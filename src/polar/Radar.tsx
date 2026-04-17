@@ -453,7 +453,7 @@ function StaticPolygon({
 }
 
 const interpolatePolarPoint =
-  (prevPoints: ReadonlyArray<RadarPoint> | undefined, t: number) => (entry: RadarPoint, index: number) => {
+  (prevPoints: ReadonlyArray<RadarPoint | undefined> | undefined, t: number) => (entry: RadarPoint, index: number) => {
     const prev = prevPoints && prevPoints[index];
 
     if (prev) {
@@ -472,9 +472,27 @@ const interpolatePolarPoint =
   };
 
 function defaultRadarAnimateItems(): AnimationInterpolateFn<RadarPoint> {
-  return (prevItems, nextItems, t) => {
-    if (t === 1) return nextItems;
-    return nextItems.map(interpolatePolarPoint(prevItems ?? undefined, t));
+  return (items, t) => {
+    if (items == null) return [];
+    if (t === 1) {
+      return items.flatMap(item => (item.status === 'removed' ? [] : [item.next]));
+    }
+    return items.flatMap(item => {
+      if (item.status === 'removed') return [];
+      if (item.status === 'matched') {
+        return [{
+          ...item.next,
+          x: interpolate(item.prev.x, item.next.x, t),
+          y: interpolate(item.prev.y, item.next.y, t),
+        }];
+      }
+      // added: animate from center
+      return [{
+        ...item.next,
+        x: interpolate(item.next.cx, item.next.x, t),
+        y: interpolate(item.next.cy, item.next.y, t),
+      }];
+    });
   };
 }
 

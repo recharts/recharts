@@ -117,6 +117,52 @@ function alignByKey<T>(
   nextItems: ReadonlyArray<T>,
   matchBy: AnimationMatchBy<T>,
 ): ReadonlyArray<T> {
+  return alignByKeyWithRemovals(prevItems, nextItems, matchBy).aligned;
+}
+
+/**
+ * Result of aligning items with removal tracking.
+ */
+export interface AlignmentResult<T> {
+  /** Aligned items: same length as nextItems, result[i] is the matched prev item or undefined */
+  aligned: ReadonlyArray<T>;
+  /** Items present in prevItems but not matched to any nextItem */
+  removed: ReadonlyArray<T>;
+}
+
+/**
+ * Like alignItems but also returns the list of previous items that were
+ * not matched to any next item. These "removed" items can be animated off-screen.
+ *
+ * For `matchByIndex` and `matchAppend`, removed is always empty because
+ * those strategies don't use identity-based matching.
+ *
+ * @internal
+ */
+export function alignItemsWithRemovals<T>(
+  prevItems: ReadonlyArray<T>,
+  nextItems: ReadonlyArray<T>,
+  matchBy: AnimationMatchByProp<T>,
+): AlignmentResult<T> {
+  if (matchBy === matchByIndex) {
+    return { aligned: alignItems(prevItems, nextItems, matchBy), removed: [] };
+  }
+  if (matchBy === matchAppend) {
+    return { aligned: alignItems(prevItems, nextItems, matchBy), removed: [] };
+  }
+  return alignByKeyWithRemovals(prevItems, nextItems, matchBy);
+}
+
+/**
+ * Align previous items to match next items by key, and track removed items.
+ *
+ * @internal
+ */
+function alignByKeyWithRemovals<T>(
+  prevItems: ReadonlyArray<T>,
+  nextItems: ReadonlyArray<T>,
+  matchBy: AnimationMatchBy<T>,
+): AlignmentResult<T> {
   // Build a map of key → prev item (first occurrence wins)
   const prevMap = new Map<string | number, T>();
   for (let i = 0; i < prevItems.length; i++) {
@@ -128,14 +174,28 @@ function alignByKey<T>(
     }
   }
 
-  // For each next item, find the matching prev item
-  // Unmatched entries are undefined — existing interpolation functions handle this
-  // via their `if (prev)` truthiness checks
-  return nextItems.map((next, i) => {
+  // Track which prev keys were matched
+  const matchedKeys = new Set<string | number>();
+
+  const aligned = nextItems.map((next, i) => {
     const key = matchBy(next, i);
     if (key != null) {
-      return prevMap.get(key) as T;
+      const prev = prevMap.get(key);
+      if (prev !== undefined) {
+        matchedKeys.add(key);
+        return prev;
+      }
     }
     return undefined as unknown as T;
   });
+
+  // Removed = prev items whose keys were not matched to any next item
+  const removed: T[] = [];
+  for (const [key, item] of prevMap) {
+    if (!matchedKeys.has(key)) {
+      removed.push(item);
+    }
+  }
+
+  return { aligned, removed };
 }

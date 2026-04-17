@@ -7,56 +7,72 @@ import type { AnimationInterpolateFn, ScatterPointItem } from 'recharts';
 const dataA = generateMockData(10, 42);
 const dataB = generateMockData(10, 99);
 
+// Extended type to support opacity and size modifications in custom animations
+type AnimatedScatterPoint = ScatterPointItem & { opacity?: number };
+
 /**
  * Crossfade: previous points fade out while new points fade in.
  * Returns both sets combined — prev with decreasing opacity, next with increasing.
  */
-const crossfade: AnimationInterpolateFn<ScatterPointItem> = (prevItems, nextItems, t) => {
-  if (t === 1) return nextItems;
-  const fadingIn = nextItems.map(entry => ({ ...entry, opacity: t }));
-  if (!prevItems) return fadingIn;
-  const fadingOut = prevItems.map(entry => ({ ...entry, opacity: 1 - t }));
-  return [...fadingOut, ...fadingIn];
+const crossfade: AnimationInterpolateFn<ScatterPointItem> = (items, t) => {
+  if (items == null) return [];
+  if (t === 1) return items.flatMap(item => (item.status === 'removed' ? [] : [item.next]));
+  const result: AnimatedScatterPoint[] = [];
+  for (const item of items) {
+    if (item.status === 'matched') {
+      result.push({ ...item.prev, opacity: 1 - t });
+      result.push({ ...item.next, opacity: t });
+    } else if (item.status === 'added') {
+      result.push({ ...item.next, opacity: t });
+    } else {
+      result.push({ ...item.prev, opacity: 1 - t });
+    }
+  }
+  return result as ScatterPointItem[];
 };
 
 /**
  * Staggered crossfade: points fade out and in one by one in a wave.
  */
-const staggeredCrossfade: AnimationInterpolateFn<ScatterPointItem> = (prevItems, nextItems, t) => {
-  if (t === 1) return nextItems;
-  const count = nextItems.length;
-  const fadingIn = nextItems.map((entry, index) => {
-    const delay = index / count;
-    const progress = Math.max(0, Math.min(1, (t - delay) / (1 - delay)));
-    return { ...entry, opacity: progress };
+const staggeredCrossfade: AnimationInterpolateFn<ScatterPointItem> = (items, t) => {
+  if (items == null) return [];
+  if (t === 1) return items.flatMap(item => (item.status === 'removed' ? [] : [item.next]));
+  const count = items.length;
+  const result: AnimatedScatterPoint[] = [];
+  items.forEach((item, index) => {
+    if (item.status === 'matched' || item.status === 'added') {
+      const delay = index / count;
+      const progress = Math.max(0, Math.min(1, (t - delay) / (1 - delay)));
+      result.push({ ...item.next, opacity: progress });
+    }
+    if (item.status === 'matched' || item.status === 'removed') {
+      const reverseIndex = count - 1 - index;
+      const delay = reverseIndex / count;
+      const progress = Math.max(0, Math.min(1, (t - delay) / (1 - delay)));
+      result.push({ ...item.prev, opacity: 1 - progress });
+    }
   });
-  if (!prevItems) return fadingIn;
-  const fadingOut = prevItems.map((entry, index) => {
-    // Reverse order: last items fade out first
-    const delay = (count - 1 - index) / count;
-    const progress = Math.max(0, Math.min(1, (t - delay) / (1 - delay)));
-    return { ...entry, opacity: 1 - progress };
-  });
-  return [...fadingOut, ...fadingIn];
+  return result as ScatterPointItem[];
 };
 
 /**
  * Pop crossfade: old points shrink and fade out, new points grow and fade in.
  */
-const popCrossfade: AnimationInterpolateFn<ScatterPointItem> = (prevItems, nextItems, t) => {
-  if (t === 1) return nextItems;
-  const fadingIn = nextItems.map(entry => ({
-    ...entry,
-    opacity: t,
-    size: entry.size * t * t,
-  }));
-  if (!prevItems) return fadingIn;
-  const fadingOut = prevItems.map(entry => ({
-    ...entry,
-    opacity: 1 - t,
-    size: entry.size * (1 - t) * (1 - t),
-  }));
-  return [...fadingOut, ...fadingIn];
+const popCrossfade: AnimationInterpolateFn<ScatterPointItem> = (items, t) => {
+  if (items == null) return [];
+  if (t === 1) return items.flatMap(item => (item.status === 'removed' ? [] : [item.next]));
+  const result: AnimatedScatterPoint[] = [];
+  for (const item of items) {
+    if (item.status === 'matched' || item.status === 'added') {
+      const next = item.next;
+      result.push({ ...next, opacity: t, size: next.size * t * t });
+    }
+    if (item.status === 'matched' || item.status === 'removed') {
+      const prev = item.prev;
+      result.push({ ...prev, opacity: 1 - t, size: prev.size * (1 - t) * (1 - t) });
+    }
+  }
+  return result as ScatterPointItem[];
 };
 
 const animationOptions = {

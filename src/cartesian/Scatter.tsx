@@ -593,19 +593,23 @@ function ScatterSymbols(props: ScatterSymbolsProps) {
   );
 }
 
-const defaultScatterAnimateItems: AnimationInterpolateFn<ScatterPointItem> = (prevItems, nextItems, t) => {
-  if (t === 1) return nextItems;
-  return nextItems.map((entry, index) => {
-    const prev = prevItems && prevItems[index];
-    if (prev) {
-      return {
-        ...entry,
-        cx: entry.cx == null ? undefined : interpolate(prev.cx, entry.cx, t),
-        cy: entry.cy == null ? undefined : interpolate(prev.cy, entry.cy, t),
-        size: interpolate(prev.size, entry.size, t),
-      };
+const defaultScatterAnimateItems: AnimationInterpolateFn<ScatterPointItem> = (items, t) => {
+  if (items == null) return [];
+  if (t === 1) {
+    return items.flatMap(item => (item.status === 'removed' ? [] : [item.next]));
+  }
+  return items.flatMap(item => {
+    if (item.status === 'removed') return [];
+    if (item.status === 'matched') {
+      return [{
+        ...item.next,
+        cx: item.next.cx == null ? undefined : interpolate(item.prev.cx, item.next.cx, t),
+        cy: item.next.cy == null ? undefined : interpolate(item.prev.cy, item.next.cy, t),
+        size: interpolate(item.prev.size, item.next.size, t),
+      }];
     }
-    return { ...entry, size: interpolate(0, entry.size, t) };
+    // added
+    return [{ ...item.next, size: interpolate(0, item.next.size, t) }];
   });
 };
 

@@ -354,28 +354,33 @@ function FunnelTrapezoids(props: FunnelTrapezoidsProps) {
   );
 }
 
-const defaultFunnelAnimateItems: AnimationInterpolateFn<FunnelTrapezoidItem> = (prevItems, nextItems, t) => {
-  if (t === 1) return nextItems;
-  return nextItems.map((entry, index) => {
-    const prev = prevItems && prevItems[index];
-    if (prev) {
-      return {
-        ...entry,
-        x: interpolate(prev.x, entry.x, t),
-        y: interpolate(prev.y, entry.y, t),
-        upperWidth: interpolate(prev.upperWidth, entry.upperWidth, t),
-        lowerWidth: interpolate(prev.lowerWidth, entry.lowerWidth, t),
-        height: interpolate(prev.height, entry.height, t),
-      };
+const defaultFunnelAnimateItems: AnimationInterpolateFn<FunnelTrapezoidItem> = (items, t) => {
+  if (items == null) return [];
+  if (t === 1) {
+    return items.flatMap(item => (item.status === 'removed' ? [] : [item.next]));
+  }
+  return items.flatMap(item => {
+    if (item.status === 'removed') return [];
+    if (item.status === 'matched') {
+      return [{
+        ...item.next,
+        x: interpolate(item.prev.x, item.next.x, t),
+        y: interpolate(item.prev.y, item.next.y, t),
+        upperWidth: interpolate(item.prev.upperWidth, item.next.upperWidth, t),
+        lowerWidth: interpolate(item.prev.lowerWidth, item.next.lowerWidth, t),
+        height: interpolate(item.prev.height, item.next.height, t),
+      }];
     }
-    return {
-      ...entry,
-      x: interpolate(entry.x + entry.upperWidth / 2, entry.x, t),
-      y: interpolate(entry.y + entry.height / 2, entry.y, t),
-      upperWidth: interpolate(0, entry.upperWidth, t),
-      lowerWidth: interpolate(0, entry.lowerWidth, t),
-      height: interpolate(0, entry.height, t),
-    };
+    // added
+    const { next } = item;
+    return [{
+      ...next,
+      x: interpolate(next.x + next.upperWidth / 2, next.x, t),
+      y: interpolate(next.y + next.height / 2, next.y, t),
+      upperWidth: interpolate(0, next.upperWidth, t),
+      lowerWidth: interpolate(0, next.lowerWidth, t),
+      height: interpolate(0, next.height, t),
+    }];
   });
 };
 

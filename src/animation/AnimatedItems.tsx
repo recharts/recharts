@@ -3,7 +3,7 @@ import { MutableRefObject, ReactNode, useCallback, useState } from 'react';
 import { JavascriptAnimate } from './JavascriptAnimate';
 import { EasingInput } from './easing';
 import { useAnimationId } from '../util/useAnimationId';
-import { alignItems, AnimationMatchByProp, matchByIndex } from './matchBy';
+import { alignItems, alignItemsWithRemovals, AnimationMatchByProp, matchByIndex } from './matchBy';
 
 /**
  * Hook that tracks whether an animation is in progress and wraps
@@ -39,16 +39,33 @@ export function useAnimationCallbacks(onAnimationStart?: () => void, onAnimation
 }
 
 /**
- * A function that interpolates between previous and next items at a given time.
+ * A tagged union describing the status of an item during animation.
  *
- * @param prevItems The items from the previous animation frame, or null on first render
- * @param nextItems The target items to animate towards
+ * - `matched`: item exists in both previous and next data — interpolate between positions
+ * - `added`: item is new (no previous position) — animate in
+ * - `removed`: item was in previous data but not in next — animate out
+ */
+export type AnimationItem<T> =
+  | { readonly status: 'matched'; readonly prev: T; readonly next: T }
+  | { readonly status: 'added'; readonly next: T }
+  | { readonly status: 'removed'; readonly prev: T };
+
+/**
+ * A function that interpolates animation items at a given time.
+ *
+ * @param items The tagged animation items describing what changed, or `null` on the very first render
+ *   (entrance animation). Each item is self-describing:
+ *   - `{ status: 'matched', prev, next }` — interpolate between `prev` and `next`
+ *   - `{ status: 'added', next }` — animate in from a computed entry position
+ *   - `{ status: 'removed', prev }` — animate out to a computed exit position
+ *
+ *   At `t = 1`, removed items should be excluded from the result.
+ *
  * @param t A normalized time value (0 = start, 1 = end)
  * @returns The interpolated items at time t
  */
 export type AnimationInterpolateFn<T> = (
-  prevItems: ReadonlyArray<T> | null,
-  nextItems: ReadonlyArray<T>,
+  items: ReadonlyArray<AnimationItem<T>> | null,
   t: number,
 ) => ReadonlyArray<T>;
 
@@ -136,10 +153,31 @@ export function AnimatedItems<T>(props: AnimatedItemsProps<T>) {
   const animationId = useAnimationId(animationInput, animationIdPrefix);
 
   const rawPrevItems = previousItemsRef.current ?? null;
-  // Align previous items so that prevItems[i] corresponds to items[i]
-  // according to the chosen matching strategy (stretch, append, or key-based).
-  const prevItems =
-    rawPrevItems && items ? alignItems(rawPrevItems, items, animationMatchBy ?? matchByIndex) : rawPrevItems;
+  // Build tagged animation items describing matched, added, and removed items.
+  let animationItems: ReadonlyArray<AnimationItem<T>> | null;
+  if (rawPrevItems && items) {
+    const matchBy = animationMatchBy ?? matchByIndex;
+    const { aligned, removed } = alignItemsWithRemovals(rawPrevItems, items, matchBy);
+    const tagged: AnimationItem<T>[] = [];
+    for (let i = 0; i < items.length; i++) {
+      const prev = aligned[i] as T | undefined;
+      const next = items[i]!;
+      if (prev != null) {
+        tagged.push({ status: 'matched', prev, next });
+      } else {
+        tagged.push({ status: 'added', next });
+      }
+    }
+    for (const prev of removed) {
+      tagged.push({ status: 'removed', prev });
+    }
+    animationItems = tagged;
+  } else if (items) {
+    // First render or no previous items — all items are "added"
+    animationItems = items.map(next => ({ status: 'added' as const, next }));
+  } else {
+    animationItems = null;
+  }
 
   return (
     <JavascriptAnimate
@@ -154,7 +192,7 @@ export function AnimatedItems<T>(props: AnimatedItemsProps<T>) {
     >
       {(t: number) => {
         const isEntrance = rawPrevItems == null;
-        const stepData = items == null ? items : animationInterpolateFn(prevItems, items, t);
+        const stepData = items == null ? items : animationInterpolateFn(animationItems, t);
         const canUpdate = shouldUpdatePreviousRef ? shouldUpdatePreviousRef(t) : t > 0;
         if (canUpdate) {
           previousItemsRef.current = stepData;

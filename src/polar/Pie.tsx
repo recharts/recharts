@@ -874,23 +874,25 @@ function PieLabelListProvider({
 
 type WithoutId<T> = Omit<T, 'id'>;
 
-const defaultPieAnimateItems: AnimationInterpolateFn<PieSectorDataItem> = (prevItems, nextItems, t) => {
+const defaultPieAnimateItems: AnimationInterpolateFn<PieSectorDataItem> = (items, t) => {
+  if (items == null) return [];
   const stepData: PieSectorDataItem[] = [];
-  const first = nextItems[0];
-  let curAngle: number = first?.startAngle ?? 0;
+  const firstNonRemoved = items.find(item => item.status !== 'removed');
+  let curAngle: number = firstNonRemoved ? firstNonRemoved.next.startAngle : 0;
 
-  nextItems.forEach((entry, index) => {
-    const prev = prevItems && prevItems[index];
-    const paddingAngle = index > 0 ? get(entry, 'paddingAngle', 0) : 0;
+  items.forEach((item, index) => {
+    if (item.status === 'removed') return;
+    const paddingAngle = index > 0 ? get(item.next, 'paddingAngle', 0) : 0;
 
-    if (prev) {
-      const angle = interpolate(prev.endAngle - prev.startAngle, entry.endAngle - entry.startAngle, t);
-      const latest = { ...entry, startAngle: curAngle + paddingAngle, endAngle: curAngle + angle + paddingAngle };
+    if (item.status === 'matched') {
+      const angle = interpolate(item.prev.endAngle - item.prev.startAngle, item.next.endAngle - item.next.startAngle, t);
+      const latest = { ...item.next, startAngle: curAngle + paddingAngle, endAngle: curAngle + angle + paddingAngle };
       stepData.push(latest);
       curAngle = latest.endAngle;
     } else {
-      const deltaAngle = interpolate(0, entry.endAngle - entry.startAngle, t);
-      const latest = { ...entry, startAngle: curAngle + paddingAngle, endAngle: curAngle + deltaAngle + paddingAngle };
+      // added
+      const deltaAngle = interpolate(0, item.next.endAngle - item.next.startAngle, t);
+      const latest = { ...item.next, startAngle: curAngle + paddingAngle, endAngle: curAngle + deltaAngle + paddingAngle };
       stepData.push(latest);
       curAngle = latest.endAngle;
     }

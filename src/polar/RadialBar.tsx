@@ -185,18 +185,22 @@ function RadialBarSectors({ sectors, allOtherRadialBarProps, showLabels }: Radia
   );
 }
 
-const defaultRadialBarAnimateItems: AnimationInterpolateFn<RadialBarDataItem> = (prevItems, nextItems, t) => {
-  if (t === 1) return nextItems;
-  return nextItems.map((entry, index) => {
-    const prev = prevItems && prevItems[index];
-    if (prev) {
-      return {
-        ...entry,
-        startAngle: interpolate(prev.startAngle, entry.startAngle, t),
-        endAngle: interpolate(prev.endAngle, entry.endAngle, t),
-      };
+const defaultRadialBarAnimateItems: AnimationInterpolateFn<RadialBarDataItem> = (items, t) => {
+  if (items == null) return [];
+  if (t === 1) {
+    return items.flatMap(item => (item.status === 'removed' ? [] : [item.next]));
+  }
+  return items.flatMap(item => {
+    if (item.status === 'removed') return [];
+    if (item.status === 'matched') {
+      return [{
+        ...item.next,
+        startAngle: interpolate(item.prev.startAngle, item.next.startAngle, t),
+        endAngle: interpolate(item.prev.endAngle, item.next.endAngle, t),
+      }];
     }
-    return { ...entry, endAngle: interpolate(entry.startAngle, entry.endAngle, t) };
+    // added
+    return [{ ...item.next, endAngle: interpolate(item.next.startAngle, item.next.endAngle, t) }];
   });
 };
 

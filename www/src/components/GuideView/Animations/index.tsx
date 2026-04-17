@@ -303,6 +303,7 @@ export function AnimationsGuide() {
         </li>
       </ul>
       <p>Swap between the 5-item and 15-item datasets below to see the difference:</p>
+      {/* TODO swap from Area to Bar - it look better. Also add Scatter */}
       <CodeEditorWithPreview
         Component={MatchingStrategiesExample}
         Controls={MatchingStrategiesControls}
@@ -321,7 +322,7 @@ export function AnimationsGuide() {
 />`}</pre>
       <p>
         Items in the old and new arrays that return the same key will animate between their positions. Items that have
-        no match animate in as new elements.
+        no match in the old data animate in as new elements, and items that have no match in the new data animate out.
       </p>
       <h2>Custom animation functions</h2>
       <p>
@@ -329,27 +330,40 @@ export function AnimationsGuide() {
         animation. Instead of the default position-based transitions, you can create any visual effect: opacity fades,
         scale transforms, staggered entrances, or anything else.
       </p>
-      <p>The function receives three arguments:</p>
+      <p>This prop is available since version 3.9.</p>
+      <p>The function receives two arguments:</p>
       <ul>
         <li>
-          <code>prevItems</code> — the items from the previous frame (or <code>null</code> on initial render)
-        </li>
-        <li>
-          <code>nextItems</code> — the target items to animate towards
+          <code>items</code> — an array of tagged items describing what changed, or <code>null</code> on the very first
+          render (entrance animation). Each item is self-describing:
+          <ul>
+            <li>
+              <code>{`{ status: 'matched', prev, next }`}</code> — item exists in both datasets, interpolate between{' '}
+              <code>prev</code> and <code>next</code>
+            </li>
+            <li>
+              <code>{`{ status: 'added', next }`}</code> — new item, animate in from a computed entry position
+            </li>
+            <li>
+              <code>{`{ status: 'removed', prev }`}</code> — item was removed, animate out (exclude at <code>t=1</code>
+              )
+            </li>
+          </ul>
         </li>
         <li>
           <code>t</code> — a normalized time from 0 (start) to 1 (end), already eased
         </li>
       </ul>
       <p>
-        Return an array of items with any properties modified. The powerful trick: since you receive <em>both</em>{' '}
-        previous and next items, you can return a combined array containing both sets — previous points fading out and
-        new points fading in simultaneously.
+        Return an array of items with any properties modified. The powerful trick: since each item carries both{' '}
+        <code>prev</code> and <code>next</code>, you can return a combined array containing both — previous points
+        fading out and new points fading in simultaneously.
       </p>
       <p>
         Try swapping the dataset below. Each animation style crossfades between two datasets using only a small custom
         function — open the source code to see how they work:
       </p>
+      {/* TODO make the two Scatters have different shape and color if possible */}
       <CodeEditorWithPreview
         Component={CustomAnimationExample}
         Controls={CustomAnimationControls}
@@ -449,9 +463,13 @@ export function AnimationsGuide() {
           </tr>
         </tbody>
       </table>
+      <p>
+        While the <code>shape</code> prop has been available on several Recharts components before, the animation
+        arguments are being passed in since version 3.9.
+      </p>
       <h3>Built-in shapes</h3>
       <p>Recharts exports the default shapes so you can reuse or extend them in your custom animations:</p>
-      <pre>{`import { AreaRevealShape, LineDrawShape } from 'recharts';
+      <pre>{`import { Area, Line, AreaRevealShape, LineDrawShape } from 'recharts';
 
 // Use the default Area shape explicitly
 <Area dataKey="value" shape={AreaRevealShape} />
@@ -464,6 +482,7 @@ export function AnimationsGuide() {
         <code>shape</code> (to skip the default clip-path reveal). The shape wraps <code>AreaRevealShape</code> but
         overrides <code>isEntrance</code> to prevent the clip-path animation:
       </p>
+      {/* TODO add controls to these two examples */}
       <CodeEditorWithPreview
         Component={AreaChartCustomAnimationExample}
         sourceCode={AreaChartCustomAnimationExampleSource}
@@ -492,14 +511,14 @@ export function AnimationsGuide() {
         <tbody>
           <tr>
             <td>
-              <code>animationInterpolateFn</code>
+              <code>animationInterpolateFn (v3.9)</code>
             </td>
             <td>How data points transition between positions (data level)</td>
             <td>All animated components</td>
           </tr>
           <tr>
             <td>
-              <code>animationMatchBy</code>
+              <code>animationMatchBy (v3.9)</code>
             </td>
             <td>How old data points pair with new data points</td>
             <td>All animated components</td>
@@ -508,7 +527,7 @@ export function AnimationsGuide() {
             <td>
               <code>shape</code>
             </td>
-            <td>How the SVG element is rendered, with access to animation state</td>
+            <td>How the SVG element is rendered, with access to animation state (v3.9)</td>
             <td>Area, Line (and Bar, Scatter via existing shape support)</td>
           </tr>
         </tbody>

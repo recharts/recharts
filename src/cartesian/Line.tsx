@@ -45,7 +45,12 @@ import { selectLinePoints } from '../state/selectors/lineSelectors';
 import { useAppSelector } from '../state/hooks';
 import { AxisId } from '../state/cartesianAxisSlice';
 import { SetLegendPayload } from '../state/SetLegendPayload';
-import { AnimatedItems, AnimationInterpolateFn, useAnimationCallbacks } from '../animation/AnimatedItems';
+import {
+  AnimatedItems,
+  AnimationInterpolateFn,
+  AnimationItem,
+  useAnimationCallbacks,
+} from '../animation/AnimatedItems';
 import { AnimationMatchByProp } from '../animation/matchBy';
 import { resolveDefaultProps } from '../util/resolveDefaultProps';
 import { usePlotArea } from '../hooks';
@@ -524,27 +529,82 @@ function getTotalLength(mainCurve: SVGPathElement | null): number {
   }
 }
 
+/**
+ * Compute the average x-spacing between consecutive items.
+ * Returns 0 if there are fewer than 2 items with defined x coordinates.
+ */
+function averageSpacing(items: ReadonlyArray<AnimationItem<LinePointItem>>): number {
+  const xs: number[] = [];
+  for (const item of items) {
+    const x = item.status === 'removed' ? item.prev.x : item.next.x;
+    if (x != null) xs.push(x);
+  }
+  if (xs.length < 2) return 0;
+  xs.sort((a, b) => a - b);
+  return (xs[xs.length - 1]! - xs[0]!) / (xs.length - 1);
+}
+
+/**
+ * Compute the average x-shift between matched pairs (prev → next).
+ * This tells us the overall direction and magnitude of the data movement.
+ */
+function averageShift(items: ReadonlyArray<AnimationItem<LinePointItem>>): number {
+  let total = 0;
+  let count = 0;
+  for (const item of items) {
+    if (item.status === 'matched' && item.prev.x != null && item.next.x != null) {
+      total += item.next.x - item.prev.x;
+      count++;
+    }
+  }
+  return count > 0 ? total / count : 0;
+}
+
 function defaultLineAnimateItems(
   animateNewValues: boolean,
-  width: number,
-  height: number,
+  _width: number,
+  _height: number,
 ): AnimationInterpolateFn<LinePointItem> {
-  return (prevItems, nextItems, t) => {
-    if (t === 1) return nextItems;
-    if (prevItems == null) {
-      // First render: return items as-is, stroke-dasharray handles the reveal
-      return nextItems;
+  return (items, t) => {
+    if (items == null) {
+      // First render: return empty, stroke-dasharray handles the reveal
+      return [];
     }
-    return nextItems.map((entry, index) => {
-      const prev = prevItems[index];
-      if (prev) {
-        return { ...entry, x: interpolate(prev.x, entry.x, t), y: interpolate(prev.y, entry.y, t) };
+    // At t=1 return only the non-removed items
+    if (t === 1) return items.flatMap(item => (item.status === 'removed' ? [] : [item.next]));
+
+    const shift = averageShift(items);
+
+    const result: LinePointItem[] = [];
+
+    for (const item of items) {
+      if (item.status === 'matched') {
+        result.push({
+          ...item.next,
+          x: interpolate(item.prev.x, item.next.x, t),
+          y: interpolate(item.prev.y, item.next.y, t),
+        });
+      } else if (item.status === 'added') {
+        if (animateNewValues && item.next.x != null) {
+          // Extrapolate entry position: the point starts where it "would have been"
+          const entryX = item.next.x - shift;
+          result.push({ ...item.next, x: interpolate(entryX, item.next.x, t), y: item.next.y });
+        } else {
+          result.push(item.next);
+        }
+      } else if (item.status === 'removed') {
+        if (animateNewValues && item.prev.x != null) {
+          const exitX = item.prev.x + shift;
+          result.push({ ...item.prev, x: interpolate(item.prev.x, exitX, t), y: item.prev.y });
+        }
+        // else: removed items are simply dropped
       }
-      if (animateNewValues) {
-        return { ...entry, x: interpolate(width * 2, entry.x, t), y: interpolate(height / 2, entry.y, t) };
-      }
-      return entry;
-    });
+    }
+
+    // Sort by x so the line path is drawn correctly
+    result.sort((a, b) => (a.x ?? 0) - (b.x ?? 0));
+
+    return result;
   };
 }
 
@@ -747,7 +807,7 @@ function LineImpl(props: WithIdRequired<Props>) {
   }
 
   const { height, width, x: left, y: top } = plotArea;
-
+  console.log({ needClip });
   return (
     <LineWithState
       {...everythingElse}

@@ -539,18 +539,23 @@ function StaticArea({
 }
 
 function defaultAreaAnimateItems(): AnimationInterpolateFn<AreaPointItem> {
-  return (prevItems, nextItems, t) => {
-    if (t === 1) return nextItems;
-    if (prevItems == null) {
+  return (items, t) => {
+    if (items == null) {
       // First render: return items as-is, clip-path animation handles the reveal
-      return nextItems;
+      return [];
     }
-    return nextItems.map((entry, index) => {
-      const prev = prevItems[index];
-      if (prev) {
-        return { ...entry, x: interpolate(prev.x, entry.x, t), y: interpolate(prev.y, entry.y, t) };
+    if (t === 1) {
+      return items.flatMap(item => (item.status === 'removed' ? [] : [item.next]));
+    }
+    return items.flatMap(item => {
+      if (item.status === 'matched') {
+        return [{ ...item.next, x: interpolate(item.prev.x, item.next.x, t), y: interpolate(item.prev.y, item.next.y, t) }];
       }
-      return entry;
+      if (item.status === 'added') {
+        return [item.next];
+      }
+      // removed: drop
+      return [];
     });
   };
 }

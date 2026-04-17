@@ -789,23 +789,28 @@ function BarRectangles({
 function defaultBarAnimateItems(
   layout: 'horizontal' | 'vertical' | undefined,
 ): AnimationInterpolateFn<BarRectangleItem> {
-  return (prevItems, nextItems, t) => {
-    if (t === 1) return nextItems;
-    return nextItems.map((entry, index) => {
-      const prev = prevItems && prevItems[index];
-      if (prev) {
-        return {
-          ...entry,
-          x: interpolate(prev.x, entry.x, t),
-          y: interpolate(prev.y, entry.y, t),
-          width: interpolate(prev.width, entry.width, t),
-          height: interpolate(prev.height, entry.height, t),
-        };
+  return (items, t) => {
+    if (items == null) return [];
+    if (t === 1) {
+      return items.flatMap(item => (item.status === 'removed' ? [] : [item.next]));
+    }
+    return items.flatMap(item => {
+      if (item.status === 'removed') return [];
+      if (item.status === 'matched') {
+        return [{
+          ...item.next,
+          x: interpolate(item.prev.x, item.next.x, t),
+          y: interpolate(item.prev.y, item.next.y, t),
+          width: interpolate(item.prev.width, item.next.width, t),
+          height: interpolate(item.prev.height, item.next.height, t),
+        }];
       }
+      // added
+      const { next } = item;
       if (layout === 'horizontal') {
-        return { ...entry, height: interpolate(0, entry.height, t), y: interpolate(entry.stackedBarStart, entry.y, t) };
+        return [{ ...next, height: interpolate(0, next.height, t), y: interpolate(next.stackedBarStart, next.y, t) }];
       }
-      return { ...entry, width: interpolate(0, entry.width, t), x: interpolate(entry.stackedBarStart, entry.x, t) };
+      return [{ ...next, width: interpolate(0, next.width, t), x: interpolate(next.stackedBarStart, next.x, t) }];
     });
   };
 }

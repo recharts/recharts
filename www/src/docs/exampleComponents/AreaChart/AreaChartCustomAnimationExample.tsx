@@ -5,10 +5,11 @@ import type { AnimationInterpolateFn } from 'recharts';
 // We need the internal type for AreaPointItem - in practice users
 // would define their own type or use `any` for the interpolation function.
 // TODO: export AreaPointItem from recharts public API
-type AreaPointItem = { x: number; y: number; value?: number | number[]; payload?: Record<string, unknown> };
+type AreaPointItem = { x: number | null; y: number | null; value?: ReadonlyArray<unknown>; payload?: any };
 
 // Helper to linearly interpolate between two numbers
-function lerp(from: number | undefined, to: number, t: number): number {
+function lerp(from: number | undefined | null, to: number | null, t: number): number | null {
+  if (to == null) return to;
   if (from == null) return to;
   return from + (to - from) * t;
 }
@@ -34,12 +35,14 @@ const useAnimateFromBottom = (): AnimationInterpolateFn<AreaPointItem> => {
   const plotArea = usePlotArea();
   const zero = plotArea ? plotArea.y + plotArea.height : 0;
 
-  return (_prev, nextItems, t) => {
-    if (t === 1) return nextItems;
-    return nextItems.map(entry => ({
-      ...entry,
-      y: lerp(zero, entry.y, t),
-    }));
+  return (items, t) => {
+    if (items == null) return [];
+    if (t === 1) return items.flatMap(item => (item.status === 'removed' ? [] : [item.next]));
+    return items.flatMap(item => {
+      if (item.status === 'removed') return [];
+      const next = item.next;
+      return [{ ...next, y: lerp(zero, next.y, t) }];
+    });
   };
 };
 

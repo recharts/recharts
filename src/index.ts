@@ -162,7 +162,7 @@ export type {
 } from './util/types';
 export type { IfOverflow } from './util/IfOverflow';
 export type { EasingInput } from './animation/easing';
-export type { AnimationInterpolateFn } from './animation/AnimatedItems';
+export type { AnimationInterpolateFn, AnimationItem } from './animation/AnimatedItems';
 export type { AnimationMatchBy, AnimationMatchByProp } from './animation/matchBy';
 export { matchByIndex, matchByDataKey, matchAppend } from './animation/matchBy';
 export { AnimationProgressProvider, useAnimationProgress } from './animation/AnimationProgressProvider';

@@ -1,5 +1,11 @@
 import { describe, it, expect } from 'vitest';
-import { alignItems, matchAppend, matchByDataKey, matchByIndex } from '../../src/animation/matchBy';
+import {
+  alignItems,
+  alignItemsWithRemovals,
+  matchAppend,
+  matchByDataKey,
+  matchByIndex,
+} from '../../src/animation/matchBy';
 
 interface TestItem {
   x: number;
@@ -419,5 +425,270 @@ describe('alignItems', () => {
         expect(aligned[i]).toBeUndefined();
       }
     });
+  });
+});
+
+describe('alignItemsWithRemovals', () => {
+  const matchByName = matchByDataKey('name') as (item: TestItem, index: number) => string | number | null;
+
+  describe('with matchByIndex', () => {
+    it('should return empty removed array (index strategy never tracks removals)', () => {
+      const prev: TestItem[] = [
+        { x: 10, y: 10 },
+        { x: 20, y: 20 },
+        { x: 30, y: 30 },
+      ];
+      const next: TestItem[] = [
+        { x: 15, y: 15 },
+        { x: 25, y: 25 },
+      ];
+
+      const result = alignItemsWithRemovals(prev, next, matchByIndex);
+
+      expect(result.aligned).toHaveLength(2);
+      expect(result.removed).toHaveLength(0);
+    });
+  });
+
+  describe('with matchAppend', () => {
+    it('should return empty removed array (append strategy never tracks removals)', () => {
+      const prev: TestItem[] = [
+        { x: 10, y: 10 },
+        { x: 20, y: 20 },
+        { x: 30, y: 30 },
+      ];
+      const next: TestItem[] = [
+        { x: 15, y: 15 },
+        { x: 25, y: 25 },
+      ];
+
+      const result = alignItemsWithRemovals(prev, next, matchAppend);
+
+      expect(result.aligned).toHaveLength(2);
+      expect(result.removed).toHaveLength(0);
+    });
+  });
+
+  describe('with custom key function (matchByDataKey)', () => {
+    it('should detect removed items in sliding window [A,B,C] -> [B,C,D]', () => {
+      const prev: TestItem[] = [
+        { x: 10, y: 10, payload: { name: 'A' } },
+        { x: 20, y: 20, payload: { name: 'B' } },
+        { x: 30, y: 30, payload: { name: 'C' } },
+      ];
+      const next: TestItem[] = [
+        { x: 10, y: 20, payload: { name: 'B' } },
+        { x: 20, y: 30, payload: { name: 'C' } },
+        { x: 30, y: 40, payload: { name: 'D' } },
+      ];
+
+      const result = alignItemsWithRemovals(prev, next, matchByName);
+
+      // Aligned should match B->B, C->C, D->undefined
+      expect(result.aligned).toHaveLength(3);
+      expect(result.aligned[0]).toBe(prev[1]); // B
+      expect(result.aligned[1]).toBe(prev[2]); // C
+      expect(result.aligned[2]).toBeUndefined(); // D is new
+
+      // A was removed
+      expect(result.removed).toHaveLength(1);
+      expect(result.removed[0]).toBe(prev[0]);
+    });
+
+    it('should detect removed items in sliding window [B,C,D] -> [A,B,C]', () => {
+      const prev: TestItem[] = [
+        { x: 10, y: 20, payload: { name: 'B' } },
+        { x: 20, y: 30, payload: { name: 'C' } },
+        { x: 30, y: 40, payload: { name: 'D' } },
+      ];
+      const next: TestItem[] = [
+        { x: 10, y: 10, payload: { name: 'A' } },
+        { x: 20, y: 20, payload: { name: 'B' } },
+        { x: 30, y: 30, payload: { name: 'C' } },
+      ];
+
+      const result = alignItemsWithRemovals(prev, next, matchByName);
+
+      // Aligned: A->undefined, B->B, C->C
+      expect(result.aligned[0]).toBeUndefined();
+      expect(result.aligned[1]).toBe(prev[0]); // B
+      expect(result.aligned[2]).toBe(prev[1]); // C
+
+      // D was removed
+      expect(result.removed).toHaveLength(1);
+      expect(result.removed[0]).toBe(prev[2]);
+    });
+
+    it('should detect multiple removed items', () => {
+      const prev: TestItem[] = [
+        { x: 10, y: 10, payload: { name: 'A' } },
+        { x: 20, y: 20, payload: { name: 'B' } },
+        { x: 30, y: 30, payload: { name: 'C' } },
+        { x: 40, y: 40, payload: { name: 'D' } },
+        { x: 50, y: 50, payload: { name: 'E' } },
+      ];
+      const next: TestItem[] = [
+        { x: 10, y: 30, payload: { name: 'C' } },
+        { x: 20, y: 40, payload: { name: 'D' } },
+        { x: 30, y: 50, payload: { name: 'E' } },
+        { x: 40, y: 60, payload: { name: 'F' } },
+        { x: 50, y: 70, payload: { name: 'G' } },
+      ];
+
+      const result = alignItemsWithRemovals(prev, next, matchByName);
+
+      // A and B were removed
+      expect(result.removed).toHaveLength(2);
+      expect(result.removed[0]).toBe(prev[0]); // A
+      expect(result.removed[1]).toBe(prev[1]); // B
+
+      // C, D, E matched; F, G are new
+      expect(result.aligned[0]).toBe(prev[2]); // C
+      expect(result.aligned[1]).toBe(prev[3]); // D
+      expect(result.aligned[2]).toBe(prev[4]); // E
+      expect(result.aligned[3]).toBeUndefined(); // F new
+      expect(result.aligned[4]).toBeUndefined(); // G new
+    });
+
+    it('should return empty removed when all previous items match', () => {
+      const prev: TestItem[] = [
+        { x: 10, y: 10, payload: { name: 'A' } },
+        { x: 20, y: 20, payload: { name: 'B' } },
+      ];
+      const next: TestItem[] = [
+        { x: 15, y: 15, payload: { name: 'A' } },
+        { x: 25, y: 25, payload: { name: 'B' } },
+      ];
+
+      const result = alignItemsWithRemovals(prev, next, matchByName);
+
+      expect(result.removed).toHaveLength(0);
+      expect(result.aligned[0]).toBe(prev[0]);
+      expect(result.aligned[1]).toBe(prev[1]);
+    });
+
+    it('should return all previous items as removed when none match', () => {
+      const prev: TestItem[] = [
+        { x: 10, y: 10, payload: { name: 'A' } },
+        { x: 20, y: 20, payload: { name: 'B' } },
+      ];
+      const next: TestItem[] = [
+        { x: 10, y: 100, payload: { name: 'X' } },
+        { x: 20, y: 200, payload: { name: 'Y' } },
+      ];
+
+      const result = alignItemsWithRemovals(prev, next, matchByName);
+
+      expect(result.removed).toHaveLength(2);
+      expect(result.removed[0]).toBe(prev[0]);
+      expect(result.removed[1]).toBe(prev[1]);
+      expect(result.aligned[0]).toBeUndefined();
+      expect(result.aligned[1]).toBeUndefined();
+    });
+  });
+});
+
+describe('tagged animation items pattern (as used by AnimatedItems)', () => {
+  const matchByName = matchByDataKey('name') as (item: TestItem, index: number) => string | number | null;
+
+  function buildTaggedItems(prev: TestItem[], next: TestItem[]) {
+    const { aligned, removed } = alignItemsWithRemovals(prev, next, matchByName);
+    const tagged: Array<
+      | { status: 'matched'; prev: TestItem; next: TestItem }
+      | { status: 'added'; next: TestItem }
+      | { status: 'removed'; prev: TestItem }
+    > = [];
+    for (let i = 0; i < next.length; i++) {
+      const p = aligned[i];
+      const n = next[i];
+      if (p != null) {
+        tagged.push({ status: 'matched', prev: p, next: n });
+      } else {
+        tagged.push({ status: 'added', next: n });
+      }
+    }
+    for (const p of removed) {
+      tagged.push({ status: 'removed', prev: p });
+    }
+    return tagged;
+  }
+
+  it('should produce correct tagged items for sliding window [A,B,C] -> [B,C,D]', () => {
+    const prev: TestItem[] = [
+      { x: 10, y: 10, payload: { name: 'A' } },
+      { x: 20, y: 20, payload: { name: 'B' } },
+      { x: 30, y: 30, payload: { name: 'C' } },
+    ];
+    const next: TestItem[] = [
+      { x: 10, y: 20, payload: { name: 'B' } },
+      { x: 20, y: 30, payload: { name: 'C' } },
+      { x: 30, y: 40, payload: { name: 'D' } },
+    ];
+
+    const tagged = buildTaggedItems(prev, next);
+
+    expect(tagged).toHaveLength(4);
+
+    // B matched
+    expect(tagged[0]).toEqual({ status: 'matched', prev: prev[1], next: next[0] });
+    // C matched
+    expect(tagged[1]).toEqual({ status: 'matched', prev: prev[2], next: next[1] });
+    // D added
+    expect(tagged[2]).toEqual({ status: 'added', next: next[2] });
+    // A removed
+    expect(tagged[3]).toEqual({ status: 'removed', prev: prev[0] });
+  });
+
+  it('should produce correct tagged items for multi-step slide [A,B,C,D,E] -> [C,D,E,F,G]', () => {
+    const prev: TestItem[] = [
+      { x: 10, y: 10, payload: { name: 'A' } },
+      { x: 20, y: 20, payload: { name: 'B' } },
+      { x: 30, y: 30, payload: { name: 'C' } },
+      { x: 40, y: 40, payload: { name: 'D' } },
+      { x: 50, y: 50, payload: { name: 'E' } },
+    ];
+    const next: TestItem[] = [
+      { x: 10, y: 30, payload: { name: 'C' } },
+      { x: 20, y: 40, payload: { name: 'D' } },
+      { x: 30, y: 50, payload: { name: 'E' } },
+      { x: 40, y: 60, payload: { name: 'F' } },
+      { x: 50, y: 70, payload: { name: 'G' } },
+    ];
+
+    const tagged = buildTaggedItems(prev, next);
+
+    expect(tagged).toHaveLength(7);
+
+    // C, D, E matched
+    expect(tagged[0]).toEqual({ status: 'matched', prev: prev[2], next: next[0] });
+    expect(tagged[1]).toEqual({ status: 'matched', prev: prev[3], next: next[1] });
+    expect(tagged[2]).toEqual({ status: 'matched', prev: prev[4], next: next[2] });
+
+    // F, G added
+    expect(tagged[3]).toEqual({ status: 'added', next: next[3] });
+    expect(tagged[4]).toEqual({ status: 'added', next: next[4] });
+
+    // A, B removed
+    expect(tagged[5]).toEqual({ status: 'removed', prev: prev[0] });
+    expect(tagged[6]).toEqual({ status: 'removed', prev: prev[1] });
+  });
+
+  it('should not produce removed items when there are no removals', () => {
+    const prev: TestItem[] = [
+      { x: 10, y: 10, payload: { name: 'A' } },
+      { x: 20, y: 20, payload: { name: 'B' } },
+    ];
+    const next: TestItem[] = [
+      { x: 15, y: 15, payload: { name: 'A' } },
+      { x: 25, y: 25, payload: { name: 'B' } },
+      { x: 35, y: 35, payload: { name: 'C' } },
+    ];
+
+    const tagged = buildTaggedItems(prev, next);
+
+    expect(tagged).toHaveLength(3);
+    expect(tagged[0]).toEqual({ status: 'matched', prev: prev[0], next: next[0] });
+    expect(tagged[1]).toEqual({ status: 'matched', prev: prev[1], next: next[1] });
+    expect(tagged[2]).toEqual({ status: 'added', next: next[2] });
   });
 });
