@@ -3,7 +3,7 @@ import { Line, LineChart, CartesianGrid, XAxis, YAxis, Tooltip, matchByDataKey, 
 import type { AnimationMatchBy } from 'recharts';
 import { generateMockData } from '@recharts/devtools';
 
-const allData = generateMockData(30, 90);
+const allData = generateMockData(30, 90).map((o, i) => ({ ...o, i }));
 
 const WINDOW = 6;
 
@@ -31,7 +31,7 @@ export default function MatchingExample(props: Partial<ControlsType>) {
       margin={{ top: 20, right: 30, left: 20, bottom: 5 }}
     >
       <CartesianGrid strokeDasharray="3 3" />
-      <XAxis dataKey="label" domain={['dataMin', 'dataMax']} />
+      <XAxis dataKey="i" type="number" domain={['dataMin', 'dataMax']} allowDataOverflow />
       <YAxis />
       <Tooltip />
       <Line

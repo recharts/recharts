@@ -530,21 +530,6 @@ function getTotalLength(mainCurve: SVGPathElement | null): number {
 }
 
 /**
- * Compute the average x-spacing between consecutive items.
- * Returns 0 if there are fewer than 2 items with defined x coordinates.
- */
-function averageSpacing(items: ReadonlyArray<AnimationItem<LinePointItem>>): number {
-  const xs: number[] = [];
-  for (const item of items) {
-    const x = item.status === 'removed' ? item.prev.x : item.next.x;
-    if (x != null) xs.push(x);
-  }
-  if (xs.length < 2) return 0;
-  xs.sort((a, b) => a - b);
-  return (xs[xs.length - 1]! - xs[0]!) / (xs.length - 1);
-}
-
-/**
  * Compute the average x-shift between matched pairs (prev → next).
  * This tells us the overall direction and magnitude of the data movement.
  */
@@ -807,7 +792,6 @@ function LineImpl(props: WithIdRequired<Props>) {
   }
 
   const { height, width, x: left, y: top } = plotArea;
-  console.log({ needClip });
   return (
     <LineWithState
       {...everythingElse}

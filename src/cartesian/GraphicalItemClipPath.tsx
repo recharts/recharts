@@ -23,7 +23,6 @@ export function useNeedsClip(xAxisId: AxisId, yAxisId: AxisId) {
 
   const needClipX: boolean = xAxis?.allowDataOverflow ?? implicitXAxis.allowDataOverflow;
   const needClipY: boolean = yAxis?.allowDataOverflow ?? implicitYAxis.allowDataOverflow;
-  console.log({ needClipX, xAxis });
   const needClip = needClipX || needClipY;
 
   return { needClip, needClipX, needClipY };
