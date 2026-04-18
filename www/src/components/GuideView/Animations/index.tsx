@@ -18,6 +18,10 @@ export function AnimationsGuide() {
   return (
     <article>
       <h1>Recharts animations</h1>
+      <p>
+        Recharts supports rich animations out of the box. Animations come with default settings and are completely
+        customizable too.
+      </p>
       <p>Some Recharts components are animated out of the box. Those are:</p>
       <ul>
         <li>
@@ -139,7 +143,7 @@ export function AnimationsGuide() {
           </tr>
         </tbody>
       </table>
-      <h2>Animation easing</h2>
+      <h3>Animation easing</h3>
       <p>Easing is a function that controls the pace of the animation. The predefined string values are:</p>
       <ul>
         <li>
@@ -189,7 +193,12 @@ export function AnimationsGuide() {
         settings. If you explicitly set <code>isAnimationActive={'{true}'}</code>, animations will always play
         regardless of this setting.
       </p>
-      <h2>Animation matching</h2>
+      <h2>Advanced animations</h2>
+      <p>
+        On top of the basic animation props, since v3.9 Recharts also supports two new props that allow you to customize
+        the animation completely.
+      </p>
+      <h3>Animation matching</h3>
       <p>
         When the data changes, Recharts needs to decide which items in the new data correspond to which items in the old
         data. This determines how each element animates from its old position to its new one.
@@ -212,7 +221,6 @@ export function AnimationsGuide() {
         <thead>
           <tr>
             <th>Value</th>
-            <th>Import</th>
             <th>Description</th>
           </tr>
         </thead>
@@ -222,9 +230,6 @@ export function AnimationsGuide() {
               <code>matchByIndex</code>
             </td>
             <td>
-              <code>{`import { matchByIndex } from 'recharts'`}</code>
-            </td>
-            <td>
               Match items by their array index with proportional stretching. When the old and new arrays have different
               lengths, old items are spread across all new positions. This is the default behavior.
             </td>
@@ -232,9 +237,6 @@ export function AnimationsGuide() {
           <tr>
             <td>
               <code>matchAppend</code>
-            </td>
-            <td>
-              <code>{`import { matchAppend } from 'recharts'`}</code>
             </td>
             <td>
               Match items sequentially: old item 0 pairs with new item 0, old item 1 with new item 1, and so on. Extra
@@ -247,9 +249,6 @@ export function AnimationsGuide() {
               <code>matchByDataKey(key)</code>
             </td>
             <td>
-              <code>{`import { matchByDataKey } from 'recharts'`}</code>
-            </td>
-            <td>
               Match items by a value in their data payload. Pass the data key name as an argument (e.g.,{' '}
               <code>matchByDataKey(&apos;timestamp&apos;)</code>). Items with the same key value are treated as the same
               logical item and animate between positions.
@@ -257,7 +256,6 @@ export function AnimationsGuide() {
           </tr>
           <tr>
             <td>Custom function</td>
-            <td>-</td>
             <td>
               A function <code>(item, index) =&gt; key</code> that extracts a unique key from each item. Return a string
               or number to pair items, or <code>null</code> for items that should not be matched.
@@ -276,10 +274,28 @@ export function AnimationsGuide() {
           first point in the new window.
         </li>
         <li>
-          <strong>matchByDataKey(&apos;time&apos;)</strong> — points keep their identity; each timestamp moves smoothly
-          to its new x-position, while new points fade in.
+          <strong>matchByDataKey(&apos;time&apos;)</strong> — points keep their identity; each matched point animates to
+          its new x-position, while new points fade in.
         </li>
       </ul>
+      <p>
+        For timeline-style motion, this works best with <code>type=&quot;linear&quot;</code> (and similarly local
+        interpolations such as step curves). With spline-based line types such as <code>monotone</code>,{' '}
+        <code>basis</code>, or <code>natural</code>, adding or removing a point also changes neighboring tangents, so
+        the visible curve can still wiggle even when the points are matched correctly.
+      </p>
+      <p>
+        Our recommendation is: use <code>linear</code> when you want the cleanest scrolling timeline animation. If you
+        need a smoother spline, render a few extra offscreen points on both sides and clip them so the control points
+        that shape the visible curve remain stable.
+      </p>
+      <p>
+        How to clip? If you want a tighter domain you can set it explicitly using <LinkToApi>XAxis</LinkToApi>{' '}
+        <code>domain</code> prop. It defaults to the extent of the data, but you can set it to a wider or narrower range
+        to hide the points. Also note that by default, points outside of the domain are still rendered and visible! If
+        you set <code>allowDataOverflow={true}</code> on your XAxis, then Line will render a clipPath and hide the extra
+        points.
+      </p>
       <CodeEditorWithPreview
         Component={MatchingExample}
         Controls={MatchingControls}
@@ -345,8 +361,7 @@ export function AnimationsGuide() {
               <code>{`{ status: 'added', next }`}</code> — new item, animate in from a computed entry position
             </li>
             <li>
-              <code>{`{ status: 'removed', prev }`}</code> — item was removed, animate out (exclude at <code>t=1</code>
-              )
+              <code>{`{ status: 'removed', prev }`}</code> — item was removed, animate out (exclude at <code>t=1</code>)
             </li>
           </ul>
         </li>
@@ -532,6 +547,7 @@ export function AnimationsGuide() {
           </tr>
         </tbody>
       </table>
+      {/* TODO https://software.es.net/react-timeseries-charts/#/example/realtime */}
     </article>
   );
 }

@@ -3,9 +3,20 @@ import { Line, LineChart, CartesianGrid, XAxis, YAxis, Tooltip, matchByDataKey, 
 import type { AnimationMatchBy } from 'recharts';
 import { generateMockData } from '@recharts/devtools';
 
-const allData = generateMockData(30, 90).map((o, i) => ({ ...o, i }));
-
 const WINDOW = 6;
+const DATA_LENGTH = 30;
+
+const allData = generateMockData(DATA_LENGTH, 90).map((o, i) => ({ ...o, i }));
+
+function normalizeWindowStart(windowStart: number): number {
+  return ((windowStart % DATA_LENGTH) + DATA_LENGTH) % DATA_LENGTH;
+}
+
+function getCircularWindowData(windowStart: number) {
+  const normalizedWindowStart = normalizeWindowStart(windowStart);
+
+  return Array.from({ length: WINDOW }, (_, index) => allData[(normalizedWindowStart + index) % DATA_LENGTH]!);
+}
 
 type MatchStrategy = 'index' | 'dataKey';
 
@@ -16,9 +27,9 @@ type ControlsType = {
 
 export default function MatchingExample(props: Partial<ControlsType>) {
   const matchStrategy = props.matchStrategy ?? 'index';
-  const windowStart = props.windowStart ?? 0;
+  const windowStart = normalizeWindowStart(props.windowStart ?? 0);
 
-  const data = allData.slice(windowStart, windowStart + WINDOW);
+  const data = getCircularWindowData(windowStart);
 
   const matchProp: typeof matchByIndex | AnimationMatchBy<{ payload?: unknown }> =
     matchStrategy === 'dataKey' ? matchByDataKey('label') : matchByIndex;
@@ -31,24 +42,17 @@ export default function MatchingExample(props: Partial<ControlsType>) {
       margin={{ top: 20, right: 30, left: 20, bottom: 5 }}
     >
       <CartesianGrid strokeDasharray="3 3" />
-      <XAxis dataKey="i" type="number" domain={['dataMin', 'dataMax']} allowDataOverflow />
+      <XAxis dataKey="label" allowDataOverflow />
       <YAxis />
       <Tooltip />
-      <Line
-        type="monotone"
-        dataKey="y"
-        stroke="#8884d8"
-        strokeWidth={2}
-        animationDuration={600}
-        animationMatchBy={matchProp}
-      />
+      <Line dataKey="y" stroke="#8884d8" strokeWidth={2} animationDuration={600} animationMatchBy={matchProp} />
     </LineChart>
   );
 }
 
 export function MatchingControls({ onChange }: { onChange: (values: ControlsType) => void }) {
   const [state, setState] = useState<ControlsType>({
-    matchStrategy: 'index',
+    matchStrategy: 'dataKey',
     windowStart: 0,
   });
 
@@ -75,10 +79,9 @@ export function MatchingControls({ onChange }: { onChange: (values: ControlsType
       return undefined;
     }
 
-    const maxStart = allData.length - WINDOW;
     const interval = setInterval(() => {
       setState(prev => {
-        const next = { ...prev, windowStart: (prev.windowStart + 1) % maxStart };
+        const next = { ...prev, windowStart: (prev.windowStart + 1) % DATA_LENGTH };
         onChangeRef.current(next);
         return next;
       });
@@ -119,7 +122,7 @@ export function MatchingControls({ onChange }: { onChange: (values: ControlsType
         </tbody>
       </table>
       <p style={{ fontSize: '0.85em', opacity: 0.8, marginTop: '0.5em' }}>
-        Slide the window to add/remove data points and observe how the two matching strategies differ.
+        Start streaming to move the window forward and observe how the two matching strategies differ.
       </p>
     </form>
   );
