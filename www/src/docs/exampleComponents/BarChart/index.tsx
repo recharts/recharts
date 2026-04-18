@@ -36,7 +36,7 @@ import CandlestickExample from './CandlestickExample';
 import candlestickExampleSource from './CandlestickExample?raw';
 import BoxPlotExample from './BoxPlotExample';
 import boxPlotExampleSource from './BoxPlotExample?raw';
-import { RechartsLink } from '../../../components/Shared/RechartsLink';
+import { LinkToApi } from '../../../components/Shared/LinkToApi.tsx';
 import AnimatedBarWidthExample from './AnimatedBarWidthExample';
 import animatedBarWidthSource from './AnimatedBarWidthExample?raw';
 import WaterfallExample from './WaterfallExample';
@@ -159,8 +159,8 @@ export const barChartExamples: Record<string, ChartExample> = {
     name: 'Candlestick',
     description: (
       <>
-        Candlestick chart is used to represent stock price movements. This example uses <RechartsLink api="Bar" /> and{' '}
-        <RechartsLink api="ErrorBar" /> to render a candlestick chart with custom <RechartsLink api="Tooltip" />.
+        Candlestick chart is used to represent stock price movements. This example uses <LinkToApi>Bar</LinkToApi> and{' '}
+        <LinkToApi>ErrorBar</LinkToApi> to render a candlestick chart with custom <LinkToApi>Tooltip</LinkToApi>.
       </>
     ),
   },
@@ -171,7 +171,7 @@ export const barChartExamples: Record<string, ChartExample> = {
     description: (
       <>
         Box plot charts summarize data distribution with quartiles and whiskers. This example uses{' '}
-        <RechartsLink api="Bar" /> and <RechartsLink api="ErrorBar" /> with a custom bar <code>shape</code> for the
+        <LinkToApi>Bar</LinkToApi> and <LinkToApi>ErrorBar</LinkToApi> with a custom bar <code>shape</code> for the
         median line.
       </>
     ),
@@ -192,7 +192,7 @@ export const barChartExamples: Record<string, ChartExample> = {
           starts where the previous one ended.
         </p>
         <p>
-          This example uses range values (<code>[low, high]</code> arrays) on a <RechartsLink api="Bar" /> component and
+          This example uses range values (<code>[low, high]</code> arrays) on a <LinkToApi>Bar</LinkToApi> component and
           a custom <code>shape</code> to color bars based on whether they represent gains, losses, or totals.
         </p>
         <p>
