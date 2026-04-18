@@ -1,0 +1,15 @@
+import{e as t}from"./iframe-h5CV-Rcn.js";import{R as c}from"./arrayEqualityCheck-ANgy1i9u.js";import{C as d}from"./ComposedChart-C7ZoWsGW.js";import{c as l}from"./Coordinate-geWwP0Ct.js";import{A as h}from"./Area-8r1_AUU2.js";import{R as u}from"./RechartsHookInspector-aIveFv2Z.js";import"./preload-helper-Dp1pzeXC.js";import"./clsx-B-dksMZM.js";import"./resolveDefaultProps-B2Z0u3RB.js";import"./immer-CtltHNiU.js";import"./PolarUtils-CTnnDHZv.js";import"./RechartsWrapper-DDGX7JTv.js";import"./index-DX1weHGw.js";import"./hooks-Cj5zxCap.js";import"./axisSelectors-CS0Gz9QT.js";import"./d3-scale-ezQ-I_PQ.js";import"./zIndexSlice-Ca__6ThW.js";import"./renderedTicksSlice-D6PrsZnk.js";import"./CartesianChart-D92F_vnb.js";import"./chartDataContext-DblKe8Ss.js";import"./CategoricalChart-CjLLFuSG.js";import"./Curve-Br2Il0bq.js";import"./types-BA97OiOO.js";import"./step-oPLXy2cm.js";import"./Layer-wxMTYWnZ.js";import"./ReactUtils-BBFoxYe1.js";import"./Label-CVl-fQEc.js";import"./Text-guYC2Xjr.js";import"./DOMUtils-DWY4ljAG.js";import"./ZIndexLayer-Ca4oOtQE.js";import"./ActivePoints-f1PDkhjz.js";import"./Dot-D_8FhM7J.js";import"./RegisterGraphicalItemId-DtcV1RZB.js";import"./GraphicalItemClipPath-cwCUl8BP.js";import"./SetGraphicalItem-CaZ4MYuw.js";import"./useAnimationId-DviPtx6L.js";import"./getRadiusAndStrokeWidthFromDot-ztMYcDbs.js";import"./graphicalItemSelectors-ZxOOdcH0.js";import"./index-D_mIMI9F.js";import"./ChartSizeDimensions-BotkTU91.js";import"./OffsetShower-BoyHPNkq.js";import"./PlotAreaShower-DoB2hHNO.js";const at={title:"Examples/cartesian/Area/Customised Label"},[f,i]=[600,300],C=n=>{const{index:s,x:r,y:o}=n;return t.createElement("text",{key:s,x:r,y:o,className:"customized-label"},`${r}, ${o}`)},e={render:()=>t.createElement(c,{width:"100%",height:i},t.createElement(d,{width:f,height:i,margin:{top:20,right:20,bottom:20,left:20},data:l},t.createElement(h,{dataKey:"y",isAnimationActive:!1,label:C}),t.createElement(u,null)))};var a,m,p;e.parameters={...e.parameters,docs:{...(a=e.parameters)==null?void 0:a.docs,source:{originalSource:`{
+  render: () => {
+    return <ResponsiveContainer width="100%" height={surfaceHeight}>
+        <ComposedChart width={surfaceWidth} height={surfaceHeight} margin={{
+        top: 20,
+        right: 20,
+        bottom: 20,
+        left: 20
+      }} data={coordinateWithValueData}>
+          <Area dataKey="y" isAnimationActive={false} label={renderLabel} />
+          <RechartsHookInspector />
+        </ComposedChart>
+      </ResponsiveContainer>;
+  }
+}`,...(p=(m=e.parameters)==null?void 0:m.docs)==null?void 0:p.source}}};const mt=["CustomizedLabel"];export{e as CustomizedLabel,mt as __namedExportsOrder,at as default};
