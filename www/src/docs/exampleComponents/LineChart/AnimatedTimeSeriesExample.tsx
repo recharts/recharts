@@ -25,7 +25,7 @@ type ControlsType = {
   windowStart: number;
 };
 
-export default function MatchingExample(props: Partial<ControlsType>) {
+export default function AnimatedTimeSeriesExample(props: Partial<ControlsType>) {
   const matchStrategy = props.matchStrategy ?? 'index';
   const windowStart = normalizeWindowStart(props.windowStart ?? 0);
 
@@ -50,7 +50,7 @@ export default function MatchingExample(props: Partial<ControlsType>) {
   );
 }
 
-export function MatchingControls({ onChange }: { onChange: (values: ControlsType) => void }) {
+export function AnimatedTimeSeriesExampleControls({ onChange }: { onChange: (values: ControlsType) => void }) {
   const [state, setState] = useState<ControlsType>({
     matchStrategy: 'dataKey',
     windowStart: 0,

@@ -1,3 +1,4 @@
+import { Link } from 'react-router';
 import BiaxialLineChart from './BiaxialLineChart';
 import CustomizedDotLineChart from './CustomizedDotLineChart';
 import CustomizedLabelLineChart from './CustomizedLabelLineChart';
@@ -38,6 +39,8 @@ import DynamicZIndexLineChartSource from './DynamicZIndexLineChart.tsx?raw';
 import LineChartCustomShapeExample, { LineChartCustomShapeControls } from './LineChartCustomShapeExample.tsx';
 import LineChartCustomShapeExampleSource from './LineChartCustomShapeExample.tsx?raw';
 import { LinkToApi } from '../../../components/Shared/LinkToApi.tsx';
+import AnimatedTimeSeriesExample, { AnimatedTimeSeriesExampleControls } from './AnimatedTimeSeriesExample.tsx';
+import AnimatedTimeSeriesExampleSource from './AnimatedTimeSeriesExample.tsx?raw';
 
 export const lineChartExamples = {
   SimpleLineChart: {
@@ -144,6 +147,19 @@ export const lineChartExamples = {
     Component: TinyLineChart,
     sourceCode: tinyLineChartSource,
     name: 'Tiny Line Chart',
+  },
+  AnimatedTimeSeriesExample: {
+    Component: AnimatedTimeSeriesExample,
+    sourceCode: AnimatedTimeSeriesExampleSource,
+    Controls: AnimatedTimeSeriesExampleControls,
+    name: 'Animated Time Series',
+    defaultTool: 'controls',
+    description: (
+      <p>
+        This example shows the use of <code>animationMatchBy</code> prop to customize Line animation. Read more in{' '}
+        <Link to="/guide/animations/">Animations guide</Link>.
+      </p>
+    ),
   },
 } satisfies Record<string, ChartExample>;
 

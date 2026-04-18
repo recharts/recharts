@@ -3,8 +3,10 @@ import { LinkToApi } from '../../Shared/LinkToApi.tsx';
 import styles from '../guideTable.module.css';
 import AnimationsExample, { AnimationsControls } from './AnimationsExample.tsx';
 import AnimationsExampleSource from './AnimationsExample.tsx?raw';
-import MatchingExample, { MatchingControls } from './MatchingExample.tsx';
-import MatchingExampleSource from './MatchingExample.tsx?raw';
+import AnimatedTimeSeriesExample, {
+  AnimatedTimeSeriesExampleControls,
+} from '../../../docs/exampleComponents/LineChart/AnimatedTimeSeriesExample.tsx';
+import MatchingExampleSource from '../../../docs/exampleComponents/LineChart/AnimatedTimeSeriesExample.tsx?raw';
 import MatchingStrategiesExample, { MatchingStrategiesControls } from './MatchingStrategiesExample.tsx';
 import MatchingStrategiesExampleSource from './MatchingStrategiesExample.tsx?raw';
 import CustomAnimationExample, { CustomAnimationControls } from './CustomAnimationExample.tsx';
@@ -297,8 +299,8 @@ export function AnimationsGuide() {
         points.
       </p>
       <CodeEditorWithPreview
-        Component={MatchingExample}
-        Controls={MatchingControls}
+        Component={AnimatedTimeSeriesExample}
+        Controls={AnimatedTimeSeriesExampleControls}
         sourceCode={MatchingExampleSource}
         stackBlitzTitle="Recharts Animation Matching Example"
         defaultTool="controls"
