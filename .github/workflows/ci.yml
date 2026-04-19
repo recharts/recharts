@@ -320,9 +320,10 @@ jobs:
 
       - name: Build website
         working-directory: www
-        run: VITE_RECHARTS_COMMIT_HASH=$(git rev-parse HEAD) npm run build
+        run: npm run build
         env:
           BASE_URL: ${{ env.BASE_URL }}
+          VITE_RECHARTS_COMMIT_HASH: ${{ github.event_name == 'pull_request' && github.event.pull_request.head.sha || github.sha }}
 
       - name: Copy storybook to docs folder
         run: |
