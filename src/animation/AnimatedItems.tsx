@@ -3,7 +3,7 @@ import { MutableRefObject, ReactNode, useCallback, useState } from 'react';
 import { JavascriptAnimate } from './JavascriptAnimate';
 import { EasingInput } from './easing';
 import { useAnimationId } from '../util/useAnimationId';
-import { alignItems, alignItemsWithRemovals, AnimationMatchByProp, matchByIndex } from './matchBy';
+import { alignItemsWithRemovals, AnimationMatchByProp, matchByIndex } from './matchBy';
 
 /**
  * Hook that tracks whether an animation is in progress and wraps
@@ -64,10 +64,7 @@ export type AnimationItem<T> =
  * @param t A normalized time value (0 = start, 1 = end)
  * @returns The interpolated items at time t
  */
-export type AnimationInterpolateFn<T> = (
-  items: ReadonlyArray<AnimationItem<T>> | null,
-  t: number,
-) => ReadonlyArray<T>;
+export type AnimationInterpolateFn<T> = (items: ReadonlyArray<AnimationItem<T>> | null, t: number) => ReadonlyArray<T>;
 
 export type AnimatedItemsProps<T> = {
   /**

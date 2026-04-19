@@ -797,13 +797,15 @@ function defaultBarAnimateItems(
     return items.flatMap(item => {
       if (item.status === 'removed') return [];
       if (item.status === 'matched') {
-        return [{
-          ...item.next,
-          x: interpolate(item.prev.x, item.next.x, t),
-          y: interpolate(item.prev.y, item.next.y, t),
-          width: interpolate(item.prev.width, item.next.width, t),
-          height: interpolate(item.prev.height, item.next.height, t),
-        }];
+        return [
+          {
+            ...item.next,
+            x: interpolate(item.prev.x, item.next.x, t),
+            y: interpolate(item.prev.y, item.next.y, t),
+            width: interpolate(item.prev.width, item.next.width, t),
+            height: interpolate(item.prev.height, item.next.height, t),
+          },
+        ];
       }
       // added
       const { next } = item;

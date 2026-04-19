@@ -64,11 +64,11 @@ const popCrossfade: AnimationInterpolateFn<ScatterPointItem> = (items, t) => {
   const result: AnimatedScatterPoint[] = [];
   for (const item of items) {
     if (item.status === 'matched' || item.status === 'added') {
-      const next = item.next;
+      const { next } = item;
       result.push({ ...next, opacity: t, size: next.size * t * t });
     }
     if (item.status === 'matched' || item.status === 'removed') {
-      const prev = item.prev;
+      const { prev } = item;
       result.push({ ...prev, opacity: 1 - t, size: prev.size * (1 - t) * (1 - t) });
     }
   }

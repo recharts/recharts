@@ -40,7 +40,7 @@ const useAnimateFromBottom = (): AnimationInterpolateFn<AreaPointItem> => {
     if (t === 1) return items.flatMap(item => (item.status === 'removed' ? [] : [item.next]));
     return items.flatMap(item => {
       if (item.status === 'removed') return [];
-      const next = item.next;
+      const { next } = item;
       return [{ ...next, y: lerp(zero, next.y, t) }];
     });
   };

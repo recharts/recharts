@@ -362,25 +362,29 @@ const defaultFunnelAnimateItems: AnimationInterpolateFn<FunnelTrapezoidItem> = (
   return items.flatMap(item => {
     if (item.status === 'removed') return [];
     if (item.status === 'matched') {
-      return [{
-        ...item.next,
-        x: interpolate(item.prev.x, item.next.x, t),
-        y: interpolate(item.prev.y, item.next.y, t),
-        upperWidth: interpolate(item.prev.upperWidth, item.next.upperWidth, t),
-        lowerWidth: interpolate(item.prev.lowerWidth, item.next.lowerWidth, t),
-        height: interpolate(item.prev.height, item.next.height, t),
-      }];
+      return [
+        {
+          ...item.next,
+          x: interpolate(item.prev.x, item.next.x, t),
+          y: interpolate(item.prev.y, item.next.y, t),
+          upperWidth: interpolate(item.prev.upperWidth, item.next.upperWidth, t),
+          lowerWidth: interpolate(item.prev.lowerWidth, item.next.lowerWidth, t),
+          height: interpolate(item.prev.height, item.next.height, t),
+        },
+      ];
     }
     // added
     const { next } = item;
-    return [{
-      ...next,
-      x: interpolate(next.x + next.upperWidth / 2, next.x, t),
-      y: interpolate(next.y + next.height / 2, next.y, t),
-      upperWidth: interpolate(0, next.upperWidth, t),
-      lowerWidth: interpolate(0, next.lowerWidth, t),
-      height: interpolate(0, next.height, t),
-    }];
+    return [
+      {
+        ...next,
+        x: interpolate(next.x + next.upperWidth / 2, next.x, t),
+        y: interpolate(next.y + next.height / 2, next.y, t),
+        upperWidth: interpolate(0, next.upperWidth, t),
+        lowerWidth: interpolate(0, next.lowerWidth, t),
+        height: interpolate(0, next.height, t),
+      },
+    ];
   });
 };
 

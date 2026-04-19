@@ -193,11 +193,13 @@ const defaultRadialBarAnimateItems: AnimationInterpolateFn<RadialBarDataItem> = 
   return items.flatMap(item => {
     if (item.status === 'removed') return [];
     if (item.status === 'matched') {
-      return [{
-        ...item.next,
-        startAngle: interpolate(item.prev.startAngle, item.next.startAngle, t),
-        endAngle: interpolate(item.prev.endAngle, item.next.endAngle, t),
-      }];
+      return [
+        {
+          ...item.next,
+          startAngle: interpolate(item.prev.startAngle, item.next.startAngle, t),
+          endAngle: interpolate(item.prev.endAngle, item.next.endAngle, t),
+        },
+      ];
     }
     // added
     return [{ ...item.next, endAngle: interpolate(item.next.startAngle, item.next.endAngle, t) }];

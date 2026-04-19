@@ -549,7 +549,9 @@ function defaultAreaAnimateItems(): AnimationInterpolateFn<AreaPointItem> {
     }
     return items.flatMap(item => {
       if (item.status === 'matched') {
-        return [{ ...item.next, x: interpolate(item.prev.x, item.next.x, t), y: interpolate(item.prev.y, item.next.y, t) }];
+        return [
+          { ...item.next, x: interpolate(item.prev.x, item.next.x, t), y: interpolate(item.prev.y, item.next.y, t) },
+        ];
       }
       if (item.status === 'added') {
         return [item.next];

@@ -601,12 +601,14 @@ const defaultScatterAnimateItems: AnimationInterpolateFn<ScatterPointItem> = (it
   return items.flatMap(item => {
     if (item.status === 'removed') return [];
     if (item.status === 'matched') {
-      return [{
-        ...item.next,
-        cx: item.next.cx == null ? undefined : interpolate(item.prev.cx, item.next.cx, t),
-        cy: item.next.cy == null ? undefined : interpolate(item.prev.cy, item.next.cy, t),
-        size: interpolate(item.prev.size, item.next.size, t),
-      }];
+      return [
+        {
+          ...item.next,
+          cx: item.next.cx == null ? undefined : interpolate(item.prev.cx, item.next.cx, t),
+          cy: item.next.cy == null ? undefined : interpolate(item.prev.cy, item.next.cy, t),
+          size: interpolate(item.prev.size, item.next.size, t),
+        },
+      ];
     }
     // added
     return [{ ...item.next, size: interpolate(0, item.next.size, t) }];

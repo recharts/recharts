@@ -88,7 +88,7 @@ export type { Props as CartesianAxisProps } from './cartesian/CartesianAxis';
 export { CartesianGrid } from './cartesian/CartesianGrid';
 export type { Props as CartesianGridProps } from './cartesian/CartesianGrid';
 export { Line } from './cartesian/Line';
-export type { Props as LineProps } from './cartesian/Line';
+export type { Props as LineProps, LinePointItem } from './cartesian/Line';
 export { Area } from './cartesian/Area';
 export type { Props as AreaProps } from './cartesian/Area';
 export { Bar } from './cartesian/Bar';

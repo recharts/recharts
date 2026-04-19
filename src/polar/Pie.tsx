@@ -885,14 +885,22 @@ const defaultPieAnimateItems: AnimationInterpolateFn<PieSectorDataItem> = (items
     const paddingAngle = index > 0 ? get(item.next, 'paddingAngle', 0) : 0;
 
     if (item.status === 'matched') {
-      const angle = interpolate(item.prev.endAngle - item.prev.startAngle, item.next.endAngle - item.next.startAngle, t);
+      const angle = interpolate(
+        item.prev.endAngle - item.prev.startAngle,
+        item.next.endAngle - item.next.startAngle,
+        t,
+      );
       const latest = { ...item.next, startAngle: curAngle + paddingAngle, endAngle: curAngle + angle + paddingAngle };
       stepData.push(latest);
       curAngle = latest.endAngle;
     } else {
       // added
       const deltaAngle = interpolate(0, item.next.endAngle - item.next.startAngle, t);
-      const latest = { ...item.next, startAngle: curAngle + paddingAngle, endAngle: curAngle + deltaAngle + paddingAngle };
+      const latest = {
+        ...item.next,
+        startAngle: curAngle + paddingAngle,
+        endAngle: curAngle + deltaAngle + paddingAngle,
+      };
       stepData.push(latest);
       curAngle = latest.endAngle;
     }
