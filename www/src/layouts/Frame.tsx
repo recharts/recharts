@@ -14,9 +14,21 @@ type FrameProps = {
   children: ReactNode;
 };
 
+export function getShortCommitHash(commitHash: string | undefined): string | undefined {
+  const cleanedHash = commitHash?.trim();
+
+  if (!cleanedHash) {
+    return undefined;
+  }
+
+  return cleanedHash.slice(0, 8);
+}
+
 export function Frame(props: FrameProps) {
   const { children } = props;
   const locale = useLocale();
+  const fullCommitHash = import.meta.env.VITE_RECHARTS_COMMIT_HASH;
+  const shortCommitHash = getShortCommitHash(fullCommitHash);
 
   return (
     <div className="container">
@@ -37,6 +49,11 @@ export function Frame(props: FrameProps) {
           </a>
         </p>
         <p>Copyright (c) 2016-{new Date().getFullYear()} Recharts Group</p>
+        {shortCommitHash ? (
+          <p>
+            Commit: <code title={fullCommitHash}>{shortCommitHash}</code>
+          </p>
+        ) : null}
       </footer>
     </div>
   );

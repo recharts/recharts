@@ -41,7 +41,7 @@ jobs:
 
       - name: Build website
         working-directory: www
-        run: VITE_RECHARTS_LATEST_VERSION=`curl -X GET "https://registry.npmjs.org/recharts/latest" | jq --raw-output '.version'` npm run build
+        run: VITE_RECHARTS_LATEST_VERSION=`curl -X GET "https://registry.npmjs.org/recharts/latest" | jq --raw-output '.version'` VITE_RECHARTS_COMMIT_HASH=${GITHUB_SHA} npm run build
 
       - name: Build storybook
         run: npm run build-storybook
