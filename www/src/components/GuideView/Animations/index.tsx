@@ -321,7 +321,6 @@ export function AnimationsGuide() {
         </li>
       </ul>
       <p>Swap between the 5-item and 15-item datasets below to see the difference:</p>
-      {/* TODO swap from Area to Bar - it look better. Also add Scatter */}
       <CodeEditorWithPreview
         Component={MatchingStrategiesExample}
         Controls={MatchingStrategiesControls}
