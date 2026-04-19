@@ -1,7 +1,21 @@
 import React, { useState, useCallback, useId } from 'react';
 import { generateMockData, RechartsDevtools } from '@recharts/devtools';
-import { Line, CartesianGrid, XAxis, YAxis, Tooltip, matchByIndex, matchAppend, Area, ComposedChart } from 'recharts';
+import {
+  Line,
+  CartesianGrid,
+  XAxis,
+  YAxis,
+  Tooltip,
+  matchByIndex,
+  matchAppend,
+  Area,
+  ComposedChart,
+  Bar,
+  Scatter,
+} from 'recharts';
 import type { AnimationMatchByProp, LinePointItem } from 'recharts';
+import { AreaPointItem } from '../../../../../src/state/selectors/areaSelectors.ts';
+import { BarRectangleItem, ScatterPointItem } from '../../../../../src';
 
 const dataSmall = generateMockData(5, 42);
 const dataLarge = generateMockData(15, 99);
@@ -13,7 +27,12 @@ type ControlsType = {
   useLargeData: boolean;
 };
 
-function getMatchProp(strategy: MatchStrategy): AnimationMatchByProp<LinePointItem> {
+/*
+ * In your chart you will typically animate one of these but in this example we throw everything at the same chart.
+ */
+type AcceptedAnimationItems = AreaPointItem | BarRectangleItem | LinePointItem | ScatterPointItem;
+
+function getMatchProp(strategy: MatchStrategy): AnimationMatchByProp<AcceptedAnimationItems> {
   switch (strategy) {
     case 'append':
       return matchAppend;
@@ -59,6 +78,8 @@ export default function MatchingStrategiesExample(props: Partial<ControlsType>) 
         animationDuration={1500}
         animationMatchBy={matchProp}
       />
+      <Bar dataKey="y" animationMatchBy={matchProp} />
+      <Scatter dataKey="z" animationMatchBy={matchProp} />
       <RechartsDevtools />
     </ComposedChart>
   );
