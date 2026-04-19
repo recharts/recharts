@@ -74,86 +74,6 @@ export function matchByDataKey(dataKey: DataKey<Record<string, unknown>>): Anima
 }
 
 /**
- * Align previous items to next items using the given matching strategy.
- *
- * Returns an array of the same length as `nextItems`, where `result[i]` is the
- * previous item that corresponds to `nextItems[i]`, or `undefined` if there is
- * no match. After alignment, interpolation functions can simply pair items by index.
- *
- * Strategies:
- * - `matchByIndex` (default): proportional stretch — `prev[floor(i × prevLen/nextLen)]`
- * - `matchAppend`: sequential 1:1 — `prev[i]` (undefined when `i ≥ prevLen`)
- * - custom function: key-based lookup
- *
- * @internal
- */
-export function alignItems<T>(
-  prevItems: ReadonlyArray<T>,
-  nextItems: ReadonlyArray<T>,
-  matchBy: AnimationMatchByProp<T>,
-): ReadonlyArray<T> {
-  if (matchBy === matchByIndex) {
-    const factor = prevItems.length / nextItems.length;
-    // Max index is floor((nextLen-1) * prevLen/nextLen) which is always < prevLen,
-    // but TypeScript doesn't know that, so we cast.
-    return nextItems.map((_, i) => prevItems[Math.floor(i * factor)] as T);
-  }
-  if (matchBy === matchAppend) {
-    return nextItems.map((_, i) => prevItems[i] as T);
-  }
-  return alignByKey(prevItems, nextItems, matchBy);
-}
-
-/**
- * Align previous items to match next items by key.
- *
- * Returns an array of the same length as nextItems, where result[i] is
- * the previous item whose key matches nextItems[i], or undefined if no match.
- *
- * @internal
- */
-function alignByKey<T>(
-  prevItems: ReadonlyArray<T>,
-  nextItems: ReadonlyArray<T>,
-  matchBy: AnimationMatchBy<T>,
-): ReadonlyArray<T> {
-  return alignByKeyWithRemovals(prevItems, nextItems, matchBy).aligned;
-}
-
-/**
- * Result of aligning items with removal tracking.
- */
-export interface AlignmentResult<T> {
-  /** Aligned items: same length as nextItems, result[i] is the matched prev item or undefined */
-  aligned: ReadonlyArray<T>;
-  /** Items present in prevItems but not matched to any nextItem */
-  removed: ReadonlyArray<T>;
-}
-
-/**
- * Like alignItems but also returns the list of previous items that were
- * not matched to any next item. These "removed" items can be animated off-screen.
- *
- * For `matchByIndex` and `matchAppend`, removed is always empty because
- * those strategies don't use identity-based matching.
- *
- * @internal
- */
-export function alignItemsWithRemovals<T>(
-  prevItems: ReadonlyArray<T>,
-  nextItems: ReadonlyArray<T>,
-  matchBy: AnimationMatchByProp<T>,
-): AlignmentResult<T> {
-  if (matchBy === matchByIndex) {
-    return { aligned: alignItems(prevItems, nextItems, matchBy), removed: [] };
-  }
-  if (matchBy === matchAppend) {
-    return { aligned: alignItems(prevItems, nextItems, matchBy), removed: [] };
-  }
-  return alignByKeyWithRemovals(prevItems, nextItems, matchBy);
-}
-
-/**
  * Align previous items to match next items by key, and track removed items.
  *
  * @internal
@@ -198,4 +118,84 @@ function alignByKeyWithRemovals<T>(
   }
 
   return { aligned, removed };
+}
+
+/**
+ * Align previous items to match next items by key.
+ *
+ * Returns an array of the same length as nextItems, where result[i] is
+ * the previous item whose key matches nextItems[i], or undefined if no match.
+ *
+ * @internal
+ */
+function alignByKey<T>(
+  prevItems: ReadonlyArray<T>,
+  nextItems: ReadonlyArray<T>,
+  matchBy: AnimationMatchBy<T>,
+): ReadonlyArray<T> {
+  return alignByKeyWithRemovals(prevItems, nextItems, matchBy).aligned;
+}
+
+/**
+ * Align previous items to next items using the given matching strategy.
+ *
+ * Returns an array of the same length as `nextItems`, where `result[i]` is the
+ * previous item that corresponds to `nextItems[i]`, or `undefined` if there is
+ * no match. After alignment, interpolation functions can simply pair items by index.
+ *
+ * Strategies:
+ * - `matchByIndex` (default): proportional stretch — `prev[floor(i × prevLen/nextLen)]`
+ * - `matchAppend`: sequential 1:1 — `prev[i]` (undefined when `i ≥ prevLen`)
+ * - custom function: key-based lookup
+ *
+ * @internal
+ */
+export function alignItems<T>(
+  prevItems: ReadonlyArray<T>,
+  nextItems: ReadonlyArray<T>,
+  matchBy: AnimationMatchByProp<T>,
+): ReadonlyArray<T> {
+  if (matchBy === matchByIndex) {
+    const factor = prevItems.length / nextItems.length;
+    // Max index is floor((nextLen-1) * prevLen/nextLen) which is always < prevLen,
+    // but TypeScript doesn't know that, so we cast.
+    return nextItems.map((_, i) => prevItems[Math.floor(i * factor)] as T);
+  }
+  if (matchBy === matchAppend) {
+    return nextItems.map((_, i) => prevItems[i] as T);
+  }
+  return alignByKey(prevItems, nextItems, matchBy);
+}
+
+/**
+ * Result of aligning items with removal tracking.
+ */
+export interface AlignmentResult<T> {
+  /** Aligned items: same length as nextItems, result[i] is the matched prev item or undefined */
+  aligned: ReadonlyArray<T>;
+  /** Items present in prevItems but not matched to any nextItem */
+  removed: ReadonlyArray<T>;
+}
+
+/**
+ * Like alignItems but also returns the list of previous items that were
+ * not matched to any next item. These "removed" items can be animated off-screen.
+ *
+ * For `matchByIndex` and `matchAppend`, removed is always empty because
+ * those strategies don't use identity-based matching.
+ *
+ * @internal
+ */
+export function alignItemsWithRemovals<T>(
+  prevItems: ReadonlyArray<T>,
+  nextItems: ReadonlyArray<T>,
+  matchBy: AnimationMatchByProp<T>,
+): AlignmentResult<T> {
+  if (matchBy === matchByIndex) {
+    return { aligned: alignItems(prevItems, nextItems, matchBy), removed: [] };
+  }
+  if (matchBy === matchAppend) {
+    return { aligned: alignItems(prevItems, nextItems, matchBy), removed: [] };
+  }
+  return alignByKeyWithRemovals(prevItems, nextItems, matchBy);
 }

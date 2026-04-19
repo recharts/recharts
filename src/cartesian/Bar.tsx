@@ -76,7 +76,7 @@ import {
   SVGPropsNoEvents,
 } from '../util/svgPropertiesNoEvents';
 import { AnimatedItems, AnimationInterpolateFn, useAnimationCallbacks } from '../animation/AnimatedItems';
-import { AnimationMatchByProp, matchByIndex } from '../animation/matchBy';
+import { AnimationMatchByProp } from '../animation/matchBy';
 import { EasingInput } from '../animation/easing';
 import { WithoutId } from '../util/useUniqueId';
 import { ZIndexable, ZIndexLayer } from '../zIndex/ZIndexLayer';
