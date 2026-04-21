@@ -1,6 +1,6 @@
 import React, { useState, useCallback, useId } from 'react';
 import { generateMockData, RechartsDevtools } from '@recharts/devtools';
-import { Scatter, ScatterChart, CartesianGrid, XAxis, YAxis, Tooltip } from 'recharts';
+import { Scatter, ScatterChart, CartesianGrid, XAxis, YAxis, Tooltip, ZAxis } from 'recharts';
 import type { AnimationInterpolateFn, ScatterPointItem } from 'recharts';
 
 // Two distinct datasets to swap between
@@ -105,11 +105,13 @@ export default function CustomAnimationExample(props: Partial<ControlsType>) {
       <CartesianGrid strokeDasharray="3 3" />
       <XAxis dataKey="x" name="x" type="number" />
       <YAxis dataKey="y" name="y" type="number" />
+      <ZAxis dataKey="z" range={[1, 1000]} domain={['dataMin', 'dataMax']} />
       <Tooltip cursor={{ strokeDasharray: '3 3' }} />
       <Scatter
         name="Data"
         data={useDataA ? dataA : dataB}
         fill="#8884d8"
+        fillOpacity={0.85}
         animationDuration={animationDuration}
         animationInterpolateFn={animationInterpolateFn}
       />

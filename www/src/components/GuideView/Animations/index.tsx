@@ -9,8 +9,10 @@ import AnimatedTimeSeriesExample, {
 import MatchingExampleSource from '../../../docs/exampleComponents/LineChart/AnimatedTimeSeriesExample.tsx?raw';
 import MatchingStrategiesExample, { MatchingStrategiesControls } from './MatchingStrategiesExample.tsx';
 import MatchingStrategiesExampleSource from './MatchingStrategiesExample.tsx?raw';
-import CustomAnimationExample, { CustomAnimationControls } from './CustomAnimationExample.tsx';
-import CustomAnimationExampleSource from './CustomAnimationExample.tsx?raw';
+import CustomAnimationExample, {
+  CustomAnimationControls,
+} from '../../../docs/exampleComponents/ScatterChart/CustomAnimationExample.tsx';
+import CustomAnimationExampleSource from '../../../docs/exampleComponents/ScatterChart/CustomAnimationExample.tsx?raw';
 import AreaChartCustomAnimationExample from '../../../docs/exampleComponents/AreaChart/AreaChartCustomAnimationExample.tsx';
 import AreaChartCustomAnimationExampleSource from '../../../docs/exampleComponents/AreaChart/AreaChartCustomAnimationExample.tsx?raw';
 import LineChartCustomShapeExample from '../../../docs/exampleComponents/LineChart/LineChartCustomShapeExample.tsx';
@@ -379,7 +381,6 @@ export function AnimationsGuide() {
         Try swapping the dataset below. Each animation style crossfades between two datasets using only a small custom
         function — open the source code to see how they work:
       </p>
-      {/* TODO make the two Scatters have different shape and color if possible */}
       <CodeEditorWithPreview
         Component={CustomAnimationExample}
         Controls={CustomAnimationControls}
