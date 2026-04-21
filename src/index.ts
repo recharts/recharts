@@ -190,7 +190,14 @@ export {
 
 export type { CartesianDataPoint, ScaleFunction, InverseScaleFunction } from './hooks';
 
-export { useChartHeight, useChartWidth, useMargin } from './context/chartLayoutContext';
+export {
+  useChartHeight,
+  useChartWidth,
+  useMargin,
+  useChartLayout,
+  useCartesianChartLayout,
+  usePolarChartLayout,
+} from './context/chartLayoutContext';
 
 export type { ChartOffset, PlotArea } from './types';
 
