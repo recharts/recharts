@@ -1045,7 +1045,7 @@ function PieImpl(props: WithIdRequired<PropsWithResolvedDefaults>) {
   const cells = useMemo(() => findAllByType(props.children, Cell), [props.children]);
 
   const sectors = useAppSelector(state => selectPieSectors(state, id, cells));
-  const sectorsWithAnimProps = useMemo(() => ({ ...propsWithoutId, sectors }), [propsWithoutId, sectors]);
+  const sectorsWithAnimProps = useMemo(() => ({ ...propsWithoutId, sectors: sectors ?? [] }), [propsWithoutId, sectors]);
 
   const previousSectorsRef = useRef<ReadonlyArray<PieSectorDataItem> | null>(null);
 
