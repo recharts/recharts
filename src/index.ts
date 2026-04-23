@@ -143,6 +143,9 @@ export type { Props as TrapezoidProps } from './shape/Trapezoid';
 
 export { Global } from './util/Global';
 export type {
+  CartesianLayout,
+  PolarLayout,
+  LayoutType,
   LegendType,
   DataKey,
   AxisInterval,
