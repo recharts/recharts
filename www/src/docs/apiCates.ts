@@ -14,6 +14,7 @@ export const apiCates = [
       'Treemap',
       'Sankey',
       'SunburstChart',
+      'WordCloud',
     ],
   },
   {

@@ -1,0 +1,150 @@
+import { describe, expect, it, vi } from 'vitest';
+import * as DOMUtils from '../../../src/util/DOMUtils';
+import { computeWordCloudLayout, WordCloudCandidate } from '../../../src/util/wordCloud/computeWordCloudLayout';
+
+describe('computeWordCloudLayout', () => {
+  const baseData: ReadonlyArray<WordCloudCandidate<{ name: string }>> = [
+    {
+      payload: { name: 'Accessibility' },
+      text: 'Accessibility',
+      value: 50,
+      fontSize: 72,
+      rotate: 0,
+      padding: 4,
+      fill: '#000',
+      fontFamily: 'Georgia',
+      fontStyle: 'normal',
+      fontWeight: 700,
+      tooltipIndex: '0',
+    },
+    {
+      payload: { name: 'Recharts' },
+      text: 'Recharts',
+      value: 40,
+      fontSize: 54,
+      rotate: 0,
+      padding: 4,
+      fill: '#000',
+      fontFamily: 'Georgia',
+      fontStyle: 'normal',
+      fontWeight: 700,
+      tooltipIndex: '1',
+    },
+    {
+      payload: { name: 'Performance' },
+      text: 'Performance',
+      value: 35,
+      fontSize: 42,
+      rotate: 0,
+      padding: 4,
+      fill: '#000',
+      fontFamily: 'Georgia',
+      fontStyle: 'normal',
+      fontWeight: 700,
+      tooltipIndex: '2',
+    },
+    {
+      payload: { name: 'Tooltip' },
+      text: 'Tooltip',
+      value: 25,
+      fontSize: 30,
+      rotate: 0,
+      padding: 4,
+      fill: '#000',
+      fontFamily: 'Georgia',
+      fontStyle: 'normal',
+      fontWeight: 700,
+      tooltipIndex: '3',
+    },
+  ];
+
+  const rotatedData: ReadonlyArray<WordCloudCandidate<{ name: string }>> = baseData.map(candidate =>
+    candidate.tooltipIndex === '1' ? { ...candidate, rotate: 45 } : candidate,
+  );
+
+  const mockWordMeasurement = () => {
+    vi.spyOn(DOMUtils, 'getStringSize').mockImplementation((text, style) => {
+      const fontSizeValue = style?.fontSize;
+      const fontSize =
+        typeof fontSizeValue === 'string' ? Number.parseFloat(fontSizeValue) : Number(fontSizeValue ?? 0);
+
+      return {
+        width: text.toString().length * fontSize * 0.6,
+        height: fontSize,
+      };
+    });
+  };
+
+  it('uses measured word bounds to avoid overlaps', () => {
+    mockWordMeasurement();
+
+    const words = computeWordCloudLayout(baseData, {
+      width: 700,
+      height: 400,
+      spiral: 'archimedean',
+      seed: 0,
+    });
+
+    expect(words).toHaveLength(4);
+
+    words.forEach((word, index) => {
+      words.slice(index + 1).forEach(otherWord => {
+        const overlapsHorizontally = Math.abs(word.x - otherWord.x) < (word.width + otherWord.width) / 2;
+        const overlapsVertically = Math.abs(word.y - otherWord.y) < (word.height + otherWord.height) / 2;
+
+        expect(overlapsHorizontally && overlapsVertically).toBe(false);
+      });
+    });
+  });
+
+  it('supports rectangular placement', () => {
+    mockWordMeasurement();
+
+    const words = computeWordCloudLayout(baseData, {
+      width: 700,
+      height: 400,
+      spiral: 'rectangular',
+      seed: 0,
+    });
+
+    expect(words).toHaveLength(4);
+    expect(words.some(word => word.x !== 350 || word.y !== 200)).toBe(true);
+  });
+
+  it('handles rotated words without dropping overlapping candidates', () => {
+    mockWordMeasurement();
+
+    const words = computeWordCloudLayout(rotatedData, {
+      width: 700,
+      height: 400,
+      spiral: 'archimedean',
+      seed: 24,
+    });
+
+    expect(words).toHaveLength(4);
+    expect(words.some(word => word.rotate !== 0)).toBe(true);
+  });
+
+  it('uses seed to vary the layout deterministically', () => {
+    mockWordMeasurement();
+
+    const wordsWithSeedA = computeWordCloudLayout(baseData, {
+      width: 700,
+      height: 400,
+      spiral: 'archimedean',
+      seed: 0,
+    });
+    const wordsWithSeedB = computeWordCloudLayout(baseData, {
+      width: 700,
+      height: 400,
+      spiral: 'archimedean',
+      seed: 90,
+    });
+
+    expect(wordsWithSeedA).toHaveLength(4);
+    expect(wordsWithSeedB).toHaveLength(4);
+    expect(wordsWithSeedA.map(word => `${word.x},${word.y}`)).not.toEqual(
+      wordsWithSeedB.map(word => `${word.x},${word.y}`),
+    );
+  });
+});
