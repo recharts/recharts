@@ -561,8 +561,20 @@ jobs:
       - name: Cleanup old PR deployments
         working-directory: gh-pages
         run: |
-          # Find directories starting with "pr-" that haven't been modified in 30 days
-          find . -maxdepth 1 -type d -name "pr-*" -mtime +30 -exec rm -rf {} +
+          # Directory mtimes are refreshed by checkout, so use last commit time instead.
+          CUTOFF_TIMESTAMP="$(date -u -d '30 days ago' +%s)"
+
+          for dir in pr-*; do
+            if [ ! -d "$dir" ]; then
+              continue
+            fi
+
+            LAST_DEPLOYMENT_TIMESTAMP="$(git log -1 --format=%ct -- "$dir")"
+            if [ "$LAST_DEPLOYMENT_TIMESTAMP" -lt "$CUTOFF_TIMESTAMP" ]; then
+              echo "Deleting stale deployment: $dir"
+              rm -rf "$dir"
+            fi
+          done
 
           # Configure git
           git config user.name "github-actions[bot]"
