@@ -562,14 +562,33 @@ jobs:
         working-directory: gh-pages
         run: |
           # Directory mtimes are refreshed by checkout, so use last commit time instead.
-          CUTOFF_TIMESTAMP="$(date -u -d '30 days ago' +%s)"
+          if CUTOFF_TIMESTAMP="$(date -u -d '30 days ago' +%s 2>/dev/null)"; then
+            # GNU date available.
+            true
+          elif CUTOFF_TIMESTAMP="$(date -u -v-30d +%s 2>/dev/null)"; then
+            # BSD date available.
+            true
+          else
+            echo "Unable to compute 30-day cutoff timestamp" >&2
+            exit 1
+          fi
+          # If no deployment directories match, expand to an empty list instead of literal "pr-*".
+          shopt -s nullglob
 
           for dir in pr-*; do
+            # Guard in case a non-directory path matches the pattern.
             if [ ! -d "$dir" ]; then
               continue
             fi
 
-            LAST_DEPLOYMENT_TIMESTAMP="$(git log -1 --format=%ct -- "$dir")"
+            if ! LAST_DEPLOYMENT_TIMESTAMP="$(git log -1 --format=%ct -- "$dir" 2>/dev/null)"; then
+              echo "Skipping $dir: unable to read commit history" >&2
+              continue
+            fi
+            if [ -z "$LAST_DEPLOYMENT_TIMESTAMP" ]; then
+              continue
+            fi
+
             if [ "$LAST_DEPLOYMENT_TIMESTAMP" -lt "$CUTOFF_TIMESTAMP" ]; then
               echo "Deleting stale deployment: $dir"
               rm -rf "$dir"
