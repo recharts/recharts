@@ -47,6 +47,7 @@
   "types/chart/ScatterChart.d.ts",
   "types/chart/SunburstChart.d.ts",
   "types/chart/Treemap.d.ts",
+  "types/chart/Venn.d.ts",
   "types/chart/types.d.ts",
   "types/component",
   "types/component/ActivePoints.d.ts",

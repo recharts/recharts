@@ -47,6 +47,7 @@
   "lib/chart/ScatterChart.js",
   "lib/chart/SunburstChart.js",
   "lib/chart/Treemap.js",
+  "lib/chart/Venn.js",
   "lib/chart/types.js",
   "lib/component",
   "lib/component/ActivePoints.js",

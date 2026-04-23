@@ -39,6 +39,7 @@ import { useAxisInverseDataSnapScaleApiExamples } from './useAxisInverseDataSnap
 import { useAxisInverseTickSnapScaleApiExamples } from './useAxisInverseTickSnapScale';
 import { useXAxisTicksApiExamples } from './useXAxisTicks';
 import { useYAxisTicksApiExamples } from './useYAxisTicks';
+import { vennApiExamples } from './Venn';
 
 export const allApiExamples: Record<string, ReadonlyArray<ChartExample>> = {
   AreaChart: areaChartApiExamples,
@@ -64,6 +65,7 @@ export const allApiExamples: Record<string, ReadonlyArray<ChartExample>> = {
   FunnelChart: funnelChartApiExamples,
   Sankey: sankeyApiExamples,
   SunburstChart: sunburstChartApiExamples,
+  Venn: vennApiExamples,
   ZIndexLayer: zIndexLayerApiExamples,
   DefaultZIndexes: defaultZIndexesApiExamples,
   useIsTooltipActive: useIsTooltipActiveApiExamples,
