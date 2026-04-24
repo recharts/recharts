@@ -545,6 +545,9 @@ jobs:
         with:
           ref: gh-pages
           path: gh-pages
+          # Full history is required so that `git log` can resolve commit timestamps
+          # for each pr-* directory during the stale-deployment cleanup step.
+          fetch-depth: 0
 
       - name: Download website artifact
         uses: actions/download-artifact@v4
@@ -591,6 +594,11 @@ jobs:
               continue
             fi
             if [ -z "$LAST_DEPLOYMENT_TIMESTAMP" ]; then
+              # No commit touching this directory was found in history.
+              # We treat this conservatively: skip deletion rather than removing a
+              # directory whose age we cannot confirm, to avoid accidentally deleting
+              # a deployment that was just created or whose history is otherwise
+              # unavailable.
               echo "Skipping $dir: no commit history found" >&2
               continue
             fi
