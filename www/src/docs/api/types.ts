@@ -15,7 +15,7 @@ export type ApiProps = {
   desc?: string | Partial<Record<SupportedLocale, ReactNode>>;
   format?: ReadonlyArray<string>;
   examples?: ReadonlyArray<PropExample>;
-  deprecated?: boolean | string;
+  deprecated?: boolean | string | Partial<Record<SupportedLocale, ReactNode>>;
 };
 
 export type ApiDoc = {
@@ -26,6 +26,6 @@ export type ApiDoc = {
   returnDesc?: string | Partial<Record<SupportedLocale, ReactNode>>;
   parentComponents?: ReadonlyArray<string>;
   childrenComponents?: ReadonlyArray<string>;
-  deprecated?: boolean | string;
+  deprecated?: boolean | string | Partial<Record<SupportedLocale, ReactNode>>;
   links?: ReadonlyArray<PropExample>;
 };

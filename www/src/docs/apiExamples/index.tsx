@@ -39,6 +39,9 @@ import { useAxisInverseDataSnapScaleApiExamples } from './useAxisInverseDataSnap
 import { useAxisInverseTickSnapScaleApiExamples } from './useAxisInverseTickSnapScale';
 import { useXAxisTicksApiExamples } from './useXAxisTicks';
 import { useYAxisTicksApiExamples } from './useYAxisTicks';
+import useChartLayoutExamples from './useChartLayoutExamples.ts';
+import useCartesianChartLayoutExamples from './useCartesianChartLayoutExamples.ts';
+import usePolarChartLayoutExamples from './usePolarChartLayoutExamples.ts';
 
 export const allApiExamples: Record<string, ReadonlyArray<ChartExample>> = {
   AreaChart: areaChartApiExamples,
@@ -78,9 +81,9 @@ export const allApiExamples: Record<string, ReadonlyArray<ChartExample>> = {
   LayoutType: useChartWidthAndHeightApiExamples,
   CartesianLayout: useChartWidthAndHeightApiExamples,
   PolarLayout: useChartWidthAndHeightApiExamples,
-  useChartLayout: useChartWidthAndHeightApiExamples,
-  useCartesianChartLayout: useChartWidthAndHeightApiExamples,
-  usePolarChartLayout: useChartWidthAndHeightApiExamples,
+  useChartLayout: useChartLayoutExamples,
+  useCartesianChartLayout: useCartesianChartLayoutExamples,
+  usePolarChartLayout: usePolarChartLayoutExamples,
   useXAxisDomain: useXAxisDomainApiExamples,
   useYAxisDomain: useYAxisDomainApiExamples,
   getRelativeCoordinate: getRelativeCoordinateExamples,
