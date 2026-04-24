@@ -12,4 +12,5 @@ export const expectedInBundle = [
   'XAxis',
   'ZIndexLayer',
   'useChartLayout',
+  'useCartesianChartLayout',
 ] as const;

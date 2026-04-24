@@ -12,4 +12,5 @@ export const expectedInBundle = [
   'YAxis',
   'ZIndexLayer',
   'useChartLayout',
+  'useCartesianChartLayout',
 ] as const;
