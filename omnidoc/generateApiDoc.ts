@@ -151,7 +151,7 @@ export function buildContextMap(
 export function processInlineLinks(text: string, componentNames?: ReadonlyArray<string>): string {
   // Match {@link url} or {@link url text} or {@ link url text} (with space after @)
   // The regex captures: url and optional text
-  return text.replace(/\{@\s*link\s+([^\s}]+)(?:\s+([^}]+))?\}/g, (match, url, t) => {
+  return text.replace(/\{@\s*link\s+([^\s}]+)(?:\s+([^}]*?))?\s*\}/g, (match, url, t) => {
     const displayText = t?.trim() || url;
 
     // Check if the URL is a single word (no protocol, no slashes) and matches a component name
@@ -165,19 +165,39 @@ export function processInlineLinks(text: string, componentNames?: ReadonlyArray<
   });
 }
 
+async function renderJsDocRichText(
+  text: string,
+  componentNames?: ReadonlyArray<string>,
+): Promise<{ [locale: string]: string }> {
+  const textWithLinks = processInlineLinks(text, componentNames);
+  return {
+    'en-US': await marked.parse(textWithLinks),
+  };
+}
+
+async function renderDeprecatedTagText(
+  text: string,
+  componentNames?: ReadonlyArray<string>,
+): Promise<string | { [locale: string]: string }> {
+  const textWithLinks = processInlineLinks(text, componentNames);
+  if (textWithLinks === text) {
+    return text;
+  }
+  return {
+    'en-US': await marked.parse(textWithLinks),
+  };
+}
+
 async function generateComponentDescription(
   componentName: string,
   projectReader: ProjectDocReader,
+  allExports: ReadonlyArray<string>,
 ): Promise<{ [locale: string]: string } | undefined> {
   const componentJsDoc = projectReader.getComponentJsDocMeta(componentName);
   if (componentJsDoc) {
     const desc: { [locale: string]: string } = {};
     if (componentJsDoc.text) {
-      // Get all component names to resolve internal component references
-      const componentNames = projectReader.getAllRuntimeExportedNames();
-      // Process inline {@link} tags before passing to marked
-      const textWithLinks = processInlineLinks(componentJsDoc.text, componentNames);
-      desc['en-US'] = await marked.parse(textWithLinks);
+      Object.assign(desc, await renderJsDocRichText(componentJsDoc.text, allExports));
     }
     // Check for @since tag
     const sinceTag = getTagText(componentJsDoc, 'since');
@@ -346,7 +366,7 @@ async function generateApiDoc(
     if (rechartsProp && rechartsProp.jsDoc) {
       const tag = getTagText(rechartsProp.jsDoc, 'deprecated');
       if (tag) {
-        deprecated = tag.text || true;
+        deprecated = tag.text ? await renderDeprecatedTagText(tag.text, allExports) : true;
       }
     }
 
@@ -356,7 +376,7 @@ async function generateApiDoc(
         if (p.jsDoc) {
           const tag = getTagText(p.jsDoc, 'deprecated');
           if (tag) {
-            deprecated = tag.text || true;
+            deprecated = tag.text ? await renderDeprecatedTagText(tag.text, allExports) : true;
             break;
           }
         }
@@ -372,10 +392,7 @@ async function generateApiDoc(
 
     // Add description if available
     if (comment) {
-      const textWithLinks = processInlineLinks(comment, allExports);
-      prop.desc = {
-        'en-US': await marked.parse(textWithLinks),
-      };
+      prop.desc = await renderJsDocRichText(comment, allExports);
     }
 
     // Add default value if available
@@ -456,19 +473,16 @@ async function generateApiDoc(
   // Get component-level JSDoc metadata
   const componentJsDoc = projectReader.getComponentJsDocMeta(componentName);
   if (componentJsDoc) {
-    apiDoc.desc = await generateComponentDescription(componentName, projectReader);
+    apiDoc.desc = await generateComponentDescription(componentName, projectReader, allExports);
 
     const returnTag = getTagText(componentJsDoc, 'returns') || getTagText(componentJsDoc, 'return');
     if (returnTag?.text) {
-      const textWithLinks = processInlineLinks(returnTag.text, allExports);
-      apiDoc.returnDesc = {
-        'en-US': await marked.parse(textWithLinks),
-      };
+      apiDoc.returnDesc = await renderJsDocRichText(returnTag.text, allExports);
     }
 
     const deprecatedTag = getTagText(componentJsDoc, 'deprecated');
     if (deprecatedTag) {
-      apiDoc.deprecated = deprecatedTag.text || true;
+      apiDoc.deprecated = deprecatedTag.text ? await renderDeprecatedTagText(deprecatedTag.text, allExports) : true;
     }
 
     // Get links from component JSDoc
@@ -517,6 +531,17 @@ async function generateApiDoc(
  * This function is intentionally not adding new lines or indentation
  * because we assume that prettier runs immediately after this generation step.
  */
+function stringifyLocalizedRichText(value: Partial<Record<string, string>>): string {
+  let result = `{`;
+  for (const [locale, html] of Object.entries(value)) {
+    if (!html) continue;
+    // Write HTML as JSX without quotes. Wrap in <section> to ensure valid JSX.
+    result += `"${locale}": (<section>${html}</section>),`;
+  }
+  result += `}`;
+  return result;
+}
+
 function stringifyApiDoc(apiDoc: ApiDoc): string {
   let result = `{"name": "${apiDoc.name}","props": [`;
 
@@ -527,12 +552,7 @@ function stringifyApiDoc(apiDoc: ApiDoc): string {
     result += `"isOptional": ${prop.isOptional},`;
 
     if (prop.desc) {
-      result += `"desc": {`;
-      for (const [locale, html] of Object.entries(prop.desc)) {
-        // Write HTML as JSX without quotes. Wrap in <section> to ensure valid JSX.
-        result += `"${locale}": (<section>${html}</section>),`;
-      }
-      result += `},`;
+      result += `"desc": ${stringifyLocalizedRichText(prop.desc)},`;
     }
 
     if (prop.defaultVal !== undefined) {
@@ -548,7 +568,11 @@ function stringifyApiDoc(apiDoc: ApiDoc): string {
     }
 
     if (prop.deprecated !== undefined) {
-      result += `"deprecated": ${JSON.stringify(prop.deprecated)},`;
+      result += `"deprecated": ${
+        typeof prop.deprecated === 'object'
+          ? stringifyLocalizedRichText(prop.deprecated)
+          : JSON.stringify(prop.deprecated)
+      },`;
     }
 
     result += `},`;
@@ -556,13 +580,7 @@ function stringifyApiDoc(apiDoc: ApiDoc): string {
   result += `],`;
   // Add component-level description if at least one language is available                                                                                                                                  │
   if (apiDoc.desc && Object.values(apiDoc.desc).some(Boolean)) {
-    result += `"desc": {`;
-    for (const [locale, html] of Object.entries(apiDoc.desc)) {
-      if (!html) continue;
-      // Write HTML as JSX without quotes. Wrap in <section> to ensure valid JSX.
-      result += `"${locale}": (<section>${html}</section>),`;
-    }
-    result += `},`;
+    result += `"desc": ${stringifyLocalizedRichText(apiDoc.desc)},`;
   }
   // Add links if available
   if (apiDoc.links && apiDoc.links.length > 0) {
@@ -577,27 +595,38 @@ function stringifyApiDoc(apiDoc: ApiDoc): string {
     result += `"childrenComponents": ${JSON.stringify(apiDoc.childrenComponents)},`;
   }
   if (apiDoc.deprecated !== undefined) {
-    result += `"deprecated": ${JSON.stringify(apiDoc.deprecated)},`;
+    result += `"deprecated": ${
+      typeof apiDoc.deprecated === 'object'
+        ? stringifyLocalizedRichText(apiDoc.deprecated)
+        : JSON.stringify(apiDoc.deprecated)
+    },`;
   }
   if (apiDoc.returnValue) {
     result += `"returnValue": ${JSON.stringify(apiDoc.returnValue)},`;
   }
   if (apiDoc.returnDesc && Object.values(apiDoc.returnDesc).some(Boolean)) {
-    result += `"returnDesc": {`;
-    for (const [locale, html] of Object.entries(apiDoc.returnDesc)) {
-      if (!html) continue;
-      // Write HTML as JSX without quotes. Wrap in <section> to ensure valid JSX.
-      result += `"${locale}": (<section>${html}</section>),`;
-    }
-    result += `},`;
+    result += `"returnDesc": ${stringifyLocalizedRichText(apiDoc.returnDesc)},`;
   }
   result += `}`;
   return result;
 }
 
+function hasTagInLocalizedText(
+  value: string | boolean | Partial<Record<string, string>> | undefined,
+  tagName: string,
+): boolean {
+  if (!value || typeof value !== 'object') {
+    return false;
+  }
+  return Object.values(value).some(desc => typeof desc === 'string' && desc.includes(`</${tagName}>`));
+}
+
 function hasTag(obj: ApiDoc | ApiProps, tagName: string): boolean {
-  if (!obj.desc) return false;
-  return Object.values(obj.desc).some(desc => typeof desc === 'string' && desc.includes(`</${tagName}>`));
+  return (
+    hasTagInLocalizedText(obj.desc, tagName) ||
+    hasTagInLocalizedText('returnDesc' in obj ? obj.returnDesc : undefined, tagName) ||
+    hasTagInLocalizedText(obj.deprecated, tagName)
+  );
 }
 
 /**

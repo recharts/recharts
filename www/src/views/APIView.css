@@ -1,4 +1,13 @@
 .page.page-api {
+
+  .deprecated-message {
+    display: flex;
+    flex-direction: row;
+    section, p {
+      display: inline;
+    }
+  }
+
   .examples {
     .example-list {
       > li {

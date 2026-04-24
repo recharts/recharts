@@ -59,10 +59,10 @@ function PropsList({ props, locale }: PropsListProps) {
               {entry.isOptional ? <em className="optional">optional</em> : null}
               {entry.deprecated ? <em className="deprecated-label">@deprecated</em> : null}
             </p>
-            {entry.deprecated && typeof entry.deprecated === 'string' ? (
-              <p className="deprecated-message">
-                <strong>Deprecated:</strong> {entry.deprecated}
-              </p>
+            {entry.deprecated && entry.deprecated !== true ? (
+              <div className="deprecated-message">
+                <strong>Deprecated:</strong> {parseLocalObj(locale, entry.deprecated)}
+              </div>
             ) : null}
             <p className="desc">{parseLocalObj(locale, entry.desc)}</p>
             {entry.defaultVal !== null &&
@@ -213,9 +213,10 @@ function APIViewNewImpl({ params }: APIViewNewImplProps) {
       <div className="content" key={page}>
         <h3 className="page-title">{page}</h3>
         {api.deprecated && (
-          <p className="deprecated-notice">
-            <strong>Deprecated:</strong> {api.deprecated === true ? 'This component is deprecated.' : api.deprecated}
-          </p>
+          <div className="deprecated-message">
+            <strong>Deprecated:</strong>{' '}
+            {api.deprecated === true ? 'This component is deprecated.' : parseLocalObj(locale, api.deprecated)}
+          </div>
         )}
         {api.desc && <p className="survey">{parseLocalObj(locale, api.desc)}</p>}
         {api.links && api.links.length ? (
