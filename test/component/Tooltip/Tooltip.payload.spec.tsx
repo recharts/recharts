@@ -1519,16 +1519,26 @@ describe('Tooltip payload', () => {
         );
 
         // There are two Bar groups. bar1 renders one rect (row A), bar2 renders one rect (row B).
-        // We need to hover over bar2's rect specifically.
         const barGroups = container.querySelectorAll('.recharts-bar');
-        const bar2Group = barGroups[1]; // second Bar component = bar2
+
+        // Hover bar1 (row A) — should show bar1's payload
+        const bar1Group = barGroups[0];
+        const bar1Rect = bar1Group.querySelector(barMouseHoverTooltipSelector);
+        assertNotNull(bar1Rect);
+        fireEvent.mouseOver(bar1Rect, { clientX: 100, clientY: 100 });
+        act(() => {
+          vi.runOnlyPendingTimers();
+        });
+        expectTooltipPayload(container, '', ['bar1 : 0 ~ 10']);
+
+        // Hover bar2 (row B) — should show bar2's payload, not bar1's
+        const bar2Group = barGroups[1];
         const bar2Rect = bar2Group.querySelector(barMouseHoverTooltipSelector);
         assertNotNull(bar2Rect);
         fireEvent.mouseOver(bar2Rect, { clientX: 200, clientY: 200 });
         act(() => {
           vi.runOnlyPendingTimers();
         });
-
         expectTooltipPayload(container, '', ['bar2 : 5 ~ 20']);
       });
     });
