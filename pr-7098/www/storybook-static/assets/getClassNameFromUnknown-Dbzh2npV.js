@@ -1,1 +1,0 @@
-function a(e){return e&&typeof e=="object"&&"className"in e&&typeof e.className=="string"?e.className:""}try{a.displayName="getClassNameFromUnknown",a.__docgenInfo={description:"",displayName:"getClassNameFromUnknown",props:{}}}catch{}export{a as g};
