@@ -246,6 +246,22 @@ describe.each(chartsThatSupportBar)('<Bar /> as a child of $testName', ({ ChartE
     });
   });
 
+  describe('Accessibility', () => {
+    it('should add tabIndex={0} to the bar rectangles when onClick is passed', () => {
+      const { container } = renderWithStrictMode(
+        <ChartElement layout="horizontal" data={data}>
+          <Bar isAnimationActive={false} dataKey="value" onClick={vi.fn()} />
+        </ChartElement>,
+      );
+
+      const rectangles = container.querySelectorAll('.recharts-bar-rectangle');
+      expect(rectangles.length).toBeGreaterThan(0);
+      rectangles.forEach(rect => {
+        expect(rect).toHaveAttribute('tabindex', '0');
+      });
+    });
+  });
+
   describe('barSize', () => {
     it('should make bars wider in horizontal chart', () => {
       const barSize = 79;
