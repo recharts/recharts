@@ -13,10 +13,14 @@ import CustomAnimationExample, {
   CustomAnimationControls,
 } from '../../../docs/exampleComponents/ScatterChart/CustomAnimationExample.tsx';
 import CustomAnimationExampleSource from '../../../docs/exampleComponents/ScatterChart/CustomAnimationExample.tsx?raw';
-import AreaChartCustomAnimationExample from '../../../docs/exampleComponents/AreaChart/AreaChartCustomAnimationExample.tsx';
-import AreaChartCustomAnimationExampleSource from '../../../docs/exampleComponents/AreaChart/AreaChartCustomAnimationExample.tsx?raw';
-import LineChartCustomShapeExample from '../../../docs/exampleComponents/LineChart/LineChartCustomShapeExample.tsx';
-import LineChartCustomShapeExampleSource from '../../../docs/exampleComponents/LineChart/LineChartCustomShapeExample.tsx?raw';
+import AreaChartCustomAnimationExample, {
+  AreaChartCustomAnimationControls,
+} from '../../../docs/exampleComponents/AreaChart/AreaChartCustomAnimationExample';
+import AreaChartCustomAnimationExampleSource from '../../../docs/exampleComponents/AreaChart/AreaChartCustomAnimationExample/index.tsx?raw';
+import LineChartCustomShapeExample, {
+  LineChartCustomShapeControls,
+} from '../../../docs/exampleComponents/LineChart/LineChartCustomShapeExample';
+import LineChartCustomShapeExampleSource from '../../../docs/exampleComponents/LineChart/LineChartCustomShapeExample/index.tsx?raw';
 
 export function AnimationsGuide() {
   return (
@@ -499,21 +503,32 @@ export function AnimationsGuide() {
         <code>shape</code> (to skip the default clip-path reveal). The shape wraps <code>AreaRevealShape</code> but
         overrides <code>isEntrance</code> to prevent the clip-path animation:
       </p>
-      {/* TODO add controls to these two examples */}
+      <p>
+        Use the controls to toggle <code>animationInterpolateFn</code> and <code>shape</code> independently, then replay
+        the entrance animation or swap datasets to see how they affect entrance vs. update motion.
+      </p>
       <CodeEditorWithPreview
         Component={AreaChartCustomAnimationExample}
+        Controls={AreaChartCustomAnimationControls}
         sourceCode={AreaChartCustomAnimationExampleSource}
         stackBlitzTitle="Recharts Area Custom Animation Example"
+        defaultTool="controls"
       />
       <h3>Custom entrance: opacity fade</h3>
       <p>
         This Line example uses a custom <code>shape</code> to fade in during the entrance animation, replacing the
         default stroke-dasharray &quot;drawing&quot; effect:
       </p>
+      <p>
+        Replay the entrance animation to see <code>t</code> and <code>isEntrance</code> drive the fade, then swap the
+        dataset to compare it with a normal update animation.
+      </p>
       <CodeEditorWithPreview
         Component={LineChartCustomShapeExample}
+        Controls={LineChartCustomShapeControls}
         sourceCode={LineChartCustomShapeExampleSource}
         stackBlitzTitle="Recharts Line Custom Shape Example"
+        defaultTool="controls"
       />
       <h3>Three orthogonal props</h3>
       <p>Together, Recharts provides three orthogonal props for animation customization. Each handles one concern:</p>

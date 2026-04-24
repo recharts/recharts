@@ -795,7 +795,19 @@ function defaultBarAnimateItems(
       return items.flatMap(item => (item.status === 'removed' ? [] : [item.next]));
     }
     return items.flatMap(item => {
-      if (item.status === 'removed') return [];
+      if (item.status === 'removed') {
+        // animate removed items to 0 height/width respective of layout
+        if (layout === 'horizontal') {
+          return [
+            {
+              ...item.prev,
+              height: interpolate(item.prev.height, 0, t),
+              y: interpolate(item.prev.y, item.prev.y + item.prev.height, t),
+            },
+          ];
+        }
+        return [{ ...item.prev, x: interpolate(item.prev.x, 0, t) }];
+      }
       if (item.status === 'matched') {
         return [
           {

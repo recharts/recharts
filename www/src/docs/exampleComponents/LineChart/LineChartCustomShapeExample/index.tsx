@@ -1,6 +1,6 @@
 import { Line, LineChart, CartesianGrid, Tooltip, XAxis, YAxis, LineDrawShape, Curve } from 'recharts';
 import { generateMockData, RechartsDevtools } from '@recharts/devtools';
-import React, { useCallback, useState } from 'react';
+import { useCallback, useEffect, useId, useState } from 'react';
 
 const data1 = generateMockData(7, 100);
 const data2 = generateMockData(7, 200);
@@ -31,7 +31,7 @@ function OpacityFadeShape(props: Parameters<typeof LineDrawShape>[0]) {
   return <Curve {...props} strokeOpacity={opacity} />;
 }
 
-export default function LineChartCustomShapeExample(props: ControlsType) {
+export default function LineChartCustomShapeExample(props: Partial<ControlsType>) {
   const { data, renderKey, animationDuration } = { ...initialState, ...props };
   return (
     <LineChart
@@ -73,23 +73,34 @@ export const LineChartCustomShapeControls = ({ onChange }: { onChange: (values: 
     [state, onChange],
   );
 
-  React.useEffect(() => {
+  useEffect(() => {
     onChange(state);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
+  const animationDurationId = useId();
+
   return (
     <form>
-      <p>
-        <label>
-          Animation duration [ms]:
-          <input
-            type="number"
-            value={state.animationDuration}
-            onChange={e => handleChange({ animationDuration: +e.target.value })}
-          />
-        </label>
-      </p>
+      <table>
+        <tbody>
+          <tr>
+            <td>
+              <label htmlFor={animationDurationId}>animationDuration</label>
+            </td>
+            <td style={{ padding: '0 1ex' }}>
+              <input
+                id={animationDurationId}
+                aria-label="animationDuration"
+                type="number"
+                min="0"
+                value={state.animationDuration}
+                onChange={e => handleChange({ animationDuration: +e.target.value })}
+              />
+            </td>
+          </tr>
+        </tbody>
+      </table>
       <p>
         <button type="button" onClick={() => handleChange({ renderKey: state.renderKey + 1 })}>
           Force remount (Triggers <em>entrance</em> animation)
@@ -106,6 +117,10 @@ export const LineChartCustomShapeControls = ({ onChange }: { onChange: (values: 
         >
           ⇄ Swap dataset (Triggers <em>update</em> animation)
         </button>
+      </p>
+      <p style={{ fontSize: '0.85em', opacity: 0.8, marginTop: '0.5em' }}>
+        The custom <code>shape</code> only fades on entrance because it checks <code>isEntrance</code> before using{' '}
+        <code>t</code>.
       </p>
     </form>
   );

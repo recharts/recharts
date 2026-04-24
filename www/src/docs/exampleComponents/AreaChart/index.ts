@@ -24,6 +24,8 @@ import AreaChartRangeExample from './AreaChartRangeExample';
 import areaChartRangeExampleSource from './AreaChartRangeExample?raw';
 import AreaChartCustomAnimationExample from './AreaChartCustomAnimationExample.tsx';
 import AreaChartCustomAnimationExampleSource from './AreaChartCustomAnimationExample.tsx?raw';
+import AreaChartCustomAnimationExample, { AreaChartCustomAnimationControls } from './AreaChartCustomAnimationExample';
+import AreaChartCustomAnimationExampleSource from './AreaChartCustomAnimationExample/index.tsx?raw';
 
 export { AreaChartNavExample };
 
@@ -76,7 +78,9 @@ export const areaChartExamples = {
   AreaChartCustomAnimation: {
     Component: AreaChartCustomAnimationExample,
     sourceCode: AreaChartCustomAnimationExampleSource,
+    Controls: AreaChartCustomAnimationControls,
     name: 'Custom Animation Example',
+    defaultTool: 'controls',
   },
   AreaChartWithCustomEvents: {
     Component: AreaChartWithCustomEvents,
