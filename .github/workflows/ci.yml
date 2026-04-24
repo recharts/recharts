@@ -591,7 +591,7 @@ jobs:
               continue
             fi
             if [ -z "$LAST_DEPLOYMENT_TIMESTAMP" ]; then
-              echo "Skipping $dir: no commit history found"
+              echo "Skipping $dir: no commit history found" >&2
               continue
             fi
 
