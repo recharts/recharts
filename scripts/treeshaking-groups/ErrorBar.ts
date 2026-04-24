@@ -5,4 +5,5 @@ export const expectedInBundle = [
   'Global',
   'Layer',
   'ZIndexLayer',
+  'useChartLayout',
 ] as const;

@@ -14,4 +14,5 @@ export const expectedInBundle = [
   'Text',
   'Trapezoid',
   'ZIndexLayer',
+  'useChartLayout',
 ] as const;

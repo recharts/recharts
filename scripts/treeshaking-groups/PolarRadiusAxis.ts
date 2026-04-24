@@ -7,4 +7,5 @@ export const expectedInBundle = [
   'PolarRadiusAxis',
   'Text',
   'ZIndexLayer',
+  'useChartLayout',
 ] as const;

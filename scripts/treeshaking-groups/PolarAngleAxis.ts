@@ -8,4 +8,5 @@ export const expectedInBundle = [
   'Polygon',
   'Text',
   'ZIndexLayer',
+  'useChartLayout',
 ] as const;

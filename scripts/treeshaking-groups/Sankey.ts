@@ -9,4 +9,5 @@ export const expectedInBundle = [
   'Surface',
   'useChartHeight',
   'useChartWidth',
+  'useChartLayout',
 ] as const;

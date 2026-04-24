@@ -11,4 +11,5 @@ export const expectedInBundle = [
   'Text',
   'XAxis',
   'ZIndexLayer',
+  'useChartLayout',
 ] as const;

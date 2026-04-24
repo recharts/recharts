@@ -8,4 +8,5 @@ export const expectedInBundle = [
   'ReferenceArea',
   'Text',
   'ZIndexLayer',
+  'useChartLayout',
 ] as const;

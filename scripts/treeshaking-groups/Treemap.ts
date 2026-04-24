@@ -10,4 +10,5 @@ export const expectedInBundle = [
   'Treemap',
   'useChartHeight',
   'useChartWidth',
+  'useChartLayout',
 ] as const;

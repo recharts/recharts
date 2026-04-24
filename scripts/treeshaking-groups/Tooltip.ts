@@ -9,4 +9,5 @@ export const expectedInBundle = [
   'Sector',
   'Tooltip',
   'ZIndexLayer',
-];
+  'useChartLayout',
+] as const;
