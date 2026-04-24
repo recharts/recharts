@@ -503,13 +503,13 @@ function BarBackground(props: BarBackgroundProps) {
           return null;
         }
 
-        const onMouseEnter = onMouseEnterFromContext(entry, i);
-        const onMouseLeave = onMouseLeaveFromContext(entry, i);
-        const onClick = onClickFromContext(entry, i);
+        const onMouseEnter = onMouseEnterFromContext(entry, entry.originalDataIndex);
+        const onMouseLeave = onMouseLeaveFromContext(entry, entry.originalDataIndex);
+        const onClick = onClickFromContext(entry, entry.originalDataIndex);
 
         const barRectangleProps: BarRectangleProps = {
           option: backgroundFromProps,
-          isActive: String(i) === activeIndex,
+          isActive: String(entry.originalDataIndex) === activeIndex,
           ...rest,
           // @ts-expect-error backgroundProps is contributing unknown props
           fill: '#eee',
@@ -728,9 +728,9 @@ function BarRectangles({
             key={`rectangle-${entry?.x}-${entry?.y}-${entry?.value}-${i}`}
             className="recharts-bar-rectangle"
             {...adaptEventsOfChild(restOfAllOtherProps, entry, i)}
-            onMouseEnter={onMouseEnterFromContext(entry, i)}
-            onMouseLeave={onMouseLeaveFromContext(entry, i)}
-            onClick={onClickFromContext(entry, i)}
+            onMouseEnter={onMouseEnterFromContext(entry, entry.originalDataIndex)}
+            onMouseLeave={onMouseLeaveFromContext(entry, entry.originalDataIndex)}
+            onClick={onClickFromContext(entry, entry.originalDataIndex)}
           >
             {activeBar ? (
               <BarRectangleWithActiveState

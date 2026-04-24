@@ -1,6 +1,7 @@
 import React, { ComponentType, ReactNode } from 'react';
-import { beforeEach, describe, expect, it } from 'vitest';
-import { render } from '@testing-library/react';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
+import { act, fireEvent, render } from '@testing-library/react';
+import { assertNotNull } from '../../helper/assertNotNull';
 import {
   Area,
   AreaChart,
@@ -1499,6 +1500,36 @@ describe('Tooltip payload', () => {
         const expectedTooltipTitle = '';
         const expectedTooltipContent = ['uv : 400kg'];
         expectTooltipPayload(container, expectedTooltipTitle, expectedTooltipContent);
+      });
+
+      it('when false in vertical layout with sparse data, should show correct payload for each bar (issue #7261)', () => {
+        const sparseData = [
+          { category: 'A', bar1: [0, 10] },
+          { category: 'B', bar2: [5, 20] },
+        ];
+
+        const { container } = render(
+          <BarChart layout="vertical" {...commonChartProps} data={sparseData}>
+            <XAxis type="number" domain={[0, 30]} />
+            <YAxis type="category" dataKey="category" />
+            <Bar dataKey="bar1" />
+            <Bar dataKey="bar2" />
+            <Tooltip shared={false} filterNull={false} />
+          </BarChart>,
+        );
+
+        // There are two Bar groups. bar1 renders one rect (row A), bar2 renders one rect (row B).
+        // We need to hover over bar2's rect specifically.
+        const barGroups = container.querySelectorAll('.recharts-bar');
+        const bar2Group = barGroups[1]; // second Bar component = bar2
+        const bar2Rect = bar2Group.querySelector(barMouseHoverTooltipSelector);
+        assertNotNull(bar2Rect);
+        fireEvent.mouseOver(bar2Rect, { clientX: 200, clientY: 200 });
+        act(() => {
+          vi.runOnlyPendingTimers();
+        });
+
+        expectTooltipPayload(container, '', ['bar2 : 5 ~ 20']);
       });
     });
 
