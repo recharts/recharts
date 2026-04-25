@@ -311,10 +311,11 @@ export function AnimationsGuide() {
         stackBlitzTitle="Recharts Animation Matching Example"
         defaultTool="controls"
       />
-      <h3>Matching strategies: stretch vs. append</h3>
+      <h3>Matching example: stretch vs. append for data with different lengths</h3>
       <p>
-        When the old and new data arrays have <strong>different lengths</strong>, the matching strategy decides how old
-        points map to new positions:
+        The matching strategy decides how old points map to new positions. When the before/after data are the same
+        length, these two matching strategies produce the same result. When the old and new data arrays have{' '}
+        <strong>different lengths</strong> however, different things happen:
       </p>
       <ul>
         <li>

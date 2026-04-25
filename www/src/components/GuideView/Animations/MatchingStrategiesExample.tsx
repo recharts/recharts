@@ -78,8 +78,8 @@ export default function MatchingStrategiesExample(props: Partial<ControlsType>) 
         animationDuration={1500}
         animationMatchBy={matchProp}
       />
-      <Bar dataKey="y" animationMatchBy={matchProp} fill="salmon" />
-      <Scatter dataKey="z" animationMatchBy={matchProp} fill="gold" />
+      <Bar dataKey="y" animationMatchBy={matchProp} fill="salmon" animationDuration={1500} />
+      <Scatter dataKey="z" animationMatchBy={matchProp} fill="gold" animationDuration={1500} />
       <RechartsDevtools />
     </ComposedChart>
   );
