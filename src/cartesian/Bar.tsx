@@ -806,7 +806,7 @@ function defaultBarAnimateItems(
             },
           ];
         }
-        return [{ ...item.prev, x: interpolate(item.prev.x, 0, t) }];
+        return [{ ...item.prev, width: interpolate(item.prev.width, 0, t) }];
       }
       if (item.status === 'matched') {
         return [
