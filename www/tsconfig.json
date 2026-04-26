@@ -21,7 +21,6 @@
     "noFallthroughCasesInSwitch": true,
 
     "types": ["vite/client"],
-    "baseUrl": ".",
     "paths": {
       /*
        * Recharts package path mapping points to the types folder in the main Recharts package.
