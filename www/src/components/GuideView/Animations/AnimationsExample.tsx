@@ -74,8 +74,14 @@ const defaultState: ControlsType = {
   replayKey: 0,
 };
 
-export function AnimationsControls({ onChange }: { onChange: (values: ControlsType) => void }) {
-  const [state, setState] = React.useState<ControlsType>(defaultState);
+export function AnimationsControls({
+  onChange,
+  initialValues,
+}: {
+  onChange: (values: ControlsType) => void;
+  initialValues?: ControlsType;
+}) {
+  const [state, setState] = React.useState<ControlsType>(initialValues ?? defaultState);
 
   const handleChange = (nextValues: Partial<ControlsType>) => {
     const newState = { ...state, ...nextValues };

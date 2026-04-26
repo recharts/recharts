@@ -1,4 +1,4 @@
-import React, { useState, useEffect, ComponentType, ReactNode } from 'react';
+import React, { useState, useEffect, useCallback, ComponentType, ReactNode } from 'react';
 import * as RechartsScope from 'recharts';
 import * as D3ShapeScope from 'd3-shape';
 import * as RechartsDevtoolsScope from '@recharts/devtools';
@@ -23,7 +23,7 @@ type CodeEditorWithPreviewProps<ControlsType> = {
   /**
    * This component renders knobs, controls, and various other activities that change the chart
    */
-  Controls?: ComponentType<{ onChange: (values: ControlsType) => void }>;
+  Controls?: ComponentType<{ onChange: (values: ControlsType) => void; initialValues?: ControlsType }>;
   /**
    * The source code of the component.
    */
@@ -91,7 +91,35 @@ export function CodeEditorWithPreview<T>({
   const [codeToRun, setCodeToRun] = useState<string | null>(null);
   const [Runner, setRunner] = useState<any>(null);
   const [activeTool, setActiveTool] = useState<ToolType>(defaultTool);
-  const [controlsState, setControlsState] = useState<T | null>(null);
+
+  const storageKey = Controls ? `recharts-controls-${encodeURIComponent(stackBlitzTitle)}` : null;
+
+  const [storedInitialValues] = useState<T | undefined>(() => {
+    if (!storageKey || typeof window === 'undefined') return undefined;
+    try {
+      const stored = sessionStorage.getItem(storageKey);
+      return stored ? (JSON.parse(stored) as T) : undefined;
+    } catch {
+      // Handles both unavailable sessionStorage and malformed JSON gracefully
+      return undefined;
+    }
+  });
+
+  const [controlsState, setControlsState] = useState<T | null>(storedInitialValues ?? null);
+
+  const handleControlsChange = useCallback(
+    (values: T) => {
+      if (storageKey) {
+        try {
+          sessionStorage.setItem(storageKey, JSON.stringify(values));
+        } catch {
+          // sessionStorage may not be available in all environments
+        }
+      }
+      setControlsState(values);
+    },
+    [storageKey],
+  );
 
   // Lazy load react-runner when entering edit mode
   useEffect(() => {
@@ -197,7 +225,7 @@ export function CodeEditorWithPreview<T>({
       label: 'Controls',
       component: (
         <div style={{ padding: '10px', height: '100%', overflow: 'auto' }}>
-          <Controls onChange={setControlsState} />
+          <Controls onChange={handleControlsChange} initialValues={storedInitialValues} />
         </div>
       ),
     });

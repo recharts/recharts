@@ -48,14 +48,22 @@ type ControlsType = {
  * @param onChange
  * @constructor
  */
-export function BarAlignControls({ onChange }: { onChange: (values: ControlsType) => void }) {
-  const [state, setState] = React.useState<ControlsType>({
-    paddingInner: 0,
-    paddingOuter: 0.8,
-    align: 0.7,
-    barGap: 0.1,
-    barCategoryGap: 0.1,
-  });
+export function BarAlignControls({
+  onChange,
+  initialValues,
+}: {
+  onChange: (values: ControlsType) => void;
+  initialValues?: ControlsType;
+}) {
+  const [state, setState] = React.useState<ControlsType>(
+    initialValues ?? {
+      paddingInner: 0,
+      paddingOuter: 0.8,
+      align: 0.7,
+      barGap: 0.1,
+      barCategoryGap: 0.1,
+    },
+  );
 
   const handleChange = (key: keyof ControlsType, value: number) => {
     const newState = { ...state, [key]: value };
