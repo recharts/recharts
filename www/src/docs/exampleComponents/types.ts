@@ -11,7 +11,7 @@ export type ChartExample<ControlsType = any> = {
   /**
    * This component renders knobs, controls, and various other activities that change the chart
    */
-  Controls?: ComponentType<{ onChange: (values: ControlsType) => void }>;
+  Controls?: ComponentType<{ onChange: (values: ControlsType) => void; sessionStoreValues: ControlsType | null }>;
   /**
    * The source code of the example.
    */

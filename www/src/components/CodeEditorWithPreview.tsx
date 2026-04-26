@@ -4,6 +4,7 @@ import * as D3ShapeScope from 'd3-shape';
 import * as RechartsDevtoolsScope from '@recharts/devtools';
 import { RechartsDevtoolsContext } from '@recharts/devtools';
 import { LuPencil, LuPlay, LuShare2 } from 'react-icons/lu';
+import { useSessionStorageState } from '@recharts/devtools/dist/hooks/useSessionStorageState';
 import { StackBlitzLink } from './Shared/StackBlitzLink';
 import { sendEvent } from './analytics';
 import { ToolFrame, ToolType, ToolItem } from './Playground/ToolFrame';
@@ -23,7 +24,7 @@ type CodeEditorWithPreviewProps<ControlsType> = {
   /**
    * This component renders knobs, controls, and various other activities that change the chart
    */
-  Controls?: ComponentType<{ onChange: (values: ControlsType) => void }>;
+  Controls?: ComponentType<{ onChange: (values: ControlsType) => void; sessionStoreValues: ControlsType | null }>;
   /**
    * The source code of the component.
    */
@@ -91,7 +92,7 @@ export function CodeEditorWithPreview<T>({
   const [codeToRun, setCodeToRun] = useState<string | null>(null);
   const [Runner, setRunner] = useState<any>(null);
   const [activeTool, setActiveTool] = useState<ToolType>(defaultTool);
-  const [controlsState, setControlsState] = useState<T | null>(null);
+  const [controlsState, setControlsState] = useSessionStorageState(encodeURIComponent(stackBlitzTitle), null);
 
   // Lazy load react-runner when entering edit mode
   useEffect(() => {
@@ -197,7 +198,7 @@ export function CodeEditorWithPreview<T>({
       label: 'Controls',
       component: (
         <div style={{ padding: '10px', height: '100%', overflow: 'auto' }}>
-          <Controls onChange={setControlsState} />
+          <Controls onChange={setControlsState} sessionStoreValues={controlsState} />
         </div>
       ),
     });

@@ -46,16 +46,25 @@ type ControlsType = {
  * Each property is a slider input, ranging from 0 to 1 in 0.01 steps.
  * Calls onChange with the new values when an input changes.
  * @param onChange
+ * @param sessionStoreValues data from session storage, or null if this is the first visit
  * @constructor
  */
-export function BarAlignControls({ onChange }: { onChange: (values: ControlsType) => void }) {
-  const [state, setState] = React.useState<ControlsType>({
-    paddingInner: 0,
-    paddingOuter: 0.8,
-    align: 0.7,
-    barGap: 0.1,
-    barCategoryGap: 0.1,
-  });
+export function BarAlignControls({
+  onChange,
+  sessionStoreValues,
+}: {
+  onChange: (values: ControlsType) => void;
+  sessionStoreValues: ControlsType | null;
+}) {
+  const [state, setState] = React.useState<ControlsType>(
+    sessionStoreValues ?? {
+      paddingInner: 0,
+      paddingOuter: 0.8,
+      align: 0.7,
+      barGap: 0.1,
+      barCategoryGap: 0.1,
+    },
+  );
 
   const handleChange = (key: keyof ControlsType, value: number) => {
     const newState = { ...state, [key]: value };
