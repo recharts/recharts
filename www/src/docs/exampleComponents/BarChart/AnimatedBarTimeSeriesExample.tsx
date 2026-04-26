@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useId, useRef, useState } from 'react';
-import type { AnimationMatchBy } from 'recharts';
+import type { AnimationItem, AnimationMatchBy, BarRectangleItem } from 'recharts';
 import {
   Bar,
   BarChart,
@@ -12,6 +12,8 @@ import {
   YAxis,
 } from 'recharts';
 import { generateMockData } from '@recharts/devtools';
+import { interpolate } from '../../../../../src/util/DataUtils.ts';
+import { AnimationInterpolateFn } from '../../../../../src';
 
 const WINDOW = 6;
 const DATA_LENGTH = 30;
@@ -29,22 +31,117 @@ function getCircularWindowData(windowStart: number) {
 }
 
 type MatchStrategy = 'index' | 'dataKey';
+type AnimationVariant = 'default' | 'custom';
 
 type ControlsType = {
   matchStrategy: MatchStrategy;
   windowStart: number;
   layout: CartesianLayout;
   animationDuration: number;
+  animationVariant: AnimationVariant;
+};
+
+const swipeLeftAnimateItems: AnimationInterpolateFn<BarRectangleItem> = (
+  items: ReadonlyArray<AnimationItem<BarRectangleItem>>,
+  t: number,
+) => {
+  if (items == null) return [];
+  if (t === 1) {
+    return items;
+  }
+  return items.flatMap((item, i) => {
+    if (!item) return [];
+    if (item.status === 'removed') {
+      const neighbour = items[i + 1];
+      if (!neighbour || neighbour.status === 'added') {
+        // can't calculate the gap
+        return [item.prev];
+      }
+      const gap = Math.abs(item.prev.x - neighbour.prev.x);
+      // animate removed items to the left, out of the chart
+      return [
+        {
+          ...item.prev,
+          x: interpolate(item.prev.x, item.prev.x - gap, t),
+        },
+      ];
+    }
+    if (item.status === 'matched') {
+      return [
+        {
+          ...item.next,
+          x: interpolate(item.prev.x, item.next.x, t),
+          y: interpolate(item.prev.y, item.next.y, t),
+          width: interpolate(item.prev.width, item.next.width, t),
+          height: interpolate(item.prev.height, item.next.height, t),
+        },
+      ];
+    }
+    // added
+    const { next } = item;
+    return [{ ...next, height: interpolate(0, next.height, t), y: interpolate(next.stackedBarStart, next.y, t) }];
+  });
+};
+
+const swipeBottomAnimateItems: AnimationInterpolateFn<BarRectangleItem> = (
+  items: ReadonlyArray<AnimationItem<BarRectangleItem>> | null,
+  t: number,
+) => {
+  if (items == null) return [];
+  if (t === 1) {
+    return items;
+  }
+  return items.flatMap((item, i) => {
+    if (!item) return [];
+    if (item.status === 'removed') {
+      const neighbour = items[i + 1];
+      if (!neighbour || neighbour.status === 'added') {
+        // can't calculate the gap
+        return [item.prev];
+      }
+      const gap = Math.abs(item.prev.y - neighbour.prev.y);
+      // animate removed items downward, out of the chart
+      return [
+        {
+          ...item.prev,
+          y: interpolate(item.prev.y, item.prev.y + gap, t),
+        },
+      ];
+    }
+    if (item.status === 'matched') {
+      return [
+        {
+          ...item.next,
+          x: interpolate(item.prev.x, item.next.x, t),
+          y: interpolate(item.prev.y, item.next.y, t),
+          width: interpolate(item.prev.width, item.next.width, t),
+          height: interpolate(item.prev.height, item.next.height, t),
+        },
+      ];
+    }
+    // added
+    const { next } = item;
+    return [{ ...next, width: interpolate(0, next.width, t), x: interpolate(next.stackedBarStart, next.x, t) }];
+  });
 };
 
 export default function AnimatedBarTimeSeriesExample(props: Partial<ControlsType>) {
   const matchStrategy = props.matchStrategy ?? 'index';
   const windowStart = normalizeWindowStart(props.windowStart ?? 0);
+  const animationVariant = props.animationVariant ?? 'default';
+  const layout = props.layout ?? 'horizontal';
 
   const data = getCircularWindowData(windowStart);
 
   const matchProp: typeof matchByIndex | AnimationMatchBy<{ payload?: unknown }> =
     matchStrategy === 'dataKey' ? matchByDataKey('label') : matchByIndex;
+
+  const animationInterpolateFn =
+    animationVariant === 'custom'
+      ? layout === 'horizontal'
+        ? swipeLeftAnimateItems
+        : swipeBottomAnimateItems
+      : undefined;
 
   return (
     <BarChart
@@ -52,7 +149,7 @@ export default function AnimatedBarTimeSeriesExample(props: Partial<ControlsType
       responsive
       data={data}
       margin={{ top: 20, right: 30, left: 20, bottom: 5 }}
-      layout={props.layout}
+      layout={layout}
     >
       <CartesianGrid strokeDasharray="3 3" />
       <XAxis allowDataOverflow type="auto" />
@@ -66,6 +163,7 @@ export default function AnimatedBarTimeSeriesExample(props: Partial<ControlsType
         fillOpacity={0.6}
         animationDuration={props.animationDuration}
         animationMatchBy={matchProp}
+        animationInterpolateFn={animationInterpolateFn}
       />
     </BarChart>
   );
@@ -77,6 +175,7 @@ export function AnimatedBarTimeSeriesExampleControls({ onChange }: { onChange: (
     windowStart: 0,
     layout: 'horizontal',
     animationDuration: 1200,
+    animationVariant: 'default',
   });
 
   const [isStreaming, setIsStreaming] = useState(false);
@@ -117,6 +216,7 @@ export function AnimatedBarTimeSeriesExampleControls({ onChange }: { onChange: (
   const streamingToggleId = useId();
   const layoutId = useId();
   const animationDurationId = useId();
+  const animationVariantId = useId();
 
   return (
     <form>
@@ -149,6 +249,21 @@ export function AnimatedBarTimeSeriesExampleControls({ onChange }: { onChange: (
               >
                 <option value="index">matchByIndex (default)</option>
                 <option value="dataKey">matchByDataKey(&apos;time&apos;)</option>
+              </select>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <label htmlFor={animationVariantId}>animationInterpolateFn</label>
+            </td>
+            <td style={{ padding: '0 1ex' }}>
+              <select
+                id={animationVariantId}
+                value={state.animationVariant}
+                onChange={e => handleChange({ animationVariant: e.target.value as AnimationVariant })}
+              >
+                <option value="default">default</option>
+                <option value="custom">custom (swipe)</option>
               </select>
             </td>
           </tr>

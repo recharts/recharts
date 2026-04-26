@@ -847,7 +847,7 @@ function RectanglesWithAnimation({
   return (
     <BarLabelListProvider showLabels={!isAnimating} rects={data}>
       <AnimatedItems
-        animationInput={props}
+        animationInput={data}
         animationIdPrefix="recharts-bar-"
         items={data}
         previousItemsRef={previousRectanglesRef}

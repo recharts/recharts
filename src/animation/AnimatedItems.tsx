@@ -189,6 +189,7 @@ export function AnimatedItems<T>(props: AnimatedItemsProps<T>) {
     >
       {(t: number) => {
         const isEntrance = rawPrevItems == null;
+        // TODO performance; how does the matching work with 10k items? Can we skip interpolation and just jump to final state after some threshold?
         const stepData = items == null ? items : animationInterpolateFn(animationItems, t);
         const canUpdate = shouldUpdatePreviousRef ? shouldUpdatePreviousRef(t) : t > 0;
         if (canUpdate) {
