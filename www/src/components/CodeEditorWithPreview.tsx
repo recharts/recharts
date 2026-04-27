@@ -92,7 +92,7 @@ export function CodeEditorWithPreview<T>({
   const [codeToRun, setCodeToRun] = useState<string | null>(null);
   const [Runner, setRunner] = useState<any>(null);
   const [activeTool, setActiveTool] = useState<ToolType>(defaultTool);
-  const [controlsState, setControlsState] = useSessionStorageState(encodeURIComponent(stackBlitzTitle), null);
+  const [controlsState, setControlsState] = useSessionStorageState<T | null>(encodeURIComponent(stackBlitzTitle), null);
 
   // Lazy load react-runner when entering edit mode
   useEffect(() => {
