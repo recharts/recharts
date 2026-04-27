@@ -264,6 +264,9 @@ interface LineProps<DataPointType = any, DataValueType = any>
    * If set a ReactElement, the shape of line can be customized.
    * If set a function, the function will be called to render customized shape.
    *
+   * During animations the shape receives additional props: `t`, `isAnimating`, and `isEntrance`.
+   * When a custom shape is provided, the built-in stroke-dasharray entrance animation is skipped.
+   *
    * @example <Line dataKey="value" shape={CustomizedShapeComponent} />
    * @example <Line dataKey="value" shape={renderShapeFunction} />
    */

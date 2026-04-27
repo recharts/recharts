@@ -1,6 +1,7 @@
 import React, { useState, useCallback, useId } from 'react';
 import { generateMockData, RechartsDevtools } from '@recharts/devtools';
 import {
+  AreaPointItem,
   Line,
   CartesianGrid,
   XAxis,
@@ -12,10 +13,10 @@ import {
   ComposedChart,
   Bar,
   Scatter,
+  BarRectangleItem,
+  ScatterPointItem,
 } from 'recharts';
 import type { AnimationMatchByProp, LinePointItem } from 'recharts';
-import { AreaPointItem } from '../../../../../src/state/selectors/areaSelectors.ts';
-import { BarRectangleItem, ScatterPointItem } from '../../../../../src';
 
 const dataSmall = generateMockData(5, 42);
 const dataLarge = generateMockData(15, 99);

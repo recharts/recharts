@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useId, useRef, useState } from 'react';
 import type { AnimationItem, AnimationMatchBy, BarRectangleItem } from 'recharts';
 import {
+  AnimationInterpolateFn,
   Bar,
   BarChart,
   CartesianGrid,
@@ -10,10 +11,9 @@ import {
   Tooltip,
   XAxis,
   YAxis,
+  interpolate,
 } from 'recharts';
 import { generateMockData } from '@recharts/devtools';
-import { interpolate } from '../../../../../src/util/DataUtils.ts';
-import { AnimationInterpolateFn } from '../../../../../src';
 
 const WINDOW = 6;
 const DATA_LENGTH = 30;
@@ -42,14 +42,11 @@ type ControlsType = {
 };
 
 const swipeLeftAnimateItems: AnimationInterpolateFn<BarRectangleItem> = (
-  items: ReadonlyArray<AnimationItem<BarRectangleItem>>,
+  items: ReadonlyArray<AnimationItem<BarRectangleItem>> | null,
   t: number,
 ) => {
   if (items == null) return [];
-  if (t === 1) {
-    return items;
-  }
-  return items.flatMap((item, i) => {
+  return items.flatMap((item, i): ReadonlyArray<BarRectangleItem> => {
     if (!item) return [];
     if (item.status === 'removed') {
       const neighbour = items[i + 1];
@@ -88,10 +85,7 @@ const swipeBottomAnimateItems: AnimationInterpolateFn<BarRectangleItem> = (
   t: number,
 ) => {
   if (items == null) return [];
-  if (t === 1) {
-    return items;
-  }
-  return items.flatMap((item, i) => {
+  return items.flatMap((item, i): ReadonlyArray<BarRectangleItem> => {
     if (!item) return [];
     if (item.status === 'removed') {
       const neighbour = items[i + 1];

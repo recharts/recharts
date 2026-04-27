@@ -52,6 +52,10 @@ export type AnimationItem<T> =
 
 /**
  * A function that interpolates animation items at a given time.
+ * This function receives an array of changes, and must "unwrap" them
+ * and interpolate appropriate values and return the result which Recharts will then render.
+ *
+ * @see {@link https://recharts.github.io/en-US/guide/animations/ Animations guide}
  *
  * @param items The tagged animation items describing what changed, or `null` on the very first render
  *   (entrance animation). Each item is self-describing:

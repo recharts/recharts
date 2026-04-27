@@ -580,7 +580,7 @@ describe('Area animation', () => {
   });
 
   describe('shape prop', () => {
-    function CustomShape(props: { t?: number; isAnimating?: boolean; isEntrance?: boolean; points?: unknown[] }) {
+    function CustomShape(props: { t?: number; isAnimating?: boolean; isEntrance?: boolean }) {
       return (
         <path
           className="custom-area-shape"
