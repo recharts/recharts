@@ -484,6 +484,45 @@ describe('Scatter Animation', () => {
     });
   });
 
+  describe('shape prop', () => {
+    function CustomShape(props: { t?: number; isAnimating?: boolean; isEntrance?: boolean }) {
+      return (
+        <path
+          className="custom-scatter-shape"
+          data-t={props.t}
+          data-is-animating={String(props.isAnimating)}
+          data-is-entrance={String(props.isEntrance)}
+        />
+      );
+    }
+
+    const renderShapeTestCase = createSelectorTestCase(({ children }: { children?: ReactNode }) => (
+      <ScatterChart width={100} height={100}>
+        {/* eslint-disable-next-line react/jsx-no-bind */}
+        <Scatter data={PageData} dataKey="uv" animationEasing="linear" shape={CustomShape} />
+        {children}
+      </ScatterChart>
+    ));
+
+    it('should pass t, isAnimating, isEntrance props to custom shape', async () => {
+      const { container, animationManager } = renderShapeTestCase();
+
+      await animationManager.setAnimationProgress(0.5);
+      const shapeDuringAnimation = container.querySelector('.custom-scatter-shape');
+      assertNotNull(shapeDuringAnimation);
+      expect(shapeDuringAnimation.getAttribute('data-t')).toBe('0.5');
+      expect(shapeDuringAnimation.getAttribute('data-is-animating')).toBe('true');
+      expect(shapeDuringAnimation.getAttribute('data-is-entrance')).toBe('true');
+
+      await animationManager.completeAnimation();
+      const shapeAfterAnimation = container.querySelector('.custom-scatter-shape');
+      assertNotNull(shapeAfterAnimation);
+      expect(shapeAfterAnimation.getAttribute('data-t')).toBe('1');
+      expect(shapeAfterAnimation.getAttribute('data-is-animating')).toBe('false');
+      expect(shapeAfterAnimation.getAttribute('data-is-entrance')).toBe('false');
+    });
+  });
+
   describe('with <YAxis width="auto" /> sibling', () => {
     const renderTestCase = createSelectorTestCase(({ children }) => (
       <ScatterChart width={100} height={100}>

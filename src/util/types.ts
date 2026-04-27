@@ -1333,15 +1333,15 @@ export type DotType =
    */
   | ReactElement<SVGProps<SVGElement>>;
 
+export interface ShapeAnimationProps {
+  t?: number;
+  isAnimating?: boolean;
+  isEntrance?: boolean;
+}
+
 export type ActiveShape<PropsType = Record<string, any>, ElementType = SVGElement> =
   | ReactElement<SVGProps<ElementType>>
-  | ((
-      props: PropsType & {
-        t?: number;
-        isAnimating?: boolean;
-        isEntrance?: boolean;
-      },
-    ) => ReactElement | null | undefined)
+  | ((props: PropsType & ShapeAnimationProps) => ReactElement | null | undefined)
   | SVGProps<ElementType>
   | boolean;
 

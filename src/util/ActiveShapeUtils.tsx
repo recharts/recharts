@@ -8,6 +8,7 @@ import { Sector } from '../shape/Sector';
 import { Layer } from '../container/Layer';
 import { Symbols, SymbolsProps } from '../shape/Symbols';
 import { Curve } from '../shape/Curve';
+import { ShapeAnimationProps } from './types';
 
 /**
  * This is an abstraction for rendering a user defined prop for a customized shape in several forms.
@@ -45,6 +46,11 @@ function defaultPropTransformer<OptionType, ExtraProps, ShapePropsType>(
 
 function isSymbolsProps(shapeType: ShapeType, _elementProps: unknown): _elementProps is SymbolsProps {
   return shapeType === 'symbols';
+}
+
+function stripShapeAnimationProps<PropsType extends ShapeAnimationProps>(props: PropsType): Omit<PropsType, keyof ShapeAnimationProps> {
+  const { t, isAnimating, isEntrance, ...propsWithoutAnimationState } = props;
+  return propsWithoutAnimationState;
 }
 
 function ShapeSelector<ShapePropsType extends React.JSX.IntrinsicAttributes>({
@@ -89,9 +95,10 @@ export function Shape<OptionType, ExtraProps, ShapePropsType extends React.JSX.I
   ...props
 }: ShapeProps<OptionType, ExtraProps>) {
   let shape: React.JSX.Element;
+  const propsWithoutAnimationState = stripShapeAnimationProps(props as ExtraProps & ShapeAnimationProps);
   if (isValidElement(option)) {
     // @ts-expect-error we can't know the type of cloned element props
-    shape = cloneElement(option, { ...props, ...getPropsFromShapeOption(option) });
+    shape = cloneElement(option, { ...propsWithoutAnimationState, ...getPropsFromShapeOption(option) });
   } else if (typeof option === 'function') {
     /*
      * So AI insist that we should render this as a React component so that shape functions can use hooks
@@ -106,10 +113,10 @@ export function Shape<OptionType, ExtraProps, ShapePropsType extends React.JSX.I
      */
     shape = option(props, props.index);
   } else if (isPlainObject(option) && typeof option !== 'boolean') {
-    const nextProps: ShapePropsType = defaultPropTransformer(option, props);
+    const nextProps: ShapePropsType = defaultPropTransformer(option, propsWithoutAnimationState);
     shape = <ShapeSelector<ShapePropsType> shapeType={shapeType} elementProps={nextProps} />;
   } else {
-    const elementProps = props as unknown as ShapePropsType;
+    const elementProps = propsWithoutAnimationState as unknown as ShapePropsType;
     shape = <ShapeSelector<ShapePropsType> shapeType={shapeType} elementProps={elementProps} />;
   }
 

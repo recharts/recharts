@@ -34,6 +34,7 @@ import {
   LegendType,
   PolarViewBoxRequired,
   PresentationAttributesAdaptChildEvent,
+  ShapeAnimationProps,
   TickItem,
   TooltipType,
 } from '../util/types';
@@ -76,7 +77,7 @@ export type RadialBarDataItem = SectorProps &
 
 type RadialBarBackground = boolean | (ActiveShape<SectorProps> & ZIndexable);
 
-type RadialBarSectorsProps = {
+type RadialBarSectorsProps = ShapeAnimationProps & {
   sectors: ReadonlyArray<RadialBarDataItem>;
   allOtherRadialBarProps: InternalProps;
   showLabels: boolean;
@@ -117,7 +118,7 @@ function RadialBarLabelListProvider({
   );
 }
 
-function RadialBarSectors({ sectors, allOtherRadialBarProps, showLabels }: RadialBarSectorsProps) {
+function RadialBarSectors({ sectors, allOtherRadialBarProps, showLabels, t, isAnimating, isEntrance }: RadialBarSectorsProps) {
   const { shape, activeShape, cornerRadius, id, ...others } = allOtherRadialBarProps;
   const baseProps = svgPropertiesNoEvents(others);
 
@@ -156,6 +157,7 @@ function RadialBarSectors({ sectors, allOtherRadialBarProps, showLabels }: Radia
           className: `recharts-radial-bar-sector ${entry.className}`,
           forceCornerRadius: others.forceCornerRadius,
           cornerIsExternal: others.cornerIsExternal,
+          ...(typeof (isActive ? activeShape : shape) === 'function' ? { t, isAnimating, isEntrance } : {}),
           isActive,
           option: isActive ? activeShape : shape,
           index: i,
@@ -244,7 +246,16 @@ function SectorsWithAnimation({
       animationInterpolateFn={animationInterpolateFn}
       animationMatchBy={props.animationMatchBy}
     >
-      {stepData => <RadialBarSectors sectors={stepData} allOtherRadialBarProps={props} showLabels={!isAnimating} />}
+      {(stepData, t, isEntrance) => (
+        <RadialBarSectors
+          sectors={stepData}
+          allOtherRadialBarProps={props}
+          showLabels={!isAnimating}
+          t={t}
+          isAnimating={isAnimating || t < 1}
+          isEntrance={isEntrance}
+        />
+      )}
     </AnimatedItems>
   );
 }

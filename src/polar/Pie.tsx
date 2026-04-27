@@ -26,6 +26,7 @@ import {
   GeometrySector,
   LegendType,
   PresentationAttributesAdaptChildEvent,
+  ShapeAnimationProps,
   TooltipType,
 } from '../util/types';
 import { Shape } from '../util/ActiveShapeUtils';
@@ -184,7 +185,7 @@ export type PieSectorDataItem = PiePresentationProps &
     cornerRadius: number | undefined;
   };
 
-export type PieSectorShapeProps = PieSectorDataItem & { isActive: boolean; index: number };
+export type PieSectorShapeProps = PieSectorDataItem & ShapeAnimationProps & { isActive: boolean; index: number };
 export type PieShape = ReactNode | ((props: PieSectorShapeProps, index: number) => React.ReactElement);
 
 interface PieEvents {
@@ -408,7 +409,7 @@ function SetPiePayloadLegend(props: { children?: ReactNode; id: GraphicalItemId 
   return <SetPolarLegendPayload legendPayload={legendPayload} />;
 }
 
-type PieSectorsProps = {
+type PieSectorsProps = ShapeAnimationProps & {
   sectors: Readonly<PieSectorDataItem[]>;
   /**
    * @deprecated
@@ -665,7 +666,8 @@ function PieLabelList({
 }
 
 function PieSectors(props: PieSectorsProps) {
-  const { sectors, activeShape, inactiveShape: inactiveShapeProp, allOtherPieProps, shape, id } = props;
+  const { sectors, activeShape, inactiveShape: inactiveShapeProp, allOtherPieProps, shape, id, t, isAnimating, isEntrance } =
+    props;
 
   const activeIndex = useAppSelector(selectActiveTooltipIndex);
   const activeDataKey = useAppSelector(selectActiveTooltipDataKey);
@@ -700,10 +702,12 @@ function PieSectors(props: PieSectorsProps) {
           graphicalItemMatches;
         const inactiveShape = activeIndex ? inactiveShapeProp : null;
         const sectorOptions = activeShape && isActive ? activeShape : inactiveShape;
+        const shapeOption = shape ?? sectorOptions;
         const sectorProps = {
           ...entry,
           stroke: entry.stroke,
           tabIndex: -1,
+          ...(typeof shapeOption === 'function' ? { t, isAnimating, isEntrance } : {}),
           [DATA_ITEM_INDEX_ATTRIBUTE_NAME]: i,
           [DATA_ITEM_GRAPHICAL_ITEM_ID_ATTRIBUTE_NAME]: id,
         };
@@ -718,7 +722,7 @@ function PieSectors(props: PieSectorsProps) {
             onMouseLeave={onMouseLeaveFromContext(entry, i)}
             onClick={onClickFromContext(entry, i)}
           >
-            <Shape option={shape ?? sectorOptions} index={i} shapeType="sector" isActive={isActive} {...sectorProps} />
+            <Shape option={shapeOption} index={i} shapeType="sector" isActive={isActive} {...sectorProps} />
           </Layer>
         );
       })}
@@ -941,7 +945,7 @@ function SectorsWithAnimation({
         animationInterpolateFn={animationInterpolateFn}
         animationMatchBy={props.animationMatchBy}
       >
-        {stepData => (
+        {(stepData, t, isEntrance) => (
           <Layer>
             <PieSectors
               sectors={stepData}
@@ -950,6 +954,9 @@ function SectorsWithAnimation({
               allOtherPieProps={props}
               shape={props.shape}
               id={id}
+              t={t}
+              isAnimating={isAnimating || t < 1}
+              isEntrance={isEntrance}
             />
           </Layer>
         )}

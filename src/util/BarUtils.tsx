@@ -1,6 +1,6 @@
 import * as React from 'react';
 import invariant from 'tiny-invariant';
-import { ActiveShape, DataKey } from './types';
+import { ActiveShape, DataKey, ShapeAnimationProps } from './types';
 import { Props as RectangleProps } from '../shape/Rectangle';
 import { BarShapeProps } from '../cartesian/Bar';
 import { Shape } from './ActiveShapeUtils';
@@ -16,7 +16,8 @@ export type BarRectangleProps = {
   height?: number;
   index: number;
   dataKey: DataKey<any> | undefined;
-} & Omit<RectangleProps, 'onAnimationStart' | 'onAnimationEnd'>;
+} & ShapeAnimationProps &
+  Omit<RectangleProps, 'onAnimationStart' | 'onAnimationEnd'>;
 
 export function BarRectangle(props: BarRectangleProps) {
   return (

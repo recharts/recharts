@@ -28,6 +28,7 @@ import {
   DataProvider,
   LegendType,
   PresentationAttributesAdaptChildEvent,
+  ShapeAnimationProps,
   TooltipType,
   TrapezoidViewBox,
 } from '../util/types';
@@ -224,7 +225,7 @@ export type Props<DataPointType = any, DataValueType = any> = FunnelSvgProps &
 
 type RealFunnelData = unknown;
 
-type FunnelTrapezoidsProps = {
+type FunnelTrapezoidsProps = ShapeAnimationProps & {
   trapezoids: ReadonlyArray<FunnelTrapezoidItem>;
   allOtherFunnelProps: InternalProps;
 };
@@ -300,7 +301,7 @@ function FunnelLabelListProvider({
 }
 
 function FunnelTrapezoids(props: FunnelTrapezoidsProps) {
-  const { trapezoids, allOtherFunnelProps } = props;
+  const { trapezoids, allOtherFunnelProps, t, isAnimating, isEntrance } = props;
   const activeItemIndex = useAppSelector(state =>
     selectActiveIndex(state, 'item', state.tooltip.settings.trigger, undefined),
   );
@@ -335,6 +336,7 @@ function FunnelTrapezoids(props: FunnelTrapezoidsProps) {
           option: trapezoidOptions,
           isActive: isActiveIndex,
           stroke: entry.stroke,
+          ...(typeof trapezoidOptions === 'function' ? { t, isAnimating, isEntrance } : {}),
         };
 
         return (
@@ -419,9 +421,15 @@ function TrapezoidsWithAnimation({
         animationInterpolateFn={animationInterpolateFn}
         animationMatchBy={props.animationMatchBy}
       >
-        {stepData => (
+        {(stepData, t, isEntrance) => (
           <Layer>
-            <FunnelTrapezoids trapezoids={stepData} allOtherFunnelProps={props} />
+            <FunnelTrapezoids
+              trapezoids={stepData}
+              allOtherFunnelProps={props}
+              t={t}
+              isAnimating={isAnimating || t < 1}
+              isEntrance={isEntrance}
+            />
           </Layer>
         )}
       </AnimatedItems>

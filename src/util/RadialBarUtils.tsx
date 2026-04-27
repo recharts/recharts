@@ -1,5 +1,6 @@
 import * as React from 'react';
 import { RadialBarDataItem, RadialBarProps } from '../polar/RadialBar';
+import { ShapeAnimationProps } from './types';
 import { Shape } from './ActiveShapeUtils';
 
 export function parseCornerRadius(cornerRadius: string | number | undefined): number | undefined {
@@ -10,7 +11,7 @@ export function parseCornerRadius(cornerRadius: string | number | undefined): nu
   return cornerRadius;
 }
 
-export interface RadialBarSectorProps extends RadialBarDataItem {
+export interface RadialBarSectorProps extends RadialBarDataItem, ShapeAnimationProps {
   index: number;
   option: RadialBarProps['activeShape'];
   isActive: boolean;

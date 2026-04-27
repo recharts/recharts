@@ -29,6 +29,7 @@ import {
   NonEmptyArray,
   NullableCoordinate,
   PresentationAttributesAdaptChildEvent,
+  ShapeAnimationProps,
   SymbolType,
   TickItem,
   TrapezoidViewBox,
@@ -426,7 +427,7 @@ const SetScatterTooltipEntrySettings = React.memo(
   },
 );
 
-type ScatterSymbolsProps = {
+type ScatterSymbolsProps = ShapeAnimationProps & {
   points: ReadonlyArray<ScatterPointItem>;
   showLabels: boolean;
   allOtherScatterProps: InternalProps;
@@ -532,7 +533,7 @@ function ScatterLabelListProvider({
 }
 
 function ScatterSymbols(props: ScatterSymbolsProps) {
-  const { points, allOtherScatterProps } = props;
+  const { points, allOtherScatterProps, t, isAnimating, isEntrance } = props;
   const { shape, activeShape, dataKey } = allOtherScatterProps;
   const { id, ...allOtherPropsWithoutId } = allOtherScatterProps;
 
@@ -564,6 +565,7 @@ function ScatterSymbols(props: ScatterSymbolsProps) {
           ...baseProps,
           ...entry,
           index: i,
+          ...(typeof option === 'function' ? { t, isAnimating, isEntrance } : {}),
           [DATA_ITEM_GRAPHICAL_ITEM_ID_ATTRIBUTE_NAME]: String(id),
         };
 
@@ -643,9 +645,16 @@ function SymbolsWithAnimation({
         animationInterpolateFn={animationInterpolateFn}
         animationMatchBy={props.animationMatchBy}
       >
-        {stepData => (
+        {(stepData, t, isEntrance) => (
           <Layer>
-            <ScatterSymbols points={stepData} allOtherScatterProps={props} showLabels={!isAnimating} />
+            <ScatterSymbols
+              points={stepData}
+              allOtherScatterProps={props}
+              showLabels={!isAnimating}
+              t={t}
+              isAnimating={isAnimating || t < 1}
+              isEntrance={isEntrance}
+            />
           </Layer>
         )}
       </AnimatedItems>

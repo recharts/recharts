@@ -44,6 +44,7 @@ import {
   DataKey,
   LegendType,
   PresentationAttributesAdaptChildEvent,
+  ShapeAnimationProps,
   TickItem,
   TooltipType,
   TrapezoidViewBox,
@@ -118,7 +119,8 @@ export interface BarRectangleItem extends RectangleProps {
   originalDataIndex: number;
 }
 
-export type BarShapeProps = BarRectangleItem & {
+export type BarShapeProps = BarRectangleItem &
+  ShapeAnimationProps & {
   isActive: boolean;
   index: number;
   option?: ActiveShape<BarShapeProps, SVGPathElement> | undefined;
@@ -604,7 +606,7 @@ function BarRectangleWithActiveState(props: {
   entry: BarRectangleItem;
   index: number;
   dataKey: DataKey<any> | undefined;
-}) {
+} & ShapeAnimationProps) {
   const { shape, activeBar, baseProps, entry, index, dataKey } = props;
   const activeIndex = useAppSelector(selectActiveTooltipIndex);
   const activeDataKey = useAppSelector(selectActiveTooltipDataKey);
@@ -684,6 +686,13 @@ function BarRectangleWithActiveState(props: {
       option={option}
       index={index}
       dataKey={dataKey}
+      {...(typeof option === 'function'
+        ? {
+            t: props.t,
+            isAnimating: props.isAnimating,
+            isEntrance: props.isEntrance,
+          }
+        : {})}
       onTransitionEnd={handleTransitionEnd}
     />
   );
@@ -704,7 +713,7 @@ function BarRectangleNeverActive(props: {
   entry: BarRectangleItem;
   index: number;
   dataKey: DataKey<any> | undefined;
-}) {
+} & ShapeAnimationProps) {
   const { shape, baseProps, entry, index, dataKey } = props;
   return (
     <BarRectangle
@@ -715,6 +724,13 @@ function BarRectangleNeverActive(props: {
       option={shape}
       index={index}
       dataKey={dataKey}
+      {...(typeof shape === 'function'
+        ? {
+            t: props.t,
+            isAnimating: props.isAnimating,
+            isEntrance: props.isEntrance,
+          }
+        : {})}
     />
   );
 }
@@ -722,7 +738,10 @@ function BarRectangleNeverActive(props: {
 function BarRectangles({
   data,
   props,
-}: {
+  t,
+  isAnimating,
+  isEntrance,
+}: ShapeAnimationProps & {
   data: ReadonlyArray<BarRectangleItem> | undefined;
   props: BarRectanglesProps;
 }) {
@@ -766,6 +785,9 @@ function BarRectangles({
                 entry={entry}
                 index={i}
                 dataKey={dataKey}
+                t={t}
+                isAnimating={isAnimating}
+                isEntrance={isEntrance}
               />
             ) : (
               /*
@@ -777,7 +799,16 @@ function BarRectangles({
                * and can skip the tree reconciliation for its children too.
                * Because we can't call hooks conditionally, we need to have a separate component for that.
                */
-              <BarRectangleNeverActive shape={shape} baseProps={baseProps} entry={entry} index={i} dataKey={dataKey} />
+              <BarRectangleNeverActive
+                shape={shape}
+                baseProps={baseProps}
+                entry={entry}
+                index={i}
+                dataKey={dataKey}
+                t={t}
+                isAnimating={isAnimating}
+                isEntrance={isEntrance}
+              />
             )}
           </BarStackClipLayer>
         );
@@ -860,9 +891,15 @@ function RectanglesWithAnimation({
         animationInterpolateFn={animationInterpolateFn}
         animationMatchBy={props.animationMatchBy}
       >
-        {stepData => (
+        {(stepData, t, isEntrance) => (
           <Layer>
-            <BarRectangles props={props} data={stepData} />
+            <BarRectangles
+              props={props}
+              data={stepData}
+              t={t}
+              isAnimating={isAnimating || t < 1}
+              isEntrance={isEntrance}
+            />
           </Layer>
         )}
       </AnimatedItems>

@@ -333,6 +333,45 @@ describe('Pie animation', () => {
     });
   });
 
+  describe('shape prop', () => {
+    function CustomShape(props: { t?: number; isAnimating?: boolean; isEntrance?: boolean }) {
+      return (
+        <path
+          className="custom-pie-shape"
+          data-t={props.t}
+          data-is-animating={String(props.isAnimating)}
+          data-is-entrance={String(props.isEntrance)}
+        />
+      );
+    }
+
+    const renderShapeTestCase = createSelectorTestCase(({ children }: { children?: ReactNode }) => (
+      <PieChart width={100} height={100}>
+        {/* eslint-disable-next-line react/jsx-no-bind */}
+        <Pie data={smallerData} dataKey="amt" isAnimationActive animationEasing="linear" shape={CustomShape} />
+        {children}
+      </PieChart>
+    ));
+
+    it('should pass t, isAnimating, isEntrance props to custom shape', async () => {
+      const { container, animationManager } = renderShapeTestCase();
+
+      await animationManager.setAnimationProgress(0.5);
+      const shapeDuringAnimation = container.querySelector('.custom-pie-shape');
+      assertNotNull(shapeDuringAnimation);
+      expect(shapeDuringAnimation.getAttribute('data-t')).toBe('0.5');
+      expect(shapeDuringAnimation.getAttribute('data-is-animating')).toBe('true');
+      expect(shapeDuringAnimation.getAttribute('data-is-entrance')).toBe('true');
+
+      await animationManager.completeAnimation();
+      const shapeAfterAnimation = container.querySelector('.custom-pie-shape');
+      assertNotNull(shapeAfterAnimation);
+      expect(shapeAfterAnimation.getAttribute('data-t')).toBe('1');
+      expect(shapeAfterAnimation.getAttribute('data-is-animating')).toBe('false');
+      expect(shapeAfterAnimation.getAttribute('data-is-entrance')).toBe('false');
+    });
+  });
+
   describe('when changing dataKey prop', () => {
     const MyTestCase = ({ children }: { children: ReactNode }) => {
       const [dataKey, setDataKey] = useState('amt');
