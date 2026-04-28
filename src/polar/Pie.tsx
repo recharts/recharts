@@ -275,11 +275,12 @@ interface PieProps<DataPointType = any, DataValueType = any>
    * Determines how Recharts pairs old data points with new data points
    * to create smooth transitions.
    *
-   * - `matchAppend` (default): match sequentially by index and animate newly appended items in
-   * - `'index'`: match by array position with proportional stretching
+   * - `matchAppend` (default): match sequentially by index and treat newly appended items as new
+   * - `matchByIndex`: match by array position with proportional stretching
    * - `matchByDataKey('someKey')`: match by a data key from the payload
    * - Custom function `(item, index) => key`: match by the returned key
    *
+   * @defaultValue matchAppend
    * @see matchByIndex
    * @see matchByDataKey
    * @see matchAppend
@@ -668,8 +669,17 @@ function PieLabelList({
 }
 
 function PieSectors(props: PieSectorsProps) {
-  const { sectors, activeShape, inactiveShape: inactiveShapeProp, allOtherPieProps, shape, id, t, isAnimating, isEntrance } =
-    props;
+  const {
+    sectors,
+    activeShape,
+    inactiveShape: inactiveShapeProp,
+    allOtherPieProps,
+    shape,
+    id,
+    t,
+    isAnimating,
+    isEntrance,
+  } = props;
 
   const activeIndex = useAppSelector(selectActiveTooltipIndex);
   const activeDataKey = useAppSelector(selectActiveTooltipDataKey);

@@ -179,10 +179,12 @@ interface AreaProps<DataPointType = any, DataValueType = any>
    * Determines how Recharts pairs old data points with new data points
    * to create smooth transitions.
    *
-   * - `'index'` (default): match by array position with proportional stretching
+   * - `matchByIndex` (default): match by array position with proportional stretching
+   * - `matchAppend`: match sequentially by index and treat newly appended items as new
    * - `matchByDataKey('someKey')`: match by a data key from the payload
    * - Custom function `(item, index) => key`: match by the returned key
    *
+   * @defaultValue matchByIndex
    * @see matchByIndex
    * @see matchByDataKey
    * @see matchAppend

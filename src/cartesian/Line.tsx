@@ -51,7 +51,7 @@ import {
   AnimationItem,
   useAnimationCallbacks,
 } from '../animation/AnimatedItems';
-import { AnimationMatchByProp } from '../animation/matchBy';
+import { AnimationMatchByProp, matchByIndex } from '../animation/matchBy';
 import { resolveDefaultProps } from '../util/resolveDefaultProps';
 import { usePlotArea } from '../hooks';
 import { WithIdRequired } from '../util/useUniqueId';
@@ -177,10 +177,12 @@ interface LineProps<DataPointType = any, DataValueType = any>
    * Determines how Recharts pairs old data points with new data points
    * to create smooth transitions.
    *
-   * - `'index'` (default): match by array position with proportional stretching
+   * - `matchByIndex` (default): match by array position with proportional stretching
+   * - `matchAppend`: match sequentially by index and treat newly appended items as new
    * - `matchByDataKey('someKey')`: match by a data key from the payload
    * - Custom function `(item, index) => key`: match by the returned key
    *
+   * @defaultValue matchByIndex
    * @see matchByIndex
    * @see matchByDataKey
    * @see matchAppend
@@ -354,7 +356,7 @@ export type Props<DataPointType = any, ValueAxisType = any> = LineSvgProps & Lin
 const computeLegendPayloadFromAreaData = (props: Props): ReadonlyArray<LegendPayload> => {
   const { dataKey, name, stroke, legendType, hide } = props;
   const payload =
-    props.shape === defaultLineProps.shape
+    props.shape === LineDrawShape
       ? (() => {
           const propsWithoutShape = { ...props };
           delete propsWithoutShape.shape;
@@ -629,6 +631,7 @@ function CurveWithAnimation({
 
   // Guard for totalLength: don't update previousPointsRef before SVG path is measured
   const shouldUpdatePreviousRef = useCallback((t: number) => t > 0 && totalLength > 0, [totalLength]);
+  const matchStrategy = props.animationMatchBy ?? matchByIndex;
 
   return (
     <LineLabelListProvider points={points} showLabels={showLabels}>
@@ -645,7 +648,7 @@ function CurveWithAnimation({
         onAnimationStart={handleAnimationStart}
         onAnimationEnd={handleAnimationEnd}
         animationInterpolateFn={animationInterpolateFn}
-        animationMatchBy={props.animationMatchBy}
+        animationMatchBy={matchStrategy}
         shouldUpdatePreviousRef={shouldUpdatePreviousRef}
       >
         {(stepData, t, isEntrance) => {
