@@ -338,7 +338,7 @@ interface ScatterProps<DataPointType = any, DataValueType = any>
    * - `matchByDataKey('someKey')`: match by a data key from the payload
    * - Custom function `(item, index) => key`: match by the returned key
    *
-   * @defaultValue matchAppend
+   * @defaultValue append
    * @see matchByIndex
    * @see matchByDataKey
    * @see matchAppend
@@ -824,6 +824,7 @@ export const defaultScatterProps = {
   xAxisId: 0,
   yAxisId: 0,
   zAxisId: 0,
+  animationMatchBy: matchAppend,
   label: false,
   line: false,
   legendType: 'circle',

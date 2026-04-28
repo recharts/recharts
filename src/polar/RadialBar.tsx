@@ -315,7 +315,7 @@ interface InternalRadialBarProps<DataPointType = any, DataValueType = any>
    * - `matchByDataKey('someKey')`: match by a data key from the payload
    * - Custom function `(item, index) => key`: match by the returned key
    *
-   * @defaultValue matchAppend
+   * @defaultValue append
    * @see matchByIndex
    * @see matchByDataKey
    * @see matchAppend
@@ -610,6 +610,7 @@ function RadialBarImpl(props: WithIdRequired<PropsWithDefaults>) {
 
 export const defaultRadialBarProps = {
   angleAxisId: 0,
+  animationMatchBy: matchAppend,
   animationBegin: 0,
   animationDuration: 1500,
   animationEasing: 'ease',

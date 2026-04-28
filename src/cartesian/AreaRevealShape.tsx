@@ -127,10 +127,11 @@ export function AreaRevealShape(
     layout: layoutProp,
     isRange,
     stroke,
-    connectNulls = false,
+    connectNulls,
     ...restProps
   } = props;
   const layout: CartesianLayout = layoutProp === 'vertical' ? 'vertical' : 'horizontal';
+  const finalConnectNulls = connectNulls ?? false;
   const clipId = useId();
 
   const { id, baseLine, ...propsWithoutIdBaseline } = restProps;
@@ -141,7 +142,7 @@ export function AreaRevealShape(
       {...restProps}
       id={id}
       baseLine={baseLine}
-      connectNulls={connectNulls}
+      connectNulls={finalConnectNulls}
       stroke="none"
       className="recharts-area-area"
       layout={layout}
@@ -154,7 +155,7 @@ export function AreaRevealShape(
       className="recharts-area-curve"
       layout={layout}
       type={restProps.type}
-      connectNulls={connectNulls}
+      connectNulls={finalConnectNulls}
       fill="none"
       stroke={stroke}
       points={restProps.points}
@@ -167,7 +168,7 @@ export function AreaRevealShape(
       className="recharts-area-curve"
       layout={layout}
       type={restProps.type}
-      connectNulls={connectNulls}
+      connectNulls={finalConnectNulls}
       fill="none"
       stroke={stroke}
       points={baseLine}

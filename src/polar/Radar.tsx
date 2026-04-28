@@ -103,7 +103,7 @@ interface RadarProps<DataPointType = any, DataValueType = any>
    * - `matchByDataKey('someKey')`: match by a data key from the payload
    * - Custom function `(item, index) => key`: match by the returned key
    *
-   * @defaultValue matchByIndex
+   * @defaultValue index
    * @see matchByIndex
    * @see matchByDataKey
    * @see matchAppend
@@ -585,6 +585,7 @@ function RenderPolygon(props: InternalRadarProps) {
 export const defaultRadarProps = {
   activeDot: true,
   angleAxisId: 0,
+  animationMatchBy: matchByIndex,
   animationBegin: 0,
   animationDuration: 1500,
   animationEasing: 'ease',

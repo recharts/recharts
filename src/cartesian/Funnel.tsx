@@ -117,7 +117,7 @@ interface FunnelProps<DataPointType = any, DataValueType = any>
    * - `matchByDataKey('someKey')`: match by a data key from the payload
    * - Custom function `(item, index) => key`: match by the returned key
    *
-   * @defaultValue matchAppend
+   * @defaultValue append
    * @see matchByIndex
    * @see matchByDataKey
    * @see matchAppend
@@ -463,6 +463,7 @@ const getRealWidthHeight = (customWidth: number | string | undefined, offset: Ch
 };
 
 export const defaultFunnelProps = {
+  animationMatchBy: matchAppend,
   animationBegin: 400,
   animationDuration: 1500,
   animationEasing: 'ease',

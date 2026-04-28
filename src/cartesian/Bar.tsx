@@ -302,7 +302,7 @@ interface BarProps<DataPointType, ValueAxisType> extends DataConsumer<DataPointT
    * - `matchByDataKey('someKey')`: match by a data key from the payload
    * - Custom function `(item, index) => key`: match by the returned key
    *
-   * @defaultValue matchAppend
+   * @defaultValue append
    * @see matchByIndex
    * @see matchByDataKey
    * @see matchAppend
@@ -970,6 +970,7 @@ class BarWithState extends PureComponent<InternalProps> {
 
 export const defaultBarProps = {
   activeBar: false,
+  animationMatchBy: matchAppend,
   animationBegin: 0,
   animationDuration: 400,
   animationEasing: 'ease',

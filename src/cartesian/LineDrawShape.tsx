@@ -158,9 +158,10 @@ export function LineDrawShape(props: CurveProps & LineShapeAnimationProps): Reac
     isEntrance,
     visibleLength,
     strokeDasharray: userStrokeDasharray,
-    connectNulls = false,
+    connectNulls,
     ...curveProps
   } = props;
+  const finalConnectNulls = connectNulls ?? false;
 
   let strokeDasharray: string | undefined;
 
@@ -172,5 +173,5 @@ export function LineDrawShape(props: CurveProps & LineShapeAnimationProps): Reac
     strokeDasharray = String(userStrokeDasharray);
   }
 
-  return <Curve {...curveProps} connectNulls={connectNulls} strokeDasharray={strokeDasharray} />;
+  return <Curve {...curveProps} connectNulls={finalConnectNulls} strokeDasharray={strokeDasharray} />;
 }
