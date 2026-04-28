@@ -585,7 +585,6 @@ function RenderPolygon(props: InternalRadarProps) {
 export const defaultRadarProps = {
   activeDot: true,
   angleAxisId: 0,
-  animationMatchBy: matchByIndex,
   animationBegin: 0,
   animationDuration: 1500,
   animationEasing: 'ease',

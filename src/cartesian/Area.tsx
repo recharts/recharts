@@ -748,7 +748,6 @@ class AreaWithState extends PureComponent<InternalProps> {
 
 export const defaultAreaProps = {
   activeDot: true,
-  animationMatchBy: matchByIndex,
   animationBegin: 0,
   animationDuration: 1500,
   animationEasing: 'ease',

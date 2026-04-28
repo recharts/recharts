@@ -463,7 +463,6 @@ const getRealWidthHeight = (customWidth: number | string | undefined, offset: Ch
 };
 
 export const defaultFunnelProps = {
-  animationMatchBy: matchAppend,
   animationBegin: 400,
   animationDuration: 1500,
   animationEasing: 'ease',

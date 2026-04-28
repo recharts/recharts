@@ -970,7 +970,6 @@ class BarWithState extends PureComponent<InternalProps> {
 
 export const defaultBarProps = {
   activeBar: false,
-  animationMatchBy: matchAppend,
   animationBegin: 0,
   animationDuration: 400,
   animationEasing: 'ease',

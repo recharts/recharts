@@ -824,7 +824,6 @@ export const defaultScatterProps = {
   xAxisId: 0,
   yAxisId: 0,
   zAxisId: 0,
-  animationMatchBy: matchAppend,
   label: false,
   line: false,
   legendType: 'circle',

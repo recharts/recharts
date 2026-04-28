@@ -980,7 +980,6 @@ function SectorsWithAnimation({
 }
 
 export const defaultPieProps = {
-  animationMatchBy: matchAppend,
   animationBegin: 400,
   animationDuration: 1500,
   animationEasing: 'ease',

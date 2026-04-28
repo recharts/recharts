@@ -610,7 +610,6 @@ function RadialBarImpl(props: WithIdRequired<PropsWithDefaults>) {
 
 export const defaultRadialBarProps = {
   angleAxisId: 0,
-  animationMatchBy: matchAppend,
   animationBegin: 0,
   animationDuration: 1500,
   animationEasing: 'ease',

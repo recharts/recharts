@@ -755,7 +755,6 @@ class LineWithState extends Component<InternalProps> {
 export const defaultLineProps = {
   activeDot: true,
   animateNewValues: true,
-  animationMatchBy: matchByIndex,
   animationBegin: 0,
   animationDuration: 1500,
   animationEasing: 'ease',
