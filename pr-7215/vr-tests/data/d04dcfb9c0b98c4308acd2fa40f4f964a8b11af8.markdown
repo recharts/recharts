@@ -1,0 +1,149 @@
+# Instructions
+
+- Following Playwright test failed.
+- Explain why, be concise, respect Playwright best practices.
+- Provide a snippet of code with the fix, if possible.
+
+# Test info
+
+- Name: tests/www/ComposedChartApiExamples.spec-vr.tsx >> ScatterAndLineOfBestFit
+- Location: test-vr/tests/www/ComposedChartApiExamples.spec-vr.tsx:29:5
+
+# Error details
+
+```
+Error: expect(locator).toHaveScreenshot(expected) failed
+
+Locator: locator('#root').locator('internal:control=component')
+  432 pixels (ratio 0.01 of all image pixels) are different.
+
+Call log:
+  - Expect "toHaveScreenshot" with timeout 10000ms
+    - verifying given screenshot expectation
+  - waiting for locator('#root').locator('internal:control=component')
+    - locator resolved to <div width="100%" class="recharts-wrapper">…</div>
+  - taking element screenshot
+    - disabled all CSS animations
+  - waiting for fonts to load...
+  - fonts loaded
+  - attempting scroll into view action
+    - waiting for element to be stable
+  - 516 pixels (ratio 0.01 of all image pixels) are different.
+  - waiting 100ms before taking screenshot
+  - waiting for locator('#root').locator('internal:control=component')
+    - locator resolved to <div width="100%" class="recharts-wrapper">…</div>
+  - taking element screenshot
+    - disabled all CSS animations
+  - waiting for fonts to load...
+  - fonts loaded
+  - attempting scroll into view action
+    - waiting for element to be stable
+  - 64 pixels (ratio 0.01 of all image pixels) are different.
+  - waiting 250ms before taking screenshot
+  - waiting for locator('#root').locator('internal:control=component')
+    - locator resolved to <div width="100%" class="recharts-wrapper">…</div>
+  - taking element screenshot
+    - disabled all CSS animations
+  - waiting for fonts to load...
+  - fonts loaded
+  - attempting scroll into view action
+    - waiting for element to be stable
+  - captured a stable screenshot
+  - 432 pixels (ratio 0.01 of all image pixels) are different.
+
+```
+
+# Page snapshot
+
+```yaml
+- generic [active] [ref=e1]:
+  - generic [ref=e3]:
+    - list [ref=e5]:
+      - listitem [ref=e6]:
+        - img "blue legend icon" [ref=e7]
+        - text: blue
+      - listitem [ref=e9]:
+        - img "red legend icon" [ref=e10]
+        - text: red
+    - application [ref=e12]:
+      - generic [ref=e88]:
+        - generic [ref=e89]:
+          - generic [ref=e91]: "0"
+          - generic [ref=e93]: "2500"
+          - generic [ref=e95]: "5000"
+          - generic [ref=e97]: "7500"
+          - generic [ref=e99]: "10000"
+        - generic [ref=e100]: Index
+        - generic [ref=e101]:
+          - generic [ref=e103]: 0ms
+          - generic [ref=e105]: 500ms
+          - generic [ref=e107]: 1000ms
+          - generic [ref=e109]: 1500ms
+          - generic [ref=e111]: 2000ms
+        - generic [ref=e112]: Time
+  - generic [ref=e113]: "500"
+```
+
+# Test source
+
+```ts
+  1  | import * as React from 'react';
+  2  | import { test, expect } from '@playwright/experimental-ct-react';
+  3  | 
+  4  | import ComposedChartExample from '../../../www/src/docs/apiExamples/ComposedChart/ComposedChartExample';
+  5  | import LineBarAreaComposedChart from '../../../www/src/docs/exampleComponents/ComposedChart/LineBarAreaComposedChart';
+  6  | import SameDataComposedChart from '../../../www/src/docs/exampleComponents/ComposedChart/SameDataComposedChart';
+  7  | import VerticalComposedChart from '../../../www/src/docs/exampleComponents/ComposedChart/VerticalComposedChart';
+  8  | import ComposedChartWithAxisLabels from '../../../www/src/docs/exampleComponents/ComposedChart/ComposedChartWithAxisLabels';
+  9  | import ScatterAndLineOfBestFit from '../../../www/src/docs/exampleComponents/ComposedChart/ScatterAndLineOfBestFit';
+  10 | import BandedChart from '../../../www/src/docs/exampleComponents/ComposedChart/BandedChart';
+  11 | import ComposedChartNavExample from '../../../www/src/docs/exampleComponents/ComposedChart/ComposedChartNavExample';
+  12 | import TargetPriceChart from '../../../www/src/docs/exampleComponents/ComposedChart/TargetPriceChart';
+  13 | 
+  14 | test('TargetPriceChart', async ({ mount }) => {
+  15 |   const component = await mount(<TargetPriceChart isAnimationActive={false} defaultIndex={50} />);
+  16 |   await expect(component).toHaveScreenshot();
+  17 | });
+  18 | 
+  19 | test('ComposedChartNavExample', async ({ mount }) => {
+  20 |   const component = await mount(<ComposedChartNavExample />);
+  21 |   await expect(component).toHaveScreenshot();
+  22 | });
+  23 | 
+  24 | test('BandedChart', async ({ mount }) => {
+  25 |   const component = await mount(<BandedChart />);
+  26 |   await expect(component).toHaveScreenshot();
+  27 | });
+  28 | 
+  29 | test('ScatterAndLineOfBestFit', async ({ mount }) => {
+  30 |   const component = await mount(<ScatterAndLineOfBestFit />);
+> 31 |   await expect(component).toHaveScreenshot();
+     |                           ^ Error: expect(locator).toHaveScreenshot(expected) failed
+  32 | });
+  33 | 
+  34 | test('ComposedChartWithAxisLabels', async ({ mount }) => {
+  35 |   const component = await mount(<ComposedChartWithAxisLabels />);
+  36 |   await expect(component).toHaveScreenshot();
+  37 | });
+  38 | 
+  39 | test('VerticalComposedChart', async ({ mount }) => {
+  40 |   const component = await mount(<VerticalComposedChart />);
+  41 |   await expect(component).toHaveScreenshot();
+  42 | });
+  43 | 
+  44 | test('SameDataComposedChart', async ({ mount }) => {
+  45 |   const component = await mount(<SameDataComposedChart />);
+  46 |   await expect(component).toHaveScreenshot();
+  47 | });
+  48 | 
+  49 | test('LineBarAreaComposedChart', async ({ mount }) => {
+  50 |   const component = await mount(<LineBarAreaComposedChart />);
+  51 |   await expect(component).toHaveScreenshot();
+  52 | });
+  53 | 
+  54 | test('ComposedChartExample', async ({ mount }) => {
+  55 |   const component = await mount(<ComposedChartExample isAnimationActive={false} />);
+  56 |   await expect(component).toHaveScreenshot();
+  57 | });
+  58 | 
+```
