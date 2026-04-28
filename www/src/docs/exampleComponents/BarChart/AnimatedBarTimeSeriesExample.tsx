@@ -130,12 +130,10 @@ export default function AnimatedBarTimeSeriesExample(props: Partial<ControlsType
   const matchProp: typeof matchByIndex | AnimationMatchBy<{ payload?: unknown }> =
     matchStrategy === 'dataKey' ? matchByDataKey('label') : matchByIndex;
 
-  const animationInterpolateFn =
-    animationVariant === 'custom'
-      ? layout === 'horizontal'
-        ? swipeLeftAnimateItems
-        : swipeBottomAnimateItems
-      : undefined;
+  let animationInterpolateFn: typeof swipeLeftAnimateItems | undefined;
+  if (animationVariant === 'custom') {
+    animationInterpolateFn = layout === 'horizontal' ? swipeLeftAnimateItems : swipeBottomAnimateItems;
+  }
 
   return (
     <BarChart

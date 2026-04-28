@@ -8,9 +8,9 @@ import { GraphicalItemId } from '../state/graphicalItemsSlice';
 
 export type ScatterShapeProps = ScatterPointItem &
   ShapeAnimationProps & {
-  index: number;
-  [DATA_ITEM_GRAPHICAL_ITEM_ID_ATTRIBUTE_NAME]: GraphicalItemId;
-};
+    index: number;
+    [DATA_ITEM_GRAPHICAL_ITEM_ID_ATTRIBUTE_NAME]: GraphicalItemId;
+  };
 
 export function ScatterSymbol({
   option,

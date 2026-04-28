@@ -168,8 +168,7 @@ export const commentSimilarityExceptions: ReadonlyArray<CommentSimilarityGroup> 
   {
     components: ['Area'],
     props: ['shape'],
-    reason:
-      'Area shape JSDoc includes clip-path reveal behavior that is specific to Area.',
+    reason: 'Area shape JSDoc includes clip-path reveal behavior that is specific to Area.',
   },
   {
     components: ['Line'],

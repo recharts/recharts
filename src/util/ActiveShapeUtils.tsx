@@ -48,7 +48,9 @@ function isSymbolsProps(shapeType: ShapeType, _elementProps: unknown): _elementP
   return shapeType === 'symbols';
 }
 
-function stripShapeAnimationProps<PropsType extends ShapeAnimationProps>(props: PropsType): Omit<PropsType, keyof ShapeAnimationProps> {
+function stripShapeAnimationProps<PropsType extends ShapeAnimationProps>(
+  props: PropsType,
+): Omit<PropsType, keyof ShapeAnimationProps> {
   const { t, isAnimating, isEntrance, ...propsWithoutAnimationState } = props;
   return propsWithoutAnimationState;
 }
