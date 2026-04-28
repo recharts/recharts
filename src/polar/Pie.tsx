@@ -46,7 +46,7 @@ import {
 import { SetPolarLegendPayload } from '../state/SetLegendPayload';
 import { DATA_ITEM_GRAPHICAL_ITEM_ID_ATTRIBUTE_NAME, DATA_ITEM_INDEX_ATTRIBUTE_NAME } from '../util/Constants';
 import { AnimatedItems, AnimationInterpolateFn, useAnimationCallbacks } from '../animation/AnimatedItems';
-import { AnimationMatchByProp } from '../animation/matchBy';
+import { AnimationMatchByProp, matchAppend } from '../animation/matchBy';
 import { RequiresDefaultProps, resolveDefaultProps } from '../util/resolveDefaultProps';
 import { RegisterGraphicalItemId } from '../context/RegisterGraphicalItemId';
 import { SetPolarGraphicalItem } from '../state/SetGraphicalItem';
@@ -275,7 +275,8 @@ interface PieProps<DataPointType = any, DataValueType = any>
    * Determines how Recharts pairs old data points with new data points
    * to create smooth transitions.
    *
-   * - `'index'` (default): match by array position with proportional stretching
+   * - `matchAppend` (default): match sequentially by index and animate newly appended items in
+   * - `'index'`: match by array position with proportional stretching
    * - `matchByDataKey('someKey')`: match by a data key from the payload
    * - Custom function `(item, index) => key`: match by the returned key
    *
@@ -373,6 +374,7 @@ interface PieProps<DataPointType = any, DataValueType = any>
   /**
    * The custom shape of a Pie Sector.
    * Can also be used to render active sector by checking isActive.
+   * During animations, the function shape also receives `t`, `isAnimating`, and `isEntrance`.
    * If undefined, renders {@link Sector} shape.
    */
   shape?: PieShape;
@@ -943,7 +945,7 @@ function SectorsWithAnimation({
         onAnimationStart={handleAnimationStart}
         onAnimationEnd={handleAnimationEnd}
         animationInterpolateFn={animationInterpolateFn}
-        animationMatchBy={props.animationMatchBy}
+        animationMatchBy={props.animationMatchBy ?? matchAppend}
       >
         {(stepData, t, isEntrance) => (
           <Layer>

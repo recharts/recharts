@@ -120,7 +120,16 @@ export interface AreaShapeAnimationProps {
 export function AreaRevealShape(
   props: CurveProps & AreaShapeAnimationProps & { layout?: LayoutType; isRange?: boolean },
 ): React.ReactElement | null {
-  const { t = 1, isAnimating = false, isEntrance = false, layout: layoutProp, isRange, stroke, ...restProps } = props;
+  const {
+    t = 1,
+    isAnimating = false,
+    isEntrance = false,
+    layout: layoutProp,
+    isRange,
+    stroke,
+    connectNulls = false,
+    ...restProps
+  } = props;
   const layout: CartesianLayout = layoutProp === 'vertical' ? 'vertical' : 'horizontal';
   const clipId = useId();
 
@@ -128,7 +137,15 @@ export function AreaRevealShape(
   const strokeSvgProps = svgPropertiesNoEvents(propsWithoutIdBaseline);
 
   const fillCurve = (
-    <Curve {...restProps} id={id} baseLine={baseLine} stroke="none" className="recharts-area-area" layout={layout} />
+    <Curve
+      {...restProps}
+      id={id}
+      baseLine={baseLine}
+      connectNulls={connectNulls}
+      stroke="none"
+      className="recharts-area-area"
+      layout={layout}
+    />
   );
 
   const strokeCurve = stroke !== 'none' && (
@@ -137,7 +154,7 @@ export function AreaRevealShape(
       className="recharts-area-curve"
       layout={layout}
       type={restProps.type}
-      connectNulls={restProps.connectNulls}
+      connectNulls={connectNulls}
       fill="none"
       stroke={stroke}
       points={restProps.points}
@@ -150,7 +167,7 @@ export function AreaRevealShape(
       className="recharts-area-curve"
       layout={layout}
       type={restProps.type}
-      connectNulls={restProps.connectNulls}
+      connectNulls={connectNulls}
       fill="none"
       stroke={stroke}
       points={baseLine}

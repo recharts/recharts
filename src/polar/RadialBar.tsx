@@ -53,7 +53,7 @@ import { useAppSelector } from '../state/hooks';
 import { selectActiveTooltipIndex } from '../state/selectors/tooltipSelectors';
 import { SetPolarLegendPayload } from '../state/SetLegendPayload';
 import { AnimatedItems, AnimationInterpolateFn, useAnimationCallbacks } from '../animation/AnimatedItems';
-import { AnimationMatchByProp } from '../animation/matchBy';
+import { AnimationMatchByProp, matchAppend } from '../animation/matchBy';
 import { AxisId } from '../state/cartesianAxisSlice';
 import { RegisterGraphicalItemId } from '../context/RegisterGraphicalItemId';
 import { RadialBarSettings } from '../state/types/RadialBarSettings';
@@ -244,7 +244,7 @@ function SectorsWithAnimation({
       onAnimationStart={handleAnimationStart}
       onAnimationEnd={handleAnimationEnd}
       animationInterpolateFn={animationInterpolateFn}
-      animationMatchBy={props.animationMatchBy}
+      animationMatchBy={props.animationMatchBy ?? matchAppend}
     >
       {(stepData, t, isEntrance) => (
         <RadialBarSectors
@@ -303,7 +303,8 @@ interface InternalRadialBarProps<DataPointType = any, DataValueType = any>
    * Determines how Recharts pairs old data points with new data points
    * to create smooth transitions.
    *
-   * - `'index'` (default): match by array position with proportional stretching
+   * - `matchAppend` (default): match sequentially by index and animate newly appended items in
+   * - `'index'`: match by array position with proportional stretching
    * - `matchByDataKey('someKey')`: match by a data key from the payload
    * - Custom function `(item, index) => key`: match by the returned key
    *
@@ -422,6 +423,12 @@ interface InternalRadialBarProps<DataPointType = any, DataValueType = any>
    * @defaultValue 0
    */
   radiusAxisId?: AxisId;
+  /**
+   * If set a ReactElement, the shape of radial bar sectors can be customized.
+   * If set a function, the function will be called to render customized shape.
+   * During animations, the function shape also receives `t`, `isAnimating`, and `isEntrance`.
+   * By default, renders a sector.
+   */
   shape?: ActiveShape<RadialBarSectorProps, SVGPathElement>;
   stackId?: string | number;
   tooltipType?: TooltipType;

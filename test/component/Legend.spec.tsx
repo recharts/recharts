@@ -4,6 +4,7 @@ import { describe, expect, it, test, vi } from 'vitest';
 import {
   Area,
   AreaChart,
+  AreaRevealShape,
   Bar,
   BarChart,
   ComposedChart,
@@ -1906,6 +1907,7 @@ describe('<Legend />', () => {
             payload: {
               dataKey: 'percent',
               name: '%',
+              shape: AreaRevealShape,
               activeDot: true,
               animationBegin: 0,
               animationDuration: 1500,

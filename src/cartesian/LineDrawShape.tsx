@@ -152,7 +152,15 @@ function computeAnimatedStrokeDasharray(
  * @see {@link https://recharts.github.io/en-US/guide/animations Animation guide}
  */
 export function LineDrawShape(props: CurveProps & LineShapeAnimationProps): React.ReactElement | null {
-  const { t, isAnimating, isEntrance, visibleLength, strokeDasharray: userStrokeDasharray, ...curveProps } = props;
+  const {
+    t,
+    isAnimating,
+    isEntrance,
+    visibleLength,
+    strokeDasharray: userStrokeDasharray,
+    connectNulls = false,
+    ...curveProps
+  } = props;
 
   let strokeDasharray: string | undefined;
 
@@ -164,5 +172,5 @@ export function LineDrawShape(props: CurveProps & LineShapeAnimationProps): Reac
     strokeDasharray = String(userStrokeDasharray);
   }
 
-  return <Curve {...curveProps} strokeDasharray={strokeDasharray} />;
+  return <Curve {...curveProps} connectNulls={connectNulls} strokeDasharray={strokeDasharray} />;
 }

@@ -109,6 +109,7 @@ export const apiCates = [
       'matchByIndex',
       'matchByDataKey',
       'matchAppend',
+      'interpolate',
       'AnimationProgressProvider',
       'useAnimationProgress',
       'AreaRevealShape',

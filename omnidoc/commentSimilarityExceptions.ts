@@ -169,7 +169,18 @@ export const commentSimilarityExceptions: ReadonlyArray<CommentSimilarityGroup> 
     components: ['Area'],
     props: ['shape'],
     reason:
-      'Area shape JSDoc includes animation-specific details (t, isAnimating, isEntrance props and clipPath skipping) that other components do not have yet',
+      'Area shape JSDoc includes clip-path reveal behavior that is specific to Area.',
+  },
+  {
+    components: ['Line'],
+    props: ['shape'],
+    reason: 'Line shape JSDoc includes stroke-dasharray reveal behavior that is specific to Line.',
+  },
+  {
+    components: ['Bar', 'Funnel', 'RadialBar'],
+    props: ['shape'],
+    reason:
+      'These graphical items document animation-state props on function shapes, which do not apply to non-animated shape props elsewhere.',
   },
   {
     components: ['Pie'],

@@ -47,7 +47,7 @@ import { RequiresDefaultProps, resolveDefaultProps } from '../util/resolveDefaul
 import { usePlotArea } from '../hooks';
 import { svgPropertiesNoEvents } from '../util/svgPropertiesNoEvents';
 import { AnimatedItems, AnimationInterpolateFn, useAnimationCallbacks } from '../animation/AnimatedItems';
-import { AnimationMatchByProp } from '../animation/matchBy';
+import { AnimationMatchByProp, matchAppend } from '../animation/matchBy';
 import { GraphicalItemId } from '../state/graphicalItemsSlice';
 import { RegisterGraphicalItemId } from '../context/RegisterGraphicalItemId';
 import { WithIdRequired } from '../util/useUniqueId';
@@ -112,7 +112,8 @@ interface FunnelProps<DataPointType = any, DataValueType = any>
    * Determines how Recharts pairs old data points with new data points
    * to create smooth transitions.
    *
-   * - `'index'` (default): match by array position with proportional stretching
+   * - `matchAppend` (default): match sequentially by index and animate newly appended items in
+   * - `'index'`: match by array position with proportional stretching
    * - `matchByDataKey('someKey')`: match by a data key from the payload
    * - Custom function `(item, index) => key`: match by the returned key
    *
@@ -179,6 +180,8 @@ interface FunnelProps<DataPointType = any, DataValueType = any>
   /**
    * If set a ReactElement, the shape of funnel can be customized.
    * If set a function, the function will be called to render customized shape.
+   * During animations, the function shape also receives `t`, `isAnimating`, and `isEntrance`.
+   * By default, renders a trapezoid.
    */
   shape?: ActiveShape<FunnelTrapezoidItem, SVGPathElement>;
   tooltipType?: TooltipType;
@@ -419,7 +422,7 @@ function TrapezoidsWithAnimation({
         onAnimationStart={handleAnimationStart}
         onAnimationEnd={handleAnimationEnd}
         animationInterpolateFn={animationInterpolateFn}
-        animationMatchBy={props.animationMatchBy}
+        animationMatchBy={props.animationMatchBy ?? matchAppend}
       >
         {(stepData, t, isEntrance) => (
           <Layer>

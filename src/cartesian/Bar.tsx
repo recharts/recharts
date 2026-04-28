@@ -77,7 +77,7 @@ import {
   SVGPropsNoEvents,
 } from '../util/svgPropertiesNoEvents';
 import { AnimatedItems, AnimationInterpolateFn, useAnimationCallbacks } from '../animation/AnimatedItems';
-import { AnimationMatchByProp } from '../animation/matchBy';
+import { AnimationMatchByProp, matchAppend } from '../animation/matchBy';
 import { EasingInput } from '../animation/easing';
 import { WithoutId } from '../util/useUniqueId';
 import { ZIndexable, ZIndexLayer } from '../zIndex/ZIndexLayer';
@@ -121,10 +121,10 @@ export interface BarRectangleItem extends RectangleProps {
 
 export type BarShapeProps = BarRectangleItem &
   ShapeAnimationProps & {
-  isActive: boolean;
-  index: number;
-  option?: ActiveShape<BarShapeProps, SVGPathElement> | undefined;
-};
+    isActive: boolean;
+    index: number;
+    option?: ActiveShape<BarShapeProps, SVGPathElement> | undefined;
+  };
 
 interface BarProps<DataPointType, ValueAxisType> extends DataConsumer<DataPointType, ValueAxisType>, ZIndexable {
   className?: string;
@@ -204,6 +204,7 @@ interface BarProps<DataPointType, ValueAxisType> extends DataConsumer<DataPointT
   /**
    * If set a ReactElement, the shape of bar can be customized.
    * If set a function, the function will be called to render customized shape.
+   * During animations, the function shape also receives `t`, `isAnimating`, and `isEntrance`.
    * By default, renders a rectangle.
    *
    * @see {@link https://recharts.github.io/en-US/examples/CustomShapeBarChart/ Custom shape bar chart example}
@@ -296,7 +297,8 @@ interface BarProps<DataPointType, ValueAxisType> extends DataConsumer<DataPointT
    * Determines how Recharts pairs old data points with new data points
    * to create smooth transitions.
    *
-   * - `'index'` (default): match by array position with proportional stretching
+   * - `matchAppend` (default): match sequentially by index and animate newly appended items in
+   * - `'index'`: match by array position with proportional stretching
    * - `matchByDataKey('someKey')`: match by a data key from the payload
    * - Custom function `(item, index) => key`: match by the returned key
    *
@@ -599,14 +601,16 @@ function BarLabelListProvider({
   );
 }
 
-function BarRectangleWithActiveState(props: {
-  shape: ActiveShape<BarShapeProps, SVGPathElement> | undefined;
-  activeBar: ActiveShape<BarShapeProps, SVGPathElement>;
-  baseProps: WithoutId<SVGPropsNoEvents<BarRectanglesProps>>;
-  entry: BarRectangleItem;
-  index: number;
-  dataKey: DataKey<any> | undefined;
-} & ShapeAnimationProps) {
+function BarRectangleWithActiveState(
+  props: {
+    shape: ActiveShape<BarShapeProps, SVGPathElement> | undefined;
+    activeBar: ActiveShape<BarShapeProps, SVGPathElement>;
+    baseProps: WithoutId<SVGPropsNoEvents<BarRectanglesProps>>;
+    entry: BarRectangleItem;
+    index: number;
+    dataKey: DataKey<any> | undefined;
+  } & ShapeAnimationProps,
+) {
   const { shape, activeBar, baseProps, entry, index, dataKey } = props;
   const activeIndex = useAppSelector(selectActiveTooltipIndex);
   const activeDataKey = useAppSelector(selectActiveTooltipDataKey);
@@ -707,13 +711,15 @@ function BarRectangleWithActiveState(props: {
   return content;
 }
 
-function BarRectangleNeverActive(props: {
-  shape: ActiveShape<BarShapeProps, SVGPathElement> | undefined;
-  baseProps: WithoutId<SVGPropsNoEvents<BarRectanglesProps>>;
-  entry: BarRectangleItem;
-  index: number;
-  dataKey: DataKey<any> | undefined;
-} & ShapeAnimationProps) {
+function BarRectangleNeverActive(
+  props: {
+    shape: ActiveShape<BarShapeProps, SVGPathElement> | undefined;
+    baseProps: WithoutId<SVGPropsNoEvents<BarRectanglesProps>>;
+    entry: BarRectangleItem;
+    index: number;
+    dataKey: DataKey<any> | undefined;
+  } & ShapeAnimationProps,
+) {
   const { shape, baseProps, entry, index, dataKey } = props;
   return (
     <BarRectangle
@@ -889,7 +895,7 @@ function RectanglesWithAnimation({
         onAnimationStart={handleAnimationStart}
         onAnimationEnd={handleAnimationEnd}
         animationInterpolateFn={animationInterpolateFn}
-        animationMatchBy={props.animationMatchBy}
+        animationMatchBy={props.animationMatchBy ?? matchAppend}
       >
         {(stepData, t, isEntrance) => (
           <Layer>

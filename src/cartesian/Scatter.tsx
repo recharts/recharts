@@ -62,7 +62,7 @@ import { SetCartesianGraphicalItem } from '../state/SetGraphicalItem';
 import { svgPropertiesNoEvents, svgPropertiesNoEventsFromUnknown } from '../util/svgPropertiesNoEvents';
 import { useViewBox } from '../context/chartLayoutContext';
 import { AnimatedItems, AnimationInterpolateFn, useAnimationCallbacks } from '../animation/AnimatedItems';
-import { AnimationMatchByProp } from '../animation/matchBy';
+import { AnimationMatchByProp, matchAppend } from '../animation/matchBy';
 import { WithIdRequired, WithoutId } from '../util/useUniqueId';
 import { GraphicalItemId } from '../state/graphicalItemsSlice';
 import { ZIndexable, ZIndexLayer } from '../zIndex/ZIndexLayer';
@@ -265,6 +265,7 @@ interface ScatterProps<DataPointType = any, DataValueType = any>
    * - Can be one of the predefined shapes as a string, which will be passed to {@link Symbols} component.
    * - If set a ReactElement, the shape of point can be customized.
    * - If set a function, the function will be called to render customized shape.
+   * - During animations, the function shape also receives `t`, `isAnimating`, and `isEntrance`.
    * @defaultValue circle
    *
    * @example <Scatter shape={CustomizedShapeComponent} />
@@ -332,7 +333,8 @@ interface ScatterProps<DataPointType = any, DataValueType = any>
    * Determines how Recharts pairs old data points with new data points
    * to create smooth transitions.
    *
-   * - `'index'` (default): match by array position with proportional stretching
+   * - `matchAppend` (default): match sequentially by index and animate newly appended items in
+   * - `'index'`: match by array position with proportional stretching
    * - `matchByDataKey('someKey')`: match by a data key from the payload
    * - Custom function `(item, index) => key`: match by the returned key
    *
@@ -643,7 +645,7 @@ function SymbolsWithAnimation({
         onAnimationStart={handleAnimationStart}
         onAnimationEnd={handleAnimationEnd}
         animationInterpolateFn={animationInterpolateFn}
-        animationMatchBy={props.animationMatchBy}
+        animationMatchBy={props.animationMatchBy ?? matchAppend}
       >
         {(stepData, t, isEntrance) => (
           <Layer>

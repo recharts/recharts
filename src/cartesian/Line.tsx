@@ -353,6 +353,14 @@ export type Props<DataPointType = any, ValueAxisType = any> = LineSvgProps & Lin
 
 const computeLegendPayloadFromAreaData = (props: Props): ReadonlyArray<LegendPayload> => {
   const { dataKey, name, stroke, legendType, hide } = props;
+  const payload =
+    props.shape === defaultLineProps.shape
+      ? (() => {
+          const propsWithoutShape = { ...props };
+          delete propsWithoutShape.shape;
+          return propsWithoutShape;
+        })()
+      : props;
   return [
     {
       inactive: hide,
@@ -360,7 +368,7 @@ const computeLegendPayloadFromAreaData = (props: Props): ReadonlyArray<LegendPay
       type: legendType,
       color: stroke,
       value: getTooltipNameProp(name, dataKey),
-      payload: props,
+      payload,
     },
   ];
 };
