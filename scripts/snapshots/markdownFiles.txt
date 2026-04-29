@@ -1,7 +1,6 @@
 [
   "AGENTS.md",
   "CHANGELOG.md",
-  "CLAUDE.md",
   "CONTRIBUTING.md",
   "DEVELOPING.md",
   "README.md",
