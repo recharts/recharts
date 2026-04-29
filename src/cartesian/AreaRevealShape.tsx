@@ -1,11 +1,11 @@
 import * as React from 'react';
-import { useId } from 'react';
 import { isNumber } from '../util/DataUtils';
 import { Curve, BaseLineType, Props as CurveProps } from '../shape/Curve';
 import { CartesianLayout, LayoutType } from '../util/types';
 import { isWellBehavedNumber } from '../util/isWellBehavedNumber';
 import { Layer } from '../container/Layer';
 import { svgPropertiesNoEvents } from '../util/svgPropertiesNoEvents';
+import { useId } from '../util/useId';
 
 /**
  * Props for the clip-path rect computation.
