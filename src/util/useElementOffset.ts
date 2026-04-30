@@ -3,36 +3,25 @@ import { useCallback, useRef, useState } from 'react';
 const EPS = 1;
 
 /**
- * TODO this documentation does not reflect what this hook is doing, update it.
- * Stores the `offsetHeight`, `offsetLeft`, `offsetTop`, and `offsetWidth` of a DOM element.
+ * Stores DOMRect dimensions from `getBoundingClientRect()`.
+ *
+ * These values are viewport-relative and may be fractional, matching DOMRect semantics.
  */
 export type ElementOffset = {
   /**
-   * Height of an element, including vertical padding and borders, as an integer.
-   *
-   * Typically, offsetHeight is a measurement in pixels of the element's CSS height, including any borders, padding, and horizontal scrollbars (if rendered). It does not include the height of pseudo-elements such as ::before or ::after
-   *
-   * https://developer.mozilla.org/en-US/docs/Web/API/HTMLElement/offsetHeight
+   * Element border-box height in CSS pixels, from `DOMRect.height`.
    */
   height: number;
   /**
-   * Number of pixels that the upper left corner of the current element is offset to the left within the HTMLElement.offsetParent node
-   *
-   * https://developer.mozilla.org/en-US/docs/Web/API/HTMLElement/offsetLeft
+   * Distance in CSS pixels from the viewport's left edge to the element's border-box left edge, from `DOMRect.left`.
    */
   left: number;
   /**
-   * Distance from the outer border of the current element (including its margin) to the top padding edge of the offsetParent, the closest positioned ancestor element.
-   *
-   * https://developer.mozilla.org/en-US/docs/Web/API/HTMLElement/offsetTop
+   * Distance in CSS pixels from the viewport's top edge to the element's border-box top edge, from `DOMRect.top`.
    */
   top: number;
   /**
-   * Layout width of an element as an integer.
-   *
-   * Typically, offsetWidth is a measurement in pixels of the element's CSS width, including any borders, padding, and vertical scrollbars (if rendered). It does not include the width of pseudo-elements such as ::before or ::after.
-   *
-   * https://developer.mozilla.org/en-US/docs/Web/API/HTMLElement/offsetWidth
+   * Element border-box width in CSS pixels, from `DOMRect.width`.
    */
   width: number;
 };
@@ -65,14 +54,17 @@ export function useElementOffset(extraDependencies: ReadonlyArray<unknown> = [])
             top: rect.top,
             width: rect.width,
           };
-          if (
-            Math.abs(box.height - lastBoundingBox.height) > EPS ||
-            Math.abs(box.left - lastBoundingBox.left) > EPS ||
-            Math.abs(box.top - lastBoundingBox.top) > EPS ||
-            Math.abs(box.width - lastBoundingBox.width) > EPS
-          ) {
-            setLastBoundingBox({ height: box.height, left: box.left, top: box.top, width: box.width });
-          }
+          setLastBoundingBox(previousBoundingBox => {
+            if (
+              Math.abs(box.height - previousBoundingBox.height) > EPS ||
+              Math.abs(box.left - previousBoundingBox.left) > EPS ||
+              Math.abs(box.top - previousBoundingBox.top) > EPS ||
+              Math.abs(box.width - previousBoundingBox.width) > EPS
+            ) {
+              return { height: box.height, left: box.left, top: box.top, width: box.width };
+            }
+            return previousBoundingBox;
+          });
         };
 
         updateBox();
@@ -84,7 +76,7 @@ export function useElementOffset(extraDependencies: ReadonlyArray<unknown> = [])
       }
     },
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [lastBoundingBox.width, lastBoundingBox.height, lastBoundingBox.top, lastBoundingBox.left, ...extraDependencies],
+    [...extraDependencies],
   );
   return [lastBoundingBox, updateBoundingBox];
 }

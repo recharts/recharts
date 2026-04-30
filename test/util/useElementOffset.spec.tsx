@@ -2,6 +2,7 @@ import React from 'react';
 import { act, render, screen } from '@testing-library/react';
 import { describe, expect, it, vi } from 'vitest';
 import { useElementOffset } from '../../src/util/useElementOffset';
+import { mockGetBoundingClientRect } from '../helper/mockGetBoundingClientRect';
 
 function TestComponent() {
   const [box, updateBox] = useElementOffset();
@@ -31,17 +32,7 @@ describe('useElementOffset', () => {
       render(<TestComponent />);
       const target = screen.getByTestId('target');
 
-      vi.spyOn(target, 'getBoundingClientRect').mockReturnValue({
-        bottom: 20,
-        height: 20,
-        left: 0,
-        right: 100,
-        top: 0,
-        width: 100,
-        x: 0,
-        y: 0,
-        toJSON: () => undefined,
-      });
+      mockGetBoundingClientRect({ height: 20, width: 100 });
 
       act(() => {
         resizeCallback?.([], {} as ResizeObserver);
@@ -49,17 +40,7 @@ describe('useElementOffset', () => {
 
       expect(screen.getByTestId('size')).toHaveTextContent('100x20');
 
-      vi.spyOn(target, 'getBoundingClientRect').mockReturnValue({
-        bottom: 60,
-        height: 60,
-        left: 0,
-        right: 80,
-        top: 0,
-        width: 80,
-        x: 0,
-        y: 0,
-        toJSON: () => undefined,
-      });
+      mockGetBoundingClientRect({ height: 60, width: 80 });
 
       act(() => {
         resizeCallback?.([], {} as ResizeObserver);
