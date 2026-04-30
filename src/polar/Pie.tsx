@@ -37,6 +37,7 @@ import {
 } from '../context/tooltipContext';
 import { TooltipPayload, TooltipPayloadConfiguration } from '../state/tooltipSlice';
 import { SetTooltipEntrySettings } from '../state/SetTooltipEntrySettings';
+import { Formatter } from '../component/DefaultTooltipContent';
 import {
   selectActiveTooltipDataKey,
   selectActiveTooltipGraphicalItemId,
@@ -353,6 +354,11 @@ interface PieProps<DataPointType = any, DataValueType = any>
   shape?: PieShape;
   tooltipType?: TooltipType;
   /**
+   * Formats the value displayed in the tooltip for this Pie.
+   * When set, takes precedence over the `formatter` prop on the Tooltip component.
+   */
+  formatter?: Formatter;
+  /**
    * @defaultValue 100
    */
   zIndex?: number;
@@ -426,6 +432,7 @@ const SetPieTooltipEntrySettings = React.memo(
     name,
     hide,
     tooltipType,
+    formatter,
     id,
     activeShape,
   }: Pick<
@@ -439,6 +446,7 @@ const SetPieTooltipEntrySettings = React.memo(
     | 'name'
     | 'hide'
     | 'tooltipType'
+    | 'formatter'
     | 'id'
     | 'activeShape'
   >) => {
@@ -471,6 +479,7 @@ const SetPieTooltipEntrySettings = React.memo(
         type: tooltipType,
         color: fill,
         unit: '', // why doesn't Pie support unit?
+        formatter,
         graphicalItemId: id,
       },
     };
@@ -1010,6 +1019,7 @@ function PieImpl(props: WithIdRequired<PropsWithResolvedDefaults>) {
         name={props.name}
         hide={props.hide}
         tooltipType={props.tooltipType}
+        formatter={props.formatter}
         id={id}
         activeShape={props.activeShape}
       />

@@ -39,6 +39,7 @@ import {
 } from '../context/tooltipContext';
 import { TooltipPayload, TooltipPayloadConfiguration } from '../state/tooltipSlice';
 import { SetTooltipEntrySettings } from '../state/SetTooltipEntrySettings';
+import { Formatter } from '../component/DefaultTooltipContent';
 import { ResolvedFunnelSettings, selectFunnelTrapezoids } from '../state/selectors/funnelSelectors';
 import { findAllByType } from '../util/ReactUtils';
 import { Cell } from '../component/Cell';
@@ -158,6 +159,11 @@ interface FunnelProps<DataPointType = any, DataValueType = any>
   shape?: ActiveShape<FunnelTrapezoidItem, SVGPathElement>;
   tooltipType?: TooltipType;
   /**
+   * Formats the value displayed in the tooltip for this Funnel.
+   * When set, takes precedence over the `formatter` prop on the Tooltip component.
+   */
+  formatter?: Formatter;
+  /**
    * The customized event handler of click on the area in this group
    */
   onClick?: (data: FunnelTrapezoidItem, index: number, e: React.MouseEvent<SVGPathElement>) => void;
@@ -215,12 +221,23 @@ const SetFunnelTooltipEntrySettings = React.memo(
     name,
     hide,
     tooltipType,
+    formatter,
     data,
     trapezoids,
     id,
   }: Pick<
     InternalProps,
-    'dataKey' | 'nameKey' | 'stroke' | 'strokeWidth' | 'fill' | 'name' | 'hide' | 'tooltipType' | 'data' | 'id'
+    | 'dataKey'
+    | 'nameKey'
+    | 'stroke'
+    | 'strokeWidth'
+    | 'fill'
+    | 'name'
+    | 'hide'
+    | 'tooltipType'
+    | 'formatter'
+    | 'data'
+    | 'id'
   > & {
     trapezoids: ReadonlyArray<FunnelTrapezoidItem>;
   }) => {
@@ -238,6 +255,7 @@ const SetFunnelTooltipEntrySettings = React.memo(
         type: tooltipType,
         color: fill,
         unit: '', // Funnel does not have unit, why?
+        formatter,
         graphicalItemId: id,
       },
     };
@@ -525,6 +543,7 @@ function FunnelImpl(props: WithIdRequired<RequiresDefaultProps<Props, typeof def
         name={props.name}
         hide={props.hide}
         tooltipType={props.tooltipType}
+        formatter={props.formatter}
         data={props.data}
         trapezoids={trapezoids}
         id={id}

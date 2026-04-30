@@ -50,6 +50,7 @@ import {
 } from '../util/types';
 import { BarRectangle, BarRectangleProps, MinPointSize, minPointSizeCallback } from '../util/BarUtils';
 import type { LegendPayload } from '../component/DefaultLegendContent';
+import { Formatter } from '../component/DefaultTooltipContent';
 import {
   useMouseClickItemDispatch,
   useMouseEnterItemDispatch,
@@ -162,6 +163,11 @@ interface BarProps<DataPointType, ValueAxisType> extends DataConsumer<DataPointT
    */
   name?: string | number;
   tooltipType?: TooltipType;
+  /**
+   * Formats the value displayed in the tooltip for this Bar.
+   * When set, takes precedence over the `formatter` prop on the Tooltip component.
+   */
+  formatter?: Formatter;
   /**
    * The type of icon in legend. If set to 'none', no legend item will be rendered.
    *
@@ -390,6 +396,7 @@ type InternalBarProps = {
   name?: string | number;
   dataKey?: DataKey<any>;
   tooltipType?: TooltipType;
+  formatter?: Formatter;
   maxBarSize?: number;
   shape?: ActiveShape<BarShapeProps, SVGPathElement>;
   background?: ActiveShape<BarShapeProps, SVGPathElement>;
@@ -439,11 +446,12 @@ const SetBarTooltipEntrySettings = React.memo(
     name,
     hide,
     unit,
+    formatter,
     tooltipType,
     id,
   }: Pick<
     InternalProps,
-    'dataKey' | 'stroke' | 'strokeWidth' | 'fill' | 'name' | 'hide' | 'unit' | 'tooltipType' | 'id'
+    'dataKey' | 'stroke' | 'strokeWidth' | 'fill' | 'name' | 'hide' | 'unit' | 'formatter' | 'tooltipType' | 'id'
   >) => {
     const tooltipEntrySettings: TooltipPayloadConfiguration = {
       dataDefinedOnItem: undefined,
@@ -459,6 +467,7 @@ const SetBarTooltipEntrySettings = React.memo(
         type: tooltipType,
         color: fill,
         unit,
+        formatter,
         graphicalItemId: id,
       },
     };
@@ -1164,6 +1173,7 @@ function BarFn(outsideProps: Props) {
             name={props.name}
             hide={props.hide}
             unit={props.unit}
+            formatter={props.formatter}
             tooltipType={props.tooltipType}
             id={id}
           />

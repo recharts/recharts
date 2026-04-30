@@ -45,6 +45,7 @@ import {
 } from '../context/tooltipContext';
 import { TooltipPayloadConfiguration } from '../state/tooltipSlice';
 import { SetTooltipEntrySettings } from '../state/SetTooltipEntrySettings';
+import { Formatter } from '../component/DefaultTooltipContent';
 import { BaseAxisWithScale } from '../state/selectors/axisSelectors';
 import { ChartData } from '../state/chartDataSlice';
 import { selectRadialBarLegendPayload, selectRadialBarSectors } from '../state/selectors/radialBarSelectors';
@@ -409,6 +410,11 @@ interface InternalRadialBarProps<DataPointType = any, DataValueType = any>
   stackId?: string | number;
   tooltipType?: TooltipType;
   /**
+   * Formats the value displayed in the tooltip for this RadialBar.
+   * When set, takes precedence over the `formatter` prop on the Tooltip component.
+   */
+  formatter?: Formatter;
+  /**
    * @defaultValue 300
    */
   zIndex?: number;
@@ -437,10 +443,11 @@ const SetRadialBarTooltipEntrySettings = React.memo(
     hide,
     fill,
     tooltipType,
+    formatter,
     id,
   }: Pick<
     InternalProps,
-    'dataKey' | 'sectors' | 'stroke' | 'strokeWidth' | 'name' | 'hide' | 'fill' | 'tooltipType' | 'id'
+    'dataKey' | 'sectors' | 'stroke' | 'strokeWidth' | 'name' | 'hide' | 'fill' | 'tooltipType' | 'formatter' | 'id'
   >) => {
     const tooltipEntrySettings: TooltipPayloadConfiguration = {
       dataDefinedOnItem: sectors,
@@ -457,6 +464,7 @@ const SetRadialBarTooltipEntrySettings = React.memo(
         type: tooltipType,
         color: fill,
         unit: '', // Why does RadialBar not support unit?
+        formatter,
       },
     };
     return <SetTooltipEntrySettings tooltipEntrySettings={tooltipEntrySettings} />;
@@ -569,6 +577,7 @@ function RadialBarImpl(props: WithIdRequired<PropsWithDefaults>) {
         hide={props.hide}
         fill={props.fill}
         tooltipType={props.tooltipType}
+        formatter={props.formatter}
         id={props.id}
       />
       <RadialBarWithState {...props} sectors={sectors} />

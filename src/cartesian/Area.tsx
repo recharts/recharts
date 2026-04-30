@@ -44,6 +44,7 @@ import {
 } from '../util/types';
 import { isClipDot } from '../util/ReactUtils';
 import type { LegendPayload } from '../component/DefaultLegendContent';
+import { Formatter } from '../component/DefaultTooltipContent';
 import { ActivePoints } from '../component/ActivePoints';
 import { TooltipPayloadConfiguration } from '../state/tooltipSlice';
 import { SetTooltipEntrySettings } from '../state/SetTooltipEntrySettings';
@@ -122,6 +123,7 @@ interface InternalAreaProps extends ZIndexable {
   points: ReadonlyArray<AreaPointItem>;
   stackId?: StackId;
 
+  formatter?: Formatter;
   tooltipType?: TooltipType;
   top: number;
   type?: CurveType;
@@ -284,6 +286,11 @@ interface AreaProps<DataPointType = any, DataValueType = any>
    */
   unit?: string | number;
   /**
+   * Formats the value displayed in the tooltip for this Area.
+   * When set, takes precedence over the `formatter` prop on the Tooltip component.
+   */
+  formatter?: Formatter;
+  /**
    * The id of XAxis which is corresponding to the data. Required when there are multiple XAxes.
    * @defaultValue 0
    */
@@ -352,11 +359,22 @@ const SetAreaTooltipEntrySettings = React.memo(
     name,
     hide,
     unit,
+    formatter,
     tooltipType,
     id,
   }: Pick<
     WithIdRequired<Props<DataPointType, ValueAxisType>>,
-    'dataKey' | 'data' | 'stroke' | 'strokeWidth' | 'fill' | 'name' | 'hide' | 'unit' | 'tooltipType' | 'id'
+    | 'dataKey'
+    | 'data'
+    | 'stroke'
+    | 'strokeWidth'
+    | 'fill'
+    | 'name'
+    | 'hide'
+    | 'unit'
+    | 'formatter'
+    | 'tooltipType'
+    | 'id'
   >) => {
     const tooltipEntrySettings: TooltipPayloadConfiguration = {
       dataDefinedOnItem: data,
@@ -372,6 +390,7 @@ const SetAreaTooltipEntrySettings = React.memo(
         type: tooltipType,
         color: getLegendItemColor(stroke, fill),
         unit,
+        formatter,
         graphicalItemId: id,
       },
     };
@@ -380,7 +399,17 @@ const SetAreaTooltipEntrySettings = React.memo(
 ) as <DataPointType, ValueAxisType>(
   props: Pick<
     WithIdRequired<Props<DataPointType, ValueAxisType>>,
-    'dataKey' | 'data' | 'stroke' | 'strokeWidth' | 'fill' | 'name' | 'hide' | 'unit' | 'tooltipType' | 'id'
+    | 'dataKey'
+    | 'data'
+    | 'stroke'
+    | 'strokeWidth'
+    | 'fill'
+    | 'name'
+    | 'hide'
+    | 'unit'
+    | 'formatter'
+    | 'tooltipType'
+    | 'id'
   >,
 ) => ReactElement;
 
@@ -1107,6 +1136,7 @@ function AreaFn<DataPointType, ValueAxisType>(outsideProps: Props<DataPointType,
             name={props.name}
             hide={props.hide}
             unit={props.unit}
+            formatter={props.formatter}
             tooltipType={props.tooltipType}
             id={id}
           />
