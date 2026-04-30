@@ -1,4 +1,4 @@
-import { useCallback, useState } from 'react';
+import { useCallback, useRef, useState } from 'react';
 
 const EPS = 1;
 
@@ -49,23 +49,37 @@ export type SetElementOffset = (node: HTMLElement | null) => void;
  */
 export function useElementOffset(extraDependencies: ReadonlyArray<unknown> = []): [ElementOffset, SetElementOffset] {
   const [lastBoundingBox, setLastBoundingBox] = useState<ElementOffset>({ height: 0, left: 0, top: 0, width: 0 });
+  const observerRef = useRef<ResizeObserver | null>(null);
+
   const updateBoundingBox = useCallback(
     (node: HTMLElement | null) => {
+      observerRef.current?.disconnect();
+      observerRef.current = null;
+
       if (node != null) {
-        const rect = node.getBoundingClientRect();
-        const box: ElementOffset = {
-          height: rect.height,
-          left: rect.left,
-          top: rect.top,
-          width: rect.width,
+        const updateBox = () => {
+          const rect = node.getBoundingClientRect();
+          const box: ElementOffset = {
+            height: rect.height,
+            left: rect.left,
+            top: rect.top,
+            width: rect.width,
+          };
+          if (
+            Math.abs(box.height - lastBoundingBox.height) > EPS ||
+            Math.abs(box.left - lastBoundingBox.left) > EPS ||
+            Math.abs(box.top - lastBoundingBox.top) > EPS ||
+            Math.abs(box.width - lastBoundingBox.width) > EPS
+          ) {
+            setLastBoundingBox({ height: box.height, left: box.left, top: box.top, width: box.width });
+          }
         };
-        if (
-          Math.abs(box.height - lastBoundingBox.height) > EPS ||
-          Math.abs(box.left - lastBoundingBox.left) > EPS ||
-          Math.abs(box.top - lastBoundingBox.top) > EPS ||
-          Math.abs(box.width - lastBoundingBox.width) > EPS
-        ) {
-          setLastBoundingBox({ height: box.height, left: box.left, top: box.top, width: box.width });
+
+        updateBox();
+
+        if (typeof ResizeObserver !== 'undefined') {
+          observerRef.current = new ResizeObserver(updateBox);
+          observerRef.current.observe(node);
         }
       }
     },
