@@ -1,12 +1,12 @@
 import React, { ReactNode, useState } from 'react';
-import { describe, it, expect, beforeAll, beforeEach } from 'vitest';
+import { describe, it, expect, beforeAll, beforeEach, vi } from 'vitest';
 import { act } from '@testing-library/react';
 import { createSelectorTestCase } from '../helper/createSelectorTestCase';
-import { Legend, Line, LineChart, YAxis } from '../../src';
+import { ComposedChart, Legend, Line, LineChart, Scatter, XAxis, YAxis } from '../../src';
 import { PageData } from '../_data';
 import { mockGetTotalLength } from '../helper/mockGetTotalLength';
 import { ExpectedLabel, expectLabels } from '../helper/expectLabel';
-import { mockSequenceOfGetBoundingClientRect } from '../helper/mockGetBoundingClientRect';
+import { mockGetBoundingClientRect, mockSequenceOfGetBoundingClientRect } from '../helper/mockGetBoundingClientRect';
 import { expectDots } from '../helper/expectDots';
 import { expectLines } from '../helper/expectLine';
 import { MockAnimationManager } from '../animation/MockProgressAnimationManager';
@@ -320,6 +320,59 @@ describe('Line animation', () => {
     });
   });
 
+  describe('in ComposedChart with sparse best-fit line data', () => {
+    const data = [
+      { index: 10000, red: 1643, blue: 790 },
+      { index: 1666, red: 182, blue: 42 },
+      { index: 625, red: 56, blue: 11 },
+      { index: 300, redLine: 0 },
+      { index: 10000, redLine: 1522 },
+      { index: 600, blueLine: 0 },
+      { index: 10000, blueLine: 678 },
+    ];
+
+    const renderTestCase = createSelectorTestCase(({ children }) => (
+      <ComposedChart data={data} width={100} height={100}>
+        <XAxis dataKey="index" type="number" />
+        <YAxis type="number" />
+        <Scatter name="red" dataKey="red" fill="red" />
+        <Scatter name="blue" dataKey="blue" fill="blue" />
+        <Line
+          dataKey="blueLine"
+          stroke="blue"
+          dot={false}
+          activeDot={false}
+          legendType="none"
+          animationEasing="linear"
+        />
+        <Line dataKey="redLine" stroke="red" dot={false} activeDot={false} legendType="none" animationEasing="linear" />
+        {children}
+      </ComposedChart>
+    ));
+
+    function getAnimatedLines(container: HTMLElement) {
+      return Array.from(container.querySelectorAll<SVGPathElement>('.recharts-line-curve'));
+    }
+
+    it('should keep the sparse line path present while stroke-dasharray grows during the entrance animation', async () => {
+      const { container, animationManager } = renderTestCase();
+
+      const linesAtStart = getAnimatedLines(container);
+      expect(linesAtStart).toHaveLength(2);
+      expect(linesAtStart[0]).toHaveAttribute('d');
+      expect(linesAtStart[0]?.getAttribute('d')).not.toBe('');
+      expect(linesAtStart[0]).toHaveAttribute('stroke-dasharray', '0px 0px');
+
+      await animationManager.setAnimationProgress(0.5);
+
+      const linesMidAnimation = getAnimatedLines(container);
+      expect(linesMidAnimation).toHaveLength(2);
+      expect(linesMidAnimation[0]).toHaveAttribute('d');
+      expect(linesMidAnimation[0]?.getAttribute('d')).not.toBe('');
+      expect(linesMidAnimation[0]).toHaveAttribute('stroke-dasharray', '50px 100px');
+    });
+  });
+
   describe('with stroke-dasharray prop', () => {
     describe('with isAnimationActive={false}', () => {
       const renderTestCase = createSelectorTestCase(({ children }) => (
@@ -423,6 +476,151 @@ describe('Line animation', () => {
 
       await animationManager.completeAnimation();
       expect(line.getAttribute('d')).toBe(initialPath);
+    });
+  });
+
+  describe('in responsive charts that receive size after mount', () => {
+    let resizeObserverCallback: (entries: ResizeObserverEntry[]) => void;
+
+    beforeEach(() => {
+      mockGetBoundingClientRect({ width: 0, height: 0 });
+      vi.stubGlobal(
+        'ResizeObserver',
+        vi.fn().mockImplementation(cb => {
+          resizeObserverCallback = cb;
+          return {
+            observe: vi.fn(),
+            unobserve: vi.fn(),
+            disconnect: vi.fn(),
+          };
+        }),
+      );
+    });
+
+    const renderTestCase = createSelectorTestCase(({ children }) => (
+      <LineChart responsive data={PageData}>
+        <Line dataKey="uv" animationEasing="linear" />
+        {children}
+      </LineChart>
+    ));
+
+    it('should keep revealing the line after a late resize instead of staying fully hidden until animation end', async () => {
+      const { container, animationManager } = renderTestCase();
+
+      act(() => {
+        resizeObserverCallback([{ contentRect: { width: 500, height: 400 } }] as ResizeObserverEntry[]);
+        vi.runOnlyPendingTimers();
+      });
+
+      const line = getLine(container);
+      expect(line).toHaveAttribute('stroke-dasharray');
+
+      await animationManager.setAnimationProgress(0.5);
+      expect(line).toHaveAttribute('stroke-dasharray', '50px 100px');
+
+      await animationManager.completeAnimation();
+      expect(line).toHaveAttribute('stroke-dasharray', '100px 100px');
+    });
+
+    it('should keep revealing sparse best-fit lines in responsive ComposedChart after a late resize', async () => {
+      const data = [
+        { index: 10000, red: 1643, blue: 790 },
+        { index: 1666, red: 182, blue: 42 },
+        { index: 625, red: 56, blue: 11 },
+        { index: 300, redLine: 0 },
+        { index: 10000, redLine: 1522 },
+        { index: 600, blueLine: 0 },
+        { index: 10000, blueLine: 678 },
+      ];
+
+      const renderResponsiveComposed = createSelectorTestCase(({ children }) => (
+        <ComposedChart responsive data={data}>
+          <Legend />
+          <XAxis dataKey="index" type="number" />
+          <YAxis type="number" width="auto" />
+          <Scatter name="red" dataKey="red" fill="red" />
+          <Scatter name="blue" dataKey="blue" fill="blue" />
+          <Line
+            dataKey="blueLine"
+            stroke="blue"
+            dot={false}
+            activeDot={false}
+            legendType="none"
+            animationEasing="linear"
+          />
+          <Line
+            dataKey="redLine"
+            stroke="red"
+            dot={false}
+            activeDot={false}
+            legendType="none"
+            animationEasing="linear"
+          />
+          {children}
+        </ComposedChart>
+      ));
+
+      const { container, animationManager } = renderResponsiveComposed();
+
+      act(() => {
+        resizeObserverCallback([{ contentRect: { width: 500, height: 400 } }] as ResizeObserverEntry[]);
+        vi.runOnlyPendingTimers();
+      });
+
+      const lines = Array.from(container.querySelectorAll<SVGPathElement>('.recharts-line-curve'));
+      expect(lines).toHaveLength(2);
+      expect(lines[0]).toHaveAttribute('stroke-dasharray');
+
+      await animationManager.setAnimationProgress(0.5);
+      expect(lines[0]).toHaveAttribute('stroke-dasharray', '50px 100px');
+      expect(lines[1]).toHaveAttribute('stroke-dasharray', '50px 100px');
+    });
+  });
+
+  describe('when layout changes during the entrance animation', () => {
+    const BaseChart = ({ children }: { children: ReactNode }) => (
+      <LineChart data={PageData} width={100} height={100}>
+        <Line dataKey="uv" animationEasing="linear" />
+        {children}
+      </LineChart>
+    );
+
+    const ChartWithLegend = ({ children }: { children: ReactNode }) => (
+      <LineChart data={PageData} width={100} height={100}>
+        <Legend />
+        <Line dataKey="uv" animationEasing="linear" />
+        {children}
+      </LineChart>
+    );
+
+    const ChartWithAutoYAxis = ({ children }: { children: ReactNode }) => (
+      <LineChart data={PageData} width={100} height={100}>
+        <YAxis width="auto" />
+        <Line dataKey="uv" animationEasing="linear" />
+        {children}
+      </LineChart>
+    );
+
+    const renderTestCase = createSelectorTestCase(BaseChart);
+
+    it('should not reset the visible stroke length when Legend is added mid-animation', async () => {
+      const { container, animationManager, rerender } = renderTestCase();
+
+      await animationManager.setAnimationProgress(0.5);
+      expect(getLine(container)).toHaveAttribute('stroke-dasharray', '50px 100px');
+
+      rerender(ChartWithLegend);
+      expect(getLine(container)).not.toHaveAttribute('stroke-dasharray', '0px 0px');
+    });
+
+    it('should not reset the visible stroke length when YAxis width="auto" is added mid-animation', async () => {
+      const { container, animationManager, rerender } = renderTestCase();
+
+      await animationManager.setAnimationProgress(0.5);
+      expect(getLine(container)).toHaveAttribute('stroke-dasharray', '50px 100px');
+
+      rerender(ChartWithAutoYAxis);
+      expect(getLine(container)).not.toHaveAttribute('stroke-dasharray', '0px 0px');
     });
   });
 
