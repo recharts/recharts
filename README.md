@@ -88,4 +88,4 @@ Browser testing via
 
 [MIT](http://opensource.org/licenses/MIT)
 
-Copyright (c) 2015-2024 Recharts Group.
+Copyright (c) 2015-2026 Recharts Group.
