@@ -5,6 +5,7 @@ export { default as CartesianAxisStory } from './cartesian/CartesianAxis.stories
 export { default as CartesianGridStory } from './cartesian/CartesianGrid.stories';
 export { default as ErrorBarStory } from './cartesian/ErrorBar.stories';
 export { default as FunnelStory } from './cartesian/Funnel.stories';
+export { default as HeatMapStory } from './cartesian/HeatMap.stories';
 export { default as LineStory } from './cartesian/Line.stories';
 export { default as ReferenceAreaStory } from './cartesian/ReferenceArea.stories';
 export { default as ReferenceDotStory } from './cartesian/ReferenceDot.stories';
@@ -17,6 +18,8 @@ export { default as AreaChartStory } from './chart/AreaChart.stories';
 export { default as BarChartStory } from './chart/BarChart.stories';
 export { default as ComposedChartStory } from './chart/ComposedChart.stories';
 export { default as FunnelChartStory } from './chart/FunnelChart.stories';
+export { default as HeatMapChartStory } from './chart/HeatMapChart.stories';
+export { default as CalendarChartStory } from './chart/CalendarChart.stories';
 export { default as LineChartStory } from './chart/LineChart.stories';
 export { default as PieChartStory } from './chart/PieChart.stories';
 export { default as RadarChartStory } from './chart/RadarChart.stories';

@@ -7,6 +7,7 @@ import { defaultBarProps } from '../src/cartesian/Bar';
 import { defaultBrushProps } from '../src/cartesian/Brush';
 import { defaultLineProps } from '../src/cartesian/Line';
 import { defaultScatterProps } from '../src/cartesian/Scatter';
+import { defaultHeatMapProps } from '../src/cartesian/HeatMap';
 import { defaultCartesianGridProps } from '../src/cartesian/CartesianGrid';
 import { errorBarDefaultProps } from '../src/cartesian/ErrorBar';
 import { referenceAreaDefaultProps } from '../src/cartesian/ReferenceArea';
@@ -49,6 +50,7 @@ export const componentMetaMap: Record<string, ComponentMeta> = {
   BarChart: { defaultProps: defaultCartesianChartProps },
   BarStack: { defaultProps: defaultBarStackProps },
   Brush: { defaultProps: defaultBrushProps },
+  CalendarChart: { defaultProps: defaultCartesianChartProps },
   CartesianGrid: { defaultProps: defaultCartesianGridProps },
   ComposedChart: { defaultProps: defaultCartesianChartProps },
   Curve: { defaultProps: defaultCurveProps },
@@ -57,6 +59,8 @@ export const componentMetaMap: Record<string, ComponentMeta> = {
   ErrorBar: { defaultProps: errorBarDefaultProps },
   Funnel: { defaultProps: defaultFunnelProps },
   FunnelChart: { defaultProps: defaultCartesianChartProps },
+  HeatMap: { defaultProps: defaultHeatMapProps },
+  HeatMapChart: { defaultProps: defaultCartesianChartProps },
   Label: { defaultProps: defaultLabelProps },
   LabelList: { defaultProps: defaultLabelProps },
   Legend: { defaultProps: legendDefaultProps },

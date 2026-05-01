@@ -98,6 +98,8 @@ export type { BarStackProps } from './cartesian/BarStack';
 export { Scatter } from './cartesian/Scatter';
 export type { Props as ScatterProps, ScatterPointNode, ScatterPointItem } from './cartesian/Scatter';
 export type { ScatterShapeProps } from './util/ScatterUtils';
+export { HeatMap } from './cartesian/HeatMap';
+export type { Props as HeatMapProps, HeatMapCellItem, HeatMapCellNode, HeatMapShapeProps } from './cartesian/HeatMap';
 export type { BaseTickContentProps, CartesianTickItem } from './util/types';
 export { XAxis } from './cartesian/XAxis';
 export type { Props as XAxisProps } from './cartesian/XAxis';
@@ -129,6 +131,9 @@ export type {
 export type { SankeyNodeOptions } from './chart/Sankey';
 export { RadarChart } from './chart/RadarChart';
 export { ScatterChart } from './chart/ScatterChart';
+export { HeatMapChart } from './chart/HeatMapChart';
+export { CalendarChart } from './chart/CalendarChart';
+export type { CalendarChartProps, CalendarChartDataPoint, CalendarChartCell } from './chart/CalendarChart';
 export { AreaChart } from './chart/AreaChart';
 export { RadialBarChart } from './chart/RadialBarChart';
 export { ComposedChart } from './chart/ComposedChart';

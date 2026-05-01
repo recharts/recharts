@@ -5,6 +5,8 @@ import {
   BarChart,
   ComposedChart,
   FunnelChart,
+  HeatMap,
+  HeatMapChart,
   LineChart,
   Pie,
   PieChart,
@@ -130,6 +132,16 @@ export const ScatterChartCase: CartesianChartTestCase = {
   tooltipIndex: '0',
 };
 
+export const HeatMapChartCase: CartesianChartTestCase = {
+  ChartElement: props => (
+    <HeatMapChart width={500} height={500} {...props}>
+      <HeatMap dataKey="uv" />
+    </HeatMapChart>
+  ),
+  testName: 'HeatMapChart',
+  tooltipIndex: '0',
+};
+
 export const PieChartCase: PolarChartTestCase = {
   ChartElement: props => (
     <PieChart width={500} height={500} {...props}>
@@ -208,6 +220,7 @@ export const allCartesianChartCases: ReadonlyArray<CartesianChartTestCase> = [
   BarChartCase,
   LineChartCase,
   ScatterChartCase,
+  HeatMapChartCase,
   FunnelChartCase,
 ];
 

@@ -5,6 +5,8 @@ import { composedChartApiExamples } from './ComposedChart';
 import { errorBarApiExamples } from './ErrorBar';
 import { funnelApiExamples } from './Funnel';
 import { funnelChartApiExamples } from './FunnelChart';
+import { heatMapApiExamples } from './HeatMap';
+import { heatMapChartApiExamples } from './HeatMapChart';
 import { labelApiExamples } from './Label';
 import { labelListApiExamples } from './LabelList';
 import { legendApiExamples } from './Legend';
@@ -52,6 +54,7 @@ export const allApiExamples: Record<string, ReadonlyArray<ChartExample>> = {
   PieChart: pieChartApiExamples,
   RadarChart: radarChartApiExamples,
   ScatterChart: scatterChartApiExamples,
+  HeatMapChart: heatMapChartApiExamples,
   RadialBarChart: radialBarApiExamples,
   Treemap: treemapApiExamples,
   ResponsiveContainer: responsiveContainerApiExamples,
@@ -63,6 +66,7 @@ export const allApiExamples: Record<string, ReadonlyArray<ChartExample>> = {
   ErrorBar: errorBarApiExamples,
   Label: labelApiExamples,
   LabelList: labelListApiExamples,
+  HeatMap: heatMapApiExamples,
   Funnel: funnelApiExamples,
   FunnelChart: funnelChartApiExamples,
   Sankey: sankeyApiExamples,
