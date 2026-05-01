@@ -106,6 +106,7 @@ export const map = {
     placeholder: 'Search',
     showData: 'Show data format',
     hideData: 'Hide data format',
+    animation: 'Animation',
   },
   'design-disciplines': {
     'design-disciplines': 'Design Disciplines',

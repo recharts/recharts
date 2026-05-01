@@ -229,3 +229,5 @@ export { createCentricChart, createRadialChart } from './util/createPolarCharts'
 export type { TypedHorizontalChartContext, TypedVerticalChartContext, NoFunnel } from './util/createCartesianCharts';
 
 export type { TypedCentricChartContext, TypedRadialChartContext, NoRadial, NoCentric } from './util/createPolarCharts';
+
+export { interpolate } from './util/DataUtils';

@@ -102,6 +102,7 @@ export const map = {
     placeholder: 'Search',
     showData: '显示数据格式',
     hideData: '隐藏数据格式',
+    animation: '动画',
   },
   'design-disciplines': {
     'design-disciplines': '设计原则',

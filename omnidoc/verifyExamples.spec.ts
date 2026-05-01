@@ -62,6 +62,7 @@ describe('Documentation Examples Coverage', () => {
     'FunnelProps',
     'FunnelTrapezoidItem',
     'Global',
+    'interpolate',
     'IfOverflow',
     'Label',
     'LabelList',

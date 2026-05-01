@@ -107,6 +107,23 @@ export const hasDuplicate = (ary: ReadonlyArray<unknown>): boolean => {
   return false;
 };
 
+/**
+ * Function to interpolate between two numbers.
+ * If both start and end are numbers, it calculates the interpolated value based on the parameter t (0 to 1).
+ * If either start or end is not a number, it returns the end value directly.
+ *
+ * You will typically use this function when implementing custom animations.
+ *
+ * `t` can be outside the (0, 1) range, depending on easing.
+ *
+ * This one interpolates only numbers;
+ * if you want to interpolate colors or strings then perhaps see {@link https://d3js.org/d3-interpolate d3-interpolate}.
+ * @param start the starting value (when t=0)
+ * @param end the final value (when t=1)
+ * @param t t interpolation factor; values in [0, 1] interpolate between start and end, and values outside that range extrapolate
+ *
+ * @since 3.9
+ */
 export function interpolate(start: unknown, end: number, t: number): number;
 export function interpolate(start: unknown, end: null, t: number): null;
 export function interpolate(start: unknown, end: number | null, t: number): number | null;
