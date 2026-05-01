@@ -24,6 +24,8 @@ describe('readStorybookDoc', () => {
         "ErrorBar",
         "Funnel",
         "FunnelChart",
+        "HeatMap",
+        "HeatMapChart",
         "Label",
         "LabelList",
         "Legend",

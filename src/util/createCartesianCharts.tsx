@@ -5,6 +5,7 @@ import { BarChart as OriginalBarChart } from '../chart/BarChart';
 import { LineChart as OriginalLineChart } from '../chart/LineChart';
 import { ComposedChart as OriginalComposedChart } from '../chart/ComposedChart';
 import { ScatterChart as OriginalScatterChart } from '../chart/ScatterChart';
+import { HeatMapChart as OriginalHeatMapChart } from '../chart/HeatMapChart';
 import { FunnelChart as OriginalFunnelChart } from '../chart/FunnelChart';
 
 import { Props as XAxisProps } from '../cartesian/XAxis';
@@ -14,6 +15,7 @@ import { Props as AreaProps } from '../cartesian/Area';
 import { Props as BarProps } from '../cartesian/Bar';
 import { Props as LineProps } from '../cartesian/Line';
 import { Props as ScatterProps } from '../cartesian/Scatter';
+import { Props as HeatMapProps } from '../cartesian/HeatMap';
 import { Props as FunnelProps } from '../cartesian/Funnel';
 import { CartesianChartProps } from './types';
 
@@ -23,6 +25,7 @@ export type TypedHorizontalChartContext<TData, TCategorical, TNumerical, TCompon
   LineChart: React.ComponentType<Omit<CartesianChartProps<TData>, 'layout'>>;
   ComposedChart: React.ComponentType<Omit<CartesianChartProps<TData>, 'layout'>>;
   ScatterChart: React.ComponentType<Omit<CartesianChartProps<TData>, 'layout'>>;
+  HeatMapChart: React.ComponentType<Omit<CartesianChartProps<TData>, 'layout'>>;
 } & Omit<
   {
     [K in keyof TComponents]: K extends 'XAxis'
@@ -39,7 +42,9 @@ export type TypedHorizontalChartContext<TData, TCategorical, TNumerical, TCompon
                 ? React.ComponentType<LineProps<TData, TNumerical>>
                 : K extends 'Scatter'
                   ? React.ComponentType<ScatterProps<TData, TNumerical>>
-                  : TComponents[K];
+                  : K extends 'HeatMap'
+                    ? React.ComponentType<HeatMapProps<TData, TNumerical>>
+                    : TComponents[K];
   },
   'Funnel' | 'FunnelChart'
 >;
@@ -50,6 +55,7 @@ export type TypedVerticalChartContext<TData, TCategorical, TNumerical, TComponen
   LineChart: React.ComponentType<Omit<CartesianChartProps<TData>, 'layout'>>;
   ComposedChart: React.ComponentType<Omit<CartesianChartProps<TData>, 'layout'>>;
   ScatterChart: React.ComponentType<Omit<CartesianChartProps<TData>, 'layout'>>;
+  HeatMapChart: React.ComponentType<Omit<CartesianChartProps<TData>, 'layout'>>;
   FunnelChart: React.ComponentType<Omit<CartesianChartProps<TData>, 'layout'>>;
 } & {
   [K in keyof TComponents]: K extends 'XAxis'
@@ -66,9 +72,11 @@ export type TypedVerticalChartContext<TData, TCategorical, TNumerical, TComponen
               ? React.ComponentType<LineProps<TData, TNumerical>>
               : K extends 'Scatter'
                 ? React.ComponentType<ScatterProps<TData, TNumerical>>
-                : K extends 'Funnel'
-                  ? React.ComponentType<FunnelProps<TData, TNumerical>>
-                  : TComponents[K];
+                : K extends 'HeatMap'
+                  ? React.ComponentType<HeatMapProps<TData, TNumerical>>
+                  : K extends 'Funnel'
+                    ? React.ComponentType<FunnelProps<TData, TNumerical>>
+                    : TComponents[K];
 };
 
 const createCartesianCharts = <TData,>(layout: 'horizontal' | 'vertical') => ({
@@ -80,6 +88,9 @@ const createCartesianCharts = <TData,>(layout: 'horizontal' | 'vertical') => ({
   ),
   ScatterChart: (props: Omit<CartesianChartProps<TData>, 'layout'>) => (
     <OriginalScatterChart {...props} layout={layout} />
+  ),
+  HeatMapChart: (props: Omit<CartesianChartProps<TData>, 'layout'>) => (
+    <OriginalHeatMapChart {...props} layout={layout} />
   ),
 });
 
