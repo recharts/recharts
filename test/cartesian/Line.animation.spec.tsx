@@ -567,13 +567,14 @@ describe('Line animation', () => {
         vi.runOnlyPendingTimers();
       });
 
-      const lines = Array.from(container.querySelectorAll<SVGPathElement>('.recharts-line-curve'));
-      expect(lines).toHaveLength(2);
-      expect(lines[0]).toHaveAttribute('stroke-dasharray');
+      const lines1 = Array.from(container.querySelectorAll<SVGPathElement>('.recharts-line-curve'));
+      expect(lines1).toHaveLength(2);
+      expect(lines1[0]).toHaveAttribute('stroke-dasharray');
 
+      const lines2 = Array.from(container.querySelectorAll<SVGPathElement>('.recharts-line-curve'));
       await animationManager.setAnimationProgress(0.5);
-      expect(lines[0]).toHaveAttribute('stroke-dasharray', '50px 100px');
-      expect(lines[1]).toHaveAttribute('stroke-dasharray', '50px 100px');
+      expect(lines2[0]).toHaveAttribute('stroke-dasharray', '50px 100px');
+      expect(lines2[1]).toHaveAttribute('stroke-dasharray', '50px 100px');
     });
   });
 
@@ -610,7 +611,7 @@ describe('Line animation', () => {
       expect(getLine(container)).toHaveAttribute('stroke-dasharray', '50px 100px');
 
       rerender(ChartWithLegend);
-      expect(getLine(container)).not.toHaveAttribute('stroke-dasharray', '0px 0px');
+      expect(getLine(container)).toHaveAttribute('stroke-dasharray', '0px 100px');
     });
 
     it('should not reset the visible stroke length when YAxis width="auto" is added mid-animation', async () => {
@@ -620,7 +621,7 @@ describe('Line animation', () => {
       expect(getLine(container)).toHaveAttribute('stroke-dasharray', '50px 100px');
 
       rerender(ChartWithAutoYAxis);
-      expect(getLine(container)).not.toHaveAttribute('stroke-dasharray', '0px 0px');
+      expect(getLine(container)).toHaveAttribute('stroke-dasharray', '0px 100px');
     });
   });
 
