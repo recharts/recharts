@@ -507,7 +507,7 @@ describe('Line animation', () => {
       expect(line).toHaveAttribute('stroke-dasharray', '50px 100px');
 
       await animationManager.completeAnimation();
-      expect(line).toHaveAttribute('stroke-dasharray', '100px 100px');
+      expect(line).not.toHaveAttribute('stroke-dasharray');
     });
 
     it('should keep revealing sparse best-fit lines in responsive ComposedChart after a late resize', async () => {
