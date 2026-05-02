@@ -4,6 +4,7 @@ export const expectedInBundle = [
   'Dot',
   'getNiceTickValues',
   'Global',
+  'interpolate',
   'Label',
   'LabelList',
   'Layer',

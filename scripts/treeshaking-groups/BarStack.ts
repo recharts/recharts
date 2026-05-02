@@ -10,6 +10,7 @@ export const expectedInBundle = [
   'DefaultZIndexes',
   'getNiceTickValues',
   'Global',
+  'interpolate',
   'Label',
   'LabelList',
   'Layer',

@@ -3,6 +3,7 @@ export const expectedInBundle = [
   'getNiceTickValues',
   'getRelativeCoordinate',
   'Global',
+  'interpolate',
   'Layer',
   'Rectangle',
   'Sankey',

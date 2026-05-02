@@ -5,6 +5,7 @@ export const expectedInBundle = [
   'DefaultZIndexes',
   'getNiceTickValues',
   'Global',
+  'interpolate',
   'Rectangle',
   'Sector',
   'Tooltip',

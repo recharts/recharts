@@ -5,6 +5,7 @@ export const expectedInBundle = [
   'Funnel',
   'getNiceTickValues',
   'Global',
+  'interpolate',
   'Label',
   'LabelList',
   'Layer',
