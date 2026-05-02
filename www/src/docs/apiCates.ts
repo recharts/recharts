@@ -114,7 +114,6 @@ export const apiCates = [
       'useAnimationProgress',
       'AreaRevealShape',
       'LineDrawShape',
-      'interpolate',
     ],
   },
 ];
