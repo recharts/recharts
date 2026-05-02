@@ -168,9 +168,20 @@ describe('interpolate', () => {
     expect(interpolate(null, 20, 0.9)).toBe(20);
   });
 
+  it('should return second number if the first is undefined', () => {
+    expect(interpolate(undefined, 20, 0.5)).toBe(20);
+    expect(interpolate(undefined, 20, 0.3)).toBe(20);
+    expect(interpolate(undefined, 20, 0.9)).toBe(20);
+  });
+
   it('should return null if second number is null', () => {
     expect(interpolate(10, null, 0.5)).toBeNull();
     expect(interpolate(null, null, 0.5)).toBeNull();
+  });
+
+  it('should return undefined if second number is undefined', () => {
+    expect(interpolate(10, undefined, 0.5)).toBeUndefined();
+    expect(interpolate(undefined, undefined, 0.5)).toBeUndefined();
   });
 });
 

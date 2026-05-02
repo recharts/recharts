@@ -695,9 +695,11 @@ function AreaWithAnimation({
             let stepBaseLine: BaseLineType;
 
             if (isNumber(baseLine)) {
-              stepBaseLine = interpolate(prevBaseLine, baseLine, t);
+              const previousNumberBaseLine = isNumber(prevBaseLine) ? prevBaseLine : undefined;
+              stepBaseLine = interpolate(previousNumberBaseLine, baseLine, t);
             } else if (isNullish(baseLine) || isNan(baseLine)) {
-              stepBaseLine = interpolate(prevBaseLine, 0, t);
+              const previousNumberBaseLine = isNumber(prevBaseLine) ? prevBaseLine : undefined;
+              stepBaseLine = interpolate(previousNumberBaseLine, 0, t);
             } else {
               stepBaseLine = baseLine.map((entry, index) => {
                 const prevPointIndex = Math.floor(index * prevPointsDiffFactor);

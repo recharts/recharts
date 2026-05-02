@@ -124,10 +124,21 @@ export const hasDuplicate = (ary: ReadonlyArray<unknown>): boolean => {
  *
  * @since 3.9
  */
-export function interpolate(start: unknown, end: number, t: number): number;
-export function interpolate(start: unknown, end: null, t: number): null;
-export function interpolate(start: unknown, end: number | null, t: number): number | null;
-export function interpolate(start: unknown, end: number | null, t: number): number | null {
+export function interpolate(start: number | null | undefined, end: number, t: number): number;
+export function interpolate(start: number | null | undefined, end: null, t: number): null;
+export function interpolate(start: number | null | undefined, end: undefined, t: number): undefined;
+export function interpolate(start: number | null | undefined, end: number | null, t: number): number | null;
+export function interpolate(start: number | null | undefined, end: number | undefined, t: number): number | undefined;
+export function interpolate(
+  start: number | null | undefined,
+  end: number | null | undefined,
+  t: number,
+): number | null | undefined;
+export function interpolate(
+  start: number | null | undefined,
+  end: number | null | undefined,
+  t: number,
+): number | null | undefined {
   if (isNumber(start) && isNumber(end)) {
     return round(start + t * (end - start));
   }
