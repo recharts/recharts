@@ -570,10 +570,12 @@ function interpolateBaseLine(
   t: number,
 ): BaseLineType {
   if (isNumber(baseLine)) {
-    return interpolate(prevBaseLine, baseLine, t);
+    const previousNumberBaseLine = isNumber(prevBaseLine) ? prevBaseLine : undefined;
+    return interpolate(previousNumberBaseLine, baseLine, t);
   }
   if (isNullish(baseLine) || isNan(baseLine)) {
-    return interpolate(prevBaseLine, 0, t);
+    const previousNumberBaseLine = isNumber(prevBaseLine) ? prevBaseLine : undefined;
+    return interpolate(previousNumberBaseLine, 0, t);
   }
   return baseLine.map((entry, index) => {
     if (Array.isArray(prevBaseLine) && prevBaseLine[index]) {
