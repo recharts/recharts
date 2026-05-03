@@ -502,14 +502,19 @@ const getOuterRadius = (
 
 const parseCoordinateOfPie = (pieSettings: PieSettings, offset: ChartOffsetInternal, dataPoint: any): PieCoordinate => {
   const { top, left, width, height } = offset;
-  const maxPieRadius = getMaxRadius(width, height);
+  const containerMaxRadius = getMaxRadius(width, height);
+  // When maxRadius prop is provided, use it to cap the effective radius for sector size calculations.
+  // This ensures the pie does not grow beyond the user-specified maxRadius.
+  const effectiveMaxRadius =
+    pieSettings.maxRadius != null ? Math.min(pieSettings.maxRadius, containerMaxRadius) : containerMaxRadius;
   const cx = left + getPercentValue(pieSettings.cx, width, width / 2);
   const cy = top + getPercentValue(pieSettings.cy, height, height / 2);
-  const innerRadius = getPercentValue(pieSettings.innerRadius, maxPieRadius, 0);
+  const innerRadius = getPercentValue(pieSettings.innerRadius, effectiveMaxRadius, 0);
 
-  const outerRadius = getOuterRadius(dataPoint, pieSettings.outerRadius, maxPieRadius);
+  const outerRadius = getOuterRadius(dataPoint, pieSettings.outerRadius, effectiveMaxRadius);
 
-  const maxRadius = pieSettings.maxRadius || Math.sqrt(width * width + height * height) / 2;
+  // maxRadius is exposed to consumers (e.g. custom labels) as a reference for the chart diagonal.
+  const maxRadius = pieSettings.maxRadius ?? Math.sqrt(width * width + height * height) / 2;
 
   return { cx, cy, innerRadius, outerRadius, maxRadius };
 };
