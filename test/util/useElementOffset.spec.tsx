@@ -1,7 +1,7 @@
 import React from 'react';
 import { act, render, screen } from '@testing-library/react';
 import { describe, expect, it, vi } from 'vitest';
-import { useElementOffset } from '../../src/util/useElementOffset';
+import { hasElementOffsetChanged, useElementOffset } from '../../src/util/useElementOffset';
 import { mockGetBoundingClientRect } from '../helper/mockGetBoundingClientRect';
 
 function TestComponent() {
@@ -14,6 +14,15 @@ function TestComponent() {
     </>
   );
 }
+
+describe('hasElementOffsetChanged', () => {
+  it('detects measurements that differ by more than the epsilon', () => {
+    const previous = { height: 20, left: 4, top: 8, width: 100 };
+
+    expect(hasElementOffsetChanged(previous, { ...previous, width: 100.5 }, 1)).toBe(false);
+    expect(hasElementOffsetChanged(previous, { ...previous, width: 101.5 }, 1)).toBe(true);
+  });
+});
 
 describe('useElementOffset', () => {
   it('updates the measured box when ResizeObserver reports a layout change', () => {

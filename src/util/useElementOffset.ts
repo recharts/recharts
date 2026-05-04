@@ -28,6 +28,15 @@ export type ElementOffset = {
 
 export type SetElementOffset = (node: HTMLElement | null) => void;
 
+export function hasElementOffsetChanged(previous: ElementOffset, next: ElementOffset, epsilon: number): boolean {
+  return (
+    Math.abs(next.height - previous.height) > epsilon ||
+    Math.abs(next.left - previous.left) > epsilon ||
+    Math.abs(next.top - previous.top) > epsilon ||
+    Math.abs(next.width - previous.width) > epsilon
+  );
+}
+
 /**
  * Use this to listen to element layout changes.
  *
@@ -54,17 +63,9 @@ export function useElementOffset(extraDependencies: ReadonlyArray<unknown> = [])
             top: rect.top,
             width: rect.width,
           };
-          setLastBoundingBox(previousBoundingBox => {
-            if (
-              Math.abs(box.height - previousBoundingBox.height) > EPS ||
-              Math.abs(box.left - previousBoundingBox.left) > EPS ||
-              Math.abs(box.top - previousBoundingBox.top) > EPS ||
-              Math.abs(box.width - previousBoundingBox.width) > EPS
-            ) {
-              return { height: box.height, left: box.left, top: box.top, width: box.width };
-            }
-            return previousBoundingBox;
-          });
+          setLastBoundingBox(previousBoundingBox =>
+            hasElementOffsetChanged(previousBoundingBox, box, EPS) ? box : previousBoundingBox,
+          );
         };
 
         updateBox();
