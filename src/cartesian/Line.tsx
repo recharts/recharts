@@ -599,9 +599,6 @@ function defaultLineAnimateItems(
       }
     }
 
-    // Sort by x so the line path is drawn correctly
-    result.sort((a, b) => (a.x ?? 0) - (b.x ?? 0));
-
     return result;
   };
 }
