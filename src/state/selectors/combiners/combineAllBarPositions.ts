@@ -39,7 +39,7 @@ function getBarPositions(
       sum = len * fullBarSize;
     }
 
-    const offset = ((bandSize - sum) / 2) >> 0;
+    const offset = Math.round((bandSize - sum) / 2);
     let prev: BarPositionPosition = { offset: offset - realBarGap, size: 0 };
 
     result = sizeList.reduce(
@@ -69,7 +69,7 @@ function getBarPositions(
 
     let originalSize = (bandSize - 2 * offset - (len - 1) * realBarGap) / len;
     if (originalSize > 1) {
-      originalSize >>= 0;
+      originalSize = Math.round(originalSize);
     }
     const size = isWellBehavedNumber(maxBarSize) ? Math.min(originalSize, maxBarSize) : originalSize;
     result = sizeList.reduce(
