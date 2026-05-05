@@ -656,71 +656,71 @@ describe('<BarChart />', () => {
       );
 
       expectBars(container, [
-        {
-          d: 'M -60.3333,350.6 h 130 v 14.4 h -130 Z',
-          height: '14.4',
-          radius: '0',
-          width: '130',
-          x: '-60.3333',
-          y: '350.6',
-        },
-        {
-          d: 'M 103,354.2 h 130 v 10.8 h -130 Z',
-          height: '10.8',
-          radius: '0',
-          width: '130',
-          x: '103',
-          y: '354.2',
-        },
-        {
-          d: 'M 266.3333,354.2 h 130 v 10.8 h -130 Z',
-          height: '10.8',
-          radius: '0',
-          width: '130',
-          x: '266.3333',
-          y: '354.2',
-        },
-        {
-          d: 'M 429.6667,357.8 h 130 v 7.2 h -130 Z',
-          height: '7.2',
-          radius: '0',
-          width: '130',
-          x: '429.6667',
-          y: '357.8',
-        },
-        {
-          d: 'M -60.3333,264.2 h 130 v 86.4 h -130 Z',
-          height: '86.4',
-          radius: '0',
-          width: '130',
-          x: '-60.3333',
-          y: '264.2',
-        },
-        {
-          d: 'M 103,189.788 h 130 v 164.412 h -130 Z',
-          height: '164.412',
-          radius: '0',
-          width: '130',
-          x: '103',
-          y: '189.788',
-        },
-        {
-          d: 'M 266.3333,303.872 h 130 v 50.328 h -130 Z',
-          height: '50.328',
-          radius: '0',
-          width: '130',
-          x: '266.3333',
-          y: '303.872',
-        },
-        {
-          d: 'M 429.6667,5 h 130 v 352.8 h -130 Z',
-          height: '352.8',
-          radius: '0',
-          width: '130',
-          x: '429.6667',
-          y: '5',
-        },
-      ]);
+          {
+            x: '-60.3333',
+            y: '350.6',
+            width: '131',
+            height: '14.4',
+            radius: '0',
+            d: 'M -60.3333,350.6 h 131 v 14.4 h -131 Z',
+          },
+          {
+            x: '103',
+            y: '354.2',
+            width: '131',
+            height: '10.8',
+            radius: '0',
+            d: 'M 103,354.2 h 131 v 10.8 h -131 Z',
+          },
+          {
+            x: '266.3333',
+            y: '354.2',
+            width: '131',
+            height: '10.8',
+            radius: '0',
+            d: 'M 266.3333,354.2 h 131 v 10.8 h -131 Z',
+          },
+          {
+            x: '429.6667',
+            y: '357.8',
+            width: '131',
+            height: '7.2',
+            radius: '0',
+            d: 'M 429.6667,357.8 h 131 v 7.2 h -131 Z',
+          },
+          {
+            x: '-60.3333',
+            y: '264.2',
+            width: '131',
+            height: '86.4',
+            radius: '0',
+            d: 'M -60.3333,264.2 h 131 v 86.4 h -131 Z',
+          },
+          {
+            x: '103',
+            y: '189.788',
+            width: '131',
+            height: '164.412',
+            radius: '0',
+            d: 'M 103,189.788 h 131 v 164.412 h -131 Z',
+          },
+          {
+            x: '266.3333',
+            y: '303.872',
+            width: '131',
+            height: '50.328',
+            radius: '0',
+            d: 'M 266.3333,303.872 h 131 v 50.328 h -131 Z',
+          },
+          {
+            x: '429.6667',
+            y: '5',
+            width: '131',
+            height: '352.8',
+            radius: '0',
+            d: 'M 429.6667,5 h 131 v 352.8 h -131 Z',
+          },
+        ]);
     });
 
     describe('stacked bar chart when x-axis is of type number and layout is vertical', () => {
@@ -823,135 +823,142 @@ describe('<BarChart />', () => {
       test('selectAllBarPositions', () => {
         const { spy } = renderTestCase(state => selectAllBarPositions(state, 'my-bar-id', false));
         expectLastCalledWith(spy, [
-          {
-            dataKeys: ['uv', 'pv'],
-            position: {
-              offset: 5.999999999999997,
-              size: 47,
+            {
+              stackId: 'test',
+              dataKeys: [
+                'uv',
+                'pv',
+              ],
+              position: {
+                offset: 5.999999999999997,
+                size: 48,
+              },
             },
-            stackId: 'test',
-          },
-        ]);
+          ]);
       });
 
       test('selectBarPosition', () => {
         const { spy } = renderTestCase(state => selectBarPosition(state, 'my-bar-id', false));
         expectLastCalledWith(spy, {
-          offset: 5.999999999999997,
-          size: 47,
-        });
+            offset: 5.999999999999997,
+            size: 48,
+          });
       });
 
       test('selectBarRectangles', () => {
         const { spy } = renderTestCase(state => selectBarRectangles(state, 'my-bar-id', false, undefined));
         expectLastCalledWith(spy, [
-          {
-            background: {
-              height: 47,
-              width: 490,
+            {
+              xKey: 4000,
+              uv: 400,
+              pv: 2400,
+              stackedBarStart: 5,
               x: 5,
               y: -18.99999999999999,
+              width: 19.6,
+              height: 48,
+              value: [
+                0,
+                400,
+              ],
+              payload: {
+                xKey: 4000,
+                uv: 400,
+                pv: 2400,
+              },
+              background: {
+                x: 5,
+                y: -18.99999999999999,
+                width: 490,
+                height: 48,
+              },
+              tooltipPosition: {
+                x: 14.8,
+                y: 5.000000000000011,
+              },
+              parentViewBox: {
+                x: 0,
+                y: 0,
+                width: 500,
+                height: 400,
+              },
+              originalDataIndex: 0,
             },
-            height: 47,
-            originalDataIndex: 0,
-            parentViewBox: {
-              height: 400,
-              width: 500,
-              x: 0,
-              y: 0,
-            },
-            payload: {
-              pv: 2400,
-              uv: 400,
-              xKey: 4000,
-            },
-            // @ts-expect-error recharts likes to spread the data object
-            pv: 2400,
-            stackedBarStart: 5,
-            tooltipPosition: {
-              x: 14.8,
-              y: 4.500000000000011,
-            },
-            uv: 400,
-            value: [0, 400],
-            width: 19.6,
-            x: 5,
-            xKey: 4000,
-            y: -18.99999999999999,
-          },
-          {
-            background: {
-              height: 47,
-              width: 490,
+            {
+              xKey: 6000,
+              uv: 300,
+              pv: 4567,
+              stackedBarStart: 5,
               x: 5,
               y: 341,
+              width: 14.7,
+              height: 48,
+              value: [
+                0,
+                300,
+              ],
+              payload: {
+                xKey: 6000,
+                uv: 300,
+                pv: 4567,
+              },
+              background: {
+                x: 5,
+                y: 341,
+                width: 490,
+                height: 48,
+              },
+              tooltipPosition: {
+                x: 12.35,
+                y: 365,
+              },
+              parentViewBox: {
+                x: 0,
+                y: 0,
+                width: 500,
+                height: 400,
+              },
+              originalDataIndex: 1,
             },
-            height: 47,
-            originalDataIndex: 1,
-            parentViewBox: {
-              height: 400,
-              width: 500,
-              x: 0,
-              y: 0,
-            },
-            payload: {
-              pv: 4567,
-              uv: 300,
-              xKey: 6000,
-            },
-            // @ts-expect-error recharts likes to spread the data object
-            pv: 4567,
-            stackedBarStart: 5,
-            tooltipPosition: {
-              x: 12.35,
-              y: 364.5,
-            },
-            uv: 300,
-            value: [0, 300],
-            width: 14.7,
-            x: 5,
-            xKey: 6000,
-            y: 341,
-          },
-        ]);
+          ]);
       });
 
       it('should render bars', () => {
         const { container } = renderTestCase();
         expectBars(container, [
-          {
-            d: 'M 5,-19 h 19.6 v 47 h -19.6 Z',
-            height: '47',
-            radius: '0',
-            width: '19.6',
-            x: '5',
-            y: '-19',
-          },
-          {
-            d: 'M 5,341 h 14.7 v 47 h -14.7 Z',
-            height: '47',
-            radius: '0',
-            width: '14.7',
-            x: '5',
-            y: '341',
-          },
-          {
-            d: 'M 24.6,-19 h 117.6 v 47 h -117.6 Z',
-            height: '47',
-            radius: '0',
-            width: '117.6',
-            x: '24.6',
-            y: '-19',
-          },
-          {
-            d: 'M 19.7,341 h 223.783 v 47 h -223.783 Z',
-            height: '47',
-            radius: '0',
-            width: '223.783',
-            x: '19.7',
-            y: '341',
-          },
-        ]);
+            {
+              x: '5',
+              y: '-19',
+              width: '19.6',
+              height: '48',
+              radius: '0',
+              d: 'M 5,-19 h 19.6 v 48 h -19.6 Z',
+            },
+            {
+              x: '5',
+              y: '341',
+              width: '14.7',
+              height: '48',
+              radius: '0',
+              d: 'M 5,341 h 14.7 v 48 h -14.7 Z',
+            },
+            {
+              x: '24.6',
+              y: '-19',
+              width: '117.6',
+              height: '48',
+              radius: '0',
+              d: 'M 24.6,-19 h 117.6 v 48 h -117.6 Z',
+            },
+            {
+              x: '19.7',
+              y: '341',
+              width: '223.783',
+              height: '48',
+              radius: '0',
+              d: 'M 19.7,341 h 223.783 v 48 h -223.783 Z',
+            },
+          ]);
       });
     });
 
@@ -1744,71 +1751,71 @@ describe('<BarChart />', () => {
         it('should render bars', () => {
           const { container } = renderTestCase();
           expectBars(container, [
-            {
-              d: 'M 78,350.6 h 50 v 14.4 h -50 Z',
-              height: '14.4',
-              radius: '0',
-              width: '50',
-              x: '78',
-              y: '350.6',
-            },
-            {
-              d: 'M 275.5,354.2 h 50 v 10.8 h -50 Z',
-              height: '10.8',
-              radius: '0',
-              width: '50',
-              x: '275.5',
-              y: '354.2',
-            },
-            {
-              d: 'M 473,354.2 h 50 v 10.8 h -50 Z',
-              height: '10.8',
-              radius: '0',
-              width: '50',
-              x: '473',
-              y: '354.2',
-            },
-            {
-              d: 'M 670.5,357.8 h 50 v 7.2 h -50 Z',
-              height: '7.2',
-              radius: '0',
-              width: '50',
-              x: '670.5',
-              y: '357.8',
-            },
-            {
-              d: 'M 88,278.6 h 30 v 86.4 h -30 Z',
-              height: '86.4',
-              radius: '0',
-              width: '30',
-              x: '88',
-              y: '278.6',
-            },
-            {
-              d: 'M 285.5,200.588 h 30 v 164.412 h -30 Z',
-              height: '164.412',
-              radius: '0',
-              width: '30',
-              x: '285.5',
-              y: '200.588',
-            },
-            {
-              d: 'M 483,314.672 h 30 v 50.328 h -30 Z',
-              height: '50.328',
-              radius: '0',
-              width: '30',
-              x: '483',
-              y: '314.672',
-            },
-            {
-              d: 'M 680.5,12.2 h 30 v 352.8 h -30 Z',
-              height: '352.8',
-              radius: '0',
-              width: '30',
-              x: '680.5',
-              y: '12.2',
-            },
-          ]);
+              {
+                x: '79',
+                y: '350.6',
+                width: '50',
+                height: '14.4',
+                radius: '0',
+                d: 'M 79,350.6 h 50 v 14.4 h -50 Z',
+              },
+              {
+                x: '276.5',
+                y: '354.2',
+                width: '50',
+                height: '10.8',
+                radius: '0',
+                d: 'M 276.5,354.2 h 50 v 10.8 h -50 Z',
+              },
+              {
+                x: '474',
+                y: '354.2',
+                width: '50',
+                height: '10.8',
+                radius: '0',
+                d: 'M 474,354.2 h 50 v 10.8 h -50 Z',
+              },
+              {
+                x: '671.5',
+                y: '357.8',
+                width: '50',
+                height: '7.2',
+                radius: '0',
+                d: 'M 671.5,357.8 h 50 v 7.2 h -50 Z',
+              },
+              {
+                x: '89',
+                y: '278.6',
+                width: '30',
+                height: '86.4',
+                radius: '0',
+                d: 'M 89,278.6 h 30 v 86.4 h -30 Z',
+              },
+              {
+                x: '286.5',
+                y: '200.588',
+                width: '30',
+                height: '164.412',
+                radius: '0',
+                d: 'M 286.5,200.588 h 30 v 164.412 h -30 Z',
+              },
+              {
+                x: '484',
+                y: '314.672',
+                width: '30',
+                height: '50.328',
+                radius: '0',
+                d: 'M 484,314.672 h 30 v 50.328 h -30 Z',
+              },
+              {
+                x: '681.5',
+                y: '12.2',
+                width: '30',
+                height: '352.8',
+                radius: '0',
+                d: 'M 681.5,12.2 h 30 v 352.8 h -30 Z',
+              },
+            ]);
         });
       });
 
@@ -2237,71 +2244,71 @@ describe('<BarChart />', () => {
           const { container } = renderTestCase();
 
           expectBars(container, [
-            {
-              d: 'M 65,37 h 230 v 25.875 h -230 Z',
-              height: '25.875',
-              radius: '0',
-              width: '230',
-              x: '65',
-              y: '37',
-            },
-            {
-              d: 'M 65,94.5 h 172.5 v 25.875 h -172.5 Z',
-              height: '25.875',
-              radius: '0',
-              width: '172.5',
-              x: '65',
-              y: '94.5',
-            },
-            {
-              d: 'M 65,152 h 172.5 v 25.875 h -172.5 Z',
-              height: '25.875',
-              radius: '0',
-              width: '172.5',
-              x: '65',
-              y: '152',
-            },
-            {
-              d: 'M 65,209.5 h 115 v 25.875 h -115 Z',
-              height: '25.875',
-              radius: '0',
-              width: '115',
-              x: '65',
-              y: '209.5',
-            },
-            {
-              d: 'M 65,62.875 h 55.2 v 25.875 h -55.2 Z',
-              height: '25.875',
-              radius: '0',
-              width: '55.2',
-              x: '65',
-              y: '62.875',
-            },
-            {
-              d: 'M 65,120.375 h 105.041 v 25.875 h -105.041 Z',
-              height: '25.875',
-              radius: '0',
-              width: '105.041',
-              x: '65',
-              y: '120.375',
-            },
-            {
-              d: 'M 65,177.875 h 32.154 v 25.875 h -32.154 Z',
-              height: '25.875',
-              radius: '0',
-              width: '32.154',
-              x: '65',
-              y: '177.875',
-            },
-            {
-              d: 'M 65,235.375 h 225.4 v 25.875 h -225.4 Z',
-              height: '25.875',
-              radius: '0',
-              width: '225.4',
-              x: '65',
-              y: '235.375',
-            },
-          ]);
+              {
+                x: '65',
+                y: '38',
+                width: '230',
+                height: '25.875',
+                radius: '0',
+                d: 'M 65,38 h 230 v 25.875 h -230 Z',
+              },
+              {
+                x: '65',
+                y: '95.5',
+                width: '172.5',
+                height: '25.875',
+                radius: '0',
+                d: 'M 65,95.5 h 172.5 v 25.875 h -172.5 Z',
+              },
+              {
+                x: '65',
+                y: '153',
+                width: '172.5',
+                height: '25.875',
+                radius: '0',
+                d: 'M 65,153 h 172.5 v 25.875 h -172.5 Z',
+              },
+              {
+                x: '65',
+                y: '210.5',
+                width: '115',
+                height: '25.875',
+                radius: '0',
+                d: 'M 65,210.5 h 115 v 25.875 h -115 Z',
+              },
+              {
+                x: '65',
+                y: '63.875',
+                width: '55.2',
+                height: '25.875',
+                radius: '0',
+                d: 'M 65,63.875 h 55.2 v 25.875 h -55.2 Z',
+              },
+              {
+                x: '65',
+                y: '121.375',
+                width: '105.041',
+                height: '25.875',
+                radius: '0',
+                d: 'M 65,121.375 h 105.041 v 25.875 h -105.041 Z',
+              },
+              {
+                x: '65',
+                y: '178.875',
+                width: '32.154',
+                height: '25.875',
+                radius: '0',
+                d: 'M 65,178.875 h 32.154 v 25.875 h -32.154 Z',
+              },
+              {
+                x: '65',
+                y: '236.375',
+                width: '225.4',
+                height: '25.875',
+                radius: '0',
+                d: 'M 65,236.375 h 225.4 v 25.875 h -225.4 Z',
+              },
+            ]);
         });
       });
 
@@ -2430,30 +2437,32 @@ describe('<BarChart />', () => {
         it('should select all bar positions for left axis', () => {
           const { spy } = renderTestCase(state => selectAllBarPositions(state, 'bar-left', false));
           expectLastCalledWith(spy, [
-            {
-              dataKeys: ['uv'],
-              position: {
-                offset: 17,
-                size: 30,
+              {
+                dataKeys: [
+                  'uv',
+                ],
+                position: {
+                  offset: 18,
+                  size: 30,
+                },
               },
-              stackId: undefined,
-            },
-          ]);
+            ]);
           expect(spy).toHaveBeenCalledTimes(3);
         });
 
         it('should select all bar positions for right axis', () => {
           const { spy } = renderTestCase(state => selectAllBarPositions(state, 'bar-right', false));
           expectLastCalledWith(spy, [
-            {
-              dataKeys: ['pv'],
-              position: {
-                offset: 22,
-                size: 20,
+              {
+                dataKeys: [
+                  'pv',
+                ],
+                position: {
+                  offset: 23,
+                  size: 20,
+                },
               },
-              stackId: undefined,
-            },
-          ]);
+            ]);
           expect(spy).toHaveBeenCalledTimes(3);
         });
 
@@ -2461,71 +2470,71 @@ describe('<BarChart />', () => {
           const { container } = renderTestCase();
 
           expectBars(container, [
-            {
-              d: 'M 65,22 h 9.2 v 30 h -9.2 Z',
-              height: '30',
-              radius: '0',
-              width: '9.2',
-              x: '65',
-              y: '22',
-            },
-            {
-              d: 'M 65,87 h 6.9 v 30 h -6.9 Z',
-              height: '30',
-              radius: '0',
-              width: '6.9',
-              x: '65',
-              y: '87',
-            },
-            {
-              d: 'M 65,152 h 6.9 v 30 h -6.9 Z',
-              height: '30',
-              radius: '0',
-              width: '6.9',
-              x: '65',
-              y: '152',
-            },
-            {
-              d: 'M 65,217 h 4.6 v 30 h -4.6 Z',
-              height: '30',
-              radius: '0',
-              width: '4.6',
-              x: '65',
-              y: '217',
-            },
-            {
-              d: 'M 65,27 h 55.2 v 20 h -55.2 Z',
-              height: '20',
-              radius: '0',
-              width: '55.2',
-              x: '65',
-              y: '27',
-            },
-            {
-              d: 'M 65,92 h 105.041 v 20 h -105.041 Z',
-              height: '20',
-              radius: '0',
-              width: '105.041',
-              x: '65',
-              y: '92',
-            },
-            {
-              d: 'M 65,157 h 32.154 v 20 h -32.154 Z',
-              height: '20',
-              radius: '0',
-              width: '32.154',
-              x: '65',
-              y: '157',
-            },
-            {
-              d: 'M 65,222 h 225.4 v 20 h -225.4 Z',
-              height: '20',
-              radius: '0',
-              width: '225.4',
-              x: '65',
-              y: '222',
-            },
-          ]);
+              {
+                x: '65',
+                y: '23',
+                width: '9.2',
+                height: '30',
+                radius: '0',
+                d: 'M 65,23 h 9.2 v 30 h -9.2 Z',
+              },
+              {
+                x: '65',
+                y: '88',
+                width: '6.9',
+                height: '30',
+                radius: '0',
+                d: 'M 65,88 h 6.9 v 30 h -6.9 Z',
+              },
+              {
+                x: '65',
+                y: '153',
+                width: '6.9',
+                height: '30',
+                radius: '0',
+                d: 'M 65,153 h 6.9 v 30 h -6.9 Z',
+              },
+              {
+                x: '65',
+                y: '218',
+                width: '4.6',
+                height: '30',
+                radius: '0',
+                d: 'M 65,218 h 4.6 v 30 h -4.6 Z',
+              },
+              {
+                x: '65',
+                y: '28',
+                width: '55.2',
+                height: '20',
+                radius: '0',
+                d: 'M 65,28 h 55.2 v 20 h -55.2 Z',
+              },
+              {
+                x: '65',
+                y: '93',
+                width: '105.041',
+                height: '20',
+                radius: '0',
+                d: 'M 65,93 h 105.041 v 20 h -105.041 Z',
+              },
+              {
+                x: '65',
+                y: '158',
+                width: '32.154',
+                height: '20',
+                radius: '0',
+                d: 'M 65,158 h 32.154 v 20 h -32.154 Z',
+              },
+              {
+                x: '65',
+                y: '223',
+                width: '225.4',
+                height: '20',
+                radius: '0',
+                d: 'M 65,223 h 225.4 v 20 h -225.4 Z',
+              },
+            ]);
         });
       });
     });
@@ -3049,71 +3058,71 @@ describe('<BarChart />', () => {
         );
 
         expectBars(container, [
-          {
-            d: 'M 17.25,254.6 h 44 v 10.4 h -44 Z',
-            height: '10.4',
-            radius: '0',
-            width: '44',
-            x: '17.25',
-            y: '254.6',
-          },
-          {
-            d: 'M 139.75,257.2 h 44 v 7.8 h -44 Z',
-            height: '7.8',
-            radius: '0',
-            width: '44',
-            x: '139.75',
-            y: '257.2',
-          },
-          {
-            d: 'M 262.25,257.2 h 44 v 7.8 h -44 Z',
-            height: '7.8',
-            radius: '0',
-            width: '44',
-            x: '262.25',
-            y: '257.2',
-          },
-          {
-            d: 'M 384.75,259.8 h 44 v 5.2 h -44 Z',
-            height: '5.2',
-            radius: '0',
-            width: '44',
-            x: '384.75',
-            y: '259.8',
-          },
-          {
-            d: 'M 70.25,202.6 h 44 v 62.4 h -44 Z',
-            height: '62.4',
-            radius: '0',
-            width: '44',
-            x: '70.25',
-            y: '202.6',
-          },
-          {
-            d: 'M 192.75,146.258 h 44 v 118.742 h -44 Z',
-            height: '118.742',
-            radius: '0',
-            width: '44',
-            x: '192.75',
-            y: '146.258',
-          },
-          {
-            d: 'M 315.25,228.652 h 44 v 36.348 h -44 Z',
-            height: '36.348',
-            radius: '0',
-            width: '44',
-            x: '315.25',
-            y: '228.652',
-          },
-          {
-            d: 'M 437.75,10.2 h 44 v 254.8 h -44 Z',
-            height: '254.8',
-            radius: '0',
-            width: '44',
-            x: '437.75',
-            y: '10.2',
-          },
-        ]);
+            {
+              x: '17.25',
+              y: '254.6',
+              width: '45',
+              height: '10.4',
+              radius: '0',
+              d: 'M 17.25,254.6 h 45 v 10.4 h -45 Z',
+            },
+            {
+              x: '139.75',
+              y: '257.2',
+              width: '45',
+              height: '7.8',
+              radius: '0',
+              d: 'M 139.75,257.2 h 45 v 7.8 h -45 Z',
+            },
+            {
+              x: '262.25',
+              y: '257.2',
+              width: '45',
+              height: '7.8',
+              radius: '0',
+              d: 'M 262.25,257.2 h 45 v 7.8 h -45 Z',
+            },
+            {
+              x: '384.75',
+              y: '259.8',
+              width: '45',
+              height: '5.2',
+              radius: '0',
+              d: 'M 384.75,259.8 h 45 v 5.2 h -45 Z',
+            },
+            {
+              x: '71.25',
+              y: '202.6',
+              width: '45',
+              height: '62.4',
+              radius: '0',
+              d: 'M 71.25,202.6 h 45 v 62.4 h -45 Z',
+            },
+            {
+              x: '193.75',
+              y: '146.258',
+              width: '45',
+              height: '118.742',
+              radius: '0',
+              d: 'M 193.75,146.258 h 45 v 118.742 h -45 Z',
+            },
+            {
+              x: '316.25',
+              y: '228.652',
+              width: '45',
+              height: '36.348',
+              radius: '0',
+              d: 'M 316.25,228.652 h 45 v 36.348 h -45 Z',
+            },
+            {
+              x: '438.75',
+              y: '10.2',
+              width: '45',
+              height: '254.8',
+              radius: '0',
+              d: 'M 438.75,10.2 h 45 v 254.8 h -45 Z',
+            },
+          ]);
       });
 
       it('should decrease the gap between bars in a category', () => {
@@ -3205,71 +3214,71 @@ describe('<BarChart />', () => {
         );
 
         expectBars(container, [
-          {
-            d: 'M 17.25,254.6 h 39 v 10.4 h -39 Z',
-            height: '10.4',
-            radius: '0',
-            width: '39',
-            x: '17.25',
-            y: '254.6',
-          },
-          {
-            d: 'M 139.75,257.2 h 39 v 7.8 h -39 Z',
-            height: '7.8',
-            radius: '0',
-            width: '39',
-            x: '139.75',
-            y: '257.2',
-          },
-          {
-            d: 'M 262.25,257.2 h 39 v 7.8 h -39 Z',
-            height: '7.8',
-            radius: '0',
-            width: '39',
-            x: '262.25',
-            y: '257.2',
-          },
-          {
-            d: 'M 384.75,259.8 h 39 v 5.2 h -39 Z',
-            height: '5.2',
-            radius: '0',
-            width: '39',
-            x: '384.75',
-            y: '259.8',
-          },
-          {
-            d: 'M 74.625,202.6 h 39 v 62.4 h -39 Z',
-            height: '62.4',
-            radius: '0',
-            width: '39',
-            x: '74.625',
-            y: '202.6',
-          },
-          {
-            d: 'M 197.125,146.258 h 39 v 118.742 h -39 Z',
-            height: '118.742',
-            radius: '0',
-            width: '39',
-            x: '197.125',
-            y: '146.258',
-          },
-          {
-            d: 'M 319.625,228.652 h 39 v 36.348 h -39 Z',
-            height: '36.348',
-            radius: '0',
-            width: '39',
-            x: '319.625',
-            y: '228.652',
-          },
-          {
-            d: 'M 442.125,10.2 h 39 v 254.8 h -39 Z',
-            height: '254.8',
-            radius: '0',
-            width: '39',
-            x: '442.125',
-            y: '10.2',
-          },
-        ]);
+            {
+              x: '17.25',
+              y: '254.6',
+              width: '40',
+              height: '10.4',
+              radius: '0',
+              d: 'M 17.25,254.6 h 40 v 10.4 h -40 Z',
+            },
+            {
+              x: '139.75',
+              y: '257.2',
+              width: '40',
+              height: '7.8',
+              radius: '0',
+              d: 'M 139.75,257.2 h 40 v 7.8 h -40 Z',
+            },
+            {
+              x: '262.25',
+              y: '257.2',
+              width: '40',
+              height: '7.8',
+              radius: '0',
+              d: 'M 262.25,257.2 h 40 v 7.8 h -40 Z',
+            },
+            {
+              x: '384.75',
+              y: '259.8',
+              width: '40',
+              height: '5.2',
+              radius: '0',
+              d: 'M 384.75,259.8 h 40 v 5.2 h -40 Z',
+            },
+            {
+              x: '75.625',
+              y: '202.6',
+              width: '40',
+              height: '62.4',
+              radius: '0',
+              d: 'M 75.625,202.6 h 40 v 62.4 h -40 Z',
+            },
+            {
+              x: '198.125',
+              y: '146.258',
+              width: '40',
+              height: '118.742',
+              radius: '0',
+              d: 'M 198.125,146.258 h 40 v 118.742 h -40 Z',
+            },
+            {
+              x: '320.625',
+              y: '228.652',
+              width: '40',
+              height: '36.348',
+              radius: '0',
+              d: 'M 320.625,228.652 h 40 v 36.348 h -40 Z',
+            },
+            {
+              x: '443.125',
+              y: '10.2',
+              width: '40',
+              height: '254.8',
+              radius: '0',
+              d: 'M 443.125,10.2 h 40 v 254.8 h -40 Z',
+            },
+          ]);
       });
     });
 
@@ -3363,71 +3372,71 @@ describe('<BarChart />', () => {
         );
 
         expectBars(container, [
-          {
-            d: 'M 35.625,254.6 h 28 v 10.4 h -28 Z',
-            height: '10.4',
-            radius: '0',
-            width: '28',
-            x: '35.625',
-            y: '254.6',
-          },
-          {
-            d: 'M 158.125,257.2 h 28 v 7.8 h -28 Z',
-            height: '7.8',
-            radius: '0',
-            width: '28',
-            x: '158.125',
-            y: '257.2',
-          },
-          {
-            d: 'M 280.625,257.2 h 28 v 7.8 h -28 Z',
-            height: '7.8',
-            radius: '0',
-            width: '28',
-            x: '280.625',
-            y: '257.2',
-          },
-          {
-            d: 'M 403.125,259.8 h 28 v 5.2 h -28 Z',
-            height: '5.2',
-            radius: '0',
-            width: '28',
-            x: '403.125',
-            y: '259.8',
-          },
-          {
-            d: 'M 67.625,202.6 h 28 v 62.4 h -28 Z',
-            height: '62.4',
-            radius: '0',
-            width: '28',
-            x: '67.625',
-            y: '202.6',
-          },
-          {
-            d: 'M 190.125,146.258 h 28 v 118.742 h -28 Z',
-            height: '118.742',
-            radius: '0',
-            width: '28',
-            x: '190.125',
-            y: '146.258',
-          },
-          {
-            d: 'M 312.625,228.652 h 28 v 36.348 h -28 Z',
-            height: '36.348',
-            radius: '0',
-            width: '28',
-            x: '312.625',
-            y: '228.652',
-          },
-          {
-            d: 'M 435.125,10.2 h 28 v 254.8 h -28 Z',
-            height: '254.8',
-            radius: '0',
-            width: '28',
-            x: '435.125',
-            y: '10.2',
-          },
-        ]);
+            {
+              x: '35.625',
+              y: '254.6',
+              width: '29',
+              height: '10.4',
+              radius: '0',
+              d: 'M 35.625,254.6 h 29 v 10.4 h -29 Z',
+            },
+            {
+              x: '158.125',
+              y: '257.2',
+              width: '29',
+              height: '7.8',
+              radius: '0',
+              d: 'M 158.125,257.2 h 29 v 7.8 h -29 Z',
+            },
+            {
+              x: '280.625',
+              y: '257.2',
+              width: '29',
+              height: '7.8',
+              radius: '0',
+              d: 'M 280.625,257.2 h 29 v 7.8 h -29 Z',
+            },
+            {
+              x: '403.125',
+              y: '259.8',
+              width: '29',
+              height: '5.2',
+              radius: '0',
+              d: 'M 403.125,259.8 h 29 v 5.2 h -29 Z',
+            },
+            {
+              x: '68.625',
+              y: '202.6',
+              width: '29',
+              height: '62.4',
+              radius: '0',
+              d: 'M 68.625,202.6 h 29 v 62.4 h -29 Z',
+            },
+            {
+              x: '191.125',
+              y: '146.258',
+              width: '29',
+              height: '118.742',
+              radius: '0',
+              d: 'M 191.125,146.258 h 29 v 118.742 h -29 Z',
+            },
+            {
+              x: '313.625',
+              y: '228.652',
+              width: '29',
+              height: '36.348',
+              radius: '0',
+              d: 'M 313.625,228.652 h 29 v 36.348 h -29 Z',
+            },
+            {
+              x: '436.125',
+              y: '10.2',
+              width: '29',
+              height: '254.8',
+              radius: '0',
+              d: 'M 436.125,10.2 h 29 v 254.8 h -29 Z',
+            },
+          ]);
       });
 
       it('should decrease the gap between bar categories', () => {
@@ -3440,71 +3449,71 @@ describe('<BarChart />', () => {
         );
 
         expectBars(container, [
-          {
-            d: 'M 8.675,254.6 h 55 v 10.4 h -55 Z',
-            height: '10.4',
-            radius: '0',
-            width: '55',
-            x: '8.675',
-            y: '254.6',
-          },
-          {
-            d: 'M 131.175,257.2 h 55 v 7.8 h -55 Z',
-            height: '7.8',
-            radius: '0',
-            width: '55',
-            x: '131.175',
-            y: '257.2',
-          },
-          {
-            d: 'M 253.675,257.2 h 55 v 7.8 h -55 Z',
-            height: '7.8',
-            radius: '0',
-            width: '55',
-            x: '253.675',
-            y: '257.2',
-          },
-          {
-            d: 'M 376.175,259.8 h 55 v 5.2 h -55 Z',
-            height: '5.2',
-            radius: '0',
-            width: '55',
-            x: '376.175',
-            y: '259.8',
-          },
-          {
-            d: 'M 67.675,202.6 h 55 v 62.4 h -55 Z',
-            height: '62.4',
-            radius: '0',
-            width: '55',
-            x: '67.675',
-            y: '202.6',
-          },
-          {
-            d: 'M 190.175,146.258 h 55 v 118.742 h -55 Z',
-            height: '118.742',
-            radius: '0',
-            width: '55',
-            x: '190.175',
-            y: '146.258',
-          },
-          {
-            d: 'M 312.675,228.652 h 55 v 36.348 h -55 Z',
-            height: '36.348',
-            radius: '0',
-            width: '55',
-            x: '312.675',
-            y: '228.652',
-          },
-          {
-            d: 'M 435.175,10.2 h 55 v 254.8 h -55 Z',
-            height: '254.8',
-            radius: '0',
-            width: '55',
-            x: '435.175',
-            y: '10.2',
-          },
-        ]);
+            {
+              x: '8.675',
+              y: '254.6',
+              width: '56',
+              height: '10.4',
+              radius: '0',
+              d: 'M 8.675,254.6 h 56 v 10.4 h -56 Z',
+            },
+            {
+              x: '131.175',
+              y: '257.2',
+              width: '56',
+              height: '7.8',
+              radius: '0',
+              d: 'M 131.175,257.2 h 56 v 7.8 h -56 Z',
+            },
+            {
+              x: '253.675',
+              y: '257.2',
+              width: '56',
+              height: '7.8',
+              radius: '0',
+              d: 'M 253.675,257.2 h 56 v 7.8 h -56 Z',
+            },
+            {
+              x: '376.175',
+              y: '259.8',
+              width: '56',
+              height: '5.2',
+              radius: '0',
+              d: 'M 376.175,259.8 h 56 v 5.2 h -56 Z',
+            },
+            {
+              x: '68.675',
+              y: '202.6',
+              width: '56',
+              height: '62.4',
+              radius: '0',
+              d: 'M 68.675,202.6 h 56 v 62.4 h -56 Z',
+            },
+            {
+              x: '191.175',
+              y: '146.258',
+              width: '56',
+              height: '118.742',
+              radius: '0',
+              d: 'M 191.175,146.258 h 56 v 118.742 h -56 Z',
+            },
+            {
+              x: '313.675',
+              y: '228.652',
+              width: '56',
+              height: '36.348',
+              radius: '0',
+              d: 'M 313.675,228.652 h 56 v 36.348 h -56 Z',
+            },
+            {
+              x: '436.175',
+              y: '10.2',
+              width: '56',
+              height: '254.8',
+              radius: '0',
+              d: 'M 436.175,10.2 h 56 v 254.8 h -56 Z',
+            },
+          ]);
       });
     });
   });

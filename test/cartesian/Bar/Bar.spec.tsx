@@ -166,47 +166,47 @@ describe.each(chartsThatSupportBar)('<Bar /> as a child of $testName', ({ ChartE
     );
 
     expectBars(container, [
-      {
-        d: 'M 65,14.2 h 71.6667 v 73 h -71.6667 Z',
-        height: '73',
-        radius: '0',
-        width: '71.6667',
-        x: '65',
-        y: '14.2',
-      },
-      {
-        d: 'M 65,106.2 h 143.3333 v 73 h -143.3333 Z',
-        height: '73',
-        radius: '0',
-        width: '143.3333',
-        x: '65',
-        y: '106.2',
-      },
-      {
-        d: 'M 65,198.2 h 215 v 73 h -215 Z',
-        height: '73',
-        radius: '0',
-        width: '215',
-        x: '65',
-        y: '198.2',
-      },
-      {
-        d: 'M 65,290.2 h 286.6667 v 73 h -286.6667 Z',
-        height: '73',
-        radius: '0',
-        width: '286.6667',
-        x: '65',
-        y: '290.2',
-      },
-      {
-        d: 'M 65,382.2 h 358.3333 v 73 h -358.3333 Z',
-        height: '73',
-        radius: '0',
-        width: '358.3333',
-        x: '65',
-        y: '382.2',
-      },
-    ]);
+        {
+          x: '65',
+          y: '14.2',
+          width: '71.6667',
+          height: '74',
+          radius: '0',
+          d: 'M 65,14.2 h 71.6667 v 74 h -71.6667 Z',
+        },
+        {
+          x: '65',
+          y: '106.2',
+          width: '143.3333',
+          height: '74',
+          radius: '0',
+          d: 'M 65,106.2 h 143.3333 v 74 h -143.3333 Z',
+        },
+        {
+          x: '65',
+          y: '198.2',
+          width: '215',
+          height: '74',
+          radius: '0',
+          d: 'M 65,198.2 h 215 v 74 h -215 Z',
+        },
+        {
+          x: '65',
+          y: '290.2',
+          width: '286.6667',
+          height: '74',
+          radius: '0',
+          d: 'M 65,290.2 h 286.6667 v 74 h -286.6667 Z',
+        },
+        {
+          x: '65',
+          y: '382.2',
+          width: '358.3333',
+          height: '74',
+          radius: '0',
+          d: 'M 65,382.2 h 358.3333 v 74 h -358.3333 Z',
+        },
+      ]);
   });
 
   it("Don't render any rectangle when data is empty", () => {
@@ -256,47 +256,47 @@ describe.each(chartsThatSupportBar)('<Bar /> as a child of $testName', ({ ChartE
       );
 
       expectBars(container, [
-        {
-          d: 'M 14,413.3333 h 79 v 81.6667 h -79 Z',
-          height: '81.6667',
-          radius: '0',
-          width: '79',
-          x: '14',
-          y: '413.3333',
-        },
-        {
-          d: 'M 112,331.6667 h 79 v 163.3333 h -79 Z',
-          height: '163.3333',
-          radius: '0',
-          width: '79',
-          x: '112',
-          y: '331.6667',
-        },
-        {
-          d: 'M 210,250 h 79 v 245 h -79 Z',
-          height: '245',
-          radius: '0',
-          width: '79',
-          x: '210',
-          y: '250',
-        },
-        {
-          d: 'M 308,168.3333 h 79 v 326.6667 h -79 Z',
-          height: '326.6667',
-          radius: '0',
-          width: '79',
-          x: '308',
-          y: '168.3333',
-        },
-        {
-          d: 'M 406,86.6667 h 79 v 408.3333 h -79 Z',
-          height: '408.3333',
-          radius: '0',
-          width: '79',
-          x: '406',
-          y: '86.6667',
-        },
-      ]);
+          {
+            x: '15',
+            y: '413.3333',
+            width: '79',
+            height: '81.6667',
+            radius: '0',
+            d: 'M 15,413.3333 h 79 v 81.6667 h -79 Z',
+          },
+          {
+            x: '113',
+            y: '331.6667',
+            width: '79',
+            height: '163.3333',
+            radius: '0',
+            d: 'M 113,331.6667 h 79 v 163.3333 h -79 Z',
+          },
+          {
+            x: '211',
+            y: '250',
+            width: '79',
+            height: '245',
+            radius: '0',
+            d: 'M 211,250 h 79 v 245 h -79 Z',
+          },
+          {
+            x: '309',
+            y: '168.3333',
+            width: '79',
+            height: '326.6667',
+            radius: '0',
+            d: 'M 309,168.3333 h 79 v 326.6667 h -79 Z',
+          },
+          {
+            x: '407',
+            y: '86.6667',
+            width: '79',
+            height: '408.3333',
+            radius: '0',
+            d: 'M 407,86.6667 h 79 v 408.3333 h -79 Z',
+          },
+        ]);
     });
 
     it('should make bars narrower in horizontal chart', () => {
@@ -308,47 +308,47 @@ describe.each(chartsThatSupportBar)('<Bar /> as a child of $testName', ({ ChartE
       );
 
       expectBars(container, [
-        {
-          d: 'M 15,413.3333 h 77 v 81.6667 h -77 Z',
-          height: '81.6667',
-          radius: '0',
-          width: '77',
-          x: '15',
-          y: '413.3333',
-        },
-        {
-          d: 'M 113,331.6667 h 77 v 163.3333 h -77 Z',
-          height: '163.3333',
-          radius: '0',
-          width: '77',
-          x: '113',
-          y: '331.6667',
-        },
-        {
-          d: 'M 211,250 h 77 v 245 h -77 Z',
-          height: '245',
-          radius: '0',
-          width: '77',
-          x: '211',
-          y: '250',
-        },
-        {
-          d: 'M 309,168.3333 h 77 v 326.6667 h -77 Z',
-          height: '326.6667',
-          radius: '0',
-          width: '77',
-          x: '309',
-          y: '168.3333',
-        },
-        {
-          d: 'M 407,86.6667 h 77 v 408.3333 h -77 Z',
-          height: '408.3333',
-          radius: '0',
-          width: '77',
-          x: '407',
-          y: '86.6667',
-        },
-      ]);
+          {
+            x: '16',
+            y: '413.3333',
+            width: '77',
+            height: '81.6667',
+            radius: '0',
+            d: 'M 16,413.3333 h 77 v 81.6667 h -77 Z',
+          },
+          {
+            x: '114',
+            y: '331.6667',
+            width: '77',
+            height: '163.3333',
+            radius: '0',
+            d: 'M 114,331.6667 h 77 v 163.3333 h -77 Z',
+          },
+          {
+            x: '212',
+            y: '250',
+            width: '77',
+            height: '245',
+            radius: '0',
+            d: 'M 212,250 h 77 v 245 h -77 Z',
+          },
+          {
+            x: '310',
+            y: '168.3333',
+            width: '77',
+            height: '326.6667',
+            radius: '0',
+            d: 'M 310,168.3333 h 77 v 326.6667 h -77 Z',
+          },
+          {
+            x: '408',
+            y: '86.6667',
+            width: '77',
+            height: '408.3333',
+            radius: '0',
+            d: 'M 408,86.6667 h 77 v 408.3333 h -77 Z',
+          },
+        ]);
     });
 
     it('should make bars taller in vertical chart', () => {
@@ -626,47 +626,47 @@ describe.each(chartsThatSupportBar)('<Bar /> as a child of $testName', ({ ChartE
       );
 
       expectBars(container, [
-        {
-          d: 'M 65,14.2 h 71.6667 v 73 h -71.6667 Z',
-          height: '73',
-          radius: '0',
-          width: '71.6667',
-          x: '65',
-          y: '14.2',
-        },
-        {
-          d: 'M 65,106.2 h 143.3333 v 73 h -143.3333 Z',
-          height: '73',
-          radius: '0',
-          width: '143.3333',
-          x: '65',
-          y: '106.2',
-        },
-        {
-          d: 'M 65,198.2 h 215 v 73 h -215 Z',
-          height: '73',
-          radius: '0',
-          width: '215',
-          x: '65',
-          y: '198.2',
-        },
-        {
-          d: 'M 65,290.2 h 286.6667 v 73 h -286.6667 Z',
-          height: '73',
-          radius: '0',
-          width: '286.6667',
-          x: '65',
-          y: '290.2',
-        },
-        {
-          d: 'M 65,382.2 h 358.3333 v 73 h -358.3333 Z',
-          height: '73',
-          radius: '0',
-          width: '358.3333',
-          x: '65',
-          y: '382.2',
-        },
-      ]);
+          {
+            x: '65',
+            y: '14.2',
+            width: '71.6667',
+            height: '74',
+            radius: '0',
+            d: 'M 65,14.2 h 71.6667 v 74 h -71.6667 Z',
+          },
+          {
+            x: '65',
+            y: '106.2',
+            width: '143.3333',
+            height: '74',
+            radius: '0',
+            d: 'M 65,106.2 h 143.3333 v 74 h -143.3333 Z',
+          },
+          {
+            x: '65',
+            y: '198.2',
+            width: '215',
+            height: '74',
+            radius: '0',
+            d: 'M 65,198.2 h 215 v 74 h -215 Z',
+          },
+          {
+            x: '65',
+            y: '290.2',
+            width: '286.6667',
+            height: '74',
+            radius: '0',
+            d: 'M 65,290.2 h 286.6667 v 74 h -286.6667 Z',
+          },
+          {
+            x: '65',
+            y: '382.2',
+            width: '358.3333',
+            height: '74',
+            radius: '0',
+            d: 'M 65,382.2 h 358.3333 v 74 h -358.3333 Z',
+          },
+        ]);
     });
 
     it('should change all bars height in vertical chart if all bars are larger than the maxBarSize', () => {
@@ -680,47 +680,47 @@ describe.each(chartsThatSupportBar)('<Bar /> as a child of $testName', ({ ChartE
       );
 
       expectBars(container, [
-        {
-          d: 'M 65,14.7 h 71.6667 v 72 h -71.6667 Z',
-          height: '72',
-          radius: '0',
-          width: '71.6667',
-          x: '65',
-          y: '14.7',
-        },
-        {
-          d: 'M 65,106.7 h 143.3333 v 72 h -143.3333 Z',
-          height: '72',
-          radius: '0',
-          width: '143.3333',
-          x: '65',
-          y: '106.7',
-        },
-        {
-          d: 'M 65,198.7 h 215 v 72 h -215 Z',
-          height: '72',
-          radius: '0',
-          width: '215',
-          x: '65',
-          y: '198.7',
-        },
-        {
-          d: 'M 65,290.7 h 286.6667 v 72 h -286.6667 Z',
-          height: '72',
-          radius: '0',
-          width: '286.6667',
-          x: '65',
-          y: '290.7',
-        },
-        {
-          d: 'M 65,382.7 h 358.3333 v 72 h -358.3333 Z',
-          height: '72',
-          radius: '0',
-          width: '358.3333',
-          x: '65',
-          y: '382.7',
-        },
-      ]);
+          {
+            x: '65',
+            y: '15.2',
+            width: '71.6667',
+            height: '72',
+            radius: '0',
+            d: 'M 65,15.2 h 71.6667 v 72 h -71.6667 Z',
+          },
+          {
+            x: '65',
+            y: '107.2',
+            width: '143.3333',
+            height: '72',
+            radius: '0',
+            d: 'M 65,107.2 h 143.3333 v 72 h -143.3333 Z',
+          },
+          {
+            x: '65',
+            y: '199.2',
+            width: '215',
+            height: '72',
+            radius: '0',
+            d: 'M 65,199.2 h 215 v 72 h -215 Z',
+          },
+          {
+            x: '65',
+            y: '291.2',
+            width: '286.6667',
+            height: '72',
+            radius: '0',
+            d: 'M 65,291.2 h 286.6667 v 72 h -286.6667 Z',
+          },
+          {
+            x: '65',
+            y: '383.2',
+            width: '358.3333',
+            height: '72',
+            radius: '0',
+            d: 'M 65,383.2 h 358.3333 v 72 h -358.3333 Z',
+          },
+        ]);
     });
 
     it('should do nothing if barSize is set in vertical chart', () => {
@@ -734,47 +734,47 @@ describe.each(chartsThatSupportBar)('<Bar /> as a child of $testName', ({ ChartE
       );
 
       expectBars(container, [
-        {
-          d: 'M 65,11 h 71.6667 v 79 h -71.6667 Z',
-          height: '79',
-          radius: '0',
-          width: '71.6667',
-          x: '65',
-          y: '11',
-        },
-        {
-          d: 'M 65,103 h 143.3333 v 79 h -143.3333 Z',
-          height: '79',
-          radius: '0',
-          width: '143.3333',
-          x: '65',
-          y: '103',
-        },
-        {
-          d: 'M 65,195 h 215 v 79 h -215 Z',
-          height: '79',
-          radius: '0',
-          width: '215',
-          x: '65',
-          y: '195',
-        },
-        {
-          d: 'M 65,287 h 286.6667 v 79 h -286.6667 Z',
-          height: '79',
-          radius: '0',
-          width: '286.6667',
-          x: '65',
-          y: '287',
-        },
-        {
-          d: 'M 65,379 h 358.3333 v 79 h -358.3333 Z',
-          height: '79',
-          radius: '0',
-          width: '358.3333',
-          x: '65',
-          y: '379',
-        },
-      ]);
+          {
+            x: '65',
+            y: '12',
+            width: '71.6667',
+            height: '79',
+            radius: '0',
+            d: 'M 65,12 h 71.6667 v 79 h -71.6667 Z',
+          },
+          {
+            x: '65',
+            y: '104',
+            width: '143.3333',
+            height: '79',
+            radius: '0',
+            d: 'M 65,104 h 143.3333 v 79 h -143.3333 Z',
+          },
+          {
+            x: '65',
+            y: '196',
+            width: '215',
+            height: '79',
+            radius: '0',
+            d: 'M 65,196 h 215 v 79 h -215 Z',
+          },
+          {
+            x: '65',
+            y: '288',
+            width: '286.6667',
+            height: '79',
+            radius: '0',
+            d: 'M 65,288 h 286.6667 v 79 h -286.6667 Z',
+          },
+          {
+            x: '65',
+            y: '380',
+            width: '358.3333',
+            height: '79',
+            radius: '0',
+            d: 'M 65,380 h 358.3333 v 79 h -358.3333 Z',
+          },
+        ]);
     });
   });
 
@@ -1153,23 +1153,23 @@ describe.each(chartsThatSupportBar)('<Bar /> as a child of $testName', ({ ChartE
       );
 
       expectBars(container, [
-        {
-          d: 'M 21.3333,5 h 130 v 460 h -130 Z',
-          height: '460',
-          radius: '0',
-          width: '130',
-          x: '21.3333',
-          y: '5',
-        },
-        {
-          d: 'M 348,464.954 h 130 v 0.046 h -130 Z',
-          height: '0.046',
-          radius: '0',
-          width: '130',
-          x: '348',
-          y: '464.954',
-        },
-      ]);
+          {
+            x: '21.3333',
+            y: '5',
+            width: '131',
+            height: '460',
+            radius: '0',
+            d: 'M 21.3333,5 h 131 v 460 h -131 Z',
+          },
+          {
+            x: '348',
+            y: '464.954',
+            width: '131',
+            height: '0.046',
+            radius: '0',
+            d: 'M 348,464.954 h 131 v 0.046 h -131 Z',
+          },
+        ]);
     });
 
     it('should assign minimum height to low value bars if minPointSize is a number', () => {
@@ -1182,31 +1182,31 @@ describe.each(chartsThatSupportBar)('<Bar /> as a child of $testName', ({ ChartE
       );
 
       expectBars(container, [
-        {
-          d: 'M 79.3333,5 h 114 v 460 h -114 Z',
-          height: '460',
-          radius: '0',
-          width: '114',
-          x: '79.3333',
-          y: '5',
-        },
-        {
-          d: 'M 222.6667,460 h 114 v 5 h -114 Z',
-          height: '5',
-          radius: '0',
-          width: '114',
-          x: '222.6667',
-          y: '460',
-        },
-        {
-          d: 'M 366,460 h 114 v 5 h -114 Z',
-          height: '5',
-          radius: '0',
-          width: '114',
-          x: '366',
-          y: '460',
-        },
-      ]);
+          {
+            x: '79.3333',
+            y: '5',
+            width: '115',
+            height: '460',
+            radius: '0',
+            d: 'M 79.3333,5 h 115 v 460 h -115 Z',
+          },
+          {
+            x: '222.6667',
+            y: '460',
+            width: '115',
+            height: '5',
+            radius: '0',
+            d: 'M 222.6667,460 h 115 v 5 h -115 Z',
+          },
+          {
+            x: '366',
+            y: '460',
+            width: '115',
+            height: '5',
+            radius: '0',
+            d: 'M 366,460 h 115 v 5 h -115 Z',
+          },
+        ]);
     });
 
     it('should assign minimum width, in a vertical chart', () => {
@@ -1219,31 +1219,31 @@ describe.each(chartsThatSupportBar)('<Bar /> as a child of $testName', ({ ChartE
       );
 
       expectBars(container, [
-        {
-          d: 'M 65,20.3333 h 430 v 122 h -430 Z',
-          height: '122',
-          radius: '0',
-          width: '430',
-          x: '65',
-          y: '20.3333',
-        },
-        {
-          d: 'M 65,173.6667 h 5 v 122 h -5 Z',
-          height: '122',
-          radius: '0',
-          width: '5',
-          x: '65',
-          y: '173.6667',
-        },
-        {
-          d: 'M 65,327 h 5 v 122 h -5 Z',
-          height: '122',
-          radius: '0',
-          width: '5',
-          x: '65',
-          y: '327',
-        },
-      ]);
+          {
+            x: '65',
+            y: '20.3333',
+            width: '430',
+            height: '123',
+            radius: '0',
+            d: 'M 65,20.3333 h 430 v 123 h -430 Z',
+          },
+          {
+            x: '65',
+            y: '173.6667',
+            width: '5',
+            height: '123',
+            radius: '0',
+            d: 'M 65,173.6667 h 5 v 123 h -5 Z',
+          },
+          {
+            x: '65',
+            y: '327',
+            width: '5',
+            height: '123',
+            radius: '0',
+            d: 'M 65,327 h 5 v 123 h -5 Z',
+          },
+        ]);
     });
 
     it('should render with varying minPointSize as per function results', () => {
@@ -1264,23 +1264,23 @@ describe.each(chartsThatSupportBar)('<Bar /> as a child of $testName', ({ ChartE
        value of 1 should have height greater than 0 due to minPointSize
       */
       expectBars(container, [
-        {
-          d: 'M 79.3333,5 h 114 v 460 h -114 Z',
-          height: '460',
-          radius: '0',
-          width: '114',
-          x: '79.3333',
-          y: '5',
-        },
-        {
-          d: 'M 366,463 h 114 v 2 h -114 Z',
-          height: '2',
-          radius: '0',
-          width: '114',
-          x: '366',
-          y: '463',
-        },
-      ]);
+          {
+            x: '79.3333',
+            y: '5',
+            width: '115',
+            height: '460',
+            radius: '0',
+            d: 'M 79.3333,5 h 115 v 460 h -115 Z',
+          },
+          {
+            x: '366',
+            y: '463',
+            width: '115',
+            height: '2',
+            radius: '0',
+            d: 'M 366,463 h 115 v 2 h -115 Z',
+          },
+        ]);
     });
   });
 
