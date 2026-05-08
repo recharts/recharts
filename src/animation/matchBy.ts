@@ -106,6 +106,22 @@ function tagAlignedItems<T>(
   return tagged;
 }
 
+function matchByIndexImpl<T>(
+  prevItems: ReadonlyArray<T>,
+  nextItems: ReadonlyArray<T>,
+): ReadonlyArray<AnimationItem<T>> {
+  const factor = prevItems.length / nextItems.length;
+  // Max index is floor((nextLen-1) * prevLen/nextLen) which is always < prevLen,
+  // but TypeScript doesn't know that, so we cast.
+  const alignedPrevItems = nextItems.map((_, i) => prevItems[Math.floor(i * factor)] as T);
+  return tagAlignedItems(alignedPrevItems, nextItems);
+}
+
+function matchAppendImpl<T>(prevItems: ReadonlyArray<T>, nextItems: ReadonlyArray<T>): ReadonlyArray<AnimationItem<T>> {
+  const alignedPrevItems = nextItems.map((_, i) => prevItems[i] as T);
+  return tagAlignedItems(alignedPrevItems, nextItems);
+}
+
 function buildPrevKeyMap<T>(
   prevItems: ReadonlyArray<T>,
   matchBy: AnimationMatchBy<T>,
@@ -161,61 +177,6 @@ function matchByKey<T>(
 }
 
 /**
- * Align previous items to match next items by key.
- *
- * Returns an array of the same length as nextItems, where result[i] is
- * the previous item whose key matches nextItems[i], or undefined if no match.
- *
- * @internal
- */
-function alignByKey<T>(
-  prevItems: ReadonlyArray<T>,
-  nextItems: ReadonlyArray<T>,
-  matchBy: AnimationMatchBy<T>,
-): ReadonlyArray<T> {
-  const prevMap = buildPrevKeyMap(prevItems, matchBy);
-
-  return nextItems.map((next, i) => {
-    const key = matchBy(next, i);
-    if (key != null) {
-      return prevMap.get(key) as T;
-    }
-    return undefined as unknown as T;
-  });
-}
-
-/**
- * Align previous items to next items using the given matching strategy.
- *
- * Returns an array of the same length as `nextItems`, where `result[i]` is the
- * previous item that corresponds to `nextItems[i]`, or `undefined` if there is
- * no match. After alignment, interpolation functions can simply pair items by index.
- *
- * Strategies:
- * - `matchByIndex` (default): proportional stretch — `prev[floor(i × prevLen/nextLen)]`
- * - `matchAppend`: sequential 1:1 — `prev[i]` (undefined when `i ≥ prevLen`)
- * - custom function: key-based lookup
- *
- * @internal
- */
-export function alignItems<T>(
-  prevItems: ReadonlyArray<T>,
-  nextItems: ReadonlyArray<T>,
-  matchBy: AnimationMatchByProp<T>,
-): ReadonlyArray<T> {
-  if (matchBy === matchByIndex) {
-    const factor = prevItems.length / nextItems.length;
-    // Max index is floor((nextLen-1) * prevLen/nextLen) which is always < prevLen,
-    // but TypeScript doesn't know that, so we cast.
-    return nextItems.map((_, i) => prevItems[Math.floor(i * factor)] as T);
-  }
-  if (matchBy === matchAppend) {
-    return nextItems.map((_, i) => prevItems[i] as T);
-  }
-  return alignByKey(prevItems, nextItems, matchBy);
-}
-
-/**
  * Match previous items to next items using the given matching strategy and return tagged animation items.
  *
  * On first render, all next items are returned as `{ status: 'added' }`.
@@ -234,9 +195,34 @@ export function matchAnimationItems<T>(
   if (prevItems == null) {
     return nextItems.map(next => ({ status: 'added' as const, next }));
   }
-  if (matchBy === matchByIndex || matchBy === matchAppend) {
-    const alignedPrevItems = alignItems(prevItems, nextItems, matchBy);
-    return tagAlignedItems(alignedPrevItems, nextItems);
+  if (matchBy === matchByIndex) {
+    return matchByIndexImpl(prevItems, nextItems);
+  }
+  if (matchBy === matchAppend) {
+    return matchAppendImpl(prevItems, nextItems);
   }
   return matchByKey(prevItems, nextItems, matchBy);
+}
+
+/**
+ * Align previous items to next items using the given matching strategy.
+ *
+ * Returns an array of the same length as `nextItems`, where `result[i]` is the
+ * previous item that corresponds to `nextItems[i]`, or `undefined` if there is
+ * no match. After alignment, interpolation functions can simply pair items by index.
+ *
+ * @internal
+ */
+export function alignItems<T>(
+  prevItems: ReadonlyArray<T>,
+  nextItems: ReadonlyArray<T>,
+  matchBy: AnimationMatchByProp<T>,
+): ReadonlyArray<T> {
+  const animationItems = matchAnimationItems(prevItems, nextItems, matchBy);
+  if (animationItems == null) {
+    return [];
+  }
+  return animationItems
+    .slice(0, nextItems.length)
+    .map(item => (item.status === 'matched' ? item.prev : (undefined as unknown as T)));
 }

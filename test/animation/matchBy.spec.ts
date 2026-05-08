@@ -426,6 +426,36 @@ describe('alignItems', () => {
       }
     });
   });
+
+  describe('strategy comparison: 15 to 5 items', () => {
+    const prev: TestItem[] = Array.from({ length: 15 }, (_, i) => ({ x: i * 10, y: i * 10 }));
+    const next: TestItem[] = Array.from({ length: 5 }, (_, i) => ({ x: i * 10, y: i * 10 }));
+
+    it('matchByIndex should squeeze old items into new positions', () => {
+      const aligned = alignItems(prev, next, matchByIndex);
+      expect(aligned).toHaveLength(5);
+      // Every position should have a defined value (squeezed from 15 prev into 5 new)
+      for (let i = 0; i < 5; i++) {
+        expect(aligned[i]).toBeDefined();
+      }
+      // First maps to first, last maps to ... not quite last but close
+      expect(aligned[0]).toBe(prev[0]);
+      expect(aligned[4]).toBe(prev[12]);
+    });
+
+    it('matchAppend should leave extras undefined', () => {
+      const aligned = alignItems(prev, next, matchAppend);
+      expect(aligned).toHaveLength(5);
+      // First 5 have defined values
+      for (let i = 0; i < 5; i++) {
+        expect(aligned[i]).toBe(prev[i]);
+      }
+      // Remaining 10 are undefined
+      for (let i = 5; i < 15; i++) {
+        expect(aligned[i]).toBeUndefined();
+      }
+    });
+  });
 });
 
 describe('matchAnimationItems', () => {
