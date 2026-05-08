@@ -3,7 +3,7 @@ import { MutableRefObject, ReactNode, useCallback, useState } from 'react';
 import { JavascriptAnimate } from './JavascriptAnimate';
 import { EasingInput } from './easing';
 import { useAnimationId } from '../util/useAnimationId';
-import { alignItemsWithRemovals, AnimationMatchByProp, matchByIndex } from './matchBy';
+import { AnimationItem, AnimationMatchByProp, matchAnimationItems, matchByIndex } from './matchBy';
 
 /**
  * Hook that tracks whether an animation is in progress and wraps
@@ -37,18 +37,6 @@ export function useAnimationCallbacks(onAnimationStart?: () => void, onAnimation
 
   return { isAnimating, handleAnimationStart, handleAnimationEnd };
 }
-
-/**
- * A tagged union describing the status of an item during animation.
- *
- * - `matched`: item exists in both previous and next data — interpolate between positions
- * - `added`: item is new (no previous position) — animate in
- * - `removed`: item was in previous data but not in next — animate out
- */
-export type AnimationItem<T> =
-  | { readonly status: 'matched'; readonly prev: T; readonly next: T }
-  | { readonly status: 'added'; readonly next: T }
-  | { readonly status: 'removed'; readonly prev: T };
 
 /**
  * A function that interpolates animation items at a given time.
@@ -154,31 +142,11 @@ export function AnimatedItems<T>(props: AnimatedItemsProps<T>) {
   const animationId = useAnimationId(animationInput, animationIdPrefix);
 
   const rawPrevItems = previousItemsRef.current ?? null;
-  // Build tagged animation items describing matched, added, and removed items.
-  let animationItems: ReadonlyArray<AnimationItem<T>> | null;
-  if (rawPrevItems && items) {
-    const matchBy = animationMatchBy ?? matchByIndex;
-    const { aligned, removed } = alignItemsWithRemovals(rawPrevItems, items, matchBy);
-    const tagged: AnimationItem<T>[] = [];
-    for (let i = 0; i < items.length; i++) {
-      const prev = aligned[i] as T | undefined;
-      const next = items[i]!;
-      if (prev != null) {
-        tagged.push({ status: 'matched', prev, next });
-      } else {
-        tagged.push({ status: 'added', next });
-      }
-    }
-    for (const prev of removed) {
-      tagged.push({ status: 'removed', prev });
-    }
-    animationItems = tagged;
-  } else if (items) {
-    // First render or no previous items — all items are "added"
-    animationItems = items.map(next => ({ status: 'added' as const, next }));
-  } else {
-    animationItems = null;
-  }
+  const animationItems: ReadonlyArray<AnimationItem<T>> | null = matchAnimationItems(
+    rawPrevItems,
+    items,
+    animationMatchBy ?? matchByIndex,
+  );
 
   return (
     <JavascriptAnimate

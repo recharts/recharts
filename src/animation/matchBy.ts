@@ -2,6 +2,18 @@ import { DataKey } from '../util/types';
 import { getValueByDataKey } from '../util/ChartUtils';
 
 /**
+ * A tagged union describing the status of an item during animation.
+ *
+ * - `matched`: item exists in both previous and next data — interpolate between positions
+ * - `added`: item is new (no previous position) — animate in
+ * - `removed`: item was in previous data but not in next — animate out
+ */
+export type AnimationItem<T> =
+  | { readonly status: 'matched'; readonly prev: T; readonly next: T }
+  | { readonly status: 'added'; readonly next: T }
+  | { readonly status: 'removed'; readonly prev: T };
+
+/**
  * A function that extracts a key from an animation item for matching purposes.
  * Items in the previous and next arrays that return the same key are considered
  * the same logical item and will animate between their positions.
@@ -73,17 +85,31 @@ export function matchByDataKey(dataKey: DataKey<Record<string, unknown>>): Anima
   };
 }
 
-/**
- * Align previous items to match next items by key, and track removed items.
- *
- * @internal
- */
-function alignByKeyWithRemovals<T>(
-  prevItems: ReadonlyArray<T>,
+function tagAlignedItems<T>(
+  alignedPrevItems: ReadonlyArray<T>,
   nextItems: ReadonlyArray<T>,
+  removedPrevItems: ReadonlyArray<T> = [],
+): ReadonlyArray<AnimationItem<T>> {
+  const tagged: AnimationItem<T>[] = [];
+  for (let i = 0; i < nextItems.length; i++) {
+    const prev = alignedPrevItems[i] as T | undefined;
+    const next = nextItems[i]!;
+    if (prev != null) {
+      tagged.push({ status: 'matched', prev, next });
+    } else {
+      tagged.push({ status: 'added', next });
+    }
+  }
+  for (const prev of removedPrevItems) {
+    tagged.push({ status: 'removed', prev });
+  }
+  return tagged;
+}
+
+function buildPrevKeyMap<T>(
+  prevItems: ReadonlyArray<T>,
   matchBy: AnimationMatchBy<T>,
-): AlignmentResult<T> {
-  // Build a map of key → prev item (first occurrence wins)
+): ReadonlyMap<string | number, T> {
   const prevMap = new Map<string | number, T>();
   for (let i = 0; i < prevItems.length; i++) {
     const item = prevItems[i];
@@ -93,11 +119,25 @@ function alignByKeyWithRemovals<T>(
       prevMap.set(key, item);
     }
   }
+  return prevMap;
+}
+
+/**
+ * Match previous items to next items by key, and include removed items explicitly.
+ *
+ * @internal
+ */
+function matchByKey<T>(
+  prevItems: ReadonlyArray<T>,
+  nextItems: ReadonlyArray<T>,
+  matchBy: AnimationMatchBy<T>,
+): ReadonlyArray<AnimationItem<T>> {
+  const prevMap = buildPrevKeyMap(prevItems, matchBy);
 
   // Track which prev keys were matched
   const matchedKeys = new Set<string | number>();
 
-  const aligned = nextItems.map((next, i) => {
+  const alignedPrevItems = nextItems.map((next, i) => {
     const key = matchBy(next, i);
     if (key != null) {
       const prev = prevMap.get(key);
@@ -110,14 +150,14 @@ function alignByKeyWithRemovals<T>(
   });
 
   // Removed = prev items whose keys were not matched to any next item
-  const removed: T[] = [];
+  const removedPrevItems: T[] = [];
   for (const [key, item] of prevMap) {
     if (!matchedKeys.has(key)) {
-      removed.push(item);
+      removedPrevItems.push(item);
     }
   }
 
-  return { aligned, removed };
+  return tagAlignedItems(alignedPrevItems, nextItems, removedPrevItems);
 }
 
 /**
@@ -133,7 +173,15 @@ function alignByKey<T>(
   nextItems: ReadonlyArray<T>,
   matchBy: AnimationMatchBy<T>,
 ): ReadonlyArray<T> {
-  return alignByKeyWithRemovals(prevItems, nextItems, matchBy).aligned;
+  const prevMap = buildPrevKeyMap(prevItems, matchBy);
+
+  return nextItems.map((next, i) => {
+    const key = matchBy(next, i);
+    if (key != null) {
+      return prevMap.get(key) as T;
+    }
+    return undefined as unknown as T;
+  });
 }
 
 /**
@@ -168,34 +216,27 @@ export function alignItems<T>(
 }
 
 /**
- * Result of aligning items with removal tracking.
- */
-export interface AlignmentResult<T> {
-  /** Aligned items: same length as nextItems, result[i] is the matched prev item or undefined */
-  aligned: ReadonlyArray<T>;
-  /** Items present in prevItems but not matched to any nextItem */
-  removed: ReadonlyArray<T>;
-}
-
-/**
- * Like alignItems but also returns the list of previous items that were
- * not matched to any next item. These "removed" items can be animated off-screen.
+ * Match previous items to next items using the given matching strategy and return tagged animation items.
  *
- * For `matchByIndex` and `matchAppend`, removed is always empty because
- * those strategies don't use identity-based matching.
+ * On first render, all next items are returned as `{ status: 'added' }`.
+ * For key-based matching, unmatched previous items are appended as `{ status: 'removed' }`.
  *
  * @internal
  */
-export function alignItemsWithRemovals<T>(
-  prevItems: ReadonlyArray<T>,
-  nextItems: ReadonlyArray<T>,
+export function matchAnimationItems<T>(
+  prevItems: ReadonlyArray<T> | null,
+  nextItems: ReadonlyArray<T> | undefined,
   matchBy: AnimationMatchByProp<T>,
-): AlignmentResult<T> {
-  if (matchBy === matchByIndex) {
-    return { aligned: alignItems(prevItems, nextItems, matchBy), removed: [] };
+): ReadonlyArray<AnimationItem<T>> | null {
+  if (nextItems == null) {
+    return null;
   }
-  if (matchBy === matchAppend) {
-    return { aligned: alignItems(prevItems, nextItems, matchBy), removed: [] };
+  if (prevItems == null) {
+    return nextItems.map(next => ({ status: 'added' as const, next }));
   }
-  return alignByKeyWithRemovals(prevItems, nextItems, matchBy);
+  if (matchBy === matchByIndex || matchBy === matchAppend) {
+    const alignedPrevItems = alignItems(prevItems, nextItems, matchBy);
+    return tagAlignedItems(alignedPrevItems, nextItems);
+  }
+  return matchByKey(prevItems, nextItems, matchBy);
 }
