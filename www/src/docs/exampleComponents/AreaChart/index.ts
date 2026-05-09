@@ -22,10 +22,10 @@ import AreaChartExample from './AreaChartExample';
 import areaChartExampleSource from './AreaChartExample?raw';
 import AreaChartRangeExample from './AreaChartRangeExample';
 import areaChartRangeExampleSource from './AreaChartRangeExample?raw';
-import AreaChartCustomAnimationExample from './AreaChartCustomAnimationExample.tsx';
-import AreaChartCustomAnimationExampleSource from './AreaChartCustomAnimationExample.tsx?raw';
 import AreaChartCustomAnimationExample, { AreaChartCustomAnimationControls } from './AreaChartCustomAnimationExample';
 import AreaChartCustomAnimationExampleSource from './AreaChartCustomAnimationExample/index.tsx?raw';
+import RangeAreaChartCustomAnimation, { RangeAreaChartCustomAnimationControls } from './RangeAreaChartCustomAnimation';
+import rangeAreaChartCustomAnimationSource from './RangeAreaChartCustomAnimation?raw';
 
 export { AreaChartNavExample };
 
@@ -80,6 +80,15 @@ export const areaChartExamples = {
     sourceCode: AreaChartCustomAnimationExampleSource,
     Controls: AreaChartCustomAnimationControls,
     name: 'Custom Animation Example',
+    defaultTool: 'controls',
+  },
+  RangeAreaChartCustomAnimation: {
+    Component: RangeAreaChartCustomAnimation,
+    sourceCode: rangeAreaChartCustomAnimationSource,
+    Controls: RangeAreaChartCustomAnimationControls,
+    name: 'Range Area Custom Animation',
+    description:
+      'Uses range data ([low, high]) so the area has an internal baseline path. Swap datasets with animationInterpolateFn enabled to compare the point animation with the baseline animation.',
     defaultTool: 'controls',
   },
   AreaChartWithCustomEvents: {

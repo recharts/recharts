@@ -21,6 +21,7 @@ import LineChartCustomShapeExample, {
   LineChartCustomShapeControls,
 } from '../../../docs/exampleComponents/LineChart/LineChartCustomShapeExample';
 import LineChartCustomShapeExampleSource from '../../../docs/exampleComponents/LineChart/LineChartCustomShapeExample/index.tsx?raw';
+import { RechartsLink } from '../../Shared/RechartsLink.tsx';
 
 export function AnimationsGuide() {
   return (
@@ -393,6 +394,17 @@ export function AnimationsGuide() {
         stackBlitzTitle="Recharts Custom Animation Example"
         defaultTool="controls"
       />
+
+      <p>
+        Also see our other custom animation examples:
+        <ul>
+          <li>
+            <RechartsLink to="/examples/RangeAreaChartCustomAnimation">
+              Ranged AreaChart with custom animation
+            </RechartsLink>
+          </li>
+        </ul>
+      </p>
 
       <h2>Custom shape animations</h2>
       <p>

@@ -504,9 +504,9 @@ function StaticArea({
   needClip: boolean;
   clipPathId: string;
   props: InternalProps;
-  t?: number;
-  isAnimating?: boolean;
-  isEntrance?: boolean;
+  t: number;
+  isAnimating: boolean;
+  isEntrance: boolean;
 }) {
   const { layout, type, stroke, connectNulls, isRange, shape } = props;
 
@@ -556,6 +556,11 @@ function defaultAreaAnimateItems(): AnimationInterpolateFn<AreaPointItem> {
         ];
       }
       if (item.status === 'added') {
+        /*
+         * Here we just return the final position without interpolating
+         * so that we can allow the default initial animation that is done by clipPath in AreaRevealShape.
+         * If you want your own custom animations then you may want to interpolate this one as well.
+         */
         return [item.next];
       }
       // removed: drop
@@ -613,6 +618,7 @@ function AreaWithAnimation({
   }
 
   const prevBaseLine = previousBaselineRef.current;
+  // TODO the defaults resolution should be done in defaultProps, not here
   const matchStrategy = props.animationMatchBy ?? matchByIndex;
   const animationInterpolateFn = props.animationInterpolateFn ?? defaultAreaAnimateItems();
 
@@ -647,7 +653,7 @@ function AreaWithAnimation({
           <AreaLabelListProvider showLabels={!isAnimating} points={points}>
             {props.children}
             <StaticArea
-              points={isEntrance ? points : stepPoints}
+              points={stepPoints}
               baseLine={stepBaseLine}
               needClip={needClip}
               clipPathId={clipPathId}
@@ -665,7 +671,7 @@ function AreaWithAnimation({
 }
 
 /*
- * This components decides if the area should be animated or not.
+ * This component decides if the area should be animated or not.
  * It also holds the state of the animation.
  */
 function RenderArea({ needClip, clipPathId, props }: { needClip: boolean; clipPathId: string; props: InternalProps }) {
