@@ -49,7 +49,7 @@ import { useChartName } from '../state/selectors/selectors';
 import { SetLegendPayload } from '../state/SetLegendPayload';
 import { useAppSelector } from '../state/hooks';
 import { AnimatedItems, AnimationInterpolateFn, useAnimationCallbacks } from '../animation/AnimatedItems';
-import { alignItems, AnimationMatchByProp, matchByIndex } from '../animation/matchBy';
+import { AnimationMatchByProp, matchAnimationItems, matchByIndex } from '../animation/matchBy';
 import { RequiresDefaultProps, resolveDefaultProps } from '../util/resolveDefaultProps';
 import { usePlotArea } from '../hooks';
 import { WithIdRequired, WithoutId } from '../util/useUniqueId';
@@ -569,7 +569,7 @@ function defaultAreaAnimateItems(): AnimationInterpolateFn<AreaPointItem> {
   };
 }
 
-function interpolateBaseLine(
+function interpolateScalarBaseLine(
   baseLine: BaseLineType | undefined,
   prevBaseLine: BaseLineType | undefined,
   t: number,
@@ -582,13 +582,7 @@ function interpolateBaseLine(
     const previousNumberBaseLine = isNumber(prevBaseLine) ? prevBaseLine : undefined;
     return interpolate(previousNumberBaseLine, 0, t);
   }
-  return baseLine.map((entry, index) => {
-    if (Array.isArray(prevBaseLine) && prevBaseLine[index]) {
-      const prev = prevBaseLine[index];
-      return { ...entry, x: interpolate(prev.x, entry.x, t), y: interpolate(prev.y, entry.y, t) };
-    }
-    return entry;
-  });
+  return baseLine;
 }
 
 function AreaWithAnimation({
@@ -622,11 +616,12 @@ function AreaWithAnimation({
   const matchStrategy = props.animationMatchBy ?? matchByIndex;
   const animationInterpolateFn = props.animationInterpolateFn ?? defaultAreaAnimateItems();
 
-  // Align baseline using the same matching strategy as points
-  const alignedPrevBaseLine =
-    prevBaseLine && Array.isArray(baseLine) && Array.isArray(prevBaseLine)
-      ? alignItems(prevBaseLine, baseLine, matchStrategy)
-      : prevBaseLine;
+  const baseLineAnimationItems =
+    Array.isArray(baseLine) && Array.isArray(prevBaseLine)
+      ? matchAnimationItems(prevBaseLine, baseLine, matchStrategy)
+      : Array.isArray(baseLine)
+        ? matchAnimationItems(null, baseLine, matchStrategy)
+        : null;
 
   return (
     <AnimatedItems
@@ -644,7 +639,14 @@ function AreaWithAnimation({
       animationMatchBy={matchStrategy}
     >
       {(stepPoints, t, isEntrance) => {
-        const stepBaseLine = isEntrance || t === 1 ? baseLine : interpolateBaseLine(baseLine, alignedPrevBaseLine, t);
+        const stepBaseLine =
+          t === 1
+            ? baseLine
+            : Array.isArray(baseLine)
+              ? animationInterpolateFn(baseLineAnimationItems, t)
+              : isEntrance
+                ? baseLine
+                : interpolateScalarBaseLine(baseLine, prevBaseLine, t);
         if (t > 0) {
           // eslint-disable-next-line no-param-reassign
           previousBaselineRef.current = stepBaseLine;

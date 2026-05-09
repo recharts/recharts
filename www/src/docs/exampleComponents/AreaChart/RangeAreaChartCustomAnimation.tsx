@@ -40,7 +40,7 @@ type MyDataType = {
   range: [number, number];
 };
 
-const dataA = [
+const dataA: ReadonlyArray<MyDataType> = [
   { name: 'Jan', range: [800, 2600] },
   { name: 'Feb', range: [1100, 3300] },
   { name: 'Mar', range: [900, 2800] },
@@ -49,7 +49,7 @@ const dataA = [
   { name: 'Jun', range: [1600, 4300] },
 ];
 
-const dataB = [
+const dataB: ReadonlyArray<MyDataType> = [
   { name: 'Jan', range: [400, 1800] },
   { name: 'Feb', range: [1500, 4200] },
   { name: 'Mar', range: [700, 2100] },
@@ -89,7 +89,9 @@ function CurveWithoutEntranceAnimation(props: CurveProps) {
   return <AreaRevealShape {...props} isEntrance={false} />;
 }
 
-function CustomAnimationArea(props: AreaProps<MyDataType, [number, number]> & { animationStyle: AnimationStyle }) {
+function CustomAnimationArea(
+  props: AreaProps<MyDataType, number | [number, number]> & { animationStyle: AnimationStyle },
+) {
   const { animationStyle } = props;
   const topToBottomAnimation = useAnimateFromPlotBottom();
   const animationInterpolateFn = animationStyle === 'topToBottom' ? topToBottomAnimation : undefined;
@@ -103,9 +105,10 @@ export default function RangeAreaChartCustomAnimation(props: Partial<ControlsTyp
     ...initialState,
     ...props,
   };
-  const gradientId = useId();
+  const gradientId1 = useId();
+  const gradientId2 = useId();
   return (
-    <AreaChart
+    <AreaChart<MyDataType>
       key={replayKey}
       style={{ width: '100%', maxWidth: 700, aspectRatio: 1.618 }}
       responsive
@@ -113,21 +116,37 @@ export default function RangeAreaChartCustomAnimation(props: Partial<ControlsTyp
       margin={{ top: 10, right: 16, left: 0, bottom: 0 }}
     >
       <defs>
-        <linearGradient id={gradientId} x1="0" y1="0" x2="0" y2="1">
+        <linearGradient id={gradientId1} x1="0" y1="0" x2="0" y2="1">
           <stop offset="5%" stopColor="#8884d8" stopOpacity={0.45} />
           <stop offset="95%" stopColor="#8884d8" stopOpacity={0.1} />
+        </linearGradient>
+        <linearGradient id={gradientId2} x1="0" y1="0" x2="0" y2="1">
+          <stop offset="5%" stopColor="#84d888" stopOpacity={0.45} />
+          <stop offset="95%" stopColor="#84d888" stopOpacity={0.1} />
         </linearGradient>
       </defs>
       <CartesianGrid strokeDasharray="3 3" />
       <XAxis dataKey="name" />
       <YAxis width="auto" domain={[0, 5200]} />
       <Tooltip />
+      {/*<CustomAnimationArea*/}
+      {/*  type="linear"*/}
+      {/*  dataKey="range"*/}
+      {/*  stroke="#8884d8"*/}
+      {/*  strokeWidth={2}*/}
+      {/*  fill={`url(#${gradientId1})`}*/}
+      {/*  fillOpacity={1}*/}
+      {/*  isAnimationActive*/}
+      {/*  animationDuration={animationDuration}*/}
+      {/*  animationStyle={animationStyle}*/}
+      {/*/>*/}
       <CustomAnimationArea
         type="linear"
-        dataKey="range"
-        stroke="#8884d8"
+        dataKey={p => p.range[1] * 2}
+        baseLine={2500}
+        stroke="#84d888"
         strokeWidth={2}
-        fill={`url(#${gradientId})`}
+        fill={`url(#${gradientId2})`}
         fillOpacity={1}
         isAnimationActive
         animationDuration={animationDuration}

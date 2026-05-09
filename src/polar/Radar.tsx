@@ -38,7 +38,7 @@ import { RegisterGraphicalItemId } from '../context/RegisterGraphicalItemId';
 import { SetPolarGraphicalItem } from '../state/SetGraphicalItem';
 import { svgPropertiesNoEvents } from '../util/svgPropertiesNoEvents';
 import { AnimatedItems, AnimationInterpolateFn, useAnimationCallbacks } from '../animation/AnimatedItems';
-import { alignItems, AnimationMatchByProp, matchByIndex } from '../animation/matchBy';
+import { AnimationMatchByProp, matchAnimationItems, matchByIndex } from '../animation/matchBy';
 import { svgPropertiesAndEvents } from '../util/svgPropertiesAndEvents';
 import { RequiresDefaultProps, resolveDefaultProps } from '../util/resolveDefaultProps';
 import { WithIdRequired } from '../util/useUniqueId';
@@ -454,25 +454,6 @@ function StaticPolygon({
   );
 }
 
-const interpolatePolarPoint =
-  (prevPoints: ReadonlyArray<RadarPoint | undefined> | undefined, t: number) => (entry: RadarPoint, index: number) => {
-    const prev = prevPoints && prevPoints[index];
-
-    if (prev) {
-      return {
-        ...entry,
-        x: interpolate(prev.x, entry.x, t),
-        y: interpolate(prev.y, entry.y, t),
-      };
-    }
-
-    return {
-      ...entry,
-      x: interpolate(entry.cx, entry.x, t),
-      y: interpolate(entry.cy, entry.y, t),
-    };
-  };
-
 function defaultRadarAnimateItems(): AnimationInterpolateFn<RadarPoint> {
   return (items, t) => {
     if (items == null) return [];
@@ -523,14 +504,8 @@ function PolygonWithAnimation({
   } = props;
   const prevBaseLinePoints = previousBaseLinePointsRef.current;
   const matchStrategy = props.animationMatchBy ?? matchByIndex;
-
-  // Align baseline using the same matching strategy as points
-  const alignedPrevBaseLinePoints =
-    prevBaseLinePoints && baseLinePoints
-      ? alignItems(prevBaseLinePoints, baseLinePoints, matchStrategy)
-      : prevBaseLinePoints;
-
   const animationInterpolateFn = props.animationInterpolateFn ?? defaultRadarAnimateItems();
+  const baseLineAnimationItems = matchAnimationItems(prevBaseLinePoints ?? null, baseLinePoints, matchStrategy);
 
   const { isAnimating, handleAnimationStart, handleAnimationEnd } = useAnimationCallbacks(
     onAnimationStart,
@@ -554,8 +529,7 @@ function PolygonWithAnimation({
         animationMatchBy={matchStrategy}
       >
         {(stepData, t) => {
-          const stepBaseLinePoints =
-            t === 1 ? baseLinePoints : baseLinePoints?.map(interpolatePolarPoint(alignedPrevBaseLinePoints, t));
+          const stepBaseLinePoints = t === 1 ? baseLinePoints : animationInterpolateFn(baseLineAnimationItems, t);
           if (t > 0) {
             // eslint-disable-next-line no-param-reassign
             previousBaseLinePointsRef.current = stepBaseLinePoints;

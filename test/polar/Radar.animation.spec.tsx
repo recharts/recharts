@@ -1,9 +1,11 @@
 import React, { ReactNode, useState } from 'react';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
-import { act } from '@testing-library/react';
+import { act, render } from '@testing-library/react';
 import { createSelectorTestCase } from '../helper/createSelectorTestCase';
 import { PageData } from '../_data';
 import { PolarAngleAxis, PolarGrid, PolarRadiusAxis, Radar, RadarChart } from '../../src';
+import type { AnimationInterpolateFn, RadarPoint } from '../../src';
+import { AnimationManagerContext } from '../../src/animation/useAnimationManager';
 import { assertNotNull } from '../helper/assertNotNull';
 import {
   ExpectedRadarDot,
@@ -12,6 +14,7 @@ import {
   getRadarDots,
   getRadarPolygons,
 } from '../helper/expectRadarPolygons';
+import { CompositeAnimationManager } from '../animation/CompositeAnimationManager';
 import { MockAnimationManager } from '../animation/MockProgressAnimationManager';
 
 const RADAR_RADIUS = 40;
@@ -37,6 +40,12 @@ function getPolygonPath(container: Element): string {
     throw new Error('Polygon does not have a "d" attribute or it is empty');
   }
   return d;
+}
+
+function getRangeRadarStrokePaths(container: Element): ReadonlyArray<string> {
+  return Array.from(container.querySelectorAll<SVGPathElement>('.recharts-radar-polygon .recharts-polygon path'))
+    .filter(path => path.getAttribute('fill') === 'none')
+    .map(path => path.getAttribute('d') ?? '');
 }
 
 async function expectAnimatedRadarPolygons(
@@ -624,6 +633,95 @@ describe('Radar animation', () => {
         [15.688600000000001, 29.85420380214485, 9.138634853193333],
         [16, 30.446666666666665, 9.32],
       ]);
+    });
+  });
+
+  describe('range baseline with custom animationInterpolateFn', () => {
+    const rangeDataA = [
+      { name: 'A', range: [20, 100] },
+      { name: 'B', range: [30, 120] },
+      { name: 'C', range: [25, 90] },
+    ];
+    const rangeDataB = [
+      { name: 'A', range: [45, 130] },
+      { name: 'B', range: [15, 70] },
+      { name: 'C', range: [35, 110] },
+    ];
+
+    const collapseToCenter: AnimationInterpolateFn<RadarPoint> = (items, t) => {
+      if (items == null) {
+        return [];
+      }
+      if (t === 1) {
+        return items.flatMap(item => (item.status === 'removed' ? [] : [item.next]));
+      }
+      return items.flatMap(item =>
+        item.status === 'removed'
+          ? []
+          : [{ ...item.next, x: item.next.cx ?? item.next.x, y: item.next.cy ?? item.next.y }],
+      );
+    };
+
+    function RangeRadarTestCase() {
+      const [data, setData] = useState(rangeDataA);
+      return (
+        <div>
+          <button type="button" onClick={() => setData(prev => (prev === rangeDataA ? rangeDataB : rangeDataA))}>
+            Change data
+          </button>
+          <RadarChart cx={CX} cy={CY} outerRadius={RADAR_RADIUS} width={100} height={100} data={data}>
+            <PolarGrid />
+            <PolarAngleAxis dataKey="name" />
+            <PolarRadiusAxis />
+            <Radar
+              dataKey="range"
+              stroke="#8884d8"
+              fill="#8884d8"
+              fillOpacity={0.2}
+              isAnimationActive
+              animationEasing="linear"
+              animationInterpolateFn={collapseToCenter}
+            />
+          </RadarChart>
+        </div>
+      );
+    }
+
+    function renderTestCase() {
+      const animationManager = new CompositeAnimationManager();
+      const { container } = render(
+        <AnimationManagerContext.Provider value={animationManager.factory}>
+          <RangeRadarTestCase />
+        </AnimationManagerContext.Provider>,
+      );
+
+      act(() => {
+        vi.runOnlyPendingTimers();
+      });
+
+      return { container, animationManager };
+    }
+
+    async function prime(container: HTMLElement, animationManager: MockAnimationManager) {
+      await animationManager.completeAnimation();
+      const button = container.querySelector('button');
+      assertNotNull(button);
+      act(() => button.click());
+    }
+
+    it('should animate the range baseline with the same custom update interpolation as the outer polygon', async () => {
+      const { container, animationManager } = renderTestCase();
+      await prime(container, animationManager);
+
+      await animationManager.setAnimationProgress(0.1);
+      const polygonsDuringAnimation = getRangeRadarStrokePaths(container);
+      expect(polygonsDuringAnimation).toHaveLength(2);
+      expect(polygonsDuringAnimation[0]).toBe(polygonsDuringAnimation[1]);
+
+      await animationManager.completeAnimation();
+      const polygonsAfterAnimation = getRangeRadarStrokePaths(container);
+      expect(polygonsAfterAnimation).toHaveLength(2);
+      expect(polygonsAfterAnimation[0]).not.toBe(polygonsAfterAnimation[1]);
     });
   });
 });

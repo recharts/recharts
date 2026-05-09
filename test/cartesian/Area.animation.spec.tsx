@@ -3,6 +3,7 @@ import { beforeEach, describe, expect, it } from 'vitest';
 import { act } from '@testing-library/react';
 import { createSelectorTestCase } from '../helper/createSelectorTestCase';
 import { Area, AreaChart, Legend, YAxis } from '../../src';
+import type { AnimationInterpolateFn, AreaPointItem } from '../../src';
 import { PageData } from '../_data';
 import { mockSequenceOfGetBoundingClientRect } from '../helper/mockGetBoundingClientRect';
 import { expectAreaCurve, ExpectedArea } from '../helper/expectAreaCurve';
@@ -23,6 +24,10 @@ function getAreaCurve(container: Element): Element {
 
 function getAreaCurveD(container: Element): string | null {
   return getAreaCurve(container).getAttribute('d');
+}
+
+function getAreaCurveDs(container: Element): ReadonlyArray<string> {
+  return Array.from(container.querySelectorAll('.recharts-area-curve')).map(curve => curve.getAttribute('d') ?? '');
 }
 
 const expectedUvLabels: ReadonlyArray<ExpectedLabel> = [
@@ -645,6 +650,53 @@ describe('Area animation', () => {
       expect(shape.getAttribute('data-is-animating')).toBe('true');
       expect(shape.getAttribute('data-is-entrance')).toBe('true');
       expect(shape.getAttribute('data-t')).toBe('0');
+    });
+  });
+
+  describe('range baseline with custom animationInterpolateFn', () => {
+    const rangeData = [
+      { name: 'Page A', range: [120, 400] },
+      { name: 'Page B', range: [160, 300] },
+      { name: 'Page C', range: [80, 240] },
+    ];
+
+    const collapseToBottom: AnimationInterpolateFn<AreaPointItem> = (items, t) => {
+      if (items == null) {
+        return [];
+      }
+      if (t === 1) {
+        return items.flatMap(item => (item.status === 'removed' ? [] : [item.next]));
+      }
+      return items.flatMap(item => (item.status === 'removed' ? [] : [{ ...item.next, y: 100 }]));
+    };
+
+    const renderTestCase = createSelectorTestCase(({ children }) => (
+      <AreaChart data={rangeData} width={100} height={100}>
+        <Area
+          type="linear"
+          dataKey="range"
+          stroke="#8884d8"
+          fill="#8884d8"
+          fillOpacity={0.2}
+          animationEasing="linear"
+          animationInterpolateFn={collapseToBottom}
+        />
+        {children}
+      </AreaChart>
+    ));
+
+    it('should animate the range baseline with the same custom entrance interpolation as the main curve', async () => {
+      const { container, animationManager } = renderTestCase();
+
+      await animationManager.setAnimationProgress(0.5);
+      const curvesDuringAnimation = getAreaCurveDs(container);
+      expect(curvesDuringAnimation).toHaveLength(2);
+      expect(curvesDuringAnimation[0]).toBe(curvesDuringAnimation[1]);
+
+      await animationManager.completeAnimation();
+      const curvesAfterAnimation = getAreaCurveDs(container);
+      expect(curvesAfterAnimation).toHaveLength(2);
+      expect(curvesAfterAnimation[0]).not.toBe(curvesAfterAnimation[1]);
     });
   });
 });
