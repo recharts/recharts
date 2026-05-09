@@ -86,18 +86,21 @@ type AnimationStyle = keyof typeof animationOptions;
 type ControlsType = {
   animationStyle: AnimationStyle;
   animationDuration: number;
+  replayKey: number;
   useDataA: boolean;
 };
 
 export default function CustomAnimationExample(props: Partial<ControlsType>) {
   const animationStyle = props.animationStyle ?? 'crossfade';
   const animationDuration = props.animationDuration ?? 1500;
+  const replayKey = props.replayKey ?? 0;
   const useDataA = props.useDataA ?? true;
 
   const animationInterpolateFn = animationOptions[animationStyle].fn;
 
   return (
     <ScatterChart
+      key={replayKey}
       style={{ width: '100%', aspectRatio: 1.618, maxWidth: 600 }}
       responsive
       margin={{ top: 20, right: 30, left: 20, bottom: 5 }}
@@ -124,6 +127,7 @@ export function CustomAnimationControls({ onChange }: { onChange: (values: Contr
   const [state, setState] = useState<ControlsType>({
     animationStyle: 'crossfade',
     animationDuration: 1500,
+    replayKey: 0,
     useDataA: true,
   });
 
@@ -146,6 +150,10 @@ export function CustomAnimationControls({ onChange }: { onChange: (values: Contr
 
   return (
     <form>
+      <button type="button" onClick={() => handleChange({ replayKey: state.replayKey + 1 })}>
+        ▶ Replay initial animation
+      </button>
+      <br />
       <button type="button" onClick={() => handleChange({ useDataA: !state.useDataA })}>
         ⇄ Swap dataset ({state.useDataA ? 'A → B' : 'B → A'})
       </button>
