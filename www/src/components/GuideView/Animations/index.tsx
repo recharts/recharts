@@ -403,6 +403,11 @@ export function AnimationsGuide() {
               Ranged AreaChart with custom animation
             </RechartsLink>
           </li>
+          <li>
+            <RechartsLink to="/examples/RangeRadarChartCustomAnimation">
+              Ranged RadarChart with custom animation
+            </RechartsLink>
+          </li>
         </ul>
       </p>
 
