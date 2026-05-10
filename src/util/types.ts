@@ -1577,7 +1577,21 @@ export interface CartesianChartProps<DataPointType = unknown>
    */
   barSize?: number | string;
   /**
-   * The base value of area.
+   * Configures the starting value used to build the internal baseline for non-ranged, non-stacked areas.
+   *
+   * WARNING despite the name `dataMin`|`dataMax` this actually reads the domain instead, so it should rather be
+   * `domainMin`|`domainMax`. This looks like a small detail,
+   * but it's actually important because domains are usually extended automatically.
+   * For example the default numerical domain starts from 0.
+   *
+   * - `number`: uses the corresponding axis value as a flat baseline
+   * - `dataMin`: uses the minimum of the value-axis domain
+   * - `dataMax`: uses the maximum of the value-axis domain
+   *
+   * This uses the same `BaseValue` resolution as the `baseValue` prop on `<Area />`, but acts as a fallback:
+   * item-level `Area.baseValue` takes precedence over the chart-level `baseValue`.
+   *
+   * Ignored for stacked areas and for ranged areas where `dataKey` already returns `[min, max]` tuples.
    */
   baseValue?: BaseValue;
   compact?: boolean;

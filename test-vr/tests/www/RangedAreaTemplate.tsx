@@ -36,6 +36,23 @@ function RangedAreaTemplate({ children }: { children: React.ReactNode }) {
   );
 }
 
+function RangedAreaTemplateWithChartBaseValue({
+  baseValue,
+  children,
+}: {
+  baseValue: number | 'dataMin' | 'dataMax';
+  children: React.ReactNode;
+}) {
+  return (
+    <AreaChart width={chartWidth} height={chartHeight} data={data} margin={chartMargin} baseValue={baseValue}>
+      <CartesianGrid strokeDasharray="3 3" />
+      <XAxis type="number" dataKey="x" domain={xDomain} ticks={data.map(entry => entry.x)} allowDecimals={false} />
+      <YAxis width={40} domain={yDomain} />
+      {children}
+    </AreaChart>
+  );
+}
+
 export function AreaRangeViaBaseValueNumber() {
   return (
     <RangedAreaTemplate>
@@ -54,6 +71,23 @@ export function AreaRangeViaBaseValueNumber() {
   );
 }
 
+export function AreaRangeViaChartBaseValueNumber() {
+  return (
+    <RangedAreaTemplateWithChartBaseValue baseValue={45}>
+      <Area
+        type="linear"
+        dataKey="value"
+        stroke="#a45bff"
+        fill="#a45bff"
+        fillOpacity={0.4}
+        strokeWidth={2}
+        dot={false}
+        isAnimationActive={false}
+      />
+    </RangedAreaTemplateWithChartBaseValue>
+  );
+}
+
 export function AreaRangeViaBaseValueDataMin() {
   return (
     <RangedAreaTemplate>
@@ -69,6 +103,23 @@ export function AreaRangeViaBaseValueDataMin() {
         isAnimationActive={false}
       />
     </RangedAreaTemplate>
+  );
+}
+
+export function AreaRangeViaChartBaseValueDataMax() {
+  return (
+    <RangedAreaTemplateWithChartBaseValue baseValue="dataMax">
+      <Area
+        type="linear"
+        dataKey="value"
+        stroke="#ff9f1c"
+        fill="#ff9f1c"
+        fillOpacity={0.4}
+        strokeWidth={2}
+        dot={false}
+        isAnimationActive={false}
+      />
+    </RangedAreaTemplateWithChartBaseValue>
   );
 }
 
