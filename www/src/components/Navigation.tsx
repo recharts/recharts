@@ -95,7 +95,7 @@ function SlideRightMobileNav({ isOpen, onClose }: { isOpen: boolean; onClose: ()
           {allNavigationItems.map(navItem => {
             const { categories } = navItem;
             const hasSubItems = categories != null && categories.length > 0;
-            const isExpanded = expanded[navItem.key];
+            const isExpanded = expanded[navItem.key] ?? false;
 
             if (hasSubItems) {
               return (
@@ -106,30 +106,34 @@ function SlideRightMobileNav({ isOpen, onClose }: { isOpen: boolean; onClose: ()
                   </button>
                   {isExpanded && (
                     <div className="collapsible-content">
-                      {categories.map(({ key, displayName, items, NavPreview }: NavCategory) => (
-                        <div className="sidebar-cate" key={key}>
-                          {displayName && items?.length > 0 && (
-                            <Link to={items[0].url} onClick={onClose}>
-                              <h4>{displayName}</h4>
-                              {NavPreview && (
-                                <div className="chart-preview">
-                                  <NavPreview />
-                                </div>
-                              )}
-                            </Link>
-                          )}
-                          {displayName && (!items || items.length === 0) && <h4>{displayName}</h4>}
-                          <ul className="menu">
-                            {items.map(item => (
-                              <li key={item.key}>
-                                <NavLink to={item.url} onClick={onClose}>
-                                  {item.displayName}
-                                </NavLink>
-                              </li>
-                            ))}
-                          </ul>
-                        </div>
-                      ))}
+                      {categories.map(({ key, displayName, items, NavPreview }: NavCategory) => {
+                        const firstItem = items[0];
+
+                        return (
+                          <div className="sidebar-cate" key={key}>
+                            {displayName && firstItem != null && (
+                              <Link to={firstItem.url} onClick={onClose}>
+                                <h4>{displayName}</h4>
+                                {NavPreview && (
+                                  <div className="chart-preview">
+                                    <NavPreview />
+                                  </div>
+                                )}
+                              </Link>
+                            )}
+                            {displayName && firstItem == null && <h4>{displayName}</h4>}
+                            <ul className="menu">
+                              {items.map(item => (
+                                <li key={item.key}>
+                                  <NavLink to={item.url} onClick={onClose}>
+                                    {item.displayName}
+                                  </NavLink>
+                                </li>
+                              ))}
+                            </ul>
+                          </div>
+                        );
+                      })}
                     </div>
                   )}
                 </li>

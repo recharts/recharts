@@ -17,7 +17,11 @@ const CROSSHAIR_COLORS = [
 ];
 
 const getCrosshairColor = (index: number): string => {
-  return CROSSHAIR_COLORS[index % CROSSHAIR_COLORS.length];
+  const color = CROSSHAIR_COLORS[index % CROSSHAIR_COLORS.length];
+  if (color == null) {
+    throw new Error('Expected a crosshair color to be available');
+  }
+  return color;
 };
 
 /**

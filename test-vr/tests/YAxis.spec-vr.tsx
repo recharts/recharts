@@ -106,7 +106,6 @@ test('YAxis with width="auto" and angled ticks', async ({ mount }) => {
   const component = await mount(
     <LineChart width={300} height={100} data={pageData}>
       <XAxis dataKey="name" />
-      {/* @ts-expect-error typescript says angle is invalid prop, but it does work */}
       <YAxis width="auto" tick={{ angle: -45, textAnchor: 'end', verticalAnchor: 'end' }} />
       <Line type="monotone" dataKey="uv" stroke="#8884d8" />
     </LineChart>,

@@ -80,12 +80,13 @@ const getIntroOfPage = (label: string | number | undefined) => {
 };
 
 const CustomTooltip = ({ active, payload, label }: TooltipContentProps) => {
-  const isVisible = active && payload && payload.length;
+  const firstPayload = payload?.[0];
+  const isVisible = active && firstPayload != null;
   return (
     <div className="custom-tooltip" style={{ visibility: isVisible ? 'visible' : 'hidden' }}>
       {isVisible && (
         <>
-          <p className="label">{`${label} : ${payload[0].value}`}</p>
+          <p className="label">{`${label} : ${firstPayload.value}`}</p>
           <p className="intro">{getIntroOfPage(label)}</p>
           <p className="desc">Anything you want can be displayed here.</p>
         </>

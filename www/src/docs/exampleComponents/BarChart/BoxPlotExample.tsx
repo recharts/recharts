@@ -71,7 +71,11 @@ const BoxShape = (props: BarShapeProps) => {
 const TooltipContent = (props: TooltipContentProps) => {
   const { active, payload } = props;
   if (active && payload && payload.length) {
-    const entry: BoxPlotDatum = payload[0].payload;
+    const firstPayload = payload[0];
+    if (firstPayload == null) {
+      return null;
+    }
+    const entry: BoxPlotDatum = firstPayload.payload;
     return (
       <div
         style={{

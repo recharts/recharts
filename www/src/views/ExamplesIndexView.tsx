@@ -16,15 +16,20 @@ class ExamplesIndexViewImpl extends PureComponent<ExamplesIndexViewProps> {
 
     const categories = Object.entries(allExamples)
       .sort(([, a], [, b]) => a.order - b.order)
-      .map(([categoryName, categoryData]) => {
-        const firstExampleKey = Object.keys(categoryData.examples)[0];
-        const firstExample = categoryData.examples[firstExampleKey];
+      .flatMap(([categoryName, categoryData]) => {
+        const firstExampleEntry = Object.entries(categoryData.examples)[0];
+        if (firstExampleEntry == null) {
+          return [];
+        }
+        const [firstExampleKey, firstExample] = firstExampleEntry;
 
-        return {
-          categoryName,
-          firstExampleKey,
-          Preview: firstExample.Component,
-        };
+        return [
+          {
+            categoryName,
+            firstExampleKey,
+            Preview: firstExample.Component,
+          },
+        ];
       });
 
     return (

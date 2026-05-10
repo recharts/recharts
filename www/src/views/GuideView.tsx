@@ -52,7 +52,11 @@ function Guide({ locale, page }: { locale: SupportedLocale; page: string }) {
 class GuideViewImpl extends PureComponent<RouteComponentProps> {
   render() {
     const { params } = this.props;
-    const page = params?.name ?? allGuides[0];
+    const defaultGuide = allGuides[0];
+    if (defaultGuide == null) {
+      throw new Error('Expected at least one guide to be registered');
+    }
+    const page = params?.name ?? defaultGuide;
 
     const locale = getLocaleType(this.props);
     const title = localeGet(locale, 'guide', page) || page;

@@ -43,7 +43,11 @@ const Candlestick = (props: BarShapeProps) => {
 const TooltipContent = (props: TooltipContentProps) => {
   const { active, payload } = props;
   if (active && payload && payload.length) {
-    const entry: MarketCandle = payload[0].payload;
+    const firstPayload = payload[0];
+    if (firstPayload == null) {
+      return null;
+    }
+    const entry: MarketCandle = firstPayload.payload;
     return (
       <div
         style={{

@@ -88,18 +88,18 @@ function apiNavItems(locale: SupportedLocale): ReadonlyArray<NavCategory> {
   );
 }
 
-const exampleCategoryNames = Object.keys(allExamples).sort((a, b) => allExamples[a].order - allExamples[b].order);
+const exampleCategories = Object.entries(allExamples).sort(([, a], [, b]) => a.order - b.order);
 function exampleNavItems(locale: SupportedLocale): ReadonlyArray<NavCategory> {
-  return exampleCategoryNames.map(
-    (cate): NavCategory => ({
-      key: cate,
-      displayName: cate,
-      items: Object.keys(allExamples[cate].examples).map(name => ({
+  return exampleCategories.map(
+    ([categoryName, category]): NavCategory => ({
+      key: categoryName,
+      displayName: categoryName,
+      items: Object.entries(category.examples).map(([name, example]) => ({
         key: name,
-        displayName: allExamples[cate].examples[name].name,
+        displayName: example.name,
         url: `/${locale}/examples/${name}/`,
       })),
-      NavPreview: allExamples[cate].NavPreview,
+      NavPreview: category.NavPreview,
     }),
   );
 }

@@ -1,0 +1,26 @@
+{
+  "extends": "../tsconfig.base.json",
+  "compilerOptions": {
+    "target": "ES2020",
+    "lib": ["ES2020", "DOM", "DOM.Iterable"],
+    "module": "ESNext",
+    "moduleResolution": "bundler",
+    "allowImportingTsExtensions": true,
+    "resolveJsonModule": true,
+    "isolatedModules": true,
+    "noEmit": true,
+    "jsx": "react-jsx",
+    "skipLibCheck": true,
+    "types": ["node", "vite/client"],
+    "paths": {
+      /*
+       * Use the local Recharts source so VR tests see unreleased API and type changes
+       * immediately instead of picking up the published package from node_modules.
+       */
+      "recharts": ["../src/index.ts"],
+      "recharts/types/*": ["../types/*"]
+    }
+  },
+  "include": ["./**/*", "../types.d.ts"],
+  "exclude": ["node_modules", "__snapshots__", "playwright-report", "test-results"]
+}
