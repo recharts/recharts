@@ -63,7 +63,7 @@ describe.each(chartsThatSupportArea)('<Area /> as a child of $testName', ({ Char
 
       render(
         <ChartElement data={data}>
-          <Area dataKey="value" isAnimationActive={false} baseLine={200} label={renderLabel} />
+          <Area dataKey="value" isAnimationActive={false} label={renderLabel} />
         </ChartElement>,
       );
 
@@ -86,7 +86,6 @@ describe.each(chartsThatSupportArea)('<Area /> as a child of $testName', ({ Char
           <Area
             dataKey="value"
             isAnimationActive={false}
-            baseLine={200}
             label={({ index, x, y }) => <Label index={index} x={x} y={y} />}
           />
         </ChartElement>,
@@ -108,7 +107,7 @@ describe.each(chartsThatSupportArea)('<Area /> as a child of $testName', ({ Char
 
       render(
         <ChartElement data={data}>
-          <Area dataKey="value" isAnimationActive={false} baseLine={200} dot={renderDot} />
+          <Area dataKey="value" isAnimationActive={false} dot={renderDot} />
         </ChartElement>,
       );
 
@@ -126,7 +125,6 @@ describe.each(chartsThatSupportArea)('<Area /> as a child of $testName', ({ Char
           <Area
             dataKey="value"
             isAnimationActive={false}
-            baseLine={200}
             dot={({ cx, cy }) => <CustomizedDot key={`${cx}-${cy}`} cx={cx} cy={cy} />}
           />
         </ChartElement>,
@@ -928,7 +926,7 @@ describe.each(chartsThatSupportArea)('<Area /> as a child of $testName', ({ Char
   test('renders the curve with the stroke on top (2nd) of the curve with the fill (1st)', () => {
     const { container } = render(
       <ChartElement data={data}>
-        <Area dataKey="value" baseLine={200} stroke="teal" fill="teal" />
+        <Area dataKey="value" stroke="teal" fill="teal" />
       </ChartElement>,
     );
 
@@ -946,7 +944,7 @@ describe.each(chartsThatDoNotSupportArea)('<Area /> as a child of $testName', ({
   it('should not render any curves', () => {
     const { container } = render(
       <ChartElement data={data}>
-        <Area dataKey="value" baseLine={200} stroke="teal" fill="teal" />
+        <Area dataKey="value" stroke="teal" fill="teal" />
       </ChartElement>,
     );
 

@@ -169,11 +169,19 @@ interface AreaProps<DataPointType = any, DataValueType = any>
    */
   animationEasing?: EasingInput;
   /**
-   * Baseline of the area:
-   * - number: uses the corresponding axis value as a flat baseline;
-   * - an array of coordinates: describes a custom baseline path.
+   * Configures the starting value used to build the internal baseline for non-ranged, non-stacked areas.
+   *
+   * WARNING despite the name `dataMin`|`dataMax` this actually reads the domain instead, so it should rather be
+   * `domainMin`|`domainMax`. This looks like a small detail,
+   * but it's actually important because domains are usually extended automatically.
+   * For example the default numerical domain starts from 0.
+   *
+   * - `number`: uses the corresponding axis value as a flat baseline
+   * - `dataMin`: uses the minimum of the value-axis domain
+   * - `dataMax`: uses the maximum of the value-axis domain
+   *
+   * Ignored when the area is stacked or when `dataKey` already returns `[min, max]` tuples.
    */
-  baseLine?: BaseLineType;
   baseValue?: BaseValue;
   className?: string;
 
@@ -221,7 +229,6 @@ interface AreaProps<DataPointType = any, DataValueType = any>
    * @defaultValue 'auto'
    */
   isAnimationActive?: boolean | 'auto';
-  isRange?: boolean;
   /**
    * Renders one label for each data point. Options:
    *

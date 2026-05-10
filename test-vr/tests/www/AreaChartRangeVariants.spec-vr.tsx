@@ -1,0 +1,21 @@
+import { expect, test } from '@playwright/experimental-ct-react';
+import {
+  AreaRangeViaBaseValueDataMax,
+  AreaRangeViaBaseValueDataMin,
+  AreaRangeViaBaseValueNumber,
+} from './RangedAreaTemplate';
+
+test('Area range via baseValue number', async ({ mount }) => {
+  const component = await mount(<AreaRangeViaBaseValueNumber />);
+  await expect(component).toHaveScreenshot();
+});
+
+test('Area range via baseValue dataMin', async ({ mount }) => {
+  const component = await mount(<AreaRangeViaBaseValueDataMin />);
+  await expect(component).toHaveScreenshot();
+});
+
+test('Area range via baseValue dataMax', async ({ mount }) => {
+  const component = await mount(<AreaRangeViaBaseValueDataMax />);
+  await expect(component).toHaveScreenshot();
+});
