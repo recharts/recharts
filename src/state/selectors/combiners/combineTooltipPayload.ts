@@ -139,6 +139,17 @@ export const combineTooltipPayload = (
       tooltipEventType === 'axis'
     ) {
       tooltipPayload = findEntryInArray(sliced, tooltipAxisDataKey, activeLabel);
+      /*
+       * When a chart has multiple X axes, items on a secondary axis have their own data arrays
+       * (dataDefinedOnItem) that may not contain the tooltip axis dataKey.
+       * In that case findEntryInArray returns undefined because it cannot match on the primary
+       * axis dataKey. We fall back to the index-based searcher so these items still contribute
+       * their payload to the tooltip.
+       * See https://github.com/recharts/recharts/issues/4757
+       */
+      if (tooltipPayload == null && dataDefinedOnItem != null) {
+        tooltipPayload = tooltipPayloadSearcher(sliced, activeIndex, computedData, finalNameKey);
+      }
     } else {
       /*
        * This is a problem because it assumes that the index is pointing to the displayed data

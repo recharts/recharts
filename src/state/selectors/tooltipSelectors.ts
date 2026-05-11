@@ -129,8 +129,26 @@ const selectAllStackedGraphicalItemsSettings: (
     graphicalItems.filter(isStacked),
 );
 
+export const selectAllGraphicalItemsSettingsIncludingAllAxes: (
+  state: RechartsRootState,
+) => ReadonlyArray<GraphicalItemSettings> = createSelector(
+  [selectAllUnfilteredGraphicalItems, selectTooltipAxis],
+  (graphicalItems, axisSettings) =>
+    graphicalItems.filter(item => {
+      if (axisSettings?.includeHidden === true) {
+        return true;
+      }
+      return !item.hide;
+    }),
+  {
+    memoizeOptions: {
+      resultEqualityCheck: emptyArraysAreEqualCheck,
+    },
+  },
+);
+
 export const selectTooltipGraphicalItemsData = createSelector(
-  [selectAllGraphicalItemsSettings],
+  [selectAllGraphicalItemsSettingsIncludingAllAxes],
   combineGraphicalItemsData,
   {
     memoizeOptions: {
