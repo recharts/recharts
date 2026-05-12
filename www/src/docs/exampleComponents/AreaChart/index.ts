@@ -34,7 +34,7 @@ export const areaChartExamples = {
     Component: AreaChartExample,
     sourceCode: areaChartExampleSource,
     name: 'Simple Area Chart',
-   },
+  },
   StackedAreaChart: {
     Component: StackedAreaChart,
     sourceCode: stackedAreaChartSource,
