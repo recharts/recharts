@@ -1598,6 +1598,11 @@ export interface CartesianChartProps<DataPointType = unknown>
    * item-level `Area.baseValue` takes precedence over the chart-level `baseValue`.
    *
    * Ignored for stacked areas and for ranged areas where `dataKey` already returns `[min, max]` tuples.
+   *
+   * Note that the baseValue does not interact with `animationInterpolateFn`;
+   * baseValue is always animated by linear interpolation.
+   * If you want a custom animation then have your `dataKey` return a tuple of two values instead of a single number
+   * which will also render a ranged Area, and that does work with your custom `animationInterpolateFn`.
    */
   baseValue?: BaseValue;
   compact?: boolean;

@@ -46,7 +46,7 @@ const dataA: ReadonlyArray<MyDataType> = [
   { name: 'Mar', range: [900, 2800] },
   { name: 'Apr', range: [1400, 3900] },
   { name: 'May', range: [1200, 3500] },
-  { name: 'Jun', range: [1600, 4300] },
+  { name: 'Jun', range: [1600, 5000] },
 ];
 
 const dataB: ReadonlyArray<MyDataType> = [
@@ -129,21 +129,21 @@ export default function RangeAreaChartCustomAnimation(props: Partial<ControlsTyp
       <XAxis dataKey="name" />
       <YAxis width="auto" domain={[0, 5200]} />
       <Tooltip />
-      {/*<CustomAnimationArea*/}
-      {/*  type="linear"*/}
-      {/*  dataKey="range"*/}
-      {/*  stroke="#8884d8"*/}
-      {/*  strokeWidth={2}*/}
-      {/*  fill={`url(#${gradientId1})`}*/}
-      {/*  fillOpacity={1}*/}
-      {/*  isAnimationActive*/}
-      {/*  animationDuration={animationDuration}*/}
-      {/*  animationStyle={animationStyle}*/}
-      {/*/>*/}
+      <CustomAnimationArea
+        type="linear"
+        dataKey="range"
+        stroke="#8884d8"
+        strokeWidth={2}
+        fill={`url(#${gradientId1})`}
+        fillOpacity={1}
+        isAnimationActive
+        animationDuration={animationDuration}
+        animationStyle={animationStyle}
+      />
       <CustomAnimationArea
         type="linear"
         dataKey={p => p.range[1] * 2}
-        baseLine={2500}
+        baseValue="dataMax"
         stroke="#84d888"
         strokeWidth={2}
         fill={`url(#${gradientId2})`}

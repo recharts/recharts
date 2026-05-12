@@ -49,7 +49,7 @@ import { useChartName } from '../state/selectors/selectors';
 import { SetLegendPayload } from '../state/SetLegendPayload';
 import { useAppSelector } from '../state/hooks';
 import { AnimatedItems, AnimationInterpolateFn, useAnimationCallbacks } from '../animation/AnimatedItems';
-import { AnimationMatchByProp, matchAnimationItems, matchByIndex } from '../animation/matchBy';
+import { AnimationItem, AnimationMatchByProp, matchAnimationItems, matchByIndex } from '../animation/matchBy';
 import { RequiresDefaultProps, resolveDefaultProps } from '../util/resolveDefaultProps';
 import { usePlotArea } from '../hooks';
 import { WithIdRequired, WithoutId } from '../util/useUniqueId';
@@ -203,6 +203,11 @@ interface AreaProps<DataPointType = any, DataValueType = any>
    * - `dataMax`: uses the maximum of the value-axis domain
    *
    * Ignored when the area is stacked or when `dataKey` already returns `[min, max]` tuples.
+   *
+   * Note that the baseValue does not interact with `animationInterpolateFn`;
+   * baseValue is always animated by linear interpolation.
+   * If you want a custom animation then have your `dataKey` return a tuple of two values instead of a single number
+   * which will also render a ranged Area, and that does work with your custom `animationInterpolateFn`.
    */
   baseValue?: BaseValue;
   className?: string;
@@ -616,12 +621,14 @@ function AreaWithAnimation({
   const matchStrategy = props.animationMatchBy ?? matchByIndex;
   const animationInterpolateFn = props.animationInterpolateFn ?? defaultAreaAnimateItems();
 
-  const baseLineAnimationItems =
-    Array.isArray(baseLine) && Array.isArray(prevBaseLine)
-      ? matchAnimationItems(prevBaseLine, baseLine, matchStrategy)
-      : Array.isArray(baseLine)
-        ? matchAnimationItems(null, baseLine, matchStrategy)
-        : null;
+  let baseLineAnimationItems: ReadonlyArray<AnimationItem<NullableCoordinate>> | null;
+  if (Array.isArray(baseLine) && Array.isArray(prevBaseLine)) {
+    baseLineAnimationItems = matchAnimationItems(prevBaseLine, baseLine, matchStrategy);
+  } else if (Array.isArray(baseLine)) {
+    baseLineAnimationItems = matchAnimationItems(null, baseLine, matchStrategy);
+  } else {
+    baseLineAnimationItems = null;
+  }
 
   return (
     <AnimatedItems
@@ -639,14 +646,14 @@ function AreaWithAnimation({
       animationMatchBy={matchStrategy}
     >
       {(stepPoints, t, isEntrance) => {
-        const stepBaseLine =
-          t === 1
-            ? baseLine
-            : Array.isArray(baseLine)
-              ? animationInterpolateFn(baseLineAnimationItems, t)
-              : isEntrance
-                ? baseLine
-                : interpolateScalarBaseLine(baseLine, prevBaseLine, t);
+        let stepBaseLine: number | ReadonlyArray<NullableCoordinate> | undefined;
+        if (t === 1) {
+          stepBaseLine = baseLine;
+        } else if (Array.isArray(baseLine)) {
+          stepBaseLine = animationInterpolateFn(baseLineAnimationItems, t);
+        } else {
+          stepBaseLine = isEntrance ? baseLine : interpolateScalarBaseLine(baseLine, prevBaseLine, t);
+        }
         if (t > 0) {
           // eslint-disable-next-line no-param-reassign
           previousBaselineRef.current = stepBaseLine;
