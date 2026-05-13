@@ -1018,6 +1018,7 @@ export function computeArea({
   const baseValue = getBaseValue(layout, chartBaseValue, itemBaseValue, xAxis, yAxis, dataMin, dataMax);
   const isHorizontalLayout = layout === 'horizontal';
   let isRange = false;
+  let baseLine: number | NullableCoordinate[] | undefined;
 
   const points: ReadonlyArray<AreaPointItem> = displayedData.map((entry, index): AreaPointItem => {
     let valueAsArray: ReadonlyArray<unknown> | undefined;
@@ -1068,7 +1069,6 @@ export function computeArea({
     };
   });
 
-  let baseLine: number | NullableCoordinate[] | undefined;
   if (hasStack || isRange) {
     baseLine = points.map((entry: AreaPointItem): BaseValueCoordinate => {
       const x = Array.isArray(entry.value) ? entry.value[0] : null;

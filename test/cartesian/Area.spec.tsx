@@ -434,7 +434,10 @@ describe.each(chartsThatSupportArea)('<Area /> as a child of $testName', ({ Char
         expect(curves).toHaveLength(2);
         expect
           .soft(curves[0])
-          .toHaveAttribute('d', 'M65,355L172.5,355L280,355L387.5,355L495,355L495,355L387.5,355L280,355L172.5,355L65,355Z');
+          .toHaveAttribute(
+            'd',
+            'M65,355L172.5,355L280,355L387.5,355L495,355L495,355L387.5,355L280,355L172.5,355L65,355Z',
+          );
         expect.soft(curves[1]).toHaveAttribute('d', 'M65,355L172.5,355L280,355L387.5,355L495,355');
       });
     });
