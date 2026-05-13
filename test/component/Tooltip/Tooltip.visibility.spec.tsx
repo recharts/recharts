@@ -343,7 +343,7 @@ const TreemapTestCase: TooltipVisibilityTestCase = {
     </Treemap>
   ),
   mouseHoverSelector: treemapNodeChartMouseHoverTooltipSelector,
-  expectedTransform: 'transform: translate(94.5px, 58.5px);',
+  expectedTransform: 'transform: translate(95.5px, 59px);',
   tooltipIndex: 'children[0]children[0]',
 };
 

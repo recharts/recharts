@@ -1200,8 +1200,8 @@ function BarFn(outsideProps: Props) {
  * @consumes CartesianChartContext
  * @consumes BarStackContext
  */
-export const Bar = React.memo(BarFn, propsAreEqual) as <DataPointType = any, ValueAxisType = any>(
-  props: Props<DataPointType, ValueAxisType>,
-) => ReactElement;
-// @ts-expect-error we need to set the displayName for debugging purposes
+export const Bar = React.memo(BarFn, propsAreEqual) as {
+  <DataPointType = any, ValueAxisType = any>(props: Props<DataPointType, ValueAxisType>): ReactElement;
+  displayName?: string;
+};
 Bar.displayName = 'Bar';
