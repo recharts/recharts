@@ -315,12 +315,24 @@ export type SVGElementPropKeysType = (typeof SVGElementPropKeys)[number];
 
 const SVGElementPropKeySet = new Set<string>(SVGElementPropKeys);
 
-export function isSvgElementPropKey(key: PropertyKey): boolean {
-  if (typeof key !== 'string') {
+/**
+ * Checks if the property is a valid SVG attribute for the given tag.
+ * If no tagName is provided, it defaults to the full list of supported SVG attributes.
+ *
+ * @param key - The property key to check.
+ * @param tagName - The SVG tag name (e.g., 'path', 'circle').
+ * @param filterEvents - Whether to exclude event handlers (on*).
+ * @returns True if the key is allowed, false otherwise.
+ */
+export const isSvgElementPropKey = (key: string, tagName?: string, filterEvents?: boolean) => {
+  if (filterEvents && key.startsWith('on')) {
     return false;
   }
-  return SVGElementPropKeySet.has(key);
-}
+  if (!tagName) {
+    return SVGElementPropKeySet.has(key);
+  }
+  return true;
+};
 
 export type DataAttributeKeyType = `data-${string}`;
 

@@ -31,9 +31,12 @@ describe.skipIf(!es6EntryExists)('tree-shaking groups', () => {
     const testFn = async () => {
       const bundledCodeOutput = await treeshake(componentName);
       const allBundledComponents = findComponentsInBundle(bundledCodeOutput, allExportedSymbols);
+      const diff = Array.from(allBundledComponents)
+        .filter(x => !knownExpectedBundle.has(x))
+        .concat(Array.from(knownExpectedBundle).filter(x => !allBundledComponents.has(x)));
       expect(
         allBundledComponents,
-        `Importing ${componentName} bundled different components than it should have. Diff: [${Array.from(allBundledComponents.symmetricDifference(knownExpectedBundle)).join(', ')}]`,
+        `Importing ${componentName} bundled different components than it should have. Diff: [${diff.join(', ')}]`,
       ).toEqual(knownExpectedBundle);
     };
 
