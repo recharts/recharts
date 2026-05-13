@@ -14,15 +14,19 @@ export type SVGPropsAndEvents<T> = Pick<T, Extract<keyof T, SVGElementPropsAndEv
 /**
  * Filters an object to only include SVG properties, data attributes, and event handlers.
  * @param obj - The object to filter.
+ * @param tagName - Optional SVG element tag name to filter by specific attributes
  * @returns A new object containing only valid SVG properties, data attributes, and event handlers.
  */
-export function svgPropertiesAndEvents<T extends Record<PropertyKey, any>>(obj: T): SVGPropsAndEvents<T> {
-  const result: Record<PropertyKey, any> = {};
+export function svgPropertiesAndEvents<T extends Record<PropertyKey, unknown>>(
+  obj: T,
+  tagName?: string,
+): SVGPropsAndEvents<T> {
+  const result: Record<PropertyKey, unknown> = {};
   // for ... in loop is 10x faster than Object.entries + filter + Object.fromEntries in Chrome
 
   for (const key in obj) {
     if (Object.prototype.hasOwnProperty.call(obj, key)) {
-      if (isSvgElementPropKey(key) || isDataAttribute(key) || isEventKey(key)) {
+      if (isSvgElementPropKey(key, tagName) || isDataAttribute(key) || isEventKey(key)) {
         result[key] = obj[key];
       }
     }
@@ -43,20 +47,24 @@ export function svgPropertiesAndEvents<T extends Record<PropertyKey, any>>(obj: 
  * If you wish to have a type-safe version, use svgPropertiesNoEvents directly with a typed object.
  *
  * @param input - The input to filter, which can be a record, a React element, or other types.
+ * @param tagName - Optional SVG element tag name to filter by specific attributes
  * @returns A record of SVG properties if the input is a record or React element, otherwise null.
  */
-export function svgPropertiesAndEventsFromUnknown(input: unknown): SVGProps<unknown> | null {
+export function svgPropertiesAndEventsFromUnknown(input: unknown, tagName?: string): SVGProps<unknown> | null {
   if (input == null) {
     return null;
   }
 
   if (isValidElement(input)) {
+    const resolvedTagName = tagName || (typeof input.type === 'string' ? input.type : undefined);
     // @ts-expect-error we can't type this better because input can be any React element
-    return svgPropertiesAndEvents(input.props);
+    return svgPropertiesAndEvents(input.props, resolvedTagName);
   }
 
   if (typeof input === 'object' && !Array.isArray(input)) {
-    return svgPropertiesAndEvents(input);
+    // Type assertion necessary: input is an arbitrary object, and svgPropertiesAndEvents
+    // returns a filtered subset that cannot be statically typed as SVGProps<unknown>
+    return svgPropertiesAndEvents(input as Record<PropertyKey, unknown>, tagName) as unknown as SVGProps<unknown>;
   }
 
   return null;

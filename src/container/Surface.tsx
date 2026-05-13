@@ -31,7 +31,7 @@ export const Surface = forwardRef<SVGSVGElement, Props>((props: Props, ref) => {
 
   return (
     <svg
-      {...svgPropertiesAndEvents(others)}
+      {...svgPropertiesAndEvents(others, 'svg')}
       className={layerClass}
       width={width}
       height={height}

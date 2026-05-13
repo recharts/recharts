@@ -305,7 +305,7 @@ export const Curve: React.FC<Props> = props => {
 
   return (
     <path
-      {...svgPropertiesNoEvents(props)}
+      {...svgPropertiesNoEvents(props, 'path')}
       {...adaptEventHandlers(props)}
       className={clsx('recharts-curve', className)}
       d={realPath === null ? undefined : realPath}

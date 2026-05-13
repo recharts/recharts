@@ -446,7 +446,7 @@ export const Text = forwardRef<SVGTextElement, Props>((outsideProps, ref) => {
 
   return (
     <text
-      {...svgPropertiesAndEvents(textProps)}
+      {...svgPropertiesAndEvents(textProps, 'text')}
       ref={ref}
       x={x}
       y={y}

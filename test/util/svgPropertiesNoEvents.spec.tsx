@@ -18,13 +18,10 @@ describe('svgPropertiesNoEvents', () => {
       'aria-label': 'test',
       className: 'svg-class',
       color: 'red',
-      height: '100px',
       id: 'svg-id',
       lang: 'en',
-      max: 10,
       media: 'all',
       method: 'get',
-      min: 0,
       name: 'svg-name',
       style: { fill: 'blue' },
       // event handlers are valid SVG properties, but this function should exclude them too
@@ -40,13 +37,10 @@ describe('svgPropertiesNoEvents', () => {
       'aria-label': 'test',
       className: 'svg-class',
       color: 'red',
-      height: '100px',
       id: 'svg-id',
       lang: 'en',
-      max: 10,
       media: 'all',
       method: 'get',
-      min: 0,
       name: 'svg-name',
       style: { fill: 'blue' },
     });
@@ -75,13 +69,10 @@ describe('svgPropertiesNoEvents', () => {
       'aria-label'?: string;
       className?: string;
       color?: string;
-      height?: string;
       id?: string;
       lang?: string;
-      max: number;
       media?: string;
       method?: string;
-      min?: number;
       name?: string;
       style?: CSSProperties;
       // Non-SVG properties
@@ -93,13 +84,10 @@ describe('svgPropertiesNoEvents', () => {
       'aria-label': 'test',
       className: 'svg-class',
       color: 'red',
-      height: '100px',
       id: 'svg-id',
       lang: 'en',
-      max: 10,
       media: 'all',
       method: 'get',
-      min: 0,
       name: 'svg-name',
       style: { fill: 'blue' },
       // Non-SVG properties
@@ -111,14 +99,10 @@ describe('svgPropertiesNoEvents', () => {
       'aria-label'?: string;
       className?: string;
       color?: string;
-      height?: string;
       id?: string;
       lang?: string;
-      // property that used to be required in the input type, continues being required
-      max: number;
       media?: string;
       method?: string;
-      min?: number;
       name?: string;
       style?: CSSProperties;
     };
@@ -133,13 +117,10 @@ describe('svgPropertiesNoEvents', () => {
       'aria-label': 'test',
       className: 'svg-class',
       color: 'red',
-      height: '100px',
       id: 'svg-id',
       lang: 'en',
-      max: 10,
       media: 'all',
       method: 'get',
-      min: 0,
       name: 'svg-name',
       style: { fill: 'blue' },
     });
@@ -163,10 +144,36 @@ describe('svgPropertiesNoEvents', () => {
     const input: { [key: PropertyKey]: any } = {
       [sym]: 'symbol-value',
       6: 'number-value',
-      cx: 10,
+      fill: 'red',
     };
     const result = svgPropertiesNoEvents(input);
-    expect(result).toEqual({ cx: 10 });
+    expect(result).toEqual({ fill: 'red' });
+  });
+
+  it('should filter element-specific properties based on tagName', () => {
+    const input = {
+      cx: 10,
+      cy: 10,
+      r: 5,
+      x: 20,
+      y: 20,
+      width: 100,
+      height: 100,
+      d: 'M0,0Z',
+      fill: 'red', // Common property
+    };
+
+    // 'circle' should include 'cx', 'cy', 'r', and common 'fill'
+    expect(svgPropertiesNoEvents(input, 'circle')).toEqual({ cx: 10, cy: 10, r: 5, fill: 'red' });
+
+    // 'rect' should include 'x', 'y', 'width', 'height', and common 'fill'
+    expect(svgPropertiesNoEvents(input, 'rect')).toEqual({ x: 20, y: 20, width: 100, height: 100, fill: 'red' });
+
+    // 'path' should include 'd', and common 'fill'
+    expect(svgPropertiesNoEvents(input, 'path')).toEqual({ d: 'M0,0Z', fill: 'red' });
+
+    // 'g' should only include common 'fill'
+    expect(svgPropertiesNoEvents(input, 'g')).toEqual({ fill: 'red' });
   });
 });
 
@@ -179,10 +186,8 @@ describe('svgPropertiesNoEventsFromUnknown', () => {
       height?: string;
       id?: string;
       lang?: string;
-      max: number;
       media?: string;
       method?: string;
-      min?: number;
       name?: string;
       style?: CSSProperties;
       // Non-SVG properties
@@ -197,10 +202,8 @@ describe('svgPropertiesNoEventsFromUnknown', () => {
       height: '100px',
       id: 'svg-id',
       lang: 'en',
-      max: 10,
       media: 'all',
       method: 'get',
-      min: 0,
       name: 'svg-name',
       style: { fill: 'blue' },
       // Non-SVG properties
@@ -217,13 +220,40 @@ describe('svgPropertiesNoEventsFromUnknown', () => {
       height: '100px',
       id: 'svg-id',
       lang: 'en',
-      max: 10,
       media: 'all',
       method: 'get',
-      min: 0,
       name: 'svg-name',
       style: { fill: 'blue' },
     });
+  });
+
+  it('should correctly narrow properties when given a ReactElement with mixed props', () => {
+    type MixedProps = {
+      cx?: number;
+      cy?: number;
+      r?: number;
+      d?: string;
+      fill?: string;
+    };
+
+    const props: MixedProps = {
+      cx: 10,
+      cy: 10,
+      r: 5,
+      d: 'M0,0Z',
+      fill: 'red',
+    };
+
+    const element = <circle {...props} />;
+    const result = svgPropertiesNoEventsFromUnknown(element);
+
+    expect(result).toEqual({
+      cx: 10,
+      cy: 10,
+      r: 5,
+      fill: 'red',
+    });
+    expect(result).not.toHaveProperty('d');
   });
 
   it.each([null, undefined, true, false, [], 'string', 1, Symbol.for('key')] as const)(
@@ -269,23 +299,21 @@ describe('svgPropertiesNoEventsFromUnknown', () => {
 
     it('should return SVGProps type when passed an object', () => {
       type InputType = {
-        cx: number;
-        cy: number;
-        r?: number;
+        fill: string;
+        id?: string;
         onClick?: () => void;
         custom?: string;
       };
-      const input: InputType = { cx: 10, cy: 10, r: 5 };
+      const input: InputType = { fill: 'red', id: 'test-id' };
       const result: Partial<Record<SVGElementPropKeysType, unknown>> | null = svgPropertiesNoEventsFromUnknown(input);
-      expect(result).toEqual({ cx: 10, cy: 10, r: 5 });
+      expect(result).toEqual({ fill: 'red', id: 'test-id' });
     });
 
     it('should accept union types and return only SVG properties', () => {
       type InputType =
         | {
-            cx: number;
-            cy: number;
-            r?: number;
+            fill: string;
+            id?: string;
             onClick?: () => void;
             custom?: string;
           }
@@ -293,9 +321,9 @@ describe('svgPropertiesNoEventsFromUnknown', () => {
       function noInfer(i: InputType) {
         return svgPropertiesNoEventsFromUnknown(i);
       }
-      const input1: InputType = { cx: 10, cy: 10, r: 5 };
+      const input1: InputType = { fill: 'red', id: 'test-id' };
       const result1: Partial<Record<SVGElementPropKeysType, unknown>> | null = noInfer(input1);
-      expect(result1).toEqual({ cx: 10, cy: 10, r: 5 });
+      expect(result1).toEqual({ fill: 'red', id: 'test-id' });
 
       const input2: InputType = true;
       const result2: Partial<Record<SVGElementPropKeysType, unknown>> | null = noInfer(input2);

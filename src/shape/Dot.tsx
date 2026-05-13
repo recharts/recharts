@@ -41,7 +41,7 @@ export const Dot: React.FC<Props> = props => {
   if (isNumber(cx) && isNumber(cy) && isNumber(r)) {
     return (
       <circle
-        {...svgPropertiesNoEvents(props)}
+        {...svgPropertiesNoEvents(props, 'circle')}
         {...adaptEventHandlers(props)}
         className={layerClass}
         cx={cx}

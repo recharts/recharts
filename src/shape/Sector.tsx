@@ -324,5 +324,5 @@ export const Sector: React.FC<Props> = sectorProps => {
     path = getSectorPath({ cx, cy, innerRadius, outerRadius, startAngle, endAngle });
   }
 
-  return <path {...svgPropertiesAndEvents(props)} className={layerClass} d={path} />;
+  return <path {...svgPropertiesAndEvents(props, 'path')} className={layerClass} d={path} />;
 };
