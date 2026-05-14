@@ -1,6 +1,6 @@
 import { ChartExample } from '../../exampleComponents/types.ts';
-import RadarChartExample from './RadarChartExample.tsx';
-import RadarChartExampleSource from './RadarChartExample.tsx?raw';
+import RadarChartExample from '../../exampleComponents/RadarChart/RadarChartExample.tsx';
+import RadarChartExampleSource from '../../exampleComponents/RadarChart/RadarChartExample.tsx?raw';
 
 export const radarChartApiExamples: ReadonlyArray<ChartExample> = [
   {

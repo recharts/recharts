@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { test, expect } from '@playwright/experimental-ct-react';
 
-import RadialBarChartExample from '../../../www/src/docs/apiExamples/RadialBarChart/RadialBarChartExample';
+import RadialBarChartExample from '../../../www/src/docs/exampleComponents/RadialBarChart/RadialBarChartExample';
 import SimpleRadialBarChart from '../../../www/src/docs/exampleComponents/RadialBarChart/SimpleRadialBarChart';
 import RadialBarChartNavExample from '../../../www/src/docs/exampleComponents/RadialBarChart/RadialBarChartNavExample';
 import RadialBarChartClickToFocusLegendExample from '../../../www/src/docs/exampleComponents/RadialBarChart/RadialBarChartClickToFocusLegendExample';

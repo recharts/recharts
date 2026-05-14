@@ -1,6 +1,6 @@
 import { ChartExample } from '../../exampleComponents/types.ts';
-import DataSnapExample from './DataSnapExample.tsx';
-import DataSnapExampleSource from './DataSnapExample.tsx?raw';
+import DataSnapExample from '../../exampleComponents/useXAxisInverseDataSnapScale/DataSnapExample.tsx';
+import DataSnapExampleSource from '../../exampleComponents/useXAxisInverseDataSnapScale/DataSnapExample.tsx?raw';
 
 export const useAxisInverseDataSnapScaleApiExamples: ReadonlyArray<ChartExample> = [
   {

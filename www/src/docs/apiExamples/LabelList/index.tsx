@@ -1,6 +1,6 @@
 import { ChartExample } from '../../exampleComponents/types.ts';
-import LabelListChartExample from './LabelListChartExample.tsx';
-import LabelListChartExampleSource from './LabelListChartExample.tsx?raw';
+import LabelListChartExample from '../../exampleComponents/LabelList/LabelListChartExample.tsx';
+import LabelListChartExampleSource from '../../exampleComponents/LabelList/LabelListChartExample.tsx?raw';
 
 export const labelListApiExamples: ReadonlyArray<ChartExample> = [
   {

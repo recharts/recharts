@@ -1,10 +1,10 @@
 import { LinkToApi } from '../../Shared/LinkToApi.tsx';
 import { TargetBlankLink } from '../../Shared/TargetBlankLink.tsx';
-import CellPieExample from '../../../docs/apiExamples/Cell/CellPieExample.tsx';
+import CellPieExample from '../../../docs/exampleComponents/Cell/CellPieExample.tsx';
 import { CodeEditorWithPreview } from '../../CodeEditorWithPreview.tsx';
-import cellPieExampleSource from '../../../docs/apiExamples/Cell/CellPieExample.tsx?raw';
-import CellBarExample from '../../../docs/apiExamples/Cell/CellBarExample.tsx';
-import cellBarExampleSource from '../../../docs/apiExamples/Cell/CellBarExample.tsx?raw';
+import cellPieExampleSource from '../../../docs/exampleComponents/Cell/CellPieExample.tsx?raw';
+import CellBarExample from '../../../docs/exampleComponents/Cell/CellBarExample.tsx';
+import cellBarExampleSource from '../../../docs/exampleComponents/Cell/CellBarExample.tsx?raw';
 import ScatterChartWithCells from '../../../docs/exampleComponents/ScatterChart/ScatterChartWithCells.tsx';
 import scatterChartWithCellsSource from '../../../docs/exampleComponents/ScatterChart/ScatterChartWithCells.tsx?raw';
 import CustomShapeBarChart from '../../../docs/exampleComponents/BarChart/CustomShapeBarChart.tsx';

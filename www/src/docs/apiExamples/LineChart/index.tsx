@@ -1,6 +1,6 @@
 import { ChartExample } from '../../exampleComponents/types.ts';
-import LineChartExample from './LineChartExample.tsx';
-import LineChartExampleSource from './LineChartExample.tsx?raw';
+import LineChartExample from '../../exampleComponents/LineChart/LineChartExample.tsx';
+import LineChartExampleSource from '../../exampleComponents/LineChart/LineChartExample.tsx?raw';
 
 export const lineChartApiExamples: ReadonlyArray<ChartExample> = [
   {

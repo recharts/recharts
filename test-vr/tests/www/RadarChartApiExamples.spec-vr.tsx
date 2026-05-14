@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { test, expect } from '@playwright/experimental-ct-react';
 
-import RadarChartExample from '../../../www/src/docs/apiExamples/RadarChart/RadarChartExample';
+import RadarChartExample from '../../../www/src/docs/exampleComponents/RadarChart/RadarChartExample';
 import SimpleRadarChart from '../../../www/src/docs/exampleComponents/RadarChart/SimpleRadarChart';
 import SpecifiedDomainRadarChart from '../../../www/src/docs/exampleComponents/RadarChart/SpecifiedDomainRadarChart';
 import RadarChartNavExample from '../../../www/src/docs/exampleComponents/RadarChart/RadarChartNavExample';

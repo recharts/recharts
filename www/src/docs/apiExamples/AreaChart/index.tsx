@@ -1,8 +1,8 @@
 import { ChartExample } from '../../exampleComponents/types.ts';
-import AreaChartExample from './AreaChartExample.tsx';
-import AreaChartExampleSource from './AreaChartExample.tsx?raw';
-import AreaChartRangeExample from './AreaChartRangeExample.tsx';
-import AreaChartRangeExampleSource from './AreaChartRangeExample.tsx?raw';
+import AreaChartExample from '../../exampleComponents/AreaChart/AreaChartExample.tsx';
+import AreaChartExampleSource from '../../exampleComponents/AreaChart/AreaChartExample.tsx?raw';
+import AreaChartRangeExample from '../../exampleComponents/AreaChart/AreaChartRangeExample.tsx';
+import AreaChartRangeExampleSource from '../../exampleComponents/AreaChart/AreaChartRangeExample.tsx?raw';
 
 export const areaChartApiExamples: ReadonlyArray<ChartExample> = [
   {

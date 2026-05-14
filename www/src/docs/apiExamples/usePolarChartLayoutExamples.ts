@@ -1,6 +1,6 @@
 import { ChartExample } from '../exampleComponents/types';
-import RadarChartExample from './RadarChart/RadarChartExample.tsx';
-import RadarChartExampleSource from './RadarChart/RadarChartExample.tsx?raw';
+import RadarChartExample from '../exampleComponents/RadarChart/RadarChartExample.tsx';
+import RadarChartExampleSource from '../exampleComponents/RadarChart/RadarChartExample.tsx?raw';
 
 const usePolarChartLayoutExamples: ReadonlyArray<ChartExample> = [
   {

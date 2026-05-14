@@ -1,6 +1,6 @@
 import { ChartExample } from '../../exampleComponents/types.ts';
-import ReferenceAreaExample from './ReferenceAreaExample.tsx';
-import ReferenceAreaExampleSource from './ReferenceAreaExample.tsx?raw';
+import ReferenceAreaExample from '../../exampleComponents/ReferenceArea/ReferenceAreaExample.tsx';
+import ReferenceAreaExampleSource from '../../exampleComponents/ReferenceArea/ReferenceAreaExample.tsx?raw';
 
 export const referenceAreaApiExamples: ReadonlyArray<ChartExample> = [
   {

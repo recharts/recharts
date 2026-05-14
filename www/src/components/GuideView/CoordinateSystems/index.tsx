@@ -4,13 +4,13 @@ import DataCoordinatesExample from './DataCoordinatesExample.tsx';
 import DataCoordinatesExampleSource from './DataCoordinatesExample.tsx?raw';
 import PixelCoordinatesExample from './PixelCoordinatesExample.tsx';
 import PixelCoordinatesExampleSource from './PixelCoordinatesExample.tsx?raw';
-import DataSnapExample from '../../../docs/apiExamples/useAxisInverseDataSnapScale/DataSnapExample.tsx';
-import DataSnapExampleSource from '../../../docs/apiExamples/useAxisInverseDataSnapScale/DataSnapExample.tsx?raw';
+import DataSnapExample from '../../../docs/exampleComponents/useXAxisInverseDataSnapScale/DataSnapExample.tsx';
+import DataSnapExampleSource from '../../../docs/exampleComponents/useXAxisInverseDataSnapScale/DataSnapExample.tsx?raw';
 import { LinkToApi } from '../../Shared/LinkToApi.tsx';
-import CrosshairExample from '../../../docs/apiExamples/getRelativeCoordinate/CrosshairExample.tsx';
-import CrosshairExampleSource from '../../../docs/apiExamples/getRelativeCoordinate/CrosshairExample.tsx?raw';
-import AxisTickSnapExample from '../../../docs/apiExamples/useAxisInverseTickSnapScale/AxisTicksSnapExample.tsx';
-import AxisTickSnapExampleSource from '../../../docs/apiExamples/useAxisInverseTickSnapScale/AxisTicksSnapExample.tsx?raw';
+import CrosshairExample from '../../../docs/exampleComponents/getRelativeCoordinate/CrosshairExample.tsx';
+import CrosshairExampleSource from '../../../docs/exampleComponents/getRelativeCoordinate/CrosshairExample.tsx?raw';
+import AxisTickSnapExample from '../../../docs/exampleComponents/useXAxisInverseTickSnapScale/AxisTicksSnapExample.tsx';
+import AxisTickSnapExampleSource from '../../../docs/exampleComponents/useXAxisInverseTickSnapScale/AxisTicksSnapExample.tsx?raw';
 
 export function CoordinateSystems() {
   return (

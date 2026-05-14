@@ -1,8 +1,8 @@
 import * as React from 'react';
 import { test, expect } from '@playwright/experimental-ct-react';
 
-import CellBarExample from '../../../www/src/docs/apiExamples/Cell/CellBarExample';
-import CellPieExample from '../../../www/src/docs/apiExamples/Cell/CellPieExample';
+import CellBarExample from '../../../www/src/docs/exampleComponents/Cell/CellBarExample';
+import CellPieExample from '../../../www/src/docs/exampleComponents/Cell/CellPieExample';
 
 test('CellPieExample', async ({ mount }) => {
   const component = await mount(<CellPieExample isAnimationActive={false} />);

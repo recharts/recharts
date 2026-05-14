@@ -1,8 +1,8 @@
 import { ChartExample } from '../../exampleComponents/types.ts';
-import BarChartExample from './BarChartExample.tsx';
-import BarChartExampleSource from './BarChartExample.tsx?raw';
-import BarChartRangeExample from './BarChartRangeExample.tsx';
-import BarChartRangeExampleSource from './BarChartRangeExample.tsx?raw';
+import BarChartExample from '../../exampleComponents/BarChart/BarChartExample.tsx';
+import BarChartExampleSource from '../../exampleComponents/BarChart/BarChartExample.tsx?raw';
+import BarChartRangeExample from '../../exampleComponents/BarChart/BarChartRangeExample.tsx';
+import BarChartRangeExampleSource from '../../exampleComponents/BarChart/BarChartRangeExample.tsx?raw';
 
 export const barChartApiExamples: ReadonlyArray<ChartExample> = [
   {
