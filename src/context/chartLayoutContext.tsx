@@ -154,7 +154,7 @@ export const useChartLayout = (): LayoutType | undefined => useAppSelector(selec
  *
  * Returns `horizontal` or `vertical` for Cartesian charts.
  * Returns `undefined` for non-Cartesian charts or outside chart context.
- * 
+ *
  * @since 3.9
  *
  * @returns {CartesianLayout | undefined} The Cartesian chart layout, or `undefined`.
@@ -182,7 +182,7 @@ export const selectPolarChartLayout = (state: RechartsRootState): PolarLayout | 
  * Returns `undefined` for non-Polar charts or outside chart context.
  *
  * @returns {PolarLayout | undefined} The Polar chart layout, or `undefined`.
- * 
+ *
  * @since 3.9
  */
 export const usePolarChartLayout = (): PolarLayout | undefined => {
