@@ -1,0 +1,127 @@
+import{e}from"./iframe-IedaLeal.js";import{A as r}from"./AreaChart-CJhy9mKm.js";import{R as o}from"./arrayEqualityCheck-CDeFCuAt.js";import{p as d}from"./Page-Cj8EiXz7.js";import{C as n}from"./CartesianGrid-B7TLSq6W.js";import{X as m}from"./XAxis-CUj044ZC.js";import{Y as i}from"./YAxis-j1HNTz_n.js";import{A as s}from"./Area-CCz7NRHm.js";import{T as p}from"./Tooltip-B6TvM8k9.js";import{R as f}from"./RechartsHookInspector-5qOOtg04.js";import{L as E}from"./LineChart-BXojSIOU.js";import{L as x}from"./Line-QYm9FiCp.js";import"./preload-helper-Dp1pzeXC.js";import"./RechartsWrapper-0o5SV0j_.js";import"./index-YtVhwzFk.js";import"./immer-Dd6dXjxy.js";import"./hooks-C5y3PU4C.js";import"./axisSelectors-Bx341r0C.js";import"./d3-scale-BX13yOxW.js";import"./zIndexSlice-BZ8DgwR3.js";import"./renderedTicksSlice-DOzQfNkA.js";import"./clsx-B-dksMZM.js";import"./PolarUtils-CTnnDHZv.js";import"./CartesianChart-DtUsH4ee.js";import"./chartDataContext-DqUMO5tY.js";import"./CategoricalChart-DAXIc6R-.js";import"./resolveDefaultProps-DinctDfH.js";import"./CartesianAxis-DdlOSCj4.js";import"./Layer-COpu_kTm.js";import"./Text-ko_k4IV7.js";import"./DOMUtils-BYFJFnuE.js";import"./Label-NwC3LlsS.js";import"./ZIndexLayer-JYekqGDv.js";import"./types-Ci9gDE8O.js";import"./getClassNameFromUnknown-Dbzh2npV.js";import"./Curve-BzqwREyl.js";import"./step-CR-qwJGd.js";import"./ReactUtils-De7AqaLg.js";import"./ActivePoints-Dn2oKCMT.js";import"./Dot-CXXTrQ7H.js";import"./RegisterGraphicalItemId-wI9lHTwH.js";import"./GraphicalItemClipPath-B96rVctv.js";import"./SetGraphicalItem-BzrdUKT-.js";import"./useAnimationId-D3Yn3hG9.js";import"./getRadiusAndStrokeWidthFromDot-B2hN5pbW.js";import"./graphicalItemSelectors-DDSx4B9l.js";import"./useElementOffset-XMbgmZkO.js";import"./uniqBy-CZ5FVlWP.js";import"./iteratee-DYAmoIVS.js";import"./Cross-vdltQL2q.js";import"./Rectangle-D0StcwZN.js";import"./Sector-BSwgLZD3.js";import"./index-sBYFadDc.js";import"./ChartSizeDimensions-DwT6nbul.js";import"./OffsetShower-RAcVZiZd.js";import"./PlotAreaShower-DRI9galD.js";import"./ErrorBarContext-C7FVOsru.js";import"./ActiveShapeUtils-cikzdunu.js";import"./isPlainObject-BBCFg2tK.js";import"./isPlainObject-BSutPv-K.js";import"./Trapezoid-DD2FtYjE.js";import"./Symbols-ncFIdchy.js";import"./symbol-BiWopP6m.js";const Fe={component:r},t={render:()=>e.createElement(e.Fragment,null,e.createElement("p",null,"Resize the window to test ResponsiveContainer"),e.createElement("div",{className:"flex-parent"},e.createElement(o,{width:"100%",className:"flex-child"},e.createElement(r,{data:d,margin:{top:10,right:30,left:0,bottom:0}},e.createElement(n,{strokeDasharray:"3 3"}),e.createElement(m,{dataKey:"name"}),e.createElement(i,null),e.createElement(s,{type:"monotone",dataKey:"uv",stroke:"#8884d8",fill:"#8884d8"}),e.createElement(p,null),e.createElement(f,null))),e.createElement(o,{className:"flex-child"},e.createElement(E,{data:d,margin:{top:10,right:30,left:0,bottom:0}},e.createElement(n,{strokeDasharray:"3 3"}),e.createElement(m,{dataKey:"name"}),e.createElement(i,null),e.createElement(x,{type:"monotone",dataKey:"amt",stroke:"orange"}),e.createElement(p,null))))),args:{}},a={render:()=>{const l=[{name:"Page A",uv:4e3,pv:2400,amt:2400},{name:"Page B",uv:3e3,pv:1398,amt:2210},{name:"Page C",uv:2e3,pv:9800,amt:2290},{name:"Page D",uv:2780,pv:3908,amt:2e3},{name:"Page E",uv:1890,pv:4800,amt:2181},{name:"Page F",uv:2390,pv:3800,amt:2500},{name:"Page G",uv:3490,pv:4300,amt:2100}];return e.createElement("div",{style:{height:"100%",width:"100%",margin:0}},e.createElement("div",{style:{display:"flex",flexDirection:"row",height:"200px"}},e.createElement("div",{style:{flex:1}},e.createElement(o,null,e.createElement(r,{data:l,margin:{top:10,right:30,left:0,bottom:0}},e.createElement(m,{dataKey:"name"}),e.createElement(i,null),e.createElement(n,{strokeDasharray:"3 3"}),e.createElement(s,{type:"monotone",dataKey:"uv",stroke:"#8884d8",fill:"#8884d8"}),e.createElement(p,null),e.createElement(f,null)))),e.createElement("div",{style:{flex:1}},e.createElement(o,null,e.createElement(r,{data:l,margin:{top:10,right:30,left:0,bottom:0}},e.createElement(m,{dataKey:"name"}),e.createElement(i,null),e.createElement(n,{strokeDasharray:"3 3"}),e.createElement(s,{type:"monotone",dataKey:"uv",stroke:"#8884d8",fill:"#8884d8"}),e.createElement(p,null))))))}};var c,v,h;t.parameters={...t.parameters,docs:{...(c=t.parameters)==null?void 0:c.docs,source:{originalSource:`{
+  render: () => {
+    return <>
+        <p>Resize the window to test ResponsiveContainer</p>
+        <div className="flex-parent">
+          <ResponsiveContainer width="100%" className="flex-child">
+            <AreaChart data={pageData} margin={{
+            top: 10,
+            right: 30,
+            left: 0,
+            bottom: 0
+          }}>
+              <CartesianGrid strokeDasharray="3 3" />
+              <XAxis dataKey="name" />
+              <YAxis />
+              <Area type="monotone" dataKey="uv" stroke="#8884d8" fill="#8884d8" />
+              <Tooltip />
+              <RechartsHookInspector />
+            </AreaChart>
+          </ResponsiveContainer>
+          <ResponsiveContainer className="flex-child">
+            <LineChart data={pageData} margin={{
+            top: 10,
+            right: 30,
+            left: 0,
+            bottom: 0
+          }}>
+              <CartesianGrid strokeDasharray="3 3" />
+              <XAxis dataKey="name" />
+              <YAxis />
+              <Line type="monotone" dataKey="amt" stroke="orange" />
+              <Tooltip />
+            </LineChart>
+          </ResponsiveContainer>
+        </div>
+      </>;
+  },
+  args: {}
+}`,...(h=(v=t.parameters)==null?void 0:v.docs)==null?void 0:h.source}}};var u,g,y;a.parameters={...a.parameters,docs:{...(u=a.parameters)==null?void 0:u.docs,source:{originalSource:`{
+  render: () => {
+    const data = [{
+      name: 'Page A',
+      uv: 4000,
+      pv: 2400,
+      amt: 2400
+    }, {
+      name: 'Page B',
+      uv: 3000,
+      pv: 1398,
+      amt: 2210
+    }, {
+      name: 'Page C',
+      uv: 2000,
+      pv: 9800,
+      amt: 2290
+    }, {
+      name: 'Page D',
+      uv: 2780,
+      pv: 3908,
+      amt: 2000
+    }, {
+      name: 'Page E',
+      uv: 1890,
+      pv: 4800,
+      amt: 2181
+    }, {
+      name: 'Page F',
+      uv: 2390,
+      pv: 3800,
+      amt: 2500
+    }, {
+      name: 'Page G',
+      uv: 3490,
+      pv: 4300,
+      amt: 2100
+    }];
+    return <div style={{
+      height: '100%',
+      width: '100%',
+      margin: 0
+    }}>
+        <div style={{
+        display: 'flex',
+        flexDirection: 'row',
+        height: '200px'
+      }}>
+          <div style={{
+          flex: 1
+        }}>
+            <ResponsiveContainer>
+              <AreaChart data={data} margin={{
+              top: 10,
+              right: 30,
+              left: 0,
+              bottom: 0
+            }}>
+                <XAxis dataKey="name" />
+                <YAxis />
+                <CartesianGrid strokeDasharray="3 3" />
+                <Area type="monotone" dataKey="uv" stroke="#8884d8" fill="#8884d8" />
+                <Tooltip />
+                <RechartsHookInspector />
+              </AreaChart>
+            </ResponsiveContainer>
+          </div>
+          <div style={{
+          flex: 1
+        }}>
+            <ResponsiveContainer>
+              <AreaChart data={data} margin={{
+              top: 10,
+              right: 30,
+              left: 0,
+              bottom: 0
+            }}>
+                <XAxis dataKey="name" />
+                <YAxis />
+                <CartesianGrid strokeDasharray="3 3" />
+                <Area type="monotone" dataKey="uv" stroke="#8884d8" fill="#8884d8" />
+                <Tooltip />
+              </AreaChart>
+            </ResponsiveContainer>
+          </div>
+        </div>
+      </div>;
+  }
+}`,...(y=(g=a.parameters)==null?void 0:g.docs)==null?void 0:y.source}}};const Ge=["MultiChartFlexbox","ResponsiveContainerWithFlexbox"];export{t as MultiChartFlexbox,a as ResponsiveContainerWithFlexbox,Ge as __namedExportsOrder,Fe as default};
