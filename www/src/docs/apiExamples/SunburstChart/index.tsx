@@ -1,11 +1,4 @@
 import { ChartExample } from '../../exampleComponents/types';
-import SunburstChartExample from '../../exampleComponents/SunburstChart/SunburstChartExample';
-import sunburstChartExampleSource from '../../exampleComponents/SunburstChart/SunburstChartExample?raw';
+import { sunburstChartExamples } from '../../exampleComponents/SunburstChart';
 
-export const sunburstChartApiExamples: ReadonlyArray<ChartExample> = [
-  {
-    Component: SunburstChartExample,
-    sourceCode: sunburstChartExampleSource,
-    name: 'Sunburst Chart Example',
-  },
-];
+export const sunburstChartApiExamples: ReadonlyArray<ChartExample> = [sunburstChartExamples.SunburstChartExample];

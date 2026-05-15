@@ -1,11 +1,4 @@
 import { ChartExample } from '../../exampleComponents/types.ts';
-import FunnelChartExample from '../../exampleComponents/FunnelChart/FunnelChartExample.tsx';
-import FunnelChartExampleSource from '../../exampleComponents/FunnelChart/FunnelChartExample.tsx?raw';
+import { funnelChartExamples } from '../../exampleComponents/FunnelChart';
 
-export const funnelChartApiExamples: ReadonlyArray<ChartExample> = [
-  {
-    Component: FunnelChartExample,
-    sourceCode: FunnelChartExampleSource,
-    name: 'Funnel Chart Example',
-  },
-];
+export const funnelChartApiExamples: ReadonlyArray<ChartExample> = [funnelChartExamples.FunnelChartExample];

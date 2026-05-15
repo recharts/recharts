@@ -16,6 +16,8 @@ import { ChartExample } from '../types.ts';
 import ScatterChartPerformance from './ScatterChartPerformance';
 import scatterChartPerformanceSource from './ScatterChartPerformance?raw';
 import ScatterChartNavExample from './ScatterChartNavExample';
+import ScatterChartExample from './ScatterChartExample';
+import scatterChartExampleSource from './ScatterChartExample?raw';
 
 export { ScatterChartNavExample };
 
@@ -59,5 +61,10 @@ export const scatterChartExamples: Record<string, ChartExample> = {
     Component: ScatterChartPerformance,
     sourceCode: scatterChartPerformanceSource,
     name: 'Scatter Chart with many points (performance test)',
+  },
+  ScatterChartExample: {
+    Component: ScatterChartExample,
+    sourceCode: scatterChartExampleSource,
+    name: 'Scatter Chart Example',
   },
 };

@@ -1,11 +1,4 @@
 import { ChartExample } from '../../exampleComponents/types.ts';
-import ComposedChartExample from '../../exampleComponents/ComposedChart/ComposedChartExample.tsx';
-import ComposedChartExampleSource from '../../exampleComponents/ComposedChart/ComposedChartExample.tsx?raw';
+import { composedChartExamples } from '../../exampleComponents/ComposedChart';
 
-export const composedChartApiExamples: ReadonlyArray<ChartExample> = [
-  {
-    Component: ComposedChartExample,
-    sourceCode: ComposedChartExampleSource,
-    name: 'Composed Chart Example',
-  },
-];
+export const composedChartApiExamples: ReadonlyArray<ChartExample> = [composedChartExamples.ComposedChartExample];

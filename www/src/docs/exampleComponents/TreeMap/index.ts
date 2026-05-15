@@ -8,6 +8,8 @@ import nestedTreemapSource from './NestedTreemap?raw';
 import treemapWithPaddingAndGapsSource from './TreemapWithPaddingAndGaps?raw';
 import { ChartExample } from '../types.ts';
 import TreeMapNavExample from './TreeMapNavExample';
+import TreemapExample from './TreemapExample';
+import treemapExampleSource from './TreemapExample?raw';
 
 export { TreeMapNavExample };
 
@@ -31,5 +33,10 @@ export const treeMapExamples: Record<string, ChartExample> = {
     Component: TreemapWithPaddingAndGaps,
     sourceCode: treemapWithPaddingAndGapsSource,
     name: 'Treemap with Padding and Gaps',
+  },
+  TreemapExample: {
+    Component: TreemapExample,
+    sourceCode: treemapExampleSource,
+    name: 'Treemap Example',
   },
 };
