@@ -18,11 +18,11 @@ import {
 import { generateMockData, RechartsDevtools } from '@recharts/devtools';
 import { useState, MouseEvent, TouchEvent, useCallback } from 'react';
 
+import { chartTheme } from '../../../styles/chart';
+
 const data = generateMockData(30, 123);
 
-const TextWithOutline = (textProps: TextProps) => (
-  <Text stroke="white" strokeWidth={3} fill="black" paintOrder="stroke" {...textProps} />
-);
+const TextWithOutline = (textProps: TextProps) => <Text {...chartTheme.text()} {...textProps} />;
 
 const PixelCrosshair = ({ pointer }: { pointer: RelativePointer | null }) => {
   const width = useChartWidth();
@@ -56,9 +56,7 @@ const PixelCrosshair = ({ pointer }: { pointer: RelativePointer | null }) => {
         left={0}
         width={width}
         height={height}
-        stroke="green"
-        strokeWidth={1}
-        strokeDasharray="4"
+        {...chartTheme.cross()}
       />
     </ZIndexLayer>
   );
@@ -124,9 +122,15 @@ export default function CrosshairExample({
       onTouchMove={handleTouchMove}
       onTouchEnd={handleLeave}
     >
-      <XAxis dataKey="label" />
-      <YAxis width="auto" />
-      <Area type="monotone" dataKey="x" stroke="var(--color-chart-1)" />
+      <XAxis dataKey="label" {...chartTheme.axis()} />
+      <YAxis width="auto" {...chartTheme.axis()} />
+      <Area
+        type="monotone"
+        dataKey="x"
+        {...chartTheme.area({ tone: 'chart-indigo' })}
+        dot={chartTheme.dot()}
+        activeDot={chartTheme.activeDot()}
+      />
       {pointers.map((pointer, index) => (
         <PixelCrosshair key={index} pointer={pointer} />
       ))}

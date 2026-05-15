@@ -1,5 +1,6 @@
 import { CartesianGrid, Legend, Line, LineChart, Tooltip, XAxis, YAxis } from 'recharts';
 import { RechartsDevtools } from '@recharts/devtools';
+import { chartTheme } from '../../../styles/chart';
 
 // #region Sample data
 const data = [
@@ -62,34 +63,23 @@ export default function Example(props: { isAnimationActive?: boolean }) {
         bottom: 5,
       }}
     >
-      <CartesianGrid strokeDasharray="3 3" stroke="var(--color-border-3)" />
-      <XAxis type="number" domain={[0, 'dataMax + 1000']} stroke="var(--color-text-3)" />
-      <YAxis dataKey="name" type="category" width="auto" stroke="var(--color-text-3)" />
-      <Tooltip
-        cursor={{ stroke: 'var(--color-border-2)' }}
-        contentStyle={{ backgroundColor: 'var(--color-surface-base)', borderColor: 'var(--color-border-2)' }}
-      />
+      <CartesianGrid {...chartTheme.cartesianGrid()} />
+      <XAxis type="number" domain={[0, 'dataMax + 1000']} {...chartTheme.axis()} />
+      <YAxis dataKey="name" type="category" width="auto" {...chartTheme.axis()} />
+      <Tooltip cursor={chartTheme.tooltipCursor()} contentStyle={chartTheme.tooltipContent()} />
       <Legend />
       <Line
         dataKey="pv"
-        stroke="var(--color-chart-1)"
-        dot={{
-          fill: 'var(--color-surface-base)',
-        }}
-        activeDot={{
-          stroke: 'var(--color-surface-base)',
-        }}
+        {...chartTheme.line({ tone: 'chart-indigo' })}
+        dot={chartTheme.dot()}
+        activeDot={chartTheme.activeDot()}
         isAnimationActive={props.isAnimationActive}
       />
       <Line
         dataKey="uv"
-        stroke="var(--color-chart-2)"
-        dot={{
-          fill: 'var(--color-surface-base)',
-        }}
-        activeDot={{
-          stroke: 'var(--color-surface-base)',
-        }}
+        {...chartTheme.line({ tone: 'chart-green' })}
+        dot={chartTheme.dot()}
+        activeDot={chartTheme.activeDot()}
         isAnimationActive={props.isAnimationActive}
       />
       <RechartsDevtools />

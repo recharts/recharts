@@ -1,6 +1,8 @@
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend } from 'recharts';
 import { RechartsDevtools } from '@recharts/devtools';
 
+import { chartTheme } from '../../../styles/chart';
+
 // #region Sample data
 const data = [
   {
@@ -77,20 +79,16 @@ export default function Example() {
       <Line
         type="monotone"
         dataKey="pv"
-        stroke="var(--color-chart-1)"
-        dot={{
-          fill: 'var(--color-surface-base)',
-        }}
-        activeDot={{ r: 8, stroke: 'var(--color-surface-base)' }}
+        {...chartTheme.line({ tone: 'chart-indigo' })}
+        dot={chartTheme.dot()}
+        activeDot={chartTheme.activeDot()}
       />
       <Line
         type="monotone"
         dataKey="uv"
-        stroke="var(--color-chart-2)"
-        dot={{
-          fill: 'var(--color-surface-base)',
-        }}
-        activeDot={{ stroke: 'var(--color-surface-base)' }}
+        {...chartTheme.line({ tone: 'chart-green' })}
+        dot={chartTheme.dot()}
+        activeDot={chartTheme.activeDot()}
       />
       <RechartsDevtools />
     </LineChart>
