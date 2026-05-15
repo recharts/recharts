@@ -1,0 +1,823 @@
+# Instructions
+
+- Following Playwright test failed.
+- Explain why, be concise, respect Playwright best practices.
+- Provide a snippet of code with the fix, if possible.
+
+# Test info
+
+- Name: tests/www/dark-mode.spec-vr.tsx >> dark mode: examples list
+- Location: test-vr/tests/www/dark-mode.spec-vr.tsx:17:5
+
+# Error details
+
+```
+Error: expect(locator).toHaveScreenshot(expected) failed
+
+Locator: locator('#root').locator('internal:control=component')
+  5315 pixels (ratio 0.01 of all image pixels) are different.
+
+Call log:
+  - Expect "toHaveScreenshot" with timeout 10000ms
+    - verifying given screenshot expectation
+  - waiting for locator('#root').locator('internal:control=component')
+    - locator resolved to <div id="root"></div>
+  - taking element screenshot
+    - disabled all CSS animations
+  - waiting for fonts to load...
+  - fonts loaded
+  - attempting scroll into view action
+    2 × waiting for element to be stable
+      - element is not visible
+    - retrying scroll into view action
+    - waiting 20ms
+    - waiting for element to be stable
+    - element is not stable
+  - retrying scroll into view action
+    - waiting 100ms
+    - waiting for element to be stable
+  - 5315 pixels (ratio 0.01 of all image pixels) are different.
+  - waiting 100ms before taking screenshot
+  - waiting for locator('#root').locator('internal:control=component')
+    - locator resolved to <div class="container">…</div>
+  - taking element screenshot
+    - disabled all CSS animations
+  - waiting for fonts to load...
+  - fonts loaded
+  - attempting scroll into view action
+    - waiting for element to be stable
+  - captured a stable screenshot
+  - 5315 pixels (ratio 0.01 of all image pixels) are different.
+
+```
+
+# Page snapshot
+
+```yaml
+- generic [active] [ref=e1]:
+  - generic [ref=e3]:
+    - banner [ref=e4]:
+      - link [ref=e5]:
+        - /url: /en-US/
+        - application [ref=e7]:
+          - generic [ref=e26]: Recharts
+      - navigation [ref=e27]:
+        - list [ref=e28]:
+          - listitem [ref=e29]:
+            - link "Guide" [ref=e30]:
+              - /url: /en-US/guide/
+          - listitem [ref=e31]:
+            - link "API" [ref=e32]:
+              - /url: /en-US/api/
+          - listitem [ref=e33]:
+            - link "Examples" [ref=e34]:
+              - /url: /en-US/examples/
+          - listitem [ref=e35]:
+            - link "Storybook" [ref=e36]:
+              - /url: /en-US/storybook/
+          - listitem [ref=e37]:
+            - link "Wiki" [ref=e38]:
+              - /url: https://github.com/recharts/recharts/wiki
+              - text: Wiki
+              - img [ref=e39]
+          - listitem [ref=e43]:
+            - link "GitHub" [ref=e44]:
+              - /url: https://github.com/recharts/recharts
+              - text: GitHub
+              - img [ref=e45]
+        - generic [ref=e49]:
+          - generic [ref=e50]:
+            - generic [ref=e51]: En
+            - generic [ref=e52]:
+              - text: "|"
+              - link "中文" [ref=e53]:
+                - /url: /zh-CN/
+          - button "system" [ref=e54] [cursor=pointer]:
+            - img [ref=e55]
+    - generic [ref=e57]:
+      - heading "Examples" [level=2] [ref=e58]
+      - generic [ref=e59]:
+        - link "LineChart" [ref=e60]:
+          - /url: /en-US/examples/SimpleLineChart/
+          - heading "LineChart" [level=4] [ref=e61]
+          - application [ref=e64]
+        - list [ref=e70]:
+          - listitem [ref=e71]:
+            - link "Simple Line Chart" [ref=e72]:
+              - /url: /en-US/examples/SimpleLineChart/
+          - listitem [ref=e73]:
+            - link "Tiny Line Chart" [ref=e74]:
+              - /url: /en-US/examples/TinyLineChart/
+          - listitem [ref=e75]:
+            - link "Dashed Line Chart" [ref=e76]:
+              - /url: /en-US/examples/DashedLineChart/
+          - listitem [ref=e77]:
+            - link "Vertical Line Chart" [ref=e78]:
+              - /url: /en-US/examples/VerticalLineChart/
+          - listitem [ref=e79]:
+            - link "Biaxial Line Chart" [ref=e80]:
+              - /url: /en-US/examples/BiaxialLineChart/
+          - listitem [ref=e81]:
+            - link "Vertical Line Chart With Specified Domain" [ref=e82]:
+              - /url: /en-US/examples/VerticalLineChartWithSpecifiedDomain/
+          - listitem [ref=e83]:
+            - link "Line Chart Connect Nulls" [ref=e84]:
+              - /url: /en-US/examples/LineChartConnectNulls/
+          - listitem [ref=e85]:
+            - link "Line Chart With X Axis Padding" [ref=e86]:
+              - /url: /en-US/examples/LineChartWithXAxisPadding/
+          - listitem [ref=e87]:
+            - link "Line Chart With Reference Lines" [ref=e88]:
+              - /url: /en-US/examples/LineChartWithReferenceLines/
+          - listitem [ref=e89]:
+            - link "Customized Dot Line Chart" [ref=e90]:
+              - /url: /en-US/examples/CustomizedDotLineChart/
+          - listitem [ref=e91]:
+            - link "Customized Label Line Chart" [ref=e92]:
+              - /url: /en-US/examples/CustomizedLabelLineChart/
+          - listitem [ref=e93]:
+            - link "Synchronized Line Chart" [ref=e94]:
+              - /url: /en-US/examples/SynchronizedLineChart/
+          - listitem [ref=e95]:
+            - link "Highlight And Zoom Line Chart" [ref=e96]:
+              - /url: /en-US/examples/HighlightAndZoomLineChart/
+          - listitem [ref=e97]:
+            - link "Line Chart Has Multi Series" [ref=e98]:
+              - /url: /en-US/examples/LineChartHasMultiSeries/
+          - listitem [ref=e99]:
+            - link "Line Chart Axis Interval" [ref=e100]:
+              - /url: /en-US/examples/LineChartAxisInterval/
+          - listitem [ref=e101]:
+            - link "Line Chart Negative Values With Reference Lines" [ref=e102]:
+              - /url: /en-US/examples/LineChartNegativeValuesWithReferenceLines/
+          - listitem [ref=e103]:
+            - link "Compare Two Lines" [ref=e104]:
+              - /url: /en-US/examples/CompareTwoLines/
+          - listitem [ref=e105]:
+            - link "Dynamic Z-Index Line Chart" [ref=e106]:
+              - /url: /en-US/examples/DynamicZIndexLineChart/
+          - listitem [ref=e107]:
+            - link "Simple Line Chart Example" [ref=e108]:
+              - /url: /en-US/examples/LineChartExample/
+      - generic [ref=e109]:
+        - link "AreaChart" [ref=e110]:
+          - /url: /en-US/examples/SimpleAreaChart/
+          - heading "AreaChart" [level=4] [ref=e111]
+          - application [ref=e114]
+        - list [ref=e124]:
+          - listitem [ref=e125]:
+            - link "Simple Area Chart" [ref=e126]:
+              - /url: /en-US/examples/SimpleAreaChart/
+          - listitem [ref=e127]:
+            - link "Stacked Area Chart" [ref=e128]:
+              - /url: /en-US/examples/StackedAreaChart/
+          - listitem [ref=e129]:
+            - link "Area Chart Connect Nulls" [ref=e130]:
+              - /url: /en-US/examples/AreaChartConnectNulls/
+          - listitem [ref=e131]:
+            - link "Cardinal Area Chart" [ref=e132]:
+              - /url: /en-US/examples/CardinalAreaChart/
+          - listitem [ref=e133]:
+            - link "Percent Area Chart" [ref=e134]:
+              - /url: /en-US/examples/PercentAreaChart/
+          - listitem [ref=e135]:
+            - link "Synchronized Area Chart" [ref=e136]:
+              - /url: /en-US/examples/SynchronizedAreaChart/
+          - listitem [ref=e137]:
+            - link "Tiny Area Chart" [ref=e138]:
+              - /url: /en-US/examples/TinyAreaChart/
+          - listitem [ref=e139]:
+            - link "Area Chart Fill By Value" [ref=e140]:
+              - /url: /en-US/examples/AreaChartFillByValue/
+          - listitem [ref=e141]:
+            - link "Area Chart With Custom Events" [ref=e142]:
+              - /url: /en-US/examples/AreaChartWithCustomEvents/
+          - listitem [ref=e143]:
+            - link "Simple Area Chart Example" [ref=e144]:
+              - /url: /en-US/examples/AreaChartExample/
+          - listitem [ref=e145]:
+            - link "Ranged Area Chart Example" [ref=e146]:
+              - /url: /en-US/examples/AreaChartRangeExample/
+      - generic [ref=e147]:
+        - link "BarChart" [ref=e148]:
+          - /url: /en-US/examples/TinyBarChart/
+          - heading "BarChart" [level=4] [ref=e149]
+          - application [ref=e152]
+        - list [ref=e170]:
+          - listitem [ref=e171]:
+            - link "Tiny Bar Chart" [ref=e172]:
+              - /url: /en-US/examples/TinyBarChart/
+          - listitem [ref=e173]:
+            - link "Simple Bar Chart" [ref=e174]:
+              - /url: /en-US/examples/SimpleBarChart/
+          - listitem [ref=e175]:
+            - link "Stacked Bar Chart" [ref=e176]:
+              - /url: /en-US/examples/StackedBarChart/
+          - listitem [ref=e177]:
+            - link "Mix Bar Chart" [ref=e178]:
+              - /url: /en-US/examples/MixBarChart/
+          - listitem [ref=e179]:
+            - link "Custom Shape Bar Chart" [ref=e180]:
+              - /url: /en-US/examples/CustomShapeBarChart/
+          - listitem [ref=e181]:
+            - link "Positive and Negative Bar Chart" [ref=e182]:
+              - /url: /en-US/examples/PositiveAndNegativeBarChart/
+          - listitem [ref=e183]:
+            - link "Brush Bar Chart" [ref=e184]:
+              - /url: /en-US/examples/BrushBarChart/
+          - listitem [ref=e185]:
+            - link "Bar Chart With Customized Event" [ref=e186]:
+              - /url: /en-US/examples/BarChartWithCustomizedEvent/
+          - listitem [ref=e187]:
+            - link "Bar Chart With Min Height" [ref=e188]:
+              - /url: /en-US/examples/BarChartWithMinHeight/
+          - listitem [ref=e189]:
+            - link "Bar Chart Stacked By Sign" [ref=e190]:
+              - /url: /en-US/examples/BarChartStackedBySign/
+          - listitem [ref=e191]:
+            - link "Biaxial Bar Chart" [ref=e192]:
+              - /url: /en-US/examples/BiaxialBarChart/
+          - listitem [ref=e193]:
+            - link "Bar Chart with background" [ref=e194]:
+              - /url: /en-US/examples/BarChartHasBackground/
+          - listitem [ref=e195]:
+            - link "Bar Chart With Multi X Axis" [ref=e196]:
+              - /url: /en-US/examples/BarChartWithMultiXAxis/
+          - listitem [ref=e197]:
+            - link "Ranged Stacked Bar Chart" [ref=e198]:
+              - /url: /en-US/examples/RangedStackedBarChart/
+          - listitem [ref=e199]:
+            - link "Population Pyramid" [ref=e200]:
+              - /url: /en-US/examples/PopulationPyramid/
+          - listitem [ref=e201]:
+            - link "Timeline" [ref=e202]:
+              - /url: /en-US/examples/TimelineExample/
+          - listitem [ref=e203]:
+            - link "Candlestick" [ref=e204]:
+              - /url: /en-US/examples/Candlestick/
+          - listitem [ref=e205]:
+            - link "Box Plot" [ref=e206]:
+              - /url: /en-US/examples/BoxPlot/
+          - listitem [ref=e207]:
+            - link "Animated Bar Width Example" [ref=e208]:
+              - /url: /en-US/examples/AnimatedBarWidthExample/
+          - listitem [ref=e209]:
+            - link "Waterfall" [ref=e210]:
+              - /url: /en-US/examples/Waterfall/
+          - listitem [ref=e211]:
+            - link "Simple Bar Chart Example" [ref=e212]:
+              - /url: /en-US/examples/BarChartExample/
+          - listitem [ref=e213]:
+            - link "Ranged Bar Chart Example" [ref=e214]:
+              - /url: /en-US/examples/BarChartRangeExample/
+      - generic [ref=e215]:
+        - link "ComposedChart" [ref=e216]:
+          - /url: /en-US/examples/LineBarAreaComposedChart/
+          - heading "ComposedChart" [level=4] [ref=e217]
+          - application [ref=e220]
+        - list [ref=e242]:
+          - listitem [ref=e243]:
+            - link "Line Bar Area Composed Chart" [ref=e244]:
+              - /url: /en-US/examples/LineBarAreaComposedChart/
+          - listitem [ref=e245]:
+            - link "Same Data Composed Chart" [ref=e246]:
+              - /url: /en-US/examples/SameDataComposedChart/
+          - listitem [ref=e247]:
+            - link "Vertical Composed Chart" [ref=e248]:
+              - /url: /en-US/examples/VerticalComposedChart/
+          - listitem [ref=e249]:
+            - link "Composed Chart With Axis Labels" [ref=e250]:
+              - /url: /en-US/examples/ComposedChartWithAxisLabels/
+          - listitem [ref=e251]:
+            - link "Scatter And Line Of Best Fit" [ref=e252]:
+              - /url: /en-US/examples/ScatterAndLineOfBestFit/
+          - listitem [ref=e253]:
+            - link "Banded Chart" [ref=e254]:
+              - /url: /en-US/examples/BandedChart/
+          - listitem [ref=e255]:
+            - link "Target Price Chart with active Label" [ref=e256]:
+              - /url: /en-US/examples/TargetPriceChart/
+          - listitem [ref=e257]:
+            - link "Composed Chart Example" [ref=e258]:
+              - /url: /en-US/examples/ComposedChartExample/
+      - generic [ref=e259]:
+        - link "ScatterChart" [ref=e260]:
+          - /url: /en-US/examples/SimpleScatterChart/
+          - heading "ScatterChart" [level=4] [ref=e261]
+          - application [ref=e264]
+        - list [ref=e288]:
+          - listitem [ref=e289]:
+            - link "Simple Scatter Chart" [ref=e290]:
+              - /url: /en-US/examples/SimpleScatterChart/
+          - listitem [ref=e291]:
+            - link "Three Dim Scatter Chart" [ref=e292]:
+              - /url: /en-US/examples/ThreeDimScatterChart/
+          - listitem [ref=e293]:
+            - link "Joint Line Scatter Chart" [ref=e294]:
+              - /url: /en-US/examples/JointLineScatterChart/
+          - listitem [ref=e295]:
+            - link "Bubble Chart" [ref=e296]:
+              - /url: /en-US/examples/BubbleChart/
+          - listitem [ref=e297]:
+            - link "Scatter Chart With Labels" [ref=e298]:
+              - /url: /en-US/examples/ScatterChartWithLabels/
+          - listitem [ref=e299]:
+            - link "Multiple Y Axes Scatter Chart" [ref=e300]:
+              - /url: /en-US/examples/MultipleYAxesScatterChart/
+          - listitem [ref=e301]:
+            - link "Scatter Chart With Cells" [ref=e302]:
+              - /url: /en-US/examples/ScatterChartWithCells/
+          - listitem [ref=e303]:
+            - link "Scatter Chart with many points (performance test)" [ref=e304]:
+              - /url: /en-US/examples/ScatterChartPerformance/
+          - listitem [ref=e305]:
+            - link "Scatter Chart Example" [ref=e306]:
+              - /url: /en-US/examples/ScatterChartExample/
+      - generic [ref=e307]:
+        - link "PieChart" [ref=e308]:
+          - /url: /en-US/examples/TwoLevelPieChart/
+          - heading "PieChart" [level=4] [ref=e309]
+          - application [ref=e312]
+        - list [ref=e326]:
+          - listitem [ref=e327]:
+            - link "Two Level Pie Chart" [ref=e328]:
+              - /url: /en-US/examples/TwoLevelPieChart/
+          - listitem [ref=e329]:
+            - link "Straight Angle Pie Chart" [ref=e330]:
+              - /url: /en-US/examples/StraightAnglePieChart/
+          - listitem [ref=e331]:
+            - link "Custom Active Shape Pie Chart" [ref=e332]:
+              - /url: /en-US/examples/CustomActiveShapePieChart/
+          - listitem [ref=e333]:
+            - link "Pie Chart With Customized Label" [ref=e334]:
+              - /url: /en-US/examples/PieChartWithCustomizedLabel/
+          - listitem [ref=e335]:
+            - link "Pie Chart with gap and rounded corners" [ref=e336]:
+              - /url: /en-US/examples/PieChartWithPaddingAngle/
+          - listitem [ref=e337]:
+            - link "Pie Chart With Needle" [ref=e338]:
+              - /url: /en-US/examples/PieChartWithNeedle/
+          - listitem [ref=e339]:
+            - link "Pie Chart in Flexbox" [ref=e340]:
+              - /url: /en-US/examples/PieChartInFlexbox/
+          - listitem [ref=e341]:
+            - link "Pie Chart in Grid" [ref=e342]:
+              - /url: /en-US/examples/PieChartInGrid/
+          - listitem [ref=e343]:
+            - link "Pie Chart with Gradient" [ref=e344]:
+              - /url: /en-US/examples/PieWithGradient/
+      - generic [ref=e345]:
+        - link "RadarChart" [ref=e346]:
+          - /url: /en-US/examples/SimpleRadarChart/
+          - heading "RadarChart" [level=4] [ref=e347]
+          - application [ref=e350]
+        - list [ref=e368]:
+          - listitem [ref=e369]:
+            - link "Simple Radar Chart" [ref=e370]:
+              - /url: /en-US/examples/SimpleRadarChart/
+          - listitem [ref=e371]:
+            - link "Specified Domain Radar Chart" [ref=e372]:
+              - /url: /en-US/examples/SpecifiedDomainRadarChart/
+          - listitem [ref=e373]:
+            - link "Radar Chart Example" [ref=e374]:
+              - /url: /en-US/examples/RadarChartExample/
+      - generic [ref=e375]:
+        - link "RadialBarChart" [ref=e376]:
+          - /url: /en-US/examples/SimpleRadialBarChart/
+          - heading "RadialBarChart" [level=4] [ref=e377]
+          - application [ref=e380]:
+            - generic [ref=e401]:
+              - generic [ref=e403]: "0"
+              - generic [ref=e406]: "5"
+              - generic [ref=e409]: "10"
+              - generic [ref=e412]: "15"
+              - generic [ref=e415]: "20"
+              - generic [ref=e418]: "25"
+              - generic [ref=e421]: "30"
+              - generic [ref=e424]: "35"
+              - generic [ref=e427]: "40"
+        - list [ref=e428]:
+          - listitem [ref=e429]:
+            - link "Simple Radial Bar Chart" [ref=e430]:
+              - /url: /en-US/examples/SimpleRadialBarChart/
+          - listitem [ref=e431]:
+            - link "Radial Bar Chart with Click to Focus Legend" [ref=e432]:
+              - /url: /en-US/examples/RadialBarChartClickToFocusLegendExample/
+          - listitem [ref=e433]:
+            - link "Radial Bar Chart Example" [ref=e434]:
+              - /url: /en-US/examples/RadialBarChartExample/
+      - generic [ref=e435]:
+        - link "TreeMap" [ref=e436]:
+          - /url: /en-US/examples/SimpleTreemap/
+          - heading "TreeMap" [level=4] [ref=e437]
+          - img [ref=e440]
+        - list [ref=e457]:
+          - listitem [ref=e458]:
+            - link "Simple Treemap" [ref=e459]:
+              - /url: /en-US/examples/SimpleTreemap/
+          - listitem [ref=e460]:
+            - link "Custom Content Treemap" [ref=e461]:
+              - /url: /en-US/examples/CustomContentTreemap/
+          - listitem [ref=e462]:
+            - link "Nested Treemap" [ref=e463]:
+              - /url: /en-US/examples/NestedTreemap/
+          - listitem [ref=e464]:
+            - link "Treemap with Padding and Gaps" [ref=e465]:
+              - /url: /en-US/examples/TreemapWithPaddingAndGaps/
+          - listitem [ref=e466]:
+            - link "Treemap Example" [ref=e467]:
+              - /url: /en-US/examples/TreemapExample/
+      - generic [ref=e468]:
+        - link "Tooltip" [ref=e469]:
+          - /url: /en-US/examples/CustomContentOfTooltip/
+          - heading "Tooltip" [level=4] [ref=e470]
+        - list [ref=e471]:
+          - listitem [ref=e472]:
+            - link "Custom Content Of Tooltip" [ref=e473]:
+              - /url: /en-US/examples/CustomContentOfTooltip/
+      - generic [ref=e474]:
+        - link "Legend" [ref=e475]:
+          - /url: /en-US/examples/LegendEffectOpacity/
+          - heading "Legend" [level=4] [ref=e476]
+        - list [ref=e477]:
+          - listitem [ref=e478]:
+            - link "Legend with Opacity" [ref=e479]:
+              - /url: /en-US/examples/LegendEffectOpacity/
+          - listitem [ref=e480]:
+            - link "Legend Example" [ref=e481]:
+              - /url: /en-US/examples/LegendExample/
+      - generic [ref=e482]:
+        - link "ResponsiveContainer" [ref=e483]:
+          - /url: /en-US/examples/AreaResponsiveContainer/
+          - heading "ResponsiveContainer" [level=4] [ref=e484]
+        - list [ref=e485]:
+          - listitem [ref=e486]:
+            - link "Area Responsive Container" [ref=e487]:
+              - /url: /en-US/examples/AreaResponsiveContainer/
+          - listitem [ref=e488]:
+            - link "Composed Responsive Container" [ref=e489]:
+              - /url: /en-US/examples/ComposedResponsiveContainer/
+          - listitem [ref=e490]:
+            - link "Pie Responsive Container" [ref=e491]:
+              - /url: /en-US/examples/PieResponsiveContainer/
+          - listitem [ref=e492]:
+            - link "Responsive Container Example" [ref=e493]:
+              - /url: /en-US/examples/ResponsiveContainerExample/
+      - generic [ref=e494]:
+        - link "XAxis" [ref=e495]:
+          - /url: /en-US/examples/MultiXAxisExample/
+          - heading "XAxis" [level=4] [ref=e496]
+        - list [ref=e497]:
+          - listitem [ref=e498]:
+            - link "Multiple X Axes" [ref=e499]:
+              - /url: /en-US/examples/MultiXAxisExample/
+    - main [ref=e500]:
+      - generic [ref=e502]:
+        - heading "Examples" [level=1] [ref=e503]
+        - paragraph [ref=e504]: Explore interactive examples of different chart types and features. Click on any category to see it in action.
+        - generic [ref=e505]:
+          - link "pv legend icon pv uv legend icon uv LineChart" [ref=e506]:
+            - /url: /en-US/examples/SimpleLineChart/
+            - generic [ref=e508]:
+              - list [ref=e510]:
+                - listitem [ref=e511]:
+                  - img "pv legend icon" [ref=e512]
+                  - text: pv
+                - listitem [ref=e514]:
+                  - img "uv legend icon" [ref=e515]
+                  - text: uv
+              - application [ref=e517]:
+                - generic [ref=e554]:
+                  - generic [ref=e555]:
+                    - generic [ref=e557]: Page A
+                    - generic [ref=e559]: Page C
+                    - generic [ref=e561]: Page E
+                    - generic [ref=e563]: Page G
+                  - generic [ref=e564]:
+                    - generic [ref=e566]: "0"
+                    - generic [ref=e568]: "2500"
+                    - generic [ref=e570]: "5000"
+                    - generic [ref=e572]: "7500"
+                    - generic [ref=e574]: "10000"
+            - heading "LineChart" [level=3] [ref=e576]
+          - link "AreaChart" [ref=e577]:
+            - /url: /en-US/examples/SimpleAreaChart/
+            - application [ref=e580]:
+              - generic [ref=e598]:
+                - generic [ref=e599]:
+                  - generic [ref=e601]: Page A
+                  - generic [ref=e603]: Page C
+                  - generic [ref=e605]: Page E
+                  - generic [ref=e607]: Page G
+                - generic [ref=e608]:
+                  - generic [ref=e610]: "0"
+                  - generic [ref=e612]: "1000"
+                  - generic [ref=e614]: "2000"
+                  - generic [ref=e616]: "3000"
+                  - generic [ref=e618]: "4000"
+            - heading "AreaChart" [level=3] [ref=e620]
+          - link "BarChart" [ref=e621]:
+            - /url: /en-US/examples/TinyBarChart/
+            - application [ref=e624]
+            - heading "BarChart" [level=3] [ref=e652]
+          - link "amt legend icon amt cnt legend icon cnt pv legend icon pv uv legend icon uv ComposedChart" [ref=e653]:
+            - /url: /en-US/examples/LineBarAreaComposedChart/
+            - generic [ref=e655]:
+              - list [ref=e657]:
+                - listitem [ref=e658]:
+                  - img "amt legend icon" [ref=e659]
+                  - text: amt
+                - listitem [ref=e661]:
+                  - img "cnt legend icon" [ref=e662]
+                  - text: cnt
+                - listitem [ref=e664]:
+                  - img "pv legend icon" [ref=e665]
+                  - text: pv
+                - listitem [ref=e667]:
+                  - img "uv legend icon" [ref=e668]
+                  - text: uv
+              - application [ref=e670]:
+                - generic [ref=e743]:
+                  - generic [ref=e744]:
+                    - generic [ref=e746]: Page B
+                    - generic [ref=e748]: Page D
+                    - generic [ref=e750]: Page F
+                  - generic [ref=e751]:
+                    - generic [ref=e753]: "0"
+                    - generic [ref=e755]: "500"
+                    - generic [ref=e757]: "1000"
+                    - generic [ref=e759]: "1500"
+                    - generic [ref=e761]: "2000"
+            - heading "ComposedChart" [level=3] [ref=e763]
+          - link "ScatterChart" [ref=e764]:
+            - /url: /en-US/examples/SimpleScatterChart/
+            - application [ref=e767]:
+              - generic [ref=e802]:
+                - generic [ref=e803]:
+                  - generic [ref=e805]: 0cm
+                  - generic [ref=e807]: 45cm
+                  - generic [ref=e809]: 90cm
+                  - generic [ref=e811]: 180cm
+                - generic [ref=e812]:
+                  - generic [ref=e814]: 0kg
+                  - generic [ref=e816]: 100kg
+                  - generic [ref=e818]: 200kg
+                  - generic [ref=e820]: 300kg
+                  - generic [ref=e822]: 400kg
+            - heading "ScatterChart" [level=3] [ref=e824]
+          - link "PieChart" [ref=e825]:
+            - /url: /en-US/examples/TwoLevelPieChart/
+            - application [ref=e828]:
+              - generic [ref=e880]:
+                - generic [ref=e883]: "100"
+                - generic [ref=e886]: "300"
+                - generic [ref=e889]: "100"
+                - generic [ref=e892]: "80"
+                - generic [ref=e894]: "40"
+                - generic [ref=e897]: "30"
+                - generic [ref=e900]: "50"
+                - generic [ref=e903]: "100"
+                - generic [ref=e905]: "200"
+                - generic [ref=e908]: "150"
+                - generic [ref=e911]: "50"
+            - heading "PieChart" [level=3] [ref=e913]
+          - link "RadarChart" [ref=e914]:
+            - /url: /en-US/examples/SimpleRadarChart/
+            - application [ref=e917]:
+              - generic [ref=e935]:
+                - generic [ref=e938]:
+                  - generic [ref=e940]: Math
+                  - generic [ref=e943]: Chinese
+                  - generic [ref=e946]: English
+                  - generic [ref=e948]: Geography
+                  - generic [ref=e951]: Physics
+                  - generic [ref=e954]: History
+                - generic [ref=e956]:
+                  - generic [ref=e958]: "0"
+                  - generic [ref=e960]: "30"
+                  - generic [ref=e962]: "60"
+                  - generic [ref=e964]: "90"
+                  - generic [ref=e966]: "120"
+            - heading "RadarChart" [level=3] [ref=e968]
+          - link "18-24 legend icon 18-24 25-29 legend icon 25-29 30-34 legend icon 30-34 35-39 legend icon 35-39 40-49 legend icon 40-49 50+ legend icon 50+ unknown legend icon unknown RadialBarChart" [ref=e969]:
+            - /url: /en-US/examples/SimpleRadialBarChart/
+            - generic [ref=e971]:
+              - list [ref=e973]:
+                - listitem [ref=e974]:
+                  - img "18-24 legend icon" [ref=e975]
+                  - text: 18-24
+                - listitem [ref=e977]:
+                  - img "25-29 legend icon" [ref=e978]
+                  - text: 25-29
+                - listitem [ref=e980]:
+                  - img "30-34 legend icon" [ref=e981]
+                  - text: 30-34
+                - listitem [ref=e983]:
+                  - img "35-39 legend icon" [ref=e984]
+                  - text: 35-39
+                - listitem [ref=e986]:
+                  - img "40-49 legend icon" [ref=e987]
+                  - text: 40-49
+                - listitem [ref=e989]:
+                  - img "50+ legend icon" [ref=e990]
+                  - text: 50+
+                - listitem [ref=e992]:
+                  - img "unknown legend icon" [ref=e993]
+                  - text: unknown
+              - application [ref=e995]:
+                - generic [ref=e1030]:
+                  - generic [ref=e1031]: "31.47"
+                  - generic [ref=e1032]: "26.69"
+                  - generic [ref=e1033]: "15.69"
+                  - generic [ref=e1034]: "8.22"
+                  - generic [ref=e1035]: "8.63"
+                  - generic [ref=e1036]: "2.63"
+                  - generic [ref=e1037]: "6.67"
+            - heading "RadialBarChart" [level=3] [ref=e1039]
+          - link "TreeMap" [ref=e1040]:
+            - /url: /en-US/examples/SimpleTreemap/
+            - img [ref=e1043]:
+              - generic [ref=e1044]:
+                - generic [ref=e1048]:
+                  - generic [ref=e1052]: axis
+                  - generic [ref=e1061]: Axis
+                - generic [ref=e1078]: controls
+                - generic [ref=e1123]:
+                  - generic [ref=e1127]: data
+                  - generic [ref=e1132]: Data
+                  - generic [ref=e1153]: render
+                  - generic [ref=e1178]: Tree
+                - generic [ref=e1187]: events
+                - generic [ref=e1204]:
+                  - generic [ref=e1208]: legend
+                  - generic [ref=e1213]: Legend
+                - generic [ref=e1222]:
+                  - generic [ref=e1226]: operator
+                  - generic [ref=e1231]: distortion
+                  - generic [ref=e1248]: encoder
+                  - generic [ref=e1273]: filter
+                  - generic [ref=e1310]: layout
+            - heading "TreeMap" [level=3] [ref=e1392]
+          - link "pv legend icon pv Tooltip" [ref=e1393]:
+            - /url: /en-US/examples/CustomContentOfTooltip/
+            - generic [ref=e1395]:
+              - list [ref=e1397]:
+                - listitem [ref=e1398]:
+                  - img "pv legend icon" [ref=e1399]
+                  - text: pv
+              - application [ref=e1401]:
+                - generic [ref=e1439]:
+                  - generic [ref=e1440]:
+                    - generic [ref=e1442]: Page A
+                    - generic [ref=e1444]: Page C
+                    - generic [ref=e1446]: Page E
+                    - generic [ref=e1448]: Page G
+                  - generic [ref=e1449]:
+                    - generic [ref=e1451]: "0"
+                    - generic [ref=e1453]: "2500"
+                    - generic [ref=e1455]: "5000"
+                    - generic [ref=e1457]: "7500"
+                    - generic [ref=e1459]: "10000"
+            - heading "Tooltip" [level=3] [ref=e1461]
+          - 'link "pv legend icon pv uv legend icon uv Tips: Hover the legend ! Legend" [ref=e1462]':
+            - /url: /en-US/examples/LegendEffectOpacity/
+            - generic [ref=e1464]:
+              - generic [ref=e1465]:
+                - list [ref=e1467]:
+                  - listitem [ref=e1468]:
+                    - img "pv legend icon" [ref=e1469]
+                    - text: pv
+                  - listitem [ref=e1471]:
+                    - img "uv legend icon" [ref=e1472]
+                    - text: uv
+                - application [ref=e1474]:
+                  - generic [ref=e1511]:
+                    - generic [ref=e1512]:
+                      - generic [ref=e1514]: Page A
+                      - generic [ref=e1516]: Page C
+                      - generic [ref=e1518]: Page E
+                      - generic [ref=e1520]: Page G
+                    - generic [ref=e1521]:
+                      - generic [ref=e1523]: "0"
+                      - generic [ref=e1525]: "2500"
+                      - generic [ref=e1527]: "5000"
+                      - generic [ref=e1529]: "7500"
+                      - generic [ref=e1531]: "10000"
+              - paragraph [ref=e1532]: "Tips: Hover the legend !"
+            - heading "Legend" [level=3] [ref=e1534]
+          - link "ResponsiveContainer" [ref=e1535]:
+            - /url: /en-US/examples/AreaResponsiveContainer/
+            - application [ref=e1540]:
+              - generic [ref=e1561]:
+                - generic [ref=e1562]:
+                  - generic [ref=e1564]: Page A
+                  - generic [ref=e1566]: Page C
+                  - generic [ref=e1568]: Page E
+                  - generic [ref=e1570]: Page G
+                - generic [ref=e1571]:
+                  - generic [ref=e1573]: "0"
+                  - generic [ref=e1575]: "1000"
+                  - generic [ref=e1577]: "2000"
+                  - generic [ref=e1579]: "3000"
+                  - generic [ref=e1581]: "4000"
+            - heading "ResponsiveContainer" [level=3] [ref=e1583]
+          - link "XAxis" [ref=e1584]:
+            - /url: /en-US/examples/MultiXAxisExample/
+            - generic [ref=e1586]:
+              - generic:
+                - status:
+                  - paragraph: Page C
+                  - list:
+                    - listitem: "amt : 2290"
+                    - listitem: "name : Page C"
+                    - listitem: "pv : 9800"
+                    - listitem: "uv : 2000"
+              - application [ref=e1587]:
+                - generic [ref=e1644]:
+                  - generic [ref=e1645]:
+                    - generic [ref=e1647]: Page C
+                    - generic [ref=e1649]: Page E
+                    - generic [ref=e1651]: Page G
+                  - generic [ref=e1652]:
+                    - generic [ref=e1654]: "3000"
+                    - generic [ref=e1656]: "2000"
+                    - generic [ref=e1658]: "2780"
+                    - generic [ref=e1660]: "1890"
+                    - generic [ref=e1662]: "2390"
+                    - generic [ref=e1664]: "3490"
+                  - generic [ref=e1665]:
+                    - generic [ref=e1667]: "0"
+                    - generic [ref=e1669]: "2500"
+                    - generic [ref=e1671]: "5000"
+                    - generic [ref=e1673]: "7500"
+                    - generic [ref=e1675]: "10000"
+                  - generic [ref=e1676]:
+                    - generic [ref=e1678]: "0"
+                    - generic [ref=e1680]: "650"
+                    - generic [ref=e1682]: "1300"
+                    - generic [ref=e1684]: "1950"
+                    - generic [ref=e1686]: "2600"
+            - heading "XAxis" [level=3] [ref=e1688]
+    - contentinfo [ref=e1689]:
+      - paragraph [ref=e1690]:
+        - text: Released under the
+        - link "MIT License" [ref=e1691]:
+          - /url: https://opensource.org/licenses/MIT
+      - paragraph [ref=e1692]: Copyright (c) 2016-2026 Recharts Group
+  - generic [ref=e1693]: "650"
+```
+
+# Test source
+
+```ts
+  1  | import * as React from 'react';
+  2  | import { BrowserRouter, Navigate, Route, Routes } from 'react-router';
+  3  | 
+  4  | import { expect, test } from './fixtures';
+  5  | import { ExamplesIndexView } from '../../../www/src/views/ExamplesIndexView.tsx';
+  6  | import { Frame } from '../../../www/src/layouts/Frame.tsx';
+  7  | import SimpleLineChart from '../../../www/src/docs/exampleComponents/LineChart/SimpleLineChart.tsx';
+  8  | 
+  9  | test.use({
+  10 |   colorScheme: 'dark',
+  11 | });
+  12 | 
+  13 | test.beforeEach(async ({ page }) => {
+  14 |   await page.emulateMedia({ reducedMotion: 'reduce' });
+  15 | });
+  16 | 
+  17 | test('dark mode: examples list', async ({ mount }) => {
+  18 |   const component = await mount(
+  19 |     <BrowserRouter>
+  20 |       <Routes>
+  21 |         <Route path="/" element={<Navigate to="examples" />} />
+  22 |         <Route
+  23 |           path="/examples"
+  24 |           element={
+  25 |             <Frame>
+  26 |               <ExamplesIndexView />
+  27 |             </Frame>
+  28 |           }
+  29 |         />
+  30 |       </Routes>
+  31 |     </BrowserRouter>,
+  32 |   );
+  33 | 
+> 34 |   await expect(component).toHaveScreenshot();
+     |                           ^ Error: expect(locator).toHaveScreenshot(expected) failed
+  35 | });
+  36 | 
+  37 | test('dark mode: Simple Line Chart', async ({ mount }) => {
+  38 |   const component = await mount(
+  39 |     <div
+  40 |       style={{
+  41 |         backgroundColor: 'var(--color-surface-base)',
+  42 |       }}
+  43 |     >
+  44 |       <SimpleLineChart />
+  45 |     </div>,
+  46 |   );
+  47 |   await expect(component).toHaveScreenshot();
+  48 | });
+  49 | 
+```
