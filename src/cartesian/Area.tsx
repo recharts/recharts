@@ -977,8 +977,8 @@ export function computeArea({
 
   const baseValue = getBaseValue(layout, chartBaseValue, itemBaseValue, xAxis, yAxis, dataMin, dataMax);
   const isHorizontalLayout = layout === 'horizontal';
-  let isRange = false;
-  let baseLine: number | NullableCoordinate[] | undefined;
+  let isRange = false,
+    baseLine: number | NullableCoordinate[] | undefined;
 
   const points: ReadonlyArray<AreaPointItem> = displayedData.map((entry, index): AreaPointItem => {
     let valueAsArray: ReadonlyArray<unknown> | undefined;
