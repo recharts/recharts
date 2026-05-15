@@ -45,7 +45,7 @@
     "test-omnidoc": "vitest run --project unit:omnidoc --config vitest.config.mts",
     "test-exports": "vitest run scripts/verify-exports.test.ts",
     "test-treeshaking": "vitest run scripts/treeshaking.test.ts",
-    "omnidoc": "npx tsx omnidoc/generateApiDoc.ts && npx tsx omnidoc/generateStorybookArgs.ts",
+    "omnidoc": "npm exec --prefix ./www -- tsx ./omnidoc/generateApiDoc.ts && npm exec --prefix ./www -- tsx ./omnidoc/generateStorybookArgs.ts",
     "test-mutation": "stryker run",
     "test-watch": "vitest --config vitest.config.mts --project unit:*",
     "lint": "eslint .",
