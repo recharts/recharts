@@ -1,0 +1,19 @@
+import{e as r}from"./iframe-CYBvhlZy.js";import{P as p,a as n}from"./PieChart-DP0Wn2Tz.js";import{R as s}from"./arrayEqualityCheck-CK8f-Z2u.js";import{L as l}from"./Legend-BXbVRa32.js";import{T as c}from"./Tooltip-Bl6pLRjZ.js";import{R as u}from"./RechartsHookInspector-CaeSkNQM.js";import{S as d}from"./Sector-CjwyDs-v.js";import"./preload-helper-Dp1pzeXC.js";import"./clsx-B-dksMZM.js";import"./immer-DZ9JDNpk.js";import"./Layer-DAuVz3MT.js";import"./resolveDefaultProps-fdlpGSvO.js";import"./Curve-BOm9EQk3.js";import"./types-BeBHA9WF.js";import"./step-CGLzAmAZ.js";import"./Text-CrKmtYV0.js";import"./DOMUtils-DaBDLSWT.js";import"./tooltipContext-D-fzSH_v.js";import"./hooks-CR7YY56P.js";import"./axisSelectors-BoLkhT_J.js";import"./d3-scale-DTdaSeXE.js";import"./ReactUtils-BYIbW4_R.js";import"./Label-C0OOgdLf.js";import"./PolarUtils-CTnnDHZv.js";import"./ZIndexLayer-CJwEcLcc.js";import"./zIndexSlice-vzQlxu4v.js";import"./index-nd8_1HWo.js";import"./ActiveShapeUtils-CCHDnR4M.js";import"./isPlainObject-CS6IzJzX.js";import"./isPlainObject-BSutPv-K.js";import"./Rectangle-CL4E1CJr.js";import"./useAnimationId-DVYg6VJa.js";import"./Trapezoid-CMh-DiG6.js";import"./Symbols-CUYfHAW-.js";import"./symbol-CPTqgyqe.js";import"./RegisterGraphicalItemId-BV1Az0SU.js";import"./SetGraphicalItem-D2M6v_rh.js";import"./RechartsWrapper-D_53Ouva.js";import"./renderedTicksSlice-PTTaozgG.js";import"./getClassNameFromUnknown-Dbzh2npV.js";import"./polarSelectors-K9JatRi9.js";import"./PolarChart-CaDvfO1W.js";import"./chartDataContext-CoyQinM0.js";import"./CategoricalChart-BXlXDqQY.js";import"./useElementOffset-Vb2Ffn3s.js";import"./uniqBy-B2hQmckI.js";import"./iteratee-DPMrHAQZ.js";import"./Cross-IqBPrWj8.js";import"./index-2ZvuN1gp.js";import"./ChartSizeDimensions-Be7xBjpI.js";import"./OffsetShower-ByB6-I6e.js";import"./PlotAreaShower-DizTc5Ay.js";const h=[{name:"Group A",value:400,fill:"#0088FE"},{name:"Group B",value:300,fill:"#00C49F"},{name:"Group C",value:300,fill:"#FFBB28"},{name:"Group D",value:200,fill:"#FF8042"}],f=({payload:e,...a})=>r.createElement(d,{...a,fill:e.fill}),hr={component:p},t={render:e=>r.createElement(s,{width:"100%",height:500},r.createElement(n,{width:400,height:400},r.createElement(p,{data:h,dataKey:"value",nameKey:"name",...e,shape:f}),r.createElement(l,null),r.createElement(c,null),r.createElement(u,null))),args:{cx:"50%",cy:"50%",fill:"#8884d8",innerRadius:60,outerRadius:80}};var o,i,m;t.parameters={...t.parameters,docs:{...(o=t.parameters)==null?void 0:o.docs,source:{originalSource:`{
+  render: (args: Args) => {
+    return <ResponsiveContainer width="100%" height={500}>
+        <PieChart width={400} height={400}>
+          <Pie data={data} dataKey="value" nameKey="name" {...args} shape={renderSectorWithCustomShapeColor} />
+          <Legend />
+          <Tooltip />
+          <RechartsHookInspector />
+        </PieChart>
+      </ResponsiveContainer>;
+  },
+  args: {
+    cx: '50%',
+    cy: '50%',
+    fill: '#8884d8',
+    innerRadius: 60,
+    outerRadius: 80
+  }
+}`,...(m=(i=t.parameters)==null?void 0:i.docs)==null?void 0:m.source}}};const fr=["PieColorSync"];export{t as PieColorSync,fr as __namedExportsOrder,hr as default};
