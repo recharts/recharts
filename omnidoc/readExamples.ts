@@ -1,4 +1,14 @@
-import { Project, SyntaxKind, Node, SourceFile, JsxOpeningElement, JsxSelfClosingElement } from 'ts-morph';
+import {
+  Project,
+  SyntaxKind,
+  Node,
+  SourceFile,
+  JsxOpeningElement,
+  JsxSelfClosingElement,
+  Expression,
+  ObjectLiteralExpression,
+  PropertyAccessExpression,
+} from 'ts-morph';
 
 export interface ExampleResult {
   name: string;
@@ -251,51 +261,153 @@ export class ExampleReader {
     if (!initializer) return;
 
     initializer.getElements().forEach(element => {
+      let componentSourceFile: SourceFile | undefined;
+      let name = 'Example';
+
       if (Node.isObjectLiteralExpression(element)) {
-        const componentProp = element.getProperty('Component');
-        if (componentProp && Node.isPropertyAssignment(componentProp)) {
-          const componentIdentifier = componentProp.getInitializerIfKind(SyntaxKind.Identifier);
-          if (componentIdentifier) {
-            const definitions = componentIdentifier.getDefinitions();
-            if (definitions.length > 0) {
-              const def = definitions[0];
-              const declaration = def?.getDeclarationNode();
-              let componentSourceFile: SourceFile | undefined;
-
-              if (declaration && Node.isImportSpecifier(declaration)) {
-                componentSourceFile = declaration.getImportDeclaration().getModuleSpecifierSourceFile();
-              } else if (
-                declaration &&
-                (Node.isFunctionDeclaration(declaration) || Node.isVariableDeclaration(declaration))
-              ) {
-                componentSourceFile = declaration.getSourceFile();
-              }
-
-              if (componentSourceFile) {
-                const filePath = componentSourceFile.getFilePath();
-
-                // Try to find 'name' property in the object literal
-                let name = 'Example';
-                if (Node.isObjectLiteralExpression(element)) {
-                  const nameProp = element.getProperty('name');
-                  if (nameProp && Node.isPropertyAssignment(nameProp)) {
-                    const nameInitializer = nameProp.getInitializerIfKind(SyntaxKind.StringLiteral);
-                    if (nameInitializer) {
-                      name = nameInitializer.getLiteralValue();
-                    }
-                  }
-                }
-
-                if (!this.fileToExamples.has(filePath)) {
-                  this.fileToExamples.set(filePath, []);
-                }
-                this.fileToExamples.get(filePath)!.push({ name, url });
-              }
-            }
-          }
+        componentSourceFile = this.getComponentSourceFileFromObjectLiteral(element);
+        name = this.getNameFromObjectLiteral(element) ?? name;
+      } else if (Node.isPropertyAccessExpression(element)) {
+        const referencedExample = this.resolveExampleObjectFromPropertyAccess(element);
+        if (referencedExample) {
+          componentSourceFile = this.getComponentSourceFileFromObjectLiteral(referencedExample);
+          name = this.getNameFromObjectLiteral(referencedExample) ?? name;
         }
       }
+
+      if (componentSourceFile) {
+        const filePath = componentSourceFile.getFilePath();
+        if (!this.fileToExamples.has(filePath)) {
+          this.fileToExamples.set(filePath, []);
+        }
+        this.fileToExamples.get(filePath)!.push({ name, url });
+      }
     });
+  }
+
+  private getNameFromObjectLiteral(exampleObject: ObjectLiteralExpression): string | undefined {
+    const nameProp = exampleObject.getProperty('name');
+    if (!nameProp || !Node.isPropertyAssignment(nameProp)) {
+      return undefined;
+    }
+    const nameInitializer = nameProp.getInitializerIfKind(SyntaxKind.StringLiteral);
+    return nameInitializer?.getLiteralValue();
+  }
+
+  private getComponentSourceFileFromObjectLiteral(exampleObject: ObjectLiteralExpression): SourceFile | undefined {
+    const componentProp = exampleObject.getProperty('Component');
+    if (componentProp && Node.isPropertyAssignment(componentProp)) {
+      const initializer = componentProp.getInitializer();
+      if (initializer) {
+        return this.getComponentSourceFileFromExpression(initializer);
+      }
+    }
+
+    const spreadFromExampleMap = exampleObject
+      .getProperties()
+      .find(prop => Node.isSpreadAssignment(prop) && Node.isPropertyAccessExpression(prop.getExpression()));
+    if (spreadFromExampleMap && Node.isSpreadAssignment(spreadFromExampleMap)) {
+      const spreadObject = this.resolveExampleObjectFromPropertyAccess(
+        spreadFromExampleMap.getExpression() as PropertyAccessExpression,
+      );
+      if (spreadObject) {
+        return this.getComponentSourceFileFromObjectLiteral(spreadObject);
+      }
+    }
+    return undefined;
+  }
+
+  private getComponentSourceFileFromExpression(expression: Expression): SourceFile | undefined {
+    if (Node.isIdentifier(expression)) {
+      const definitions = expression.getDefinitions();
+      if (definitions.length === 0) {
+        return undefined;
+      }
+      const declaration = definitions[0]?.getDeclarationNode();
+      if (!declaration) {
+        return undefined;
+      }
+      if (Node.isImportSpecifier(declaration)) {
+        return declaration.getImportDeclaration().getModuleSpecifierSourceFile();
+      }
+      if (Node.isFunctionDeclaration(declaration) || Node.isVariableDeclaration(declaration)) {
+        return declaration.getSourceFile();
+      }
+      return undefined;
+    }
+
+    if (Node.isPropertyAccessExpression(expression)) {
+      const referencedExample = this.resolveExampleObjectFromPropertyAccess(expression);
+      if (!referencedExample) {
+        return undefined;
+      }
+      return this.getComponentSourceFileFromObjectLiteral(referencedExample);
+    }
+
+    return undefined;
+  }
+
+  private resolveExampleObjectFromPropertyAccess(
+    propertyAccessExpression: PropertyAccessExpression,
+  ): ObjectLiteralExpression | undefined {
+    const propertyName = propertyAccessExpression.getName();
+    const expression = propertyAccessExpression.getExpression();
+    if (!Node.isIdentifier(expression)) {
+      return undefined;
+    }
+
+    const definitions = expression.getDefinitions();
+    if (definitions.length === 0) {
+      return undefined;
+    }
+    const declaration = definitions[0]?.getDeclarationNode();
+    if (!declaration) {
+      return undefined;
+    }
+
+    let variableDeclaration;
+    if (Node.isVariableDeclaration(declaration)) {
+      variableDeclaration = declaration;
+    } else if (Node.isImportSpecifier(declaration)) {
+      const sourceFile = declaration.getImportDeclaration().getModuleSpecifierSourceFile();
+      if (!sourceFile) {
+        return undefined;
+      }
+      variableDeclaration = sourceFile.getVariableDeclaration(declaration.getName());
+    }
+
+    if (!variableDeclaration) {
+      return undefined;
+    }
+
+    const objectLiteral = this.getObjectLiteralInitializer(variableDeclaration.getInitializer());
+    if (!objectLiteral) {
+      return undefined;
+    }
+
+    const property = objectLiteral.getProperty(propertyName);
+    if (!property || !Node.isPropertyAssignment(property)) {
+      return undefined;
+    }
+
+    return property.getInitializerIfKind(SyntaxKind.ObjectLiteralExpression);
+  }
+
+  private getObjectLiteralInitializer(expression: Node | undefined): ObjectLiteralExpression | undefined {
+    if (!expression) {
+      return undefined;
+    }
+    if (Node.isObjectLiteralExpression(expression)) {
+      return expression;
+    }
+    if (
+      Node.isSatisfiesExpression(expression) ||
+      Node.isAsExpression(expression) ||
+      Node.isParenthesizedExpression(expression)
+    ) {
+      return this.getObjectLiteralInitializer(expression.getExpression());
+    }
+    return undefined;
   }
 
   private isComponentUsed(sourceFile: SourceFile, componentName: string): boolean {
