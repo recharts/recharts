@@ -1,6 +1,6 @@
 import { ChartExample } from '../../exampleComponents/types.ts';
-import RadialBarChartExample from './RadialBarChartExample.tsx';
-import RadialBarChartExampleSource from './RadialBarChartExample.tsx?raw';
+import RadialBarChartExample from '../../exampleComponents/RadialBarChart/RadialBarChartExample.tsx';
+import RadialBarChartExampleSource from '../../exampleComponents/RadialBarChart/RadialBarChartExample.tsx?raw';
 
 export const radialBarApiExamples: ReadonlyArray<ChartExample> = [
   {

@@ -1,6 +1,6 @@
 import { ChartExample } from '../../exampleComponents/types.ts';
-import ComposedChartExample from './ComposedChartExample.tsx';
-import ComposedChartExampleSource from './ComposedChartExample.tsx?raw';
+import ComposedChartExample from '../../exampleComponents/ComposedChart/ComposedChartExample.tsx';
+import ComposedChartExampleSource from '../../exampleComponents/ComposedChart/ComposedChartExample.tsx?raw';
 
 export const composedChartApiExamples: ReadonlyArray<ChartExample> = [
   {

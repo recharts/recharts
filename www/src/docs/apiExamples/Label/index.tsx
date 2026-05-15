@@ -1,14 +1,14 @@
 import { ChartExample } from '../../exampleComponents/types.ts';
-import LabelCartesianPositions from './LabelCartesianPositions.tsx';
-import LabelCartesianPositionsSource from './LabelCartesianPositions.tsx?raw';
-import LabelPiePositions from './LabelPiePositions.tsx';
-import LabelPiePositionsSource from './LabelPiePositions.tsx?raw';
-import LabelRadialBarPositions from './LabelRadialBarPositions.tsx';
-import LabelRadialBarPositionsSource from './LabelRadialBarPositions.tsx?raw';
-import LabelFunnelPositions from './LabelFunnelPositions.tsx';
-import LabelFunnelPositionsSource from './LabelFunnelPositions.tsx?raw';
-import LabelBarChartExample from './LabelBarChartExample.tsx';
-import LabelBarChartExampleSource from './LabelBarChartExample.tsx?raw';
+import LabelCartesianPositions from '../../exampleComponents/Label/LabelCartesianPositions.tsx';
+import LabelCartesianPositionsSource from '../../exampleComponents/Label/LabelCartesianPositions.tsx?raw';
+import LabelPiePositions from '../../exampleComponents/Label/LabelPiePositions.tsx';
+import LabelPiePositionsSource from '../../exampleComponents/Label/LabelPiePositions.tsx?raw';
+import LabelRadialBarPositions from '../../exampleComponents/Label/LabelRadialBarPositions.tsx';
+import LabelRadialBarPositionsSource from '../../exampleComponents/Label/LabelRadialBarPositions.tsx?raw';
+import LabelFunnelPositions from '../../exampleComponents/Label/LabelFunnelPositions.tsx';
+import LabelFunnelPositionsSource from '../../exampleComponents/Label/LabelFunnelPositions.tsx?raw';
+import LabelBarChartExample from '../../exampleComponents/Label/LabelBarChartExample.tsx';
+import LabelBarChartExampleSource from '../../exampleComponents/Label/LabelBarChartExample.tsx?raw';
 import { localeGet, useLocale } from '../../../utils/LocaleUtils.ts';
 
 export const labelApiExamples: ReadonlyArray<ChartExample> = [

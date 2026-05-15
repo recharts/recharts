@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { test, expect } from '@playwright/experimental-ct-react';
 
-import TreemapExample from '../../../www/src/docs/apiExamples/Treemap/TreemapExample';
+import TreemapExample from '../../../www/src/docs/exampleComponents/TreeMap/TreemapExample';
 import SimpleTreemap from '../../../www/src/docs/exampleComponents/TreeMap/SimpleTreemap';
 import CustomContentTreemap from '../../../www/src/docs/exampleComponents/TreeMap/CustomContentTreemap';
 import TreeMapNavExample from '../../../www/src/docs/exampleComponents/TreeMap/TreeMapNavExample';

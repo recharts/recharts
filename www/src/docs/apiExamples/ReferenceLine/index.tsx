@@ -1,8 +1,8 @@
 import { ChartExample } from '../../exampleComponents/types.ts';
-import ReferenceLineExample from './ReferenceLineExample.tsx';
-import ReferenceLineExampleSource from './ReferenceLineExample.tsx?raw';
-import ReferenceLinePositionExample from './ReferenceLinePositionExample.tsx';
-import ReferenceLinePositionExampleSource from './ReferenceLinePositionExample.tsx?raw';
+import ReferenceLineExample from '../../exampleComponents/ReferenceLine/ReferenceLineExample.tsx';
+import ReferenceLineExampleSource from '../../exampleComponents/ReferenceLine/ReferenceLineExample.tsx?raw';
+import ReferenceLinePositionExample from '../../exampleComponents/ReferenceLine/ReferenceLinePositionExample.tsx';
+import ReferenceLinePositionExampleSource from '../../exampleComponents/ReferenceLine/ReferenceLinePositionExample.tsx?raw';
 
 export const referenceLineApiExamples: ReadonlyArray<ChartExample> = [
   {

@@ -1,8 +1,8 @@
 import { ChartExample } from '../../exampleComponents/types';
 import PrahaMetro from '../../../components/GuideView/ZIndex/PrahaMetro';
 import prahaMetroSource from '../../../components/GuideView/ZIndex/PrahaMetro?raw';
-import ShadowDomExample from './ShadowDomExample';
-import shadowDomExampleSource from './ShadowDomExample?raw';
+import ShadowDomExample from '../../exampleComponents/ZIndexLayer/ShadowDomExample';
+import shadowDomExampleSource from '../../exampleComponents/ZIndexLayer/ShadowDomExample?raw';
 
 export const zIndexLayerApiExamples: ReadonlyArray<ChartExample> = [
   {

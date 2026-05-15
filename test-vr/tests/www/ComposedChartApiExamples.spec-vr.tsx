@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { test, expect } from '@playwright/experimental-ct-react';
 
-import ComposedChartExample from '../../../www/src/docs/apiExamples/ComposedChart/ComposedChartExample';
+import ComposedChartExample from '../../../www/src/docs/exampleComponents/ComposedChart/ComposedChartExample';
 import LineBarAreaComposedChart from '../../../www/src/docs/exampleComponents/ComposedChart/LineBarAreaComposedChart';
 import SameDataComposedChart from '../../../www/src/docs/exampleComponents/ComposedChart/SameDataComposedChart';
 import VerticalComposedChart from '../../../www/src/docs/exampleComponents/ComposedChart/VerticalComposedChart';

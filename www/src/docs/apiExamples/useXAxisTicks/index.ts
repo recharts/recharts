@@ -1,6 +1,6 @@
 import { ChartExample } from '../../exampleComponents/types.ts';
-import AxisTickSnapExample from '../useAxisInverseTickSnapScale/AxisTicksSnapExample.tsx';
-import AxisTickSnapExampleSource from '../useAxisInverseTickSnapScale/AxisTicksSnapExample?raw';
+import AxisTickSnapExample from '../../exampleComponents/useXAxisInverseTickSnapScale/AxisTicksSnapExample.tsx';
+import AxisTickSnapExampleSource from '../../exampleComponents/useXAxisInverseTickSnapScale/AxisTicksSnapExample?raw';
 
 export const useXAxisTicksApiExamples: ReadonlyArray<ChartExample> = [
   {
