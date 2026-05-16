@@ -93,7 +93,8 @@ export class ExampleReader {
     // Add all relevant files
     this.project.addSourceFilesAtPaths([
       'www/src/docs/exampleComponents/**/*.{ts,tsx}',
-      'www/src/docs/apiExamples/**/*.{ts,tsx}',
+      // Only the index is accessed directly; sub-files are resolved lazily via module resolution
+      'www/src/docs/apiExamples/index.tsx',
     ]);
 
     this.buildUrlMap();
