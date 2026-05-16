@@ -36,13 +36,15 @@ const firstItemWithCheck: number = data[0] ?? 0;
 Another example is when using .map to transform an array:
 
 ```tsx
-const data = [1, 2, 3];
-// Invalid solution: Using `as` to assert the type of the mapped array, which can lead to runtime errors if the mapping function does not return the expected type
-const mappedData: string[] = data.map(item => item.toString()) as string[]; // This will not raise a compile-time error, but it can lead to a runtime error if the mapping function does not return a string.
+// example user input
+const data = [1, null, 3];
 
-// Correct solution: Use `import { isNotNil } from '../utils/DataUtils';` to filter out null or undefined values before mapping, and let TypeScript infer the type of the mapped array
+// Invalid solution: Using `as` to assert the type of the mapped array, which can lead to runtime errors if the mapping function does not return the expected type
+const mappedData: string[] = data.map(item => item?.toString()) as string[]; // This will not raise a compile-time error, but it can lead to a runtime error if the data array has null/undefined values in it.
+
+// Correct solution: Use `import { isNotNil } from '../utils/DataUtils';` to filter out null or undefined values. No type assertions necessary!
 import { isNotNil } from '../utils/DataUtils';
-const mappedDataWithCheck: string[] = data.map(item => item.toString()).filter(isNotNil);
+const mappedDataWithCheck: string[] = data.map(item => item?.toString()).filter(isNotNil);
 ```
 
 `as unknown as T` is a popular pattern to bypass type checking, but it can lead to runtime errors if the type is not actually correct. Avoid using this pattern at all costs:
@@ -88,7 +90,7 @@ type HasId = { id: string };
 function isHasId(value: unknown): value is HasId {
   // Comprehensive runtime check to ensure the value has the correct shape
   // Unit tests omitted for clarity, but should be added to confirm that this function correctly identifies objects with an `id` property of type string.
-  return typeof value === 'object' && value !== null && 'id' in value && typeof (value as any).id === 'string';
+  return typeof value === 'object' && value !== null && 'id' in value && typeof value.id === 'string';
 }
 ```
 
