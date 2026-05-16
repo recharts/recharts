@@ -417,6 +417,8 @@ export const usePlotArea = (): PlotArea | undefined => {
  * Returns undefined when used outside a chart context.
  *
  * @returns Data points that are currently visible in a Tooltip
+ *
+ * @since 3.1
  */
 export const useActiveTooltipDataPoints = <T = unknown>(): ReadonlyArray<T> | undefined => {
   return useAppSelector(selectActiveTooltipDataPoints);
