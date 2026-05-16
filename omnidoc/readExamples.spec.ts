@@ -38,33 +38,14 @@ describe('ExampleReader', () => {
     expect(examples.length).toBeGreaterThan(0);
   });
 
-  it('should find examples for LineChart from API examples', () => {
+  it('should find examples for LineChart', () => {
     const examples = reader.getExamples('LineChart');
-    expect(examples).toContainEqual({
-      url: '/api/LineChart/',
-      name: 'Simple Line Chart Example',
-    });
-    expect(examples).toContainEqual({
-      name: 'Multiple X Axes',
-      url: '/examples/MultiXAxisExample/',
-    });
-  });
-
-  it('should find examples for useChartWidth', () => {
-    const examples = reader.getExamples('useChartWidth');
-    expect(examples).toHaveLength(1);
-    expect(examples).toContainEqual({
-      url: '/api/useChartWidth/',
-      name: 'useChartWidth API Example',
-    });
-  });
-
-  it('should find examples for a type', () => {
-    const examples = reader.getExamples('InverseScaleFunction');
-    expect(examples.length).toBeGreaterThan(0);
-    expect(examples).toContainEqual({
-      url: '/api/useXAxisInverseDataSnapScale/',
-      name: 'Converting pixels to data values',
-    });
+    expect(examples).toContainEqual(
+      expect.objectContaining({
+        name: 'Multiple X Axes',
+        url: '/examples/MultiXAxisExample/',
+      }),
+    );
+    expect(examples.length).toBeGreaterThan(1);
   });
 });

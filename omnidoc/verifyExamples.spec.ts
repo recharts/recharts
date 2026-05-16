@@ -191,6 +191,31 @@ describe('Documentation Examples Coverage', () => {
     'NoCentric',
     'NiceTicksAlgorithm',
     'EasingInput',
+    // Hooks and types that do not appear in any /examples/ page component;
+    // they need dedicated examples to be removed from this list.
+    'CartesianLayout',
+    'InverseScaleFunction',
+    'LayoutType',
+    'PolarLayout',
+    'useActiveTooltipCoordinate',
+    'useActiveTooltipDataPoints',
+    'useActiveTooltipLabel',
+    'useCartesianChartLayout',
+    'useChartLayout',
+    'useChartWidth',
+    'useIsTooltipActive',
+    'useMargin',
+    'useOffset',
+    'usePolarChartLayout',
+    'useXAxisDomain',
+    'useXAxisInverseDataSnapScale',
+    'useXAxisInverseTickSnapScale',
+    'useXAxisTicks',
+    'useYAxisDomain',
+    'useYAxisInverseDataSnapScale',
+    'useYAxisInverseTickSnapScale',
+    'useYAxisTicks',
+    'ZIndexLayer',
   ];
 
   describe.each(allExports.filter(name => !exportsThatNeedExamples.includes(name)))('Export: %s', exportName => {

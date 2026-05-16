@@ -1,14 +1,4 @@
-import {
-  Project,
-  SyntaxKind,
-  Node,
-  SourceFile,
-  JsxOpeningElement,
-  JsxSelfClosingElement,
-  Expression,
-  ObjectLiteralExpression,
-  PropertyAccessExpression,
-} from 'ts-morph';
+import { Project, SyntaxKind, Node, SourceFile, JsxOpeningElement, JsxSelfClosingElement } from 'ts-morph';
 
 export interface ExampleResult {
   name: string;
@@ -30,60 +20,21 @@ export class ExampleReader {
   }
 
   public getExamples(componentName: string, propName?: string): ExampleResult[] {
-    const explicitExamples = new Map<string, ExampleResult>();
-    const implicitExamples = new Map<string, ExampleResult>();
-
+    const results = new Map<string, ExampleResult>();
     const cleanName = componentName.trim();
-    // Some components (like hooks) have their own API page but share example file with others.
-    // If a component has an explicit API example entry, we should ONLY show that.
-    const hasOwnApiPage = Array.from(this.fileToExamples.values()).some(exList =>
-      exList.some(ex => ex.url.includes(`/api/${cleanName}/`)),
-    );
 
     this.fileToExamples.forEach((exList, filePath) => {
       const sourceFile = this.project.getSourceFile(filePath);
       if (!sourceFile) return;
 
-      // Check for component usage
-      const explicitMatches = exList.filter(ex => ex.url === `/api/${cleanName}/`);
-      const isExplicitApiExample = explicitMatches.length > 0;
+      if (!this.isComponentUsed(sourceFile, cleanName)) return;
 
-      if (isExplicitApiExample) {
-        if (propName) {
-          if (this.isPropUsed(sourceFile, cleanName, propName)) {
-            explicitMatches.forEach(ex => explicitExamples.set(ex.url, ex));
-          }
-        } else {
-          explicitMatches.forEach(ex => explicitExamples.set(ex.url, ex));
-        }
-      }
+      if (propName && !this.isPropUsed(sourceFile, cleanName, propName)) return;
 
-      if (this.isComponentUsed(sourceFile, cleanName)) {
-        // Implicit usage - add to implicit examples
-        // But filter out API examples that are NOT for this component IF it has its own page
-
-        const filteredList = exList.filter(ex => {
-          if (hasOwnApiPage && ex.url.startsWith('/api/')) {
-            return ex.url === `/api/${cleanName}/`;
-          }
-          return true;
-        });
-
-        // If propName is specified, check for prop usage
-        if (propName) {
-          if (this.isPropUsed(sourceFile, cleanName, propName)) {
-            filteredList.forEach(ex => implicitExamples.set(ex.url, ex));
-          }
-        } else {
-          filteredList.forEach(ex => implicitExamples.set(ex.url, ex));
-        }
-      }
+      exList.forEach(ex => results.set(ex.url, ex));
     });
 
-    // Merge implicit into explicit, preferring explicit when URLs collide
-    // (explicit examples are set first, then we only add implicit if URL not present)
-    explicitExamples.forEach((ex, url) => implicitExamples.set(url, ex));
-    return Array.from(implicitExamples.values());
+    return Array.from(results.values());
   }
 
   private initialize() {
@@ -91,27 +42,17 @@ export class ExampleReader {
       return;
     }
     // Add all relevant files
-    this.project.addSourceFilesAtPaths([
-      'www/src/docs/exampleComponents/**/*.{ts,tsx}',
-      // Only the index is accessed directly; sub-files are resolved lazily via module resolution
-      'www/src/docs/apiExamples/index.tsx',
-    ]);
+    this.project.addSourceFilesAtPaths(['www/src/docs/exampleComponents/**/*.{ts,tsx}']);
 
     this.buildUrlMap();
     this.initialized = true;
   }
 
   private buildUrlMap() {
-    // 1. Parse www/src/docs/exampleComponents/index.ts
+    // Parse www/src/docs/exampleComponents/index.ts
     const exampleComponentsIndex = this.project.getSourceFile('www/src/docs/exampleComponents/index.ts');
     if (exampleComponentsIndex) {
       this.processExampleComponentsIndex(exampleComponentsIndex);
-    }
-
-    // 2. Parse www/src/docs/apiExamples/index.tsx
-    const apiExamplesIndex = this.project.getSourceFile('www/src/docs/apiExamples/index.tsx');
-    if (apiExamplesIndex) {
-      this.processApiExamplesIndex(apiExamplesIndex);
     }
   }
 
@@ -216,199 +157,6 @@ export class ExampleReader {
         }
       }
     });
-  }
-
-  private processApiExamplesIndex(sourceFile: SourceFile) {
-    const allApiExamplesExport = sourceFile.getVariableDeclaration('allApiExamples');
-    if (!allApiExamplesExport) return;
-
-    const initializer = allApiExamplesExport.getInitializerIfKind(SyntaxKind.ObjectLiteralExpression);
-    if (!initializer) return;
-
-    initializer.getProperties().forEach(prop => {
-      if (Node.isPropertyAssignment(prop)) {
-        const componentName = prop.getName(); // e.g. AreaChart
-        const url = `/api/${componentName}/`;
-
-        const examplesIdentifier = prop.getInitializerIfKind(SyntaxKind.Identifier);
-        if (examplesIdentifier) {
-          const definitions = examplesIdentifier.getDefinitions();
-          if (definitions.length > 0) {
-            const def = definitions[0];
-            const declaration = def?.getDeclarationNode();
-            if (declaration) {
-              const declSourceFile = declaration.getSourceFile();
-              if (declSourceFile !== sourceFile && Node.isVariableDeclaration(declaration)) {
-                this.processApiExampleArray(declSourceFile, declaration.getName(), url);
-              } else if (Node.isImportSpecifier(declaration)) {
-                const importDecl = declaration.getImportDeclaration();
-                const moduleSpecifier = importDecl.getModuleSpecifierSourceFile();
-                if (moduleSpecifier) {
-                  this.processApiExampleArray(moduleSpecifier, declaration.getName(), url);
-                }
-              }
-            }
-          }
-        }
-      }
-    });
-  }
-
-  private processApiExampleArray(sourceFile: SourceFile, exportName: string, url: string) {
-    const variableDecl = sourceFile.getVariableDeclaration(exportName);
-    if (!variableDecl) return;
-
-    const initializer = variableDecl.getInitializerIfKind(SyntaxKind.ArrayLiteralExpression);
-    if (!initializer) return;
-
-    initializer.getElements().forEach(element => {
-      let componentSourceFile: SourceFile | undefined;
-      let name = 'Example';
-
-      if (Node.isObjectLiteralExpression(element)) {
-        componentSourceFile = this.getComponentSourceFileFromObjectLiteral(element);
-        name = this.getNameFromObjectLiteral(element) ?? name;
-      } else if (Node.isPropertyAccessExpression(element)) {
-        const referencedExample = this.resolveExampleObjectFromPropertyAccess(element);
-        if (referencedExample) {
-          componentSourceFile = this.getComponentSourceFileFromObjectLiteral(referencedExample);
-          name = this.getNameFromObjectLiteral(referencedExample) ?? name;
-        }
-      }
-
-      if (componentSourceFile) {
-        const filePath = componentSourceFile.getFilePath();
-        if (!this.fileToExamples.has(filePath)) {
-          this.fileToExamples.set(filePath, []);
-        }
-        this.fileToExamples.get(filePath)!.push({ name, url });
-      }
-    });
-  }
-
-  private getNameFromObjectLiteral(exampleObject: ObjectLiteralExpression): string | undefined {
-    const nameProp = exampleObject.getProperty('name');
-    if (!nameProp || !Node.isPropertyAssignment(nameProp)) {
-      return undefined;
-    }
-    const nameInitializer = nameProp.getInitializerIfKind(SyntaxKind.StringLiteral);
-    return nameInitializer?.getLiteralValue();
-  }
-
-  private getComponentSourceFileFromObjectLiteral(exampleObject: ObjectLiteralExpression): SourceFile | undefined {
-    const componentProp = exampleObject.getProperty('Component');
-    if (componentProp && Node.isPropertyAssignment(componentProp)) {
-      const initializer = componentProp.getInitializer();
-      if (initializer) {
-        return this.getComponentSourceFileFromExpression(initializer);
-      }
-    }
-
-    const spreadFromExampleMap = exampleObject
-      .getProperties()
-      .find(prop => Node.isSpreadAssignment(prop) && Node.isPropertyAccessExpression(prop.getExpression()));
-    if (spreadFromExampleMap && Node.isSpreadAssignment(spreadFromExampleMap)) {
-      const spreadObject = this.resolveExampleObjectFromPropertyAccess(
-        spreadFromExampleMap.getExpression() as PropertyAccessExpression,
-      );
-      if (spreadObject) {
-        return this.getComponentSourceFileFromObjectLiteral(spreadObject);
-      }
-    }
-    return undefined;
-  }
-
-  private getComponentSourceFileFromExpression(expression: Expression): SourceFile | undefined {
-    if (Node.isIdentifier(expression)) {
-      const definitions = expression.getDefinitions();
-      if (definitions.length === 0) {
-        return undefined;
-      }
-      const declaration = definitions[0]?.getDeclarationNode();
-      if (!declaration) {
-        return undefined;
-      }
-      if (Node.isImportSpecifier(declaration)) {
-        return declaration.getImportDeclaration().getModuleSpecifierSourceFile();
-      }
-      if (Node.isFunctionDeclaration(declaration) || Node.isVariableDeclaration(declaration)) {
-        return declaration.getSourceFile();
-      }
-      return undefined;
-    }
-
-    if (Node.isPropertyAccessExpression(expression)) {
-      const referencedExample = this.resolveExampleObjectFromPropertyAccess(expression);
-      if (!referencedExample) {
-        return undefined;
-      }
-      return this.getComponentSourceFileFromObjectLiteral(referencedExample);
-    }
-
-    return undefined;
-  }
-
-  private resolveExampleObjectFromPropertyAccess(
-    propertyAccessExpression: PropertyAccessExpression,
-  ): ObjectLiteralExpression | undefined {
-    const propertyName = propertyAccessExpression.getName();
-    const expression = propertyAccessExpression.getExpression();
-    if (!Node.isIdentifier(expression)) {
-      return undefined;
-    }
-
-    const definitions = expression.getDefinitions();
-    if (definitions.length === 0) {
-      return undefined;
-    }
-    const declaration = definitions[0]?.getDeclarationNode();
-    if (!declaration) {
-      return undefined;
-    }
-
-    let variableDeclaration;
-    if (Node.isVariableDeclaration(declaration)) {
-      variableDeclaration = declaration;
-    } else if (Node.isImportSpecifier(declaration)) {
-      const sourceFile = declaration.getImportDeclaration().getModuleSpecifierSourceFile();
-      if (!sourceFile) {
-        return undefined;
-      }
-      variableDeclaration = sourceFile.getVariableDeclaration(declaration.getName());
-    }
-
-    if (!variableDeclaration) {
-      return undefined;
-    }
-
-    const objectLiteral = this.getObjectLiteralInitializer(variableDeclaration.getInitializer());
-    if (!objectLiteral) {
-      return undefined;
-    }
-
-    const property = objectLiteral.getProperty(propertyName);
-    if (!property || !Node.isPropertyAssignment(property)) {
-      return undefined;
-    }
-
-    return property.getInitializerIfKind(SyntaxKind.ObjectLiteralExpression);
-  }
-
-  private getObjectLiteralInitializer(expression: Node | undefined): ObjectLiteralExpression | undefined {
-    if (!expression) {
-      return undefined;
-    }
-    if (Node.isObjectLiteralExpression(expression)) {
-      return expression;
-    }
-    if (
-      Node.isSatisfiesExpression(expression) ||
-      Node.isAsExpression(expression) ||
-      Node.isParenthesizedExpression(expression)
-    ) {
-      return this.getObjectLiteralInitializer(expression.getExpression());
-    }
-    return undefined;
   }
 
   private isComponentUsed(sourceFile: SourceFile, componentName: string): boolean {
