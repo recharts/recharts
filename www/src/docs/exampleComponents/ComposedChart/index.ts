@@ -14,6 +14,8 @@ import { ChartExample } from '../types.ts';
 import ComposedChartNavExample from './ComposedChartNavExample';
 import TargetPriceChart from './TargetPriceChart.tsx';
 import targetPriceChartSource from './TargetPriceChart.tsx?raw';
+import ComposedChartExample from './ComposedChartExample';
+import composedChartExampleSource from './ComposedChartExample?raw';
 
 export { ComposedChartNavExample };
 
@@ -52,5 +54,10 @@ export const composedChartExamples: Record<string, ChartExample> = {
     Component: TargetPriceChart,
     sourceCode: targetPriceChartSource,
     name: 'Target Price Chart with active Label',
+  },
+  ComposedChartExample: {
+    Component: ComposedChartExample,
+    sourceCode: composedChartExampleSource,
+    name: 'Composed Chart Example',
   },
 };

@@ -41,6 +41,10 @@ import AnimatedBarWidthExample from './AnimatedBarWidthExample';
 import animatedBarWidthSource from './AnimatedBarWidthExample?raw';
 import WaterfallExample from './WaterfallExample';
 import waterfallExampleSource from './WaterfallExample?raw';
+import BarChartExample from './BarChartExample';
+import barChartExampleSource from './BarChartExample?raw';
+import BarChartRangeExample from './BarChartRangeExample';
+import barChartRangeExampleSource from './BarChartRangeExample?raw';
 
 export { BarChartNavExample };
 
@@ -201,5 +205,15 @@ export const barChartExamples: Record<string, ChartExample> = {
         </p>
       </article>
     ),
+  },
+  BarChartExample: {
+    Component: BarChartExample,
+    sourceCode: barChartExampleSource,
+    name: 'Simple Bar Chart Example',
+  },
+  BarChartRangeExample: {
+    Component: BarChartRangeExample,
+    sourceCode: barChartRangeExampleSource,
+    name: 'Ranged Bar Chart Example',
   },
 };

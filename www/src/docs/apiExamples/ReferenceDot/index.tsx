@@ -1,11 +1,4 @@
 import { ChartExample } from '../../exampleComponents/types.ts';
-import ReferenceDotExample from '../../exampleComponents/ReferenceDot/ReferenceDotExample.tsx';
-import ReferenceDotExampleSource from '../../exampleComponents/ReferenceDot/ReferenceDotExample.tsx?raw';
+import { referenceDotExamples } from '../../exampleComponents/ReferenceDot';
 
-export const referenceDotApiExamples: ReadonlyArray<ChartExample> = [
-  {
-    Component: ReferenceDotExample,
-    sourceCode: ReferenceDotExampleSource,
-    name: 'Reference Dot Example',
-  },
-];
+export const referenceDotApiExamples: ReadonlyArray<ChartExample> = [referenceDotExamples.ReferenceDotExample];

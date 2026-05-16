@@ -1,12 +1,9 @@
 import { ChartExample } from '../../exampleComponents/types';
-import LineChartExample from '../../exampleComponents/LineChart/LineChartExample';
-import LineChartExampleSource from '../../exampleComponents/LineChart/LineChartExample?raw';
+import { lineChartExamples } from '../../exampleComponents/LineChart';
 
 export const usePlotAreaApiExamples: ReadonlyArray<ChartExample> = [
   {
-    Component: LineChartExample,
-    sourceCode: LineChartExampleSource,
-    name: 'Simple Line Chart Example',
+    ...lineChartExamples.LineChartExample,
     defaultTool: 'devtools',
     defaultToolTab: 'usePlotArea',
   },
