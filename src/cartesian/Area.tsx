@@ -954,7 +954,10 @@ export function computeArea({
 }): ComputedArea {
   const hasStack = stackedData && stackedData.length;
 
-  let dataMin: number | undefined, dataMax: number | undefined;
+  let dataMin: number | undefined,
+    dataMax: number | undefined,
+    isRange = false,
+    baseLine: number | NullableCoordinate[] | undefined;
   if (hasStack) {
     for (let i = 0; i < stackedData.length; i++) {
       const p = stackedData[i];
@@ -977,8 +980,6 @@ export function computeArea({
 
   const baseValue = getBaseValue(layout, chartBaseValue, itemBaseValue, xAxis, yAxis, dataMin, dataMax);
   const isHorizontalLayout = layout === 'horizontal';
-  let isRange = false,
-    baseLine: number | NullableCoordinate[] | undefined;
 
   const points: ReadonlyArray<AreaPointItem> = displayedData.map((entry, index): AreaPointItem => {
     let valueAsArray: ReadonlyArray<unknown> | undefined;
