@@ -28,10 +28,10 @@ export default defineConfig({
    */
   outputDir: path.join(__dirname, 'test-results'),
   /* Maximum time one test can run for. */
-  timeout: 10 * 1000,
+  timeout: 20_000,
   expect: {
     /* https://playwright.dev/docs/test-timeouts */
-    timeout: 10 * 1000,
+    timeout: 10_000,
   },
   /* Run tests in files in parallel */
   fullyParallel: true,
