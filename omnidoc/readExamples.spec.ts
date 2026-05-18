@@ -1,5 +1,23 @@
+import { Project } from 'ts-morph';
 import { describe, it, expect } from 'vitest';
-import { ExampleReader } from './readExamples';
+import { ExampleReader, unwrapObjectLiteralExpression } from './readExamples';
+
+describe('unwrapObjectLiteralExpression', () => {
+  it('should unwrap object literals wrapped in satisfies expressions', () => {
+    const project = new Project({ useInMemoryFileSystem: true });
+    const sourceFile = project.createSourceFile(
+      'example.ts',
+      `const direct = { example: true };
+const wrapped = { example: true } satisfies Record<string, boolean>;`,
+    );
+
+    const direct = sourceFile.getVariableDeclarationOrThrow('direct');
+    const wrapped = sourceFile.getVariableDeclarationOrThrow('wrapped');
+
+    expect(unwrapObjectLiteralExpression(direct.getInitializer())?.getProperty('example')).toBeDefined();
+    expect(unwrapObjectLiteralExpression(wrapped.getInitializer())?.getProperty('example')).toBeDefined();
+  });
+});
 
 describe('ExampleReader', () => {
   const reader = new ExampleReader();
@@ -9,7 +27,7 @@ describe('ExampleReader', () => {
     expect(examples).toEqual(
       expect.arrayContaining([
         expect.objectContaining({
-          url: '/examples/SimpleAreaChart/',
+          url: '/examples/AreaChartExample/',
           name: 'Simple Area Chart',
         }),
         expect.objectContaining({
@@ -23,7 +41,7 @@ describe('ExampleReader', () => {
 
   it('should find examples for a prop', () => {
     const examples = reader.getExamples('AreaChart', 'data');
-    expect(examples).toEqual(expect.arrayContaining([expect.objectContaining({ url: '/examples/SimpleAreaChart/' })]));
+    expect(examples).toEqual(expect.arrayContaining([expect.objectContaining({ url: '/examples/AreaChartExample/' })]));
     expect(examples.length).toBeGreaterThan(0);
   });
 
@@ -34,7 +52,7 @@ describe('ExampleReader', () => {
 
   it('should find examples for YAxis width prop', () => {
     const examples = reader.getExamples('YAxis', 'width');
-    expect(examples).toEqual(expect.arrayContaining([expect.objectContaining({ url: '/examples/SimpleAreaChart/' })]));
+    expect(examples).toEqual(expect.arrayContaining([expect.objectContaining({ url: '/examples/AreaChartExample/' })]));
     expect(examples.length).toBeGreaterThan(0);
   });
 
