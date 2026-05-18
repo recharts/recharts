@@ -1,7 +1,6 @@
 import * as React from 'react';
 import { test, expect } from '@playwright/experimental-ct-react';
 
-import ComposedChartExample from '../../../www/src/docs/exampleComponents/ComposedChart/ComposedChartExample';
 import LineBarAreaComposedChart from '../../../www/src/docs/exampleComponents/ComposedChart/LineBarAreaComposedChart';
 import SameDataComposedChart from '../../../www/src/docs/exampleComponents/ComposedChart/SameDataComposedChart';
 import VerticalComposedChart from '../../../www/src/docs/exampleComponents/ComposedChart/VerticalComposedChart';
@@ -48,10 +47,5 @@ test('SameDataComposedChart', async ({ mount }) => {
 
 test('LineBarAreaComposedChart', async ({ mount }) => {
   const component = await mount(<LineBarAreaComposedChart />);
-  await expect(component).toHaveScreenshot();
-});
-
-test('ComposedChartExample', async ({ mount }) => {
-  const component = await mount(<ComposedChartExample isAnimationActive={false} />);
   await expect(component).toHaveScreenshot();
 });

@@ -1,8 +1,32 @@
-import { Project, SyntaxKind, Node, SourceFile, JsxOpeningElement, JsxSelfClosingElement } from 'ts-morph';
+import {
+  Project,
+  SyntaxKind,
+  Node,
+  SourceFile,
+  ObjectLiteralExpression,
+  JsxOpeningElement,
+  JsxSelfClosingElement,
+} from 'ts-morph';
 
 export interface ExampleResult {
   name: string;
   url: string;
+}
+
+export function unwrapObjectLiteralExpression(node: Node | undefined): ObjectLiteralExpression | undefined {
+  if (!node) {
+    return undefined;
+  }
+
+  if (Node.isObjectLiteralExpression(node)) {
+    return node;
+  }
+
+  if (Node.isSatisfiesExpression(node) || Node.isAsExpression(node) || Node.isParenthesizedExpression(node)) {
+    return unwrapObjectLiteralExpression(node.getExpression());
+  }
+
+  return undefined;
 }
 
 export class ExampleReader {
@@ -60,14 +84,14 @@ export class ExampleReader {
     const allExamplesExport = sourceFile.getVariableDeclaration('allExamples');
     if (!allExamplesExport) return;
 
-    const initializer = allExamplesExport.getInitializerIfKind(SyntaxKind.ObjectLiteralExpression);
+    const initializer = unwrapObjectLiteralExpression(allExamplesExport.getInitializer());
     if (!initializer) return;
 
     initializer.getProperties().forEach(prop => {
       if (Node.isPropertyAssignment(prop)) {
         // e.g. AreaChart: { examples: areaChartExamples ... }
         // We want to process `areaChartExamples`
-        const objectLiteral = prop.getInitializerIfKind(SyntaxKind.ObjectLiteralExpression);
+        const objectLiteral = unwrapObjectLiteralExpression(prop.getInitializer());
         if (objectLiteral) {
           const examplesProp = objectLiteral.getProperty('examples');
           if (examplesProp && Node.isPropertyAssignment(examplesProp)) {
@@ -104,13 +128,13 @@ export class ExampleReader {
     const variableDecl = sourceFile.getVariableDeclaration(exportName);
     if (!variableDecl) return;
 
-    const initializer = variableDecl.getInitializerIfKind(SyntaxKind.ObjectLiteralExpression);
+    const initializer = unwrapObjectLiteralExpression(variableDecl.getInitializer());
     if (!initializer) return;
 
     initializer.getProperties().forEach(prop => {
       if (Node.isPropertyAssignment(prop)) {
         const exampleName = prop.getName(); // e.g. SimpleAreaChart
-        const exampleObj = prop.getInitializerIfKind(SyntaxKind.ObjectLiteralExpression);
+        const exampleObj = unwrapObjectLiteralExpression(prop.getInitializer());
         if (exampleObj) {
           const componentProp = exampleObj.getProperty('Component');
           if (componentProp && Node.isPropertyAssignment(componentProp)) {

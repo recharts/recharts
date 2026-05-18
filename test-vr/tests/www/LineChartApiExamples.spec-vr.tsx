@@ -1,6 +1,5 @@
 import * as React from 'react';
 import { test, expect } from './fixtures';
-import LineChartExample from '../../../www/src/docs/exampleComponents/LineChart/LineChartExample';
 import SimpleLineChart from '../../../www/src/docs/exampleComponents/LineChart/SimpleLineChart';
 import TinyLineChart from '../../../www/src/docs/exampleComponents/LineChart/TinyLineChart';
 import DashedLineChart from '../../../www/src/docs/exampleComponents/LineChart/DashedLineChart';
@@ -91,11 +90,6 @@ test('DashedLineChart', async ({ mount }) => {
 
 test('TinyLineChart', async ({ mount }) => {
   const component = await mount(<TinyLineChart />);
-  await expect(component).toHaveScreenshot();
-});
-
-test('LineChartExample', async ({ mount }) => {
-  const component = await mount(<LineChartExample isAnimationActive={false} />);
   await expect(component).toHaveScreenshot();
 });
 

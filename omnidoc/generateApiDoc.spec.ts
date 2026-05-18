@@ -204,7 +204,7 @@ describe('generateApiDoc', () => {
   it('should include examples from ExampleReader', async () => {
     const apiDoc = await generateApiDoc('AreaChart', reader, exampleReader, contextMap);
     expect(apiDoc.links).toBeDefined();
-    const simpleAreaChart = apiDoc.links?.find(l => l.url === '/examples/SimpleAreaChart/');
+    const simpleAreaChart = apiDoc.links?.find(l => l.url === '/examples/AreaChartExample/');
     expect(simpleAreaChart).toBeDefined();
     expect(simpleAreaChart?.name).toBe('Simple Area Chart');
   });

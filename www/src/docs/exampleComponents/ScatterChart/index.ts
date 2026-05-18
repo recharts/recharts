@@ -1,12 +1,10 @@
 import JointLineScatterChart from './JointLineScatterChart';
-import SimpleScatterChart from './SimpleScatterChart';
 import ThreeDimScatterChart from './ThreeDimScatterChart';
 import BubbleChart from './BubbleChart';
 import ScatterChartWithLabels from './ScatterChartWithLabels';
 import MultipleYAxesScatterChart from './MultipleYAxesScatterChart';
 import ScatterChartWithCells from './ScatterChartWithCells';
 import jointLineScatterChartSource from './JointLineScatterChart?raw';
-import simpleScatterChartSource from './SimpleScatterChart?raw';
 import threeDimScatterChartSource from './ThreeDimScatterChart?raw';
 import bubbleChartSource from './BubbleChart?raw';
 import scatterChartWithLabelsSource from './ScatterChartWithLabels?raw';
@@ -21,10 +19,10 @@ import scatterChartExampleSource from './ScatterChartExample?raw';
 
 export { ScatterChartNavExample };
 
-export const scatterChartExamples: Record<string, ChartExample> = {
+export const scatterChartExamples = {
   SimpleScatterChart: {
-    Component: SimpleScatterChart,
-    sourceCode: simpleScatterChartSource,
+    Component: ScatterChartExample,
+    sourceCode: scatterChartExampleSource,
     name: 'Simple Scatter Chart',
   },
   ThreeDimScatterChart: {
@@ -62,9 +60,4 @@ export const scatterChartExamples: Record<string, ChartExample> = {
     sourceCode: scatterChartPerformanceSource,
     name: 'Scatter Chart with many points (performance test)',
   },
-  ScatterChartExample: {
-    Component: ScatterChartExample,
-    sourceCode: scatterChartExampleSource,
-    name: 'Scatter Chart Example',
-  },
-};
+} satisfies Record<string, ChartExample>;

@@ -23,7 +23,7 @@ import { TargetBlankLink } from '../../../components/Shared/TargetBlankLink.tsx'
 
 export { PieChartNavExample };
 
-export const pieChartExamples: Record<string, ChartExample> = {
+export const pieChartExamples = {
   TwoLevelPieChart: {
     Component: TwoLevelPieChart,
     sourceCode: twoLevelPieChartSource,
@@ -104,4 +104,4 @@ export const pieChartExamples: Record<string, ChartExample> = {
       </>
     ),
   },
-};
+} satisfies Record<string, ChartExample>;

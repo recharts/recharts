@@ -3,10 +3,10 @@ import { lineChartExamples } from '../exampleComponents/LineChart';
 
 const useCartesianChartLayoutExamples: ReadonlyArray<ChartExample> = [
   {
-    ...lineChartExamples.LineChartExample,
-    name: 'useChartLayout API Example',
+    ...lineChartExamples.SimpleLineChart,
+    name: 'useCartesianChartLayout API Example',
     defaultTool: 'devtools',
-    defaultToolTab: 'useCartesianChartLayoutExamples',
+    defaultToolTab: 'useCartesianChartLayout',
   },
 ];
 export default useCartesianChartLayoutExamples;

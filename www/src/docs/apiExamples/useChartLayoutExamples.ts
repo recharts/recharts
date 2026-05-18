@@ -3,7 +3,7 @@ import { lineChartExamples } from '../exampleComponents/LineChart';
 
 const useChartLayoutExamples: ReadonlyArray<ChartExample> = [
   {
-    ...lineChartExamples.LineChartExample,
+    ...lineChartExamples.SimpleLineChart,
     name: 'useChartLayout API Example',
     defaultTool: 'devtools',
     defaultToolTab: 'useChartLayout',

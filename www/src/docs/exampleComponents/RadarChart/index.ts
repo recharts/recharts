@@ -4,12 +4,10 @@ import simpleRadarChartSource from './SimpleRadarChart?raw';
 import specifiedDomainRadarChartSource from './SpecifiedDomainRadarChart?raw';
 import { ChartExample } from '../types.ts';
 import RadarChartNavExample from './RadarChartNavExample';
-import RadarChartExample from './RadarChartExample';
-import radarChartExampleSource from './RadarChartExample?raw';
 
 export { RadarChartNavExample };
 
-export const radarChartExamples: Record<string, ChartExample> = {
+export const radarChartExamples = {
   SimpleRadarChart: {
     Component: SimpleRadarChart,
     sourceCode: simpleRadarChartSource,
@@ -20,9 +18,4 @@ export const radarChartExamples: Record<string, ChartExample> = {
     sourceCode: specifiedDomainRadarChartSource,
     name: 'Specified Domain Radar Chart',
   },
-  RadarChartExample: {
-    Component: RadarChartExample,
-    sourceCode: radarChartExampleSource,
-    name: 'Radar Chart Example',
-  },
-};
+} satisfies Record<string, ChartExample>;
