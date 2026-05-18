@@ -34,6 +34,8 @@ export class ExampleReader {
 
   private fileToExamples: Map<string, ExampleResult[]> = new Map();
 
+  private exportToExamples: Map<string, ExampleResult[]> = new Map();
+
   private initialized = false;
 
   constructor() {
@@ -46,6 +48,12 @@ export class ExampleReader {
   public getExamples(componentName: string, propName?: string): ExampleResult[] {
     const results = new Map<string, ExampleResult>();
     const cleanName = componentName.trim();
+
+    if (!propName) {
+      this.exportToExamples.get(cleanName)?.forEach(ex => {
+        results.set(ex.url, ex);
+      });
+    }
 
     this.fileToExamples.forEach((exList, filePath) => {
       const sourceFile = this.project.getSourceFile(filePath);
@@ -66,7 +74,10 @@ export class ExampleReader {
       return;
     }
     // Add all relevant files
-    this.project.addSourceFilesAtPaths(['www/src/docs/exampleComponents/**/*.{ts,tsx}']);
+    this.project.addSourceFilesAtPaths([
+      'www/src/docs/exampleComponents/**/*.{ts,tsx}',
+      'www/src/docs/apiExamples/**/*.{ts,tsx}',
+    ]);
 
     this.buildUrlMap();
     this.initialized = true;
@@ -77,6 +88,11 @@ export class ExampleReader {
     const exampleComponentsIndex = this.project.getSourceFile('www/src/docs/exampleComponents/index.ts');
     if (exampleComponentsIndex) {
       this.processExampleComponentsIndex(exampleComponentsIndex);
+    }
+
+    const apiExamplesIndex = this.project.getSourceFile('www/src/docs/apiExamples/index.tsx');
+    if (apiExamplesIndex) {
+      this.processApiExamplesIndex(apiExamplesIndex);
     }
   }
 
@@ -181,6 +197,90 @@ export class ExampleReader {
         }
       }
     });
+  }
+
+  private processApiExamplesIndex(sourceFile: SourceFile) {
+    const allApiExamplesExport = sourceFile.getVariableDeclaration('allApiExamples');
+    if (!allApiExamplesExport) return;
+
+    const initializer = unwrapObjectLiteralExpression(allApiExamplesExport.getInitializer());
+    if (!initializer) return;
+
+    initializer.getProperties().forEach(prop => {
+      if (!Node.isPropertyAssignment(prop)) {
+        return;
+      }
+
+      const examplesIdentifier = prop.getInitializerIfKind(SyntaxKind.Identifier);
+      if (!examplesIdentifier) {
+        return;
+      }
+
+      const definitions = examplesIdentifier.getDefinitions();
+      if (definitions.length === 0) {
+        return;
+      }
+
+      const declaration = definitions[0]?.getDeclarationNode();
+      if (!declaration) {
+        return;
+      }
+
+      if (Node.isVariableDeclaration(declaration)) {
+        this.processApiExampleArray(declaration.getSourceFile(), declaration.getName());
+      } else {
+        const importDeclaration = declaration.getFirstAncestorByKind(SyntaxKind.ImportDeclaration);
+        const moduleSpecifier = importDeclaration?.getModuleSpecifierSourceFile();
+        if (moduleSpecifier) {
+          this.processApiExampleArray(moduleSpecifier, examplesIdentifier.getText());
+        }
+      }
+    });
+  }
+
+  private processApiExampleArray(sourceFile: SourceFile, exportName: string) {
+    const variableDecl = sourceFile.getVariableDeclaration(exportName);
+    if (!variableDecl) return;
+
+    const initializer = variableDecl.getInitializerIfKind(SyntaxKind.ArrayLiteralExpression);
+    if (!initializer) return;
+
+    initializer.getElements().forEach(element => {
+      const exampleObj = unwrapObjectLiteralExpression(element);
+      if (!exampleObj) {
+        return;
+      }
+
+      const defaultToolTabProp = exampleObj.getProperty('defaultToolTab');
+      if (!defaultToolTabProp || !Node.isPropertyAssignment(defaultToolTabProp)) {
+        return;
+      }
+
+      const defaultToolTab = defaultToolTabProp.getInitializerIfKind(SyntaxKind.StringLiteral)?.getLiteralValue();
+      if (!defaultToolTab) {
+        return;
+      }
+
+      defaultToolTab
+        .split('|')
+        .map(name => name.trim())
+        .filter(Boolean)
+        .forEach(name => {
+          this.addExportExample(name, {
+            name: `${name} API example`,
+            url: `/api/${name}/`,
+          });
+        });
+    });
+  }
+
+  private addExportExample(exportName: string, example: ExampleResult) {
+    const existingExamples = this.exportToExamples.get(exportName) ?? [];
+    if (existingExamples.some(existing => existing.url === example.url)) {
+      return;
+    }
+
+    this.exportToExamples.set(exportName, [...existingExamples, example]);
   }
 
   private isComponentUsed(sourceFile: SourceFile, componentName: string): boolean {

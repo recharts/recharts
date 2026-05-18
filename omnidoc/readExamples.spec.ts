@@ -66,4 +66,14 @@ describe('ExampleReader', () => {
     );
     expect(examples.length).toBeGreaterThan(1);
   });
+
+  it('should find API examples from defaultToolTab coverage', () => {
+    const examples = reader.getExamples('useXAxisTicks');
+    expect(examples).toContainEqual(
+      expect.objectContaining({
+        name: 'useXAxisTicks API example',
+        url: '/api/useXAxisTicks/',
+      }),
+    );
+  });
 });
