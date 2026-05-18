@@ -3,7 +3,7 @@ import { lineChartExamples } from '../../exampleComponents/LineChart';
 
 export const useYAxisDomainApiExamples: ReadonlyArray<ChartExample> = [
   {
-    ...lineChartExamples.LineChartExample,
+    ...lineChartExamples.SimpleLineChart,
     defaultTool: 'devtools',
     defaultToolTab: 'useYAxisDomain',
   },

@@ -25,17 +25,21 @@ import areaChartRangeExampleSource from './AreaChartRangeExample?raw';
 
 export { AreaChartNavExample };
 
-export const areaChartExamples: Record<string, ChartExample> = {
-  SimpleAreaChart: {
-    Component: SimpleAreaChart,
-    sourceCode: simpleAreaChartSource,
+export const areaChartExamples = {
+  AreaChartExample: {
+    Component: AreaChartExample,
+    sourceCode: areaChartExampleSource,
     name: 'Simple Area Chart',
-    description: 'This chart also demonstrates preventing the context menu on right mouse click.',
   },
   StackedAreaChart: {
     Component: StackedAreaChart,
     sourceCode: stackedAreaChartSource,
     name: 'Stacked Area Chart',
+  },
+  AreaChartRangeExample: {
+    Component: AreaChartRangeExample,
+    sourceCode: areaChartRangeExampleSource,
+    name: 'Ranged Area Chart',
   },
   AreaChartConnectNulls: {
     Component: AreaChartConnectNulls,
@@ -74,14 +78,9 @@ export const areaChartExamples: Record<string, ChartExample> = {
     description:
       'The example demonstrates how to add custom event handlers to an Area Chart and how to write proper types.',
   },
-  AreaChartExample: {
-    Component: AreaChartExample,
-    sourceCode: areaChartExampleSource,
-    name: 'Simple Area Chart Example',
+  PreventRightClickExample: {
+    Component: SimpleAreaChart,
+    sourceCode: simpleAreaChartSource,
+    name: 'Prevent right click menu',
   },
-  AreaChartRangeExample: {
-    Component: AreaChartRangeExample,
-    sourceCode: areaChartRangeExampleSource,
-    name: 'Ranged Area Chart Example',
-  },
-};
+} satisfies Record<string, ChartExample>;

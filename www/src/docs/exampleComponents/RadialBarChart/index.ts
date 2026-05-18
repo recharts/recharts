@@ -4,12 +4,10 @@ import { ChartExample } from '../types.ts';
 import RadialBarChartNavExample from './RadialBarChartNavExample';
 import RadialBarChartClickToFocusLegendExample from './RadialBarChartClickToFocusLegendExample';
 import RadialBarChartClickToFocusLegendExampleSource from './RadialBarChartClickToFocusLegendExample?raw';
-import RadialBarChartExample from './RadialBarChartExample';
-import radialBarChartExampleSource from './RadialBarChartExample?raw';
 
 export { RadialBarChartNavExample };
 
-export const radialBarChartExamples: Record<string, ChartExample> = {
+export const radialBarChartExamples = {
   SimpleRadialBarChart: {
     Component: SimpleRadialBarChart,
     sourceCode: simpleRadialBarChartSource,
@@ -20,9 +18,4 @@ export const radialBarChartExamples: Record<string, ChartExample> = {
     sourceCode: RadialBarChartClickToFocusLegendExampleSource,
     name: 'Radial Bar Chart with Click to Focus Legend',
   },
-  RadialBarChartExample: {
-    Component: RadialBarChartExample,
-    sourceCode: radialBarChartExampleSource,
-    name: 'Radial Bar Chart Example',
-  },
-};
+} satisfies Record<string, ChartExample>;

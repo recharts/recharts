@@ -35,19 +35,12 @@ import CompareTwoLines from './CompareTwoLines.tsx';
 import CompareTwoLinesSource from './CompareTwoLines.tsx?raw';
 import DynamicZIndexLineChart from './DynamicZIndexLineChart.tsx';
 import DynamicZIndexLineChartSource from './DynamicZIndexLineChart.tsx?raw';
-import LineChartExample from './LineChartExample';
-import lineChartExampleSource from './LineChartExample?raw';
 
 export const lineChartExamples = {
   SimpleLineChart: {
     Component: SimpleLineChart,
     sourceCode: simpleLineChartSource,
     name: 'Simple Line Chart',
-  },
-  TinyLineChart: {
-    Component: TinyLineChart,
-    sourceCode: tinyLineChartSource,
-    name: 'Tiny Line Chart',
   },
   DashedLineChart: {
     Component: DashedLineChart,
@@ -131,10 +124,10 @@ export const lineChartExamples = {
     sourceCode: DynamicZIndexLineChartSource,
     name: 'Dynamic Z-Index Line Chart',
   },
-  LineChartExample: {
-    Component: LineChartExample,
-    sourceCode: lineChartExampleSource,
-    name: 'Simple Line Chart Example',
+  TinyLineChart: {
+    Component: TinyLineChart,
+    sourceCode: tinyLineChartSource,
+    name: 'Tiny Line Chart',
   },
 } satisfies Record<string, ChartExample>;
 

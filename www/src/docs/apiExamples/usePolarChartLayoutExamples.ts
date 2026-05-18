@@ -3,10 +3,10 @@ import { radarChartExamples } from '../exampleComponents/RadarChart';
 
 const usePolarChartLayoutExamples: ReadonlyArray<ChartExample> = [
   {
-    ...radarChartExamples.RadarChartExample,
-    name: 'useChartLayout API Example',
+    ...radarChartExamples.SimpleRadarChart,
+    name: 'usePolarChartLayout',
     defaultTool: 'devtools',
-    defaultToolTab: 'usePolarChartLayoutExamples',
+    defaultToolTab: 'usePolarChartLayout',
   },
 ];
 export default usePolarChartLayoutExamples;

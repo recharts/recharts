@@ -3,7 +3,7 @@ import { lineChartExamples } from '../../exampleComponents/LineChart';
 
 export const useChartWidthAndHeightApiExamples: ReadonlyArray<ChartExample> = [
   {
-    ...lineChartExamples.LineChartExample,
+    ...lineChartExamples.SimpleLineChart,
     name: 'useChartWidth API Example',
     defaultTool: 'devtools',
     defaultToolTab: 'useChartWidth | useChartHeight',

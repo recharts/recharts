@@ -1,17 +1,15 @@
-import AreaResponsiveContainer from './AreaResponsiveContainer';
 import ComposedResponsiveContainer from './ComposedResponsiveContainer';
 import PieResponsiveContainer from './PieResponsiveContainer';
-import areaResponsiveContainerSource from './AreaResponsiveContainer?raw';
 import composedResponsiveContainerSource from './ComposedResponsiveContainer?raw';
 import pieResponsiveContainerSource from './PieResponsiveContainer?raw';
 import { ChartExample } from '../types.ts';
 import ResponsiveContainerExample from './ResponsiveContainerExample';
 import responsiveContainerExampleSource from './ResponsiveContainerExample?raw';
 
-export const responsiveContainerExamples: Record<string, ChartExample> = {
+export const responsiveContainerExamples = {
   AreaResponsiveContainer: {
-    Component: AreaResponsiveContainer,
-    sourceCode: areaResponsiveContainerSource,
+    Component: ResponsiveContainerExample,
+    sourceCode: responsiveContainerExampleSource,
     name: 'Area Responsive Container',
   },
   ComposedResponsiveContainer: {
@@ -24,9 +22,4 @@ export const responsiveContainerExamples: Record<string, ChartExample> = {
     sourceCode: pieResponsiveContainerSource,
     name: 'Pie Responsive Container',
   },
-  ResponsiveContainerExample: {
-    Component: ResponsiveContainerExample,
-    sourceCode: responsiveContainerExampleSource,
-    name: 'Responsive Container Example',
-  },
-};
+} satisfies Record<string, ChartExample>;
