@@ -2,12 +2,7 @@ import * as React from 'react';
 import { cloneElement, isValidElement, ReactElement } from 'react';
 import isPlainObject from 'es-toolkit/compat/isPlainObject';
 
-import { Rectangle } from '../shape/Rectangle';
-import { Trapezoid } from '../shape/Trapezoid';
-import { Sector } from '../shape/Sector';
 import { Layer } from '../container/Layer';
-import { Symbols, SymbolsProps } from '../shape/Symbols';
-import { Curve } from '../shape/Curve';
 
 /**
  * This is an abstraction for rendering a user defined prop for a customized shape in several forms.
@@ -18,62 +13,34 @@ import { Curve } from '../shape/Curve';
  *  - a render prop(inline function that returns jsx)
  *  - a React element
  *
- * <ShapeSelector /> is a subcomponent of <Shape /> and used to match a component
- * to the value of props.shapeType that is passed to the root.
- *
+ * The concrete default shape is supplied by the caller so this helper does not
+ * import unrelated shapes and accidentally couple bundles together.
  */
-type ShapeType = 'trapezoid' | 'rectangle' | 'sector' | 'symbols' | 'curve';
+type ShapeRenderer<PropsType> = (props: PropsType) => React.JSX.Element;
 
-export type ShapeProps<OptionType, ExtraProps> = {
-  shapeType: ShapeType;
+export type ShapeProps<OptionType, PropsType> = {
   option: OptionType;
+  renderDefaultShape: ShapeRenderer<PropsType>;
   isActive?: boolean;
   index?: string | number;
   activeClassName?: string;
   inActiveClassName?: string;
-} & ExtraProps;
+} & PropsType;
 
-function defaultPropTransformer<OptionType, ExtraProps, ShapePropsType>(
-  option: OptionType,
-  props: ExtraProps,
-): ShapePropsType {
+function defaultPropTransformer<OptionType, PropsType>(option: OptionType, props: PropsType): PropsType & OptionType {
   return {
     ...props,
     ...option,
-  } as unknown as ShapePropsType;
+  };
 }
 
-function isSymbolsProps(shapeType: ShapeType, _elementProps: unknown): _elementProps is SymbolsProps {
-  return shapeType === 'symbols';
+function isShapeFunction<PropsType>(
+  option: unknown,
+): option is (props: PropsType, index?: string | number) => React.JSX.Element | null | undefined {
+  return typeof option === 'function';
 }
 
-function ShapeSelector<ShapePropsType extends React.JSX.IntrinsicAttributes>({
-  shapeType,
-  elementProps,
-}: {
-  shapeType: ShapeType;
-  elementProps: ShapePropsType;
-}): React.ReactNode {
-  switch (shapeType) {
-    case 'rectangle':
-      return <Rectangle {...elementProps} />;
-    case 'trapezoid':
-      return <Trapezoid {...elementProps} />;
-    case 'sector':
-      return <Sector {...elementProps} />;
-    case 'symbols':
-      if (isSymbolsProps(shapeType, elementProps)) {
-        return <Symbols {...elementProps} />;
-      }
-      break;
-    case 'curve':
-      return <Curve {...elementProps} />;
-    default:
-      return null;
-  }
-}
-
-export function getPropsFromShapeOption<T>(option: ReactElement<T> | T): T {
+export function getPropsFromShapeOption<T extends object>(option: ReactElement<T> | T): T {
   if (isValidElement(option)) {
     return option.props;
   }
@@ -81,28 +48,30 @@ export function getPropsFromShapeOption<T>(option: ReactElement<T> | T): T {
   return option;
 }
 
-export function Shape<OptionType, ExtraProps, ShapePropsType extends React.JSX.IntrinsicAttributes>({
+export function Shape<OptionPropsType, PropsType extends OptionPropsType, OptionType>({
   option,
-  shapeType,
+  renderDefaultShape,
   activeClassName = 'recharts-active-shape',
   inActiveClassName = 'recharts-shape',
   ...props
-}: ShapeProps<OptionType, ExtraProps>) {
-  let shape: React.JSX.Element;
+}: ShapeProps<OptionType, PropsType>) {
+  const { index, isActive } = props;
+  // TypeScript does not preserve the original generic object type through object rest destructuring.
+  // @ts-expect-error object rest widens generic props beyond PropsType
+  const shapeProps: PropsType = props;
+  let shape: React.ReactNode;
   if (isValidElement(option)) {
-    // @ts-expect-error we can't know the type of cloned element props
-    shape = cloneElement(option, { ...props, ...getPropsFromShapeOption(option) });
-  } else if (typeof option === 'function') {
-    shape = option(props, props.index);
+    // @ts-expect-error cloned elements can accept a narrower prop type than our runtime shape props
+    shape = cloneElement(option, { ...shapeProps, ...getPropsFromShapeOption(option) });
+  } else if (isShapeFunction<OptionPropsType>(option)) {
+    shape = option(shapeProps, index);
   } else if (isPlainObject(option) && typeof option !== 'boolean') {
-    const nextProps: ShapePropsType = defaultPropTransformer(option, props);
-    shape = <ShapeSelector<ShapePropsType> shapeType={shapeType} elementProps={nextProps} />;
+    shape = renderDefaultShape(defaultPropTransformer(option, shapeProps));
   } else {
-    const elementProps = props as unknown as ShapePropsType;
-    shape = <ShapeSelector<ShapePropsType> shapeType={shapeType} elementProps={elementProps} />;
+    shape = renderDefaultShape(shapeProps);
   }
 
-  if (props.isActive) {
+  if (isActive) {
     return <Layer className={activeClassName}>{shape}</Layer>;
   }
 

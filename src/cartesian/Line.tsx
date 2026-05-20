@@ -12,7 +12,7 @@ import {
 } from 'react';
 
 import { clsx } from 'clsx';
-import { CurveType, Props as CurveProps } from '../shape/Curve';
+import { Curve, CurveType, Props as CurveProps } from '../shape/Curve';
 import { Layer } from '../container/Layer';
 import {
   CartesianLabelListContextProvider,
@@ -69,6 +69,10 @@ import { DefaultZIndexes } from '../zIndex/DefaultZIndexes';
 import { propsAreEqual } from '../util/propsAreEqual';
 import { GraphicalItemId } from '../state/graphicalItemsSlice';
 import { ChartData } from '../state/chartDataSlice';
+
+function renderCurve(props: CurveProps) {
+  return <Curve {...props} />;
+}
 
 export interface LinePointItem {
   readonly value: number;
@@ -553,7 +557,9 @@ function StaticCurve({
 
   return (
     <>
-      {points?.length > 1 && <Shape shapeType="curve" option={shape} {...curveProps} pathRef={pathRef} />}
+      {points?.length > 1 && (
+        <Shape option={shape} renderDefaultShape={renderCurve} {...curveProps} pathRef={pathRef} />
+      )}
       <LineDotsWrapper points={points} clipPathId={clipPathId} props={props} />
     </>
   );

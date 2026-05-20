@@ -7,6 +7,7 @@ import { selectPieLegend, selectPieSectors } from '../state/selectors/pieSelecto
 import { useAppSelector } from '../state/hooks';
 import { Layer } from '../container/Layer';
 import { Curve, Props as CurveProps } from '../shape/Curve';
+import { Sector } from '../shape/Sector';
 import { Text } from '../component/Text';
 import { Cell } from '../component/Cell';
 import { findAllByType } from '../util/ReactUtils';
@@ -374,6 +375,10 @@ export type PieCoordinate = {
   maxRadius: number;
 };
 
+function renderSectorShape(props: PieSectorShapeProps) {
+  return <Sector {...props} />;
+}
+
 function SetPiePayloadLegend(props: { children?: ReactNode; id: GraphicalItemId }) {
   const cells = useMemo(() => findAllByType(props.children, Cell), [props.children]);
 
@@ -694,7 +699,13 @@ function PieSectors(props: PieSectorsProps) {
             onMouseLeave={onMouseLeaveFromContext(entry, i)}
             onClick={onClickFromContext(entry, i)}
           >
-            <Shape option={shape ?? sectorOptions} index={i} shapeType="sector" isActive={isActive} {...sectorProps} />
+            <Shape
+              option={shape ?? sectorOptions}
+              index={i}
+              isActive={isActive}
+              renderDefaultShape={renderSectorShape}
+              {...sectorProps}
+            />
           </Layer>
         );
       })}

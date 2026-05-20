@@ -1,6 +1,5 @@
 export const expectedInBundle = [
   'Cell',
-  'Curve',
   'DefaultZIndexes',
   'Funnel',
   'getNiceTickValues',
@@ -9,9 +8,6 @@ export const expectedInBundle = [
   'Label',
   'LabelList',
   'Layer',
-  'Rectangle',
-  'Sector',
-  'Symbols',
   'Text',
   'Trapezoid',
   'usePlotArea',

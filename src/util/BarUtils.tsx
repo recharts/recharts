@@ -1,7 +1,7 @@
 import * as React from 'react';
 import invariant from 'tiny-invariant';
 import { ActiveShape, DataKey } from './types';
-import { Props as RectangleProps } from '../shape/Rectangle';
+import { Rectangle, Props as RectangleProps } from '../shape/Rectangle';
 import { BarShapeProps } from '../cartesian/Bar';
 import { Shape } from './ActiveShapeUtils';
 import { isNullish, isNumber } from './DataUtils';
@@ -18,10 +18,14 @@ export type BarRectangleProps = {
   dataKey: DataKey<any> | undefined;
 } & Omit<RectangleProps, 'onAnimationStart' | 'onAnimationEnd'>;
 
+function renderRectangle(props: BarRectangleProps) {
+  return <Rectangle {...props} />;
+}
+
 export function BarRectangle(props: BarRectangleProps) {
   return (
     <Shape
-      shapeType="rectangle"
+      renderDefaultShape={renderRectangle}
       activeClassName="recharts-active-bar"
       inActiveClassName="recharts-inactive-bar"
       {...props}

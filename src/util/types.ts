@@ -1333,10 +1333,10 @@ export type DotType =
    */
   | ReactElement<SVGProps<SVGElement>>;
 
-export type ActiveShape<PropsType = Record<string, any>, ElementType = SVGElement> =
-  | ReactElement<SVGProps<ElementType>>
-  | ((props: PropsType) => ReactElement | null | undefined)
-  | SVGProps<ElementType>
+export type ActiveShape<PropsType = Record<string, unknown>, ElementType = SVGElement> =
+  | ReactElement<Partial<PropsType> & SVGProps<ElementType>>
+  | ((props: PropsType, index?: string | number) => ReactElement | null | undefined)
+  | (Partial<PropsType> & SVGProps<ElementType>)
   | boolean;
 
 export type RangeObj = PolarViewBoxRequired & {
