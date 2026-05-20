@@ -1,40 +1,28 @@
+import { clsx } from 'clsx';
 import * as React from 'react';
 import {
-  ReactElement,
   isValidElement,
+  ReactElement,
   SVGProps,
+  useCallback,
+  useInsertionEffect,
   useLayoutEffect,
   useMemo,
   useRef,
-  useInsertionEffect,
-  useCallback,
 } from 'react';
-import { clsx } from 'clsx';
-import {
-  AxisDomainTypeInput,
-  AxisInterval,
-  AxisTick,
-  RenderableAxisProps,
-  PresentationAttributesAdaptChildEvent,
-  Size,
-  AxisDomain,
-  ScaleType,
-  EvaluatedAxisDomainType,
-  TickProp,
-  YAxisTickContentProps,
-  TickItem,
-} from '../util/types';
-import { CartesianAxis, CartesianAxisRef, defaultCartesianAxisProps } from './CartesianAxis';
+import { isLabelContentAFunction } from '../component/Label';
+import { useCartesianChartLayout } from '../context/chartLayoutContext';
+import { useIsPanorama } from '../context/PanoramaContext';
 import {
   addYAxis,
-  replaceYAxis,
+  NiceTicksAlgorithm,
   removeYAxis,
+  replaceYAxis,
   updateYAxisWidth,
   YAxisOrientation,
   YAxisPadding,
   YAxisSettings,
   YAxisWidth,
-  NiceTicksAlgorithm,
 } from '../state/cartesianAxisSlice';
 import { useAppDispatch, useAppSelector } from '../state/hooks';
 import {
@@ -45,14 +33,26 @@ import {
   selectYAxisSize,
 } from '../state/selectors/axisSelectors';
 import { selectAxisViewBox } from '../state/selectors/selectChartOffsetInternal';
-import { useIsPanorama } from '../context/PanoramaContext';
-import { isLabelContentAFunction } from '../component/Label';
-import { RequiresDefaultProps, resolveDefaultProps } from '../util/resolveDefaultProps';
 import { axisPropsAreEqual } from '../util/axisPropsAreEqual';
-import { CustomScaleDefinition } from '../util/scale/CustomScaleDefinition';
-import { useCartesianChartLayout } from '../context/chartLayoutContext';
-import { getAxisTypeBasedOnLayout } from '../util/getAxisTypeBasedOnLayout';
 import { DEFAULT_Y_AXIS_WIDTH } from '../util/Constants';
+import { getAxisTypeBasedOnLayout } from '../util/getAxisTypeBasedOnLayout';
+import { RequiresDefaultProps, resolveDefaultProps } from '../util/resolveDefaultProps';
+import { CustomScaleDefinition } from '../util/scale/CustomScaleDefinition';
+import {
+  AxisDomain,
+  AxisDomainTypeInput,
+  AxisInterval,
+  AxisTick,
+  EvaluatedAxisDomainType,
+  PresentationAttributesAdaptChildEvent,
+  RenderableAxisProps,
+  ScaleType,
+  Size,
+  TickItem,
+  TickProp,
+  YAxisTickContentProps,
+} from '../util/types';
+import { CartesianAxis, CartesianAxisRef, defaultCartesianAxisProps } from './CartesianAxis';
 
 interface YAxisProps<DataPointType = any, DataValueType = any> extends Omit<
   RenderableAxisProps<DataPointType, DataValueType>,
@@ -314,7 +314,7 @@ function YAxisImpl(props: PropsWithDefaults) {
   });
 
   useLayoutEffect(() => {
-    if (!chartDataLengthEmpty && width === 'auto') {
+    if (chartDataLengthEmpty === false && width === 'auto') {
       resetYAxisWidth();
     }
   }, [chartDataLengthEmpty, width, resetYAxisWidth]);

@@ -1,5 +1,5 @@
-import React, { ReactNode } from 'react';
 import { fireEvent, render } from '@testing-library/react';
+import React, { ComponentProps, ReactNode } from 'react';
 import { describe, expect, it, test, vi } from 'vitest';
 import {
   Area,
@@ -19,8 +19,8 @@ import {
   YAxis,
   YAxisProps,
 } from '../../../src';
-import { AxisDomain, CategoricalDomain, NumberDomain, StackOffsetType } from '../../../src/util/types';
-import { pageData, rangeData } from '../../../storybook/stories/data';
+import { useIsPanorama } from '../../../src/context/PanoramaContext';
+import { YAxisSettings } from '../../../src/state/cartesianAxisSlice';
 import { useAppSelector } from '../../../src/state/hooks';
 import {
   implicitYAxis,
@@ -28,14 +28,14 @@ import {
   selectNumericalDomain,
   selectRenderableAxisSettings,
 } from '../../../src/state/selectors/axisSelectors';
-import { YAxisSettings } from '../../../src/state/cartesianAxisSlice';
-import { expectYAxisTicks } from '../../helper/expectAxisTicks';
-import { useIsPanorama } from '../../../src/context/PanoramaContext';
-import { mockGetBoundingClientRect } from '../../helper/mockGetBoundingClientRect';
+import { AxisDomain, CategoricalDomain, NumberDomain, StackOffsetType } from '../../../src/util/types';
 import { getCalculatedYAxisWidth } from '../../../src/util/YAxisUtils';
-import { expectLastCalledWith } from '../../helper/expectLastCalledWith';
-import { createSelectorTestCase, rechartsTestRender } from '../../helper/createSelectorTestCase';
+import { pageData, rangeData } from '../../../storybook/stories/data';
 import { assertNotNull } from '../../helper/assertNotNull';
+import { createSelectorTestCase, rechartsTestRender } from '../../helper/createSelectorTestCase';
+import { expectYAxisTicks } from '../../helper/expectAxisTicks';
+import { expectLastCalledWith } from '../../helper/expectLastCalledWith';
+import { mockGetBoundingClientRect } from '../../helper/mockGetBoundingClientRect';
 
 describe('<YAxis />', () => {
   const data = [
@@ -2255,6 +2255,41 @@ describe('<YAxis />', () => {
         <Bar dataKey="amt" />
       </BarChart>,
     );
+
+    // Get all tick elements from the rendered Y-axis
+    const tickElements = container.querySelectorAll('.recharts-cartesian-axis-tick-value');
+
+    const yAxis = container.querySelector('.yAxis');
+    assertNotNull(yAxis);
+    const yAxisLine = yAxis.querySelector('line');
+
+    const calculatedYAxisWidth = getCalculatedYAxisWidth({
+      ticks: Array.from(tickElements),
+      tickSize: 6,
+      tickMargin: 2,
+      label: undefined,
+      labelGapWithTick: 5,
+    });
+
+    expect(calculatedYAxisWidth).toBe(88); // 80 width + 6 tick size + 2 tick margin
+    expect(yAxisLine).toHaveAttribute('width', '88');
+  });
+
+  it('should render y-axis with dynamically calculated width even after starting from empty data', async () => {
+    mockGetBoundingClientRect({ width: 80, height: 30 });
+
+    const ticks = [0, 800, 1600, 2400];
+    const BarChartWrapper = ({ data: internalData }: Pick<ComponentProps<typeof BarChart>, 'data'>) => {
+      return (
+        <BarChart width={400} height={300} data={internalData}>
+          <YAxis width="auto" ticks={ticks} />
+          <Bar dataKey="amt" />
+        </BarChart>
+      );
+    };
+
+    const { container, rerender } = render(<BarChartWrapper data={[]} />);
+    rerender(<BarChartWrapper data={data} />);
 
     // Get all tick elements from the rendered Y-axis
     const tickElements = container.querySelectorAll('.recharts-cartesian-axis-tick-value');
