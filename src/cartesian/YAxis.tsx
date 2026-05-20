@@ -271,22 +271,6 @@ function SetYAxisSettings(props: Omit<YAxisSettings, 'type'> & { type: AxisDomai
   return null;
 }
 
-function useEffectEventPolyfill<Args extends unknown[], R>(fn: (...args: Args) => R) {
-  const latestFn = useRef<(...args: Args) => R>(() => {
-    throw new Error('Cannot call an event handler while rendering.');
-  });
-  useInsertionEffect(() => {
-    latestFn.current = fn;
-  }, [fn]);
-
-  return useCallback((...args: Args) => {
-    if (typeof latestFn.current === 'function') {
-      return latestFn.current(...args);
-    }
-    return undefined;
-  }, []);
-}
-
 function YAxisImpl(props: PropsWithDefaults) {
   const { yAxisId, className, width, label } = props;
 
@@ -309,13 +293,19 @@ function YAxisImpl(props: PropsWithDefaults) {
   const synchronizedSettings = useAppSelector(state => selectYAxisSettingsNoDefaults(state, yAxisId));
   const chartDataLengthEmpty = useAppSelector(state => !state.chartData.chartData?.length);
 
-  const resetYAxisWidth = useEffectEventPolyfill(() => {
-    dispatch(updateYAxisWidth({ id: yAxisId, width: DEFAULT_Y_AXIS_WIDTH }));
-  });
+  const resetYAxisWidth = useCallback(
+    () => dispatch(updateYAxisWidth({ id: yAxisId, width: DEFAULT_Y_AXIS_WIDTH })),
+    [dispatch, yAxisId],
+  );
+
+  const stableResetYAxisWidth = useRef<typeof resetYAxisWidth>(resetYAxisWidth);
+  useInsertionEffect(() => {
+    stableResetYAxisWidth.current = resetYAxisWidth;
+  }, [resetYAxisWidth]);
 
   useLayoutEffect(() => {
     if (chartDataLengthEmpty === false && width === 'auto') {
-      resetYAxisWidth();
+      stableResetYAxisWidth.current();
     }
   }, [chartDataLengthEmpty, width, resetYAxisWidth]);
 
