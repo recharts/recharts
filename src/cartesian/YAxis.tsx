@@ -1,5 +1,14 @@
 import * as React from 'react';
-import { ReactElement, isValidElement, SVGProps, useLayoutEffect, useMemo, useRef } from 'react';
+import {
+  ReactElement,
+  isValidElement,
+  SVGProps,
+  useLayoutEffect,
+  useMemo,
+  useRef,
+  useInsertionEffect,
+  useCallback,
+} from 'react';
 import { clsx } from 'clsx';
 import {
   AxisDomainTypeInput,
@@ -43,6 +52,7 @@ import { axisPropsAreEqual } from '../util/axisPropsAreEqual';
 import { CustomScaleDefinition } from '../util/scale/CustomScaleDefinition';
 import { useCartesianChartLayout } from '../context/chartLayoutContext';
 import { getAxisTypeBasedOnLayout } from '../util/getAxisTypeBasedOnLayout';
+import { DEFAULT_Y_AXIS_WIDTH } from '../util/Constants';
 
 interface YAxisProps<DataPointType = any, DataValueType = any> extends Omit<
   RenderableAxisProps<DataPointType, DataValueType>,
@@ -261,6 +271,22 @@ function SetYAxisSettings(props: Omit<YAxisSettings, 'type'> & { type: AxisDomai
   return null;
 }
 
+function useEffectEventPolyfill<Args extends unknown[], R>(fn: (...args: Args) => R) {
+  const latestFn = useRef<(...args: Args) => R>(() => {
+    throw new Error('Cannot call an event handler while rendering.');
+  });
+  useInsertionEffect(() => {
+    latestFn.current = fn;
+  }, [fn]);
+
+  return useCallback((...args: Args) => {
+    if (typeof latestFn.current === 'function') {
+      return latestFn.current(...args);
+    }
+    return undefined;
+  }, []);
+}
+
 function YAxisImpl(props: PropsWithDefaults) {
   const { yAxisId, className, width, label } = props;
 
@@ -281,6 +307,17 @@ function YAxisImpl(props: PropsWithDefaults) {
    * https://github.com/recharts/recharts/issues/6257
    */
   const synchronizedSettings = useAppSelector(state => selectYAxisSettingsNoDefaults(state, yAxisId));
+  const chartDataLengthEmpty = useAppSelector(state => !state.chartData.chartData?.length);
+
+  const resetYAxisWidth = useEffectEventPolyfill(() => {
+    dispatch(updateYAxisWidth({ id: yAxisId, width: DEFAULT_Y_AXIS_WIDTH }));
+  });
+
+  useLayoutEffect(() => {
+    if (!chartDataLengthEmpty && width === 'auto') {
+      resetYAxisWidth();
+    }
+  }, [chartDataLengthEmpty, width, resetYAxisWidth]);
 
   useLayoutEffect(() => {
     // No dynamic width calculation is done when width !== 'auto'
