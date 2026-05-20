@@ -1,15 +1,6 @@
 import { clsx } from 'clsx';
 import * as React from 'react';
-import {
-  isValidElement,
-  ReactElement,
-  SVGProps,
-  useCallback,
-  useInsertionEffect,
-  useLayoutEffect,
-  useMemo,
-  useRef,
-} from 'react';
+import { isValidElement, ReactElement, SVGProps, useCallback, useLayoutEffect, useMemo, useRef } from 'react';
 import { isLabelContentAFunction } from '../component/Label';
 import { useCartesianChartLayout } from '../context/chartLayoutContext';
 import { useIsPanorama } from '../context/PanoramaContext';
@@ -299,9 +290,7 @@ function YAxisImpl(props: PropsWithDefaults) {
   );
 
   const stableResetYAxisWidth = useRef<typeof resetYAxisWidth>(resetYAxisWidth);
-  useInsertionEffect(() => {
-    stableResetYAxisWidth.current = resetYAxisWidth;
-  }, [resetYAxisWidth]);
+  stableResetYAxisWidth.current = resetYAxisWidth;
 
   useLayoutEffect(() => {
     if (chartDataLengthEmpty === false && width === 'auto') {
