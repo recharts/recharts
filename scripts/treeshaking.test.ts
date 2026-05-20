@@ -175,15 +175,22 @@ describe.skipIf(!es6EntryExists)('trace-bundle integration', () => {
   it('finds the path from the requested component module instead of the package entry', async () => {
     const graph = await getModuleGraph('Area');
     const area = findMatchingModules(graph, 'Area');
-    const rectangle = findMatchingModules(graph, 'Rectangle');
+    const dot = findMatchingModules(graph, 'Dot');
     const nodeById = new Map(graph.map(node => [node.id, node]));
 
     expect(area).toHaveLength(1);
-    expect(rectangle).toHaveLength(1);
-    expect(findShortestPaths(area[0].id, rectangle[0].id, nodeById, 8)).toContainEqual([
-      path.resolve(__dirname, '..', 'src', 'cartesian', 'Area.tsx'),
-      path.resolve(__dirname, '..', 'src', 'util', 'ActiveShapeUtils.tsx'),
-      path.resolve(__dirname, '..', 'src', 'shape', 'Rectangle.tsx'),
+    expect(dot).toHaveLength(1);
+    expect(findShortestPaths(area[0].id, dot[0].id, nodeById, 8)).toEqual([
+      [
+        path.resolve(__dirname, '..', 'src', 'cartesian', 'Area.tsx'),
+        path.resolve(__dirname, '..', 'src', 'component', 'Dots.tsx'),
+        path.resolve(__dirname, '..', 'src', 'shape', 'Dot.tsx'),
+      ],
+      [
+        path.resolve(__dirname, '..', 'src', 'cartesian', 'Area.tsx'),
+        path.resolve(__dirname, '..', 'src', 'component', 'ActivePoints.tsx'),
+        path.resolve(__dirname, '..', 'src', 'shape', 'Dot.tsx'),
+      ],
     ]);
   }, 30_000);
 });
