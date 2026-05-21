@@ -31,7 +31,7 @@ import {
   TooltipType,
   TrapezoidViewBox,
 } from '../util/types';
-import { FunnelTrapezoid, FunnelTrapezoidProps } from '../util/FunnelUtils';
+import { defaultFunnelShape, FunnelTrapezoid, FunnelTrapezoidProps } from '../util/FunnelUtils';
 import {
   useMouseClickItemDispatch,
   useMouseEnterItemDispatch,
@@ -454,6 +454,7 @@ export const defaultFunnelProps = {
   legendType: 'rect',
   nameKey: 'name',
   reversed: false,
+  shape: defaultFunnelShape,
   stroke: '#fff',
 } as const satisfies Partial<Props>;
 

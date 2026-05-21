@@ -1335,7 +1335,7 @@ export type DotType =
 
 export type ActiveShape<PropsType = Record<string, unknown>, ElementType = SVGElement> =
   | ReactElement<Partial<PropsType> & SVGProps<ElementType>>
-  | ((props: PropsType, index?: string | number) => ReactElement | null | undefined)
+  | ((props: PropsType, index?: string | number) => ReactNode)
   | (Partial<PropsType> & SVGProps<ElementType>)
   | boolean;
 

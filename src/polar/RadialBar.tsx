@@ -3,7 +3,12 @@ import { MutableRefObject, PureComponent, ReactElement, ReactNode, useCallback, 
 import { clsx } from 'clsx';
 
 import { Series } from 'victory-vendor/d3-shape';
-import { parseCornerRadius, RadialBarSector, RadialBarSectorProps } from '../util/RadialBarUtils';
+import {
+  defaultRadialBarShape,
+  parseCornerRadius,
+  RadialBarSector,
+  RadialBarSectorProps,
+} from '../util/RadialBarUtils';
 import { Props as SectorProps } from '../shape/Sector';
 import { Layer } from '../container/Layer';
 import { findAllByType } from '../util/ReactUtils';
@@ -157,7 +162,7 @@ function RadialBarSectors({ sectors, allOtherRadialBarProps, showLabels }: Radia
           forceCornerRadius: others.forceCornerRadius,
           cornerIsExternal: others.cornerIsExternal,
           isActive,
-          option: isActive ? activeShape : shape,
+          option: isActive && activeShape != null ? activeShape : shape,
           index: i,
         };
 
@@ -591,6 +596,7 @@ export const defaultRadialBarProps = {
   legendType: 'rect',
   minPointSize: 0,
   radiusAxisId: 0,
+  shape: defaultRadialBarShape,
   zIndex: DefaultZIndexes.bar,
 } as const satisfies Partial<RadialBarProps>;
 

@@ -186,7 +186,7 @@ export type PieSectorDataItem = PiePresentationProps &
   };
 
 export type PieSectorShapeProps = PieSectorDataItem & { isActive: boolean; index: number };
-export type PieShape = ReactNode | ((props: PieSectorShapeProps, index: number) => React.ReactElement);
+export type PieShape = ActiveShape<PieSectorShapeProps, SVGPathElement>;
 
 interface PieEvents {
   /**
@@ -375,9 +375,7 @@ export type PieCoordinate = {
   maxRadius: number;
 };
 
-function renderSectorShape(props: PieSectorShapeProps) {
-  return <Sector {...props} />;
-}
+const defaultPieSectorShape = Sector;
 
 function SetPiePayloadLegend(props: { children?: ReactNode; id: GraphicalItemId }) {
   const cells = useMemo(() => findAllByType(props.children, Cell), [props.children]);
@@ -700,10 +698,10 @@ function PieSectors(props: PieSectorsProps) {
             onClick={onClickFromContext(entry, i)}
           >
             <Shape
-              option={shape ?? sectorOptions}
+              option={sectorOptions ?? shape}
               index={i}
               isActive={isActive}
-              renderDefaultShape={renderSectorShape}
+              renderDefaultShape={defaultPieSectorShape}
               {...sectorProps}
             />
           </Layer>
@@ -987,6 +985,7 @@ export const defaultPieProps = {
   outerRadius: '80%',
   paddingAngle: 0,
   rootTabIndex: 0,
+  shape: defaultPieSectorShape,
   startAngle: 0,
   stroke: '#fff',
   zIndex: DefaultZIndexes.area,

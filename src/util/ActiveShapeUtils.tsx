@@ -16,9 +16,9 @@ import { Layer } from '../container/Layer';
  * The concrete default shape is supplied by the caller so this helper does not
  * import unrelated shapes and accidentally couple bundles together.
  */
-type ShapeRenderer<PropsType> = (props: PropsType) => React.JSX.Element;
+type ShapeRenderer<PropsType extends object> = React.ComponentType<PropsType>;
 
-export type ShapeProps<OptionType, PropsType> = {
+export type ShapeProps<OptionType, PropsType extends object> = {
   option: OptionType;
   renderDefaultShape: ShapeRenderer<PropsType>;
   isActive?: boolean;
@@ -27,7 +27,10 @@ export type ShapeProps<OptionType, PropsType> = {
   inActiveClassName?: string;
 } & PropsType;
 
-function defaultPropTransformer<OptionType, PropsType>(option: OptionType, props: PropsType): PropsType & OptionType {
+function defaultPropTransformer<OptionType extends object, PropsType extends object>(
+  option: OptionType,
+  props: PropsType,
+): PropsType & OptionType {
   return {
     ...props,
     ...option,
@@ -36,8 +39,12 @@ function defaultPropTransformer<OptionType, PropsType>(option: OptionType, props
 
 function isShapeFunction<PropsType>(
   option: unknown,
-): option is (props: PropsType, index?: string | number) => React.JSX.Element | null | undefined {
+): option is (props: PropsType, index?: string | number) => React.ReactNode {
   return typeof option === 'function';
+}
+
+function isShapeOptionsObject(option: unknown): option is object {
+  return isPlainObject(option) && typeof option !== 'boolean';
 }
 
 export function getPropsFromShapeOption<T extends object>(option: ReactElement<T> | T): T {
@@ -48,7 +55,7 @@ export function getPropsFromShapeOption<T extends object>(option: ReactElement<T
   return option;
 }
 
-export function Shape<OptionPropsType, PropsType extends OptionPropsType, OptionType>({
+export function Shape<OptionPropsType extends object, PropsType extends OptionPropsType, OptionType>({
   option,
   renderDefaultShape,
   activeClassName = 'recharts-active-shape',
@@ -59,16 +66,19 @@ export function Shape<OptionPropsType, PropsType extends OptionPropsType, Option
   // TypeScript does not preserve the original generic object type through object rest destructuring.
   // @ts-expect-error object rest widens generic props beyond PropsType
   const shapeProps: PropsType = props;
+  const DefaultShape = renderDefaultShape;
   let shape: React.ReactNode;
   if (isValidElement(option)) {
-    // @ts-expect-error cloned elements can accept a narrower prop type than our runtime shape props
     shape = cloneElement(option, { ...shapeProps, ...getPropsFromShapeOption(option) });
+  } else if (option === renderDefaultShape) {
+    const OptionShape = renderDefaultShape;
+    shape = <OptionShape {...shapeProps} />;
   } else if (isShapeFunction<OptionPropsType>(option)) {
     shape = option(shapeProps, index);
-  } else if (isPlainObject(option) && typeof option !== 'boolean') {
-    shape = renderDefaultShape(defaultPropTransformer(option, shapeProps));
+  } else if (isShapeOptionsObject(option)) {
+    shape = <DefaultShape {...defaultPropTransformer(option, shapeProps)} />;
   } else {
-    shape = renderDefaultShape(shapeProps);
+    shape = <DefaultShape {...shapeProps} />;
   }
 
   if (isActive) {

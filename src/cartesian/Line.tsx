@@ -70,9 +70,7 @@ import { propsAreEqual } from '../util/propsAreEqual';
 import { GraphicalItemId } from '../state/graphicalItemsSlice';
 import { ChartData } from '../state/chartDataSlice';
 
-function renderCurve(props: CurveProps) {
-  return <Curve {...props} />;
-}
+const defaultLineShape = Curve;
 
 export interface LinePointItem {
   readonly value: number;
@@ -108,7 +106,7 @@ interface InternalLineProps extends ZIndexable {
   layout: 'horizontal' | 'vertical';
   left: number;
   legendType: LegendType;
-  shape?: ActiveShape<CurveProps, SVGPathElement>;
+  shape: ActiveShape<CurveProps, SVGPathElement>;
 
   name?: string | number;
   needClip?: boolean;
@@ -558,7 +556,7 @@ function StaticCurve({
   return (
     <>
       {points?.length > 1 && (
-        <Shape option={shape} renderDefaultShape={renderCurve} {...curveProps} pathRef={pathRef} />
+        <Shape option={shape} renderDefaultShape={defaultLineShape} {...curveProps} pathRef={pathRef} />
       )}
       <LineDotsWrapper points={points} clipPathId={clipPathId} props={props} />
     </>
@@ -876,6 +874,7 @@ export const defaultLineProps = {
   isAnimationActive: 'auto',
   label: false,
   legendType: 'line',
+  shape: defaultLineShape,
   stroke: '#3182bd',
   strokeWidth: 1,
   xAxisId: 0,
