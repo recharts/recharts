@@ -121,7 +121,6 @@ export interface BarRectangleItem extends RectangleProps {
 export type BarShapeProps = BarRectangleItem & {
   isActive: boolean;
   index: number;
-  option?: ActiveShape<BarShapeProps, SVGPathElement> | undefined;
 };
 
 interface BarProps<DataPointType, ValueAxisType> extends DataConsumer<DataPointType, ValueAxisType>, ZIndexable {

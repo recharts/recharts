@@ -10,6 +10,14 @@ export type FunnelTrapezoidProps = {
   isActive: boolean;
 } & FunnelTrapezoidItem;
 
-export function FunnelTrapezoid(props: FunnelTrapezoidProps) {
-  return <Shape renderDefaultShape={defaultFunnelShape} {...props} />;
+type FunnelTrapezoidShapeProps = Omit<FunnelTrapezoidProps, 'option'>;
+
+export function FunnelTrapezoid({ option, ...shapeProps }: FunnelTrapezoidProps) {
+  return (
+    <Shape<FunnelTrapezoidShapeProps, SVGPathElement>
+      option={option}
+      DefaultShape={defaultFunnelShape}
+      shapeProps={shapeProps}
+    />
+  );
 }

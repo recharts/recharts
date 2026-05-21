@@ -537,6 +537,7 @@ function ScatterSymbols(props: ScatterSymbolsProps) {
         const symbolProps: ScatterShapeProps = {
           ...baseProps,
           ...entry,
+          isActive,
           index: i,
           [DATA_ITEM_GRAPHICAL_ITEM_ID_ATTRIBUTE_NAME]: String(id),
         };
@@ -558,7 +559,7 @@ function ScatterSymbols(props: ScatterSymbolsProps) {
               onMouseLeave={onMouseLeaveFromContext(entry, i)}
               onClick={onClickFromContext(entry, i)}
             >
-              <ScatterSymbol option={option} isActive={isActive} {...symbolProps} />
+              <ScatterSymbol option={option} {...symbolProps} />
             </Layer>
           </ZIndexLayer>
         );

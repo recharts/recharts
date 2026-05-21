@@ -551,12 +551,13 @@ function StaticCurve({
     layout,
     connectNulls,
     strokeDasharray: strokeDasharray ?? props.strokeDasharray,
+    pathRef,
   };
 
   return (
     <>
       {points?.length > 1 && (
-        <Shape option={shape} renderDefaultShape={defaultLineShape} {...curveProps} pathRef={pathRef} />
+        <Shape<CurveProps, SVGPathElement> option={shape} DefaultShape={defaultLineShape} shapeProps={curveProps} />
       )}
       <LineDotsWrapper points={points} clipPathId={clipPathId} props={props} />
     </>
