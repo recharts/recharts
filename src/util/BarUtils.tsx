@@ -1,13 +1,15 @@
 import * as React from 'react';
 import invariant from 'tiny-invariant';
 import { ActiveShape, DataKey } from './types';
-import { Props as RectangleProps } from '../shape/Rectangle';
+import { Rectangle, Props as RectangleProps } from '../shape/Rectangle';
 import { BarShapeProps } from '../cartesian/Bar';
 import { Shape } from './ActiveShapeUtils';
 import { isNullish, isNumber } from './DataUtils';
 
+export const defaultBarShape = Rectangle;
+
 export type BarRectangleProps = {
-  option: ActiveShape<BarShapeProps, SVGPathElement> | undefined;
+  option: ActiveShape<BarShapeProps, SVGPathElement>;
   isActive: boolean;
   onMouseEnter?: (e: React.MouseEvent<SVGPathElement, MouseEvent>) => void;
   onMouseLeave?: (e: React.MouseEvent<SVGPathElement, MouseEvent>) => void;
@@ -21,7 +23,7 @@ export type BarRectangleProps = {
 export function BarRectangle(props: BarRectangleProps) {
   return (
     <Shape
-      shapeType="rectangle"
+      renderDefaultShape={defaultBarShape}
       activeClassName="recharts-active-bar"
       inActiveClassName="recharts-inactive-bar"
       {...props}

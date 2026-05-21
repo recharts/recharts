@@ -12,7 +12,7 @@ import {
 } from 'react';
 
 import { clsx } from 'clsx';
-import { CurveType, Props as CurveProps } from '../shape/Curve';
+import { Curve, CurveType, Props as CurveProps } from '../shape/Curve';
 import { Layer } from '../container/Layer';
 import {
   CartesianLabelListContextProvider,
@@ -70,6 +70,8 @@ import { propsAreEqual } from '../util/propsAreEqual';
 import { GraphicalItemId } from '../state/graphicalItemsSlice';
 import { ChartData } from '../state/chartDataSlice';
 
+const defaultLineShape = Curve;
+
 export interface LinePointItem {
   readonly value: number;
   readonly payload?: any;
@@ -104,7 +106,7 @@ interface InternalLineProps extends ZIndexable {
   layout: 'horizontal' | 'vertical';
   left: number;
   legendType: LegendType;
-  shape?: ActiveShape<CurveProps, SVGPathElement>;
+  shape: ActiveShape<CurveProps, SVGPathElement>;
 
   name?: string | number;
   needClip?: boolean;
@@ -553,7 +555,9 @@ function StaticCurve({
 
   return (
     <>
-      {points?.length > 1 && <Shape shapeType="curve" option={shape} {...curveProps} pathRef={pathRef} />}
+      {points?.length > 1 && (
+        <Shape option={shape} renderDefaultShape={defaultLineShape} {...curveProps} pathRef={pathRef} />
+      )}
       <LineDotsWrapper points={points} clipPathId={clipPathId} props={props} />
     </>
   );
@@ -870,6 +874,7 @@ export const defaultLineProps = {
   isAnimationActive: 'auto',
   label: false,
   legendType: 'line',
+  shape: defaultLineShape,
   stroke: '#3182bd',
   strokeWidth: 1,
   xAxisId: 0,

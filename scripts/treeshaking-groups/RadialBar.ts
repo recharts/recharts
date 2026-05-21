@@ -1,6 +1,5 @@
 export const expectedInBundle = [
   'Cell',
-  'Curve',
   'DefaultZIndexes',
   'getNiceTickValues',
   'Global',
@@ -9,11 +8,8 @@ export const expectedInBundle = [
   'LabelList',
   'Layer',
   'RadialBar',
-  'Rectangle',
   'Sector',
-  'Symbols',
   'Text',
-  'Trapezoid',
   'ZIndexLayer',
   'useChartLayout',
 ] as const;

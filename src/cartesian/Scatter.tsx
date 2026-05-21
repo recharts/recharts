@@ -119,7 +119,7 @@ export interface ScatterPointItem {
   tooltipPosition: Coordinate;
 }
 
-export type ScatterCustomizedShape = ActiveShape<ScatterShapeProps, SVGPathElement & InnerSymbolsProp> | SymbolType;
+export type ScatterCustomizedShape = ActiveShape<ScatterShapeProps & InnerSymbolsProp, SVGPathElement> | SymbolType;
 
 /**
  * Internal props, combination of external props + defaultProps + private Recharts state
