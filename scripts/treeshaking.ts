@@ -8,9 +8,15 @@ import { minify } from 'terser';
 import { nodeResolve } from '@rollup/plugin-node-resolve';
 import { babel } from '@rollup/plugin-babel';
 
-const packageRoot = path.resolve(__dirname, '..');
+const currentFile = fileURLToPath(import.meta.url);
+const packageRoot = path.resolve(path.dirname(currentFile), '..');
 const srcEntry = path.join(packageRoot, 'src', 'index.ts');
 const es6Directory = path.join(packageRoot, 'es6');
+
+function isExecutedAsScript(): boolean {
+  const scriptPath = process.argv[1];
+  return scriptPath != null && currentFile === path.resolve(scriptPath);
+}
 
 function getExternals(): Array<string | RegExp> {
   const packageJson = JSON.parse(fs.readFileSync(path.join(packageRoot, 'package.json'), 'utf-8'));
@@ -428,7 +434,7 @@ export const ALL_TRACKED_COMPONENT_NAMES: string[] = [
 ];
 
 // when called as the first argument of node, we read the array of component names or file paths from the command line
-if (require.main === module) {
+if (isExecutedAsScript()) {
   const args = process.argv.slice(2);
   // If the first argument is a file path, pass it directly. Otherwise, pass the array of components.
   const input = args.length === 1 && /\.(tsx?|jsx?)$/.test(args[0]) ? args[0] : args;
