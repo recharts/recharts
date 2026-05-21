@@ -8,25 +8,24 @@ import { isNullish, isNumber } from './DataUtils';
 
 export const defaultBarShape = Rectangle;
 
-export type BarRectangleProps = {
+export type BarRectangleProps = BarShapeProps & {
   option: ActiveShape<BarShapeProps, SVGPathElement>;
-  isActive: boolean;
   onMouseEnter?: (e: React.MouseEvent<SVGPathElement, MouseEvent>) => void;
   onMouseLeave?: (e: React.MouseEvent<SVGPathElement, MouseEvent>) => void;
   onClick?: (e: React.MouseEvent<SVGPathElement, MouseEvent>) => void;
-  width?: number;
-  height?: number;
-  index: number;
   dataKey: DataKey<any> | undefined;
 } & Omit<RectangleProps, 'onAnimationStart' | 'onAnimationEnd'>;
 
-export function BarRectangle(props: BarRectangleProps) {
+type BarRectangleShapeProps = Omit<BarRectangleProps, 'option'>;
+
+export function BarRectangle({ option, ...shapeProps }: BarRectangleProps) {
   return (
-    <Shape
-      renderDefaultShape={defaultBarShape}
+    <Shape<BarRectangleShapeProps, SVGPathElement>
+      option={option}
+      DefaultShape={defaultBarShape}
+      shapeProps={shapeProps}
       activeClassName="recharts-active-bar"
       inActiveClassName="recharts-inactive-bar"
-      {...props}
     />
   );
 }

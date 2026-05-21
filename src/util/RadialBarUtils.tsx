@@ -15,10 +15,19 @@ export function parseCornerRadius(cornerRadius: string | number | undefined): nu
 
 export interface RadialBarSectorProps extends RadialBarDataItem {
   index: number;
-  option: Exclude<RadialBarProps['shape'], undefined> | RadialBarProps['activeShape'];
   isActive: boolean;
 }
 
-export function RadialBarSector(props: RadialBarSectorProps) {
-  return <Shape renderDefaultShape={defaultRadialBarShape} {...props} />;
+type RadialBarSectorComponentProps = RadialBarSectorProps & {
+  option: Exclude<RadialBarProps['shape'], undefined> | RadialBarProps['activeShape'];
+};
+
+export function RadialBarSector({ option, ...shapeProps }: RadialBarSectorComponentProps) {
+  return (
+    <Shape<RadialBarSectorProps, SVGPathElement>
+      option={option}
+      DefaultShape={defaultRadialBarShape}
+      shapeProps={shapeProps}
+    />
+  );
 }

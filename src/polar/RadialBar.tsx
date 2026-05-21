@@ -150,7 +150,7 @@ function RadialBarSectors({ sectors, allOtherRadialBarProps, showLabels }: Radia
         const onMouseLeave = onMouseLeaveFromContext(entry, i);
         const onClick = onClickFromContext(entry, i);
 
-        const radialBarSectorProps: RadialBarSectorProps = {
+        const radialBarSectorProps: React.ComponentProps<typeof RadialBarSector> = {
           ...baseProps,
           cornerRadius: parseCornerRadius(cornerRadius),
           ...entry,
@@ -484,7 +484,7 @@ class RadialBarWithState extends PureComponent<InternalProps> {
             return null;
           }
 
-          const props: RadialBarSectorProps = {
+          const props: React.ComponentProps<typeof RadialBarSector> = {
             cornerRadius: parseCornerRadius(cornerRadius),
             ...rest,
             // @ts-expect-error backgroundProps is contributing unknown props

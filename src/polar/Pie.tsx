@@ -18,12 +18,12 @@ import {
   ActiveShape,
   adaptEventsOfChild,
   AnimationDuration,
-  EasingInput,
   ChartOffsetInternal,
   Coordinate,
   DataConsumer,
   DataKey,
   DataProvider,
+  EasingInput,
   GeometrySector,
   LegendType,
   PresentationAttributesAdaptChildEvent,
@@ -185,7 +185,12 @@ export type PieSectorDataItem = PiePresentationProps &
     cornerRadius: number | undefined;
   };
 
-export type PieSectorShapeProps = PieSectorDataItem & { isActive: boolean; index: number };
+export type PieSectorShapeProps = PieSectorDataItem & {
+  [DATA_ITEM_INDEX_ATTRIBUTE_NAME]: number;
+  [DATA_ITEM_GRAPHICAL_ITEM_ID_ATTRIBUTE_NAME]: GraphicalItemId;
+  isActive: boolean;
+  index: number;
+} & SVGProps<SVGPathElement>;
 export type PieShape = ActiveShape<PieSectorShapeProps, SVGPathElement>;
 
 interface PieEvents {
@@ -679,10 +684,12 @@ function PieSectors(props: PieSectorsProps) {
           graphicalItemMatches;
         const inactiveShape = activeIndex ? inactiveShapeProp : null;
         const sectorOptions = activeShape && isActive ? activeShape : inactiveShape;
-        const sectorProps = {
+        const sectorProps: PieSectorShapeProps = {
           ...entry,
           stroke: entry.stroke,
           tabIndex: -1,
+          index: i,
+          isActive,
           [DATA_ITEM_INDEX_ATTRIBUTE_NAME]: i,
           [DATA_ITEM_GRAPHICAL_ITEM_ID_ATTRIBUTE_NAME]: id,
         };
@@ -697,12 +704,10 @@ function PieSectors(props: PieSectorsProps) {
             onMouseLeave={onMouseLeaveFromContext(entry, i)}
             onClick={onClickFromContext(entry, i)}
           >
-            <Shape
+            <Shape<PieSectorShapeProps, SVGPathElement>
               option={sectorOptions ?? shape}
-              index={i}
-              isActive={isActive}
-              renderDefaultShape={defaultPieSectorShape}
-              {...sectorProps}
+              DefaultShape={defaultPieSectorShape}
+              shapeProps={sectorProps}
             />
           </Layer>
         );

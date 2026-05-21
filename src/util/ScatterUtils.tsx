@@ -7,32 +7,34 @@ import { DATA_ITEM_GRAPHICAL_ITEM_ID_ATTRIBUTE_NAME } from './Constants';
 import { GraphicalItemId } from '../state/graphicalItemsSlice';
 
 export type ScatterShapeProps = ScatterPointItem & {
+  isActive: boolean;
   index: number;
   [DATA_ITEM_GRAPHICAL_ITEM_ID_ATTRIBUTE_NAME]: GraphicalItemId;
 };
 
-function renderSymbols(props: ScatterShapeProps) {
+type ScatterSymbolShapeProps = ScatterShapeProps & InnerSymbolsProp;
+
+function renderSymbols(props: ScatterSymbolShapeProps) {
   return <Symbols {...props} />;
 }
 
 export function ScatterSymbol({
   option,
-  isActive,
   ...props
 }: {
   option: ActiveShape<ScatterShapeProps & InnerSymbolsProp, SVGPathElement> | SymbolType;
-  isActive: boolean;
 } & ScatterShapeProps) {
   if (typeof option === 'string') {
     return (
-      <Shape
+      <Shape<ScatterSymbolShapeProps, SVGPathElement>
         option={<Symbols type={option} {...props} />}
-        isActive={isActive}
-        renderDefaultShape={renderSymbols}
-        {...props}
+        DefaultShape={renderSymbols}
+        shapeProps={props}
       />
     );
   }
 
-  return <Shape option={option} isActive={isActive} renderDefaultShape={renderSymbols} {...props} />;
+  return (
+    <Shape<ScatterSymbolShapeProps, SVGPathElement> option={option} DefaultShape={renderSymbols} shapeProps={props} />
+  );
 }
