@@ -28,7 +28,7 @@ const crossfade: AnimationInterpolateFn<ScatterPointItem> = (items, t) => {
       result.push({ ...item.prev, opacity: 1 - t });
     }
   }
-  return result as ScatterPointItem[];
+  return result;
 };
 
 /**
@@ -52,7 +52,7 @@ const staggeredCrossfade: AnimationInterpolateFn<ScatterPointItem> = (items, t) 
       result.push({ ...item.prev, opacity: 1 - progress });
     }
   });
-  return result as ScatterPointItem[];
+  return result;
 };
 
 /**
@@ -72,7 +72,7 @@ const popCrossfade: AnimationInterpolateFn<ScatterPointItem> = (items, t) => {
       result.push({ ...prev, opacity: 1 - t, size: prev.size * (1 - t) * (1 - t) });
     }
   }
-  return result as ScatterPointItem[];
+  return result;
 };
 
 const animationOptions = {
