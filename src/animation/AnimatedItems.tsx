@@ -4,6 +4,7 @@ import { JavascriptAnimate } from './JavascriptAnimate';
 import { EasingInput } from './easing';
 import { useAnimationId } from '../util/useAnimationId';
 import { AnimationItem, AnimationMatchByProp, matchAnimationItems, matchByIndex } from './matchBy';
+import { useAnimationStartSnapshot } from './useAnimationStartSnapshot';
 
 /**
  * Hook that tracks whether an animation is in progress and wraps
@@ -140,15 +141,8 @@ export function AnimatedItems<T>(props: AnimatedItemsProps<T>) {
   } = props;
 
   const animationId = useAnimationId(animationInput, animationIdPrefix);
-  const animationStartItemsRef = React.useRef<ReadonlyArray<T> | null>(previousItemsRef.current ?? null);
-  const previousAnimationIdRef = React.useRef(animationId);
-
-  if (previousAnimationIdRef.current !== animationId) {
-    previousAnimationIdRef.current = animationId;
-    animationStartItemsRef.current = previousItemsRef.current ?? null;
-  }
-
-  const rawPrevItems = animationStartItemsRef.current;
+  const animationStartItems = useAnimationStartSnapshot(animationId, previousItemsRef);
+  const rawPrevItems = animationStartItems.startValue ?? null;
   const animationItems: ReadonlyArray<AnimationItem<T>> | null = matchAnimationItems(
     rawPrevItems,
     items,
@@ -170,15 +164,10 @@ export function AnimatedItems<T>(props: AnimatedItemsProps<T>) {
         const isEntrance = rawPrevItems == null;
         // TODO performance; how does the matching work with 10k items? Can we skip interpolation and just jump to final state after some threshold?
         const stepData = items == null ? items : animationInterpolateFn(animationItems, t);
-        const canUpdate = shouldUpdatePreviousRef ? shouldUpdatePreviousRef(t) : t > 0;
-        if (canUpdate) {
-          previousItemsRef.current = stepData;
-        }
+        const canUpdate = shouldUpdatePreviousRef ? shouldUpdatePreviousRef(t) : true;
+        animationStartItems.syncStepValue(stepData, t, canUpdate);
         if (stepData == null) {
           return null;
-        }
-        if (t === 1) {
-          animationStartItemsRef.current = stepData;
         }
         return children(stepData, t, isEntrance);
       }}

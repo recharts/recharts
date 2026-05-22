@@ -13,6 +13,7 @@
   "lib/animation/matchBy.js",
   "lib/animation/timeoutController.js",
   "lib/animation/useAnimationManager.js",
+  "lib/animation/useAnimationStartSnapshot.js",
   "lib/animation/util.js",
   "lib/cartesian",
   "lib/cartesian/Area.js",
