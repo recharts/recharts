@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { MutableRefObject, PureComponent, ReactElement, ReactNode, useMemo, useRef } from 'react';
+import { MutableRefObject, PureComponent, ReactElement, ReactNode, useCallback, useMemo, useRef } from 'react';
 import { clsx } from 'clsx';
 import { BaseLineType, CurveType, Props as CurveProps } from '../shape/Curve';
 import { Layer } from '../container/Layer';
@@ -631,6 +631,14 @@ function AreaWithAnimation({
 }) {
   const { points, baseLine, isAnimationActive, animationBegin, animationDuration, animationEasing } = props;
   const animationInput = useMemo(() => ({ points, baseLine }), [points, baseLine]);
+  const previousAnimationInputRef = useRef(animationInput);
+  const animationStartBaselineRef = useRef(previousBaselineRef.current);
+  const isReadyToUpdatePreviousRefsRef = useRef(true);
+  if (previousAnimationInputRef.current !== animationInput) {
+    previousAnimationInputRef.current = animationInput;
+    animationStartBaselineRef.current = previousBaselineRef.current;
+    isReadyToUpdatePreviousRefsRef.current = false;
+  }
   const layout = useCartesianChartLayout();
 
   const { isAnimating, handleAnimationStart, handleAnimationEnd } = useAnimationCallbacks(
@@ -638,14 +646,21 @@ function AreaWithAnimation({
     props.onAnimationEnd,
   );
 
-  if (layout == null) {
-    return null;
-  }
-
-  const prevBaseLine = previousBaselineRef.current;
+  const prevBaseLine = animationStartBaselineRef.current;
   // TODO the defaults resolution should be done in defaultProps, not here
   const matchStrategy = props.animationMatchBy ?? matchByIndex;
   const animationInterpolateFn = props.animationInterpolateFn ?? defaultAreaAnimateItems();
+  const shouldUpdatePreviousRef = useCallback((t: number) => {
+    if (t === 0) {
+      isReadyToUpdatePreviousRefsRef.current = true;
+      return false;
+    }
+    return isReadyToUpdatePreviousRefsRef.current && t > 0;
+  }, []);
+
+  if (layout == null) {
+    return null;
+  }
 
   let baseLineAnimationItems: ReadonlyArray<AnimationItem<NullableCoordinate>> | null;
   if (Array.isArray(baseLine) && Array.isArray(prevBaseLine)) {
@@ -670,8 +685,12 @@ function AreaWithAnimation({
       onAnimationEnd={handleAnimationEnd}
       animationInterpolateFn={animationInterpolateFn}
       animationMatchBy={matchStrategy}
+      shouldUpdatePreviousRef={shouldUpdatePreviousRef}
     >
       {(stepPoints, t, isEntrance) => {
+        if (t === 0) {
+          isReadyToUpdatePreviousRefsRef.current = true;
+        }
         let stepBaseLine: number | ReadonlyArray<NullableCoordinate> | undefined;
         if (t === 1) {
           stepBaseLine = baseLine;
@@ -680,7 +699,7 @@ function AreaWithAnimation({
         } else {
           stepBaseLine = isEntrance ? baseLine : interpolateScalarBaseLine(baseLine, prevBaseLine, t);
         }
-        if (t > 0) {
+        if (t > 0 && isReadyToUpdatePreviousRefsRef.current) {
           // eslint-disable-next-line no-param-reassign
           previousBaselineRef.current = stepBaseLine;
         }

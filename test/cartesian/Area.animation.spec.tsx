@@ -781,7 +781,7 @@ describe('Area animation', () => {
       return button;
     }
 
-    it.fails('should preserve the in-flight range paths when an update is interrupted', async () => {
+    it('should preserve the in-flight range paths when an update is interrupted', async () => {
       const { container, animationManager } = renderTestCase();
       const button = await prime(container, animationManager);
 
@@ -794,7 +794,7 @@ describe('Area animation', () => {
       expect(getAreaCurveDs(container)).toEqual(frameBeforeInterruption);
     });
 
-    it.fails('should continue the interrupted range swap from the current geometry on the next tick', async () => {
+    it('should continue the interrupted range swap from the current geometry on the next tick', async () => {
       const { container, animationManager } = renderTestCase();
 
       await animationManager.completeAnimation();

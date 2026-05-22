@@ -140,8 +140,15 @@ export function AnimatedItems<T>(props: AnimatedItemsProps<T>) {
   } = props;
 
   const animationId = useAnimationId(animationInput, animationIdPrefix);
+  const animationStartItemsRef = React.useRef<ReadonlyArray<T> | null>(previousItemsRef.current ?? null);
+  const previousAnimationIdRef = React.useRef(animationId);
 
-  const rawPrevItems = previousItemsRef.current ?? null;
+  if (previousAnimationIdRef.current !== animationId) {
+    previousAnimationIdRef.current = animationId;
+    animationStartItemsRef.current = previousItemsRef.current ?? null;
+  }
+
+  const rawPrevItems = animationStartItemsRef.current;
   const animationItems: ReadonlyArray<AnimationItem<T>> | null = matchAnimationItems(
     rawPrevItems,
     items,
@@ -169,6 +176,9 @@ export function AnimatedItems<T>(props: AnimatedItemsProps<T>) {
         }
         if (stepData == null) {
           return null;
+        }
+        if (t === 1) {
+          animationStartItemsRef.current = stepData;
         }
         return children(stepData, t, isEntrance);
       }}
