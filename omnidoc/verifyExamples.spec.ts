@@ -146,7 +146,6 @@ describe('Documentation Examples Coverage', () => {
     'EasingInput',
     'InverseScaleFunction',
     'LayoutType',
-    'PolarLayout',
     'useXAxisInverseDataSnapScale',
     'useXAxisInverseTickSnapScale',
     'useYAxisInverseDataSnapScale',

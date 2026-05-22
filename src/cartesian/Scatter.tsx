@@ -33,6 +33,7 @@ import {
   SymbolType,
   TickItem,
   TrapezoidViewBox,
+  CartesianLayout,
 } from '../util/types';
 import { TooltipType } from '../component/DefaultTooltipContent';
 import { ScatterShapeProps, ScatterSymbol } from '../util/ScatterUtils';
@@ -60,7 +61,7 @@ import { RegisterGraphicalItemId } from '../context/RegisterGraphicalItemId';
 import { ScatterSettings } from '../state/types/ScatterSettings';
 import { SetCartesianGraphicalItem } from '../state/SetGraphicalItem';
 import { svgPropertiesNoEvents, svgPropertiesNoEventsFromUnknown } from '../util/svgPropertiesNoEvents';
-import { useViewBox } from '../context/chartLayoutContext';
+import { useCartesianChartLayout, useViewBox } from '../context/chartLayoutContext';
 import { AnimatedItems, AnimationInterpolateFn, useAnimationCallbacks } from '../animation/AnimatedItems';
 import { AnimationMatchByProp, matchAppend } from '../animation/matchBy';
 import { WithIdRequired, WithoutId } from '../util/useUniqueId';
@@ -151,7 +152,7 @@ interface ScatterInternalProps extends ZIndexable {
   animationBegin: number;
   animationDuration: AnimationDuration;
   animationEasing: EasingInput;
-  animationInterpolateFn?: AnimationInterpolateFn<ScatterPointItem>;
+  animationInterpolateFn: AnimationInterpolateFn<ScatterPointItem, CartesianLayout>;
   animationMatchBy: AnimationMatchByProp<ScatterPointItem>;
 
   needClip: boolean;
@@ -326,8 +327,11 @@ interface ScatterProps<DataPointType = any, DataValueType = any>
    * @param nextItems The target items to animate towards
    * @param t A normalized time value (0 = start, 1 = end)
    * @returns The interpolated items at time t
+   *
+   * @since 3.9
+   * @see {@link https://recharts.github.io/en-US/guide/animations/ Animations guide
    */
-  animationInterpolateFn?: AnimationInterpolateFn<ScatterPointItem>;
+  animationInterpolateFn?: AnimationInterpolateFn<ScatterPointItem, CartesianLayout>;
   /**
    * Strategy for matching previous items to next items during animation.
    * Determines how Recharts pairs old data points with new data points
@@ -342,6 +346,9 @@ interface ScatterProps<DataPointType = any, DataValueType = any>
    * @see matchByIndex
    * @see matchByDataKey
    * @see matchAppend
+   *
+   * @since 3.9
+   * @see {@link https://recharts.github.io/en-US/guide/animations/ Animations guide
    */
   animationMatchBy?: AnimationMatchByProp<ScatterPointItem>;
   /**
@@ -601,7 +608,7 @@ function ScatterSymbols(props: ScatterSymbolsProps) {
   );
 }
 
-const defaultScatterAnimateItems: AnimationInterpolateFn<ScatterPointItem> = (items, t) => {
+const defaultScatterAnimateItems: AnimationInterpolateFn<ScatterPointItem, CartesianLayout> = (items, t) => {
   if (items == null) return [];
   if (t === 1) {
     return items.flatMap(item => (item.status === 'removed' ? [] : [item.next]));
@@ -630,10 +637,13 @@ function SymbolsWithAnimation({
   previousPointsRef: MutableRefObject<ReadonlyArray<ScatterPointItem> | null>;
   props: InternalProps;
 }) {
-  const { points, isAnimationActive, animationBegin, animationDuration, animationEasing } = props;
-  const animationInterpolateFn = props.animationInterpolateFn ?? defaultScatterAnimateItems;
+  const { points, isAnimationActive, animationBegin, animationDuration, animationEasing, animationInterpolateFn } =
+    props;
 
   const { isAnimating, handleAnimationStart, handleAnimationEnd } = useAnimationCallbacks();
+  const layout = useCartesianChartLayout();
+
+  if (layout == null) return null;
 
   return (
     <ScatterLabelListProvider showLabels={!isAnimating} points={points}>
@@ -650,6 +660,7 @@ function SymbolsWithAnimation({
         onAnimationEnd={handleAnimationEnd}
         animationInterpolateFn={animationInterpolateFn}
         animationMatchBy={props.animationMatchBy}
+        layout={layout}
       >
         {(stepData, t, isEntrance) => (
           <Layer>
@@ -840,6 +851,7 @@ export const defaultScatterProps = {
   animationDuration: 400,
   animationEasing: 'linear',
   animationMatchBy: matchAppend,
+  animationInterpolateFn: defaultScatterAnimateItems,
   zIndex: DefaultZIndexes.scatter,
 } as const satisfies Partial<Props>;
 

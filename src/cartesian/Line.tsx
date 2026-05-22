@@ -82,7 +82,7 @@ interface InternalLineProps extends ZIndexable {
   animationBegin: number;
   animationDuration: AnimationDuration;
   animationEasing: EasingInput;
-  animationInterpolateFn?: AnimationInterpolateFn<LinePointItem>;
+  animationInterpolateFn: AnimationInterpolateFn<LinePointItem, CartesianLayout>;
   animationMatchBy: AnimationMatchByProp<LinePointItem>;
 
   className?: string;
@@ -165,8 +165,11 @@ interface LineProps<DataPointType = any, DataValueType = any>
    * @param nextItems The target items to animate towards
    * @param t A normalized time value (0 = start, 1 = end)
    * @returns The interpolated items at time t
+   *
+   * @since 3.9
+   * @see {@link https://recharts.github.io/en-US/guide/animations/ Animations guide
    */
-  animationInterpolateFn?: AnimationInterpolateFn<LinePointItem>;
+  animationInterpolateFn?: AnimationInterpolateFn<LinePointItem, CartesianLayout>;
   /**
    * Strategy for matching previous items to next items during animation.
    * Determines how Recharts pairs old data points with new data points
@@ -181,6 +184,9 @@ interface LineProps<DataPointType = any, DataValueType = any>
    * @see matchByIndex
    * @see matchByDataKey
    * @see matchAppend
+   *
+   * @since 3.9
+   * @see {@link https://recharts.github.io/en-US/guide/animations/ Animations guide
    */
   animationMatchBy?: AnimationMatchByProp<LinePointItem>;
   className?: string;
@@ -339,12 +345,76 @@ interface LineProps<DataPointType = any, DataValueType = any>
   strokeDasharray?: string | number;
 }
 
+function getTotalLength(mainCurve: SVGPathElement | null): number {
+  try {
+    return (mainCurve && mainCurve.getTotalLength && mainCurve.getTotalLength()) || 0;
+  } catch {
+    return 0;
+  }
+}
+
+/**
+ * Compute the average x-shift between matched pairs (prev → next).
+ * This tells us the overall direction and magnitude of the data movement.
+ */
+function averageShift(items: ReadonlyArray<AnimationItem<LinePointItem>>): number {
+  let total = 0;
+  let count = 0;
+  for (const item of items) {
+    if (item.status === 'matched' && item.prev.x != null && item.next.x != null) {
+      total += item.next.x - item.prev.x;
+      count++;
+    }
+  }
+  return count > 0 ? total / count : 0;
+}
+
+const defaultLineAnimateItems: AnimationInterpolateFn<LinePointItem, CartesianLayout> = (items, t) => {
+  if (items == null) {
+    // First render: return empty, stroke-dasharray handles the reveal
+    return [];
+  }
+  // At t=1 return only the non-removed items
+  if (t === 1) return items.flatMap(item => (item.status === 'removed' ? [] : [item.next]));
+
+  const shift = averageShift(items);
+
+  const result: LinePointItem[] = [];
+
+  for (const item of items) {
+    if (item.status === 'matched') {
+      result.push({
+        ...item.next,
+        x: interpolate(item.prev.x, item.next.x, t),
+        y: interpolate(item.prev.y, item.next.y, t),
+      });
+    } else if (item.status === 'added') {
+      if (item.next.x != null) {
+        // Extrapolate entry position: the point starts where it "would have been"
+        const entryX = item.next.x - shift;
+        result.push({ ...item.next, x: interpolate(entryX, item.next.x, t), y: item.next.y });
+      } else {
+        result.push(item.next);
+      }
+    } else if (item.status === 'removed') {
+      if (item.prev.x != null) {
+        const exitX = item.prev.x + shift;
+        result.push({ ...item.prev, x: interpolate(item.prev.x, exitX, t), y: item.prev.y });
+      }
+      // else: removed items are simply dropped
+    }
+  }
+
+  return result;
+};
+
 export const defaultLineProps = {
   activeDot: true,
   animateNewValues: true,
   animationBegin: 0,
   animationDuration: 1500,
   animationEasing: 'ease',
+  animationInterpolateFn: defaultLineAnimateItems,
   animationMatchBy: matchByIndex,
   connectNulls: false,
   dot: true,
@@ -528,7 +598,7 @@ function StaticCurve({
     pathRef,
     t,
     isAnimating,
-    isEntrance,
+    isEntrance: props.animateNewValues ? isEntrance : false,
     visibleLength,
   };
 
@@ -544,75 +614,6 @@ function StaticCurve({
       <LineDotsWrapper points={points} clipPathId={clipPathId} props={props} />
     </>
   );
-}
-
-function getTotalLength(mainCurve: SVGPathElement | null): number {
-  try {
-    return (mainCurve && mainCurve.getTotalLength && mainCurve.getTotalLength()) || 0;
-  } catch {
-    return 0;
-  }
-}
-
-/**
- * Compute the average x-shift between matched pairs (prev → next).
- * This tells us the overall direction and magnitude of the data movement.
- */
-function averageShift(items: ReadonlyArray<AnimationItem<LinePointItem>>): number {
-  let total = 0;
-  let count = 0;
-  for (const item of items) {
-    if (item.status === 'matched' && item.prev.x != null && item.next.x != null) {
-      total += item.next.x - item.prev.x;
-      count++;
-    }
-  }
-  return count > 0 ? total / count : 0;
-}
-
-function defaultLineAnimateItems(
-  animateNewValues: boolean,
-  _width: number,
-  _height: number,
-): AnimationInterpolateFn<LinePointItem> {
-  return (items, t) => {
-    if (items == null) {
-      // First render: return empty, stroke-dasharray handles the reveal
-      return [];
-    }
-    // At t=1 return only the non-removed items
-    if (t === 1) return items.flatMap(item => (item.status === 'removed' ? [] : [item.next]));
-
-    const shift = averageShift(items);
-
-    const result: LinePointItem[] = [];
-
-    for (const item of items) {
-      if (item.status === 'matched') {
-        result.push({
-          ...item.next,
-          x: interpolate(item.prev.x, item.next.x, t),
-          y: interpolate(item.prev.y, item.next.y, t),
-        });
-      } else if (item.status === 'added') {
-        if (animateNewValues && item.next.x != null) {
-          // Extrapolate entry position: the point starts where it "would have been"
-          const entryX = item.next.x - shift;
-          result.push({ ...item.next, x: interpolate(entryX, item.next.x, t), y: item.next.y });
-        } else {
-          result.push(item.next);
-        }
-      } else if (item.status === 'removed') {
-        if (animateNewValues && item.prev.x != null) {
-          const exitX = item.prev.x + shift;
-          result.push({ ...item.prev, x: interpolate(item.prev.x, exitX, t), y: item.prev.y });
-        }
-        // else: removed items are simply dropped
-      }
-    }
-
-    return result;
-  };
 }
 
 function CurveWithAnimation({
@@ -633,12 +634,10 @@ function CurveWithAnimation({
     animationDuration,
     animationEasing,
     animationMatchBy,
-    width,
-    height,
+    animationInterpolateFn,
+    layout,
   } = props;
   const totalLength = getTotalLength(pathRef.current);
-  const animationInterpolateFn =
-    props.animationInterpolateFn ?? defaultLineAnimateItems(props.animateNewValues, width, height);
 
   const { isAnimating, handleAnimationStart, handleAnimationEnd } = useAnimationCallbacks(
     props.onAnimationStart,
@@ -667,6 +666,7 @@ function CurveWithAnimation({
         animationInterpolateFn={animationInterpolateFn}
         animationMatchBy={animationMatchBy}
         shouldUpdatePreviousRef={shouldUpdatePreviousRef}
+        layout={layout}
       >
         {(stepData, t, isEntrance) => {
           const animationActive = isAnimating || t < 1;

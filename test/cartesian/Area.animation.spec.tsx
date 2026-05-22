@@ -2,7 +2,7 @@ import React, { ReactNode, useState } from 'react';
 import { beforeEach, describe, expect, it } from 'vitest';
 import { act } from '@testing-library/react';
 import { createSelectorTestCase } from '../helper/createSelectorTestCase';
-import { Area, AreaChart, Legend, XAxis, YAxis } from '../../src';
+import { Area, AreaChart, CartesianLayout, Legend, XAxis, YAxis } from '../../src';
 import type { AnimationInterpolateFn, AreaPointItem } from '../../src';
 import { PageData } from '../_data';
 import { mockSequenceOfGetBoundingClientRect } from '../helper/mockGetBoundingClientRect';
@@ -692,7 +692,7 @@ describe('Area animation', () => {
       { name: 'Page C', range: [80, 240] },
     ];
 
-    const collapseToBottom: AnimationInterpolateFn<AreaPointItem> = (items, t) => {
+    const collapseToBottom: AnimationInterpolateFn<AreaPointItem, CartesianLayout> = (items, t) => {
       if (items == null) {
         return [];
       }

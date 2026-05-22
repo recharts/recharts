@@ -41,7 +41,7 @@ type ControlsType = {
   animationVariant: AnimationVariant;
 };
 
-const swipeLeftAnimateItems: AnimationInterpolateFn<BarRectangleItem> = (
+const swipeLeftAnimateItems: AnimationInterpolateFn<BarRectangleItem, CartesianLayout> = (
   items: ReadonlyArray<AnimationItem<BarRectangleItem>> | null,
   t: number,
 ) => {
@@ -74,7 +74,7 @@ const swipeLeftAnimateItems: AnimationInterpolateFn<BarRectangleItem> = (
   });
 };
 
-const swipeBottomAnimateItems: AnimationInterpolateFn<BarRectangleItem> = (
+const swipeBottomAnimateItems: AnimationInterpolateFn<BarRectangleItem, CartesianLayout> = (
   items: ReadonlyArray<AnimationItem<BarRectangleItem>> | null,
   t: number,
 ) => {
@@ -104,6 +104,13 @@ const swipeBottomAnimateItems: AnimationInterpolateFn<BarRectangleItem> = (
   });
 };
 
+const animationInterpolateFn: AnimationInterpolateFn<BarRectangleItem, CartesianLayout> = (items, t, layout) => {
+  if (layout === 'horizontal') {
+    return swipeLeftAnimateItems(items, t, layout);
+  }
+  return swipeBottomAnimateItems(items, t, layout);
+};
+
 export default function AnimatedBarTimeSeriesExample(props: Partial<ControlsType>) {
   const matchStrategy = props.matchStrategy ?? 'index';
   const windowStart = normalizeWindowStart(props.windowStart ?? 0);
@@ -114,11 +121,6 @@ export default function AnimatedBarTimeSeriesExample(props: Partial<ControlsType
 
   const matchProp: typeof matchByIndex | AnimationMatchBy<{ payload?: unknown }> =
     matchStrategy === 'dataKey' ? matchByDataKey('label') : matchByIndex;
-
-  let animationInterpolateFn: typeof swipeLeftAnimateItems | undefined;
-  if (animationVariant === 'custom') {
-    animationInterpolateFn = layout === 'horizontal' ? swipeLeftAnimateItems : swipeBottomAnimateItems;
-  }
 
   return (
     <BarChart
@@ -140,7 +142,7 @@ export default function AnimatedBarTimeSeriesExample(props: Partial<ControlsType
         fillOpacity={0.6}
         animationDuration={props.animationDuration}
         animationMatchBy={matchProp}
-        animationInterpolateFn={animationInterpolateFn}
+        animationInterpolateFn={animationVariant === 'custom' ? animationInterpolateFn : undefined}
       />
       <RechartsDevtools />
     </BarChart>

@@ -143,6 +143,8 @@ export type LineDrawShapeProps = CurveProps &
  * ```
  *
  * @see {@link https://recharts.github.io/en-US/guide/animations Animation guide}
+ *
+ * @since 3.9
  */
 export function LineDrawShape(props: LineDrawShapeProps): React.ReactElement | null {
   const {

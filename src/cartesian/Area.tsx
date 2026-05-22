@@ -86,7 +86,7 @@ interface InternalAreaProps extends ZIndexable {
   animationBegin: number;
   animationDuration: AnimationDuration;
   animationEasing: EasingInput;
-  animationInterpolateFn?: AnimationInterpolateFn<AreaPointItem>;
+  animationInterpolateFn: AnimationInterpolateFn<AreaPointItem, CartesianLayout>;
   animationMatchBy: AnimationMatchByProp<AreaPointItem>;
   baseLine: BaseLineType | undefined;
 
@@ -173,8 +173,11 @@ interface AreaProps<DataPointType = any, DataValueType = any>
    * @param nextItems The target items to animate towards
    * @param t A normalized time value (0 = start, 1 = end)
    * @returns The interpolated items at time t
+   *
+   * @since 3.9
+   * @see {@link https://recharts.github.io/en-US/guide/animations/ Animations guide}
    */
-  animationInterpolateFn?: AnimationInterpolateFn<AreaPointItem>;
+  animationInterpolateFn?: AnimationInterpolateFn<AreaPointItem, CartesianLayout>;
   /**
    * Strategy for matching previous items to next items during animation.
    * Determines how Recharts pairs old data points with new data points
@@ -189,6 +192,9 @@ interface AreaProps<DataPointType = any, DataValueType = any>
    * @see matchByIndex
    * @see matchByDataKey
    * @see matchAppend
+   *
+   * @since 3.9
+   * @see {@link https://recharts.github.io/en-US/guide/animations/ Animations guide
    */
   animationMatchBy?: AnimationMatchByProp<AreaPointItem>;
   /**
@@ -356,12 +362,40 @@ interface AreaProps<DataPointType = any, DataValueType = any>
   zIndex?: number;
 }
 
+const defaultAreaAnimateItems: AnimationInterpolateFn<AreaPointItem, CartesianLayout> = (items, t) => {
+  if (items == null) {
+    // First render: return items as-is, clip-path animation handles the reveal
+    return [];
+  }
+  if (t === 1) {
+    return items.flatMap(item => (item.status === 'removed' ? [] : [item.next]));
+  }
+  return items.flatMap(item => {
+    if (item.status === 'matched') {
+      return [
+        { ...item.next, x: interpolate(item.prev.x, item.next.x, t), y: interpolate(item.prev.y, item.next.y, t) },
+      ];
+    }
+    if (item.status === 'added') {
+      /*
+       * Here we just return the final position without interpolating
+       * so that we can allow the default initial animation that is done by clipPath in AreaRevealShape.
+       * If you want your own custom animations then you may want to interpolate this one as well.
+       */
+      return [item.next];
+    }
+    // removed: drop
+    return [];
+  });
+};
+
 export const defaultAreaProps = {
   activeDot: true,
   animationBegin: 0,
   animationDuration: 1500,
   animationEasing: 'ease',
   animationMatchBy: matchByIndex,
+  animationInterpolateFn: defaultAreaAnimateItems,
   connectNulls: false,
   dot: false,
   fill: '#3182bd',
@@ -573,35 +607,6 @@ function StaticArea({
   );
 }
 
-function defaultAreaAnimateItems(): AnimationInterpolateFn<AreaPointItem> {
-  return (items, t) => {
-    if (items == null) {
-      // First render: return items as-is, clip-path animation handles the reveal
-      return [];
-    }
-    if (t === 1) {
-      return items.flatMap(item => (item.status === 'removed' ? [] : [item.next]));
-    }
-    return items.flatMap(item => {
-      if (item.status === 'matched') {
-        return [
-          { ...item.next, x: interpolate(item.prev.x, item.next.x, t), y: interpolate(item.prev.y, item.next.y, t) },
-        ];
-      }
-      if (item.status === 'added') {
-        /*
-         * Here we just return the final position without interpolating
-         * so that we can allow the default initial animation that is done by clipPath in AreaRevealShape.
-         * If you want your own custom animations then you may want to interpolate this one as well.
-         */
-        return [item.next];
-      }
-      // removed: drop
-      return [];
-    });
-  };
-}
-
 function interpolateScalarBaseLine(
   baseLine: BaseLineType | undefined,
   prevBaseLine: BaseLineType | undefined,
@@ -631,8 +636,16 @@ function AreaWithAnimation({
   previousPointsRef: MutableRefObject<ReadonlyArray<AreaPointItem> | null>;
   previousBaselineRef: MutableRefObject<BaseLineType | undefined>;
 }) {
-  const { points, baseLine, isAnimationActive, animationBegin, animationDuration, animationEasing, animationMatchBy } =
-    props;
+  const {
+    points,
+    baseLine,
+    isAnimationActive,
+    animationBegin,
+    animationDuration,
+    animationEasing,
+    animationMatchBy,
+    animationInterpolateFn,
+  } = props;
   const animationInput = useMemo(() => ({ points, baseLine }), [points, baseLine]);
   const baseLineAnimationState = useAnimationStartSnapshot(animationInput, previousBaselineRef);
   const layout = useCartesianChartLayout();
@@ -643,7 +656,6 @@ function AreaWithAnimation({
   );
 
   const prevBaseLine = baseLineAnimationState.startValue;
-  const animationInterpolateFn = props.animationInterpolateFn ?? defaultAreaAnimateItems();
 
   if (layout == null) {
     return null;
@@ -672,13 +684,14 @@ function AreaWithAnimation({
       onAnimationEnd={handleAnimationEnd}
       animationInterpolateFn={animationInterpolateFn}
       animationMatchBy={animationMatchBy}
+      layout={layout}
     >
       {(stepPoints, t, isEntrance) => {
         let stepBaseLine: number | ReadonlyArray<NullableCoordinate> | undefined;
         if (t === 1) {
           stepBaseLine = baseLine;
         } else if (Array.isArray(baseLine)) {
-          stepBaseLine = animationInterpolateFn(baseLineAnimationItems, t);
+          stepBaseLine = animationInterpolateFn(baseLineAnimationItems, t, layout);
         } else {
           stepBaseLine = isEntrance ? baseLine : interpolateScalarBaseLine(baseLine, prevBaseLine, t);
         }

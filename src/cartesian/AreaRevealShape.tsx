@@ -106,6 +106,8 @@ export type AreaRevealShapeProps = CurveProps & ShapeAnimationProps & { layout?:
  * ```
  *
  * @see {@link https://recharts.github.io/en-US/guide/animations Animation guide}
+ *
+ * @since 3.9
  */
 export function AreaRevealShape(props: AreaRevealShapeProps): React.ReactElement | null {
   const {

@@ -789,6 +789,7 @@ describe('Tooltip visibility', () => {
             animationBegin: 0,
             animationDuration: 1500,
             animationEasing: 'ease',
+            animationInterpolateFn: expect.any(Function),
             animationMatchBy: 'index',
             connectNulls: false,
             dataKey: 'uv',

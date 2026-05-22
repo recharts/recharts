@@ -31,6 +31,7 @@ import {
   ShapeAnimationProps,
   TooltipType,
   TrapezoidViewBox,
+  CartesianLayout,
 } from '../util/types';
 import { defaultFunnelShape, FunnelTrapezoid, FunnelTrapezoidProps } from '../util/FunnelUtils';
 import {
@@ -51,6 +52,7 @@ import { AnimationMatchByProp, matchAppend } from '../animation/matchBy';
 import { GraphicalItemId } from '../state/graphicalItemsSlice';
 import { RegisterGraphicalItemId } from '../context/RegisterGraphicalItemId';
 import { WithIdRequired } from '../util/useUniqueId';
+import { useCartesianChartLayout } from '../context/chartLayoutContext';
 
 export type FunnelTrapezoidItem = TrapezoidProps &
   TrapezoidViewBox & {
@@ -105,8 +107,11 @@ interface FunnelProps<DataPointType = any, DataValueType = any>
    * @param nextItems The target items to animate towards
    * @param t A normalized time value (0 = start, 1 = end)
    * @returns The interpolated items at time t
+   *
+   * @since 3.9
+   * @see {@link https://recharts.github.io/en-US/guide/animations/ Animations guide
    */
-  animationInterpolateFn?: AnimationInterpolateFn<FunnelTrapezoidItem>;
+  animationInterpolateFn?: AnimationInterpolateFn<FunnelTrapezoidItem, CartesianLayout>;
   /**
    * Strategy for matching previous items to next items during animation.
    * Determines how Recharts pairs old data points with new data points
@@ -121,6 +126,9 @@ interface FunnelProps<DataPointType = any, DataValueType = any>
    * @see matchByIndex
    * @see matchByDataKey
    * @see matchAppend
+   *
+   * @since 3.9
+   * @see {@link https://recharts.github.io/en-US/guide/animations/ Animations guide
    */
   animationMatchBy?: AnimationMatchByProp<FunnelTrapezoidItem>;
   className?: string;
@@ -362,7 +370,7 @@ function FunnelTrapezoids(props: FunnelTrapezoidsProps) {
   );
 }
 
-const defaultFunnelAnimateItems: AnimationInterpolateFn<FunnelTrapezoidItem> = (items, t) => {
+const defaultFunnelAnimateItems: AnimationInterpolateFn<FunnelTrapezoidItem, CartesianLayout> = (items, t) => {
   if (items == null) return [];
   if (t === 1) {
     return items.flatMap(item => (item.status === 'removed' ? [] : [item.next]));
@@ -403,13 +411,16 @@ function TrapezoidsWithAnimation({
   props: InternalProps;
   previousTrapezoidsRef: MutableRefObject<ReadonlyArray<FunnelTrapezoidItem> | undefined>;
 }) {
-  const { trapezoids, isAnimationActive, animationBegin, animationDuration, animationEasing } = props;
-  const animationInterpolateFn = props.animationInterpolateFn ?? defaultFunnelAnimateItems;
+  const { trapezoids, isAnimationActive, animationBegin, animationDuration, animationEasing, animationInterpolateFn } =
+    props;
+  const layout = useCartesianChartLayout();
 
   const { isAnimating, handleAnimationStart, handleAnimationEnd } = useAnimationCallbacks(
     props.onAnimationStart,
     props.onAnimationEnd,
   );
+
+  if (layout == null) return null;
 
   return (
     <FunnelLabelListProvider showLabels={!isAnimating} trapezoids={trapezoids}>
@@ -426,6 +437,7 @@ function TrapezoidsWithAnimation({
         onAnimationEnd={handleAnimationEnd}
         animationInterpolateFn={animationInterpolateFn}
         animationMatchBy={props.animationMatchBy}
+        layout={layout}
       >
         {(stepData, t, isEntrance) => (
           <Layer>
@@ -468,6 +480,7 @@ export const defaultFunnelProps = {
   animationBegin: 400,
   animationDuration: 1500,
   animationEasing: 'ease',
+  animationInterpolateFn: defaultFunnelAnimateItems,
   animationMatchBy: matchAppend,
   fill: '#808080',
   hide: false,

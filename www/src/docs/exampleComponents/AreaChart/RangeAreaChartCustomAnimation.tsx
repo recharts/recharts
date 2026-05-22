@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useId, useState } from 'react';
-import type { AnimationInterpolateFn, AreaPointItem, AreaRevealShapeProps } from 'recharts';
+import type { AnimationInterpolateFn, AreaPointItem, AreaRevealShapeProps, CartesianLayout } from 'recharts';
 import {
   Area,
   AreaChart,
@@ -57,7 +57,7 @@ const dataB: ReadonlyArray<MyDataType> = [
   { name: 'Jun', range: [2200, 5000] },
 ];
 
-function useAnimateFromPlotBottom(): AnimationInterpolateFn<AreaPointItem> {
+function useAnimateFromPlotBottom(): AnimationInterpolateFn<AreaPointItem, CartesianLayout> {
   const plotArea = usePlotArea();
   const top = plotArea?.y ?? 0;
 

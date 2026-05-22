@@ -42,6 +42,7 @@ import {
   ShapeAnimationProps,
   TickItem,
   TooltipType,
+  PolarLayout,
 } from '../util/types';
 import {
   TooltipTriggerInfo,
@@ -69,6 +70,7 @@ import { WithIdRequired } from '../util/useUniqueId';
 import { ZIndexable, ZIndexLayer } from '../zIndex/ZIndexLayer';
 import { DefaultZIndexes } from '../zIndex/DefaultZIndexes';
 import { getZIndexFromUnknown } from '../zIndex/getZIndexFromUnknown';
+import { usePolarChartLayout } from '../context/chartLayoutContext';
 
 const STABLE_EMPTY_ARRAY: readonly RadialBarDataItem[] = [];
 
@@ -201,7 +203,7 @@ function RadialBarSectors({
   );
 }
 
-const defaultRadialBarAnimateItems: AnimationInterpolateFn<RadialBarDataItem> = (items, t) => {
+const defaultRadialBarAnimateItems: AnimationInterpolateFn<RadialBarDataItem, PolarLayout> = (items, t) => {
   if (items == null) return [];
   if (t === 1) {
     return items.flatMap(item => (item.status === 'removed' ? [] : [item.next]));
@@ -244,6 +246,10 @@ function SectorsWithAnimation({
     onAnimationEnd,
   );
 
+  const layout = usePolarChartLayout();
+
+  if (layout == null) return null;
+
   return (
     <AnimatedItems
       animationInput={props}
@@ -258,6 +264,7 @@ function SectorsWithAnimation({
       onAnimationEnd={handleAnimationEnd}
       animationInterpolateFn={props.animationInterpolateFn}
       animationMatchBy={props.animationMatchBy}
+      layout={layout}
     >
       {(stepData, t, isEntrance) => (
         <RadialBarSectors
@@ -309,8 +316,11 @@ interface InternalRadialBarProps<DataPointType = any, DataValueType = any>
    * @param nextItems The target items to animate towards
    * @param t A normalized time value (0 = start, 1 = end)
    * @returns The interpolated items at time t
+   *
+   * @since 3.9
+   * @see {@link https://recharts.github.io/en-US/guide/animations/ Animations guide
    */
-  animationInterpolateFn?: AnimationInterpolateFn<RadialBarDataItem>;
+  animationInterpolateFn?: AnimationInterpolateFn<RadialBarDataItem, PolarLayout>;
   /**
    * Strategy for matching previous items to next items during animation.
    * Determines how Recharts pairs old data points with new data points

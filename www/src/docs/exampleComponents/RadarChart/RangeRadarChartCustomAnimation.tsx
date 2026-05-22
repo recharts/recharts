@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useId, useState } from 'react';
-import type { AnimationInterpolateFn, RadarPoint } from 'recharts';
+import type { AnimationInterpolateFn, PolarLayout, RadarPoint } from 'recharts';
 import { interpolate, Legend, PolarAngleAxis, PolarGrid, PolarRadiusAxis, Radar, RadarChart, Tooltip } from 'recharts';
 
 const animationOptions = {
@@ -41,7 +41,7 @@ const dataB = [
   { subject: 'Sports', range: [95, 150] },
 ];
 
-const animateFromCenter: AnimationInterpolateFn<RadarPoint> = (items, t) => {
+const animateFromCenter: AnimationInterpolateFn<RadarPoint, PolarLayout> = (items, t) => {
   if (items == null) {
     return [];
   }

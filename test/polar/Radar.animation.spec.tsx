@@ -3,7 +3,7 @@ import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { act, render } from '@testing-library/react';
 import { createSelectorTestCase } from '../helper/createSelectorTestCase';
 import { PageData } from '../_data';
-import { PolarAngleAxis, PolarGrid, PolarRadiusAxis, Radar, RadarChart } from '../../src';
+import { PolarAngleAxis, PolarGrid, PolarLayout, PolarRadiusAxis, Radar, RadarChart } from '../../src';
 import type { AnimationInterpolateFn, RadarPoint } from '../../src';
 import { AnimationManagerContext } from '../../src/animation/useAnimationManager';
 import { assertNotNull } from '../helper/assertNotNull';
@@ -648,7 +648,7 @@ describe('Radar animation', () => {
       { name: 'C', range: [35, 110] },
     ];
 
-    const collapseToCenter: AnimationInterpolateFn<RadarPoint> = (items, t) => {
+    const collapseToCenter: AnimationInterpolateFn<RadarPoint, PolarLayout> = (items, t) => {
       if (items == null) {
         return [];
       }

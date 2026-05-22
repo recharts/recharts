@@ -11,6 +11,8 @@ import {
   AreaRevealShape,
   AreaPointItem,
   interpolate,
+  CartesianLayout,
+  AreaRevealShapeProps,
 } from 'recharts';
 import { RechartsDevtools } from '@recharts/devtools';
 
@@ -57,7 +59,7 @@ const initialState: ControlsType = {
  * Uses animationInterpolateFn to move points from the chart bottom upwards.
  * Combined with a custom shape (no clipPath) so the reveal animation doesn't interfere.
  */
-const useAnimateFromBottom = (): AnimationInterpolateFn<AreaPointItem> => {
+const useAnimateFromBottom = (): AnimationInterpolateFn<AreaPointItem, CartesianLayout> => {
   const plotArea = usePlotArea();
   const zero = plotArea ? plotArea.y + plotArea.height : 0;
 
@@ -75,10 +77,10 @@ const useAnimateFromBottom = (): AnimationInterpolateFn<AreaPointItem> => {
 /**
  * Custom shape that wraps AreaRevealShape but can also be used
  * to demonstrate that custom shapes skip the built-in clipPath animation.
- * By using AreaRevealShape here, we get the same default animation
+ * By using AreaRevealShape here, we get the same default animation,
  * but we could also customize it.
  */
-function GrowFromBottomShape(props: Parameters<typeof AreaRevealShape>[0]) {
+function GrowFromBottomShape(props: AreaRevealShapeProps) {
   // Skip the clip-path reveal — we're using animationInterpolateFn for the entrance instead
   return <AreaRevealShape {...props} isEntrance={false} />;
 }

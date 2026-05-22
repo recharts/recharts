@@ -1,6 +1,6 @@
 import React, { useState, useCallback, useId } from 'react';
 import { generateMockData, RechartsDevtools } from '@recharts/devtools';
-import { Scatter, ScatterChart, CartesianGrid, XAxis, YAxis, Tooltip, ZAxis } from 'recharts';
+import { Scatter, ScatterChart, CartesianGrid, XAxis, YAxis, Tooltip, ZAxis, CartesianLayout } from 'recharts';
 import type { AnimationInterpolateFn, ScatterPointItem } from 'recharts';
 
 // Two distinct datasets to swap between
@@ -14,7 +14,7 @@ type AnimatedScatterPoint = ScatterPointItem & { opacity?: number };
  * Crossfade: previous points fade out while new points fade in.
  * Returns both sets combined — prev with decreasing opacity, next with increasing.
  */
-const crossfade: AnimationInterpolateFn<ScatterPointItem> = (items, t) => {
+const crossfade: AnimationInterpolateFn<ScatterPointItem, CartesianLayout> = (items, t) => {
   if (items == null) return [];
   if (t === 1) return items.flatMap(item => (item.status === 'removed' ? [] : [item.next]));
   const result: AnimatedScatterPoint[] = [];
@@ -34,7 +34,7 @@ const crossfade: AnimationInterpolateFn<ScatterPointItem> = (items, t) => {
 /**
  * Staggered crossfade: points fade out and in one by one in a wave.
  */
-const staggeredCrossfade: AnimationInterpolateFn<ScatterPointItem> = (items, t) => {
+const staggeredCrossfade: AnimationInterpolateFn<ScatterPointItem, CartesianLayout> = (items, t) => {
   if (items == null) return [];
   if (t === 1) return items.flatMap(item => (item.status === 'removed' ? [] : [item.next]));
   const count = items.length;
@@ -58,7 +58,7 @@ const staggeredCrossfade: AnimationInterpolateFn<ScatterPointItem> = (items, t) 
 /**
  * Pop crossfade: old points shrink and fade out, new points grow and fade in.
  */
-const popCrossfade: AnimationInterpolateFn<ScatterPointItem> = (items, t) => {
+const popCrossfade: AnimationInterpolateFn<ScatterPointItem, CartesianLayout> = (items, t) => {
   if (items == null) return [];
   if (t === 1) return items.flatMap(item => (item.status === 'removed' ? [] : [item.next]));
   const result: AnimatedScatterPoint[] = [];

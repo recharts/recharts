@@ -2,7 +2,7 @@ import React, { useState, ReactNode } from 'react';
 import { beforeEach, describe, expect, it } from 'vitest';
 import { act } from '@testing-library/react';
 import { createSelectorTestCase } from '../helper/createSelectorTestCase';
-import { ScatterChart, Scatter, Legend, XAxis, YAxis, ZAxis } from '../../src';
+import { ScatterChart, Scatter, Legend, XAxis, YAxis, ZAxis, CartesianLayout } from '../../src';
 import type { AnimationInterpolateFn, ScatterPointItem } from '../../src';
 import { PageData } from '../_data';
 import { mockSequenceOfGetBoundingClientRect } from '../helper/mockGetBoundingClientRect';
@@ -409,7 +409,7 @@ describe('Scatter Animation', () => {
       { x: 30, y: 80, z: 200 },
     ];
 
-    const crossfade: AnimationInterpolateFn<ScatterPointItem> = (items, t) => {
+    const crossfade: AnimationInterpolateFn<ScatterPointItem, CartesianLayout> = (items, t) => {
       if (items == null) {
         return [];
       }

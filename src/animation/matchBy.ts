@@ -7,6 +7,9 @@ import { getValueByDataKey } from '../util/ChartUtils';
  * - `matched`: item exists in both previous and next data — interpolate between positions
  * - `added`: item is new (no previous position) — animate in
  * - `removed`: item was in previous data but not in next — animate out
+ *
+ * @since 3.9
+ * @see {@link https://recharts.github.io/en-US/guide/animations Animation guide}
  */
 export type AnimationItem<T> =
   | { readonly status: 'matched'; readonly prev: T; readonly next: T }
@@ -21,12 +24,18 @@ export type AnimationItem<T> =
  * @param item The chart item (e.g., a bar rectangle, a line point, a pie sector)
  * @param index The index of the item in the array
  * @returns A string or number key, or null if the item cannot be matched
+ *
+ * @since 3.9
+ * @see {@link https://recharts.github.io/en-US/guide/animations Animation guide}
  */
 export type AnimationMatchBy<T> = (item: T, index: number) => string | number | null;
 
 /**
  * The union of all accepted `animationMatchBy` prop values:
  * a built-in sentinel string, or a custom matching function.
+ *
+ * @since 3.9
+ * @see {@link https://recharts.github.io/en-US/guide/animations Animation guide}
  */
 export type AnimationMatchByProp<T> = typeof matchByIndex | typeof matchAppend | AnimationMatchBy<T>;
 
@@ -41,6 +50,9 @@ export type AnimationMatchByProp<T> = typeof matchByIndex | typeof matchAppend |
  * @example
  * import { matchByIndex } from 'recharts';
  * <Line animationMatchBy={matchByIndex} />
+ *
+ * @since 3.9
+ * @see {@link https://recharts.github.io/en-US/guide/animations Animation guide}
  */
 export const matchByIndex = 'index' as const;
 
@@ -56,6 +68,9 @@ export const matchByIndex = 'index' as const;
  * @example
  * import { matchAppend } from 'recharts';
  * <Line animationMatchBy={matchAppend} />
+ *
+ * @since 3.9
+ * @see {@link https://recharts.github.io/en-US/guide/animations Animation guide}
  */
 export const matchAppend = 'append' as const;
 
@@ -74,6 +89,9 @@ export const matchAppend = 'append' as const;
  * <Line animationMatchBy={matchByDataKey('timestamp')} />
  * <Bar animationMatchBy={matchByDataKey('name')} />
  * <Pie animationMatchBy={matchByDataKey('id')} />
+ *
+ * @since 3.9
+ * @see {@link https://recharts.github.io/en-US/guide/animations Animation guide}
  */
 export function matchByDataKey(dataKey: DataKey<Record<string, unknown>>): AnimationMatchBy<{ payload?: unknown }> {
   return (item: { payload?: unknown }): string | number | null => {

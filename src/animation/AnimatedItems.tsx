@@ -5,6 +5,7 @@ import { EasingInput } from './easing';
 import { useAnimationId } from '../util/useAnimationId';
 import { AnimationItem, AnimationMatchByProp, matchAnimationItems, matchByIndex } from './matchBy';
 import { useAnimationStartSnapshot } from './useAnimationStartSnapshot';
+import { CartesianLayout, PolarLayout } from '../util/types';
 
 /**
  * Hook that tracks whether an animation is in progress and wraps
@@ -55,11 +56,18 @@ export function useAnimationCallbacks(onAnimationStart?: () => void, onAnimation
  *   At `t = 1`, removed items should be excluded from the result.
  *
  * @param t A normalized time value (0 = start, 1 = end)
+ * @param layout of the chart, useful for deciding the direction of animation
  * @returns The interpolated items at time t
+ *
+ * @since 3.9
  */
-export type AnimationInterpolateFn<T> = (items: ReadonlyArray<AnimationItem<T>> | null, t: number) => ReadonlyArray<T>;
+export type AnimationInterpolateFn<ItemType, LayoutType extends CartesianLayout | PolarLayout> = (
+  items: ReadonlyArray<AnimationItem<ItemType>> | null,
+  t: number,
+  layout: LayoutType,
+) => ReadonlyArray<ItemType>;
 
-export type AnimatedItemsProps<T> = {
+export type AnimatedItemsProps<ItemType, LayoutType extends CartesianLayout | PolarLayout> = {
   /**
    * Opaque input to detect when a new animation should start.
    * When this value changes by reference, a new animation begins.
@@ -68,9 +76,9 @@ export type AnimatedItemsProps<T> = {
   /** Prefix for the generated animation ID */
   animationIdPrefix: string;
   /** The target items to animate towards */
-  items: ReadonlyArray<T> | undefined;
+  items: ReadonlyArray<ItemType> | undefined;
   /** Ref holding previous items — used to detect first render vs data update */
-  previousItemsRef: MutableRefObject<ReadonlyArray<T> | null | undefined>;
+  previousItemsRef: MutableRefObject<ReadonlyArray<ItemType> | null | undefined>;
   /** Whether animation is active */
   isAnimationActive: boolean | 'auto';
   /** Delay in ms before animation begins */
@@ -84,7 +92,7 @@ export type AnimatedItemsProps<T> = {
   /** Called when the animation completes */
   onAnimationEnd?: () => void;
   /** The interpolation function — either the default or user-provided */
-  animationInterpolateFn: AnimationInterpolateFn<T>;
+  animationInterpolateFn: AnimationInterpolateFn<ItemType, LayoutType>;
   /**
    * Strategy for matching previous items to next items during animation.
    *
@@ -95,7 +103,7 @@ export type AnimatedItemsProps<T> = {
    * Use `matchByDataKey('someKey')` for time-series or streaming charts
    * where items should be matched by their data identity rather than position.
    */
-  animationMatchBy?: AnimationMatchByProp<T>;
+  animationMatchBy?: AnimationMatchByProp<ItemType>;
   /**
    * Optional guard for updating previousItemsRef. Default: `(t) => t > 0`.
    * Line uses `(t) => t > 0 && totalLength > 0` to avoid updating before SVG path is measured.
@@ -110,7 +118,8 @@ export type AnimatedItemsProps<T> = {
    *   `true` when `prevItems` was `null` — meaning the component just appeared for the first time.
    *   `false` when animating between two datasets.
    */
-  children: (items: ReadonlyArray<T>, t: number, isEntrance: boolean) => ReactNode;
+  children: (items: ReadonlyArray<ItemType>, t: number, isEntrance: boolean) => ReactNode;
+  layout: LayoutType;
 };
 
 /**
@@ -121,8 +130,12 @@ export type AnimatedItemsProps<T> = {
  * 1. Track previous items in a ref
  * 2. Wrap in JavascriptAnimate
  * 3. Update ref when t > 0
+ *
+ * @since 3.9
  */
-export function AnimatedItems<T>(props: AnimatedItemsProps<T>) {
+export function AnimatedItems<ItemType, LayoutType extends CartesianLayout | PolarLayout>(
+  props: AnimatedItemsProps<ItemType, LayoutType>,
+) {
   const {
     animationInput,
     animationIdPrefix,
@@ -138,12 +151,13 @@ export function AnimatedItems<T>(props: AnimatedItemsProps<T>) {
     animationMatchBy,
     shouldUpdatePreviousRef,
     children,
+    layout,
   } = props;
 
   const animationId = useAnimationId(animationInput, animationIdPrefix);
   const animationStartItems = useAnimationStartSnapshot(animationId, previousItemsRef);
   const rawPrevItems = animationStartItems.startValue ?? null;
-  const animationItems: ReadonlyArray<AnimationItem<T>> | null = matchAnimationItems(
+  const animationItems: ReadonlyArray<AnimationItem<ItemType>> | null = matchAnimationItems(
     rawPrevItems,
     items,
     animationMatchBy ?? matchByIndex,
@@ -163,7 +177,7 @@ export function AnimatedItems<T>(props: AnimatedItemsProps<T>) {
       {(t: number) => {
         const isEntrance = rawPrevItems == null;
         // TODO performance; how does the matching work with 10k items? Can we skip interpolation and just jump to final state after some threshold?
-        const stepData = items == null ? items : animationInterpolateFn(animationItems, t);
+        const stepData = items == null ? items : animationInterpolateFn(animationItems, t, layout);
         const canUpdate = shouldUpdatePreviousRef ? shouldUpdatePreviousRef(t) : true;
         animationStartItems.syncStepValue(stepData, t, canUpdate);
         if (stepData == null) {

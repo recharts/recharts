@@ -26,6 +26,7 @@ import {
   EasingInput,
   GeometrySector,
   LegendType,
+  PolarLayout,
   PresentationAttributesAdaptChildEvent,
   ShapeAnimationProps,
   TooltipType,
@@ -69,6 +70,7 @@ import { DefaultZIndexes } from '../zIndex/DefaultZIndexes';
 import { ChartData } from '../state/chartDataSlice';
 import { getClassNameFromUnknown } from '../util/getClassNameFromUnknown';
 import { WithIdRequired } from '../util/useUniqueId';
+import { usePolarChartLayout } from '../context/chartLayoutContext';
 
 interface PieDef {
   /**
@@ -275,8 +277,11 @@ interface PieProps<DataPointType = any, DataValueType = any>
    * @param nextItems The target items to animate towards
    * @param t A normalized time value (0 = start, 1 = end)
    * @returns The interpolated items at time t
+   *
+   * @since 3.9
+   * @see {@link https://recharts.github.io/en-US/guide/animations/ Animations guide
    */
-  animationInterpolateFn?: AnimationInterpolateFn<PieSectorDataItem>;
+  animationInterpolateFn?: AnimationInterpolateFn<PieSectorDataItem, PolarLayout>;
   /**
    * Strategy for matching previous items to next items during animation.
    * Determines how Recharts pairs old data points with new data points
@@ -291,6 +296,9 @@ interface PieProps<DataPointType = any, DataValueType = any>
    * @see matchByIndex
    * @see matchByDataKey
    * @see matchAppend
+   *
+   * @since 3.9
+   * @see {@link https://recharts.github.io/en-US/guide/animations/ Animations guide
    */
   animationMatchBy?: AnimationMatchByProp<PieSectorDataItem>;
   className?: string;
@@ -906,7 +914,7 @@ function PieLabelListProvider({
 
 type WithoutId<T> = Omit<T, 'id'>;
 
-const defaultPieAnimateItems: AnimationInterpolateFn<PieSectorDataItem> = (items, t) => {
+const defaultPieAnimateItems: AnimationInterpolateFn<PieSectorDataItem, PolarLayout> = (items, t) => {
   if (items == null) return [];
   const stepData: PieSectorDataItem[] = [];
   const firstNonRemoved = items.find(item => item.status !== 'removed');
@@ -949,13 +957,16 @@ function SectorsWithAnimation({
   previousSectorsRef: MutableRefObject<ReadonlyArray<PieSectorDataItem> | null>;
   id: GraphicalItemId;
 }) {
-  const { sectors, activeShape, inactiveShape } = props;
-  const animationInterpolateFn = props.animationInterpolateFn ?? defaultPieAnimateItems;
+  const { sectors, activeShape, inactiveShape, animationInterpolateFn } = props;
 
   const { isAnimating, handleAnimationStart, handleAnimationEnd } = useAnimationCallbacks(
     props.onAnimationStart,
     props.onAnimationEnd,
   );
+
+  const layout = usePolarChartLayout();
+
+  if (layout == null) return null;
 
   return (
     <PieLabelListProvider showLabels={!isAnimating} sectors={sectors}>
@@ -972,6 +983,7 @@ function SectorsWithAnimation({
         onAnimationEnd={handleAnimationEnd}
         animationInterpolateFn={animationInterpolateFn}
         animationMatchBy={props.animationMatchBy}
+        layout={layout}
       >
         {(stepData, t, isEntrance) => (
           <Layer>
@@ -999,6 +1011,7 @@ export const defaultPieProps = {
   animationBegin: 400,
   animationDuration: 1500,
   animationEasing: 'ease',
+  animationInterpolateFn: defaultPieAnimateItems,
   animationMatchBy: matchAppend,
   cx: '50%',
   cy: '50%',

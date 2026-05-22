@@ -23,6 +23,7 @@ import {
   DotType,
   EasingInput,
   LegendType,
+  PolarLayout,
   TooltipType,
   TrapezoidViewBox,
 } from '../util/types';
@@ -46,6 +47,7 @@ import { WithIdRequired } from '../util/useUniqueId';
 import { ZIndexable, ZIndexLayer } from '../zIndex/ZIndexLayer';
 import { DefaultZIndexes } from '../zIndex/DefaultZIndexes';
 import { RechartsScale } from '../util/scale/RechartsScale';
+import { usePolarChartLayout } from '../context/chartLayoutContext';
 
 export interface RadarPoint {
   x: number;
@@ -92,8 +94,11 @@ interface RadarProps<DataPointType = any, DataValueType = any>
    * @param nextItems The target items to animate towards
    * @param t A normalized time value (0 = start, 1 = end)
    * @returns The interpolated items at time t
+   *
+   * @since 3.9
+   * @see {@link https://recharts.github.io/en-US/guide/animations/ Animations guide
    */
-  animationInterpolateFn?: AnimationInterpolateFn<RadarPoint>;
+  animationInterpolateFn?: AnimationInterpolateFn<RadarPoint, PolarLayout>;
   /**
    * Strategy for matching previous items to next items during animation.
    * Determines how Recharts pairs old data points with new data points
@@ -455,7 +460,7 @@ function StaticPolygon({
   );
 }
 
-const defaultRadarAnimateItems: AnimationInterpolateFn<RadarPoint> = (items, t) => {
+const defaultRadarAnimateItems: AnimationInterpolateFn<RadarPoint, PolarLayout> = (items, t) => {
   if (items == null) return [];
   if (t === 1) {
     return items.flatMap(item => (item.status === 'removed' ? [] : [item.next]));
@@ -512,6 +517,10 @@ function PolygonWithAnimation({
     onAnimationEnd,
   );
 
+  const layout = usePolarChartLayout();
+
+  if (layout == null) return null;
+
   return (
     <RadarLabelListProvider showLabels={!isAnimating} points={points}>
       <AnimatedItems
@@ -527,9 +536,11 @@ function PolygonWithAnimation({
         onAnimationEnd={handleAnimationEnd}
         animationInterpolateFn={animationInterpolateFn}
         animationMatchBy={animationMatchBy}
+        layout={layout}
       >
         {(stepData, t) => {
-          const stepBaseLinePoints = t === 1 ? baseLinePoints : animationInterpolateFn(baseLineAnimationItems, t);
+          const stepBaseLinePoints =
+            t === 1 ? baseLinePoints : animationInterpolateFn(baseLineAnimationItems, t, layout);
           baseLineAnimationState.syncStepValue(stepBaseLinePoints, t);
           return <StaticPolygon points={stepData} baseLinePoints={stepBaseLinePoints} props={props} />;
         }}

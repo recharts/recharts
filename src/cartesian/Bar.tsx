@@ -37,6 +37,7 @@ import {
   ActiveShape,
   adaptEventsOfChild,
   AnimationDuration,
+  CartesianLayout,
   CartesianViewBoxRequired,
   ChartOffsetInternal,
   Coordinate,
@@ -289,8 +290,11 @@ interface BarProps<DataPointType, ValueAxisType> extends DataConsumer<DataPointT
    * @param nextItems The target items to animate towards
    * @param t A normalized time value (0 = start, 1 = end)
    * @returns The interpolated items at time t
+   *
+   * @since 3.9
+   * @see {@link https://recharts.github.io/en-US/guide/animations/ Animations guide
    */
-  animationInterpolateFn?: AnimationInterpolateFn<BarRectangleItem>;
+  animationInterpolateFn?: AnimationInterpolateFn<BarRectangleItem, CartesianLayout>;
   /**
    * Strategy for matching previous items to next items during animation.
    * Determines how Recharts pairs old data points with new data points
@@ -425,7 +429,7 @@ type InternalBarProps = {
 
   onAnimationStart?: () => void;
   onAnimationEnd?: () => void;
-  animationInterpolateFn?: AnimationInterpolateFn<BarRectangleItem>;
+  animationInterpolateFn: AnimationInterpolateFn<BarRectangleItem, CartesianLayout>;
   animationMatchBy: AnimationMatchByProp<BarRectangleItem>;
 
   /**
@@ -815,48 +819,44 @@ function BarRectangles({
   );
 }
 
-function defaultBarAnimateItems(
-  layout: 'horizontal' | 'vertical' | undefined,
-): AnimationInterpolateFn<BarRectangleItem> {
-  return (items, t) => {
-    if (items == null) return [];
-    if (t === 1) {
-      return items.flatMap(item => (item.status === 'removed' ? [] : [item.next]));
-    }
-    return items.flatMap(item => {
-      if (item.status === 'removed') {
-        // animate removed items to 0 height/width respective of layout
-        if (layout === 'horizontal') {
-          return [
-            {
-              ...item.prev,
-              height: interpolate(item.prev.height, 0, t),
-              y: interpolate(item.prev.y, item.prev.y + item.prev.height, t),
-            },
-          ];
-        }
-        return [{ ...item.prev, width: interpolate(item.prev.width, 0, t) }];
-      }
-      if (item.status === 'matched') {
+const defaultBarAnimateItems: AnimationInterpolateFn<BarRectangleItem, CartesianLayout> = (items, t, layout) => {
+  if (items == null) return [];
+  if (t === 1) {
+    return items.flatMap(item => (item.status === 'removed' ? [] : [item.next]));
+  }
+  return items.flatMap(item => {
+    if (item.status === 'removed') {
+      // animate removed items to 0 height/width respective of layout
+      if (layout === 'horizontal') {
         return [
           {
-            ...item.next,
-            x: interpolate(item.prev.x, item.next.x, t),
-            y: interpolate(item.prev.y, item.next.y, t),
-            width: interpolate(item.prev.width, item.next.width, t),
-            height: interpolate(item.prev.height, item.next.height, t),
+            ...item.prev,
+            height: interpolate(item.prev.height, 0, t),
+            y: interpolate(item.prev.y, item.prev.y + item.prev.height, t),
           },
         ];
       }
-      // added
-      const { next } = item;
-      if (layout === 'horizontal') {
-        return [{ ...next, height: interpolate(0, next.height, t), y: interpolate(next.stackedBarStart, next.y, t) }];
-      }
-      return [{ ...next, width: interpolate(0, next.width, t), x: interpolate(next.stackedBarStart, next.x, t) }];
-    });
-  };
-}
+      return [{ ...item.prev, width: interpolate(item.prev.width, 0, t) }];
+    }
+    if (item.status === 'matched') {
+      return [
+        {
+          ...item.next,
+          x: interpolate(item.prev.x, item.next.x, t),
+          y: interpolate(item.prev.y, item.next.y, t),
+          width: interpolate(item.prev.width, item.next.width, t),
+          height: interpolate(item.prev.height, item.next.height, t),
+        },
+      ];
+    }
+    // added
+    const { next } = item;
+    if (layout === 'horizontal') {
+      return [{ ...next, height: interpolate(0, next.height, t), y: interpolate(next.stackedBarStart, next.y, t) }];
+    }
+    return [{ ...next, width: interpolate(0, next.width, t), x: interpolate(next.stackedBarStart, next.x, t) }];
+  });
+};
 
 function RectanglesWithAnimation({
   props,
@@ -865,8 +865,15 @@ function RectanglesWithAnimation({
   props: InternalProps;
   previousRectanglesRef: MutableRefObject<null | ReadonlyArray<BarRectangleItem>>;
 }) {
-  const { data, layout, isAnimationActive, animationBegin, animationDuration, animationEasing } = props;
-  const animationInterpolateFn = props.animationInterpolateFn ?? defaultBarAnimateItems(layout);
+  const {
+    data,
+    isAnimationActive,
+    animationBegin,
+    animationDuration,
+    animationEasing,
+    animationInterpolateFn,
+    layout,
+  } = props;
 
   const { isAnimating, handleAnimationStart, handleAnimationEnd } = useAnimationCallbacks(
     props.onAnimationStart,
@@ -888,6 +895,7 @@ function RectanglesWithAnimation({
         onAnimationEnd={handleAnimationEnd}
         animationInterpolateFn={animationInterpolateFn}
         animationMatchBy={props.animationMatchBy}
+        layout={layout}
       >
         {(stepData, t, isEntrance) => (
           <Layer>
@@ -964,6 +972,7 @@ export const defaultBarProps = {
   animationBegin: 0,
   animationDuration: 400,
   animationEasing: 'ease',
+  animationInterpolateFn: defaultBarAnimateItems,
   animationMatchBy: matchAppend,
   background: false,
   hide: false,
