@@ -1339,10 +1339,10 @@ export interface ShapeAnimationProps {
   isEntrance?: boolean;
 }
 
-export type ActiveShape<PropsType = Record<string, any>, ElementType = SVGElement> =
-  | ReactElement<SVGProps<ElementType>>
-  | ((props: PropsType & ShapeAnimationProps) => ReactElement | null | undefined)
-  | SVGProps<ElementType>
+export type ActiveShape<PropsType = Record<string, unknown>, ElementType = SVGElement> =
+  | ReactElement<Partial<PropsType> & SVGProps<ElementType>>
+  | ((props: PropsType, index?: string | number) => ReactNode)
+  | (Partial<PropsType> & SVGProps<ElementType>)
   | boolean;
 
 export type RangeObj = PolarViewBoxRequired & {

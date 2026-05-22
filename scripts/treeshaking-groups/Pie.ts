@@ -9,11 +9,8 @@ export const expectedInBundle = [
   'LabelList',
   'Layer',
   'Pie',
-  'Rectangle',
   'Sector',
-  'Symbols',
   'Text',
-  'Trapezoid',
   'ZIndexLayer',
   'useChartLayout',
 ] as const;

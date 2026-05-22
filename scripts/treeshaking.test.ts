@@ -5,6 +5,7 @@ import {
   treeshake,
   getBundleSize,
   getBundleSizeReport,
+  getModuleGraph,
   findComponentsInBundle,
   CHART_COMPONENT_NAMES,
   CARTESIAN_COMPONENT_NAMES,
@@ -12,8 +13,10 @@ import {
   formatBundleSize,
   getReductionPercent,
   matchComponentNamesInBundle,
+  type ModuleGraphNode,
 } from './treeshaking';
 import { treeshakingGroups } from './treeshaking-groups';
+import { findMatchingModules, findShortestPaths } from './trace-bundle.ts';
 import { ProjectDocReader } from '../omnidoc/readProject';
 
 const es6EntryPath = path.resolve(__dirname, '..', 'es6', 'index.js');
@@ -140,4 +143,54 @@ describe('matchComponentNamesInBundle', () => {
     const foundComponents = matchComponentNamesInBundle(code, ['LineChart', 'Foo', 'Bar', 'Baz', 'Zoo', 'NotInCode']);
     expect(foundComponents).toEqual(new Set(['Foo', 'Bar', 'Baz', 'Zoo']));
   });
+});
+
+describe('trace-bundle helpers', () => {
+  it('prefers exact component module matches over broader path matches', () => {
+    const graph: ReadonlyArray<ModuleGraphNode> = [
+      { id: '/repo/src/index.ts', importedIds: [], importers: [], renderedLength: 0 },
+      { id: '/repo/src/cartesian/Area.tsx', importedIds: [], importers: [], renderedLength: 10 },
+      { id: '/repo/src/cartesian/ReferenceArea.tsx', importedIds: [], importers: [], renderedLength: 10 },
+    ];
+
+    expect(findMatchingModules(graph, 'Area').map(node => node.id)).toEqual(['/repo/src/cartesian/Area.tsx']);
+  });
+
+  it('returns only shortest import paths', () => {
+    const graph: ReadonlyArray<ModuleGraphNode> = [
+      { id: 'Area', importedIds: ['ActiveShapeUtils', 'LongHop'], importers: [], renderedLength: 1 },
+      { id: 'ActiveShapeUtils', importedIds: ['Rectangle'], importers: ['Area'], renderedLength: 1 },
+      { id: 'LongHop', importedIds: ['AnotherHop'], importers: ['Area'], renderedLength: 1 },
+      { id: 'AnotherHop', importedIds: ['Rectangle'], importers: ['LongHop'], renderedLength: 1 },
+      { id: 'Rectangle', importedIds: [], importers: ['ActiveShapeUtils', 'AnotherHop'], renderedLength: 1 },
+    ];
+
+    const nodeById = new Map(graph.map(node => [node.id, node]));
+
+    expect(findShortestPaths('Area', 'Rectangle', nodeById, 8)).toEqual([['Area', 'ActiveShapeUtils', 'Rectangle']]);
+  });
+});
+
+describe.skipIf(!es6EntryExists)('trace-bundle integration', () => {
+  it('finds the path from the requested component module instead of the package entry', async () => {
+    const graph = await getModuleGraph('Area');
+    const area = findMatchingModules(graph, 'Area');
+    const dot = findMatchingModules(graph, 'Dot');
+    const nodeById = new Map(graph.map(node => [node.id, node]));
+
+    expect(area).toHaveLength(1);
+    expect(dot).toHaveLength(1);
+    expect(findShortestPaths(area[0].id, dot[0].id, nodeById, 8)).toEqual([
+      [
+        path.resolve(__dirname, '..', 'src', 'cartesian', 'Area.tsx'),
+        path.resolve(__dirname, '..', 'src', 'component', 'Dots.tsx'),
+        path.resolve(__dirname, '..', 'src', 'shape', 'Dot.tsx'),
+      ],
+      [
+        path.resolve(__dirname, '..', 'src', 'cartesian', 'Area.tsx'),
+        path.resolve(__dirname, '..', 'src', 'component', 'ActivePoints.tsx'),
+        path.resolve(__dirname, '..', 'src', 'shape', 'Dot.tsx'),
+      ],
+    ]);
+  }, 30_000);
 });

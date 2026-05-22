@@ -49,7 +49,7 @@ import {
   TooltipType,
   TrapezoidViewBox,
 } from '../util/types';
-import { BarRectangle, BarRectangleProps, MinPointSize, minPointSizeCallback } from '../util/BarUtils';
+import { BarRectangle, BarRectangleProps, defaultBarShape, MinPointSize, minPointSizeCallback } from '../util/BarUtils';
 import type { LegendPayload } from '../component/DefaultLegendContent';
 import {
   useMouseClickItemDispatch,
@@ -123,7 +123,6 @@ export type BarShapeProps = BarRectangleItem &
   ShapeAnimationProps & {
     isActive: boolean;
     index: number;
-    option?: ActiveShape<BarShapeProps, SVGPathElement> | undefined;
   };
 
 interface BarProps<DataPointType, ValueAxisType> extends DataConsumer<DataPointType, ValueAxisType>, ZIndexable {
@@ -420,7 +419,7 @@ type InternalBarProps = {
   dataKey?: DataKey<any>;
   tooltipType?: TooltipType;
   maxBarSize?: number;
-  shape?: ActiveShape<BarShapeProps, SVGPathElement>;
+  shape: ActiveShape<BarShapeProps, SVGPathElement>;
   background?: ActiveShape<BarShapeProps, SVGPathElement>;
   radius?: number | [number, number, number, number];
 
@@ -603,14 +602,14 @@ function BarLabelListProvider({
 }
 
 function BarRectangleWithActiveState(
-  props: {
-    shape: ActiveShape<BarShapeProps, SVGPathElement> | undefined;
+  props: ShapeAnimationProps & {
+    shape: ActiveShape<BarShapeProps, SVGPathElement>;
     activeBar: ActiveShape<BarShapeProps, SVGPathElement>;
     baseProps: WithoutId<SVGPropsNoEvents<BarRectanglesProps>>;
     entry: BarRectangleItem;
     index: number;
     dataKey: DataKey<any> | undefined;
-  } & ShapeAnimationProps,
+  },
 ) {
   const { shape, activeBar, baseProps, entry, index, dataKey } = props;
   const activeIndex = useAppSelector(selectActiveTooltipIndex);
@@ -671,7 +670,7 @@ function BarRectangleWithActiveState(
   // Render in ZIndexLayer if active OR if we are waiting for exit transition
   const shouldRenderInLayer = isActive || stayInLayer;
 
-  let option: ActiveShape<BarShapeProps, SVGPathElement> | undefined;
+  let option: ActiveShape<BarShapeProps, SVGPathElement>;
   if (isActive) {
     if (activeBar === true) {
       option = shape;
@@ -713,13 +712,13 @@ function BarRectangleWithActiveState(
 }
 
 function BarRectangleNeverActive(
-  props: {
-    shape: ActiveShape<BarShapeProps, SVGPathElement> | undefined;
+  props: ShapeAnimationProps & {
+    shape: ActiveShape<BarShapeProps, SVGPathElement>;
     baseProps: WithoutId<SVGPropsNoEvents<BarRectanglesProps>>;
     entry: BarRectangleItem;
     index: number;
     dataKey: DataKey<any> | undefined;
-  } & ShapeAnimationProps,
+  },
 ) {
   const { shape, baseProps, entry, index, dataKey } = props;
   return (
@@ -979,6 +978,7 @@ export const defaultBarProps = {
   label: false,
   legendType: 'rect',
   minPointSize: defaultMinPointSize,
+  shape: defaultBarShape,
   xAxisId: 0,
   yAxisId: 0,
   zIndex: DefaultZIndexes.bar,
@@ -1235,7 +1235,7 @@ function BarFn(outsideProps: Props) {
             minPointSize={props.minPointSize}
             maxBarSize={props.maxBarSize}
             isPanorama={isPanorama}
-            hasCustomShape={props.shape != null}
+            hasCustomShape={props.shape != null && props.shape !== defaultBarShape}
           />
           <ZIndexLayer zIndex={props.zIndex}>
             <BarImpl {...props} id={id} />

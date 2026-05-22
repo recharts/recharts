@@ -2,7 +2,7 @@ import * as React from 'react';
 import { Component, MutableRefObject, ReactElement, ReactNode, Ref, useCallback, useMemo, useRef } from 'react';
 
 import { clsx } from 'clsx';
-import { CurveType, Props as CurveProps } from '../shape/Curve';
+import { Curve, CurveType, Props as CurveProps } from '../shape/Curve';
 import { Layer } from '../container/Layer';
 import { LineDrawShape } from './LineDrawShape';
 import { useAnimatedLineLength } from './useAnimatedLineLength';
@@ -62,6 +62,8 @@ import { propsAreEqual } from '../util/propsAreEqual';
 import { GraphicalItemId } from '../state/graphicalItemsSlice';
 import { ChartData } from '../state/chartDataSlice';
 
+const defaultLineShape = Curve;
+
 export interface LinePointItem {
   readonly value: number;
   readonly payload?: any;
@@ -98,7 +100,7 @@ interface InternalLineProps extends ZIndexable {
   layout: 'horizontal' | 'vertical';
   left: number;
   legendType: LegendType;
-  shape?: ActiveShape<CurveProps, SVGPathElement>;
+  shape: ActiveShape<CurveProps, SVGPathElement>;
 
   name?: string | number;
   needClip?: boolean;
@@ -514,7 +516,8 @@ function StaticCurve({
     type,
     layout,
     connectNulls,
-    strokeDasharray,
+    strokeDasharray: strokeDasharray ?? props.strokeDasharray,
+    pathRef,
     t,
     isAnimating,
     isEntrance,
@@ -523,7 +526,9 @@ function StaticCurve({
 
   return (
     <>
-      {points?.length > 1 && <Shape shapeType="curve" option={shape} {...curveProps} pathRef={pathRef} />}
+      {points?.length > 1 && (
+        <Shape<CurveProps, SVGPathElement> option={shape} DefaultShape={defaultLineShape} shapeProps={curveProps} />
+      )}
       <LineDotsWrapper points={points} clipPathId={clipPathId} props={props} />
     </>
   );
@@ -757,7 +762,7 @@ export const defaultLineProps = {
   isAnimationActive: 'auto',
   label: false,
   legendType: 'line',
-  shape: LineDrawShape,
+  shape: defaultLineShape,
   stroke: '#3182bd',
   strokeWidth: 1,
   xAxisId: 0,

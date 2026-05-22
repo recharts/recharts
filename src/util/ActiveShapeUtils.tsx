@@ -1,14 +1,8 @@
 import * as React from 'react';
 import { cloneElement, isValidElement, ReactElement } from 'react';
-import isPlainObject from 'es-toolkit/compat/isPlainObject';
 
-import { Rectangle } from '../shape/Rectangle';
-import { Trapezoid } from '../shape/Trapezoid';
-import { Sector } from '../shape/Sector';
 import { Layer } from '../container/Layer';
-import { Symbols, SymbolsProps } from '../shape/Symbols';
-import { Curve } from '../shape/Curve';
-import { ShapeAnimationProps } from './types';
+import { ActiveShape, ShapeAnimationProps } from './types';
 
 /**
  * This is an abstraction for rendering a user defined prop for a customized shape in several forms.
@@ -19,69 +13,52 @@ import { ShapeAnimationProps } from './types';
  *  - a render prop(inline function that returns jsx)
  *  - a React element
  *
- * <ShapeSelector /> is a subcomponent of <Shape /> and used to match a component
- * to the value of props.shapeType that is passed to the root.
- *
+ * The concrete default shape is supplied by the caller so this helper does not
+ * import unrelated shapes and accidentally couple bundles together.
  */
-type ShapeType = 'trapezoid' | 'rectangle' | 'sector' | 'symbols' | 'curve';
+type ShapeRenderer<PropsType> = (props: PropsType) => React.ReactNode;
 
-export type ShapeProps<OptionType, ExtraProps> = {
-  shapeType: ShapeType;
-  option: OptionType;
-  isActive?: boolean;
-  index?: string | number;
+type ShapeOptionProps<PropsType extends object> = Partial<PropsType>;
+
+type ShapeOptionElement<PropsType extends object> = ReactElement<ShapeOptionProps<PropsType>>;
+
+export type ShapeProps<PropsType extends object, ElementType extends SVGElement = SVGElement> = {
+  /**
+   * Multi-value prop, decides either which component renders, or which props it receives, based on the value type:
+   *
+   * - If a React element, then it gets cloned with new props injected (this works but is counter-intuitive and impossible to type properly, please don't prefer this path)
+   * - If a function, it gets called with props plus index (keep in mind: this will change in 4.0 where we will render it as JSX component instead)
+   * - If an object, then it gets passed to the default shape as props
+   * - Else it's ignored and the default shape is rendered with the props from this component
+   */
+  option: ActiveShape<PropsType, ElementType> | undefined;
+  /**
+   * This prop controls the default shape. If `option` is either a React element, or a function, then it's ignored.
+   * If `option` is an object, then this shape is rendered with the props from `option`.
+   * If `option` is anything else (e.g. boolean), then this shape is rendered with the props from this component.
+   */
+  DefaultShape: ShapeRenderer<PropsType>;
+  /**
+   * The props forwarded to the selected shape branch.
+   *
+   * Keeping these props grouped avoids generic object-rest widening. That lets this helper keep strong types
+   * without relying on casts or `@ts-expect-error`.
+   */
+  shapeProps: PropsType;
   activeClassName?: string;
   inActiveClassName?: string;
-} & ExtraProps;
+};
 
-function defaultPropTransformer<OptionType, ExtraProps, ShapePropsType>(
-  option: OptionType,
-  props: ExtraProps,
-): ShapePropsType {
+function mergeShapeProps<PropsType extends object>(option: ShapeOptionProps<PropsType>, props: PropsType): PropsType {
   return {
     ...props,
     ...option,
-  } as unknown as ShapePropsType;
+  };
 }
 
-function isSymbolsProps(shapeType: ShapeType, _elementProps: unknown): _elementProps is SymbolsProps {
-  return shapeType === 'symbols';
-}
-
-function stripShapeAnimationProps<PropsType extends ShapeAnimationProps>(
-  props: PropsType,
-): Omit<PropsType, keyof ShapeAnimationProps> {
-  const { t, isAnimating, isEntrance, ...propsWithoutAnimationState } = props;
-  return propsWithoutAnimationState;
-}
-
-function ShapeSelector<ShapePropsType extends React.JSX.IntrinsicAttributes>({
-  shapeType,
-  elementProps,
-}: {
-  shapeType: ShapeType;
-  elementProps: ShapePropsType;
-}): React.ReactNode {
-  switch (shapeType) {
-    case 'rectangle':
-      return <Rectangle {...elementProps} />;
-    case 'trapezoid':
-      return <Trapezoid {...elementProps} />;
-    case 'sector':
-      return <Sector {...elementProps} />;
-    case 'symbols':
-      if (isSymbolsProps(shapeType, elementProps)) {
-        return <Symbols {...elementProps} />;
-      }
-      break;
-    case 'curve':
-      return <Curve {...elementProps} />;
-    default:
-      return null;
-  }
-}
-
-export function getPropsFromShapeOption<T>(option: ReactElement<T> | T): T {
+export function getPropsFromShapeOption<PropsType extends object>(
+  option: ShapeOptionElement<PropsType> | ShapeOptionProps<PropsType>,
+): ShapeOptionProps<PropsType> {
   if (isValidElement(option)) {
     return option.props;
   }
@@ -89,40 +66,55 @@ export function getPropsFromShapeOption<T>(option: ReactElement<T> | T): T {
   return option;
 }
 
-export function Shape<OptionType, ExtraProps, ShapePropsType extends React.JSX.IntrinsicAttributes>({
-  option,
-  shapeType,
-  activeClassName = 'recharts-active-shape',
-  inActiveClassName = 'recharts-shape',
-  ...props
-}: ShapeProps<OptionType, ExtraProps>) {
-  let shape: React.JSX.Element;
-  const propsWithoutAnimationState = stripShapeAnimationProps(props as ExtraProps & ShapeAnimationProps);
-  if (isValidElement(option)) {
-    // @ts-expect-error we can't know the type of cloned element props
-    shape = cloneElement(option, { ...propsWithoutAnimationState, ...getPropsFromShapeOption(option) });
-  } else if (typeof option === 'function') {
-    /*
-     * So AI insist that we should render this as a React component so that shape functions can use hooks
-     * (e.g. useRef for SVG path measurement in LineDrawShape).
-     * const ShapeComponent = option as React.FC<typeof props>;
-     * shape = <ShapeComponent {...props} />;
-     *
-     * However! When I test it, hooks work perfectly fine even when we call this as a function. Who's correct here?
-     *
-     * We can't change this easily because of the second argument (the index) - React components can't receive second argument (it's always just props)
-     * and so that would be a breaking change. Which we can do for 4.0 but if it works ... then why change it?
-     */
-    shape = option(props, props.index);
-  } else if (isPlainObject(option) && typeof option !== 'boolean') {
-    const nextProps: ShapePropsType = defaultPropTransformer(option, propsWithoutAnimationState);
-    shape = <ShapeSelector<ShapePropsType> shapeType={shapeType} elementProps={nextProps} />;
-  } else {
-    const elementProps = propsWithoutAnimationState as unknown as ShapePropsType;
-    shape = <ShapeSelector<ShapePropsType> shapeType={shapeType} elementProps={elementProps} />;
+function renderWithShapeElement<PropsType extends object>(option: ShapeOptionElement<PropsType>, props: PropsType) {
+  return cloneElement(option, mergeShapeProps(getPropsFromShapeOption(option), props));
+}
+
+function getShapeIndex(shapeProps: object): string | number | undefined {
+  if (!('index' in shapeProps)) {
+    return undefined;
   }
 
-  if (props.isActive) {
+  const { index } = shapeProps;
+  return typeof index === 'number' || typeof index === 'string' ? index : undefined;
+}
+
+function isActiveShape(shapeProps: object): boolean {
+  return 'isActive' in shapeProps && shapeProps.isActive === true;
+}
+
+/**
+ * Renders the user-provided active shape option while keeping each runtime branch aligned with its TypeScript type.
+ *
+ * The `option` prop supports four shapes:
+ * - React element: clone it and let its own props override the injected ones
+ * - function: call it with the forwarded props and optional index
+ * - plain object: merge it into the default shape props
+ * - boolean / undefined: ignore it and render the default shape with the forwarded props
+ */
+export function Shape<PropsType extends ShapeAnimationProps, ElementType extends SVGElement = SVGElement>({
+  option,
+  DefaultShape,
+  shapeProps,
+  activeClassName = 'recharts-active-shape',
+  inActiveClassName = 'recharts-shape',
+}: ShapeProps<PropsType, ElementType>) {
+  const index = getShapeIndex(shapeProps);
+  let shape: React.ReactNode;
+
+  if (isValidElement(option)) {
+    shape = renderWithShapeElement(option, shapeProps);
+  } else if (option === DefaultShape) {
+    shape = <DefaultShape {...shapeProps} />;
+  } else if (typeof option === 'function') {
+    shape = option(shapeProps, index);
+  } else if (typeof option === 'object') {
+    shape = <DefaultShape {...mergeShapeProps(option, shapeProps)} />;
+  } else {
+    shape = <DefaultShape {...shapeProps} />;
+  }
+
+  if (isActiveShape(shapeProps)) {
     return <Layer className={activeClassName}>{shape}</Layer>;
   }
 

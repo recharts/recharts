@@ -1,31 +1,32 @@
 import * as React from 'react';
 import invariant from 'tiny-invariant';
 import { ActiveShape, DataKey, ShapeAnimationProps } from './types';
-import { Props as RectangleProps } from '../shape/Rectangle';
+import { Rectangle, Props as RectangleProps } from '../shape/Rectangle';
 import { BarShapeProps } from '../cartesian/Bar';
 import { Shape } from './ActiveShapeUtils';
 import { isNullish, isNumber } from './DataUtils';
 
-export type BarRectangleProps = {
-  option: ActiveShape<BarShapeProps, SVGPathElement> | undefined;
-  isActive: boolean;
+export const defaultBarShape = Rectangle;
+
+export type BarRectangleProps = BarShapeProps & {
+  option: ActiveShape<BarShapeProps, SVGPathElement>;
   onMouseEnter?: (e: React.MouseEvent<SVGPathElement, MouseEvent>) => void;
   onMouseLeave?: (e: React.MouseEvent<SVGPathElement, MouseEvent>) => void;
   onClick?: (e: React.MouseEvent<SVGPathElement, MouseEvent>) => void;
-  width?: number;
-  height?: number;
-  index: number;
   dataKey: DataKey<any> | undefined;
 } & ShapeAnimationProps &
   Omit<RectangleProps, 'onAnimationStart' | 'onAnimationEnd'>;
 
-export function BarRectangle(props: BarRectangleProps) {
+type BarRectangleShapeProps = Omit<BarRectangleProps, 'option'>;
+
+export function BarRectangle({ option, ...shapeProps }: BarRectangleProps) {
   return (
-    <Shape
-      shapeType="rectangle"
+    <Shape<BarRectangleShapeProps, SVGPathElement>
+      option={option}
+      DefaultShape={defaultBarShape}
+      shapeProps={shapeProps}
       activeClassName="recharts-active-bar"
       inActiveClassName="recharts-inactive-bar"
-      {...props}
     />
   );
 }
