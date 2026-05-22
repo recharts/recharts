@@ -2,9 +2,9 @@ import * as React from 'react';
 import { Component, MutableRefObject, ReactElement, ReactNode, Ref, useCallback, useMemo, useRef } from 'react';
 
 import { clsx } from 'clsx';
-import { Curve, CurveType, Props as CurveProps } from '../shape/Curve';
+import { CurveType, Props as CurveProps } from '../shape/Curve';
 import { Layer } from '../container/Layer';
-import { LineDrawShape } from './LineDrawShape';
+import { LineDrawShape, LineDrawShapeProps } from './LineDrawShape';
 import { useAnimatedLineLength } from './useAnimatedLineLength';
 import {
   CartesianLabelListContextProvider,
@@ -21,12 +21,12 @@ import {
   ActiveDotType,
   ActiveShape,
   AnimationDuration,
-  EasingInput,
   CartesianLayout,
   DataConsumer,
   DataKey,
   DataProvider,
   DotType,
+  EasingInput,
   LegendType,
   TickItem,
   TooltipType,
@@ -61,8 +61,6 @@ import { DefaultZIndexes } from '../zIndex/DefaultZIndexes';
 import { propsAreEqual } from '../util/propsAreEqual';
 import { GraphicalItemId } from '../state/graphicalItemsSlice';
 import { ChartData } from '../state/chartDataSlice';
-
-const defaultLineShape = Curve;
 
 export interface LinePointItem {
   readonly value: number;
@@ -341,6 +339,28 @@ interface LineProps<DataPointType = any, DataValueType = any>
   strokeDasharray?: string | number;
 }
 
+export const defaultLineProps = {
+  activeDot: true,
+  animateNewValues: true,
+  animationBegin: 0,
+  animationDuration: 1500,
+  animationEasing: 'ease',
+  connectNulls: false,
+  dot: true,
+  fill: '#fff',
+  hide: false,
+  isAnimationActive: 'auto',
+  label: false,
+  legendType: 'line',
+  shape: LineDrawShape,
+  stroke: '#3182bd',
+  strokeWidth: 1,
+  xAxisId: 0,
+  yAxisId: 0,
+  zIndex: DefaultZIndexes.line,
+  type: 'linear',
+} as const satisfies Partial<Props>;
+
 /**
  * Because of naming conflict, we are forced to ignore certain (valid) SVG attributes.
  */
@@ -352,14 +372,6 @@ export type Props<DataPointType = any, ValueAxisType = any> = LineSvgProps & Lin
 
 const computeLegendPayloadFromAreaData = (props: Props): ReadonlyArray<LegendPayload> => {
   const { dataKey, name, stroke, legendType, hide } = props;
-  const payload =
-    props.shape === LineDrawShape
-      ? (() => {
-          const propsWithoutShape = { ...props };
-          delete propsWithoutShape.shape;
-          return propsWithoutShape;
-        })()
-      : props;
   return [
     {
       inactive: hide,
@@ -367,7 +379,7 @@ const computeLegendPayloadFromAreaData = (props: Props): ReadonlyArray<LegendPay
       type: legendType,
       color: stroke,
       value: getTooltipNameProp(name, dataKey),
-      payload,
+      payload: props,
     },
   ];
 };
@@ -502,12 +514,7 @@ function StaticCurve({
   visibleLength?: number | null;
 }) {
   const { type, layout, connectNulls, needClip, shape, strokeDasharray, ...others } = props;
-  const curveProps: CurveProps & {
-    t?: number;
-    isAnimating?: boolean;
-    isEntrance?: boolean;
-    visibleLength?: number | null;
-  } = {
+  const curveProps: LineDrawShapeProps = {
     ...svgPropertiesAndEvents(others),
     fill: 'none',
     className: 'recharts-line-curve',
@@ -527,7 +534,11 @@ function StaticCurve({
   return (
     <>
       {points?.length > 1 && (
-        <Shape<CurveProps, SVGPathElement> option={shape} DefaultShape={defaultLineShape} shapeProps={curveProps} />
+        <Shape<LineDrawShapeProps, SVGPathElement>
+          option={shape}
+          DefaultShape={defaultLineProps.shape}
+          shapeProps={curveProps}
+        />
       )}
       <LineDotsWrapper points={points} clipPathId={clipPathId} props={props} />
     </>
@@ -748,28 +759,6 @@ class LineWithState extends Component<InternalProps> {
     );
   }
 }
-
-export const defaultLineProps = {
-  activeDot: true,
-  animateNewValues: true,
-  animationBegin: 0,
-  animationDuration: 1500,
-  animationEasing: 'ease',
-  connectNulls: false,
-  dot: true,
-  fill: '#fff',
-  hide: false,
-  isAnimationActive: 'auto',
-  label: false,
-  legendType: 'line',
-  shape: defaultLineShape,
-  stroke: '#3182bd',
-  strokeWidth: 1,
-  xAxisId: 0,
-  yAxisId: 0,
-  zIndex: DefaultZIndexes.line,
-  type: 'linear',
-} as const satisfies Partial<Props>;
 
 function LineImpl(props: WithIdRequired<Props>) {
   const {

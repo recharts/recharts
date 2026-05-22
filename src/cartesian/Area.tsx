@@ -65,7 +65,7 @@ import { DefaultZIndexes } from '../zIndex/DefaultZIndexes';
 import { propsAreEqual } from '../util/propsAreEqual';
 import { AxisId } from '../state/cartesianAxisSlice';
 import { StackDataPoint } from '../util/stacks/stackTypes';
-import { AreaRevealShape } from './AreaRevealShape';
+import { AreaRevealShape, AreaRevealShapeProps } from './AreaRevealShape';
 
 /**
  * @inline
@@ -115,7 +115,7 @@ interface InternalAreaProps extends ZIndexable {
   onAnimationStart?: () => void;
 
   points: ReadonlyArray<AreaPointItem>;
-  shape?: ActiveShape<CurveProps, SVGPathElement>;
+  shape: ActiveShape<CurveProps, SVGPathElement>;
   stackId?: StackId;
 
   tooltipType?: TooltipType;
@@ -355,6 +355,28 @@ interface AreaProps<DataPointType = any, DataValueType = any>
   zIndex?: number;
 }
 
+export const defaultAreaProps = {
+  activeDot: true,
+  animationBegin: 0,
+  animationDuration: 1500,
+  animationEasing: 'ease',
+  connectNulls: false,
+  dot: false,
+  fill: '#3182bd',
+  fillOpacity: 0.6,
+  hide: false,
+  isAnimationActive: 'auto',
+  legendType: 'line',
+  stroke: '#3182bd',
+  strokeWidth: 1,
+  type: 'linear',
+  label: false,
+  shape: AreaRevealShape,
+  xAxisId: 0,
+  yAxisId: 0,
+  zIndex: DefaultZIndexes.area,
+} as const satisfies Partial<Props<never, never>>;
+
 /**
  * Because of naming conflict, we are forced to ignore certain (valid) SVG attributes.
  */
@@ -518,7 +540,7 @@ function StaticArea({
   const { id, ...propsWithoutId } = props;
   const propsWithEvents = svgPropertiesAndEvents(propsWithoutId);
 
-  const curveProps = {
+  const curveProps: AreaRevealShapeProps = {
     ...propsWithEvents,
     id,
     points,
@@ -537,7 +559,11 @@ function StaticArea({
     <>
       {points?.length > 1 && (
         <Layer clipPath={needClip ? `url(#clipPath-${clipPathId})` : undefined}>
-          <Shape shapeType="curve" option={shape} {...curveProps} />
+          <Shape<AreaRevealShapeProps, SVGPathElement>
+            option={shape}
+            DefaultShape={defaultAreaProps.shape}
+            shapeProps={curveProps}
+          />
         </Layer>
       )}
       <AreaDotsWrapper points={points} props={propsWithoutId} clipPathId={clipPathId} />
@@ -762,28 +788,6 @@ class AreaWithState extends PureComponent<InternalProps> {
     );
   }
 }
-
-export const defaultAreaProps = {
-  activeDot: true,
-  animationBegin: 0,
-  animationDuration: 1500,
-  animationEasing: 'ease',
-  connectNulls: false,
-  dot: false,
-  fill: '#3182bd',
-  fillOpacity: 0.6,
-  hide: false,
-  isAnimationActive: 'auto',
-  legendType: 'line',
-  stroke: '#3182bd',
-  strokeWidth: 1,
-  type: 'linear',
-  label: false,
-  shape: AreaRevealShape,
-  xAxisId: 0,
-  yAxisId: 0,
-  zIndex: DefaultZIndexes.area,
-} as const satisfies Partial<Props<never, never>>;
 
 function AreaImpl<DataPointType, ValueAxisType>(props: PropsWithDefaults<DataPointType, ValueAxisType>) {
   const {

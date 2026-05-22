@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { isNumber } from '../util/DataUtils';
 import { Curve, BaseLineType, Props as CurveProps } from '../shape/Curve';
-import { CartesianLayout, LayoutType } from '../util/types';
+import { CartesianLayout, LayoutType, ShapeAnimationProps } from '../util/types';
 import { isWellBehavedNumber } from '../util/isWellBehavedNumber';
 import { Layer } from '../container/Layer';
 import { svgPropertiesNoEvents } from '../util/svgPropertiesNoEvents';
@@ -84,17 +84,7 @@ function RevealClipRect({ alpha, layout, points, baseLine, strokeWidth }: ClipRe
   return <HorizontalClipRect alpha={alpha} points={points} baseLine={baseLine} strokeWidth={strokeWidth} />;
 }
 
-/**
- * Extra props passed to the Area shape during animation.
- */
-export interface AreaShapeAnimationProps {
-  /** Normalized animation progress: 0 = start, 1 = fully visible */
-  t?: number;
-  /** Whether the animation is currently in progress */
-  isAnimating?: boolean;
-  /** Whether this is the entrance (first render) animation */
-  isEntrance?: boolean;
-}
+export type AreaRevealShapeProps = CurveProps & ShapeAnimationProps & { layout?: LayoutType; isRange?: boolean };
 
 /**
  * The default shape for Area that reveals the chart with a left-to-right (or top-to-bottom)
@@ -117,9 +107,7 @@ export interface AreaShapeAnimationProps {
  *
  * @see {@link https://recharts.github.io/en-US/guide/animations Animation guide}
  */
-export function AreaRevealShape(
-  props: CurveProps & AreaShapeAnimationProps & { layout?: LayoutType; isRange?: boolean },
-): React.ReactElement | null {
+export function AreaRevealShape(props: AreaRevealShapeProps): React.ReactElement | null {
   const {
     t = 1,
     isAnimating = false,

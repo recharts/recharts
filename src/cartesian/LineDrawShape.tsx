@@ -1,25 +1,6 @@
 import * as React from 'react';
 import { Curve, Props as CurveProps } from '../shape/Curve';
-
-/**
- * Extra props passed to the Line shape during animation.
- */
-export interface LineShapeAnimationProps {
-  /** Normalized animation progress: 0 = start, 1 = fully visible */
-  t?: number;
-  /** Whether the animation is currently in progress */
-  isAnimating?: boolean;
-  /** Whether this is the entrance (first render) animation */
-  isEntrance?: boolean;
-  /**
-   * The computed visible length of the SVG path during entrance animation, in pixels.
-   * - When a number: the shape should apply stroke-dasharray to reveal exactly this many pixels.
-   * - When null or undefined: no entrance-driven stroke-dasharray should be applied.
-   *
-   * This value is computed by `useAnimatedLineLength` in the parent component.
-   */
-  visibleLength?: number | null;
-}
+import { ShapeAnimationProps } from '../util/types';
 
 /**
  * Reads the total length of an SVG path element, returning 0 if the element
@@ -129,6 +110,18 @@ function computeAnimatedStrokeDasharray(
   return generateSimpleStrokeDasharray(totalLength, visibleLength);
 }
 
+export type LineDrawShapeProps = CurveProps &
+  ShapeAnimationProps & {
+    /**
+     * The computed visible length of the SVG path during entrance animation, in pixels.
+     * - When a number: the shape should apply stroke-dasharray to reveal exactly this many pixels.
+     * - When null or undefined: no entrance-driven stroke-dasharray should be applied.
+     *
+     * This value is computed by `useAnimatedLineLength` in the parent component.
+     */
+    visibleLength?: number | null;
+  };
+
 /**
  * The default shape for Line. During the entrance animation, the line is progressively
  * revealed using the `strokeDasharray` SVG attribute: the visible portion grows from
@@ -151,7 +144,7 @@ function computeAnimatedStrokeDasharray(
  *
  * @see {@link https://recharts.github.io/en-US/guide/animations Animation guide}
  */
-export function LineDrawShape(props: CurveProps & LineShapeAnimationProps): React.ReactElement | null {
+export function LineDrawShape(props: LineDrawShapeProps): React.ReactElement | null {
   const {
     t,
     isAnimating,
