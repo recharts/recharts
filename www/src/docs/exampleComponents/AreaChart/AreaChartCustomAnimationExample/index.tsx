@@ -1,19 +1,18 @@
 import { useCallback, useEffect, useId, useState } from 'react';
-import { Area, AreaChart, CartesianGrid, Tooltip, usePlotArea, XAxis, YAxis, AreaRevealShape } from 'recharts';
+import {
+  AnimationInterpolateFn,
+  Area,
+  AreaChart,
+  CartesianGrid,
+  Tooltip,
+  usePlotArea,
+  XAxis,
+  YAxis,
+  AreaRevealShape,
+  AreaPointItem,
+  interpolate,
+} from 'recharts';
 import { RechartsDevtools } from '@recharts/devtools';
-import type { AnimationInterpolateFn } from 'recharts';
-
-// We need the internal type for AreaPointItem - in practice users
-// would define their own type or use `any` for the interpolation function.
-// TODO: export AreaPointItem from recharts public API
-type AreaPointItem = { x: number | null; y: number | null; value?: ReadonlyArray<unknown>; payload?: unknown };
-
-// Helper to linearly interpolate between two numbers
-function lerp(from: number | undefined | null, to: number | null, t: number): number | null {
-  if (to == null) return to;
-  if (from == null) return to;
-  return from + (to - from) * t;
-}
 
 // #region Sample data
 const dataA = [
@@ -68,7 +67,7 @@ const useAnimateFromBottom = (): AnimationInterpolateFn<AreaPointItem> => {
     return items.flatMap(item => {
       if (item.status === 'removed') return [];
       const { next } = item;
-      return [{ ...next, y: lerp(zero, next.y, t) }];
+      return [{ ...next, y: interpolate(zero, next.y, t) }];
     });
   };
 };
