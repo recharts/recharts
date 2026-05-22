@@ -2,10 +2,11 @@ import React, { ReactNode, useState } from 'react';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { act } from '@testing-library/react';
 import { createSelectorTestCase } from '../helper/createSelectorTestCase';
-import { Funnel, FunnelChart } from '../../src';
+import { Funnel, FunnelChart, FunnelTrapezoidItem } from '../../src';
 import { assertNotNull } from '../helper/assertNotNull';
 import { PageData } from '../_data';
 import { MockAnimationManager } from '../animation/MockProgressAnimationManager';
+import { ShapeAnimationProps } from '../../src/util/types';
 
 const smallerData = PageData.slice(0, 2);
 
@@ -120,7 +121,7 @@ describe('Funnel animation', () => {
   });
 
   describe('shape prop', () => {
-    function CustomShape(props: { t?: number; isAnimating?: boolean; isEntrance?: boolean }) {
+    function CustomShape(props: FunnelTrapezoidItem & ShapeAnimationProps) {
       return (
         <path
           className="custom-funnel-shape"

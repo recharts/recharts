@@ -184,7 +184,7 @@ interface FunnelProps<DataPointType = any, DataValueType = any>
    * During animations, the function shape also receives `t`, `isAnimating`, and `isEntrance`.
    * By default, renders a trapezoid.
    */
-  shape?: ActiveShape<FunnelTrapezoidItem, SVGPathElement>;
+  shape?: ActiveShape<FunnelTrapezoidItem & ShapeAnimationProps, SVGPathElement>;
   tooltipType?: TooltipType;
   /**
    * The customized event handler of click on the area in this group
