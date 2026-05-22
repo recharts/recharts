@@ -14,5 +14,6 @@ export const expectedInBundle = [
   'Text',
   'useActiveTooltipDataPoints',
   'useChartLayout',
+  'usePolarChartLayout',
   'ZIndexLayer',
 ] as const;

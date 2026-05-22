@@ -14,5 +14,6 @@ export const expectedInBundle = [
   'Sector',
   'Text',
   'useChartLayout',
+  'usePolarChartLayout',
   'ZIndexLayer',
 ] as const;

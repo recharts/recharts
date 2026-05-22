@@ -13,6 +13,7 @@ export const expectedInBundle = [
   'Scatter',
   'Symbols',
   'Text',
+  'useCartesianChartLayout',
   'usePlotArea',
   'useChartLayout',
   'ZIndexLayer',

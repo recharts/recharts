@@ -12,7 +12,8 @@ export const expectedInBundle = [
   'matchByIndex',
   'Text',
   'Trapezoid',
-  'usePlotArea',
   'ZIndexLayer',
+  'usePlotArea',
+  'useCartesianChartLayout',
   'useChartLayout',
 ] as const;
