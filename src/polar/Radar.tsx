@@ -455,34 +455,32 @@ function StaticPolygon({
   );
 }
 
-function defaultRadarAnimateItems(): AnimationInterpolateFn<RadarPoint> {
-  return (items, t) => {
-    if (items == null) return [];
-    if (t === 1) {
-      return items.flatMap(item => (item.status === 'removed' ? [] : [item.next]));
-    }
-    return items.flatMap(item => {
-      if (item.status === 'removed') return [];
-      if (item.status === 'matched') {
-        return [
-          {
-            ...item.next,
-            x: interpolate(item.prev.x, item.next.x, t),
-            y: interpolate(item.prev.y, item.next.y, t),
-          },
-        ];
-      }
-      // added: animate from center
+const defaultRadarAnimateItems: AnimationInterpolateFn<RadarPoint> = (items, t) => {
+  if (items == null) return [];
+  if (t === 1) {
+    return items.flatMap(item => (item.status === 'removed' ? [] : [item.next]));
+  }
+  return items.flatMap(item => {
+    if (item.status === 'removed') return [];
+    if (item.status === 'matched') {
       return [
         {
           ...item.next,
-          x: interpolate(item.next.cx, item.next.x, t),
-          y: interpolate(item.next.cy, item.next.y, t),
+          x: interpolate(item.prev.x, item.next.x, t),
+          y: interpolate(item.prev.y, item.next.y, t),
         },
       ];
-    });
-  };
-}
+    }
+    // added: animate from center
+    return [
+      {
+        ...item.next,
+        x: interpolate(item.next.cx, item.next.x, t),
+        y: interpolate(item.next.cy, item.next.y, t),
+      },
+    ];
+  });
+};
 
 function PolygonWithAnimation({
   props,
@@ -501,12 +499,12 @@ function PolygonWithAnimation({
     animationDuration,
     animationEasing,
     animationMatchBy,
+    animationInterpolateFn,
     onAnimationStart,
     onAnimationEnd,
   } = props;
   const baseLineAnimationState = useAnimationStartSnapshot(props, previousBaseLinePointsRef);
   const prevBaseLinePoints = baseLineAnimationState.startValue;
-  const animationInterpolateFn = props.animationInterpolateFn ?? defaultRadarAnimateItems();
   const baseLineAnimationItems = matchAnimationItems(prevBaseLinePoints ?? null, baseLinePoints, animationMatchBy);
 
   const { isAnimating, handleAnimationStart, handleAnimationEnd } = useAnimationCallbacks(
@@ -562,6 +560,7 @@ export const defaultRadarProps = {
   animationDuration: 1500,
   animationEasing: 'ease',
   animationMatchBy: matchByIndex,
+  animationInterpolateFn: defaultRadarAnimateItems,
   dot: false,
   hide: false,
   isAnimationActive: 'auto',

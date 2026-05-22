@@ -569,7 +569,9 @@ function ScatterSymbols(props: ScatterSymbolsProps) {
           ...entry,
           isActive,
           index: i,
-          ...(typeof option === 'function' ? { t, isAnimating, isEntrance } : {}),
+          t,
+          isAnimating,
+          isEntrance,
           [DATA_ITEM_GRAPHICAL_ITEM_ID_ATTRIBUTE_NAME]: String(id),
         };
 

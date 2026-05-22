@@ -169,7 +169,9 @@ function RadialBarSectors({
           className: `recharts-radial-bar-sector ${entry.className}`,
           forceCornerRadius: others.forceCornerRadius,
           cornerIsExternal: others.cornerIsExternal,
-          ...(typeof (isActive ? activeShape : shape) === 'function' ? { t, isAnimating, isEntrance } : {}),
+          t,
+          isAnimating,
+          isEntrance,
           isActive,
           option: isActive && activeShape != null ? activeShape : shape,
           index: i,
@@ -236,7 +238,6 @@ function SectorsWithAnimation({
     onAnimationStart,
     onAnimationEnd,
   } = props;
-  const animationInterpolateFn = props.animationInterpolateFn ?? defaultRadialBarAnimateItems;
 
   const { isAnimating, handleAnimationStart, handleAnimationEnd } = useAnimationCallbacks(
     onAnimationStart,
@@ -255,7 +256,7 @@ function SectorsWithAnimation({
       animationEasing={animationEasing}
       onAnimationStart={handleAnimationStart}
       onAnimationEnd={handleAnimationEnd}
-      animationInterpolateFn={animationInterpolateFn}
+      animationInterpolateFn={props.animationInterpolateFn}
       animationMatchBy={props.animationMatchBy}
     >
       {(stepData, t, isEntrance) => (
@@ -619,6 +620,7 @@ export const defaultRadialBarProps = {
   animationDuration: 1500,
   animationEasing: 'ease',
   animationMatchBy: matchAppend,
+  animationInterpolateFn: defaultRadialBarAnimateItems,
   background: false,
   cornerIsExternal: false,
   cornerRadius: 0,

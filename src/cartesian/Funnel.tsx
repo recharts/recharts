@@ -340,7 +340,9 @@ function FunnelTrapezoids(props: FunnelTrapezoidsProps) {
           option: trapezoidOptions,
           isActive: isActiveIndex,
           stroke: entry.stroke,
-          ...(typeof trapezoidOptions === 'function' ? { t, isAnimating, isEntrance } : {}),
+          t,
+          isAnimating,
+          isEntrance,
         };
 
         return (

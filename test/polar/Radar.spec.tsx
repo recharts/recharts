@@ -334,6 +334,7 @@ describe('<Radar />', () => {
         animationDuration: 1500,
         animationEasing: 'ease',
         animationMatchBy: 'index',
+        animationInterpolateFn: expect.any(Function),
         baseLinePoints: [],
         dataKey: 'value',
         dot: false,
