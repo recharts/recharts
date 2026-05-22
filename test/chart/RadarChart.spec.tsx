@@ -102,7 +102,7 @@ describe('<RadarChart />', () => {
 
     it('should select outer radius', () => {
       const { spy } = renderTestCase(selectOuterRadius);
-      expectLastCalledWith(spy, 150); // TODO this returns 196, why?
+      expectLastCalledWith(spy, 150);
     });
 
     it('should select radius axis range', () => {
@@ -112,7 +112,7 @@ describe('<RadarChart />', () => {
 
     it('should select radius axis scale', () => {
       const { spy } = renderTestCase(state => selectPolarAxisScale(state, 'radiusAxis', 0));
-      expectLastCalledWithScale(spy, { domain: [0, 1000], range: [0, 150] }); // TODO this returns 0, 196, why?
+      expectLastCalledWithScale(spy, { domain: [0, 1000], range: [0, 150] });
     });
 
     it('should select radius axis scale type', () => {
