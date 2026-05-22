@@ -256,7 +256,7 @@ function SectorsWithAnimation({
       onAnimationStart={handleAnimationStart}
       onAnimationEnd={handleAnimationEnd}
       animationInterpolateFn={animationInterpolateFn}
-      animationMatchBy={props.animationMatchBy ?? matchAppend}
+      animationMatchBy={props.animationMatchBy}
     >
       {(stepData, t, isEntrance) => (
         <RadialBarSectors
@@ -618,6 +618,7 @@ export const defaultRadialBarProps = {
   animationBegin: 0,
   animationDuration: 1500,
   animationEasing: 'ease',
+  animationMatchBy: matchAppend,
   background: false,
   cornerIsExternal: false,
   cornerRadius: 0,

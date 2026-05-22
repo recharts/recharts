@@ -152,7 +152,7 @@ interface ScatterInternalProps extends ZIndexable {
   animationDuration: AnimationDuration;
   animationEasing: EasingInput;
   animationInterpolateFn?: AnimationInterpolateFn<ScatterPointItem>;
-  animationMatchBy?: AnimationMatchByProp<ScatterPointItem>;
+  animationMatchBy: AnimationMatchByProp<ScatterPointItem>;
 
   needClip: boolean;
 
@@ -647,7 +647,7 @@ function SymbolsWithAnimation({
         onAnimationStart={handleAnimationStart}
         onAnimationEnd={handleAnimationEnd}
         animationInterpolateFn={animationInterpolateFn}
-        animationMatchBy={props.animationMatchBy ?? matchAppend}
+        animationMatchBy={props.animationMatchBy}
       >
         {(stepData, t, isEntrance) => (
           <Layer>
@@ -837,6 +837,7 @@ export const defaultScatterProps = {
   animationBegin: 0,
   animationDuration: 400,
   animationEasing: 'linear',
+  animationMatchBy: matchAppend,
   zIndex: DefaultZIndexes.scatter,
 } as const satisfies Partial<Props>;
 

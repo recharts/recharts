@@ -423,7 +423,7 @@ function TrapezoidsWithAnimation({
         onAnimationStart={handleAnimationStart}
         onAnimationEnd={handleAnimationEnd}
         animationInterpolateFn={animationInterpolateFn}
-        animationMatchBy={props.animationMatchBy ?? matchAppend}
+        animationMatchBy={props.animationMatchBy}
       >
         {(stepData, t, isEntrance) => (
           <Layer>
@@ -466,6 +466,7 @@ export const defaultFunnelProps = {
   animationBegin: 400,
   animationDuration: 1500,
   animationEasing: 'ease',
+  animationMatchBy: matchAppend,
   fill: '#808080',
   hide: false,
   isAnimationActive: 'auto',

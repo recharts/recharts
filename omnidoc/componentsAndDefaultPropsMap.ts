@@ -42,19 +42,10 @@ type ComponentMeta = {
   defaultProps: Record<string, unknown> | undefined;
 };
 
-const areaOmnidocDefaultProps = { ...defaultAreaProps, animationMatchBy: 'index' as const };
-const barOmnidocDefaultProps = { ...defaultBarProps, animationMatchBy: 'append' as const };
-const funnelOmnidocDefaultProps = { ...defaultFunnelProps, animationMatchBy: 'append' as const };
-const lineOmnidocDefaultProps = { ...defaultLineProps, animationMatchBy: 'index' as const };
-const pieOmnidocDefaultProps = { ...defaultPieProps, animationMatchBy: 'append' as const };
-const radarOmnidocDefaultProps = { ...defaultRadarProps, animationMatchBy: 'index' as const };
-const radialBarOmnidocDefaultProps = { ...defaultRadialBarProps, animationMatchBy: 'append' as const };
-const scatterOmnidocDefaultProps = { ...defaultScatterProps, animationMatchBy: 'append' as const };
-
 export const componentMetaMap: Record<string, ComponentMeta> = {
-  Area: { defaultProps: areaOmnidocDefaultProps },
+  Area: { defaultProps: defaultAreaProps },
   AreaChart: { defaultProps: defaultCartesianChartProps },
-  Bar: { defaultProps: barOmnidocDefaultProps },
+  Bar: { defaultProps: defaultBarProps },
   BarChart: { defaultProps: defaultCartesianChartProps },
   BarStack: { defaultProps: defaultBarStackProps },
   Brush: { defaultProps: defaultBrushProps },
@@ -64,21 +55,21 @@ export const componentMetaMap: Record<string, ComponentMeta> = {
   DefaultTooltipContent: { defaultProps: defaultDefaultTooltipContentProps },
   DefaultLegendContent: { defaultProps: defaultLegendContentDefaultProps },
   ErrorBar: { defaultProps: errorBarDefaultProps },
-  Funnel: { defaultProps: funnelOmnidocDefaultProps },
+  Funnel: { defaultProps: defaultFunnelProps },
   FunnelChart: { defaultProps: defaultCartesianChartProps },
   Label: { defaultProps: defaultLabelProps },
   LabelList: { defaultProps: defaultLabelProps },
   Legend: { defaultProps: legendDefaultProps },
-  Line: { defaultProps: lineOmnidocDefaultProps },
+  Line: { defaultProps: defaultLineProps },
   LineChart: { defaultProps: defaultCartesianChartProps },
-  Pie: { defaultProps: pieOmnidocDefaultProps },
+  Pie: { defaultProps: defaultPieProps },
   PieChart: { defaultProps: defaultPieChartProps },
   PolarAngleAxis: { defaultProps: defaultPolarAngleAxisProps },
   PolarGrid: { defaultProps: defaultPolarGridProps },
   PolarRadiusAxis: { defaultProps: defaultPolarRadiusAxisProps },
-  Radar: { defaultProps: radarOmnidocDefaultProps },
+  Radar: { defaultProps: defaultRadarProps },
   RadarChart: { defaultProps: defaultRadarChartProps },
-  RadialBar: { defaultProps: radialBarOmnidocDefaultProps },
+  RadialBar: { defaultProps: defaultRadialBarProps },
   RadialBarChart: { defaultProps: defaultRadialBarChartProps },
   Rectangle: { defaultProps: defaultRectangleProps },
   ReferenceArea: { defaultProps: referenceAreaDefaultProps },
@@ -86,7 +77,7 @@ export const componentMetaMap: Record<string, ComponentMeta> = {
   ReferenceLine: { defaultProps: referenceLineDefaultProps },
   ResponsiveContainer: { defaultProps: defaultResponsiveContainerProps },
   Sankey: { defaultProps: sankeyDefaultProps },
-  Scatter: { defaultProps: scatterOmnidocDefaultProps },
+  Scatter: { defaultProps: defaultScatterProps },
   ScatterChart: { defaultProps: defaultCartesianChartProps },
   Sector: { defaultProps: defaultSectorProps },
   SunburstChart: { defaultProps: defaultSunburstChartProps },

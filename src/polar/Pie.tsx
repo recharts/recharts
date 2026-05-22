@@ -971,7 +971,7 @@ function SectorsWithAnimation({
         onAnimationStart={handleAnimationStart}
         onAnimationEnd={handleAnimationEnd}
         animationInterpolateFn={animationInterpolateFn}
-        animationMatchBy={props.animationMatchBy ?? matchAppend}
+        animationMatchBy={props.animationMatchBy}
       >
         {(stepData, t, isEntrance) => (
           <Layer>
@@ -999,6 +999,7 @@ export const defaultPieProps = {
   animationBegin: 400,
   animationDuration: 1500,
   animationEasing: 'ease',
+  animationMatchBy: matchAppend,
   cx: '50%',
   cy: '50%',
   dataKey: 'value',

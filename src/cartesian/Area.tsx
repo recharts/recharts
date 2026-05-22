@@ -22,12 +22,12 @@ import {
   ActiveDotType,
   ActiveShape,
   AnimationDuration,
-  EasingInput,
   CartesianLayout,
   DataConsumer,
   DataKey,
   DataProvider,
   DotType,
+  EasingInput,
   LegendType,
   NullableCoordinate,
   TickItem,
@@ -87,7 +87,7 @@ interface InternalAreaProps extends ZIndexable {
   animationDuration: AnimationDuration;
   animationEasing: EasingInput;
   animationInterpolateFn?: AnimationInterpolateFn<AreaPointItem>;
-  animationMatchBy?: AnimationMatchByProp<AreaPointItem>;
+  animationMatchBy: AnimationMatchByProp<AreaPointItem>;
   baseLine: BaseLineType | undefined;
 
   baseValue?: BaseValue;
@@ -361,6 +361,7 @@ export const defaultAreaProps = {
   animationBegin: 0,
   animationDuration: 1500,
   animationEasing: 'ease',
+  animationMatchBy: matchByIndex,
   connectNulls: false,
   dot: false,
   fill: '#3182bd',
@@ -630,7 +631,8 @@ function AreaWithAnimation({
   previousPointsRef: MutableRefObject<ReadonlyArray<AreaPointItem> | null>;
   previousBaselineRef: MutableRefObject<BaseLineType | undefined>;
 }) {
-  const { points, baseLine, isAnimationActive, animationBegin, animationDuration, animationEasing } = props;
+  const { points, baseLine, isAnimationActive, animationBegin, animationDuration, animationEasing, animationMatchBy } =
+    props;
   const animationInput = useMemo(() => ({ points, baseLine }), [points, baseLine]);
   const baseLineAnimationState = useAnimationStartSnapshot(animationInput, previousBaselineRef);
   const layout = useCartesianChartLayout();
@@ -641,8 +643,6 @@ function AreaWithAnimation({
   );
 
   const prevBaseLine = baseLineAnimationState.startValue;
-  // TODO the defaults resolution should be done in defaultProps, not here
-  const matchStrategy = props.animationMatchBy ?? matchByIndex;
   const animationInterpolateFn = props.animationInterpolateFn ?? defaultAreaAnimateItems();
 
   if (layout == null) {
@@ -651,9 +651,9 @@ function AreaWithAnimation({
 
   let baseLineAnimationItems: ReadonlyArray<AnimationItem<NullableCoordinate>> | null;
   if (Array.isArray(baseLine) && Array.isArray(prevBaseLine)) {
-    baseLineAnimationItems = matchAnimationItems(prevBaseLine, baseLine, matchStrategy);
+    baseLineAnimationItems = matchAnimationItems(prevBaseLine, baseLine, animationMatchBy);
   } else if (Array.isArray(baseLine)) {
-    baseLineAnimationItems = matchAnimationItems(null, baseLine, matchStrategy);
+    baseLineAnimationItems = matchAnimationItems(null, baseLine, animationMatchBy);
   } else {
     baseLineAnimationItems = null;
   }
@@ -671,7 +671,7 @@ function AreaWithAnimation({
       onAnimationStart={handleAnimationStart}
       onAnimationEnd={handleAnimationEnd}
       animationInterpolateFn={animationInterpolateFn}
-      animationMatchBy={matchStrategy}
+      animationMatchBy={animationMatchBy}
     >
       {(stepPoints, t, isEntrance) => {
         let stepBaseLine: number | ReadonlyArray<NullableCoordinate> | undefined;

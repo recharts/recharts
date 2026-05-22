@@ -83,7 +83,7 @@ interface InternalLineProps extends ZIndexable {
   animationDuration: AnimationDuration;
   animationEasing: EasingInput;
   animationInterpolateFn?: AnimationInterpolateFn<LinePointItem>;
-  animationMatchBy?: AnimationMatchByProp<LinePointItem>;
+  animationMatchBy: AnimationMatchByProp<LinePointItem>;
 
   className?: string;
   connectNulls: boolean;
@@ -345,6 +345,7 @@ export const defaultLineProps = {
   animationBegin: 0,
   animationDuration: 1500,
   animationEasing: 'ease',
+  animationMatchBy: matchByIndex,
   connectNulls: false,
   dot: true,
   fill: '#fff',
@@ -625,7 +626,16 @@ function CurveWithAnimation({
   pathRef: MutableRefObject<SVGPathElement | null>;
   previousPointsRef: MutableRefObject<ReadonlyArray<LinePointItem> | null>;
 }) {
-  const { points, isAnimationActive, animationBegin, animationDuration, animationEasing, width, height } = props;
+  const {
+    points,
+    isAnimationActive,
+    animationBegin,
+    animationDuration,
+    animationEasing,
+    animationMatchBy,
+    width,
+    height,
+  } = props;
   const totalLength = getTotalLength(pathRef.current);
   const animationInterpolateFn =
     props.animationInterpolateFn ?? defaultLineAnimateItems(props.animateNewValues, width, height);
@@ -639,7 +649,6 @@ function CurveWithAnimation({
 
   // Guard for totalLength: don't update previousPointsRef before SVG path is measured
   const shouldUpdatePreviousRef = useCallback((t: number) => t > 0 && totalLength > 0, [totalLength]);
-  const matchStrategy = props.animationMatchBy ?? matchByIndex;
 
   return (
     <LineLabelListProvider points={points} showLabels={showLabels}>
@@ -656,7 +665,7 @@ function CurveWithAnimation({
         onAnimationStart={handleAnimationStart}
         onAnimationEnd={handleAnimationEnd}
         animationInterpolateFn={animationInterpolateFn}
-        animationMatchBy={matchStrategy}
+        animationMatchBy={animationMatchBy}
         shouldUpdatePreviousRef={shouldUpdatePreviousRef}
       >
         {(stepData, t, isEntrance) => {

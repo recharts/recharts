@@ -18,10 +18,10 @@ import { Dots } from '../component/Dots';
 import {
   ActiveDotType,
   AnimationDuration,
-  EasingInput,
   DataConsumer,
   DataKey,
   DotType,
+  EasingInput,
   LegendType,
   TooltipType,
   TrapezoidViewBox,
@@ -500,14 +500,14 @@ function PolygonWithAnimation({
     animationBegin,
     animationDuration,
     animationEasing,
+    animationMatchBy,
     onAnimationStart,
     onAnimationEnd,
   } = props;
   const baseLineAnimationState = useAnimationStartSnapshot(props, previousBaseLinePointsRef);
   const prevBaseLinePoints = baseLineAnimationState.startValue;
-  const matchStrategy = props.animationMatchBy ?? matchByIndex;
   const animationInterpolateFn = props.animationInterpolateFn ?? defaultRadarAnimateItems();
-  const baseLineAnimationItems = matchAnimationItems(prevBaseLinePoints ?? null, baseLinePoints, matchStrategy);
+  const baseLineAnimationItems = matchAnimationItems(prevBaseLinePoints ?? null, baseLinePoints, animationMatchBy);
 
   const { isAnimating, handleAnimationStart, handleAnimationEnd } = useAnimationCallbacks(
     onAnimationStart,
@@ -528,7 +528,7 @@ function PolygonWithAnimation({
         onAnimationStart={handleAnimationStart}
         onAnimationEnd={handleAnimationEnd}
         animationInterpolateFn={animationInterpolateFn}
-        animationMatchBy={matchStrategy}
+        animationMatchBy={animationMatchBy}
       >
         {(stepData, t) => {
           const stepBaseLinePoints = t === 1 ? baseLinePoints : animationInterpolateFn(baseLineAnimationItems, t);
@@ -561,6 +561,7 @@ export const defaultRadarProps = {
   animationBegin: 0,
   animationDuration: 1500,
   animationEasing: 'ease',
+  animationMatchBy: matchByIndex,
   dot: false,
   hide: false,
   isAnimationActive: 'auto',
