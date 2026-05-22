@@ -690,13 +690,9 @@ function BarRectangleWithActiveState(
       option={option}
       index={index}
       dataKey={dataKey}
-      {...(typeof option === 'function'
-        ? {
-            t: props.t,
-            isAnimating: props.isAnimating,
-            isEntrance: props.isEntrance,
-          }
-        : {})}
+      t={props.t}
+      isAnimating={props.isAnimating}
+      isEntrance={props.isEntrance}
       onTransitionEnd={handleTransitionEnd}
     />
   );
@@ -730,13 +726,9 @@ function BarRectangleNeverActive(
       option={shape}
       index={index}
       dataKey={dataKey}
-      {...(typeof shape === 'function'
-        ? {
-            t: props.t,
-            isAnimating: props.isAnimating,
-            isEntrance: props.isEntrance,
-          }
-        : {})}
+      t={props.t}
+      isAnimating={props.isAnimating}
+      isEntrance={props.isEntrance}
     />
   );
 }

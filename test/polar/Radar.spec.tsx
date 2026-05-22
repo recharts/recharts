@@ -333,6 +333,7 @@ describe('<Radar />', () => {
         animationBegin: 0,
         animationDuration: 1500,
         animationEasing: 'ease',
+        animationMatchBy: 'index',
         baseLinePoints: [],
         dataKey: 'value',
         dot: false,
