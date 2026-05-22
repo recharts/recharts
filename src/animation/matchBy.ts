@@ -76,7 +76,7 @@ export const matchAppend = 'append' as const;
  * <Pie animationMatchBy={matchByDataKey('id')} />
  */
 export function matchByDataKey(dataKey: DataKey<Record<string, unknown>>): AnimationMatchBy<{ payload?: unknown }> {
-  return (item: { payload?: unknown }) => {
+  return (item: { payload?: unknown }): string | number | null => {
     if (item.payload == null || typeof item.payload !== 'object') return null;
     const value = getValueByDataKey(item.payload as Record<string, unknown>, dataKey);
     if (value == null) return null;
