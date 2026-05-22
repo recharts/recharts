@@ -408,6 +408,9 @@ export function AnimationsGuide() {
               Ranged RadarChart with custom animation
             </RechartsLink>
           </li>
+          <li>
+            <RechartsLink to="/examples/AnimatedBarTimeSeriesExample/">BarChart with custom animation</RechartsLink>
+          </li>
         </ul>
       </p>
 
@@ -582,7 +585,6 @@ export function AnimationsGuide() {
           </tr>
         </tbody>
       </table>
-      {/* TODO https://software.es.net/react-timeseries-charts/#/example/realtime */}
     </article>
   );
 }
