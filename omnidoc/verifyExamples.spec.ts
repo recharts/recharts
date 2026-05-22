@@ -34,6 +34,7 @@ describe('Documentation Examples Coverage', () => {
     'Coordinate',
     'Cross',
     'CrossProps',
+    'CurveProps',
     'CustomScaleDefinition',
     'Customized',
     'CustomizedProps',
@@ -151,6 +152,14 @@ describe('Documentation Examples Coverage', () => {
     'useYAxisInverseDataSnapScale',
     'useYAxisInverseTickSnapScale',
     'ZIndexLayer',
+    'AnimationHandle',
+    'AnimationMatchByProp',
+    'AnimationProgressProvider',
+    'AnimationStatus',
+    'LineDrawShape',
+    'LinePointItem',
+    'matchAppend',
+    'useAnimationProgress',
   ];
 
   /*
@@ -158,6 +167,7 @@ describe('Documentation Examples Coverage', () => {
    */
   const exportsThatNeedPropExamples: ReadonlySet<string> = new Set([
     'Area',
+    'AreaRevealShape',
     'AreaChart',
     'Bar',
     'BarChart',
@@ -165,6 +175,7 @@ describe('Documentation Examples Coverage', () => {
     'Brush',
     'CartesianGrid',
     'ComposedChart',
+    'Curve',
     'DefaultLegendContent',
     'DefaultTooltipContent',
     'ErrorBar',

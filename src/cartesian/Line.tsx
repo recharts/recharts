@@ -267,7 +267,7 @@ interface LineProps<DataPointType = any, DataValueType = any>
    * @example <Line dataKey="value" shape={CustomizedShapeComponent} />
    * @example <Line dataKey="value" shape={renderShapeFunction} />
    */
-  shape?: ActiveShape<CurveProps, SVGPathElement>;
+  shape?: ActiveShape<LineDrawShapeProps, SVGPathElement>;
 
   /**
    * The name of data.

@@ -1,4 +1,4 @@
-import { Line, LineChart, CartesianGrid, Tooltip, XAxis, YAxis, LineDrawShape, Curve } from 'recharts';
+import { Line, LineChart, CartesianGrid, Tooltip, XAxis, YAxis, LineDrawShapeProps, Curve } from 'recharts';
 import { generateMockData, RechartsDevtools } from '@recharts/devtools';
 import { useCallback, useEffect, useId, useState } from 'react';
 
@@ -21,7 +21,7 @@ const initialState: ControlsType = {
  * Custom shape that fades in using opacity during entrance animation,
  * and renders normally otherwise.
  */
-function OpacityFadeShape(props: Parameters<typeof LineDrawShape>[0]) {
+function OpacityFadeShape(props: LineDrawShapeProps) {
   const { t = 1, isEntrance = false } = props;
   const opacity = isEntrance ? t : 1;
   /*

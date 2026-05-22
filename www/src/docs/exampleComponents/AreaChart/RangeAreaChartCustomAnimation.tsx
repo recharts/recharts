@@ -1,12 +1,11 @@
 import { useCallback, useEffect, useId, useState } from 'react';
-import type { AnimationInterpolateFn, AreaPointItem } from 'recharts';
+import type { AnimationInterpolateFn, AreaPointItem, AreaRevealShapeProps } from 'recharts';
 import {
   Area,
   AreaChart,
   AreaProps,
   AreaRevealShape,
   CartesianGrid,
-  CurveProps,
   interpolate,
   Tooltip,
   usePlotArea,
@@ -85,7 +84,7 @@ function useAnimateFromPlotBottom(): AnimationInterpolateFn<AreaPointItem> {
   };
 }
 
-function CurveWithoutEntranceAnimation(props: CurveProps) {
+function CurveWithoutEntranceAnimation(props: AreaRevealShapeProps) {
   return <AreaRevealShape {...props} isEntrance={false} />;
 }
 

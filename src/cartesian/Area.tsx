@@ -303,7 +303,7 @@ interface AreaProps<DataPointType = any, DataValueType = any>
    * @example <Area dataKey="value" shape={CustomizedShapeComponent} />
    * @example <Area dataKey="value" shape={renderShapeFunction} />
    */
-  shape?: ActiveShape<CurveProps, SVGPathElement>;
+  shape?: ActiveShape<AreaRevealShapeProps, SVGPathElement>;
 
   /**
    * When two Areas have the same axisId and same stackId, then the two Areas are stacked in the chart.
