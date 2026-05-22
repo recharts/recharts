@@ -13,7 +13,7 @@ import {
   YAxis,
   interpolate,
 } from 'recharts';
-import { generateMockData } from '@recharts/devtools';
+import { generateMockData, RechartsDevtools } from '@recharts/devtools';
 
 const WINDOW = 6;
 const DATA_LENGTH = 30;
@@ -46,20 +46,14 @@ const swipeLeftAnimateItems: AnimationInterpolateFn<BarRectangleItem> = (
   t: number,
 ) => {
   if (items == null) return [];
-  return items.flatMap((item, i): ReadonlyArray<BarRectangleItem> => {
+  return items.flatMap((item): ReadonlyArray<BarRectangleItem> => {
     if (!item) return [];
     if (item.status === 'removed') {
-      const neighbour = items[i + 1];
-      if (!neighbour || neighbour.status === 'added') {
-        // can't calculate the gap
-        return [item.prev];
-      }
-      const gap = Math.abs(item.prev.x - neighbour.prev.x);
       // animate removed items to the left, out of the chart
       return [
         {
           ...item.prev,
-          x: interpolate(item.prev.x, item.prev.x - gap, t),
+          x: interpolate(item.prev.x, item.prev.x - item.prev.width * 2, t),
         },
       ];
     }
@@ -76,7 +70,7 @@ const swipeLeftAnimateItems: AnimationInterpolateFn<BarRectangleItem> = (
     }
     // added
     const { next } = item;
-    return [{ ...next, height: interpolate(0, next.height, t), y: interpolate(next.stackedBarStart, next.y, t) }];
+    return [{ ...next, x: interpolate(item.next.x + item.next.width * 2, item.next.x, t) }];
   });
 };
 
@@ -85,20 +79,14 @@ const swipeBottomAnimateItems: AnimationInterpolateFn<BarRectangleItem> = (
   t: number,
 ) => {
   if (items == null) return [];
-  return items.flatMap((item, i): ReadonlyArray<BarRectangleItem> => {
+  return items.flatMap((item): ReadonlyArray<BarRectangleItem> => {
     if (!item) return [];
     if (item.status === 'removed') {
-      const neighbour = items[i + 1];
-      if (!neighbour || neighbour.status === 'added') {
-        // can't calculate the gap
-        return [item.prev];
-      }
-      const gap = Math.abs(item.prev.y - neighbour.prev.y);
-      // animate removed items downward, out of the chart
+      // animate removed items upward, out of the chart
       return [
         {
           ...item.prev,
-          y: interpolate(item.prev.y, item.prev.y + gap, t),
+          y: interpolate(item.prev.y, item.prev.y - item.prev.height * 2, t),
         },
       ];
     }
@@ -106,16 +94,13 @@ const swipeBottomAnimateItems: AnimationInterpolateFn<BarRectangleItem> = (
       return [
         {
           ...item.next,
-          x: interpolate(item.prev.x, item.next.x, t),
           y: interpolate(item.prev.y, item.next.y, t),
-          width: interpolate(item.prev.width, item.next.width, t),
-          height: interpolate(item.prev.height, item.next.height, t),
         },
       ];
     }
-    // added
+    // added items animate from the bottom
     const { next } = item;
-    return [{ ...next, width: interpolate(0, next.width, t), x: interpolate(next.stackedBarStart, next.x, t) }];
+    return [{ ...next, y: interpolate(next.y + next.height * 2, next.y, t) }];
   });
 };
 
@@ -157,6 +142,7 @@ export default function AnimatedBarTimeSeriesExample(props: Partial<ControlsType
         animationMatchBy={matchProp}
         animationInterpolateFn={animationInterpolateFn}
       />
+      <RechartsDevtools />
     </BarChart>
   );
 }
