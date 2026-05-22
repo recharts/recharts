@@ -8,6 +8,8 @@ export const expectedInBundle = [
   'Label',
   'LabelList',
   'Layer',
+  'matchAppend',
+  'matchByIndex',
   'Text',
   'Trapezoid',
   'usePlotArea',

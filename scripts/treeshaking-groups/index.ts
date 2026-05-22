@@ -49,6 +49,7 @@ import { expectedInBundle as ZAxis } from './ZAxis';
 
 export const treeshakingGroups: Record<string, ReadonlyArray<string>> = {
   Area,
+  AreaRevealShape: ['Curve', 'Layer', 'useChartLayout'],
   AreaChart,
   Bar,
   BarChart,
@@ -67,6 +68,7 @@ export const treeshakingGroups: Record<string, ReadonlyArray<string>> = {
   LabelList: ['DefaultZIndexes', 'Global', 'Label', 'LabelList', 'Layer', 'Text', 'ZIndexLayer', 'useChartLayout'],
   Legend: ['DefaultLegendContent', 'Legend', 'Surface', 'Symbols', 'useChartHeight', 'useChartWidth', 'useMargin'],
   Line,
+  LineDrawShape: ['Curve', 'useChartLayout'],
   LineChart,
   Pie,
   PieChart,

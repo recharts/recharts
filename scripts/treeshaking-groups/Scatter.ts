@@ -8,10 +8,12 @@ export const expectedInBundle = [
   'Label',
   'LabelList',
   'Layer',
+  'matchAppend',
+  'matchByIndex',
   'Scatter',
   'Symbols',
   'Text',
   'usePlotArea',
-  'ZIndexLayer',
   'useChartLayout',
+  'ZIndexLayer',
 ] as const;

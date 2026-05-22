@@ -1,5 +1,6 @@
 export const expectedInBundle = [
   'Area',
+  'AreaRevealShape',
   'Curve',
   'DefaultZIndexes',
   'Dot',
@@ -9,6 +10,8 @@ export const expectedInBundle = [
   'Label',
   'LabelList',
   'Layer',
+  'matchAppend',
+  'matchByIndex',
   'Text',
   'useActiveTooltipDataPoints',
   'usePlotArea',

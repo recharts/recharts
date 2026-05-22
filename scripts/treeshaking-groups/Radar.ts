@@ -7,10 +7,12 @@ export const expectedInBundle = [
   'Label',
   'LabelList',
   'Layer',
+  'matchAppend',
+  'matchByIndex',
   'Polygon',
   'Radar',
   'Text',
   'useActiveTooltipDataPoints',
-  'ZIndexLayer',
   'useChartLayout',
+  'ZIndexLayer',
 ] as const;
