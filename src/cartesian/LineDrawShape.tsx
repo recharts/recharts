@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { RefObject } from 'react';
 import { Curve, Props as CurveProps } from '../shape/Curve';
 import { ShapeAnimationProps } from '../util/types';
 
@@ -19,7 +20,7 @@ function getTotalLength(path: SVGPathElement | null): number {
  *
  * Uses `totalLength` as the gap (instead of `totalLength - length`) to prevent a floating-point
  * precision artifact: when fractional dash and gap values are serialized to a string attribute
- * and re-parsed by the SVG renderer, their sum can differ from the actual path length by a ULP,
+ * and reparsed by the SVG renderer, their sum can differ from the actual path length by a ULP,
  * causing the dasharray pattern to repeat and render a phantom dot at the path endpoint
  * with round or square strokeLinecap.
  *
@@ -110,8 +111,15 @@ function computeAnimatedStrokeDasharray(
   return generateSimpleStrokeDasharray(totalLength, visibleLength);
 }
 
-export type LineDrawShapeProps = CurveProps &
+export type LineDrawShapeProps = Omit<CurveProps, 'pathRef'> &
   ShapeAnimationProps & {
+    /**
+     * CurveProps use Ref which includes the object plus callback.
+     * Here in LineDrawShape we have to read from it so we only allow the object - but we keep `Curve.ref` the same
+     * for backwards compatibility.
+     * LineDrawShape is new since 3.9 so there's no backwards to go.
+     */
+    pathRef: RefObject<SVGPathElement>;
     /**
      * The computed visible length of the SVG path during entrance animation, in pixels.
      * - When a number: the shape should apply stroke-dasharray to reveal exactly this many pixels.
@@ -161,7 +169,7 @@ export function LineDrawShape(props: LineDrawShapeProps): React.ReactElement | n
   let strokeDasharray: string | undefined;
 
   if (visibleLength != null) {
-    const pathRef = curveProps.pathRef as React.RefObject<SVGPathElement | null> | undefined;
+    const { pathRef } = curveProps;
     const totalLength = getTotalLength(pathRef?.current ?? null);
     strokeDasharray = computeAnimatedStrokeDasharray(userStrokeDasharray, totalLength, visibleLength);
   } else if (userStrokeDasharray != null) {
