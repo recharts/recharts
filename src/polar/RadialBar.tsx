@@ -318,7 +318,7 @@ interface InternalRadialBarProps<DataPointType = any, DataValueType = any>
    * @returns The interpolated items at time t
    *
    * @since 3.9
-   * @see {@link https://recharts.github.io/en-US/guide/animations/ Animations guide
+   * @see {@link https://recharts.github.io/en-US/guide/animations/ Animations guide}
    */
   animationInterpolateFn?: AnimationInterpolateFn<RadialBarDataItem, PolarLayout>;
   /**

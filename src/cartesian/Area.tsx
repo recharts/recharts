@@ -194,7 +194,7 @@ interface AreaProps<DataPointType = any, DataValueType = any>
    * @see matchAppend
    *
    * @since 3.9
-   * @see {@link https://recharts.github.io/en-US/guide/animations/ Animations guide
+   * @see {@link https://recharts.github.io/en-US/guide/animations/ Animations guide}
    */
   animationMatchBy?: AnimationMatchByProp<AreaPointItem>;
   /**

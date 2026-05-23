@@ -279,7 +279,7 @@ interface PieProps<DataPointType = any, DataValueType = any>
    * @returns The interpolated items at time t
    *
    * @since 3.9
-   * @see {@link https://recharts.github.io/en-US/guide/animations/ Animations guide
+   * @see {@link https://recharts.github.io/en-US/guide/animations/ Animations guide}
    */
   animationInterpolateFn?: AnimationInterpolateFn<PieSectorDataItem, PolarLayout>;
   /**
@@ -298,7 +298,7 @@ interface PieProps<DataPointType = any, DataValueType = any>
    * @see matchAppend
    *
    * @since 3.9
-   * @see {@link https://recharts.github.io/en-US/guide/animations/ Animations guide
+   * @see {@link https://recharts.github.io/en-US/guide/animations/ Animations guide}
    */
   animationMatchBy?: AnimationMatchByProp<PieSectorDataItem>;
   className?: string;
