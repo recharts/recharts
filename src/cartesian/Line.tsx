@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Component, MutableRefObject, ReactElement, ReactNode, Ref, useCallback, useMemo, useRef } from 'react';
+import { Component, MutableRefObject, ReactElement, ReactNode, RefObject, useCallback, useMemo, useRef } from 'react';
 
 import { clsx } from 'clsx';
 import { CurveType, Props as CurveProps } from '../shape/Curve';
@@ -98,7 +98,7 @@ interface InternalLineProps extends ZIndexable {
   layout: 'horizontal' | 'vertical';
   left: number;
   legendType: LegendType;
-  shape: ActiveShape<CurveProps, SVGPathElement>;
+  shape: ActiveShape<LineDrawShapeProps, SVGPathElement>;
 
   name?: string | number;
   needClip?: boolean;
@@ -576,7 +576,7 @@ function StaticCurve({
   visibleLength,
 }: {
   clipPathId: string;
-  pathRef: Ref<SVGPathElement>;
+  pathRef: RefObject<SVGPathElement>;
   points: ReadonlyArray<LinePointItem>;
   props: InternalProps;
   t?: number;
@@ -624,7 +624,7 @@ function CurveWithAnimation({
 }: {
   clipPathId: string;
   props: InternalProps;
-  pathRef: MutableRefObject<SVGPathElement | null>;
+  pathRef: RefObject<SVGPathElement>;
   previousPointsRef: MutableRefObject<ReadonlyArray<LinePointItem> | null>;
 }) {
   const {
@@ -692,7 +692,7 @@ function CurveWithAnimation({
 
 function RenderCurve({ clipPathId, props }: { clipPathId: string; props: InternalProps }) {
   const previousPointsRef = useRef<ReadonlyArray<LinePointItem> | null>(null);
-  const pathRef = useRef<SVGPathElement | null>(null);
+  const pathRef = useRef<SVGPathElement>(null);
 
   return (
     <CurveWithAnimation props={props} clipPathId={clipPathId} previousPointsRef={previousPointsRef} pathRef={pathRef} />
