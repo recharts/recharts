@@ -20,7 +20,14 @@ import { CartesianLayout, PolarLayout } from '../util/types';
  * @param onAnimationStart optional callback to call when animation starts
  * @param onAnimationEnd optional callback to call when animation ends
  */
-export function useAnimationCallbacks(onAnimationStart?: () => void, onAnimationEnd?: () => void) {
+export function useAnimationCallbacks(
+  onAnimationStart?: () => void,
+  onAnimationEnd?: () => void,
+): {
+  isAnimating: boolean;
+  handleAnimationStart: () => void;
+  handleAnimationEnd: () => void;
+} {
   const [isAnimating, setIsAnimating] = useState(false);
 
   const handleAnimationStart = useCallback(() => {
