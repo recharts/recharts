@@ -443,6 +443,7 @@ jobs:
     name: VR Tests (${{ matrix.browser }})
     permissions:
       contents: read
+      id-token: write
     runs-on: ubuntu-latest
     needs: [build]
     container:
@@ -475,6 +476,14 @@ jobs:
         run: npx playwright test --config=test-vr/playwright-ct.config.ts --project=${{ matrix.browser }}
         # Continue even if tests fail so the blob report can still be uploaded.
         continue-on-error: true
+
+      - name: Upload Flakiness report artifact (fork PRs only)
+        if: always() && github.event_name == 'pull_request' && github.event.pull_request.head.repo.fork
+        uses: actions/upload-artifact@v4
+        with:
+          name: flakiness-report-${{ github.job }}-${{ strategy.job-index }}
+          path: flakiness-report/
+          retention-days: 1
 
       - name: Upload blob report artifact
         if: always()
