@@ -47,7 +47,10 @@ export default defineConfig({
   /* Reporter to use. See https://playwright.dev/docs/test-reporters */
   reporter: process.env.CI
     ? // In CI each browser job emits a blob that is later merged into a single HTML report.
-      [['blob', { outputDir: path.join(__dirname, 'blob-report') }]]
+      [
+        ['blob', { outputDir: path.join(__dirname, 'blob-report') }],
+        ['@flakiness/playwright', { flakinessProject: 'recharts/recharts' }],
+      ],
     : [
         [
           'html',
