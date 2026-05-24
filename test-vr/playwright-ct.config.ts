@@ -50,7 +50,7 @@ export default defineConfig({
       [
         ['blob', { outputDir: path.join(__dirname, 'blob-report') }],
         ['@flakiness/playwright', { flakinessProject: 'recharts/recharts' }],
-      ],
+      ]
     : [
         [
           'html',
