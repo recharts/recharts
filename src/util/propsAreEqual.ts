@@ -1,6 +1,6 @@
 import { shallowEqual } from 'react-redux';
 
-const propsToShallowCompare = new Set<string>([
+export const propsToShallowCompare = new Set<string>([
   'axisLine',
   'tickLine',
   'activeBar',

@@ -22,6 +22,23 @@ export type {
   TooltipItemSorter,
   ValueType as TooltipValueType,
 } from './component/DefaultTooltipContent';
+export type {
+  RechartsTheme,
+  RechartsThemeColors,
+  RechartsThemeTypography,
+  RechartsThemeStrokeWidths,
+  RechartsThemeRadii,
+  RechartsThemeShadows,
+  RechartsThemeSeries,
+  RechartsSeriesStyle,
+  RechartsThemeComponents,
+  RechartsImplicitSvgTheme,
+  RechartsSvgComponentTheme,
+  RechartsHtmlComponentTheme,
+} from './theme/RechartsTheme';
+export { legacyTheme, lightTheme, darkTheme } from './theme/builtinThemes';
+export { RechartsThemeProvider, useRechartsTheme } from './theme/RechartsThemeProvider';
+export type { RechartsThemeProviderProps } from './theme/RechartsThemeProvider';
 export { ResponsiveContainer } from './component/ResponsiveContainer';
 export type { Props as ResponsiveContainerProps } from './component/ResponsiveContainer';
 export { Cell } from './component/Cell';

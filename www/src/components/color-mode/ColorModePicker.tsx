@@ -1,8 +1,7 @@
-import { useSyncExternalStore } from 'react';
 import { LuMonitor, LuMoon, LuSun } from 'react-icons/lu';
 
 import styles from './ColorModePicker.module.css';
-import { useColorModeStore } from './ColorModeProvider';
+import { useColorModeState, useColorModeStore } from './ColorModeProvider';
 import { ColorModeState } from './defineColorModeStore';
 
 function ColorModePickerIcon(props: ColorModeState) {
@@ -17,7 +16,7 @@ function ColorModePickerIcon(props: ColorModeState) {
 
 export function ColorModePicker(props: React.ComponentPropsWithRef<'button'>) {
   const store = useColorModeStore();
-  const state = useSyncExternalStore(store.subscribe, store.getSnapshot, store.getServerSnapshot);
+  const state = useColorModeState();
   return (
     <button
       {...props}

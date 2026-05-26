@@ -55,27 +55,11 @@ const MyChart = (props: { interval: AxisInterval }) => (
     data={data}
     margin={{ left: 0, right: 0, top: 10 }}
   >
-    <CartesianGrid strokeDasharray="3 3" stroke="var(--color-border-3)" />
-    <XAxis dataKey="name" interval={props.interval} stroke="var(--color-text-3)" />
-    <YAxis interval={props.interval} width="auto" stroke="var(--color-text-3)" />
-    <Line
-      type="monotone"
-      dataKey="pv"
-      stroke="var(--color-chart-1)"
-      dot={{
-        fill: 'var(--color-surface-base)',
-      }}
-      activeDot={{ r: 8, stroke: 'var(--color-surface-base)' }}
-    />
-    <Line
-      type="monotone"
-      dataKey="uv"
-      stroke="var(--color-chart-2)"
-      dot={{
-        fill: 'var(--color-surface-base)',
-      }}
-      activeDot={{ stroke: 'var(--color-surface-base)' }}
-    />
+    <CartesianGrid strokeDasharray="3 3" />
+    <XAxis dataKey="name" interval={props.interval} />
+    <YAxis interval={props.interval} width="auto" />
+    <Line type="monotone" dataKey="pv" activeDot={{ r: 8 }} />
+    <Line type="monotone" dataKey="uv" />
     <RechartsDevtools />
   </LineChart>
 );

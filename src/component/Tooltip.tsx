@@ -30,7 +30,8 @@ import { setTooltipSettingsState, TooltipIndex, TooltipPayload, TooltipPayloadEn
 import { AxisId } from '../state/cartesianAxisSlice';
 import { useTooltipChartSynchronisation } from '../synchronisation/useChartSynchronisation';
 import { useTooltipEventType } from '../state/selectors/selectTooltipEventType';
-import { resolveDefaultProps } from '../util/resolveDefaultProps';
+import type { RechartsTheme } from '../theme/RechartsTheme';
+import { useRechartsResolvedProps } from '../theme/useRechartsResolvedProps';
 
 export type ContentType<TValue extends ValueType = ValueType, TName extends NameType = NameType> =
   | ReactElement
@@ -266,6 +267,42 @@ export const defaultTooltipProps = {
   wrapperStyle: {},
 } as const satisfies Partial<TooltipProps<any, any>>;
 
+function getTooltipComponentTheme(theme: RechartsTheme): Partial<TooltipProps<ValueType, NameType>> | undefined {
+  return theme.components?.Tooltip;
+}
+
+function getTooltipTokenTheme(theme: RechartsTheme): Partial<TooltipProps<ValueType, NameType>> | undefined {
+  const typography = {
+    fontFamily: theme.typography?.fontFamily,
+    fontSize: theme.typography?.fontSize,
+    fontWeight: theme.typography?.fontWeight,
+    letterSpacing: theme.typography?.letterSpacing,
+  } satisfies CSSProperties;
+
+  return {
+    cursor: theme.colors?.tooltipCursor != null ? { stroke: theme.colors.tooltipCursor } : undefined,
+    contentStyle: {
+      ...typography,
+      backgroundColor: theme.colors?.surface,
+      border: theme.colors?.border != null ? `1px solid ${theme.colors.border}` : undefined,
+      borderRadius: theme.radii?.tooltip,
+      boxShadow: theme.shadows?.tooltip,
+      color: theme.colors?.text,
+    },
+    itemStyle: {
+      ...typography,
+      color: theme.colors?.text,
+    },
+    labelStyle: {
+      ...typography,
+      color: theme.colors?.text,
+    },
+    wrapperStyle: {
+      color: theme.colors?.text,
+    },
+  };
+}
+
 /**
  * The Tooltip component displays a floating box with data values when hovering over or clicking on chart elements.
  *
@@ -280,7 +317,12 @@ export const defaultTooltipProps = {
  * @consumes TooltipEntrySettings
  */
 export function Tooltip(outsideProps: TooltipProps<ValueType, NameType>) {
-  const props = resolveDefaultProps(outsideProps, defaultTooltipProps);
+  const props = useRechartsResolvedProps(
+    outsideProps,
+    defaultTooltipProps,
+    getTooltipComponentTheme,
+    getTooltipTokenTheme,
+  );
   const {
     active: activeFromProps,
     allowEscapeViewBox,

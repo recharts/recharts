@@ -13,12 +13,14 @@ import { useIsPanorama } from '../context/PanoramaContext';
 
 import { useClipPathId } from '../container/ClipPathProvider';
 import { svgPropertiesAndEvents } from '../util/svgPropertiesAndEvents';
-import { RequiresDefaultProps, resolveDefaultProps } from '../util/resolveDefaultProps';
+import { RequiresDefaultProps } from '../util/resolveDefaultProps';
 import { AxisId } from '../state/cartesianAxisSlice';
 import { ZIndexable, ZIndexLayer } from '../zIndex/ZIndexLayer';
 import { DefaultZIndexes } from '../zIndex/DefaultZIndexes';
 import { Coordinate } from '../util/types';
 import { CartesianScaleHelperImpl } from '../util/scale/CartesianScaleHelper';
+import type { RechartsTheme } from '../theme/RechartsTheme';
+import { useRechartsResolvedProps } from '../theme/useRechartsResolvedProps';
 
 type ReferenceCoordinateValue = number | string;
 
@@ -248,6 +250,18 @@ export const referenceDotDefaultProps = {
 
 type PropsWithDefaults = RequiresDefaultProps<Props, typeof referenceDotDefaultProps>;
 
+function getReferenceDotComponentTheme(theme: RechartsTheme): Partial<Props> | undefined {
+  return theme.components?.ReferenceDot;
+}
+
+function getReferenceDotTokenTheme(theme: RechartsTheme): Partial<Props> | undefined {
+  return {
+    fill: theme.colors?.surface,
+    stroke: theme.colors?.border,
+    strokeWidth: theme.strokeWidths?.reference,
+  };
+}
+
 /**
  * Draws a circle on the chart to highlight a specific point.
  *
@@ -266,7 +280,12 @@ export function ReferenceDot<
   XValueType extends ReferenceCoordinateValue = any,
   YValueType extends ReferenceCoordinateValue = any,
 >(outsideProps: Props<XValueType, YValueType>) {
-  const props = resolveDefaultProps(outsideProps, referenceDotDefaultProps);
+  const props = useRechartsResolvedProps(
+    outsideProps,
+    referenceDotDefaultProps,
+    getReferenceDotComponentTheme,
+    getReferenceDotTokenTheme,
+  );
   const { x, y, r, ifOverflow, yAxisId, xAxisId } = props;
   return (
     <>

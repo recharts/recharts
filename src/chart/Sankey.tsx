@@ -26,13 +26,15 @@ import { ChartOptions } from '../state/optionsSlice';
 import { ReportEventSettings } from '../state/ReportEventSettings';
 import { SetComputedData } from '../context/chartDataContext';
 import { svgPropertiesNoEvents, svgPropertiesNoEventsFromUnknown } from '../util/svgPropertiesNoEvents';
-import { RequiresDefaultProps, resolveDefaultProps } from '../util/resolveDefaultProps';
+import { RequiresDefaultProps } from '../util/resolveDefaultProps';
 import { isPositiveNumber } from '../util/isWellBehavedNumber';
 import { isNotNil, noop } from '../util/DataUtils';
 import { WithIdRequired } from '../util/useUniqueId';
 import { RegisterGraphicalItemId } from '../context/RegisterGraphicalItemId';
 import { GraphicalItemId } from '../state/graphicalItemsSlice';
 import { initialEventSettingsState } from '../state/eventSettingsSlice';
+import type { RechartsTheme } from '../theme/RechartsTheme';
+import { useRechartsResolvedProps } from '../theme/useRechartsResolvedProps';
 
 const interpolationGenerator = (a: number, b: number) => {
   const ka = +a;
@@ -1087,6 +1089,10 @@ export const sankeyDefaultProps = {
   ...initialEventSettingsState,
 } as const satisfies Partial<Props>;
 
+function getSankeyComponentTheme(theme: RechartsTheme): Partial<Props> | undefined {
+  return theme.components?.Sankey;
+}
+
 type PropsWithResolvedDefaults = RequiresDefaultProps<Props, typeof sankeyDefaultProps>;
 
 type InternalSankeyProps = WithIdRequired<PropsWithResolvedDefaults>;
@@ -1250,7 +1256,11 @@ function SankeyImpl(props: InternalSankeyProps) {
  * @provides TooltipEntrySettings
  */
 export function Sankey(outsideProps: Props) {
-  const props: PropsWithResolvedDefaults = resolveDefaultProps(outsideProps, sankeyDefaultProps);
+  const props: PropsWithResolvedDefaults = useRechartsResolvedProps(
+    outsideProps,
+    sankeyDefaultProps,
+    getSankeyComponentTheme,
+  );
   const { width, height, style, className, id: externalId, throttleDelay, throttledEvents } = props;
   const [tooltipPortal, setTooltipPortal] = useState<HTMLElement | null>(null);
 

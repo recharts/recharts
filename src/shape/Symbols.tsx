@@ -13,6 +13,8 @@ import {
   SymbolType as D3SymbolType,
 } from 'victory-vendor/d3-shape';
 import { clsx } from 'clsx';
+import type { RechartsTheme } from '../theme/RechartsTheme';
+import { useRechartsResolvedProps } from '../theme/useRechartsResolvedProps';
 import { SymbolType } from '../util/types';
 import { isNumber, upperFirst } from '../util/DataUtils';
 import { svgPropertiesAndEvents } from '../util/svgPropertiesAndEvents';
@@ -77,6 +79,12 @@ export interface InnerSymbolsProp {
 
 export type SymbolsProps = Omit<SVGProps<SVGPathElement>, 'type'> & InnerSymbolsProp;
 
+const symbolsDefaultProps = {} as const satisfies Partial<SymbolsProps>;
+
+function getSymbolsComponentTheme(theme: RechartsTheme): Partial<SymbolsProps> | undefined {
+  return theme.components?.Symbols;
+}
+
 const registerSymbol = (key: string, factory: D3SymbolType) => {
   symbolFactories[`symbol${upperFirst(key)}`] = factory;
 };
@@ -84,7 +92,13 @@ const registerSymbol = (key: string, factory: D3SymbolType) => {
 /**
  * Renders a symbol from a set of predefined shapes.
  */
-export const Symbols = ({ type = 'circle', size = 64, sizeType = 'area', ...rest }: SymbolsProps) => {
+export const Symbols = (outsideProps: SymbolsProps) => {
+  const {
+    type = 'circle',
+    size = 64,
+    sizeType = 'area',
+    ...rest
+  } = useRechartsResolvedProps(outsideProps, symbolsDefaultProps, getSymbolsComponentTheme);
   const props = { ...rest, type, size, sizeType };
   let realType: SymbolType = 'circle';
   if (typeof type === 'string') {

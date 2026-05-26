@@ -4,9 +4,10 @@ import { clsx } from 'clsx';
 import { GeometrySector, GeometrySectorWithCornerRadius } from '../util/types';
 import { polarToCartesian, RADIAN } from '../util/PolarUtils';
 import { getPercentValue, mathSign } from '../util/DataUtils';
-import { resolveDefaultProps } from '../util/resolveDefaultProps';
 import { svgPropertiesAndEvents } from '../util/svgPropertiesAndEvents';
 import { roundTemplateLiteral } from '../util/round';
+import type { RechartsTheme } from '../theme/RechartsTheme';
+import { useRechartsResolvedProps } from '../theme/useRechartsResolvedProps';
 
 const getDeltaAngle = (startAngle: number, endAngle: number) => {
   const sign = mathSign(endAngle - startAngle);
@@ -284,8 +285,12 @@ export const defaultSectorProps = {
   cornerIsExternal: false,
 } as const satisfies Partial<Props>;
 
+function getSectorComponentTheme(theme: RechartsTheme): Partial<Props> | undefined {
+  return theme.components?.Sector;
+}
+
 export const Sector: React.FC<Props> = sectorProps => {
-  const props = resolveDefaultProps(sectorProps, defaultSectorProps);
+  const props = useRechartsResolvedProps(sectorProps, defaultSectorProps, getSectorComponentTheme);
   const {
     cx,
     cy,

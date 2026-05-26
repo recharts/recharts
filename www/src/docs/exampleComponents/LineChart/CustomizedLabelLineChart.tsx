@@ -79,37 +79,13 @@ const CustomizedLabelLineChart = () => {
         bottom: 10,
       }}
     >
-      <CartesianGrid strokeDasharray="3 3" stroke="var(--color-border-3)" />
+      <CartesianGrid strokeDasharray="3 3" />
       <XAxis dataKey="name" height={60} tick={CustomizedAxisTick} />
       <YAxis width="auto" />
-      <Tooltip
-        cursor={{ stroke: 'var(--color-border-2)' }}
-        contentStyle={{ backgroundColor: 'var(--color-surface-base)', borderColor: 'var(--color-border-2)' }}
-      />
+      <Tooltip />
       <Legend />
-      <Line
-        type="monotone"
-        dataKey="pv"
-        stroke="var(--color-chart-1)"
-        label={CustomizedLabel}
-        dot={{
-          fill: 'var(--color-surface-base)',
-        }}
-        activeDot={{
-          stroke: 'var(--color-surface-base)',
-        }}
-      />
-      <Line
-        type="monotone"
-        dataKey="uv"
-        stroke="var(--color-chart-2)"
-        dot={{
-          fill: 'var(--color-surface-base)',
-        }}
-        activeDot={{
-          stroke: 'var(--color-surface-base)',
-        }}
-      />
+      <Line type="monotone" dataKey="pv" label={CustomizedLabel} />
+      <Line type="monotone" dataKey="uv" />
       <RechartsDevtools />
     </LineChart>
   );

@@ -18,10 +18,11 @@ import { CartesianViewBoxRequired, DataKey, PolarViewBoxRequired, TrapezoidViewB
 import { cartesianViewBoxToTrapezoid, useViewBox } from '../context/chartLayoutContext';
 import { useAppSelector } from '../state/hooks';
 import { selectPolarViewBox } from '../state/selectors/polarAxisSelectors';
-import { resolveDefaultProps } from '../util/resolveDefaultProps';
 import { svgPropertiesAndEvents } from '../util/svgPropertiesAndEvents';
 import { ZIndexable, ZIndexLayer } from '../zIndex/ZIndexLayer';
 import { DefaultZIndexes } from '../zIndex/DefaultZIndexes';
+import type { RechartsTheme } from '../theme/RechartsTheme';
+import { useRechartsResolvedProps } from '../theme/useRechartsResolvedProps';
 
 import { CartesianLabelPosition, getCartesianPosition } from '../cartesian/getCartesianPosition';
 
@@ -356,6 +357,20 @@ export const defaultLabelProps = {
   textBreakAll: false,
 } as const satisfies Partial<Props>;
 
+function getLabelComponentTheme(theme: RechartsTheme): Partial<Props> | undefined {
+  return theme.components?.Label;
+}
+
+function getLabelTokenTheme(theme: RechartsTheme): Partial<Props> | undefined {
+  return {
+    fill: theme.colors?.text,
+    fontFamily: theme.typography?.fontFamily,
+    fontSize: theme.typography?.fontSize,
+    fontWeight: theme.typography?.fontWeight,
+    letterSpacing: theme.typography?.letterSpacing,
+  };
+}
+
 function polarViewBoxToTrapezoid(
   viewBox: PolarViewBoxRequired | TrapezoidViewBox | undefined,
 ): TrapezoidViewBox | undefined {
@@ -381,7 +396,12 @@ function polarViewBoxToTrapezoid(
  * @consumes PolarLabelContext
  */
 export function Label(outerProps: Props) {
-  const props: PropsWithDefaults = resolveDefaultProps(outerProps, defaultLabelProps);
+  const props: PropsWithDefaults = useRechartsResolvedProps(
+    outerProps,
+    defaultLabelProps,
+    getLabelComponentTheme,
+    getLabelTokenTheme,
+  );
   const {
     viewBox: viewBoxFromProps,
     parentViewBox,

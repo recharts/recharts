@@ -10,7 +10,8 @@ import { PolarViewBoxRequired } from '../util/types';
 import { svgPropertiesNoEvents } from '../util/svgPropertiesNoEvents';
 import { ZIndexable, ZIndexLayer } from '../zIndex/ZIndexLayer';
 import { DefaultZIndexes } from '../zIndex/DefaultZIndexes';
-import { resolveDefaultProps } from '../util/resolveDefaultProps';
+import type { RechartsTheme } from '../theme/RechartsTheme';
+import { useRechartsResolvedProps } from '../theme/useRechartsResolvedProps';
 
 interface PolarGridProps extends ZIndexable {
   /**
@@ -239,6 +240,17 @@ export const defaultPolarGridProps = {
   fill: 'none',
 } as const satisfies Partial<Props>;
 
+function getPolarGridComponentTheme(theme: RechartsTheme): Partial<Props> | undefined {
+  return theme.components?.PolarGrid;
+}
+
+function getPolarGridTokenTheme(theme: RechartsTheme): Partial<Props> | undefined {
+  return {
+    stroke: theme.colors?.grid,
+    strokeWidth: theme.strokeWidths?.polarGrid,
+  };
+}
+
 /**
  * @consumes PolarViewBoxContext
  */
@@ -256,7 +268,7 @@ export const PolarGrid = (outsideProps: Props) => {
     polarRadius: polarRadiusInput,
     zIndex,
     ...inputs
-  } = resolveDefaultProps(outsideProps, defaultPolarGridProps);
+  } = useRechartsResolvedProps(outsideProps, defaultPolarGridProps, getPolarGridComponentTheme, getPolarGridTokenTheme);
   const polarViewBox: PolarViewBoxRequired | undefined = useAppSelector(selectPolarViewBox);
 
   const polarAnglesFromRedux = useAppSelector(state => selectPolarGridAngles(state, angleAxisId));

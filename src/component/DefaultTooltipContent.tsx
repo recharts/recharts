@@ -9,6 +9,8 @@ import { clsx } from 'clsx';
 import { isNullish, isNumOrStr } from '../util/DataUtils';
 import { DataKey } from '../util/types';
 import { TooltipPayload, TooltipPayloadEntry } from '../state/tooltipSlice';
+import type { RechartsTheme } from '../theme/RechartsTheme';
+import { useRechartsResolvedProps } from '../theme/useRechartsResolvedProps';
 
 function defaultFormatter(value: ValueType | undefined): React.ReactNode {
   return Array.isArray(value) && isNumOrStr(value[0]) && isNumOrStr(value[1]) ? value.join(' ~ ') : value;
@@ -94,6 +96,38 @@ export const defaultDefaultTooltipContentProps = {
   accessibilityLayer: false,
 } as const satisfies Partial<Props<any, any>>;
 
+function getDefaultTooltipContentComponentTheme(theme: RechartsTheme): Partial<Props<ValueType, NameType>> | undefined {
+  return theme.components?.DefaultTooltipContent;
+}
+
+function getDefaultTooltipContentTokenTheme(theme: RechartsTheme): Partial<Props<ValueType, NameType>> | undefined {
+  const typography = {
+    fontFamily: theme.typography?.fontFamily,
+    fontSize: theme.typography?.fontSize,
+    fontWeight: theme.typography?.fontWeight,
+    letterSpacing: theme.typography?.letterSpacing,
+  } satisfies CSSProperties;
+
+  return {
+    contentStyle: {
+      ...typography,
+      backgroundColor: theme.colors?.surface,
+      border: theme.colors?.border != null ? `1px solid ${theme.colors.border}` : undefined,
+      borderRadius: theme.radii?.tooltip,
+      boxShadow: theme.shadows?.tooltip,
+      color: theme.colors?.text,
+    },
+    itemStyle: {
+      ...typography,
+      color: theme.colors?.text,
+    },
+    labelStyle: {
+      ...typography,
+      color: theme.colors?.text,
+    },
+  };
+}
+
 function lodashLikeSortBy<T>(array: ReadonlyArray<T>, itemSorter: TooltipItemSorter | undefined): ReadonlyArray<T> {
   if (itemSorter == null) {
     return array;
@@ -108,12 +142,18 @@ function lodashLikeSortBy<T>(array: ReadonlyArray<T>, itemSorter: TooltipItemSor
  * You can use this component to customize the content of the tooltip,
  * or you can provide your own completely independent content.
  */
-export const DefaultTooltipContent = (props: Props) => {
+export const DefaultTooltipContent = (outsideProps: Props) => {
+  const props = useRechartsResolvedProps(
+    outsideProps,
+    defaultDefaultTooltipContentProps,
+    getDefaultTooltipContentComponentTheme,
+    getDefaultTooltipContentTokenTheme,
+  );
   const {
-    separator = defaultDefaultTooltipContentProps.separator,
+    separator,
     contentStyle,
     itemStyle,
-    labelStyle = defaultDefaultTooltipContentProps.labelStyle,
+    labelStyle,
     payload,
     formatter,
     itemSorter,
@@ -121,7 +161,7 @@ export const DefaultTooltipContent = (props: Props) => {
     labelClassName,
     label,
     labelFormatter,
-    accessibilityLayer = defaultDefaultTooltipContentProps.accessibilityLayer,
+    accessibilityLayer,
   } = props;
 
   const renderContent = () => {

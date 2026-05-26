@@ -39,6 +39,7 @@ export const map = {
     'getting-started': 'Getting Started',
     typescript: 'TypeScript',
     customize: 'Customize',
+    theming: 'Theming',
     activeIndex: 'Active Index',
     sizes: 'Chart size',
     zIndex: 'Z-Index and layers',

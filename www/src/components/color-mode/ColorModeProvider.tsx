@@ -1,4 +1,4 @@
-import { createContext, useContext } from 'react';
+import { createContext, useContext, useSyncExternalStore } from 'react';
 
 import { defineColorModeStore } from './defineColorModeStore';
 
@@ -26,4 +26,9 @@ export function useColorModeStore() {
     throw new Error('useColorModeStore must be used within a ColorModeProvider');
   }
   return store;
+}
+
+export function useColorModeState() {
+  const store = useColorModeStore();
+  return useSyncExternalStore(store.subscribe, store.getSnapshot, store.getServerSnapshot);
 }

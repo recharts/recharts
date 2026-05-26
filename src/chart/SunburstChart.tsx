@@ -27,8 +27,10 @@ import { useAppDispatch } from '../state/hooks';
 import { RechartsRootState } from '../state/store';
 import { RegisterGraphicalItemId } from '../context/RegisterGraphicalItemId';
 import { WithIdRequired } from '../util/useUniqueId';
-import { RequiresDefaultProps, resolveDefaultProps } from '../util/resolveDefaultProps';
+import { RequiresDefaultProps } from '../util/resolveDefaultProps';
 import { initialEventSettingsState } from '../state/eventSettingsSlice';
+import type { RechartsTheme } from '../theme/RechartsTheme';
+import { useRechartsResolvedProps } from '../theme/useRechartsResolvedProps';
 
 export interface SunburstData {
   [key: string]: any;
@@ -260,6 +262,25 @@ export const defaultSunburstChartProps = {
   ...initialEventSettingsState,
 } as const satisfies Partial<SunburstChartProps>;
 
+function getSunburstChartComponentTheme(theme: RechartsTheme): Partial<SunburstChartProps> | undefined {
+  return theme.components?.SunburstChart;
+}
+
+function getSunburstChartTokenTheme(theme: RechartsTheme): Partial<SunburstChartProps> | undefined {
+  return {
+    fill: theme.series?.palette?.[0],
+    stroke: theme.colors?.surface,
+    textOptions: {
+      fill: theme.colors?.text,
+      fontFamily: theme.typography?.fontFamily,
+      fontSize: theme.typography?.fontSize,
+      fontWeight: theme.typography?.fontWeight,
+      letterSpacing: theme.typography?.letterSpacing,
+      stroke: theme.colors?.surface,
+    },
+  };
+}
+
 type InternalSunburstChartProps = WithIdRequired<
   RequiresDefaultProps<SunburstChartProps, typeof defaultSunburstChartProps>
 >;
@@ -426,7 +447,12 @@ const SunburstChartImpl = ({
  * @provides TooltipEntrySettings
  */
 export const SunburstChart = (outsideProps: SunburstChartProps) => {
-  const props = resolveDefaultProps(outsideProps, defaultSunburstChartProps);
+  const props = useRechartsResolvedProps(
+    outsideProps,
+    defaultSunburstChartProps,
+    getSunburstChartComponentTheme,
+    getSunburstChartTokenTheme,
+  );
   const { className, width, height, responsive, style, id: externalId, throttleDelay, throttledEvents } = props;
   const [tooltipPortal, setTooltipPortal] = useState<HTMLElement | null>(null);
   return (

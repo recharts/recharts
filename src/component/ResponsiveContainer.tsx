@@ -24,6 +24,8 @@ import {
 } from './responsiveContainerUtils';
 import { Percent, Size } from '../util/types';
 import { isPositiveNumber } from '../util/isWellBehavedNumber';
+import type { RechartsTheme } from '../theme/RechartsTheme';
+import { useRechartsResolvedProps } from '../theme/useRechartsResolvedProps';
 
 export interface Props {
   /**
@@ -84,6 +86,10 @@ export interface Props {
    * If specified provides a callback providing the updated chart width and height values.
    */
   onResize?: (width: number, height: number) => void;
+}
+
+function getResponsiveContainerComponentTheme(theme: RechartsTheme): Partial<Props> | undefined {
+  return theme.components?.ResponsiveContainer;
 }
 
 const ResponsiveContainerContext = createContext<Size>(defaultResponsiveContainerProps.initialDimension);
@@ -256,19 +262,24 @@ const SizeDetectorContainer = forwardRef<HTMLDivElement | null, Props>(
  * @provides ResponsiveContainerContext
  */
 export const ResponsiveContainer = forwardRef<HTMLDivElement, Props>((props, ref) => {
+  const themedProps = useRechartsResolvedProps(
+    props,
+    defaultResponsiveContainerProps,
+    getResponsiveContainerComponentTheme,
+  );
   const responsiveContainerContext = useResponsiveContainerContext();
   if (isPositiveNumber(responsiveContainerContext.width) && isPositiveNumber(responsiveContainerContext.height)) {
     /*
      * If we detect that we are already inside another ResponsiveContainer,
      * we do not attempt to add another layer of responsiveness.
      */
-    return props.children;
+    return themedProps.children;
   }
 
   const { width, height } = getDefaultWidthAndHeight({
-    width: props.width,
-    height: props.height,
-    aspect: props.aspect,
+    width: themedProps.width,
+    height: themedProps.height,
+    aspect: themedProps.aspect,
   });
 
   /*
@@ -278,8 +289,8 @@ export const ResponsiveContainer = forwardRef<HTMLDivElement, Props>((props, ref
   const { calculatedWidth, calculatedHeight } = calculateChartDimensions(undefined, undefined, {
     width,
     height,
-    aspect: props.aspect,
-    maxHeight: props.maxHeight,
+    aspect: themedProps.aspect,
+    maxHeight: themedProps.maxHeight,
   });
 
   if (isNumber(calculatedWidth) && isNumber(calculatedHeight)) {
@@ -294,7 +305,7 @@ export const ResponsiveContainer = forwardRef<HTMLDivElement, Props>((props, ref
      */
     return (
       <ResponsiveContainerContextProvider width={calculatedWidth} height={calculatedHeight}>
-        {props.children}
+        {themedProps.children}
       </ResponsiveContainerContextProvider>
     );
   }
@@ -302,5 +313,5 @@ export const ResponsiveContainer = forwardRef<HTMLDivElement, Props>((props, ref
    * Static analysis did not produce fixed dimensions,
    * so we need to render a special div and monitor its size.
    */
-  return <SizeDetectorContainer {...props} width={width} height={height} ref={ref} />;
+  return <SizeDetectorContainer {...themedProps} width={width} height={height} ref={ref} />;
 });

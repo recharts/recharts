@@ -39,6 +39,7 @@ export const map = {
     'getting-started': '起步',
     typescript: 'TypeScript',
     customize: '组件自定义',
+    theming: '主题系统',
     activeIndex: '活动索引',
     sizes: '图表尺寸',
     zIndex: 'Z-Index 和图层',

@@ -30,7 +30,7 @@ import { selectPolarAxisScale, selectPolarAxisTicks } from '../state/selectors/p
 import { selectPolarViewBox } from '../state/selectors/polarAxisSelectors';
 import { defaultPolarRadiusAxisProps } from './defaultPolarRadiusAxisProps';
 import { svgPropertiesNoEvents, svgPropertiesNoEventsFromUnknown } from '../util/svgPropertiesNoEvents';
-import { RequiresDefaultProps, resolveDefaultProps } from '../util/resolveDefaultProps';
+import { RequiresDefaultProps } from '../util/resolveDefaultProps';
 import { ZIndexable, ZIndexLayer } from '../zIndex/ZIndexLayer';
 import { RechartsScale } from '../util/scale/RechartsScale';
 import { CustomScaleDefinition } from '../util/scale/CustomScaleDefinition';
@@ -38,6 +38,8 @@ import { usePolarChartLayout } from '../context/chartLayoutContext';
 import { noop } from '../util/DataUtils';
 import { getAxisTypeBasedOnLayout } from '../util/getAxisTypeBasedOnLayout';
 import { getClassNameFromUnknown } from '../util/getClassNameFromUnknown';
+import type { RechartsTheme } from '../theme/RechartsTheme';
+import { useRechartsResolvedProps } from '../theme/useRechartsResolvedProps';
 
 type TickOrientation = 'left' | 'right' | 'middle';
 
@@ -220,6 +222,24 @@ type PropsWithDefaults<DataPointType = any, DataValueType = any> = RequiresDefau
   Props<DataPointType, DataValueType>,
   typeof defaultPolarRadiusAxisProps
 >;
+
+function getPolarRadiusAxisComponentTheme<DataPointType, DataValueType>(
+  theme: RechartsTheme,
+): Partial<Props<DataPointType, DataValueType>> | undefined {
+  return theme.components?.PolarRadiusAxis;
+}
+
+function getPolarRadiusAxisTokenTheme<DataPointType, DataValueType>(
+  theme: RechartsTheme,
+): Partial<Props<DataPointType, DataValueType>> | undefined {
+  return {
+    stroke: theme.colors?.axis,
+    fontFamily: theme.typography?.fontFamily,
+    fontSize: theme.typography?.fontSize,
+    fontWeight: theme.typography?.fontWeight,
+    letterSpacing: theme.typography?.letterSpacing,
+  };
+}
 
 type InsideProps = Omit<PropsWithDefaults, 'scale'> &
   PolarViewBoxRequired & {
@@ -418,9 +438,11 @@ export const PolarRadiusAxisWrapper: FunctionComponent<PropsWithDefaults> = (def
 export function PolarRadiusAxis<DataPointType = any, DataValueType = any>(
   outsideProps: Props<DataPointType, DataValueType>,
 ) {
-  const props: PropsWithDefaults<DataPointType, DataValueType> = resolveDefaultProps(
+  const props: PropsWithDefaults<DataPointType, DataValueType> = useRechartsResolvedProps(
     outsideProps,
     defaultPolarRadiusAxisProps,
+    getPolarRadiusAxisComponentTheme<DataPointType, DataValueType>,
+    getPolarRadiusAxisTokenTheme,
   );
   return (
     <>

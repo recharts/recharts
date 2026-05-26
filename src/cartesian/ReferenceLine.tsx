@@ -18,12 +18,14 @@ import { useIsPanorama } from '../context/PanoramaContext';
 
 import { useClipPathId } from '../container/ClipPathProvider';
 import { svgPropertiesAndEvents } from '../util/svgPropertiesAndEvents';
-import { RequiresDefaultProps, resolveDefaultProps } from '../util/resolveDefaultProps';
+import { RequiresDefaultProps } from '../util/resolveDefaultProps';
 import { ZIndexable, ZIndexLayer } from '../zIndex/ZIndexLayer';
 import { DefaultZIndexes } from '../zIndex/DefaultZIndexes';
 import { isWellBehavedNumber } from '../util/isWellBehavedNumber';
 import { BandPosition, RechartsScale } from '../util/scale/RechartsScale';
 import { CartesianScaleHelper, CartesianScaleHelperImpl } from '../util/scale/CartesianScaleHelper';
+import type { RechartsTheme } from '../theme/RechartsTheme';
+import { useRechartsResolvedProps } from '../theme/useRechartsResolvedProps';
 
 /**
  * Single point that defines one end of a segment.
@@ -369,6 +371,17 @@ export const referenceLineDefaultProps = {
 
 type PropsWithDefaults = RequiresDefaultProps<Props, typeof referenceLineDefaultProps>;
 
+function getReferenceLineComponentTheme(theme: RechartsTheme): Partial<Props> | undefined {
+  return theme.components?.ReferenceLine;
+}
+
+function getReferenceLineTokenTheme(theme: RechartsTheme): Partial<Props> | undefined {
+  return {
+    stroke: theme.colors?.border,
+    strokeWidth: theme.strokeWidths?.reference,
+  };
+}
+
 /**
  * Draws a line on the chart connecting two points.
  *
@@ -387,7 +400,12 @@ export function ReferenceLine<
   XValueType extends ReferenceCoordinateValue = any,
   YValueType extends ReferenceCoordinateValue = any,
 >(outsideProps: Props<XValueType, YValueType>) {
-  const props: PropsWithDefaults = resolveDefaultProps(outsideProps, referenceLineDefaultProps);
+  const props: PropsWithDefaults = useRechartsResolvedProps(
+    outsideProps,
+    referenceLineDefaultProps,
+    getReferenceLineComponentTheme,
+    getReferenceLineTokenTheme,
+  );
   return (
     <>
       <ReportReferenceLine

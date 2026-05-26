@@ -55,18 +55,7 @@ export default function Example() {
       responsive
       data={data}
     >
-      <Line
-        type="monotone"
-        dataKey="pv"
-        stroke="var(--color-chart-1)"
-        strokeWidth={2}
-        dot={{
-          fill: 'var(--color-surface-base)',
-        }}
-        activeDot={{
-          stroke: 'var(--color-surface-base)',
-        }}
-      />
+      <Line type="monotone" dataKey="pv" strokeWidth={2} />
       <RechartsDevtools />
     </LineChart>
   );

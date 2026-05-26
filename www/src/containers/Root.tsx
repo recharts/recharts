@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { RouterProvider, createBrowserRouter } from 'react-router';
 import { routes } from '../routes';
-import { ColorModeProvider, defineColorModeStore } from '../components/color-mode';
+import { ColorModeProvider, ColorModeRechartsThemeProvider, defineColorModeStore } from '../components/color-mode';
 
 export function Root() {
   const [colorModeStore] = useState(() => {
@@ -19,7 +19,9 @@ export function Root() {
 
   return (
     <ColorModeProvider store={colorModeStore}>
-      <RouterProvider router={router} />
+      <ColorModeRechartsThemeProvider>
+        <RouterProvider router={router} />
+      </ColorModeRechartsThemeProvider>
     </ColorModeProvider>
   );
 }

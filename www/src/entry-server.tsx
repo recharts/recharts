@@ -3,13 +3,15 @@ import { RouterProvider, createMemoryRouter } from 'react-router';
 import { routes } from './routes';
 import { supportedLocales } from './locale';
 import { getSiteRoutes } from './navigation.data';
-import { ColorModeProvider, defineColorModeStore } from './components/color-mode';
+import { ColorModeProvider, ColorModeRechartsThemeProvider, defineColorModeStore } from './components/color-mode';
 
 export function render(url: string, template: string) {
   const router = createMemoryRouter(routes, { initialEntries: [url] });
   const appHtml = renderToString(
     <ColorModeProvider store={defineColorModeStore()}>
-      <RouterProvider router={router} />
+      <ColorModeRechartsThemeProvider>
+        <RouterProvider router={router} />
+      </ColorModeRechartsThemeProvider>
     </ColorModeProvider>,
   );
 

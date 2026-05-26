@@ -37,11 +37,13 @@ import {
 } from '../state/selectors/axisSelectors';
 import { selectAxisViewBox } from '../state/selectors/selectChartOffsetInternal';
 import { useIsPanorama } from '../context/PanoramaContext';
-import { RequiresDefaultProps, resolveDefaultProps } from '../util/resolveDefaultProps';
+import { RequiresDefaultProps } from '../util/resolveDefaultProps';
 import { axisPropsAreEqual } from '../util/axisPropsAreEqual';
 import { CustomScaleDefinition } from '../util/scale/CustomScaleDefinition';
 import { useCartesianChartLayout } from '../context/chartLayoutContext';
 import { getAxisTypeBasedOnLayout } from '../util/getAxisTypeBasedOnLayout';
+import type { RechartsTheme } from '../theme/RechartsTheme';
+import { useRechartsResolvedProps } from '../theme/useRechartsResolvedProps';
 
 interface XAxisProps<DataPointType = any, DataValueType = any> extends Omit<
   RenderableAxisProps<DataPointType, DataValueType>,
@@ -317,8 +319,31 @@ type PropsWithDefaults<DataPointType = any, DataValueType = any> = RequiresDefau
   typeof xAxisDefaultProps
 >;
 
+function getXAxisComponentTheme<DataPointType, DataValueType>(
+  theme: RechartsTheme,
+): Partial<Props<DataPointType, DataValueType>> | undefined {
+  return theme.components?.XAxis;
+}
+
+function getXAxisTokenTheme<DataPointType, DataValueType>(
+  theme: RechartsTheme,
+): Partial<Props<DataPointType, DataValueType>> | undefined {
+  return {
+    stroke: theme.colors?.axis,
+    fontFamily: theme.typography?.fontFamily,
+    fontSize: theme.typography?.fontSize,
+    fontWeight: theme.typography?.fontWeight,
+    letterSpacing: theme.typography?.letterSpacing,
+  };
+}
+
 const XAxisSettingsDispatcher = <DataPointType, DataValueType>(outsideProps: Props<DataPointType, DataValueType>) => {
-  const props: PropsWithDefaults<DataPointType, DataValueType> = resolveDefaultProps(outsideProps, xAxisDefaultProps);
+  const props: PropsWithDefaults<DataPointType, DataValueType> = useRechartsResolvedProps(
+    outsideProps,
+    xAxisDefaultProps,
+    getXAxisComponentTheme<DataPointType, DataValueType>,
+    getXAxisTokenTheme,
+  );
   return (
     <>
       <SetXAxisSettings

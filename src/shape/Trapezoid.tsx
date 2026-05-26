@@ -5,13 +5,14 @@ import * as React from 'react';
 import { SVGProps, useEffect, useRef, useState } from 'react';
 import { clsx } from 'clsx';
 import { AnimationDuration, EasingInput } from '../util/types';
-import { resolveDefaultProps } from '../util/resolveDefaultProps';
 import { JavascriptAnimate } from '../animation/JavascriptAnimate';
 import { useAnimationId } from '../util/useAnimationId';
 import { interpolate } from '../util/DataUtils';
 import { getTransitionVal } from '../animation/util';
 import { svgPropertiesAndEvents } from '../util/svgPropertiesAndEvents';
 import { roundTemplateLiteral } from '../util/round';
+import type { RechartsTheme } from '../theme/RechartsTheme';
+import { useRechartsResolvedProps } from '../theme/useRechartsResolvedProps';
 
 const getTrapezoidPath = (x: number, y: number, upperWidth: number, lowerWidth: number, height: number): string => {
   const widthGap = upperWidth - lowerWidth;
@@ -109,8 +110,12 @@ export const defaultTrapezoidProps = {
   animationEasing: 'ease',
 } as const satisfies Partial<Props>;
 
+function getTrapezoidComponentTheme(theme: RechartsTheme): Partial<Props> | undefined {
+  return theme.components?.Trapezoid;
+}
+
 export const Trapezoid: React.FC<Props> = outsideProps => {
-  const trapezoidProps = resolveDefaultProps(outsideProps, defaultTrapezoidProps);
+  const trapezoidProps = useRechartsResolvedProps(outsideProps, defaultTrapezoidProps, getTrapezoidComponentTheme);
 
   const { x, y, upperWidth, lowerWidth, height, className } = trapezoidProps;
   const { animationEasing, animationDuration, animationBegin, isUpdateAnimationActive } = trapezoidProps;

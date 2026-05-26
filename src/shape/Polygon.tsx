@@ -4,6 +4,8 @@
 import * as React from 'react';
 import { SVGProps } from 'react';
 import { clsx } from 'clsx';
+import type { RechartsTheme } from '../theme/RechartsTheme';
+import { useRechartsResolvedProps } from '../theme/useRechartsResolvedProps';
 import { Coordinate } from '../util/types';
 import { svgPropertiesAndEvents } from '../util/svgPropertiesAndEvents';
 import { roundTemplateLiteral } from '../util/round';
@@ -121,7 +123,14 @@ interface PolygonProps {
 
 export type Props = Omit<SVGProps<SVGPolygonElement>, 'points'> & PolygonProps;
 
-export const Polygon: React.FC<Props> = props => {
+const polygonDefaultProps = {} as const satisfies Partial<Props>;
+
+function getPolygonComponentTheme(theme: RechartsTheme): Partial<Props> | undefined {
+  return theme.components?.Polygon;
+}
+
+export const Polygon: React.FC<Props> = outsideProps => {
+  const props = useRechartsResolvedProps(outsideProps, polygonDefaultProps, getPolygonComponentTheme);
   const { points, className, baseLinePoints, connectNulls, ...others } = props;
 
   if (!points || !points.length) {

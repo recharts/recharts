@@ -4,6 +4,8 @@
 import * as React from 'react';
 import { SVGProps } from 'react';
 import { clsx } from 'clsx';
+import type { RechartsTheme } from '../theme/RechartsTheme';
+import { useRechartsResolvedProps } from '../theme/useRechartsResolvedProps';
 import { isNumber } from '../util/DataUtils';
 import { svgPropertiesAndEvents } from '../util/svgPropertiesAndEvents';
 
@@ -37,20 +39,27 @@ interface CrossProps {
 
 export type Props = SVGProps<SVGPathElement> & CrossProps;
 
+const crossDefaultProps = {} as const satisfies Partial<Props>;
+
+function getCrossComponentTheme(theme: RechartsTheme): Partial<Props> | undefined {
+  return theme.components?.Cross;
+}
+
 const getPath = (x: number, y: number, width: number, height: number, top: number, left: number) => {
   return `M${x},${top}v${height}M${left},${y}h${width}`;
 };
 
-export const Cross: React.FC<Props> = ({
-  x = 0,
-  y = 0,
-  top = 0,
-  left = 0,
-  width = 0,
-  height = 0,
-  className,
-  ...rest
-}) => {
+export const Cross: React.FC<Props> = outsideProps => {
+  const {
+    x = 0,
+    y = 0,
+    top = 0,
+    left = 0,
+    width = 0,
+    height = 0,
+    className,
+    ...rest
+  } = useRechartsResolvedProps(outsideProps, crossDefaultProps, getCrossComponentTheme);
   const props = { x, y, top, left, width, height, ...rest };
 
   if (!isNumber(x) || !isNumber(y) || !isNumber(width) || !isNumber(height) || !isNumber(top) || !isNumber(left)) {

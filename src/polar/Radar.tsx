@@ -40,11 +40,14 @@ import { SetPolarGraphicalItem } from '../state/SetGraphicalItem';
 import { svgPropertiesNoEvents } from '../util/svgPropertiesNoEvents';
 import { JavascriptAnimate } from '../animation/JavascriptAnimate';
 import { svgPropertiesAndEvents } from '../util/svgPropertiesAndEvents';
-import { RequiresDefaultProps, resolveDefaultProps } from '../util/resolveDefaultProps';
+import { RequiresDefaultProps } from '../util/resolveDefaultProps';
 import { WithIdRequired } from '../util/useUniqueId';
 import { ZIndexable, ZIndexLayer } from '../zIndex/ZIndexLayer';
 import { DefaultZIndexes } from '../zIndex/DefaultZIndexes';
 import { RechartsScale } from '../util/scale/RechartsScale';
+import { getGraphicalItemSeriesStyle, isLegacyTheme } from '../theme/graphicalItemTheme';
+import type { RechartsTheme } from '../theme/RechartsTheme';
+import { useRechartsResolvedProps } from '../theme/useRechartsResolvedProps';
 
 export interface RadarPoint {
   x: number;
@@ -172,6 +175,35 @@ export type RadarComposedData = {
   baseLinePoints: RadarPoint[];
   isRange: boolean;
 };
+
+function getRadarComponentTheme<DataPointType, DataValueType>(
+  theme: RechartsTheme,
+): Partial<Props<DataPointType, DataValueType>> | undefined {
+  return theme.components?.Radar;
+}
+
+function getRadarTokenTheme<DataPointType, DataValueType>(
+  theme: RechartsTheme,
+  props: Props<DataPointType, DataValueType>,
+): Partial<Props<DataPointType, DataValueType>> | undefined {
+  const seriesStyle = getGraphicalItemSeriesStyle(theme, props, { usePaletteFallback: !isLegacyTheme(theme) });
+  let mainColor: string | undefined;
+  if (typeof seriesStyle?.stroke === 'string') {
+    mainColor = seriesStyle.stroke;
+  } else if (typeof seriesStyle?.fill === 'string') {
+    mainColor = seriesStyle.fill;
+  }
+
+  return {
+    fill: typeof seriesStyle?.fill === 'string' ? seriesStyle.fill : mainColor,
+    fillOpacity: seriesStyle?.fillOpacity,
+    opacity: seriesStyle?.opacity,
+    stroke: mainColor,
+    strokeDasharray: seriesStyle?.strokeDasharray,
+    strokeOpacity: seriesStyle?.strokeOpacity,
+    strokeWidth: seriesStyle?.strokeWidth != null ? seriesStyle.strokeWidth : theme.strokeWidths?.line,
+  };
+}
 
 function getLegendItemColor(stroke: string | undefined, fill: string | undefined): string | undefined {
   return stroke && stroke !== 'none' ? stroke : fill;
@@ -609,7 +641,12 @@ function RadarImpl(props: WithIdRequired<PropsWithDefaults>) {
  * @provides LabelListContext
  */
 export function Radar<DataPointType = any, DataValueType = any>(outsideProps: Props<DataPointType, DataValueType>) {
-  const props: PropsWithDefaults = resolveDefaultProps(outsideProps, defaultRadarProps);
+  const props: PropsWithDefaults = useRechartsResolvedProps(
+    outsideProps,
+    defaultRadarProps,
+    getRadarComponentTheme<DataPointType, DataValueType>,
+    getRadarTokenTheme,
+  );
   return (
     <RegisterGraphicalItemId id={props.id} type="radar">
       {id => (

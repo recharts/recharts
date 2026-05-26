@@ -13,11 +13,13 @@ import { AxisId } from '../state/cartesianAxisSlice';
 import { selectAxisPropsNeededForCartesianGridTicksGenerator } from '../state/selectors/axisSelectors';
 import { useAppSelector } from '../state/hooks';
 import { useIsPanorama } from '../context/PanoramaContext';
-import { RequiresDefaultProps, resolveDefaultProps } from '../util/resolveDefaultProps';
+import { RequiresDefaultProps } from '../util/resolveDefaultProps';
 import { svgPropertiesNoEvents } from '../util/svgPropertiesNoEvents';
 import { isPositiveNumber } from '../util/isWellBehavedNumber';
 import { ZIndexable, ZIndexLayer } from '../zIndex/ZIndexLayer';
 import { DefaultZIndexes } from '../zIndex/DefaultZIndexes';
+import type { RechartsTheme } from '../theme/RechartsTheme';
+import { useRechartsResolvedProps } from '../theme/useRechartsResolvedProps';
 
 /**
  * The <CartesianGrid horizontal
@@ -455,6 +457,17 @@ export const defaultCartesianGridProps = {
   zIndex: DefaultZIndexes.grid,
 } as const satisfies Partial<Props>;
 
+function getCartesianGridComponentTheme(theme: RechartsTheme): Partial<Props> | undefined {
+  return theme.components?.CartesianGrid;
+}
+
+function getCartesianGridTokenTheme(theme: RechartsTheme): Partial<Props> | undefined {
+  return {
+    stroke: theme.colors?.grid,
+    strokeWidth: theme.strokeWidths?.grid,
+  };
+}
+
 /**
  * Renders background grid with lines and fill colors in a Cartesian chart.
  *
@@ -465,7 +478,12 @@ export function CartesianGrid(props: Props) {
   const chartHeight = useChartHeight();
   const offset = useOffsetInternal();
   const propsIncludingDefaults: CartesianGridInternalProps = {
-    ...resolveDefaultProps(props, defaultCartesianGridProps),
+    ...useRechartsResolvedProps(
+      props,
+      defaultCartesianGridProps,
+      getCartesianGridComponentTheme,
+      getCartesianGridTokenTheme,
+    ),
     x: isNumber(props.x) ? props.x : offset.left,
     y: isNumber(props.y) ? props.y : offset.top,
     width: isNumber(props.width) ? props.width : offset.width,

@@ -5,7 +5,6 @@ import * as React from 'react';
 import { SVGProps, useEffect, useMemo, useRef, useState } from 'react';
 import { clsx } from 'clsx';
 import { AnimationDuration } from '../util/types';
-import { resolveDefaultProps } from '../util/resolveDefaultProps';
 import { JavascriptAnimate } from '../animation/JavascriptAnimate';
 import { EasingInput } from '../animation/easing';
 import { interpolate } from '../util/DataUtils';
@@ -13,6 +12,8 @@ import { useAnimationId } from '../util/useAnimationId';
 import { getTransitionVal } from '../animation/util';
 import { svgPropertiesAndEvents } from '../util/svgPropertiesAndEvents';
 import { round, roundTemplateLiteral } from '../util/round';
+import type { RechartsTheme } from '../theme/RechartsTheme';
+import { useRechartsResolvedProps } from '../theme/useRechartsResolvedProps';
 
 /**
  * @inline
@@ -180,6 +181,10 @@ export const defaultRectangleProps = {
   animationEasing: 'ease',
 } as const satisfies Partial<Props>;
 
+function getRectangleComponentTheme(theme: RechartsTheme): Partial<Props> | undefined {
+  return theme.components?.Rectangle;
+}
+
 /**
  * Renders a rectangle element. Unlike the {@link https://developer.mozilla.org/en-US/docs/Web/SVG/Reference/Element/rect rect SVG element}, this component supports rounded corners
  * and animation.
@@ -192,7 +197,7 @@ export const defaultRectangleProps = {
  * @constructor
  */
 export const Rectangle: React.FC<Props> = rectangleProps => {
-  const props = resolveDefaultProps(rectangleProps, defaultRectangleProps);
+  const props = useRechartsResolvedProps(rectangleProps, defaultRectangleProps, getRectangleComponentTheme);
   const pathRef = useRef<SVGPathElement>(null);
   const [totalLength, setTotalLength] = useState(-1);
 
