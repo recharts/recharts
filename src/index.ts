@@ -37,6 +37,8 @@ export type {
   RechartsHtmlComponentTheme,
 } from './theme/RechartsTheme';
 export { legacyTheme, lightTheme, darkTheme } from './theme/builtinThemes';
+export { rechartsFromAntd } from './theme/adapters/antd';
+export type { AntdThemeTokenLike, RechartsFromAntdOptions } from './theme/adapters/antd';
 export { RechartsThemeProvider, useRechartsTheme } from './theme/RechartsThemeProvider';
 export type { RechartsThemeProviderProps } from './theme/RechartsThemeProvider';
 export { ResponsiveContainer } from './component/ResponsiveContainer';

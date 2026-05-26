@@ -3,6 +3,7 @@ import { SupportedLocale } from '../../../locale';
 import { SourceCodeEditor } from '../../Playground/SourceCodeEditor.tsx';
 import { TargetBlankLink } from '../../Shared/TargetBlankLink.tsx';
 import styles from '../guideTable.module.css';
+import AntdThemePreview from './AntdThemePreview.tsx';
 import ThemePreview from './ThemePreview.tsx';
 
 const builtInThemesExample = `
@@ -334,42 +335,12 @@ export function App() {
 const antdIntegrationExample = `
 import * as React from 'react';
 import { ConfigProvider, theme as antTheme } from 'antd';
-import { RechartsThemeProvider, type RechartsTheme } from 'recharts';
+import { RechartsThemeProvider, rechartsFromAntd } from 'recharts';
 
 function ChartSection() {
   const { token } = antTheme.useToken();
 
-  const rechartsTheme = React.useMemo<RechartsTheme>(
-    () => ({
-      meta: {
-        name: 'antd',
-      },
-      colors: {
-        surface: token.colorBgContainer,
-        text: token.colorText,
-        mutedText: token.colorTextSecondary,
-        grid: token.colorBorderSecondary,
-        border: token.colorBorder,
-        axis: token.colorTextSecondary,
-        tooltipCursor: token.colorBorder,
-      },
-      typography: {
-        fontSize: token.fontSize,
-      },
-      strokeWidths: {
-        axis: token.lineWidth,
-        grid: token.lineWidth,
-        reference: token.lineWidth,
-      },
-      radii: {
-        tooltip: token.borderRadius,
-      },
-      series: {
-        palette: [token.colorPrimary, token.colorSuccess, token.colorWarning],
-      },
-    }),
-    [token],
-  );
+  const rechartsTheme = React.useMemo(() => rechartsFromAntd(token), [token]);
 
   return <RechartsThemeProvider theme={rechartsTheme}>...</RechartsThemeProvider>;
 }
@@ -379,10 +350,6 @@ export function App() {
     <ConfigProvider
       theme={{
         algorithm: antTheme.darkAlgorithm,
-        token: {
-          colorPrimary: '#1677ff',
-          borderRadius: 10,
-        },
       }}
     >
       <ChartSection />
@@ -737,9 +704,9 @@ export function ThemingGuide({ locale }: { locale: SupportedLocale }) {
       <section>
         <h2>Integrations with popular UI libraries</h2>
         <p>
-          Recharts does <strong>not</strong> ship first-party adapters for these libraries yet. Today, the recommended
-          approach is to read the active library theme in your app, map its tokens to a plain <code>RechartsTheme</code>{' '}
-          object, and pass that object to <code>RechartsThemeProvider</code>.
+          Recharts currently ships a first-party helper for Ant Design. For the other libraries, the recommended
+          approach today is to read the active library theme in your app, map its tokens to a plain{' '}
+          <code>RechartsTheme</code> object, and pass that object to <code>RechartsThemeProvider</code>.
         </p>
         <table className={styles.table}>
           <thead>
@@ -772,7 +739,7 @@ export function ThemingGuide({ locale }: { locale: SupportedLocale }) {
               </td>
               <td>colorPrimary, colorText, colorBgContainer, colorBorder, fontSize, lineWidth, borderRadius</td>
               <td>
-                Map Ant tokens from <code>theme.useToken()</code> into a <code>RechartsTheme</code>.
+                Use <code>rechartsFromAntd(token)</code>.
               </td>
             </tr>
             <tr>
@@ -819,8 +786,17 @@ export function ThemingGuide({ locale }: { locale: SupportedLocale }) {
         <h3>Ant Design</h3>
         <p>
           Ant Design exposes seed tokens, derived tokens, and algorithms such as <code>defaultAlgorithm</code>,{' '}
-          <code>darkAlgorithm</code>, and <code>compactAlgorithm</code>. The most natural integration is to map the
-          active Ant tokens directly into Recharts tokens.
+          <code>darkAlgorithm</code>, and <code>compactAlgorithm</code>. For the live preview below, Recharts also
+          vendors adapted copies of all seven custom Ant Design website <code>ThemePreview</code> themes.
+        </p>
+        <AntdThemePreview />
+        <p>
+          The Bootstrap, Cartoon, Geek, Glass, Illustration, MUI-like, and shadcn-like theme configs used in this
+          preview were adapted from Ant Design&apos;s website sources under the MIT license:{' '}
+          <TargetBlankLink href="https://github.com/ant-design/ant-design/tree/398420c1599c431e02e639f557c6c59ef1fa2d1b/.dumi/pages/index/components/ThemePreview/previewThemes">
+            ant-design/.dumi/pages/index/components/ThemePreview/previewThemes
+          </TargetBlankLink>
+          .
         </p>
         <SourceCodeEditor value={antdIntegrationExample} />
 
@@ -856,9 +832,7 @@ export function ThemingGuide({ locale }: { locale: SupportedLocale }) {
             There is no first-party <code>createRechartsTheme()</code> helper yet; theme composition is still normal
             object spread or an app-specific utility.
           </li>
-          <li>
-            There are no official adapters for Material UI, Ant Design, Chakra UI, Mantine, or shadcn/Tailwind yet.
-          </li>
+          <li>There are no official adapters for Material UI, Chakra UI, Mantine, or shadcn/Tailwind yet.</li>
           <li>
             There is no dedicated chart-root <code>theme</code> prop; local overrides use nested providers.
           </li>
