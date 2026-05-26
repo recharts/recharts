@@ -1,0 +1,125 @@
+# Instructions
+
+- Following Playwright test failed.
+- Explain why, be concise, respect Playwright best practices.
+- Provide a snippet of code with the fix, if possible.
+
+# Test info
+
+- Name: tests/zIndex.spec-vr.tsx >> bar and line without z-index
+- Location: test-vr/tests/zIndex.spec-vr.tsx:6:5
+
+# Error details
+
+```
+Error: expect(locator).toHaveScreenshot(expected) failed
+
+Locator: locator('#root').locator('internal:control=component')
+  131 pixels (ratio 0.01 of all image pixels) are different.
+
+Call log:
+  - Expect "toHaveScreenshot" with timeout 10000ms
+    - verifying given screenshot expectation
+  - waiting for locator('#root').locator('internal:control=component')
+    - locator resolved to <div width="500" height="300" class="recharts-wrapper">…</div>
+  - taking element screenshot
+    - disabled all CSS animations
+  - waiting for fonts to load...
+  - fonts loaded
+  - attempting scroll into view action
+    - waiting for element to be stable
+  - 131 pixels (ratio 0.01 of all image pixels) are different.
+  - waiting 100ms before taking screenshot
+  - waiting for locator('#root').locator('internal:control=component')
+    - locator resolved to <div width="500" height="300" class="recharts-wrapper">…</div>
+  - taking element screenshot
+    - disabled all CSS animations
+  - waiting for fonts to load...
+  - fonts loaded
+  - attempting scroll into view action
+    - waiting for element to be stable
+  - captured a stable screenshot
+  - 131 pixels (ratio 0.01 of all image pixels) are different.
+
+```
+
+# Page snapshot
+
+```yaml
+- generic [active] [ref=e1]:
+  - generic [ref=e3]:
+    - generic:
+      - status:
+        - paragraph: Page B
+        - list:
+          - listitem: "uv : 300"
+          - listitem: "uv : 300"
+    - application [ref=e4]:
+      - generic [ref=e75]:
+        - generic [ref=e76]:
+          - generic [ref=e77]: "400"
+          - generic [ref=e78]: "300"
+          - generic [ref=e79]: "300"
+          - generic [ref=e80]: "200"
+          - generic [ref=e81]: "278"
+          - generic [ref=e82]: "189"
+        - generic [ref=e83]:
+          - generic [ref=e84]: "400"
+          - generic [ref=e85]: "300"
+          - generic [ref=e86]: "300"
+          - generic [ref=e87]: "200"
+          - generic [ref=e88]: "278"
+          - generic [ref=e89]: "189"
+        - generic [ref=e90]:
+          - generic [ref=e92]: "0"
+          - generic [ref=e94]: "100"
+          - generic [ref=e96]: "200"
+          - generic [ref=e98]: "300"
+          - generic [ref=e100]: "400"
+        - generic [ref=e101]:
+          - generic [ref=e103]: Page A
+          - generic [ref=e105]: Page B
+          - generic [ref=e107]: Page C
+          - generic [ref=e109]: Page D
+          - generic [ref=e111]: Page E
+          - generic [ref=e113]: Page F
+  - generic [ref=e114]: Page A
+```
+
+# Test source
+
+```ts
+  1  | import * as React from 'react';
+  2  | import { test, expect } from '@playwright/experimental-ct-react';
+  3  | import { Bar, CartesianGrid, ComposedChart, Line, Tooltip, XAxis, YAxis } from '../../src';
+  4  | import { PageData } from '../../test/_data';
+  5  | 
+  6  | test('bar and line without z-index', async ({ mount }) => {
+  7  |   const component = await mount(
+  8  |     <ComposedChart width={500} height={300} data={PageData} style={{ backgroundColor: '#F8F3FF' }}>
+  9  |       <Line
+  10 |         type="natural"
+  11 |         dataKey="uv"
+  12 |         stroke="#FFB3AB"
+  13 |         strokeWidth={3}
+  14 |         label={{ fill: '#2B2B2B' }}
+  15 |         isAnimationActive={false}
+  16 |       />
+  17 |       <Bar
+  18 |         dataKey="uv"
+  19 |         fill="#C8B6FF"
+  20 |         background
+  21 |         label={{ fill: '#2B2B2B', position: 'insideBottom' }}
+  22 |         isAnimationActive={false}
+  23 |       />
+  24 |       <Tooltip defaultIndex={1} />
+  25 |       <CartesianGrid verticalFill={['#ccc', '#aaa']} />
+  26 |       <YAxis dataKey="uv" fill="#C8B6FF" />
+  27 |       <XAxis dataKey="name" fill="#FFDFBA" />
+  28 |     </ComposedChart>,
+  29 |   );
+> 30 |   await expect(component).toHaveScreenshot();
+     |                           ^ Error: expect(locator).toHaveScreenshot(expected) failed
+  31 | });
+  32 | 
+```

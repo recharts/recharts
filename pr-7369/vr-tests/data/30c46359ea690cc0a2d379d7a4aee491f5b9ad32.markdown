@@ -1,0 +1,86 @@
+# Instructions
+
+- Following Playwright test failed.
+- Explain why, be concise, respect Playwright best practices.
+- Provide a snippet of code with the fix, if possible.
+
+# Test info
+
+- Name: tests/www/ResponsiveContainerApiExamples.spec-vr.tsx >> ResponsiveContainerExample
+- Location: test-vr/tests/www/ResponsiveContainerApiExamples.spec-vr.tsx:6:5
+
+# Error details
+
+```
+Error: expect(locator).toHaveScreenshot(expected) failed
+
+Locator: locator('#root').locator('internal:control=component')
+Timeout: 10000ms
+  Timeout 10000ms exceeded.
+
+Call log:
+  - Expect "toHaveScreenshot" with timeout 10000ms
+    - verifying given screenshot expectation
+  - waiting for locator('#root').locator('internal:control=component')
+    - locator resolved to <div class="recharts-responsive-container">…</div>
+  - taking element screenshot
+    - disabled all CSS animations
+  - waiting for fonts to load...
+  - fonts loaded
+  - attempting scroll into view action
+    2 × waiting for element to be stable
+      - element is not visible
+    - retrying scroll into view action
+    - waiting 20ms
+    2 × waiting for element to be stable
+      - element is not visible
+    - retrying scroll into view action
+      - waiting 100ms
+    19 × waiting for element to be stable
+       - element is not visible
+     - retrying scroll into view action
+       - waiting 500ms
+  - Timeout 10000ms exceeded.
+
+```
+
+# Page snapshot
+
+```yaml
+- generic [active]:
+  - application [ref=e2]:
+    - generic [ref=e62]:
+      - generic [ref=e63]:
+        - generic [ref=e65]: Page A
+        - generic [ref=e67]: Page B
+        - generic [ref=e69]: Page C
+        - generic [ref=e71]: Page D
+        - generic [ref=e73]: Page E
+        - generic [ref=e75]: Page F
+        - generic [ref=e77]: Page G
+      - generic [ref=e78]:
+        - generic [ref=e80]: "0"
+        - generic [ref=e82]: "1000"
+        - generic [ref=e84]: "2000"
+        - generic [ref=e86]: "3000"
+        - generic [ref=e88]: "4000"
+      - generic [ref=e89]: Min PAGE
+      - generic [ref=e90]: Max
+  - generic [ref=e91]: "0"
+```
+
+# Test source
+
+```ts
+  1  | import * as React from 'react';
+  2  | import { test, expect } from '@playwright/experimental-ct-react';
+  3  | 
+  4  | import ResponsiveContainerExample from '../../../www/src/docs/exampleComponents/ResponsiveContainer/ResponsiveContainerExample';
+  5  | 
+  6  | test('ResponsiveContainerExample', async ({ mount }) => {
+  7  |   const component = await mount(<ResponsiveContainerExample isAnimationActive={false} />);
+> 8  |   await expect(component).toHaveScreenshot();
+     |                           ^ Error: expect(locator).toHaveScreenshot(expected) failed
+  9  | });
+  10 | 
+```

@@ -1,0 +1,125 @@
+# Instructions
+
+- Following Playwright test failed.
+- Explain why, be concise, respect Playwright best practices.
+- Provide a snippet of code with the fix, if possible.
+
+# Test info
+
+- Name: tests/www/DomainAndTicks.spec-vr.tsx >> MassBarChartCategoricalY
+- Location: test-vr/tests/www/DomainAndTicks.spec-vr.tsx:14:5
+
+# Error details
+
+```
+Error: expect(locator).toHaveScreenshot(expected) failed
+
+Locator: locator('#root').locator('internal:control=component')
+  119 pixels (ratio 0.01 of all image pixels) are different.
+
+Call log:
+  - Expect "toHaveScreenshot" with timeout 10000ms
+    - verifying given screenshot expectation
+  - waiting for locator('#root').locator('internal:control=component')
+    - locator resolved to <div width="100%" class="recharts-wrapper">…</div>
+  - taking element screenshot
+    - disabled all CSS animations
+  - waiting for fonts to load...
+  - fonts loaded
+  - attempting scroll into view action
+    - waiting for element to be stable
+  - 94997 pixels (ratio 0.24 of all image pixels) are different.
+  - waiting 100ms before taking screenshot
+  - waiting for locator('#root').locator('internal:control=component')
+    - locator resolved to <div width="100%" class="recharts-wrapper">…</div>
+  - taking element screenshot
+    - disabled all CSS animations
+  - waiting for fonts to load...
+  - fonts loaded
+  - attempting scroll into view action
+    - waiting for element to be stable
+  - 94878 pixels (ratio 0.24 of all image pixels) are different.
+  - waiting 250ms before taking screenshot
+  - waiting for locator('#root').locator('internal:control=component')
+    - locator resolved to <div width="100%" class="recharts-wrapper">…</div>
+  - taking element screenshot
+    - disabled all CSS animations
+  - waiting for fonts to load...
+  - fonts loaded
+  - attempting scroll into view action
+    - waiting for element to be stable
+  - captured a stable screenshot
+  - 119 pixels (ratio 0.01 of all image pixels) are different.
+
+```
+
+# Page snapshot
+
+```yaml
+- generic [active] [ref=e1]:
+  - application [ref=e4]:
+    - generic [ref=e43]:
+      - generic [ref=e44]:
+        - generic [ref=e46]: Sun
+        - generic [ref=e48]: Mercury
+        - generic [ref=e50]: Venus
+        - generic [ref=e52]: Earth
+        - generic [ref=e54]: Mars
+        - generic [ref=e56]: Jupiter
+        - generic [ref=e58]: Saturn
+        - generic [ref=e60]: Uranus
+        - generic [ref=e62]: Neptune
+        - generic [ref=e64]: Pluto
+      - generic [ref=e65]:
+        - generic [ref=e67]: "1.989e+30"
+        - generic [ref=e69]: "3.3e+23"
+        - generic [ref=e71]: "4.87e+24"
+        - generic [ref=e73]: "5.97e+24"
+        - generic [ref=e75]: "6.42e+23"
+        - generic [ref=e77]: "1.9e+27"
+        - generic [ref=e79]: "5.68e+26"
+        - generic [ref=e81]: "8.68e+25"
+        - generic [ref=e83]: "1.02e+26"
+        - generic [ref=e85]: "1.3e+22"
+      - generic [ref=e86]: Mass [kg]
+  - generic [ref=e87]: "1.989e+30"
+```
+
+# Test source
+
+```ts
+  1  | import * as React from 'react';
+  2  | import { test, expect } from '@playwright/experimental-ct-react';
+  3  | import MassBarChart from '../../../www/src/components/GuideView/DomainAndTicks/MassBarChart';
+  4  | import MassBarChartCategoricalY from '../../../www/src/components/GuideView/DomainAndTicks/MassBarChartCategoricalY';
+  5  | import MassBarChartCustomYDomain from '../../../www/src/components/GuideView/DomainAndTicks/MassBarChartCustomYDomain';
+  6  | import MassBarChartLogScale from '../../../www/src/components/GuideView/DomainAndTicks/MassBarChartLogScale';
+  7  | import MassBarChartCustomTicks from '../../../www/src/components/GuideView/DomainAndTicks/MassBarChartCustomTicks';
+  8  | 
+  9  | test('MassBarChart', async ({ mount }) => {
+  10 |   const component = await mount(<MassBarChart />);
+  11 |   await expect(component).toHaveScreenshot();
+  12 | });
+  13 | 
+  14 | test('MassBarChartCategoricalY', async ({ mount }) => {
+  15 |   const component = await mount(<MassBarChartCategoricalY />);
+> 16 |   await expect(component).toHaveScreenshot();
+     |                           ^ Error: expect(locator).toHaveScreenshot(expected) failed
+  17 | });
+  18 | 
+  19 | test('MassBarChartCustomYDomain', async ({ mount }) => {
+  20 |   const component = await mount(<MassBarChartCustomYDomain />);
+  21 |   await expect(component).toHaveScreenshot();
+  22 | });
+  23 | 
+  24 | test('MassBarChartLogScale', async ({ mount }) => {
+  25 |   const component = await mount(<MassBarChartLogScale />);
+  26 |   await expect(component).toHaveScreenshot();
+  27 | });
+  28 | 
+  29 | test('MassBarChartCustomTicks', async ({ mount }) => {
+  30 |   const component = await mount(<MassBarChartCustomTicks />);
+  31 |   await expect(component).toHaveScreenshot();
+  32 | });
+  33 | 
+```

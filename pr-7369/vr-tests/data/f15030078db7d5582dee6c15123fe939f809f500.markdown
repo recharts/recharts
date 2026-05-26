@@ -1,0 +1,303 @@
+# Instructions
+
+- Following Playwright test failed.
+- Explain why, be concise, respect Playwright best practices.
+- Provide a snippet of code with the fix, if possible.
+
+# Test info
+
+- Name: tests/RadialBarChart.spec-vr.tsx >> Rings With Default Axes
+- Location: test-vr/tests/RadialBarChart.spec-vr.tsx:70:5
+
+# Error details
+
+```
+Error: expect(locator).toHaveScreenshot(expected) failed
+
+Locator: locator('#root').locator('internal:control=component')
+  910 pixels (ratio 0.01 of all image pixels) are different.
+
+Call log:
+  - Expect "toHaveScreenshot" with timeout 10000ms
+    - verifying given screenshot expectation
+  - waiting for locator('#root').locator('internal:control=component')
+    - locator resolved to <div width="800" height="800" class="recharts-wrapper">…</div>
+  - taking element screenshot
+    - disabled all CSS animations
+  - waiting for fonts to load...
+  - fonts loaded
+  - attempting scroll into view action
+    - waiting for element to be stable
+  - 119557 pixels (ratio 0.19 of all image pixels) are different.
+  - waiting 100ms before taking screenshot
+  - waiting for locator('#root').locator('internal:control=component')
+    - locator resolved to <div width="800" height="800" class="recharts-wrapper">…</div>
+  - taking element screenshot
+    - disabled all CSS animations
+  - waiting for fonts to load...
+  - fonts loaded
+  - attempting scroll into view action
+    - waiting for element to be stable
+  - 74048 pixels (ratio 0.12 of all image pixels) are different.
+  - waiting 250ms before taking screenshot
+  - waiting for locator('#root').locator('internal:control=component')
+    - locator resolved to <div width="800" height="800" class="recharts-wrapper">…</div>
+  - taking element screenshot
+    - disabled all CSS animations
+  - waiting for fonts to load...
+  - fonts loaded
+  - attempting scroll into view action
+    - waiting for element to be stable
+  - 39091 pixels (ratio 0.07 of all image pixels) are different.
+  - waiting 500ms before taking screenshot
+  - waiting for locator('#root').locator('internal:control=component')
+    - locator resolved to <div width="800" height="800" class="recharts-wrapper">…</div>
+  - taking element screenshot
+    - disabled all CSS animations
+  - waiting for fonts to load...
+  - fonts loaded
+  - attempting scroll into view action
+    - waiting for element to be stable
+  - 5086 pixels (ratio 0.01 of all image pixels) are different.
+  - waiting 1000ms before taking screenshot
+  - waiting for locator('#root').locator('internal:control=component')
+    - locator resolved to <div width="800" height="800" class="recharts-wrapper">…</div>
+  - taking element screenshot
+    - disabled all CSS animations
+  - waiting for fonts to load...
+  - fonts loaded
+  - attempting scroll into view action
+    - waiting for element to be stable
+  - captured a stable screenshot
+  - 910 pixels (ratio 0.01 of all image pixels) are different.
+
+```
+
+# Page snapshot
+
+```yaml
+- generic [ref=e3]:
+  - list [ref=e5]:
+    - listitem [ref=e6]:
+      - img "Dwarves legend icon" [ref=e7]
+      - text: Dwarves
+    - listitem [ref=e9]:
+      - img "Elves legend icon" [ref=e10]
+      - text: Elves
+    - listitem [ref=e12]:
+      - img "Humans legend icon" [ref=e13]
+      - text: Humans
+    - listitem [ref=e15]:
+      - img "Sauron legend icon" [ref=e16]
+      - text: Sauron
+  - generic:
+    - status:
+      - paragraph: "0"
+      - list:
+        - listitem: "rings : 3"
+  - application [ref=e18]:
+    - generic [ref=e47]:
+      - generic [ref=e50]:
+        - generic [ref=e52]: "0"
+        - generic [ref=e55]: "1"
+        - generic [ref=e58]: "2"
+        - generic [ref=e61]: "3"
+        - generic [ref=e64]: "4"
+        - generic [ref=e67]: "5"
+        - generic [ref=e70]: "6"
+        - generic [ref=e73]: "7"
+        - generic [ref=e76]: "8"
+      - generic [ref=e78]:
+        - generic [ref=e80]: "0"
+        - generic [ref=e82]: "1"
+        - generic [ref=e84]: "2"
+        - generic [ref=e86]: "3"
+```
+
+# Test source
+
+```ts
+  1   | import * as React from 'react';
+  2   | import { expect, test } from '@playwright/experimental-ct-react';
+  3   | import { Legend, PolarAngleAxis, PolarGrid, PolarRadiusAxis, RadialBar, RadialBarChart, Tooltip } from '../../src';
+  4   | import { RechartsHookInspector } from '../../storybook/storybook-addon-recharts';
+  5   | import { pageData } from '../../storybook/stories/data';
+  6   | 
+  7   | test('Stacked RadialBar Chart', async ({ mount }) => {
+  8   |   const component = await mount(
+  9   |     <RadialBarChart width={800} height={800} data={pageData}>
+  10  |       <RadialBar dataKey="pv" stackId="stack1" fill="gold" />
+  11  |       <RadialBar dataKey="uv" stackId="stack1" fill="purple" />
+  12  |       <Legend />
+  13  |       <PolarGrid gridType="circle" />
+  14  |       <PolarAngleAxis dataKey="pv" type="number" axisLineType="circle" />
+  15  |       <Tooltip defaultIndex={3} cursor={{ strokeWidth: 3, stroke: 'black', strokeDasharray: '4 4' }} />
+  16  |       <RechartsHookInspector />
+  17  |     </RadialBarChart>,
+  18  |   );
+  19  |   await expect(component).toHaveScreenshot();
+  20  | });
+  21  | 
+  22  | /**
+  23  |  * Three Rings for the Elven-kings under the sky,
+  24  |  * Seven for the Dwarf-lords in their halls of stone,
+  25  |  * Nine for Mortal Men doomed to die,
+  26  |  * One for the Dark Lord on his dark throne
+  27  |  * In the Land of Mordor where the Shadows lie.
+  28  |  * One Ring to rule them all, One Ring to find them,
+  29  |  * One Ring to bring them all and in the darkness bind them
+  30  |  * In the Land of Mordor where the Shadows lie.
+  31  |  *
+  32  |  * Lord of the Rings, J.R.R. Tolkien, 1954
+  33  |  */
+  34  | const ringsData = [
+  35  |   {
+  36  |     name: 'Elves',
+  37  |     rings: 3,
+  38  |     fill: 'green',
+  39  |   },
+  40  |   {
+  41  |     name: 'Dwarves',
+  42  |     rings: 7,
+  43  |     fill: 'blue',
+  44  |   },
+  45  |   {
+  46  |     name: 'Humans',
+  47  |     rings: 9,
+  48  |     fill: 'red',
+  49  |   },
+  50  |   {
+  51  |     name: 'Sauron',
+  52  |     rings: 1,
+  53  |     fill: 'black',
+  54  |   },
+  55  | ];
+  56  | 
+  57  | test('Rings With Implicit Axes', async ({ mount }) => {
+  58  |   const component = await mount(
+  59  |     <RadialBarChart width={800} height={800} data={ringsData}>
+  60  |       <RadialBar dataKey="rings" />
+  61  |       <Legend />
+  62  |       <PolarGrid gridType="circle" />
+  63  |       <Tooltip defaultIndex={0} />
+  64  |       <RechartsHookInspector />
+  65  |     </RadialBarChart>,
+  66  |   );
+  67  |   await expect(component).toHaveScreenshot();
+  68  | });
+  69  | 
+  70  | test('Rings With Default Axes', async ({ mount }) => {
+  71  |   const component = await mount(
+  72  |     <RadialBarChart width={800} height={800} data={ringsData}>
+  73  |       <RadialBar dataKey="rings" />
+  74  |       <Legend />
+  75  |       <PolarGrid gridType="circle" />
+  76  |       <PolarAngleAxis />
+  77  |       <PolarRadiusAxis />
+  78  |       <Tooltip defaultIndex={0} />
+  79  |       <RechartsHookInspector />
+  80  |     </RadialBarChart>,
+  81  |   );
+> 82  |   await expect(component).toHaveScreenshot();
+      |                           ^ Error: expect(locator).toHaveScreenshot(expected) failed
+  83  | });
+  84  | 
+  85  | test('Rings With Data Keys', async ({ mount }) => {
+  86  |   const component = await mount(
+  87  |     <RadialBarChart width={800} height={800} data={ringsData}>
+  88  |       <RadialBar dataKey="rings" />
+  89  |       <Legend />
+  90  |       <PolarGrid gridType="circle" />
+  91  |       <PolarAngleAxis dataKey="rings" />
+  92  |       <PolarRadiusAxis dataKey="name" stroke="black" />
+  93  |       <Tooltip defaultIndex={0} />
+  94  |       <RechartsHookInspector />
+  95  |     </RadialBarChart>,
+  96  |   );
+  97  |   await expect(component).toHaveScreenshot();
+  98  | });
+  99  | 
+  100 | test('Rings With Types', async ({ mount }) => {
+  101 |   const component = await mount(
+  102 |     <RadialBarChart width={800} height={800} data={ringsData}>
+  103 |       <RadialBar dataKey="rings" />
+  104 |       <Legend />
+  105 |       <PolarGrid gridType="circle" />
+  106 |       <PolarAngleAxis type="number" />
+  107 |       <PolarRadiusAxis type="category" stroke="black" />
+  108 |       <Tooltip defaultIndex={0} />
+  109 |       <RechartsHookInspector />
+  110 |     </RadialBarChart>,
+  111 |   );
+  112 |   await expect(component).toHaveScreenshot();
+  113 | });
+  114 | 
+  115 | test('Rings With Data Keys And Types', async ({ mount }) => {
+  116 |   const component = await mount(
+  117 |     <RadialBarChart width={800} height={800} data={ringsData}>
+  118 |       <RadialBar dataKey="rings" />
+  119 |       <Legend />
+  120 |       <PolarGrid gridType="circle" />
+  121 |       <PolarAngleAxis dataKey="rings" type="number" />
+  122 |       <PolarRadiusAxis dataKey="name" type="category" stroke="black" />
+  123 |       <Tooltip defaultIndex={0} />
+  124 |       <RechartsHookInspector />
+  125 |     </RadialBarChart>,
+  126 |   );
+  127 |   await expect(component).toHaveScreenshot();
+  128 | });
+  129 | 
+  130 | test('Rings With Custom Domain', async ({ mount }) => {
+  131 |   const totalCountOfRings = ringsData.reduce((acc, entry) => acc + entry.rings, 0);
+  132 |   const component = await mount(
+  133 |     <RadialBarChart width={800} height={800} data={ringsData}>
+  134 |       <RadialBar dataKey="rings" />
+  135 |       <Legend />
+  136 |       <PolarGrid gridType="circle" />
+  137 |       <PolarAngleAxis dataKey="rings" type="number" domain={[0, totalCountOfRings]} />
+  138 |       <PolarRadiusAxis dataKey="name" type="category" stroke="black" />
+  139 |       <Tooltip defaultIndex={0} />
+  140 |       <RechartsHookInspector />
+  141 |     </RadialBarChart>,
+  142 |   );
+  143 |   await expect(component).toHaveScreenshot();
+  144 | });
+  145 | 
+  146 | test('Rings With Radius Axis Vertically', async ({ mount }) => {
+  147 |   const totalCountOfRings = ringsData.reduce((acc, entry) => acc + entry.rings, 0);
+  148 |   const component = await mount(
+  149 |     <RadialBarChart width={800} height={800} data={ringsData} startAngle={90} endAngle={-270}>
+  150 |       <RadialBar dataKey="rings" />
+  151 |       <Legend />
+  152 |       <PolarGrid gridType="circle" />
+  153 |       <PolarAngleAxis dataKey="rings" type="number" domain={[0, totalCountOfRings]} />
+  154 |       <PolarRadiusAxis dataKey="name" type="category" orientation="left" angle={90} stroke="black" />
+  155 |       <Tooltip defaultIndex={0} />
+  156 |       <RechartsHookInspector />
+  157 |     </RadialBarChart>,
+  158 |   );
+  159 |   await expect(component).toHaveScreenshot();
+  160 | });
+  161 | 
+  162 | test('Reversed Angle Axis', async ({ mount }) => {
+  163 |   const component = await mount(
+  164 |     <RadialBarChart width={800} height={800} data={ringsData}>
+  165 |       <RadialBar dataKey="rings" />
+  166 |       <Legend />
+  167 |       <PolarGrid gridType="circle" />
+  168 |       <PolarAngleAxis type="number" reversed />
+  169 |       <PolarRadiusAxis type="category" stroke="black" />
+  170 |       <Tooltip />
+  171 |       <RechartsHookInspector />
+  172 |     </RadialBarChart>,
+  173 |   );
+  174 |   await expect(component).toHaveScreenshot();
+  175 | });
+  176 | 
+  177 | test('Reversed Radius Axis', async ({ mount }) => {
+  178 |   const component = await mount(
+  179 |     <RadialBarChart width={800} height={800} data={ringsData}>
+  180 |       <RadialBar dataKey="rings" />
+  181 |       <Legend />
+  182 |       <PolarGrid gridType="circle" />
+```

@@ -1,0 +1,77 @@
+# Instructions
+
+- Following Playwright test failed.
+- Explain why, be concise, respect Playwright best practices.
+- Provide a snippet of code with the fix, if possible.
+
+# Test info
+
+- Name: tests/www/ActiveIndex.spec-vr.tsx >> PieChartDefaultIndex
+- Location: test-vr/tests/www/ActiveIndex.spec-vr.tsx:6:5
+
+# Error details
+
+```
+Error: expect(locator).toHaveScreenshot(expected) failed
+
+Locator: locator('#root').locator('internal:control=component')
+  138 pixels (ratio 0.01 of all image pixels) are different.
+
+Call log:
+  - Expect "toHaveScreenshot" with timeout 10000ms
+    - verifying given screenshot expectation
+  - waiting for locator('#root').locator('internal:control=component')
+    - locator resolved to <div width="400" height="400" class="recharts-wrapper">…</div>
+  - taking element screenshot
+    - disabled all CSS animations
+  - waiting for fonts to load...
+  - fonts loaded
+  - attempting scroll into view action
+    - waiting for element to be stable
+  - 138 pixels (ratio 0.01 of all image pixels) are different.
+  - waiting 100ms before taking screenshot
+  - waiting for locator('#root').locator('internal:control=component')
+    - locator resolved to <div width="400" height="400" class="recharts-wrapper">…</div>
+  - taking element screenshot
+    - disabled all CSS animations
+  - waiting for fonts to load...
+  - fonts loaded
+  - attempting scroll into view action
+    - waiting for element to be stable
+  - captured a stable screenshot
+  - 138 pixels (ratio 0.01 of all image pixels) are different.
+
+```
+
+# Page snapshot
+
+```yaml
+- generic [ref=e3]:
+  - generic:
+    - status:
+      - paragraph
+      - list:
+        - listitem: "Page C : 868"
+  - application [ref=e4]
+```
+
+# Test source
+
+```ts
+  1  | import * as React from 'react';
+  2  | import { test, expect } from '@playwright/experimental-ct-react';
+  3  | import PieChartDefaultIndex from '../../../www/src/components/GuideView/ActiveIndex/PieChartDefaultIndex';
+  4  | import BarChartClickable from '../../../www/src/components/GuideView/ActiveIndex/BarChartClickable';
+  5  | 
+  6  | test('PieChartDefaultIndex', async ({ mount }) => {
+  7  |   const component = await mount(<PieChartDefaultIndex isAnimationActive={false} />);
+> 8  |   await expect(component).toHaveScreenshot();
+     |                           ^ Error: expect(locator).toHaveScreenshot(expected) failed
+  9  | });
+  10 | 
+  11 | test('BarChartClickable', async ({ mount }) => {
+  12 |   const component = await mount(<BarChartClickable />);
+  13 |   await expect(component).toHaveScreenshot();
+  14 | });
+  15 | 
+```

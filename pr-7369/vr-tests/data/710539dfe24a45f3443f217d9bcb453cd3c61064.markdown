@@ -1,0 +1,182 @@
+# Instructions
+
+- Following Playwright test failed.
+- Explain why, be concise, respect Playwright best practices.
+- Provide a snippet of code with the fix, if possible.
+
+# Test info
+
+- Name: tests/Treemap.spec-vr.tsx >> custom content
+- Location: test-vr/tests/Treemap.spec-vr.tsx:51:5
+
+# Error details
+
+```
+Error: expect(locator).toHaveScreenshot(expected) failed
+
+Locator: locator('#root').locator('internal:control=component')
+  230 pixels (ratio 0.01 of all image pixels) are different.
+
+Call log:
+  - Expect "toHaveScreenshot" with timeout 10000ms
+    - verifying given screenshot expectation
+  - waiting for locator('#root').locator('internal:control=component')
+    - locator resolved to <div width="500" height="250" class="recharts-wrapper">…</div>
+  - taking element screenshot
+    - disabled all CSS animations
+  - waiting for fonts to load...
+  - fonts loaded
+  - attempting scroll into view action
+    - waiting for element to be stable
+  - 230 pixels (ratio 0.01 of all image pixels) are different.
+  - waiting 100ms before taking screenshot
+  - waiting for locator('#root').locator('internal:control=component')
+    - locator resolved to <div width="500" height="250" class="recharts-wrapper">…</div>
+  - taking element screenshot
+    - disabled all CSS animations
+  - waiting for fonts to load...
+  - fonts loaded
+  - attempting scroll into view action
+    - waiting for element to be stable
+  - captured a stable screenshot
+  - 230 pixels (ratio 0.01 of all image pixels) are different.
+
+```
+
+# Page snapshot
+
+```yaml
+- img [ref=e4]:
+  - generic [ref=e5]:
+    - generic [ref=e13]:
+      - generic [ref=e15]: A
+      - generic [ref=e16]: "1"
+    - generic [ref=e35]:
+      - generic [ref=e37]: B
+      - generic [ref=e38]: "2"
+    - generic [ref=e42]:
+      - generic [ref=e44]: C
+      - generic [ref=e45]: "3"
+    - generic [ref=e49]:
+      - generic [ref=e51]: D
+      - generic [ref=e52]: "4"
+    - generic [ref=e56]:
+      - generic [ref=e58]: E
+      - generic [ref=e59]: "5"
+    - generic [ref=e63]:
+      - generic [ref=e65]: F
+      - generic [ref=e66]: "6"
+    - generic [ref=e70]:
+      - generic [ref=e72]: G
+      - generic [ref=e73]: "7"
+    - generic [ref=e77]:
+      - generic [ref=e79]: H
+      - generic [ref=e80]: "8"
+    - generic [ref=e84]:
+      - generic [ref=e86]: I
+      - generic [ref=e87]: "9"
+    - generic [ref=e91]:
+      - generic [ref=e93]: J
+      - generic [ref=e94]: "10"
+    - generic [ref=e98]:
+      - generic [ref=e100]: K
+      - generic [ref=e101]: "11"
+    - generic [ref=e105]:
+      - generic [ref=e107]: L
+      - generic [ref=e108]: "12"
+    - generic [ref=e112]:
+      - generic [ref=e114]: M
+      - generic [ref=e115]: "13"
+    - generic [ref=e119]:
+      - generic [ref=e121]: "N"
+      - generic [ref=e122]: "14"
+    - generic [ref=e126]:
+      - generic [ref=e128]: O
+      - generic [ref=e129]: "15"
+    - generic [ref=e133]:
+      - generic [ref=e135]: P
+      - generic [ref=e136]: "16"
+    - generic [ref=e140]:
+      - generic [ref=e142]: Q
+      - generic [ref=e143]: "17"
+    - generic [ref=e147]:
+      - generic [ref=e149]: R
+      - generic [ref=e150]: "18"
+    - generic [ref=e154]:
+      - generic [ref=e156]: S
+      - generic [ref=e157]: "19"
+    - generic [ref=e161]:
+      - generic [ref=e163]: T
+      - generic [ref=e164]: "20"
+```
+
+# Test source
+
+```ts
+  1  | import * as React from 'react';
+  2  | import { test, expect } from '@playwright/experimental-ct-react';
+  3  | import { Treemap } from '../../src';
+  4  | import { exampleTreemapData } from '../../test/_data';
+  5  | import { CustomContent } from './TreemapComponents';
+  6  | 
+  7  | test('simple treemap', async ({ mount }) => {
+  8  |   const component = await mount(
+  9  |     <Treemap
+  10 |       width={500}
+  11 |       height={250}
+  12 |       data={exampleTreemapData}
+  13 |       isAnimationActive={false}
+  14 |       nameKey="name"
+  15 |       dataKey="value"
+  16 |     />,
+  17 |   );
+  18 |   await expect(component).toHaveScreenshot();
+  19 | });
+  20 | 
+  21 | test('nested treemap', async ({ mount }) => {
+  22 |   const component = await mount(
+  23 |     <Treemap
+  24 |       width={500}
+  25 |       height={250}
+  26 |       data={exampleTreemapData}
+  27 |       isAnimationActive={false}
+  28 |       nameKey="name"
+  29 |       dataKey="value"
+  30 |       type="nest"
+  31 |     />,
+  32 |   );
+  33 |   await expect(component).toHaveScreenshot();
+  34 | });
+  35 | 
+  36 | test('custom aspect ratio', async ({ mount }) => {
+  37 |   const component = await mount(
+  38 |     <Treemap
+  39 |       width={500}
+  40 |       height={500}
+  41 |       data={exampleTreemapData}
+  42 |       isAnimationActive={false}
+  43 |       nameKey="name"
+  44 |       dataKey="value"
+  45 |       aspectRatio={1}
+  46 |     />,
+  47 |   );
+  48 |   await expect(component).toHaveScreenshot();
+  49 | });
+  50 | 
+  51 | test('custom content', async ({ mount }) => {
+  52 |   const component = await mount(
+  53 |     <Treemap
+  54 |       width={500}
+  55 |       height={250}
+  56 |       data={exampleTreemapData}
+  57 |       isAnimationActive={false}
+  58 |       nameKey="name"
+  59 |       dataKey="value"
+  60 |       content={<CustomContent />}
+  61 |     />,
+  62 |   );
+> 63 |   await expect(component).toHaveScreenshot();
+     |                           ^ Error: expect(locator).toHaveScreenshot(expected) failed
+  64 | });
+  65 | 
+```

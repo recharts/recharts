@@ -1,0 +1,86 @@
+# Instructions
+
+- Following Playwright test failed.
+- Explain why, be concise, respect Playwright best practices.
+- Provide a snippet of code with the fix, if possible.
+
+# Test info
+
+- Name: tests/www/ErrorBarApiExamples.spec-vr.tsx >> ErrorBarExample
+- Location: test-vr/tests/www/ErrorBarApiExamples.spec-vr.tsx:6:5
+
+# Error details
+
+```
+Error: expect(locator).toHaveScreenshot(expected) failed
+
+Locator: locator('#root').locator('internal:control=component')
+  95 pixels (ratio 0.01 of all image pixels) are different.
+
+Call log:
+  - Expect "toHaveScreenshot" with timeout 10000ms
+    - verifying given screenshot expectation
+  - waiting for locator('#root').locator('internal:control=component')
+    - locator resolved to <div width="100%" class="recharts-wrapper">…</div>
+  - taking element screenshot
+    - disabled all CSS animations
+  - waiting for fonts to load...
+  - fonts loaded
+  - attempting scroll into view action
+    - waiting for element to be stable
+  - 95 pixels (ratio 0.01 of all image pixels) are different.
+  - waiting 100ms before taking screenshot
+  - waiting for locator('#root').locator('internal:control=component')
+    - locator resolved to <div width="100%" class="recharts-wrapper">…</div>
+  - taking element screenshot
+    - disabled all CSS animations
+  - waiting for fonts to load...
+  - fonts loaded
+  - attempting scroll into view action
+    - waiting for element to be stable
+  - captured a stable screenshot
+  - 95 pixels (ratio 0.01 of all image pixels) are different.
+
+```
+
+# Page snapshot
+
+```yaml
+- generic [active] [ref=e1]:
+  - generic [ref=e3]:
+    - list [ref=e5]:
+      - listitem [ref=e6]:
+        - img "A school legend icon" [ref=e7]
+        - text: A school
+    - application [ref=e9]:
+      - generic [ref=e123]:
+        - generic [ref=e124]:
+          - generic [ref=e126]: 0cm
+          - generic [ref=e128]: 45cm
+          - generic [ref=e130]: 90cm
+          - generic [ref=e132]: 135cm
+          - generic [ref=e134]: 180cm
+        - generic [ref=e135]:
+          - generic [ref=e137]: 0kg
+          - generic [ref=e139]: 150kg
+          - generic [ref=e141]: 300kg
+          - generic [ref=e143]: 450kg
+          - generic [ref=e145]: 600kg
+  - generic [ref=e146]: "150"
+```
+
+# Test source
+
+```ts
+  1  | import * as React from 'react';
+  2  | import { test, expect } from '@playwright/experimental-ct-react';
+  3  | 
+  4  | import ErrorBarExample from '../../../www/src/docs/exampleComponents/ErrorBar/ErrorBarExample';
+  5  | 
+  6  | test('ErrorBarExample', async ({ mount }) => {
+  7  |   const component = await mount(<ErrorBarExample isAnimationActive={false} />);
+> 8  |   await expect(component).toHaveScreenshot();
+     |                           ^ Error: expect(locator).toHaveScreenshot(expected) failed
+  9  | });
+  10 | 
+```

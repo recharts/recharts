@@ -1,0 +1,112 @@
+# Instructions
+
+- Following Playwright test failed.
+- Explain why, be concise, respect Playwright best practices.
+- Provide a snippet of code with the fix, if possible.
+
+# Test info
+
+- Name: tests/www/TreemapApiExamples.spec-vr.tsx >> TreemapWithPaddingAndGaps
+- Location: test-vr/tests/www/TreemapApiExamples.spec-vr.tsx:24:5
+
+# Error details
+
+```
+Error: expect(locator).toHaveScreenshot(expected) failed
+
+Locator: locator('#root').locator('internal:control=component')
+  1991 pixels (ratio 0.02 of all image pixels) are different.
+
+Call log:
+  - Expect "toHaveScreenshot" with timeout 10000ms
+    - verifying given screenshot expectation
+  - waiting for locator('#root').locator('internal:control=component')
+    - locator resolved to <div width="100%" class="recharts-wrapper">…</div>
+  - taking element screenshot
+    - disabled all CSS animations
+  - waiting for fonts to load...
+  - fonts loaded
+  - attempting scroll into view action
+    - waiting for element to be stable
+  - 1991 pixels (ratio 0.02 of all image pixels) are different.
+  - waiting 100ms before taking screenshot
+  - waiting for locator('#root').locator('internal:control=component')
+    - locator resolved to <div width="100%" class="recharts-wrapper">…</div>
+  - taking element screenshot
+    - disabled all CSS animations
+  - waiting for fonts to load...
+  - fonts loaded
+  - attempting scroll into view action
+    - waiting for element to be stable
+  - captured a stable screenshot
+  - 1991 pixels (ratio 0.02 of all image pixels) are different.
+
+```
+
+# Page snapshot
+
+```yaml
+- img [ref=e4]:
+  - generic [ref=e5]:
+    - generic [ref=e10]:
+      - generic [ref=e23]: Axis
+      - generic [ref=e38]: CartesianAxes
+    - generic [ref=e40]:
+      - generic [ref=e53]: ClickControl
+      - generic [ref=e63]: ControlList
+      - generic [ref=e68]: DragControl
+      - generic [ref=e73]: ExpandControl
+      - generic [ref=e78]: HoverControl
+      - generic [ref=e88]: PanZoomControl
+      - generic [ref=e93]: SelectionControl
+      - generic [ref=e98]: TooltipControl
+    - generic [ref=e100]:
+      - generic [ref=e108]: Data
+      - generic [ref=e113]: DataList
+      - generic [ref=e118]: DataSprite
+      - generic [ref=e128]: NodeSprite
+      - generic [ref=e143]: EdgeRenderer
+      - generic [ref=e153]: ScaleBinding
+      - generic [ref=e163]: TreeBuilder
+    - generic [ref=e165]:
+      - generic [ref=e173]: DataEvent
+      - generic [ref=e178]: SelectionEvent
+      - generic [ref=e183]: TooltipEvent
+    - generic [ref=e190]:
+      - generic [ref=e198]: Legend
+      - generic [ref=e208]: LegendRange
+```
+
+# Test source
+
+```ts
+  1  | import * as React from 'react';
+  2  | import { test, expect } from '@playwright/experimental-ct-react';
+  3  | 
+  4  | import SimpleTreemap from '../../../www/src/docs/exampleComponents/TreeMap/SimpleTreemap';
+  5  | import CustomContentTreemap from '../../../www/src/docs/exampleComponents/TreeMap/CustomContentTreemap';
+  6  | import TreeMapNavExample from '../../../www/src/docs/exampleComponents/TreeMap/TreeMapNavExample';
+  7  | import TreemapWithPaddingAndGaps from '../../../www/src/docs/exampleComponents/TreeMap/TreemapWithPaddingAndGaps';
+  8  | 
+  9  | test('TreeMapNavExample', async ({ mount }) => {
+  10 |   const component = await mount(<TreeMapNavExample />);
+  11 |   await expect(component).toHaveScreenshot();
+  12 | });
+  13 | 
+  14 | test('CustomContentTreemap', async ({ mount }) => {
+  15 |   const component = await mount(<CustomContentTreemap />);
+  16 |   await expect(component).toHaveScreenshot();
+  17 | });
+  18 | 
+  19 | test('SimpleTreemap', async ({ mount }) => {
+  20 |   const component = await mount(<SimpleTreemap />);
+  21 |   await expect(component).toHaveScreenshot();
+  22 | });
+  23 | 
+  24 | test('TreemapWithPaddingAndGaps', async ({ mount }) => {
+  25 |   const component = await mount(<TreemapWithPaddingAndGaps />);
+> 26 |   await expect(component).toHaveScreenshot();
+     |                           ^ Error: expect(locator).toHaveScreenshot(expected) failed
+  27 | });
+  28 | 
+```

@@ -1,0 +1,129 @@
+# Instructions
+
+- Following Playwright test failed.
+- Explain why, be concise, respect Playwright best practices.
+- Provide a snippet of code with the fix, if possible.
+
+# Test info
+
+- Name: tests/www/CoordinateSystems.spec-vr.tsx >> AxisTickSnapExample
+- Location: test-vr/tests/www/CoordinateSystems.spec-vr.tsx:11:5
+
+# Error details
+
+```
+Error: expect(locator).toHaveScreenshot(expected) failed
+
+Locator: locator('#root').locator('internal:control=component')
+  141 pixels (ratio 0.01 of all image pixels) are different.
+
+Call log:
+  - Expect "toHaveScreenshot" with timeout 10000ms
+    - verifying given screenshot expectation
+  - waiting for locator('#root').locator('internal:control=component')
+    - locator resolved to <div width="100%" class="recharts-wrapper">…</div>
+  - taking element screenshot
+    - disabled all CSS animations
+  - waiting for fonts to load...
+  - fonts loaded
+  - attempting scroll into view action
+    - waiting for element to be stable
+  - 567 pixels (ratio 0.01 of all image pixels) are different.
+  - waiting 100ms before taking screenshot
+  - waiting for locator('#root').locator('internal:control=component')
+    - locator resolved to <div width="100%" class="recharts-wrapper">…</div>
+  - taking element screenshot
+    - disabled all CSS animations
+  - waiting for fonts to load...
+  - fonts loaded
+  - attempting scroll into view action
+    - waiting for element to be stable
+  - 95 pixels (ratio 0.01 of all image pixels) are different.
+  - waiting 250ms before taking screenshot
+  - waiting for locator('#root').locator('internal:control=component')
+    - locator resolved to <div width="100%" class="recharts-wrapper">…</div>
+  - taking element screenshot
+    - disabled all CSS animations
+  - waiting for fonts to load...
+  - fonts loaded
+  - attempting scroll into view action
+    - waiting for element to be stable
+  - 174 pixels (ratio 0.01 of all image pixels) are different.
+  - waiting 500ms before taking screenshot
+  - waiting for locator('#root').locator('internal:control=component')
+    - locator resolved to <div width="100%" class="recharts-wrapper">…</div>
+  - taking element screenshot
+    - disabled all CSS animations
+  - waiting for fonts to load...
+  - fonts loaded
+  - attempting scroll into view action
+    - waiting for element to be stable
+  - 137 pixels (ratio 0.01 of all image pixels) are different.
+  - waiting 1000ms before taking screenshot
+  - waiting for locator('#root').locator('internal:control=component')
+    - locator resolved to <div width="100%" class="recharts-wrapper">…</div>
+  - taking element screenshot
+    - disabled all CSS animations
+  - waiting for fonts to load...
+  - fonts loaded
+  - attempting scroll into view action
+    - waiting for element to be stable
+  - 12 pixels (ratio 0.01 of all image pixels) are different.
+  - waiting 1000ms before taking screenshot
+  - waiting for locator('#root').locator('internal:control=component')
+    - locator resolved to <div width="100%" class="recharts-wrapper">…</div>
+  - taking element screenshot
+    - disabled all CSS animations
+  - waiting for fonts to load...
+  - fonts loaded
+  - attempting scroll into view action
+    - waiting for element to be stable
+  - captured a stable screenshot
+  - 141 pixels (ratio 0.01 of all image pixels) are different.
+
+```
+
+# Page snapshot
+
+```yaml
+- generic [active] [ref=e1]:
+  - application [ref=e4]:
+    - generic [ref=e65]:
+      - generic [ref=e66]:
+        - generic [ref=e68]: Jan
+        - generic [ref=e70]: Feb
+        - generic [ref=e72]: Mar
+        - generic [ref=e74]: Apr
+        - generic [ref=e76]: May
+        - generic [ref=e78]: Jun
+      - generic [ref=e79]:
+        - generic [ref=e81]: "0"
+        - generic [ref=e83]: "15000"
+        - generic [ref=e85]: "30000"
+        - generic [ref=e87]: "45000"
+        - generic [ref=e89]: "60000"
+      - generic [ref=e90]: Mar
+      - generic [ref=e91]: "15000"
+  - generic [ref=e92]: "0"
+```
+
+# Test source
+
+```ts
+  1  | import * as React from 'react';
+  2  | import { test, expect } from '@playwright/experimental-ct-react';
+  3  | import DataSnapExample from '../../../www/src/docs/exampleComponents/useXAxisInverseDataSnapScale/DataSnapExample';
+  4  | import AxisTickSnapExample from '../../../www/src/docs/exampleComponents/useXAxisInverseTickSnapScale/AxisTicksSnapExample';
+  5  | 
+  6  | test('DataSnapExample', async ({ mount }) => {
+  7  |   const component = await mount(<DataSnapExample initialPointers={[{ relativeX: 200, relativeY: 100 }]} />);
+  8  |   await expect(component).toHaveScreenshot();
+  9  | });
+  10 | 
+  11 | test('AxisTickSnapExample', async ({ mount }) => {
+  12 |   const component = await mount(<AxisTickSnapExample initialPointers={[{ relativeX: 200, relativeY: 100 }]} />);
+> 13 |   await expect(component).toHaveScreenshot();
+     |                           ^ Error: expect(locator).toHaveScreenshot(expected) failed
+  14 | });
+  15 | 
+```

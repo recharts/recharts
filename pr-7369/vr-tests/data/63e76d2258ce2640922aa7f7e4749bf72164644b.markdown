@@ -1,0 +1,144 @@
+# Instructions
+
+- Following Playwright test failed.
+- Explain why, be concise, respect Playwright best practices.
+- Provide a snippet of code with the fix, if possible.
+
+# Test info
+
+- Name: tests/Treemap.spec-vr.tsx >> nested treemap
+- Location: test-vr/tests/Treemap.spec-vr.tsx:21:5
+
+# Error details
+
+```
+Error: expect(locator).toHaveScreenshot(expected) failed
+
+Locator: locator('#root').locator('internal:control=component')
+  49884 pixels (ratio 0.40 of all image pixels) are different.
+
+Call log:
+  - Expect "toHaveScreenshot" with timeout 10000ms
+    - verifying given screenshot expectation
+  - waiting for locator('#root').locator('internal:control=component')
+    - locator resolved to <div width="500" height="250" class="recharts-wrapper">…</div>
+  - taking element screenshot
+    - disabled all CSS animations
+  - waiting for fonts to load...
+  - fonts loaded
+  - attempting scroll into view action
+    - waiting for element to be stable
+  - 49884 pixels (ratio 0.40 of all image pixels) are different.
+  - waiting 100ms before taking screenshot
+  - waiting for locator('#root').locator('internal:control=component')
+    - locator resolved to <div width="500" height="250" class="recharts-wrapper">…</div>
+  - taking element screenshot
+    - disabled all CSS animations
+  - waiting for fonts to load...
+  - fonts loaded
+  - attempting scroll into view action
+    - waiting for element to be stable
+  - captured a stable screenshot
+  - 49884 pixels (ratio 0.40 of all image pixels) are different.
+
+```
+
+# Page snapshot
+
+```yaml
+- generic [active] [ref=e1]:
+  - img [ref=e4]:
+    - generic [ref=e5]:
+      - generic [ref=e14]: A
+      - generic [ref=e19]: B
+      - generic [ref=e24]: C
+      - generic [ref=e29]: D
+      - generic [ref=e34]: E
+      - generic [ref=e39]: F
+      - generic [ref=e44]: G
+      - generic [ref=e49]: H
+      - generic [ref=e54]: I
+      - generic [ref=e59]: J
+      - generic [ref=e64]: K
+      - generic [ref=e69]: L
+      - generic [ref=e74]: M
+      - generic [ref=e79]: "N"
+      - generic [ref=e84]: O
+      - generic [ref=e89]: P
+      - generic [ref=e94]: Q
+      - generic [ref=e99]: R
+      - generic [ref=e104]: S
+      - generic [ref=e109]: T
+  - generic [ref=e111]: T
+```
+
+# Test source
+
+```ts
+  1  | import * as React from 'react';
+  2  | import { test, expect } from '@playwright/experimental-ct-react';
+  3  | import { Treemap } from '../../src';
+  4  | import { exampleTreemapData } from '../../test/_data';
+  5  | import { CustomContent } from './TreemapComponents';
+  6  | 
+  7  | test('simple treemap', async ({ mount }) => {
+  8  |   const component = await mount(
+  9  |     <Treemap
+  10 |       width={500}
+  11 |       height={250}
+  12 |       data={exampleTreemapData}
+  13 |       isAnimationActive={false}
+  14 |       nameKey="name"
+  15 |       dataKey="value"
+  16 |     />,
+  17 |   );
+  18 |   await expect(component).toHaveScreenshot();
+  19 | });
+  20 | 
+  21 | test('nested treemap', async ({ mount }) => {
+  22 |   const component = await mount(
+  23 |     <Treemap
+  24 |       width={500}
+  25 |       height={250}
+  26 |       data={exampleTreemapData}
+  27 |       isAnimationActive={false}
+  28 |       nameKey="name"
+  29 |       dataKey="value"
+  30 |       type="nest"
+  31 |     />,
+  32 |   );
+> 33 |   await expect(component).toHaveScreenshot();
+     |                           ^ Error: expect(locator).toHaveScreenshot(expected) failed
+  34 | });
+  35 | 
+  36 | test('custom aspect ratio', async ({ mount }) => {
+  37 |   const component = await mount(
+  38 |     <Treemap
+  39 |       width={500}
+  40 |       height={500}
+  41 |       data={exampleTreemapData}
+  42 |       isAnimationActive={false}
+  43 |       nameKey="name"
+  44 |       dataKey="value"
+  45 |       aspectRatio={1}
+  46 |     />,
+  47 |   );
+  48 |   await expect(component).toHaveScreenshot();
+  49 | });
+  50 | 
+  51 | test('custom content', async ({ mount }) => {
+  52 |   const component = await mount(
+  53 |     <Treemap
+  54 |       width={500}
+  55 |       height={250}
+  56 |       data={exampleTreemapData}
+  57 |       isAnimationActive={false}
+  58 |       nameKey="name"
+  59 |       dataKey="value"
+  60 |       content={<CustomContent />}
+  61 |     />,
+  62 |   );
+  63 |   await expect(component).toHaveScreenshot();
+  64 | });
+  65 | 
+```

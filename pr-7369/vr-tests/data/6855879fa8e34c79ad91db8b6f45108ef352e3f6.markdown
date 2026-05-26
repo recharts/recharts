@@ -1,0 +1,111 @@
+# Instructions
+
+- Following Playwright test failed.
+- Explain why, be concise, respect Playwright best practices.
+- Provide a snippet of code with the fix, if possible.
+
+# Test info
+
+- Name: tests/www/IndexView.spec-vr.tsx >> Index Line Chart
+- Location: test-vr/tests/www/IndexView.spec-vr.tsx:5:5
+
+# Error details
+
+```
+Error: expect(locator).toHaveScreenshot(expected) failed
+
+Locator: locator('#root').locator('internal:control=component')
+  374 pixels (ratio 0.01 of all image pixels) are different.
+
+Call log:
+  - Expect "toHaveScreenshot" with timeout 10000ms
+    - verifying given screenshot expectation
+  - waiting for locator('#root').locator('internal:control=component')
+    - locator resolved to <div width="100%" class="recharts-wrapper">…</div>
+  - taking element screenshot
+    - disabled all CSS animations
+  - waiting for fonts to load...
+  - fonts loaded
+  - attempting scroll into view action
+    - waiting for element to be stable
+  - 693 pixels (ratio 0.01 of all image pixels) are different.
+  - waiting 100ms before taking screenshot
+  - waiting for locator('#root').locator('internal:control=component')
+    - locator resolved to <div width="100%" class="recharts-wrapper">…</div>
+  - taking element screenshot
+    - disabled all CSS animations
+  - waiting for fonts to load...
+  - fonts loaded
+  - attempting scroll into view action
+    - waiting for element to be stable
+  - 360 pixels (ratio 0.01 of all image pixels) are different.
+  - waiting 250ms before taking screenshot
+  - waiting for locator('#root').locator('internal:control=component')
+    - locator resolved to <div width="100%" class="recharts-wrapper">…</div>
+  - taking element screenshot
+    - disabled all CSS animations
+  - waiting for fonts to load...
+  - fonts loaded
+  - attempting scroll into view action
+    - waiting for element to be stable
+  - 255 pixels (ratio 0.01 of all image pixels) are different.
+  - waiting 500ms before taking screenshot
+  - waiting for locator('#root').locator('internal:control=component')
+    - locator resolved to <div width="100%" class="recharts-wrapper">…</div>
+  - taking element screenshot
+    - disabled all CSS animations
+  - waiting for fonts to load...
+  - fonts loaded
+  - attempting scroll into view action
+    - waiting for element to be stable
+  - 49 pixels (ratio 0.01 of all image pixels) are different.
+  - waiting 1000ms before taking screenshot
+  - waiting for locator('#root').locator('internal:control=component')
+    - locator resolved to <div width="100%" class="recharts-wrapper">…</div>
+  - taking element screenshot
+    - disabled all CSS animations
+  - waiting for fonts to load...
+  - fonts loaded
+  - attempting scroll into view action
+    - waiting for element to be stable
+  - captured a stable screenshot
+  - 374 pixels (ratio 0.01 of all image pixels) are different.
+
+```
+
+# Page snapshot
+
+```yaml
+- generic [active] [ref=e1]:
+  - application [ref=e4]:
+    - generic [ref=e39]:
+      - generic [ref=e40]:
+        - generic [ref=e42]: A
+        - generic [ref=e44]: B
+        - generic [ref=e46]: C
+        - generic [ref=e48]: D
+        - generic [ref=e50]: E
+        - generic [ref=e52]: F
+      - generic [ref=e53]:
+        - generic [ref=e55]: "0"
+        - generic [ref=e57]: "250"
+        - generic [ref=e59]: "500"
+        - generic [ref=e61]: "750"
+        - generic [ref=e63]: "1000"
+  - generic [ref=e64]: "0"
+```
+
+# Test source
+
+```ts
+  1 | import * as React from 'react';
+  2 | import { test, expect } from './fixtures';
+  3 | import IndexLineChart from '../../../www/src/views/IndexView/IndexLineChart';
+  4 | 
+  5 | test('Index Line Chart', async ({ mount }) => {
+  6 |   const component = await mount(<IndexLineChart />);
+> 7 |   await expect(component).toHaveScreenshot();
+    |                           ^ Error: expect(locator).toHaveScreenshot(expected) failed
+  8 | });
+  9 | 
+```

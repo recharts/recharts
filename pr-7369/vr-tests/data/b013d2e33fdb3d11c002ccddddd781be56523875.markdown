@@ -1,0 +1,130 @@
+# Instructions
+
+- Following Playwright test failed.
+- Explain why, be concise, respect Playwright best practices.
+- Provide a snippet of code with the fix, if possible.
+
+# Test info
+
+- Name: tests/App.spec-vr.tsx >> LineChart
+- Location: test-vr/tests/App.spec-vr.tsx:6:5
+
+# Error details
+
+```
+Error: expect(locator).toHaveScreenshot(expected) failed
+
+Locator: locator('#root').locator('internal:control=component')
+  50 pixels (ratio 0.01 of all image pixels) are different.
+
+Call log:
+  - Expect "toHaveScreenshot" with timeout 10000ms
+    - verifying given screenshot expectation
+  - waiting for locator('#root').locator('internal:control=component')
+    - locator resolved to <div width="800" height="500" class="recharts-wrapper">…</div>
+  - taking element screenshot
+    - disabled all CSS animations
+  - waiting for fonts to load...
+  - fonts loaded
+  - attempting scroll into view action
+    - waiting for element to be stable
+  - 459 pixels (ratio 0.01 of all image pixels) are different.
+  - waiting 100ms before taking screenshot
+  - waiting for locator('#root').locator('internal:control=component')
+    - locator resolved to <div width="800" height="500" class="recharts-wrapper">…</div>
+  - taking element screenshot
+    - disabled all CSS animations
+  - waiting for fonts to load...
+  - fonts loaded
+  - attempting scroll into view action
+    - waiting for element to be stable
+  - 211 pixels (ratio 0.01 of all image pixels) are different.
+  - waiting 250ms before taking screenshot
+  - waiting for locator('#root').locator('internal:control=component')
+    - locator resolved to <div width="800" height="500" class="recharts-wrapper">…</div>
+  - taking element screenshot
+    - disabled all CSS animations
+  - waiting for fonts to load...
+  - fonts loaded
+  - attempting scroll into view action
+    - waiting for element to be stable
+  - 140 pixels (ratio 0.01 of all image pixels) are different.
+  - waiting 500ms before taking screenshot
+  - waiting for locator('#root').locator('internal:control=component')
+    - locator resolved to <div width="800" height="500" class="recharts-wrapper">…</div>
+  - taking element screenshot
+    - disabled all CSS animations
+  - waiting for fonts to load...
+  - fonts loaded
+  - attempting scroll into view action
+    - waiting for element to be stable
+  - 60 pixels (ratio 0.01 of all image pixels) are different.
+  - waiting 1000ms before taking screenshot
+  - waiting for locator('#root').locator('internal:control=component')
+    - locator resolved to <div width="800" height="500" class="recharts-wrapper">…</div>
+  - taking element screenshot
+    - disabled all CSS animations
+  - waiting for fonts to load...
+  - fonts loaded
+  - attempting scroll into view action
+    - waiting for element to be stable
+  - captured a stable screenshot
+  - 50 pixels (ratio 0.01 of all image pixels) are different.
+
+```
+
+# Page snapshot
+
+```yaml
+- generic [active] [ref=e1]:
+  - generic [ref=e3]:
+    - list [ref=e5]:
+      - listitem [ref=e6]:
+        - img "pv legend icon" [ref=e7]
+        - text: pv
+      - listitem [ref=e9]:
+        - img "uv legend icon" [ref=e10]
+        - text: uv
+    - application [ref=e12]:
+      - generic [ref=e86]:
+        - generic [ref=e87]:
+          - generic [ref=e89]: Page A
+          - generic [ref=e91]: Page B
+          - generic [ref=e93]: Page C
+          - generic [ref=e95]: Page D
+          - generic [ref=e97]: Page E
+          - generic [ref=e99]: Page F
+          - generic [ref=e101]: Page G
+        - generic [ref=e102]:
+          - generic [ref=e104]: "0"
+          - generic [ref=e106]: "400"
+          - generic [ref=e108]: "800"
+          - generic [ref=e110]: "1200"
+          - generic [ref=e112]: "1600"
+  - generic [ref=e113]: "0"
+```
+
+# Test source
+
+```ts
+  1  | import * as React from 'react';
+  2  | import { test, expect } from '@playwright/experimental-ct-react';
+  3  | import { pageData } from '../../storybook/stories/data';
+  4  | import { CartesianGrid, Legend, Line, LineChart, XAxis, YAxis } from '../../src';
+  5  | 
+  6  | test('LineChart', async ({ mount }) => {
+  7  |   const component = await mount(
+  8  |     <LineChart width={800} height={500} data={pageData}>
+  9  |       <CartesianGrid strokeDasharray="3 3" />
+  10 |       <XAxis dataKey="name" interval="preserveEnd" />
+  11 |       <YAxis interval="preserveEnd" />
+  12 |       <Legend />
+  13 |       <Line type="monotone" dataKey="pv" stroke="#8884d8" activeDot={{ r: 8 }} />
+  14 |       <Line type="monotone" dataKey="uv" stroke="#82ca9d" />
+  15 |     </LineChart>,
+  16 |   );
+> 17 |   await expect(component).toHaveScreenshot();
+     |                           ^ Error: expect(locator).toHaveScreenshot(expected) failed
+  18 | });
+  19 | 
+```

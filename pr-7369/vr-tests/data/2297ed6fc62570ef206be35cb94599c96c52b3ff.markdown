@@ -1,0 +1,246 @@
+# Instructions
+
+- Following Playwright test failed.
+- Explain why, be concise, respect Playwright best practices.
+- Provide a snippet of code with the fix, if possible.
+
+# Test info
+
+- Name: tests/Text.spec-vr.tsx >> Text with numeric children
+- Location: test-vr/tests/Text.spec-vr.tsx:257:5
+
+# Error details
+
+```
+Error: expect(locator).toHaveScreenshot(expected) failed
+
+Locator: locator('#root').locator('internal:control=component')
+  72 pixels (ratio 0.01 of all image pixels) are different.
+
+Call log:
+  - Expect "toHaveScreenshot" with timeout 10000ms
+    - verifying given screenshot expectation
+  - waiting for locator('#root').locator('internal:control=component')
+    - locator resolved to <svg width="500" height="100" viewBox="0 0 500 100" class="recharts-surface">…</svg>
+  - taking element screenshot
+    - disabled all CSS animations
+  - waiting for fonts to load...
+  - fonts loaded
+  - attempting scroll into view action
+    - waiting for element to be stable
+  - 72 pixels (ratio 0.01 of all image pixels) are different.
+  - waiting 100ms before taking screenshot
+  - waiting for locator('#root').locator('internal:control=component')
+    - locator resolved to <svg width="500" height="100" viewBox="0 0 500 100" class="recharts-surface">…</svg>
+  - taking element screenshot
+    - disabled all CSS animations
+  - waiting for fonts to load...
+  - fonts loaded
+  - attempting scroll into view action
+    - waiting for element to be stable
+  - captured a stable screenshot
+  - 72 pixels (ratio 0.01 of all image pixels) are different.
+
+```
+
+# Page snapshot
+
+```yaml
+- img [ref=e3]:
+  - generic [ref=e4]: "42"
+  - generic [ref=e5]: "3.14159"
+  - generic [ref=e6]:
+    - generic: 10.0, 50.0
+  - generic [ref=e7]:
+    - generic: 100.0, 50.0
+  - generic [ref=e8]:
+    - generic: 200.0, 50.0
+```
+
+# Test source
+
+```ts
+  174 |   const component = await mount(
+  175 |     <Surface width={500} height={300}>
+  176 |       <Text x={10} y={50} width={200} maxLines={1} lineHeight="20px">
+  177 |         This is a very long text that should be truncated with ellipsis when it exceeds the width
+  178 |       </Text>
+  179 | 
+  180 |       <Text x={10} y={100} width={200} maxLines={2} lineHeight="20px">
+  181 |         This is a very long text that should wrap to multiple lines and then be truncated with ellipsis when it exceeds
+  182 |         maxLines
+  183 |       </Text>
+  184 | 
+  185 |       <Text x={10} y={180} width={200} maxLines={3} lineHeight="20px">
+  186 |         Short text that fits within constraints should not show ellipsis
+  187 |       </Text>
+  188 |     </Surface>,
+  189 |   );
+  190 |   await expect(component).toHaveScreenshot();
+  191 | });
+  192 | 
+  193 | test('Text with breakAll character breaking', async ({ mount }) => {
+  194 |   const component = await mount(
+  195 |     <Surface width={500} height={200}>
+  196 |       <Text x={10} y={50} width={150} breakAll={false} lineHeight="20px">
+  197 |         This text breaks at word boundaries by default
+  198 |       </Text>
+  199 |       <Crosshair x={10} y={50} color="red" />
+  200 |       <Crosshair x={160} y={50} color="blue" />
+  201 | 
+  202 |       <Text x={10} y={130} width={150} breakAll lineHeight="20px">
+  203 |         Thistextbreaksatcharacterboundarieswhenbreakallisenabledregardlessofspaces
+  204 |       </Text>
+  205 |       <Crosshair x={10} y={130} color="red" />
+  206 |       <Crosshair x={160} y={130} color="blue" />
+  207 |     </Surface>,
+  208 |   );
+  209 |   await expect(component).toHaveScreenshot();
+  210 | });
+  211 | 
+  212 | test('Text with different textAnchor alignments', async ({ mount }) => {
+  213 |   const component = await mount(
+  214 |     <Surface width={500} height={200}>
+  215 |       <Text x={250} y={50} textAnchor="start">
+  216 |         textAnchor=start
+  217 |       </Text>
+  218 |       <Crosshair x={250} y={50} color="red" />
+  219 | 
+  220 |       <Text x={250} y={100} textAnchor="middle">
+  221 |         textAnchor=middle
+  222 |       </Text>
+  223 |       <Crosshair x={250} y={100} color="red" />
+  224 | 
+  225 |       <Text x={250} y={150} textAnchor="end">
+  226 |         textAnchor=end
+  227 |       </Text>
+  228 |       <Crosshair x={250} y={150} color="red" />
+  229 |     </Surface>,
+  230 |   );
+  231 |   await expect(component).toHaveScreenshot();
+  232 | });
+  233 | 
+  234 | test('Text with undefined and null children', async ({ mount }) => {
+  235 |   const component = await mount(
+  236 |     <Surface width={500} height={150}>
+  237 |       <Text x={10} y={50}>
+  238 |         {undefined}
+  239 |       </Text>
+  240 |       <Text x={10} y={50}>
+  241 |         Normal text after undefined
+  242 |       </Text>
+  243 |       <Crosshair x={10} y={50} color="red" />
+  244 | 
+  245 |       <Text x={10} y={100}>
+  246 |         {null}
+  247 |       </Text>
+  248 |       <Text x={10} y={100}>
+  249 |         Normal text after null
+  250 |       </Text>
+  251 |       <Crosshair x={10} y={100} color="red" />
+  252 |     </Surface>,
+  253 |   );
+  254 |   await expect(component).toHaveScreenshot();
+  255 | });
+  256 | 
+  257 | test('Text with numeric children', async ({ mount }) => {
+  258 |   const component = await mount(
+  259 |     <Surface width={500} height={100}>
+  260 |       <Text x={10} y={50}>
+  261 |         {42}
+  262 |       </Text>
+  263 |       <Text x={100} y={50}>
+  264 |         {3.14159}
+  265 |       </Text>
+  266 |       <Text x={200} y={50}>
+  267 |         {0}
+  268 |       </Text>
+  269 |       <Crosshair x={10} y={50} color="red" />
+  270 |       <Crosshair x={100} y={50} color="red" />
+  271 |       <Crosshair x={200} y={50} color="red" />
+  272 |     </Surface>,
+  273 |   );
+> 274 |   await expect(component).toHaveScreenshot();
+      |                           ^ Error: expect(locator).toHaveScreenshot(expected) failed
+  275 | });
+  276 | 
+  277 | test('Text with complex style and lineHeight combinations', async ({ mount }) => {
+  278 |   const component = await mount(
+  279 |     <Surface width={500} height={300}>
+  280 |       <Text x={10} y={50} width={200} lineHeight={15} style={{ fontSize: '16px', fontWeight: 'bold' }}>
+  281 |         Bold text with 1.5 line height that wraps to multiple lines
+  282 |       </Text>
+  283 |       <Crosshair x={10} y={50} color="red" />
+  284 | 
+  285 |       <Text x={10} y={150} width={200} lineHeight="30px" style={{ fontSize: '12px', fontStyle: 'italic' }}>
+  286 |         Italic text with 30px line height that wraps to multiple lines with larger spacing
+  287 |       </Text>
+  288 |       <Crosshair x={10} y={150} color="red" />
+  289 |     </Surface>,
+  290 |   );
+  291 |   await expect(component).toHaveScreenshot();
+  292 | });
+  293 | 
+  294 | test('Text with angle and textAnchor combinations', async ({ mount, page }) => {
+  295 |   const component = await mount(
+  296 |     <Surface width={500} height={300}>
+  297 |       <Text x={150} y={100} angle={45} textAnchor="start">
+  298 |         start + 45°
+  299 |       </Text>
+  300 |       <Crosshair x={150} y={100} color="red" />
+  301 | 
+  302 |       <Text x={250} y={150} angle={45} textAnchor="middle">
+  303 |         middle + 45°
+  304 |       </Text>
+  305 |       <Crosshair x={250} y={150} color="red" />
+  306 | 
+  307 |       <Text x={350} y={200} angle={45} textAnchor="end">
+  308 |         end + 45°
+  309 |       </Text>
+  310 |       <Crosshair x={350} y={200} color="red" />
+  311 |     </Surface>,
+  312 |   );
+  313 |   await page.waitForTimeout(500);
+  314 |   await expect(component).toHaveScreenshot();
+  315 | });
+  316 | 
+  317 | test('Text with scaleToFit and angle combination', async ({ mount }) => {
+  318 |   const component = await mount(
+  319 |     <Surface width={500} height={200}>
+  320 |       <Text x={100} y={100} width={200} scaleToFit angle={30}>
+  321 |         This long text should be scaled to fit 200px width and then rotated 30 degrees around the anchor point
+  322 |       </Text>
+  323 |       <Crosshair x={100} y={100} color="red" />
+  324 |       <Crosshair x={300} y={100} color="blue" />
+  325 |     </Surface>,
+  326 |   );
+  327 |   await expect(component).toHaveScreenshot();
+  328 | });
+  329 | 
+  330 | test('Text with width + verticalAnchor + scaleToFit combination', async ({ mount }) => {
+  331 |   // All text in this text is placed wrong, looks like a bug to me
+  332 |   const component = await mount(
+  333 |     <Surface width={500} height={400}>
+  334 |       <Text x={10} y={100} width={300} scaleToFit verticalAnchor="start">
+  335 |         This long text should be scaled to fit 300px width with verticalAnchor start - text should appear below the
+  336 |         crosshair
+  337 |       </Text>
+  338 |       <Crosshair x={10} y={100} color="red" />
+  339 | 
+  340 |       <Text x={10} y={200} width={300} scaleToFit verticalAnchor="middle">
+  341 |         This long text should be scaled to fit 300px width with verticalAnchor middle - text should be centered on the
+  342 |         crosshair
+  343 |       </Text>
+  344 |       <Crosshair x={10} y={200} color="red" />
+  345 | 
+  346 |       <Text x={10} y={300} width={300} scaleToFit verticalAnchor="end">
+  347 |         This long text should be scaled to fit 300px width with verticalAnchor end - text should appear above the
+  348 |         crosshair
+  349 |       </Text>
+  350 |       <Crosshair x={10} y={300} color="red" />
+  351 |     </Surface>,
+  352 |   );
+  353 |   await expect(component).toHaveScreenshot();
+  354 | });
+  355 | 
+```

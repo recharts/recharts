@@ -1,0 +1,117 @@
+# Instructions
+
+- Following Playwright test failed.
+- Explain why, be concise, respect Playwright best practices.
+- Provide a snippet of code with the fix, if possible.
+
+# Test info
+
+- Name: tests/www/LabelApiExamples.spec-vr.tsx >> LabelBarChartExample
+- Location: test-vr/tests/www/LabelApiExamples.spec-vr.tsx:25:5
+
+# Error details
+
+```
+Error: expect(locator).toHaveScreenshot(expected) failed
+
+Locator: locator('#root').locator('internal:control=component')
+  945 pixels (ratio 0.01 of all image pixels) are different.
+
+Call log:
+  - Expect "toHaveScreenshot" with timeout 10000ms
+    - verifying given screenshot expectation
+  - waiting for locator('#root').locator('internal:control=component')
+    - locator resolved to <div width="100%" class="recharts-wrapper">…</div>
+  - taking element screenshot
+    - disabled all CSS animations
+  - waiting for fonts to load...
+  - fonts loaded
+  - attempting scroll into view action
+    - waiting for element to be stable
+  - 945 pixels (ratio 0.01 of all image pixels) are different.
+  - waiting 100ms before taking screenshot
+  - waiting for locator('#root').locator('internal:control=component')
+    - locator resolved to <div width="100%" class="recharts-wrapper">…</div>
+  - taking element screenshot
+    - disabled all CSS animations
+  - waiting for fonts to load...
+  - fonts loaded
+  - attempting scroll into view action
+    - waiting for element to be stable
+  - captured a stable screenshot
+  - 945 pixels (ratio 0.01 of all image pixels) are different.
+
+```
+
+# Page snapshot
+
+```yaml
+- generic [active] [ref=e1]:
+  - application [ref=e4]:
+    - generic [ref=e81]:
+      - generic [ref=e82]:
+        - generic [ref=e84]: Page A
+        - generic [ref=e86]: Page B
+        - generic [ref=e88]: Page C
+        - generic [ref=e90]: Page D
+        - generic [ref=e92]: Page E
+        - generic [ref=e94]: Page F
+        - generic [ref=e96]: Page G
+      - generic [ref=e97]: insideBottom
+      - generic [ref=e98]:
+        - generic [ref=e100]: "0"
+        - generic [ref=e102]: "2500"
+        - generic [ref=e104]: "5000"
+        - generic [ref=e106]: "7500"
+        - generic [ref=e108]: "10000"
+      - generic [ref=e109]: insideLeft
+      - generic [ref=e110]:
+        - generic [ref=e111]: Page A
+        - generic [ref=e112]: Page B
+        - generic [ref=e113]: Page C
+        - generic [ref=e114]: Page D
+        - generic [ref=e115]: Page E
+        - generic [ref=e116]: Page F
+        - generic [ref=e117]: Page G
+  - generic [ref=e118]: "0"
+```
+
+# Test source
+
+```ts
+  1  | import * as React from 'react';
+  2  | import { test, expect } from '@playwright/experimental-ct-react';
+  3  | 
+  4  | import LabelBarChartExample from '../../../www/src/docs/exampleComponents/Label/LabelBarChartExample';
+  5  | import LabelFunnelPositions from '../../../www/src/docs/exampleComponents/Label/LabelFunnelPositions';
+  6  | import LabelRadialBarPositions from '../../../www/src/docs/exampleComponents/Label/LabelRadialBarPositions';
+  7  | import LabelPiePositions from '../../../www/src/docs/exampleComponents/Label/LabelPiePositions';
+  8  | import LabelCartesianPositions from '../../../www/src/docs/exampleComponents/Label/LabelCartesianPositions';
+  9  | 
+  10 | test('LabelCartesianPositions', async ({ mount }) => {
+  11 |   const component = await mount(<LabelCartesianPositions />);
+  12 |   await expect(component).toHaveScreenshot();
+  13 | });
+  14 | 
+  15 | test('LabelPiePositions', async ({ mount }) => {
+  16 |   const component = await mount(<LabelPiePositions isAnimationActive={false} />);
+  17 |   await expect(component).toHaveScreenshot();
+  18 | });
+  19 | 
+  20 | test('LabelRadialBarPositions', async ({ mount }) => {
+  21 |   const component = await mount(<LabelRadialBarPositions isAnimationActive={false} />);
+  22 |   await expect(component).toHaveScreenshot();
+  23 | });
+  24 | 
+  25 | test('LabelBarChartExample', async ({ mount }) => {
+  26 |   const component = await mount(<LabelBarChartExample isAnimationActive={false} />);
+> 27 |   await expect(component).toHaveScreenshot();
+     |                           ^ Error: expect(locator).toHaveScreenshot(expected) failed
+  28 | });
+  29 | 
+  30 | test('LabelFunnelPositions', async ({ mount }) => {
+  31 |   const component = await mount(<LabelFunnelPositions isAnimationActive={false} />);
+  32 |   await expect(component).toHaveScreenshot();
+  33 | });
+  34 | 
+```

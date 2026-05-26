@@ -1,0 +1,221 @@
+# Instructions
+
+- Following Playwright test failed.
+- Explain why, be concise, respect Playwright best practices.
+- Provide a snippet of code with the fix, if possible.
+
+# Test info
+
+- Name: tests/LabelList.spec-vr.tsx >> Pie > implicit LabelList
+- Location: test-vr/tests/LabelList.spec-vr.tsx:62:5
+
+# Error details
+
+```
+Error: expect(locator).toHaveScreenshot(expected) failed
+
+Locator: locator('#root').locator('internal:control=component')
+  3034 pixels (ratio 0.01 of all image pixels) are different.
+
+Call log:
+  - Expect "toHaveScreenshot" with timeout 10000ms
+    - verifying given screenshot expectation
+  - waiting for locator('#root').locator('internal:control=component')
+    - locator resolved to <div width="900" height="500" class="recharts-wrapper">…</div>
+  - taking element screenshot
+    - disabled all CSS animations
+  - waiting for fonts to load...
+  - fonts loaded
+  - attempting scroll into view action
+    - waiting for element to be stable
+  - 3034 pixels (ratio 0.01 of all image pixels) are different.
+  - waiting 100ms before taking screenshot
+  - waiting for locator('#root').locator('internal:control=component')
+    - locator resolved to <div width="900" height="500" class="recharts-wrapper">…</div>
+  - taking element screenshot
+    - disabled all CSS animations
+  - waiting for fonts to load...
+  - fonts loaded
+  - attempting scroll into view action
+    - waiting for element to be stable
+  - captured a stable screenshot
+  - 3034 pixels (ratio 0.01 of all image pixels) are different.
+
+```
+
+# Page snapshot
+
+```yaml
+- application [ref=e4]:
+  - generic [ref=e174]:
+    - generic [ref=e175]:
+      - generic [ref=e176]: top
+      - generic [ref=e177]: top
+    - generic [ref=e178]:
+      - generic [ref=e179]: left
+      - generic [ref=e180]: left
+    - generic [ref=e181]:
+      - generic [ref=e182]: right
+      - generic [ref=e183]: right
+    - generic [ref=e184]:
+      - generic [ref=e185]: bottom
+      - generic [ref=e186]: bottom
+    - generic [ref=e187]:
+      - generic [ref=e188]: inside
+      - generic [ref=e189]: inside
+    - generic [ref=e190]:
+      - generic [ref=e191]: outside
+      - generic [ref=e192]: outside
+    - generic [ref=e193]:
+      - generic [ref=e194]: insideLeft
+      - generic [ref=e195]: insideLeft
+    - generic [ref=e196]:
+      - generic [ref=e197]: insideRight
+      - generic [ref=e198]: insideRight
+    - generic [ref=e199]:
+      - generic [ref=e200]: insideTop
+      - generic [ref=e201]: insideTop
+    - generic [ref=e202]:
+      - generic [ref=e203]: insideBottom
+      - generic [ref=e204]: insideBottom
+    - generic [ref=e205]:
+      - generic [ref=e206]: insideTopLeft
+      - generic [ref=e207]: insideTopLeft
+    - generic [ref=e208]:
+      - generic [ref=e209]: insideBottomLeft
+      - generic [ref=e210]: insideBottomLeft
+    - generic [ref=e211]:
+      - generic [ref=e212]: insideTopRight
+      - generic [ref=e213]: insideTopRight
+    - generic [ref=e214]:
+      - generic [ref=e215]: insideBottomRight
+      - generic [ref=e216]: insideBottomRight
+    - generic [ref=e217]:
+      - generic [ref=e218]: insideStart
+      - generic [ref=e219]: insideStart
+    - generic [ref=e220]:
+      - generic [ref=e221]: insideEnd
+      - generic [ref=e222]: insideEnd
+    - generic [ref=e223]:
+      - generic [ref=e224]: end
+      - generic [ref=e225]: end
+    - generic [ref=e226]:
+      - generic [ref=e227]: center
+      - generic [ref=e228]: center
+    - generic [ref=e229]:
+      - generic [ref=e230]: centerTop
+      - generic [ref=e231]: centerTop
+    - generic [ref=e232]:
+      - generic [ref=e233]: centerBottom
+      - generic [ref=e234]: centerBottom
+    - generic [ref=e235]:
+      - generic [ref=e236]: middle
+      - generic [ref=e237]: middle
+```
+
+# Test source
+
+```ts
+  1   | import * as React from 'react';
+  2   | import { test, expect } from '@playwright/experimental-ct-react';
+  3   | import {
+  4   |   AreaExplicitLabelListTest,
+  5   |   AreaImplicitLabelListTest,
+  6   |   BarExplicitLabelListTest,
+  7   |   BarImplicitLabelListTest,
+  8   |   LineExplicitLabelListTest,
+  9   |   LineImplicitLabelListTest,
+  10  |   ScatterExplicitLabelListTest,
+  11  |   ScatterImplicitLabelListTest,
+  12  |   PieExplicitLabelListTest,
+  13  |   PieImplicitLabelListTest,
+  14  |   RadarExplicitLabelListTest,
+  15  |   RadarImplicitLabelListTest,
+  16  |   RadialBarExplicitLabelListTest,
+  17  |   RadialBarImplicitLabelListTest,
+  18  |   FunnelImplicitLabelListTest,
+  19  |   FunnelExplicitLabelListTest,
+  20  | } from './LabelListComponents';
+  21  | 
+  22  | test('Area > implicit LabelList', async ({ mount }) => {
+  23  |   const component = await mount(<AreaImplicitLabelListTest />);
+  24  |   await expect(component).toHaveScreenshot();
+  25  | });
+  26  | 
+  27  | test('Area > explicit LabelList', async ({ mount }) => {
+  28  |   const component = await mount(<AreaExplicitLabelListTest />);
+  29  |   await expect(component).toHaveScreenshot();
+  30  | });
+  31  | 
+  32  | test('Bar > implicit LabelList', async ({ mount }) => {
+  33  |   const component = await mount(<BarImplicitLabelListTest />);
+  34  |   await expect(component).toHaveScreenshot();
+  35  | });
+  36  | 
+  37  | test('Bar > explicit LabelList', async ({ mount }) => {
+  38  |   const component = await mount(<BarExplicitLabelListTest />);
+  39  |   await expect(component).toHaveScreenshot();
+  40  | });
+  41  | 
+  42  | test('Line > implicit LabelList', async ({ mount }) => {
+  43  |   const component = await mount(<LineImplicitLabelListTest />);
+  44  |   await expect(component).toHaveScreenshot();
+  45  | });
+  46  | 
+  47  | test('Line > explicit LabelList', async ({ mount }) => {
+  48  |   const component = await mount(<LineExplicitLabelListTest />);
+  49  |   await expect(component).toHaveScreenshot();
+  50  | });
+  51  | 
+  52  | test('Scatter > implicit LabelList', async ({ mount }) => {
+  53  |   const component = await mount(<ScatterImplicitLabelListTest />);
+  54  |   await expect(component).toHaveScreenshot();
+  55  | });
+  56  | 
+  57  | test('Scatter > explicit LabelList', async ({ mount }) => {
+  58  |   const component = await mount(<ScatterExplicitLabelListTest />);
+  59  |   await expect(component).toHaveScreenshot();
+  60  | });
+  61  | 
+  62  | test('Pie > implicit LabelList', async ({ mount }) => {
+  63  |   const component = await mount(<PieImplicitLabelListTest />);
+> 64  |   await expect(component).toHaveScreenshot();
+      |                           ^ Error: expect(locator).toHaveScreenshot(expected) failed
+  65  | });
+  66  | 
+  67  | test('Pie > explicit LabelList', async ({ mount }) => {
+  68  |   const component = await mount(<PieExplicitLabelListTest />);
+  69  |   await expect(component).toHaveScreenshot();
+  70  | });
+  71  | 
+  72  | test('Radar > implicit LabelList', async ({ mount }) => {
+  73  |   const component = await mount(<RadarImplicitLabelListTest />);
+  74  |   await expect(component).toHaveScreenshot();
+  75  | });
+  76  | 
+  77  | test('Radar > explicit LabelList', async ({ mount }) => {
+  78  |   const component = await mount(<RadarExplicitLabelListTest />);
+  79  |   await expect(component).toHaveScreenshot();
+  80  | });
+  81  | 
+  82  | test('RadialBar > implicit LabelList', async ({ mount }) => {
+  83  |   const component = await mount(<RadialBarImplicitLabelListTest />);
+  84  |   await expect(component).toHaveScreenshot();
+  85  | });
+  86  | 
+  87  | test('RadialBar > explicit LabelList', async ({ mount }) => {
+  88  |   const component = await mount(<RadialBarExplicitLabelListTest />);
+  89  |   await expect(component).toHaveScreenshot();
+  90  | });
+  91  | 
+  92  | test('Funnel > implicit LabelList', async ({ mount }) => {
+  93  |   const component = await mount(<FunnelImplicitLabelListTest />);
+  94  |   await expect(component).toHaveScreenshot();
+  95  | });
+  96  | 
+  97  | test('Funnel > explicit LabelList', async ({ mount }) => {
+  98  |   const component = await mount(<FunnelExplicitLabelListTest />);
+  99  |   await expect(component).toHaveScreenshot();
+  100 | });
+  101 | 
+```

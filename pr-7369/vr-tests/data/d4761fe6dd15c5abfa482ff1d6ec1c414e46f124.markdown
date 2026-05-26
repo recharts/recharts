@@ -1,0 +1,133 @@
+# Instructions
+
+- Following Playwright test failed.
+- Explain why, be concise, respect Playwright best practices.
+- Provide a snippet of code with the fix, if possible.
+
+# Test info
+
+- Name: tests/www/XAxisApiExamples.spec-vr.tsx >> MultiXAxisExample
+- Location: test-vr/tests/www/XAxisApiExamples.spec-vr.tsx:5:5
+
+# Error details
+
+```
+Error: expect(locator).toHaveScreenshot(expected) failed
+
+Locator: locator('#root').locator('internal:control=component')
+  341 pixels (ratio 0.01 of all image pixels) are different.
+
+Call log:
+  - Expect "toHaveScreenshot" with timeout 10000ms
+    - verifying given screenshot expectation
+  - waiting for locator('#root').locator('internal:control=component')
+    - locator resolved to <div width="100%" class="recharts-wrapper">…</div>
+  - taking element screenshot
+    - disabled all CSS animations
+  - waiting for fonts to load...
+  - fonts loaded
+  - attempting scroll into view action
+    - waiting for element to be stable
+  - 755 pixels (ratio 0.01 of all image pixels) are different.
+  - waiting 100ms before taking screenshot
+  - waiting for locator('#root').locator('internal:control=component')
+    - locator resolved to <div width="100%" class="recharts-wrapper">…</div>
+  - taking element screenshot
+    - disabled all CSS animations
+  - waiting for fonts to load...
+  - fonts loaded
+  - attempting scroll into view action
+    - waiting for element to be stable
+  - 214 pixels (ratio 0.01 of all image pixels) are different.
+  - waiting 250ms before taking screenshot
+  - waiting for locator('#root').locator('internal:control=component')
+    - locator resolved to <div width="100%" class="recharts-wrapper">…</div>
+  - taking element screenshot
+    - disabled all CSS animations
+  - waiting for fonts to load...
+  - fonts loaded
+  - attempting scroll into view action
+    - waiting for element to be stable
+  - 155 pixels (ratio 0.01 of all image pixels) are different.
+  - waiting 500ms before taking screenshot
+  - waiting for locator('#root').locator('internal:control=component')
+    - locator resolved to <div width="100%" class="recharts-wrapper">…</div>
+  - taking element screenshot
+    - disabled all CSS animations
+  - waiting for fonts to load...
+  - fonts loaded
+  - attempting scroll into view action
+    - waiting for element to be stable
+  - 36 pixels (ratio 0.01 of all image pixels) are different.
+  - waiting 1000ms before taking screenshot
+  - waiting for locator('#root').locator('internal:control=component')
+    - locator resolved to <div width="100%" class="recharts-wrapper">…</div>
+  - taking element screenshot
+    - disabled all CSS animations
+  - waiting for fonts to load...
+  - fonts loaded
+  - attempting scroll into view action
+    - waiting for element to be stable
+  - captured a stable screenshot
+  - 341 pixels (ratio 0.01 of all image pixels) are different.
+
+```
+
+# Page snapshot
+
+```yaml
+- generic [active] [ref=e1]:
+  - generic [ref=e3]:
+    - generic:
+      - status:
+        - paragraph: Page C
+        - list:
+          - listitem: "amt : 2290"
+          - listitem: "name : Page C"
+          - listitem: "pv : 9800"
+          - listitem: "uv : 2000"
+    - application [ref=e4]:
+      - generic [ref=e60]:
+        - generic [ref=e61]:
+          - generic [ref=e63]: Page B
+          - generic [ref=e65]: Page C
+          - generic [ref=e67]: Page D
+          - generic [ref=e69]: Page E
+          - generic [ref=e71]: Page F
+          - generic [ref=e73]: Page G
+        - generic [ref=e74]:
+          - generic [ref=e76]: "3000"
+          - generic [ref=e78]: "2000"
+          - generic [ref=e80]: "2780"
+          - generic [ref=e82]: "1890"
+          - generic [ref=e84]: "2390"
+          - generic [ref=e86]: "3490"
+        - generic [ref=e87]:
+          - generic [ref=e89]: "0"
+          - generic [ref=e91]: "2500"
+          - generic [ref=e93]: "5000"
+          - generic [ref=e95]: "7500"
+          - generic [ref=e97]: "10000"
+        - generic [ref=e98]:
+          - generic [ref=e100]: "0"
+          - generic [ref=e102]: "650"
+          - generic [ref=e104]: "1300"
+          - generic [ref=e106]: "1950"
+          - generic [ref=e108]: "2600"
+  - generic [ref=e109]: "650"
+```
+
+# Test source
+
+```ts
+  1 | import * as React from 'react';
+  2 | import { test, expect } from '@playwright/experimental-ct-react';
+  3 | import MultiXAxisExample from '../../../www/src/docs/exampleComponents/XAxis/MultiXAxisExample';
+  4 | 
+  5 | test('MultiXAxisExample', async ({ mount }) => {
+  6 |   const component = await mount(<MultiXAxisExample />);
+> 7 |   await expect(component).toHaveScreenshot();
+    |                           ^ Error: expect(locator).toHaveScreenshot(expected) failed
+  8 | });
+  9 | 
+```
