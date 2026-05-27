@@ -41,11 +41,11 @@ const dataB = [
   { subject: 'Sports', range: [95, 150] },
 ];
 
-const animateFromCenter: AnimationInterpolateFn<RadarPoint, PolarLayout> = (items, t) => {
+const animateFromCenter: AnimationInterpolateFn<RadarPoint, PolarLayout> = (items, animationElapsedTime) => {
   if (items == null) {
     return [];
   }
-  if (t === 1) {
+  if (animationElapsedTime === 1) {
     return items.flatMap(item => (item.status === 'removed' ? [] : [item.next]));
   }
 
@@ -57,9 +57,9 @@ const animateFromCenter: AnimationInterpolateFn<RadarPoint, PolarLayout> = (item
     return [
       {
         ...item.next,
-        x: interpolate(item.next.cx, item.next.x, t),
-        y: interpolate(item.next.cy, item.next.y, t),
-        radius: interpolate(0, item.next.radius, t),
+        x: interpolate(item.next.cx, item.next.x, animationElapsedTime),
+        y: interpolate(item.next.cy, item.next.y, animationElapsedTime),
+        radius: interpolate(0, item.next.radius, animationElapsedTime),
       },
     ];
   });

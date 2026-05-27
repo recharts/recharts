@@ -1333,9 +1333,32 @@ export type DotType =
    */
   | ReactElement<SVGProps<SVGElement>>;
 
+/**
+ * Animation metadata forwarded to custom chart shapes.
+ *
+ * These props let a shape react to the current animation state without needing
+ * to know how its parent chart component computes the animated geometry.
+ */
 export interface ShapeAnimationProps {
-  t?: number;
+  /**
+   * Normalized animation progress time in the approximately `[0, 1]` range.
+   * 0 = start of animation
+   * 1 = end of animation
+   * Why approximately? This number already includes easing. The typical easing functions are in 0, 1
+   * but you may construct a custom Bézier curve that goes out of the range
+   * and so this number may too be out of the range.
+   */
+  animationElapsedTime?: number;
+  /**
+   * Whether the parent chart element is currently animating.
+   */
   isAnimating?: boolean;
+  /**
+   * Whether the current animation pass is the initial entrance animation.
+   * Some Recharts components have different "first render" and "data update" animations
+   * and this is the property that tracks it. You may choose to override it and control
+   * which animation renders that way.
+   */
   isEntrance?: boolean;
 }
 

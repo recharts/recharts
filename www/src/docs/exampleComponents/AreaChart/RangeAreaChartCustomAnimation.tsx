@@ -61,11 +61,11 @@ function useAnimateFromPlotBottom(): AnimationInterpolateFn<AreaPointItem, Carte
   const plotArea = usePlotArea();
   const top = plotArea?.y ?? 0;
 
-  return (items, t) => {
+  return (items, animationElapsedTime) => {
     if (items == null) {
       return [];
     }
-    if (t === 1) {
+    if (animationElapsedTime === 1) {
       return items.flatMap(item => (item.status === 'removed' ? [] : [item.next]));
     }
 
@@ -79,7 +79,7 @@ function useAnimateFromPlotBottom(): AnimationInterpolateFn<AreaPointItem, Carte
        * which creates a visual jank when swapping datasets.
        * Customize your animations the way you want!
        */
-      return [{ ...item.next, y: interpolate(top, item.next.y, t) }];
+      return [{ ...item.next, y: interpolate(top, item.next.y, animationElapsedTime) }];
     });
   };
 }

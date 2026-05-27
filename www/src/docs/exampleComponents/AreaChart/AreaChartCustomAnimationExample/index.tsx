@@ -63,13 +63,13 @@ const useAnimateFromBottom = (): AnimationInterpolateFn<AreaPointItem, Cartesian
   const plotArea = usePlotArea();
   const zero = plotArea ? plotArea.y + plotArea.height : 0;
 
-  return (items, t) => {
+  return (items, animationElapsedTime) => {
     if (items == null) return [];
-    if (t === 1) return items.flatMap(item => (item.status === 'removed' ? [] : [item.next]));
+    if (animationElapsedTime === 1) return items.flatMap(item => (item.status === 'removed' ? [] : [item.next]));
     return items.flatMap(item => {
       if (item.status === 'removed') return [];
       const { next } = item;
-      return [{ ...next, y: interpolate(zero, next.y, t) }];
+      return [{ ...next, y: interpolate(zero, next.y, animationElapsedTime) }];
     });
   };
 };

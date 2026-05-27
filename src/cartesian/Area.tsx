@@ -171,8 +171,8 @@ interface AreaProps<DataPointType = any, DataValueType = any>
    *
    * @param prevItems The items from the previous animation frame, or null on first render
    * @param nextItems The target items to animate towards
-   * @param t A normalized time value (0 = start, 1 = end)
-   * @returns The interpolated items at time t
+   * @param animationElapsedTime A normalized time value (0 = start, 1 = end)
+   * @returns The interpolated items at time animationElapsedTime
    *
    * @since 3.9
    * @see {@link https://recharts.github.io/en-US/guide/animations/ Animations guide}
@@ -303,7 +303,7 @@ interface AreaProps<DataPointType = any, DataValueType = any>
    * If set a function, the function will be called to render customized shape.
    * By default, renders a filled curve path with a clipPath entrance animation.
    *
-   * During animations the shape receives additional props: `t`, `isAnimating`, and `isEntrance`.
+   * During animations the shape receives additional props: `animationElapsedTime`, `isAnimating`, and `isEntrance`.
    * When a custom shape is provided, the built-in clipPath entrance animation is skipped.
    *
    * @see AreaRevealShape — the default entrance animation, available for import from recharts
@@ -362,18 +362,25 @@ interface AreaProps<DataPointType = any, DataValueType = any>
   zIndex?: number;
 }
 
-const defaultAreaAnimateItems: AnimationInterpolateFn<AreaPointItem, CartesianLayout> = (items, t) => {
+const defaultAreaAnimateItems: AnimationInterpolateFn<AreaPointItem, CartesianLayout> = (
+  items,
+  animationElapsedTime,
+) => {
   if (items == null) {
     // First render: return items as-is, clip-path animation handles the reveal
     return [];
   }
-  if (t === 1) {
+  if (animationElapsedTime === 1) {
     return items.flatMap(item => (item.status === 'removed' ? [] : [item.next]));
   }
   return items.flatMap(item => {
     if (item.status === 'matched') {
       return [
-        { ...item.next, x: interpolate(item.prev.x, item.next.x, t), y: interpolate(item.prev.y, item.next.y, t) },
+        {
+          ...item.next,
+          x: interpolate(item.prev.x, item.next.x, animationElapsedTime),
+          y: interpolate(item.prev.y, item.next.y, animationElapsedTime),
+        },
       ];
     }
     if (item.status === 'added') {
@@ -558,7 +565,7 @@ function StaticArea({
   needClip,
   clipPathId,
   props,
-  t,
+  animationElapsedTime,
   isAnimating,
   isEntrance,
 }: {
@@ -567,7 +574,7 @@ function StaticArea({
   needClip: boolean;
   clipPathId: string;
   props: InternalProps;
-  t: number;
+  animationElapsedTime: number;
   isAnimating: boolean;
   isEntrance: boolean;
 }) {
@@ -586,7 +593,7 @@ function StaticArea({
     layout,
     stroke,
     isRange,
-    t,
+    animationElapsedTime,
     isAnimating,
     isEntrance,
   };
@@ -610,15 +617,15 @@ function StaticArea({
 function interpolateScalarBaseLine(
   baseLine: BaseLineType | undefined,
   prevBaseLine: BaseLineType | undefined,
-  t: number,
+  animationElapsedTime: number,
 ): BaseLineType {
   if (isNumber(baseLine)) {
     const previousNumberBaseLine = isNumber(prevBaseLine) ? prevBaseLine : undefined;
-    return interpolate(previousNumberBaseLine, baseLine, t);
+    return interpolate(previousNumberBaseLine, baseLine, animationElapsedTime);
   }
   if (isNullish(baseLine) || isNan(baseLine)) {
     const previousNumberBaseLine = isNumber(prevBaseLine) ? prevBaseLine : undefined;
-    return interpolate(previousNumberBaseLine, 0, t);
+    return interpolate(previousNumberBaseLine, 0, animationElapsedTime);
   }
   return baseLine;
 }
@@ -686,16 +693,18 @@ function AreaWithAnimation({
       animationMatchBy={animationMatchBy}
       layout={layout}
     >
-      {(stepPoints, t, isEntrance) => {
+      {(stepPoints, animationElapsedTime, isEntrance) => {
         let stepBaseLine: number | ReadonlyArray<NullableCoordinate> | undefined;
-        if (t === 1) {
+        if (animationElapsedTime === 1) {
           stepBaseLine = baseLine;
         } else if (Array.isArray(baseLine)) {
-          stepBaseLine = animationInterpolateFn(baseLineAnimationItems, t, layout);
+          stepBaseLine = animationInterpolateFn(baseLineAnimationItems, animationElapsedTime, layout);
         } else {
-          stepBaseLine = isEntrance ? baseLine : interpolateScalarBaseLine(baseLine, prevBaseLine, t);
+          stepBaseLine = isEntrance
+            ? baseLine
+            : interpolateScalarBaseLine(baseLine, prevBaseLine, animationElapsedTime);
         }
-        baseLineAnimationState.syncStepValue(stepBaseLine, t);
+        baseLineAnimationState.syncStepValue(stepBaseLine, animationElapsedTime);
         return (
           <AreaLabelListProvider showLabels={!isAnimating} points={points}>
             {props.children}
@@ -705,8 +714,8 @@ function AreaWithAnimation({
               needClip={needClip}
               clipPathId={clipPathId}
               props={props}
-              t={t}
-              isAnimating={isAnimating || t < 1}
+              animationElapsedTime={animationElapsedTime}
+              isAnimating={isAnimating || animationElapsedTime < 1}
               isEntrance={isEntrance}
             />
             <LabelListFromLabelProp label={props.label} />

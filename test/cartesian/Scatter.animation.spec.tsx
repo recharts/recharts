@@ -409,23 +409,23 @@ describe('Scatter Animation', () => {
       { x: 30, y: 80, z: 200 },
     ];
 
-    const crossfade: AnimationInterpolateFn<ScatterPointItem, CartesianLayout> = (items, t) => {
+    const crossfade: AnimationInterpolateFn<ScatterPointItem, CartesianLayout> = (items, animationElapsedTime) => {
       if (items == null) {
         return [];
       }
-      if (t === 1) {
+      if (animationElapsedTime === 1) {
         return items.flatMap(item => (item.status === 'removed' ? [] : [item.next]));
       }
 
       const result: AnimatedScatterPoint[] = [];
       for (const item of items) {
         if (item.status === 'matched') {
-          result.push({ ...item.prev, opacity: 1 - t });
-          result.push({ ...item.next, opacity: t });
+          result.push({ ...item.prev, opacity: 1 - animationElapsedTime });
+          result.push({ ...item.next, opacity: animationElapsedTime });
         } else if (item.status === 'added') {
-          result.push({ ...item.next, opacity: t });
+          result.push({ ...item.next, opacity: animationElapsedTime });
         } else {
-          result.push({ ...item.prev, opacity: 1 - t });
+          result.push({ ...item.prev, opacity: 1 - animationElapsedTime });
         }
       }
       return result as ScatterPointItem[];
@@ -580,11 +580,11 @@ describe('Scatter Animation', () => {
   });
 
   describe('shape prop', () => {
-    function CustomShape(props: { t?: number; isAnimating?: boolean; isEntrance?: boolean }) {
+    function CustomShape(props: { animationElapsedTime?: number; isAnimating?: boolean; isEntrance?: boolean }) {
       return (
         <path
           className="custom-scatter-shape"
-          data-t={props.t}
+          data-t={props.animationElapsedTime}
           data-is-animating={String(props.isAnimating)}
           data-is-entrance={String(props.isEntrance)}
         />
@@ -599,7 +599,7 @@ describe('Scatter Animation', () => {
       </ScatterChart>
     ));
 
-    it('should pass t, isAnimating, isEntrance props to custom shape', async () => {
+    it('should pass animationElapsedTime, isAnimating, isEntrance props to custom shape', async () => {
       const { container, animationManager } = renderShapeTestCase();
 
       await animationManager.setAnimationProgress(0.5);

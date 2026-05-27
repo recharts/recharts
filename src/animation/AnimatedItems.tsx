@@ -53,17 +53,17 @@ export function useAnimationCallbacks(
  *   - `{ status: 'added', next }` — animate in from a computed entry position
  *   - `{ status: 'removed', prev }` — animate out to a computed exit position
  *
- *   At `t = 1`, removed items should be excluded from the result.
+ *   At `animationElapsedTime = 1`, removed items should be excluded from the result.
  *
- * @param t A normalized time value (0 = start, 1 = end)
+ * @param animationElapsedTime A normalized time value (0 = start, 1 = end)
  * @param layout of the chart, useful for deciding the direction of animation
- * @returns The interpolated items at time t
+ * @returns The interpolated items at time animationElapsedTime
  *
  * @since 3.9
  */
 export type AnimationInterpolateFn<ItemType, LayoutType extends CartesianLayout | PolarLayout> = (
   items: ReadonlyArray<AnimationItem<ItemType>> | null,
-  t: number,
+  animationElapsedTime: number,
   layout: LayoutType,
 ) => ReadonlyArray<ItemType>;
 
@@ -105,20 +105,20 @@ export type AnimatedItemsProps<ItemType, LayoutType extends CartesianLayout | Po
    */
   animationMatchBy?: AnimationMatchByProp<ItemType>;
   /**
-   * Optional guard for updating previousItemsRef. Default: `(t) => t > 0`.
-   * Line uses `(t) => t > 0 && totalLength > 0` to avoid updating before SVG path is measured.
+   * Optional guard for updating previousItemsRef. Default: `(animationElapsedTime) => animationElapsedTime > 0`.
+   * Line uses `(animationElapsedTime) => animationElapsedTime > 0 && totalLength > 0` to avoid updating before SVG path is measured.
    */
-  shouldUpdatePreviousRef?: (t: number) => boolean;
+  shouldUpdatePreviousRef?: (animationElapsedTime: number) => boolean;
   /**
    * Render with interpolated items and animation state.
    *
    * @param items The interpolated items at the current animation frame
-   * @param t The normalized time (0-1), useful for additional animation effects
+   * @param animationElapsedTime The normalized time (0-1), useful for additional animation effects
    * @param isEntrance Whether this is the first render (entrance animation) or a data update animation.
    *   `true` when `prevItems` was `null` — meaning the component just appeared for the first time.
    *   `false` when animating between two datasets.
    */
-  children: (items: ReadonlyArray<ItemType>, t: number, isEntrance: boolean) => ReactNode;
+  children: (items: ReadonlyArray<ItemType>, animationElapsedTime: number, isEntrance: boolean) => ReactNode;
   layout: LayoutType;
 };
 
@@ -129,7 +129,7 @@ export type AnimatedItemsProps<ItemType, LayoutType extends CartesianLayout | Po
  * Radar, RadialBar, Area, and Line:
  * 1. Track previous items in a ref
  * 2. Wrap in JavascriptAnimate
- * 3. Update ref when t > 0
+ * 3. Update ref when animationElapsedTime > 0
  *
  * @since 3.9
  */
@@ -174,16 +174,18 @@ export function AnimatedItems<ItemType, LayoutType extends CartesianLayout | Pol
       onAnimationStart={onAnimationStart}
       key={animationId}
     >
-      {(t: number) => {
+      {(animationElapsedTime: number) => {
         const isEntrance = rawPrevItems == null;
         // TODO performance; how does the matching work with 10k items? Can we skip interpolation and just jump to final state after some threshold?
-        const stepData = items == null ? items : animationInterpolateFn(animationItems, t, layout);
-        const canUpdate = shouldUpdatePreviousRef ? shouldUpdatePreviousRef(t) : t > 0;
-        animationStartItems.syncStepValue(stepData, t, canUpdate);
+        const stepData = items == null ? items : animationInterpolateFn(animationItems, animationElapsedTime, layout);
+        const canUpdate = shouldUpdatePreviousRef
+          ? shouldUpdatePreviousRef(animationElapsedTime)
+          : animationElapsedTime > 0;
+        animationStartItems.syncStepValue(stepData, animationElapsedTime, canUpdate);
         if (stepData == null) {
           return null;
         }
-        return children(stepData, t, isEntrance);
+        return children(stepData, animationElapsedTime, isEntrance);
       }}
     </JavascriptAnimate>
   );

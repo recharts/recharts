@@ -45,6 +45,6 @@ export const mapObject = <T extends Record<string, any>, R>(
  *  - interpolateCSSValue("scaleX(0)", "scaleX(1)", 0.5) => "scaleX(0.5)"
  *  - interpolateCSSValue("translate(50px, 30px)", "translate(0px, 0px)", 0.5) => "translate(25px, 15px)"
  */
-export function interpolateCSSValue(from: string, to: string, t: number): string {
-  return interpolateString(from, to)(t);
+export function interpolateCSSValue(from: string, to: string, animationElapsedTime: number): string {
+  return interpolateString(from, to)(animationElapsedTime);
 }

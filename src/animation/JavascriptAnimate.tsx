@@ -19,7 +19,7 @@ type JavascriptAnimateProps = {
   canBegin?: boolean;
   onAnimationStart?: () => void;
   onAnimationEnd?: () => void;
-  children: (time: number) => React.ReactNode;
+  children: (animationElapsedTime: number) => React.ReactNode;
 };
 
 const defaultJavascriptAnimateProps = {
@@ -32,12 +32,12 @@ const defaultJavascriptAnimateProps = {
   onAnimationStart: () => {},
 } as const satisfies Partial<JavascriptAnimateProps>;
 
-type TimeAsObject = {
-  t: number;
+type AnimationElapsedTimeState = {
+  animationElapsedTime: number;
 };
 
-const from: TimeAsObject = { t: 0 };
-const to: TimeAsObject = { t: 1 };
+const from: AnimationElapsedTimeState = { animationElapsedTime: 0 };
+const to: AnimationElapsedTimeState = { animationElapsedTime: 1 };
 
 export function JavascriptAnimate(outsideProps: JavascriptAnimateProps) {
   const props = resolveDefaultProps(outsideProps, defaultJavascriptAnimateProps);
@@ -58,7 +58,7 @@ export function JavascriptAnimate(outsideProps: JavascriptAnimateProps) {
 
   const animationManager = useAnimationManager(props.animationId, props.animationManager);
 
-  const [style, setStyle] = useState<TimeAsObject>(isActive ? from : to);
+  const [style, setStyle] = useState<AnimationElapsedTimeState>(isActive ? from : to);
   const stopJSAnimation = useRef<(() => void) | null>(null);
 
   useEffect(() => {
@@ -72,7 +72,7 @@ export function JavascriptAnimate(outsideProps: JavascriptAnimateProps) {
       return noop;
     }
 
-    const startAnimation = configUpdate<TimeAsObject>(
+    const startAnimation = configUpdate<AnimationElapsedTimeState>(
       from,
       to,
       configEasing(easing),
@@ -96,5 +96,5 @@ export function JavascriptAnimate(outsideProps: JavascriptAnimateProps) {
     };
   }, [isActive, canBegin, duration, easing, begin, onAnimationStart, onAnimationEnd, animationManager]);
 
-  return children(style.t);
+  return children(style.animationElapsedTime);
 }

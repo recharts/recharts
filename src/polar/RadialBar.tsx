@@ -129,7 +129,7 @@ function RadialBarSectors({
   sectors,
   allOtherRadialBarProps,
   showLabels,
-  t,
+  animationElapsedTime,
   isAnimating,
   isEntrance,
 }: RadialBarSectorsProps) {
@@ -171,7 +171,7 @@ function RadialBarSectors({
           className: `recharts-radial-bar-sector ${entry.className}`,
           forceCornerRadius: others.forceCornerRadius,
           cornerIsExternal: others.cornerIsExternal,
-          t,
+          animationElapsedTime,
           isAnimating,
           isEntrance,
           isActive,
@@ -203,9 +203,12 @@ function RadialBarSectors({
   );
 }
 
-const defaultRadialBarAnimateItems: AnimationInterpolateFn<RadialBarDataItem, PolarLayout> = (items, t) => {
+const defaultRadialBarAnimateItems: AnimationInterpolateFn<RadialBarDataItem, PolarLayout> = (
+  items,
+  animationElapsedTime,
+) => {
   if (items == null) return [];
-  if (t === 1) {
+  if (animationElapsedTime === 1) {
     return items.flatMap(item => (item.status === 'removed' ? [] : [item.next]));
   }
   return items.flatMap(item => {
@@ -214,13 +217,18 @@ const defaultRadialBarAnimateItems: AnimationInterpolateFn<RadialBarDataItem, Po
       return [
         {
           ...item.next,
-          startAngle: interpolate(item.prev.startAngle, item.next.startAngle, t),
-          endAngle: interpolate(item.prev.endAngle, item.next.endAngle, t),
+          startAngle: interpolate(item.prev.startAngle, item.next.startAngle, animationElapsedTime),
+          endAngle: interpolate(item.prev.endAngle, item.next.endAngle, animationElapsedTime),
         },
       ];
     }
     // added
-    return [{ ...item.next, endAngle: interpolate(item.next.startAngle, item.next.endAngle, t) }];
+    return [
+      {
+        ...item.next,
+        endAngle: interpolate(item.next.startAngle, item.next.endAngle, animationElapsedTime),
+      },
+    ];
   });
 };
 
@@ -266,13 +274,13 @@ function SectorsWithAnimation({
       animationMatchBy={props.animationMatchBy}
       layout={layout}
     >
-      {(stepData, t, isEntrance) => (
+      {(stepData, animationElapsedTime, isEntrance) => (
         <RadialBarSectors
           sectors={stepData}
           allOtherRadialBarProps={props}
           showLabels={!isAnimating}
-          t={t}
-          isAnimating={isAnimating || t < 1}
+          animationElapsedTime={animationElapsedTime}
+          isAnimating={isAnimating || animationElapsedTime < 1}
           isEntrance={isEntrance}
         />
       )}
@@ -314,8 +322,8 @@ interface InternalRadialBarProps<DataPointType = any, DataValueType = any>
    *
    * @param prevItems The items from the previous animation frame, or null on first render
    * @param nextItems The target items to animate towards
-   * @param t A normalized time value (0 = start, 1 = end)
-   * @returns The interpolated items at time t
+   * @param animationElapsedTime A normalized time value (0 = start, 1 = end)
+   * @returns The interpolated items at time animationElapsedTime
    *
    * @since 3.9
    * @see {@link https://recharts.github.io/en-US/guide/animations/ Animations guide}
@@ -450,7 +458,7 @@ interface InternalRadialBarProps<DataPointType = any, DataValueType = any>
   /**
    * If set a ReactElement, the shape of radial bar sectors can be customized.
    * If set a function, the function will be called to render customized shape.
-   * During animations, the function shape also receives `t`, `isAnimating`, and `isEntrance`.
+   * During animations, the function shape also receives `animationElapsedTime`, `isAnimating`, and `isEntrance`.
    * By default, renders a sector.
    */
   shape?: ActiveShape<RadialBarSectorProps, SVGPathElement>;

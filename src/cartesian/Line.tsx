@@ -163,8 +163,8 @@ interface LineProps<DataPointType = any, DataValueType = any>
    *
    * @param prevItems The items from the previous animation frame, or null on first render
    * @param nextItems The target items to animate towards
-   * @param t A normalized time value (0 = start, 1 = end)
-   * @returns The interpolated items at time t
+   * @param animationElapsedTime A normalized time value (0 = start, 1 = end)
+   * @returns The interpolated items at time animationElapsedTime
    *
    * @since 3.9
    * @see {@link https://recharts.github.io/en-US/guide/animations/ Animations guide}
@@ -267,7 +267,7 @@ interface LineProps<DataPointType = any, DataValueType = any>
    * If set a ReactElement, the shape of line can be customized.
    * If set a function, the function will be called to render customized shape.
    *
-   * During animations the shape receives additional props: `t`, `isAnimating`, and `isEntrance`.
+   * During animations the shape receives additional props: `animationElapsedTime`, `isAnimating`, and `isEntrance`.
    * When a custom shape is provided, the built-in stroke-dasharray entrance animation is skipped.
    *
    * @example <Line dataKey="value" shape={CustomizedShapeComponent} />
@@ -369,13 +369,16 @@ function averageShift(items: ReadonlyArray<AnimationItem<LinePointItem>>): numbe
   return count > 0 ? total / count : 0;
 }
 
-const defaultLineAnimateItems: AnimationInterpolateFn<LinePointItem, CartesianLayout> = (items, t) => {
+const defaultLineAnimateItems: AnimationInterpolateFn<LinePointItem, CartesianLayout> = (
+  items,
+  animationElapsedTime,
+) => {
   if (items == null) {
     // First render: return empty, stroke-dasharray handles the reveal
     return [];
   }
-  // At t=1 return only the non-removed items
-  if (t === 1) return items.flatMap(item => (item.status === 'removed' ? [] : [item.next]));
+  // At animationElapsedTime=1 return only the non-removed items
+  if (animationElapsedTime === 1) return items.flatMap(item => (item.status === 'removed' ? [] : [item.next]));
 
   const shift = averageShift(items);
 
@@ -385,21 +388,29 @@ const defaultLineAnimateItems: AnimationInterpolateFn<LinePointItem, CartesianLa
     if (item.status === 'matched') {
       result.push({
         ...item.next,
-        x: interpolate(item.prev.x, item.next.x, t),
-        y: interpolate(item.prev.y, item.next.y, t),
+        x: interpolate(item.prev.x, item.next.x, animationElapsedTime),
+        y: interpolate(item.prev.y, item.next.y, animationElapsedTime),
       });
     } else if (item.status === 'added') {
       if (item.next.x != null) {
         // Extrapolate entry position: the point starts where it "would have been"
         const entryX = item.next.x - shift;
-        result.push({ ...item.next, x: interpolate(entryX, item.next.x, t), y: item.next.y });
+        result.push({
+          ...item.next,
+          x: interpolate(entryX, item.next.x, animationElapsedTime),
+          y: item.next.y,
+        });
       } else {
         result.push(item.next);
       }
     } else if (item.status === 'removed') {
       if (item.prev.x != null) {
         const exitX = item.prev.x + shift;
-        result.push({ ...item.prev, x: interpolate(item.prev.x, exitX, t), y: item.prev.y });
+        result.push({
+          ...item.prev,
+          x: interpolate(item.prev.x, exitX, animationElapsedTime),
+          y: item.prev.y,
+        });
       }
       // else: removed items are simply dropped
     }
@@ -570,7 +581,7 @@ function StaticCurve({
   pathRef,
   points,
   props,
-  t,
+  animationElapsedTime,
   isAnimating,
   isEntrance,
   visibleLength,
@@ -579,7 +590,7 @@ function StaticCurve({
   pathRef: RefObject<SVGPathElement>;
   points: ReadonlyArray<LinePointItem>;
   props: InternalProps;
-  t?: number;
+  animationElapsedTime?: number;
   isAnimating?: boolean;
   isEntrance?: boolean;
   visibleLength?: number | null;
@@ -596,7 +607,7 @@ function StaticCurve({
     connectNulls,
     strokeDasharray: strokeDasharray ?? props.strokeDasharray,
     pathRef,
-    t,
+    animationElapsedTime,
     isAnimating,
     isEntrance: props.animateNewValues ? isEntrance : false,
     visibleLength,
@@ -647,7 +658,10 @@ function CurveWithAnimation({
   const getVisibleLength = useAnimatedLineLength(points);
 
   // Guard for totalLength: don't update previousPointsRef before SVG path is measured
-  const shouldUpdatePreviousRef = useCallback((t: number) => t > 0 && totalLength > 0, [totalLength]);
+  const shouldUpdatePreviousRef = useCallback(
+    (animationElapsedTime: number) => animationElapsedTime > 0 && totalLength > 0,
+    [totalLength],
+  );
 
   return (
     <LineLabelListProvider points={points} showLabels={showLabels}>
@@ -668,16 +682,16 @@ function CurveWithAnimation({
         shouldUpdatePreviousRef={shouldUpdatePreviousRef}
         layout={layout}
       >
-        {(stepData, t, isEntrance) => {
-          const animationActive = isAnimating || t < 1;
-          const visibleLength = animationActive ? getVisibleLength(t, totalLength) : null;
+        {(stepData, animationElapsedTime, isEntrance) => {
+          const animationActive = isAnimating || animationElapsedTime < 1;
+          const visibleLength = animationActive ? getVisibleLength(animationElapsedTime, totalLength) : null;
           return (
             <StaticCurve
               props={props}
               points={stepData}
               clipPathId={clipPathId}
               pathRef={pathRef}
-              t={t}
+              animationElapsedTime={animationElapsedTime}
               isAnimating={animationActive}
               isEntrance={isEntrance}
               visibleLength={visibleLength}

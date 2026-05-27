@@ -648,11 +648,11 @@ describe('Radar animation', () => {
       { name: 'C', range: [35, 110] },
     ];
 
-    const collapseToCenter: AnimationInterpolateFn<RadarPoint, PolarLayout> = (items, t) => {
+    const collapseToCenter: AnimationInterpolateFn<RadarPoint, PolarLayout> = (items, animationElapsedTime) => {
       if (items == null) {
         return [];
       }
-      if (t === 1) {
+      if (animationElapsedTime === 1) {
         return items.flatMap(item => (item.status === 'removed' ? [] : [item.next]));
       }
       return items.flatMap(item =>

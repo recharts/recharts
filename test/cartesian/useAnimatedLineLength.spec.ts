@@ -11,7 +11,7 @@ describe('useAnimatedLineLength', () => {
   ];
 
   describe('initial animation (from zero)', () => {
-    it('should return 0 at t=0', () => {
+    it('should return 0 at animationElapsedTime=0', () => {
       const { result } = renderHook(() => useAnimatedLineLength(pointsA));
       expect(result.current(0, 100)).toBe(0);
     });
@@ -23,7 +23,7 @@ describe('useAnimatedLineLength', () => {
       expect(result.current(0.9, 100)).toBe(90);
     });
 
-    it('should return null when t=1 (fully visible)', () => {
+    it('should return null when animationElapsedTime=1 (fully visible)', () => {
       const { result } = renderHook(() => useAnimatedLineLength(pointsA));
       expect(result.current(1, 100)).toBeNull();
     });
@@ -41,13 +41,13 @@ describe('useAnimatedLineLength', () => {
       // Data changes, new path is 200px
       rerender({ points: pointsB });
 
-      // At t=0, should start from 50px (continuous, no jump)
+      // At animationElapsedTime=0, should start from 50px (continuous, no jump)
       expect(result.current(0, 200)).toBe(50);
 
-      // At t=0.25, visible = 50 + 0.25 * 200 = 100px
+      // At animationElapsedTime=0.25, visible = 50 + 0.25 * 200 = 100px
       expect(result.current(0.25, 200)).toBe(100);
 
-      // At t=0.75, visible = 50 + 0.75 * 200 = 200 = totalLength → fully visible, returns null
+      // At animationElapsedTime=0.75, visible = 50 + 0.75 * 200 = 200 = totalLength → fully visible, returns null
       expect(result.current(0.75, 200)).toBeNull();
     });
 
@@ -62,10 +62,10 @@ describe('useAnimatedLineLength', () => {
       // Data changes, new path is only 50px
       rerender({ points: pointsB });
 
-      // At t=0, should start from 30px (continuous)
+      // At animationElapsedTime=0, should start from 30px (continuous)
       expect(result.current(0, 50)).toBe(30);
 
-      // At t=0.4, visible = 30 + 0.4 * 50 = 50 = totalLength → fully visible, returns null
+      // At animationElapsedTime=0.4, visible = 30 + 0.4 * 50 = 50 = totalLength → fully visible, returns null
       expect(result.current(0.4, 50)).toBeNull();
     });
   });
@@ -82,7 +82,7 @@ describe('useAnimatedLineLength', () => {
       // Data changes
       rerender({ points: pointsB });
 
-      // At t=0, start from 50px (continuous)
+      // At animationElapsedTime=0, start from 50px (continuous)
       expect(result.current(0, 100)).toBe(50);
 
       // totalLength grows to 200 mid-animation
@@ -177,7 +177,7 @@ describe('useAnimatedLineLength', () => {
       expect(result.current(0.5, 100)).toBe(50);
     });
 
-    it('should handle t > 1 gracefully (returns null since fully visible)', () => {
+    it('should handle animationElapsedTime > 1 gracefully (returns null since fully visible)', () => {
       const { result } = renderHook(() => useAnimatedLineLength(pointsA));
       expect(result.current(1.5, 100)).toBeNull();
     });

@@ -13,11 +13,11 @@ export type AnimationStartSnapshot<T> = {
    * Feed each rendered animation frame back into the snapshot state machine.
    *
    * This method serves two jobs:
-   * 1. it "arms" the hook once the new animation has rendered its t=0 frame, and
+   * 1. it "arms" the hook once the new animation has rendered its animationElapsedTime=0 frame, and
    * 2. it optionally commits later in-flight frames back into the mutable ref so
    *    future animations can continue smoothly from the latest visible geometry.
    */
-  syncStepValue: (stepValue: T, t: number, canCommit?: boolean) => void;
+  syncStepValue: (stepValue: T, animationElapsedTime: number, canCommit?: boolean) => void;
 };
 
 /**
@@ -28,7 +28,7 @@ export type AnimationStartSnapshot<T> = {
  * Recharts stores the latest visible animation frame in mutable refs so the next
  * animation can resume from that exact geometry. That works well, but there is a
  * subtle trap: when an animation is interrupted, React may render several times
- * before the new animation has actually emitted its own `t=0` frame. If we keep
+ * before the new animation has actually emitted its own `animationElapsedTime=0` frame. If we keep
  * reading and writing the same live ref during that window, the "start" value of
  * the new animation can drift, which produces visible jumps.
  *
@@ -46,13 +46,13 @@ export type AnimationStartSnapshot<T> = {
  * Lifecycle:
  * 1. When `animationInput` changes by reference, a new cycle begins. We capture
  *    the current ref value into `startValue` and temporarily block writes.
- * 2. When the new animation renders `t=0`, we unlock writes. This ensures the new
+ * 2. When the new animation renders `animationElapsedTime=0`, we unlock writes. This ensures the new
  *    animation has had a chance to render its true starting frame before any live
  *    ref gets updated.
- * 3. For `t > 0`, callers may commit the visible frame back into the mutable ref.
+ * 3. For `animationElapsedTime > 0`, callers may commit the visible frame back into the mutable ref.
  *    Callers can still veto that with `canCommit=false` (for example when a Line
  *    needs to wait until SVG path length has been measured).
- * 4. At `t=1`, we also refresh the frozen snapshot so subsequent rerenders in the
+ * 4. At `animationElapsedTime=1`, we also refresh the frozen snapshot so subsequent rerenders in the
  *    completed state observe the finished geometry.
  */
 export function useAnimationStartSnapshot<T>(
@@ -72,7 +72,7 @@ export function useAnimationStartSnapshot<T>(
   const startValueRef = useRef(previousValueRef.current);
   /*
    * Prevents us from writing back into the live ref until the new animation has
-   * actually rendered its own t=0 frame. This avoids "pre-start" renders from
+   * actually rendered its own animationElapsedTime=0 frame. This avoids "pre-start" renders from
    * accidentally rebasing the next animation onto already-shifted geometry.
    */
   const isReadyToCommitRef = useRef(true);
@@ -81,15 +81,15 @@ export function useAnimationStartSnapshot<T>(
     // New animation cycle: capture exactly one frozen starting snapshot.
     previousAnimationInputRef.current = animationInput;
     startValueRef.current = previousValueRef.current;
-    // Writes stay blocked until the new cycle acknowledges its t=0 frame.
+    // Writes stay blocked until the new cycle acknowledges its animationElapsedTime=0 frame.
     isReadyToCommitRef.current = false;
   }
 
   const syncStepValue = useCallback(
-    (stepValue: T, t: number, canCommit: boolean = true) => {
-      if (t === 0) {
+    (stepValue: T, animationElapsedTime: number, canCommit: boolean = true) => {
+      if (animationElapsedTime === 0) {
         /*
-         * t=0 is the handshake that says: "the new animation has now rendered its
+         * animationElapsedTime=0 is the handshake that says: "the new animation has now rendered its
          * own starting frame". We do not write anything yet; we only allow later
          * in-flight frames to be committed safely.
          */
@@ -97,12 +97,12 @@ export function useAnimationStartSnapshot<T>(
         return;
       }
 
-      if (t === 1) {
+      if (animationElapsedTime === 1) {
         // Keep the frozen snapshot aligned with the fully completed geometry.
         startValueRef.current = stepValue;
       }
 
-      if (t > 0 && isReadyToCommitRef.current && canCommit) {
+      if (animationElapsedTime > 0 && isReadyToCommitRef.current && canCommit) {
         /*
          * Commit the latest visible frame so a future interruption can resume from
          * exactly what the user saw on screen most recently.

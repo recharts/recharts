@@ -58,7 +58,8 @@ const AnimationProgressContext = createContext<CompositeProgressManager | null>(
  * Wraps chart components and intercepts their animations for manual control.
  *
  * When this provider is present, animations inside it do not play automatically.
- * Instead, they are paused at t=0, and you can use {@link useAnimationProgress} to build UI that scrubs through them manually.
+ * Instead, they are paused at animationElapsedTime=0, and you can use {@link useAnimationProgress}
+ * to build UI that scrubs through them manually.
  *
  * @example
  * ```tsx

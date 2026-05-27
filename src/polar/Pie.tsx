@@ -275,8 +275,8 @@ interface PieProps<DataPointType = any, DataValueType = any>
    *
    * @param prevItems The items from the previous animation frame, or null on first render
    * @param nextItems The target items to animate towards
-   * @param t A normalized time value (0 = start, 1 = end)
-   * @returns The interpolated items at time t
+   * @param animationElapsedTime A normalized time value (0 = start, 1 = end)
+   * @returns The interpolated items at time animationElapsedTime
    *
    * @since 3.9
    * @see {@link https://recharts.github.io/en-US/guide/animations/ Animations guide}
@@ -390,7 +390,7 @@ interface PieProps<DataPointType = any, DataValueType = any>
   /**
    * The custom shape of a Pie Sector.
    * Can also be used to render active sector by checking isActive.
-   * During animations, the function shape also receives `t`, `isAnimating`, and `isEntrance`.
+   * During animations, the function shape also receives `animationElapsedTime`, `isAnimating`, and `isEntrance`.
    * If undefined, renders {@link Sector} shape.
    */
   shape?: PieShape;
@@ -693,7 +693,7 @@ function PieSectors(props: PieSectorsProps) {
     allOtherPieProps,
     shape,
     id,
-    t,
+    animationElapsedTime,
     isAnimating,
     isEntrance,
   } = props;
@@ -737,7 +737,7 @@ function PieSectors(props: PieSectorsProps) {
           tabIndex: -1,
           index: i,
           isActive,
-          t,
+          animationElapsedTime,
           isAnimating,
           isEntrance,
           [DATA_ITEM_INDEX_ATTRIBUTE_NAME]: i,
@@ -914,7 +914,10 @@ function PieLabelListProvider({
 
 type WithoutId<T> = Omit<T, 'id'>;
 
-const defaultPieAnimateItems: AnimationInterpolateFn<PieSectorDataItem, PolarLayout> = (items, t) => {
+const defaultPieAnimateItems: AnimationInterpolateFn<PieSectorDataItem, PolarLayout> = (
+  items,
+  animationElapsedTime,
+) => {
   if (items == null) return [];
   const stepData: PieSectorDataItem[] = [];
   const firstNonRemoved = items.find(item => item.status !== 'removed');
@@ -928,14 +931,14 @@ const defaultPieAnimateItems: AnimationInterpolateFn<PieSectorDataItem, PolarLay
       const angle = interpolate(
         item.prev.endAngle - item.prev.startAngle,
         item.next.endAngle - item.next.startAngle,
-        t,
+        animationElapsedTime,
       );
       const latest = { ...item.next, startAngle: curAngle + paddingAngle, endAngle: curAngle + angle + paddingAngle };
       stepData.push(latest);
       curAngle = latest.endAngle;
     } else {
       // added
-      const deltaAngle = interpolate(0, item.next.endAngle - item.next.startAngle, t);
+      const deltaAngle = interpolate(0, item.next.endAngle - item.next.startAngle, animationElapsedTime);
       const latest = {
         ...item.next,
         startAngle: curAngle + paddingAngle,
@@ -985,7 +988,7 @@ function SectorsWithAnimation({
         animationMatchBy={props.animationMatchBy}
         layout={layout}
       >
-        {(stepData, t, isEntrance) => (
+        {(stepData, animationElapsedTime, isEntrance) => (
           <Layer>
             <PieSectors
               sectors={stepData}
@@ -994,8 +997,8 @@ function SectorsWithAnimation({
               allOtherPieProps={props}
               shape={props.shape}
               id={id}
-              t={t}
-              isAnimating={isAnimating || t < 1}
+              animationElapsedTime={animationElapsedTime}
+              isAnimating={isAnimating || animationElapsedTime < 1}
               isEntrance={isEntrance}
             />
           </Layer>

@@ -266,7 +266,7 @@ interface ScatterProps<DataPointType = any, DataValueType = any>
    * - Can be one of the predefined shapes as a string, which will be passed to {@link Symbols} component.
    * - If set a ReactElement, the shape of point can be customized.
    * - If set a function, the function will be called to render customized shape.
-   * - During animations, the function shape also receives `t`, `isAnimating`, and `isEntrance`.
+   * - During animations, the function shape also receives `animationElapsedTime`, `isAnimating`, and `isEntrance`.
    * @defaultValue circle
    *
    * @example <Scatter shape={CustomizedShapeComponent} />
@@ -325,8 +325,8 @@ interface ScatterProps<DataPointType = any, DataValueType = any>
    *
    * @param prevItems The items from the previous animation frame, or null on first render
    * @param nextItems The target items to animate towards
-   * @param t A normalized time value (0 = start, 1 = end)
-   * @returns The interpolated items at time t
+   * @param animationElapsedTime A normalized time value (0 = start, 1 = end)
+   * @returns The interpolated items at time animationElapsedTime
    *
    * @since 3.9
    * @see {@link https://recharts.github.io/en-US/guide/animations/ Animations guide}
@@ -543,7 +543,7 @@ function ScatterLabelListProvider({
 }
 
 function ScatterSymbols(props: ScatterSymbolsProps) {
-  const { points, allOtherScatterProps, t, isAnimating, isEntrance } = props;
+  const { points, allOtherScatterProps, animationElapsedTime, isAnimating, isEntrance } = props;
   const { shape, activeShape, dataKey } = allOtherScatterProps;
   const { id, ...allOtherPropsWithoutId } = allOtherScatterProps;
 
@@ -576,7 +576,7 @@ function ScatterSymbols(props: ScatterSymbolsProps) {
           ...entry,
           isActive,
           index: i,
-          t,
+          animationElapsedTime,
           isAnimating,
           isEntrance,
           [DATA_ITEM_GRAPHICAL_ITEM_ID_ATTRIBUTE_NAME]: String(id),
@@ -608,9 +608,12 @@ function ScatterSymbols(props: ScatterSymbolsProps) {
   );
 }
 
-const defaultScatterAnimateItems: AnimationInterpolateFn<ScatterPointItem, CartesianLayout> = (items, t) => {
+const defaultScatterAnimateItems: AnimationInterpolateFn<ScatterPointItem, CartesianLayout> = (
+  items,
+  animationElapsedTime,
+) => {
   if (items == null) return [];
-  if (t === 1) {
+  if (animationElapsedTime === 1) {
     return items.flatMap(item => (item.status === 'removed' ? [] : [item.next]));
   }
   return items.flatMap(item => {
@@ -619,14 +622,14 @@ const defaultScatterAnimateItems: AnimationInterpolateFn<ScatterPointItem, Carte
       return [
         {
           ...item.next,
-          cx: item.next.cx == null ? undefined : interpolate(item.prev.cx, item.next.cx, t),
-          cy: item.next.cy == null ? undefined : interpolate(item.prev.cy, item.next.cy, t),
-          size: interpolate(item.prev.size, item.next.size, t),
+          cx: item.next.cx == null ? undefined : interpolate(item.prev.cx, item.next.cx, animationElapsedTime),
+          cy: item.next.cy == null ? undefined : interpolate(item.prev.cy, item.next.cy, animationElapsedTime),
+          size: interpolate(item.prev.size, item.next.size, animationElapsedTime),
         },
       ];
     }
     // added
-    return [{ ...item.next, size: interpolate(0, item.next.size, t) }];
+    return [{ ...item.next, size: interpolate(0, item.next.size, animationElapsedTime) }];
   });
 };
 
@@ -662,14 +665,14 @@ function SymbolsWithAnimation({
         animationMatchBy={props.animationMatchBy}
         layout={layout}
       >
-        {(stepData, t, isEntrance) => (
+        {(stepData, animationElapsedTime, isEntrance) => (
           <Layer>
             <ScatterSymbols
               points={stepData}
               allOtherScatterProps={props}
               showLabels={!isAnimating}
-              t={t}
-              isAnimating={isAnimating || t < 1}
+              animationElapsedTime={animationElapsedTime}
+              isAnimating={isAnimating || animationElapsedTime < 1}
               isEntrance={isEntrance}
             />
           </Layer>

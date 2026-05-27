@@ -133,13 +133,13 @@ export type LineDrawShapeProps = Omit<CurveProps, 'pathRef'> &
 /**
  * The default shape for Line. During the entrance animation, the line is progressively
  * revealed using the `strokeDasharray` SVG attribute: the visible portion grows from
- * 0 to the full path length as `t` progresses from 0 to 1.
+ * 0 to the full path length as `animationElapsedTime` progresses from 0 to 1.
  *
  * This is the built-in shape for Line. It is automatically used when no custom `shape` prop
  * is provided. You can import and reuse it as a starting point for custom shapes,
  * or use it as a reference for building your own.
  *
- * The animation progress props (`t`, `isAnimating`, `isEntrance`) are available
+ * The animation progress props (`animationElapsedTime`, `isAnimating`, `isEntrance`) are available
  * for custom shapes that want to add their own effects on top.
  *
  * @example
@@ -156,7 +156,7 @@ export type LineDrawShapeProps = Omit<CurveProps, 'pathRef'> &
  */
 export function LineDrawShape(props: LineDrawShapeProps): React.ReactElement | null {
   const {
-    t,
+    animationElapsedTime: _animationElapsedTime,
     isAnimating,
     isEntrance,
     visibleLength,

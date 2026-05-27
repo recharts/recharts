@@ -463,7 +463,7 @@ describe('<Pie />', () => {
           startAngle: 0,
           stroke: '#fff',
           tabIndex: -1,
-          t: 1,
+          animationElapsedTime: 1,
           tooltipPayload: [
             {
               color: '#808080',

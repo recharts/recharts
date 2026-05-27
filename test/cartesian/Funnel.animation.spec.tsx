@@ -125,7 +125,7 @@ describe('Funnel animation', () => {
       return (
         <path
           className="custom-funnel-shape"
-          data-t={props.t}
+          data-t={props.animationElapsedTime}
           data-is-animating={String(props.isAnimating)}
           data-is-entrance={String(props.isEntrance)}
         />
@@ -140,7 +140,7 @@ describe('Funnel animation', () => {
       </FunnelChart>
     ));
 
-    it('should pass t, isAnimating, isEntrance props to custom shape', async () => {
+    it('should pass animationElapsedTime, isAnimating, isEntrance props to custom shape', async () => {
       const { container, animationManager } = renderShapeTestCase();
 
       await animationManager.setAnimationProgress(0.5);

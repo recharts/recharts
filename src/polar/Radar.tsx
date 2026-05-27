@@ -92,8 +92,8 @@ interface RadarProps<DataPointType = any, DataValueType = any>
    *
    * @param prevItems The items from the previous animation frame, or null on first render
    * @param nextItems The target items to animate towards
-   * @param t A normalized time value (0 = start, 1 = end)
-   * @returns The interpolated items at time t
+   * @param animationElapsedTime A normalized time value (0 = start, 1 = end)
+   * @returns The interpolated items at time animationElapsedTime
    *
    * @since 3.9
    * @see {@link https://recharts.github.io/en-US/guide/animations/ Animations guide}
@@ -460,9 +460,9 @@ function StaticPolygon({
   );
 }
 
-const defaultRadarAnimateItems: AnimationInterpolateFn<RadarPoint, PolarLayout> = (items, t) => {
+const defaultRadarAnimateItems: AnimationInterpolateFn<RadarPoint, PolarLayout> = (items, animationElapsedTime) => {
   if (items == null) return [];
-  if (t === 1) {
+  if (animationElapsedTime === 1) {
     return items.flatMap(item => (item.status === 'removed' ? [] : [item.next]));
   }
   return items.flatMap(item => {
@@ -471,8 +471,8 @@ const defaultRadarAnimateItems: AnimationInterpolateFn<RadarPoint, PolarLayout> 
       return [
         {
           ...item.next,
-          x: interpolate(item.prev.x, item.next.x, t),
-          y: interpolate(item.prev.y, item.next.y, t),
+          x: interpolate(item.prev.x, item.next.x, animationElapsedTime),
+          y: interpolate(item.prev.y, item.next.y, animationElapsedTime),
         },
       ];
     }
@@ -480,8 +480,8 @@ const defaultRadarAnimateItems: AnimationInterpolateFn<RadarPoint, PolarLayout> 
     return [
       {
         ...item.next,
-        x: interpolate(item.next.cx, item.next.x, t),
-        y: interpolate(item.next.cy, item.next.y, t),
+        x: interpolate(item.next.cx, item.next.x, animationElapsedTime),
+        y: interpolate(item.next.cy, item.next.y, animationElapsedTime),
       },
     ];
   });
@@ -538,10 +538,12 @@ function PolygonWithAnimation({
         animationMatchBy={animationMatchBy}
         layout={layout}
       >
-        {(stepData, t) => {
+        {(stepData, animationElapsedTime) => {
           const stepBaseLinePoints =
-            t === 1 ? baseLinePoints : animationInterpolateFn(baseLineAnimationItems, t, layout);
-          baseLineAnimationState.syncStepValue(stepBaseLinePoints, t);
+            animationElapsedTime === 1
+              ? baseLinePoints
+              : animationInterpolateFn(baseLineAnimationItems, animationElapsedTime, layout);
+          baseLineAnimationState.syncStepValue(stepBaseLinePoints, animationElapsedTime);
           return <StaticPolygon points={stepData} baseLinePoints={stepBaseLinePoints} props={props} />;
         }}
       </AnimatedItems>

@@ -105,8 +105,8 @@ interface FunnelProps<DataPointType = any, DataValueType = any>
    *
    * @param prevItems The items from the previous animation frame, or null on first render
    * @param nextItems The target items to animate towards
-   * @param t A normalized time value (0 = start, 1 = end)
-   * @returns The interpolated items at time t
+   * @param animationElapsedTime A normalized time value (0 = start, 1 = end)
+   * @returns The interpolated items at time animationElapsedTime
    *
    * @since 3.9
    * @see {@link https://recharts.github.io/en-US/guide/animations/ Animations guide}
@@ -189,7 +189,7 @@ interface FunnelProps<DataPointType = any, DataValueType = any>
   /**
    * If set a ReactElement, the shape of funnel can be customized.
    * If set a function, the function will be called to render customized shape.
-   * During animations, the function shape also receives `t`, `isAnimating`, and `isEntrance`.
+   * During animations, the function shape also receives `animationElapsedTime`, `isAnimating`, and `isEntrance`.
    * By default, renders a trapezoid.
    */
   shape?: ActiveShape<FunnelTrapezoidItem & ShapeAnimationProps, SVGPathElement>;
@@ -313,7 +313,7 @@ function FunnelLabelListProvider({
 }
 
 function FunnelTrapezoids(props: FunnelTrapezoidsProps) {
-  const { trapezoids, allOtherFunnelProps, t, isAnimating, isEntrance } = props;
+  const { trapezoids, allOtherFunnelProps, animationElapsedTime, isAnimating, isEntrance } = props;
   const activeItemIndex = useAppSelector(state =>
     selectActiveIndex(state, 'item', state.tooltip.settings.trigger, undefined),
   );
@@ -348,7 +348,7 @@ function FunnelTrapezoids(props: FunnelTrapezoidsProps) {
           option: trapezoidOptions,
           isActive: isActiveIndex,
           stroke: entry.stroke,
-          t,
+          animationElapsedTime,
           isAnimating,
           isEntrance,
         };
@@ -370,9 +370,12 @@ function FunnelTrapezoids(props: FunnelTrapezoidsProps) {
   );
 }
 
-const defaultFunnelAnimateItems: AnimationInterpolateFn<FunnelTrapezoidItem, CartesianLayout> = (items, t) => {
+const defaultFunnelAnimateItems: AnimationInterpolateFn<FunnelTrapezoidItem, CartesianLayout> = (
+  items,
+  animationElapsedTime,
+) => {
   if (items == null) return [];
-  if (t === 1) {
+  if (animationElapsedTime === 1) {
     return items.flatMap(item => (item.status === 'removed' ? [] : [item.next]));
   }
   return items.flatMap(item => {
@@ -381,11 +384,11 @@ const defaultFunnelAnimateItems: AnimationInterpolateFn<FunnelTrapezoidItem, Car
       return [
         {
           ...item.next,
-          x: interpolate(item.prev.x, item.next.x, t),
-          y: interpolate(item.prev.y, item.next.y, t),
-          upperWidth: interpolate(item.prev.upperWidth, item.next.upperWidth, t),
-          lowerWidth: interpolate(item.prev.lowerWidth, item.next.lowerWidth, t),
-          height: interpolate(item.prev.height, item.next.height, t),
+          x: interpolate(item.prev.x, item.next.x, animationElapsedTime),
+          y: interpolate(item.prev.y, item.next.y, animationElapsedTime),
+          upperWidth: interpolate(item.prev.upperWidth, item.next.upperWidth, animationElapsedTime),
+          lowerWidth: interpolate(item.prev.lowerWidth, item.next.lowerWidth, animationElapsedTime),
+          height: interpolate(item.prev.height, item.next.height, animationElapsedTime),
         },
       ];
     }
@@ -394,11 +397,11 @@ const defaultFunnelAnimateItems: AnimationInterpolateFn<FunnelTrapezoidItem, Car
     return [
       {
         ...next,
-        x: interpolate(next.x + next.upperWidth / 2, next.x, t),
-        y: interpolate(next.y + next.height / 2, next.y, t),
-        upperWidth: interpolate(0, next.upperWidth, t),
-        lowerWidth: interpolate(0, next.lowerWidth, t),
-        height: interpolate(0, next.height, t),
+        x: interpolate(next.x + next.upperWidth / 2, next.x, animationElapsedTime),
+        y: interpolate(next.y + next.height / 2, next.y, animationElapsedTime),
+        upperWidth: interpolate(0, next.upperWidth, animationElapsedTime),
+        lowerWidth: interpolate(0, next.lowerWidth, animationElapsedTime),
+        height: interpolate(0, next.height, animationElapsedTime),
       },
     ];
   });
@@ -439,13 +442,13 @@ function TrapezoidsWithAnimation({
         animationMatchBy={props.animationMatchBy}
         layout={layout}
       >
-        {(stepData, t, isEntrance) => (
+        {(stepData, animationElapsedTime, isEntrance) => (
           <Layer>
             <FunnelTrapezoids
               trapezoids={stepData}
               allOtherFunnelProps={props}
-              t={t}
-              isAnimating={isAnimating || t < 1}
+              animationElapsedTime={animationElapsedTime}
+              isAnimating={isAnimating || animationElapsedTime < 1}
               isEntrance={isEntrance}
             />
           </Layer>

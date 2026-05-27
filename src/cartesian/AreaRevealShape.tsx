@@ -111,7 +111,7 @@ export type AreaRevealShapeProps = CurveProps & ShapeAnimationProps & { layout?:
  */
 export function AreaRevealShape(props: AreaRevealShapeProps): React.ReactElement | null {
   const {
-    t = 1,
+    animationElapsedTime = 1,
     isAnimating = false,
     isEntrance = false,
     layout: layoutProp,
@@ -165,13 +165,13 @@ export function AreaRevealShape(props: AreaRevealShapeProps): React.ReactElement
     />
   );
 
-  if (isEntrance && (isAnimating || t < 1)) {
+  if (isEntrance && (isAnimating || animationElapsedTime < 1)) {
     return (
       <Layer>
         <defs>
           <clipPath id={clipId}>
             <RevealClipRect
-              alpha={t}
+              alpha={animationElapsedTime}
               points={restProps.points ?? []}
               baseLine={baseLine}
               layout={layout}

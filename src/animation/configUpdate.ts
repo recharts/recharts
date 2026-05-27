@@ -148,8 +148,8 @@ function createTimingUpdate<T extends Record<string, number>>(
       beginTime = now;
     }
 
-    const t = (now - beginTime) / duration;
-    const currStyle = mapObject((key, val) => alpha(...val, easing(t)), timingStyle);
+    const animationElapsedTime = (now - beginTime) / duration;
+    const currStyle = mapObject((key, val) => alpha(...val, easing(animationElapsedTime)), timingStyle);
 
     // get union set and add compatible prefix
     render({
@@ -158,7 +158,7 @@ function createTimingUpdate<T extends Record<string, number>>(
       ...currStyle,
     });
 
-    if (t < 1) {
+    if (animationElapsedTime < 1) {
       stopAnimation = timeoutController.setTimeout(timingUpdate);
     } else {
       const finalStyle = mapObject((key, val) => alpha(...val, easing(1)), timingStyle);

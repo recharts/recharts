@@ -264,11 +264,11 @@ export const Rectangle: React.FC<Props> = rectangleProps => {
       isActive={isUpdateAnimationActive}
       begin={animationBegin}
     >
-      {(t: number) => {
-        const currWidth = interpolate(prevWidth, width, t);
-        const currHeight = interpolate(prevHeight, height, t);
-        const currX = interpolate(prevX, x, t);
-        const currY = interpolate(prevY, y, t);
+      {(animationElapsedTime: number) => {
+        const currWidth = interpolate(prevWidth, width, animationElapsedTime);
+        const currHeight = interpolate(prevHeight, height, animationElapsedTime);
+        const currX = interpolate(prevX, x, animationElapsedTime);
+        const currY = interpolate(prevY, y, animationElapsedTime);
         if (pathRef.current) {
           prevWidthRef.current = currWidth;
           prevHeightRef.current = currHeight;
@@ -278,7 +278,7 @@ export const Rectangle: React.FC<Props> = rectangleProps => {
         let animationStyle: { transition: string; strokeDasharray: string } | { strokeDasharray: string };
         if (!isAnimationActive) {
           animationStyle = { strokeDasharray: to };
-        } else if (t > 0) {
+        } else if (animationElapsedTime > 0) {
           animationStyle = { transition, strokeDasharray: to };
         } else {
           animationStyle = { strokeDasharray: from };

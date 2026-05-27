@@ -14,18 +14,18 @@ type AnimatedScatterPoint = ScatterPointItem & { opacity?: number };
  * Crossfade: previous points fade out while new points fade in.
  * Returns both sets combined — prev with decreasing opacity, next with increasing.
  */
-const crossfade: AnimationInterpolateFn<ScatterPointItem, CartesianLayout> = (items, t) => {
+const crossfade: AnimationInterpolateFn<ScatterPointItem, CartesianLayout> = (items, animationElapsedTime) => {
   if (items == null) return [];
-  if (t === 1) return items.flatMap(item => (item.status === 'removed' ? [] : [item.next]));
+  if (animationElapsedTime === 1) return items.flatMap(item => (item.status === 'removed' ? [] : [item.next]));
   const result: AnimatedScatterPoint[] = [];
   for (const item of items) {
     if (item.status === 'matched') {
-      result.push({ ...item.prev, opacity: 1 - t });
-      result.push({ ...item.next, opacity: t });
+      result.push({ ...item.prev, opacity: 1 - animationElapsedTime });
+      result.push({ ...item.next, opacity: animationElapsedTime });
     } else if (item.status === 'added') {
-      result.push({ ...item.next, opacity: t });
+      result.push({ ...item.next, opacity: animationElapsedTime });
     } else {
-      result.push({ ...item.prev, opacity: 1 - t });
+      result.push({ ...item.prev, opacity: 1 - animationElapsedTime });
     }
   }
   return result;
@@ -34,21 +34,21 @@ const crossfade: AnimationInterpolateFn<ScatterPointItem, CartesianLayout> = (it
 /**
  * Staggered crossfade: points fade out and in one by one in a wave.
  */
-const staggeredCrossfade: AnimationInterpolateFn<ScatterPointItem, CartesianLayout> = (items, t) => {
+const staggeredCrossfade: AnimationInterpolateFn<ScatterPointItem, CartesianLayout> = (items, animationElapsedTime) => {
   if (items == null) return [];
-  if (t === 1) return items.flatMap(item => (item.status === 'removed' ? [] : [item.next]));
+  if (animationElapsedTime === 1) return items.flatMap(item => (item.status === 'removed' ? [] : [item.next]));
   const count = items.length;
   const result: AnimatedScatterPoint[] = [];
   items.forEach((item, index) => {
     if (item.status === 'matched' || item.status === 'added') {
       const delay = index / count;
-      const progress = Math.max(0, Math.min(1, (t - delay) / (1 - delay)));
+      const progress = Math.max(0, Math.min(1, (animationElapsedTime - delay) / (1 - delay)));
       result.push({ ...item.next, opacity: progress });
     }
     if (item.status === 'matched' || item.status === 'removed') {
       const reverseIndex = count - 1 - index;
       const delay = reverseIndex / count;
-      const progress = Math.max(0, Math.min(1, (t - delay) / (1 - delay)));
+      const progress = Math.max(0, Math.min(1, (animationElapsedTime - delay) / (1 - delay)));
       result.push({ ...item.prev, opacity: 1 - progress });
     }
   });
@@ -58,18 +58,26 @@ const staggeredCrossfade: AnimationInterpolateFn<ScatterPointItem, CartesianLayo
 /**
  * Pop crossfade: old points shrink and fade out, new points grow and fade in.
  */
-const popCrossfade: AnimationInterpolateFn<ScatterPointItem, CartesianLayout> = (items, t) => {
+const popCrossfade: AnimationInterpolateFn<ScatterPointItem, CartesianLayout> = (items, animationElapsedTime) => {
   if (items == null) return [];
-  if (t === 1) return items.flatMap(item => (item.status === 'removed' ? [] : [item.next]));
+  if (animationElapsedTime === 1) return items.flatMap(item => (item.status === 'removed' ? [] : [item.next]));
   const result: AnimatedScatterPoint[] = [];
   for (const item of items) {
     if (item.status === 'matched' || item.status === 'added') {
       const { next } = item;
-      result.push({ ...next, opacity: t, size: next.size * t * t });
+      result.push({
+        ...next,
+        opacity: animationElapsedTime,
+        size: next.size * animationElapsedTime * animationElapsedTime,
+      });
     }
     if (item.status === 'matched' || item.status === 'removed') {
       const { prev } = item;
-      result.push({ ...prev, opacity: 1 - t, size: prev.size * (1 - t) * (1 - t) });
+      result.push({
+        ...prev,
+        opacity: 1 - animationElapsedTime,
+        size: prev.size * (1 - animationElapsedTime) * (1 - animationElapsedTime),
+      });
     }
   }
   return result;

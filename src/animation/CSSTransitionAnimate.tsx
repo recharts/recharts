@@ -90,8 +90,8 @@ export function CSSTransitionAnimate(outsideProps: CSSTransitionAnimateProps) {
           if (!beginTime) {
             beginTime = now;
           }
-          const t = Math.min(1, Math.max(0, (now - beginTime) / duration));
-          setStyle(interpolateCSSValue(from, to, t));
+          const animationElapsedTime = Math.min(1, Math.max(0, (now - beginTime) / duration));
+          setStyle(interpolateCSSValue(from, to, animationElapsedTime));
           stopJSAnimation.current = tc.setTimeout(timingUpdate);
         };
         stopJSAnimation.current = tc.setTimeout(timingUpdate);

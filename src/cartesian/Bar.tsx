@@ -204,7 +204,7 @@ interface BarProps<DataPointType, ValueAxisType> extends DataConsumer<DataPointT
   /**
    * If set a ReactElement, the shape of bar can be customized.
    * If set a function, the function will be called to render customized shape.
-   * During animations, the function shape also receives `t`, `isAnimating`, and `isEntrance`.
+   * During animations, the function shape also receives `animationElapsedTime`, `isAnimating`, and `isEntrance`.
    * By default, renders a rectangle.
    *
    * @see {@link https://recharts.github.io/en-US/examples/CustomShapeBarChart/ Custom shape bar chart example}
@@ -288,8 +288,8 @@ interface BarProps<DataPointType, ValueAxisType> extends DataConsumer<DataPointT
    *
    * @param prevItems The items from the previous animation frame, or null on first render
    * @param nextItems The target items to animate towards
-   * @param t A normalized time value (0 = start, 1 = end)
-   * @returns The interpolated items at time t
+   * @param animationElapsedTime A normalized time value (0 = start, 1 = end)
+   * @returns The interpolated items at time animationElapsedTime
    *
    * @since 3.9
    * @see {@link https://recharts.github.io/en-US/guide/animations/ Animations guide}
@@ -694,7 +694,7 @@ function BarRectangleWithActiveState(
       option={option}
       index={index}
       dataKey={dataKey}
-      t={props.t}
+      animationElapsedTime={props.animationElapsedTime}
       isAnimating={props.isAnimating}
       isEntrance={props.isEntrance}
       onTransitionEnd={handleTransitionEnd}
@@ -730,7 +730,7 @@ function BarRectangleNeverActive(
       option={shape}
       index={index}
       dataKey={dataKey}
-      t={props.t}
+      animationElapsedTime={props.animationElapsedTime}
       isAnimating={props.isAnimating}
       isEntrance={props.isEntrance}
     />
@@ -740,7 +740,7 @@ function BarRectangleNeverActive(
 function BarRectangles({
   data,
   props,
-  t,
+  animationElapsedTime,
   isAnimating,
   isEntrance,
 }: ShapeAnimationProps & {
@@ -787,7 +787,7 @@ function BarRectangles({
                 entry={entry}
                 index={i}
                 dataKey={dataKey}
-                t={t}
+                animationElapsedTime={animationElapsedTime}
                 isAnimating={isAnimating}
                 isEntrance={isEntrance}
               />
@@ -807,7 +807,7 @@ function BarRectangles({
                 entry={entry}
                 index={i}
                 dataKey={dataKey}
-                t={t}
+                animationElapsedTime={animationElapsedTime}
                 isAnimating={isAnimating}
                 isEntrance={isEntrance}
               />
@@ -819,9 +819,13 @@ function BarRectangles({
   );
 }
 
-const defaultBarAnimateItems: AnimationInterpolateFn<BarRectangleItem, CartesianLayout> = (items, t, layout) => {
+const defaultBarAnimateItems: AnimationInterpolateFn<BarRectangleItem, CartesianLayout> = (
+  items,
+  animationElapsedTime,
+  layout,
+) => {
   if (items == null) return [];
-  if (t === 1) {
+  if (animationElapsedTime === 1) {
     return items.flatMap(item => (item.status === 'removed' ? [] : [item.next]));
   }
   return items.flatMap(item => {
@@ -831,30 +835,42 @@ const defaultBarAnimateItems: AnimationInterpolateFn<BarRectangleItem, Cartesian
         return [
           {
             ...item.prev,
-            height: interpolate(item.prev.height, 0, t),
-            y: interpolate(item.prev.y, item.prev.y + item.prev.height, t),
+            height: interpolate(item.prev.height, 0, animationElapsedTime),
+            y: interpolate(item.prev.y, item.prev.y + item.prev.height, animationElapsedTime),
           },
         ];
       }
-      return [{ ...item.prev, width: interpolate(item.prev.width, 0, t) }];
+      return [{ ...item.prev, width: interpolate(item.prev.width, 0, animationElapsedTime) }];
     }
     if (item.status === 'matched') {
       return [
         {
           ...item.next,
-          x: interpolate(item.prev.x, item.next.x, t),
-          y: interpolate(item.prev.y, item.next.y, t),
-          width: interpolate(item.prev.width, item.next.width, t),
-          height: interpolate(item.prev.height, item.next.height, t),
+          x: interpolate(item.prev.x, item.next.x, animationElapsedTime),
+          y: interpolate(item.prev.y, item.next.y, animationElapsedTime),
+          width: interpolate(item.prev.width, item.next.width, animationElapsedTime),
+          height: interpolate(item.prev.height, item.next.height, animationElapsedTime),
         },
       ];
     }
     // added
     const { next } = item;
     if (layout === 'horizontal') {
-      return [{ ...next, height: interpolate(0, next.height, t), y: interpolate(next.stackedBarStart, next.y, t) }];
+      return [
+        {
+          ...next,
+          height: interpolate(0, next.height, animationElapsedTime),
+          y: interpolate(next.stackedBarStart, next.y, animationElapsedTime),
+        },
+      ];
     }
-    return [{ ...next, width: interpolate(0, next.width, t), x: interpolate(next.stackedBarStart, next.x, t) }];
+    return [
+      {
+        ...next,
+        width: interpolate(0, next.width, animationElapsedTime),
+        x: interpolate(next.stackedBarStart, next.x, animationElapsedTime),
+      },
+    ];
   });
 };
 
@@ -897,13 +913,13 @@ function RectanglesWithAnimation({
         animationMatchBy={props.animationMatchBy}
         layout={layout}
       >
-        {(stepData, t, isEntrance) => (
+        {(stepData, animationElapsedTime, isEntrance) => (
           <Layer>
             <BarRectangles
               props={props}
               data={stepData}
-              t={t}
-              isAnimating={isAnimating || t < 1}
+              animationElapsedTime={animationElapsedTime}
+              isAnimating={isAnimating || animationElapsedTime < 1}
               isEntrance={isEntrance}
             />
           </Layer>

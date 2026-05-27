@@ -22,10 +22,10 @@ const initialState: ControlsType = {
  * and renders normally otherwise.
  */
 function OpacityFadeShape(props: LineDrawShapeProps) {
-  const { t = 1, isEntrance = false } = props;
-  const opacity = isEntrance ? t : 1;
+  const { animationElapsedTime = 1, isEntrance = false } = props;
+  const opacity = isEntrance ? animationElapsedTime : 1;
   /*
-   * If we did strokeOpacity={t} directly, then the opacity animates even when updating the dataset.
+   * If we did strokeOpacity={animationElapsedTime} directly, then the opacity animates even when updating the dataset.
    * This may be the effect that you want! In this particular example we however demonstrate how to differentiate.
    */
   return <Curve {...props} strokeOpacity={opacity} />;
@@ -120,7 +120,7 @@ export const LineChartCustomShapeControls = ({ onChange }: { onChange: (values: 
       </p>
       <p style={{ fontSize: '0.85em', opacity: 0.8, marginTop: '0.5em' }}>
         The custom <code>shape</code> only fades on entrance because it checks <code>isEntrance</code> before using{' '}
-        <code>t</code>.
+        <code>animationElapsedTime</code>.
       </p>
     </form>
   );

@@ -43,7 +43,7 @@ type ControlsType = {
 
 const swipeLeftAnimateItems: AnimationInterpolateFn<BarRectangleItem, CartesianLayout> = (
   items: ReadonlyArray<AnimationItem<BarRectangleItem>> | null,
-  t: number,
+  animationElapsedTime: number,
 ) => {
   if (items == null) return [];
   return items.flatMap((item): ReadonlyArray<BarRectangleItem> => {
@@ -53,7 +53,7 @@ const swipeLeftAnimateItems: AnimationInterpolateFn<BarRectangleItem, CartesianL
       return [
         {
           ...item.prev,
-          x: interpolate(item.prev.x, item.prev.x - item.prev.width * 2, t),
+          x: interpolate(item.prev.x, item.prev.x - item.prev.width * 2, animationElapsedTime),
         },
       ];
     }
@@ -61,22 +61,22 @@ const swipeLeftAnimateItems: AnimationInterpolateFn<BarRectangleItem, CartesianL
       return [
         {
           ...item.next,
-          x: interpolate(item.prev.x, item.next.x, t),
-          y: interpolate(item.prev.y, item.next.y, t),
-          width: interpolate(item.prev.width, item.next.width, t),
-          height: interpolate(item.prev.height, item.next.height, t),
+          x: interpolate(item.prev.x, item.next.x, animationElapsedTime),
+          y: interpolate(item.prev.y, item.next.y, animationElapsedTime),
+          width: interpolate(item.prev.width, item.next.width, animationElapsedTime),
+          height: interpolate(item.prev.height, item.next.height, animationElapsedTime),
         },
       ];
     }
     // added
     const { next } = item;
-    return [{ ...next, x: interpolate(item.next.x + item.next.width * 2, item.next.x, t) }];
+    return [{ ...next, x: interpolate(item.next.x + item.next.width * 2, item.next.x, animationElapsedTime) }];
   });
 };
 
 const swipeBottomAnimateItems: AnimationInterpolateFn<BarRectangleItem, CartesianLayout> = (
   items: ReadonlyArray<AnimationItem<BarRectangleItem>> | null,
-  t: number,
+  animationElapsedTime: number,
 ) => {
   if (items == null) return [];
   return items.flatMap((item): ReadonlyArray<BarRectangleItem> => {
@@ -86,7 +86,7 @@ const swipeBottomAnimateItems: AnimationInterpolateFn<BarRectangleItem, Cartesia
       return [
         {
           ...item.prev,
-          y: interpolate(item.prev.y, item.prev.y - item.prev.height * 2, t),
+          y: interpolate(item.prev.y, item.prev.y - item.prev.height * 2, animationElapsedTime),
         },
       ];
     }
@@ -94,21 +94,25 @@ const swipeBottomAnimateItems: AnimationInterpolateFn<BarRectangleItem, Cartesia
       return [
         {
           ...item.next,
-          y: interpolate(item.prev.y, item.next.y, t),
+          y: interpolate(item.prev.y, item.next.y, animationElapsedTime),
         },
       ];
     }
     // added items animate from the bottom
     const { next } = item;
-    return [{ ...next, y: interpolate(next.y + next.height * 2, next.y, t) }];
+    return [{ ...next, y: interpolate(next.y + next.height * 2, next.y, animationElapsedTime) }];
   });
 };
 
-const animationInterpolateFn: AnimationInterpolateFn<BarRectangleItem, CartesianLayout> = (items, t, layout) => {
+const animationInterpolateFn: AnimationInterpolateFn<BarRectangleItem, CartesianLayout> = (
+  items,
+  animationElapsedTime,
+  layout,
+) => {
   if (layout === 'horizontal') {
-    return swipeLeftAnimateItems(items, t, layout);
+    return swipeLeftAnimateItems(items, animationElapsedTime, layout);
   }
-  return swipeBottomAnimateItems(items, t, layout);
+  return swipeBottomAnimateItems(items, animationElapsedTime, layout);
 };
 
 export default function AnimatedBarTimeSeriesExample(props: Partial<ControlsType>) {

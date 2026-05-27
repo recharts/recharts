@@ -34,7 +34,12 @@ function extractPathCoordinates(path: string): ReadonlyArray<number> {
   return Array.from(path.matchAll(/-?\d+(?:\.\d+)?/g), match => Number(match[0]));
 }
 
-function expectPathToInterpolateLinearly(actualPath: string, startPath: string, endPath: string, t: number): void {
+function expectPathToInterpolateLinearly(
+  actualPath: string,
+  startPath: string,
+  endPath: string,
+  animationElapsedTime: number,
+): void {
   const actual = extractPathCoordinates(actualPath);
   const start = extractPathCoordinates(startPath);
   const end = extractPathCoordinates(endPath);
@@ -43,7 +48,7 @@ function expectPathToInterpolateLinearly(actualPath: string, startPath: string, 
   expect(start).toHaveLength(end.length);
 
   actual.forEach((value, index) => {
-    const expectedValue = start[index] + (end[index] - start[index]) * t;
+    const expectedValue = start[index] + (end[index] - start[index]) * animationElapsedTime;
     const difference = Math.abs(value - expectedValue);
     if (difference > 0.0005) {
       throw new Error(
@@ -617,11 +622,11 @@ describe('Area animation', () => {
   });
 
   describe('shape prop', () => {
-    function CustomShape(props: { t?: number; isAnimating?: boolean; isEntrance?: boolean }) {
+    function CustomShape(props: { animationElapsedTime?: number; isAnimating?: boolean; isEntrance?: boolean }) {
       return (
         <path
           className="custom-area-shape"
-          data-t={props.t}
+          data-t={props.animationElapsedTime}
           data-is-animating={String(props.isAnimating)}
           data-is-entrance={String(props.isEntrance)}
         />
@@ -644,7 +649,7 @@ describe('Area animation', () => {
       expect(customShapes.length).toBeGreaterThan(0);
     });
 
-    it('should pass t, isAnimating, isEntrance props to custom shape', async () => {
+    it('should pass animationElapsedTime, isAnimating, isEntrance props to custom shape', async () => {
       const { container, animationManager } = renderShapeTestCase();
 
       // During entrance animation
@@ -692,11 +697,11 @@ describe('Area animation', () => {
       { name: 'Page C', range: [80, 240] },
     ];
 
-    const collapseToBottom: AnimationInterpolateFn<AreaPointItem, CartesianLayout> = (items, t) => {
+    const collapseToBottom: AnimationInterpolateFn<AreaPointItem, CartesianLayout> = (items, animationElapsedTime) => {
       if (items == null) {
         return [];
       }
-      if (t === 1) {
+      if (animationElapsedTime === 1) {
         return items.flatMap(item => (item.status === 'removed' ? [] : [item.next]));
       }
       return items.flatMap(item => (item.status === 'removed' ? [] : [{ ...item.next, y: 100 }]));

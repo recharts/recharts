@@ -1962,11 +1962,11 @@ describe('Line animation', () => {
   });
 
   describe('shape prop', () => {
-    function CustomLineShape(props: { t?: number; isAnimating?: boolean; isEntrance?: boolean }) {
+    function CustomLineShape(props: { animationElapsedTime?: number; isAnimating?: boolean; isEntrance?: boolean }) {
       return (
         <path
           className="custom-line-shape"
-          data-t={props.t}
+          data-t={props.animationElapsedTime}
           data-is-animating={String(props.isAnimating)}
           data-is-entrance={String(props.isEntrance)}
         />
@@ -1989,7 +1989,7 @@ describe('Line animation', () => {
       expect(customShapes.length).toBeGreaterThan(0);
     });
 
-    it('should pass t, isAnimating, isEntrance props to custom shape during animation', async () => {
+    it('should pass animationElapsedTime, isAnimating, isEntrance props to custom shape during animation', async () => {
       const { container, animationManager } = renderShapeTestCase();
 
       await animationManager.setAnimationProgress(0.5);
