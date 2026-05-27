@@ -265,7 +265,7 @@ describe('selectStackGroups', () => {
             ]),
           },
         });
-        expect(spy).toHaveBeenCalledTimes(3);
+        expect(spy).toHaveBeenCalledTimes(2);
       });
     });
 
@@ -284,7 +284,7 @@ describe('selectStackGroups', () => {
             ],
           }),
         });
-        expect(spy).toHaveBeenCalledTimes(3);
+        expect(spy).toHaveBeenCalledTimes(2);
 
         const legendItems = container.querySelectorAll('.recharts-legend-item');
         assertNotNull(legendItems);
@@ -300,7 +300,7 @@ describe('selectStackGroups', () => {
             graphicalItems: [expect.objectContaining({ dataKey: 'pv', hide: false })],
           }),
         });
-        expect(spy).toHaveBeenCalledTimes(5);
+        expect(spy).toHaveBeenCalledTimes(3);
 
         act(() => {
           fireEvent.click(uvItem);
@@ -315,7 +315,7 @@ describe('selectStackGroups', () => {
             ],
           }),
         });
-        expect(spy).toHaveBeenCalledTimes(7);
+        expect(spy).toHaveBeenCalledTimes(4);
       });
     });
   });

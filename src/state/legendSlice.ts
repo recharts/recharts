@@ -32,7 +32,7 @@ const initialState: LegendState = {
   settings: {
     layout: 'horizontal',
     align: 'center',
-    verticalAlign: 'middle',
+    verticalAlign: 'bottom',
     itemSorter: 'value',
   },
   size: {

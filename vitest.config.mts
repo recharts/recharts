@@ -28,6 +28,7 @@ export default defineConfig({
       include: ['src', 'test', 'www/src'],
     },
     restoreMocks: true,
+    unstubGlobals: true,
     projects: [
       {
         extends: true,
