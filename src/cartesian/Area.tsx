@@ -57,7 +57,7 @@ import { useChartName } from '../state/selectors/selectors';
 import { SetLegendPayload } from '../state/SetLegendPayload';
 import { useAppSelector } from '../state/hooks';
 import { useAnimationId } from '../util/useAnimationId';
-import { RequiresDefaultProps, resolveDefaultProps } from '../util/resolveDefaultProps';
+import { RequiresDefaultProps } from '../util/resolveDefaultProps';
 import { isWellBehavedNumber } from '../util/isWellBehavedNumber';
 import { usePlotArea } from '../hooks';
 import { WithIdRequired, WithoutId } from '../util/useUniqueId';
@@ -73,6 +73,9 @@ import { DefaultZIndexes } from '../zIndex/DefaultZIndexes';
 import { propsAreEqual } from '../util/propsAreEqual';
 import { AxisId } from '../state/cartesianAxisSlice';
 import { StackDataPoint } from '../util/stacks/stackTypes';
+import { getGraphicalItemSeriesStyle } from '../theme/graphicalItemTheme';
+import { RechartsSeriesStyle, RechartsTheme } from '../theme/RechartsTheme';
+import { useRechartsResolvedProps } from '../theme/useRechartsResolvedProps';
 
 /**
  * @inline
@@ -331,6 +334,43 @@ type PropsWithDefaults<DataPointType, ValueAxisType> = WithIdRequired<
 
 function getLegendItemColor(stroke: string | undefined, fill: string | undefined): string | undefined {
   return stroke && stroke !== 'none' ? stroke : fill;
+}
+
+function getSeriesStyle<DataPointType, ValueAxisType>(
+  theme: RechartsTheme,
+  props: Props<DataPointType, ValueAxisType>,
+): RechartsSeriesStyle | undefined {
+  return getGraphicalItemSeriesStyle(theme, props);
+}
+
+function getAreaComponentTheme<DataPointType, ValueAxisType>(
+  theme: RechartsTheme,
+): Partial<Props<DataPointType, ValueAxisType>> | undefined {
+  return theme.components?.Area;
+}
+
+function getAreaTokenTheme<DataPointType, ValueAxisType>(
+  theme: RechartsTheme,
+  props: Props<DataPointType, ValueAxisType>,
+): Partial<Props<DataPointType, ValueAxisType>> | undefined {
+  const seriesStyle = getSeriesStyle(theme, props);
+  const fill = typeof seriesStyle?.fill === 'string' ? seriesStyle.fill : undefined;
+  let stroke: string | undefined;
+  if (typeof seriesStyle?.stroke === 'string') {
+    stroke = seriesStyle.stroke;
+  } else if (fill != null) {
+    stroke = fill;
+  }
+
+  return {
+    fill,
+    fillOpacity: seriesStyle?.fillOpacity,
+    opacity: seriesStyle?.opacity,
+    stroke,
+    strokeDasharray: seriesStyle?.strokeDasharray,
+    strokeOpacity: seriesStyle?.strokeOpacity,
+    strokeWidth: seriesStyle?.strokeWidth != null ? seriesStyle.strokeWidth : theme.strokeWidths?.area,
+  };
 }
 
 const computeLegendPayloadFromAreaData = <DataPointType, ValueAxisType>(
@@ -1099,7 +1139,12 @@ export function computeArea({
 }
 
 function AreaFn<DataPointType, ValueAxisType>(outsideProps: Props<DataPointType, ValueAxisType>) {
-  const props = resolveDefaultProps(outsideProps, defaultAreaProps);
+  const props = useRechartsResolvedProps(
+    outsideProps,
+    defaultAreaProps,
+    getAreaComponentTheme<DataPointType, ValueAxisType>,
+    getAreaTokenTheme<DataPointType, ValueAxisType>,
+  );
   const isPanorama = useIsPanorama();
   // Report all props to Redux store first, before calling hooks, to avoid circular dependencies.
   return (

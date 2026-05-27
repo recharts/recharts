@@ -41,10 +41,12 @@ import { AppDispatch } from '../state/store';
 import { isPositiveNumber } from '../util/isWellBehavedNumber';
 import { svgPropertiesNoEvents } from '../util/svgPropertiesNoEvents';
 import { CSSTransitionAnimate } from '../animation/CSSTransitionAnimate';
-import { RequiresDefaultProps, resolveDefaultProps } from '../util/resolveDefaultProps';
+import { RequiresDefaultProps } from '../util/resolveDefaultProps';
 import { RegisterGraphicalItemId } from '../context/RegisterGraphicalItemId';
 import { GraphicalItemId } from '../state/graphicalItemsSlice';
 import { initialEventSettingsState } from '../state/eventSettingsSlice';
+import type { RechartsTheme } from '../theme/RechartsTheme';
+import { useRechartsResolvedProps } from '../theme/useRechartsResolvedProps';
 
 const NODE_VALUE_KEY = 'value';
 
@@ -603,6 +605,18 @@ export const defaultTreeMapProps = {
   ...initialEventSettingsState,
 } as const satisfies Partial<Props>;
 
+function getTreemapComponentTheme(theme: RechartsTheme): Partial<Props> | undefined {
+  return theme.components?.Treemap;
+}
+
+function getTreemapTokenTheme(theme: RechartsTheme): Partial<Props> | undefined {
+  return {
+    colorPanel: theme.series?.palette,
+    fill: theme.series?.palette?.[0],
+    stroke: theme.colors?.surface,
+  };
+}
+
 const defaultState: State = {
   isAnimationFinished: false,
   formatRoot: null,
@@ -1159,7 +1173,12 @@ function TreemapDispatchInject(props: RequiresDefaultProps<Props, typeof default
  * @provides TooltipEntrySettings
  */
 export function Treemap(outsideProps: Props) {
-  const props = resolveDefaultProps(outsideProps, defaultTreeMapProps);
+  const props = useRechartsResolvedProps(
+    outsideProps,
+    defaultTreeMapProps,
+    getTreemapComponentTheme,
+    getTreemapTokenTheme,
+  );
   const { className, style, width, height, throttleDelay, throttledEvents } = props;
 
   const [tooltipPortal, setTooltipPortal] = useState<HTMLElement | null>(null);

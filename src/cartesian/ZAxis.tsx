@@ -4,8 +4,9 @@ import { AxisDomain, BaseAxisProps, ScaleType } from '../util/types';
 import { addZAxis, AxisId, removeZAxis, replaceZAxis, ZAxisSettings } from '../state/cartesianAxisSlice';
 import { useAppDispatch } from '../state/hooks';
 import { AxisRange, implicitZAxis } from '../state/selectors/axisSelectors';
-import { resolveDefaultProps } from '../util/resolveDefaultProps';
 import { CustomScaleDefinition } from '../util/scale/CustomScaleDefinition';
+import type { RechartsTheme } from '../theme/RechartsTheme';
+import { useRechartsResolvedProps } from '../theme/useRechartsResolvedProps';
 
 function SetZAxisSettings(settings: ZAxisSettings): null {
   const dispatch = useAppDispatch();
@@ -114,6 +115,10 @@ export const zAxisDefaultProps = {
   type: implicitZAxis.type,
 } as const satisfies Partial<Props>;
 
+function getZAxisComponentTheme(theme: RechartsTheme): Partial<Props> | undefined {
+  return theme.components?.ZAxis;
+}
+
 /**
  * Virtual axis, does not render anything itself. Has no ticks, grid lines, or labels.
  * Useful for dynamically setting Scatter point size, based on data.
@@ -121,7 +126,7 @@ export const zAxisDefaultProps = {
  * @consumes CartesianViewBoxContext
  */
 export function ZAxis<DataPointType = any, DataValueType = any>(outsideProps: Props<DataPointType, DataValueType>) {
-  const props = resolveDefaultProps(outsideProps, zAxisDefaultProps);
+  const props = useRechartsResolvedProps(outsideProps, zAxisDefaultProps, getZAxisComponentTheme);
   return (
     <SetZAxisSettings
       domain={props.domain}

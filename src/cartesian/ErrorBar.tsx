@@ -10,12 +10,13 @@ import { LinePointItem } from './Line';
 import { ScatterPointItem } from './Scatter';
 import { ReportErrorBarSettings, useErrorBarContext } from '../context/ErrorBarContext';
 import { useXAxis, useYAxis } from '../hooks';
-import { resolveDefaultProps } from '../util/resolveDefaultProps';
 import { svgPropertiesNoEvents } from '../util/svgPropertiesNoEvents';
 import { useChartLayout } from '../context/chartLayoutContext';
 import { CSSTransitionAnimate } from '../animation/CSSTransitionAnimate';
 import { ZIndexable, ZIndexLayer } from '../zIndex/ZIndexLayer';
 import { DefaultZIndexes } from '../zIndex/DefaultZIndexes';
+import type { RechartsTheme } from '../theme/RechartsTheme';
+import { useRechartsResolvedProps } from '../theme/useRechartsResolvedProps';
 
 export interface ErrorBarDataItem {
   x: number | undefined;
@@ -263,6 +264,17 @@ export const errorBarDefaultProps = {
   zIndex: DefaultZIndexes.line,
 } as const satisfies Partial<Props>;
 
+function getErrorBarComponentTheme(theme: RechartsTheme): Partial<Props> | undefined {
+  return theme.components?.ErrorBar;
+}
+
+function getErrorBarTokenTheme(theme: RechartsTheme): Partial<Props> | undefined {
+  return {
+    stroke: theme.colors?.border,
+    strokeWidth: theme.strokeWidths?.reference,
+  };
+}
+
 /**
  * ErrorBar renders whiskers to represent error margins on a chart.
  *
@@ -287,7 +299,12 @@ export const errorBarDefaultProps = {
  */
 export function ErrorBar(outsideProps: Props) {
   const realDirection: ErrorBarDirection = useErrorBarDirection(outsideProps.direction);
-  const props = resolveDefaultProps(outsideProps, errorBarDefaultProps);
+  const props = useRechartsResolvedProps(
+    outsideProps,
+    errorBarDefaultProps,
+    getErrorBarComponentTheme,
+    getErrorBarTokenTheme,
+  );
   const { width, isAnimationActive, animationBegin, animationDuration, animationEasing, zIndex } = props;
 
   return (

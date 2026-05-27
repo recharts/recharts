@@ -27,8 +27,10 @@ import { BrushSettings, setBrushSettings } from '../state/brushSlice';
 import { PanoramaContextProvider } from '../context/PanoramaContext';
 import { selectBrushDimensions } from '../state/selectors/brushSelectors';
 import { useBrushChartSynchronisation } from '../synchronisation/useChartSynchronisation';
-import { RequiresDefaultProps, resolveDefaultProps } from '../util/resolveDefaultProps';
+import { RequiresDefaultProps } from '../util/resolveDefaultProps';
 import { svgPropertiesNoEvents } from '../util/svgPropertiesNoEvents';
+import type { RechartsTheme } from '../theme/RechartsTheme';
+import { useRechartsResolvedProps } from '../theme/useRechartsResolvedProps';
 
 type BrushTravellerType = ReactElement<SVGElement> | ((props: TravellerProps) => ReactElement<SVGElement>);
 
@@ -1060,6 +1062,17 @@ export const defaultBrushProps = {
   alwaysShowText: false,
 } as const satisfies Partial<Props>;
 
+function getBrushComponentTheme(theme: RechartsTheme): Partial<Props> | undefined {
+  return theme.components?.Brush;
+}
+
+function getBrushTokenTheme(theme: RechartsTheme): Partial<Props> | undefined {
+  return {
+    fill: theme.colors?.surface,
+    stroke: theme.colors?.border ?? theme.colors?.axis,
+  };
+}
+
 /**
  * Renders a scrollbar that allows the user to zoom and pan in the chart along its XAxis.
  * It also allows you to render a small overview of the chart inside the brush that is always visible
@@ -1074,7 +1087,7 @@ export const defaultBrushProps = {
  * @consumes CartesianChartContext
  */
 export function Brush(outsideProps: Props) {
-  const props = resolveDefaultProps(outsideProps, defaultBrushProps);
+  const props = useRechartsResolvedProps(outsideProps, defaultBrushProps, getBrushComponentTheme, getBrushTokenTheme);
   return (
     <>
       <BrushSettingsDispatcher

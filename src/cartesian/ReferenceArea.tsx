@@ -16,11 +16,13 @@ import { useIsPanorama } from '../context/PanoramaContext';
 import { useClipPathId } from '../container/ClipPathProvider';
 import { NullableCoordinate, RectanglePosition } from '../util/types';
 import { svgPropertiesAndEvents, SVGPropsAndEvents } from '../util/svgPropertiesAndEvents';
-import { RequiresDefaultProps, resolveDefaultProps } from '../util/resolveDefaultProps';
+import { RequiresDefaultProps } from '../util/resolveDefaultProps';
 import { ZIndexable, ZIndexLayer } from '../zIndex/ZIndexLayer';
 import { DefaultZIndexes } from '../zIndex/DefaultZIndexes';
 import { RechartsScale } from '../util/scale/RechartsScale';
 import { CartesianScaleHelperImpl } from '../util/scale/CartesianScaleHelper';
+import type { RechartsTheme } from '../theme/RechartsTheme';
+import { useRechartsResolvedProps } from '../theme/useRechartsResolvedProps';
 
 type ReferenceCoordinateValue = number | string;
 
@@ -252,6 +254,18 @@ export const referenceAreaDefaultProps = {
 
 type PropsWithDefaults = RequiresDefaultProps<Props, typeof referenceAreaDefaultProps>;
 
+function getReferenceAreaComponentTheme(theme: RechartsTheme): Partial<Props> | undefined {
+  return theme.components?.ReferenceArea;
+}
+
+function getReferenceAreaTokenTheme(theme: RechartsTheme): Partial<Props> | undefined {
+  return {
+    fill: theme.colors?.grid,
+    stroke: theme.colors?.border,
+    strokeWidth: theme.strokeWidths?.reference,
+  };
+}
+
 /**
  * Draws a rectangular area on the chart to highlight a specific range.
  *
@@ -270,7 +284,12 @@ export function ReferenceArea<
   XValueType extends ReferenceCoordinateValue = any,
   YValueType extends ReferenceCoordinateValue = any,
 >(outsideProps: Props<XValueType, YValueType>) {
-  const props = resolveDefaultProps(outsideProps, referenceAreaDefaultProps);
+  const props = useRechartsResolvedProps(
+    outsideProps,
+    referenceAreaDefaultProps,
+    getReferenceAreaComponentTheme,
+    getReferenceAreaTokenTheme,
+  );
   return (
     <>
       <ReportReferenceArea

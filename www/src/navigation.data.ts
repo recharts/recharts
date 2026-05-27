@@ -13,6 +13,7 @@ const guidePages = [
   'getting-started',
   'typescript',
   'customize',
+  'theming',
   'activeIndex',
   'sizes',
   'domainAndTicks',

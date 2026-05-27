@@ -63,11 +63,14 @@ import { RadialBarSettings } from '../state/types/RadialBarSettings';
 import { SetPolarGraphicalItem } from '../state/SetGraphicalItem';
 import { svgPropertiesNoEvents, svgPropertiesNoEventsFromUnknown } from '../util/svgPropertiesNoEvents';
 import { JavascriptAnimate } from '../animation/JavascriptAnimate';
-import { RequiresDefaultProps, resolveDefaultProps } from '../util/resolveDefaultProps';
+import { RequiresDefaultProps } from '../util/resolveDefaultProps';
 import { WithIdRequired } from '../util/useUniqueId';
 import { ZIndexable, ZIndexLayer } from '../zIndex/ZIndexLayer';
 import { DefaultZIndexes } from '../zIndex/DefaultZIndexes';
 import { getZIndexFromUnknown } from '../zIndex/getZIndexFromUnknown';
+import { getGraphicalItemSeriesStyle, isLegacyTheme } from '../theme/graphicalItemTheme';
+import type { RechartsTheme } from '../theme/RechartsTheme';
+import { useRechartsResolvedProps } from '../theme/useRechartsResolvedProps';
 
 const STABLE_EMPTY_ARRAY: readonly RadialBarDataItem[] = [];
 
@@ -427,6 +430,35 @@ export type RadialBarProps<DataPointType = any, DataValueType = any> = Omit<
 
 type InternalProps = WithIdRequired<PropsWithDefaults> & Pick<InternalRadialBarProps, 'sectors'>;
 
+function getRadialBarComponentTheme<DataPointType, DataValueType>(
+  theme: RechartsTheme,
+): Partial<RadialBarProps<DataPointType, DataValueType>> | undefined {
+  return theme.components?.RadialBar;
+}
+
+function getRadialBarTokenTheme<DataPointType, DataValueType>(
+  theme: RechartsTheme,
+  props: RadialBarProps<DataPointType, DataValueType>,
+): Partial<RadialBarProps<DataPointType, DataValueType>> | undefined {
+  const seriesStyle = getGraphicalItemSeriesStyle(theme, props, { usePaletteFallback: !isLegacyTheme(theme) });
+  let fill: string | undefined;
+  if (typeof seriesStyle?.fill === 'string') {
+    fill = seriesStyle.fill;
+  } else if (typeof seriesStyle?.stroke === 'string') {
+    fill = seriesStyle.stroke;
+  }
+
+  return {
+    fill,
+    fillOpacity: seriesStyle?.fillOpacity,
+    opacity: seriesStyle?.opacity,
+    stroke: typeof seriesStyle?.stroke === 'string' ? seriesStyle.stroke : undefined,
+    strokeDasharray: seriesStyle?.strokeDasharray,
+    strokeOpacity: seriesStyle?.strokeOpacity,
+    strokeWidth: seriesStyle?.strokeWidth != null ? seriesStyle.strokeWidth : theme.strokeWidths?.bar,
+  };
+}
+
 function SetRadialBarPayloadLegend(props: RadialBarProps) {
   const legendPayload = useAppSelector(state => selectRadialBarLegendPayload(state, props.legendType));
   return <SetPolarLegendPayload legendPayload={legendPayload ?? []} />;
@@ -747,9 +779,11 @@ export function computeRadialBarDataItems({
 export function RadialBar<DataPointType = any, DataValueType = any>(
   outsideProps: RadialBarProps<DataPointType, DataValueType>,
 ) {
-  const props: PropsWithDefaults<DataPointType, DataValueType> = resolveDefaultProps(
+  const props: PropsWithDefaults<DataPointType, DataValueType> = useRechartsResolvedProps(
     outsideProps,
     defaultRadialBarProps,
+    getRadialBarComponentTheme<DataPointType, DataValueType>,
+    getRadialBarTokenTheme,
   );
   return (
     <RegisterGraphicalItemId id={props.id} type="radialBar">

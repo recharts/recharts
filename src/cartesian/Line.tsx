@@ -59,6 +59,9 @@ import { usePlotArea } from '../hooks';
 import { WithIdRequired } from '../util/useUniqueId';
 import { RegisterGraphicalItemId } from '../context/RegisterGraphicalItemId';
 import { SetCartesianGraphicalItem } from '../state/SetGraphicalItem';
+import { getGraphicalItemSeriesStyle } from '../theme/graphicalItemTheme';
+import type { RechartsTheme } from '../theme/RechartsTheme';
+import { useRechartsResolvedProps } from '../theme/useRechartsResolvedProps';
 import { svgPropertiesNoEvents } from '../util/svgPropertiesNoEvents';
 import { JavascriptAnimate } from '../animation/JavascriptAnimate';
 import { svgPropertiesAndEvents } from '../util/svgPropertiesAndEvents';
@@ -326,6 +329,31 @@ type LineSvgProps = Omit<CurveProps, 'points' | 'pathRef' | 'ref' | 'layout' | '
 type InternalProps = LineSvgProps & InternalLineProps;
 
 export type Props<DataPointType = any, ValueAxisType = any> = LineSvgProps & LineProps<DataPointType, ValueAxisType>;
+
+function getLineComponentTheme(theme: RechartsTheme): Partial<Props> | undefined {
+  return theme.components?.Line;
+}
+
+function getLineTokenTheme<DataPointType, ValueAxisType>(
+  theme: RechartsTheme,
+  props: Props<DataPointType, ValueAxisType>,
+): Partial<Props<DataPointType, ValueAxisType>> | undefined {
+  const seriesStyle = getGraphicalItemSeriesStyle(theme, props);
+  let stroke: string | undefined;
+  if (typeof seriesStyle?.stroke === 'string') {
+    stroke = seriesStyle.stroke;
+  } else if (typeof seriesStyle?.fill === 'string') {
+    stroke = seriesStyle.fill;
+  }
+
+  return {
+    opacity: seriesStyle?.opacity,
+    stroke,
+    strokeDasharray: seriesStyle?.strokeDasharray,
+    strokeOpacity: seriesStyle?.strokeOpacity,
+    strokeWidth: seriesStyle?.strokeWidth != null ? seriesStyle.strokeWidth : theme.strokeWidths?.line,
+  };
+}
 
 const computeLegendPayloadFromAreaData = (props: Props): ReadonlyArray<LegendPayload> => {
   const { dataKey, name, stroke, legendType, hide } = props;
@@ -996,7 +1024,7 @@ export function computeLinePoints({
 }
 
 function LineFn(outsideProps: Props) {
-  const props = resolveDefaultProps(outsideProps, defaultLineProps);
+  const props = useRechartsResolvedProps(outsideProps, defaultLineProps, getLineComponentTheme, getLineTokenTheme);
   const isPanorama = useIsPanorama();
   return (
     <RegisterGraphicalItemId id={props.id} type="line">

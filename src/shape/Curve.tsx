@@ -37,6 +37,8 @@ import { isNumber, upperFirst } from '../util/DataUtils';
 import { isWellBehavedNumber } from '../util/isWellBehavedNumber';
 import { svgPropertiesNoEvents } from '../util/svgPropertiesNoEvents';
 import { useChartLayout } from '../context/chartLayoutContext';
+import type { RechartsTheme } from '../theme/RechartsTheme';
+import { useRechartsResolvedProps } from '../theme/useRechartsResolvedProps';
 
 interface CurveFactories {
   [index: string]: CurveFactory;
@@ -216,6 +218,10 @@ export const defaultCurveProps = {
   type: 'linear',
 } as const satisfies Partial<Props>;
 
+function getCurveComponentTheme(theme: RechartsTheme): Partial<Props> | undefined {
+  return theme.components?.Curve;
+}
+
 /**
  * Calculate the path of curve. Returns null if points is an empty array.
  * @return path or null
@@ -286,7 +292,8 @@ export const getPath = ({
 };
 
 export const Curve: React.FC<Props> = props => {
-  const { className, points, path, pathRef } = props;
+  const resolvedProps = useRechartsResolvedProps(props, defaultCurveProps, getCurveComponentTheme);
+  const { className, points, path, pathRef } = resolvedProps;
   const layout = useChartLayout();
 
   if ((!points || !points.length) && !path) {
@@ -294,19 +301,19 @@ export const Curve: React.FC<Props> = props => {
   }
 
   const getPathInput: GetPathProps = {
-    type: props.type,
-    points: props.points,
-    baseLine: props.baseLine,
-    layout: props.layout || layout,
-    connectNulls: props.connectNulls,
+    type: resolvedProps.type,
+    points: resolvedProps.points,
+    baseLine: resolvedProps.baseLine,
+    layout: resolvedProps.layout || layout,
+    connectNulls: resolvedProps.connectNulls,
   };
 
   const realPath: string | null | undefined = points && points.length ? getPath(getPathInput) : path;
 
   return (
     <path
-      {...svgPropertiesNoEvents(props)}
-      {...adaptEventHandlers(props)}
+      {...svgPropertiesNoEvents(resolvedProps)}
+      {...adaptEventHandlers(resolvedProps)}
       className={clsx('recharts-curve', className)}
       d={realPath === null ? undefined : realPath}
       ref={pathRef}

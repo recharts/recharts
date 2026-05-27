@@ -42,13 +42,16 @@ import { SetTooltipEntrySettings } from '../state/SetTooltipEntrySettings';
 import { ResolvedFunnelSettings, selectFunnelTrapezoids } from '../state/selectors/funnelSelectors';
 import { findAllByType } from '../util/ReactUtils';
 import { Cell } from '../component/Cell';
-import { RequiresDefaultProps, resolveDefaultProps } from '../util/resolveDefaultProps';
+import { RequiresDefaultProps } from '../util/resolveDefaultProps';
 import { usePlotArea } from '../hooks';
 import { svgPropertiesNoEvents } from '../util/svgPropertiesNoEvents';
 import { JavascriptAnimate } from '../animation/JavascriptAnimate';
 import { useAnimationId } from '../util/useAnimationId';
 import { GraphicalItemId } from '../state/graphicalItemsSlice';
 import { RegisterGraphicalItemId } from '../context/RegisterGraphicalItemId';
+import { getGraphicalItemSeriesStyle, isLegacyTheme } from '../theme/graphicalItemTheme';
+import type { RechartsTheme } from '../theme/RechartsTheme';
+import { useRechartsResolvedProps } from '../theme/useRechartsResolvedProps';
 import { WithIdRequired } from '../util/useUniqueId';
 
 export type FunnelTrapezoidItem = TrapezoidProps &
@@ -197,6 +200,33 @@ type InternalProps = FunnelSvgProps & InternalFunnelProps;
 
 export type Props<DataPointType = any, DataValueType = any> = FunnelSvgProps &
   FunnelProps<DataPointType, DataValueType>;
+
+function getFunnelComponentTheme(theme: RechartsTheme): Partial<Props> | undefined {
+  return theme.components?.Funnel;
+}
+
+function getFunnelTokenTheme<DataPointType, DataValueType>(
+  theme: RechartsTheme,
+  props: Props<DataPointType, DataValueType>,
+): Partial<Props<DataPointType, DataValueType>> | undefined {
+  const seriesStyle = getGraphicalItemSeriesStyle(theme, props, { usePaletteFallback: !isLegacyTheme(theme) });
+  let fill: string | undefined;
+  if (typeof seriesStyle?.fill === 'string') {
+    fill = seriesStyle.fill;
+  } else if (typeof seriesStyle?.stroke === 'string') {
+    fill = seriesStyle.stroke;
+  }
+
+  return {
+    fill,
+    fillOpacity: seriesStyle?.fillOpacity,
+    opacity: seriesStyle?.opacity,
+    stroke: typeof seriesStyle?.stroke === 'string' ? seriesStyle.stroke : undefined,
+    strokeDasharray: seriesStyle?.strokeDasharray,
+    strokeOpacity: seriesStyle?.strokeOpacity,
+    strokeWidth: seriesStyle?.strokeWidth,
+  };
+}
 
 type RealFunnelData = unknown;
 
@@ -690,7 +720,12 @@ export function computeFunnelTrapezoids({
  * @provides CellReader
  */
 function FunnelFn(outsideProps: Props) {
-  const { id: externalId, ...props } = resolveDefaultProps(outsideProps, defaultFunnelProps);
+  const { id: externalId, ...props } = useRechartsResolvedProps(
+    outsideProps,
+    defaultFunnelProps,
+    getFunnelComponentTheme,
+    getFunnelTokenTheme,
+  );
   return (
     <RegisterGraphicalItemId id={externalId} type="funnel">
       {id => <FunnelImpl {...props} id={id} />}

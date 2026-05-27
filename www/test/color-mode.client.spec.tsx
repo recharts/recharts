@@ -3,9 +3,11 @@ import { act, cleanup, render, screen } from '@testing-library/react';
 import { userEvent } from '@testing-library/user-event';
 import '@testing-library/jest-dom/vitest';
 
+import { useRechartsTheme } from 'recharts';
 import {
   ColorModeProvider,
   ColorModePicker,
+  ColorModeRechartsThemeProvider,
   ColorModeWatcher,
   defineColorModeStore,
 } from '../src/components/color-mode';
@@ -276,6 +278,33 @@ test('ColorModeWatcher', () => {
     store.dispatch('system');
   });
   expect(screen.getByRole('heading', { name: 'origin: system; mode: light' })).toBeInTheDocument();
+
+  store.dispose();
+});
+
+function RechartsThemeNameProbe() {
+  const theme = useRechartsTheme();
+  return <h1>{theme.meta?.name}</h1>;
+}
+
+test('ColorModeRechartsThemeProvider', () => {
+  setupEnvironment({ preferredColorMode: 'light' });
+  const store = defineColorModeStore();
+  render(
+    <ColorModeProvider store={store}>
+      <ColorModeRechartsThemeProvider>
+        <RechartsThemeNameProbe />
+      </ColorModeRechartsThemeProvider>
+    </ColorModeProvider>,
+  );
+
+  expect(screen.getByRole('heading', { name: 'light' })).toBeInTheDocument();
+
+  act(() => {
+    store.dispatch('dark');
+  });
+
+  expect(screen.getByRole('heading', { name: 'dark' })).toBeInTheDocument();
 
   store.dispose();
 });

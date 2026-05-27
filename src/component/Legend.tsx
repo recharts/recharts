@@ -17,8 +17,9 @@ import { ElementOffset, useElementOffset } from '../util/useElementOffset';
 import { useChartHeight, useChartWidth, useMargin } from '../context/chartLayoutContext';
 import { LegendSettings, setLegendSettings, setLegendSize } from '../state/legendSlice';
 import { useAppDispatch } from '../state/hooks';
-import { resolveDefaultProps } from '../util/resolveDefaultProps';
 import { propsAreEqual } from '../util/propsAreEqual';
+import type { RechartsTheme } from '../theme/RechartsTheme';
+import { useRechartsResolvedProps } from '../theme/useRechartsResolvedProps';
 
 function defaultUniqBy(entry: LegendPayload) {
   return entry.value;
@@ -208,12 +209,42 @@ export const legendDefaultProps = {
   verticalAlign: 'bottom',
 } as const satisfies Partial<Props>;
 
+function getLegendComponentTheme(theme: RechartsTheme): Partial<Props> | undefined {
+  return theme.components?.Legend;
+}
+
+function getLegendTokenTheme(theme: RechartsTheme): Partial<Props> | undefined {
+  const typography = {
+    fontFamily: theme.typography?.fontFamily,
+    fontSize: theme.typography?.fontSize,
+    fontWeight: theme.typography?.fontWeight,
+    letterSpacing: theme.typography?.letterSpacing,
+  } satisfies CSSProperties;
+
+  return {
+    inactiveColor: theme.colors?.mutedText,
+    labelStyle: {
+      ...typography,
+      color: theme.colors?.text,
+    },
+    wrapperStyle: {
+      ...typography,
+      color: theme.colors?.text,
+    },
+  };
+}
+
 /**
  * @consumes CartesianChartContext
  * @consumes PolarChartContext
  */
 function LegendImpl(outsideProps: Props) {
-  const props = resolveDefaultProps(outsideProps, legendDefaultProps);
+  const props = useRechartsResolvedProps(
+    outsideProps,
+    legendDefaultProps,
+    getLegendComponentTheme,
+    getLegendTokenTheme,
+  );
   const contextPayload = useLegendPayload();
   const legendPortalFromContext = useLegendPortal();
   const margin = useMargin();

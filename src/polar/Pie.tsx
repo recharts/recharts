@@ -46,7 +46,7 @@ import {
 import { SetPolarLegendPayload } from '../state/SetLegendPayload';
 import { DATA_ITEM_GRAPHICAL_ITEM_ID_ATTRIBUTE_NAME, DATA_ITEM_INDEX_ATTRIBUTE_NAME } from '../util/Constants';
 import { useAnimationId } from '../util/useAnimationId';
-import { RequiresDefaultProps, resolveDefaultProps } from '../util/resolveDefaultProps';
+import { RequiresDefaultProps } from '../util/resolveDefaultProps';
 import { RegisterGraphicalItemId } from '../context/RegisterGraphicalItemId';
 import { SetPolarGraphicalItem } from '../state/SetGraphicalItem';
 import { PiePresentationProps, PieSettings } from '../state/types/PieSettings';
@@ -67,6 +67,9 @@ import { ZIndexable, ZIndexLayer } from '../zIndex/ZIndexLayer';
 import { DefaultZIndexes } from '../zIndex/DefaultZIndexes';
 import { ChartData } from '../state/chartDataSlice';
 import { getClassNameFromUnknown } from '../util/getClassNameFromUnknown';
+import { getGraphicalItemSeriesStyle, isLegacyTheme } from '../theme/graphicalItemTheme';
+import type { RechartsTheme } from '../theme/RechartsTheme';
+import { useRechartsResolvedProps } from '../theme/useRechartsResolvedProps';
 import { WithIdRequired } from '../util/useUniqueId';
 
 interface PieDef {
@@ -369,6 +372,33 @@ type PieSvgAttributes = Omit<PresentationAttributesAdaptChildEvent<any, SVGEleme
 type InternalProps = PieSvgAttributes & InternalPieProps;
 
 export type Props<DataPointType = any, DataValueType = any> = PieSvgAttributes & PieProps<DataPointType, DataValueType>;
+
+function getPieComponentTheme(theme: RechartsTheme): Partial<Props> | undefined {
+  return theme.components?.Pie;
+}
+
+function getPieTokenTheme<DataPointType, DataValueType>(
+  theme: RechartsTheme,
+  props: Props<DataPointType, DataValueType>,
+): Partial<Props<DataPointType, DataValueType>> | undefined {
+  const seriesStyle = getGraphicalItemSeriesStyle(theme, props, { usePaletteFallback: !isLegacyTheme(theme) });
+  let fill: string | undefined;
+  if (typeof seriesStyle?.fill === 'string') {
+    fill = seriesStyle.fill;
+  } else if (typeof seriesStyle?.stroke === 'string') {
+    fill = seriesStyle.stroke;
+  }
+
+  return {
+    fill,
+    fillOpacity: seriesStyle?.fillOpacity,
+    opacity: seriesStyle?.opacity,
+    stroke: typeof seriesStyle?.stroke === 'string' ? seriesStyle.stroke : undefined,
+    strokeDasharray: seriesStyle?.strokeDasharray,
+    strokeOpacity: seriesStyle?.strokeOpacity,
+    strokeWidth: seriesStyle?.strokeWidth,
+  };
+}
 
 type RealPieData = Record<string, unknown>;
 
@@ -1043,7 +1073,12 @@ type PropsWithResolvedDefaults = RequiresDefaultProps<Props, typeof defaultPiePr
  * @provides CellReader
  */
 function PieFn(outsideProps: Props) {
-  const props: PropsWithResolvedDefaults = resolveDefaultProps(outsideProps, defaultPieProps);
+  const props: PropsWithResolvedDefaults = useRechartsResolvedProps(
+    outsideProps,
+    defaultPieProps,
+    getPieComponentTheme,
+    getPieTokenTheme,
+  );
   const { id: externalId, ...propsWithoutId } = props;
   const presentationProps: PiePresentationProps | null = svgPropertiesNoEvents(propsWithoutId);
 

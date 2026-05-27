@@ -11,7 +11,9 @@ import {
   PresentationAttributesAdaptChildEvent,
   CartesianLayout,
 } from '../util/types';
-import { RequiresDefaultProps, resolveDefaultProps } from '../util/resolveDefaultProps';
+import { RequiresDefaultProps } from '../util/resolveDefaultProps';
+import type { RechartsTheme } from '../theme/RechartsTheme';
+import { useRechartsResolvedProps } from '../theme/useRechartsResolvedProps';
 
 const SIZE = 32;
 export type ContentType = ReactElement | ((props: Props) => ReactNode);
@@ -128,6 +130,27 @@ export const defaultLegendContentDefaultProps = {
   verticalAlign: 'middle',
   labelStyle: {},
 } as const satisfies Partial<Props>;
+
+function getDefaultLegendContentComponentTheme(theme: RechartsTheme): Partial<Props> | undefined {
+  return theme.components?.DefaultLegendContent;
+}
+
+function getDefaultLegendContentTokenTheme(theme: RechartsTheme): Partial<Props> | undefined {
+  const typography = {
+    fontFamily: theme.typography?.fontFamily,
+    fontSize: theme.typography?.fontSize,
+    fontWeight: theme.typography?.fontWeight,
+    letterSpacing: theme.typography?.letterSpacing,
+  } satisfies CSSProperties;
+
+  return {
+    inactiveColor: theme.colors?.mutedText,
+    labelStyle: {
+      ...typography,
+      color: theme.colors?.text,
+    },
+  };
+}
 
 type InternalProps = RequiresDefaultProps<Props, typeof defaultLegendContentDefaultProps> & {
   payload: ReadonlyArray<LegendPayload>;
@@ -257,7 +280,12 @@ function Items(props: InternalProps) {
  * or you can provide your own completely independent content.
  */
 export const DefaultLegendContent = (outsideProps: Props) => {
-  const props = resolveDefaultProps(outsideProps, defaultLegendContentDefaultProps);
+  const props = useRechartsResolvedProps(
+    outsideProps,
+    defaultLegendContentDefaultProps,
+    getDefaultLegendContentComponentTheme,
+    getDefaultLegendContentTokenTheme,
+  );
   const { payload, layout, align } = props;
 
   if (!payload || !payload.length) {

@@ -1,6 +1,8 @@
 import * as React from 'react';
 import { ReactNode, CSSProperties, SVGProps, forwardRef } from 'react';
 import { clsx } from 'clsx';
+import type { RechartsTheme } from '../theme/RechartsTheme';
+import { useRechartsResolvedProps } from '../theme/useRechartsResolvedProps';
 import { svgPropertiesAndEvents } from '../util/svgPropertiesAndEvents';
 import { CartesianViewBox } from '../util/types';
 
@@ -17,6 +19,12 @@ interface SurfaceProps {
 
 export type Props = Omit<SVGProps<SVGSVGElement>, 'viewBox'> & SurfaceProps;
 
+const surfaceDefaultProps = {} as const satisfies Partial<Props>;
+
+function getSurfaceComponentTheme(theme: RechartsTheme): Partial<Props> | undefined {
+  return theme.components?.Surface;
+}
+
 /**
  * Renders an SVG element.
  *
@@ -25,7 +33,11 @@ export type Props = Omit<SVGProps<SVGSVGElement>, 'viewBox'> & SurfaceProps;
  * @link https://developer.mozilla.org/en-US/docs/Web/SVG/Element/svg
  */
 export const Surface = forwardRef<SVGSVGElement, Props>((props: Props, ref) => {
-  const { children, width, height, viewBox, className, style, title, desc, ...others } = props;
+  const { children, width, height, viewBox, className, style, title, desc, ...others } = useRechartsResolvedProps(
+    props,
+    surfaceDefaultProps,
+    getSurfaceComponentTheme,
+  );
   const svgView = viewBox || { width, height, x: 0, y: 0 };
   const layerClass = clsx('recharts-surface', className);
 

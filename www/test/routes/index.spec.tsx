@@ -37,6 +37,7 @@ function testInstallationView(url: string) {
   expect(screen.getByRole('link', { name: 'Installation' })).toBeInTheDocument();
   expect(screen.getByRole('link', { name: 'Getting Started' })).toBeInTheDocument();
   expect(screen.getByRole('link', { name: 'Customize' })).toBeInTheDocument();
+  expect(screen.getByRole('link', { name: 'Theming' })).toBeInTheDocument();
   expect(screen.getByRole('link', { name: 'API' })).toBeInTheDocument();
   expect(screen.getByRole('link', { name: 'Examples' })).toBeInTheDocument();
   dispose();
@@ -45,6 +46,13 @@ function testInstallationView(url: string) {
 function testGettingStartedView(url: string) {
   const { screen, dispose } = baseRender(url);
   expect(screen.getByRole('heading', { name: 'Getting Started' })).toBeInTheDocument();
+  dispose();
+}
+
+function testThemingView(url: string) {
+  const { screen, dispose } = baseRender(url);
+  expect(screen.getByRole('heading', { name: 'Theming' })).toBeInTheDocument();
+  expect(screen.getByText(/This guide documents the current Recharts theme system/i)).toBeInTheDocument();
   dispose();
 }
 
@@ -120,6 +128,11 @@ describe('routes', () => {
       '/en-US/guide/getting-started',
       '/en-US/guide/getting-started/',
     ])('should render Getting Started guide at %s', testGettingStartedView);
+
+    it.each(['/guide/theming', '/guide/theming/', '/en-US/guide/theming', '/en-US/guide/theming/'])(
+      'should render Theming guide at %s',
+      testThemingView,
+    );
   });
 
   describe('routes without locale prefix', () => {

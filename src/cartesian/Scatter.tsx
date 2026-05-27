@@ -68,6 +68,9 @@ import { ZIndexable, ZIndexLayer } from '../zIndex/ZIndexLayer';
 import { DefaultZIndexes } from '../zIndex/DefaultZIndexes';
 import { propsAreEqual } from '../util/propsAreEqual';
 import { ChartData } from '../state/chartDataSlice';
+import { getGraphicalItemSeriesStyle, isLegacyTheme } from '../theme/graphicalItemTheme';
+import type { RechartsTheme } from '../theme/RechartsTheme';
+import { useRechartsResolvedProps } from '../theme/useRechartsResolvedProps';
 
 export interface ScatterPointNode {
   x?: number | string;
@@ -340,6 +343,33 @@ type InternalProps = BaseScatterSvgProps & ScatterInternalProps;
 
 export type Props<DataPointType = any, ValueAxisType = any> = BaseScatterSvgProps &
   ScatterProps<DataPointType, ValueAxisType>;
+
+function getScatterComponentTheme(theme: RechartsTheme): Partial<Props> | undefined {
+  return theme.components?.Scatter;
+}
+
+function getScatterTokenTheme<DataPointType, ValueAxisType>(
+  theme: RechartsTheme,
+  props: Props<DataPointType, ValueAxisType>,
+): Partial<Props<DataPointType, ValueAxisType>> | undefined {
+  const seriesStyle = getGraphicalItemSeriesStyle(theme, props, { usePaletteFallback: !isLegacyTheme(theme) });
+  let fill: string | undefined;
+  if (typeof seriesStyle?.fill === 'string') {
+    fill = seriesStyle.fill;
+  } else if (typeof seriesStyle?.stroke === 'string') {
+    fill = seriesStyle.stroke;
+  }
+
+  return {
+    fill,
+    fillOpacity: seriesStyle?.fillOpacity,
+    opacity: seriesStyle?.opacity,
+    stroke: typeof seriesStyle?.stroke === 'string' ? seriesStyle.stroke : undefined,
+    strokeDasharray: seriesStyle?.strokeDasharray,
+    strokeOpacity: seriesStyle?.strokeOpacity,
+    strokeWidth: seriesStyle?.strokeWidth != null ? seriesStyle.strokeWidth : theme.strokeWidths?.scatter,
+  };
+}
 
 const computeLegendPayloadFromScatterProps = (props: Props): ReadonlyArray<LegendPayload> => {
   const { dataKey, name, fill, legendType, hide } = props;
@@ -884,7 +914,12 @@ function ScatterImpl(props: WithIdRequired<Props>) {
 }
 
 function ScatterFn(outsideProps: Props) {
-  const props = resolveDefaultProps(outsideProps, defaultScatterProps);
+  const props = useRechartsResolvedProps(
+    outsideProps,
+    defaultScatterProps,
+    getScatterComponentTheme,
+    getScatterTokenTheme,
+  );
   const isPanorama = useIsPanorama();
   return (
     <RegisterGraphicalItemId id={props.id} type="scatter">

@@ -7,8 +7,9 @@ import { Global } from '../util/Global';
 import { getStringSize } from '../util/DOMUtils';
 import { reduceCSSCalc } from '../util/ReduceCSSCalc';
 import { svgPropertiesAndEvents } from '../util/svgPropertiesAndEvents';
-import { resolveDefaultProps } from '../util/resolveDefaultProps';
 import { isWellBehavedNumber } from '../util/isWellBehavedNumber';
+import type { RechartsTheme } from '../theme/RechartsTheme';
+import { useRechartsResolvedProps } from '../theme/useRechartsResolvedProps';
 
 const BREAKING_SPACES = /[ \f\n\r\t\v\u2028\u2029]+/;
 
@@ -382,6 +383,21 @@ export const textDefaultProps = {
   y: 0,
 } as const satisfies Partial<Props>;
 
+function getTextComponentTheme(theme: RechartsTheme): Partial<Props> | undefined {
+  return theme.components?.Text;
+}
+
+function getTextTokenTheme(theme: RechartsTheme): Partial<Props> | undefined {
+  return {
+    fill: theme.colors?.text,
+    fontFamily: theme.typography?.fontFamily,
+    fontSize: theme.typography?.fontSize,
+    fontWeight: theme.typography?.fontWeight,
+    letterSpacing: theme.typography?.letterSpacing,
+    lineHeight: theme.typography?.lineHeight,
+  };
+}
+
 export const Text = forwardRef<SVGTextElement, Props>((outsideProps, ref) => {
   const {
     x: propsX,
@@ -393,7 +409,7 @@ export const Text = forwardRef<SVGTextElement, Props>((outsideProps, ref) => {
     textAnchor,
     verticalAnchor,
     ...props
-  } = resolveDefaultProps(outsideProps, textDefaultProps);
+  } = useRechartsResolvedProps(outsideProps, textDefaultProps, getTextComponentTheme, getTextTokenTheme);
   const wordsByLines: ReadonlyArray<Words> = useMemo(() => {
     return getWordsByLines({
       breakAll: props.breakAll,

@@ -738,8 +738,8 @@ const data: DataPoint[] = [
 ];
 // #endregion
 
-const color = 'var(--color-chart-3)';
-const compareColor = 'var(--color-chart-8)';
+const color = '#ffc658';
+const compareColor = '#ff7300';
 
 const { yAxisMin, yAxisMax } = data.reduce(
   (acc, val) => {
@@ -848,15 +848,13 @@ const App: FC = () => {
         type="number"
         name="Portfolio value"
         tickFormatter={formatUsdCompressed}
-        tick={{ fill: 'var(--color-text-3)' }}
         domain={yAxisDomain}
-        stroke="var(--color-text-3)"
       />
       {/** XAxis is required to show the lowest tick on the y-axis */}
       <XAxis dataKey="date" axisLine={false} tickLine={false} tick={false} tickSize={0} tickMargin={0} />
       <Tooltip
         offset={10}
-        cursor={isHovering ? { stroke: 'var(--color-border-2)', strokeWidth: 1 } : false}
+        cursor={isHovering ? { strokeWidth: 1 } : false}
         allowEscapeViewBox={{ x: true, y: true }}
         wrapperStyle={{
           top: '-24px',
@@ -895,7 +893,7 @@ const App: FC = () => {
         dataKey={getDataKeyReinvestClose}
         name="Compare value"
         dot={false}
-        activeDot={{ fill: compareColor, stroke: 'var(--color-surface-base)' }}
+        activeDot={{ fill: compareColor }}
         stroke="url(#compareValueColor)"
         strokeDasharray="0.1 4"
         strokeLinecap="round"
@@ -907,8 +905,7 @@ const App: FC = () => {
         type="linear"
         dataKey={getDataKeyClose}
         name="Portfolio value"
-        stroke="var(--color-chart-1)"
-        activeDot={{ fill: color, stroke: 'var(--color-surface-base)' }}
+        activeDot={{ fill: color }}
         dot={false}
         animationDuration={500}
       />

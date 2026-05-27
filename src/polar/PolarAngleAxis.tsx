@@ -26,7 +26,7 @@ import { selectAngleAxis, selectPolarViewBox } from '../state/selectors/polarAxi
 import { defaultPolarAngleAxisProps } from './defaultPolarAngleAxisProps';
 import { useIsPanorama } from '../context/PanoramaContext';
 import { svgPropertiesNoEvents, svgPropertiesNoEventsFromUnknown } from '../util/svgPropertiesNoEvents';
-import { RequiresDefaultProps, resolveDefaultProps } from '../util/resolveDefaultProps';
+import { RequiresDefaultProps } from '../util/resolveDefaultProps';
 import { ZIndexable, ZIndexLayer } from '../zIndex/ZIndexLayer';
 import { RechartsScale } from '../util/scale/RechartsScale';
 import { CustomScaleDefinition } from '../util/scale/CustomScaleDefinition';
@@ -34,6 +34,8 @@ import { usePolarChartLayout } from '../context/chartLayoutContext';
 import { noop } from '../util/DataUtils';
 import { getAxisTypeBasedOnLayout } from '../util/getAxisTypeBasedOnLayout';
 import { getClassNameFromUnknown } from '../util/getClassNameFromUnknown';
+import type { RechartsTheme } from '../theme/RechartsTheme';
+import { useRechartsResolvedProps } from '../theme/useRechartsResolvedProps';
 
 const eps = 1e-5;
 const COS_45 = Math.cos(degreeToRadian(45));
@@ -263,6 +265,24 @@ type PropsWithDefaults<DataPointType = any, DataValueType = any> = RequiresDefau
   Props<DataPointType, DataValueType>,
   typeof defaultPolarAngleAxisProps
 >;
+
+function getPolarAngleAxisComponentTheme<DataPointType, DataValueType>(
+  theme: RechartsTheme,
+): Partial<Props<DataPointType, DataValueType>> | undefined {
+  return theme.components?.PolarAngleAxis;
+}
+
+function getPolarAngleAxisTokenTheme<DataPointType, DataValueType>(
+  theme: RechartsTheme,
+): Partial<Props<DataPointType, DataValueType>> | undefined {
+  return {
+    stroke: theme.colors?.axis,
+    fontFamily: theme.typography?.fontFamily,
+    fontSize: theme.typography?.fontSize,
+    fontWeight: theme.typography?.fontWeight,
+    letterSpacing: theme.typography?.letterSpacing,
+  };
+}
 
 type InternalPolarAngleAxisProps = Omit<PropsWithDefaults, 'scale'> & {
   cx: number;
@@ -502,9 +522,11 @@ export const PolarAngleAxisWrapper: FunctionComponent<PropsWithDefaults> = (defa
 export function PolarAngleAxis<DataPointType = any, DataValueType = any>(
   outsideProps: Props<DataPointType, DataValueType>,
 ): React.ReactNode {
-  const props: PropsWithDefaults<DataPointType, DataValueType> = resolveDefaultProps(
+  const props: PropsWithDefaults<DataPointType, DataValueType> = useRechartsResolvedProps(
     outsideProps,
     defaultPolarAngleAxisProps,
+    getPolarAngleAxisComponentTheme<DataPointType, DataValueType>,
+    getPolarAngleAxisTokenTheme,
   );
 
   return (

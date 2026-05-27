@@ -67,7 +67,6 @@ import { useIsPanorama } from '../context/PanoramaContext';
 import { selectActiveTooltipDataKey, selectActiveTooltipIndex } from '../state/selectors/tooltipSelectors';
 import { SetLegendPayload } from '../state/SetLegendPayload';
 import { useAnimationId } from '../util/useAnimationId';
-import { resolveDefaultProps } from '../util/resolveDefaultProps';
 import { RegisterGraphicalItemId } from '../context/RegisterGraphicalItemId';
 import { BarSettings } from '../state/types/BarSettings';
 import { SetCartesianGraphicalItem } from '../state/SetGraphicalItem';
@@ -87,6 +86,9 @@ import { AxisId } from '../state/cartesianAxisSlice';
 import { BarStackClipLayer, useStackId } from './BarStack';
 import { GraphicalItemId } from '../state/graphicalItemsSlice';
 import { ChartData } from '../state/chartDataSlice';
+import { getGraphicalItemSeriesStyle, isLegacyTheme } from '../theme/graphicalItemTheme';
+import type { RechartsTheme } from '../theme/RechartsTheme';
+import { useRechartsResolvedProps } from '../theme/useRechartsResolvedProps';
 
 type BarRectangleType = {
   x: number | null;
@@ -414,6 +416,33 @@ export type Props<DataPointType = any, ValueAxisType = any> = Partial<BarEvents>
   Omit<BarSvgProps, keyof BarEvents>;
 
 type InternalProps = BarSvgProps & InternalBarProps;
+
+function getBarComponentTheme(theme: RechartsTheme): Partial<Props> | undefined {
+  return theme.components?.Bar;
+}
+
+function getBarTokenTheme<DataPointType, ValueAxisType>(
+  theme: RechartsTheme,
+  props: Props<DataPointType, ValueAxisType>,
+): Partial<Props<DataPointType, ValueAxisType>> | undefined {
+  const seriesStyle = getGraphicalItemSeriesStyle(theme, props, { usePaletteFallback: !isLegacyTheme(theme) });
+  let fill: string | undefined;
+  if (typeof seriesStyle?.fill === 'string') {
+    fill = seriesStyle.fill;
+  } else if (typeof seriesStyle?.stroke === 'string') {
+    fill = seriesStyle.stroke;
+  }
+
+  return {
+    fill,
+    fillOpacity: seriesStyle?.fillOpacity,
+    opacity: seriesStyle?.opacity,
+    stroke: typeof seriesStyle?.stroke === 'string' ? seriesStyle.stroke : undefined,
+    strokeDasharray: seriesStyle?.strokeDasharray,
+    strokeOpacity: seriesStyle?.strokeOpacity,
+    strokeWidth: seriesStyle?.strokeWidth != null ? seriesStyle.strokeWidth : theme.strokeWidths?.bar,
+  };
+}
 
 const computeLegendPayloadFromBarData = (props: Props): ReadonlyArray<LegendPayload> => {
   const { dataKey, name, fill, legendType, hide } = props;
@@ -1146,7 +1175,7 @@ export function computeBarRectangles({
 }
 
 function BarFn(outsideProps: Props) {
-  const props = resolveDefaultProps(outsideProps, defaultBarProps);
+  const props = useRechartsResolvedProps(outsideProps, defaultBarProps, getBarComponentTheme, getBarTokenTheme);
   // stackId may arrive from props or from BarStack context
   const stackId = useStackId(props.stackId);
   const isPanorama = useIsPanorama();

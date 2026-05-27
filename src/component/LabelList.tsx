@@ -10,6 +10,8 @@ import { svgPropertiesAndEvents } from '../util/svgPropertiesAndEvents';
 import { ZIndexable, ZIndexLayer } from '../zIndex/ZIndexLayer';
 import { DefaultZIndexes } from '../zIndex/DefaultZIndexes';
 import { isRenderableText, RenderableText } from './Text';
+import type { RechartsTheme } from '../theme/RechartsTheme';
+import { useRechartsResolvedProps } from '../theme/useRechartsResolvedProps';
 
 export interface LabelListEntry<DataPointItem = any> {
   /**
@@ -130,6 +132,22 @@ interface LabelListProps extends ZIndexable {
 type SvgTextProps = PropsWithoutRef<SVGProps<SVGTextElement>>;
 export type Props = Omit<SvgTextProps, 'children'> & LabelListProps;
 
+const labelListDefaultProps = {} as const satisfies Partial<Props>;
+
+function getLabelListComponentTheme(theme: RechartsTheme): Partial<Props> | undefined {
+  return theme.components?.LabelList;
+}
+
+function getLabelListTokenTheme(theme: RechartsTheme): Partial<Props> | undefined {
+  return {
+    fill: theme.colors?.text,
+    fontFamily: theme.typography?.fontFamily,
+    fontSize: theme.typography?.fontSize,
+    fontWeight: theme.typography?.fontWeight,
+    letterSpacing: theme.typography?.letterSpacing,
+  };
+}
+
 /**
  * This is the type accepted for the `label` prop on various graphical items.
  * It accepts:
@@ -175,7 +193,13 @@ function usePolarLabelListContext(): ReadonlyArray<PolarLabelListEntry> | undefi
 /**
  * @consumes LabelListContext
  */
-export function LabelList({ valueAccessor = defaultAccessor, ...restProps }: Props) {
+export function LabelList(outsideProps: Props) {
+  const { valueAccessor = defaultAccessor, ...restProps } = useRechartsResolvedProps(
+    outsideProps,
+    labelListDefaultProps,
+    getLabelListComponentTheme,
+    getLabelListTokenTheme,
+  );
   const { dataKey, clockWise, id, textBreakAll, zIndex, ...others } = restProps;
   const cartesianData = useCartesianLabelListContext();
   const polarData = usePolarLabelListContext();
