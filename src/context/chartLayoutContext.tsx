@@ -146,6 +146,8 @@ export const selectChartLayout = (state: RechartsRootState): LayoutType => state
  * @deprecated this hook mixes cartesian and polar layouts together; prefer to use {@link useCartesianChartLayout} and {@link usePolarChartLayout} instead, which give you better type safety.
  *
  * @returns {LayoutType | undefined} The chart layout, or `undefined` if not in a chart context.
+ *
+ * @since 3.9
  */
 export const useChartLayout = (): LayoutType | undefined => useAppSelector(selectChartLayout);
 
