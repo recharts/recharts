@@ -8,13 +8,6 @@ import { useAnimationStartSnapshot } from './useAnimationStartSnapshot';
 import { CartesianLayout, PolarLayout } from '../util/types';
 
 /**
- * Hook that tracks whether an animation is in progress and wraps
- * optional user-provided onAnimationStart/onAnimationEnd callbacks.
- *
- * Used by all animated chart components (Bar, Scatter, Funnel, Pie,
- * Radar, RadialBar, Area, Line) to control label visibility during animation.
- */
-/**
  * Hook that tracks animation state and provides callbacks for animation start/end.
  *
  * @param onAnimationStart optional callback to call when animation starts
