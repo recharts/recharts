@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { test, expect } from '@playwright/experimental-ct-react';
 import { Surface, Text } from '../../src';
-import { Crosshair } from '../../storybook/storybook-addon-recharts/crosshairs/Crosshair';
+import { Crosshair } from './Crosshair';
 
 test('Text with default props', async ({ mount }) => {
   const component = await mount(
