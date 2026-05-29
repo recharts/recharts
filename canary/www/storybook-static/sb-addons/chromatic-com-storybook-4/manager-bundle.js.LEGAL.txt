@@ -1,14 +1,5 @@
 Bundled license information:
 
-filesize/dist/filesize.esm.js:
-  /**
-   * filesize
-   *
-   * @copyright 2024 Jason Mulligan <jason.mulligan@avoidwork.com>
-   * @license BSD-3-Clause
-   * @version 10.1.1
-   */
-
 @chromatic-com/storybook/dist/manager.mjs:
   /*! Bundled license information:
   
