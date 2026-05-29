@@ -12,8 +12,6 @@ module.exports = {
     '@storybook/addon-a11y',
     '@storybook/addon-docs',
     '@chromatic-com/storybook',
-    './storybook-addon-recharts',
-    './storybook-addon-stackblitz',
     '@storybook/addon-vitest',
   ],
   framework: {

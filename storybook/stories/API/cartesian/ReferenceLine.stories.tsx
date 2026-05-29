@@ -3,7 +3,6 @@ import { Args } from '@storybook/react-vite';
 import { ComposedChart, Line, ReferenceLine, CartesianGrid, XAxis, YAxis, ResponsiveContainer } from '../../../../src';
 import { pageData } from '../../data';
 import { getStoryArgsFromArgsTypesObject } from '../props/utils';
-import { RechartsHookInspector } from '../../../storybook-addon-recharts';
 import { ReferenceLineArgs } from '../arg-types/ReferenceLineArgs';
 
 export default {
@@ -29,7 +28,6 @@ export const API = {
           <YAxis type="number" />
           <ReferenceLine {...args} />
           <Line dataKey="uv" />
-          <RechartsHookInspector />
         </ComposedChart>
       </ResponsiveContainer>
     );

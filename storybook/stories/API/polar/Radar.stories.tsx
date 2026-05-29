@@ -3,7 +3,6 @@ import { Args } from '@storybook/react-vite';
 import { Radar, RadarChart, PolarGrid, PolarAngleAxis, PolarRadiusAxis, ResponsiveContainer } from '../../../../src';
 import { subjectData } from '../../data';
 import { getStoryArgsFromArgsTypesObject } from '../props/utils';
-import { RechartsHookInspector } from '../../../storybook-addon-recharts';
 import { RadarArgs } from '../arg-types/RadarArgs';
 
 export default {
@@ -31,7 +30,6 @@ export const General = {
           <PolarAngleAxis dataKey="subject" />
           <PolarRadiusAxis />
           <Radar {...args} />
-          <RechartsHookInspector />
         </RadarChart>
       </ResponsiveContainer>
     );

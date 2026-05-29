@@ -1,6 +1,5 @@
 import React from 'react';
 import { Surface, Text } from '../../../../src';
-import { RechartsHookInspector } from '../../../storybook-addon-recharts';
 import { TextArgs } from '../arg-types/TextArgs';
 
 export default {
@@ -13,7 +12,6 @@ export const API = {
     return (
       <Surface width={500} height={300}>
         <Text {...args}>{args.content}</Text>
-        <RechartsHookInspector />
       </Surface>
     );
   },

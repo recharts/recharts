@@ -3,7 +3,6 @@ import { Args } from '@storybook/react-vite';
 import { Area, AreaChart, Legend, Line, LineChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from '../../../../src';
 import { pageData, rechartsPackageDownloads } from '../../data';
 import { getStoryArgsFromArgsTypesObject } from '../props/utils';
-import { RechartsHookInspector } from '../../../storybook-addon-recharts';
 import { LegendArgs } from '../arg-types/LegendArgs';
 
 export default {
@@ -31,7 +30,6 @@ export const API = {
           <Legend {...args} />
           <Line dataKey="uv" stroke="#8884d8" name="Series 1 (UV)" />
           <Line dataKey="pv" stroke="#82ca9d" name="Series 2 (PV)" />
-          <RechartsHookInspector />
         </LineChart>
       </ResponsiveContainer>
     );
@@ -92,7 +90,6 @@ export const LegendPortal = {
                 }}
                 labelFormatter={value => new Date(value).toLocaleDateString()}
               />
-              <RechartsHookInspector />
             </AreaChart>
           </ResponsiveContainer>
         </div>

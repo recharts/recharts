@@ -1,7 +1,6 @@
 import React from 'react';
 import { Args } from '@storybook/react-vite';
 import { ResponsiveContainer, SunburstChart, SunburstData, Tooltip } from '../../../../src';
-import { RechartsHookInspector } from '../../../storybook-addon-recharts';
 import { SunburstChartArgs } from '../arg-types/SunburstChartArgs';
 
 export default {
@@ -95,7 +94,6 @@ export const API = {
       <ResponsiveContainer width="100%" height={450}>
         <SunburstChart {...args} data={args.data}>
           <Tooltip />
-          <RechartsHookInspector />
         </SunburstChart>
       </ResponsiveContainer>
     );

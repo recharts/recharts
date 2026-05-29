@@ -9,7 +9,6 @@ import {
   ResponsiveContainer,
 } from '../../../../../src';
 import { pageData } from '../../../data';
-import { RechartsHookInspector } from '../../../../storybook-addon-recharts';
 
 export default {
   title: 'Examples/cartesian/ReferenceLine/ReferenceLineSegment',
@@ -38,7 +37,6 @@ export const Segment = {
               { x: 'Page E', y: 1500 },
             ]}
           />
-          <RechartsHookInspector />
         </ComposedChart>
       </ResponsiveContainer>
     );

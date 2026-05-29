@@ -14,7 +14,6 @@ import {
   YAxis,
 } from '../../../../../src';
 import { pageData } from '../../../data';
-import { RechartsHookInspector } from '../../../../storybook-addon-recharts';
 
 export default {
   component: Brush,
@@ -40,7 +39,6 @@ export const ControlledBrush = {
               }}
               alwaysShowText
             />
-            <RechartsHookInspector />
           </ComposedChart>
         </ResponsiveContainer>
         <input
@@ -85,7 +83,6 @@ export const PanoramicBrush = {
           </LineChart>
         </Brush>
         <Tooltip />
-        <RechartsHookInspector />
       </ComposedChart>
     );
   },
@@ -103,7 +100,6 @@ export const NoChartBrush = {
             <Line type="monotone" dataKey="uv" stroke="#82ca9d" />
           </LineChart>
         </Brush>
-        <RechartsHookInspector />
       </ComposedChart>
     );
   },

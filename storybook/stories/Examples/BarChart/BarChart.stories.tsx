@@ -18,7 +18,6 @@ import {
   YAxis,
 } from '../../../../src';
 import { getStoryArgsFromArgsTypesObject } from '../../API/props/utils';
-import { RechartsHookInspector } from '../../../storybook-addon-recharts';
 import { BarChartArgs } from '../../API/arg-types/BarChartArgs';
 import { assertNotNull } from '../../../../test/helper/assertNotNull';
 
@@ -83,7 +82,6 @@ export const StackedAndDynamic = {
             activeBar={{ fill: 'silver' }}
           />
           <Tooltip shared={false} defaultIndex={1} />
-          <RechartsHookInspector />
         </BarChart>
       </ResponsiveContainer>
     );
@@ -118,7 +116,6 @@ export const StackedWithErrorBar = {
           <Bar dataKey="uv" stackId="a" fill="#82ca9d">
             <ErrorBar dataKey="pvError" width={5} stroke="red" direction="x" />
           </Bar>
-          <RechartsHookInspector />
         </BarChart>
       </ResponsiveContainer>
     );
@@ -194,7 +191,6 @@ export const XAxisTickMarginWithBrushDy = {
           <Brush dataKey="name" height={30} dy={30} stroke="#8884d8" />
           <Bar dataKey="pv" fill="#8884d8" />
           <Bar dataKey="uv" fill="#82ca9d" />
-          <RechartsHookInspector />
         </BarChart>
       </ResponsiveContainer>
     );
@@ -226,7 +222,6 @@ export const StackedWithBrush = {
           <Bar dataKey="pv" stackId="a" fill="#8884d8" activeBar={{ fill: 'gold' }} />
           <Bar dataKey="uv" stackId="a" fill="#82ca9d" activeBar={{ fill: 'silver' }} />
           <Brush dataKey="name" height={30} stroke="#8884d8" />
-          <RechartsHookInspector />
         </BarChart>
       </ResponsiveContainer>
     );
@@ -263,7 +258,6 @@ export const HasLabelBasedOnSeparateDataKey = {
           <Tooltip />
           <Bar dataKey="pv" fill="#8884d8" label={{ dataKey: 'label', position: 'top', fill: '#111' }} />
           <Bar dataKey="uv" fill="#82ca9d" />
-          <RechartsHookInspector />
         </BarChart>
       </ResponsiveContainer>
     );
@@ -293,7 +287,6 @@ export const NoPadding = {
           <CartesianGrid strokeDasharray="3 3" />
           <Bar dataKey="pv" fill="#8884d8" background={{ fill: '#eee' }} />
           <Tooltip />
-          <RechartsHookInspector />
         </BarChart>
       </ResponsiveContainer>
     );
@@ -348,7 +341,6 @@ export const WithMinPointSize = {
           <Bar dataKey="pv" fill="purple" minPointSize={value => (value === 0 ? 0 : 2)} stackId="a" />
           <Bar dataKey="uv" fill="green" minPointSize={value => (value === 0 ? 0 : 2)} stackId="a" />
           <Bar dataKey="uv" fill="blue" minPointSize={value => (value === 0 ? 0 : 2)} />
-          <RechartsHookInspector />
         </BarChart>
       </ResponsiveContainer>
     );
@@ -377,7 +369,6 @@ export const OneDataPointPercentSize = {
           <CartesianGrid strokeDasharray="3 3" />
           <Bar dataKey={v => v[1]} />
           <Tooltip />
-          <RechartsHookInspector />
         </BarChart>
       </ResponsiveContainer>
     );
@@ -408,7 +399,6 @@ export const RangedBarChart = {
           <CartesianGrid strokeDasharray="3 3" />
           <Tooltip />
           <Bar dataKey="temperature" fill="violet" stroke="indigo" />
-          <RechartsHookInspector />
         </BarChart>
       </ResponsiveContainer>
     );
@@ -444,7 +434,6 @@ export const CustomCursorBarChart = {
           <CartesianGrid strokeDasharray="3 3" />
           <Bar dataKey="uv" fill="violet" stroke="indigo" />
           <Tooltip cursor={<MyCustomCursor />} />
-          <RechartsHookInspector />
         </BarChart>
       </ResponsiveContainer>
     );
@@ -529,7 +518,6 @@ export const ChangingDataKey = {
           <YAxis dataKey={useData2 ? dataKey2 : dataKey1} />
           <Tooltip />
           <Legend />
-          <RechartsHookInspector />
           <Bar
             name="Animated Bar"
             hide={!visible}
@@ -596,7 +584,6 @@ export const ChangingDataKeyAndStacked = {
           <YAxis dataKey="uv" />
           <Tooltip />
           <Legend />
-          <RechartsHookInspector />
           <Bar
             name="Animated Bar 1"
             hide={!visible}
@@ -661,7 +648,6 @@ export const ChangingData = {
         <BarChart {...args} data={data}>
           <YAxis hide domain={[0, 100]} />
           <Bar dataKey="number" fill="chocolate" background={{ fill: 'bisque' }} />
-          <RechartsHookInspector />
         </BarChart>
 
         <button type="button" onClick={changeSynchronously}>

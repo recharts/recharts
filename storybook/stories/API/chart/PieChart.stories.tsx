@@ -2,7 +2,6 @@ import React, { useState } from 'react';
 import { Label, Legend, Pie, PieChart, ResponsiveContainer, Sector, Tooltip } from '../../../../src';
 import { pageDataWithFillColor } from '../../data';
 import { getStoryArgsFromArgsTypesObject } from '../props/utils';
-import { RechartsHookInspector } from '../../../storybook-addon-recharts';
 import { PieChartArgs } from '../arg-types/PieChartArgs';
 import { assertNotNull } from '../../../../test/helper/assertNotNull';
 
@@ -26,7 +25,6 @@ export const API = {
             }}
           />
           <Tooltip defaultIndex={3} />
-          <RechartsHookInspector />
         </PieChart>
       </ResponsiveContainer>
     );
@@ -57,7 +55,6 @@ export const Donut = {
           </Label>
           <Legend align="right" verticalAlign="middle" layout="vertical" />
         </Pie>
-        <RechartsHookInspector />
       </PieChart>
     );
   },
@@ -131,7 +128,6 @@ export const ChangingDataKey = {
         <PieChart {...args} data={useData2 ? data2 : data1}>
           <Tooltip />
           <Legend />
-          <RechartsHookInspector />
           <Pie
             data={useData2 ? data2 : data1}
             name="Animated line"

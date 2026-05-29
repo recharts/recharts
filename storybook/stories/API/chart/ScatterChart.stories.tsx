@@ -3,7 +3,6 @@ import { Args } from '@storybook/react-vite';
 import { coordinateData } from '../../data';
 import { ResponsiveContainer, Scatter, ScatterChart, XAxis, YAxis } from '../../../../src';
 import { getStoryArgsFromArgsTypesObject } from '../props/utils';
-import { RechartsHookInspector } from '../../../storybook-addon-recharts';
 import { ScatterChartArgs } from '../arg-types/ScatterChartArgs';
 
 export default {
@@ -21,7 +20,6 @@ export const API = {
           <XAxis dataKey="x" />
           <YAxis dataKey="y" />
           <Scatter data={data} />
-          <RechartsHookInspector />
         </ScatterChart>
       </ResponsiveContainer>
     );

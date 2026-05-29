@@ -19,7 +19,6 @@ import {
 } from '../../../../src';
 import { pageData, subjectData } from '../../data';
 import { getStoryArgsFromArgsTypesObject } from '../props/utils';
-import { RechartsHookInspector } from '../../../storybook-addon-recharts';
 import { LabelListArgs } from '../arg-types/LabelListArgs';
 
 export default {
@@ -49,7 +48,6 @@ export const API = {
           <Line dataKey="uv">
             <LabelList {...args} />
           </Line>
-          <RechartsHookInspector />
         </LineChart>
       </ResponsiveContainer>
     );
@@ -89,7 +87,6 @@ export const OnBarChart = {
           <Bar dataKey="uv" fill="#8884d8">
             <LabelList {...args} />
           </Bar>
-          <RechartsHookInspector />
         </BarChart>
       </ResponsiveContainer>
     );
@@ -113,7 +110,6 @@ export const OnRadarChart = {
         <Radar name="A" dataKey="A" stroke="#8884d8" fill="#8884d8" fillOpacity={0.6}>
           <LabelList {...args} />
         </Radar>
-        <RechartsHookInspector />
       </RadarChart>
     );
   },
@@ -165,7 +161,6 @@ export const WithCustomContent = {
           <Bar dataKey="pv" fill="#82ca9d">
             <LabelList {...args} content={renderCustomLabel} />
           </Bar>
-          <RechartsHookInspector />
         </BarChart>
       </ResponsiveContainer>
     );
@@ -199,7 +194,6 @@ export const WithFormatter = {
           <Bar dataKey="uv" fill="#8884d8">
             <LabelList {...args} formatter={value => (value != null ? `${value} visitors` : '')} />
           </Bar>
-          <RechartsHookInspector />
         </BarChart>
       </ResponsiveContainer>
     );

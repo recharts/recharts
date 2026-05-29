@@ -12,7 +12,6 @@ import {
   XAxis,
   YAxis,
 } from '../../../../src';
-import { RechartsHookInspector } from '../../../storybook-addon-recharts';
 import { pageData } from '../../data';
 import { isWellBehavedNumber } from '../../../../src/util/isWellBehavedNumber';
 import { LineChartArgs } from '../../API/arg-types/LineChartArgs';
@@ -116,7 +115,6 @@ export const CustomLineShapeChart = {
               />
             )}
           />
-          <RechartsHookInspector />
         </LineChart>
       </ResponsiveContainer>
     );
