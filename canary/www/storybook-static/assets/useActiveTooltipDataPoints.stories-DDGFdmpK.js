@@ -1,0 +1,17 @@
+import{e as o}from"./iframe-Dbih6tM_.js";import{P as r}from"./_data-CE1j0ret.js";import{g as d}from"./utils-ePvtT4un.js";import{T as s}from"./TooltipArgs-B4vqbkYQ.js";import{T as n}from"./Tooltip-91lkN_Ou.js";import{g as l}from"./zIndexSlice-F7HsGAhb.js";import{C as c}from"./ComposedChart-hkcoJXW_.js";import{p as g}from"./Page-DPte-9pC.js";import{A as e}from"./Area-BtAI4Kse.js";import{L as A}from"./Line-DKLERS8c.js";import{X as v}from"./XAxis-UKVsyr7-.js";import{Y as u}from"./YAxis-x6PKBVdt.js";import{L as f}from"./Legend-cJzfLKeh.js";import"./preload-helper-Dp1pzeXC.js";import"./index-C3fYT42t.js";import"./index-VrctuRm7.js";import"./immer-u9L_0Kl5.js";import"./get-DVIR8H8G.js";import"./resolveDefaultProps-C6XhIduD.js";import"./useAnimationId-CWLhhp_H.js";import"./useElementOffset-BXd0grxf.js";import"./uniqBy-ByRFrmC2.js";import"./iteratee-DEDrKpvz.js";import"./RechartsWrapper-CzkBSRjy.js";import"./index-yjWx6Bgh.js";import"./renderedTicksSlice-CY1pIMUb.js";import"./axisSelectors-DGtb_paL.js";import"./d3-scale-QFZ3DYXF.js";import"./isWellBehavedNumber-C76PNx6x.js";import"./PolarUtils-CTnnDHZv.js";import"./types-Bhc7gOzP.js";import"./Curve-CbpaSJeH.js";import"./step-EAtlMAAS.js";import"./path-DyVhHtw_.js";import"./Cross-BehVYR4O.js";import"./Rectangle-DeVdQqm5.js";import"./Sector-C4ZURWaA.js";import"./ZIndexLayer-DaMCCGdS.js";import"./CartesianChart-sZ1KYKyT.js";import"./chartDataContext-CumcEPMe.js";import"./CategoricalChart-BUbHs2Eq.js";import"./Layer-B42S8g5T.js";import"./ReactUtils-Bj9mmMxB.js";import"./Label-CzYO866A.js";import"./Text-BD0wWctz.js";import"./DOMUtils-DtcMNyN4.js";import"./ActivePoints-DzbjRTsh.js";import"./Dot-BKoIVpn9.js";import"./RegisterGraphicalItemId-CoMv7TZ7.js";import"./GraphicalItemClipPath-BqpiOJ0K.js";import"./SetGraphicalItem-C_rRFyeV.js";import"./getRadiusAndStrokeWidthFromDot-DA8FMUL1.js";import"./graphicalItemSelectors-BbOSuOCl.js";import"./ErrorBarContext-CaITZn-H.js";import"./ActiveShapeUtils-B7EaMEP1.js";import"./CartesianAxis-sMFUgupR.js";import"./getClassNameFromUnknown-Dbzh2npV.js";import"./Symbols-BGSIVaqN.js";import"./symbol-C1rCDija.js";const xt={argTypes:s,title:"API/hooks/useActiveTooltipDataPoints",component:n},y=r.map(t=>({name:t.name,uv:t.uv})),T=r.map(t=>({name:t.name,pv:t.pv})),C=r.map(t=>({name:t.name,amt:t.amt})),a={name:"useActiveTooltipDataPoints",render:t=>o.createElement(l,{width:"100%",height:400},o.createElement(c,{data:g},o.createElement(e,{data:T,dataKey:"pv"}),o.createElement(e,{data:y,dataKey:"uv"}),o.createElement(A,{data:C,dataKey:"amt"}),o.createElement(v,{dataKey:"name",allowDuplicatedCategory:!1}),o.createElement(u,null),o.createElement(f,null),o.createElement(n,{...t}))),args:d(s)};var m,i,p;a.parameters={...a.parameters,docs:{...(m=a.parameters)==null?void 0:m.docs,source:{originalSource:`{
+  name: 'useActiveTooltipDataPoints',
+  render: (args: Args) => {
+    return <ResponsiveContainer width="100%" height={400}>
+        <ComposedChart data={pageData}>
+          <Area data={dataPv} dataKey="pv" />
+          <Area data={dataUv} dataKey="uv" />
+          <Line data={dataAmt} dataKey="amt" />
+          <XAxis dataKey="name" allowDuplicatedCategory={false} />
+          <YAxis />
+          <Legend />
+          <Tooltip {...args} />
+        </ComposedChart>
+      </ResponsiveContainer>;
+  },
+  args: getStoryArgsFromArgsTypesObject(TooltipArgs)
+}`,...(p=(i=a.parameters)==null?void 0:i.docs)==null?void 0:p.source}}};const Lt=["UseActiveTooltipDataPoints"];export{a as UseActiveTooltipDataPoints,Lt as __namedExportsOrder,xt as default};
