@@ -5,6 +5,7 @@
     "esModuleInterop": true,
     "noEmit": true,
     "target": "es2023",
+    "types": ["node"],
     /* Disable noUncheckedIndexedAccess in storybook - fixing all array access would be a large undertaking */
     "noUncheckedIndexedAccess": false
   },
