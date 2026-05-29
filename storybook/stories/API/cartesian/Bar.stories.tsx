@@ -15,7 +15,6 @@ import {
 } from '../../../../src';
 import { pageData } from '../../data';
 import { getStoryArgsFromArgsTypesObject } from '../props/utils';
-import { RechartsHookInspector } from '../../../storybook-addon-recharts';
 import { BarArgs } from '../arg-types/BarArgs';
 
 const [surfaceWidth, surfaceHeight] = [600, 300];
@@ -48,7 +47,6 @@ export const API = {
           {/* The target component */}
           <Bar dataKey="uv" {...args} />
           <Tooltip />
-          <RechartsHookInspector />
         </ComposedChart>
       </ResponsiveContainer>
     );
@@ -167,7 +165,6 @@ export const WithMinHeight = {
             <LabelList dataKey="name" content={renderCustomizedLabel} />
           </Bar>
           <Bar dataKey="uv" fill="#82ca9d" minPointSize={10} />
-          <RechartsHookInspector />
         </BarChart>
       </ResponsiveContainer>
     );

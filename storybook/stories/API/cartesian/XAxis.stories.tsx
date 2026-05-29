@@ -13,7 +13,6 @@ import {
 } from '../../../../src';
 import { coordinateWithValueData } from '../../data';
 import { getStoryArgsFromArgsTypesObject } from '../props/utils';
-import { RechartsHookInspector } from '../../../storybook-addon-recharts';
 import { XAxisArgs } from '../arg-types/XAxisArgs';
 
 export default {
@@ -32,7 +31,6 @@ export const API = {
           <Legend />
           <Line dataKey="y" />
           <Tooltip />
-          <RechartsHookInspector />
         </LineChart>
       </ResponsiveContainer>
     );
@@ -108,7 +106,6 @@ export const CustomTickWithPadding = {
           <Line type="monotone" dataKey="value" stroke="#8884d8" />
           <Tooltip />
           <Legend />
-          <RechartsHookInspector />
         </LineChart>
       </ResponsiveContainer>
     );
@@ -166,7 +163,6 @@ export const CustomTickFunction = {
           <Line type="monotone" dataKey="profit" stroke="#82ca9d" name="Profit" />
           <Tooltip />
           <Legend />
-          <RechartsHookInspector />
         </LineChart>
       </ResponsiveContainer>
     );

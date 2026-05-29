@@ -15,7 +15,6 @@ import {
   YAxis,
   useActiveTooltipLabel,
 } from '../../../../src';
-import { RechartsHookInspector } from '../../../storybook-addon-recharts';
 
 export default {
   component: LineChart,
@@ -183,7 +182,6 @@ export const DualLineChart = {
           {/* Draw extra active dot for Series 2 */}
           <JointActiveDot dataKey="y2" fill="blue" />
           <Tooltip />
-          <RechartsHookInspector />
         </LineChart>
       </ResponsiveContainer>
     );

@@ -3,7 +3,6 @@ import { Args, StoryObj } from '@storybook/react-vite';
 import { Funnel, FunnelChart, LabelList, Legend, ResponsiveContainer, Tooltip } from '../../../../src';
 import { getStoryArgsFromArgsTypesObject } from '../props/utils';
 import { pageDataWithFillColor } from '../../data';
-import { RechartsHookInspector } from '../../../storybook-addon-recharts';
 import { FunnelChartArgs } from '../arg-types/FunnelChartArgs';
 
 export default {
@@ -29,7 +28,6 @@ export const API: StoryObj = {
             <LabelList dataKey="name" fill="#000" position="right" stroke="none" />
           </Funnel>
           <Tooltip />
-          <RechartsHookInspector />
         </FunnelChart>
       </ResponsiveContainer>
     );
@@ -118,7 +116,6 @@ export const WithChangingDataKey: StoryObj = {
             label={{ dataKey: 'name', stroke: 'none', fill: 'black', strokeDasharray: '0 0' }}
           />
           <Tooltip />
-          <RechartsHookInspector />
         </FunnelChart>
       </>
     );

@@ -17,7 +17,6 @@ import {
   XAxis,
   YAxis,
 } from '../../../../src';
-import { RechartsHookInspector } from '../../../storybook-addon-recharts';
 import { getStoryArgsFromArgsTypesObject } from '../../API/props/utils';
 import { LineChartArgs } from '../../API/arg-types/LineChartArgs';
 import { assertNotNull } from '../../../../test/helper/assertNotNull';
@@ -42,7 +41,6 @@ export const Simple = {
           <Tooltip cursor={{ stroke: 'gold', strokeWidth: 2 }} defaultIndex={3} />
           <Line type="monotone" dataKey="pv" stroke="#8884d8" activeDot={{ r: 8 }} />
           <Line type="monotone" dataKey="uv" stroke="#82ca9d" />
-          <RechartsHookInspector />
         </LineChart>
       </ResponsiveContainer>
     );
@@ -82,7 +80,6 @@ export const Dashed = {
           <Tooltip defaultIndex={3} active />
           <Line type="monotone" dataKey="pv" stroke="#8884d8" strokeDasharray="5 5" />
           <Line type="monotone" dataKey="uv" stroke="#82ca9d" strokeDasharray="3 4 5 2" />
-          <RechartsHookInspector />
         </LineChart>
       </ResponsiveContainer>
     );
@@ -120,7 +117,6 @@ export const LogarithmicYAxis = {
             activeDot={{ r: 8 }}
             unit=" KFLOPS"
           />
-          <RechartsHookInspector />
         </LineChart>
       </ResponsiveContainer>
     );
@@ -150,7 +146,6 @@ export const Vertical = {
           <Tooltip defaultIndex={4} active />
           <Line dataKey="pv" stroke="#8884d8" />
           <Line dataKey="uv" stroke="#82ca9d" />
-          <RechartsHookInspector />
         </LineChart>
       </ResponsiveContainer>
     );
@@ -182,7 +177,6 @@ export const BiAxial = {
           <Line yAxisId="left" type="monotone" dataKey="pv" stroke="#8884d8" activeDot={{ r: 8 }} />
           <Line yAxisId="right" type="monotone" dataKey="uv" stroke="#82ca9d" />
           <Tooltip />
-          <RechartsHookInspector />
         </LineChart>
       </ResponsiveContainer>
     );
@@ -211,7 +205,6 @@ export const VerticalWithSpecifiedDomain = {
           <Line dataKey="pv" stroke="#8884d8" />
           <Line dataKey="uv" stroke="#82ca9d" />
           <Tooltip />
-          <RechartsHookInspector />
         </LineChart>
       </ResponsiveContainer>
     );
@@ -240,7 +233,6 @@ export const ConnectNulls = {
             <YAxis />
             <Line type="monotone" dataKey="uv" stroke="#8884d8" fill="#8884d8" />
             <Tooltip />
-            <RechartsHookInspector />
           </LineChart>
         </ResponsiveContainer>
 
@@ -288,7 +280,6 @@ export const WithXAxisPadding = {
           <Line type="monotone" dataKey="pv" stroke="#8884d8" activeDot={{ r: 8 }} />
           <Line type="monotone" dataKey="uv" stroke="#82ca9d" />
           <Tooltip />
-          <RechartsHookInspector />
         </LineChart>
       </ResponsiveContainer>
     );
@@ -313,7 +304,6 @@ export const WithReferenceLines = {
           <Line type="monotone" dataKey="pv" stroke="#8884d8" />
           <Line type="monotone" dataKey="uv" stroke="#82ca9d" />
           <Tooltip />
-          <RechartsHookInspector />
         </LineChart>
       </ResponsiveContainer>
     );
@@ -387,7 +377,6 @@ export const WithCustomizedDot = {
           <Line type="monotone" dataKey="pv" stroke="#8884d8" dot={<CustomizedDot />} />
           <Line type="monotone" dataKey="uv" stroke="#82ca9d" />
           <Tooltip />
-          <RechartsHookInspector />
         </LineChart>
       </ResponsiveContainer>
     );
@@ -428,7 +417,6 @@ export const ClipDot: StoryObj = {
           <XAxis dataKey="name" allowDataOverflow />
           <YAxis allowDataOverflow />
           <Tooltip />
-          <RechartsHookInspector />
         </LineChart>
       </ResponsiveContainer>
     );
@@ -478,7 +466,6 @@ export const WithCustomizedLabel = {
           <Line type="monotone" dataKey="pv" stroke="#8884d8" label={<CustomizedLabel />} />
           <Line type="monotone" dataKey="uv" stroke="#82ca9d" />
           <Tooltip />
-          <RechartsHookInspector />
         </LineChart>
       </ResponsiveContainer>
     );
@@ -618,7 +605,6 @@ export const HighlightAndZoom = {
               <ReferenceArea yAxisId="1" x1={refAreaLeft} x2={refAreaRight} strokeOpacity={0.3} />
             ) : null}
             <Tooltip />
-            <RechartsHookInspector />
           </LineChart>
         </ResponsiveContainer>
       </div>
@@ -645,7 +631,6 @@ export const LineChartHasMultiSeries = {
           <Line dataKey="pv" />
           <Line dataKey="amt" />
           <Tooltip />
-          <RechartsHookInspector />
         </LineChart>
       </ResponsiveContainer>
     );
@@ -669,7 +654,6 @@ export const LineChartAxisInterval = {
           <Legend />
           <Line type="monotone" dataKey="pv" stroke="#8884d8" activeDot={{ r: 8 }} />
           <Line type="monotone" dataKey="uv" stroke="#82ca9d" />
-          <RechartsHookInspector />
         </LineChart>
 
         <LineChart width={200} height={100} data={pageData}>
@@ -761,7 +745,6 @@ export const NegativeValuesWithReferenceLines = {
           {minX < 0 && <ReferenceLine x={0} stroke="gray" strokeWidth={1.5} strokeOpacity={0.65} />}
 
           <Line strokeWidth={2} data={data} dot={false} type="monotone" dataKey="y" stroke="black" tooltipType="none" />
-          <RechartsHookInspector />
         </LineChart>
       </ResponsiveContainer>
     );
@@ -893,7 +876,6 @@ export const ToggleChildrenComponentsExceptCartesianGrid: StoryObj = {
                 dot={false}
               />
               <Tooltip />
-              <RechartsHookInspector />
             </>
           )}
         </LineChart>
@@ -924,7 +906,6 @@ export const WithBrush: StoryObj = {
           <Line type="monotone" dataKey="pv" stroke="#8884d8" activeDot={{ r: 8 }} />
           <Line type="monotone" dataKey="uv" stroke="#82ca9d" />
           <Tooltip />
-          <RechartsHookInspector />
         </LineChart>
       </ResponsiveContainer>
     );
@@ -961,7 +942,6 @@ export const HideOnLegendClick: StoryObj = {
           <Line hide={activeSeries.includes('uv')} type="monotone" dataKey="uv" stroke="#8884d8" fill="#8884d8" />
           <Line hide={activeSeries.includes('pv')} type="monotone" dataKey="pv" stroke="#987" fill="#8884d8" />
           <Tooltip />
-          <RechartsHookInspector />
         </LineChart>
       </ResponsiveContainer>
     );
@@ -992,7 +972,6 @@ export const LineTrailingIcon: StoryObj = {
             dot={{ stroke: 'red', strokeWidth: 1, r: 4 }}
           />
           <Tooltip />
-          <RechartsHookInspector />
         </LineChart>
       </ResponsiveContainer>
     );
@@ -1018,7 +997,6 @@ export const ReversedXAxis = {
           <Line type="monotone" dataKey="pv" stroke="#8884d8" activeDot={{ r: 8 }} />
           <Line type="monotone" dataKey="uv" stroke="#82ca9d" />
           <Tooltip />
-          <RechartsHookInspector />
         </LineChart>
       </ResponsiveContainer>
     );
@@ -1100,7 +1078,6 @@ export const ChangingDataKey = {
           <YAxis dataKey={useData2 ? dataKey2 : dataKey1} />
           <Tooltip />
           <Legend />
-          <RechartsHookInspector />
           <Line
             name="Animated line"
             hide={!visible}
@@ -1147,7 +1124,6 @@ export const UndefinedEventHandlers: StoryObj = {
           />
           <Line type="monotone" dataKey="uv" stroke="#82ca9d" />
           <Tooltip />
-          <RechartsHookInspector />
         </LineChart>
       </ResponsiveContainer>
     );
@@ -1195,7 +1171,6 @@ export const ActiveDotExcludedFromDomain = {
           <YAxis type="number" domain={[80, 200]} allowDataOverflow={allowDataOverflow} />
           <Tooltip cursor={{ stroke: '#999', strokeWidth: 1 }} />
           <Line type="monotone" dataKey="pv" stroke="#8884d8" isAnimationActive={false} />
-          <RechartsHookInspector />
         </LineChart>
       </ResponsiveContainer>
     );

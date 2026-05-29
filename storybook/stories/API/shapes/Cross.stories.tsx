@@ -1,7 +1,6 @@
 import React from 'react';
 import { Args } from '@storybook/react-vite';
 import { Cross, ComposedChart, ResponsiveContainer } from '../../../../src';
-import { RechartsHookInspector } from '../../../storybook-addon-recharts';
 import { CrossArgs } from '../arg-types/CrossArgs';
 
 export default {
@@ -24,7 +23,6 @@ export const API = {
           }}
         >
           <Cross {...args} />
-          <RechartsHookInspector />
         </ComposedChart>
       </ResponsiveContainer>
     );

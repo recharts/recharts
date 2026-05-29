@@ -12,7 +12,6 @@ import {
 } from '../../../../src';
 import { pageData } from '../../data';
 import { getStoryArgsFromArgsTypesObject } from '../props/utils';
-import { RechartsHookInspector } from '../../../storybook-addon-recharts';
 import { ZAxisArgs } from '../arg-types/ZAxisArgs';
 
 export default {
@@ -31,7 +30,6 @@ export const API = {
           <CartesianGrid />
           <Scatter name="pageData" data={pageData} />
           <Tooltip />
-          <RechartsHookInspector />
         </ScatterChart>
       </ResponsiveContainer>
     );

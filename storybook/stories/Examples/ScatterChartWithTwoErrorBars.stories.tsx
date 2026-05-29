@@ -2,7 +2,6 @@ import React from 'react';
 import { Args } from '@storybook/react-vite';
 import { ScatterChart, CartesianGrid, XAxis, YAxis, Tooltip, Scatter, ErrorBar } from '../../../src';
 import { getStoryArgsFromArgsTypesObject } from '../API/props/utils';
-import { RechartsHookInspector } from '../../storybook-addon-recharts';
 import { ScatterChartArgs } from '../API/arg-types/ScatterChartArgs';
 
 export default {
@@ -45,7 +44,6 @@ export const WithErrorBarsAndExtendedDomain = {
           <ErrorBar dataKey="errorY" width={4} strokeWidth={2} stroke="red" direction="y" />
         </Scatter>
         <Tooltip cursor={{ strokeDasharray: '3 3' }} />
-        <RechartsHookInspector />
       </ScatterChart>
     );
   },

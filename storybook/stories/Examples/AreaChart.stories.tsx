@@ -14,7 +14,6 @@ import {
   LegendPayload,
 } from '../../../src';
 import { getStoryArgsFromArgsTypesObject } from '../API/props/utils';
-import { RechartsHookInspector } from '../../storybook-addon-recharts';
 import { AreaChartArgs } from '../API/arg-types/AreaChartArgs';
 
 export default {
@@ -36,7 +35,6 @@ export const StackedAreaChart = {
           <Area type="monotone" dataKey="y" stackId="1" stroke="#8884d8" fill="#8884d8" />
           <Area type="monotone" dataKey="z" stackId="1" stroke="#82ca9d" fill="#82ca9d" />
           <Tooltip active defaultIndex={2} />
-          <RechartsHookInspector />
           <Legend />
         </AreaChart>
       </ResponsiveContainer>
@@ -65,7 +63,6 @@ export const RangedAreaChart = {
           <YAxis />
           <Area dataKey="temperature" stroke="#d82428" fill="#8884d8" />
           <Tooltip defaultIndex={4} active />
-          <RechartsHookInspector />
         </AreaChart>
       </ResponsiveContainer>
     );
@@ -116,7 +113,6 @@ export const RangedAreaChartWithGradient = {
           />
           <YAxis unit="%" ticks={[-5, 0, 5, 10, 15]} domain={[-5, 15]} />
           <Tooltip />
-          <RechartsHookInspector />
         </AreaChart>
       </ResponsiveContainer>
     );
@@ -161,7 +157,6 @@ export const WithChangingDataKeyAndAnimations = {
             <YAxis />
             <Area dataKey={dataKey} label={{ fill: 'green' }} dot />
             <Tooltip />
-            <RechartsHookInspector />
           </ComposedChart>
         </ResponsiveContainer>
       </>
@@ -229,7 +224,6 @@ export const StackedAreaWithCustomLegend = {
             hide={hiddenItems.includes('amt')}
             animationBegin={600}
           />
-          <RechartsHookInspector />
           <Legend
             content={({ payload }) => (
               <ul style={{ display: 'flex', flexDirection: 'row', listStyleType: 'none', padding: 0 }}>

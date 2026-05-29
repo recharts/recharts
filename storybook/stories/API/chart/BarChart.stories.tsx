@@ -3,7 +3,6 @@ import { Args } from '@storybook/react-vite';
 import { Bar, BarChart, CartesianGrid, Legend, ResponsiveContainer, Tooltip, XAxis, YAxis } from '../../../../src';
 import { pageData, pageDataWithNegativeNumbers } from '../../data';
 import { getStoryArgsFromArgsTypesObject } from '../props/utils';
-import { RechartsHookInspector } from '../../../storybook-addon-recharts';
 import { BarChartArgs } from '../arg-types/BarChartArgs';
 
 export default {
@@ -19,7 +18,6 @@ export const API = {
         <ResponsiveContainer width="100%" height={400}>
           <BarChart {...args}>
             <Bar dataKey="uv" />
-            <RechartsHookInspector />
           </BarChart>
         </ResponsiveContainer>
       </StrictMode>
@@ -60,7 +58,6 @@ export const BarInBar = {
           />
           <XAxis xAxisId="one" />
           <XAxis xAxisId="two" hide />
-          <RechartsHookInspector />
         </BarChart>
       </ResponsiveContainer>
     );
@@ -89,7 +86,6 @@ export const Stacked = {
           <Tooltip />
           <Bar dataKey="uv" stackId="a" fill="green" barSize={50} name="UV Bar" />
           <Bar dataKey="pv" stackId="a" fill="red" barSize={30} name="PV Bar" />
-          <RechartsHookInspector />
         </BarChart>
       </ResponsiveContainer>
     );
@@ -118,7 +114,6 @@ export const VerticalWithMultipleAxes = {
         <XAxis xAxisId={1} type="number" />
         <XAxis xAxisId={2} type="number" orientation="top" />
         <YAxis type="category" />
-        <RechartsHookInspector />
       </BarChart>
     );
   },

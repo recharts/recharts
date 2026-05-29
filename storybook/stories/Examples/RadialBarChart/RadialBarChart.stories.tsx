@@ -11,7 +11,6 @@ import {
 } from '../../../../src';
 import { pageData, pageDataWithFillColor } from '../../data';
 import { getStoryArgsFromArgsTypesObject } from '../../API/props/utils';
-import { RechartsHookInspector } from '../../../storybook-addon-recharts';
 import { RadialBarChartArgs } from '../../API/arg-types/RadialBarChartArgs';
 
 export default {
@@ -26,7 +25,6 @@ export const SimpleRadialBarChart = {
         <RadialBar dataKey="pv" />
         <Legend />
         <Tooltip />
-        <RechartsHookInspector />
       </RadialBarChart>
     );
   },
@@ -45,7 +43,6 @@ export const RadialBarWithColors = {
         <RadialBar dataKey="pv" />
         <Legend />
         <Tooltip />
-        <RechartsHookInspector />
       </RadialBarChart>
     );
   },
@@ -67,7 +64,6 @@ export const RadialBarWithAxesAndGrid: StoryObj = {
         <PolarAngleAxis dataKey="pv" type="number" axisLineType="circle" stroke="red" />
         <PolarRadiusAxis dataKey="name" orientation="middle" type="category" angle={90} stroke="black" />
         <Tooltip cursor={{ strokeWidth: 3, stroke: 'black', strokeDasharray: '4 4' }} />
-        <RechartsHookInspector />
       </RadialBarChart>
     );
   },
@@ -113,7 +109,6 @@ export const RadialBarChartWithChangingDataKey: StoryObj = {
           <PolarRadiusAxis type="category" dataKey="name" />
           <RadialBar dataKey={dataKey} fill="orange" fillOpacity={0.5} stroke="blue" strokeDasharray="3 3" label />
           <Tooltip />
-          <RechartsHookInspector />
         </RadialBarChart>
       </>
     );

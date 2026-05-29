@@ -1,7 +1,6 @@
 import React from 'react';
 import { Args } from '@storybook/react-vite';
 import { Pie, PieChart, ResponsiveContainer } from '../../../../src';
-import { RechartsHookInspector } from '../../../storybook-addon-recharts';
 
 const data = [
   { value: 'Luck', percent: 10, customRadius: 140 },
@@ -22,7 +21,6 @@ export const PieWithStep = {
       <ResponsiveContainer width="100%" height={500}>
         <PieChart width={400} height={400}>
           <Pie dataKey="percent" {...args} />
-          <RechartsHookInspector />
         </PieChart>
       </ResponsiveContainer>
     );

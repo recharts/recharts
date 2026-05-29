@@ -2,7 +2,6 @@ import React from 'react';
 import { Args, StoryObj } from '@storybook/react-vite';
 import { Area, AreaChart, CartesianGrid, ResponsiveContainer, Tooltip, XAxis, YAxis } from '../../../src';
 import { pageData } from '../data/Page';
-import { RechartsHookInspector } from '../../storybook-addon-recharts';
 import { Props } from '../../../src/component/ResponsiveContainer';
 
 export default {
@@ -43,7 +42,6 @@ export const API: StoryObj<Props> = {
               <YAxis />
               <Area type="monotone" dataKey="uv" stroke="#8884d8" fill="#8884d8" />
               <Tooltip />
-              <RechartsHookInspector />
             </AreaChart>
           </ResponsiveContainer>
         </div>

@@ -11,7 +11,6 @@ import {
 } from '../../../../src';
 import { pageData, subjectData } from '../../data';
 import { getStoryArgsFromArgsTypesObject } from '../props/utils';
-import { RechartsHookInspector } from '../../../storybook-addon-recharts';
 import { PolarAngleAxisArgs } from '../arg-types/PolarAngleAxisArgs';
 
 export default {
@@ -32,7 +31,6 @@ export const API = {
           <PolarAngleAxis dataKey="subject" {...args} />
           <PolarRadiusAxis />
           <Radar name="Student A" dataKey="A" stroke="#8884d8" fill="#8884d8" fillOpacity={0.6} />
-          <RechartsHookInspector />
         </RadarChart>
       </ResponsiveContainer>
     );
@@ -66,7 +64,6 @@ export const InRadialBarChart = {
         >
           {/* The target component */}
           <PolarAngleAxis {...args} />
-          <RechartsHookInspector />
         </RadialBarChart>
       </ResponsiveContainer>
     );
