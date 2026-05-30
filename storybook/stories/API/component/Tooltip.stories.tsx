@@ -3,7 +3,6 @@ import { Args } from '@storybook/react-vite';
 import { Line, LineChart, ResponsiveContainer, Tooltip } from '../../../../src';
 import { pageData } from '../../data';
 import { getStoryArgsFromArgsTypesObject } from '../props/utils';
-import { RechartsHookInspector } from '../../../storybook-addon-recharts';
 import { TooltipArgs } from '../arg-types/TooltipArgs';
 
 export default {
@@ -30,7 +29,6 @@ export const API = {
           <Line dataKey="uv" />
           {/* The target component */}
           <Tooltip {...args} />
-          <RechartsHookInspector />
         </LineChart>
       </ResponsiveContainer>
     );

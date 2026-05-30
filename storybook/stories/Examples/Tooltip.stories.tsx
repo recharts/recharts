@@ -19,7 +19,6 @@ import {
   XAxis,
   YAxis,
 } from '../../../src';
-import { RechartsHookInspector } from '../../storybook-addon-recharts';
 import { getStoryArgsFromArgsTypesObject } from '../API/props/utils';
 import { TooltipArgs } from '../API/arg-types/TooltipArgs';
 
@@ -38,7 +37,6 @@ const SimpleTooltipStory = {
           <YAxis />
           <Tooltip {...args} />
           <Line dataKey="uv" />
-          <RechartsHookInspector />
         </ComposedChart>
       </ResponsiveContainer>
     );
@@ -73,7 +71,6 @@ export const SettingTooltipIndex = {
       <Tooltip {...args} />
       <Line type="monotone" dataKey="uv" stroke="#8884d8" />
       <Line type="monotone" dataKey="pv" stroke="#82ca9d" />
-      <RechartsHookInspector />
     </LineChart>
   ),
   args: {
@@ -122,7 +119,6 @@ export const LockedByClick = {
           />
           <Line dataKey="uv" />
           <Bar dataKey="pv" />
-          <RechartsHookInspector />
         </ComposedChart>
       </ResponsiveContainer>
     );
@@ -170,7 +166,6 @@ export const CssScaledParent = {
               <Line dataKey="uv" />
               <Bar dataKey="pv" />
               <Tooltip {...args} />
-              <RechartsHookInspector />
             </ComposedChart>
           </ResponsiveContainer>
         </div>
@@ -211,7 +206,6 @@ export const SeparateDataSetsForChart = {
           <Tooltip {...args} />
           <Area dataKey="value" />
           <Line dataKey="value" data={lineData} />
-          <RechartsHookInspector />
         </ComposedChart>
       </ResponsiveContainer>
     );
@@ -298,7 +292,6 @@ export const LargeDataArray = {
           <Line dataKey="x" />
           <Line dataKey="y" />
           <Line dataKey="z" />
-          <RechartsHookInspector />
         </ComposedChart>
       </ResponsiveContainer>
     );
@@ -327,7 +320,6 @@ export const IncludeHidden = {
           <Tooltip {...args} />
           <Line dataKey="uv" />
           <Line dataKey="pv" hide />
-          <RechartsHookInspector />
         </ComposedChart>
       </ResponsiveContainer>
     );
@@ -346,7 +338,6 @@ export const SharedTooltipInBarChart = {
           <Bar dataKey="uv" fill="green" />
           <Bar dataKey="pv" fill="red" />
           <Tooltip {...args} />
-          <RechartsHookInspector />
         </BarChart>
       </ResponsiveContainer>
     );
@@ -367,7 +358,6 @@ export const SharedTooltipInRadialBarChart = {
           <RadialBar dataKey="uv" fill="green" />
           <RadialBar dataKey="pv" fill="red" />
           <Tooltip {...args} />
-          <RechartsHookInspector />
         </RadialBarChart>
       </ResponsiveContainer>
     );
@@ -394,7 +384,6 @@ export const TallTooltipInNarrowChart = {
         <Line dataKey="uv" fill="green" />
         <Line dataKey="pv" fill="red" />
         <Line dataKey="amt" fill="amt" />
-        <RechartsHookInspector />
       </LineChart>
     );
   },
@@ -416,7 +405,6 @@ export const TooltipWithPortal = {
             {portalRef && <Tooltip {...args} portal={portalRef} />}
             <Line dataKey="uv" fill="green" />
             <Line dataKey="pv" fill="red" />
-            <RechartsHookInspector />
           </LineChart>
         </ResponsiveContainer>
         <div
@@ -475,7 +463,6 @@ export const RechartsAlphaTooltipBug5516Repro = {
             <LineChart data={d1} style={{ border: '1px solid black' }}>
               <Tooltip {...args} />
               <Line dataKey="Triggers" />
-              <RechartsHookInspector />
             </LineChart>
           </ResponsiveContainer>
         </div>
@@ -504,7 +491,6 @@ export const RechartsAlphaTooltipBug5516ReproButWithItemBasedTooltip = {
             <BarChart data={d1} style={{ border: '1px solid black' }}>
               <Bar dataKey="Triggers" />
               <Tooltip {...args} />
-              <RechartsHookInspector />
             </BarChart>
           </ResponsiveContainer>
         </div>
@@ -544,7 +530,6 @@ export const RechartsTooltipBug5542Repro = {
             <Legend />
             <Bar dataKey="pv" fill="#8884d8" />
             <Bar dataKey="uv" fill="#82ca9d" />
-            <RechartsHookInspector />
           </BarChart>
         </div>
       </div>
@@ -565,7 +550,6 @@ export const TooltipWithNegativeOffset = {
           <YAxis />
           <Line dataKey="uv" />
           <Tooltip {...args} />
-          <RechartsHookInspector />
         </ComposedChart>
       </ResponsiveContainer>
     );

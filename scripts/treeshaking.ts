@@ -7,6 +7,7 @@ import { rollup, type OutputChunk, type OutputAsset } from 'rollup';
 import { minify } from 'terser';
 import { nodeResolve } from '@rollup/plugin-node-resolve';
 import { babel } from '@rollup/plugin-babel';
+import commonjs from '@rollup/plugin-commonjs';
 
 const currentFile = fileURLToPath(import.meta.url);
 const packageRoot = path.resolve(path.dirname(currentFile), '..');
@@ -18,12 +19,25 @@ function isExecutedAsScript(): boolean {
   return scriptPath != null && currentFile === path.resolve(scriptPath);
 }
 
-function getExternals(): Array<string | RegExp> {
+export type TreeshakeOptions = {
+  readonly bundleDependencies?: boolean;
+};
+
+function getPackagePathPattern(packageName: string): RegExp {
+  const escapedPackageName = packageName.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+  return new RegExp(`^${escapedPackageName}(?:/.*)?$`);
+}
+
+function getExternals(options: TreeshakeOptions = {}): Array<string | RegExp> {
   const packageJson = JSON.parse(fs.readFileSync(path.join(packageRoot, 'package.json'), 'utf-8'));
   const deps: string[] = Object.keys(packageJson.dependencies ?? {});
   const peerDeps: string[] = Object.keys(packageJson.peerDependencies ?? {});
-  const specialDeps = ['use-sync-external-store/shim/with-selector'];
-  return [...deps, ...peerDeps, ...specialDeps, /^victory-vendor.*/, /^es-toolkit.*/, /^react.*/, /^react-dom.*/];
+  const alwaysExternal = ['@recharts/devtools'];
+  const externalPackages = options.bundleDependencies
+    ? [...peerDeps, ...alwaysExternal]
+    : [...deps, ...peerDeps, ...alwaysExternal];
+
+  return externalPackages.map(getPackagePathPattern);
 }
 
 const resolveDirectoryIndexPlugin = {
@@ -69,55 +83,99 @@ function createTmpEntry(componentsOrFile: string | string[]): { tmpFile: string;
   return { tmpFile, cleanup: () => fs.unlinkSync(tmpFile) };
 }
 
-/**
- * Bundle one or more recharts components using rollup with aggressive tree-shaking.
- * Returns the rollup output chunks/assets.
- */
-export async function treeshake(components: string | string[]): Promise<(OutputChunk | OutputAsset)[]> {
+type RawNode = { importedIds: ReadonlyArray<string>; importers: ReadonlyArray<string> };
+
+type BundleBuildResult = {
+  readonly output: ReadonlyArray<OutputChunk | OutputAsset>;
+  readonly graphByModuleId?: ReadonlyMap<string, RawNode>;
+};
+
+function getRollupPlugins(options: TreeshakeOptions = {}, graphByModuleId?: Map<string, RawNode>) {
+  return [
+    {
+      name: 'recharts-alias',
+      resolveId(source: string) {
+        if (source === 'recharts') {
+          return srcEntry;
+        }
+        if (source.startsWith('file://')) {
+          return fileURLToPath(source);
+        }
+        return null;
+      },
+    },
+    nodeResolve({
+      extensions: ['.mjs', '.js', '.jsx', '.json', '.node', '.ts', '.tsx'],
+      moduleDirectories: ['node_modules'],
+      exportConditions: ['import', 'module', 'browser', 'default'],
+    }),
+    options.bundleDependencies ? commonjs() : null,
+    babel({
+      babelHelpers: 'bundled',
+      extensions: ['.js', '.jsx', '.ts', '.tsx'],
+      presets: [
+        ['@babel/preset-env', { targets: { node: 'current' } }],
+        ['@babel/preset-react', { runtime: 'automatic' }],
+        '@babel/preset-typescript',
+      ],
+    }),
+    resolveDirectoryIndexPlugin,
+    graphByModuleId == null
+      ? null
+      : {
+          name: 'capture-module-graph',
+          buildEnd() {
+            for (const id of this.getModuleIds()) {
+              const info = this.getModuleInfo(id);
+              if (info != null) {
+                graphByModuleId.set(id, {
+                  importedIds: info.importedIds,
+                  importers: info.importers,
+                });
+              }
+            }
+          },
+        },
+  ].filter(plugin => plugin != null);
+}
+
+async function buildBundle(
+  components: string | string[],
+  options: TreeshakeOptions = {},
+  graphByModuleId?: Map<string, RawNode>,
+): Promise<BundleBuildResult> {
   const { tmpFile, cleanup } = createTmpEntry(components);
   try {
     const bundle = await rollup({
       input: tmpFile,
-      external: getExternals(),
+      external: getExternals(options),
       treeshake: {
         moduleSideEffects: false,
       },
       logLevel: 'silent',
-      plugins: [
-        {
-          name: 'recharts-alias',
-          resolveId(source) {
-            if (source === 'recharts') {
-              return srcEntry;
-            }
-            if (source.startsWith('file://')) {
-              return fileURLToPath(source);
-            }
-            return null;
-          },
-        },
-        nodeResolve({
-          extensions: ['.mjs', '.js', '.jsx', '.json', '.node', '.ts', '.tsx'],
-          moduleDirectories: ['node_modules'],
-        }),
-        babel({
-          babelHelpers: 'bundled',
-          extensions: ['.js', '.jsx', '.ts', '.tsx'],
-          presets: [
-            ['@babel/preset-env', { targets: { node: 'current' } }],
-            ['@babel/preset-react', { runtime: 'automatic' }],
-            '@babel/preset-typescript',
-          ],
-        }),
-        resolveDirectoryIndexPlugin,
-      ],
+      plugins: getRollupPlugins(options, graphByModuleId),
     });
     const output = await bundle.generate({ format: 'esm' });
     await bundle.close();
-    return output.output;
+    return {
+      output: output.output,
+      graphByModuleId,
+    };
   } finally {
     cleanup();
   }
+}
+
+/**
+ * Bundle one or more recharts components using rollup with aggressive tree-shaking.
+ * Returns the rollup output chunks/assets.
+ */
+export async function treeshake(
+  components: string | string[],
+  options: TreeshakeOptions = {},
+): Promise<(OutputChunk | OutputAsset)[]> {
+  const { output } = await buildBundle(components, options);
+  return [...output];
 }
 
 /**
@@ -143,89 +201,28 @@ export type ModuleGraphNode = {
  *
  * Useful for debugging why a component pulls in unexpected modules.
  */
-export async function getModuleGraph(components: string | string[]): Promise<ModuleGraphNode[]> {
-  const { tmpFile, cleanup } = createTmpEntry(components);
-
-  // Capture module graph info from within a rollup plugin hook (the only place
-  // PluginContext.getModuleIds / getModuleInfo are available).
-  type RawNode = { importedIds: ReadonlyArray<string>; importers: ReadonlyArray<string> };
+export async function getModuleGraph(
+  components: string | string[],
+  options: TreeshakeOptions = {},
+): Promise<ModuleGraphNode[]> {
   const graphByModuleId = new Map<string, RawNode>();
+  const { output } = await buildBundle(components, options, graphByModuleId);
 
-  try {
-    const bundle = await rollup({
-      input: tmpFile,
-      external: getExternals(),
-      treeshake: {
-        moduleSideEffects: false,
-      },
-      logLevel: 'silent',
-      plugins: [
-        {
-          name: 'recharts-alias',
-          resolveId(source) {
-            if (source === 'recharts') {
-              return srcEntry;
-            }
-            if (source.startsWith('file://')) {
-              return fileURLToPath(source);
-            }
-            return null;
-          },
-        },
-        nodeResolve({
-          extensions: ['.mjs', '.js', '.jsx', '.json', '.node', '.ts', '.tsx'],
-          moduleDirectories: ['node_modules'],
-        }),
-        babel({
-          babelHelpers: 'bundled',
-          extensions: ['.js', '.jsx', '.ts', '.tsx'],
-          presets: [
-            ['@babel/preset-env', { targets: { node: 'current' } }],
-            ['@babel/preset-react', { runtime: 'automatic' }],
-            '@babel/preset-typescript',
-          ],
-        }),
-        resolveDirectoryIndexPlugin,
-        {
-          name: 'capture-module-graph',
-          buildEnd() {
-            for (const id of this.getModuleIds()) {
-              const info = this.getModuleInfo(id);
-              if (info != null) {
-                graphByModuleId.set(id, {
-                  importedIds: info.importedIds,
-                  importers: info.importers,
-                });
-              }
-            }
-          },
-        },
-      ],
-    });
-
-    // Generate output to get per-module rendered sizes.
-    const output = await bundle.generate({ format: 'esm' });
-    await bundle.close();
-
-    // Build rendered-length lookup from output chunks.
-    const renderedLengths = new Map<string, number>();
-    for (const chunkOrAsset of output.output) {
-      if (chunkOrAsset.type === 'chunk') {
-        for (const [id, mod] of Object.entries(chunkOrAsset.modules)) {
-          renderedLengths.set(id, mod.renderedLength);
-        }
+  const renderedLengths = new Map<string, number>();
+  for (const chunkOrAsset of output) {
+    if (chunkOrAsset.type === 'chunk') {
+      for (const [id, mod] of Object.entries(chunkOrAsset.modules)) {
+        renderedLengths.set(id, mod.renderedLength);
       }
     }
-
-    return Array.from(graphByModuleId.entries()).map(([id, { importedIds, importers }]) => ({
-      id,
-      importedIds,
-      importers,
-      renderedLength: renderedLengths.get(id) ?? 0,
-    }));
-  } finally {
-    cleanup();
   }
+
+  return Array.from(graphByModuleId.entries()).map(([id, { importedIds, importers }]) => ({
+    id,
+    importedIds,
+    importers,
+    renderedLength: renderedLengths.get(id) ?? 0,
+  }));
 }
 
 /**
@@ -296,12 +293,16 @@ export type BundleSizeReport = {
   readonly stages: ReadonlyArray<BundleSizeStage>;
 };
 
-export async function getBundleSizeReport(components: string | string[]): Promise<BundleSizeReport> {
+export async function getBundleSizeReportFromOutput(
+  components: string | string[],
+  output: ReadonlyArray<OutputChunk | OutputAsset>,
+  options: TreeshakeOptions = {},
+): Promise<BundleSizeReport> {
   const normalizedComponents = Array.isArray(components) ? components : [components];
   const es6FolderBytes = getDirectorySizeInBytes(es6Directory);
-  const output = await treeshake(normalizedComponents);
   const treeShakenBytes = getBundleSize(output);
   const treeShakenCode = getCombinedChunkCode(output);
+  const reductionBaselineBytes = options.bundleDependencies ? treeShakenBytes : es6FolderBytes;
 
   const minifiedResult = await minify(treeShakenCode, {
     module: true,
@@ -330,22 +331,31 @@ export async function getBundleSizeReport(components: string | string[]): Promis
         stage: 'tree-shaken',
         bytes: treeShakenBytes,
         humanReadableSize: formatBundleSize(treeShakenBytes),
-        reductionFromBaselinePercent: getReductionPercent(es6FolderBytes, treeShakenBytes),
+        reductionFromBaselinePercent: getReductionPercent(reductionBaselineBytes, treeShakenBytes),
       },
       {
         stage: 'minified',
         bytes: minifiedBytes,
         humanReadableSize: formatBundleSize(minifiedBytes),
-        reductionFromBaselinePercent: getReductionPercent(es6FolderBytes, minifiedBytes),
+        reductionFromBaselinePercent: getReductionPercent(reductionBaselineBytes, minifiedBytes),
       },
       {
         stage: 'minified+gzip',
         bytes: minifiedGzipBytes,
         humanReadableSize: formatBundleSize(minifiedGzipBytes),
-        reductionFromBaselinePercent: getReductionPercent(es6FolderBytes, minifiedGzipBytes),
+        reductionFromBaselinePercent: getReductionPercent(reductionBaselineBytes, minifiedGzipBytes),
       },
     ],
   };
+}
+
+export async function getBundleSizeReport(
+  components: string | string[],
+  options: TreeshakeOptions = {},
+): Promise<BundleSizeReport> {
+  const normalizedComponents = Array.isArray(components) ? components : [components];
+  const output = await treeshake(normalizedComponents, options);
+  return getBundleSizeReportFromOutput(normalizedComponents, output, options);
 }
 
 export function matchComponentNamesInBundle(sourceCode: string, componentNames: ReadonlyArray<string>): Set<string> {

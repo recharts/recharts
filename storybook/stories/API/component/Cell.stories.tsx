@@ -3,7 +3,6 @@ import { Args } from '@storybook/react-vite';
 import { Cell, Pie, PieChart, ResponsiveContainer } from '../../../../src';
 import { getStoryArgsFromArgsTypesObject } from '../props/utils';
 import { pageData } from '../../data';
-import { RechartsHookInspector } from '../../../storybook-addon-recharts';
 import { CellArgs } from '../arg-types/CellArgs';
 
 export default {
@@ -30,7 +29,6 @@ export const API = {
               <Cell key={`cell-pie-${entry.pv}-${entry.uv}`} fill={COLORS[index]} {...args} />
             ))}
           </Pie>
-          <RechartsHookInspector />
         </PieChart>
       </ResponsiveContainer>
     );

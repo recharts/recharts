@@ -14,7 +14,6 @@ import {
   XAxis,
   YAxis,
 } from '../../../../src';
-import { RechartsHookInspector } from '../../../storybook-addon-recharts';
 import { pageData } from '../../data';
 import { getStoryArgsFromArgsTypesObject } from '../props/utils';
 import { LabelArgs } from '../arg-types/LabelArgs';
@@ -43,7 +42,6 @@ export const API = {
           <YAxis tick={false} />
           <XAxis dataKey="name" tick={false} />
           <Label value={`Position: ${args.position}`} {...args} />
-          <RechartsHookInspector />
         </LineChart>
       </ResponsiveContainer>
     );
@@ -70,7 +68,6 @@ export const PolarPositions = {
         <PolarAngleAxis dataKey="name" />
         <PolarRadiusAxis tick={false} />
         <Label value={`Position: ${args.position}`} {...args} />
-        <RechartsHookInspector />
       </RadarChart>
     );
   },

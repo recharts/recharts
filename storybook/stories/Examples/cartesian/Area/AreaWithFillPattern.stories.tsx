@@ -1,7 +1,6 @@
 import React from 'react';
 import { ComposedChart, Area, ResponsiveContainer } from '../../../../../src';
 import { coordinateWithValueData } from '../../../data';
-import { RechartsHookInspector } from '../../../../storybook-addon-recharts';
 
 export default {
   title: 'Examples/cartesian/Area/With Fill Pattern',
@@ -34,7 +33,6 @@ export const FillPattern = {
           </defs>
           <Area type="monotone" dataKey="x" stroke="#8884d8" fillOpacity={1} fill="url(#left)" />
           <Area type="monotone" dataKey="y" stroke="#82ca9d" fillOpacity={1} fill="url(#right)" />
-          <RechartsHookInspector />
         </ComposedChart>
       </ResponsiveContainer>
     );

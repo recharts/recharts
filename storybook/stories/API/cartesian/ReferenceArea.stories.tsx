@@ -3,7 +3,6 @@ import React from 'react';
 import { CartesianGrid, ComposedChart, Line, ReferenceArea, ResponsiveContainer, XAxis, YAxis } from '../../../../src';
 import { pageData } from '../../data';
 import { getStoryArgsFromArgsTypesObject } from '../props/utils';
-import { RechartsHookInspector } from '../../../storybook-addon-recharts';
 import { ReferenceAreaArgs } from '../arg-types/ReferenceAreaArgs';
 
 export default {
@@ -29,7 +28,6 @@ export const API = {
           <YAxis type="number" />
           <Line dataKey="uv" />
           <ReferenceArea {...args} />
-          <RechartsHookInspector />
         </ComposedChart>
       </ResponsiveContainer>
     );

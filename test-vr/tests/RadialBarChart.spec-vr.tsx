@@ -1,7 +1,6 @@
 import * as React from 'react';
 import { expect, test } from '@playwright/experimental-ct-react';
 import { Legend, PolarAngleAxis, PolarGrid, PolarRadiusAxis, RadialBar, RadialBarChart, Tooltip } from '../../src';
-import { RechartsHookInspector } from '../../storybook/storybook-addon-recharts';
 import { pageData } from '../../storybook/stories/data';
 
 test('Stacked RadialBar Chart', async ({ mount }) => {
@@ -13,7 +12,6 @@ test('Stacked RadialBar Chart', async ({ mount }) => {
       <PolarGrid gridType="circle" />
       <PolarAngleAxis dataKey="pv" type="number" axisLineType="circle" />
       <Tooltip defaultIndex={3} cursor={{ strokeWidth: 3, stroke: 'black', strokeDasharray: '4 4' }} />
-      <RechartsHookInspector />
     </RadialBarChart>,
   );
   await expect(component).toHaveScreenshot();
@@ -61,7 +59,6 @@ test('Rings With Implicit Axes', async ({ mount }) => {
       <Legend />
       <PolarGrid gridType="circle" />
       <Tooltip defaultIndex={0} />
-      <RechartsHookInspector />
     </RadialBarChart>,
   );
   await expect(component).toHaveScreenshot();
@@ -76,7 +73,6 @@ test('Rings With Default Axes', async ({ mount }) => {
       <PolarAngleAxis />
       <PolarRadiusAxis />
       <Tooltip defaultIndex={0} />
-      <RechartsHookInspector />
     </RadialBarChart>,
   );
   await expect(component).toHaveScreenshot();
@@ -91,7 +87,6 @@ test('Rings With Data Keys', async ({ mount }) => {
       <PolarAngleAxis dataKey="rings" />
       <PolarRadiusAxis dataKey="name" stroke="black" />
       <Tooltip defaultIndex={0} />
-      <RechartsHookInspector />
     </RadialBarChart>,
   );
   await expect(component).toHaveScreenshot();
@@ -106,7 +101,6 @@ test('Rings With Types', async ({ mount }) => {
       <PolarAngleAxis type="number" />
       <PolarRadiusAxis type="category" stroke="black" />
       <Tooltip defaultIndex={0} />
-      <RechartsHookInspector />
     </RadialBarChart>,
   );
   await expect(component).toHaveScreenshot();
@@ -121,7 +115,6 @@ test('Rings With Data Keys And Types', async ({ mount }) => {
       <PolarAngleAxis dataKey="rings" type="number" />
       <PolarRadiusAxis dataKey="name" type="category" stroke="black" />
       <Tooltip defaultIndex={0} />
-      <RechartsHookInspector />
     </RadialBarChart>,
   );
   await expect(component).toHaveScreenshot();
@@ -137,7 +130,6 @@ test('Rings With Custom Domain', async ({ mount }) => {
       <PolarAngleAxis dataKey="rings" type="number" domain={[0, totalCountOfRings]} />
       <PolarRadiusAxis dataKey="name" type="category" stroke="black" />
       <Tooltip defaultIndex={0} />
-      <RechartsHookInspector />
     </RadialBarChart>,
   );
   await expect(component).toHaveScreenshot();
@@ -153,7 +145,6 @@ test('Rings With Radius Axis Vertically', async ({ mount }) => {
       <PolarAngleAxis dataKey="rings" type="number" domain={[0, totalCountOfRings]} />
       <PolarRadiusAxis dataKey="name" type="category" orientation="left" angle={90} stroke="black" />
       <Tooltip defaultIndex={0} />
-      <RechartsHookInspector />
     </RadialBarChart>,
   );
   await expect(component).toHaveScreenshot();
@@ -168,7 +159,6 @@ test('Reversed Angle Axis', async ({ mount }) => {
       <PolarAngleAxis type="number" reversed />
       <PolarRadiusAxis type="category" stroke="black" />
       <Tooltip />
-      <RechartsHookInspector />
     </RadialBarChart>,
   );
   await expect(component).toHaveScreenshot();
@@ -183,7 +173,6 @@ test('Reversed Radius Axis', async ({ mount }) => {
       <PolarAngleAxis type="number" />
       <PolarRadiusAxis type="category" stroke="black" reversed />
       <Tooltip />
-      <RechartsHookInspector />
     </RadialBarChart>,
   );
   await expect(component).toHaveScreenshot();
@@ -198,7 +187,6 @@ test('Reversed Both Axes', async ({ mount }) => {
       <PolarAngleAxis type="number" reversed />
       <PolarRadiusAxis type="category" stroke="black" reversed />
       <Tooltip />
-      <RechartsHookInspector />
     </RadialBarChart>,
   );
   await expect(component).toHaveScreenshot();
@@ -213,7 +201,6 @@ test('Angled', async ({ mount }) => {
       <PolarAngleAxis type="number" />
       <PolarRadiusAxis type="category" stroke="black" />
       <Tooltip />
-      <RechartsHookInspector />
     </RadialBarChart>,
   );
   await expect(component).toHaveScreenshot();
@@ -228,7 +215,6 @@ test('Chart Reversed By Angles', async ({ mount }) => {
       <PolarAngleAxis type="number" />
       <PolarRadiusAxis type="category" stroke="black" />
       <Tooltip />
-      <RechartsHookInspector />
     </RadialBarChart>,
   );
   await expect(component).toHaveScreenshot();
@@ -243,7 +229,6 @@ test('Chart Reversed By Both Angles And Reverse Axis', async ({ mount }) => {
       <PolarAngleAxis type="number" reversed />
       <PolarRadiusAxis type="category" stroke="black" reversed />
       <Tooltip />
-      <RechartsHookInspector />
     </RadialBarChart>,
   );
   await expect(component).toHaveScreenshot();

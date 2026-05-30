@@ -1,8 +1,6 @@
 import React from 'react';
 import { Args } from '@storybook/react-vite';
-import { Pie, PieChart, ResponsiveContainer, Sector, Tooltip } from '../../../../src';
-import { PieSectorDataItem } from '../../../../src/polar/Pie';
-import { RechartsHookInspector } from '../../../storybook-addon-recharts';
+import { Pie, PieChart, PieSectorDataItem, ResponsiveContainer, Sector, Tooltip } from '../../../../src';
 
 export default {
   component: Pie,
@@ -84,7 +82,6 @@ export const CustomActiveShapePieChart = {
         <PieChart width={400} height={400}>
           <Pie dataKey="value" {...args} shape={renderActiveShape} />
           <Tooltip defaultIndex={0} content={NoContent} />
-          <RechartsHookInspector />
         </PieChart>
       </ResponsiveContainer>
     );

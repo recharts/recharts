@@ -3,7 +3,6 @@ import React from 'react';
 import { pageData } from '../../data';
 import { RadialBar, RadialBarChart, Tooltip } from '../../../../src';
 import { getStoryArgsFromArgsTypesObject } from '../props/utils';
-import { RechartsHookInspector } from '../../../storybook-addon-recharts';
 import { StorybookArgs } from '../../../StorybookArgs';
 import { RadialBarChartArgs } from '../arg-types/RadialBarChartArgs';
 
@@ -19,7 +18,6 @@ export const API: StoryObj = {
       <RadialBarChart {...args}>
         <RadialBar dataKey="uv" activeShape={{ fill: 'red' }} label={{ position: 'insideStart', fill: 'white' }} />
         <Tooltip defaultIndex={3} />
-        <RechartsHookInspector />
       </RadialBarChart>
     );
   },

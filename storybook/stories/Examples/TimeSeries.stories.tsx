@@ -5,7 +5,6 @@ import { timeDay, timeHour, timeMinute, timeMonth, timeSecond, timeWeek, timeYea
 import { timeData } from '../data';
 import { ComposedChart, Line, ResponsiveContainer, XAxis, Tooltip } from '../../../src';
 import { Props as XAxisProps } from '../../../src/cartesian/XAxis';
-import { RechartsHookInspector } from '../../storybook-addon-recharts';
 
 export default {
   component: XAxis,
@@ -30,7 +29,6 @@ const StoryTemplate = {
         >
           <XAxis dataKey="x" {...args} domain={['auto', 'auto']} />
           <Line dataKey="y" />
-          <RechartsHookInspector />
         </ComposedChart>
       </ResponsiveContainer>
     );
@@ -124,7 +122,6 @@ export const WithD3Scale = {
           <XAxis dataKey="x" {...args} {...xAxisArgs} />
           <Line dataKey="y" />
           <Tooltip />
-          <RechartsHookInspector />
         </ComposedChart>
       </ResponsiveContainer>
     );

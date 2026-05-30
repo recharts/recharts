@@ -4,8 +4,9 @@
   "description": "the website of recharts",
   "private": true,
   "scripts": {
-    "build": "vite build && npm run prerender && npm run postprocess-sitemap && npm run validate-sitemap",
-    "build:client": "vite build",
+    "generate-bundle-data": "tsx ../scripts/generate-bundle-data.ts",
+    "build": "npm run build:client && npm run prerender && npm run postprocess-sitemap && npm run validate-sitemap",
+    "build:client": "npm run generate-bundle-data && vite build",
     "prerender": "tsx scripts/prerender.tsx",
     "postprocess-sitemap": "tsx scripts/postprocess-sitemap.tsx",
     "validate-sitemap": "tsx scripts/validate-sitemap.tsx",
@@ -42,7 +43,7 @@
     "react-helmet": "^6.1.0",
     "react-icons": "^5.5.0",
     "react-router": "^7.9.5",
-    "react-router-dom": "^7.15.1",
+    "react-router-dom": "^7.16.0",
     "react-runner": "^1.0.5",
     "recharts": "*"
   },

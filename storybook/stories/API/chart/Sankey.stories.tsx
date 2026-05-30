@@ -3,7 +3,6 @@ import { Args } from '@storybook/react-vite';
 import { complexNodeLinkData, nodeLinkData } from '../../data';
 import { ResponsiveContainer, Sankey, Tooltip } from '../../../../src';
 import { NodeProps } from '../../../../src/chart/Sankey';
-import { RechartsHookInspector } from '../../../storybook-addon-recharts';
 import { SankeyArgs } from '../arg-types/SankeyArgs';
 import { getStoryArgsFromArgsTypesObject } from '../props/utils';
 
@@ -19,7 +18,6 @@ export const API = {
       <ResponsiveContainer width="100%" height={400}>
         <Sankey data={nodeLinkData} {...args}>
           <Tooltip />
-          <RechartsHookInspector />
         </Sankey>
       </ResponsiveContainer>
     );
@@ -34,9 +32,7 @@ export const Customized = {
   render: (args: Args) => {
     return (
       <ResponsiveContainer width="100%" height={400}>
-        <Sankey data={nodeLinkData} {...args}>
-          <RechartsHookInspector />
-        </Sankey>
+        <Sankey data={nodeLinkData} {...args} />
       </ResponsiveContainer>
     );
   },
@@ -159,9 +155,7 @@ export const CustomNodeAndLink = {
 
     return (
       <ResponsiveContainer width="100%" height={400}>
-        <Sankey data={complexNodeLinkData} node={CustomNode} link={CustomLink} {...args}>
-          <RechartsHookInspector />
-        </Sankey>
+        <Sankey data={complexNodeLinkData} node={CustomNode} link={CustomLink} {...args} />
       </ResponsiveContainer>
     );
   },

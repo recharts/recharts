@@ -2,7 +2,6 @@ import React from 'react';
 import { Args } from '@storybook/react-vite';
 import { ComposedChart, Legend, Line, ResponsiveContainer, useMargin, XAxis, YAxis } from '../../../../src';
 import { pageData } from '../../data';
-import { MarginShower } from '../../../storybook-addon-recharts/inspectors/MarginShower';
 
 export default {
   title: 'API/hooks/useMargin',
@@ -27,7 +26,6 @@ export const UseMargin = {
           <XAxis dataKey="name" />
           <YAxis />
           <Legend />
-          <MarginShower />
         </ComposedChart>
       </ResponsiveContainer>
     );

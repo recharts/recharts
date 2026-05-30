@@ -2,7 +2,6 @@ import React from 'react';
 import { Args } from '@storybook/react-vite';
 import { CartesianGrid, ResponsiveContainer, ComposedChart, XAxis, YAxis } from '../../../../src';
 import { pageData } from '../../data';
-import { RechartsHookInspector } from '../../../storybook-addon-recharts';
 import { CartesianGridArgs } from '../arg-types/CartesianGridArgs';
 import { getStoryArgsFromArgsTypesObject } from '../props/utils';
 
@@ -22,7 +21,6 @@ export const API = {
       <ResponsiveContainer width="100%" height={surfaceHeight}>
         <ComposedChart width={surfaceWidth} height={surfaceHeight}>
           <CartesianGrid {...args} />
-          <RechartsHookInspector />
         </ComposedChart>
       </ResponsiveContainer>
     );
@@ -51,7 +49,6 @@ export const MultipleGrids = {
           <YAxis dataKey="pv" />
           {args.displayGridA && <CartesianGrid verticalFill={['#aaeeee', '#eeeeaa']} stroke="trasparent" />}
           {args.displayGridB && <CartesianGrid stroke="silver" strokeDasharray="3 3" strokeWidth={3} />}
-          <RechartsHookInspector />
         </ComposedChart>
       </ResponsiveContainer>
     );

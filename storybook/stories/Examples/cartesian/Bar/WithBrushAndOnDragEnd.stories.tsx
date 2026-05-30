@@ -1,7 +1,6 @@
 import React from 'react';
 import { Brush, ResponsiveContainer, Bar, BarChart, XAxis, YAxis } from '../../../../../src';
 import { dateWithValueData } from '../../../data';
-import { RechartsHookInspector } from '../../../../storybook-addon-recharts';
 
 export default {
   title: 'Examples/cartesian/Bar/With Brush and onDragEnd',
@@ -41,7 +40,6 @@ export const WithBrushAndOnDragEnd = {
               }}
             />
             <Bar dataKey="value" />
-            <RechartsHookInspector />
           </BarChart>
         </ResponsiveContainer>
       </div>

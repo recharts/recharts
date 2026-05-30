@@ -24,6 +24,40 @@ test('PieChartDefaultIndex', async ({ mount }) => {
 });
 ```
 
+## Playwright CT specialty
+
+Playwright component testing (CT) allows us to render React components in isolation and test them. The `mount` function is used to render the component, and the `expect(component).toHaveScreenshot()` assertion compares the rendered output to a baseline screenshot.
+
+There is one specialty that is different from other testing frameworks. Playwright CT does not support components declared inside the test file. Instead it requires us to define the component in a separate file and import it.
+
+Example:
+```tsx
+// file: test-vr/tests/Legend.spec-vr.tsx
+import * as React from 'react';
+import { test, expect } from '@playwright/experimental-ct-react';
+import LegendTestComponent from './LegendTestComponent';
+
+test('correct test: this works', async ({ mount }) => {
+  const component = await mount(<LegendTestComponent />);
+  await expect(component).toHaveScreenshot();
+});
+
+function LegendTestComponent2() {
+  return (
+    <div>
+      <p>This will not work because the component is declared inside the test file</p>
+    </div>
+  );
+}
+
+test('incorrect test: this does not work and throws when running the test', async ({ mount }) => {
+  const component = await mount(<LegendTestComponent2 />);
+  await expect(component).toHaveScreenshot();
+});
+```
+
+This is described in https://playwright.dev/docs/test-components#test-stories in case you want to read details.
+
 # Running the test
 
 To run the full suite of VR tests, run:
@@ -64,6 +98,8 @@ npm run test-vr:update -- --grep=Legend
 ```sh
 npm run test-vr:update -- test-vr/tests/Legend.spec-vr.tsx
 ```
+
+Screenshots generation depends on docker. If docker is not available in your environment, you will not be able to run the tests or update screenshots. If that happens, notify the user and move on.
 
 # More instructions
 

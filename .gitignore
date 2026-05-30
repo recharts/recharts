@@ -38,6 +38,5 @@ storybook/stories/API/**/*.mdx
 # Bundle analysis output
 bundle-visualization.html
 
-# bundle-viz app: dependencies and build artifacts
-bundle-viz/node_modules
-bundle-viz/dist
+# Website-generated bundle size data
+www/public/generated/bundleSizeData.generated.json

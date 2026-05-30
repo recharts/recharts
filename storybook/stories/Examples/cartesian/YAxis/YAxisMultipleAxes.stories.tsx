@@ -3,7 +3,6 @@ import { Args } from '@storybook/react-vite';
 import { Bar, ComposedChart, Line, ResponsiveContainer, Tooltip, XAxis, YAxis } from '../../../../../src';
 import { pageData } from '../../../data';
 import { getStoryArgsFromArgsTypesObject } from '../../../API/props/utils';
-import { RechartsHookInspector } from '../../../../storybook-addon-recharts';
 import { YAxisArgs } from '../../../API/arg-types/YAxisArgs';
 
 export default {
@@ -31,7 +30,6 @@ export const WithLeftAndRightAxes = {
               <YAxis {...args} yAxisId="right-mirror" orientation="right" mirror tickCount={20} />
 
               <Tooltip />
-              <RechartsHookInspector />
             </ComposedChart>
           </ResponsiveContainer>
         </div>

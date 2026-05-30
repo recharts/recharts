@@ -1,7 +1,6 @@
 import React from 'react';
 import { Args } from '@storybook/react-vite';
 import { ComposedChart, Dot, ResponsiveContainer } from '../../../../src';
-import { RechartsHookInspector } from '../../../storybook-addon-recharts';
 import { DotArgs } from '../arg-types/DotArgs';
 
 export default {
@@ -24,7 +23,6 @@ export const API = {
           }}
         >
           <Dot {...args} />
-          <RechartsHookInspector />
         </ComposedChart>
       </ResponsiveContainer>
     );

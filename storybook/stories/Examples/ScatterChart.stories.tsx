@@ -14,7 +14,6 @@ import {
 } from '../../../src';
 import { getStoryArgsFromArgsTypesObject } from '../API/props/utils';
 import { StorybookArgs } from '../../StorybookArgs';
-import { RechartsHookInspector } from '../../storybook-addon-recharts';
 import { babiesAndVideosCorrelation } from '../data/spurriousCorrelations';
 import { ScatterChartArgs } from '../API/arg-types/ScatterChartArgs';
 import { assertNotNull } from '../../../test/helper/assertNotNull';
@@ -94,7 +93,6 @@ export const SpurriousCorrelation: StoryObj<StorybookArgs> = {
           shape="circle"
         />
         <Tooltip cursor={{ strokeDasharray: '3 3' }} shared={false} />
-        <RechartsHookInspector />
       </ScatterChart>
     );
   },
@@ -141,7 +139,6 @@ export const WithDuplicatedCategory: StoryObj<StorybookArgs> = {
           <Scatter activeShape={{ fill: 'red' }} name="A school" data={data} />
           <Tooltip cursor={{ strokeDasharray: '3 3' }} />
           <Legend />
-          <RechartsHookInspector />
         </ScatterChart>
       </ResponsiveContainer>
     );
@@ -224,7 +221,6 @@ export const ChangingDataKey = {
             strokeDasharray="2 2"
             label={{ fill: 'red', dy: -25, dataKey: useData2 ? dataKey2 : dataKey1 }}
           />
-          <RechartsHookInspector />
         </ScatterChart>
       </>
     );

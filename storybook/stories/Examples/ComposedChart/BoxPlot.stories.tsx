@@ -13,7 +13,6 @@ import {
 } from '../../../../src';
 import { BoxPlot, BoxPlotData } from '../../data/DataProps';
 import { boxPlots } from '../../data';
-import { RechartsHookInspector } from '../../../storybook-addon-recharts';
 
 export default {
   component: ComposedChart,
@@ -89,7 +88,6 @@ export const BoxPlotChart = {
           <Scatter dataKey="average" fill="red" stroke="#FFF" />
           <XAxis />
           <YAxis />
-          <RechartsHookInspector />
         </ComposedChart>
       </ResponsiveContainer>
     );

@@ -3,7 +3,6 @@ import { Args } from '@storybook/react-vite';
 import { CartesianGrid, Legend, Line, LineChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from '../../../../src';
 import { coordinateWithValueData } from '../../data';
 import { getStoryArgsFromArgsTypesObject } from '../props/utils';
-import { RechartsHookInspector } from '../../../storybook-addon-recharts';
 import { YAxisArgs } from '../arg-types/YAxisArgs';
 
 export default {
@@ -33,7 +32,6 @@ export const API = {
           <Legend />
           <Line dataKey="y" />
           <Tooltip />
-          <RechartsHookInspector />
         </LineChart>
       </ResponsiveContainer>
     );
@@ -104,7 +102,6 @@ export const YAxisCustomTickWithPadding = {
           <Line type="monotone" dataKey="target" stroke="#e74c3c" strokeDasharray="5 5" name="Target" />
           <Tooltip />
           <Legend />
-          <RechartsHookInspector />
         </LineChart>
       </ResponsiveContainer>
     );

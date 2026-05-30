@@ -3,7 +3,6 @@ import { Args } from '@storybook/react-vite';
 import { Area, ComposedChart, Legend, ResponsiveContainer, Tooltip, XAxis, YAxis } from '../../../../src';
 import { pageData } from '../../data';
 import { getStoryArgsFromArgsTypesObject } from '../props/utils';
-import { RechartsHookInspector } from '../../../storybook-addon-recharts';
 import { AreaArgs } from '../arg-types/AreaArgs';
 
 export default {
@@ -36,7 +35,6 @@ export const API = {
           {/* The target component */}
           <Area dataKey="uv" {...args} />
           <Tooltip />
-          <RechartsHookInspector />
         </ComposedChart>
       </ResponsiveContainer>
     );

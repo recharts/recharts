@@ -3,7 +3,6 @@ import { Args } from '@storybook/react-vite';
 import { ScatterChart, ErrorBar, CartesianGrid, XAxis, YAxis, ResponsiveContainer, Scatter } from '../../../../src';
 import { errorData } from '../../data';
 import { getStoryArgsFromArgsTypesObject } from '../props/utils';
-import { RechartsHookInspector } from '../../../storybook-addon-recharts';
 import { ErrorBarArgs } from '../arg-types/ErrorBarArgs';
 
 export default {
@@ -31,7 +30,6 @@ export const API = {
           <Scatter data={errorData} fill="#ff7300">
             <ErrorBar dataKey="errorY" {...args} />
           </Scatter>
-          <RechartsHookInspector />
         </ScatterChart>
       </ResponsiveContainer>
     );

@@ -1,7 +1,6 @@
 import React from 'react';
 import { Line, LineChart, ResponsiveContainer, XAxis } from '../../../../../src';
 import { ticks } from '../../../data';
-import { RechartsHookInspector } from '../../../../storybook-addon-recharts';
 
 export default {
   title: 'Examples/cartesian/Cartesian Axis/Tick Positioning',
@@ -40,7 +39,6 @@ export const TickPositioning = {
               height={70}
             />
           ))}
-          <RechartsHookInspector />
         </LineChart>
       </ResponsiveContainer>
     );
