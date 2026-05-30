@@ -70,7 +70,7 @@ export default defineConfig({
       {
         test: {
           name: 'treeshaking',
-          include: ['scripts/treeshaking.test.ts'],
+          include: ['scripts/treeshaking.test.ts', 'scripts/generate-bundle-data.test.ts'],
           environment: 'node',
           globals: false,
         },

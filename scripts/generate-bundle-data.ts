@@ -1,123 +1,315 @@
 /**
- * Generates bundle size data as a hierarchical JSON file consumed by the bundle-viz app.
+ * Generates bundle-size visualization data consumed by the website examples.
  *
- * Prerequisites: build the es6 output first:
- *   npm run build-es6
+ * Prerequisites: build the library output first:
+ *   npm run build
  *
  * Usage:
- *   npm run generate-bundle-data                      # all tracked components
- *   npm run generate-bundle-data -- Area              # single component
- *   npm run generate-bundle-data -- Area Line Bar     # specific set
+ *   npm run generate-bundle-data
+ *   npm run generate-bundle-data -- --example www/src/docs/exampleComponents/AreaChart/AreaChartConnectNulls.tsx
+ *   npm run generate-bundle-data -- --treemap-example www/src/docs/exampleComponents/TreeMap/NestedTreemap.tsx
+ *   npm run generate-bundle-data -- --sunburst-example www/src/docs/exampleComponents/PieChart/PieChartWithCustomizedLabel.tsx
  *
- * Output: bundle-viz/src/bundle-data.json
+ * Output: www/public/generated/bundleSizeData.generated.json
  */
-import path from 'node:path';
 import fs from 'node:fs';
+import path from 'node:path';
+import { fileURLToPath, pathToFileURL } from 'node:url';
 import type { OutputChunk } from 'rollup';
-import { treeshake, ALL_TRACKED_COMPONENT_NAMES } from './treeshaking';
+import { formatBundleSize, getBundleSizeReportFromOutput, treeshake, type TreeshakeOptions } from './treeshaking';
+import type {
+  BundleVisualizationData,
+  BundleVisualizationEntry,
+  BundleVisualizationNode,
+  BundleVisualizationStage,
+} from '../www/src/docs/exampleComponents/_bundleSize/types.ts';
 
-const packageRoot = path.resolve(__dirname, '..');
+const currentFile = fileURLToPath(import.meta.url);
+const packageRoot = path.resolve(path.dirname(currentFile), '..');
 const es6Entry = path.join(packageRoot, 'es6', 'index.js');
-const outFile = path.join(packageRoot, 'bundle-viz', 'src', 'bundle-data.json');
+const generatedOutputFile = path.join(packageRoot, 'www', 'public', 'generated', 'bundleSizeData.generated.json');
 
-interface BundleNode {
+type BundleVisualizationKey = keyof BundleVisualizationData;
+
+type BundleVisualizationTargets = Record<BundleVisualizationKey, string>;
+
+type BundleVisualizationModule = {
+  readonly id: string;
+  readonly renderedLength: number;
+};
+
+type MutableBundleVisualizationNode = {
   name: string;
+  fullPath: string;
   value: number;
-  children?: BundleNode[];
+  children?: MutableBundleVisualizationNode[];
+};
+
+const dependencyVisualizationTreeshakeOptions: TreeshakeOptions = {
+  bundleDependencies: true,
+};
+
+export const DEFAULT_BUNDLE_VISUALIZATION_TARGETS: BundleVisualizationTargets = {
+  treemap: 'www/src/views/IndexView/IndexLineChart.tsx',
+  sunburst: 'www/src/views/IndexView/IndexLineChart.tsx',
+};
+
+const SUPPORTED_ARGUMENTS = new Set([
+  '--example',
+  '--treemap',
+  '--treemap-example',
+  '--sunburst',
+  '--sunburst-example',
+]);
+
+function normalizePathForJson(filePath: string): string {
+  return filePath.split(path.sep).join('/');
 }
 
-function sortTree(node: BundleNode): void {
-  if (!node.children) return;
-  node.children.sort((a, b) => b.value - a.value);
+function stripModuleSuffixes(moduleId: string): string {
+  return moduleId.replace(/[?#].*$/, '');
+}
+
+function toRepoRelativePath(filePath: string): string {
+  const relativePath = path.relative(packageRoot, filePath);
+  return normalizePathForJson(relativePath);
+}
+
+function resolveExamplePath(examplePath: string): string {
+  return path.isAbsolute(examplePath) ? examplePath : path.resolve(packageRoot, examplePath);
+}
+
+function getRequiredArgumentValue(argumentsList: ReadonlyArray<string>, index: number): string {
+  const value = argumentsList[index];
+  if (value == null || SUPPORTED_ARGUMENTS.has(value)) {
+    throw new Error(`Missing value for ${argumentsList[index - 1]}.`);
+  }
+
+  return value;
+}
+
+export function parseBundleVisualizationTargets(cliArguments: ReadonlyArray<string>): BundleVisualizationTargets {
+  const targets: BundleVisualizationTargets = { ...DEFAULT_BUNDLE_VISUALIZATION_TARGETS };
+
+  for (let index = 0; index < cliArguments.length; index += 1) {
+    const argument = cliArguments[index];
+
+    switch (argument) {
+      case '--example': {
+        const examplePath = getRequiredArgumentValue(cliArguments, index + 1);
+        targets.treemap = examplePath;
+        targets.sunburst = examplePath;
+        index += 1;
+        break;
+      }
+      case '--treemap':
+      case '--treemap-example': {
+        targets.treemap = getRequiredArgumentValue(cliArguments, index + 1);
+        index += 1;
+        break;
+      }
+      case '--sunburst':
+      case '--sunburst-example': {
+        targets.sunburst = getRequiredArgumentValue(cliArguments, index + 1);
+        index += 1;
+        break;
+      }
+      default:
+        throw new Error(
+          `Unknown argument "${argument}". Supported options: --example, --treemap-example, --sunburst-example.`,
+        );
+    }
+  }
+
+  return targets;
+}
+
+function normalizeSourceModuleId(moduleId: string): string | null {
+  if (moduleId.startsWith('\0')) {
+    return null;
+  }
+
+  const sanitizedModuleId = stripModuleSuffixes(moduleId);
+  const relativePath = path.relative(packageRoot, sanitizedModuleId);
+  if (relativePath.startsWith('..') || path.isAbsolute(relativePath)) {
+    return null;
+  }
+
+  const normalizedRelativePath = normalizePathForJson(relativePath);
+
+  if (normalizedRelativePath.startsWith('src/')) {
+    return normalizedRelativePath;
+  }
+
+  if (normalizedRelativePath.startsWith('node_modules/')) {
+    return normalizedRelativePath;
+  }
+
+  if (normalizedRelativePath.startsWith('www/')) {
+    return `entry/${normalizedRelativePath}`;
+  }
+
+  return `local/${normalizedRelativePath}`;
+}
+
+function sortTree(node: MutableBundleVisualizationNode): void {
+  if (node.children == null) {
+    return;
+  }
+
+  node.children.sort((left, right) => right.value - left.value || left.name.localeCompare(right.name));
   node.children.forEach(sortTree);
 }
 
-function countLeaves(node: BundleNode): number {
-  if (!node.children || node.children.length === 0) return 1;
-  return node.children.reduce((sum, child) => sum + countLeaves(child), 0);
-}
-
-/**
- * Inserts a leaf module into a directory tree.
- * Path segments like ['state', 'selectors', 'axisSelectors.js'] become nested children.
- */
-function insertModule(root: BundleNode, segments: string[], size: number): void {
+function insertModule(root: MutableBundleVisualizationNode, modulePath: string, size: number): void {
+  const segments = modulePath.split('/');
   let current = root;
-  for (let i = 0; i < segments.length - 1; i++) {
-    const seg = segments[i]!;
-    let child = current.children?.find(c => c.name === seg && c.children != null);
-    if (!child) {
-      child = { name: seg, value: 0, children: [] };
-      if (!current.children) current.children = [];
+
+  for (let segmentIndex = 0; segmentIndex < segments.length; segmentIndex += 1) {
+    const segment = segments[segmentIndex];
+    const fullPath = segments.slice(0, segmentIndex + 1).join('/');
+    const isLeaf = segmentIndex === segments.length - 1;
+
+    if (current.children == null) {
+      current.children = [];
+    }
+
+    let child = current.children.find(candidate => candidate.name === segment);
+    if (child == null) {
+      child = {
+        name: segment,
+        fullPath,
+        value: 0,
+        children: isLeaf ? undefined : [],
+      };
       current.children.push(child);
     }
+
     child.value += size;
     current = child;
   }
+}
 
-  // Leaf node
-  const fileName = segments[segments.length - 1]!;
-  if (!current.children) current.children = [];
-  const existing = current.children.find(c => c.name === fileName);
-  if (existing) {
-    existing.value += size;
-  } else {
-    current.children.push({ name: fileName, value: size });
+export function buildBundleVisualizationTree(modules: ReadonlyArray<BundleVisualizationModule>): {
+  tree: BundleVisualizationNode;
+  moduleCount: number;
+} {
+  const sizeByModulePath = new Map<string, number>();
+
+  modules.forEach(({ id, renderedLength }) => {
+    if (renderedLength <= 0) {
+      return;
+    }
+
+    const normalizedModuleId = normalizeSourceModuleId(id);
+    if (normalizedModuleId == null) {
+      return;
+    }
+
+    sizeByModulePath.set(normalizedModuleId, (sizeByModulePath.get(normalizedModuleId) ?? 0) + renderedLength);
+  });
+
+  const root: MutableBundleVisualizationNode = {
+    name: 'bundle',
+    fullPath: 'bundle',
+    value: 0,
+    children: [],
+  };
+
+  for (const [modulePath, size] of sizeByModulePath.entries()) {
+    root.value += size;
+    insertModule(root, modulePath, size);
   }
+
+  sortTree(root);
+
+  return {
+    tree: root,
+    moduleCount: sizeByModulePath.size,
+  };
+}
+
+function getModulesFromOutput(output: ReadonlyArray<OutputChunk | { type: string }>): BundleVisualizationModule[] {
+  const modules: BundleVisualizationModule[] = [];
+
+  output.forEach(chunkOrAsset => {
+    if (chunkOrAsset.type !== 'chunk') {
+      return;
+    }
+
+    Object.entries(chunkOrAsset.modules).forEach(([id, moduleInfo]) => {
+      if (id.includes('recharts-treeshake-entry-')) {
+        return;
+      }
+
+      modules.push({ id, renderedLength: moduleInfo.renderedLength });
+    });
+  });
+
+  return modules;
+}
+
+async function buildVisualizationEntry(examplePath: string): Promise<BundleVisualizationEntry> {
+  const resolvedExamplePath = resolveExamplePath(examplePath);
+  if (!fs.existsSync(resolvedExamplePath)) {
+    throw new Error(`Example file not found: ${toRepoRelativePath(resolvedExamplePath)}`);
+  }
+
+  const output = await treeshake(resolvedExamplePath, dependencyVisualizationTreeshakeOptions);
+  const { tree, moduleCount } = buildBundleVisualizationTree(getModulesFromOutput(output));
+  if (moduleCount === 0) {
+    throw new Error(`No bundled modules were found in ${toRepoRelativePath(resolvedExamplePath)}.`);
+  }
+
+  const report = await getBundleSizeReportFromOutput(
+    resolvedExamplePath,
+    output,
+    dependencyVisualizationTreeshakeOptions,
+  );
+
+  return {
+    examplePath: toRepoRelativePath(resolvedExamplePath),
+    totalSize: tree.value,
+    totalSizeLabel: formatBundleSize(tree.value),
+    moduleCount,
+    generatedAt: new Date().toISOString(),
+    stages: report.stages as ReadonlyArray<BundleVisualizationStage>,
+    tree,
+  };
+}
+
+export async function generateBundleVisualizationData(
+  targets: BundleVisualizationTargets,
+): Promise<BundleVisualizationData> {
+  const [treemap, sunburst] = await Promise.all([
+    buildVisualizationEntry(targets.treemap),
+    buildVisualizationEntry(targets.sunburst),
+  ]);
+
+  return { treemap, sunburst };
 }
 
 async function main(): Promise<void> {
   if (!fs.existsSync(es6Entry)) {
-    console.error('Error: es6/index.js not found. Build the es6 output first:\n  npm run build-es6');
+    console.error('Error: es6/index.js not found. Build the library output first:\n  npm run build');
     process.exit(1);
   }
 
-  const cliArgs = process.argv.slice(2);
-  const components = cliArgs.length > 0 ? cliArgs : [...ALL_TRACKED_COMPONENT_NAMES];
+  const targets = parseBundleVisualizationTargets(process.argv.slice(2));
+  const data = await generateBundleVisualizationData(targets);
 
-  console.log(`Building tree-shaken bundle for: ${components.join(', ')}`);
+  fs.mkdirSync(path.dirname(generatedOutputFile), { recursive: true });
+  fs.writeFileSync(generatedOutputFile, JSON.stringify(data, null, 2), 'utf-8');
 
-  const output = await treeshake(components);
-  const chunks = output.filter((c): c is OutputChunk => c.type === 'chunk');
-
-  const root: BundleNode = { name: 'recharts', value: 0, children: [] };
-
-  for (const chunk of chunks) {
-    for (const [id, mod] of Object.entries(chunk.modules)) {
-      if (mod.renderedLength <= 0) continue;
-
-      const size = mod.renderedLength;
-      root.value += size;
-
-      // Convert absolute path to relative segments, strip es6/ prefix
-      let relPath = id.startsWith(packageRoot) ? id.slice(packageRoot.length + 1) : id;
-      if (relPath.startsWith('es6/')) relPath = relPath.slice(4);
-
-      const segments = relPath.split('/');
-      insertModule(root, segments, size);
-    }
-  }
-
-  // Sort children by value descending at every level
-  sortTree(root);
-
-  const bundleData = {
-    components,
-    generatedAt: new Date().toISOString(),
-    totalSize: root.value,
-    tree: root,
-  };
-
-  fs.writeFileSync(outFile, JSON.stringify(bundleData, null, 2), 'utf-8');
-
-  console.log(`\nTotal bundle size : ${(root.value / 1024).toFixed(2)} kB`);
-  console.log(`Modules included  : ${countLeaves(root)}`);
-  console.log(`\nData written to   : ${outFile}`);
-  console.log('Now start the visualization app:');
-  console.log('  cd bundle-viz && npm install && npm run dev');
+  console.log('Generated bundle-size visualization data:');
+  console.log(`  treemap  -> ${data.treemap.examplePath} (${data.treemap.totalSizeLabel})`);
+  console.log(`  sunburst -> ${data.sunburst.examplePath} (${data.sunburst.totalSizeLabel})`);
+  console.log(`Written to ${toRepoRelativePath(generatedOutputFile)}`);
 }
 
-main().catch(err => {
-  console.error('Error:', (err as Error).message ?? err);
-  process.exit(1);
-});
+if (process.argv[1] != null && import.meta.url === pathToFileURL(process.argv[1]).href) {
+  main().catch(error => {
+    console.error('Error:', (error as Error).message ?? error);
+    process.exit(1);
+  });
+}
