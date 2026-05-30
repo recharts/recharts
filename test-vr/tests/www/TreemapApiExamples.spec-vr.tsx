@@ -2,6 +2,7 @@ import * as React from 'react';
 import { test, expect } from '@playwright/experimental-ct-react';
 
 import SimpleTreemap from '../../../www/src/docs/exampleComponents/TreeMap/SimpleTreemap';
+import BundleSizeTreemap from '../../../www/src/docs/exampleComponents/TreeMap/BundleSizeTreemap';
 import CustomContentTreemap from '../../../www/src/docs/exampleComponents/TreeMap/CustomContentTreemap';
 import TreeMapNavExample from '../../../www/src/docs/exampleComponents/TreeMap/TreeMapNavExample';
 import TreemapWithPaddingAndGaps from '../../../www/src/docs/exampleComponents/TreeMap/TreemapWithPaddingAndGaps';
@@ -23,5 +24,10 @@ test('SimpleTreemap', async ({ mount }) => {
 
 test('TreemapWithPaddingAndGaps', async ({ mount }) => {
   const component = await mount(<TreemapWithPaddingAndGaps />);
+  await expect(component).toHaveScreenshot();
+});
+
+test('BundleSizeTreemap', async ({ mount }) => {
+  const component = await mount(<BundleSizeTreemap forceFallbackData />);
   await expect(component).toHaveScreenshot();
 });

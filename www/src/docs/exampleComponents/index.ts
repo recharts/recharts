@@ -7,6 +7,7 @@ import { pieChartExamples, PieChartNavExample } from './PieChart';
 import { radarChartExamples, RadarChartNavExample } from './RadarChart';
 import { radialBarChartExamples, RadialBarChartNavExample } from './RadialBarChart';
 import { treeMapExamples, TreeMapNavExample } from './TreeMap';
+import { sunburstChartExamples, SunburstChartNavExample } from './SunburstChart';
 import { tooltipExamples } from './Tooltip';
 import { legendExamples as LegendExamples } from './Legend';
 import { responsiveContainerExamples as ResponsiveContainerExamples } from './ResponsiveContainer';
@@ -23,8 +24,9 @@ export const allExamples: AllExamples = {
   RadarChart: { examples: radarChartExamples, order: 7, NavPreview: RadarChartNavExample },
   RadialBarChart: { examples: radialBarChartExamples, order: 8, NavPreview: RadialBarChartNavExample },
   TreeMap: { examples: treeMapExamples, order: 9, NavPreview: TreeMapNavExample },
-  Tooltip: { examples: tooltipExamples, order: 10, NavPreview: null },
-  Legend: { examples: LegendExamples, order: 11, NavPreview: null },
-  ResponsiveContainer: { examples: ResponsiveContainerExamples, order: 12, NavPreview: null },
-  XAxis: { examples: xAxisExamples, order: 13, NavPreview: null },
+  SunburstChart: { examples: sunburstChartExamples, order: 10, NavPreview: SunburstChartNavExample },
+  Tooltip: { examples: tooltipExamples, order: 11, NavPreview: null },
+  Legend: { examples: LegendExamples, order: 12, NavPreview: null },
+  ResponsiveContainer: { examples: ResponsiveContainerExamples, order: 13, NavPreview: null },
+  XAxis: { examples: xAxisExamples, order: 14, NavPreview: null },
 };
