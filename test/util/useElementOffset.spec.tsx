@@ -14,7 +14,7 @@ describe('useElementOffset', () => {
     disconnectSpy = vi.fn();
     vi.stubGlobal(
       'ResizeObserver',
-      vi.fn().mockImplementation((cb: (entries: ResizeObserverEntry[]) => void) => {
+      vi.fn(function ResizeObserverMock(cb: (entries: ResizeObserverEntry[]) => void) {
         resizeObserverCallback = cb;
         return { observe: observeSpy, unobserve: vi.fn(), disconnect: disconnectSpy };
       }),

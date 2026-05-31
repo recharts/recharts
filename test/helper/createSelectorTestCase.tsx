@@ -102,7 +102,7 @@ export function createSelectorTestCase(Component: ComponentType<{ children: Reac
        * This is not reproducible in every test because it depends on the action ordering.
        * But it doesn't hurt to run all timers here anyway.
        */
-      vi.runOnlyPendingTimers();
+      vi.runAllTimers();
     });
 
     assertUniqueHtmlIds(container);
@@ -116,7 +116,7 @@ export function createSelectorTestCase(Component: ComponentType<{ children: Reac
       );
 
       act(() => {
-        vi.runOnlyPendingTimers();
+        vi.runAllTimers();
       });
     };
     const rerenderSameComponent = () => {

@@ -5,11 +5,12 @@
     "declarationDir": "./types" /* Output directory for generated declaration files. */,
     "outDir": "./build/",
     "rootDir": "./src",
+    "lib": ["DOM", "DOM.Iterable", "ES2023"],
     "preserveConstEnums": true,
     "removeComments": false,
     "sourceMap": true,
     "target": "es6",
-    "types": ["vitest/globals"]
+    "types": ["node", "vitest/globals"]
   },
   "include": ["./src/**/*", "types.d.ts"]
 }

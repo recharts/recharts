@@ -1,4 +1,4 @@
-import { defineConfig } from 'vitest/config';
+import { configDefaults, defineConfig } from 'vitest/config';
 import react from '@vitejs/plugin-react';
 
 /*
@@ -14,7 +14,16 @@ export default defineConfig({
   test: {
     environment: 'jsdom',
     globals: true,
-    exclude: ['**/node_modules', 'dist', '.idea', '.git', '.cache', 'build', 'scripts', '.stryker-tmp', 'www'],
+    exclude: [
+      ...configDefaults.exclude,
+      '**/dist/**',
+      '**/.idea/**',
+      '**/.cache/**',
+      '**/build/**',
+      '**/scripts/**',
+      '**/.stryker-tmp/**',
+      '**/www/**',
+    ],
     restoreMocks: true,
     setupFiles: [
       'test/vitest.setup.ts',
@@ -22,5 +31,8 @@ export default defineConfig({
       'test/helper/expectStackGroups.ts',
       './test/helper/expectFunctionReturning.ts',
     ],
+    coverage: {
+      include: ['src/**/*.{ts,tsx}', 'test/**/*.{ts,tsx}'],
+    },
   },
 });
