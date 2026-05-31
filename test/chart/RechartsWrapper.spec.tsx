@@ -44,11 +44,13 @@ describe('RechartsWrapper', () => {
     const disconnectSpy = vi.fn();
 
     // Mock global ResizeObserver
-    const ResizeObserverMock = vi.fn().mockImplementation(() => ({
-      observe: observeSpy,
-      unobserve: vi.fn(),
-      disconnect: disconnectSpy,
-    }));
+    const ResizeObserverMock = vi.fn(function ResizeObserverMock() {
+      return {
+        observe: observeSpy,
+        unobserve: vi.fn(),
+        disconnect: disconnectSpy,
+      };
+    });
     vi.stubGlobal('ResizeObserver', ResizeObserverMock);
 
     // Initial render. Passing an inline function ref guarantees the component invokes the callback

@@ -18,7 +18,11 @@ setupConsoleWarningToError();
  * https://github.com/reduxjs/redux-toolkit/pull/4701
  * https://github.com/reduxjs/redux-toolkit/issues/4693
  */
-vi.useFakeTimers();
+vi.useFakeTimers({
+  // RTK autobatching caches requestAnimationFrame at import time, but faking
+  // the wider Vitest 4 timer surface interferes with React scheduling.
+  toFake: ['requestAnimationFrame', 'cancelAnimationFrame'],
+});
 
 /*
  * Looks like the testing-library only ever considers jest
@@ -39,4 +43,6 @@ afterEach(() => {
   // all except this one. This one cannot be set using vi.spyOn() and therefore vitest will not reset it automatically!
   // So it must be restored manually.
   restoreHTMLElementProperties();
+  vi.clearAllMocks();
+  vi.clearAllTimers();
 });

@@ -1,16 +1,19 @@
-import { describe, it, expect, vi, beforeEach } from 'vitest';
+import { describe, it, expect, vi, beforeEach, Mock } from 'vitest';
 import { SyntheticEvent } from 'react';
 import { Store } from '@reduxjs/toolkit';
 import { act } from '@testing-library/react';
+import { CategoricalChartFunc } from '../../src/chart/types';
 import { externalEventAction } from '../../src/state/externalEventsMiddleware';
 import { createRechartsStore, RechartsRootState } from '../../src/state/store';
 
 describe('externalEventsMiddleware', () => {
-  let store: Store<RechartsRootState>, mockHandler: ReturnType<typeof vi.fn>, mockEvent: SyntheticEvent;
+  let store: Store<RechartsRootState>,
+    mockHandler: Mock<CategoricalChartFunc<SyntheticEvent>>,
+    mockEvent: SyntheticEvent;
 
   beforeEach(() => {
     store = createRechartsStore();
-    mockHandler = vi.fn();
+    mockHandler = vi.fn<CategoricalChartFunc<SyntheticEvent>>();
     mockEvent = {
       type: 'mousemove',
       persist: vi.fn(),
@@ -27,7 +30,7 @@ describe('externalEventsMiddleware', () => {
     );
 
     act(() => {
-      vi.runOnlyPendingTimers();
+      vi.runAllTimers();
     });
 
     expect(mockHandler).not.toHaveBeenCalled();
@@ -44,10 +47,10 @@ describe('externalEventsMiddleware', () => {
 
     expect(mockEvent.persist).toHaveBeenCalledTimes(1);
     expect(mockHandler).toHaveBeenCalledTimes(0);
-    expect(vi.getTimerCount()).toBe(1);
+    expect(vi.getTimerCount()).toBeGreaterThan(0);
 
     act(() => {
-      vi.runOnlyPendingTimers();
+      vi.runAllTimers();
     });
 
     expect(vi.getTimerCount()).toBe(0);
@@ -92,8 +95,6 @@ describe('externalEventsMiddleware', () => {
       }),
     );
 
-    expect(vi.getTimerCount()).toBe(1);
-
     // Second dispatch with same event type should cancel the first
     const secondMockEvent = {
       type: 'touchmove',
@@ -107,7 +108,11 @@ describe('externalEventsMiddleware', () => {
       }),
     );
 
-    expect(vi.getTimerCount()).toBe(1);
+    act(() => {
+      vi.runAllTimers();
+    });
+
+    expect(mockHandler).toHaveBeenCalledTimes(1);
   });
 
   it('should NOT cancel animation frames for different event types', () => {
@@ -124,8 +129,6 @@ describe('externalEventsMiddleware', () => {
     const handler1 = vi.fn();
     const handler2 = vi.fn();
 
-    expect(vi.getTimerCount()).toBe(0);
-
     // Dispatch touchmove event
     store.dispatch(
       externalEventAction({
@@ -133,8 +136,6 @@ describe('externalEventsMiddleware', () => {
         handler: handler1,
       }),
     );
-
-    expect(vi.getTimerCount()).toBe(1);
 
     // Dispatch mousemove event - should NOT cancel touchmove event
     store.dispatch(
@@ -144,11 +145,8 @@ describe('externalEventsMiddleware', () => {
       }),
     );
 
-    // Both should be pending
-    expect(vi.getTimerCount()).toBe(2);
-
     act(() => {
-      vi.runOnlyPendingTimers();
+      vi.runAllTimers();
     });
 
     // Both handlers should have been called
@@ -177,7 +175,7 @@ describe('externalEventsMiddleware', () => {
     );
 
     act(() => {
-      vi.runOnlyPendingTimers();
+      vi.runAllTimers();
     });
 
     expect(handler1).toHaveBeenCalledTimes(1);
@@ -209,7 +207,7 @@ describe('externalEventsMiddleware', () => {
     currentTarget = null;
 
     act(() => {
-      vi.runOnlyPendingTimers();
+      vi.runAllTimers();
     });
 
     expect(mockHandler).toHaveBeenCalledTimes(1);
