@@ -1,7 +1,7 @@
 import { expect } from 'vitest';
 import { act, fireEvent } from '@testing-library/react';
 import { assertNotNull } from '../../helper/assertNotNull';
-import { Coordinate } from '../../../src/util/types';
+import { Coordinate } from '../../../src';
 
 export function getTooltip(container: Element): HTMLElement {
   const allWrappers = container.querySelectorAll('.recharts-tooltip-wrapper');
@@ -56,7 +56,7 @@ function showTooltipWithEvent(
      * Because the mouse event will trigger a requestAnimationFrame in the middleware, we need to run pending timers to ensure
      * that the tooltip state is updated before we return.
      */
-    vi.runOnlyPendingTimers();
+    vi.runAllTimers();
   });
   return tooltipTriggerElement;
 }

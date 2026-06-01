@@ -4,7 +4,7 @@
     "esModuleInterop": true,
     "noEmit": true,
     "target": "es2023",
-    "types": ["vitest/globals"],
+    "types": ["node", "vitest/globals"],
     /* Disable noUncheckedIndexedAccess in tests - fixing all array access would be a large undertaking */
     "noUncheckedIndexedAccess": false
   },

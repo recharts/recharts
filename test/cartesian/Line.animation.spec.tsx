@@ -474,7 +474,7 @@ describe('Line animation', () => {
       mockGetBoundingClientRect({ width: 0, height: 0 });
       vi.stubGlobal(
         'ResizeObserver',
-        vi.fn().mockImplementation(cb => {
+        vi.fn(function ResizeObserverMock(cb) {
           resizeObserverCallback = cb;
           return {
             observe: vi.fn(),

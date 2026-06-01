@@ -11,8 +11,8 @@ import { Mock } from 'vitest';
  * @throws if the spy was not called with the expected argument
  * @return void
  */
-export function expectLastCalledWith<T1, T2, T3, T4>(
-  spy: Mock<(arg1: T1, arg2: T2, arg3: T3, arg4: T4) => void>,
+export function expectLastCalledWith<T1, T2, T3, T4, TReturn>(
+  spy: Mock<(arg1: T1, arg2: T2, arg3: T3, arg4: T4) => TReturn>,
   expected1: T1,
   expected2?: T2,
   expected3?: T3,
@@ -43,8 +43,8 @@ export function expectLastCalledWith<T1, T2, T3, T4>(
  * @throws if the spy was not called with the expected argument
  * @return void
  */
-export function expectNthCalledWith<T1, T2>(
-  spy: Mock<(arg1: T1, arg2: T2) => void>,
+export function expectNthCalledWith<T1, T2, TReturn>(
+  spy: Mock<(arg1: T1, arg2: T2) => TReturn>,
   n: number,
   expected1: T1,
   expected2?: T2,

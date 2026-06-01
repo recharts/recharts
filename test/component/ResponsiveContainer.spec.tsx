@@ -32,7 +32,7 @@ describe('<ResponsiveContainer />', () => {
      * This mock also allow us to use {@link notifyResizeObserverChange} to fire changes
      * from inside our test.
      */
-    resizeObserverMock = vi.fn().mockImplementation(callback => {
+    resizeObserverMock = vi.fn(function ResizeObserverMock(callback) {
       notifyResizeObserverChange = callback;
 
       return {

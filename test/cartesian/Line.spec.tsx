@@ -1,14 +1,13 @@
 import React from 'react';
 import { fireEvent, render } from '@testing-library/react';
-import { describe, it, expect, vi, test, beforeEach } from 'vitest';
-import { Line, ErrorBar, LineChart, Customized, XAxis, LineProps, Tooltip } from '../../src';
+import { beforeEach, describe, expect, it, test, vi } from 'vitest';
+import { ActiveDotProps, Customized, ErrorBar, Line, LineChart, LineProps, Tooltip, XAxis } from '../../src';
 import { useAppSelector } from '../../src/state/hooks';
 import { selectErrorBarsSettings } from '../../src/state/selectors/axisSelectors';
 import { createSelectorTestCase } from '../helper/createSelectorTestCase';
 import { selectTooltipPayload } from '../../src/state/selectors/selectors';
 import { expectLines } from '../helper/expectLine';
 import { PageData } from '../_data';
-import { ActiveDotProps, ActiveDotType } from '../../src/util/types';
 import { mockGetBoundingClientRect } from '../helper/mockGetBoundingClientRect';
 import { showTooltip } from '../component/Tooltip/tooltipTestHelpers';
 import { lineChartMouseHoverTooltipSelector } from '../component/Tooltip/tooltipMouseHoverSelectors';
@@ -231,7 +230,7 @@ describe('<Line />', () => {
     });
 
     test('passes props to activeDot function', () => {
-      const spy: ActiveDotType = vi.fn();
+      const spy = vi.fn<(props: ActiveDotProps) => React.ReactNode>();
       const { container } = render(
         <LineChart width={400} height={400} data={PageData}>
           <Line activeDot={spy} type="monotone" dataKey="uv" />
