@@ -1,0 +1,56 @@
+import{c as e}from"./iframe-CbFBC3pt.js";import{t as n}from"./Time-D4Einjlh.js";import{X as s}from"./XAxis-CuiMGrX2.js";import{g as y}from"./zIndexSlice-B8XantvI.js";import{C as g}from"./ComposedChart-Bc5HbX-g.js";import{L as x}from"./Line-D5xEp1_i.js";import{t as T,s as A,f as C,e as E,b as M,g as b,h as w,i as D,c as r}from"./d3-scale-C98YhsaH.js";import{T as V}from"./Tooltip-srpLNmE9.js";import"./preload-helper-Dp1pzeXC.js";import"./get-CeJ-O4Ro.js";import"./CartesianAxis-CA9u32-P.js";import"./Layer-DTzSPWpf.js";import"./resolveDefaultProps-DZFSM3t8.js";import"./Text-BLKgh8ue.js";import"./DOMUtils-rSL8yp4p.js";import"./isWellBehavedNumber-D0PjXqnv.js";import"./Label-8xdcvYL4.js";import"./PolarUtils-CTnnDHZv.js";import"./ZIndexLayer-BgzH297Q.js";import"./index-ZsssZYUM.js";import"./index-C2rCfHQ6.js";import"./types-CX4nwvsZ.js";import"./getClassNameFromUnknown-Jg1grEQN.js";import"./renderedTicksSlice-DaB_pXBU.js";import"./immer-BwRByMMH.js";import"./RechartsWrapper-C8YdywQb.js";import"./index-C4IztgfQ.js";import"./index-TGdP4Icg.js";import"./axisSelectors-DV4HNdRQ.js";import"./CartesianChart-ByXMh7XU.js";import"./chartDataContext-DASovuhK.js";import"./CategoricalChart-BMWFvZBg.js";import"./Curve-BlF3DWpa.js";import"./step-NntPL7PC.js";import"./path-DyVhHtw_.js";import"./ReactUtils-PDSB0db_.js";import"./ActivePoints-losSAyHn.js";import"./Dot-rYx1Cydy.js";import"./RegisterGraphicalItemId-BWff6MJa.js";import"./ErrorBarContext-eKi9YHyC.js";import"./GraphicalItemClipPath-3Dbzdjfh.js";import"./SetGraphicalItem-D4AnrrJM.js";import"./useAnimationId-B6jMJ5_9.js";import"./getRadiusAndStrokeWidthFromDot-Dg3y-0Vr.js";import"./ActiveShapeUtils-CC3LhhHX.js";import"./useElementOffset-WNt73Ltm.js";import"./uniqBy-DX3rhGUr.js";import"./iteratee-C94OH8qj.js";import"./Cross-D1PvKyxV.js";import"./Rectangle-BaQ7rI5r.js";import"./Sector-g-iQgKRp.js";const Xt={component:s},S={render:t=>e.createElement(y,{width:"100%",height:400},e.createElement(g,{data:n,margin:{top:20,right:20,bottom:20,left:20}},e.createElement(s,{dataKey:"x",...t,domain:["auto","auto"]}),e.createElement(x,{dataKey:"y"}))),args:{data:n}},a={...S,parameters:{controls:{include:["type","scale","domain","data"]}},argTypes:{scale:{options:[void 0,"auto","ordinal","time","point","linear"],control:{type:"radio"}},type:{options:[void 0,"category","number"],control:{type:"radio"}}}},k=r(".%L"),O=r(":%S"),K=r("%I:%M"),F=r("%I %p"),L=r("%a %d"),R=r("%b %d"),W=r("%B"),X=r("%Y");function B(t){return A(t)<t?k(t):C(t)<t?O(t):E(t)<t?K(t):M(t)<t?F(t):b(t)<t?w(t)<t?L(t):R(t):D(t)<t?W(t):X(t)}const i={...S,render:t=>{const p=t.data.map(o=>o.x).map(o=>o.valueOf()),m=T().domain([Math.min(...p),Math.max(...p)]).nice(),v={domain:m.domain().map(o=>o.valueOf()),scale:m,type:"number",ticks:m.ticks(5).map(o=>o.valueOf()),tickFormatter:B};return e.createElement(y,{width:"100%",height:400},e.createElement(g,{data:n,margin:{top:20,right:20,bottom:20,left:20}},e.createElement(s,{dataKey:"x",...t,...v}),e.createElement(x,{dataKey:"y"}),e.createElement(V,null)))},parameters:{controls:{include:["data"]}}};var c,l,u;a.parameters={...a.parameters,docs:{...(c=a.parameters)==null?void 0:c.docs,source:{originalSource:`{
+  ...StoryTemplate,
+  parameters: {
+    controls: {
+      include: ['type', 'scale', 'domain', 'data']
+    }
+  },
+  argTypes: {
+    scale: {
+      options: [undefined, 'auto', 'ordinal', 'time', 'point', 'linear'],
+      control: {
+        type: 'radio'
+      }
+    },
+    type: {
+      options: [undefined, 'category', 'number'],
+      control: {
+        type: 'radio'
+      }
+    }
+  }
+}`,...(u=(l=a.parameters)==null?void 0:l.docs)==null?void 0:u.source}}};var d,f,h;i.parameters={...i.parameters,docs:{...(d=i.parameters)==null?void 0:d.docs,source:{originalSource:`{
+  ...StoryTemplate,
+  render: (args: Args) => {
+    const timeValues = args.data.map(row => row.x);
+    // The d3 scaleTime domain requires numeric values
+    const numericValues = timeValues.map(time => time.valueOf());
+    // With .nice() we extend the domain nicely.
+    const timeScale = scaleTime().domain([Math.min(...numericValues), Math.max(...numericValues)]).nice();
+    const xAxisArgs: XAxisProps = {
+      domain: timeScale.domain().map(date => date.valueOf()),
+      // @ts-expect-error we need to wrap the d3 scales in unified interface
+      scale: timeScale,
+      type: 'number',
+      ticks: timeScale.ticks(5).map(date => date.valueOf()),
+      tickFormatter: multiFormat
+    };
+    return <ResponsiveContainer width="100%" height={400}>
+        <ComposedChart data={timeData} margin={{
+        top: 20,
+        right: 20,
+        bottom: 20,
+        left: 20
+      }}>
+          <XAxis dataKey="x" {...args} {...xAxisArgs} />
+          <Line dataKey="y" />
+          <Tooltip />
+        </ComposedChart>
+      </ResponsiveContainer>;
+  },
+  parameters: {
+    controls: {
+      include: ['data']
+    }
+  }
+}`,...(h=(f=i.parameters)==null?void 0:f.docs)==null?void 0:h.source}}};const Bt=["DefaultBehaviour","WithD3Scale"];export{a as DefaultBehaviour,i as WithD3Scale,Bt as __namedExportsOrder,Xt as default};
