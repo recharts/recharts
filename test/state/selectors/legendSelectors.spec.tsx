@@ -22,7 +22,7 @@ describe('selectLegendSettings', () => {
   shouldReturnFromInitialState(selectLegendSettings, {
     layout: 'horizontal',
     align: 'center',
-    verticalAlign: 'middle',
+    verticalAlign: 'bottom',
     itemSorter: 'value',
   });
 

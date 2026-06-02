@@ -3,10 +3,12 @@ export const expectedInBundle = [
   'getNiceTickValues',
   'getRelativeCoordinate',
   'Global',
+  'interpolate',
   'Layer',
   'Rectangle',
   'Sankey',
   'Surface',
   'useChartHeight',
   'useChartWidth',
+  'useChartLayout',
 ] as const;

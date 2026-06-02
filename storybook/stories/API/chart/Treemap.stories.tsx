@@ -2,9 +2,8 @@ import React from 'react';
 import { Args } from '@storybook/react-vite';
 import { flatTreemapData, sizeData, treemapData } from '../../data';
 import { ResponsiveContainer, Tooltip, Treemap, TreemapNode } from '../../../../src';
-import { RechartsHookInspector } from '../../../storybook-addon-recharts';
-import { getStoryArgsFromArgsTypesObject } from '../props/utils';
 import { TreemapArgs } from '../arg-types/TreemapArgs';
+import { getStoryArgsFromArgsTypesObject } from '../props/utils';
 
 export default {
   argTypes: TreemapArgs,
@@ -16,9 +15,7 @@ export const API = {
   render: (args: Args) => {
     return (
       <ResponsiveContainer width="100%" height={400}>
-        <Treemap {...args}>
-          <RechartsHookInspector />
-        </Treemap>
+        <Treemap {...args} />
       </ResponsiveContainer>
     );
   },
@@ -37,7 +34,6 @@ export const WithTooltip = {
       <ResponsiveContainer width="100%" height={400}>
         <Treemap {...args}>
           <Tooltip />
-          <RechartsHookInspector />
         </Treemap>
       </ResponsiveContainer>
     );
@@ -94,7 +90,6 @@ export const WithCustomContent = {
           }}
         >
           <Tooltip />
-          <RechartsHookInspector />
         </Treemap>
       </ResponsiveContainer>
     );
@@ -113,7 +108,6 @@ export const Nested = {
       <ResponsiveContainer width="100%" height={400}>
         <Treemap {...args}>
           <Tooltip />
-          <RechartsHookInspector />
         </Treemap>
       </ResponsiveContainer>
     );

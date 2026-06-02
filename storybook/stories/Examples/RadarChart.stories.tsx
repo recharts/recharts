@@ -3,7 +3,6 @@ import { Args, StoryObj } from '@storybook/react-vite';
 import { PolarAngleAxis, PolarGrid, PolarRadiusAxis, Radar, RadarChart, Tooltip, Legend } from '../../../src';
 import { getStoryArgsFromArgsTypesObject } from '../API/props/utils';
 import { rangeData } from '../data';
-import { RechartsHookInspector } from '../../storybook-addon-recharts';
 import { RadarChartArgs } from '../API/arg-types/RadarChartArgs';
 
 export default {
@@ -23,7 +22,6 @@ export const RangedRadarChart: StoryObj = {
         <PolarAngleAxis dataKey="day" />
         <Radar type="number" name="Temperature" dataKey="temperature" fill="orange" fillOpacity={0.5} stroke="blue" />
         <Tooltip defaultIndex={2} />
-        <RechartsHookInspector />
       </RadarChart>
     );
   },
@@ -77,7 +75,6 @@ export const RadarWithChangingDataKey: StoryObj = {
             label={{ fill: 'red' }}
           />
           <Tooltip defaultIndex={2} />
-          <RechartsHookInspector />
         </RadarChart>
       </>
     );

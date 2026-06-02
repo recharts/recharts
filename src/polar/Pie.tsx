@@ -7,6 +7,7 @@ import { selectPieLegend, selectPieSectors } from '../state/selectors/pieSelecto
 import { useAppSelector } from '../state/hooks';
 import { Layer } from '../container/Layer';
 import { Curve, Props as CurveProps } from '../shape/Curve';
+import { Sector } from '../shape/Sector';
 import { Text } from '../component/Text';
 import { Cell } from '../component/Cell';
 import { findAllByType } from '../util/ReactUtils';
@@ -17,12 +18,12 @@ import {
   ActiveShape,
   adaptEventsOfChild,
   AnimationDuration,
-  AnimationTiming,
   ChartOffsetInternal,
   Coordinate,
   DataConsumer,
   DataKey,
   DataProvider,
+  EasingInput,
   GeometrySector,
   LegendType,
   PresentationAttributesAdaptChildEvent,
@@ -66,6 +67,7 @@ import { ZIndexable, ZIndexLayer } from '../zIndex/ZIndexLayer';
 import { DefaultZIndexes } from '../zIndex/DefaultZIndexes';
 import { ChartData } from '../state/chartDataSlice';
 import { getClassNameFromUnknown } from '../util/getClassNameFromUnknown';
+import { WithIdRequired } from '../util/useUniqueId';
 
 interface PieDef {
   /**
@@ -183,8 +185,13 @@ export type PieSectorDataItem = PiePresentationProps &
     cornerRadius: number | undefined;
   };
 
-export type PieSectorShapeProps = PieSectorDataItem & { isActive: boolean; index: number };
-export type PieShape = ReactNode | ((props: PieSectorShapeProps, index: number) => React.ReactElement);
+export type PieSectorShapeProps = PieSectorDataItem & {
+  [DATA_ITEM_INDEX_ATTRIBUTE_NAME]: number;
+  [DATA_ITEM_GRAPHICAL_ITEM_ID_ATTRIBUTE_NAME]: GraphicalItemId;
+  isActive: boolean;
+  index: number;
+} & SVGProps<SVGPathElement>;
+export type PieShape = ActiveShape<PieSectorShapeProps, SVGPathElement>;
 
 interface PieEvents {
   /**
@@ -227,35 +234,9 @@ interface PieEvents {
 /**
  * Internal props, combination of external props + defaultProps + private Recharts state
  */
-interface InternalPieProps<DataPointType = unknown> extends DataProvider<DataPointType>, PieDef, ZIndexable, PieEvents {
+interface InternalPieProps extends PropsWithResolvedDefaults {
   id: GraphicalItemId;
-  className?: string;
-  // We actually spread the whole PieSectorDataItem into the keys.
-  dataKey: DataKey<DataPointType, unknown>;
-  // We actually spread the whole PieSectorDataItem into the keys.
-  nameKey?: DataKey<DataPointType, string>;
-  /** The minimum angle for no-zero element */
-  minAngle?: number;
-  legendType?: LegendType;
-  tooltipType?: TooltipType;
-  /** the max radius of pie */
-  maxRadius?: number;
-  hide?: boolean;
   sectors: ReadonlyArray<PieSectorDataItem>;
-  /** @deprecated */
-  activeShape?: ActiveShape<PieSectorDataItem>;
-  /** @deprecated */
-  inactiveShape?: ActiveShape<PieSectorDataItem>;
-  shape?: PieShape;
-  labelLine?: PieLabelLine;
-  label?: PieLabel;
-  animationEasing?: AnimationTiming;
-  isAnimationActive?: boolean | 'auto';
-  animationBegin?: number;
-  animationDuration?: AnimationDuration;
-  onAnimationStart?: () => void;
-  onAnimationEnd?: () => void;
-  rootTabIndex?: number;
 }
 
 interface PieProps<DataPointType = any, DataValueType = any>
@@ -283,7 +264,7 @@ interface PieProps<DataPointType = any, DataValueType = any>
    * The type of easing function.
    * @defaultValue ease
    */
-  animationEasing?: AnimationTiming;
+  animationEasing?: EasingInput;
   className?: string;
   /**
    * Hides the whole graphical element when true.
@@ -398,6 +379,8 @@ export type PieCoordinate = {
   outerRadius: number;
   maxRadius: number;
 };
+
+const defaultPieSectorShape = Sector;
 
 function SetPiePayloadLegend(props: { children?: ReactNode; id: GraphicalItemId }) {
   const cells = useMemo(() => findAllByType(props.children, Cell), [props.children]);
@@ -701,10 +684,12 @@ function PieSectors(props: PieSectorsProps) {
           graphicalItemMatches;
         const inactiveShape = activeIndex ? inactiveShapeProp : null;
         const sectorOptions = activeShape && isActive ? activeShape : inactiveShape;
-        const sectorProps = {
+        const sectorProps: PieSectorShapeProps = {
           ...entry,
           stroke: entry.stroke,
           tabIndex: -1,
+          index: i,
+          isActive,
           [DATA_ITEM_INDEX_ATTRIBUTE_NAME]: i,
           [DATA_ITEM_GRAPHICAL_ITEM_ID_ATTRIBUTE_NAME]: id,
         };
@@ -719,7 +704,11 @@ function PieSectors(props: PieSectorsProps) {
             onMouseLeave={onMouseLeaveFromContext(entry, i)}
             onClick={onClickFromContext(entry, i)}
           >
-            <Shape option={shape ?? sectorOptions} index={i} shapeType="sector" isActive={isActive} {...sectorProps} />
+            <Shape<PieSectorShapeProps, SVGPathElement>
+              option={sectorOptions ?? shape}
+              DefaultShape={defaultPieSectorShape}
+              shapeProps={sectorProps}
+            />
           </Layer>
         );
       })}
@@ -1001,12 +990,13 @@ export const defaultPieProps = {
   outerRadius: '80%',
   paddingAngle: 0,
   rootTabIndex: 0,
+  shape: defaultPieSectorShape,
   startAngle: 0,
   stroke: '#fff',
   zIndex: DefaultZIndexes.area,
 } as const satisfies Partial<Props>;
 
-function PieImpl(props: Omit<InternalProps, 'sectors'>) {
+function PieImpl(props: WithIdRequired<PropsWithResolvedDefaults>) {
   const { id, ...propsWithoutId } = props;
   const { hide, className, rootTabIndex } = props;
 

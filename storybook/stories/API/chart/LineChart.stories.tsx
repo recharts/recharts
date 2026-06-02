@@ -2,7 +2,6 @@ import React, { useCallback, useState } from 'react';
 import { Args } from '@storybook/react-vite';
 import { pageData } from '../../data';
 import { Line, LineChart, ResponsiveContainer, Tooltip, XAxis } from '../../../../src';
-import { RechartsHookInspector } from '../../../storybook-addon-recharts';
 import { LineChartArgs } from '../arg-types/LineChartArgs';
 import { getStoryArgsFromArgsTypesObject } from '../props/utils';
 
@@ -34,7 +33,6 @@ export const API = {
             strokeWidth={isHovered ? 8 : 4}
             animationDuration={5000}
           />
-          <RechartsHookInspector />
         </LineChart>
       </ResponsiveContainer>
     );
@@ -53,7 +51,6 @@ export const SynchronizedTooltip = {
           <Line isAnimationActive={false} name="BookOne" type="monotone" dataKey="uv" stroke="#111" />
           <XAxis dataKey="name" />
           <Tooltip active />
-          <RechartsHookInspector />
         </LineChart>
         <LineChart {...args} id="BookTwo" className="BookTwo">
           <Line isAnimationActive={false} name="BookTwo" type="monotone" dataKey="uv" stroke="#ff7300" />

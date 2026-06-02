@@ -9,6 +9,7 @@ import {
   Brush,
   CartesianGrid,
   ComposedChart,
+  Curve,
   DefaultZIndexes,
   Funnel,
   FunnelChart,
@@ -86,6 +87,7 @@ import {
   selectLegendSize,
 } from '../../../src/state/selectors/legendSelectors';
 import { mockTouchingElement } from '../../helper/mockTouchingElement';
+import { assertNotNull } from '../../helper/assertNotNull';
 import { LegendSettings } from '../../../src/state/legendSlice';
 import { selectTooltipAxisId } from '../../../src/state/selectors/selectTooltipAxisId';
 import { selectTooltipAxisType } from '../../../src/state/selectors/selectTooltipAxisType';
@@ -596,11 +598,16 @@ describe('Tooltip visibility', () => {
           const tooltip = getTooltip(container);
           expect(tooltip).not.toBeVisible();
 
-          const tooltipTriggerElement = showTooltip(container, mouseHoverSelector);
+          showTooltip(container, mouseHoverSelector);
 
           expect(tooltip).toBeVisible();
 
-          fireEvent.mouseOut(tooltipTriggerElement);
+          const tooltipTriggerElementAfterHover = container.querySelector(mouseHoverSelector);
+          assertNotNull(tooltipTriggerElementAfterHover);
+          fireEvent.mouseOut(tooltipTriggerElementAfterHover);
+          act(() => {
+            vi.runAllTimers();
+          });
 
           // Still visible after moving out of the chart, because active is true.
           expect(tooltip).toBeVisible();
@@ -616,11 +623,16 @@ describe('Tooltip visibility', () => {
           const tooltip = getTooltip(container);
           expect(tooltip).not.toBeVisible();
 
-          const tooltipTriggerElement = showTooltip(container, mouseHoverSelector);
+          showTooltip(container, mouseHoverSelector);
 
           expect(tooltip).not.toBeVisible();
 
-          fireEvent.mouseOut(tooltipTriggerElement);
+          const tooltipTriggerElementAfterHover = container.querySelector(mouseHoverSelector);
+          assertNotNull(tooltipTriggerElementAfterHover);
+          fireEvent.mouseOut(tooltipTriggerElementAfterHover);
+          act(() => {
+            vi.runAllTimers();
+          });
 
           expect(tooltip).not.toBeVisible();
         });
@@ -635,11 +647,16 @@ describe('Tooltip visibility', () => {
           const tooltip = getTooltip(container);
           expect(tooltip).not.toBeVisible();
 
-          const tooltipTriggerElement = showTooltip(container, mouseHoverSelector);
+          showTooltip(container, mouseHoverSelector);
 
           expect(tooltip).toBeVisible();
 
-          fireEvent.mouseOut(tooltipTriggerElement);
+          const tooltipTriggerElementAfterHover = container.querySelector(mouseHoverSelector);
+          assertNotNull(tooltipTriggerElementAfterHover);
+          fireEvent.mouseOut(tooltipTriggerElementAfterHover);
+          act(() => {
+            vi.runAllTimers();
+          });
 
           expect(tooltip).not.toBeVisible();
         });
@@ -675,7 +692,12 @@ describe('Tooltip visibility', () => {
           // Tooltip should be able to move when the mouse moves over the chart
           expect(tooltip).toBeVisible();
 
-          fireEvent.mouseOut(tooltipTriggerElement);
+          const tooltipTriggerElementAfterHover = container.querySelector(mouseHoverSelector);
+          assertNotNull(tooltipTriggerElementAfterHover);
+          fireEvent.mouseOut(tooltipTriggerElementAfterHover);
+          act(() => {
+            vi.runAllTimers();
+          });
 
           // Since active is false, the tooltip can be dismissed by mousing out
           expect(tooltip).not.toBeVisible();
@@ -797,6 +819,7 @@ describe('Tooltip visibility', () => {
             isAnimationActive: 'auto',
             label: false,
             legendType: 'line',
+            shape: Curve,
             stroke: '#82ca9d',
             strokeWidth: 1,
             type: 'linear',

@@ -12,7 +12,7 @@ import {
 } from 'react';
 
 import { clsx } from 'clsx';
-import { CurveType, Props as CurveProps } from '../shape/Curve';
+import { Curve, CurveType, Props as CurveProps } from '../shape/Curve';
 import { Layer } from '../container/Layer';
 import {
   CartesianLabelListContextProvider,
@@ -29,7 +29,7 @@ import {
   ActiveDotType,
   ActiveShape,
   AnimationDuration,
-  AnimationTiming,
+  EasingInput,
   CartesianLayout,
   DataConsumer,
   DataKey,
@@ -70,6 +70,8 @@ import { propsAreEqual } from '../util/propsAreEqual';
 import { GraphicalItemId } from '../state/graphicalItemsSlice';
 import { ChartData } from '../state/chartDataSlice';
 
+const defaultLineShape = Curve;
+
 export interface LinePointItem {
   readonly value: number;
   readonly payload?: any;
@@ -89,7 +91,7 @@ interface InternalLineProps extends ZIndexable {
   animateNewValues: boolean;
   animationBegin: number;
   animationDuration: AnimationDuration;
-  animationEasing: AnimationTiming;
+  animationEasing: EasingInput;
 
   className?: string;
   connectNulls: boolean;
@@ -104,7 +106,7 @@ interface InternalLineProps extends ZIndexable {
   layout: 'horizontal' | 'vertical';
   left: number;
   legendType: LegendType;
-  shape?: ActiveShape<CurveProps, SVGPathElement>;
+  shape: ActiveShape<CurveProps, SVGPathElement>;
 
   name?: string | number;
   needClip?: boolean;
@@ -162,7 +164,7 @@ interface LineProps<DataPointType = any, DataValueType = any>
    * The type of easing function.
    * @defaultValue ease
    */
-  animationEasing?: AnimationTiming;
+  animationEasing?: EasingInput;
   className?: string;
   /**
    * Whether to connect the line across null points.
@@ -549,11 +551,14 @@ function StaticCurve({
     layout,
     connectNulls,
     strokeDasharray: strokeDasharray ?? props.strokeDasharray,
+    pathRef,
   };
 
   return (
     <>
-      {points?.length > 1 && <Shape shapeType="curve" option={shape} {...curveProps} pathRef={pathRef} />}
+      {points?.length > 1 && (
+        <Shape<CurveProps, SVGPathElement> option={shape} DefaultShape={defaultLineShape} shapeProps={curveProps} />
+      )}
       <LineDotsWrapper points={points} clipPathId={clipPathId} props={props} />
     </>
   );
@@ -870,6 +875,7 @@ export const defaultLineProps = {
   isAnimationActive: 'auto',
   label: false,
   legendType: 'line',
+  shape: defaultLineShape,
   stroke: '#3182bd',
   strokeWidth: 1,
   xAxisId: 0,

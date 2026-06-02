@@ -1,11 +1,11 @@
 import * as React from 'react';
 import { test, expect } from '@playwright/experimental-ct-react';
 
-import LabelBarChartExample from '../../../www/src/docs/apiExamples/Label/LabelBarChartExample';
-import LabelFunnelPositions from '../../../www/src/docs/apiExamples/Label/LabelFunnelPositions';
-import LabelRadialBarPositions from '../../../www/src/docs/apiExamples/Label/LabelRadialBarPositions';
-import LabelPiePositions from '../../../www/src/docs/apiExamples/Label/LabelPiePositions';
-import LabelCartesianPositions from '../../../www/src/docs/apiExamples/Label/LabelCartesianPositions';
+import LabelBarChartExample from '../../../www/src/docs/exampleComponents/Label/LabelBarChartExample';
+import LabelFunnelPositions from '../../../www/src/docs/exampleComponents/Label/LabelFunnelPositions';
+import LabelRadialBarPositions from '../../../www/src/docs/exampleComponents/Label/LabelRadialBarPositions';
+import LabelPiePositions from '../../../www/src/docs/exampleComponents/Label/LabelPiePositions';
+import LabelCartesianPositions from '../../../www/src/docs/exampleComponents/Label/LabelCartesianPositions';
 
 test('LabelCartesianPositions', async ({ mount }) => {
   const component = await mount(<LabelCartesianPositions />);

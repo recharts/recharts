@@ -18,8 +18,15 @@ export const isNan = (value: unknown): value is number => {
   return typeof value == 'number' && value != +value;
 };
 
+/**
+ * Checks if the value is a percent string.
+ * A valid percent string must end with '%' and have at least one character before the '%'.
+ *
+ * @param {string | number | undefined} value The value to check
+ * @returns {boolean} true if the value is a percent string
+ */
 export const isPercent = (value: string | number | undefined): value is Percent =>
-  typeof value === 'string' && value.indexOf('%') === value.length - 1;
+  typeof value === 'string' && value.length > 1 && value.indexOf('%') === value.length - 1;
 
 export const isNumber = (value: unknown): value is number =>
   (typeof value === 'number' || value instanceof Number) && !isNan(value);
@@ -100,10 +107,38 @@ export const hasDuplicate = (ary: ReadonlyArray<unknown>): boolean => {
   return false;
 };
 
-export function interpolate(start: unknown, end: number, t: number): number;
-export function interpolate(start: unknown, end: null, t: number): null;
-export function interpolate(start: unknown, end: number | null, t: number): number | null;
-export function interpolate(start: unknown, end: number | null, t: number): number | null {
+/**
+ * Function to interpolate between two numbers.
+ * If both start and end are numbers, it calculates the interpolated value based on the parameter t (0 to 1).
+ * If either start or end is not a number, it returns the end value directly.
+ *
+ * You will typically use this function when implementing custom animations.
+ *
+ * `t` can be outside the (0, 1) range, depending on easing.
+ *
+ * This one interpolates only numbers;
+ * if you want to interpolate colors or strings then perhaps see {@link https://d3js.org/d3-interpolate d3-interpolate}.
+ * @param start the starting value (when t=0)
+ * @param end the final value (when t=1)
+ * @param t t interpolation factor; values in [0, 1] interpolate between start and end, and values outside that range extrapolate
+ *
+ * @since 3.9
+ */
+export function interpolate(start: number | null | undefined, end: number, t: number): number;
+export function interpolate(start: number | null | undefined, end: null, t: number): null;
+export function interpolate(start: number | null | undefined, end: undefined, t: number): undefined;
+export function interpolate(start: number | null | undefined, end: number | null, t: number): number | null;
+export function interpolate(start: number | null | undefined, end: number | undefined, t: number): number | undefined;
+export function interpolate(
+  start: number | null | undefined,
+  end: number | null | undefined,
+  t: number,
+): number | null | undefined;
+export function interpolate(
+  start: number | null | undefined,
+  end: number | null | undefined,
+  t: number,
+): number | null | undefined {
   if (isNumber(start) && isNumber(end)) {
     return round(start + t * (end - start));
   }

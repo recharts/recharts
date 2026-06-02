@@ -12,7 +12,6 @@ import {
 import { StorybookArgs } from '../../../StorybookArgs';
 import { getStoryArgsFromArgsTypesObject } from '../../API/props/utils';
 import { pageDataWithFillColor } from '../../data';
-import { RechartsHookInspector } from '../../../storybook-addon-recharts';
 import { RadialBarChartArgs } from '../../API/arg-types/RadialBarChartArgs';
 
 export default {
@@ -49,7 +48,6 @@ export const RadialBarChartWithMultipleAxes: StoryObj<StorybookArgs> = {
         <PolarRadiusAxis radiusAxisId="axis-amt" dataKey="amt" type="number" angle={180} stroke="black" />
         <PolarGrid stroke="red" strokeOpacity={0.5} angleAxisId="axis-pv" radiusAxisId="axis-name" />
         <PolarGrid stroke="blue" strokeOpacity={0.5} angleAxisId="axis-uv" radiusAxisId="axis-amt" />
-        <RechartsHookInspector />
       </RadialBarChart>
     );
   },

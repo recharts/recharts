@@ -17,30 +17,21 @@ describe('Documentation Examples Coverage', () => {
   const exportsThatNeedExamples: ReadonlyArray<string> = [
     'ActiveDotProps',
     'ActiveLabel',
-    'Area',
-    'AreaChart',
     'AreaProps',
     'AxisDomainItem',
     'AxisId',
-    'AxisInterval',
     'AxisRange',
-    'Bar',
     'BarProps',
-    'BarChart',
-    'BarStack',
     'BarStackProps',
     'BaseTickContentProps',
-    'Brush',
     'BrushProps',
     'CartesianAxis',
     'CartesianAxisProps',
-    'CartesianGrid',
     'CartesianGridProps',
     'CartesianViewBox',
     'Cell',
     'CellProps',
     'ChartOffset',
-    'ComposedChart',
     'Coordinate',
     'Cross',
     'CrossProps',
@@ -49,70 +40,48 @@ describe('Documentation Examples Coverage', () => {
     'CustomScaleDefinition',
     'Customized',
     'CustomizedProps',
-    'DefaultLegendContent',
-    'DefaultTooltipContent',
     'DefaultTooltipContentProps',
     'Dot',
-    'DotItemDotProps',
     'DotProps',
-    'ErrorBar',
     'ErrorBarProps',
     'Funnel',
     'FunnelChart',
     'FunnelProps',
     'FunnelTrapezoidItem',
     'Global',
+    'interpolate',
     'IfOverflow',
-    'Label',
-    'LabelList',
     'LabelListEntry',
     'LabelListProps',
     'LabelListPropsWithPosition',
     'Layer',
     'LayerProps',
-    'Legend',
     'LegendProps',
     'LegendType',
-    'Line',
-    'LineChart',
     'LineProps',
     'Margin',
     'NumberDomain',
     'Padding',
-    'Pie',
-    'PieChart',
     'PieLabel',
-    'PieSectorShapeProps',
     'PieShape',
     'PlotArea',
-    'PolarAngleAxis',
     'PolarAngleAxisProps',
     'PolarCoordinate',
-    'PolarGrid',
     'PolarGridProps',
-    'PolarRadiusAxis',
     'PolarRadiusAxisProps',
     'Polygon',
     'PolygonProps',
-    'Radar',
     'RadarProps',
     'InternalRadarProps',
     'RadarPoint',
-    'RadarChart',
-    'RadialBar',
-    'RadialBarChart',
     'RadialBarDataItem',
     'RadialBarProps',
-    'Rectangle',
     'RectangleProps',
-    'ReferenceArea',
     'ReferenceAreaProps',
     'ReferenceDot',
     'ReferenceDotProps',
-    'ReferenceLine',
     'ReferenceLineProps',
     'ReferenceLineSegment',
-    'ResponsiveContainer',
     'ResponsiveContainerProps',
     'Sankey',
     'SankeyData',
@@ -122,36 +91,24 @@ describe('Documentation Examples Coverage', () => {
     'SankeyNodeOptions',
     'SankeyNodeProps',
     'SankeyProps',
-    'Scatter',
-    'ScatterChart',
     'ScatterProps',
     'ScatterPointItem',
     'ScatterPointNode',
-    'Sector',
     'SectorProps',
-    'SunburstChart',
-    'SunburstData',
     'SunburstChartProps',
     'Surface',
     'SurfaceProps',
-    'Symbols',
     'SymbolsProps',
-    'Text',
     'TextProps',
     'TickItem',
-    'Tooltip',
     'TooltipPayloadEntry',
     'TooltipProps',
     'Trapezoid',
     'TrapezoidProps',
-    'Treemap',
     'TreemapContentType',
     'TreemapProps',
-    'XAxis',
     'XAxisProps',
-    'YAxis',
     'YAxisProps',
-    'ZAxis',
     'ZAxisProps',
     'getNiceTickValues',
     'TextVerticalAnchor',
@@ -189,7 +146,110 @@ describe('Documentation Examples Coverage', () => {
     'NoFunnel',
     'NoCentric',
     'NiceTicksAlgorithm',
+    'EasingInput',
+    // Hooks and types that do not appear in any /examples/ page component;
+    // they need dedicated examples to be removed from this list.
+    'CartesianLayout',
+    'InverseScaleFunction',
+    'LayoutType',
+    'PolarLayout',
+    'useXAxisInverseDataSnapScale',
+    'useXAxisInverseTickSnapScale',
+    'useYAxisInverseDataSnapScale',
+    'useYAxisInverseTickSnapScale',
+    'ZIndexLayer',
   ];
+
+  /*
+   * Set of exports that do have at least one example, but some of its props do not.
+   */
+  const exportsThatNeedPropExamples: ReadonlySet<string> = new Set([
+    'Area',
+    'AreaChart',
+    'Bar',
+    'BarChart',
+    'BarStack',
+    'Brush',
+    'CartesianGrid',
+    'ComposedChart',
+    'DefaultLegendContent',
+    'DefaultTooltipContent',
+    'ErrorBar',
+    'Label',
+    'LabelList',
+    'Legend',
+    'Line',
+    'LineChart',
+    'Pie',
+    'PieChart',
+    'PolarAngleAxis',
+    'PolarGrid',
+    'PolarRadiusAxis',
+    'Radar',
+    'RadarChart',
+    'RadialBar',
+    'RadialBarChart',
+    'Rectangle',
+    'ReferenceArea',
+    'ReferenceLine',
+    'ResponsiveContainer',
+    'Scatter',
+    'ScatterChart',
+    'Sector',
+    'SunburstChart',
+    'Symbols',
+    'Text',
+    'Tooltip',
+    'Treemap',
+    'XAxis',
+    'YAxis',
+    'ZAxis',
+  ]);
+
+  describe.each(exportsThatNeedExamples)('Excluded export: %s', exportName => {
+    test('still has no example usage', () => {
+      const examples = exampleReader.getExamples(exportName);
+      expect(examples.length, `${exportName} is excluded but already has examples`).toBe(0);
+    });
+  });
+
+  describe.each(Array.from(exportsThatNeedPropExamples))('Excluded prop example: %s', exportName => {
+    test('has a component example', () => {
+      const examples = exampleReader.getExamples(exportName);
+      expect(examples.length, `No examples found for ${exportName}`).toBeGreaterThan(0);
+    });
+
+    test('still has no prop example usage', () => {
+      if (components.has(exportName)) {
+        const props = projectReader.getRechartsPropsOf(exportName);
+
+        if (props.length <= 0) {
+          throw new Error(
+            `Export ${exportName} has no props, so it should not be in the exportsThatNeedPropExamples list`,
+          );
+        }
+
+        const uncoveredProps = props.filter(propName => {
+          // Skip event handlers as they are often not demonstrated in static examples
+          if (propName.startsWith('on')) {
+            return false;
+          }
+          const propExamples = exampleReader.getExamples(exportName, propName);
+          if (propExamples.length === 0) {
+            // no examples found for this prop, so this exclusion is still fresh
+            return true;
+          }
+          // this prop has an example therefore is not uncovered
+          return false;
+        });
+        expect(
+          uncoveredProps,
+          `All props of component ${exportName} have examples available, you should remove this from the exclusion list`,
+          // if you want to see which props are not covered - then remove the `.not` and the test suite will tell you
+        ).not.toEqual([]);
+      }
+    });
+  });
 
   describe.each(allExports.filter(name => !exportsThatNeedExamples.includes(name)))('Export: %s', exportName => {
     test('has at least one example usage', () => {
@@ -200,7 +260,7 @@ describe('Documentation Examples Coverage', () => {
     if (components.has(exportName)) {
       const props = projectReader.getRechartsPropsOf(exportName);
 
-      if (props.length > 0) {
+      if (props.length > 0 && !exportsThatNeedPropExamples.has(exportName)) {
         describe('Props', () => {
           test.each(props)('prop: %s has example usage', propName => {
             // Skip event handlers as they are often not demonstrated in static examples

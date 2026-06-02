@@ -1,11 +1,4 @@
 import { ChartExample } from '../../exampleComponents/types.ts';
-import ScatterChartExample from './ScatterChartExample.tsx';
-import ScatterChartExampleSource from './ScatterChartExample.tsx?raw';
+import { scatterChartExamples } from '../../exampleComponents/ScatterChart';
 
-export const scatterChartApiExamples: ReadonlyArray<ChartExample> = [
-  {
-    Component: ScatterChartExample,
-    sourceCode: ScatterChartExampleSource,
-    name: 'Scatter Chart Example',
-  },
-];
+export const scatterChartApiExamples: ReadonlyArray<ChartExample> = [scatterChartExamples.SimpleScatterChart];

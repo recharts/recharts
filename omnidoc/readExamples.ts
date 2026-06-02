@@ -1,14 +1,40 @@
-import { Project, SyntaxKind, Node, SourceFile, JsxOpeningElement, JsxSelfClosingElement } from 'ts-morph';
+import {
+  Project,
+  SyntaxKind,
+  Node,
+  SourceFile,
+  ObjectLiteralExpression,
+  JsxOpeningElement,
+  JsxSelfClosingElement,
+} from 'ts-morph';
 
 export interface ExampleResult {
   name: string;
   url: string;
 }
 
+export function unwrapObjectLiteralExpression(node: Node | undefined): ObjectLiteralExpression | undefined {
+  if (!node) {
+    return undefined;
+  }
+
+  if (Node.isObjectLiteralExpression(node)) {
+    return node;
+  }
+
+  if (Node.isSatisfiesExpression(node) || Node.isAsExpression(node) || Node.isParenthesizedExpression(node)) {
+    return unwrapObjectLiteralExpression(node.getExpression());
+  }
+
+  return undefined;
+}
+
 export class ExampleReader {
   private project: Project;
 
   private fileToExamples: Map<string, ExampleResult[]> = new Map();
+
+  private exportToExamples: Map<string, ExampleResult[]> = new Map();
 
   private initialized = false;
 
@@ -20,60 +46,27 @@ export class ExampleReader {
   }
 
   public getExamples(componentName: string, propName?: string): ExampleResult[] {
-    const explicitExamples = new Map<string, ExampleResult>();
-    const implicitExamples = new Map<string, ExampleResult>();
-
+    const results = new Map<string, ExampleResult>();
     const cleanName = componentName.trim();
-    // Some components (like hooks) have their own API page but share example file with others.
-    // If a component has an explicit API example entry, we should ONLY show that.
-    const hasOwnApiPage = Array.from(this.fileToExamples.values()).some(exList =>
-      exList.some(ex => ex.url.includes(`/api/${cleanName}/`)),
-    );
+
+    if (!propName) {
+      this.exportToExamples.get(cleanName)?.forEach(ex => {
+        results.set(ex.url, ex);
+      });
+    }
 
     this.fileToExamples.forEach((exList, filePath) => {
       const sourceFile = this.project.getSourceFile(filePath);
       if (!sourceFile) return;
 
-      // Check for component usage
-      const explicitMatches = exList.filter(ex => ex.url === `/api/${cleanName}/`);
-      const isExplicitApiExample = explicitMatches.length > 0;
+      if (!this.isComponentUsed(sourceFile, cleanName)) return;
 
-      if (isExplicitApiExample) {
-        if (propName) {
-          if (this.isPropUsed(sourceFile, cleanName, propName)) {
-            explicitMatches.forEach(ex => explicitExamples.set(ex.url, ex));
-          }
-        } else {
-          explicitMatches.forEach(ex => explicitExamples.set(ex.url, ex));
-        }
-      }
+      if (propName && !this.isPropUsed(sourceFile, cleanName, propName)) return;
 
-      if (this.isComponentUsed(sourceFile, cleanName)) {
-        // Implicit usage - add to implicit examples
-        // But filter out API examples that are NOT for this component IF it has its own page
-
-        const filteredList = exList.filter(ex => {
-          if (hasOwnApiPage && ex.url.startsWith('/api/')) {
-            return ex.url === `/api/${cleanName}/`;
-          }
-          return true;
-        });
-
-        // If propName is specified, check for prop usage
-        if (propName) {
-          if (this.isPropUsed(sourceFile, cleanName, propName)) {
-            filteredList.forEach(ex => implicitExamples.set(ex.url, ex));
-          }
-        } else {
-          filteredList.forEach(ex => implicitExamples.set(ex.url, ex));
-        }
-      }
+      exList.forEach(ex => results.set(ex.url, ex));
     });
 
-    // Merge implicit into explicit, preferring explicit when URLs collide
-    // (explicit examples are set first, then we only add implicit if URL not present)
-    explicitExamples.forEach((ex, url) => implicitExamples.set(url, ex));
-    return Array.from(implicitExamples.values());
+    return Array.from(results.values());
   }
 
   private initialize() {
@@ -91,13 +84,12 @@ export class ExampleReader {
   }
 
   private buildUrlMap() {
-    // 1. Parse www/src/docs/exampleComponents/index.ts
+    // Parse www/src/docs/exampleComponents/index.ts
     const exampleComponentsIndex = this.project.getSourceFile('www/src/docs/exampleComponents/index.ts');
     if (exampleComponentsIndex) {
       this.processExampleComponentsIndex(exampleComponentsIndex);
     }
 
-    // 2. Parse www/src/docs/apiExamples/index.tsx
     const apiExamplesIndex = this.project.getSourceFile('www/src/docs/apiExamples/index.tsx');
     if (apiExamplesIndex) {
       this.processApiExamplesIndex(apiExamplesIndex);
@@ -108,14 +100,14 @@ export class ExampleReader {
     const allExamplesExport = sourceFile.getVariableDeclaration('allExamples');
     if (!allExamplesExport) return;
 
-    const initializer = allExamplesExport.getInitializerIfKind(SyntaxKind.ObjectLiteralExpression);
+    const initializer = unwrapObjectLiteralExpression(allExamplesExport.getInitializer());
     if (!initializer) return;
 
     initializer.getProperties().forEach(prop => {
       if (Node.isPropertyAssignment(prop)) {
         // e.g. AreaChart: { examples: areaChartExamples ... }
         // We want to process `areaChartExamples`
-        const objectLiteral = prop.getInitializerIfKind(SyntaxKind.ObjectLiteralExpression);
+        const objectLiteral = unwrapObjectLiteralExpression(prop.getInitializer());
         if (objectLiteral) {
           const examplesProp = objectLiteral.getProperty('examples');
           if (examplesProp && Node.isPropertyAssignment(examplesProp)) {
@@ -152,13 +144,13 @@ export class ExampleReader {
     const variableDecl = sourceFile.getVariableDeclaration(exportName);
     if (!variableDecl) return;
 
-    const initializer = variableDecl.getInitializerIfKind(SyntaxKind.ObjectLiteralExpression);
+    const initializer = unwrapObjectLiteralExpression(variableDecl.getInitializer());
     if (!initializer) return;
 
     initializer.getProperties().forEach(prop => {
       if (Node.isPropertyAssignment(prop)) {
         const exampleName = prop.getName(); // e.g. SimpleAreaChart
-        const exampleObj = prop.getInitializerIfKind(SyntaxKind.ObjectLiteralExpression);
+        const exampleObj = unwrapObjectLiteralExpression(prop.getInitializer());
         if (exampleObj) {
           const componentProp = exampleObj.getProperty('Component');
           if (componentProp && Node.isPropertyAssignment(componentProp)) {
@@ -211,39 +203,42 @@ export class ExampleReader {
     const allApiExamplesExport = sourceFile.getVariableDeclaration('allApiExamples');
     if (!allApiExamplesExport) return;
 
-    const initializer = allApiExamplesExport.getInitializerIfKind(SyntaxKind.ObjectLiteralExpression);
+    const initializer = unwrapObjectLiteralExpression(allApiExamplesExport.getInitializer());
     if (!initializer) return;
 
     initializer.getProperties().forEach(prop => {
-      if (Node.isPropertyAssignment(prop)) {
-        const componentName = prop.getName(); // e.g. AreaChart
-        const url = `/api/${componentName}/`;
+      if (!Node.isPropertyAssignment(prop)) {
+        return;
+      }
 
-        const examplesIdentifier = prop.getInitializerIfKind(SyntaxKind.Identifier);
-        if (examplesIdentifier) {
-          const definitions = examplesIdentifier.getDefinitions();
-          if (definitions.length > 0) {
-            const def = definitions[0];
-            const declaration = def?.getDeclarationNode();
-            if (declaration) {
-              const declSourceFile = declaration.getSourceFile();
-              if (declSourceFile !== sourceFile && Node.isVariableDeclaration(declaration)) {
-                this.processApiExampleArray(declSourceFile, declaration.getName(), url);
-              } else if (Node.isImportSpecifier(declaration)) {
-                const importDecl = declaration.getImportDeclaration();
-                const moduleSpecifier = importDecl.getModuleSpecifierSourceFile();
-                if (moduleSpecifier) {
-                  this.processApiExampleArray(moduleSpecifier, declaration.getName(), url);
-                }
-              }
-            }
-          }
+      const examplesIdentifier = prop.getInitializerIfKind(SyntaxKind.Identifier);
+      if (!examplesIdentifier) {
+        return;
+      }
+
+      const definitions = examplesIdentifier.getDefinitions();
+      if (definitions.length === 0) {
+        return;
+      }
+
+      const declaration = definitions[0]?.getDeclarationNode();
+      if (!declaration) {
+        return;
+      }
+
+      if (Node.isVariableDeclaration(declaration)) {
+        this.processApiExampleArray(declaration.getSourceFile(), declaration.getName());
+      } else {
+        const importDeclaration = declaration.getFirstAncestorByKind(SyntaxKind.ImportDeclaration);
+        const moduleSpecifier = importDeclaration?.getModuleSpecifierSourceFile();
+        if (moduleSpecifier) {
+          this.processApiExampleArray(moduleSpecifier, examplesIdentifier.getText());
         }
       }
     });
   }
 
-  private processApiExampleArray(sourceFile: SourceFile, exportName: string, url: string) {
+  private processApiExampleArray(sourceFile: SourceFile, exportName: string) {
     const variableDecl = sourceFile.getVariableDeclaration(exportName);
     if (!variableDecl) return;
 
@@ -251,51 +246,41 @@ export class ExampleReader {
     if (!initializer) return;
 
     initializer.getElements().forEach(element => {
-      if (Node.isObjectLiteralExpression(element)) {
-        const componentProp = element.getProperty('Component');
-        if (componentProp && Node.isPropertyAssignment(componentProp)) {
-          const componentIdentifier = componentProp.getInitializerIfKind(SyntaxKind.Identifier);
-          if (componentIdentifier) {
-            const definitions = componentIdentifier.getDefinitions();
-            if (definitions.length > 0) {
-              const def = definitions[0];
-              const declaration = def?.getDeclarationNode();
-              let componentSourceFile: SourceFile | undefined;
-
-              if (declaration && Node.isImportSpecifier(declaration)) {
-                componentSourceFile = declaration.getImportDeclaration().getModuleSpecifierSourceFile();
-              } else if (
-                declaration &&
-                (Node.isFunctionDeclaration(declaration) || Node.isVariableDeclaration(declaration))
-              ) {
-                componentSourceFile = declaration.getSourceFile();
-              }
-
-              if (componentSourceFile) {
-                const filePath = componentSourceFile.getFilePath();
-
-                // Try to find 'name' property in the object literal
-                let name = 'Example';
-                if (Node.isObjectLiteralExpression(element)) {
-                  const nameProp = element.getProperty('name');
-                  if (nameProp && Node.isPropertyAssignment(nameProp)) {
-                    const nameInitializer = nameProp.getInitializerIfKind(SyntaxKind.StringLiteral);
-                    if (nameInitializer) {
-                      name = nameInitializer.getLiteralValue();
-                    }
-                  }
-                }
-
-                if (!this.fileToExamples.has(filePath)) {
-                  this.fileToExamples.set(filePath, []);
-                }
-                this.fileToExamples.get(filePath)!.push({ name, url });
-              }
-            }
-          }
-        }
+      const exampleObj = unwrapObjectLiteralExpression(element);
+      if (!exampleObj) {
+        return;
       }
+
+      const defaultToolTabProp = exampleObj.getProperty('defaultToolTab');
+      if (!defaultToolTabProp || !Node.isPropertyAssignment(defaultToolTabProp)) {
+        return;
+      }
+
+      const defaultToolTab = defaultToolTabProp.getInitializerIfKind(SyntaxKind.StringLiteral)?.getLiteralValue();
+      if (!defaultToolTab) {
+        return;
+      }
+
+      defaultToolTab
+        .split('|')
+        .map(name => name.trim())
+        .filter(Boolean)
+        .forEach(name => {
+          this.addExportExample(name, {
+            name: `${name} API example`,
+            url: `/api/${name}/`,
+          });
+        });
     });
+  }
+
+  private addExportExample(exportName: string, example: ExampleResult) {
+    const existingExamples = this.exportToExamples.get(exportName) ?? [];
+    if (existingExamples.some(existing => existing.url === example.url)) {
+      return;
+    }
+
+    this.exportToExamples.set(exportName, [...existingExamples, example]);
   }
 
   private isComponentUsed(sourceFile: SourceFile, componentName: string): boolean {

@@ -7,6 +7,7 @@ import {
   Bar,
   BarChart,
   ComposedChart,
+  Curve,
   DefaultZIndexes,
   Legend,
   LegendProps,
@@ -24,7 +25,7 @@ import {
   Surface,
 } from '../../src';
 import { testChartLayoutContext } from '../util/context';
-import { mockGetBoundingClientRect } from '../helper/mockGetBoundingClientRect';
+import { mockGetBoundingClientRect, mockSequenceOfGetBoundingClientRect } from '../helper/mockGetBoundingClientRect';
 import { assertNotNull } from '../helper/assertNotNull';
 import { expectBars } from '../helper/expectBars';
 import { useAppSelector } from '../../src/state/hooks';
@@ -438,6 +439,7 @@ describe('<Legend />', () => {
         iconSize: 14,
         inactiveColor: '#ccc',
         itemSorter: 'value',
+        labelStyle: {},
         layout: 'horizontal',
         margin: {
           bottom: 5,
@@ -466,6 +468,7 @@ describe('<Legend />', () => {
               isAnimationActive: 'auto',
               label: false,
               legendType: 'line',
+              shape: Curve,
               stroke: '#8884d8',
               strokeDasharray: '5 5',
               strokeWidth: 1,
@@ -495,6 +498,7 @@ describe('<Legend />', () => {
               isAnimationActive: 'auto',
               label: false,
               legendType: 'line',
+              shape: Curve,
               stroke: '#82ca9d',
               strokeWidth: 1,
               type: 'monotone',
@@ -797,6 +801,7 @@ describe('<Legend />', () => {
         iconSize: 14,
         inactiveColor: '#ccc',
         itemSorter: 'value',
+        labelStyle: {},
         layout: 'horizontal',
         margin: {
           bottom: 5,
@@ -825,6 +830,7 @@ describe('<Legend />', () => {
               isAnimationActive: 'auto',
               label: false,
               legendType: 'line',
+              shape: Curve,
               stroke: '#8884d8',
               strokeDasharray: '5 5',
               strokeWidth: 1,
@@ -854,6 +860,7 @@ describe('<Legend />', () => {
               isAnimationActive: 'auto',
               label: false,
               legendType: 'line',
+              shape: Curve,
               stroke: '#82ca9d',
               strokeWidth: 1,
               type: 'monotone',
@@ -1027,7 +1034,7 @@ describe('<Legend />', () => {
       expect(container.querySelectorAll('.recharts-default-legend')).toHaveLength(1);
 
       expect(yAxisRangeSpy).toHaveBeenLastCalledWith([485, 5]);
-      expect(yAxisRangeSpy).toHaveBeenCalledTimes(3);
+      expect(yAxisRangeSpy).toHaveBeenCalledTimes(2);
 
       expectBars(container, [
         {
@@ -1090,7 +1097,7 @@ describe('<Legend />', () => {
       expect(container.querySelectorAll('.recharts-default-legend')).toHaveLength(0);
 
       expect(yAxisRangeSpy).toHaveBeenLastCalledWith([495, 5]);
-      expect(yAxisRangeSpy).toHaveBeenCalledTimes(4);
+      expect(yAxisRangeSpy).toHaveBeenCalledTimes(3);
 
       expectBars(container, [
         {
@@ -1628,7 +1635,7 @@ describe('<Legend />', () => {
             spy(offset);
           },
         )();
-        expect(spy).toHaveBeenCalledTimes(3);
+        expect(spy).toHaveBeenCalledTimes(2);
         expectLastCalledWith(spy, {
           brushBottom: 5,
           top: 5,
@@ -1657,7 +1664,7 @@ describe('<Legend />', () => {
             spy(offset);
           },
         )();
-        expect(spy).toHaveBeenCalledTimes(2);
+        expect(spy).toHaveBeenCalledTimes(3);
         expectLastCalledWith(spy, {
           brushBottom: 5,
           top: 5,
@@ -1724,6 +1731,37 @@ describe('<Legend />', () => {
           right: 5,
           width: 490,
           height: 490 - 13,
+        });
+      });
+
+      it('should update bottom offset when legend height increases after resize (regression #7200)', () => {
+        // Simulate legend wrapping: first render has small height, then height increases
+        mockSequenceOfGetBoundingClientRect([
+          { height: 20, width: 200 },
+          { height: 60, width: 200 },
+        ]);
+        const spy = vi.fn();
+        testChartLayoutContext(
+          props => (
+            <BarChart width={500} height={500} data={categoricalData}>
+              {props.children}
+              <Legend layout="horizontal" />
+              <Bar dataKey="value" />
+            </BarChart>
+          ),
+          ({ offset }) => {
+            spy(offset);
+          },
+        )();
+        // The final offset should reflect the larger legend height (60px)
+        expectLastCalledWith(spy, {
+          brushBottom: 5,
+          top: 5,
+          bottom: 5 + 60,
+          left: 5,
+          right: 5,
+          width: 490,
+          height: 490 - 60,
         });
       });
     });

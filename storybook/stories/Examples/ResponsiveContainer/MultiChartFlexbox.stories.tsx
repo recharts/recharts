@@ -12,7 +12,6 @@ import {
 } from '../../../../src';
 import { pageData } from '../../data';
 import './style.css';
-import { RechartsHookInspector } from '../../../storybook-addon-recharts';
 
 export default {
   component: AreaChart,
@@ -39,7 +38,6 @@ export const MultiChartFlexbox = {
               <YAxis />
               <Area type="monotone" dataKey="uv" stroke="#8884d8" fill="#8884d8" />
               <Tooltip />
-              <RechartsHookInspector />
             </AreaChart>
           </ResponsiveContainer>
           <ResponsiveContainer className="flex-child">
@@ -89,7 +87,6 @@ export const ResponsiveContainerWithFlexbox = {
                 <CartesianGrid strokeDasharray="3 3" />
                 <Area type="monotone" dataKey="uv" stroke="#8884d8" fill="#8884d8" />
                 <Tooltip />
-                <RechartsHookInspector />
               </AreaChart>
             </ResponsiveContainer>
           </div>

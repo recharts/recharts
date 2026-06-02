@@ -1,11 +1,9 @@
 import { ChartExample } from '../../exampleComponents/types';
-import LineChartExample from '../LineChart/LineChartExample';
-import LineChartExampleSource from '../LineChart/LineChartExample?raw';
+import { lineChartExamples } from '../../exampleComponents/LineChart';
 
 export const useChartWidthAndHeightApiExamples: ReadonlyArray<ChartExample> = [
   {
-    Component: LineChartExample,
-    sourceCode: LineChartExampleSource,
+    ...lineChartExamples.SimpleLineChart,
     name: 'useChartWidth API Example',
     defaultTool: 'devtools',
     defaultToolTab: 'useChartWidth | useChartHeight',

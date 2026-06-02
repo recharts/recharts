@@ -24,7 +24,6 @@ import {
   YAxis,
 } from '../../../src';
 import { PageData } from '../../../test/_data';
-import { RechartsHookInspector } from '../../storybook-addon-recharts';
 
 const SynchronisationProps = {
   syncId: { control: 'text' },
@@ -98,7 +97,6 @@ export const Synchronised = {
             <Area type="monotone" dataKey="uv" stroke={green} fill={green} />
             <Brush />
             <Tooltip />
-            <RechartsHookInspector />
           </AreaChart>
         </ResponsiveContainer>
 
@@ -247,7 +245,6 @@ export const SynchronisedWithDataOnItem = {
           {series.map(s => (
             <Line dataKey="y" data={s.data} name={s.name} key={s.name} />
           ))}
-          <RechartsHookInspector />
         </LineChart>
         <LineChart {...args} width={500} height={300}>
           <XAxis dataKey="x" type="number" domain={[0, 3]} />

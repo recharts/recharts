@@ -39,6 +39,7 @@ import { TextAnchor, TextVerticalAnchor } from '../component/Text';
 import type { TickFormatter } from '../cartesian/CartesianAxis';
 import { TextProps } from '../index';
 import { TypedDataKey } from './typedDataKey';
+import type { EasingInput } from '../animation/easing';
 
 /**
  * Determines how values are stacked:
@@ -678,7 +679,9 @@ export type DOMAttributesAdaptChildEvent<P, T> = {
  *
  * @inline
  */
-export type AnimationTiming = 'ease' | 'ease-in' | 'ease-out' | 'ease-in-out' | 'linear';
+export type { EasingInput };
+/** @deprecated Use EasingInput instead */
+export type AnimationTiming = EasingInput;
 /** Specifies the duration of animation, the unit of this option is ms. */
 export type AnimationDuration = number;
 
@@ -796,6 +799,9 @@ export type YAxisTickContentProps = BaseTickContentProps & {
   padding: YAxisPadding | undefined;
 };
 
+/**
+ * @inline
+ */
 export type TickProp<T> = TextProps | ReactElement | ((props: T) => ReactNode) | boolean;
 
 export interface BaseAxisProps<DataPointType, DataValueType> extends DataConsumer<DataPointType, DataValueType> {
@@ -1327,10 +1333,10 @@ export type DotType =
    */
   | ReactElement<SVGProps<SVGElement>>;
 
-export type ActiveShape<PropsType = Record<string, any>, ElementType = SVGElement> =
-  | ReactElement<SVGProps<ElementType>>
-  | ((props: PropsType) => ReactElement | null | undefined)
-  | SVGProps<ElementType>
+export type ActiveShape<PropsType = Record<string, unknown>, ElementType = SVGElement> =
+  | ReactElement<Partial<PropsType> & SVGProps<ElementType>>
+  | ((props: PropsType, index?: string | number) => ReactNode)
+  | (Partial<PropsType> & SVGProps<ElementType>)
   | boolean;
 
 export type RangeObj = PolarViewBoxRequired & {
@@ -1571,7 +1577,21 @@ export interface CartesianChartProps<DataPointType = unknown>
    */
   barSize?: number | string;
   /**
-   * The base value of area.
+   * Configures the starting value used to build the internal baseline for non-ranged, non-stacked areas.
+   *
+   * WARNING despite the name `dataMin`|`dataMax` this actually reads the domain instead, so it should rather be
+   * `domainMin`|`domainMax`. This looks like a small detail,
+   * but it's actually important because domains are usually extended automatically.
+   * For example the default numerical domain starts from 0.
+   *
+   * - `number`: uses the corresponding axis value as a flat baseline
+   * - `dataMin`: uses the minimum of the value-axis domain
+   * - `dataMax`: uses the maximum of the value-axis domain
+   *
+   * This uses the same `BaseValue` resolution as the `baseValue` prop on `<Area />`, but acts as a fallback:
+   * item-level `Area.baseValue` takes precedence over the chart-level `baseValue`.
+   *
+   * Ignored for stacked areas and for ranged areas where `dataKey` already returns `[min, max]` tuples.
    */
   baseValue?: BaseValue;
   compact?: boolean;

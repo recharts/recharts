@@ -135,8 +135,32 @@ export const useMargin = (): Margin | undefined => {
 
 export const selectChartLayout = (state: RechartsRootState): LayoutType => state.layout.layoutType;
 
-export const useChartLayout = () => useAppSelector(selectChartLayout);
+/**
+ * Returns the chart layout as configured by the chart.
+ *
+ * Cartesian charts use `horizontal` or `vertical`.
+ * Polar charts use `centric` or `radial`.
+ *
+ * Returns `undefined` if used outside a chart context.
+ *
+ * @deprecated this hook mixes cartesian and polar layouts together; prefer to use {@link useCartesianChartLayout} and {@link usePolarChartLayout} instead, which give you better type safety.
+ *
+ * @returns {LayoutType | undefined} The chart layout, or `undefined` if not in a chart context.
+ *
+ * @since 3.9
+ */
+export const useChartLayout = (): LayoutType | undefined => useAppSelector(selectChartLayout);
 
+/**
+ * Returns the chart layout only for Cartesian charts.
+ *
+ * Returns `horizontal` or `vertical` for Cartesian charts.
+ * Returns `undefined` for non-Cartesian charts or outside chart context.
+ *
+ * @since 3.9
+ *
+ * @returns {CartesianLayout | undefined} The Cartesian chart layout, or `undefined`.
+ */
 export const useCartesianChartLayout = (): CartesianLayout | undefined => {
   const layout = useChartLayout();
   if (layout === 'horizontal' || layout === 'vertical') {
@@ -153,6 +177,16 @@ export const selectPolarChartLayout = (state: RechartsRootState): PolarLayout | 
   return undefined;
 };
 
+/**
+ * Returns the chart layout only for Polar charts.
+ *
+ * Returns `centric` or `radial` for Polar charts.
+ * Returns `undefined` for non-Polar charts or outside chart context.
+ *
+ * @returns {PolarLayout | undefined} The Polar chart layout, or `undefined`.
+ *
+ * @since 3.9
+ */
 export const usePolarChartLayout = (): PolarLayout | undefined => {
   return useAppSelector(selectPolarChartLayout);
 };

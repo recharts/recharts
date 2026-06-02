@@ -143,6 +143,9 @@ export type { Props as TrapezoidProps } from './shape/Trapezoid';
 
 export { Global } from './util/Global';
 export type {
+  CartesianLayout,
+  PolarLayout,
+  LayoutType,
   LegendType,
   DataKey,
   AxisInterval,
@@ -158,6 +161,7 @@ export type {
   TickItem,
 } from './util/types';
 export type { IfOverflow } from './util/IfOverflow';
+export type { EasingInput } from './animation/easing';
 
 export { ZIndexLayer } from './zIndex/ZIndexLayer';
 export { DefaultZIndexes } from './zIndex/DefaultZIndexes';
@@ -189,7 +193,14 @@ export {
 
 export type { CartesianDataPoint, ScaleFunction, InverseScaleFunction } from './hooks';
 
-export { useChartHeight, useChartWidth, useMargin } from './context/chartLayoutContext';
+export {
+  useChartHeight,
+  useChartWidth,
+  useMargin,
+  useChartLayout,
+  useCartesianChartLayout,
+  usePolarChartLayout,
+} from './context/chartLayoutContext';
 
 export type { ChartOffset, PlotArea } from './types';
 
@@ -218,3 +229,5 @@ export { createCentricChart, createRadialChart } from './util/createPolarCharts'
 export type { TypedHorizontalChartContext, TypedVerticalChartContext, NoFunnel } from './util/createCartesianCharts';
 
 export type { TypedCentricChartContext, TypedRadialChartContext, NoRadial, NoCentric } from './util/createPolarCharts';
+
+export { interpolate } from './util/DataUtils';

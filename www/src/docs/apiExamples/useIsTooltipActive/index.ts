@@ -1,12 +1,9 @@
 import { ChartExample } from '../../exampleComponents/types';
-import LineChartExample from '../LineChart/LineChartExample';
-import LineChartExampleSource from '../LineChart/LineChartExample?raw';
+import { lineChartExamples } from '../../exampleComponents/LineChart';
 
 export const useIsTooltipActiveApiExamples: ReadonlyArray<ChartExample> = [
   {
-    Component: LineChartExample,
-    sourceCode: LineChartExampleSource,
-    name: 'Simple Line Chart Example',
+    ...lineChartExamples.SimpleLineChart,
     defaultTool: 'devtools',
     defaultToolTab: 'useIsTooltipActive',
   },

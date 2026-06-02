@@ -25,6 +25,7 @@ export const IGNORE_WARNINGS: Array<string | RegExp> = [
   /React does not recognize the (.+) prop on a DOM element/,
   'verticalCoordinatesGenerator should return Array but instead it returned',
   'horizontalCoordinatesGenerator should return Array but instead it returned',
+  'ImmutableStateInvariantMiddleware took',
 ];
 
 let originalConsoleWarn: typeof console.warn, originalConsoleError: typeof console.error;

@@ -2,7 +2,18 @@ import React, { ComponentType } from 'react';
 import { describe, expect, it, vi } from 'vitest';
 import { render } from '@testing-library/react';
 import { useOffsetInternal } from '../../src/context/chartLayoutContext';
-import { Brush, ComposedChart, Customized, Legend, XAxis, YAxis } from '../../src';
+import {
+  Brush,
+  ComposedChart,
+  Customized,
+  Legend,
+  PieChart,
+  XAxis,
+  YAxis,
+  useCartesianChartLayout,
+  useChartLayout,
+  usePolarChartLayout,
+} from '../../src';
 import { mockGetBoundingClientRect } from '../helper/mockGetBoundingClientRect';
 import { emptyOffset } from '../helper/offsetHelpers';
 import { useClipPathId } from '../../src/container/ClipPathProvider';
@@ -316,5 +327,48 @@ describe('useOffsetInternal', () => {
       top: 10,
       width: 40,
     });
+  });
+});
+
+describe('layout hooks', () => {
+  it('should return undefined for all layout hooks outside of chart', () => {
+    expect.assertions(3);
+    const Comp = (): null => {
+      expect(useChartLayout()).toBe(undefined);
+      expect(useCartesianChartLayout()).toBe(undefined);
+      expect(usePolarChartLayout()).toBe(undefined);
+      return null;
+    };
+    render(<Comp />);
+  });
+
+  it('should return cartesian layout and no polar layout in cartesian chart', () => {
+    expect.assertions(3);
+    const Comp = (): null => {
+      expect(useChartLayout()).toBe('horizontal');
+      expect(useCartesianChartLayout()).toBe('horizontal');
+      expect(usePolarChartLayout()).toBe(undefined);
+      return null;
+    };
+    render(
+      <ComposedChart width={100} height={200}>
+        <Comp />
+      </ComposedChart>,
+    );
+  });
+
+  it('should return polar layout and no cartesian layout in polar chart', () => {
+    expect.assertions(3);
+    const Comp = (): null => {
+      expect(useChartLayout()).toBe('centric');
+      expect(useCartesianChartLayout()).toBe(undefined);
+      expect(usePolarChartLayout()).toBe('centric');
+      return null;
+    };
+    render(
+      <PieChart width={100} height={200}>
+        <Comp />
+      </PieChart>,
+    );
   });
 });

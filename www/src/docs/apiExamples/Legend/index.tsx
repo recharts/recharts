@@ -1,11 +1,4 @@
 import { ChartExample } from '../../exampleComponents/types.ts';
-import LegendExample from './LegendExample.tsx';
-import LegendExampleSource from './LegendExample.tsx?raw';
+import { legendExamples } from '../../exampleComponents/Legend';
 
-export const legendApiExamples: ReadonlyArray<ChartExample> = [
-  {
-    Component: LegendExample,
-    sourceCode: LegendExampleSource,
-    name: 'Legend Example',
-  },
-];
+export const legendApiExamples: ReadonlyArray<ChartExample> = [legendExamples.LegendEffectOpacity];

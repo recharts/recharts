@@ -169,6 +169,22 @@ describe('generateApiDoc', () => {
     expect(description).toContain('<LinkToApi>DefaultTooltipContent</LinkToApi>');
   });
 
+  it('should convert inline {@link} tags in component deprecated text', async () => {
+    const apiDoc = await generateApiDoc('useChartLayout', reader, exampleReader, contextMap);
+
+    expect(apiDoc.deprecated).toEqual(
+      expect.objectContaining({
+        'en-US': expect.stringContaining('<LinkToApi>useCartesianChartLayout</LinkToApi>'),
+      }),
+    );
+    expect(apiDoc.deprecated).toEqual(
+      expect.objectContaining({
+        'en-US': expect.stringContaining('<LinkToApi>usePolarChartLayout</LinkToApi>'),
+      }),
+    );
+    expect(apiDoc.deprecated).not.toEqual(expect.stringContaining('{@link'));
+  });
+
   it('should include return value in API doc for hooks', async () => {
     const apiDoc = await generateApiDoc('useChartHeight', reader, exampleReader, contextMap);
     expect(apiDoc.returnValue).toBeDefined();
@@ -188,7 +204,7 @@ describe('generateApiDoc', () => {
   it('should include examples from ExampleReader', async () => {
     const apiDoc = await generateApiDoc('AreaChart', reader, exampleReader, contextMap);
     expect(apiDoc.links).toBeDefined();
-    const simpleAreaChart = apiDoc.links?.find(l => l.url === '/examples/SimpleAreaChart/');
+    const simpleAreaChart = apiDoc.links?.find(l => l.url === '/examples/AreaChartExample/');
     expect(simpleAreaChart).toBeDefined();
     expect(simpleAreaChart?.name).toBe('Simple Area Chart');
   });

@@ -1,7 +1,6 @@
 import React, { ComponentProps, useState } from 'react';
 import { ComposedChart, XAxis, Bar, ResponsiveContainer, YAxis, Legend } from '../../../../../src';
 import { pageData } from '../../../data';
-import { RechartsHookInspector } from '../../../../storybook-addon-recharts';
 import { getStoryArgsFromArgsTypesObject } from '../../../API/props/utils';
 import { YAxisArgs } from '../../../API/arg-types/YAxisArgs';
 
@@ -37,7 +36,6 @@ export const WithIncludeHidden = {
             <Legend onClick={handleLegendClick} />
             <Bar dataKey="pv" fill="blue" hide={!activeKeys.includes('pv')} />
             <Bar dataKey="amt" fill="green" hide={!activeKeys.includes('amt')} />
-            <RechartsHookInspector />
           </ComposedChart>
         </ResponsiveContainer>
       </>

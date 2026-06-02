@@ -2,7 +2,6 @@ import React from 'react';
 import { Args } from '@storybook/react-vite';
 import { Funnel, FunnelChart, LabelList, Legend, ResponsiveContainer } from '../../../../src';
 import { getStoryArgsFromArgsTypesObject } from '../props/utils';
-import { RechartsHookInspector } from '../../../storybook-addon-recharts';
 import { FunnelArgs } from '../arg-types/FunnelArgs';
 
 export default {
@@ -19,7 +18,6 @@ export const API = {
             <LabelList dataKey="name" fill="#000" position="right" stroke="none" />
             <Legend />
           </Funnel>
-          <RechartsHookInspector />
         </FunnelChart>
       </ResponsiveContainer>
     );

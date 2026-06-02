@@ -1,8 +1,6 @@
 import React from 'react';
 import { Args } from '@storybook/react-vite';
-import { Legend, Pie, PieChart, ResponsiveContainer, Sector, Tooltip } from '../../../../src';
-import { PieSectorDataItem } from '../../../../src/polar/Pie';
-import { RechartsHookInspector } from '../../../storybook-addon-recharts';
+import { Legend, Pie, PieChart, PieSectorDataItem, ResponsiveContainer, Sector, Tooltip } from '../../../../src';
 
 const data = [
   { name: 'Group A', value: 400, fill: '#0088FE' },
@@ -27,7 +25,6 @@ export const PieColorSync = {
           <Pie data={data} dataKey="value" nameKey="name" {...args} shape={renderSectorWithCustomShapeColor} />
           <Legend />
           <Tooltip />
-          <RechartsHookInspector />
         </PieChart>
       </ResponsiveContainer>
     );

@@ -3,7 +3,6 @@ import { Args } from '@storybook/react-vite';
 import { Area, ComposedChart, Legend, Line, ResponsiveContainer, Tooltip, XAxis, YAxis } from '../../../../src';
 import { pageData } from '../../data';
 import { PageData } from '../../../../test/_data';
-import { RechartsHookInspector } from '../../../storybook-addon-recharts';
 import { getStoryArgsFromArgsTypesObject } from '../props/utils';
 import { TooltipArgs } from '../arg-types/TooltipArgs';
 
@@ -29,7 +28,6 @@ export const UseActiveTooltipDataPoints = {
           <YAxis />
           <Legend />
           <Tooltip {...args} />
-          <RechartsHookInspector defaultOpened="useActiveTooltipDataPoints" />
         </ComposedChart>
       </ResponsiveContainer>
     );

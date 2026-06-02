@@ -1,11 +1,6 @@
 import { ChartExample } from '../../exampleComponents/types.ts';
-import CrosshairExample from './CrosshairExample.tsx';
-import CrosshairExampleSource from './CrosshairExample.tsx?raw';
+import { getRelativeCoordinateExamples as getRelativeCoordinateChartExamples } from '../../exampleComponents/getRelativeCoordinate';
 
 export const getRelativeCoordinateExamples: ReadonlyArray<ChartExample> = [
-  {
-    Component: CrosshairExample,
-    sourceCode: CrosshairExampleSource,
-    name: 'Render crosshair at mouse position',
-  },
+  getRelativeCoordinateChartExamples.CrosshairExample,
 ];

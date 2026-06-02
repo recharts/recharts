@@ -3,7 +3,7 @@ import * as React from 'react';
 import {
   AllowInDimension,
   AnimationDuration,
-  AnimationTiming,
+  EasingInput,
   CartesianViewBox,
   Coordinate,
   PolarCoordinate,
@@ -16,7 +16,7 @@ export type TooltipBoundingBoxProps = {
   active: boolean;
   allowEscapeViewBox: AllowInDimension;
   animationDuration: AnimationDuration;
-  animationEasing: AnimationTiming;
+  animationEasing: EasingInput;
   children: React.ReactNode;
   coordinate: Coordinate | PolarCoordinate | undefined;
   hasPayload: boolean;
@@ -37,13 +37,14 @@ function resolveTransitionProperty(args: {
   isAnimationActive: boolean | 'auto';
   active: boolean;
   animationDuration: number;
-  animationEasing: string;
+  animationEasing: EasingInput;
 }): `transform ${number}ms ${string}` | undefined {
   if (args.prefersReducedMotion && args.isAnimationActive === 'auto') {
     return undefined;
   }
   if (args.isAnimationActive && args.active) {
-    return `transform ${args.animationDuration}ms ${args.animationEasing}`;
+    const easing = typeof args.animationEasing === 'string' ? args.animationEasing : 'ease';
+    return `transform ${args.animationDuration}ms ${easing}`;
   }
   return undefined;
 }

@@ -477,6 +477,15 @@ export class ProjectDocReader implements DocReader {
     // If this is a type alias (like ComponentType), resolve the alias
     const aliasSymbol = type.getAliasSymbol();
     if (aliasSymbol) {
+      if (aliasSymbol.getName() === 'MemoExoticComponent') {
+        // For React.memo(Fn), the alias type argument is the wrapped component Fn (a function type).
+        // We need to extract Props from Fn's first call-signature parameter.
+        const innerFunctionType = type.getAliasTypeArguments()[0];
+        const params = innerFunctionType?.getCallSignatures()?.[0]?.getParameters() ?? [];
+        if (params.length > 0) {
+          return params[0].getTypeAtLocation(declaration);
+        }
+      }
       return this.getTypeArgumentsOfComponentType(type);
     }
     // Otherwise, try to get the type from function call signatures

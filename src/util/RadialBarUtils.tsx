@@ -1,6 +1,9 @@
 import * as React from 'react';
 import { RadialBarDataItem, RadialBarProps } from '../polar/RadialBar';
+import { Sector } from '../shape/Sector';
 import { Shape } from './ActiveShapeUtils';
+
+export const defaultRadialBarShape = Sector;
 
 export function parseCornerRadius(cornerRadius: string | number | undefined): number | undefined {
   if (typeof cornerRadius === 'string') {
@@ -12,10 +15,19 @@ export function parseCornerRadius(cornerRadius: string | number | undefined): nu
 
 export interface RadialBarSectorProps extends RadialBarDataItem {
   index: number;
-  option: RadialBarProps['activeShape'];
   isActive: boolean;
 }
 
-export function RadialBarSector(props: RadialBarSectorProps) {
-  return <Shape shapeType="sector" {...props} />;
+type RadialBarSectorComponentProps = RadialBarSectorProps & {
+  option: Exclude<RadialBarProps['shape'], undefined> | RadialBarProps['activeShape'];
+};
+
+export function RadialBarSector({ option, ...shapeProps }: RadialBarSectorComponentProps) {
+  return (
+    <Shape<RadialBarSectorProps, SVGPathElement>
+      option={option}
+      DefaultShape={defaultRadialBarShape}
+      shapeProps={shapeProps}
+    />
+  );
 }

@@ -87,7 +87,11 @@ const WaterfallBar = (props: BarShapeProps) => {
 
 const WaterfallTooltip = ({ active, payload }: TooltipContentProps) => {
   if (active && payload && payload.length) {
-    const entry: WaterfallDatum = payload[0].payload;
+    const firstPayload = payload[0];
+    if (firstPayload == null) {
+      return null;
+    }
+    const entry: WaterfallDatum = firstPayload.payload;
     return (
       <div style={{ backgroundColor: 'white', border: '1px solid #ccc', padding: '0.5em 1em' }}>
         <p style={{ margin: 0, fontWeight: 'bold' }}>{entry.name}</p>

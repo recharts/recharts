@@ -7,4 +7,5 @@ export const expectedInBundle = [
   'useChartHeight',
   'useChartWidth',
   'usePlotArea',
+  'useChartLayout',
 ] as const;

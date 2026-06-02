@@ -2,7 +2,6 @@ import React from 'react';
 import { expect, within } from 'storybook/test';
 import { ComposedChart, ReferenceDot, CartesianGrid, XAxis, YAxis, ResponsiveContainer } from '../../../../../src';
 import { pageData } from '../../../data';
-import { RechartsHookInspector } from '../../../../storybook-addon-recharts';
 
 export default {
   title: 'Examples/cartesian/Reference Dot/If Overflow',
@@ -25,7 +24,6 @@ export const IfOverflow = {
           <XAxis dataKey="name" />
           <YAxis type="number" />
           <ReferenceDot ifOverflow="extendDomain" x="Page E" y={1700} r={100} />
-          <RechartsHookInspector />
         </ComposedChart>
       </ResponsiveContainer>
     );

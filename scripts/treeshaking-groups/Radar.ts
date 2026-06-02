@@ -3,6 +3,7 @@ export const expectedInBundle = [
   'Dot',
   'getNiceTickValues',
   'Global',
+  'interpolate',
   'Label',
   'LabelList',
   'Layer',
@@ -11,4 +12,5 @@ export const expectedInBundle = [
   'Text',
   'useActiveTooltipDataPoints',
   'ZIndexLayer',
+  'useChartLayout',
 ] as const;

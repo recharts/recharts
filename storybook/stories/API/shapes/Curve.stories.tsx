@@ -2,7 +2,6 @@ import React from 'react';
 import { Args } from '@storybook/react-vite';
 import { ComposedChart, Curve, ResponsiveContainer } from '../../../../src';
 import { coordinateData } from '../../data';
-import { RechartsHookInspector } from '../../../storybook-addon-recharts';
 import { getStoryArgsFromArgsTypesObject } from '../props/utils';
 import { CurveArgs } from '../arg-types/CurveArgs';
 
@@ -26,7 +25,6 @@ export const API = {
           }}
         >
           <Curve {...args} />
-          <RechartsHookInspector />
         </ComposedChart>
       </ResponsiveContainer>
     );

@@ -127,7 +127,7 @@ jobs:
       # Use the Playwright container to run tests, as recommended in https://storybook.js.org/docs/writing-tests/in-ci
       # Make sure to grab the latest version of the Playwright image
       # https://playwright.dev/docs/docker#pull-the-image
-      image: mcr.microsoft.com/playwright:v1.58.2-jammy
+      image: mcr.microsoft.com/playwright:v1.60.0-jammy
     env:
       ENCRYPTED_CHROMATIC_TOKEN: ${{ secrets.CHROMATIC_PROJECT_TOKEN }}
       # /root home is required to allow Firefox to run in the container
@@ -323,6 +323,7 @@ jobs:
         run: npm run build
         env:
           BASE_URL: ${{ env.BASE_URL }}
+          VITE_RECHARTS_COMMIT_HASH: ${{ github.event_name == 'pull_request' && github.event.pull_request.head.sha || github.sha }}
 
       - name: Copy storybook to docs folder
         run: |
@@ -442,11 +443,12 @@ jobs:
     name: VR Tests (${{ matrix.browser }})
     permissions:
       contents: read
+      id-token: write
     runs-on: ubuntu-latest
     needs: [build]
     container:
       # Run directly in the Playwright image — no Docker-in-Docker needed.
-      image: mcr.microsoft.com/playwright:v1.58.2-jammy
+      image: mcr.microsoft.com/playwright:v1.60.0-jammy
     env:
       HOME: /root
     strategy:
@@ -474,6 +476,14 @@ jobs:
         run: npx playwright test --config=test-vr/playwright-ct.config.ts --project=${{ matrix.browser }}
         # Continue even if tests fail so the blob report can still be uploaded.
         continue-on-error: true
+
+      - name: Upload Flakiness report artifact (fork PRs only)
+        if: always() && github.event_name == 'pull_request' && github.event.pull_request.head.repo.fork
+        uses: actions/upload-artifact@v4
+        with:
+          name: flakiness-report-${{ github.job }}-${{ strategy.job-index }}
+          path: flakiness-report/
+          retention-days: 1
 
       - name: Upload blob report artifact
         if: always()
@@ -544,6 +554,9 @@ jobs:
         with:
           ref: gh-pages
           path: gh-pages
+          # Full history is required so that `git log` can resolve commit timestamps
+          # for each pr-* directory during the stale-deployment cleanup step.
+          fetch-depth: 0
 
       - name: Download website artifact
         uses: actions/download-artifact@v4
@@ -560,12 +573,67 @@ jobs:
       - name: Cleanup old PR deployments
         working-directory: gh-pages
         run: |
-          # Find directories starting with "pr-" that haven't been modified in 30 days
-          find . -maxdepth 1 -type d -name "pr-*" -mtime +30 -exec rm -rf {} +
+          # Directory mtimes are refreshed by checkout, so use last commit time instead.
+          if CUTOFF_TIMESTAMP="$(date -u -d '30 days ago' +%s 2>/dev/null)"; then
+            # GNU date available.
+            true
+          elif CUTOFF_TIMESTAMP="$(date -u -v-30d +%s 2>/dev/null)"; then
+            # BSD date available.
+            true
+          else
+            echo "Unable to compute 30-day cutoff timestamp" >&2
+            exit 1
+          fi
+          # If no deployment directories match, expand to an empty list instead of literal "pr-*".
+          shopt -s nullglob
+
+          CHECKED_DEPLOYMENTS=0
+          DELETED_DEPLOYMENTS=0
+          echo "Starting cleanup for PR deployments older than 30 days (cutoff epoch: $CUTOFF_TIMESTAMP)."
+
+          for dir in pr-*; do
+            # Guard in case a non-directory path matches the pattern.
+            if [ ! -d "$dir" ]; then
+              continue
+            fi
+            CHECKED_DEPLOYMENTS=$((CHECKED_DEPLOYMENTS + 1))
+
+            if ! LAST_DEPLOYMENT_TIMESTAMP="$(git log -1 --format=%ct -- "$dir" 2>/dev/null)"; then
+              echo "Skipping $dir: unable to read commit history" >&2
+              continue
+            fi
+            if [ -z "$LAST_DEPLOYMENT_TIMESTAMP" ]; then
+              # No commit touching this directory was found in history.
+              # We treat this conservatively: skip deletion rather than removing a
+              # directory whose age we cannot confirm, to avoid accidentally deleting
+              # a deployment that was just created or whose history is otherwise
+              # unavailable.
+              echo "Skipping $dir: no commit history found" >&2
+              continue
+            fi
+
+            if [ "$LAST_DEPLOYMENT_TIMESTAMP" -lt "$CUTOFF_TIMESTAMP" ]; then
+              echo "Deleting stale deployment: $dir (last deployment epoch: $LAST_DEPLOYMENT_TIMESTAMP)"
+              rm -rf "$dir"
+              DELETED_DEPLOYMENTS=$((DELETED_DEPLOYMENTS + 1))
+            else
+              echo "Keeping deployment: $dir (last deployment epoch: $LAST_DEPLOYMENT_TIMESTAMP)"
+            fi
+          done
+
+          echo "Cleanup summary: checked=$CHECKED_DEPLOYMENTS deleted=$DELETED_DEPLOYMENTS"
 
           # Configure git
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -A
+
+          if git diff --cached --quiet; then
+            echo "No stale deployment directories were deleted; no cleanup commit created."
+          else
+            git commit --no-verify -m "Cleanup old PR deployments"
+            echo "Created cleanup commit with deleted stale deployment directories."
+          fi
 
       - name: Deploy
         id: deploy

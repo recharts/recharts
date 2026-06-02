@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import { pageData } from '../../data';
 import { CartesianGrid, Legend, Line, LineChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from '../../../../src';
-import { RechartsHookInspector } from '../../../storybook-addon-recharts';
 
 export default {
   component: LineChart,
@@ -36,7 +35,6 @@ export const ToggleBetweenDataKeys = {
             <Legend />
             <Line type="monotone" dataKey={dataKey} stroke="#8884d8" activeDot={{ r: 8 }} />
             <Tooltip />
-            <RechartsHookInspector />
           </LineChart>
         </ResponsiveContainer>
       </>

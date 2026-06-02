@@ -60,7 +60,10 @@ const toNumber = (value: TooltipValueType | undefined): number => {
   if (Array.isArray(value)) {
     [, v] = value;
   }
-  const parsed = parseFloat(v);
+  if (v == null) {
+    return 0;
+  }
+  const parsed = parseFloat(String(v));
   if (!Number.isNaN(parsed)) {
     return parsed;
   }

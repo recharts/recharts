@@ -2,7 +2,6 @@ import React from 'react';
 import { expect, within } from 'storybook/test';
 import { ComposedChart, ReferenceArea, CartesianGrid, XAxis, YAxis, ResponsiveContainer } from '../../../../../src';
 import { pageData } from '../../../data';
-import { RechartsHookInspector } from '../../../../storybook-addon-recharts';
 
 export default {
   title: 'Examples/cartesian/Reference Area/If Overflow',
@@ -33,7 +32,6 @@ export const IfOverflow = {
             strokeOpacity={0.3}
             ifOverflow="extendDomain"
           />
-          <RechartsHookInspector />
         </ComposedChart>
       </ResponsiveContainer>
     );

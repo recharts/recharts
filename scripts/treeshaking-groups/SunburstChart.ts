@@ -10,4 +10,5 @@ export const expectedInBundle = [
   'Text',
   'useChartHeight',
   'useChartWidth',
+  'useChartLayout',
 ] as const;

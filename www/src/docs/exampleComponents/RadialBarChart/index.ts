@@ -7,7 +7,7 @@ import RadialBarChartClickToFocusLegendExampleSource from './RadialBarChartClick
 
 export { RadialBarChartNavExample };
 
-export const radialBarChartExamples: Record<string, ChartExample> = {
+export const radialBarChartExamples = {
   SimpleRadialBarChart: {
     Component: SimpleRadialBarChart,
     sourceCode: simpleRadialBarChartSource,
@@ -18,4 +18,4 @@ export const radialBarChartExamples: Record<string, ChartExample> = {
     sourceCode: RadialBarChartClickToFocusLegendExampleSource,
     name: 'Radial Bar Chart with Click to Focus Legend',
   },
-};
+} satisfies Record<string, ChartExample>;

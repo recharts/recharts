@@ -1,11 +1,6 @@
 import { ChartExample } from '../../exampleComponents/types.ts';
-import ResponsiveContainerExample from './ResponsiveContainerExample.tsx';
-import ResponsiveContainerExampleSource from './ResponsiveContainerExample.tsx?raw';
+import { responsiveContainerExamples } from '../../exampleComponents/ResponsiveContainer';
 
 export const responsiveContainerApiExamples: ReadonlyArray<ChartExample> = [
-  {
-    Component: ResponsiveContainerExample,
-    sourceCode: ResponsiveContainerExampleSource,
-    name: 'Responsive Container Example',
-  },
+  responsiveContainerExamples.AreaResponsiveContainer,
 ];

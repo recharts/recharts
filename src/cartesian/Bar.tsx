@@ -48,7 +48,7 @@ import {
   TooltipType,
   TrapezoidViewBox,
 } from '../util/types';
-import { BarRectangle, BarRectangleProps, MinPointSize, minPointSizeCallback } from '../util/BarUtils';
+import { BarRectangle, BarRectangleProps, defaultBarShape, MinPointSize, minPointSizeCallback } from '../util/BarUtils';
 import type { LegendPayload } from '../component/DefaultLegendContent';
 import {
   useMouseClickItemDispatch,
@@ -121,7 +121,6 @@ export interface BarRectangleItem extends RectangleProps {
 export type BarShapeProps = BarRectangleItem & {
   isActive: boolean;
   index: number;
-  option?: ActiveShape<BarShapeProps, SVGPathElement> | undefined;
 };
 
 interface BarProps<DataPointType, ValueAxisType> extends DataConsumer<DataPointType, ValueAxisType>, ZIndexable {
@@ -391,7 +390,7 @@ type InternalBarProps = {
   dataKey?: DataKey<any>;
   tooltipType?: TooltipType;
   maxBarSize?: number;
-  shape?: ActiveShape<BarShapeProps, SVGPathElement>;
+  shape: ActiveShape<BarShapeProps, SVGPathElement>;
   background?: ActiveShape<BarShapeProps, SVGPathElement>;
   radius?: number | [number, number, number, number];
 
@@ -503,13 +502,13 @@ function BarBackground(props: BarBackgroundProps) {
           return null;
         }
 
-        const onMouseEnter = onMouseEnterFromContext(entry, i);
-        const onMouseLeave = onMouseLeaveFromContext(entry, i);
-        const onClick = onClickFromContext(entry, i);
+        const onMouseEnter = onMouseEnterFromContext(entry, entry.originalDataIndex);
+        const onMouseLeave = onMouseLeaveFromContext(entry, entry.originalDataIndex);
+        const onClick = onClickFromContext(entry, entry.originalDataIndex);
 
         const barRectangleProps: BarRectangleProps = {
           option: backgroundFromProps,
-          isActive: String(i) === activeIndex,
+          isActive: String(entry.originalDataIndex) === activeIndex,
           ...rest,
           // @ts-expect-error backgroundProps is contributing unknown props
           fill: '#eee',
@@ -572,7 +571,7 @@ function BarLabelListProvider({
 }
 
 function BarRectangleWithActiveState(props: {
-  shape: ActiveShape<BarShapeProps, SVGPathElement> | undefined;
+  shape: ActiveShape<BarShapeProps, SVGPathElement>;
   activeBar: ActiveShape<BarShapeProps, SVGPathElement>;
   baseProps: WithoutId<SVGPropsNoEvents<BarRectanglesProps>>;
   entry: BarRectangleItem;
@@ -638,7 +637,7 @@ function BarRectangleWithActiveState(props: {
   // Render in ZIndexLayer if active OR if we are waiting for exit transition
   const shouldRenderInLayer = isActive || stayInLayer;
 
-  let option: ActiveShape<BarShapeProps, SVGPathElement> | undefined;
+  let option: ActiveShape<BarShapeProps, SVGPathElement>;
   if (isActive) {
     if (activeBar === true) {
       option = shape;
@@ -673,7 +672,7 @@ function BarRectangleWithActiveState(props: {
 }
 
 function BarRectangleNeverActive(props: {
-  shape: ActiveShape<BarShapeProps, SVGPathElement> | undefined;
+  shape: ActiveShape<BarShapeProps, SVGPathElement>;
   baseProps: WithoutId<SVGPropsNoEvents<BarRectanglesProps>>;
   entry: BarRectangleItem;
   index: number;
@@ -728,9 +727,9 @@ function BarRectangles({
             key={`rectangle-${entry?.x}-${entry?.y}-${entry?.value}-${i}`}
             className="recharts-bar-rectangle"
             {...adaptEventsOfChild(restOfAllOtherProps, entry, i)}
-            onMouseEnter={onMouseEnterFromContext(entry, i)}
-            onMouseLeave={onMouseLeaveFromContext(entry, i)}
-            onClick={onClickFromContext(entry, i)}
+            onMouseEnter={onMouseEnterFromContext(entry, entry.originalDataIndex)}
+            onMouseLeave={onMouseLeaveFromContext(entry, entry.originalDataIndex)}
+            onClick={onClickFromContext(entry, entry.originalDataIndex)}
           >
             {activeBar ? (
               <BarRectangleWithActiveState
@@ -926,6 +925,7 @@ export const defaultBarProps = {
   label: false,
   legendType: 'rect',
   minPointSize: defaultMinPointSize,
+  shape: defaultBarShape,
   xAxisId: 0,
   yAxisId: 0,
   zIndex: DefaultZIndexes.bar,
@@ -1182,7 +1182,7 @@ function BarFn(outsideProps: Props) {
             minPointSize={props.minPointSize}
             maxBarSize={props.maxBarSize}
             isPanorama={isPanorama}
-            hasCustomShape={props.shape != null}
+            hasCustomShape={props.shape != null && props.shape !== defaultBarShape}
           />
           <ZIndexLayer zIndex={props.zIndex}>
             <BarImpl {...props} id={id} />

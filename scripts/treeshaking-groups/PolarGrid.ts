@@ -1,1 +1,7 @@
-export const expectedInBundle = ['DefaultZIndexes', 'getNiceTickValues', 'PolarGrid', 'ZIndexLayer'] as const;
+export const expectedInBundle = [
+  'DefaultZIndexes',
+  'getNiceTickValues',
+  'PolarGrid',
+  'ZIndexLayer',
+  'useChartLayout',
+] as const;

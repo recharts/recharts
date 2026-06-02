@@ -1,7 +1,6 @@
 import * as React from 'react';
 import { expect, test } from '@playwright/experimental-ct-react';
 import { PolarAngleAxis, PolarGrid, PolarRadiusAxis, Radar, RadarChart } from '../../../src';
-import { RechartsHookInspector } from '../../../storybook/storybook-addon-recharts';
 
 test('number angle type with explicit domain', async ({ mount }) => {
   const component = await mount(
@@ -19,7 +18,6 @@ test('number angle type with explicit domain', async ({ mount }) => {
       <PolarRadiusAxis type="number" dataKey="r" />
       <PolarAngleAxis dataKey="angle" axisLineType="circle" type="number" domain={[0, 360]} />
       <Radar type="number" name="r" dataKey="r" fillOpacity={0} stroke="#000" />
-      <RechartsHookInspector />
     </RadarChart>,
   );
   await expect(component).toHaveScreenshot();

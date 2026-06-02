@@ -36,20 +36,17 @@ import CandlestickExample from './CandlestickExample';
 import candlestickExampleSource from './CandlestickExample?raw';
 import BoxPlotExample from './BoxPlotExample';
 import boxPlotExampleSource from './BoxPlotExample?raw';
-import { RechartsLink } from '../../../components/Shared/RechartsLink';
+import { LinkToApi } from '../../../components/Shared/LinkToApi.tsx';
 import AnimatedBarWidthExample from './AnimatedBarWidthExample';
 import animatedBarWidthSource from './AnimatedBarWidthExample?raw';
 import WaterfallExample from './WaterfallExample';
 import waterfallExampleSource from './WaterfallExample?raw';
+import BarChartRangeExample from './BarChartRangeExample';
+import barChartRangeExampleSource from './BarChartRangeExample?raw';
 
 export { BarChartNavExample };
 
-export const barChartExamples: Record<string, ChartExample> = {
-  TinyBarChart: {
-    Component: TinyBarChart,
-    sourceCode: tinyBarChartSource,
-    name: 'Tiny Bar Chart',
-  },
+export const barChartExamples = {
   SimpleBarChart: {
     Component: SimpleBarChart,
     sourceCode: simpleBarChartSource,
@@ -59,6 +56,80 @@ export const barChartExamples: Record<string, ChartExample> = {
     Component: StackedBarChart,
     sourceCode: stackedBarChartSource,
     name: 'Stacked Bar Chart',
+  },
+  PopulationPyramid: {
+    Component: PopulationPyramidExample,
+    sourceCode: populationPyramidExampleSource,
+    name: 'Population Pyramid',
+  },
+  TimelineExample: {
+    // https://github.com/recharts/recharts/issues/6034
+    Component: TimelineExample,
+    sourceCode: timelineExampleSource,
+    name: 'Timeline',
+    description: (
+      <article>
+        <p>
+          <code>{'radius={number}'}</code> prop on a <code>Bar</code> component will round all edges of the Rectangle.
+        </p>
+        <p>
+          Stacked ranged charts are available since Recharts 3.6. So you can provide the ranges directly as arrays of
+          two numbers.
+        </p>
+        <p>
+          This example also demonstrates the use of <code>shape</code> prop instead of <code>Cell</code>.
+        </p>
+      </article>
+    ),
+  },
+  Candlestick: {
+    Component: CandlestickExample,
+    sourceCode: candlestickExampleSource,
+    name: 'Candlestick',
+    description: (
+      <>
+        Candlestick chart is used to represent stock price movements. This example uses <LinkToApi>Bar</LinkToApi> and{' '}
+        <LinkToApi>ErrorBar</LinkToApi> to render a candlestick chart with custom <LinkToApi>Tooltip</LinkToApi>.
+      </>
+    ),
+  },
+  BoxPlot: {
+    Component: BoxPlotExample,
+    sourceCode: boxPlotExampleSource,
+    name: 'Box Plot',
+    description: (
+      <>
+        Box plot charts summarize data distribution with quartiles and whiskers. This example uses{' '}
+        <LinkToApi>Bar</LinkToApi> and <LinkToApi>ErrorBar</LinkToApi> with a custom bar <code>shape</code> for the
+        median line.
+      </>
+    ),
+  },
+  AnimatedBarWidthExample: {
+    Component: AnimatedBarWidthExample,
+    sourceCode: animatedBarWidthSource,
+    name: 'Animated Bar Width',
+  },
+  Waterfall: {
+    Component: WaterfallExample,
+    sourceCode: waterfallExampleSource,
+    name: 'Waterfall',
+    description: (
+      <article>
+        <p>
+          Waterfall charts show how sequential positive or negative values contribute to a running total. Each bar
+          starts where the previous one ended.
+        </p>
+        <p>
+          This example uses range values (<code>[low, high]</code> arrays) on a <LinkToApi>Bar</LinkToApi> component and
+          a custom <code>shape</code> to color bars based on whether they represent gains, losses, or totals.
+        </p>
+        <p>
+          The <code>computeWaterfallData</code> helper function is defined inline to transform raw data into the range
+          format that Recharts expects.
+        </p>
+      </article>
+    ),
   },
   MixBarChart: {
     Component: MixBarChart,
@@ -128,78 +199,14 @@ export const barChartExamples: Record<string, ChartExample> = {
       </article>
     ),
   },
-  PopulationPyramid: {
-    Component: PopulationPyramidExample,
-    sourceCode: populationPyramidExampleSource,
-    name: 'Population Pyramid',
+  BarChartRangeExample: {
+    Component: BarChartRangeExample,
+    sourceCode: barChartRangeExampleSource,
+    name: 'Ranged Bar Chart',
   },
-  TimelineExample: {
-    // https://github.com/recharts/recharts/issues/6034
-    Component: TimelineExample,
-    sourceCode: timelineExampleSource,
-    name: 'Timeline',
-    description: (
-      <article>
-        <p>
-          <code>{'radius={number}'}</code> prop on a <code>Bar</code> component will round all edges of the Rectangle.
-        </p>
-        <p>
-          Stacked ranged charts are available since Recharts 3.6. So you can provide the ranges directly as arrays of
-          two numbers.
-        </p>
-        <p>
-          This example also demonstrates the use of <code>shape</code> prop instead of <code>Cell</code>.
-        </p>
-      </article>
-    ),
+  TinyBarChart: {
+    Component: TinyBarChart,
+    sourceCode: tinyBarChartSource,
+    name: 'Tiny Bar Chart',
   },
-  Candlestick: {
-    Component: CandlestickExample,
-    sourceCode: candlestickExampleSource,
-    name: 'Candlestick',
-    description: (
-      <>
-        Candlestick chart is used to represent stock price movements. This example uses <RechartsLink api="Bar" /> and{' '}
-        <RechartsLink api="ErrorBar" /> to render a candlestick chart with custom <RechartsLink api="Tooltip" />.
-      </>
-    ),
-  },
-  BoxPlot: {
-    Component: BoxPlotExample,
-    sourceCode: boxPlotExampleSource,
-    name: 'Box Plot',
-    description: (
-      <>
-        Box plot charts summarize data distribution with quartiles and whiskers. This example uses{' '}
-        <RechartsLink api="Bar" /> and <RechartsLink api="ErrorBar" /> with a custom bar <code>shape</code> for the
-        median line.
-      </>
-    ),
-  },
-  AnimatedBarWidthExample: {
-    Component: AnimatedBarWidthExample,
-    sourceCode: animatedBarWidthSource,
-    name: 'Animated Bar Width Example',
-  },
-  Waterfall: {
-    Component: WaterfallExample,
-    sourceCode: waterfallExampleSource,
-    name: 'Waterfall',
-    description: (
-      <article>
-        <p>
-          Waterfall charts show how sequential positive or negative values contribute to a running total. Each bar
-          starts where the previous one ended.
-        </p>
-        <p>
-          This example uses range values (<code>[low, high]</code> arrays) on a <RechartsLink api="Bar" /> component and
-          a custom <code>shape</code> to color bars based on whether they represent gains, losses, or totals.
-        </p>
-        <p>
-          The <code>computeWaterfallData</code> helper function is defined inline to transform raw data into the range
-          format that Recharts expects.
-        </p>
-      </article>
-    ),
-  },
-};
+} satisfies Record<string, ChartExample>;

@@ -17,7 +17,7 @@ import targetPriceChartSource from './TargetPriceChart.tsx?raw';
 
 export { ComposedChartNavExample };
 
-export const composedChartExamples: Record<string, ChartExample> = {
+export const composedChartExamples = {
   LineBarAreaComposedChart: {
     Component: LineBarAreaComposedChart,
     sourceCode: lineBarAreaComposedChartSource,
@@ -53,4 +53,4 @@ export const composedChartExamples: Record<string, ChartExample> = {
     sourceCode: targetPriceChartSource,
     name: 'Target Price Chart with active Label',
   },
-};
+} satisfies Record<string, ChartExample>;

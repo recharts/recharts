@@ -42,11 +42,6 @@ export const lineChartExamples = {
     sourceCode: simpleLineChartSource,
     name: 'Simple Line Chart',
   },
-  TinyLineChart: {
-    Component: TinyLineChart,
-    sourceCode: tinyLineChartSource,
-    name: 'Tiny Line Chart',
-  },
   DashedLineChart: {
     Component: DashedLineChart,
     sourceCode: dashedLineChartSource,
@@ -128,6 +123,11 @@ export const lineChartExamples = {
     Component: DynamicZIndexLineChart,
     sourceCode: DynamicZIndexLineChartSource,
     name: 'Dynamic Z-Index Line Chart',
+  },
+  TinyLineChart: {
+    Component: TinyLineChart,
+    sourceCode: tinyLineChartSource,
+    name: 'Tiny Line Chart',
   },
 } satisfies Record<string, ChartExample>;
 

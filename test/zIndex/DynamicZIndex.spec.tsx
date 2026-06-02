@@ -1,12 +1,10 @@
 import { describe, it, expect, vi } from 'vitest';
 import React, { useState } from 'react';
-import { render, act, waitFor } from '@testing-library/react';
+import { render, act } from '@testing-library/react';
 import { LineChart, Line, XAxis, YAxis } from '../../src';
 
 describe('Dynamic zIndex updates', () => {
-  vi.useFakeTimers();
-
-  it('should keep the line in the DOM when zIndex changes dynamically', async () => {
+  it('should keep the line in the DOM when zIndex changes dynamically', () => {
     const data = [
       { name: 'A', uv: 400, pv: 2400 },
       { name: 'B', uv: 300, pv: 4567 },
@@ -23,20 +21,20 @@ describe('Dynamic zIndex updates', () => {
           <LineChart width={400} height={400} data={data}>
             <XAxis dataKey="name" />
             <YAxis />
-            <Line dataKey="uv" stroke="#8884d8" zIndex={zIndex} />
-            <Line dataKey="pv" stroke="#82ca9d" />
+            <Line dataKey="uv" stroke="#8884d8" zIndex={zIndex} isAnimationActive={false} />
+            <Line dataKey="pv" stroke="#82ca9d" isAnimationActive={false} />
           </LineChart>
         </div>
       );
     }
 
     const { container, getByText } = render(<ChartWithDynamicZIndex />);
-
-    // Initial render check - wait for portal registration
-    await waitFor(() => {
-      const lines = container.querySelectorAll('.recharts-line');
-      expect(lines.length).toBe(2);
+    act(() => {
+      vi.runAllTimers();
     });
+
+    const initialLines = container.querySelectorAll('.recharts-line');
+    expect(initialLines.length).toBe(2);
 
     const button = getByText('Increment zIndex');
 
@@ -45,7 +43,7 @@ describe('Dynamic zIndex updates', () => {
       button.click();
     });
     act(() => {
-      vi.runOnlyPendingTimers();
+      vi.runAllTimers();
     });
 
     let lines = container.querySelectorAll('.recharts-line');
@@ -55,7 +53,7 @@ describe('Dynamic zIndex updates', () => {
       button.click();
     });
     act(() => {
-      vi.runOnlyPendingTimers();
+      vi.runAllTimers();
     });
 
     lines = container.querySelectorAll('.recharts-line');

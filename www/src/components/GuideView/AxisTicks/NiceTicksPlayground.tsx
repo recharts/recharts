@@ -45,8 +45,14 @@ export default function AxisTicksPlayground(props: Partial<AxisTicksControlsType
   );
 }
 
-export function AxisTicksControls({ onChange }: { onChange: (values: AxisTicksControlsType) => void }) {
-  const [state, setState] = React.useState<AxisTicksControlsType>(defaultState);
+export function AxisTicksControls({
+  onChange,
+  sessionStoreValues,
+}: {
+  onChange: (values: AxisTicksControlsType) => void;
+  sessionStoreValues: AxisTicksControlsType | null;
+}) {
+  const [state, setState] = React.useState<AxisTicksControlsType>(sessionStoreValues ?? defaultState);
 
   const updateState = (nextValues: Partial<AxisTicksControlsType>) => {
     const nextState = { ...state, ...nextValues };

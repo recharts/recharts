@@ -9,9 +9,9 @@ import SynchronizedAreaChart from '../../../www/src/docs/exampleComponents/AreaC
 import TinyAreaChart from '../../../www/src/docs/exampleComponents/AreaChart/TinyAreaChart';
 import AreaChartFillByValue from '../../../www/src/docs/exampleComponents/AreaChart/AreaChartFillByValue';
 import AreaChartNavExample from '../../../www/src/docs/exampleComponents/AreaChart/AreaChartNavExample';
-import AreaChartExample from '../../../www/src/docs/apiExamples/AreaChart/AreaChartExample';
-import AreaChartRangeExample from '../../../www/src/docs/apiExamples/AreaChart/AreaChartRangeExample';
-import CrosshairExample from '../../../www/src/docs/apiExamples/getRelativeCoordinate/CrosshairExample';
+import AreaChartExample from '../../../www/src/docs/exampleComponents/AreaChart/AreaChartExample';
+import AreaChartRangeExample from '../../../www/src/docs/exampleComponents/AreaChart/AreaChartRangeExample';
+import CrosshairExample from '../../../www/src/docs/exampleComponents/getRelativeCoordinate/CrosshairExample';
 
 test('AreaChartNavExample', async ({ mount }) => {
   const component = await mount(<AreaChartNavExample />);

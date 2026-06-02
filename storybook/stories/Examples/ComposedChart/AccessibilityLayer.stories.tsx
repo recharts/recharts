@@ -13,7 +13,6 @@ import {
 } from '../../../../src';
 import { pageData } from '../../data';
 import { getStoryArgsFromArgsTypesObject } from '../../API/props/utils';
-import { RechartsHookInspector } from '../../../storybook-addon-recharts';
 import { ComposedChartArgs } from '../../API/arg-types/ComposedChartArgs';
 
 export default {
@@ -39,7 +38,6 @@ export const AreaChartWithAccessibilityLayer: StoryObj = {
           <XAxis dataKey="name" />
           <YAxis />
           <Tooltip />
-          <RechartsHookInspector />
         </ComposedChart>
       </ResponsiveContainer>
     );
@@ -82,7 +80,6 @@ export const AccessibleWithButton = {
           <Area type="monotone" dataKey="pv" stackId="1" stroke="#82ca9d" fill="#82ca9d" />
           <Area type="monotone" dataKey="amt" stackId="1" stroke="#ffc658" fill="#ffc658" />
           {toggle && <Tooltip />}
-          <RechartsHookInspector />
         </AreaChart>
       </div>
     );

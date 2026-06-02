@@ -1,13 +1,22 @@
-import { describe, it, expect, test, vi, beforeEach } from 'vitest';
+import { beforeEach, describe, expect, it, test, vi } from 'vitest';
 import { act, render } from '@testing-library/react';
 import React, { createContext, ReactNode, useCallback, useContext, useState } from 'react';
-import { Area, AreaChart, DefaultLegendContentProps, Legend, LegendPayload, Line, LineChart } from '../../src';
+import {
+  Area,
+  AreaChart,
+  Curve,
+  DefaultLegendContentProps,
+  DefaultZIndexes,
+  Legend,
+  LegendPayload,
+  Line,
+  LineChart,
+} from '../../src';
 import { numericalData } from '../_data';
 import { expectLegendLabels } from '../helper/expectLegendLabels';
 import { createSelectorTestCase } from '../helper/createSelectorTestCase';
 import { expectLastCalledWith } from '../helper/expectLastCalledWith';
 import { assertNotNull } from '../helper/assertNotNull';
-import { DefaultZIndexes } from '../../src/zIndex/DefaultZIndexes';
 
 describe('Legend.itemSorter', () => {
   describe('with default content', () => {
@@ -64,6 +73,7 @@ describe('Legend.itemSorter', () => {
           iconSize: 14,
           inactiveColor: '#ccc',
           itemSorter: 'value',
+          labelStyle: {},
           layout: 'horizontal',
           margin: {
             bottom: 5,
@@ -91,6 +101,7 @@ describe('Legend.itemSorter', () => {
                 label: false,
                 legendType: 'line',
                 name: 'A',
+                shape: Curve,
                 stroke: '#3182bd',
                 strokeWidth: 1,
                 type: 'linear',
@@ -120,6 +131,7 @@ describe('Legend.itemSorter', () => {
                 label: false,
                 legendType: 'line',
                 name: 'B',
+                shape: Curve,
                 stroke: '#3182bd',
                 strokeWidth: 1,
                 type: 'linear',
@@ -158,6 +170,7 @@ describe('Legend.itemSorter', () => {
           iconSize: 14,
           inactiveColor: '#ccc',
           itemSorter: 'dataKey',
+          labelStyle: {},
           layout: 'horizontal',
           margin: {
             bottom: 5,
@@ -185,6 +198,7 @@ describe('Legend.itemSorter', () => {
                 label: false,
                 legendType: 'line',
                 name: 'B',
+                shape: Curve,
                 stroke: '#3182bd',
                 strokeWidth: 1,
                 type: 'linear',
@@ -214,6 +228,7 @@ describe('Legend.itemSorter', () => {
                 label: false,
                 legendType: 'line',
                 name: 'A',
+                shape: Curve,
                 stroke: '#3182bd',
                 strokeWidth: 1,
                 type: 'linear',

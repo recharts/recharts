@@ -1,11 +1,7 @@
 import { ChartExample } from '../../exampleComponents/types.ts';
-import TreemapExample from './TreemapExample.tsx';
-import TreemapExampleSource from './TreemapExample.tsx?raw';
+import { treeMapExamples } from '../../exampleComponents/TreeMap';
 
 export const treemapApiExamples: ReadonlyArray<ChartExample> = [
-  {
-    Component: TreemapExample,
-    sourceCode: TreemapExampleSource,
-    name: 'Treemap Example',
-  },
+  treeMapExamples.SimpleTreemap,
+  treeMapExamples.TreemapWithPaddingAndGaps,
 ];

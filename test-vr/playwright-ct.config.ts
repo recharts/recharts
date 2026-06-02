@@ -28,10 +28,10 @@ export default defineConfig({
    */
   outputDir: path.join(__dirname, 'test-results'),
   /* Maximum time one test can run for. */
-  timeout: 10 * 1000,
+  timeout: 20_000,
   expect: {
     /* https://playwright.dev/docs/test-timeouts */
-    timeout: 10 * 1000,
+    timeout: 10_000,
   },
   /* Run tests in files in parallel */
   fullyParallel: true,
@@ -47,7 +47,10 @@ export default defineConfig({
   /* Reporter to use. See https://playwright.dev/docs/test-reporters */
   reporter: process.env.CI
     ? // In CI each browser job emits a blob that is later merged into a single HTML report.
-      [['blob', { outputDir: path.join(__dirname, 'blob-report') }]]
+      [
+        ['blob', { outputDir: path.join(__dirname, 'blob-report') }],
+        ['@flakiness/playwright', { flakinessProject: 'recharts/recharts' }],
+      ]
     : [
         [
           'html',

@@ -3,7 +3,12 @@ import { MutableRefObject, PureComponent, ReactElement, ReactNode, useCallback, 
 import { clsx } from 'clsx';
 
 import { Series } from 'victory-vendor/d3-shape';
-import { parseCornerRadius, RadialBarSector, RadialBarSectorProps } from '../util/RadialBarUtils';
+import {
+  defaultRadialBarShape,
+  parseCornerRadius,
+  RadialBarSector,
+  RadialBarSectorProps,
+} from '../util/RadialBarUtils';
 import { Props as SectorProps } from '../shape/Sector';
 import { Layer } from '../container/Layer';
 import { findAllByType } from '../util/ReactUtils';
@@ -27,7 +32,7 @@ import {
   ActiveShape,
   adaptEventsOfChild,
   AnimationDuration,
-  AnimationTiming,
+  EasingInput,
   DataConsumer,
   DataKey,
   LayoutType,
@@ -145,7 +150,7 @@ function RadialBarSectors({ sectors, allOtherRadialBarProps, showLabels }: Radia
         const onMouseLeave = onMouseLeaveFromContext(entry, i);
         const onClick = onClickFromContext(entry, i);
 
-        const radialBarSectorProps: RadialBarSectorProps = {
+        const radialBarSectorProps: React.ComponentProps<typeof RadialBarSector> = {
           ...baseProps,
           cornerRadius: parseCornerRadius(cornerRadius),
           ...entry,
@@ -157,7 +162,7 @@ function RadialBarSectors({ sectors, allOtherRadialBarProps, showLabels }: Radia
           forceCornerRadius: others.forceCornerRadius,
           cornerIsExternal: others.cornerIsExternal,
           isActive,
-          option: isActive ? activeShape : shape,
+          option: isActive && activeShape != null ? activeShape : shape,
           index: i,
         };
 
@@ -294,7 +299,7 @@ interface InternalRadialBarProps<DataPointType = any, DataValueType = any>
    * The type of easing function.
    * @defaultValue ease
    */
-  animationEasing?: AnimationTiming;
+  animationEasing?: EasingInput;
   /**
    * Renders a background for each bar. Options:
    *  - `false`: no background;
@@ -479,7 +484,7 @@ class RadialBarWithState extends PureComponent<InternalProps> {
             return null;
           }
 
-          const props: RadialBarSectorProps = {
+          const props: React.ComponentProps<typeof RadialBarSector> = {
             cornerRadius: parseCornerRadius(cornerRadius),
             ...rest,
             // @ts-expect-error backgroundProps is contributing unknown props
@@ -591,6 +596,7 @@ export const defaultRadialBarProps = {
   legendType: 'rect',
   minPointSize: 0,
   radiusAxisId: 0,
+  shape: defaultRadialBarShape,
   zIndex: DefaultZIndexes.bar,
 } as const satisfies Partial<RadialBarProps>;
 

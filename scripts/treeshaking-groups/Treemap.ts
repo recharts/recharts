@@ -3,6 +3,7 @@ export const expectedInBundle = [
   'getNiceTickValues',
   'getRelativeCoordinate',
   'Global',
+  'interpolate',
   'Layer',
   'Polygon',
   'Rectangle',
@@ -10,4 +11,5 @@ export const expectedInBundle = [
   'Treemap',
   'useChartHeight',
   'useChartWidth',
+  'useChartLayout',
 ] as const;

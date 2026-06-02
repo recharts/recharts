@@ -168,6 +168,39 @@ describe('Chart Helpers', () => {
       );
       expect(invalidTypeChart).toBeDefined();
     });
+
+    it('should type Tooltip formatter with TNumerical value and TData key name', () => {
+      const Typed = createHorizontalChart<ExampleDataPoint, string, number>()({
+        Area,
+        XAxis,
+        Tooltip,
+      });
+
+      expect(Typed.Tooltip).toBe(Tooltip);
+
+      // formatter receives (value: number, name: 'value' | 'name', ...) — correct types compile without errors
+      const validChart = (
+        <Typed.AreaChart data={data} width={400} height={400}>
+          <Typed.XAxis dataKey="name" />
+          <Typed.Area dataKey="value" isAnimationActive={false} />
+          <Typed.Tooltip
+            formatter={(value: number | undefined, name: 'value' | 'name' | undefined) => `${name}: ${value}`}
+          />
+        </Typed.AreaChart>
+      );
+      expect(validChart).toBeDefined();
+
+      // formatter with wrong value type should produce a type error
+      const invalidFormatterChart = (
+        <Typed.AreaChart data={data} width={400} height={400}>
+          <Typed.Tooltip
+            // @ts-expect-error value should be number, not string
+            formatter={(value: string) => value}
+          />
+        </Typed.AreaChart>
+      );
+      expect(invalidFormatterChart).toBeDefined();
+    });
   });
 
   describe('createVerticalChart', () => {

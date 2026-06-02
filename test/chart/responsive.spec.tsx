@@ -23,7 +23,7 @@ describe('responsive prop', () => {
     mockGetBoundingClientRect({ width: 500, height: 400 });
     vi.stubGlobal(
       'ResizeObserver',
-      vi.fn().mockImplementation(cb => {
+      vi.fn(function ResizeObserverMock(cb) {
         resizeObserverCallback = cb;
         return resizeObserverMock;
       }),

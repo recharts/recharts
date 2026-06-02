@@ -49,6 +49,7 @@ export const map = {
     barAlignment: '柱子对齐方式',
     cell: '从 Cell 组件迁移到 shape 属性',
     coordinateSystems: '坐标系与维度系统',
+    animations: '动画',
   },
   installation: {
     installation: '安装',
@@ -101,6 +102,7 @@ export const map = {
     placeholder: 'Search',
     showData: '显示数据格式',
     hideData: '隐藏数据格式',
+    animation: '动画',
   },
   'design-disciplines': {
     'design-disciplines': '设计原则',

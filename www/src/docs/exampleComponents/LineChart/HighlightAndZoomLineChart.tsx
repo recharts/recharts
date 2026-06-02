@@ -41,6 +41,8 @@ type ZoomAndHighlightState = {
   animation: boolean;
 };
 
+type AxisDomain = [string | number, string | number];
+
 const initialState: ZoomAndHighlightState = {
   left: 'dataMin',
   right: 'dataMax',
@@ -58,10 +60,15 @@ const getAxisYDomain = (
   to: string | number | undefined,
   ref: keyof Impressions,
   offset: number,
-): (number | string)[] => {
+): AxisDomain => {
   if (from != null && to != null) {
     const refData = impressionsData.slice(Number(from) - 1, Number(to));
-    let [bottom, top] = [refData[0][ref], refData[0][ref]];
+    const firstDatum = refData[0];
+    if (firstDatum == null) {
+      return [initialState.bottom, initialState.top];
+    }
+    let bottom = firstDatum[ref];
+    let top = firstDatum[ref];
     refData.forEach(d => {
       if (d[ref] > top) top = d[ref];
       if (d[ref] < bottom) bottom = d[ref];

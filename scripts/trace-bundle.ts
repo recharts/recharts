@@ -8,35 +8,78 @@
  *   npm run build-es6
  *
  * Usage:
- *   npx tsx scripts/trace-bundle.ts --from <ComponentA> --to <ComponentB>
+ *   node scripts/trace-bundle.ts --from <ComponentA> --to <ComponentB>
  *
  * Examples:
- *   npx tsx scripts/trace-bundle.ts --from Area --to Pie
- *   npx tsx scripts/trace-bundle.ts --from Line --to RadialBar
+ *   node scripts/trace-bundle.ts --from Area --to Pie
+ *   node scripts/trace-bundle.ts --from Line --to RadialBar
  *
  * The --to value is matched against file paths, so a partial name works too:
- *   npx tsx scripts/trace-bundle.ts --from Area --to polar
+ *   node scripts/trace-bundle.ts --from Area --to polar
  */
 import path from 'node:path';
 import fs from 'node:fs';
-import { getModuleGraph, type ModuleGraphNode } from './treeshaking';
+import { fileURLToPath } from 'node:url';
+import { getModuleGraph, type ModuleGraphNode } from './treeshaking.ts';
 
-const packageRoot = path.resolve(__dirname, '..');
+const currentFile = fileURLToPath(import.meta.url);
+const packageRoot = path.resolve(path.dirname(currentFile), '..');
 const es6Entry = path.join(packageRoot, 'es6', 'index.js');
+
+function isExecutedAsScript(): boolean {
+  const scriptPath = process.argv[1];
+  return scriptPath != null && currentFile === path.resolve(scriptPath);
+}
 
 function relativePath(id: string): string {
   if (id.startsWith(packageRoot)) return id.slice(packageRoot.length + 1);
   return id;
 }
 
+function stripExtension(filePath: string): string {
+  const extension = path.extname(filePath);
+  return extension.length === 0 ? filePath : filePath.slice(0, -extension.length);
+}
+
+function matchesPattern(id: string, pattern: string): boolean {
+  const normalizedPattern = pattern.toLowerCase();
+  const relativeId = relativePath(id);
+  const relativeIdWithoutExtension = stripExtension(relativeId);
+  const baseName = path.basename(relativeIdWithoutExtension);
+
+  return (
+    relativeId.toLowerCase().includes(normalizedPattern) ||
+    relativeIdWithoutExtension.toLowerCase() === normalizedPattern ||
+    baseName.toLowerCase() === normalizedPattern
+  );
+}
+
+export function findMatchingModules(graph: ReadonlyArray<ModuleGraphNode>, pattern: string): ModuleGraphNode[] {
+  const exactMatches = graph.filter(node => {
+    const relativeIdWithoutExtension = stripExtension(relativePath(node.id));
+    const baseName = path.basename(relativeIdWithoutExtension);
+    const normalizedPattern = pattern.toLowerCase();
+
+    return (
+      relativeIdWithoutExtension.toLowerCase() === normalizedPattern || baseName.toLowerCase() === normalizedPattern
+    );
+  });
+
+  if (exactMatches.length > 0) {
+    return exactMatches;
+  }
+
+  return graph.filter(node => matchesPattern(node.id, pattern));
+}
+
 function printUsage(): void {
   console.log('Usage:');
-  console.log('  npx tsx scripts/trace-bundle.ts --from <ComponentA> --to <ComponentB>');
+  console.log('  node scripts/trace-bundle.ts --from <ComponentA> --to <ComponentB>');
   console.log('');
   console.log('Examples:');
-  console.log('  npx tsx scripts/trace-bundle.ts --from Area --to Pie');
-  console.log('  npx tsx scripts/trace-bundle.ts --from Line --to RadialBar');
-  console.log('  npx tsx scripts/trace-bundle.ts --from Area --to polar');
+  console.log('  node scripts/trace-bundle.ts --from Area --to Pie');
+  console.log('  node scripts/trace-bundle.ts --from Line --to RadialBar');
+  console.log('  node scripts/trace-bundle.ts --from Area --to polar');
   console.log('');
   console.log('The --to value is matched against file paths (partial match is fine).');
   console.log('Run npm run build-es6 first if es6/index.js does not exist.');
@@ -45,9 +88,9 @@ function printUsage(): void {
 /**
  * BFS on the forward import graph from start to end.
  * Returns up to maxResults shortest paths, each expressed as an array of module IDs
- * from the entry to the target.
+ * from the source to the target.
  */
-function findShortestPaths(
+export function findShortestPaths(
   startId: string,
   endId: string,
   nodeById: Map<string, ModuleGraphNode>,
@@ -56,12 +99,19 @@ function findShortestPaths(
   const MAX_DEPTH = 25;
   const results: string[][] = [];
   const queue: string[][] = [[startId]];
+  const shortestPathLengthById = new Map<string, number>([[startId, 1]]);
+  let shortestResultLength: number | null = null;
 
   while (queue.length > 0 && results.length < maxResults) {
     const currentPath = queue.shift()!;
     const current = currentPath[currentPath.length - 1];
 
+    if (shortestResultLength != null && currentPath.length > shortestResultLength) {
+      continue;
+    }
+
     if (current === endId) {
+      shortestResultLength = currentPath.length;
       results.push(currentPath);
       continue;
     }
@@ -72,9 +122,14 @@ function findShortestPaths(
     if (!node) continue;
 
     for (const next of node.importedIds) {
-      if (!currentPath.includes(next)) {
-        queue.push([...currentPath, next]);
-      }
+      if (currentPath.includes(next)) continue;
+
+      const nextDepth = currentPath.length + 1;
+      const shortestKnownPath = shortestPathLengthById.get(next);
+      if (shortestKnownPath != null && shortestKnownPath < nextDepth) continue;
+
+      shortestPathLengthById.set(next, nextDepth);
+      queue.push([...currentPath, next]);
     }
   }
 
@@ -82,16 +137,16 @@ function findShortestPaths(
 }
 
 async function main(): Promise<void> {
-  if (!fs.existsSync(es6Entry)) {
-    console.error('Error: es6/index.js not found. Build the es6 output first:\n  npm run build-es6');
-    process.exit(1);
-  }
-
   const args = process.argv.slice(2);
 
   if (args.includes('--help') || args.includes('-h')) {
     printUsage();
     process.exit(0);
+  }
+
+  if (!fs.existsSync(es6Entry)) {
+    console.error('Error: es6/index.js not found. Build the es6 output first:\n  npm run build-es6');
+    process.exit(1);
   }
 
   const fromIdx = args.indexOf('--from');
@@ -109,20 +164,15 @@ async function main(): Promise<void> {
 
   const graph = await getModuleGraph(fromComponent);
   const nodeById = new Map(graph.map(n => [n.id, n]));
+  const sourceNodes = findMatchingModules(graph, fromComponent);
 
-  // Identify the entry node: the node with no importers (the temp file we created)
-  const entryNode = graph.find(n => n.importers.length === 0 && n.importedIds.length > 0);
-  if (!entryNode) {
-    console.error('Could not identify bundle entry node.');
+  if (sourceNodes.length === 0) {
+    console.error(`No modules matching "${fromComponent}" were found in the bundle graph.`);
     process.exit(1);
   }
 
   // Find target modules that match the --to pattern
-  const toPatternLower = toPattern.toLowerCase();
-  const targetNodes = graph.filter(n => {
-    const rel = relativePath(n.id);
-    return rel.toLowerCase().includes(toPatternLower) || path.basename(n.id, '.js').toLowerCase() === toPatternLower;
-  });
+  const targetNodes = findMatchingModules(graph, toPattern);
 
   if (targetNodes.length === 0) {
     console.log(`No modules matching "${toPattern}" were found in the bundle.`);
@@ -137,41 +187,45 @@ async function main(): Promise<void> {
   }
 
   let foundAny = false;
-  for (const target of targetNodes) {
-    const relTarget = relativePath(target.id);
-    const sizeKb = (target.renderedLength / 1024).toFixed(2);
+  for (const source of sourceNodes) {
+    const relSource = relativePath(source.id);
 
-    console.log(`──────────────────────────────────────────────────────`);
-    console.log(`Target: ${relTarget}  (${sizeKb} kB rendered)`);
-    console.log(`──────────────────────────────────────────────────────`);
+    for (const target of targetNodes) {
+      const relTarget = relativePath(target.id);
+      const sizeKb = (target.renderedLength / 1024).toFixed(2);
 
-    if (target.renderedLength === 0) {
-      console.log(`✓  This module is fully tree-shaken away (renderedLength = 0).`);
-      console.log(`   It is imported somewhere in the dependency graph but contributes no output code.\n`);
-      continue;
-    }
+      console.log(`──────────────────────────────────────────────────────`);
+      console.log(`From:   ${relSource}`);
+      console.log(`Target: ${relTarget}  (${sizeKb} kB rendered)`);
+      console.log(`──────────────────────────────────────────────────────`);
 
-    const paths = findShortestPaths(entryNode.id, target.id, nodeById, 8);
+      if (target.renderedLength === 0) {
+        console.log(`✓  This module is fully tree-shaken away (renderedLength = 0).`);
+        console.log(`   The path below shows why it is still imported before tree-shaking.\n`);
+      }
 
-    if (paths.length === 0) {
-      console.log(`No import path found from "${fromComponent}" to this module.\n`);
-    } else {
-      foundAny = true;
-      console.log(`Found ${paths.length} shortest import path(s):\n`);
-      paths.forEach((p, i) => {
-        console.log(`  Path ${i + 1}:`);
-        p.forEach((id, depth) => {
-          let prefix: string;
-          if (depth === 0) prefix = '┌';
-          else if (depth === p.length - 1) prefix = '└';
-          else prefix = '│';
-          const arrow = depth === 0 ? '' : '──';
-          const nodeSize = nodeById.get(id)?.renderedLength ?? 0;
-          const sizeStr = nodeSize > 0 ? `  (${(nodeSize / 1024).toFixed(2)} kB)` : '  (tree-shaken)';
-          console.log(`    ${prefix}${arrow} ${relativePath(id)}${sizeStr}`);
+      const paths = findShortestPaths(source.id, target.id, nodeById, 8);
+
+      if (paths.length === 0) {
+        console.log(`No import path found from "${relSource}" to this module.\n`);
+      } else {
+        foundAny = true;
+        console.log(`Found ${paths.length} shortest import path(s):\n`);
+        paths.forEach((p, i) => {
+          console.log(`  Path ${i + 1}:`);
+          p.forEach((id, depth) => {
+            let prefix: string;
+            if (depth === 0) prefix = '┌';
+            else if (depth === p.length - 1) prefix = '└';
+            else prefix = '│';
+            const arrow = depth === 0 ? '' : '──';
+            const nodeSize = nodeById.get(id)?.renderedLength ?? 0;
+            const sizeStr = nodeSize > 0 ? `  (${(nodeSize / 1024).toFixed(2)} kB)` : '  (tree-shaken)';
+            console.log(`    ${prefix}${arrow} ${relativePath(id)}${sizeStr}`);
+          });
+          console.log();
         });
-        console.log();
-      });
+      }
     }
   }
 
@@ -181,7 +235,9 @@ async function main(): Promise<void> {
   }
 }
 
-main().catch(err => {
-  console.error('Error:', (err as Error).message ?? err);
-  process.exit(1);
-});
+if (isExecutedAsScript()) {
+  main().catch(err => {
+    console.error('Error:', (err as Error).message ?? err);
+    process.exit(1);
+  });
+}

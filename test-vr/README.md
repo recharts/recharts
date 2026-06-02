@@ -13,6 +13,9 @@ but there is nothing stopping you from adding more complex tests that interact w
 Playwright will run all files in the `test-vr/tests` folder that end with `*.spec-vr.tsx`.
 (This is configured in the `./playwright.config.ts` file.)
 
+TypeScript in `test-vr/` resolves `recharts` from the local repository instead of the published npm package,
+so VR tests see source and declaration changes as soon as you make them.
+
 ## How to run tests
 
 See [DEVELOPING.md](../DEVELOPING.md) for basic instructions on how to run the tests and update the snapshots.

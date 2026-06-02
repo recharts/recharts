@@ -4,7 +4,7 @@
 import * as React from 'react';
 import { SVGProps, useEffect, useRef, useState } from 'react';
 import { clsx } from 'clsx';
-import { AnimationDuration, AnimationTiming } from '../util/types';
+import { AnimationDuration, EasingInput } from '../util/types';
 import { resolveDefaultProps } from '../util/resolveDefaultProps';
 import { JavascriptAnimate } from '../animation/JavascriptAnimate';
 import { useAnimationId } from '../util/useAnimationId';
@@ -59,7 +59,7 @@ interface TrapezoidProps {
   isUpdateAnimationActive?: boolean;
   animationBegin?: number;
   animationDuration?: AnimationDuration;
-  animationEasing?: AnimationTiming;
+  animationEasing?: EasingInput;
 
   /**
    * The customized event handler of click on the trapezoid
@@ -173,7 +173,11 @@ export const Trapezoid: React.FC<Props> = outsideProps => {
 
   const from = `0px ${totalLength === -1 ? 1 : totalLength}px`;
   const to = `${totalLength}px ${totalLength}px`;
-  const transition = getTransitionVal(['strokeDasharray'], animationDuration, animationEasing);
+  const transition = getTransitionVal(
+    ['strokeDasharray'],
+    animationDuration,
+    typeof animationEasing === 'string' ? animationEasing : 'ease',
+  );
 
   return (
     <JavascriptAnimate

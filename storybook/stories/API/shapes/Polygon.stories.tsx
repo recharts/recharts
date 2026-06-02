@@ -1,7 +1,6 @@
 import React from 'react';
 import { Args } from '@storybook/react-vite';
 import { ComposedChart, Polygon, ResponsiveContainer } from '../../../../src';
-import { RechartsHookInspector } from '../../../storybook-addon-recharts';
 import { PolygonArgs } from '../arg-types/PolygonArgs';
 
 const pointDefault = [
@@ -31,7 +30,6 @@ export const API = {
           }}
         >
           <Polygon {...args} />
-          <RechartsHookInspector />
         </ComposedChart>
       </ResponsiveContainer>
     );
@@ -58,7 +56,6 @@ export const UsingConnectNulls = {
           }}
         >
           <Polygon {...args} />
-          <RechartsHookInspector />
         </ComposedChart>
       </ResponsiveContainer>
     );
@@ -86,7 +83,6 @@ export const UsingBaselinePoints = {
           }}
         >
           <Polygon {...args} />
-          <RechartsHookInspector />
         </ComposedChart>
       </ResponsiveContainer>
     );

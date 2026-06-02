@@ -1,12 +1,9 @@
 import { ChartExample } from '../../exampleComponents/types.ts';
-import AxisTickSnapExample from '../useAxisInverseTickSnapScale/AxisTicksSnapExample.tsx';
-import AxisTickSnapExampleSource from '../useAxisInverseTickSnapScale/AxisTicksSnapExample?raw';
+import { axisInverseTickSnapScaleExamples } from '../../exampleComponents/useXAxisInverseTickSnapScale';
 
 export const useYAxisTicksApiExamples: ReadonlyArray<ChartExample> = [
   {
-    Component: AxisTickSnapExample,
-    sourceCode: AxisTickSnapExampleSource,
-    name: 'Converting pixels to data values',
+    ...axisInverseTickSnapScaleExamples.AxisTicksSnapExample,
     defaultTool: 'devtools',
     defaultToolTab: 'useYAxisTicks',
   },

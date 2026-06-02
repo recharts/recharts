@@ -31,7 +31,7 @@ test('dark mode: examples list', async ({ mount }) => {
     </BrowserRouter>,
   );
 
-  await expect(component).toHaveScreenshot();
+  await expect(component).toHaveScreenshot({ timeout: 20_000 });
 });
 
 test('dark mode: Simple Line Chart', async ({ mount }) => {

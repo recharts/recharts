@@ -32,7 +32,7 @@ describe('<ResponsiveContainer />', () => {
      * This mock also allow us to use {@link notifyResizeObserverChange} to fire changes
      * from inside our test.
      */
-    resizeObserverMock = vi.fn().mockImplementation(callback => {
+    resizeObserverMock = vi.fn(function ResizeObserverMock(callback) {
       notifyResizeObserverChange = callback;
 
       return {
@@ -392,6 +392,18 @@ describe('<ResponsiveContainer />', () => {
     );
     expect(container.querySelector('.recharts-responsive-container')).not.toBeInTheDocument();
     expect(screen.getByTestId('inside')).toHaveStyle({ width: '100px', height: '100px' });
+  });
+
+  it('should not warn on initial render before dimensions are measured', () => {
+    mockGetBoundingClientRect({ width: 400, height: 200 });
+
+    render(
+      <ResponsiveContainer width="100%" height="100%">
+        <DimensionSpy />
+      </ResponsiveContainer>,
+    );
+
+    expect(consoleWarnSpy).not.toHaveBeenCalled();
   });
 
   it('should warn when aspect is not greater than zero', () => {

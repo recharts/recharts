@@ -8,6 +8,7 @@ git clone https://github.com/recharts/recharts.git
 cd recharts
 npm install # the right Node version can be found in .nvmrc file
 ```
+**Note for Windows users:** `npm install` may fail because `@codecov/bundle-analyzer` is only supported on Linux/Darwin. If that happens, run `npm install --force` to continue the setup.
 
 # Linting and types
 

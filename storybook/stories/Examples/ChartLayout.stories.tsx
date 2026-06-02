@@ -3,7 +3,6 @@ import { Args } from '@storybook/react-vite';
 import { ComposedChart, useChartHeight, useChartWidth } from '../../../src';
 import { selectContainerScale } from '../../../src/state/selectors/containerSelectors';
 import { useAppSelector } from '../../../src/state/hooks';
-import { RechartsHookInspector } from '../../storybook-addon-recharts';
 import { ChartSizeDimensions } from '../../ChartSizeDimensions';
 
 function ShowScale() {
@@ -67,7 +66,6 @@ export const WithAbsolutePositionAndFlexboxParents = {
             <ComposedChart {...args}>
               <ChartSizeDimensions />
               <ShowScale />
-              <RechartsHookInspector />
             </ComposedChart>
           </div>
         </div>

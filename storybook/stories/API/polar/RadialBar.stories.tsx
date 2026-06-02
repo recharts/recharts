@@ -3,7 +3,6 @@ import { Args } from '@storybook/react-vite';
 import { pageDataWithFillColor } from '../../data';
 import { Legend, PolarAngleAxis, RadialBar, RadialBarChart, ResponsiveContainer, Tooltip } from '../../../../src';
 import { getStoryArgsFromArgsTypesObject } from '../props/utils';
-import { RechartsHookInspector } from '../../../storybook-addon-recharts';
 import { RadialBarArgs } from '../arg-types/RadialBarArgs';
 
 export default {
@@ -20,7 +19,6 @@ export const API = {
           <PolarAngleAxis />
           <RadialBar dataKey="uv" {...args} />
           <Tooltip />
-          <RechartsHookInspector />
         </RadialBarChart>
       </ResponsiveContainer>
     );

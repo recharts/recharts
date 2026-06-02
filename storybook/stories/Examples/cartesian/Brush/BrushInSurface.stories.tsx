@@ -1,7 +1,6 @@
 import React from 'react';
 import { Brush, ResponsiveContainer, ComposedChart } from '../../../../../src';
 import { dateData } from '../../../data';
-import { RechartsHookInspector } from '../../../../storybook-addon-recharts';
 
 export default {
   title: 'Examples/cartesian/Brush/In Surface',
@@ -73,7 +72,6 @@ export const InSurface = {
             gap={5}
             onChange={handleGapChange}
           />
-          <RechartsHookInspector />
         </ComposedChart>
       </ResponsiveContainer>
     );

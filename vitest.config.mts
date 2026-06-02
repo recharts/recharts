@@ -1,5 +1,6 @@
-import { defineConfig } from 'vitest/config';
+import { configDefaults, defineConfig } from 'vitest/config';
 import react from '@vitejs/plugin-react';
+import { playwright } from '@vitest/browser-playwright';
 
 // https://vitejs.dev/config/
 // @ts-expect-error wants esModuleInterop
@@ -22,12 +23,22 @@ export default defineConfig({
   test: {
     environment: 'jsdom',
     globals: true,
-    exclude: ['**/node_modules', 'dist', '.idea', '.git', '.cache', 'build', 'scripts', '.stryker-tmp', 'www/docs'],
+    exclude: [
+      ...configDefaults.exclude,
+      '**/dist/**',
+      '**/.idea/**',
+      '**/.cache/**',
+      '**/build/**',
+      '**/scripts/**',
+      '**/.stryker-tmp/**',
+      '**/www/docs/**',
+    ],
     coverage: {
       provider: 'v8',
-      include: ['src', 'test', 'www/src'],
+      include: ['src/**/*.{ts,tsx}', 'test/**/*.{ts,tsx}', 'www/src/**/*.{ts,tsx}'],
     },
     restoreMocks: true,
+    unstubGlobals: true,
     projects: [
       {
         extends: true,
@@ -69,7 +80,7 @@ export default defineConfig({
       {
         test: {
           name: 'treeshaking',
-          include: ['scripts/treeshaking.test.ts'],
+          include: ['scripts/treeshaking.test.ts', 'scripts/generate-bundle-data.test.ts'],
           environment: 'node',
           globals: false,
         },
@@ -89,14 +100,13 @@ export default defineConfig({
           browser: {
             enabled: true,
             headless: true,
-            provider: 'playwright',
+            provider: playwright(),
             instances: [
               {
                 browser: 'firefox',
               },
             ],
           },
-          setupFiles: ['storybook/vitest.setup.ts'],
         },
       },
     ],

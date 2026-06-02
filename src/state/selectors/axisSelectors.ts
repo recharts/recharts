@@ -743,11 +743,7 @@ export const combineDomainOfStackGroups = (
     // ZAxis ignores stacks
     return undefined;
   }
-  const domainOfStackGroups = getDomainOfStackGroups(stackGroups, dataStartIndex, dataEndIndex);
-  if (domainOfStackGroups != null && domainOfStackGroups[0] === 0 && domainOfStackGroups[1] === 0) {
-    return undefined;
-  }
-  return domainOfStackGroups;
+  return getDomainOfStackGroups(stackGroups, dataStartIndex, dataEndIndex);
 };
 
 const selectAllowsDataOverflow: (state: RechartsRootState, axisType: AllAxisTypes, axisId: AxisId) => boolean =

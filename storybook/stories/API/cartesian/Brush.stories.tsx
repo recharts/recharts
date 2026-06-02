@@ -14,7 +14,6 @@ import {
   Tooltip,
 } from '../../../../src';
 import { getStoryArgsFromArgsTypesObject } from '../props/utils';
-import { RechartsHookInspector } from '../../../storybook-addon-recharts';
 import { BrushArgs } from '../arg-types/BrushArgs';
 
 export default {
@@ -28,7 +27,6 @@ export const API = {
       <ComposedChart data={pageData}>
         <Line dataKey="uv" />
         <Brush {...args} />
-        <RechartsHookInspector />
       </ComposedChart>
     </ResponsiveContainer>
   ),
@@ -56,7 +54,6 @@ export const PanoramaWithLine = {
             <Line dataKey="uv" />
           </ComposedChart>
         </Brush>
-        <RechartsHookInspector />
       </ComposedChart>
     </ResponsiveContainer>
   ),
@@ -74,7 +71,6 @@ export const PanoramaWithArea = {
             <Area dataKey="uv" />
           </ComposedChart>
         </Brush>
-        <RechartsHookInspector />
       </ComposedChart>
     </ResponsiveContainer>
   ),
@@ -92,7 +88,6 @@ export const PanoramaWithBar = {
             <Bar dataKey="uv" />
           </ComposedChart>
         </Brush>
-        <RechartsHookInspector />
       </ComposedChart>
     </ResponsiveContainer>
   ),
@@ -110,7 +105,6 @@ export const PanoramaWithScatter = {
             <Scatter dataKey="uv" />
           </ScatterChart>
         </Brush>
-        <RechartsHookInspector />
       </ScatterChart>
     </ResponsiveContainer>
   ),

@@ -47,6 +47,9 @@ describe('Example Components', () => {
   });
 
   it('should all have unique names', () => {
+    /*
+     * All example names must be unique because in the URL they are only identified by the example name.
+     */
     const names = new Set<string>();
     Object.values(allExamples).forEach(({ examples }) => {
       Object.values(examples).forEach(example => {

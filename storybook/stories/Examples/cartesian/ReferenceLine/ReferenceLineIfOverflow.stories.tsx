@@ -10,7 +10,6 @@ import {
   ResponsiveContainer,
 } from '../../../../../src';
 import { pageData } from '../../../data';
-import { RechartsHookInspector } from '../../../../storybook-addon-recharts';
 
 export default {
   title: 'Examples/cartesian/ReferenceLine/ReferenceLineIfOverflow',
@@ -34,7 +33,6 @@ export const IfOverflow = {
           <YAxis type="number" />
           <Line dataKey="uv" />
           <ReferenceLine ifOverflow="extendDomain" y={1700} />
-          <RechartsHookInspector />
         </ComposedChart>
       </ResponsiveContainer>
     );

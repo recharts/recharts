@@ -411,7 +411,6 @@ describe('<Pie />', () => {
         <PieChart width={400} height={400}>
           <Pie
             isAnimationActive={false}
-            // @ts-expect-error our element typing needs attention
             activeShape={activeShape}
             inactiveShape={{ fill: '#ff7322' }}
             cx={250}

@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 import { DefaultZIndexes, getRelativeCoordinate, Pie, PieChart, RelativePointer, ZIndexLayer } from '../../../../src';
-import { RechartsHookInspector } from '../../../storybook-addon-recharts';
 
 export default {
   component: Pie,
@@ -90,7 +89,6 @@ export const DraggablePie = {
       >
         <Pie dataKey="value" data={data} outerRadius={200} label isAnimationActive={false} />
         <DraggablePoint angle={email} radius={200} cx={cx} cy={cy} />
-        <RechartsHookInspector />
       </PieChart>
     );
   },

@@ -18,7 +18,6 @@ import {
   XAxis,
   YAxis,
 } from '../../../../src';
-import { RechartsHookInspector } from '../../../storybook-addon-recharts';
 import { ComposedChartArgs } from '../arg-types/ComposedChartArgs';
 import { getStoryArgsFromArgsTypesObject } from '../props/utils';
 
@@ -44,7 +43,6 @@ const HorizontalChartTemplate = {
           }}
         >
           {args.children}
-          <RechartsHookInspector />
         </Composed>
       </ResponsiveContainer>
     );
@@ -178,7 +176,6 @@ export const LineBarAreaScatterTimeScale = {
               <Bar dataKey="y" barSize={20} fill="#413ea0" />
               <Line type="monotone" dataKey="y" stroke="#ff7300" />
               <Tooltip />
-              <RechartsHookInspector />
             </Composed>
           </div>
         </ResponsiveContainer>

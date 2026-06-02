@@ -26,4 +26,34 @@ describe('replacePlaywrightVersion', () => {
     const result = replacePlaywrightVersion(content, newVersion);
     expect(result).toBe(expected);
   });
+
+  it('replaces all occurrences of the version when it appears multiple times', () => {
+    const content = `  build_test_pack:
+    name: Build, Test, Pack
+    runs-on: ubuntu-latest
+    container:
+      image: mcr.microsoft.com/playwright:v1.55.1-jammy
+    env:
+  another_job:
+    name: Another Job
+    runs-on: ubuntu-latest
+    container:
+      image: mcr.microsoft.com/playwright:v1.55.1-jammy
+    env:`;
+    const newVersion = '1.60.0';
+    const expected = `  build_test_pack:
+    name: Build, Test, Pack
+    runs-on: ubuntu-latest
+    container:
+      image: mcr.microsoft.com/playwright:v1.60.0-jammy
+    env:
+  another_job:
+    name: Another Job
+    runs-on: ubuntu-latest
+    container:
+      image: mcr.microsoft.com/playwright:v1.60.0-jammy
+    env:`;
+    const result = replacePlaywrightVersion(content, newVersion);
+    expect(result).toBe(expected);
+  });
 });

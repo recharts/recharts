@@ -17,11 +17,11 @@ const dirname = path.dirname(filename);
 const projectRoot = path.join(dirname, '..');
 
 export function replacePlaywrightVersion(content, newVersion) {
-  const regex = dockerImageRegex;
-  if (!regex.test(content)) {
+  if (!dockerImageRegex.test(content)) {
     throw new Error('Could not find playwright version string to replace.');
   }
-  return content.replace(regex, `mcr.microsoft.com/playwright:v${newVersion}-jammy`);
+  const globalRegex = new RegExp(dockerImageRegex.source, 'g');
+  return content.replace(globalRegex, `mcr.microsoft.com/playwright:v${newVersion}-jammy`);
 }
 
 function updateFileVersion(filePath, newVersion) {

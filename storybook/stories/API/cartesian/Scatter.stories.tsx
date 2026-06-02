@@ -3,7 +3,6 @@ import { Args } from '@storybook/react-vite';
 import { ComposedChart, ResponsiveContainer, Scatter, XAxis, YAxis } from '../../../../src';
 import { pageData } from '../../data';
 import { getStoryArgsFromArgsTypesObject } from '../props/utils';
-import { RechartsHookInspector } from '../../../storybook-addon-recharts';
 import { ScatterArgs } from '../arg-types/ScatterArgs';
 
 const [surfaceWidth, surfaceHeight] = [600, 300];
@@ -31,7 +30,6 @@ export const API = {
           <Scatter {...args} />
           <XAxis dataKey="pv" />
           <YAxis dataKey="uv" />
-          <RechartsHookInspector />
         </ComposedChart>
       </ResponsiveContainer>
     );

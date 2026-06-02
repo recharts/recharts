@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { describe, expect, test } from 'vitest';
 import { createSelectorTestCase } from '../../helper/createSelectorTestCase';
-import { Bar, BarChart, BarStack } from '../../../src';
+import { Bar, BarChart, BarStack, BarRectangleItem } from '../../../src';
 import { PageData } from '../../_data';
 import {
   expandRectangle,
@@ -48,96 +48,474 @@ describe('BarStack Selectors', () => {
     test('selectBarRectangles for first bar', () => {
       const { spy } = renderTestCase(state => selectBarRectangles(state, 'red', false, undefined));
       expectLastCalledWith(spy, [
-        expect.objectContaining({
+        {
+          name: 'Page A',
+          uv: 400,
+          pv: 2400,
+          amt: 2400,
+          stackedBarStart: 195,
           x: 8.166666666666668,
           y: 187.39999999999998,
-          width: 10,
+          width: 11,
           height: 7.600000000000023,
-        }),
-        expect.objectContaining({
+          value: [0, 400],
+          payload: {
+            name: 'Page A',
+            uv: 400,
+            pv: 2400,
+            amt: 2400,
+          },
+          background: {
+            x: 8.166666666666668,
+            y: 5,
+            width: 11,
+            height: 190,
+          },
+          tooltipPosition: {
+            x: 13.666666666666668,
+            y: 191.2,
+          },
+          parentViewBox: {
+            x: 0,
+            y: 0,
+            width: 200,
+            height: 200,
+          },
+          originalDataIndex: 0,
+        },
+        {
+          name: 'Page B',
+          uv: 300,
+          pv: 4567,
+          amt: 2400,
+          stackedBarStart: 195,
           x: 39.833333333333336,
           y: 189.3,
-          width: 10,
+          width: 11,
           height: 5.699999999999989,
-        }),
-        expect.objectContaining({
+          value: [0, 300],
+          payload: {
+            name: 'Page B',
+            uv: 300,
+            pv: 4567,
+            amt: 2400,
+          },
+          background: {
+            x: 39.833333333333336,
+            y: 5,
+            width: 11,
+            height: 190,
+          },
+          tooltipPosition: {
+            x: 45.333333333333336,
+            y: 192.15,
+          },
+          parentViewBox: {
+            x: 0,
+            y: 0,
+            width: 200,
+            height: 200,
+          },
+          originalDataIndex: 1,
+        },
+        {
+          name: 'Page C',
+          uv: 300,
+          pv: 1398,
+          amt: 2400,
+          stackedBarStart: 195,
           x: 71.50000000000001,
           y: 189.3,
-          width: 10,
+          width: 11,
           height: 5.699999999999989,
-        }),
-        expect.objectContaining({
+          value: [0, 300],
+          payload: {
+            name: 'Page C',
+            uv: 300,
+            pv: 1398,
+            amt: 2400,
+          },
+          background: {
+            x: 71.50000000000001,
+            y: 5,
+            width: 11,
+            height: 190,
+          },
+          tooltipPosition: {
+            x: 77.00000000000001,
+            y: 192.15,
+          },
+          parentViewBox: {
+            x: 0,
+            y: 0,
+            width: 200,
+            height: 200,
+          },
+          originalDataIndex: 2,
+        },
+        {
+          name: 'Page D',
+          uv: 200,
+          pv: 9800,
+          amt: 2400,
+          stackedBarStart: 195,
           x: 103.16666666666667,
           y: 191.2,
-          width: 10,
+          width: 11,
           height: 3.8000000000000114,
-        }),
-        expect.objectContaining({
+          value: [0, 200],
+          payload: {
+            name: 'Page D',
+            uv: 200,
+            pv: 9800,
+            amt: 2400,
+          },
+          background: {
+            x: 103.16666666666667,
+            y: 5,
+            width: 11,
+            height: 190,
+          },
+          tooltipPosition: {
+            x: 108.66666666666667,
+            y: 193.1,
+          },
+          parentViewBox: {
+            x: 0,
+            y: 0,
+            width: 200,
+            height: 200,
+          },
+          originalDataIndex: 3,
+        },
+        {
+          name: 'Page E',
+          uv: 278,
+          pv: 3908,
+          amt: 2400,
+          stackedBarStart: 195,
           x: 134.83333333333334,
           y: 189.718,
-          width: 10,
+          width: 11,
           height: 5.282000000000011,
-        }),
-        expect.objectContaining({
+          value: [0, 278],
+          payload: {
+            name: 'Page E',
+            uv: 278,
+            pv: 3908,
+            amt: 2400,
+          },
+          background: {
+            x: 134.83333333333334,
+            y: 5,
+            width: 11,
+            height: 190,
+          },
+          tooltipPosition: {
+            x: 140.33333333333334,
+            y: 192.35899999999998,
+          },
+          parentViewBox: {
+            x: 0,
+            y: 0,
+            width: 200,
+            height: 200,
+          },
+          originalDataIndex: 4,
+        },
+        {
+          name: 'Page F',
+          uv: 189,
+          pv: 4800,
+          amt: 2400,
+          stackedBarStart: 195,
           x: 166.5,
           y: 191.409,
-          width: 10,
+          width: 11,
           height: 3.591000000000008,
-        }),
-      ]);
+          value: [0, 189],
+          payload: {
+            name: 'Page F',
+            uv: 189,
+            pv: 4800,
+            amt: 2400,
+          },
+          background: {
+            x: 166.5,
+            y: 5,
+            width: 11,
+            height: 190,
+          },
+          tooltipPosition: {
+            x: 172,
+            y: 193.2045,
+          },
+          parentViewBox: {
+            x: 0,
+            y: 0,
+            width: 200,
+            height: 200,
+          },
+          originalDataIndex: 5,
+        },
+      ] as unknown as BarRectangleItem[]);
     });
 
     test('selectBarRectangles for second bar', () => {
       const { spy } = renderTestCase(state => selectBarRectangles(state, 'green', false, undefined));
       expectLastCalledWith(spy, [
-        expect.objectContaining({
+        {
+          name: 'Page A',
+          uv: 400,
+          pv: 2400,
+          amt: 2400,
+          stackedBarStart: 195,
           x: 8.166666666666668,
           y: 141.8,
-          width: 10,
+          width: 11,
           height: 45.599999999999966,
-        }),
-        expect.objectContaining({
+          value: [400, 2800],
+          payload: {
+            name: 'Page A',
+            uv: 400,
+            pv: 2400,
+            amt: 2400,
+          },
+          background: {
+            x: 8.166666666666668,
+            y: 5,
+            width: 11,
+            height: 190,
+          },
+          tooltipPosition: {
+            x: 13.666666666666668,
+            y: 164.6,
+          },
+          parentViewBox: {
+            x: 0,
+            y: 0,
+            width: 200,
+            height: 200,
+          },
+          originalDataIndex: 0,
+        },
+        {
+          name: 'Page B',
+          uv: 300,
+          pv: 4567,
+          amt: 2400,
+          stackedBarStart: 195,
           x: 39.833333333333336,
           y: 102.52699999999999,
-          width: 10,
+          width: 11,
           height: 86.77300000000002,
-        }),
-        expect.objectContaining({
+          value: [300, 4867],
+          payload: {
+            name: 'Page B',
+            uv: 300,
+            pv: 4567,
+            amt: 2400,
+          },
+          background: {
+            x: 39.833333333333336,
+            y: 5,
+            width: 11,
+            height: 190,
+          },
+          tooltipPosition: {
+            x: 45.333333333333336,
+            y: 145.9135,
+          },
+          parentViewBox: {
+            x: 0,
+            y: 0,
+            width: 200,
+            height: 200,
+          },
+          originalDataIndex: 1,
+        },
+        {
+          name: 'Page C',
+          uv: 300,
+          pv: 1398,
+          amt: 2400,
+          stackedBarStart: 195,
           x: 71.50000000000001,
           y: 162.738,
-          width: 10,
+          width: 11,
           height: 26.562000000000012,
-        }),
-        expect.objectContaining({
+          value: [300, 1698],
+          payload: {
+            name: 'Page C',
+            uv: 300,
+            pv: 1398,
+            amt: 2400,
+          },
+          background: {
+            x: 71.50000000000001,
+            y: 5,
+            width: 11,
+            height: 190,
+          },
+          tooltipPosition: {
+            x: 77.00000000000001,
+            y: 176.019,
+          },
+          parentViewBox: {
+            x: 0,
+            y: 0,
+            width: 200,
+            height: 200,
+          },
+          originalDataIndex: 2,
+        },
+        {
+          name: 'Page D',
+          uv: 200,
+          pv: 9800,
+          amt: 2400,
+          stackedBarStart: 195,
           x: 103.16666666666667,
           y: 5,
-          width: 10,
+          width: 11,
           height: 186.2,
-        }),
-        expect.objectContaining({
+          value: [200, 10000],
+          payload: {
+            name: 'Page D',
+            uv: 200,
+            pv: 9800,
+            amt: 2400,
+          },
+          background: {
+            x: 103.16666666666667,
+            y: 5,
+            width: 11,
+            height: 190,
+          },
+          tooltipPosition: {
+            x: 108.66666666666667,
+            y: 98.1,
+          },
+          parentViewBox: {
+            x: 0,
+            y: 0,
+            width: 200,
+            height: 200,
+          },
+          originalDataIndex: 3,
+        },
+        {
+          name: 'Page E',
+          uv: 278,
+          pv: 3908,
+          amt: 2400,
+          stackedBarStart: 195,
           x: 134.83333333333334,
           y: 115.466,
-          width: 10,
+          width: 11,
           height: 74.252,
-        }),
-        expect.objectContaining({
+          value: [278, 4186],
+          payload: {
+            name: 'Page E',
+            uv: 278,
+            pv: 3908,
+            amt: 2400,
+          },
+          background: {
+            x: 134.83333333333334,
+            y: 5,
+            width: 11,
+            height: 190,
+          },
+          tooltipPosition: {
+            x: 140.33333333333334,
+            y: 152.59199999999998,
+          },
+          parentViewBox: {
+            x: 0,
+            y: 0,
+            width: 200,
+            height: 200,
+          },
+          originalDataIndex: 4,
+        },
+        {
+          name: 'Page F',
+          uv: 189,
+          pv: 4800,
+          amt: 2400,
+          stackedBarStart: 195,
           x: 166.5,
           y: 100.209,
-          width: 10,
+          width: 11,
           height: 91.19999999999999,
-        }),
-      ]);
+          value: [189, 4989],
+          payload: {
+            name: 'Page F',
+            uv: 189,
+            pv: 4800,
+            amt: 2400,
+          },
+          background: {
+            x: 166.5,
+            y: 5,
+            width: 11,
+            height: 190,
+          },
+          tooltipPosition: {
+            x: 172,
+            y: 145.809,
+          },
+          parentViewBox: {
+            x: 0,
+            y: 0,
+            width: 200,
+            height: 200,
+          },
+          originalDataIndex: 5,
+        },
+      ] as unknown as BarRectangleItem[]);
     });
 
     test('selectStackRects should select edges of all rectangles in this stack', () => {
       const { spy } = renderTestCase(state => selectStackRects(state, 'mystackid', false));
       expectLastCalledWith(spy, [
-        { height: 53.19999999999999, width: 10, x: 8.166666666666668, y: 141.8 },
-        { height: 92.47300000000001, width: 10, x: 39.833333333333336, y: 102.52699999999999 },
-        { height: 32.262, width: 10, x: 71.50000000000001, y: 162.738 },
-        { height: 190, width: 10, x: 103.16666666666667, y: 5 },
-        { height: 79.534, width: 10, x: 134.83333333333334, y: 115.466 },
-        { height: 94.791, width: 10, x: 166.5, y: 100.209 },
+        {
+          x: 8.166666666666668,
+          y: 141.8,
+          width: 11,
+          height: 53.19999999999999,
+        },
+        {
+          x: 39.833333333333336,
+          y: 102.52699999999999,
+          width: 11,
+          height: 92.47300000000001,
+        },
+        {
+          x: 71.50000000000001,
+          y: 162.738,
+          width: 11,
+          height: 32.262,
+        },
+        {
+          x: 103.16666666666667,
+          y: 5,
+          width: 11,
+          height: 190,
+        },
+        {
+          x: 134.83333333333334,
+          y: 115.466,
+          width: 11,
+          height: 79.534,
+        },
+        {
+          x: 166.5,
+          y: 100.209,
+          width: 11,
+          height: 94.791,
+        },
       ]);
     });
   });

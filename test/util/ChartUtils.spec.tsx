@@ -2,6 +2,7 @@ import { scaleBand, scaleLinear, scalePoint } from 'victory-vendor/d3-scale';
 import {
   getBandSizeOfAxis,
   getDomainOfStackGroups,
+  getTooltipNameProp,
   getValueByDataKey,
   MAX_VALUE_REG,
   MIN_VALUE_REG,
@@ -312,6 +313,27 @@ describe('getDomainOfStackGroups', () => {
 
     expect(getDomainOfStackGroups(stackData, 0, 1)).toEqual([0, 0]);
   });
+
+  // https://github.com/recharts/recharts/issues/6235
+  it('returns undefined for empty stack groups', () => {
+    expect(getDomainOfStackGroups({}, 0, 1)).toBeUndefined();
+  });
+
+  // https://github.com/recharts/recharts/issues/6235
+  it('returns [0, 0] when all stacked values are zero', () => {
+    stackData = {
+      a: {
+        stackedData: [
+          [
+            [0, 0],
+            [0, 0],
+          ],
+        ],
+      },
+    };
+
+    expect(getDomainOfStackGroups(stackData, 0, 1)).toEqual([0, 0]);
+  });
 });
 
 describe('MIN_VALUE_REG ', () => {
@@ -432,5 +454,35 @@ describe('isCategoricalAxis', () => {
 
   test.each(casesWhereFalse)('it should return false for $axisType axis in $layout chart', ({ axisType, layout }) => {
     expect(isCategoricalAxis(layout, axisType)).toBe(false);
+  });
+});
+
+describe('getTooltipNameProp', () => {
+  it('should return string name when provided', () => {
+    expect(getTooltipNameProp('revenue', 'dataKey')).toBe('revenue');
+  });
+
+  it('should return stringified number name when provided', () => {
+    expect(getTooltipNameProp(42, 'dataKey')).toBe('42');
+  });
+
+  it('should preserve name={0} instead of falling back to dataKey', () => {
+    expect(getTooltipNameProp(0, 'dataKey')).toBe('0');
+  });
+
+  it('should preserve name="" instead of falling back to dataKey', () => {
+    expect(getTooltipNameProp('', 'dataKey')).toBe('');
+  });
+
+  it('should fall back to string dataKey when name is undefined', () => {
+    expect(getTooltipNameProp(undefined, 'revenue')).toBe('revenue');
+  });
+
+  it('should return undefined when name is undefined and dataKey is a function', () => {
+    expect(getTooltipNameProp(undefined, (entry: unknown) => entry)).toBeUndefined();
+  });
+
+  it('should return undefined when both name and dataKey are undefined', () => {
+    expect(getTooltipNameProp(undefined, undefined)).toBeUndefined();
   });
 });

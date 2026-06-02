@@ -606,7 +606,7 @@ export const getDomainOfStackGroups = (
   startIndex: number,
   endIndex: number,
 ): NumberDomain | undefined => {
-  if (stackGroups == null) {
+  if (stackGroups == null || Object.keys(stackGroups).length === 0) {
     return undefined;
   }
   return makeDomainFinite(
@@ -702,7 +702,7 @@ export function getTooltipNameProp(
   nameFromItem: string | number | undefined | unknown,
   dataKey: DataKey<any> | undefined,
 ): string | undefined {
-  if (nameFromItem) {
+  if (nameFromItem != null) {
     return String(nameFromItem);
   }
   if (typeof dataKey === 'string') {

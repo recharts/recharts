@@ -1,8 +1,7 @@
 import * as React from 'react';
 import { test, expect } from '@playwright/experimental-ct-react';
 
-import ScatterChartExample from '../../../www/src/docs/apiExamples/ScatterChart/ScatterChartExample';
-import SimpleScatterChart from '../../../www/src/docs/exampleComponents/ScatterChart/SimpleScatterChart';
+import ScatterChartExample from '../../../www/src/docs/exampleComponents/ScatterChart/ScatterChartExample';
 import ThreeDimScatterChart from '../../../www/src/docs/exampleComponents/ScatterChart/ThreeDimScatterChart';
 import JointLineScatterChart from '../../../www/src/docs/exampleComponents/ScatterChart/JointLineScatterChart';
 import BubbleChart from '../../../www/src/docs/exampleComponents/ScatterChart/BubbleChart';
@@ -43,11 +42,6 @@ test('JointLineScatterChart', async ({ mount }) => {
 
 test('ThreeDimScatterChart', async ({ mount }) => {
   const component = await mount(<ThreeDimScatterChart defaultIndex="3" />);
-  await expect(component).toHaveScreenshot();
-});
-
-test('SimpleScatterChart', async ({ mount }) => {
-  const component = await mount(<SimpleScatterChart defaultIndex="1" />);
   await expect(component).toHaveScreenshot();
 });
 

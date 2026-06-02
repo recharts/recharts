@@ -7,7 +7,7 @@ import RadarChartNavExample from './RadarChartNavExample';
 
 export { RadarChartNavExample };
 
-export const radarChartExamples: Record<string, ChartExample> = {
+export const radarChartExamples = {
   SimpleRadarChart: {
     Component: SimpleRadarChart,
     sourceCode: simpleRadarChartSource,
@@ -18,4 +18,4 @@ export const radarChartExamples: Record<string, ChartExample> = {
     sourceCode: specifiedDomainRadarChartSource,
     name: 'Specified Domain Radar Chart',
   },
-};
+} satisfies Record<string, ChartExample>;

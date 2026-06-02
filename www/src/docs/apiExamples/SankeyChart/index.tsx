@@ -1,11 +1,4 @@
 import { ChartExample } from '../../exampleComponents/types.ts';
-import SankeyCustomNodeExample from './SankeyCustomNodeExample.tsx';
-import SankeyCustomNodeExampleSource from './SankeyCustomNodeExample.tsx?raw';
+import { sankeyExamples } from '../../exampleComponents/Sankey';
 
-export const sankeyApiExamples: ReadonlyArray<ChartExample> = [
-  {
-    Component: SankeyCustomNodeExample,
-    sourceCode: SankeyCustomNodeExampleSource,
-    name: 'Sankey Custom Node Example',
-  },
-];
+export const sankeyApiExamples: ReadonlyArray<ChartExample> = [sankeyExamples.SankeyCustomNodeExample];

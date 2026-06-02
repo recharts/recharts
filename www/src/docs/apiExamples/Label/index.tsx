@@ -1,20 +1,13 @@
 import { ChartExample } from '../../exampleComponents/types.ts';
-import LabelCartesianPositions from './LabelCartesianPositions.tsx';
-import LabelCartesianPositionsSource from './LabelCartesianPositions.tsx?raw';
-import LabelPiePositions from './LabelPiePositions.tsx';
-import LabelPiePositionsSource from './LabelPiePositions.tsx?raw';
-import LabelRadialBarPositions from './LabelRadialBarPositions.tsx';
-import LabelRadialBarPositionsSource from './LabelRadialBarPositions.tsx?raw';
-import LabelFunnelPositions from './LabelFunnelPositions.tsx';
-import LabelFunnelPositionsSource from './LabelFunnelPositions.tsx?raw';
-import LabelBarChartExample from './LabelBarChartExample.tsx';
-import LabelBarChartExampleSource from './LabelBarChartExample.tsx?raw';
+import { labelExamples } from '../../exampleComponents/Label';
 import { localeGet, useLocale } from '../../../utils/LocaleUtils.ts';
 
 export const labelApiExamples: ReadonlyArray<ChartExample> = [
   {
+    ...labelExamples.LabelCartesianPositions,
     Component: () => {
       const locale = useLocale();
+      const LabelCartesianPositions = labelExamples.LabelCartesianPositions.Component;
       return (
         <>
           <p style={{ fontSize: 18 }}>{localeGet(locale, 'label', 'cartesian-title')}</p>
@@ -22,12 +15,12 @@ export const labelApiExamples: ReadonlyArray<ChartExample> = [
         </>
       );
     },
-    sourceCode: LabelCartesianPositionsSource,
-    name: 'Label Cartesian Positions Example',
   },
   {
+    ...labelExamples.LabelPiePositions,
     Component: () => {
       const locale = useLocale();
+      const LabelPiePositions = labelExamples.LabelPiePositions.Component;
       return (
         <>
           <p style={{ fontSize: 18 }}>{localeGet(locale, 'label', 'polar-title')}</p>
@@ -35,12 +28,12 @@ export const labelApiExamples: ReadonlyArray<ChartExample> = [
         </>
       );
     },
-    sourceCode: LabelPiePositionsSource,
-    name: 'Label Pie Positions Example',
   },
   {
+    ...labelExamples.LabelRadialBarPositions,
     Component: () => {
       const locale = useLocale();
+      const LabelRadialBarPositions = labelExamples.LabelRadialBarPositions.Component;
       return (
         <>
           <p style={{ fontSize: 18 }}>{localeGet(locale, 'label', 'radialbar-title')}</p>
@@ -48,17 +41,7 @@ export const labelApiExamples: ReadonlyArray<ChartExample> = [
         </>
       );
     },
-    sourceCode: LabelRadialBarPositionsSource,
-    name: 'Label Radial Bar Positions Example',
   },
-  {
-    Component: LabelFunnelPositions,
-    sourceCode: LabelFunnelPositionsSource,
-    name: 'Label Funnel Positions Example',
-  },
-  {
-    Component: LabelBarChartExample,
-    sourceCode: LabelBarChartExampleSource,
-    name: 'Label Bar Chart Example',
-  },
+  labelExamples.LabelFunnelPositions,
+  labelExamples.LabelBarChartExample,
 ];
