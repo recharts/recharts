@@ -176,7 +176,6 @@ export function AnimatedItems<ItemType, LayoutType extends CartesianLayout | Pol
     >
       {(animationElapsedTime: number) => {
         const isEntrance = rawPrevItems == null;
-        // TODO performance; how does the matching work with 10k items? Can we skip interpolation and just jump to final state after some threshold?
         const stepData = items == null ? items : animationInterpolateFn(animationItems, animationElapsedTime, layout);
         const canUpdate = shouldUpdatePreviousRef
           ? shouldUpdatePreviousRef(animationElapsedTime)
