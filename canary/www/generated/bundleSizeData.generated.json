@@ -1,45 +1,45 @@
 {
   "treemap": {
     "examplePath": "www/src/views/IndexView/IndexLineChart.tsx",
-    "totalSize": 792798,
-    "totalSizeLabel": "774.22 KB",
-    "moduleCount": 315,
-    "generatedAt": "2026-06-03T02:01:06.368Z",
+    "totalSize": 808250,
+    "totalSizeLabel": "789.31 KB",
+    "moduleCount": 320,
+    "generatedAt": "2026-06-03T12:35:36.477Z",
     "stages": [
       {
         "stage": "es6-folder",
-        "bytes": 1232890,
-        "humanReadableSize": "1.18 MB",
+        "bytes": 1270584,
+        "humanReadableSize": "1.21 MB",
         "reductionFromBaselinePercent": 0
       },
       {
         "stage": "tree-shaken",
-        "bytes": 796290,
-        "humanReadableSize": "777.63 KB",
+        "bytes": 811768,
+        "humanReadableSize": "792.74 KB",
         "reductionFromBaselinePercent": 0
       },
       {
         "stage": "minified",
-        "bytes": 277811,
-        "humanReadableSize": "271.30 KB",
-        "reductionFromBaselinePercent": 65.11
+        "bytes": 280840,
+        "humanReadableSize": "274.26 KB",
+        "reductionFromBaselinePercent": 65.4
       },
       {
         "stage": "minified+gzip",
-        "bytes": 91116,
-        "humanReadableSize": "88.98 KB",
-        "reductionFromBaselinePercent": 88.56
+        "bytes": 92267,
+        "humanReadableSize": "90.10 KB",
+        "reductionFromBaselinePercent": 88.63
       }
     ],
     "tree": {
       "name": "bundle",
       "fullPath": "bundle",
-      "value": 792798,
+      "value": 808250,
       "children": [
         {
           "name": "src",
           "fullPath": "src",
-          "value": 431274,
+          "value": 446704,
           "children": [
             {
               "name": "state",
@@ -422,7 +422,7 @@
             {
               "name": "util",
               "fullPath": "src/util",
-              "value": 97625,
+              "value": 97756,
               "children": [
                 {
                   "name": "scale",
@@ -474,14 +474,14 @@
                   "value": 6694
                 },
                 {
+                  "name": "DataUtils.ts",
+                  "fullPath": "src/util/DataUtils.ts",
+                  "value": 5013
+                },
+                {
                   "name": "getActiveCoordinate.ts",
                   "fullPath": "src/util/getActiveCoordinate.ts",
                   "value": 4998
-                },
-                {
-                  "name": "DataUtils.ts",
-                  "fullPath": "src/util/DataUtils.ts",
-                  "value": 4882
                 },
                 {
                   "name": "getRelativeCoordinate.ts",
@@ -665,12 +665,12 @@
             {
               "name": "cartesian",
               "fullPath": "src/cartesian",
-              "value": 74321,
+              "value": 75328,
               "children": [
                 {
                   "name": "Line.tsx",
                   "fullPath": "src/cartesian/Line.tsx",
-                  "value": 21773
+                  "value": 14766
                 },
                 {
                   "name": "CartesianAxis.tsx",
@@ -693,6 +693,11 @@
                   "value": 6159
                 },
                 {
+                  "name": "LineDrawShape.tsx",
+                  "fullPath": "src/cartesian/LineDrawShape.tsx",
+                  "value": 5864
+                },
+                {
                   "name": "getTicks.ts",
                   "fullPath": "src/cartesian/getTicks.ts",
                   "value": 5123
@@ -708,9 +713,76 @@
                   "value": 4068
                 },
                 {
+                  "name": "useAnimatedLineLength.ts",
+                  "fullPath": "src/cartesian/useAnimatedLineLength.ts",
+                  "value": 2150
+                },
+                {
                   "name": "GraphicalItemClipPath.tsx",
                   "fullPath": "src/cartesian/GraphicalItemClipPath.tsx",
                   "value": 1558
+                }
+              ]
+            },
+            {
+              "name": "animation",
+              "fullPath": "src/animation",
+              "value": 27438,
+              "children": [
+                {
+                  "name": "matchBy.ts",
+                  "fullPath": "src/animation/matchBy.ts",
+                  "value": 5864
+                },
+                {
+                  "name": "useAnimationStartSnapshot.ts",
+                  "fullPath": "src/animation/useAnimationStartSnapshot.ts",
+                  "value": 4279
+                },
+                {
+                  "name": "configUpdate.ts",
+                  "fullPath": "src/animation/configUpdate.ts",
+                  "value": 4004
+                },
+                {
+                  "name": "easing.ts",
+                  "fullPath": "src/animation/easing.ts",
+                  "value": 3936
+                },
+                {
+                  "name": "AnimatedItems.tsx",
+                  "fullPath": "src/animation/AnimatedItems.tsx",
+                  "value": 3865
+                },
+                {
+                  "name": "AnimationManager.ts",
+                  "fullPath": "src/animation/AnimationManager.ts",
+                  "value": 1751
+                },
+                {
+                  "name": "JavascriptAnimate.tsx",
+                  "fullPath": "src/animation/JavascriptAnimate.tsx",
+                  "value": 1710
+                },
+                {
+                  "name": "timeoutController.ts",
+                  "fullPath": "src/animation/timeoutController.ts",
+                  "value": 911
+                },
+                {
+                  "name": "util.ts",
+                  "fullPath": "src/animation/util.ts",
+                  "value": 605
+                },
+                {
+                  "name": "useAnimationManager.tsx",
+                  "fullPath": "src/animation/useAnimationManager.tsx",
+                  "value": 392
+                },
+                {
+                  "name": "createDefaultAnimationManager.tsx",
+                  "fullPath": "src/animation/createDefaultAnimationManager.tsx",
+                  "value": 121
                 }
               ]
             },
@@ -780,53 +852,6 @@
                   "name": "LineChart.tsx",
                   "fullPath": "src/chart/LineChart.tsx",
                   "value": 486
-                }
-              ]
-            },
-            {
-              "name": "animation",
-              "fullPath": "src/animation",
-              "value": 13146,
-              "children": [
-                {
-                  "name": "configUpdate.ts",
-                  "fullPath": "src/animation/configUpdate.ts",
-                  "value": 3947
-                },
-                {
-                  "name": "easing.ts",
-                  "fullPath": "src/animation/easing.ts",
-                  "value": 3689
-                },
-                {
-                  "name": "AnimationManager.ts",
-                  "fullPath": "src/animation/AnimationManager.ts",
-                  "value": 1751
-                },
-                {
-                  "name": "JavascriptAnimate.tsx",
-                  "fullPath": "src/animation/JavascriptAnimate.tsx",
-                  "value": 1653
-                },
-                {
-                  "name": "timeoutController.ts",
-                  "fullPath": "src/animation/timeoutController.ts",
-                  "value": 911
-                },
-                {
-                  "name": "util.ts",
-                  "fullPath": "src/animation/util.ts",
-                  "value": 682
-                },
-                {
-                  "name": "useAnimationManager.tsx",
-                  "fullPath": "src/animation/useAnimationManager.tsx",
-                  "value": 392
-                },
-                {
-                  "name": "createDefaultAnimationManager.tsx",
-                  "fullPath": "src/animation/createDefaultAnimationManager.tsx",
-                  "value": 121
                 }
               ]
             },
@@ -987,7 +1012,7 @@
         {
           "name": "node_modules",
           "fullPath": "node_modules",
-          "value": 360108,
+          "value": 360130,
           "children": [
             {
               "name": "@reduxjs",
@@ -1869,12 +1894,12 @@
             {
               "name": "d3-array",
               "fullPath": "node_modules/d3-array",
-              "value": 7499,
+              "value": 7495,
               "children": [
                 {
                   "name": "src",
                   "fullPath": "node_modules/d3-array/src",
-                  "value": 7499,
+                  "value": 7495,
                   "children": [
                     {
                       "name": "ticks.js",
@@ -1889,7 +1914,7 @@
                     {
                       "name": "bisector.js",
                       "fullPath": "node_modules/d3-array/src/bisector.js",
-                      "value": 1457
+                      "value": 1453
                     },
                     {
                       "name": "quantile.js",
@@ -2001,17 +2026,17 @@
             {
               "name": "d3-interpolate",
               "fullPath": "node_modules/d3-interpolate",
-              "value": 4952,
+              "value": 4978,
               "children": [
                 {
                   "name": "src",
                   "fullPath": "node_modules/d3-interpolate/src",
-                  "value": 4952,
+                  "value": 4978,
                   "children": [
                     {
                       "name": "string.js",
                       "fullPath": "node_modules/d3-interpolate/src/string.js",
-                      "value": 1737
+                      "value": 1752
                     },
                     {
                       "name": "color.js",
@@ -2026,7 +2051,7 @@
                     {
                       "name": "value.js",
                       "fullPath": "node_modules/d3-interpolate/src/value.js",
-                      "value": 448
+                      "value": 459
                     },
                     {
                       "name": "piecewise.js",
@@ -2267,45 +2292,45 @@
   },
   "sunburst": {
     "examplePath": "www/src/views/IndexView/IndexLineChart.tsx",
-    "totalSize": 792798,
-    "totalSizeLabel": "774.22 KB",
-    "moduleCount": 315,
-    "generatedAt": "2026-06-03T02:01:08.293Z",
+    "totalSize": 808250,
+    "totalSizeLabel": "789.31 KB",
+    "moduleCount": 320,
+    "generatedAt": "2026-06-03T12:35:34.465Z",
     "stages": [
       {
         "stage": "es6-folder",
-        "bytes": 1232890,
-        "humanReadableSize": "1.18 MB",
+        "bytes": 1270584,
+        "humanReadableSize": "1.21 MB",
         "reductionFromBaselinePercent": 0
       },
       {
         "stage": "tree-shaken",
-        "bytes": 796290,
-        "humanReadableSize": "777.63 KB",
+        "bytes": 811768,
+        "humanReadableSize": "792.74 KB",
         "reductionFromBaselinePercent": 0
       },
       {
         "stage": "minified",
-        "bytes": 277811,
-        "humanReadableSize": "271.30 KB",
-        "reductionFromBaselinePercent": 65.11
+        "bytes": 280840,
+        "humanReadableSize": "274.26 KB",
+        "reductionFromBaselinePercent": 65.4
       },
       {
         "stage": "minified+gzip",
-        "bytes": 91116,
-        "humanReadableSize": "88.98 KB",
-        "reductionFromBaselinePercent": 88.56
+        "bytes": 92267,
+        "humanReadableSize": "90.10 KB",
+        "reductionFromBaselinePercent": 88.63
       }
     ],
     "tree": {
       "name": "bundle",
       "fullPath": "bundle",
-      "value": 792798,
+      "value": 808250,
       "children": [
         {
           "name": "src",
           "fullPath": "src",
-          "value": 431274,
+          "value": 446704,
           "children": [
             {
               "name": "state",
@@ -2688,7 +2713,7 @@
             {
               "name": "util",
               "fullPath": "src/util",
-              "value": 97625,
+              "value": 97756,
               "children": [
                 {
                   "name": "scale",
@@ -2740,14 +2765,14 @@
                   "value": 6694
                 },
                 {
+                  "name": "DataUtils.ts",
+                  "fullPath": "src/util/DataUtils.ts",
+                  "value": 5013
+                },
+                {
                   "name": "getActiveCoordinate.ts",
                   "fullPath": "src/util/getActiveCoordinate.ts",
                   "value": 4998
-                },
-                {
-                  "name": "DataUtils.ts",
-                  "fullPath": "src/util/DataUtils.ts",
-                  "value": 4882
                 },
                 {
                   "name": "getRelativeCoordinate.ts",
@@ -2931,12 +2956,12 @@
             {
               "name": "cartesian",
               "fullPath": "src/cartesian",
-              "value": 74321,
+              "value": 75328,
               "children": [
                 {
                   "name": "Line.tsx",
                   "fullPath": "src/cartesian/Line.tsx",
-                  "value": 21773
+                  "value": 14766
                 },
                 {
                   "name": "CartesianAxis.tsx",
@@ -2959,6 +2984,11 @@
                   "value": 6159
                 },
                 {
+                  "name": "LineDrawShape.tsx",
+                  "fullPath": "src/cartesian/LineDrawShape.tsx",
+                  "value": 5864
+                },
+                {
                   "name": "getTicks.ts",
                   "fullPath": "src/cartesian/getTicks.ts",
                   "value": 5123
@@ -2974,9 +3004,76 @@
                   "value": 4068
                 },
                 {
+                  "name": "useAnimatedLineLength.ts",
+                  "fullPath": "src/cartesian/useAnimatedLineLength.ts",
+                  "value": 2150
+                },
+                {
                   "name": "GraphicalItemClipPath.tsx",
                   "fullPath": "src/cartesian/GraphicalItemClipPath.tsx",
                   "value": 1558
+                }
+              ]
+            },
+            {
+              "name": "animation",
+              "fullPath": "src/animation",
+              "value": 27438,
+              "children": [
+                {
+                  "name": "matchBy.ts",
+                  "fullPath": "src/animation/matchBy.ts",
+                  "value": 5864
+                },
+                {
+                  "name": "useAnimationStartSnapshot.ts",
+                  "fullPath": "src/animation/useAnimationStartSnapshot.ts",
+                  "value": 4279
+                },
+                {
+                  "name": "configUpdate.ts",
+                  "fullPath": "src/animation/configUpdate.ts",
+                  "value": 4004
+                },
+                {
+                  "name": "easing.ts",
+                  "fullPath": "src/animation/easing.ts",
+                  "value": 3936
+                },
+                {
+                  "name": "AnimatedItems.tsx",
+                  "fullPath": "src/animation/AnimatedItems.tsx",
+                  "value": 3865
+                },
+                {
+                  "name": "AnimationManager.ts",
+                  "fullPath": "src/animation/AnimationManager.ts",
+                  "value": 1751
+                },
+                {
+                  "name": "JavascriptAnimate.tsx",
+                  "fullPath": "src/animation/JavascriptAnimate.tsx",
+                  "value": 1710
+                },
+                {
+                  "name": "timeoutController.ts",
+                  "fullPath": "src/animation/timeoutController.ts",
+                  "value": 911
+                },
+                {
+                  "name": "util.ts",
+                  "fullPath": "src/animation/util.ts",
+                  "value": 605
+                },
+                {
+                  "name": "useAnimationManager.tsx",
+                  "fullPath": "src/animation/useAnimationManager.tsx",
+                  "value": 392
+                },
+                {
+                  "name": "createDefaultAnimationManager.tsx",
+                  "fullPath": "src/animation/createDefaultAnimationManager.tsx",
+                  "value": 121
                 }
               ]
             },
@@ -3046,53 +3143,6 @@
                   "name": "LineChart.tsx",
                   "fullPath": "src/chart/LineChart.tsx",
                   "value": 486
-                }
-              ]
-            },
-            {
-              "name": "animation",
-              "fullPath": "src/animation",
-              "value": 13146,
-              "children": [
-                {
-                  "name": "configUpdate.ts",
-                  "fullPath": "src/animation/configUpdate.ts",
-                  "value": 3947
-                },
-                {
-                  "name": "easing.ts",
-                  "fullPath": "src/animation/easing.ts",
-                  "value": 3689
-                },
-                {
-                  "name": "AnimationManager.ts",
-                  "fullPath": "src/animation/AnimationManager.ts",
-                  "value": 1751
-                },
-                {
-                  "name": "JavascriptAnimate.tsx",
-                  "fullPath": "src/animation/JavascriptAnimate.tsx",
-                  "value": 1653
-                },
-                {
-                  "name": "timeoutController.ts",
-                  "fullPath": "src/animation/timeoutController.ts",
-                  "value": 911
-                },
-                {
-                  "name": "util.ts",
-                  "fullPath": "src/animation/util.ts",
-                  "value": 682
-                },
-                {
-                  "name": "useAnimationManager.tsx",
-                  "fullPath": "src/animation/useAnimationManager.tsx",
-                  "value": 392
-                },
-                {
-                  "name": "createDefaultAnimationManager.tsx",
-                  "fullPath": "src/animation/createDefaultAnimationManager.tsx",
-                  "value": 121
                 }
               ]
             },
@@ -3253,7 +3303,7 @@
         {
           "name": "node_modules",
           "fullPath": "node_modules",
-          "value": 360108,
+          "value": 360130,
           "children": [
             {
               "name": "@reduxjs",
@@ -4135,12 +4185,12 @@
             {
               "name": "d3-array",
               "fullPath": "node_modules/d3-array",
-              "value": 7499,
+              "value": 7495,
               "children": [
                 {
                   "name": "src",
                   "fullPath": "node_modules/d3-array/src",
-                  "value": 7499,
+                  "value": 7495,
                   "children": [
                     {
                       "name": "ticks.js",
@@ -4155,7 +4205,7 @@
                     {
                       "name": "bisector.js",
                       "fullPath": "node_modules/d3-array/src/bisector.js",
-                      "value": 1457
+                      "value": 1453
                     },
                     {
                       "name": "quantile.js",
@@ -4267,17 +4317,17 @@
             {
               "name": "d3-interpolate",
               "fullPath": "node_modules/d3-interpolate",
-              "value": 4952,
+              "value": 4978,
               "children": [
                 {
                   "name": "src",
                   "fullPath": "node_modules/d3-interpolate/src",
-                  "value": 4952,
+                  "value": 4978,
                   "children": [
                     {
                       "name": "string.js",
                       "fullPath": "node_modules/d3-interpolate/src/string.js",
-                      "value": 1737
+                      "value": 1752
                     },
                     {
                       "name": "color.js",
@@ -4292,7 +4342,7 @@
                     {
                       "name": "value.js",
                       "fullPath": "node_modules/d3-interpolate/src/value.js",
-                      "value": 448
+                      "value": 459
                     },
                     {
                       "name": "piecewise.js",
