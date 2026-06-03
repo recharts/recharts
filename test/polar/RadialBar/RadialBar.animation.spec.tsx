@@ -113,6 +113,45 @@ describe('RadialBar animation', () => {
     });
   });
 
+  describe('shape prop', () => {
+    function CustomShape(props: { animationElapsedTime?: number; isAnimating?: boolean; isEntrance?: boolean }) {
+      return (
+        <path
+          className="custom-radial-bar-shape"
+          data-t={props.animationElapsedTime}
+          data-is-animating={String(props.isAnimating)}
+          data-is-entrance={String(props.isEntrance)}
+        />
+      );
+    }
+
+    const renderShapeTestCase = createSelectorTestCase(({ children }: { children?: ReactNode }) => (
+      <RadialBarChart width={400} height={400} data={smallerData}>
+        {/* eslint-disable-next-line react/jsx-no-bind */}
+        <RadialBar dataKey="uv" isAnimationActive animationEasing="linear" shape={CustomShape} />
+        {children}
+      </RadialBarChart>
+    ));
+
+    it('should pass animationElapsedTime, isAnimating, isEntrance props to custom shape', async () => {
+      const { container, animationManager } = renderShapeTestCase();
+
+      await animationManager.setAnimationProgress(0.5);
+      const shapeDuringAnimation = container.querySelector('.custom-radial-bar-shape');
+      assertNotNull(shapeDuringAnimation);
+      expect(shapeDuringAnimation.getAttribute('data-t')).toBe('0.5');
+      expect(shapeDuringAnimation.getAttribute('data-is-animating')).toBe('true');
+      expect(shapeDuringAnimation.getAttribute('data-is-entrance')).toBe('true');
+
+      await animationManager.completeAnimation();
+      const shapeAfterAnimation = container.querySelector('.custom-radial-bar-shape');
+      assertNotNull(shapeAfterAnimation);
+      expect(shapeAfterAnimation.getAttribute('data-t')).toBe('1');
+      expect(shapeAfterAnimation.getAttribute('data-is-animating')).toBe('false');
+      expect(shapeAfterAnimation.getAttribute('data-is-entrance')).toBe('false');
+    });
+  });
+
   describe('when changing dataKey prop', () => {
     const MyTestCase = ({ children }: { children: ReactNode }) => {
       const [dataKey, setDataKey] = useState('uv');

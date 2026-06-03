@@ -1,6 +1,6 @@
 import * as React from 'react';
 import invariant from 'tiny-invariant';
-import { ActiveShape, DataKey } from './types';
+import { ActiveShape, DataKey, ShapeAnimationProps } from './types';
 import { Rectangle, Props as RectangleProps } from '../shape/Rectangle';
 import { BarShapeProps } from '../cartesian/Bar';
 import { Shape } from './ActiveShapeUtils';
@@ -14,7 +14,8 @@ export type BarRectangleProps = BarShapeProps & {
   onMouseLeave?: (e: React.MouseEvent<SVGPathElement, MouseEvent>) => void;
   onClick?: (e: React.MouseEvent<SVGPathElement, MouseEvent>) => void;
   dataKey: DataKey<any> | undefined;
-} & Omit<RectangleProps, 'onAnimationStart' | 'onAnimationEnd'>;
+} & ShapeAnimationProps &
+  Omit<RectangleProps, 'onAnimationStart' | 'onAnimationEnd'>;
 
 type BarRectangleShapeProps = Omit<BarRectangleProps, 'option'>;
 

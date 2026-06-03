@@ -105,6 +105,15 @@ export const apiCates = [
   },
   {
     name: 'animation',
-    items: ['interpolate'],
+    items: [
+      'matchByIndex',
+      'matchByDataKey',
+      'matchAppend',
+      'interpolate',
+      'AnimationProgressProvider',
+      'useAnimationProgress',
+      'AreaRevealShape',
+      'LineDrawShape',
+    ],
   },
 ];

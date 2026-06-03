@@ -189,12 +189,12 @@ export const Trapezoid: React.FC<Props> = outsideProps => {
       isActive={isUpdateAnimationActive}
       begin={animationBegin}
     >
-      {(t: number) => {
-        const currUpperWidth = interpolate(prevUpperWidth, upperWidth, t);
-        const currLowerWidth = interpolate(prevLowerWidth, lowerWidth, t);
-        const currHeight = interpolate(prevHeight, height, t);
-        const currX = interpolate(prevX, x, t);
-        const currY = interpolate(prevY, y, t);
+      {(animationElapsedTime: number) => {
+        const currUpperWidth = interpolate(prevUpperWidth, upperWidth, animationElapsedTime);
+        const currLowerWidth = interpolate(prevLowerWidth, lowerWidth, animationElapsedTime);
+        const currHeight = interpolate(prevHeight, height, animationElapsedTime);
+        const currX = interpolate(prevX, x, animationElapsedTime);
+        const currY = interpolate(prevY, y, animationElapsedTime);
 
         if (pathRef.current) {
           prevUpperWidthRef.current = currUpperWidth;
@@ -203,7 +203,8 @@ export const Trapezoid: React.FC<Props> = outsideProps => {
           prevXRef.current = currX;
           prevYRef.current = currY;
         }
-        const animationStyle = t > 0 ? { transition, strokeDasharray: to } : { strokeDasharray: from };
+        const animationStyle =
+          animationElapsedTime > 0 ? { transition, strokeDasharray: to } : { strokeDasharray: from };
         return (
           <path
             {...svgPropertiesAndEvents(trapezoidProps)}

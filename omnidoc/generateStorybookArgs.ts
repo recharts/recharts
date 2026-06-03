@@ -172,8 +172,8 @@ function generateStorybookArgs(componentName: string, projectReader: ProjectDocR
       };
     }
 
-    // Default value
-    if (defaultValue.type === 'known' && defaultValue.value !== undefined) {
+    // Default value excludes functions because we can't serialize those
+    if (defaultValue.type === 'known' && defaultValue.value !== undefined && typeof defaultValue.value !== 'function') {
       arg.defaultValue = defaultValue.value;
       if (arg.table) {
         arg.table.defaultValue = {

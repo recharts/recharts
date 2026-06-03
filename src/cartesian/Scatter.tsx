@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { MutableRefObject, ReactElement, ReactNode, useCallback, useMemo, useRef, useState } from 'react';
+import { MutableRefObject, ReactElement, ReactNode, useMemo, useRef } from 'react';
 
 import { clsx } from 'clsx';
 import { Layer } from '../container/Layer';
@@ -29,9 +29,11 @@ import {
   NonEmptyArray,
   NullableCoordinate,
   PresentationAttributesAdaptChildEvent,
+  ShapeAnimationProps,
   SymbolType,
   TickItem,
   TrapezoidViewBox,
+  CartesianLayout,
 } from '../util/types';
 import { TooltipType } from '../component/DefaultTooltipContent';
 import { ScatterShapeProps, ScatterSymbol } from '../util/ScatterUtils';
@@ -54,14 +56,14 @@ import { useIsPanorama } from '../context/PanoramaContext';
 import { selectActiveTooltipIndex } from '../state/selectors/tooltipSelectors';
 import { SetLegendPayload } from '../state/SetLegendPayload';
 import { DATA_ITEM_GRAPHICAL_ITEM_ID_ATTRIBUTE_NAME } from '../util/Constants';
-import { useAnimationId } from '../util/useAnimationId';
 import { resolveDefaultProps } from '../util/resolveDefaultProps';
 import { RegisterGraphicalItemId } from '../context/RegisterGraphicalItemId';
 import { ScatterSettings } from '../state/types/ScatterSettings';
 import { SetCartesianGraphicalItem } from '../state/SetGraphicalItem';
 import { svgPropertiesNoEvents, svgPropertiesNoEventsFromUnknown } from '../util/svgPropertiesNoEvents';
-import { JavascriptAnimate } from '../animation/JavascriptAnimate';
-import { useViewBox } from '../context/chartLayoutContext';
+import { useCartesianChartLayout, useViewBox } from '../context/chartLayoutContext';
+import { AnimatedItems, AnimationInterpolateFn, useAnimationCallbacks } from '../animation/AnimatedItems';
+import { AnimationMatchByProp, matchAppend } from '../animation/matchBy';
 import { WithIdRequired, WithoutId } from '../util/useUniqueId';
 import { GraphicalItemId } from '../state/graphicalItemsSlice';
 import { ZIndexable, ZIndexLayer } from '../zIndex/ZIndexLayer';
@@ -150,6 +152,8 @@ interface ScatterInternalProps extends ZIndexable {
   animationBegin: number;
   animationDuration: AnimationDuration;
   animationEasing: EasingInput;
+  animationInterpolateFn: AnimationInterpolateFn<ScatterPointItem, CartesianLayout>;
+  animationMatchBy: AnimationMatchByProp<ScatterPointItem>;
 
   needClip: boolean;
 
@@ -262,6 +266,7 @@ interface ScatterProps<DataPointType = any, DataValueType = any>
    * - Can be one of the predefined shapes as a string, which will be passed to {@link Symbols} component.
    * - If set a ReactElement, the shape of point can be customized.
    * - If set a function, the function will be called to render customized shape.
+   * - During animations, the function shape also receives `animationElapsedTime`, `isAnimating`, and `isEntrance`.
    * @defaultValue circle
    *
    * @example <Scatter shape={CustomizedShapeComponent} />
@@ -314,6 +319,38 @@ interface ScatterProps<DataPointType = any, DataValueType = any>
    * @defaultValue 'linear'
    */
   animationEasing?: EasingInput;
+  /**
+   * Custom animation function for interpolating data items.
+   * When provided, this replaces the default animation interpolation.
+   *
+   * @param prevItems The items from the previous animation frame, or null on first render
+   * @param nextItems The target items to animate towards
+   * @param animationElapsedTime A normalized time value (0 = start, 1 = end)
+   * @returns The interpolated items at time animationElapsedTime
+   *
+   * @since 3.9
+   * @see {@link https://recharts.github.io/en-US/guide/animations/ Animations guide}
+   */
+  animationInterpolateFn?: AnimationInterpolateFn<ScatterPointItem, CartesianLayout>;
+  /**
+   * Strategy for matching previous items to next items during animation.
+   * Determines how Recharts pairs old data points with new data points
+   * to create smooth transitions.
+   *
+   * - `matchAppend` (default): match sequentially by index and treat newly appended items as new
+   * - `matchByIndex`: match by array position with proportional stretching
+   * - `matchByDataKey('someKey')`: match by a data key from the payload
+   * - Custom function `(item, index) => key`: match by the returned key
+   *
+   * @defaultValue append
+   * @see matchByIndex
+   * @see matchByDataKey
+   * @see matchAppend
+   *
+   * @since 3.9
+   * @see {@link https://recharts.github.io/en-US/guide/animations/ Animations guide}
+   */
+  animationMatchBy?: AnimationMatchByProp<ScatterPointItem>;
   /**
    * Z-Index of this component and its children. The higher the value,
    * the more on top it will be rendered.
@@ -400,7 +437,7 @@ const SetScatterTooltipEntrySettings = React.memo(
   },
 );
 
-type ScatterSymbolsProps = {
+type ScatterSymbolsProps = ShapeAnimationProps & {
   points: ReadonlyArray<ScatterPointItem>;
   showLabels: boolean;
   allOtherScatterProps: InternalProps;
@@ -506,7 +543,7 @@ function ScatterLabelListProvider({
 }
 
 function ScatterSymbols(props: ScatterSymbolsProps) {
-  const { points, allOtherScatterProps } = props;
+  const { points, allOtherScatterProps, animationElapsedTime, isAnimating, isEntrance } = props;
   const { shape, activeShape, dataKey } = allOtherScatterProps;
   const { id, ...allOtherPropsWithoutId } = allOtherScatterProps;
 
@@ -539,6 +576,9 @@ function ScatterSymbols(props: ScatterSymbolsProps) {
           ...entry,
           isActive,
           index: i,
+          animationElapsedTime,
+          isAnimating,
+          isEntrance,
           [DATA_ITEM_GRAPHICAL_ITEM_ID_ATTRIBUTE_NAME]: String(id),
         };
 
@@ -568,6 +608,31 @@ function ScatterSymbols(props: ScatterSymbolsProps) {
   );
 }
 
+const defaultScatterAnimateItems: AnimationInterpolateFn<ScatterPointItem, CartesianLayout> = (
+  items,
+  animationElapsedTime,
+) => {
+  if (items == null) return [];
+  if (animationElapsedTime === 1) {
+    return items.flatMap(item => (item.status === 'removed' ? [] : [item.next]));
+  }
+  return items.flatMap(item => {
+    if (item.status === 'removed') return [];
+    if (item.status === 'matched') {
+      return [
+        {
+          ...item.next,
+          cx: item.next.cx == null ? undefined : interpolate(item.prev.cx, item.next.cx, animationElapsedTime),
+          cy: item.next.cy == null ? undefined : interpolate(item.prev.cy, item.next.cy, animationElapsedTime),
+          size: interpolate(item.prev.size, item.next.size, animationElapsedTime),
+        },
+      ];
+    }
+    // added
+    return [{ ...item.next, size: interpolate(0, item.next.size, animationElapsedTime) }];
+  });
+};
+
 function SymbolsWithAnimation({
   previousPointsRef,
   props,
@@ -575,73 +640,45 @@ function SymbolsWithAnimation({
   previousPointsRef: MutableRefObject<ReadonlyArray<ScatterPointItem> | null>;
   props: InternalProps;
 }) {
-  const { points, isAnimationActive, animationBegin, animationDuration, animationEasing } = props;
-  const prevPoints = previousPointsRef.current;
-  const animationId = useAnimationId(props, 'recharts-scatter-');
+  const { points, isAnimationActive, animationBegin, animationDuration, animationEasing, animationInterpolateFn } =
+    props;
 
-  const [isAnimating, setIsAnimating] = useState(false);
+  const { isAnimating, handleAnimationStart, handleAnimationEnd } = useAnimationCallbacks();
+  const layout = useCartesianChartLayout();
 
-  const handleAnimationEnd = useCallback(() => {
-    // Scatter doesn't have onAnimationEnd prop, and if we want to add it we do it here
-    // if (typeof onAnimationEnd === 'function') {
-    //   onAnimationEnd();
-    // }
-    setIsAnimating(false);
-  }, []);
-
-  const handleAnimationStart = useCallback(() => {
-    // Scatter doesn't have onAnimationStart prop, and if we want to add it we do it here
-    // if (typeof onAnimationStart === 'function') {
-    //   onAnimationStart();
-    // }
-    setIsAnimating(true);
-  }, []);
-
-  const showLabels = !isAnimating;
+  if (layout == null) return null;
 
   return (
-    <ScatterLabelListProvider showLabels={showLabels} points={points}>
-      {props.children}
-      <JavascriptAnimate
-        animationId={animationId}
-        begin={animationBegin}
-        duration={animationDuration}
-        isActive={isAnimationActive}
-        easing={animationEasing}
-        onAnimationEnd={handleAnimationEnd}
+    <ScatterLabelListProvider showLabels={!isAnimating} points={points}>
+      <AnimatedItems
+        animationInput={props}
+        animationIdPrefix="recharts-scatter-"
+        items={points}
+        previousItemsRef={previousPointsRef}
+        isAnimationActive={isAnimationActive}
+        animationBegin={animationBegin}
+        animationDuration={animationDuration}
+        animationEasing={animationEasing}
         onAnimationStart={handleAnimationStart}
-        key={animationId}
+        onAnimationEnd={handleAnimationEnd}
+        animationInterpolateFn={animationInterpolateFn}
+        animationMatchBy={props.animationMatchBy}
+        layout={layout}
       >
-        {(t: number) => {
-          const stepData: ReadonlyArray<ScatterPointItem> =
-            t === 1
-              ? points
-              : points?.map((entry: ScatterPointItem, index: number): ScatterPointItem => {
-                  const prev = prevPoints && prevPoints[index];
-
-                  if (prev) {
-                    return {
-                      ...entry,
-                      cx: entry.cx == null ? undefined : interpolate(prev.cx, entry.cx, t),
-                      cy: entry.cy == null ? undefined : interpolate(prev.cy, entry.cy, t),
-                      size: interpolate(prev.size, entry.size, t),
-                    };
-                  }
-
-                  return { ...entry, size: interpolate(0, entry.size, t) };
-                });
-
-          if (t > 0) {
-            // eslint-disable-next-line no-param-reassign
-            previousPointsRef.current = stepData;
-          }
-          return (
-            <Layer>
-              <ScatterSymbols points={stepData} allOtherScatterProps={props} showLabels={showLabels} />
-            </Layer>
-          );
-        }}
-      </JavascriptAnimate>
+        {(stepData, animationElapsedTime, isEntrance) => (
+          <Layer>
+            <ScatterSymbols
+              points={stepData}
+              allOtherScatterProps={props}
+              showLabels={!isAnimating}
+              animationElapsedTime={animationElapsedTime}
+              isAnimating={isAnimating || animationElapsedTime < 1}
+              isEntrance={isEntrance}
+            />
+          </Layer>
+        )}
+      </AnimatedItems>
+      {props.children}
       <LabelListFromLabelProp label={props.label} />
     </ScatterLabelListProvider>
   );
@@ -816,6 +853,8 @@ export const defaultScatterProps = {
   animationBegin: 0,
   animationDuration: 400,
   animationEasing: 'linear',
+  animationMatchBy: matchAppend,
+  animationInterpolateFn: defaultScatterAnimateItems,
   zIndex: DefaultZIndexes.scatter,
 } as const satisfies Partial<Props>;
 

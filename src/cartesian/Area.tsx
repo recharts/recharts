@@ -1,16 +1,7 @@
 import * as React from 'react';
-import {
-  MutableRefObject,
-  PureComponent,
-  ReactElement,
-  ReactNode,
-  useCallback,
-  useMemo,
-  useRef,
-  useState,
-} from 'react';
+import { MutableRefObject, PureComponent, ReactElement, ReactNode, useMemo, useRef } from 'react';
 import { clsx } from 'clsx';
-import { BaseLineType, Curve, CurveType, Props as CurveProps } from '../shape/Curve';
+import { BaseLineType, CurveType, Props as CurveProps } from '../shape/Curve';
 import { Layer } from '../container/Layer';
 import {
   CartesianLabelListContextProvider,
@@ -29,13 +20,14 @@ import {
 } from '../util/ChartUtils';
 import {
   ActiveDotType,
+  ActiveShape,
   AnimationDuration,
-  EasingInput,
   CartesianLayout,
   DataConsumer,
   DataKey,
   DataProvider,
   DotType,
+  EasingInput,
   LegendType,
   NullableCoordinate,
   TickItem,
@@ -56,23 +48,25 @@ import { useCartesianChartLayout, useChartLayout } from '../context/chartLayoutC
 import { useChartName } from '../state/selectors/selectors';
 import { SetLegendPayload } from '../state/SetLegendPayload';
 import { useAppSelector } from '../state/hooks';
-import { useAnimationId } from '../util/useAnimationId';
+import { AnimatedItems, AnimationInterpolateFn, useAnimationCallbacks } from '../animation/AnimatedItems';
+import { AnimationItem, AnimationMatchByProp, matchAnimationItems, matchByIndex } from '../animation/matchBy';
+import { useAnimationStartSnapshot } from '../animation/useAnimationStartSnapshot';
 import { RequiresDefaultProps, resolveDefaultProps } from '../util/resolveDefaultProps';
-import { isWellBehavedNumber } from '../util/isWellBehavedNumber';
 import { usePlotArea } from '../hooks';
 import { WithIdRequired, WithoutId } from '../util/useUniqueId';
 import { RegisterGraphicalItemId } from '../context/RegisterGraphicalItemId';
 import { AreaSettings } from '../state/types/AreaSettings';
 import { SetCartesianGraphicalItem } from '../state/SetGraphicalItem';
 import { svgPropertiesNoEvents } from '../util/svgPropertiesNoEvents';
-import { JavascriptAnimate } from '../animation/JavascriptAnimate';
 import { getRadiusAndStrokeWidthFromDot } from '../util/getRadiusAndStrokeWidthFromDot';
 import { svgPropertiesAndEvents } from '../util/svgPropertiesAndEvents';
+import { Shape } from '../util/ActiveShapeUtils';
 import { ZIndexable, ZIndexLayer } from '../zIndex/ZIndexLayer';
 import { DefaultZIndexes } from '../zIndex/DefaultZIndexes';
 import { propsAreEqual } from '../util/propsAreEqual';
 import { AxisId } from '../state/cartesianAxisSlice';
 import { StackDataPoint } from '../util/stacks/stackTypes';
+import { AreaRevealShape, AreaRevealShapeProps } from './AreaRevealShape';
 
 /**
  * @inline
@@ -92,6 +86,8 @@ interface InternalAreaProps extends ZIndexable {
   animationBegin: number;
   animationDuration: AnimationDuration;
   animationEasing: EasingInput;
+  animationInterpolateFn: AnimationInterpolateFn<AreaPointItem, CartesianLayout>;
+  animationMatchBy: AnimationMatchByProp<AreaPointItem>;
   baseLine: BaseLineType | undefined;
 
   baseValue?: BaseValue;
@@ -120,6 +116,7 @@ interface InternalAreaProps extends ZIndexable {
   onAnimationStart?: () => void;
 
   points: ReadonlyArray<AreaPointItem>;
+  shape: ActiveShape<CurveProps, SVGPathElement>;
   stackId?: StackId;
 
   tooltipType?: TooltipType;
@@ -169,6 +166,38 @@ interface AreaProps<DataPointType = any, DataValueType = any>
    */
   animationEasing?: EasingInput;
   /**
+   * Custom animation function for interpolating data items.
+   * When provided, this replaces the default animation interpolation.
+   *
+   * @param prevItems The items from the previous animation frame, or null on first render
+   * @param nextItems The target items to animate towards
+   * @param animationElapsedTime A normalized time value (0 = start, 1 = end)
+   * @returns The interpolated items at time animationElapsedTime
+   *
+   * @since 3.9
+   * @see {@link https://recharts.github.io/en-US/guide/animations/ Animations guide}
+   */
+  animationInterpolateFn?: AnimationInterpolateFn<AreaPointItem, CartesianLayout>;
+  /**
+   * Strategy for matching previous items to next items during animation.
+   * Determines how Recharts pairs old data points with new data points
+   * to create smooth transitions.
+   *
+   * - `matchByIndex` (default): match by array position with proportional stretching
+   * - `matchAppend`: match sequentially by index and treat newly appended items as new
+   * - `matchByDataKey('someKey')`: match by a data key from the payload
+   * - Custom function `(item, index) => key`: match by the returned key
+   *
+   * @defaultValue index
+   * @see matchByIndex
+   * @see matchByDataKey
+   * @see matchAppend
+   *
+   * @since 3.9
+   * @see {@link https://recharts.github.io/en-US/guide/animations/ Animations guide}
+   */
+  animationMatchBy?: AnimationMatchByProp<AreaPointItem>;
+  /**
    * Configures the starting value used to build the internal baseline for non-ranged, non-stacked areas.
    *
    * WARNING despite the name `dataMin`|`dataMax` this actually reads the domain instead, so it should rather be
@@ -181,6 +210,11 @@ interface AreaProps<DataPointType = any, DataValueType = any>
    * - `dataMax`: uses the maximum of the value-axis domain
    *
    * Ignored when the area is stacked or when `dataKey` already returns `[min, max]` tuples.
+   *
+   * Note that the baseValue does not interact with `animationInterpolateFn`;
+   * baseValue is always animated by linear interpolation.
+   * If you want a custom animation then have your `dataKey` return a tuple of two values instead of a single number
+   * which will also render a ranged Area, and that does work with your custom `animationInterpolateFn`.
    */
   baseValue?: BaseValue;
   className?: string;
@@ -263,6 +297,21 @@ interface AreaProps<DataPointType = any, DataValueType = any>
    * The customized event handler of animation start
    */
   onAnimationStart?: () => void;
+
+  /**
+   * If set a ReactElement, the shape of area can be customized.
+   * If set a function, the function will be called to render customized shape.
+   * By default, renders a filled curve path with a clipPath entrance animation.
+   *
+   * During animations the shape receives additional props: `animationElapsedTime`, `isAnimating`, and `isEntrance`.
+   * When a custom shape is provided, the built-in clipPath entrance animation is skipped.
+   *
+   * @see AreaRevealShape — the default entrance animation, available for import from recharts
+   * @example <Area dataKey="value" shape={CustomizedShapeComponent} />
+   * @example <Area dataKey="value" shape={renderShapeFunction} />
+   */
+  shape?: ActiveShape<AreaRevealShapeProps, SVGPathElement>;
+
   /**
    * When two Areas have the same axisId and same stackId, then the two Areas are stacked in the chart.
    */
@@ -312,6 +361,64 @@ interface AreaProps<DataPointType = any, DataValueType = any>
    */
   zIndex?: number;
 }
+
+const defaultAreaAnimateItems: AnimationInterpolateFn<AreaPointItem, CartesianLayout> = (
+  items,
+  animationElapsedTime,
+) => {
+  if (items == null) {
+    // First render: return items as-is, clip-path animation handles the reveal
+    return [];
+  }
+  if (animationElapsedTime === 1) {
+    return items.flatMap(item => (item.status === 'removed' ? [] : [item.next]));
+  }
+  return items.flatMap(item => {
+    if (item.status === 'matched') {
+      return [
+        {
+          ...item.next,
+          x: interpolate(item.prev.x, item.next.x, animationElapsedTime),
+          y: interpolate(item.prev.y, item.next.y, animationElapsedTime),
+        },
+      ];
+    }
+    if (item.status === 'added') {
+      /*
+       * Here we just return the final position without interpolating
+       * so that we can allow the default initial animation that is done by clipPath in AreaRevealShape.
+       * If you want your own custom animations then you may want to interpolate this one as well.
+       */
+      return [item.next];
+    }
+    // removed: drop
+    return [];
+  });
+};
+
+export const defaultAreaProps = {
+  activeDot: true,
+  animationBegin: 0,
+  animationDuration: 1500,
+  animationEasing: 'ease',
+  animationMatchBy: matchByIndex,
+  animationInterpolateFn: defaultAreaAnimateItems,
+  connectNulls: false,
+  dot: false,
+  fill: '#3182bd',
+  fillOpacity: 0.6,
+  hide: false,
+  isAnimationActive: 'auto',
+  legendType: 'line',
+  stroke: '#3182bd',
+  strokeWidth: 1,
+  type: 'linear',
+  label: false,
+  shape: AreaRevealShape,
+  xAxisId: 0,
+  yAxisId: 0,
+  zIndex: DefaultZIndexes.area,
+} as const satisfies Partial<Props<never, never>>;
 
 /**
  * Because of naming conflict, we are forced to ignore certain (valid) SVG attributes.
@@ -458,56 +565,48 @@ function StaticArea({
   needClip,
   clipPathId,
   props,
+  animationElapsedTime,
+  isAnimating,
+  isEntrance,
 }: {
   points: ReadonlyArray<AreaPointItem>;
   baseLine: BaseLineType | undefined;
   needClip: boolean;
   clipPathId: string;
   props: InternalProps;
+  animationElapsedTime: number;
+  isAnimating: boolean;
+  isEntrance: boolean;
 }) {
-  const { layout, type, stroke, connectNulls, isRange } = props;
+  const { layout, type, stroke, connectNulls, isRange, shape } = props;
 
   const { id, ...propsWithoutId } = props;
-  const allOtherProps = svgPropertiesNoEvents(propsWithoutId);
   const propsWithEvents = svgPropertiesAndEvents(propsWithoutId);
+
+  const curveProps: AreaRevealShapeProps = {
+    ...propsWithEvents,
+    id,
+    points,
+    connectNulls,
+    type,
+    baseLine,
+    layout,
+    stroke,
+    isRange,
+    animationElapsedTime,
+    isAnimating,
+    isEntrance,
+  };
 
   return (
     <>
       {points?.length > 1 && (
         <Layer clipPath={needClip ? `url(#clipPath-${clipPathId})` : undefined}>
-          <Curve
-            {...propsWithEvents}
-            id={id}
-            points={points}
-            connectNulls={connectNulls}
-            type={type}
-            baseLine={baseLine}
-            layout={layout}
-            stroke="none"
-            className="recharts-area-area"
+          <Shape<AreaRevealShapeProps, SVGPathElement>
+            option={shape}
+            DefaultShape={defaultAreaProps.shape}
+            shapeProps={curveProps}
           />
-          {stroke !== 'none' && (
-            <Curve
-              {...allOtherProps}
-              className="recharts-area-curve"
-              layout={layout}
-              type={type}
-              connectNulls={connectNulls}
-              fill="none"
-              points={points}
-            />
-          )}
-          {stroke !== 'none' && isRange && Array.isArray(baseLine) && (
-            <Curve
-              {...allOtherProps}
-              className="recharts-area-curve"
-              layout={layout}
-              type={type}
-              connectNulls={connectNulls}
-              fill="none"
-              points={baseLine}
-            />
-          )}
         </Layer>
       )}
       <AreaDotsWrapper points={points} props={propsWithoutId} clipPathId={clipPathId} />
@@ -515,102 +614,20 @@ function StaticArea({
   );
 }
 
-function VerticalRect({
-  alpha,
-  baseLine,
-  points,
-  strokeWidth,
-}: {
-  alpha: number;
-  points: ReadonlyArray<AreaPointItem>;
-  baseLine: BaseLineType | undefined;
-  strokeWidth: string | number | undefined;
-}) {
-  const startY = points[0]?.y;
-  const endY = points[points.length - 1]?.y;
-  if (!isWellBehavedNumber(startY) || !isWellBehavedNumber(endY)) {
-    return null;
-  }
-  const height = alpha * Math.abs(startY - endY);
-  let maxX = Math.max(...points.map(entry => entry.x || 0));
-
+function interpolateScalarBaseLine(
+  baseLine: BaseLineType | undefined,
+  prevBaseLine: BaseLineType | undefined,
+  animationElapsedTime: number,
+): BaseLineType {
   if (isNumber(baseLine)) {
-    maxX = Math.max(baseLine, maxX);
-  } else if (baseLine && Array.isArray(baseLine) && baseLine.length) {
-    maxX = Math.max(...baseLine.map(entry => entry.x || 0), maxX);
+    const previousNumberBaseLine = isNumber(prevBaseLine) ? prevBaseLine : undefined;
+    return interpolate(previousNumberBaseLine, baseLine, animationElapsedTime);
   }
-
-  if (isNumber(maxX)) {
-    return (
-      <rect
-        x={0}
-        y={startY < endY ? startY : startY - height}
-        width={maxX + (strokeWidth ? parseInt(`${strokeWidth}`, 10) : 1)}
-        height={Math.floor(height)}
-      />
-    );
+  if (isNullish(baseLine) || isNan(baseLine)) {
+    const previousNumberBaseLine = isNumber(prevBaseLine) ? prevBaseLine : undefined;
+    return interpolate(previousNumberBaseLine, 0, animationElapsedTime);
   }
-
-  return null;
-}
-
-function HorizontalRect({
-  alpha,
-  baseLine,
-  points,
-  strokeWidth,
-}: {
-  alpha: number;
-  points: ReadonlyArray<AreaPointItem>;
-  baseLine: BaseLineType | undefined;
-  strokeWidth: string | number | undefined;
-}) {
-  const startX = points[0]?.x;
-  const endX = points[points.length - 1]?.x;
-  if (!isWellBehavedNumber(startX) || !isWellBehavedNumber(endX)) {
-    return null;
-  }
-  const width = alpha * Math.abs(startX - endX);
-  let maxY = Math.max(...points.map(entry => entry.y || 0));
-
-  if (isNumber(baseLine)) {
-    maxY = Math.max(baseLine, maxY);
-  } else if (baseLine && Array.isArray(baseLine) && baseLine.length) {
-    maxY = Math.max(...baseLine.map(entry => entry.y || 0), maxY);
-  }
-
-  if (isNumber(maxY)) {
-    return (
-      <rect
-        x={startX < endX ? startX : startX - width}
-        y={0}
-        width={width}
-        height={Math.floor(maxY + (strokeWidth ? parseInt(`${strokeWidth}`, 10) : 1))}
-      />
-    );
-  }
-
-  return null;
-}
-
-function ClipRect({
-  alpha,
-  layout,
-  points,
-  baseLine,
-  strokeWidth,
-}: {
-  alpha: number;
-  layout: CartesianLayout;
-  points: ReadonlyArray<AreaPointItem>;
-  baseLine: BaseLineType | undefined;
-  strokeWidth: string | number | undefined;
-}) {
-  if (layout === 'vertical') {
-    return <VerticalRect alpha={alpha} points={points} baseLine={baseLine} strokeWidth={strokeWidth} />;
-  }
-
-  return <HorizontalRect alpha={alpha} points={points} baseLine={baseLine} strokeWidth={strokeWidth} />;
+  return baseLine;
 }
 
 function AreaWithAnimation({
@@ -633,158 +650,84 @@ function AreaWithAnimation({
     animationBegin,
     animationDuration,
     animationEasing,
-    onAnimationStart,
-    onAnimationEnd,
+    animationMatchBy,
+    animationInterpolateFn,
   } = props;
   const animationInput = useMemo(() => ({ points, baseLine }), [points, baseLine]);
-  const animationId = useAnimationId(animationInput, 'recharts-area-');
+  const baseLineAnimationState = useAnimationStartSnapshot(animationInput, previousBaselineRef);
   const layout = useCartesianChartLayout();
 
-  const [isAnimating, setIsAnimating] = useState(false);
-  const showLabels = !isAnimating;
+  const { isAnimating, handleAnimationStart, handleAnimationEnd } = useAnimationCallbacks(
+    props.onAnimationStart,
+    props.onAnimationEnd,
+  );
 
-  const handleAnimationEnd = useCallback(() => {
-    if (typeof onAnimationEnd === 'function') {
-      onAnimationEnd();
-    }
-    setIsAnimating(false);
-  }, [onAnimationEnd]);
-
-  const handleAnimationStart = useCallback(() => {
-    if (typeof onAnimationStart === 'function') {
-      onAnimationStart();
-    }
-    setIsAnimating(true);
-  }, [onAnimationStart]);
+  const prevBaseLine = baseLineAnimationState.startValue;
 
   if (layout == null) {
     return null;
   }
 
-  const prevPoints = previousPointsRef.current;
-  const prevBaseLine = previousBaselineRef.current;
+  let baseLineAnimationItems: ReadonlyArray<AnimationItem<NullableCoordinate>> | null;
+  if (Array.isArray(baseLine) && Array.isArray(prevBaseLine)) {
+    baseLineAnimationItems = matchAnimationItems(prevBaseLine, baseLine, animationMatchBy);
+  } else if (Array.isArray(baseLine)) {
+    baseLineAnimationItems = matchAnimationItems(null, baseLine, animationMatchBy);
+  } else {
+    baseLineAnimationItems = null;
+  }
+
   return (
-    <AreaLabelListProvider showLabels={showLabels} points={points}>
-      {props.children}
-      <JavascriptAnimate
-        animationId={animationId}
-        begin={animationBegin}
-        duration={animationDuration}
-        isActive={isAnimationActive}
-        easing={animationEasing}
-        onAnimationEnd={handleAnimationEnd}
-        onAnimationStart={handleAnimationStart}
-        key={animationId}
-      >
-        {(t: number) => {
-          if (prevPoints) {
-            const prevPointsDiffFactor = prevPoints.length / points.length;
-            const stepPoints: ReadonlyArray<AreaPointItem> =
-              /*
-               * Here it is important that at the very end of the animation, on the last frame,
-               * we render the original points without any interpolation.
-               * This is needed because the code above is checking for reference equality to decide if the animation should run
-               * and if we create a new array instance (even if the numbers were the same)
-               * then we would break animations.
-               */
-              t === 1
-                ? points
-                : points.map((entry, index): AreaPointItem => {
-                    const prevPointIndex = Math.floor(index * prevPointsDiffFactor);
-                    if (prevPoints[prevPointIndex]) {
-                      const prev: AreaPointItem = prevPoints[prevPointIndex];
-
-                      return { ...entry, x: interpolate(prev.x, entry.x, t), y: interpolate(prev.y, entry.y, t) };
-                    }
-
-                    return entry;
-                  });
-            let stepBaseLine: BaseLineType;
-
-            if (isNumber(baseLine)) {
-              const previousNumberBaseLine = isNumber(prevBaseLine) ? prevBaseLine : undefined;
-              stepBaseLine = interpolate(previousNumberBaseLine, baseLine, t);
-            } else if (isNullish(baseLine) || isNan(baseLine)) {
-              const previousNumberBaseLine = isNumber(prevBaseLine) ? prevBaseLine : undefined;
-              stepBaseLine = interpolate(previousNumberBaseLine, 0, t);
-            } else {
-              stepBaseLine = baseLine.map((entry, index) => {
-                const prevPointIndex = Math.floor(index * prevPointsDiffFactor);
-                if (Array.isArray(prevBaseLine) && prevBaseLine[prevPointIndex]) {
-                  const prev = prevBaseLine[prevPointIndex];
-
-                  return { ...entry, x: interpolate(prev.x, entry.x, t), y: interpolate(prev.y, entry.y, t) };
-                }
-
-                return entry;
-              });
-            }
-
-            if (t > 0) {
-              /*
-               * We need to keep the refs in the parent component because we need to remember the last shape of the animation
-               * even if AreaWithAnimation is unmounted as that happens when changing props.
-               *
-               * And we need to update the refs here because here is where the interpolation is computed.
-               * Eslint doesn't like changing function arguments, but we need it so here is an eslint-disable.
-               */
-              // eslint-disable-next-line no-param-reassign
-              previousPointsRef.current = stepPoints;
-              // eslint-disable-next-line no-param-reassign
-              previousBaselineRef.current = stepBaseLine;
-            }
-            return (
-              <StaticArea
-                points={stepPoints}
-                baseLine={stepBaseLine}
-                needClip={needClip}
-                clipPathId={clipPathId}
-                props={props}
-              />
-            );
-          }
-
-          if (t > 0) {
-            // eslint-disable-next-line no-param-reassign
-            previousPointsRef.current = points;
-            // eslint-disable-next-line no-param-reassign
-            previousBaselineRef.current = baseLine;
-          }
-          return (
-            <Layer>
-              {isAnimationActive && (
-                <defs>
-                  <clipPath id={`animationClipPath-${clipPathId}`}>
-                    <ClipRect
-                      alpha={t}
-                      points={points}
-                      baseLine={baseLine}
-                      layout={layout}
-                      strokeWidth={props.strokeWidth}
-                    />
-                  </clipPath>
-                </defs>
-              )}
-              <Layer clipPath={`url(#animationClipPath-${clipPathId})`}>
-                <StaticArea
-                  points={points}
-                  baseLine={baseLine}
-                  needClip={needClip}
-                  clipPathId={clipPathId}
-                  props={props}
-                />
-              </Layer>
-            </Layer>
-          );
-        }}
-      </JavascriptAnimate>
-      <LabelListFromLabelProp label={props.label} />
-    </AreaLabelListProvider>
+    <AnimatedItems
+      animationInput={animationInput}
+      animationIdPrefix="recharts-area-"
+      items={points}
+      previousItemsRef={previousPointsRef}
+      isAnimationActive={isAnimationActive}
+      animationBegin={animationBegin}
+      animationDuration={animationDuration}
+      animationEasing={animationEasing}
+      onAnimationStart={handleAnimationStart}
+      onAnimationEnd={handleAnimationEnd}
+      animationInterpolateFn={animationInterpolateFn}
+      animationMatchBy={animationMatchBy}
+      layout={layout}
+    >
+      {(stepPoints, animationElapsedTime, isEntrance) => {
+        let stepBaseLine: number | ReadonlyArray<NullableCoordinate> | undefined;
+        if (animationElapsedTime === 1) {
+          stepBaseLine = baseLine;
+        } else if (Array.isArray(baseLine)) {
+          stepBaseLine = animationInterpolateFn(baseLineAnimationItems, animationElapsedTime, layout);
+        } else {
+          stepBaseLine = isEntrance
+            ? baseLine
+            : interpolateScalarBaseLine(baseLine, prevBaseLine, animationElapsedTime);
+        }
+        baseLineAnimationState.syncStepValue(stepBaseLine, animationElapsedTime);
+        return (
+          <AreaLabelListProvider showLabels={!isAnimating} points={points}>
+            {props.children}
+            <StaticArea
+              points={stepPoints}
+              baseLine={stepBaseLine}
+              needClip={needClip}
+              clipPathId={clipPathId}
+              props={props}
+              animationElapsedTime={animationElapsedTime}
+              isAnimating={isAnimating || animationElapsedTime < 1}
+              isEntrance={isEntrance}
+            />
+            <LabelListFromLabelProp label={props.label} />
+          </AreaLabelListProvider>
+        );
+      }}
+    </AnimatedItems>
   );
 }
 
 /*
- * This components decides if the area should be animated or not.
+ * This component decides if the area should be animated or not.
  * It also holds the state of the animation.
  */
 function RenderArea({ needClip, clipPathId, props }: { needClip: boolean; clipPathId: string; props: InternalProps }) {
@@ -866,27 +809,6 @@ class AreaWithState extends PureComponent<InternalProps> {
     );
   }
 }
-
-export const defaultAreaProps = {
-  activeDot: true,
-  animationBegin: 0,
-  animationDuration: 1500,
-  animationEasing: 'ease',
-  connectNulls: false,
-  dot: false,
-  fill: '#3182bd',
-  fillOpacity: 0.6,
-  hide: false,
-  isAnimationActive: 'auto',
-  legendType: 'line',
-  stroke: '#3182bd',
-  strokeWidth: 1,
-  type: 'linear',
-  label: false,
-  xAxisId: 0,
-  yAxisId: 0,
-  zIndex: DefaultZIndexes.area,
-} as const satisfies Partial<Props<never, never>>;
 
 function AreaImpl<DataPointType, ValueAxisType>(props: PropsWithDefaults<DataPointType, ValueAxisType>) {
   const {

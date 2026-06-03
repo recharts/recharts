@@ -2,7 +2,8 @@ import React, { useState, ReactNode } from 'react';
 import { beforeEach, describe, expect, it } from 'vitest';
 import { act } from '@testing-library/react';
 import { createSelectorTestCase } from '../helper/createSelectorTestCase';
-import { ScatterChart, Scatter, Legend, YAxis } from '../../src';
+import { ScatterChart, Scatter, Legend, XAxis, YAxis, ZAxis, CartesianLayout } from '../../src';
+import type { AnimationInterpolateFn, ScatterPointItem } from '../../src';
 import { PageData } from '../_data';
 import { mockSequenceOfGetBoundingClientRect } from '../helper/mockGetBoundingClientRect';
 import { ExpectedPoint, expectScatterPoints, getAllScatterPoints } from '../helper/expectScatterPoints';
@@ -92,6 +93,19 @@ async function dotsAnimate(
 
 function getAllScatterPointPathsDs(container: Element): ReadonlyArray<string | null> {
   return Array.from(getAllScatterPoints(container)).map(path => path.getAttribute('d'));
+}
+
+function getScatterPointFrame(container: Element): ReadonlyArray<string> {
+  return getAllScatterPoints(container)
+    .map(point =>
+      JSON.stringify({
+        transform: point.getAttribute('transform'),
+        opacity: point.getAttribute('opacity'),
+        width: point.getAttribute('width'),
+        height: point.getAttribute('height'),
+      }),
+    )
+    .sort();
 }
 
 function assertAllItemsAreEqual<T>(arr: ReadonlyArray<T>): void {
@@ -381,6 +395,87 @@ describe('Scatter Animation', () => {
     });
   });
 
+  describe('with a custom interpolation that renders both previous and next points', () => {
+    type AnimatedScatterPoint = ScatterPointItem & { opacity?: number };
+
+    const dataA = [
+      { x: 10, y: 10, z: 200 },
+      { x: 20, y: 30, z: 200 },
+      { x: 30, y: 20, z: 200 },
+    ];
+    const dataB = [
+      { x: 10, y: 70, z: 200 },
+      { x: 20, y: 50, z: 200 },
+      { x: 30, y: 80, z: 200 },
+    ];
+
+    const crossfade: AnimationInterpolateFn<ScatterPointItem, CartesianLayout> = (items, animationElapsedTime) => {
+      if (items == null) {
+        return [];
+      }
+      if (animationElapsedTime === 1) {
+        return items.flatMap(item => (item.status === 'removed' ? [] : [item.next]));
+      }
+
+      const result: AnimatedScatterPoint[] = [];
+      for (const item of items) {
+        if (item.status === 'matched') {
+          result.push({ ...item.prev, opacity: 1 - animationElapsedTime });
+          result.push({ ...item.next, opacity: animationElapsedTime });
+        } else if (item.status === 'added') {
+          result.push({ ...item.next, opacity: animationElapsedTime });
+        } else {
+          result.push({ ...item.prev, opacity: 1 - animationElapsedTime });
+        }
+      }
+      return result as ScatterPointItem[];
+    };
+
+    const MyTestCase = ({ children }: { children: ReactNode }) => {
+      const [data, setData] = useState(dataA);
+      return (
+        <div>
+          <button type="button" onClick={() => setData(prev => (prev === dataA ? dataB : dataA))}>
+            Swap dataset
+          </button>
+          <ScatterChart width={100} height={100}>
+            <XAxis type="number" dataKey="x" />
+            <YAxis type="number" dataKey="y" />
+            <ZAxis type="number" dataKey="z" range={[100, 100]} />
+            <Scatter data={data} animationEasing="linear" animationInterpolateFn={crossfade} />
+            {children}
+          </ScatterChart>
+        </div>
+      );
+    };
+
+    const renderTestCase = createSelectorTestCase(MyTestCase);
+
+    async function prime(container: HTMLElement, animationManager: MockAnimationManager) {
+      await animationManager.completeAnimation();
+      const button = container.querySelector('button');
+      assertNotNull(button);
+      act(() => {
+        button.click();
+      });
+      await animationManager.setAnimationProgress(0.4);
+      return button;
+    }
+
+    it.fails('should preserve the in-flight visual state when an update is interrupted', async () => {
+      const { container, animationManager } = renderTestCase();
+      const button = await prime(container, animationManager);
+
+      const frameBeforeInterruption = getScatterPointFrame(container);
+
+      act(() => {
+        button.click();
+      });
+
+      expect(getScatterPointFrame(container)).toEqual(frameBeforeInterruption);
+    });
+  });
+
   describe('when the scatter element hides during the animation', () => {
     const renderTestCase = createSelectorTestCase(({ children }) => {
       const [isVisible, setIsVisible] = useState(true);
@@ -481,6 +576,45 @@ describe('Scatter Animation', () => {
         'M4.282,0A4.282,4.282,0,1,1,-4.282,0A4.282,4.282,0,1,1,4.282,0',
         'M4.514,0A4.514,4.514,0,1,1,-4.514,0A4.514,4.514,0,1,1,4.514,0',
       ]);
+    });
+  });
+
+  describe('shape prop', () => {
+    function CustomShape(props: { animationElapsedTime?: number; isAnimating?: boolean; isEntrance?: boolean }) {
+      return (
+        <path
+          className="custom-scatter-shape"
+          data-t={props.animationElapsedTime}
+          data-is-animating={String(props.isAnimating)}
+          data-is-entrance={String(props.isEntrance)}
+        />
+      );
+    }
+
+    const renderShapeTestCase = createSelectorTestCase(({ children }: { children?: ReactNode }) => (
+      <ScatterChart width={100} height={100}>
+        {/* eslint-disable-next-line react/jsx-no-bind */}
+        <Scatter data={PageData} dataKey="uv" animationEasing="linear" shape={CustomShape} />
+        {children}
+      </ScatterChart>
+    ));
+
+    it('should pass animationElapsedTime, isAnimating, isEntrance props to custom shape', async () => {
+      const { container, animationManager } = renderShapeTestCase();
+
+      await animationManager.setAnimationProgress(0.5);
+      const shapeDuringAnimation = container.querySelector('.custom-scatter-shape');
+      assertNotNull(shapeDuringAnimation);
+      expect(shapeDuringAnimation.getAttribute('data-t')).toBe('0.5');
+      expect(shapeDuringAnimation.getAttribute('data-is-animating')).toBe('true');
+      expect(shapeDuringAnimation.getAttribute('data-is-entrance')).toBe('true');
+
+      await animationManager.completeAnimation();
+      const shapeAfterAnimation = container.querySelector('.custom-scatter-shape');
+      assertNotNull(shapeAfterAnimation);
+      expect(shapeAfterAnimation.getAttribute('data-t')).toBe('1');
+      expect(shapeAfterAnimation.getAttribute('data-is-animating')).toBe('false');
+      expect(shapeAfterAnimation.getAttribute('data-is-entrance')).toBe('false');
     });
   });
 

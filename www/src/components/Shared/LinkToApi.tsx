@@ -1,11 +1,5 @@
-import { Link } from 'react-router';
-import { useLocale } from '../../utils/LocaleUtils.ts';
+import { RechartsLink } from './RechartsLink.tsx';
 
 export function LinkToApi({ children }: { children: string }) {
-  const locale = useLocale();
-  return (
-    <Link to={`/${locale}/api/${children}`} className="link-to-api">
-      {children}
-    </Link>
-  );
+  return <RechartsLink to={`/api/${children}`}>{children}</RechartsLink>;
 }

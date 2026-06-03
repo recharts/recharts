@@ -1,3 +1,5 @@
+import { interpolateString } from 'victory-vendor/d3-interpolate';
+
 /*
  * @description: convert camel case to dash case
  * string => string
@@ -33,3 +35,16 @@ export const mapObject = <T extends Record<string, any>, R>(
     }),
     {} as { [K in keyof T]: R },
   );
+
+/**
+ * Interpolates between two CSS value strings.
+ * Delegates to d3-interpolate's interpolateString which finds embedded numbers
+ * and interpolates them while preserving surrounding text (units, function names, etc.).
+ *
+ * For example:
+ *  - interpolateCSSValue("scaleX(0)", "scaleX(1)", 0.5) => "scaleX(0.5)"
+ *  - interpolateCSSValue("translate(50px, 30px)", "translate(0px, 0px)", 0.5) => "translate(25px, 15px)"
+ */
+export function interpolateCSSValue(from: string, to: string, animationElapsedTime: number): string {
+  return interpolateString(from, to)(animationElapsedTime);
+}

@@ -88,9 +88,10 @@ export type { Props as CartesianAxisProps } from './cartesian/CartesianAxis';
 export { CartesianGrid } from './cartesian/CartesianGrid';
 export type { Props as CartesianGridProps } from './cartesian/CartesianGrid';
 export { Line } from './cartesian/Line';
-export type { Props as LineProps } from './cartesian/Line';
+export type { Props as LineProps, LinePointItem } from './cartesian/Line';
 export { Area } from './cartesian/Area';
 export type { Props as AreaProps } from './cartesian/Area';
+export type { AreaPointItem } from './state/selectors/areaSelectors';
 export { Bar } from './cartesian/Bar';
 export type { Props as BarProps, BarRectangleItem, BarShapeProps } from './cartesian/Bar';
 export { BarStack } from './cartesian/BarStack';
@@ -162,6 +163,15 @@ export type {
 } from './util/types';
 export type { IfOverflow } from './util/IfOverflow';
 export type { EasingInput } from './animation/easing';
+export type { AnimationInterpolateFn } from './animation/AnimatedItems';
+export type { AnimationItem, AnimationMatchBy, AnimationMatchByProp } from './animation/matchBy';
+export { matchByIndex, matchByDataKey, matchAppend } from './animation/matchBy';
+export { AnimationProgressProvider, useAnimationProgress } from './animation/AnimationProgressProvider';
+export type { AnimationHandle, AnimationStatus } from './animation/AnimationProgressProvider';
+export { AreaRevealShape } from './cartesian/AreaRevealShape';
+export type { AreaRevealShapeProps } from './cartesian/AreaRevealShape';
+export { LineDrawShape } from './cartesian/LineDrawShape';
+export type { LineDrawShapeProps } from './cartesian/LineDrawShape';
 
 export { ZIndexLayer } from './zIndex/ZIndexLayer';
 export { DefaultZIndexes } from './zIndex/DefaultZIndexes';

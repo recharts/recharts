@@ -7,9 +7,12 @@ export const expectedInBundle = [
   'Label',
   'LabelList',
   'Layer',
+  'matchAppend',
+  'matchByIndex',
   'RadialBar',
   'Sector',
   'Text',
-  'ZIndexLayer',
   'useChartLayout',
+  'usePolarChartLayout',
+  'ZIndexLayer',
 ] as const;

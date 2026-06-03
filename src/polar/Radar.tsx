@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { MouseEvent, MutableRefObject, ReactElement, ReactNode, SVGProps, useCallback, useRef, useState } from 'react';
+import { MouseEvent, MutableRefObject, ReactElement, ReactNode, SVGProps, useRef } from 'react';
 import last from 'es-toolkit/compat/last';
 
 import { clsx } from 'clsx';
@@ -18,11 +18,12 @@ import { Dots } from '../component/Dots';
 import {
   ActiveDotType,
   AnimationDuration,
-  EasingInput,
   DataConsumer,
   DataKey,
   DotType,
+  EasingInput,
   LegendType,
+  PolarLayout,
   TooltipType,
   TrapezoidViewBox,
 } from '../util/types';
@@ -34,17 +35,19 @@ import { selectRadarPoints } from '../state/selectors/radarSelectors';
 import { useAppSelector } from '../state/hooks';
 import { useIsPanorama } from '../context/PanoramaContext';
 import { SetPolarLegendPayload } from '../state/SetLegendPayload';
-import { useAnimationId } from '../util/useAnimationId';
 import { RegisterGraphicalItemId } from '../context/RegisterGraphicalItemId';
 import { SetPolarGraphicalItem } from '../state/SetGraphicalItem';
 import { svgPropertiesNoEvents } from '../util/svgPropertiesNoEvents';
-import { JavascriptAnimate } from '../animation/JavascriptAnimate';
+import { AnimatedItems, AnimationInterpolateFn, useAnimationCallbacks } from '../animation/AnimatedItems';
+import { AnimationMatchByProp, matchAnimationItems, matchByIndex } from '../animation/matchBy';
+import { useAnimationStartSnapshot } from '../animation/useAnimationStartSnapshot';
 import { svgPropertiesAndEvents } from '../util/svgPropertiesAndEvents';
 import { RequiresDefaultProps, resolveDefaultProps } from '../util/resolveDefaultProps';
 import { WithIdRequired } from '../util/useUniqueId';
 import { ZIndexable, ZIndexLayer } from '../zIndex/ZIndexLayer';
 import { DefaultZIndexes } from '../zIndex/DefaultZIndexes';
 import { RechartsScale } from '../util/scale/RechartsScale';
+import { usePolarChartLayout } from '../context/chartLayoutContext';
 
 export interface RadarPoint {
   x: number;
@@ -83,6 +86,35 @@ interface RadarProps<DataPointType = any, DataValueType = any>
    * @defaultValue ease
    */
   animationEasing?: EasingInput;
+  /**
+   * Custom animation function for interpolating data items.
+   * When provided, this replaces the default animation interpolation.
+   *
+   * @param prevItems The items from the previous animation frame, or null on first render
+   * @param nextItems The target items to animate towards
+   * @param animationElapsedTime A normalized time value (0 = start, 1 = end)
+   * @returns The interpolated items at time animationElapsedTime
+   *
+   * @since 3.9
+   * @see {@link https://recharts.github.io/en-US/guide/animations/ Animations guide}
+   */
+  animationInterpolateFn?: AnimationInterpolateFn<RadarPoint, PolarLayout>;
+  /**
+   * Strategy for matching previous items to next items during animation.
+   * Determines how Recharts pairs old data points with new data points
+   * to create smooth transitions.
+   *
+   * - `matchByIndex` (default): match by array position with proportional stretching
+   * - `matchAppend`: match sequentially by index and treat newly appended items as new
+   * - `matchByDataKey('someKey')`: match by a data key from the payload
+   * - Custom function `(item, index) => key`: match by the returned key
+   *
+   * @defaultValue index
+   * @see matchByIndex
+   * @see matchByDataKey
+   * @see matchAppend
+   */
+  animationMatchBy?: AnimationMatchByProp<RadarPoint>;
   baseLinePoints?: RadarPoint[];
   className?: string;
   connectNulls?: boolean;
@@ -428,25 +460,32 @@ function StaticPolygon({
   );
 }
 
-const interpolatePolarPoint =
-  (prevPoints: ReadonlyArray<RadarPoint> | undefined, prevPointsDiffFactor: number, t: number) =>
-  (entry: RadarPoint, index: number) => {
-    const prev = prevPoints && prevPoints[Math.floor(index * prevPointsDiffFactor)];
-
-    if (prev) {
-      return {
-        ...entry,
-        x: interpolate(prev.x, entry.x, t),
-        y: interpolate(prev.y, entry.y, t),
-      };
+const defaultRadarAnimateItems: AnimationInterpolateFn<RadarPoint, PolarLayout> = (items, animationElapsedTime) => {
+  if (items == null) return [];
+  if (animationElapsedTime === 1) {
+    return items.flatMap(item => (item.status === 'removed' ? [] : [item.next]));
+  }
+  return items.flatMap(item => {
+    if (item.status === 'removed') return [];
+    if (item.status === 'matched') {
+      return [
+        {
+          ...item.next,
+          x: interpolate(item.prev.x, item.next.x, animationElapsedTime),
+          y: interpolate(item.prev.y, item.next.y, animationElapsedTime),
+        },
+      ];
     }
-
-    return {
-      ...entry,
-      x: interpolate(entry.cx, entry.x, t),
-      y: interpolate(entry.cy, entry.y, t),
-    };
-  };
+    // added: animate from center
+    return [
+      {
+        ...item.next,
+        x: interpolate(item.next.cx, item.next.x, animationElapsedTime),
+        y: interpolate(item.next.cy, item.next.y, animationElapsedTime),
+      },
+    ];
+  });
+};
 
 function PolygonWithAnimation({
   props,
@@ -464,64 +503,50 @@ function PolygonWithAnimation({
     animationBegin,
     animationDuration,
     animationEasing,
-    onAnimationEnd,
+    animationMatchBy,
+    animationInterpolateFn,
     onAnimationStart,
+    onAnimationEnd,
   } = props;
-  const prevPoints = previousPointsRef.current;
-  const prevBaseLinePoints = previousBaseLinePointsRef.current;
+  const baseLineAnimationState = useAnimationStartSnapshot(props, previousBaseLinePointsRef);
+  const prevBaseLinePoints = baseLineAnimationState.startValue;
+  const baseLineAnimationItems = matchAnimationItems(prevBaseLinePoints ?? null, baseLinePoints, animationMatchBy);
 
-  const prevPointsDiffFactor: number = prevPoints ? prevPoints.length / points.length : 1;
-  const prevBaseLinePointsDiffFactor: number = prevBaseLinePoints
-    ? prevBaseLinePoints.length / baseLinePoints.length
-    : 1;
+  const { isAnimating, handleAnimationStart, handleAnimationEnd } = useAnimationCallbacks(
+    onAnimationStart,
+    onAnimationEnd,
+  );
 
-  const animationId = useAnimationId(props, 'recharts-radar-');
-  const [isAnimating, setIsAnimating] = useState(false);
-  const showLabels = !isAnimating;
+  const layout = usePolarChartLayout();
 
-  const handleAnimationEnd = useCallback(() => {
-    if (typeof onAnimationEnd === 'function') {
-      onAnimationEnd();
-    }
-    setIsAnimating(false);
-  }, [onAnimationEnd]);
-
-  const handleAnimationStart = useCallback(() => {
-    if (typeof onAnimationStart === 'function') {
-      onAnimationStart();
-    }
-    setIsAnimating(true);
-  }, [onAnimationStart]);
+  if (layout == null) return null;
 
   return (
-    <RadarLabelListProvider showLabels={showLabels} points={points}>
-      <JavascriptAnimate
-        animationId={animationId}
-        begin={animationBegin}
-        duration={animationDuration}
-        isActive={isAnimationActive}
-        easing={animationEasing}
-        key={`radar-${animationId}`}
-        onAnimationEnd={handleAnimationEnd}
+    <RadarLabelListProvider showLabels={!isAnimating} points={points}>
+      <AnimatedItems
+        animationInput={props}
+        animationIdPrefix="recharts-radar-"
+        items={points}
+        previousItemsRef={previousPointsRef}
+        isAnimationActive={isAnimationActive}
+        animationBegin={animationBegin}
+        animationDuration={animationDuration}
+        animationEasing={animationEasing}
         onAnimationStart={handleAnimationStart}
+        onAnimationEnd={handleAnimationEnd}
+        animationInterpolateFn={animationInterpolateFn}
+        animationMatchBy={animationMatchBy}
+        layout={layout}
       >
-        {(t: number) => {
-          const stepData = t === 1 ? points : points.map(interpolatePolarPoint(prevPoints, prevPointsDiffFactor, t));
-
+        {(stepData, animationElapsedTime) => {
           const stepBaseLinePoints =
-            t === 1
+            animationElapsedTime === 1
               ? baseLinePoints
-              : baseLinePoints?.map(interpolatePolarPoint(prevBaseLinePoints, prevBaseLinePointsDiffFactor, t));
-
-          if (t > 0) {
-            // eslint-disable-next-line no-param-reassign
-            previousPointsRef.current = stepData;
-            // eslint-disable-next-line no-param-reassign
-            previousBaseLinePointsRef.current = stepBaseLinePoints;
-          }
+              : animationInterpolateFn(baseLineAnimationItems, animationElapsedTime, layout);
+          baseLineAnimationState.syncStepValue(stepBaseLinePoints, animationElapsedTime);
           return <StaticPolygon points={stepData} baseLinePoints={stepBaseLinePoints} props={props} />;
         }}
-      </JavascriptAnimate>
+      </AnimatedItems>
       <LabelListFromLabelProp label={props.label} />
       {props.children}
     </RadarLabelListProvider>
@@ -547,6 +572,8 @@ export const defaultRadarProps = {
   animationBegin: 0,
   animationDuration: 1500,
   animationEasing: 'ease',
+  animationMatchBy: matchByIndex,
+  animationInterpolateFn: defaultRadarAnimateItems,
   dot: false,
   hide: false,
   isAnimationActive: 'auto',

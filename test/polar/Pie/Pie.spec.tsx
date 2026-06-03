@@ -443,6 +443,8 @@ describe('<Pie />', () => {
           index: 0,
           innerRadius: 0,
           isActive: true,
+          isAnimating: false,
+          isEntrance: true,
           label: 'Iter: 0',
           maxRadius: 275.77164466275354,
           midAngle: 38.579169175195666,
@@ -461,6 +463,7 @@ describe('<Pie />', () => {
           startAngle: 0,
           stroke: '#fff',
           tabIndex: -1,
+          animationElapsedTime: 1,
           tooltipPayload: [
             {
               color: '#808080',

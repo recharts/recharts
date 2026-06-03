@@ -2,7 +2,7 @@ import * as React from 'react';
 import { cloneElement, isValidElement, ReactElement } from 'react';
 
 import { Layer } from '../container/Layer';
-import { ActiveShape } from './types';
+import { ActiveShape, ShapeAnimationProps } from './types';
 
 /**
  * This is an abstraction for rendering a user defined prop for a customized shape in several forms.
@@ -92,7 +92,7 @@ function isActiveShape(shapeProps: object): boolean {
  * - plain object: merge it into the default shape props
  * - boolean / undefined: ignore it and render the default shape with the forwarded props
  */
-export function Shape<PropsType extends object, ElementType extends SVGElement = SVGElement>({
+export function Shape<PropsType extends ShapeAnimationProps, ElementType extends SVGElement = SVGElement>({
   option,
   DefaultShape,
   shapeProps,

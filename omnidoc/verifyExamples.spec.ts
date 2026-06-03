@@ -17,7 +17,6 @@ describe('Documentation Examples Coverage', () => {
   const exportsThatNeedExamples: ReadonlyArray<string> = [
     'ActiveDotProps',
     'ActiveLabel',
-    'AreaProps',
     'AxisDomainItem',
     'AxisId',
     'AxisRange',
@@ -35,7 +34,6 @@ describe('Documentation Examples Coverage', () => {
     'Coordinate',
     'Cross',
     'CrossProps',
-    'Curve',
     'CurveProps',
     'CustomScaleDefinition',
     'Customized',
@@ -49,7 +47,6 @@ describe('Documentation Examples Coverage', () => {
     'FunnelProps',
     'FunnelTrapezoidItem',
     'Global',
-    'interpolate',
     'IfOverflow',
     'LabelListEntry',
     'LabelListProps',
@@ -73,7 +70,6 @@ describe('Documentation Examples Coverage', () => {
     'PolygonProps',
     'RadarProps',
     'InternalRadarProps',
-    'RadarPoint',
     'RadialBarDataItem',
     'RadialBarProps',
     'RectangleProps',
@@ -92,7 +88,6 @@ describe('Documentation Examples Coverage', () => {
     'SankeyNodeProps',
     'SankeyProps',
     'ScatterProps',
-    'ScatterPointItem',
     'ScatterPointNode',
     'SectorProps',
     'SunburstChartProps',
@@ -147,17 +142,21 @@ describe('Documentation Examples Coverage', () => {
     'NoCentric',
     'NiceTicksAlgorithm',
     'EasingInput',
-    // Hooks and types that do not appear in any /examples/ page component;
-    // they need dedicated examples to be removed from this list.
-    'CartesianLayout',
     'InverseScaleFunction',
     'LayoutType',
-    'PolarLayout',
     'useXAxisInverseDataSnapScale',
     'useXAxisInverseTickSnapScale',
     'useYAxisInverseDataSnapScale',
     'useYAxisInverseTickSnapScale',
     'ZIndexLayer',
+    'AnimationHandle',
+    'AnimationMatchByProp',
+    'AnimationProgressProvider',
+    'AnimationStatus',
+    'LineDrawShape',
+    'LinePointItem',
+    'matchAppend',
+    'useAnimationProgress',
   ];
 
   /*
@@ -165,6 +164,7 @@ describe('Documentation Examples Coverage', () => {
    */
   const exportsThatNeedPropExamples: ReadonlySet<string> = new Set([
     'Area',
+    'AreaRevealShape',
     'AreaChart',
     'Bar',
     'BarChart',
@@ -172,6 +172,7 @@ describe('Documentation Examples Coverage', () => {
     'Brush',
     'CartesianGrid',
     'ComposedChart',
+    'Curve',
     'DefaultLegendContent',
     'DefaultTooltipContent',
     'ErrorBar',

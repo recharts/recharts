@@ -2,10 +2,11 @@ import React, { ReactNode, useState } from 'react';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { act } from '@testing-library/react';
 import { createSelectorTestCase } from '../helper/createSelectorTestCase';
-import { Funnel, FunnelChart } from '../../src';
+import { Funnel, FunnelChart, FunnelTrapezoidItem } from '../../src';
 import { assertNotNull } from '../helper/assertNotNull';
 import { PageData } from '../_data';
 import { MockAnimationManager } from '../animation/MockProgressAnimationManager';
+import { ShapeAnimationProps } from '../../src/util/types';
 
 const smallerData = PageData.slice(0, 2);
 
@@ -116,6 +117,45 @@ describe('Funnel animation', () => {
         ],
         ['M 5,5L 495,5L 433.75,150L 66.25,150L 5,5 Z', 'M 66.25,150L 433.75,150L 250,295L 250,295L 66.25,150 Z'],
       ]);
+    });
+  });
+
+  describe('shape prop', () => {
+    function CustomShape(props: FunnelTrapezoidItem & ShapeAnimationProps) {
+      return (
+        <path
+          className="custom-funnel-shape"
+          data-t={props.animationElapsedTime}
+          data-is-animating={String(props.isAnimating)}
+          data-is-entrance={String(props.isEntrance)}
+        />
+      );
+    }
+
+    const renderShapeTestCase = createSelectorTestCase(({ children }: { children?: ReactNode }) => (
+      <FunnelChart width={500} height={300}>
+        {/* eslint-disable-next-line react/jsx-no-bind */}
+        <Funnel data={smallerData} dataKey="uv" isAnimationActive animationEasing="linear" shape={CustomShape} />
+        {children}
+      </FunnelChart>
+    ));
+
+    it('should pass animationElapsedTime, isAnimating, isEntrance props to custom shape', async () => {
+      const { container, animationManager } = renderShapeTestCase();
+
+      await animationManager.setAnimationProgress(0.5);
+      const shapeDuringAnimation = container.querySelector('.custom-funnel-shape');
+      assertNotNull(shapeDuringAnimation);
+      expect(shapeDuringAnimation.getAttribute('data-t')).toBe('0.5');
+      expect(shapeDuringAnimation.getAttribute('data-is-animating')).toBe('true');
+      expect(shapeDuringAnimation.getAttribute('data-is-entrance')).toBe('true');
+
+      await animationManager.completeAnimation();
+      const shapeAfterAnimation = container.querySelector('.custom-funnel-shape');
+      assertNotNull(shapeAfterAnimation);
+      expect(shapeAfterAnimation.getAttribute('data-t')).toBe('1');
+      expect(shapeAfterAnimation.getAttribute('data-is-animating')).toBe('false');
+      expect(shapeAfterAnimation.getAttribute('data-is-entrance')).toBe('false');
     });
   });
 

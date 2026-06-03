@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { MutableRefObject, ReactElement, ReactNode, useCallback, useMemo, useRef, useState } from 'react';
+import { MutableRefObject, ReactElement, ReactNode, useMemo, useRef } from 'react';
 import omit from 'es-toolkit/compat/omit';
 
 import { clsx } from 'clsx';
@@ -28,8 +28,10 @@ import {
   DataProvider,
   LegendType,
   PresentationAttributesAdaptChildEvent,
+  ShapeAnimationProps,
   TooltipType,
   TrapezoidViewBox,
+  CartesianLayout,
 } from '../util/types';
 import { defaultFunnelShape, FunnelTrapezoid, FunnelTrapezoidProps } from '../util/FunnelUtils';
 import {
@@ -45,11 +47,12 @@ import { Cell } from '../component/Cell';
 import { RequiresDefaultProps, resolveDefaultProps } from '../util/resolveDefaultProps';
 import { usePlotArea } from '../hooks';
 import { svgPropertiesNoEvents } from '../util/svgPropertiesNoEvents';
-import { JavascriptAnimate } from '../animation/JavascriptAnimate';
-import { useAnimationId } from '../util/useAnimationId';
+import { AnimatedItems, AnimationInterpolateFn, useAnimationCallbacks } from '../animation/AnimatedItems';
+import { AnimationMatchByProp, matchAppend } from '../animation/matchBy';
 import { GraphicalItemId } from '../state/graphicalItemsSlice';
 import { RegisterGraphicalItemId } from '../context/RegisterGraphicalItemId';
 import { WithIdRequired } from '../util/useUniqueId';
+import { useCartesianChartLayout } from '../context/chartLayoutContext';
 
 export type FunnelTrapezoidItem = TrapezoidProps &
   TrapezoidViewBox & {
@@ -96,6 +99,38 @@ interface FunnelProps<DataPointType = any, DataValueType = any>
    * @defaultValue ease
    */
   animationEasing?: EasingInput;
+  /**
+   * Custom animation function for interpolating data items.
+   * When provided, this replaces the default animation interpolation.
+   *
+   * @param prevItems The items from the previous animation frame, or null on first render
+   * @param nextItems The target items to animate towards
+   * @param animationElapsedTime A normalized time value (0 = start, 1 = end)
+   * @returns The interpolated items at time animationElapsedTime
+   *
+   * @since 3.9
+   * @see {@link https://recharts.github.io/en-US/guide/animations/ Animations guide}
+   */
+  animationInterpolateFn?: AnimationInterpolateFn<FunnelTrapezoidItem, CartesianLayout>;
+  /**
+   * Strategy for matching previous items to next items during animation.
+   * Determines how Recharts pairs old data points with new data points
+   * to create smooth transitions.
+   *
+   * - `matchAppend` (default): match sequentially by index and treat newly appended items as new
+   * - `matchByIndex`: match by array position with proportional stretching
+   * - `matchByDataKey('someKey')`: match by a data key from the payload
+   * - Custom function `(item, index) => key`: match by the returned key
+   *
+   * @defaultValue append
+   * @see matchByIndex
+   * @see matchByDataKey
+   * @see matchAppend
+   *
+   * @since 3.9
+   * @see {@link https://recharts.github.io/en-US/guide/animations/ Animations guide}
+   */
+  animationMatchBy?: AnimationMatchByProp<FunnelTrapezoidItem>;
   className?: string;
   /**
    * Hides the whole graphical element when true.
@@ -154,8 +189,10 @@ interface FunnelProps<DataPointType = any, DataValueType = any>
   /**
    * If set a ReactElement, the shape of funnel can be customized.
    * If set a function, the function will be called to render customized shape.
+   * During animations, the function shape also receives `animationElapsedTime`, `isAnimating`, and `isEntrance`.
+   * By default, renders a trapezoid.
    */
-  shape?: ActiveShape<FunnelTrapezoidItem, SVGPathElement>;
+  shape?: ActiveShape<FunnelTrapezoidItem & ShapeAnimationProps, SVGPathElement>;
   tooltipType?: TooltipType;
   /**
    * The customized event handler of click on the area in this group
@@ -200,7 +237,7 @@ export type Props<DataPointType = any, DataValueType = any> = FunnelSvgProps &
 
 type RealFunnelData = unknown;
 
-type FunnelTrapezoidsProps = {
+type FunnelTrapezoidsProps = ShapeAnimationProps & {
   trapezoids: ReadonlyArray<FunnelTrapezoidItem>;
   allOtherFunnelProps: InternalProps;
 };
@@ -276,7 +313,7 @@ function FunnelLabelListProvider({
 }
 
 function FunnelTrapezoids(props: FunnelTrapezoidsProps) {
-  const { trapezoids, allOtherFunnelProps } = props;
+  const { trapezoids, allOtherFunnelProps, animationElapsedTime, isAnimating, isEntrance } = props;
   const activeItemIndex = useAppSelector(state =>
     selectActiveIndex(state, 'item', state.tooltip.settings.trigger, undefined),
   );
@@ -311,6 +348,9 @@ function FunnelTrapezoids(props: FunnelTrapezoidsProps) {
           option: trapezoidOptions,
           isActive: isActiveIndex,
           stroke: entry.stroke,
+          animationElapsedTime,
+          isAnimating,
+          isEntrance,
         };
 
         return (
@@ -330,6 +370,43 @@ function FunnelTrapezoids(props: FunnelTrapezoidsProps) {
   );
 }
 
+const defaultFunnelAnimateItems: AnimationInterpolateFn<FunnelTrapezoidItem, CartesianLayout> = (
+  items,
+  animationElapsedTime,
+) => {
+  if (items == null) return [];
+  if (animationElapsedTime === 1) {
+    return items.flatMap(item => (item.status === 'removed' ? [] : [item.next]));
+  }
+  return items.flatMap(item => {
+    if (item.status === 'removed') return [];
+    if (item.status === 'matched') {
+      return [
+        {
+          ...item.next,
+          x: interpolate(item.prev.x, item.next.x, animationElapsedTime),
+          y: interpolate(item.prev.y, item.next.y, animationElapsedTime),
+          upperWidth: interpolate(item.prev.upperWidth, item.next.upperWidth, animationElapsedTime),
+          lowerWidth: interpolate(item.prev.lowerWidth, item.next.lowerWidth, animationElapsedTime),
+          height: interpolate(item.prev.height, item.next.height, animationElapsedTime),
+        },
+      ];
+    }
+    // added
+    const { next } = item;
+    return [
+      {
+        ...next,
+        x: interpolate(next.x + next.upperWidth / 2, next.x, animationElapsedTime),
+        y: interpolate(next.y + next.height / 2, next.y, animationElapsedTime),
+        upperWidth: interpolate(0, next.upperWidth, animationElapsedTime),
+        lowerWidth: interpolate(0, next.lowerWidth, animationElapsedTime),
+        height: interpolate(0, next.height, animationElapsedTime),
+      },
+    ];
+  });
+};
+
 function TrapezoidsWithAnimation({
   previousTrapezoidsRef,
   props,
@@ -337,87 +414,46 @@ function TrapezoidsWithAnimation({
   props: InternalProps;
   previousTrapezoidsRef: MutableRefObject<ReadonlyArray<FunnelTrapezoidItem> | undefined>;
 }) {
-  const {
-    trapezoids,
-    isAnimationActive,
-    animationBegin,
-    animationDuration,
-    animationEasing,
-    onAnimationEnd,
-    onAnimationStart,
-  } = props;
-  const prevTrapezoids = previousTrapezoidsRef.current;
+  const { trapezoids, isAnimationActive, animationBegin, animationDuration, animationEasing, animationInterpolateFn } =
+    props;
+  const layout = useCartesianChartLayout();
 
-  const [isAnimating, setIsAnimating] = useState(false);
-  const showLabels = !isAnimating;
+  const { isAnimating, handleAnimationStart, handleAnimationEnd } = useAnimationCallbacks(
+    props.onAnimationStart,
+    props.onAnimationEnd,
+  );
 
-  const animationId = useAnimationId(trapezoids, 'recharts-funnel-');
-
-  const handleAnimationEnd = useCallback(() => {
-    if (typeof onAnimationEnd === 'function') {
-      onAnimationEnd();
-    }
-    setIsAnimating(false);
-  }, [onAnimationEnd]);
-
-  const handleAnimationStart = useCallback(() => {
-    if (typeof onAnimationStart === 'function') {
-      onAnimationStart();
-    }
-    setIsAnimating(true);
-  }, [onAnimationStart]);
+  if (layout == null) return null;
 
   return (
-    <FunnelLabelListProvider showLabels={showLabels} trapezoids={trapezoids}>
-      <JavascriptAnimate
-        animationId={animationId}
-        begin={animationBegin}
-        duration={animationDuration}
-        isActive={isAnimationActive}
-        easing={animationEasing}
-        key={animationId}
+    <FunnelLabelListProvider showLabels={!isAnimating} trapezoids={trapezoids}>
+      <AnimatedItems
+        animationInput={trapezoids}
+        animationIdPrefix="recharts-funnel-"
+        items={trapezoids}
+        previousItemsRef={previousTrapezoidsRef}
+        isAnimationActive={isAnimationActive}
+        animationBegin={animationBegin}
+        animationDuration={animationDuration}
+        animationEasing={animationEasing}
         onAnimationStart={handleAnimationStart}
         onAnimationEnd={handleAnimationEnd}
+        animationInterpolateFn={animationInterpolateFn}
+        animationMatchBy={props.animationMatchBy}
+        layout={layout}
       >
-        {(t: number) => {
-          const stepData: ReadonlyArray<FunnelTrapezoidItem> | undefined =
-            t === 1
-              ? trapezoids
-              : trapezoids.map((entry: FunnelTrapezoidItem, index: number): FunnelTrapezoidItem => {
-                  const prev = prevTrapezoids && prevTrapezoids[index];
-
-                  if (prev) {
-                    return {
-                      ...entry,
-                      x: interpolate(prev.x, entry.x, t),
-                      y: interpolate(prev.y, entry.y, t),
-                      upperWidth: interpolate(prev.upperWidth, entry.upperWidth, t),
-                      lowerWidth: interpolate(prev.lowerWidth, entry.lowerWidth, t),
-                      height: interpolate(prev.height, entry.height, t),
-                    };
-                  }
-
-                  return {
-                    ...entry,
-                    x: interpolate(entry.x + entry.upperWidth / 2, entry.x, t),
-                    y: interpolate(entry.y + entry.height / 2, entry.y, t),
-                    upperWidth: interpolate(0, entry.upperWidth, t),
-                    lowerWidth: interpolate(0, entry.lowerWidth, t),
-                    height: interpolate(0, entry.height, t),
-                  };
-                });
-
-          if (t > 0) {
-            // eslint-disable-next-line no-param-reassign
-            previousTrapezoidsRef.current = stepData;
-          }
-          return (
-            <Layer>
-              <FunnelTrapezoids trapezoids={stepData} allOtherFunnelProps={props} />
-            </Layer>
-          );
-        }}
-      </JavascriptAnimate>
+        {(stepData, animationElapsedTime, isEntrance) => (
+          <Layer>
+            <FunnelTrapezoids
+              trapezoids={stepData}
+              allOtherFunnelProps={props}
+              animationElapsedTime={animationElapsedTime}
+              isAnimating={isAnimating || animationElapsedTime < 1}
+              isEntrance={isEntrance}
+            />
+          </Layer>
+        )}
+      </AnimatedItems>
       <LabelListFromLabelProp label={props.label} />
       {props.children}
     </FunnelLabelListProvider>
@@ -447,6 +483,8 @@ export const defaultFunnelProps = {
   animationBegin: 400,
   animationDuration: 1500,
   animationEasing: 'ease',
+  animationInterpolateFn: defaultFunnelAnimateItems,
+  animationMatchBy: matchAppend,
   fill: '#808080',
   hide: false,
   isAnimationActive: 'auto',

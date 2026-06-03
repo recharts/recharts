@@ -16,6 +16,8 @@ import scatterChartPerformanceSource from './ScatterChartPerformance?raw';
 import ScatterChartNavExample from './ScatterChartNavExample';
 import ScatterChartExample from './ScatterChartExample';
 import scatterChartExampleSource from './ScatterChartExample?raw';
+import CustomAnimationExample, { CustomAnimationControls } from './CustomAnimationExample.tsx';
+import CustomAnimationExampleSource from './CustomAnimationExample.tsx?raw';
 
 export { ScatterChartNavExample };
 
@@ -39,6 +41,18 @@ export const scatterChartExamples = {
     Component: BubbleChart,
     sourceCode: bubbleChartSource,
     name: 'Bubble Chart',
+  },
+  CustomAnimation: {
+    Component: CustomAnimationExample,
+    sourceCode: CustomAnimationExampleSource,
+    name: 'Custom Animation',
+    description: (
+      <p>
+        Uses new <code>animationInterpolateFn</code> prop introduced in version 3.9 to implement custom animation.
+      </p>
+    ),
+    Controls: CustomAnimationControls,
+    defaultTool: 'controls',
   },
   ScatterChartWithLabels: {
     Component: ScatterChartWithLabels,

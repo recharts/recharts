@@ -43,6 +43,8 @@ import WaterfallExample from './WaterfallExample';
 import waterfallExampleSource from './WaterfallExample?raw';
 import BarChartRangeExample from './BarChartRangeExample';
 import barChartRangeExampleSource from './BarChartRangeExample?raw';
+import AnimatedBarTimeSeriesExample, { AnimatedBarTimeSeriesExampleControls } from './AnimatedBarTimeSeriesExample.tsx';
+import AnimatedBarTimeSeriesExampleSource from './AnimatedBarTimeSeriesExample.tsx?raw';
 
 export { BarChartNavExample };
 
@@ -130,6 +132,13 @@ export const barChartExamples = {
         </p>
       </article>
     ),
+  },
+  AnimatedBarTimeSeriesExample: {
+    Component: AnimatedBarTimeSeriesExample,
+    sourceCode: AnimatedBarTimeSeriesExampleSource,
+    Controls: AnimatedBarTimeSeriesExampleControls,
+    name: 'Animated Bar series',
+    defaultTool: 'controls',
   },
   MixBarChart: {
     Component: MixBarChart,

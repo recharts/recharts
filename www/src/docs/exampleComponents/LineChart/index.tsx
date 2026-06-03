@@ -1,3 +1,4 @@
+import { Link } from 'react-router';
 import BiaxialLineChart from './BiaxialLineChart';
 import CustomizedDotLineChart from './CustomizedDotLineChart';
 import CustomizedLabelLineChart from './CustomizedLabelLineChart';
@@ -35,6 +36,11 @@ import CompareTwoLines from './CompareTwoLines.tsx';
 import CompareTwoLinesSource from './CompareTwoLines.tsx?raw';
 import DynamicZIndexLineChart from './DynamicZIndexLineChart.tsx';
 import DynamicZIndexLineChartSource from './DynamicZIndexLineChart.tsx?raw';
+import LineChartCustomShapeExample, { LineChartCustomShapeControls } from './LineChartCustomShapeExample';
+import LineChartCustomShapeExampleSource from './LineChartCustomShapeExample/index.tsx?raw';
+import { LinkToApi } from '../../../components/Shared/LinkToApi.tsx';
+import AnimatedTimeSeriesExample, { AnimatedTimeSeriesExampleControls } from './AnimatedTimeSeriesExample.tsx';
+import AnimatedTimeSeriesExampleSource from './AnimatedTimeSeriesExample.tsx?raw';
 
 export const lineChartExamples = {
   SimpleLineChart: {
@@ -92,6 +98,19 @@ export const lineChartExamples = {
     sourceCode: synchronizedLineChartSource,
     name: 'Synchronized Line Chart',
   },
+  LineChartCustomShapeExample: {
+    Component: LineChartCustomShapeExample,
+    sourceCode: LineChartCustomShapeExampleSource,
+    Controls: LineChartCustomShapeControls,
+    name: 'Line that animates opacity',
+    defaultTool: 'controls',
+    description: (
+      <p>
+        This example shows how you can override <LinkToApi>Line</LinkToApi> <code>shape</code> prop and provide custom
+        entrance animation. Compare it to the update animation which remains the same as the default one.
+      </p>
+    ),
+  },
   HighlightAndZoomLineChart: {
     Component: HighlightAndZoomLineChart,
     sourceCode: highlightAndZoomLineChartSource,
@@ -128,6 +147,19 @@ export const lineChartExamples = {
     Component: TinyLineChart,
     sourceCode: tinyLineChartSource,
     name: 'Tiny Line Chart',
+  },
+  AnimatedTimeSeriesExample: {
+    Component: AnimatedTimeSeriesExample,
+    sourceCode: AnimatedTimeSeriesExampleSource,
+    Controls: AnimatedTimeSeriesExampleControls,
+    name: 'Animated Time Series',
+    defaultTool: 'controls',
+    description: (
+      <p>
+        This example shows the use of <code>animationMatchBy</code> prop to customize Line animation. Read more in{' '}
+        <Link to="/guide/animations/">Animations guide</Link>.
+      </p>
+    ),
   },
 } satisfies Record<string, ChartExample>;
 

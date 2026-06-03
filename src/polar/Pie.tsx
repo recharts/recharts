@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { MutableRefObject, ReactElement, ReactNode, SVGProps, useCallback, useMemo, useRef, useState } from 'react';
+import { MutableRefObject, ReactElement, ReactNode, SVGProps, useMemo, useRef } from 'react';
 import get from 'es-toolkit/compat/get';
 
 import { clsx } from 'clsx';
@@ -26,7 +26,9 @@ import {
   EasingInput,
   GeometrySector,
   LegendType,
+  PolarLayout,
   PresentationAttributesAdaptChildEvent,
+  ShapeAnimationProps,
   TooltipType,
 } from '../util/types';
 import { Shape } from '../util/ActiveShapeUtils';
@@ -45,7 +47,8 @@ import {
 } from '../state/selectors/tooltipSelectors';
 import { SetPolarLegendPayload } from '../state/SetLegendPayload';
 import { DATA_ITEM_GRAPHICAL_ITEM_ID_ATTRIBUTE_NAME, DATA_ITEM_INDEX_ATTRIBUTE_NAME } from '../util/Constants';
-import { useAnimationId } from '../util/useAnimationId';
+import { AnimatedItems, AnimationInterpolateFn, useAnimationCallbacks } from '../animation/AnimatedItems';
+import { AnimationMatchByProp, matchAppend } from '../animation/matchBy';
 import { RequiresDefaultProps, resolveDefaultProps } from '../util/resolveDefaultProps';
 import { RegisterGraphicalItemId } from '../context/RegisterGraphicalItemId';
 import { SetPolarGraphicalItem } from '../state/SetGraphicalItem';
@@ -55,7 +58,6 @@ import {
   svgPropertiesNoEventsFromUnknown,
   SVGPropsNoEvents,
 } from '../util/svgPropertiesNoEvents';
-import { JavascriptAnimate } from '../animation/JavascriptAnimate';
 import {
   LabelListFromLabelProp,
   PolarLabelListContextProvider,
@@ -68,6 +70,7 @@ import { DefaultZIndexes } from '../zIndex/DefaultZIndexes';
 import { ChartData } from '../state/chartDataSlice';
 import { getClassNameFromUnknown } from '../util/getClassNameFromUnknown';
 import { WithIdRequired } from '../util/useUniqueId';
+import { usePolarChartLayout } from '../context/chartLayoutContext';
 
 interface PieDef {
   /**
@@ -185,12 +188,13 @@ export type PieSectorDataItem = PiePresentationProps &
     cornerRadius: number | undefined;
   };
 
-export type PieSectorShapeProps = PieSectorDataItem & {
-  [DATA_ITEM_INDEX_ATTRIBUTE_NAME]: number;
-  [DATA_ITEM_GRAPHICAL_ITEM_ID_ATTRIBUTE_NAME]: GraphicalItemId;
-  isActive: boolean;
-  index: number;
-} & SVGProps<SVGPathElement>;
+export type PieSectorShapeProps = PieSectorDataItem &
+  ShapeAnimationProps & {
+    [DATA_ITEM_INDEX_ATTRIBUTE_NAME]: number;
+    [DATA_ITEM_GRAPHICAL_ITEM_ID_ATTRIBUTE_NAME]: GraphicalItemId;
+    isActive: boolean;
+    index: number;
+  } & SVGProps<SVGPathElement>;
 export type PieShape = ActiveShape<PieSectorShapeProps, SVGPathElement>;
 
 interface PieEvents {
@@ -265,6 +269,38 @@ interface PieProps<DataPointType = any, DataValueType = any>
    * @defaultValue ease
    */
   animationEasing?: EasingInput;
+  /**
+   * Custom animation function for interpolating data items.
+   * When provided, this replaces the default animation interpolation.
+   *
+   * @param prevItems The items from the previous animation frame, or null on first render
+   * @param nextItems The target items to animate towards
+   * @param animationElapsedTime A normalized time value (0 = start, 1 = end)
+   * @returns The interpolated items at time animationElapsedTime
+   *
+   * @since 3.9
+   * @see {@link https://recharts.github.io/en-US/guide/animations/ Animations guide}
+   */
+  animationInterpolateFn?: AnimationInterpolateFn<PieSectorDataItem, PolarLayout>;
+  /**
+   * Strategy for matching previous items to next items during animation.
+   * Determines how Recharts pairs old data points with new data points
+   * to create smooth transitions.
+   *
+   * - `matchAppend` (default): match sequentially by index and treat newly appended items as new
+   * - `matchByIndex`: match by array position with proportional stretching
+   * - `matchByDataKey('someKey')`: match by a data key from the payload
+   * - Custom function `(item, index) => key`: match by the returned key
+   *
+   * @defaultValue append
+   * @see matchByIndex
+   * @see matchByDataKey
+   * @see matchAppend
+   *
+   * @since 3.9
+   * @see {@link https://recharts.github.io/en-US/guide/animations/ Animations guide}
+   */
+  animationMatchBy?: AnimationMatchByProp<PieSectorDataItem>;
   className?: string;
   /**
    * Hides the whole graphical element when true.
@@ -354,6 +390,7 @@ interface PieProps<DataPointType = any, DataValueType = any>
   /**
    * The custom shape of a Pie Sector.
    * Can also be used to render active sector by checking isActive.
+   * During animations, the function shape also receives `animationElapsedTime`, `isAnimating`, and `isEntrance`.
    * If undefined, renders {@link Sector} shape.
    */
   shape?: PieShape;
@@ -392,7 +429,7 @@ function SetPiePayloadLegend(props: { children?: ReactNode; id: GraphicalItemId 
   return <SetPolarLegendPayload legendPayload={legendPayload} />;
 }
 
-type PieSectorsProps = {
+type PieSectorsProps = ShapeAnimationProps & {
   sectors: Readonly<PieSectorDataItem[]>;
   /**
    * @deprecated
@@ -649,7 +686,17 @@ function PieLabelList({
 }
 
 function PieSectors(props: PieSectorsProps) {
-  const { sectors, activeShape, inactiveShape: inactiveShapeProp, allOtherPieProps, shape, id } = props;
+  const {
+    sectors,
+    activeShape,
+    inactiveShape: inactiveShapeProp,
+    allOtherPieProps,
+    shape,
+    id,
+    animationElapsedTime,
+    isAnimating,
+    isEntrance,
+  } = props;
 
   const activeIndex = useAppSelector(selectActiveTooltipIndex);
   const activeDataKey = useAppSelector(selectActiveTooltipDataKey);
@@ -690,6 +737,9 @@ function PieSectors(props: PieSectorsProps) {
           tabIndex: -1,
           index: i,
           isActive,
+          animationElapsedTime,
+          isAnimating,
+          isEntrance,
           [DATA_ITEM_INDEX_ATTRIBUTE_NAME]: i,
           [DATA_ITEM_GRAPHICAL_ITEM_ID_ATTRIBUTE_NAME]: id,
         };
@@ -864,6 +914,43 @@ function PieLabelListProvider({
 
 type WithoutId<T> = Omit<T, 'id'>;
 
+const defaultPieAnimateItems: AnimationInterpolateFn<PieSectorDataItem, PolarLayout> = (
+  items,
+  animationElapsedTime,
+) => {
+  if (items == null) return [];
+  const stepData: PieSectorDataItem[] = [];
+  const firstNonRemoved = items.find(item => item.status !== 'removed');
+  let curAngle: number = firstNonRemoved ? firstNonRemoved.next.startAngle : 0;
+
+  items.forEach((item, index) => {
+    if (item.status === 'removed') return;
+    const paddingAngle = index > 0 ? get(item.next, 'paddingAngle', 0) : 0;
+
+    if (item.status === 'matched') {
+      const angle = interpolate(
+        item.prev.endAngle - item.prev.startAngle,
+        item.next.endAngle - item.next.startAngle,
+        animationElapsedTime,
+      );
+      const latest = { ...item.next, startAngle: curAngle + paddingAngle, endAngle: curAngle + angle + paddingAngle };
+      stepData.push(latest);
+      curAngle = latest.endAngle;
+    } else {
+      // added
+      const deltaAngle = interpolate(0, item.next.endAngle - item.next.startAngle, animationElapsedTime);
+      const latest = {
+        ...item.next,
+        startAngle: curAngle + paddingAngle,
+        endAngle: curAngle + deltaAngle + paddingAngle,
+      };
+      stepData.push(latest);
+      curAngle = latest.endAngle;
+    }
+  });
+  return stepData;
+};
+
 function SectorsWithAnimation({
   props,
   previousSectorsRef,
@@ -873,97 +960,50 @@ function SectorsWithAnimation({
   previousSectorsRef: MutableRefObject<ReadonlyArray<PieSectorDataItem> | null>;
   id: GraphicalItemId;
 }) {
-  const {
-    sectors,
-    isAnimationActive,
-    animationBegin,
-    animationDuration,
-    animationEasing,
-    activeShape,
-    inactiveShape,
-    onAnimationStart,
-    onAnimationEnd,
-  } = props;
-  const animationId = useAnimationId(props, 'recharts-pie-');
+  const { sectors, activeShape, inactiveShape, animationInterpolateFn } = props;
 
-  const prevSectors = previousSectorsRef.current;
+  const { isAnimating, handleAnimationStart, handleAnimationEnd } = useAnimationCallbacks(
+    props.onAnimationStart,
+    props.onAnimationEnd,
+  );
 
-  const [isAnimating, setIsAnimating] = useState(false);
+  const layout = usePolarChartLayout();
 
-  const handleAnimationEnd = useCallback(() => {
-    if (typeof onAnimationEnd === 'function') {
-      onAnimationEnd();
-    }
-    setIsAnimating(false);
-  }, [onAnimationEnd]);
+  if (layout == null) return null;
 
-  const handleAnimationStart = useCallback(() => {
-    if (typeof onAnimationStart === 'function') {
-      onAnimationStart();
-    }
-    setIsAnimating(true);
-  }, [onAnimationStart]);
   return (
     <PieLabelListProvider showLabels={!isAnimating} sectors={sectors}>
-      <JavascriptAnimate
-        animationId={animationId}
-        begin={animationBegin}
-        duration={animationDuration}
-        isActive={isAnimationActive}
-        easing={animationEasing}
+      <AnimatedItems
+        animationInput={props}
+        animationIdPrefix="recharts-pie-"
+        items={sectors}
+        previousItemsRef={previousSectorsRef}
+        isAnimationActive={props.isAnimationActive}
+        animationBegin={props.animationBegin}
+        animationDuration={props.animationDuration}
+        animationEasing={props.animationEasing}
         onAnimationStart={handleAnimationStart}
         onAnimationEnd={handleAnimationEnd}
-        key={animationId}
+        animationInterpolateFn={animationInterpolateFn}
+        animationMatchBy={props.animationMatchBy}
+        layout={layout}
       >
-        {(t: number) => {
-          const stepData: PieSectorDataItem[] = [];
-          const first: PieSectorDataItem | undefined = sectors && sectors[0];
-          let curAngle: number = first?.startAngle ?? 0;
-
-          sectors?.forEach((entry, index) => {
-            const prev = prevSectors && prevSectors[index];
-            const paddingAngle = index > 0 ? get(entry, 'paddingAngle', 0) : 0;
-
-            if (prev) {
-              const angle = interpolate(prev.endAngle - prev.startAngle, entry.endAngle - entry.startAngle, t);
-              const latest = {
-                ...entry,
-                startAngle: curAngle + paddingAngle,
-                endAngle: curAngle + angle + paddingAngle,
-              };
-
-              stepData.push(latest);
-              curAngle = latest.endAngle;
-            } else {
-              const { endAngle, startAngle } = entry;
-              const deltaAngle = interpolate(0, endAngle - startAngle, t);
-              const latest = {
-                ...entry,
-                startAngle: curAngle + paddingAngle,
-                endAngle: curAngle + deltaAngle + paddingAngle,
-              };
-
-              stepData.push(latest);
-              curAngle = latest.endAngle;
-            }
-          });
-
-          // eslint-disable-next-line no-param-reassign
-          previousSectorsRef.current = stepData;
-          return (
-            <Layer>
-              <PieSectors
-                sectors={stepData}
-                activeShape={activeShape}
-                inactiveShape={inactiveShape}
-                allOtherPieProps={props}
-                shape={props.shape}
-                id={id}
-              />
-            </Layer>
-          );
-        }}
-      </JavascriptAnimate>
+        {(stepData, animationElapsedTime, isEntrance) => (
+          <Layer>
+            <PieSectors
+              sectors={stepData}
+              activeShape={activeShape}
+              inactiveShape={inactiveShape}
+              allOtherPieProps={props}
+              shape={props.shape}
+              id={id}
+              animationElapsedTime={animationElapsedTime}
+              isAnimating={isAnimating || animationElapsedTime < 1}
+              isEntrance={isEntrance}
+            />
+          </Layer>
+        )}
+      </AnimatedItems>
       <PieLabelList showLabels={!isAnimating} sectors={sectors} props={props} />
       {props.children}
     </PieLabelListProvider>
@@ -974,6 +1014,8 @@ export const defaultPieProps = {
   animationBegin: 400,
   animationDuration: 1500,
   animationEasing: 'ease',
+  animationInterpolateFn: defaultPieAnimateItems,
+  animationMatchBy: matchAppend,
   cx: '50%',
   cy: '50%',
   dataKey: 'value',

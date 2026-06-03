@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { MutableRefObject, PureComponent, ReactElement, ReactNode, useCallback, useRef, useState } from 'react';
+import { MutableRefObject, PureComponent, ReactElement, ReactNode, useRef } from 'react';
 import { clsx } from 'clsx';
 
 import { Series } from 'victory-vendor/d3-shape';
@@ -39,8 +39,10 @@ import {
   LegendType,
   PolarViewBoxRequired,
   PresentationAttributesAdaptChildEvent,
+  ShapeAnimationProps,
   TickItem,
   TooltipType,
+  PolarLayout,
 } from '../util/types';
 import {
   TooltipTriggerInfo,
@@ -56,18 +58,19 @@ import { selectRadialBarLegendPayload, selectRadialBarSectors } from '../state/s
 import { useAppSelector } from '../state/hooks';
 import { selectActiveTooltipIndex } from '../state/selectors/tooltipSelectors';
 import { SetPolarLegendPayload } from '../state/SetLegendPayload';
-import { useAnimationId } from '../util/useAnimationId';
+import { AnimatedItems, AnimationInterpolateFn, useAnimationCallbacks } from '../animation/AnimatedItems';
+import { AnimationMatchByProp, matchAppend } from '../animation/matchBy';
 import { AxisId } from '../state/cartesianAxisSlice';
 import { RegisterGraphicalItemId } from '../context/RegisterGraphicalItemId';
 import { RadialBarSettings } from '../state/types/RadialBarSettings';
 import { SetPolarGraphicalItem } from '../state/SetGraphicalItem';
 import { svgPropertiesNoEvents, svgPropertiesNoEventsFromUnknown } from '../util/svgPropertiesNoEvents';
-import { JavascriptAnimate } from '../animation/JavascriptAnimate';
 import { RequiresDefaultProps, resolveDefaultProps } from '../util/resolveDefaultProps';
 import { WithIdRequired } from '../util/useUniqueId';
 import { ZIndexable, ZIndexLayer } from '../zIndex/ZIndexLayer';
 import { DefaultZIndexes } from '../zIndex/DefaultZIndexes';
 import { getZIndexFromUnknown } from '../zIndex/getZIndexFromUnknown';
+import { usePolarChartLayout } from '../context/chartLayoutContext';
 
 const STABLE_EMPTY_ARRAY: readonly RadialBarDataItem[] = [];
 
@@ -81,7 +84,7 @@ export type RadialBarDataItem = SectorProps &
 
 type RadialBarBackground = boolean | (ActiveShape<SectorProps> & ZIndexable);
 
-type RadialBarSectorsProps = {
+type RadialBarSectorsProps = ShapeAnimationProps & {
   sectors: ReadonlyArray<RadialBarDataItem>;
   allOtherRadialBarProps: InternalProps;
   showLabels: boolean;
@@ -122,7 +125,14 @@ function RadialBarLabelListProvider({
   );
 }
 
-function RadialBarSectors({ sectors, allOtherRadialBarProps, showLabels }: RadialBarSectorsProps) {
+function RadialBarSectors({
+  sectors,
+  allOtherRadialBarProps,
+  showLabels,
+  animationElapsedTime,
+  isAnimating,
+  isEntrance,
+}: RadialBarSectorsProps) {
   const { shape, activeShape, cornerRadius, id, ...others } = allOtherRadialBarProps;
   const baseProps = svgPropertiesNoEvents(others);
 
@@ -161,6 +171,9 @@ function RadialBarSectors({ sectors, allOtherRadialBarProps, showLabels }: Radia
           className: `recharts-radial-bar-sector ${entry.className}`,
           forceCornerRadius: others.forceCornerRadius,
           cornerIsExternal: others.cornerIsExternal,
+          animationElapsedTime,
+          isAnimating,
+          isEntrance,
           isActive,
           option: isActive && activeShape != null ? activeShape : shape,
           index: i,
@@ -190,6 +203,35 @@ function RadialBarSectors({ sectors, allOtherRadialBarProps, showLabels }: Radia
   );
 }
 
+const defaultRadialBarAnimateItems: AnimationInterpolateFn<RadialBarDataItem, PolarLayout> = (
+  items,
+  animationElapsedTime,
+) => {
+  if (items == null) return [];
+  if (animationElapsedTime === 1) {
+    return items.flatMap(item => (item.status === 'removed' ? [] : [item.next]));
+  }
+  return items.flatMap(item => {
+    if (item.status === 'removed') return [];
+    if (item.status === 'matched') {
+      return [
+        {
+          ...item.next,
+          startAngle: interpolate(item.prev.startAngle, item.next.startAngle, animationElapsedTime),
+          endAngle: interpolate(item.prev.endAngle, item.next.endAngle, animationElapsedTime),
+        },
+      ];
+    }
+    // added
+    return [
+      {
+        ...item.next,
+        endAngle: interpolate(item.next.startAngle, item.next.endAngle, animationElapsedTime),
+      },
+    ];
+  });
+};
+
 function SectorsWithAnimation({
   props,
   previousSectorsRef,
@@ -203,72 +245,46 @@ function SectorsWithAnimation({
     animationBegin,
     animationDuration,
     animationEasing,
-    onAnimationEnd,
     onAnimationStart,
+    onAnimationEnd,
   } = props;
-  const animationId = useAnimationId(props, 'recharts-radialbar-');
 
-  const prevData = previousSectorsRef.current;
+  const { isAnimating, handleAnimationStart, handleAnimationEnd } = useAnimationCallbacks(
+    onAnimationStart,
+    onAnimationEnd,
+  );
 
-  const [isAnimating, setIsAnimating] = useState(false);
+  const layout = usePolarChartLayout();
 
-  const handleAnimationEnd = useCallback(() => {
-    if (typeof onAnimationEnd === 'function') {
-      onAnimationEnd();
-    }
-    setIsAnimating(false);
-  }, [onAnimationEnd]);
+  if (layout == null) return null;
 
-  const handleAnimationStart = useCallback(() => {
-    if (typeof onAnimationStart === 'function') {
-      onAnimationStart();
-    }
-    setIsAnimating(true);
-  }, [onAnimationStart]);
   return (
-    <JavascriptAnimate
-      animationId={animationId}
-      begin={animationBegin}
-      duration={animationDuration}
-      isActive={isAnimationActive}
-      easing={animationEasing}
+    <AnimatedItems
+      animationInput={props}
+      animationIdPrefix="recharts-radialbar-"
+      items={sectors}
+      previousItemsRef={previousSectorsRef}
+      isAnimationActive={isAnimationActive}
+      animationBegin={animationBegin}
+      animationDuration={animationDuration}
+      animationEasing={animationEasing}
       onAnimationStart={handleAnimationStart}
       onAnimationEnd={handleAnimationEnd}
-      key={animationId}
+      animationInterpolateFn={props.animationInterpolateFn}
+      animationMatchBy={props.animationMatchBy}
+      layout={layout}
     >
-      {(t: number) => {
-        const stepData: ReadonlyArray<RadialBarDataItem> | undefined =
-          t === 1
-            ? sectors
-            : (sectors ?? STABLE_EMPTY_ARRAY).map((entry: RadialBarDataItem, index: number): RadialBarDataItem => {
-                const prev = prevData && prevData[index];
-
-                if (prev) {
-                  return {
-                    ...entry,
-                    startAngle: interpolate(prev.startAngle, entry.startAngle, t),
-                    endAngle: interpolate(prev.endAngle, entry.endAngle, t),
-                  };
-                }
-                const { endAngle, startAngle } = entry;
-
-                return { ...entry, endAngle: interpolate(startAngle, endAngle, t) };
-              });
-
-        if (t > 0) {
-          // eslint-disable-next-line no-param-reassign
-          previousSectorsRef.current = stepData ?? null;
-        }
-
-        return (
-          <RadialBarSectors
-            sectors={stepData ?? STABLE_EMPTY_ARRAY}
-            allOtherRadialBarProps={props}
-            showLabels={!isAnimating}
-          />
-        );
-      }}
-    </JavascriptAnimate>
+      {(stepData, animationElapsedTime, isEntrance) => (
+        <RadialBarSectors
+          sectors={stepData}
+          allOtherRadialBarProps={props}
+          showLabels={!isAnimating}
+          animationElapsedTime={animationElapsedTime}
+          isAnimating={isAnimating || animationElapsedTime < 1}
+          isEntrance={isEntrance}
+        />
+      )}
+    </AnimatedItems>
   );
 }
 
@@ -300,6 +316,35 @@ interface InternalRadialBarProps<DataPointType = any, DataValueType = any>
    * @defaultValue ease
    */
   animationEasing?: EasingInput;
+  /**
+   * Custom animation function for interpolating data items.
+   * When provided, this replaces the default animation interpolation.
+   *
+   * @param prevItems The items from the previous animation frame, or null on first render
+   * @param nextItems The target items to animate towards
+   * @param animationElapsedTime A normalized time value (0 = start, 1 = end)
+   * @returns The interpolated items at time animationElapsedTime
+   *
+   * @since 3.9
+   * @see {@link https://recharts.github.io/en-US/guide/animations/ Animations guide}
+   */
+  animationInterpolateFn?: AnimationInterpolateFn<RadialBarDataItem, PolarLayout>;
+  /**
+   * Strategy for matching previous items to next items during animation.
+   * Determines how Recharts pairs old data points with new data points
+   * to create smooth transitions.
+   *
+   * - `matchAppend` (default): match sequentially by index and treat newly appended items as new
+   * - `matchByIndex`: match by array position with proportional stretching
+   * - `matchByDataKey('someKey')`: match by a data key from the payload
+   * - Custom function `(item, index) => key`: match by the returned key
+   *
+   * @defaultValue append
+   * @see matchByIndex
+   * @see matchByDataKey
+   * @see matchAppend
+   */
+  animationMatchBy?: AnimationMatchByProp<RadialBarDataItem>;
   /**
    * Renders a background for each bar. Options:
    *  - `false`: no background;
@@ -410,6 +455,12 @@ interface InternalRadialBarProps<DataPointType = any, DataValueType = any>
    * @defaultValue 0
    */
   radiusAxisId?: AxisId;
+  /**
+   * If set a ReactElement, the shape of radial bar sectors can be customized.
+   * If set a function, the function will be called to render customized shape.
+   * During animations, the function shape also receives `animationElapsedTime`, `isAnimating`, and `isEntrance`.
+   * By default, renders a sector.
+   */
   shape?: ActiveShape<RadialBarSectorProps, SVGPathElement>;
   stackId?: string | number;
   tooltipType?: TooltipType;
@@ -586,6 +637,8 @@ export const defaultRadialBarProps = {
   animationBegin: 0,
   animationDuration: 1500,
   animationEasing: 'ease',
+  animationMatchBy: matchAppend,
+  animationInterpolateFn: defaultRadialBarAnimateItems,
   background: false,
   cornerIsExternal: false,
   cornerRadius: 0,

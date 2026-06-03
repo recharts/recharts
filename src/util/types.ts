@@ -1333,6 +1333,35 @@ export type DotType =
    */
   | ReactElement<SVGProps<SVGElement>>;
 
+/**
+ * Animation metadata forwarded to custom chart shapes.
+ *
+ * These props let a shape react to the current animation state without needing
+ * to know how its parent chart component computes the animated geometry.
+ */
+export interface ShapeAnimationProps {
+  /**
+   * Normalized animation progress time in the approximately `[0, 1]` range.
+   * 0 = start of animation
+   * 1 = end of animation
+   * Why approximately? This number already includes easing. The typical easing functions are in 0, 1
+   * but you may construct a custom Bézier curve that goes out of the range
+   * and so this number may too be out of the range.
+   */
+  animationElapsedTime?: number;
+  /**
+   * Whether the parent chart element is currently animating.
+   */
+  isAnimating?: boolean;
+  /**
+   * Whether the current animation pass is the initial entrance animation.
+   * Some Recharts components have different "first render" and "data update" animations
+   * and this is the property that tracks it. You may choose to override it and control
+   * which animation renders that way.
+   */
+  isEntrance?: boolean;
+}
+
 export type ActiveShape<PropsType = Record<string, unknown>, ElementType = SVGElement> =
   | ReactElement<Partial<PropsType> & SVGProps<ElementType>>
   | ((props: PropsType, index?: string | number) => ReactNode)
@@ -1592,6 +1621,11 @@ export interface CartesianChartProps<DataPointType = unknown>
    * item-level `Area.baseValue` takes precedence over the chart-level `baseValue`.
    *
    * Ignored for stacked areas and for ranged areas where `dataKey` already returns `[min, max]` tuples.
+   *
+   * Note that the baseValue does not interact with `animationInterpolateFn`;
+   * baseValue is always animated by linear interpolation.
+   * If you want a custom animation then have your `dataKey` return a tuple of two values instead of a single number
+   * which will also render a ranged Area, and that does work with your custom `animationInterpolateFn`.
    */
   baseValue?: BaseValue;
   compact?: boolean;

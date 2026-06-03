@@ -4,7 +4,7 @@ import { noop } from '../util/DataUtils';
 import { AnimationManager, ReactSmoothStyle } from './AnimationManager';
 import { resolveDefaultProps } from '../util/resolveDefaultProps';
 import { useAnimationManager } from './useAnimationManager';
-import { getTransitionVal } from './util';
+import { getTransitionVal, interpolateCSSValue } from './util';
 import { Global } from '../util/Global';
 import { usePrefersReducedMotion } from '../util/usePrefersReducedMotion';
 
@@ -63,6 +63,7 @@ export function CSSTransitionAnimate(outsideProps: CSSTransitionAnimateProps) {
     return from;
   });
   const initialized = useRef(false);
+  const stopJSAnimation = useRef<(() => void) | null>(null);
 
   const onAnimationStart = useCallback(() => {
     setStyle(from);
@@ -75,6 +76,38 @@ export function CSSTransitionAnimate(outsideProps: CSSTransitionAnimateProps) {
     }
 
     initialized.current = true;
+
+    if (animationManager.isManualControl) {
+      /*
+       * In manual control mode, CSS transitions can't be scrubbed to an arbitrary progress.
+       * Instead, we use JS interpolation driven by the manual timeout controller —
+       * the same pattern as JavascriptAnimate.
+       */
+      const tc = animationManager.getTimeoutController();
+      const onAnimationActive = () => {
+        let beginTime: number;
+        const timingUpdate = (now: number) => {
+          if (!beginTime) {
+            beginTime = now;
+          }
+          const animationElapsedTime = Math.min(1, Math.max(0, (now - beginTime) / duration));
+          setStyle(interpolateCSSValue(from, to, animationElapsedTime));
+          stopJSAnimation.current = tc.setTimeout(timingUpdate);
+        };
+        stopJSAnimation.current = tc.setTimeout(timingUpdate);
+      };
+
+      animationManager.start([onAnimationStart, begin, onAnimationActive, duration, onAnimationEnd]);
+
+      return () => {
+        animationManager.stop();
+        if (stopJSAnimation.current) {
+          stopJSAnimation.current();
+        }
+        onAnimationEnd();
+      };
+    }
+
     const unsubscribe = animationManager.subscribe(setStyle);
     animationManager.start([onAnimationStart, begin, to, duration, onAnimationEnd]);
 
@@ -88,11 +121,6 @@ export function CSSTransitionAnimate(outsideProps: CSSTransitionAnimateProps) {
   }, [isActive, canBegin, duration, easing, begin, onAnimationStart, onAnimationEnd, animationManager, to, from]);
 
   if (!isActive) {
-    /*
-     * With isActive=false, the component always renders with the final style, immediately,
-     * and ignores all other props.
-     * Also there is no transition applied.
-     */
     return children({
       [attributeName]: to,
     });
@@ -104,6 +132,12 @@ export function CSSTransitionAnimate(outsideProps: CSSTransitionAnimateProps) {
   }
 
   if (initialized.current) {
+    if (animationManager.isManualControl) {
+      // No CSS transition — the JS interpolation drives the value directly
+      return children({
+        [attributeName]: style,
+      });
+    }
     const transition = getTransitionVal([attributeName], duration, easing);
     return children({
       transition,

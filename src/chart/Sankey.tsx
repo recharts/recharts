@@ -37,7 +37,7 @@ import { initialEventSettingsState } from '../state/eventSettingsSlice';
 const interpolationGenerator = (a: number, b: number) => {
   const ka = +a;
   const kb = b - ka;
-  return (t: number) => ka + kb * t;
+  return (animationElapsedTime: number) => ka + kb * animationElapsedTime;
 };
 
 const centerY = (node: SankeyNode) => node.y + node.dy / 2;

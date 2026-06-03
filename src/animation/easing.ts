@@ -2,20 +2,20 @@ export const ACCURACY = 1e-4;
 
 const cubicBezierFactor = (c1: number, c2: number) => [0, 3 * c1, 3 * c2 - 6 * c1, 3 * c1 - 3 * c2 + 1];
 
-const evaluatePolynomial = (params: ReadonlyArray<number>, t: number) =>
-  params.map((param, i) => param * t ** i).reduce((pre, curr) => pre + curr);
+const evaluatePolynomial = (params: ReadonlyArray<number>, animationElapsedTime: number) =>
+  params.map((param, i) => param * animationElapsedTime ** i).reduce((pre, curr) => pre + curr);
 
-const cubicBezier = (c1: number, c2: number) => (t: number) => {
+const cubicBezier = (c1: number, c2: number) => (animationElapsedTime: number) => {
   const params = cubicBezierFactor(c1, c2);
 
-  return evaluatePolynomial(params, t);
+  return evaluatePolynomial(params, animationElapsedTime);
 };
 
-const derivativeCubicBezier = (c1: number, c2: number) => (t: number) => {
+const derivativeCubicBezier = (c1: number, c2: number) => (animationElapsedTime: number) => {
   const params = cubicBezierFactor(c1, c2);
   const newParams = [...params.map((param, i) => param * i).slice(1), 0];
 
-  return evaluatePolynomial(newParams, t);
+  return evaluatePolynomial(newParams, animationElapsedTime);
 };
 
 type CubicBezierTemplate = `cubic-bezier(${number},${number},${number},${number})`;
@@ -26,7 +26,7 @@ type BezierInput = [NamedBezier] | [number, number, number, number];
 
 export type BezierEasingFunction = {
   isStepper: false;
-  (t: number): number;
+  (animationElapsedTime: number): number;
 };
 
 const parseCubicBezier = (easing: string): [number, number, number, number] | null => {
@@ -88,15 +88,15 @@ const createBezierEasing = (x1: number, y1: number, x2: number, y2: number): Bez
     return value;
   };
 
-  const bezier = (_t: number) => {
-    const t = _t > 1 ? 1 : _t;
-    let x = t;
+  const bezier = (_animationElapsedTime: number) => {
+    const animationElapsedTime = _animationElapsedTime > 1 ? 1 : _animationElapsedTime;
+    let x = animationElapsedTime;
 
     for (let i = 0; i < 8; ++i) {
-      const evalT = curveX(x) - t;
+      const evalT = curveX(x) - animationElapsedTime;
       const derVal = derCurveX(x);
 
-      if (Math.abs(evalT - t) < ACCURACY || derVal < ACCURACY) {
+      if (Math.abs(evalT - animationElapsedTime) < ACCURACY || derVal < ACCURACY) {
         return curveY(x);
       }
 

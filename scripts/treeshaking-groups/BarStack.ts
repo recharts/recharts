@@ -13,6 +13,8 @@ export const expectedInBundle = [
   'Label',
   'LabelList',
   'Layer',
+  'matchAppend',
+  'matchByIndex',
   'Rectangle',
   'Text',
   'usePlotArea',

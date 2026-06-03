@@ -1,16 +1,17 @@
 import * as React from 'react';
-import { ActiveShape, SymbolType } from './types';
+import { ActiveShape, ShapeAnimationProps, SymbolType } from './types';
 import { ScatterPointItem } from '../cartesian/Scatter';
 import { InnerSymbolsProp, Symbols } from '../shape/Symbols';
 import { Shape } from './ActiveShapeUtils';
 import { DATA_ITEM_GRAPHICAL_ITEM_ID_ATTRIBUTE_NAME } from './Constants';
 import { GraphicalItemId } from '../state/graphicalItemsSlice';
 
-export type ScatterShapeProps = ScatterPointItem & {
-  isActive: boolean;
-  index: number;
-  [DATA_ITEM_GRAPHICAL_ITEM_ID_ATTRIBUTE_NAME]: GraphicalItemId;
-};
+export type ScatterShapeProps = ScatterPointItem &
+  ShapeAnimationProps & {
+    isActive: boolean;
+    index: number;
+    [DATA_ITEM_GRAPHICAL_ITEM_ID_ATTRIBUTE_NAME]: GraphicalItemId;
+  };
 
 type ScatterSymbolShapeProps = ScatterShapeProps & InnerSymbolsProp;
 
