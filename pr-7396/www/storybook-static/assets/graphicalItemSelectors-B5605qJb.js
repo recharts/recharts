@@ -1,0 +1,1 @@
+import{j as e}from"./RechartsWrapper-Bz5AtJCZ.js";function I(a,s){var i;return((i=a.graphicalItems.cartesianItems.find(t=>t.id===s))==null?void 0:i.xAxisId)??e}function d(a,s){var i;return((i=a.graphicalItems.cartesianItems.find(t=>t.id===s))==null?void 0:i.yAxisId)??e}export{d as a,I as s};
