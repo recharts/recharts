@@ -433,6 +433,21 @@ describe('Line animation', () => {
         // After the animation is completed, stroke-dasharray is the user-provided value.
         expect(line).toHaveAttribute('stroke-dasharray', '7 3');
       });
+
+      it('should preserve single-value dash gaps during animation', async () => {
+        const renderSingleDash = createSelectorTestCase(({ children }) => (
+          <LineChart data={PageData} width={100} height={100}>
+            <Line dataKey="uv" animationEasing="linear" strokeDasharray="5" />
+            {children}
+          </LineChart>
+        ));
+        const { container, animationManager } = renderSingleDash();
+
+        await animationManager.setAnimationProgress(0.1);
+
+        const line = getLine(container);
+        expect(line).toHaveAttribute('stroke-dasharray', '5px, 5px, 0px, 100px');
+      });
     });
   });
 
