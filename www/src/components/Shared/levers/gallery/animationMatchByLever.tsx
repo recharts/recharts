@@ -1,17 +1,29 @@
-import { matchAppend, matchByIndex } from 'recharts';
-import { Lever } from '../Levers.tsx';
+import type { Lever, SelectOption } from '../Levers.tsx';
+import { createSelectLever } from '../Levers.tsx';
 
-export const animationMatchByLever: Lever = {
-  name: 'animationMatchBy',
-  Component: ({ state, handleChange, htmlId }) => (
-    <select
-      id={htmlId}
-      value={state.animationMatchBy}
-      // @ts-expect-error - We know that the value will be one of the options, but TypeScript can't infer that from the event target.
-      onChange={e => handleChange({ animationMatchBy: e.target.value })}
-    >
-      <option value={matchByIndex}>matchByIndex</option>
-      <option value={matchAppend}>matchAppend</option>
-    </select>
-  ),
+export type AnimationMatchByValue = 'index' | 'append' | 'dataKey';
+
+type WithAnimationMatchBy = {
+  animationMatchBy: AnimationMatchByValue;
 };
+
+const defaultOptions: ReadonlyArray<SelectOption<AnimationMatchByValue>> = [
+  { value: 'index', label: 'matchByIndex' },
+  { value: 'append', label: 'matchAppend' },
+];
+
+export function animationMatchByLever<TState extends WithAnimationMatchBy>({
+  label = 'animationMatchBy',
+  options = defaultOptions,
+}: {
+  label?: string;
+  options?: ReadonlyArray<SelectOption<AnimationMatchByValue>>;
+} = {}): Lever<TState> {
+  return createSelectLever({
+    key: 'animationMatchBy',
+    label,
+    options,
+    getValue: state => state.animationMatchBy,
+    onChange: (animationMatchBy, state) => ({ ...state, animationMatchBy }),
+  });
+}

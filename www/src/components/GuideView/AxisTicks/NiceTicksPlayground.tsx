@@ -1,6 +1,7 @@
-import React from 'react';
 import { CartesianGrid, Line, LineChart, Tooltip, XAxis, YAxis, NiceTicksAlgorithm } from 'recharts';
 import { RechartsDevtools } from '@recharts/devtools';
+import type { Lever } from '../../Shared/levers/Levers.tsx';
+import { createRangeLever, createSelectLever } from '../../Shared/levers/Levers.tsx';
 
 const data = [
   { x: 0, y: 12 },
@@ -16,22 +17,43 @@ export type AxisTicksControlsType = {
   scale: 'linear' | 'symlog';
 };
 
-const defaultState: AxisTicksControlsType = {
+export const axisTicksDefaultState: AxisTicksControlsType = {
   niceTicks: 'auto',
   tickCount: 5,
   scale: 'linear',
 };
 
 const niceTicksOptions: ReadonlyArray<NiceTicksAlgorithm> = ['none', 'auto', 'adaptive', 'snap125'];
+const scaleOptions = ['linear', 'symlog'] as const;
 
-function isNiceTicks(value: string): value is NiceTicksAlgorithm {
-  return value === 'none' || value === 'auto' || value === 'adaptive' || value === 'snap125';
-}
+export const axisTicksLevers = [
+  createSelectLever<AxisTicksControlsType, NiceTicksAlgorithm>({
+    key: 'niceTicks',
+    label: 'niceTicks',
+    options: niceTicksOptions.map(option => ({ value: option, label: option })),
+    getValue: state => state.niceTicks,
+    onChange: (niceTicks, state) => ({ ...state, niceTicks }),
+  }),
+  createSelectLever<AxisTicksControlsType, (typeof scaleOptions)[number]>({
+    key: 'scale',
+    label: 'scale',
+    options: scaleOptions.map(option => ({ value: option, label: option })),
+    getValue: state => state.scale,
+    onChange: (scale, state) => ({ ...state, scale }),
+  }),
+  createRangeLever<AxisTicksControlsType>({
+    key: 'tickCount',
+    label: 'tickCount',
+    min: 2,
+    max: 12,
+    step: 1,
+    getValue: state => state.tickCount,
+    onChange: (tickCount, state) => ({ ...state, tickCount }),
+  }),
+] satisfies ReadonlyArray<Lever<AxisTicksControlsType>>;
 
 export default function AxisTicksPlayground(props: Partial<AxisTicksControlsType>) {
-  const niceTicks = props.niceTicks ?? defaultState.niceTicks;
-  const tickCount = props.tickCount ?? defaultState.tickCount;
-  const scale = props.scale ?? defaultState.scale;
+  const { niceTicks, tickCount, scale } = { ...axisTicksDefaultState, ...props };
 
   return (
     <LineChart style={{ width: '100%', aspectRatio: 1.618, maxWidth: 700 }} responsive data={data}>
@@ -43,91 +65,4 @@ export default function AxisTicksPlayground(props: Partial<AxisTicksControlsType
       <RechartsDevtools />
     </LineChart>
   );
-}
-
-export function AxisTicksControls({
-  onChange,
-  sessionStoreValues,
-}: {
-  onChange: (values: AxisTicksControlsType) => void;
-  sessionStoreValues: AxisTicksControlsType | null;
-}) {
-  const [state, setState] = React.useState<AxisTicksControlsType>(sessionStoreValues ?? defaultState);
-
-  const updateState = (nextValues: Partial<AxisTicksControlsType>) => {
-    const nextState = { ...state, ...nextValues };
-    setState(nextState);
-    onChange(nextState);
-  };
-
-  React.useEffect(() => {
-    onChange(state);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
-
-  /* eslint-disable jsx-a11y/control-has-associated-label */
-  return (
-    <form>
-      <table>
-        <tbody>
-          <tr>
-            <td>
-              <label htmlFor="axis-ticks-algorithm">niceTicks</label>
-            </td>
-            <td style={{ padding: '0 1ex' }}>
-              <select
-                id="axis-ticks-algorithm"
-                value={state.niceTicks}
-                onChange={event => {
-                  const { value } = event.target;
-                  if (isNiceTicks(value)) {
-                    updateState({ niceTicks: value });
-                  }
-                }}
-              >
-                {niceTicksOptions.map(option => (
-                  <option key={option} value={option}>
-                    {option}
-                  </option>
-                ))}
-              </select>
-            </td>
-          </tr>
-          <tr>
-            <td>
-              <label htmlFor="axis-ticks-scale">scale</label>
-            </td>
-            <td style={{ padding: '0 1ex' }}>
-              <select
-                id="axis-ticks-scale"
-                value={state.scale}
-                onChange={event => updateState({ scale: event.target.value as AxisTicksControlsType['scale'] })}
-              >
-                <option value="linear">linear</option>
-                <option value="symlog">symlog</option>
-              </select>
-            </td>
-          </tr>
-          <tr>
-            <td>
-              <label htmlFor="axis-ticks-count">tickCount</label>
-            </td>
-            <td style={{ padding: '0 1ex' }}>
-              <input
-                id="axis-ticks-count"
-                type="range"
-                min="2"
-                max="12"
-                step="1"
-                value={state.tickCount}
-                onChange={event => updateState({ tickCount: Number(event.target.value) })}
-              />
-            </td>
-            <td>{state.tickCount}</td>
-          </tr>
-        </tbody>
-      </table>
-    </form>
-  );
-  /* eslint-enable jsx-a11y/control-has-associated-label */
 }

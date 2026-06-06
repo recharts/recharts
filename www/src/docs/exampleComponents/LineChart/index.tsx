@@ -36,10 +36,16 @@ import CompareTwoLines from './CompareTwoLines.tsx';
 import CompareTwoLinesSource from './CompareTwoLines.tsx?raw';
 import DynamicZIndexLineChart from './DynamicZIndexLineChart.tsx';
 import DynamicZIndexLineChartSource from './DynamicZIndexLineChart.tsx?raw';
-import LineChartCustomShapeExample, { LineChartCustomShapeControls } from './LineChartCustomShapeExample';
+import LineChartCustomShapeExample, {
+  lineChartCustomShapeDefaultState,
+  lineChartCustomShapeLevers,
+} from './LineChartCustomShapeExample';
 import LineChartCustomShapeExampleSource from './LineChartCustomShapeExample/index.tsx?raw';
 import { LinkToApi } from '../../../components/Shared/LinkToApi.tsx';
-import AnimatedTimeSeriesExample, { AnimatedTimeSeriesExampleControls } from './AnimatedTimeSeriesExample.tsx';
+import AnimatedTimeSeriesExample, {
+  animatedTimeSeriesDefaultState,
+  animatedTimeSeriesLevers,
+} from './AnimatedTimeSeriesExample.tsx';
 import AnimatedTimeSeriesExampleSource from './AnimatedTimeSeriesExample.tsx?raw';
 
 export const lineChartExamples = {
@@ -101,7 +107,8 @@ export const lineChartExamples = {
   LineChartCustomShapeExample: {
     Component: LineChartCustomShapeExample,
     sourceCode: LineChartCustomShapeExampleSource,
-    Controls: LineChartCustomShapeControls,
+    defaultControlsState: lineChartCustomShapeDefaultState,
+    levers: lineChartCustomShapeLevers,
     name: 'Line that animates opacity',
     defaultTool: 'controls',
     description: (
@@ -151,13 +158,15 @@ export const lineChartExamples = {
   AnimatedTimeSeriesExample: {
     Component: AnimatedTimeSeriesExample,
     sourceCode: AnimatedTimeSeriesExampleSource,
-    Controls: AnimatedTimeSeriesExampleControls,
+    defaultControlsState: animatedTimeSeriesDefaultState,
+    levers: animatedTimeSeriesLevers,
     name: 'Animated Time Series',
     defaultTool: 'controls',
     description: (
       <p>
         This example shows the use of <code>animationMatchBy</code> prop to customize Line animation. Read more in{' '}
-        <Link to="/guide/animations/">Animations guide</Link>.
+        <Link to="/guide/animations/">Animations guide</Link>. Start streaming to move the window forward and compare
+        the matching strategies.
       </p>
     ),
   },

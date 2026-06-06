@@ -1,5 +1,5 @@
 import { CodeEditorWithPreview } from '../../CodeEditorWithPreview';
-import CustomBandScaleExample, { BarAlignControls } from './CustomBandScaleExample';
+import CustomBandScaleExample, { barAlignDefaultState, barAlignLevers } from './CustomBandScaleExample';
 import customBandScaleExampleSource from './CustomBandScaleExample?raw';
 import { TargetBlankLink } from '../../Shared/TargetBlankLink';
 
@@ -42,7 +42,8 @@ export function BarAlign() {
       <CodeEditorWithPreview
         Component={CustomBandScaleExample}
         sourceCode={customBandScaleExampleSource}
-        Controls={BarAlignControls}
+        defaultControlsState={barAlignDefaultState}
+        levers={barAlignLevers}
         stackBlitzTitle="Bar Chart with custom scale"
         defaultTool="controls"
       />

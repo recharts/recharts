@@ -1,19 +1,32 @@
-import { Lever } from '../Levers.tsx';
+import { ReactNode } from 'react';
+import type { Lever } from '../Levers.tsx';
+import { createRangeLever } from '../Levers.tsx';
 
-export const animationDurationLever: Lever = {
-  name: 'animationDuration',
-  Component: ({ state, handleChange, htmlId }) => (
-    <>
-      <input
-        id={htmlId}
-        type="range"
-        min="100"
-        max="3000"
-        step="100"
-        value={state.animationDuration}
-        onChange={e => handleChange({ animationDuration: parseInt(e.target.value, 10) })}
-      />
-      {state.animationDuration}
-    </>
-  ),
+type WithAnimationDuration = {
+  animationDuration: number;
 };
+
+export function animationDurationLever<TState extends WithAnimationDuration>({
+  label = 'animationDuration',
+  min = 100,
+  max = 3000,
+  step = 100,
+  formatValue = value => value,
+}: {
+  label?: string;
+  min?: number;
+  max?: number;
+  step?: number;
+  formatValue?: (value: number, state: TState) => ReactNode;
+} = {}): Lever<TState> {
+  return createRangeLever({
+    key: 'animationDuration',
+    label,
+    min,
+    max,
+    step,
+    getValue: state => state.animationDuration,
+    onChange: (animationDuration, state) => ({ ...state, animationDuration }),
+    formatValue,
+  });
+}

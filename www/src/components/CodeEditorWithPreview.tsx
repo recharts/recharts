@@ -4,6 +4,8 @@ import * as D3ShapeScope from 'd3-shape';
 import * as RechartsDevtoolsScope from '@recharts/devtools';
 import { RechartsDevtoolsContext, useSessionStorageState } from '@recharts/devtools';
 import { LuPencil, LuPlay, LuShare2 } from 'react-icons/lu';
+import type { Lever } from './Shared/levers/Levers.tsx';
+import { Levers } from './Shared/levers/Levers.tsx';
 import { StackBlitzLink } from './Shared/StackBlitzLink';
 import { sendEvent } from './analytics';
 import { ToolFrame, ToolType, ToolItem } from './Playground/ToolFrame';
@@ -20,10 +22,8 @@ type CodeEditorWithPreviewProps<ControlsType> = {
    * The component to render by default (before any edits).
    */
   Component: ComponentType<ControlsType>;
-  /**
-   * This component renders knobs, controls, and various other activities that change the chart
-   */
-  Controls?: ComponentType<{ onChange: (values: ControlsType) => void }>;
+  defaultControlsState?: ControlsType;
+  levers?: ReadonlyArray<Lever<ControlsType>>;
   /**
    * The source code of the component.
    */
@@ -79,7 +79,8 @@ const PreviewResult = React.memo(({ Component, isEditMode, codeToRun, Runner, co
  */
 export function CodeEditorWithPreview<T>({
   Component,
-  Controls,
+  defaultControlsState,
+  levers,
   sourceCode,
   stackBlitzTitle,
   analyticsLabel,
@@ -191,13 +192,18 @@ export function CodeEditorWithPreview<T>({
     },
   ];
 
-  if (Controls) {
+  if (defaultControlsState != null && levers != null) {
     actualTools.push({
       name: 'controls',
       label: 'Controls',
       component: (
         <div style={{ padding: '10px', height: '100%', overflow: 'auto' }}>
-          <Controls onChange={setControlsState} />
+          <Levers
+            defaultState={defaultControlsState}
+            levers={levers}
+            onChange={setControlsState}
+            state={controlsState}
+          />
         </div>
       ),
     });
@@ -210,7 +216,7 @@ export function CodeEditorWithPreview<T>({
         isEditMode={isEditMode}
         codeToRun={codeToRun}
         Runner={Runner}
-        componentProps={controlsState}
+        componentProps={controlsState ?? defaultControlsState}
       />
 
       <ToolFrame activeTool={activeTool} onToolChange={setActiveTool} tools={actualTools} />

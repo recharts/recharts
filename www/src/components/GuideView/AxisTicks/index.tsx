@@ -1,7 +1,7 @@
 import { CodeEditorWithPreview } from '../../CodeEditorWithPreview';
-import AxisTicksPlayground, { AxisTicksControls } from './NiceTicksPlayground';
+import AxisTicksPlayground, { axisTicksDefaultState, axisTicksLevers } from './NiceTicksPlayground';
 import axisTicksPlaygroundSource from './NiceTicksPlayground?raw';
-import CustomAxisTicks, { CustomAxisTicksControls } from './CustomAxisTicks.tsx';
+import CustomAxisTicks, { customAxisTicksDefaultState, customAxisTicksLevers } from './CustomAxisTicks.tsx';
 import customAxisTicksSource from './CustomAxisTicks.tsx?raw';
 
 export function AxisTicks() {
@@ -43,7 +43,8 @@ export function AxisTicks() {
       <CodeEditorWithPreview
         Component={AxisTicksPlayground}
         sourceCode={axisTicksPlaygroundSource}
-        Controls={AxisTicksControls}
+        defaultControlsState={axisTicksDefaultState}
+        levers={axisTicksLevers}
         stackBlitzTitle="Recharts niceTicks Playground"
         defaultTool="controls"
       />
@@ -55,7 +56,8 @@ export function AxisTicks() {
         Component={CustomAxisTicks}
         sourceCode={customAxisTicksSource}
         stackBlitzTitle="Custom Axis Ticks Example"
-        Controls={CustomAxisTicksControls}
+        defaultControlsState={customAxisTicksDefaultState}
+        levers={customAxisTicksLevers}
         defaultTool="source"
       />
     </article>

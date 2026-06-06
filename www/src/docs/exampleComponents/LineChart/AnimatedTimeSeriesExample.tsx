@@ -1,7 +1,9 @@
-import { useState, useCallback, useId, useEffect, useRef } from 'react';
 import { Line, LineChart, CartesianGrid, XAxis, YAxis, Tooltip, matchByDataKey, matchByIndex } from 'recharts';
 import type { AnimationMatchBy } from 'recharts';
 import { generateMockData } from '@recharts/devtools';
+import type { Lever } from '../../../components/Shared/levers/Levers.tsx';
+import { animationMatchByLever } from '../../../components/Shared/levers/gallery/animationMatchByLever.tsx';
+import { streamWindowLever } from '../../../components/Shared/levers/gallery/streamWindowLever.tsx';
 
 const WINDOW = 6;
 const DATA_LENGTH = 30;
@@ -18,21 +20,35 @@ function getCircularWindowData(windowStart: number) {
   return Array.from({ length: WINDOW }, (_, index) => allData[(normalizedWindowStart + index) % DATA_LENGTH]!);
 }
 
-type MatchStrategy = 'index' | 'dataKey';
-
 type ControlsType = {
-  matchStrategy: MatchStrategy;
+  animationMatchBy: 'index' | 'dataKey';
   windowStart: number;
 };
 
-export default function AnimatedTimeSeriesExample(props: Partial<ControlsType>) {
-  const matchStrategy = props.matchStrategy ?? 'index';
-  const windowStart = normalizeWindowStart(props.windowStart ?? 0);
+export const animatedTimeSeriesDefaultState: ControlsType = {
+  animationMatchBy: 'dataKey',
+  windowStart: 0,
+};
 
-  const data = getCircularWindowData(windowStart);
+export const animatedTimeSeriesLevers = [
+  animationMatchByLever<ControlsType>({
+    options: [
+      { value: 'index', label: 'matchByIndex (default)' },
+      { value: 'dataKey', label: "matchByDataKey('time')" },
+    ],
+  }),
+  streamWindowLever<ControlsType>({
+    wrapAt: DATA_LENGTH,
+  }),
+] satisfies ReadonlyArray<Lever<ControlsType>>;
+
+export default function AnimatedTimeSeriesExample(props: Partial<ControlsType>) {
+  const { animationMatchBy, windowStart } = { ...animatedTimeSeriesDefaultState, ...props };
+
+  const data = getCircularWindowData(normalizeWindowStart(windowStart));
 
   const matchProp: typeof matchByIndex | AnimationMatchBy<{ payload?: unknown }> =
-    matchStrategy === 'dataKey' ? matchByDataKey('label') : matchByIndex;
+    animationMatchBy === 'dataKey' ? matchByDataKey('label') : matchByIndex;
 
   return (
     <LineChart
@@ -47,83 +63,5 @@ export default function AnimatedTimeSeriesExample(props: Partial<ControlsType>) 
       <Tooltip />
       <Line dataKey="y" stroke="#8884d8" strokeWidth={2} animationDuration={600} animationMatchBy={matchProp} />
     </LineChart>
-  );
-}
-
-export function AnimatedTimeSeriesExampleControls({ onChange }: { onChange: (values: ControlsType) => void }) {
-  const [state, setState] = useState<ControlsType>({
-    matchStrategy: 'dataKey',
-    windowStart: 0,
-  });
-
-  const [isStreaming, setIsStreaming] = useState(false);
-
-  const onChangeRef = useRef(onChange);
-  onChangeRef.current = onChange;
-
-  const handleChange = useCallback((next: Partial<ControlsType>) => {
-    setState(prev => {
-      const newState = { ...prev, ...next };
-      onChangeRef.current(newState);
-      return newState;
-    });
-  }, []);
-
-  useEffect(() => {
-    onChangeRef.current(state);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
-
-  useEffect(() => {
-    if (!isStreaming) {
-      return undefined;
-    }
-
-    const interval = setInterval(() => {
-      setState(prev => {
-        const next = { ...prev, windowStart: (prev.windowStart + 1) % DATA_LENGTH };
-        onChangeRef.current(next);
-        return next;
-      });
-    }, 800);
-
-    return () => clearInterval(interval);
-  }, [isStreaming]);
-
-  const matchStrategyId = useId();
-  const streamingToggleId = useId();
-
-  return (
-    <form>
-      <table>
-        <tbody>
-          <tr>
-            <td>
-              <label htmlFor={matchStrategyId}>animationMatchBy</label>
-            </td>
-            <td style={{ padding: '0 1ex' }}>
-              <select
-                id={matchStrategyId}
-                value={state.matchStrategy}
-                onChange={e => handleChange({ matchStrategy: e.target.value as MatchStrategy })}
-              >
-                <option value="index">matchByIndex (default)</option>
-                <option value="dataKey">matchByDataKey(&apos;time&apos;)</option>
-              </select>
-            </td>
-          </tr>
-          <tr>
-            <td>
-              <button id={streamingToggleId} type="button" onClick={() => setIsStreaming(s => !s)}>
-                {isStreaming ? 'Stop streaming' : 'Start streaming'}
-              </button>
-            </td>
-          </tr>
-        </tbody>
-      </table>
-      <p style={{ fontSize: '0.85em', opacity: 0.8, marginTop: '0.5em' }}>
-        Start streaming to move the window forward and observe how the two matching strategies differ.
-      </p>
-    </form>
   );
 }

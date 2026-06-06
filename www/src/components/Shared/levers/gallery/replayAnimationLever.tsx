@@ -1,10 +1,22 @@
-import { Lever } from '../Levers.tsx';
+import { ReactNode } from 'react';
+import type { Lever } from '../Levers.tsx';
+import { createActionLever } from '../Levers.tsx';
 
-export const replayAnimationLever: Lever = {
-  name: 'replayAnimation',
-  Component: ({ state, handleChange, htmlId }) => (
-    <button id={htmlId} type="button" onClick={() => handleChange({ replayKey: (state.replayKey ?? 0) + 1 })}>
-      ▶ Replay animation
-    </button>
-  ),
+type WithReplayKey = {
+  replayKey: number;
 };
+
+export function replayAnimationLever<TState extends WithReplayKey>({
+  label = 'replayAnimation',
+  buttonLabel = '▶ Replay animation',
+}: {
+  label?: string;
+  buttonLabel?: ReactNode | ((state: TState) => ReactNode);
+} = {}): Lever<TState> {
+  return createActionLever({
+    key: 'replayAnimation',
+    label,
+    buttonLabel,
+    onClick: state => ({ ...state, replayKey: state.replayKey + 1 }),
+  });
+}

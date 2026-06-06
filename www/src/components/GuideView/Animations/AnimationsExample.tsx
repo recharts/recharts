@@ -1,11 +1,11 @@
 import { Bar, BarChart, CartesianGrid, Tooltip, XAxis, YAxis } from 'recharts';
 import { RechartsDevtools } from '@recharts/devtools';
-import { LeverChangeHandler, Levers, LeverState } from '../../Shared/levers/Levers.tsx';
+import type { Lever } from '../../Shared/levers/Levers.tsx';
 import { animationBeginLever } from '../../Shared/levers/gallery/animationBeginLever.tsx';
-import { replayAnimationLever } from '../../Shared/levers/gallery/replayAnimationLever.tsx';
-import { isAnimationActiveLever } from '../../Shared/levers/gallery/isAnimationActiveLever.tsx';
 import { animationDurationLever } from '../../Shared/levers/gallery/animationDurationLever.tsx';
-import { animationEasingLever } from '../../Shared/levers/gallery/animationEasingLever.tsx';
+import { animationEasingLever, AnimationEasingValue } from '../../Shared/levers/gallery/animationEasingLever.tsx';
+import { isAnimationActiveLever } from '../../Shared/levers/gallery/isAnimationActiveLever.tsx';
+import { replayAnimationLever } from '../../Shared/levers/gallery/replayAnimationLever.tsx';
 
 const data = [
   { month: 'Jan', revenue: 4200 },
@@ -18,12 +18,35 @@ const data = [
   { month: 'Aug', revenue: 8600 },
 ];
 
-export default function AnimationsExample(props: Partial<LeverState>) {
-  const isAnimationActive = props.isAnimationActive ?? 'auto';
-  const animationBegin = props.animationBegin ?? 0;
-  const animationDuration = props.animationDuration ?? 400;
-  const animationEasing = props.animationEasing ?? 'ease';
-  const replayKey = props.replayKey ?? 0;
+type AnimationsControlsState = {
+  isAnimationActive: boolean | 'auto';
+  animationBegin: number;
+  animationDuration: number;
+  animationEasing: AnimationEasingValue;
+  replayKey: number;
+};
+
+export const animationsDefaultState: AnimationsControlsState = {
+  isAnimationActive: 'auto',
+  animationBegin: 0,
+  animationDuration: 400,
+  animationEasing: 'ease',
+  replayKey: 0,
+};
+
+export const animationsLevers = [
+  replayAnimationLever<AnimationsControlsState>(),
+  isAnimationActiveLever<AnimationsControlsState>(),
+  animationBeginLever<AnimationsControlsState>(),
+  animationDurationLever<AnimationsControlsState>(),
+  animationEasingLever<AnimationsControlsState>(),
+] satisfies ReadonlyArray<Lever<AnimationsControlsState>>;
+
+export default function AnimationsExample(props: Partial<AnimationsControlsState>) {
+  const { isAnimationActive, animationBegin, animationDuration, animationEasing, replayKey } = {
+    ...animationsDefaultState,
+    ...props,
+  };
 
   return (
     <BarChart
@@ -47,29 +70,5 @@ export default function AnimationsExample(props: Partial<LeverState>) {
       />
       <RechartsDevtools />
     </BarChart>
-  );
-}
-
-const defaultState: LeverState = {
-  isAnimationActive: 'auto',
-  animationBegin: 0,
-  animationDuration: 400,
-  animationEasing: 'ease',
-  replayKey: 0,
-};
-
-export function AnimationsControls({ onChange }: { onChange: LeverChangeHandler }) {
-  return (
-    <Levers
-      defaultState={defaultState}
-      onChange={onChange}
-      levers={[
-        replayAnimationLever,
-        isAnimationActiveLever,
-        animationBeginLever,
-        animationDurationLever,
-        animationEasingLever,
-      ]}
-    />
   );
 }

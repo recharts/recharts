@@ -1,4 +1,3 @@
-import { useCallback, useEffect, useId, useState } from 'react';
 import {
   AnimationInterpolateFn,
   Area,
@@ -15,8 +14,12 @@ import {
   AreaRevealShapeProps,
 } from 'recharts';
 import { RechartsDevtools } from '@recharts/devtools';
+import type { Lever } from '../../../../components/Shared/levers/Levers.tsx';
+import { createCheckboxLever } from '../../../../components/Shared/levers/Levers.tsx';
+import { animationDurationLever } from '../../../../components/Shared/levers/gallery/animationDurationLever.tsx';
+import { replayAnimationLever } from '../../../../components/Shared/levers/gallery/replayAnimationLever.tsx';
+import { swapDataSetLever } from '../../../../components/Shared/levers/gallery/swapDataLever.tsx';
 
-// #region Sample data
 const dataA = [
   { name: 'Page A', uv: 4000, pv: 2400, amt: 2400 },
   { name: 'Page B', uv: 3000, pv: 1398, amt: 2210 },
@@ -36,22 +39,21 @@ const dataB = [
   { name: 'Page F', uv: 2900, pv: 2700, amt: 2400 },
   { name: 'Page G', uv: 4100, pv: 3900, amt: 2200 },
 ];
-// #endregion
 
 type ControlsType = {
   animationDuration: number;
-  renderKey: number;
+  replayKey: number;
   useCustomInterpolation: boolean;
   useCustomShape: boolean;
-  useDataA: boolean;
+  dataSet: 'a' | 'b';
 };
 
-const initialState: ControlsType = {
+export const areaChartCustomAnimationDefaultState: ControlsType = {
   animationDuration: 900,
-  renderKey: 0,
+  replayKey: 0,
   useCustomInterpolation: true,
   useCustomShape: true,
-  useDataA: true,
+  dataSet: 'a',
 };
 
 /**
@@ -74,14 +76,7 @@ const useAnimateFromBottom = (): AnimationInterpolateFn<AreaPointItem, Cartesian
   };
 };
 
-/**
- * Custom shape that wraps AreaRevealShape but can also be used
- * to demonstrate that custom shapes skip the built-in clipPath animation.
- * By using AreaRevealShape here, we get the same default animation,
- * but we could also customize it.
- */
 function GrowFromBottomShape(props: AreaRevealShapeProps) {
-  // Skip the clip-path reveal — we're using animationInterpolateFn for the entrance instead
   return <AreaRevealShape {...props} isEntrance={false} />;
 }
 
@@ -105,9 +100,36 @@ function MyAnimatedArea({
   );
 }
 
+export const areaChartCustomAnimationLevers = [
+  replayAnimationLever<ControlsType>({
+    buttonLabel: 'Replay entrance animation',
+  }),
+  swapDataSetLever<ControlsType>({
+    buttonLabel: '⇄ Swap dataset (Shows update animation)',
+  }),
+  animationDurationLever<ControlsType>({
+    min: 200,
+    max: 2500,
+    step: 100,
+    formatValue: value => `${value}ms`,
+  }),
+  createCheckboxLever<ControlsType>({
+    key: 'useCustomInterpolation',
+    label: 'animationInterpolateFn',
+    getValue: state => state.useCustomInterpolation,
+    onChange: (useCustomInterpolation, state) => ({ ...state, useCustomInterpolation }),
+  }),
+  createCheckboxLever<ControlsType>({
+    key: 'useCustomShape',
+    label: 'shape={GrowFromBottomShape}',
+    getValue: state => state.useCustomShape,
+    onChange: (useCustomShape, state) => ({ ...state, useCustomShape }),
+  }),
+] satisfies ReadonlyArray<Lever<ControlsType>>;
+
 export default function AreaChartCustomAnimationExample(props: Partial<ControlsType>) {
-  const { animationDuration, renderKey, useCustomInterpolation, useCustomShape, useDataA } = {
-    ...initialState,
+  const { animationDuration, replayKey, useCustomInterpolation, useCustomShape, dataSet } = {
+    ...areaChartCustomAnimationDefaultState,
     ...props,
   };
 
@@ -115,7 +137,7 @@ export default function AreaChartCustomAnimationExample(props: Partial<ControlsT
     <AreaChart
       style={{ width: '100%', maxWidth: '700px', maxHeight: '70vh', aspectRatio: 1.618 }}
       responsive
-      data={useDataA ? dataA : dataB}
+      data={dataSet === 'a' ? dataA : dataB}
       margin={{ top: 10, right: 0, left: 0, bottom: 0 }}
     >
       <defs>
@@ -129,102 +151,12 @@ export default function AreaChartCustomAnimationExample(props: Partial<ControlsT
       <YAxis width="auto" />
       <Tooltip />
       <MyAnimatedArea
-        key={renderKey}
+        key={replayKey}
         animationDuration={animationDuration}
         useCustomInterpolation={useCustomInterpolation}
         useCustomShape={useCustomShape}
       />
       <RechartsDevtools />
     </AreaChart>
-  );
-}
-
-export function AreaChartCustomAnimationControls({ onChange }: { onChange: (values: ControlsType) => void }) {
-  const [state, setState] = useState<ControlsType>(initialState);
-
-  const handleChange = useCallback(
-    (next: Partial<ControlsType>) => {
-      const newState = { ...state, ...next };
-      setState(newState);
-      onChange(newState);
-    },
-    [state, onChange],
-  );
-
-  useEffect(() => {
-    onChange(state);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
-
-  const animationDurationId = useId();
-  const interpolationId = useId();
-  const shapeId = useId();
-
-  return (
-    <form>
-      <p>
-        <button type="button" onClick={() => handleChange({ renderKey: state.renderKey + 1 })}>
-          Replay entrance animation
-        </button>
-      </p>
-      <p>
-        <button type="button" onClick={() => handleChange({ useDataA: !state.useDataA })}>
-          ⇄ Swap dataset (Shows update animation)
-        </button>
-      </p>
-      <table>
-        <tbody>
-          <tr>
-            <td>
-              <label htmlFor={animationDurationId}>animationDuration</label>
-            </td>
-            <td style={{ padding: '0 1ex' }}>
-              <input
-                id={animationDurationId}
-                aria-label="animationDuration"
-                type="range"
-                min="200"
-                max="2500"
-                step="100"
-                value={state.animationDuration}
-                onChange={e => handleChange({ animationDuration: parseInt(e.target.value, 10) })}
-              />
-            </td>
-            <td>{state.animationDuration}ms</td>
-          </tr>
-          <tr>
-            <td>
-              <label htmlFor={interpolationId}>animationInterpolateFn</label>
-            </td>
-            <td style={{ padding: '0 1ex' }}>
-              <input
-                id={interpolationId}
-                aria-label="animationInterpolateFn"
-                type="checkbox"
-                checked={state.useCustomInterpolation}
-                onChange={e => handleChange({ useCustomInterpolation: e.target.checked })}
-              />
-            </td>
-          </tr>
-          <tr>
-            <td>
-              <label htmlFor={shapeId}>shape={'{GrowFromBottomShape}'}</label>
-            </td>
-            <td style={{ padding: '0 1ex' }}>
-              <input
-                id={shapeId}
-                aria-label="shape"
-                type="checkbox"
-                checked={state.useCustomShape}
-                onChange={e => handleChange({ useCustomShape: e.target.checked })}
-              />
-            </td>
-          </tr>
-        </tbody>
-      </table>
-      <p style={{ fontSize: '0.85em', opacity: 0.8, marginTop: '0.5em' }}>
-        Disable the custom shape to see the default clip-path reveal hide most of the grow-from-bottom interpolation.
-      </p>
-    </form>
   );
 }

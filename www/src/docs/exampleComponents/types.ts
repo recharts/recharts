@@ -1,4 +1,5 @@
 import { ComponentType, ReactNode } from 'react';
+import type { Lever } from '../../components/Shared/levers/Levers.tsx';
 import { ToolType } from '../../components/Playground/ToolFrame.tsx';
 
 export type ChartExample<ControlsType = any> = {
@@ -8,10 +9,8 @@ export type ChartExample<ControlsType = any> = {
    * It may accept props coming from its associated controls
    */
   Component: ComponentType<ControlsType>;
-  /**
-   * This component renders knobs, controls, and various other activities that change the chart
-   */
-  Controls?: ComponentType<{ onChange: (values: ControlsType) => void; sessionStoreValues: ControlsType | null }>;
+  defaultControlsState?: ControlsType;
+  levers?: ReadonlyArray<Lever<ControlsType>>;
   /**
    * The source code of the example.
    */

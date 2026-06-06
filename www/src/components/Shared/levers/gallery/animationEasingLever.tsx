@@ -1,9 +1,7 @@
-import { EasingInput } from 'recharts';
-import { Lever } from '../Levers.tsx';
+import type { Lever, SelectOption } from '../Levers.tsx';
+import { createSelectLever } from '../Levers.tsx';
 
-type AnimationEasing = Extract<EasingInput, string>;
-
-const easingOptions: ReadonlyArray<AnimationEasing> = [
+const easingOptions = [
   'ease',
   'ease-in',
   'ease-out',
@@ -11,22 +9,25 @@ const easingOptions: ReadonlyArray<AnimationEasing> = [
   'linear',
   'spring',
   'cubic-bezier(.32,1.75,0,.94)',
-];
+] as const;
 
-export const animationEasingLever: Lever = {
-  name: 'animationEasing',
-  Component: ({ state, handleChange, htmlId }) => (
-    <select
-      id={htmlId}
-      value={state.animationEasing}
-      // @ts-expect-error - We know that the value will be one of the options, but TypeScript can't infer that from the event target.
-      onChange={e => handleChange({ animationEasing: e.target.value })}
-    >
-      {easingOptions.map(option => (
-        <option key={option} value={option}>
-          {option}
-        </option>
-      ))}
-    </select>
-  ),
+export type AnimationEasingValue = (typeof easingOptions)[number];
+
+type WithAnimationEasing = {
+  animationEasing: AnimationEasingValue;
 };
+
+const options: ReadonlyArray<SelectOption<AnimationEasingValue>> = easingOptions.map(option => ({
+  value: option,
+  label: option,
+}));
+
+export function animationEasingLever<TState extends WithAnimationEasing>(): Lever<TState> {
+  return createSelectLever({
+    key: 'animationEasing',
+    label: 'animationEasing',
+    options,
+    getValue: state => state.animationEasing,
+    onChange: (animationEasing, state) => ({ ...state, animationEasing }),
+  });
+}
