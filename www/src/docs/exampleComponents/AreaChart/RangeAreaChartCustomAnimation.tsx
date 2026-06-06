@@ -79,6 +79,12 @@ function useAnimateFromPlotBottom(): AnimationInterpolateFn<AreaPointItem, Carte
         return [];
       }
 
+      /*
+       * For demonstration here we always animate from the top, and we ignore the previous position (item.prev.y)
+       * and so the chart always looks like a new animation, there is no continuity.
+       * Here it depends on what exactly is your goal;
+       * Customize your animations the way you want!
+       */
       return [{ ...item.next, y: interpolate(top, item.next.y, animationElapsedTime) }];
     });
   };
@@ -100,13 +106,11 @@ function CustomAnimationArea(
 }
 
 export const rangeAreaChartCustomAnimationLevers = [
-  replayAnimationLever<ControlsType>({
-    buttonLabel: '▶ Replay initial animation',
-  }),
+  replayAnimationLever<ControlsType>(),
   swapDataSetLever<ControlsType>(),
   createSelectLever<ControlsType, AnimationStyle>({
-    key: 'animationStyle',
-    label: 'Animation style',
+    key: 'animationInterpolateFn',
+    label: 'animationInterpolateFn',
     options: Object.entries(animationOptions).map(([value, option]) => ({
       value: value as AnimationStyle,
       label: option.label,

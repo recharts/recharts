@@ -70,13 +70,11 @@ const animateFromCenter: AnimationInterpolateFn<RadarPoint, PolarLayout> = (item
 };
 
 export const rangeRadarChartCustomAnimationLevers = [
-  replayAnimationLever<ControlsType>({
-    buttonLabel: '▶ Replay initial animation',
-  }),
+  replayAnimationLever<ControlsType>(),
   swapDataSetLever<ControlsType>(),
   createSelectLever<ControlsType, AnimationStyle>({
-    key: 'animationStyle',
-    label: 'Animation style',
+    key: 'animationInterpolateFn',
+    label: 'animationInterpolateFn',
     options: Object.entries(animationOptions).map(([value, option]) => ({
       value: value as AnimationStyle,
       label: option.label,

@@ -7,7 +7,6 @@ type WithDataSet = {
 };
 
 export function swapDataSetLever<TState extends WithDataSet>({
-  label = 'dataSet',
   buttonLabel,
 }: {
   label?: string;
@@ -15,7 +14,7 @@ export function swapDataSetLever<TState extends WithDataSet>({
 } = {}): Lever<TState> {
   return createActionLever({
     key: 'swapDataSet',
-    label,
+    label: 'swap data set',
     buttonLabel: buttonLabel ?? ((state: TState) => `⇄ Swap dataset (${state.dataSet === 'a' ? 'A → B' : 'B → A'})`),
     onClick: state => ({ ...state, dataSet: state.dataSet === 'b' ? 'a' : 'b' }),
   });
