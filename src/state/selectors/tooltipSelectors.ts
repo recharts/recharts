@@ -58,6 +58,7 @@ import { ReferenceAreaSettings, ReferenceDotSettings, ReferenceLineSettings } fr
 import { selectChartName, selectReverseStackOrder, selectStackOffsetType } from './rootPropsSelectors';
 import { isNotNil, mathSign } from '../../util/DataUtils';
 import { combineAxisRangeWithReverse } from './combiners/combineAxisRangeWithReverse';
+import { applyViewportToRange, FULL_VIEWPORT, isFullViewport } from '../../util/zoom/viewport';
 import { TooltipIndex, TooltipInteractionState, TooltipPayload, TooltipSettingsState } from '../tooltipSlice';
 
 import {
@@ -313,12 +314,33 @@ export const selectTooltipAxisRangeWithReverse: (state: RechartsRootState) => Ax
   combineAxisRangeWithReverse,
 );
 
+/**
+ * Same as {@link selectTooltipAxisRangeWithReverse} but with the current zoom viewport applied, so
+ * the tooltip's scale, ticks and cursor stay aligned with the zoomed data. Only the tooltip's own
+ * (index) axis is zoomed; the range is returned unchanged when not zoomed.
+ */
+const selectTooltipZoomedAxisRangeWithReverse: (state: RechartsRootState) => AxisRange | undefined = createSelector(
+  [selectTooltipAxisRangeWithReverse, selectTooltipAxisType, (state: RechartsRootState) => state.zoom],
+  (range, axisType, zoom) => {
+    if (range == null) {
+      return range;
+    }
+    let viewport = FULL_VIEWPORT;
+    if (axisType === 'xAxis') {
+      viewport = zoom.x;
+    } else if (axisType === 'yAxis') {
+      viewport = zoom.y;
+    }
+    return isFullViewport(viewport) ? range : applyViewportToRange(range, viewport);
+  },
+);
+
 const selectTooltipConfiguredScale: (state: RechartsRootState) => CustomScaleDefinition | undefined = createSelector(
   [
     selectTooltipAxis,
     selectTooltipAxisRealScaleType,
     selectTooltipAxisDomainIncludingNiceTicks,
-    selectTooltipAxisRangeWithReverse,
+    selectTooltipZoomedAxisRangeWithReverse,
   ],
   combineConfiguredScale,
 );

@@ -2073,7 +2073,7 @@ export const combineAxisTicks = (
     })
     .filter(isNotNil);
 };
-export const selectTicksOfAxis: (
+const selectUnfilteredTicksOfAxis: (
   state: RechartsRootState,
   axisType: RenderableAxisType,
   axisId: AxisId,
@@ -2091,6 +2091,28 @@ export const selectTicksOfAxis: (
     pickAxisType,
   ],
   combineAxisTicks,
+);
+
+/**
+ * When an axis is zoomed, its scale maps the full domain across a stretched range, so some ticks
+ * (and therefore grid lines and axis labels) fall outside the plotting area. This drops those ticks
+ * so the axis and grid stay within bounds. When not zoomed it returns the ticks unchanged.
+ */
+export const selectTicksOfAxis: (
+  state: RechartsRootState,
+  axisType: RenderableAxisType,
+  axisId: AxisId,
+  isPanorama: boolean,
+) => ReadonlyArray<CartesianTickItem> | undefined = createSelector(
+  [selectUnfilteredTicksOfAxis, selectAxisRange, selectViewportForAxisType],
+  (ticks, axisRange, viewport) => {
+    if (ticks == null || axisRange == null || isFullViewport(viewport)) {
+      return ticks;
+    }
+    const min = Math.min(axisRange[0], axisRange[1]) - 0.5;
+    const max = Math.max(axisRange[0], axisRange[1]) + 0.5;
+    return ticks.filter(tick => tick.coordinate >= min && tick.coordinate <= max);
+  },
 );
 
 /**

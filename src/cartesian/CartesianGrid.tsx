@@ -11,6 +11,7 @@ import { defaultCartesianAxisProps } from './CartesianAxis';
 import { useChartHeight, useChartWidth, useOffsetInternal } from '../context/chartLayoutContext';
 import { AxisId } from '../state/cartesianAxisSlice';
 import { selectAxisPropsNeededForCartesianGridTicksGenerator } from '../state/selectors/axisSelectors';
+import { selectIsZoomed } from '../state/selectors/zoomSelectors';
 import { useAppSelector } from '../state/hooks';
 import { useIsPanorama } from '../context/PanoramaContext';
 import { RequiresDefaultProps, resolveDefaultProps } from '../util/resolveDefaultProps';
@@ -476,6 +477,7 @@ export function CartesianGrid(props: Props) {
     propsIncludingDefaults;
 
   const isPanorama = useIsPanorama();
+  const isZoomed = useAppSelector(selectIsZoomed);
   const xAxis: AxisPropsForCartesianGridTicksGeneration | undefined = useAppSelector(state =>
     selectAxisPropsNeededForCartesianGridTicksGenerator(state, 'xAxis', xAxisId, isPanorama),
   );
@@ -553,6 +555,15 @@ export function CartesianGrid(props: Props) {
     if (Array.isArray(generatorResult)) {
       verticalPoints = generatorResult;
     }
+  }
+
+  /*
+   * When zoomed, the generators place grid lines across the stretched range, so some land outside
+   * the plotting area. Keep only the lines that fall within the visible plot bounds.
+   */
+  if (isZoomed) {
+    horizontalPoints = horizontalPoints?.filter(p => p >= y - 0.5 && p <= y + height + 0.5);
+    verticalPoints = verticalPoints?.filter(p => p >= x - 0.5 && p <= x + width + 0.5);
   }
 
   return (
