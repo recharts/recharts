@@ -127,6 +127,13 @@ export function getAllNavigationItems(locale: SupportedLocale): Navigation {
     { key: 'storybook', displayName: localeGet(locale, 'frame', 'storybook'), url: `/${locale}/storybook/` },
     { key: 'wiki', displayName: 'Wiki', url: 'https://github.com/recharts/recharts/wiki', targetBlank: true },
     { key: 'github', displayName: 'GitHub', url: 'https://github.com/recharts/recharts', targetBlank: true },
+    { key: 'npm', displayName: 'npm', url: 'https://www.npmjs.com/package/recharts', targetBlank: true },
+    {
+      key: '3.0-upgrade',
+      displayName: '3.0 migration guide',
+      url: 'https://github.com/recharts/recharts/wiki/3.0-migration-guide',
+      targetBlank: true,
+    },
   ];
 }
 

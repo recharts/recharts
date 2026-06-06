@@ -9,11 +9,10 @@ header {
   line-height: 60px;
   display: flex;
   flex-direction: row;
-  gap: 80px;
 
   .logo {
     margin: 0;
-    padding: 0 2rem;
+    padding-left: 2vw;
     font-family: var(--font-family-code), monospace;
     font-weight: 300;
     font-size: var(--font-size-xl);

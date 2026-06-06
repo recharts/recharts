@@ -82,7 +82,7 @@ nav.desktop-only {
       display: flex;
       flex-direction: row;
       flex: 1;
-      gap: 40px;
+      gap: min(40px, 2vw);
 
       a {
         height: 61px;
