@@ -4,6 +4,7 @@ import { generateMockData } from '@recharts/devtools';
 import type { Lever } from '../../../components/Shared/levers/Levers.tsx';
 import { animationMatchByLever } from '../../../components/Shared/levers/gallery/animationMatchByLever.tsx';
 import { streamWindowLever } from '../../../components/Shared/levers/gallery/streamWindowLever.tsx';
+import { animationDurationLever } from '../../../components/Shared/levers/gallery/animationDurationLever.tsx';
 
 const WINDOW = 6;
 const DATA_LENGTH = 30;
@@ -15,24 +16,27 @@ function getCircularWindowData(windowStart: number) {
 }
 
 type ControlsType = {
+  animationDuration: number;
   animationMatchBy: 'index' | 'dataKey';
   windowStart: number;
 };
 
 export const animatedTimeSeriesDefaultState: ControlsType = {
+  animationDuration: 800,
   animationMatchBy: 'dataKey',
   windowStart: 0,
 };
 
 export const animatedTimeSeriesLevers = [
+  streamWindowLever<ControlsType>({
+    wrapAt: DATA_LENGTH,
+  }),
+  animationDurationLever(),
   animationMatchByLever<ControlsType>({
     options: [
       { value: 'index', label: 'matchByIndex (default)' },
       { value: 'dataKey', label: "matchByDataKey('time')" },
     ],
-  }),
-  streamWindowLever<ControlsType>({
-    wrapAt: DATA_LENGTH,
   }),
 ] satisfies ReadonlyArray<Lever<ControlsType>>;
 

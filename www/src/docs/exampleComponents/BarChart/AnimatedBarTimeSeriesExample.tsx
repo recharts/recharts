@@ -122,7 +122,6 @@ export const animatedBarTimeSeriesDefaultState: ControlsType = {
 export const animatedBarTimeSeriesLevers: ReadonlyArray<Lever<ControlsType>> = [
   streamWindowLever<ControlsType>({
     wrapAt: DATA_LENGTH,
-    getDelayMs: state => state.animationDuration * 1.1,
   }),
   cartesianLayoutLever(),
   animationMatchByLever<ControlsType>({

@@ -2,6 +2,7 @@ import { ReactNode, useEffect, useState } from 'react';
 import type { Lever } from '../Levers.tsx';
 
 type WithWindowStart = {
+  animationDuration: number;
   windowStart: number;
 };
 
@@ -15,21 +16,19 @@ export function streamWindowLever<TState extends WithWindowStart>({
   label = 'streaming',
   startLabel = 'Start streaming',
   stopLabel = 'Stop streaming',
-  getDelayMs = () => 800,
 }: {
   wrapAt: number;
   step?: number;
   label?: ReactNode;
   startLabel?: ReactNode;
   stopLabel?: ReactNode;
-  getDelayMs?: (state: TState) => number;
 }): Lever<TState> {
   return {
     key: 'streamWindow',
     label,
     Component: ({ state, setState, htmlId }) => {
       const [isStreaming, setIsStreaming] = useState(false);
-      const delayMs = getDelayMs(state);
+      const delayMs = state.animationDuration * 1.1;
 
       useEffect(() => {
         if (!isStreaming) {
