@@ -107,12 +107,7 @@ export const areaChartCustomAnimationLevers = [
   swapDataSetLever<ControlsType>({
     buttonLabel: '⇄ Swap dataset (Shows update animation)',
   }),
-  animationDurationLever<ControlsType>({
-    min: 200,
-    max: 2500,
-    step: 100,
-    formatValue: value => `${value}ms`,
-  }),
+  animationDurationLever<ControlsType>(),
   createCheckboxLever<ControlsType>({
     key: 'useCustomInterpolation',
     label: 'animationInterpolateFn',

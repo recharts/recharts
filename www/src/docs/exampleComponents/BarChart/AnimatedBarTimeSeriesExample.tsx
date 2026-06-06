@@ -123,6 +123,10 @@ export const animatedBarTimeSeriesDefaultState: ControlsType = {
 };
 
 export const animatedBarTimeSeriesLevers = [
+  streamWindowLever<ControlsType>({
+    wrapAt: DATA_LENGTH,
+    getDelayMs: state => state.animationDuration * 1.1,
+  }),
   createSelectLever<ControlsType, CartesianLayout>({
     key: 'layout',
     label: 'layout',
@@ -149,15 +153,7 @@ export const animatedBarTimeSeriesLevers = [
     getValue: state => state.animationVariant,
     onChange: (animationVariant, state) => ({ ...state, animationVariant }),
   }),
-  streamWindowLever<ControlsType>({
-    wrapAt: DATA_LENGTH,
-    getDelayMs: state => state.animationDuration * 1.1,
-  }),
-  animationDurationLever<ControlsType>({
-    min: 100,
-    max: 2000,
-    step: 100,
-  }),
+  animationDurationLever<ControlsType>(),
 ] satisfies ReadonlyArray<Lever<ControlsType>>;
 
 export default function AnimatedBarTimeSeriesExample(props: Partial<ControlsType>) {

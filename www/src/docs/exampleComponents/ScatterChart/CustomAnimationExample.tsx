@@ -112,12 +112,7 @@ export const customAnimationLevers = [
     getValue: state => state.animationStyle,
     onChange: (animationStyle, state) => ({ ...state, animationStyle }),
   }),
-  animationDurationLever<ControlsType>({
-    label: 'Duration (ms)',
-    min: 300,
-    max: 3000,
-    step: 100,
-  }),
+  animationDurationLever<ControlsType>(),
 ] satisfies ReadonlyArray<Lever<ControlsType>>;
 
 export default function CustomAnimationExample(props: Partial<ControlsType>) {

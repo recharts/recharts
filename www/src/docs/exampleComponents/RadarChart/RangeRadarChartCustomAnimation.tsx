@@ -84,12 +84,7 @@ export const rangeRadarChartCustomAnimationLevers = [
     getValue: state => state.animationStyle,
     onChange: (animationStyle, state) => ({ ...state, animationStyle }),
   }),
-  animationDurationLever<ControlsType>({
-    min: 300,
-    max: 3000,
-    step: 100,
-    formatValue: value => `${value}ms`,
-  }),
+  animationDurationLever<ControlsType>(),
 ] satisfies ReadonlyArray<Lever<ControlsType>>;
 
 export default function RangeRadarChartCustomAnimation(props: Partial<ControlsType>) {
