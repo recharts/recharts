@@ -42,6 +42,10 @@ export const installTouchGesture: ZoomGestureInstaller = api => {
     if (!api.getOptions().touch) {
       return;
     }
+    // Touching a scrollbar must not also trigger pinch/double-tap; the scrollbar handles it.
+    if ((event.target as Element | null)?.closest?.('[data-recharts-zoom-scrollbar]') != null) {
+      return;
+    }
     if (event.touches.length >= 2) {
       const a = event.touches[0];
       const b = event.touches[1];

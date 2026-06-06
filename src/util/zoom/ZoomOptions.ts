@@ -58,6 +58,11 @@ type ZoomGestureOptions = {
    * drag up/down to zoom in/out (Google-Maps style). @defaultValue true
    */
   touch?: boolean;
+  /**
+   * Show on-canvas scrollbars (one per zoomed axis). Drag the thumb to pan, drag its ends to zoom,
+   * click the track to page. Only visible while that axis is zoomed. @defaultValue true
+   */
+  scrollbars?: boolean;
 };
 
 /**
@@ -100,6 +105,7 @@ const ZOOM_DEFAULTS: Required<ZoomGestureOptions> = {
   doubleClickReset: true,
   keyboard: true,
   touch: true,
+  scrollbars: true,
 };
 
 const AXIS_SHORTHANDS: ReadonlyArray<ZoomAxis> = ['x', 'y', 'xy'];

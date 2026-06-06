@@ -42,6 +42,10 @@ export const installPointerGesture: ZoomGestureInstaller = api => {
     if (event.button !== 0) {
       return;
     }
+    // Grabbing a scrollbar must not also start a plot pan.
+    if ((event.target as Element | null)?.closest?.('[data-recharts-zoom-scrollbar]') != null) {
+      return;
+    }
     // Touch is handled by the dedicated touch gesture (pinch, two-finger pan, double-tap).
     if (event.pointerType === 'touch') {
       return;

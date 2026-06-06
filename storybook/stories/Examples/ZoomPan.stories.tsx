@@ -24,6 +24,7 @@ type ZoomPlaygroundArgs = {
   doubleClickReset: boolean;
   keyboard: boolean;
   touch: boolean;
+  scrollbars: boolean;
   wheelStep: number;
   animate: boolean;
 };
@@ -63,6 +64,7 @@ export default {
     doubleClickReset: { control: { type: 'boolean' }, description: 'Double-click resets the view' },
     keyboard: { control: { type: 'boolean' }, description: 'Focus the chart: +/- zoom, Shift+arrows pan, 0 reset' },
     touch: { control: { type: 'boolean' }, description: 'Pinch, two-finger pan, double-tap (+drag) on touch devices' },
+    scrollbars: { control: { type: 'boolean' }, description: 'On-canvas scrollbars (shown only while zoomed)' },
     animate: { control: { type: 'boolean' }, description: 'Per-series mount animation (auto-off while zoomed)' },
   },
   args: {
@@ -78,6 +80,7 @@ export default {
     doubleClickReset: true,
     keyboard: true,
     touch: true,
+    scrollbars: true,
     animate: false,
   },
 };
@@ -95,6 +98,7 @@ function Playground(args: ZoomPlaygroundArgs) {
     doubleClickReset: args.doubleClickReset,
     keyboard: args.keyboard,
     touch: args.touch,
+    scrollbars: args.scrollbars,
   };
   const common = { width: 760, height: 420, data, zoom };
   const isAnimationActive = args.animate;

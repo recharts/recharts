@@ -28,6 +28,7 @@ describe('resolveZoomOptions', () => {
       doubleClickReset: true,
       keyboard: true,
       touch: true,
+      scrollbars: true,
     });
   });
 
