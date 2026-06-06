@@ -53,6 +53,8 @@ Most time-series charts only want horizontal zoom. Pass the axis as a shorthand 
 | Double-click | Reset to the full view |
 | <kbd>+</kbd> / <kbd>-</kbd> (chart focused) | Zoom in / out |
 | <kbd>Shift</kbd> + arrows, <kbd>0</kbd> (chart focused) | Pan / reset |
+| Pinch, two-finger drag (touch) | Zoom / pan |
+| Double-tap, or double-tap + drag up/down (touch) | Reset / zoom |
 
 Every gesture can be turned off individually (see the options below), so you can build, say, a
 wheel-only chart. When `pan` is off, a plain drag does the region zoom (no modifier needed).
@@ -73,6 +75,7 @@ wheel-only chart. When `pan` is off, a plain drag does the region zoom (no modif
 | `dragToZoom` | `boolean` | `true` | <kbd>Shift</kbd> + drag to select a region to zoom into (plain drag when `pan` is off) |
 | `doubleClickReset` | `boolean` | `true` | Double-click resets to the full view |
 | `keyboard` | `boolean` | `true` | Keyboard zoom/pan when focused (`+`/`-`, <kbd>Shift</kbd>+arrows, `0`) |
+| `touch` | `boolean` | `true` | Touch gestures: pinch, two-finger pan, double-tap (+ drag) |
 | `viewport` | `{ x?: AxisWindow; y?: AxisWindow }` | — | Controlled viewport (see below) |
 | `initialZoom` | `{ x?: AxisWindow; y?: AxisWindow }` | — | Uncontrolled initial viewport, applied once on mount |
 | `onZoomChange` | `(viewport) => void` | — | Called whenever the viewport changes |
@@ -155,10 +158,9 @@ byte-for-byte as it does today.
 ## Roadmap
 
 Done (cartesian): wheel / drag / double-click zoom & pan, drag-to-zoom selection, **keyboard**
-controls, **axis-handle** interactions, controlled & uncontrolled state.
+controls, **axis-handle** interactions, **touch / pinch** gestures, controlled & uncontrolled state.
 
-Planned, each as its own small PR: **touch / pinch** gestures,
-automatic **animation** suppression while zooming, an on-canvas **minimap** and **scrollbars**,
-**brush ↔ zoom** two-way sync, and zoom for **polar** (Pie / Radar / RadialBar) and **standalone**
-(Sankey / Treemap / Sunburst) charts via an SVG transform. A **vertical brush** (`layout="vertical"`)
-ships independently.
+Planned, each as its own small PR: automatic **animation** suppression while zooming, an on-canvas
+**minimap** and **scrollbars**, **brush ↔ zoom** two-way sync, and zoom for **polar** (Pie / Radar /
+RadialBar) and **standalone** (Sankey / Treemap / Sunburst) charts via an SVG transform. A
+**vertical brush** (`layout="vertical"`) ships independently.

@@ -53,6 +53,11 @@ type ZoomGestureOptions = {
    * reset. Requires the chart to be focusable (the default `accessibilityLayer`). @defaultValue true
    */
   keyboard?: boolean;
+  /**
+   * Touch gestures: pinch to zoom, two-finger drag to pan, double-tap to reset, and double-tap then
+   * drag up/down to zoom in/out (Google-Maps style). @defaultValue true
+   */
+  touch?: boolean;
 };
 
 /**
@@ -94,6 +99,7 @@ const ZOOM_DEFAULTS: Required<ZoomGestureOptions> = {
   dragToZoom: true,
   doubleClickReset: true,
   keyboard: true,
+  touch: true,
 };
 
 const AXIS_SHORTHANDS: ReadonlyArray<ZoomAxis> = ['x', 'y', 'xy'];

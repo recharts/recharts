@@ -17,6 +17,7 @@ import { installPointerGesture } from './zoom/pointerGesture';
 import { installDoubleClickGesture } from './zoom/doubleClickGesture';
 import { installKeyboardGesture } from './zoom/keyboardGesture';
 import { installAxisGesture } from './zoom/axisGesture';
+import { installTouchGesture } from './zoom/touchGesture';
 
 type ZoomControllerProps = {
   options: ResolvedZoomOptions;
@@ -146,6 +147,7 @@ export function ZoomController({ options }: ZoomControllerProps) {
       installDoubleClickGesture(api),
       installKeyboardGesture(api),
       installAxisGesture(api),
+      installTouchGesture(api),
     ];
     return () => cleanups.forEach(cleanup => cleanup());
   }, [api, isPanorama]);

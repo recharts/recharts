@@ -27,6 +27,7 @@ describe('resolveZoomOptions', () => {
       dragToZoom: true,
       doubleClickReset: true,
       keyboard: true,
+      touch: true,
     });
   });
 

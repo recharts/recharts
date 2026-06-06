@@ -23,6 +23,7 @@ type ZoomPlaygroundArgs = {
   dragToZoom: boolean;
   doubleClickReset: boolean;
   keyboard: boolean;
+  touch: boolean;
   wheelStep: number;
   animate: boolean;
 };
@@ -61,6 +62,7 @@ export default {
     dragToZoom: { control: { type: 'boolean' }, description: 'Shift + drag to zoom a region' },
     doubleClickReset: { control: { type: 'boolean' }, description: 'Double-click resets the view' },
     keyboard: { control: { type: 'boolean' }, description: 'Focus the chart: +/- zoom, Shift+arrows pan, 0 reset' },
+    touch: { control: { type: 'boolean' }, description: 'Pinch, two-finger pan, double-tap (+drag) on touch devices' },
     animate: { control: { type: 'boolean' }, description: 'Animate the series (laggy while zooming)' },
   },
   args: {
@@ -75,6 +77,7 @@ export default {
     dragToZoom: true,
     doubleClickReset: true,
     keyboard: true,
+    touch: true,
     animate: false,
   },
 };
@@ -91,6 +94,7 @@ function Playground(args: ZoomPlaygroundArgs) {
     dragToZoom: args.dragToZoom,
     doubleClickReset: args.doubleClickReset,
     keyboard: args.keyboard,
+    touch: args.touch,
   };
   const common = { width: 760, height: 420, data, zoom };
   const isAnimationActive = args.animate;

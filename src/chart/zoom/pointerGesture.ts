@@ -42,6 +42,10 @@ export const installPointerGesture: ZoomGestureInstaller = api => {
     if (event.button !== 0) {
       return;
     }
+    // Touch is handled by the dedicated touch gesture (pinch, two-finger pan, double-tap).
+    if (event.pointerType === 'touch') {
+      return;
+    }
     // Dragging on an axis band is handled by the axis gesture (pans only that axis).
     if (api.pointerRegion(event.clientX, event.clientY) !== 'plot') {
       return;
