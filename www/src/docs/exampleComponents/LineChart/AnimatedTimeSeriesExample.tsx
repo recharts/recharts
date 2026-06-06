@@ -1,5 +1,5 @@
-import { Line, LineChart, CartesianGrid, XAxis, YAxis, Tooltip, matchByDataKey, matchByIndex } from 'recharts';
 import type { AnimationMatchBy } from 'recharts';
+import { CartesianGrid, Line, LineChart, matchByDataKey, matchByIndex, Tooltip, XAxis, YAxis } from 'recharts';
 import { generateMockData } from '@recharts/devtools';
 import type { Lever } from '../../../components/Shared/levers/Levers.tsx';
 import { animationMatchByLever } from '../../../components/Shared/levers/gallery/animationMatchByLever.tsx';
@@ -10,14 +10,8 @@ const DATA_LENGTH = 30;
 
 const allData = generateMockData(DATA_LENGTH, 90).map((o, i) => ({ ...o, i }));
 
-function normalizeWindowStart(windowStart: number): number {
-  return ((windowStart % DATA_LENGTH) + DATA_LENGTH) % DATA_LENGTH;
-}
-
 function getCircularWindowData(windowStart: number) {
-  const normalizedWindowStart = normalizeWindowStart(windowStart);
-
-  return Array.from({ length: WINDOW }, (_, index) => allData[(normalizedWindowStart + index) % DATA_LENGTH]!);
+  return Array.from({ length: WINDOW }, (_, index) => allData[(windowStart + index) % DATA_LENGTH]!);
 }
 
 type ControlsType = {
@@ -45,7 +39,7 @@ export const animatedTimeSeriesLevers = [
 export default function AnimatedTimeSeriesExample(props: Partial<ControlsType>) {
   const { animationMatchBy, windowStart } = { ...animatedTimeSeriesDefaultState, ...props };
 
-  const data = getCircularWindowData(normalizeWindowStart(windowStart));
+  const data = getCircularWindowData(windowStart);
 
   const matchProp: typeof matchByIndex | AnimationMatchBy<{ payload?: unknown }> =
     animationMatchBy === 'dataKey' ? matchByDataKey('label') : matchByIndex;
