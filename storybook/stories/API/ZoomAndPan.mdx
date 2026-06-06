@@ -50,7 +50,8 @@ Most time-series charts only want horizontal zoom. Pass the axis as a shorthand 
 | Drag | Pan the visible window |
 | <kbd>Shift</kbd> + drag | Rubber-band a region to zoom into (when `dragToZoom` is on) |
 | Double-click | Reset to the full view |
-| <kbd>+</kbd> / <kbd>-</kbd>, arrows (chart focused) | _Planned:_ keyboard zoom / pan |
+| <kbd>+</kbd> / <kbd>-</kbd> (chart focused) | Zoom in / out |
+| <kbd>Shift</kbd> + arrows, <kbd>0</kbd> (chart focused) | Pan / reset |
 
 Every gesture can be turned off individually (see the options below), so you can build, say, a
 wheel-only chart. When `pan` is off, a plain drag does the region zoom (no modifier needed).
@@ -69,6 +70,7 @@ wheel-only chart. When `pan` is off, a plain drag does the region zoom (no modif
 | `pan` | `boolean` | `true` | Drag to pan |
 | `dragToZoom` | `boolean` | `true` | <kbd>Shift</kbd> + drag to select a region to zoom into (plain drag when `pan` is off) |
 | `doubleClickReset` | `boolean` | `true` | Double-click resets to the full view |
+| `keyboard` | `boolean` | `true` | Keyboard zoom/pan when focused (`+`/`-`, <kbd>Shift</kbd>+arrows, `0`) |
 | `viewport` | `{ x?: AxisWindow; y?: AxisWindow }` | — | Controlled viewport (see below) |
 | `initialZoom` | `{ x?: AxisWindow; y?: AxisWindow }` | — | Uncontrolled initial viewport, applied once on mount |
 | `onZoomChange` | `(viewport) => void` | — | Called whenever the viewport changes |
@@ -150,11 +152,11 @@ byte-for-byte as it does today.
 
 ## Roadmap
 
-Done (cartesian): wheel / drag / double-click zoom & pan, drag-to-zoom selection, controlled &
-uncontrolled state.
+Done (cartesian): wheel / drag / double-click zoom & pan, drag-to-zoom selection, **keyboard**
+controls, controlled & uncontrolled state.
 
-Planned, each as its own small PR: **keyboard** controls (`+`/`-`, arrows, reset), **axis-handle**
-interactions (scroll / drag on an axis to zoom or pan just that axis), **touch / pinch** gestures,
+Planned, each as its own small PR: **axis-handle** interactions (scroll / drag on an axis to zoom
+or pan just that axis), **touch / pinch** gestures,
 automatic **animation** suppression while zooming, an on-canvas **minimap** and **scrollbars**,
 **brush ↔ zoom** two-way sync, and zoom for **polar** (Pie / Radar / RadialBar) and **standalone**
 (Sankey / Treemap / Sunburst) charts via an SVG transform. A **vertical brush** (`layout="vertical"`)

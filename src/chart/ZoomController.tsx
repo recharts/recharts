@@ -15,6 +15,7 @@ import { SelectionRect, ZoomGestureApi } from './zoom/ZoomGestureApi';
 import { installWheelGesture } from './zoom/wheelGesture';
 import { installPointerGesture } from './zoom/pointerGesture';
 import { installDoubleClickGesture } from './zoom/doubleClickGesture';
+import { installKeyboardGesture } from './zoom/keyboardGesture';
 
 type ZoomControllerProps = {
   options: ResolvedZoomOptions;
@@ -117,7 +118,12 @@ export function ZoomController({ options }: ZoomControllerProps) {
     if (api == null || isPanorama) {
       return undefined;
     }
-    const cleanups = [installWheelGesture(api), installPointerGesture(api), installDoubleClickGesture(api)];
+    const cleanups = [
+      installWheelGesture(api),
+      installPointerGesture(api),
+      installDoubleClickGesture(api),
+      installKeyboardGesture(api),
+    ];
     return () => cleanups.forEach(cleanup => cleanup());
   }, [api, isPanorama]);
 

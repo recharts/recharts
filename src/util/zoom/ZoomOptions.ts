@@ -43,6 +43,11 @@ type ZoomGestureOptions = {
   dragToZoom?: boolean;
   /** Double-click resets to the full view. @defaultValue true */
   doubleClickReset?: boolean;
+  /**
+   * Keyboard zoom/pan when the chart is focused: `+`/`-` to zoom, Shift + arrows to pan, `0` to
+   * reset. Requires the chart to be focusable (the default `accessibilityLayer`). @defaultValue true
+   */
+  keyboard?: boolean;
 };
 
 /**
@@ -82,6 +87,7 @@ const ZOOM_DEFAULTS: Required<ZoomGestureOptions> = {
   pan: true,
   dragToZoom: true,
   doubleClickReset: true,
+  keyboard: true,
 };
 
 const AXIS_SHORTHANDS: ReadonlyArray<ZoomAxis> = ['x', 'y', 'xy'];
