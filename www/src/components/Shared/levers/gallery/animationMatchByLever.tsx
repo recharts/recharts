@@ -13,15 +13,13 @@ const defaultOptions: ReadonlyArray<SelectOption<AnimationMatchByValue>> = [
 ];
 
 export function animationMatchByLever<TState extends WithAnimationMatchBy>({
-  label = 'animationMatchBy',
   options = defaultOptions,
 }: {
-  label?: string;
   options?: ReadonlyArray<SelectOption<AnimationMatchByValue>>;
 } = {}): Lever<TState> {
   return createSelectLever({
     key: 'animationMatchBy',
-    label,
+    label: 'animationMatchBy',
     options,
     getValue: state => state.animationMatchBy,
     onChange: (animationMatchBy, state) => ({ ...state, animationMatchBy }),
