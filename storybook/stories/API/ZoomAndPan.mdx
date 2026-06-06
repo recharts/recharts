@@ -1,0 +1,154 @@
+# Zoom and Pan
+
+Zoom and pan let your users explore dense cartesian charts interactively: scroll to zoom into a
+region, drag to move around, and double-click to snap back to the full view.
+
+> 🚧 **Status: design preview.** This page describes the zoom/pan API as it is being built, one
+> small PR at a time (replacing the monolithic prototype in
+> [#5934](https://github.com/recharts/recharts/pull/5934)). The examples below show the **planned**
+> public API so we can agree on it before wiring up the interactions. The runtime is not enabled
+> yet — this is the "describe the final state first, then work backwards" target.
+
+## Quick start
+
+Zoom is opt-in, per chart, via a single `zoom` prop. Pass `zoom` (or `zoom={true}`) to enable it
+with sensible defaults on both axes:
+
+```tsx
+<LineChart width={600} height={300} data={data} zoom>
+  <CartesianGrid strokeDasharray="3 3" />
+  <XAxis dataKey="name" />
+  <YAxis />
+  <Tooltip />
+  <Line type="monotone" dataKey="value" stroke="#8884d8" />
+</LineChart>
+```
+
+That's it. With the defaults the chart now responds to the mouse wheel, drag-to-pan,
+double-click-to-reset and keyboard. Tooltips, the cursor, the brush and accessibility keep working
+exactly as before — nothing else in your chart needs to change.
+
+## Constrain to a single axis
+
+Most time-series charts only want horizontal zoom. Pass the axis as a shorthand string, or use the
+`axis` option:
+
+```tsx
+<LineChart data={data} zoom="x">{/* ... */}</LineChart>
+
+// equivalent to
+<LineChart data={data} zoom={{ axis: 'x' }}>{/* ... */}</LineChart>
+```
+
+`axis` accepts `'x'`, `'y'` or `'xy'` (default `'xy'`).
+
+## Controls
+
+| Gesture | Action |
+| --- | --- |
+| Mouse wheel / trackpad scroll | Zoom in and out, centred on the pointer |
+| Drag | Pan the visible window |
+| Modifier + drag (e.g. <kbd>Shift</kbd>) | Rubber-band a region to zoom into (when `dragToZoom` is on) |
+| Double-click | Reset to the full view |
+| <kbd>+</kbd> / <kbd>-</kbd> (chart focused) | Zoom in / out |
+| Arrow keys (chart focused) | Pan |
+
+Every gesture can be turned off individually (see the options below), so you can build, say, a
+wheel-only chart or a keyboard-only chart.
+
+## Options
+
+`zoom` is either a boolean (`true` = all defaults) or a `ZoomOptions` object:
+
+| Option | Type | Default | Description |
+| --- | --- | --- | --- |
+| `axis` | `'x' \| 'y' \| 'xy'` | `'xy'` | Which dimensions can be zoomed and panned |
+| `minZoom` | `number` | `1` | Furthest zoom-out. `1` means you cannot zoom out past the full data |
+| `maxZoom` | `number` | `25` | Deepest zoom-in (a `maxZoom` of `25` shows ~1/25th of the data) |
+| `wheel` | `boolean` | `true` | Wheel / trackpad to zoom |
+| `pan` | `boolean` | `true` | Drag to pan |
+| `dragToZoom` | `boolean` | `false` | Modifier + drag to select a region to zoom into |
+| `doubleClickReset` | `boolean` | `true` | Double-click resets to the full view |
+| `keyboard` | `boolean` | follows `accessibilityLayer` | Keyboard zoom/pan when the chart is focused |
+| `animate` | `boolean` | `false` | Animate graphical items while zooming. Off by default for smoothness on large data |
+| `viewport` | `{ x?: AxisWindow; y?: AxisWindow }` | — | Controlled viewport (see below) |
+| `onZoomChange` | `(viewport) => void` | — | Called whenever the user zooms or pans |
+
+```tsx
+<BarChart
+  data={data}
+  zoom={{ axis: 'x', maxZoom: 40, dragToZoom: true, animate: false }}
+>
+  {/* ... */}
+</BarChart>
+```
+
+## Controlled zoom
+
+For persistence, deep-linking, or syncing several charts, you can control the viewport yourself.
+The viewport is described per axis as a **normalized window** — two numbers in `[0, 1]` that say
+which slice of the axis is visible. `{ start: 0, end: 1 }` is the whole axis (no zoom);
+`{ start: 0.25, end: 0.5 }` shows the second quarter.
+
+```tsx
+const [viewport, setViewport] = useState({ x: { start: 0, end: 1 } });
+
+<LineChart data={data} zoom={{ axis: 'x', viewport, onZoomChange: setViewport }}>
+  {/* ... */}
+</LineChart>
+```
+
+Why ratios rather than data values? Because they mean the same thing for every kind of axis —
+numeric, time, or categorical (band) — and they stay correct when the container is resized. A
+data-value-based convenience API (e.g. "show x from 100 to 500") may be layered on top later.
+
+## How it works (under the hood)
+
+Recharts already turns every data point into a pixel through a single per-axis scale
+(`domain → range`). Zoom hooks into exactly that one place and nowhere else:
+
+1. The normalized viewport is stored in a tiny Redux slice (`{ x, y }`, default = full window).
+2. When a viewport is **not** full, we **stretch the axis _range_** (the pixel interval the scale
+   maps into) by `1 / windowWidth` and shift it so the visible slice fills the plotting area. The
+   axis **domain is left untouched**.
+3. Because every renderer — lines, bars, areas, scatter, gridlines, ticks, reference lines — asks
+   the same scale for positions, they are all zoomed automatically. Parts that fall outside the
+   plotting area are hidden by the clip path that Recharts already applies. **No graphical
+   component needs to know about zoom.**
+4. Tooltips, the cursor and keyboard navigation use the scale's inverse, which is derived from the
+   same stretched range, so hit-testing stays consistent.
+
+We zoom the **range, not the domain**, on purpose:
+
+- It works identically for linear, time, **and band/point (categorical)** scales — a domain window
+  can't express "show 2½ categories", a stretched range can.
+- It allows smooth, sub-pixel panning even on categorical axes.
+- It keeps the change tiny and decoupled: the feature lights up by transforming one selector,
+  rather than threading zoom state through every renderer.
+- It is compatible with the immutable `RechartsScale` (we feed it a different range; we never
+  mutate or monkey-patch the scale).
+
+When the viewport is the full window the transform is the identity, so an un-zoomed chart renders
+byte-for-byte as it does today.
+
+## What keeps working
+
+- **Tooltips & cursor** — driven by the same (zoomed) scale.
+- **Brush** — the brush keeps slicing data as usual; brush↔zoom syncing is planned as a later step.
+- **Accessibility** — keyboard navigation and the live-region tooltip are unaffected; optional
+  keyboard zoom/pan is additive.
+
+## Performance
+
+- Animations are disabled while zooming by default (`animate: false`) so panning a large series
+  stays smooth; the initial mount still animates.
+- Off-screen geometry is clipped rather than recomputed. For very large datasets, data
+  virtualization is out of scope for the first version.
+
+## Roadmap
+
+The first version targets **cartesian charts** (Line, Bar, Area, Scatter, Composed). Planned
+follow-ups, each as its own small PR: a **minimap** overview, **brush ↔ zoom** two-way sync,
+on-canvas **scrollbars**, **touch/pinch** gestures, and zoom for **polar** (Pie/Radar/RadialBar)
+and **standalone** (Sankey/Treemap/Sunburst) charts via an SVG transform. A **vertical brush**
+(`layout="vertical"`) ships independently.
