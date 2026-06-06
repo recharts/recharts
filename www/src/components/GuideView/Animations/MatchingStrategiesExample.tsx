@@ -1,32 +1,29 @@
-import React, { useState, useCallback, useId } from 'react';
 import { generateMockData, RechartsDevtools } from '@recharts/devtools';
+import type { AnimationMatchByProp, LinePointItem } from 'recharts';
 import {
+  Area,
   AreaPointItem,
-  Line,
+  Bar,
+  BarRectangleItem,
   CartesianGrid,
+  ComposedChart,
+  Line,
+  matchAppend,
+  matchByIndex,
+  Scatter,
+  ScatterPointItem,
+  Tooltip,
   XAxis,
   YAxis,
-  Tooltip,
-  matchByIndex,
-  matchAppend,
-  Area,
-  ComposedChart,
-  Bar,
-  Scatter,
-  BarRectangleItem,
-  ScatterPointItem,
 } from 'recharts';
-import type { AnimationMatchByProp, LinePointItem } from 'recharts';
+import { LeverChangeHandler, Levers, LeverState } from '../../Shared/levers/Levers.tsx';
+import { replayAnimationLever } from '../../Shared/levers/gallery/swapDataLever.tsx';
+import { animationMatchByLever } from '../../Shared/levers/gallery/animationMatchByLever.tsx';
 
 const dataSmall = generateMockData(5, 42);
 const dataLarge = generateMockData(15, 99);
 
 type MatchStrategy = 'index' | 'append';
-
-type ControlsType = {
-  matchStrategy: MatchStrategy;
-  useLargeData: boolean;
-};
 
 /*
  * In your chart you will typically animate one of these but in this example we throw everything at the same chart.
@@ -43,9 +40,9 @@ function getMatchProp(strategy: MatchStrategy): AnimationMatchByProp<AcceptedAni
   }
 }
 
-export default function MatchingStrategiesExample(props: Partial<ControlsType>) {
-  const matchStrategy = props.matchStrategy ?? 'index';
-  const useLargeData = props.useLargeData ?? false;
+export default function MatchingStrategiesExample(props: Partial<LeverState>) {
+  const matchStrategy = props.animationMatchBy ?? 'index';
+  const useLargeData = props.dataSet === 'b';
 
   const data = useLargeData ? dataLarge : dataSmall;
   const matchProp = getMatchProp(matchStrategy);
@@ -86,57 +83,13 @@ export default function MatchingStrategiesExample(props: Partial<ControlsType>) 
   );
 }
 
-export function MatchingStrategiesControls({ onChange }: { onChange: (values: ControlsType) => void }) {
-  const [state, setState] = useState<ControlsType>({
-    matchStrategy: 'index',
-    useLargeData: false,
-  });
+const defaultState: LeverState = {
+  animationMatchBy: 'index',
+  dataSet: 'a',
+};
 
-  const handleChange = useCallback(
-    (next: Partial<ControlsType>) => {
-      const newState = { ...state, ...next };
-      setState(newState);
-      onChange(newState);
-    },
-    [state, onChange],
-  );
-
-  React.useEffect(() => {
-    onChange(state);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
-
-  const matchStrategyId = useId();
-
+export function MatchingStrategiesControls({ onChange }: { onChange: LeverChangeHandler }) {
   return (
-    <form>
-      <button type="button" onClick={() => handleChange({ useLargeData: !state.useLargeData })}>
-        ⇄ Swap dataset ({state.useLargeData ? '15 → 5 items' : '5 → 15 items'})
-      </button>
-      <table>
-        <tbody>
-          <tr>
-            <td>
-              <label htmlFor={matchStrategyId}>animationMatchBy</label>
-            </td>
-            <td style={{ padding: '0 1ex' }}>
-              <select
-                id={matchStrategyId}
-                value={state.matchStrategy}
-                onChange={e => handleChange({ matchStrategy: e.target.value as MatchStrategy })}
-              >
-                <option value="index">matchByIndex — stretch (default)</option>
-                <option value="append">matchAppend — sequential</option>
-              </select>
-            </td>
-          </tr>
-        </tbody>
-      </table>
-      <p style={{ fontSize: '0.85em', opacity: 0.8, marginTop: '0.5em' }}>
-        Swap between a 5-item and a 15-item dataset and compare: <strong>matchByIndex</strong> stretches old points
-        across the new range, while <strong>matchAppend</strong> keeps existing points in place and new points animate
-        in from the edge.
-      </p>
-    </form>
+    <Levers defaultState={defaultState} levers={[replayAnimationLever, animationMatchByLever]} onChange={onChange} />
   );
 }

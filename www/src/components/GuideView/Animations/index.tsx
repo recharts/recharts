@@ -328,7 +328,11 @@ export function AnimationsGuide() {
           the first 5 match directly and the remaining 10 animate in as new elements.
         </li>
       </ul>
-      <p>Swap between the 5-item and 15-item datasets below to see the difference:</p>
+      <p>
+        Swap between a 5-item and a 15-item dataset and compare: <strong>matchByIndex</strong> stretches old points
+        across the new range, while <strong>matchAppend</strong> keeps existing points in place and new points animate
+        in from the edge:
+      </p>
       <CodeEditorWithPreview
         Component={MatchingStrategiesExample}
         Controls={MatchingStrategiesControls}

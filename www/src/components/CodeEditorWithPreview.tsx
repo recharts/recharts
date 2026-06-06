@@ -23,7 +23,7 @@ type CodeEditorWithPreviewProps<ControlsType> = {
   /**
    * This component renders knobs, controls, and various other activities that change the chart
    */
-  Controls?: ComponentType<{ onChange: (values: ControlsType) => void; sessionStoreValues: ControlsType | null }>;
+  Controls?: ComponentType<{ onChange: (values: ControlsType) => void }>;
   /**
    * The source code of the component.
    */
@@ -197,7 +197,7 @@ export function CodeEditorWithPreview<T>({
       label: 'Controls',
       component: (
         <div style={{ padding: '10px', height: '100%', overflow: 'auto' }}>
-          <Controls onChange={setControlsState} sessionStoreValues={controlsState} />
+          <Controls onChange={setControlsState} />
         </div>
       ),
     });
