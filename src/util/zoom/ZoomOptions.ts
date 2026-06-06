@@ -1,4 +1,5 @@
-import { ZoomDimension } from '../../state/zoomSlice';
+import { ZoomDimension, ZoomState } from '../../state/zoomSlice';
+import { AxisViewport, clampViewport, FULL_VIEWPORT } from './viewport';
 
 /**
  * Which dimensions a chart can be zoomed and panned along.
@@ -6,9 +7,20 @@ import { ZoomDimension } from '../../state/zoomSlice';
 export type ZoomAxis = 'x' | 'y' | 'xy';
 
 /**
- * Public configuration for the cartesian zoom/pan feature. See the "Zoom and Pan" guide.
+ * A visible window along a single axis, expressed as fractions in `[0, 1]` of the axis.
+ * `{ start: 0, end: 1 }` is the whole axis (not zoomed).
  */
-export type ZoomOptions = {
+export type AxisWindow = { start: number; end: number };
+
+/**
+ * A per-dimension viewport in public form. Omitting a dimension means it is not zoomed.
+ */
+export type ZoomViewport = { x?: AxisWindow; y?: AxisWindow };
+
+/**
+ * The gesture/limit part of the zoom configuration - everything that has a sensible default.
+ */
+type ZoomGestureOptions = {
   /** Which dimensions can be zoomed and panned. @defaultValue 'xy' */
   axis?: ZoomAxis;
   /** Furthest zoom-out. 1 means the full data cannot be zoomed out past. @defaultValue 1 */
@@ -24,13 +36,34 @@ export type ZoomOptions = {
 };
 
 /**
+ * Public configuration for the cartesian zoom/pan feature. See the "Zoom and Pan" guide.
+ */
+export type ZoomOptions = ZoomGestureOptions & {
+  /**
+   * Controlled viewport. When provided, the chart shows exactly this window and you are responsible
+   * for updating it (typically from {@link ZoomOptions.onZoomChange}). A dimension left out is shown
+   * un-zoomed.
+   */
+  viewport?: ZoomViewport;
+  /**
+   * Initial (uncontrolled) viewport, applied once on mount. Ignored when `viewport` is set.
+   */
+  initialZoom?: ZoomViewport;
+  /**
+   * Called whenever the zoom viewport changes, with both dimensions in `[0, 1]` window form.
+   */
+  onZoomChange?: (viewport: Required<ZoomViewport>) => void;
+};
+
+/**
  * The `zoom` prop accepts `true` (enable with defaults), an axis shorthand (`"x"`), or full options.
  */
 export type ZoomProp = boolean | ZoomAxis | ZoomOptions;
 
-export type ResolvedZoomOptions = Required<ZoomOptions>;
+export type ResolvedZoomOptions = Required<ZoomGestureOptions> &
+  Pick<ZoomOptions, 'viewport' | 'initialZoom' | 'onZoomChange'>;
 
-const ZOOM_DEFAULTS: ResolvedZoomOptions = {
+const ZOOM_DEFAULTS: Required<ZoomGestureOptions> = {
   axis: 'xy',
   minZoom: 1,
   maxZoom: 25,
@@ -66,4 +99,30 @@ export function resolveZoomOptions(zoom: ZoomProp | undefined): ResolvedZoomOpti
  */
 export function zoomEnabledForDimension(options: ResolvedZoomOptions, dimension: ZoomDimension): boolean {
   return options.axis === 'xy' || options.axis === dimension;
+}
+
+/* ---------------------------------------------------------------------------------------------- *
+ * Mapping between the public `[0, 1]` window form and the internal AxisViewport / ZoomState.
+ * ---------------------------------------------------------------------------------------------- */
+
+export function windowToViewport(window: AxisWindow): AxisViewport {
+  return clampViewport({ startRatio: window.start, endRatio: window.end });
+}
+
+export function viewportToWindow(viewport: AxisViewport): AxisWindow {
+  return { start: viewport.startRatio, end: viewport.endRatio };
+}
+
+/**
+ * Converts a public viewport into a full {@link ZoomState}; omitted dimensions become the full view.
+ */
+export function zoomStateFromViewport(viewport: ZoomViewport): ZoomState {
+  return {
+    x: viewport.x ? windowToViewport(viewport.x) : FULL_VIEWPORT,
+    y: viewport.y ? windowToViewport(viewport.y) : FULL_VIEWPORT,
+  };
+}
+
+export function zoomStateToViewport(state: ZoomState): Required<ZoomViewport> {
+  return { x: viewportToWindow(state.x), y: viewportToWindow(state.y) };
 }

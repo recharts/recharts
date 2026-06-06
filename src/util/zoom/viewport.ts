@@ -76,6 +76,14 @@ export function isFullViewport(viewport: AxisViewport): boolean {
 }
 
 /**
+ * Returns `true` when two viewports are equal within a small tolerance. Used to break controlled
+ * vs internal-state update loops where floating-point drift would otherwise make them differ.
+ */
+export function viewportsEqual(a: AxisViewport, b: AxisViewport): boolean {
+  return Math.abs(a.startRatio - b.startRatio) < 1e-6 && Math.abs(a.endRatio - b.endRatio) < 1e-6;
+}
+
+/**
  * Normalizes an arbitrary, possibly invalid, viewport into a valid one:
  * - both ratios are clamped into `[0, 1]`,
  * - the start is guaranteed to be before the end (they are swapped if reversed),

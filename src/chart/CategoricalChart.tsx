@@ -7,6 +7,7 @@ import { CartesianChartProps } from '../util/types';
 import { svgPropertiesNoEvents } from '../util/svgPropertiesNoEvents';
 import { ReportChartSize } from '../context/chartLayoutContext';
 import { ZoomController } from './ZoomController';
+import { ZoomStateSync } from './ZoomStateSync';
 import { resolveZoomOptions } from '../util/zoom/ZoomOptions';
 
 export const CategoricalChart = forwardRef<SVGSVGElement, CartesianChartProps>((props: CartesianChartProps, ref) => {
@@ -51,7 +52,12 @@ export const CategoricalChart = forwardRef<SVGSVGElement, CartesianChartProps>((
       <RootSurface otherAttributes={attrs} title={title} desc={desc} ref={ref}>
         <ClipPathProvider>{children}</ClipPathProvider>
       </RootSurface>
-      {zoomOptions != null && <ZoomController options={zoomOptions} />}
+      {zoomOptions != null && (
+        <>
+          <ZoomController options={zoomOptions} />
+          <ZoomStateSync options={zoomOptions} />
+        </>
+      )}
     </RechartsWrapper>
   );
 });
