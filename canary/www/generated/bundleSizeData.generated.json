@@ -1,21 +1,21 @@
 {
   "treemap": {
     "examplePath": "www/src/views/IndexView/IndexLineChart.tsx",
-    "totalSize": 808250,
-    "totalSizeLabel": "789.31 KB",
+    "totalSize": 808103,
+    "totalSizeLabel": "789.16 KB",
     "moduleCount": 320,
-    "generatedAt": "2026-06-05T14:24:17.919Z",
+    "generatedAt": "2026-06-06T10:08:05.789Z",
     "stages": [
       {
         "stage": "es6-folder",
-        "bytes": 1270584,
+        "bytes": 1270439,
         "humanReadableSize": "1.21 MB",
         "reductionFromBaselinePercent": 0
       },
       {
         "stage": "tree-shaken",
-        "bytes": 811768,
-        "humanReadableSize": "792.74 KB",
+        "bytes": 811621,
+        "humanReadableSize": "792.60 KB",
         "reductionFromBaselinePercent": 0
       },
       {
@@ -34,12 +34,12 @@
     "tree": {
       "name": "bundle",
       "fullPath": "bundle",
-      "value": 808250,
+      "value": 808103,
       "children": [
         {
           "name": "src",
           "fullPath": "src",
-          "value": 446704,
+          "value": 446557,
           "children": [
             {
               "name": "state",
@@ -727,7 +727,7 @@
             {
               "name": "animation",
               "fullPath": "src/animation",
-              "value": 27438,
+              "value": 27291,
               "children": [
                 {
                   "name": "matchBy.ts",
@@ -752,7 +752,7 @@
                 {
                   "name": "AnimatedItems.tsx",
                   "fullPath": "src/animation/AnimatedItems.tsx",
-                  "value": 3865
+                  "value": 3718
                 },
                 {
                   "name": "AnimationManager.ts",
@@ -2292,21 +2292,21 @@
   },
   "sunburst": {
     "examplePath": "www/src/views/IndexView/IndexLineChart.tsx",
-    "totalSize": 808250,
-    "totalSizeLabel": "789.31 KB",
+    "totalSize": 808103,
+    "totalSizeLabel": "789.16 KB",
     "moduleCount": 320,
-    "generatedAt": "2026-06-05T14:24:19.819Z",
+    "generatedAt": "2026-06-06T10:08:03.708Z",
     "stages": [
       {
         "stage": "es6-folder",
-        "bytes": 1270584,
+        "bytes": 1270439,
         "humanReadableSize": "1.21 MB",
         "reductionFromBaselinePercent": 0
       },
       {
         "stage": "tree-shaken",
-        "bytes": 811768,
-        "humanReadableSize": "792.74 KB",
+        "bytes": 811621,
+        "humanReadableSize": "792.60 KB",
         "reductionFromBaselinePercent": 0
       },
       {
@@ -2325,12 +2325,12 @@
     "tree": {
       "name": "bundle",
       "fullPath": "bundle",
-      "value": 808250,
+      "value": 808103,
       "children": [
         {
           "name": "src",
           "fullPath": "src",
-          "value": 446704,
+          "value": 446557,
           "children": [
             {
               "name": "state",
@@ -3018,7 +3018,7 @@
             {
               "name": "animation",
               "fullPath": "src/animation",
-              "value": 27438,
+              "value": 27291,
               "children": [
                 {
                   "name": "matchBy.ts",
@@ -3043,7 +3043,7 @@
                 {
                   "name": "AnimatedItems.tsx",
                   "fullPath": "src/animation/AnimatedItems.tsx",
-                  "value": 3865
+                  "value": 3718
                 },
                 {
                   "name": "AnimationManager.ts",
