@@ -1,6 +1,6 @@
 version: 2
 updates:
-  # Enable version updates for npm
+  # Enable version updates for npm - production dependencies
   - package-ecosystem: 'npm'
     # Look for `package.json` and `lock` files in the `root` directory
     # With npm workspaces, all dependencies (including workspace packages) are managed from the root
@@ -8,10 +8,12 @@ updates:
     # Check the npm registry for updates every day
     schedule:
       interval: 'daily'
-    # ignore all major version updates of production dependencies. Allow whatever updates for dev dependencies
+    # Only allow production dependency updates
+    allow:
+      - dependency-type: 'production'
+    # ignore all major version updates of production dependencies
     ignore:
-      - dependency-name: 'production'
-        update-types: ['version-update:semver-major']
+      - update-types: ['version-update:semver-major']
     versioning-strategy: auto
     # add the 'dependencies' label to PRs
     labels:
@@ -50,3 +52,16 @@ updates:
         patterns:
           - 'react-router'
           - 'react-router-dom'
+
+  # Enable version updates for npm - development dependencies
+  - package-ecosystem: 'npm'
+    directory: '/'
+    schedule:
+      interval: 'daily'
+    # Only allow development dependency updates
+    allow:
+      - dependency-type: 'development'
+    versioning-strategy: auto
+    labels:
+      - 'dependencies'
+    open-pull-requests-limit: 10
