@@ -16,6 +16,7 @@ import { installWheelGesture } from './zoom/wheelGesture';
 import { installPointerGesture } from './zoom/pointerGesture';
 import { installDoubleClickGesture } from './zoom/doubleClickGesture';
 import { installKeyboardGesture } from './zoom/keyboardGesture';
+import { installAxisGesture } from './zoom/axisGesture';
 
 type ZoomControllerProps = {
   options: ResolvedZoomOptions;
@@ -90,6 +91,27 @@ export function ZoomController({ options }: ZoomControllerProps) {
           y: Math.min(Math.max(clientY - rect.top, o.top), o.top + o.height),
         };
       },
+      pointerRegion: (clientX, clientY) => {
+        const o = live.current.offset;
+        if (o == null) {
+          return 'outside';
+        }
+        const rect = element.getBoundingClientRect();
+        const px = clientX - rect.left;
+        const py = clientY - rect.top;
+        const inX = px >= o.left && px <= o.left + o.width;
+        const inY = py >= o.top && py <= o.top + o.height;
+        if (inX && inY) {
+          return 'plot';
+        }
+        if (inX) {
+          return 'xAxis';
+        }
+        if (inY) {
+          return 'yAxis';
+        }
+        return 'outside';
+      },
       zoomBy: (dimension, factor, plotFocus) => {
         const z = live.current.zoom;
         if (z != null) {
@@ -123,6 +145,7 @@ export function ZoomController({ options }: ZoomControllerProps) {
       installPointerGesture(api),
       installDoubleClickGesture(api),
       installKeyboardGesture(api),
+      installAxisGesture(api),
     ];
     return () => cleanups.forEach(cleanup => cleanup());
   }, [api, isPanorama]);

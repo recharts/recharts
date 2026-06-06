@@ -48,6 +48,7 @@ Most time-series charts only want horizontal zoom. Pass the axis as a shorthand 
 | --- | --- |
 | Mouse wheel / trackpad scroll | Zoom in and out, centred on the pointer |
 | Drag | Pan the visible window |
+| Wheel / drag **on an axis** | Zoom / pan just that axis |
 | <kbd>Shift</kbd> + drag | Rubber-band a region to zoom into (when `dragToZoom` is on) |
 | Double-click | Reset to the full view |
 | <kbd>+</kbd> / <kbd>-</kbd> (chart focused) | Zoom in / out |
@@ -68,6 +69,7 @@ wheel-only chart. When `pan` is off, a plain drag does the region zoom (no modif
 | `wheel` | `boolean` | `true` | Wheel / trackpad to zoom |
 | `wheelStep` | `number` | `1.15` | Zoom factor per wheel notch (larger = faster/coarser) |
 | `pan` | `boolean` | `true` | Drag to pan |
+| `axisInteractions` | `boolean` | `true` | Wheel / drag on an axis band zooms / pans only that axis |
 | `dragToZoom` | `boolean` | `true` | <kbd>Shift</kbd> + drag to select a region to zoom into (plain drag when `pan` is off) |
 | `doubleClickReset` | `boolean` | `true` | Double-click resets to the full view |
 | `keyboard` | `boolean` | `true` | Keyboard zoom/pan when focused (`+`/`-`, <kbd>Shift</kbd>+arrows, `0`) |
@@ -153,10 +155,9 @@ byte-for-byte as it does today.
 ## Roadmap
 
 Done (cartesian): wheel / drag / double-click zoom & pan, drag-to-zoom selection, **keyboard**
-controls, controlled & uncontrolled state.
+controls, **axis-handle** interactions, controlled & uncontrolled state.
 
-Planned, each as its own small PR: **axis-handle** interactions (scroll / drag on an axis to zoom
-or pan just that axis), **touch / pinch** gestures,
+Planned, each as its own small PR: **touch / pinch** gestures,
 automatic **animation** suppression while zooming, an on-canvas **minimap** and **scrollbars**,
 **brush ↔ zoom** two-way sync, and zoom for **polar** (Pie / Radar / RadialBar) and **standalone**
 (Sankey / Treemap / Sunburst) charts via an SVG transform. A **vertical brush** (`layout="vertical"`)

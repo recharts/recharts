@@ -23,8 +23,10 @@ describe('resolveZoomOptions', () => {
       wheel: true,
       wheelStep: 1.15,
       pan: true,
+      axisInteractions: true,
       dragToZoom: true,
       doubleClickReset: true,
+      keyboard: true,
     });
   });
 

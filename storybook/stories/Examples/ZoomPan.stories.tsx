@@ -19,6 +19,7 @@ type ZoomPlaygroundArgs = {
   maxZoom: number;
   wheel: boolean;
   pan: boolean;
+  axisInteractions: boolean;
   dragToZoom: boolean;
   doubleClickReset: boolean;
   keyboard: boolean;
@@ -53,6 +54,10 @@ export default {
       description: 'Zoom factor per wheel notch',
     },
     pan: { control: { type: 'boolean' }, description: 'Drag to pan' },
+    axisInteractions: {
+      control: { type: 'boolean' },
+      description: 'Wheel / drag on an axis zooms / pans just that axis',
+    },
     dragToZoom: { control: { type: 'boolean' }, description: 'Shift + drag to zoom a region' },
     doubleClickReset: { control: { type: 'boolean' }, description: 'Double-click resets the view' },
     keyboard: { control: { type: 'boolean' }, description: 'Focus the chart: +/- zoom, Shift+arrows pan, 0 reset' },
@@ -66,6 +71,7 @@ export default {
     wheel: true,
     wheelStep: 1.15,
     pan: true,
+    axisInteractions: true,
     dragToZoom: true,
     doubleClickReset: true,
     keyboard: true,
@@ -81,6 +87,7 @@ function Playground(args: ZoomPlaygroundArgs) {
     wheel: args.wheel,
     wheelStep: args.wheelStep,
     pan: args.pan,
+    axisInteractions: args.axisInteractions,
     dragToZoom: args.dragToZoom,
     doubleClickReset: args.doubleClickReset,
     keyboard: args.keyboard,

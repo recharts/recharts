@@ -37,6 +37,11 @@ type ZoomGestureOptions = {
   /** Drag to pan. @defaultValue true */
   pan?: boolean;
   /**
+   * Interactions on the axis bands around the plot: wheel over an axis zooms only that axis, drag
+   * over an axis pans only that axis. @defaultValue true
+   */
+  axisInteractions?: boolean;
+  /**
    * Drag-to-zoom a selected region. Triggered by Shift + drag (or a plain drag when `pan` is off).
    * @defaultValue true
    */
@@ -85,6 +90,7 @@ const ZOOM_DEFAULTS: Required<ZoomGestureOptions> = {
   wheel: true,
   wheelStep: 1.15,
   pan: true,
+  axisInteractions: true,
   dragToZoom: true,
   doubleClickReset: true,
   keyboard: true,

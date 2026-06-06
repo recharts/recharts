@@ -10,6 +10,10 @@ export const installWheelGesture: ZoomGestureInstaller = api => {
     if (!options.wheel) {
       return;
     }
+    // Wheeling over an axis band is handled by the axis gesture (zooms only that axis).
+    if (api.pointerRegion(event.clientX, event.clientY) !== 'plot') {
+      return;
+    }
     const fractions = api.plotFractions(event.clientX, event.clientY);
     if (fractions == null) {
       return;
