@@ -6,8 +6,8 @@ import { Area, AreaChart, Bar, BarChart, CartesianGrid, Line, LineChart, Tooltip
  *
  * Try it: scroll over the chart to zoom (centred on the pointer), drag to pan, and double-click to
  * reset. Use the Controls panel to constrain the axis, change the zoom limits, and toggle each
- * gesture. The `animate` control re-enables the per-series animation so you can feel why we disable
- * it while zooming.
+ * gesture. The `animate` control toggles the per-series mount animation; zooming/panning stays
+ * smooth either way because animation is suppressed automatically while the chart is zoomed.
  */
 
 type ChartType = 'LineChart' | 'BarChart' | 'AreaChart';
@@ -63,7 +63,7 @@ export default {
     doubleClickReset: { control: { type: 'boolean' }, description: 'Double-click resets the view' },
     keyboard: { control: { type: 'boolean' }, description: 'Focus the chart: +/- zoom, Shift+arrows pan, 0 reset' },
     touch: { control: { type: 'boolean' }, description: 'Pinch, two-finger pan, double-tap (+drag) on touch devices' },
-    animate: { control: { type: 'boolean' }, description: 'Animate the series (laggy while zooming)' },
+    animate: { control: { type: 'boolean' }, description: 'Per-series mount animation (auto-off while zoomed)' },
   },
   args: {
     chartType: 'LineChart',

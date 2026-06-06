@@ -150,17 +150,19 @@ byte-for-byte as it does today.
 
 ## Performance
 
-- For now, disable per-series animation (`isAnimationActive={false}`) on large datasets so panning
-  stays smooth. Automatic animation suppression while zooming is a planned follow-up.
+- Series animation is **automatically suppressed while the chart is zoomed/panned**, so the series
+  doesn't re-animate on every viewport change; it resumes once you reset to the full view. You don't
+  need to set `isAnimationActive={false}` yourself for smooth panning.
 - Off-screen geometry is clipped rather than recomputed. For very large datasets, data
   virtualization is out of scope for the first version.
 
 ## Roadmap
 
 Done (cartesian): wheel / drag / double-click zoom & pan, drag-to-zoom selection, **keyboard**
-controls, **axis-handle** interactions, **touch / pinch** gestures, controlled & uncontrolled state.
+controls, **axis-handle** interactions, **touch / pinch** gestures, automatic **animation**
+suppression while zooming, controlled & uncontrolled state.
 
-Planned, each as its own small PR: automatic **animation** suppression while zooming, an on-canvas
-**minimap** and **scrollbars**, **brush ↔ zoom** two-way sync, and zoom for **polar** (Pie / Radar /
-RadialBar) and **standalone** (Sankey / Treemap / Sunburst) charts via an SVG transform. A
-**vertical brush** (`layout="vertical"`) ships independently.
+Planned, each as its own small PR: an on-canvas **minimap** and **scrollbars**, **brush ↔ zoom**
+two-way sync, and zoom for **polar** (Pie / Radar / RadialBar) and **standalone** (Sankey / Treemap
+/ Sunburst) charts via an SVG transform. A **vertical brush** (`layout="vertical"`) ships
+independently.
