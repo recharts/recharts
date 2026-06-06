@@ -31,9 +31,22 @@ updates:
           - '@stryker*'
       typescript-eslint:
         patterns:
+          - 'typescript-eslint'
           - '@typescript-eslint*'
           - 'eslint-plugin-typescript*'
       playwright:
         patterns:
           - 'playwright'
           - '@playwright/experimental-ct-react'
+      vite:
+        patterns:
+          - 'vite'
+          - '@vitejs/plugin-react'
+      vitest:
+        patterns:
+          - 'vitest'
+          - '@vitest/*'
+      react-router:
+        patterns:
+          - 'react-router'
+          - 'react-router-dom'
