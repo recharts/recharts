@@ -43,7 +43,10 @@ import WaterfallExample from './WaterfallExample';
 import waterfallExampleSource from './WaterfallExample?raw';
 import BarChartRangeExample from './BarChartRangeExample';
 import barChartRangeExampleSource from './BarChartRangeExample?raw';
-import AnimatedBarTimeSeriesExample, { AnimatedBarTimeSeriesExampleControls } from './AnimatedBarTimeSeriesExample.tsx';
+import AnimatedBarTimeSeriesExample, {
+  animatedBarTimeSeriesDefaultState,
+  animatedBarTimeSeriesLevers,
+} from './AnimatedBarTimeSeriesExample.tsx';
 import AnimatedBarTimeSeriesExampleSource from './AnimatedBarTimeSeriesExample.tsx?raw';
 
 export { BarChartNavExample };
@@ -136,8 +139,10 @@ export const barChartExamples = {
   AnimatedBarTimeSeriesExample: {
     Component: AnimatedBarTimeSeriesExample,
     sourceCode: AnimatedBarTimeSeriesExampleSource,
-    Controls: AnimatedBarTimeSeriesExampleControls,
+    defaultControlsState: animatedBarTimeSeriesDefaultState,
+    levers: animatedBarTimeSeriesLevers,
     name: 'Animated Bar series',
+    description: 'Start streaming to move the window forward and compare the matching and interpolation strategies.',
     defaultTool: 'controls',
   },
   MixBarChart: {

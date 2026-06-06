@@ -1,7 +1,11 @@
-import React from 'react';
 import { Bar, BarChart, CartesianGrid, Tooltip, XAxis, YAxis } from 'recharts';
-import type { EasingInput } from 'recharts';
 import { RechartsDevtools } from '@recharts/devtools';
+import type { Lever } from '../../Shared/levers/Levers.tsx';
+import { animationBeginLever } from '../../Shared/levers/gallery/animationBeginLever.tsx';
+import { animationDurationLever } from '../../Shared/levers/gallery/animationDurationLever.tsx';
+import { animationEasingLever, AnimationEasingValue } from '../../Shared/levers/gallery/animationEasingLever.tsx';
+import { isAnimationActiveLever } from '../../Shared/levers/gallery/isAnimationActiveLever.tsx';
+import { replayAnimationLever } from '../../Shared/levers/gallery/replayAnimationLever.tsx';
 
 const data = [
   { month: 'Jan', revenue: 4200 },
@@ -14,22 +18,35 @@ const data = [
   { month: 'Aug', revenue: 8600 },
 ];
 
-type AnimationEasing = Extract<EasingInput, string>;
-
-type ControlsType = {
+type AnimationsControlsState = {
   isAnimationActive: boolean | 'auto';
   animationBegin: number;
   animationDuration: number;
-  animationEasing: AnimationEasing;
+  animationEasing: AnimationEasingValue;
   replayKey: number;
 };
 
-export default function AnimationsExample(props: Partial<ControlsType>) {
-  const isAnimationActive = props.isAnimationActive ?? 'auto';
-  const animationBegin = props.animationBegin ?? 0;
-  const animationDuration = props.animationDuration ?? 400;
-  const animationEasing = props.animationEasing ?? 'ease';
-  const replayKey = props.replayKey ?? 0;
+export const animationsDefaultState: AnimationsControlsState = {
+  isAnimationActive: 'auto',
+  animationBegin: 0,
+  animationDuration: 400,
+  animationEasing: 'ease',
+  replayKey: 0,
+};
+
+export const animationsLevers = [
+  replayAnimationLever<AnimationsControlsState>(),
+  isAnimationActiveLever<AnimationsControlsState>(),
+  animationBeginLever<AnimationsControlsState>(),
+  animationDurationLever<AnimationsControlsState>(),
+  animationEasingLever<AnimationsControlsState>(),
+] satisfies ReadonlyArray<Lever<AnimationsControlsState>>;
+
+export default function AnimationsExample(props: Partial<AnimationsControlsState>) {
+  const { isAnimationActive, animationBegin, animationDuration, animationEasing, replayKey } = {
+    ...animationsDefaultState,
+    ...props,
+  };
 
   return (
     <BarChart
@@ -53,131 +70,5 @@ export default function AnimationsExample(props: Partial<ControlsType>) {
       />
       <RechartsDevtools />
     </BarChart>
-  );
-}
-
-const easingOptions: ReadonlyArray<AnimationEasing> = [
-  'ease',
-  'ease-in',
-  'ease-out',
-  'ease-in-out',
-  'linear',
-  'spring',
-  'cubic-bezier(.32,1.75,0,.94)',
-];
-
-const defaultState: ControlsType = {
-  isAnimationActive: 'auto',
-  animationBegin: 0,
-  animationDuration: 400,
-  animationEasing: 'ease',
-  replayKey: 0,
-};
-
-export function AnimationsControls({
-  onChange,
-  sessionStoreValues,
-}: {
-  onChange: (values: ControlsType) => void;
-  sessionStoreValues: ControlsType | null;
-}) {
-  const [state, setState] = React.useState<ControlsType>(sessionStoreValues ?? defaultState);
-
-  const handleChange = (nextValues: Partial<ControlsType>) => {
-    const newState = { ...state, ...nextValues };
-    setState(newState);
-    onChange(newState);
-  };
-
-  // Emit initial state only on mount so the chart renders correctly
-  React.useEffect(() => {
-    onChange(state);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
-
-  /* eslint-disable jsx-a11y/control-has-associated-label */
-  return (
-    <form>
-      <button type="button" onClick={() => handleChange({ replayKey: state.replayKey + 1 })}>
-        ▶ Replay animation
-      </button>
-      <table>
-        <tbody>
-          <tr>
-            <td>
-              <label htmlFor="animation-active">isAnimationActive</label>
-            </td>
-            <td style={{ padding: '0 1ex' }}>
-              <select
-                id="animation-active"
-                value={String(state.isAnimationActive)}
-                onChange={e => {
-                  const raw = e.target.value;
-                  const value: boolean | 'auto' = raw === 'auto' ? 'auto' : raw === 'true';
-                  handleChange({ isAnimationActive: value });
-                }}
-              >
-                <option value="auto">auto</option>
-                <option value="true">true</option>
-                <option value="false">false</option>
-              </select>
-            </td>
-            <td>{String(state.isAnimationActive)}</td>
-          </tr>
-          <tr>
-            <td>
-              <label htmlFor="animation-begin">animationBegin (ms)</label>
-            </td>
-            <td style={{ padding: '0 1ex' }}>
-              <input
-                id="animation-begin"
-                type="range"
-                min="0"
-                max="2000"
-                step="100"
-                value={state.animationBegin}
-                onChange={e => handleChange({ animationBegin: parseInt(e.target.value, 10) })}
-              />
-            </td>
-            <td>{state.animationBegin}</td>
-          </tr>
-          <tr>
-            <td>
-              <label htmlFor="animation-duration">animationDuration (ms)</label>
-            </td>
-            <td style={{ padding: '0 1ex' }}>
-              <input
-                id="animation-duration"
-                type="range"
-                min="100"
-                max="3000"
-                step="100"
-                value={state.animationDuration}
-                onChange={e => handleChange({ animationDuration: parseInt(e.target.value, 10) })}
-              />
-            </td>
-            <td>{state.animationDuration}</td>
-          </tr>
-          <tr>
-            <td>
-              <label htmlFor="animation-easing">animationEasing</label>
-            </td>
-            <td style={{ padding: '0 1ex' }}>
-              <select
-                id="animation-easing"
-                value={state.animationEasing}
-                onChange={e => handleChange({ animationEasing: e.target.value as AnimationEasing })}
-              >
-                {easingOptions.map(option => (
-                  <option key={option} value={option}>
-                    {option}
-                  </option>
-                ))}
-              </select>
-            </td>
-          </tr>
-        </tbody>
-      </table>
-    </form>
   );
 }

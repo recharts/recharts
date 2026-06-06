@@ -5,7 +5,8 @@ import specifiedDomainRadarChartSource from './SpecifiedDomainRadarChart?raw';
 import { ChartExample } from '../types.ts';
 import RadarChartNavExample from './RadarChartNavExample';
 import RangeRadarChartCustomAnimation, {
-  RangeRadarChartCustomAnimationControls,
+  rangeRadarChartCustomAnimationDefaultState,
+  rangeRadarChartCustomAnimationLevers,
 } from './RangeRadarChartCustomAnimation';
 import rangeRadarChartCustomAnimationSource from './RangeRadarChartCustomAnimation?raw';
 
@@ -25,7 +26,8 @@ export const radarChartExamples = {
   RangeRadarChartCustomAnimation: {
     Component: RangeRadarChartCustomAnimation,
     sourceCode: rangeRadarChartCustomAnimationSource,
-    Controls: RangeRadarChartCustomAnimationControls,
+    defaultControlsState: rangeRadarChartCustomAnimationDefaultState,
+    levers: rangeRadarChartCustomAnimationLevers,
     name: 'Range Radar Custom Animation',
     description:
       'Uses range data ([low, high]) so the radar polygon has an internal baseline. Swap datasets with animationInterpolateFn enabled to compare the point animation with the baseline animation.',

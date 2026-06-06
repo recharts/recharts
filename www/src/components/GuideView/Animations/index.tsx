@@ -1,24 +1,31 @@
 import { CodeEditorWithPreview } from '../../CodeEditorWithPreview.tsx';
 import { LinkToApi } from '../../Shared/LinkToApi.tsx';
 import styles from '../guideTable.module.css';
-import AnimationsExample, { AnimationsControls } from './AnimationsExample.tsx';
+import AnimationsExample, { animationsDefaultState, animationsLevers } from './AnimationsExample.tsx';
 import AnimationsExampleSource from './AnimationsExample.tsx?raw';
 import AnimatedTimeSeriesExample, {
-  AnimatedTimeSeriesExampleControls,
+  animatedTimeSeriesDefaultState,
+  animatedTimeSeriesLevers,
 } from '../../../docs/exampleComponents/LineChart/AnimatedTimeSeriesExample.tsx';
 import MatchingExampleSource from '../../../docs/exampleComponents/LineChart/AnimatedTimeSeriesExample.tsx?raw';
-import MatchingStrategiesExample, { MatchingStrategiesControls } from './MatchingStrategiesExample.tsx';
+import MatchingStrategiesExample, {
+  matchingStrategiesDefaultState,
+  matchingStrategiesLevers,
+} from './MatchingStrategiesExample.tsx';
 import MatchingStrategiesExampleSource from './MatchingStrategiesExample.tsx?raw';
 import CustomAnimationExample, {
-  CustomAnimationControls,
+  customAnimationDefaultState,
+  customAnimationLevers,
 } from '../../../docs/exampleComponents/ScatterChart/CustomAnimationExample.tsx';
 import CustomAnimationExampleSource from '../../../docs/exampleComponents/ScatterChart/CustomAnimationExample.tsx?raw';
 import AreaChartCustomAnimationExample, {
-  AreaChartCustomAnimationControls,
+  areaChartCustomAnimationDefaultState,
+  areaChartCustomAnimationLevers,
 } from '../../../docs/exampleComponents/AreaChart/AreaChartCustomAnimationExample';
 import AreaChartCustomAnimationExampleSource from '../../../docs/exampleComponents/AreaChart/AreaChartCustomAnimationExample/index.tsx?raw';
 import LineChartCustomShapeExample, {
-  LineChartCustomShapeControls,
+  lineChartCustomShapeDefaultState,
+  lineChartCustomShapeLevers,
 } from '../../../docs/exampleComponents/LineChart/LineChartCustomShapeExample';
 import LineChartCustomShapeExampleSource from '../../../docs/exampleComponents/LineChart/LineChartCustomShapeExample/index.tsx?raw';
 import { RechartsLink } from '../../Shared/RechartsLink.tsx';
@@ -187,7 +194,8 @@ export function AnimationsGuide() {
       </p>
       <CodeEditorWithPreview
         Component={AnimationsExample}
-        Controls={AnimationsControls}
+        defaultControlsState={animationsDefaultState}
+        levers={animationsLevers}
         sourceCode={AnimationsExampleSource}
         stackBlitzTitle="Recharts Animations Example"
         defaultTool="controls"
@@ -307,7 +315,8 @@ export function AnimationsGuide() {
       </p>
       <CodeEditorWithPreview
         Component={AnimatedTimeSeriesExample}
-        Controls={AnimatedTimeSeriesExampleControls}
+        defaultControlsState={animatedTimeSeriesDefaultState}
+        levers={animatedTimeSeriesLevers}
         sourceCode={MatchingExampleSource}
         stackBlitzTitle="Recharts Animation Matching Example"
         defaultTool="controls"
@@ -328,10 +337,15 @@ export function AnimationsGuide() {
           the first 5 match directly and the remaining 10 animate in as new elements.
         </li>
       </ul>
-      <p>Swap between the 5-item and 15-item datasets below to see the difference:</p>
+      <p>
+        Swap between a 5-item and a 15-item dataset and compare: <strong>matchByIndex</strong> stretches old points
+        across the new range, while <strong>matchAppend</strong> keeps existing points in place and new points animate
+        in from the edge:
+      </p>
       <CodeEditorWithPreview
         Component={MatchingStrategiesExample}
-        Controls={MatchingStrategiesControls}
+        defaultControlsState={matchingStrategiesDefaultState}
+        levers={matchingStrategiesLevers}
         sourceCode={MatchingStrategiesExampleSource}
         stackBlitzTitle="Recharts Matching Strategies Example"
         defaultTool="controls"
@@ -389,7 +403,8 @@ export function AnimationsGuide() {
       </p>
       <CodeEditorWithPreview
         Component={CustomAnimationExample}
-        Controls={CustomAnimationControls}
+        defaultControlsState={customAnimationDefaultState}
+        levers={customAnimationLevers}
         sourceCode={CustomAnimationExampleSource}
         stackBlitzTitle="Recharts Custom Animation Example"
         defaultTool="controls"
@@ -530,7 +545,8 @@ export function AnimationsGuide() {
       </p>
       <CodeEditorWithPreview
         Component={AreaChartCustomAnimationExample}
-        Controls={AreaChartCustomAnimationControls}
+        defaultControlsState={areaChartCustomAnimationDefaultState}
+        levers={areaChartCustomAnimationLevers}
         sourceCode={AreaChartCustomAnimationExampleSource}
         stackBlitzTitle="Recharts Area Custom Animation Example"
         defaultTool="controls"
@@ -546,7 +562,8 @@ export function AnimationsGuide() {
       </p>
       <CodeEditorWithPreview
         Component={LineChartCustomShapeExample}
-        Controls={LineChartCustomShapeControls}
+        defaultControlsState={lineChartCustomShapeDefaultState}
+        levers={lineChartCustomShapeLevers}
         sourceCode={LineChartCustomShapeExampleSource}
         stackBlitzTitle="Recharts Line Custom Shape Example"
         defaultTool="controls"

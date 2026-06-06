@@ -39,7 +39,8 @@ function ExamplesViewImpl({ params }: ExamplesViewImplProps) {
                 key={page}
                 Component={exampleResult.Component}
                 sourceCode={exampleResult.sourceCode}
-                Controls={exampleResult.Controls}
+                defaultControlsState={exampleResult.defaultControlsState}
+                levers={exampleResult.levers}
                 defaultTool={exampleResult.defaultTool}
                 stackBlitzTitle={`Recharts example: ${exampleResult.name}`}
                 analyticsLabel={page}

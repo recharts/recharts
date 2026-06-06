@@ -173,7 +173,8 @@ function ApiExamples({ examples, componentName }: ApiExamplesProps) {
                 <CodeEditorWithPreview
                   Component={example.Component}
                   sourceCode={example.sourceCode}
-                  Controls={example.Controls}
+                  defaultControlsState={example.defaultControlsState}
+                  levers={example.levers}
                   stackBlitzTitle={`Recharts API example: ${componentName} - ${example.name || `Example ${i + 1}`}`}
                   analyticsLabel={`${componentName}-api-example-${i}`}
                   defaultTool={example.defaultTool}

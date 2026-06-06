@@ -1,19 +1,17 @@
-import React, { useState, useCallback, useId } from 'react';
 import { generateMockData, RechartsDevtools } from '@recharts/devtools';
 import { Scatter, ScatterChart, CartesianGrid, XAxis, YAxis, Tooltip, ZAxis, CartesianLayout } from 'recharts';
 import type { AnimationInterpolateFn, ScatterPointItem } from 'recharts';
+import type { Lever } from '../../../components/Shared/levers/Levers.tsx';
+import { createSelectLever } from '../../../components/Shared/levers/Levers.tsx';
+import { animationDurationLever } from '../../../components/Shared/levers/gallery/animationDurationLever.tsx';
+import { replayAnimationLever } from '../../../components/Shared/levers/gallery/replayAnimationLever.tsx';
+import { swapDataSetLever } from '../../../components/Shared/levers/gallery/swapDataLever.tsx';
 
-// Two distinct datasets to swap between
 const dataA = generateMockData(10, 42);
 const dataB = generateMockData(10, 99);
 
-// Extended type to support opacity and size modifications in custom animations
 type AnimatedScatterPoint = ScatterPointItem & { opacity?: number };
 
-/**
- * Crossfade: previous points fade out while new points fade in.
- * Returns both sets combined — prev with decreasing opacity, next with increasing.
- */
 const crossfade: AnimationInterpolateFn<ScatterPointItem, CartesianLayout> = (items, animationElapsedTime) => {
   if (items == null) return [];
   if (animationElapsedTime === 1) return items.flatMap(item => (item.status === 'removed' ? [] : [item.next]));
@@ -31,9 +29,6 @@ const crossfade: AnimationInterpolateFn<ScatterPointItem, CartesianLayout> = (it
   return result;
 };
 
-/**
- * Staggered crossfade: points fade out and in one by one in a wave.
- */
 const staggeredCrossfade: AnimationInterpolateFn<ScatterPointItem, CartesianLayout> = (items, animationElapsedTime) => {
   if (items == null) return [];
   if (animationElapsedTime === 1) return items.flatMap(item => (item.status === 'removed' ? [] : [item.next]));
@@ -55,9 +50,6 @@ const staggeredCrossfade: AnimationInterpolateFn<ScatterPointItem, CartesianLayo
   return result;
 };
 
-/**
- * Pop crossfade: old points shrink and fade out, new points grow and fade in.
- */
 const popCrossfade: AnimationInterpolateFn<ScatterPointItem, CartesianLayout> = (items, animationElapsedTime) => {
   if (items == null) return [];
   if (animationElapsedTime === 1) return items.flatMap(item => (item.status === 'removed' ? [] : [item.next]));
@@ -95,14 +87,36 @@ type ControlsType = {
   animationStyle: AnimationStyle;
   animationDuration: number;
   replayKey: number;
-  useDataA: boolean;
+  dataSet: 'a' | 'b';
 };
 
+export const customAnimationDefaultState: ControlsType = {
+  animationStyle: 'crossfade',
+  animationDuration: 1500,
+  replayKey: 0,
+  dataSet: 'a',
+};
+
+export const customAnimationLevers = [
+  replayAnimationLever<ControlsType>({
+    buttonLabel: '▶ Replay initial animation',
+  }),
+  swapDataSetLever<ControlsType>(),
+  createSelectLever<ControlsType, AnimationStyle>({
+    key: 'animationStyle',
+    label: 'Animation style',
+    options: Object.entries(animationOptions).map(([value, option]) => ({
+      value: value as AnimationStyle,
+      label: option.label,
+    })),
+    getValue: state => state.animationStyle,
+    onChange: (animationStyle, state) => ({ ...state, animationStyle }),
+  }),
+  animationDurationLever<ControlsType>(),
+] satisfies ReadonlyArray<Lever<ControlsType>>;
+
 export default function CustomAnimationExample(props: Partial<ControlsType>) {
-  const animationStyle = props.animationStyle ?? 'crossfade';
-  const animationDuration = props.animationDuration ?? 1500;
-  const replayKey = props.replayKey ?? 0;
-  const useDataA = props.useDataA ?? true;
+  const { animationStyle, animationDuration, replayKey, dataSet } = { ...customAnimationDefaultState, ...props };
 
   const animationInterpolateFn = animationOptions[animationStyle].fn;
 
@@ -120,7 +134,7 @@ export default function CustomAnimationExample(props: Partial<ControlsType>) {
       <Tooltip cursor={{ strokeDasharray: '3 3' }} />
       <Scatter
         name="Data"
-        data={useDataA ? dataA : dataB}
+        data={dataSet === 'a' ? dataA : dataB}
         fill="#8884d8"
         fillOpacity={0.85}
         animationDuration={animationDuration}
@@ -128,83 +142,5 @@ export default function CustomAnimationExample(props: Partial<ControlsType>) {
       />
       <RechartsDevtools />
     </ScatterChart>
-  );
-}
-
-export function CustomAnimationControls({ onChange }: { onChange: (values: ControlsType) => void }) {
-  const [state, setState] = useState<ControlsType>({
-    animationStyle: 'crossfade',
-    animationDuration: 1500,
-    replayKey: 0,
-    useDataA: true,
-  });
-
-  const handleChange = useCallback(
-    (next: Partial<ControlsType>) => {
-      const newState = { ...state, ...next };
-      setState(newState);
-      onChange(newState);
-    },
-    [state, onChange],
-  );
-
-  React.useEffect(() => {
-    onChange(state);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
-
-  const animationStyleId = useId();
-  const animationDurationId = useId();
-
-  return (
-    <form>
-      <button type="button" onClick={() => handleChange({ replayKey: state.replayKey + 1 })}>
-        ▶ Replay initial animation
-      </button>
-      <br />
-      <button type="button" onClick={() => handleChange({ useDataA: !state.useDataA })}>
-        ⇄ Swap dataset ({state.useDataA ? 'A → B' : 'B → A'})
-      </button>
-      <table>
-        <tbody>
-          <tr>
-            <td>
-              <label htmlFor={animationStyleId}>Animation style</label>
-            </td>
-            <td style={{ padding: '0 1ex' }}>
-              <select
-                id={animationStyleId}
-                value={state.animationStyle}
-                onChange={e => handleChange({ animationStyle: e.target.value as AnimationStyle })}
-              >
-                {Object.entries(animationOptions).map(([key, { label }]) => (
-                  <option key={key} value={key}>
-                    {label}
-                  </option>
-                ))}
-              </select>
-            </td>
-          </tr>
-          <tr>
-            <td>
-              <label htmlFor={animationDurationId}>Duration (ms)</label>
-            </td>
-            {/* eslint-disable-next-line jsx-a11y/control-has-associated-label */}
-            <td style={{ padding: '0 1ex' }}>
-              <input
-                id={animationDurationId}
-                type="range"
-                min="300"
-                max="3000"
-                step="100"
-                value={state.animationDuration}
-                onChange={e => handleChange({ animationDuration: parseInt(e.target.value, 10) })}
-              />
-            </td>
-            <td>{state.animationDuration}</td>
-          </tr>
-        </tbody>
-      </table>
-    </form>
   );
 }

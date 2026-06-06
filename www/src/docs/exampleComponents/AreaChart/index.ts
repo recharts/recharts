@@ -22,9 +22,15 @@ import AreaChartExample from './AreaChartExample';
 import areaChartExampleSource from './AreaChartExample?raw';
 import AreaChartRangeExample from './AreaChartRangeExample';
 import areaChartRangeExampleSource from './AreaChartRangeExample?raw';
-import AreaChartCustomAnimationExample, { AreaChartCustomAnimationControls } from './AreaChartCustomAnimationExample';
+import AreaChartCustomAnimationExample, {
+  areaChartCustomAnimationDefaultState,
+  areaChartCustomAnimationLevers,
+} from './AreaChartCustomAnimationExample';
 import AreaChartCustomAnimationExampleSource from './AreaChartCustomAnimationExample/index.tsx?raw';
-import RangeAreaChartCustomAnimation, { RangeAreaChartCustomAnimationControls } from './RangeAreaChartCustomAnimation';
+import RangeAreaChartCustomAnimation, {
+  rangeAreaChartCustomAnimationDefaultState,
+  rangeAreaChartCustomAnimationLevers,
+} from './RangeAreaChartCustomAnimation';
 import rangeAreaChartCustomAnimationSource from './RangeAreaChartCustomAnimation?raw';
 
 export { AreaChartNavExample };
@@ -78,14 +84,18 @@ export const areaChartExamples = {
   AreaChartCustomAnimation: {
     Component: AreaChartCustomAnimationExample,
     sourceCode: AreaChartCustomAnimationExampleSource,
-    Controls: AreaChartCustomAnimationControls,
+    defaultControlsState: areaChartCustomAnimationDefaultState,
+    levers: areaChartCustomAnimationLevers,
     name: 'Custom Animation Example',
+    description:
+      'Disable the custom shape to see the default clip-path reveal hide most of the grow-from-bottom interpolation.',
     defaultTool: 'controls',
   },
   RangeAreaChartCustomAnimation: {
     Component: RangeAreaChartCustomAnimation,
     sourceCode: rangeAreaChartCustomAnimationSource,
-    Controls: RangeAreaChartCustomAnimationControls,
+    defaultControlsState: rangeAreaChartCustomAnimationDefaultState,
+    levers: rangeAreaChartCustomAnimationLevers,
     name: 'Range Area Custom Animation',
     description:
       'Uses range data ([low, high]) so the area has an internal baseline path. Swap datasets with animationInterpolateFn enabled to compare the point animation with the baseline animation.',

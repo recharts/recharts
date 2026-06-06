@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useId, useState } from 'react';
+import { useId } from 'react';
 import type { AnimationInterpolateFn, AreaPointItem, AreaRevealShapeProps, CartesianLayout } from 'recharts';
 import {
   Area,
@@ -12,6 +12,11 @@ import {
   XAxis,
   YAxis,
 } from 'recharts';
+import type { Lever } from '../../../components/Shared/levers/Levers.tsx';
+import { createSelectLever } from '../../../components/Shared/levers/Levers.tsx';
+import { animationDurationLever } from '../../../components/Shared/levers/gallery/animationDurationLever.tsx';
+import { replayAnimationLever } from '../../../components/Shared/levers/gallery/replayAnimationLever.tsx';
+import { swapDataSetLever } from '../../../components/Shared/levers/gallery/swapDataLever.tsx';
 
 const animationOptions = {
   leftToRight: { label: 'Left to right (default)' },
@@ -24,14 +29,14 @@ type ControlsType = {
   animationStyle: AnimationStyle;
   animationDuration: number;
   replayKey: number;
-  useDataA: boolean;
+  dataSet: 'a' | 'b';
 };
 
-const initialState: ControlsType = {
+export const rangeAreaChartCustomAnimationDefaultState: ControlsType = {
   animationStyle: 'topToBottom',
   animationDuration: 1600,
   replayKey: 0,
-  useDataA: true,
+  dataSet: 'a',
 };
 
 type MyDataType = {
@@ -76,7 +81,8 @@ function useAnimateFromPlotBottom(): AnimationInterpolateFn<AreaPointItem, Carte
 
       /*
        * For demonstration here we always animate from the top, and we ignore the previous position (item.prev.y)
-       * which creates a visual jank when swapping datasets.
+       * and so the chart always looks like a new animation, there is no continuity.
+       * Here it depends on what exactly is your goal;
        * Customize your animations the way you want!
        */
       return [{ ...item.next, y: interpolate(top, item.next.y, animationElapsedTime) }];
@@ -99,9 +105,25 @@ function CustomAnimationArea(
   return <Area animationInterpolateFn={animationInterpolateFn} shape={shape} {...props} />;
 }
 
+export const rangeAreaChartCustomAnimationLevers = [
+  replayAnimationLever<ControlsType>(),
+  swapDataSetLever<ControlsType>(),
+  createSelectLever<ControlsType, AnimationStyle>({
+    key: 'animationInterpolateFn',
+    label: 'animationInterpolateFn',
+    options: Object.entries(animationOptions).map(([value, option]) => ({
+      value: value as AnimationStyle,
+      label: option.label,
+    })),
+    getValue: state => state.animationStyle,
+    onChange: (animationStyle, state) => ({ ...state, animationStyle }),
+  }),
+  animationDurationLever<ControlsType>(),
+] satisfies ReadonlyArray<Lever<ControlsType>>;
+
 export default function RangeAreaChartCustomAnimation(props: Partial<ControlsType>) {
-  const { animationStyle, animationDuration, replayKey, useDataA } = {
-    ...initialState,
+  const { animationStyle, animationDuration, replayKey, dataSet } = {
+    ...rangeAreaChartCustomAnimationDefaultState,
     ...props,
   };
   const gradientId1 = useId();
@@ -111,7 +133,7 @@ export default function RangeAreaChartCustomAnimation(props: Partial<ControlsTyp
       key={replayKey}
       style={{ width: '100%', maxWidth: 700, aspectRatio: 1.618 }}
       responsive
-      data={useDataA ? dataA : dataB}
+      data={dataSet === 'a' ? dataA : dataB}
       margin={{ top: 10, right: 16, left: 0, bottom: 0 }}
     >
       <defs>
@@ -152,80 +174,5 @@ export default function RangeAreaChartCustomAnimation(props: Partial<ControlsTyp
         animationStyle={animationStyle}
       />
     </AreaChart>
-  );
-}
-
-export function RangeAreaChartCustomAnimationControls({ onChange }: { onChange: (values: ControlsType) => void }) {
-  const [state, setState] = useState<ControlsType>(initialState);
-  const animationStyleId = useId();
-  const animationDurationId = useId();
-
-  const handleChange = useCallback(
-    (next: Partial<ControlsType>) => {
-      const newState = { ...state, ...next };
-      setState(newState);
-      onChange(newState);
-    },
-    [state, onChange],
-  );
-
-  useEffect(() => {
-    onChange(state);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
-
-  return (
-    <form>
-      <p>
-        <button type="button" onClick={() => handleChange({ replayKey: state.replayKey + 1 })}>
-          ▶ Replay initial animation
-        </button>
-      </p>
-      <p>
-        <button type="button" onClick={() => handleChange({ useDataA: !state.useDataA })}>
-          ⇄ Swap dataset ({state.useDataA ? 'A -> B' : 'B -> A'})
-        </button>
-      </p>
-      <table>
-        <tbody>
-          <tr>
-            <td>
-              <label htmlFor={animationStyleId}>Animation style</label>
-            </td>
-            <td style={{ padding: '0 1ex' }}>
-              <select
-                id={animationStyleId}
-                value={state.animationStyle}
-                onChange={e => handleChange({ animationStyle: e.target.value as AnimationStyle })}
-              >
-                {Object.entries(animationOptions).map(([key, { label }]) => (
-                  <option key={key} value={key}>
-                    {label}
-                  </option>
-                ))}
-              </select>
-            </td>
-          </tr>
-          <tr>
-            <td>
-              <label htmlFor={animationDurationId}>animationDuration</label>
-            </td>
-            <td style={{ padding: '0 1ex' }}>
-              <input
-                id={animationDurationId}
-                aria-label="animationDuration"
-                type="range"
-                min="300"
-                max="3000"
-                step="100"
-                value={state.animationDuration}
-                onChange={e => handleChange({ animationDuration: parseInt(e.target.value, 10) })}
-              />
-            </td>
-            <td>{state.animationDuration}ms</td>
-          </tr>
-        </tbody>
-      </table>
-    </form>
   );
 }

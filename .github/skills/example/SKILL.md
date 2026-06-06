@@ -59,24 +59,65 @@ import PieChartDefaultIndex from './PieChartDefaultIndex.tsx';
 import PieChartDefaultIndexSource from './PieChartDefaultIndex.tsx?raw';
 
 // code omitted for clarity ...
-      <CodeEditorWithPreview
-        Component={PieChartDefaultIndex}
-        sourceCode={PieChartDefaultIndexSource}
-        stackBlitzTitle="Recharts PieChart Default Index Example"
-      />
+<CodeEditorWithPreview
+  Component={PieChartDefaultIndex}
+  sourceCode={PieChartDefaultIndexSource}
+  stackBlitzTitle="Recharts PieChart Default Index Example"
+/>;
 ```
 
-# Controls (optional)
+# Controls / levers (optional)
 
 Controls are a feature of the `CodeEditorWithPreview` component that allows you to change the props of the example component dynamically. This is useful for demonstrating how different props affect the chart.
 
-To add controls to an example, you define and export a new component in your example file. This component renders a form and accepts a single prop: `onChange`. This `onChange` function is provided by `CodeEditorWithPreview` and is used to update the props of the example component when the form values change. It is expected that the example will accept object that was provided as the first argument of `onChange` as props.
+The preferred implementation is **not** to export a separate `Controls` component. Instead, export:
 
-Then, provide the controls component as `Controls` prop to `CodeEditorWithPreview`.
+- `defaultControlsState` - the initial serializable state object
+- `levers` - an array of lever definitions
 
-To see a real example of how to implement controls, check out `www/src/components/GuideView/BarAlign/CustomBandScaleExample.tsx` file.
+The example component should accept that state object as props (usually `Partial<T>` merged with the defaults inside the example).
 
-Controls are optional, and not every example needs to have them.
+Typical shape:
+
+```tsx
+import type { Lever } from '../../Shared/levers/Levers.tsx';
+import { animationDurationLever } from '../../Shared/levers/gallery/animationDurationLever.tsx';
+import { replayAnimationLever } from '../../Shared/levers/gallery/replayAnimationLever.tsx';
+
+type ControlsState = {
+  animationDuration: number;
+  replayKey: number;
+};
+
+export const defaultControlsState: ControlsState = {
+  animationDuration: 600,
+  replayKey: 0,
+};
+
+export const levers = [
+  replayAnimationLever<ControlsState>(),
+  animationDurationLever<ControlsState>(),
+] satisfies ReadonlyArray<Lever<ControlsState>>;
+```
+
+Then pass them to `CodeEditorWithPreview`:
+
+```tsx
+<CodeEditorWithPreview
+  Component={MyExample}
+  sourceCode={MyExampleSource}
+  defaultControlsState={defaultControlsState}
+  levers={levers}
+  stackBlitzTitle="Recharts example"
+  defaultTool="controls"
+/>
+```
+
+Prefer the predefined gallery levers in `www/src/components/Shared/levers/gallery/` when possible. If a control is likely to be reused by multiple examples, add it to the gallery instead of creating ad-hoc UI in one file.
+
+Keep control state **serializable**. Store simple keys such as `'index' | 'append'` or `'a' | 'b'`, then map those values to runtime functions or datasets inside the example component.
+
+Levers are optional, and not every example needs to have them.
 
 # Visual Regression Testing
 

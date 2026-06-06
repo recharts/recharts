@@ -1,31 +1,31 @@
-import React, { useState, useCallback, useId } from 'react';
 import { generateMockData, RechartsDevtools } from '@recharts/devtools';
+import type { AnimationMatchByProp, LinePointItem } from 'recharts';
 import {
+  Area,
   AreaPointItem,
-  Line,
+  Bar,
+  BarRectangleItem,
   CartesianGrid,
+  ComposedChart,
+  Line,
+  matchAppend,
+  matchByIndex,
+  Scatter,
+  ScatterPointItem,
+  Tooltip,
   XAxis,
   YAxis,
-  Tooltip,
-  matchByIndex,
-  matchAppend,
-  Area,
-  ComposedChart,
-  Bar,
-  Scatter,
-  BarRectangleItem,
-  ScatterPointItem,
 } from 'recharts';
-import type { AnimationMatchByProp, LinePointItem } from 'recharts';
+import type { Lever } from '../../Shared/levers/Levers.tsx';
+import { animationMatchByLever, AnimationMatchByValue } from '../../Shared/levers/gallery/animationMatchByLever.tsx';
+import { swapDataSetLever } from '../../Shared/levers/gallery/swapDataLever.tsx';
 
 const dataSmall = generateMockData(5, 42);
 const dataLarge = generateMockData(15, 99);
 
-type MatchStrategy = 'index' | 'append';
-
-type ControlsType = {
-  matchStrategy: MatchStrategy;
-  useLargeData: boolean;
+type MatchingStrategiesControlsState = {
+  animationMatchBy: AnimationMatchByValue;
+  dataSet: 'a' | 'b';
 };
 
 /*
@@ -33,7 +33,24 @@ type ControlsType = {
  */
 type AcceptedAnimationItems = AreaPointItem | BarRectangleItem | LinePointItem | ScatterPointItem;
 
-function getMatchProp(strategy: MatchStrategy): AnimationMatchByProp<AcceptedAnimationItems> {
+export const matchingStrategiesDefaultState: MatchingStrategiesControlsState = {
+  animationMatchBy: 'index',
+  dataSet: 'a',
+};
+
+export const matchingStrategiesLevers = [
+  swapDataSetLever<MatchingStrategiesControlsState>({
+    buttonLabel: state => `⇄ Swap dataset (${state.dataSet === 'a' ? '5 → 15 items' : '15 → 5 items'})`,
+  }),
+  animationMatchByLever<MatchingStrategiesControlsState>({
+    options: [
+      { value: 'index', label: 'matchByIndex — stretch (default)' },
+      { value: 'append', label: 'matchAppend — sequential' },
+    ],
+  }),
+] satisfies ReadonlyArray<Lever<MatchingStrategiesControlsState>>;
+
+function getMatchProp(strategy: AnimationMatchByValue): AnimationMatchByProp<AcceptedAnimationItems> {
   switch (strategy) {
     case 'append':
       return matchAppend;
@@ -43,12 +60,12 @@ function getMatchProp(strategy: MatchStrategy): AnimationMatchByProp<AcceptedAni
   }
 }
 
-export default function MatchingStrategiesExample(props: Partial<ControlsType>) {
-  const matchStrategy = props.matchStrategy ?? 'index';
-  const useLargeData = props.useLargeData ?? false;
+export default function MatchingStrategiesExample(props: Partial<MatchingStrategiesControlsState>) {
+  const { animationMatchBy, dataSet } = { ...matchingStrategiesDefaultState, ...props };
+  const useLargeData = dataSet === 'b';
 
   const data = useLargeData ? dataLarge : dataSmall;
-  const matchProp = getMatchProp(matchStrategy);
+  const matchProp = getMatchProp(animationMatchBy);
 
   return (
     <ComposedChart
@@ -83,60 +100,5 @@ export default function MatchingStrategiesExample(props: Partial<ControlsType>) 
       <Scatter dataKey="z" animationMatchBy={matchProp} fill="gold" animationDuration={1500} />
       <RechartsDevtools />
     </ComposedChart>
-  );
-}
-
-export function MatchingStrategiesControls({ onChange }: { onChange: (values: ControlsType) => void }) {
-  const [state, setState] = useState<ControlsType>({
-    matchStrategy: 'index',
-    useLargeData: false,
-  });
-
-  const handleChange = useCallback(
-    (next: Partial<ControlsType>) => {
-      const newState = { ...state, ...next };
-      setState(newState);
-      onChange(newState);
-    },
-    [state, onChange],
-  );
-
-  React.useEffect(() => {
-    onChange(state);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
-
-  const matchStrategyId = useId();
-
-  return (
-    <form>
-      <button type="button" onClick={() => handleChange({ useLargeData: !state.useLargeData })}>
-        ⇄ Swap dataset ({state.useLargeData ? '15 → 5 items' : '5 → 15 items'})
-      </button>
-      <table>
-        <tbody>
-          <tr>
-            <td>
-              <label htmlFor={matchStrategyId}>animationMatchBy</label>
-            </td>
-            <td style={{ padding: '0 1ex' }}>
-              <select
-                id={matchStrategyId}
-                value={state.matchStrategy}
-                onChange={e => handleChange({ matchStrategy: e.target.value as MatchStrategy })}
-              >
-                <option value="index">matchByIndex — stretch (default)</option>
-                <option value="append">matchAppend — sequential</option>
-              </select>
-            </td>
-          </tr>
-        </tbody>
-      </table>
-      <p style={{ fontSize: '0.85em', opacity: 0.8, marginTop: '0.5em' }}>
-        Swap between a 5-item and a 15-item dataset and compare: <strong>matchByIndex</strong> stretches old points
-        across the new range, while <strong>matchAppend</strong> keeps existing points in place and new points animate
-        in from the edge.
-      </p>
-    </form>
   );
 }
