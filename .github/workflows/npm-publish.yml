@@ -1,4 +1,4 @@
-# This workflow will run tests using node and then publish a package to npm when a release is created
+# This workflow installs dependencies, builds the package, and publishes it to npm when a release is created
 # For more information see: https://docs.github.com/en/actions/publishing-packages/publishing-nodejs-packages
 
 name: npm publish
@@ -19,8 +19,39 @@ jobs:
         with:
           node-version: 24
           registry-url: https://registry.npmjs.org/
+      - name: Determine release version and npm dist-tag
+        id: release-info
+        env:
+          RELEASE_TAG: ${{ github.event.release.tag_name }}
+        run: |
+          PACKAGE_VERSION="$(node -p "require('./package.json').version")"
+          RELEASE_TAG="${RELEASE_TAG}"
+          # GitHub release tags are expected to look like v3.8.2 or v3.8.2-canary.0.
+          if [[ "$RELEASE_TAG" != v* ]]; then
+            echo "Release tag must start with 'v' (got: $RELEASE_TAG)." >&2
+            exit 1
+          fi
+          RELEASE_VERSION="${RELEASE_TAG#v}"
+
+          # Fail fast if the release tag and package metadata disagree, so we do not
+          # publish one version while advertising another in GitHub.
+          if [ "$PACKAGE_VERSION" != "$RELEASE_VERSION" ]; then
+            echo "Release tag ($RELEASE_TAG) does not match package.json version ($PACKAGE_VERSION)." >&2
+            exit 1
+          fi
+
+          NPM_TAG=latest
+          # Stable versions have no prerelease suffix and stay on npm's default
+          # dist-tag. For prereleases like 3.8.2-alpha.0 or 3.8.2-canary.7, this
+          # regex captures the first identifier after the hyphen ("alpha",
+          # "canary", "beta", ...) and ignores the numeric suffix.
+          if [[ "$PACKAGE_VERSION" =~ -([0-9A-Za-z]+)(\.[0-9A-Za-z.-]+)?$ ]]; then
+            NPM_TAG="${BASH_REMATCH[1]}"
+          fi
+
+          echo "npm_tag=$NPM_TAG" >> "$GITHUB_OUTPUT"
       - run: npm ci
       - run: npm run build
-      - run: npm publish
+      - run: npm publish --tag "${{ steps.release-info.outputs.npm_tag }}"
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_AUTH_TOKEN }}

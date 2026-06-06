@@ -8,6 +8,7 @@ git clone https://github.com/recharts/recharts.git
 cd recharts
 npm install # the right Node version can be found in .nvmrc file
 ```
+
 **Note for Windows users:** `npm install` may fail because `@codecov/bundle-analyzer` is only supported on Linux/Darwin. If that happens, run `npm install --force` to continue the setup.
 
 # Linting and types
@@ -181,28 +182,41 @@ and you can see before & after.
 npm run test-vr:ui
 ```
 
-# Releases
+# Releasing new versions
 
 [Releases](https://github.com/recharts/recharts/releases) are automated via GH Actions - when a new release is created
 in GH, CI will trigger that:
 
-1. Runs a build
-2. Runs tests
-3. Runs `npm publish`
+1. Installs dependencies
+2. Runs a build
+3. Runs `npm publish` with the appropriate npm dist-tag
 
-Version increments and tagging are not automated at this time.
+GitHub releases are created by maintainers manually.
 
-## Release testing
+The GitHub release tag must match the `package.json` version, with a leading `v`.
 
-Until we can automate more, it should be preferred to test as close to the results of `npm publish` as we possibly can.
-This ensures we don't publish unintended breaking changes. One way to do that is using `yalc` - `npm i -g yalc`.
+## Stable releases
 
-1. Make your changes in recharts
-2. `yalc publish` in recharts
-3. `yalc add recharts` in your test package (ex: in a vite or webpack reach app with recharts installed, imported, and
-   your recent changes used)
-4. `npm install`
-5. Test a local run, a build, etc.
+For a normal release, use a stable semver version such as `3.8.2`.
+
+1. Run `npm version 3.8.2`
+2. Push the version commit and tag
+3. Create a GitHub release with tag `v3.8.2` via GitHub UI, and add release notes
+4. The publish workflow will release the package to npm
+
+## Alpha and canary releases
+
+For prereleases, use a semver prerelease identifier in `package.json`, for example `3.8.2-alpha.0` or `3.8.2-canary.0`.
+
+1. Update `package.json` to the prerelease version. For example:
+
+ ```sh
+npm version 3.8.2-canary.0
+ ```
+
+2. Push the version commit and tag
+3. Create a GitHub prerelease with the matching tag, for example `v3.8.2-alpha.0` or `v3.8.2-canary.0`
+4. The publish workflow will derive the npm dist-tag from the prerelease identifier and publish to `alpha` or `canary`, so `latest` stays unchanged
 
 # Folder structure
 
