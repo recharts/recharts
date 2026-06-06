@@ -127,7 +127,7 @@ export const animatedBarTimeSeriesLevers: ReadonlyArray<Lever<ControlsType>> = [
   animationMatchByLever<ControlsType>({
     options: [
       { value: 'index', label: 'matchByIndex (default)' },
-      { value: 'dataKey', label: "matchByDataKey('time')" },
+      { value: 'dataKey', label: "matchByDataKey('label')" },
     ],
   }),
   createSelectLever<ControlsType, AnimationVariant>({

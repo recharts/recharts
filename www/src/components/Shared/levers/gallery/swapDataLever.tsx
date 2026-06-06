@@ -9,7 +9,6 @@ type WithDataSet = {
 export function swapDataSetLever<TState extends WithDataSet>({
   buttonLabel,
 }: {
-  label?: string;
   buttonLabel?: ReactNode | ((state: TState) => ReactNode);
 } = {}): Lever<TState> {
   return createActionLever({

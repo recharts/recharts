@@ -35,13 +35,13 @@ export const animatedTimeSeriesLevers = [
   animationMatchByLever<ControlsType>({
     options: [
       { value: 'index', label: 'matchByIndex (default)' },
-      { value: 'dataKey', label: "matchByDataKey('time')" },
+      { value: 'dataKey', label: "matchByDataKey('label')" },
     ],
   }),
 ] satisfies ReadonlyArray<Lever<ControlsType>>;
 
 export default function AnimatedTimeSeriesExample(props: Partial<ControlsType>) {
-  const { animationMatchBy, windowStart } = { ...animatedTimeSeriesDefaultState, ...props };
+  const { animationMatchBy, windowStart, animationDuration } = { ...animatedTimeSeriesDefaultState, ...props };
 
   const data = getCircularWindowData(windowStart);
 
@@ -59,7 +59,13 @@ export default function AnimatedTimeSeriesExample(props: Partial<ControlsType>) 
       <XAxis dataKey="label" allowDataOverflow />
       <YAxis />
       <Tooltip />
-      <Line dataKey="y" stroke="#8884d8" strokeWidth={2} animationDuration={600} animationMatchBy={matchProp} />
+      <Line
+        dataKey="y"
+        stroke="#8884d8"
+        strokeWidth={2}
+        animationDuration={animationDuration}
+        animationMatchBy={matchProp}
+      />
     </LineChart>
   );
 }
