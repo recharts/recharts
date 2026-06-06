@@ -21,10 +21,16 @@ jobs:
           registry-url: https://registry.npmjs.org/
       - name: Determine release version and npm dist-tag
         id: release-info
+        env:
+          RELEASE_TAG: ${{ github.event.release.tag_name }}
         run: |
           PACKAGE_VERSION="$(node -p "require('./package.json').version")"
-          RELEASE_TAG="${{ github.event.release.tag_name }}"
+          RELEASE_TAG="${RELEASE_TAG}"
           # GitHub release tags are expected to look like v3.8.2 or v3.8.2-canary.0.
+          if [[ "$RELEASE_TAG" != v* ]]; then
+            echo "Release tag must start with 'v' (got: $RELEASE_TAG)." >&2
+            exit 1
+          fi
           RELEASE_VERSION="${RELEASE_TAG#v}"
 
           # Fail fast if the release tag and package metadata disagree, so we do not
