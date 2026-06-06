@@ -29,8 +29,18 @@ type ZoomGestureOptions = {
   maxZoom?: number;
   /** Wheel / trackpad to zoom. @defaultValue true */
   wheel?: boolean;
+  /**
+   * Zoom factor applied per wheel notch (and per keyboard zoom step). `1.15` means each notch zooms
+   * in by 15%. Larger is faster/coarser. @defaultValue 1.15
+   */
+  wheelStep?: number;
   /** Drag to pan. @defaultValue true */
   pan?: boolean;
+  /**
+   * Drag-to-zoom a selected region. Triggered by Shift + drag (or a plain drag when `pan` is off).
+   * @defaultValue true
+   */
+  dragToZoom?: boolean;
   /** Double-click resets to the full view. @defaultValue true */
   doubleClickReset?: boolean;
 };
@@ -68,7 +78,9 @@ const ZOOM_DEFAULTS: Required<ZoomGestureOptions> = {
   minZoom: 1,
   maxZoom: 25,
   wheel: true,
+  wheelStep: 1.15,
   pan: true,
+  dragToZoom: true,
   doubleClickReset: true,
 };
 

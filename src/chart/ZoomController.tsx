@@ -1,4 +1,5 @@
-import { useContext, useEffect, useRef } from 'react';
+import * as React from 'react';
+import { useContext, useEffect, useMemo, useRef, useState } from 'react';
 import { useAppDispatch, useAppSelector } from '../state/hooks';
 import { selectZoom } from '../state/selectors/zoomSelectors';
 import { resetZoom, setAxisViewport, ZoomDimension, ZoomState } from '../state/zoomSlice';
@@ -6,12 +7,14 @@ import { selectChartOffsetInternal } from '../state/selectors/selectChartOffsetI
 import { mouseMoveAction } from '../state/mouseEventsMiddleware';
 import { TooltipPortalContext } from '../context/tooltipPortalContext';
 import { useIsPanorama } from '../context/PanoramaContext';
-import { clampRatio, getViewportWidth, panViewport, zoomViewportAround } from '../util/zoom/viewport';
+import { AxisViewport, clampRatio } from '../util/zoom/viewport';
+import { panDimension, selectDimension, zoomDimension } from '../util/zoom/zoomActions';
 import { ResolvedZoomOptions, zoomEnabledForDimension } from '../util/zoom/ZoomOptions';
 import { ChartOffsetInternal } from '../util/types';
-
-/** How much one wheel notch zooms in or out. */
-const WHEEL_ZOOM_STEP = 1.15;
+import { SelectionRect, ZoomGestureApi } from './zoom/ZoomGestureApi';
+import { installWheelGesture } from './zoom/wheelGesture';
+import { installPointerGesture } from './zoom/pointerGesture';
+import { installDoubleClickGesture } from './zoom/doubleClickGesture';
 
 type ZoomControllerProps = {
   options: ResolvedZoomOptions;
@@ -24,148 +27,117 @@ type LiveState = {
 };
 
 /**
- * Headless controller that turns mouse gestures over the chart into zoom/pan actions.
+ * Mounts the zoom gestures on the main chart and renders the drag-to-zoom selection overlay.
  *
- * It attaches native listeners (so wheel can `preventDefault` page scroll) to the chart wrapper
- * element and dispatches updates to the zoom slice. It renders nothing and is only mounted on the
- * main chart when the `zoom` prop is set - never on the brush panorama.
+ * It only orchestrates: it builds a small {@link ZoomGestureApi} (reading live state through refs
+ * and turning gestures into store updates via the pure zoom actions) and hands it to each gesture
+ * module (wheel, pointer, double-click, ...). The gesture logic lives in `./zoom/*` so this stays
+ * thin and new gestures (keyboard, touch, axis) plug in without bloating it.
  *
- * The actual rendering of the zoom is handled entirely by the axis range transform
- * (see selectZoomedAxisRangeWithReverse); this component only updates the viewport state.
+ * Never mounted on the brush panorama. The visual zoom itself is produced by the axis range
+ * transform; this component only updates the viewport state.
  */
-export function ZoomController({ options }: ZoomControllerProps): null {
+export function ZoomController({ options }: ZoomControllerProps) {
   const element = useContext(TooltipPortalContext);
   const offset = useAppSelector(selectChartOffsetInternal);
   const zoom = useAppSelector(selectZoom);
   const dispatch = useAppDispatch();
   const isPanorama = useIsPanorama();
+  const [selection, setSelection] = useState<SelectionRect | null>(null);
 
-  /*
-   * Keep the latest offset/zoom/options in a ref so the native event handlers always read fresh
-   * values without having to be detached and re-attached every time the viewport changes.
-   */
+  // Keep the latest offset/zoom/options in a ref so the gesture handlers always read fresh values
+  // without being detached and re-attached on every viewport change.
   const live = useRef<LiveState>({ offset, zoom, options });
   live.current = { offset, zoom, options };
 
-  useEffect(() => {
-    if (element == null || isPanorama) {
-      return undefined;
+  const api = useMemo<ZoomGestureApi | null>(() => {
+    if (element == null) {
+      return null;
     }
 
-    const focusRatios = (clientX: number, clientY: number, o: ChartOffsetInternal) => {
-      const rect = element.getBoundingClientRect();
-      const x = clampRatio((clientX - rect.left - o.left) / o.width);
-      // Pixels grow downward but the y domain grows upward, so flip to get the domain fraction.
-      const y = clampRatio(1 - (clientY - rect.top - o.top) / o.height);
-      return { x, y };
-    };
-
-    const zoomDimension = (dimension: ZoomDimension, factor: number, plotFocus: number, z: ZoomState) => {
-      const opt = live.current.options;
-      if (!zoomEnabledForDimension(opt, dimension)) {
+    const applyDimension = (dimension: ZoomDimension, viewport: AxisViewport) => {
+      if (!zoomEnabledForDimension(live.current.options, dimension)) {
         return;
       }
-      const current = z[dimension];
-      const width = getViewportWidth(current);
-      /*
-       * plotFocus is the pointer position as a fraction of the *visible* window (0..1). zoomViewportAround
-       * expects a fraction of the *whole* axis, so map it through the current viewport. When fully zoomed
-       * out these are equal, which is why the bug only showed up once already zoomed.
-       */
-      const absoluteFocus = current.startRatio + plotFocus * width;
-      const minWidth = 1 / opt.maxZoom;
-      const maxWidth = Math.min(1, 1 / opt.minZoom);
-      // Clamp the factor so the resulting width stays within [minWidth, maxWidth] while keeping focus.
-      const clampedFactor = Math.min(Math.max(factor, width / maxWidth), width / minWidth);
-      dispatch(setAxisViewport({ dimension, viewport: zoomViewportAround(current, clampedFactor, absoluteFocus) }));
+      dispatch(setAxisViewport({ dimension, viewport }));
     };
 
-    /*
-     * After the viewport changes, the stored active tooltip coordinate is stale until the next
-     * mouse move. Re-dispatch a move at the current pointer so the tooltip, cursor and active dot
-     * follow the zoom immediately - on both zoom in and zoom out.
-     */
-    const refreshActivePointer = (clientX: number, clientY: number) => {
-      dispatch(mouseMoveAction({ clientX, clientY, currentTarget: element }));
+    return {
+      element,
+      getOptions: () => live.current.options,
+      getOffset: () => live.current.offset,
+      plotFractions: (clientX, clientY) => {
+        const o = live.current.offset;
+        if (o == null) {
+          return null;
+        }
+        const rect = element.getBoundingClientRect();
+        return {
+          x: clampRatio((clientX - rect.left - o.left) / o.width),
+          // Pixels grow downward but the y domain grows upward, so flip to the domain fraction.
+          y: clampRatio(1 - (clientY - rect.top - o.top) / o.height),
+        };
+      },
+      plotPixels: (clientX, clientY) => {
+        const o = live.current.offset;
+        if (o == null) {
+          return null;
+        }
+        const rect = element.getBoundingClientRect();
+        return {
+          x: Math.min(Math.max(clientX - rect.left, o.left), o.left + o.width),
+          y: Math.min(Math.max(clientY - rect.top, o.top), o.top + o.height),
+        };
+      },
+      zoomBy: (dimension, factor, plotFocus) => {
+        const z = live.current.zoom;
+        if (z != null) {
+          applyDimension(dimension, zoomDimension(z[dimension], factor, plotFocus, live.current.options));
+        }
+      },
+      panBy: (dimension, deltaPlotFraction) => {
+        const z = live.current.zoom;
+        if (z != null) {
+          applyDimension(dimension, panDimension(z[dimension], deltaPlotFraction));
+        }
+      },
+      selectInto: (dimension, from, to) => {
+        const z = live.current.zoom;
+        if (z != null) {
+          applyDimension(dimension, selectDimension(z[dimension], from, to, live.current.options));
+        }
+      },
+      reset: () => dispatch(resetZoom()),
+      refreshPointer: (clientX, clientY) => dispatch(mouseMoveAction({ clientX, clientY, currentTarget: element })),
+      setSelection,
     };
+  }, [element, dispatch]);
 
-    const onWheel = (event: WheelEvent) => {
-      const { offset: o, zoom: z, options: opt } = live.current;
-      if (!opt.wheel || o == null || z == null) {
-        return;
-      }
-      event.preventDefault();
-      const { x, y } = focusRatios(event.clientX, event.clientY, o);
-      const factor = event.deltaY < 0 ? WHEEL_ZOOM_STEP : 1 / WHEEL_ZOOM_STEP;
-      zoomDimension('x', factor, x, z);
-      zoomDimension('y', factor, y, z);
-      refreshActivePointer(event.clientX, event.clientY);
-    };
+  useEffect(() => {
+    if (api == null || isPanorama) {
+      return undefined;
+    }
+    const cleanups = [installWheelGesture(api), installPointerGesture(api), installDoubleClickGesture(api)];
+    return () => cleanups.forEach(cleanup => cleanup());
+  }, [api, isPanorama]);
 
-    const onDoubleClick = (event: MouseEvent) => {
-      if (live.current.options.doubleClickReset) {
-        dispatch(resetZoom());
-        refreshActivePointer(event.clientX, event.clientY);
-      }
-    };
+  if (selection == null) {
+    return null;
+  }
 
-    let dragging = false;
-    let lastX = 0;
-    let lastY = 0;
-
-    const onPointerDown = (event: PointerEvent) => {
-      if (!live.current.options.pan || event.button !== 0) {
-        return;
-      }
-      dragging = true;
-      lastX = event.clientX;
-      lastY = event.clientY;
-    };
-
-    const onPointerMove = (event: PointerEvent) => {
-      if (!dragging) {
-        return;
-      }
-      const { offset: o, zoom: z, options: opt } = live.current;
-      if (o == null || z == null) {
-        return;
-      }
-      const dx = event.clientX - lastX;
-      const dy = event.clientY - lastY;
-      lastX = event.clientX;
-      lastY = event.clientY;
-      if (zoomEnabledForDimension(opt, 'x') && o.width > 0) {
-        // Drag right -> reveal earlier data -> window moves towards the start.
-        dispatch(
-          setAxisViewport({ dimension: 'x', viewport: panViewport(z.x, (-dx / o.width) * getViewportWidth(z.x)) }),
-        );
-      }
-      if (zoomEnabledForDimension(opt, 'y') && o.height > 0) {
-        // Drag down -> reveal higher values -> window moves towards the end.
-        dispatch(
-          setAxisViewport({ dimension: 'y', viewport: panViewport(z.y, (dy / o.height) * getViewportWidth(z.y)) }),
-        );
-      }
-    };
-
-    const onPointerUp = () => {
-      dragging = false;
-    };
-
-    element.addEventListener('wheel', onWheel, { passive: false });
-    element.addEventListener('dblclick', onDoubleClick);
-    element.addEventListener('pointerdown', onPointerDown);
-    window.addEventListener('pointermove', onPointerMove);
-    window.addEventListener('pointerup', onPointerUp);
-
-    return () => {
-      element.removeEventListener('wheel', onWheel);
-      element.removeEventListener('dblclick', onDoubleClick);
-      element.removeEventListener('pointerdown', onPointerDown);
-      window.removeEventListener('pointermove', onPointerMove);
-      window.removeEventListener('pointerup', onPointerUp);
-    };
-  }, [element, isPanorama, dispatch]);
-
-  return null;
+  return (
+    <div
+      className="recharts-zoom-selection"
+      style={{
+        position: 'absolute',
+        left: selection.x,
+        top: selection.y,
+        width: selection.width,
+        height: selection.height,
+        background: 'rgba(120, 120, 255, 0.15)',
+        border: '1px solid rgba(80, 80, 200, 0.6)',
+        pointerEvents: 'none',
+      }}
+    />
+  );
 }

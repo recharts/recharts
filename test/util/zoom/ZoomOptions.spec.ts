@@ -21,7 +21,9 @@ describe('resolveZoomOptions', () => {
       minZoom: 1,
       maxZoom: 25,
       wheel: true,
+      wheelStep: 1.15,
       pan: true,
+      dragToZoom: true,
       doubleClickReset: true,
     });
   });

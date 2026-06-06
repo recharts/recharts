@@ -3,11 +3,11 @@
 Zoom and pan let your users explore dense cartesian charts interactively: scroll to zoom into a
 region, drag to move around, and double-click to snap back to the full view.
 
-> 🚧 **Status: design preview.** This page describes the zoom/pan API as it is being built, one
-> small PR at a time (replacing the monolithic prototype in
-> [#5934](https://github.com/recharts/recharts/pull/5934)). The examples below show the **planned**
-> public API so we can agree on it before wiring up the interactions. The runtime is not enabled
-> yet — this is the "describe the final state first, then work backwards" target.
+> 🚧 **Status: rolling out.** Built one small PR at a time (replacing the monolithic prototype in
+> [#5934](https://github.com/recharts/recharts/pull/5934)). **Working today** on cartesian charts
+> (Line, Bar, Area, Scatter, Composed): wheel / drag / double-click zoom & pan, drag-to-zoom
+> selection, and controlled state. **Still landing:** keyboard, axis-handle and touch gestures,
+> minimap, scrollbars, brush ↔ zoom sync, and polar / standalone charts (see the Roadmap below).
 
 ## Quick start
 
@@ -25,8 +25,8 @@ with sensible defaults on both axes:
 ```
 
 That's it. With the defaults the chart now responds to the mouse wheel, drag-to-pan,
-double-click-to-reset and keyboard. Tooltips, the cursor, the brush and accessibility keep working
-exactly as before — nothing else in your chart needs to change.
+<kbd>Shift</kbd> + drag to zoom a region, and double-click to reset. Tooltips, the cursor, the
+brush and accessibility keep working exactly as before — nothing else in your chart needs to change.
 
 ## Constrain to a single axis
 
@@ -48,13 +48,12 @@ Most time-series charts only want horizontal zoom. Pass the axis as a shorthand 
 | --- | --- |
 | Mouse wheel / trackpad scroll | Zoom in and out, centred on the pointer |
 | Drag | Pan the visible window |
-| Modifier + drag (e.g. <kbd>Shift</kbd>) | Rubber-band a region to zoom into (when `dragToZoom` is on) |
+| <kbd>Shift</kbd> + drag | Rubber-band a region to zoom into (when `dragToZoom` is on) |
 | Double-click | Reset to the full view |
-| <kbd>+</kbd> / <kbd>-</kbd> (chart focused) | Zoom in / out |
-| Arrow keys (chart focused) | Pan |
+| <kbd>+</kbd> / <kbd>-</kbd>, arrows (chart focused) | _Planned:_ keyboard zoom / pan |
 
 Every gesture can be turned off individually (see the options below), so you can build, say, a
-wheel-only chart or a keyboard-only chart.
+wheel-only chart. When `pan` is off, a plain drag does the region zoom (no modifier needed).
 
 ## Options
 
@@ -66,18 +65,18 @@ wheel-only chart or a keyboard-only chart.
 | `minZoom` | `number` | `1` | Furthest zoom-out. `1` means you cannot zoom out past the full data |
 | `maxZoom` | `number` | `25` | Deepest zoom-in (a `maxZoom` of `25` shows ~1/25th of the data) |
 | `wheel` | `boolean` | `true` | Wheel / trackpad to zoom |
+| `wheelStep` | `number` | `1.15` | Zoom factor per wheel notch (larger = faster/coarser) |
 | `pan` | `boolean` | `true` | Drag to pan |
-| `dragToZoom` | `boolean` | `false` | Modifier + drag to select a region to zoom into |
+| `dragToZoom` | `boolean` | `true` | <kbd>Shift</kbd> + drag to select a region to zoom into (plain drag when `pan` is off) |
 | `doubleClickReset` | `boolean` | `true` | Double-click resets to the full view |
-| `keyboard` | `boolean` | follows `accessibilityLayer` | Keyboard zoom/pan when the chart is focused |
-| `animate` | `boolean` | `false` | Animate graphical items while zooming. Off by default for smoothness on large data |
 | `viewport` | `{ x?: AxisWindow; y?: AxisWindow }` | — | Controlled viewport (see below) |
-| `onZoomChange` | `(viewport) => void` | — | Called whenever the user zooms or pans |
+| `initialZoom` | `{ x?: AxisWindow; y?: AxisWindow }` | — | Uncontrolled initial viewport, applied once on mount |
+| `onZoomChange` | `(viewport) => void` | — | Called whenever the viewport changes |
 
 ```tsx
 <BarChart
   data={data}
-  zoom={{ axis: 'x', maxZoom: 40, dragToZoom: true, animate: false }}
+  zoom={{ axis: 'x', maxZoom: 40, wheelStep: 1.25, dragToZoom: true }}
 >
   {/* ... */}
 </BarChart>
@@ -97,6 +96,10 @@ const [viewport, setViewport] = useState({ x: { start: 0, end: 1 } });
   {/* ... */}
 </LineChart>
 ```
+
+Because two charts can share the same `viewport`/`onZoomChange`, controlling it is also how you keep
+several charts **in sync**. If you only need a starting zoom (not full control), use `initialZoom`
+instead — it is applied once and then the chart manages itself, still reporting via `onZoomChange`.
 
 Why ratios rather than data values? Because they mean the same thing for every kind of axis —
 numeric, time, or categorical (band) — and they stay correct when the container is resized. A
@@ -140,15 +143,19 @@ byte-for-byte as it does today.
 
 ## Performance
 
-- Animations are disabled while zooming by default (`animate: false`) so panning a large series
-  stays smooth; the initial mount still animates.
+- For now, disable per-series animation (`isAnimationActive={false}`) on large datasets so panning
+  stays smooth. Automatic animation suppression while zooming is a planned follow-up.
 - Off-screen geometry is clipped rather than recomputed. For very large datasets, data
   virtualization is out of scope for the first version.
 
 ## Roadmap
 
-The first version targets **cartesian charts** (Line, Bar, Area, Scatter, Composed). Planned
-follow-ups, each as its own small PR: a **minimap** overview, **brush ↔ zoom** two-way sync,
-on-canvas **scrollbars**, **touch/pinch** gestures, and zoom for **polar** (Pie/Radar/RadialBar)
-and **standalone** (Sankey/Treemap/Sunburst) charts via an SVG transform. A **vertical brush**
-(`layout="vertical"`) ships independently.
+Done (cartesian): wheel / drag / double-click zoom & pan, drag-to-zoom selection, controlled &
+uncontrolled state.
+
+Planned, each as its own small PR: **keyboard** controls (`+`/`-`, arrows, reset), **axis-handle**
+interactions (scroll / drag on an axis to zoom or pan just that axis), **touch / pinch** gestures,
+automatic **animation** suppression while zooming, an on-canvas **minimap** and **scrollbars**,
+**brush ↔ zoom** two-way sync, and zoom for **polar** (Pie / Radar / RadialBar) and **standalone**
+(Sankey / Treemap / Sunburst) charts via an SVG transform. A **vertical brush** (`layout="vertical"`)
+ships independently.

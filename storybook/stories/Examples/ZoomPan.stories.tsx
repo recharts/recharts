@@ -19,7 +19,9 @@ type ZoomPlaygroundArgs = {
   maxZoom: number;
   wheel: boolean;
   pan: boolean;
+  dragToZoom: boolean;
   doubleClickReset: boolean;
+  wheelStep: number;
   animate: boolean;
 };
 
@@ -45,7 +47,12 @@ export default {
     minZoom: { control: { type: 'range', min: 0.5, max: 2, step: 0.1 }, description: 'Furthest zoom-out' },
     maxZoom: { control: { type: 'range', min: 2, max: 50, step: 1 }, description: 'Deepest zoom-in' },
     wheel: { control: { type: 'boolean' }, description: 'Wheel / trackpad to zoom' },
+    wheelStep: {
+      control: { type: 'range', min: 1.05, max: 2, step: 0.05 },
+      description: 'Zoom factor per wheel notch',
+    },
     pan: { control: { type: 'boolean' }, description: 'Drag to pan' },
+    dragToZoom: { control: { type: 'boolean' }, description: 'Shift + drag to zoom a region' },
     doubleClickReset: { control: { type: 'boolean' }, description: 'Double-click resets the view' },
     animate: { control: { type: 'boolean' }, description: 'Animate the series (laggy while zooming)' },
   },
@@ -55,7 +62,9 @@ export default {
     minZoom: 1,
     maxZoom: 25,
     wheel: true,
+    wheelStep: 1.15,
     pan: true,
+    dragToZoom: true,
     doubleClickReset: true,
     animate: false,
   },
@@ -67,7 +76,9 @@ function Playground(args: ZoomPlaygroundArgs) {
     minZoom: args.minZoom,
     maxZoom: args.maxZoom,
     wheel: args.wheel,
+    wheelStep: args.wheelStep,
     pan: args.pan,
+    dragToZoom: args.dragToZoom,
     doubleClickReset: args.doubleClickReset,
   };
   const common = { width: 760, height: 420, data, zoom };
