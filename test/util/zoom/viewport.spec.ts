@@ -1,5 +1,6 @@
 import { describe, it, expect } from 'vitest';
 import {
+  applyViewportToRange,
   AxisViewport,
   clampRatio,
   clampViewport,
@@ -158,6 +159,39 @@ describe('viewport math', () => {
       expect(result.endRatio).toBeLessThanOrEqual(1);
       expect(result.startRatio).toBeGreaterThanOrEqual(0);
       expect(getViewportWidth(result)).toBeCloseTo(0.5);
+    });
+  });
+
+  describe('applyViewportToRange', () => {
+    it('returns the range unchanged for the full viewport', () => {
+      expect(applyViewportToRange([0, 500], FULL_VIEWPORT)).toEqual([0, 500]);
+    });
+
+    it('stretches and shifts so the visible window fills the range', () => {
+      // Show the [0.25, 0.5] slice of a [0, 500] range.
+      const [a, b] = applyViewportToRange([0, 500], { startRatio: 0.25, endRatio: 0.5 });
+      // A linear scale maps fraction f to a + f*(b-a); check the window edges land on [0, 500].
+      const span = b - a;
+      expect(a + 0.25 * span).toBeCloseTo(0);
+      expect(a + 0.5 * span).toBeCloseTo(500);
+    });
+
+    it('zooms in by exactly 1 / windowWidth', () => {
+      const [a, b] = applyViewportToRange([0, 500], { startRatio: 0.4, endRatio: 0.6 });
+      // window width 0.2 => 5x zoom => range span 5 * 500
+      expect(b - a).toBeCloseTo(2500);
+    });
+
+    it('works for a descending (reversed / vertical) range', () => {
+      const range: [number, number] = [400, 0];
+      const [a, b] = applyViewportToRange(range, { startRatio: 0.25, endRatio: 0.75 });
+      const span = b - a;
+      expect(a + 0.25 * span).toBeCloseTo(400);
+      expect(a + 0.75 * span).toBeCloseTo(0);
+    });
+
+    it('is the identity for a degenerate window', () => {
+      expect(applyViewportToRange([10, 90], { startRatio: 0.5, endRatio: 0.5 })).toEqual([10, 90]);
     });
   });
 });

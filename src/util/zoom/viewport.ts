@@ -145,3 +145,32 @@ export function zoomViewportAround(viewport: AxisViewport, factor: number, focus
 
   return clampViewport({ startRatio: start, endRatio: start + newWidth });
 }
+
+/**
+ * Turns a viewport into the axis pixel range a scale should map into so that the visible window
+ * fills the plotting area.
+ *
+ * Instead of changing the scale's *domain*, we **stretch its output _range_**: the full domain is
+ * still mapped, but across a wider, shifted pixel interval so that only the `[startRatio, endRatio]`
+ * slice lands inside the original range. Everything outside is hidden by the chart's clip path. This
+ * is what makes zoom work the same way for linear, time and band scales, and keeps every renderer
+ * untouched (they all just ask the scale for positions).
+ *
+ * The transform is the identity for the full viewport, so an un-zoomed axis is left byte-for-byte
+ * unchanged. It works for both ascending and descending ranges (e.g. reversed or vertical axes).
+ *
+ * @param range    the un-zoomed axis range `[a, b]` (a maps to the domain start, b to the domain end)
+ * @param viewport the visible window
+ * @returns the stretched range to feed the scale
+ */
+export function applyViewportToRange(range: readonly [number, number], viewport: AxisViewport): [number, number] {
+  const width = getViewportWidth(viewport);
+  if (isFullViewport(viewport) || width <= 0) {
+    return [range[0], range[1]];
+  }
+  const [a, b] = range;
+  const span = b - a;
+  const stretchedSpan = span / width;
+  const start = a - viewport.startRatio * stretchedSpan;
+  return [start, start + stretchedSpan];
+}
