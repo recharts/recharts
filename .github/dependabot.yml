@@ -8,10 +8,6 @@ updates:
     # Check the npm registry for updates every day
     schedule:
       interval: 'daily'
-    # ignore all major version updates
-    ignore:
-      - dependency-name: '*'
-        update-types: ['version-update:semver-major']
     versioning-strategy: auto
     # add the 'dependencies' label to PRs
     labels:
