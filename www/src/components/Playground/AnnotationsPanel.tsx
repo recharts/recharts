@@ -1,4 +1,4 @@
-import { RechartsAnnotationsPortal } from '@recharts/devtools';
+import { RechartsDevtoolsPortal } from '@recharts/devtools';
 
 /**
  * Props for the AnnotationsPanel component.
@@ -16,7 +16,7 @@ type AnnotationsPanelProps = {
  */
 export function AnnotationsPanel({ className = '' }: AnnotationsPanelProps) {
   return (
-    <RechartsAnnotationsPortal
+    <RechartsDevtoolsPortal
       style={{
         height: '100%',
         background: 'var(--color-bg)',
