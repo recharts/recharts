@@ -1,11 +1,7 @@
 import { AnimationManager, HandleChangeFn, ReactSmoothQueue, ReactSmoothStyle } from './AnimationManager';
 import { TimeoutController } from './timeoutController';
 import { ManualTimeoutController } from './ManualTimeoutController';
-
-/**
- * Status of a single animation managed by ProgressAnimationManager.
- */
-export type AnimationStatus = 'idle' | 'pending' | 'active' | 'complete';
+import { AnimationStatus } from './types';
 
 /**
  * An AnimationManager implementation that allows manual control of animation progress.

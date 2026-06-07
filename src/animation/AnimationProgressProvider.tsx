@@ -1,23 +1,9 @@
 import * as React from 'react';
 import { createContext, useContext, useEffect, useMemo, useState } from 'react';
 import { AnimationManagerContext, AnimationManagerFactory } from './useAnimationManager';
-import { AnimationStatus, ProgressAnimationManager } from './ProgressAnimationManager';
+import { ProgressAnimationManager } from './ProgressAnimationManager';
 import { AnimationManager } from './AnimationManager';
-
-export type { AnimationStatus } from './ProgressAnimationManager';
-
-/**
- * A handle to a single animation that supports manual progress control.
- * Returned by {@link useAnimationProgress}.
- */
-export type AnimationHandle = {
-  readonly animationId: string;
-  getStatus(): AnimationStatus;
-  getProgress(): number;
-  setProgress(percent: number): void;
-  complete(): void;
-  isAnimating(): boolean;
-};
+import { AnimationHandle } from './types';
 
 /**
  * Manages multiple ProgressAnimationManagers — one per animation in the chart.

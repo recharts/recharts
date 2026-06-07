@@ -167,7 +167,6 @@ export type { AnimationInterpolateFn } from './animation/AnimatedItems';
 export type { AnimationItem, AnimationMatchBy, AnimationMatchByProp } from './animation/matchBy';
 export { matchByIndex, matchByDataKey, matchAppend } from './animation/matchBy';
 export { AnimationProgressProvider, useAnimationProgress } from './animation/AnimationProgressProvider';
-export type { AnimationHandle, AnimationStatus } from './animation/AnimationProgressProvider';
 export { AreaRevealShape } from './cartesian/AreaRevealShape';
 export type { AreaRevealShapeProps } from './cartesian/AreaRevealShape';
 export { LineDrawShape } from './cartesian/LineDrawShape';
@@ -241,3 +240,4 @@ export type { TypedHorizontalChartContext, TypedVerticalChartContext, NoFunnel }
 export type { TypedCentricChartContext, TypedRadialChartContext, NoRadial, NoCentric } from './util/createPolarCharts';
 
 export { interpolate } from './util/DataUtils';
+export type { AnimationStatus, AnimationHandle } from './animation/types';

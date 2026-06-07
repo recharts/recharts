@@ -12,6 +12,7 @@
   "lib/animation/easing.js",
   "lib/animation/matchBy.js",
   "lib/animation/timeoutController.js",
+  "lib/animation/types.js",
   "lib/animation/useAnimationManager.js",
   "lib/animation/useAnimationStartSnapshot.js",
   "lib/animation/util.js",
