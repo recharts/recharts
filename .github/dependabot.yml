@@ -8,14 +8,10 @@ updates:
     # Check the npm registry for updates every day
     schedule:
       interval: 'daily'
-    # Only allow production dependency updates
-    allow:
-      - dependency-type: "all"
-    # ignore all major version updates of production dependencies
+    # ignore all major version updates
     ignore:
-      - dependency-name: "*"
-        update-types: [ "version-update:semver-major" ]
-        dependency-type: "production"
+      - dependency-name: '*'
+        update-types: ['version-update:semver-major']
     versioning-strategy: auto
     # add the 'dependencies' label to PRs
     labels:
