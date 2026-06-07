@@ -1,6 +1,6 @@
 version: 2
 updates:
-  # Enable version updates for npm
+  # Enable version updates for npm - production dependencies
   - package-ecosystem: 'npm'
     # Look for `package.json` and `lock` files in the `root` directory
     # With npm workspaces, all dependencies (including workspace packages) are managed from the root
@@ -8,10 +8,6 @@ updates:
     # Check the npm registry for updates every day
     schedule:
       interval: 'daily'
-    # ignore all major version updates
-    ignore:
-      - dependency-name: '*'
-        update-types: ['version-update:semver-major']
     versioning-strategy: auto
     # add the 'dependencies' label to PRs
     labels:
@@ -31,9 +27,22 @@ updates:
           - '@stryker*'
       typescript-eslint:
         patterns:
+          - 'typescript-eslint'
           - '@typescript-eslint*'
           - 'eslint-plugin-typescript*'
       playwright:
         patterns:
           - 'playwright'
           - '@playwright/experimental-ct-react'
+      vite:
+        patterns:
+          - 'vite'
+          - '@vitejs/plugin-react'
+      vitest:
+        patterns:
+          - 'vitest'
+          - '@vitest/*'
+      react-router:
+        patterns:
+          - 'react-router'
+          - 'react-router-dom'
