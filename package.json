@@ -129,7 +129,7 @@
     "@storybook/addon-onboarding": "^10.4.1",
     "@storybook/addon-vitest": "^10.4.1",
     "@storybook/builder-vite": "^10.4.1",
-    "@storybook/icons": "^1.2.12",
+    "@storybook/icons": "^2.0.2",
     "@storybook/react-vite": "^10.4.1",
     "@stryker-mutator/typescript-checker": "^9.2.0",
     "@stryker-mutator/vitest-runner": "^9.2.0",
