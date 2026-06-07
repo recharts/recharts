@@ -10,10 +10,12 @@ updates:
       interval: 'daily'
     # Only allow production dependency updates
     allow:
-      - dependency-type: 'production'
+      - dependency-type: "all"
     # ignore all major version updates of production dependencies
     ignore:
-      - update-types: ['version-update:semver-major']
+      - dependency-name: "*"
+        update-types: [ "version-update:semver-major" ]
+        dependency-type: "production"
     versioning-strategy: auto
     # add the 'dependencies' label to PRs
     labels:
@@ -52,16 +54,3 @@ updates:
         patterns:
           - 'react-router'
           - 'react-router-dom'
-
-  # Enable version updates for npm - development dependencies
-  - package-ecosystem: 'npm'
-    directory: '/'
-    schedule:
-      interval: 'daily'
-    # Only allow development dependency updates
-    allow:
-      - dependency-type: 'development'
-    versioning-strategy: auto
-    labels:
-      - 'dependencies'
-    open-pull-requests-limit: 10
