@@ -1,16 +1,17 @@
 import { ZoomGestureInstaller } from './ZoomGestureApi';
 
-/** Fraction of the visible window panned per arrow press. */
+/** Fraction of the visible window panned per arrow press, and the faster step with Shift. */
 const PAN_STEP = 0.1;
+const PAN_STEP_FAST = 0.25;
 
 /**
  * Keyboard zoom/pan when the chart is focused:
  * - `+` / `=` zoom in, `-` / `_` zoom out (centred on the plot),
  * - `0` / `Escape` reset,
- * - <kbd>Shift</kbd> + arrows pan.
+ * - arrow keys pan, <kbd>Shift</kbd> + arrows pan faster.
  *
- * Plain arrow keys are intentionally left to the accessibility layer (data-point navigation), so
- * panning uses Shift + arrows and stops propagation to avoid moving the tooltip at the same time.
+ * The arrow handlers stop propagation so panning doesn't also move the tooltip through the
+ * accessibility data-point navigation.
  */
 export const installKeyboardGesture: ZoomGestureInstaller = api => {
   const onKeyDown = (event: KeyboardEvent) => {
@@ -41,22 +42,21 @@ export const installKeyboardGesture: ZoomGestureInstaller = api => {
       case 'ArrowLeft':
       case 'ArrowRight':
       case 'ArrowUp':
-      case 'ArrowDown':
-        if (!event.shiftKey) {
-          return;
-        }
+      case 'ArrowDown': {
+        const dist = event.shiftKey ? PAN_STEP_FAST : PAN_STEP;
         if (event.key === 'ArrowLeft') {
-          api.panBy('x', -PAN_STEP);
+          api.panBy('x', -dist);
         } else if (event.key === 'ArrowRight') {
-          api.panBy('x', PAN_STEP);
+          api.panBy('x', dist);
         } else if (event.key === 'ArrowUp') {
-          api.panBy('y', PAN_STEP);
+          api.panBy('y', dist);
         } else {
-          api.panBy('y', -PAN_STEP);
+          api.panBy('y', -dist);
         }
         event.preventDefault();
         event.stopPropagation();
         break;
+      }
       default:
         break;
     }

@@ -29,6 +29,19 @@ describe('axis interactions', () => {
     expect(last.y).toEqual({ start: 0, end: 1 });
   });
 
+  it('Shift + wheel over the plot pans instead of zooming', async () => {
+    const onZoomChange = vi.fn();
+    const { wrapper } = renderChart({ axis: 'x', initialZoom: { x: { start: 0.3, end: 0.6 } }, onZoomChange });
+    await waitFor(() => expect(onZoomChange).toHaveBeenCalled());
+    onZoomChange.mockClear();
+    // Plot centre, with Shift held: pans x rather than zooming.
+    fireEvent.wheel(wrapper, { deltaY: 100, clientX: 200, clientY: 150, shiftKey: true });
+    await waitFor(() => expect(onZoomChange).toHaveBeenCalled());
+    const last = onZoomChange.mock.calls.at(-1)![0];
+    expect(last.x.end - last.x.start).toBeCloseTo(0.3, 5);
+    expect(last.x.start).not.toBeCloseTo(0.3, 3);
+  });
+
   it('does nothing over an axis when axisInteractions is off', async () => {
     const onZoomChange = vi.fn();
     const { wrapper } = renderChart({ axis: 'xy', axisInteractions: false, onZoomChange });

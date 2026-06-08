@@ -7,10 +7,11 @@ import { selectChartOffsetInternal } from '../state/selectors/selectChartOffsetI
 import { mouseMoveAction } from '../state/mouseEventsMiddleware';
 import { TooltipPortalContext } from '../context/tooltipPortalContext';
 import { useIsPanorama } from '../context/PanoramaContext';
-import { AxisViewport, clampRatio } from '../util/zoom/viewport';
+import { AxisViewport, clampRatio, isFullViewport } from '../util/zoom/viewport';
 import { panDimension, selectDimension, zoomDimension } from '../util/zoom/zoomActions';
 import { ResolvedZoomOptions, zoomEnabledForDimension } from '../util/zoom/ZoomOptions';
 import { ChartOffsetInternal } from '../util/types';
+import { SCROLLBAR_GAP, SCROLLBAR_THICKNESS } from './ZoomScrollbars';
 import { SelectionRect, ZoomGestureApi } from './zoom/ZoomGestureApi';
 import { installWheelGesture } from './zoom/wheelGesture';
 import { installPointerGesture } from './zoom/pointerGesture';
@@ -63,6 +64,15 @@ export function ZoomController({ options }: ZoomControllerProps) {
         return;
       }
       dispatch(setAxisViewport({ dimension, viewport }));
+      /*
+       * Optimistically update the live ref too. Redux state only refreshes on the next render, so
+       * without this several mutations in one event (e.g. a pinch that zooms AND pans the same axis
+       * in one frame) would each read the same stale viewport and the last dispatch would overwrite
+       * the others. The pure zoom actions already return clamped viewports, matching the reducer.
+       */
+      if (live.current.zoom != null) {
+        live.current = { ...live.current, zoom: { ...live.current.zoom, [dimension]: viewport } };
+      }
     };
 
     return {
@@ -103,6 +113,19 @@ export function ZoomController({ options }: ZoomControllerProps) {
         const inX = px >= o.left && px <= o.left + o.width;
         const inY = py >= o.top && py <= o.top + o.height;
         if (inX && inY) {
+          // The scrollbar bands sit on the bottom (x) / right (y) edges of the plot, and only when
+          // that axis is zoomed. Detect them so wheel there pans rather than zooms.
+          const opt = live.current.options;
+          const z = live.current.zoom;
+          if (opt.scrollbars && z != null) {
+            const band = SCROLLBAR_THICKNESS + SCROLLBAR_GAP;
+            if (zoomEnabledForDimension(opt, 'x') && !isFullViewport(z.x) && py >= o.top + o.height - band) {
+              return 'xScrollbar';
+            }
+            if (zoomEnabledForDimension(opt, 'y') && !isFullViewport(z.y) && px >= o.left + o.width - band) {
+              return 'yScrollbar';
+            }
+          }
           return 'plot';
         }
         if (inX) {
@@ -151,6 +174,22 @@ export function ZoomController({ options }: ZoomControllerProps) {
     ];
     return () => cleanups.forEach(cleanup => cleanup());
   }, [api, isPanorama]);
+
+  /*
+   * Let the chart own touch gestures: `touch-action: none` stops the browser from claiming the touch
+   * for scrolling / native pinch-zoom and cancelling ours. (Axis-label drags survive tick re-renders
+   * thanks to the stable hit targets in ZoomAxisTouchTargets, not a CSS trick.)
+   */
+  useEffect(() => {
+    if (element == null || isPanorama || !options.touch) {
+      return undefined;
+    }
+    const previous = element.style.touchAction;
+    element.style.touchAction = 'none';
+    return () => {
+      element.style.touchAction = previous;
+    };
+  }, [element, isPanorama, options.touch]);
 
   if (selection == null) {
     return null;

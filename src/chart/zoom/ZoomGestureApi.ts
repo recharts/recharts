@@ -10,7 +10,7 @@ export type SelectionRect = { x: number; y: number; width: number; height: numbe
  * Which region of the chart a pointer is over: the plot area, one of the axis bands around it, or
  * outside the chart entirely. Lets gestures scope themselves (e.g. wheel over the x-axis zooms x).
  */
-export type PointerRegion = 'plot' | 'xAxis' | 'yAxis' | 'outside';
+export type PointerRegion = 'plot' | 'xAxis' | 'yAxis' | 'xScrollbar' | 'yScrollbar' | 'outside';
 
 /**
  * The single surface every zoom gesture module talks to. `ZoomController` builds one of these

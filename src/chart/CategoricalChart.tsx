@@ -9,6 +9,7 @@ import { ReportChartSize } from '../context/chartLayoutContext';
 import { ZoomController } from './ZoomController';
 import { ZoomStateSync } from './ZoomStateSync';
 import { ZoomScrollbars } from './ZoomScrollbars';
+import { ZoomAxisTouchTargets } from './ZoomAxisTouchTargets';
 import { resolveZoomOptions } from '../util/zoom/ZoomOptions';
 
 export const CategoricalChart = forwardRef<SVGSVGElement, CartesianChartProps>((props: CartesianChartProps, ref) => {
@@ -57,6 +58,7 @@ export const CategoricalChart = forwardRef<SVGSVGElement, CartesianChartProps>((
         <>
           <ZoomController options={zoomOptions} />
           <ZoomStateSync options={zoomOptions} />
+          <ZoomAxisTouchTargets options={zoomOptions} />
           <ZoomScrollbars options={zoomOptions} />
         </>
       )}

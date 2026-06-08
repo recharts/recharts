@@ -38,6 +38,32 @@ describe('keyboard zoom gestures', () => {
     });
   });
 
+  it('pans with arrow keys when zoomed', async () => {
+    const onZoomChange = vi.fn();
+    const { wrapper } = renderChart({ axis: 'x', initialZoom: { x: { start: 0.3, end: 0.6 } }, onZoomChange });
+    await waitFor(() => expect(onZoomChange).toHaveBeenCalled());
+    onZoomChange.mockClear();
+    fireEvent.keyDown(wrapper, { key: 'ArrowRight' });
+    await waitFor(() => expect(onZoomChange).toHaveBeenCalled());
+    const last = onZoomChange.mock.calls.at(-1)![0];
+    // The window keeps its width and shifts towards the end.
+    expect(last.x.end - last.x.start).toBeCloseTo(0.3, 5);
+    expect(last.x.start).toBeGreaterThan(0.3);
+    expect(last.x.start).toBeLessThan(0.35);
+  });
+
+  it('pans faster with Shift+arrow', async () => {
+    const onZoomChange = vi.fn();
+    const { wrapper } = renderChart({ axis: 'x', initialZoom: { x: { start: 0.3, end: 0.6 } }, onZoomChange });
+    await waitFor(() => expect(onZoomChange).toHaveBeenCalled());
+    onZoomChange.mockClear();
+    fireEvent.keyDown(wrapper, { key: 'ArrowRight', shiftKey: true });
+    await waitFor(() => expect(onZoomChange).toHaveBeenCalled());
+    const last = onZoomChange.mock.calls.at(-1)![0];
+    // Shift uses the larger step, so the window shifts further than a plain arrow.
+    expect(last.x.start).toBeGreaterThan(0.35);
+  });
+
   it('does nothing when keyboard is disabled', async () => {
     const onZoomChange = vi.fn();
     const { wrapper } = renderChart({ axis: 'x', keyboard: false, onZoomChange });

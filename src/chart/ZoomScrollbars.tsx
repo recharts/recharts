@@ -5,14 +5,17 @@ import { selectZoom } from '../state/selectors/zoomSelectors';
 import { selectChartOffsetInternal } from '../state/selectors/selectChartOffsetInternal';
 import { setAxisViewport, ZoomDimension } from '../state/zoomSlice';
 import { useIsPanorama } from '../context/PanoramaContext';
-import { AxisViewport, getViewportWidth, isFullViewport, panViewport } from '../util/zoom/viewport';
+import { AxisViewport, getViewportWidth, isFullViewport } from '../util/zoom/viewport';
 import { ResolvedZoomOptions, zoomEnabledForDimension } from '../util/zoom/ZoomOptions';
 
 /** Marker so the pointer gesture knows not to start a plot pan when a scrollbar is grabbed. */
 export const ZOOM_SCROLLBAR_ATTR = 'data-recharts-zoom-scrollbar';
 
-const THICKNESS = 10;
-const GAP = 2;
+export const SCROLLBAR_THICKNESS = 10;
+export const SCROLLBAR_GAP = 2;
+/** Touch keeps the same slim bar but gets a larger, transparent drag/hit area around it. */
+const SCROLLBAR_TOUCH_HIT = 24;
+const GAP = SCROLLBAR_GAP;
 
 type AxisScrollbarProps = {
   dimension: ZoomDimension;
@@ -21,91 +24,140 @@ type AxisScrollbarProps = {
 };
 
 /**
- * One on-canvas scrollbar (horizontal for x, vertical for y). Drag the thumb to pan; click the
- * track to page. Rendered as an absolutely-positioned overlay inside the chart wrapper.
+ * One on-canvas scrollbar (horizontal for x, vertical for y). The whole band is a drag handle: grab
+ * the thumb, or press the track to jump the thumb under the pointer and drag from there. Rendered as
+ * an absolutely-positioned overlay inside the chart wrapper.
  */
 function AxisScrollbar({ dimension, viewport, plot }: AxisScrollbarProps) {
   const dispatch = useAppDispatch();
   const [hover, setHover] = useState(false);
+  const [active, setActive] = useState(false);
 
   const horizontal = dimension === 'x';
   const trackLength = horizontal ? plot.width : plot.height;
   const windowRatio = getViewportWidth(viewport);
-  const thumbLength = Math.max(windowRatio * trackLength, 16);
+  const coarsePointer =
+    typeof window !== 'undefined' && typeof window.matchMedia === 'function'
+      ? window.matchMedia('(pointer: coarse)').matches
+      : false;
+  // The visible bar stays slim; on touch the draggable hit area around it is enlarged.
+  const barThickness = SCROLLBAR_THICKNESS;
+  const hitThickness = coarsePointer ? SCROLLBAR_TOUCH_HIT : SCROLLBAR_THICKNESS;
+  const barInset = hitThickness - barThickness;
+  const thumbLength = Math.max(windowRatio * trackLength, coarsePointer ? 24 : 16);
   // Offset of the thumb from the start of the track. The y domain grows upward, so it is flipped.
   const thumbOffset = (horizontal ? viewport.startRatio : 1 - viewport.endRatio) * trackLength;
 
   const apply = (next: AxisViewport) => dispatch(setAxisViewport({ dimension, viewport: next }));
 
-  const onThumbPointerDown = (event: React.PointerEvent) => {
-    event.stopPropagation();
-    event.preventDefault();
-    const startPos = horizontal ? event.clientX : event.clientY;
-    const startViewport = viewport;
-    const sign = horizontal ? 1 : -1;
-    const onMove = (e: PointerEvent) => {
-      const pos = horizontal ? e.clientX : e.clientY;
-      const ratio = (sign * (pos - startPos)) / trackLength;
-      if (!Number.isFinite(ratio) || trackLength <= 0) {
-        return;
-      }
-      apply(panViewport(startViewport, ratio));
+  // The whole band is a drag handle (like a native scrollbar): grab the thumb where you touch it, or,
+  // when you press the empty track, jump the thumb under the pointer and drag from there. Touch and
+  // mouse are handled with their own events (pointer events proved unreliable for touch on mobile).
+  const beginDrag = (clientX: number, clientY: number, trackRect: DOMRect) => {
+    setActive(true);
+    const trackStart = horizontal ? trackRect.left : trackRect.top;
+    const pressed = (horizontal ? clientX : clientY) - trackStart;
+    const onThumb = pressed >= thumbOffset && pressed <= thumbOffset + thumbLength;
+    const grab = onThumb ? pressed - thumbOffset : thumbLength / 2;
+    const maxThumbStart = Math.max(trackLength - thumbLength, 1);
+    const maxStartRatio = Math.max(1 - windowRatio, 0);
+    const moveTo = (cx: number, cy: number) => {
+      const local = (horizontal ? cx : cy) - trackStart;
+      const desired = Math.max(0, Math.min(maxThumbStart, local - grab));
+      const ratio = desired / maxThumbStart;
+      // The y track is flipped: the top of the track is the end of the domain.
+      const startRatio = (horizontal ? ratio : 1 - ratio) * maxStartRatio;
+      apply({ startRatio, endRatio: startRatio + windowRatio });
     };
-    const onUp = () => {
-      window.removeEventListener('pointermove', onMove);
-      window.removeEventListener('pointerup', onUp);
-    };
-    window.addEventListener('pointermove', onMove);
-    window.addEventListener('pointerup', onUp);
+    moveTo(clientX, clientY);
+    return moveTo;
   };
 
-  const onTrackPointerDown = (event: React.PointerEvent) => {
-    // Page towards the click by one window width.
-    const offset = horizontal ? event.nativeEvent.offsetX : event.nativeEvent.offsetY;
-    const screenRatio = offset / trackLength;
-    const domainClick = horizontal ? screenRatio : 1 - screenRatio;
-    if (domainClick < viewport.startRatio) {
-      apply(panViewport(viewport, -windowRatio));
-    } else if (domainClick > viewport.endRatio) {
-      apply(panViewport(viewport, windowRatio));
+  const onTouchStart = (event: React.TouchEvent) => {
+    const t = event.touches[0];
+    if (t == null) {
+      return;
     }
+    event.preventDefault();
+    const moveTo = beginDrag(t.clientX, t.clientY, event.currentTarget.getBoundingClientRect());
+    const onMove = (e: TouchEvent) => {
+      const m = e.touches[0];
+      if (m != null) {
+        if (e.cancelable) {
+          e.preventDefault();
+        }
+        moveTo(m.clientX, m.clientY);
+      }
+    };
+    const onEnd = () => {
+      setActive(false);
+      window.removeEventListener('touchmove', onMove);
+      window.removeEventListener('touchend', onEnd);
+      window.removeEventListener('touchcancel', onEnd);
+    };
+    window.addEventListener('touchmove', onMove, { passive: false });
+    window.addEventListener('touchend', onEnd);
+    window.addEventListener('touchcancel', onEnd);
+  };
+
+  const onMouseDown = (event: React.MouseEvent) => {
+    event.preventDefault();
+    const moveTo = beginDrag(event.clientX, event.clientY, event.currentTarget.getBoundingClientRect());
+    const onMove = (e: MouseEvent) => moveTo(e.clientX, e.clientY);
+    const onUp = () => {
+      setActive(false);
+      window.removeEventListener('mousemove', onMove);
+      window.removeEventListener('mouseup', onUp);
+    };
+    window.addEventListener('mousemove', onMove);
+    window.addEventListener('mouseup', onUp);
   };
 
   const trackStyle: React.CSSProperties = horizontal
     ? {
         left: plot.left,
-        top: plot.top + plot.height - THICKNESS - GAP,
+        top: plot.top + plot.height - hitThickness - GAP,
         width: trackLength,
-        height: THICKNESS,
+        height: hitThickness,
       }
     : {
-        left: plot.left + plot.width - THICKNESS - GAP,
+        left: plot.left + plot.width - hitThickness - GAP,
         top: plot.top,
-        width: THICKNESS,
+        width: hitThickness,
         height: trackLength,
       };
 
+  // The slim visible bar sits at the outer edge of the (possibly larger) hit area.
   const thumbStyle: React.CSSProperties = horizontal
-    ? { left: thumbOffset, top: 0, width: thumbLength, height: THICKNESS }
-    : { left: 0, top: thumbOffset, width: THICKNESS, height: thumbLength };
+    ? { left: thumbOffset, top: barInset, width: thumbLength, height: barThickness }
+    : { left: barInset, top: thumbOffset, width: barThickness, height: thumbLength };
+
+  let thumbBackground = 'rgba(0,0,0,0.35)';
+  if (active) {
+    thumbBackground = 'rgba(0,0,0,0.6)';
+  } else if (!coarsePointer && hover) {
+    thumbBackground = 'rgba(0,0,0,0.55)';
+  }
 
   return (
+    // A supplementary visual control; the accessible path for panning is the keyboard.
+    // eslint-disable-next-line jsx-a11y/no-static-element-interactions
     <div
       {...{ [ZOOM_SCROLLBAR_ATTR]: 'track' }}
       className={`recharts-zoom-scrollbar recharts-zoom-scrollbar-${dimension}`}
-      onPointerDown={onTrackPointerDown}
-      style={{ position: 'absolute', borderRadius: THICKNESS / 2, ...trackStyle }}
+      onTouchStart={onTouchStart}
+      onMouseDown={onMouseDown}
+      style={{ position: 'absolute', touchAction: 'none', ...trackStyle }}
     >
       <div
         {...{ [ZOOM_SCROLLBAR_ATTR]: 'thumb' }}
         className="recharts-zoom-scrollbar-thumb"
-        onPointerDown={onThumbPointerDown}
         onMouseEnter={() => setHover(true)}
         onMouseLeave={() => setHover(false)}
         style={{
           position: 'absolute',
-          borderRadius: THICKNESS / 2,
-          background: hover ? 'rgba(0,0,0,0.55)' : 'rgba(0,0,0,0.35)',
+          borderRadius: barThickness / 2,
+          background: thumbBackground,
           cursor: horizontal ? 'ew-resize' : 'ns-resize',
           touchAction: 'none',
           ...thumbStyle,
