@@ -1,5 +1,17 @@
 import * as React from 'react';
-import { Area, AreaChart, Bar, BarChart, CartesianGrid, Line, LineChart, Tooltip, XAxis, YAxis } from '../../../src';
+import {
+  Area,
+  AreaChart,
+  Bar,
+  BarChart,
+  CartesianGrid,
+  Line,
+  LineChart,
+  Tooltip,
+  XAxis,
+  YAxis,
+  ZoomAndPan,
+} from '../../../src';
 
 /**
  * Interactive zoom & pan playground.
@@ -100,7 +112,7 @@ function Playground(args: ZoomPlaygroundArgs) {
     touch: args.touch,
     scrollbars: args.scrollbars,
   };
-  const common = { width: 760, height: 420, data, zoom };
+  const common = { width: 760, height: 420, data };
   const isAnimationActive = args.animate;
 
   if (args.chartType === 'BarChart') {
@@ -112,6 +124,7 @@ function Playground(args: ZoomPlaygroundArgs) {
         <Tooltip />
         <Bar dataKey="uv" fill="#8884d8" isAnimationActive={isAnimationActive} />
         <Bar dataKey="pv" fill="#82ca9d" isAnimationActive={isAnimationActive} />
+        <ZoomAndPan {...zoom} />
       </BarChart>
     );
   }
@@ -125,6 +138,7 @@ function Playground(args: ZoomPlaygroundArgs) {
         <Tooltip />
         <Area type="monotone" dataKey="uv" stroke="#8884d8" fill="#8884d8" isAnimationActive={isAnimationActive} />
         <Area type="monotone" dataKey="pv" stroke="#82ca9d" fill="#82ca9d" isAnimationActive={isAnimationActive} />
+        <ZoomAndPan {...zoom} />
       </AreaChart>
     );
   }
@@ -137,6 +151,7 @@ function Playground(args: ZoomPlaygroundArgs) {
       <Tooltip />
       <Line type="monotone" dataKey="uv" stroke="#8884d8" dot={false} isAnimationActive={isAnimationActive} />
       <Line type="monotone" dataKey="pv" stroke="#82ca9d" dot={false} isAnimationActive={isAnimationActive} />
+      <ZoomAndPan {...zoom} />
     </LineChart>
   );
 }
@@ -165,19 +180,21 @@ function ControlledExample() {
           Reset
         </button>
       </div>
-      <LineChart width={760} height={210} data={data} zoom={zoom}>
+      <LineChart width={760} height={210} data={data}>
         <CartesianGrid strokeDasharray="3 3" />
         <XAxis dataKey="name" />
         <YAxis />
         <Tooltip />
         <Line type="monotone" dataKey="uv" stroke="#8884d8" dot={false} isAnimationActive={false} />
+        <ZoomAndPan {...zoom} />
       </LineChart>
-      <LineChart width={760} height={210} data={data} zoom={zoom}>
+      <LineChart width={760} height={210} data={data}>
         <CartesianGrid strokeDasharray="3 3" />
         <XAxis dataKey="name" />
         <YAxis />
         <Tooltip />
         <Line type="monotone" dataKey="pv" stroke="#82ca9d" dot={false} isAnimationActive={false} />
+        <ZoomAndPan {...zoom} />
       </LineChart>
     </div>
   );

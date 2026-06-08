@@ -28,7 +28,6 @@ import { AxisRange } from '../state/selectors/axisSelectors';
 import { ExternalMouseEvents } from '../chart/types';
 import { SyncMethod } from '../synchronisation/types';
 import { isEventKey } from './excludeEventProps';
-import { ZoomProp } from './zoom/ZoomOptions';
 import { DotPoint } from '../component/Dots';
 import { SVGPropsNoEvents } from './svgPropertiesNoEvents';
 import { BaseValue } from '../cartesian/Area';
@@ -1585,16 +1584,6 @@ export interface EventThrottlingProps {
 
 export interface CartesianChartProps<DataPointType = unknown>
   extends BaseChartProps<DataPointType>, EventThrottlingProps {
-  /**
-   * Enables interactive zoom and pan on this cartesian chart.
-   *
-   * Pass `true` to enable with defaults, an axis shorthand (`"x"` / `"y"` / `"xy"`) to constrain
-   * the dimensions, or a {@link ZoomOptions} object for full control (min/max zoom, which gestures
-   * are enabled, ...).
-   *
-   * @see {@link https://recharts.github.io Zoom and Pan guide}
-   */
-  zoom?: ZoomProp;
   /**
    * The gap between two bar categories, which can be a percent value or a fixed value.
    *

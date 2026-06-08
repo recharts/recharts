@@ -6,16 +6,10 @@ import { ClipPathProvider } from '../container/ClipPathProvider';
 import { CartesianChartProps } from '../util/types';
 import { svgPropertiesNoEvents } from '../util/svgPropertiesNoEvents';
 import { ReportChartSize } from '../context/chartLayoutContext';
-import { ZoomController } from './ZoomController';
-import { ZoomStateSync } from './ZoomStateSync';
-import { ZoomScrollbars } from './ZoomScrollbars';
-import { ZoomAxisTouchTargets } from './ZoomAxisTouchTargets';
-import { resolveZoomOptions } from '../util/zoom/ZoomOptions';
 
 export const CategoricalChart = forwardRef<SVGSVGElement, CartesianChartProps>((props: CartesianChartProps, ref) => {
-  const { width, height, responsive, children, className, style, compact, title, desc, zoom, ...others } = props;
+  const { width, height, responsive, children, className, style, compact, title, desc, ...others } = props;
   const attrs = svgPropertiesNoEvents(others);
-  const zoomOptions = resolveZoomOptions(zoom);
 
   /*
    * The "compact" mode is used as the panorama within Brush.
@@ -54,14 +48,6 @@ export const CategoricalChart = forwardRef<SVGSVGElement, CartesianChartProps>((
       <RootSurface otherAttributes={attrs} title={title} desc={desc} ref={ref}>
         <ClipPathProvider>{children}</ClipPathProvider>
       </RootSurface>
-      {zoomOptions != null && (
-        <>
-          <ZoomController options={zoomOptions} />
-          <ZoomStateSync options={zoomOptions} />
-          <ZoomAxisTouchTargets options={zoomOptions} />
-          <ZoomScrollbars options={zoomOptions} />
-        </>
-      )}
     </RechartsWrapper>
   );
 });

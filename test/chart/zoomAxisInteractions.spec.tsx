@@ -1,16 +1,17 @@
 import * as React from 'react';
 import { render, fireEvent, waitFor } from '@testing-library/react';
 import { describe, it, expect, vi } from 'vitest';
-import { Line, LineChart, XAxis, YAxis } from '../../src';
+import { Line, LineChart, XAxis, YAxis, ZoomAndPan } from '../../src';
 
 const data = Array.from({ length: 20 }, (_, i) => ({ name: `#${i}`, uv: 1000 + i * 50 }));
 
 function renderChart(zoom: any) {
   const utils = render(
-    <LineChart width={400} height={300} data={data} zoom={zoom}>
+    <LineChart width={400} height={300} data={data}>
       <XAxis dataKey="name" />
       <YAxis />
       <Line type="monotone" dataKey="uv" isAnimationActive={false} />
+      <ZoomAndPan {...zoom} />
     </LineChart>,
   );
   const wrapper = utils.container.querySelector('.recharts-wrapper') as HTMLElement;

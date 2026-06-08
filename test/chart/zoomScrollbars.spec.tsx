@@ -1,16 +1,17 @@
 import * as React from 'react';
 import { render, waitFor } from '@testing-library/react';
 import { describe, it, expect } from 'vitest';
-import { Line, LineChart, XAxis, YAxis } from '../../src';
+import { Line, LineChart, XAxis, YAxis, ZoomAndPan } from '../../src';
 
 const data = Array.from({ length: 20 }, (_, i) => ({ name: `#${i}`, uv: 1000 + i * 50 }));
 
 function renderChart(zoom: any) {
   return render(
-    <LineChart width={400} height={300} data={data} zoom={zoom}>
+    <LineChart width={400} height={300} data={data}>
       <XAxis dataKey="name" />
       <YAxis />
       <Line type="monotone" dataKey="uv" isAnimationActive={false} />
+      <ZoomAndPan {...zoom} />
     </LineChart>,
   );
 }
@@ -21,10 +22,11 @@ describe('zoom scrollbars', () => {
     expect(container.querySelector('.recharts-zoom-scrollbar-x')).toBeNull();
 
     rerender(
-      <LineChart width={400} height={300} data={data} zoom={{ axis: 'x', viewport: { x: { start: 0.2, end: 0.6 } } }}>
+      <LineChart width={400} height={300} data={data}>
         <XAxis dataKey="name" />
         <YAxis />
         <Line type="monotone" dataKey="uv" isAnimationActive={false} />
+        <ZoomAndPan axis="x" viewport={{ x: { start: 0.2, end: 0.6 } }} />
       </LineChart>,
     );
     await waitFor(() => expect(container.querySelector('.recharts-zoom-scrollbar-x')).not.toBeNull());
