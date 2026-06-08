@@ -156,23 +156,23 @@ type Viewport = { x?: AxisWindow; y?: AxisWindow };
 
       <h2>Controlled &amp; uncontrolled state</h2>
       <p>
-        The chart owns the viewport. Leave it alone for an uncontrolled chart, set an initial value, or control it
-        fully.
+        Leave it alone for an uncontrolled chart, set an initial value, or control it fully. These live on{' '}
+        <code>&lt;ZoomAndPan /&gt;</code> (and any individual interaction component).
       </p>
       <pre>{`// uncontrolled, with an initial zoom
-<LineChart data={data} defaultZoomViewport={{ x: { start: 0.2, end: 0.6 } }}>
-  <MouseWheelZoom />
+<LineChart data={data}>
+  <ZoomAndPan initialZoom={{ x: { start: 0.2, end: 0.6 } }} />
 </LineChart>
 
 // controlled: you hold the viewport and update it
 const [viewport, setViewport] = useState({ x: { start: 0.2, end: 0.6 } });
 
-<LineChart data={data} zoomViewport={viewport} onZoomViewportChange={setViewport}>
-  <MouseWheelZoom />
+<LineChart data={data}>
+  <ZoomAndPan viewport={viewport} onZoomChange={setViewport} />
 </LineChart>`}</pre>
       <p>
-        <code>onZoomViewportChange</code> fires on every change with the new viewport. Because it is the same shape you
-        pass back in, a controlled chart settles without a feedback loop, and you can sync several charts by sharing one
+        <code>onZoomChange</code> fires on every change with the new viewport. Because it is the same shape you pass
+        back in, a controlled chart settles without a feedback loop, and you can sync several charts by sharing one
         viewport.
       </p>
 
@@ -220,8 +220,8 @@ function ZoomButtons() {
       </table>
       <p>
         To bring your own gesture library completely: add none of the built-in interaction components, and drive the
-        chart through controlled <code>zoomViewport</code> + <code>onZoomViewportChange</code> from your library&apos;s
-        handlers. The built-ins are then just a convenient default you can opt out of.
+        viewport from your library&apos;s handlers through <code>useZoom()</code> (or a controlled{' '}
+        <code>&lt;ZoomAndPan /&gt;</code>). The built-ins are then just a convenient default you can opt out of.
       </p>
 
       <h2>Touch</h2>
