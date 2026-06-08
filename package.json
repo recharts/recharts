@@ -152,7 +152,7 @@
     "browserslist": "^4.23.2",
     "bundlewatch": "^0.4.1",
     "chromatic": "^11.5.6",
-    "cross-env": "^7.0.3",
+    "cross-env": "^10.1.0",
     "d3-scale-chromatic": "^3.1.0",
     "d3-time": "^3.1.0",
     "d3-time-format": "^4.1.0",
