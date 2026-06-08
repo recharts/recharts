@@ -22,6 +22,10 @@ export const installWheelGesture: ZoomGestureInstaller = api => {
     if (region === 'outside') {
       return;
     }
+    // Composable components scope the wheel to specific regions so they don't double-count.
+    if (options.wheelRegions != null && !options.wheelRegions.includes(region)) {
+      return;
+    }
     if ((region === 'xAxis' || region === 'yAxis') && !options.axisInteractions) {
       return;
     }

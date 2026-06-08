@@ -55,7 +55,22 @@ export const installPointerGesture: ZoomGestureInstaller = api => {
       return;
     }
     const options = api.getOptions();
-    const wantsSelect = options.dragToZoom && (event.shiftKey || !options.pan);
+    let wantsSelect: boolean;
+    if (options.pointerMode === 'pan') {
+      // A plain-drag pan component; a modifier drag is left for a select component.
+      if (event.shiftKey) {
+        return;
+      }
+      wantsSelect = false;
+    } else if (options.pointerMode === 'select') {
+      // A select-only component; needs the modifier so it can coexist with a pan component.
+      if (!event.shiftKey) {
+        return;
+      }
+      wantsSelect = true;
+    } else {
+      wantsSelect = options.dragToZoom && (event.shiftKey || !options.pan);
+    }
     if (wantsSelect) {
       const pixels = api.plotPixels(event.clientX, event.clientY);
       if (pixels == null) {

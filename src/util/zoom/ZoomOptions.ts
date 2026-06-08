@@ -91,7 +91,19 @@ export type ZoomOptions = ZoomGestureOptions & {
 export type ZoomProp = boolean | ZoomAxis | ZoomOptions;
 
 export type ResolvedZoomOptions = Required<ZoomGestureOptions> &
-  Pick<ZoomOptions, 'viewport' | 'initialZoom' | 'onZoomChange'>;
+  Pick<ZoomOptions, 'viewport' | 'initialZoom' | 'onZoomChange'> & {
+    /**
+     * Internal: restrict the wheel gesture to these pointer regions (`'plot'`, `'xAxis'`, `'yAxis'`,
+     * `'xScrollbar'`, `'yScrollbar'`). Lets the composable components share the one wheel module
+     * without double-counting (e.g. `<MouseWheelZoom/>` = plot, `<AxisZoom/>` = axes). Default: all.
+     */
+    wheelRegions?: readonly string[];
+    /**
+     * Internal: restrict the pointer drag gesture to `'pan'` only (plain drag) or `'select'` only
+     * (modifier + drag), so `<PanOnDrag/>` and `<DragToZoom/>` can coexist. Default: legacy (both).
+     */
+    pointerMode?: 'pan' | 'select';
+  };
 
 const ZOOM_DEFAULTS: Required<ZoomGestureOptions> = {
   axis: 'xy',
