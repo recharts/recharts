@@ -199,7 +199,9 @@ export {
   useXAxisTicks,
   useYAxisTicks,
   useCartesianScale,
+  useZoom,
 } from './hooks';
+export type { UseZoomResult } from './hooks';
 
 export type { CartesianDataPoint, ScaleFunction, InverseScaleFunction } from './hooks';
 

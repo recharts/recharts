@@ -1,3 +1,4 @@
+import { useCallback, useMemo } from 'react';
 import { AxisId, defaultAxisId } from './state/cartesianAxisSlice';
 import {
   BaseAxisWithScale,
@@ -9,8 +10,12 @@ import {
   selectAxisWithScale,
   selectRenderedTicksOfAxis,
 } from './state/selectors/axisSelectors';
-import { useAppSelector } from './state/hooks';
+import { useAppSelector, useAppDispatch } from './state/hooks';
 import { useIsPanorama } from './context/PanoramaContext';
+import { selectZoom, selectIsZoomed } from './state/selectors/zoomSelectors';
+import { setZoom, resetZoom } from './state/zoomSlice';
+import { ZoomViewport, zoomStateFromViewport, zoomStateToViewport } from './util/zoom/ZoomOptions';
+import { FULL_VIEWPORT, getViewportWidth, panViewport, zoomViewportAround } from './util/zoom/viewport';
 import {
   selectActiveLabel,
   selectActiveTooltipCoordinate,
@@ -400,6 +405,71 @@ export const useOffset = (): ChartOffset | undefined => {
  */
 export const usePlotArea = (): PlotArea | undefined => {
   return useAppSelector(selectPlotArea);
+};
+
+/** Default zoom factor for `zoomIn` / `zoomOut` when no factor is given. */
+const DEFAULT_ZOOM_STEP = 1.5;
+
+export type UseZoomResult = {
+  /** The visible window of each axis, as `{ start, end }` fractions in `[0, 1]`. */
+  viewport: Required<ZoomViewport>;
+  /** Whether either axis is currently zoomed in. */
+  isZoomed: boolean;
+  /** Replace the viewport. Axes left out stay at the full view. */
+  setViewport: (viewport: ZoomViewport) => void;
+  /** Zoom both axes in around their centre. `factor > 1`; defaults to {@link DEFAULT_ZOOM_STEP}. */
+  zoomIn: (factor?: number) => void;
+  /** Zoom both axes out around their centre. */
+  zoomOut: (factor?: number) => void;
+  /** Pan by a fraction of the visible window on each axis (positive x = towards the end, positive y = up). */
+  pan: (deltaX: number, deltaY: number) => void;
+  /** Reset to the full, un-zoomed view. */
+  reset: () => void;
+};
+
+/**
+ * Read and control the chart's zoom viewport from your own UI: buttons, a slider, a minimap, or a
+ * different gesture library entirely. Must be used inside a chart.
+ *
+ * The chart zooms whenever the viewport is not full, so this works on its own, with none of the
+ * built-in interaction components mounted (the "bring your own controls" case).
+ *
+ * @since 4.0
+ */
+export const useZoom = (): UseZoomResult => {
+  const dispatch = useAppDispatch();
+  const rawZoom = useAppSelector(selectZoom);
+  const zoom = useMemo(() => rawZoom ?? { x: FULL_VIEWPORT, y: FULL_VIEWPORT }, [rawZoom]);
+  const isZoomed = useAppSelector(selectIsZoomed) ?? false;
+
+  const setViewport = useCallback(
+    (viewport: ZoomViewport) => dispatch(setZoom(zoomStateFromViewport(viewport))),
+    [dispatch],
+  );
+
+  const zoomByFactor = useCallback(
+    (factor: number) =>
+      dispatch(setZoom({ x: zoomViewportAround(zoom.x, factor, 0.5), y: zoomViewportAround(zoom.y, factor, 0.5) })),
+    [dispatch, zoom],
+  );
+
+  const zoomIn = useCallback((factor = DEFAULT_ZOOM_STEP) => zoomByFactor(factor), [zoomByFactor]);
+  const zoomOut = useCallback((factor = DEFAULT_ZOOM_STEP) => zoomByFactor(1 / factor), [zoomByFactor]);
+
+  const pan = useCallback(
+    (deltaX: number, deltaY: number) =>
+      dispatch(
+        setZoom({
+          x: panViewport(zoom.x, deltaX * getViewportWidth(zoom.x)),
+          y: panViewport(zoom.y, deltaY * getViewportWidth(zoom.y)),
+        }),
+      ),
+    [dispatch, zoom],
+  );
+
+  const reset = useCallback(() => dispatch(resetZoom()), [dispatch]);
+
+  return { viewport: zoomStateToViewport(zoom), isZoomed, setViewport, zoomIn, zoomOut, pan, reset };
 };
 
 /**
