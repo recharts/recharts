@@ -40,11 +40,30 @@ type Viewport = { x?: AxisWindow; y?: AxisWindow };
         an axis, it has nothing to do with the browser window, and resizing the browser never zooms the chart.
       </p>
 
-      <h2>Turning it on: interaction components</h2>
+      <h2>Quick start</h2>
       <p>
-        Add the interactions you want as children of the chart. Each one registers its own handlers and is independently
-        tree-shakeable, so you only ship what you use. Nothing here changes the <LinkToApi>Brush</LinkToApi> or any
-        existing behavior.
+        For the usual experience in one line, add <code>&lt;ZoomAndPan /&gt;</code>. It bundles the sensible defaults:
+        wheel zoom, drag to pan, pinch, keyboard, double-click reset and scrollbars.
+      </p>
+      <pre>{`import { LineChart, XAxis, YAxis, Line, ZoomAndPan } from 'recharts';
+
+<LineChart data={data} width={600} height={300}>
+  <XAxis dataKey="date" />
+  <YAxis />
+  <Line dataKey="value" />
+  <ZoomAndPan />
+</LineChart>`}</pre>
+      <p>
+        It takes the same options as the individual interactions, so you can tune it or switch parts off without
+        dropping to the granular components:
+      </p>
+      <pre>{`<ZoomAndPan axis="x" minZoom={1} maxZoom={20} pinch={false} scrollbars={false} />`}</pre>
+
+      <h2>Composing individual interactions</h2>
+      <p>
+        For exact control over which interactions exist (or to wire your own), drop the bundle and add just the pieces
+        you want as children of the chart. Each one registers its own handlers and is independently tree-shakeable, so
+        you only ship what you use. Nothing here changes the <LinkToApi>Brush</LinkToApi> or any existing behavior.
       </p>
       <pre>{`import {
   LineChart, XAxis, YAxis, Line,
