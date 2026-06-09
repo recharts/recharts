@@ -74,6 +74,7 @@ import { selectTooltipSettings } from './selectTooltipSettings';
 import { combineTooltipInteractionState } from './combiners/combineTooltipInteractionState';
 import { combineActiveTooltipIndex } from './combiners/combineActiveTooltipIndex';
 import { combineCoordinateForDefaultIndex } from './combiners/combineCoordinateForDefaultIndex';
+import { selectIsZoomed } from './zoomSelectors';
 import { selectChartHeight, selectChartWidth } from './containerSelectors';
 import { selectChartOffsetInternal } from './selectChartOffsetInternal';
 import { combineTooltipPayloadConfigurations } from './combiners/combineTooltipPayloadConfigurations';
@@ -515,16 +516,57 @@ const selectTooltipCoordinateForDefaultIndex: (state: RechartsRootState) => Coor
   combineCoordinateForDefaultIndex,
 );
 
+/**
+ * The active tooltip's coordinate recomputed from its index against the current (zoomed) ticks, so it
+ * tracks the data point as the chart zooms/pans, independent of where the pointer is.
+ */
+const selectActiveTooltipCoordinateFromIndex: (state: RechartsRootState) => Coordinate | undefined = createSelector(
+  [
+    selectChartWidth,
+    selectChartHeight,
+    selectChartLayout,
+    selectChartOffsetInternal,
+    selectTooltipAxisTicks,
+    selectActiveTooltipIndex,
+    selectTooltipPayloadConfigurations,
+  ],
+  (width, height, layout, offset, ticks, activeIndex, configurations) =>
+    combineCoordinateForDefaultIndex(width, height, layout, offset, ticks, activeIndex ?? undefined, configurations),
+);
+
 export const selectActiveTooltipCoordinate: (state: RechartsRootState) => Coordinate | undefined = createSelector(
-  [selectTooltipInteractionState, selectTooltipCoordinateForDefaultIndex],
+  [
+    selectTooltipInteractionState,
+    selectTooltipCoordinateForDefaultIndex,
+    selectActiveTooltipCoordinateFromIndex,
+    selectChartLayout,
+    selectIsZoomed,
+  ],
   (
     tooltipInteractionState: TooltipInteractionState | undefined,
     defaultIndexCoordinate: Coordinate | undefined,
+    activeIndexCoordinate: Coordinate | undefined,
+    layout: LayoutType,
+    isZoomed: boolean,
   ): Coordinate | undefined => {
-    if (tooltipInteractionState?.coordinate) {
-      return tooltipInteractionState.coordinate;
+    const stored = tooltipInteractionState?.coordinate;
+    /*
+     * While zoomed/panned, the stored pixel coordinate goes stale as the data moves under the chart -
+     * panning from an axis or scrollbar, or dragging off the chart, never refreshes it, so the cursor
+     * would freeze. Follow the active data point along the zoomed axis using its live index
+     * coordinate, keeping the pointer's perpendicular position when we have one.
+     */
+    if (isZoomed && activeIndexCoordinate != null) {
+      if (stored != null) {
+        return layout === 'horizontal'
+          ? { x: activeIndexCoordinate.x, y: stored.y }
+          : { x: stored.x, y: activeIndexCoordinate.y };
+      }
+      return activeIndexCoordinate;
     }
-
+    if (stored) {
+      return stored;
+    }
     return defaultIndexCoordinate;
   },
 );

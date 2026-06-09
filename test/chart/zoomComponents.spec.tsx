@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { render, fireEvent, waitFor } from '@testing-library/react';
-import { describe, it, expect } from 'vitest';
+import { describe, it, expect, vi } from 'vitest';
 import {
   Line,
   LineChart,
@@ -9,6 +9,7 @@ import {
   MouseWheelZoom,
   PanOnDrag,
   DragToZoom,
+  DragToSelect,
   AxisZoom,
   ZoomPanKeyboard,
   PinchZoom,
@@ -85,12 +86,65 @@ describe('zoom interaction components', () => {
     await waitFor(() => expect(container.querySelector('.recharts-zoom-scrollbar-x')).not.toBeNull());
   });
 
+  it('<ZoomScrollbar/> applies custom thickness, class and style', async () => {
+    const { wrapper, container } = renderWith(
+      <>
+        <MouseWheelZoom />
+        <ZoomScrollbar
+          axis="x"
+          thickness={16}
+          thumbClassName="my-thumb"
+          thumbStyle={{ background: 'rgb(255, 0, 0)' }}
+        />
+      </>,
+    );
+    fireEvent.wheel(wrapper, { deltaY: -100, clientX: 200, clientY: 150 });
+    const thumb = await waitFor(() => {
+      const el = container.querySelector('.recharts-zoom-scrollbar-x .recharts-zoom-scrollbar-thumb') as HTMLElement;
+      expect(el).not.toBeNull();
+      return el;
+    });
+    expect(thumb.className).toContain('my-thumb');
+    expect(thumb.style.background).toContain('255, 0, 0');
+    // For a horizontal scrollbar the thumb height is the (custom) bar thickness.
+    expect(thumb.style.height).toBe('16px');
+  });
+
+  it('<DragToSelect/> selects with mobile double-tap then drag', async () => {
+    const onSelect = vi.fn();
+    const { wrapper } = renderWith(<DragToSelect onSelect={onSelect} />);
+    fireEvent.touchStart(wrapper, { touches: [{ clientX: 150, clientY: 150 }] });
+    fireEvent.touchEnd(wrapper, { touches: [] });
+    fireEvent.touchStart(wrapper, { touches: [{ clientX: 150, clientY: 150 }] });
+    fireEvent.touchMove(wrapper, { touches: [{ clientX: 220, clientY: 100 }] });
+    fireEvent.touchEnd(wrapper, { touches: [] });
+
+    await waitFor(() => expect(onSelect).toHaveBeenCalled());
+    expect(onSelect.mock.calls.at(-1)![0]).toMatchObject({
+      x: expect.objectContaining({ start: expect.any(Number), end: expect.any(Number) }),
+      y: expect.objectContaining({ start: expect.any(Number), end: expect.any(Number) }),
+    });
+  });
+
+  it('<DragToZoom/> zooms into the selected region on mobile double-tap then drag release', async () => {
+    const { wrapper } = renderWith(<DragToZoom />);
+    fireEvent.touchStart(wrapper, { touches: [{ clientX: 150, clientY: 150 }] });
+    fireEvent.touchEnd(wrapper, { touches: [] });
+    fireEvent.touchStart(wrapper, { touches: [{ clientX: 150, clientY: 150 }] });
+    fireEvent.touchMove(wrapper, { touches: [{ clientX: 150, clientY: 100 }] });
+    expect(zoomApi.isZoomed).toBe(false);
+    fireEvent.touchEnd(wrapper, { touches: [] });
+
+    await waitFor(() => expect(zoomApi.isZoomed).toBe(true));
+  });
+
   it('all interaction components mount together without crashing', () => {
     const { container } = renderWith(
       <>
         <MouseWheelZoom />
         <PanOnDrag />
-        <DragToZoom />
+        <DragToZoom modifier="shift" />
+        <DragToSelect onSelect={() => {}} />
         <AxisZoom />
         <ZoomPanKeyboard />
         <PinchZoom />

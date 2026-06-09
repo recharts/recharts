@@ -1,5 +1,6 @@
 import { ZoomDimension } from '../../state/zoomSlice';
 import { ResolvedZoomOptions } from '../../util/zoom/ZoomOptions';
+import { AxisViewport } from '../../util/zoom/viewport';
 
 /**
  * A drag-to-zoom selection rectangle, in chart-wrapper pixel coordinates.
@@ -39,10 +40,14 @@ export type ZoomGestureApi = {
   panBy: (dimension: ZoomDimension, deltaPlotFraction: number) => void;
   /** Zoom one axis into `[from, to]` fractions of the visible window (drag-to-zoom). */
   selectInto: (dimension: ZoomDimension, fromPlotFraction: number, toPlotFraction: number) => void;
+  /** The viewport a `[from, to]` selection would zoom one axis to, without applying it (drag-to-select). */
+  previewSelection: (dimension: ZoomDimension, fromPlotFraction: number, toPlotFraction: number) => AxisViewport | null;
   /** Reset to the full view. */
   reset: () => void;
   /** Refresh the active tooltip at a pointer position after a zoom change (no mouse move needed). */
   refreshPointer: (clientX: number, clientY: number) => void;
+  /** Refresh the active tooltip at its last active chart coordinate (pan with no pointer event). */
+  refreshActivePointer: () => void;
   /** Show or clear the drag-to-zoom selection rectangle overlay. */
   setSelection: (rect: SelectionRect | null) => void;
 };
@@ -51,3 +56,109 @@ export type ZoomGestureApi = {
  * A gesture installer attaches its DOM listeners and returns a cleanup function.
  */
 export type ZoomGestureInstaller = (api: ZoomGestureApi) => () => void;
+
+type TouchStyle = CSSStyleDeclaration & {
+  WebkitTapHighlightColor?: string;
+  WebkitUserSelect?: string;
+};
+
+const TOUCH_DECORATION_CLASS = 'recharts-zoom-touch-interactions';
+
+type StyleSnapshot = {
+  style: TouchStyle;
+  touchAction: string;
+  userSelect: string;
+  webkitUserSelect?: string;
+  webkitTapHighlightColor?: string;
+  outline: string;
+};
+
+type DecorationSnapshot = {
+  hadClass: boolean;
+  styles: ReadonlyArray<StyleSnapshot>;
+  stylesheet: HTMLStyleElement | null;
+};
+
+function snapshot(style: TouchStyle): StyleSnapshot {
+  return {
+    style,
+    touchAction: style.touchAction,
+    userSelect: style.userSelect,
+    webkitUserSelect: style.WebkitUserSelect,
+    webkitTapHighlightColor: style.WebkitTapHighlightColor,
+    outline: style.outline,
+  };
+}
+
+function applyTouchBrowserStyle(target: HTMLElement | SVGElement): void {
+  const style = target.style as TouchStyle;
+  style.touchAction = 'none';
+  style.userSelect = 'none';
+  style.WebkitUserSelect = 'none';
+  style.WebkitTapHighlightColor = 'transparent';
+  style.outline = 'none';
+}
+
+function createTouchDecorationStyles(): HTMLStyleElement {
+  const stylesheet = document.createElement('style');
+  stylesheet.setAttribute('data-recharts-zoom-touch-style', 'true');
+  stylesheet.textContent = `
+    .${TOUCH_DECORATION_CLASS},
+    .${TOUCH_DECORATION_CLASS} *,
+    .${TOUCH_DECORATION_CLASS} svg,
+    .${TOUCH_DECORATION_CLASS} svg * {
+      -webkit-tap-highlight-color: transparent !important;
+      -webkit-touch-callout: none !important;
+      -webkit-user-select: none !important;
+      user-select: none !important;
+    }
+
+    .${TOUCH_DECORATION_CLASS}:focus,
+    .${TOUCH_DECORATION_CLASS} *:focus,
+    .${TOUCH_DECORATION_CLASS}:focus-visible,
+    .${TOUCH_DECORATION_CLASS} *:focus-visible {
+      outline: none !important;
+      box-shadow: none !important;
+    }
+  `;
+  return stylesheet;
+}
+
+/**
+ * Mobile browsers focus / tap-highlight the focusable chart SVG, which shows up as a thick black
+ * rounded rectangle around the plot. Suppress those browser decorations only while touch zoom
+ * gestures are installed; keyboard focus remains available when zoom touch handling is not active.
+ */
+export function suppressTouchBrowserDecorations(element: HTMLElement): () => void {
+  const targets: Array<HTMLElement | SVGElement> = [
+    element,
+    ...element.querySelectorAll<SVGElement>('svg *'),
+    ...element.querySelectorAll<SVGElement>('.recharts-surface'),
+  ];
+  const previous: DecorationSnapshot = {
+    hadClass: element.classList.contains(TOUCH_DECORATION_CLASS),
+    styles: targets.map(target => snapshot(target.style as TouchStyle)),
+    stylesheet: typeof document === 'undefined' ? null : createTouchDecorationStyles(),
+  };
+
+  element.classList.add(TOUCH_DECORATION_CLASS);
+  if (previous.stylesheet != null) {
+    element.appendChild(previous.stylesheet);
+  }
+  targets.forEach(target => applyTouchBrowserStyle(target));
+
+  return () => {
+    previous.styles.forEach(previousStyle => {
+      const { style, touchAction, userSelect, webkitUserSelect, webkitTapHighlightColor, outline } = previousStyle;
+      style.touchAction = touchAction;
+      style.userSelect = userSelect;
+      style.WebkitUserSelect = webkitUserSelect;
+      style.WebkitTapHighlightColor = webkitTapHighlightColor;
+      style.outline = outline;
+    });
+    previous.stylesheet?.remove();
+    if (!previous.hadClass) {
+      element.classList.remove(TOUCH_DECORATION_CLASS);
+    }
+  };
+}

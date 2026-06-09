@@ -83,13 +83,22 @@ export {
   MouseWheelZoom,
   PanOnDrag,
   DragToZoom,
+  DragToSelect,
   AxisZoom,
   ZoomPanKeyboard,
   DoubleClickReset,
   PinchZoom,
   ZoomScrollbar,
 } from './chart/zoom/interactionComponents';
-export type { CommonZoomProps } from './chart/zoom/interactionComponents';
+export type {
+  CommonZoomProps,
+  MouseWheelZoomProps,
+  AxisZoomProps,
+  ZoomPanKeyboardProps,
+  PinchZoomProps,
+  ZoomScrollbarProps,
+  DragToSelectProps,
+} from './chart/zoom/interactionComponents';
 export { ReferenceLine } from './cartesian/ReferenceLine';
 export type { Props as ReferenceLineProps, ReferenceLineSegment } from './cartesian/ReferenceLine';
 export { ReferenceDot } from './cartesian/ReferenceDot';

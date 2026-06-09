@@ -41,8 +41,10 @@ export const installAxisGesture: ZoomGestureInstaller = api => {
     lastY = event.clientY;
     if (panAxis === 'x' && offset.width > 0) {
       api.panBy('x', -dx / offset.width);
+      api.refreshActivePointer();
     } else if (panAxis === 'y' && offset.height > 0) {
       api.panBy('y', dy / offset.height);
+      api.refreshActivePointer();
     }
   };
 

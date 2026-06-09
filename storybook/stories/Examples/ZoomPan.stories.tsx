@@ -36,8 +36,13 @@ type ZoomPlaygroundArgs = {
   doubleClickReset: boolean;
   keyboard: boolean;
   touch: boolean;
+  touchDoubleTapDrag: 'zoom' | 'select';
   scrollbars: boolean;
   wheelStep: number;
+  wheelPanStep: number;
+  panStep: number;
+  panFastMultiplier: number;
+  pinchThreshold: number;
   animate: boolean;
 };
 
@@ -67,15 +72,36 @@ export default {
       control: { type: 'range', min: 1.05, max: 2, step: 0.05 },
       description: 'Zoom factor per wheel notch',
     },
+    wheelPanStep: {
+      control: { type: 'range', min: 0.0005, max: 0.005, step: 0.0005 },
+      description: 'Pan distance per wheel delta unit',
+    },
     pan: { control: { type: 'boolean' }, description: 'Drag to pan' },
+    panStep: {
+      control: { type: 'range', min: 0.01, max: 0.5, step: 0.01 },
+      description: 'Pan distance per arrow-key press',
+    },
+    panFastMultiplier: {
+      control: { type: 'range', min: 1, max: 10, step: 0.5 },
+      description: 'Shift-arrow pan multiplier',
+    },
     axisInteractions: {
       control: { type: 'boolean' },
       description: 'Wheel / drag on an axis zooms / pans just that axis',
     },
-    dragToZoom: { control: { type: 'boolean' }, description: 'Shift + drag to zoom a region' },
+    dragToZoom: { control: { type: 'boolean' }, description: 'Desktop Shift + drag to zoom a region' },
     doubleClickReset: { control: { type: 'boolean' }, description: 'Double-click resets the view' },
     keyboard: { control: { type: 'boolean' }, description: 'Focus the chart: +/- zoom, Shift+arrows pan, 0 reset' },
     touch: { control: { type: 'boolean' }, description: 'Pinch, two-finger pan, double-tap (+drag) on touch devices' },
+    touchDoubleTapDrag: {
+      control: { type: 'inline-radio' },
+      options: ['zoom', 'select'],
+      description: 'Mobile double-tap + drag behavior',
+    },
+    pinchThreshold: {
+      control: { type: 'range', min: 0, max: 40, step: 1 },
+      description: 'Finger-spread before pinch zooming starts',
+    },
     scrollbars: { control: { type: 'boolean' }, description: 'On-canvas scrollbars (shown only while zoomed)' },
     animate: { control: { type: 'boolean' }, description: 'Per-series mount animation (auto-off while zoomed)' },
   },
@@ -86,12 +112,17 @@ export default {
     maxZoom: 25,
     wheel: true,
     wheelStep: 1.15,
+    wheelPanStep: 0.0015,
     pan: true,
+    panStep: 0.1,
+    panFastMultiplier: 2.5,
     axisInteractions: true,
     dragToZoom: true,
     doubleClickReset: true,
     keyboard: true,
     touch: true,
+    touchDoubleTapDrag: 'zoom',
+    pinchThreshold: 12,
     scrollbars: true,
     animate: false,
   },
@@ -104,12 +135,18 @@ function Playground(args: ZoomPlaygroundArgs) {
     maxZoom: args.maxZoom,
     wheel: args.wheel,
     wheelStep: args.wheelStep,
+    wheelPanStep: args.wheelPanStep,
     pan: args.pan,
+    panStep: args.panStep,
+    panFastMultiplier: args.panFastMultiplier,
     axisInteractions: args.axisInteractions,
     dragToZoom: args.dragToZoom,
     doubleClickReset: args.doubleClickReset,
     keyboard: args.keyboard,
     touch: args.touch,
+    touchDoubleTapDrag: args.touchDoubleTapDrag,
+    onTouchSelect: args.touchDoubleTapDrag === 'select' ? () => {} : undefined,
+    pinchThreshold: args.pinchThreshold,
     scrollbars: args.scrollbars,
   };
   const common = { width: 760, height: 420, data };

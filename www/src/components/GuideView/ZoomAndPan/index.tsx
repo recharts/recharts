@@ -67,7 +67,7 @@ type Viewport = { x?: AxisWindow; y?: AxisWindow };
       </p>
       <pre>{`import {
   LineChart, XAxis, YAxis, Line,
-  MouseWheelZoom, PanOnDrag, DragToZoom, ZoomPanKeyboard, PinchZoom, ZoomScrollbar,
+  MouseWheelZoom, PanOnDrag, DragToZoom, DragToSelect, ZoomPanKeyboard, PinchZoom, ZoomScrollbar,
 } from 'recharts';
 
 <LineChart data={data} width={600} height={300}>
@@ -79,6 +79,7 @@ type Viewport = { x?: AxisWindow; y?: AxisWindow };
   <MouseWheelZoom />
   <PanOnDrag />
   <DragToZoom />
+  <DragToSelect onSelect={selection => setSelectedWindow(selection)} />
   <ZoomPanKeyboard />
   <PinchZoom />
   <ZoomScrollbar axis="x" />
@@ -112,6 +113,14 @@ type Viewport = { x?: AxisWindow; y?: AxisWindow };
               <code>&lt;DragToZoom /&gt;</code>
             </td>
             <td>Drag a rectangle to zoom into it (hold a modifier, or use it without panning).</td>
+          </tr>
+          <tr>
+            <td>
+              <code>&lt;DragToSelect /&gt;</code>
+            </td>
+            <td>
+              Drag a rectangle and receive the selected viewport window in <code>onSelect</code> without changing zoom.
+            </td>
           </tr>
           <tr>
             <td>
@@ -150,9 +159,28 @@ type Viewport = { x?: AxisWindow; y?: AxisWindow };
       </table>
 
       <p>Common options live on the components, per interaction or shared via context:</p>
-      <pre>{`<MouseWheelZoom axis="x" step={1.15} />   // x only, custom zoom step per notch
-<DragToZoom axis="xy" minZoom={1} maxZoom={25} />
-<ZoomScrollbar axis="y" />`}</pre>
+      <pre>{`<MouseWheelZoom axis="x" step={1.15} panStep={0.0015} />
+<DragToZoom axis="xy" minZoom={1} maxZoom={25} modifier="shift" />
+<DragToSelect onSelect={selection => setSelectedWindow(selection)} />
+<PinchZoom threshold={12} doubleTapDrag="select" onSelect={selection => setSelectedWindow(selection)} />
+<ZoomPanKeyboard panStep={0.1} panFastMultiplier={2.5} />
+<ZoomScrollbar axis="y" thickness={12} thumbClassName="zoom-thumb" />`}</pre>
+      <p>
+        <code>step</code> controls zoom speed. <code>panStep</code> controls keyboard or wheel pan distance depending on
+        the component. <code>threshold</code> controls how far fingers must spread before a pinch starts zooming.
+        Scrollbars can be styled with <code>className</code>/<code>style</code> for the track and{' '}
+        <code>thumbClassName</code>/<code>thumbStyle</code> for the thumb. The drag rectangle of{' '}
+        <code>&lt;DragToZoom /&gt;</code> / <code>&lt;DragToSelect /&gt;</code> (and <code>&lt;ZoomAndPan /&gt;</code>)
+        is styled the same way with <code>selectionClassName</code>/<code>selectionStyle</code>. Both keep stable{' '}
+        <code>.recharts-zoom-scrollbar</code> / <code>.recharts-zoom-selection</code> classes for plain CSS or Tailwind.
+      </p>
+      <p>
+        <code>&lt;DragToSelect /&gt;</code> is the single selection component: mouse / pen uses rectangle drag, and
+        touch uses double-tap-then-drag, with both paths calling the same <code>onSelect</code>. If you use the bundled{' '}
+        <code>&lt;ZoomAndPan /&gt;</code> instead, <code>touchDoubleTapDrag=&quot;zoom&quot;</code> keeps the maps-style
+        mobile zoom, while <code>touchDoubleTapDrag=&quot;select&quot;</code> emits the mobile selection through{' '}
+        <code>onTouchSelect</code>.
+      </p>
 
       <h2>Controlled &amp; uncontrolled state</h2>
       <p>
@@ -227,7 +255,8 @@ function ZoomButtons() {
       <h2>Touch</h2>
       <p>
         <code>&lt;PinchZoom /&gt;</code> uses two fingers (pinch to zoom, two-finger drag to pan), plus double-tap to
-        reset and double-tap-then-drag to zoom (the &quot;maps&quot; gesture). A single finger is left entirely to the{' '}
+        reset. Double-tap-then-drag defaults to zooming (the &quot;maps&quot; gesture), and can instead select a window
+        when configured with <code>doubleTapDrag=&quot;select&quot;</code>. A single finger is left entirely to the{' '}
         <LinkToApi>Tooltip</LinkToApi>, so one finger never zooms and there is no conflict. While you interact with the
         chart it takes over touch handling (<code>touch-action: none</code>) so the page does not scroll and the browser
         does not pinch-zoom; everything is opt-in, so leave <code>&lt;PinchZoom /&gt;</code> out and touch is untouched.

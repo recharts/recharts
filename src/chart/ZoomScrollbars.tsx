@@ -1,15 +1,36 @@
 import * as React from 'react';
-import { useState } from 'react';
+import { useContext, useState } from 'react';
 import { useAppDispatch, useAppSelector } from '../state/hooks';
 import { selectZoom } from '../state/selectors/zoomSelectors';
 import { selectChartOffsetInternal } from '../state/selectors/selectChartOffsetInternal';
+import { selectActiveTooltipCoordinate } from '../state/selectors/tooltipSelectors';
+import { mouseMoveAction } from '../state/mouseEventsMiddleware';
 import { setAxisViewport, ZoomDimension } from '../state/zoomSlice';
 import { useIsPanorama } from '../context/PanoramaContext';
+import { TooltipPortalContext } from '../context/tooltipPortalContext';
 import { AxisViewport, getViewportWidth, isFullViewport } from '../util/zoom/viewport';
 import { ResolvedZoomOptions, zoomEnabledForDimension } from '../util/zoom/ZoomOptions';
 
 /** Marker so the pointer gesture knows not to start a plot pan when a scrollbar is grabbed. */
 export const ZOOM_SCROLLBAR_ATTR = 'data-recharts-zoom-scrollbar';
+
+/**
+ * Look of the on-canvas scrollbars. Style with `className`/`style` (track) and
+ * `thumbClassName`/`thumbStyle` (thumb), like other Recharts HTML overlays. Default colors are inline
+ * and merged *before* your `*Style` (so yours win); the class names are stable for plain CSS / Tailwind.
+ */
+export type ScrollbarStyle = {
+  /** Visible bar thickness in px (the touch hit area is enlarged automatically). @defaultValue 10 */
+  thickness?: number;
+  /** Class added to the scrollbar track (the band). */
+  className?: string;
+  /** Inline style merged onto the track. */
+  style?: React.CSSProperties;
+  /** Class added to the draggable thumb. */
+  thumbClassName?: string;
+  /** Inline style merged onto the thumb. */
+  thumbStyle?: React.CSSProperties;
+};
 
 export const SCROLLBAR_THICKNESS = 10;
 export const SCROLLBAR_GAP = 2;
@@ -21,6 +42,8 @@ type AxisScrollbarProps = {
   dimension: ZoomDimension;
   viewport: AxisViewport;
   plot: { left: number; top: number; width: number; height: number };
+  scrollbarStyle: ScrollbarStyle;
+  refreshActivePointer: () => void;
 };
 
 /**
@@ -28,7 +51,7 @@ type AxisScrollbarProps = {
  * the thumb, or press the track to jump the thumb under the pointer and drag from there. Rendered as
  * an absolutely-positioned overlay inside the chart wrapper.
  */
-function AxisScrollbar({ dimension, viewport, plot }: AxisScrollbarProps) {
+function AxisScrollbar({ dimension, viewport, plot, scrollbarStyle, refreshActivePointer }: AxisScrollbarProps) {
   const dispatch = useAppDispatch();
   const [hover, setHover] = useState(false);
   const [active, setActive] = useState(false);
@@ -40,10 +63,11 @@ function AxisScrollbar({ dimension, viewport, plot }: AxisScrollbarProps) {
     typeof window !== 'undefined' && typeof window.matchMedia === 'function'
       ? window.matchMedia('(pointer: coarse)').matches
       : false;
-  // The visible bar stays slim; on touch the draggable hit area around it is enlarged.
-  const barThickness = SCROLLBAR_THICKNESS;
-  const hitThickness = coarsePointer ? SCROLLBAR_TOUCH_HIT : SCROLLBAR_THICKNESS;
+  // The visible bar keeps its (customizable) thickness; on touch the draggable hit area is enlarged.
+  const barThickness = scrollbarStyle.thickness ?? SCROLLBAR_THICKNESS;
+  const hitThickness = coarsePointer ? Math.max(SCROLLBAR_TOUCH_HIT, barThickness) : barThickness;
   const barInset = hitThickness - barThickness;
+  const radius = barThickness / 2;
   const thumbLength = Math.max(windowRatio * trackLength, coarsePointer ? 24 : 16);
   // Offset of the thumb from the start of the track. The y domain grows upward, so it is flipped.
   const thumbOffset = (horizontal ? viewport.startRatio : 1 - viewport.endRatio) * trackLength;
@@ -68,6 +92,7 @@ function AxisScrollbar({ dimension, viewport, plot }: AxisScrollbarProps) {
       // The y track is flipped: the top of the track is the end of the domain.
       const startRatio = (horizontal ? ratio : 1 - ratio) * maxStartRatio;
       apply({ startRatio, endRatio: startRatio + windowRatio });
+      refreshActivePointer();
     };
     moveTo(clientX, clientY);
     return moveTo;
@@ -132,11 +157,11 @@ function AxisScrollbar({ dimension, viewport, plot }: AxisScrollbarProps) {
     ? { left: thumbOffset, top: barInset, width: thumbLength, height: barThickness }
     : { left: barInset, top: thumbOffset, width: barThickness, height: thumbLength };
 
-  let thumbBackground = 'rgba(0,0,0,0.35)';
+  let thumbBackground = 'rgba(0, 0, 0, 0.35)';
   if (active) {
-    thumbBackground = 'rgba(0,0,0,0.6)';
+    thumbBackground = 'rgba(0, 0, 0, 0.6)';
   } else if (!coarsePointer && hover) {
-    thumbBackground = 'rgba(0,0,0,0.55)';
+    thumbBackground = 'rgba(0, 0, 0, 0.55)';
   }
 
   return (
@@ -144,23 +169,34 @@ function AxisScrollbar({ dimension, viewport, plot }: AxisScrollbarProps) {
     // eslint-disable-next-line jsx-a11y/no-static-element-interactions
     <div
       {...{ [ZOOM_SCROLLBAR_ATTR]: 'track' }}
-      className={`recharts-zoom-scrollbar recharts-zoom-scrollbar-${dimension}`}
+      className={`recharts-zoom-scrollbar recharts-zoom-scrollbar-${dimension}${
+        scrollbarStyle.className ? ` ${scrollbarStyle.className}` : ''
+      }`}
       onTouchStart={onTouchStart}
       onMouseDown={onMouseDown}
-      style={{ position: 'absolute', touchAction: 'none', ...trackStyle }}
+      style={{
+        position: 'absolute',
+        touchAction: 'none',
+        borderRadius: radius,
+        ...trackStyle,
+        ...scrollbarStyle.style,
+      }}
     >
       <div
         {...{ [ZOOM_SCROLLBAR_ATTR]: 'thumb' }}
-        className="recharts-zoom-scrollbar-thumb"
+        className={`recharts-zoom-scrollbar-thumb${
+          scrollbarStyle.thumbClassName ? ` ${scrollbarStyle.thumbClassName}` : ''
+        }`}
         onMouseEnter={() => setHover(true)}
         onMouseLeave={() => setHover(false)}
         style={{
           position: 'absolute',
-          borderRadius: barThickness / 2,
+          borderRadius: radius,
           background: thumbBackground,
           cursor: horizontal ? 'ew-resize' : 'ns-resize',
           touchAction: 'none',
           ...thumbStyle,
+          ...scrollbarStyle.thumbStyle,
         }}
       />
     </div>
@@ -170,18 +206,42 @@ function AxisScrollbar({ dimension, viewport, plot }: AxisScrollbarProps) {
 /**
  * Renders the on-canvas scrollbars for the zoomed axes. Mounted on the main chart only.
  */
-export function ZoomScrollbars({ options }: { options: ResolvedZoomOptions }) {
+export function ZoomScrollbars({
+  options,
+  scrollbarStyle = {},
+}: {
+  options: ResolvedZoomOptions;
+  scrollbarStyle?: ScrollbarStyle;
+}) {
+  const dispatch = useAppDispatch();
+  const element = useContext(TooltipPortalContext);
   const zoom = useAppSelector(selectZoom);
   const offset = useAppSelector(selectChartOffsetInternal);
+  const activeTooltipCoordinate = useAppSelector(selectActiveTooltipCoordinate);
   const isPanorama = useIsPanorama();
 
-  if (!options.scrollbars || isPanorama || zoom == null || offset == null) {
+  if (!options.scrollbars || isPanorama || zoom == null || offset == null || element == null) {
     return null;
   }
 
   const plot = { left: offset.left, top: offset.top, width: offset.width, height: offset.height };
   const showX = zoomEnabledForDimension(options, 'x') && !isFullViewport(zoom.x);
   const showY = zoomEnabledForDimension(options, 'y') && !isFullViewport(zoom.y);
+  // The scrollbar pans via setAxisViewport directly (no api / pointer event), so nudge the cursor to
+  // follow its data point - mirroring api.refreshActivePointer used by the axis / touch gestures.
+  const refreshActivePointer = () => {
+    if (activeTooltipCoordinate == null) {
+      return;
+    }
+    const rect = element.getBoundingClientRect();
+    dispatch(
+      mouseMoveAction({
+        clientX: rect.left + activeTooltipCoordinate.x,
+        clientY: rect.top + activeTooltipCoordinate.y,
+        currentTarget: element,
+      }),
+    );
+  };
 
   if (!showX && !showY) {
     return null;
@@ -189,8 +249,24 @@ export function ZoomScrollbars({ options }: { options: ResolvedZoomOptions }) {
 
   return (
     <>
-      {showX && <AxisScrollbar dimension="x" viewport={zoom.x} plot={plot} />}
-      {showY && <AxisScrollbar dimension="y" viewport={zoom.y} plot={plot} />}
+      {showX && (
+        <AxisScrollbar
+          dimension="x"
+          viewport={zoom.x}
+          plot={plot}
+          scrollbarStyle={scrollbarStyle}
+          refreshActivePointer={refreshActivePointer}
+        />
+      )}
+      {showY && (
+        <AxisScrollbar
+          dimension="y"
+          viewport={zoom.y}
+          plot={plot}
+          scrollbarStyle={scrollbarStyle}
+          refreshActivePointer={refreshActivePointer}
+        />
+      )}
     </>
   );
 }

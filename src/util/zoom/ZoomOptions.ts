@@ -63,6 +63,14 @@ type ZoomGestureOptions = {
    * click the track to page. Only visible while that axis is zoomed. @defaultValue true
    */
   scrollbars?: boolean;
+  /** Fraction of the visible window panned per keyboard arrow press. @defaultValue 0.1 */
+  panStep?: number;
+  /** Multiplier applied to {@link ZoomGestureOptions.panStep} when Shift is held. @defaultValue 2.5 */
+  panFastMultiplier?: number;
+  /** Finger-spread (px) before a pinch starts zooming, so small two-finger moves stay pure pan. @defaultValue 12 */
+  pinchThreshold?: number;
+  /** Fraction of the visible window panned per unit of wheel delta (Shift / scrollbar wheel). @defaultValue 0.0015 */
+  wheelPanStep?: number;
 };
 
 /**
@@ -99,10 +107,27 @@ export type ResolvedZoomOptions = Required<ZoomGestureOptions> &
      */
     wheelRegions?: readonly string[];
     /**
-     * Internal: restrict the pointer drag gesture to `'pan'` only (plain drag) or `'select'` only
-     * (modifier + drag), so `<PanOnDrag/>` and `<DragToZoom/>` can coexist. Default: legacy (both).
+     * Internal: restrict the pointer drag gesture - `'pan'` (plain drag pans), `'select'` (plain drag
+     * selects), or `'selectShift'` (Shift + drag selects, so it can coexist with a `'pan'` component).
+     * Default: legacy (plain drag pans, Shift / no-pan selects).
      */
-    pointerMode?: 'pan' | 'select';
+    pointerMode?: 'pan' | 'select' | 'selectShift';
+    /**
+     * Internal: when set, a completed drag selection emits the selected window here (per axis, in
+     * `[0, 1]` fractions) instead of zooming into it. Used by `<DragToSelect/>`.
+     */
+    onSelectRegion?: (selection: ZoomViewport) => void;
+    /**
+     * Internal: same shape as `onSelectRegion`, but reserved for the touch double-tap-drag select
+     * mode so it never changes desktop Shift + drag behavior.
+     */
+    onTouchSelectRegion?: (selection: ZoomViewport) => void;
+    /**
+     * Internal: controls the touch double-tap-then-drag gesture. Default zooms like a maps UI;
+     * selectZoom draws a region and zooms into it; selectCallback emits a viewport through
+     * `onTouchSelectRegion` instead; none leaves that gesture to another component.
+     */
+    touchDoubleTapDrag?: 'zoom' | 'selectZoom' | 'selectCallback' | 'none';
   };
 
 const ZOOM_DEFAULTS: Required<ZoomGestureOptions> = {
@@ -118,6 +143,10 @@ const ZOOM_DEFAULTS: Required<ZoomGestureOptions> = {
   keyboard: true,
   touch: true,
   scrollbars: true,
+  panStep: 0.1,
+  panFastMultiplier: 2.5,
+  pinchThreshold: 12,
+  wheelPanStep: 0.0015,
 };
 
 const AXIS_SHORTHANDS: ReadonlyArray<ZoomAxis> = ['x', 'y', 'xy'];

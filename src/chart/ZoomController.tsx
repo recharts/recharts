@@ -1,9 +1,9 @@
-import * as React from 'react';
 import { useContext, useEffect, useState } from 'react';
 import { TooltipPortalContext } from '../context/tooltipPortalContext';
 import { useIsPanorama } from '../context/PanoramaContext';
 import { ResolvedZoomOptions } from '../util/zoom/ZoomOptions';
-import { SelectionRect } from './zoom/ZoomGestureApi';
+import { SelectionRect, suppressTouchBrowserDecorations } from './zoom/ZoomGestureApi';
+import { renderSelectionOverlay, SelectionStyle } from './zoom/SelectionOverlay';
 import { useZoomApi } from './zoom/useZoomApi';
 import { installWheelGesture } from './zoom/wheelGesture';
 import { installPointerGesture } from './zoom/pointerGesture';
@@ -14,6 +14,7 @@ import { installTouchGesture } from './zoom/touchGesture';
 
 type ZoomControllerProps = {
   options: ResolvedZoomOptions;
+  selectionStyle?: SelectionStyle;
 };
 
 /**
@@ -27,7 +28,7 @@ type ZoomControllerProps = {
  * Never mounted on the brush panorama. The visual zoom itself is produced by the axis range
  * transform; this component only updates the viewport state.
  */
-export function ZoomController({ options }: ZoomControllerProps) {
+export function ZoomController({ options, selectionStyle }: ZoomControllerProps) {
   const element = useContext(TooltipPortalContext);
   const isPanorama = useIsPanorama();
   const [selection, setSelection] = useState<SelectionRect | null>(null);
@@ -57,30 +58,8 @@ export function ZoomController({ options }: ZoomControllerProps) {
     if (element == null || isPanorama || !options.touch) {
       return undefined;
     }
-    const previous = element.style.touchAction;
-    element.style.touchAction = 'none';
-    return () => {
-      element.style.touchAction = previous;
-    };
+    return suppressTouchBrowserDecorations(element);
   }, [element, isPanorama, options.touch]);
 
-  if (selection == null) {
-    return null;
-  }
-
-  return (
-    <div
-      className="recharts-zoom-selection"
-      style={{
-        position: 'absolute',
-        left: selection.x,
-        top: selection.y,
-        width: selection.width,
-        height: selection.height,
-        background: 'rgba(120, 120, 255, 0.15)',
-        border: '1px solid rgba(80, 80, 200, 0.6)',
-        pointerEvents: 'none',
-      }}
-    />
-  );
+  return renderSelectionOverlay(selection, element, selectionStyle);
 }

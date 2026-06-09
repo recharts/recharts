@@ -3,6 +3,7 @@ import { useAppDispatch, useAppSelector } from '../../state/hooks';
 import { selectZoom } from '../../state/selectors/zoomSelectors';
 import { resetZoom, setAxisViewport, ZoomDimension, ZoomState } from '../../state/zoomSlice';
 import { selectChartOffsetInternal } from '../../state/selectors/selectChartOffsetInternal';
+import { selectActiveTooltipCoordinate } from '../../state/selectors/tooltipSelectors';
 import { mouseMoveAction } from '../../state/mouseEventsMiddleware';
 import { TooltipPortalContext } from '../../context/tooltipPortalContext';
 import { AxisViewport, clampRatio, isFullViewport } from '../../util/zoom/viewport';
@@ -16,6 +17,7 @@ type LiveState = {
   offset: ChartOffsetInternal | undefined;
   zoom: ZoomState | undefined;
   options: ResolvedZoomOptions;
+  activeTooltipCoordinate: { x: number; y: number } | undefined;
 };
 
 const noopSelection = (_rect: SelectionRect | null): void => {};
@@ -39,10 +41,11 @@ export function useZoomApi(
   const element = useContext(TooltipPortalContext);
   const offset = useAppSelector(selectChartOffsetInternal);
   const zoom = useAppSelector(selectZoom);
+  const activeTooltipCoordinate = useAppSelector(selectActiveTooltipCoordinate);
   const dispatch = useAppDispatch();
 
-  const live = useRef<LiveState>({ offset, zoom, options });
-  live.current = { offset, zoom, options };
+  const live = useRef<LiveState>({ offset, zoom, options, activeTooltipCoordinate });
+  live.current = { offset, zoom, options, activeTooltipCoordinate };
 
   return useMemo<ZoomGestureApi | null>(() => {
     if (element == null) {
@@ -144,8 +147,29 @@ export function useZoomApi(
           applyDimension(dimension, selectDimension(z[dimension], from, to, live.current.options));
         }
       },
+      previewSelection: (dimension, from, to) => {
+        const z = live.current.zoom;
+        return z == null ? null : selectDimension(z[dimension], from, to, live.current.options);
+      },
       reset: () => dispatch(resetZoom()),
       refreshPointer: (clientX, clientY) => dispatch(mouseMoveAction({ clientX, clientY, currentTarget: element })),
+      refreshActivePointer: () => {
+        // Pan from an axis / scrollbar (or with the finger off the chart) never fires a pointer event,
+        // so the cursor would freeze. Re-dispatch a move at the active tooltip's current coordinate -
+        // which selectActiveTooltipCoordinate keeps aligned with its data point as the chart pans.
+        const coordinate = live.current.activeTooltipCoordinate;
+        if (coordinate == null) {
+          return;
+        }
+        const rect = element.getBoundingClientRect();
+        dispatch(
+          mouseMoveAction({
+            clientX: rect.left + coordinate.x,
+            clientY: rect.top + coordinate.y,
+            currentTarget: element,
+          }),
+        );
+      },
       setSelection,
     };
   }, [element, dispatch, setSelection]);

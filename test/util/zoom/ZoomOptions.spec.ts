@@ -29,6 +29,10 @@ describe('resolveZoomOptions', () => {
       keyboard: true,
       touch: true,
       scrollbars: true,
+      panStep: 0.1,
+      panFastMultiplier: 2.5,
+      pinchThreshold: 12,
+      wheelPanStep: 0.0015,
     });
   });
 

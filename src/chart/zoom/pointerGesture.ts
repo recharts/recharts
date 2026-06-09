@@ -1,5 +1,5 @@
 import { ZoomGestureInstaller, SelectionRect } from './ZoomGestureApi';
-import { zoomEnabledForDimension } from '../../util/zoom/ZoomOptions';
+import { ZoomViewport, viewportToWindow, zoomEnabledForDimension } from '../../util/zoom/ZoomOptions';
 
 /** Minimum drag length (as a fraction of the visible window) before a drag-to-zoom selection counts. */
 const MIN_SELECT_FRACTION = 0.01;
@@ -57,13 +57,16 @@ export const installPointerGesture: ZoomGestureInstaller = api => {
     const options = api.getOptions();
     let wantsSelect: boolean;
     if (options.pointerMode === 'pan') {
-      // A plain-drag pan component; a modifier drag is left for a select component.
+      // Plain drag pans; a Shift drag is left for a coexisting select component.
       if (event.shiftKey) {
         return;
       }
       wantsSelect = false;
     } else if (options.pointerMode === 'select') {
-      // A select-only component; needs the modifier so it can coexist with a pan component.
+      // Plain drag selects.
+      wantsSelect = true;
+    } else if (options.pointerMode === 'selectShift') {
+      // Shift + drag selects, so it can coexist with a plain-drag pan component.
       if (!event.shiftKey) {
         return;
       }
@@ -104,6 +107,7 @@ export const installPointerGesture: ZoomGestureInstaller = api => {
       if (offset.height > 0) {
         api.panBy('y', dy / offset.height);
       }
+      api.refreshPointer(event.clientX, event.clientY);
     } else if (mode === 'select' && startPixels != null) {
       const pixels = api.plotPixels(event.clientX, event.clientY);
       if (pixels != null) {
@@ -117,13 +121,32 @@ export const installPointerGesture: ZoomGestureInstaller = api => {
       const from = api.plotFractions(startClientX, startClientY);
       const to = api.plotFractions(event.clientX, event.clientY);
       if (from != null && to != null) {
-        // Only zoom a dimension that was actually dragged, so a horizontal selection in xy mode
-        // doesn't collapse the y axis to maximum zoom.
-        if (Math.abs(to.x - from.x) > MIN_SELECT_FRACTION) {
-          api.selectInto('x', from.x, to.x);
-        }
-        if (Math.abs(to.y - from.y) > MIN_SELECT_FRACTION) {
-          api.selectInto('y', from.y, to.y);
+        const draggedX = Math.abs(to.x - from.x) > MIN_SELECT_FRACTION;
+        const draggedY = Math.abs(to.y - from.y) > MIN_SELECT_FRACTION;
+        const { onSelectRegion } = api.getOptions();
+        if (onSelectRegion != null) {
+          // Drag-to-select: emit the selected window instead of zooming into it.
+          const selection: ZoomViewport = {};
+          const vx = draggedX ? api.previewSelection('x', from.x, to.x) : null;
+          const vy = draggedY ? api.previewSelection('y', from.y, to.y) : null;
+          if (vx != null) {
+            selection.x = viewportToWindow(vx);
+          }
+          if (vy != null) {
+            selection.y = viewportToWindow(vy);
+          }
+          if (selection.x != null || selection.y != null) {
+            onSelectRegion(selection);
+          }
+        } else {
+          // Only zoom a dimension that was actually dragged, so a horizontal selection in xy mode
+          // doesn't collapse the y axis to maximum zoom.
+          if (draggedX) {
+            api.selectInto('x', from.x, to.x);
+          }
+          if (draggedY) {
+            api.selectInto('y', from.y, to.y);
+          }
         }
       }
       api.setSelection(null);

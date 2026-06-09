@@ -33,6 +33,27 @@ describe('touch zoom gestures', () => {
     expect(last.x.end - last.x.start).toBeLessThan(1);
   });
 
+  it('double-tap then drag zooms into the selected region when configured', async () => {
+    const onZoomChange = vi.fn();
+    const onTouchSelect = vi.fn();
+    const { wrapper } = renderChart({ axis: 'xy', touchDoubleTapDrag: 'select', onTouchSelect, onZoomChange });
+    fireEvent.touchStart(wrapper, { touches: [{ clientX: 150, clientY: 150 }] });
+    fireEvent.touchEnd(wrapper, { touches: [] });
+    fireEvent.touchStart(wrapper, { touches: [{ clientX: 150, clientY: 150 }] });
+    fireEvent.touchMove(wrapper, { touches: [{ clientX: 220, clientY: 100 }] });
+    fireEvent.touchEnd(wrapper, { touches: [] });
+
+    await waitFor(() => expect(onTouchSelect).toHaveBeenCalled());
+    await waitFor(() => expect(onZoomChange).toHaveBeenCalled());
+    expect(onTouchSelect.mock.calls.at(-1)![0]).toMatchObject({
+      x: expect.objectContaining({ start: expect.any(Number), end: expect.any(Number) }),
+      y: expect.objectContaining({ start: expect.any(Number), end: expect.any(Number) }),
+    });
+    const last = onZoomChange.mock.calls.at(-1)![0];
+    expect(last.x.end - last.x.start).toBeLessThan(1);
+    expect(last.y.end - last.y.start).toBeLessThan(1);
+  });
+
   it('double-tap resets', async () => {
     const onZoomChange = vi.fn();
     const { wrapper } = renderChart({ axis: 'x', initialZoom: { x: { start: 0.2, end: 0.6 } }, onZoomChange });
