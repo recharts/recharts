@@ -173,7 +173,7 @@
     "globals": "^16.3.0",
     "husky": "^9.1.1",
     "jsdom": "^24.1.1",
-    "lint-staged": "^15.2.7",
+    "lint-staged": "^17.0.7",
     "marked": "^18.0.5",
     "playwright": "1.60.0",
     "prettier": "^3.6.2",
