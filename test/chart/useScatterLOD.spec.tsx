@@ -8,19 +8,21 @@ const data = [{ x: 0, y: 0 }, { x: 100, y: 100 }, ...Array.from({ length: 100 },
 
 let lodCount = -1;
 
-function Capture() {
-  lodCount = useScatterLOD(data, { x: 'x', y: 'y', cellSize: 4 }).length;
-  return null;
+// Feeds the decimated result straight to <Scatter data>: the realistic pattern, which also exercises
+// the re-register path that previously caused an infinite update loop.
+function LODScatter() {
+  const lod = useScatterLOD(data, { x: 'x', y: 'y', cellSize: 4 });
+  lodCount = lod.length;
+  return <Scatter data={lod} dataKey="y" isAnimationActive={false} />;
 }
 
 describe('useScatterLOD', () => {
-  it('collapses overlapping points to roughly one per grid cell', async () => {
+  it('collapses overlapping points to roughly one per grid cell without looping', async () => {
     render(
       <ScatterChart width={400} height={300}>
         <XAxis dataKey="x" type="number" domain={[0, 100]} />
         <YAxis dataKey="y" type="number" domain={[0, 100]} />
-        <Scatter data={data} dataKey="y" isAnimationActive={false} />
-        <Capture />
+        <LODScatter />
       </ScatterChart>,
     );
 

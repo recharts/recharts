@@ -1,4 +1,4 @@
-import { useMemo } from 'react';
+import { useMemo, useRef } from 'react';
 import { useAppSelector } from '../../state/hooks';
 import { selectChartOffsetInternal } from '../../state/selectors/selectChartOffsetInternal';
 import { useXAxisScale, useYAxisScale } from '../../hooks';
@@ -43,32 +43,40 @@ export function useScatterLOD<T>(data: ReadonlyArray<T>, options: ScatterLODOpti
   const xScale = useXAxisScale(xAxisId);
   const yScale = useYAxisScale(yAxisId);
   const offset = useAppSelector(selectChartOffsetInternal);
+  const stableRef = useRef<ReadonlyArray<T>>(data);
 
-  return useMemo(() => {
-    if (xScale == null || yScale == null || offset == null) {
+  // Depend on the plot's primitive dimensions (not the offset object) so the memo doesn't recompute
+  // just because the selector handed back a new object with the same values.
+  const plotLeft = offset?.left ?? 0;
+  const plotTop = offset?.top ?? 0;
+  const plotWidth = offset?.width ?? 0;
+  const plotHeight = offset?.height ?? 0;
+  const measured = offset != null;
+
+  const computed = useMemo(() => {
+    if (xScale == null || yScale == null || !measured) {
       return data;
     }
     const cell = cellSize > 0 ? cellSize : 1;
-    const left = offset.left - cell;
-    const right = offset.left + offset.width + cell;
-    const top = offset.top - cell;
-    const bottom = offset.top + offset.height + cell;
+    const minX = plotLeft - cell;
+    const maxX = plotLeft + plotWidth + cell;
+    const minY = plotTop - cell;
+    const maxY = plotTop + plotHeight + cell;
+    // A flat key per grid cell; the column count bounds the range so cells never collide.
+    const columns = Math.max(Math.ceil(plotWidth / cell) + 3, 1);
 
     const seen = new Set<number>();
     const result: T[] = [];
-    // A flat key per grid cell; the column count bounds the range so cells never collide.
-    const columns = Math.max(Math.ceil(offset.width / cell) + 3, 1);
-
     data.forEach(point => {
       const px = xScale(getValueByDataKey(point, x as DataKey<T>) as never);
       const py = yScale(getValueByDataKey(point, y as DataKey<T>) as never);
       if (px == null || py == null || Number.isNaN(px) || Number.isNaN(py)) {
         return;
       }
-      if (cull && (px < left || px > right || py < top || py > bottom)) {
+      if (cull && (px < minX || px > maxX || py < minY || py > maxY)) {
         return;
       }
-      const key = Math.round((py - offset.top) / cell) * columns + Math.round((px - offset.left) / cell);
+      const key = Math.round((py - plotTop) / cell) * columns + Math.round((px - plotLeft) / cell);
       if (seen.has(key)) {
         return;
       }
@@ -77,5 +85,13 @@ export function useScatterLOD<T>(data: ReadonlyArray<T>, options: ScatterLODOpti
     });
 
     return result.length === data.length ? data : result;
-  }, [data, xScale, yScale, offset, x, y, cellSize, cull]);
+  }, [data, xScale, yScale, measured, plotLeft, plotTop, plotWidth, plotHeight, x, y, cellSize, cull]);
+
+  // Reuse the previous array while the kept set is unchanged, so handing it to <Scatter data> can't
+  // start an endless re-register / re-render loop when an upstream dependency changes identity.
+  const previous = stableRef.current;
+  const stable =
+    previous.length === computed.length && previous.every((point, i) => point === computed[i]) ? previous : computed;
+  stableRef.current = stable;
+  return stable;
 }

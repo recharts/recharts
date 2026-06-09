@@ -204,6 +204,27 @@ const [viewport, setViewport] = useState({ x: { start: 0.2, end: 0.6 } });
         viewport.
       </p>
 
+      <h2>Auto-scaling, follow &amp; level of detail</h2>
+      <p>
+        A few headless helpers react to the viewport. <code>&lt;AutoScaleAxis /&gt;</code> re-fits the value axis to the
+        data visible in the current window as you pan or zoom; <code>&lt;FollowSeries /&gt;</code> keeps one series
+        vertically centred while panning (optionally auto-scaling the span around it); and <code>useScatterLOD</code>{' '}
+        decimates dense scatter data against the zoomed scales, so you draw fewer points when zoomed out and reveal more
+        detail as you zoom in.
+      </p>
+      <pre>{`<LineChart data={data}>
+  <Line dataKey="value" />
+  <MouseWheelZoom axis="x" />
+  <AutoScaleAxis axis="y" />            {/* fit y to the visible x window */}
+  {/* or keep one series centred: <FollowSeries dataKey="value" autoScale /> */}
+</LineChart>
+
+// dense scatter: roughly one point per cell, more as you zoom in
+function Points() {
+  const lod = useScatterLOD(bigData, { x: 'x', y: 'y' });
+  return <Scatter data={lod} />;
+}`}</pre>
+
       <h2>Custom UI &amp; your own gestures</h2>
       <p>
         For buttons, sliders, a minimap of your own, or a different gesture library entirely, drop down to the hooks.
