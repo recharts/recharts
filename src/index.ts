@@ -103,6 +103,8 @@ export { AutoScaleAxis } from './chart/zoom/AutoScaleAxis';
 export type { AutoScaleAxisProps } from './chart/zoom/AutoScaleAxis';
 export { FollowSeries } from './chart/zoom/FollowSeries';
 export type { FollowSeriesProps } from './chart/zoom/FollowSeries';
+export { useScatterLOD } from './chart/zoom/useScatterLOD';
+export type { ScatterLODOptions } from './chart/zoom/useScatterLOD';
 export { ReferenceLine } from './cartesian/ReferenceLine';
 export type { Props as ReferenceLineProps, ReferenceLineSegment } from './cartesian/ReferenceLine';
 export { ReferenceDot } from './cartesian/ReferenceDot';
