@@ -34,6 +34,7 @@ type ChartType = 'LineChart' | 'BarChart' | 'AreaChart';
 
 type ZoomPlaygroundArgs = {
   chartType: ChartType;
+  layout: 'horizontal' | 'vertical';
   axis: 'x' | 'y' | 'xy';
   minZoom: number;
   maxZoom: number;
@@ -67,6 +68,11 @@ export default {
       control: { type: 'inline-radio' },
       options: ['LineChart', 'BarChart', 'AreaChart'],
       description: 'Which cartesian chart to render',
+    },
+    layout: {
+      control: { type: 'inline-radio' },
+      options: ['horizontal', 'vertical'],
+      description: 'Chart orientation: swaps the category / value axes (e.g. horizontal bars)',
     },
     axis: {
       control: { type: 'inline-radio' },
@@ -115,6 +121,7 @@ export default {
   },
   args: {
     chartType: 'LineChart',
+    layout: 'horizontal',
     axis: 'x',
     minZoom: 1,
     maxZoom: 25,
@@ -157,15 +164,27 @@ function Playground(args: ZoomPlaygroundArgs) {
     pinchThreshold: args.pinchThreshold,
     scrollbars: args.scrollbars,
   };
-  const common = { width: 760, height: 420, data };
+  const common = { width: 760, height: 420, data, layout: args.layout };
   const isAnimationActive = args.animate;
+  // Swap which axis is the category and which is the value so the chart flips orientation.
+  const axes =
+    args.layout === 'vertical' ? (
+      <>
+        <XAxis type="number" />
+        <YAxis dataKey="name" type="category" />
+      </>
+    ) : (
+      <>
+        <XAxis dataKey="name" type="category" />
+        <YAxis type="number" />
+      </>
+    );
 
   if (args.chartType === 'BarChart') {
     return (
       <BarChart {...common}>
         <CartesianGrid strokeDasharray="3 3" />
-        <XAxis dataKey="name" />
-        <YAxis />
+        {axes}
         <Tooltip />
         <Bar dataKey="uv" fill="#8884d8" isAnimationActive={isAnimationActive} />
         <Bar dataKey="pv" fill="#82ca9d" isAnimationActive={isAnimationActive} />
@@ -178,8 +197,7 @@ function Playground(args: ZoomPlaygroundArgs) {
     return (
       <AreaChart {...common}>
         <CartesianGrid strokeDasharray="3 3" />
-        <XAxis dataKey="name" />
-        <YAxis />
+        {axes}
         <Tooltip />
         <Area type="monotone" dataKey="uv" stroke="#8884d8" fill="#8884d8" isAnimationActive={isAnimationActive} />
         <Area type="monotone" dataKey="pv" stroke="#82ca9d" fill="#82ca9d" isAnimationActive={isAnimationActive} />
@@ -191,8 +209,7 @@ function Playground(args: ZoomPlaygroundArgs) {
   return (
     <LineChart {...common}>
       <CartesianGrid strokeDasharray="3 3" />
-      <XAxis dataKey="name" />
-      <YAxis />
+      {axes}
       <Tooltip />
       <Line type="monotone" dataKey="uv" stroke="#8884d8" dot={false} isAnimationActive={isAnimationActive} />
       <Line type="monotone" dataKey="pv" stroke="#82ca9d" dot={false} isAnimationActive={isAnimationActive} />

@@ -38,6 +38,10 @@ export type ZoomGestureApi = {
   zoomBy: (dimension: ZoomDimension, factor: number, plotFocus: number) => void;
   /** Pan one axis by `deltaPlotFraction` (a fraction of the visible window). */
   panBy: (dimension: ZoomDimension, deltaPlotFraction: number) => void;
+  /** Pan one axis by a screen-pixel delta (down / right positive), accounting for axis orientation. */
+  panByPixels: (dimension: ZoomDimension, deltaPixels: number) => void;
+  /** Whether each screen axis' domain grows toward the low-pixel edge (depends on layout / reverse). */
+  getFlipped: () => { x: boolean; y: boolean };
   /** Zoom one axis into `[from, to]` fractions of the visible window (drag-to-zoom). */
   selectInto: (dimension: ZoomDimension, fromPlotFraction: number, toPlotFraction: number) => void;
   /** The viewport a `[from, to]` selection would zoom one axis to, without applying it (drag-to-select). */

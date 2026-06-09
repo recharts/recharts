@@ -3,12 +3,13 @@ import { useContext, useState } from 'react';
 import { useAppDispatch, useAppSelector } from '../state/hooks';
 import { selectZoom } from '../state/selectors/zoomSelectors';
 import { selectChartOffsetInternal } from '../state/selectors/selectChartOffsetInternal';
+import { selectAxisRangeWithReverse } from '../state/selectors/axisSelectors';
 import { selectActiveTooltipCoordinate } from '../state/selectors/tooltipSelectors';
 import { mouseMoveAction } from '../state/mouseEventsMiddleware';
 import { setAxisViewport, ZoomDimension } from '../state/zoomSlice';
 import { useIsPanorama } from '../context/PanoramaContext';
 import { TooltipPortalContext } from '../context/tooltipPortalContext';
-import { AxisViewport, getViewportWidth, isFullViewport } from '../util/zoom/viewport';
+import { AxisViewport, getViewportWidth, isFullViewport, isRangeFlipped } from '../util/zoom/viewport';
 import { ResolvedZoomOptions, zoomEnabledForDimension } from '../util/zoom/ZoomOptions';
 
 /** Marker so the pointer gesture knows not to start a plot pan when a scrollbar is grabbed. */
@@ -44,6 +45,8 @@ type AxisScrollbarProps = {
   plot: { left: number; top: number; width: number; height: number };
   scrollbarStyle: ScrollbarStyle;
   refreshActivePointer: () => void;
+  /** Whether this axis' domain grows toward the low-pixel edge (e.g. a horizontal-layout value y). */
+  flipped: boolean;
 };
 
 /**
@@ -51,7 +54,14 @@ type AxisScrollbarProps = {
  * the thumb, or press the track to jump the thumb under the pointer and drag from there. Rendered as
  * an absolutely-positioned overlay inside the chart wrapper.
  */
-function AxisScrollbar({ dimension, viewport, plot, scrollbarStyle, refreshActivePointer }: AxisScrollbarProps) {
+function AxisScrollbar({
+  dimension,
+  viewport,
+  plot,
+  scrollbarStyle,
+  refreshActivePointer,
+  flipped,
+}: AxisScrollbarProps) {
   const dispatch = useAppDispatch();
   const [hover, setHover] = useState(false);
   const [active, setActive] = useState(false);
@@ -70,7 +80,7 @@ function AxisScrollbar({ dimension, viewport, plot, scrollbarStyle, refreshActiv
   const radius = barThickness / 2;
   const thumbLength = Math.max(windowRatio * trackLength, coarsePointer ? 24 : 16);
   // Offset of the thumb from the start of the track. The y domain grows upward, so it is flipped.
-  const thumbOffset = (horizontal ? viewport.startRatio : 1 - viewport.endRatio) * trackLength;
+  const thumbOffset = (flipped ? 1 - viewport.endRatio : viewport.startRatio) * trackLength;
 
   const apply = (next: AxisViewport) => dispatch(setAxisViewport({ dimension, viewport: next }));
 
@@ -90,7 +100,7 @@ function AxisScrollbar({ dimension, viewport, plot, scrollbarStyle, refreshActiv
       const desired = Math.max(0, Math.min(maxThumbStart, local - grab));
       const ratio = desired / maxThumbStart;
       // The y track is flipped: the top of the track is the end of the domain.
-      const startRatio = (horizontal ? ratio : 1 - ratio) * maxStartRatio;
+      const startRatio = (flipped ? 1 - ratio : ratio) * maxStartRatio;
       apply({ startRatio, endRatio: startRatio + windowRatio });
       refreshActivePointer();
     };
@@ -218,6 +228,10 @@ export function ZoomScrollbars({
   const zoom = useAppSelector(selectZoom);
   const offset = useAppSelector(selectChartOffsetInternal);
   const activeTooltipCoordinate = useAppSelector(selectActiveTooltipCoordinate);
+  const xFlipped =
+    useAppSelector(state => isRangeFlipped(selectAxisRangeWithReverse(state, 'xAxis', 0, false))) ?? false;
+  const yFlipped =
+    useAppSelector(state => isRangeFlipped(selectAxisRangeWithReverse(state, 'yAxis', 0, false))) ?? false;
   const isPanorama = useIsPanorama();
 
   if (!options.scrollbars || isPanorama || zoom == null || offset == null || element == null) {
@@ -256,6 +270,7 @@ export function ZoomScrollbars({
           plot={plot}
           scrollbarStyle={scrollbarStyle}
           refreshActivePointer={refreshActivePointer}
+          flipped={xFlipped}
         />
       )}
       {showY && (
@@ -265,6 +280,7 @@ export function ZoomScrollbars({
           plot={plot}
           scrollbarStyle={scrollbarStyle}
           refreshActivePointer={refreshActivePointer}
+          flipped={yFlipped}
         />
       )}
     </>

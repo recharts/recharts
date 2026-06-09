@@ -3,10 +3,11 @@ import { useAppDispatch, useAppSelector } from '../../state/hooks';
 import { selectZoom } from '../../state/selectors/zoomSelectors';
 import { resetZoom, setAxisViewport, ZoomDimension, ZoomState } from '../../state/zoomSlice';
 import { selectChartOffsetInternal } from '../../state/selectors/selectChartOffsetInternal';
+import { selectAxisRangeWithReverse } from '../../state/selectors/axisSelectors';
 import { selectActiveTooltipCoordinate } from '../../state/selectors/tooltipSelectors';
 import { mouseMoveAction } from '../../state/mouseEventsMiddleware';
 import { TooltipPortalContext } from '../../context/tooltipPortalContext';
-import { AxisViewport, clampRatio, isFullViewport } from '../../util/zoom/viewport';
+import { AxisViewport, clampRatio, isFullViewport, isRangeFlipped } from '../../util/zoom/viewport';
 import { panDimension, selectDimension, zoomDimension } from '../../util/zoom/zoomActions';
 import { ResolvedZoomOptions, zoomEnabledForDimension } from '../../util/zoom/ZoomOptions';
 import { ChartOffsetInternal } from '../../util/types';
@@ -17,6 +18,13 @@ type LiveState = {
   offset: ChartOffsetInternal | undefined;
   zoom: ZoomState | undefined;
   options: ResolvedZoomOptions;
+  /**
+   * Whether each screen axis is "flipped": its domain minimum sits at the high-pixel edge (bottom /
+   * right) rather than the low edge. The value axis of a horizontal-layout chart is flipped (values
+   * grow upward); a vertical-layout category axis is not. Drives orientation so zoom/pan feel right
+   * in both layouts (and with reversed axes).
+   */
+  flipped: { x: boolean; y: boolean };
   activeTooltipCoordinate: { x: number; y: number } | undefined;
 };
 
@@ -42,10 +50,16 @@ export function useZoomApi(
   const offset = useAppSelector(selectChartOffsetInternal);
   const zoom = useAppSelector(selectZoom);
   const activeTooltipCoordinate = useAppSelector(selectActiveTooltipCoordinate);
+  // An axis is "flipped" when its range runs from high to low pixels (domain min at the far edge).
+  const xFlipped =
+    useAppSelector(state => isRangeFlipped(selectAxisRangeWithReverse(state, 'xAxis', 0, false))) ?? false;
+  const yFlipped =
+    useAppSelector(state => isRangeFlipped(selectAxisRangeWithReverse(state, 'yAxis', 0, false))) ?? false;
   const dispatch = useAppDispatch();
 
-  const live = useRef<LiveState>({ offset, zoom, options, activeTooltipCoordinate });
-  live.current = { offset, zoom, options, activeTooltipCoordinate };
+  const flipped = { x: xFlipped, y: yFlipped };
+  const live = useRef<LiveState>({ offset, zoom, options, flipped, activeTooltipCoordinate });
+  live.current = { offset, zoom, options, flipped, activeTooltipCoordinate };
 
   return useMemo<ZoomGestureApi | null>(() => {
     if (element == null) {
@@ -78,10 +92,14 @@ export function useZoomApi(
           return null;
         }
         const rect = element.getBoundingClientRect();
+        const fx = (clientX - rect.left - o.left) / o.width;
+        const fy = (clientY - rect.top - o.top) / o.height;
+        // Map screen position to a window fraction, flipping where the axis domain grows toward the
+        // low-pixel edge (e.g. a value y axis, whose values grow upward).
+        const { x: flipX, y: flipY } = live.current.flipped;
         return {
-          x: clampRatio((clientX - rect.left - o.left) / o.width),
-          // Pixels grow downward but the y domain grows upward, so flip to the domain fraction.
-          y: clampRatio(1 - (clientY - rect.top - o.top) / o.height),
+          x: clampRatio(flipX ? 1 - fx : fx),
+          y: clampRatio(flipY ? 1 - fy : fy),
         };
       },
       plotPixels: (clientX, clientY) => {
@@ -141,6 +159,22 @@ export function useZoomApi(
           applyDimension(dimension, panDimension(z[dimension], deltaPlotFraction));
         }
       },
+      panByPixels: (dimension, deltaPixels) => {
+        const z = live.current.zoom;
+        const o = live.current.offset;
+        if (z == null || o == null) {
+          return;
+        }
+        const size = dimension === 'x' ? o.width : o.height;
+        if (size <= 0) {
+          return;
+        }
+        // Screen down/right is positive; a flipped axis (domain grows toward the low-pixel edge) moves
+        // the window the other way, so the content tracks the pointer in either layout.
+        const sign = live.current.flipped[dimension] ? 1 : -1;
+        applyDimension(dimension, panDimension(z[dimension], (sign * deltaPixels) / size));
+      },
+      getFlipped: () => live.current.flipped,
       selectInto: (dimension, from, to) => {
         const z = live.current.zoom;
         if (z != null) {

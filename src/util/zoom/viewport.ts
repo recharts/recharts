@@ -41,6 +41,19 @@ export const FULL_VIEWPORT: AxisViewport = { startRatio: 0, endRatio: 1 };
  */
 export const MIN_VIEWPORT_WIDTH = 1e-4;
 
+/**
+ * Whether a pixel range runs from a high to a low coordinate - i.e. the axis' domain minimum sits at
+ * the far (bottom / right) edge. True for a value y axis (values grow upward), false for a normal x
+ * axis or a vertical-layout category y. Used to orient zoom/pan gestures and scrollbars per layout.
+ */
+export function isRangeFlipped(range: readonly [number, number] | undefined): boolean {
+  if (range == null) {
+    return false;
+  }
+  const [start, end] = range;
+  return start > end;
+}
+
 const EPSILON = 1e-9;
 
 /**

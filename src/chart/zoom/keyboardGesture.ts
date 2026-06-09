@@ -40,14 +40,16 @@ export const installKeyboardGesture: ZoomGestureInstaller = api => {
       case 'ArrowUp':
       case 'ArrowDown': {
         const dist = options.panStep * (event.shiftKey ? options.panFastMultiplier : 1);
+        // Arrows move the view in screen direction (Up/Left toward the top-left edge) in any layout.
+        const flipped = api.getFlipped();
         if (event.key === 'ArrowLeft') {
-          api.panBy('x', -dist);
+          api.panBy('x', (flipped.x ? 1 : -1) * dist);
         } else if (event.key === 'ArrowRight') {
-          api.panBy('x', dist);
+          api.panBy('x', (flipped.x ? -1 : 1) * dist);
         } else if (event.key === 'ArrowUp') {
-          api.panBy('y', dist);
+          api.panBy('y', (flipped.y ? 1 : -1) * dist);
         } else {
-          api.panBy('y', -dist);
+          api.panBy('y', (flipped.y ? -1 : 1) * dist);
         }
         event.preventDefault();
         event.stopPropagation();

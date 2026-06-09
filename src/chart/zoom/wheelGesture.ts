@@ -37,10 +37,13 @@ export const installWheelGesture: ZoomGestureInstaller = api => {
     const rawDelta = Math.abs(event.deltaY) >= Math.abs(event.deltaX) ? event.deltaY : event.deltaX;
     const panAmount = rawDelta * options.wheelPanStep;
 
+    // Flip the wheel-pan direction on a flipped axis so scrolling moves the view the same screen way
+    // in either layout (zoom focus is already orientation-correct via plotFractions).
+    const flipped = api.getFlipped();
     const zoomX = () => api.zoomBy('x', zoomFactor, fractions.x);
     const zoomY = () => api.zoomBy('y', zoomFactor, fractions.y);
-    const panX = () => api.panBy('x', panAmount);
-    const panY = () => api.panBy('y', -panAmount);
+    const panX = () => api.panBy('x', (flipped.x ? -1 : 1) * panAmount);
+    const panY = () => api.panBy('y', (flipped.y ? -1 : 1) * panAmount);
 
     const shift = event.shiftKey;
     const ctrl = event.ctrlKey || event.metaKey;

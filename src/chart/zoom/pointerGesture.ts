@@ -93,20 +93,12 @@ export const installPointerGesture: ZoomGestureInstaller = api => {
 
   const onPointerMove = (event: PointerEvent) => {
     if (mode === 'pan') {
-      const offset = api.getOffset();
-      if (offset == null) {
-        return;
-      }
       const dx = event.clientX - lastX;
       const dy = event.clientY - lastY;
       lastX = event.clientX;
       lastY = event.clientY;
-      if (offset.width > 0) {
-        api.panBy('x', -dx / offset.width);
-      }
-      if (offset.height > 0) {
-        api.panBy('y', dy / offset.height);
-      }
+      api.panByPixels('x', dx);
+      api.panByPixels('y', dy);
       api.refreshPointer(event.clientX, event.clientY);
     } else if (mode === 'select' && startPixels != null) {
       const pixels = api.plotPixels(event.clientX, event.clientY);

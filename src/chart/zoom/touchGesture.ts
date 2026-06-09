@@ -246,13 +246,12 @@ export const installTouchGesture: ZoomGestureInstaller = api => {
         zoomDistance = d;
       }
 
-      const offset = api.getOffset();
-      if (offset != null && lastMid != null) {
-        if ((pinchAxis === 'both' || pinchAxis === 'x') && offset.width > 0) {
-          api.panBy('x', -(m.clientX - lastMid.clientX) / offset.width);
+      if (lastMid != null) {
+        if (pinchAxis === 'both' || pinchAxis === 'x') {
+          api.panByPixels('x', m.clientX - lastMid.clientX);
         }
-        if ((pinchAxis === 'both' || pinchAxis === 'y') && offset.height > 0) {
-          api.panBy('y', (m.clientY - lastMid.clientY) / offset.height);
+        if (pinchAxis === 'both' || pinchAxis === 'y') {
+          api.panByPixels('y', m.clientY - lastMid.clientY);
         }
         api.refreshPointer(m.clientX, m.clientY);
       }
@@ -268,17 +267,14 @@ export const installTouchGesture: ZoomGestureInstaller = api => {
       if (event.cancelable) {
         event.preventDefault();
       }
-      const offset = api.getOffset();
-      if (offset != null) {
-        const dx = t.clientX - lastAxis.clientX;
-        const dy = t.clientY - lastAxis.clientY;
-        if (panAxis === 'x' && offset.width > 0) {
-          api.panBy('x', -dx / offset.width);
-          api.refreshActivePointer();
-        } else if (panAxis === 'y' && offset.height > 0) {
-          api.panBy('y', dy / offset.height);
-          api.refreshActivePointer();
-        }
+      const dx = t.clientX - lastAxis.clientX;
+      const dy = t.clientY - lastAxis.clientY;
+      if (panAxis === 'x') {
+        api.panByPixels('x', dx);
+        api.refreshActivePointer();
+      } else if (panAxis === 'y') {
+        api.panByPixels('y', dy);
+        api.refreshActivePointer();
       }
       lastAxis = { clientX: t.clientX, clientY: t.clientY };
       return;
