@@ -28,6 +28,7 @@ describe('resolveZoomOptions', () => {
       doubleClickReset: true,
       keyboard: true,
       touch: true,
+      touchDrag: 'tooltip',
       scrollbars: true,
       panStep: 0.1,
       panFastMultiplier: 2.5,

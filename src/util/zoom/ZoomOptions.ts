@@ -59,6 +59,12 @@ type ZoomGestureOptions = {
    */
   touch?: boolean;
   /**
+   * What a one-finger drag on the plot does on touch devices.
+   * `tooltip` leaves it to the chart cursor/tooltip; `pan` pans the zoom viewport.
+   * A single tap still updates the cursor/tooltip in both modes. @defaultValue 'tooltip'
+   */
+  touchDrag?: 'tooltip' | 'pan';
+  /**
    * Show on-canvas scrollbars (one per zoomed axis). Drag the thumb to pan, drag its ends to zoom,
    * click the track to page. Only visible while that axis is zoomed. @defaultValue true
    */
@@ -142,6 +148,7 @@ const ZOOM_DEFAULTS: Required<ZoomGestureOptions> = {
   doubleClickReset: true,
   keyboard: true,
   touch: true,
+  touchDrag: 'tooltip',
   scrollbars: true,
   panStep: 0.1,
   panFastMultiplier: 2.5,

@@ -5,6 +5,7 @@ import { resetZoom, setAxisViewport, ZoomDimension, ZoomState } from '../../stat
 import { selectChartOffsetInternal } from '../../state/selectors/selectChartOffsetInternal';
 import { selectAxisRangeWithReverse } from '../../state/selectors/axisSelectors';
 import { selectActiveTooltipCoordinate } from '../../state/selectors/tooltipSelectors';
+import { selectAllXAxes, selectAllYAxes } from '../../state/selectors/selectAllAxes';
 import { mouseMoveAction } from '../../state/mouseEventsMiddleware';
 import { TooltipPortalContext } from '../../context/tooltipPortalContext';
 import { AxisViewport, clampRatio, isFullViewport, isRangeFlipped } from '../../util/zoom/viewport';
@@ -26,6 +27,8 @@ type LiveState = {
    */
   flipped: { x: boolean; y: boolean };
   activeTooltipCoordinate: { x: number; y: number } | undefined;
+  hasXAxis: boolean;
+  hasYAxis: boolean;
 };
 
 const noopSelection = (_rect: SelectionRect | null): void => {};
@@ -50,6 +53,8 @@ export function useZoomApi(
   const offset = useAppSelector(selectChartOffsetInternal);
   const zoom = useAppSelector(selectZoom);
   const activeTooltipCoordinate = useAppSelector(selectActiveTooltipCoordinate);
+  const hasXAxis = useAppSelector(state => selectAllXAxes(state).length > 0) ?? false;
+  const hasYAxis = useAppSelector(state => selectAllYAxes(state).length > 0) ?? false;
   // An axis is "flipped" when its range runs from high to low pixels (domain min at the far edge).
   const xFlipped =
     useAppSelector(state => isRangeFlipped(selectAxisRangeWithReverse(state, 'xAxis', 0, false))) ?? false;
@@ -57,9 +62,9 @@ export function useZoomApi(
     useAppSelector(state => isRangeFlipped(selectAxisRangeWithReverse(state, 'yAxis', 0, false))) ?? false;
   const dispatch = useAppDispatch();
 
-  const flipped = { x: xFlipped, y: yFlipped };
-  const live = useRef<LiveState>({ offset, zoom, options, flipped, activeTooltipCoordinate });
-  live.current = { offset, zoom, options, flipped, activeTooltipCoordinate };
+  const flipped = { x: hasXAxis ? xFlipped : false, y: hasYAxis ? yFlipped : false };
+  const live = useRef<LiveState>({ offset, zoom, options, flipped, activeTooltipCoordinate, hasXAxis, hasYAxis });
+  live.current = { offset, zoom, options, flipped, activeTooltipCoordinate, hasXAxis, hasYAxis };
 
   return useMemo<ZoomGestureApi | null>(() => {
     if (element == null) {
@@ -140,9 +145,15 @@ export function useZoomApi(
           return 'plot';
         }
         if (inX) {
+          if (!live.current.hasXAxis) {
+            return 'outside';
+          }
           return 'xAxis';
         }
         if (inY) {
+          if (!live.current.hasYAxis) {
+            return 'outside';
+          }
           return 'yAxis';
         }
         return 'outside';

@@ -7,6 +7,8 @@ const DOUBLE_TAP_MS = 300;
 const DOUBLE_TAP_MOVE_TOLERANCE = 8;
 /** Zoom factor change per pixel of vertical drag in the double-tap-drag gesture. */
 const DRAG_ZOOM_SENSITIVITY = 0.01;
+/** Movement (px) before a one-finger plot touch becomes a pan instead of a tap/tooltip update. */
+const SINGLE_TOUCH_PAN_TOLERANCE = 4;
 
 type Pt = { clientX: number; clientY: number };
 
@@ -30,10 +32,13 @@ type TouchRegion = 'plot' | 'xAxis' | 'yAxis' | 'outside';
  * Mouse / pen pan and wheel are handled by the pointer / axis / wheel gestures, which ignore touch.
  */
 export const installTouchGesture: ZoomGestureInstaller = api => {
-  let mode: 'none' | 'axisPan' | 'pinch' | 'doubleTapPending' | 'doubleTapDrag' = 'none';
-  // single-finger axis pan
+  let mode: 'none' | 'axisPan' | 'plotPan' | 'pinch' | 'doubleTapPending' | 'doubleTapDrag' = 'none';
+  // single-finger axis/plot pan
   let panAxis: ZoomDimension | null = null;
   let lastAxis: Pt | null = null;
+  let plotPanStart: Pt | null = null;
+  let lastPlotPan: Pt | null = null;
+  let plotPanEngaged = false;
   // double-tap / double-tap-drag (Google-Maps style)
   let lastTapTime = 0;
   let anchor: { x: number; y: number } | null = null;
@@ -189,7 +194,8 @@ export const installTouchGesture: ZoomGestureInstaller = api => {
       return;
     }
 
-    // On the plot a single finger is left to the tooltip; detect double-tap (reset / drag-zoom).
+    // On the plot a single finger either stays with the tooltip/cursor, or pans when requested.
+    // In both modes a plain tap is left alone so it can update the tooltip/cursor at that position.
     const now = Date.now();
     if (now - lastTapTime < DOUBLE_TAP_MS) {
       mode = 'doubleTapPending';
@@ -204,7 +210,14 @@ export const installTouchGesture: ZoomGestureInstaller = api => {
       }
     } else {
       lastTapTime = now;
-      mode = 'none';
+      if (region === 'plot' && api.getOptions().touchDrag === 'pan' && api.getOptions().pan) {
+        mode = 'plotPan';
+        plotPanStart = { clientX: t.clientX, clientY: t.clientY };
+        lastPlotPan = plotPanStart;
+        plotPanEngaged = false;
+      } else {
+        mode = 'none';
+      }
     }
   };
 
@@ -280,6 +293,29 @@ export const installTouchGesture: ZoomGestureInstaller = api => {
       return;
     }
 
+    if (mode === 'plotPan' && touches.length === 1 && plotPanStart != null && lastPlotPan != null) {
+      const t = touches[0];
+      if (t == null) {
+        return;
+      }
+      const totalDx = t.clientX - plotPanStart.clientX;
+      const totalDy = t.clientY - plotPanStart.clientY;
+      if (!plotPanEngaged && Math.hypot(totalDx, totalDy) < SINGLE_TOUCH_PAN_TOLERANCE) {
+        return;
+      }
+      plotPanEngaged = true;
+      if (event.cancelable) {
+        event.preventDefault();
+      }
+      const dx = t.clientX - lastPlotPan.clientX;
+      const dy = t.clientY - lastPlotPan.clientY;
+      api.panByPixels('x', dx);
+      api.panByPixels('y', dy);
+      api.refreshActivePointer();
+      lastPlotPan = { clientX: t.clientX, clientY: t.clientY };
+      return;
+    }
+
     if ((mode === 'doubleTapPending' || mode === 'doubleTapDrag') && touches.length === 1) {
       const t = touches[0];
       if (t == null) {
@@ -334,6 +370,9 @@ export const installTouchGesture: ZoomGestureInstaller = api => {
       mode = 'none';
       panAxis = null;
       lastAxis = null;
+      plotPanStart = null;
+      lastPlotPan = null;
+      plotPanEngaged = false;
       anchor = null;
       anchorPixels = null;
       lastDragClient = null;

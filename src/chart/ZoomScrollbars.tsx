@@ -5,6 +5,7 @@ import { selectZoom } from '../state/selectors/zoomSelectors';
 import { selectChartOffsetInternal } from '../state/selectors/selectChartOffsetInternal';
 import { selectAxisRangeWithReverse } from '../state/selectors/axisSelectors';
 import { selectActiveTooltipCoordinate } from '../state/selectors/tooltipSelectors';
+import { selectAllXAxes, selectAllYAxes } from '../state/selectors/selectAllAxes';
 import { mouseMoveAction } from '../state/mouseEventsMiddleware';
 import { setAxisViewport, ZoomDimension } from '../state/zoomSlice';
 import { useIsPanorama } from '../context/PanoramaContext';
@@ -228,10 +229,14 @@ export function ZoomScrollbars({
   const zoom = useAppSelector(selectZoom);
   const offset = useAppSelector(selectChartOffsetInternal);
   const activeTooltipCoordinate = useAppSelector(selectActiveTooltipCoordinate);
+  const hasXAxis = useAppSelector(state => selectAllXAxes(state).length > 0) ?? false;
+  const hasYAxis = useAppSelector(state => selectAllYAxes(state).length > 0) ?? false;
   const xFlipped =
-    useAppSelector(state => isRangeFlipped(selectAxisRangeWithReverse(state, 'xAxis', 0, false))) ?? false;
+    (useAppSelector(state => isRangeFlipped(selectAxisRangeWithReverse(state, 'xAxis', 0, false))) ?? false) &&
+    hasXAxis;
   const yFlipped =
-    useAppSelector(state => isRangeFlipped(selectAxisRangeWithReverse(state, 'yAxis', 0, false))) ?? false;
+    (useAppSelector(state => isRangeFlipped(selectAxisRangeWithReverse(state, 'yAxis', 0, false))) ?? false) &&
+    hasYAxis;
   const isPanorama = useIsPanorama();
 
   if (!options.scrollbars || isPanorama || zoom == null || offset == null || element == null) {

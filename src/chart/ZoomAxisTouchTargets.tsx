@@ -2,6 +2,7 @@ import * as React from 'react';
 import { useAppSelector } from '../state/hooks';
 import { selectChartHeight } from '../state/selectors/containerSelectors';
 import { selectChartOffsetInternal } from '../state/selectors/selectChartOffsetInternal';
+import { selectAllXAxes, selectAllYAxes } from '../state/selectors/selectAllAxes';
 import { useIsPanorama } from '../context/PanoramaContext';
 import { ResolvedZoomOptions, zoomEnabledForDimension } from '../util/zoom/ZoomOptions';
 
@@ -20,6 +21,8 @@ const X_AXIS_TARGET_DEPTH = 40;
 export function ZoomAxisTouchTargets({ options }: { options: ResolvedZoomOptions }) {
   const offset = useAppSelector(selectChartOffsetInternal);
   const height = useAppSelector(selectChartHeight);
+  const hasXAxis = useAppSelector(state => selectAllXAxes(state).length > 0);
+  const hasYAxis = useAppSelector(state => selectAllYAxes(state).length > 0);
   const isPanorama = useIsPanorama();
 
   const coarsePointer =
@@ -34,8 +37,8 @@ export function ZoomAxisTouchTargets({ options }: { options: ResolvedZoomOptions
   const base: React.CSSProperties = { position: 'absolute', background: 'transparent', touchAction: 'none' };
   const plotBottom = offset.top + offset.height;
   const xDepth = Math.min(Math.max(height - plotBottom, 0), X_AXIS_TARGET_DEPTH);
-  const showX = zoomEnabledForDimension(options, 'x') && xDepth > 0;
-  const showY = zoomEnabledForDimension(options, 'y') && offset.left > 0;
+  const showX = hasXAxis && zoomEnabledForDimension(options, 'x') && xDepth > 0;
+  const showY = hasYAxis && zoomEnabledForDimension(options, 'y') && offset.left > 0;
 
   return (
     <>

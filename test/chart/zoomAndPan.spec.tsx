@@ -48,4 +48,37 @@ describe('<ZoomAndPan />', () => {
     });
     expect(onZoomChange).not.toHaveBeenCalled();
   });
+
+  it('keeps one-finger touch drag for tooltip/cursor by default', async () => {
+    const onZoomChange = vi.fn();
+    const { wrapper } = renderChart({ initialZoom: { x: { start: 0.25, end: 0.75 } }, onZoomChange });
+    await waitFor(() => expect(onZoomChange).toHaveBeenCalled());
+    onZoomChange.mockClear();
+
+    fireEvent.touchStart(wrapper, { touches: [{ clientX: 200, clientY: 150 }] });
+    fireEvent.touchMove(wrapper, { touches: [{ clientX: 240, clientY: 150 }] });
+    fireEvent.touchEnd(wrapper, { touches: [] });
+
+    await new Promise(resolve => {
+      setTimeout(resolve, 0);
+    });
+    expect(onZoomChange).not.toHaveBeenCalled();
+  });
+
+  it('can use one-finger touch drag to pan', async () => {
+    const onZoomChange = vi.fn();
+    const { wrapper } = renderChart({
+      initialZoom: { x: { start: 0.25, end: 0.75 } },
+      touchDrag: 'pan',
+      onZoomChange,
+    });
+    await waitFor(() => expect(onZoomChange).toHaveBeenCalled());
+    onZoomChange.mockClear();
+
+    fireEvent.touchStart(wrapper, { touches: [{ clientX: 200, clientY: 150 }] });
+    fireEvent.touchMove(wrapper, { touches: [{ clientX: 240, clientY: 150 }] });
+    fireEvent.touchEnd(wrapper, { touches: [] });
+
+    await waitFor(() => expect(onZoomChange).toHaveBeenCalled());
+  });
 });

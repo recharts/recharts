@@ -50,6 +50,7 @@ const ALL_OFF = {
   doubleClickReset: false,
   keyboard: false,
   touch: false,
+  touchDrag: 'tooltip',
   axisInteractions: false,
   scrollbars: false,
 } as const;
@@ -273,6 +274,8 @@ export type PinchZoomProps = CommonZoomProps &
      * window through `onSelect`. @defaultValue 'none'
      */
     doubleTapDrag?: 'zoom' | 'select' | 'none';
+    /** What a one-finger drag on the plot does. A tap still updates the tooltip/cursor. @defaultValue 'tooltip' */
+    touchDrag?: 'tooltip' | 'pan';
     /** Called when `doubleTapDrag="select"` completes a touch selection. */
     onSelect?: (selection: ZoomViewport) => void;
   };
@@ -283,6 +286,7 @@ export function PinchZoom({
   maxZoom,
   threshold,
   doubleTapDrag = 'none',
+  touchDrag = 'tooltip',
   onSelect,
   selectionClassName,
   selectionStyle,
@@ -294,6 +298,7 @@ export function PinchZoom({
     { axis, minZoom, maxZoom },
     {
       touch: true,
+      touchDrag,
       axisInteractions: true,
       pinchThreshold: threshold ?? 12,
       touchDoubleTapDrag: doubleTapDrag === 'select' ? 'selectCallback' : doubleTapDrag,
