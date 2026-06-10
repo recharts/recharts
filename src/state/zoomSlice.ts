@@ -1,5 +1,5 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
-import { AxisViewport, clampViewport, FULL_VIEWPORT } from '../util/zoom/viewport';
+import { AxisViewport, clampViewport, FULL_VIEWPORT, viewportsEqual } from '../util/zoom/viewport';
 
 /**
  * The two spatial dimensions a cartesian chart can be zoomed along.
@@ -39,22 +39,34 @@ const zoomSlice = createSlice({
      */
     setAxisViewport(state: ZoomState, action: PayloadAction<{ dimension: ZoomDimension; viewport: AxisViewport }>) {
       const { dimension, viewport } = action.payload;
-      state[dimension] = clampViewport(viewport);
+      const next = clampViewport(viewport);
+      if (!viewportsEqual(state[dimension], next)) {
+        state[dimension] = next;
+      }
     },
     /**
      * Replaces both viewports at once, e.g. when restoring a saved zoom or syncing from a brush.
      */
-    setZoom(_state: ZoomState, action: PayloadAction<ZoomState>) {
-      return {
-        x: clampViewport(action.payload.x),
-        y: clampViewport(action.payload.y),
-      };
+    setZoom(state: ZoomState, action: PayloadAction<ZoomState>) {
+      const nextX = clampViewport(action.payload.x);
+      const nextY = clampViewport(action.payload.y);
+      if (!viewportsEqual(state.x, nextX)) {
+        state.x = nextX;
+      }
+      if (!viewportsEqual(state.y, nextY)) {
+        state.y = nextY;
+      }
     },
     /**
      * Resets the chart back to the fully zoomed-out state.
      */
-    resetZoom() {
-      return initialState;
+    resetZoom(state: ZoomState) {
+      if (!viewportsEqual(state.x, FULL_VIEWPORT)) {
+        state.x = FULL_VIEWPORT;
+      }
+      if (!viewportsEqual(state.y, FULL_VIEWPORT)) {
+        state.y = FULL_VIEWPORT;
+      }
     },
   },
 });

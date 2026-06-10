@@ -45,6 +45,7 @@ describe('Chart dimensions', () => {
       expectLastCalledWith(spy, {
         bottom: 13,
         brushBottom: 13,
+        brushRight: 12,
         height: 176,
         left: 14,
         right: 12,
@@ -170,13 +171,14 @@ describe('Chart dimensions', () => {
         expectLastCalledWith(spy, {
           bottom: 53,
           brushBottom: 13,
+          brushRight: 12,
           height: 136,
           left: 14,
           right: 12,
           top: 11,
           width: 74,
         });
-        expect(spy).toHaveBeenCalledTimes(3);
+        expect(spy).toHaveBeenCalledTimes(2);
       });
 
       it('should return clipPath ID', () => {
@@ -184,10 +186,10 @@ describe('Chart dimensions', () => {
         expect(spy).toHaveBeenCalledWith(expect.stringMatching(/^recharts\d+-clip$/));
       });
 
-      it('should render 1 clipPath', () => {
+      it('should render 2 clipPaths, one for the main chart and one for the isolated brush preview', () => {
         const { container } = renderTestCase();
         const clipPaths = container.querySelectorAll('clipPath');
-        expect(clipPaths.length).toBe(1);
+        expect(clipPaths.length).toBe(2);
         const clipPath1 = clipPaths[0];
         expect(clipPath1).toBeInTheDocument();
         expect(clipPath1).toHaveAttribute('id', expect.stringMatching(/^recharts\d+-clip$/));
@@ -206,7 +208,7 @@ describe('Chart dimensions', () => {
         const clipPathId = spy.mock.calls[spy.mock.calls.length - 1][0];
 
         const clipPaths = container.querySelectorAll(`clipPath`);
-        expect(clipPaths.length).toBe(1);
+        expect(clipPaths.length).toBe(2);
 
         const clipPath1 = clipPaths[0];
         expect(clipPath1).toHaveAttribute('id', clipPathId);
@@ -220,7 +222,7 @@ describe('Chart dimensions', () => {
           x: 14,
           y: 147,
         });
-        expect(spy).toHaveBeenCalledTimes(3);
+        expect(spy).toHaveBeenCalledTimes(2);
       });
 
       it('should render two surfaces, one for main chart and another for panorama', () => {
@@ -244,7 +246,11 @@ describe('Chart dimensions', () => {
         expect(surface2).toHaveAttribute('width', '74');
         expect(surface2).toHaveAttribute('height', '40');
         expect(surface2).toHaveAttribute('viewBox', '0 0 74 40');
-        expect(surface2).not.toHaveAttribute('style');
+        // The preview is an isolated compact chart: it renders the standard surface (with its
+        // standard style) positioned into the brush rail, but stays decorative - not focusable.
+        expect(surface2).toHaveAttribute('x', '14');
+        expect(surface2).toHaveAttribute('y', '147');
+        expect(surface2).toHaveStyle({ width: '100%', height: '100%', display: 'block' });
         expect(surface2).not.toHaveAttribute('tabindex');
         expect(surface2).not.toHaveAttribute('role');
       });
@@ -256,7 +262,7 @@ describe('Chart dimensions', () => {
       });
     });
 
-    describe('dimensions in the panorama chart', () => {
+    describe('dimensions inside the isolated brush preview chart', () => {
       const renderTestCase = createSelectorTestCase(({ children }) => (
         <LineChart width={100} height={200} data={PageData} margin={{ top: 11, right: 12, bottom: 13, left: 14 }}>
           <Line dataKey="uv" />
@@ -269,74 +275,75 @@ describe('Chart dimensions', () => {
         </LineChart>
       ));
 
-      it('should select accessibility layer', () => {
+      it('should not have an accessibility layer - the preview is decorative', () => {
         const { spy } = renderTestCase(useAccessibilityLayer);
-        expect(spy).toHaveBeenCalledWith(true);
+        expect(spy).toHaveBeenCalledWith(false);
       });
 
-      it('should return chart width from the main chart', () => {
+      it('should return the preview chart width', () => {
         const { spy } = renderTestCase(useChartWidth);
-        expect(spy).toHaveBeenCalledWith(100);
+        expect(spy).toHaveBeenCalledWith(74);
       });
 
-      it('should return chart height from the main chart', () => {
+      it('should return the preview chart height', () => {
         const { spy } = renderTestCase(useChartHeight);
-        expect(spy).toHaveBeenCalledWith(200);
+        expect(spy).toHaveBeenCalledWith(40);
       });
 
-      it('should return chart offset from the main chart', () => {
+      it('should return the preview chart offset', () => {
         const { spy } = renderTestCase(useOffsetInternal);
         expectLastCalledWith(spy, {
-          bottom: 53,
-          brushBottom: 13,
-          height: 136,
-          left: 14,
-          right: 12,
-          top: 11,
-          width: 74,
+          bottom: 1,
+          brushBottom: 1,
+          brushRight: 1,
+          height: 38,
+          left: 1,
+          right: 1,
+          top: 1,
+          width: 72,
         });
         expect(spy).toHaveBeenCalledTimes(1);
       });
 
-      it('should return clipPath ID from the main chart', () => {
+      it('should return the preview clipPath ID', () => {
         const { spy } = renderTestCase(useClipPathId);
         expect(spy).toHaveBeenCalledWith(expect.stringMatching(/^recharts\d+-clip$/));
       });
 
-      it('should select clipPath ID of the main chart', () => {
+      it('should select the clipPath ID of the preview chart, distinct from the main chart', () => {
         const { container, spy } = renderTestCase(useClipPathId);
         expect(spy).toHaveBeenCalledWith(expect.stringMatching(/^recharts\d+-clip$/));
         const clipPathId = spy.mock.calls[spy.mock.calls.length - 1][0];
 
         const clipPaths = container.querySelectorAll(`clipPath`);
-        expect(clipPaths.length).toBe(1);
+        expect(clipPaths.length).toBe(2);
 
-        const clipPath1 = clipPaths[0];
-        expect(clipPath1).toHaveAttribute('id', clipPathId);
+        // The first clipPath belongs to the main chart, the second to the preview.
+        expect(clipPaths[0]).not.toHaveAttribute('id', clipPathId);
+        expect(clipPaths[1]).toHaveAttribute('id', clipPathId);
       });
 
-      it('should select brush dimensions', () => {
+      it('should select the preview store brush dimensions (no brush inside the preview)', () => {
         const { spy } = renderTestCase(selectBrushDimensions);
         expectLastCalledWith(spy, {
-          height: 40,
-          width: 74,
-          x: 14,
-          y: 147,
+          height: 0,
+          width: 0,
+          x: 0,
+          y: 0,
         });
         expect(spy).toHaveBeenCalledTimes(1);
       });
 
-      it('should always say that the chart is panorama', () => {
+      it('should not be a panorama context: the preview is isolated in its own store', () => {
         const { spy } = renderTestCase(useIsPanorama);
         expect(spy).toHaveBeenCalledTimes(1);
         /*
-         * it's important that the panorama is always true, and this selector is stable,
-         * because if it was oscillating between true and false,
-         * then various configuration-push components would push configuration
-         * into the main chart state.
+         * The preview chart runs in its own store, so configuration-push components inside it
+         * write to the preview store and can never leak into the main chart state. That makes the
+         * panorama context flag unnecessary here.
          */
-        expect(spy).toHaveBeenCalledWith(true);
-        expect(spy).toHaveBeenNthCalledWith(1, true);
+        expect(spy).toHaveBeenCalledWith(false);
+        expect(spy).toHaveBeenNthCalledWith(1, false);
       });
     });
   });

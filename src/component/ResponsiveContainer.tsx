@@ -88,6 +88,9 @@ export interface Props extends Omit<React.HTMLAttributes<HTMLDivElement>, 'id' |
 
 const ResponsiveContainerContext = createContext<Size>(defaultResponsiveContainerProps.initialDimension);
 
+// Export the context so it can be reset in PanoramaPreview
+export { ResponsiveContainerContext };
+
 function isAcceptableSize(size: { width: number | undefined; height: number | undefined }): size is Size {
   return isPositiveNumber(size.width) && isPositiveNumber(size.height);
 }

@@ -633,7 +633,7 @@ describe('<Brush />', () => {
 
       const PanoramaComp = (): null => {
         panoramaViewBoxSpy(useViewBox());
-        panoramaYAxisRangeSpy(useAppSelector(state => selectAxisRangeWithReverse(state, 'yAxis', 0, true)));
+        panoramaYAxisRangeSpy(useAppSelector(state => selectAxisRangeWithReverse(state, 'yAxis', 0, false)));
         return null;
       };
 
@@ -702,6 +702,37 @@ describe('<Brush />', () => {
         x: '100',
         y: '90',
       });
+    });
+  });
+
+  describe('ResponsiveContainer integration', () => {
+    it('should render panorama correctly when parent chart is inside ResponsiveContainer', async () => {
+      const { ResponsiveContainer } = await import('../../src');
+      const { container } = render(
+        <ResponsiveContainer width={400} height={300}>
+          <LineChart data={data}>
+            <Line dataKey="value" dot isAnimationActive={false} />
+            <Brush dataKey="value" x={100} y={50} width={400} height={40}>
+              <LineChart>
+                <Line dataKey="value" dot isAnimationActive={false} />
+              </LineChart>
+            </Brush>
+          </LineChart>
+        </ResponsiveContainer>,
+      );
+
+      await waitFor(() => expect(container.querySelector('.recharts-brush')).not.toBeNull());
+
+      // Verify the brush panorama chart is rendered
+      const brushLines = container.querySelectorAll('.recharts-brush .recharts-line');
+      expect(brushLines.length).toBeGreaterThan(0);
+
+      // Verify the brush travellers are present
+      const travellers = container.querySelectorAll('.recharts-brush-traveller');
+      expect(travellers).toHaveLength(2);
+
+      // Verify the brush slide is present
+      expect(container.querySelector('.recharts-brush-slide')).not.toBeNull();
     });
   });
 });

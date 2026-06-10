@@ -708,6 +708,7 @@ export type ChartOffsetInternal = {
   width: number;
   height: number;
   brushBottom: number;
+  brushRight: number;
 };
 
 export interface Padding {

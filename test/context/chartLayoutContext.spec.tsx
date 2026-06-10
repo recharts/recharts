@@ -75,6 +75,7 @@ describe('useOffsetInternal', () => {
       bottom: 5,
       left: 5,
       brushBottom: 5,
+      brushRight: 5,
       height: 190,
       width: 90,
     });
@@ -100,6 +101,7 @@ describe('useOffsetInternal', () => {
       bottom: 30,
       left: 40,
       brushBottom: 30,
+      brushRight: 20,
       height: 160,
       width: 40,
     });
@@ -123,6 +125,7 @@ describe('useOffsetInternal', () => {
       bottom: 70,
       left: 40,
       brushBottom: 30,
+      brushRight: 20,
       height: 120,
       width: 40,
     });
@@ -147,6 +150,7 @@ describe('useOffsetInternal', () => {
       bottom: 43,
       left: 40,
       brushBottom: 30,
+      brushRight: 20,
       height: 147,
       width: 240,
     });
@@ -169,6 +173,7 @@ describe('useOffsetInternal', () => {
     expect(offsetSpy).toHaveBeenLastCalledWith({
       bottom: 30,
       brushBottom: 30,
+      brushRight: 80,
       height: 160,
       left: 100,
       right: 80,
@@ -194,6 +199,7 @@ describe('useOffsetInternal', () => {
     expect(offsetSpy).toHaveBeenLastCalledWith({
       bottom: 30,
       brushBottom: 30,
+      brushRight: 59,
       height: 160,
       left: 63,
       right: 59,
@@ -219,6 +225,7 @@ describe('useOffsetInternal', () => {
     expect(offsetSpy).toHaveBeenLastCalledWith({
       bottom: 30,
       brushBottom: 30,
+      brushRight: 20,
       height: 160,
       left: 40,
       right: 20,
@@ -244,6 +251,7 @@ describe('useOffsetInternal', () => {
     expect(offsetSpy).toHaveBeenLastCalledWith({
       bottom: 60,
       brushBottom: 60,
+      brushRight: 20,
       height: 100,
       left: 40,
       right: 20,
@@ -268,6 +276,7 @@ describe('useOffsetInternal', () => {
     expect(offsetSpy).toHaveBeenLastCalledWith({
       bottom: 69,
       brushBottom: 69,
+      brushRight: 20,
       height: 98,
       left: 40,
       right: 20,
@@ -292,6 +301,7 @@ describe('useOffsetInternal', () => {
     expect(offsetSpy).toHaveBeenLastCalledWith({
       bottom: 30,
       brushBottom: 30,
+      brushRight: 20,
       height: 160,
       left: 40,
       right: 20,
@@ -321,6 +331,7 @@ describe('useOffsetInternal', () => {
     expect(offsetSpy).toHaveBeenLastCalledWith({
       bottom: 59,
       brushBottom: 30,
+      brushRight: 20,
       height: 131,
       left: 40,
       right: 20,

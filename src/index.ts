@@ -77,6 +77,8 @@ export type { RadialBarSectorProps } from './util/RadialBarUtils';
 
 export { Brush } from './cartesian/Brush';
 export type { Props as BrushProps } from './cartesian/Brush';
+export { Minimap } from './cartesian/Minimap';
+export type { Props as MinimapProps } from './cartesian/Minimap';
 export { ZoomAndPan } from './chart/zoom/ZoomAndPan';
 export type { ZoomAndPanProps } from './chart/zoom/ZoomAndPan';
 export {

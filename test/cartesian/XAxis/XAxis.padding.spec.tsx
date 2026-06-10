@@ -51,6 +51,7 @@ describe('XAxis padding', () => {
 
     expect(offsetSpy).toHaveBeenLastCalledWith({
       brushBottom: 35,
+      brushRight: 5,
       top: 5,
       bottom: 35,
       left: 65,

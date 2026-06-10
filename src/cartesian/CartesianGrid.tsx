@@ -13,10 +13,12 @@ import { AxisId } from '../state/cartesianAxisSlice';
 import { selectAxisPropsNeededForCartesianGridTicksGenerator } from '../state/selectors/axisSelectors';
 import { selectIsZoomed } from '../state/selectors/zoomSelectors';
 import { useAppSelector } from '../state/hooks';
+import { RechartsRootState } from '../state/store';
 import { useIsPanorama } from '../context/PanoramaContext';
 import { RequiresDefaultProps, resolveDefaultProps } from '../util/resolveDefaultProps';
 import { svgPropertiesNoEvents } from '../util/svgPropertiesNoEvents';
 import { isPositiveNumber } from '../util/isWellBehavedNumber';
+import { areScalesApproximatelyEqual, areValueArraysApproximatelyEqual } from '../util/approximateEquality';
 import { ZIndexable, ZIndexLayer } from '../zIndex/ZIndexLayer';
 import { DefaultZIndexes } from '../zIndex/DefaultZIndexes';
 
@@ -437,6 +439,52 @@ const defaultHorizontalCoordinatesGenerator: HorizontalCoordinatesGenerator = (
     syncWithTicks,
   );
 
+function areGridAxisScalesEqual(
+  a: AxisPropsForCartesianGridTicksGeneration['scale'],
+  b: AxisPropsForCartesianGridTicksGeneration['scale'],
+  realScaleType: AxisPropsForCartesianGridTicksGeneration['realScaleType'],
+): boolean {
+  if (a === b) {
+    return true;
+  }
+  if (realScaleType == null) {
+    return false;
+  }
+  return areScalesApproximatelyEqual(a, b);
+}
+
+function areGridAxisPropsEqual(
+  a: AxisPropsForCartesianGridTicksGeneration | undefined,
+  b: AxisPropsForCartesianGridTicksGeneration | undefined,
+): boolean {
+  if (a === b) {
+    return true;
+  }
+  if (a == null || b == null) {
+    return false;
+  }
+  return (
+    a.angle === b.angle &&
+    a.axisType === b.axisType &&
+    a.interval === b.interval &&
+    a.isCategorical === b.isCategorical &&
+    a.minTickGap === b.minTickGap &&
+    a.orientation === b.orientation &&
+    a.realScaleType === b.realScaleType &&
+    a.tick === b.tick &&
+    a.tickCount === b.tickCount &&
+    a.tickFormatter === b.tickFormatter &&
+    a.type === b.type &&
+    a.unit === b.unit &&
+    areValueArraysApproximatelyEqual(a.categoricalDomain, b.categoricalDomain) &&
+    areValueArraysApproximatelyEqual(a.duplicateDomain, b.duplicateDomain) &&
+    areValueArraysApproximatelyEqual(a.niceTicks, b.niceTicks) &&
+    areValueArraysApproximatelyEqual(a.range, b.range) &&
+    areValueArraysApproximatelyEqual(a.ticks, b.ticks) &&
+    areGridAxisScalesEqual(a.scale, b.scale, a.realScaleType)
+  );
+}
+
 export const defaultCartesianGridProps = {
   horizontal: true,
   vertical: true,
@@ -478,11 +526,23 @@ export function CartesianGrid(props: Props) {
 
   const isPanorama = useIsPanorama();
   const isZoomed = useAppSelector(selectIsZoomed);
-  const xAxis: AxisPropsForCartesianGridTicksGeneration | undefined = useAppSelector(state =>
-    selectAxisPropsNeededForCartesianGridTicksGenerator(state, 'xAxis', xAxisId, isPanorama),
+  const selectXAxis = React.useCallback(
+    (state: RechartsRootState) =>
+      selectAxisPropsNeededForCartesianGridTicksGenerator(state, 'xAxis', xAxisId, isPanorama),
+    [isPanorama, xAxisId],
   );
-  const yAxis: AxisPropsForCartesianGridTicksGeneration | undefined = useAppSelector(state =>
-    selectAxisPropsNeededForCartesianGridTicksGenerator(state, 'yAxis', yAxisId, isPanorama),
+  const selectYAxis = React.useCallback(
+    (state: RechartsRootState) =>
+      selectAxisPropsNeededForCartesianGridTicksGenerator(state, 'yAxis', yAxisId, isPanorama),
+    [isPanorama, yAxisId],
+  );
+  const xAxis = useAppSelector<AxisPropsForCartesianGridTicksGeneration | undefined>(
+    selectXAxis,
+    areGridAxisPropsEqual,
+  );
+  const yAxis = useAppSelector<AxisPropsForCartesianGridTicksGeneration | undefined>(
+    selectYAxis,
+    areGridAxisPropsEqual,
   );
 
   if (!isPositiveNumber(width) || !isPositiveNumber(height) || !isNumber(x) || !isNumber(y)) {
