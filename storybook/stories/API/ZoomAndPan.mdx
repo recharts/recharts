@@ -6,21 +6,22 @@ region, drag to move around, and double-click to snap back to the full view.
 > 🚧 **Status: rolling out.** Built one small PR at a time (replacing the monolithic prototype in
 > [#5934](https://github.com/recharts/recharts/pull/5934)). **Working today** on cartesian charts
 > (Line, Bar, Area, Scatter, Composed): wheel / drag / double-click zoom & pan, drag-to-zoom
-> selection, and controlled state. **Still landing:** keyboard, axis-handle and touch gestures,
-> minimap, scrollbars, brush ↔ zoom sync, and polar / standalone charts (see the Roadmap below).
+> selection, keyboard, axis-handle and touch gestures, scrollbars, minimap, brush zoom mode and
+> controlled state. **Still landing:** polar / standalone charts (see the Roadmap below).
 
 ## Quick start
 
-Zoom is opt-in, per chart, via a single `zoom` prop. Pass `zoom` (or `zoom={true}`) to enable it
-with sensible defaults on both axes:
+Zoom is opt-in, per chart, via the `ZoomAndPan` component. Add it as a child of the chart to enable
+the default wheel, drag, touch, keyboard, scrollbar and reset interactions:
 
 ```tsx
-<LineChart width={600} height={300} data={data} zoom>
+<LineChart width={600} height={300} data={data}>
   <CartesianGrid strokeDasharray="3 3" />
   <XAxis dataKey="name" />
   <YAxis />
   <Tooltip />
   <Line type="monotone" dataKey="value" stroke="#8884d8" />
+  <ZoomAndPan />
 </LineChart>
 ```
 
@@ -30,14 +31,13 @@ brush and accessibility keep working exactly as before — nothing else in your 
 
 ## Constrain to a single axis
 
-Most time-series charts only want horizontal zoom. Pass the axis as a shorthand string, or use the
-`axis` option:
+Most time-series charts only want horizontal zoom. Pass the axis to `ZoomAndPan`:
 
 ```tsx
-<LineChart data={data} zoom="x">{/* ... */}</LineChart>
-
-// equivalent to
-<LineChart data={data} zoom={{ axis: 'x' }}>{/* ... */}</LineChart>
+<LineChart data={data}>
+  {/* ... */}
+  <ZoomAndPan axis="x" />
+</LineChart>
 ```
 
 `axis` accepts `'x'`, `'y'` or `'xy'` (default `'xy'`).
@@ -62,7 +62,7 @@ wheel-only chart. When `pan` is off, a plain drag does the region zoom (no modif
 
 ## Options
 
-`zoom` is either a boolean (`true` = all defaults) or a `ZoomOptions` object:
+`ZoomAndPan` accepts these options:
 
 | Option | Type | Default | Description |
 | --- | --- | --- | --- |
@@ -83,11 +83,9 @@ wheel-only chart. When `pan` is off, a plain drag does the region zoom (no modif
 | `onZoomChange` | `(viewport) => void` | — | Called whenever the viewport changes |
 
 ```tsx
-<BarChart
-  data={data}
-  zoom={{ axis: 'x', maxZoom: 40, wheelStep: 1.25, dragToZoom: true }}
->
+<BarChart data={data}>
   {/* ... */}
+  <ZoomAndPan axis="x" maxZoom={40} wheelStep={1.25} dragToZoom />
 </BarChart>
 ```
 
@@ -101,8 +99,9 @@ which slice of the axis is visible. `{ start: 0, end: 1 }` is the whole axis (no
 ```tsx
 const [viewport, setViewport] = useState({ x: { start: 0, end: 1 } });
 
-<LineChart data={data} zoom={{ axis: 'x', viewport, onZoomChange: setViewport }}>
+<LineChart data={data}>
   {/* ... */}
+  <ZoomAndPan axis="x" viewport={viewport} onZoomChange={setViewport} />
 </LineChart>
 ```
 
@@ -146,7 +145,10 @@ byte-for-byte as it does today.
 ## What keeps working
 
 - **Tooltips & cursor** — driven by the same (zoomed) scale.
-- **Brush** — the brush keeps slicing data as usual; brush↔zoom syncing is planned as a later step.
+- **Brush** — the default `mode="slice"` keeps slicing data as usual; `mode="zoom"` edits the same
+  viewport as plot gestures and `Minimap`.
+- **Minimap** — renders a panorama plus an editable viewport rectangle, reading and writing the
+  same zoom state.
 - **Accessibility** — keyboard navigation and the live-region tooltip are unaffected; optional
   keyboard zoom/pan is additive.
 
@@ -162,8 +164,8 @@ byte-for-byte as it does today.
 
 Done (cartesian): wheel / drag / double-click zoom & pan, drag-to-zoom selection, **keyboard**
 controls, **axis-handle** interactions, **touch / pinch** gestures, automatic **animation**
-suppression while zooming, on-canvas **scrollbars**, controlled & uncontrolled state.
+suppression while zooming, on-canvas **scrollbars**, **minimap**, **brush zoom mode**, controlled &
+uncontrolled state.
 
-Planned, each as its own small PR: an on-canvas **minimap**, **brush ↔ zoom** two-way sync, and
-zoom for **polar** (Pie / Radar / RadialBar) and **standalone** (Sankey / Treemap / Sunburst) charts
-via an SVG transform. A **vertical brush** (`layout="vertical"`) ships independently.
+Planned, each as its own small PR: zoom for **polar** (Pie / Radar / RadialBar) and
+**standalone** (Sankey / Treemap / Sunburst) charts via an SVG transform.

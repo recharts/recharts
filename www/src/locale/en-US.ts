@@ -108,6 +108,7 @@ export const map = {
     showData: 'Show data format',
     hideData: 'Hide data format',
     animation: 'Animation',
+    'zoom-and-pan': 'Zoom & Pan',
   },
   'design-disciplines': {
     'design-disciplines': 'Design Disciplines',

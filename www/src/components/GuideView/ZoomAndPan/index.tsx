@@ -58,12 +58,27 @@ type Viewport = { x?: AxisWindow; y?: AxisWindow };
         dropping to the granular components:
       </p>
       <pre>{`<ZoomAndPan axis="x" minZoom={1} maxZoom={20} pinch={false} scrollbars={false} />`}</pre>
+      <p>
+        Add <code>&lt;Minimap /&gt;</code> when the chart needs a persistent overview of the full data:
+      </p>
+      <pre>{`<LineChart data={data} width={600} height={300}>
+  <XAxis dataKey="date" />
+  <YAxis />
+  <Line dataKey="value" />
+  <ZoomAndPan axis="x" />
+  <Minimap axis="x">
+    <LineChart data={data}>
+      <Line dataKey="value" />
+    </LineChart>
+  </Minimap>
+</LineChart>`}</pre>
 
       <h2>Composing individual interactions</h2>
       <p>
         For exact control over which interactions exist (or to wire your own), drop the bundle and add just the pieces
         you want as children of the chart. Each one registers its own handlers and is independently tree-shakeable, so
-        you only ship what you use. Nothing here changes the <LinkToApi>Brush</LinkToApi> or any existing behavior.
+        you only ship what you use. The <LinkToApi>Brush</LinkToApi> keeps its existing index-slicing behavior unless
+        you explicitly switch it to <code>mode=&quot;zoom&quot;</code>.
       </p>
       <pre>{`import {
   LineChart, XAxis, YAxis, Line,
@@ -151,6 +166,18 @@ type Viewport = { x?: AxisWindow; y?: AxisWindow };
           </tr>
           <tr>
             <td>
+              <code>&lt;Minimap /&gt;</code>
+            </td>
+            <td>A panorama plus an editable viewport rectangle: drag to pan, resize to zoom, click to jump.</td>
+          </tr>
+          <tr>
+            <td>
+              <code>&lt;Brush mode=&quot;zoom&quot; /&gt;</code>
+            </td>
+            <td>Uses the Brush panorama and travellers to edit the zoom viewport instead of slicing data.</td>
+          </tr>
+          <tr>
+            <td>
               <code>&lt;DoubleClickReset /&gt;</code>
             </td>
             <td>Double-click (or double-tap) to reset to the full view.</td>
@@ -162,9 +189,11 @@ type Viewport = { x?: AxisWindow; y?: AxisWindow };
       <pre>{`<MouseWheelZoom axis="x" step={1.15} panStep={0.0015} />
 <DragToZoom axis="xy" minZoom={1} maxZoom={25} modifier="shift" />
 <DragToSelect onSelect={selection => setSelectedWindow(selection)} />
-<PinchZoom threshold={12} doubleTapDrag="select" onSelect={selection => setSelectedWindow(selection)} />
+<PinchZoom threshold={12} touchDrag="pan" doubleTapDrag="select" onSelect={selection => setSelectedWindow(selection)} />
 <ZoomPanKeyboard panStep={0.1} panFastMultiplier={2.5} />
-<ZoomScrollbar axis="y" thickness={12} thumbClassName="zoom-thumb" />`}</pre>
+<ZoomScrollbar axis="y" thickness={12} thumbClassName="zoom-thumb" />
+<Minimap axis="x" position="bottom-right" width={180} height={80} />
+<Brush mode="zoom" axis="x" autoScaleYDomain />`}</pre>
       <p>
         <code>step</code> controls zoom speed. <code>panStep</code> controls keyboard or wheel pan distance depending on
         the component. <code>threshold</code> controls how far fingers must spread before a pinch starts zooming.
@@ -277,10 +306,27 @@ function ZoomButtons() {
       <p>
         <code>&lt;PinchZoom /&gt;</code> uses two fingers (pinch to zoom, two-finger drag to pan), plus double-tap to
         reset. Double-tap-then-drag defaults to zooming (the &quot;maps&quot; gesture), and can instead select a window
-        when configured with <code>doubleTapDrag=&quot;select&quot;</code>. A single finger is left entirely to the{' '}
-        <LinkToApi>Tooltip</LinkToApi>, so one finger never zooms and there is no conflict. While you interact with the
-        chart it takes over touch handling (<code>touch-action: none</code>) so the page does not scroll and the browser
-        does not pinch-zoom; everything is opt-in, so leave <code>&lt;PinchZoom /&gt;</code> out and touch is untouched.
+        when configured with <code>doubleTapDrag=&quot;select&quot;</code>.
+      </p>
+      <p>
+        By default a single finger is left to the <LinkToApi>Tooltip</LinkToApi> / cursor: dragging moves the active
+        data point, and a tap sets it. Set <code>touchDrag=&quot;pan&quot;</code> (on <code>&lt;PinchZoom /&gt;</code>{' '}
+        or <code>&lt;ZoomAndPan /&gt;</code>) to make a one-finger drag pan the chart instead; a plain tap still updates
+        the tooltip/cursor at that position, so you never lose the ability to inspect a data point. This is useful on
+        dashboards where scrolling is handled by the page and the chart needs to feel &ldquo;grabbable&rdquo;.
+      </p>
+      <pre>{`// default: one-finger drag moves the tooltip cursor
+<PinchZoom />
+
+// one-finger drag pans instead; tap still sets the tooltip
+<PinchZoom touchDrag="pan" />
+
+// same option on the bundle component
+<ZoomAndPan touchDrag="pan" />`}</pre>
+      <p>
+        While you interact with the chart it takes over touch handling (<code>touch-action: none</code>) so the page
+        does not scroll and the browser does not pinch-zoom; everything is opt-in, so leave{' '}
+        <code>&lt;PinchZoom /&gt;</code> out and touch is untouched.
       </p>
 
       <h2>Accessibility</h2>
@@ -306,9 +352,10 @@ function ZoomButtons() {
 
       <h2>Defaults</h2>
       <p>
-        Zoom and every gesture are <strong>off until you opt in</strong> with a component, hook or prop, and the
-        existing <LinkToApi>Brush</LinkToApi> is unchanged. Enabling anything by default would be a breaking change, so
-        it never happens implicitly.
+        Zoom and every gesture are <strong>off until you opt in</strong> with a component, hook or prop. The existing{' '}
+        <LinkToApi>Brush</LinkToApi> remains <code>mode=&quot;slice&quot;</code> by default, and zoom coupling is only
+        enabled with <code>mode=&quot;zoom&quot;</code>. Enabling anything by default would be a breaking change, so it
+        never happens implicitly.
       </p>
     </article>
   );

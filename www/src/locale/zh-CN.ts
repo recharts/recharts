@@ -104,6 +104,7 @@ export const map = {
     showData: '显示数据格式',
     hideData: '隐藏数据格式',
     animation: '动画',
+    'zoom-and-pan': '缩放和平移',
   },
   'design-disciplines': {
     'design-disciplines': '设计原则',
