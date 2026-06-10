@@ -57,4 +57,28 @@ describe('<AutoScaleAxis />', () => {
     });
     expect(zoomApi.viewport.y).toEqual({ start: 0, end: 1 });
   });
+
+  it('vertical layout: defaults to fitting the x (value) window from the zoomed y window', async () => {
+    render(
+      <LineChart width={400} height={300} data={data} layout="vertical">
+        <XAxis type="number" />
+        <YAxis dataKey="name" type="category" />
+        <Line dataKey="uv" isAnimationActive={false} />
+        <MouseWheelZoom axis="y" />
+        <AutoScaleAxis />
+        <Capture />
+      </LineChart>,
+    );
+
+    // Zoom y into the late categories (high index -> high uv values).
+    act(() => {
+      zoomApi.setViewport({ y: { start: 0.7, end: 1 } });
+    });
+
+    // Auto-scale should pull the x (value) window up to the visible high values.
+    await waitFor(() => {
+      expect(zoomApi.viewport.x.start).toBeGreaterThan(0.3);
+      expect(zoomApi.viewport.x.end - zoomApi.viewport.x.start).toBeLessThan(1);
+    });
+  });
 });

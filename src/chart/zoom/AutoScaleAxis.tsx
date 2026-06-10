@@ -10,13 +10,15 @@ import { useXAxisScale, useYAxisScale, useXAxisDomain, useYAxisDomain } from '..
 import { getValueByDataKey } from '../../util/ChartUtils';
 import { AxisId } from '../../state/cartesianAxisSlice';
 import { clampViewport } from '../../util/zoom/viewport';
+import { useCartesianChartLayout } from '../../context/chartLayoutContext';
 
 /** Props for {@link AutoScaleAxis}. */
 export type AutoScaleAxisProps = {
   /**
-   * Which axis to auto-fit to the data currently visible on the other axis. `'y'` (the default)
-   * re-fits the value axis as you pan/zoom the x axis; `'x'` does the opposite.
-   * @defaultValue 'y'
+   * Which axis to auto-fit to the data currently visible on the other one.
+   *
+   * Defaults to the layout's VALUE axis: `'y'` in a horizontal layout, `'x'` in a vertical layout
+   * (where the category axis is y and the values run along x). Set it explicitly to override.
    */
   axis?: ZoomDimension;
   /** Id of the x axis to read. @defaultValue 0 */
@@ -30,15 +32,19 @@ export type AutoScaleAxisProps = {
 const MIN_HALF_SPAN = 0.05;
 
 /**
- * Keeps one axis fitted to the data visible on the other one: as you pan or zoom (say the x axis),
- * the y axis re-scales to be as zoomed-in as possible while still showing every visible point.
+ * Keeps one axis fitted to the data visible on the other one: as you pan or zoom the category axis,
+ * the value axis re-scales to be as zoomed-in as possible while still showing every visible point.
  *
  * It is a headless component (renders nothing): on each change of the source axis' window it measures
  * the value extent of the points inside it and writes the matching viewport on the target axis.
  * Because the source drives the target (and never the reverse), there is no feedback loop. The target
  * axis becomes auto-managed, so don't also drive it by hand. Numeric target axis only.
+ *
+ * Layout-aware: in a vertical layout the roles swap (categories on y, values on x), so the default
+ * target becomes the x axis. Note the SCREEN orientation of each axis never changes with layout:
+ * x always runs horizontally (left/width) and y vertically (top/height).
  */
-export function AutoScaleAxis({ axis = 'y', xAxisId = 0, yAxisId = 0, padding = 0.05 }: AutoScaleAxisProps) {
+export function AutoScaleAxis({ axis, xAxisId = 0, yAxisId = 0, padding = 0.05 }: AutoScaleAxisProps) {
   const dispatch = useAppDispatch();
   const isPanorama = useIsPanorama();
   const zoom = useAppSelector(selectZoom);
@@ -51,14 +57,17 @@ export function AutoScaleAxis({ axis = 'y', xAxisId = 0, yAxisId = 0, padding = 
   const yDomain = useYAxisDomain(yAxisId);
   const xAxisSettings = useAppSelector(state => selectXAxisSettings(state, xAxisId));
   const yAxisSettings = useAppSelector(state => selectYAxisSettings(state, yAxisId));
+  const layout = useCartesianChartLayout();
 
-  // `target` is the axis we re-scale; `source` is the one whose visible window selects the points.
-  const target = axis;
-  const sourceScale = target === 'y' ? xScale : yScale;
+  // `target` is the axis we re-scale (the value axis by default); `source` is the one whose visible
+  // window selects the points (the category axis).
+  const target: ZoomDimension = axis ?? (layout === 'vertical' ? 'x' : 'y');
+  const sourceAxis: ZoomDimension = target === 'y' ? 'x' : 'y';
+  const sourceScale = sourceAxis === 'x' ? xScale : yScale;
   const targetDomain = target === 'y' ? yDomain : xDomain;
   // The series whose values live on the target axis (their data keys give the values to fit).
   const targetAxisId = target === 'y' ? yAxisId : xAxisId;
-  const sourceDataKey = target === 'y' ? xAxisSettings?.dataKey : yAxisSettings?.dataKey;
+  const sourceDataKey = sourceAxis === 'x' ? xAxisSettings?.dataKey : yAxisSettings?.dataKey;
 
   useEffect(() => {
     const chartData = chartDataState?.chartData;
@@ -83,8 +92,10 @@ export function AutoScaleAxis({ axis = 'y', xAxisId = 0, yAxisId = 0, padding = 
       return;
     }
 
-    const lo = target === 'y' ? offset.left : offset.top;
-    const hi = target === 'y' ? offset.left + offset.width : offset.top + offset.height;
+    // The screen band of the SOURCE axis. The x axis always runs horizontally and the y axis always
+    // vertically, whatever the layout - layout only changes which axis carries categories vs values.
+    const lo = sourceAxis === 'x' ? offset.left : offset.top;
+    const hi = sourceAxis === 'x' ? offset.left + offset.width : offset.top + offset.height;
     const valueKeys = cartesianItems
       .filter(item => (target === 'y' ? item.yAxisId === targetAxisId : item.xAxisId === targetAxisId))
       .filter(item => !item.hide && item.dataKey != null)
@@ -136,6 +147,7 @@ export function AutoScaleAxis({ axis = 'y', xAxisId = 0, yAxisId = 0, padding = 
     targetDomain,
     sourceDataKey,
     target,
+    sourceAxis,
     targetAxisId,
     padding,
     dispatch,

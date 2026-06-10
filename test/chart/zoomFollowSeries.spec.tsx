@@ -58,4 +58,27 @@ describe('<FollowSeries />', () => {
       expect(width).toBeLessThan(0.5);
     });
   });
+
+  it('vertical layout: follows along y and re-centres the x (value) window', async () => {
+    render(
+      <LineChart width={400} height={300} data={data} layout="vertical">
+        <XAxis type="number" />
+        <YAxis dataKey="name" type="category" />
+        <Line dataKey="uv" isAnimationActive={false} />
+        <MouseWheelZoom axis="y" />
+        <FollowSeries dataKey="uv" span={0.4} />
+        <Capture />
+      </LineChart>,
+    );
+
+    const xCenter = () => (zoomApi.viewport.x.start + zoomApi.viewport.x.end) / 2;
+
+    // Early categories (low values) -> x window low.
+    act(() => zoomApi.setViewport({ y: { start: 0, end: 0.3 } }));
+    await waitFor(() => expect(xCenter()).toBeLessThan(0.4));
+
+    // Late categories (high values) -> x window high.
+    act(() => zoomApi.setViewport({ y: { start: 0.7, end: 1 } }));
+    await waitFor(() => expect(xCenter()).toBeGreaterThan(0.6));
+  });
 });
