@@ -1,10 +1,14 @@
-import { useMemo, useRef } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useAppSelector } from '../../state/hooks';
 import { selectChartOffsetInternal } from '../../state/selectors/selectChartOffsetInternal';
-import { useXAxisScale, useYAxisScale } from '../../hooks';
 import { getValueByDataKey } from '../../util/ChartUtils';
 import { DataKey } from '../../util/types';
 import { AxisId } from '../../state/cartesianAxisSlice';
+import { useIsPanorama } from '../../context/PanoramaContext';
+import { selectAxisScale } from '../../state/selectors/axisSelectors';
+import { RechartsRootState } from '../../state/store';
+import { RechartsScale } from '../../util/scale/RechartsScale';
+import { areScalesApproximatelyEqual } from '../../util/approximateEquality';
 
 /** Options for {@link useScatterLOD}. */
 export type ScatterLODOptions = {
@@ -31,7 +35,7 @@ export type ScatterLODOptions = {
  * with off-screen points dropped. As you zoom in, the same data spreads over more cells so more points
  * appear - giving cheap rendering when zoomed out and full detail when zoomed in.
  *
- * Feed the result to a `<Scatter data={...} />`. It recomputes only when the data or the viewport
+ * Feed the result to a Scatter component with the data prop. It recomputes only when the data or the viewport
  * changes, and returns the input unchanged until the scales are measured.
  *
  * @example
@@ -40,10 +44,18 @@ export type ScatterLODOptions = {
  */
 export function useScatterLOD<T>(data: ReadonlyArray<T>, options: ScatterLODOptions): ReadonlyArray<T> {
   const { x, y, xAxisId = 0, yAxisId = 0, cellSize = 2, cull = true } = options;
-  const xScale = useXAxisScale(xAxisId);
-  const yScale = useYAxisScale(yAxisId);
+  const isPanorama = useIsPanorama();
+  const selectXAxisScale = useCallback(
+    (state: RechartsRootState) => selectAxisScale(state, 'xAxis', xAxisId, isPanorama),
+    [isPanorama, xAxisId],
+  );
+  const selectYAxisScale = useCallback(
+    (state: RechartsRootState) => selectAxisScale(state, 'yAxis', yAxisId, isPanorama),
+    [isPanorama, yAxisId],
+  );
+  const xScale = useAppSelector<RechartsScale | undefined>(selectXAxisScale, areScalesApproximatelyEqual);
+  const yScale = useAppSelector<RechartsScale | undefined>(selectYAxisScale, areScalesApproximatelyEqual);
   const offset = useAppSelector(selectChartOffsetInternal);
-  const stableRef = useRef<ReadonlyArray<T>>(data);
 
   // Depend on the plot's primitive dimensions (not the offset object) so the memo doesn't recompute
   // just because the selector handed back a new object with the same values.
@@ -58,18 +70,27 @@ export function useScatterLOD<T>(data: ReadonlyArray<T>, options: ScatterLODOpti
       return data;
     }
     const cell = cellSize > 0 ? cellSize : 1;
-    const minX = plotLeft - cell;
-    const maxX = plotLeft + plotWidth + cell;
-    const minY = plotTop - cell;
-    const maxY = plotTop + plotHeight + cell;
+    /*
+     * Cull with half a plot of slack on every side. The decimated result is fed back to
+     * <Scatter data>, and with an automatic axis domain the kept points define the next domain: a
+     * tight cull would let small domain shifts drop/add edge points, which shifts the domain again -
+     * an oscillation that can crash with "Maximum update depth exceeded" under fast wheel bursts.
+     * The generous margin makes the kept set a fixed point of that feedback.
+     */
+    const cullMarginX = plotWidth / 2 + cell;
+    const cullMarginY = plotHeight / 2 + cell;
+    const minX = plotLeft - cullMarginX;
+    const maxX = plotLeft + plotWidth + cullMarginX;
+    const minY = plotTop - cullMarginY;
+    const maxY = plotTop + plotHeight + cullMarginY;
     // A flat key per grid cell; the column count bounds the range so cells never collide.
     const columns = Math.max(Math.ceil(plotWidth / cell) + 3, 1);
 
     const seen = new Set<number>();
     const result: T[] = [];
     data.forEach(point => {
-      const px = xScale(getValueByDataKey(point, x as DataKey<T>) as never);
-      const py = yScale(getValueByDataKey(point, y as DataKey<T>) as never);
+      const px = xScale.map(getValueByDataKey(point, x as DataKey<T>) as never);
+      const py = yScale.map(getValueByDataKey(point, y as DataKey<T>) as never);
       if (px == null || py == null || Number.isNaN(px) || Number.isNaN(py)) {
         return;
       }
@@ -87,11 +108,20 @@ export function useScatterLOD<T>(data: ReadonlyArray<T>, options: ScatterLODOpti
     return result.length === data.length ? data : result;
   }, [data, xScale, yScale, measured, plotLeft, plotTop, plotWidth, plotHeight, x, y, cellSize, cull]);
 
-  // Reuse the previous array while the kept set is unchanged, so handing it to <Scatter data> can't
-  // start an endless re-register / re-render loop when an upstream dependency changes identity.
-  const previous = stableRef.current;
-  const stable =
-    previous.length === computed.length && previous.every((point, i) => point === computed[i]) ? previous : computed;
-  stableRef.current = stable;
+  /*
+   * Emit through state from a passive effect rather than returning the memo directly. Feeding the
+   * result straight back into <Scatter data> inside the same commit chains a dispatch onto every
+   * zoom dispatch (data re-registration -> domain -> scale -> ...); under a fast wheel burst those
+   * nested synchronous updates pile up and React aborts with "Maximum update depth exceeded".
+   * Deferring to a passive effect puts a commit boundary in the loop, and the equality guard reuses
+   * the previous array while the kept set is unchanged so the chain terminates.
+   */
+  const [stable, setStable] = useState(computed);
+  useEffect(() => {
+    setStable(previous =>
+      previous.length === computed.length && previous.every((point, i) => point === computed[i]) ? previous : computed,
+    );
+  }, [computed]);
+
   return stable;
 }
