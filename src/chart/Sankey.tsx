@@ -34,6 +34,8 @@ import { RegisterGraphicalItemId } from '../context/RegisterGraphicalItemId';
 import { GraphicalItemId } from '../state/graphicalItemsSlice';
 import { initialEventSettingsState } from '../state/eventSettingsSlice';
 import { ClipPathProvider } from '../container/ClipPathProvider';
+import { ZoomPropBridge } from './zoom/ZoomPropBridge';
+import { ZoomProp } from '../util/zoom/ZoomOptions';
 import { ZoomTransformLayer } from './zoom/ZoomTransformLayer';
 import { selectChartOffsetInternal } from '../state/selectors/selectChartOffsetInternal';
 import { selectZoom } from '../state/selectors/zoomSelectors';
@@ -764,6 +766,13 @@ interface SankeyProps extends EventThrottlingProps {
    * @default 'justify'
    */
   align?: 'left' | 'justify';
+  /**
+   * Enables the built-in zoom and pan controls.
+   *
+   * Accepts `true` for defaults, `'x' | 'y' | 'xy'` as shorthand, or a full options object.
+   * Equivalent to mounting `<ZoomAndPan />` as a child.
+   */
+  zoom?: ZoomProp;
 }
 
 export type Props = Omit<SVGProps<SVGSVGElement>, keyof SankeyProps> & SankeyProps;
@@ -1343,6 +1352,7 @@ export function Sankey(outsideProps: Props) {
           <RegisterGraphicalItemId id={externalId} type="sankey">
             {id => <SankeyImpl {...props} id={id} />}
           </RegisterGraphicalItemId>
+          <ZoomPropBridge zoom={props.zoom} />
         </TooltipPortalContext.Provider>
       </RechartsWrapper>
     </RechartsStoreProvider>

@@ -47,6 +47,8 @@ import { RegisterGraphicalItemId } from '../context/RegisterGraphicalItemId';
 import { GraphicalItemId } from '../state/graphicalItemsSlice';
 import { initialEventSettingsState } from '../state/eventSettingsSlice';
 import { ClipPathProvider } from '../container/ClipPathProvider';
+import { ZoomPropBridge } from './zoom/ZoomPropBridge';
+import { ZoomProp } from '../util/zoom/ZoomOptions';
 import { ZoomTransformLayer } from './zoom/ZoomTransformLayer';
 import { selectChartOffsetInternal } from '../state/selectors/selectChartOffsetInternal';
 import { selectZoom } from '../state/selectors/zoomSelectors';
@@ -427,6 +429,13 @@ export type TreemapContentType = ReactNode | ((props: TreemapNode) => React.Reac
 
 export interface Props<DataPointType extends TreemapDataType = TreemapDataType, DataValueType = any>
   extends DataConsumer<DataPointType, DataValueType>, EventThrottlingProps {
+  /**
+   * Enables the built-in zoom and pan controls.
+   *
+   * Accepts `true` for defaults, `'x' | 'y' | 'xy'` as shorthand, or a full options object.
+   * Equivalent to mounting `<ZoomAndPan />` as a child.
+   */
+  zoom?: ZoomProp;
   /**
    * The width of chart container.
    * Can be a number or a percent string like "100%".
@@ -1256,6 +1265,7 @@ export function Treemap(outsideProps: Props) {
       >
         <TooltipPortalContext.Provider value={tooltipPortal}>
           <TreemapDispatchInject {...props} />
+          <ZoomPropBridge zoom={props.zoom} />
         </TooltipPortalContext.Provider>
       </RechartsWrapper>
     </RechartsStoreProvider>

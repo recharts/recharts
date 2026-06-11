@@ -82,3 +82,51 @@ describe('<ZoomAndPan />', () => {
     await waitFor(() => expect(onZoomChange).toHaveBeenCalled());
   });
 });
+
+describe('the zoom prop shorthand', () => {
+  function renderWithZoomProp(zoom: boolean | 'x' | 'y' | 'xy' | ZoomAndPanProps) {
+    const utils = render(
+      <LineChart width={400} height={300} data={data} zoom={zoom}>
+        <XAxis dataKey="name" />
+        <YAxis />
+        <Line dataKey="uv" isAnimationActive={false} />
+      </LineChart>,
+    );
+    return { ...utils, wrapper: utils.container.querySelector('.recharts-wrapper') as HTMLElement };
+  }
+
+  it('zoom={true} mounts the default interactions (wheel zooms)', async () => {
+    const { wrapper, container } = renderWithZoomProp(true);
+    fireEvent.wheel(wrapper, { deltaY: -100, clientX: 200, clientY: 150 });
+    // The scrollbar only renders while zoomed, so it is a good "the chart is zoomed" marker.
+    await waitFor(() => expect(container.querySelector('.recharts-zoom-scrollbar-x')).not.toBeNull());
+  });
+
+  it('accepts a full options object', async () => {
+    const onZoomChange = vi.fn();
+    const { container } = render(
+      <LineChart width={400} height={300} data={data} zoom={{ axis: 'x', onZoomChange }}>
+        <XAxis dataKey="name" />
+        <YAxis />
+        <Line dataKey="uv" isAnimationActive={false} />
+      </LineChart>,
+    );
+    const wrapper = container.querySelector('.recharts-wrapper') as HTMLElement;
+    fireEvent.wheel(wrapper, { deltaY: -100, clientX: 200, clientY: 150 });
+    await waitFor(() => expect(onZoomChange).toHaveBeenCalled());
+    const last = onZoomChange.mock.calls.at(-1)![0];
+    expect(last.x.end - last.x.start).toBeLessThan(1);
+    expect(last.y).toEqual({ start: 0, end: 1 });
+  });
+
+  it('renders nothing zoom-related when the prop is absent', () => {
+    const { container } = render(
+      <LineChart width={400} height={300} data={data}>
+        <XAxis dataKey="name" />
+        <YAxis />
+        <Line dataKey="uv" isAnimationActive={false} />
+      </LineChart>,
+    );
+    expect(container.querySelector('.recharts-zoom-scrollbar-x')).toBeNull();
+  });
+});

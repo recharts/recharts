@@ -30,6 +30,8 @@ import { WithIdRequired } from '../util/useUniqueId';
 import { RequiresDefaultProps, resolveDefaultProps } from '../util/resolveDefaultProps';
 import { initialEventSettingsState } from '../state/eventSettingsSlice';
 import { ClipPathProvider } from '../container/ClipPathProvider';
+import { ZoomPropBridge } from './zoom/ZoomPropBridge';
+import { ZoomProp } from '../util/zoom/ZoomOptions';
 import { ZoomTransformLayer } from './zoom/ZoomTransformLayer';
 import { selectChartOffsetInternal } from '../state/selectors/selectChartOffsetInternal';
 import { selectZoom } from '../state/selectors/zoomSelectors';
@@ -55,6 +57,13 @@ interface SunburstNode extends SunburstData {
 
 export interface SunburstChartProps extends EventThrottlingProps {
   className?: string;
+  /**
+   * Enables the built-in zoom and pan controls.
+   *
+   * Accepts `true` for defaults, `'x' | 'y' | 'xy'` as shorthand, or a full options object.
+   * Equivalent to mounting `<ZoomAndPan />` as a child.
+   */
+  zoom?: ZoomProp;
   /**
    * The source data. Each element should be an object.
    * The properties of each object represent the values of different data dimensions.
@@ -483,6 +492,7 @@ export const SunburstChart = (outsideProps: SunburstChartProps) => {
           <RegisterGraphicalItemId id={externalId} type="sunburst">
             {id => <SunburstChartImpl {...props} id={id} />}
           </RegisterGraphicalItemId>
+          <ZoomPropBridge zoom={props.zoom} />
         </RechartsWrapper>
       </TooltipPortalContext.Provider>
     </RechartsStoreProvider>
