@@ -1,5 +1,10 @@
 import styles from '../guideTable.module.css';
 import { LinkToApi } from '../../Shared/LinkToApi.tsx';
+import { CodeEditorWithPreview } from '../../CodeEditorWithPreview';
+import QuickStartExample from './QuickStartExample';
+import quickStartExampleSource from './QuickStartExample?raw';
+import CustomControlsExample from './CustomControlsExample';
+import customControlsExampleSource from './CustomControlsExample?raw';
 
 /**
  * Guide for the cartesian Zoom & Pan feature.
@@ -47,8 +52,14 @@ type Viewport = { x?: AxisWindow; y?: AxisWindow };
       <h2>Quick start</h2>
       <p>
         For the usual experience in one line, add <code>&lt;ZoomAndPan /&gt;</code>. It bundles the sensible defaults:
-        wheel zoom, drag to pan, pinch, keyboard, double-click reset and scrollbars.
+        wheel zoom, drag to pan, pinch, keyboard, double-click reset and scrollbars. Try it: wheel over the chart, drag
+        to pan, double-click to reset.
       </p>
+      <CodeEditorWithPreview
+        Component={QuickStartExample}
+        sourceCode={quickStartExampleSource}
+        stackBlitzTitle="Recharts zoom and pan quick start"
+      />
       <pre>{`import { LineChart, XAxis, YAxis, Line, ZoomAndPan } from 'recharts';
 
 <LineChart data={data} width={600} height={300}>
@@ -294,11 +305,42 @@ function Points() {
         require a cartesian axis are automatically disabled on these charts; everything else works unchanged.
       </p>
 
+      <h2>Brush or ZoomAndPan?</h2>
+      <p>Recharts now has two ways to show a slice of the data, and both are valid:</p>
+      <ul>
+        <li>
+          <LinkToApi>Brush</LinkToApi> in its classic mode is <strong>domain-driven</strong>: it slices the data to an
+          index window (<code>startIndex</code>/<code>endIndex</code>), the axes re-fit to the visible slice, and the
+          rest of the data is simply not rendered. Whole categories enter and leave the view.
+        </li>
+        <li>
+          <code>ZoomAndPan</code> is <strong>range-driven</strong>: the data and domain stay untouched and the axis
+          range is stretched instead, so panning is continuous (including sub-category positions) and every gesture maps
+          to the same normalized viewport.
+        </li>
+      </ul>
+      <p>
+        They meet in <code>&lt;Brush mode=&quot;zoom&quot;&gt;</code>: the familiar Brush UI (travellers, panorama)
+        editing the range-driven viewport instead of slicing, in sync with every other zoom control. Use classic Brush
+        when stepping through whole data windows is the point; use the zoom viewport when you want smooth, gesture-led
+        exploration; use Brush zoom mode when you want both.
+      </p>
+
       <h2>Custom UI &amp; your own gestures</h2>
       <p>
         For buttons, sliders, a minimap of your own, or a different gesture library entirely, drop down to the hooks.
-        They read and write the same viewport as the components.
+        They read and write the same viewport as the components: <code>useZoom()</code> gives you the viewport plus
+        zoomIn/zoomOut/pan/reset helpers, and <code>useZoomState()</code> is the same state as a <code>useState</code>
+        -shaped tuple (<code>const [zoom, setZoom] = useZoomState()</code>). Every built-in consumer (
+        <code>ZoomAndPan</code>, the granular components, <code>Minimap</code>, <code>Brush mode=&quot;zoom&quot;</code>
+        ) reads and writes that same state, so custom controls stay in sync with all of them. In this example no
+        interaction component is mounted; the buttons are the only way to zoom:
       </p>
+      <CodeEditorWithPreview
+        Component={CustomControlsExample}
+        sourceCode={customControlsExampleSource}
+        stackBlitzTitle="Recharts custom zoom controls"
+      />
       <pre>{`import { useZoom } from 'recharts';
 
 function ZoomButtons() {
