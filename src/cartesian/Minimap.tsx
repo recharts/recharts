@@ -1,5 +1,16 @@
 import * as React from 'react';
-import { ReactElement, SVGProps, useMemo, useRef, useState } from 'react';
+import {
+  createContext,
+  ReactElement,
+  ReactNode,
+  SVGProps,
+  useCallback,
+  useContext,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from 'react';
 import { clsx } from 'clsx';
 import { Layer } from '../container/Layer';
 import { PanoramaPreview } from '../container/PanoramaPreview';
@@ -60,10 +71,7 @@ type MinimapOwnProps = MinimapStyleProps & {
   axis?: ZoomAxis;
   minZoom?: number;
   maxZoom?: number;
-  wheel?: boolean;
-  wheelStep?: number;
-  wheelPanStep?: number;
-  pinch?: boolean;
+  controls?: ReactNode;
   ariaLabel?: string;
   /**
    * SVG z-index layer used by the minimap. Defaults above series and labels so the minimap stays opaque and interactive.
@@ -83,6 +91,8 @@ const DEFAULT_WHEEL_STEP = 1.15;
 const DEFAULT_WHEEL_PAN_STEP = 0.0015;
 const DEFAULT_Z_INDEX = 2500;
 const KEYBOARD_PAN_STEP = 0.1;
+const EMPTY_AREA: ViewportWindowArea = { x: 0, y: 0, width: 0, height: 0 };
+const DEFAULT_ZOOM_STATE: ZoomState = { x: FULL_VIEWPORT, y: FULL_VIEWPORT };
 
 function axisEnabled(axis: ZoomAxis, dimension: 'x' | 'y'): boolean {
   return axis === 'xy' || axis === dimension;
@@ -95,41 +105,21 @@ function mergeEnabledDimensions(current: ZoomState, next: ZoomState, axis: ZoomA
   };
 }
 
-function visibleZoomForAxis(zoom: ZoomState, axis: ZoomAxis): ZoomState {
-  return {
-    x: axisEnabled(axis, 'x') ? zoom.x : FULL_VIEWPORT,
-    y: axisEnabled(axis, 'y') ? zoom.y : FULL_VIEWPORT,
-  };
-}
-
-function getPointFromEvent(
-  event: React.PointerEvent<SVGRectElement>,
+function getPointFromClient(
+  clientX: number,
+  clientY: number,
+  target: SVGRectElement,
   area: ViewportWindowArea,
 ): { x: number; y: number } {
-  const rect = event.currentTarget.getBoundingClientRect();
+  const rect = target.getBoundingClientRect();
   return {
-    x: area.x + event.clientX - rect.left,
-    y: area.y + event.clientY - rect.top,
-  };
-}
-
-function getPointFromMouseEvent(
-  event: React.MouseEvent<SVGRectElement>,
-  area: ViewportWindowArea,
-): { x: number; y: number } {
-  const rect = event.currentTarget.getBoundingClientRect();
-  return {
-    x: area.x + event.clientX - rect.left,
-    y: area.y + event.clientY - rect.top,
+    x: area.x + clientX - rect.left,
+    y: area.y + clientY - rect.top,
   };
 }
 
 function getTouchPoint(touch: React.Touch, target: SVGRectElement, area: ViewportWindowArea): { x: number; y: number } {
-  const rect = target.getBoundingClientRect();
-  return {
-    x: area.x + touch.clientX - rect.left,
-    y: area.y + touch.clientY - rect.top,
-  };
+  return getPointFromClient(touch.clientX, touch.clientY, target, area);
 }
 
 function getRatioInArea(value: number, start: number, size: number, flipped: boolean): number {
@@ -161,6 +151,28 @@ function getCursor(hit: ViewportWindowHit): React.CSSProperties['cursor'] {
   }
 }
 
+function restrictHitToAxis(hit: ViewportWindowHit, axis: ZoomAxis): ViewportWindowHit {
+  if (axis === 'xy' || hit === 'outside' || hit === 'body') {
+    return hit;
+  }
+  if (axis === 'x') {
+    if (hit.includes('left')) {
+      return 'left';
+    }
+    if (hit.includes('right')) {
+      return 'right';
+    }
+    return 'body';
+  }
+  if (hit.includes('top')) {
+    return 'top';
+  }
+  if (hit.includes('bottom')) {
+    return 'bottom';
+  }
+  return 'body';
+}
+
 type DragState = {
   hit: ViewportWindowHandle;
   startX: number;
@@ -173,6 +185,41 @@ type PinchState = {
   midpoint: { x: number; y: number };
   zoom: ZoomState;
 };
+
+type MinimapControlsContextValue = {
+  area: ViewportWindowArea;
+  axis: ZoomAxis;
+  cursor: React.CSSProperties['cursor'];
+  flipped: ViewportWindowFlipped;
+  limits: ZoomLimits;
+  viewportRect: ReturnType<typeof zoomStateToRect>;
+  getCurrentZoom: () => ZoomState;
+  apply: (next: ZoomState) => void;
+  setHoverHit: (hit: ViewportWindowHit) => void;
+  overlayNode: SVGRectElement | null;
+};
+
+type InternalMinimapControlsContextValue = MinimapControlsContextValue & {
+  cancelDrag: () => void;
+  cancelPinch: () => void;
+  registerCancelDrag: (cancel: () => void) => () => void;
+  registerCancelPinch: (cancel: () => void) => () => void;
+  setDragHit: (hit: ViewportWindowHandle | null) => void;
+};
+
+const MinimapControlsContext = createContext<InternalMinimapControlsContextValue | null>(null);
+
+function useInternalMinimapControls(): InternalMinimapControlsContextValue {
+  const context = useContext(MinimapControlsContext);
+  if (context == null) {
+    throw new Error('useMinimapControls must be used inside <Minimap />.');
+  }
+  return context;
+}
+
+export function useMinimapControls(): MinimapControlsContextValue {
+  return useInternalMinimapControls();
+}
 
 function MinimapInternal(props: Props) {
   const {
@@ -194,10 +241,7 @@ function MinimapInternal(props: Props) {
     axis = 'xy',
     minZoom = DEFAULT_LIMITS.minZoom,
     maxZoom = DEFAULT_LIMITS.maxZoom,
-    wheel = true,
-    wheelStep = DEFAULT_WHEEL_STEP,
-    wheelPanStep = DEFAULT_WHEEL_PAN_STEP,
-    pinch = true,
+    controls,
     ariaLabel,
     zIndex = DEFAULT_Z_INDEX,
     style,
@@ -214,31 +258,13 @@ function MinimapInternal(props: Props) {
   const yFlipped =
     useAppSelector(state => isRangeFlipped(selectAxisRangeWithReverse(state, 'yAxis', 0, false))) ?? false;
   const clipId = useUniqueId('recharts-minimap-clip');
-  const dragRef = useRef<DragState | null>(null);
-  const pinchRef = useRef<PinchState | null>(null);
   const zoomRef = useRef<ZoomState | undefined>(zoom);
+  const cancelDragRef = useRef<() => void>(() => {});
+  const cancelPinchRef = useRef<() => void>(() => {});
   const [hoverHit, setHoverHit] = useState<ViewportWindowHit>('outside');
+  const [dragHit, setDragHit] = useState<ViewportWindowHandle | null>(null);
+  const [overlayNode, setOverlayNode] = useState<SVGRectElement | null>(null);
   zoomRef.current = zoom;
-
-  /*
-   * Wheel is attached as a NATIVE non-passive listener: React's synthetic `onWheel` is passive since
-   * v17, which makes `preventDefault()` a no-op - the page would scroll while wheeling the minimap.
-   * The trampoline always calls the latest handler so the listener is attached only once per node.
-   */
-  const overlayNodeRef = useRef<SVGRectElement | null>(null);
-  const wheelHandlerRef = useRef<(event: WheelEvent) => void>(() => {});
-  const overlayRefCallback = useMemo(() => {
-    const trampoline = (event: WheelEvent) => wheelHandlerRef.current(event);
-    return (node: SVGRectElement | null) => {
-      if (overlayNodeRef.current != null) {
-        overlayNodeRef.current.removeEventListener('wheel', trampoline);
-      }
-      overlayNodeRef.current = node;
-      if (node != null) {
-        node.addEventListener('wheel', trampoline, { passive: false });
-      }
-    };
-  }, []);
 
   const frame = useMemo(() => {
     if (offset == null || chartWidth == null || chartHeight == null) {
@@ -274,281 +300,93 @@ function MinimapInternal(props: Props) {
     };
   }, [frame, padding.bottom, padding.left, padding.right, padding.top]);
 
+  const flipped: ViewportWindowFlipped = useMemo(() => ({ x: xFlipped, y: yFlipped }), [xFlipped, yFlipped]);
+  const limits = useMemo(() => ({ minZoom, maxZoom }), [maxZoom, minZoom]);
+
+  const apply = useCallback(
+    (next: ZoomState) => {
+      const { current } = zoomRef;
+      if (current == null) {
+        return;
+      }
+      dispatch(setZoom(mergeEnabledDimensions(current, next, axis)));
+    },
+    [axis, dispatch],
+  );
+
+  const getCurrentZoom = useCallback(() => zoomRef.current ?? DEFAULT_ZOOM_STATE, []);
+
+  const cancelDrag = useCallback(() => cancelDragRef.current(), []);
+  const cancelPinch = useCallback(() => cancelPinchRef.current(), []);
+  const registerCancelDrag = useCallback((cancel: () => void) => {
+    cancelDragRef.current = cancel;
+    return () => {
+      if (cancelDragRef.current === cancel) {
+        cancelDragRef.current = () => {};
+      }
+    };
+  }, []);
+  const registerCancelPinch = useCallback((cancel: () => void) => {
+    cancelPinchRef.current = cancel;
+    return () => {
+      if (cancelPinchRef.current === cancel) {
+        cancelPinchRef.current = () => {};
+      }
+    };
+  }, []);
+
+  const activeArea = content ?? EMPTY_AREA;
+  const displayedZoom = zoom ?? DEFAULT_ZOOM_STATE;
+  const viewportRect = useMemo(
+    () => zoomStateToRect(displayedZoom, activeArea, flipped),
+    [activeArea, displayedZoom, flipped],
+  );
+  const activeHit = dragHit ?? hoverHit;
+  const cursor = dragHit === 'body' ? 'grabbing' : getCursor(activeHit);
+  const controlsContext = useMemo<InternalMinimapControlsContextValue>(
+    () => ({
+      area: activeArea,
+      axis,
+      cursor,
+      flipped,
+      limits,
+      viewportRect,
+      getCurrentZoom,
+      apply,
+      setHoverHit,
+      setDragHit,
+      overlayNode,
+      cancelDrag,
+      cancelPinch,
+      registerCancelDrag,
+      registerCancelPinch,
+    }),
+    [
+      activeArea,
+      apply,
+      axis,
+      cancelDrag,
+      cancelPinch,
+      cursor,
+      flipped,
+      getCurrentZoom,
+      limits,
+      overlayNode,
+      registerCancelDrag,
+      registerCancelPinch,
+      viewportRect,
+    ],
+  );
+
   if (frame == null || content == null || chartData == null || !chartData.length || zoom == null) {
     return null;
   }
 
-  const flipped: ViewportWindowFlipped = { x: xFlipped, y: yFlipped };
-  const displayedZoom = visibleZoomForAxis(zoom, axis);
-  const viewportRect = zoomStateToRect(displayedZoom, content, flipped);
-  const isZoomed =
-    (axisEnabled(axis, 'x') && !isFullViewport(zoom.x)) || (axisEnabled(axis, 'y') && !isFullViewport(zoom.y));
-  const limits = { minZoom, maxZoom };
-
-  const apply = (next: ZoomState) => {
-    const { current } = zoomRef;
-    if (current == null) {
-      return;
-    }
-    dispatch(setZoom(mergeEnabledDimensions(current, next, axis)));
-  };
-
-  const beginDrag = (point: { x: number; y: number }) => {
-    const currentZoom = zoomRef.current == null ? displayedZoom : visibleZoomForAxis(zoomRef.current, axis);
-    const currentRect = zoomStateToRect(currentZoom, content, flipped);
-    const hit = hitTestViewportWindow(currentRect, point.x, point.y);
-    setHoverHit(hit);
-    if (hit === 'outside') {
-      apply(centerZoomStateAtPoint(currentZoom, content, flipped, point.x, point.y));
-      return;
-    }
-    dragRef.current = { hit, startX: point.x, startY: point.y, zoom: currentZoom };
-  };
-
-  const beginTouchDrag = (point: { x: number; y: number }) => {
-    const currentZoom = zoomRef.current == null ? displayedZoom : visibleZoomForAxis(zoomRef.current, axis);
-    const currentRect = zoomStateToRect(currentZoom, content, flipped);
-    const hit = hitTestViewportWindow(currentRect, point.x, point.y);
-    setHoverHit(hit);
-    if (hit !== 'outside') {
-      dragRef.current = { hit, startX: point.x, startY: point.y, zoom: currentZoom };
-    }
-  };
-
-  const moveDrag = (point: { x: number; y: number }) => {
-    const drag = dragRef.current;
-    if (drag == null) {
-      return;
-    }
-    if (drag.hit === 'body') {
-      apply(panZoomStateByPixels(drag.zoom, content, flipped, point.x - drag.startX, point.y - drag.startY));
-    } else {
-      apply(resizeZoomStateRect(drag.zoom, content, flipped, drag.hit, point.x, point.y));
-    }
-  };
-
-  const handlePointerDown = (event: React.PointerEvent<SVGRectElement>) => {
-    event.preventDefault();
-    event.stopPropagation();
-    if (event.pointerType !== 'mouse' && event.pointerType !== 'pen') {
-      return;
-    }
-    beginDrag(getPointFromEvent(event, content));
-    event.currentTarget.setPointerCapture?.(event.pointerId);
-  };
-
-  const handlePointerMove = (event: React.PointerEvent<SVGRectElement>) => {
-    if (dragRef.current == null) {
-      const point = getPointFromEvent(event, content);
-      const nextHit = hitTestViewportWindow(viewportRect, point.x, point.y);
-      if (nextHit !== hoverHit) {
-        setHoverHit(nextHit);
-      }
-      return;
-    }
-    event.preventDefault();
-    event.stopPropagation();
-    moveDrag(getPointFromEvent(event, content));
-  };
-
-  const handlePointerUp = (event: React.PointerEvent<SVGRectElement>) => {
-    dragRef.current = null;
-    event.currentTarget.releasePointerCapture?.(event.pointerId);
-  };
-
-  const handleMouseDown = (event: React.MouseEvent<SVGRectElement>) => {
-    if (dragRef.current != null) {
-      return;
-    }
-    event.preventDefault();
-    event.stopPropagation();
-    beginDrag(getPointFromMouseEvent(event, content));
-  };
-
-  const handleMouseMove = (event: React.MouseEvent<SVGRectElement>) => {
-    if (dragRef.current == null) {
-      const point = getPointFromMouseEvent(event, content);
-      const nextHit = hitTestViewportWindow(viewportRect, point.x, point.y);
-      if (nextHit !== hoverHit) {
-        setHoverHit(nextHit);
-      }
-      return;
-    }
-    event.preventDefault();
-    event.stopPropagation();
-    moveDrag(getPointFromMouseEvent(event, content));
-  };
-
-  const handleMouseUp = () => {
-    dragRef.current = null;
-  };
-
-  const handleWheel = (event: WheelEvent) => {
-    const node = overlayNodeRef.current;
-    if (!wheel || node == null) {
-      return;
-    }
-    event.preventDefault();
-    event.stopPropagation();
-    const rect = node.getBoundingClientRect();
-    const point = { x: content.x + event.clientX - rect.left, y: content.y + event.clientY - rect.top };
-    const currentZoom = zoomRef.current == null ? displayedZoom : visibleZoomForAxis(zoomRef.current, axis);
-    const factor = event.deltaY < 0 ? wheelStep : 1 / wheelStep;
-    const rawDelta = Math.abs(event.deltaY) >= Math.abs(event.deltaX) ? event.deltaY : event.deltaX;
-    const panAmount = rawDelta * wheelPanStep;
-
-    if (event.shiftKey) {
-      const panY = event.ctrlKey || event.metaKey;
-      apply({
-        x: panY ? currentZoom.x : panDimension(currentZoom.x, panAmount),
-        y: panY ? panDimension(currentZoom.y, panAmount) : currentZoom.y,
-      });
-      return;
-    }
-
-    apply({
-      x: zoomDimension(currentZoom.x, factor, getRatioInArea(point.x, content.x, content.width, flipped.x), limits),
-      y: zoomDimension(currentZoom.y, factor, getRatioInArea(point.y, content.y, content.height, flipped.y), limits),
-    });
-  };
-
-  const handleTouchStart = (event: React.TouchEvent<SVGRectElement>) => {
-    if (event.touches.length === 1) {
-      const touch = event.touches[0];
-      if (touch == null) {
-        return;
-      }
-      event.preventDefault();
-      event.stopPropagation();
-      pinchRef.current = null;
-      beginTouchDrag(getTouchPoint(touch, event.currentTarget, content));
-      return;
-    }
-
-    if (!pinch || event.touches.length < 2) {
-      return;
-    }
-    event.preventDefault();
-    event.stopPropagation();
-    dragRef.current = null;
-    const first = event.touches[0];
-    const second = event.touches[1];
-    if (first == null || second == null) {
-      return;
-    }
-    const a = getTouchPoint(first, event.currentTarget, content);
-    const b = getTouchPoint(second, event.currentTarget, content);
-    const currentZoom = zoomRef.current == null ? displayedZoom : visibleZoomForAxis(zoomRef.current, axis);
-    pinchRef.current = {
-      distance: Math.hypot(a.x - b.x, a.y - b.y),
-      midpoint: { x: (a.x + b.x) / 2, y: (a.y + b.y) / 2 },
-      zoom: currentZoom,
-    };
-  };
-
-  const handleTouchMove = (event: React.TouchEvent<SVGRectElement>) => {
-    const pinchState = pinchRef.current;
-    if (pinchState == null && event.touches.length === 1 && dragRef.current != null) {
-      const touch = event.touches[0];
-      if (touch == null) {
-        return;
-      }
-      event.preventDefault();
-      event.stopPropagation();
-      moveDrag(getTouchPoint(touch, event.currentTarget, content));
-      return;
-    }
-
-    if (!pinch || pinchState == null || event.touches.length < 2) {
-      return;
-    }
-    event.preventDefault();
-    event.stopPropagation();
-    const first = event.touches[0];
-    const second = event.touches[1];
-    if (first == null || second == null) {
-      return;
-    }
-    const a = getTouchPoint(first, event.currentTarget, content);
-    const b = getTouchPoint(second, event.currentTarget, content);
-    const midpoint = { x: (a.x + b.x) / 2, y: (a.y + b.y) / 2 };
-    const distance = Math.hypot(a.x - b.x, a.y - b.y);
-    const factor = pinchState.distance === 0 ? 1 : distance / pinchState.distance;
-    const zoomed: ZoomState = {
-      x: zoomDimension(
-        pinchState.zoom.x,
-        factor,
-        getRatioInArea(midpoint.x, content.x, content.width, flipped.x),
-        limits,
-      ),
-      y: zoomDimension(
-        pinchState.zoom.y,
-        factor,
-        getRatioInArea(midpoint.y, content.y, content.height, flipped.y),
-        limits,
-      ),
-    };
-    apply(
-      panZoomStateByPixels(
-        zoomed,
-        content,
-        flipped,
-        midpoint.x - pinchState.midpoint.x,
-        midpoint.y - pinchState.midpoint.y,
-      ),
-    );
-  };
-
-  const handleTouchEnd = () => {
-    pinchRef.current = null;
-    dragRef.current = null;
-  };
-
-  const handleKeyDown = (event: React.KeyboardEvent<SVGRectElement>) => {
-    const currentZoom = zoomRef.current == null ? displayedZoom : visibleZoomForAxis(zoomRef.current, axis);
-    let next: ZoomState | undefined;
-
-    if (event.key === 'ArrowLeft' || event.key === 'ArrowRight') {
-      const direction = event.key === 'ArrowRight' ? 1 : -1;
-      next = {
-        x: panDimension(currentZoom.x, direction * (flipped.x ? -1 : 1) * KEYBOARD_PAN_STEP),
-        y: currentZoom.y,
-      };
-    } else if (event.key === 'ArrowUp' || event.key === 'ArrowDown') {
-      const direction = event.key === 'ArrowDown' ? 1 : -1;
-      next = {
-        x: currentZoom.x,
-        y: panDimension(currentZoom.y, direction * (flipped.y ? -1 : 1) * KEYBOARD_PAN_STEP),
-      };
-    } else if (event.key === '+' || event.key === '=') {
-      next = {
-        x: zoomDimension(currentZoom.x, wheelStep, 0.5, limits),
-        y: zoomDimension(currentZoom.y, wheelStep, 0.5, limits),
-      };
-    } else if (event.key === '-') {
-      next = {
-        x: zoomDimension(currentZoom.x, 1 / wheelStep, 0.5, limits),
-        y: zoomDimension(currentZoom.y, 1 / wheelStep, 0.5, limits),
-      };
-    } else if (event.key === '0' || event.key === 'Home') {
-      next = { x: FULL_VIEWPORT, y: FULL_VIEWPORT };
-    }
-
-    if (next == null) {
-      return;
-    }
-
-    event.preventDefault();
-    event.stopPropagation();
-    apply(next);
-  };
-
-  wheelHandlerRef.current = handleWheel;
-
+  const isZoomed = !isFullViewport(zoom.x) || !isFullViewport(zoom.y);
   const layerClass = clsx('recharts-minimap', className);
   const userSelectStyle = generatePrefixStyle('userSelect', 'none');
-  const activeHit = dragRef.current?.hit ?? hoverHit;
-  const cursor = dragRef.current?.hit === 'body' ? 'grabbing' : getCursor(activeHit);
+  // eslint-disable-next-line @typescript-eslint/no-use-before-define
+  const renderedControls = controls === undefined ? <MinimapControls /> : controls;
 
   return (
     <ZIndexLayer zIndex={zIndex}>
@@ -626,48 +464,402 @@ function MinimapInternal(props: Props) {
           stroke={viewportStroke}
           pointerEvents="none"
         />
-        <rect
-          {...{ [ZOOM_SCROLLBAR_ATTR]: 'minimap' }}
-          ref={overlayRefCallback}
-          className="recharts-minimap-overlay"
-          x={content.x}
-          y={content.y}
-          width={content.width}
-          height={content.height}
-          fill="transparent"
-          pointerEvents="all"
-          tabIndex={0}
-          aria-label={ariaLabel}
-          /*
-           * No outline:none here: the element is keyboard-focusable, so the focus ring must stay
-           * visible. Browsers only draw the default ring on :focus-visible (keyboard), not on click.
-           */
-          style={{ cursor, touchAction: 'none' }}
-          onPointerDown={handlePointerDown}
-          onPointerMove={handlePointerMove}
-          onPointerUp={handlePointerUp}
-          onPointerCancel={handlePointerUp}
-          onMouseDown={handleMouseDown}
-          onMouseMove={handleMouseMove}
-          onMouseUp={handleMouseUp}
-          onMouseLeave={handleMouseUp}
-          onTouchStartCapture={handleTouchStart}
-          onTouchMoveCapture={handleTouchMove}
-          onTouchEndCapture={handleTouchEnd}
-          onTouchCancelCapture={handleTouchEnd}
-          onKeyDown={handleKeyDown}
-        />
+        <MinimapControlsContext.Provider value={controlsContext}>
+          <rect
+            {...{ [ZOOM_SCROLLBAR_ATTR]: 'minimap' }}
+            ref={setOverlayNode}
+            className="recharts-minimap-overlay"
+            x={content.x}
+            y={content.y}
+            width={content.width}
+            height={content.height}
+            fill="transparent"
+            pointerEvents="all"
+            tabIndex={0}
+            aria-label={ariaLabel}
+            /*
+             * No outline:none here: the element is keyboard-focusable, so the focus ring must stay
+             * visible. Browsers only draw the default ring on :focus-visible (keyboard), not on click.
+             */
+            style={{ cursor, touchAction: 'none' }}
+          />
+          {renderedControls}
+        </MinimapControlsContext.Provider>
       </Layer>
     </ZIndexLayer>
+  );
+}
+
+export function MinimapDrag() {
+  const {
+    area,
+    apply,
+    axis,
+    cancelPinch,
+    flipped,
+    getCurrentZoom,
+    overlayNode,
+    registerCancelDrag,
+    setDragHit,
+    setHoverHit,
+    viewportRect,
+  } = useInternalMinimapControls();
+  const dragRef = useRef<DragState | null>(null);
+
+  useEffect(() => {
+    if (overlayNode == null) {
+      return undefined;
+    }
+
+    const end = () => {
+      dragRef.current = null;
+      setDragHit(null);
+    };
+    const unregisterCancelDrag = registerCancelDrag(end);
+
+    const beginDrag = (point: { x: number; y: number }, jumpOutside: boolean) => {
+      const currentZoom = getCurrentZoom();
+      const currentRect = zoomStateToRect(currentZoom, area, flipped);
+      const hit = restrictHitToAxis(hitTestViewportWindow(currentRect, point.x, point.y), axis);
+      setHoverHit(hit);
+      setDragHit(null);
+      if (hit === 'outside') {
+        if (jumpOutside) {
+          apply(centerZoomStateAtPoint(currentZoom, area, flipped, point.x, point.y));
+        }
+        return;
+      }
+      dragRef.current = { hit, startX: point.x, startY: point.y, zoom: currentZoom };
+      setDragHit(hit);
+    };
+
+    const moveDrag = (point: { x: number; y: number }) => {
+      const drag = dragRef.current;
+      if (drag == null) {
+        return;
+      }
+      if (drag.hit === 'body') {
+        apply(panZoomStateByPixels(drag.zoom, area, flipped, point.x - drag.startX, point.y - drag.startY));
+      } else {
+        apply(resizeZoomStateRect(drag.zoom, area, flipped, drag.hit, point.x, point.y));
+      }
+    };
+
+    const pointerDown = (event: PointerEvent) => {
+      event.preventDefault();
+      event.stopPropagation();
+      if (event.pointerType !== 'mouse' && event.pointerType !== 'pen') {
+        return;
+      }
+      beginDrag(getPointFromClient(event.clientX, event.clientY, overlayNode, area), true);
+      overlayNode.setPointerCapture?.(event.pointerId);
+    };
+    const pointerMove = (event: PointerEvent) => {
+      const point = getPointFromClient(event.clientX, event.clientY, overlayNode, area);
+      if (dragRef.current == null) {
+        setHoverHit(restrictHitToAxis(hitTestViewportWindow(viewportRect, point.x, point.y), axis));
+        return;
+      }
+      event.preventDefault();
+      event.stopPropagation();
+      moveDrag(point);
+    };
+    const pointerUp = (event: PointerEvent) => {
+      end();
+      overlayNode.releasePointerCapture?.(event.pointerId);
+    };
+    const mouseDown = (event: MouseEvent) => {
+      if (dragRef.current != null) {
+        return;
+      }
+      event.preventDefault();
+      event.stopPropagation();
+      beginDrag(getPointFromClient(event.clientX, event.clientY, overlayNode, area), true);
+    };
+    const mouseMove = (event: MouseEvent) => {
+      const point = getPointFromClient(event.clientX, event.clientY, overlayNode, area);
+      if (dragRef.current == null) {
+        setHoverHit(restrictHitToAxis(hitTestViewportWindow(viewportRect, point.x, point.y), axis));
+        return;
+      }
+      event.preventDefault();
+      event.stopPropagation();
+      moveDrag(point);
+    };
+    const touchStart = (event: TouchEvent) => {
+      if (event.touches.length !== 1) {
+        end();
+        return;
+      }
+      const touch = event.touches[0];
+      if (touch == null) {
+        return;
+      }
+      event.preventDefault();
+      event.stopPropagation();
+      cancelPinch();
+      beginDrag(getTouchPoint(touch, overlayNode, area), false);
+    };
+    const touchMove = (event: TouchEvent) => {
+      if (event.touches.length !== 1 || dragRef.current == null) {
+        if (event.touches.length !== 1) {
+          end();
+        }
+        return;
+      }
+      const touch = event.touches[0];
+      if (touch == null) {
+        return;
+      }
+      event.preventDefault();
+      event.stopPropagation();
+      moveDrag(getTouchPoint(touch, overlayNode, area));
+    };
+
+    overlayNode.addEventListener('pointerdown', pointerDown);
+    overlayNode.addEventListener('pointermove', pointerMove);
+    overlayNode.addEventListener('pointerup', pointerUp);
+    overlayNode.addEventListener('pointercancel', pointerUp);
+    overlayNode.addEventListener('mousedown', mouseDown);
+    overlayNode.addEventListener('mousemove', mouseMove);
+    overlayNode.addEventListener('mouseup', end);
+    overlayNode.addEventListener('mouseleave', end);
+    overlayNode.addEventListener('touchstart', touchStart, { passive: false });
+    overlayNode.addEventListener('touchmove', touchMove, { passive: false });
+    overlayNode.addEventListener('touchend', end);
+    overlayNode.addEventListener('touchcancel', end);
+    return () => {
+      overlayNode.removeEventListener('pointerdown', pointerDown);
+      overlayNode.removeEventListener('pointermove', pointerMove);
+      overlayNode.removeEventListener('pointerup', pointerUp);
+      overlayNode.removeEventListener('pointercancel', pointerUp);
+      overlayNode.removeEventListener('mousedown', mouseDown);
+      overlayNode.removeEventListener('mousemove', mouseMove);
+      overlayNode.removeEventListener('mouseup', end);
+      overlayNode.removeEventListener('mouseleave', end);
+      overlayNode.removeEventListener('touchstart', touchStart);
+      overlayNode.removeEventListener('touchmove', touchMove);
+      overlayNode.removeEventListener('touchend', end);
+      overlayNode.removeEventListener('touchcancel', end);
+      unregisterCancelDrag();
+    };
+  }, [
+    area,
+    apply,
+    axis,
+    cancelPinch,
+    flipped,
+    getCurrentZoom,
+    overlayNode,
+    registerCancelDrag,
+    setDragHit,
+    setHoverHit,
+    viewportRect,
+  ]);
+
+  return null;
+}
+
+export function MinimapWheel({
+  enabled = true,
+  step = DEFAULT_WHEEL_STEP,
+  panStep = DEFAULT_WHEEL_PAN_STEP,
+}: {
+  enabled?: boolean;
+  step?: number;
+  panStep?: number;
+}) {
+  const { area, apply, flipped, getCurrentZoom, limits, overlayNode } = useMinimapControls();
+
+  useEffect(() => {
+    if (overlayNode == null) {
+      return undefined;
+    }
+    const wheel = (event: WheelEvent) => {
+      if (!enabled) {
+        event.preventDefault();
+        event.stopPropagation();
+        return;
+      }
+      event.preventDefault();
+      event.stopPropagation();
+      const rect = overlayNode.getBoundingClientRect();
+      const point = { x: area.x + event.clientX - rect.left, y: area.y + event.clientY - rect.top };
+      const currentZoom = getCurrentZoom();
+      const factor = event.deltaY < 0 ? step : 1 / step;
+      const rawDelta = Math.abs(event.deltaY) >= Math.abs(event.deltaX) ? event.deltaY : event.deltaX;
+      const panAmount = rawDelta * panStep;
+
+      if (event.shiftKey) {
+        const panY = event.ctrlKey || event.metaKey;
+        apply({
+          x: panY ? currentZoom.x : panDimension(currentZoom.x, panAmount),
+          y: panY ? panDimension(currentZoom.y, panAmount) : currentZoom.y,
+        });
+        return;
+      }
+
+      apply({
+        x: zoomDimension(currentZoom.x, factor, getRatioInArea(point.x, area.x, area.width, flipped.x), limits),
+        y: zoomDimension(currentZoom.y, factor, getRatioInArea(point.y, area.y, area.height, flipped.y), limits),
+      });
+    };
+    overlayNode.addEventListener('wheel', wheel, { passive: false });
+    return () => overlayNode.removeEventListener('wheel', wheel);
+  }, [area, apply, enabled, flipped, getCurrentZoom, limits, overlayNode, panStep, step]);
+
+  return null;
+}
+
+export function MinimapPinch() {
+  const { area, apply, cancelDrag, flipped, getCurrentZoom, limits, overlayNode, registerCancelPinch } =
+    useInternalMinimapControls();
+  const pinchRef = useRef<PinchState | null>(null);
+
+  useEffect(() => {
+    if (overlayNode == null) {
+      return undefined;
+    }
+    const end = () => {
+      pinchRef.current = null;
+    };
+    const unregisterCancelPinch = registerCancelPinch(end);
+
+    const touchStart = (event: TouchEvent) => {
+      if (event.touches.length < 2) {
+        return;
+      }
+      event.preventDefault();
+      event.stopPropagation();
+      cancelDrag();
+      const first = event.touches[0];
+      const second = event.touches[1];
+      if (first == null || second == null) {
+        return;
+      }
+      const a = getTouchPoint(first, overlayNode, area);
+      const b = getTouchPoint(second, overlayNode, area);
+      pinchRef.current = {
+        distance: Math.hypot(a.x - b.x, a.y - b.y),
+        midpoint: { x: (a.x + b.x) / 2, y: (a.y + b.y) / 2 },
+        zoom: getCurrentZoom(),
+      };
+    };
+    const touchMove = (event: TouchEvent) => {
+      const pinchState = pinchRef.current;
+      if (pinchState == null || event.touches.length < 2) {
+        return;
+      }
+      event.preventDefault();
+      event.stopPropagation();
+      const first = event.touches[0];
+      const second = event.touches[1];
+      if (first == null || second == null) {
+        return;
+      }
+      const a = getTouchPoint(first, overlayNode, area);
+      const b = getTouchPoint(second, overlayNode, area);
+      const midpoint = { x: (a.x + b.x) / 2, y: (a.y + b.y) / 2 };
+      const distance = Math.hypot(a.x - b.x, a.y - b.y);
+      const factor = pinchState.distance === 0 ? 1 : distance / pinchState.distance;
+      const zoomed: ZoomState = {
+        x: zoomDimension(pinchState.zoom.x, factor, getRatioInArea(midpoint.x, area.x, area.width, flipped.x), limits),
+        y: zoomDimension(pinchState.zoom.y, factor, getRatioInArea(midpoint.y, area.y, area.height, flipped.y), limits),
+      };
+      apply(
+        panZoomStateByPixels(
+          zoomed,
+          area,
+          flipped,
+          midpoint.x - pinchState.midpoint.x,
+          midpoint.y - pinchState.midpoint.y,
+        ),
+      );
+    };
+    overlayNode.addEventListener('touchstart', touchStart, { passive: false });
+    overlayNode.addEventListener('touchmove', touchMove, { passive: false });
+    overlayNode.addEventListener('touchend', end);
+    overlayNode.addEventListener('touchcancel', end);
+    return () => {
+      overlayNode.removeEventListener('touchstart', touchStart);
+      overlayNode.removeEventListener('touchmove', touchMove);
+      overlayNode.removeEventListener('touchend', end);
+      overlayNode.removeEventListener('touchcancel', end);
+      unregisterCancelPinch();
+    };
+  }, [area, apply, cancelDrag, flipped, getCurrentZoom, limits, overlayNode, registerCancelPinch]);
+
+  return null;
+}
+
+export function MinimapKeyboard({ step = DEFAULT_WHEEL_STEP }: { step?: number }) {
+  const { apply, flipped, getCurrentZoom, limits, overlayNode } = useInternalMinimapControls();
+
+  useEffect(() => {
+    if (overlayNode == null) {
+      return undefined;
+    }
+    const keydown = (event: KeyboardEvent) => {
+      const currentZoom = getCurrentZoom();
+      let next: ZoomState | undefined;
+      if (event.key === 'ArrowLeft' || event.key === 'ArrowRight') {
+        const direction = event.key === 'ArrowRight' ? 1 : -1;
+        next = {
+          x: panDimension(currentZoom.x, direction * (flipped.x ? -1 : 1) * KEYBOARD_PAN_STEP),
+          y: currentZoom.y,
+        };
+      } else if (event.key === 'ArrowUp' || event.key === 'ArrowDown') {
+        const direction = event.key === 'ArrowDown' ? 1 : -1;
+        next = {
+          x: currentZoom.x,
+          y: panDimension(currentZoom.y, direction * (flipped.y ? -1 : 1) * KEYBOARD_PAN_STEP),
+        };
+      } else if (event.key === '+' || event.key === '=') {
+        next = {
+          x: zoomDimension(currentZoom.x, step, 0.5, limits),
+          y: zoomDimension(currentZoom.y, step, 0.5, limits),
+        };
+      } else if (event.key === '-') {
+        next = {
+          x: zoomDimension(currentZoom.x, 1 / step, 0.5, limits),
+          y: zoomDimension(currentZoom.y, 1 / step, 0.5, limits),
+        };
+      } else if (event.key === '0' || event.key === 'Home') {
+        next = { x: FULL_VIEWPORT, y: FULL_VIEWPORT };
+      }
+      if (next == null) {
+        return;
+      }
+      event.preventDefault();
+      event.stopPropagation();
+      apply(next);
+    };
+    overlayNode.addEventListener('keydown', keydown);
+    return () => overlayNode.removeEventListener('keydown', keydown);
+  }, [apply, flipped, getCurrentZoom, limits, overlayNode, step]);
+
+  return null;
+}
+
+export function MinimapControls() {
+  return (
+    <>
+      <MinimapDrag />
+      <MinimapWheel />
+      <MinimapPinch />
+      <MinimapKeyboard />
+    </>
   );
 }
 
 /**
  * Renders a compact overview of the full chart data with an editable viewport rectangle.
  *
- * Drag the rectangle to pan, resize its edges to zoom, click outside it to jump, or use wheel and pinch gestures over
- * the minimap. The minimap reads and writes the same normalized zoom viewport as `ZoomAndPan`, so it stays in sync with
- * plot gestures, scrollbars, Brush zoom mode and controlled zoom state.
+ * By default, `<Minimap />` renders a hit surface plus `<MinimapControls />`: drag, wheel, pinch and keyboard controls.
+ * Replace the `controls` prop to compose only the controls you want, or use `useMinimapControls()` to bring your own
+ * controls. The minimap always renders the complete shared viewport rectangle; its `axis` prop only limits which
+ * dimensions the minimap controls write back. The minimap reads and writes the same normalized zoom viewport as
+ * `ZoomAndPan`, so it stays in sync with plot gestures, scrollbars, Brush zoom mode and controlled zoom state.
  *
  * @consumes CartesianChartContext
  */

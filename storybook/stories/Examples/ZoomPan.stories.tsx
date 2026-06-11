@@ -6,6 +6,7 @@ import {
   Bar,
   BarChart,
   Brush,
+  BrushZoomControls,
   CartesianGrid,
   FollowSeries,
   Funnel,
@@ -13,6 +14,10 @@ import {
   Line,
   LineChart,
   Minimap,
+  MinimapDrag,
+  MinimapKeyboard,
+  MinimapPinch,
+  MinimapWheel,
   MouseWheelZoom,
   PanOnDrag,
   Pie,
@@ -297,6 +302,15 @@ type ControlledZoomPlaygroundArgs = ZoomPlaygroundArgs & {
 function ZoomPlaygroundControls(args: ControlledZoomPlaygroundArgs) {
   const showHorizontalBrush = args.brushMode === 'horizontal' || args.brushMode === 'both';
   const showVerticalBrush = args.brushMode === 'vertical' || args.brushMode === 'both';
+  const minimapControls = (
+    <>
+      <MinimapDrag />
+      <MinimapWheel enabled={args.minimapWheel} />
+      {args.minimapPinch && <MinimapPinch />}
+      <MinimapKeyboard />
+    </>
+  );
+  const brushControls = <BrushZoomControls wheel={args.brushWheel} pinch={args.brushPinch} />;
 
   return (
     <>
@@ -333,8 +347,7 @@ function ZoomPlaygroundControls(args: ControlledZoomPlaygroundArgs) {
           position={args.minimapPosition}
           width={220}
           height={76}
-          wheel={args.minimapWheel}
-          pinch={args.minimapPinch}
+          controls={minimapControls}
           viewportStroke="#1d4ed8"
           fill="#fff"
         >
@@ -346,8 +359,7 @@ function ZoomPlaygroundControls(args: ControlledZoomPlaygroundArgs) {
           mode="zoom"
           axis="x"
           autoScaleYDomain={args.brushAutoScaleYDomain}
-          wheel={args.brushWheel}
-          pinch={args.brushPinch}
+          controls={brushControls}
           height={56}
           stroke="#1d4ed8"
         >
@@ -355,7 +367,7 @@ function ZoomPlaygroundControls(args: ControlledZoomPlaygroundArgs) {
         </Brush>
       )}
       {showVerticalBrush && (
-        <Brush layout="vertical" mode="zoom" axis="y" wheel={args.brushWheel} pinch={args.brushPinch} stroke="#0f766e">
+        <Brush layout="vertical" mode="zoom" axis="y" controls={brushControls} stroke="#0f766e">
           {renderPreviewChart(args)}
         </Brush>
       )}
@@ -515,8 +527,14 @@ function MinimapExample(args: ZoomPlaygroundArgs) {
       <Minimap
         axis={args.axis}
         position={args.minimapPosition}
-        wheel={args.minimapWheel}
-        pinch={args.minimapPinch}
+        controls={
+          <>
+            <MinimapDrag />
+            <MinimapWheel enabled={args.minimapWheel} />
+            {args.minimapPinch && <MinimapPinch />}
+            <MinimapKeyboard />
+          </>
+        }
         width={220}
         height={76}
         viewportStroke="#1d4ed8"
@@ -548,8 +566,7 @@ function BrushZoomModeExample(args: ZoomPlaygroundArgs) {
       <Brush
         mode="zoom"
         autoScaleYDomain={args.brushAutoScaleYDomain}
-        wheel={args.brushWheel}
-        pinch={args.brushPinch}
+        controls={<BrushZoomControls wheel={args.brushWheel} pinch={args.brushPinch} />}
         height={52}
         stroke="#1d4ed8"
       >
@@ -576,7 +593,13 @@ function VerticalBrushZoomModeExample(args: ZoomPlaygroundArgs) {
       <Tooltip />
       <Line type="monotone" dataKey="uv" stroke="#8884d8" dot={false} isAnimationActive={false} />
       <ZoomAndPan axis="y" initialZoom={{ y: { start: 0.2, end: 0.65 } }} scrollbars={false} />
-      <Brush layout="vertical" mode="zoom" axis="y" stroke="#0f766e" wheel={args.brushWheel} pinch={args.brushPinch}>
+      <Brush
+        layout="vertical"
+        mode="zoom"
+        axis="y"
+        stroke="#0f766e"
+        controls={<BrushZoomControls wheel={args.brushWheel} pinch={args.brushPinch} />}
+      >
         <LineChart data={data}>
           <Line type="monotone" dataKey="uv" stroke="#8884d8" dot={false} isAnimationActive={false} />
         </LineChart>
@@ -605,8 +628,7 @@ function MultiBrushZoomModeExample(args: ZoomPlaygroundArgs) {
         mode="zoom"
         axis="x"
         autoScaleYDomain={args.brushAutoScaleYDomain}
-        wheel={args.brushWheel}
-        pinch={args.brushPinch}
+        controls={<BrushZoomControls wheel={args.brushWheel} pinch={args.brushPinch} />}
         height={52}
         stroke="#1d4ed8"
       >
@@ -614,7 +636,13 @@ function MultiBrushZoomModeExample(args: ZoomPlaygroundArgs) {
           <Line type="monotone" dataKey="uv" stroke="#8884d8" dot={false} isAnimationActive={false} />
         </LineChart>
       </Brush>
-      <Brush layout="vertical" mode="zoom" axis="y" stroke="#0f766e" wheel={args.brushWheel} pinch={args.brushPinch}>
+      <Brush
+        layout="vertical"
+        mode="zoom"
+        axis="y"
+        stroke="#0f766e"
+        controls={<BrushZoomControls wheel={args.brushWheel} pinch={args.brushPinch} />}
+      >
         <LineChart data={data}>
           <Line type="monotone" dataKey="uv" stroke="#8884d8" dot={false} isAnimationActive={false} />
         </LineChart>

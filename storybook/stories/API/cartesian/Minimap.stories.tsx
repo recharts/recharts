@@ -1,7 +1,20 @@
 import React from 'react';
 import { Args } from '@storybook/react-vite';
 import { pageData } from '../../data';
-import { Line, LineChart, Minimap, ResponsiveContainer, Tooltip, XAxis, YAxis, ZoomAndPan } from '../../../../src';
+import {
+  Line,
+  LineChart,
+  Minimap,
+  MinimapDrag,
+  MinimapKeyboard,
+  MinimapPinch,
+  MinimapWheel,
+  ResponsiveContainer,
+  Tooltip,
+  XAxis,
+  YAxis,
+  ZoomAndPan,
+} from '../../../../src';
 
 export default {
   component: Minimap,
@@ -16,8 +29,8 @@ export default {
     },
     width: { control: { type: 'range', min: 80, max: 320, step: 10 } },
     height: { control: { type: 'range', min: 40, max: 160, step: 5 } },
-    wheel: { control: { type: 'boolean' } },
-    pinch: { control: { type: 'boolean' } },
+    minimapWheel: { control: { type: 'boolean' } },
+    minimapPinch: { control: { type: 'boolean' } },
     fill: { control: { type: 'color' } },
     stroke: { control: { type: 'color' } },
     viewportStroke: { control: { type: 'color' } },
@@ -27,29 +40,39 @@ export default {
 };
 
 export const API = {
-  render: (args: Args) => (
-    <ResponsiveContainer width="100%" height={400}>
-      <LineChart data={pageData}>
-        <XAxis dataKey="name" />
-        <YAxis />
-        <Tooltip />
-        <Line dataKey="uv" stroke="#8884d8" dot={false} isAnimationActive={false} />
-        <ZoomAndPan axis={args.axis} initialZoom={{ x: { start: 0.2, end: 0.55 } }} scrollbars={false} />
-        <Minimap {...args}>
-          <LineChart data={pageData}>
-            <Line dataKey="uv" stroke="#8884d8" dot={false} isAnimationActive={false} />
-          </LineChart>
-        </Minimap>
-      </LineChart>
-    </ResponsiveContainer>
-  ),
+  render: ({ minimapWheel, minimapPinch, ...args }: Args) => {
+    const controls = (
+      <>
+        <MinimapDrag />
+        <MinimapWheel enabled={minimapWheel} />
+        {minimapPinch && <MinimapPinch />}
+        <MinimapKeyboard />
+      </>
+    );
+    return (
+      <ResponsiveContainer width="100%" height={400}>
+        <LineChart data={pageData}>
+          <XAxis dataKey="name" />
+          <YAxis />
+          <Tooltip />
+          <Line dataKey="uv" stroke="#8884d8" dot={false} isAnimationActive={false} />
+          <ZoomAndPan axis={args.axis} initialZoom={{ x: { start: 0.2, end: 0.55 } }} scrollbars={false} />
+          <Minimap {...args} controls={controls}>
+            <LineChart data={pageData}>
+              <Line dataKey="uv" stroke="#8884d8" dot={false} isAnimationActive={false} />
+            </LineChart>
+          </Minimap>
+        </LineChart>
+      </ResponsiveContainer>
+    );
+  },
   args: {
     axis: 'x',
     position: 'bottom-right',
     width: 200,
     height: 80,
-    wheel: true,
-    pinch: true,
+    minimapWheel: true,
+    minimapPinch: true,
     fill: '#fff',
     stroke: '#cbd5e1',
     viewportStroke: '#1d4ed8',

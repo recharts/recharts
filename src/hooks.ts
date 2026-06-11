@@ -482,7 +482,7 @@ export const useZoom = (): UseZoomResult => {
  *
  * The setter MERGES per axis: an axis you leave out is left untouched (not reset), and each
  * provided axis is written atomically - so two controls can drive different axes concurrently
- * without clobbering each other. To reset an axis, pass `{ start: 0, end: 1 }` explicitly, or use
+ * without clobbering each other. To reset an axis, pass a full-axis window from start 0 to end 1, or use
  * {@link useZoom}'s `reset()` (useZoom also exposes zoomIn/zoomOut/pan helpers, and its
  * `setViewport` replaces the whole viewport instead of merging).
  *

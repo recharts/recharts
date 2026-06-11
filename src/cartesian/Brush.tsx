@@ -2,12 +2,16 @@ import * as React from 'react';
 import {
   PureComponent,
   ReactElement,
+  ReactNode,
   SVGAttributes,
   SVGProps,
   TouchEvent,
+  createContext,
   useCallback,
   useContext,
   useEffect,
+  useMemo,
+  useState,
 } from 'react';
 import { clsx } from 'clsx';
 import { scalePoint, ScalePoint } from 'victory-vendor/d3-scale';
@@ -159,18 +163,7 @@ interface BrushProps<DataPointType = any, DataValueType = any> extends DataConsu
    * @defaultValue 'x'
    */
   axis?: ZoomDimension;
-  /**
-   * Wheel / trackpad over the brush zooms the controlled axis; Shift + wheel pans it.
-   *
-   * @defaultValue true
-   */
-  wheel?: boolean;
-  /**
-   * Two-finger pinch over the brush zooms the controlled axis in zoom mode.
-   *
-   * @defaultValue true
-   */
-  pinch?: boolean;
+  controls?: ReactNode;
   /** Zoom factor per wheel notch in zoom mode. @defaultValue 1.15 */
   wheelStep?: number;
   /** Fraction of the visible window panned per unit of wheel delta in zoom mode. @defaultValue 0.0015 */
@@ -294,8 +287,7 @@ function TravellerLayer({
     useZoomPan,
     autoScaleYDomain,
     axis,
-    wheel,
-    pinch,
+    controls,
     wheelStep,
     wheelPanStep,
     minZoom,
@@ -304,7 +296,6 @@ function TravellerLayer({
     controlledEndPosition,
     endLabel,
     onZoomWindowChange,
-    onZoomWheel,
     startLabel,
     zoomMode,
     heightIsExplicit,
@@ -714,14 +705,6 @@ function getPrimaryPageCoordinate(
   return layout === 'vertical' ? event.pageY : event.pageX;
 }
 
-function getPrimaryClientCoordinate(event: React.Touch, layout: CartesianLayout): number {
-  return layout === 'vertical' ? event.clientY : event.clientX;
-}
-
-function getTouchDistance(first: React.Touch, second: React.Touch): number {
-  return Math.hypot(second.clientX - first.clientX, second.clientY - first.clientY);
-}
-
 function getPrimaryStart(props: Pick<BrushWithStateProps, 'layout' | 'x' | 'y'>): number {
   return props.layout === 'vertical' ? props.y : props.x;
 }
@@ -738,14 +721,10 @@ type BrushWithStateProps = InternalProps &
     controlledEndPosition?: number;
     startLabel?: number | string;
     endLabel?: number | string;
+    onLayerNodeChange?: (node: SVGGElement | null) => void;
     onZoomWindowChange?: (start: number, end: number, railStart?: number, railLength?: number) => void;
-    onZoomWheel?: (factor: number, focusRatio: number, pan: boolean, delta: number) => void;
     zoomMode?: boolean;
   };
-
-type BrushPinchState = {
-  distance: number;
-};
 
 class BrushWithState extends PureComponent<BrushWithStateProps, State> {
   constructor(props: BrushWithStateProps) {
@@ -763,9 +742,7 @@ class BrushWithState extends PureComponent<BrushWithStateProps, State> {
 
   travellerDragStartHandlers: Record<BrushTravellerId, (event: MouseOrTouchEvent) => void>;
 
-  pinchState: BrushPinchState | null = null;
-
-  layerRef = React.createRef<SVGGElement>();
+  layerRef: SVGGElement | null = null;
 
   static getDerivedStateFromProps(nextProps: BrushWithStateProps, prevState: State): Partial<State> | null {
     const {
@@ -903,20 +880,23 @@ class BrushWithState extends PureComponent<BrushWithStateProps, State> {
     return null;
   }
 
-  componentDidMount() {
-    // Native, non-passive: React's synthetic onWheel is passive and cannot preventDefault page scroll.
-    this.layerRef.current?.addEventListener('wheel', this.handleWheel, { passive: false });
-  }
-
   componentWillUnmount() {
     if (this.leaveTimer) {
       clearTimeout(this.leaveTimer);
       this.leaveTimer = null;
     }
 
-    this.layerRef.current?.removeEventListener('wheel', this.handleWheel);
+    this.props.onLayerNodeChange?.(null);
     this.detachDragEndListener();
   }
+
+  setLayerRef = (node: SVGGElement | null) => {
+    if (this.layerRef === node) {
+      return;
+    }
+    this.layerRef = node;
+    this.props.onLayerNodeChange?.(node);
+  };
 
   handleDrag = (e: React.Touch | React.MouseEvent<SVGGElement> | MouseEvent) => {
     if (this.leaveTimer) {
@@ -932,37 +912,7 @@ class BrushWithState extends PureComponent<BrushWithStateProps, State> {
   };
 
   handleTouchMove = (e: TouchEvent<SVGGElement>) => {
-    if (this.pinchState != null && this.props.zoomMode && this.props.pinch && e.touches.length >= 2) {
-      e.preventDefault();
-      e.stopPropagation();
-      const first = e.touches[0];
-      const second = e.touches[1];
-      if (first == null || second == null) {
-        return;
-      }
-      const distance = getTouchDistance(first, second);
-      if (distance <= 0 || this.pinchState.distance <= 0) {
-        return;
-      }
-
-      const svgRect = e.currentTarget.ownerSVGElement?.getBoundingClientRect();
-      if (svgRect == null) {
-        return;
-      }
-
-      const center =
-        (getPrimaryClientCoordinate(first, this.props.layout) + getPrimaryClientCoordinate(second, this.props.layout)) /
-        2;
-      const primaryClient = center - (this.props.layout === 'vertical' ? svgRect.top : svgRect.left);
-      const primaryStart = getPrimaryStart(this.props);
-      const primarySize = getPrimarySize(this.props) - this.props.travellerWidth;
-      if (primarySize <= 0) {
-        return;
-      }
-
-      const focusRatio = Math.min(Math.max((primaryClient - primaryStart) / primarySize, 0), 1);
-      this.props.onZoomWheel?.(distance / this.pinchState.distance, focusRatio, false, 0);
-      this.pinchState = { distance };
+    if (e.touches.length > 1) {
       return;
     }
 
@@ -970,29 +920,6 @@ class BrushWithState extends PureComponent<BrushWithStateProps, State> {
     if (touch != null) {
       this.handleDrag(touch);
     }
-  };
-
-  handleTouchStart = (e: TouchEvent<SVGGElement>) => {
-    if (!this.props.zoomMode || !this.props.pinch || e.touches.length < 2) {
-      return;
-    }
-    e.preventDefault();
-    e.stopPropagation();
-    const first = e.touches[0];
-    const second = e.touches[1];
-    if (first == null || second == null) {
-      return;
-    }
-    this.pinchState = { distance: getTouchDistance(first, second) };
-    this.setState({
-      isSlideMoving: false,
-      isTravellerMoving: false,
-      movingTravellerId: undefined,
-    });
-  };
-
-  handleTouchEnd = () => {
-    this.pinchState = null;
   };
 
   attachDragEndListener() {
@@ -1305,35 +1232,6 @@ class BrushWithState extends PureComponent<BrushWithStateProps, State> {
     }
   };
 
-  /*
-   * Attached as a NATIVE non-passive listener (see componentDidMount): React attaches its synthetic
-   * `onWheel` passively at the root since v17, which makes `preventDefault()` a no-op - the page
-   * would scroll while wheeling over the brush.
-   */
-  handleWheel = (event: WheelEvent) => {
-    const { onZoomWheel, wheel, wheelPanStep, zoomMode } = this.props;
-    if (!zoomMode || !wheel || onZoomWheel == null) {
-      return;
-    }
-    event.preventDefault();
-    event.stopPropagation();
-    const svgRect = this.layerRef.current?.ownerSVGElement?.getBoundingClientRect();
-    if (svgRect == null) {
-      return;
-    }
-    const primaryClient = this.props.layout === 'vertical' ? event.clientY - svgRect.top : event.clientX - svgRect.left;
-    const primaryStart = getPrimaryStart(this.props);
-    const primarySize = getPrimarySize(this.props) - this.props.travellerWidth;
-    if (primarySize <= 0) {
-      return;
-    }
-    const focusRatio = Math.min(Math.max((primaryClient - primaryStart) / primarySize, 0), 1);
-    const step = this.props.wheelStep > 1 ? this.props.wheelStep : 1.15;
-    const factor = event.deltaY < 0 ? step : 1 / step;
-    const rawDelta = Math.abs(event.deltaY) >= Math.abs(event.deltaX) ? event.deltaY : event.deltaX;
-    onZoomWheel(factor, focusRatio, event.shiftKey, rawDelta * wheelPanStep);
-  };
-
   render() {
     const {
       data,
@@ -1386,12 +1284,10 @@ class BrushWithState extends PureComponent<BrushWithStateProps, State> {
 
     return (
       <Layer
-        ref={this.layerRef}
+        ref={this.setLayerRef}
         className={layerClass}
         onMouseLeave={this.handleLeaveWrapper}
-        onTouchStart={this.handleTouchStart}
         onTouchMove={this.handleTouchMove}
-        onTouchEnd={this.handleTouchEnd}
         style={style}
       >
         <Background x={activeX} y={calculatedY} width={activeWidth} height={activeHeight} fill={fill} stroke={stroke} />
@@ -1484,6 +1380,167 @@ type BrushDimensions = {
   height: number;
 };
 
+function getPrimaryStartFromDimensions(dimensions: BrushDimensions, layout: CartesianLayout): number {
+  return layout === 'vertical' ? dimensions.y : dimensions.x;
+}
+
+function getPrimarySizeFromDimensions(dimensions: BrushDimensions, layout: CartesianLayout): number {
+  return layout === 'vertical' ? dimensions.height : dimensions.width;
+}
+
+type BrushZoomControlsContextValue = {
+  axis: ZoomDimension;
+  brushNode: SVGGElement | null;
+  layout: CartesianLayout;
+  railLength: number;
+  railStart: number;
+  travellerWidth: number;
+  wheelPanStep: number;
+  wheelStep: number;
+  zoomBy: (factor: number, focusRatio: number, pan: boolean, delta: number) => void;
+};
+
+const BrushZoomControlsContext = createContext<BrushZoomControlsContextValue | null>(null);
+
+export function useBrushZoomControls(): BrushZoomControlsContextValue {
+  const context = useContext(BrushZoomControlsContext);
+  if (context == null) {
+    throw new Error('useBrushZoomControls must be used inside <Brush mode="zoom" />.');
+  }
+  return context;
+}
+
+type BrushPinchState = {
+  distance: number;
+};
+
+export function BrushWheelZoom({ enabled = true }: { enabled?: boolean }) {
+  const { brushNode, layout, railLength, railStart, wheelPanStep, wheelStep, zoomBy } = useBrushZoomControls();
+
+  useEffect(() => {
+    if (brushNode == null) {
+      return undefined;
+    }
+    const wheel = (event: WheelEvent) => {
+      if (!enabled) {
+        event.preventDefault();
+        event.stopPropagation();
+        return;
+      }
+      event.preventDefault();
+      event.stopPropagation();
+      const svgRect = brushNode.ownerSVGElement?.getBoundingClientRect();
+      if (svgRect == null) {
+        return;
+      }
+      const primaryClient = layout === 'vertical' ? event.clientY - svgRect.top : event.clientX - svgRect.left;
+      if (railLength <= 0) {
+        return;
+      }
+      const focusRatio = Math.min(Math.max((primaryClient - railStart) / railLength, 0), 1);
+      const step = wheelStep > 1 ? wheelStep : 1.15;
+      const factor = event.deltaY < 0 ? step : 1 / step;
+      const rawDelta = Math.abs(event.deltaY) >= Math.abs(event.deltaX) ? event.deltaY : event.deltaX;
+      zoomBy(factor, focusRatio, event.shiftKey, rawDelta * wheelPanStep);
+    };
+    brushNode.addEventListener('wheel', wheel, { passive: false });
+    return () => brushNode.removeEventListener('wheel', wheel);
+  }, [brushNode, enabled, layout, railLength, railStart, wheelPanStep, wheelStep, zoomBy]);
+
+  return null;
+}
+
+export function BrushPinchZoom({ enabled = true }: { enabled?: boolean }) {
+  const { brushNode, layout, railLength, railStart, zoomBy } = useBrushZoomControls();
+  const pinchState = React.useRef<BrushPinchState | null>(null);
+
+  useEffect(() => {
+    if (brushNode == null) {
+      return undefined;
+    }
+    const touchStart = (event: globalThis.TouchEvent) => {
+      if (event.touches.length < 2) {
+        return;
+      }
+      if (!enabled) {
+        event.preventDefault();
+        event.stopPropagation();
+        return;
+      }
+      event.preventDefault();
+      event.stopPropagation();
+      const first = event.touches[0];
+      const second = event.touches[1];
+      if (first == null || second == null) {
+        return;
+      }
+      pinchState.current = { distance: Math.hypot(second.clientX - first.clientX, second.clientY - first.clientY) };
+    };
+    const touchMove = (event: globalThis.TouchEvent) => {
+      if (event.touches.length < 2) {
+        return;
+      }
+      const state = pinchState.current;
+      if (!enabled) {
+        event.preventDefault();
+        event.stopPropagation();
+        return;
+      }
+      if (state == null) {
+        return;
+      }
+      event.preventDefault();
+      event.stopPropagation();
+      const first = event.touches[0];
+      const second = event.touches[1];
+      if (first == null || second == null) {
+        return;
+      }
+      const distance = Math.hypot(second.clientX - first.clientX, second.clientY - first.clientY);
+      if (distance <= 0 || state.distance <= 0) {
+        return;
+      }
+      const svgRect = brushNode.ownerSVGElement?.getBoundingClientRect();
+      if (svgRect == null) {
+        return;
+      }
+      const center =
+        layout === 'vertical' ? (first.clientY + second.clientY) / 2 : (first.clientX + second.clientX) / 2;
+      const primaryClient = center - (layout === 'vertical' ? svgRect.top : svgRect.left);
+      if (railLength <= 0) {
+        return;
+      }
+      const focusRatio = Math.min(Math.max((primaryClient - railStart) / railLength, 0), 1);
+      zoomBy(distance / state.distance, focusRatio, false, 0);
+      pinchState.current = { distance };
+    };
+    const end = () => {
+      pinchState.current = null;
+    };
+    brushNode.addEventListener('touchstart', touchStart, { passive: false });
+    brushNode.addEventListener('touchmove', touchMove, { passive: false });
+    brushNode.addEventListener('touchend', end);
+    brushNode.addEventListener('touchcancel', end);
+    return () => {
+      brushNode.removeEventListener('touchstart', touchStart);
+      brushNode.removeEventListener('touchmove', touchMove);
+      brushNode.removeEventListener('touchend', end);
+      brushNode.removeEventListener('touchcancel', end);
+    };
+  }, [brushNode, enabled, layout, railLength, railStart, zoomBy]);
+
+  return null;
+}
+
+export function BrushZoomControls({ wheel = true, pinch = true }: { wheel?: boolean; pinch?: boolean }) {
+  return (
+    <>
+      <BrushWheelZoom enabled={wheel} />
+      <BrushPinchZoom enabled={pinch} />
+    </>
+  );
+}
+
 function getBrushDimensions(props: InternalProps, offset: ChartOffsetInternal, margin: Margin): BrushDimensions {
   const { height, heightIsExplicit, layout, width, widthIsExplicit, x, y } = props;
 
@@ -1515,6 +1572,7 @@ function BrushInternal(props: InternalProps) {
   const chartData = useChartData();
   const dataIndexes = useDataIndex();
   const zoom = useAppSelector(selectZoom);
+  const [brushNode, setBrushNode] = useState<SVGGElement | null>(null);
   const offset = useAppSelector(selectChartOffsetInternal);
   const registeredBrushHeight = useAppSelector(selectBrushHeight);
   const margin = useAppSelector(selectMargin);
@@ -1527,6 +1585,9 @@ function BrushInternal(props: InternalProps) {
     onChange: onChangeFromProps,
     startIndex: startIndexFromProps,
     travellerWidth,
+    controls,
+    wheelPanStep,
+    wheelStep,
   } = props;
   const zoomMode = props.mode === 'zoom' || props.useZoomPan === true;
   const controlledZoomAxis: ZoomDimension = props.axis ?? (layout === 'vertical' ? 'y' : 'x');
@@ -1563,9 +1624,51 @@ function BrushInternal(props: InternalProps) {
     [onChangeFromProps, onChangeFromContext, dispatch, dataIndexes],
   );
 
+  const brushDimensions = offset == null || margin == null ? null : getBrushDimensions(props, offset, margin);
+  const primaryStart = brushDimensions == null ? 0 : getPrimaryStartFromDimensions(brushDimensions, layout);
+  const primarySize = brushDimensions == null ? 0 : getPrimarySizeFromDimensions(brushDimensions, layout);
+  const railLength = Math.max(primarySize - travellerWidth, 0);
+  const zoomLimits = useMemo<ZoomLimits>(() => ({ minZoom, maxZoom }), [maxZoom, minZoom]);
+  const onZoomWheel = useCallback(
+    (factor: number, focusRatio: number, pan: boolean, delta: number) => {
+      if (!zoomMode || zoom == null) {
+        return;
+      }
+      const current: AxisViewport = zoom[controlledZoomAxis];
+      const viewport = pan
+        ? panDimension(current, (controlledAxisFlipped ? -1 : 1) * delta)
+        : zoomDimension(current, factor, controlledAxisFlipped ? 1 - focusRatio : focusRatio, zoomLimits);
+      setZoomWindows({ [controlledZoomAxis]: viewportToWindow(viewport) });
+    },
+    [controlledAxisFlipped, controlledZoomAxis, setZoomWindows, zoom, zoomLimits, zoomMode],
+  );
+  const controlsContext = useMemo<BrushZoomControlsContextValue>(
+    () => ({
+      axis: controlledZoomAxis,
+      brushNode,
+      layout,
+      railLength,
+      railStart: primaryStart,
+      travellerWidth,
+      wheelPanStep,
+      wheelStep,
+      zoomBy: onZoomWheel,
+    }),
+    [
+      brushNode,
+      controlledZoomAxis,
+      layout,
+      onZoomWheel,
+      primaryStart,
+      railLength,
+      travellerWidth,
+      wheelPanStep,
+      wheelStep,
+    ],
+  );
+
   if (
-    offset == null ||
-    margin == null ||
+    brushDimensions == null ||
     dataIndexes == null ||
     chartData == null ||
     !chartData.length ||
@@ -1574,7 +1677,6 @@ function BrushInternal(props: InternalProps) {
   ) {
     return null;
   }
-  const brushDimensions = getBrushDimensions(props, offset, margin);
 
   let { startIndex, endIndex } = dataIndexes;
   if (zoomMode) {
@@ -1584,9 +1686,6 @@ function BrushInternal(props: InternalProps) {
     endIndex = Math.max(startIndex, Math.min(lastIndex, Math.ceil(viewport.endRatio * lastIndex)));
   }
   const { x, y, width, height } = brushDimensions;
-  const primaryStart = layout === 'vertical' ? y : x;
-  const primarySize = layout === 'vertical' ? height : width;
-  const railLength = Math.max(primarySize - travellerWidth, 0);
   const controlledWindow =
     zoomMode && railLength > 0
       ? axisViewportToPixelWindow(zoom[controlledZoomAxis], primaryStart, railLength, controlledAxisFlipped)
@@ -1609,27 +1708,11 @@ function BrushInternal(props: InternalProps) {
           props.tickFormatter,
         )
       : undefined;
-  const zoomLimits: ZoomLimits = {
-    minZoom,
-    maxZoom,
-  };
-
   const onZoomWindowChange = (start: number, end: number, railStart = primaryStart, activeRailLength = railLength) => {
     if (!zoomMode || activeRailLength <= 0) {
       return;
     }
     const viewport = pixelWindowToAxisViewport(start, end, railStart, activeRailLength, controlledAxisFlipped);
-    setZoomWindows({ [controlledZoomAxis]: viewportToWindow(viewport) });
-  };
-
-  const onZoomWheel = (factor: number, focusRatio: number, pan: boolean, delta: number) => {
-    if (!zoomMode) {
-      return;
-    }
-    const current: AxisViewport = zoom[controlledZoomAxis];
-    const viewport = pan
-      ? panDimension(current, (controlledAxisFlipped ? -1 : 1) * delta)
-      : zoomDimension(current, factor, controlledAxisFlipped ? 1 - focusRatio : focusRatio, zoomLimits);
     setZoomWindows({ [controlledZoomAxis]: viewportToWindow(viewport) });
   };
 
@@ -1648,19 +1731,22 @@ function BrushInternal(props: InternalProps) {
       {/* Fit the axis OPPOSITE to the one this brush edits. On a categorical target AutoScaleAxis
           bails out by itself (numeric domains only), so this is safe in every layout. */}
       {zoomMode && props.autoScaleYDomain && <AutoScaleAxis axis={controlledZoomAxis === 'x' ? 'y' : 'x'} />}
-      <BrushWithState
-        {...props}
-        {...contextProperties}
-        startIndexControlledFromProps={startIndexFromProps ?? undefined}
-        endIndexControlledFromProps={endIndexFromProps ?? undefined}
-        controlledStartPosition={controlledWindow?.start}
-        controlledEndPosition={controlledWindow?.end}
-        startLabel={controlledStartLabel}
-        endLabel={controlledEndLabel}
-        onZoomWindowChange={onZoomWindowChange}
-        onZoomWheel={onZoomWheel}
-        zoomMode={zoomMode}
-      />
+      <BrushZoomControlsContext.Provider value={controlsContext}>
+        <BrushWithState
+          {...props}
+          {...contextProperties}
+          startIndexControlledFromProps={startIndexFromProps ?? undefined}
+          endIndexControlledFromProps={endIndexFromProps ?? undefined}
+          controlledStartPosition={controlledWindow?.start}
+          controlledEndPosition={controlledWindow?.end}
+          startLabel={controlledStartLabel}
+          endLabel={controlledEndLabel}
+          onLayerNodeChange={setBrushNode}
+          onZoomWindowChange={onZoomWindowChange}
+          zoomMode={zoomMode}
+        />
+        {zoomMode && (controls === undefined ? <BrushZoomControls /> : controls)}
+      </BrushZoomControlsContext.Provider>
     </>
   );
 }
@@ -1711,8 +1797,6 @@ export const defaultBrushProps = {
   layout: 'horizontal',
   mode: 'slice',
   autoScaleYDomain: false,
-  wheel: true,
-  pinch: true,
   wheelStep: 1.15,
   wheelPanStep: 0.0015,
   minZoom: 1,
@@ -1724,7 +1808,9 @@ export const defaultBrushProps = {
  *
  * By default, `mode="slice"` keeps the historical behavior: moving the brush changes the active data indexes used by
  * the chart. Use `mode="zoom"` when the Brush should edit the shared zoom viewport instead of slicing data. In zoom
- * mode it stays synchronized with `ZoomAndPan`, `Minimap`, and controlled zoom state.
+ * mode it stays synchronized with `ZoomAndPan`, `Minimap`, and controlled zoom state. Zoom mode mounts
+ * `<BrushZoomControls />` by default; replace the `controls` prop to compose Brush zoom gestures or bring your own
+ * controls with `useBrushZoomControls()`.
  *
  * If a chart is synchronized with other charts using the `syncId` prop on the chart,
  * slice-mode brush indexes synchronize between all synchronized charts.

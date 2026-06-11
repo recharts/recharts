@@ -1,7 +1,19 @@
 import * as React from 'react';
 import { fireEvent, render, waitFor } from '@testing-library/react';
 import { describe, expect, it, vi } from 'vitest';
-import { Line, LineChart, Minimap, ResponsiveContainer, XAxis, YAxis, ZoomAndPan } from '../../src';
+import {
+  Line,
+  LineChart,
+  Minimap,
+  MinimapDrag,
+  MinimapKeyboard,
+  MinimapPinch,
+  MinimapWheel,
+  ResponsiveContainer,
+  XAxis,
+  YAxis,
+  ZoomAndPan,
+} from '../../src';
 
 const data = Array.from({ length: 20 }, (_, i) => ({ name: `#${i}`, value: i * 10 }));
 
@@ -40,6 +52,26 @@ describe('<Minimap />', () => {
 
     await waitFor(() => {
       expect(container.querySelector('.recharts-zIndex-layer_2500 .recharts-minimap')).not.toBeNull();
+    });
+  });
+
+  it.each(['x', 'y'] as const)('renders the full viewport window when controls are limited to %s', async axis => {
+    const { container } = render(
+      <LineChart width={400} height={300} data={data}>
+        <XAxis dataKey="name" />
+        <YAxis />
+        <Line dataKey="value" isAnimationActive={false} />
+        <ZoomAndPan axis="xy" initialZoom={{ x: { start: 0.2, end: 0.5 }, y: { start: 0.1, end: 0.4 } }} />
+        <Minimap x={0} y={0} width={100} height={40} axis={axis} padding={{ top: 0, right: 0, bottom: 0, left: 0 }} />
+      </LineChart>,
+    );
+
+    await waitFor(() => {
+      const viewport = container.querySelector('.recharts-minimap-viewport') as SVGRectElement;
+      expect(Number(viewport.getAttribute('x'))).toBeCloseTo(20, 5);
+      expect(Number(viewport.getAttribute('width'))).toBeCloseTo(30, 5);
+      expect(Number(viewport.getAttribute('y'))).toBeCloseTo(24, 5);
+      expect(Number(viewport.getAttribute('height'))).toBeCloseTo(12, 5);
     });
   });
 
@@ -255,6 +287,90 @@ describe('<Minimap />', () => {
     await waitFor(() => expect(onZoomChange).toHaveBeenCalled());
     const next = onZoomChange.mock.calls.at(-1)![0];
     expect(next.x.end - next.x.start).toBeLessThan(1);
+  });
+
+  it('does not let wheel events zoom the parent chart when minimap wheel is disabled', async () => {
+    const onZoomChange = vi.fn();
+    const { container } = render(
+      <LineChart width={400} height={300} data={data}>
+        <XAxis dataKey="name" />
+        <YAxis />
+        <Line dataKey="value" isAnimationActive={false} />
+        <ZoomAndPan axis="x" scrollbars={false} wheel onZoomChange={onZoomChange} />
+        <Minimap
+          x={0}
+          y={0}
+          width={100}
+          height={40}
+          axis="x"
+          controls={
+            <>
+              <MinimapDrag />
+              <MinimapWheel enabled={false} />
+              <MinimapPinch />
+              <MinimapKeyboard />
+            </>
+          }
+          padding={{ top: 0, right: 0, bottom: 0, left: 0 }}
+        />
+      </LineChart>,
+    );
+
+    const overlay = await waitFor(() => {
+      const el = container.querySelector('.recharts-minimap-overlay') as SVGRectElement;
+      expect(el).not.toBeNull();
+      return el;
+    });
+    const parentWheelListener = vi.fn();
+    container.addEventListener('wheel', parentWheelListener);
+    onZoomChange.mockClear();
+
+    fireEvent.wheel(overlay, { deltaY: -100, clientX: 50, clientY: 20 });
+
+    expect(parentWheelListener).not.toHaveBeenCalled();
+    expect(onZoomChange).not.toHaveBeenCalled();
+  });
+
+  it('keeps minimap cursors with custom controls', async () => {
+    const { container } = render(
+      <LineChart width={400} height={300} data={data}>
+        <XAxis dataKey="name" />
+        <YAxis />
+        <Line dataKey="value" isAnimationActive={false} />
+        <ZoomAndPan axis="x" initialZoom={{ x: { start: 0.2, end: 0.5 } }} />
+        <Minimap
+          x={0}
+          y={0}
+          width={100}
+          height={40}
+          axis="x"
+          controls={
+            <>
+              <MinimapDrag />
+              <MinimapWheel />
+              <MinimapPinch />
+              <MinimapKeyboard />
+            </>
+          }
+          padding={{ top: 0, right: 0, bottom: 0, left: 0 }}
+        />
+      </LineChart>,
+    );
+
+    const overlay = await waitFor(() => {
+      const el = container.querySelector('.recharts-minimap-overlay') as SVGRectElement;
+      expect(el).not.toBeNull();
+      return el;
+    });
+
+    fireEvent.mouseMove(overlay, { clientX: 30, clientY: 20 });
+    await waitFor(() => expect(overlay).toHaveStyle({ cursor: 'grab' }));
+
+    fireEvent.mouseDown(overlay, { button: 0, clientX: 30, clientY: 20 });
+    await waitFor(() => expect(overlay).toHaveStyle({ cursor: 'grabbing' }));
+
+    fireEvent.mouseUp(overlay, { clientX: 30, clientY: 20 });
+    await waitFor(() => expect(overlay).toHaveStyle({ cursor: 'grab' }));
   });
 
   it('renders correctly when parent chart is inside ResponsiveContainer', async () => {
