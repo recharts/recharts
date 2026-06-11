@@ -1,15 +1,15 @@
 import { useContext, useMemo, useRef } from 'react';
 import { useAppDispatch, useAppSelector } from '../../state/hooks';
 import { selectZoom } from '../../state/selectors/zoomSelectors';
-import { resetZoom, setAxisViewport, ZoomDimension, ZoomState } from '../../state/zoomSlice';
+import { resetZoom, setAxisViewport, setZoom, ZoomDimension, ZoomState } from '../../state/zoomSlice';
 import { selectChartOffsetInternal } from '../../state/selectors/selectChartOffsetInternal';
 import { selectAxisRangeWithReverse } from '../../state/selectors/axisSelectors';
 import { selectActiveTooltipCoordinate } from '../../state/selectors/tooltipSelectors';
 import { selectAllXAxes, selectAllYAxes } from '../../state/selectors/selectAllAxes';
 import { mouseMoveAction } from '../../state/mouseEventsMiddleware';
 import { TooltipPortalContext } from '../../context/tooltipPortalContext';
-import { AxisViewport, clampRatio, isFullViewport, isRangeFlipped } from '../../util/zoom/viewport';
-import { panDimension, selectDimension, zoomDimension } from '../../util/zoom/zoomActions';
+import { AxisViewport, clampRatio, FULL_VIEWPORT, isFullViewport, isRangeFlipped } from '../../util/zoom/viewport';
+import { panDimension, resetDimensionWithLimits, selectDimension, zoomDimension } from '../../util/zoom/zoomActions';
 import { ResolvedZoomOptions, zoomEnabledForDimension } from '../../util/zoom/ZoomOptions';
 import { ChartOffsetInternal } from '../../util/types';
 import { SCROLLBAR_GAP, SCROLLBAR_THICKNESS } from '../ZoomScrollbars';
@@ -196,7 +196,22 @@ export function useZoomApi(
         const z = live.current.zoom;
         return z == null ? null : selectDimension(z[dimension], from, to, live.current.options);
       },
-      reset: () => dispatch(resetZoom()),
+      reset: () => {
+        const { options: liveOptions } = live.current;
+        if (liveOptions.minZoom > 1) {
+          // The full view is not allowed: reset lands on the most zoomed-out viewport the limits
+          // permit, on the zoom-enabled dimensions (the others go back to the true full view).
+          const floor = resetDimensionWithLimits(liveOptions);
+          dispatch(
+            setZoom({
+              x: zoomEnabledForDimension(liveOptions, 'x') ? floor : FULL_VIEWPORT,
+              y: zoomEnabledForDimension(liveOptions, 'y') ? floor : FULL_VIEWPORT,
+            }),
+          );
+          return;
+        }
+        dispatch(resetZoom());
+      },
       refreshPointer: (clientX, clientY) => dispatch(mouseMoveAction({ clientX, clientY, currentTarget: element })),
       refreshActivePointer: () => {
         // Pan from an axis / scrollbar (or with the finger off the chart) never fires a pointer event,

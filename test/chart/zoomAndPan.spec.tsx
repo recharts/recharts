@@ -83,6 +83,42 @@ describe('<ZoomAndPan />', () => {
   });
 });
 
+describe('zoom limits', () => {
+  it('minZoom > 1 applies on mount: the chart starts at the most zoomed-out allowed view', async () => {
+    const onZoomChange = vi.fn();
+    renderChart({ minZoom: 2, onZoomChange });
+    await waitFor(() => expect(onZoomChange).toHaveBeenCalled());
+    const last = onZoomChange.mock.calls.at(-1)![0];
+    expect(last.x.end - last.x.start).toBeCloseTo(0.5, 5);
+    expect(last.y.end - last.y.start).toBeCloseTo(0.5, 5);
+  });
+
+  it('minZoom > 1 clamps initialZoom and keeps double-click reset at the allowed floor', async () => {
+    const onZoomChange = vi.fn();
+    const { wrapper } = renderChart({
+      minZoom: 2,
+      // Wider than 1/minZoom: must be clamped on mount.
+      initialZoom: { x: { start: 0.1, end: 0.9 } },
+      onZoomChange,
+    });
+    await waitFor(() => expect(onZoomChange).toHaveBeenCalled());
+    const mounted = onZoomChange.mock.calls.at(-1)![0];
+    expect(mounted.x.end - mounted.x.start).toBeCloseTo(0.5, 5);
+
+    // Zoom further in, then reset: it must land back on the floor (width 1/minZoom), not full view.
+    fireEvent.wheel(wrapper, { deltaY: -240, clientX: 200, clientY: 150 });
+    await waitFor(() => {
+      const zoomed = onZoomChange.mock.calls.at(-1)![0];
+      expect(zoomed.x.end - zoomed.x.start).toBeLessThan(0.5);
+    });
+    onZoomChange.mockClear();
+    fireEvent.doubleClick(wrapper, { clientX: 200, clientY: 150 });
+    await waitFor(() => expect(onZoomChange).toHaveBeenCalled());
+    const reset = onZoomChange.mock.calls.at(-1)![0];
+    expect(reset.x.end - reset.x.start).toBeCloseTo(0.5, 5);
+  });
+});
+
 describe('the zoom prop shorthand', () => {
   function renderWithZoomProp(zoom: boolean | 'x' | 'y' | 'xy' | ZoomAndPanProps) {
     const utils = render(

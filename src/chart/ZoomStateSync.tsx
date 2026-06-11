@@ -2,9 +2,16 @@ import { useLayoutEffect, useRef } from 'react';
 import { useAppDispatch, useAppSelector } from '../state/hooks';
 import { selectZoom } from '../state/selectors/zoomSelectors';
 import { setZoom, ZoomState } from '../state/zoomSlice';
+import { setZoomLimits } from '../state/zoomSettingsSlice';
 import { useIsPanorama } from '../context/PanoramaContext';
 import { viewportsEqual } from '../util/zoom/viewport';
-import { ResolvedZoomOptions, zoomStateFromViewport, zoomStateToViewport } from '../util/zoom/ZoomOptions';
+import { clampDimensionToLimits, resetDimensionWithLimits } from '../util/zoom/zoomActions';
+import {
+  ResolvedZoomOptions,
+  zoomEnabledForDimension,
+  zoomStateFromViewport,
+  zoomStateToViewport,
+} from '../util/zoom/ZoomOptions';
 
 function zoomStatesEqual(a: ZoomState, b: ZoomState): boolean {
   return viewportsEqual(a.x, b.x) && viewportsEqual(a.y, b.y);
@@ -32,6 +39,18 @@ export function ZoomStateSync({ options }: { options: ResolvedZoomOptions }): nu
   const zoomRef = useRef(zoom);
   zoomRef.current = zoom;
 
+  // 0. Register the chart-level limits so window editors (Brush zoom mode, Minimap) can default
+  // to the same minZoom/maxZoom instead of their own.
+  useLayoutEffect(() => {
+    if (isPanorama) {
+      return undefined;
+    }
+    dispatch(setZoomLimits({ minZoom: options.minZoom, maxZoom: options.maxZoom }));
+    return () => {
+      dispatch(setZoomLimits(null));
+    };
+  }, [dispatch, isPanorama, options.minZoom, options.maxZoom]);
+
   // 1. Initial (uncontrolled) viewport, applied once.
   const didApplyInitial = useRef(false);
   useLayoutEffect(() => {
@@ -40,7 +59,24 @@ export function ZoomStateSync({ options }: { options: ResolvedZoomOptions }): nu
     }
     didApplyInitial.current = true;
     if (initialZoom != null && viewport == null) {
-      dispatch(setZoom(zoomStateFromViewport(initialZoom)));
+      // Initial values obey the same limits as gestures, per zoom-enabled dimension.
+      const initial = zoomStateFromViewport(initialZoom);
+      dispatch(
+        setZoom({
+          x: zoomEnabledForDimension(options, 'x') ? clampDimensionToLimits(initial.x, options) : initial.x,
+          y: zoomEnabledForDimension(options, 'y') ? clampDimensionToLimits(initial.y, options) : initial.y,
+        }),
+      );
+    } else if (viewport == null && options.minZoom > 1) {
+      // minZoom > 1 means the full view is not allowed: an un-zoomed mount starts at the most
+      // zoomed-out viewport the limits permit.
+      const floor = resetDimensionWithLimits(options);
+      dispatch(
+        setZoom({
+          x: zoomEnabledForDimension(options, 'x') ? floor : { startRatio: 0, endRatio: 1 },
+          y: zoomEnabledForDimension(options, 'y') ? floor : { startRatio: 0, endRatio: 1 },
+        }),
+      );
     }
     // Only ever runs once - intentionally not reacting to later prop changes.
     // eslint-disable-next-line react-hooks/exhaustive-deps

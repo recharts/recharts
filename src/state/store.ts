@@ -22,6 +22,7 @@ import { zIndexReducer } from './zIndexSlice';
 import { eventSettingsReducer } from './eventSettingsSlice';
 import { renderedTicksReducer } from './renderedTicksSlice';
 import { zoomReducer } from './zoomSlice';
+import { zoomSettingsReducer } from './zoomSettingsSlice';
 
 export type RechartsRootState = {
   brush: ReturnType<typeof brushReducer>;
@@ -41,6 +42,7 @@ export type RechartsRootState = {
   tooltip: ReturnType<typeof tooltipReducer>;
   zIndex: ReturnType<typeof zIndexReducer>;
   zoom: ReturnType<typeof zoomReducer>;
+  zoomSettings: ReturnType<typeof zoomSettingsReducer>;
 };
 
 const rootReducer: Reducer<RechartsRootState> = combineReducers({
@@ -61,6 +63,7 @@ const rootReducer: Reducer<RechartsRootState> = combineReducers({
   tooltip: tooltipReducer,
   zIndex: zIndexReducer,
   zoom: zoomReducer,
+  zoomSettings: zoomSettingsReducer,
 });
 
 export const createRechartsStore = (

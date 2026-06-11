@@ -44,6 +44,57 @@ export function panDimension(current: AxisViewport, deltaPlotFraction: number): 
 }
 
 /**
+ * Clamps one axis viewport into the width bounds the limits allow, keeping its centre (shifted
+ * only as needed to stay inside `[0, 1]`). Use it on viewports that arrive from outside the
+ * gesture maths - initial / controlled values, direct window edits - so they obey the same
+ * `minZoom`/`maxZoom` as every gesture.
+ */
+export function clampDimensionToLimits(current: AxisViewport, limits: ZoomLimits): AxisViewport {
+  const width = getViewportWidth(current);
+  const minWidth = 1 / limits.maxZoom;
+  const maxWidth = Math.min(1, 1 / limits.minZoom);
+  const targetWidth = Math.min(Math.max(width, minWidth), maxWidth);
+  if (targetWidth === width) {
+    return current;
+  }
+  const center = (current.startRatio + current.endRatio) / 2;
+  return clampViewport({ startRatio: center - targetWidth / 2, endRatio: center + targetWidth / 2 });
+}
+
+/**
+ * Same clamp, but anchored: whichever edge moved least compared to `previous` stays fixed and only
+ * the other edge gives. This is what window editors (brush travellers, minimap resize handles)
+ * want - the handle being dragged hits the limit while the opposite edge does not jump around.
+ */
+export function clampDimensionToLimitsAnchored(
+  next: AxisViewport,
+  previous: AxisViewport,
+  limits: ZoomLimits,
+): AxisViewport {
+  const width = getViewportWidth(next);
+  const minWidth = 1 / limits.maxZoom;
+  const maxWidth = Math.min(1, 1 / limits.minZoom);
+  const targetWidth = Math.min(Math.max(width, minWidth), maxWidth);
+  if (targetWidth === width) {
+    return next;
+  }
+  const startMoved = Math.abs(next.startRatio - previous.startRatio);
+  const endMoved = Math.abs(next.endRatio - previous.endRatio);
+  if (startMoved <= endMoved) {
+    return clampViewport({ startRatio: next.startRatio, endRatio: next.startRatio + targetWidth });
+  }
+  return clampViewport({ startRatio: next.endRatio - targetWidth, endRatio: next.endRatio });
+}
+
+/**
+ * The most zoomed-out viewport the limits allow: the full axis, or a centered `1/minZoom` window
+ * when `minZoom > 1`. This is what "reset" and an un-zoomed mount must land on.
+ */
+export function resetDimensionWithLimits(limits: ZoomLimits): AxisViewport {
+  return clampDimensionToLimits({ startRatio: 0, endRatio: 1 }, limits);
+}
+
+/**
  * Zooms one axis into the sub-window between two fractions of the current visible window
  * (drag-to-zoom selection). Order-independent; respects `maxZoom`.
  */

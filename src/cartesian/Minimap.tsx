@@ -18,14 +18,14 @@ import { ZIndexLayer } from '../zIndex/ZIndexLayer';
 import { useChartData } from '../context/chartDataContext';
 import { useAppDispatch, useAppSelector } from '../state/hooks';
 import { setZoom, ZoomState } from '../state/zoomSlice';
-import { selectZoom } from '../state/selectors/zoomSelectors';
+import { selectSharedZoomLimits, selectZoom } from '../state/selectors/zoomSelectors';
 import { selectChartOffsetInternal } from '../state/selectors/selectChartOffsetInternal';
 import { selectAxisRangeWithReverse } from '../state/selectors/axisSelectors';
 import { selectChartHeight, selectChartWidth } from '../state/selectors/containerSelectors';
 import { Padding } from '../util/types';
 import { generatePrefixStyle } from '../util/CssPrefixUtils';
 import { isFullViewport, isRangeFlipped, FULL_VIEWPORT } from '../util/zoom/viewport';
-import { panDimension, zoomDimension, ZoomLimits } from '../util/zoom/zoomActions';
+import { panDimension, resetDimensionWithLimits, zoomDimension, ZoomLimits } from '../util/zoom/zoomActions';
 import { ZoomAxis } from '../util/zoom/ZoomOptions';
 import {
   centerZoomStateAtPoint,
@@ -239,8 +239,8 @@ function MinimapInternal(props: Props) {
     position = 'bottom-right',
     margin = 10,
     axis = 'xy',
-    minZoom = DEFAULT_LIMITS.minZoom,
-    maxZoom = DEFAULT_LIMITS.maxZoom,
+    minZoom,
+    maxZoom,
     controls,
     ariaLabel,
     zIndex = DEFAULT_Z_INDEX,
@@ -301,7 +301,16 @@ function MinimapInternal(props: Props) {
   }, [frame, padding.bottom, padding.left, padding.right, padding.top]);
 
   const flipped: ViewportWindowFlipped = useMemo(() => ({ x: xFlipped, y: yFlipped }), [xFlipped, yFlipped]);
-  const limits = useMemo(() => ({ minZoom, maxZoom }), [maxZoom, minZoom]);
+  // Explicit props win; otherwise fall back to the chart-level limits registered by the zoom
+  // setup (ZoomAndPan / the zoom prop), so one set of limits governs every control by default.
+  const sharedLimits = useAppSelector(selectSharedZoomLimits);
+  const limits = useMemo<ZoomLimits>(
+    () => ({
+      minZoom: minZoom ?? sharedLimits?.minZoom ?? DEFAULT_LIMITS.minZoom,
+      maxZoom: maxZoom ?? sharedLimits?.maxZoom ?? DEFAULT_LIMITS.maxZoom,
+    }),
+    [maxZoom, minZoom, sharedLimits],
+  );
 
   const apply = useCallback(
     (next: ZoomState) => {
@@ -498,6 +507,7 @@ export function MinimapDrag() {
     cancelPinch,
     flipped,
     getCurrentZoom,
+    limits,
     overlayNode,
     registerCancelDrag,
     setDragHit,
@@ -541,7 +551,7 @@ export function MinimapDrag() {
       if (drag.hit === 'body') {
         apply(panZoomStateByPixels(drag.zoom, area, flipped, point.x - drag.startX, point.y - drag.startY));
       } else {
-        apply(resizeZoomStateRect(drag.zoom, area, flipped, drag.hit, point.x, point.y));
+        apply(resizeZoomStateRect(drag.zoom, area, flipped, drag.hit, point.x, point.y, limits));
       }
     };
 
@@ -650,6 +660,7 @@ export function MinimapDrag() {
     cancelPinch,
     flipped,
     getCurrentZoom,
+    limits,
     overlayNode,
     registerCancelDrag,
     setDragHit,
@@ -825,7 +836,9 @@ export function MinimapKeyboard({ step = DEFAULT_WHEEL_STEP }: { step?: number }
           y: zoomDimension(currentZoom.y, 1 / step, 0.5, limits),
         };
       } else if (event.key === '0' || event.key === 'Home') {
-        next = { x: FULL_VIEWPORT, y: FULL_VIEWPORT };
+        // Reset lands on the most zoomed-out viewport the limits allow (full view if minZoom <= 1).
+        const floor = resetDimensionWithLimits(limits);
+        next = { x: floor, y: floor };
       }
       if (next == null) {
         return;

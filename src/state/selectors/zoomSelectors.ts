@@ -19,3 +19,10 @@ export const selectAxisViewport = (state: RechartsRootState, dimension: ZoomDime
  */
 export const selectIsZoomed = (state: RechartsRootState): boolean =>
   !isFullViewport(state.zoom.x) || !isFullViewport(state.zoom.y);
+
+/**
+ * The chart-level zoom limits registered by the chart's zoom setup (`<ZoomAndPan />` / the `zoom`
+ * prop), or `null` when none registered. Window editors (Brush zoom mode, Minimap) fall back to
+ * these when they get no explicit `minZoom`/`maxZoom` props.
+ */
+export const selectSharedZoomLimits = (state: RechartsRootState) => state.zoomSettings.limits;

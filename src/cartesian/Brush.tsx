@@ -38,7 +38,7 @@ import { useAppDispatch, useAppSelector } from '../state/hooks';
 import { ChartData, setDataStartEndIndexes } from '../state/chartDataSlice';
 import { HorizontalBrushSettings, setBrushSettings, setVerticalBrushWidth } from '../state/brushSlice';
 import { selectAxisDomainIncludingNiceTicks, selectAxisRangeWithReverse } from '../state/selectors/axisSelectors';
-import { selectZoom } from '../state/selectors/zoomSelectors';
+import { selectSharedZoomLimits, selectZoom } from '../state/selectors/zoomSelectors';
 import { selectBrushHeight, selectChartOffsetInternal } from '../state/selectors/selectChartOffsetInternal';
 import { selectMargin } from '../state/selectors/containerSelectors';
 import { useBrushChartSynchronisation } from '../synchronisation/useChartSynchronisation';
@@ -46,7 +46,7 @@ import { RequiresDefaultProps, resolveDefaultProps } from '../util/resolveDefaul
 import { svgPropertiesNoEvents } from '../util/svgPropertiesNoEvents';
 import { ZoomDimension } from '../state/zoomSlice';
 import { AxisViewport, isRangeFlipped } from '../util/zoom/viewport';
-import { panDimension, zoomDimension, ZoomLimits } from '../util/zoom/zoomActions';
+import { clampDimensionToLimitsAnchored, panDimension, zoomDimension, ZoomLimits } from '../util/zoom/zoomActions';
 import { axisViewportToPixelWindow, pixelWindowToAxisViewport } from '../util/zoom/viewportWindow';
 import { viewportToWindow } from '../util/zoom/ZoomOptions';
 import { useZoomState } from '../hooks';
@@ -722,7 +722,13 @@ type BrushWithStateProps = InternalProps &
     startLabel?: number | string;
     endLabel?: number | string;
     onLayerNodeChange?: (node: SVGGElement | null) => void;
-    onZoomWindowChange?: (start: number, end: number, railStart?: number, railLength?: number) => void;
+    onZoomWindowChange?: (
+      start: number,
+      end: number,
+      railStart?: number,
+      railLength?: number,
+      movingTraveller?: BrushTravellerId,
+    ) => void;
     zoomMode?: boolean;
   };
 
@@ -1152,7 +1158,7 @@ class BrushWithState extends PureComponent<BrushWithStateProps, State> {
       const newValue = initValue + totalDelta;
       const newStartX = movingTravellerId === 'startX' ? newValue : (dragStartXInitial ?? startX);
       const newEndX = movingTravellerId === 'endX' ? newValue : (dragEndXInitial ?? endX);
-      onZoomWindowChange?.(newStartX, newEndX, this.state.dragRailStart, this.state.dragRailLength);
+      onZoomWindowChange?.(newStartX, newEndX, this.state.dragRailStart, this.state.dragRailLength, movingTravellerId);
     } else {
       this.setState(
         // @ts-expect-error not sure why typescript is not happy with this, partial update is fine in React
@@ -1210,7 +1216,7 @@ class BrushWithState extends PureComponent<BrushWithStateProps, State> {
 
     if (zoomMode) {
       // Dispatch to Redux only — controlled positions will update startX/endX via getDerivedStateFromProps.
-      onZoomWindowChange?.(nextStartX, nextEndX);
+      onZoomWindowChange?.(nextStartX, nextEndX, undefined, undefined, id);
     } else {
       this.setState(
         // @ts-expect-error not sure why typescript is not happy with this, partial update is fine in React
@@ -1628,7 +1634,16 @@ function BrushInternal(props: InternalProps) {
   const primaryStart = brushDimensions == null ? 0 : getPrimaryStartFromDimensions(brushDimensions, layout);
   const primarySize = brushDimensions == null ? 0 : getPrimarySizeFromDimensions(brushDimensions, layout);
   const railLength = Math.max(primarySize - travellerWidth, 0);
-  const zoomLimits = useMemo<ZoomLimits>(() => ({ minZoom, maxZoom }), [maxZoom, minZoom]);
+  // Explicit props win; otherwise fall back to the chart-level limits registered by the zoom
+  // setup (ZoomAndPan / the zoom prop), so one set of limits governs every control by default.
+  const sharedLimits = useAppSelector(selectSharedZoomLimits);
+  const zoomLimits = useMemo<ZoomLimits>(
+    () => ({
+      minZoom: minZoom ?? sharedLimits?.minZoom ?? 1,
+      maxZoom: maxZoom ?? sharedLimits?.maxZoom ?? 25,
+    }),
+    [maxZoom, minZoom, sharedLimits],
+  );
   const onZoomWheel = useCallback(
     (factor: number, focusRatio: number, pan: boolean, delta: number) => {
       if (!zoomMode || zoom == null) {
@@ -1708,12 +1723,45 @@ function BrushInternal(props: InternalProps) {
           props.tickFormatter,
         )
       : undefined;
-  const onZoomWindowChange = (start: number, end: number, railStart = primaryStart, activeRailLength = railLength) => {
+  const onZoomWindowChange = (
+    start: number,
+    end: number,
+    railStart = primaryStart,
+    activeRailLength = railLength,
+    movingTraveller?: BrushTravellerId,
+  ) => {
     if (!zoomMode || activeRailLength <= 0) {
       return;
     }
-    const viewport = pixelWindowToAxisViewport(start, end, railStart, activeRailLength, controlledAxisFlipped);
-    setZoomWindows({ [controlledZoomAxis]: viewportToWindow(viewport) });
+    let windowStart = start;
+    let windowEnd = end;
+    if (movingTraveller != null) {
+      /*
+       * A traveller drag obeys minZoom/maxZoom in pixel space, against the fixed traveller: the
+       * dragged handle stops at the limit, the anchored one holds, and the handles can never
+       * cross (which would silently swap which edge the clamp anchors on).
+       */
+      const minSize = activeRailLength / zoomLimits.maxZoom;
+      const maxSize = activeRailLength * Math.min(1, 1 / zoomLimits.minZoom);
+      if (movingTraveller === 'startX') {
+        windowStart = Math.min(Math.max(windowStart, windowEnd - maxSize), windowEnd - minSize);
+      } else {
+        windowEnd = Math.max(Math.min(windowEnd, windowStart + maxSize), windowStart + minSize);
+      }
+    }
+    const viewport = pixelWindowToAxisViewport(
+      windowStart,
+      windowEnd,
+      railStart,
+      activeRailLength,
+      controlledAxisFlipped,
+    );
+    // The slide and programmatic paths keep their width, so the anchored clamp passes them through.
+    const clamped =
+      movingTraveller != null
+        ? viewport
+        : clampDimensionToLimitsAnchored(viewport, zoom[controlledZoomAxis], zoomLimits);
+    setZoomWindows({ [controlledZoomAxis]: viewportToWindow(clamped) });
   };
 
   const contextProperties: PropertiesFromContext = {
@@ -1799,8 +1847,6 @@ export const defaultBrushProps = {
   autoScaleYDomain: false,
   wheelStep: 1.15,
   wheelPanStep: 0.0015,
-  minZoom: 1,
-  maxZoom: 25,
 } as const satisfies Partial<Props>;
 
 /**

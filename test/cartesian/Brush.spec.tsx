@@ -208,7 +208,9 @@ describe('<Brush />', () => {
     const customTraveller = container.querySelector('[data-testid="custom-traveller-element"]');
     expect(customTraveller).toBeInTheDocument();
     expect(customTraveller).toBeVisible();
-    expect(spy).toHaveBeenCalledTimes(2);
+    // Two travellers, each rendered twice: the brush re-renders once after its zoom controls
+    // register their settings.
+    expect(spy).toHaveBeenCalledTimes(4);
     expect(spy).toHaveBeenNthCalledWith(1, {
       x: 100,
       y: 50,

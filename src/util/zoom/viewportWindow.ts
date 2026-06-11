@@ -1,5 +1,6 @@
 import { ZoomState } from '../../state/zoomSlice';
 import { AxisViewport, clampRatio, clampViewport, getViewportWidth, panViewport } from './viewport';
+import { ZoomLimits } from './zoomActions';
 
 export type ViewportWindowArea = {
   x: number;
@@ -138,6 +139,7 @@ export function resizeZoomStateRect(
   handle: ViewportWindowHandle,
   pointerX: number,
   pointerY: number,
+  limits?: ZoomLimits,
 ): ZoomState {
   const rect = zoomStateToRect(zoom, area, flipped);
   let left = rect.x;
@@ -148,16 +150,23 @@ export function resizeZoomStateRect(
   const clampedX = clampPixel(pointerX, area.x, area.width);
   const clampedY = clampPixel(pointerY, area.y, area.height);
 
+  // The zoom limits in pixel terms: a window narrower than minSize would exceed maxZoom, wider
+  // than maxSize would fall below minZoom. Only the dragged edge is clamped, so the anchor holds.
+  const minSizeX = limits ? Math.max((1 / limits.maxZoom) * area.width, MIN_PIXEL_SIZE) : MIN_PIXEL_SIZE;
+  const maxSizeX = limits ? Math.min(1, 1 / limits.minZoom) * area.width : area.width;
+  const minSizeY = limits ? Math.max((1 / limits.maxZoom) * area.height, MIN_PIXEL_SIZE) : MIN_PIXEL_SIZE;
+  const maxSizeY = limits ? Math.min(1, 1 / limits.minZoom) * area.height : area.height;
+
   if (handle.includes('left')) {
-    left = Math.min(clampedX, right - MIN_PIXEL_SIZE);
+    left = Math.min(Math.max(clampedX, right - maxSizeX), right - minSizeX);
   } else if (handle.includes('right')) {
-    right = Math.max(clampedX, left + MIN_PIXEL_SIZE);
+    right = Math.max(Math.min(clampedX, left + maxSizeX), left + minSizeX);
   }
 
   if (handle.includes('top')) {
-    top = Math.min(clampedY, bottom - MIN_PIXEL_SIZE);
+    top = Math.min(Math.max(clampedY, bottom - maxSizeY), bottom - minSizeY);
   } else if (handle.includes('bottom')) {
-    bottom = Math.max(clampedY, top + MIN_PIXEL_SIZE);
+    bottom = Math.max(Math.min(clampedY, top + maxSizeY), top + minSizeY);
   }
 
   return rectToZoomState({ x: left, y: top, width: right - left, height: bottom - top }, area, flipped);
