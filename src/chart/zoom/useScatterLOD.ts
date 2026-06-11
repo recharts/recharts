@@ -8,7 +8,7 @@ import { useIsPanorama } from '../../context/PanoramaContext';
 import { selectAxisScale } from '../../state/selectors/axisSelectors';
 import { RechartsRootState } from '../../state/store';
 import { RechartsScale } from '../../util/scale/RechartsScale';
-import { areScalesApproximatelyEqual } from '../../util/approximateEquality';
+import { areScalesApproximatelyEqual } from '../../util/propsAreEqual';
 
 /** Options for {@link useScatterLOD}. */
 export type ScatterLODOptions<T = unknown> = {

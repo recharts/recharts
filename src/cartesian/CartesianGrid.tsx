@@ -15,10 +15,11 @@ import { selectIsZoomed } from '../state/selectors/zoomSelectors';
 import { useAppSelector } from '../state/hooks';
 import { RechartsRootState } from '../state/store';
 import { useIsPanorama } from '../context/PanoramaContext';
+import { useClipPathId } from '../container/ClipPathProvider';
 import { RequiresDefaultProps, resolveDefaultProps } from '../util/resolveDefaultProps';
 import { svgPropertiesNoEvents } from '../util/svgPropertiesNoEvents';
 import { isPositiveNumber } from '../util/isWellBehavedNumber';
-import { areScalesApproximatelyEqual, areValueArraysApproximatelyEqual } from '../util/approximateEquality';
+import { areScalesApproximatelyEqual, areValueArraysApproximatelyEqual } from '../util/propsAreEqual';
 import { ZIndexable, ZIndexLayer } from '../zIndex/ZIndexLayer';
 import { DefaultZIndexes } from '../zIndex/DefaultZIndexes';
 
@@ -526,6 +527,7 @@ export function CartesianGrid(props: Props) {
 
   const isPanorama = useIsPanorama();
   const isZoomed = useAppSelector(selectIsZoomed);
+  const clipPathId = useClipPathId();
   const selectXAxis = React.useCallback(
     (state: RechartsRootState) =>
       selectAxisPropsNeededForCartesianGridTicksGenerator(state, 'xAxis', xAxisId, isPanorama),
@@ -618,8 +620,10 @@ export function CartesianGrid(props: Props) {
   }
 
   /*
-   * When zoomed, the generators place grid lines across the stretched range, so some land outside
-   * the plotting area. Keep only the lines that fall within the visible plot bounds.
+   * When zoomed, the generators place grid lines across the stretched range, so most land outside
+   * the plotting area. The filter is a coarse cull so a deep zoom doesn't render hundreds of
+   * invisible lines; the clip path below cuts the survivors exactly at the plot edge, whatever
+   * their stroke width.
    */
   if (isZoomed) {
     horizontalPoints = horizontalPoints?.filter(p => p >= y - 0.5 && p <= y + height + 0.5);
@@ -628,7 +632,10 @@ export function CartesianGrid(props: Props) {
 
   return (
     <ZIndexLayer zIndex={propsIncludingDefaults.zIndex}>
-      <g className="recharts-cartesian-grid">
+      <g
+        className="recharts-cartesian-grid"
+        clipPath={isZoomed && clipPathId != null ? `url(#${clipPathId})` : undefined}
+      >
         <Background
           fill={propsIncludingDefaults.fill}
           fillOpacity={propsIncludingDefaults.fillOpacity}

@@ -230,6 +230,7 @@ export {
   useYAxisTicks,
   useCartesianScale,
   useZoom,
+  useZoomState,
 } from './hooks';
 export type { UseZoomResult } from './hooks';
 

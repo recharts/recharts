@@ -19,6 +19,7 @@ import { getValueByDataKey } from '../util/ChartUtils';
 import { isNumber, isNotNil } from '../util/DataUtils';
 import { generatePrefixStyle } from '../util/CssPrefixUtils';
 import {
+  CartesianLayout,
   CategoricalDomain,
   ChartOffsetInternal,
   DataConsumer,
@@ -39,10 +40,12 @@ import { selectMargin } from '../state/selectors/containerSelectors';
 import { useBrushChartSynchronisation } from '../synchronisation/useChartSynchronisation';
 import { RequiresDefaultProps, resolveDefaultProps } from '../util/resolveDefaultProps';
 import { svgPropertiesNoEvents } from '../util/svgPropertiesNoEvents';
-import { setAxisViewport, ZoomDimension } from '../state/zoomSlice';
+import { ZoomDimension } from '../state/zoomSlice';
 import { AxisViewport, isRangeFlipped } from '../util/zoom/viewport';
 import { panDimension, zoomDimension, ZoomLimits } from '../util/zoom/zoomActions';
 import { axisViewportToPixelWindow, pixelWindowToAxisViewport } from '../util/zoom/viewportWindow';
+import { viewportToWindow } from '../util/zoom/ZoomOptions';
+import { useZoomState } from '../hooks';
 import { AutoScaleAxis } from '../chart/zoom/AutoScaleAxis';
 import { isWellFormedNumberDomain } from '../util/isDomainSpecifiedByUser';
 
@@ -52,7 +55,6 @@ type BrushTravellerType =
 
 // Why is this tickFormatter different from the other TickFormatters? This one allows to return numbers too for some reason.
 type BrushTickFormatter = (value: any, index: number) => number | string;
-type BrushLayout = 'horizontal' | 'vertical';
 type BrushMode = 'slice' | 'zoom';
 const DEFAULT_VERTICAL_BRUSH_WIDTH = 64;
 const DEFAULT_VERTICAL_BRUSH_GAP = 8;
@@ -133,7 +135,7 @@ interface BrushProps<DataPointType = any, DataValueType = any> extends DataConsu
    *
    * @defaultValue 'horizontal'
    */
-  layout?: BrushLayout;
+  layout?: CartesianLayout;
   /**
    * `slice` keeps the existing Brush behavior: it writes data start/end indexes. `zoom` makes the
    * brush edit the shared zoom viewport instead, without slicing chart data.
@@ -497,7 +499,7 @@ function BrushText({
   data: ChartData;
   startX: number;
   endX: number;
-  layout: BrushLayout;
+  layout: CartesianLayout;
   startLabel: number | string | undefined;
   endLabel: number | string | undefined;
 }) {
@@ -569,7 +571,7 @@ function Slide({
   travellerWidth: number;
   startX: number;
   endX: number;
-  layout: BrushLayout;
+  layout: CartesianLayout;
   onMouseEnter: (e: MouseOrTouchEvent) => void;
   onMouseLeave: (e: MouseOrTouchEvent) => void;
   onMouseDown: (e: MouseOrTouchEvent) => void;
@@ -633,7 +635,7 @@ interface State {
   prevWidth?: number;
   prevX?: number;
   prevY?: number;
-  prevLayout?: BrushLayout;
+  prevLayout?: CartesianLayout;
   prevTravellerWidth?: number;
 
   /**
@@ -650,7 +652,7 @@ type TravellerProps = {
   y: number;
   width: number;
   height: number;
-  layout: BrushLayout;
+  layout: CartesianLayout;
   stroke?: SVGAttributes<SVGElement>['stroke'];
 };
 
@@ -668,7 +670,7 @@ const createScale = ({
   data: ChartData | undefined;
   startIndex: number;
   endIndex: number;
-  layout: BrushLayout;
+  layout: CartesianLayout;
   x: number;
   y: number;
   width: number;
@@ -707,12 +709,12 @@ type MouseOrTouchEvent = React.MouseEvent<SVGGElement> | TouchEvent<SVGGElement>
 
 function getPrimaryPageCoordinate(
   event: React.Touch | React.MouseEvent<SVGGElement> | MouseEvent,
-  layout: BrushLayout,
+  layout: CartesianLayout,
 ): number {
   return layout === 'vertical' ? event.pageY : event.pageX;
 }
 
-function getPrimaryClientCoordinate(event: React.Touch, layout: BrushLayout): number {
+function getPrimaryClientCoordinate(event: React.Touch, layout: CartesianLayout): number {
   return layout === 'vertical' ? event.clientY : event.clientX;
 }
 
@@ -1507,6 +1509,9 @@ function getBrushDimensions(props: InternalProps, offset: ChartOffsetInternal, m
 
 function BrushInternal(props: InternalProps) {
   const dispatch = useAppDispatch();
+  // Brush zoom mode edits the viewport through the same public hook custom controls use
+  // (the setter merges per axis, so a concurrent writer on the other axis is never clobbered).
+  const [, setZoomWindows] = useZoomState();
   const chartData = useChartData();
   const dataIndexes = useDataIndex();
   const zoom = useAppSelector(selectZoom);
@@ -1614,7 +1619,7 @@ function BrushInternal(props: InternalProps) {
       return;
     }
     const viewport = pixelWindowToAxisViewport(start, end, railStart, activeRailLength, controlledAxisFlipped);
-    dispatch(setAxisViewport({ dimension: controlledZoomAxis, viewport }));
+    setZoomWindows({ [controlledZoomAxis]: viewportToWindow(viewport) });
   };
 
   const onZoomWheel = (factor: number, focusRatio: number, pan: boolean, delta: number) => {
@@ -1625,7 +1630,7 @@ function BrushInternal(props: InternalProps) {
     const viewport = pan
       ? panDimension(current, (controlledAxisFlipped ? -1 : 1) * delta)
       : zoomDimension(current, factor, controlledAxisFlipped ? 1 - focusRatio : focusRatio, zoomLimits);
-    dispatch(setAxisViewport({ dimension: controlledZoomAxis, viewport }));
+    setZoomWindows({ [controlledZoomAxis]: viewportToWindow(viewport) });
   };
 
   const contextProperties: PropertiesFromContext = {
@@ -1661,7 +1666,7 @@ function BrushInternal(props: InternalProps) {
 }
 
 function BrushSettingsDispatcher(
-  props: HorizontalBrushSettings & { layout: BrushLayout; widthIsExplicit: boolean },
+  props: HorizontalBrushSettings & { layout: CartesianLayout; widthIsExplicit: boolean },
 ): null {
   const dispatch = useAppDispatch();
   const { height, layout, padding, width, widthIsExplicit, x, y } = props;

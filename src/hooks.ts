@@ -13,8 +13,8 @@ import {
 import { useAppSelector, useAppDispatch } from './state/hooks';
 import { useIsPanorama } from './context/PanoramaContext';
 import { selectZoom, selectIsZoomed } from './state/selectors/zoomSelectors';
-import { setZoom, resetZoom } from './state/zoomSlice';
-import { ZoomViewport, zoomStateFromViewport, zoomStateToViewport } from './util/zoom/ZoomOptions';
+import { setAxisViewport, setZoom, resetZoom } from './state/zoomSlice';
+import { ZoomViewport, windowToViewport, zoomStateFromViewport, zoomStateToViewport } from './util/zoom/ZoomOptions';
 import { FULL_VIEWPORT, getViewportWidth, panViewport, zoomViewportAround } from './util/zoom/viewport';
 import {
   selectActiveLabel,
@@ -470,6 +470,42 @@ export const useZoom = (): UseZoomResult => {
   const reset = useCallback(() => dispatch(resetZoom()), [dispatch]);
 
   return { viewport: zoomStateToViewport(zoom), isZoomed, setViewport, zoomIn, zoomOut, pan, reset };
+};
+
+/**
+ * The zoom viewport as a `useState`-shaped tuple: `const [zoom, setZoom] = useZoomState()`.
+ *
+ * Reads and writes the same shared viewport that every built-in zoom consumer uses
+ * (`ZoomAndPan`, the granular interaction components, `Minimap`, `Brush mode="zoom"` - the Brush
+ * itself edits the viewport through this hook), so custom controls built on it stay in sync with
+ * all of them.
+ *
+ * The setter MERGES per axis: an axis you leave out is left untouched (not reset), and each
+ * provided axis is written atomically - so two controls can drive different axes concurrently
+ * without clobbering each other. To reset an axis, pass `{ start: 0, end: 1 }` explicitly, or use
+ * {@link useZoom}'s `reset()` (useZoom also exposes zoomIn/zoomOut/pan helpers, and its
+ * `setViewport` replaces the whole viewport instead of merging).
+ *
+ * Must be used inside a chart.
+ */
+export const useZoomState = (): [Required<ZoomViewport>, (viewport: ZoomViewport) => void] => {
+  const dispatch = useAppDispatch();
+  const rawZoom = useAppSelector(selectZoom);
+  const zoom = useMemo(() => rawZoom ?? { x: FULL_VIEWPORT, y: FULL_VIEWPORT }, [rawZoom]);
+
+  const setZoomWindows = useCallback(
+    (viewport: ZoomViewport) => {
+      if (viewport.x != null) {
+        dispatch(setAxisViewport({ dimension: 'x', viewport: windowToViewport(viewport.x) }));
+      }
+      if (viewport.y != null) {
+        dispatch(setAxisViewport({ dimension: 'y', viewport: windowToViewport(viewport.y) }));
+      }
+    },
+    [dispatch],
+  );
+
+  return [zoomStateToViewport(zoom), setZoomWindows];
 };
 
 /**

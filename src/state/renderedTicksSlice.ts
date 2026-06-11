@@ -10,7 +10,7 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { castDraft, WritableDraft } from 'immer';
 import { TickItem } from '../util/types';
-import { areRenderedTicksEqual } from '../util/approximateEquality';
+import { areRenderedTicksEqual } from '../util/propsAreEqual';
 import { AxisId } from './cartesianAxisSlice';
 
 type RenderedTicksAxisState = {

@@ -34,7 +34,7 @@ import { DefaultZIndexes } from '../zIndex/DefaultZIndexes';
 import { getClassNameFromUnknown } from '../util/getClassNameFromUnknown';
 import { removeRenderedTicks, setRenderedTicks } from '../state/renderedTicksSlice';
 import { useAppDispatch } from '../state/hooks';
-import { areRenderedTicksEqual } from '../util/approximateEquality';
+import { areRenderedTicksEqual } from '../util/propsAreEqual';
 
 /** The orientation of the axis in correspondence to the chart */
 export type Orientation = XAxisOrientation | YAxisOrientation;
