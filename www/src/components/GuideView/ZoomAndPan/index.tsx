@@ -14,9 +14,13 @@ export function ZoomAndPanGuide() {
       <h1>Zoom &amp; Pan</h1>
       <p>
         Recharts can zoom and pan a cartesian chart (<LinkToApi>LineChart</LinkToApi>, <LinkToApi>AreaChart</LinkToApi>,{' '}
-        <LinkToApi>BarChart</LinkToApi>, <LinkToApi>ScatterChart</LinkToApi>, <LinkToApi>ComposedChart</LinkToApi>). It
-        is <strong>off by default</strong> and fully composable: you opt in by adding the interaction components (or
-        hooks) you want, and they all drive one shared, normalized viewport.
+        <LinkToApi>BarChart</LinkToApi>, <LinkToApi>ScatterChart</LinkToApi>, <LinkToApi>ComposedChart</LinkToApi>) in
+        both horizontal and vertical layouts, and non-cartesian charts too (<LinkToApi>PieChart</LinkToApi>,{' '}
+        <LinkToApi>RadarChart</LinkToApi>, <LinkToApi>RadialBarChart</LinkToApi>, <LinkToApi>FunnelChart</LinkToApi>,{' '}
+        <LinkToApi>Sankey</LinkToApi>, <LinkToApi>SunburstChart</LinkToApi>, <LinkToApi>Treemap</LinkToApi> — see{' '}
+        <a href="#special-charts">Polar &amp; standalone charts</a>). It is <strong>off by default</strong> and fully
+        composable: you opt in by adding the interaction components (or hooks) you want, and they all drive one shared,
+        normalized viewport.
       </p>
 
       <h2>The viewport</h2>
@@ -58,16 +62,38 @@ type Viewport = { x?: AxisWindow; y?: AxisWindow };
         dropping to the granular components:
       </p>
       <pre>{`<ZoomAndPan axis="x" minZoom={1} maxZoom={20} pinch={false} scrollbars={false} />`}</pre>
+      <p>
+        As a shorthand, every chart root also accepts a <code>zoom</code> prop that mounts{' '}
+        <code>&lt;ZoomAndPan /&gt;</code> for you. It takes <code>true</code> for the defaults, an axis (
+        <code>&quot;x&quot;</code>, <code>&quot;y&quot;</code>, <code>&quot;xy&quot;</code>) or a full options object:
+      </p>
+      <pre>{`<LineChart data={data} zoom="x">...</LineChart>
+<BarChart data={data} zoom={{ axis: 'x', maxZoom: 10, scrollbars: false }}>...</BarChart>`}</pre>
+      <p>
+        Add <code>&lt;Minimap /&gt;</code> when the chart needs a persistent overview of the full data:
+      </p>
+      <pre>{`<LineChart data={data} width={600} height={300}>
+  <XAxis dataKey="date" />
+  <YAxis />
+  <Line dataKey="value" />
+  <ZoomAndPan axis="x" />
+  <Minimap axis="x">
+    <LineChart data={data}>
+      <Line dataKey="value" />
+    </LineChart>
+  </Minimap>
+</LineChart>`}</pre>
 
       <h2>Composing individual interactions</h2>
       <p>
         For exact control over which interactions exist (or to wire your own), drop the bundle and add just the pieces
         you want as children of the chart. Each one registers its own handlers and is independently tree-shakeable, so
-        you only ship what you use. Nothing here changes the <LinkToApi>Brush</LinkToApi> or any existing behavior.
+        you only ship what you use. The <LinkToApi>Brush</LinkToApi> keeps its existing index-slicing behavior unless
+        you explicitly switch it to <code>mode=&quot;zoom&quot;</code>.
       </p>
       <pre>{`import {
   LineChart, XAxis, YAxis, Line,
-  MouseWheelZoom, PanOnDrag, DragToZoom, ZoomPanKeyboard, PinchZoom, ZoomScrollbar,
+  MouseWheelZoom, PanOnDrag, DragToZoom, DragToSelect, ZoomPanKeyboard, PinchZoom, ZoomScrollbar,
 } from 'recharts';
 
 <LineChart data={data} width={600} height={300}>
@@ -79,6 +105,7 @@ type Viewport = { x?: AxisWindow; y?: AxisWindow };
   <MouseWheelZoom />
   <PanOnDrag />
   <DragToZoom />
+  <DragToSelect onSelect={selection => setSelectedWindow(selection)} />
   <ZoomPanKeyboard />
   <PinchZoom />
   <ZoomScrollbar axis="x" />
@@ -115,6 +142,14 @@ type Viewport = { x?: AxisWindow; y?: AxisWindow };
           </tr>
           <tr>
             <td>
+              <code>&lt;DragToSelect /&gt;</code>
+            </td>
+            <td>
+              Drag a rectangle and receive the selected viewport window in <code>onSelect</code> without changing zoom.
+            </td>
+          </tr>
+          <tr>
+            <td>
               <code>&lt;ZoomPanKeyboard /&gt;</code>
             </td>
             <td>
@@ -142,6 +177,18 @@ type Viewport = { x?: AxisWindow; y?: AxisWindow };
           </tr>
           <tr>
             <td>
+              <code>&lt;Minimap /&gt;</code>
+            </td>
+            <td>A panorama plus an editable viewport rectangle: drag to pan, resize to zoom, click to jump.</td>
+          </tr>
+          <tr>
+            <td>
+              <code>&lt;Brush mode=&quot;zoom&quot; /&gt;</code>
+            </td>
+            <td>Uses the Brush panorama and travellers to edit the zoom viewport instead of slicing data.</td>
+          </tr>
+          <tr>
+            <td>
               <code>&lt;DoubleClickReset /&gt;</code>
             </td>
             <td>Double-click (or double-tap) to reset to the full view.</td>
@@ -150,9 +197,30 @@ type Viewport = { x?: AxisWindow; y?: AxisWindow };
       </table>
 
       <p>Common options live on the components, per interaction or shared via context:</p>
-      <pre>{`<MouseWheelZoom axis="x" step={1.15} />   // x only, custom zoom step per notch
-<DragToZoom axis="xy" minZoom={1} maxZoom={25} />
-<ZoomScrollbar axis="y" />`}</pre>
+      <pre>{`<MouseWheelZoom axis="x" step={1.15} panStep={0.0015} />
+<DragToZoom axis="xy" minZoom={1} maxZoom={25} modifier="shift" />
+<DragToSelect onSelect={selection => setSelectedWindow(selection)} />
+<PinchZoom threshold={12} touchDrag="pan" doubleTapDrag="select" onSelect={selection => setSelectedWindow(selection)} />
+<ZoomPanKeyboard panStep={0.1} panFastMultiplier={2.5} />
+<ZoomScrollbar axis="y" thickness={12} thumbClassName="zoom-thumb" />
+<Minimap axis="x" position="bottom-right" width={180} height={80} />
+<Brush mode="zoom" axis="x" autoScaleYDomain />`}</pre>
+      <p>
+        <code>step</code> controls zoom speed. <code>panStep</code> controls keyboard or wheel pan distance depending on
+        the component. <code>threshold</code> controls how far fingers must spread before a pinch starts zooming.
+        Scrollbars can be styled with <code>className</code>/<code>style</code> for the track and{' '}
+        <code>thumbClassName</code>/<code>thumbStyle</code> for the thumb. The drag rectangle of{' '}
+        <code>&lt;DragToZoom /&gt;</code> / <code>&lt;DragToSelect /&gt;</code> (and <code>&lt;ZoomAndPan /&gt;</code>)
+        is styled the same way with <code>selectionClassName</code>/<code>selectionStyle</code>. Both keep stable{' '}
+        <code>.recharts-zoom-scrollbar</code> / <code>.recharts-zoom-selection</code> classes for plain CSS or Tailwind.
+      </p>
+      <p>
+        <code>&lt;DragToSelect /&gt;</code> is the single selection component: mouse / pen uses rectangle drag, and
+        touch uses double-tap-then-drag, with both paths calling the same <code>onSelect</code>. If you use the bundled{' '}
+        <code>&lt;ZoomAndPan /&gt;</code> instead, <code>touchDoubleTapDrag=&quot;zoom&quot;</code> keeps the maps-style
+        mobile zoom, while <code>touchDoubleTapDrag=&quot;select&quot;</code> emits the mobile selection through{' '}
+        <code>onTouchSelect</code>.
+      </p>
 
       <h2>Controlled &amp; uncontrolled state</h2>
       <p>
@@ -174,6 +242,56 @@ const [viewport, setViewport] = useState({ x: { start: 0.2, end: 0.6 } });
         <code>onZoomChange</code> fires on every change with the new viewport. Because it is the same shape you pass
         back in, a controlled chart settles without a feedback loop, and you can sync several charts by sharing one
         viewport.
+      </p>
+
+      <h2>Auto-scaling, follow &amp; level of detail</h2>
+      <p>
+        A few headless helpers react to the viewport. <code>&lt;AutoScaleAxis /&gt;</code> re-fits the value axis to the
+        data visible in the current window as you pan or zoom; <code>&lt;FollowSeries /&gt;</code> keeps one series
+        vertically centred while panning (optionally auto-scaling the span around it); and <code>useScatterLOD</code>{' '}
+        decimates dense scatter data against the zoomed scales, so you draw fewer points when zoomed out and reveal more
+        detail as you zoom in.
+      </p>
+      <pre>{`<LineChart data={data}>
+  <Line dataKey="value" />
+  <MouseWheelZoom axis="x" />
+  <AutoScaleAxis />                     {/* fit the value axis to the visible window */}
+  {/* or keep one series centred: <FollowSeries dataKey="value" autoScale /> */}
+</LineChart>
+
+// dense scatter: roughly one point per cell, more as you zoom in
+function Points() {
+  const lod = useScatterLOD(bigData, { x: 'x', y: 'y' });
+  return <Scatter data={lod} />;
+}`}</pre>
+      <p>
+        Both helpers are layout-aware: they fit / re-centre the <em>value</em> axis, which is y in a horizontal layout
+        and x in a vertical one (where the categories run along y). Pass an explicit <code>axis</code> to{' '}
+        <code>&lt;AutoScaleAxis /&gt;</code> to override.
+      </p>
+
+      <h2 id="special-charts">Polar &amp; standalone charts</h2>
+      <p>
+        Charts without cartesian axes — <LinkToApi>PieChart</LinkToApi>, <LinkToApi>RadarChart</LinkToApi>,{' '}
+        <LinkToApi>RadialBarChart</LinkToApi>, <LinkToApi>FunnelChart</LinkToApi>, <LinkToApi>Sankey</LinkToApi>,{' '}
+        <LinkToApi>SunburstChart</LinkToApi> and <LinkToApi>Treemap</LinkToApi> — zoom as a <strong>camera</strong>:
+        instead of stretching axis ranges, the plot content is scaled and translated under the same viewport. Centric
+        and radial charts zoom uniformly so they keep their aspect ratio. The exact same gestures, options, controlled
+        state and <code>useZoom()</code> hook apply.
+      </p>
+      <pre>{`<PieChart width={400} height={300}>
+  <Pie data={data} dataKey="value" />
+  <ZoomAndPan />
+</PieChart>
+
+<Sankey width={600} height={300} data={sankeyData}>
+  {/* one-finger drag pans on touch - handy for maps-like exploration */}
+  <ZoomAndPan touchDrag="pan" />
+</Sankey>`}</pre>
+      <p>
+        Tooltips stay attached to their items while zoomed (active coordinates are mapped through the same transform),
+        and content outside the plot area is clipped only while actually zoomed. Axis-band gestures and scrollbars that
+        require a cartesian axis are automatically disabled on these charts; everything else works unchanged.
       </p>
 
       <h2>Custom UI &amp; your own gestures</h2>
@@ -227,10 +345,28 @@ function ZoomButtons() {
       <h2>Touch</h2>
       <p>
         <code>&lt;PinchZoom /&gt;</code> uses two fingers (pinch to zoom, two-finger drag to pan), plus double-tap to
-        reset and double-tap-then-drag to zoom (the &quot;maps&quot; gesture). A single finger is left entirely to the{' '}
-        <LinkToApi>Tooltip</LinkToApi>, so one finger never zooms and there is no conflict. While you interact with the
-        chart it takes over touch handling (<code>touch-action: none</code>) so the page does not scroll and the browser
-        does not pinch-zoom; everything is opt-in, so leave <code>&lt;PinchZoom /&gt;</code> out and touch is untouched.
+        reset. Double-tap-then-drag defaults to zooming (the &quot;maps&quot; gesture), and can instead select a window
+        when configured with <code>doubleTapDrag=&quot;select&quot;</code>.
+      </p>
+      <p>
+        By default a single finger is left to the <LinkToApi>Tooltip</LinkToApi> / cursor: dragging moves the active
+        data point, and a tap sets it. Set <code>touchDrag=&quot;pan&quot;</code> (on <code>&lt;PinchZoom /&gt;</code>{' '}
+        or <code>&lt;ZoomAndPan /&gt;</code>) to make a one-finger drag pan the chart instead; a plain tap still updates
+        the tooltip/cursor at that position, so you never lose the ability to inspect a data point. This is useful on
+        dashboards where scrolling is handled by the page and the chart needs to feel &ldquo;grabbable&rdquo;.
+      </p>
+      <pre>{`// default: one-finger drag moves the tooltip cursor
+<PinchZoom />
+
+// one-finger drag pans instead; tap still sets the tooltip
+<PinchZoom touchDrag="pan" />
+
+// same option on the bundle component
+<ZoomAndPan touchDrag="pan" />`}</pre>
+      <p>
+        While you interact with the chart it takes over touch handling (<code>touch-action: none</code>) so the page
+        does not scroll and the browser does not pinch-zoom; everything is opt-in, so leave{' '}
+        <code>&lt;PinchZoom /&gt;</code> out and touch is untouched.
       </p>
 
       <h2>Accessibility</h2>
@@ -256,9 +392,10 @@ function ZoomButtons() {
 
       <h2>Defaults</h2>
       <p>
-        Zoom and every gesture are <strong>off until you opt in</strong> with a component, hook or prop, and the
-        existing <LinkToApi>Brush</LinkToApi> is unchanged. Enabling anything by default would be a breaking change, so
-        it never happens implicitly.
+        Zoom and every gesture are <strong>off until you opt in</strong> with a component, hook or prop. The existing{' '}
+        <LinkToApi>Brush</LinkToApi> remains <code>mode=&quot;slice&quot;</code> by default, and zoom coupling is only
+        enabled with <code>mode=&quot;zoom&quot;</code>. Enabling anything by default would be a breaking change, so it
+        never happens implicitly.
       </p>
     </article>
   );
