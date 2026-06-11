@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { useContext, useState } from 'react';
+import { useContext, useEffect, useRef, useState } from 'react';
 import { useAppDispatch, useAppSelector } from '../state/hooks';
 import { selectZoom } from '../state/selectors/zoomSelectors';
 import { selectChartOffsetInternal } from '../state/selectors/selectChartOffsetInternal';
@@ -66,6 +66,10 @@ function AxisScrollbar({
   const dispatch = useAppDispatch();
   const [hover, setHover] = useState(false);
   const [active, setActive] = useState(false);
+  // Holds the teardown of an in-progress drag, so unmounting mid-drag still removes the
+  // window listeners instead of leaving them alive with stale closures.
+  const dragCleanupRef = useRef<(() => void) | null>(null);
+  useEffect(() => () => dragCleanupRef.current?.(), []);
 
   const horizontal = dimension === 'x';
   const trackLength = horizontal ? plot.width : plot.height;
@@ -127,6 +131,7 @@ function AxisScrollbar({
     };
     const onEnd = () => {
       setActive(false);
+      dragCleanupRef.current = null;
       window.removeEventListener('touchmove', onMove);
       window.removeEventListener('touchend', onEnd);
       window.removeEventListener('touchcancel', onEnd);
@@ -134,6 +139,11 @@ function AxisScrollbar({
     window.addEventListener('touchmove', onMove, { passive: false });
     window.addEventListener('touchend', onEnd);
     window.addEventListener('touchcancel', onEnd);
+    dragCleanupRef.current = () => {
+      window.removeEventListener('touchmove', onMove);
+      window.removeEventListener('touchend', onEnd);
+      window.removeEventListener('touchcancel', onEnd);
+    };
   };
 
   const onMouseDown = (event: React.MouseEvent) => {
@@ -142,11 +152,16 @@ function AxisScrollbar({
     const onMove = (e: MouseEvent) => moveTo(e.clientX, e.clientY);
     const onUp = () => {
       setActive(false);
+      dragCleanupRef.current = null;
       window.removeEventListener('mousemove', onMove);
       window.removeEventListener('mouseup', onUp);
     };
     window.addEventListener('mousemove', onMove);
     window.addEventListener('mouseup', onUp);
+    dragCleanupRef.current = () => {
+      window.removeEventListener('mousemove', onMove);
+      window.removeEventListener('mouseup', onUp);
+    };
   };
 
   const trackStyle: React.CSSProperties = horizontal

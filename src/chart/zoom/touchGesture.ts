@@ -324,15 +324,19 @@ export const installTouchGesture: ZoomGestureInstaller = api => {
       if (mode === 'doubleTapPending' && Math.abs(t.clientY - anchorClientY) < DOUBLE_TAP_MOVE_TOLERANCE) {
         return;
       }
+      const doubleTapDrag = api.getOptions().touchDoubleTapDrag;
+      if (doubleTapDrag === 'none') {
+        // Double-tap-drag is disabled: abandon the gesture entirely, so the move neither zooms nor
+        // counts as a plain double-tap when the finger lifts.
+        mode = 'none';
+        return;
+      }
       mode = 'doubleTapDrag';
       if (event.cancelable) {
         event.preventDefault();
       }
       lastDragClient = { clientX: t.clientX, clientY: t.clientY };
-      if (
-        api.getOptions().touchDoubleTapDrag === 'selectCallback' ||
-        api.getOptions().touchDoubleTapDrag === 'selectZoom'
-      ) {
+      if (doubleTapDrag === 'selectCallback' || doubleTapDrag === 'selectZoom') {
         const pixels = api.plotPixels(t.clientX, t.clientY);
         const rect = pixels == null ? null : buildSelectionRect(pixels);
         api.setSelection(rect);

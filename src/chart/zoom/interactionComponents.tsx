@@ -68,7 +68,7 @@ function buildOptions(common: CommonZoomProps, overrides: Partial<ResolvedZoomOp
   if (common.maxZoom != null) {
     limits.maxZoom = common.maxZoom;
   }
-  const base = resolveZoomOptions({ ...ALL_OFF, ...limits }) as ResolvedZoomOptions;
+  const base = resolveZoomOptions({ ...ALL_OFF, ...limits });
   return { ...base, ...overrides };
 }
 

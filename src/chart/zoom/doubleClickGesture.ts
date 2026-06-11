@@ -9,7 +9,7 @@ export const installDoubleClickGesture: ZoomGestureInstaller = api => {
       return;
     }
     // A double-click on a scrollbar just pages quickly, it must not reset the whole chart.
-    if ((event.target as Element | null)?.closest?.('[data-recharts-zoom-scrollbar]') != null) {
+    if (event.target instanceof Element && event.target.closest('[data-recharts-zoom-scrollbar]') != null) {
       return;
     }
     api.reset();

@@ -638,7 +638,11 @@ function MinimapInternal(props: Props) {
           pointerEvents="all"
           tabIndex={0}
           aria-label={ariaLabel}
-          style={{ cursor, touchAction: 'none', outline: 'none' }}
+          /*
+           * No outline:none here: the element is keyboard-focusable, so the focus ring must stay
+           * visible. Browsers only draw the default ring on :focus-visible (keyboard), not on click.
+           */
+          style={{ cursor, touchAction: 'none' }}
           onPointerDown={handlePointerDown}
           onPointerMove={handlePointerMove}
           onPointerUp={handlePointerUp}

@@ -156,15 +156,17 @@ const ZOOM_DEFAULTS: Required<ZoomGestureOptions> = {
   wheelPanStep: 0.0015,
 };
 
-const AXIS_SHORTHANDS: ReadonlyArray<ZoomAxis> = ['x', 'y', 'xy'];
-
 function isZoomAxis(value: unknown): value is ZoomAxis {
-  return typeof value === 'string' && (AXIS_SHORTHANDS as ReadonlyArray<string>).includes(value);
+  return value === 'x' || value === 'y' || value === 'xy';
 }
 
 /**
  * Normalizes the `zoom` prop into resolved options, or `null` when zoom is disabled.
+ * Only an absent/`false` prop disables: any options object, axis shorthand or `true` resolves,
+ * which the first overload encodes for callers that pass one.
  */
+export function resolveZoomOptions(zoom: ZoomOptions | ZoomAxis | true): ResolvedZoomOptions;
+export function resolveZoomOptions(zoom: ZoomProp | undefined): ResolvedZoomOptions | null;
 export function resolveZoomOptions(zoom: ZoomProp | undefined): ResolvedZoomOptions | null {
   if (zoom == null || zoom === false) {
     return null;

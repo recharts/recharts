@@ -148,14 +148,24 @@ export const installPointerGesture: ZoomGestureInstaller = api => {
     startPixels = null;
   };
 
+  // A canceled drag (browser took over the gesture, window lost focus, ...) must not commit the
+  // selection or zoom; it only clears the in-progress state.
+  const onPointerCancel = () => {
+    if (mode === 'select') {
+      api.setSelection(null);
+    }
+    mode = null;
+    startPixels = null;
+  };
+
   api.element.addEventListener('pointerdown', onPointerDown);
   window.addEventListener('pointermove', onPointerMove);
   window.addEventListener('pointerup', onPointerUp);
-  window.addEventListener('pointercancel', onPointerUp);
+  window.addEventListener('pointercancel', onPointerCancel);
   return () => {
     api.element.removeEventListener('pointerdown', onPointerDown);
     window.removeEventListener('pointermove', onPointerMove);
     window.removeEventListener('pointerup', onPointerUp);
-    window.removeEventListener('pointercancel', onPointerUp);
+    window.removeEventListener('pointercancel', onPointerCancel);
   };
 };

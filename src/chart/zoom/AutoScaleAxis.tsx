@@ -96,8 +96,12 @@ export function AutoScaleAxis({ axis, xAxisId = 0, yAxisId = 0, padding = 0.05 }
     // vertically, whatever the layout - layout only changes which axis carries categories vs values.
     const lo = sourceAxis === 'x' ? offset.left : offset.top;
     const hi = sourceAxis === 'x' ? offset.left + offset.width : offset.top + offset.height;
+    // Match on both axes: in a multi-axis chart a series can carry the target axis id while being
+    // plotted against a different source axis, and would then be measured with the wrong scale.
+    const sourceAxisId = sourceAxis === 'x' ? xAxisId : yAxisId;
     const valueKeys = cartesianItems
       .filter(item => (target === 'y' ? item.yAxisId === targetAxisId : item.xAxisId === targetAxisId))
+      .filter(item => (sourceAxis === 'x' ? item.xAxisId === sourceAxisId : item.yAxisId === sourceAxisId))
       .filter(item => !item.hide && item.dataKey != null)
       .map(item => item.dataKey);
     if (valueKeys.length === 0) {
@@ -108,7 +112,7 @@ export function AutoScaleAxis({ axis, xAxisId = 0, yAxisId = 0, padding = 0.05 }
     let max = -Infinity;
     chartData.forEach((row, index) => {
       const sourceValue = sourceDataKey != null ? getValueByDataKey(row, sourceDataKey) : index;
-      const pixel = sourceScale(sourceValue as never);
+      const pixel = sourceScale(sourceValue);
       // Keep points whose source position is inside the visible plot band (small tolerance for bands).
       if (pixel == null || Number.isNaN(pixel) || pixel < lo - 1 || pixel > hi + 1) {
         return;
@@ -149,6 +153,8 @@ export function AutoScaleAxis({ axis, xAxisId = 0, yAxisId = 0, padding = 0.05 }
     target,
     sourceAxis,
     targetAxisId,
+    xAxisId,
+    yAxisId,
     padding,
     dispatch,
   ]);

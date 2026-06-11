@@ -1,12 +1,17 @@
 import * as React from 'react';
 import { fireEvent, render, waitFor } from '@testing-library/react';
-import { describe, it, expect } from 'vitest';
+import { beforeEach, describe, it, expect } from 'vitest';
 import { Scatter, ScatterChart, XAxis, YAxis, ZoomAndPan, useScatterLOD } from '../../src';
 
 // 100 coincident points (+ 2 corners to give the axes a domain): they all land in one pixel cell.
 const data = [{ x: 0, y: 0 }, { x: 100, y: 100 }, ...Array.from({ length: 100 }, () => ({ x: 50, y: 50 }))];
 
 let lodCount = -1;
+
+// The counter is module-scoped: reset it so one test can never pass on the previous test's value.
+beforeEach(() => {
+  lodCount = -1;
+});
 
 // Feeds the decimated result straight to <Scatter data>: the realistic pattern, which also exercises
 // the re-register path that previously caused an infinite update loop.

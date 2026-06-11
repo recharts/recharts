@@ -93,7 +93,7 @@ export function FollowSeries({
     const points: Array<{ pixel: number; value: number }> = [];
     chartData.forEach((row, index) => {
       const sourceValue = sourceDataKey != null ? getValueByDataKey(row, sourceDataKey) : index;
-      const pixel = sourceScale(sourceValue as never);
+      const pixel = sourceScale(sourceValue);
       const value = Number(getValueByDataKey(row, dataKey));
       if (pixel != null && !Number.isNaN(pixel) && Number.isFinite(value)) {
         points.push({ pixel, value });

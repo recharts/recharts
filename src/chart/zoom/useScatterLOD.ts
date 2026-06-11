@@ -11,11 +11,11 @@ import { RechartsScale } from '../../util/scale/RechartsScale';
 import { areScalesApproximatelyEqual } from '../../util/approximateEquality';
 
 /** Options for {@link useScatterLOD}. */
-export type ScatterLODOptions = {
+export type ScatterLODOptions<T = unknown> = {
   /** Data key for the x value. */
-  x: DataKey<any>;
+  x: DataKey<T>;
   /** Data key for the y value. */
-  y: DataKey<any>;
+  y: DataKey<T>;
   /** Id of the x axis the points are plotted against. @defaultValue 0 */
   xAxisId?: AxisId;
   /** Id of the y axis the points are plotted against. @defaultValue 0 */
@@ -42,7 +42,7 @@ export type ScatterLODOptions = {
  * const points = useScatterLOD(bigData, { x: 'x', y: 'y' });
  * return <Scatter data={points} />;
  */
-export function useScatterLOD<T>(data: ReadonlyArray<T>, options: ScatterLODOptions): ReadonlyArray<T> {
+export function useScatterLOD<T>(data: ReadonlyArray<T>, options: ScatterLODOptions<T>): ReadonlyArray<T> {
   const { x, y, xAxisId = 0, yAxisId = 0, cellSize = 2, cull = true } = options;
   const isPanorama = useIsPanorama();
   const selectXAxisScale = useCallback(
@@ -83,21 +83,28 @@ export function useScatterLOD<T>(data: ReadonlyArray<T>, options: ScatterLODOpti
     const maxX = plotLeft + plotWidth + cullMarginX;
     const minY = plotTop - cullMarginY;
     const maxY = plotTop + plotHeight + cullMarginY;
-    // A flat key per grid cell; the column count bounds the range so cells never collide.
-    const columns = Math.max(Math.ceil(plotWidth / cell) + 3, 1);
+    /*
+     * One flat key per grid cell. The grid is anchored on the culled band (not the plot) and the
+     * column/row indexes are clamped into it, so points outside the band (cull=false) can never
+     * collide with interior cells - they merge into the invisible edge cells instead.
+     */
+    const columns = Math.max(Math.ceil((maxX - minX) / cell) + 1, 1);
+    const rows = Math.max(Math.ceil((maxY - minY) / cell) + 1, 1);
 
     const seen = new Set<number>();
     const result: T[] = [];
     data.forEach(point => {
-      const px = xScale.map(getValueByDataKey(point, x as DataKey<T>) as never);
-      const py = yScale.map(getValueByDataKey(point, y as DataKey<T>) as never);
+      const px = xScale.map(getValueByDataKey(point, x));
+      const py = yScale.map(getValueByDataKey(point, y));
       if (px == null || py == null || Number.isNaN(px) || Number.isNaN(py)) {
         return;
       }
       if (cull && (px < minX || px > maxX || py < minY || py > maxY)) {
         return;
       }
-      const key = Math.round((py - plotTop) / cell) * columns + Math.round((px - plotLeft) / cell);
+      const col = Math.min(Math.max(Math.round((px - minX) / cell), 0), columns - 1);
+      const row = Math.min(Math.max(Math.round((py - minY) / cell), 0), rows - 1);
+      const key = row * columns + col;
       if (seen.has(key)) {
         return;
       }

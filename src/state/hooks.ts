@@ -37,6 +37,16 @@ const refEquality: EqualityFn<unknown> = (a, b) => a === b;
  * @param selector for pulling things out of Redux store; will not be called if the store is not accessible
  * @return whatever the selector returned; or undefined when outside of Redux store
  */
+/**
+ * Returns a stable function that reads the current Redux state on demand (or `undefined` outside
+ * of a chart). Unlike {@link useAppSelector} it does NOT subscribe: use it to resolve state lazily
+ * inside event handlers when subscribing would re-render on every store update.
+ */
+export function useAppStateReader(): () => RechartsRootState | undefined {
+  const context = useContext(RechartsReduxContext);
+  return useMemo(() => (context ? context.store.getState : noop), [context]);
+}
+
 export function useAppSelector<T>(
   selector: (state: RechartsRootState) => T,
   equalityFn: EqualityFn<T | undefined> = refEquality,

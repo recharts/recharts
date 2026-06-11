@@ -61,20 +61,20 @@ export type ZoomGestureApi = {
  */
 export type ZoomGestureInstaller = (api: ZoomGestureApi) => () => void;
 
-type TouchStyle = CSSStyleDeclaration & {
-  WebkitTapHighlightColor?: string;
-  WebkitUserSelect?: string;
-};
-
 const TOUCH_DECORATION_CLASS = 'recharts-zoom-touch-interactions';
 
+// Set through setProperty/getPropertyValue (the vendor-prefixed ones are not on CSSStyleDeclaration).
+const TOUCH_STYLE_PROPERTIES = [
+  'touch-action',
+  'user-select',
+  '-webkit-user-select',
+  '-webkit-tap-highlight-color',
+  'outline',
+] as const;
+
 type StyleSnapshot = {
-  style: TouchStyle;
-  touchAction: string;
-  userSelect: string;
-  webkitUserSelect?: string;
-  webkitTapHighlightColor?: string;
-  outline: string;
+  style: CSSStyleDeclaration;
+  values: ReadonlyArray<string>;
 };
 
 type DecorationSnapshot = {
@@ -83,24 +83,17 @@ type DecorationSnapshot = {
   stylesheet: HTMLStyleElement | null;
 };
 
-function snapshot(style: TouchStyle): StyleSnapshot {
-  return {
-    style,
-    touchAction: style.touchAction,
-    userSelect: style.userSelect,
-    webkitUserSelect: style.WebkitUserSelect,
-    webkitTapHighlightColor: style.WebkitTapHighlightColor,
-    outline: style.outline,
-  };
+function snapshot(style: CSSStyleDeclaration): StyleSnapshot {
+  return { style, values: TOUCH_STYLE_PROPERTIES.map(property => style.getPropertyValue(property)) };
 }
 
 function applyTouchBrowserStyle(target: HTMLElement | SVGElement): void {
-  const style = target.style as TouchStyle;
-  style.touchAction = 'none';
-  style.userSelect = 'none';
-  style.WebkitUserSelect = 'none';
-  style.WebkitTapHighlightColor = 'transparent';
-  style.outline = 'none';
+  const { style } = target;
+  style.setProperty('touch-action', 'none');
+  style.setProperty('user-select', 'none');
+  style.setProperty('-webkit-user-select', 'none');
+  style.setProperty('-webkit-tap-highlight-color', 'transparent');
+  style.setProperty('outline', 'none');
 }
 
 function createTouchDecorationStyles(): HTMLStyleElement {
@@ -141,7 +134,7 @@ export function suppressTouchBrowserDecorations(element: HTMLElement): () => voi
   ];
   const previous: DecorationSnapshot = {
     hadClass: element.classList.contains(TOUCH_DECORATION_CLASS),
-    styles: targets.map(target => snapshot(target.style as TouchStyle)),
+    styles: targets.map(target => snapshot(target.style)),
     stylesheet: typeof document === 'undefined' ? null : createTouchDecorationStyles(),
   };
 
@@ -152,13 +145,8 @@ export function suppressTouchBrowserDecorations(element: HTMLElement): () => voi
   targets.forEach(target => applyTouchBrowserStyle(target));
 
   return () => {
-    previous.styles.forEach(previousStyle => {
-      const { style, touchAction, userSelect, webkitUserSelect, webkitTapHighlightColor, outline } = previousStyle;
-      style.touchAction = touchAction;
-      style.userSelect = userSelect;
-      style.WebkitUserSelect = webkitUserSelect;
-      style.WebkitTapHighlightColor = webkitTapHighlightColor;
-      style.outline = outline;
+    previous.styles.forEach(({ style, values }) => {
+      TOUCH_STYLE_PROPERTIES.forEach((property, index) => style.setProperty(property, values[index] ?? ''));
     });
     previous.stylesheet?.remove();
     if (!previous.hadClass) {
