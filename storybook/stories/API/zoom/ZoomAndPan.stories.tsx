@@ -1,6 +1,6 @@
 import React from 'react';
 import { Args } from '@storybook/react-vite';
-import { pageData } from '../data';
+import { pageData } from '../../data';
 import {
   Line,
   LineChart,
@@ -12,7 +12,7 @@ import {
   YAxis,
   ZoomAndPan,
   useZoom,
-} from '../../../src';
+} from '../../../../src';
 
 export default {
   component: ZoomAndPan,

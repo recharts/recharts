@@ -457,9 +457,16 @@ export const ZoomAndPanPlayground = {
  * shared. Here two charts read and write the same viewport, so zooming/panning one keeps the other
  * perfectly in sync.
  */
-function ControlledExample() {
+function ControlledExample(args: ZoomPlaygroundArgs) {
   const [viewport, setViewport] = React.useState(fullViewport);
-  const zoom = { axis: 'x' as const, viewport, onZoomChange: setViewport };
+  const zoom = {
+    axis: args.axis,
+    wheel: args.wheel,
+    pan: args.pan,
+    scrollbars: args.scrollbars,
+    viewport,
+    onZoomChange: setViewport,
+  };
 
   return (
     <div>
@@ -491,10 +498,11 @@ function ControlledExample() {
 
 export const Controlled = {
   name: 'Controlled (synced charts)',
-  render: () => <ControlledExample />,
+  render: (args: ZoomPlaygroundArgs) => <ControlledExample {...args} />,
+  parameters: { controls: { include: ['axis', 'wheel', 'pan', 'scrollbars'] } },
 };
 
-function MinimapExample() {
+function MinimapExample(args: ZoomPlaygroundArgs) {
   return (
     <LineChart width={760} height={360} data={data}>
       <CartesianGrid strokeDasharray="3 3" />
@@ -503,8 +511,16 @@ function MinimapExample() {
       <Tooltip />
       <Line type="monotone" dataKey="uv" stroke="#8884d8" dot={false} isAnimationActive={false} />
       <Line type="monotone" dataKey="pv" stroke="#82ca9d" dot={false} isAnimationActive={false} />
-      <ZoomAndPan axis="x" initialZoom={{ x: { start: 0.18, end: 0.48 } }} scrollbars={false} />
-      <Minimap axis="x" position="bottom-right" width={220} height={76} viewportStroke="#1d4ed8">
+      <ZoomAndPan axis={args.axis} initialZoom={{ x: { start: 0.18, end: 0.48 } }} scrollbars={false} />
+      <Minimap
+        axis={args.axis}
+        position={args.minimapPosition}
+        wheel={args.minimapWheel}
+        pinch={args.minimapPinch}
+        width={220}
+        height={76}
+        viewportStroke="#1d4ed8"
+      >
         <LineChart data={data}>
           <Line type="monotone" dataKey="uv" stroke="#8884d8" dot={false} isAnimationActive={false} />
           <Line type="monotone" dataKey="pv" stroke="#82ca9d" dot={false} isAnimationActive={false} />
@@ -516,10 +532,11 @@ function MinimapExample() {
 
 export const MinimapOverview = {
   name: 'Minimap overview',
-  render: () => <MinimapExample />,
+  render: (args: ZoomPlaygroundArgs) => <MinimapExample {...args} />,
+  parameters: { controls: { include: ['axis', 'minimapPosition', 'minimapWheel', 'minimapPinch'] } },
 };
 
-function BrushZoomModeExample() {
+function BrushZoomModeExample(args: ZoomPlaygroundArgs) {
   return (
     <LineChart width={760} height={360} data={data}>
       <CartesianGrid strokeDasharray="3 3" />
@@ -528,7 +545,14 @@ function BrushZoomModeExample() {
       <Tooltip />
       <Line type="monotone" dataKey="uv" stroke="#8884d8" dot={false} isAnimationActive={false} />
       <ZoomAndPan axis="x" initialZoom={{ x: { start: 0.2, end: 0.5 } }} scrollbars={false} />
-      <Brush mode="zoom" autoScaleYDomain height={52} stroke="#1d4ed8">
+      <Brush
+        mode="zoom"
+        autoScaleYDomain={args.brushAutoScaleYDomain}
+        wheel={args.brushWheel}
+        pinch={args.brushPinch}
+        height={52}
+        stroke="#1d4ed8"
+      >
         <LineChart data={data}>
           <Line type="monotone" dataKey="uv" stroke="#8884d8" dot={false} isAnimationActive={false} />
         </LineChart>
@@ -539,10 +563,11 @@ function BrushZoomModeExample() {
 
 export const BrushZoomMode = {
   name: 'Brush zoom mode',
-  render: () => <BrushZoomModeExample />,
+  render: (args: ZoomPlaygroundArgs) => <BrushZoomModeExample {...args} />,
+  parameters: { controls: { include: ['brushAutoScaleYDomain', 'brushWheel', 'brushPinch'] } },
 };
 
-function VerticalBrushZoomModeExample() {
+function VerticalBrushZoomModeExample(args: ZoomPlaygroundArgs) {
   return (
     <LineChart width={760} height={360} data={data}>
       <CartesianGrid strokeDasharray="3 3" />
@@ -551,7 +576,7 @@ function VerticalBrushZoomModeExample() {
       <Tooltip />
       <Line type="monotone" dataKey="uv" stroke="#8884d8" dot={false} isAnimationActive={false} />
       <ZoomAndPan axis="y" initialZoom={{ y: { start: 0.2, end: 0.65 } }} scrollbars={false} />
-      <Brush layout="vertical" mode="zoom" axis="y" stroke="#0f766e" wheel pinch>
+      <Brush layout="vertical" mode="zoom" axis="y" stroke="#0f766e" wheel={args.brushWheel} pinch={args.brushPinch}>
         <LineChart data={data}>
           <Line type="monotone" dataKey="uv" stroke="#8884d8" dot={false} isAnimationActive={false} />
         </LineChart>
@@ -562,10 +587,11 @@ function VerticalBrushZoomModeExample() {
 
 export const VerticalBrushZoomMode = {
   name: 'Vertical brush zoom mode',
-  render: () => <VerticalBrushZoomModeExample />,
+  render: (args: ZoomPlaygroundArgs) => <VerticalBrushZoomModeExample {...args} />,
+  parameters: { controls: { include: ['brushWheel', 'brushPinch'] } },
 };
 
-function MultiBrushZoomModeExample() {
+function MultiBrushZoomModeExample(args: ZoomPlaygroundArgs) {
   return (
     <LineChart width={760} height={360} data={data}>
       <CartesianGrid strokeDasharray="3 3" />
@@ -575,12 +601,20 @@ function MultiBrushZoomModeExample() {
       <Line type="monotone" dataKey="uv" stroke="#8884d8" dot={false} isAnimationActive={false} />
       <Line type="monotone" dataKey="pv" stroke="#82ca9d" dot={false} isAnimationActive={false} />
       <ZoomAndPan axis="xy" initialZoom={{ x: { start: 0.12, end: 0.55 }, y: { start: 0.2, end: 0.75 } }} />
-      <Brush mode="zoom" axis="x" autoScaleYDomain={false} height={52} stroke="#1d4ed8">
+      <Brush
+        mode="zoom"
+        axis="x"
+        autoScaleYDomain={args.brushAutoScaleYDomain}
+        wheel={args.brushWheel}
+        pinch={args.brushPinch}
+        height={52}
+        stroke="#1d4ed8"
+      >
         <LineChart data={data}>
           <Line type="monotone" dataKey="uv" stroke="#8884d8" dot={false} isAnimationActive={false} />
         </LineChart>
       </Brush>
-      <Brush layout="vertical" mode="zoom" axis="y" stroke="#0f766e">
+      <Brush layout="vertical" mode="zoom" axis="y" stroke="#0f766e" wheel={args.brushWheel} pinch={args.brushPinch}>
         <LineChart data={data}>
           <Line type="monotone" dataKey="uv" stroke="#8884d8" dot={false} isAnimationActive={false} />
         </LineChart>
@@ -591,7 +625,8 @@ function MultiBrushZoomModeExample() {
 
 export const MultiBrushZoomMode = {
   name: 'Multi-brush zoom mode',
-  render: () => <MultiBrushZoomModeExample />,
+  render: (args: ZoomPlaygroundArgs) => <MultiBrushZoomModeExample {...args} />,
+  parameters: { controls: { include: ['brushAutoScaleYDomain', 'brushWheel', 'brushPinch'] } },
 };
 
 /**
@@ -599,8 +634,12 @@ export const MultiBrushZoomMode = {
  * "Auto-scale y" re-fits y to the data inside the visible window; "Follow series" keeps the line
  * vertically centred (auto-scaling the span around it). Switch modes to compare; "Off" leaves y free.
  */
-function AutoScaleExample() {
-  const [mode, setMode] = React.useState<'autoscale' | 'follow' | 'off'>('autoscale');
+function AutoScaleExample(args: ZoomPlaygroundArgs) {
+  const [mode, setMode] = React.useState<AutoScaleMode>(args.autoScaleMode);
+  // The Storybook control and the in-canvas buttons drive the same mode.
+  React.useEffect(() => {
+    setMode(args.autoScaleMode);
+  }, [args.autoScaleMode]);
   const button = (value: typeof mode, label: string) => (
     <button
       type="button"
@@ -636,7 +675,8 @@ function AutoScaleExample() {
 
 export const AutoScaleAndFollow = {
   name: 'Auto-scale & follow',
-  render: () => <AutoScaleExample />,
+  render: (args: ZoomPlaygroundArgs) => <AutoScaleExample {...args} />,
+  parameters: { controls: { include: ['autoScaleMode'] } },
 };
 
 /**
@@ -718,6 +758,7 @@ function ScatterLODExample({ points, cellSize, cull }: ScatterLODArgs) {
 export const ScatterLevelOfDetail = {
   name: 'Scatter level of detail',
   render: (args: ScatterLODArgs) => <ScatterLODExample {...args} />,
+  parameters: { controls: { include: ['points', 'cellSize', 'cull'] } },
   argTypes: {
     points: {
       control: { type: 'range', min: 1000, max: 50000, step: 1000 },
@@ -774,17 +815,24 @@ const specialTreemapData = [
 ];
 
 const specialZoom = {
-  initialZoom: { x: { start: 0.15, end: 0.85 }, y: { start: 0.15, end: 0.85 } },
   scrollbars: true,
 };
 
-function SpecialChartsZoomExample() {
+function SpecialChartsZoomExample(args: ZoomPlaygroundArgs) {
+  const zoomProps = {
+    ...specialZoom,
+    wheel: args.wheel,
+    pan: args.pan,
+    touch: args.touch,
+    touchDrag: args.touchDrag,
+    scrollbars: args.scrollbars,
+  };
   return (
     <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, minmax(320px, 1fr))', gap: 16 }}>
       <PieChart width={360} height={260}>
         <Tooltip />
         <Pie data={specialChartData} dataKey="value" nameKey="name" cx="50%" cy="50%" outerRadius={80} fill="#8884d8" />
-        <ZoomAndPan {...specialZoom} />
+        <ZoomAndPan {...zoomProps} />
       </PieChart>
 
       <RadarChart width={360} height={260} data={specialChartData}>
@@ -793,27 +841,27 @@ function SpecialChartsZoomExample() {
         <PolarRadiusAxis />
         <Radar dataKey="uv" stroke="#8884d8" fill="#8884d8" fillOpacity={0.6} />
         <Tooltip />
-        <ZoomAndPan {...specialZoom} />
+        <ZoomAndPan {...zoomProps} />
       </RadarChart>
 
       <RadialBarChart width={360} height={260} data={specialChartData}>
         <RadialBar dataKey="value" background />
         <Tooltip />
-        <ZoomAndPan {...specialZoom} />
+        <ZoomAndPan {...zoomProps} />
       </RadialBarChart>
 
       <FunnelChart width={360} height={260}>
         <Tooltip />
         <Funnel dataKey="value" data={specialChartData} isAnimationActive={false} />
-        <ZoomAndPan {...specialZoom} />
+        <ZoomAndPan {...zoomProps} />
       </FunnelChart>
 
       <Sankey width={360} height={260} data={specialSankeyData}>
-        <ZoomAndPan {...specialZoom} />
+        <ZoomAndPan {...zoomProps} />
       </Sankey>
 
       <SunburstChart width={360} height={260} data={specialSunburstData}>
-        <ZoomAndPan {...specialZoom} />
+        <ZoomAndPan {...zoomProps} />
       </SunburstChart>
 
       <Treemap
@@ -824,7 +872,7 @@ function SpecialChartsZoomExample() {
         nameKey="name"
         isAnimationActive={false}
       >
-        <ZoomAndPan {...specialZoom} />
+        <ZoomAndPan {...zoomProps} />
       </Treemap>
     </div>
   );
@@ -832,5 +880,6 @@ function SpecialChartsZoomExample() {
 
 export const SpecialCharts = {
   name: 'Special charts',
-  render: () => <SpecialChartsZoomExample />,
+  render: (args: ZoomPlaygroundArgs) => <SpecialChartsZoomExample {...args} />,
+  parameters: { controls: { include: ['wheel', 'pan', 'touch', 'touchDrag', 'scrollbars'] } },
 };
