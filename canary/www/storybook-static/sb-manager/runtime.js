@@ -20184,6 +20184,30 @@ var HighlightStyles = ({ refId, itemId }) => react_default.createElement(
 // src/manager/components/sidebar/Refs.tsx
 init_react();
 
+// src/shared/constants/tags.ts
+var Tag2 = {
+  /** Indicates that autodocs should be generated for this component */
+  AUTODOCS: "autodocs",
+  /** MDX documentation attached to a component's stories file */
+  ATTACHED_MDX: "attached-mdx",
+  /** Standalone MDX documentation not attached to stories */
+  UNATTACHED_MDX: "unattached-mdx",
+  /** Story has a play function */
+  PLAY_FN: "play-fn",
+  /** Story has a test function */
+  TEST_FN: "test-fn",
+  /** Development environment tag */
+  DEV: "dev",
+  /** Test environment tag */
+  TEST: "test",
+  /** Manifest generation tag */
+  MANIFEST: "manifest"
+}, BUILT_IN_FILTERS = {
+  _docs: (entry, excluded) => excluded ? entry.type !== "docs" : entry.type === "docs",
+  _play: (entry, excluded) => excluded ? entry.type !== "story" || !entry.tags?.includes(Tag2.PLAY_FN) : entry.type === "story" && !!entry.tags?.includes(Tag2.PLAY_FN),
+  _test: (entry, excluded) => excluded ? entry.type !== "story" || entry.subtype !== "test" : entry.type === "story" && entry.subtype === "test"
+}, USER_TAG_FILTER = (tag) => (entry, excluded) => excluded ? !entry.tags?.includes(tag) : !!entry.tags?.includes(tag);
+
 // src/shared/utils/story-index-filters.ts
 var getActiveFilterCount = ({
   includedTagFilters,
@@ -25069,30 +25093,6 @@ var MutedText = styled.span(({ theme }) => ({
     ))
   };
 };
-
-// src/shared/constants/tags.ts
-var Tag2 = {
-  /** Indicates that autodocs should be generated for this component */
-  AUTODOCS: "autodocs",
-  /** MDX documentation attached to a component's stories file */
-  ATTACHED_MDX: "attached-mdx",
-  /** Standalone MDX documentation not attached to stories */
-  UNATTACHED_MDX: "unattached-mdx",
-  /** Story has a play function */
-  PLAY_FN: "play-fn",
-  /** Story has a test function */
-  TEST_FN: "test-fn",
-  /** Development environment tag */
-  DEV: "dev",
-  /** Test environment tag */
-  TEST: "test",
-  /** Manifest generation tag */
-  MANIFEST: "manifest"
-}, BUILT_IN_FILTERS = {
-  _docs: (entry, excluded) => excluded ? entry.type !== "docs" : entry.type === "docs",
-  _play: (entry, excluded) => excluded ? entry.type !== "story" || !entry.tags?.includes(Tag2.PLAY_FN) : entry.type === "story" && !!entry.tags?.includes(Tag2.PLAY_FN),
-  _test: (entry, excluded) => excluded ? entry.type !== "story" || entry.subtype !== "test" : entry.type === "story" && entry.subtype === "test"
-}, USER_TAG_FILTER = (tag) => (entry, excluded) => excluded ? !entry.tags?.includes(tag) : !!entry.tags?.includes(tag);
 
 // src/manager/components/sidebar/FilterPanel.utils.ts
 var BUILT_IN_TAGS = /* @__PURE__ */ new Set([

@@ -40088,6 +40088,14 @@ init_dist();
 // src/preview-api/modules/preview-web/PreviewWithSelection.tsx
 init_client_logger();
 
+// src/shared/utils/story-index-filters.ts
+var getActiveFilterCount = ({
+  includedTagFilters,
+  excludedTagFilters,
+  includedStatusFilters,
+  excludedStatusFilters
+}) => (includedTagFilters?.length ?? 0) + (excludedTagFilters?.length ?? 0) + (includedStatusFilters?.length ?? 0) + (excludedStatusFilters?.length ?? 0), hasActiveFilters = (filters) => getActiveFilterCount(filters) > 0;
+
 // src/preview-api/modules/preview-web/docs-context/DocsContext.ts
 init_esm();
 
@@ -60180,14 +60188,6 @@ var buildNavigationUrl = (path, queryParams = {}) => {
   return [path, ...params].join("&");
 };
 
-// src/shared/utils/story-index-filters.ts
-var getActiveFilterCount = ({
-  includedTagFilters,
-  excludedTagFilters,
-  includedStatusFilters,
-  excludedStatusFilters
-}) => (includedTagFilters?.length ?? 0) + (excludedTagFilters?.length ?? 0) + (includedStatusFilters?.length ?? 0) + (excludedStatusFilters?.length ?? 0), hasActiveFilters = (filters) => getActiveFilterCount(filters) > 0;
-
 // src/shared/universal-store/use-universal-store-manager.ts
 var React33 = __toESM(require_react(), 1);
 var useUniversalStore = (universalStore, selector) => {
@@ -60274,8 +60274,8 @@ var BUILT_IN_URL_TAG_MAP = {
     {}
   );
   return (item) => {
-    let tags2 = item.tags ?? [];
-    return (tags2.includes(Tag.DEV) || item.type === "docs") && tags2.filter((tag) => staticExcludeTags[tag]).length === 0;
+    let tags2 = item.tags ?? [], isCsfAutodocsEntry = item.type === "docs" && !tags2.includes(Tag.ATTACHED_MDX) && !tags2.includes(Tag.UNATTACHED_MDX);
+    return (tags2.includes(Tag.DEV) || isCsfAutodocsEntry) && tags2.filter((tag) => staticExcludeTags[tag]).length === 0;
   };
 }, computeTagsFilterFn = (includedTagFilters, excludedTagFilters) => {
   let computeFilterFunctions = (set3) => Object.values(
@@ -60990,7 +60990,7 @@ init_dist();
 var import_memoizerific9 = __toESM(require_memoizerific(), 1), import_semver = __toESM(require_semver2(), 1);
 
 // src/manager-api/version.ts
-var version = "10.4.2";
+var version = "10.4.3";
 
 // src/manager-api/modules/versions.ts
 var { VERSIONCHECK } = scope, getVersionCheckData = (0, import_memoizerific9.default)(1)(() => {
