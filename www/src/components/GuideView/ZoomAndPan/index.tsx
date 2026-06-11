@@ -14,9 +14,13 @@ export function ZoomAndPanGuide() {
       <h1>Zoom &amp; Pan</h1>
       <p>
         Recharts can zoom and pan a cartesian chart (<LinkToApi>LineChart</LinkToApi>, <LinkToApi>AreaChart</LinkToApi>,{' '}
-        <LinkToApi>BarChart</LinkToApi>, <LinkToApi>ScatterChart</LinkToApi>, <LinkToApi>ComposedChart</LinkToApi>). It
-        is <strong>off by default</strong> and fully composable: you opt in by adding the interaction components (or
-        hooks) you want, and they all drive one shared, normalized viewport.
+        <LinkToApi>BarChart</LinkToApi>, <LinkToApi>ScatterChart</LinkToApi>, <LinkToApi>ComposedChart</LinkToApi>) in
+        both horizontal and vertical layouts, and non-cartesian charts too (<LinkToApi>PieChart</LinkToApi>,{' '}
+        <LinkToApi>RadarChart</LinkToApi>, <LinkToApi>RadialBarChart</LinkToApi>, <LinkToApi>FunnelChart</LinkToApi>,{' '}
+        <LinkToApi>Sankey</LinkToApi>, <LinkToApi>SunburstChart</LinkToApi>, <LinkToApi>Treemap</LinkToApi> — see{' '}
+        <a href="#special-charts">Polar &amp; standalone charts</a>). It is <strong>off by default</strong> and fully
+        composable: you opt in by adding the interaction components (or hooks) you want, and they all drive one shared,
+        normalized viewport.
       </p>
 
       <h2>The viewport</h2>
@@ -58,6 +62,13 @@ type Viewport = { x?: AxisWindow; y?: AxisWindow };
         dropping to the granular components:
       </p>
       <pre>{`<ZoomAndPan axis="x" minZoom={1} maxZoom={20} pinch={false} scrollbars={false} />`}</pre>
+      <p>
+        As a shorthand, every chart root also accepts a <code>zoom</code> prop that mounts{' '}
+        <code>&lt;ZoomAndPan /&gt;</code> for you. It takes <code>true</code> for the defaults, an axis (
+        <code>&quot;x&quot;</code>, <code>&quot;y&quot;</code>, <code>&quot;xy&quot;</code>) or a full options object:
+      </p>
+      <pre>{`<LineChart data={data} zoom="x">...</LineChart>
+<BarChart data={data} zoom={{ axis: 'x', maxZoom: 10, scrollbars: false }}>...</BarChart>`}</pre>
       <p>
         Add <code>&lt;Minimap /&gt;</code> when the chart needs a persistent overview of the full data:
       </p>
@@ -244,7 +255,7 @@ const [viewport, setViewport] = useState({ x: { start: 0.2, end: 0.6 } });
       <pre>{`<LineChart data={data}>
   <Line dataKey="value" />
   <MouseWheelZoom axis="x" />
-  <AutoScaleAxis axis="y" />            {/* fit y to the visible x window */}
+  <AutoScaleAxis />                     {/* fit the value axis to the visible window */}
   {/* or keep one series centred: <FollowSeries dataKey="value" autoScale /> */}
 </LineChart>
 
@@ -253,6 +264,35 @@ function Points() {
   const lod = useScatterLOD(bigData, { x: 'x', y: 'y' });
   return <Scatter data={lod} />;
 }`}</pre>
+      <p>
+        Both helpers are layout-aware: they fit / re-centre the <em>value</em> axis, which is y in a horizontal layout
+        and x in a vertical one (where the categories run along y). Pass an explicit <code>axis</code> to{' '}
+        <code>&lt;AutoScaleAxis /&gt;</code> to override.
+      </p>
+
+      <h2 id="special-charts">Polar &amp; standalone charts</h2>
+      <p>
+        Charts without cartesian axes — <LinkToApi>PieChart</LinkToApi>, <LinkToApi>RadarChart</LinkToApi>,{' '}
+        <LinkToApi>RadialBarChart</LinkToApi>, <LinkToApi>FunnelChart</LinkToApi>, <LinkToApi>Sankey</LinkToApi>,{' '}
+        <LinkToApi>SunburstChart</LinkToApi> and <LinkToApi>Treemap</LinkToApi> — zoom as a <strong>camera</strong>:
+        instead of stretching axis ranges, the plot content is scaled and translated under the same viewport. Centric
+        and radial charts zoom uniformly so they keep their aspect ratio. The exact same gestures, options, controlled
+        state and <code>useZoom()</code> hook apply.
+      </p>
+      <pre>{`<PieChart width={400} height={300}>
+  <Pie data={data} dataKey="value" />
+  <ZoomAndPan />
+</PieChart>
+
+<Sankey width={600} height={300} data={sankeyData}>
+  {/* one-finger drag pans on touch - handy for maps-like exploration */}
+  <ZoomAndPan touchDrag="pan" />
+</Sankey>`}</pre>
+      <p>
+        Tooltips stay attached to their items while zoomed (active coordinates are mapped through the same transform),
+        and content outside the plot area is clipped only while actually zoomed. Axis-band gestures and scrollbars that
+        require a cartesian axis are automatically disabled on these charts; everything else works unchanged.
+      </p>
 
       <h2>Custom UI &amp; your own gestures</h2>
       <p>
