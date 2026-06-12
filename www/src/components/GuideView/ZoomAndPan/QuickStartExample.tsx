@@ -1,4 +1,3 @@
-import React from 'react';
 import { CartesianGrid, Line, LineChart, Tooltip, XAxis, YAxis, ZoomAndPan } from 'recharts';
 import { generateMockData } from '@recharts/devtools';
 
