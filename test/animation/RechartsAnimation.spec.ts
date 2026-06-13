@@ -1,10 +1,10 @@
 import { describe, it, expect } from 'vitest';
-import { RechartsAnimation } from '../../src/animation/RechartsAnimation';
+import { RechartsAnimationImpl } from '../../src/animation/RechartsAnimation';
 import { noop } from '../../src/util/DataUtils';
 
 describe('RechartsAnimation state machine', () => {
   it('should start in "init" state', () => {
-    const a = new RechartsAnimation({
+    const a = new RechartsAnimationImpl({
       onAnimationStart: noop,
       onAnimationEnd: noop,
       animationDuration: 200,
@@ -15,7 +15,7 @@ describe('RechartsAnimation state machine', () => {
 
   it('should transition to "pending" after the first tick, and call onAnimationStart while doing so, and not call it second time after active', () => {
     const spy = vi.fn();
-    const a = new RechartsAnimation({
+    const a = new RechartsAnimationImpl({
       onAnimationStart: spy,
       onAnimationEnd: noop,
       animationDuration: 200,
@@ -31,7 +31,7 @@ describe('RechartsAnimation state machine', () => {
   });
 
   it('should not throw an error when onAnimationStart or onAnimationEnd are not defined', () => {
-    const a = new RechartsAnimation({
+    const a = new RechartsAnimationImpl({
       onAnimationStart: undefined,
       onAnimationEnd: undefined,
       animationDuration: 200,
@@ -44,7 +44,7 @@ describe('RechartsAnimation state machine', () => {
   });
 
   it('should return progress = 0 when init and when pending', () => {
-    const a = new RechartsAnimation({
+    const a = new RechartsAnimationImpl({
       onAnimationStart: noop,
       onAnimationEnd: noop,
       animationDuration: 200,
@@ -56,7 +56,7 @@ describe('RechartsAnimation state machine', () => {
   });
 
   it('should transition to "active" after the second tick', () => {
-    const a = new RechartsAnimation({
+    const a = new RechartsAnimationImpl({
       onAnimationStart: noop,
       onAnimationEnd: noop,
       animationDuration: 200,
@@ -68,7 +68,7 @@ describe('RechartsAnimation state machine', () => {
   });
 
   it('should return correct progress when in "active" state', () => {
-    const a = new RechartsAnimation({
+    const a = new RechartsAnimationImpl({
       onAnimationStart: noop,
       onAnimationEnd: noop,
       animationDuration: 200,
@@ -82,7 +82,7 @@ describe('RechartsAnimation state machine', () => {
 
   it('should handle transition to "completed" state and call onAnimationEnd', () => {
     const spy = vi.fn();
-    const a = new RechartsAnimation({
+    const a = new RechartsAnimationImpl({
       onAnimationStart: undefined,
       onAnimationEnd: spy,
       animationDuration: 200,
@@ -100,7 +100,7 @@ describe('RechartsAnimation state machine', () => {
 
   it('should wait for [animationBegin] time before progressing from pending to active', () => {
     const spy = vi.fn();
-    const a = new RechartsAnimation({
+    const a = new RechartsAnimationImpl({
       onAnimationStart: spy,
       onAnimationEnd: noop,
       animationDuration: 200,
@@ -127,7 +127,7 @@ describe('RechartsAnimation state machine', () => {
      */
 
     const spy = vi.fn();
-    const a = new RechartsAnimation({
+    const a = new RechartsAnimationImpl({
       onAnimationStart: spy,
       onAnimationEnd: noop,
       animationDuration: 200,
@@ -148,7 +148,7 @@ describe('RechartsAnimation state machine', () => {
   });
 
   it('should no longer update progress after complete', () => {
-    const a = new RechartsAnimation({
+    const a = new RechartsAnimationImpl({
       onAnimationStart: noop,
       onAnimationEnd: noop,
       animationDuration: 200,
@@ -170,9 +170,9 @@ describe('RechartsAnimation state machine', () => {
   });
 
   describe('progress tracking when animationBegin = 0', () => {
-    let a: RechartsAnimation;
+    let a: RechartsAnimationImpl;
     beforeEach(() => {
-      a = new RechartsAnimation({
+      a = new RechartsAnimationImpl({
         onAnimationStart: noop,
         onAnimationEnd: noop,
         animationDuration: 200,
@@ -210,9 +210,9 @@ describe('RechartsAnimation state machine', () => {
   });
 
   describe('progress tracking when animationBegin > 0', () => {
-    let a: RechartsAnimation;
+    let a: RechartsAnimationImpl;
     beforeEach(() => {
-      a = new RechartsAnimation({
+      a = new RechartsAnimationImpl({
         onAnimationStart: noop,
         onAnimationEnd: noop,
         animationDuration: 200,
@@ -253,7 +253,7 @@ describe('RechartsAnimation state machine', () => {
 
   it('should allow animationBegin to be greater than animationDuration because "begin" is a pause before the actual animation', () => {
     expect(() => {
-      return new RechartsAnimation({
+      return new RechartsAnimationImpl({
         onAnimationStart: noop,
         onAnimationEnd: noop,
         animationDuration: 200,
@@ -263,7 +263,7 @@ describe('RechartsAnimation state machine', () => {
   });
 
   it('should handle multiple calls to "tick" with the same time value correctly', () => {
-    const a = new RechartsAnimation({
+    const a = new RechartsAnimationImpl({
       onAnimationStart: vi.fn(),
       onAnimationEnd: vi.fn(),
       animationDuration: 200,
@@ -283,7 +283,7 @@ describe('RechartsAnimation state machine', () => {
   it('should allow to complete straight away and skip the other states, and not call any of the handlers', () => {
     const startSpy = vi.fn();
     const endSpy = vi.fn();
-    const a = new RechartsAnimation({
+    const a = new RechartsAnimationImpl({
       onAnimationStart: startSpy,
       onAnimationEnd: endSpy,
       animationDuration: 200,
