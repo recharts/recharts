@@ -7,6 +7,7 @@
   "types/animation/JavascriptAnimate.d.ts",
   "types/animation/ManualTimeoutController.d.ts",
   "types/animation/ProgressAnimationManager.d.ts",
+  "types/animation/RechartsAnimation.d.ts",
   "types/animation/configUpdate.d.ts",
   "types/animation/createDefaultAnimationManager.d.ts",
   "types/animation/easing.d.ts",
