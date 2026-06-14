@@ -64,6 +64,7 @@ import {
   PolarLabelListEntry,
   Props as LabelListProps,
 } from '../component/LabelList';
+import { PolarLabelContextProvider } from '../component/Label';
 import { GraphicalItemId } from '../state/graphicalItemsSlice';
 import { ZIndexable, ZIndexLayer } from '../zIndex/ZIndexLayer';
 import { DefaultZIndexes } from '../zIndex/DefaultZIndexes';
@@ -1005,7 +1006,21 @@ function SectorsWithAnimation({
         )}
       </AnimatedItems>
       <PieLabelList showLabels={!isAnimating} sectors={sectors} props={props} />
-      {props.children}
+      {sectors.length > 0 ? (
+        <PolarLabelContextProvider
+          cx={sectors[0].cx}
+          cy={sectors[0].cy}
+          innerRadius={sectors[0].innerRadius}
+          outerRadius={sectors[0].outerRadius}
+          startAngle={props.startAngle}
+          endAngle={props.endAngle}
+          clockWise={false}
+        >
+          {props.children}
+        </PolarLabelContextProvider>
+      ) : (
+        props.children
+      )}
     </PieLabelListProvider>
   );
 }
