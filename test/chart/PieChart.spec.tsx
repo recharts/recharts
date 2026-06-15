@@ -876,6 +876,10 @@ describe('<PieChart />', () => {
         </PieChart>,
       );
 
+      act(() => {
+        vi.runOnlyPendingTimers();
+      });
+
       expect(labelSpy).toHaveBeenCalled();
       const props = labelSpy.mock.calls[0][0];
       expect(props.viewBox.innerRadius).toBe(80);
@@ -902,6 +906,10 @@ describe('<PieChart />', () => {
           </Pie>
         </PieChart>,
       );
+
+      act(() => {
+        vi.runOnlyPendingTimers();
+      });
 
       expect(labelSpy).toHaveBeenCalled();
       const props = labelSpy.mock.calls[0][0];
