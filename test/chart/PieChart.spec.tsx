@@ -1,7 +1,7 @@
 import React from 'react';
 import { act, fireEvent } from '@testing-library/react';
 import { expect, Mock, vi } from 'vitest';
-import { Cell, Legend, Pie, PieChart, Sector, SectorProps, Tooltip, useChartHeight } from '../../src';
+import { Cell, Legend, Label, Pie, PieChart, Sector, SectorProps, Tooltip, useChartHeight } from '../../src';
 import { useChartWidth, useViewBox } from '../../src/context/chartLayoutContext';
 import { useClipPathId } from '../../src/container/ClipPathProvider';
 import { createSelectorTestCase, rechartsTestRender } from '../helper/createSelectorTestCase';
@@ -850,6 +850,62 @@ describe('<PieChart />', () => {
     it('should default to dataKey = value', () => {
       const { container } = renderTestCase();
       expect(selectPieSectors(container)).toHaveLength(2);
+    });
+  });
+
+  describe('Label children viewBox - issue #7445', () => {
+    test('should pass correct innerRadius to custom Label content when Pie has innerRadius set', () => {
+      const labelSpy = vi.fn().mockReturnValue(null);
+
+      rechartsTestRender(
+        <PieChart width={400} height={400}>
+          <Pie
+            dataKey="value"
+            isAnimationActive={false}
+            data={[
+              { name: 'Group A', value: 400 },
+              { name: 'Group B', value: 300 },
+            ]}
+            cx={200}
+            cy={200}
+            innerRadius={80}
+            outerRadius={120}
+          >
+            <Label content={labelSpy} />
+          </Pie>
+        </PieChart>,
+      );
+
+      expect(labelSpy).toHaveBeenCalled();
+      const props = labelSpy.mock.calls[0][0];
+      expect(props.viewBox.innerRadius).toBe(80);
+      expect(props.viewBox.outerRadius).toBe(120);
+    });
+
+    test('should pass correct innerRadius of 0 when Pie has no innerRadius set', () => {
+      const labelSpy = vi.fn().mockReturnValue(null);
+
+      rechartsTestRender(
+        <PieChart width={400} height={400}>
+          <Pie
+            dataKey="value"
+            isAnimationActive={false}
+            data={[
+              { name: 'Group A', value: 400 },
+              { name: 'Group B', value: 300 },
+            ]}
+            cx={200}
+            cy={200}
+            outerRadius={120}
+          >
+            <Label content={labelSpy} />
+          </Pie>
+        </PieChart>,
+      );
+
+      expect(labelSpy).toHaveBeenCalled();
+      const props = labelSpy.mock.calls[0][0];
+      expect(props.viewBox.innerRadius).toBe(0);
     });
   });
 });
