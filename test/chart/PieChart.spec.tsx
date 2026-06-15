@@ -915,5 +915,24 @@ describe('<PieChart />', () => {
       const props = labelSpy.mock.calls[0][0];
       expect(props.viewBox.innerRadius).toBe(0);
     });
+
+    test('should render children directly when Pie has no sectors', () => {
+      const labelSpy = vi.fn().mockReturnValue(null);
+
+      rechartsTestRender(
+        <PieChart width={400} height={400}>
+          <Pie dataKey="value" isAnimationActive={false} data={[]} cx={200} cy={200} outerRadius={120}>
+            <Label content={labelSpy} />
+          </Pie>
+        </PieChart>,
+      );
+
+      act(() => {
+        vi.runOnlyPendingTimers();
+      });
+
+      // Label should not be called when there are no sectors
+      expect(labelSpy).not.toHaveBeenCalled();
+    });
   });
 });
