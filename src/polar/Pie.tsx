@@ -972,6 +972,8 @@ function SectorsWithAnimation({
 
   if (layout == null) return null;
 
+  const firstSector = sectors[0];
+
   return (
     <PieLabelListProvider showLabels={!isAnimating} sectors={sectors}>
       <AnimatedItems
@@ -1006,12 +1008,12 @@ function SectorsWithAnimation({
         )}
       </AnimatedItems>
       <PieLabelList showLabels={!isAnimating} sectors={sectors} props={props} />
-      {sectors.length > 0 ? (
+      {firstSector ? (
         <PolarLabelContextProvider
-          cx={sectors[0].cx}
-          cy={sectors[0].cy}
-          innerRadius={sectors[0].innerRadius}
-          outerRadius={sectors[0].outerRadius}
+          cx={firstSector.cx}
+          cy={firstSector.cy}
+          innerRadius={firstSector.innerRadius}
+          outerRadius={firstSector.outerRadius}
           startAngle={props.startAngle}
           endAngle={props.endAngle}
           clockWise={false}
