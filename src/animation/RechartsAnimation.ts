@@ -1,3 +1,4 @@
+// eslint-disable-next-line max-classes-per-file
 const INIT = 'init' as const;
 const PENDING = 'pending' as const;
 const ACTIVE = 'active' as const;
@@ -7,7 +8,7 @@ type AnimationState = typeof INIT | typeof PENDING | typeof ACTIVE | typeof COMP
 
 type AnimationStateCallback = () => void;
 
-export interface RechartsAnimation {
+export interface RechartsAnimation<T> {
   /**
    * Returns the state machine current state
    * - `init`:       RechartsAnimation had just been created, and did not announce its start yet (`onAnimationStart`)
@@ -31,13 +32,18 @@ export interface RechartsAnimation {
    *
    * The progress is linear with time; if you wish for easing, apply the easing function after reading the progress.
    */
-  getProgress(): void;
+  getProgress(): number;
   /**
    * Sets the current time of the animation. The animation sets its internal state and progress accordingly.
    * This is current, absolute time; not additive! This allows you to essentially "travel back in time" based on the value you pass in here.
-   * @param now
+   *
+   * Returns the (relative) time remaining until the current activity is over.
+   * Meaning: if the state is in a middle of a delay, returns the time left until the delay is finished.
+   * If the state is in the middle of a transition, returns time left until that transition is complete.
+   * This is useful because it's the same number you can take and put into setTimeout(fn, X)
+   * as that's how much time we need to wait until the next state transition happens.
    */
-  tick(now: number): void;
+  tick(now: number): number;
   /**
    * Completes the animation. Completed animation:
    * - cannot be manipulated anymore
@@ -46,6 +52,22 @@ export interface RechartsAnimation {
    * - getState() always returns 'completed'
    */
   complete(): void;
+
+  /**
+   * Returns the starting value of the animation.
+   * Does not include progress, easing, interpolation, none of that - just the static starting value
+   */
+  getFrom(): T;
+
+  /**
+   * Returns the end value of the animation.
+   * Does not include progress, easing, interpolation, none of that - just the static end value
+   */
+  getTo(): T;
+}
+
+function remaining(time: number): number {
+  return Math.max(0, time);
 }
 
 /**
@@ -63,12 +85,15 @@ export interface RechartsAnimation {
  *
  * For this reason, we do not automatically end the animation when it reaches `1`. You need to call .complete() first.
  *
- * The RechartsAnimation class is responsible for managing the transition between these stages, and for announcing the start and end of the animation to its parent component.
+ * The RechartsAnimation class is responsible for managing the transition between these stages.
  *
  * The animation queue is static and consists of four elements:
  * - `onAnimationStart`: function that is called when the animation is moving from `init` to `pending`
+ * - `animationBegin`: delay between `onAnimationStart` and the transition
+ * - the transition itself, `animationDuration`-long
+ * `onAnimationEnd`: function that is called when the animation is moving from `active` to `completed`
  */
-export class RechartsAnimationImpl implements RechartsAnimation {
+abstract class RechartsAnimationImpl<T extends string | number> implements RechartsAnimation<T> {
   private readonly onAnimationStart: undefined | AnimationStateCallback;
 
   private readonly onAnimationEnd: undefined | AnimationStateCallback;
@@ -79,21 +104,29 @@ export class RechartsAnimationImpl implements RechartsAnimation {
 
   private pendingStartedTime: number | undefined;
 
-  private readonly animationDuration: number;
+  protected readonly animationDuration: number;
 
   private readonly animationBegin: number;
+
+  private readonly from: T;
+
+  private readonly to: T;
 
   constructor(param: {
     onAnimationStart: undefined | AnimationStateCallback;
     onAnimationEnd: undefined | AnimationStateCallback;
     animationDuration: number;
     animationBegin: number;
+    from: T;
+    to: T;
   }) {
     this.onAnimationStart = param.onAnimationStart;
     this.onAnimationEnd = param.onAnimationEnd;
     this.animationDuration = param.animationDuration;
     this.animationBegin = param.animationBegin;
     this.progress = 0;
+    this.from = param.from;
+    this.to = param.to;
   }
 
   private state: AnimationState = INIT;
@@ -102,32 +135,39 @@ export class RechartsAnimationImpl implements RechartsAnimation {
     return this.state;
   }
 
-  tick(now: number) {
+  tick(now: number): number {
     if (this.getState() === INIT) {
       this.state = PENDING;
       this.pendingStartedTime = now;
       this.onAnimationStart?.();
-      return;
+      return this.animationBegin;
     }
 
     if (this.getState() === PENDING) {
       if (this.pendingStartedTime == null) {
-        throw new Error('Invalid animation state');
+        throw new Error();
       }
       const timeElapsed = now - this.pendingStartedTime;
       if (timeElapsed >= this.animationBegin) {
         this.state = ACTIVE;
         this.animationStartedTime = now;
+        // The state flipped just now so the elapsed time is zero
+        return this.nextAnimationUpdate(0);
       }
-      return;
+      return remaining(this.animationBegin - timeElapsed);
     }
 
     if (this.getState() === ACTIVE) {
       if (this.animationStartedTime == null) {
-        throw new Error('Invalid animation state');
+        throw new Error();
       }
-      this.setProgress((now - this.animationStartedTime) / this.animationDuration);
+      const timeElapsed = now - this.animationStartedTime;
+      this.setProgress(timeElapsed / this.animationDuration);
+      return this.nextAnimationUpdate(timeElapsed);
     }
+
+    // state === COMPLETED, nothing interesting is going to happen
+    return 0;
   }
 
   private setProgress(newProgress: number) {
@@ -145,5 +185,33 @@ export class RechartsAnimationImpl implements RechartsAnimation {
       this.onAnimationEnd?.();
     }
     this.state = COMPLETED;
+  }
+
+  getFrom() {
+    return this.from;
+  }
+
+  getTo() {
+    return this.to;
+  }
+
+  protected abstract nextAnimationUpdate(timeElapsed: number): number;
+}
+
+export class JavascriptAnimation extends RechartsAnimationImpl<number> {
+  // eslint-disable-next-line class-methods-use-this
+  protected nextAnimationUpdate(): number {
+    /*
+     * JavaScript-based animations have to update as soon as possible,
+     * so we return 0 here to indicate that the next update should be scheduled immediately
+     * and it should trigger render on every occasion.
+     */
+    return 0;
+  }
+}
+
+export class CSSTransition extends RechartsAnimationImpl<string> {
+  protected nextAnimationUpdate(timeElapsed: number): number {
+    return remaining(this.animationDuration - timeElapsed);
   }
 }

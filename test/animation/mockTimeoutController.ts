@@ -1,6 +1,13 @@
 import { act } from '@testing-library/react';
 import { CallbackType, CancelableTimeout, TimeoutController } from '../../src/animation/timeoutController';
 
+type MockTimeoutControllerConfig = {
+  /**
+   * The mock controller will never allow more than this number of timeouts at once
+   */
+  timeoutLimit?: number;
+};
+
 /**
  * Mock implementation of TimeoutController for testing purposes.
  * This does not use requestAnimationFrame and allows for manual control of timeouts.
@@ -10,8 +17,20 @@ export class MockTimeoutController implements TimeoutController {
 
   private cancelledFramesCount = 0;
 
+  private readonly config: MockTimeoutControllerConfig;
+
+  constructor(config: MockTimeoutControllerConfig = {}) {
+    this.config = config;
+  }
+
   setTimeout(callback: CallbackType, delay?: number): CancelableTimeout {
     this.timeouts.push({ callback, delay });
+
+    if (this.config.timeoutLimit != null && this.timeouts.length > this.config.timeoutLimit) {
+      throw new Error(
+        `Timeout queue has size ${this.timeouts.length} which is more than the allowed ${this.config.timeoutLimit}`,
+      );
+    }
 
     // Return a cancelable timeout function
     return () => {

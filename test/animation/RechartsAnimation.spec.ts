@@ -1,25 +1,29 @@
 import { describe, it, expect } from 'vitest';
-import { RechartsAnimationImpl } from '../../src/animation/RechartsAnimation';
+import { CSSTransition, JavascriptAnimation } from '../../src/animation/RechartsAnimation';
 import { noop } from '../../src/util/DataUtils';
 
 describe('RechartsAnimation state machine', () => {
   it('should start in "init" state', () => {
-    const a = new RechartsAnimationImpl({
+    const a = new JavascriptAnimation({
       onAnimationStart: noop,
       onAnimationEnd: noop,
       animationDuration: 200,
       animationBegin: 0,
+      from: 0,
+      to: 1,
     });
     expect(a.getState()).toBe('init');
   });
 
   it('should transition to "pending" after the first tick, and call onAnimationStart while doing so, and not call it second time after active', () => {
     const spy = vi.fn();
-    const a = new RechartsAnimationImpl({
+    const a = new JavascriptAnimation({
       onAnimationStart: spy,
       onAnimationEnd: noop,
       animationDuration: 200,
       animationBegin: 20,
+      from: 0,
+      to: 1,
     });
     expect(spy).toHaveBeenCalledTimes(0);
     a.tick(10); // this becomes the starting time
@@ -31,11 +35,13 @@ describe('RechartsAnimation state machine', () => {
   });
 
   it('should not throw an error when onAnimationStart or onAnimationEnd are not defined', () => {
-    const a = new RechartsAnimationImpl({
+    const a = new JavascriptAnimation({
       onAnimationStart: undefined,
       onAnimationEnd: undefined,
       animationDuration: 200,
       animationBegin: 0,
+      from: 0,
+      to: 1,
     });
     a.tick(0);
     a.tick(0);
@@ -44,11 +50,13 @@ describe('RechartsAnimation state machine', () => {
   });
 
   it('should return progress = 0 when init and when pending', () => {
-    const a = new RechartsAnimationImpl({
+    const a = new JavascriptAnimation({
       onAnimationStart: noop,
       onAnimationEnd: noop,
       animationDuration: 200,
       animationBegin: 0,
+      from: 0,
+      to: 1,
     });
     expect(a.getProgress()).toBe(0);
     a.tick(0);
@@ -56,37 +64,28 @@ describe('RechartsAnimation state machine', () => {
   });
 
   it('should transition to "active" after the second tick', () => {
-    const a = new RechartsAnimationImpl({
+    const a = new JavascriptAnimation({
       onAnimationStart: noop,
       onAnimationEnd: noop,
       animationDuration: 200,
       animationBegin: 0,
+      from: 0,
+      to: 1,
     });
     a.tick(0);
     a.tick(0);
     expect(a.getState()).toBe('active');
   });
 
-  it('should return correct progress when in "active" state', () => {
-    const a = new RechartsAnimationImpl({
-      onAnimationStart: noop,
-      onAnimationEnd: noop,
-      animationDuration: 200,
-      animationBegin: 0,
-    });
-    a.tick(0);
-    a.tick(0);
-    expect(a.getProgress()).toBeGreaterThanOrEqual(0);
-    expect(a.getProgress()).toBeLessThan(1);
-  });
-
   it('should handle transition to "completed" state and call onAnimationEnd', () => {
     const spy = vi.fn();
-    const a = new RechartsAnimationImpl({
+    const a = new JavascriptAnimation({
       onAnimationStart: undefined,
       onAnimationEnd: spy,
       animationDuration: 200,
       animationBegin: 0,
+      from: 0,
+      to: 1,
     });
     a.tick(0);
     a.tick(0);
@@ -100,11 +99,13 @@ describe('RechartsAnimation state machine', () => {
 
   it('should wait for [animationBegin] time before progressing from pending to active', () => {
     const spy = vi.fn();
-    const a = new RechartsAnimationImpl({
+    const a = new JavascriptAnimation({
       onAnimationStart: spy,
       onAnimationEnd: noop,
       animationDuration: 200,
       animationBegin: 100,
+      from: 0,
+      to: 1,
     });
 
     a.tick(10); // init -> pending at time t = 10
@@ -127,11 +128,13 @@ describe('RechartsAnimation state machine', () => {
      */
 
     const spy = vi.fn();
-    const a = new RechartsAnimationImpl({
+    const a = new JavascriptAnimation({
       onAnimationStart: spy,
       onAnimationEnd: noop,
       animationDuration: 200,
       animationBegin: 100,
+      from: 0,
+      to: 1,
     });
 
     a.tick(10); // init -> pending at time t = 10
@@ -148,11 +151,13 @@ describe('RechartsAnimation state machine', () => {
   });
 
   it('should no longer update progress after complete', () => {
-    const a = new RechartsAnimationImpl({
+    const a = new JavascriptAnimation({
       onAnimationStart: noop,
       onAnimationEnd: noop,
       animationDuration: 200,
       animationBegin: 0,
+      from: 0,
+      to: 1,
     });
     a.tick(0);
     a.tick(0);
@@ -170,13 +175,15 @@ describe('RechartsAnimation state machine', () => {
   });
 
   describe('progress tracking when animationBegin = 0', () => {
-    let a: RechartsAnimationImpl;
+    let a: JavascriptAnimation;
     beforeEach(() => {
-      a = new RechartsAnimationImpl({
+      a = new JavascriptAnimation({
         onAnimationStart: noop,
         onAnimationEnd: noop,
         animationDuration: 200,
         animationBegin: 0,
+        from: 0,
+        to: 1,
       });
       a.tick(0); // pending
       a.tick(0); // active
@@ -210,13 +217,15 @@ describe('RechartsAnimation state machine', () => {
   });
 
   describe('progress tracking when animationBegin > 0', () => {
-    let a: RechartsAnimationImpl;
+    let a: JavascriptAnimation;
     beforeEach(() => {
-      a = new RechartsAnimationImpl({
+      a = new JavascriptAnimation({
         onAnimationStart: noop,
         onAnimationEnd: noop,
         animationDuration: 200,
         animationBegin: 500,
+        from: 0,
+        to: 1,
       });
       a.tick(100); // pending
       a.tick(1000); // active
@@ -253,21 +262,25 @@ describe('RechartsAnimation state machine', () => {
 
   it('should allow animationBegin to be greater than animationDuration because "begin" is a pause before the actual animation', () => {
     expect(() => {
-      return new RechartsAnimationImpl({
+      return new JavascriptAnimation({
         onAnimationStart: noop,
         onAnimationEnd: noop,
         animationDuration: 200,
         animationBegin: 300,
+        from: 0,
+        to: 1,
       });
-    }).not.toThrowError();
+    }).not.toThrow();
   });
 
   it('should handle multiple calls to "tick" with the same time value correctly', () => {
-    const a = new RechartsAnimationImpl({
-      onAnimationStart: vi.fn(),
-      onAnimationEnd: vi.fn(),
+    const a = new JavascriptAnimation({
+      onAnimationStart: noop,
+      onAnimationEnd: noop,
       animationDuration: 200,
       animationBegin: 100,
+      from: 0,
+      to: 1,
     });
 
     a.tick(10);
@@ -283,16 +296,185 @@ describe('RechartsAnimation state machine', () => {
   it('should allow to complete straight away and skip the other states, and not call any of the handlers', () => {
     const startSpy = vi.fn();
     const endSpy = vi.fn();
-    const a = new RechartsAnimationImpl({
+    const a = new JavascriptAnimation({
       onAnimationStart: startSpy,
       onAnimationEnd: endSpy,
       animationDuration: 200,
       animationBegin: 0,
+      from: 0,
+      to: 1,
     });
     a.complete();
     expect(a.getState()).toBe('completed');
     expect(a.getProgress()).toBe(1);
     expect(startSpy).not.toHaveBeenCalled();
     expect(endSpy).not.toHaveBeenCalled();
+  });
+
+  it('should return "begin" time if the tick just activated it now', () => {
+    const a = new JavascriptAnimation({
+      onAnimationStart: noop,
+      onAnimationEnd: noop,
+      animationDuration: 200,
+      animationBegin: 300,
+      from: 0,
+      to: 1,
+    });
+    expect(a.tick(10)).toEqual(300);
+    expect(a.getState()).toBe('pending');
+  });
+
+  describe('JavascriptAnimation', () => {
+    it('should return starting and ending values', () => {
+      const a = new JavascriptAnimation({
+        onAnimationStart: noop,
+        onAnimationEnd: noop,
+        animationDuration: 500,
+        animationBegin: 300,
+        from: 2,
+        to: 5,
+      });
+      expect(a.getFrom()).toBe(2);
+      expect(a.getTo()).toBe(5);
+    });
+
+    it('should return the remaining time from tick() function', () => {
+      const a = new JavascriptAnimation({
+        onAnimationStart: noop,
+        onAnimationEnd: noop,
+        animationDuration: 200,
+        animationBegin: 300,
+        from: 0,
+        to: 1,
+      });
+      // first tick is just state switch, so the next delay will be exactly equal to 'animationBegin'
+      expect(a.tick(10)).toEqual(300);
+
+      // the animation started at t=10, the time now is t=20, begin=300, so we still have 290 time left
+      expect(a.tick(20)).toBe(290);
+
+      /*
+       * Okay our timeout got a little bit delayed = the time is now 350, the beginning delay is over.
+       * We waited longer than necessary but that's fine.
+       * The animation should just start and not be delayed any further.
+       * The tick function is now telling us the transition is in progress,
+       * and we should report back immediately for next render because this is JS animation and needs frequent renders.
+       */
+      expect(a.tick(350)).toBe(0);
+
+      // now we're getting into the transition itself
+      expect(a.tick(360)).toBe(0);
+      // ticking through it
+      expect(a.tick(400)).toBe(0);
+      // again overshoot - should clamp to zero
+      expect(a.tick(550)).toBe(0);
+
+      // more ticking just produces more zeroes
+      expect(a.tick(600)).toBe(0);
+
+      a.complete();
+      // nothing interesting is going to happen to this animation anymore
+      expect(a.tick(700)).toBe(0);
+    });
+
+    it('should return 0 if the tick landed exactly at the start of animation', () => {
+      const a = new JavascriptAnimation({
+        onAnimationStart: noop,
+        onAnimationEnd: noop,
+        animationDuration: 500,
+        animationBegin: 300,
+        from: 0,
+        to: 1,
+      });
+
+      expect(a.tick(100)).toEqual(300); // init -> pending
+      // 200 remaining from 'begin' delay
+      expect(a.tick(200)).toBe(200);
+      // 1 time unit remaining
+      expect(a.tick(399)).toBe(1);
+      expect(a.getState()).toBe('pending');
+      // the delay had completed at the exact time of the tick, what a coincidence!
+      // the animation should just start and not be delayed further,
+      // so we have 0 because this is JS animation and it should render as frequently as possible
+      expect(a.tick(400)).toBe(0);
+      expect(a.getState()).toBe('active');
+    });
+  });
+
+  describe('CSSTransition', () => {
+    it('should return starting and ending values', () => {
+      const a = new CSSTransition({
+        onAnimationStart: noop,
+        onAnimationEnd: noop,
+        animationDuration: 500,
+        animationBegin: 300,
+        from: 'arbitrary values can go here',
+        to: 'because this class does not handle the interpolation',
+      });
+      expect(a.getFrom()).toBe('arbitrary values can go here');
+      expect(a.getTo()).toBe('because this class does not handle the interpolation');
+    });
+
+    it('should return the remaining time from tick() function', () => {
+      const a = new CSSTransition({
+        onAnimationStart: noop,
+        onAnimationEnd: noop,
+        animationDuration: 200,
+        animationBegin: 300,
+        from: 'scale(1)',
+        to: 'scale(7)',
+      });
+      // first tick is just state switch, so the next delay will be exactly equal to 'animationBegin'
+      expect(a.tick(10)).toEqual(300);
+
+      // the animation started at t=10, the time now is t=20, begin=300, so we still have 290 time left
+      expect(a.tick(20)).toBe(290);
+
+      /*
+       * Okay our timeout got a little bit delayed = the time is now 350, the beginning delay is over.
+       * We waited longer than necessary but that's fine.
+       * The animation should just start and not be delayed any further.
+       * The tick function is now telling us the transition is in progress,
+       * and will take 200 time to complete (= animationDuration from the config)
+       */
+      expect(a.tick(350)).toBe(200);
+
+      // now we're getting into the transition itself
+      expect(a.tick(360)).toBe(190);
+      // ticking through it
+      expect(a.tick(400)).toBe(150);
+      // again overshoot - should clamp to zero
+      expect(a.tick(550)).toBe(0);
+
+      // more ticking just produces more zeroes
+      expect(a.tick(600)).toBe(0);
+
+      a.complete();
+      // nothing interesting is going to happen to this animation anymore
+      expect(a.tick(700)).toBe(0);
+    });
+
+    it('should return remaining time of next step if the tick landed exactly at the start of animation', () => {
+      const a = new CSSTransition({
+        onAnimationStart: noop,
+        onAnimationEnd: noop,
+        animationDuration: 500,
+        animationBegin: 300,
+        from: 'scale(1)',
+        to: 'scale(7)',
+      });
+
+      expect(a.tick(100)).toEqual(300); // init -> pending
+      // 200 remaining from 'begin' delay
+      expect(a.tick(200)).toBe(200);
+      // 1 time unit remaining
+      expect(a.tick(399)).toBe(1);
+      expect(a.getState()).toBe('pending');
+      // the delay had completed at the exact time of the tick, what a coincidence!
+      // the animation should just start and not be delayed further,
+      // so we have the full duration remaining
+      expect(a.tick(400)).toBe(500);
+      expect(a.getState()).toBe('active');
+    });
   });
 });
