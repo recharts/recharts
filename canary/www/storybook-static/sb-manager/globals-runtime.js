@@ -57984,6 +57984,9 @@ var initialGlobals4 = {
   [PARAM_KEY4]: { value: void 0, isRotated: !1 }
 };
 
+// src/csf/core-annotations.ts
+var CORE_ANNOTATIONS_COMPOSED = Symbol.for("storybook.internal.composedWithCoreAnnotations");
+
 // src/csf/index.ts
 var sanitize = (string) => string.toLowerCase().replace(/[ ’–—―′¿'`~!@#$%^&*()_|+\-=?;:'",.<>\{\}\[\]\\\/]/gi, "-").replace(/-+/g, "-").replace(/^-+/, "").replace(/-+$/, ""), sanitizeSafe = (string, part) => {
   let sanitized = sanitize(string);
@@ -60990,7 +60993,7 @@ init_dist();
 var import_memoizerific9 = __toESM(require_memoizerific(), 1), import_semver = __toESM(require_semver2(), 1);
 
 // src/manager-api/version.ts
-var version = "10.4.4";
+var version = "10.4.5";
 
 // src/manager-api/modules/versions.ts
 var { VERSIONCHECK } = scope, getVersionCheckData = (0, import_memoizerific9.default)(1)(() => {
