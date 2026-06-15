@@ -1,0 +1,100 @@
+# Instructions
+
+- Following Playwright test failed.
+- Explain why, be concise, respect Playwright best practices.
+- Provide a snippet of code with the fix, if possible.
+
+# Test info
+
+- Name: tests/www/SunburstChartExamples.spec-vr.tsx >> BundleSizeSunburst
+- Location: test-vr/tests/www/SunburstChartExamples.spec-vr.tsx:11:5
+
+# Error details
+
+```
+Error: expect(locator).toHaveScreenshot(expected) failed
+
+Locator: locator('#root').locator('internal:control=component')
+  3 pixels (ratio 0.01 of all image pixels) are different.
+
+Call log:
+  - Expect "toHaveScreenshot" with timeout 10000ms
+    - verifying given screenshot expectation
+  - waiting for locator('#root').locator('internal:control=component')
+    - locator resolved to <div>…</div>
+  - taking element screenshot
+    - disabled all CSS animations
+  - waiting for fonts to load...
+  - fonts loaded
+  - attempting scroll into view action
+    - waiting for element to be stable
+  - 3 pixels (ratio 0.01 of all image pixels) are different.
+  - waiting 100ms before taking screenshot
+  - waiting for locator('#root').locator('internal:control=component')
+    - locator resolved to <div>…</div>
+  - taking element screenshot
+    - disabled all CSS animations
+  - waiting for fonts to load...
+  - fonts loaded
+  - attempting scroll into view action
+    - waiting for element to be stable
+  - captured a stable screenshot
+  - 3 pixels (ratio 0.01 of all image pixels) are different.
+
+```
+
+# Page snapshot
+
+```yaml
+- generic [ref=e3]:
+  - generic [ref=e4]:
+    - generic [ref=e5]:
+      - strong [ref=e6]: Measured entry
+      - code [ref=e8]: www/src/views/IndexView/IndexLineChart.tsx
+    - generic [ref=e9]:
+      - strong [ref=e10]: Tree-shaken total
+      - generic [ref=e11]: 9.50 KB
+    - generic [ref=e12]:
+      - strong [ref=e13]: Minified + gzip
+      - generic [ref=e14]: 3.00 KB
+  - img [ref=e16]:
+    - generic [ref=e17]:
+      - generic [ref=e20]: "4608"
+      - generic [ref=e23]: "2816"
+      - generic [ref=e26]: "1536"
+      - generic [ref=e29]: "1280"
+      - generic [ref=e32]: "1152"
+      - generic [ref=e35]: "1152"
+      - generic [ref=e38]: "640"
+      - generic [ref=e41]: "640"
+      - generic [ref=e44]: "2304"
+      - generic [ref=e47]: "2304"
+      - generic [ref=e50]: "2304"
+      - generic [ref=e53]: "1792"
+      - generic [ref=e56]: "1792"
+      - generic [ref=e59]: "1024"
+      - generic [ref=e62]: "1024"
+      - generic [ref=e65]: "1024"
+      - generic [ref=e68]: "1024"
+```
+
+# Test source
+
+```ts
+  1  | import * as React from 'react';
+  2  | import { test, expect } from '@playwright/experimental-ct-react';
+  3  | import SunburstChartExample from '../../../www/src/docs/exampleComponents/SunburstChart/SunburstChartExample';
+  4  | import BundleSizeSunburst from '../../../www/src/docs/exampleComponents/SunburstChart/BundleSizeSunburst';
+  5  | 
+  6  | test('SunburstChartExample', async ({ mount }) => {
+  7  |   const component = await mount(<SunburstChartExample />);
+  8  |   await expect(component).toHaveScreenshot();
+  9  | });
+  10 | 
+  11 | test('BundleSizeSunburst', async ({ mount }) => {
+  12 |   const component = await mount(<BundleSizeSunburst forceFallbackData />);
+> 13 |   await expect(component).toHaveScreenshot();
+     |                           ^ Error: expect(locator).toHaveScreenshot(expected) failed
+  14 | });
+  15 | 
+```

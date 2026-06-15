@@ -1,0 +1,205 @@
+# Instructions
+
+- Following Playwright test failed.
+- Explain why, be concise, respect Playwright best practices.
+- Provide a snippet of code with the fix, if possible.
+
+# Test info
+
+- Name: tests/Label.spec-vr.tsx >> Pie > Label
+- Location: test-vr/tests/Label.spec-vr.tsx:183:5
+
+# Error details
+
+```
+Error: expect(locator).toHaveScreenshot(expected) failed
+
+Locator: locator('#root').locator('internal:control=component')
+  17 pixels (ratio 0.01 of all image pixels) are different.
+
+Call log:
+  - Expect "toHaveScreenshot" with timeout 10000ms
+    - verifying given screenshot expectation
+  - waiting for locator('#root').locator('internal:control=component')
+    - locator resolved to <div width="900" height="500" class="recharts-wrapper">…</div>
+  - taking element screenshot
+    - disabled all CSS animations
+  - waiting for fonts to load...
+  - fonts loaded
+  - attempting scroll into view action
+    - waiting for element to be stable
+  - 17 pixels (ratio 0.01 of all image pixels) are different.
+  - waiting 100ms before taking screenshot
+  - waiting for locator('#root').locator('internal:control=component')
+    - locator resolved to <div width="900" height="500" class="recharts-wrapper">…</div>
+  - taking element screenshot
+    - disabled all CSS animations
+  - waiting for fonts to load...
+  - fonts loaded
+  - attempting scroll into view action
+    - waiting for element to be stable
+  - captured a stable screenshot
+  - 17 pixels (ratio 0.01 of all image pixels) are different.
+
+```
+
+# Page snapshot
+
+```yaml
+- generic [ref=e3]:
+  - list [ref=e5]:
+    - listitem [ref=e6]:
+      - img "18-24 legend icon" [ref=e7]
+      - text: 18-24
+    - listitem [ref=e9]:
+      - img "25-29 legend icon" [ref=e10]
+      - text: 25-29
+    - listitem [ref=e12]:
+      - img "30-34 legend icon" [ref=e13]
+      - text: 30-34
+    - listitem [ref=e15]:
+      - img "35-39 legend icon" [ref=e16]
+      - text: 35-39
+    - listitem [ref=e18]:
+      - img "40-49 legend icon" [ref=e19]
+      - text: 40-49
+    - listitem [ref=e21]:
+      - img "50+ legend icon" [ref=e22]
+      - text: 50+
+    - listitem [ref=e24]:
+      - img "unknown legend icon" [ref=e25]
+      - text: unknown
+  - application [ref=e27]:
+    - generic [ref=e30]:
+      - generic [ref=e53]: "Position: insideStart"
+      - generic [ref=e54]: "Position: insideEnd"
+      - generic [ref=e55]: "Position: end"
+    - generic [ref=e56]:
+      - generic [ref=e57]: "Position: top"
+      - generic [ref=e58]: "Position: left"
+      - generic [ref=e59]: "Position: right"
+      - generic [ref=e60]: "Position: bottom"
+      - generic [ref=e61]: "Position: inside"
+      - generic [ref=e62]: "Position: outside"
+      - generic [ref=e63]: "Position: insideLeft"
+      - generic [ref=e64]: "Position: insideRight"
+      - generic [ref=e65]: "Position: insideTop"
+      - generic [ref=e66]: "Position: insideBottom"
+      - generic [ref=e67]: "Position: insideTopLeft"
+      - generic [ref=e68]: "Position: insideBottomLeft"
+      - generic [ref=e69]: "Position: insideTopRight"
+      - generic [ref=e70]: "Position: insideBottomRight"
+      - generic [ref=e71]: "Position: center"
+      - generic [ref=e72]: "Position: centerTop"
+      - generic [ref=e73]: "Position: centerBottom"
+      - generic [ref=e74]: "Position: middle"
+```
+
+# Test source
+
+```ts
+  94  |   const component = await mount(
+  95  |     <AreaChart width={900} height={900} data={pageData}>
+  96  |       <XAxis dataKey="name" />
+  97  |       <YAxis />
+  98  |       <Line type="monotone" dataKey="uv" stroke="#8884d8" />
+  99  |       <ReferenceDot x="Page D" y={700} r={270} strokeOpacity={0.3} fillOpacity={0.3} fill="#8884d8">
+  100 |         {availablePositions.map(position => (
+  101 |           <Label key={position} value={`Position: ${position}`} position={position} className={position} />
+  102 |         ))}
+  103 |       </ReferenceDot>
+  104 |     </AreaChart>,
+  105 |   );
+  106 |   await expect(component).toHaveScreenshot();
+  107 | });
+  108 | 
+  109 | test('ReferenceLine > Label', async ({ mount }) => {
+  110 |   const component = await mount(
+  111 |     <AreaChart width={900} height={500} data={pageData} margin={{ top: 30, bottom: 30 }}>
+  112 |       <XAxis dataKey="name" />
+  113 |       <YAxis />
+  114 |       <Line type="monotone" dataKey="uv" stroke="#8884d8" />
+  115 |       <ReferenceLine x="Page C" stroke="#ff7300">
+  116 |         {availablePositions.map(position => (
+  117 |           <Label key={position} value={`Position: ${position}`} position={position} className={position} />
+  118 |         ))}
+  119 |       </ReferenceLine>
+  120 |     </AreaChart>,
+  121 |   );
+  122 |   await expect(component).toHaveScreenshot();
+  123 | });
+  124 | 
+  125 | test('RadarChart > Label', async ({ mount }) => {
+  126 |   const component = await mount(
+  127 |     <RadarChart width={900} height={500} data={pageData}>
+  128 |       {availablePositions.map(position => (
+  129 |         <Label key={position} value={`Position: ${position}`} position={position} className={position} />
+  130 |       ))}
+  131 |       <PolarRadiusAxis dataKey="uv" angle={45} />
+  132 |       <PolarAngleAxis dataKey="name" />
+  133 |       <Radar dataKey="uv" stroke="#8884d8" fill="none" />
+  134 |     </RadarChart>,
+  135 |   );
+  136 |   await expect(component).toHaveScreenshot();
+  137 | });
+  138 | 
+  139 | test('PolarRadiusAxis > Label', async ({ mount }) => {
+  140 |   const component = await mount(
+  141 |     <RadarChart width={900} height={500} data={pageData}>
+  142 |       <PolarRadiusAxis dataKey="uv" angle={45}>
+  143 |         {availablePositions.map(position => (
+  144 |           <Label key={position} value={`Position: ${position}`} position={position} className={position} />
+  145 |         ))}
+  146 |       </PolarRadiusAxis>
+  147 |       <PolarAngleAxis dataKey="name" />
+  148 |       <Radar dataKey="uv" stroke="#8884d8" fill="none" />
+  149 |     </RadarChart>,
+  150 |   );
+  151 |   await expect(component).toHaveScreenshot();
+  152 | });
+  153 | 
+  154 | test('PolarAngleAxis > Label', async ({ mount }) => {
+  155 |   // Label does not render in PolarAngleAxis at all, this looks like a bug and/or missing feature
+  156 |   const component = await mount(
+  157 |     <RadarChart width={900} height={500} data={pageData}>
+  158 |       <PolarRadiusAxis dataKey="uv" angle={45} />
+  159 |       <PolarAngleAxis dataKey="name">
+  160 |         {availablePositions.map(position => (
+  161 |           <Label key={position} value={`Position: ${position}`} position={position} className={position} />
+  162 |         ))}
+  163 |       </PolarAngleAxis>
+  164 |       <Radar dataKey="uv" stroke="#8884d8" fill="none" />
+  165 |     </RadarChart>,
+  166 |   );
+  167 |   await expect(component).toHaveScreenshot();
+  168 | });
+  169 | 
+  170 | test('PieChart > Label', async ({ mount }) => {
+  171 |   const component = await mount(
+  172 |     <PieChart width={900} height={500}>
+  173 |       <Pie data={pageDataWithFillColor} dataKey="uv" nameKey="name" isAnimationActive={false} />
+  174 |       {availablePositions.map(position => (
+  175 |         <Label key={position} value={`Position: ${position}`} position={position} className={position} />
+  176 |       ))}
+  177 |       <Legend />
+  178 |     </PieChart>,
+  179 |   );
+  180 |   await expect(component).toHaveScreenshot();
+  181 | });
+  182 | 
+  183 | test('Pie > Label', async ({ mount }) => {
+  184 |   const component = await mount(
+  185 |     <PieChart width={900} height={500}>
+  186 |       <Pie data={pageDataWithFillColor} dataKey="uv" nameKey="name" isAnimationActive={false}>
+  187 |         {availablePositions.map(position => (
+  188 |           <Label key={position} value={`Position: ${position}`} position={position} className={position} />
+  189 |         ))}
+  190 |       </Pie>
+  191 |       <Legend />
+  192 |     </PieChart>,
+  193 |   );
+> 194 |   await expect(component).toHaveScreenshot();
+      |                           ^ Error: expect(locator).toHaveScreenshot(expected) failed
+  195 | });
+  196 | 
+```
