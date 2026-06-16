@@ -399,6 +399,19 @@ describe('RechartsAnimation state machine', () => {
       expect(a.tick(400)).toBe(0);
       expect(a.getState()).toBe('active');
     });
+
+    it('should return animation value including easing', () => {
+      const easing = (x: number) => x * 2;
+      const a = new JavascriptAnimation({
+        onAnimationStart: noop,
+        onAnimationEnd: noop,
+        animationDuration: 500,
+        animationBegin: 300,
+        from: 0,
+        to: 1,
+        easing,
+      });
+    });
   });
 
   describe('CSSTransition', () => {

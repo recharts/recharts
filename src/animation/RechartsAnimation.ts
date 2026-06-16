@@ -1,4 +1,6 @@
 // eslint-disable-next-line max-classes-per-file
+import { interpolate } from '../util/DataUtils';
+
 const INIT = 'init' as const;
 const PENDING = 'pending' as const;
 const ACTIVE = 'active' as const;
@@ -195,7 +197,16 @@ abstract class RechartsAnimationImpl<T extends string | number> implements Recha
     return this.to;
   }
 
+  /**
+   * Returns the duration of time of when the controller should ask for the next update
+   */
   protected abstract nextAnimationUpdate(timeElapsed: number): number;
+
+  /**
+   * Returns value of the transition at the current time.
+   * The exact details differ based on the animation type
+   */
+  protected abstract interpolated(): T;
 }
 
 export class JavascriptAnimation extends RechartsAnimationImpl<number> {
@@ -208,10 +219,30 @@ export class JavascriptAnimation extends RechartsAnimationImpl<number> {
      */
     return 0;
   }
+
+  protected interpolated(): number {
+    /*
+     * TODO easing
+     */
+    return interpolate(this.getFrom(), this.getTo(), this.getProgress());
+  }
 }
 
 export class CSSTransition extends RechartsAnimationImpl<string> {
   protected nextAnimationUpdate(timeElapsed: number): number {
+    /**
+     * CSS transitions do not need DOM updates past the initial render
+     * so here we just instruct the controller to wait until the animation duration is over.
+     */
     return remaining(this.animationDuration - timeElapsed);
+  }
+
+  /**
+   * CSS transitions leave both interpolation and easing to the browser
+   * - so all we need to do here is return the final state
+   * and let browser handle the rest.
+   */
+  protected interpolated(): string {
+    return this.getTo();
   }
 }
