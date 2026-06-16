@@ -4,7 +4,7 @@ const config = {
   _comment:
     "This config was generated using 'stryker init'. Please take a look at: https://stryker-mutator.io/docs/stryker-js/configuration/ for more information.",
   packageManager: 'npm',
-  reporters: ['html', 'clear-text', 'progress'],
+  reporters: ['html', 'clear-text', 'progress', 'json'],
   testRunner_comment:
     'Take a look at https://stryker-mutator.io/docs/stryker-js/vitest-runner for information about the vitest plugin.',
   testRunner: 'vitest',
@@ -22,6 +22,7 @@ const config = {
   commandRunner: {
     command: 'vitest run --config ./vitest.config-mutation.mts',
   },
+  disableTypeChecks: '*.html',
 };
 
 export default config;
