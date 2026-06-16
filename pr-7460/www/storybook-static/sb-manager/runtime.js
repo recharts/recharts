@@ -9,11 +9,20 @@ var __require = /* @__PURE__ */ ((x2) => typeof require < "u" ? require : typeof
   if (typeof require < "u") return require.apply(this, arguments);
   throw Error('Dynamic require of "' + x2 + '" is not supported');
 });
-var __esm = (fn, res) => function() {
-  return fn && (res = (0, fn[__getOwnPropNames(fn)[0]])(fn = 0)), res;
+var __esm = (fn, res, err) => function() {
+  if (err) throw err[0];
+  try {
+    return fn && (res = (0, fn[__getOwnPropNames(fn)[0]])(fn = 0)), res;
+  } catch (e2) {
+    throw err = [e2], e2;
+  }
 };
 var __commonJS = (cb, mod) => function() {
-  return mod || (0, cb[__getOwnPropNames(cb)[0]])((mod = { exports: {} }).exports, mod), mod.exports;
+  try {
+    return mod || (0, cb[__getOwnPropNames(cb)[0]])((mod = { exports: {} }).exports, mod), mod.exports;
+  } catch (e2) {
+    throw mod = 0, e2;
+  }
 };
 var __export = (target, all) => {
   for (var name in all)
@@ -541,7 +550,7 @@ var require_cjs = __commonJS({
       var stringValue = Object.prototype.toString.call(value);
       return stringValue === "[object RegExp]" || stringValue === "[object Date]" || isReactElement(value);
     }
-    var canUseSymbol = typeof Symbol == "function" && Symbol.for, REACT_ELEMENT_TYPE = canUseSymbol ? Symbol.for("react.element") : 60103;
+    var canUseSymbol = typeof Symbol == "function" && Symbol.for, REACT_ELEMENT_TYPE = canUseSymbol ? /* @__PURE__ */ Symbol.for("react.element") : 60103;
     function isReactElement(value) {
       return value.$$typeof === REACT_ELEMENT_TYPE;
     }
@@ -609,8 +618,8 @@ var require_cjs = __commonJS({
 var require_react_is_production_min = __commonJS({
   "../../node_modules/downshift/node_modules/react-is/cjs/react-is.production.min.js"(exports) {
     "use strict";
-    var b2 = Symbol.for("react.element"), c2 = Symbol.for("react.portal"), d2 = Symbol.for("react.fragment"), e2 = Symbol.for("react.strict_mode"), f2 = Symbol.for("react.profiler"), g2 = Symbol.for("react.provider"), h2 = Symbol.for("react.context"), k2 = Symbol.for("react.server_context"), l3 = Symbol.for("react.forward_ref"), m2 = Symbol.for("react.suspense"), n3 = Symbol.for("react.suspense_list"), p2 = Symbol.for("react.memo"), q2 = Symbol.for("react.lazy"), t2 = Symbol.for("react.offscreen"), u2;
-    u2 = Symbol.for("react.module.reference");
+    var b2 = /* @__PURE__ */ Symbol.for("react.element"), c2 = /* @__PURE__ */ Symbol.for("react.portal"), d2 = /* @__PURE__ */ Symbol.for("react.fragment"), e2 = /* @__PURE__ */ Symbol.for("react.strict_mode"), f2 = /* @__PURE__ */ Symbol.for("react.profiler"), g2 = /* @__PURE__ */ Symbol.for("react.provider"), h2 = /* @__PURE__ */ Symbol.for("react.context"), k2 = /* @__PURE__ */ Symbol.for("react.server_context"), l3 = /* @__PURE__ */ Symbol.for("react.forward_ref"), m2 = /* @__PURE__ */ Symbol.for("react.suspense"), n3 = /* @__PURE__ */ Symbol.for("react.suspense_list"), p2 = /* @__PURE__ */ Symbol.for("react.memo"), q2 = /* @__PURE__ */ Symbol.for("react.lazy"), t2 = /* @__PURE__ */ Symbol.for("react.offscreen"), u2;
+    u2 = /* @__PURE__ */ Symbol.for("react.module.reference");
     function v2(a2) {
       if (typeof a2 == "object" && a2 !== null) {
         var r4 = a2.$$typeof;
@@ -3557,15 +3566,15 @@ function $7215afc6de606d6b$var$restoreScrollPosition(scrollableElements) {
 }
 
 // ../../node_modules/@react-aria/utils/dist/platform.mjs
-function $c87311424ea30a05$var$testUserAgent(re) {
+function $c87311424ea30a05$var$testUserAgent(re2) {
   var _window_navigator_userAgentData;
   if (typeof window > "u" || window.navigator == null) return !1;
   let brands = (_window_navigator_userAgentData = window.navigator.userAgentData) === null || _window_navigator_userAgentData === void 0 ? void 0 : _window_navigator_userAgentData.brands;
-  return Array.isArray(brands) && brands.some((brand) => re.test(brand.brand)) || re.test(window.navigator.userAgent);
+  return Array.isArray(brands) && brands.some((brand) => re2.test(brand.brand)) || re2.test(window.navigator.userAgent);
 }
-function $c87311424ea30a05$var$testPlatform(re) {
+function $c87311424ea30a05$var$testPlatform(re2) {
   var _window_navigator_userAgentData;
-  return typeof window < "u" && window.navigator != null ? re.test(((_window_navigator_userAgentData = window.navigator.userAgentData) === null || _window_navigator_userAgentData === void 0 ? void 0 : _window_navigator_userAgentData.platform) || window.navigator.platform) : !1;
+  return typeof window < "u" && window.navigator != null ? re2.test(((_window_navigator_userAgentData = window.navigator.userAgentData) === null || _window_navigator_userAgentData === void 0 ? void 0 : _window_navigator_userAgentData.platform) || window.navigator.platform) : !1;
 }
 function $c87311424ea30a05$var$cached(fn) {
   let res = null;
@@ -3971,7 +3980,7 @@ function $9446cca9a3875146$export$7d15b64cf5a3a4c4(value, min = -1 / 0, max = 1 
 
 // ../../node_modules/@react-aria/landmark/dist/useLandmark.mjs
 init_react();
-var import_shim = __toESM(require_shim(), 1), $a86207c5d7f7e1fb$var$LANDMARK_API_VERSION = 1, $a86207c5d7f7e1fb$var$landmarkSymbol = Symbol.for("react-aria-landmark-manager");
+var import_shim = __toESM(require_shim(), 1), $a86207c5d7f7e1fb$var$LANDMARK_API_VERSION = 1, $a86207c5d7f7e1fb$var$landmarkSymbol = /* @__PURE__ */ Symbol.for("react-aria-landmark-manager");
 function $a86207c5d7f7e1fb$var$subscribe(fn) {
   return document.addEventListener("react-aria-landmark-manager-change", fn), () => document.removeEventListener("react-aria-landmark-manager-change", fn);
 }
@@ -4935,7 +4944,7 @@ var $f6c31cce2adf654f$var$_shouldStopPropagation = /* @__PURE__ */ new WeakMap()
     let currentTarget = (_state_target = state?.target) !== null && _state_target !== void 0 ? _state_target : originalEvent.currentTarget, rect = currentTarget?.getBoundingClientRect(), x2, y2 = 0, clientX, clientY = null;
     originalEvent.clientX != null && originalEvent.clientY != null && (clientX = originalEvent.clientX, clientY = originalEvent.clientY), rect && (clientX != null && clientY != null ? (x2 = clientX - rect.left, y2 = clientY - rect.top) : (x2 = rect.width / 2, y2 = rect.height / 2)), this.type = type, this.pointerType = pointerType, this.target = originalEvent.currentTarget, this.shiftKey = originalEvent.shiftKey, this.metaKey = originalEvent.metaKey, this.ctrlKey = originalEvent.ctrlKey, this.altKey = originalEvent.altKey, this.x = x2, this.y = y2;
   }
-}, $f6c31cce2adf654f$var$LINK_CLICKED = Symbol("linkClicked"), $f6c31cce2adf654f$var$STYLE_ID = "react-aria-pressable-style", $f6c31cce2adf654f$var$PRESSABLE_ATTRIBUTE = "data-react-aria-pressable";
+}, $f6c31cce2adf654f$var$LINK_CLICKED = /* @__PURE__ */ Symbol("linkClicked"), $f6c31cce2adf654f$var$STYLE_ID = "react-aria-pressable-style", $f6c31cce2adf654f$var$PRESSABLE_ATTRIBUTE = "data-react-aria-pressable";
 function $f6c31cce2adf654f$export$45712eceda6fad21(props) {
   let { onPress, onPressChange, onPressStart, onPressEnd, onPressUp, onClick, isDisabled, isPressed: isPressedProp, preventFocusOnPress, shouldCancelOnPointerExit, allowTextSelectionOnPress, ref: domRef, ...domProps } = $f6c31cce2adf654f$var$usePressResponderContext(props), [isPressed, setPressed] = useState(!1), ref = useRef({
     isPressed: !1,
@@ -5483,7 +5492,7 @@ init_react();
 
 // ../../node_modules/react-aria-components/dist/utils.mjs
 init_react();
-var $64fa3d84918910a7$export$c62b8e45d58ddad9 = Symbol("default");
+var $64fa3d84918910a7$export$c62b8e45d58ddad9 = /* @__PURE__ */ Symbol("default");
 function $64fa3d84918910a7$export$2881499e37b75b9a({ values, children }) {
   for (let [Context2, value] of values)
     children = react_default.createElement(Context2.Provider, {
@@ -5935,7 +5944,7 @@ function $148a7a147e38ea7f$export$702d680b21cbd764(localeString) {
 
 // ../../node_modules/@react-aria/i18n/dist/useDefaultLocale.mjs
 init_react();
-var $1e5a04cdaf7d1af8$var$localeSymbol = Symbol.for("react-aria.i18n.locale");
+var $1e5a04cdaf7d1af8$var$localeSymbol = /* @__PURE__ */ Symbol.for("react-aria.i18n.locale");
 function $1e5a04cdaf7d1af8$export$f09106e7c6677ec5() {
   let locale = typeof window < "u" && window[$1e5a04cdaf7d1af8$var$localeSymbol] || typeof navigator < "u" && (navigator.language || navigator.userLanguage) || "en-US";
   try {
@@ -8827,9 +8836,6 @@ var IntlMessageFormat = (
 
 // ../../node_modules/@react-aria/i18n/dist/useMessageFormatter.mjs
 init_react();
-
-// ../../node_modules/@internationalized/string/dist/LocalizedStringDictionary.mjs
-var $5b160d28a433310d$var$localeSymbol = Symbol.for("react-aria.i18n.locale"), $5b160d28a433310d$var$stringsSymbol = Symbol.for("react-aria.i18n.strings");
 
 // ../../node_modules/@react-aria/i18n/dist/useLocalizedStringFormatter.mjs
 init_react();
@@ -13069,7 +13075,7 @@ function partialImpl(func, placeholder, ...partialArgs) {
   };
   return func.prototype && (partialed.prototype = Object.create(func.prototype)), partialed;
 }
-var placeholderSymbol = Symbol("partial.placeholder");
+var placeholderSymbol = /* @__PURE__ */ Symbol("partial.placeholder");
 partial.placeholder = placeholderSymbol;
 
 // ../../node_modules/es-toolkit/dist/function/partialRight.mjs
@@ -13083,7 +13089,7 @@ function partialRightImpl(func, placeholder, ...partialArgs) {
   };
   return func.prototype && (partialedRight.prototype = Object.create(func.prototype)), partialedRight;
 }
-var placeholderSymbol2 = Symbol("partialRight.placeholder");
+var placeholderSymbol2 = /* @__PURE__ */ Symbol("partialRight.placeholder");
 partialRight.placeholder = placeholderSymbol2;
 
 // ../../node_modules/es-toolkit/dist/function/retry.mjs
@@ -13424,7 +13430,6 @@ function createStatusStore({
                   status,
                   typeId
                 });
-              case "preview":
               default:
                 throw new StatusTypeIdMismatchError3({
                   status,
@@ -14323,15 +14328,7 @@ function toValue(str, measurement, popperOffsets, referenceOffsets) {
     return str;
   if (unit.indexOf("%") === 0) {
     var element = void 0;
-    switch (unit) {
-      case "%p":
-        element = popperOffsets;
-        break;
-      case "%":
-      case "%r":
-      default:
-        element = referenceOffsets;
-    }
+    unit === "%p" ? element = popperOffsets : element = referenceOffsets;
     var rect = getClientRect(element);
     return rect[measurement] / 100 * value;
   } else if (unit === "vh" || unit === "vw") {
@@ -20116,15 +20113,11 @@ var isRendererReact = scope.STORYBOOK_RENDERER === "react", CreateNewStoryFileMo
         let storyId = createNewStoryResult.storyId;
         await trySelectStory(api.selectStory, storyId), handleSuccessfullyCreatedStory(componentExportName), handleFileSearch();
       } catch (e2) {
-        switch (e2?.payload?.type) {
-          case "STORY_FILE_EXISTS":
-            let err = e2;
-            await trySelectStory(api.selectStory, err.payload.kind), handleStoryAlreadyExists();
-            break;
-          default:
-            setError({ selectedItemId, error: e2?.message });
-            break;
-        }
+        if (e2?.payload?.type === "STORY_FILE_EXISTS") {
+          let err = e2;
+          await trySelectStory(api.selectStory, err.payload.kind), handleStoryAlreadyExists();
+        } else
+          setError({ selectedItemId, error: e2?.message });
       }
     },
     [api?.selectStory, handleSuccessfullyCreatedStory, handleFileSearch, handleStoryAlreadyExists]
@@ -25693,12 +25686,7 @@ var CHANNEL_EVENT_PREFIX = "UNIVERSAL_STORE:", ProgressState = {
           this.state = event.payload, this.emitToListeners(setStateEvent, eventInfo);
           break;
       }
-    switch (event.type) {
-      case _UniversalStore.InternalEventType.SET_STATE:
-        this.debug("handleChannelEvents: Setting state", { event }), this.state = event.payload.state;
-        break;
-    }
-    this.emitToListeners(event, { actor: eventInfo.actor });
+    event.type === _UniversalStore.InternalEventType.SET_STATE && (this.debug("handleChannelEvents: Setting state", { event }), this.state = event.payload.state), this.emitToListeners(event, { actor: eventInfo.actor });
   }
   debug(message, data) {
     this.debugging && console.debug(
