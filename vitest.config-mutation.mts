@@ -23,8 +23,12 @@ export default defineConfig({
       '**/scripts/**',
       '**/.stryker-tmp/**',
       '**/www/**',
+      // These two tests time out when running inside stryker, not sure why
+      'test/component/Tooltip/Tooltip.payload.spec.tsx',
+      'test/chart/Treemap.spec.tsx',
     ],
     restoreMocks: true,
+    unstubGlobals: true,
     setupFiles: [
       'test/vitest.setup.ts',
       'test/helper/toBeRechartsScale.ts',
