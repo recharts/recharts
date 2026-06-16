@@ -3,7 +3,7 @@ import { useEffect, useRef, useState } from 'react';
 import { noop } from '../util/DataUtils';
 import { resolveDefaultProps } from '../util/resolveDefaultProps';
 import configUpdate from './configUpdate';
-import { configEasing, EasingInput } from './easing';
+import { createEasingFunction, EasingInput } from './easing';
 import { AnimationManager } from './AnimationManager';
 import { useAnimationManager } from './useAnimationManager';
 import { Global } from '../util/Global';
@@ -75,7 +75,7 @@ export function JavascriptAnimate(outsideProps: JavascriptAnimateProps) {
     const startAnimation = configUpdate<AnimationElapsedTimeState>(
       from,
       to,
-      configEasing(easing),
+      createEasingFunction(easing),
       duration,
       setStyle,
       animationManager.getTimeoutController(),

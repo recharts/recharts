@@ -117,45 +117,85 @@ export const configBezier = (...args: BezierInput): BezierEasingFunction => {
 };
 
 type SpringInput = {
+  /**
+   * The stiffness coefficient of the spring.
+   * Higher values create a more forceful, faster pull towards the target.
+   */
   stiff?: number;
+  /**
+   * The damping coefficient (friction/resistance).
+   * Higher values reduce bounciness and stop oscillation sooner. Lower values create more bounce.
+   */
   damping?: number;
+  /**
+   * The physics simulation time step in milliseconds.
+   * Determines the granularity of the baked frames. 16.67ms roughly equals a 60fps frame delta.
+   */
   dt?: number;
 };
 
-export type SpringEasingFunction = {
-  isStepper: true;
-  dt: number;
-  (currX: number, destX: number, currV: number): [number, number];
-};
+/**
+ * Creates a performance-optimized, progress-based spring easing function.
+ * It pre-calculates ("bakes") spring physics frames upfront based on a fixed duration,
+ * then returns a pure, lightweight function mapping progress (0 to 1) to the animated position.
+ * This approach is ideal for low-power devices because it removes heavy physics math from the frame loop.
+ */
+export const createSpringEasing = (config: SpringInput = {}): EasingFunction => {
+  const { stiff = 100, damping = 8, dt = 16.67 } = config;
+  const destX = 1;
 
-export const configSpring = (config: SpringInput = {}): SpringEasingFunction => {
-  const { stiff = 100, damping = 8, dt = 17 } = config;
-  const stepper = (currX: number, destX: number, currV: number): ReturnType<SpringEasingFunction> => {
+  const positions: number[] = [0];
+  let currX = 0;
+  let currV = 0;
+
+  // Safety valve to prevent accidental infinite loops if physics config is extreme
+  const maxIterations = 10000;
+  let iterations = 0;
+
+  // 1. Run the simulation until the spring completely stops moving
+  while (iterations < maxIterations) {
     const FSpring = -(currX - destX) * stiff;
     const FDamping = currV * damping;
-    const newV = currV + ((FSpring - FDamping) * dt) / 1000;
-    const newX = (currV * dt) / 1000 + currX;
 
-    if (Math.abs(newX - destX) < ACCURACY && Math.abs(newV) < ACCURACY) {
-      return [destX, 0];
+    currV += ((FSpring - FDamping) * dt) / 1000;
+    currX += (currV * dt) / 1000;
+
+    positions.push(currX);
+
+    // Stop only when position is essentially at 1.0 AND bounce velocity has died down
+    if (Math.abs(currX - destX) < ACCURACY && Math.abs(currV) < ACCURACY) {
+      break;
     }
-    return [newX, newV];
+    iterations++;
+  }
+
+  // Force the absolute final element to be exactly 1.0 for a perfect finish
+  positions[positions.length - 1] = destX;
+  const maxIndex = positions.length - 1;
+
+  // 2. The ultra-smooth runtime function mapping your 0..1 progress
+  return (t: number): number => {
+    if (t <= 0) return 0;
+    if (t >= 1) return destX;
+
+    // Scale t (0..1) proportionally across our entire pre-calculated array
+    const exactFrame = t * maxIndex;
+    const index = Math.floor(exactFrame);
+    const fraction = exactFrame - index;
+
+    // Blend between the two closest frames
+    return (positions[index] ?? 0) + ((positions[index + 1] ?? 0) - (positions[index] ?? 0)) * fraction;
   };
-
-  stepper.isStepper = true as const;
-  stepper.dt = dt;
-
-  return stepper;
 };
 
-export type EasingFunction = BezierEasingFunction | SpringEasingFunction;
+export type EasingFunction = (t: number) => number;
 
 /**
  * @inline
  */
 export type EasingInput = NamedBezier | 'spring' | EasingFunction;
 
-export const configEasing = (easing: EasingInput): EasingFunction | null => {
+export const createEasingFunction = (easing: EasingInput): EasingFunction | null => {
   if (typeof easing === 'string') {
     switch (easing) {
       case 'ease':
@@ -165,7 +205,7 @@ export const configEasing = (easing: EasingInput): EasingFunction | null => {
       case 'linear':
         return configBezier(easing);
       case 'spring':
-        return configSpring();
+        return createSpringEasing();
       default:
         if (easing.split('(')[0] === 'cubic-bezier') {
           return configBezier(easing);

@@ -1,25 +1,6 @@
 import { describe, it, expect } from 'vitest';
-import {
-  ACCURACY,
-  BezierEasingFunction,
-  configBezier,
-  configEasing,
-  configSpring,
-  EasingFunction,
-} from '../../src/animation/easing';
+import { configBezier, createEasingFunction, createSpringEasing } from '../../src/animation/easing';
 import { assertNotNull } from '../helper/assertNotNull';
-
-function assertIsBezierFunction(easing: EasingFunction): asserts easing is BezierEasingFunction {
-  if (typeof easing !== 'function' || easing.isStepper) {
-    throw new Error('Expected a Bezier easing function');
-  }
-}
-
-function assertIsSpringFunction(easing: EasingFunction): asserts easing is EasingFunction & { isStepper: true } {
-  if (typeof easing !== 'function' || !easing.isStepper) {
-    throw new Error('Expected a Spring easing function');
-  }
-}
 
 describe('configBezier', () => {
   it('should return a cubic-bezier function when given four numbers', () => {
@@ -152,100 +133,86 @@ describe('configBezier', () => {
   });
 });
 
-describe('configSpring', () => {
-  it('should return a stepper function with default config', () => {
-    const spring = configSpring();
-    expect(typeof spring).toBe('function');
-    expect(spring.isStepper).toBe(true);
-    expect(spring.dt).toBe(17);
+describe('createSpringEasing', () => {
+  it('should return a spring function with default config', () => {
+    const spring = createSpringEasing();
+    expect(spring).toBeInstanceOf(Function);
 
     // Test stepper with some inputs
-    const [newX, newV] = spring(0, 1, 0);
-    expect(newX).toBeCloseTo(0, 3);
-    expect(newV).toBeCloseTo(1.7, 3);
+    const t0 = spring(0);
+    expect(t0).toBeCloseTo(0, 3);
 
-    const [midX, midV] = spring(0.1, 1, 0);
-    expect(midX).toBeCloseTo(0.1, 3);
-    expect(midV).toBeCloseTo(1.53, 3);
+    const t1 = spring(0.1);
+    expect(t1).toBeCloseTo(1.1044, 3);
 
-    const [finalX, finalV] = spring(0.5, 1, 0);
-    expect(finalX).toBeCloseTo(0.5, 3);
-    expect(finalV).toBeCloseTo(0.85, 3);
+    // spring with basic settings settles quite fast
+    const t2 = spring(0.5);
+    expect(t2).toBeCloseTo(1.0028, 3);
+
+    const t3 = spring(0.8);
+    expect(t3).toBeCloseTo(1, 3);
+
+    const t4 = spring(0.9);
+    expect(t4).toBeCloseTo(1, 3);
+
+    const tFinal = spring(1);
+    expect(tFinal).toBe(1);
   });
 
   it('should handle custom config', () => {
-    const customSpring = configSpring({ stiff: 200, damping: 10, dt: 20 });
-    expect(customSpring.dt).toBe(20);
+    const customSpring = createSpringEasing({ stiff: 200, damping: 2 });
 
-    // Test stepper with some inputs
-    const [newX, newV] = customSpring(0, 1, 0);
-    expect(newX).toBeCloseTo(0, 3);
-    expect(newV).toBeCloseTo(4, 3);
+    const t0 = customSpring(0);
+    expect(t0).toBeCloseTo(0, 3);
 
-    const [midX, midV] = customSpring(0.1, 1, 0);
-    expect(midX).toBeCloseTo(0.1, 3);
-    expect(midV).toBeCloseTo(3.6, 3);
+    // This custom config creates a much bouncier spring, so we expect it to overshoot significantly at the start
+    const t1 = customSpring(0.1);
+    expect(t1).toBeCloseTo(0.6967, 3);
 
-    const [finalX, finalV] = customSpring(0.5, 1, 0);
-    expect(finalX).toBeCloseTo(0.5, 3);
-    expect(finalV).toBeCloseTo(2, 3);
-  });
+    const t2 = customSpring(0.3);
+    expect(t2).toBeCloseTo(1.0205, 3);
 
-  it('should settle at destination with zero velocity', () => {
-    const spring = configSpring();
-    let x = 0;
-    let v = 0;
-    const destX = 1;
+    // by the half of the animation done, even the more dynamic spring begins to settle
+    const t3 = customSpring(0.5);
+    expect(t3).toBeCloseTo(1.0089, 3);
 
-    // Run the spring simulation until it settles
-    for (let i = 0; i < 100; i++) {
-      [x, v] = spring(x, destX, v);
-      // If settled, we should break early
-      if (Math.abs(x - destX) < ACCURACY && Math.abs(v) < ACCURACY) {
-        break;
-      }
-    }
+    const t4 = customSpring(0.9);
+    expect(t4).toBeCloseTo(0.9998, 3);
 
-    // The spring should have settled
-    expect(x).toBeCloseTo(destX, 2);
-    expect(v).toBeCloseTo(0, 1);
+    const tFinal = customSpring(1);
+    expect(tFinal).toBe(1);
   });
 });
 
 describe('configEasing', () => {
   it('should return the correct bezier function for named easing', () => {
-    const easing = configEasing('ease');
+    const easing = createEasingFunction('ease');
     expect(easing).toBeInstanceOf(Function);
   });
 
-  it('should return stepper function', () => {
-    const spring = configEasing('spring');
+  it('should return spring function', () => {
+    const spring = createEasingFunction('spring');
     assertNotNull(spring);
     expect(spring).toBeInstanceOf(Function);
-    expect(spring.isStepper).toBe(true);
-    assertIsSpringFunction(spring);
-    expect(spring(0, 1, 0)).toEqual([0, 1.7]);
+    expect(spring(0.5)).toBeCloseTo(1.00289, 3);
   });
 
   it('should handle cubic-bezier input', () => {
-    const bezier = configEasing('cubic-bezier(0.42,0,0.58,1)');
+    const bezier = createEasingFunction('cubic-bezier(0.42,0,0.58,1)');
     assertNotNull(bezier);
     expect(bezier).toBeInstanceOf(Function);
-    assertIsBezierFunction(bezier);
-    expect(bezier.isStepper).toBe(false);
     expect(bezier(0.5)).toEqual(0.5);
   });
 
   it('should return null for invalid inputs', () => {
     // @ts-expect-error typescript correctly highlights that the input is invalid
-    const result = configEasing('invalid');
+    const result = createEasingFunction('invalid');
     expect(result).toBeNull();
   });
 
   it('should handle function inputs', () => {
     const customFunc = () => 7;
-    customFunc.isStepper = false as const; // Simulate a bezier function
-    const result = configEasing(customFunc);
+    const result = createEasingFunction(customFunc);
     expect(result).toBe(customFunc);
   });
 });

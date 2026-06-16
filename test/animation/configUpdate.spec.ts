@@ -1,5 +1,5 @@
 import { describe, it, beforeEach, expect, vi, MockInstance } from 'vitest';
-import { configEasing } from '../../src/animation/easing';
+import { createEasingFunction } from '../../src/animation/easing';
 import animationFunction, {
   CancelAnimationFrameDi,
   CancelAnimationFunction,
@@ -13,7 +13,7 @@ describe('animationFunction', () => {
   describe('with linear easing', () => {
     const mockAnimationFrame = new MockTimeoutController();
     // this static property addition to a function is wild
-    const linearEasing = configEasing('linear');
+    const linearEasing = createEasingFunction('linear');
     let startAnimation: StartAnimationFunction;
     const render = vi.fn();
 
@@ -113,7 +113,7 @@ describe('animationFunction', () => {
 
   describe('with spring easing', () => {
     const mockAnimationFrame = new MockTimeoutController();
-    const springEasing = configEasing('spring');
+    const springEasing = createEasingFunction('spring');
     let startAnimation: StartAnimationFunction;
     const render = vi.fn();
 
@@ -169,60 +169,27 @@ describe('animationFunction', () => {
 
       // numbers are not exactly halfway through because the animation did not start at time 0, it started at time 4
       expect(render).toHaveBeenLastCalledWith({
-        x: 106.01478200678056,
-        y: 106.01478200678056,
+        x: 100.36052986528156,
+        y: 100.36052986528156,
       });
       expect(render).toHaveBeenCalledTimes(2);
       expect(mockAnimationFrame.getCallbacksCount()).toBe(1);
       // exact end of the animation - we got lucky but this is not guaranteed
       await mockAnimationFrame.triggerNextTimeout(1004);
       expect(render).toHaveBeenLastCalledWith({
-        x: 103.8629546018778,
-        y: 103.8629546018778,
-      });
-      expect(render).toHaveBeenCalledTimes(3);
-      // okay the animation continues beyond the duration?
-      expect(mockAnimationFrame.getCallbacksCount()).toBe(1);
-
-      await mockAnimationFrame.triggerNextTimeout(2000);
-      expect(render).toHaveBeenLastCalledWith({
-        x: 99.86220182838869,
-        y: 99.86220182838869,
+        x: 100,
+        y: 100,
       });
       expect(render).toHaveBeenCalledTimes(4);
-      expect(mockAnimationFrame.getCallbacksCount()).toBe(1);
+      expect(mockAnimationFrame.getCallbacksCount()).toBe(0);
 
-      // and it continues even further
-
-      await mockAnimationFrame.triggerNextTimeout(3000);
-      expect(render).toHaveBeenLastCalledWith({
-        x: 100.00438658948147,
-        y: 100.00438658948147,
-      });
-      expect(render).toHaveBeenCalledTimes(5);
-      expect(mockAnimationFrame.getCallbacksCount()).toBe(1);
-
-      // on and on
-
-      await mockAnimationFrame.triggerNextTimeout(4000);
-      expect(render).toHaveBeenLastCalledWith({
-        x: 99.9998780350853,
-        y: 99.9998780350853,
-      });
-      expect(render).toHaveBeenCalledTimes(6);
-      expect(mockAnimationFrame.getCallbacksCount()).toBe(1);
-
-      // when does this end?
-
-      await mockAnimationFrame.triggerNextTimeout(5000);
-
+      // animation is now complete.
+      await mockAnimationFrame.triggerNextTimeout(2000);
       expect(render).toHaveBeenLastCalledWith({
         x: 100,
         y: 100,
       });
-      expect(render).toHaveBeenCalledTimes(7);
-      // Done ... animation that had duration of 1000ms took 5000ms to complete, that doesn't sound right
-      // Actually. It looks like the duration is not respected at all, the animation is just always 5000ms long.
+      expect(render).toHaveBeenCalledTimes(4);
       expect(mockAnimationFrame.getCallbacksCount()).toBe(0);
     });
 
@@ -240,16 +207,6 @@ describe('animationFunction', () => {
       await mockAnimationFrame.triggerNextTimeout(2000);
 
       expect(render).toHaveBeenNthCalledWith(2, {
-        x: 99.86165969099825,
-        y: 99.86165969099825,
-      });
-      expect(render).toHaveBeenCalledTimes(2);
-      expect(mockAnimationFrame.getCallbacksCount()).toBe(1);
-
-      // okay, so the animation continues even after the duration
-      // this is the same 5000ms animation that we had before, so now let's overshoot it even more
-      await mockAnimationFrame.triggerNextTimeout(8000);
-      expect(render).toHaveBeenNthCalledWith(3, {
         x: 100,
         y: 100,
       });
@@ -274,7 +231,7 @@ describe('animationFunction', () => {
   describe('linear easing with mocked requestAnimationFrame', () => {
     const realAnimationFrame = new RequestAnimationFrameTimeoutController();
     // this static property addition to a function is wild
-    const linearEasing = configEasing('linear');
+    const linearEasing = createEasingFunction('linear');
     let startAnimation: StartAnimationFunction,
       requestAnimationFrameMock: MockInstance<RequestAnimationFrameDi>,
       cancelAnimationFrameMock: MockInstance<CancelAnimationFrameDi>;
@@ -311,7 +268,7 @@ describe('animationFunction', () => {
     });
 
     it('should use stepperUpdate if easing.isStepper is true', async () => {
-      const easing = configEasing('spring');
+      const easing = createEasingFunction('spring');
       const from = { val: '0' };
       const to = { val: '1' };
       const duration = 20;
@@ -329,7 +286,7 @@ describe('animationFunction', () => {
     });
 
     it('should use timingUpdate if easing.isStepper is false', () => {
-      const easing = configEasing('spring');
+      const easing = createEasingFunction('spring');
       const from = { x: 0, y: 0 };
       const to = { x: 100, y: 100 };
       const duration = 20;
