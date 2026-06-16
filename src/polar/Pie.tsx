@@ -1008,21 +1008,17 @@ function SectorsWithAnimation({
         )}
       </AnimatedItems>
       <PieLabelList showLabels={!isAnimating} sectors={sectors} props={props} />
-      {firstSector ? (
-        <PolarLabelContextProvider
-          cx={firstSector.cx}
-          cy={firstSector.cy}
-          innerRadius={firstSector.innerRadius}
-          outerRadius={firstSector.outerRadius}
-          startAngle={props.startAngle}
-          endAngle={props.endAngle}
-          clockWise={false}
-        >
-          {props.children}
-        </PolarLabelContextProvider>
-      ) : (
-        props.children
-      )}
+      <PolarLabelContextProvider
+        cx={firstSector?.cx ?? 0}
+        cy={firstSector?.cy ?? 0}
+        innerRadius={firstSector?.innerRadius ?? 0}
+        outerRadius={firstSector?.outerRadius ?? 0}
+        startAngle={props.startAngle}
+        endAngle={props.endAngle}
+        clockWise={false}
+      >
+        {props.children}
+      </PolarLabelContextProvider>
     </PieLabelListProvider>
   );
 }
