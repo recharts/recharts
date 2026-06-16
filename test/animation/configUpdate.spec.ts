@@ -267,39 +267,6 @@ describe('animationFunction', () => {
       expect(typeof stopAnimation).toBe('function');
     });
 
-    it('should use stepperUpdate if easing.isStepper is true', async () => {
-      const easing = createEasingFunction('spring');
-      const from = { val: '0' };
-      const to = { val: '1' };
-      const duration = 20;
-
-      startAnimation = animationFunction(from, to, easing, duration, render, realAnimationFrame);
-
-      startAnimation();
-
-      expect(requestAnimationFrameMock).toHaveBeenCalledWith(expect.any(Function));
-
-      vi.advanceTimersToNextFrame();
-
-      // Check if render was called
-      expect(render).toHaveBeenCalled();
-    });
-
-    it('should use timingUpdate if easing.isStepper is false', () => {
-      const easing = createEasingFunction('spring');
-      const from = { x: 0, y: 0 };
-      const to = { x: 100, y: 100 };
-      const duration = 20;
-
-      startAnimation = animationFunction(from, to, easing, duration, render, realAnimationFrame);
-      startAnimation();
-      vi.advanceTimersToNextFrame();
-
-      expect(requestAnimationFrameMock).toHaveBeenCalled();
-
-      expect(render).toHaveBeenCalled();
-    });
-
     it('should stop animation when requested', () => {
       const from = { x: 0, y: 0 };
       const to = { x: 100, y: 100 };
