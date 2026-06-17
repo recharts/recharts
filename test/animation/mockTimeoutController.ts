@@ -24,7 +24,19 @@ export class MockTimeoutController implements TimeoutController {
   }
 
   setTimeout(callback: CallbackType, delay?: number): CancelableTimeout {
-    this.timeouts.push({ callback, delay });
+    /*
+     * Here on purpose, we store a copy of the callback instead of the callback itself.
+     * Why?
+     * This is to test that the other classes are keeping track of their cancellations properly.
+     * If we didn't do that then it's easy to return the first instance returned from calling `setTimeout`
+     * and call it a day. Which is what would happen in this mock controller only,
+     * but the actual RequestAnimationFrameTimeoutController implementation keeps track of requestIds,
+     * not callback instances so that wouldn't work.
+     *
+     * So long story short, this copy exists to keep the mock behavior same as actual timeout controller behavior.
+     */
+    const copy: CallbackType = (now: number) => callback(now);
+    this.timeouts.push({ callback: copy, delay });
 
     if (this.config.timeoutLimit != null && this.timeouts.length > this.config.timeoutLimit) {
       throw new Error(
@@ -34,7 +46,7 @@ export class MockTimeoutController implements TimeoutController {
 
     // Return a cancelable timeout function
     return () => {
-      this.removeTimeout(callback);
+      this.removeTimeout(copy);
       this.cancelledFramesCount++;
     };
   }

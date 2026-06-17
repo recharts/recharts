@@ -1,22 +1,17 @@
 import { describe, it, beforeEach, expect, Mock } from 'vitest';
 import { identity } from 'es-toolkit';
 import { MockTimeoutController } from './mockTimeoutController';
-import { AnimationControllerImpl } from '../../src/animation/AnimationControllerImpl';
+import { animationControllerImpl } from '../../src/animation/AnimationControllerImpl';
 import { CSSTransition, JavascriptAnimation } from '../../src/animation/RechartsAnimation';
 import { noop } from '../../src/util/DataUtils';
-import { EasingFunction } from '../../src/animation/easing';
-import { AnimationController } from '../../src/animation/AnimationController';
 
 describe('AnimationControllerImpl', () => {
-  let timeoutController: MockTimeoutController,
-    animationController: AnimationController<number, EasingFunction>,
-    animationState: JavascriptAnimation;
+  let timeoutController: MockTimeoutController, animationState: JavascriptAnimation;
 
   beforeEach(() => {
     timeoutController = new MockTimeoutController({
       timeoutLimit: 1,
     });
-    animationController = new AnimationControllerImpl();
     animationState = new JavascriptAnimation({
       animationBegin: 100,
       animationDuration: 200,
@@ -29,14 +24,14 @@ describe('AnimationControllerImpl', () => {
   });
 
   it('should return stop function', () => {
-    const ret = animationController.start(timeoutController, animationState, noop);
+    const ret = animationControllerImpl(timeoutController, animationState, noop);
     expect(ret).toBeInstanceOf(Function);
   });
 
   it('should use the timeout controller to progress the animation state', async () => {
     expect(timeoutController.getCallbacksCount()).toBe(0);
 
-    animationController.start(timeoutController, animationState, noop);
+    animationControllerImpl(timeoutController, animationState, noop);
 
     // first we expect it to start a first timeout to start the animation
     // expect(timeoutController.getCallbacksCount()).toBe(1);
@@ -71,7 +66,7 @@ describe('AnimationControllerImpl', () => {
   });
 
   it('should set long timeouts while animation is paused', async () => {
-    animationController.start(timeoutController, animationState, noop);
+    animationControllerImpl(timeoutController, animationState, noop);
     await timeoutController.triggerNextTimeout(0); // init -> pending
     // The animation is now paused for duration=100, so the controller can afford to set longer timeout
     expect(timeoutController.getTimeouts()).toEqual([100]);
@@ -83,7 +78,7 @@ describe('AnimationControllerImpl', () => {
      * Because JS animations must trigger a DOM render, the controller is expected
      * to use the smallest possible timeout so that it can get notified as soon as possible when the animation state changes, and trigger a render.
      */
-    animationController.start(timeoutController, animationState, noop);
+    animationControllerImpl(timeoutController, animationState, noop);
     await timeoutController.triggerNextTimeout(0); // init -> pending
     await timeoutController.triggerNextTimeout(100);
     expect(animationState.getState()).toBe('active');
@@ -93,6 +88,63 @@ describe('AnimationControllerImpl', () => {
      * but the controller should schedule next timeout immediately
      */
     expect(timeoutController.getTimeouts()).toEqual([0]);
+  });
+
+  it('should allow starting and then cancelling multiple animations', async () => {
+    const time1 = new MockTimeoutController({
+      timeoutLimit: 1,
+    });
+    const time2 = new MockTimeoutController({
+      timeoutLimit: 1,
+    });
+    const animation1 = new JavascriptAnimation({
+      animationBegin: 100,
+      animationDuration: 200,
+      onAnimationStart: noop,
+      onAnimationEnd: noop,
+      from: 0,
+      to: 1,
+      easing: identity,
+    });
+    const spy1: Mock<(now: number) => void> = vi.fn();
+    const animation2 = new JavascriptAnimation({
+      animationBegin: 100,
+      animationDuration: 200,
+      onAnimationStart: noop,
+      onAnimationEnd: noop,
+      from: 0,
+      to: 1,
+      easing: identity,
+    });
+    const spy2: Mock<(now: number) => void> = vi.fn();
+    const cancel1 = animationControllerImpl(time1, animation1, spy1);
+    const cancel2 = animationControllerImpl(time2, animation2, spy2);
+
+    await time1.triggerNextTimeout(0); // init -> pending
+    await time2.triggerNextTimeout(0); // init -> pending
+    await time1.triggerNextTimeout(100); // pending -> active
+    await time2.triggerNextTimeout(100); // pending -> active
+    expect(animation1.getState()).toBe('active');
+    expect(animation2.getState()).toBe('active');
+    expect(spy1).toHaveBeenCalledTimes(1);
+    await time1.triggerNextTimeout(150);
+    await time2.triggerNextTimeout(150);
+    expect(spy2).toHaveBeenCalledTimes(2);
+    expect(spy2).toHaveBeenCalledTimes(2);
+
+    cancel1();
+    await time1.triggerNextTimeout(200);
+    await time2.triggerNextTimeout(200);
+    // animation1 should be cancelled, so only animation2 should receive updates
+    expect(spy1).toHaveBeenCalledTimes(2);
+    expect(spy2).toHaveBeenCalledTimes(3);
+
+    cancel2();
+    await time1.triggerNextTimeout(250);
+    await time2.triggerNextTimeout(250);
+    // both animations should be cancelled, so no more updates
+    expect(spy1).toHaveBeenCalledTimes(2);
+    expect(spy2).toHaveBeenCalledTimes(3);
   });
 
   describe('when given JavascriptAnimation', () => {
@@ -107,7 +159,7 @@ describe('AnimationControllerImpl', () => {
         easing: x => x * 2,
       });
       const spy: Mock<(now: number) => void> = vi.fn();
-      animationController.start(timeoutController, easedAnimation, spy);
+      animationControllerImpl(timeoutController, easedAnimation, spy);
 
       await timeoutController.triggerNextTimeout(0); // init -> pending
       await timeoutController.triggerNextTimeout(100);
@@ -137,8 +189,7 @@ describe('AnimationControllerImpl', () => {
         easing: 'ease-in',
       });
       const spy: Mock<(now: string) => void> = vi.fn();
-      // @ts-expect-error temp
-      animationController.start(timeoutController, easedAnimation, spy);
+      animationControllerImpl(timeoutController, easedAnimation, spy);
 
       await timeoutController.triggerNextTimeout(0); // init -> pending
       await timeoutController.triggerNextTimeout(100);
@@ -158,7 +209,7 @@ describe('AnimationControllerImpl', () => {
 
   describe('interrupting animation', () => {
     it('should cancel timeout when stop is called at the start', async () => {
-      const stop = animationController.start(timeoutController, animationState, noop);
+      const stop = animationControllerImpl(timeoutController, animationState, noop);
 
       expect(timeoutController.getCallbacksCount()).toBe(1);
       stop();
@@ -166,7 +217,7 @@ describe('AnimationControllerImpl', () => {
     });
 
     it('should cancel timeout when stop is called while animation is active', async () => {
-      const stop = animationController.start(timeoutController, animationState, noop);
+      const stop = animationControllerImpl(timeoutController, animationState, noop);
 
       expect(timeoutController.getCallbacksCount()).toBe(1);
 
@@ -182,7 +233,7 @@ describe('AnimationControllerImpl', () => {
   describe('subscribing for updates', () => {
     it('should call subscribe with the same number as the animationState.progress', async () => {
       const spy: Mock<(now: number) => void> = vi.fn();
-      animationController.start(timeoutController, animationState, spy);
+      animationControllerImpl(timeoutController, animationState, spy);
 
       await timeoutController.triggerNextTimeout(0); // init -> pending
       expect(animationState.getState()).toBe('pending');
