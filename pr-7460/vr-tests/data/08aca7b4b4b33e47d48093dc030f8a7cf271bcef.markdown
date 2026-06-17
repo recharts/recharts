@@ -1,0 +1,148 @@
+# Instructions
+
+- Following Playwright test failed.
+- Explain why, be concise, respect Playwright best practices.
+- Provide a snippet of code with the fix, if possible.
+
+# Test info
+
+- Name: tests/www/ScatterChartApiExamples.spec-vr.tsx >> ThreeDimScatterChart
+- Location: test-vr/tests/www/ScatterChartApiExamples.spec-vr.tsx:43:5
+
+# Error details
+
+```
+Error: expect(locator).toHaveScreenshot(expected) failed
+
+Locator: locator('#root').locator('internal:control=component')
+  3 pixels (ratio 0.01 of all image pixels) are different.
+
+Call log:
+  - Expect "toHaveScreenshot" with timeout 10000ms
+    - verifying given screenshot expectation
+  - waiting for locator('#root').locator('internal:control=component')
+    - locator resolved to <div width="100%" class="recharts-wrapper">…</div>
+  - taking element screenshot
+    - disabled all CSS animations
+  - waiting for fonts to load...
+  - fonts loaded
+  - attempting scroll into view action
+    - waiting for element to be stable
+  - 1946 pixels (ratio 0.01 of all image pixels) are different.
+  - waiting 100ms before taking screenshot
+  - waiting for locator('#root').locator('internal:control=component')
+    - locator resolved to <div width="100%" class="recharts-wrapper">…</div>
+  - taking element screenshot
+    - disabled all CSS animations
+  - waiting for fonts to load...
+  - fonts loaded
+  - attempting scroll into view action
+    - waiting for element to be stable
+  - 1879 pixels (ratio 0.01 of all image pixels) are different.
+  - waiting 250ms before taking screenshot
+  - waiting for locator('#root').locator('internal:control=component')
+    - locator resolved to <div width="100%" class="recharts-wrapper">…</div>
+  - taking element screenshot
+    - disabled all CSS animations
+  - waiting for fonts to load...
+  - fonts loaded
+  - attempting scroll into view action
+    - waiting for element to be stable
+  - captured a stable screenshot
+  - 3 pixels (ratio 0.01 of all image pixels) are different.
+
+```
+
+# Page snapshot
+
+```yaml
+- generic [active] [ref=e1]:
+  - generic [ref=e3]:
+    - generic:
+      - status:
+        - paragraph
+        - list:
+          - listitem: "score : 280km"
+          - listitem: "stature : 140cm"
+          - listitem: "weight : 250kg"
+    - list [ref=e5]:
+      - listitem [ref=e6]:
+        - img "A school legend icon" [ref=e7]
+        - text: A school
+      - listitem [ref=e9]:
+        - img "B school legend icon" [ref=e10]
+        - text: B school
+    - application [ref=e12]:
+      - generic [ref=e69]:
+        - generic [ref=e70]:
+          - generic [ref=e72]: 0cm
+          - generic [ref=e74]: 60cm
+          - generic [ref=e76]: 120cm
+          - generic [ref=e78]: 180cm
+          - generic [ref=e80]: 240cm
+        - generic [ref=e81]:
+          - generic [ref=e83]: 0kg
+          - generic [ref=e85]: 100kg
+          - generic [ref=e87]: 200kg
+          - generic [ref=e89]: 300kg
+          - generic [ref=e91]: 400kg
+  - generic [ref=e92]: "100"
+```
+
+# Test source
+
+```ts
+  1  | import * as React from 'react';
+  2  | import { test, expect } from '@playwright/experimental-ct-react';
+  3  | 
+  4  | import ScatterChartExample from '../../../www/src/docs/exampleComponents/ScatterChart/ScatterChartExample';
+  5  | import ThreeDimScatterChart from '../../../www/src/docs/exampleComponents/ScatterChart/ThreeDimScatterChart';
+  6  | import JointLineScatterChart from '../../../www/src/docs/exampleComponents/ScatterChart/JointLineScatterChart';
+  7  | import BubbleChart from '../../../www/src/docs/exampleComponents/ScatterChart/BubbleChart';
+  8  | import ScatterChartWithLabels from '../../../www/src/docs/exampleComponents/ScatterChart/ScatterChartWithLabels';
+  9  | import MultipleYAxesScatterChart from '../../../www/src/docs/exampleComponents/ScatterChart/MultipleYAxesScatterChart';
+  10 | import ScatterChartWithCells from '../../../www/src/docs/exampleComponents/ScatterChart/ScatterChartWithCells';
+  11 | import ScatterChartNavExample from '../../../www/src/docs/exampleComponents/ScatterChart/ScatterChartNavExample';
+  12 | 
+  13 | test('ScatterChartNavExample', async ({ mount }) => {
+  14 |   const component = await mount(<ScatterChartNavExample />);
+  15 |   await expect(component).toHaveScreenshot();
+  16 | });
+  17 | 
+  18 | test('ScatterChartWithCells', async ({ mount }) => {
+  19 |   const component = await mount(<ScatterChartWithCells />);
+  20 |   await expect(component).toHaveScreenshot();
+  21 | });
+  22 | 
+  23 | test('MultipleYAxesScatterChart', async ({ mount }) => {
+  24 |   const component = await mount(<MultipleYAxesScatterChart />);
+  25 |   await expect(component).toHaveScreenshot();
+  26 | });
+  27 | 
+  28 | test('ScatterChartWithLabels', async ({ mount }) => {
+  29 |   const component = await mount(<ScatterChartWithLabels defaultIndex="2" />);
+  30 |   await expect(component).toHaveScreenshot();
+  31 | });
+  32 | 
+  33 | test('BubbleChart', async ({ mount }) => {
+  34 |   const component = await mount(<BubbleChart defaultIndex="7" />);
+  35 |   await expect(component).toHaveScreenshot();
+  36 | });
+  37 | 
+  38 | test('JointLineScatterChart', async ({ mount }) => {
+  39 |   const component = await mount(<JointLineScatterChart defaultIndex="2" />);
+  40 |   await expect(component).toHaveScreenshot();
+  41 | });
+  42 | 
+  43 | test('ThreeDimScatterChart', async ({ mount }) => {
+  44 |   const component = await mount(<ThreeDimScatterChart defaultIndex="3" />);
+> 45 |   await expect(component).toHaveScreenshot();
+     |                           ^ Error: expect(locator).toHaveScreenshot(expected) failed
+  46 | });
+  47 | 
+  48 | test('ScatterChartExample', async ({ mount }) => {
+  49 |   const component = await mount(<ScatterChartExample isAnimationActive={false} />);
+  50 |   await expect(component).toHaveScreenshot();
+  51 | });
+  52 | 
+```
