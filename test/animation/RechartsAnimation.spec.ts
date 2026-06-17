@@ -1,4 +1,5 @@
 import { describe, it, expect } from 'vitest';
+import { identity } from 'es-toolkit';
 import { CSSTransition, JavascriptAnimation } from '../../src/animation/RechartsAnimation';
 import { noop } from '../../src/util/DataUtils';
 
@@ -11,6 +12,7 @@ describe('RechartsAnimation state machine', () => {
       animationBegin: 0,
       from: 0,
       to: 1,
+      easing: identity,
     });
     expect(a.getState()).toBe('init');
   });
@@ -24,6 +26,7 @@ describe('RechartsAnimation state machine', () => {
       animationBegin: 20,
       from: 0,
       to: 1,
+      easing: identity,
     });
     expect(spy).toHaveBeenCalledTimes(0);
     a.tick(10); // this becomes the starting time
@@ -42,6 +45,7 @@ describe('RechartsAnimation state machine', () => {
       animationBegin: 0,
       from: 0,
       to: 1,
+      easing: identity,
     });
     a.tick(0);
     a.tick(0);
@@ -57,6 +61,7 @@ describe('RechartsAnimation state machine', () => {
       animationBegin: 0,
       from: 0,
       to: 1,
+      easing: identity,
     });
     expect(a.getProgress()).toBe(0);
     a.tick(0);
@@ -71,6 +76,7 @@ describe('RechartsAnimation state machine', () => {
       animationBegin: 0,
       from: 0,
       to: 1,
+      easing: identity,
     });
     a.tick(0);
     a.tick(0);
@@ -86,6 +92,7 @@ describe('RechartsAnimation state machine', () => {
       animationBegin: 0,
       from: 0,
       to: 1,
+      easing: identity,
     });
     a.tick(0);
     a.tick(0);
@@ -106,6 +113,7 @@ describe('RechartsAnimation state machine', () => {
       animationBegin: 100,
       from: 0,
       to: 1,
+      easing: identity,
     });
 
     a.tick(10); // init -> pending at time t = 10
@@ -135,6 +143,7 @@ describe('RechartsAnimation state machine', () => {
       animationBegin: 100,
       from: 0,
       to: 1,
+      easing: identity,
     });
 
     a.tick(10); // init -> pending at time t = 10
@@ -158,6 +167,7 @@ describe('RechartsAnimation state machine', () => {
       animationBegin: 0,
       from: 0,
       to: 1,
+      easing: identity,
     });
     a.tick(0);
     a.tick(0);
@@ -184,6 +194,7 @@ describe('RechartsAnimation state machine', () => {
         animationBegin: 0,
         from: 0,
         to: 1,
+        easing: identity,
       });
       a.tick(0); // pending
       a.tick(0); // active
@@ -226,6 +237,7 @@ describe('RechartsAnimation state machine', () => {
         animationBegin: 500,
         from: 0,
         to: 1,
+        easing: identity,
       });
       a.tick(100); // pending
       a.tick(1000); // active
@@ -269,6 +281,7 @@ describe('RechartsAnimation state machine', () => {
         animationBegin: 300,
         from: 0,
         to: 1,
+        easing: identity,
       });
     }).not.toThrow();
   });
@@ -281,6 +294,7 @@ describe('RechartsAnimation state machine', () => {
       animationBegin: 100,
       from: 0,
       to: 1,
+      easing: identity,
     });
 
     a.tick(10);
@@ -303,6 +317,7 @@ describe('RechartsAnimation state machine', () => {
       animationBegin: 0,
       from: 0,
       to: 1,
+      easing: identity,
     });
     a.complete();
     expect(a.getState()).toBe('completed');
@@ -319,6 +334,7 @@ describe('RechartsAnimation state machine', () => {
       animationBegin: 300,
       from: 0,
       to: 1,
+      easing: identity,
     });
     expect(a.tick(10)).toEqual(300);
     expect(a.getState()).toBe('pending');
@@ -333,6 +349,7 @@ describe('RechartsAnimation state machine', () => {
         animationBegin: 300,
         from: 2,
         to: 5,
+        easing: identity,
       });
       expect(a.getFrom()).toBe(2);
       expect(a.getTo()).toBe(5);
@@ -346,6 +363,7 @@ describe('RechartsAnimation state machine', () => {
         animationBegin: 300,
         from: 0,
         to: 1,
+        easing: identity,
       });
       // first tick is just state switch, so the next delay will be exactly equal to 'animationBegin'
       expect(a.tick(10)).toEqual(300);
@@ -385,6 +403,7 @@ describe('RechartsAnimation state machine', () => {
         animationBegin: 300,
         from: 0,
         to: 1,
+        easing: identity,
       });
 
       expect(a.tick(100)).toEqual(300); // init -> pending
@@ -401,7 +420,8 @@ describe('RechartsAnimation state machine', () => {
     });
 
     it('should return animation value including easing', () => {
-      const easing = (x: number) => x * 2;
+      const easing = (_x: number) => 7;
+      const spy = vi.fn(easing);
       const a = new JavascriptAnimation({
         onAnimationStart: noop,
         onAnimationEnd: noop,
@@ -409,8 +429,24 @@ describe('RechartsAnimation state machine', () => {
         animationBegin: 300,
         from: 0,
         to: 1,
-        easing,
+        easing: spy,
       });
+      a.tick(10);
+      a.tick(400);
+      expect(a.getState()).toBe('active');
+      a.tick(500);
+
+      /*
+       * Okay so at this point of time, the animation progress is 20%
+       * which is what getProgress() is showing us.
+       * The easing function however can stretch or shrink it,
+       * which is what we are seeing from getInterpolated()
+       */
+      expect(a.getProgress()).toBe(0.2);
+      expect(a.getInterpolated()).toBe(7);
+
+      expect(spy).toHaveBeenCalledTimes(1);
+      expect(spy).toHaveBeenLastCalledWith(0.2);
     });
   });
 
@@ -423,6 +459,7 @@ describe('RechartsAnimation state machine', () => {
         animationBegin: 300,
         from: 'arbitrary values can go here',
         to: 'because this class does not handle the interpolation',
+        easing: 'ease-in',
       });
       expect(a.getFrom()).toBe('arbitrary values can go here');
       expect(a.getTo()).toBe('because this class does not handle the interpolation');
@@ -436,6 +473,7 @@ describe('RechartsAnimation state machine', () => {
         animationBegin: 300,
         from: 'scale(1)',
         to: 'scale(7)',
+        easing: 'ease-in',
       });
       // first tick is just state switch, so the next delay will be exactly equal to 'animationBegin'
       expect(a.tick(10)).toEqual(300);
@@ -475,6 +513,7 @@ describe('RechartsAnimation state machine', () => {
         animationBegin: 300,
         from: 'scale(1)',
         to: 'scale(7)',
+        easing: 'ease-in',
       });
 
       expect(a.tick(100)).toEqual(300); // init -> pending
@@ -488,6 +527,31 @@ describe('RechartsAnimation state machine', () => {
       // so we have the full duration remaining
       expect(a.tick(400)).toBe(500);
       expect(a.getState()).toBe('active');
+    });
+
+    it('should return animation value as-is, ignore easing', () => {
+      const a = new CSSTransition({
+        onAnimationStart: noop,
+        onAnimationEnd: noop,
+        animationDuration: 500,
+        animationBegin: 300,
+        from: 'scale(1)',
+        to: 'scale(7)',
+        easing: 'ease-in',
+      });
+      a.tick(10);
+      a.tick(400);
+      expect(a.getState()).toBe('active');
+      a.tick(500);
+
+      /*
+       * CSS transitions are different! The progress here is 20% but!
+       * What we actually want is we want the final value here
+       * because that's what we put into DOM for the browser to render.
+       * And so `getInterpolated()` is meant to return the final value, always.
+       */
+      expect(a.getProgress()).toBe(0.2);
+      expect(a.getInterpolated()).toBe('scale(7)');
     });
   });
 });

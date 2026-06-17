@@ -1,14 +1,14 @@
 import { describe, it, beforeEach, expect, Mock } from 'vitest';
+import { identity } from 'es-toolkit';
 import { MockTimeoutController } from './mockTimeoutController';
 import { JavaScriptAnimationController } from '../../src/animation/JavaScriptAnimationController';
-import { RechartsAnimation, JavascriptAnimation } from '../../src/animation/RechartsAnimation';
+import { JavascriptAnimation } from '../../src/animation/RechartsAnimation';
 import { noop } from '../../src/util/DataUtils';
-import { AnimationController } from '../../src/animation/AnimationController';
 
 describe('JavaScriptAnimationController', () => {
   let timeoutController: MockTimeoutController,
-    animationController: AnimationController<number>,
-    animationState: RechartsAnimation<number>;
+    animationController: JavaScriptAnimationController,
+    animationState: JavascriptAnimation;
 
   beforeEach(() => {
     timeoutController = new MockTimeoutController({
@@ -22,6 +22,7 @@ describe('JavaScriptAnimationController', () => {
       onAnimationEnd: noop,
       from: 0,
       to: 1,
+      easing: identity,
     });
   });
 
@@ -92,7 +93,33 @@ describe('JavaScriptAnimationController', () => {
     expect(timeoutController.getTimeouts()).toEqual([0]);
   });
 
-  describe.todo('easing');
+  it('should return interpolated and eased value for continuous rendering', async () => {
+    const easedAnimation: JavascriptAnimation = new JavascriptAnimation({
+      animationBegin: 100,
+      animationDuration: 200,
+      onAnimationStart: noop,
+      onAnimationEnd: noop,
+      from: 0,
+      to: 1,
+      easing: x => x * 2,
+    });
+    const spy: Mock<(now: number) => void> = vi.fn();
+    animationController.start(timeoutController, easedAnimation, spy);
+
+    await timeoutController.triggerNextTimeout(0); // init -> pending
+    await timeoutController.triggerNextTimeout(100);
+    expect(easedAnimation.getState()).toBe('active');
+    expect(easedAnimation.getProgress()).toBe(0);
+    expect(spy).toHaveBeenCalledTimes(1);
+    expect(spy).toHaveBeenLastCalledWith(0);
+
+    await timeoutController.triggerNextTimeout(150);
+    expect(easedAnimation.getProgress()).toBe(0.25);
+    expect(easedAnimation.getInterpolated()).toBe(0.5);
+    expect(spy).toHaveBeenCalledTimes(2);
+    // spy should receive the interpolated and eased value because the JS engine needs it to render next update
+    expect(spy).toHaveBeenLastCalledWith(0.5);
+  });
 
   describe('interrupting animation', () => {
     it('should cancel timeout when stop is called at the start', async () => {

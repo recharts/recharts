@@ -1,7 +1,8 @@
 import { AnimationController } from './AnimationController';
 import { CancelableTimeout, TimeoutController } from './timeoutController';
-import { RechartsAnimation } from './RechartsAnimation';
+import { CSSTransition } from './RechartsAnimation';
 import { noop } from '../util/DataUtils';
+import { NamedBezier } from './easing';
 
 /**
  * CSS animations require only one update at the start, and second at the end (to call onAnimationEnd)
@@ -9,12 +10,12 @@ import { noop } from '../util/DataUtils';
  *
  * CSS animation is represented as a stream of CSS rules that get applied to the appropriate element.
  */
-export class CSSAnimationController implements AnimationController<string> {
+export class CSSAnimationController implements AnimationController<string, NamedBezier> {
   private cancellable: CancelableTimeout | undefined;
 
   start(
     timeoutController: TimeoutController,
-    animationHandle: RechartsAnimation<string>,
+    animationHandle: CSSTransition,
     listener: (newState: string) => void,
   ): CancelableTimeout {
     const nextUpdate = (now: number) => {

@@ -1,14 +1,13 @@
 import { describe, it, beforeEach, expect, Mock } from 'vitest';
 import { MockTimeoutController } from './mockTimeoutController';
-import { RechartsAnimation, CSSTransition } from '../../src/animation/RechartsAnimation';
+import { CSSTransition } from '../../src/animation/RechartsAnimation';
 import { noop } from '../../src/util/DataUtils';
-import { AnimationController } from '../../src/animation/AnimationController';
 import { CSSAnimationController } from '../../src/animation/CSSAnimationController';
 
 describe('CSSAnimationController', () => {
   let timeoutController: MockTimeoutController,
-    animationController: AnimationController<string>,
-    animationState: RechartsAnimation<string>;
+    animationController: CSSAnimationController,
+    animationState: CSSTransition;
 
   beforeEach(() => {
     timeoutController = new MockTimeoutController({
@@ -22,6 +21,7 @@ describe('CSSAnimationController', () => {
       onAnimationEnd: noop,
       from: 'height: 100px',
       to: 'height: 200px',
+      easing: 'linear',
     });
   });
 
@@ -90,6 +90,34 @@ describe('CSSAnimationController', () => {
      * so we can wait 200 time
      */
     expect(timeoutController.getTimeouts()).toEqual([200]);
+  });
+
+  it('should return the end style as that is what DOM expects', async () => {
+    const easedAnimation: CSSTransition = new CSSTransition({
+      animationBegin: 100,
+      animationDuration: 200,
+      onAnimationStart: noop,
+      onAnimationEnd: noop,
+      from: 'height: 100px',
+      to: 'height: 200px',
+      easing: 'ease-in',
+    });
+    const spy: Mock<(now: string) => void> = vi.fn();
+    animationController.start(timeoutController, easedAnimation, spy);
+
+    await timeoutController.triggerNextTimeout(0); // init -> pending
+    await timeoutController.triggerNextTimeout(100);
+    expect(easedAnimation.getState()).toBe('active');
+    expect(easedAnimation.getProgress()).toBe(0);
+    expect(spy).toHaveBeenCalledTimes(1);
+    expect(spy).toHaveBeenLastCalledWith('height: 200px');
+
+    await timeoutController.triggerNextTimeout(150);
+    expect(easedAnimation.getProgress()).toBe(0.25);
+    expect(easedAnimation.getInterpolated()).toBe('height: 200px');
+    expect(spy).toHaveBeenCalledTimes(2);
+    // spy should receive the interpolated and eased value because the JS engine needs it to render next update
+    expect(spy).toHaveBeenLastCalledWith('height: 200px');
   });
 
   describe('interrupting animation', () => {

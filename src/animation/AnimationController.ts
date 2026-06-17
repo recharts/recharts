@@ -7,7 +7,7 @@ import { RechartsAnimation } from './RechartsAnimation';
  *
  * The animation state machine is responsible for calculating the animation progress and calling the onAnimationStart and onAnimationEnd callbacks at the right time, while the AnimationManager is responsible for calling the tick method of the animation state machine.
  */
-export interface AnimationController<T> {
+export interface AnimationController<T, E> {
   /**
    * Starts (or resumes) an animation using the provided timeout controller and the animation state machine.
    *
@@ -17,7 +17,7 @@ export interface AnimationController<T> {
    */
   start(
     timeoutController: TimeoutController,
-    animationHandle: RechartsAnimation<T>,
+    animationHandle: RechartsAnimation<T, E>,
     listener: (newState: T) => void,
   ): CancelableTimeout;
 }

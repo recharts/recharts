@@ -1,5 +1,6 @@
 // eslint-disable-next-line max-classes-per-file
 import { interpolate } from '../util/DataUtils';
+import { EasingFunction, NamedBezier } from './easing';
 
 const INIT = 'init' as const;
 const PENDING = 'pending' as const;
@@ -10,7 +11,7 @@ type AnimationState = typeof INIT | typeof PENDING | typeof ACTIVE | typeof COMP
 
 type AnimationStateCallback = () => void;
 
-export interface RechartsAnimation<T> {
+export interface RechartsAnimation<T, E> {
   /**
    * Returns the state machine current state
    * - `init`:       RechartsAnimation had just been created, and did not announce its start yet (`onAnimationStart`)
@@ -32,9 +33,19 @@ export interface RechartsAnimation<T> {
    * For this reason, the easing function must be applied _after_ this animation state,
    * so that one has a chance to construct dynamic "overshoot" animations.
    *
-   * The progress is linear with time; if you wish for easing, apply the easing function after reading the progress.
+   * The progress is linear with time.
+   * If you wish for easing, use `getInterpolated()` instead.
    */
   getProgress(): number;
+  /**
+   * Returns value of the transition at the current time.
+   * The exact details differ based on the animation type
+   */
+  getInterpolated(): T;
+  /**
+   * Returns the easing input or function
+   */
+  getEasing(): E;
   /**
    * Sets the current time of the animation. The animation sets its internal state and progress accordingly.
    * This is current, absolute time; not additive! This allows you to essentially "travel back in time" based on the value you pass in here.
@@ -73,19 +84,12 @@ function remaining(time: number): number {
 }
 
 /**
- * RechartsAnimation is a Recharts state machine. It has several stages in its life:
+ * Recharts state machine.
  *
  * Possible transitions are:
  * - init to pending - `onAnimationStart` executes
  * - pending to active
  * - active to completed - `onAnimationEnd` executes
- *
- * AnimationController: so this is typically either a setTimeout-based or requestAnimationFrame-based solution which reports the passage of time and translates that into a "progress". This controller will read the `animationDuration` and the time elapsed since the last tick, run that through easing function, then pass as progress. All good. But! This can also be customized. Since Recharts v3.9 we support passing custom animationControllers. Why is that useful?
- * - Unit testing: one can construct a chart at any point of the animation, for unit tests or visual tests for example (Recharts source code uses this extensively)
- * - Manual animation control: I find it very useful to have a UI that controls the progress of the animation, so that I can observe and debug the animation without being constrained by time.
- * - Other more creative animation controllers: One can construct a chart that animates based on a page scroll distance. Or animates back and forth based on mouse wheel events. Or a BarChart that animates based on microphone signal volume. We don't want to support all of those inside the library - we want to focus on charts - but we want to give users the tools to do that if they want to. And this tool is AnimationController override. We will provide the default implementation in the form of requestAnimationFrameAnimationController and let users add their own.
- *
- * For this reason, we do not automatically end the animation when it reaches `1`. You need to call .complete() first.
  *
  * The RechartsAnimation class is responsible for managing the transition between these stages.
  *
@@ -94,8 +98,16 @@ function remaining(time: number): number {
  * - `animationBegin`: delay between `onAnimationStart` and the transition
  * - the transition itself, `animationDuration`-long
  * `onAnimationEnd`: function that is called when the animation is moving from `active` to `completed`
+ *
+ * AnimationController: so this is typically either a setTimeout-based or requestAnimationFrame-based solution which reports the passage of time and translates that into a "progress". This controller will read the `animationDuration` and the time elapsed since the last tick, run that through easing function, then pass as progress. All good. But! This can also be customized. Since Recharts v3.9 we support passing custom animationControllers. Why is that useful?
+ * - Unit testing: one can construct a chart at any point of the animation, for unit tests or visual tests for example (Recharts source code uses this extensively)
+ * - Manual animation control: I find it very useful to have a UI that controls the progress of the animation, so that I can observe and debug the animation without being constrained by time.
+ * - Other more creative animation controllers: One can construct a chart that animates based on a page scroll distance. Or animates back and forth based on mouse wheel events. Or a BarChart that animates based on microphone signal volume. We don't want to support all of those inside the library - we want to focus on charts - but we want to give users the tools to do that if they want to. And this tool is AnimationController override. We will provide the default implementation in the form of requestAnimationFrameAnimationController and let users add their own.
+ *
+ * For this reason, we do not automatically end the animation when it reaches `1`. You need to call .complete() first.
+ *
  */
-abstract class RechartsAnimationImpl<T extends string | number> implements RechartsAnimation<T> {
+abstract class RechartsAnimationImpl<T, E> implements RechartsAnimation<T, E> {
   private readonly onAnimationStart: undefined | AnimationStateCallback;
 
   private readonly onAnimationEnd: undefined | AnimationStateCallback;
@@ -114,6 +126,8 @@ abstract class RechartsAnimationImpl<T extends string | number> implements Recha
 
   private readonly to: T;
 
+  protected readonly easing: E;
+
   constructor(param: {
     onAnimationStart: undefined | AnimationStateCallback;
     onAnimationEnd: undefined | AnimationStateCallback;
@@ -121,6 +135,7 @@ abstract class RechartsAnimationImpl<T extends string | number> implements Recha
     animationBegin: number;
     from: T;
     to: T;
+    easing: E;
   }) {
     this.onAnimationStart = param.onAnimationStart;
     this.onAnimationEnd = param.onAnimationEnd;
@@ -129,12 +144,17 @@ abstract class RechartsAnimationImpl<T extends string | number> implements Recha
     this.progress = 0;
     this.from = param.from;
     this.to = param.to;
+    this.easing = param.easing;
   }
 
   private state: AnimationState = INIT;
 
   getState() {
     return this.state;
+  }
+
+  getEasing(): E {
+    return this.easing;
   }
 
   tick(now: number): number {
@@ -197,19 +217,15 @@ abstract class RechartsAnimationImpl<T extends string | number> implements Recha
     return this.to;
   }
 
+  public abstract getInterpolated(): T;
+
   /**
    * Returns the duration of time of when the controller should ask for the next update
    */
   protected abstract nextAnimationUpdate(timeElapsed: number): number;
-
-  /**
-   * Returns value of the transition at the current time.
-   * The exact details differ based on the animation type
-   */
-  protected abstract interpolated(): T;
 }
 
-export class JavascriptAnimation extends RechartsAnimationImpl<number> {
+export class JavascriptAnimation extends RechartsAnimationImpl<number, EasingFunction> {
   // eslint-disable-next-line class-methods-use-this
   protected nextAnimationUpdate(): number {
     /*
@@ -220,15 +236,17 @@ export class JavascriptAnimation extends RechartsAnimationImpl<number> {
     return 0;
   }
 
-  protected interpolated(): number {
-    /*
-     * TODO easing
-     */
-    return interpolate(this.getFrom(), this.getTo(), this.getProgress());
+  /**
+   * Returns value of the animation after its easing function had been applied.
+   * This value, unlike getProgress(), can escape the [0..1] range
+   * because this is entirely within the easing function control. Spring typically does this.
+   */
+  public getInterpolated(): number {
+    return this.easing(interpolate(this.getFrom(), this.getTo(), this.getProgress()));
   }
 }
 
-export class CSSTransition extends RechartsAnimationImpl<string> {
+export class CSSTransition extends RechartsAnimationImpl<string, NamedBezier> {
   protected nextAnimationUpdate(timeElapsed: number): number {
     /**
      * CSS transitions do not need DOM updates past the initial render
@@ -238,11 +256,13 @@ export class CSSTransition extends RechartsAnimationImpl<string> {
   }
 
   /**
-   * CSS transitions leave both interpolation and easing to the browser
-   * - so all we need to do here is return the final state
+   * Returns the final value of the animation (the `to`).
+   *
+   * CSS transitions leave both interpolation and easing to the browser,
+   * so all we need to do here is return the final state
    * and let browser handle the rest.
    */
-  protected interpolated(): string {
+  public getInterpolated(): string {
     return this.getTo();
   }
 }
