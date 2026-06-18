@@ -13,7 +13,7 @@ import { RechartsAnimation } from './RechartsAnimation';
  *
  * This function will mutate the animationHandle object!
  */
-export type AnimationController<T, E> = (
+export type AnimationController = <T, E>(
   timeoutController: TimeoutController,
   animationHandle: RechartsAnimation<T, E>,
   listener: (newState: T) => void,

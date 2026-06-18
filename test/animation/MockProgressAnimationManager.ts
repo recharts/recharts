@@ -1,5 +1,6 @@
 import { MockAbstractAnimationManager } from './MockAbstractAnimationManager';
-import { AnimationManager, ReactSmoothQueue } from '../../src/animation/AnimationManager';
+import { AnimationManager } from '../../src/animation/AnimationManager';
+import { RechartsAnimation } from '../../src/animation/RechartsAnimation';
 
 export interface MockAnimationManager {
   /**
@@ -59,8 +60,8 @@ export class MockProgressAnimationManager
   }
 
   async setAnimationProgress(percent: number): Promise<void> {
-    if (this.queue === null || this.queue.length === 0) {
-      throw new Error(`[${this.animationId}] Queue is empty`);
+    if (this.animation === null) {
+      throw new Error(`[${this.animationId}] Animation not available`);
     }
     if (percent < 0) {
       throw new Error('Percent must be greater than or equal to 0');
@@ -86,7 +87,7 @@ export class MockProgressAnimationManager
   }
 
   async completeAnimation(): Promise<void> {
-    if (this.queue === null || this.queue.length === 0) {
+    if (this.animation === null) {
       throw new Error('Queue is empty');
     }
 
@@ -95,15 +96,13 @@ export class MockProgressAnimationManager
       await this.setAnimationProgress(1);
     }
 
-    const result = this.poll(this.queue.length);
     this.onStop?.();
-    return result;
   }
 
-  start(queue: ReactSmoothQueue) {
-    super.start(queue);
-    this.isPrimed = false; // Reset the primed state when starting a new queue
-    this.animationProgress = 0; // Reset the animation progress when starting a new queue
+  start(animation: RechartsAnimation<T, E>, listener: (newState: T) => void) {
+    super.start(animation, listener);
+    this.isPrimed = false; // Reset the primed state when starting a new animation
+    this.animationProgress = 0; // Reset the animation progress when starting a new animation
   }
 
   stop() {
@@ -135,10 +134,38 @@ export class MockProgressAnimationManager
    * @returns Promise<void>
    */
   private async prime(): Promise<void> {
+    if (this.animation === null) {
+      throw new Error('No animation available');
+    }
     if (this.isPrimed) {
       return;
     }
     this.isPrimed = true;
+
+    if (this.animation.getState() === 'completed') {
+      return; // job done
+    }
+
+    if (this.animation.getState() === 'init') {
+      await this.timeoutController.triggerNextTimeout(0);
+    }
+
+    if (this.animation.getState() === 'pending') {
+      /*
+       * The `firstTick` exists because the previous implementation `configUpdate` had this thing where it required
+       * a first non-zero tick to correctly initialize its internal state.
+       * This is confusing and unnecessary so the new implementation does not have that
+       * but all our unit tests are {firstTick}ms off so I added the same delay here
+       * just so that I don't have to update tons of assertions.
+       */
+      await this.timeoutController.triggerNextTimeout(this.animation.getBeginDelay() + this.firstTick);
+    }
+
+    if (this.animation.getState() === 'active') {
+      return; // this is what we wanted to reach!
+    }
+
+    throw new Error(`Unexpected animation state: ${this.animation.getState()}`);
 
     /*
      * We don't really have a good way to check which function is the easing function.
@@ -147,14 +174,14 @@ export class MockProgressAnimationManager
      * the Animate component by default puts the easing function as the third item in the queue.
      * If that changes, bunch of tests will break, so no harm.
      */
-    await this.poll(2); // Poll the first two items in the queue, which we expect to be 1. onStart and 2. starting delay
-    await this.poll(1); // Poll the next item, which we expect to be the easing function
+    // await this.poll(2); // Poll the first two items in the queue, which we expect to be 1. onStart and 2. starting delay
+    // await this.poll(1); // Poll the next item, which we expect to be the easing function
 
     /*
      * Now, a specialty of the configUpdate easing function is that it needs one tick
      * to kickstart and set up its internal state.
      */
-    await this.triggerNextTimeout(this.firstTick);
+    // await this.triggerNextTimeout(this.firstTick);
   }
 
   /**
@@ -167,22 +194,12 @@ export class MockProgressAnimationManager
    * @return Promise<number> The animation duration in milliseconds.
    */
   private async peekAnimationDuration(): Promise<number> {
-    if (this.queue === null || this.queue.length === 0) {
-      throw new Error(`[${this.animationId}] Queue is empty`);
+    if (this.animation === null) {
+      throw new Error(`[${this.animationId}] Animation not available`);
     }
 
     await this.prime();
 
-    const animationDuration = this.queue[0];
-
-    if (typeof animationDuration !== 'number') {
-      throw new Error(
-        `[${this.animationId}] We assume the first item in the queue is the animation duration.
-        Found: [${typeof animationDuration}] instead.
-        This probably means you are calling this method at a wrong time.`,
-      );
-    }
-
-    return animationDuration;
+    return this.animation.getDuration();
   }
 }

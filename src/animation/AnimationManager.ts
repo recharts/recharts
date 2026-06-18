@@ -1,5 +1,6 @@
 import { CancelableTimeout, TimeoutController } from './timeoutController';
 import { StartAnimationFunction } from './configUpdate';
+import { RechartsAnimation } from './RechartsAnimation';
 
 export type ReactSmoothStyle = string | Record<string, unknown>;
 
@@ -18,10 +19,10 @@ export type ReactSmoothQueue = ReadonlyArray<ReactSmoothQueueItem>;
 
 export type HandleChangeFn = (currentStyle: ReactSmoothStyle) => null | void;
 
-export type AnimationManager = {
+export type AnimationManager<T, E> = {
   stop: () => void;
-  start: (style: ReactSmoothQueue) => void;
-  subscribe: (handleChange: (style: ReactSmoothStyle) => void) => () => void;
+  start: (animation: RechartsAnimation<T, E>) => void;
+  subscribe: (handleChange: (style: T) => void) => () => void;
   getTimeoutController(): TimeoutController;
   /**
    * When true, this manager controls animation progress manually (e.g. via a scrubber).

@@ -77,6 +77,23 @@ export interface RechartsAnimation<T, E> {
    * Does not include progress, easing, interpolation, none of that - just the static end value
    */
   getTo(): T;
+
+  /**
+   * Unique identifier of an animation
+   */
+  getAnimationId(): string;
+
+  /**
+   * Returns the configuration - the duration of the transition.
+   * Does not change in time, does not change when state changes, this is a static value.
+   */
+  getDuration(): number;
+
+  /**
+   * Returns the configuration - the duration of delay in between animation initialization, and transition.
+   * Does not change in time, does not change when state changes, this is a static value.
+   */
+  getBeginDelay(): number;
 }
 
 function remaining(time: number): number {
@@ -128,7 +145,10 @@ abstract class RechartsAnimationImpl<T, E> implements RechartsAnimation<T, E> {
 
   protected readonly easing: E;
 
+  private readonly animationId: string;
+
   constructor(param: {
+    animationId: string;
     onAnimationStart: undefined | AnimationStateCallback;
     onAnimationEnd: undefined | AnimationStateCallback;
     animationDuration: number;
@@ -137,6 +157,7 @@ abstract class RechartsAnimationImpl<T, E> implements RechartsAnimation<T, E> {
     to: T;
     easing: E;
   }) {
+    this.animationId = param.animationId;
     this.onAnimationStart = param.onAnimationStart;
     this.onAnimationEnd = param.onAnimationEnd;
     this.animationDuration = param.animationDuration;
@@ -155,6 +176,10 @@ abstract class RechartsAnimationImpl<T, E> implements RechartsAnimation<T, E> {
 
   getEasing(): E {
     return this.easing;
+  }
+
+  getDuration(): number {
+    return this.animationDuration;
   }
 
   tick(now: number): number {
@@ -215,6 +240,14 @@ abstract class RechartsAnimationImpl<T, E> implements RechartsAnimation<T, E> {
 
   getTo() {
     return this.to;
+  }
+
+  getAnimationId(): string {
+    return this.animationId;
+  }
+
+  getBeginDelay(): number {
+    return this.animationBegin;
   }
 
   public abstract getInterpolated(): T;

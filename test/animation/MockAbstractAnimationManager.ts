@@ -7,6 +7,8 @@ import {
 } from '../../src/animation/AnimationManager';
 import { TimeoutController } from '../../src/animation/timeoutController';
 import { MockTimeoutController } from './mockTimeoutController';
+import { RechartsAnimation } from '../../src/animation/RechartsAnimation';
+import { animationControllerImpl } from '../../src/animation/AnimationControllerImpl';
 
 /**
  * Abstract class for the various mock animation managers.
@@ -51,22 +53,23 @@ export abstract class MockAbstractAnimationManager implements AnimationManager {
   }
 
   public isAnimating(): boolean {
-    return this.queue !== null && this.queue.length > 0;
+    return this.animation !== null && this.animation.getState() !== 'completed';
   }
 
-  protected queue: ReactSmoothQueue | null = null;
+  protected animation: RechartsAnimation<any, any> | null = null;
 
   protected readonly timeoutController: MockTimeoutController = new MockTimeoutController();
 
   private listener: HandleChangeFn | null = null;
 
-  start(queue: ReactSmoothQueue): void {
-    this.queue = queue;
+  start(animation: RechartsAnimation<any, any>, listener: (newState: T) => void): void {
+    this.animation = animation;
     this.timeoutController.clear();
+    animationControllerImpl(this.timeoutController, this.animation, listener);
   }
 
   stop(): void {
-    this.queue = null;
+    this.animation = null;
   }
 
   subscribe(handleChange: (style: ReactSmoothStyle) => void): () => void {
@@ -81,12 +84,12 @@ export abstract class MockAbstractAnimationManager implements AnimationManager {
   }
 
   private async pollPrivate(): Promise<void> {
-    if (this.queue === null || this.queue.length === 0) {
-      throw new Error('Queue is empty');
+    if (this.animation === null) {
+      throw new Error('There is no animation');
     }
-    const head = this.queue[0];
+    const head = this.animation[0];
 
-    this.queue = this.queue.slice(1);
+    this.animation = this.animation.slice(1);
     if (typeof head === 'function') {
       head();
     } else if (typeof head === 'object' || typeof head === 'string') {

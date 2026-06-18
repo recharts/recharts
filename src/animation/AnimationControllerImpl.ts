@@ -9,7 +9,7 @@ import { CancelableTimeout, TimeoutController } from './timeoutController';
  * JavaScript animation progress is represented as a stream of numbers between 0 and 1, where 0 means the animation just started, and 1 means the animation just ended. Each individual consumer is then responsible
  * for mapping that number onto a React component.
  */
-export const animationControllerImpl = (<T, E>(
+export const animationControllerImpl: AnimationController = <T, E>(
   timeoutController: TimeoutController,
   animationHandle: RechartsAnimation<T, E>,
   listener: (progress: T) => void,
@@ -33,4 +33,4 @@ export const animationControllerImpl = (<T, E>(
   cancellable = timeoutController.setTimeout(nextUpdate, 0);
 
   return () => cancellable?.();
-}) satisfies AnimationController<any, any>;
+};

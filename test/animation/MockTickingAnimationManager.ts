@@ -25,11 +25,11 @@ export class MockTickingAnimationManager extends MockAbstractAnimationManager im
    */
   public assertQueue(expectedQueue: SerializableQueue | null): void {
     if (expectedQueue === null) {
-      expect(this.queue).toBeNull();
+      expect(this.animation).toBeNull();
       return;
     }
-    assertNotNull(this.queue);
-    const serializedQueue: SerializableQueue = this.queue.map(item => {
+    assertNotNull(this.animation);
+    const serializedQueue: SerializableQueue = this.animation.map(item => {
       if (typeof item === 'function') {
         const name = 'getMockName' in item && typeof item.getMockName === 'function' ? item.getMockName() : item.name;
         return `[function ${name || 'anonymous'}]`;
