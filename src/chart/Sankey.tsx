@@ -530,6 +530,9 @@ const resolveNodeLinkCollisions = (
         continue;
       }
 
+      // This backward pass only keeps moved nodes within the chart bounds.
+      // It intentionally does not iterate again against fixed obstacles above,
+      // because this fix is scoped to the fully-contained skipped-depth case.
       const dy = item.node.y + getItemHeight(item) + nodePadding - previousY;
       if (dy > 0) {
         item.node.y -= dy;

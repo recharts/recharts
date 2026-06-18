@@ -34,6 +34,10 @@ const getLinkYAtX = (path: Element, x: number): number => {
     throw new Error('Expected Sankey link path to have coordinates');
   }
 
+  if (coordinates.length < 8) {
+    throw new Error(`Expected Sankey link path to have at least 8 coordinates, got ${coordinates.length}`);
+  }
+
   const [sourceX, sourceY, sourceControlX, sourceControlY, targetControlX, targetControlY, targetX, targetY] =
     coordinates;
   let minT = 0;
