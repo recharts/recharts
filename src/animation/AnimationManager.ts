@@ -21,7 +21,7 @@ export type HandleChangeFn = (currentStyle: ReactSmoothStyle) => null | void;
 
 export type AnimationManager<T, E> = {
   stop: () => void;
-  start: (animation: RechartsAnimation<T, E>) => void;
+  start: (animation: RechartsAnimation<T, E>, listener: (newStyle: T) => void) => void;
   subscribe: (handleChange: (style: T) => void) => () => void;
   getTimeoutController(): TimeoutController;
   /**
@@ -32,6 +32,9 @@ export type AnimationManager<T, E> = {
   isManualControl?: boolean;
 };
 
+/**
+ * @deprecated
+ */
 export function createAnimateManager(timeoutController: TimeoutController): AnimationManager {
   let currStyle: ReactSmoothQueueItem | ReactSmoothQueue | undefined;
   let handleChange: HandleChangeFn = () => null;

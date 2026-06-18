@@ -45,9 +45,9 @@ export interface MockAnimationManager {
  * A higher level mock animation manager that allows for less granular control
  * but also requires less setup to get to a certain point in the animation.
  */
-export class MockProgressAnimationManager
+export class MockProgressAnimationManager<T, E>
   extends MockAbstractAnimationManager
-  implements AnimationManager, MockAnimationManager
+  implements AnimationManager<T, E>, MockAnimationManager
 {
   private readonly onStop?: () => void;
 
