@@ -50,6 +50,14 @@ $ npm install recharts react-is
 
 `react-is` needs to match the version of your installed `react` package.
 
+### Deno
+
+Deno is a drop-in replacement for npm, so Recharts installs the same way:
+
+```sh
+$ deno add recharts react-is
+```
+
 ### umd
 
 The UMD build is also available on unpkg.com:
