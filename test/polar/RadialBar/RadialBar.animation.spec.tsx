@@ -148,7 +148,7 @@ describe('RadialBar animation', () => {
       assertNotNull(shapeAfterAnimation);
       expect(shapeAfterAnimation.getAttribute('data-t')).toBe('1');
       expect(shapeAfterAnimation.getAttribute('data-is-animating')).toBe('false');
-      expect(shapeAfterAnimation.getAttribute('data-is-entrance')).toBe('true');
+      expect(shapeAfterAnimation.getAttribute('data-is-entrance')).toBe('false');
     });
   });
 

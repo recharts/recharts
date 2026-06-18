@@ -1,3 +1,4 @@
+import { act } from '@testing-library/react';
 import { MockAbstractAnimationManager } from './MockAbstractAnimationManager';
 import { AnimationManager } from '../../src/animation/AnimationManager';
 import { RechartsAnimation } from '../../src/animation/RechartsAnimation';
@@ -67,13 +68,11 @@ export class MockProgressAnimationManager<T, E>
       throw new Error('Percent must be greater than or equal to 0');
     }
 
-    if (this.animationProgress >= 1) {
+    if (this.animation.getState() === 'completed') {
       throw new Error(
         'Animation is already complete. Call completeAnimation to finish the queue. MockProgressAnimationManager does not support rewinding.',
       );
     }
-
-    this.animationProgress = percent;
 
     const animationDuration = await this.peekAnimationDuration();
 
@@ -81,20 +80,23 @@ export class MockProgressAnimationManager<T, E>
      * The time is absolute, and the configUpdate is internally tracking the time when it started,
      * so here we can just multiply by percent and add the first tick to get the time to advance.
      */
-    const timeToAdvance = animationDuration * percent + this.firstTick;
+    const timeToAdvance = animationDuration * percent + this.animation.getBeginDelay() + this.firstTick;
 
     await this.timeoutController.triggerNextTimeout(timeToAdvance);
   }
 
   async completeAnimation(): Promise<void> {
-    if (this.animation === null) {
-      throw new Error('Queue is empty');
-    }
-
-    if (this.animationProgress < 1) {
-      // Finish the animation by setting the progress to 100%. This will also prime the animation manager if it hasn't been primed yet.
+    if (this.animation?.getProgress() < 1) {
+      // Finish the animation by setting the progress to 100% so that we can get fresh assertions in tests
       await this.setAnimationProgress(1);
     }
+
+    act(() => {
+      if (this.animation === null) {
+        throw new Error('Queue is empty');
+      }
+      this.animation.complete();
+    });
 
     this.onStop?.();
   }
@@ -102,13 +104,11 @@ export class MockProgressAnimationManager<T, E>
   start(animation: RechartsAnimation<T, E>, listener: (newState: T) => void) {
     super.start(animation, listener);
     this.isPrimed = false; // Reset the primed state when starting a new animation
-    this.animationProgress = 0; // Reset the animation progress when starting a new animation
   }
 
   stop() {
     super.stop();
     this.isPrimed = false; // Reset the primed state when stopping the queue
-    this.animationProgress = 0; // Reset the animation progress when stopping a queue
     this.onStop?.();
   }
 
@@ -121,8 +121,6 @@ export class MockProgressAnimationManager<T, E>
    * @private
    */
   private firstTick: number = 16;
-
-  private animationProgress: number = 0;
 
   /**
    * Priming the animation manager is a necessary step before starting the animation.

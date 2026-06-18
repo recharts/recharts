@@ -1,17 +1,17 @@
 import React from 'react';
 import { render } from '@testing-library/react';
 import { describe, expect, it, vi } from 'vitest';
-import { MockProgressAnimationManager } from './MockProgressAnimationManager';
 
 import { JavascriptAnimate } from '../../src/animation/JavascriptAnimate';
+import { CompositeAnimationManager } from './CompositeAnimationManager';
 
 describe('JavascriptAnimate progress', () => {
   it('should call the function child with the current time', async () => {
-    const animationManager = new MockProgressAnimationManager('1');
+    const animationManager = new CompositeAnimationManager();
     const child = vi.fn();
 
     render(
-      <JavascriptAnimate animationId="1" easing="linear" duration={500} animationManager={animationManager}>
+      <JavascriptAnimate animationId="1" easing="linear" duration={500} animationManager={animationManager.factory}>
         {child}
       </JavascriptAnimate>,
     );
@@ -20,22 +20,21 @@ describe('JavascriptAnimate progress', () => {
     expect(child).toHaveBeenCalledTimes(1);
 
     await animationManager.setAnimationProgress(0.3);
-
     expect(child).toHaveBeenLastCalledWith(0.3);
+    expect(child).toHaveBeenCalledTimes(2);
 
     await animationManager.setAnimationProgress(0.7);
-
     expect(child).toHaveBeenLastCalledWith(0.7);
-    expect(child).toHaveBeenCalledTimes(4);
+    expect(child).toHaveBeenCalledTimes(3);
   });
 
   describe('when easing changes in the middle of the animation', () => {
     it('should update the child with the new time and unfortunately it jumps in the middle', async () => {
-      const animationManager = new MockProgressAnimationManager('1');
+      const animationManager = new CompositeAnimationManager();
       const child = vi.fn();
 
       const { rerender } = render(
-        <JavascriptAnimate animationId="1" easing="linear" duration={500} animationManager={animationManager}>
+        <JavascriptAnimate animationId="1" easing="linear" duration={500} animationManager={animationManager.factory}>
           {child}
         </JavascriptAnimate>,
       );
@@ -49,24 +48,24 @@ describe('JavascriptAnimate progress', () => {
 
       // Change "to" in the middle of the animation
       rerender(
-        <JavascriptAnimate animationId="1" easing="ease-out" duration={500} animationManager={animationManager}>
+        <JavascriptAnimate animationId="1" easing="ease-out" duration={500} animationManager={animationManager.factory}>
           {child}
         </JavascriptAnimate>,
       );
 
       // the animation now is at the exact same point as before the props change, and will start progressing from there
       expect(child).toHaveBeenLastCalledWith(0.3);
-      expect(child).toHaveBeenCalledTimes(4);
+      expect(child).toHaveBeenCalledTimes(3);
 
       await animationManager.setAnimationProgress(0.7);
 
       expect(child).toHaveBeenLastCalledWith(expect.closeTo(0.81, 2));
-      expect(child).toHaveBeenCalledTimes(6);
+      expect(child).toHaveBeenCalledTimes(5);
 
       await animationManager.setAnimationProgress(1);
 
       expect(child).toHaveBeenLastCalledWith(1);
-      expect(child).toHaveBeenCalledTimes(7);
+      expect(child).toHaveBeenCalledTimes(6);
     });
   });
 });

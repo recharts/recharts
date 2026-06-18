@@ -12,9 +12,13 @@ export type ReactSmoothStyle = string | Record<string, unknown>;
  * - A StartAnimationFunction that starts eased transition and calls different render
  *      because of course in Recharts we have to have three ways to do everything
  * - An arbitrary function to be executed
+ * @deprecated
  */
 export type ReactSmoothQueueItem = number | ReactSmoothStyle | StartAnimationFunction | (() => void);
 
+/**
+ * @deprecated
+ */
 export type ReactSmoothQueue = ReadonlyArray<ReactSmoothQueueItem>;
 
 export type HandleChangeFn = (currentStyle: ReactSmoothStyle) => null | void;

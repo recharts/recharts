@@ -1,14 +1,9 @@
 import { act } from '@testing-library/react';
-import {
-  AnimationManager,
-  HandleChangeFn,
-  ReactSmoothQueue,
-  ReactSmoothStyle,
-} from '../../src/animation/AnimationManager';
+import { AnimationManager, HandleChangeFn, ReactSmoothStyle } from '../../src/animation/AnimationManager';
 import { TimeoutController } from '../../src/animation/timeoutController';
 import { MockTimeoutController } from './mockTimeoutController';
 import { RechartsAnimation } from '../../src/animation/RechartsAnimation';
-import { animationControllerImpl } from '../../src/animation/AnimationControllerImpl';
+import { mockAnimationController } from './mockAnimationController';
 
 /**
  * Abstract class for the various mock animation managers.
@@ -65,7 +60,7 @@ export abstract class MockAbstractAnimationManager implements AnimationManager {
   start(animation: RechartsAnimation<any, any>, listener: (newState: T) => void): void {
     this.animation = animation;
     this.timeoutController.clear();
-    animationControllerImpl(this.timeoutController, this.animation, listener);
+    mockAnimationController(this.timeoutController, this.animation, listener);
   }
 
   stop(): void {
