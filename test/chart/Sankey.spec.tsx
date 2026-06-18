@@ -17,6 +17,43 @@ import { expectLastCalledWith } from '../helper/expectLastCalledWith';
 import { mockTouchingElement } from '../helper/mockTouchingElement';
 import { TooltipInteractionState } from '../../src/state/tooltipSlice';
 
+const readSvgNumber = (element: Element, attribute: string): number => Number(element.getAttribute(attribute));
+
+const getCubicPoint = (start: number, control1: number, control2: number, end: number, t: number): number => {
+  const inverseT = 1 - t;
+  return inverseT ** 3 * start + 3 * inverseT ** 2 * t * control1 + 3 * inverseT * t ** 2 * control2 + t ** 3 * end;
+};
+
+const getLinkYAtX = (path: Element, x: number): number => {
+  const coordinates = path
+    .getAttribute('d')
+    ?.match(/-?\d+(?:\.\d+)?/g)
+    ?.map(Number);
+
+  if (coordinates == null) {
+    throw new Error('Expected Sankey link path to have coordinates');
+  }
+
+  const [sourceX, sourceY, sourceControlX, sourceControlY, targetControlX, targetControlY, targetX, targetY] =
+    coordinates;
+  let minT = 0;
+  let maxT = 1;
+
+  for (let i = 0; i < 30; i++) {
+    const middleT = (minT + maxT) / 2;
+    const middleX = getCubicPoint(sourceX, sourceControlX, targetControlX, targetX, middleT);
+
+    if (middleX < x) {
+      minT = middleT;
+    } else {
+      maxT = middleT;
+    }
+  }
+
+  const t = (minT + maxT) / 2;
+  return getCubicPoint(sourceY, sourceControlY, targetControlY, targetY, t);
+};
+
 describe('<Sankey />', () => {
   it('renders 48 nodes in simple SankeyChart', () => {
     const { container } = render(<Sankey width={1000} height={500} data={exampleSankeyData} />);
@@ -782,5 +819,50 @@ describe('<Sankey />', () => {
     // A and B should render because they have >0 values.
     // C and D have 0 values, so they get 0 height and do not render.
     expect(nodes.length).toBe(2);
+  });
+
+  it('should keep intermediate nodes out of links that skip over their depth', () => {
+    const overlappingData = {
+      nodes: [
+        { name: 'Consumption bought' },
+        { name: 'Total consumption' },
+        { name: 'Total production' },
+        { name: 'Consumed production' },
+        { name: 'Passive surplus' },
+        { name: 'Unused production' },
+      ],
+      links: [
+        { source: 0, target: 1, value: 797.44 },
+        { source: 2, target: 3, value: 39.73 },
+        { source: 3, target: 1, value: 39.73 },
+        { source: 2, target: 4, value: 1.95 },
+        { source: 4, target: 5, value: 1.95 },
+      ],
+    };
+
+    const { container } = render(<Sankey width={760} height={420} data={overlappingData} />);
+
+    const nodes = Array.from(container.querySelectorAll('.recharts-sankey-node'));
+    const link = container.querySelector('.recharts-sankey-link');
+
+    assertNotNull(link);
+
+    for (const node of [nodes[3], nodes[4]]) {
+      assertNotNull(node);
+
+      const nodeX = readSvgNumber(node, 'x');
+      const nodeY = readSvgNumber(node, 'y');
+      const nodeWidth = readSvgNumber(node, 'width');
+      const nodeHeight = readSvgNumber(node, 'height');
+      const linkY = getLinkYAtX(link, nodeX + nodeWidth / 2);
+      const linkWidth = readSvgNumber(link, 'stroke-width');
+      const isAboveLink = nodeY + nodeHeight <= linkY - linkWidth / 2;
+      const isBelowLink = nodeY >= linkY + linkWidth / 2;
+
+      expect(
+        isAboveLink || isBelowLink,
+        JSON.stringify({ nodeY, nodeHeight, linkY, linkWidth, nodeBottom: nodeY + nodeHeight }),
+      ).toBe(true);
+    }
   });
 });
