@@ -151,12 +151,10 @@ describe('Documentation Examples Coverage', () => {
     'ZIndexLayer',
     'AnimationHandle',
     'AnimationMatchByProp',
-    'AnimationProgressProvider',
     'AnimationStatus',
     'LineDrawShape',
     'LinePointItem',
     'matchAppend',
-    'useAnimationProgress',
   ];
 
   /*

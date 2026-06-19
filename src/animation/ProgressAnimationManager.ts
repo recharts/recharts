@@ -4,6 +4,8 @@ import { ManualTimeoutController } from './ManualTimeoutController';
 
 /**
  * Status of a single animation managed by ProgressAnimationManager.
+ *
+ * @deprecated
  */
 export type AnimationStatus = 'idle' | 'pending' | 'active' | 'complete';
 
