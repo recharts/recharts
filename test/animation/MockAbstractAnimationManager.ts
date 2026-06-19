@@ -1,5 +1,4 @@
-import { AnimationManager, ReactSmoothStyle } from '../../src/animation/AnimationManager';
-import { TimeoutController } from '../../src/animation/timeoutController';
+import { AnimationManager } from '../../src/animation/AnimationManager';
 import { MockTimeoutController } from './mockTimeoutController';
 import { RechartsAnimation } from '../../src/animation/RechartsAnimation';
 import { mockAnimationController } from './mockAnimationController';
@@ -19,19 +18,10 @@ export abstract class MockAbstractAnimationManager implements AnimationManager {
 
   start(animation: RechartsAnimation<any, any>, listener: (newState: T) => void): void {
     this.animation = animation;
-    this.timeoutController.clear();
     mockAnimationController(this.timeoutController, this.animation, listener);
   }
 
   stop(): void {
     this.animation = null;
-  }
-
-  subscribe(handleChange: (style: ReactSmoothStyle) => void): () => void {
-    return () => {};
-  }
-
-  getTimeoutController(): TimeoutController {
-    return this.timeoutController;
   }
 }

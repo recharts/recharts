@@ -198,7 +198,7 @@ describe('CSSTransitionAnimate timing', () => {
             duration={500}
             isActive={false}
             onAnimationStart={handleAnimationStart}
-            animationManager={animationManager}
+            animationManager={animationManager.factory}
           >
             {child}
           </CSSTransitionAnimate>,
@@ -224,7 +224,7 @@ describe('CSSTransitionAnimate timing', () => {
             duration={500}
             isActive={false}
             onAnimationStart={handleAnimationStart}
-            animationManager={animationManager}
+            animationManager={animationManager.factory}
           >
             {child}
           </CSSTransitionAnimate>,
@@ -333,7 +333,7 @@ describe('CSSTransitionAnimate timing', () => {
             isActive={false}
             onAnimationStart={handleAnimationStart}
             onAnimationEnd={handleAnimationEnd}
-            animationManager={animationManager}
+            animationManager={animationManager.factory}
           >
             {child}
           </CSSTransitionAnimate>,
@@ -356,7 +356,7 @@ describe('CSSTransitionAnimate timing', () => {
             isActive={false}
             onAnimationStart={handleAnimationStart}
             onAnimationEnd={handleAnimationEnd}
-            animationManager={animationManager}
+            animationManager={animationManager.factory}
           >
             {child}
           </CSSTransitionAnimate>,
@@ -382,7 +382,7 @@ describe('CSSTransitionAnimate timing', () => {
             duration={500}
             canBegin={false}
             onAnimationStart={handleAnimationStart}
-            animationManager={animationManager}
+            animationManager={animationManager.factory}
           >
             {child}
           </CSSTransitionAnimate>,
@@ -403,7 +403,7 @@ describe('CSSTransitionAnimate timing', () => {
             duration={500}
             canBegin={false}
             onAnimationStart={handleAnimationStart}
-            animationManager={animationManager}
+            animationManager={animationManager.factory}
           >
             {child}
           </CSSTransitionAnimate>,

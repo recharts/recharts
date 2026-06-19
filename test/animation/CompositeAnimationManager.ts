@@ -1,7 +1,4 @@
-import { useEffect, useState } from 'react';
 import { MockAnimationManager, MockProgressAnimationManager } from './MockProgressAnimationManager';
-import { AnimationManager } from '../../src/animation/AnimationManager';
-import { AnimationManagerFactory } from '../../src/animation/useAnimationManager';
 import { AnimationController } from '../../src/animation/AnimationController';
 import { CancelableTimeout, TimeoutController } from '../../src/animation/timeoutController';
 import { RechartsAnimation } from '../../src/animation/RechartsAnimation';
@@ -15,19 +12,6 @@ export class CompositeAnimationManager implements MockAnimationManager {
    * All animation managers under this composite manager.
    */
   public animationManagers: Map<string, MockAnimationManager> = new Map();
-
-  private subscribers: Set<() => void> = new Set();
-
-  public subscribe = (callback: () => void): (() => void) => {
-    this.subscribers.add(callback);
-    return () => {
-      this.subscribers.delete(callback);
-    };
-  };
-
-  private notifySubscribers = () => {
-    this.subscribers.forEach(callback => callback());
-  };
 
   async setAnimationProgress(percent: number): Promise<void> {
     const animatingManagers = this.getAnimatingManagers();
@@ -73,12 +57,10 @@ export class CompositeAnimationManager implements MockAnimationManager {
     const animationId = animationHandle.getAnimationId();
     const onStop = () => {
       this.animationManagers.delete(animationId);
-      this.notifySubscribers();
     };
     const manager = new MockProgressAnimationManager(animationId, onStop);
     manager.start(animationHandle, listener);
     this.animationManagers.set(animationId, manager);
-    this.notifySubscribers();
     return onStop;
   };
 
