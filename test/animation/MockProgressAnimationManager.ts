@@ -1,7 +1,8 @@
 import { act } from '@testing-library/react';
-import { MockAbstractAnimationManager } from './MockAbstractAnimationManager';
 import { AnimationManager } from '../../src/animation/AnimationManager';
 import { RechartsAnimation } from '../../src/animation/RechartsAnimation';
+import { mockAnimationController } from './mockAnimationController';
+import { MockTimeoutController } from './mockTimeoutController';
 
 export interface MockAnimationManager {
   /**
@@ -46,17 +47,17 @@ export interface MockAnimationManager {
  * A higher level mock animation manager that allows for less granular control
  * but also requires less setup to get to a certain point in the animation.
  */
-export class MockProgressAnimationManager<T, E>
-  extends MockAbstractAnimationManager
-  implements AnimationManager<T, E>, MockAnimationManager
-{
+export class MockProgressAnimationManager<T, E> implements AnimationManager<T, E>, MockAnimationManager {
   private readonly onStop?: () => void;
+
+  private animation: RechartsAnimation<any, any> | null = null;
+
+  private readonly timeoutController: MockTimeoutController = new MockTimeoutController();
 
   constructor(
     private animationId: string,
     onStop?: () => void,
   ) {
-    super();
     this.onStop = onStop;
   }
 
@@ -101,13 +102,18 @@ export class MockProgressAnimationManager<T, E>
     this.onStop?.();
   }
 
+  public isAnimating(): boolean {
+    return this.animation !== null && this.animation.getState() !== 'completed';
+  }
+
   start(animation: RechartsAnimation<T, E>, listener: (newState: T) => void) {
-    super.start(animation, listener);
+    this.animation = animation;
     this.isPrimed = false; // Reset the primed state when starting a new animation
+    mockAnimationController(this.timeoutController, this.animation, listener);
   }
 
   stop() {
-    super.stop();
+    this.animation = null;
     this.isPrimed = false; // Reset the primed state when stopping the queue
     this.onStop?.();
   }

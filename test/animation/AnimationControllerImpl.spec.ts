@@ -13,6 +13,7 @@ describe('AnimationControllerImpl', () => {
       timeoutLimit: 1,
     });
     animationState = new JavascriptAnimation({
+      animationId: '1',
       animationBegin: 100,
       animationDuration: 200,
       onAnimationStart: noop,
@@ -98,6 +99,7 @@ describe('AnimationControllerImpl', () => {
       timeoutLimit: 1,
     });
     const animation1 = new JavascriptAnimation({
+      animationId: '1',
       animationBegin: 100,
       animationDuration: 200,
       onAnimationStart: noop,
@@ -108,6 +110,7 @@ describe('AnimationControllerImpl', () => {
     });
     const spy1: Mock<(now: number) => void> = vi.fn();
     const animation2 = new JavascriptAnimation({
+      animationId: '1',
       animationBegin: 100,
       animationDuration: 200,
       onAnimationStart: noop,
@@ -150,6 +153,7 @@ describe('AnimationControllerImpl', () => {
   describe('when given JavascriptAnimation', () => {
     it('should return interpolated and eased value for continuous rendering', async () => {
       const easedAnimation: JavascriptAnimation = new JavascriptAnimation({
+        animationId: '1',
         animationBegin: 100,
         animationDuration: 200,
         onAnimationStart: noop,
@@ -180,6 +184,7 @@ describe('AnimationControllerImpl', () => {
   describe('when given CSSTransition', () => {
     it('should return the end style as that is what DOM expects', async () => {
       const easedAnimation: CSSTransition = new CSSTransition({
+        animationId: '1',
         animationBegin: 100,
         animationDuration: 200,
         onAnimationStart: noop,
