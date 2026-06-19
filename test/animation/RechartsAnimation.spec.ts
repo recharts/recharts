@@ -4,9 +4,11 @@ import { CSSTransition, JavascriptAnimation } from '../../src/animation/Recharts
 import { noop } from '../../src/util/DataUtils';
 
 describe('RechartsAnimation state machine', () => {
-  it('should start in "init" state', () => {
+  it('should start in "init" state and call onAnimationStart immediately', () => {
+    const spy = vi.fn();
     const a = new JavascriptAnimation({
-      onAnimationStart: noop,
+      animationId: 'animation1',
+      onAnimationStart: spy,
       onAnimationEnd: noop,
       animationDuration: 200,
       animationBegin: 0,
@@ -15,11 +17,13 @@ describe('RechartsAnimation state machine', () => {
       easing: identity,
     });
     expect(a.getState()).toBe('init');
+    expect(spy).toHaveBeenCalledTimes(1);
   });
 
   it('should transition to "pending" after the first tick, and call onAnimationStart while doing so, and not call it second time after active', () => {
     const spy = vi.fn();
     const a = new JavascriptAnimation({
+      animationId: 'animation1',
       onAnimationStart: spy,
       onAnimationEnd: noop,
       animationDuration: 200,
@@ -28,7 +32,7 @@ describe('RechartsAnimation state machine', () => {
       to: 1,
       easing: identity,
     });
-    expect(spy).toHaveBeenCalledTimes(0);
+    expect(spy).toHaveBeenCalledTimes(1);
     a.tick(10); // this becomes the starting time
     expect(a.getState()).toBe('pending');
     expect(spy).toHaveBeenCalledTimes(1);
@@ -39,6 +43,7 @@ describe('RechartsAnimation state machine', () => {
 
   it('should not throw an error when onAnimationStart or onAnimationEnd are not defined', () => {
     const a = new JavascriptAnimation({
+      animationId: 'animation1',
       onAnimationStart: undefined,
       onAnimationEnd: undefined,
       animationDuration: 200,
@@ -55,6 +60,7 @@ describe('RechartsAnimation state machine', () => {
 
   it('should return progress = 0 when init and when pending', () => {
     const a = new JavascriptAnimation({
+      animationId: 'animation1',
       onAnimationStart: noop,
       onAnimationEnd: noop,
       animationDuration: 200,
@@ -70,6 +76,7 @@ describe('RechartsAnimation state machine', () => {
 
   it('should transition to "active" after the second tick', () => {
     const a = new JavascriptAnimation({
+      animationId: 'animation1',
       onAnimationStart: noop,
       onAnimationEnd: noop,
       animationDuration: 200,
@@ -86,6 +93,7 @@ describe('RechartsAnimation state machine', () => {
   it('should handle transition to "completed" state and call onAnimationEnd', () => {
     const spy = vi.fn();
     const a = new JavascriptAnimation({
+      animationId: 'animation1',
       onAnimationStart: undefined,
       onAnimationEnd: spy,
       animationDuration: 200,
@@ -107,6 +115,7 @@ describe('RechartsAnimation state machine', () => {
   it('should wait for [animationBegin] time before progressing from pending to active', () => {
     const spy = vi.fn();
     const a = new JavascriptAnimation({
+      animationId: 'animation1',
       onAnimationStart: spy,
       onAnimationEnd: noop,
       animationDuration: 200,
@@ -137,6 +146,7 @@ describe('RechartsAnimation state machine', () => {
 
     const spy = vi.fn();
     const a = new JavascriptAnimation({
+      animationId: 'animation1',
       onAnimationStart: spy,
       onAnimationEnd: noop,
       animationDuration: 200,
@@ -161,6 +171,7 @@ describe('RechartsAnimation state machine', () => {
 
   it('should no longer update progress after complete', () => {
     const a = new JavascriptAnimation({
+      animationId: 'animation1',
       onAnimationStart: noop,
       onAnimationEnd: noop,
       animationDuration: 200,
@@ -188,6 +199,7 @@ describe('RechartsAnimation state machine', () => {
     let a: JavascriptAnimation;
     beforeEach(() => {
       a = new JavascriptAnimation({
+        animationId: 'animation1',
         onAnimationStart: noop,
         onAnimationEnd: noop,
         animationDuration: 200,
@@ -231,6 +243,7 @@ describe('RechartsAnimation state machine', () => {
     let a: JavascriptAnimation;
     beforeEach(() => {
       a = new JavascriptAnimation({
+        animationId: 'animation1',
         onAnimationStart: noop,
         onAnimationEnd: noop,
         animationDuration: 200,
@@ -275,6 +288,7 @@ describe('RechartsAnimation state machine', () => {
   it('should allow animationBegin to be greater than animationDuration because "begin" is a pause before the actual animation', () => {
     expect(() => {
       return new JavascriptAnimation({
+        animationId: 'animation1',
         onAnimationStart: noop,
         onAnimationEnd: noop,
         animationDuration: 200,
@@ -288,6 +302,7 @@ describe('RechartsAnimation state machine', () => {
 
   it('should handle multiple calls to "tick" with the same time value correctly', () => {
     const a = new JavascriptAnimation({
+      animationId: 'animation1',
       onAnimationStart: noop,
       onAnimationEnd: noop,
       animationDuration: 200,
@@ -307,10 +322,11 @@ describe('RechartsAnimation state machine', () => {
     expect(a.getState()).toBe('active');
   });
 
-  it('should allow to complete straight away and skip the other states, and not call any of the handlers', () => {
+  it('should allow to complete straight away and skip the other states, and not call onAnimationEnd', () => {
     const startSpy = vi.fn();
     const endSpy = vi.fn();
     const a = new JavascriptAnimation({
+      animationId: 'animation1',
       onAnimationStart: startSpy,
       onAnimationEnd: endSpy,
       animationDuration: 200,
@@ -322,12 +338,13 @@ describe('RechartsAnimation state machine', () => {
     a.complete();
     expect(a.getState()).toBe('completed');
     expect(a.getProgress()).toBe(1);
-    expect(startSpy).not.toHaveBeenCalled();
+    expect(startSpy).toHaveBeenCalledTimes(1);
     expect(endSpy).not.toHaveBeenCalled();
   });
 
   it('should return "begin" time if the tick just activated it now', () => {
     const a = new JavascriptAnimation({
+      animationId: 'animation1',
       onAnimationStart: noop,
       onAnimationEnd: noop,
       animationDuration: 200,
@@ -343,6 +360,7 @@ describe('RechartsAnimation state machine', () => {
   describe('JavascriptAnimation', () => {
     it('should return starting and ending values', () => {
       const a = new JavascriptAnimation({
+        animationId: 'animation1',
         onAnimationStart: noop,
         onAnimationEnd: noop,
         animationDuration: 500,
@@ -357,6 +375,7 @@ describe('RechartsAnimation state machine', () => {
 
     it('should return the remaining time from tick() function', () => {
       const a = new JavascriptAnimation({
+        animationId: 'animation1',
         onAnimationStart: noop,
         onAnimationEnd: noop,
         animationDuration: 200,
@@ -397,6 +416,7 @@ describe('RechartsAnimation state machine', () => {
 
     it('should return 0 if the tick landed exactly at the start of animation', () => {
       const a = new JavascriptAnimation({
+        animationId: 'animation1',
         onAnimationStart: noop,
         onAnimationEnd: noop,
         animationDuration: 500,
@@ -423,6 +443,7 @@ describe('RechartsAnimation state machine', () => {
       const easing = (_x: number) => 7;
       const spy = vi.fn(easing);
       const a = new JavascriptAnimation({
+        animationId: 'animation1',
         onAnimationStart: noop,
         onAnimationEnd: noop,
         animationDuration: 500,
@@ -453,6 +474,7 @@ describe('RechartsAnimation state machine', () => {
   describe('CSSTransition', () => {
     it('should return starting and ending values', () => {
       const a = new CSSTransition({
+        animationId: 'animation1',
         onAnimationStart: noop,
         onAnimationEnd: noop,
         animationDuration: 500,
@@ -467,6 +489,7 @@ describe('RechartsAnimation state machine', () => {
 
     it('should return the remaining time from tick() function', () => {
       const a = new CSSTransition({
+        animationId: 'animation1',
         onAnimationStart: noop,
         onAnimationEnd: noop,
         animationDuration: 200,
@@ -507,6 +530,7 @@ describe('RechartsAnimation state machine', () => {
 
     it('should return remaining time of next step if the tick landed exactly at the start of animation', () => {
       const a = new CSSTransition({
+        animationId: 'animation1',
         onAnimationStart: noop,
         onAnimationEnd: noop,
         animationDuration: 500,
@@ -531,6 +555,7 @@ describe('RechartsAnimation state machine', () => {
 
     it('should return animation value as-is, ignore easing', () => {
       const a = new CSSTransition({
+        animationId: 'animation1',
         onAnimationStart: noop,
         onAnimationEnd: noop,
         animationDuration: 500,

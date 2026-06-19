@@ -2,6 +2,7 @@
 import { interpolate } from '../util/DataUtils';
 import { EasingFunction, NamedBezier } from './easing';
 
+// TODO we don't need four states, three is enough because onAnimationStart is called in constructor now
 const INIT = 'init' as const;
 const PENDING = 'pending' as const;
 const ACTIVE = 'active' as const;
@@ -104,14 +105,15 @@ function remaining(time: number): number {
  * Recharts state machine.
  *
  * Possible transitions are:
- * - init to pending - `onAnimationStart` executes
+ * - created - start at init, onAnimationStart executes
+ * - init to pending - `animationBegin` timer begin
  * - pending to active
  * - active to completed - `onAnimationEnd` executes
  *
  * The RechartsAnimation class is responsible for managing the transition between these stages.
  *
  * The animation queue is static and consists of four elements:
- * - `onAnimationStart`: function that is called when the animation is moving from `init` to `pending`
+ * - `onAnimationStart`: function that is called when the animation is created
  * - `animationBegin`: delay between `onAnimationStart` and the transition
  * - the transition itself, `animationDuration`-long
  * `onAnimationEnd`: function that is called when the animation is moving from `active` to `completed`
@@ -166,6 +168,7 @@ abstract class RechartsAnimationImpl<T, E> implements RechartsAnimation<T, E> {
     this.from = param.from;
     this.to = param.to;
     this.easing = param.easing;
+    this.onAnimationStart?.();
   }
 
   private state: AnimationState = INIT;
@@ -186,7 +189,6 @@ abstract class RechartsAnimationImpl<T, E> implements RechartsAnimation<T, E> {
     if (this.getState() === INIT) {
       this.state = PENDING;
       this.pendingStartedTime = now;
-      this.onAnimationStart?.();
       return this.animationBegin;
     }
 
