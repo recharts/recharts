@@ -5,7 +5,6 @@
   "lib/animation/AnimationControllerImpl.js",
   "lib/animation/CSSTransitionAnimate.js",
   "lib/animation/JavascriptAnimate.js",
-  "lib/animation/ManualTimeoutController.js",
   "lib/animation/RechartsAnimation.js",
   "lib/animation/easing.js",
   "lib/animation/matchBy.js",

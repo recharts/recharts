@@ -5,7 +5,6 @@
   "types/animation/AnimationControllerImpl.d.ts",
   "types/animation/CSSTransitionAnimate.d.ts",
   "types/animation/JavascriptAnimate.d.ts",
-  "types/animation/ManualTimeoutController.d.ts",
   "types/animation/RechartsAnimation.d.ts",
   "types/animation/easing.d.ts",
   "types/animation/matchBy.d.ts",

@@ -5,7 +5,6 @@
   "es6/animation/AnimationControllerImpl.js",
   "es6/animation/CSSTransitionAnimate.js",
   "es6/animation/JavascriptAnimate.js",
-  "es6/animation/ManualTimeoutController.js",
   "es6/animation/RechartsAnimation.js",
   "es6/animation/easing.js",
   "es6/animation/matchBy.js",
