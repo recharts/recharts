@@ -149,7 +149,6 @@ describe('Documentation Examples Coverage', () => {
     'useYAxisInverseDataSnapScale',
     'useYAxisInverseTickSnapScale',
     'ZIndexLayer',
-    'AnimationHandle',
     'AnimationMatchByProp',
     'AnimationStatus',
     'LineDrawShape',

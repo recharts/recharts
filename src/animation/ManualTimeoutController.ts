@@ -2,8 +2,7 @@ import { CallbackType, CancelableTimeout, TimeoutController } from './timeoutCon
 
 /**
  * A timeout controller that stores callbacks for manual triggering
- * instead of using requestAnimationFrame. Used by ProgressAnimationManager
- * to enable manual animation scrubbing.
+ * instead of using requestAnimationFrame.
  *
  * @internal
  */
