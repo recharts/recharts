@@ -9,6 +9,7 @@ export type { AnimationStatus } from './ProgressAnimationManager';
 /**
  * A handle to a single animation that supports manual progress control.
  * Returned by {@link useAnimationProgress}.
+ * @deprecated
  */
 export type AnimationHandle = {
   readonly animationId: string;
@@ -22,7 +23,7 @@ export type AnimationHandle = {
 /**
  * Manages multiple ProgressAnimationManagers — one per animation in the chart.
  * Notifies subscribers when the animation list changes.
- * @internal
+ * @deprecated
  */
 class CompositeProgressManager {
   public animations: Map<string, ProgressAnimationManager> = new Map();
@@ -72,6 +73,7 @@ const AnimationProgressContext = createContext<CompositeProgressManager | null>(
  *   <MyCustomControls />
  * </AnimationProgressProvider>
  * ```
+ * @deprecated
  */
 export function AnimationProgressProvider({ children }: { children: React.ReactNode }) {
   const compositeManager = useMemo(() => new CompositeProgressManager(), []);
@@ -103,6 +105,7 @@ export function AnimationProgressProvider({ children }: { children: React.ReactN
  *   ));
  * }
  * ```
+ * @deprecated
  */
 export function useAnimationProgress(): Map<string, AnimationHandle> | null {
   const compositeManager = useContext(AnimationProgressContext);

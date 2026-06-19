@@ -15,8 +15,9 @@ export type AnimationStatus = 'idle' | 'pending' | 'active' | 'complete';
  * to any point (0-1) for manual scrubbing.
  *
  * @internal Used by AnimationProgressProvider
+ * @deprecated
  */
-export class ProgressAnimationManager implements AnimationManager {
+export class ProgressAnimationManager<T, E> implements AnimationManager<T, E> {
   readonly isManualControl = true;
 
   private queue: Array<ReactSmoothQueue[number]> | null = null;

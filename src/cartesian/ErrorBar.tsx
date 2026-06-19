@@ -13,7 +13,7 @@ import { useXAxis, useYAxis } from '../hooks';
 import { resolveDefaultProps } from '../util/resolveDefaultProps';
 import { svgPropertiesNoEvents } from '../util/svgPropertiesNoEvents';
 import { useChartLayout } from '../context/chartLayoutContext';
-import { CSSTransitionAnimate } from '../animation/CSSTransitionAnimate';
+import { CSSTransitionAnimate, extractCssEasing } from '../animation/CSSTransitionAnimate';
 import { ZIndexable, ZIndexLayer } from '../zIndex/ZIndexLayer';
 import { DefaultZIndexes } from '../zIndex/DefaultZIndexes';
 
@@ -224,7 +224,7 @@ function ErrorBarImpl(props: ErrorBarInternalProps) {
               to={`${scaleDirection}(1)`}
               attributeName="transform"
               begin={animationBegin}
-              easing={typeof animationEasing === 'string' ? animationEasing : undefined}
+              easing={extractCssEasing(animationEasing)}
               isActive={isAnimationActive}
               duration={animationDuration}
               key={`errorbar-${dataIndex}-${c.x1}-${c.y1}-${c.x2}-${c.y2}-${lineIndex}`}

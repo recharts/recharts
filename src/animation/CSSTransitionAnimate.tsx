@@ -1,7 +1,6 @@
 import * as React from 'react';
 import { CSSProperties, useCallback, useEffect, useRef, useState } from 'react';
 import { noop } from '../util/DataUtils';
-import { AnimationManager, ReactSmoothStyle } from './AnimationManager';
 import { resolveDefaultProps } from '../util/resolveDefaultProps';
 import { useAnimationManager } from './useAnimationManager';
 import { getTransitionVal } from './util';
@@ -9,13 +8,15 @@ import { Global } from '../util/Global';
 import { usePrefersReducedMotion } from '../util/usePrefersReducedMotion';
 import { CSSTransition } from './RechartsAnimation';
 import { RequestAnimationFrameTimeoutController } from './timeoutController';
+import { EasingInput, NamedBezier } from './easing';
+import { AnimationController } from './AnimationController';
 
 type CSSTransitionAnimateProps = {
   animationId: string;
-  animationManager?: AnimationManager;
+  animationManager?: AnimationController;
   duration?: number;
   begin?: number;
-  easing?: string;
+  easing?: NamedBezier;
   isActive?: boolean | 'auto';
   canBegin?: boolean;
   from: string;
@@ -23,7 +24,7 @@ type CSSTransitionAnimateProps = {
   attributeName: string;
   onAnimationStart?: () => void;
   onAnimationEnd?: () => void;
-  children: (style: CSSProperties | undefined) => React.ReactNode;
+  children: (style: CSSProperties) => React.ReactNode;
 };
 
 const defaultProps = {
@@ -35,6 +36,13 @@ const defaultProps = {
   onAnimationEnd: () => {},
   onAnimationStart: () => {},
 } as const satisfies Partial<CSSTransitionAnimateProps>;
+
+export function extractCssEasing(easingInput: EasingInput): NamedBezier | undefined {
+  if (easingInput === 'spring' || typeof easingInput !== 'string') {
+    return undefined;
+  }
+  return easingInput;
+}
 
 export function CSSTransitionAnimate(outsideProps: CSSTransitionAnimateProps) {
   const props = resolveDefaultProps(outsideProps, defaultProps);
@@ -58,7 +66,7 @@ export function CSSTransitionAnimate(outsideProps: CSSTransitionAnimateProps) {
   const isActive = isActiveProp === 'auto' ? !Global.isSsr && !prefersReducedMotion : isActiveProp;
 
   const animationManager = useAnimationManager(props.animationManager);
-  const [style, setStyle] = useState<ReactSmoothStyle>(() => {
+  const [style, setStyle] = useState<string>(() => {
     if (!isActive) {
       return to;
     }

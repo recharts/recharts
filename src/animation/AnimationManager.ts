@@ -2,6 +2,9 @@ import { CancelableTimeout, TimeoutController } from './timeoutController';
 import { StartAnimationFunction } from './configUpdate';
 import { RechartsAnimation } from './RechartsAnimation';
 
+/**
+ * @deprecated
+ */
 export type ReactSmoothStyle = string | Record<string, unknown>;
 
 /**
