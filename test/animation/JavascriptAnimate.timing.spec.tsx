@@ -32,7 +32,7 @@ describe('JavascriptAnimate timing', () => {
         </JavascriptAnimate>,
       );
 
-      expect(handleAnimationStart).not.toHaveBeenCalled();
+      expect(handleAnimationStart).toHaveBeenCalledTimes(1);
       expect(handleAnimationEnd).not.toHaveBeenCalled();
 
       await animationManager.setAnimationProgress(0.5);

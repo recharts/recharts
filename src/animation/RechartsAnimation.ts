@@ -168,6 +168,7 @@ abstract class RechartsAnimationImpl<T, E> implements RechartsAnimation<T, E> {
     this.from = param.from;
     this.to = param.to;
     this.easing = param.easing;
+    // Mimic what the previous animationManager was doing - call onAnimationStart immediately and synchronously
     this.onAnimationStart?.();
   }
 

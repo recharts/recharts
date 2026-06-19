@@ -248,7 +248,7 @@ describe('Pie animation', () => {
 
     it('should call onAnimationStart callback when the animation begins', async () => {
       const { animationManager } = renderTestCase();
-      expect(onAnimationStart).not.toHaveBeenCalled();
+      expect(onAnimationStart).toHaveBeenCalledTimes(1);
 
       await animationManager.setAnimationProgress(0.1);
       expect(onAnimationStart).toHaveBeenCalledTimes(1);

@@ -575,12 +575,14 @@ describe('<Label />', () => {
     expect(screen.getByText(/400/i)).toBeInTheDocument();
   });
 
-  it('Renders label by label props with animation enabled', () => {
-    const { container } = rechartsTestRender(
+  it('Renders label by label props with animation completed', async () => {
+    const { container, animationManager } = rechartsTestRender(
       <LineChart width={400} height={400} data={data} margin={{ top: 20, right: 20, bottom: 20, left: 20 }}>
         <Line type="monotone" dataKey="uv" stroke="#ff7300" label={{ position: 'center' }} />
       </LineChart>,
     );
+
+    await animationManager.completeAnimation();
 
     expect(container.querySelectorAll('.recharts-line .recharts-line-curve').length).toEqual(1);
     expect(screen.getByText(/400/i)).toBeInTheDocument();

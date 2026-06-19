@@ -204,8 +204,8 @@ describe('Line animation', () => {
       expect(line).toBeInTheDocument();
       // the path is fully rendered
       expect(line).toHaveAttribute('d', 'M5,5L23,27.5L41,27.5L59,50L77,32.45L95,52.475');
-      // but the strokeDasharray is 0 so the line is not visible
-      expect(line).toHaveAttribute('stroke-dasharray', '0px 0px');
+      // but the strokeDasharray is 0px (dash) - 100px (gap) so the line is not visible
+      expect(line).toHaveAttribute('stroke-dasharray', '0px 100px');
     });
 
     it('should animate line left-to-right by continually extending the stroke-dasharray', async () => {
@@ -275,10 +275,9 @@ describe('Line animation', () => {
       const { container, animationManager } = renderTestCase();
 
       /*
-       * ... the very first tick, the first render, shows all labels. This looks like a bug. Same happens in browser,
-       * but it's too quick to notice I suppose.
+       * ... the very first tick, the first render, no labels
        */
-      expectLabels(container, expectedUvLabels);
+      expectLabels(container, []);
 
       // but after the first tick, all labels are hidden
       await animationManager.setAnimationProgress(0.1);
@@ -358,7 +357,7 @@ describe('Line animation', () => {
       expect(linesAtStart).toHaveLength(2);
       expect(linesAtStart[0]).toHaveAttribute('d');
       expect(linesAtStart[0]?.getAttribute('d')).not.toBe('');
-      expect(linesAtStart[0]).toHaveAttribute('stroke-dasharray', '0px 0px');
+      expect(linesAtStart[0]).toHaveAttribute('stroke-dasharray', '0px 100px');
 
       await animationManager.setAnimationProgress(0.5);
 
@@ -407,7 +406,7 @@ describe('Line animation', () => {
         // the path is fully rendered
         expect(line).toHaveAttribute('d', 'M5,5L23,27.5L41,27.5L59,50L77,32.45L95,52.475');
         // but the strokeDasharray is 0 so the line is not visible
-        expect(line).toHaveAttribute('stroke-dasharray', '0px, 0px');
+        expect(line).toHaveAttribute('stroke-dasharray', '0px, 100px');
       });
 
       it('should animate line left-to-right by continually extending the stroke-dasharray', async () => {
@@ -719,17 +718,15 @@ describe('Line animation', () => {
       it('should hide labels during the animation', async () => {
         const { container, animationManager } = renderTestCase();
 
-        // Chart starts with UV dataKey, so UV labels are expected
-        expectLabels(container, expectedUvLabels);
+        // Chart starts with UV dataKey, but animation is running so labels are hidden
+        expectLabels(container, []);
 
         await prime(container, animationManager);
 
         /*
-         * The labels should still be hidden! But all labels now appear again.
-         * Why? Because the animation is not started yet, but they swap to PV label values immediately.
-         * This looks like a bug, but in the browser the labels disappear so quickly that I can't see it.
+         * The labels should still be hidden! and indeed they are
          */
-        expectLabels(container, expectedPvLabels);
+        expectLabels(container, []);
         await animationManager.setAnimationProgress(0.2);
         // the labels should be hidden by now because the animation is in progress
         expectLabels(container, []);
@@ -889,11 +886,9 @@ describe('Line animation', () => {
         await prime(container, animationManager);
 
         /*
-         * The labels should still be hidden! But all labels now appear again.
-         * Why? Because the animation is not started yet, but they swap to PV label values immediately.
-         * This looks like a bug, but in the browser the labels disappear so quickly that I can't see it.
+         * The labels should still be hidden!
          */
-        expectLabels(container, expectedPvLabels);
+        expectLabels(container, []);
         await animationManager.setAnimationProgress(0.2);
         // the labels should be hidden by now because the animation is in progress
         expectLabels(container, []);
@@ -1063,7 +1058,7 @@ describe('Line animation', () => {
        */
       expect(getLine(container).getAttribute('d')).toBe(initialPath);
       // stroke-dasharray should be 0px, 0px because the animation is not started yet
-      expect(getLine(container)).toHaveAttribute('stroke-dasharray', '0px 0px');
+      expect(getLine(container)).toHaveAttribute('stroke-dasharray', '0px 100px');
 
       // path changes little by little as the animation progresses
       await animationManager.setAnimationProgress(0.2);
@@ -1176,11 +1171,9 @@ describe('Line animation', () => {
         await prime(container, animationManager);
 
         /*
-         * The labels should still be hidden! But all labels now appear again.
-         * Why? Because the animation is not started yet, but they swap to new label values immediately.
-         * This looks like a bug, but in the browser the labels disappear so quickly that I can't see it.
+         * The labels should still be hidden!
          */
-        expectLabels(container, expectedPvLabels);
+        expectLabels(container, []);
         await animationManager.setAnimationProgress(0.2);
         // the labels should be hidden by now because the animation is in progress
         expectLabels(container, []);
@@ -1242,11 +1235,9 @@ describe('Line animation', () => {
         await prime(container, animationManager);
 
         /*
-         * The labels should still be hidden! But all labels now appear again.
-         * Why? Because the animation is not started yet, but they swap to new label values immediately.
-         * This looks like a bug, but in the browser the labels disappear so quickly that I can't see it.
+         * The labels should still be hidden!
          */
-        expectLabels(container, expectedPvLabels);
+        expectLabels(container, []);
 
         await animationManager.setAnimationProgress(0.2);
         // the labels should be hidden by now because the animation is in progress
@@ -1416,44 +1407,9 @@ describe('Line animation', () => {
       await prime(container, animationManager);
 
       /*
-       * The labels should still be hidden! But all labels now appear again.
-       * Why? Because the animation is not started yet, but they swap to new label values immediately.
-       * This looks like a bug, but in the browser the labels disappear so quickly that I can't see it.
+       * The labels should still be hidden!
        */
-      expectLabels(container, [
-        {
-          height: '0',
-          offset: '5',
-          textContent: '400',
-          width: '0',
-          x: '5',
-          y: '5',
-        },
-        {
-          height: '0',
-          offset: '5',
-          textContent: '300',
-          width: '0',
-          x: '35',
-          y: '27.5',
-        },
-        {
-          height: '0',
-          offset: '5',
-          textContent: '300',
-          width: '0',
-          x: '65',
-          y: '27.5',
-        },
-        {
-          height: '0',
-          offset: '5',
-          textContent: '200',
-          width: '0',
-          x: '95',
-          y: '50',
-        },
-      ]);
+      expectLabels(container, []);
 
       await animationManager.setAnimationProgress(0.2);
       // the labels should be hidden by now because the animation is in progress
@@ -1858,7 +1814,7 @@ describe('Line animation', () => {
       });
 
       // the animation should restart from the beginning
-      expect(getLine(container)).toHaveAttribute('stroke-dasharray', '0px 0px');
+      expect(getLine(container)).toHaveAttribute('stroke-dasharray', '0px 100px');
       expect(getLine(container).getAttribute('d')).toBe('M5,5L23,27.5L41,27.5L59,50L77,32.45L95,52.475');
 
       await animationManager.setAnimationProgress(0.3);

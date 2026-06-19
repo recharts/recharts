@@ -375,7 +375,7 @@ describe('Area animation', () => {
     it('should hide labels during the animation', async () => {
       const { container, animationManager } = renderTestCase();
 
-      expectLabels(container, expectedUvLabels);
+      expectLabels(container, []);
       await expectLabelsHideDuringAnimation(container, animationManager);
       // after animation is done, labels should render
       expectLabels(container, expectedUvLabels);

@@ -13,6 +13,7 @@ export type SerializableQueue = ReadonlyArray<string | number | Record<string, a
  * Useful for detailed control over the animation queue,
  * insight into the current state of the animation,
  * and for stepping through the animation queue in a controlled manner.
+ * @deprecated
  */
 export class MockTickingAnimationManager extends MockAbstractAnimationManager implements AnimationManager {
   /**
