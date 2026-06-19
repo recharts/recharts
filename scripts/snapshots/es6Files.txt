@@ -3,7 +3,6 @@
   "es6/animation/AnimatedItems.js",
   "es6/animation/AnimationController.js",
   "es6/animation/AnimationControllerImpl.js",
-  "es6/animation/AnimationManager.js",
   "es6/animation/CSSTransitionAnimate.js",
   "es6/animation/JavascriptAnimate.js",
   "es6/animation/ManualTimeoutController.js",

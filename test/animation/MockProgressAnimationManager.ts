@@ -1,5 +1,4 @@
 import { act } from '@testing-library/react';
-import { AnimationManager } from '../../src/animation/AnimationManager';
 import { RechartsAnimation } from '../../src/animation/RechartsAnimation';
 import { mockAnimationController } from './mockAnimationController';
 import { MockTimeoutController } from './mockTimeoutController';
@@ -47,7 +46,7 @@ export interface MockAnimationManager {
  * A higher level mock animation manager that allows for less granular control
  * but also requires less setup to get to a certain point in the animation.
  */
-export class MockProgressAnimationManager<T, E> implements AnimationManager<T, E>, MockAnimationManager {
+export class MockProgressAnimationManager<T, E> implements MockAnimationManager {
   private readonly onStop?: () => void;
 
   private animation: RechartsAnimation<any, any> | null = null;

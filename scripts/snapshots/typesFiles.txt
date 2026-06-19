@@ -3,7 +3,6 @@
   "types/animation/AnimatedItems.d.ts",
   "types/animation/AnimationController.d.ts",
   "types/animation/AnimationControllerImpl.d.ts",
-  "types/animation/AnimationManager.d.ts",
   "types/animation/CSSTransitionAnimate.d.ts",
   "types/animation/JavascriptAnimate.d.ts",
   "types/animation/ManualTimeoutController.d.ts",
