@@ -1,10 +1,8 @@
 import * as React from 'react';
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { noop } from '../util/DataUtils';
 import { resolveDefaultProps } from '../util/resolveDefaultProps';
-import configUpdate from './configUpdate';
 import { createEasingFunction, EasingInput } from './easing';
-import { AnimationManager } from './AnimationManager';
 import { useAnimationManager } from './useAnimationManager';
 import { Global } from '../util/Global';
 import { usePrefersReducedMotion } from '../util/usePrefersReducedMotion';
@@ -34,10 +32,6 @@ const defaultJavascriptAnimateProps = {
   onAnimationEnd: () => {},
   onAnimationStart: () => {},
 } as const satisfies Partial<JavascriptAnimateProps>;
-
-// type AnimationElapsedTimeState = {
-//   animationElapsedTime: number;
-// };
 
 const from = 0;
 const to = 1;
@@ -90,23 +84,6 @@ export function JavascriptAnimate(outsideProps: JavascriptAnimateProps) {
     });
 
     return animationManager(timeoutController, animation, setStyle);
-
-    // const startAnimation = configUpdate<AnimationElapsedTimeState>(
-    //   from,
-    //   to,
-    //   createEasingFunction(easing),
-    //   duration,
-    //   setStyle,
-    //   animationManager.getTimeoutController(),
-    // );
-
-    // const onAnimationActive = () => {
-    //   stopJSAnimation.current = startAnimation();
-    // };
-
-    // animationManager.start([onAnimationStart, begin, onAnimationActive, duration, onAnimationEnd]);
-
-    // return stop;
   }, [animationManager, animationId, isActive, canBegin, duration, easing, begin, onAnimationStart, onAnimationEnd]);
 
   return children(style);

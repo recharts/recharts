@@ -82,7 +82,9 @@ function createTimingUpdate<T extends Record<string, number>>(
   };
 }
 
-// configure update function
+/**
+ * @deprecated
+ */
 // eslint-disable-next-line import/no-default-export
 export default <T extends Record<string, number>>(
   from: T,

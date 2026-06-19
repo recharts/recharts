@@ -92,17 +92,6 @@ export function CSSTransitionAnimate(outsideProps: CSSTransitionAnimateProps) {
     });
 
     return animationManager(timeoutController, animation, setStyle);
-
-    // const unsubscribe = animationManager.subscribe(setStyle);
-    // animationManager.start([onAnimationStart, begin, to, duration, onAnimationEnd]);
-
-    // return () => {
-    // animationManager.stop();
-    // if (unsubscribe) {
-    //   unsubscribe();
-    // }
-    // onAnimationEnd();
-    // };
   }, [
     isActive,
     canBegin,
@@ -130,12 +119,6 @@ export function CSSTransitionAnimate(outsideProps: CSSTransitionAnimateProps) {
   }
 
   if (initialized.current) {
-    // if (animationManager.isManualControl) {
-    //   // No CSS transition — the JS interpolation drives the value directly
-    //   return children({
-    //     [attributeName]: style,
-    //   });
-    // }
     const transition = getTransitionVal([attributeName], duration, easing);
     return children({
       transition,
