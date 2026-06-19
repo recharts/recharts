@@ -86,16 +86,16 @@ export class MockProgressAnimationManager<T, E>
   }
 
   async completeAnimation(): Promise<void> {
-    if (this.animation?.getProgress() < 1) {
+    if (this.animation === null) {
+      throw new Error('Queue is empty');
+    }
+    if (this.animation.getProgress() < 1) {
       // Finish the animation by setting the progress to 100% so that we can get fresh assertions in tests
       await this.setAnimationProgress(1);
     }
 
     act(() => {
-      if (this.animation === null) {
-        throw new Error('Queue is empty');
-      }
-      this.animation.complete();
+      this.animation?.complete();
     });
 
     this.onStop?.();
@@ -164,22 +164,6 @@ export class MockProgressAnimationManager<T, E>
     }
 
     throw new Error(`Unexpected animation state: ${this.animation.getState()}`);
-
-    /*
-     * We don't really have a good way to check which function is the easing function.
-     * We should have it return a Promise or something like that,
-     * but until that happens we're just going to make an educated guess and say that
-     * the Animate component by default puts the easing function as the third item in the queue.
-     * If that changes, bunch of tests will break, so no harm.
-     */
-    // await this.poll(2); // Poll the first two items in the queue, which we expect to be 1. onStart and 2. starting delay
-    // await this.poll(1); // Poll the next item, which we expect to be the easing function
-
-    /*
-     * Now, a specialty of the configUpdate easing function is that it needs one tick
-     * to kickstart and set up its internal state.
-     */
-    // await this.triggerNextTimeout(this.firstTick);
   }
 
   /**
