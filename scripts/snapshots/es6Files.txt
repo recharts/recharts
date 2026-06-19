@@ -7,7 +7,6 @@
   "es6/animation/JavascriptAnimate.js",
   "es6/animation/ManualTimeoutController.js",
   "es6/animation/RechartsAnimation.js",
-  "es6/animation/configUpdate.js",
   "es6/animation/easing.js",
   "es6/animation/matchBy.js",
   "es6/animation/timeoutController.js",

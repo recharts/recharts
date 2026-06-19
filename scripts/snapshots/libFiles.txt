@@ -7,7 +7,6 @@
   "lib/animation/JavascriptAnimate.js",
   "lib/animation/ManualTimeoutController.js",
   "lib/animation/RechartsAnimation.js",
-  "lib/animation/configUpdate.js",
   "lib/animation/easing.js",
   "lib/animation/matchBy.js",
   "lib/animation/timeoutController.js",
