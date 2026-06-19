@@ -1,0 +1,141 @@
+# Instructions
+
+- Following Playwright test failed.
+- Explain why, be concise, respect Playwright best practices.
+- Provide a snippet of code with the fix, if possible.
+
+# Test info
+
+- Name: tests/www/GettingStarted.spec-vr.tsx >> GettingStarted Step3
+- Location: test-vr/tests/www/GettingStarted.spec-vr.tsx:19:5
+
+# Error details
+
+```
+Error: expect(locator).toHaveScreenshot(expected) failed
+
+Locator: locator('#root').locator('internal:control=component')
+  11 pixels (ratio 0.01 of all image pixels) are different.
+
+Call log:
+  - Expect "toHaveScreenshot" with timeout 10000ms
+    - verifying given screenshot expectation
+  - waiting for locator('#root').locator('internal:control=component')
+    - locator resolved to <div width="100%" class="recharts-wrapper">…</div>
+  - taking element screenshot
+    - disabled all CSS animations
+  - waiting for fonts to load...
+  - fonts loaded
+  - attempting scroll into view action
+    - waiting for element to be stable
+  - 544 pixels (ratio 0.01 of all image pixels) are different.
+  - waiting 100ms before taking screenshot
+  - waiting for locator('#root').locator('internal:control=component')
+    - locator resolved to <div width="100%" class="recharts-wrapper">…</div>
+  - taking element screenshot
+    - disabled all CSS animations
+  - waiting for fonts to load...
+  - fonts loaded
+  - attempting scroll into view action
+    - waiting for element to be stable
+  - 124 pixels (ratio 0.01 of all image pixels) are different.
+  - waiting 250ms before taking screenshot
+  - waiting for locator('#root').locator('internal:control=component')
+    - locator resolved to <div width="100%" class="recharts-wrapper">…</div>
+  - taking element screenshot
+    - disabled all CSS animations
+  - waiting for fonts to load...
+  - fonts loaded
+  - attempting scroll into view action
+    - waiting for element to be stable
+  - 253 pixels (ratio 0.01 of all image pixels) are different.
+  - waiting 500ms before taking screenshot
+  - waiting for locator('#root').locator('internal:control=component')
+    - locator resolved to <div width="100%" class="recharts-wrapper">…</div>
+  - taking element screenshot
+    - disabled all CSS animations
+  - waiting for fonts to load...
+  - fonts loaded
+  - attempting scroll into view action
+    - waiting for element to be stable
+  - 131 pixels (ratio 0.01 of all image pixels) are different.
+  - waiting 1000ms before taking screenshot
+  - waiting for locator('#root').locator('internal:control=component')
+    - locator resolved to <div width="100%" class="recharts-wrapper">…</div>
+  - taking element screenshot
+    - disabled all CSS animations
+  - waiting for fonts to load...
+  - fonts loaded
+  - attempting scroll into view action
+    - waiting for element to be stable
+  - captured a stable screenshot
+  - 11 pixels (ratio 0.01 of all image pixels) are different.
+
+```
+
+# Page snapshot
+
+```yaml
+- generic [active] [ref=e1]:
+  - generic [ref=e3]:
+    - list [ref=e5]:
+      - listitem [ref=e6]:
+        - img "My data series name legend icon" [ref=e7]
+        - text: My data series name
+    - application [ref=e9]:
+      - generic [ref=e34]:
+        - generic [ref=e35]:
+          - generic [ref=e37]: Page A
+          - generic [ref=e39]: Page B
+          - generic [ref=e41]: Page C
+          - generic [ref=e43]: Page D
+          - generic [ref=e45]: Page E
+          - generic [ref=e47]: Page F
+        - generic [ref=e48]:
+          - generic [ref=e50]: "0"
+          - generic [ref=e52]: "100"
+          - generic [ref=e54]: "200"
+          - generic [ref=e56]: "300"
+          - generic [ref=e58]: "400"
+        - generic [ref=e59]: UV
+  - generic [ref=e60]: "0"
+```
+
+# Test source
+
+```ts
+  1  | import * as React from 'react';
+  2  | import { test, expect } from '@playwright/experimental-ct-react';
+  3  | import Step1 from '../../../www/src/components/GuideView/GettingStarted/Step1';
+  4  | import Step2 from '../../../www/src/components/GuideView/GettingStarted/Step2';
+  5  | import Step3 from '../../../www/src/components/GuideView/GettingStarted/Step3';
+  6  | import Step4 from '../../../www/src/components/GuideView/GettingStarted/Step4';
+  7  | import Step5 from '../../../www/src/components/GuideView/GettingStarted/Step5';
+  8  | 
+  9  | test('GettingStarted Step1', async ({ mount }) => {
+  10 |   const component = await mount(<Step1 />);
+  11 |   await expect(component).toHaveScreenshot();
+  12 | });
+  13 | 
+  14 | test('GettingStarted Step2', async ({ mount }) => {
+  15 |   const component = await mount(<Step2 />);
+  16 |   await expect(component).toHaveScreenshot();
+  17 | });
+  18 | 
+  19 | test('GettingStarted Step3', async ({ mount }) => {
+  20 |   const component = await mount(<Step3 />);
+> 21 |   await expect(component).toHaveScreenshot();
+     |                           ^ Error: expect(locator).toHaveScreenshot(expected) failed
+  22 | });
+  23 | 
+  24 | test('GettingStarted Step4', async ({ mount }) => {
+  25 |   const component = await mount(<Step4 />);
+  26 |   await expect(component).toHaveScreenshot();
+  27 | });
+  28 | 
+  29 | test('GettingStarted Step5', async ({ mount }) => {
+  30 |   const component = await mount(<Step5 />);
+  31 |   await expect(component).toHaveScreenshot();
+  32 | });
+  33 | 
+```
