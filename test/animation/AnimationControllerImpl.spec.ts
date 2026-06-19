@@ -4,6 +4,7 @@ import { MockTimeoutController } from './mockTimeoutController';
 import { animationControllerImpl } from '../../src/animation/AnimationControllerImpl';
 import { CSSTransition, JavascriptAnimation } from '../../src/animation/RechartsAnimation';
 import { noop } from '../../src/util/DataUtils';
+import { expectLastCalledWith } from '../helper/expectLastCalledWith';
 
 describe('AnimationControllerImpl', () => {
   let timeoutController: MockTimeoutController, animationState: JavascriptAnimation;
@@ -132,7 +133,7 @@ describe('AnimationControllerImpl', () => {
     expect(spy1).toHaveBeenCalledTimes(1);
     await time1.triggerNextTimeout(150);
     await time2.triggerNextTimeout(150);
-    expect(spy2).toHaveBeenCalledTimes(2);
+    expect(spy1).toHaveBeenCalledTimes(2);
     expect(spy2).toHaveBeenCalledTimes(2);
 
     cancel1();
@@ -170,14 +171,14 @@ describe('AnimationControllerImpl', () => {
       expect(easedAnimation.getState()).toBe('active');
       expect(easedAnimation.getProgress()).toBe(0);
       expect(spy).toHaveBeenCalledTimes(1);
-      expect(spy).toHaveBeenLastCalledWith(0);
+      expectLastCalledWith(spy, 0);
 
       await timeoutController.triggerNextTimeout(150);
       expect(easedAnimation.getProgress()).toBe(0.25);
       expect(easedAnimation.getInterpolated()).toBe(0.5);
       expect(spy).toHaveBeenCalledTimes(2);
       // spy should receive the interpolated and eased value because the JS engine needs it to render next update
-      expect(spy).toHaveBeenLastCalledWith(0.5);
+      expectLastCalledWith(spy, 0.5);
     });
   });
 
@@ -201,14 +202,14 @@ describe('AnimationControllerImpl', () => {
       expect(easedAnimation.getState()).toBe('active');
       expect(easedAnimation.getProgress()).toBe(0);
       expect(spy).toHaveBeenCalledTimes(1);
-      expect(spy).toHaveBeenLastCalledWith('height: 200px');
+      expectLastCalledWith(spy, 'height: 200px');
 
       await timeoutController.triggerNextTimeout(150);
       expect(easedAnimation.getProgress()).toBe(0.25);
       expect(easedAnimation.getInterpolated()).toBe('height: 200px');
       expect(spy).toHaveBeenCalledTimes(2);
       // spy should receive the interpolated and eased value because the JS engine needs it to render next update
-      expect(spy).toHaveBeenLastCalledWith('height: 200px');
+      expectLastCalledWith(spy, 'height: 200px');
     });
   });
 
@@ -247,19 +248,19 @@ describe('AnimationControllerImpl', () => {
       await timeoutController.triggerNextTimeout(100); // pending -> active
       expect(animationState.getState()).toBe('active');
       expect(spy).toHaveBeenCalledTimes(1);
-      expect(spy).toHaveBeenLastCalledWith(0);
+      expectLastCalledWith(spy, 0);
 
       await timeoutController.triggerNextTimeout(150);
       expect(spy).toHaveBeenCalledTimes(2);
-      expect(spy).toHaveBeenLastCalledWith(0.25);
+      expectLastCalledWith(spy, 0.25);
 
       await timeoutController.triggerNextTimeout(200);
       expect(spy).toHaveBeenCalledTimes(3);
-      expect(spy).toHaveBeenLastCalledWith(0.5);
+      expectLastCalledWith(spy, 0.5);
 
       await timeoutController.triggerNextTimeout(300);
       expect(spy).toHaveBeenCalledTimes(4);
-      expect(spy).toHaveBeenLastCalledWith(1);
+      expectLastCalledWith(spy, 1);
       expect(animationState.getState()).toBe('completed');
 
       // animation is now complete, no more updates

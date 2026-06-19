@@ -2,6 +2,7 @@ import { describe, it, expect } from 'vitest';
 import { identity } from 'es-toolkit';
 import { CSSTransition, JavascriptAnimation } from '../../src/animation/RechartsAnimation';
 import { noop } from '../../src/util/DataUtils';
+import { expectLastCalledWith } from '../helper/expectLastCalledWith';
 
 describe('RechartsAnimation state machine', () => {
   it('should start in "init" state and call onAnimationStart immediately', () => {
@@ -467,7 +468,60 @@ describe('RechartsAnimation state machine', () => {
       expect(a.getInterpolated()).toBe(7);
 
       expect(spy).toHaveBeenCalledTimes(1);
-      expect(spy).toHaveBeenLastCalledWith(0.2);
+      expectLastCalledWith(spy, 0.2);
+    });
+
+    it('should return animation value including easing for values other than 0, 1', () => {
+      const easing = (x: number) => x * 2;
+      const easingSpy = vi.fn(easing);
+      const a = new JavascriptAnimation({
+        animationId: 'animation1',
+        onAnimationStart: noop,
+        onAnimationEnd: noop,
+        animationDuration: 500,
+        animationBegin: 300,
+        from: 10,
+        to: 110,
+        easing: easingSpy,
+      });
+      a.tick(10);
+      a.tick(400);
+      expect(a.getState()).toBe('active');
+      a.tick(500);
+
+      /*
+       * Okay so at this point of time, the animation progress is 20%
+       * which is what getProgress() is showing us.
+       * The easing function however can stretch or shrink it,
+       * which is what we are seeing from getInterpolated()
+       */
+      expect(a.getProgress()).toBe(0.2);
+      /*
+       * So what's going on here.
+       * from 10 to 110 is 100 steps, 20% of the progress means progress = 0.2, all good so far.
+       * Now it depends on the order on which you do things.
+       *
+       * If you do easing -> interpolate:
+       * progress = 0.2
+       * easing * progress = 0.2 * 2 = 0.4
+       * interpolate = 10 (start) + 0.4 * 100 = 50
+       *
+       * If you do interpolate -> easing:
+       * progress = 0.2
+       * interpolate = 10 + 0.2 * 100 = 30
+       * easing * interpolate = 30 * 2 = 60
+       *
+       * So you end up with different numbers.
+       *
+       * If you ask AI it will tell you that you should do easing -> interpolate, always.
+       * However, we have ton of tests showing that Rechart has always done interpolate -> easing
+       * so let's keep it that way even though it's technically incorrect.
+       * If someone complains we can save it for the next major version.
+       */
+      expect(a.getInterpolated()).toBe(60);
+
+      expect(easingSpy).toHaveBeenCalledTimes(1);
+      expectLastCalledWith(easingSpy, 30);
     });
   });
 

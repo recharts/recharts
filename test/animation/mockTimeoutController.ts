@@ -36,13 +36,13 @@ export class MockTimeoutController implements TimeoutController {
      * So long story short, this copy exists to keep the mock behavior same as actual timeout controller behavior.
      */
     const copy: CallbackType = (now: number) => callback(now);
-    this.timeouts.push({ callback: copy, delay });
-
-    if (this.config.timeoutLimit != null && this.timeouts.length > this.config.timeoutLimit) {
+    if (this.config.timeoutLimit != null && this.timeouts.length >= this.config.timeoutLimit) {
       throw new Error(
         `Timeout queue has size ${this.timeouts.length} which is more than the allowed ${this.config.timeoutLimit}`,
       );
     }
+
+    this.timeouts.push({ callback: copy, delay });
 
     // Return a cancelable timeout function
     return () => {

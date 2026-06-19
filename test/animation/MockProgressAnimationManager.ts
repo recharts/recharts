@@ -53,6 +53,8 @@ export class MockProgressAnimationManager<T, E> implements MockAnimationManager 
 
   private readonly timeoutController: MockTimeoutController = new MockTimeoutController();
 
+  private cancelController: undefined | (() => void);
+
   constructor(
     private animationId: string,
     onStop?: () => void,
@@ -108,10 +110,12 @@ export class MockProgressAnimationManager<T, E> implements MockAnimationManager 
   start(animation: RechartsAnimation<T, E>, listener: (newState: T) => void) {
     this.animation = animation;
     this.isPrimed = false; // Reset the primed state when starting a new animation
-    mockAnimationController(this.timeoutController, this.animation, listener);
+    this.cancelController = mockAnimationController(this.timeoutController, this.animation, listener);
   }
 
   stop() {
+    this.cancelController?.();
+    this.cancelController = undefined;
     this.animation = null;
     this.isPrimed = false; // Reset the primed state when stopping the queue
     this.onStop?.();

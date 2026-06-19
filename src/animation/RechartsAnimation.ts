@@ -2,7 +2,6 @@
 import { interpolate } from '../util/DataUtils';
 import { EasingFunction, NamedBezier } from './easing';
 
-// TODO we don't need four states, three is enough because onAnimationStart is called in constructor now
 const INIT = 'init' as const;
 const PENDING = 'pending' as const;
 const ACTIVE = 'active' as const;
@@ -15,8 +14,8 @@ type AnimationStateCallback = () => void;
 export interface RechartsAnimation<T, E> {
   /**
    * Returns the state machine current state
-   * - `init`:       RechartsAnimation had just been created, and did not announce its start yet (`onAnimationStart`)
-   * - `pending`:    RechartsAnimation has executed `onAnimationStart` and it's now paused for `animationBegin` milliseconds until the transition begins
+   * - `init`:       RechartsAnimation had just been created. It immediately calls `onAnimationStart`
+   * - `pending`:    RechartsAnimation is now paused for `animationBegin` milliseconds until the transition begins
    * - `active`:     RechartsAnimation is transitioning items on screen
    * - `completed`:  RechartsAnimation has completed its transition and executed `onAnimationEnd`.
    *                 This state is final and the animation is no longer allowed to transition to other states.
@@ -127,8 +126,6 @@ function remaining(time: number): number {
  *
  */
 abstract class RechartsAnimationImpl<T, E> implements RechartsAnimation<T, E> {
-  private readonly onAnimationStart: undefined | AnimationStateCallback;
-
   private readonly onAnimationEnd: undefined | AnimationStateCallback;
 
   private progress: number;
@@ -160,7 +157,6 @@ abstract class RechartsAnimationImpl<T, E> implements RechartsAnimation<T, E> {
     easing: E;
   }) {
     this.animationId = param.animationId;
-    this.onAnimationStart = param.onAnimationStart;
     this.onAnimationEnd = param.onAnimationEnd;
     this.animationDuration = param.animationDuration;
     this.animationBegin = param.animationBegin;
@@ -169,7 +165,7 @@ abstract class RechartsAnimationImpl<T, E> implements RechartsAnimation<T, E> {
     this.to = param.to;
     this.easing = param.easing;
     // Mimic what the previous animationManager was doing - call onAnimationStart immediately and synchronously
-    this.onAnimationStart?.();
+    param.onAnimationStart?.();
   }
 
   private state: AnimationState = INIT;
