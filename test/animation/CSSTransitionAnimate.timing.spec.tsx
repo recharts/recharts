@@ -83,7 +83,7 @@ describe('CSSTransitionAnimate timing', () => {
             to="scaleY(1)"
             attributeName="transform"
             duration={500}
-            animationManager={animationManager.factory}
+            animationController={animationManager.factory}
             canBegin
           >
             {childFunction}
@@ -117,7 +117,7 @@ describe('CSSTransitionAnimate timing', () => {
             duration={500}
             onAnimationStart={handleAnimationStart}
             onAnimationEnd={handleAnimationEnd}
-            animationManager={animationManager.factory}
+            animationController={animationManager.factory}
           >
             {childFunction}
           </CSSTransitionAnimate>,
@@ -145,7 +145,7 @@ describe('CSSTransitionAnimate timing', () => {
             duration={500}
             onAnimationStart={handleAnimationStart}
             onAnimationEnd={handleAnimationEnd}
-            animationManager={animationManager.factory}
+            animationController={animationManager.factory}
           >
             {childFunction}
           </CSSTransitionAnimate>,
@@ -172,7 +172,7 @@ describe('CSSTransitionAnimate timing', () => {
             duration={500}
             canBegin={false}
             onAnimationStart={handleAnimationStart}
-            animationManager={animationManager.factory}
+            animationController={animationManager.factory}
           >
             {child}
           </CSSTransitionAnimate>,
@@ -198,7 +198,7 @@ describe('CSSTransitionAnimate timing', () => {
             duration={500}
             isActive={false}
             onAnimationStart={handleAnimationStart}
-            animationManager={animationManager.factory}
+            animationController={animationManager.factory}
           >
             {child}
           </CSSTransitionAnimate>,
@@ -224,7 +224,7 @@ describe('CSSTransitionAnimate timing', () => {
             duration={500}
             isActive={false}
             onAnimationStart={handleAnimationStart}
-            animationManager={animationManager.factory}
+            animationController={animationManager.factory}
           >
             {child}
           </CSSTransitionAnimate>,
@@ -246,7 +246,7 @@ describe('CSSTransitionAnimate timing', () => {
             duration={300}
             isActive
             onAnimationStart={handleAnimationStart}
-            animationManager={animationManager.factory}
+            animationController={animationManager.factory}
           >
             {child}
           </CSSTransitionAnimate>,
@@ -283,7 +283,7 @@ describe('CSSTransitionAnimate timing', () => {
                 duration={500}
                 isActive={isActive}
                 onAnimationStart={handleAnimationStart}
-                animationManager={animationManager.factory}
+                animationController={animationManager.factory}
               >
                 {child}
               </CSSTransitionAnimate>
@@ -333,7 +333,7 @@ describe('CSSTransitionAnimate timing', () => {
             isActive={false}
             onAnimationStart={handleAnimationStart}
             onAnimationEnd={handleAnimationEnd}
-            animationManager={animationManager.factory}
+            animationController={animationManager.factory}
           >
             {child}
           </CSSTransitionAnimate>,
@@ -356,7 +356,7 @@ describe('CSSTransitionAnimate timing', () => {
             isActive={false}
             onAnimationStart={handleAnimationStart}
             onAnimationEnd={handleAnimationEnd}
-            animationManager={animationManager.factory}
+            animationController={animationManager.factory}
           >
             {child}
           </CSSTransitionAnimate>,
@@ -382,7 +382,7 @@ describe('CSSTransitionAnimate timing', () => {
             duration={500}
             canBegin={false}
             onAnimationStart={handleAnimationStart}
-            animationManager={animationManager.factory}
+            animationController={animationManager.factory}
           >
             {child}
           </CSSTransitionAnimate>,
@@ -403,7 +403,7 @@ describe('CSSTransitionAnimate timing', () => {
             duration={500}
             canBegin={false}
             onAnimationStart={handleAnimationStart}
-            animationManager={animationManager.factory}
+            animationController={animationManager.factory}
           >
             {child}
           </CSSTransitionAnimate>,
@@ -430,7 +430,7 @@ describe('CSSTransitionAnimate timing', () => {
             duration={500}
             canBegin={false}
             onAnimationStart={handleAnimationStart}
-            animationManager={animationManager.factory}
+            animationController={animationManager.factory}
           >
             {child}
           </CSSTransitionAnimate>,
@@ -451,7 +451,7 @@ describe('CSSTransitionAnimate timing', () => {
             duration={500}
             canBegin
             onAnimationStart={handleAnimationStart}
-            animationManager={animationManager.factory}
+            animationController={animationManager.factory}
           >
             {child}
           </CSSTransitionAnimate>,

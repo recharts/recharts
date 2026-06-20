@@ -1,7 +1,7 @@
 import { MockAnimationManager, MockProgressAnimationManager } from './MockProgressAnimationManager';
 import { AnimationController } from '../../src/animation/AnimationController';
 import { CancelableTimeout, TimeoutController } from '../../src/animation/timeoutController';
-import { RechartsAnimation } from '../../src/animation/RechartsAnimation';
+import { AnimationStateMachine } from '../../src/animation/AnimationStateMachine';
 
 /*
  * CompositeAnimationManager allows for the management of multiple animations.
@@ -11,7 +11,7 @@ export class CompositeAnimationManager implements MockAnimationManager {
   /**
    * All animation managers under this composite manager.
    */
-  public animationManagers: Map<string, MockAnimationManager> = new Map();
+  private animationManagers: Map<string, MockAnimationManager> = new Map();
 
   async setAnimationProgress(percent: number): Promise<void> {
     const animatingManagers = this.getAnimatingManagers();
@@ -51,7 +51,7 @@ export class CompositeAnimationManager implements MockAnimationManager {
 
   public factory: AnimationController = <T, E>(
     timeoutController: TimeoutController,
-    animationHandle: RechartsAnimation<T, E>,
+    animationHandle: AnimationStateMachine<T, E>,
     listener: (newState: T) => void,
   ): CancelableTimeout => {
     const animationId = animationHandle.getAnimationId();
@@ -67,7 +67,7 @@ export class CompositeAnimationManager implements MockAnimationManager {
     };
   };
 
-  public getAnimatingManagers(): Map<string, MockAnimationManager> {
+  private getAnimatingManagers(): Map<string, MockAnimationManager> {
     const animatingManagers = new Map<string, MockAnimationManager>();
 
     for (const [id, manager] of this.animationManagers) {

@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest';
 import { identity } from 'es-toolkit';
-import { CSSTransition, JavascriptAnimation } from '../../src/animation/RechartsAnimation';
+import { CSSTransitionAnimation, JavascriptAnimation } from '../../src/animation/AnimationStateMachine';
 import { noop } from '../../src/util/DataUtils';
 import { expectLastCalledWith } from '../helper/expectLastCalledWith';
 
@@ -527,7 +527,7 @@ describe('RechartsAnimation state machine', () => {
 
   describe('CSSTransition', () => {
     it('should return starting and ending values', () => {
-      const a = new CSSTransition({
+      const a = new CSSTransitionAnimation({
         animationId: 'animation1',
         onAnimationStart: noop,
         onAnimationEnd: noop,
@@ -542,7 +542,7 @@ describe('RechartsAnimation state machine', () => {
     });
 
     it('should return the remaining time from tick() function', () => {
-      const a = new CSSTransition({
+      const a = new CSSTransitionAnimation({
         animationId: 'animation1',
         onAnimationStart: noop,
         onAnimationEnd: noop,
@@ -583,7 +583,7 @@ describe('RechartsAnimation state machine', () => {
     });
 
     it('should return remaining time of next step if the tick landed exactly at the start of animation', () => {
-      const a = new CSSTransition({
+      const a = new CSSTransitionAnimation({
         animationId: 'animation1',
         onAnimationStart: noop,
         onAnimationEnd: noop,
@@ -608,7 +608,7 @@ describe('RechartsAnimation state machine', () => {
     });
 
     it('should return animation value as-is, ignore easing', () => {
-      const a = new CSSTransition({
+      const a = new CSSTransitionAnimation({
         animationId: 'animation1',
         onAnimationStart: noop,
         onAnimationEnd: noop,

@@ -7,17 +7,17 @@ const PENDING = 'pending' as const;
 const ACTIVE = 'active' as const;
 const COMPLETED = 'completed' as const;
 
-type AnimationState = typeof INIT | typeof PENDING | typeof ACTIVE | typeof COMPLETED;
+export type AnimationState = typeof INIT | typeof PENDING | typeof ACTIVE | typeof COMPLETED;
 
 type AnimationStateCallback = () => void;
 
-export interface RechartsAnimation<T, E> {
+export interface AnimationStateMachine<T, E> {
   /**
    * Returns the state machine current state
-   * - `init`:       RechartsAnimation had just been created. It immediately calls `onAnimationStart`
-   * - `pending`:    RechartsAnimation is now paused for `animationBegin` milliseconds until the transition begins
-   * - `active`:     RechartsAnimation is transitioning items on screen
-   * - `completed`:  RechartsAnimation has completed its transition and executed `onAnimationEnd`.
+   * - `init`:       animation had just been created. It immediately calls `onAnimationStart`
+   * - `pending`:    animation is now paused for `animationBegin` milliseconds until the transition begins
+   * - `active`:     animation is transitioning items on screen
+   * - `completed`:  animation has completed its transition and executed `onAnimationEnd`.
    *                 This state is final and the animation is no longer allowed to transition to other states.
    */
   getState(): AnimationState;
@@ -48,7 +48,8 @@ export interface RechartsAnimation<T, E> {
   getEasing(): E;
   /**
    * Sets the current time of the animation. The animation sets its internal state and progress accordingly.
-   * This is current, absolute time; not additive! This allows you to essentially "travel back in time" based on the value you pass in here.
+   * This is current, absolute time; not additive!
+   * This allows you to essentially "travel back in time" based on the value you pass in here.
    *
    * Returns the (relative) time remaining until the current activity is over.
    * Meaning: if the state is in a middle of a delay, returns the time left until the delay is finished.
@@ -109,7 +110,7 @@ function remaining(time: number): number {
  * - pending to active
  * - active to completed - `onAnimationEnd` executes
  *
- * The RechartsAnimation class is responsible for managing the transition between these stages.
+ * The RechartsAnimationImpl class is responsible for managing the transition between these stages.
  *
  * The animation queue is static and consists of four elements:
  * - `onAnimationStart`: function that is called when the animation is created
@@ -123,9 +124,8 @@ function remaining(time: number): number {
  * - Other more creative animation controllers: One can construct a chart that animates based on a page scroll distance. Or animates back and forth based on mouse wheel events. Or a BarChart that animates based on microphone signal volume. We don't want to support all of those inside the library - we want to focus on charts - but we want to give users the tools to do that if they want to. And this tool is AnimationController override. We will provide the default implementation in the form of requestAnimationFrameAnimationController and let users add their own.
  *
  * For this reason, we do not automatically end the animation when it reaches `1`. You need to call .complete() first.
- *
  */
-abstract class RechartsAnimationImpl<T, E> implements RechartsAnimation<T, E> {
+abstract class RechartsAnimationImpl<T, E> implements AnimationStateMachine<T, E> {
   private readonly onAnimationEnd: undefined | AnimationStateCallback;
 
   private progress: number;
@@ -278,7 +278,7 @@ export class JavascriptAnimation extends RechartsAnimationImpl<number, EasingFun
   }
 }
 
-export class CSSTransition extends RechartsAnimationImpl<string, NamedBezier> {
+export class CSSTransitionAnimation extends RechartsAnimationImpl<string, NamedBezier> {
   protected nextAnimationUpdate(timeElapsed: number): number {
     /**
      * CSS transitions do not need DOM updates past the initial render

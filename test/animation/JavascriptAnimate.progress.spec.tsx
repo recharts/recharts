@@ -11,7 +11,7 @@ describe('JavascriptAnimate progress', () => {
     const child = vi.fn();
 
     render(
-      <JavascriptAnimate animationId="1" easing="linear" duration={500} animationManager={animationManager.factory}>
+      <JavascriptAnimate animationId="1" easing="linear" duration={500} animationController={animationManager.factory}>
         {child}
       </JavascriptAnimate>,
     );
@@ -34,7 +34,12 @@ describe('JavascriptAnimate progress', () => {
       const child = vi.fn();
 
       const { rerender } = render(
-        <JavascriptAnimate animationId="1" easing="linear" duration={500} animationManager={animationManager.factory}>
+        <JavascriptAnimate
+          animationId="1"
+          easing="linear"
+          duration={500}
+          animationController={animationManager.factory}
+        >
           {child}
         </JavascriptAnimate>,
       );
@@ -48,7 +53,12 @@ describe('JavascriptAnimate progress', () => {
 
       // Change "to" in the middle of the animation
       rerender(
-        <JavascriptAnimate animationId="1" easing="ease-out" duration={500} animationManager={animationManager.factory}>
+        <JavascriptAnimate
+          animationId="1"
+          easing="ease-out"
+          duration={500}
+          animationController={animationManager.factory}
+        >
           {child}
         </JavascriptAnimate>,
       );

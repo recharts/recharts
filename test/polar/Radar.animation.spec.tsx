@@ -5,7 +5,7 @@ import { createSelectorTestCase } from '../helper/createSelectorTestCase';
 import { PageData } from '../_data';
 import { PolarAngleAxis, PolarGrid, PolarLayout, PolarRadiusAxis, Radar, RadarChart } from '../../src';
 import type { AnimationInterpolateFn, RadarPoint } from '../../src';
-import { AnimationManagerContext } from '../../src/animation/useAnimationManager';
+import { AnimationControllerProvider } from '../../src/animation/useAnimationController';
 import { assertNotNull } from '../helper/assertNotNull';
 import {
   ExpectedRadarDot,
@@ -690,9 +690,9 @@ describe('Radar animation', () => {
     function renderTestCase() {
       const animationManager = new CompositeAnimationManager();
       const { container } = render(
-        <AnimationManagerContext.Provider value={animationManager.factory}>
+        <AnimationControllerProvider value={animationManager.factory}>
           <RangeRadarTestCase />
-        </AnimationManagerContext.Provider>,
+        </AnimationControllerProvider>,
       );
 
       act(() => {

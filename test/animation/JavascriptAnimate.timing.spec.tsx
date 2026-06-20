@@ -26,7 +26,7 @@ describe('JavascriptAnimate timing', () => {
           duration={500}
           onAnimationStart={handleAnimationStart}
           onAnimationEnd={handleAnimationEnd}
-          animationManager={animationManager.factory}
+          animationController={animationManager.factory}
         >
           {() => <div className="test-wrapper" />}
         </JavascriptAnimate>,
@@ -56,7 +56,7 @@ describe('JavascriptAnimate timing', () => {
           canBegin={false}
           onAnimationStart={handleAnimationStart}
           onAnimationEnd={handleAnimationEnd}
-          animationManager={animationManager.factory}
+          animationController={animationManager.factory}
         >
           {() => <div className="test-wrapper" />}
         </JavascriptAnimate>,
@@ -78,7 +78,7 @@ describe('JavascriptAnimate timing', () => {
           isActive={false}
           onAnimationStart={handleAnimationStart}
           onAnimationEnd={handleAnimationEnd}
-          animationManager={animationManager.factory}
+          animationController={animationManager.factory}
         >
           {() => <div className="test-wrapper" />}
         </JavascriptAnimate>,
@@ -95,7 +95,7 @@ describe('JavascriptAnimate timing', () => {
       const childFunction = vi.fn();
 
       render(
-        <JavascriptAnimate animationId="1" duration={500} animationManager={animationManager.factory}>
+        <JavascriptAnimate animationId="1" duration={500} animationController={animationManager.factory}>
           {childFunction}
         </JavascriptAnimate>,
       );
@@ -121,7 +121,7 @@ describe('JavascriptAnimate timing', () => {
           duration={500}
           canBegin={false}
           onAnimationStart={handleAnimationStart}
-          animationManager={animationManager.factory}
+          animationController={animationManager.factory}
         >
           {child}
         </JavascriptAnimate>,
@@ -144,7 +144,7 @@ describe('JavascriptAnimate timing', () => {
           duration={500}
           isActive={false}
           onAnimationStart={handleAnimationStart}
-          animationManager={animationManager.factory}
+          animationController={animationManager.factory}
         >
           {child}
         </JavascriptAnimate>,
@@ -167,7 +167,7 @@ describe('JavascriptAnimate timing', () => {
           duration={500}
           isActive={false}
           onAnimationStart={handleAnimationStart}
-          animationManager={animationManager.factory}
+          animationController={animationManager.factory}
         >
           {child}
         </JavascriptAnimate>,
@@ -186,7 +186,7 @@ describe('JavascriptAnimate timing', () => {
           duration={500}
           isActive
           onAnimationStart={handleAnimationStart}
-          animationManager={animationManager.factory}
+          animationController={animationManager.factory}
         >
           {child}
         </JavascriptAnimate>,
@@ -235,7 +235,7 @@ describe('JavascriptAnimate timing', () => {
               duration={500}
               isActive={isActive}
               onAnimationStart={handleAnimationStart}
-              animationManager={animationManager.factory}
+              animationController={animationManager.factory}
             >
               {child}
             </JavascriptAnimate>
@@ -278,7 +278,7 @@ describe('JavascriptAnimate timing', () => {
           isActive={false}
           onAnimationStart={handleAnimationStart}
           onAnimationEnd={handleAnimationEnd}
-          animationManager={animationManager.factory}
+          animationController={animationManager.factory}
         >
           {child}
         </JavascriptAnimate>,
@@ -298,7 +298,7 @@ describe('JavascriptAnimate timing', () => {
           isActive={false}
           onAnimationStart={handleAnimationStart}
           onAnimationEnd={handleAnimationEnd}
-          animationManager={animationManager.factory}
+          animationController={animationManager.factory}
         >
           {child}
         </JavascriptAnimate>,
@@ -321,7 +321,7 @@ describe('JavascriptAnimate timing', () => {
           duration={500}
           canBegin={false}
           onAnimationStart={handleAnimationStart}
-          animationManager={animationManager.factory}
+          animationController={animationManager.factory}
         >
           {child}
         </JavascriptAnimate>,
@@ -339,7 +339,7 @@ describe('JavascriptAnimate timing', () => {
           duration={500}
           canBegin={false}
           onAnimationStart={handleAnimationStart}
-          animationManager={animationManager.factory}
+          animationController={animationManager.factory}
         >
           {child}
         </JavascriptAnimate>,
