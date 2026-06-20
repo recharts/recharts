@@ -1,21 +1,21 @@
 {
   "treemap": {
     "examplePath": "www/src/views/IndexView/IndexLineChart.tsx",
-    "totalSize": 810515,
-    "totalSizeLabel": "791.52 KB",
+    "totalSize": 810525,
+    "totalSizeLabel": "791.53 KB",
     "moduleCount": 318,
-    "generatedAt": "2026-06-20T13:05:20.480Z",
+    "generatedAt": "2026-06-20T13:17:54.944Z",
     "stages": [
       {
         "stage": "es6-folder",
-        "bytes": 1253633,
+        "bytes": 1253643,
         "humanReadableSize": "1.20 MB",
         "reductionFromBaselinePercent": 0
       },
       {
         "stage": "tree-shaken",
-        "bytes": 814029,
-        "humanReadableSize": "794.95 KB",
+        "bytes": 814039,
+        "humanReadableSize": "794.96 KB",
         "reductionFromBaselinePercent": 0
       },
       {
@@ -34,12 +34,12 @@
     "tree": {
       "name": "bundle",
       "fullPath": "bundle",
-      "value": 810515,
+      "value": 810525,
       "children": [
         {
           "name": "src",
           "fullPath": "src",
-          "value": 448991,
+          "value": 449001,
           "children": [
             {
               "name": "state",
@@ -727,7 +727,7 @@
             {
               "name": "animation",
               "fullPath": "src/animation",
-              "value": 29725,
+              "value": 29735,
               "children": [
                 {
                   "name": "matchBy.ts",
@@ -737,7 +737,7 @@
                 {
                   "name": "AnimationStateMachine.ts",
                   "fullPath": "src/animation/AnimationStateMachine.ts",
-                  "value": 5547
+                  "value": 5548
                 },
                 {
                   "name": "easing.ts",
@@ -757,7 +757,7 @@
                 {
                   "name": "JavascriptAnimate.tsx",
                   "fullPath": "src/animation/JavascriptAnimate.tsx",
-                  "value": 1584
+                  "value": 1593
                 },
                 {
                   "name": "useAnimationController.tsx",
@@ -2282,21 +2282,21 @@
   },
   "sunburst": {
     "examplePath": "www/src/views/IndexView/IndexLineChart.tsx",
-    "totalSize": 810515,
-    "totalSizeLabel": "791.52 KB",
+    "totalSize": 810525,
+    "totalSizeLabel": "791.53 KB",
     "moduleCount": 318,
-    "generatedAt": "2026-06-20T13:05:22.362Z",
+    "generatedAt": "2026-06-20T13:17:57.002Z",
     "stages": [
       {
         "stage": "es6-folder",
-        "bytes": 1253633,
+        "bytes": 1253643,
         "humanReadableSize": "1.20 MB",
         "reductionFromBaselinePercent": 0
       },
       {
         "stage": "tree-shaken",
-        "bytes": 814029,
-        "humanReadableSize": "794.95 KB",
+        "bytes": 814039,
+        "humanReadableSize": "794.96 KB",
         "reductionFromBaselinePercent": 0
       },
       {
@@ -2315,12 +2315,12 @@
     "tree": {
       "name": "bundle",
       "fullPath": "bundle",
-      "value": 810515,
+      "value": 810525,
       "children": [
         {
           "name": "src",
           "fullPath": "src",
-          "value": 448991,
+          "value": 449001,
           "children": [
             {
               "name": "state",
@@ -3008,7 +3008,7 @@
             {
               "name": "animation",
               "fullPath": "src/animation",
-              "value": 29725,
+              "value": 29735,
               "children": [
                 {
                   "name": "matchBy.ts",
@@ -3018,7 +3018,7 @@
                 {
                   "name": "AnimationStateMachine.ts",
                   "fullPath": "src/animation/AnimationStateMachine.ts",
-                  "value": 5547
+                  "value": 5548
                 },
                 {
                   "name": "easing.ts",
@@ -3038,7 +3038,7 @@
                 {
                   "name": "JavascriptAnimate.tsx",
                   "fullPath": "src/animation/JavascriptAnimate.tsx",
-                  "value": 1584
+                  "value": 1593
                 },
                 {
                   "name": "useAnimationController.tsx",
