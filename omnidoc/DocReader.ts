@@ -3,7 +3,7 @@ export type DefaultValue = { type: 'known'; value: unknown | undefined } | { typ
 export interface DocReader {
   /**
    * Returns all exported public symbol names from the project.
-   * Excludes hooks and functions, and types.
+   * Includes everything - Components, hooks, functions, types, all of it
    */
   getPublicSymbolNames(): ReadonlyArray<string>;
 
@@ -14,6 +14,7 @@ export interface DocReader {
 
   /**
    * Returns all runtime exports: components, hooks, and utilities.
+   * Excludes types
    */
   getAllRuntimeExportedNames(): ReadonlyArray<string>;
 

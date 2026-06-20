@@ -138,6 +138,10 @@ export class ProjectDocReader implements DocReader {
     return this.getPublicSymbolNames(SymbolFlags.Variable | SymbolFlags.Function);
   }
 
+  getAllExportedNames(): ReadonlyArray<string> {
+    return this.getPublicSymbolNames();
+  }
+
   private getComponentDeclaration(component: string): ExportedDeclarations {
     const sourceFile = this.project.getSourceFileOrThrow('src/index.ts');
     const exportedDeclarations = sourceFile.getExportedDeclarations();
