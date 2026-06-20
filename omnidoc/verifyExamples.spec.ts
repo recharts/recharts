@@ -111,7 +111,6 @@ describe('Documentation Examples Coverage', () => {
     'YAxisOrientation',
     'XAxisPadding',
     'YAxisPadding',
-    'NiceTicks',
     'CartesianTickItem',
     'TextAnchor',
     'TooltipItemSorter',
@@ -150,7 +149,6 @@ describe('Documentation Examples Coverage', () => {
     'useYAxisInverseTickSnapScale',
     'ZIndexLayer',
     'AnimationMatchByProp',
-    'AnimationStatus',
     'LineDrawShape',
     'LinePointItem',
     'matchAppend',
@@ -205,6 +203,10 @@ describe('Documentation Examples Coverage', () => {
   ]);
 
   describe.each(exportsThatNeedExamples)('Excluded export: %s', exportName => {
+    test('is actually exported from the library', () => {
+      expect(projectReader.getPublicSymbolNames()).toContain(exportName);
+    });
+
     test('still has no example usage', () => {
       const examples = exampleReader.getExamples(exportName);
       expect(examples.length, `${exportName} is excluded but already has examples`).toBe(0);
@@ -212,6 +214,10 @@ describe('Documentation Examples Coverage', () => {
   });
 
   describe.each(Array.from(exportsThatNeedPropExamples))('Excluded prop example: %s', exportName => {
+    test('is actually exported from the library', () => {
+      expect(projectReader.getPublicSymbolNames()).toContain(exportName);
+    });
+
     test('has a component example', () => {
       const examples = exampleReader.getExamples(exportName);
       expect(examples.length, `No examples found for ${exportName}`).toBeGreaterThan(0);
