@@ -120,9 +120,16 @@ const updateDepthOfTargets = (tree: SankeyNode[], curNode: SankeyNode) => {
     const target = tree[targetNode];
 
     if (target) {
-      target.depth = Math.max(curNode.depth + 1, target.depth);
-
-      updateDepthOfTargets(tree, target);
+      const newDepth = curNode.depth + 1;
+      /*
+       * Only recurse when the depth grows. Depth is the longest path to a node, so once it stops increasing
+       * the subtree is already up to date; without this guard every path through the graph is walked
+       * separately, which explodes combinatorially on dense graphs.
+       */
+      if (newDepth > target.depth) {
+        target.depth = newDepth;
+        updateDepthOfTargets(tree, target);
+      }
     }
   }
 };
@@ -421,7 +428,7 @@ const updateYOfLinks = (tree: SankeyNode[], links: LinkDataItemDy[]): void => {
   }
 };
 
-const computeData = ({
+export const computeData = ({
   data,
   width,
   height,

@@ -2,6 +2,7 @@ import React from 'react';
 import { describe, expect, it, Mock, vi } from 'vitest';
 import { fireEvent, render } from '@testing-library/react';
 import { Sankey, SankeyLinkProps, SankeyNodeProps, Tooltip, XAxis, YAxis } from '../../src';
+import { computeData } from '../../src/chart/Sankey';
 import { exampleSankeyData } from '../_data';
 import { useChartHeight, useChartWidth, useViewBox } from '../../src/context/chartLayoutContext';
 import { useAppSelector } from '../../src/state/hooks';
@@ -782,5 +783,86 @@ describe('<Sankey />', () => {
     // A and B should render because they have >0 values.
     // C and D have 0 values, so they get 0 height and do not render.
     expect(nodes.length).toBe(2);
+  });
+
+  describe('layout of large, heavily branching graphs', () => {
+    const computeOptions = {
+      width: 1000,
+      height: 500,
+      iterations: 32,
+      nodeWidth: 10,
+      nodePadding: 10,
+      sort: true,
+      verticalAlign: 'justify',
+      align: 'justify',
+    } as const;
+
+    type ChainLink = { source: number; target: number; value: number };
+
+    /**
+     * Builds a chain where every node branches into two nodes that immediately merge back into the
+     * next node. The graph stays small, but the number of distinct paths from the first node to the
+     * last grows as `2 ** segments`, which is the shape that makes a naive longest-path search blow up.
+     */
+    const makeBranchingChainData = (segments: number): { nodes: Array<{ name: string }>; links: ChainLink[] } => {
+      const nodes: Array<{ name: string }> = [{ name: 'entry-0' }];
+      const links: ChainLink[] = [];
+      let entry = 0;
+
+      for (let i = 0; i < segments; i++) {
+        const top = nodes.push({ name: `top-${i}` }) - 1;
+        const bottom = nodes.push({ name: `bottom-${i}` }) - 1;
+        const next = nodes.push({ name: `entry-${i + 1}` }) - 1;
+
+        links.push({ source: entry, target: top, value: 1 });
+        links.push({ source: entry, target: bottom, value: 1 });
+        links.push({ source: top, target: next, value: 1 });
+        links.push({ source: bottom, target: next, value: 1 });
+
+        entry = next;
+      }
+
+      return { nodes, links };
+    };
+
+    it('assigns depth as the longest path from a source, even when nodes skip layers', () => {
+      // 0 -> 1 -> 2, plus a shortcut 0 -> 2.
+      // Node 2 must take the longer path (depth 2), not the shortcut.
+      const data = {
+        nodes: [{ name: 'a' }, { name: 'b' }, { name: 'c' }],
+        links: [
+          { source: 0, target: 1, value: 1 },
+          { source: 1, target: 2, value: 1 },
+          { source: 0, target: 2, value: 1 },
+        ],
+      };
+
+      const { nodes } = computeData({ data, ...computeOptions });
+
+      expect(nodes.map(node => node.depth)).toEqual([0, 1, 2]);
+    });
+
+    it('computes the layout in linear time for a heavily branching graph', () => {
+      // With 28 segments there are 2 ** 28 distinct paths from the first node to the last, so any layout
+      // that follows every path instead of pruning resolved branches hangs for minutes and blows past
+      // vitest's default test timeout. The fixed layout stays linear and finishes in a few milliseconds.
+      const segments = 28;
+      const data = makeBranchingChainData(segments);
+
+      const { nodes } = computeData({ data, ...computeOptions });
+
+      expect(nodes).toHaveLength(data.nodes.length);
+      // Each segment contributes two layers of depth (entry -> top/bottom -> next entry).
+      expect(Math.max(...nodes.map(node => node.depth))).toBe(segments * 2);
+    });
+
+    it('renders a heavily branching graph without freezing the main thread', () => {
+      const data = makeBranchingChainData(28);
+
+      const { container } = render(<Sankey width={1000} height={500} data={data} />);
+
+      expect(container.querySelectorAll('.recharts-sankey-node')).toHaveLength(data.nodes.length);
+      expect(container.querySelectorAll('.recharts-sankey-link')).toHaveLength(data.links.length);
+    });
   });
 });
