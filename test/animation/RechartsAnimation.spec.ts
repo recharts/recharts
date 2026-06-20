@@ -275,7 +275,7 @@ describe('RechartsAnimation state machine', () => {
       expect(a.getProgress()).toBe(0.25);
 
       a.tick(4000);
-      // progress is not allowed to go out of bounds, so it can be greater than 1
+      // progress is not allowed to go out of bounds, so it cannot be greater than 1
       expect(a.getProgress()).toBe(1);
       // still active! even after overshooting the state should not change. You need to call .complete() explicitly
       expect(a.getState()).toBe('active');

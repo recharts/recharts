@@ -3,11 +3,11 @@ import { RechartsAnimation } from './RechartsAnimation';
 import { CancelableTimeout, TimeoutController } from './timeoutController';
 
 /**
- * JavaScript animations require trigger and repain as soon as possible,
+ * JavaScript animations require trigger and repaint as soon as possible,
  * so this class uses the timeoutController to trigger updates as quickly as the controller allows.
  *
- * JavaScript animation progress is represented as a stream of numbers between 0 and 1, where 0 means the animation just started, and 1 means the animation just ended. Each individual consumer is then responsible
- * for mapping that number onto a React component.
+ * JavaScript animation progress is represented as a stream of values. The exact type depends on the animationHandle type.
+ * Each individual consumer is then responsible for mapping those values onto a React component.
  */
 export const animationControllerImpl: AnimationController = <T, E>(
   timeoutController: TimeoutController,
