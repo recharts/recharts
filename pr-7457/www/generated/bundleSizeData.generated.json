@@ -1,21 +1,21 @@
 {
   "treemap": {
     "examplePath": "www/src/views/IndexView/IndexLineChart.tsx",
-    "totalSize": 809461,
-    "totalSizeLabel": "790.49 KB",
+    "totalSize": 809418,
+    "totalSizeLabel": "790.45 KB",
     "moduleCount": 318,
-    "generatedAt": "2026-06-20T00:27:23.953Z",
+    "generatedAt": "2026-06-20T01:30:44.152Z",
     "stages": [
       {
         "stage": "es6-folder",
-        "bytes": 1252477,
+        "bytes": 1252434,
         "humanReadableSize": "1.19 MB",
         "reductionFromBaselinePercent": 0
       },
       {
         "stage": "tree-shaken",
-        "bytes": 812975,
-        "humanReadableSize": "793.92 KB",
+        "bytes": 812932,
+        "humanReadableSize": "793.88 KB",
         "reductionFromBaselinePercent": 0
       },
       {
@@ -34,12 +34,12 @@
     "tree": {
       "name": "bundle",
       "fullPath": "bundle",
-      "value": 809461,
+      "value": 809418,
       "children": [
         {
           "name": "src",
           "fullPath": "src",
-          "value": 447937,
+          "value": 447894,
           "children": [
             {
               "name": "state",
@@ -727,7 +727,7 @@
             {
               "name": "animation",
               "fullPath": "src/animation",
-              "value": 28671,
+              "value": 28628,
               "children": [
                 {
                   "name": "matchBy.ts",
@@ -762,7 +762,7 @@
                 {
                   "name": "AnimationControllerImpl.ts",
                   "fullPath": "src/animation/AnimationControllerImpl.ts",
-                  "value": 1150
+                  "value": 1107
                 },
                 {
                   "name": "timeoutController.ts",
@@ -2282,21 +2282,21 @@
   },
   "sunburst": {
     "examplePath": "www/src/views/IndexView/IndexLineChart.tsx",
-    "totalSize": 809461,
-    "totalSizeLabel": "790.49 KB",
+    "totalSize": 809418,
+    "totalSizeLabel": "790.45 KB",
     "moduleCount": 318,
-    "generatedAt": "2026-06-20T00:27:22.091Z",
+    "generatedAt": "2026-06-20T01:30:42.216Z",
     "stages": [
       {
         "stage": "es6-folder",
-        "bytes": 1252477,
+        "bytes": 1252434,
         "humanReadableSize": "1.19 MB",
         "reductionFromBaselinePercent": 0
       },
       {
         "stage": "tree-shaken",
-        "bytes": 812975,
-        "humanReadableSize": "793.92 KB",
+        "bytes": 812932,
+        "humanReadableSize": "793.88 KB",
         "reductionFromBaselinePercent": 0
       },
       {
@@ -2315,12 +2315,12 @@
     "tree": {
       "name": "bundle",
       "fullPath": "bundle",
-      "value": 809461,
+      "value": 809418,
       "children": [
         {
           "name": "src",
           "fullPath": "src",
-          "value": 447937,
+          "value": 447894,
           "children": [
             {
               "name": "state",
@@ -3008,7 +3008,7 @@
             {
               "name": "animation",
               "fullPath": "src/animation",
-              "value": 28671,
+              "value": 28628,
               "children": [
                 {
                   "name": "matchBy.ts",
@@ -3043,7 +3043,7 @@
                 {
                   "name": "AnimationControllerImpl.ts",
                   "fullPath": "src/animation/AnimationControllerImpl.ts",
-                  "value": 1150
+                  "value": 1107
                 },
                 {
                   "name": "timeoutController.ts",
