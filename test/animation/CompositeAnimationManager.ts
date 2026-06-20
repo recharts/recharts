@@ -1,7 +1,7 @@
 import { MockAnimationManager, MockProgressAnimationManager } from './MockProgressAnimationManager';
 import { AnimationController } from '../../src/animation/AnimationController';
 import { CancelableTimeout, TimeoutController } from '../../src/animation/timeoutController';
-import { RechartsAnimation } from '../../src/animation/RechartsAnimation';
+import { AnimationStateMachine } from '../../src/animation/AnimationStateMachine';
 
 /*
  * CompositeAnimationManager allows for the management of multiple animations.
@@ -51,7 +51,7 @@ export class CompositeAnimationManager implements MockAnimationManager {
 
   public factory: AnimationController = <T, E>(
     timeoutController: TimeoutController,
-    animationHandle: RechartsAnimation<T, E>,
+    animationHandle: AnimationStateMachine<T, E>,
     listener: (newState: T) => void,
   ): CancelableTimeout => {
     const animationId = animationHandle.getAnimationId();

@@ -6,7 +6,7 @@ import { createEasingFunction, EasingInput } from './easing';
 import { useAnimationManager } from './useAnimationManager';
 import { Global } from '../util/Global';
 import { usePrefersReducedMotion } from '../util/usePrefersReducedMotion';
-import { JavascriptAnimation } from './RechartsAnimation';
+import { JavascriptAnimation } from './AnimationStateMachine';
 import { RequestAnimationFrameTimeoutController } from './timeoutController';
 import { AnimationController } from './AnimationController';
 

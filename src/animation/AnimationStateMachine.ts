@@ -11,7 +11,7 @@ type AnimationState = typeof INIT | typeof PENDING | typeof ACTIVE | typeof COMP
 
 type AnimationStateCallback = () => void;
 
-export interface RechartsAnimation<T, E> {
+export interface AnimationStateMachine<T, E> {
   /**
    * Returns the state machine current state
    * - `init`:       RechartsAnimation had just been created. It immediately calls `onAnimationStart`
@@ -125,7 +125,7 @@ function remaining(time: number): number {
  * For this reason, we do not automatically end the animation when it reaches `1`. You need to call .complete() first.
  *
  */
-abstract class RechartsAnimationImpl<T, E> implements RechartsAnimation<T, E> {
+abstract class RechartsAnimationImpl<T, E> implements AnimationStateMachine<T, E> {
   private readonly onAnimationEnd: undefined | AnimationStateCallback;
 
   private progress: number;
@@ -278,7 +278,7 @@ export class JavascriptAnimation extends RechartsAnimationImpl<number, EasingFun
   }
 }
 
-export class CSSTransition extends RechartsAnimationImpl<string, NamedBezier> {
+export class CSSTransitionAnimation extends RechartsAnimationImpl<string, NamedBezier> {
   protected nextAnimationUpdate(timeElapsed: number): number {
     /**
      * CSS transitions do not need DOM updates past the initial render

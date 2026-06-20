@@ -2,7 +2,7 @@ import { describe, it, beforeEach, expect, Mock } from 'vitest';
 import { identity } from 'es-toolkit';
 import { MockTimeoutController } from './mockTimeoutController';
 import { animationControllerImpl } from '../../src/animation/AnimationControllerImpl';
-import { CSSTransition, JavascriptAnimation } from '../../src/animation/RechartsAnimation';
+import { CSSTransitionAnimation, JavascriptAnimation } from '../../src/animation/AnimationStateMachine';
 import { noop } from '../../src/util/DataUtils';
 import { expectLastCalledWith } from '../helper/expectLastCalledWith';
 
@@ -184,7 +184,7 @@ describe('AnimationControllerImpl', () => {
 
   describe('when given CSSTransition', () => {
     it('should return the end style as that is what DOM expects', async () => {
-      const easedAnimation: CSSTransition = new CSSTransition({
+      const easedAnimation: CSSTransitionAnimation = new CSSTransitionAnimation({
         animationId: '1',
         animationBegin: 100,
         animationDuration: 200,

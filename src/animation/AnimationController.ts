@@ -1,5 +1,5 @@
 import { CancelableTimeout, TimeoutController } from './timeoutController';
-import { RechartsAnimation } from './RechartsAnimation';
+import { AnimationStateMachine } from './AnimationStateMachine';
 
 /**
  * AnimationController accepts the animation state machine (= RechartsAnimation) plus a timeout controller,
@@ -11,6 +11,6 @@ import { RechartsAnimation } from './RechartsAnimation';
  */
 export type AnimationController = <T, E>(
   timeoutController: TimeoutController,
-  animationHandle: RechartsAnimation<T, E>,
+  animationHandle: AnimationStateMachine<T, E>,
   listener: (newState: T) => void,
 ) => CancelableTimeout;

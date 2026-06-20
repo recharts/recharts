@@ -6,7 +6,7 @@ import { useAnimationManager } from './useAnimationManager';
 import { getTransitionVal } from './util';
 import { Global } from '../util/Global';
 import { usePrefersReducedMotion } from '../util/usePrefersReducedMotion';
-import { CSSTransition } from './RechartsAnimation';
+import { CSSTransitionAnimation } from './AnimationStateMachine';
 import { RequestAnimationFrameTimeoutController } from './timeoutController';
 import { EasingInput, NamedBezier } from './easing';
 import { AnimationController } from './AnimationController';
@@ -88,7 +88,7 @@ export function CSSTransitionAnimate(outsideProps: CSSTransitionAnimateProps) {
 
     const timeoutController = new RequestAnimationFrameTimeoutController();
 
-    const animation = new CSSTransition({
+    const animation = new CSSTransitionAnimation({
       animationId: animationId + attributeName,
       easing,
       animationDuration: duration,

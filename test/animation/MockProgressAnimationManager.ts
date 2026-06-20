@@ -1,5 +1,5 @@
 import { act } from '@testing-library/react';
-import { RechartsAnimation } from '../../src/animation/RechartsAnimation';
+import { AnimationStateMachine } from '../../src/animation/AnimationStateMachine';
 import { mockAnimationController } from './mockAnimationController';
 import { MockTimeoutController } from './mockTimeoutController';
 
@@ -49,7 +49,7 @@ export interface MockAnimationManager {
 export class MockProgressAnimationManager<T, E> implements MockAnimationManager {
   private readonly onStop?: () => void;
 
-  private animation: RechartsAnimation<any, any> | null = null;
+  private animation: AnimationStateMachine<any, any> | null = null;
 
   private readonly timeoutController: MockTimeoutController = new MockTimeoutController();
 
@@ -107,7 +107,7 @@ export class MockProgressAnimationManager<T, E> implements MockAnimationManager 
     return this.animation !== null && this.animation.getState() !== 'completed';
   }
 
-  start(animation: RechartsAnimation<T, E>, listener: (newState: T) => void) {
+  start(animation: AnimationStateMachine<T, E>, listener: (newState: T) => void) {
     this.animation = animation;
     this.isPrimed = false; // Reset the primed state when starting a new animation
     this.cancelController = mockAnimationController(this.timeoutController, this.animation, listener);

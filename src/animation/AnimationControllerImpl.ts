@@ -1,5 +1,5 @@
 import { AnimationController } from './AnimationController';
-import { RechartsAnimation } from './RechartsAnimation';
+import { AnimationStateMachine } from './AnimationStateMachine';
 import { CancelableTimeout, TimeoutController } from './timeoutController';
 
 /**
@@ -11,7 +11,7 @@ import { CancelableTimeout, TimeoutController } from './timeoutController';
  */
 export const animationControllerImpl: AnimationController = <T, E>(
   timeoutController: TimeoutController,
-  animationHandle: RechartsAnimation<T, E>,
+  animationHandle: AnimationStateMachine<T, E>,
   listener: (progress: T) => void,
 ): CancelableTimeout => {
   let cancellable: CancelableTimeout | undefined;
