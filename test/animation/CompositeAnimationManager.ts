@@ -11,7 +11,7 @@ export class CompositeAnimationManager implements MockAnimationManager {
   /**
    * All animation managers under this composite manager.
    */
-  public animationManagers: Map<string, MockAnimationManager> = new Map();
+  private animationManagers: Map<string, MockAnimationManager> = new Map();
 
   async setAnimationProgress(percent: number): Promise<void> {
     const animatingManagers = this.getAnimatingManagers();
@@ -67,7 +67,7 @@ export class CompositeAnimationManager implements MockAnimationManager {
     };
   };
 
-  public getAnimatingManagers(): Map<string, MockAnimationManager> {
+  private getAnimatingManagers(): Map<string, MockAnimationManager> {
     const animatingManagers = new Map<string, MockAnimationManager>();
 
     for (const [id, manager] of this.animationManagers) {
