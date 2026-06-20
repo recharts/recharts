@@ -20,7 +20,7 @@ const derivativeCubicBezier = (c1: number, c2: number) => (animationElapsedTime:
 
 type CubicBezierTemplate = `cubic-bezier(${number},${number},${number},${number})`;
 
-type NamedBezier = 'linear' | 'ease' | 'ease-in' | 'ease-out' | 'ease-in-out' | CubicBezierTemplate;
+export type NamedBezier = 'linear' | 'ease' | 'ease-in' | 'ease-out' | 'ease-in-out' | CubicBezierTemplate;
 
 type BezierInput = [NamedBezier] | [number, number, number, number];
 

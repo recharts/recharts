@@ -1,7 +1,7 @@
-import { useEffect, useState } from 'react';
 import { MockAnimationManager, MockProgressAnimationManager } from './MockProgressAnimationManager';
-import { AnimationManager } from '../../src/animation/AnimationManager';
-import { AnimationManagerFactory } from '../../src/animation/useAnimationManager';
+import { AnimationController } from '../../src/animation/AnimationController';
+import { CancelableTimeout, TimeoutController } from '../../src/animation/timeoutController';
+import { RechartsAnimation } from '../../src/animation/RechartsAnimation';
 
 /*
  * CompositeAnimationManager allows for the management of multiple animations.
@@ -12,19 +12,6 @@ export class CompositeAnimationManager implements MockAnimationManager {
    * All animation managers under this composite manager.
    */
   public animationManagers: Map<string, MockAnimationManager> = new Map();
-
-  private subscribers: Set<() => void> = new Set();
-
-  public subscribe = (callback: () => void): (() => void) => {
-    this.subscribers.add(callback);
-    return () => {
-      this.subscribers.delete(callback);
-    };
-  };
-
-  private notifySubscribers = () => {
-    this.subscribers.forEach(callback => callback());
-  };
 
   async setAnimationProgress(percent: number): Promise<void> {
     const animatingManagers = this.getAnimatingManagers();
@@ -62,15 +49,22 @@ export class CompositeAnimationManager implements MockAnimationManager {
     return this.getAnimatingManagers().size > 0;
   }
 
-  public factory: AnimationManagerFactory = (animationId: string): AnimationManager => {
+  public factory: AnimationController = <T, E>(
+    timeoutController: TimeoutController,
+    animationHandle: RechartsAnimation<T, E>,
+    listener: (newState: T) => void,
+  ): CancelableTimeout => {
+    const animationId = animationHandle.getAnimationId();
     const onStop = () => {
       this.animationManagers.delete(animationId);
-      this.notifySubscribers();
     };
-    const manager = new MockProgressAnimationManager(animationId, onStop);
+    const manager = new MockProgressAnimationManager<T, E>(animationId, onStop);
+    manager.start(animationHandle, listener);
     this.animationManagers.set(animationId, manager);
-    this.notifySubscribers();
-    return manager;
+    return () => {
+      onStop();
+      manager.stop();
+    };
   };
 
   public getAnimatingManagers(): Map<string, MockAnimationManager> {
@@ -83,18 +77,4 @@ export class CompositeAnimationManager implements MockAnimationManager {
     }
     return animatingManagers;
   }
-}
-
-export function useAllAnimationManagers(
-  compositeAnimationManager: CompositeAnimationManager,
-): Map<string, MockAnimationManager> {
-  const [managers, setManagers] = useState(compositeAnimationManager.animationManagers);
-
-  useEffect(() => {
-    return compositeAnimationManager.subscribe(() => {
-      setManagers(new Map(compositeAnimationManager.animationManagers));
-    });
-  }, [compositeAnimationManager]);
-
-  return managers;
 }

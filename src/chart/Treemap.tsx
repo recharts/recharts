@@ -40,7 +40,7 @@ import { useAppDispatch } from '../state/hooks';
 import { AppDispatch } from '../state/store';
 import { isPositiveNumber } from '../util/isWellBehavedNumber';
 import { svgPropertiesNoEvents } from '../util/svgPropertiesNoEvents';
-import { CSSTransitionAnimate } from '../animation/CSSTransitionAnimate';
+import { CSSTransitionAnimate, extractCssEasing } from '../animation/CSSTransitionAnimate';
 import { RequiresDefaultProps, resolveDefaultProps } from '../util/resolveDefaultProps';
 import { RegisterGraphicalItemId } from '../context/RegisterGraphicalItemId';
 import { GraphicalItemId } from '../state/graphicalItemsSlice';
@@ -838,7 +838,7 @@ function TreemapItem({
       to="translate(0, 0)"
       attributeName="transform"
       begin={animationBegin}
-      easing={typeof animationEasing === 'string' ? animationEasing : undefined}
+      easing={extractCssEasing(animationEasing)}
       isActive={isAnimationActive}
       duration={animationDuration}
       onAnimationStart={handleAnimationStart}

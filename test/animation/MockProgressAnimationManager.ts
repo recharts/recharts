@@ -1,5 +1,7 @@
-import { MockAbstractAnimationManager } from './MockAbstractAnimationManager';
-import { AnimationManager, ReactSmoothQueue } from '../../src/animation/AnimationManager';
+import { act } from '@testing-library/react';
+import { RechartsAnimation } from '../../src/animation/RechartsAnimation';
+import { mockAnimationController } from './mockAnimationController';
+import { MockTimeoutController } from './mockTimeoutController';
 
 export interface MockAnimationManager {
   /**
@@ -44,35 +46,35 @@ export interface MockAnimationManager {
  * A higher level mock animation manager that allows for less granular control
  * but also requires less setup to get to a certain point in the animation.
  */
-export class MockProgressAnimationManager
-  extends MockAbstractAnimationManager
-  implements AnimationManager, MockAnimationManager
-{
+export class MockProgressAnimationManager<T, E> implements MockAnimationManager {
   private readonly onStop?: () => void;
+
+  private animation: RechartsAnimation<any, any> | null = null;
+
+  private readonly timeoutController: MockTimeoutController = new MockTimeoutController();
+
+  private cancelController: undefined | (() => void);
 
   constructor(
     private animationId: string,
     onStop?: () => void,
   ) {
-    super();
     this.onStop = onStop;
   }
 
   async setAnimationProgress(percent: number): Promise<void> {
-    if (this.queue === null || this.queue.length === 0) {
-      throw new Error(`[${this.animationId}] Queue is empty`);
+    if (this.animation === null) {
+      throw new Error(`[${this.animationId}] Animation not available`);
     }
     if (percent < 0) {
       throw new Error('Percent must be greater than or equal to 0');
     }
 
-    if (this.animationProgress >= 1) {
+    if (this.animation.getState() === 'completed') {
       throw new Error(
         'Animation is already complete. Call completeAnimation to finish the queue. MockProgressAnimationManager does not support rewinding.',
       );
     }
-
-    this.animationProgress = percent;
 
     const animationDuration = await this.peekAnimationDuration();
 
@@ -80,36 +82,42 @@ export class MockProgressAnimationManager
      * The time is absolute, and the configUpdate is internally tracking the time when it started,
      * so here we can just multiply by percent and add the first tick to get the time to advance.
      */
-    const timeToAdvance = animationDuration * percent + this.firstTick;
+    const timeToAdvance = animationDuration * percent + this.animation.getBeginDelay() + this.firstTick;
 
     await this.timeoutController.triggerNextTimeout(timeToAdvance);
   }
 
   async completeAnimation(): Promise<void> {
-    if (this.queue === null || this.queue.length === 0) {
+    if (this.animation === null) {
       throw new Error('Queue is empty');
     }
-
-    if (this.animationProgress < 1) {
-      // Finish the animation by setting the progress to 100%. This will also prime the animation manager if it hasn't been primed yet.
+    if (this.animation.getProgress() < 1) {
+      // Finish the animation by setting the progress to 100% so that we can get fresh assertions in tests
       await this.setAnimationProgress(1);
     }
 
-    const result = this.poll(this.queue.length);
+    act(() => {
+      this.animation?.complete();
+    });
+
     this.onStop?.();
-    return result;
   }
 
-  start(queue: ReactSmoothQueue) {
-    super.start(queue);
-    this.isPrimed = false; // Reset the primed state when starting a new queue
-    this.animationProgress = 0; // Reset the animation progress when starting a new queue
+  public isAnimating(): boolean {
+    return this.animation !== null && this.animation.getState() !== 'completed';
+  }
+
+  start(animation: RechartsAnimation<T, E>, listener: (newState: T) => void) {
+    this.animation = animation;
+    this.isPrimed = false; // Reset the primed state when starting a new animation
+    this.cancelController = mockAnimationController(this.timeoutController, this.animation, listener);
   }
 
   stop() {
-    super.stop();
+    this.cancelController?.();
+    this.cancelController = undefined;
+    this.animation = null;
     this.isPrimed = false; // Reset the primed state when stopping the queue
-    this.animationProgress = 0; // Reset the animation progress when stopping a queue
     this.onStop?.();
   }
 
@@ -123,8 +131,6 @@ export class MockProgressAnimationManager
    */
   private firstTick: number = 16;
 
-  private animationProgress: number = 0;
-
   /**
    * Priming the animation manager is a necessary step before starting the animation.
    * This method will step through the queue until it reaches the easing function,
@@ -135,26 +141,38 @@ export class MockProgressAnimationManager
    * @returns Promise<void>
    */
   private async prime(): Promise<void> {
+    if (this.animation === null) {
+      throw new Error('No animation available');
+    }
     if (this.isPrimed) {
       return;
     }
     this.isPrimed = true;
 
-    /*
-     * We don't really have a good way to check which function is the easing function.
-     * We should have it return a Promise or something like that,
-     * but until that happens we're just going to make an educated guess and say that
-     * the Animate component by default puts the easing function as the third item in the queue.
-     * If that changes, bunch of tests will break, so no harm.
-     */
-    await this.poll(2); // Poll the first two items in the queue, which we expect to be 1. onStart and 2. starting delay
-    await this.poll(1); // Poll the next item, which we expect to be the easing function
+    if (this.animation.getState() === 'completed') {
+      return; // job done
+    }
 
-    /*
-     * Now, a specialty of the configUpdate easing function is that it needs one tick
-     * to kickstart and set up its internal state.
-     */
-    await this.triggerNextTimeout(this.firstTick);
+    if (this.animation.getState() === 'init') {
+      await this.timeoutController.triggerNextTimeout(0);
+    }
+
+    if (this.animation.getState() === 'pending') {
+      /*
+       * The `firstTick` exists because the previous implementation `configUpdate` had this thing where it required
+       * a first non-zero tick to correctly initialize its internal state.
+       * This is confusing and unnecessary so the new implementation does not have that
+       * but all our unit tests are {firstTick}ms off so I added the same delay here
+       * just so that I don't have to update tons of assertions.
+       */
+      await this.timeoutController.triggerNextTimeout(this.animation.getBeginDelay() + this.firstTick);
+    }
+
+    if (this.animation.getState() === 'active') {
+      return; // this is what we wanted to reach!
+    }
+
+    throw new Error(`Unexpected animation state: ${this.animation.getState()}`);
   }
 
   /**
@@ -167,22 +185,12 @@ export class MockProgressAnimationManager
    * @return Promise<number> The animation duration in milliseconds.
    */
   private async peekAnimationDuration(): Promise<number> {
-    if (this.queue === null || this.queue.length === 0) {
-      throw new Error(`[${this.animationId}] Queue is empty`);
+    if (this.animation === null) {
+      throw new Error(`[${this.animationId}] Animation not available`);
     }
 
     await this.prime();
 
-    const animationDuration = this.queue[0];
-
-    if (typeof animationDuration !== 'number') {
-      throw new Error(
-        `[${this.animationId}] We assume the first item in the queue is the animation duration.
-        Found: [${typeof animationDuration}] instead.
-        This probably means you are calling this method at a wrong time.`,
-      );
-    }
-
-    return animationDuration;
+    return this.animation.getDuration();
   }
 }

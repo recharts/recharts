@@ -13,8 +13,17 @@ export interface TimeoutController {
   /**
    * Sets a timeout that executes a callback after a specified delay.
    * Allows setting multiple timeouts and provides a way to cancel them independently.
-   * @param callback - The function to execute after the delay. Receives the current time in milliseconds as an argument.
-   * @param delay (optional) - The time in milliseconds to wait before executing the callback. Defaults to 0.
+   *
+   * Note that this one function has two different time systems!
+   * The input (delay - parameter of setTimeout)
+   * - is relative
+   * - it means "wait for this long"
+   * -
+   *
+   * The output (now - parameter of the callback) is absolute; it means "this is the time now"
+   *
+   * @param callback - The function to execute after the delay. Receives the current absolute time in milliseconds as an argument.
+   * @param delay (optional) - The duration of time in milliseconds to wait before executing the callback. Defaults to 0.
    */
   setTimeout(callback: CallbackType, delay?: number): CancelableTimeout;
 }

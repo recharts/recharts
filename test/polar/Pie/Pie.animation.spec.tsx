@@ -39,6 +39,7 @@ async function expectAnimatedPiePaths(
   await animationManager.setAnimationProgress(animationProgress);
   const stepSize = (1 - animationProgress) / steps;
   const initialPieSectors = selectPieSectors(container);
+  expect(initialPieSectors.length).toBeGreaterThan(0);
   const getD = (sector: Element) => {
     const trimmed = trim(sector.getAttribute('d'));
     assertNotNull(trimmed);
@@ -247,7 +248,7 @@ describe('Pie animation', () => {
 
     it('should call onAnimationStart callback when the animation begins', async () => {
       const { animationManager } = renderTestCase();
-      expect(onAnimationStart).not.toHaveBeenCalled();
+      expect(onAnimationStart).toHaveBeenCalledTimes(1);
 
       await animationManager.setAnimationProgress(0.1);
       expect(onAnimationStart).toHaveBeenCalledTimes(1);

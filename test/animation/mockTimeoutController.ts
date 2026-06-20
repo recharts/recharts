@@ -1,6 +1,13 @@
 import { act } from '@testing-library/react';
 import { CallbackType, CancelableTimeout, TimeoutController } from '../../src/animation/timeoutController';
 
+type MockTimeoutControllerConfig = {
+  /**
+   * The mock controller will never allow more than this number of timeouts at once
+   */
+  timeoutLimit?: number;
+};
+
 /**
  * Mock implementation of TimeoutController for testing purposes.
  * This does not use requestAnimationFrame and allows for manual control of timeouts.
@@ -10,12 +17,36 @@ export class MockTimeoutController implements TimeoutController {
 
   private cancelledFramesCount = 0;
 
+  private readonly config: MockTimeoutControllerConfig;
+
+  constructor(config: MockTimeoutControllerConfig = {}) {
+    this.config = config;
+  }
+
   setTimeout(callback: CallbackType, delay?: number): CancelableTimeout {
-    this.timeouts.push({ callback, delay });
+    /*
+     * Here on purpose, we store a copy of the callback instead of the callback itself.
+     * Why?
+     * This is to test that the other classes are keeping track of their cancellations properly.
+     * If we didn't do that then it's easy to return the first instance returned from calling `setTimeout`
+     * and call it a day. Which is what would happen in this mock controller only,
+     * but the actual RequestAnimationFrameTimeoutController implementation keeps track of requestIds,
+     * not callback instances so that wouldn't work.
+     *
+     * So long story short, this copy exists to keep the mock behavior same as actual timeout controller behavior.
+     */
+    const copy: CallbackType = (now: number) => callback(now);
+    if (this.config.timeoutLimit != null && this.timeouts.length >= this.config.timeoutLimit) {
+      throw new Error(
+        `Timeout queue has size ${this.timeouts.length} which is more than the allowed ${this.config.timeoutLimit}`,
+      );
+    }
+
+    this.timeouts.push({ callback: copy, delay });
 
     // Return a cancelable timeout function
     return () => {
-      this.removeTimeout(callback);
+      this.removeTimeout(copy);
       this.cancelledFramesCount++;
     };
   }

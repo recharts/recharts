@@ -166,8 +166,6 @@ export type { EasingInput } from './animation/easing';
 export type { AnimationInterpolateFn } from './animation/AnimatedItems';
 export type { AnimationItem, AnimationMatchBy, AnimationMatchByProp } from './animation/matchBy';
 export { matchByIndex, matchByDataKey, matchAppend } from './animation/matchBy';
-export { AnimationProgressProvider, useAnimationProgress } from './animation/AnimationProgressProvider';
-export type { AnimationHandle, AnimationStatus } from './animation/AnimationProgressProvider';
 export { AreaRevealShape } from './cartesian/AreaRevealShape';
 export type { AreaRevealShapeProps } from './cartesian/AreaRevealShape';
 export { LineDrawShape } from './cartesian/LineDrawShape';
