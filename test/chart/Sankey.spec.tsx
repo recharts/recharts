@@ -798,13 +798,18 @@ describe('<Sankey />', () => {
     } as const;
 
     type ChainLink = { source: number; target: number; value: number };
+    type BranchingChain = { nodes: Array<{ name: string }>; links: ChainLink[]; segments: number };
 
     /**
      * Builds a chain where every node branches into two nodes that immediately merge back into the
-     * next node. The graph stays small, but the number of distinct paths from the first node to the
-     * last grows as `2 ** segments`, which is the shape that makes a naive longest-path search blow up.
+     * next node. The graph stays small (a few nodes per segment), but the number of distinct paths
+     * from the first node to the last grows as `2 ** segments`.
+     *
+     * The default of 28 segments makes the path count large enough to exercise the layout on a
+     * densely branching graph. The chosen `segments` is returned so callers can assert on it
+     * without repeating the number.
      */
-    const makeBranchingChainData = (segments: number): { nodes: Array<{ name: string }>; links: ChainLink[] } => {
+    const makeBranchingChainData = (segments = 28): BranchingChain => {
       const nodes: Array<{ name: string }> = [{ name: 'entry-0' }];
       const links: ChainLink[] = [];
       let entry = 0;
@@ -822,7 +827,7 @@ describe('<Sankey />', () => {
         entry = next;
       }
 
-      return { nodes, links };
+      return { nodes, links, segments };
     };
 
     it('assigns depth as the longest path from a source, even when nodes skip layers', () => {
@@ -843,11 +848,7 @@ describe('<Sankey />', () => {
     });
 
     it('computes the layout in linear time for a heavily branching graph', () => {
-      // With 28 segments there are 2 ** 28 distinct paths from the first node to the last, so any layout
-      // that follows every path instead of pruning resolved branches hangs for minutes and blows past
-      // vitest's default test timeout. The fixed layout stays linear and finishes in a few milliseconds.
-      const segments = 28;
-      const data = makeBranchingChainData(segments);
+      const { segments, ...data } = makeBranchingChainData();
 
       const { nodes } = computeData({ data, ...computeOptions });
 
@@ -857,12 +858,12 @@ describe('<Sankey />', () => {
     });
 
     it('renders a heavily branching graph without freezing the main thread', () => {
-      const data = makeBranchingChainData(28);
+      const { nodes, links } = makeBranchingChainData();
 
-      const { container } = render(<Sankey width={1000} height={500} data={data} />);
+      const { container } = render(<Sankey width={1000} height={500} data={{ nodes, links }} />);
 
-      expect(container.querySelectorAll('.recharts-sankey-node')).toHaveLength(data.nodes.length);
-      expect(container.querySelectorAll('.recharts-sankey-link')).toHaveLength(data.links.length);
+      expect(container.querySelectorAll('.recharts-sankey-node')).toHaveLength(nodes.length);
+      expect(container.querySelectorAll('.recharts-sankey-link')).toHaveLength(links.length);
     });
   });
 });
