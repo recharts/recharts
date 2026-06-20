@@ -14,10 +14,10 @@ type AnimationStateCallback = () => void;
 export interface AnimationStateMachine<T, E> {
   /**
    * Returns the state machine current state
-   * - `init`:       RechartsAnimation had just been created. It immediately calls `onAnimationStart`
-   * - `pending`:    RechartsAnimation is now paused for `animationBegin` milliseconds until the transition begins
-   * - `active`:     RechartsAnimation is transitioning items on screen
-   * - `completed`:  RechartsAnimation has completed its transition and executed `onAnimationEnd`.
+   * - `init`:       animation had just been created. It immediately calls `onAnimationStart`
+   * - `pending`:    animation is now paused for `animationBegin` milliseconds until the transition begins
+   * - `active`:     animation is transitioning items on screen
+   * - `completed`:  animation has completed its transition and executed `onAnimationEnd`.
    *                 This state is final and the animation is no longer allowed to transition to other states.
    */
   getState(): AnimationState;
@@ -110,7 +110,7 @@ function remaining(time: number): number {
  * - pending to active
  * - active to completed - `onAnimationEnd` executes
  *
- * The RechartsAnimation class is responsible for managing the transition between these stages.
+ * The RechartsAnimationImpl class is responsible for managing the transition between these stages.
  *
  * The animation queue is static and consists of four elements:
  * - `onAnimationStart`: function that is called when the animation is created
@@ -124,7 +124,6 @@ function remaining(time: number): number {
  * - Other more creative animation controllers: One can construct a chart that animates based on a page scroll distance. Or animates back and forth based on mouse wheel events. Or a BarChart that animates based on microphone signal volume. We don't want to support all of those inside the library - we want to focus on charts - but we want to give users the tools to do that if they want to. And this tool is AnimationController override. We will provide the default implementation in the form of requestAnimationFrameAnimationController and let users add their own.
  *
  * For this reason, we do not automatically end the animation when it reaches `1`. You need to call .complete() first.
- *
  */
 abstract class RechartsAnimationImpl<T, E> implements AnimationStateMachine<T, E> {
   private readonly onAnimationEnd: undefined | AnimationStateCallback;

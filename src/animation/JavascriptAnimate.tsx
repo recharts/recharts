@@ -54,7 +54,7 @@ export function JavascriptAnimate(outsideProps: JavascriptAnimateProps) {
 
   const isActive = isActiveProp === 'auto' ? !Global.isSsr && !prefersReducedMotion : isActiveProp;
 
-  const animationManager = useAnimationController(props.animationController);
+  const animationController = useAnimationController(props.animationController);
   const [style, setStyle] = useState<number>(isActive ? from : to);
 
   useEffect(() => {
@@ -83,8 +83,8 @@ export function JavascriptAnimate(outsideProps: JavascriptAnimateProps) {
       to,
     });
 
-    return animationManager(timeoutController, animation, setStyle);
-  }, [animationManager, animationId, isActive, canBegin, duration, easing, begin, onAnimationStart, onAnimationEnd]);
+    return animationController(timeoutController, animation, setStyle);
+  }, [animationController, animationId, isActive, canBegin, duration, easing, begin, onAnimationStart, onAnimationEnd]);
 
   return children(style);
 }
