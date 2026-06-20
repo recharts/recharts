@@ -9,7 +9,7 @@
   "types/animation/easing.d.ts",
   "types/animation/matchBy.d.ts",
   "types/animation/timeoutController.d.ts",
-  "types/animation/useAnimationManager.d.ts",
+  "types/animation/useAnimationController.d.ts",
   "types/animation/useAnimationStartSnapshot.d.ts",
   "types/animation/util.d.ts",
   "types/cartesian",

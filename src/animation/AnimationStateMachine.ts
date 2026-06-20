@@ -7,7 +7,7 @@ const PENDING = 'pending' as const;
 const ACTIVE = 'active' as const;
 const COMPLETED = 'completed' as const;
 
-type AnimationState = typeof INIT | typeof PENDING | typeof ACTIVE | typeof COMPLETED;
+export type AnimationState = typeof INIT | typeof PENDING | typeof ACTIVE | typeof COMPLETED;
 
 type AnimationStateCallback = () => void;
 
@@ -48,7 +48,8 @@ export interface AnimationStateMachine<T, E> {
   getEasing(): E;
   /**
    * Sets the current time of the animation. The animation sets its internal state and progress accordingly.
-   * This is current, absolute time; not additive! This allows you to essentially "travel back in time" based on the value you pass in here.
+   * This is current, absolute time; not additive!
+   * This allows you to essentially "travel back in time" based on the value you pass in here.
    *
    * Returns the (relative) time remaining until the current activity is over.
    * Meaning: if the state is in a middle of a delay, returns the time left until the delay is finished.

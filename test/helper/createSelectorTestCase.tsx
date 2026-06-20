@@ -6,7 +6,7 @@ import { useAppSelectorWithStableTest } from './selectorTestHelpers';
 import { RechartsRootState } from '../../src/state/store';
 import { MockAnimationManager } from '../animation/MockProgressAnimationManager';
 import { assertUniqueHtmlIds } from '../util/assertUniqueHtmlIds';
-import { AnimationManagerContext } from '../../src/animation/useAnimationManager';
+import { AnimationControllerProvider } from '../../src/animation/useAnimationController';
 import { CompositeAnimationManager } from '../animation/CompositeAnimationManager';
 
 const emptySelector = (): undefined => undefined;
@@ -84,11 +84,11 @@ export function createSelectorTestCase(Component: ComponentType<{ children: Reac
     const Comp = getComp(selector, spy);
 
     const { container, debug, rerender, getByText, queryByText, unmount } = render(
-      <AnimationManagerContext.Provider value={animationManager.factory}>
+      <AnimationControllerProvider value={animationManager.factory}>
         <Component>
           <Comp />
         </Component>
-      </AnimationManagerContext.Provider>,
+      </AnimationControllerProvider>,
     );
 
     act(() => {
@@ -108,11 +108,11 @@ export function createSelectorTestCase(Component: ComponentType<{ children: Reac
     assertUniqueHtmlIds(container);
     const myRerender = (NextComponent: ComponentType<{ children: ReactNode }>): void => {
       rerender(
-        <AnimationManagerContext.Provider value={animationManager.factory}>
+        <AnimationControllerProvider value={animationManager.factory}>
           <NextComponent>
             <Comp />
           </NextComponent>
-        </AnimationManagerContext.Provider>,
+        </AnimationControllerProvider>,
       );
 
       act(() => {

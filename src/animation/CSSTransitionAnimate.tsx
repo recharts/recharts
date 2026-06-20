@@ -2,7 +2,7 @@ import * as React from 'react';
 import { CSSProperties, useCallback, useEffect, useRef, useState } from 'react';
 import { noop } from '../util/DataUtils';
 import { resolveDefaultProps } from '../util/resolveDefaultProps';
-import { useAnimationManager } from './useAnimationManager';
+import { useAnimationController } from './useAnimationController';
 import { getTransitionVal } from './util';
 import { Global } from '../util/Global';
 import { usePrefersReducedMotion } from '../util/usePrefersReducedMotion';
@@ -13,7 +13,7 @@ import { AnimationController } from './AnimationController';
 
 type CSSTransitionAnimateProps = {
   animationId: string;
-  animationManager?: AnimationController;
+  animationController?: AnimationController;
   duration?: number;
   begin?: number;
   easing?: NamedBezier;
@@ -65,7 +65,7 @@ export function CSSTransitionAnimate(outsideProps: CSSTransitionAnimateProps) {
 
   const isActive = isActiveProp === 'auto' ? !Global.isSsr && !prefersReducedMotion : isActiveProp;
 
-  const animationManager = useAnimationManager(props.animationManager);
+  const animationController = useAnimationController(props.animationController);
   const [style, setStyle] = useState<string>(() => {
     if (!isActive) {
       return to;
@@ -99,7 +99,7 @@ export function CSSTransitionAnimate(outsideProps: CSSTransitionAnimateProps) {
       to,
     });
 
-    return animationManager(timeoutController, animation, setStyle);
+    return animationController(timeoutController, animation, setStyle);
   }, [
     isActive,
     canBegin,
@@ -108,7 +108,7 @@ export function CSSTransitionAnimate(outsideProps: CSSTransitionAnimateProps) {
     begin,
     onAnimationStart,
     onAnimationEnd,
-    animationManager,
+    animationController,
     to,
     from,
     animationId,

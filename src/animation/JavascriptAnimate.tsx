@@ -3,7 +3,7 @@ import { useEffect, useState } from 'react';
 import { noop } from '../util/DataUtils';
 import { resolveDefaultProps } from '../util/resolveDefaultProps';
 import { createEasingFunction, EasingInput } from './easing';
-import { useAnimationManager } from './useAnimationManager';
+import { useAnimationController } from './useAnimationController';
 import { Global } from '../util/Global';
 import { usePrefersReducedMotion } from '../util/usePrefersReducedMotion';
 import { JavascriptAnimation } from './AnimationStateMachine';
@@ -12,7 +12,7 @@ import { AnimationController } from './AnimationController';
 
 type JavascriptAnimateProps = {
   animationId: string;
-  animationManager?: AnimationController;
+  animationController?: AnimationController;
   duration?: number;
   begin?: number;
   easing?: EasingInput;
@@ -54,7 +54,7 @@ export function JavascriptAnimate(outsideProps: JavascriptAnimateProps) {
 
   const isActive = isActiveProp === 'auto' ? !Global.isSsr && !prefersReducedMotion : isActiveProp;
 
-  const animationManager = useAnimationManager(props.animationManager);
+  const animationManager = useAnimationController(props.animationController);
   const [style, setStyle] = useState<number>(isActive ? from : to);
 
   useEffect(() => {
