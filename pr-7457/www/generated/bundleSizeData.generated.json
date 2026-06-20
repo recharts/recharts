@@ -1,45 +1,45 @@
 {
   "treemap": {
     "examplePath": "www/src/views/IndexView/IndexLineChart.tsx",
-    "totalSize": 809617,
-    "totalSizeLabel": "790.64 KB",
+    "totalSize": 809461,
+    "totalSizeLabel": "790.49 KB",
     "moduleCount": 318,
-    "generatedAt": "2026-06-19T16:12:33.495Z",
+    "generatedAt": "2026-06-20T00:27:23.953Z",
     "stages": [
       {
         "stage": "es6-folder",
-        "bytes": 1252632,
+        "bytes": 1252477,
         "humanReadableSize": "1.19 MB",
         "reductionFromBaselinePercent": 0
       },
       {
         "stage": "tree-shaken",
-        "bytes": 813131,
-        "humanReadableSize": "794.07 KB",
+        "bytes": 812975,
+        "humanReadableSize": "793.92 KB",
         "reductionFromBaselinePercent": 0
       },
       {
         "stage": "minified",
-        "bytes": 280923,
-        "humanReadableSize": "274.34 KB",
+        "bytes": 280879,
+        "humanReadableSize": "274.30 KB",
         "reductionFromBaselinePercent": 65.45
       },
       {
         "stage": "minified+gzip",
-        "bytes": 91997,
-        "humanReadableSize": "89.84 KB",
-        "reductionFromBaselinePercent": 88.69
+        "bytes": 91990,
+        "humanReadableSize": "89.83 KB",
+        "reductionFromBaselinePercent": 88.68
       }
     ],
     "tree": {
       "name": "bundle",
       "fullPath": "bundle",
-      "value": 809617,
+      "value": 809461,
       "children": [
         {
           "name": "src",
           "fullPath": "src",
-          "value": 448093,
+          "value": 447937,
           "children": [
             {
               "name": "state",
@@ -727,7 +727,7 @@
             {
               "name": "animation",
               "fullPath": "src/animation",
-              "value": 28827,
+              "value": 28671,
               "children": [
                 {
                   "name": "matchBy.ts",
@@ -737,7 +737,7 @@
                 {
                   "name": "RechartsAnimation.ts",
                   "fullPath": "src/animation/RechartsAnimation.ts",
-                  "value": 5703
+                  "value": 5547
                 },
                 {
                   "name": "easing.ts",
@@ -2282,45 +2282,45 @@
   },
   "sunburst": {
     "examplePath": "www/src/views/IndexView/IndexLineChart.tsx",
-    "totalSize": 809617,
-    "totalSizeLabel": "790.64 KB",
+    "totalSize": 809461,
+    "totalSizeLabel": "790.49 KB",
     "moduleCount": 318,
-    "generatedAt": "2026-06-19T16:12:31.601Z",
+    "generatedAt": "2026-06-20T00:27:22.091Z",
     "stages": [
       {
         "stage": "es6-folder",
-        "bytes": 1252632,
+        "bytes": 1252477,
         "humanReadableSize": "1.19 MB",
         "reductionFromBaselinePercent": 0
       },
       {
         "stage": "tree-shaken",
-        "bytes": 813131,
-        "humanReadableSize": "794.07 KB",
+        "bytes": 812975,
+        "humanReadableSize": "793.92 KB",
         "reductionFromBaselinePercent": 0
       },
       {
         "stage": "minified",
-        "bytes": 280923,
-        "humanReadableSize": "274.34 KB",
+        "bytes": 280879,
+        "humanReadableSize": "274.30 KB",
         "reductionFromBaselinePercent": 65.45
       },
       {
         "stage": "minified+gzip",
-        "bytes": 91997,
-        "humanReadableSize": "89.84 KB",
-        "reductionFromBaselinePercent": 88.69
+        "bytes": 91990,
+        "humanReadableSize": "89.83 KB",
+        "reductionFromBaselinePercent": 88.68
       }
     ],
     "tree": {
       "name": "bundle",
       "fullPath": "bundle",
-      "value": 809617,
+      "value": 809461,
       "children": [
         {
           "name": "src",
           "fullPath": "src",
-          "value": 448093,
+          "value": 447937,
           "children": [
             {
               "name": "state",
@@ -3008,7 +3008,7 @@
             {
               "name": "animation",
               "fullPath": "src/animation",
-              "value": 28827,
+              "value": 28671,
               "children": [
                 {
                   "name": "matchBy.ts",
@@ -3018,7 +3018,7 @@
                 {
                   "name": "RechartsAnimation.ts",
                   "fullPath": "src/animation/RechartsAnimation.ts",
-                  "value": 5703
+                  "value": 5547
                 },
                 {
                   "name": "easing.ts",
