@@ -195,7 +195,7 @@ type Viewport = { x?: AxisWindow; y?: AxisWindow };
             <td>
               <code>&lt;DoubleClickReset /&gt;</code>
             </td>
-            <td>Double-click (or double-tap) to reset to the full view.</td>
+            <td>Double-click to reset to the configured zoom floor.</td>
           </tr>
         </tbody>
       </table>
@@ -221,7 +221,8 @@ type Viewport = { x?: AxisWindow; y?: AxisWindow };
       <h2>Controlled &amp; uncontrolled state</h2>
       <p>
         Leave it alone for an uncontrolled chart, set an initial value, or control it fully. These live on{' '}
-        <code>&lt;ZoomAndPan /&gt;</code> (and any individual interaction component).
+        <code>&lt;ZoomAndPan /&gt;</code>. Individual interaction components expose gesture, axis, and limit props; use{' '}
+        <code>&lt;ZoomAndPan /&gt;</code> when you need controlled viewport props.
       </p>
       <pre>{`// uncontrolled, with an initial zoom
 <ZoomAndPan initialZoom={{ x: { start: 0.2, end: 0.6 } }} />
@@ -380,9 +381,9 @@ type Viewport = { x?: AxisWindow; y?: AxisWindow };
       <pre>{`<PinchZoom touchDrag="pan" />
 <ZoomAndPan touchDrag="pan" />`}</pre>
       <p>
-        While you interact with the chart it takes over touch handling (<code>touch-action: none</code>) so the page
-        does not scroll and the browser does not pinch-zoom; everything is opt-in, so leave{' '}
-        <code>&lt;PinchZoom /&gt;</code> out and touch is untouched.
+        Pinch, axis, and scrollbar gestures prevent the browser from claiming the active gesture; one-finger plot
+        scrolling is preserved unless you opt into <code>touchDrag=&quot;pan&quot;</code>. Everything is opt-in, so
+        leave <code>&lt;PinchZoom /&gt;</code> out and touch is untouched.
       </p>
 
       <h2>Accessibility</h2>

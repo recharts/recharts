@@ -15,7 +15,19 @@ import {
 export default {
   component: DoubleClickReset,
   argTypes: {
-    // This component has no configurable props.
+    axis: {
+      control: { type: 'inline-radio' },
+      options: ['x', 'y', 'xy'],
+      description: 'Which dimensions reset.',
+    },
+    minZoom: {
+      control: { type: 'range', min: 0.5, max: 2, step: 0.1 },
+      description: 'Furthest zoom-out after reset.',
+    },
+    maxZoom: {
+      control: { type: 'range', min: 2, max: 50, step: 1 },
+      description: 'Deepest zoom-in used by shared zoom math.',
+    },
   },
 };
 
