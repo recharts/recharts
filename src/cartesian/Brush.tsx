@@ -35,9 +35,11 @@ import {
 import { useChartData, useDataIndex } from '../context/chartDataContext';
 import { BrushStartEndIndex, BrushUpdateDispatchContext, OnBrushUpdate } from '../context/brushUpdateContext';
 import { useAppDispatch, useAppSelector } from '../state/hooks';
+import { AxisId, defaultAxisId } from '../state/cartesianAxisSlice';
 import { ChartData, setDataStartEndIndexes } from '../state/chartDataSlice';
 import { HorizontalBrushSettings, setBrushSettings, setVerticalBrushWidth } from '../state/brushSlice';
 import { selectAxisDomainIncludingNiceTicks, selectAxisRangeWithReverse } from '../state/selectors/axisSelectors';
+import { selectAllXAxes, selectAllYAxes } from '../state/selectors/selectAllAxes';
 import { selectSharedZoomLimits, selectZoom } from '../state/selectors/zoomSelectors';
 import { selectBrushHeight, selectChartOffsetInternal } from '../state/selectors/selectChartOffsetInternal';
 import { selectMargin } from '../state/selectors/containerSelectors';
@@ -163,6 +165,10 @@ interface BrushProps<DataPointType = any, DataValueType = any> extends DataConsu
    * @defaultValue 'x'
    */
   axis?: ZoomDimension;
+  /** Primary X axis used by zoom mode for orientation and labels. @defaultValue 0 */
+  xAxisId?: AxisId;
+  /** Primary Y axis used by zoom mode for orientation and labels. @defaultValue 0 */
+  yAxisId?: AxisId;
   controls?: ReactNode;
   /** Zoom factor per wheel notch in zoom mode. @defaultValue 1.15 */
   wheelStep?: number;
@@ -192,6 +198,11 @@ type PropertiesFromContext = {
   endIndex: number;
   onChange: OnBrushUpdate;
 };
+
+function getPrimaryAxisId(axes: ReadonlyArray<{ id: AxisId }>, configured: AxisId | undefined): AxisId {
+  const target = configured ?? defaultAxisId;
+  return axes.some(axis => axis.id === target) ? target : (axes[0]?.id ?? defaultAxisId);
+}
 
 type BrushTravellerId = 'startX' | 'endX';
 
@@ -1597,11 +1608,15 @@ function BrushInternal(props: InternalProps) {
   } = props;
   const zoomMode = props.mode === 'zoom' || props.useZoomPan === true;
   const controlledZoomAxis: ZoomDimension = props.axis ?? (layout === 'vertical' ? 'y' : 'x');
+  const xAxes = useAppSelector(selectAllXAxes) ?? [];
+  const yAxes = useAppSelector(selectAllYAxes) ?? [];
+  const controlledAxisId =
+    controlledZoomAxis === 'x' ? getPrimaryAxisId(xAxes, props.xAxisId) : getPrimaryAxisId(yAxes, props.yAxisId);
   const controlledAxisRange = useAppSelector(state =>
-    selectAxisRangeWithReverse(state, controlledZoomAxis === 'x' ? 'xAxis' : 'yAxis', 0, false),
+    selectAxisRangeWithReverse(state, controlledZoomAxis === 'x' ? 'xAxis' : 'yAxis', controlledAxisId, false),
   );
   const controlledAxisDomain = useAppSelector(state =>
-    selectAxisDomainIncludingNiceTicks(state, controlledZoomAxis === 'x' ? 'xAxis' : 'yAxis', 0, false),
+    selectAxisDomainIncludingNiceTicks(state, controlledZoomAxis === 'x' ? 'xAxis' : 'yAxis', controlledAxisId, false),
   );
   const controlledAxisFlipped = isRangeFlipped(controlledAxisRange);
 

@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { useContext, useEffect } from 'react';
+import { useContext } from 'react';
 import { createPortal } from 'react-dom';
 import { TooltipPortalContext } from '../../context/tooltipPortalContext';
 import { useIsPanorama } from '../../context/PanoramaContext';
@@ -8,7 +8,6 @@ import { ZoomController } from '../ZoomController';
 import { ZoomStateSync } from '../ZoomStateSync';
 import { ZoomScrollbars } from '../ZoomScrollbars';
 import { ZoomAxisTouchTargets } from '../ZoomAxisTouchTargets';
-import { suppressTouchBrowserDecorations } from './ZoomGestureApi';
 
 /**
  * Props for {@link ZoomAndPan}: every gesture / limit option plus controlled-state hooks.
@@ -60,15 +59,6 @@ export function ZoomAndPan({
           touchDoubleTapDrag: touchDoubleTapDragMode,
           onTouchSelectRegion: onTouchSelect,
         };
-  const touchEnabled = options?.touch;
-  // Touch interactions take over browser gestures; suppress tap highlight without changing keyboard focus styles.
-  useEffect(() => {
-    if (element == null || isPanorama || !touchEnabled) {
-      return undefined;
-    }
-    return suppressTouchBrowserDecorations(element);
-  }, [element, isPanorama, touchEnabled]);
-
   if (element == null || isPanorama || options == null) {
     return null;
   }

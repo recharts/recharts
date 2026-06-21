@@ -18,6 +18,8 @@ describe('resolveZoomOptions', () => {
   it('applies all defaults for zoom={true}', () => {
     expect(resolveZoomOptions(true)).toEqual({
       axis: 'xy',
+      xAxisId: 0,
+      yAxisId: 0,
       minZoom: 1,
       maxZoom: 25,
       wheel: true,

@@ -1,4 +1,4 @@
-import { ZoomGestureInstaller } from './ZoomGestureApi';
+import { isInteractiveZoomTarget, ZoomGestureInstaller } from './ZoomGestureApi';
 
 /**
  * Keyboard zoom/pan when the chart is focused:
@@ -13,6 +13,12 @@ export const installKeyboardGesture: ZoomGestureInstaller = api => {
   const onKeyDown = (event: KeyboardEvent) => {
     const options = api.getOptions();
     if (!options.keyboard) {
+      return;
+    }
+    if (isInteractiveZoomTarget(event.target)) {
+      return;
+    }
+    if ((event.ctrlKey || event.metaKey) && ['+', '=', '-', '_', '0'].includes(event.key)) {
       return;
     }
     const step = options.wheelStep > 1 ? options.wheelStep : 1.15;

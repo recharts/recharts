@@ -1,13 +1,20 @@
 import * as React from 'react';
 import { useAppSelector } from '../state/hooks';
-import { selectChartHeight } from '../state/selectors/containerSelectors';
+import { selectChartHeight, selectChartWidth } from '../state/selectors/containerSelectors';
 import { selectChartOffsetInternal } from '../state/selectors/selectChartOffsetInternal';
 import { selectAllXAxes, selectAllYAxes } from '../state/selectors/selectAllAxes';
 import { useIsPanorama } from '../context/PanoramaContext';
 import { ResolvedZoomOptions, zoomEnabledForDimension } from '../util/zoom/ZoomOptions';
 
-/** How far below the plot the x-axis target reaches (covers the labels, but not a legend further down). */
-const X_AXIS_TARGET_DEPTH = 40;
+const MAX_AXIS_TARGET_DEPTH = 48;
+
+function numericAxisSize(size: number | 'auto' | undefined): number {
+  return typeof size === 'number' ? size : 0;
+}
+
+function axisTargetDepth(measuredSize: number, availableSize: number): number {
+  return Math.min(measuredSize > 0 ? measuredSize : availableSize, availableSize, MAX_AXIS_TARGET_DEPTH);
+}
 
 /**
  * Transparent, *stable* touch targets over the axis label areas, mounted only on touch devices.
@@ -20,38 +27,95 @@ const X_AXIS_TARGET_DEPTH = 40;
  */
 export function ZoomAxisTouchTargets({ options }: { options: ResolvedZoomOptions }) {
   const offset = useAppSelector(selectChartOffsetInternal);
+  const width = useAppSelector(selectChartWidth);
   const height = useAppSelector(selectChartHeight);
-  const hasXAxis = useAppSelector(state => selectAllXAxes(state).length > 0);
-  const hasYAxis = useAppSelector(state => selectAllYAxes(state).length > 0);
+  const xAxes = useAppSelector(selectAllXAxes) ?? [];
+  const yAxes = useAppSelector(selectAllYAxes) ?? [];
   const isPanorama = useIsPanorama();
 
   const coarsePointer =
     typeof window !== 'undefined' && typeof window.matchMedia === 'function'
-      ? window.matchMedia('(pointer: coarse)').matches
+      ? window.matchMedia('(any-pointer: coarse)').matches || window.matchMedia('(pointer: coarse)').matches
       : false;
 
-  if (!coarsePointer || !options.axisInteractions || isPanorama || offset == null || height == null) {
+  if (!coarsePointer || !options.axisInteractions || isPanorama || offset == null || width == null || height == null) {
     return null;
   }
 
   const base: React.CSSProperties = { position: 'absolute', background: 'transparent', touchAction: 'none' };
+  const plotRight = offset.left + offset.width;
   const plotBottom = offset.top + offset.height;
-  const xDepth = Math.min(Math.max(height - plotBottom, 0), X_AXIS_TARGET_DEPTH);
-  const showX = hasXAxis && zoomEnabledForDimension(options, 'x') && xDepth > 0;
-  const showY = hasYAxis && zoomEnabledForDimension(options, 'y') && offset.left > 0;
+  const topAxes = xAxes.filter(axis => axis.orientation === 'top');
+  const bottomAxes = xAxes.filter(axis => axis.orientation === 'bottom');
+  const leftAxes = yAxes.filter(axis => axis.orientation === 'left');
+  const rightAxes = yAxes.filter(axis => axis.orientation === 'right');
+  const topXAxisDepth =
+    topAxes.length > 0
+      ? axisTargetDepth(
+          topAxes.reduce((sum, axis) => sum + numericAxisSize(axis.height), 0),
+          offset.top,
+        )
+      : 0;
+  const bottomXAxisDepth =
+    bottomAxes.length > 0
+      ? axisTargetDepth(
+          bottomAxes.reduce((sum, axis) => sum + numericAxisSize(axis.height), 0),
+          Math.max(height - plotBottom, 0),
+        )
+      : 0;
+  const leftYAxisDepth =
+    leftAxes.length > 0
+      ? axisTargetDepth(
+          leftAxes.reduce((sum, axis) => sum + numericAxisSize(axis.width), 0),
+          offset.left,
+        )
+      : 0;
+  const rightYAxisDepth =
+    rightAxes.length > 0
+      ? axisTargetDepth(
+          rightAxes.reduce((sum, axis) => sum + numericAxisSize(axis.width), 0),
+          Math.max(width - plotRight, 0),
+        )
+      : 0;
+  const showX = xAxes.length > 0 && zoomEnabledForDimension(options, 'x');
+  const showY = yAxes.length > 0 && zoomEnabledForDimension(options, 'y');
 
   return (
     <>
-      {showX && (
+      {showX && topXAxisDepth > 0 && (
         <div
           data-recharts-zoom-axis-target="x"
-          style={{ ...base, left: offset.left, top: plotBottom, width: offset.width, height: xDepth }}
+          style={{
+            ...base,
+            left: offset.left,
+            top: offset.top - topXAxisDepth,
+            width: offset.width,
+            height: topXAxisDepth,
+          }}
         />
       )}
-      {showY && (
+      {showX && bottomXAxisDepth > 0 && (
+        <div
+          data-recharts-zoom-axis-target="x"
+          style={{ ...base, left: offset.left, top: plotBottom, width: offset.width, height: bottomXAxisDepth }}
+        />
+      )}
+      {showY && leftYAxisDepth > 0 && (
         <div
           data-recharts-zoom-axis-target="y"
-          style={{ ...base, left: 0, top: offset.top, width: offset.left, height: offset.height }}
+          style={{
+            ...base,
+            left: offset.left - leftYAxisDepth,
+            top: offset.top,
+            width: leftYAxisDepth,
+            height: offset.height,
+          }}
+        />
+      )}
+      {showY && rightYAxisDepth > 0 && (
+        <div
+          data-recharts-zoom-axis-target="y"
+          style={{ ...base, left: plotRight, top: offset.top, width: rightYAxisDepth, height: offset.height }}
         />
       )}
     </>

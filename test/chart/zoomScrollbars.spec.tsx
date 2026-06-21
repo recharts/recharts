@@ -44,6 +44,25 @@ describe('zoom scrollbars', () => {
     expect(parseFloat(thumb.style.width)).toBeGreaterThan(0);
   });
 
+  it('keeps a minimum-size thumb inside the track near the end of the viewport', async () => {
+    const { container } = renderChart({
+      axis: 'x',
+      maxZoom: 100,
+      initialZoom: { x: { start: 0.94, end: 0.95 } },
+    });
+    const track = await waitFor(() => {
+      const el = container.querySelector('.recharts-zoom-scrollbar-x') as HTMLElement;
+      expect(el).not.toBeNull();
+      return el;
+    });
+    const thumb = track.querySelector('.recharts-zoom-scrollbar-thumb') as HTMLElement;
+
+    const trackLength = parseFloat(track.style.width);
+    const thumbStart = parseFloat(thumb.style.left);
+    const thumbLength = parseFloat(thumb.style.width);
+    expect(thumbStart + thumbLength).toBeLessThanOrEqual(trackLength + 0.001);
+  });
+
   it('does not render scrollbars when disabled', async () => {
     const { container } = renderChart({ axis: 'x', initialZoom: { x: { start: 0.2, end: 0.6 } }, scrollbars: false });
     await new Promise(resolve => {

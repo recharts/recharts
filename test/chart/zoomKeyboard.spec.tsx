@@ -74,4 +74,39 @@ describe('keyboard zoom gestures', () => {
     });
     expect(onZoomChange).not.toHaveBeenCalled();
   });
+
+  it('preserves browser zoom shortcuts', async () => {
+    const onZoomChange = vi.fn();
+    const { wrapper } = renderChart({ axis: 'x', onZoomChange });
+    fireEvent.keyDown(wrapper, { key: '+', ctrlKey: true });
+    fireEvent.keyDown(wrapper, { key: '-', metaKey: true });
+    fireEvent.keyDown(wrapper, { key: '0', ctrlKey: true });
+    await new Promise(resolve => {
+      setTimeout(resolve, 0);
+    });
+    expect(onZoomChange).not.toHaveBeenCalled();
+  });
+
+  it('ignores keyboard events from embedded controls', async () => {
+    const onZoomChange = vi.fn();
+    const utils = render(
+      <LineChart width={400} height={300} data={data}>
+        <XAxis dataKey="name" />
+        <YAxis />
+        <Line type="monotone" dataKey="uv" isAnimationActive={false} />
+        <foreignObject>
+          <input aria-label="zoom test input" />
+        </foreignObject>
+        <ZoomAndPan axis="x" onZoomChange={onZoomChange} />
+      </LineChart>,
+    );
+    const input = utils.getByLabelText('zoom test input');
+    fireEvent.keyDown(input, { key: '+' });
+    fireEvent.keyDown(input, { key: 'ArrowRight' });
+    fireEvent.keyDown(input, { key: 'Escape' });
+    await new Promise(resolve => {
+      setTimeout(resolve, 0);
+    });
+    expect(onZoomChange).not.toHaveBeenCalled();
+  });
 });

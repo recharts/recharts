@@ -53,6 +53,23 @@ export const installTouchGesture: ZoomGestureInstaller = api => {
   let zooming = false;
   let lastMid: Pt | null = null;
 
+  const clearState = () => {
+    mode = 'none';
+    panAxis = null;
+    lastAxis = null;
+    plotPanStart = null;
+    lastPlotPan = null;
+    plotPanEngaged = false;
+    anchor = null;
+    anchorPixels = null;
+    lastDragClient = null;
+    lastMid = null;
+    zooming = false;
+    initialDistance = 0;
+    zoomDistance = 0;
+    api.setSelection(null);
+  };
+
   const regionAt = (clientX: number, clientY: number): TouchRegion => {
     const o = api.getOffset();
     if (o == null) {
@@ -124,8 +141,15 @@ export const installTouchGesture: ZoomGestureInstaller = api => {
       return;
     }
     const selection: ZoomViewport = {};
-    const vx = Math.abs(to.x - anchor.x) > 0.01 ? api.previewSelection('x', anchor.x, to.x) : null;
-    const vy = Math.abs(to.y - anchor.y) > 0.01 ? api.previewSelection('y', anchor.y, to.y) : null;
+    const options = api.getOptions();
+    const vx =
+      Math.abs(to.x - anchor.x) > 0.01 && zoomEnabledForDimension(options, 'x')
+        ? api.previewSelection('x', anchor.x, to.x)
+        : null;
+    const vy =
+      Math.abs(to.y - anchor.y) > 0.01 && zoomEnabledForDimension(options, 'y')
+        ? api.previewSelection('y', anchor.y, to.y)
+        : null;
     if (vx != null) {
       selection.x = viewportToWindow(vx);
     }
@@ -160,6 +184,9 @@ export const installTouchGesture: ZoomGestureInstaller = api => {
     const { touches } = event;
 
     if (touches.length >= 2) {
+      if (api.getOptions().touchPinch === false) {
+        return;
+      }
       // Suppress the browser's native pinch-zoom and start a (region-aware) pinch.
       if (event.cancelable) {
         event.preventDefault();
@@ -184,7 +211,7 @@ export const installTouchGesture: ZoomGestureInstaller = api => {
       return;
     }
     const region = regionAt(t.clientX, t.clientY);
-    if ((region === 'xAxis' || region === 'yAxis') && api.getOptions().pan) {
+    if ((region === 'xAxis' || region === 'yAxis') && api.getOptions().pan && api.getOptions().touchAxisPan !== false) {
       mode = 'axisPan';
       panAxis = region === 'xAxis' ? 'x' : 'y';
       lastAxis = { clientX: t.clientX, clientY: t.clientY };
@@ -371,19 +398,7 @@ export const installTouchGesture: ZoomGestureInstaller = api => {
     }
     // event.touches is authoritative: reconcile state with however many fingers actually remain.
     if (event.touches.length === 0) {
-      mode = 'none';
-      panAxis = null;
-      lastAxis = null;
-      plotPanStart = null;
-      lastPlotPan = null;
-      plotPanEngaged = false;
-      anchor = null;
-      anchorPixels = null;
-      lastDragClient = null;
-      lastMid = null;
-      zooming = false;
-      initialDistance = 0;
-      zoomDistance = 0;
+      clearState();
     } else if (event.touches.length < 2 && mode === 'pinch') {
       mode = 'none';
       lastMid = null;
@@ -391,14 +406,18 @@ export const installTouchGesture: ZoomGestureInstaller = api => {
     }
   };
 
+  const onTouchCancel = () => {
+    clearState();
+  };
+
   api.element.addEventListener('touchstart', onTouchStart, { passive: false });
   api.element.addEventListener('touchmove', onTouchMove, { passive: false });
   api.element.addEventListener('touchend', onTouchEnd);
-  api.element.addEventListener('touchcancel', onTouchEnd);
+  api.element.addEventListener('touchcancel', onTouchCancel);
   return () => {
     api.element.removeEventListener('touchstart', onTouchStart);
     api.element.removeEventListener('touchmove', onTouchMove);
     api.element.removeEventListener('touchend', onTouchEnd);
-    api.element.removeEventListener('touchcancel', onTouchEnd);
+    api.element.removeEventListener('touchcancel', onTouchCancel);
   };
 };

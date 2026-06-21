@@ -12,10 +12,22 @@ import {
 } from './state/selectors/axisSelectors';
 import { useAppSelector, useAppDispatch } from './state/hooks';
 import { useIsPanorama } from './context/PanoramaContext';
-import { selectZoom, selectIsZoomed } from './state/selectors/zoomSelectors';
-import { setAxisViewport, setZoom, resetZoom } from './state/zoomSlice';
-import { ZoomViewport, windowToViewport, zoomStateFromViewport, zoomStateToViewport } from './util/zoom/ZoomOptions';
-import { FULL_VIEWPORT, getViewportWidth, panViewport, zoomViewportAround } from './util/zoom/viewport';
+import {
+  selectZoom,
+  selectIsZoomed,
+  selectSharedZoomAxis,
+  selectSharedZoomLimits,
+} from './state/selectors/zoomSelectors';
+import { setAxisViewport, setZoom } from './state/zoomSlice';
+import {
+  ZoomAxis,
+  ZoomViewport,
+  windowToViewport,
+  zoomStateFromViewport,
+  zoomStateToViewport,
+} from './util/zoom/ZoomOptions';
+import { FULL_VIEWPORT, getViewportWidth } from './util/zoom/viewport';
+import { clampDimensionToLimits, panDimension, resetDimensionWithLimits, zoomDimension } from './util/zoom/zoomActions';
 import {
   selectActiveLabel,
   selectActiveTooltipCoordinate,
@@ -409,6 +421,11 @@ export const usePlotArea = (): PlotArea | undefined => {
 
 /** Default zoom factor for `zoomIn` / `zoomOut` when no factor is given. */
 const DEFAULT_ZOOM_STEP = 1.5;
+const DEFAULT_ZOOM_LIMITS = { minZoom: 1, maxZoom: 25 };
+
+function zoomAxisEnabled(axis: ZoomAxis, dimension: 'x' | 'y'): boolean {
+  return axis === 'xy' || axis === dimension;
+}
 
 export type UseZoomResult = {
   /** The visible window of each axis, as `{ start, end }` fractions in `[0, 1]`. */
@@ -441,16 +458,31 @@ export const useZoom = (): UseZoomResult => {
   const rawZoom = useAppSelector(selectZoom);
   const zoom = useMemo(() => rawZoom ?? { x: FULL_VIEWPORT, y: FULL_VIEWPORT }, [rawZoom]);
   const isZoomed = useAppSelector(selectIsZoomed) ?? false;
+  const sharedLimits = useAppSelector(selectSharedZoomLimits) ?? DEFAULT_ZOOM_LIMITS;
+  const sharedAxis = useAppSelector(selectSharedZoomAxis) ?? 'xy';
 
   const setViewport = useCallback(
-    (viewport: ZoomViewport) => dispatch(setZoom(zoomStateFromViewport(viewport))),
-    [dispatch],
+    (viewport: ZoomViewport) => {
+      const next = zoomStateFromViewport(viewport);
+      dispatch(
+        setZoom({
+          x: zoomAxisEnabled(sharedAxis, 'x') ? clampDimensionToLimits(next.x, sharedLimits) : zoom.x,
+          y: zoomAxisEnabled(sharedAxis, 'y') ? clampDimensionToLimits(next.y, sharedLimits) : zoom.y,
+        }),
+      );
+    },
+    [dispatch, sharedAxis, sharedLimits, zoom],
   );
 
   const zoomByFactor = useCallback(
     (factor: number) =>
-      dispatch(setZoom({ x: zoomViewportAround(zoom.x, factor, 0.5), y: zoomViewportAround(zoom.y, factor, 0.5) })),
-    [dispatch, zoom],
+      dispatch(
+        setZoom({
+          x: zoomAxisEnabled(sharedAxis, 'x') ? zoomDimension(zoom.x, factor, 0.5, sharedLimits) : zoom.x,
+          y: zoomAxisEnabled(sharedAxis, 'y') ? zoomDimension(zoom.y, factor, 0.5, sharedLimits) : zoom.y,
+        }),
+      ),
+    [dispatch, sharedAxis, sharedLimits, zoom],
   );
 
   const zoomIn = useCallback((factor = DEFAULT_ZOOM_STEP) => zoomByFactor(factor), [zoomByFactor]);
@@ -460,14 +492,22 @@ export const useZoom = (): UseZoomResult => {
     (deltaX: number, deltaY: number) =>
       dispatch(
         setZoom({
-          x: panViewport(zoom.x, deltaX * getViewportWidth(zoom.x)),
-          y: panViewport(zoom.y, deltaY * getViewportWidth(zoom.y)),
+          x: zoomAxisEnabled(sharedAxis, 'x') ? panDimension(zoom.x, deltaX * getViewportWidth(zoom.x)) : zoom.x,
+          y: zoomAxisEnabled(sharedAxis, 'y') ? panDimension(zoom.y, deltaY * getViewportWidth(zoom.y)) : zoom.y,
         }),
       ),
-    [dispatch, zoom],
+    [dispatch, sharedAxis, zoom],
   );
 
-  const reset = useCallback(() => dispatch(resetZoom()), [dispatch]);
+  const reset = useCallback(() => {
+    const floor = resetDimensionWithLimits(sharedLimits);
+    dispatch(
+      setZoom({
+        x: zoomAxisEnabled(sharedAxis, 'x') ? floor : zoom.x,
+        y: zoomAxisEnabled(sharedAxis, 'y') ? floor : zoom.y,
+      }),
+    );
+  }, [dispatch, sharedAxis, sharedLimits, zoom]);
 
   return { viewport: zoomStateToViewport(zoom), isZoomed, setViewport, zoomIn, zoomOut, pan, reset };
 };

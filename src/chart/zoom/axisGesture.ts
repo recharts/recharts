@@ -15,7 +15,7 @@ export const installAxisGesture: ZoomGestureInstaller = api => {
     if (event.pointerType === 'touch' || event.button !== 0 || !options.axisInteractions || !options.pan) {
       return;
     }
-    const region = api.pointerRegion(event.clientX, event.clientY);
+    const region = api.pointerRegion(event.clientX, event.clientY, event.target);
     if (region === 'xAxis') {
       panAxis = 'x';
     } else if (region === 'yAxis') {
@@ -31,19 +31,15 @@ export const installAxisGesture: ZoomGestureInstaller = api => {
     if (panAxis == null) {
       return;
     }
-    const offset = api.getOffset();
-    if (offset == null) {
-      return;
-    }
     const dx = event.clientX - lastX;
     const dy = event.clientY - lastY;
     lastX = event.clientX;
     lastY = event.clientY;
-    if (panAxis === 'x' && offset.width > 0) {
-      api.panBy('x', -dx / offset.width);
+    if (panAxis === 'x') {
+      api.panByPixels('x', dx);
       api.refreshActivePointer();
-    } else if (panAxis === 'y' && offset.height > 0) {
-      api.panBy('y', dy / offset.height);
+    } else if (panAxis === 'y') {
+      api.panByPixels('y', dy);
       api.refreshActivePointer();
     }
   };

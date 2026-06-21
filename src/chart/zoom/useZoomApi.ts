@@ -1,19 +1,20 @@
 import { useContext, useMemo, useRef } from 'react';
 import { useAppDispatch, useAppSelector } from '../../state/hooks';
 import { selectZoom } from '../../state/selectors/zoomSelectors';
-import { resetZoom, setAxisViewport, setZoom, ZoomDimension, ZoomState } from '../../state/zoomSlice';
+import { setAxisViewport, setZoom, ZoomDimension, ZoomState } from '../../state/zoomSlice';
+import { AxisId, defaultAxisId } from '../../state/cartesianAxisSlice';
 import { selectChartOffsetInternal } from '../../state/selectors/selectChartOffsetInternal';
 import { selectAxisRangeWithReverse } from '../../state/selectors/axisSelectors';
 import { selectActiveTooltipCoordinate } from '../../state/selectors/tooltipSelectors';
 import { selectAllXAxes, selectAllYAxes } from '../../state/selectors/selectAllAxes';
 import { mouseMoveAction } from '../../state/mouseEventsMiddleware';
 import { TooltipPortalContext } from '../../context/tooltipPortalContext';
-import { AxisViewport, clampRatio, FULL_VIEWPORT, isFullViewport, isRangeFlipped } from '../../util/zoom/viewport';
+import { AxisViewport, clampRatio, isFullViewport, isRangeFlipped } from '../../util/zoom/viewport';
 import { panDimension, resetDimensionWithLimits, selectDimension, zoomDimension } from '../../util/zoom/zoomActions';
 import { ResolvedZoomOptions, zoomEnabledForDimension } from '../../util/zoom/ZoomOptions';
 import { ChartOffsetInternal } from '../../util/types';
-import { SCROLLBAR_GAP, SCROLLBAR_THICKNESS } from '../ZoomScrollbars';
-import { SelectionRect, ZoomGestureApi } from './ZoomGestureApi';
+import { SCROLLBAR_GAP, SCROLLBAR_THICKNESS, ZOOM_SCROLLBAR_AXIS_ATTR } from '../ZoomScrollbars';
+import { PointerRegion, SelectionRect, ZoomGestureApi } from './ZoomGestureApi';
 
 type LiveState = {
   offset: ChartOffsetInternal | undefined;
@@ -32,6 +33,25 @@ type LiveState = {
 };
 
 const noopSelection = (_rect: SelectionRect | null): void => {};
+
+function getPrimaryAxisId(axes: ReadonlyArray<{ id: AxisId }>, configured: AxisId): AxisId {
+  return axes.some(axis => axis.id === configured) ? configured : (axes[0]?.id ?? defaultAxisId);
+}
+
+function getScrollbarRegionFromTarget(target: EventTarget | null | undefined): PointerRegion | null {
+  if (!(target instanceof Element)) {
+    return null;
+  }
+  const scrollbar = target.closest(`[${ZOOM_SCROLLBAR_AXIS_ATTR}]`);
+  const axis = scrollbar?.getAttribute(ZOOM_SCROLLBAR_AXIS_ATTR);
+  if (axis === 'x') {
+    return 'xScrollbar';
+  }
+  if (axis === 'y') {
+    return 'yScrollbar';
+  }
+  return null;
+}
 
 /**
  * Builds the {@link ZoomGestureApi} that every gesture talks to. It reads live offset / zoom /
@@ -53,13 +73,17 @@ export function useZoomApi(
   const offset = useAppSelector(selectChartOffsetInternal);
   const zoom = useAppSelector(selectZoom);
   const activeTooltipCoordinate = useAppSelector(selectActiveTooltipCoordinate);
-  const hasXAxis = useAppSelector(state => selectAllXAxes(state).length > 0) ?? false;
-  const hasYAxis = useAppSelector(state => selectAllYAxes(state).length > 0) ?? false;
+  const xAxes = useAppSelector(selectAllXAxes) ?? [];
+  const yAxes = useAppSelector(selectAllYAxes) ?? [];
+  const hasXAxis = xAxes.length > 0;
+  const hasYAxis = yAxes.length > 0;
+  const primaryXAxisId = getPrimaryAxisId(xAxes, options.xAxisId);
+  const primaryYAxisId = getPrimaryAxisId(yAxes, options.yAxisId);
   // An axis is "flipped" when its range runs from high to low pixels (domain min at the far edge).
   const xFlipped =
-    useAppSelector(state => isRangeFlipped(selectAxisRangeWithReverse(state, 'xAxis', 0, false))) ?? false;
+    useAppSelector(state => isRangeFlipped(selectAxisRangeWithReverse(state, 'xAxis', primaryXAxisId, false))) ?? false;
   const yFlipped =
-    useAppSelector(state => isRangeFlipped(selectAxisRangeWithReverse(state, 'yAxis', 0, false))) ?? false;
+    useAppSelector(state => isRangeFlipped(selectAxisRangeWithReverse(state, 'yAxis', primaryYAxisId, false))) ?? false;
   const dispatch = useAppDispatch();
 
   const flipped = { x: hasXAxis ? xFlipped : false, y: hasYAxis ? yFlipped : false };
@@ -118,7 +142,11 @@ export function useZoomApi(
           y: Math.min(Math.max(clientY - rect.top, o.top), o.top + o.height),
         };
       },
-      pointerRegion: (clientX, clientY) => {
+      pointerRegion: (clientX, clientY, target) => {
+        const scrollbarRegion = getScrollbarRegionFromTarget(target);
+        if (scrollbarRegion != null) {
+          return scrollbarRegion;
+        }
         const o = live.current.offset;
         if (o == null) {
           return 'outside';
@@ -198,19 +226,17 @@ export function useZoomApi(
       },
       reset: () => {
         const { options: liveOptions } = live.current;
-        if (liveOptions.minZoom > 1) {
-          // The full view is not allowed: reset lands on the most zoomed-out viewport the limits
-          // permit, on the zoom-enabled dimensions (the others go back to the true full view).
-          const floor = resetDimensionWithLimits(liveOptions);
-          dispatch(
-            setZoom({
-              x: zoomEnabledForDimension(liveOptions, 'x') ? floor : FULL_VIEWPORT,
-              y: zoomEnabledForDimension(liveOptions, 'y') ? floor : FULL_VIEWPORT,
-            }),
-          );
+        const z = live.current.zoom;
+        if (z == null) {
           return;
         }
-        dispatch(resetZoom());
+        const floor = resetDimensionWithLimits(liveOptions);
+        dispatch(
+          setZoom({
+            x: zoomEnabledForDimension(liveOptions, 'x') ? floor : z.x,
+            y: zoomEnabledForDimension(liveOptions, 'y') ? floor : z.y,
+          }),
+        );
       },
       refreshPointer: (clientX, clientY) => dispatch(mouseMoveAction({ clientX, clientY, currentTarget: element })),
       refreshActivePointer: () => {

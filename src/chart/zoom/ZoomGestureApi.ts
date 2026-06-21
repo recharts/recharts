@@ -33,7 +33,7 @@ export type ZoomGestureApi = {
   /** Maps a pointer's client coordinates to wrapper-relative pixels, clamped to the plot area. */
   plotPixels: (clientX: number, clientY: number) => { x: number; y: number } | null;
   /** Which region (plot / axis band / outside) the pointer is over. */
-  pointerRegion: (clientX: number, clientY: number) => PointerRegion;
+  pointerRegion: (clientX: number, clientY: number, target?: EventTarget | null) => PointerRegion;
   /** Zoom one axis by `factor` around `plotFocus` (a fraction of the visible window). */
   zoomBy: (dimension: ZoomDimension, factor: number, plotFocus: number) => void;
   /** Pan one axis by `deltaPlotFraction` (a fraction of the visible window). */
@@ -64,13 +64,7 @@ export type ZoomGestureInstaller = (api: ZoomGestureApi) => () => void;
 const TOUCH_DECORATION_CLASS = 'recharts-zoom-touch-interactions';
 
 // Set through setProperty/getPropertyValue (the vendor-prefixed ones are not on CSSStyleDeclaration).
-const TOUCH_STYLE_PROPERTIES = [
-  'touch-action',
-  'user-select',
-  '-webkit-user-select',
-  '-webkit-tap-highlight-color',
-  'outline',
-] as const;
+const TOUCH_STYLE_PROPERTIES = ['user-select', '-webkit-user-select', '-webkit-tap-highlight-color'] as const;
 
 type StyleSnapshot = {
   style: CSSStyleDeclaration;
@@ -81,7 +75,10 @@ type DecorationSnapshot = {
   hadClass: boolean;
   styles: ReadonlyArray<StyleSnapshot>;
   stylesheet: HTMLStyleElement | null;
+  count: number;
 };
+
+const touchDecorationOwners = new WeakMap<HTMLElement, DecorationSnapshot>();
 
 function snapshot(style: CSSStyleDeclaration): StyleSnapshot {
   return { style, values: TOUCH_STYLE_PROPERTIES.map(property => style.getPropertyValue(property)) };
@@ -89,11 +86,9 @@ function snapshot(style: CSSStyleDeclaration): StyleSnapshot {
 
 function applyTouchBrowserStyle(target: HTMLElement | SVGElement): void {
   const { style } = target;
-  style.setProperty('touch-action', 'none');
   style.setProperty('user-select', 'none');
   style.setProperty('-webkit-user-select', 'none');
   style.setProperty('-webkit-tap-highlight-color', 'transparent');
-  style.setProperty('outline', 'none');
 }
 
 function createTouchDecorationStyles(): HTMLStyleElement {
@@ -110,13 +105,6 @@ function createTouchDecorationStyles(): HTMLStyleElement {
       user-select: none !important;
     }
 
-    .${TOUCH_DECORATION_CLASS}:focus,
-    .${TOUCH_DECORATION_CLASS} *:focus,
-    .${TOUCH_DECORATION_CLASS}:focus-visible,
-    .${TOUCH_DECORATION_CLASS} *:focus-visible {
-      outline: none !important;
-      box-shadow: none !important;
-    }
   `;
   return stylesheet;
 }
@@ -127,6 +115,25 @@ function createTouchDecorationStyles(): HTMLStyleElement {
  * gestures are installed; keyboard focus remains available when zoom touch handling is not active.
  */
 export function suppressTouchBrowserDecorations(element: HTMLElement): () => void {
+  const active = touchDecorationOwners.get(element);
+  if (active != null) {
+    active.count += 1;
+    return () => {
+      active.count -= 1;
+      if (active.count > 0) {
+        return;
+      }
+      active.styles.forEach(({ style, values }) => {
+        TOUCH_STYLE_PROPERTIES.forEach((property, index) => style.setProperty(property, values[index] ?? ''));
+      });
+      active.stylesheet?.remove();
+      if (!active.hadClass) {
+        element.classList.remove(TOUCH_DECORATION_CLASS);
+      }
+      touchDecorationOwners.delete(element);
+    };
+  }
+
   const targets: Array<HTMLElement | SVGElement> = [
     element,
     ...element.querySelectorAll<SVGElement>('svg *'),
@@ -136,8 +143,10 @@ export function suppressTouchBrowserDecorations(element: HTMLElement): () => voi
     hadClass: element.classList.contains(TOUCH_DECORATION_CLASS),
     styles: targets.map(target => snapshot(target.style)),
     stylesheet: typeof document === 'undefined' ? null : createTouchDecorationStyles(),
+    count: 1,
   };
 
+  touchDecorationOwners.set(element, previous);
   element.classList.add(TOUCH_DECORATION_CLASS);
   if (previous.stylesheet != null) {
     element.appendChild(previous.stylesheet);
@@ -145,6 +154,10 @@ export function suppressTouchBrowserDecorations(element: HTMLElement): () => voi
   targets.forEach(target => applyTouchBrowserStyle(target));
 
   return () => {
+    previous.count -= 1;
+    if (previous.count > 0) {
+      return;
+    }
     previous.styles.forEach(({ style, values }) => {
       TOUCH_STYLE_PROPERTIES.forEach((property, index) => style.setProperty(property, values[index] ?? ''));
     });
@@ -152,5 +165,17 @@ export function suppressTouchBrowserDecorations(element: HTMLElement): () => voi
     if (!previous.hadClass) {
       element.classList.remove(TOUCH_DECORATION_CLASS);
     }
+    touchDecorationOwners.delete(element);
   };
+}
+
+export function isInteractiveZoomTarget(target: EventTarget | null): boolean {
+  if (!(target instanceof Element)) {
+    return false;
+  }
+  return (
+    target.closest(
+      'a[href], button, input, select, textarea, summary, [contenteditable=""], [contenteditable="true"], [role="button"], [role="link"], [role="textbox"], [role="checkbox"], [role="radio"], [role="switch"], [role="menuitem"]',
+    ) != null
+  );
 }

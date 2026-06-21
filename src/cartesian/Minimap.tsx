@@ -18,9 +18,11 @@ import { ZIndexLayer } from '../zIndex/ZIndexLayer';
 import { useChartData } from '../context/chartDataContext';
 import { useAppDispatch, useAppSelector } from '../state/hooks';
 import { setZoom, ZoomState } from '../state/zoomSlice';
+import { AxisId, defaultAxisId } from '../state/cartesianAxisSlice';
 import { selectSharedZoomLimits, selectZoom } from '../state/selectors/zoomSelectors';
 import { selectChartOffsetInternal } from '../state/selectors/selectChartOffsetInternal';
 import { selectAxisRangeWithReverse } from '../state/selectors/axisSelectors';
+import { selectAllXAxes, selectAllYAxes } from '../state/selectors/selectAllAxes';
 import { selectChartHeight, selectChartWidth } from '../state/selectors/containerSelectors';
 import { Padding } from '../util/types';
 import { generatePrefixStyle } from '../util/CssPrefixUtils';
@@ -69,6 +71,8 @@ type MinimapOwnProps = MinimapStyleProps & {
   position?: MinimapPosition;
   margin?: number;
   axis?: ZoomAxis;
+  xAxisId?: AxisId;
+  yAxisId?: AxisId;
   minZoom?: number;
   maxZoom?: number;
   controls?: ReactNode;
@@ -103,6 +107,11 @@ function mergeEnabledDimensions(current: ZoomState, next: ZoomState, axis: ZoomA
     x: axisEnabled(axis, 'x') ? next.x : current.x,
     y: axisEnabled(axis, 'y') ? next.y : current.y,
   };
+}
+
+function getPrimaryAxisId(axes: ReadonlyArray<{ id: AxisId }>, configured: AxisId | undefined): AxisId {
+  const target = configured ?? defaultAxisId;
+  return axes.some(axis => axis.id === target) ? target : (axes[0]?.id ?? defaultAxisId);
 }
 
 function getPointFromClient(
@@ -239,6 +248,8 @@ function MinimapInternal(props: Props) {
     position = 'bottom-right',
     margin = 10,
     axis = 'xy',
+    xAxisId,
+    yAxisId,
     minZoom,
     maxZoom,
     controls,
@@ -253,10 +264,14 @@ function MinimapInternal(props: Props) {
   const offset = useAppSelector(selectChartOffsetInternal);
   const chartWidth = useAppSelector(selectChartWidth);
   const chartHeight = useAppSelector(selectChartHeight);
+  const xAxes = useAppSelector(selectAllXAxes) ?? [];
+  const yAxes = useAppSelector(selectAllYAxes) ?? [];
+  const primaryXAxisId = getPrimaryAxisId(xAxes, xAxisId);
+  const primaryYAxisId = getPrimaryAxisId(yAxes, yAxisId);
   const xFlipped =
-    useAppSelector(state => isRangeFlipped(selectAxisRangeWithReverse(state, 'xAxis', 0, false))) ?? false;
+    useAppSelector(state => isRangeFlipped(selectAxisRangeWithReverse(state, 'xAxis', primaryXAxisId, false))) ?? false;
   const yFlipped =
-    useAppSelector(state => isRangeFlipped(selectAxisRangeWithReverse(state, 'yAxis', 0, false))) ?? false;
+    useAppSelector(state => isRangeFlipped(selectAxisRangeWithReverse(state, 'yAxis', primaryYAxisId, false))) ?? false;
   const clipId = useUniqueId('recharts-minimap-clip');
   const zoomRef = useRef<ZoomState | undefined>(zoom);
   const cancelDragRef = useRef<() => void>(() => {});
@@ -704,8 +719,8 @@ export function MinimapWheel({
       if (event.shiftKey) {
         const panY = event.ctrlKey || event.metaKey;
         apply({
-          x: panY ? currentZoom.x : panDimension(currentZoom.x, panAmount),
-          y: panY ? panDimension(currentZoom.y, panAmount) : currentZoom.y,
+          x: panY ? currentZoom.x : panDimension(currentZoom.x, (flipped.x ? -1 : 1) * panAmount),
+          y: panY ? panDimension(currentZoom.y, (flipped.y ? -1 : 1) * panAmount) : currentZoom.y,
         });
         return;
       }

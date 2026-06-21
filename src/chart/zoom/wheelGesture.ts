@@ -15,7 +15,7 @@ export const installWheelGesture: ZoomGestureInstaller = api => {
     if (!options.wheel) {
       return;
     }
-    const region = api.pointerRegion(event.clientX, event.clientY);
+    const region = api.pointerRegion(event.clientX, event.clientY, event.target);
     if (region === 'outside') {
       return;
     }

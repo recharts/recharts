@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { render, act, waitFor } from '@testing-library/react';
 import { describe, it, expect } from 'vitest';
-import { Line, LineChart, XAxis, YAxis, useZoom, useZoomState } from '../../src';
+import { Line, LineChart, XAxis, YAxis, ZoomAndPan, useZoom, useZoomState } from '../../src';
 import type { UseZoomResult } from '../../src';
 
 const data = Array.from({ length: 20 }, (_, i) => ({ name: `#${i}`, uv: 1000 + i * 50 }));
@@ -48,6 +48,28 @@ describe('useZoom', () => {
     act(() => api.reset());
     expect(api.isZoomed).toBe(false);
     expect(api.viewport.x).toEqual({ start: 0, end: 1 });
+  });
+
+  it('respects chart-level axis and minZoom settings from ZoomAndPan', async () => {
+    render(
+      <LineChart width={400} height={300} data={data}>
+        <XAxis dataKey="name" />
+        <YAxis />
+        <Line dataKey="uv" isAnimationActive={false} />
+        <ZoomAndPan axis="x" minZoom={2} initialZoom={{ x: { start: 0.1, end: 0.3 }, y: { start: 0.25, end: 0.55 } }} />
+        <Capture />
+      </LineChart>,
+    );
+
+    await waitFor(() => expect(api.viewport.x).toEqual({ start: 0.1, end: 0.3 }));
+    act(() => api.reset());
+
+    await waitFor(() => expect(api.viewport.x.end - api.viewport.x.start).toBeCloseTo(0.5, 5));
+    expect(api.viewport.y).toEqual({ start: 0.25, end: 0.55 });
+
+    act(() => api.zoomOut(100));
+    await waitFor(() => expect(api.viewport.x.end - api.viewport.x.start).toBeCloseTo(0.5, 5));
+    expect(api.viewport.y).toEqual({ start: 0.25, end: 0.55 });
   });
 });
 

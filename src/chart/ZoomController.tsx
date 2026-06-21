@@ -50,9 +50,9 @@ export function ZoomController({ options, selectionStyle }: ZoomControllerProps)
   }, [api, isPanorama]);
 
   /*
-   * Let the chart own touch gestures: `touch-action: none` stops the browser from claiming the touch
-   * for scrolling / native pinch-zoom and cancelling ours. (Axis-label drags survive tick re-renders
-   * thanks to the stable hit targets in ZoomAxisTouchTargets, not a CSS trick.)
+   * Suppress touch-selection browser chrome while the touch gesture engine is mounted. Gesture code
+   * prevents default only for the active pinch/pan/select paths, so ordinary one-finger scrolling can
+   * still be left to the page when touchDrag="tooltip".
    */
   useEffect(() => {
     if (element == null || isPanorama || !options.touch) {

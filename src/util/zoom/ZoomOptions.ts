@@ -1,4 +1,5 @@
 import { ZoomDimension, ZoomState } from '../../state/zoomSlice';
+import { AxisId, defaultAxisId } from '../../state/cartesianAxisSlice';
 import { AxisViewport, clampViewport, FULL_VIEWPORT } from './viewport';
 
 /**
@@ -23,6 +24,10 @@ export type ZoomViewport = { x?: AxisWindow; y?: AxisWindow };
 type ZoomGestureOptions = {
   /** Which dimensions can be zoomed and panned. @defaultValue 'xy' */
   axis?: ZoomAxis;
+  /** Primary X axis used for orientation and hit-testing decisions. @defaultValue 0 */
+  xAxisId?: AxisId;
+  /** Primary Y axis used for orientation and hit-testing decisions. @defaultValue 0 */
+  yAxisId?: AxisId;
   /** Furthest zoom-out. 1 means the full data cannot be zoomed out past. @defaultValue 1 */
   minZoom?: number;
   /** Deepest zoom-in (e.g. 25 shows ~1/25th of the data). @defaultValue 25 */
@@ -65,8 +70,8 @@ type ZoomGestureOptions = {
    */
   touchDrag?: 'tooltip' | 'pan';
   /**
-   * Show on-canvas scrollbars (one per zoomed axis). Drag the thumb to pan, drag its ends to zoom,
-   * click the track to page. Only visible while that axis is zoomed. @defaultValue true
+   * Show on-canvas scrollbars (one per zoomed axis). Drag the thumb or track to pan; wheel over the
+   * scrollbar pans, and Shift+wheel zooms. Only visible while that axis is zoomed. @defaultValue true
    */
   scrollbars?: boolean;
   /** Fraction of the visible window panned per keyboard arrow press. @defaultValue 0.1 */
@@ -134,10 +139,22 @@ export type ResolvedZoomOptions = Required<ZoomGestureOptions> &
      * `onTouchSelectRegion` instead; none leaves that gesture to another component.
      */
     touchDoubleTapDrag?: 'zoom' | 'selectZoom' | 'selectCallback' | 'none';
+    /**
+     * Internal: disable two-finger pinch handling while keeping the touch double-tap-drag selection
+     * path installed. Used by `<DragToSelect/>`, which must not zoom the chart itself.
+     */
+    touchPinch?: boolean;
+    /**
+     * Internal: disable one-finger axis panning while keeping other touch gestures installed.
+     * Used by selection-only controls.
+     */
+    touchAxisPan?: boolean;
   };
 
 const ZOOM_DEFAULTS: Required<ZoomGestureOptions> = {
   axis: 'xy',
+  xAxisId: defaultAxisId,
+  yAxisId: defaultAxisId,
   minZoom: 1,
   maxZoom: 25,
   wheel: true,

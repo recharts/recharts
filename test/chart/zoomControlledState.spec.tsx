@@ -1,19 +1,29 @@
 import * as React from 'react';
-import { render, waitFor } from '@testing-library/react';
+import { fireEvent, render, waitFor } from '@testing-library/react';
 import { describe, it, expect, vi } from 'vitest';
-import { Line, LineChart, XAxis, YAxis, ZoomAndPan } from '../../src';
+import { Line, LineChart, XAxis, YAxis, ZoomAndPan, useZoom } from '../../src';
+import type { UseZoomResult } from '../../src';
 
 const data = Array.from({ length: 20 }, (_, i) => ({ name: `#${i}`, uv: 1000 + i * 50 }));
 
+let zoomApi: UseZoomResult;
+
+function Capture() {
+  zoomApi = useZoom();
+  return null;
+}
+
 function renderChart(zoom: any) {
-  return render(
+  const utils = render(
     <LineChart width={400} height={300} data={data}>
       <XAxis dataKey="name" />
       <YAxis />
       <Line type="monotone" dataKey="uv" isAnimationActive={false} />
       <ZoomAndPan {...zoom} />
+      <Capture />
     </LineChart>,
   );
+  return { ...utils, wrapper: utils.container.querySelector('.recharts-wrapper') as HTMLElement };
 }
 
 describe('controlled / uncontrolled zoom state', () => {
@@ -36,6 +46,20 @@ describe('controlled / uncontrolled zoom state', () => {
     const last = onZoomChange.mock.calls.at(-1)![0];
     expect(last.x.start).toBeCloseTo(0.3);
     expect(last.x.end).toBeCloseTo(0.7);
+  });
+
+  it('keeps a rejected controlled viewport authoritative after a gesture proposal', async () => {
+    const fixedViewport = { x: { start: 0.2, end: 0.8 } };
+    const onZoomChange = vi.fn();
+    const { wrapper } = renderChart({ viewport: fixedViewport, onZoomChange });
+
+    await waitFor(() => expect(zoomApi.viewport.x).toEqual(fixedViewport.x));
+    onZoomChange.mockClear();
+
+    fireEvent.wheel(wrapper, { deltaY: -100, clientX: 200, clientY: 150 });
+
+    await waitFor(() => expect(onZoomChange).toHaveBeenCalled());
+    await waitFor(() => expect(zoomApi.viewport.x).toEqual(fixedViewport.x));
   });
 
   it('does not call onZoomChange when left at the default (un-zoomed) state', async () => {

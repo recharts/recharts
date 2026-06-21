@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { render, fireEvent, waitFor } from '@testing-library/react';
+import { act, render, fireEvent, waitFor } from '@testing-library/react';
 import { describe, it, expect, vi } from 'vitest';
 import {
   Line,
@@ -28,16 +28,20 @@ function Capture() {
   return null;
 }
 
-function renderWith(node: React.ReactNode) {
-  const utils = render(
+function chartWith(node: React.ReactNode) {
+  return (
     <LineChart width={400} height={300} data={data}>
       <XAxis dataKey="name" />
       <YAxis />
       <Line dataKey="uv" isAnimationActive={false} />
       {node}
       <Capture />
-    </LineChart>,
+    </LineChart>
   );
+}
+
+function renderWith(node: React.ReactNode) {
+  const utils = render(chartWith(node));
   return { ...utils, wrapper: utils.container.querySelector('.recharts-wrapper') as HTMLElement };
 }
 
@@ -52,6 +56,21 @@ describe('zoom interaction components', () => {
     const { wrapper } = renderWith(<ZoomPanKeyboard />);
     fireEvent.keyDown(wrapper, { key: '+' });
     await waitFor(() => expect(zoomApi.isZoomed).toBe(true));
+  });
+
+  it('<ZoomPanKeyboard axis="x" minZoom={2}/> reset preserves y and obeys minZoom', async () => {
+    const { wrapper } = renderWith(<ZoomPanKeyboard axis="x" minZoom={2} />);
+    act(() =>
+      zoomApi.setViewport({
+        x: { start: 0.1, end: 0.3 },
+        y: { start: 0.25, end: 0.55 },
+      }),
+    );
+
+    fireEvent.keyDown(wrapper, { key: '0' });
+
+    await waitFor(() => expect(zoomApi.viewport.x.end - zoomApi.viewport.x.start).toBeCloseTo(0.5, 5));
+    expect(zoomApi.viewport.y).toEqual({ start: 0.25, end: 0.55 });
   });
 
   it('<AxisZoom/> wheel on the x-axis zooms only x', async () => {
@@ -72,6 +91,25 @@ describe('zoom interaction components', () => {
     await waitFor(() => expect(zoomApi.isZoomed).toBe(true));
     fireEvent.doubleClick(wrapper, { clientX: 200, clientY: 150 });
     await waitFor(() => expect(zoomApi.isZoomed).toBe(false));
+  });
+
+  it('<DoubleClickReset/> ignores embedded controls', async () => {
+    const { getByRole } = renderWith(
+      <>
+        <DoubleClickReset />
+        <foreignObject>
+          <button type="button">embedded control</button>
+        </foreignObject>
+      </>,
+    );
+
+    act(() => zoomApi.setViewport({ x: { start: 0.2, end: 0.6 } }));
+    await waitFor(() => expect(zoomApi.isZoomed).toBe(true));
+    fireEvent.doubleClick(getByRole('button', { name: 'embedded control' }), { clientX: 200, clientY: 150 });
+    await new Promise(resolve => {
+      setTimeout(resolve, 0);
+    });
+    expect(zoomApi.isZoomed).toBe(true);
   });
 
   it('<ZoomScrollbar/> renders for the zoomed axis only', async () => {
@@ -126,6 +164,64 @@ describe('zoom interaction components', () => {
     });
   });
 
+  it('<DragToSelect axis="x"/> omits y from diagonal touch selection callbacks', async () => {
+    const onSelect = vi.fn();
+    const { wrapper } = renderWith(<DragToSelect axis="x" onSelect={onSelect} />);
+
+    fireEvent.touchStart(wrapper, { touches: [{ clientX: 150, clientY: 150 }] });
+    fireEvent.touchEnd(wrapper, { touches: [] });
+    fireEvent.touchStart(wrapper, { touches: [{ clientX: 150, clientY: 150 }] });
+    fireEvent.touchMove(wrapper, { touches: [{ clientX: 240, clientY: 90 }] });
+    fireEvent.touchEnd(wrapper, { touches: [] });
+
+    await waitFor(() => expect(onSelect).toHaveBeenCalled());
+    expect(onSelect.mock.calls.at(-1)![0].x).toEqual(expect.objectContaining({ start: expect.any(Number) }));
+    expect(onSelect.mock.calls.at(-1)![0].y).toBeUndefined();
+  });
+
+  it('<DragToSelect/> does not zoom on a two-finger pinch', async () => {
+    const onSelect = vi.fn();
+    const { wrapper } = renderWith(<DragToSelect onSelect={onSelect} />);
+
+    fireEvent.touchStart(wrapper, {
+      touches: [
+        { clientX: 150, clientY: 150 },
+        { clientX: 250, clientY: 150 },
+      ],
+    });
+    fireEvent.touchMove(wrapper, {
+      touches: [
+        { clientX: 100, clientY: 150 },
+        { clientX: 300, clientY: 150 },
+      ],
+    });
+    fireEvent.touchEnd(wrapper, { touches: [] });
+
+    await new Promise(resolve => {
+      setTimeout(resolve, 0);
+    });
+    expect(zoomApi.isZoomed).toBe(false);
+    expect(onSelect).not.toHaveBeenCalled();
+  });
+
+  it('keeps touch decoration ownership reference-counted without removing focus outlines', async () => {
+    const { container, rerender } = renderWith(
+      <>
+        <DragToZoom />
+        <PinchZoom />
+      </>,
+    );
+    const wrapper = container.querySelector('.recharts-wrapper') as HTMLElement;
+    await waitFor(() => expect(wrapper.classList.contains('recharts-zoom-touch-interactions')).toBe(true));
+    expect(wrapper.style.outline).toBe('');
+
+    rerender(chartWith(<PinchZoom />));
+    await waitFor(() => expect(wrapper.classList.contains('recharts-zoom-touch-interactions')).toBe(true));
+
+    rerender(chartWith(null));
+    await waitFor(() => expect(wrapper.classList.contains('recharts-zoom-touch-interactions')).toBe(false));
+  });
+
   it('<DragToZoom/> zooms into the selected region on mobile double-tap then drag release', async () => {
     const { wrapper } = renderWith(<DragToZoom />);
     fireEvent.touchStart(wrapper, { touches: [{ clientX: 150, clientY: 150 }] });
@@ -153,5 +249,38 @@ describe('zoom interaction components', () => {
       </>,
     );
     expect(container.querySelector('.recharts-line')).not.toBeNull();
+  });
+
+  describe.each([
+    ['wheel first', true],
+    ['scrollbar first', false],
+  ])('mixed <MouseWheelZoom/> and <ZoomScrollbar/> composition: %s', (_label, wheelFirst) => {
+    it('routes a scrollbar wheel event to the scrollbar only', async () => {
+      const components = wheelFirst ? (
+        <>
+          <MouseWheelZoom />
+          <ZoomScrollbar axis="x" />
+        </>
+      ) : (
+        <>
+          <ZoomScrollbar axis="x" />
+          <MouseWheelZoom />
+        </>
+      );
+      const { container } = renderWith(components);
+
+      act(() => zoomApi.setViewport({ x: { start: 0.2, end: 0.6 } }));
+      const scrollbar = await waitFor(() => {
+        const el = container.querySelector('.recharts-zoom-scrollbar-x') as HTMLElement;
+        expect(el).not.toBeNull();
+        return el;
+      });
+
+      fireEvent.wheel(scrollbar, { deltaY: 100, clientX: 200, clientY: 250 });
+
+      await waitFor(() => expect(zoomApi.viewport.x.start).not.toBeCloseTo(0.2));
+      expect(zoomApi.viewport.x.end - zoomApi.viewport.x.start).toBeCloseTo(0.4, 5);
+      expect(zoomApi.viewport.y).toEqual({ start: 0, end: 1 });
+    });
   });
 });

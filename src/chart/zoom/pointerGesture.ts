@@ -51,7 +51,7 @@ export const installPointerGesture: ZoomGestureInstaller = api => {
       return;
     }
     // Dragging on an axis band is handled by the axis gesture (pans only that axis).
-    if (api.pointerRegion(event.clientX, event.clientY) !== 'plot') {
+    if (api.pointerRegion(event.clientX, event.clientY, event.target) !== 'plot') {
       return;
     }
     const options = api.getOptions();
@@ -119,8 +119,9 @@ export const installPointerGesture: ZoomGestureInstaller = api => {
         if (onSelectRegion != null) {
           // Drag-to-select: emit the selected window instead of zooming into it.
           const selection: ZoomViewport = {};
-          const vx = draggedX ? api.previewSelection('x', from.x, to.x) : null;
-          const vy = draggedY ? api.previewSelection('y', from.y, to.y) : null;
+          const options = api.getOptions();
+          const vx = draggedX && zoomEnabledForDimension(options, 'x') ? api.previewSelection('x', from.x, to.x) : null;
+          const vy = draggedY && zoomEnabledForDimension(options, 'y') ? api.previewSelection('y', from.y, to.y) : null;
           if (vx != null) {
             selection.x = viewportToWindow(vx);
           }

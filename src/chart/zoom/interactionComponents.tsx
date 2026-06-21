@@ -4,6 +4,7 @@ import { createPortal } from 'react-dom';
 import { TooltipPortalContext } from '../../context/tooltipPortalContext';
 import { useIsPanorama } from '../../context/PanoramaContext';
 import { ResolvedZoomOptions, ZoomAxis, ZoomViewport, resolveZoomOptions } from '../../util/zoom/ZoomOptions';
+import { AxisId } from '../../state/cartesianAxisSlice';
 import { useZoomApi } from './useZoomApi';
 import { SelectionRect, suppressTouchBrowserDecorations, ZoomGestureInstaller } from './ZoomGestureApi';
 import { installWheelGesture } from './wheelGesture';
@@ -27,6 +28,10 @@ import { renderSelectionOverlay } from './SelectionOverlay';
 export type CommonZoomProps = {
   /** Which dimensions can be zoomed and panned. @defaultValue 'xy' */
   axis?: ZoomAxis;
+  /** Primary X axis used for orientation decisions. @defaultValue 0 */
+  xAxisId?: AxisId;
+  /** Primary Y axis used for orientation decisions. @defaultValue 0 */
+  yAxisId?: AxisId;
   /** Furthest zoom-out (1 = cannot zoom out past the full data). @defaultValue 1 */
   minZoom?: number;
   /** Deepest zoom-in (e.g. 25 shows ~1/25th of the data). @defaultValue 25 */
@@ -58,9 +63,15 @@ const ALL_OFF = {
 function buildOptions(common: CommonZoomProps, overrides: Partial<ResolvedZoomOptions>): ResolvedZoomOptions {
   // Only pass limits that are actually set; passing `undefined` would override resolveZoomOptions'
   // defaults (e.g. axis would become undefined and disable every dimension).
-  const limits: { axis?: ZoomAxis; minZoom?: number; maxZoom?: number } = {};
+  const limits: { axis?: ZoomAxis; xAxisId?: AxisId; yAxisId?: AxisId; minZoom?: number; maxZoom?: number } = {};
   if (common.axis != null) {
     limits.axis = common.axis;
+  }
+  if (common.xAxisId != null) {
+    limits.xAxisId = common.xAxisId;
+  }
+  if (common.yAxisId != null) {
+    limits.yAxisId = common.yAxisId;
   }
   if (common.minZoom != null) {
     limits.minZoom = common.minZoom;
@@ -99,10 +110,10 @@ const DOUBLE_CLICK: readonly ZoomGestureInstaller[] = [installDoubleClickGesture
 export type MouseWheelZoomProps = CommonZoomProps & WheelStepProps & WheelPanStepProps;
 
 /** Wheel / trackpad over the plot to zoom around the pointer (Shift = pan x, Ctrl/Cmd + Shift = pan y). */
-export function MouseWheelZoom({ axis, minZoom, maxZoom, step, panStep }: MouseWheelZoomProps) {
+export function MouseWheelZoom({ axis, xAxisId, yAxisId, minZoom, maxZoom, step, panStep }: MouseWheelZoomProps) {
   useZoomGesture(
     buildOptions(
-      { axis, minZoom, maxZoom },
+      { axis, xAxisId, yAxisId, minZoom, maxZoom },
       { wheel: true, wheelStep: step ?? 1.15, wheelPanStep: panStep ?? 0.0015, wheelRegions: ['plot'] },
     ),
     WHEEL,
@@ -111,8 +122,11 @@ export function MouseWheelZoom({ axis, minZoom, maxZoom, step, panStep }: MouseW
 }
 
 /** Drag the plot to pan. */
-export function PanOnDrag({ axis, minZoom, maxZoom }: CommonZoomProps) {
-  useZoomGesture(buildOptions({ axis, minZoom, maxZoom }, { pan: true, pointerMode: 'pan' }), POINTER);
+export function PanOnDrag({ axis, xAxisId, yAxisId, minZoom, maxZoom }: CommonZoomProps) {
+  useZoomGesture(
+    buildOptions({ axis, xAxisId, yAxisId, minZoom, maxZoom }, { pan: true, pointerMode: 'pan' }),
+    POINTER,
+  );
   return null;
 }
 
@@ -130,6 +144,8 @@ type SelectionStyleProps = {
 /** Drag a rectangle to zoom into it. Hold Shift instead (`modifier="shift"`) to coexist with PanOnDrag. */
 export function DragToZoom({
   axis,
+  xAxisId,
+  yAxisId,
   minZoom,
   maxZoom,
   modifier = 'none',
@@ -140,7 +156,7 @@ export function DragToZoom({
   const isPanorama = useIsPanorama();
   const [selection, setSelection] = useState<SelectionRect | null>(null);
   const options = buildOptions(
-    { axis, minZoom, maxZoom },
+    { axis, xAxisId, yAxisId, minZoom, maxZoom },
     {
       dragToZoom: true,
       pointerMode: modifier === 'shift' ? 'selectShift' : 'select',
@@ -181,6 +197,8 @@ export type DragToSelectProps = CommonZoomProps &
  */
 export function DragToSelect({
   axis,
+  xAxisId,
+  yAxisId,
   minZoom,
   maxZoom,
   modifier = 'none',
@@ -192,11 +210,13 @@ export function DragToSelect({
   const isPanorama = useIsPanorama();
   const [selection, setSelection] = useState<SelectionRect | null>(null);
   const options = buildOptions(
-    { axis, minZoom, maxZoom },
+    { axis, xAxisId, yAxisId, minZoom, maxZoom },
     {
       dragToZoom: true,
       pointerMode: modifier === 'shift' ? 'selectShift' : 'select',
       touch: true,
+      touchPinch: false,
+      touchAxisPan: false,
       axisInteractions: true,
       touchDoubleTapDrag: 'selectCallback',
       onSelectRegion: onSelect,
@@ -219,10 +239,10 @@ export function DragToSelect({
 export type AxisZoomProps = CommonZoomProps & WheelStepProps & WheelPanStepProps;
 
 /** Wheel or drag directly on an axis band to zoom / pan only that axis. */
-export function AxisZoom({ axis, minZoom, maxZoom, step, panStep }: AxisZoomProps) {
+export function AxisZoom({ axis, xAxisId, yAxisId, minZoom, maxZoom, step, panStep }: AxisZoomProps) {
   useZoomGesture(
     buildOptions(
-      { axis, minZoom, maxZoom },
+      { axis, xAxisId, yAxisId, minZoom, maxZoom },
       {
         wheel: true,
         wheelStep: step ?? 1.15,
@@ -246,10 +266,19 @@ export type ZoomPanKeyboardProps = CommonZoomProps &
   };
 
 /** Keyboard zoom/pan while the chart is focused (`+`/`-` zoom, arrows pan, `0`/`Esc` reset). */
-export function ZoomPanKeyboard({ axis, minZoom, maxZoom, step, panStep, panFastMultiplier }: ZoomPanKeyboardProps) {
+export function ZoomPanKeyboard({
+  axis,
+  xAxisId,
+  yAxisId,
+  minZoom,
+  maxZoom,
+  step,
+  panStep,
+  panFastMultiplier,
+}: ZoomPanKeyboardProps) {
   useZoomGesture(
     buildOptions(
-      { axis, minZoom, maxZoom },
+      { axis, xAxisId, yAxisId, minZoom, maxZoom },
       { keyboard: true, wheelStep: step ?? 1.15, panStep: panStep ?? 0.1, panFastMultiplier: panFastMultiplier ?? 2.5 },
     ),
     KEYBOARD,
@@ -257,9 +286,9 @@ export function ZoomPanKeyboard({ axis, minZoom, maxZoom, step, panStep, panFast
   return null;
 }
 
-/** Double-click (or double-tap) to reset the chart to the full view. */
-export function DoubleClickReset() {
-  useZoomGesture(buildOptions({}, { doubleClickReset: true }), DOUBLE_CLICK);
+/** Double-click to reset the chart to the configured zoom floor. */
+export function DoubleClickReset({ axis, xAxisId, yAxisId, minZoom, maxZoom }: CommonZoomProps) {
+  useZoomGesture(buildOptions({ axis, xAxisId, yAxisId, minZoom, maxZoom }, { doubleClickReset: true }), DOUBLE_CLICK);
   return null;
 }
 
@@ -282,6 +311,8 @@ export type PinchZoomProps = CommonZoomProps &
 
 export function PinchZoom({
   axis,
+  xAxisId,
+  yAxisId,
   minZoom,
   maxZoom,
   threshold,
@@ -295,7 +326,7 @@ export function PinchZoom({
   const isPanorama = useIsPanorama();
   const [selection, setSelection] = useState<SelectionRect | null>(null);
   const options = buildOptions(
-    { axis, minZoom, maxZoom },
+    { axis, xAxisId, yAxisId, minZoom, maxZoom },
     {
       touch: true,
       touchDrag,
@@ -328,7 +359,10 @@ export function PinchZoom({
 }
 
 /** Props for {@link ZoomScrollbar}: which axis, zoom limits, plus the scrollbar look. */
-export type ZoomScrollbarProps = { axis?: 'x' | 'y' } & Pick<CommonZoomProps, 'minZoom' | 'maxZoom'> &
+export type ZoomScrollbarProps = { axis?: 'x' | 'y' } & Pick<
+  CommonZoomProps,
+  'xAxisId' | 'yAxisId' | 'minZoom' | 'maxZoom'
+> &
   WheelPanStepProps &
   ScrollbarStyle;
 
@@ -339,6 +373,8 @@ export type ZoomScrollbarProps = { axis?: 'x' | 'y' } & Pick<CommonZoomProps, 'm
  */
 export function ZoomScrollbar({
   axis = 'x',
+  xAxisId,
+  yAxisId,
   minZoom,
   maxZoom,
   thickness,
@@ -351,7 +387,7 @@ export function ZoomScrollbar({
   const element = useContext(TooltipPortalContext);
   const isPanorama = useIsPanorama();
   const options = buildOptions(
-    { axis, minZoom, maxZoom },
+    { axis, xAxisId, yAxisId, minZoom, maxZoom },
     {
       scrollbars: true,
       wheel: true,

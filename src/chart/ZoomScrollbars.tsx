@@ -8,6 +8,7 @@ import { selectActiveTooltipCoordinate } from '../state/selectors/tooltipSelecto
 import { selectAllXAxes, selectAllYAxes } from '../state/selectors/selectAllAxes';
 import { mouseMoveAction } from '../state/mouseEventsMiddleware';
 import { setAxisViewport, ZoomDimension } from '../state/zoomSlice';
+import { AxisId, defaultAxisId } from '../state/cartesianAxisSlice';
 import { useIsPanorama } from '../context/PanoramaContext';
 import { TooltipPortalContext } from '../context/tooltipPortalContext';
 import { AxisViewport, getViewportWidth, isFullViewport, isRangeFlipped } from '../util/zoom/viewport';
@@ -15,6 +16,7 @@ import { ResolvedZoomOptions, zoomEnabledForDimension } from '../util/zoom/ZoomO
 
 /** Marker so the pointer gesture knows not to start a plot pan when a scrollbar is grabbed. */
 export const ZOOM_SCROLLBAR_ATTR = 'data-recharts-zoom-scrollbar';
+export const ZOOM_SCROLLBAR_AXIS_ATTR = 'data-recharts-zoom-scrollbar-axis';
 
 /**
  * Look of the on-canvas scrollbars. Style with `className`/`style` (track) and
@@ -39,6 +41,10 @@ export const SCROLLBAR_GAP = 2;
 /** Touch keeps the same slim bar but gets a larger, transparent drag/hit area around it. */
 const SCROLLBAR_TOUCH_HIT = 24;
 const GAP = SCROLLBAR_GAP;
+
+function getPrimaryAxisId(axes: ReadonlyArray<{ id: AxisId }>, configured: AxisId): AxisId {
+  return axes.some(axis => axis.id === configured) ? configured : (axes[0]?.id ?? defaultAxisId);
+}
 
 type AxisScrollbarProps = {
   dimension: ZoomDimension;
@@ -83,9 +89,12 @@ function AxisScrollbar({
   const hitThickness = coarsePointer ? Math.max(SCROLLBAR_TOUCH_HIT, barThickness) : barThickness;
   const barInset = hitThickness - barThickness;
   const radius = barThickness / 2;
-  const thumbLength = Math.max(windowRatio * trackLength, coarsePointer ? 24 : 16);
-  // Offset of the thumb from the start of the track. The y domain grows upward, so it is flipped.
-  const thumbOffset = (flipped ? 1 - viewport.endRatio : viewport.startRatio) * trackLength;
+  const thumbLength = Math.min(trackLength, Math.max(windowRatio * trackLength, coarsePointer ? 24 : 16));
+  const availableTravel = Math.max(trackLength - thumbLength, 0);
+  const maxStartRatio = Math.max(1 - windowRatio, 0);
+  const displayStartRatio = flipped ? maxStartRatio - viewport.startRatio : viewport.startRatio;
+  const normalizedThumbOffset = maxStartRatio > 0 ? displayStartRatio / maxStartRatio : 0;
+  const thumbOffset = normalizedThumbOffset * availableTravel;
 
   const apply = (next: AxisViewport) => dispatch(setAxisViewport({ dimension, viewport: next }));
 
@@ -98,14 +107,13 @@ function AxisScrollbar({
     const pressed = (horizontal ? clientX : clientY) - trackStart;
     const onThumb = pressed >= thumbOffset && pressed <= thumbOffset + thumbLength;
     const grab = onThumb ? pressed - thumbOffset : thumbLength / 2;
-    const maxThumbStart = Math.max(trackLength - thumbLength, 1);
-    const maxStartRatio = Math.max(1 - windowRatio, 0);
+    const maxThumbStart = Math.max(availableTravel, 1);
     const moveTo = (cx: number, cy: number) => {
       const local = (horizontal ? cx : cy) - trackStart;
-      const desired = Math.max(0, Math.min(maxThumbStart, local - grab));
+      const desired = Math.max(0, Math.min(availableTravel, local - grab));
       const ratio = desired / maxThumbStart;
       // The y track is flipped: the top of the track is the end of the domain.
-      const startRatio = (flipped ? 1 - ratio : ratio) * maxStartRatio;
+      const startRatio = flipped ? maxStartRatio - ratio * maxStartRatio : ratio * maxStartRatio;
       apply({ startRatio, endRatio: startRatio + windowRatio });
       refreshActivePointer();
     };
@@ -194,7 +202,7 @@ function AxisScrollbar({
     // A supplementary visual control; the accessible path for panning is the keyboard.
     // eslint-disable-next-line jsx-a11y/no-static-element-interactions
     <div
-      {...{ [ZOOM_SCROLLBAR_ATTR]: 'track' }}
+      {...{ [ZOOM_SCROLLBAR_ATTR]: 'track', [ZOOM_SCROLLBAR_AXIS_ATTR]: dimension }}
       className={`recharts-zoom-scrollbar recharts-zoom-scrollbar-${dimension}${
         scrollbarStyle.className ? ` ${scrollbarStyle.className}` : ''
       }`}
@@ -209,7 +217,7 @@ function AxisScrollbar({
       }}
     >
       <div
-        {...{ [ZOOM_SCROLLBAR_ATTR]: 'thumb' }}
+        {...{ [ZOOM_SCROLLBAR_ATTR]: 'thumb', [ZOOM_SCROLLBAR_AXIS_ATTR]: dimension }}
         className={`recharts-zoom-scrollbar-thumb${
           scrollbarStyle.thumbClassName ? ` ${scrollbarStyle.thumbClassName}` : ''
         }`}
@@ -244,13 +252,19 @@ export function ZoomScrollbars({
   const zoom = useAppSelector(selectZoom);
   const offset = useAppSelector(selectChartOffsetInternal);
   const activeTooltipCoordinate = useAppSelector(selectActiveTooltipCoordinate);
-  const hasXAxis = useAppSelector(state => selectAllXAxes(state).length > 0) ?? false;
-  const hasYAxis = useAppSelector(state => selectAllYAxes(state).length > 0) ?? false;
+  const xAxes = useAppSelector(selectAllXAxes) ?? [];
+  const yAxes = useAppSelector(selectAllYAxes) ?? [];
+  const hasXAxis = xAxes.length > 0;
+  const hasYAxis = yAxes.length > 0;
+  const primaryXAxisId = getPrimaryAxisId(xAxes, options.xAxisId);
+  const primaryYAxisId = getPrimaryAxisId(yAxes, options.yAxisId);
   const xFlipped =
-    (useAppSelector(state => isRangeFlipped(selectAxisRangeWithReverse(state, 'xAxis', 0, false))) ?? false) &&
+    (useAppSelector(state => isRangeFlipped(selectAxisRangeWithReverse(state, 'xAxis', primaryXAxisId, false))) ??
+      false) &&
     hasXAxis;
   const yFlipped =
-    (useAppSelector(state => isRangeFlipped(selectAxisRangeWithReverse(state, 'yAxis', 0, false))) ?? false) &&
+    (useAppSelector(state => isRangeFlipped(selectAxisRangeWithReverse(state, 'yAxis', primaryYAxisId, false))) ??
+      false) &&
     hasYAxis;
   const isPanorama = useIsPanorama();
 

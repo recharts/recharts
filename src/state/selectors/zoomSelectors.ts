@@ -26,3 +26,5 @@ export const selectIsZoomed = (state: RechartsRootState): boolean =>
  * these when they get no explicit `minZoom`/`maxZoom` props.
  */
 export const selectSharedZoomLimits = (state: RechartsRootState) => state.zoomSettings.limits;
+
+export const selectSharedZoomAxis = (state: RechartsRootState) => state.zoomSettings.axis;

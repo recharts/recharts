@@ -2,7 +2,7 @@ import { useLayoutEffect, useRef } from 'react';
 import { useAppDispatch, useAppSelector } from '../state/hooks';
 import { selectZoom } from '../state/selectors/zoomSelectors';
 import { setZoom, ZoomState } from '../state/zoomSlice';
-import { setZoomLimits } from '../state/zoomSettingsSlice';
+import { setZoomAxis, setZoomLimits } from '../state/zoomSettingsSlice';
 import { useIsPanorama } from '../context/PanoramaContext';
 import { viewportsEqual } from '../util/zoom/viewport';
 import { clampDimensionToLimits, resetDimensionWithLimits } from '../util/zoom/zoomActions';
@@ -22,9 +22,9 @@ function zoomStatesEqual(a: ZoomState, b: ZoomState): boolean {
  * internal zoom slice. Renders nothing. Mounted on the main chart only (never the brush panorama).
  *
  * - `initialZoom`: applied once on mount (ignored when `viewport` is controlled).
- * - `viewport` (controlled): pushed into the store whenever the prop changes; gestures still update
- *   the store optimistically and notify via `onZoomChange`, so a parent that feeds the value back
- *   settles without a loop (equality-guarded).
+ * - `viewport` (controlled): reasserted into the store whenever prop and store diverge; gestures
+ *   may propose changes through the store, but a parent that rejects them keeps the rendered
+ *   viewport authoritative.
  * - `onZoomChange`: called whenever the viewport changes, with both dimensions in `[0, 1]` form.
  *
  * Uses layout effects (like the axis reporters) so cross-chart sync, scrollbars, minimap, etc. that
@@ -46,10 +46,12 @@ export function ZoomStateSync({ options }: { options: ResolvedZoomOptions }): nu
       return undefined;
     }
     dispatch(setZoomLimits({ minZoom: options.minZoom, maxZoom: options.maxZoom }));
+    dispatch(setZoomAxis(options.axis));
     return () => {
       dispatch(setZoomLimits(null));
+      dispatch(setZoomAxis(null));
     };
-  }, [dispatch, isPanorama, options.minZoom, options.maxZoom]);
+  }, [dispatch, isPanorama, options.axis, options.minZoom, options.maxZoom]);
 
   // 1. Initial (uncontrolled) viewport, applied once.
   const didApplyInitial = useRef(false);
@@ -82,8 +84,8 @@ export function ZoomStateSync({ options }: { options: ResolvedZoomOptions }): nu
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  // 2. Controlled viewport -> store. Keyed on the prop only; the equality guard against the live
-  // store value prevents reverting an in-flight gesture before the parent echoes it back.
+  // 2. Controlled viewport -> store. Also keyed on the live zoom state so rejected gesture updates
+  // are reasserted even when the parent keeps passing the same viewport object.
   useLayoutEffect(() => {
     if (isPanorama || viewport == null) {
       return;
@@ -93,7 +95,7 @@ export function ZoomStateSync({ options }: { options: ResolvedZoomOptions }): nu
     if (current == null || !zoomStatesEqual(target, current)) {
       dispatch(setZoom(target));
     }
-  }, [viewport, isPanorama, dispatch]);
+  }, [viewport, zoom, isPanorama, dispatch]);
 
   // 3. Store -> onZoomChange.
   const lastNotified = useRef<ZoomState | undefined>(zoom);

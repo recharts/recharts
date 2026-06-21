@@ -42,6 +42,7 @@ export function PanoramaPreview({ x, y, width, height, data, children, padding }
     compact: true,
     data,
     syncId: undefined,
+    zoom: false,
     // The preview is purely decorative; it must not become a second focusable application.
     accessibilityLayer: false,
   });

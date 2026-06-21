@@ -21,6 +21,7 @@ function zoomInAtLowerPlot(wrapper: HTMLElement) {
 }
 
 const yCenter = () => (zoomApi.viewport.y.start + zoomApi.viewport.y.end) / 2;
+const xCenter = () => (zoomApi.viewport.x.start + zoomApi.viewport.x.end) / 2;
 
 describe('zoom orientation across layouts', () => {
   it('vertical layout (category y): zooming low on screen lands on the high (late-category) end', async () => {
@@ -53,5 +54,22 @@ describe('zoom orientation across layouts', () => {
     zoomInAtLowerPlot(wrapper);
     // Bottom of a value y axis is the domain minimum, so the window sits low (opposite of above).
     await waitFor(() => expect(yCenter()).toBeLessThan(0.45));
+  });
+
+  it('uses the first registered custom x-axis id for reversed-axis orientation', async () => {
+    const utils = render(
+      <BarChart width={400} height={300} data={data}>
+        <XAxis xAxisId="time" dataKey="name" type="category" reversed />
+        <YAxis yAxisId="value" type="number" />
+        <Bar xAxisId="time" yAxisId="value" dataKey="uv" isAnimationActive={false} />
+        <MouseWheelZoom axis="x" />
+        <Capture />
+      </BarChart>,
+    );
+    const wrapper = utils.container.querySelector('.recharts-wrapper') as HTMLElement;
+    fireEvent.wheel(wrapper, { deltaY: -120, clientX: 100, clientY: 150 });
+    fireEvent.wheel(wrapper, { deltaY: -120, clientX: 100, clientY: 150 });
+
+    await waitFor(() => expect(xCenter()).toBeGreaterThan(0.5));
   });
 });
