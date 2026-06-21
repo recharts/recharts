@@ -597,6 +597,130 @@ describe('Tooltip synchronization', () => {
     });
   });
 
+  describe('when syncMethod=value with syncValueFallback=closest on both charts with slightly different data arrays', () => {
+    // Simulate the scenario: two charts with overlapping but not identical data
+    // (like stock charts where one has 251 trading days and another has 252)
+    const data1 = [
+      { date: 'Day 1', price: 100 },
+      { date: 'Day 2', price: 105 },
+      { date: 'Day 3', price: 110 },
+      { date: 'Day 4', price: 108 },
+      { date: 'Day 5', price: 112 },
+      { date: 'Day 6', price: 115 },
+    ];
+
+    // data2 is missing 'Day 1' - like a returns chart that starts one day later
+    const data2 = [
+      { date: 'Day 2', returns: 5 },
+      { date: 'Day 3', returns: 4.8 },
+      { date: 'Day 4', returns: -1.8 },
+      { date: 'Day 5', returns: 3.7 },
+      { date: 'Day 6', returns: 2.7 },
+    ];
+
+    const renderTestCase = createSynchronisedSelectorTestCase(
+      ({ children }) => (
+        <LineChart
+          syncId="stockSync"
+          syncMethod="value"
+          syncValueFallback="closest"
+          data={data1}
+          width={400}
+          height={400}
+          className="chart-1"
+        >
+          <XAxis dataKey="date" />
+          <YAxis />
+          <Tooltip />
+          {children}
+          <Line type="monotone" dataKey="price" stroke="#8884d8" />
+        </LineChart>
+      ),
+      ({ children }) => (
+        <LineChart
+          syncId="stockSync"
+          syncMethod="value"
+          syncValueFallback="closest"
+          data={data2}
+          width={400}
+          height={400}
+          className="chart-2"
+        >
+          <XAxis dataKey="date" />
+          <YAxis />
+          <Tooltip />
+          {children}
+          <Line type="monotone" dataKey="returns" stroke="#82ca9d" />
+        </LineChart>
+      ),
+    );
+
+    test('should show synced tooltip on chart B when hovering a shared data point on chart A', () => {
+      const { wrapperA, wrapperB, debug } = renderTestCase();
+
+      expectTooltipNotVisible(wrapperA);
+      expectTooltipNotVisible(wrapperB);
+
+      showTooltip(wrapperA, lineChartMouseHoverTooltipSelector, debug);
+
+      // The default hover lands on data point at index 2 (roughly middle of chart)
+      // which is 'Day 3' - a date that exists in both charts
+      expectTooltipPayload(wrapperA, 'Day 3', ['price : 110']);
+      expectTooltipPayload(wrapperB, 'Day 3', ['returns : 4.8']);
+    });
+
+    test('synced chart should show tooltip even when hovered date only exists in chart A', () => {
+      const { wrapperA, spyB, debug } = renderTestCase(selectSynchronisedTooltipState);
+
+      // Hover near the left edge to hit 'Day 1' which only exists in chart A
+      showTooltipOnCoordinate(wrapperA, lineChartMouseHoverTooltipSelector, { clientX: 70, clientY: 200 }, debug);
+
+      const syncB = spyB.mock.calls[spyB.mock.calls.length - 1][0];
+
+      // Chart B should have an active synced tooltip, even though 'Day 1' doesn't exist in its data.
+      // The fix falls back to the closest available tick in chart B.
+      expect(syncB.active).toBe(true);
+      expect(syncB.index).not.toBeNull();
+    });
+
+    test('should spy on sync state to understand what label is sent', () => {
+      const { wrapperA, spyA, spyB, debug } = renderTestCase(selectSynchronisedTooltipState);
+
+      showTooltip(wrapperA, lineChartMouseHoverTooltipSelector, debug);
+
+      // Chart A should NOT have sync state active (it's the sender)
+      const syncStateA = spyA.mock.calls[spyA.mock.calls.length - 1][0];
+      expect(syncStateA.active).toBe(false);
+
+      // Chart B SHOULD have sync state active
+      const syncStateB = spyB.mock.calls[spyB.mock.calls.length - 1][0];
+      expect(syncStateB.active).toBe(true);
+      expect(syncStateB.label).toBeDefined();
+      expect(syncStateB.index).not.toBeNull();
+    });
+
+    test('synced tooltip should remain active at all positions across the chart', () => {
+      const { wrapperA, spyB, debug } = renderTestCase(selectSynchronisedTooltipState);
+
+      // Hover at multiple positions across chart A, including the left edge
+      // where 'Day 1' exists in chart A but not in chart B
+      const positions = [
+        { clientX: 70, clientY: 200 }, // left edge - 'Day 1' (not in chart B)
+        { clientX: 130, clientY: 200 }, // 'Day 2' area
+        { clientX: 200, clientY: 200 }, // middle
+        { clientX: 300, clientY: 200 }, // 'Day 5' area
+        { clientX: 370, clientY: 200 }, // near right edge - 'Day 6'
+      ];
+
+      for (const pos of positions) {
+        showTooltipOnCoordinate(wrapperA, lineChartMouseHoverTooltipSelector, pos, debug);
+        const state = spyB.mock.calls[spyB.mock.calls.length - 1][0];
+        expect(state.active).toBe(true);
+        expect(state.index).not.toBeNull();
+      }
+    });
+  });
+
   describe('selectActiveCoordinate', () => {
     it('should return undefined for initial state', () => {
       const store = createRechartsStore();

@@ -1,6 +1,6 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { StackOffsetType } from '../util/types';
-import { SyncMethod } from '../synchronisation/types';
+import { SyncMethod, SyncValueFallback } from '../synchronisation/types';
 import { BaseValue } from '../cartesian/Area';
 
 /**
@@ -24,6 +24,7 @@ export type UpdatableChartOptions = {
    */
   syncId: number | string | undefined;
   syncMethod: SyncMethod;
+  syncValueFallback: SyncValueFallback;
   baseValue: BaseValue | undefined;
   /**
    * If false, stacked items will be rendered left to right. If true, stacked items will be rendered right to left.
@@ -42,6 +43,7 @@ export const initialState: UpdatableChartOptions = {
   stackOffset: 'none',
   syncId: undefined,
   syncMethod: 'index',
+  syncValueFallback: 'none',
   baseValue: undefined,
   reverseStackOrder: false,
 };
@@ -59,6 +61,7 @@ const rootPropsSlice = createSlice({
       state.stackOffset = action.payload.stackOffset;
       state.syncId = action.payload.syncId;
       state.syncMethod = action.payload.syncMethod;
+      state.syncValueFallback = action.payload.syncValueFallback;
       state.className = action.payload.className;
       state.baseValue = action.payload.baseValue;
       state.reverseStackOrder = action.payload.reverseStackOrder;

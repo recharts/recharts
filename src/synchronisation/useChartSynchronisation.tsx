@@ -1,7 +1,12 @@
 import { useEffect } from 'react';
 import { PayloadAction } from '@reduxjs/toolkit';
 import { useAppDispatch, useAppSelector } from '../state/hooks';
-import { selectEventEmitter, selectSyncId, selectSyncMethod } from '../state/selectors/rootPropsSelectors';
+import {
+  selectEventEmitter,
+  selectSyncId,
+  selectSyncMethod,
+  selectSyncValueFallback,
+} from '../state/selectors/rootPropsSelectors';
 import { BRUSH_SYNC_EVENT, eventCenter, TOOLTIP_SYNC_EVENT } from '../util/Events';
 import { createEventEmitter } from '../state/optionsSlice';
 import { setSyncInteraction, TooltipIndex, TooltipSyncState } from '../state/tooltipSlice';
@@ -15,6 +20,62 @@ import { BrushStartEndIndex } from '../context/brushUpdateContext';
 import { setDataStartEndIndexes } from '../state/chartDataSlice';
 import { ActiveLabel, MouseHandlerDataParam } from './types';
 import { noop } from '../util/DataUtils';
+
+/**
+ * When syncMethod="value" cannot find an exact label match in the receiving chart's ticks,
+ * this function finds the closest tick using binary search on string-compared values.
+ *
+ * This handles cases where synced charts have slightly different data arrays
+ * (e.g., one chart starts a day earlier than another). Instead of hiding the tooltip
+ * entirely, the receiving chart shows the nearest available data point.
+ *
+ * When a label falls between two ticks, this function deterministically returns
+ * the previous tick (the last tick whose string value is less than the label),
+ * rather than computing actual lexicographic or numeric proximity.
+ *
+ * Note: comparison is purely lexicographic (via String(tick.value) < label).
+ * This means ticks must be sorted by their string representation for correct results.
+ * Numeric labels like "Day 10" sort before "Day 2" lexicographically, which may
+ * differ from numeric ordering. In practice, axis ticks arrive in display order
+ * which matches string sort order for consistently formatted labels.
+ */
+export function findClosestTick(ticks: ReadonlyArray<TickItem>, label: string): TickItem | undefined {
+  const len = ticks.length;
+  if (len === 0) {
+    return undefined;
+  }
+
+  let lo = 0;
+  let hi = len - 1;
+
+  while (lo < hi) {
+    const mid = (lo + hi) >> 1;
+    const midTick = ticks[mid];
+    if (midTick != null && String(midTick.value) < label) {
+      lo = mid + 1;
+    } else {
+      hi = mid;
+    }
+  }
+
+  // lo is now the index of the first tick >= label.
+  // Check if the tick before lo is closer.
+  if (lo > 0 && lo < len) {
+    const prevTick = ticks[lo - 1];
+    const currTick = ticks[lo];
+    if (prevTick != null && currTick != null) {
+      const prev = String(prevTick.value);
+      const curr = String(currTick.value);
+      if (label > prev && label < curr) {
+        return prevTick;
+      }
+    }
+  }
+
+  // Clamp to valid range
+  const clampedIndex = Math.min(lo, len - 1);
+  return ticks[clampedIndex];
+}
 
 /**
  * Listens for tooltip sync events from other charts and dispatches the appropriate
@@ -33,6 +94,7 @@ function useTooltipSyncEventsListener() {
   const myEventEmitter = useAppSelector(selectEventEmitter);
   const dispatch = useAppDispatch();
   const syncMethod = useAppSelector(selectSyncMethod);
+  const syncValueFallback = useAppSelector(selectSyncValueFallback);
   const tooltipTicks = useAppSelector(selectTooltipAxisTicks);
   const layout = useChartLayout();
   const viewBox = useViewBox();
@@ -124,6 +186,17 @@ function useTooltipSyncEventsListener() {
       } else if (syncMethod === 'value') {
         // labels are always strings, tick.value might be a string or a number, depending on axis type
         activeTick = tooltipTicks.find(tick => String(tick.value) === action.payload.label);
+        if (
+          activeTick == null &&
+          syncValueFallback === 'closest' &&
+          action.payload.label != null &&
+          tooltipTicks.length > 0
+        ) {
+          // If no exact match was found, find the closest tick by comparing string values.
+          // This handles cases where the synced chart has slightly different data
+          // (e.g., one chart has 251 data points and another has 252).
+          activeTick = findClosestTick(tooltipTicks, action.payload.label);
+        }
       }
 
       const { coordinate } = action.payload;
@@ -194,7 +267,7 @@ function useTooltipSyncEventsListener() {
     return () => {
       eventCenter.off(TOOLTIP_SYNC_EVENT, listener);
     };
-  }, [className, dispatch, myEventEmitter, mySyncId, syncMethod, tooltipTicks, layout, viewBox]);
+  }, [className, dispatch, myEventEmitter, mySyncId, syncMethod, syncValueFallback, tooltipTicks, layout, viewBox]);
 }
 
 /**
