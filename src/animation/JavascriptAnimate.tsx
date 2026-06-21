@@ -6,7 +6,7 @@ import { createEasingFunction, EasingInput } from './easing';
 import { useAnimationController } from './useAnimationController';
 import { Global } from '../util/Global';
 import { usePrefersReducedMotion } from '../util/usePrefersReducedMotion';
-import { JavascriptAnimation } from './AnimationStateMachine';
+import { JavascriptAnimation } from './AnimationHandle';
 import { RequestAnimationFrameTimeoutController } from './timeoutController';
 import { AnimationController } from './AnimationController';
 
@@ -55,7 +55,7 @@ export function JavascriptAnimate(outsideProps: JavascriptAnimateProps) {
   const isActive = isActiveProp === 'auto' ? !Global.isSsr && !prefersReducedMotion : isActiveProp;
 
   const animationController = useAnimationController(props.animationController);
-  const [style, setStyle] = useState<number>(isActive ? from : to);
+  const [style, setStyle] = useState<number | string>(isActive ? from : to);
 
   useEffect(() => {
     if (!isActive) {
@@ -86,5 +86,5 @@ export function JavascriptAnimate(outsideProps: JavascriptAnimateProps) {
     return animationController(timeoutController, animation, setStyle);
   }, [animationController, animationId, isActive, canBegin, duration, easing, begin, onAnimationStart, onAnimationEnd]);
 
-  return children(style);
+  return children(Number(style));
 }

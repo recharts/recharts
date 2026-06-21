@@ -3,7 +3,7 @@
   "lib/animation/AnimatedItems.js",
   "lib/animation/AnimationController.js",
   "lib/animation/AnimationControllerImpl.js",
-  "lib/animation/AnimationStateMachine.js",
+  "lib/animation/AnimationHandle.js",
   "lib/animation/CSSTransitionAnimate.js",
   "lib/animation/JavascriptAnimate.js",
   "lib/animation/easing.js",

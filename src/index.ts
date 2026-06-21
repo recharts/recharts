@@ -162,10 +162,17 @@ export type {
   TickItem,
 } from './util/types';
 export type { IfOverflow } from './util/IfOverflow';
+
 export type { EasingInput } from './animation/easing';
 export type { AnimationInterpolateFn } from './animation/AnimatedItems';
 export type { AnimationItem, AnimationMatchBy, AnimationMatchByProp } from './animation/matchBy';
 export { matchByIndex, matchByDataKey, matchAppend } from './animation/matchBy';
+export type { AnimationHandle } from './animation/AnimationHandle';
+export { JavascriptAnimation, CSSTransitionAnimation } from './animation/AnimationHandle';
+export type { AnimationController, OnAnimationStateUpdate } from './animation/AnimationController';
+export type { TimeoutController, CancelableTimeout } from './animation/timeoutController';
+export { AnimationControllerProvider } from './animation/useAnimationController';
+
 export { AreaRevealShape } from './cartesian/AreaRevealShape';
 export type { AreaRevealShapeProps } from './cartesian/AreaRevealShape';
 export { LineDrawShape } from './cartesian/LineDrawShape';
