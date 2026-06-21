@@ -152,6 +152,14 @@ describe('Documentation Examples Coverage', () => {
     'LineDrawShape',
     'LinePointItem',
     'matchAppend',
+    'AnimationController',
+    'AnimationControllerProvider',
+    'AnimationHandle',
+    'CancelableTimeout',
+    'CSSTransitionAnimation',
+    'JavascriptAnimation',
+    'OnAnimationStateUpdate',
+    'TimeoutController',
   ];
 
   /*

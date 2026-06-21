@@ -1,6 +1,6 @@
-import { describe, it, expect } from 'vitest';
+import { describe, expect, it } from 'vitest';
 import { identity } from 'es-toolkit';
-import { CSSTransitionAnimation, JavascriptAnimation } from '../../src/animation/AnimationStateMachine';
+import { CSSTransitionAnimation, JavascriptAnimation } from '../../src';
 import { noop } from '../../src/util/DataUtils';
 import { expectLastCalledWith } from '../helper/expectLastCalledWith';
 

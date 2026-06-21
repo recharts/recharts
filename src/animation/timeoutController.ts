@@ -1,14 +1,29 @@
 /**
  * Callback type for the timeout function.
- * Receives current time in milliseconds as an argument.
+ * Receives current time as an argument.
  */
 export type CallbackType = (now: number) => void;
 
 /**
  * A function that, when called, cancels the timeout.
+ *
+ * @since 3.9
  */
 export type CancelableTimeout = () => void;
 
+/**
+ * TimeoutController is responsible for controlling the movement of time.
+ * Think of it as a clock.
+ *
+ * Recharts default implementation uses requestAnimationFrame which works great in a browser.
+ * You may choose to override this which is especially useful if you want to control animations.
+ *
+ * Why would you want to do this?
+ * - unit tests
+ * - animations based on something other than time: UI controls, page scroll, mouse movement ...
+ *
+ * @since 3.9
+ */
 export interface TimeoutController {
   /**
    * Sets a timeout that executes a callback after a specified delay.
@@ -37,9 +52,7 @@ export class RequestAnimationFrameTimeoutController implements TimeoutController
     const executeCallback = (now: number): void => {
       if (now - startTime >= delay) {
         callback(now);
-        // tests fail without the extra if, even when five lines below it's not needed
-        // TODO finish transition to the mocked timeout controller and then remove this condition
-      } else if (typeof requestAnimationFrame === 'function') {
+      } else {
         requestId = requestAnimationFrame(executeCallback);
       }
     };

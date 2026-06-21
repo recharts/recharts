@@ -1,5 +1,5 @@
-import { AnimationController } from './AnimationController';
-import { AnimationStateMachine } from './AnimationStateMachine';
+import { AnimationController, OnAnimationStateUpdate } from './AnimationController';
+import { AnimationHandle } from './AnimationHandle';
 import { CancelableTimeout, TimeoutController } from './timeoutController';
 
 /**
@@ -9,10 +9,10 @@ import { CancelableTimeout, TimeoutController } from './timeoutController';
  * JavaScript animation progress is represented as a stream of values. The exact type depends on the animationHandle type.
  * Each individual consumer is then responsible for mapping those values onto a React component.
  */
-export const animationControllerImpl: AnimationController = <T, E>(
+export const animationControllerImpl: AnimationController = (
   timeoutController: TimeoutController,
-  animationHandle: AnimationStateMachine<T, E>,
-  listener: (progress: T) => void,
+  animationHandle: AnimationHandle,
+  listener: OnAnimationStateUpdate,
 ): CancelableTimeout => {
   let cancellable: CancelableTimeout | undefined;
   const nextUpdate = (now: number) => {
