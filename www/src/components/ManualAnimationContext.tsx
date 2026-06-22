@@ -188,7 +188,7 @@ export function ManualAnimationControls({
             style={radioInputStyle}
             type="radio"
             name={id}
-            defaultChecked={!isManualAnimationEnabled}
+            checked={!isManualAnimationEnabled}
             onChange={() => onToggle(false)}
           />
           Autoplay Animations (default)
@@ -198,7 +198,7 @@ export function ManualAnimationControls({
             style={radioInputStyle}
             type="radio"
             name={id}
-            defaultChecked={isManualAnimationEnabled}
+            checked={isManualAnimationEnabled}
             onChange={() => onToggle(true)}
           />
           Manual Animations
