@@ -1071,7 +1071,7 @@ function BarImpl(props: BarImplProps) {
 
 export function computeBarRectangles({
   layout,
-  barSettings: { dataKey, minPointSize: minPointSizeProp, hasCustomShape },
+  barSettings: { dataKey, minPointSize: minPointSizeProp },
   pos,
   bandSize,
   xAxis,
@@ -1184,13 +1184,7 @@ export function computeBarRectangles({
        * Bars with a custom shape are not filtered out: the custom renderer may still draw something
        * visible at zero-dimension positions (e.g. horizontal lines in a BoxPlot).
        */
-      if (
-        x == null ||
-        y == null ||
-        width == null ||
-        height == null ||
-        (!hasCustomShape && (width === 0 || height === 0))
-      ) {
+      if (x == null || y == null || width == null || height == null) {
         return null;
       }
 

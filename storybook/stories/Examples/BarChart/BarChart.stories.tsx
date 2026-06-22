@@ -671,6 +671,56 @@ export const ChangingData = {
   },
 };
 
+export const ChangingDataToZero = {
+  render: (args: Args) => {
+    type MyDataShape = Array<{ number: number }>;
+
+    const [data, setData] = useState<MyDataShape>([{ number: 10 }]);
+
+    const reset = () => {
+      setData([{ number: 10 }]);
+    };
+
+    const changeSynchronously = () => {
+      setData([{ number: 0 }]);
+    };
+
+    const changeAsynchronously = () => {
+      setData([{ number: 90 }]);
+
+      setTimeout(() => {
+        setData([{ number: 0 }]);
+      }, 150);
+    };
+
+    return (
+      <div style={{ display: 'flex', gap: '4rem', alignItems: 'center' }}>
+        <BarChart {...args} data={data}>
+          <YAxis hide domain={[0, 100]} />
+          <Bar dataKey="number" fill="chocolate" background={{ fill: 'bisque' }} />
+        </BarChart>
+
+        <button type="button" onClick={changeSynchronously}>
+          Change data synchronously
+        </button>
+
+        <button type="button" onClick={changeAsynchronously}>
+          Change data with setTimeout
+        </button>
+
+        <button type="button" onClick={reset}>
+          Reset
+        </button>
+      </div>
+    );
+  },
+  args: {
+    ...getStoryArgsFromArgsTypesObject(BarChartArgs),
+    width: 100,
+    height: 100,
+  },
+};
+
 export const VerticalWithLabelLists = {
   render: (args: Args) => {
     return (
