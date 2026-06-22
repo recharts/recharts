@@ -1,4 +1,14 @@
-import React, { createContext, ReactNode, useCallback, useContext, useEffect, useId, useRef, useState } from 'react';
+import React, {
+  createContext,
+  CSSProperties,
+  ReactNode,
+  useCallback,
+  useContext,
+  useEffect,
+  useId,
+  useRef,
+  useState,
+} from 'react';
 import {
   AnimationController,
   AnimationControllerProvider,
@@ -137,6 +147,30 @@ function TimeSetter() {
   );
 }
 
+/* Container: Stack items vertically with a clean gap between rows */
+const radioGroupStyle: CSSProperties = {
+  display: 'flex',
+  gap: '12px',
+};
+
+/* Label: Vertically centers the default circle with the text */
+const radioLabelStyle = {
+  display: 'flex',
+  alignItems: 'center' /* Forces perfect vertical alignment */,
+  gap: '8px' /* Adjust this to change space between circle and text */,
+  cursor: 'pointer',
+  fontSize: '16px',
+  color: '#333',
+};
+
+/* Optional: Make the default radio slightly larger if it feels tiny */
+const radioInputStyle = {
+  margin: 0 /* Removes default browser margins that mess up alignment */,
+  width: '16px',
+  height: '16px',
+  cursor: 'pointer',
+};
+
 export function ManualAnimationControls({
   isManualAnimationEnabled,
   onToggle,
@@ -148,14 +182,28 @@ export function ManualAnimationControls({
   const id = useId();
   return (
     <>
-      <label>
-        <input type="radio" name={id} defaultChecked={!isManualAnimationEnabled} onChange={() => onToggle(false)} />
-        Autoplay Animations (default)
-      </label>
-      <label>
-        <input type="radio" name={id} defaultChecked={isManualAnimationEnabled} onChange={() => onToggle(true)} />
-        Manual Animations
-      </label>
+      <div style={radioGroupStyle}>
+        <label style={radioLabelStyle}>
+          <input
+            style={radioInputStyle}
+            type="radio"
+            name={id}
+            defaultChecked={!isManualAnimationEnabled}
+            onChange={() => onToggle(false)}
+          />
+          Autoplay Animations (default)
+        </label>
+        <label style={radioLabelStyle}>
+          <input
+            style={radioInputStyle}
+            type="radio"
+            name={id}
+            defaultChecked={isManualAnimationEnabled}
+            onChange={() => onToggle(true)}
+          />
+          Manual Animations
+        </label>
+      </div>
       {isManualAnimationEnabled && (
         <>
           <p>Time is paused. Control the animation progress by dragging the red line below.</p>
