@@ -1,0 +1,121 @@
+# Instructions
+
+- Following Playwright test failed.
+- Explain why, be concise, respect Playwright best practices.
+- Provide a snippet of code with the fix, if possible.
+
+# Test info
+
+- Name: tests/www/Customize.spec-vr.tsx >> CustomizeTooltipContent
+- Location: test-vr/tests/www/Customize.spec-vr.tsx:19:5
+
+# Error details
+
+```
+Error: expect(locator).toHaveScreenshot(expected) failed
+
+Locator: locator('#root').locator('internal:control=component')
+  77 pixels (ratio 0.01 of all image pixels) are different.
+
+Call log:
+  - Expect "toHaveScreenshot" with timeout 10000ms
+    - verifying given screenshot expectation
+  - waiting for locator('#root').locator('internal:control=component')
+    - locator resolved to <div width="600" height="300" class="recharts-wrapper">…</div>
+  - taking element screenshot
+    - disabled all CSS animations
+  - waiting for fonts to load...
+  - fonts loaded
+  - attempting scroll into view action
+    - waiting for element to be stable
+  - 32931 pixels (ratio 0.19 of all image pixels) are different.
+  - waiting 100ms before taking screenshot
+  - waiting for locator('#root').locator('internal:control=component')
+    - locator resolved to <div width="600" height="300" class="recharts-wrapper">…</div>
+  - taking element screenshot
+    - disabled all CSS animations
+  - waiting for fonts to load...
+  - fonts loaded
+  - attempting scroll into view action
+    - waiting for element to be stable
+  - 32854 pixels (ratio 0.19 of all image pixels) are different.
+  - waiting 250ms before taking screenshot
+  - waiting for locator('#root').locator('internal:control=component')
+    - locator resolved to <div width="600" height="300" class="recharts-wrapper">…</div>
+  - taking element screenshot
+    - disabled all CSS animations
+  - waiting for fonts to load...
+  - fonts loaded
+  - attempting scroll into view action
+    - waiting for element to be stable
+  - captured a stable screenshot
+  - 77 pixels (ratio 0.01 of all image pixels) are different.
+
+```
+
+# Page snapshot
+
+```yaml
+- generic [active] [ref=e1]:
+  - generic [ref=e3]:
+    - generic:
+      - generic:
+        - paragraph: "Page C : 300"
+        - paragraph: Page C is about women's bag
+        - paragraph: Anything you want can be displayed here.
+    - application [ref=e4]:
+      - generic [ref=e36]:
+        - generic [ref=e37]:
+          - generic [ref=e39]: Page A
+          - generic [ref=e41]: Page B
+          - generic [ref=e43]: Page C
+          - generic [ref=e45]: Page D
+          - generic [ref=e47]: Page E
+          - generic [ref=e49]: Page F
+        - generic [ref=e50]:
+          - generic [ref=e52]: "0"
+          - generic [ref=e54]: "100"
+          - generic [ref=e56]: "200"
+          - generic [ref=e58]: "300"
+          - generic [ref=e60]: "400"
+  - generic [ref=e61]: "0"
+```
+
+# Test source
+
+```ts
+  1  | import * as React from 'react';
+  2  | import { test, expect } from '@playwright/experimental-ct-react';
+  3  | import CustomizeLabels from '../../../www/src/components/GuideView/Customize/CustomizeLabels';
+  4  | import CustomizeBarShape from '../../../www/src/components/GuideView/Customize/CustomizeBarShape';
+  5  | import CustomizeTooltipContent from '../../../www/src/components/GuideView/Customize/CustomizeTooltipContent';
+  6  | import CustomizeSizeAndStroke from '../../../www/src/components/GuideView/Customize/CustomizeSizeAndStroke';
+  7  | import CustomizeLegendAndTooltipStyle from '../../../www/src/components/GuideView/Customize/CustomizeLegendAndTooltipStyle';
+  8  | 
+  9  | test('CustomizeLabels', async ({ mount }) => {
+  10 |   const component = await mount(<CustomizeLabels />);
+  11 |   await expect(component).toHaveScreenshot();
+  12 | });
+  13 | 
+  14 | test('CustomizeBarShape', async ({ mount }) => {
+  15 |   const component = await mount(<CustomizeBarShape />);
+  16 |   await expect(component).toHaveScreenshot();
+  17 | });
+  18 | 
+  19 | test('CustomizeTooltipContent', async ({ mount }) => {
+  20 |   const component = await mount(<CustomizeTooltipContent />);
+> 21 |   await expect(component).toHaveScreenshot();
+     |                           ^ Error: expect(locator).toHaveScreenshot(expected) failed
+  22 | });
+  23 | 
+  24 | test('CustomizeSizeAndStroke', async ({ mount }) => {
+  25 |   const component = await mount(<CustomizeSizeAndStroke />);
+  26 |   await expect(component).toHaveScreenshot();
+  27 | });
+  28 | 
+  29 | test('CustomizeLegendAndTooltipStyle', async ({ mount }) => {
+  30 |   const component = await mount(<CustomizeLegendAndTooltipStyle />);
+  31 |   await expect(component).toHaveScreenshot();
+  32 | });
+  33 | 
+```

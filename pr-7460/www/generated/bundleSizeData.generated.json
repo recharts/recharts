@@ -1,45 +1,45 @@
 {
   "treemap": {
     "examplePath": "www/src/views/IndexView/IndexLineChart.tsx",
-    "totalSize": 809418,
-    "totalSizeLabel": "790.45 KB",
+    "totalSize": 813107,
+    "totalSizeLabel": "794.05 KB",
     "moduleCount": 318,
-    "generatedAt": "2026-06-20T07:33:03.038Z",
+    "generatedAt": "2026-06-22T13:32:00.224Z",
     "stages": [
       {
         "stage": "es6-folder",
-        "bytes": 1252434,
-        "humanReadableSize": "1.19 MB",
+        "bytes": 1256559,
+        "humanReadableSize": "1.20 MB",
         "reductionFromBaselinePercent": 0
       },
       {
         "stage": "tree-shaken",
-        "bytes": 812932,
-        "humanReadableSize": "793.88 KB",
+        "bytes": 816621,
+        "humanReadableSize": "797.48 KB",
         "reductionFromBaselinePercent": 0
       },
       {
         "stage": "minified",
-        "bytes": 280879,
-        "humanReadableSize": "274.30 KB",
-        "reductionFromBaselinePercent": 65.45
+        "bytes": 280988,
+        "humanReadableSize": "274.40 KB",
+        "reductionFromBaselinePercent": 65.59
       },
       {
         "stage": "minified+gzip",
-        "bytes": 91990,
-        "humanReadableSize": "89.83 KB",
-        "reductionFromBaselinePercent": 88.68
+        "bytes": 92026,
+        "humanReadableSize": "89.87 KB",
+        "reductionFromBaselinePercent": 88.73
       }
     ],
     "tree": {
       "name": "bundle",
       "fullPath": "bundle",
-      "value": 809418,
+      "value": 813107,
       "children": [
         {
           "name": "src",
           "fullPath": "src",
-          "value": 447894,
+          "value": 451583,
           "children": [
             {
               "name": "state",
@@ -727,17 +727,17 @@
             {
               "name": "animation",
               "fullPath": "src/animation",
-              "value": 28628,
+              "value": 32317,
               "children": [
+                {
+                  "name": "AnimationHandle.ts",
+                  "fullPath": "src/animation/AnimationHandle.ts",
+                  "value": 7884
+                },
                 {
                   "name": "matchBy.ts",
                   "fullPath": "src/animation/matchBy.ts",
                   "value": 5864
-                },
-                {
-                  "name": "RechartsAnimation.ts",
-                  "fullPath": "src/animation/RechartsAnimation.ts",
-                  "value": 5547
                 },
                 {
                   "name": "easing.ts",
@@ -757,22 +757,22 @@
                 {
                   "name": "JavascriptAnimate.tsx",
                   "fullPath": "src/animation/JavascriptAnimate.tsx",
-                  "value": 1578
+                  "value": 1601
+                },
+                {
+                  "name": "useAnimationController.tsx",
+                  "fullPath": "src/animation/useAnimationController.tsx",
+                  "value": 1438
+                },
+                {
+                  "name": "timeoutController.ts",
+                  "fullPath": "src/animation/timeoutController.ts",
+                  "value": 1149
                 },
                 {
                   "name": "AnimationControllerImpl.ts",
                   "fullPath": "src/animation/AnimationControllerImpl.ts",
                   "value": 1107
-                },
-                {
-                  "name": "timeoutController.ts",
-                  "fullPath": "src/animation/timeoutController.ts",
-                  "value": 911
-                },
-                {
-                  "name": "useAnimationManager.tsx",
-                  "fullPath": "src/animation/useAnimationManager.tsx",
-                  "value": 347
                 }
               ]
             },
@@ -2282,45 +2282,45 @@
   },
   "sunburst": {
     "examplePath": "www/src/views/IndexView/IndexLineChart.tsx",
-    "totalSize": 809418,
-    "totalSizeLabel": "790.45 KB",
+    "totalSize": 813107,
+    "totalSizeLabel": "794.05 KB",
     "moduleCount": 318,
-    "generatedAt": "2026-06-20T07:33:04.781Z",
+    "generatedAt": "2026-06-22T13:32:02.169Z",
     "stages": [
       {
         "stage": "es6-folder",
-        "bytes": 1252434,
-        "humanReadableSize": "1.19 MB",
+        "bytes": 1256559,
+        "humanReadableSize": "1.20 MB",
         "reductionFromBaselinePercent": 0
       },
       {
         "stage": "tree-shaken",
-        "bytes": 812932,
-        "humanReadableSize": "793.88 KB",
+        "bytes": 816621,
+        "humanReadableSize": "797.48 KB",
         "reductionFromBaselinePercent": 0
       },
       {
         "stage": "minified",
-        "bytes": 280879,
-        "humanReadableSize": "274.30 KB",
-        "reductionFromBaselinePercent": 65.45
+        "bytes": 280988,
+        "humanReadableSize": "274.40 KB",
+        "reductionFromBaselinePercent": 65.59
       },
       {
         "stage": "minified+gzip",
-        "bytes": 91990,
-        "humanReadableSize": "89.83 KB",
-        "reductionFromBaselinePercent": 88.68
+        "bytes": 92026,
+        "humanReadableSize": "89.87 KB",
+        "reductionFromBaselinePercent": 88.73
       }
     ],
     "tree": {
       "name": "bundle",
       "fullPath": "bundle",
-      "value": 809418,
+      "value": 813107,
       "children": [
         {
           "name": "src",
           "fullPath": "src",
-          "value": 447894,
+          "value": 451583,
           "children": [
             {
               "name": "state",
@@ -3008,17 +3008,17 @@
             {
               "name": "animation",
               "fullPath": "src/animation",
-              "value": 28628,
+              "value": 32317,
               "children": [
+                {
+                  "name": "AnimationHandle.ts",
+                  "fullPath": "src/animation/AnimationHandle.ts",
+                  "value": 7884
+                },
                 {
                   "name": "matchBy.ts",
                   "fullPath": "src/animation/matchBy.ts",
                   "value": 5864
-                },
-                {
-                  "name": "RechartsAnimation.ts",
-                  "fullPath": "src/animation/RechartsAnimation.ts",
-                  "value": 5547
                 },
                 {
                   "name": "easing.ts",
@@ -3038,22 +3038,22 @@
                 {
                   "name": "JavascriptAnimate.tsx",
                   "fullPath": "src/animation/JavascriptAnimate.tsx",
-                  "value": 1578
+                  "value": 1601
+                },
+                {
+                  "name": "useAnimationController.tsx",
+                  "fullPath": "src/animation/useAnimationController.tsx",
+                  "value": 1438
+                },
+                {
+                  "name": "timeoutController.ts",
+                  "fullPath": "src/animation/timeoutController.ts",
+                  "value": 1149
                 },
                 {
                   "name": "AnimationControllerImpl.ts",
                   "fullPath": "src/animation/AnimationControllerImpl.ts",
                   "value": 1107
-                },
-                {
-                  "name": "timeoutController.ts",
-                  "fullPath": "src/animation/timeoutController.ts",
-                  "value": 911
-                },
-                {
-                  "name": "useAnimationManager.tsx",
-                  "fullPath": "src/animation/useAnimationManager.tsx",
-                  "value": 347
                 }
               ]
             },
