@@ -48,6 +48,8 @@ import AnimatedBarTimeSeriesExample, {
   animatedBarTimeSeriesLevers,
 } from './AnimatedBarTimeSeriesExample.tsx';
 import AnimatedBarTimeSeriesExampleSource from './AnimatedBarTimeSeriesExample.tsx?raw';
+import ScrollAnimateBarChart from './ScrollAnimateBarChart.tsx';
+import ScrollAnimateBarChartSource from './ScrollAnimateBarChart.tsx?raw';
 
 export { BarChartNavExample };
 
@@ -222,5 +224,17 @@ export const barChartExamples = {
     Component: TinyBarChart,
     sourceCode: tinyBarChartSource,
     name: 'Tiny Bar Chart',
+  },
+  ScrollAnimateBarChart: {
+    Component: ScrollAnimateBarChart,
+    sourceCode: ScrollAnimateBarChartSource,
+    name: 'Animate by Scroll',
+    description: (
+      <p>
+        This example uses new components introduced in 3.9 to animate the chart based on the scroll position. The
+        animation controller is provided by a custom function that listens to the window scroll event and updates the
+        animation time.
+      </p>
+    ),
   },
 } satisfies Record<string, ChartExample>;
