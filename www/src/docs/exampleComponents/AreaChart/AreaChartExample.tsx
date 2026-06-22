@@ -76,6 +76,8 @@ const AreaChartExample = ({ isAnimationActive = true }) => (
       fillOpacity={1}
       fill="url(#colorUv)"
       isAnimationActive={isAnimationActive}
+      animationBegin={200}
+      animationDuration={1300}
     />
     <Area
       type="monotone"
