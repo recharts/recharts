@@ -4,15 +4,11 @@ import { act } from '@testing-library/react';
 import { createSelectorTestCase } from '../../helper/createSelectorTestCase';
 import { PageData } from '../../_data';
 import { Pie, PieChart } from '../../../src';
-import {
-  expectPieSectors,
-  selectPieSectors,
-  getPieSectorAngles,
-  expectPieSectorAngles,
-} from '../../helper/expectPieSectors';
+import { expectPieSectorAngles, expectPieSectors } from '../../helper/expectPieSectors';
 import { assertNotNull } from '../../helper/assertNotNull';
-import { trim } from '../../helper/trim';
 import { MockAnimationManager } from '../../animation/MockProgressAnimationManager';
+import { expectAnimatedPiePaths } from '../../helper/expectAnimatedPiePaths';
+import { expectAnimatedPieAngles } from '../../helper/expectAnimatedPieAngles';
 
 const smallerData = PageData.slice(0, 3);
 
@@ -24,164 +20,6 @@ const finalSectorPaths = [
   { d: 'M 32,18.8231 A 36,36,0, 0,0, 32,81.1769 L 50,50 Z' },
   { d: 'M 32,81.1769 A 36,36,0, 0,0, 86,50 L 50,50 Z' },
 ];
-
-async function expectAnimatedPiePaths(
-  container: Element,
-  animationManager: MockAnimationManager,
-  steps: number = 5,
-): Promise<ReadonlyArray<ReadonlyArray<string>>> {
-  assertNotNull(container);
-  /*
-   * Pie sectors at 0% progress do not render at all, so we
-   * start from 0.1 so that the sectors have rendered a little bit.
-   */
-  let animationProgress = 0.1;
-  await animationManager.setAnimationProgress(animationProgress);
-  const stepSize = (1 - animationProgress) / steps;
-  const initialPieSectors = selectPieSectors(container);
-  expect(initialPieSectors.length).toBeGreaterThan(0);
-  const getD = (sector: Element) => {
-    const trimmed = trim(sector.getAttribute('d'));
-    assertNotNull(trimmed);
-    return trimmed;
-  };
-  const initialPathDs = Array.from(initialPieSectors).map(getD);
-  const initialAttributes = Array.from(initialPieSectors).map(sector => ({
-    fill: sector.getAttribute('fill'),
-    stroke: sector.getAttribute('stroke'),
-  }));
-
-  const pathDsDuringAnimation: string[][] = [];
-  for (animationProgress += stepSize; animationProgress < 1; animationProgress += stepSize) {
-    // eslint-disable-next-line no-await-in-loop
-    await animationManager.setAnimationProgress(animationProgress);
-    const currentPieSectors = selectPieSectors(container);
-    const currentPathDs = Array.from(currentPieSectors).map(getD);
-    pathDsDuringAnimation.push(currentPathDs);
-
-    // Assert that all d attributes change
-    initialPathDs.forEach((initial, index) => {
-      const currentSector = currentPieSectors[index];
-      expect(trim(currentSector.getAttribute('d'))).not.toBe(initial);
-      expect(currentSector.getAttribute('fill')).toBe(initialAttributes[index].fill);
-      expect(currentSector.getAttribute('stroke')).toBe(initialAttributes[index].stroke);
-    });
-  }
-
-  await animationManager.completeAnimation();
-  // Final check to ensure the animation completed
-  const finalPieSectors = selectPieSectors(container);
-  expect(finalPieSectors).toHaveLength(initialPieSectors.length);
-  finalPieSectors.forEach((sector, index) => {
-    expect(trim(sector.getAttribute('d'))).not.toBe(initialPathDs[index]);
-    expect(sector.getAttribute('fill')).toBe(initialAttributes[index].fill);
-    expect(sector.getAttribute('stroke')).toBe(initialAttributes[index].stroke);
-  });
-
-  // collect the path.d-s one last time, at the end of the animation
-  const finalPathDs = Array.from(finalPieSectors).map(getD);
-  pathDsDuringAnimation.push(finalPathDs);
-
-  // Return the collected path.d-s
-  expect(pathDsDuringAnimation).toHaveLength(steps);
-
-  return pathDsDuringAnimation;
-}
-
-async function expectAnimatedPieAngles(
-  container: Element,
-  animationManager: MockAnimationManager,
-  steps: number = 5,
-): Promise<ReadonlyArray<ReadonlyArray<{ startAngle: number; endAngle: number }>>> {
-  assertNotNull(container);
-  /*
-   * Pie sectors at 0% progress do not render at all, so we
-   * start from 0.1 so that the sectors have rendered a little bit.
-   */
-  let animationProgress = 0.1;
-  await animationManager.setAnimationProgress(animationProgress);
-  const stepSize = (1 - animationProgress) / steps;
-  const initialPieSectors = selectPieSectors(container);
-  const initialAngles = getPieSectorAngles(initialPieSectors);
-  const initialAttributes = Array.from(initialPieSectors).map(sector => ({
-    fill: sector.getAttribute('fill'),
-    stroke: sector.getAttribute('stroke'),
-  }));
-
-  const anglesDuringAnimation: { startAngle: number; endAngle: number }[][] = [];
-  for (animationProgress += stepSize; animationProgress < 1; animationProgress += stepSize) {
-    // eslint-disable-next-line no-await-in-loop
-    await animationManager.setAnimationProgress(animationProgress);
-    const currentPieSectors = selectPieSectors(container);
-    const currentAngles = getPieSectorAngles(currentPieSectors);
-    anglesDuringAnimation.push(currentAngles);
-
-    // Assert that all angles change
-    initialAngles.forEach((initial, index) => {
-      const current = currentAngles[index];
-      const currentSector = currentPieSectors[index];
-      expect(currentSector.getAttribute('fill')).toBe(initialAttributes[index].fill);
-      expect(currentSector.getAttribute('stroke')).toBe(initialAttributes[index].stroke);
-      if (index === 0) {
-        // Because the pie grows from the same position, the start angle should remain the same for the first sector
-        expect(current.startAngle).toBe(initial.startAngle);
-      } else {
-        // For all other sectors, the start angle should change
-        expect(current.startAngle).not.toBe(initial.startAngle);
-      }
-      if (index !== currentAngles.length - 1) {
-        /*
-         * This is true for all sectors except the last one because the Pie is always a full circle.
-         * During the initial animation the Pie "grows" from the center, so the end angle of the last sector
-         * will indeed be different from the initial end angle,
-         * but during the "rearrange angles" animation the end angle of the last sector
-         * will always be 360 degrees, same as the initial end angle.
-         */
-        expect(current.endAngle).not.toBe(initial.endAngle);
-      }
-    });
-  }
-
-  await animationManager.completeAnimation();
-  // Final check to ensure the animation completed
-  const finalPieSectors = selectPieSectors(container);
-  expect(finalPieSectors).toHaveLength(initialPieSectors.length);
-  const finalAngles = getPieSectorAngles(finalPieSectors);
-  finalAngles.forEach((final, index) => {
-    const initial = initialAngles[index];
-    const finalSector = finalPieSectors[index];
-    expect(finalSector.getAttribute('fill')).toBe(initialAttributes[index].fill);
-    expect(finalSector.getAttribute('stroke')).toBe(initialAttributes[index].stroke);
-    if (index === 0) {
-      // Because the pie grows from the same position, the start angle should remain the same for the first sector
-      expect(final.startAngle).toBe(initial.startAngle);
-    } else {
-      // For all other sectors, the start angle should change
-      expect(final.startAngle).not.toBe(initial.startAngle);
-    }
-    if (index !== finalAngles.length - 1) {
-      /*
-       * This is true for all sectors except the last one because the Pie is always a full circle.
-       * During the initial animation the Pie "grows" from the center, so the end angle of the last sector
-       * will indeed be different from the initial end angle,
-       * but during the "rearrange angles" animation the end angle of the last sector
-       * will always be 360 degrees, same as the initial end angle.
-       */
-      expect(final.endAngle).not.toBe(initial.endAngle);
-    }
-  });
-
-  // Also, because the Pie is always a full circle, the end angle of the last sector should be 360 degrees
-  expect(finalAngles[finalAngles.length - 1].endAngle).toBe(0);
-
-  // collect the angles one last time, at the end of the animation
-  anglesDuringAnimation.push(finalAngles);
-
-  // Return the collected angles
-  expect(anglesDuringAnimation).toHaveLength(steps);
-
-  return anglesDuringAnimation;
-}
 
 describe('Pie animation', () => {
   const onAnimationStart = vi.fn();
