@@ -1,4 +1,12 @@
-import { Pie, PieChart, PieLabelRenderProps, PieSectorShapeProps, Sector } from 'recharts';
+import {
+  Pie,
+  PieChart,
+  PieLabelRenderProps,
+  PieSectorShapeProps,
+  Sector,
+  useActiveTooltipDataPoints,
+  useIsTooltipActive,
+} from 'recharts';
 import { RechartsDevtools } from '@recharts/devtools';
 
 // #region Sample data
@@ -31,7 +39,23 @@ const renderCustomizedLabel = ({ cx, cy, midAngle, innerRadius, outerRadius, per
 };
 
 const MyCustomPie = (props: PieSectorShapeProps) => {
-  return <Sector {...props} fill={COLORS[props.index % COLORS.length]} />;
+  const p = useActiveTooltipDataPoints();
+  const isAnyPieActive = useIsTooltipActive();
+  const isThisPieActive = isAnyPieActive && props.payload === p?.[0];
+  let fillOpacity: number;
+  if (isAnyPieActive && !isThisPieActive) {
+    fillOpacity = 0.5;
+  } else {
+    fillOpacity = 1;
+  }
+  return (
+    <Sector
+      {...props}
+      fill={COLORS[props.index % COLORS.length]}
+      fillOpacity={fillOpacity}
+      style={{ transition: 'fill-opacity 0.3s ease' }}
+    />
+  );
 };
 
 export default function PieChartWithCustomizedLabel({ isAnimationActive = true }: { isAnimationActive?: boolean }) {
