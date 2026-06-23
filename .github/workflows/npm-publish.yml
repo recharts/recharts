@@ -56,5 +56,3 @@ jobs:
       - run: npm ci
       - run: npm run build
       - run: npm publish --tag "${{ steps.release-info.outputs.npm_tag }}"
-        env:
-          NODE_AUTH_TOKEN: ${{ secrets.NPM_AUTH_TOKEN }}
