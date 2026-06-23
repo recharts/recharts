@@ -22,6 +22,8 @@ export type CancelableTimeout = () => void;
  * - unit tests
  * - animations based on something other than time: UI controls, page scroll, mouse movement ...
  *
+ * @see {@link https://recharts.github.io/en-US/guide/animations/ Animation guide}
+ *
  * @since 3.9
  */
 export interface TimeoutController {
