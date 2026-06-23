@@ -29,6 +29,7 @@ import LineChartCustomShapeExample, {
 } from '../../../docs/exampleComponents/LineChart/LineChartCustomShapeExample';
 import LineChartCustomShapeExampleSource from '../../../docs/exampleComponents/LineChart/LineChartCustomShapeExample/index.tsx?raw';
 import { RechartsLink } from '../../Shared/RechartsLink.tsx';
+import ScrollAnimateBarChart from '../../../docs/exampleComponents/BarChart/ScrollAnimateBarChart.tsx';
 
 export function AnimationsGuide() {
   return (
@@ -409,7 +410,6 @@ export function AnimationsGuide() {
         stackBlitzTitle="Recharts Custom Animation Example"
         defaultTool="controls"
       />
-
       <p>
         Also see our other custom animation examples:
         <ul>
@@ -428,7 +428,6 @@ export function AnimationsGuide() {
           </li>
         </ul>
       </p>
-
       <h2>Custom shape animations</h2>
       <p>
         While <code>animationInterpolateFn</code> controls how <em>data points</em> move during animation, some
