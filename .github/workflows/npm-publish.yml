@@ -19,7 +19,7 @@ jobs:
       - uses: actions/checkout@v7
       - uses: actions/setup-node@v6
         with:
-          node-version: 24
+          node-version: 26
           registry-url: https://registry.npmjs.org/
           package-manager-cache: false  # never use caching in release builds
       - name: Determine release version and npm dist-tag
@@ -55,5 +55,4 @@ jobs:
           echo "npm_tag=$NPM_TAG" >> "$GITHUB_OUTPUT"
       - run: npm ci
       - run: npm run build
-      - run: npm install -g npm@latest
       - run: npm publish --tag "${{ steps.release-info.outputs.npm_tag }}"
