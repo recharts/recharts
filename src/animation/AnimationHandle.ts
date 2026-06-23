@@ -300,6 +300,8 @@ export class CSSTransitionAnimation extends RechartsAnimation<string, NamedBezie
  * - the transition itself, takes `animationDuration` ms to finish
  * - `onAnimationEnd`: function that is called when the animation is moving from `active` to `completed`
  *
+ * @see {@link https://recharts.github.io/en-US/guide/animations/ Animation guide}
+ *
  * @since 3.9
  */
 export type AnimationHandle = JavascriptAnimation | CSSTransitionAnimation;

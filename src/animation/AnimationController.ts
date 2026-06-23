@@ -6,6 +6,8 @@ import { AnimationHandle } from './AnimationHandle';
  * and CSS transition-based animations always produce strings,
  * but it's so much easier to just have them together than to deal with all the generics.
  *
+ * @see {@link https://recharts.github.io/en-US/guide/animations/ Animation guide}
+ *
  * @since 3.9
  */
 export type OnAnimationStateUpdate = (newState: number | string) => void;
@@ -19,6 +21,8 @@ export type OnAnimationStateUpdate = (newState: number | string) => void;
  * The animation state machine is responsible for calculating the animation progress
  * and calling the onAnimationStart and onAnimationEnd callbacks at the right time,
  * while the AnimationController is responsible for calling the tick method of the animation state machine.
+ *
+ * @see {@link https://recharts.github.io/en-US/guide/animations/ Animation guide}
  *
  * @since 3.9
  */

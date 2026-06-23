@@ -151,6 +151,7 @@ function TimeSetter() {
 const radioGroupStyle: CSSProperties = {
   display: 'flex',
   gap: '12px',
+  margin: '1ex',
 };
 
 /* Label: Vertically centers the default circle with the text */
@@ -159,8 +160,6 @@ const radioLabelStyle = {
   alignItems: 'center' /* Forces perfect vertical alignment */,
   gap: '8px' /* Adjust this to change space between circle and text */,
   cursor: 'pointer',
-  fontSize: '16px',
-  color: '#333',
 };
 
 /* Optional: Make the default radio slightly larger if it feels tiny */
