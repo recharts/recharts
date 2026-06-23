@@ -1,0 +1,160 @@
+import{R as e}from"./iframe-CMVn_SNm.js";import{g as s}from"./utils-ePvtT4un.js";import{L as o}from"./AnimatedItems-i8neEi91.js";import{R as h}from"./zIndexSlice-5bfS2JCG.js";import{L as V}from"./LineChart-Bp5qTEb4.js";import{p as u,s as N}from"./Page-Cj8EiXz7.js";import{X as g}from"./XAxis-BK_m78bZ.js";import{Y as f}from"./YAxis-8PetJcY4.js";import{L as X}from"./Line-CGg890gZ.js";import{B as y}from"./BarChart-BX50M0uL.js";import{C as b}from"./CartesianGrid-Wjo40xqZ.js";import{B as A}from"./Bar-DlNVr3VR.js";import{R as Y}from"./RadarChart-DYsY3ntn.js";import{P as _}from"./PolarGrid-C__V3kND.js";import{P as q}from"./PolarAngleAxis-DYu09aE4.js";import{P as U}from"./PolarRadiusAxis-CI7oWDnG.js";import{R as $}from"./Radar-DtroQW7U.js";import"./preload-helper-Dp1pzeXC.js";import"./Label-DCWSGF-w.js";import"./get-CIPBGhdg.js";import"./Text-DjHHlwuG.js";import"./resolveDefaultProps-CRaaAotp.js";import"./DOMUtils-DEDVnuPv.js";import"./isWellBehavedNumber-C4Dcoy8i.js";import"./PolarUtils-CTnnDHZv.js";import"./ZIndexLayer-qzvYtv-n.js";import"./index-BHUmbQo-.js";import"./index-BNNprLMB.js";import"./Layer-NKsa_8yv.js";import"./index-DgABY5rS.js";import"./index-o3wTHYCY.js";import"./immer-BrNA81ld.js";import"./useAnimationId-DARzAta0.js";import"./RechartsWrapper-DcTKM8HZ.js";import"./renderedTicksSlice-B8N2zN9Q.js";import"./axisSelectors-Dk5pLmzI.js";import"./d3-scale-p_vnFVNW.js";import"./CartesianChart-Bhmmmn5c.js";import"./chartDataContext-Dg2f8fbZ.js";import"./CategoricalChart-DUjGX6JP.js";import"./CartesianAxis-HAFu0ua0.js";import"./types-DXSGjGm9.js";import"./getClassNameFromUnknown-Jg1grEQN.js";import"./Curve-Bldv1TQU.js";import"./step-BXHdJ1Cz.js";import"./path-DyVhHtw_.js";import"./ActivePoints-BTW7Abvw.js";import"./Dot-BUoSKBIz.js";import"./RegisterGraphicalItemId-B5nu-pPZ.js";import"./ErrorBarContext-B0E3DilN.js";import"./GraphicalItemClipPath-CTln66En.js";import"./SetGraphicalItem-rX6NUfmr.js";import"./getRadiusAndStrokeWidthFromDot-CIJw8Q-v.js";import"./ActiveShapeUtils-DbnUcZo7.js";import"./tooltipContext-E9qytSTD.js";import"./tiny-invariant-CopsF_GD.js";import"./Rectangle-DOnpVfWW.js";import"./util-Dxo8gN5i.js";import"./getZIndexFromUnknown-CMvd9kQk.js";import"./graphicalItemSelectors-CVpIZw14.js";import"./PolarChart-C_9K1e13.js";import"./polarScaleSelectors-ChYG2yyB.js";import"./polarSelectors-BqWV3kVE.js";import"./Polygon-D80w_Ejf.js";import"./maxBy-Cil7XD0-.js";import"./iteratee-C6Ehk9Ya.js";const i={angle:{description:`Text rotation angle in degrees.
+Positive values rotate clockwise, negative values rotate counterclockwise.`,control:{type:"number"},table:{type:{summary:"number"},category:"General",defaultValue:{summary:"0"}},defaultValue:0},clockWise:{description:"The parameter to calculate the view box of label in radial charts.",control:{type:"boolean"},table:{type:{summary:"boolean"},category:"General"}},content:{description:`If set a React element, the option is the customized React element of rendering each label.
+If set to a function, the function is called once for each item`,table:{type:{summary:"Function | ReactNode"},category:"General"}},dataKey:{description:`Decides how to extract the value of each label from the data:
+- \`string\`: the name of the field in the data object;
+- \`number\`: the index of the field in the data;
+- \`function\`: a function that receives the data object and returns the value of each label.
+
+If set, then valueAccessor will be ignored.
+
+Scatter requires this prop to be set.
+Other graphical components will show the same value as the dataKey of the component by default.`,table:{type:{summary:"Function | number | string"},category:"General"}},formatter:{description:`Function to customize how content is serialized before rendering.
+
+This should return a renderable text - something that the {@link Text} component can render.
+Typically, a string or number.
+Custom components are not supported here - use the \`content\` prop instead.`,table:{type:{summary:"Function"},category:"General"}},id:{description:"Unique identifier of this component.\nUsed as an HTML attribute `id`.",control:{type:"text"},table:{type:{summary:"string"},category:"General"}},offset:{description:`The offset to the specified "position".
+Direction of the offset depends on the position.`,table:{type:{summary:"number | string"},category:"General",defaultValue:{summary:"5"}},defaultValue:5},position:{description:"The position of label relative to the view box.",table:{type:{summary:'"bottom" | "center" | "centerBottom" | "centerTop" | "end" | "inside" | "insideBottom" | "insideBottomLeft" | "insideBottomRight" | "insideEnd" | "insideLeft" | "insideRight" | "insideStart" | "insideTop" | "insideTopLeft" | "insideTopRight" | "left" | "middle" | "outside" | "right" | "top" | { x?: string | number | undefined; y?: string | number | undefined; }'},category:"General",defaultValue:{summary:"middle"}},defaultValue:"middle"},textBreakAll:{control:{type:"boolean"},table:{type:{summary:"boolean"},category:"General",defaultValue:{summary:"false"}},defaultValue:!1},valueAccessor:{description:"The accessor function to get the value of each label. Is ignored if dataKey is specified.",table:{type:{summary:"Function"},category:"General"}},zIndex:{description:`Z-Index of this component and its children. The higher the value,
+the more on top it will be rendered.
+Components with higher zIndex will appear in front of components with lower zIndex.
+If undefined or 0, the content is rendered in the default layer without portals.`,control:{type:"number"},table:{type:{summary:"number"},category:"General",defaultValue:{summary:"2000"}},defaultValue:2e3}},lt={argTypes:i,component:o},l={render:r=>{const[a,t]=[600,300];return e.createElement(h,{width:"100%",height:t},e.createElement(V,{width:a,height:t,margin:{top:20,right:20,bottom:20,left:20},data:u},e.createElement(g,{dataKey:"name"}),e.createElement(f,null),e.createElement(X,{dataKey:"uv"},e.createElement(o,{...r}))))},args:{...s(i),dataKey:"uv",position:"top",offset:5,angle:0,textBreakAll:!1,zIndex:2e3}},m={render:r=>{const[a,t]=[600,300];return e.createElement(h,{width:"100%",height:t},e.createElement(y,{width:a,height:t,margin:{top:20,right:20,bottom:20,left:20},data:u},e.createElement(b,{strokeDasharray:"3 3"}),e.createElement(g,{dataKey:"name"}),e.createElement(f,null),e.createElement(A,{dataKey:"uv",fill:"#8884d8"},e.createElement(o,{...r}))))},args:{...s(i),dataKey:"uv",position:"top",offset:5}},c={render:r=>e.createElement(Y,{width:500,height:400,data:N},e.createElement(_,null),e.createElement(q,{dataKey:"subject"}),e.createElement(U,null),e.createElement($,{name:"A",dataKey:"A",stroke:"#8884d8",fill:"#8884d8",fillOpacity:.6},e.createElement(o,{...r}))),args:{...s(i),dataKey:"A",position:"outside",clockWise:!0}},d={render:r=>{const a=O=>{const{x:F,y:j,width:z,value:x}=O;if(x==null)return null;const v=Number(F)+Number(z)/2,L=Number(j)-14;return e.createElement("g",null,e.createElement("circle",{cx:v,cy:L,r:10,fill:"#8884d8"}),e.createElement("text",{x:v,y:L,fill:"#fff",textAnchor:"middle",dominantBaseline:"middle",fontSize:10},x))},[t,n]=[600,300];return e.createElement(h,{width:"100%",height:n},e.createElement(y,{width:t,height:n,margin:{top:30,right:20,bottom:20,left:20},data:u},e.createElement(b,{strokeDasharray:"3 3"}),e.createElement(g,{dataKey:"name"}),e.createElement(f,null),e.createElement(A,{dataKey:"pv",fill:"#82ca9d"},e.createElement(o,{...r,content:a}))))},args:{...s(i),dataKey:"pv"}},p={render:r=>{const[a,t]=[600,300];return e.createElement(h,{width:"100%",height:t},e.createElement(y,{width:a,height:t,margin:{top:20,right:20,bottom:20,left:20},data:u},e.createElement(b,{strokeDasharray:"3 3"}),e.createElement(g,{dataKey:"name"}),e.createElement(f,null),e.createElement(A,{dataKey:"uv",fill:"#8884d8"},e.createElement(o,{...r,formatter:n=>n!=null?`${n} visitors`:""}))))},args:{...s(i),dataKey:"uv",position:"top"}};var C,w,E;l.parameters={...l.parameters,docs:{...(C=l.parameters)==null?void 0:C.docs,source:{originalSource:`{
+  render: (args: Args) => {
+    const [surfaceWidth, surfaceHeight] = [600, 300];
+    return <ResponsiveContainer width="100%" height={surfaceHeight}>
+        <LineChart width={surfaceWidth} height={surfaceHeight} margin={{
+        top: 20,
+        right: 20,
+        bottom: 20,
+        left: 20
+      }} data={pageData}>
+          <XAxis dataKey="name" />
+          <YAxis />
+          {/* The target component */}
+          <Line dataKey="uv">
+            <LabelList {...args} />
+          </Line>
+        </LineChart>
+      </ResponsiveContainer>;
+  },
+  args: {
+    ...getStoryArgsFromArgsTypesObject(LabelListArgs),
+    // This API story should have explicit values for all props
+    dataKey: 'uv',
+    position: 'top',
+    offset: 5,
+    angle: 0,
+    textBreakAll: false,
+    zIndex: 2000
+  }
+}`,...(E=(w=l.parameters)==null?void 0:w.docs)==null?void 0:E.source}}};var K,R,B;m.parameters={...m.parameters,docs:{...(K=m.parameters)==null?void 0:K.docs,source:{originalSource:`{
+  render: (args: Args) => {
+    const [surfaceWidth, surfaceHeight] = [600, 300];
+    return <ResponsiveContainer width="100%" height={surfaceHeight}>
+        <BarChart width={surfaceWidth} height={surfaceHeight} margin={{
+        top: 20,
+        right: 20,
+        bottom: 20,
+        left: 20
+      }} data={pageData}>
+          <CartesianGrid strokeDasharray="3 3" />
+          <XAxis dataKey="name" />
+          <YAxis />
+          {/* The target component */}
+          <Bar dataKey="uv" fill="#8884d8">
+            <LabelList {...args} />
+          </Bar>
+        </BarChart>
+      </ResponsiveContainer>;
+  },
+  args: {
+    ...getStoryArgsFromArgsTypesObject(LabelListArgs),
+    dataKey: 'uv',
+    position: 'top',
+    offset: 5
+  }
+}`,...(B=(R=m.parameters)==null?void 0:R.docs)==null?void 0:B.source}}};var T,P,W;c.parameters={...c.parameters,docs:{...(T=c.parameters)==null?void 0:T.docs,source:{originalSource:`{
+  render: (args: Args) => {
+    return <RadarChart width={500} height={400} data={subjectData}>
+        <PolarGrid />
+        <PolarAngleAxis dataKey="subject" />
+        <PolarRadiusAxis />
+        {/* The target component */}
+        <Radar name="A" dataKey="A" stroke="#8884d8" fill="#8884d8" fillOpacity={0.6}>
+          <LabelList {...args} />
+        </Radar>
+      </RadarChart>;
+  },
+  args: {
+    ...getStoryArgsFromArgsTypesObject(LabelListArgs),
+    dataKey: 'A',
+    position: 'outside',
+    clockWise: true
+  }
+}`,...(W=(P=c.parameters)==null?void 0:P.docs)==null?void 0:W.source}}};var k,G,H;d.parameters={...d.parameters,docs:{...(k=d.parameters)==null?void 0:k.docs,source:{originalSource:`{
+  render: (args: Args) => {
+    const renderCustomLabel = (props: LabelProps) => {
+      const {
+        x,
+        y,
+        width,
+        value
+      } = props;
+      if (value == null) {
+        return null;
+      }
+      const xPos = Number(x) + Number(width) / 2;
+      const yPos = Number(y) - 14;
+      return <g>
+          <circle cx={xPos} cy={yPos} r={10} fill="#8884d8" />
+          <text x={xPos} y={yPos} fill="#fff" textAnchor="middle" dominantBaseline="middle" fontSize={10}>
+            {value}
+          </text>
+        </g>;
+    };
+    const [surfaceWidth, surfaceHeight] = [600, 300];
+    return <ResponsiveContainer width="100%" height={surfaceHeight}>
+        <BarChart width={surfaceWidth} height={surfaceHeight} margin={{
+        top: 30,
+        right: 20,
+        bottom: 20,
+        left: 20
+      }} data={pageData}>
+          <CartesianGrid strokeDasharray="3 3" />
+          <XAxis dataKey="name" />
+          <YAxis />
+          {/* The target component with custom content renderer */}
+          <Bar dataKey="pv" fill="#82ca9d">
+            <LabelList {...args} content={renderCustomLabel} />
+          </Bar>
+        </BarChart>
+      </ResponsiveContainer>;
+  },
+  args: {
+    ...getStoryArgsFromArgsTypesObject(LabelListArgs),
+    dataKey: 'pv'
+  }
+}`,...(H=(G=d.parameters)==null?void 0:G.docs)==null?void 0:H.source}}};var D,S,I;p.parameters={...p.parameters,docs:{...(D=p.parameters)==null?void 0:D.docs,source:{originalSource:`{
+  render: (args: Args) => {
+    const [surfaceWidth, surfaceHeight] = [600, 300];
+    return <ResponsiveContainer width="100%" height={surfaceHeight}>
+        <BarChart width={surfaceWidth} height={surfaceHeight} margin={{
+        top: 20,
+        right: 20,
+        bottom: 20,
+        left: 20
+      }} data={pageData}>
+          <CartesianGrid strokeDasharray="3 3" />
+          <XAxis dataKey="name" />
+          <YAxis />
+          {/* The target component with formatter */}
+          <Bar dataKey="uv" fill="#8884d8">
+            <LabelList {...args} formatter={value => value != null ? \`\${value} visitors\` : ''} />
+          </Bar>
+        </BarChart>
+      </ResponsiveContainer>;
+  },
+  args: {
+    ...getStoryArgsFromArgsTypesObject(LabelListArgs),
+    dataKey: 'uv',
+    position: 'top'
+  }
+}`,...(I=(S=p.parameters)==null?void 0:S.docs)==null?void 0:I.source}}};const mt=["API","OnBarChart","OnRadarChart","WithCustomContent","WithFormatter"];export{l as API,m as OnBarChart,c as OnRadarChart,d as WithCustomContent,p as WithFormatter,mt as __namedExportsOrder,lt as default};
