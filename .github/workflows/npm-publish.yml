@@ -4,6 +4,8 @@
 name: npm publish
 
 permissions:
+  # https://docs.npmjs.com/trusted-publishers#step-2-configure-your-cicd-workflow
+  id-token: write  # Required for OIDC
   contents: read
 
 on:
@@ -19,6 +21,7 @@ jobs:
         with:
           node-version: 24
           registry-url: https://registry.npmjs.org/
+          package-manager-cache: false  # never use caching in release builds
       - name: Determine release version and npm dist-tag
         id: release-info
         env:
