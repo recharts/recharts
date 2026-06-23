@@ -10,6 +10,7 @@ import { BarSettings } from './types/BarSettings';
 import { RadialBarSettings } from './types/RadialBarSettings';
 import { PieSettings } from './types/PieSettings';
 import { RadarSettings } from './types/RadarSettings';
+import { PolarScatterSettings } from './types/PolarScatterSettings';
 
 /**
  * Unique ID of the graphical item.
@@ -63,7 +64,7 @@ export interface BasePolarGraphicalItemSettings extends GraphicalItemSettings {
   radiusAxisId: AxisId;
 }
 
-export type PolarGraphicalItemSettings = PieSettings | RadarSettings | RadialBarSettings;
+export type PolarGraphicalItemSettings = PieSettings | RadarSettings | RadialBarSettings | PolarScatterSettings;
 
 export type GraphicalItemsState = {
   /**

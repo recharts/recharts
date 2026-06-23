@@ -29,12 +29,12 @@ export const commentSimilarityExceptions: ReadonlyArray<CommentSimilarityGroup> 
     reason: 'Children comments vary widely based on component purpose',
   },
   {
-    components: ['Area', 'Bar', 'Line', 'Scatter', 'Radar', 'RadialBar', 'Pie', 'Funnel'],
+    components: ['Area', 'Bar', 'Line', 'Scatter', 'PolarScatter', 'Radar', 'RadialBar', 'Pie', 'Funnel'],
     props: ['hide'],
     reason: 'Graphical elements hide has extra details on domain calculation',
   },
   {
-    components: ['Area', 'Bar', 'Line', 'Scatter', 'Radar', 'RadialBar'],
+    components: ['Area', 'Bar', 'Line', 'Scatter', 'PolarScatter', 'Radar', 'RadialBar'],
     props: ['label'],
     reason:
       'label in graphical elements describes multiple labels, unlike axes and reference elements which describe a single label.',
@@ -145,10 +145,10 @@ export const commentSimilarityExceptions: ReadonlyArray<CommentSimilarityGroup> 
       'Here padding means distance between sectors, unlike chart padding which means distance from container edge',
   },
   {
-    components: ['Scatter'],
+    components: ['Scatter', 'PolarScatter'],
     props: ['shape'],
     // https://github.com/recharts/recharts/issues/1753
-    reason: 'unlike other graphical items, Scatter shape allows a string option for predefined shapes',
+    reason: 'unlike other graphical items, Scatter-style shapes allow a string option for predefined shapes',
   },
   {
     components: ['Dot', 'Sector'],

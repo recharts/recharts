@@ -71,6 +71,13 @@ export type {
 } from './polar/Pie';
 export { Radar } from './polar/Radar';
 export type { Props as RadarProps, RadarPoint, InternalRadarProps } from './polar/Radar';
+export { PolarScatter } from './polar/PolarScatter';
+export type {
+  Props as PolarScatterProps,
+  PolarScatterPointItem,
+  PolarScatterPointNode,
+  PolarScatterShapeProps,
+} from './polar/PolarScatter';
 export { RadialBar } from './polar/RadialBar';
 export type { RadialBarProps, RadialBarDataItem } from './polar/RadialBar';
 export type { RadialBarSectorProps } from './util/RadialBarUtils';
@@ -129,6 +136,7 @@ export type {
 } from './chart/Sankey';
 export type { SankeyNodeOptions } from './chart/Sankey';
 export { RadarChart } from './chart/RadarChart';
+export { PolarScatterChart } from './chart/PolarScatterChart';
 export { ScatterChart } from './chart/ScatterChart';
 export { AreaChart } from './chart/AreaChart';
 export { RadialBarChart } from './chart/RadialBarChart';
