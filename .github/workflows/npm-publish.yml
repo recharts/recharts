@@ -55,4 +55,5 @@ jobs:
           echo "npm_tag=$NPM_TAG" >> "$GITHUB_OUTPUT"
       - run: npm ci
       - run: npm run build
+      - run: npm install -g npm@latest
       - run: npm publish --tag "${{ steps.release-info.outputs.npm_tag }}"
