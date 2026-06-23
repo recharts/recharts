@@ -4,24 +4,65 @@
 name: npm publish
 
 permissions:
-  # https://docs.npmjs.com/trusted-publishers#step-2-configure-your-cicd-workflow
-  id-token: write  # Required for OIDC
   contents: read
 
 on:
   release:
     types: [published]
+env:
+  NODE_VERSION: 26.x
 
 jobs:
+  build:
+    name: Build
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Recharts Repository
+        uses: actions/checkout@v7
+
+      - name: Use Node.js ${{ env.NODE_VERSION }}
+        uses: actions/setup-node@v6
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          registry-url: https://registry.npmjs.org/
+          package-manager-cache: false  # never use caching in release builds
+
+      - name: Install Dependencies
+        run: npm ci
+
+      - name: Build main lib
+        run: npm run build
+
+      - name: Upload build artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: build-output
+          path: |
+            es6/
+            lib/
+            umd/
+            types/
+          retention-days: 1
+
   publish-npm:
+    permissions:
+      # https://docs.npmjs.com/trusted-publishers#step-2-configure-your-cicd-workflow
+      id-token: write # Required for OIDC
+    needs: build
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v7
       - uses: actions/setup-node@v6
         with:
-          node-version: 26
+          node-version: ${{ env.NODE_VERSION }}
           registry-url: https://registry.npmjs.org/
           package-manager-cache: false  # never use caching in release builds
+
+      - name: Download build artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: build-output
+
       - name: Determine release version and npm dist-tag
         id: release-info
         env:
@@ -53,6 +94,4 @@ jobs:
           fi
 
           echo "npm_tag=$NPM_TAG" >> "$GITHUB_OUTPUT"
-      - run: npm ci
-      - run: npm run build
       - run: npm publish --tag "${{ steps.release-info.outputs.npm_tag }}"
