@@ -3,9 +3,6 @@
 
 name: npm publish
 
-permissions:
-  contents: read
-
 on:
   release:
     types: [published]
@@ -16,9 +13,13 @@ jobs:
   build:
     name: Build
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
     steps:
       - name: Checkout Recharts Repository
         uses: actions/checkout@v7
+        with:
+          persist-credentials: false
 
       - name: Use Node.js ${{ env.NODE_VERSION }}
         uses: actions/setup-node@v6
@@ -45,13 +46,16 @@ jobs:
           retention-days: 1
 
   publish-npm:
-    permissions:
-      # https://docs.npmjs.com/trusted-publishers#step-2-configure-your-cicd-workflow
-      id-token: write # Required for OIDC
     needs: build
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      # https://docs.npmjs.com/trusted-publishers#step-2-configure-your-cicd-workflow
+      id-token: write # Required for OIDC
     steps:
       - uses: actions/checkout@v7
+        with:
+          persist-credentials: false
       - uses: actions/setup-node@v6
         with:
           node-version: ${{ env.NODE_VERSION }}
