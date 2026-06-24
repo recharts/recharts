@@ -42,6 +42,11 @@ const interpolationGenerator = (a: number, b: number) => {
 
 const centerY = (node: SankeyNode) => node.y + node.dy / 2;
 
+const cubicValue = (start: number, control1: number, control2: number, end: number, t: number): number => {
+  const inverseT = 1 - t;
+  return inverseT ** 3 * start + 3 * inverseT ** 2 * t * control1 + 3 * inverseT * t ** 2 * control2 + t ** 3 * end;
+};
+
 // TODO why is this not reading dataKey?
 const getValue = (entry: LinkDataItem | SankeyNode | undefined): number => (entry && entry.value) || 0;
 
@@ -193,7 +198,7 @@ const getDepthTree = (tree: SankeyNode[]): SankeyNode[][] => {
   return result;
 };
 
-type LinkDataItemDy = LinkDataItem & { dy: number };
+type LinkDataItemDy = LinkDataItem & { dy: number; sy?: number; ty?: number };
 
 type SankeyVerticalAlign = 'justify' | 'top';
 
@@ -201,13 +206,13 @@ const updateYOfTree = (
   depthTree: SankeyNode[][],
   height: number,
   nodePadding: number,
-  links: ReadonlyArray<LinkDataItem>,
+  links: LinkDataItem[],
   verticalAlign: SankeyVerticalAlign,
 ): Array<LinkDataItemDy> => {
   let yRatio: number = Math.min(
     ...depthTree.map(nodes => {
-      const sum = sumBy(nodes, getValue);
-      return sum === 0 ? Infinity : (height - (nodes.length - 1) * nodePadding) / sum;
+      const value = sumBy(nodes, getValue);
+      return value === 0 ? Infinity : (height - (nodes.length - 1) * nodePadding) / value;
     }),
   );
   if (yRatio === Infinity) {
@@ -399,7 +404,6 @@ const updateYOfLinks = (tree: SankeyNode[], links: LinkDataItemDy[]): void => {
       const link = links[targetLink];
 
       if (link) {
-        // @ts-expect-error we should refactor this to immutable
         link.sy = sy;
         sy += link.dy;
       }
@@ -413,10 +417,127 @@ const updateYOfLinks = (tree: SankeyNode[], links: LinkDataItemDy[]): void => {
       const link = links[sourceLink];
 
       if (link) {
-        // @ts-expect-error we should refactor this to immutable
         link.ty = ty;
         ty += link.dy;
       }
+    }
+  }
+};
+
+const getLinkYAtX = (sourceNode: SankeyNode, targetNode: SankeyNode, link: LinkDataItemDy, x: number): number => {
+  const sourceX = sourceNode.x + sourceNode.dx;
+  const targetX = targetNode.x;
+  const progress = targetX === sourceX ? 0 : (x - sourceX) / (targetX - sourceX);
+  const boundedProgress = Math.min(Math.max(progress, 0), 1);
+  const sourceY = sourceNode.y + (link.sy ?? 0) + link.dy / 2;
+  const targetY = targetNode.y + (link.ty ?? 0) + link.dy / 2;
+
+  return cubicValue(sourceY, sourceY, targetY, targetY, boundedProgress);
+};
+
+const resolveNodeLinkCollisions = (
+  tree: SankeyNode[],
+  depthTree: SankeyNode[][],
+  links: LinkDataItemDy[],
+  height: number,
+  nodePadding: number,
+) => {
+  const depthByNode = new Map<SankeyNode, number>();
+
+  for (let depth = 0; depth < depthTree.length; depth++) {
+    const nodes = depthTree[depth];
+    if (nodes == null) {
+      continue;
+    }
+
+    for (const node of nodes) {
+      depthByNode.set(node, depth);
+    }
+  }
+
+  for (let depth = 0; depth < depthTree.length; depth++) {
+    const nodes = depthTree[depth];
+    if (nodes == null || nodes.length === 0) {
+      continue;
+    }
+
+    const depthX = nodes[0] == null ? undefined : nodes[0].x + nodes[0].dx / 2;
+    if (depthX == null) {
+      continue;
+    }
+
+    const fixedObstacles = links.flatMap(link => {
+      const sourceNode = tree[link.source];
+      const targetNode = tree[link.target];
+      if (sourceNode == null || targetNode == null) {
+        return [];
+      }
+
+      const sourceDepth = depthByNode.get(sourceNode);
+      const targetDepth = depthByNode.get(targetNode);
+      if (sourceDepth == null || targetDepth == null) {
+        return [];
+      }
+
+      if (depth <= Math.min(sourceDepth, targetDepth) || depth >= Math.max(sourceDepth, targetDepth)) {
+        return [];
+      }
+
+      const y = getLinkYAtX(sourceNode, targetNode, link, depthX) - link.dy / 2;
+      return [{ y, dy: link.dy, fixed: true as const }];
+    });
+
+    const containedNodeObstacles = fixedObstacles.filter(obstacle =>
+      nodes.some(node => node.y >= obstacle.y && node.y + node.dy <= obstacle.y + obstacle.dy),
+    );
+
+    if (containedNodeObstacles.length === 0) {
+      continue;
+    }
+
+    type CollisionItem = { node: SankeyNode; fixed: false } | { y: number; dy: number; fixed: true };
+    const getItemY = (item: CollisionItem): number => (item.fixed ? item.y : item.node.y);
+    const getItemHeight = (item: CollisionItem): number => (item.fixed ? item.dy : item.node.dy);
+    let items: CollisionItem[] = [
+      ...nodes.map(node => ({ node, fixed: false as const })),
+      ...containedNodeObstacles,
+    ].sort((a, b) => getItemY(a) - getItemY(b));
+
+    let nextY = 0;
+    for (const item of items) {
+      if (item.fixed) {
+        nextY = Math.max(nextY, item.y + item.dy + nodePadding);
+        continue;
+      }
+
+      if (item.node.y < nextY) {
+        item.node.y = nextY;
+      }
+      nextY = item.node.y + item.node.dy + nodePadding;
+    }
+
+    items = items.sort((a, b) => getItemY(a) - getItemY(b));
+
+    let previousY = height + nodePadding;
+    for (let i = items.length - 1; i >= 0; i--) {
+      const item = items[i];
+      if (item == null) {
+        continue;
+      }
+
+      if (item.fixed) {
+        previousY = Math.min(previousY, item.y - nodePadding);
+        continue;
+      }
+
+      // This backward pass only keeps moved nodes within the chart bounds.
+      // It intentionally does not iterate again against fixed obstacles above,
+      // because this fix is scoped to the fully-contained skipped-depth case.
+      const dy = item.node.y + getItemHeight(item) + nodePadding - previousY;
+      if (dy > 0) {
+        item.node.y -= dy;
+      }
+      previousY = item.node.y;
     }
   }
 };
@@ -466,6 +587,9 @@ const computeData = ({
   }
 
   updateYOfLinks(tree, linksWithDy);
+  resolveNodeLinkCollisions(tree, depthTree, linksWithDy, height, nodePadding);
+  updateYOfLinks(tree, linksWithDy);
+
   // @ts-expect-error updateYOfLinks modifies the links array to add sy and ty in place
   const newLinks: ReadonlyArray<SankeyLink> = linksWithDy;
 
