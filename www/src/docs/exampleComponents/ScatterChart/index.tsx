@@ -77,5 +77,11 @@ export const scatterChartExamples = {
     Component: ScatterChartPerformance,
     sourceCode: scatterChartPerformanceSource,
     name: 'Scatter Chart with many points (performance test)',
+    description: (
+      <p>
+        Renders multiple Scatter elements with multiple points in them. Edit this example to add or remove data points
+        and observe performance.
+      </p>
+    ),
   },
 } satisfies Record<string, ChartExample>;
