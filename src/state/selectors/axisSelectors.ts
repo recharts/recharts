@@ -1094,6 +1094,7 @@ export const combineNumericalDomain = (
   referenceElementsDomain: NumberDomain | undefined,
   layout: LayoutType,
   axisType: AllAxisTypes,
+  numericTicksDomain?: NumberDomain | undefined,
 ): NumberDomain | undefined => {
   if (domainFromUserPreference != null) {
     // We're done! No need to compute anything else.
@@ -1107,8 +1108,61 @@ export const combineNumericalDomain = (
     ? mergeDomains(domainOfStackGroups, referenceElementsDomain, dataAndErrorBarsDomain)
     : mergeDomains(referenceElementsDomain, dataAndErrorBarsDomain);
 
-  return parseNumericalUserDomain(domainDefinition, mergedDomains, axisSettings.allowDataOverflow);
+  const parsedDomain = parseNumericalUserDomain(domainDefinition, mergedDomains, axisSettings.allowDataOverflow);
+  if (parsedDomain != null) {
+    return parsedDomain;
+  }
+
+  /*
+   * https://github.com/recharts/recharts/issues/7362
+   * The user-provided domain could not be resolved without data - it's a function
+   * bound or one of 'auto'/'dataMin'/'dataMax' - and there is no data domain to
+   * resolve it from: empty or all-null data, and no domain-extending reference
+   * elements (only reference dots/lines/areas with ifOverflow="extendDomain"
+   * contribute to mergedDomains). If the
+   * axis opted into data overflow and supplied an explicit numeric `ticks` array,
+   * fall back to the ticks' [min, max] extent so the explicit tick ladder still
+   * renders, mirroring what a literal numeric domain already does.
+   */
+  if (axisSettings.allowDataOverflow && mergedDomains == null && numericTicksDomain != null) {
+    return numericTicksDomain;
+  }
+
+  return parsedDomain;
 };
+
+/**
+ * https://github.com/recharts/recharts/issues/7362
+ * Derives the [min, max] extent of an axis's explicit numeric `ticks`. Used by
+ * {@link combineNumericalDomain} as a last-resort domain when a non-literal domain
+ * cannot be resolved without data. Returns undefined for non-number axes, or when
+ * no numeric ticks were supplied.
+ */
+export const combineNumericTicksDomain = (axisSettings: AllAxisSettings): NumberDomain | undefined => {
+  if (
+    axisSettings == null ||
+    axisSettings.type !== 'number' ||
+    !('ticks' in axisSettings) ||
+    axisSettings.ticks == null
+  ) {
+    return undefined;
+  }
+  const numericTicks = onlyAllowNumbers(axisSettings.ticks);
+  if (numericTicks.length === 0) {
+    return undefined;
+  }
+  return [Math.min(...numericTicks), Math.max(...numericTicks)];
+};
+
+export const selectNumericTicksDomain: (
+  state: RechartsRootState,
+  axisType: AllAxisTypes,
+  axisId: AxisId,
+) => NumberDomain | undefined = createSelector([selectBaseAxis], combineNumericTicksDomain, {
+  memoizeOptions: {
+    resultEqualityCheck: numberDomainEqualityCheck,
+  },
+});
 
 export const selectNumericalDomain: (
   state: RechartsRootState,
@@ -1125,6 +1179,7 @@ export const selectNumericalDomain: (
     selectReferenceElementsDomain,
     selectChartLayout,
     pickAxisType,
+    selectNumericTicksDomain,
   ],
   combineNumericalDomain,
   {
