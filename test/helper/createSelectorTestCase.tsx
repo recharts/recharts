@@ -1,12 +1,12 @@
 import { Selector } from '@reduxjs/toolkit';
 import React, { ComponentType, ReactNode } from 'react';
 import { Mock, vi } from 'vitest';
-import { act, render } from '@testing-library/react';
+import { act, cleanup, render } from '@testing-library/react';
 import { useAppSelectorWithStableTest } from './selectorTestHelpers';
 import { RechartsRootState } from '../../src/state/store';
 import { MockAnimationManager } from '../animation/MockProgressAnimationManager';
 import { assertUniqueHtmlIds } from '../util/assertUniqueHtmlIds';
-import { AnimationControllerProvider } from '../../src/animation/useAnimationController';
+import { AnimationControllerProvider } from '../../src';
 import { CompositeAnimationManager } from '../animation/CompositeAnimationManager';
 
 const emptySelector = (): undefined => undefined;
@@ -78,6 +78,13 @@ export function createSelectorTestCase(Component: ComponentType<{ children: Reac
   return function renderTestCase<T>(
     selector: ReactHook<T> | Selector<RechartsRootState, T, never> | undefined = undefined,
   ): TestCaseResult<T> {
+    /*
+     * Some of our tests are calling createSelectorTestCase twice in one test, with the assumption that they are independent.
+     * Well guess what, testing-library/react renders are not independent. In fact, they append to the same DOM.
+     * Which I find surprising, and I wasn't alone, so let's call cleanup here
+     * to continue pretending that they are indeed independent.
+     */
+    cleanup();
     const spy: Mock<(selectorResult: T | undefined) => void> = vi.fn();
     const animationManager = new CompositeAnimationManager();
 
@@ -206,6 +213,13 @@ export function createSynchronisedSelectorTestCase(
     spyC: Mock<(selectorResult: T) => void>;
     debug: () => void;
   } {
+    /*
+     * Some of our tests are calling createSelectorTestCase twice in one test, with the assumption that they are independent.
+     * Well guess what, testing-library/react renders are not independent. In fact, they append to the same DOM.
+     * Which I find surprising, and I wasn't alone, so let's call cleanup here
+     * to continue pretending that they are indeed independent.
+     */
+    cleanup();
     const spyA: Mock<(selectorResult: T | undefined) => void> = vi.fn();
     const spyB: Mock<(selectorResult: T | undefined) => void> = vi.fn();
     const spyC: Mock<(selectorResult: T | undefined) => void> = vi.fn();

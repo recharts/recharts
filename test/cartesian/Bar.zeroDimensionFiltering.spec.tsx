@@ -199,6 +199,8 @@ describe('Bar zero-dimension filtering', () => {
       (spyB.mock.lastCall?.[0]?.length ?? 0) +
       (spyC.mock.lastCall?.[0]?.length ?? 0);
 
+    expect(actualRectangles).toBe(60);
+
     const potentialRectangles = totalCategories * numberOfStackedBars;
     const percentSaved = Math.round(((potentialRectangles - actualRectangles) / potentialRectangles) * 100);
 
