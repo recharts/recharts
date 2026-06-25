@@ -50,6 +50,8 @@ import AnimatedBarTimeSeriesExample, {
 import AnimatedBarTimeSeriesExampleSource from './AnimatedBarTimeSeriesExample.tsx?raw';
 import ScrollAnimateBarChart from './ScrollAnimateBarChart.tsx';
 import ScrollAnimateBarChartSource from './ScrollAnimateBarChart.tsx?raw';
+import StackedBarChartWithHorizontalLine from './StackedBarChartWithHorizontalLine.tsx';
+import StackedBarChartWithHorizontalLineSource from './StackedBarChartWithHorizontalLine.tsx?raw';
 
 export { BarChartNavExample };
 
@@ -234,6 +236,21 @@ export const barChartExamples = {
         This example uses new components introduced in 3.9 to animate the chart based on the scroll position. The
         animation controller is provided by a custom function that listens to the window scroll event and updates the
         animation time.
+      </p>
+    ),
+  },
+  StackedBarChartWithHorizontalLine: {
+    Component: StackedBarChartWithHorizontalLine,
+    sourceCode: StackedBarChartWithHorizontalLineSource,
+    name: 'Stacked Bar Chart with Horizontal Line',
+    description: (
+      <p>
+        This example shows a stacked bar chart with a horizontal line indicating a threshold.
+        <br />
+        The chart uses the <strong>Bar</strong> component to create the bars, and the <strong>ReferenceLine</strong>
+        component to create the horizontal line.
+        <br />
+        The <strong>LabelList</strong> component is used to display the total value of the bars above the threshold.
       </p>
     ),
   },
