@@ -16,12 +16,11 @@ describe('XAxis padding with allowDataOverflow', () => {
       >
         <XAxis dataKey="x" type="number" domain={[0, 100]} allowDataOverflow padding={{ left: 10, right: 50 }} />
         <YAxis />
-        <Bar dataKey="y" isAnimationActive={false} />
+        <Bar dataKey="y" isAnimationActive={false} id="my-bar" />
       </BarChart>,
     );
 
-    const clipPathRect = container.querySelectorAll('clipPath rect');
-    const itemClipPath = Array.from(clipPathRect).find(rect => rect.getAttribute('width') === '270');
+    const itemClipPath = container.querySelector('clipPath#clipPath-my-bar rect');
 
     expect(itemClipPath).toBeDefined();
     expect(itemClipPath?.getAttribute('x')).toBe('75');
@@ -46,13 +45,11 @@ describe('XAxis padding with allowDataOverflow', () => {
           padding={{ left: 10, right: 50 }}
         />
         <YAxis />
-        <Bar dataKey="y" isAnimationActive={false} />
+        <Bar dataKey="y" isAnimationActive={false} id="my-bar" />
       </BarChart>,
     );
 
-    const clipPathRects = Array.from(container.querySelectorAll('clipPath rect'));
-    const narrowClipPath = clipPathRects.find(rect => rect.getAttribute('width') === '270');
-
-    expect(narrowClipPath).toBeUndefined();
+    const narrowClipPath = container.querySelector('clipPath#clipPath-my-bar rect');
+    expect(narrowClipPath).toBe(null);
   });
 });
