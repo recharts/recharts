@@ -21,6 +21,7 @@ import TimelineExample from '../../../www/src/docs/exampleComponents/BarChart/Ti
 import CandlestickExample from '../../../www/src/docs/exampleComponents/BarChart/CandlestickExample';
 import BoxPlotExample from '../../../www/src/docs/exampleComponents/BarChart/BoxPlotExample';
 import AnimatedBarWidthExample from '../../../www/src/docs/exampleComponents/BarChart/AnimatedBarWidthExample';
+import StackedBarChartWithHorizontalLine from '../../../www/src/docs/exampleComponents/BarChart/StackedBarChartWithHorizontalLine';
 
 test('CandlestickExample', async ({ mount }) => {
   const component = await mount(<CandlestickExample defaultIndex="50" />);
@@ -128,5 +129,10 @@ test('RangedStackedBarChart', async ({ mount }) => {
 
 test('AnimatedBarWidthExample', async ({ mount }) => {
   const component = await mount(<AnimatedBarWidthExample isAnimationActive={false} defaultIndex="2" />);
+  await expect(component).toHaveScreenshot();
+});
+
+test('StackedBarChartWithHorizontalLine', async ({ mount }) => {
+  const component = await mount(<StackedBarChartWithHorizontalLine />);
   await expect(component).toHaveScreenshot();
 });

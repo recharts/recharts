@@ -73,10 +73,6 @@ type DataPoint = (typeof data)[number];
 const StackTotalLabel = (props: LabelProps) => {
   const { x, y, width, value } = props;
   const total = Number(value);
-  if (x == null || y == null || width == null || Number.isNaN(total)) {
-    return null;
-  }
-
   const label = total.toLocaleString();
   const cx = Number(x) + Number(width) / 2;
   const cy = Number(y) - 18;
