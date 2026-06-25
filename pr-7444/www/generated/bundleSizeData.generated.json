@@ -1,60 +1,60 @@
 {
   "treemap": {
     "examplePath": "www/src/views/IndexView/IndexLineChart.tsx",
-    "totalSize": 808103,
-    "totalSizeLabel": "789.16 KB",
-    "moduleCount": 320,
-    "generatedAt": "2026-06-10T04:09:19.462Z",
+    "totalSize": 815340,
+    "totalSizeLabel": "796.23 KB",
+    "moduleCount": 318,
+    "generatedAt": "2026-06-25T13:31:42.513Z",
     "stages": [
       {
         "stage": "es6-folder",
-        "bytes": 1270439,
+        "bytes": 1265244,
         "humanReadableSize": "1.21 MB",
         "reductionFromBaselinePercent": 0
       },
       {
         "stage": "tree-shaken",
-        "bytes": 811621,
-        "humanReadableSize": "792.60 KB",
+        "bytes": 818854,
+        "humanReadableSize": "799.66 KB",
         "reductionFromBaselinePercent": 0
       },
       {
         "stage": "minified",
-        "bytes": 280840,
-        "humanReadableSize": "274.26 KB",
-        "reductionFromBaselinePercent": 65.4
+        "bytes": 281289,
+        "humanReadableSize": "274.70 KB",
+        "reductionFromBaselinePercent": 65.65
       },
       {
         "stage": "minified+gzip",
-        "bytes": 92267,
-        "humanReadableSize": "90.10 KB",
-        "reductionFromBaselinePercent": 88.63
+        "bytes": 92095,
+        "humanReadableSize": "89.94 KB",
+        "reductionFromBaselinePercent": 88.75
       }
     ],
     "tree": {
       "name": "bundle",
       "fullPath": "bundle",
-      "value": 808103,
+      "value": 815340,
       "children": [
         {
           "name": "src",
           "fullPath": "src",
-          "value": 446557,
+          "value": 453816,
           "children": [
             {
               "name": "state",
               "fullPath": "src/state",
-              "value": 167971,
+              "value": 169814,
               "children": [
                 {
                   "name": "selectors",
                   "fullPath": "src/state/selectors",
-                  "value": 105088,
+                  "value": 106931,
                   "children": [
                     {
                       "name": "axisSelectors.ts",
                       "fullPath": "src/state/selectors/axisSelectors.ts",
-                      "value": 51710
+                      "value": 53553
                     },
                     {
                       "name": "combiners",
@@ -665,7 +665,7 @@
             {
               "name": "cartesian",
               "fullPath": "src/cartesian",
-              "value": 75328,
+              "value": 75504,
               "children": [
                 {
                   "name": "Line.tsx",
@@ -695,7 +695,7 @@
                 {
                   "name": "LineDrawShape.tsx",
                   "fullPath": "src/cartesian/LineDrawShape.tsx",
-                  "value": 5864
+                  "value": 6040
                 },
                 {
                   "name": "getTicks.ts",
@@ -727,12 +727,22 @@
             {
               "name": "animation",
               "fullPath": "src/animation",
-              "value": 27291,
+              "value": 32531,
               "children": [
+                {
+                  "name": "AnimationHandle.ts",
+                  "fullPath": "src/animation/AnimationHandle.ts",
+                  "value": 7970
+                },
                 {
                   "name": "matchBy.ts",
                   "fullPath": "src/animation/matchBy.ts",
                   "value": 5864
+                },
+                {
+                  "name": "easing.ts",
+                  "fullPath": "src/animation/easing.ts",
+                  "value": 5277
                 },
                 {
                   "name": "useAnimationStartSnapshot.ts",
@@ -740,49 +750,29 @@
                   "value": 4279
                 },
                 {
-                  "name": "configUpdate.ts",
-                  "fullPath": "src/animation/configUpdate.ts",
-                  "value": 4004
-                },
-                {
-                  "name": "easing.ts",
-                  "fullPath": "src/animation/easing.ts",
-                  "value": 3936
-                },
-                {
                   "name": "AnimatedItems.tsx",
                   "fullPath": "src/animation/AnimatedItems.tsx",
                   "value": 3718
                 },
                 {
-                  "name": "AnimationManager.ts",
-                  "fullPath": "src/animation/AnimationManager.ts",
-                  "value": 1751
-                },
-                {
                   "name": "JavascriptAnimate.tsx",
                   "fullPath": "src/animation/JavascriptAnimate.tsx",
-                  "value": 1710
+                  "value": 1601
+                },
+                {
+                  "name": "useAnimationController.tsx",
+                  "fullPath": "src/animation/useAnimationController.tsx",
+                  "value": 1480
                 },
                 {
                   "name": "timeoutController.ts",
                   "fullPath": "src/animation/timeoutController.ts",
-                  "value": 911
+                  "value": 1235
                 },
                 {
-                  "name": "util.ts",
-                  "fullPath": "src/animation/util.ts",
-                  "value": 605
-                },
-                {
-                  "name": "useAnimationManager.tsx",
-                  "fullPath": "src/animation/useAnimationManager.tsx",
-                  "value": 392
-                },
-                {
-                  "name": "createDefaultAnimationManager.tsx",
-                  "fullPath": "src/animation/createDefaultAnimationManager.tsx",
-                  "value": 121
+                  "name": "AnimationControllerImpl.ts",
+                  "fullPath": "src/animation/AnimationControllerImpl.ts",
+                  "value": 1107
                 }
               ]
             },
@@ -1012,7 +1002,7 @@
         {
           "name": "node_modules",
           "fullPath": "node_modules",
-          "value": 360130,
+          "value": 360108,
           "children": [
             {
               "name": "@reduxjs",
@@ -1894,12 +1884,12 @@
             {
               "name": "d3-array",
               "fullPath": "node_modules/d3-array",
-              "value": 7495,
+              "value": 7499,
               "children": [
                 {
                   "name": "src",
                   "fullPath": "node_modules/d3-array/src",
-                  "value": 7495,
+                  "value": 7499,
                   "children": [
                     {
                       "name": "ticks.js",
@@ -1914,7 +1904,7 @@
                     {
                       "name": "bisector.js",
                       "fullPath": "node_modules/d3-array/src/bisector.js",
-                      "value": 1453
+                      "value": 1457
                     },
                     {
                       "name": "quantile.js",
@@ -2026,17 +2016,17 @@
             {
               "name": "d3-interpolate",
               "fullPath": "node_modules/d3-interpolate",
-              "value": 4978,
+              "value": 4952,
               "children": [
                 {
                   "name": "src",
                   "fullPath": "node_modules/d3-interpolate/src",
-                  "value": 4978,
+                  "value": 4952,
                   "children": [
                     {
                       "name": "string.js",
                       "fullPath": "node_modules/d3-interpolate/src/string.js",
-                      "value": 1752
+                      "value": 1737
                     },
                     {
                       "name": "color.js",
@@ -2051,7 +2041,7 @@
                     {
                       "name": "value.js",
                       "fullPath": "node_modules/d3-interpolate/src/value.js",
-                      "value": 459
+                      "value": 448
                     },
                     {
                       "name": "piecewise.js",
@@ -2292,60 +2282,60 @@
   },
   "sunburst": {
     "examplePath": "www/src/views/IndexView/IndexLineChart.tsx",
-    "totalSize": 808103,
-    "totalSizeLabel": "789.16 KB",
-    "moduleCount": 320,
-    "generatedAt": "2026-06-10T04:09:21.368Z",
+    "totalSize": 815340,
+    "totalSizeLabel": "796.23 KB",
+    "moduleCount": 318,
+    "generatedAt": "2026-06-25T13:31:40.631Z",
     "stages": [
       {
         "stage": "es6-folder",
-        "bytes": 1270439,
+        "bytes": 1265244,
         "humanReadableSize": "1.21 MB",
         "reductionFromBaselinePercent": 0
       },
       {
         "stage": "tree-shaken",
-        "bytes": 811621,
-        "humanReadableSize": "792.60 KB",
+        "bytes": 818854,
+        "humanReadableSize": "799.66 KB",
         "reductionFromBaselinePercent": 0
       },
       {
         "stage": "minified",
-        "bytes": 280840,
-        "humanReadableSize": "274.26 KB",
-        "reductionFromBaselinePercent": 65.4
+        "bytes": 281289,
+        "humanReadableSize": "274.70 KB",
+        "reductionFromBaselinePercent": 65.65
       },
       {
         "stage": "minified+gzip",
-        "bytes": 92267,
-        "humanReadableSize": "90.10 KB",
-        "reductionFromBaselinePercent": 88.63
+        "bytes": 92095,
+        "humanReadableSize": "89.94 KB",
+        "reductionFromBaselinePercent": 88.75
       }
     ],
     "tree": {
       "name": "bundle",
       "fullPath": "bundle",
-      "value": 808103,
+      "value": 815340,
       "children": [
         {
           "name": "src",
           "fullPath": "src",
-          "value": 446557,
+          "value": 453816,
           "children": [
             {
               "name": "state",
               "fullPath": "src/state",
-              "value": 167971,
+              "value": 169814,
               "children": [
                 {
                   "name": "selectors",
                   "fullPath": "src/state/selectors",
-                  "value": 105088,
+                  "value": 106931,
                   "children": [
                     {
                       "name": "axisSelectors.ts",
                       "fullPath": "src/state/selectors/axisSelectors.ts",
-                      "value": 51710
+                      "value": 53553
                     },
                     {
                       "name": "combiners",
@@ -2956,7 +2946,7 @@
             {
               "name": "cartesian",
               "fullPath": "src/cartesian",
-              "value": 75328,
+              "value": 75504,
               "children": [
                 {
                   "name": "Line.tsx",
@@ -2986,7 +2976,7 @@
                 {
                   "name": "LineDrawShape.tsx",
                   "fullPath": "src/cartesian/LineDrawShape.tsx",
-                  "value": 5864
+                  "value": 6040
                 },
                 {
                   "name": "getTicks.ts",
@@ -3018,12 +3008,22 @@
             {
               "name": "animation",
               "fullPath": "src/animation",
-              "value": 27291,
+              "value": 32531,
               "children": [
+                {
+                  "name": "AnimationHandle.ts",
+                  "fullPath": "src/animation/AnimationHandle.ts",
+                  "value": 7970
+                },
                 {
                   "name": "matchBy.ts",
                   "fullPath": "src/animation/matchBy.ts",
                   "value": 5864
+                },
+                {
+                  "name": "easing.ts",
+                  "fullPath": "src/animation/easing.ts",
+                  "value": 5277
                 },
                 {
                   "name": "useAnimationStartSnapshot.ts",
@@ -3031,49 +3031,29 @@
                   "value": 4279
                 },
                 {
-                  "name": "configUpdate.ts",
-                  "fullPath": "src/animation/configUpdate.ts",
-                  "value": 4004
-                },
-                {
-                  "name": "easing.ts",
-                  "fullPath": "src/animation/easing.ts",
-                  "value": 3936
-                },
-                {
                   "name": "AnimatedItems.tsx",
                   "fullPath": "src/animation/AnimatedItems.tsx",
                   "value": 3718
                 },
                 {
-                  "name": "AnimationManager.ts",
-                  "fullPath": "src/animation/AnimationManager.ts",
-                  "value": 1751
-                },
-                {
                   "name": "JavascriptAnimate.tsx",
                   "fullPath": "src/animation/JavascriptAnimate.tsx",
-                  "value": 1710
+                  "value": 1601
+                },
+                {
+                  "name": "useAnimationController.tsx",
+                  "fullPath": "src/animation/useAnimationController.tsx",
+                  "value": 1480
                 },
                 {
                   "name": "timeoutController.ts",
                   "fullPath": "src/animation/timeoutController.ts",
-                  "value": 911
+                  "value": 1235
                 },
                 {
-                  "name": "util.ts",
-                  "fullPath": "src/animation/util.ts",
-                  "value": 605
-                },
-                {
-                  "name": "useAnimationManager.tsx",
-                  "fullPath": "src/animation/useAnimationManager.tsx",
-                  "value": 392
-                },
-                {
-                  "name": "createDefaultAnimationManager.tsx",
-                  "fullPath": "src/animation/createDefaultAnimationManager.tsx",
-                  "value": 121
+                  "name": "AnimationControllerImpl.ts",
+                  "fullPath": "src/animation/AnimationControllerImpl.ts",
+                  "value": 1107
                 }
               ]
             },
@@ -3303,7 +3283,7 @@
         {
           "name": "node_modules",
           "fullPath": "node_modules",
-          "value": 360130,
+          "value": 360108,
           "children": [
             {
               "name": "@reduxjs",
@@ -4185,12 +4165,12 @@
             {
               "name": "d3-array",
               "fullPath": "node_modules/d3-array",
-              "value": 7495,
+              "value": 7499,
               "children": [
                 {
                   "name": "src",
                   "fullPath": "node_modules/d3-array/src",
-                  "value": 7495,
+                  "value": 7499,
                   "children": [
                     {
                       "name": "ticks.js",
@@ -4205,7 +4185,7 @@
                     {
                       "name": "bisector.js",
                       "fullPath": "node_modules/d3-array/src/bisector.js",
-                      "value": 1453
+                      "value": 1457
                     },
                     {
                       "name": "quantile.js",
@@ -4317,17 +4297,17 @@
             {
               "name": "d3-interpolate",
               "fullPath": "node_modules/d3-interpolate",
-              "value": 4978,
+              "value": 4952,
               "children": [
                 {
                   "name": "src",
                   "fullPath": "node_modules/d3-interpolate/src",
-                  "value": 4978,
+                  "value": 4952,
                   "children": [
                     {
                       "name": "string.js",
                       "fullPath": "node_modules/d3-interpolate/src/string.js",
-                      "value": 1752
+                      "value": 1737
                     },
                     {
                       "name": "color.js",
@@ -4342,7 +4322,7 @@
                     {
                       "name": "value.js",
                       "fullPath": "node_modules/d3-interpolate/src/value.js",
-                      "value": 459
+                      "value": 448
                     },
                     {
                       "name": "piecewise.js",
