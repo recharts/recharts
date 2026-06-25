@@ -105,7 +105,7 @@ export function createSelectorTestCase(Component: ComponentType<{ children: Reac
       vi.runAllTimers();
     });
 
-    assertUniqueHtmlIds(container);
+    assertUniqueHtmlIds();
     const myRerender = (NextComponent: ComponentType<{ children: ReactNode }>): void => {
       rerender(
         <AnimationControllerProvider value={animationManager.factory}>
@@ -247,7 +247,7 @@ export function createSynchronisedSelectorTestCase(
       </>,
     );
 
-    assertUniqueHtmlIds(container);
+    assertUniqueHtmlIds();
     const wrapperA = container.querySelector('#wrapperA')!;
     const wrapperB = container.querySelector('#wrapperB')!;
     const wrapperC = container.querySelector('#wrapperC')!;
