@@ -56,7 +56,7 @@ function showTooltipWithEvent(
      * Because the mouse event will trigger a requestAnimationFrame in the middleware, we need to run pending timers to ensure
      * that the tooltip state is updated before we return.
      */
-    vi.runAllTimers();
+    vi.runOnlyPendingTimers();
   });
   return tooltipTriggerElement;
 }
