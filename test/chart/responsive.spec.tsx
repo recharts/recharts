@@ -48,7 +48,7 @@ describe('responsive prop', () => {
         const { container } = renderTestCase();
         const wrapperElement = container.querySelector('.recharts-wrapper');
         expect(wrapperElement).toBeInTheDocument();
-        expect(wrapperElement).toHaveStyle({ position: 'relative', width: undefined, height: undefined });
+        expect(wrapperElement).toHaveStyle({ position: 'relative' });
       });
 
       it('should not interact with ResizeObserver', () => {
@@ -257,7 +257,7 @@ describe('responsive prop', () => {
         const { container } = renderTestCase();
         const wrapperElement = container.querySelector('.recharts-wrapper');
         expect(wrapperElement).toBeInTheDocument();
-        expect(wrapperElement).toHaveStyle({ position: 'relative', width: undefined, height: undefined });
+        expect(wrapperElement).toHaveStyle({ position: 'relative' });
       });
 
       it('should subscribe to ResizeObserver', () => {
