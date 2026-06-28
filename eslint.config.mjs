@@ -314,10 +314,11 @@ const overridesConfig = [
   },
   {
     name: 'scripts override',
-    files: ['scripts/*.js', 'scripts/*.mjs', 'scripts/*.ts', 'www/scripts/*.tsx'],
+    files: ['scripts/*.js', 'scripts/*.mjs', 'scripts/*.ts', 'scripts/*.mts', 'www/scripts/*.tsx'],
     rules: {
       '@typescript-eslint/no-require-imports': 'off',
       'no-console': 'off',
+      'no-await-in-loop': 'off',
     },
   },
   {
