@@ -3,10 +3,8 @@ import react from '@vitejs/plugin-react';
 import { playwright } from '@vitest/browser-playwright';
 
 // https://vitejs.dev/config/
-// @ts-expect-error wants esModuleInterop
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
-// @ts-expect-error storybookTest import not found
 import { storybookTest } from '@storybook/addon-vitest/vitest-plugin';
 
 // @ts-expect-error does not like import.meta
