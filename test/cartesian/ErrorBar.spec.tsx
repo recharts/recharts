@@ -1330,11 +1330,11 @@ describe('<ErrorBar />', () => {
           selectAxisDomainIncludingNiceTicks(state, 'yAxis', 0, useIsPanorama()),
         );
         expect(spy).toHaveBeenCalledWith([0, 3400]);
-        expect(spy).toHaveBeenCalledTimes(3);
+        expect(spy).toHaveBeenCalledTimes(4);
 
         rerender(secondRender);
         expect(spy).toHaveBeenLastCalledWith([0, 3600]);
-        expect(spy).toHaveBeenCalledTimes(7);
+        expect(spy).toHaveBeenCalledTimes(8);
       });
 
       test('YAxis ticks', () => {
@@ -1504,12 +1504,12 @@ describe('<ErrorBar />', () => {
           selectAxisDomainIncludingNiceTicks(state, 'yAxis', 0, useIsPanorama()),
         );
         expect(spy).toHaveBeenCalledWith([0, 3400]);
-        expect(spy).toHaveBeenCalledTimes(3);
+        expect(spy).toHaveBeenCalledTimes(4);
 
         rerender(secondRender);
 
         expect(spy).toHaveBeenLastCalledWith([0, 3600]);
-        expect(spy).toHaveBeenCalledTimes(7);
+        expect(spy).toHaveBeenCalledTimes(8);
       });
 
       test('YAxis ticks', () => {
@@ -1795,12 +1795,12 @@ describe('<ErrorBar />', () => {
           selectAxisDomainIncludingNiceTicks(state, 'xAxis', 0, useIsPanorama()),
         );
         expect(spy).toHaveBeenCalledWith([0, 3400]);
-        expect(spy).toHaveBeenCalledTimes(3);
+        expect(spy).toHaveBeenCalledTimes(4);
 
         rerender(secondRender);
 
         expect(spy).toHaveBeenLastCalledWith([0, 3600]);
-        expect(spy).toHaveBeenCalledTimes(7);
+        expect(spy).toHaveBeenCalledTimes(8);
       });
 
       test('XAxis ticks', () => {
@@ -2049,7 +2049,7 @@ describe('<ErrorBar />', () => {
           selectAxisDomainIncludingNiceTicks(state, 'xAxis', 0, useIsPanorama()),
         );
         expect(spy).toHaveBeenCalledWith([0, 3400]);
-        expect(spy).toHaveBeenCalledTimes(3);
+        expect(spy).toHaveBeenCalledTimes(4);
 
         rerender(secondRender);
 

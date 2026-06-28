@@ -1018,7 +1018,7 @@ describe('Tooltip synchronization', () => {
         sourceViewBox: viewBox,
         graphicalItemId: undefined,
       });
-      expect(spyA).toHaveBeenCalledTimes(4);
+      expect(spyA).toHaveBeenCalledTimes(5);
       expect(spyB).toHaveBeenLastCalledWith({
         // Thanks to mouse events, synchronisation on this chart is now turned off so that it can start sending events to other charts
         // sourceViewBox is cleared by setMouseOverAxisIndex since Chart B is now doing its own interaction

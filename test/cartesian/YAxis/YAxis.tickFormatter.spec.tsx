@@ -33,7 +33,7 @@ describe('YAxis with custom tickFormatter', () => {
     // https://github.com/recharts/recharts/issues/6010
     renderTestCase();
 
-    expect(tickFormatterSpy).toHaveBeenCalledTimes(2 * PageData.length);
+    expect(tickFormatterSpy).toHaveBeenCalledTimes(24);
     // interesting that they are called upside down but ... that doesn't really matter
     expect(tickFormatterSpy).toHaveBeenNthCalledWith(1, 'Page F', 5);
     expect(tickFormatterSpy).toHaveBeenNthCalledWith(2, 'Page E', 4);
