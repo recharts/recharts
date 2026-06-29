@@ -133,3 +133,19 @@ test('of equal values of -Infinity', () => {
 
   expect(scales).toEqual([-Infinity, -Infinity]);
 });
+test('allowDecimals=false does not produce duplicate ticks when cormax rounds to same integer as the last step', () => {
+  // Without the fix, getTickValuesFixedDomain([0, 4.4], 5, false) returns [0, 2, 4, 4]
+  // because Math.round(4.4)===4 duplicates the last rangeStep value of 4.
+  const scales = getTickValuesFixedDomain([0, 4.4], 5, false);
+
+  expect(scales).toEqual([0, 2, 4]);
+  expect(scales.length).toBeLessThan(5); // fewer than requested when integers can't fit
+});
+
+test('allowDecimals=false does not produce duplicate ticks with step=1 boundary rounding', () => {
+  // rangeStep produces [0,1,2,3], then cormax=3.4 is appended and rounds to 3 — duplicate.
+  const scales = getTickValuesFixedDomain([0, 3.4], 5, false);
+
+  expect(scales).toEqual([0, 1, 2, 3]);
+  expect(scales.length).toBeLessThan(5);
+});
