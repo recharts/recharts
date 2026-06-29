@@ -229,6 +229,12 @@ export const commentSimilarityExceptions: ReadonlyArray<CommentSimilarityGroup> 
     reason: 'DefaultLegendContent formatter requires HTML context, unlike other components which use SVG',
   },
   {
+    components: ['Label', 'LabelList'],
+    props: ['formatter'],
+    reason:
+      'Label and LabelList formatter serializes content for SVG text rendering, unlike graphical item formatters which format tooltip values',
+  },
+  {
     components: ['XAxis', 'YAxis', 'ZAxis', 'PolarAngleAxis', 'PolarRadiusAxis'],
     props: ['type'],
     reason: '"type" in axes means categorical/numerical, unlike curves where it means line shape',

@@ -35,7 +35,7 @@ import {
   TrapezoidViewBox,
   CartesianLayout,
 } from '../util/types';
-import { TooltipType } from '../component/DefaultTooltipContent';
+import { Formatter, TooltipType } from '../component/DefaultTooltipContent';
 import { ScatterShapeProps, ScatterSymbol } from '../util/ScatterUtils';
 import { InnerSymbolsProp } from '../shape/Symbols';
 import type { LegendPayload } from '../component/DefaultLegendContent';
@@ -140,6 +140,7 @@ interface ScatterInternalProps extends ZIndexable {
   lineJointType: CurveType;
   legendType: LegendType;
   tooltipType?: TooltipType;
+  formatter?: Formatter;
   className?: string;
   name?: string;
 
@@ -246,6 +247,11 @@ interface ScatterProps<DataPointType = any, DataValueType = any>
    */
   legendType?: LegendType;
   tooltipType?: TooltipType;
+  /**
+   * Formats the value displayed in the tooltip for this Scatter.
+   * When set, takes precedence over the `formatter` prop on the Tooltip component.
+   */
+  formatter?: Formatter;
   className?: string;
   /**
    * The name of data.
@@ -401,6 +407,7 @@ type InputRequiredToComputeTooltipEntrySettings = {
   fill?: string;
   name?: string;
   hide?: boolean;
+  formatter?: Formatter;
   tooltipType?: TooltipType;
   id: GraphicalItemId;
 };
@@ -414,6 +421,7 @@ const SetScatterTooltipEntrySettings = React.memo(
     fill,
     name,
     hide,
+    formatter,
     tooltipType,
     id,
   }: InputRequiredToComputeTooltipEntrySettings) => {
@@ -431,6 +439,7 @@ const SetScatterTooltipEntrySettings = React.memo(
         type: tooltipType,
         color: fill,
         unit: '', // why doesn't Scatter support unit?
+        formatter,
         graphicalItemId: id,
       },
     };
@@ -969,6 +978,7 @@ function ScatterImpl(props: WithIdRequired<Props>) {
         fill={props.fill}
         name={props.name}
         hide={props.hide}
+        formatter={props.formatter}
         tooltipType={props.tooltipType}
         id={props.id}
       />

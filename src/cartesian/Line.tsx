@@ -33,6 +33,7 @@ import {
   TrapezoidViewBox,
 } from '../util/types';
 import type { LegendPayload } from '../component/DefaultLegendContent';
+import { Formatter } from '../component/DefaultTooltipContent';
 import { ActivePoints } from '../component/ActivePoints';
 import { TooltipPayloadConfiguration } from '../state/tooltipSlice';
 import { SetTooltipEntrySettings } from '../state/SetTooltipEntrySettings';
@@ -107,6 +108,7 @@ interface InternalLineProps extends ZIndexable {
   onAnimationStart?: () => void;
 
   points: ReadonlyArray<LinePointItem>;
+  formatter?: Formatter;
   tooltipType?: TooltipType;
   top: number;
   type?: CurveType;
@@ -303,6 +305,11 @@ interface LineProps<DataPointType = any, DataValueType = any>
    */
   unit?: string | number | null;
   /**
+   * Formats the value displayed in the tooltip for this Line.
+   * When set, takes precedence over the `formatter` prop on the Tooltip component.
+   */
+  formatter?: Formatter;
+  /**
    * The id of XAxis which is corresponding to the data. Required when there are multiple XAxes.
    * @defaultValue 0
    */
@@ -476,11 +483,22 @@ const SetLineTooltipEntrySettings = React.memo(
     name,
     hide,
     unit,
+    formatter,
     tooltipType,
     id,
   }: Pick<
     InternalProps,
-    'dataKey' | 'data' | 'stroke' | 'strokeWidth' | 'fill' | 'name' | 'hide' | 'unit' | 'tooltipType' | 'id'
+    | 'dataKey'
+    | 'data'
+    | 'stroke'
+    | 'strokeWidth'
+    | 'fill'
+    | 'name'
+    | 'hide'
+    | 'unit'
+    | 'formatter'
+    | 'tooltipType'
+    | 'id'
   >) => {
     const tooltipEntrySettings: TooltipPayloadConfiguration = {
       dataDefinedOnItem: data,
@@ -496,6 +514,7 @@ const SetLineTooltipEntrySettings = React.memo(
         type: tooltipType,
         color: stroke,
         unit,
+        formatter,
         graphicalItemId: id,
       },
     };
@@ -910,6 +929,7 @@ function LineFn(outsideProps: Props) {
             name={props.name}
             hide={props.hide}
             unit={props.unit}
+            formatter={props.formatter}
             tooltipType={props.tooltipType}
             id={id}
           />
