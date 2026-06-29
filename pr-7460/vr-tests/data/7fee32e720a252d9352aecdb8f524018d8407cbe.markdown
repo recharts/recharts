@@ -1,0 +1,225 @@
+# Instructions
+
+- Following Playwright test failed.
+- Explain why, be concise, respect Playwright best practices.
+- Provide a snippet of code with the fix, if possible.
+
+# Test info
+
+- Name: tests/www/BarChartApiExamples.spec-vr.tsx >> TimelineExample
+- Location: test-vr/tests/www/BarChartApiExamples.spec-vr.tsx:35:5
+
+# Error details
+
+```
+Error: expect(locator).toHaveScreenshot(expected) failed
+
+Locator: locator('#root').locator('internal:control=component')
+  22 pixels (ratio 0.01 of all image pixels) are different.
+
+Call log:
+  - Expect "toHaveScreenshot" with timeout 10000ms
+    - verifying given screenshot expectation
+  - waiting for locator('#root').locator('internal:control=component')
+    - locator resolved to <div width="100%" class="recharts-wrapper">…</div>
+  - taking element screenshot
+    - disabled all CSS animations
+  - waiting for fonts to load...
+  - fonts loaded
+  - attempting scroll into view action
+    - waiting for element to be stable
+  - 78121 pixels (ratio 0.26 of all image pixels) are different.
+  - waiting 100ms before taking screenshot
+  - waiting for locator('#root').locator('internal:control=component')
+    - locator resolved to <div width="100%" class="recharts-wrapper">…</div>
+  - taking element screenshot
+    - disabled all CSS animations
+  - waiting for fonts to load...
+  - fonts loaded
+  - attempting scroll into view action
+    - waiting for element to be stable
+  - 78099 pixels (ratio 0.26 of all image pixels) are different.
+  - waiting 250ms before taking screenshot
+  - waiting for locator('#root').locator('internal:control=component')
+    - locator resolved to <div width="100%" class="recharts-wrapper">…</div>
+  - taking element screenshot
+    - disabled all CSS animations
+  - waiting for fonts to load...
+  - fonts loaded
+  - attempting scroll into view action
+    - waiting for element to be stable
+  - captured a stable screenshot
+  - 22 pixels (ratio 0.01 of all image pixels) are different.
+
+```
+
+# Page snapshot
+
+```yaml
+- generic [active] [ref=e1]:
+  - generic [ref=e3]:
+    - generic:
+      - status:
+        - paragraph
+        - list:
+          - listitem: "firstCycle : 5.37 ~ 7.87"
+    - application [ref=e4]:
+      - generic [ref=e73]:
+        - generic [ref=e74]:
+          - generic [ref=e76]: "0"
+          - generic [ref=e78]: "5"
+          - generic [ref=e80]: "10"
+          - generic [ref=e82]: "15"
+          - generic [ref=e84]: "20"
+        - generic [ref=e85]: Time (s)
+        - generic [ref=e86]:
+          - generic [ref=e88]: TEST 1
+          - generic [ref=e90]: TEST 2
+          - generic [ref=e92]: TEST 3
+          - generic [ref=e94]: TEST 4
+          - generic [ref=e96]: TEST 5
+          - generic [ref=e98]: TEST 6
+          - generic [ref=e100]: TEST 7
+          - generic [ref=e102]: TEST 8
+        - generic [ref=e103]: Test run
+  - generic [ref=e104]: TEST 1
+```
+
+# Test source
+
+```ts
+  1   | import * as React from 'react';
+  2   | import { test, expect } from '@playwright/experimental-ct-react';
+  3   | import BarChartRangeExample from '../../../www/src/docs/exampleComponents/BarChart/BarChartRangeExample';
+  4   | import TinyBarChart from '../../../www/src/docs/exampleComponents/BarChart/TinyBarChart';
+  5   | import SimpleBarChart from '../../../www/src/docs/exampleComponents/BarChart/SimpleBarChart';
+  6   | import StackedBarChart from '../../../www/src/docs/exampleComponents/BarChart/StackedBarChart';
+  7   | import MixBarChart from '../../../www/src/docs/exampleComponents/BarChart/MixBarChart';
+  8   | import CustomShapeBarChart from '../../../www/src/docs/exampleComponents/BarChart/CustomShapeBarChart';
+  9   | import PositiveAndNegativeBarChart from '../../../www/src/docs/exampleComponents/BarChart/PositiveAndNegativeBarChart';
+  10  | import BrushBarChart from '../../../www/src/docs/exampleComponents/BarChart/BrushBarChart';
+  11  | import BarChartWithCustomizedEvent from '../../../www/src/docs/exampleComponents/BarChart/BarChartWithCustomizedEvent';
+  12  | import BarChartWithMinHeight from '../../../www/src/docs/exampleComponents/BarChart/BarChartWithMinHeight';
+  13  | import BarChartStackedBySign from '../../../www/src/docs/exampleComponents/BarChart/BarChartStackedBySign';
+  14  | import BiaxialBarChart from '../../../www/src/docs/exampleComponents/BarChart/BiaxialBarChart';
+  15  | import BarChartHasBackground from '../../../www/src/docs/exampleComponents/BarChart/BarChartHasBackground';
+  16  | import BarChartWithMultiXAxis from '../../../www/src/docs/exampleComponents/BarChart/BarChartWithMultiXAxis';
+  17  | import BarChartNavExample from '../../../www/src/docs/exampleComponents/BarChart/BarChartNavExample';
+  18  | import RangedStackedBarChart from '../../../www/src/docs/exampleComponents/BarChart/RangedStackedBarChart';
+  19  | import PopulationPyramidExample from '../../../www/src/docs/exampleComponents/BarChart/PopulationPyramidExample';
+  20  | import TimelineExample from '../../../www/src/docs/exampleComponents/BarChart/TimelineExample';
+  21  | import CandlestickExample from '../../../www/src/docs/exampleComponents/BarChart/CandlestickExample';
+  22  | import BoxPlotExample from '../../../www/src/docs/exampleComponents/BarChart/BoxPlotExample';
+  23  | import AnimatedBarWidthExample from '../../../www/src/docs/exampleComponents/BarChart/AnimatedBarWidthExample';
+  24  | 
+  25  | test('CandlestickExample', async ({ mount }) => {
+  26  |   const component = await mount(<CandlestickExample defaultIndex="50" />);
+  27  |   await expect(component).toHaveScreenshot();
+  28  | });
+  29  | 
+  30  | test('BoxPlotExample', async ({ mount }) => {
+  31  |   const component = await mount(<BoxPlotExample defaultIndex="2" />);
+  32  |   await expect(component).toHaveScreenshot();
+  33  | });
+  34  | 
+  35  | test('TimelineExample', async ({ mount }) => {
+  36  |   /*
+  37  |    * This shows a bug where defaultIndex highlights all items in the row
+  38  |    * but mouse hover only highlights one item in the stack.
+  39  |    */
+  40  |   const component = await mount(<TimelineExample defaultIndex={3} />);
+> 41  |   await expect(component).toHaveScreenshot();
+      |                           ^ Error: expect(locator).toHaveScreenshot(expected) failed
+  42  | });
+  43  | 
+  44  | test('PopulationPyramidExample', async ({ mount }) => {
+  45  |   const component = await mount(<PopulationPyramidExample defaultIndex={4} />);
+  46  |   await expect(component).toHaveScreenshot();
+  47  | });
+  48  | 
+  49  | test('BarChartNavExample', async ({ mount }) => {
+  50  |   const component = await mount(<BarChartNavExample />);
+  51  |   await expect(component).toHaveScreenshot();
+  52  | });
+  53  | 
+  54  | test('BarChartWithMultiXAxis', async ({ mount }) => {
+  55  |   const component = await mount(<BarChartWithMultiXAxis />);
+  56  |   await expect(component).toHaveScreenshot();
+  57  | });
+  58  | 
+  59  | test('BarChartHasBackground', async ({ mount }) => {
+  60  |   const component = await mount(<BarChartHasBackground />);
+  61  |   await expect(component).toHaveScreenshot();
+  62  | });
+  63  | 
+  64  | test('BiaxialBarChart', async ({ mount }) => {
+  65  |   const component = await mount(<BiaxialBarChart />);
+  66  |   await expect(component).toHaveScreenshot();
+  67  | });
+  68  | 
+  69  | test('BarChartStackedBySign', async ({ mount }) => {
+  70  |   const component = await mount(<BarChartStackedBySign />);
+  71  |   await expect(component).toHaveScreenshot();
+  72  | });
+  73  | 
+  74  | test('BarChartWithMinHeight', async ({ mount }) => {
+  75  |   const component = await mount(<BarChartWithMinHeight />);
+  76  |   await expect(component).toHaveScreenshot();
+  77  | });
+  78  | 
+  79  | test('BarChartWithCustomizedEvent', async ({ mount }) => {
+  80  |   const component = await mount(<BarChartWithCustomizedEvent />);
+  81  |   await expect(component).toHaveScreenshot();
+  82  | });
+  83  | 
+  84  | test('BrushBarChart', async ({ mount }) => {
+  85  |   const component = await mount(<BrushBarChart />);
+  86  |   await expect(component).toHaveScreenshot();
+  87  | });
+  88  | 
+  89  | test('PositiveAndNegativeBarChart', async ({ mount }) => {
+  90  |   const component = await mount(<PositiveAndNegativeBarChart />);
+  91  |   await expect(component).toHaveScreenshot();
+  92  | });
+  93  | 
+  94  | test('CustomShapeBarChart', async ({ mount }) => {
+  95  |   const component = await mount(<CustomShapeBarChart />);
+  96  |   await expect(component).toHaveScreenshot();
+  97  | });
+  98  | 
+  99  | test('MixBarChart', async ({ mount }) => {
+  100 |   const component = await mount(<MixBarChart />);
+  101 |   await expect(component).toHaveScreenshot();
+  102 | });
+  103 | 
+  104 | test('StackedBarChart', async ({ mount }) => {
+  105 |   const component = await mount(<StackedBarChart />);
+  106 |   await expect(component).toHaveScreenshot();
+  107 | });
+  108 | 
+  109 | test('SimpleBarChart', async ({ mount }) => {
+  110 |   const component = await mount(<SimpleBarChart />);
+  111 |   await expect(component).toHaveScreenshot();
+  112 | });
+  113 | 
+  114 | test('TinyBarChart', async ({ mount }) => {
+  115 |   const component = await mount(<TinyBarChart />);
+  116 |   await expect(component).toHaveScreenshot();
+  117 | });
+  118 | 
+  119 | test('BarChartRangeExample', async ({ mount }) => {
+  120 |   const component = await mount(<BarChartRangeExample isAnimationActive={false} />);
+  121 |   await expect(component).toHaveScreenshot();
+  122 | });
+  123 | 
+  124 | test('RangedStackedBarChart', async ({ mount }) => {
+  125 |   const component = await mount(<RangedStackedBarChart isAnimationActive={false} defaultIndex="1" />);
+  126 |   await expect(component).toHaveScreenshot();
+  127 | });
+  128 | 
+  129 | test('AnimatedBarWidthExample', async ({ mount }) => {
+  130 |   const component = await mount(<AnimatedBarWidthExample isAnimationActive={false} defaultIndex="2" />);
+  131 |   await expect(component).toHaveScreenshot();
+  132 | });
+  133 | 
+```
