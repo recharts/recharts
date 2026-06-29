@@ -78,7 +78,7 @@ ${sourceLine}`;
 }
 
 function perSecond(count: number, nanos: number) {
-  const seconds = nanos / (10 ^ 9);
+  const seconds = nanos / 1e9;
   return Math.floor(count / seconds);
 }
 
@@ -113,6 +113,12 @@ for (const failureGenerator of failures) {
       assertNotNull(sourceLine);
       const prompt = createPrompt(message, sourceLine, file, line);
       const newLine = await callOllama(prompt);
+      /*
+       * TODO this can potentially overwrite previous changes. First we should group the changes by file,
+       * and apply lines in descending order so that the addition or removal of lines
+       * will not affect line numbers below.
+       * Apply prettier only once, at the end.
+       */
       await replaceLineInFile(file, line, newLine);
     }
   }
