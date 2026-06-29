@@ -1,0 +1,4564 @@
+{
+  "treemap": {
+    "examplePath": "www/src/views/IndexView/IndexLineChart.tsx",
+    "totalSize": 815340,
+    "totalSizeLabel": "796.23 KB",
+    "moduleCount": 318,
+    "generatedAt": "2026-06-29T12:15:16.966Z",
+    "stages": [
+      {
+        "stage": "es6-folder",
+        "bytes": 1265282,
+        "humanReadableSize": "1.21 MB",
+        "reductionFromBaselinePercent": 0
+      },
+      {
+        "stage": "tree-shaken",
+        "bytes": 818854,
+        "humanReadableSize": "799.66 KB",
+        "reductionFromBaselinePercent": 0
+      },
+      {
+        "stage": "minified",
+        "bytes": 281289,
+        "humanReadableSize": "274.70 KB",
+        "reductionFromBaselinePercent": 65.65
+      },
+      {
+        "stage": "minified+gzip",
+        "bytes": 92095,
+        "humanReadableSize": "89.94 KB",
+        "reductionFromBaselinePercent": 88.75
+      }
+    ],
+    "tree": {
+      "name": "bundle",
+      "fullPath": "bundle",
+      "value": 815340,
+      "children": [
+        {
+          "name": "src",
+          "fullPath": "src",
+          "value": 453816,
+          "children": [
+            {
+              "name": "state",
+              "fullPath": "src/state",
+              "value": 169814,
+              "children": [
+                {
+                  "name": "selectors",
+                  "fullPath": "src/state/selectors",
+                  "value": 106931,
+                  "children": [
+                    {
+                      "name": "axisSelectors.ts",
+                      "fullPath": "src/state/selectors/axisSelectors.ts",
+                      "value": 53553
+                    },
+                    {
+                      "name": "combiners",
+                      "fullPath": "src/state/selectors/combiners",
+                      "value": 18984,
+                      "children": [
+                        {
+                          "name": "combineTooltipPayload.ts",
+                          "fullPath": "src/state/selectors/combiners/combineTooltipPayload.ts",
+                          "value": 5880
+                        },
+                        {
+                          "name": "combineActiveTooltipIndex.ts",
+                          "fullPath": "src/state/selectors/combiners/combineActiveTooltipIndex.ts",
+                          "value": 2241
+                        },
+                        {
+                          "name": "combineTooltipPayloadConfigurations.ts",
+                          "fullPath": "src/state/selectors/combiners/combineTooltipPayloadConfigurations.ts",
+                          "value": 2021
+                        },
+                        {
+                          "name": "combineDisplayedStackedData.ts",
+                          "fullPath": "src/state/selectors/combiners/combineDisplayedStackedData.ts",
+                          "value": 1822
+                        },
+                        {
+                          "name": "combineTooltipInteractionState.ts",
+                          "fullPath": "src/state/selectors/combiners/combineTooltipInteractionState.ts",
+                          "value": 1708
+                        },
+                        {
+                          "name": "combineConfiguredScale.ts",
+                          "fullPath": "src/state/selectors/combiners/combineConfiguredScale.ts",
+                          "value": 1440
+                        },
+                        {
+                          "name": "combineCheckedDomain.ts",
+                          "fullPath": "src/state/selectors/combiners/combineCheckedDomain.ts",
+                          "value": 1203
+                        },
+                        {
+                          "name": "combineCoordinateForDefaultIndex.ts",
+                          "fullPath": "src/state/selectors/combiners/combineCoordinateForDefaultIndex.ts",
+                          "value": 1141
+                        },
+                        {
+                          "name": "combineRealScaleType.ts",
+                          "fullPath": "src/state/selectors/combiners/combineRealScaleType.ts",
+                          "value": 756
+                        },
+                        {
+                          "name": "combineInverseScaleFunction.ts",
+                          "fullPath": "src/state/selectors/combiners/combineInverseScaleFunction.ts",
+                          "value": 325
+                        },
+                        {
+                          "name": "combineAxisRangeWithReverse.ts",
+                          "fullPath": "src/state/selectors/combiners/combineAxisRangeWithReverse.ts",
+                          "value": 229
+                        },
+                        {
+                          "name": "combineActiveLabel.ts",
+                          "fullPath": "src/state/selectors/combiners/combineActiveLabel.ts",
+                          "value": 218
+                        }
+                      ]
+                    },
+                    {
+                      "name": "tooltipSelectors.ts",
+                      "fullPath": "src/state/selectors/tooltipSelectors.ts",
+                      "value": 11302
+                    },
+                    {
+                      "name": "polarAxisSelectors.ts",
+                      "fullPath": "src/state/selectors/polarAxisSelectors.ts",
+                      "value": 4591
+                    },
+                    {
+                      "name": "selectors.ts",
+                      "fullPath": "src/state/selectors/selectors.ts",
+                      "value": 3898
+                    },
+                    {
+                      "name": "dataSelectors.ts",
+                      "fullPath": "src/state/selectors/dataSelectors.ts",
+                      "value": 2856
+                    },
+                    {
+                      "name": "selectChartOffsetInternal.ts",
+                      "fullPath": "src/state/selectors/selectChartOffsetInternal.ts",
+                      "value": 2824
+                    },
+                    {
+                      "name": "lineSelectors.ts",
+                      "fullPath": "src/state/selectors/lineSelectors.ts",
+                      "value": 2681
+                    },
+                    {
+                      "name": "touchSelectors.ts",
+                      "fullPath": "src/state/selectors/touchSelectors.ts",
+                      "value": 859
+                    },
+                    {
+                      "name": "selectTooltipEventType.ts",
+                      "fullPath": "src/state/selectors/selectTooltipEventType.ts",
+                      "value": 854
+                    },
+                    {
+                      "name": "arrayEqualityCheck.ts",
+                      "fullPath": "src/state/selectors/arrayEqualityCheck.ts",
+                      "value": 733
+                    },
+                    {
+                      "name": "brushSelectors.ts",
+                      "fullPath": "src/state/selectors/brushSelectors.ts",
+                      "value": 497
+                    },
+                    {
+                      "name": "selectTooltipAxisType.ts",
+                      "fullPath": "src/state/selectors/selectTooltipAxisType.ts",
+                      "value": 462
+                    },
+                    {
+                      "name": "rootPropsSelectors.ts",
+                      "fullPath": "src/state/selectors/rootPropsSelectors.ts",
+                      "value": 451
+                    },
+                    {
+                      "name": "selectPlotArea.ts",
+                      "fullPath": "src/state/selectors/selectPlotArea.ts",
+                      "value": 412
+                    },
+                    {
+                      "name": "legendSelectors.ts",
+                      "fullPath": "src/state/selectors/legendSelectors.ts",
+                      "value": 380
+                    },
+                    {
+                      "name": "selectActivePropsFromChartPointer.ts",
+                      "fullPath": "src/state/selectors/selectActivePropsFromChartPointer.ts",
+                      "value": 337
+                    },
+                    {
+                      "name": "selectAllAxes.ts",
+                      "fullPath": "src/state/selectors/selectAllAxes.ts",
+                      "value": 251
+                    },
+                    {
+                      "name": "selectChartOffset.ts",
+                      "fullPath": "src/state/selectors/selectChartOffset.ts",
+                      "value": 236
+                    },
+                    {
+                      "name": "containerSelectors.ts",
+                      "fullPath": "src/state/selectors/containerSelectors.ts",
+                      "value": 218
+                    },
+                    {
+                      "name": "numberDomainEqualityCheck.ts",
+                      "fullPath": "src/state/selectors/numberDomainEqualityCheck.ts",
+                      "value": 181
+                    },
+                    {
+                      "name": "selectTooltipPayloadSearcher.ts",
+                      "fullPath": "src/state/selectors/selectTooltipPayloadSearcher.ts",
+                      "value": 83
+                    },
+                    {
+                      "name": "selectTooltipAxisId.ts",
+                      "fullPath": "src/state/selectors/selectTooltipAxisId.ts",
+                      "value": 67
+                    },
+                    {
+                      "name": "selectTooltipSettings.ts",
+                      "fullPath": "src/state/selectors/selectTooltipSettings.ts",
+                      "value": 62
+                    },
+                    {
+                      "name": "pickAxisId.ts",
+                      "fullPath": "src/state/selectors/pickAxisId.ts",
+                      "value": 57
+                    },
+                    {
+                      "name": "pickAxisType.ts",
+                      "fullPath": "src/state/selectors/pickAxisType.ts",
+                      "value": 52
+                    },
+                    {
+                      "name": "selectTooltipState.ts",
+                      "fullPath": "src/state/selectors/selectTooltipState.ts",
+                      "value": 50
+                    }
+                  ]
+                },
+                {
+                  "name": "tooltipSlice.ts",
+                  "fullPath": "src/state/tooltipSlice.ts",
+                  "value": 7681
+                },
+                {
+                  "name": "keyboardEventsMiddleware.ts",
+                  "fullPath": "src/state/keyboardEventsMiddleware.ts",
+                  "value": 6661
+                },
+                {
+                  "name": "cartesianAxisSlice.ts",
+                  "fullPath": "src/state/cartesianAxisSlice.ts",
+                  "value": 5517
+                },
+                {
+                  "name": "externalEventsMiddleware.ts",
+                  "fullPath": "src/state/externalEventsMiddleware.ts",
+                  "value": 4477
+                },
+                {
+                  "name": "mouseEventsMiddleware.ts",
+                  "fullPath": "src/state/mouseEventsMiddleware.ts",
+                  "value": 4075
+                },
+                {
+                  "name": "touchEventsMiddleware.ts",
+                  "fullPath": "src/state/touchEventsMiddleware.ts",
+                  "value": 3722
+                },
+                {
+                  "name": "zIndexSlice.ts",
+                  "fullPath": "src/state/zIndexSlice.ts",
+                  "value": 3301
+                },
+                {
+                  "name": "store.ts",
+                  "fullPath": "src/state/store.ts",
+                  "value": 2685
+                },
+                {
+                  "name": "graphicalItemsSlice.ts",
+                  "fullPath": "src/state/graphicalItemsSlice.ts",
+                  "value": 2231
+                },
+                {
+                  "name": "legendSlice.ts",
+                  "fullPath": "src/state/legendSlice.ts",
+                  "value": 1941
+                },
+                {
+                  "name": "chartDataSlice.ts",
+                  "fullPath": "src/state/chartDataSlice.ts",
+                  "value": 1813
+                },
+                {
+                  "name": "RechartsStoreProvider.tsx",
+                  "fullPath": "src/state/RechartsStoreProvider.tsx",
+                  "value": 1614
+                },
+                {
+                  "name": "hooks.ts",
+                  "fullPath": "src/state/hooks.ts",
+                  "value": 1599
+                },
+                {
+                  "name": "SetGraphicalItem.ts",
+                  "fullPath": "src/state/SetGraphicalItem.ts",
+                  "value": 1434
+                },
+                {
+                  "name": "rootPropsSlice.ts",
+                  "fullPath": "src/state/rootPropsSlice.ts",
+                  "value": 1297
+                },
+                {
+                  "name": "errorBarSlice.ts",
+                  "fullPath": "src/state/errorBarSlice.ts",
+                  "value": 1234
+                },
+                {
+                  "name": "optionsSlice.ts",
+                  "fullPath": "src/state/optionsSlice.ts",
+                  "value": 1126
+                },
+                {
+                  "name": "ReportMainChartProps.tsx",
+                  "fullPath": "src/state/ReportMainChartProps.tsx",
+                  "value": 1091
+                },
+                {
+                  "name": "referenceElementsSlice.ts",
+                  "fullPath": "src/state/referenceElementsSlice.ts",
+                  "value": 1088
+                },
+                {
+                  "name": "renderedTicksSlice.ts",
+                  "fullPath": "src/state/renderedTicksSlice.ts",
+                  "value": 1053
+                },
+                {
+                  "name": "SetTooltipEntrySettings.tsx",
+                  "fullPath": "src/state/SetTooltipEntrySettings.tsx",
+                  "value": 980
+                },
+                {
+                  "name": "layoutSlice.ts",
+                  "fullPath": "src/state/layoutSlice.ts",
+                  "value": 949
+                },
+                {
+                  "name": "SetLegendPayload.ts",
+                  "fullPath": "src/state/SetLegendPayload.ts",
+                  "value": 824
+                },
+                {
+                  "name": "RechartsReduxContext.tsx",
+                  "fullPath": "src/state/RechartsReduxContext.tsx",
+                  "value": 706
+                },
+                {
+                  "name": "eventSettingsSlice.ts",
+                  "fullPath": "src/state/eventSettingsSlice.ts",
+                  "value": 691
+                },
+                {
+                  "name": "polarAxisSlice.ts",
+                  "fullPath": "src/state/polarAxisSlice.ts",
+                  "value": 633
+                },
+                {
+                  "name": "brushSlice.ts",
+                  "fullPath": "src/state/brushSlice.ts",
+                  "value": 631
+                },
+                {
+                  "name": "polarOptionsSlice.ts",
+                  "fullPath": "src/state/polarOptionsSlice.ts",
+                  "value": 592
+                },
+                {
+                  "name": "types",
+                  "fullPath": "src/state/types",
+                  "value": 447,
+                  "children": [
+                    {
+                      "name": "StackedGraphicalItem.ts",
+                      "fullPath": "src/state/types/StackedGraphicalItem.ts",
+                      "value": 447
+                    }
+                  ]
+                },
+                {
+                  "name": "reduxDevtoolsJsonStringifyReplacer.ts",
+                  "fullPath": "src/state/reduxDevtoolsJsonStringifyReplacer.ts",
+                  "value": 353
+                },
+                {
+                  "name": "ReportEventSettings.tsx",
+                  "fullPath": "src/state/ReportEventSettings.tsx",
+                  "value": 268
+                },
+                {
+                  "name": "ReportChartProps.tsx",
+                  "fullPath": "src/state/ReportChartProps.tsx",
+                  "value": 169
+                }
+              ]
+            },
+            {
+              "name": "util",
+              "fullPath": "src/util",
+              "value": 97756,
+              "children": [
+                {
+                  "name": "scale",
+                  "fullPath": "src/util/scale",
+                  "value": 14960,
+                  "children": [
+                    {
+                      "name": "getNiceTickValues.ts",
+                      "fullPath": "src/util/scale/getNiceTickValues.ts",
+                      "value": 9983
+                    },
+                    {
+                      "name": "createCategoricalInverse.ts",
+                      "fullPath": "src/util/scale/createCategoricalInverse.ts",
+                      "value": 1964
+                    },
+                    {
+                      "name": "RechartsScale.ts",
+                      "fullPath": "src/util/scale/RechartsScale.ts",
+                      "value": 1795
+                    },
+                    {
+                      "name": "util",
+                      "fullPath": "src/util/scale/util",
+                      "value": 1218,
+                      "children": [
+                        {
+                          "name": "arithmetic.ts",
+                          "fullPath": "src/util/scale/util/arithmetic.ts",
+                          "value": 1218
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "name": "ChartUtils.ts",
+                  "fullPath": "src/util/ChartUtils.ts",
+                  "value": 13005
+                },
+                {
+                  "name": "svgPropertiesNoEvents.ts",
+                  "fullPath": "src/util/svgPropertiesNoEvents.ts",
+                  "value": 6716
+                },
+                {
+                  "name": "isDomainSpecifiedByUser.ts",
+                  "fullPath": "src/util/isDomainSpecifiedByUser.ts",
+                  "value": 6694
+                },
+                {
+                  "name": "DataUtils.ts",
+                  "fullPath": "src/util/DataUtils.ts",
+                  "value": 5013
+                },
+                {
+                  "name": "getActiveCoordinate.ts",
+                  "fullPath": "src/util/getActiveCoordinate.ts",
+                  "value": 4998
+                },
+                {
+                  "name": "getRelativeCoordinate.ts",
+                  "fullPath": "src/util/getRelativeCoordinate.ts",
+                  "value": 4292
+                },
+                {
+                  "name": "ReduceCSSCalc.ts",
+                  "fullPath": "src/util/ReduceCSSCalc.ts",
+                  "value": 4223
+                },
+                {
+                  "name": "resolveDefaultProps.tsx",
+                  "fullPath": "src/util/resolveDefaultProps.tsx",
+                  "value": 3871
+                },
+                {
+                  "name": "types.ts",
+                  "fullPath": "src/util/types.ts",
+                  "value": 3807
+                },
+                {
+                  "name": "excludeEventProps.ts",
+                  "fullPath": "src/util/excludeEventProps.ts",
+                  "value": 3126
+                },
+                {
+                  "name": "PolarUtils.ts",
+                  "fullPath": "src/util/PolarUtils.ts",
+                  "value": 2795
+                },
+                {
+                  "name": "propsAreEqual.ts",
+                  "fullPath": "src/util/propsAreEqual.ts",
+                  "value": 2738
+                },
+                {
+                  "name": "DOMUtils.ts",
+                  "fullPath": "src/util/DOMUtils.ts",
+                  "value": 2400
+                },
+                {
+                  "name": "ActiveShapeUtils.tsx",
+                  "fullPath": "src/util/ActiveShapeUtils.tsx",
+                  "value": 2133
+                },
+                {
+                  "name": "svgPropertiesAndEvents.ts",
+                  "fullPath": "src/util/svgPropertiesAndEvents.ts",
+                  "value": 1902
+                },
+                {
+                  "name": "YAxisUtils.tsx",
+                  "fullPath": "src/util/YAxisUtils.tsx",
+                  "value": 1444
+                },
+                {
+                  "name": "CartesianUtils.ts",
+                  "fullPath": "src/util/CartesianUtils.ts",
+                  "value": 1319
+                },
+                {
+                  "name": "TickUtils.ts",
+                  "fullPath": "src/util/TickUtils.ts",
+                  "value": 1134
+                },
+                {
+                  "name": "axisPropsAreEqual.ts",
+                  "fullPath": "src/util/axisPropsAreEqual.ts",
+                  "value": 1101
+                },
+                {
+                  "name": "useUniqueId.ts",
+                  "fullPath": "src/util/useUniqueId.ts",
+                  "value": 1076
+                },
+                {
+                  "name": "useAnimationId.tsx",
+                  "fullPath": "src/util/useAnimationId.tsx",
+                  "value": 1014
+                },
+                {
+                  "name": "usePrefersReducedMotion.ts",
+                  "fullPath": "src/util/usePrefersReducedMotion.ts",
+                  "value": 1007
+                },
+                {
+                  "name": "getEveryNth.ts",
+                  "fullPath": "src/util/getEveryNth.ts",
+                  "value": 799
+                },
+                {
+                  "name": "LRUCache.ts",
+                  "fullPath": "src/util/LRUCache.ts",
+                  "value": 722
+                },
+                {
+                  "name": "getRadiusAndStrokeWidthFromDot.tsx",
+                  "fullPath": "src/util/getRadiusAndStrokeWidthFromDot.tsx",
+                  "value": 640
+                },
+                {
+                  "name": "LogUtils.ts",
+                  "fullPath": "src/util/LogUtils.ts",
+                  "value": 639
+                },
+                {
+                  "name": "Constants.ts",
+                  "fullPath": "src/util/Constants.ts",
+                  "value": 599
+                },
+                {
+                  "name": "useId.ts",
+                  "fullPath": "src/util/useId.ts",
+                  "value": 529
+                },
+                {
+                  "name": "useReportScale.ts",
+                  "fullPath": "src/util/useReportScale.ts",
+                  "value": 472
+                },
+                {
+                  "name": "getAxisTypeBasedOnLayout.ts",
+                  "fullPath": "src/util/getAxisTypeBasedOnLayout.ts",
+                  "value": 446
+                },
+                {
+                  "name": "createEventProxy.ts",
+                  "fullPath": "src/util/createEventProxy.ts",
+                  "value": 412
+                },
+                {
+                  "name": "round.ts",
+                  "fullPath": "src/util/round.ts",
+                  "value": 326
+                },
+                {
+                  "name": "stacks",
+                  "fullPath": "src/util/stacks",
+                  "value": 317,
+                  "children": [
+                    {
+                      "name": "getStackSeriesIdentifier.ts",
+                      "fullPath": "src/util/stacks/getStackSeriesIdentifier.ts",
+                      "value": 317
+                    }
+                  ]
+                },
+                {
+                  "name": "Global.ts",
+                  "fullPath": "src/util/Global.ts",
+                  "value": 258
+                },
+                {
+                  "name": "getSliced.ts",
+                  "fullPath": "src/util/getSliced.ts",
+                  "value": 208
+                },
+                {
+                  "name": "getClassNameFromUnknown.tsx",
+                  "fullPath": "src/util/getClassNameFromUnknown.tsx",
+                  "value": 171
+                },
+                {
+                  "name": "isWellBehavedNumber.ts",
+                  "fullPath": "src/util/isWellBehavedNumber.ts",
+                  "value": 160
+                },
+                {
+                  "name": "Events.ts",
+                  "fullPath": "src/util/Events.ts",
+                  "value": 149
+                },
+                {
+                  "name": "ReactUtils.ts",
+                  "fullPath": "src/util/ReactUtils.ts",
+                  "value": 141
+                }
+              ]
+            },
+            {
+              "name": "cartesian",
+              "fullPath": "src/cartesian",
+              "value": 75504,
+              "children": [
+                {
+                  "name": "Line.tsx",
+                  "fullPath": "src/cartesian/Line.tsx",
+                  "value": 14766
+                },
+                {
+                  "name": "CartesianAxis.tsx",
+                  "fullPath": "src/cartesian/CartesianAxis.tsx",
+                  "value": 13233
+                },
+                {
+                  "name": "CartesianGrid.tsx",
+                  "fullPath": "src/cartesian/CartesianGrid.tsx",
+                  "value": 11078
+                },
+                {
+                  "name": "YAxis.tsx",
+                  "fullPath": "src/cartesian/YAxis.tsx",
+                  "value": 6321
+                },
+                {
+                  "name": "getCartesianPosition.tsx",
+                  "fullPath": "src/cartesian/getCartesianPosition.tsx",
+                  "value": 6159
+                },
+                {
+                  "name": "LineDrawShape.tsx",
+                  "fullPath": "src/cartesian/LineDrawShape.tsx",
+                  "value": 6040
+                },
+                {
+                  "name": "getTicks.ts",
+                  "fullPath": "src/cartesian/getTicks.ts",
+                  "value": 5123
+                },
+                {
+                  "name": "XAxis.tsx",
+                  "fullPath": "src/cartesian/XAxis.tsx",
+                  "value": 5008
+                },
+                {
+                  "name": "getEquidistantTicks.ts",
+                  "fullPath": "src/cartesian/getEquidistantTicks.ts",
+                  "value": 4068
+                },
+                {
+                  "name": "useAnimatedLineLength.ts",
+                  "fullPath": "src/cartesian/useAnimatedLineLength.ts",
+                  "value": 2150
+                },
+                {
+                  "name": "GraphicalItemClipPath.tsx",
+                  "fullPath": "src/cartesian/GraphicalItemClipPath.tsx",
+                  "value": 1558
+                }
+              ]
+            },
+            {
+              "name": "animation",
+              "fullPath": "src/animation",
+              "value": 32531,
+              "children": [
+                {
+                  "name": "AnimationHandle.ts",
+                  "fullPath": "src/animation/AnimationHandle.ts",
+                  "value": 7970
+                },
+                {
+                  "name": "matchBy.ts",
+                  "fullPath": "src/animation/matchBy.ts",
+                  "value": 5864
+                },
+                {
+                  "name": "easing.ts",
+                  "fullPath": "src/animation/easing.ts",
+                  "value": 5277
+                },
+                {
+                  "name": "useAnimationStartSnapshot.ts",
+                  "fullPath": "src/animation/useAnimationStartSnapshot.ts",
+                  "value": 4279
+                },
+                {
+                  "name": "AnimatedItems.tsx",
+                  "fullPath": "src/animation/AnimatedItems.tsx",
+                  "value": 3718
+                },
+                {
+                  "name": "JavascriptAnimate.tsx",
+                  "fullPath": "src/animation/JavascriptAnimate.tsx",
+                  "value": 1601
+                },
+                {
+                  "name": "useAnimationController.tsx",
+                  "fullPath": "src/animation/useAnimationController.tsx",
+                  "value": 1480
+                },
+                {
+                  "name": "timeoutController.ts",
+                  "fullPath": "src/animation/timeoutController.ts",
+                  "value": 1235
+                },
+                {
+                  "name": "AnimationControllerImpl.ts",
+                  "fullPath": "src/animation/AnimationControllerImpl.ts",
+                  "value": 1107
+                }
+              ]
+            },
+            {
+              "name": "component",
+              "fullPath": "src/component",
+              "value": 24462,
+              "children": [
+                {
+                  "name": "Label.tsx",
+                  "fullPath": "src/component/Label.tsx",
+                  "value": 9809
+                },
+                {
+                  "name": "Text.tsx",
+                  "fullPath": "src/component/Text.tsx",
+                  "value": 7597
+                },
+                {
+                  "name": "LabelList.tsx",
+                  "fullPath": "src/component/LabelList.tsx",
+                  "value": 3115
+                },
+                {
+                  "name": "ActivePoints.tsx",
+                  "fullPath": "src/component/ActivePoints.tsx",
+                  "value": 1870
+                },
+                {
+                  "name": "Dots.tsx",
+                  "fullPath": "src/component/Dots.tsx",
+                  "value": 1775
+                },
+                {
+                  "name": "ResponsiveContainer.tsx",
+                  "fullPath": "src/component/ResponsiveContainer.tsx",
+                  "value": 196
+                },
+                {
+                  "name": "responsiveContainerUtils.ts",
+                  "fullPath": "src/component/responsiveContainerUtils.ts",
+                  "value": 100
+                }
+              ]
+            },
+            {
+              "name": "chart",
+              "fullPath": "src/chart",
+              "value": 14865,
+              "children": [
+                {
+                  "name": "RechartsWrapper.tsx",
+                  "fullPath": "src/chart/RechartsWrapper.tsx",
+                  "value": 10504
+                },
+                {
+                  "name": "CartesianChart.tsx",
+                  "fullPath": "src/chart/CartesianChart.tsx",
+                  "value": 2318
+                },
+                {
+                  "name": "CategoricalChart.tsx",
+                  "fullPath": "src/chart/CategoricalChart.tsx",
+                  "value": 1557
+                },
+                {
+                  "name": "LineChart.tsx",
+                  "fullPath": "src/chart/LineChart.tsx",
+                  "value": 486
+                }
+              ]
+            },
+            {
+              "name": "zIndex",
+              "fullPath": "src/zIndex",
+              "value": 9406,
+              "children": [
+                {
+                  "name": "ZIndexLayer.tsx",
+                  "fullPath": "src/zIndex/ZIndexLayer.tsx",
+                  "value": 4621
+                },
+                {
+                  "name": "DefaultZIndexes.tsx",
+                  "fullPath": "src/zIndex/DefaultZIndexes.tsx",
+                  "value": 2271
+                },
+                {
+                  "name": "ZIndexPortal.tsx",
+                  "fullPath": "src/zIndex/ZIndexPortal.tsx",
+                  "value": 1452
+                },
+                {
+                  "name": "zIndexSelectors.ts",
+                  "fullPath": "src/zIndex/zIndexSelectors.ts",
+                  "value": 1062
+                }
+              ]
+            },
+            {
+              "name": "context",
+              "fullPath": "src/context",
+              "value": 8670,
+              "children": [
+                {
+                  "name": "chartLayoutContext.tsx",
+                  "fullPath": "src/context/chartLayoutContext.tsx",
+                  "value": 7031
+                },
+                {
+                  "name": "chartDataContext.tsx",
+                  "fullPath": "src/context/chartDataContext.tsx",
+                  "value": 528
+                },
+                {
+                  "name": "ErrorBarContext.tsx",
+                  "fullPath": "src/context/ErrorBarContext.tsx",
+                  "value": 439
+                },
+                {
+                  "name": "RegisterGraphicalItemId.tsx",
+                  "fullPath": "src/context/RegisterGraphicalItemId.tsx",
+                  "value": 323
+                },
+                {
+                  "name": "PanoramaContext.tsx",
+                  "fullPath": "src/context/PanoramaContext.tsx",
+                  "value": 122
+                },
+                {
+                  "name": "accessibilityContext.tsx",
+                  "fullPath": "src/context/accessibilityContext.tsx",
+                  "value": 104
+                },
+                {
+                  "name": "tooltipPortalContext.tsx",
+                  "fullPath": "src/context/tooltipPortalContext.tsx",
+                  "value": 62
+                },
+                {
+                  "name": "legendPortalContext.tsx",
+                  "fullPath": "src/context/legendPortalContext.tsx",
+                  "value": 61
+                }
+              ]
+            },
+            {
+              "name": "synchronisation",
+              "fullPath": "src/synchronisation",
+              "value": 8354,
+              "children": [
+                {
+                  "name": "useChartSynchronisation.tsx",
+                  "fullPath": "src/synchronisation/useChartSynchronisation.tsx",
+                  "value": 8354
+                }
+              ]
+            },
+            {
+              "name": "container",
+              "fullPath": "src/container",
+              "value": 5102,
+              "children": [
+                {
+                  "name": "RootSurface.tsx",
+                  "fullPath": "src/container/RootSurface.tsx",
+                  "value": 2507
+                },
+                {
+                  "name": "ClipPathProvider.tsx",
+                  "fullPath": "src/container/ClipPathProvider.tsx",
+                  "value": 1055
+                },
+                {
+                  "name": "Surface.tsx",
+                  "fullPath": "src/container/Surface.tsx",
+                  "value": 932
+                },
+                {
+                  "name": "Layer.tsx",
+                  "fullPath": "src/container/Layer.tsx",
+                  "value": 608
+                }
+              ]
+            },
+            {
+              "name": "shape",
+              "fullPath": "src/shape",
+              "value": 5033,
+              "children": [
+                {
+                  "name": "Curve.tsx",
+                  "fullPath": "src/shape/Curve.tsx",
+                  "value": 4366
+                },
+                {
+                  "name": "Dot.tsx",
+                  "fullPath": "src/shape/Dot.tsx",
+                  "value": 667
+                }
+              ]
+            },
+            {
+              "name": "hooks.ts",
+              "fullPath": "src/hooks.ts",
+              "value": 1813
+            },
+            {
+              "name": "polar",
+              "fullPath": "src/polar",
+              "value": 506,
+              "children": [
+                {
+                  "name": "defaultPolarAngleAxisProps.tsx",
+                  "fullPath": "src/polar/defaultPolarAngleAxisProps.tsx",
+                  "value": 258
+                },
+                {
+                  "name": "defaultPolarRadiusAxisProps.tsx",
+                  "fullPath": "src/polar/defaultPolarRadiusAxisProps.tsx",
+                  "value": 248
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "name": "node_modules",
+          "fullPath": "node_modules",
+          "value": 360108,
+          "children": [
+            {
+              "name": "@reduxjs",
+              "fullPath": "node_modules/@reduxjs",
+              "value": 73087,
+              "children": [
+                {
+                  "name": "toolkit",
+                  "fullPath": "node_modules/@reduxjs/toolkit",
+                  "value": 73087,
+                  "children": [
+                    {
+                      "name": "dist",
+                      "fullPath": "node_modules/@reduxjs/toolkit/dist",
+                      "value": 60417,
+                      "children": [
+                        {
+                          "name": "redux-toolkit.esm.js",
+                          "fullPath": "node_modules/@reduxjs/toolkit/dist/redux-toolkit.esm.js",
+                          "value": 60417
+                        }
+                      ]
+                    },
+                    {
+                      "name": "node_modules",
+                      "fullPath": "node_modules/@reduxjs/toolkit/node_modules",
+                      "value": 12670,
+                      "children": [
+                        {
+                          "name": "immer",
+                          "fullPath": "node_modules/@reduxjs/toolkit/node_modules/immer",
+                          "value": 12670,
+                          "children": [
+                            {
+                              "name": "dist",
+                              "fullPath": "node_modules/@reduxjs/toolkit/node_modules/immer/dist",
+                              "value": 12670,
+                              "children": [
+                                {
+                                  "name": "immer.esm.mjs",
+                                  "fullPath": "node_modules/@reduxjs/toolkit/node_modules/immer/dist/immer.esm.mjs",
+                                  "value": 12670
+                                }
+                              ]
+                            }
+                          ]
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "name": "decimal.js-light",
+              "fullPath": "node_modules/decimal.js-light",
+              "value": 49559,
+              "children": [
+                {
+                  "name": "decimal.mjs",
+                  "fullPath": "node_modules/decimal.js-light/decimal.mjs",
+                  "value": 49559
+                }
+              ]
+            },
+            {
+              "name": "d3-scale",
+              "fullPath": "node_modules/d3-scale",
+              "value": 28222,
+              "children": [
+                {
+                  "name": "src",
+                  "fullPath": "node_modules/d3-scale/src",
+                  "value": 28222,
+                  "children": [
+                    {
+                      "name": "continuous.js",
+                      "fullPath": "node_modules/d3-scale/src/continuous.js",
+                      "value": 3205
+                    },
+                    {
+                      "name": "log.js",
+                      "fullPath": "node_modules/d3-scale/src/log.js",
+                      "value": 3190
+                    },
+                    {
+                      "name": "diverging.js",
+                      "fullPath": "node_modules/d3-scale/src/diverging.js",
+                      "value": 2489
+                    },
+                    {
+                      "name": "band.js",
+                      "fullPath": "node_modules/d3-scale/src/band.js",
+                      "value": 2451
+                    },
+                    {
+                      "name": "sequential.js",
+                      "fullPath": "node_modules/d3-scale/src/sequential.js",
+                      "value": 2398
+                    },
+                    {
+                      "name": "time.js",
+                      "fullPath": "node_modules/d3-scale/src/time.js",
+                      "value": 1982
+                    },
+                    {
+                      "name": "linear.js",
+                      "fullPath": "node_modules/d3-scale/src/linear.js",
+                      "value": 1412
+                    },
+                    {
+                      "name": "quantile.js",
+                      "fullPath": "node_modules/d3-scale/src/quantile.js",
+                      "value": 1277
+                    },
+                    {
+                      "name": "radial.js",
+                      "fullPath": "node_modules/d3-scale/src/radial.js",
+                      "value": 1273
+                    },
+                    {
+                      "name": "quantize.js",
+                      "fullPath": "node_modules/d3-scale/src/quantize.js",
+                      "value": 1154
+                    },
+                    {
+                      "name": "tickFormat.js",
+                      "fullPath": "node_modules/d3-scale/src/tickFormat.js",
+                      "value": 1003
+                    },
+                    {
+                      "name": "pow.js",
+                      "fullPath": "node_modules/d3-scale/src/pow.js",
+                      "value": 1001
+                    },
+                    {
+                      "name": "ordinal.js",
+                      "fullPath": "node_modules/d3-scale/src/ordinal.js",
+                      "value": 981
+                    },
+                    {
+                      "name": "sequentialQuantile.js",
+                      "fullPath": "node_modules/d3-scale/src/sequentialQuantile.js",
+                      "value": 938
+                    },
+                    {
+                      "name": "threshold.js",
+                      "fullPath": "node_modules/d3-scale/src/threshold.js",
+                      "value": 880
+                    },
+                    {
+                      "name": "symlog.js",
+                      "fullPath": "node_modules/d3-scale/src/symlog.js",
+                      "value": 702
+                    },
+                    {
+                      "name": "init.js",
+                      "fullPath": "node_modules/d3-scale/src/init.js",
+                      "value": 674
+                    },
+                    {
+                      "name": "identity.js",
+                      "fullPath": "node_modules/d3-scale/src/identity.js",
+                      "value": 564
+                    },
+                    {
+                      "name": "nice.js",
+                      "fullPath": "node_modules/d3-scale/src/nice.js",
+                      "value": 318
+                    },
+                    {
+                      "name": "utcTime.js",
+                      "fullPath": "node_modules/d3-scale/src/utcTime.js",
+                      "value": 226
+                    },
+                    {
+                      "name": "constant.js",
+                      "fullPath": "node_modules/d3-scale/src/constant.js",
+                      "value": 67
+                    },
+                    {
+                      "name": "number.js",
+                      "fullPath": "node_modules/d3-scale/src/number.js",
+                      "value": 37
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "name": "es-toolkit",
+              "fullPath": "node_modules/es-toolkit",
+              "value": 27078,
+              "children": [
+                {
+                  "name": "dist",
+                  "fullPath": "node_modules/es-toolkit/dist",
+                  "value": 26509,
+                  "children": [
+                    {
+                      "name": "compat",
+                      "fullPath": "node_modules/es-toolkit/dist/compat",
+                      "value": 22434,
+                      "children": [
+                        {
+                          "name": "_internal",
+                          "fullPath": "node_modules/es-toolkit/dist/compat/_internal",
+                          "value": 5289,
+                          "children": [
+                            {
+                              "name": "isKey.js",
+                              "fullPath": "node_modules/es-toolkit/dist/compat/_internal/isKey.js",
+                              "value": 1306
+                            },
+                            {
+                              "name": "isIterateeCall.js",
+                              "fullPath": "node_modules/es-toolkit/dist/compat/_internal/isIterateeCall.js",
+                              "value": 964
+                            },
+                            {
+                              "name": "isDeepKey.js",
+                              "fullPath": "node_modules/es-toolkit/dist/compat/_internal/isDeepKey.js",
+                              "value": 963
+                            },
+                            {
+                              "name": "compareValues.js",
+                              "fullPath": "node_modules/es-toolkit/dist/compat/_internal/compareValues.js",
+                              "value": 883
+                            },
+                            {
+                              "name": "toKey.js",
+                              "fullPath": "node_modules/es-toolkit/dist/compat/_internal/toKey.js",
+                              "value": 587
+                            },
+                            {
+                              "name": "isIndex.js",
+                              "fullPath": "node_modules/es-toolkit/dist/compat/_internal/isIndex.js",
+                              "value": 586
+                            }
+                          ]
+                        },
+                        {
+                          "name": "util",
+                          "fullPath": "node_modules/es-toolkit/dist/compat/util",
+                          "value": 5203,
+                          "children": [
+                            {
+                              "name": "toPath.js",
+                              "fullPath": "node_modules/es-toolkit/dist/compat/util/toPath.js",
+                              "value": 2364
+                            },
+                            {
+                              "name": "toString.js",
+                              "fullPath": "node_modules/es-toolkit/dist/compat/util/toString.js",
+                              "value": 1038
+                            },
+                            {
+                              "name": "toFinite.js",
+                              "fullPath": "node_modules/es-toolkit/dist/compat/util/toFinite.js",
+                              "value": 952
+                            },
+                            {
+                              "name": "toNumber.js",
+                              "fullPath": "node_modules/es-toolkit/dist/compat/util/toNumber.js",
+                              "value": 849
+                            }
+                          ]
+                        },
+                        {
+                          "name": "array",
+                          "fullPath": "node_modules/es-toolkit/dist/compat/array",
+                          "value": 4885,
+                          "children": [
+                            {
+                              "name": "orderBy.js",
+                              "fullPath": "node_modules/es-toolkit/dist/compat/array/orderBy.js",
+                              "value": 4056
+                            },
+                            {
+                              "name": "sortBy.js",
+                              "fullPath": "node_modules/es-toolkit/dist/compat/array/sortBy.js",
+                              "value": 829
+                            }
+                          ]
+                        },
+                        {
+                          "name": "predicate",
+                          "fullPath": "node_modules/es-toolkit/dist/compat/predicate",
+                          "value": 2870,
+                          "children": [
+                            {
+                              "name": "isObject.js",
+                              "fullPath": "node_modules/es-toolkit/dist/compat/predicate/isObject.js",
+                              "value": 1255
+                            },
+                            {
+                              "name": "isArrayLike.js",
+                              "fullPath": "node_modules/es-toolkit/dist/compat/predicate/isArrayLike.js",
+                              "value": 871
+                            },
+                            {
+                              "name": "isSymbol.js",
+                              "fullPath": "node_modules/es-toolkit/dist/compat/predicate/isSymbol.js",
+                              "value": 744
+                            }
+                          ]
+                        },
+                        {
+                          "name": "object",
+                          "fullPath": "node_modules/es-toolkit/dist/compat/object",
+                          "value": 2638,
+                          "children": [
+                            {
+                              "name": "get.js",
+                              "fullPath": "node_modules/es-toolkit/dist/compat/object/get.js",
+                              "value": 2638
+                            }
+                          ]
+                        },
+                        {
+                          "name": "math",
+                          "fullPath": "node_modules/es-toolkit/dist/compat/math",
+                          "value": 1549,
+                          "children": [
+                            {
+                              "name": "range.js",
+                              "fullPath": "node_modules/es-toolkit/dist/compat/math/range.js",
+                              "value": 1549
+                            }
+                          ]
+                        }
+                      ]
+                    },
+                    {
+                      "name": "_internal",
+                      "fullPath": "node_modules/es-toolkit/dist/_internal",
+                      "value": 1700,
+                      "children": [
+                        {
+                          "name": "isEqualsSameValueZero.js",
+                          "fullPath": "node_modules/es-toolkit/dist/_internal/isEqualsSameValueZero.js",
+                          "value": 909
+                        },
+                        {
+                          "name": "isUnsafeProperty.js",
+                          "fullPath": "node_modules/es-toolkit/dist/_internal/isUnsafeProperty.js",
+                          "value": 791
+                        }
+                      ]
+                    },
+                    {
+                      "name": "array",
+                      "fullPath": "node_modules/es-toolkit/dist/array",
+                      "value": 1260,
+                      "children": [
+                        {
+                          "name": "flatten.js",
+                          "fullPath": "node_modules/es-toolkit/dist/array/flatten.js",
+                          "value": 1260
+                        }
+                      ]
+                    },
+                    {
+                      "name": "predicate",
+                      "fullPath": "node_modules/es-toolkit/dist/predicate",
+                      "value": 1115,
+                      "children": [
+                        {
+                          "name": "isLength.js",
+                          "fullPath": "node_modules/es-toolkit/dist/predicate/isLength.js",
+                          "value": 1115
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "name": "compat",
+                  "fullPath": "node_modules/es-toolkit/compat",
+                  "value": 569,
+                  "children": [
+                    {
+                      "name": "sortBy.js",
+                      "fullPath": "node_modules/es-toolkit/compat/sortBy.js",
+                      "value": 203
+                    },
+                    {
+                      "name": "range.js",
+                      "fullPath": "node_modules/es-toolkit/compat/range.js",
+                      "value": 193
+                    },
+                    {
+                      "name": "get.js",
+                      "fullPath": "node_modules/es-toolkit/compat/get.js",
+                      "value": 173
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "name": "redux",
+              "fullPath": "node_modules/redux",
+              "value": 23594,
+              "children": [
+                {
+                  "name": "es",
+                  "fullPath": "node_modules/redux/es",
+                  "value": 23594,
+                  "children": [
+                    {
+                      "name": "redux.js",
+                      "fullPath": "node_modules/redux/es/redux.js",
+                      "value": 23594
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "name": "immer",
+              "fullPath": "node_modules/immer",
+              "value": 23283,
+              "children": [
+                {
+                  "name": "dist",
+                  "fullPath": "node_modules/immer/dist",
+                  "value": 23283,
+                  "children": [
+                    {
+                      "name": "immer.mjs",
+                      "fullPath": "node_modules/immer/dist/immer.mjs",
+                      "value": 23283
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "name": "d3-shape",
+              "fullPath": "node_modules/d3-shape",
+              "value": 21306,
+              "children": [
+                {
+                  "name": "src",
+                  "fullPath": "node_modules/d3-shape/src",
+                  "value": 21306,
+                  "children": [
+                    {
+                      "name": "curve",
+                      "fullPath": "node_modules/d3-shape/src/curve",
+                      "value": 13097,
+                      "children": [
+                        {
+                          "name": "monotone.js",
+                          "fullPath": "node_modules/d3-shape/src/curve/monotone.js",
+                          "value": 3306
+                        },
+                        {
+                          "name": "natural.js",
+                          "fullPath": "node_modules/d3-shape/src/curve/natural.js",
+                          "value": 1742
+                        },
+                        {
+                          "name": "basisClosed.js",
+                          "fullPath": "node_modules/d3-shape/src/curve/basisClosed.js",
+                          "value": 1623
+                        },
+                        {
+                          "name": "basis.js",
+                          "fullPath": "node_modules/d3-shape/src/curve/basis.js",
+                          "value": 1512
+                        },
+                        {
+                          "name": "step.js",
+                          "fullPath": "node_modules/d3-shape/src/curve/step.js",
+                          "value": 1419
+                        },
+                        {
+                          "name": "basisOpen.js",
+                          "fullPath": "node_modules/d3-shape/src/curve/basisOpen.js",
+                          "value": 1146
+                        },
+                        {
+                          "name": "bump.js",
+                          "fullPath": "node_modules/d3-shape/src/curve/bump.js",
+                          "value": 1065
+                        },
+                        {
+                          "name": "linear.js",
+                          "fullPath": "node_modules/d3-shape/src/curve/linear.js",
+                          "value": 796
+                        },
+                        {
+                          "name": "linearClosed.js",
+                          "fullPath": "node_modules/d3-shape/src/curve/linearClosed.js",
+                          "value": 488
+                        }
+                      ]
+                    },
+                    {
+                      "name": "area.js",
+                      "fullPath": "node_modules/d3-shape/src/area.js",
+                      "value": 2960
+                    },
+                    {
+                      "name": "offset",
+                      "fullPath": "node_modules/d3-shape/src/offset",
+                      "value": 1635,
+                      "children": [
+                        {
+                          "name": "wiggle.js",
+                          "fullPath": "node_modules/d3-shape/src/offset/wiggle.js",
+                          "value": 716
+                        },
+                        {
+                          "name": "none.js",
+                          "fullPath": "node_modules/d3-shape/src/offset/none.js",
+                          "value": 310
+                        },
+                        {
+                          "name": "expand.js",
+                          "fullPath": "node_modules/d3-shape/src/offset/expand.js",
+                          "value": 305
+                        },
+                        {
+                          "name": "silhouette.js",
+                          "fullPath": "node_modules/d3-shape/src/offset/silhouette.js",
+                          "value": 304
+                        }
+                      ]
+                    },
+                    {
+                      "name": "line.js",
+                      "fullPath": "node_modules/d3-shape/src/line.js",
+                      "value": 1494
+                    },
+                    {
+                      "name": "stack.js",
+                      "fullPath": "node_modules/d3-shape/src/stack.js",
+                      "value": 1292
+                    },
+                    {
+                      "name": "path.js",
+                      "fullPath": "node_modules/d3-shape/src/path.js",
+                      "value": 353
+                    },
+                    {
+                      "name": "array.js",
+                      "fullPath": "node_modules/d3-shape/src/array.js",
+                      "value": 184
+                    },
+                    {
+                      "name": "order",
+                      "fullPath": "node_modules/d3-shape/src/order",
+                      "value": 124,
+                      "children": [
+                        {
+                          "name": "none.js",
+                          "fullPath": "node_modules/d3-shape/src/order/none.js",
+                          "value": 124
+                        }
+                      ]
+                    },
+                    {
+                      "name": "constant.js",
+                      "fullPath": "node_modules/d3-shape/src/constant.js",
+                      "value": 77
+                    },
+                    {
+                      "name": "point.js",
+                      "fullPath": "node_modules/d3-shape/src/point.js",
+                      "value": 69
+                    },
+                    {
+                      "name": "noop.js",
+                      "fullPath": "node_modules/d3-shape/src/noop.js",
+                      "value": 21
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "name": "d3-time-format",
+              "fullPath": "node_modules/d3-time-format",
+              "value": 19057,
+              "children": [
+                {
+                  "name": "src",
+                  "fullPath": "node_modules/d3-time-format/src",
+                  "value": 19057,
+                  "children": [
+                    {
+                      "name": "locale.js",
+                      "fullPath": "node_modules/d3-time-format/src/locale.js",
+                      "value": 18326
+                    },
+                    {
+                      "name": "defaultLocale.js",
+                      "fullPath": "node_modules/d3-time-format/src/defaultLocale.js",
+                      "value": 731
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "name": "use-sync-external-store",
+              "fullPath": "node_modules/use-sync-external-store",
+              "value": 13071,
+              "children": [
+                {
+                  "name": "cjs",
+                  "fullPath": "node_modules/use-sync-external-store/cjs",
+                  "value": 12319,
+                  "children": [
+                    {
+                      "name": "use-sync-external-store-shim",
+                      "fullPath": "node_modules/use-sync-external-store/cjs/use-sync-external-store-shim",
+                      "value": 6294,
+                      "children": [
+                        {
+                          "name": "with-selector.development.js",
+                          "fullPath": "node_modules/use-sync-external-store/cjs/use-sync-external-store-shim/with-selector.development.js",
+                          "value": 3452
+                        },
+                        {
+                          "name": "with-selector.production.js",
+                          "fullPath": "node_modules/use-sync-external-store/cjs/use-sync-external-store-shim/with-selector.production.js",
+                          "value": 2842
+                        }
+                      ]
+                    },
+                    {
+                      "name": "use-sync-external-store-shim.development.js",
+                      "fullPath": "node_modules/use-sync-external-store/cjs/use-sync-external-store-shim.development.js",
+                      "value": 3626
+                    },
+                    {
+                      "name": "use-sync-external-store-shim.production.js",
+                      "fullPath": "node_modules/use-sync-external-store/cjs/use-sync-external-store-shim.production.js",
+                      "value": 2399
+                    }
+                  ]
+                },
+                {
+                  "name": "shim",
+                  "fullPath": "node_modules/use-sync-external-store/shim",
+                  "value": 752,
+                  "children": [
+                    {
+                      "name": "with-selector.js",
+                      "fullPath": "node_modules/use-sync-external-store/shim/with-selector.js",
+                      "value": 396
+                    },
+                    {
+                      "name": "index.js",
+                      "fullPath": "node_modules/use-sync-external-store/shim/index.js",
+                      "value": 356
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "name": "d3-format",
+              "fullPath": "node_modules/d3-format",
+              "value": 11569,
+              "children": [
+                {
+                  "name": "src",
+                  "fullPath": "node_modules/d3-format/src",
+                  "value": 11569,
+                  "children": [
+                    {
+                      "name": "locale.js",
+                      "fullPath": "node_modules/d3-format/src/locale.js",
+                      "value": 5838
+                    },
+                    {
+                      "name": "formatSpecifier.js",
+                      "fullPath": "node_modules/d3-format/src/formatSpecifier.js",
+                      "value": 1640
+                    },
+                    {
+                      "name": "formatDecimal.js",
+                      "fullPath": "node_modules/d3-format/src/formatDecimal.js",
+                      "value": 793
+                    },
+                    {
+                      "name": "formatPrefixAuto.js",
+                      "fullPath": "node_modules/d3-format/src/formatPrefixAuto.js",
+                      "value": 545
+                    },
+                    {
+                      "name": "formatTypes.js",
+                      "fullPath": "node_modules/d3-format/src/formatTypes.js",
+                      "value": 468
+                    },
+                    {
+                      "name": "formatGroup.js",
+                      "fullPath": "node_modules/d3-format/src/formatGroup.js",
+                      "value": 463
+                    },
+                    {
+                      "name": "formatTrim.js",
+                      "fullPath": "node_modules/d3-format/src/formatTrim.js",
+                      "value": 459
+                    },
+                    {
+                      "name": "formatRounded.js",
+                      "fullPath": "node_modules/d3-format/src/formatRounded.js",
+                      "value": 402
+                    },
+                    {
+                      "name": "defaultLocale.js",
+                      "fullPath": "node_modules/d3-format/src/defaultLocale.js",
+                      "value": 291
+                    },
+                    {
+                      "name": "formatNumerals.js",
+                      "fullPath": "node_modules/d3-format/src/formatNumerals.js",
+                      "value": 156
+                    },
+                    {
+                      "name": "precisionPrefix.js",
+                      "fullPath": "node_modules/d3-format/src/precisionPrefix.js",
+                      "value": 155
+                    },
+                    {
+                      "name": "precisionRound.js",
+                      "fullPath": "node_modules/d3-format/src/precisionRound.js",
+                      "value": 150
+                    },
+                    {
+                      "name": "exponent.js",
+                      "fullPath": "node_modules/d3-format/src/exponent.js",
+                      "value": 87
+                    },
+                    {
+                      "name": "precisionFixed.js",
+                      "fullPath": "node_modules/d3-format/src/precisionFixed.js",
+                      "value": 83
+                    },
+                    {
+                      "name": "identity.js",
+                      "fullPath": "node_modules/d3-format/src/identity.js",
+                      "value": 39
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "name": "d3-color",
+              "fullPath": "node_modules/d3-color",
+              "value": 11042,
+              "children": [
+                {
+                  "name": "src",
+                  "fullPath": "node_modules/d3-color/src",
+                  "value": 11042,
+                  "children": [
+                    {
+                      "name": "color.js",
+                      "fullPath": "node_modules/d3-color/src/color.js",
+                      "value": 10718
+                    },
+                    {
+                      "name": "define.js",
+                      "fullPath": "node_modules/d3-color/src/define.js",
+                      "value": 324
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "name": "eventemitter3",
+              "fullPath": "node_modules/eventemitter3",
+              "value": 10500,
+              "children": [
+                {
+                  "name": "index.js",
+                  "fullPath": "node_modules/eventemitter3/index.js",
+                  "value": 10500
+                }
+              ]
+            },
+            {
+              "name": "d3-time",
+              "fullPath": "node_modules/d3-time",
+              "value": 10279,
+              "children": [
+                {
+                  "name": "src",
+                  "fullPath": "node_modules/d3-time/src",
+                  "value": 10279,
+                  "children": [
+                    {
+                      "name": "interval.js",
+                      "fullPath": "node_modules/d3-time/src/interval.js",
+                      "value": 2002
+                    },
+                    {
+                      "name": "ticks.js",
+                      "fullPath": "node_modules/d3-time/src/ticks.js",
+                      "value": 1745
+                    },
+                    {
+                      "name": "week.js",
+                      "fullPath": "node_modules/d3-time/src/week.js",
+                      "value": 1428
+                    },
+                    {
+                      "name": "year.js",
+                      "fullPath": "node_modules/d3-time/src/year.js",
+                      "value": 1347
+                    },
+                    {
+                      "name": "day.js",
+                      "fullPath": "node_modules/d3-time/src/day.js",
+                      "value": 805
+                    },
+                    {
+                      "name": "month.js",
+                      "fullPath": "node_modules/d3-time/src/month.js",
+                      "value": 674
+                    },
+                    {
+                      "name": "hour.js",
+                      "fullPath": "node_modules/d3-time/src/hour.js",
+                      "value": 602
+                    },
+                    {
+                      "name": "minute.js",
+                      "fullPath": "node_modules/d3-time/src/minute.js",
+                      "value": 582
+                    },
+                    {
+                      "name": "millisecond.js",
+                      "fullPath": "node_modules/d3-time/src/millisecond.js",
+                      "value": 547
+                    },
+                    {
+                      "name": "second.js",
+                      "fullPath": "node_modules/d3-time/src/second.js",
+                      "value": 276
+                    },
+                    {
+                      "name": "duration.js",
+                      "fullPath": "node_modules/d3-time/src/duration.js",
+                      "value": 271
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "name": "reselect",
+              "fullPath": "node_modules/reselect",
+              "value": 10099,
+              "children": [
+                {
+                  "name": "dist",
+                  "fullPath": "node_modules/reselect/dist",
+                  "value": 10099,
+                  "children": [
+                    {
+                      "name": "reselect.mjs",
+                      "fullPath": "node_modules/reselect/dist/reselect.mjs",
+                      "value": 10099
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "name": "d3-array",
+              "fullPath": "node_modules/d3-array",
+              "value": 7499,
+              "children": [
+                {
+                  "name": "src",
+                  "fullPath": "node_modules/d3-array/src",
+                  "value": 7499,
+                  "children": [
+                    {
+                      "name": "ticks.js",
+                      "fullPath": "node_modules/d3-array/src/ticks.js",
+                      "value": 1916
+                    },
+                    {
+                      "name": "quickselect.js",
+                      "fullPath": "node_modules/d3-array/src/quickselect.js",
+                      "value": 1469
+                    },
+                    {
+                      "name": "bisector.js",
+                      "fullPath": "node_modules/d3-array/src/bisector.js",
+                      "value": 1457
+                    },
+                    {
+                      "name": "quantile.js",
+                      "fullPath": "node_modules/d3-array/src/quantile.js",
+                      "value": 867
+                    },
+                    {
+                      "name": "sort.js",
+                      "fullPath": "node_modules/d3-array/src/sort.js",
+                      "value": 464
+                    },
+                    {
+                      "name": "range.js",
+                      "fullPath": "node_modules/d3-array/src/range.js",
+                      "value": 327
+                    },
+                    {
+                      "name": "number.js",
+                      "fullPath": "node_modules/d3-array/src/number.js",
+                      "value": 226
+                    },
+                    {
+                      "name": "max.js",
+                      "fullPath": "node_modules/d3-array/src/max.js",
+                      "value": 218
+                    },
+                    {
+                      "name": "min.js",
+                      "fullPath": "node_modules/d3-array/src/min.js",
+                      "value": 218
+                    },
+                    {
+                      "name": "bisect.js",
+                      "fullPath": "node_modules/d3-array/src/bisect.js",
+                      "value": 114
+                    },
+                    {
+                      "name": "descending.js",
+                      "fullPath": "node_modules/d3-array/src/descending.js",
+                      "value": 112
+                    },
+                    {
+                      "name": "ascending.js",
+                      "fullPath": "node_modules/d3-array/src/ascending.js",
+                      "value": 111
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "name": "react-redux",
+              "fullPath": "node_modules/react-redux",
+              "value": 6855,
+              "children": [
+                {
+                  "name": "es",
+                  "fullPath": "node_modules/react-redux/es",
+                  "value": 6855,
+                  "children": [
+                    {
+                      "name": "utils",
+                      "fullPath": "node_modules/react-redux/es/utils",
+                      "value": 4876,
+                      "children": [
+                        {
+                          "name": "Subscription.js",
+                          "fullPath": "node_modules/react-redux/es/utils/Subscription.js",
+                          "value": 3160
+                        },
+                        {
+                          "name": "useIsomorphicLayoutEffect.js",
+                          "fullPath": "node_modules/react-redux/es/utils/useIsomorphicLayoutEffect.js",
+                          "value": 840
+                        },
+                        {
+                          "name": "shallowEqual.js",
+                          "fullPath": "node_modules/react-redux/es/utils/shallowEqual.js",
+                          "value": 638
+                        },
+                        {
+                          "name": "batch.js",
+                          "fullPath": "node_modules/react-redux/es/utils/batch.js",
+                          "value": 238
+                        }
+                      ]
+                    },
+                    {
+                      "name": "components",
+                      "fullPath": "node_modules/react-redux/es/components",
+                      "value": 1979,
+                      "children": [
+                        {
+                          "name": "Provider.js",
+                          "fullPath": "node_modules/react-redux/es/components/Provider.js",
+                          "value": 1203
+                        },
+                        {
+                          "name": "Context.js",
+                          "fullPath": "node_modules/react-redux/es/components/Context.js",
+                          "value": 776
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "name": "d3-interpolate",
+              "fullPath": "node_modules/d3-interpolate",
+              "value": 4952,
+              "children": [
+                {
+                  "name": "src",
+                  "fullPath": "node_modules/d3-interpolate/src",
+                  "value": 4952,
+                  "children": [
+                    {
+                      "name": "string.js",
+                      "fullPath": "node_modules/d3-interpolate/src/string.js",
+                      "value": 1737
+                    },
+                    {
+                      "name": "color.js",
+                      "fullPath": "node_modules/d3-interpolate/src/color.js",
+                      "value": 484
+                    },
+                    {
+                      "name": "rgb.js",
+                      "fullPath": "node_modules/d3-interpolate/src/rgb.js",
+                      "value": 479
+                    },
+                    {
+                      "name": "value.js",
+                      "fullPath": "node_modules/d3-interpolate/src/value.js",
+                      "value": 448
+                    },
+                    {
+                      "name": "piecewise.js",
+                      "fullPath": "node_modules/d3-interpolate/src/piecewise.js",
+                      "value": 392
+                    },
+                    {
+                      "name": "object.js",
+                      "fullPath": "node_modules/d3-interpolate/src/object.js",
+                      "value": 352
+                    },
+                    {
+                      "name": "array.js",
+                      "fullPath": "node_modules/d3-interpolate/src/array.js",
+                      "value": 336
+                    },
+                    {
+                      "name": "numberArray.js",
+                      "fullPath": "node_modules/d3-interpolate/src/numberArray.js",
+                      "value": 318
+                    },
+                    {
+                      "name": "date.js",
+                      "fullPath": "node_modules/d3-interpolate/src/date.js",
+                      "value": 139
+                    },
+                    {
+                      "name": "round.js",
+                      "fullPath": "node_modules/d3-interpolate/src/round.js",
+                      "value": 125
+                    },
+                    {
+                      "name": "number.js",
+                      "fullPath": "node_modules/d3-interpolate/src/number.js",
+                      "value": 114
+                    },
+                    {
+                      "name": "constant.js",
+                      "fullPath": "node_modules/d3-interpolate/src/constant.js",
+                      "value": 28
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "name": "d3-path",
+              "fullPath": "node_modules/d3-path",
+              "value": 4303,
+              "children": [
+                {
+                  "name": "src",
+                  "fullPath": "node_modules/d3-path/src",
+                  "value": 4303,
+                  "children": [
+                    {
+                      "name": "path.js",
+                      "fullPath": "node_modules/d3-path/src/path.js",
+                      "value": 4303
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "name": "@babel",
+              "fullPath": "node_modules/@babel",
+              "value": 1733,
+              "children": [
+                {
+                  "name": "runtime",
+                  "fullPath": "node_modules/@babel/runtime",
+                  "value": 1733,
+                  "children": [
+                    {
+                      "name": "helpers",
+                      "fullPath": "node_modules/@babel/runtime/helpers",
+                      "value": 1733,
+                      "children": [
+                        {
+                          "name": "esm",
+                          "fullPath": "node_modules/@babel/runtime/helpers/esm",
+                          "value": 1733,
+                          "children": [
+                            {
+                              "name": "objectSpread2.js",
+                              "fullPath": "node_modules/@babel/runtime/helpers/esm/objectSpread2.js",
+                              "value": 758
+                            },
+                            {
+                              "name": "typeof.js",
+                              "fullPath": "node_modules/@babel/runtime/helpers/esm/typeof.js",
+                              "value": 335
+                            },
+                            {
+                              "name": "toPrimitive.js",
+                              "fullPath": "node_modules/@babel/runtime/helpers/esm/toPrimitive.js",
+                              "value": 324
+                            },
+                            {
+                              "name": "defineProperty.js",
+                              "fullPath": "node_modules/@babel/runtime/helpers/esm/defineProperty.js",
+                              "value": 205
+                            },
+                            {
+                              "name": "toPropertyKey.js",
+                              "fullPath": "node_modules/@babel/runtime/helpers/esm/toPropertyKey.js",
+                              "value": 111
+                            }
+                          ]
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "name": "redux-thunk",
+              "fullPath": "node_modules/redux-thunk",
+              "value": 1277,
+              "children": [
+                {
+                  "name": "es",
+                  "fullPath": "node_modules/redux-thunk/es",
+                  "value": 1277,
+                  "children": [
+                    {
+                      "name": "index.js",
+                      "fullPath": "node_modules/redux-thunk/es/index.js",
+                      "value": 1277
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "name": "internmap",
+              "fullPath": "node_modules/internmap",
+              "value": 1175,
+              "children": [
+                {
+                  "name": "src",
+                  "fullPath": "node_modules/internmap/src",
+                  "value": 1175,
+                  "children": [
+                    {
+                      "name": "index.js",
+                      "fullPath": "node_modules/internmap/src/index.js",
+                      "value": 1175
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "name": "clsx",
+              "fullPath": "node_modules/clsx",
+              "value": 368,
+              "children": [
+                {
+                  "name": "dist",
+                  "fullPath": "node_modules/clsx/dist",
+                  "value": 368,
+                  "children": [
+                    {
+                      "name": "clsx.mjs",
+                      "fullPath": "node_modules/clsx/dist/clsx.mjs",
+                      "value": 368
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "name": "victory-vendor",
+              "fullPath": "node_modules/victory-vendor",
+              "value": 200,
+              "children": [
+                {
+                  "name": "es",
+                  "fullPath": "node_modules/victory-vendor/es",
+                  "value": 200,
+                  "children": [
+                    {
+                      "name": "d3-scale.js",
+                      "fullPath": "node_modules/victory-vendor/es/d3-scale.js",
+                      "value": 200
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "name": "entry",
+          "fullPath": "entry",
+          "value": 1416,
+          "children": [
+            {
+              "name": "www",
+              "fullPath": "entry/www",
+              "value": 1416,
+              "children": [
+                {
+                  "name": "src",
+                  "fullPath": "entry/www/src",
+                  "value": 1416,
+                  "children": [
+                    {
+                      "name": "views",
+                      "fullPath": "entry/www/src/views",
+                      "value": 1416,
+                      "children": [
+                        {
+                          "name": "IndexView",
+                          "fullPath": "entry/www/src/views/IndexView",
+                          "value": 1416,
+                          "children": [
+                            {
+                              "name": "IndexLineChart.tsx",
+                              "fullPath": "entry/www/src/views/IndexView/IndexLineChart.tsx",
+                              "value": 1416
+                            }
+                          ]
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  },
+  "sunburst": {
+    "examplePath": "www/src/views/IndexView/IndexLineChart.tsx",
+    "totalSize": 815340,
+    "totalSizeLabel": "796.23 KB",
+    "moduleCount": 318,
+    "generatedAt": "2026-06-29T12:15:15.073Z",
+    "stages": [
+      {
+        "stage": "es6-folder",
+        "bytes": 1265282,
+        "humanReadableSize": "1.21 MB",
+        "reductionFromBaselinePercent": 0
+      },
+      {
+        "stage": "tree-shaken",
+        "bytes": 818854,
+        "humanReadableSize": "799.66 KB",
+        "reductionFromBaselinePercent": 0
+      },
+      {
+        "stage": "minified",
+        "bytes": 281289,
+        "humanReadableSize": "274.70 KB",
+        "reductionFromBaselinePercent": 65.65
+      },
+      {
+        "stage": "minified+gzip",
+        "bytes": 92095,
+        "humanReadableSize": "89.94 KB",
+        "reductionFromBaselinePercent": 88.75
+      }
+    ],
+    "tree": {
+      "name": "bundle",
+      "fullPath": "bundle",
+      "value": 815340,
+      "children": [
+        {
+          "name": "src",
+          "fullPath": "src",
+          "value": 453816,
+          "children": [
+            {
+              "name": "state",
+              "fullPath": "src/state",
+              "value": 169814,
+              "children": [
+                {
+                  "name": "selectors",
+                  "fullPath": "src/state/selectors",
+                  "value": 106931,
+                  "children": [
+                    {
+                      "name": "axisSelectors.ts",
+                      "fullPath": "src/state/selectors/axisSelectors.ts",
+                      "value": 53553
+                    },
+                    {
+                      "name": "combiners",
+                      "fullPath": "src/state/selectors/combiners",
+                      "value": 18984,
+                      "children": [
+                        {
+                          "name": "combineTooltipPayload.ts",
+                          "fullPath": "src/state/selectors/combiners/combineTooltipPayload.ts",
+                          "value": 5880
+                        },
+                        {
+                          "name": "combineActiveTooltipIndex.ts",
+                          "fullPath": "src/state/selectors/combiners/combineActiveTooltipIndex.ts",
+                          "value": 2241
+                        },
+                        {
+                          "name": "combineTooltipPayloadConfigurations.ts",
+                          "fullPath": "src/state/selectors/combiners/combineTooltipPayloadConfigurations.ts",
+                          "value": 2021
+                        },
+                        {
+                          "name": "combineDisplayedStackedData.ts",
+                          "fullPath": "src/state/selectors/combiners/combineDisplayedStackedData.ts",
+                          "value": 1822
+                        },
+                        {
+                          "name": "combineTooltipInteractionState.ts",
+                          "fullPath": "src/state/selectors/combiners/combineTooltipInteractionState.ts",
+                          "value": 1708
+                        },
+                        {
+                          "name": "combineConfiguredScale.ts",
+                          "fullPath": "src/state/selectors/combiners/combineConfiguredScale.ts",
+                          "value": 1440
+                        },
+                        {
+                          "name": "combineCheckedDomain.ts",
+                          "fullPath": "src/state/selectors/combiners/combineCheckedDomain.ts",
+                          "value": 1203
+                        },
+                        {
+                          "name": "combineCoordinateForDefaultIndex.ts",
+                          "fullPath": "src/state/selectors/combiners/combineCoordinateForDefaultIndex.ts",
+                          "value": 1141
+                        },
+                        {
+                          "name": "combineRealScaleType.ts",
+                          "fullPath": "src/state/selectors/combiners/combineRealScaleType.ts",
+                          "value": 756
+                        },
+                        {
+                          "name": "combineInverseScaleFunction.ts",
+                          "fullPath": "src/state/selectors/combiners/combineInverseScaleFunction.ts",
+                          "value": 325
+                        },
+                        {
+                          "name": "combineAxisRangeWithReverse.ts",
+                          "fullPath": "src/state/selectors/combiners/combineAxisRangeWithReverse.ts",
+                          "value": 229
+                        },
+                        {
+                          "name": "combineActiveLabel.ts",
+                          "fullPath": "src/state/selectors/combiners/combineActiveLabel.ts",
+                          "value": 218
+                        }
+                      ]
+                    },
+                    {
+                      "name": "tooltipSelectors.ts",
+                      "fullPath": "src/state/selectors/tooltipSelectors.ts",
+                      "value": 11302
+                    },
+                    {
+                      "name": "polarAxisSelectors.ts",
+                      "fullPath": "src/state/selectors/polarAxisSelectors.ts",
+                      "value": 4591
+                    },
+                    {
+                      "name": "selectors.ts",
+                      "fullPath": "src/state/selectors/selectors.ts",
+                      "value": 3898
+                    },
+                    {
+                      "name": "dataSelectors.ts",
+                      "fullPath": "src/state/selectors/dataSelectors.ts",
+                      "value": 2856
+                    },
+                    {
+                      "name": "selectChartOffsetInternal.ts",
+                      "fullPath": "src/state/selectors/selectChartOffsetInternal.ts",
+                      "value": 2824
+                    },
+                    {
+                      "name": "lineSelectors.ts",
+                      "fullPath": "src/state/selectors/lineSelectors.ts",
+                      "value": 2681
+                    },
+                    {
+                      "name": "touchSelectors.ts",
+                      "fullPath": "src/state/selectors/touchSelectors.ts",
+                      "value": 859
+                    },
+                    {
+                      "name": "selectTooltipEventType.ts",
+                      "fullPath": "src/state/selectors/selectTooltipEventType.ts",
+                      "value": 854
+                    },
+                    {
+                      "name": "arrayEqualityCheck.ts",
+                      "fullPath": "src/state/selectors/arrayEqualityCheck.ts",
+                      "value": 733
+                    },
+                    {
+                      "name": "brushSelectors.ts",
+                      "fullPath": "src/state/selectors/brushSelectors.ts",
+                      "value": 497
+                    },
+                    {
+                      "name": "selectTooltipAxisType.ts",
+                      "fullPath": "src/state/selectors/selectTooltipAxisType.ts",
+                      "value": 462
+                    },
+                    {
+                      "name": "rootPropsSelectors.ts",
+                      "fullPath": "src/state/selectors/rootPropsSelectors.ts",
+                      "value": 451
+                    },
+                    {
+                      "name": "selectPlotArea.ts",
+                      "fullPath": "src/state/selectors/selectPlotArea.ts",
+                      "value": 412
+                    },
+                    {
+                      "name": "legendSelectors.ts",
+                      "fullPath": "src/state/selectors/legendSelectors.ts",
+                      "value": 380
+                    },
+                    {
+                      "name": "selectActivePropsFromChartPointer.ts",
+                      "fullPath": "src/state/selectors/selectActivePropsFromChartPointer.ts",
+                      "value": 337
+                    },
+                    {
+                      "name": "selectAllAxes.ts",
+                      "fullPath": "src/state/selectors/selectAllAxes.ts",
+                      "value": 251
+                    },
+                    {
+                      "name": "selectChartOffset.ts",
+                      "fullPath": "src/state/selectors/selectChartOffset.ts",
+                      "value": 236
+                    },
+                    {
+                      "name": "containerSelectors.ts",
+                      "fullPath": "src/state/selectors/containerSelectors.ts",
+                      "value": 218
+                    },
+                    {
+                      "name": "numberDomainEqualityCheck.ts",
+                      "fullPath": "src/state/selectors/numberDomainEqualityCheck.ts",
+                      "value": 181
+                    },
+                    {
+                      "name": "selectTooltipPayloadSearcher.ts",
+                      "fullPath": "src/state/selectors/selectTooltipPayloadSearcher.ts",
+                      "value": 83
+                    },
+                    {
+                      "name": "selectTooltipAxisId.ts",
+                      "fullPath": "src/state/selectors/selectTooltipAxisId.ts",
+                      "value": 67
+                    },
+                    {
+                      "name": "selectTooltipSettings.ts",
+                      "fullPath": "src/state/selectors/selectTooltipSettings.ts",
+                      "value": 62
+                    },
+                    {
+                      "name": "pickAxisId.ts",
+                      "fullPath": "src/state/selectors/pickAxisId.ts",
+                      "value": 57
+                    },
+                    {
+                      "name": "pickAxisType.ts",
+                      "fullPath": "src/state/selectors/pickAxisType.ts",
+                      "value": 52
+                    },
+                    {
+                      "name": "selectTooltipState.ts",
+                      "fullPath": "src/state/selectors/selectTooltipState.ts",
+                      "value": 50
+                    }
+                  ]
+                },
+                {
+                  "name": "tooltipSlice.ts",
+                  "fullPath": "src/state/tooltipSlice.ts",
+                  "value": 7681
+                },
+                {
+                  "name": "keyboardEventsMiddleware.ts",
+                  "fullPath": "src/state/keyboardEventsMiddleware.ts",
+                  "value": 6661
+                },
+                {
+                  "name": "cartesianAxisSlice.ts",
+                  "fullPath": "src/state/cartesianAxisSlice.ts",
+                  "value": 5517
+                },
+                {
+                  "name": "externalEventsMiddleware.ts",
+                  "fullPath": "src/state/externalEventsMiddleware.ts",
+                  "value": 4477
+                },
+                {
+                  "name": "mouseEventsMiddleware.ts",
+                  "fullPath": "src/state/mouseEventsMiddleware.ts",
+                  "value": 4075
+                },
+                {
+                  "name": "touchEventsMiddleware.ts",
+                  "fullPath": "src/state/touchEventsMiddleware.ts",
+                  "value": 3722
+                },
+                {
+                  "name": "zIndexSlice.ts",
+                  "fullPath": "src/state/zIndexSlice.ts",
+                  "value": 3301
+                },
+                {
+                  "name": "store.ts",
+                  "fullPath": "src/state/store.ts",
+                  "value": 2685
+                },
+                {
+                  "name": "graphicalItemsSlice.ts",
+                  "fullPath": "src/state/graphicalItemsSlice.ts",
+                  "value": 2231
+                },
+                {
+                  "name": "legendSlice.ts",
+                  "fullPath": "src/state/legendSlice.ts",
+                  "value": 1941
+                },
+                {
+                  "name": "chartDataSlice.ts",
+                  "fullPath": "src/state/chartDataSlice.ts",
+                  "value": 1813
+                },
+                {
+                  "name": "RechartsStoreProvider.tsx",
+                  "fullPath": "src/state/RechartsStoreProvider.tsx",
+                  "value": 1614
+                },
+                {
+                  "name": "hooks.ts",
+                  "fullPath": "src/state/hooks.ts",
+                  "value": 1599
+                },
+                {
+                  "name": "SetGraphicalItem.ts",
+                  "fullPath": "src/state/SetGraphicalItem.ts",
+                  "value": 1434
+                },
+                {
+                  "name": "rootPropsSlice.ts",
+                  "fullPath": "src/state/rootPropsSlice.ts",
+                  "value": 1297
+                },
+                {
+                  "name": "errorBarSlice.ts",
+                  "fullPath": "src/state/errorBarSlice.ts",
+                  "value": 1234
+                },
+                {
+                  "name": "optionsSlice.ts",
+                  "fullPath": "src/state/optionsSlice.ts",
+                  "value": 1126
+                },
+                {
+                  "name": "ReportMainChartProps.tsx",
+                  "fullPath": "src/state/ReportMainChartProps.tsx",
+                  "value": 1091
+                },
+                {
+                  "name": "referenceElementsSlice.ts",
+                  "fullPath": "src/state/referenceElementsSlice.ts",
+                  "value": 1088
+                },
+                {
+                  "name": "renderedTicksSlice.ts",
+                  "fullPath": "src/state/renderedTicksSlice.ts",
+                  "value": 1053
+                },
+                {
+                  "name": "SetTooltipEntrySettings.tsx",
+                  "fullPath": "src/state/SetTooltipEntrySettings.tsx",
+                  "value": 980
+                },
+                {
+                  "name": "layoutSlice.ts",
+                  "fullPath": "src/state/layoutSlice.ts",
+                  "value": 949
+                },
+                {
+                  "name": "SetLegendPayload.ts",
+                  "fullPath": "src/state/SetLegendPayload.ts",
+                  "value": 824
+                },
+                {
+                  "name": "RechartsReduxContext.tsx",
+                  "fullPath": "src/state/RechartsReduxContext.tsx",
+                  "value": 706
+                },
+                {
+                  "name": "eventSettingsSlice.ts",
+                  "fullPath": "src/state/eventSettingsSlice.ts",
+                  "value": 691
+                },
+                {
+                  "name": "polarAxisSlice.ts",
+                  "fullPath": "src/state/polarAxisSlice.ts",
+                  "value": 633
+                },
+                {
+                  "name": "brushSlice.ts",
+                  "fullPath": "src/state/brushSlice.ts",
+                  "value": 631
+                },
+                {
+                  "name": "polarOptionsSlice.ts",
+                  "fullPath": "src/state/polarOptionsSlice.ts",
+                  "value": 592
+                },
+                {
+                  "name": "types",
+                  "fullPath": "src/state/types",
+                  "value": 447,
+                  "children": [
+                    {
+                      "name": "StackedGraphicalItem.ts",
+                      "fullPath": "src/state/types/StackedGraphicalItem.ts",
+                      "value": 447
+                    }
+                  ]
+                },
+                {
+                  "name": "reduxDevtoolsJsonStringifyReplacer.ts",
+                  "fullPath": "src/state/reduxDevtoolsJsonStringifyReplacer.ts",
+                  "value": 353
+                },
+                {
+                  "name": "ReportEventSettings.tsx",
+                  "fullPath": "src/state/ReportEventSettings.tsx",
+                  "value": 268
+                },
+                {
+                  "name": "ReportChartProps.tsx",
+                  "fullPath": "src/state/ReportChartProps.tsx",
+                  "value": 169
+                }
+              ]
+            },
+            {
+              "name": "util",
+              "fullPath": "src/util",
+              "value": 97756,
+              "children": [
+                {
+                  "name": "scale",
+                  "fullPath": "src/util/scale",
+                  "value": 14960,
+                  "children": [
+                    {
+                      "name": "getNiceTickValues.ts",
+                      "fullPath": "src/util/scale/getNiceTickValues.ts",
+                      "value": 9983
+                    },
+                    {
+                      "name": "createCategoricalInverse.ts",
+                      "fullPath": "src/util/scale/createCategoricalInverse.ts",
+                      "value": 1964
+                    },
+                    {
+                      "name": "RechartsScale.ts",
+                      "fullPath": "src/util/scale/RechartsScale.ts",
+                      "value": 1795
+                    },
+                    {
+                      "name": "util",
+                      "fullPath": "src/util/scale/util",
+                      "value": 1218,
+                      "children": [
+                        {
+                          "name": "arithmetic.ts",
+                          "fullPath": "src/util/scale/util/arithmetic.ts",
+                          "value": 1218
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "name": "ChartUtils.ts",
+                  "fullPath": "src/util/ChartUtils.ts",
+                  "value": 13005
+                },
+                {
+                  "name": "svgPropertiesNoEvents.ts",
+                  "fullPath": "src/util/svgPropertiesNoEvents.ts",
+                  "value": 6716
+                },
+                {
+                  "name": "isDomainSpecifiedByUser.ts",
+                  "fullPath": "src/util/isDomainSpecifiedByUser.ts",
+                  "value": 6694
+                },
+                {
+                  "name": "DataUtils.ts",
+                  "fullPath": "src/util/DataUtils.ts",
+                  "value": 5013
+                },
+                {
+                  "name": "getActiveCoordinate.ts",
+                  "fullPath": "src/util/getActiveCoordinate.ts",
+                  "value": 4998
+                },
+                {
+                  "name": "getRelativeCoordinate.ts",
+                  "fullPath": "src/util/getRelativeCoordinate.ts",
+                  "value": 4292
+                },
+                {
+                  "name": "ReduceCSSCalc.ts",
+                  "fullPath": "src/util/ReduceCSSCalc.ts",
+                  "value": 4223
+                },
+                {
+                  "name": "resolveDefaultProps.tsx",
+                  "fullPath": "src/util/resolveDefaultProps.tsx",
+                  "value": 3871
+                },
+                {
+                  "name": "types.ts",
+                  "fullPath": "src/util/types.ts",
+                  "value": 3807
+                },
+                {
+                  "name": "excludeEventProps.ts",
+                  "fullPath": "src/util/excludeEventProps.ts",
+                  "value": 3126
+                },
+                {
+                  "name": "PolarUtils.ts",
+                  "fullPath": "src/util/PolarUtils.ts",
+                  "value": 2795
+                },
+                {
+                  "name": "propsAreEqual.ts",
+                  "fullPath": "src/util/propsAreEqual.ts",
+                  "value": 2738
+                },
+                {
+                  "name": "DOMUtils.ts",
+                  "fullPath": "src/util/DOMUtils.ts",
+                  "value": 2400
+                },
+                {
+                  "name": "ActiveShapeUtils.tsx",
+                  "fullPath": "src/util/ActiveShapeUtils.tsx",
+                  "value": 2133
+                },
+                {
+                  "name": "svgPropertiesAndEvents.ts",
+                  "fullPath": "src/util/svgPropertiesAndEvents.ts",
+                  "value": 1902
+                },
+                {
+                  "name": "YAxisUtils.tsx",
+                  "fullPath": "src/util/YAxisUtils.tsx",
+                  "value": 1444
+                },
+                {
+                  "name": "CartesianUtils.ts",
+                  "fullPath": "src/util/CartesianUtils.ts",
+                  "value": 1319
+                },
+                {
+                  "name": "TickUtils.ts",
+                  "fullPath": "src/util/TickUtils.ts",
+                  "value": 1134
+                },
+                {
+                  "name": "axisPropsAreEqual.ts",
+                  "fullPath": "src/util/axisPropsAreEqual.ts",
+                  "value": 1101
+                },
+                {
+                  "name": "useUniqueId.ts",
+                  "fullPath": "src/util/useUniqueId.ts",
+                  "value": 1076
+                },
+                {
+                  "name": "useAnimationId.tsx",
+                  "fullPath": "src/util/useAnimationId.tsx",
+                  "value": 1014
+                },
+                {
+                  "name": "usePrefersReducedMotion.ts",
+                  "fullPath": "src/util/usePrefersReducedMotion.ts",
+                  "value": 1007
+                },
+                {
+                  "name": "getEveryNth.ts",
+                  "fullPath": "src/util/getEveryNth.ts",
+                  "value": 799
+                },
+                {
+                  "name": "LRUCache.ts",
+                  "fullPath": "src/util/LRUCache.ts",
+                  "value": 722
+                },
+                {
+                  "name": "getRadiusAndStrokeWidthFromDot.tsx",
+                  "fullPath": "src/util/getRadiusAndStrokeWidthFromDot.tsx",
+                  "value": 640
+                },
+                {
+                  "name": "LogUtils.ts",
+                  "fullPath": "src/util/LogUtils.ts",
+                  "value": 639
+                },
+                {
+                  "name": "Constants.ts",
+                  "fullPath": "src/util/Constants.ts",
+                  "value": 599
+                },
+                {
+                  "name": "useId.ts",
+                  "fullPath": "src/util/useId.ts",
+                  "value": 529
+                },
+                {
+                  "name": "useReportScale.ts",
+                  "fullPath": "src/util/useReportScale.ts",
+                  "value": 472
+                },
+                {
+                  "name": "getAxisTypeBasedOnLayout.ts",
+                  "fullPath": "src/util/getAxisTypeBasedOnLayout.ts",
+                  "value": 446
+                },
+                {
+                  "name": "createEventProxy.ts",
+                  "fullPath": "src/util/createEventProxy.ts",
+                  "value": 412
+                },
+                {
+                  "name": "round.ts",
+                  "fullPath": "src/util/round.ts",
+                  "value": 326
+                },
+                {
+                  "name": "stacks",
+                  "fullPath": "src/util/stacks",
+                  "value": 317,
+                  "children": [
+                    {
+                      "name": "getStackSeriesIdentifier.ts",
+                      "fullPath": "src/util/stacks/getStackSeriesIdentifier.ts",
+                      "value": 317
+                    }
+                  ]
+                },
+                {
+                  "name": "Global.ts",
+                  "fullPath": "src/util/Global.ts",
+                  "value": 258
+                },
+                {
+                  "name": "getSliced.ts",
+                  "fullPath": "src/util/getSliced.ts",
+                  "value": 208
+                },
+                {
+                  "name": "getClassNameFromUnknown.tsx",
+                  "fullPath": "src/util/getClassNameFromUnknown.tsx",
+                  "value": 171
+                },
+                {
+                  "name": "isWellBehavedNumber.ts",
+                  "fullPath": "src/util/isWellBehavedNumber.ts",
+                  "value": 160
+                },
+                {
+                  "name": "Events.ts",
+                  "fullPath": "src/util/Events.ts",
+                  "value": 149
+                },
+                {
+                  "name": "ReactUtils.ts",
+                  "fullPath": "src/util/ReactUtils.ts",
+                  "value": 141
+                }
+              ]
+            },
+            {
+              "name": "cartesian",
+              "fullPath": "src/cartesian",
+              "value": 75504,
+              "children": [
+                {
+                  "name": "Line.tsx",
+                  "fullPath": "src/cartesian/Line.tsx",
+                  "value": 14766
+                },
+                {
+                  "name": "CartesianAxis.tsx",
+                  "fullPath": "src/cartesian/CartesianAxis.tsx",
+                  "value": 13233
+                },
+                {
+                  "name": "CartesianGrid.tsx",
+                  "fullPath": "src/cartesian/CartesianGrid.tsx",
+                  "value": 11078
+                },
+                {
+                  "name": "YAxis.tsx",
+                  "fullPath": "src/cartesian/YAxis.tsx",
+                  "value": 6321
+                },
+                {
+                  "name": "getCartesianPosition.tsx",
+                  "fullPath": "src/cartesian/getCartesianPosition.tsx",
+                  "value": 6159
+                },
+                {
+                  "name": "LineDrawShape.tsx",
+                  "fullPath": "src/cartesian/LineDrawShape.tsx",
+                  "value": 6040
+                },
+                {
+                  "name": "getTicks.ts",
+                  "fullPath": "src/cartesian/getTicks.ts",
+                  "value": 5123
+                },
+                {
+                  "name": "XAxis.tsx",
+                  "fullPath": "src/cartesian/XAxis.tsx",
+                  "value": 5008
+                },
+                {
+                  "name": "getEquidistantTicks.ts",
+                  "fullPath": "src/cartesian/getEquidistantTicks.ts",
+                  "value": 4068
+                },
+                {
+                  "name": "useAnimatedLineLength.ts",
+                  "fullPath": "src/cartesian/useAnimatedLineLength.ts",
+                  "value": 2150
+                },
+                {
+                  "name": "GraphicalItemClipPath.tsx",
+                  "fullPath": "src/cartesian/GraphicalItemClipPath.tsx",
+                  "value": 1558
+                }
+              ]
+            },
+            {
+              "name": "animation",
+              "fullPath": "src/animation",
+              "value": 32531,
+              "children": [
+                {
+                  "name": "AnimationHandle.ts",
+                  "fullPath": "src/animation/AnimationHandle.ts",
+                  "value": 7970
+                },
+                {
+                  "name": "matchBy.ts",
+                  "fullPath": "src/animation/matchBy.ts",
+                  "value": 5864
+                },
+                {
+                  "name": "easing.ts",
+                  "fullPath": "src/animation/easing.ts",
+                  "value": 5277
+                },
+                {
+                  "name": "useAnimationStartSnapshot.ts",
+                  "fullPath": "src/animation/useAnimationStartSnapshot.ts",
+                  "value": 4279
+                },
+                {
+                  "name": "AnimatedItems.tsx",
+                  "fullPath": "src/animation/AnimatedItems.tsx",
+                  "value": 3718
+                },
+                {
+                  "name": "JavascriptAnimate.tsx",
+                  "fullPath": "src/animation/JavascriptAnimate.tsx",
+                  "value": 1601
+                },
+                {
+                  "name": "useAnimationController.tsx",
+                  "fullPath": "src/animation/useAnimationController.tsx",
+                  "value": 1480
+                },
+                {
+                  "name": "timeoutController.ts",
+                  "fullPath": "src/animation/timeoutController.ts",
+                  "value": 1235
+                },
+                {
+                  "name": "AnimationControllerImpl.ts",
+                  "fullPath": "src/animation/AnimationControllerImpl.ts",
+                  "value": 1107
+                }
+              ]
+            },
+            {
+              "name": "component",
+              "fullPath": "src/component",
+              "value": 24462,
+              "children": [
+                {
+                  "name": "Label.tsx",
+                  "fullPath": "src/component/Label.tsx",
+                  "value": 9809
+                },
+                {
+                  "name": "Text.tsx",
+                  "fullPath": "src/component/Text.tsx",
+                  "value": 7597
+                },
+                {
+                  "name": "LabelList.tsx",
+                  "fullPath": "src/component/LabelList.tsx",
+                  "value": 3115
+                },
+                {
+                  "name": "ActivePoints.tsx",
+                  "fullPath": "src/component/ActivePoints.tsx",
+                  "value": 1870
+                },
+                {
+                  "name": "Dots.tsx",
+                  "fullPath": "src/component/Dots.tsx",
+                  "value": 1775
+                },
+                {
+                  "name": "ResponsiveContainer.tsx",
+                  "fullPath": "src/component/ResponsiveContainer.tsx",
+                  "value": 196
+                },
+                {
+                  "name": "responsiveContainerUtils.ts",
+                  "fullPath": "src/component/responsiveContainerUtils.ts",
+                  "value": 100
+                }
+              ]
+            },
+            {
+              "name": "chart",
+              "fullPath": "src/chart",
+              "value": 14865,
+              "children": [
+                {
+                  "name": "RechartsWrapper.tsx",
+                  "fullPath": "src/chart/RechartsWrapper.tsx",
+                  "value": 10504
+                },
+                {
+                  "name": "CartesianChart.tsx",
+                  "fullPath": "src/chart/CartesianChart.tsx",
+                  "value": 2318
+                },
+                {
+                  "name": "CategoricalChart.tsx",
+                  "fullPath": "src/chart/CategoricalChart.tsx",
+                  "value": 1557
+                },
+                {
+                  "name": "LineChart.tsx",
+                  "fullPath": "src/chart/LineChart.tsx",
+                  "value": 486
+                }
+              ]
+            },
+            {
+              "name": "zIndex",
+              "fullPath": "src/zIndex",
+              "value": 9406,
+              "children": [
+                {
+                  "name": "ZIndexLayer.tsx",
+                  "fullPath": "src/zIndex/ZIndexLayer.tsx",
+                  "value": 4621
+                },
+                {
+                  "name": "DefaultZIndexes.tsx",
+                  "fullPath": "src/zIndex/DefaultZIndexes.tsx",
+                  "value": 2271
+                },
+                {
+                  "name": "ZIndexPortal.tsx",
+                  "fullPath": "src/zIndex/ZIndexPortal.tsx",
+                  "value": 1452
+                },
+                {
+                  "name": "zIndexSelectors.ts",
+                  "fullPath": "src/zIndex/zIndexSelectors.ts",
+                  "value": 1062
+                }
+              ]
+            },
+            {
+              "name": "context",
+              "fullPath": "src/context",
+              "value": 8670,
+              "children": [
+                {
+                  "name": "chartLayoutContext.tsx",
+                  "fullPath": "src/context/chartLayoutContext.tsx",
+                  "value": 7031
+                },
+                {
+                  "name": "chartDataContext.tsx",
+                  "fullPath": "src/context/chartDataContext.tsx",
+                  "value": 528
+                },
+                {
+                  "name": "ErrorBarContext.tsx",
+                  "fullPath": "src/context/ErrorBarContext.tsx",
+                  "value": 439
+                },
+                {
+                  "name": "RegisterGraphicalItemId.tsx",
+                  "fullPath": "src/context/RegisterGraphicalItemId.tsx",
+                  "value": 323
+                },
+                {
+                  "name": "PanoramaContext.tsx",
+                  "fullPath": "src/context/PanoramaContext.tsx",
+                  "value": 122
+                },
+                {
+                  "name": "accessibilityContext.tsx",
+                  "fullPath": "src/context/accessibilityContext.tsx",
+                  "value": 104
+                },
+                {
+                  "name": "tooltipPortalContext.tsx",
+                  "fullPath": "src/context/tooltipPortalContext.tsx",
+                  "value": 62
+                },
+                {
+                  "name": "legendPortalContext.tsx",
+                  "fullPath": "src/context/legendPortalContext.tsx",
+                  "value": 61
+                }
+              ]
+            },
+            {
+              "name": "synchronisation",
+              "fullPath": "src/synchronisation",
+              "value": 8354,
+              "children": [
+                {
+                  "name": "useChartSynchronisation.tsx",
+                  "fullPath": "src/synchronisation/useChartSynchronisation.tsx",
+                  "value": 8354
+                }
+              ]
+            },
+            {
+              "name": "container",
+              "fullPath": "src/container",
+              "value": 5102,
+              "children": [
+                {
+                  "name": "RootSurface.tsx",
+                  "fullPath": "src/container/RootSurface.tsx",
+                  "value": 2507
+                },
+                {
+                  "name": "ClipPathProvider.tsx",
+                  "fullPath": "src/container/ClipPathProvider.tsx",
+                  "value": 1055
+                },
+                {
+                  "name": "Surface.tsx",
+                  "fullPath": "src/container/Surface.tsx",
+                  "value": 932
+                },
+                {
+                  "name": "Layer.tsx",
+                  "fullPath": "src/container/Layer.tsx",
+                  "value": 608
+                }
+              ]
+            },
+            {
+              "name": "shape",
+              "fullPath": "src/shape",
+              "value": 5033,
+              "children": [
+                {
+                  "name": "Curve.tsx",
+                  "fullPath": "src/shape/Curve.tsx",
+                  "value": 4366
+                },
+                {
+                  "name": "Dot.tsx",
+                  "fullPath": "src/shape/Dot.tsx",
+                  "value": 667
+                }
+              ]
+            },
+            {
+              "name": "hooks.ts",
+              "fullPath": "src/hooks.ts",
+              "value": 1813
+            },
+            {
+              "name": "polar",
+              "fullPath": "src/polar",
+              "value": 506,
+              "children": [
+                {
+                  "name": "defaultPolarAngleAxisProps.tsx",
+                  "fullPath": "src/polar/defaultPolarAngleAxisProps.tsx",
+                  "value": 258
+                },
+                {
+                  "name": "defaultPolarRadiusAxisProps.tsx",
+                  "fullPath": "src/polar/defaultPolarRadiusAxisProps.tsx",
+                  "value": 248
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "name": "node_modules",
+          "fullPath": "node_modules",
+          "value": 360108,
+          "children": [
+            {
+              "name": "@reduxjs",
+              "fullPath": "node_modules/@reduxjs",
+              "value": 73087,
+              "children": [
+                {
+                  "name": "toolkit",
+                  "fullPath": "node_modules/@reduxjs/toolkit",
+                  "value": 73087,
+                  "children": [
+                    {
+                      "name": "dist",
+                      "fullPath": "node_modules/@reduxjs/toolkit/dist",
+                      "value": 60417,
+                      "children": [
+                        {
+                          "name": "redux-toolkit.esm.js",
+                          "fullPath": "node_modules/@reduxjs/toolkit/dist/redux-toolkit.esm.js",
+                          "value": 60417
+                        }
+                      ]
+                    },
+                    {
+                      "name": "node_modules",
+                      "fullPath": "node_modules/@reduxjs/toolkit/node_modules",
+                      "value": 12670,
+                      "children": [
+                        {
+                          "name": "immer",
+                          "fullPath": "node_modules/@reduxjs/toolkit/node_modules/immer",
+                          "value": 12670,
+                          "children": [
+                            {
+                              "name": "dist",
+                              "fullPath": "node_modules/@reduxjs/toolkit/node_modules/immer/dist",
+                              "value": 12670,
+                              "children": [
+                                {
+                                  "name": "immer.esm.mjs",
+                                  "fullPath": "node_modules/@reduxjs/toolkit/node_modules/immer/dist/immer.esm.mjs",
+                                  "value": 12670
+                                }
+                              ]
+                            }
+                          ]
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "name": "decimal.js-light",
+              "fullPath": "node_modules/decimal.js-light",
+              "value": 49559,
+              "children": [
+                {
+                  "name": "decimal.mjs",
+                  "fullPath": "node_modules/decimal.js-light/decimal.mjs",
+                  "value": 49559
+                }
+              ]
+            },
+            {
+              "name": "d3-scale",
+              "fullPath": "node_modules/d3-scale",
+              "value": 28222,
+              "children": [
+                {
+                  "name": "src",
+                  "fullPath": "node_modules/d3-scale/src",
+                  "value": 28222,
+                  "children": [
+                    {
+                      "name": "continuous.js",
+                      "fullPath": "node_modules/d3-scale/src/continuous.js",
+                      "value": 3205
+                    },
+                    {
+                      "name": "log.js",
+                      "fullPath": "node_modules/d3-scale/src/log.js",
+                      "value": 3190
+                    },
+                    {
+                      "name": "diverging.js",
+                      "fullPath": "node_modules/d3-scale/src/diverging.js",
+                      "value": 2489
+                    },
+                    {
+                      "name": "band.js",
+                      "fullPath": "node_modules/d3-scale/src/band.js",
+                      "value": 2451
+                    },
+                    {
+                      "name": "sequential.js",
+                      "fullPath": "node_modules/d3-scale/src/sequential.js",
+                      "value": 2398
+                    },
+                    {
+                      "name": "time.js",
+                      "fullPath": "node_modules/d3-scale/src/time.js",
+                      "value": 1982
+                    },
+                    {
+                      "name": "linear.js",
+                      "fullPath": "node_modules/d3-scale/src/linear.js",
+                      "value": 1412
+                    },
+                    {
+                      "name": "quantile.js",
+                      "fullPath": "node_modules/d3-scale/src/quantile.js",
+                      "value": 1277
+                    },
+                    {
+                      "name": "radial.js",
+                      "fullPath": "node_modules/d3-scale/src/radial.js",
+                      "value": 1273
+                    },
+                    {
+                      "name": "quantize.js",
+                      "fullPath": "node_modules/d3-scale/src/quantize.js",
+                      "value": 1154
+                    },
+                    {
+                      "name": "tickFormat.js",
+                      "fullPath": "node_modules/d3-scale/src/tickFormat.js",
+                      "value": 1003
+                    },
+                    {
+                      "name": "pow.js",
+                      "fullPath": "node_modules/d3-scale/src/pow.js",
+                      "value": 1001
+                    },
+                    {
+                      "name": "ordinal.js",
+                      "fullPath": "node_modules/d3-scale/src/ordinal.js",
+                      "value": 981
+                    },
+                    {
+                      "name": "sequentialQuantile.js",
+                      "fullPath": "node_modules/d3-scale/src/sequentialQuantile.js",
+                      "value": 938
+                    },
+                    {
+                      "name": "threshold.js",
+                      "fullPath": "node_modules/d3-scale/src/threshold.js",
+                      "value": 880
+                    },
+                    {
+                      "name": "symlog.js",
+                      "fullPath": "node_modules/d3-scale/src/symlog.js",
+                      "value": 702
+                    },
+                    {
+                      "name": "init.js",
+                      "fullPath": "node_modules/d3-scale/src/init.js",
+                      "value": 674
+                    },
+                    {
+                      "name": "identity.js",
+                      "fullPath": "node_modules/d3-scale/src/identity.js",
+                      "value": 564
+                    },
+                    {
+                      "name": "nice.js",
+                      "fullPath": "node_modules/d3-scale/src/nice.js",
+                      "value": 318
+                    },
+                    {
+                      "name": "utcTime.js",
+                      "fullPath": "node_modules/d3-scale/src/utcTime.js",
+                      "value": 226
+                    },
+                    {
+                      "name": "constant.js",
+                      "fullPath": "node_modules/d3-scale/src/constant.js",
+                      "value": 67
+                    },
+                    {
+                      "name": "number.js",
+                      "fullPath": "node_modules/d3-scale/src/number.js",
+                      "value": 37
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "name": "es-toolkit",
+              "fullPath": "node_modules/es-toolkit",
+              "value": 27078,
+              "children": [
+                {
+                  "name": "dist",
+                  "fullPath": "node_modules/es-toolkit/dist",
+                  "value": 26509,
+                  "children": [
+                    {
+                      "name": "compat",
+                      "fullPath": "node_modules/es-toolkit/dist/compat",
+                      "value": 22434,
+                      "children": [
+                        {
+                          "name": "_internal",
+                          "fullPath": "node_modules/es-toolkit/dist/compat/_internal",
+                          "value": 5289,
+                          "children": [
+                            {
+                              "name": "isKey.js",
+                              "fullPath": "node_modules/es-toolkit/dist/compat/_internal/isKey.js",
+                              "value": 1306
+                            },
+                            {
+                              "name": "isIterateeCall.js",
+                              "fullPath": "node_modules/es-toolkit/dist/compat/_internal/isIterateeCall.js",
+                              "value": 964
+                            },
+                            {
+                              "name": "isDeepKey.js",
+                              "fullPath": "node_modules/es-toolkit/dist/compat/_internal/isDeepKey.js",
+                              "value": 963
+                            },
+                            {
+                              "name": "compareValues.js",
+                              "fullPath": "node_modules/es-toolkit/dist/compat/_internal/compareValues.js",
+                              "value": 883
+                            },
+                            {
+                              "name": "toKey.js",
+                              "fullPath": "node_modules/es-toolkit/dist/compat/_internal/toKey.js",
+                              "value": 587
+                            },
+                            {
+                              "name": "isIndex.js",
+                              "fullPath": "node_modules/es-toolkit/dist/compat/_internal/isIndex.js",
+                              "value": 586
+                            }
+                          ]
+                        },
+                        {
+                          "name": "util",
+                          "fullPath": "node_modules/es-toolkit/dist/compat/util",
+                          "value": 5203,
+                          "children": [
+                            {
+                              "name": "toPath.js",
+                              "fullPath": "node_modules/es-toolkit/dist/compat/util/toPath.js",
+                              "value": 2364
+                            },
+                            {
+                              "name": "toString.js",
+                              "fullPath": "node_modules/es-toolkit/dist/compat/util/toString.js",
+                              "value": 1038
+                            },
+                            {
+                              "name": "toFinite.js",
+                              "fullPath": "node_modules/es-toolkit/dist/compat/util/toFinite.js",
+                              "value": 952
+                            },
+                            {
+                              "name": "toNumber.js",
+                              "fullPath": "node_modules/es-toolkit/dist/compat/util/toNumber.js",
+                              "value": 849
+                            }
+                          ]
+                        },
+                        {
+                          "name": "array",
+                          "fullPath": "node_modules/es-toolkit/dist/compat/array",
+                          "value": 4885,
+                          "children": [
+                            {
+                              "name": "orderBy.js",
+                              "fullPath": "node_modules/es-toolkit/dist/compat/array/orderBy.js",
+                              "value": 4056
+                            },
+                            {
+                              "name": "sortBy.js",
+                              "fullPath": "node_modules/es-toolkit/dist/compat/array/sortBy.js",
+                              "value": 829
+                            }
+                          ]
+                        },
+                        {
+                          "name": "predicate",
+                          "fullPath": "node_modules/es-toolkit/dist/compat/predicate",
+                          "value": 2870,
+                          "children": [
+                            {
+                              "name": "isObject.js",
+                              "fullPath": "node_modules/es-toolkit/dist/compat/predicate/isObject.js",
+                              "value": 1255
+                            },
+                            {
+                              "name": "isArrayLike.js",
+                              "fullPath": "node_modules/es-toolkit/dist/compat/predicate/isArrayLike.js",
+                              "value": 871
+                            },
+                            {
+                              "name": "isSymbol.js",
+                              "fullPath": "node_modules/es-toolkit/dist/compat/predicate/isSymbol.js",
+                              "value": 744
+                            }
+                          ]
+                        },
+                        {
+                          "name": "object",
+                          "fullPath": "node_modules/es-toolkit/dist/compat/object",
+                          "value": 2638,
+                          "children": [
+                            {
+                              "name": "get.js",
+                              "fullPath": "node_modules/es-toolkit/dist/compat/object/get.js",
+                              "value": 2638
+                            }
+                          ]
+                        },
+                        {
+                          "name": "math",
+                          "fullPath": "node_modules/es-toolkit/dist/compat/math",
+                          "value": 1549,
+                          "children": [
+                            {
+                              "name": "range.js",
+                              "fullPath": "node_modules/es-toolkit/dist/compat/math/range.js",
+                              "value": 1549
+                            }
+                          ]
+                        }
+                      ]
+                    },
+                    {
+                      "name": "_internal",
+                      "fullPath": "node_modules/es-toolkit/dist/_internal",
+                      "value": 1700,
+                      "children": [
+                        {
+                          "name": "isEqualsSameValueZero.js",
+                          "fullPath": "node_modules/es-toolkit/dist/_internal/isEqualsSameValueZero.js",
+                          "value": 909
+                        },
+                        {
+                          "name": "isUnsafeProperty.js",
+                          "fullPath": "node_modules/es-toolkit/dist/_internal/isUnsafeProperty.js",
+                          "value": 791
+                        }
+                      ]
+                    },
+                    {
+                      "name": "array",
+                      "fullPath": "node_modules/es-toolkit/dist/array",
+                      "value": 1260,
+                      "children": [
+                        {
+                          "name": "flatten.js",
+                          "fullPath": "node_modules/es-toolkit/dist/array/flatten.js",
+                          "value": 1260
+                        }
+                      ]
+                    },
+                    {
+                      "name": "predicate",
+                      "fullPath": "node_modules/es-toolkit/dist/predicate",
+                      "value": 1115,
+                      "children": [
+                        {
+                          "name": "isLength.js",
+                          "fullPath": "node_modules/es-toolkit/dist/predicate/isLength.js",
+                          "value": 1115
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "name": "compat",
+                  "fullPath": "node_modules/es-toolkit/compat",
+                  "value": 569,
+                  "children": [
+                    {
+                      "name": "sortBy.js",
+                      "fullPath": "node_modules/es-toolkit/compat/sortBy.js",
+                      "value": 203
+                    },
+                    {
+                      "name": "range.js",
+                      "fullPath": "node_modules/es-toolkit/compat/range.js",
+                      "value": 193
+                    },
+                    {
+                      "name": "get.js",
+                      "fullPath": "node_modules/es-toolkit/compat/get.js",
+                      "value": 173
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "name": "redux",
+              "fullPath": "node_modules/redux",
+              "value": 23594,
+              "children": [
+                {
+                  "name": "es",
+                  "fullPath": "node_modules/redux/es",
+                  "value": 23594,
+                  "children": [
+                    {
+                      "name": "redux.js",
+                      "fullPath": "node_modules/redux/es/redux.js",
+                      "value": 23594
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "name": "immer",
+              "fullPath": "node_modules/immer",
+              "value": 23283,
+              "children": [
+                {
+                  "name": "dist",
+                  "fullPath": "node_modules/immer/dist",
+                  "value": 23283,
+                  "children": [
+                    {
+                      "name": "immer.mjs",
+                      "fullPath": "node_modules/immer/dist/immer.mjs",
+                      "value": 23283
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "name": "d3-shape",
+              "fullPath": "node_modules/d3-shape",
+              "value": 21306,
+              "children": [
+                {
+                  "name": "src",
+                  "fullPath": "node_modules/d3-shape/src",
+                  "value": 21306,
+                  "children": [
+                    {
+                      "name": "curve",
+                      "fullPath": "node_modules/d3-shape/src/curve",
+                      "value": 13097,
+                      "children": [
+                        {
+                          "name": "monotone.js",
+                          "fullPath": "node_modules/d3-shape/src/curve/monotone.js",
+                          "value": 3306
+                        },
+                        {
+                          "name": "natural.js",
+                          "fullPath": "node_modules/d3-shape/src/curve/natural.js",
+                          "value": 1742
+                        },
+                        {
+                          "name": "basisClosed.js",
+                          "fullPath": "node_modules/d3-shape/src/curve/basisClosed.js",
+                          "value": 1623
+                        },
+                        {
+                          "name": "basis.js",
+                          "fullPath": "node_modules/d3-shape/src/curve/basis.js",
+                          "value": 1512
+                        },
+                        {
+                          "name": "step.js",
+                          "fullPath": "node_modules/d3-shape/src/curve/step.js",
+                          "value": 1419
+                        },
+                        {
+                          "name": "basisOpen.js",
+                          "fullPath": "node_modules/d3-shape/src/curve/basisOpen.js",
+                          "value": 1146
+                        },
+                        {
+                          "name": "bump.js",
+                          "fullPath": "node_modules/d3-shape/src/curve/bump.js",
+                          "value": 1065
+                        },
+                        {
+                          "name": "linear.js",
+                          "fullPath": "node_modules/d3-shape/src/curve/linear.js",
+                          "value": 796
+                        },
+                        {
+                          "name": "linearClosed.js",
+                          "fullPath": "node_modules/d3-shape/src/curve/linearClosed.js",
+                          "value": 488
+                        }
+                      ]
+                    },
+                    {
+                      "name": "area.js",
+                      "fullPath": "node_modules/d3-shape/src/area.js",
+                      "value": 2960
+                    },
+                    {
+                      "name": "offset",
+                      "fullPath": "node_modules/d3-shape/src/offset",
+                      "value": 1635,
+                      "children": [
+                        {
+                          "name": "wiggle.js",
+                          "fullPath": "node_modules/d3-shape/src/offset/wiggle.js",
+                          "value": 716
+                        },
+                        {
+                          "name": "none.js",
+                          "fullPath": "node_modules/d3-shape/src/offset/none.js",
+                          "value": 310
+                        },
+                        {
+                          "name": "expand.js",
+                          "fullPath": "node_modules/d3-shape/src/offset/expand.js",
+                          "value": 305
+                        },
+                        {
+                          "name": "silhouette.js",
+                          "fullPath": "node_modules/d3-shape/src/offset/silhouette.js",
+                          "value": 304
+                        }
+                      ]
+                    },
+                    {
+                      "name": "line.js",
+                      "fullPath": "node_modules/d3-shape/src/line.js",
+                      "value": 1494
+                    },
+                    {
+                      "name": "stack.js",
+                      "fullPath": "node_modules/d3-shape/src/stack.js",
+                      "value": 1292
+                    },
+                    {
+                      "name": "path.js",
+                      "fullPath": "node_modules/d3-shape/src/path.js",
+                      "value": 353
+                    },
+                    {
+                      "name": "array.js",
+                      "fullPath": "node_modules/d3-shape/src/array.js",
+                      "value": 184
+                    },
+                    {
+                      "name": "order",
+                      "fullPath": "node_modules/d3-shape/src/order",
+                      "value": 124,
+                      "children": [
+                        {
+                          "name": "none.js",
+                          "fullPath": "node_modules/d3-shape/src/order/none.js",
+                          "value": 124
+                        }
+                      ]
+                    },
+                    {
+                      "name": "constant.js",
+                      "fullPath": "node_modules/d3-shape/src/constant.js",
+                      "value": 77
+                    },
+                    {
+                      "name": "point.js",
+                      "fullPath": "node_modules/d3-shape/src/point.js",
+                      "value": 69
+                    },
+                    {
+                      "name": "noop.js",
+                      "fullPath": "node_modules/d3-shape/src/noop.js",
+                      "value": 21
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "name": "d3-time-format",
+              "fullPath": "node_modules/d3-time-format",
+              "value": 19057,
+              "children": [
+                {
+                  "name": "src",
+                  "fullPath": "node_modules/d3-time-format/src",
+                  "value": 19057,
+                  "children": [
+                    {
+                      "name": "locale.js",
+                      "fullPath": "node_modules/d3-time-format/src/locale.js",
+                      "value": 18326
+                    },
+                    {
+                      "name": "defaultLocale.js",
+                      "fullPath": "node_modules/d3-time-format/src/defaultLocale.js",
+                      "value": 731
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "name": "use-sync-external-store",
+              "fullPath": "node_modules/use-sync-external-store",
+              "value": 13071,
+              "children": [
+                {
+                  "name": "cjs",
+                  "fullPath": "node_modules/use-sync-external-store/cjs",
+                  "value": 12319,
+                  "children": [
+                    {
+                      "name": "use-sync-external-store-shim",
+                      "fullPath": "node_modules/use-sync-external-store/cjs/use-sync-external-store-shim",
+                      "value": 6294,
+                      "children": [
+                        {
+                          "name": "with-selector.development.js",
+                          "fullPath": "node_modules/use-sync-external-store/cjs/use-sync-external-store-shim/with-selector.development.js",
+                          "value": 3452
+                        },
+                        {
+                          "name": "with-selector.production.js",
+                          "fullPath": "node_modules/use-sync-external-store/cjs/use-sync-external-store-shim/with-selector.production.js",
+                          "value": 2842
+                        }
+                      ]
+                    },
+                    {
+                      "name": "use-sync-external-store-shim.development.js",
+                      "fullPath": "node_modules/use-sync-external-store/cjs/use-sync-external-store-shim.development.js",
+                      "value": 3626
+                    },
+                    {
+                      "name": "use-sync-external-store-shim.production.js",
+                      "fullPath": "node_modules/use-sync-external-store/cjs/use-sync-external-store-shim.production.js",
+                      "value": 2399
+                    }
+                  ]
+                },
+                {
+                  "name": "shim",
+                  "fullPath": "node_modules/use-sync-external-store/shim",
+                  "value": 752,
+                  "children": [
+                    {
+                      "name": "with-selector.js",
+                      "fullPath": "node_modules/use-sync-external-store/shim/with-selector.js",
+                      "value": 396
+                    },
+                    {
+                      "name": "index.js",
+                      "fullPath": "node_modules/use-sync-external-store/shim/index.js",
+                      "value": 356
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "name": "d3-format",
+              "fullPath": "node_modules/d3-format",
+              "value": 11569,
+              "children": [
+                {
+                  "name": "src",
+                  "fullPath": "node_modules/d3-format/src",
+                  "value": 11569,
+                  "children": [
+                    {
+                      "name": "locale.js",
+                      "fullPath": "node_modules/d3-format/src/locale.js",
+                      "value": 5838
+                    },
+                    {
+                      "name": "formatSpecifier.js",
+                      "fullPath": "node_modules/d3-format/src/formatSpecifier.js",
+                      "value": 1640
+                    },
+                    {
+                      "name": "formatDecimal.js",
+                      "fullPath": "node_modules/d3-format/src/formatDecimal.js",
+                      "value": 793
+                    },
+                    {
+                      "name": "formatPrefixAuto.js",
+                      "fullPath": "node_modules/d3-format/src/formatPrefixAuto.js",
+                      "value": 545
+                    },
+                    {
+                      "name": "formatTypes.js",
+                      "fullPath": "node_modules/d3-format/src/formatTypes.js",
+                      "value": 468
+                    },
+                    {
+                      "name": "formatGroup.js",
+                      "fullPath": "node_modules/d3-format/src/formatGroup.js",
+                      "value": 463
+                    },
+                    {
+                      "name": "formatTrim.js",
+                      "fullPath": "node_modules/d3-format/src/formatTrim.js",
+                      "value": 459
+                    },
+                    {
+                      "name": "formatRounded.js",
+                      "fullPath": "node_modules/d3-format/src/formatRounded.js",
+                      "value": 402
+                    },
+                    {
+                      "name": "defaultLocale.js",
+                      "fullPath": "node_modules/d3-format/src/defaultLocale.js",
+                      "value": 291
+                    },
+                    {
+                      "name": "formatNumerals.js",
+                      "fullPath": "node_modules/d3-format/src/formatNumerals.js",
+                      "value": 156
+                    },
+                    {
+                      "name": "precisionPrefix.js",
+                      "fullPath": "node_modules/d3-format/src/precisionPrefix.js",
+                      "value": 155
+                    },
+                    {
+                      "name": "precisionRound.js",
+                      "fullPath": "node_modules/d3-format/src/precisionRound.js",
+                      "value": 150
+                    },
+                    {
+                      "name": "exponent.js",
+                      "fullPath": "node_modules/d3-format/src/exponent.js",
+                      "value": 87
+                    },
+                    {
+                      "name": "precisionFixed.js",
+                      "fullPath": "node_modules/d3-format/src/precisionFixed.js",
+                      "value": 83
+                    },
+                    {
+                      "name": "identity.js",
+                      "fullPath": "node_modules/d3-format/src/identity.js",
+                      "value": 39
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "name": "d3-color",
+              "fullPath": "node_modules/d3-color",
+              "value": 11042,
+              "children": [
+                {
+                  "name": "src",
+                  "fullPath": "node_modules/d3-color/src",
+                  "value": 11042,
+                  "children": [
+                    {
+                      "name": "color.js",
+                      "fullPath": "node_modules/d3-color/src/color.js",
+                      "value": 10718
+                    },
+                    {
+                      "name": "define.js",
+                      "fullPath": "node_modules/d3-color/src/define.js",
+                      "value": 324
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "name": "eventemitter3",
+              "fullPath": "node_modules/eventemitter3",
+              "value": 10500,
+              "children": [
+                {
+                  "name": "index.js",
+                  "fullPath": "node_modules/eventemitter3/index.js",
+                  "value": 10500
+                }
+              ]
+            },
+            {
+              "name": "d3-time",
+              "fullPath": "node_modules/d3-time",
+              "value": 10279,
+              "children": [
+                {
+                  "name": "src",
+                  "fullPath": "node_modules/d3-time/src",
+                  "value": 10279,
+                  "children": [
+                    {
+                      "name": "interval.js",
+                      "fullPath": "node_modules/d3-time/src/interval.js",
+                      "value": 2002
+                    },
+                    {
+                      "name": "ticks.js",
+                      "fullPath": "node_modules/d3-time/src/ticks.js",
+                      "value": 1745
+                    },
+                    {
+                      "name": "week.js",
+                      "fullPath": "node_modules/d3-time/src/week.js",
+                      "value": 1428
+                    },
+                    {
+                      "name": "year.js",
+                      "fullPath": "node_modules/d3-time/src/year.js",
+                      "value": 1347
+                    },
+                    {
+                      "name": "day.js",
+                      "fullPath": "node_modules/d3-time/src/day.js",
+                      "value": 805
+                    },
+                    {
+                      "name": "month.js",
+                      "fullPath": "node_modules/d3-time/src/month.js",
+                      "value": 674
+                    },
+                    {
+                      "name": "hour.js",
+                      "fullPath": "node_modules/d3-time/src/hour.js",
+                      "value": 602
+                    },
+                    {
+                      "name": "minute.js",
+                      "fullPath": "node_modules/d3-time/src/minute.js",
+                      "value": 582
+                    },
+                    {
+                      "name": "millisecond.js",
+                      "fullPath": "node_modules/d3-time/src/millisecond.js",
+                      "value": 547
+                    },
+                    {
+                      "name": "second.js",
+                      "fullPath": "node_modules/d3-time/src/second.js",
+                      "value": 276
+                    },
+                    {
+                      "name": "duration.js",
+                      "fullPath": "node_modules/d3-time/src/duration.js",
+                      "value": 271
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "name": "reselect",
+              "fullPath": "node_modules/reselect",
+              "value": 10099,
+              "children": [
+                {
+                  "name": "dist",
+                  "fullPath": "node_modules/reselect/dist",
+                  "value": 10099,
+                  "children": [
+                    {
+                      "name": "reselect.mjs",
+                      "fullPath": "node_modules/reselect/dist/reselect.mjs",
+                      "value": 10099
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "name": "d3-array",
+              "fullPath": "node_modules/d3-array",
+              "value": 7499,
+              "children": [
+                {
+                  "name": "src",
+                  "fullPath": "node_modules/d3-array/src",
+                  "value": 7499,
+                  "children": [
+                    {
+                      "name": "ticks.js",
+                      "fullPath": "node_modules/d3-array/src/ticks.js",
+                      "value": 1916
+                    },
+                    {
+                      "name": "quickselect.js",
+                      "fullPath": "node_modules/d3-array/src/quickselect.js",
+                      "value": 1469
+                    },
+                    {
+                      "name": "bisector.js",
+                      "fullPath": "node_modules/d3-array/src/bisector.js",
+                      "value": 1457
+                    },
+                    {
+                      "name": "quantile.js",
+                      "fullPath": "node_modules/d3-array/src/quantile.js",
+                      "value": 867
+                    },
+                    {
+                      "name": "sort.js",
+                      "fullPath": "node_modules/d3-array/src/sort.js",
+                      "value": 464
+                    },
+                    {
+                      "name": "range.js",
+                      "fullPath": "node_modules/d3-array/src/range.js",
+                      "value": 327
+                    },
+                    {
+                      "name": "number.js",
+                      "fullPath": "node_modules/d3-array/src/number.js",
+                      "value": 226
+                    },
+                    {
+                      "name": "max.js",
+                      "fullPath": "node_modules/d3-array/src/max.js",
+                      "value": 218
+                    },
+                    {
+                      "name": "min.js",
+                      "fullPath": "node_modules/d3-array/src/min.js",
+                      "value": 218
+                    },
+                    {
+                      "name": "bisect.js",
+                      "fullPath": "node_modules/d3-array/src/bisect.js",
+                      "value": 114
+                    },
+                    {
+                      "name": "descending.js",
+                      "fullPath": "node_modules/d3-array/src/descending.js",
+                      "value": 112
+                    },
+                    {
+                      "name": "ascending.js",
+                      "fullPath": "node_modules/d3-array/src/ascending.js",
+                      "value": 111
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "name": "react-redux",
+              "fullPath": "node_modules/react-redux",
+              "value": 6855,
+              "children": [
+                {
+                  "name": "es",
+                  "fullPath": "node_modules/react-redux/es",
+                  "value": 6855,
+                  "children": [
+                    {
+                      "name": "utils",
+                      "fullPath": "node_modules/react-redux/es/utils",
+                      "value": 4876,
+                      "children": [
+                        {
+                          "name": "Subscription.js",
+                          "fullPath": "node_modules/react-redux/es/utils/Subscription.js",
+                          "value": 3160
+                        },
+                        {
+                          "name": "useIsomorphicLayoutEffect.js",
+                          "fullPath": "node_modules/react-redux/es/utils/useIsomorphicLayoutEffect.js",
+                          "value": 840
+                        },
+                        {
+                          "name": "shallowEqual.js",
+                          "fullPath": "node_modules/react-redux/es/utils/shallowEqual.js",
+                          "value": 638
+                        },
+                        {
+                          "name": "batch.js",
+                          "fullPath": "node_modules/react-redux/es/utils/batch.js",
+                          "value": 238
+                        }
+                      ]
+                    },
+                    {
+                      "name": "components",
+                      "fullPath": "node_modules/react-redux/es/components",
+                      "value": 1979,
+                      "children": [
+                        {
+                          "name": "Provider.js",
+                          "fullPath": "node_modules/react-redux/es/components/Provider.js",
+                          "value": 1203
+                        },
+                        {
+                          "name": "Context.js",
+                          "fullPath": "node_modules/react-redux/es/components/Context.js",
+                          "value": 776
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "name": "d3-interpolate",
+              "fullPath": "node_modules/d3-interpolate",
+              "value": 4952,
+              "children": [
+                {
+                  "name": "src",
+                  "fullPath": "node_modules/d3-interpolate/src",
+                  "value": 4952,
+                  "children": [
+                    {
+                      "name": "string.js",
+                      "fullPath": "node_modules/d3-interpolate/src/string.js",
+                      "value": 1737
+                    },
+                    {
+                      "name": "color.js",
+                      "fullPath": "node_modules/d3-interpolate/src/color.js",
+                      "value": 484
+                    },
+                    {
+                      "name": "rgb.js",
+                      "fullPath": "node_modules/d3-interpolate/src/rgb.js",
+                      "value": 479
+                    },
+                    {
+                      "name": "value.js",
+                      "fullPath": "node_modules/d3-interpolate/src/value.js",
+                      "value": 448
+                    },
+                    {
+                      "name": "piecewise.js",
+                      "fullPath": "node_modules/d3-interpolate/src/piecewise.js",
+                      "value": 392
+                    },
+                    {
+                      "name": "object.js",
+                      "fullPath": "node_modules/d3-interpolate/src/object.js",
+                      "value": 352
+                    },
+                    {
+                      "name": "array.js",
+                      "fullPath": "node_modules/d3-interpolate/src/array.js",
+                      "value": 336
+                    },
+                    {
+                      "name": "numberArray.js",
+                      "fullPath": "node_modules/d3-interpolate/src/numberArray.js",
+                      "value": 318
+                    },
+                    {
+                      "name": "date.js",
+                      "fullPath": "node_modules/d3-interpolate/src/date.js",
+                      "value": 139
+                    },
+                    {
+                      "name": "round.js",
+                      "fullPath": "node_modules/d3-interpolate/src/round.js",
+                      "value": 125
+                    },
+                    {
+                      "name": "number.js",
+                      "fullPath": "node_modules/d3-interpolate/src/number.js",
+                      "value": 114
+                    },
+                    {
+                      "name": "constant.js",
+                      "fullPath": "node_modules/d3-interpolate/src/constant.js",
+                      "value": 28
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "name": "d3-path",
+              "fullPath": "node_modules/d3-path",
+              "value": 4303,
+              "children": [
+                {
+                  "name": "src",
+                  "fullPath": "node_modules/d3-path/src",
+                  "value": 4303,
+                  "children": [
+                    {
+                      "name": "path.js",
+                      "fullPath": "node_modules/d3-path/src/path.js",
+                      "value": 4303
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "name": "@babel",
+              "fullPath": "node_modules/@babel",
+              "value": 1733,
+              "children": [
+                {
+                  "name": "runtime",
+                  "fullPath": "node_modules/@babel/runtime",
+                  "value": 1733,
+                  "children": [
+                    {
+                      "name": "helpers",
+                      "fullPath": "node_modules/@babel/runtime/helpers",
+                      "value": 1733,
+                      "children": [
+                        {
+                          "name": "esm",
+                          "fullPath": "node_modules/@babel/runtime/helpers/esm",
+                          "value": 1733,
+                          "children": [
+                            {
+                              "name": "objectSpread2.js",
+                              "fullPath": "node_modules/@babel/runtime/helpers/esm/objectSpread2.js",
+                              "value": 758
+                            },
+                            {
+                              "name": "typeof.js",
+                              "fullPath": "node_modules/@babel/runtime/helpers/esm/typeof.js",
+                              "value": 335
+                            },
+                            {
+                              "name": "toPrimitive.js",
+                              "fullPath": "node_modules/@babel/runtime/helpers/esm/toPrimitive.js",
+                              "value": 324
+                            },
+                            {
+                              "name": "defineProperty.js",
+                              "fullPath": "node_modules/@babel/runtime/helpers/esm/defineProperty.js",
+                              "value": 205
+                            },
+                            {
+                              "name": "toPropertyKey.js",
+                              "fullPath": "node_modules/@babel/runtime/helpers/esm/toPropertyKey.js",
+                              "value": 111
+                            }
+                          ]
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "name": "redux-thunk",
+              "fullPath": "node_modules/redux-thunk",
+              "value": 1277,
+              "children": [
+                {
+                  "name": "es",
+                  "fullPath": "node_modules/redux-thunk/es",
+                  "value": 1277,
+                  "children": [
+                    {
+                      "name": "index.js",
+                      "fullPath": "node_modules/redux-thunk/es/index.js",
+                      "value": 1277
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "name": "internmap",
+              "fullPath": "node_modules/internmap",
+              "value": 1175,
+              "children": [
+                {
+                  "name": "src",
+                  "fullPath": "node_modules/internmap/src",
+                  "value": 1175,
+                  "children": [
+                    {
+                      "name": "index.js",
+                      "fullPath": "node_modules/internmap/src/index.js",
+                      "value": 1175
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "name": "clsx",
+              "fullPath": "node_modules/clsx",
+              "value": 368,
+              "children": [
+                {
+                  "name": "dist",
+                  "fullPath": "node_modules/clsx/dist",
+                  "value": 368,
+                  "children": [
+                    {
+                      "name": "clsx.mjs",
+                      "fullPath": "node_modules/clsx/dist/clsx.mjs",
+                      "value": 368
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "name": "victory-vendor",
+              "fullPath": "node_modules/victory-vendor",
+              "value": 200,
+              "children": [
+                {
+                  "name": "es",
+                  "fullPath": "node_modules/victory-vendor/es",
+                  "value": 200,
+                  "children": [
+                    {
+                      "name": "d3-scale.js",
+                      "fullPath": "node_modules/victory-vendor/es/d3-scale.js",
+                      "value": 200
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "name": "entry",
+          "fullPath": "entry",
+          "value": 1416,
+          "children": [
+            {
+              "name": "www",
+              "fullPath": "entry/www",
+              "value": 1416,
+              "children": [
+                {
+                  "name": "src",
+                  "fullPath": "entry/www/src",
+                  "value": 1416,
+                  "children": [
+                    {
+                      "name": "views",
+                      "fullPath": "entry/www/src/views",
+                      "value": 1416,
+                      "children": [
+                        {
+                          "name": "IndexView",
+                          "fullPath": "entry/www/src/views/IndexView",
+                          "value": 1416,
+                          "children": [
+                            {
+                              "name": "IndexLineChart.tsx",
+                              "fullPath": "entry/www/src/views/IndexView/IndexLineChart.tsx",
+                              "value": 1416
+                            }
+                          ]
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  }
+}
