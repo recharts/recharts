@@ -1,45 +1,45 @@
 {
   "treemap": {
     "examplePath": "www/src/views/IndexView/IndexLineChart.tsx",
-    "totalSize": 819832,
-    "totalSizeLabel": "800.62 KB",
+    "totalSize": 819898,
+    "totalSizeLabel": "800.68 KB",
     "moduleCount": 318,
-    "generatedAt": "2026-06-29T15:12:54.879Z",
+    "generatedAt": "2026-06-29T23:50:20.277Z",
     "stages": [
       {
         "stage": "es6-folder",
-        "bytes": 1265633,
+        "bytes": 1266207,
         "humanReadableSize": "1.21 MB",
         "reductionFromBaselinePercent": 0
       },
       {
         "stage": "tree-shaken",
-        "bytes": 823348,
-        "humanReadableSize": "804.05 KB",
+        "bytes": 823414,
+        "humanReadableSize": "804.12 KB",
         "reductionFromBaselinePercent": 0
       },
       {
         "stage": "minified",
-        "bytes": 282445,
-        "humanReadableSize": "275.83 KB",
-        "reductionFromBaselinePercent": 65.7
+        "bytes": 282491,
+        "humanReadableSize": "275.87 KB",
+        "reductionFromBaselinePercent": 65.69
       },
       {
         "stage": "minified+gzip",
-        "bytes": 92706,
-        "humanReadableSize": "90.53 KB",
+        "bytes": 92716,
+        "humanReadableSize": "90.54 KB",
         "reductionFromBaselinePercent": 88.74
       }
     ],
     "tree": {
       "name": "bundle",
       "fullPath": "bundle",
-      "value": 819832,
+      "value": 819898,
       "children": [
         {
           "name": "src",
           "fullPath": "src",
-          "value": 454177,
+          "value": 454243,
           "children": [
             {
               "name": "state",
@@ -665,12 +665,12 @@
             {
               "name": "cartesian",
               "fullPath": "src/cartesian",
-              "value": 75508,
+              "value": 75574,
               "children": [
                 {
                   "name": "Line.tsx",
                   "fullPath": "src/cartesian/Line.tsx",
-                  "value": 14766
+                  "value": 14832
                 },
                 {
                   "name": "CartesianAxis.tsx",
@@ -2282,45 +2282,45 @@
   },
   "sunburst": {
     "examplePath": "www/src/views/IndexView/IndexLineChart.tsx",
-    "totalSize": 819832,
-    "totalSizeLabel": "800.62 KB",
+    "totalSize": 819898,
+    "totalSizeLabel": "800.68 KB",
     "moduleCount": 318,
-    "generatedAt": "2026-06-29T15:12:56.881Z",
+    "generatedAt": "2026-06-29T23:50:22.109Z",
     "stages": [
       {
         "stage": "es6-folder",
-        "bytes": 1265633,
+        "bytes": 1266207,
         "humanReadableSize": "1.21 MB",
         "reductionFromBaselinePercent": 0
       },
       {
         "stage": "tree-shaken",
-        "bytes": 823348,
-        "humanReadableSize": "804.05 KB",
+        "bytes": 823414,
+        "humanReadableSize": "804.12 KB",
         "reductionFromBaselinePercent": 0
       },
       {
         "stage": "minified",
-        "bytes": 282445,
-        "humanReadableSize": "275.83 KB",
-        "reductionFromBaselinePercent": 65.7
+        "bytes": 282491,
+        "humanReadableSize": "275.87 KB",
+        "reductionFromBaselinePercent": 65.69
       },
       {
         "stage": "minified+gzip",
-        "bytes": 92706,
-        "humanReadableSize": "90.53 KB",
+        "bytes": 92716,
+        "humanReadableSize": "90.54 KB",
         "reductionFromBaselinePercent": 88.74
       }
     ],
     "tree": {
       "name": "bundle",
       "fullPath": "bundle",
-      "value": 819832,
+      "value": 819898,
       "children": [
         {
           "name": "src",
           "fullPath": "src",
-          "value": 454177,
+          "value": 454243,
           "children": [
             {
               "name": "state",
@@ -2946,12 +2946,12 @@
             {
               "name": "cartesian",
               "fullPath": "src/cartesian",
-              "value": 75508,
+              "value": 75574,
               "children": [
                 {
                   "name": "Line.tsx",
                   "fullPath": "src/cartesian/Line.tsx",
-                  "value": 14766
+                  "value": 14832
                 },
                 {
                   "name": "CartesianAxis.tsx",
