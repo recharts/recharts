@@ -115,7 +115,7 @@
     "@codecov/bundle-analyzer": "^2.0.1",
     "@eslint-community/eslint-plugin-eslint-comments": "^4.7.2",
     "@eslint/compat": "^2.1.0",
-    "@eslint/js": "^9.35.0",
+    "@eslint/js": "^10.0.1",
     "@flakiness/playwright": "^1.9.0",
     "@playwright/experimental-ct-react": "1.61.1",
     "@recharts/devtools": "^0.0.14",
