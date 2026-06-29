@@ -238,7 +238,7 @@ function Items(props: InternalProps) {
           height={iconSize}
           viewBox={viewBox}
           style={svgStyle}
-          aria-label={`${entry.value} legend icon`}
+          aria-label={entry.value == null ? 'legend icon' : `${entry.value} legend icon`}
         >
           <Icon data={entry} iconType={iconType} inactiveColor={inactiveColor} />
         </Surface>

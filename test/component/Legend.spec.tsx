@@ -618,6 +618,19 @@ describe('<Legend />', () => {
       expect(surface.getAttribute('aria-label')).toBe('UV legend icon');
     });
 
+    test('aria-label drops the value when the legend entry has no name or string dataKey', () => {
+      const { container } = rechartsTestRender(
+        <LineChart width={500} height={500} data={numericalData}>
+          <Legend />
+          <Line dataKey={row => row.value} />
+        </LineChart>,
+      );
+
+      const legendItem = container.getElementsByClassName('legend-item-0')[0];
+      const surface = legendItem.getElementsByClassName('recharts-surface')[0];
+      expect(surface.getAttribute('aria-label')).toBe('legend icon');
+    });
+
     it('should render one line legend item for each Line, with default class and style attributes', () => {
       const { container, getByText } = rechartsTestRender(
         <LineChart width={500} height={500} data={numericalData}>
