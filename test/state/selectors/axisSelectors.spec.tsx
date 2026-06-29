@@ -1798,7 +1798,7 @@ describe('selectErrorBarsSettings', () => {
             direction: 'x',
           },
         ]);
-        expect(spy).toHaveBeenCalledTimes(3);
+        expect(spy).toHaveBeenCalledTimes(4);
       });
 
       it('should return YAxis error bars', () => {
@@ -1809,7 +1809,7 @@ describe('selectErrorBarsSettings', () => {
             direction: 'y',
           },
         ]);
-        expect(spy).toHaveBeenCalledTimes(3);
+        expect(spy).toHaveBeenCalledTimes(4);
       });
     });
 
@@ -1909,7 +1909,7 @@ describe('selectErrorBarsSettings', () => {
             direction: 'x',
           },
         ]);
-        expect(spy).toHaveBeenCalledTimes(3);
+        expect(spy).toHaveBeenCalledTimes(4);
       });
 
       it('should return YAxis error bars', () => {
@@ -1920,7 +1920,7 @@ describe('selectErrorBarsSettings', () => {
             direction: 'y',
           },
         ]);
-        expect(spy).toHaveBeenCalledTimes(3);
+        expect(spy).toHaveBeenCalledTimes(4);
       });
     });
 

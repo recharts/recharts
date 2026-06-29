@@ -1573,7 +1573,7 @@ describe('Tooltip visibility', () => {
           activeIndex: null,
           isActive: false,
         });
-        expect(spy).toHaveBeenCalledTimes(3);
+        expect(spy).toHaveBeenCalledTimes(4);
 
         showTooltip(container, composedChartMouseHoverTooltipSelector);
 
@@ -1581,7 +1581,7 @@ describe('Tooltip visibility', () => {
           activeIndex: '0',
           isActive: true,
         });
-        expect(spy).toHaveBeenCalledTimes(4);
+        expect(spy).toHaveBeenCalledTimes(5);
       });
 
       it('should render tooltip payload for hidden items', () => {

@@ -1771,7 +1771,7 @@ describe('Tooltip integration', () => {
 
     it('should select tooltip payload configurations', () => {
       const { spy } = renderTestCase(state => selectTooltipPayloadConfigurations(state, 'axis', 'hover', '0'));
-      expect(spy).toHaveBeenCalledTimes(2);
+      expect(spy).toHaveBeenCalledTimes(3);
       expectLastCalledWith(spy, [
         {
           dataDefinedOnItem: [
