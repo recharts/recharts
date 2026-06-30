@@ -429,6 +429,14 @@ export function Label(outerProps: Props) {
   };
 
   if (isValidElement(content)) {
+    // Always strip labelRef (internal ref). Only strip textBreakAll when
+    // cloning into a native DOM element (string type), because it is not a
+    // valid HTML/SVG attribute. For custom components the prop is preserved so
+    // they can handle it themselves.
+    if (typeof content.type === 'string') {
+      const { labelRef: _, textBreakAll: __, ...propsWithoutLabelRef } = propsWithViewBox;
+      return cloneElement(content, propsWithoutLabelRef);
+    }
     const { labelRef: _, ...propsWithoutLabelRef } = propsWithViewBox;
     return cloneElement(content, propsWithoutLabelRef);
   }

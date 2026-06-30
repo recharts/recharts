@@ -1,6 +1,6 @@
 import { screen } from '@testing-library/react';
-import React from 'react';
-import { describe, expect, it, vi } from 'vitest';
+import React, { type FC } from 'react';
+import { describe, expect, it, vi, beforeEach, afterEach } from 'vitest';
 import { DefaultZIndexes, Label, LabelProps, Line, LineChart, PieChart, ReferenceLine, Surface } from '../../src';
 import { PolarViewBoxRequired } from '../../src/util/types';
 import { rechartsTestRender } from '../helper/createSelectorTestCase';
@@ -681,6 +681,65 @@ describe('<Label />', () => {
           {},
         );
       });
+    });
+  });
+
+  describe('custom content and textBreakAll prop forwarding (regression for #3177)', () => {
+    let consoleErrorSpy: ReturnType<typeof vi.spyOn>;
+
+    beforeEach(() => {
+      consoleErrorSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
+    });
+
+    afterEach(() => {
+      consoleErrorSpy.mockRestore();
+    });
+
+    it('should NOT forward textBreakAll to a native DOM element used as content (avoids React unknown-prop warning)', () => {
+      // content is a native <div> element — textBreakAll must not reach it
+      const domContent = <div data-testid="custom-label">hello</div>;
+      rechartsTestRender(
+        <LineChart width={400} height={400} data={data}>
+          <Label value="text" position="center" content={domContent} textBreakAll />
+        </LineChart>,
+      );
+
+      // React emits console.error for unknown DOM props
+      const unknownPropWarning = consoleErrorSpy.mock.calls.find(args =>
+        String(args[0]).includes('textBreakAll'),
+      );
+      expect(unknownPropWarning).toBeUndefined();
+    });
+
+    it('should still forward textBreakAll to a custom React component used as content', () => {
+      const receivedProps: Record<string, unknown> = {};
+      const CustomLabel: FC<Record<string, unknown>> = props => {
+        Object.assign(receivedProps, props);
+        return <text>custom</text>;
+      };
+
+      rechartsTestRender(
+        <LineChart width={400} height={400} data={data}>
+          <Label value="text" position="center" content={<CustomLabel />} textBreakAll />
+        </LineChart>,
+      );
+
+      expect(receivedProps).toHaveProperty('textBreakAll', true);
+    });
+
+    it('should forward textBreakAll to a content function', () => {
+      const contentFn = vi.fn(() => null);
+
+      rechartsTestRender(
+        <LineChart width={400} height={400} data={data}>
+          <Label value="text" position="center" content={contentFn} textBreakAll />
+        </LineChart>,
+      );
+
+      expect(contentFn).toHaveBeenCalledWith(
+        expect.objectContaining({ textBreakAll: true }),
+        {},
+      );
     });
   });
 });
