@@ -1,0 +1,1 @@
+import{i as l,a as u}from"./iteratee-B_h2EV3R.js";function o(n,t){if(n.length===0)return;let f=n[0],i=-1/0;for(let r=0;r<n.length;r++){const e=n[r],a=t(e,r,n);if(Number.isNaN(a))return e;a>i&&(i=a,f=e)}return f}function x(n,t){if(n!=null)return o(Array.from(n),l(t??u))}export{x as m};
