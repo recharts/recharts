@@ -135,6 +135,14 @@ export { RadialBarChart } from './chart/RadialBarChart';
 export { ComposedChart } from './chart/ComposedChart';
 export { SunburstChart } from './chart/SunburstChart';
 export type { SunburstData, SunburstChartProps } from './chart/SunburstChart';
+export { CirclePackingChart } from './chart/CirclePackingChart';
+export type {
+  CirclePackingChartProps,
+  CirclePackingContentType,
+  CirclePackingDataType,
+  CirclePackingLayoutType,
+  CirclePackingNode,
+} from './chart/CirclePackingChart';
 
 export { Funnel } from './cartesian/Funnel';
 export type { Props as FunnelProps, FunnelTrapezoidItem } from './cartesian/Funnel';

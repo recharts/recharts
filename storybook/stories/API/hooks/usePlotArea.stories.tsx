@@ -39,3 +39,5 @@ export const UsePlotArea = {
     },
   },
 };
+
+export const API = UsePlotArea;
