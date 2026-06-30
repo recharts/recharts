@@ -24,7 +24,7 @@
     "react-component"
   ],
   "scripts": {
-    "prepare": "husky",
+    "prepare": "husky || true",
     "prebuild": "npm run omnidoc",
     "build": "npm run build-types && npm run build-cjs && npm run build-es6 && npm run build-umd && npm run test-build-output",
     "build-cjs": "rimraf lib && cross-env NODE_ENV=commonjs babel ./src -d lib --extensions '.js,.ts,.tsx'",
