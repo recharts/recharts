@@ -53,8 +53,9 @@ function computeHash(str: string): number {
  *  the hash to [0, themeCount).
  */
 export function graphicalItemIdentity(item: ThemableItem, themeCount?: number): number {
-  // Negative themeCount is semantically invalid (can't have negative themes)
-  if (themeCount != null && themeCount < 0) {
+  // Negative or zero themeCount is semantically invalid (can't have negative themes,
+  // and zero themes means none available)
+  if (themeCount != null && themeCount <= 0) {
     return 0;
   }
 
