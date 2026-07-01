@@ -12,8 +12,10 @@ Follow these steps:
 3. If there are no TODOs, identify what needs testing for the new feature/fix.
 4. Add a new, complete, runnable test in $2. This test is intended to fail because it expects behavior that hasn't been implemented yet, or explores an edge-case that is not yet covered.
 5. Summarize what you have added to the test file and why it is expected to fail.
-6. Do NOT call the tests. I will run the tests myself.
+6. You do not need to call the tests. But if you do decide then you can call `npm test -- --reporter=minimal $2`
 7. Don't worry if the test actually fails or not. It's the intent that counts. Just don't duplicate already existing tests.
+8. If you think of any new test to add, and the TDD loop is done, say "STOP"
+9. If something unexpected happen and you wish to terminate the TDD game, say "STOP"
 
 **Crucial:** Do not implement the fix. The goal of this step is to have a failing test that accurately reflects the desired outcome.
 

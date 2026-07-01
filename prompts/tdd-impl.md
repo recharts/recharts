@@ -11,6 +11,8 @@ Follow these steps:
 3. Change the implementation in $1 to make the test pass.
 4. Run `npm test -- --reporter=minimal $2` command again to verify that the test now passes.
 5. Summarize what you have added to the test file and why it is expected to fail.
+6. If you conclude that the implementation is complete and there is nothing left to do, say "STOP"
+7. If something unexpected happen and you wish to terminate the TDD game, say "STOP"
 
 **Crucial:** Do not update the test file. The goal of this step is to update the implementation so that the existing test passes.
 
