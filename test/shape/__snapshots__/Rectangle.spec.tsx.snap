@@ -101,17 +101,3 @@ exports[`<Rectangle /> > Shouldn't render any path when x, y, width or height is
   </svg>
 </div>
 `;
-
-exports[`<Rectangle /> > Shouldn't render anything when height === 0 || width === 0 1`] = `
-<div>
-  <svg
-    class="recharts-surface"
-    height="400"
-    viewBox="0 0 400 400"
-    width="400"
-  >
-    <title />
-    <desc />
-  </svg>
-</div>
-`;

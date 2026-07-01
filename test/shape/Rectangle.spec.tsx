@@ -34,7 +34,7 @@ describe('<Rectangle />', () => {
     expect(container).toMatchSnapshot();
   });
 
-  it("Shouldn't render anything when height === 0 || width === 0", () => {
+  it('Should render zero-size path when height === 0 || width === 0', () => {
     const { container } = render(
       <Surface width={400} height={400}>
         <Rectangle x={50} y={200} width={80} height={0} radius={5} fill="#ff7300" />
@@ -42,8 +42,7 @@ describe('<Rectangle />', () => {
       </Surface>,
     );
 
-    expect(container.querySelectorAll('.recharts-rectangle')).toHaveLength(0);
-    expect(container).toMatchSnapshot();
+    expect(container.querySelectorAll('.recharts-rectangle')).toHaveLength(2);
   });
 
   it("Shouldn't render any path when x, y, width or height is not a number", () => {
