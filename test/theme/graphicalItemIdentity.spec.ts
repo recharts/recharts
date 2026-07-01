@@ -196,4 +196,11 @@ describe('graphicalItemIdentity', () => {
     expect(graphicalItemIdentity(itemA, -5)).toBe(0);
     expect(graphicalItemIdentity(itemB, -99)).toBe(0);
   });
+
+  it('should return 0 when themeCount is 0 since no themes are available', () => {
+    const itemA: ThemableItem = { dataKey: 'anything' };
+    const itemB: ThemableItem = { dataKey: 'somethingElse' };
+    expect(graphicalItemIdentity(itemA, 0)).toBe(0);
+    expect(graphicalItemIdentity(itemB, 0)).toBe(0);
+  });
 });
