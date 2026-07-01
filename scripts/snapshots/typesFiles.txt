@@ -210,6 +210,8 @@
   "types/synchronisation/syncSelectors.d.ts",
   "types/synchronisation/types.d.ts",
   "types/synchronisation/useChartSynchronisation.d.ts",
+  "types/theme",
+  "types/theme/graphicalItemIdentity.d.ts",
   "types/types.d.ts",
   "types/util",
   "types/util/ActiveShapeUtils.d.ts",
