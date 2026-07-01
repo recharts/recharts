@@ -418,7 +418,7 @@ describe.each(chartsThatSupportArea)('<Area /> as a child of $testName', ({ Char
           .soft(curves[0])
           .toHaveAttribute(
             'd',
-            'M65,355L172.5,355L280,355L387.5,355L495,355L495,495L387.5,495L280,495L172.5,495L65,495Z',
+            'M65,355L172.5,355L280,355L387.5,355L495,355L495,355L387.5,355L280,355L172.5,355L65,355Z',
           );
         expect.soft(curves[1]).toHaveAttribute('d', 'M65,355L172.5,355L280,355L387.5,355L495,355');
       });
@@ -434,7 +434,10 @@ describe.each(chartsThatSupportArea)('<Area /> as a child of $testName', ({ Char
         expect(curves).toHaveLength(2);
         expect
           .soft(curves[0])
-          .toHaveAttribute('d', 'M65,355L172.5,355L280,355L387.5,355L495,355L495,5L387.5,5L280,5L172.5,5L65,5Z');
+          .toHaveAttribute(
+            'd',
+            'M65,355L172.5,355L280,355L387.5,355L495,355L495,355L387.5,355L280,355L172.5,355L65,355Z',
+          );
         expect.soft(curves[1]).toHaveAttribute('d', 'M65,355L172.5,355L280,355L387.5,355L495,355');
       });
     });
@@ -528,7 +531,7 @@ describe.each(chartsThatSupportArea)('<Area /> as a child of $testName', ({ Char
           .soft(curves[0])
           .toHaveAttribute(
             'd',
-            'M495,54.286L495,54.286L495,54.286L495,54.286L495,54.286L65,54.286L65,54.286L65,54.286L65,54.286L65,54.286Z',
+            'M495,54.286L495,54.286L495,54.286L495,54.286L495,54.286L495,54.286L495,54.286L495,54.286L495,54.286L495,54.286Z',
           );
         expect.soft(curves[1]).toHaveAttribute('d', 'M495,54.286L495,54.286L495,54.286L495,54.286L495,54.286');
       });
@@ -588,7 +591,7 @@ describe.each(chartsThatSupportArea)('<Area /> as a child of $testName', ({ Char
         expect.soft(curves[1]).toHaveAttribute('d', 'M5,5L127.5,5L250,5L372.5,5L495,5');
       });
 
-      it('should set baseValue to 0 when dataMin', () => {
+      it('should set baseValue to actual dataMin when no axes', () => {
         const { container } = render(
           <ChartElement data={data}>
             <Area dataKey="value" baseValue="dataMin" />
@@ -596,9 +599,10 @@ describe.each(chartsThatSupportArea)('<Area /> as a child of $testName', ({ Char
         );
         const curves = container.querySelectorAll('.recharts-curve');
         expect(curves).toHaveLength(2);
+        // data is all value=100, so dataMin=100 → area collapses to flat line
         expect
           .soft(curves[0])
-          .toHaveAttribute('d', 'M5,5L127.5,5L250,5L372.5,5L495,5L495,495L372.5,495L250,495L127.5,495L5,495Z');
+          .toHaveAttribute('d', 'M5,5L127.5,5L250,5L372.5,5L495,5L495,5L372.5,5L250,5L127.5,5L5,5Z');
         expect.soft(curves[1]).toHaveAttribute('d', 'M5,5L127.5,5L250,5L372.5,5L495,5');
       });
 

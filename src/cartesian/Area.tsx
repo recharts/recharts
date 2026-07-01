@@ -917,6 +917,8 @@ export const getBaseValue = (
   itemBaseValue: BaseValue | undefined,
   xAxis: BaseAxisWithScale,
   yAxis: BaseAxisWithScale,
+  dataMin?: number,
+  dataMax?: number,
 ): number => {
   // The baseValue can be defined both on the AreaChart, and on the Area.
   // The value for the item takes precedence.
@@ -935,10 +937,10 @@ export const getBaseValue = (
     const domainMin = Math.min(domain[0], domain[1]);
 
     if (baseValue === 'dataMin') {
-      return domainMin;
+      return dataMin ?? domainMin;
     }
     if (baseValue === 'dataMax') {
-      return domainMax;
+      return dataMax ?? domainMax;
     }
 
     return domainMax < 0 ? domainMax : Math.max(Math.min(domain[0], domain[1]), 0);
@@ -980,9 +982,33 @@ export function computeArea({
   bandSize: number;
 }): ComputedArea {
   const hasStack = stackedData && stackedData.length;
-  const baseValue = getBaseValue(layout, chartBaseValue, itemBaseValue, xAxis, yAxis);
+
+  let dataMin: number | undefined,
+    dataMax: number | undefined,
+    isRange = false,
+    baseLine: number | NullableCoordinate[] | undefined;
+  if (hasStack) {
+    for (let i = 0; i < stackedData.length; i++) {
+      const p = stackedData[i];
+      if (p != null) {
+        const lo = Math.min(p[0], p[1]);
+        const hi = Math.max(p[0], p[1]);
+        dataMin = dataMin == null ? lo : Math.min(dataMin, lo);
+        dataMax = dataMax == null ? hi : Math.max(dataMax, hi);
+      }
+    }
+  } else {
+    for (let i = 0; i < displayedData.length; i++) {
+      const val = Number(getValueByDataKey(displayedData[i], dataKey));
+      if (!Number.isNaN(val)) {
+        dataMin = dataMin == null ? val : Math.min(dataMin, val);
+        dataMax = dataMax == null ? val : Math.max(dataMax, val);
+      }
+    }
+  }
+
+  const baseValue = getBaseValue(layout, chartBaseValue, itemBaseValue, xAxis, yAxis, dataMin, dataMax);
   const isHorizontalLayout = layout === 'horizontal';
-  let isRange = false;
 
   const points: ReadonlyArray<AreaPointItem> = displayedData.map((entry, index): AreaPointItem => {
     let valueAsArray: ReadonlyArray<unknown> | undefined;
@@ -1021,7 +1047,6 @@ export function computeArea({
     };
   });
 
-  let baseLine: number | NullableCoordinate[] | undefined;
   if (hasStack || isRange) {
     baseLine = points.map((entry: AreaPointItem): BaseValueCoordinate => {
       const x = Array.isArray(entry.value) ? entry.value[0] : null;
