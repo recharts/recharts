@@ -8,6 +8,7 @@ export const emptyOffset: ChartOffsetInternal = {
   width: 0,
   height: 0,
   brushBottom: 0,
+  brushRight: 0,
 };
 
 export function makeChartOffset(partialOffset: Partial<ChartOffsetInternal>): ChartOffsetInternal {

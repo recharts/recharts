@@ -2,13 +2,13 @@ import * as React from 'react';
 import { forwardRef } from 'react';
 import { RootSurface } from '../container/RootSurface';
 import { RechartsWrapper } from './RechartsWrapper';
-import { ClipPathProvider } from '../container/ClipPathProvider';
 import { CartesianChartProps } from '../util/types';
 import { svgPropertiesNoEvents } from '../util/svgPropertiesNoEvents';
 import { ReportChartSize } from '../context/chartLayoutContext';
+import { ZoomPropBridge } from './zoom/ZoomPropBridge';
 
 export const CategoricalChart = forwardRef<SVGSVGElement, CartesianChartProps>((props: CartesianChartProps, ref) => {
-  const { width, height, responsive, children, className, style, compact, title, desc, ...others } = props;
+  const { width, height, responsive, children, className, style, compact, title, desc, zoom, ...others } = props;
   const attrs = svgPropertiesNoEvents(others);
 
   /*
@@ -46,8 +46,9 @@ export const CategoricalChart = forwardRef<SVGSVGElement, CartesianChartProps>((
       onTouchEnd={props.onTouchEnd}
     >
       <RootSurface otherAttributes={attrs} title={title} desc={desc} ref={ref}>
-        <ClipPathProvider>{children}</ClipPathProvider>
+        {children}
       </RootSurface>
+      <ZoomPropBridge zoom={zoom} />
     </RechartsWrapper>
   );
 });

@@ -24,6 +24,7 @@ const guidePages = [
   'barAlignment',
   'cell',
   'animations',
+  'zoomAndPan',
 ];
 
 export function getSiteRoutes(): string[] {

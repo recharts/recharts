@@ -23,12 +23,20 @@ import { SetTooltipEntrySettings } from '../state/SetTooltipEntrySettings';
 import { RechartsStoreProvider } from '../state/RechartsStoreProvider';
 import { ReportEventSettings } from '../state/ReportEventSettings';
 import { ChartCoordinate, DataKey, EventThrottlingProps, Margin, Percent } from '../util/types';
-import { useAppDispatch } from '../state/hooks';
+import { useAppDispatch, useAppSelector } from '../state/hooks';
 import { RechartsRootState } from '../state/store';
 import { RegisterGraphicalItemId } from '../context/RegisterGraphicalItemId';
 import { WithIdRequired } from '../util/useUniqueId';
 import { RequiresDefaultProps, resolveDefaultProps } from '../util/resolveDefaultProps';
 import { initialEventSettingsState } from '../state/eventSettingsSlice';
+import { ClipPathProvider } from '../container/ClipPathProvider';
+import { ZoomPropBridge } from './zoom/ZoomPropBridge';
+import { ZoomProp } from '../util/zoom/ZoomOptions';
+import { ZoomTransformLayer } from './zoom/ZoomTransformLayer';
+import { selectChartOffsetInternal } from '../state/selectors/selectChartOffsetInternal';
+import { selectZoom } from '../state/selectors/zoomSelectors';
+import { getUniformZoomState, transformCoordinateByZoom } from '../util/zoom/transform';
+import { FULL_VIEWPORT } from '../util/zoom/viewport';
 
 export interface SunburstData {
   [key: string]: any;
@@ -49,6 +57,13 @@ interface SunburstNode extends SunburstData {
 
 export interface SunburstChartProps extends EventThrottlingProps {
   className?: string;
+  /**
+   * Enables the built-in zoom and pan controls.
+   *
+   * Accepts `true` for defaults, `'x' | 'y' | 'xy'` as shorthand, or a full options object.
+   * Equivalent to mounting `<ZoomAndPan />` as a child.
+   */
+  zoom?: ZoomProp;
   /**
    * The source data. Each element should be an object.
    * The properties of each object represent the values of different data dimensions.
@@ -243,7 +258,7 @@ const preloadedState: Partial<RechartsRootState> = {
   },
 };
 
-type SunburstPositionMap = Map<string, ChartCoordinate>;
+type SunburstPositionMap = Map<TooltipIndex, ChartCoordinate>;
 
 export const defaultSunburstChartProps = {
   padding: 2,
@@ -287,6 +302,8 @@ const SunburstChartImpl = ({
   id,
 }: InternalSunburstChartProps) => {
   const dispatch = useAppDispatch();
+  const offset = useAppSelector(selectChartOffsetInternal);
+  const zoom = useAppSelector(selectZoom);
 
   const width = useChartWidth();
   const height = useChartHeight();
@@ -314,7 +331,7 @@ const SunburstChartImpl = ({
       setActiveMouseOverItemIndex({
         activeIndex: node.tooltipIndex,
         activeDataKey: dataKey,
-        activeCoordinate: positions.get(node.name),
+        activeCoordinate: positions.get(node.tooltipIndex),
         activeGraphicalItemId: id,
       }),
     );
@@ -333,7 +350,7 @@ const SunburstChartImpl = ({
       setActiveClickItemIndex({
         activeIndex: node.tooltipIndex,
         activeDataKey: dataKey,
-        activeCoordinate: positions.get(node.name),
+        activeCoordinate: positions.get(node.tooltipIndex),
         activeGraphicalItemId: id,
       }),
     );
@@ -380,7 +397,17 @@ const SunburstChartImpl = ({
       );
 
       const { x: tooltipX, y: tooltipY } = polarToCartesian(cx, cy, innerR + radius / 2, start);
-      positions.set(d.name, { x: tooltipX, y: tooltipY });
+      const tooltipCoordinate = { x: tooltipX, y: tooltipY };
+      positions.set(
+        currentTooltipIndex,
+        offset == null
+          ? tooltipCoordinate
+          : (transformCoordinateByZoom(
+              tooltipCoordinate,
+              { x: offset.left, y: offset.top, width: offset.width, height: offset.height },
+              getUniformZoomState(zoom ?? { x: FULL_VIEWPORT, y: FULL_VIEWPORT }),
+            ) ?? tooltipCoordinate),
+      );
 
       return drawArcs(
         d.children,
@@ -401,7 +428,11 @@ const SunburstChartImpl = ({
   const layerClass = clsx('recharts-sunburst', className);
   return (
     <Surface width={width} height={height}>
-      <Layer className={layerClass}>{sectors}</Layer>
+      <ClipPathProvider>
+        <ZoomTransformLayer>
+          <Layer className={layerClass}>{sectors}</Layer>
+        </ZoomTransformLayer>
+      </ClipPathProvider>
       <SetSunburstTooltipEntrySettings
         dataKey={dataKey}
         nameKey={nameKey}
@@ -461,6 +492,7 @@ export const SunburstChart = (outsideProps: SunburstChartProps) => {
           <RegisterGraphicalItemId id={externalId} type="sunburst">
             {id => <SunburstChartImpl {...props} id={id} />}
           </RegisterGraphicalItemId>
+          <ZoomPropBridge zoom={props.zoom} />
         </RechartsWrapper>
       </TooltipPortalContext.Provider>
     </RechartsStoreProvider>

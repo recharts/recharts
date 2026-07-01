@@ -10,6 +10,7 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { castDraft, WritableDraft } from 'immer';
 import { TickItem } from '../util/types';
+import { areRenderedTicksEqual } from '../util/propsAreEqual';
 import { AxisId } from './cartesianAxisSlice';
 
 type RenderedTicksAxisState = {
@@ -39,6 +40,9 @@ export const renderedTicksSlice = createSlice({
       }>,
     ) => {
       const { axisType, axisId, ticks } = action.payload;
+      if (areRenderedTicksEqual(state[axisType][axisId], ticks)) {
+        return;
+      }
       state[axisType][axisId] = castDraft(ticks);
     },
     removeRenderedTicks: (

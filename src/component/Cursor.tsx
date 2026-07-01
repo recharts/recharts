@@ -19,6 +19,9 @@ import { getCursorPoints } from '../util/cursor/getCursorPoints';
 import { useChartLayout, useOffsetInternal } from '../context/chartLayoutContext';
 import { useTooltipAxisBandSize } from '../context/useTooltipAxis';
 import { useChartName } from '../state/selectors/selectors';
+import { useAppSelector } from '../state/hooks';
+import { selectIsZoomed } from '../state/selectors/zoomSelectors';
+import { useClipPathId } from '../container/ClipPathProvider';
 import { TooltipIndex, TooltipPayload } from '../state/tooltipSlice';
 import { svgPropertiesNoEventsFromUnknown } from '../util/svgPropertiesNoEvents';
 import { ZIndexable, ZIndexLayer } from '../zIndex/ZIndexLayer';
@@ -64,6 +67,13 @@ function RenderCursor({
 export function CursorInternal(props: CursorConnectedProps) {
   const { coordinate, payload, index, offset, tooltipAxisBandSize, layout, cursor, tooltipEventType, chartName } =
     props;
+
+  /*
+   * When zoomed, the cursor (especially the thick band cursor of bar charts) can spill over the
+   * plot edges, so clip it to the plotting area - the same clip the graphical items already use.
+   */
+  const clipPathId = useClipPathId();
+  const isZoomed = useAppSelector(selectIsZoomed) ?? false;
 
   // The cursor is a part of the Tooltip, and it should be shown (by default) when the Tooltip is active.
   const activeCoordinate = coordinate;
@@ -114,9 +124,11 @@ export function CursorInternal(props: CursorConnectedProps) {
     className: clsx('recharts-tooltip-cursor', extraClassName),
   };
 
+  const cursorElement = <RenderCursor cursor={cursor} cursorComp={cursorComp} cursorProps={cursorProps} />;
+
   return (
     <ZIndexLayer zIndex={props.zIndex ?? preferredZIndex}>
-      <RenderCursor cursor={cursor} cursorComp={cursorComp} cursorProps={cursorProps} />
+      {isZoomed && clipPathId ? <g clipPath={`url(#${clipPathId})`}>{cursorElement}</g> : cursorElement}
     </ZIndexLayer>
   );
 }

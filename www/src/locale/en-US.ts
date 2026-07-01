@@ -50,6 +50,7 @@ export const map = {
     cell: 'Migrate from Cell component to shape prop',
     coordinateSystems: 'Coordinate and dimension systems',
     animations: 'Animation',
+    zoomAndPan: 'Zoom & Pan',
   },
   installation: {
     installation: 'Installation',
@@ -107,6 +108,7 @@ export const map = {
     showData: 'Show data format',
     hideData: 'Hide data format',
     animation: 'Animation',
+    'zoom-and-pan': 'Zoom & Pan',
   },
   'design-disciplines': {
     'design-disciplines': 'Design Disciplines',

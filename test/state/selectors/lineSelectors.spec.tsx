@@ -191,7 +191,8 @@ describe('selectLinePoints', () => {
         },
       ];
 
-      expect(spy).toHaveBeenCalledTimes(5);
+      // One render fewer than before: offset and axis-settings updates are equality-guarded.
+      expect(spy).toHaveBeenCalledTimes(4);
       /*
        * Last render has the new updated data with consistent dataKey.
        * Line will resume animation from the most recent previous data

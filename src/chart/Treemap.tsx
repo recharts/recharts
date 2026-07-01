@@ -21,6 +21,7 @@ import {
   Margin,
   Percent,
   RectanglePosition,
+  ChartOffsetInternal,
 } from '../util/types';
 import { ReportChartMargin, useChartHeight, useChartWidth } from '../context/chartLayoutContext';
 import { TooltipPortalContext } from '../context/tooltipPortalContext';
@@ -36,8 +37,8 @@ import { SetTooltipEntrySettings } from '../state/SetTooltipEntrySettings';
 import { ChartOptions } from '../state/optionsSlice';
 import { RechartsStoreProvider } from '../state/RechartsStoreProvider';
 import { ReportEventSettings } from '../state/ReportEventSettings';
-import { useAppDispatch } from '../state/hooks';
-import { AppDispatch } from '../state/store';
+import { useAppDispatch, useAppStateReader } from '../state/hooks';
+import { AppDispatch, RechartsRootState } from '../state/store';
 import { isPositiveNumber } from '../util/isWellBehavedNumber';
 import { svgPropertiesNoEvents } from '../util/svgPropertiesNoEvents';
 import { CSSTransitionAnimate, extractCssEasing } from '../animation/CSSTransitionAnimate';
@@ -45,6 +46,14 @@ import { RequiresDefaultProps, resolveDefaultProps } from '../util/resolveDefaul
 import { RegisterGraphicalItemId } from '../context/RegisterGraphicalItemId';
 import { GraphicalItemId } from '../state/graphicalItemsSlice';
 import { initialEventSettingsState } from '../state/eventSettingsSlice';
+import { ClipPathProvider } from '../container/ClipPathProvider';
+import { ZoomPropBridge } from './zoom/ZoomPropBridge';
+import { ZoomProp } from '../util/zoom/ZoomOptions';
+import { ZoomTransformLayer } from './zoom/ZoomTransformLayer';
+import { selectChartOffsetInternal } from '../state/selectors/selectChartOffsetInternal';
+import { selectZoom } from '../state/selectors/zoomSelectors';
+import { transformCoordinateByZoom } from '../util/zoom/transform';
+import { ZoomState } from '../state/zoomSlice';
 
 const NODE_VALUE_KEY = 'value';
 
@@ -421,6 +430,13 @@ export type TreemapContentType = ReactNode | ((props: TreemapNode) => React.Reac
 export interface Props<DataPointType extends TreemapDataType = TreemapDataType, DataValueType = any>
   extends DataConsumer<DataPointType, DataValueType>, EventThrottlingProps {
   /**
+   * Enables the built-in zoom and pan controls.
+   *
+   * Accepts `true` for defaults, `'x' | 'y' | 'xy'` as shorthand, or a full options object.
+   * Equivalent to mounting `<ZoomAndPan />` as a child.
+   */
+  zoom?: ZoomProp;
+  /**
    * The width of chart container.
    * Can be a number or a percent string like "100%".
    */
@@ -691,11 +707,41 @@ function ContentItem({
   );
 }
 
+function transformTreemapCoordinate(
+  coordinate: Coordinate,
+  offset: ChartOffsetInternal | undefined,
+  zoomState: ZoomState | undefined,
+): Coordinate {
+  if (offset == null || zoomState == null) {
+    return coordinate;
+  }
+  return (
+    transformCoordinateByZoom(
+      coordinate,
+      { x: offset.left, y: offset.top, width: offset.width, height: offset.height },
+      zoomState,
+    ) ?? coordinate
+  );
+}
+
 function ContentItemWithEvents(props: ContentItemProps) {
   const dispatch = useAppDispatch();
-  const activeCoordinate: Coordinate = {
-    x: props.nodeProps.x + props.nodeProps.width / 2,
-    y: props.nodeProps.y + props.nodeProps.height / 2,
+  /*
+   * Read the zoom/offset lazily at event time instead of subscribing: a subscription here would
+   * re-render every single treemap node on each pan/zoom frame, when the ZoomTransformLayer
+   * already moves the whole tree for free.
+   */
+  const readState = useAppStateReader();
+  const getActiveCoordinate = (): Coordinate => {
+    const state = readState();
+    return transformTreemapCoordinate(
+      {
+        x: props.nodeProps.x + props.nodeProps.width / 2,
+        y: props.nodeProps.y + props.nodeProps.height / 2,
+      },
+      state && selectChartOffsetInternal(state),
+      state && selectZoom(state),
+    );
   };
 
   const onMouseEnter = () => {
@@ -703,7 +749,7 @@ function ContentItemWithEvents(props: ContentItemProps) {
       setActiveMouseOverItemIndex({
         activeIndex: props.nodeProps.tooltipIndex,
         activeDataKey: props.dataKey,
-        activeCoordinate,
+        activeCoordinate: getActiveCoordinate(),
         activeGraphicalItemId: props.id,
       }),
     );
@@ -717,7 +763,7 @@ function ContentItemWithEvents(props: ContentItemProps) {
       setActiveClickItemIndex({
         activeIndex: props.nodeProps.tooltipIndex,
         activeDataKey: props.dataKey,
-        activeCoordinate,
+        activeCoordinate: getActiveCoordinate(),
         activeGraphicalItemId: props.id,
       }),
     );
@@ -878,6 +924,12 @@ type InternalTreemapProps = RequiresDefaultProps<Props, typeof defaultTreeMapPro
   height: number;
   dispatch: AppDispatch;
   id: GraphicalItemId;
+  /*
+   * Lazy state reader instead of subscribed offset/zoom values: subscribing would re-render the
+   * whole (Pure) treemap on every pan/zoom frame, when ZoomTransformLayer already moves it.
+   * transformTreemapCoordinate falls back to the raw coordinate outside of a chart context.
+   */
+  readState: () => RechartsRootState | undefined;
 };
 
 class TreemapWithState extends PureComponent<InternalTreemapProps, State> {
@@ -1089,12 +1141,17 @@ class TreemapWithState extends PureComponent<InternalTreemapProps, State> {
       return;
     }
 
-    const { dataKey, dispatch } = this.props;
+    const { dataKey, dispatch, readState } = this.props;
 
-    const activeCoordinate = {
-      x: activeNode.x + activeNode.width / 2,
-      y: activeNode.y + activeNode.height / 2,
-    };
+    const state = readState();
+    const activeCoordinate = transformTreemapCoordinate(
+      {
+        x: activeNode.x + activeNode.width / 2,
+        y: activeNode.y + activeNode.height / 2,
+      },
+      state && selectChartOffsetInternal(state),
+      state && selectZoom(state),
+    );
 
     // Treemap does not support onTouchMove prop, but it could
     // onTouchMove?.(activeNode, Number(itemIndex), e);
@@ -1109,7 +1166,7 @@ class TreemapWithState extends PureComponent<InternalTreemapProps, State> {
   };
 
   render() {
-    const { width, height, className, style, children, type, ...others } = this.props;
+    const { width, height, className, style, children, type, readState, dispatch, ...others } = this.props;
     const attrs = svgPropertiesNoEvents(others);
 
     return (
@@ -1128,7 +1185,9 @@ class TreemapWithState extends PureComponent<InternalTreemapProps, State> {
           height={getTreemapRenderHeight(height, type)}
           onTouchMove={this.handleTouchMove}
         >
-          {this.renderAllNodes()}
+          <ClipPathProvider>
+            <ZoomTransformLayer>{this.renderAllNodes()}</ZoomTransformLayer>
+          </ClipPathProvider>
           {children}
         </Surface>
         {type === 'nest' && this.renderNestIndex()}
@@ -1141,13 +1200,16 @@ function TreemapDispatchInject(props: RequiresDefaultProps<Props, typeof default
   const dispatch = useAppDispatch();
   const width = useChartWidth();
   const height = useChartHeight();
+  const readState = useAppStateReader();
   if (!isPositiveNumber(width) || !isPositiveNumber(height)) {
     return null;
   }
   const { id: externalId } = props;
   return (
     <RegisterGraphicalItemId id={externalId} type="treemap">
-      {id => <TreemapWithState {...props} id={id} width={width} height={height} dispatch={dispatch} />}
+      {id => (
+        <TreemapWithState {...props} id={id} width={width} height={height} dispatch={dispatch} readState={readState} />
+      )}
     </RegisterGraphicalItemId>
   );
 }
@@ -1199,6 +1261,7 @@ export function Treemap(outsideProps: Props) {
       >
         <TooltipPortalContext.Provider value={tooltipPortal}>
           <TreemapDispatchInject {...props} />
+          <ZoomPropBridge zoom={props.zoom} />
         </TooltipPortalContext.Provider>
       </RechartsWrapper>
     </RechartsStoreProvider>

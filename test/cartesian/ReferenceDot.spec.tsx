@@ -476,7 +476,8 @@ describe('<ReferenceDot />', () => {
       );
 
       expect(dotSpy).toHaveBeenLastCalledWith([]);
-      expect(dotSpy).toHaveBeenCalledTimes(6);
+      // One render fewer than before: offset and axis-settings updates are equality-guarded.
+      expect(dotSpy).toHaveBeenCalledTimes(5);
     });
   });
 });
