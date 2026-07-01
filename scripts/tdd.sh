@@ -36,14 +36,24 @@ function commit() {
   git commit -m "${message}"
 }
 
+function clear_kv_cache() {
+  model_name=$(ollama ps | awk 'NR>1 {print $1}')
+  curl http://localhost:11434/api/generate -d "{
+    \"model\": \"${model_name}\",
+    \"keep_alive\": 0
+  }"
+}
+
 function tdd_green() {
   pi --prompt-template prompts "/tdd-impl ${SOURCE_FILE} ${TEST_FILE}"
+  clear_kv_cache
   autoformat
   commit "TDD green"
 }
 
 function tdd_red() {
   pi --prompt-template prompts "/tdd-test ${SOURCE_FILE} ${TEST_FILE}"
+  clear_kv_cache
   autoformat
   commit "TDD red"
 }
