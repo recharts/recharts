@@ -186,4 +186,14 @@ describe('graphicalItemIdentity', () => {
     expect(index).toBeGreaterThanOrEqual(0);
     expect(index).toBeLessThan(5);
   });
+
+  it('should return 0 for negative themeCount since it is semantically invalid', () => {
+    // Negative themeCount is semantically impossible (you can't have "negative themes").
+    // The function should treat this as a special case and return 0, not a random large hash.
+    const itemA: ThemableItem = { dataKey: 'anything' };
+    const itemB: ThemableItem = { dataKey: 'somethingElse' };
+    expect(graphicalItemIdentity(itemA, -1)).toBe(0);
+    expect(graphicalItemIdentity(itemA, -5)).toBe(0);
+    expect(graphicalItemIdentity(itemB, -99)).toBe(0);
+  });
 });
