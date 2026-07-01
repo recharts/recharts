@@ -105,12 +105,12 @@
     "victory-vendor": "^37.0.2"
   },
   "devDependencies": {
-    "@babel/cli": "^7.24.8",
-    "@babel/core": "^7.24.9",
-    "@babel/preset-env": "^7.29.0",
-    "@babel/preset-react": "^7.28.5",
-    "@babel/preset-typescript": "^7.28.5",
-    "@babel/runtime": "^7.26.10",
+    "@babel/cli": "^8.0.1",
+    "@babel/core": "^8.0.1",
+    "@babel/preset-env": "^8.0.2",
+    "@babel/preset-react": "^8.0.1",
+    "@babel/preset-typescript": "^8.0.1",
+    "@babel/runtime": "^8.0.0",
     "@chromatic-com/storybook": "^5.2.1",
     "@codecov/bundle-analyzer": "^2.0.1",
     "@eslint-community/eslint-plugin-eslint-comments": "^4.7.2",
