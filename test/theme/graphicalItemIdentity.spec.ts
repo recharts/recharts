@@ -146,7 +146,7 @@ describe('graphicalItemIdentity', () => {
     for (const themeCount of testThemeCounts) {
       const buckets = new Array(themeCount).fill(0);
       for (const str of strings) {
-        const idx = graphicalItemIdentity({ dataKey: str } as ThemableItem, themeCount);
+        const idx = graphicalItemIdentity({ dataKey: str }, themeCount);
         expect(idx).toBeGreaterThanOrEqual(0);
         expect(idx).toBeLessThan(themeCount);
         buckets[idx]++;
