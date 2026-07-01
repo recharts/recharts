@@ -19,8 +19,8 @@
   },
   "author": "recharts group",
   "devDependencies": {
-    "@babel/preset-env": "^7.28.5",
-    "@babel/preset-react": "^7.28.5",
+    "@babel/preset-env": "^8.0.2",
+    "@babel/preset-react": "^8.0.1",
     "@types/react-helmet": "^6.1.11",
     "@types/sax": "^1.2.7",
     "sax": "^1.4.3",
