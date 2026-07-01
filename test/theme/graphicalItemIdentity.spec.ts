@@ -203,4 +203,9 @@ describe('graphicalItemIdentity', () => {
     expect(graphicalItemIdentity(itemA, 0)).toBe(0);
     expect(graphicalItemIdentity(itemB, 0)).toBe(0);
   });
+
+  it('should not throw when given dataKey function', () => {
+    const itemA: ThemableItem = { dataKey: () => {} };
+    expect(graphicalItemIdentity(itemA, 10)).toBeGreaterThanOrEqual(0);
+  });
 });
