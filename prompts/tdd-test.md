@@ -14,7 +14,7 @@ Follow these steps:
 5. Summarize what you have added to the test file and why it is expected to fail.
 6. You do not need to call the tests. But if you do decide then you can call `npm test -- --reporter=minimal $2`
 7. Don't worry if the test actually fails or not. It's the intent that counts. Just don't duplicate already existing tests.
-8. If you think of any new test to add, and the TDD loop is done, say "STOP"
+8. If you can not think of any new test to add, and you want to terminate the TDD loop, say "STOP"
 9. If something unexpected happen and you wish to terminate the TDD game, say "STOP"
 
 **Crucial:** Do not implement the fix. The goal of this step is to have a failing test that accurately reflects the desired outcome.
