@@ -210,6 +210,8 @@
   "lib/synchronisation/syncSelectors.js",
   "lib/synchronisation/types.js",
   "lib/synchronisation/useChartSynchronisation.js",
+  "lib/theme",
+  "lib/theme/graphicalItemIdentity.js",
   "lib/types.js",
   "lib/util",
   "lib/util/ActiveShapeUtils.js",
