@@ -20,7 +20,7 @@
 import { DataKey } from '..';
 
 export type ThemableItem = {
-  dataKey: DataKey<any>;
+  dataKey: DataKey<unknown>;
 };
 
 /**

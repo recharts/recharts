@@ -27,17 +27,17 @@ function run_test() {
 
 function autoformat() {
   npx prettier --write "${SOURCE_FILE}" "${TEST_FILE}" \
-    && npx eslint "${SOURCE_FILE}" || return 1
+    && npx eslint "${SOURCE_FILE}" "${TEST_FILE}" || return 1
 }
 
 function commit() {
   message=$1
   git add "${SOURCE_FILE}" "${TEST_FILE}"
-  git commit -m "${message}"
+  git commit -m "${message}" -- "${SOURCE_FILE}" "${TEST_FILE}"
 }
 
 function clear_kv_cache() {
-  model_name=$(ollama ps | awk 'NR>1 {print $1}')
+  model_name=$(ollama ps | awk 'NR==2 {print $1}')
   curl http://localhost:11434/api/generate -d "{
     \"model\": \"${model_name}\",
     \"keep_alive\": 0
