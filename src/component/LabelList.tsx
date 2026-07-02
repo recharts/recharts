@@ -79,6 +79,8 @@ interface LabelListProps extends ZIndexable {
   dataKey?: DataKey<any>;
   /**
    * If set a React element, the option is the customized React element of rendering each label.
+   * Use an SVG element or component, such as `<text>` or `<g>`.
+   * HTML elements such as `<div>` are not valid inside the chart SVG and may trigger React DOM warnings.
    * If set to a function, the function is called once for each item
    *
    * @example <LabelList content={CustomizedLabel} />
