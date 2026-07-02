@@ -1,21 +1,21 @@
 import React from 'react';
-import { describe, test, it, expect, vi, Mock } from 'vitest';
+import { describe, expect, it, Mock, test, vi } from 'vitest';
 import { render } from '@testing-library/react';
 import {
-  CartesianGrid,
-  LineChart,
-  ComposedChart,
-  Customized,
-  BarChart,
-  ScatterChart,
-  AreaChart,
   Area,
-  YAxis,
-  XAxis,
+  AreaChart,
+  BarChart,
   Brush,
+  CartesianGrid,
+  ComposedChart,
+  DefaultZIndexes,
   Legend,
   Line,
+  LineChart,
+  ScatterChart,
   Tooltip,
+  XAxis,
+  YAxis,
 } from '../../../src';
 import {
   AxisPropsForCartesianGridTicksGeneration,
@@ -29,8 +29,6 @@ import { pageData } from '../../../storybook/stories/data';
 import { selectAxisScale } from '../../../src/state/selectors/axisSelectors';
 import { useAppSelector } from '../../../src/state/hooks';
 import { expectLastCalledWith } from '../../helper/expectLastCalledWith';
-
-import { DefaultZIndexes } from '../../../src/zIndex/DefaultZIndexes';
 
 const allChartsThatSupportCartesianGrid = [
   { ChartElement: AreaChart, testName: 'AreaElement' },
@@ -257,7 +255,7 @@ describe('CartesianGrid', () => {
         <Line yAxisId="left" type="monotone" dataKey="pv" stroke="#8884d8" activeDot={{ r: 8 }} />
         <Line yAxisId="right" type="monotone" dataKey="uv" stroke="#82ca9d" />
         <Tooltip />
-        <Customized component={<Comp />} />
+        <Comp />
       </LineChart>,
     );
 
@@ -1313,7 +1311,6 @@ describe.each(allChartsThatSupportCartesianGrid)('<CartesianGrid /> when child o
           const expectedProps: GridLineTypeFunctionProps = {
             stroke: '#ccc',
             syncWithTicks: false,
-            fill: 'none',
             height: 200,
             width: 300,
             vertical: true,
@@ -1381,7 +1378,8 @@ describe.each(allChartsThatSupportCartesianGrid)('<CartesianGrid /> when child o
               unit: undefined,
             },
           };
-          expect(horizontal).toHaveBeenCalledWith(expectedProps);
+          expect(horizontal).toHaveBeenCalledTimes(5);
+          expectLastCalledWith(horizontal, expectedProps);
 
           expect(container.querySelectorAll('[data-testid=my_mock_line]')).toHaveLength(horizontalPoints.length);
         });
@@ -1409,7 +1407,6 @@ describe.each(allChartsThatSupportCartesianGrid)('<CartesianGrid /> when child o
           const expectedProps: GridLineTypeFunctionProps = {
             stroke: '#ccc',
             syncWithTicks: false,
-            fill: 'none',
             height: 200,
             width: 300,
             vertical: true,
@@ -1501,7 +1498,6 @@ describe.each(allChartsThatSupportCartesianGrid)('<CartesianGrid /> when child o
           const expectedProps: GridLineTypeFunctionProps = {
             stroke: '#ccc',
             syncWithTicks: false,
-            fill: 'none',
             height: 200,
             width: 300,
             horizontal: true,
@@ -1569,7 +1565,7 @@ describe.each(allChartsThatSupportCartesianGrid)('<CartesianGrid /> when child o
               unit: undefined,
             },
           };
-          expect(vertical).toHaveBeenCalledWith(expectedProps);
+          expectLastCalledWith(vertical, expectedProps);
 
           expect(container.querySelectorAll('[data-testid=my_mock_line]')).toHaveLength(verticalPoints.length);
         });
@@ -1597,7 +1593,6 @@ describe.each(allChartsThatSupportCartesianGrid)('<CartesianGrid /> when child o
           const expectedProps: GridLineTypeFunctionProps = {
             stroke: '#ccc',
             syncWithTicks: false,
-            fill: 'none',
             height: 200,
             width: 300,
             horizontal: true,
@@ -1665,7 +1660,7 @@ describe.each(allChartsThatSupportCartesianGrid)('<CartesianGrid /> when child o
             y2: 202,
             index: expect.any(Number),
           };
-          expect(spy).toHaveBeenCalledWith(expectedProps);
+          expectLastCalledWith(spy, expectedProps);
 
           expect(container.querySelectorAll('[data-testid=my_mock_line]')).toHaveLength(verticalPoints.length);
         });
