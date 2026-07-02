@@ -1,6 +1,7 @@
 import { ReactNode } from 'react';
 import Helmet from 'react-helmet';
 import { Link } from 'react-router';
+import { darkTheme, lightTheme, RechartsThemeProvider } from 'recharts';
 
 import '../styles/app.css';
 import './frame.css';
@@ -10,6 +11,7 @@ import { Navigation } from '../components/Navigation.tsx';
 import { SidebarNav } from '../components/Shared/SidebarNav';
 import { RechartsLogo } from './RechartsLogo.tsx';
 import { useIsIsolatedView } from '../routes/useIsIsolatedView.ts';
+import { useColorMode } from '../components/color-mode';
 
 type FrameProps = {
   children: ReactNode;
@@ -31,36 +33,39 @@ export function Frame(props: FrameProps) {
   const locale = useLocale();
   const fullCommitHash = import.meta.env.VITE_RECHARTS_COMMIT_HASH;
   const shortCommitHash = getShortCommitHash(fullCommitHash);
+  const colorMode = useColorMode();
 
   if (isIsolated) {
     return <main>{children}</main>;
   }
 
   return (
-    <div className="container">
-      <Helmet titleTemplate="%s | Recharts" />
-      <header>
-        <Link className="logo" to={`/${locale}/`}>
-          <RechartsLogo />
-        </Link>
-        <Navigation />
-      </header>
-      <SidebarNav />
-      <main>{children}</main>
-      <footer>
-        <p>
-          <span>Released under the </span>
-          <a href="https://opensource.org/licenses/MIT" target="_blank" rel="noreferrer">
-            MIT License
-          </a>
-        </p>
-        <p>Copyright (c) 2016-{new Date().getFullYear()} Recharts Group</p>
-        {shortCommitHash ? (
+    <RechartsThemeProvider value={colorMode.mode === 'light' ? lightTheme : darkTheme}>
+      <div className="container">
+        <Helmet titleTemplate="%s | Recharts" />
+        <header>
+          <Link className="logo" to={`/${locale}/`}>
+            <RechartsLogo />
+          </Link>
+          <Navigation />
+        </header>
+        <SidebarNav />
+        <main>{children}</main>
+        <footer>
           <p>
-            Commit: <code title={fullCommitHash}>{shortCommitHash}</code>
+            <span>Released under the </span>
+            <a href="https://opensource.org/licenses/MIT" target="_blank" rel="noreferrer">
+              MIT License
+            </a>
           </p>
-        ) : null}
-      </footer>
-    </div>
+          <p>Copyright (c) 2016-{new Date().getFullYear()} Recharts Group</p>
+          {shortCommitHash ? (
+            <p>
+              Commit: <code title={fullCommitHash}>{shortCommitHash}</code>
+            </p>
+          ) : null}
+        </footer>
+      </div>
+    </RechartsThemeProvider>
   );
 }

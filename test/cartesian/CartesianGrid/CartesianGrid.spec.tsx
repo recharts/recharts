@@ -16,21 +16,21 @@ import {
   Legend,
   Line,
   Tooltip,
-} from '../../src';
+} from '../../../src';
 import {
   AxisPropsForCartesianGridTicksGeneration,
   GridLineTypeFunctionProps,
   HorizontalCoordinatesGenerator,
   VerticalCoordinatesGenerator,
-} from '../../src/cartesian/CartesianGrid';
-import { ChartOffsetInternal, Margin } from '../../src/util/types';
-import { assertNotNull } from '../helper/assertNotNull';
-import { pageData } from '../../storybook/stories/data';
-import { selectAxisScale } from '../../src/state/selectors/axisSelectors';
-import { useAppSelector } from '../../src/state/hooks';
-import { expectLastCalledWith } from '../helper/expectLastCalledWith';
+} from '../../../src/cartesian/CartesianGrid';
+import { ChartOffsetInternal, Margin } from '../../../src/util/types';
+import { assertNotNull } from '../../helper/assertNotNull';
+import { pageData } from '../../../storybook/stories/data';
+import { selectAxisScale } from '../../../src/state/selectors/axisSelectors';
+import { useAppSelector } from '../../../src/state/hooks';
+import { expectLastCalledWith } from '../../helper/expectLastCalledWith';
 
-import { DefaultZIndexes } from '../../src/zIndex/DefaultZIndexes';
+import { DefaultZIndexes } from '../../../src/zIndex/DefaultZIndexes';
 
 const allChartsThatSupportCartesianGrid = [
   { ChartElement: AreaChart, testName: 'AreaElement' },

@@ -246,3 +246,9 @@ export type { TypedHorizontalChartContext, TypedVerticalChartContext, NoFunnel }
 export type { TypedCentricChartContext, TypedRadialChartContext, NoRadial, NoCentric } from './util/createPolarCharts';
 
 export { interpolate } from './util/DataUtils';
+
+export type { RechartsTheme } from './theme/RechartsTheme';
+export { RechartsThemeProvider } from './theme/RechartsThemeContext';
+export { darkTheme } from './theme/darkTheme';
+export { lightTheme } from './theme/lightTheme';
+export { legacyTheme } from './theme/legacyTheme';
