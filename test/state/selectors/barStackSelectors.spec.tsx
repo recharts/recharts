@@ -4,6 +4,7 @@ import { createSelectorTestCase } from '../../helper/createSelectorTestCase';
 import { Bar, BarChart, BarStack, BarRectangleItem } from '../../../src';
 import { PageData } from '../../_data';
 import {
+  BarStackItem,
   expandRectangle,
   selectAllBarsInStack,
   selectStackRects,
@@ -11,6 +12,7 @@ import {
 import { expectLastCalledWith } from '../../helper/expectLastCalledWith';
 import { defaultAxisId } from '../../../src/state/cartesianAxisSlice';
 import { selectBarRectangles } from '../../../src/state/selectors/barSelectors';
+import { assertNotNull } from '../../helper/assertNotNull';
 
 describe('BarStack Selectors', () => {
   describe('in chart with BarStack', () => {
@@ -590,13 +592,19 @@ describe('BarStack Selectors', () => {
     ));
 
     test('selectStackRects should preserve original data indices when combining filtered bars', () => {
-      const { spy: stackSpy } = renderTestCase(state => selectStackRects(state, 'sparse', false));
-      const { spy: firstBarSpy } = renderTestCase(state => selectBarRectangles(state, 'bar-one', false, undefined));
-      const { spy: secondBarSpy } = renderTestCase(state => selectBarRectangles(state, 'bar-two', false, undefined));
+      let stackRects: ReadonlyArray<BarStackItem | undefined> | undefined,
+        firstRects: ReadonlyArray<BarRectangleItem> | undefined,
+        secondRects: ReadonlyArray<BarRectangleItem> | undefined;
 
-      const stackRects = stackSpy.mock.lastCall?.[0];
-      const firstRects = firstBarSpy.mock.lastCall?.[0] ?? [];
-      const secondRects = secondBarSpy.mock.lastCall?.[0] ?? [];
+      renderTestCase(state => {
+        stackRects = selectStackRects(state, 'sparse', false);
+        firstRects = selectBarRectangles(state, 'bar-one', false, undefined);
+        secondRects = selectBarRectangles(state, 'bar-two', false, undefined);
+      });
+
+      assertNotNull(stackRects);
+      assertNotNull(firstRects);
+      assertNotNull(secondRects);
 
       expect(firstRects).toHaveLength(1);
       expect(secondRects).toHaveLength(1);

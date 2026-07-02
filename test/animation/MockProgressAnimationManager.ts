@@ -1,5 +1,5 @@
 import { act } from '@testing-library/react';
-import { AnimationStateMachine } from '../../src/animation/AnimationStateMachine';
+import { AnimationHandle } from '../../src';
 import { mockAnimationController } from './mockAnimationController';
 import { MockTimeoutController } from './mockTimeoutController';
 
@@ -46,10 +46,10 @@ export interface MockAnimationManager {
  * A higher level mock animation manager that allows for less granular control
  * but also requires less setup to get to a certain point in the animation.
  */
-export class MockProgressAnimationManager<T, E> implements MockAnimationManager {
+export class MockProgressAnimationManager implements MockAnimationManager {
   private readonly onStop?: () => void;
 
-  private animation: AnimationStateMachine<any, any> | null = null;
+  private animation: AnimationHandle | null = null;
 
   private readonly timeoutController: MockTimeoutController = new MockTimeoutController();
 
@@ -82,7 +82,7 @@ export class MockProgressAnimationManager<T, E> implements MockAnimationManager 
      * The time is absolute, and the configUpdate is internally tracking the time when it started,
      * so here we can just multiply by percent and add the first tick to get the time to advance.
      */
-    const timeToAdvance = animationDuration * percent + this.animation.getBeginDelay() + this.firstTick;
+    const timeToAdvance = animationDuration * percent + this.animation.getAnimationBegin() + this.firstTick;
 
     await this.timeoutController.triggerNextTimeout(timeToAdvance);
   }
@@ -107,7 +107,7 @@ export class MockProgressAnimationManager<T, E> implements MockAnimationManager 
     return this.animation !== null && this.animation.getState() !== 'completed';
   }
 
-  start(animation: AnimationStateMachine<T, E>, listener: (newState: T) => void) {
+  start(animation: AnimationHandle, listener: (newState: string | number) => void) {
     this.animation = animation;
     this.isPrimed = false; // Reset the primed state when starting a new animation
     this.cancelController = mockAnimationController(this.timeoutController, this.animation, listener);
@@ -165,7 +165,7 @@ export class MockProgressAnimationManager<T, E> implements MockAnimationManager 
        * but all our unit tests are {firstTick}ms off so I added the same delay here
        * just so that I don't have to update tons of assertions.
        */
-      await this.timeoutController.triggerNextTimeout(this.animation.getBeginDelay() + this.firstTick);
+      await this.timeoutController.triggerNextTimeout(this.animation.getAnimationBegin() + this.firstTick);
     }
 
     if (this.animation.getState() === 'active') {
@@ -191,6 +191,6 @@ export class MockProgressAnimationManager<T, E> implements MockAnimationManager 
 
     await this.prime();
 
-    return this.animation.getDuration();
+    return this.animation.getAnimationDuration();
   }
 }

@@ -1,4 +1,5 @@
 import { ReactNode } from 'react';
+import { useIsIsolatedView } from '../../routes/useIsIsolatedView.ts';
 
 /**
  * The allowed types of tools in the playground.
@@ -55,6 +56,11 @@ type ToolFrameProps = {
  */
 export function ToolFrame({ activeTool, onToolChange, tools, className = '' }: ToolFrameProps) {
   const activeToolItem = tools.find(t => t.name === activeTool);
+  const isIsolated = useIsIsolatedView();
+
+  if (isIsolated) {
+    return null;
+  }
 
   return (
     <div className={`codemirror-wrapper ${className}`}>

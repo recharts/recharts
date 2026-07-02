@@ -6,7 +6,7 @@ import { useAnimationController } from './useAnimationController';
 import { getTransitionVal } from './util';
 import { Global } from '../util/Global';
 import { usePrefersReducedMotion } from '../util/usePrefersReducedMotion';
-import { CSSTransitionAnimation } from './AnimationStateMachine';
+import { CSSTransitionAnimation } from './AnimationHandle';
 import { RequestAnimationFrameTimeoutController } from './timeoutController';
 import { EasingInput, NamedBezier } from './easing';
 import { AnimationController } from './AnimationController';
@@ -66,7 +66,7 @@ export function CSSTransitionAnimate(outsideProps: CSSTransitionAnimateProps) {
   const isActive = isActiveProp === 'auto' ? !Global.isSsr && !prefersReducedMotion : isActiveProp;
 
   const animationController = useAnimationController(props.animationController);
-  const [style, setStyle] = useState<string>(() => {
+  const [style, setStyle] = useState<string | number>(() => {
     if (!isActive) {
       return to;
     }

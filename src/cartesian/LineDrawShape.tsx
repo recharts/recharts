@@ -33,21 +33,27 @@ function generateSimpleStrokeDasharray(totalLength: number, length: number): str
 }
 
 /**
- * Repeats a dash pattern array a given number of times.
+ * Normalizes a dash pattern to the even-length sequence used by SVG renderers.
+ * Odd-length stroke-dasharray values repeat once, so "5" behaves like "5 5".
  *
- * If the input array has an odd length, a trailing `0` is appended to make it even
- * before repeating, because SVG stroke-dasharray patterns must have an even number
- * of values to cycle correctly between dash and gap segments.
+ * @param lines Array of dash/gap lengths to repeat
+ * @returns An even-length dash pattern
+ */
+function normalizeDashPattern(lines: number[]): number[] {
+  return lines.length % 2 !== 0 ? [...lines, ...lines] : lines;
+}
+
+/**
+ * Repeats a dash pattern array a given number of times.
  *
  * @param lines Array of dash/gap lengths to repeat
  * @param count Number of times to repeat the pattern
  * @returns A new array with the pattern repeated `count` times
  */
 function repeat(lines: number[], count: number): number[] {
-  const linesUnit = lines.length % 2 !== 0 ? [...lines, 0] : lines;
   const result: number[] = [];
   for (let i = 0; i < count; ++i) {
-    result.push(...linesUnit);
+    result.push(...lines);
   }
   return result;
 }
@@ -68,7 +74,8 @@ function repeat(lines: number[], count: number): number[] {
  * @returns A stroke-dasharray string incorporating the custom dash pattern
  */
 function getStrokeDasharray(length: number, totalLength: number, lines: number[]): string {
-  const lineLength = lines.reduce((pre, next) => pre + next, 0);
+  const normalizedLines = normalizeDashPattern(lines);
+  const lineLength = normalizedLines.reduce((pre, next) => pre + next, 0);
 
   // if lineLength is 0 return the default when no strokeDasharray is provided
   if (!lineLength) {
@@ -78,17 +85,17 @@ function getStrokeDasharray(length: number, totalLength: number, lines: number[]
   const count = Math.floor(length / lineLength);
   const remainLength = length % lineLength;
   let remainLines: number[] = [];
-  for (let i = 0, sum = 0; i < lines.length; sum += lines[i] ?? 0, ++i) {
-    const lineValue = lines[i];
+  for (let i = 0, sum = 0; i < normalizedLines.length; sum += normalizedLines[i] ?? 0, ++i) {
+    const lineValue = normalizedLines[i];
     if (lineValue != null && sum + lineValue > remainLength) {
-      remainLines = [...lines.slice(0, i), remainLength - sum];
+      remainLines = [...normalizedLines.slice(0, i), remainLength - sum];
       break;
     }
   }
 
   const emptyLines = remainLines.length % 2 === 0 ? [0, totalLength] : [totalLength];
 
-  return [...repeat(lines, count), ...remainLines, ...emptyLines].map(line => `${line}px`).join(', ');
+  return [...repeat(normalizedLines, count), ...remainLines, ...emptyLines].map(line => `${line}px`).join(', ');
 }
 
 /**

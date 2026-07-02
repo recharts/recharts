@@ -9,6 +9,7 @@ import { useLocale } from '../utils/LocaleUtils.ts';
 import { Navigation } from '../components/Navigation.tsx';
 import { SidebarNav } from '../components/Shared/SidebarNav';
 import { RechartsLogo } from './RechartsLogo.tsx';
+import { useIsIsolatedView } from '../routes/useIsIsolatedView.ts';
 
 type FrameProps = {
   children: ReactNode;
@@ -25,10 +26,15 @@ export function getShortCommitHash(commitHash: string | undefined): string | und
 }
 
 export function Frame(props: FrameProps) {
+  const isIsolated = useIsIsolatedView();
   const { children } = props;
   const locale = useLocale();
   const fullCommitHash = import.meta.env.VITE_RECHARTS_COMMIT_HASH;
   const shortCommitHash = getShortCommitHash(fullCommitHash);
+
+  if (isIsolated) {
+    return <main>{children}</main>;
+  }
 
   return (
     <div className="container">

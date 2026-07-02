@@ -15,13 +15,29 @@ updates:
     # max of 10 PRs at a time from dependabot
     open-pull-requests-limit: 10
     groups:
+      babel:
+        patterns:
+          - '@babel*'
+      playwright:
+        patterns:
+          - 'playwright'
+          - '@playwright/experimental-ct-react'
+      react:
+        patterns:
+          - 'react'
+          - 'react-dom'
+          - 'react-is'
+          - '@types/react'
+          - '@types/react-dom'
+          - '@types/react-is'
+      react-router:
+        patterns:
+          - 'react-router'
+          - 'react-router-dom'
       storybook:
         patterns:
           - '@storybook*'
           - 'storybook'
-      babel:
-        patterns:
-          - '@babel*'
       stryker:
         patterns:
           - '@stryker*'
@@ -30,10 +46,6 @@ updates:
           - 'typescript-eslint'
           - '@typescript-eslint*'
           - 'eslint-plugin-typescript*'
-      playwright:
-        patterns:
-          - 'playwright'
-          - '@playwright/experimental-ct-react'
       vite:
         patterns:
           - 'vite'
@@ -42,7 +54,3 @@ updates:
         patterns:
           - 'vitest'
           - '@vitest/*'
-      react-router:
-        patterns:
-          - 'react-router'
-          - 'react-router-dom'

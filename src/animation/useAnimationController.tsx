@@ -13,12 +13,14 @@ const AnimationControllerContext = createContext<AnimationController>(animationC
  * - Unit tests are an excellent use (Recharts itself has ton of tests with mock TimeoutController)
  * - If you want to animate charts back and forth (Recharts only animates forward)
  * - If you want to replace requestAnimationFrame with something else
- *   - Perhaps a manual animation controls (`@recharts/devtools` does this, it's available on https://recharts.github.io too)
+ *   - Perhaps a manual animation controls (https://recharts.github.io does this)
  *   - If you want to maybe animate charts based on mouse movement, or page scroll position, instead of time
  *
  * If you don't use this provider then all charts use the default requestAnimationFrame and default animation logic.
  *
  * If you use this component then all charts inside use your custom animationController.
+ *
+ * @see {@link https://recharts.github.io/en-US/guide/animations/ Animation guide}
  *
  * @since 3.9
  */

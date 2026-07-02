@@ -1,18 +1,23 @@
-import { ScatterChart, Scatter, XAxis, YAxis, CartesianGrid, Tooltip } from 'recharts';
+import { CartesianGrid, Scatter, ScatterChart, Tooltip, XAxis, YAxis, ZAxis } from 'recharts';
 import { between, random, RechartsDevtools } from '@recharts/devtools';
 
 const gen = random(42);
 
-const chartData = {
-  points: Array.from({ length: 100 }, (_1, i) => ({
+const countOfScatterElements = 100;
+const pointsPerScatter = 10;
+
+const datasets = Array.from({ length: countOfScatterElements }, (_1, i) => {
+  const passed = between(gen, 0, 10) > 5;
+  return {
     name: `line-${i}`,
-    passed: between(gen, 0, 10) > 5,
-    points: Array.from({ length: 10 }, (_2, j) => ({
-      x: j * 0.1,
+    passed,
+    points: Array.from({ length: pointsPerScatter }, _2 => ({
+      x: between(gen, 0, 100),
       y: between(gen, 0, 100),
+      z: between(gen, 0, 100),
     })),
-  })),
-};
+  };
+});
 
 export default function ScatterChartPerformance() {
   return (
@@ -29,15 +34,15 @@ export default function ScatterChartPerformance() {
       <CartesianGrid />
       <XAxis dataKey="x" type="number" unit="m" domain={[0, 1]} />
       <YAxis dataKey="y" type="number" unit="m" domain={[0, 100]} />
+      <ZAxis dataKey="z" range={[0, 100]} />
       <Tooltip />
 
-      {chartData.points.map(line => (
+      {datasets.map(line => (
         <Scatter
           key={line.name}
           data={line.points}
           fill={line.passed ? '#22c55e' : '#ef4444'}
           isAnimationActive={false}
-          line
           name={line.name}
           strokeWidth={4}
         />

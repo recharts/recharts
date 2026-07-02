@@ -444,7 +444,7 @@ describe('itemSorter in ComposedChart', () => {
             graphicalItemId: 'scatter-uv',
           },
         ]);
-        expect(spy).toHaveBeenCalledTimes(3);
+        expect(spy).toHaveBeenCalledTimes(4);
       });
     });
 
@@ -749,7 +749,7 @@ describe('itemSorter in ComposedChart', () => {
             value: 2400,
           },
         ]);
-        expect(spy).toHaveBeenCalledTimes(3);
+        expect(spy).toHaveBeenCalledTimes(4);
       });
     });
 

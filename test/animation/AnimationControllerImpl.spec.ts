@@ -1,8 +1,8 @@
-import { describe, it, beforeEach, expect, Mock } from 'vitest';
+import { beforeEach, describe, expect, it, Mock } from 'vitest';
 import { identity } from 'es-toolkit';
 import { MockTimeoutController } from './mockTimeoutController';
 import { animationControllerImpl } from '../../src/animation/AnimationControllerImpl';
-import { CSSTransitionAnimation, JavascriptAnimation } from '../../src/animation/AnimationStateMachine';
+import { CSSTransitionAnimation, JavascriptAnimation, OnAnimationStateUpdate } from '../../src';
 import { noop } from '../../src/util/DataUtils';
 import { expectLastCalledWith } from '../helper/expectLastCalledWith';
 
@@ -109,7 +109,7 @@ describe('AnimationControllerImpl', () => {
       to: 1,
       easing: identity,
     });
-    const spy1: Mock<(now: number) => void> = vi.fn();
+    const spy1: Mock<OnAnimationStateUpdate> = vi.fn();
     const animation2 = new JavascriptAnimation({
       animationId: '1',
       animationBegin: 100,
@@ -120,7 +120,7 @@ describe('AnimationControllerImpl', () => {
       to: 1,
       easing: identity,
     });
-    const spy2: Mock<(now: number) => void> = vi.fn();
+    const spy2: Mock<OnAnimationStateUpdate> = vi.fn();
     const cancel1 = animationControllerImpl(time1, animation1, spy1);
     const cancel2 = animationControllerImpl(time2, animation2, spy2);
 
@@ -163,7 +163,7 @@ describe('AnimationControllerImpl', () => {
         to: 1,
         easing: x => x * 2,
       });
-      const spy: Mock<(now: number) => void> = vi.fn();
+      const spy: Mock<OnAnimationStateUpdate> = vi.fn();
       animationControllerImpl(timeoutController, easedAnimation, spy);
 
       await timeoutController.triggerNextTimeout(0); // init -> pending
@@ -194,7 +194,7 @@ describe('AnimationControllerImpl', () => {
         to: 'height: 200px',
         easing: 'ease-in',
       });
-      const spy: Mock<(now: string) => void> = vi.fn();
+      const spy: Mock<OnAnimationStateUpdate> = vi.fn();
       animationControllerImpl(timeoutController, easedAnimation, spy);
 
       await timeoutController.triggerNextTimeout(0); // init -> pending
@@ -238,7 +238,7 @@ describe('AnimationControllerImpl', () => {
 
   describe('subscribing for updates', () => {
     it('should call subscribe with the same number as the animationState.progress', async () => {
-      const spy: Mock<(now: number) => void> = vi.fn();
+      const spy: Mock<OnAnimationStateUpdate> = vi.fn();
       animationControllerImpl(timeoutController, animationState, spy);
 
       await timeoutController.triggerNextTimeout(0); // init -> pending

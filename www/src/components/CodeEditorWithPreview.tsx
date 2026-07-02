@@ -1,4 +1,4 @@
-import React, { useState, useEffect, ComponentType, ReactNode } from 'react';
+import React, { ComponentType, ReactNode, useEffect, useState } from 'react';
 import * as RechartsScope from 'recharts';
 import * as D3ShapeScope from 'd3-shape';
 import * as RechartsDevtoolsScope from '@recharts/devtools';
@@ -8,11 +8,12 @@ import type { Lever } from './Shared/levers/Levers.tsx';
 import { Levers } from './Shared/levers/Levers.tsx';
 import { StackBlitzLink } from './Shared/StackBlitzLink';
 import { sendEvent } from './analytics';
-import { ToolFrame, ToolType, ToolItem } from './Playground/ToolFrame';
+import { ToolFrame, ToolItem, ToolType } from './Playground/ToolFrame';
 import { SourceCodeEditor } from './Playground/SourceCodeEditor';
 import { DevToolsPanel } from './Playground/DevToolsPanel';
 import { AnnotationsPanel } from './Playground/AnnotationsPanel';
 import { CopyButton } from '../utils/CopyButton';
+import { ManualAnimationControls, ManualAnimationContext } from './ManualAnimationContext.tsx';
 
 /**
  * Props passed to the previewed component.
@@ -165,6 +166,8 @@ export function CodeEditorWithPreview<T>({
   // Refactor for DevTools Copy State
   const [devToolsValue, setDevToolsValue] = useState<unknown>(undefined);
 
+  const [isManualAnimations, setIsManualAnimations] = useState<boolean>(false);
+
   // Update tools definition
   const actualTools: ToolItem[] = [
     {
@@ -191,36 +194,38 @@ export function CodeEditorWithPreview<T>({
       label: 'Annotations',
       component: <AnnotationsPanel />,
     },
-  ];
-
-  if (defaultControlsState != null && levers != null) {
-    actualTools.push({
+    {
       name: 'controls',
       label: 'Controls',
       component: (
         <div style={{ padding: '10px', height: '100%', overflow: 'auto' }}>
-          <Levers
-            defaultState={defaultControlsState}
-            levers={levers}
-            onChange={setControlsState}
-            state={controlsState}
-          />
+          {defaultControlsState != null && levers != null && (
+            <Levers
+              defaultState={defaultControlsState}
+              levers={levers}
+              onChange={setControlsState}
+              state={controlsState}
+            />
+          )}
+          <ManualAnimationControls isManualAnimationEnabled={isManualAnimations} onToggle={setIsManualAnimations} />
         </div>
       ),
-    });
-  }
+    },
+  ];
 
   return (
     <RechartsDevtoolsContext>
-      <PreviewResult
-        Component={Component}
-        isEditMode={isEditMode}
-        codeToRun={codeToRun}
-        Runner={Runner}
-        componentProps={controlsState ?? defaultControlsState}
-      />
+      <ManualAnimationContext enabled={isManualAnimations}>
+        <PreviewResult
+          Component={Component}
+          isEditMode={isEditMode}
+          codeToRun={codeToRun}
+          Runner={Runner}
+          componentProps={controlsState ?? defaultControlsState}
+        />
 
-      <ToolFrame activeTool={activeTool} onToolChange={setActiveTool} tools={actualTools} />
+        <ToolFrame activeTool={activeTool} onToolChange={setActiveTool} tools={actualTools} />
+      </ManualAnimationContext>
     </RechartsDevtoolsContext>
   );
 }

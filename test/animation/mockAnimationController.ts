@@ -1,6 +1,10 @@
-import { AnimationController } from '../../src/animation/AnimationController';
-import { CancelableTimeout, TimeoutController } from '../../src/animation/timeoutController';
-import { AnimationStateMachine } from '../../src/animation/AnimationStateMachine';
+import {
+  AnimationController,
+  AnimationHandle,
+  CancelableTimeout,
+  OnAnimationStateUpdate,
+  TimeoutController,
+} from '../../src';
 
 /**
  * Animation controller that does not automatically complete when reaching 100%.
@@ -8,10 +12,10 @@ import { AnimationStateMachine } from '../../src/animation/AnimationStateMachine
  * that "100% progress animation" and "completed animation" are two different states
  * and it's just easier to write a new controller than rewrite all the tests.
  */
-export const mockAnimationController: AnimationController = <T, E>(
+export const mockAnimationController: AnimationController = (
   timeoutController: TimeoutController,
-  animationHandle: AnimationStateMachine<T, E>,
-  listener: (progress: T) => void,
+  animationHandle: AnimationHandle,
+  listener: OnAnimationStateUpdate,
 ): CancelableTimeout => {
   let cancellable: CancelableTimeout | undefined;
   const nextUpdate = (now: number) => {

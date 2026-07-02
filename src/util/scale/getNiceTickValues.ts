@@ -295,8 +295,15 @@ export const getTickValuesFixedDomain = (
      * The step is guaranteed to be an integer in the code above which is great start
      * but when the first step is not an integer, it will start stepping from a decimal value anyway.
      * So we need to round all the values to integers after the fact.
+     * The domain boundary (cormax) is appended after the rangeStep values. When
+     * cormax rounds down to the same integer as the last rangeStep value, we end up
+     * with a duplicate trailing tick. Remove it.
      */
     values = values.map(value => Math.round(value));
+    const last = values.length - 1;
+    if (last > 0 && values[last] === values[last - 1]) {
+      values = values.slice(0, last);
+    }
   }
 
   return min > max ? values.reverse() : values;

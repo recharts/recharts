@@ -5,9 +5,15 @@ import { Area, AreaChart, Bar, BarChart, Line, LineChart, Scatter, ScatterChart,
 import { assertNotNull } from '../helper/assertNotNull';
 import { pageData } from '../../storybook/stories/data';
 
-function selectAllClipPaths(container: Element | null) {
+function selectAllClipPaths(container: Element | null): ReadonlyArray<SVGRectElement> {
   assertNotNull(container);
-  return container.querySelectorAll('clipPath rect');
+  /*
+   * Something somewhere in one of the jsdom bumps broke this selector so if this were just a good old
+   * `container.querySelectorAll('clipPath rect')` then that returns no results.
+   * But if we split it into two chained calls then it works perfectly fine!
+   */
+  const clipPaths = container.querySelectorAll('clipPath');
+  return Array.from(clipPaths).flatMap(clipPath => Array.from(clipPath.querySelectorAll('rect')));
 }
 
 function expectClipPathDimensions(

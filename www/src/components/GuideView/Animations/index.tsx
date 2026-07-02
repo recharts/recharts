@@ -409,7 +409,6 @@ export function AnimationsGuide() {
         stackBlitzTitle="Recharts Custom Animation Example"
         defaultTool="controls"
       />
-
       <p>
         Also see our other custom animation examples:
         <ul>
@@ -428,7 +427,6 @@ export function AnimationsGuide() {
           </li>
         </ul>
       </p>
-
       <h2>Custom shape animations</h2>
       <p>
         While <code>animationInterpolateFn</code> controls how <em>data points</em> move during animation, some
@@ -602,6 +600,56 @@ export function AnimationsGuide() {
           </tr>
         </tbody>
       </table>
+      <h2>Customize animation controller</h2>
+      <p>
+        Since 3.9 recharts allows you to completely override the controller using{' '}
+        <LinkToApi>AnimationControllerProvider</LinkToApi>. The animation controller is responsible for communication
+        between the timing, animation handle, and listener. By default, Recharts uses a requestAnimationFrame-based
+        controller, but you can implement your own to drive animations from any source: scroll position, WebSocket data,
+        or even manual controls.
+      </p>
+      <p>
+        Why would you want to use this? Several reasons:
+        <ul>
+          <li>Unit tests are an excellent use (Recharts itself has ton of tests with mock TimeoutController)</li>
+          <li>If you want to animate charts back and forth</li>
+          <li>
+            If you want to replace requestAnimationFrame with something else. Perhaps a manual animation controls, as
+            you can see on every chart on this website
+          </li>
+          <li>
+            If you want to maybe animate charts based on mouse movement, or page scroll position, instead of time{' '}
+          </li>
+        </ul>
+        If you do not use this provider then all charts use the default requestAnimationFrame and default animation
+        logic.
+      </p>
+      <p>
+        See <RechartsLink to="/examples/ScrollAnimateBarChart">ScrollAnimateBarChart example</RechartsLink> where chart
+        animates in response to page scroll, not time.
+      </p>
+      <p>
+        See{' '}
+        <a href="https://github.com/recharts/recharts/blob/main/test/animation/mockAnimationController.ts">
+          mockAnimationController.ts
+        </a>{' '}
+        and{' '}
+        <a href="https://github.com/recharts/recharts/blob/main/test/animation/MockProgressAnimationManager.ts#L113">
+          MockProgressAnimationManager
+        </a>{' '}
+        to see how Recharts tests animation. Our unit tests then look for example like this:{' '}
+        <a href="https://github.com/recharts/recharts/blob/main/test/cartesian/Line.animation.spec.tsx">
+          Line.animation.spec.tsx
+        </a>
+        .
+      </p>
+      <p>
+        See{' '}
+        <a href="https://github.com/recharts/recharts/blob/main/www/src/components/ManualAnimationContext.tsx">
+          ManualAnimationContext.tsx
+        </a>{' '}
+        with code that handles manual animations here on this website.
+      </p>
     </article>
   );
 }
