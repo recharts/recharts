@@ -477,6 +477,8 @@ export interface Props<DataPointType extends TreemapDataType = TreemapDataType, 
 
   /**
    * If set to a React element, the option is the customized React element of rendering the content.
+   * Use an SVG element or component, such as `<text>` or `<g>`.
+   * HTML elements such as `<div>` are not valid inside the chart SVG and may trigger React DOM warnings.
    * If set to a function, the function will be called to render the content.
    */
   content?: TreemapContentType;

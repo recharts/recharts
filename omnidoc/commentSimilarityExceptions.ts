@@ -124,6 +124,11 @@ export const commentSimilarityExceptions: ReadonlyArray<CommentSimilarityGroup> 
     reason: 'LabelList dataKey has special complications compared to other components',
   },
   {
+    components: ['LabelList'],
+    props: ['content'],
+    reason: 'LabelList content renders labels for data items, unlike Treemap content which renders tree nodes',
+  },
+  {
     components: ['Text'],
     props: ['width'],
     reason: 'has extra details on automated wrapping',
