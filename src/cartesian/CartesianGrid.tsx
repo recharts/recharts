@@ -119,7 +119,6 @@ interface CartesianGridProps extends ZIndexable {
   /**
    * The background color used to fill the space between grid lines
    *
-   * @defaultValue none
    * @example <CartesianGrid fill="red" />
    * @example <CartesianGrid fill="#ccc" />
    */
