@@ -1,9 +1,8 @@
-import { describe, it, expect } from 'vitest';
+import { describe, expect, it } from 'vitest';
 import { generateMockData } from '@recharts/devtools';
 import React from 'react';
 import { rechartsTestRender } from '../../helper/createSelectorTestCase';
-import { CartesianGrid, CartesianGridProps, ComposedChart } from '../../../src';
-import { RechartsThemeProvider } from '../../../src/theme/RechartsThemeContext';
+import { CartesianGrid, CartesianGridProps, ComposedChart, RechartsThemeProvider } from '../../../src';
 
 const mockData = generateMockData(5, 2);
 
@@ -112,6 +111,96 @@ describe('CartesianGrid theme', () => {
 
       it('should convert array of numbers to string', () => {
         expect(renderDasharray([1, 2, 3])).toBe('1,2,3');
+      });
+    });
+  });
+
+  describe('fill', () => {
+    function getBgRect(container: ReturnType<typeof rechartsTestRender>['container']): HTMLElement | null {
+      return container.querySelector('.recharts-cartesian-grid-bg') as HTMLElement;
+    }
+
+    describe('when not defined at all', () => {
+      it('should use defaults from theme (legacyTheme has no fill, so background is null)', () => {
+        const { container } = rechartsTestRender(
+          <MyChart>
+            <CartesianGrid />
+          </MyChart>,
+        );
+        // legacyTheme has fill: 'none' so Background returns null - no element rendered
+        expect(getBgRect(container)).toBe(null);
+      });
+    });
+
+    describe('when defined as a prop', () => {
+      it('should follow the prop when both fill and fillOpacity are provided', () => {
+        const { container } = rechartsTestRender(
+          <MyChart>
+            <CartesianGrid fill="gold" fillOpacity={0.9} />
+          </MyChart>,
+        );
+        const bgRect = getBgRect(container);
+        expect(bgRect).not.toBe(null);
+        expect(bgRect?.getAttribute('fill')).toBe('gold');
+        expect(bgRect?.getAttribute('fill-opacity')).toBe('0.9');
+      });
+    });
+
+    describe('when defined as a theme', () => {
+      it('should follow the theme fill', () => {
+        const { container } = rechartsTestRender(
+          <RechartsThemeProvider value={{ grid: { fill: 'purple' } }}>
+            <MyChart>
+              <CartesianGrid />
+            </MyChart>
+          </RechartsThemeProvider>,
+        );
+        const bgRect = getBgRect(container);
+        expect(bgRect).not.toBe(null);
+        expect(bgRect?.getAttribute('fill')).toBe('purple');
+      });
+
+      it('should follow the theme fillOpacity when combined with fill', () => {
+        const { container } = rechartsTestRender(
+          <RechartsThemeProvider value={{ grid: { fill: 'lime', fillOpacity: 0.5 } }}>
+            <MyChart>
+              <CartesianGrid />
+            </MyChart>
+          </RechartsThemeProvider>,
+        );
+        const bgRect = getBgRect(container);
+        expect(bgRect).not.toBe(null);
+        expect(bgRect?.getAttribute('fill')).toBe('lime');
+        expect(bgRect?.getAttribute('fill-opacity')).toBe('0.5');
+      });
+    });
+
+    describe('when defined as both a prop and a theme', () => {
+      it('should follow the prop fill', () => {
+        const { container } = rechartsTestRender(
+          <RechartsThemeProvider value={{ grid: { fill: 'red' } }}>
+            <MyChart>
+              <CartesianGrid fill="gold" />
+            </MyChart>
+          </RechartsThemeProvider>,
+        );
+        const bgRect = getBgRect(container);
+        expect(bgRect).not.toBe(null);
+        expect(bgRect?.getAttribute('fill')).toBe('gold');
+      });
+
+      it('should follow the prop fillOpacity when combined with fill', () => {
+        const { container } = rechartsTestRender(
+          <RechartsThemeProvider value={{ grid: { fill: 'red', fillOpacity: 0.1 } }}>
+            <MyChart>
+              <CartesianGrid fill="gold" fillOpacity={0.9} />
+            </MyChart>
+          </RechartsThemeProvider>,
+        );
+        const bgRect = getBgRect(container);
+        expect(bgRect).not.toBe(null);
+        expect(bgRect?.getAttribute('fill')).toBe('gold');
+        expect(bgRect?.getAttribute('fill-opacity')).toBe('0.9');
       });
     });
   });
