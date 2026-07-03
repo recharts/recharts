@@ -150,6 +150,14 @@ export class ProjectDocReader implements DocReader {
     return this.getPublicSymbolNames(SymbolFlags.Variable | SymbolFlags.Function);
   }
 
+  /**
+   * stable is the opposite of experimental
+   */
+  isStable(exportName: string): boolean {
+    const jsdoc: JSDocMeta | undefined = this.getComponentJsDocMeta(exportName);
+    return !hasTag(jsdoc, 'experimental');
+  }
+
   getAllExportedNames(): ReadonlyArray<string> {
     return this.getPublicSymbolNames();
   }

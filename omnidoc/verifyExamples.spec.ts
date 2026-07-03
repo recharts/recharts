@@ -1,5 +1,5 @@
-import { describe, test, expect } from 'vitest';
-import { hasTag, JSDocMeta, ProjectDocReader } from './readProject';
+import { describe, expect, test } from 'vitest';
+import { ProjectDocReader } from './readProject';
 import { ExampleReader } from './readExamples';
 
 describe('Documentation Examples Coverage', () => {
@@ -8,10 +8,7 @@ describe('Documentation Examples Coverage', () => {
 
   // Get all exports, then filter away experimental
   const allExports = projectReader.getPublicSymbolNames();
-  const allStableExports = allExports.filter(component => {
-    const jsdoc: JSDocMeta | undefined = projectReader.getComponentJsDocMeta(component);
-    return !hasTag(jsdoc, 'experimental');
-  });
+  const allStableExports = allExports.filter(component => projectReader.isStable(component));
   const components = new Set(projectReader.getPublicComponentNames());
 
   /*
