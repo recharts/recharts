@@ -498,6 +498,13 @@ export function CartesianGrid(props: Props) {
 
   const theme = useRechartsTheme();
 
+  const themeProps: Props = {
+    stroke: propsIncludingDefaults.stroke ?? theme.grid.stroke,
+    strokeWidth: propsIncludingDefaults.strokeWidth ?? theme.grid.strokeWidth,
+    strokeOpacity: propsIncludingDefaults.strokeOpacity ?? theme.grid.strokeOpacity,
+    strokeDasharray: propsIncludingDefaults.strokeDasharray ?? theme.grid.strokeDasharray,
+  };
+
   if (!isPositiveNumber(width) || !isPositiveNumber(height) || !isNumber(x) || !isNumber(y)) {
     return null;
   }
@@ -588,10 +595,7 @@ export function CartesianGrid(props: Props) {
 
         <HorizontalGridLines
           {...propsIncludingDefaults}
-          stroke={propsIncludingDefaults.stroke ?? theme.grid.stroke}
-          strokeWidth={propsIncludingDefaults.strokeWidth ?? theme.grid.strokeWidth}
-          strokeOpacity={propsIncludingDefaults.strokeOpacity ?? theme.grid.strokeOpacity}
-          strokeDasharray={propsIncludingDefaults.strokeDasharray ?? theme.grid.strokeDasharray}
+          {...themeProps}
           offset={offset}
           horizontalPoints={horizontalPoints}
           xAxis={xAxis}
@@ -600,10 +604,7 @@ export function CartesianGrid(props: Props) {
 
         <VerticalGridLines
           {...propsIncludingDefaults}
-          stroke={propsIncludingDefaults.stroke ?? theme.grid.stroke}
-          strokeWidth={propsIncludingDefaults.strokeWidth ?? theme.grid.strokeWidth}
-          strokeOpacity={propsIncludingDefaults.strokeOpacity ?? theme.grid.strokeOpacity}
-          strokeDasharray={propsIncludingDefaults.strokeDasharray ?? theme.grid.strokeDasharray}
+          {...themeProps}
           offset={offset}
           verticalPoints={verticalPoints}
           xAxis={xAxis}

@@ -91,6 +91,8 @@ export class ProjectDocReader implements DocReader {
 
   private componentNamesCache: ReadonlyArray<string> | null = null;
 
+  private stabilityCache: Map<string, boolean> = new Map();
+
   constructor() {
     this.project = new Project({
       tsConfigFilePath: 'tsconfig.json',
@@ -154,8 +156,13 @@ export class ProjectDocReader implements DocReader {
    * stable is the opposite of experimental
    */
   isStable(exportName: string): boolean {
+    if (this.stabilityCache.has(exportName)) {
+      return this.stabilityCache.get(exportName)!;
+    }
     const jsdoc: JSDocMeta | undefined = this.getComponentJsDocMeta(exportName);
-    return !hasTag(jsdoc, 'experimental');
+    const result = !hasTag(jsdoc, 'experimental');
+    this.stabilityCache.set(exportName, result);
+    return result;
   }
 
   getAllExportedNames(): ReadonlyArray<string> {
