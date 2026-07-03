@@ -138,7 +138,8 @@ interface XAxisProps<DataPointType = any, DataValueType = any> extends Omit<
    * - `false`: Do not render any tick labels.
    * - `true`: Render tick labels with default settings.
    * - `object`: An object of props to be merged into the internally calculated tick props.
-   * - `ReactElement`: A custom React element to be used as the tick label.
+   * - `ReactElement`: A custom SVG React element to be used as the tick label.
+   *   HTML elements such as `<div>` are not valid inside the chart SVG and may trigger React DOM warnings.
    * - `function`: A function that returns a React element for custom rendering of tick labels.
    *
    * @defaultValue true

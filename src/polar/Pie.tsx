@@ -332,7 +332,8 @@ interface PieProps<DataPointType = any, DataValueType = any>
    * - `false`: no labels are rendered;
    * - `object` that has `position` prop: the props of LabelList component;
    * - `object` that does not have `position` prop: the props of a custom Pie label (similar to Label with position "outside"); this variant supports `labelLine`
-   * - `ReactElement`: a custom label element;
+   * - `ReactElement`: a custom SVG label element, such as `<text>` or `<g>`.
+   *   HTML elements such as `<div>` are not valid inside the chart SVG and may trigger React DOM warnings.
    * - `function`: a render function of custom label.
    *
    * Also see the `labelLine` prop that draws a line connecting each label to the corresponding sector.

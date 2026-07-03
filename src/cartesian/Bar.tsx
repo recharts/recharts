@@ -329,7 +329,8 @@ interface BarProps<DataPointType, ValueAxisType> extends DataConsumer<DataPointT
    * - `true`: renders default labels;
    * - `false`: no labels are rendered;
    * - `object`: the props of LabelList component;
-   * - `ReactElement`: a custom label element;
+   * - `ReactElement`: a custom SVG label element, such as `<text>` or `<g>`.
+   *   HTML elements such as `<div>` are not valid inside the chart SVG and may trigger React DOM warnings.
    * - `function`: a render function of custom label.
    *
    * @defaultValue false
