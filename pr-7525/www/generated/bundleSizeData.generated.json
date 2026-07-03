@@ -1,32 +1,32 @@
 {
   "treemap": {
     "examplePath": "www/src/views/IndexView/IndexLineChart.tsx",
-    "totalSize": 812952,
-    "totalSizeLabel": "793.90 KB",
+    "totalSize": 812674,
+    "totalSizeLabel": "793.63 KB",
     "moduleCount": 317,
-    "generatedAt": "2026-07-03T12:25:27.775Z",
+    "generatedAt": "2026-07-03T15:06:25.014Z",
     "stages": [
       {
         "stage": "es6-folder",
-        "bytes": 1272443,
+        "bytes": 1271689,
         "humanReadableSize": "1.21 MB",
         "reductionFromBaselinePercent": 0
       },
       {
         "stage": "tree-shaken",
-        "bytes": 815679,
-        "humanReadableSize": "796.56 KB",
+        "bytes": 815401,
+        "humanReadableSize": "796.29 KB",
         "reductionFromBaselinePercent": 0
       },
       {
         "stage": "minified",
-        "bytes": 280980,
-        "humanReadableSize": "274.39 KB",
-        "reductionFromBaselinePercent": 65.55
+        "bytes": 280807,
+        "humanReadableSize": "274.23 KB",
+        "reductionFromBaselinePercent": 65.56
       },
       {
         "stage": "minified+gzip",
-        "bytes": 91889,
+        "bytes": 91895,
         "humanReadableSize": "89.74 KB",
         "reductionFromBaselinePercent": 88.73
       }
@@ -34,12 +34,12 @@
     "tree": {
       "name": "bundle",
       "fullPath": "bundle",
-      "value": 812952,
+      "value": 812674,
       "children": [
         {
           "name": "src",
           "fullPath": "src",
-          "value": 455884,
+          "value": 455606,
           "children": [
             {
               "name": "state",
@@ -665,7 +665,7 @@
             {
               "name": "cartesian",
               "fullPath": "src/cartesian",
-              "value": 76497,
+              "value": 76219,
               "children": [
                 {
                   "name": "Line.tsx",
@@ -680,7 +680,7 @@
                 {
                   "name": "CartesianGrid.tsx",
                   "fullPath": "src/cartesian/CartesianGrid.tsx",
-                  "value": 12001
+                  "value": 11723
                 },
                 {
                   "name": "YAxis.tsx",
@@ -2277,32 +2277,32 @@
   },
   "sunburst": {
     "examplePath": "www/src/views/IndexView/IndexLineChart.tsx",
-    "totalSize": 812952,
-    "totalSizeLabel": "793.90 KB",
+    "totalSize": 812674,
+    "totalSizeLabel": "793.63 KB",
     "moduleCount": 317,
-    "generatedAt": "2026-07-03T12:25:29.673Z",
+    "generatedAt": "2026-07-03T15:06:23.082Z",
     "stages": [
       {
         "stage": "es6-folder",
-        "bytes": 1272443,
+        "bytes": 1271689,
         "humanReadableSize": "1.21 MB",
         "reductionFromBaselinePercent": 0
       },
       {
         "stage": "tree-shaken",
-        "bytes": 815679,
-        "humanReadableSize": "796.56 KB",
+        "bytes": 815401,
+        "humanReadableSize": "796.29 KB",
         "reductionFromBaselinePercent": 0
       },
       {
         "stage": "minified",
-        "bytes": 280980,
-        "humanReadableSize": "274.39 KB",
-        "reductionFromBaselinePercent": 65.55
+        "bytes": 280807,
+        "humanReadableSize": "274.23 KB",
+        "reductionFromBaselinePercent": 65.56
       },
       {
         "stage": "minified+gzip",
-        "bytes": 91889,
+        "bytes": 91895,
         "humanReadableSize": "89.74 KB",
         "reductionFromBaselinePercent": 88.73
       }
@@ -2310,12 +2310,12 @@
     "tree": {
       "name": "bundle",
       "fullPath": "bundle",
-      "value": 812952,
+      "value": 812674,
       "children": [
         {
           "name": "src",
           "fullPath": "src",
-          "value": 455884,
+          "value": 455606,
           "children": [
             {
               "name": "state",
@@ -2941,7 +2941,7 @@
             {
               "name": "cartesian",
               "fullPath": "src/cartesian",
-              "value": 76497,
+              "value": 76219,
               "children": [
                 {
                   "name": "Line.tsx",
@@ -2956,7 +2956,7 @@
                 {
                   "name": "CartesianGrid.tsx",
                   "fullPath": "src/cartesian/CartesianGrid.tsx",
-                  "value": 12001
+                  "value": 11723
                 },
                 {
                   "name": "YAxis.tsx",
