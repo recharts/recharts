@@ -38,6 +38,18 @@ export function getTagText(jsDoc: JSDocMeta | undefined, tagName: string): { tex
   return undefined;
 }
 
+export function hasTag(jsDoc: JSDocMeta | undefined, tagName: string): boolean {
+  if (jsDoc == null) {
+    return false;
+  }
+  for (const [name] of jsDoc.tags) {
+    if (name === tagName) {
+      return true;
+    }
+  }
+  return false;
+}
+
 /**
  * Get all tags with a specific name (useful for tags that can appear multiple times like @example, @consumes, @provides)
  */
