@@ -17,7 +17,7 @@
  * calculate such an identifier.
  */
 
-import { DataKey } from '..';
+import { DataKey } from '../util/types';
 
 export type ThemableItem = {
   dataKey: DataKey<unknown>;

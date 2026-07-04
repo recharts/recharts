@@ -20,3 +20,8 @@ export function ColorModeWatcher(props: { render: (state: ColorModeState) => Rea
   const state = useSyncExternalStore(store.subscribe, store.getSnapshot, store.getServerSnapshot);
   return props.render(state);
 }
+
+export function useColorMode(): ColorModeState {
+  const store = useColorModeStore();
+  return useSyncExternalStore(store.subscribe, store.getSnapshot, store.getServerSnapshot);
+}

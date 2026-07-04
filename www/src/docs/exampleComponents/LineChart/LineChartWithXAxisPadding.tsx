@@ -55,7 +55,7 @@ export default function Example() {
       responsive
       data={data}
     >
-      <CartesianGrid strokeDasharray="3 3" stroke="var(--color-border-3)" />
+      <CartesianGrid strokeDasharray="3 3" />
       <XAxis dataKey="name" padding={{ left: 30, right: 30 }} stroke="var(--color-text-3)" />
       <YAxis width="auto" stroke="var(--color-text-3)" />
       <Tooltip

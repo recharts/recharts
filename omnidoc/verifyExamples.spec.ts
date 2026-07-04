@@ -1,4 +1,4 @@
-import { describe, test, expect } from 'vitest';
+import { describe, expect, test } from 'vitest';
 import { ProjectDocReader } from './readProject';
 import { ExampleReader } from './readExamples';
 
@@ -6,8 +6,9 @@ describe('Documentation Examples Coverage', () => {
   const projectReader = new ProjectDocReader();
   const exampleReader = new ExampleReader();
 
-  // Get all exports
+  // Get all exports, then filter away experimental
   const allExports = projectReader.getPublicSymbolNames();
+  const allStableExports = allExports.filter(component => projectReader.isStable(component));
   const components = new Set(projectReader.getPublicComponentNames());
 
   /*
@@ -257,7 +258,7 @@ describe('Documentation Examples Coverage', () => {
     });
   });
 
-  describe.each(allExports.filter(name => !exportsThatNeedExamples.includes(name)))('Export: %s', exportName => {
+  describe.each(allStableExports.filter(name => !exportsThatNeedExamples.includes(name)))('Export: %s', exportName => {
     test('has at least one example usage', () => {
       const examples = exampleReader.getExamples(exportName);
       expect(examples.length, `No examples found for ${exportName}`).toBeGreaterThan(0);

@@ -18,6 +18,7 @@ import { svgPropertiesNoEvents } from '../util/svgPropertiesNoEvents';
 import { isPositiveNumber } from '../util/isWellBehavedNumber';
 import { ZIndexable, ZIndexLayer } from '../zIndex/ZIndexLayer';
 import { DefaultZIndexes } from '../zIndex/DefaultZIndexes';
+import { useRechartsTheme } from '../theme/RechartsThemeContext';
 
 /**
  * The <CartesianGrid horizontal
@@ -118,7 +119,6 @@ interface CartesianGridProps extends ZIndexable {
   /**
    * The background color used to fill the space between grid lines
    *
-   * @defaultValue none
    * @example <CartesianGrid fill="red" />
    * @example <CartesianGrid fill="#ccc" />
    */
@@ -185,7 +185,7 @@ interface CartesianGridProps extends ZIndexable {
    * @example <CartesianGrid strokeDasharray="5 5 1 5" />
    * @see {@link https://developer.mozilla.org/en-US/docs/Web/SVG/Attribute/stroke-dasharray stroke-dasharray on MDN}
    */
-  strokeDasharray?: string | number[];
+  strokeDasharray?: string | number | ReadonlyArray<number>;
   /**
    * The id of XAxis which is corresponding to the data. Required when there are multiple XAxes.
    * @defaultValue 0
@@ -202,7 +202,8 @@ interface CartesianGridProps extends ZIndexable {
   zIndex?: number;
 }
 
-type AcceptedSvgProps = Omit<SVGProps<SVGLineElement>, 'offset'>;
+// We exclude strokeDasharray here because Recharts allows array of numbers while DOM does not
+type AcceptedSvgProps = Omit<SVGProps<SVGLineElement>, 'offset' | 'strokeDasharray'>;
 
 export type Props = AcceptedSvgProps & CartesianGridProps;
 
@@ -262,7 +263,21 @@ function LineItem({ option, lineItemProps }: { option: GridLineType; lineItemPro
   } else {
     const { x1, y1, x2, y2, key, ...others } = lineItemProps;
     const { offset: __, ...restOfFilteredProps } = svgPropertiesNoEvents(others) ?? {};
-    lineItem = <line {...restOfFilteredProps} x1={x1} y1={y1} x2={x2} y2={y2} fill="none" key={key} />;
+    const strokeDasharray: string | number | undefined = Array.isArray(restOfFilteredProps.strokeDasharray)
+      ? restOfFilteredProps.strokeDasharray.join(',')
+      : restOfFilteredProps.strokeDasharray;
+    lineItem = (
+      <line
+        {...restOfFilteredProps}
+        strokeDasharray={strokeDasharray}
+        x1={x1}
+        y1={y1}
+        x2={x2}
+        y2={y2}
+        fill="none"
+        key={key}
+      />
+    );
   }
 
   return lineItem;
@@ -444,8 +459,6 @@ export const defaultCartesianGridProps = {
   // The abscissas of vertical grid lines
   verticalPoints: [],
 
-  stroke: '#ccc',
-  fill: 'none',
   // The fill of colors of grid lines
   verticalFill: [],
   horizontalFill: [],
@@ -482,6 +495,15 @@ export function CartesianGrid(props: Props) {
   const yAxis: AxisPropsForCartesianGridTicksGeneration | undefined = useAppSelector(state =>
     selectAxisPropsNeededForCartesianGridTicksGenerator(state, 'yAxis', yAxisId, isPanorama),
   );
+
+  const theme = useRechartsTheme();
+
+  const themeProps: Props = {
+    stroke: propsIncludingDefaults.stroke ?? theme.grid.stroke,
+    strokeWidth: propsIncludingDefaults.strokeWidth ?? theme.grid.strokeWidth,
+    strokeOpacity: propsIncludingDefaults.strokeOpacity ?? theme.grid.strokeOpacity,
+    strokeDasharray: propsIncludingDefaults.strokeDasharray ?? theme.grid.strokeDasharray,
+  };
 
   if (!isPositiveNumber(width) || !isPositiveNumber(height) || !isNumber(x) || !isNumber(y)) {
     return null;
@@ -559,8 +581,8 @@ export function CartesianGrid(props: Props) {
     <ZIndexLayer zIndex={propsIncludingDefaults.zIndex}>
       <g className="recharts-cartesian-grid">
         <Background
-          fill={propsIncludingDefaults.fill}
-          fillOpacity={propsIncludingDefaults.fillOpacity}
+          fill={propsIncludingDefaults.fill ?? theme.grid.fill}
+          fillOpacity={propsIncludingDefaults.fillOpacity ?? theme.grid.fillOpacity}
           x={propsIncludingDefaults.x}
           y={propsIncludingDefaults.y}
           width={propsIncludingDefaults.width}
@@ -573,6 +595,7 @@ export function CartesianGrid(props: Props) {
 
         <HorizontalGridLines
           {...propsIncludingDefaults}
+          {...themeProps}
           offset={offset}
           horizontalPoints={horizontalPoints}
           xAxis={xAxis}
@@ -581,6 +604,7 @@ export function CartesianGrid(props: Props) {
 
         <VerticalGridLines
           {...propsIncludingDefaults}
+          {...themeProps}
           offset={offset}
           verticalPoints={verticalPoints}
           xAxis={xAxis}

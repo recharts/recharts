@@ -709,6 +709,9 @@ async function main() {
   const generatedComponents: string[] = [];
 
   for (const componentName of componentsToGenerate) {
+    if (!projectReader.isStable(componentName)) {
+      continue;
+    }
     try {
       const apiDoc = await generateApiDoc(componentName, projectReader, exampleReader, contextMap);
       const outputPath = path.join(OUTPUT_DIR, `${componentName}API.tsx`);

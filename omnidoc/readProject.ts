@@ -38,6 +38,18 @@ export function getTagText(jsDoc: JSDocMeta | undefined, tagName: string): { tex
   return undefined;
 }
 
+export function hasTag(jsDoc: JSDocMeta | undefined, tagName: string): boolean {
+  if (jsDoc == null) {
+    return false;
+  }
+  for (const [name] of jsDoc.tags) {
+    if (name === tagName) {
+      return true;
+    }
+  }
+  return false;
+}
+
 /**
  * Get all tags with a specific name (useful for tags that can appear multiple times like @example, @consumes, @provides)
  */
@@ -78,6 +90,8 @@ export class ProjectDocReader implements DocReader {
   private symbolNamesCache: ReadonlyArray<string> | null = null;
 
   private componentNamesCache: ReadonlyArray<string> | null = null;
+
+  private stabilityCache: Map<string, boolean> = new Map();
 
   constructor() {
     this.project = new Project({
@@ -136,6 +150,19 @@ export class ProjectDocReader implements DocReader {
 
   getAllRuntimeExportedNames(): ReadonlyArray<string> {
     return this.getPublicSymbolNames(SymbolFlags.Variable | SymbolFlags.Function);
+  }
+
+  /**
+   * stable is the opposite of experimental
+   */
+  isStable(exportName: string): boolean {
+    if (this.stabilityCache.has(exportName)) {
+      return this.stabilityCache.get(exportName)!;
+    }
+    const jsdoc: JSDocMeta | undefined = this.getComponentJsDocMeta(exportName);
+    const result = !hasTag(jsdoc, 'experimental');
+    this.stabilityCache.set(exportName, result);
+    return result;
   }
 
   getAllExportedNames(): ReadonlyArray<string> {
