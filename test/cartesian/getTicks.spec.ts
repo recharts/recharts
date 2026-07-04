@@ -221,14 +221,12 @@ describe('getTicks', () => {
     ])(
       `equidistantPreserveStart spaces nicely for %s and tick step of %s`,
       (tickValues, tickWidthStep, expectedResult) => {
-        const ticks: ReadonlyArray<TickItem> = tickValues.map(
-          (value, index): TickItem => ({
-            value,
-            coordinate: tickWidthStep * (index + 1),
-            index,
-            offset: 0,
-          }),
-        );
+        const ticks: ReadonlyArray<TickItem> = tickValues.map((value, index): TickItem => ({
+          value,
+          coordinate: tickWidthStep * (index + 1),
+          index,
+          offset: 0,
+        }));
         const input = {
           ...EXAMPLE_INPUT,
           interval: 'equidistantPreserveStart' as const,

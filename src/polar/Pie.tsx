@@ -112,10 +112,7 @@ interface PieDef {
 }
 
 type PieLabelLine =
-  | ReactElement<SVGElement>
-  | ((props: any) => ReactElement<SVGElement>)
-  | SVGProps<SVGPathElement>
-  | boolean;
+  ReactElement<SVGElement> | ((props: any) => ReactElement<SVGElement>) | SVGProps<SVGPathElement> | boolean;
 
 interface PieLabelExtraProps {
   stroke: string;
@@ -895,24 +892,22 @@ function PieLabelListProvider({
     if (!showLabels || !sectors) {
       return [];
     }
-    return sectors.map(
-      (entry): PolarLabelListEntry => ({
-        value: entry.value,
-        payload: entry.payload,
+    return sectors.map((entry): PolarLabelListEntry => ({
+      value: entry.value,
+      payload: entry.payload,
+      clockWise: false,
+      parentViewBox: undefined,
+      viewBox: {
+        cx: entry.cx,
+        cy: entry.cy,
+        innerRadius: entry.innerRadius,
+        outerRadius: entry.outerRadius,
+        startAngle: entry.startAngle,
+        endAngle: entry.endAngle,
         clockWise: false,
-        parentViewBox: undefined,
-        viewBox: {
-          cx: entry.cx,
-          cy: entry.cy,
-          innerRadius: entry.innerRadius,
-          outerRadius: entry.outerRadius,
-          startAngle: entry.startAngle,
-          endAngle: entry.endAngle,
-          clockWise: false,
-        },
-        fill: entry.fill,
-      }),
-    );
+      },
+      fill: entry.fill,
+    }));
   }, [sectors, showLabels]);
   return (
     <PolarLabelListContextProvider value={showLabels ? labelListEntries : undefined}>

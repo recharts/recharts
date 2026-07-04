@@ -210,9 +210,9 @@ For prereleases, use a semver prerelease identifier in `package.json`, for examp
 
 1. Update `package.json` to the prerelease version. For example:
 
- ```sh
+```sh
 npm version 3.8.2-canary.0
- ```
+```
 
 2. Push the version commit and tag
 3. Create a GitHub prerelease with the matching tag, for example `v3.8.2-alpha.0` or `v3.8.2-canary.0`

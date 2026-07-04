@@ -31,6 +31,7 @@ Playwright component testing (CT) allows us to render React components in isolat
 There is one specialty that is different from other testing frameworks. Playwright CT does not support components declared inside the test file. Instead it requires us to define the component in a separate file and import it.
 
 Example:
+
 ```tsx
 // file: test-vr/tests/Legend.spec-vr.tsx
 import * as React from 'react';
@@ -71,6 +72,7 @@ Note that this may take 20+ minutes to run (because Recharts has almost 1000 VR 
 ```sh
 npm run test-vr -- --grep=Legend
 ```
+
 Which will run only tests with "Legend" in their name. You can also specify the path to a specific test file:
 
 ```sh

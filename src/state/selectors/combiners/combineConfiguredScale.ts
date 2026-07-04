@@ -33,10 +33,7 @@ function getD3ScaleFromType<Domain extends CategoricalDomainItem = CategoricalDo
  */
 export function combineConfiguredScaleInternal(
   scale:
-    | CustomScaleDefinition
-    | CustomScaleDefinition<string>
-    | CustomScaleDefinition<number>
-    | CustomScaleDefinition<Date>,
+    CustomScaleDefinition | CustomScaleDefinition<string> | CustomScaleDefinition<number> | CustomScaleDefinition<Date>,
   axisDomain: ReadonlyArray<CategoricalDomainItem>,
   axisRange: AxisRange,
 ): CustomScaleDefinition;

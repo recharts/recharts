@@ -26,19 +26,19 @@ export type TypedDataKey<DataPointType = any, DataValueType = unknown> =
       string extends keyof DataPointType
       ? string | number | ((obj: DataPointType) => DataValueType)
       : /*
-           * Otherwise, we extract keys from T whose values extend R.
-           * This allows for strongly typed access to known properties.
-           * This part also enables Intellisense/autocomplete for known keys.
-           */
-          | {
-              [K in keyof DataPointType]: DataPointType[K] extends DataValueType
-                ? K extends string | number
-                  ? K
-                  : never
-                : never;
-            }[keyof DataPointType]
-          /*
-           * Additionally, if T is an array or readonly array, we allow numeric string keys for convenience.
-           */
-          | (DataPointType extends ReadonlyArray<infer E> ? (E extends DataValueType ? `${number}` : never) : never)
-          | ((obj: DataPointType) => DataValueType);
+         * Otherwise, we extract keys from T whose values extend R.
+         * This allows for strongly typed access to known properties.
+         * This part also enables Intellisense/autocomplete for known keys.
+         */
+        | {
+            [K in keyof DataPointType]: DataPointType[K] extends DataValueType
+              ? K extends string | number
+                ? K
+                : never
+              : never;
+          }[keyof DataPointType]
+        /*
+         * Additionally, if T is an array or readonly array, we allow numeric string keys for convenience.
+         */
+        | (DataPointType extends ReadonlyArray<infer E> ? (E extends DataValueType ? `${number}` : never) : never)
+        | ((obj: DataPointType) => DataValueType);

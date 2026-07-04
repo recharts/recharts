@@ -7,11 +7,13 @@ This folder contains tools for managing and maintaining documentation consistenc
 ### Documentation Consistency Tests (`omnidoc.spec.ts`)
 
 Automated tests that verify documentation is synchronized across:
+
 - TypeScript source code comments
 - API documentation in `www/src/docs/api`
 - Storybook documentation
 
 Run with:
+
 ```shell
 npm run test-omnidoc
 ```
@@ -19,6 +21,7 @@ npm run test-omnidoc
 ### API Documentation Generator (`generateApiDoc.ts`)
 
 Auto-generates API documentation files from TypeScript source code. This tool:
+
 - Reads TypeScript comments and type definitions from source code
 - Generates API documentation in the `www/src/docs/api` folder
 - Only generates `en-US` descriptions (from TypeScript docs)
@@ -27,16 +30,19 @@ Auto-generates API documentation files from TypeScript source code. This tool:
 #### Usage
 
 Generate documentation for specific components:
+
 ```shell
 npm run omnidoc [component1] [component2] ...
 ```
 
 Generate documentation for all allowlisted components:
+
 ```shell
 npm run omnidoc
 ```
 
 Examples:
+
 ```shell
 npm run omnidoc
 npm run omnidoc CartesianGrid
@@ -46,6 +52,7 @@ npm run omnidoc XAxis YAxis ZAxis
 #### After Generation
 
 After generating API documentation:
+
 1. Review the generated files for correctness
 2. Update `www/src/docs/api/index.ts` to import and export the new API docs
 3. Run `npm run test-omnidoc` to verify consistency

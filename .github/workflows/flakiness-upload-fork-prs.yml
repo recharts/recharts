@@ -2,7 +2,7 @@ name: Upload Flakiness.io report (fork PRs)
 on:
   workflow_run:
     # Must match the name(s) of workflows that produce flakiness-report artifacts
-    workflows: ["Build and test"]
+    workflows: ['Build and test']
     types: [completed]
 
 jobs:
