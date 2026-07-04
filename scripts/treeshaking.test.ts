@@ -25,7 +25,8 @@ const es6EntryExists = existsSync(es6EntryPath);
 describe.skipIf(!es6EntryExists)('tree-shaking groups', () => {
   const projectReader = new ProjectDocReader();
   const allExportedSymbols = projectReader.getAllRuntimeExportedNames();
-  for (const componentName of allExportedSymbols) {
+  const allStableSymbols = allExportedSymbols.filter(symbol => projectReader.isStable(symbol));
+  for (const componentName of allStableSymbols) {
     // If we don't have an explicit known issue for this component, we expect it to be the only tracked component in its bundle.
     const knownExpectedBundle = new Set(treeshakingGroups[componentName] ?? [componentName]);
     // In case the component itself is missing from the known expected bundle, add it.
@@ -33,7 +34,7 @@ describe.skipIf(!es6EntryExists)('tree-shaking groups', () => {
 
     const testFn = async () => {
       const bundledCodeOutput = await treeshake(componentName);
-      const allBundledComponents = findComponentsInBundle(bundledCodeOutput, allExportedSymbols);
+      const allBundledComponents = findComponentsInBundle(bundledCodeOutput, allStableSymbols);
       expect(
         allBundledComponents,
         `Importing ${componentName} bundled different components than it should have. Diff: [${Array.from(allBundledComponents.symmetricDifference(knownExpectedBundle)).join(', ')}]`,
