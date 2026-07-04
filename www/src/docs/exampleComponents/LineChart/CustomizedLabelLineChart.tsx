@@ -79,7 +79,7 @@ const CustomizedLabelLineChart = () => {
         bottom: 10,
       }}
     >
-      <CartesianGrid strokeDasharray="3 3" stroke="var(--color-border-3)" />
+      <CartesianGrid strokeDasharray="3 3" />
       <XAxis dataKey="name" height={60} tick={CustomizedAxisTick} />
       <YAxis width="auto" />
       <Tooltip

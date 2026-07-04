@@ -33,7 +33,7 @@ const series = [
 export default function LineChartHasMultiSeries() {
   return (
     <LineChart style={{ width: '100%', maxWidth: '700px', maxHeight: '70vh', aspectRatio: 1.618 }} responsive>
-      <CartesianGrid strokeDasharray="3 3" stroke="var(--color-border-3)" />
+      <CartesianGrid strokeDasharray="3 3" />
       <XAxis dataKey="category" type="category" allowDuplicatedCategory={false} stroke="var(--color-text-3)" />
       <YAxis dataKey="value" width="auto" stroke="var(--color-text-3)" />
       <Tooltip

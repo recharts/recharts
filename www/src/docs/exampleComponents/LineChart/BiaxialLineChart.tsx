@@ -61,7 +61,7 @@ export default function Example() {
         bottom: 5,
       }}
     >
-      <CartesianGrid strokeDasharray="3 3" stroke="var(--color-border-3)" />
+      <CartesianGrid strokeDasharray="3 3" />
       <XAxis dataKey="name" stroke="var(--color-text-3)" />
       <YAxis yAxisId="left" width="auto" stroke="var(--color-text-3)" />
       <YAxis yAxisId="right" orientation="right" width="auto" stroke="var(--color-text-3)" />

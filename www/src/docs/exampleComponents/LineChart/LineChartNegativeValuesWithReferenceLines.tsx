@@ -65,7 +65,7 @@ export default function LineChartNegativeValuesWithReferenceLines() {
         bottom: 5,
       }}
     >
-      <CartesianGrid strokeDasharray="3 3" stroke="var(--color-border-3)" />
+      <CartesianGrid strokeDasharray="3 3" />
 
       <YAxis
         dataKey="y"

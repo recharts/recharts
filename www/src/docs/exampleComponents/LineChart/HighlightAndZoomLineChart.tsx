@@ -153,7 +153,7 @@ const HighlightAndZoomLineChart = () => {
         onMouseMove={onMouseMove}
         onMouseUp={zoom}
       >
-        <CartesianGrid strokeDasharray="3 3" stroke="var(--color-border-3)" />
+        <CartesianGrid strokeDasharray="3 3" />
         <XAxis allowDataOverflow dataKey="name" domain={[left, right]} type="number" stroke="var(--color-text-3)" />
         <YAxis
           allowDataOverflow
