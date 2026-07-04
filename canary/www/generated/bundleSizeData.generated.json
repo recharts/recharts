@@ -1,45 +1,45 @@
 {
   "treemap": {
     "examplePath": "www/src/views/IndexView/IndexLineChart.tsx",
-    "totalSize": 812105,
-    "totalSizeLabel": "793.07 KB",
-    "moduleCount": 315,
-    "generatedAt": "2026-07-04T03:17:15.921Z",
+    "totalSize": 813468,
+    "totalSizeLabel": "794.40 KB",
+    "moduleCount": 317,
+    "generatedAt": "2026-07-04T11:35:16.843Z",
     "stages": [
       {
         "stage": "es6-folder",
-        "bytes": 1269106,
+        "bytes": 1272051,
         "humanReadableSize": "1.21 MB",
         "reductionFromBaselinePercent": 0
       },
       {
         "stage": "tree-shaken",
-        "bytes": 814828,
-        "humanReadableSize": "795.73 KB",
+        "bytes": 816195,
+        "humanReadableSize": "797.07 KB",
         "reductionFromBaselinePercent": 0
       },
       {
         "stage": "minified",
-        "bytes": 280775,
-        "humanReadableSize": "274.19 KB",
-        "reductionFromBaselinePercent": 65.54
+        "bytes": 281149,
+        "humanReadableSize": "274.56 KB",
+        "reductionFromBaselinePercent": 65.55
       },
       {
         "stage": "minified+gzip",
-        "bytes": 91893,
-        "humanReadableSize": "89.74 KB",
-        "reductionFromBaselinePercent": 88.72
+        "bytes": 91994,
+        "humanReadableSize": "89.84 KB",
+        "reductionFromBaselinePercent": 88.73
       }
     ],
     "tree": {
       "name": "bundle",
       "fullPath": "bundle",
-      "value": 812105,
+      "value": 813468,
       "children": [
         {
           "name": "src",
           "fullPath": "src",
-          "value": 454243,
+          "value": 455606,
           "children": [
             {
               "name": "state",
@@ -665,7 +665,7 @@
             {
               "name": "cartesian",
               "fullPath": "src/cartesian",
-              "value": 75574,
+              "value": 76219,
               "children": [
                 {
                   "name": "Line.tsx",
@@ -680,7 +680,7 @@
                 {
                   "name": "CartesianGrid.tsx",
                   "fullPath": "src/cartesian/CartesianGrid.tsx",
-                  "value": 11078
+                  "value": 11723
                 },
                 {
                   "name": "YAxis.tsx",
@@ -979,6 +979,23 @@
               "name": "hooks.ts",
               "fullPath": "src/hooks.ts",
               "value": 1813
+            },
+            {
+              "name": "theme",
+              "fullPath": "src/theme",
+              "value": 718,
+              "children": [
+                {
+                  "name": "legacyTheme.ts",
+                  "fullPath": "src/theme/legacyTheme.ts",
+                  "value": 371
+                },
+                {
+                  "name": "RechartsThemeContext.ts",
+                  "fullPath": "src/theme/RechartsThemeContext.ts",
+                  "value": 347
+                }
+              ]
             },
             {
               "name": "polar",
@@ -2260,45 +2277,45 @@
   },
   "sunburst": {
     "examplePath": "www/src/views/IndexView/IndexLineChart.tsx",
-    "totalSize": 812105,
-    "totalSizeLabel": "793.07 KB",
-    "moduleCount": 315,
-    "generatedAt": "2026-07-04T03:17:13.955Z",
+    "totalSize": 813468,
+    "totalSizeLabel": "794.40 KB",
+    "moduleCount": 317,
+    "generatedAt": "2026-07-04T11:35:14.705Z",
     "stages": [
       {
         "stage": "es6-folder",
-        "bytes": 1269106,
+        "bytes": 1272051,
         "humanReadableSize": "1.21 MB",
         "reductionFromBaselinePercent": 0
       },
       {
         "stage": "tree-shaken",
-        "bytes": 814828,
-        "humanReadableSize": "795.73 KB",
+        "bytes": 816195,
+        "humanReadableSize": "797.07 KB",
         "reductionFromBaselinePercent": 0
       },
       {
         "stage": "minified",
-        "bytes": 280775,
-        "humanReadableSize": "274.19 KB",
-        "reductionFromBaselinePercent": 65.54
+        "bytes": 281149,
+        "humanReadableSize": "274.56 KB",
+        "reductionFromBaselinePercent": 65.55
       },
       {
         "stage": "minified+gzip",
-        "bytes": 91893,
-        "humanReadableSize": "89.74 KB",
-        "reductionFromBaselinePercent": 88.72
+        "bytes": 91994,
+        "humanReadableSize": "89.84 KB",
+        "reductionFromBaselinePercent": 88.73
       }
     ],
     "tree": {
       "name": "bundle",
       "fullPath": "bundle",
-      "value": 812105,
+      "value": 813468,
       "children": [
         {
           "name": "src",
           "fullPath": "src",
-          "value": 454243,
+          "value": 455606,
           "children": [
             {
               "name": "state",
@@ -2924,7 +2941,7 @@
             {
               "name": "cartesian",
               "fullPath": "src/cartesian",
-              "value": 75574,
+              "value": 76219,
               "children": [
                 {
                   "name": "Line.tsx",
@@ -2939,7 +2956,7 @@
                 {
                   "name": "CartesianGrid.tsx",
                   "fullPath": "src/cartesian/CartesianGrid.tsx",
-                  "value": 11078
+                  "value": 11723
                 },
                 {
                   "name": "YAxis.tsx",
@@ -3238,6 +3255,23 @@
               "name": "hooks.ts",
               "fullPath": "src/hooks.ts",
               "value": 1813
+            },
+            {
+              "name": "theme",
+              "fullPath": "src/theme",
+              "value": 718,
+              "children": [
+                {
+                  "name": "legacyTheme.ts",
+                  "fullPath": "src/theme/legacyTheme.ts",
+                  "value": 371
+                },
+                {
+                  "name": "RechartsThemeContext.ts",
+                  "fullPath": "src/theme/RechartsThemeContext.ts",
+                  "value": 347
+                }
+              ]
             },
             {
               "name": "polar",
