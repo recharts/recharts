@@ -1,10 +1,10 @@
 {
   "treemap": {
     "examplePath": "www/src/views/IndexView/IndexLineChart.tsx",
-    "totalSize": 812674,
-    "totalSizeLabel": "793.63 KB",
+    "totalSize": 813468,
+    "totalSizeLabel": "794.40 KB",
     "moduleCount": 317,
-    "generatedAt": "2026-07-03T15:06:25.014Z",
+    "generatedAt": "2026-07-04T01:46:05.529Z",
     "stages": [
       {
         "stage": "es6-folder",
@@ -14,27 +14,27 @@
       },
       {
         "stage": "tree-shaken",
-        "bytes": 815401,
-        "humanReadableSize": "796.29 KB",
+        "bytes": 816195,
+        "humanReadableSize": "797.07 KB",
         "reductionFromBaselinePercent": 0
       },
       {
         "stage": "minified",
-        "bytes": 280807,
-        "humanReadableSize": "274.23 KB",
-        "reductionFromBaselinePercent": 65.56
+        "bytes": 281149,
+        "humanReadableSize": "274.56 KB",
+        "reductionFromBaselinePercent": 65.55
       },
       {
         "stage": "minified+gzip",
-        "bytes": 91895,
-        "humanReadableSize": "89.74 KB",
+        "bytes": 91994,
+        "humanReadableSize": "89.84 KB",
         "reductionFromBaselinePercent": 88.73
       }
     ],
     "tree": {
       "name": "bundle",
       "fullPath": "bundle",
-      "value": 812674,
+      "value": 813468,
       "children": [
         {
           "name": "src",
@@ -1019,7 +1019,7 @@
         {
           "name": "node_modules",
           "fullPath": "node_modules",
-          "value": 355652,
+          "value": 356446,
           "children": [
             {
               "name": "@reduxjs",
@@ -1212,17 +1212,17 @@
             {
               "name": "immer",
               "fullPath": "node_modules/immer",
-              "value": 27396,
+              "value": 28190,
               "children": [
                 {
                   "name": "dist",
                   "fullPath": "node_modules/immer/dist",
-                  "value": 27396,
+                  "value": 28190,
                   "children": [
                     {
                       "name": "immer.mjs",
                       "fullPath": "node_modules/immer/dist/immer.mjs",
-                      "value": 27396
+                      "value": 28190
                     }
                   ]
                 }
@@ -2277,10 +2277,10 @@
   },
   "sunburst": {
     "examplePath": "www/src/views/IndexView/IndexLineChart.tsx",
-    "totalSize": 812674,
-    "totalSizeLabel": "793.63 KB",
+    "totalSize": 813468,
+    "totalSizeLabel": "794.40 KB",
     "moduleCount": 317,
-    "generatedAt": "2026-07-03T15:06:23.082Z",
+    "generatedAt": "2026-07-04T01:46:03.561Z",
     "stages": [
       {
         "stage": "es6-folder",
@@ -2290,27 +2290,27 @@
       },
       {
         "stage": "tree-shaken",
-        "bytes": 815401,
-        "humanReadableSize": "796.29 KB",
+        "bytes": 816195,
+        "humanReadableSize": "797.07 KB",
         "reductionFromBaselinePercent": 0
       },
       {
         "stage": "minified",
-        "bytes": 280807,
-        "humanReadableSize": "274.23 KB",
-        "reductionFromBaselinePercent": 65.56
+        "bytes": 281149,
+        "humanReadableSize": "274.56 KB",
+        "reductionFromBaselinePercent": 65.55
       },
       {
         "stage": "minified+gzip",
-        "bytes": 91895,
-        "humanReadableSize": "89.74 KB",
+        "bytes": 91994,
+        "humanReadableSize": "89.84 KB",
         "reductionFromBaselinePercent": 88.73
       }
     ],
     "tree": {
       "name": "bundle",
       "fullPath": "bundle",
-      "value": 812674,
+      "value": 813468,
       "children": [
         {
           "name": "src",
@@ -3295,7 +3295,7 @@
         {
           "name": "node_modules",
           "fullPath": "node_modules",
-          "value": 355652,
+          "value": 356446,
           "children": [
             {
               "name": "@reduxjs",
@@ -3488,17 +3488,17 @@
             {
               "name": "immer",
               "fullPath": "node_modules/immer",
-              "value": 27396,
+              "value": 28190,
               "children": [
                 {
                   "name": "dist",
                   "fullPath": "node_modules/immer/dist",
-                  "value": 27396,
+                  "value": 28190,
                   "children": [
                     {
                       "name": "immer.mjs",
                       "fullPath": "node_modules/immer/dist/immer.mjs",
-                      "value": 27396
+                      "value": 28190
                     }
                   ]
                 }
