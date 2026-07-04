@@ -1,9 +1,9 @@
 .page.page-api {
-
   .deprecated-message {
     display: flex;
     flex-direction: row;
-    section, p {
+    section,
+    p {
       display: inline;
     }
   }

@@ -234,31 +234,29 @@ export class ProjectDocReader implements DocReader {
     for (const prop of typeProperties) {
       const propName = prop.getName();
       // Skip built-in React properties and methods
-      if (
-        !(
-          !propName.startsWith('UNSAFE_') &&
-          propName !== 'constructor' &&
-          propName !== 'context' &&
-          propName !== 'props' &&
-          propName !== 'refs' &&
-          propName !== 'state' &&
-          propName !== 'contextType' &&
-          propName !== 'defaultProps' &&
-          propName !== 'displayName' &&
-          propName !== 'componentDidCatch' &&
-          propName !== 'componentDidMount' &&
-          propName !== 'componentDidUpdate' &&
-          propName !== 'componentWillMount' &&
-          propName !== 'componentWillReceiveProps' &&
-          propName !== 'componentWillUnmount' &&
-          propName !== 'componentWillUpdate' &&
-          propName !== 'forceUpdate' &&
-          propName !== 'getSnapshotBeforeUpdate' &&
-          propName !== 'render' &&
-          propName !== 'setState' &&
-          propName !== 'shouldComponentUpdate'
-        )
-      ) {
+      if (!(
+        !propName.startsWith('UNSAFE_') &&
+        propName !== 'constructor' &&
+        propName !== 'context' &&
+        propName !== 'props' &&
+        propName !== 'refs' &&
+        propName !== 'state' &&
+        propName !== 'contextType' &&
+        propName !== 'defaultProps' &&
+        propName !== 'displayName' &&
+        propName !== 'componentDidCatch' &&
+        propName !== 'componentDidMount' &&
+        propName !== 'componentDidUpdate' &&
+        propName !== 'componentWillMount' &&
+        propName !== 'componentWillReceiveProps' &&
+        propName !== 'componentWillUnmount' &&
+        propName !== 'componentWillUpdate' &&
+        propName !== 'forceUpdate' &&
+        propName !== 'getSnapshotBeforeUpdate' &&
+        propName !== 'render' &&
+        propName !== 'setState' &&
+        propName !== 'shouldComponentUpdate'
+      )) {
         continue;
       }
 

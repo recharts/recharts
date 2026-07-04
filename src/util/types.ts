@@ -113,17 +113,7 @@ export type SymbolType = 'circle' | 'cross' | 'diamond' | 'square' | 'star' | 't
  * @inline
  */
 export type LegendType =
-  | 'circle'
-  | 'cross'
-  | 'diamond'
-  | 'line'
-  | 'plainline'
-  | 'rect'
-  | 'square'
-  | 'star'
-  | 'triangle'
-  | 'wye'
-  | 'none';
+  'circle' | 'cross' | 'diamond' | 'line' | 'plainline' | 'rect' | 'square' | 'star' | 'triangle' | 'wye' | 'none';
 export type TooltipType = 'none';
 
 export type AllowInDimension = {
@@ -1025,12 +1015,7 @@ export interface RenderableAxisProps<DataPointType, DataValueType> extends BaseA
  * 'equidistantPreserveEnd' selects a number N such that every nTh tick will be shown, ensuring the last tick is always visible.
  */
 export type AxisInterval =
-  | number
-  | 'preserveStart'
-  | 'preserveEnd'
-  | 'preserveStartEnd'
-  | 'equidistantPreserveStart'
-  | 'equidistantPreserveEnd';
+  number | 'preserveStart' | 'preserveEnd' | 'preserveStartEnd' | 'equidistantPreserveStart' | 'equidistantPreserveEnd';
 
 /**
  * Ticks can be any type when the axis is the type of category.

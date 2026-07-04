@@ -398,12 +398,7 @@ async function generateApiDoc(
     // Add default value if available
     if (defaultValue.type === 'known') {
       prop.defaultVal = defaultValue.value as
-        | string
-        | number
-        | boolean
-        | Array<unknown>
-        | Record<string, unknown>
-        | null;
+        string | number | boolean | Array<unknown> | Record<string, unknown> | null;
     }
 
     // Add examples if available

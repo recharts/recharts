@@ -20,10 +20,11 @@ We will use `createSelectorTestCase` helper function to create our test case. Th
 1. Put the chart that reproduces the behavior in a test case using `createSelectorTestCase`. Pick a file in the `test` folder or create a brand new file.
 
 Pseudocode here:
+
 ```tsx
 describe('pseudocode test suite', () => {
   const renderTestCase = createSelectorTestCase(({ children }) => <MyChart>{children}</MyChart>);
-})
+});
 ```
 
 2. Verify that the test case reproduces the bug by inspecting the DOM. Write a new test for that:
@@ -35,7 +36,7 @@ import { expectYAxisTicks } from './expectAxisTicks';
 it('should render YAxis ticks correctly', () => {
   const { container } = renderTestCase();
   expectYAxisTicks(container, [/* expected ticks here */]);
-})
+});
 ```
 
 If this test fails, it means that we have successfully reproduced the bug in a unit test. Then look at the implementation and see which hooks or selectors it is calling. Then add a new test:
@@ -43,8 +44,8 @@ If this test fails, it means that we have successfully reproduced the bug in a u
 ```tsx
 test('myPseudoSelector', () => {
   const { spy } = renderTestCase(myPseudoSelector);
-  expectLastCalledWith(spy, /* expected value here */);
-})
+  expectLastCalledWith(spy /* expected value here */);
+});
 ```
 
 The first selector is likely to be too high level; it will be calling multiple hooks and selectors inside, so we won't be able to pinpoint the root cause of the bug. So we will need to go deeper. Look into that selector dependencies, find a more specific selector that appears to be relevant for the behavior we're seeing. Then add another test for that selector, and so on, until we find the root cause of the bug.
