@@ -490,20 +490,17 @@ const CartesianAxisComponent = forwardRef<CartesianAxisRef, InternalProps>((prop
   const [letterSpacing, setLetterSpacing] = useState('');
   const tickRefs = useRef<HTMLCollectionOf<Element> | null>(null);
 
-  useImperativeHandle(
-    ref,
-    (): CartesianAxisRef => ({
-      getCalculatedWidth: (): number => {
-        return getCalculatedYAxisWidth({
-          ticks: tickRefs.current,
-          label: props.labelRef?.current,
-          labelGapWithTick: 5,
-          tickSize: props.tickSize,
-          tickMargin: props.tickMargin,
-        });
-      },
-    }),
-  );
+  useImperativeHandle(ref, (): CartesianAxisRef => ({
+    getCalculatedWidth: (): number => {
+      return getCalculatedYAxisWidth({
+        ticks: tickRefs.current,
+        label: props.labelRef?.current,
+        labelGapWithTick: 5,
+        tickSize: props.tickSize,
+        tickMargin: props.tickMargin,
+      });
+    },
+  }));
 
   const layerRef = useCallback(
     (el: SVGElement | null) => {

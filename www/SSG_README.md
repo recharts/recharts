@@ -17,6 +17,7 @@ This website uses Static Site Generation (SSG) to pre-render all routes at build
 ## Files Added/Modified
 
 ### New Files
+
 - `src/entry-server.tsx` - SSR entry point that exports `render()` and `getAllRoutes()`
 - `scripts/prerender.tsx` - Script that orchestrates the pre-rendering process
 - `scripts/postprocess-sitemap.tsx` - Adds trailing slashes and creates URL alternates using SAX parser
@@ -26,6 +27,7 @@ This website uses Static Site Generation (SSG) to pre-render all routes at build
 - `src/views/ExamplesIndexView.css` - Styling for examples index page
 
 ### Modified Files
+
 - `src/app.tsx` - Changed from `createRoot().render()` to `hydrateRoot()` for proper hydration
 - `package.json` - Added `prerender`, `postprocess-sitemap`, and `validate-sitemap` scripts; updated `build` to run all
 - `vite.config.ts` - Removed `defaultLanguage` from sitemap config to generate explicit locale URLs
@@ -38,6 +40,7 @@ npm run build
 ```
 
 This runs:
+
 1. `npm run build:client` - Builds the client application to `/docs` and generates sitemap.xml
 2. `npm run prerender` - Pre-renders all routes to HTML files with trailing slashes in URLs
 3. `npm run postprocess-sitemap` - Updates sitemap to include both trailing-slash and non-trailing-slash URL formats
@@ -48,11 +51,13 @@ This runs:
 The sitemap follows a specific structure to support both trailing-slash and non-trailing-slash URLs:
 
 ### Canonical URLs (with trailing slash)
+
 - All canonical URLs in `<loc>` tags have trailing slashes: `/guide/`, `/api/`, `/examples/`
 - Pre-rendered HTML files match this structure: `docs/guide/index.html`, `docs/api/index.html`
 - Exception: Root URL `/` remains as-is
 
 ### Alternate URLs
+
 Each canonical URL has multiple alternates:
 
 1. **x-default alternate** (without trailing slash): `/guide`, `/api`, `/examples`
@@ -64,6 +69,7 @@ Each canonical URL has multiple alternates:
    - Matches the HTML file structure
 
 ### Example Sitemap Entry
+
 ```xml
 <url>
   <loc>https://recharts.github.io/guide/</loc>
@@ -79,6 +85,7 @@ Each canonical URL has multiple alternates:
 ## Sitemap Postprocessing
 
 The `scripts/postprocess-sitemap.tsx` script:
+
 - Uses SAX parser (no regex) for robust XML parsing
 - Ensures all canonical URLs have trailing slashes
 - Adds x-default alternates without trailing slashes for non-root URLs
@@ -106,6 +113,7 @@ The `scripts/validate-sitemap.tsx` script validates:
 ## Pre-rendered Routes
 
 The solution pre-renders:
+
 - Root route (`/`)
 - All locale-specific routes (`/en-US`, `/zh-CN`)
 - Examples index pages (`/examples`, `/en-US/examples`, `/zh-CN/examples`)

@@ -99,12 +99,10 @@ export const selectAllPolarAppliedNumericalValues: (
         .filter(Boolean);
     }
     if (axisSettings?.dataKey != null) {
-      return data.map(
-        (item): AppliedChartDataWithErrorDomain => ({
-          value: getValueByDataKey(item, axisSettings.dataKey),
-          errorDomain: [],
-        }),
-      );
+      return data.map((item): AppliedChartDataWithErrorDomain => ({
+        value: getValueByDataKey(item, axisSettings.dataKey),
+        errorDomain: [],
+      }));
     }
     return data.map((entry): AppliedChartDataWithErrorDomain => ({ value: entry, errorDomain: [] }));
   },

@@ -91,7 +91,6 @@ Browser testing via
 
 [![TestMu AI](www/public/assets/testmu-logo-black.svg)](https://www.testmuai.com/?utm_medium=sponsor&utm_source=recharts)
 
-
 ## License
 
 [MIT](http://opensource.org/licenses/MIT)

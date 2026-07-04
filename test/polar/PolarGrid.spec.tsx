@@ -55,14 +55,12 @@ type ExpectedPolygon = {
 function expectPolarGridPolygons(container: HTMLElement, expectedPolygon: ReadonlyArray<ExpectedPolygon>) {
   const polygons = container.querySelectorAll<SVGPathElement>('.recharts-polar-grid-concentric-polygon');
 
-  const actualPolygons: ReadonlyArray<ExpectedPolygon> = Array.from(polygons).map(
-    (polygon): ExpectedPolygon => ({
-      cx: Number(polygon.getAttribute('cx')),
-      cy: Number(polygon.getAttribute('cy')),
-      d: polygon.getAttribute('d'),
-      fill: polygon.getAttribute('fill'),
-    }),
-  );
+  const actualPolygons: ReadonlyArray<ExpectedPolygon> = Array.from(polygons).map((polygon): ExpectedPolygon => ({
+    cx: Number(polygon.getAttribute('cx')),
+    cy: Number(polygon.getAttribute('cy')),
+    d: polygon.getAttribute('d'),
+    fill: polygon.getAttribute('fill'),
+  }));
 
   expect(actualPolygons).toEqual(expectedPolygon.map(it => ({ ...it, fill: it.fill ?? 'none' })));
 }
@@ -76,13 +74,11 @@ type ExpectedCircle = {
 function expectPolarGridCircles(container: HTMLElement, expectedCircles: ReadonlyArray<ExpectedCircle>) {
   const circles = container.querySelectorAll<SVGCircleElement>('.recharts-polar-grid-concentric-circle');
 
-  const actualCircles: ReadonlyArray<ExpectedCircle> = Array.from(circles).map(
-    (circle): ExpectedCircle => ({
-      cx: Number(circle.getAttribute('cx')),
-      cy: Number(circle.getAttribute('cy')),
-      r: Number(circle.getAttribute('r')),
-    }),
-  );
+  const actualCircles: ReadonlyArray<ExpectedCircle> = Array.from(circles).map((circle): ExpectedCircle => ({
+    cx: Number(circle.getAttribute('cx')),
+    cy: Number(circle.getAttribute('cy')),
+    r: Number(circle.getAttribute('r')),
+  }));
 
   expect(actualCircles).toEqual(expectedCircles);
 }

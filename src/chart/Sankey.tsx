@@ -747,9 +747,7 @@ export interface SankeyData {
 
 // TODO: improve types - NodeOptions uses SankeyNode, LinkOptions uses LinkProps. Standardize.
 export type SankeyNodeOptions =
-  | ReactElement<SVGProps<SVGRectElement>>
-  | ((props: NodeProps) => ReactNode)
-  | RectangleProps;
+  ReactElement<SVGProps<SVGRectElement>> | ((props: NodeProps) => ReactNode) | RectangleProps;
 
 type SankeyLinkOptions =
   | ReactElement<SVGProps<SVGPathElement>>

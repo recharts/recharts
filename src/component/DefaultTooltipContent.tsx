@@ -55,10 +55,7 @@ export interface Payload<TValue extends ValueType = ValueType, TName extends Nam
  * @inline
  */
 export type TooltipItemSorter<TValue extends ValueType = ValueType, TName extends NameType = NameType> =
-  | 'dataKey'
-  | 'value'
-  | 'name'
-  | ((item: Payload<TValue, TName>) => number | string | undefined);
+  'dataKey' | 'value' | 'name' | ((item: Payload<TValue, TName>) => number | string | undefined);
 
 export interface Props<TValue extends ValueType = ValueType, TName extends NameType = NameType> {
   separator?: string;

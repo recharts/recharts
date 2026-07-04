@@ -33,8 +33,7 @@ import { useTooltipEventType } from '../state/selectors/selectTooltipEventType';
 import { resolveDefaultProps } from '../util/resolveDefaultProps';
 
 export type ContentType<TValue extends ValueType = ValueType, TName extends NameType = NameType> =
-  | ReactElement
-  | ((props: TooltipContentProps<TValue, TName>) => ReactNode);
+  ReactElement | ((props: TooltipContentProps<TValue, TName>) => ReactNode);
 
 function defaultUniqBy(entry: Payload<ValueType, NameType>) {
   return entry.dataKey;

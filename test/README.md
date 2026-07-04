@@ -13,9 +13,9 @@ When writing a new test or modifying an existing one, prefer to use the `createS
 Here is an example usage:
 
 ```tsx
-  const renderTestCase = createSelectorTestCase(({ children }) => <MyChart>{children}</MyChart>);
-  const { spy, rerenderSameComponent } = renderTestCase(mySelector);
-  expectLastCalledWith(spy, expectedValue);
+const renderTestCase = createSelectorTestCase(({ children }) => <MyChart>{children}</MyChart>);
+const { spy, rerenderSameComponent } = renderTestCase(mySelector);
+expectLastCalledWith(spy, expectedValue);
 ```
 
 Inspect some of the test files in the `test` folder for more examples.
@@ -37,12 +37,12 @@ This helps to spot unnecessary re-renders and improve performance.
 Every time you use `createSelectorTestCase`, you get a `spy` object that you can use to verify the number of calls:
 
 ```ts
-  const { spy, rerenderSameComponent } = renderTestCase(mySelector);
-  expect(spy).toHaveBeenCalledTimes(1); // Initial render
-  rerenderSameComponent();
-  expect(spy).toHaveBeenCalledTimes(1); // No re-render
-  rerenderSameComponent({ someProp: newValue });
-  expect(spy).toHaveBeenCalledTimes(2); // Re-rendered due to prop change
+const { spy, rerenderSameComponent } = renderTestCase(mySelector);
+expect(spy).toHaveBeenCalledTimes(1); // Initial render
+rerenderSameComponent();
+expect(spy).toHaveBeenCalledTimes(1); // No re-render
+rerenderSameComponent({ someProp: newValue });
+expect(spy).toHaveBeenCalledTimes(2); // Re-rendered due to prop change
 ```
 
 ## Special considerations for Recharts tests

@@ -74,34 +74,30 @@ function guideNavItems(locale: SupportedLocale): ReadonlyArray<NavCategory> {
 }
 
 function apiNavItems(locale: SupportedLocale): ReadonlyArray<NavCategory> {
-  return apiCates.map(
-    ({ name, items }): NavCategory => ({
-      key: name,
-      displayName: localeGet(locale, 'api', name),
-      items: items.map(compName => ({
-        key: compName,
-        displayName: compName,
-        url: `/${locale}/api/${compName}/`,
-      })),
-      NavPreview: null,
-    }),
-  );
+  return apiCates.map(({ name, items }): NavCategory => ({
+    key: name,
+    displayName: localeGet(locale, 'api', name),
+    items: items.map(compName => ({
+      key: compName,
+      displayName: compName,
+      url: `/${locale}/api/${compName}/`,
+    })),
+    NavPreview: null,
+  }));
 }
 
 const exampleCategories = Object.entries(allExamples).sort(([, a], [, b]) => a.order - b.order);
 function exampleNavItems(locale: SupportedLocale): ReadonlyArray<NavCategory> {
-  return exampleCategories.map(
-    ([categoryName, category]): NavCategory => ({
-      key: categoryName,
-      displayName: categoryName,
-      items: Object.entries(category.examples).map(([name, example]) => ({
-        key: name,
-        displayName: example.name,
-        url: `/${locale}/examples/${name}/`,
-      })),
-      NavPreview: category.NavPreview,
-    }),
-  );
+  return exampleCategories.map(([categoryName, category]): NavCategory => ({
+    key: categoryName,
+    displayName: categoryName,
+    items: Object.entries(category.examples).map(([name, example]) => ({
+      key: name,
+      displayName: example.name,
+      url: `/${locale}/examples/${name}/`,
+    })),
+    NavPreview: category.NavPreview,
+  }));
 }
 
 export function getAllNavigationItems(locale: SupportedLocale): Navigation {
