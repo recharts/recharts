@@ -75,8 +75,46 @@ export { RadialBar } from './polar/RadialBar';
 export type { RadialBarProps, RadialBarDataItem } from './polar/RadialBar';
 export type { RadialBarSectorProps } from './util/RadialBarUtils';
 
-export { Brush } from './cartesian/Brush';
+export { Brush, BrushPinchZoom, BrushWheelZoom, BrushZoomControls, useBrushZoomControls } from './cartesian/Brush';
 export type { Props as BrushProps } from './cartesian/Brush';
+export {
+  Minimap,
+  MinimapControls,
+  MinimapDrag,
+  MinimapKeyboard,
+  MinimapPinch,
+  MinimapWheel,
+  useMinimapControls,
+} from './cartesian/Minimap';
+export type { Props as MinimapProps } from './cartesian/Minimap';
+export { ZoomAndPan } from './chart/zoom/ZoomAndPan';
+export type { ZoomAndPanProps } from './chart/zoom/ZoomAndPan';
+export {
+  MouseWheelZoom,
+  PanOnDrag,
+  DragToZoom,
+  DragToSelect,
+  AxisZoom,
+  ZoomPanKeyboard,
+  DoubleClickReset,
+  PinchZoom,
+  ZoomScrollbar,
+} from './chart/zoom/interactionComponents';
+export type {
+  CommonZoomProps,
+  MouseWheelZoomProps,
+  AxisZoomProps,
+  ZoomPanKeyboardProps,
+  PinchZoomProps,
+  ZoomScrollbarProps,
+  DragToSelectProps,
+} from './chart/zoom/interactionComponents';
+export { AutoScaleAxis } from './chart/zoom/AutoScaleAxis';
+export type { AutoScaleAxisProps } from './chart/zoom/AutoScaleAxis';
+export { FollowSeries } from './chart/zoom/FollowSeries';
+export type { FollowSeriesProps } from './chart/zoom/FollowSeries';
+export { useScatterLOD } from './chart/zoom/useScatterLOD';
+export type { ScatterLODOptions } from './chart/zoom/useScatterLOD';
 export { ReferenceLine } from './cartesian/ReferenceLine';
 export type { Props as ReferenceLineProps, ReferenceLineSegment } from './cartesian/ReferenceLine';
 export { ReferenceDot } from './cartesian/ReferenceDot';
@@ -204,7 +242,10 @@ export {
   useXAxisTicks,
   useYAxisTicks,
   useCartesianScale,
+  useZoom,
+  useZoomState,
 } from './hooks';
+export type { UseZoomResult } from './hooks';
 
 export type { CartesianDataPoint, ScaleFunction, InverseScaleFunction } from './hooks';
 

@@ -12,7 +12,7 @@ import { ReportChartMargin, ReportChartSize, useChartHeight, useChartWidth } fro
 import { TooltipPortalContext } from '../context/tooltipPortalContext';
 import { RechartsWrapper } from './RechartsWrapper';
 import { RechartsStoreProvider } from '../state/RechartsStoreProvider';
-import { useAppDispatch } from '../state/hooks';
+import { useAppDispatch, useAppSelector } from '../state/hooks';
 import {
   mouseLeaveItem,
   setActiveClickItemIndex,
@@ -28,11 +28,19 @@ import { SetComputedData } from '../context/chartDataContext';
 import { svgPropertiesNoEvents, svgPropertiesNoEventsFromUnknown } from '../util/svgPropertiesNoEvents';
 import { RequiresDefaultProps, resolveDefaultProps } from '../util/resolveDefaultProps';
 import { isPositiveNumber } from '../util/isWellBehavedNumber';
-import { isNotNil, noop } from '../util/DataUtils';
+import { isNotNil } from '../util/DataUtils';
 import { WithIdRequired } from '../util/useUniqueId';
 import { RegisterGraphicalItemId } from '../context/RegisterGraphicalItemId';
 import { GraphicalItemId } from '../state/graphicalItemsSlice';
 import { initialEventSettingsState } from '../state/eventSettingsSlice';
+import { ClipPathProvider } from '../container/ClipPathProvider';
+import { ZoomPropBridge } from './zoom/ZoomPropBridge';
+import { ZoomProp } from '../util/zoom/ZoomOptions';
+import { ZoomTransformLayer } from './zoom/ZoomTransformLayer';
+import { selectChartOffsetInternal } from '../state/selectors/selectChartOffsetInternal';
+import { selectZoom } from '../state/selectors/zoomSelectors';
+import { transformCoordinateByZoom } from '../util/zoom/transform';
+import { FULL_VIEWPORT } from '../util/zoom/viewport';
 
 const interpolationGenerator = (a: number, b: number) => {
   const ka = +a;
@@ -681,10 +689,13 @@ const SetSankeyTooltipEntrySettings = React.memo(
     name,
     data,
     id,
-  }: Pick<InternalSankeyProps, 'dataKey' | 'nameKey' | 'stroke' | 'strokeWidth' | 'fill' | 'name' | 'data' | 'id'>) => {
+    positions,
+  }: Pick<InternalSankeyProps, 'dataKey' | 'nameKey' | 'stroke' | 'strokeWidth' | 'fill' | 'name' | 'data' | 'id'> & {
+    positions: Record<string, Coordinate | undefined>;
+  }) => {
     const tooltipEntrySettings: TooltipPayloadConfiguration = {
       dataDefinedOnItem: data,
-      getPosition: noop,
+      getPosition: tooltipIndex => positions[tooltipIndex],
       settings: {
         stroke,
         strokeWidth,
@@ -879,6 +890,13 @@ interface SankeyProps extends EventThrottlingProps {
    * @default 'justify'
    */
   align?: 'left' | 'justify';
+  /**
+   * Enables the built-in zoom and pan controls.
+   *
+   * Accepts `true` for defaults, `'x' | 'y' | 'xy'` as shorthand, or a full options object.
+   * Equivalent to mounting `<ZoomAndPan />` as a child.
+   */
+  zoom?: ZoomProp;
 }
 
 export type Props = Omit<SVGProps<SVGSVGElement>, keyof SankeyProps> & SankeyProps;
@@ -1220,6 +1238,7 @@ function SankeyImpl(props: InternalSankeyProps) {
   const {
     link,
     dataKey,
+    nameKey,
     node,
     onMouseEnter,
     onMouseLeave,
@@ -1232,6 +1251,10 @@ function SankeyImpl(props: InternalSankeyProps) {
     linkCurvature,
     margin,
     verticalAlign,
+    stroke,
+    strokeWidth,
+    fill,
+    name,
     align,
   } = props;
 
@@ -1239,6 +1262,8 @@ function SankeyImpl(props: InternalSankeyProps) {
 
   const width = useChartWidth();
   const height = useChartHeight();
+  const offset = useAppSelector(selectChartOffsetInternal);
+  const zoom = useAppSelector(selectZoom);
 
   const { links, modifiedLinks, modifiedNodes } = useMemo(() => {
     if (!data || !width || !height || width <= 0 || height <= 0) {
@@ -1298,6 +1323,25 @@ function SankeyImpl(props: InternalSankeyProps) {
     verticalAlign,
   ]);
 
+  const tooltipPositions = useMemo(() => {
+    if (offset == null) {
+      return {};
+    }
+
+    const plot = { x: offset.left, y: offset.top, width: offset.width, height: offset.height };
+    const zoomState = zoom ?? { x: FULL_VIEWPORT, y: FULL_VIEWPORT };
+    const positions: Record<string, Coordinate | undefined> = {};
+
+    modifiedNodes.forEach((item, index) => {
+      positions[`node-${index}`] = transformCoordinateByZoom(getNodeCoordinateOfTooltip(item), plot, zoomState);
+    });
+    modifiedLinks.forEach((item, index) => {
+      positions[`link-${index}`] = transformCoordinateByZoom(getLinkCoordinateOfTooltip(item), plot, zoomState);
+    });
+
+    return positions;
+  }, [modifiedLinks, modifiedNodes, offset, zoom]);
+
   const handleMouseEnter = useCallback(
     (item: NodeProps | LinkProps, type: SankeyElementType, e: MouseEvent<SVGGraphicsElement>) => {
       if (onMouseEnter) {
@@ -1331,36 +1375,53 @@ function SankeyImpl(props: InternalSankeyProps) {
 
   return (
     <>
+      <SetSankeyTooltipEntrySettings
+        dataKey={dataKey}
+        nameKey={nameKey}
+        stroke={stroke}
+        strokeWidth={strokeWidth}
+        fill={fill}
+        name={name}
+        data={data}
+        id={id}
+        positions={tooltipPositions}
+      />
       <SetComputedData computedData={{ links: modifiedLinks, nodes: modifiedNodes }} />
       <Surface {...attrs} width={width} height={height}>
+        {/* Children stay outside the clip/zoom layer: Sankey's public contract is that they do NOT
+            receive a clipPathId, and overlays (Tooltip & co.) must not be transform-zoomed. */}
         {children}
-        <AllSankeyLinkElements
-          graphicalItemId={id}
-          links={links}
-          modifiedLinks={modifiedLinks}
-          linkContent={link}
-          dataKey={dataKey}
-          onMouseEnter={(linkProps: LinkProps, e: MouseEvent<SVGGraphicsElement>) =>
-            handleMouseEnter(linkProps, 'link', e)
-          }
-          onMouseLeave={(linkProps: LinkProps, e: MouseEvent<SVGGraphicsElement>) =>
-            handleMouseLeave(linkProps, 'link', e)
-          }
-          onClick={(linkProps: LinkProps, e: MouseEvent<SVGGraphicsElement>) => handleClick(linkProps, 'link', e)}
-        />
-        <AllNodeElements
-          graphicalItemId={id}
-          modifiedNodes={modifiedNodes}
-          nodeContent={node}
-          dataKey={dataKey}
-          onMouseEnter={(nodeProps: NodeProps, e: MouseEvent<SVGGraphicsElement>) =>
-            handleMouseEnter(nodeProps, 'node', e)
-          }
-          onMouseLeave={(nodeProps: NodeProps, e: MouseEvent<SVGGraphicsElement>) =>
-            handleMouseLeave(nodeProps, 'node', e)
-          }
-          onClick={(nodeProps: NodeProps, e: MouseEvent<SVGGraphicsElement>) => handleClick(nodeProps, 'node', e)}
-        />
+        <ClipPathProvider>
+          <ZoomTransformLayer>
+            <AllSankeyLinkElements
+              graphicalItemId={id}
+              links={links}
+              modifiedLinks={modifiedLinks}
+              linkContent={link}
+              dataKey={dataKey}
+              onMouseEnter={(linkProps: LinkProps, e: MouseEvent<SVGGraphicsElement>) =>
+                handleMouseEnter(linkProps, 'link', e)
+              }
+              onMouseLeave={(linkProps: LinkProps, e: MouseEvent<SVGGraphicsElement>) =>
+                handleMouseLeave(linkProps, 'link', e)
+              }
+              onClick={(linkProps: LinkProps, e: MouseEvent<SVGGraphicsElement>) => handleClick(linkProps, 'link', e)}
+            />
+            <AllNodeElements
+              graphicalItemId={id}
+              modifiedNodes={modifiedNodes}
+              nodeContent={node}
+              dataKey={dataKey}
+              onMouseEnter={(nodeProps: NodeProps, e: MouseEvent<SVGGraphicsElement>) =>
+                handleMouseEnter(nodeProps, 'node', e)
+              }
+              onMouseLeave={(nodeProps: NodeProps, e: MouseEvent<SVGGraphicsElement>) =>
+                handleMouseLeave(nodeProps, 'node', e)
+              }
+              onClick={(nodeProps: NodeProps, e: MouseEvent<SVGGraphicsElement>) => handleClick(nodeProps, 'node', e)}
+            />
+          </ZoomTransformLayer>
+        </ClipPathProvider>
       </Surface>
     </>
   );
@@ -1413,22 +1474,9 @@ export function Sankey(outsideProps: Props) {
       >
         <TooltipPortalContext.Provider value={tooltipPortal}>
           <RegisterGraphicalItemId id={externalId} type="sankey">
-            {id => (
-              <>
-                <SetSankeyTooltipEntrySettings
-                  dataKey={props.dataKey}
-                  nameKey={props.nameKey}
-                  stroke={props.stroke}
-                  strokeWidth={props.strokeWidth}
-                  fill={props.fill}
-                  name={props.name}
-                  data={props.data}
-                  id={id}
-                />
-                <SankeyImpl {...props} id={id} />
-              </>
-            )}
+            {id => <SankeyImpl {...props} id={id} />}
           </RegisterGraphicalItemId>
+          <ZoomPropBridge zoom={props.zoom} />
         </TooltipPortalContext.Provider>
       </RechartsWrapper>
     </RechartsStoreProvider>

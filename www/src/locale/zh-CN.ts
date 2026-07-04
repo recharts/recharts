@@ -50,6 +50,7 @@ export const map = {
     cell: '从 Cell 组件迁移到 shape 属性',
     coordinateSystems: '坐标系与维度系统',
     animations: '动画',
+    zoomAndPan: '缩放和平移',
   },
   installation: {
     installation: '安装',
@@ -103,6 +104,7 @@ export const map = {
     showData: '显示数据格式',
     hideData: '隐藏数据格式',
     animation: '动画',
+    'zoom-and-pan': '缩放和平移',
   },
   'design-disciplines': {
     'design-disciplines': '设计原则',

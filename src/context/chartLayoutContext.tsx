@@ -61,7 +61,28 @@ const manyComponentsThrowErrorsIfOffsetIsUndefined: ChartOffsetInternal = {
   width: 0,
   height: 0,
   brushBottom: 0,
+  brushRight: 0,
 };
+
+function areChartOffsetsEqual(a: ChartOffsetInternal | undefined, b: ChartOffsetInternal | undefined): boolean {
+  if (a === b) {
+    return true;
+  }
+  if (a == null || b == null) {
+    return false;
+  }
+  return (
+    a.top === b.top &&
+    a.bottom === b.bottom &&
+    a.left === b.left &&
+    a.right === b.right &&
+    a.width === b.width &&
+    a.height === b.height &&
+    a.brushBottom === b.brushBottom &&
+    a.brushRight === b.brushRight
+  );
+}
+
 /**
  * For internal use only. If you want this information, `import { useOffset } from 'recharts'` instead.
  *
@@ -70,7 +91,9 @@ const manyComponentsThrowErrorsIfOffsetIsUndefined: ChartOffsetInternal = {
  * @returns {ChartOffsetInternal} The offset of the chart in pixels, or a default value if not in a chart context.
  */
 export const useOffsetInternal = (): ChartOffsetInternal => {
-  return useAppSelector(selectChartOffsetInternal) ?? manyComponentsThrowErrorsIfOffsetIsUndefined;
+  return (
+    useAppSelector(selectChartOffsetInternal, areChartOffsetsEqual) ?? manyComponentsThrowErrorsIfOffsetIsUndefined
+  );
 };
 
 /**

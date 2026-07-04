@@ -34,6 +34,7 @@ import { DefaultZIndexes } from '../zIndex/DefaultZIndexes';
 import { getClassNameFromUnknown } from '../util/getClassNameFromUnknown';
 import { removeRenderedTicks, setRenderedTicks } from '../state/renderedTicksSlice';
 import { useAppDispatch } from '../state/hooks';
+import { areRenderedTicksEqual } from '../util/propsAreEqual';
 
 /** The orientation of the axis in correspondence to the chart */
 export type Orientation = XAxisOrientation | YAxisOrientation;
@@ -311,9 +312,11 @@ function RenderedTicksReporter({
   axisId: AxisId | undefined;
 }) {
   const dispatch = useAppDispatch();
+  const lastReportedTicksRef = useRef<ReadonlyArray<TickItemType> | null>(null);
+
   useEffect(() => {
     if (axisId == null || axisType == null) {
-      return noop;
+      return;
     }
     // Filter out irrelevant internal properties before exposing externally
     const tickItems = ticks.map(tick => ({
@@ -322,8 +325,19 @@ function RenderedTicksReporter({
       offset: tick.offset,
       index: tick.index,
     }));
+    if (areRenderedTicksEqual(lastReportedTicksRef.current, tickItems)) {
+      return;
+    }
+    lastReportedTicksRef.current = tickItems;
     dispatch(setRenderedTicks({ ticks: tickItems, axisId, axisType }));
+  }, [dispatch, ticks, axisId, axisType]);
+
+  useEffect(() => {
+    if (axisId == null || axisType == null) {
+      return noop;
+    }
     return () => {
+      lastReportedTicksRef.current = null;
       dispatch(
         removeRenderedTicks({
           axisId,
@@ -331,7 +345,7 @@ function RenderedTicksReporter({
         }),
       );
     };
-  }, [dispatch, ticks, axisId, axisType]);
+  }, [dispatch, axisId, axisType]);
 
   return null;
 }

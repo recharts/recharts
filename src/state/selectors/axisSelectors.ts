@@ -89,6 +89,7 @@ import { emptyArraysAreEqualCheck } from './arrayEqualityCheck';
 import { AllAxisTypes, RenderableAxisType, selectTooltipAxisType } from './selectTooltipAxisType';
 import { selectTooltipAxisId } from './selectTooltipAxisId';
 import { RechartsScale, rechartsScaleFactory } from '../../util/scale/RechartsScale';
+import { applyViewportToRange, AxisViewport, FULL_VIEWPORT, isFullViewport } from '../../util/zoom/viewport';
 import { combineCheckedDomain } from './combiners/combineCheckedDomain';
 import { CustomScaleDefinition } from '../../util/scale/CustomScaleDefinition';
 import { combineConfiguredScale } from './combiners/combineConfiguredScale';
@@ -1602,13 +1603,51 @@ export const selectCheckedAxisDomain: (
   combineCheckedDomain,
 );
 
+const selectViewportForAxisType = (state: RechartsRootState, axisType: RenderableAxisType): AxisViewport => {
+  if (axisType === 'xAxis') {
+    return state.zoom.x;
+  }
+  if (axisType === 'yAxis') {
+    return state.zoom.y;
+  }
+  // Only the cartesian x and y axes can be zoomed; everything else stays at the full viewport.
+  return FULL_VIEWPORT;
+};
+
+/**
+ * The axis range after the current zoom viewport has been applied - this is the single place where
+ * zoom enters the rendering pipeline. Feeding the stretched range into the scale makes data, ticks,
+ * grid, reference lines and the inverse scale (tooltip/cursor) all zoom together.
+ *
+ * Returns the range unchanged for the full (default) viewport and for the brush panorama, so an
+ * un-zoomed chart - and the brush overview - render exactly as before.
+ */
+export const selectZoomedAxisRangeWithReverse: (
+  state: RechartsRootState,
+  axisType: RenderableAxisType,
+  axisId: AxisId,
+  isPanorama: boolean,
+) => AxisRange | undefined = createSelector(
+  [
+    selectAxisRangeWithReverse,
+    selectViewportForAxisType,
+    (_state: RechartsRootState, _axisType: RenderableAxisType, _axisId: AxisId, isPanorama: boolean) => isPanorama,
+  ],
+  (axisRange, viewport, isPanorama) => {
+    if (axisRange == null || isPanorama || isFullViewport(viewport)) {
+      return axisRange;
+    }
+    return applyViewportToRange(axisRange, viewport);
+  },
+);
+
 const selectConfiguredScale: (
   state: RechartsRootState,
   axisType: RenderableAxisType,
   axisId: AxisId,
   isPanorama: boolean,
 ) => CustomScaleDefinition | undefined = createSelector(
-  [selectBaseAxis, selectRealScaleType, selectCheckedAxisDomain, selectAxisRangeWithReverse],
+  [selectBaseAxis, selectRealScaleType, selectCheckedAxisDomain, selectZoomedAxisRangeWithReverse],
   combineConfiguredScale,
 );
 
@@ -2089,7 +2128,7 @@ export const combineAxisTicks = (
     })
     .filter(isNotNil);
 };
-export const selectTicksOfAxis: (
+const selectUnfilteredTicksOfAxis: (
   state: RechartsRootState,
   axisType: RenderableAxisType,
   axisId: AxisId,
@@ -2107,6 +2146,28 @@ export const selectTicksOfAxis: (
     pickAxisType,
   ],
   combineAxisTicks,
+);
+
+/**
+ * When an axis is zoomed, its scale maps the full domain across a stretched range, so some ticks
+ * (and therefore grid lines and axis labels) fall outside the plotting area. This drops those ticks
+ * so the axis and grid stay within bounds. When not zoomed it returns the ticks unchanged.
+ */
+export const selectTicksOfAxis: (
+  state: RechartsRootState,
+  axisType: RenderableAxisType,
+  axisId: AxisId,
+  isPanorama: boolean,
+) => ReadonlyArray<CartesianTickItem> | undefined = createSelector(
+  [selectUnfilteredTicksOfAxis, selectAxisRange, selectViewportForAxisType],
+  (ticks, axisRange, viewport) => {
+    if (ticks == null || axisRange == null || isFullViewport(viewport)) {
+      return ticks;
+    }
+    const min = Math.min(axisRange[0], axisRange[1]) - 0.5;
+    const max = Math.max(axisRange[0], axisRange[1]) + 0.5;
+    return ticks.filter(tick => tick.coordinate >= min && tick.coordinate <= max);
+  },
 );
 
 /**
