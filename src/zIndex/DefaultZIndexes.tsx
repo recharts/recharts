@@ -26,8 +26,10 @@ export const DefaultZIndexes = {
 
   /**
    * Cursor is embedded inside Tooltip and controlled by it.
-   * The Tooltip itself has a separate portal and is not included in the zIndex system;
-   * Cursor is the decoration inside the chart area. CursorRectangle is a rectangle box.
+   *
+   * The `Tooltip` itself has a separate portal and is not included in the zIndex system;
+   *
+   * `Cursor` is the decoration inside the chart area. CursorRectangle is a rectangle box.
    * It renders below bar so that in a stacked bar chart the cursor rectangle does not hide the other bars.
    */
   cursorRectangle: 200,
@@ -38,7 +40,7 @@ export const DefaultZIndexes = {
   bar: 300,
 
   /**
-   * Line and ReferenceLine, and ErrorBor
+   * Line and ReferenceLine, and ErrorBar
    */
   line: 400,
 
@@ -60,14 +62,17 @@ export const DefaultZIndexes = {
 
   /**
    * Cursor is embedded inside Tooltip and controlled by it.
-   * The Tooltip itself has a separate portal and is not included in the zIndex system;
-   * Cursor is the decoration inside the chart area, usually a cross or a box.
-   * CursorLine is a line cursor rendered in Line, Area, Scatter, Radar charts.
-   * It renders above the Line and Scatter so that it is always visible.
-   * It renders below active dot so that the dot is always visible and shows the current point.
-   * We're also assuming that the active dot is small enough that it does not fully cover the cursor line.
    *
-   * This also applies to the radial cursor in RadialBarChart.
+   * The Tooltip itself has a separate portal and is not included in the zIndex system;
+   *
+   * `Cursor` is the decoration inside the chart area, usually a cross or a box.
+   *
+   * `CursorLine` is a line cursor rendered in Line, Area, Scatter, Radar charts.
+   * - It renders above the Line and Scatter so that it is always visible.
+   * - It renders below active dot so that the dot is always visible and shows the current point.
+   * - We're also assuming that the active dot is small enough that it does not fully cover the cursor line.
+   *
+   * This zIndex also applies to the radial cursor in RadialBarChart.
    */
   cursorLine: 1100,
 
