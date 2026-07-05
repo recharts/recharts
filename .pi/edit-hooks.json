@@ -1,0 +1,5 @@
+{
+  "onEdit": {
+    "*": "npx prettier --write {file}"
+  }
+}
