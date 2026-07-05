@@ -990,9 +990,14 @@ function BrushInternal(props: InternalProps) {
   const { startIndex: startIndexFromProps, endIndex: endIndexFromProps } = props;
 
   useEffect(() => {
-    // start and end index can be controlled from props, and we need them to stay up-to-date in the Redux state too
+    /*
+     * start and end index can be controlled from props, and we need them to stay up-to-date in the Redux state too.
+     * `chartData` is also a dependency here: whenever the chart data changes, `chartDataSlice` may reset
+     * `dataStartIndex` / `dataEndIndex` back to the full range. If the indices are controlled from props,
+     * this effect re-applies them so a controlled Brush selection is never silently clobbered by a data update.
+     */
     dispatch(setDataStartEndIndexes({ startIndex: startIndexFromProps, endIndex: endIndexFromProps }));
-  }, [dispatch, endIndexFromProps, startIndexFromProps]);
+  }, [dispatch, endIndexFromProps, startIndexFromProps, chartData]);
 
   useBrushChartSynchronisation();
 
