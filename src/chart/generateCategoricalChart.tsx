@@ -1511,6 +1511,12 @@ export const generateCategoricalChart = ({
       eventCenter.removeListener(SYNC_EVENT, this.handleReceiveSyncEvent);
     }
 
+    syncAccessibilityIndex(state: CategoricalChartState) {
+      if (typeof state.activeTooltipIndex === 'number' && state.activeTooltipIndex >= 0) {
+        this.accessibilityManager.setIndex(state.activeTooltipIndex);
+      }
+    }
+
     handleLegendBBoxUpdate = (box: DOMRect | null) => {
       if (box) {
         const { dataStartIndex, dataEndIndex, updateId } = this.state;
@@ -1576,6 +1582,7 @@ export const generateCategoricalChart = ({
 
       if (mouse) {
         const nextState: CategoricalChartState = { ...mouse, isTooltipActive: true };
+        this.syncAccessibilityIndex(nextState);
         this.setState(nextState);
         this.triggerSyncEvent(nextState);
 
@@ -1590,6 +1597,7 @@ export const generateCategoricalChart = ({
       const mouse = this.getMouseInfo(e);
       const nextState: CategoricalChartState = mouse ? { ...mouse, isTooltipActive: true } : { isTooltipActive: false };
 
+      this.syncAccessibilityIndex(nextState);
       this.setState(nextState);
       this.triggerSyncEvent(nextState);
 
@@ -1673,6 +1681,7 @@ export const generateCategoricalChart = ({
 
       if (mouse) {
         const nextState: CategoricalChartState = { ...mouse, isTooltipActive: true };
+        this.syncAccessibilityIndex(nextState);
         this.setState(nextState);
         this.triggerSyncEvent(nextState);
 

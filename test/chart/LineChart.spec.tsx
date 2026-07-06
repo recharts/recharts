@@ -1,5 +1,5 @@
 import React, { FC } from 'react';
-import { render, fireEvent, screen } from '@testing-library/react';
+import { act, render, fireEvent, screen } from '@testing-library/react';
 
 import { vi, describe, test, SpyInstance } from 'vitest';
 import { LineChart, Line, XAxis, YAxis, Tooltip, Brush, CartesianAxis, Legend } from '../../src';
@@ -273,6 +273,61 @@ describe('<LineChart />', () => {
     // expect(onMouseUp).tohaveBeenCalled();
     // expect(propsOfCallback).to.include.all.keys(['className', 'points', 'connectNulls', 'type']);
     // expect(eventOfCallback).to.include.all.keys(['currentTarget', 'target']);
+  });
+
+  test('focus should not move activeDot away from the hovered point with accessibilityLayer enabled', () => {
+    vi.useFakeTimers();
+    try {
+      const onClick = vi.fn();
+      const margin = { top: 20, right: 20, bottom: 20, left: 20 };
+      const width = 400;
+      const height = 400;
+      const { container } = render(
+        <LineChart width={width} height={height} data={data} margin={margin} accessibilityLayer>
+          <Line type="monotone" dataKey="uv" stroke="#ff7300" activeDot={{ onClick }} isAnimationActive={false} />
+          <Tooltip />
+          <XAxis dataKey="name" />
+          <YAxis />
+        </LineChart>,
+      );
+
+      const wrapper = container.querySelector('.recharts-wrapper');
+      const svg = container.querySelector('svg');
+      assertNotNull(wrapper);
+      assertNotNull(svg);
+      const dots = container.querySelectorAll('.recharts-line-dot');
+      expect(dots).toHaveLength(data.length);
+      const secondDot = dots[1];
+      const secondPointX = Number(secondDot.getAttribute('cx'));
+      const secondPointY = Number(secondDot.getAttribute('cy'));
+
+      fireEvent.mouseOver(wrapper, {
+        bubbles: true,
+        cancelable: true,
+        clientX: secondPointX,
+        clientY: secondPointY,
+        pageX: secondPointX,
+        pageY: secondPointY,
+      });
+      vi.advanceTimersByTime(100);
+
+      const activeDot = container.querySelector('.recharts-active-dot circle');
+      assertNotNull(activeDot);
+      expect(activeDot).toHaveAttribute('cx', `${secondPointX}`);
+
+      act(() => {
+        svg.focus();
+      });
+
+      const focusedActiveDot = container.querySelector('.recharts-active-dot circle');
+      assertNotNull(focusedActiveDot);
+      expect(focusedActiveDot).toHaveAttribute('cx', `${secondPointX}`);
+      fireEvent.click(focusedActiveDot);
+
+      expect(onClick).toHaveBeenCalledTimes(1);
+    } finally {
+      vi.useRealTimers();
+    }
   });
 
   /*
