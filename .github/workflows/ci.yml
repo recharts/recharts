@@ -426,6 +426,11 @@ jobs:
         with:
           version: 10
 
+      - name: Install Deno
+        uses: denoland/setup-deno@v2
+        with:
+          deno-version: v2.x
+
       - name: Download Packed Library Artifact
         uses: actions/download-artifact@v4
         with:
