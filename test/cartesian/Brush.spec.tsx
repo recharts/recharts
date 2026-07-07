@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { describe, expect, test, vi } from 'vitest';
-import { fireEvent, render, screen, waitFor } from '@testing-library/react';
+import { act, fireEvent, render, screen, waitFor } from '@testing-library/react';
 import { BarChart, Brush, BrushProps, ComposedChart, Customized, Line, LineChart, ReferenceLine } from '../../src';
 import { assertNotNull } from '../helper/assertNotNull';
 import { useAppSelector } from '../../src/state/hooks';
@@ -707,7 +707,10 @@ describe('<Brush />', () => {
       // Simulate a parent re-render that creates a brand new array instance
       // (e.g. a fresh fetch or a non-memoized map) with the same length.
       const button = container.querySelector('button') as HTMLButtonElement;
-      fireEvent.click(button);
+      act(() => {
+        fireEvent.click(button);
+        vi.runOnlyPendingTimers();
+      });
 
       const lastCall = spy.mock.calls[spy.mock.calls.length - 1][0];
       expect(lastCall.chartData).not.toBe(data);
