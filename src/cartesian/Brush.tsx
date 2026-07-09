@@ -556,6 +556,8 @@ class BrushWithState extends PureComponent<BrushWithStateProps, State> {
         prevTravellerWidth: travellerWidth,
         prevX: x,
         prevWidth: width,
+        prevStartIndexControlledFromProps: startIndexControlledFromProps,
+        prevEndIndexControlledFromProps: endIndexControlledFromProps,
         ...(data && data.length
           ? createScale({ data, width, x, travellerWidth, startIndex, endIndex })
           : { scale: undefined, scaleValues: undefined }),

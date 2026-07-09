@@ -580,6 +580,33 @@ describe('<Brush />', () => {
     });
   });
 
+  describe('dragging the slide when start/endIndex are controlled from props', () => {
+    test('should not snap the slide back to its original position on mouseup', () => {
+      // startIndex/endIndex are controlled from props but without an onChange handler,
+      // so they stay fixed for the duration of the drag - same as a drag that never crosses
+      // a data index boundary, which is the common case for small mouse movements.
+      const { container } = render(
+        <BarChart width={400} height={100} data={data}>
+          <Brush dataKey="value" x={100} y={50} width={400} height={40} startIndex={3} endIndex={6} />
+        </BarChart>,
+      );
+
+      const slide = container.querySelector('.recharts-brush-slide') as SVGRectElement;
+      const travellers = () => container.querySelectorAll('.recharts-brush-traveller');
+      const positionsOf = (elements: NodeListOf<Element>) =>
+        Array.from(elements).map(el => el.getAttribute('aria-valuenow'));
+
+      fireEvent.mouseDown(slide, { clientX: 200 });
+      fireEvent.mouseMove(slide, { clientX: 220 });
+      const positionsWhileDragging = positionsOf(travellers());
+
+      fireEvent.mouseUp(slide);
+      const positionsAfterMouseUp = positionsOf(travellers());
+
+      expect(positionsAfterMouseUp).toEqual(positionsWhileDragging);
+    });
+  });
+
   describe('panorama and state integration', () => {
     it('should select data from the parent chart', () => {
       const rootDataSpy = vi.fn();
