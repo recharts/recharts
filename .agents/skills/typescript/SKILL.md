@@ -1,5 +1,5 @@
 ---
-name: TypeScript
+name: typescript
 description: Write strongly-typed TypeScript code in Recharts
 ---
 
