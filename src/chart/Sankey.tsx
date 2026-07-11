@@ -852,6 +852,14 @@ interface SankeyProps extends EventThrottlingProps {
   className?: string;
   children?: ReactNode;
   /**
+   * Turn on accessibility support for keyboard-only and screen reader users.
+   *
+   * @defaultValue true
+   */
+  accessibilityLayer?: boolean;
+  title?: string;
+  desc?: string;
+  /**
    * Empty space around the container.
    *
    * @defaultValue {"top":5,"right":5,"bottom":5,"left":5}
@@ -1203,6 +1211,7 @@ function AllNodeElements({
 }
 
 export const sankeyDefaultProps = {
+  accessibilityLayer: true,
   align: 'justify',
   dataKey: 'value',
   iterations: 32,
@@ -1238,9 +1247,26 @@ function SankeyImpl(props: InternalSankeyProps) {
     margin,
     verticalAlign,
     align,
+    accessibilityLayer,
+    title,
+    desc,
   } = props;
 
   const attrs = svgPropertiesNoEvents(others);
+
+  let tabIndex: number | undefined, role: string | undefined;
+
+  if (typeof attrs.tabIndex === 'number') {
+    tabIndex = attrs.tabIndex;
+  } else {
+    tabIndex = accessibilityLayer ? 0 : undefined;
+  }
+
+  if (typeof attrs.role === 'string') {
+    role = attrs.role;
+  } else {
+    role = accessibilityLayer ? 'application' : undefined;
+  }
 
   const width = useChartWidth();
   const height = useChartHeight();
@@ -1337,7 +1363,7 @@ function SankeyImpl(props: InternalSankeyProps) {
   return (
     <>
       <SetComputedData computedData={{ links: modifiedLinks, nodes: modifiedNodes }} />
-      <Surface {...attrs} width={width} height={height}>
+      <Surface {...attrs} title={title} desc={desc} role={role} tabIndex={tabIndex} width={width} height={height}>
         {children}
         <AllSankeyLinkElements
           graphicalItemId={id}

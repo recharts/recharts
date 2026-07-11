@@ -72,6 +72,48 @@ describe('<Sankey />', () => {
     expect(container.querySelectorAll('.recharts-sankey-link')).toHaveLength(68);
   });
 
+  describe('accessibility', () => {
+    it('should add tabindex and role to the svg element by default', () => {
+      const { container } = render(<Sankey width={1000} height={500} data={exampleSankeyData} />);
+
+      const svg = container.querySelector('svg');
+      assertNotNull(svg);
+      expect(svg).toHaveAttribute('role', 'application');
+      expect(svg).toHaveAttribute('tabindex', '0');
+    });
+
+    it('should not add tabindex and role to the svg element when accessibilityLayer=false', () => {
+      const { container } = render(
+        <Sankey width={1000} height={500} data={exampleSankeyData} accessibilityLayer={false} />,
+      );
+
+      const svg = container.querySelector('svg');
+      assertNotNull(svg);
+      expect(svg).not.toHaveAttribute('role');
+      expect(svg).not.toHaveAttribute('tabindex');
+    });
+
+    it('should prefer explicit role and tabIndex over the accessibilityLayer defaults', () => {
+      const { container } = render(
+        <Sankey width={1000} height={500} data={exampleSankeyData} role="img" tabIndex={-1} />,
+      );
+
+      const svg = container.querySelector('svg');
+      assertNotNull(svg);
+      expect(svg).toHaveAttribute('role', 'img');
+      expect(svg).toHaveAttribute('tabindex', '-1');
+    });
+
+    it('should set title and description correctly', () => {
+      const { container } = render(
+        <Sankey width={1000} height={500} data={exampleSankeyData} title="Sankey title" desc="Sankey description" />,
+      );
+
+      expect(container.querySelector('title')).toHaveTextContent('Sankey title');
+      expect(container.querySelector('desc')).toHaveTextContent('Sankey description');
+    });
+  });
+
   it('re-renders links and nodes when data changes', () => {
     const { container, rerender } = render(<Sankey width={1000} height={500} data={exampleSankeyData} />);
 
