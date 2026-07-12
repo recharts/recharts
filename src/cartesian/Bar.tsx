@@ -645,6 +645,9 @@ function BarRectangleWithActiveState(
     activeBar &&
     String(entry.originalDataIndex) === activeIndex &&
     (activeDataKey == null || dataKey === activeDataKey);
+  const isAnotherBarActive =
+    activeIndex != null &&
+    (String(entry.originalDataIndex) !== activeIndex || (activeDataKey != null && dataKey !== activeDataKey));
 
   const [stayInLayer, setStayInLayer] = useState(false);
   const [hasMountedActive, setHasMountedActive] = useState(false);
@@ -662,12 +665,15 @@ function BarRectangleWithActiveState(
       });
     } else {
       setHasMountedActive(false);
+      if (isAnotherBarActive) {
+        setStayInLayer(false);
+      }
     }
 
     return () => {
       cancelAnimationFrame(rafId);
     };
-  }, [isActive]);
+  }, [isActive, isAnotherBarActive]);
 
   const handleTransitionEnd = useCallback(() => {
     // 4. Leave the layer only when the exit transition finishes
