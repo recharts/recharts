@@ -117,7 +117,7 @@ export type TooltipProps<TValue extends ValueType = ValueType, TName extends Nam
    */
   content?: ContentType<TValue, TName>;
   /**
-   * Styles for the wrapper container.
+   * CSS styles to be applied to the wrapper `div` element.
    * @defaultValue {}
    */
   contentStyle?: CSSProperties;
@@ -184,6 +184,10 @@ export type TooltipProps<TValue extends ValueType = ValueType, TName extends Nam
    * Renders once on the top of tooltip and shows categorical axis value.
    *
    * Even if there are multiple graphical items in the chart, only one label gets rendered.
+   *
+   * Note that "Label" in tooltip is the header, which is different from {@link Legend}
+   * where "labelStyle" are the individual items.
+   *
    * @defaultValue {}
    */
   labelStyle?: CSSProperties;

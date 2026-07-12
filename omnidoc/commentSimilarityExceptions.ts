@@ -339,4 +339,10 @@ export const commentSimilarityExceptions: ReadonlyArray<CommentSimilarityGroup> 
     props: ['fill', 'stroke'],
     reason: 'Cell is a generic component used to override attributes of children, so its description is more abstract.',
   },
+  {
+    components: ['Tooltip'],
+    props: ['labelStyle'],
+    reason:
+      'labelStyle in Tooltip styles the title, where the same labelStyle in Legend styles the individual items. Naming inconsistency we keep for backwards compatibility.',
+  },
 ];
