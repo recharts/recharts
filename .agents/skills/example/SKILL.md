@@ -121,5 +121,24 @@ Levers are optional, and not every example needs to have them.
 
 # Visual Regression Testing
 
-We strongly recommend to create a new VR test for every new example.
-All website example VR tests are located in `test-vr/tests/www` folder. You can create a new test file there, and use existing tests as a reference on how to implement it. You can also refer to the `vr-test` skill, and `test-vr/README.md` for more information on how to implement VR tests and how to run them locally.
+We strongly recommend creating a VR test for every new example.
+All website example VR tests live in the `test-vr/tests/www/` folder. Place your test file there, naming it `<YourExampleName>.spec-vr.tsx`.
+
+Here is an example of what a complete VR test file should look like:
+
+```tsx
+import * as React from 'react';
+import { test, expect } from '@playwright/experimental-ct-react';
+import TooltipStylesExample from '../../../www/src/docs/exampleComponents/Tooltip/TooltipStylesExample';
+
+test('TooltipStylesExample', async ({ mount }) => {
+  const component = await mount(<TooltipStylesExample />);
+  await expect(component).toHaveScreenshot();
+});
+```
+
+### Key notes for creating VR tests:
+- **Path mapping**: Test files import the example using a relative path pointing back into `www/src/...`.
+- **Structure**: Playwright CT requires components to be imported from separate files; they cannot be declared inline inside the test file.
+- **Props**: If your example doesn't accept any props, mount it directly: `<ExampleComponent />`. If it accepts props (like levers or controls), pass them in exactly as `CodeEditorWithPreview` would.
+- **Generating screenshots**: Requires docker which you may assume is not configured in your environment. Mention to the user that they must generate screenshots locally and commit them to the repo.
