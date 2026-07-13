@@ -89,7 +89,7 @@ export const LegendPortal = {
                   return value?.toLocaleString();
                 }}
                 labelFormatter={value =>
-                  (typeof value === 'string' || typeof value === 'number') && new Date(value).toLocaleDateString()
+                  typeof value === 'string' || typeof value === 'number' ? new Date(value).toLocaleDateString() : value
                 }
               />
             </AreaChart>
