@@ -407,7 +407,7 @@ export function Label(outerProps: Props) {
 
   let viewBox: PolarViewBoxRequired | TrapezoidViewBox | undefined,
     label: RenderableText,
-    positionAttrs: LabelPositionAttributes;
+    positionAttrs: LabelPositionAttributes | undefined;
   if (viewBoxFromProps == null) {
     viewBox = resolvedViewBox;
   } else if (isPolar(viewBoxFromProps)) {
@@ -425,7 +425,41 @@ export function Label(outerProps: Props) {
     return null;
   }
 
+  // TODO: Generic Polar Hook
+  const isRadialPolarLabel =
+    isPolar(viewBox) && (position === 'insideStart' || position === 'insideEnd' || position === 'end');
+
+  if (isPolar(viewBox)) {
+    if (!isRadialPolarLabel) {
+      positionAttrs = getAttrsOfPolarLabel(viewBox, props.offset, props.position);
+    }
+  } else if (cartesianBox) {
+    const cartesianResult = getCartesianPosition({
+      viewBox: cartesianBox,
+      position,
+      offset: props.offset,
+      parentViewBox: isPolar(parentViewBox) ? undefined : parentViewBox,
+      clamp: true,
+    });
+
+    positionAttrs = {
+      x: cartesianResult.x,
+      y: cartesianResult.y,
+      textAnchor: cartesianResult.horizontalAnchor,
+      verticalAnchor: cartesianResult.verticalAnchor,
+      ...(cartesianResult.width !== undefined ? { width: cartesianResult.width } : {}),
+      ...(cartesianResult.height !== undefined ? { height: cartesianResult.height } : {}),
+    };
+  }
+
+  /*
+   * Custom content receives the computed position attributes too, so that
+   * custom labels can be positioned the same way the built-in Text label is.
+   * Explicitly passed props win over the computed values.
+   * https://github.com/recharts/recharts/issues/5067
+   */
   const propsWithViewBox = {
+    ...positionAttrs,
     ...props,
     viewBox,
   };
@@ -449,32 +483,12 @@ export function Label(outerProps: Props) {
 
   const attrs = svgPropertiesAndEvents(props);
 
-  if (isPolar(viewBox)) {
-    // TODO: Generic Polar Hook
-    if (position === 'insideStart' || position === 'insideEnd' || position === 'end') {
-      return renderRadialLabel(props, position, label, attrs, viewBox);
-    }
-    positionAttrs = getAttrsOfPolarLabel(viewBox, props.offset, props.position);
-  } else {
-    if (!cartesianBox) {
-      return null;
-    }
-    const cartesianResult = getCartesianPosition({
-      viewBox: cartesianBox,
-      position,
-      offset: props.offset,
-      parentViewBox: isPolar(parentViewBox) ? undefined : parentViewBox,
-      clamp: true,
-    });
+  if (isRadialPolarLabel && isPolar(viewBox)) {
+    return renderRadialLabel(props, position, label, attrs, viewBox);
+  }
 
-    positionAttrs = {
-      x: cartesianResult.x,
-      y: cartesianResult.y,
-      textAnchor: cartesianResult.horizontalAnchor,
-      verticalAnchor: cartesianResult.verticalAnchor,
-      ...(cartesianResult.width !== undefined ? { width: cartesianResult.width } : {}),
-      ...(cartesianResult.height !== undefined ? { height: cartesianResult.height } : {}),
-    };
+  if (positionAttrs == null) {
+    return null;
   }
 
   return (

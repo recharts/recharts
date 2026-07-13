@@ -1,7 +1,17 @@
 import { screen } from '@testing-library/react';
 import React from 'react';
 import { describe, expect, it, vi } from 'vitest';
-import { DefaultZIndexes, Label, LabelProps, Line, LineChart, PieChart, ReferenceLine, Surface } from '../../src';
+import {
+  DefaultZIndexes,
+  Label,
+  LabelProps,
+  Line,
+  LineChart,
+  PieChart,
+  ReferenceLine,
+  Surface,
+  YAxis,
+} from '../../src';
 import { PolarViewBoxRequired } from '../../src/util/types';
 import { rechartsTestRender } from '../helper/createSelectorTestCase';
 import { assertNotNull } from '../helper/assertNotNull';
@@ -302,6 +312,10 @@ describe('<Label />', () => {
               angle: 0,
               offset: 5,
               position: 'center',
+              textAnchor: 'middle',
+              verticalAnchor: 'middle',
+              x: 150,
+              y: 150,
               textBreakAll: false,
               zIndex: DefaultZIndexes.label,
               viewBox: {
@@ -465,6 +479,10 @@ describe('<Label />', () => {
             offset: 5,
             textBreakAll: false,
             position: 'center',
+            textAnchor: 'middle',
+            verticalAnchor: 'middle',
+            x: 150,
+            y: 150,
             zIndex: DefaultZIndexes.label,
             viewBox: {
               height: 200,
@@ -500,6 +518,10 @@ describe('<Label />', () => {
             offset: 5,
             textBreakAll: false,
             position: 'center',
+            textAnchor: 'middle',
+            verticalAnchor: 'middle',
+            x: 150,
+            y: 150,
             zIndex: DefaultZIndexes.label,
             viewBox: {
               height: 200,
@@ -538,6 +560,10 @@ describe('<Label />', () => {
             textBreakAll: false,
             offset: 5,
             position: 'center',
+            textAnchor: 'middle',
+            verticalAnchor: 'middle',
+            x: 150,
+            y: 150,
             zIndex: DefaultZIndexes.label,
             viewBox: {
               height: 200,
@@ -588,6 +614,27 @@ describe('<Label />', () => {
     expect(screen.getByText(/400/i)).toBeInTheDocument();
   });
 
+  describe('custom label on an axis', () => {
+    it('should provide computed x and y coordinates to a custom label element', () => {
+      const received: Array<LabelProps> = [];
+      const CustomLabel = (props: LabelProps) => {
+        received.push(props);
+        return null;
+      };
+      rechartsTestRender(
+        <LineChart width={400} height={400} data={data}>
+          <YAxis label={<CustomLabel />} />
+          <Line dataKey="uv" />
+        </LineChart>,
+      );
+
+      expect(received.length).toBeGreaterThan(0);
+      const lastProps = received[received.length - 1];
+      expect(typeof lastProps.x).toBe('number');
+      expect(typeof lastProps.y).toBe('number');
+    });
+  });
+
   describe('in PieChart', () => {
     describe('with custom content function', () => {
       it('should pass the correct props to the content function when position=center', () => {
@@ -612,6 +659,10 @@ describe('<Label />', () => {
             value: 'text',
             textBreakAll: false,
             position: 'center',
+            textAnchor: 'middle',
+            verticalAnchor: 'middle',
+            x: 100,
+            y: 50,
             offset: 5,
             zIndex: DefaultZIndexes.label,
           },
@@ -675,6 +726,10 @@ describe('<Label />', () => {
             value: 'text',
             textBreakAll: false,
             position: 'center',
+            textAnchor: 'middle',
+            verticalAnchor: 'middle',
+            x: 200,
+            y: 200,
             offset: 5,
             zIndex: DefaultZIndexes.label,
           },
