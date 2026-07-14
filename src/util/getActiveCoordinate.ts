@@ -120,6 +120,19 @@ export const calculateActiveTickIndex = (
 
   if (axisType === 'angleAxis' && range != null && Math.abs(Math.abs(range[1] - range[0]) - 360) <= 1e-6) {
     // ticks are distributed in a circle
+    const span = range[1] - range[0];
+    /*
+     * Tick coordinates can be shifted outside of the range (e.g. by the band offset
+     * that tooltip ticks receive), so both the coordinate and the intervals live
+     * modulo the full circle. Testing the coordinate shifted by a whole turn in both
+     * directions closes the wrap-around gap where no interval matched
+     * and the active index came back as -1.
+     * https://github.com/recharts/recharts/issues/5099
+     */
+    const isInside = (lowerLimit: number, upperLimit: number, inclusiveLower: boolean): boolean =>
+      [coordinate, coordinate + span, coordinate - span].some(
+        c => (inclusiveLower ? c >= lowerLimit : c > lowerLimit) && c <= upperLimit,
+      );
     for (let i = 0; i < len; i++) {
       const before = i > 0 ? unsortedTicks[i - 1]?.coordinate : unsortedTicks[len - 1]?.coordinate;
       const cur = unsortedTicks[i]?.coordinate;
@@ -150,17 +163,14 @@ export const calculateActiveTickIndex = (
           Math.max(cur, (sameDirectionCoord + cur) / 2),
         ];
 
-        if (
-          (coordinate > sameInterval[0] && coordinate <= sameInterval[1]) ||
-          (coordinate >= diffInterval[0] && coordinate <= diffInterval[1])
-        ) {
+        if (isInside(sameInterval[0], sameInterval[1], false) || isInside(diffInterval[0], diffInterval[1], true)) {
           return unsortedTicks[i]?.index;
         }
       } else {
         const minValue = Math.min(before, after);
         const maxValue = Math.max(before, after);
 
-        if (coordinate > (minValue + cur) / 2 && coordinate <= (maxValue + cur) / 2) {
+        if (isInside((minValue + cur) / 2, (maxValue + cur) / 2, false)) {
           return unsortedTicks[i]?.index;
         }
       }
