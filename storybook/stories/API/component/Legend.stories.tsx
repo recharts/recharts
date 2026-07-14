@@ -88,7 +88,9 @@ export const LegendPortal = {
                 formatter={value => {
                   return value?.toLocaleString();
                 }}
-                labelFormatter={value => new Date(value).toLocaleDateString()}
+                labelFormatter={value =>
+                  typeof value === 'string' || typeof value === 'number' ? new Date(value).toLocaleDateString() : value
+                }
               />
             </AreaChart>
           </ResponsiveContainer>

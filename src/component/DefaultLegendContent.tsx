@@ -111,7 +111,21 @@ interface DefaultLegendContentProps {
    */
   payload?: ReadonlyArray<LegendPayload>;
   /**
-   * The style of each text label which is a span element.
+   * Style of individual items inside the Legend, a `<span>` element.
+   * These show the data label (name, or dataKey) and value.
+   *
+   * If a chart has multiple graphical items then the Legend renders multiple item
+   * and each of them gets this itemStyle applied.
+   *
+   * Pie charts render multiple labels from a single data series.
+   *
+   * Note that this is different from {@link Tooltip}:
+   * - in Tooltip: "labelStyle" styles the title / header
+   * - in Tooltip: "itemStyle" styles the individual data points
+   * - in Legend: "labelStyle" styles the individual data points
+   *
+   * Beware of the naming inconsistency!
+   *
    * @defaultValue {}
    */
   labelStyle?: CSSProperties;

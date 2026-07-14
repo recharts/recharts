@@ -117,7 +117,7 @@ export type TooltipProps<TValue extends ValueType = ValueType, TName extends Nam
    */
   content?: ContentType<TValue, TName>;
   /**
-   * The style of tooltip content which is a dom element.
+   * CSS styles to be applied to the wrapper `div` element.
    * @defaultValue {}
    */
   contentStyle?: CSSProperties;
@@ -166,16 +166,28 @@ export type TooltipProps<TValue extends ValueType = ValueType, TName extends Nam
    */
   itemSorter?: TooltipItemSorter;
   /**
-   * The style of default tooltip content item which is a li element.
+   * Style of individual items inside the tooltip, a `<li>` element.
+   * These show the data label (name, or dataKey) and value.
+   *
+   * If a chart has multiple graphical items then the Tooltip renders multiple item
+   * and each of them gets this itemStyle applied.
+   *
    * @defaultValue {}
    */
   itemStyle?: CSSProperties;
   /**
    * The formatter function of label in tooltip.
    */
-  labelFormatter?: (label: any, payload: TooltipPayload) => ReactNode;
+  labelFormatter?: (label: ReactNode, payload: TooltipPayload) => ReactNode;
   /**
-   * The style of default tooltip label which is a p element.
+   * "Label" is the tooltip title.
+   * Renders once on the top of tooltip and shows categorical axis value.
+   *
+   * Even if there are multiple graphical items in the chart, only one label gets rendered.
+   *
+   * Note that "Label" in tooltip is the header, which is different from {@link Legend}
+   * where "labelStyle" are the individual items.
+   *
    * @defaultValue {}
    */
   labelStyle?: CSSProperties;
