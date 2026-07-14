@@ -661,13 +661,29 @@ export const getBandSizeOfAxis = (
 
   if (axis && ticks && ticks.length >= 2) {
     const orderedTicks: ReadonlyArray<TickItem> = sortBy(ticks, (o: TickItem) => o.coordinate);
-    let bandSize = Infinity;
 
+    // Collect the pixel gaps between adjacent category positions and track the
+    // widest one.
+    const gaps: number[] = [];
+    let maxGap = 0;
     for (let i = 1, len = orderedTicks.length; i < len; i++) {
-      const cur = orderedTicks[i];
-      const prev = orderedTicks[i - 1];
+      const gap = (orderedTicks[i]?.coordinate || 0) - (orderedTicks[i - 1]?.coordinate || 0);
+      gaps.push(gap);
+      maxGap = Math.max(gap, maxGap);
+    }
 
-      bandSize = Math.min((cur?.coordinate || 0) - (prev?.coordinate || 0), bandSize);
+    // High-precision float values can place two ticks at (almost) the same pixel,
+    // producing a spurious sub-pixel gap. Such near-coincident positions are the
+    // same category slot for rendering purposes and must not define the band
+    // size, otherwise every bar collapses to ~0px wide (issue #4043). Ignore gaps
+    // that are a negligible fraction of the widest gap so a single near-duplicate
+    // value cannot dictate the spacing.
+    const minMeaningfulGap = maxGap * 1e-4;
+    let bandSize = Infinity;
+    for (let i = 0; i < gaps.length; i++) {
+      if (gaps[i] > minMeaningfulGap) {
+        bandSize = Math.min(gaps[i], bandSize);
+      }
     }
 
     return bandSize === Infinity ? 0 : bandSize;
