@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { describe, expect, test, vi } from 'vitest';
-import { fireEvent, render, screen, waitFor } from '@testing-library/react';
+import { act, fireEvent, render, screen, waitFor } from '@testing-library/react';
 import { BarChart, Brush, BrushProps, ComposedChart, Customized, Line, LineChart, ReferenceLine } from '../../src';
 import { assertNotNull } from '../helper/assertNotNull';
 import { useAppSelector } from '../../src/state/hooks';
@@ -697,6 +697,52 @@ describe('<Brush />', () => {
 
       expect(rootYAxisRangeSpy).toHaveBeenLastCalledWith([216, 11]);
       expect(panoramaYAxisRangeSpy).toHaveBeenLastCalledWith([39, 1]);
+    });
+  });
+
+  describe('controlled startIndex and endIndex across data updates', () => {
+    // Keeping this as a stable component reference (not re-created per render) matters:
+    // if the component type identity changed between renders, React would unmount and
+    // remount the whole chart instead of re-rendering it, which would defeat the purpose
+    // of this test (a genuine parent re-render with a new `data` array, not a remount).
+    function ControlledBrushWithChangingData({ children }: { children: React.ReactNode }) {
+      const [chartData, setChartData] = useState(data);
+      return (
+        <>
+          <BarChart width={400} height={100} data={chartData}>
+            {children}
+            <Brush dataKey="value" startIndex={2} endIndex={5} x={100} y={50} width={400} height={40} />
+          </BarChart>
+          <button type="button" onClick={() => setChartData(data.map(entry => ({ ...entry })))}>
+            change data
+          </button>
+        </>
+      );
+    }
+
+    it('should preserve the controlled startIndex and endIndex when the data array identity changes but the length stays the same', () => {
+      const renderTestCase = createSelectorTestCase(ControlledBrushWithChangingData);
+      const { spy, container } = renderTestCase(selectChartDataWithIndexes);
+
+      expectLastCalledWith(spy, {
+        chartData: data,
+        dataStartIndex: 2,
+        dataEndIndex: 5,
+        computedData: undefined,
+      });
+
+      // Simulate a parent re-render that creates a brand new array instance
+      // (e.g. a fresh fetch or a non-memoized map) with the same length.
+      const button = container.querySelector('button') as HTMLButtonElement;
+      act(() => {
+        fireEvent.click(button);
+        vi.runOnlyPendingTimers();
+      });
+
+      const lastCall = spy.mock.calls[spy.mock.calls.length - 1][0];
+      expect(lastCall.chartData).not.toBe(data);
+      expect(lastCall.dataStartIndex).toBe(2);
+      expect(lastCall.dataEndIndex).toBe(5);
     });
   });
 
