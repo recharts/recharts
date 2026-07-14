@@ -1,7 +1,6 @@
 import * as React from 'react';
 import { FunctionComponent, ReactElement, ReactNode, SVGProps, useEffect, useMemo } from 'react';
-import maxBy from 'es-toolkit/compat/maxBy';
-import minBy from 'es-toolkit/compat/minBy';
+import { maxBy, minBy } from 'es-toolkit/compat';
 
 import { clsx } from 'clsx';
 import { Text } from '../component/Text';

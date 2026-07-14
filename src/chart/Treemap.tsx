@@ -1,7 +1,6 @@
 import * as React from 'react';
 import { PureComponent, ReactNode, useCallback, useState } from 'react';
-import omit from 'es-toolkit/compat/omit';
-import get from 'es-toolkit/compat/get';
+import { get, omit } from 'es-toolkit/compat';
 
 import { Layer } from '../container/Layer';
 import { Surface } from '../container/Surface';

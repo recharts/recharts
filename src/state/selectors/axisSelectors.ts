@@ -1,5 +1,5 @@
 import { createSelector } from 'reselect';
-import range from 'es-toolkit/compat/range';
+import { range } from 'es-toolkit/compat';
 import { selectChartLayout } from '../../context/chartLayoutContext';
 import {
   getDomainOfStackGroups,

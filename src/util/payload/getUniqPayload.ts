@@ -1,4 +1,4 @@
-import uniqBy from 'es-toolkit/compat/uniqBy';
+import { uniqBy } from 'es-toolkit/compat';
 
 type UniqueFunc<T> = (entry: T) => unknown;
 

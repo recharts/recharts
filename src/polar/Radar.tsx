@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { MouseEvent, MutableRefObject, ReactElement, ReactNode, SVGProps, useRef } from 'react';
-import last from 'es-toolkit/compat/last';
+import { last } from 'es-toolkit/compat';
 
 import { clsx } from 'clsx';
 import { interpolate, isNullish, noop } from '../util/DataUtils';

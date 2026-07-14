@@ -1,8 +1,6 @@
 import * as React from 'react';
 import { MouseEvent, ReactElement, ReactNode, SVGProps, useCallback, useMemo, useState } from 'react';
-import maxBy from 'es-toolkit/compat/maxBy';
-import sumBy from 'es-toolkit/compat/sumBy';
-import get from 'es-toolkit/compat/get';
+import { get, maxBy, sumBy } from 'es-toolkit/compat';
 import { Surface } from '../container/Surface';
 import { Layer } from '../container/Layer';
 import { Props as RectangleProps, Rectangle } from '../shape/Rectangle';

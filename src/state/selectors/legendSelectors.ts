@@ -1,5 +1,5 @@
 import { createSelector } from 'reselect';
-import sortBy from 'es-toolkit/compat/sortBy';
+import { sortBy } from 'es-toolkit/compat';
 import { RechartsRootState } from '../store';
 import { LegendSettings } from '../legendSlice';
 import { LegendPayload } from '../../component/DefaultLegendContent';

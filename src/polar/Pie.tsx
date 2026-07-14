@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { MutableRefObject, ReactElement, ReactNode, SVGProps, useMemo, useRef } from 'react';
-import get from 'es-toolkit/compat/get';
+import { get } from 'es-toolkit/compat';
 
 import { clsx } from 'clsx';
 import { selectPieLegend, selectPieSectors } from '../state/selectors/pieSelectors';

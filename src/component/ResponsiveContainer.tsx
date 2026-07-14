@@ -13,7 +13,7 @@ import {
   useRef,
   useState,
 } from 'react';
-import throttle from 'es-toolkit/compat/throttle';
+import { throttle } from 'es-toolkit/compat';
 import { isNumber, noop } from '../util/DataUtils';
 import { warn } from '../util/LogUtils';
 import {

@@ -1,4 +1,4 @@
-import get from 'es-toolkit/compat/get';
+import { get } from 'es-toolkit/compat';
 import { NonEmptyArray, Percent } from './types';
 import { round } from './round';
 

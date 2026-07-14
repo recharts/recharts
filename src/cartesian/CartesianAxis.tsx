@@ -4,7 +4,7 @@
 import * as React from 'react';
 import { SVGProps, useState, useRef, useCallback, forwardRef, useImperativeHandle, useEffect } from 'react';
 
-import get from 'es-toolkit/compat/get';
+import { get } from 'es-toolkit/compat';
 import { clsx } from 'clsx';
 import { Layer } from '../container/Layer';
 import { Text, Props as TextProps, TextAnchor, TextVerticalAnchor, isValidTextAnchor } from '../component/Text';

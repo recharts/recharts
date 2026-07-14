@@ -1,4 +1,4 @@
-import { existsSync } from 'fs';
+import { existsSync, readFileSync } from 'fs';
 import { describe, it, expect } from 'vitest';
 import { globSync } from 'glob';
 
@@ -63,6 +63,14 @@ describe('expected folder structure', () => {
   describe('es6 folder output', () => {
     it('should have expected files and no more', async () => {
       await checkFolderOutput('es6/**/*', 'es6Files');
+    });
+
+    it('should avoid es-toolkit compat subpath imports', () => {
+      const es6Output = globSync('es6/**/*.js')
+        .map(file => readFileSync(file, 'utf8'))
+        .join('\n');
+
+      expect(es6Output).not.toContain('es-toolkit/compat/');
     });
   });
 

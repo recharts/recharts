@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { MutableRefObject, ReactElement, ReactNode, useMemo, useRef } from 'react';
-import omit from 'es-toolkit/compat/omit';
+import { omit } from 'es-toolkit/compat';
 
 import { clsx } from 'clsx';
 import { selectActiveIndex } from '../state/selectors/selectors';

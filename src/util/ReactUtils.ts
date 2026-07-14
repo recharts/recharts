@@ -1,4 +1,4 @@
-import get from 'es-toolkit/compat/get';
+import { get } from 'es-toolkit/compat';
 
 import * as React from 'react';
 import { Children, ReactNode } from 'react';

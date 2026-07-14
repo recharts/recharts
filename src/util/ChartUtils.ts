@@ -1,5 +1,4 @@
-import sortBy from 'es-toolkit/compat/sortBy';
-import get from 'es-toolkit/compat/get';
+import { get, sortBy } from 'es-toolkit/compat';
 
 import {
   Series,
