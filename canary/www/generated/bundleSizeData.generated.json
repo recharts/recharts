@@ -1,45 +1,45 @@
 {
   "treemap": {
     "examplePath": "www/src/views/IndexView/IndexLineChart.tsx",
-    "totalSize": 813468,
-    "totalSizeLabel": "794.40 KB",
+    "totalSize": 814107,
+    "totalSizeLabel": "795.03 KB",
     "moduleCount": 317,
-    "generatedAt": "2026-07-14T19:21:56.517Z",
+    "generatedAt": "2026-07-14T20:19:49.183Z",
     "stages": [
       {
         "stage": "es6-folder",
-        "bytes": 1272942,
+        "bytes": 1273930,
         "humanReadableSize": "1.21 MB",
         "reductionFromBaselinePercent": 0
       },
       {
         "stage": "tree-shaken",
-        "bytes": 816195,
-        "humanReadableSize": "797.07 KB",
+        "bytes": 816834,
+        "humanReadableSize": "797.69 KB",
         "reductionFromBaselinePercent": 0
       },
       {
         "stage": "minified",
-        "bytes": 281149,
-        "humanReadableSize": "274.56 KB",
-        "reductionFromBaselinePercent": 65.55
+        "bytes": 281205,
+        "humanReadableSize": "274.61 KB",
+        "reductionFromBaselinePercent": 65.57
       },
       {
         "stage": "minified+gzip",
-        "bytes": 91994,
-        "humanReadableSize": "89.84 KB",
+        "bytes": 92025,
+        "humanReadableSize": "89.87 KB",
         "reductionFromBaselinePercent": 88.73
       }
     ],
     "tree": {
       "name": "bundle",
       "fullPath": "bundle",
-      "value": 813468,
+      "value": 814107,
       "children": [
         {
           "name": "src",
           "fullPath": "src",
-          "value": 455606,
+          "value": 456245,
           "children": [
             {
               "name": "state",
@@ -422,7 +422,7 @@
             {
               "name": "util",
               "fullPath": "src/util",
-              "value": 98113,
+              "value": 98752,
               "children": [
                 {
                   "name": "scale",
@@ -474,14 +474,14 @@
                   "value": 6694
                 },
                 {
+                  "name": "getActiveCoordinate.ts",
+                  "fullPath": "src/util/getActiveCoordinate.ts",
+                  "value": 5637
+                },
+                {
                   "name": "DataUtils.ts",
                   "fullPath": "src/util/DataUtils.ts",
                   "value": 5015
-                },
-                {
-                  "name": "getActiveCoordinate.ts",
-                  "fullPath": "src/util/getActiveCoordinate.ts",
-                  "value": 4998
                 },
                 {
                   "name": "getRelativeCoordinate.ts",
@@ -2277,45 +2277,45 @@
   },
   "sunburst": {
     "examplePath": "www/src/views/IndexView/IndexLineChart.tsx",
-    "totalSize": 813468,
-    "totalSizeLabel": "794.40 KB",
+    "totalSize": 814107,
+    "totalSizeLabel": "795.03 KB",
     "moduleCount": 317,
-    "generatedAt": "2026-07-14T19:21:58.732Z",
+    "generatedAt": "2026-07-14T20:19:47.125Z",
     "stages": [
       {
         "stage": "es6-folder",
-        "bytes": 1272942,
+        "bytes": 1273930,
         "humanReadableSize": "1.21 MB",
         "reductionFromBaselinePercent": 0
       },
       {
         "stage": "tree-shaken",
-        "bytes": 816195,
-        "humanReadableSize": "797.07 KB",
+        "bytes": 816834,
+        "humanReadableSize": "797.69 KB",
         "reductionFromBaselinePercent": 0
       },
       {
         "stage": "minified",
-        "bytes": 281149,
-        "humanReadableSize": "274.56 KB",
-        "reductionFromBaselinePercent": 65.55
+        "bytes": 281205,
+        "humanReadableSize": "274.61 KB",
+        "reductionFromBaselinePercent": 65.57
       },
       {
         "stage": "minified+gzip",
-        "bytes": 91994,
-        "humanReadableSize": "89.84 KB",
+        "bytes": 92025,
+        "humanReadableSize": "89.87 KB",
         "reductionFromBaselinePercent": 88.73
       }
     ],
     "tree": {
       "name": "bundle",
       "fullPath": "bundle",
-      "value": 813468,
+      "value": 814107,
       "children": [
         {
           "name": "src",
           "fullPath": "src",
-          "value": 455606,
+          "value": 456245,
           "children": [
             {
               "name": "state",
@@ -2698,7 +2698,7 @@
             {
               "name": "util",
               "fullPath": "src/util",
-              "value": 98113,
+              "value": 98752,
               "children": [
                 {
                   "name": "scale",
@@ -2750,14 +2750,14 @@
                   "value": 6694
                 },
                 {
+                  "name": "getActiveCoordinate.ts",
+                  "fullPath": "src/util/getActiveCoordinate.ts",
+                  "value": 5637
+                },
+                {
                   "name": "DataUtils.ts",
                   "fullPath": "src/util/DataUtils.ts",
                   "value": 5015
-                },
-                {
-                  "name": "getActiveCoordinate.ts",
-                  "fullPath": "src/util/getActiveCoordinate.ts",
-                  "value": 4998
                 },
                 {
                   "name": "getRelativeCoordinate.ts",
