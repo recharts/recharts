@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Legend, Line, LineChart, CartesianGrid } from '../../src';
+import { Legend, Line, LineChart, CartesianGrid, XAxis, YAxis } from '../../src';
 import { HorizontalAlignmentType, VerticalAlignmentType } from '../../src/component/DefaultLegendContent';
 
 const data = [
@@ -35,28 +35,22 @@ const allAlignmentCombinations: ReadonlyArray<Alignment> = [
 export const LegendAlignVRTest = ({ offset }: { offset?: number }) => (
   <div style={wrapperStyle}>
     {allAlignmentCombinations.map(([horizontalAlign, verticalAlign]) => (
-      <LineChart
-        key={`${horizontalAlign}-${verticalAlign}`}
-        width={600}
-        height={200}
-        data={data}
-        style={{ border: '1px solid red' }}
-      >
-        <Line type="monotone" dataKey="uv" stroke="#8884d8" />
-        <Line type="monotone" dataKey="pv" stroke="#8884d8" />
-        <CartesianGrid />
-        <Legend
-          align={horizontalAlign}
-          verticalAlign={verticalAlign}
-          offset={offset}
-          // eslint-disable-next-line react/no-unstable-nested-components
-          content={() => (
-            <div style={{ border: '1px dashed black' }}>
-              Horizontal align: {horizontalAlign}, vertical align: {verticalAlign}
-            </div>
-          )}
-        />
-      </LineChart>
+      <React.Fragment key={`${horizontalAlign}-${verticalAlign}`}>
+        <LineChart width={600} height={200} data={data} style={{ border: '1px solid red' }}>
+          <XAxis dataKey="name" />
+          <YAxis />
+          <Line type="monotone" dataKey="uv" name={`Horizontal align: ${horizontalAlign}`} stroke="purple" />
+          <Line type="monotone" dataKey="pv" name={`Vertical align: ${verticalAlign}`} stroke="gold" />
+          <CartesianGrid />
+          <Legend
+            align={horizontalAlign}
+            verticalAlign={verticalAlign}
+            offset={offset}
+            wrapperStyle={{ border: '1px dashed black' }}
+          />
+        </LineChart>
+        <hr style={{ border: '1px dashed black', width: '100%' }} />
+      </React.Fragment>
     ))}
   </div>
 );
