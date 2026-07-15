@@ -930,6 +930,20 @@ describe('<Legend />', () => {
       ]);
     });
 
+    it('should not forward ID and className to the DOM', () => {
+      // This is arguably a bug - so this test is just documenting the current behavior
+      const { container } = rechartsTestRender(
+        <LineChart width={600} height={300} data={categoricalData}>
+          {/* @ts-expect-error TypeScript is correct here since these props don't do anything */}
+          <Legend id="foo" className="bar" />
+          <Line dataKey="uv" />
+        </LineChart>,
+      );
+
+      expect(container.querySelector('#foo')).toBeNull();
+      expect(container.querySelector('.bar')).toBeNull();
+    });
+
     test('label style should not change color of hidden Line', () => {
       const { container } = rechartsTestRender(
         <LineChart width={500} height={500} data={numericalData}>
