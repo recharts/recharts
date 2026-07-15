@@ -42,6 +42,15 @@ function getTicksEnd(
         ...entry,
         tickCoord: gap > 0 ? entry.coordinate - gap * sign : entry.coordinate,
       };
+    } else if (i === 0) {
+      // Nudge the first tick inwards when it would overflow the start edge,
+      // mirroring what getTicksStart does for the last tick. Without this the
+      // tick fails the visibility check and is dropped instead of rendered.
+      const gap = sign * (entry.coordinate - (sign * getSize()) / 2 - start);
+      result[i] = entry = {
+        ...entry,
+        tickCoord: gap < 0 ? entry.coordinate - gap * sign : entry.coordinate,
+      };
     } else {
       result[i] = entry = { ...entry, tickCoord: entry.coordinate };
     }

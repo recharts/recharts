@@ -239,4 +239,37 @@ describe('getTicks', () => {
       },
     );
   });
+
+  describe('reversed axis', () => {
+    // A reversed YAxis puts the smallest value at the top of the chart, so the
+    // first tick sits right against the start edge of the axis.
+    // See https://github.com/recharts/recharts/issues/2882
+    const reversedYAxisTicks: ReadonlyArray<TickItem> = [
+      { value: '0', coordinate: 5, index: 0, offset: 0 },
+      { value: '25', coordinate: 70, index: 1, offset: 0 },
+      { value: '50', coordinate: 135, index: 2, offset: 0 },
+      { value: '75', coordinate: 200, index: 3, offset: 0 },
+      { value: '100', coordinate: 265, index: 4, offset: 0 },
+    ];
+    const reversedYAxisInput: GetTicksInput = {
+      ...EXAMPLE_INPUT,
+      orientation: 'left' as const,
+      ticks: reversedYAxisTicks,
+    };
+
+    test.each(['preserveEnd', 'preserveStart', 'preserveStartEnd'] as const)(
+      'shows the tick at the start edge with interval=%s',
+      interval => {
+        const result = getTicks({ ...reversedYAxisInput, interval }) as CartesianTickItem[];
+
+        expect(result.map(tick => tick.value)).toEqual(['0', '25', '50', '75', '100']);
+      },
+    );
+
+    test('nudges the tick at the start edge inwards to keep it visible', () => {
+      const result = getTicks({ ...reversedYAxisInput, interval: 'preserveEnd' as const }) as CartesianTickItem[];
+
+      expect(result[0]).toEqual({ value: '0', coordinate: 5, tickCoord: 6, isShow: true, index: 0, offset: 0 });
+    });
+  });
 });
