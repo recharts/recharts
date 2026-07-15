@@ -1,6 +1,6 @@
 import React, { CSSProperties, useState } from 'react';
 import { fireEvent } from '@testing-library/react';
-import { describe, expect, it, test, vi } from 'vitest';
+import { describe, expect, it, Mock, test, vi } from 'vitest';
 import {
   Area,
   AreaChart,
@@ -24,6 +24,7 @@ import {
   Scatter,
   ScatterChart,
   Surface,
+  LegendPayload,
 } from '../../src';
 import { testChartLayoutContext } from '../util/context';
 import { mockGetBoundingClientRect, mockSequenceOfGetBoundingClientRect } from '../helper/mockGetBoundingClientRect';
@@ -3105,7 +3106,9 @@ describe('<Legend />', () => {
 
   describe('click events', () => {
     it('should call onClick when clicked', () => {
-      const onClick = vi.fn();
+      const onClick: Mock<
+        (payload: LegendPayload, index: number, ev: React.MouseEvent<HTMLElement, MouseEvent>) => void
+      > = vi.fn();
       const { container } = rechartsTestRender(
         <ScatterChart width={500} height={500} data={numericalData}>
           <Legend onClick={onClick} />
@@ -3117,6 +3120,34 @@ describe('<Legend />', () => {
       assertNotNull(legend);
       fireEvent.click(legend);
       expect(onClick).toHaveBeenCalledTimes(1);
+      const expectedPayload: LegendPayload = {
+        color: undefined,
+        dataKey: 'percent',
+        inactive: false,
+        payload: {
+          animationBegin: 0,
+          animationDuration: 400,
+          animationEasing: 'linear',
+          animationInterpolateFn: expect.any(Function),
+          animationMatchBy: 'append',
+          dataKey: 'percent',
+          hide: false,
+          isAnimationActive: 'auto',
+          label: false,
+          legendType: 'circle',
+          line: false,
+          lineJointType: 'linear',
+          lineType: 'joint',
+          shape: 'circle',
+          xAxisId: 0,
+          yAxisId: 0,
+          zAxisId: 0,
+          zIndex: 600,
+        },
+        type: 'circle',
+        value: 'percent',
+      };
+      expect(onClick).toHaveBeenLastCalledWith(expectedPayload, 0, expect.objectContaining({ type: 'click' }));
     });
   });
 

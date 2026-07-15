@@ -4,13 +4,7 @@ import { ReactNode, MouseEvent, ReactElement, CSSProperties } from 'react';
 import { clsx } from 'clsx';
 import { Surface } from '../container/Surface';
 import { Symbols } from '../shape/Symbols';
-import {
-  DataKey,
-  LegendType,
-  adaptEventsOfChild,
-  PresentationAttributesAdaptChildEvent,
-  CartesianLayout,
-} from '../util/types';
+import { DataKey, LegendType, adaptEventsOfChild, PresentationAttributesForHTML, CartesianLayout } from '../util/types';
 import { RequiresDefaultProps, resolveDefaultProps } from '../util/resolveDefaultProps';
 
 const SIZE = 32;
@@ -132,7 +126,7 @@ interface DefaultLegendContentProps {
 }
 
 export type Props = DefaultLegendContentProps &
-  Omit<PresentationAttributesAdaptChildEvent<any, ReactElement>, keyof DefaultLegendContentProps>;
+  Omit<PresentationAttributesForHTML<LegendPayload, ReactElement>, keyof DefaultLegendContentProps>;
 
 export const defaultLegendContentDefaultProps = {
   align: 'center',

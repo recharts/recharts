@@ -103,6 +103,11 @@ export type PresentationAttributesWithProps<P, T> = AriaAttributes &
 export type PresentationAttributesAdaptChildEvent<P, T> = AriaAttributes &
   DOMAttributesAdaptChildEvent<P, T> &
   Omit<SVGProps<T>, keyof DOMAttributesAdaptChildEvent<P, T>>;
+/**
+ * A version of PresentationAttributes that excludes SVG-specific props.
+ * For use with components that render HTML elements (i.e., Legend and Tooltip, which render <ul>, <li>, <div>).
+ */
+export type PresentationAttributesForHTML<P, T> = AriaAttributes & DOMAttributesAdaptChildEvent<P, T>;
 
 /**
  * @inline

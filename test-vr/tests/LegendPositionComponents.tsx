@@ -32,7 +32,7 @@ const allAlignmentCombinations: ReadonlyArray<Alignment> = [
   ['right', 'bottom'],
 ];
 
-export const LegendAlignVRTest = ({ offset }: { offset?: number }) => (
+export const LegendAlignVRTest = () => (
   <div style={wrapperStyle}>
     {allAlignmentCombinations.map(([horizontalAlign, verticalAlign]) => (
       <React.Fragment key={`${horizontalAlign}-${verticalAlign}`}>
@@ -42,12 +42,7 @@ export const LegendAlignVRTest = ({ offset }: { offset?: number }) => (
           <Line type="monotone" dataKey="uv" name={`Horizontal align: ${horizontalAlign}`} stroke="purple" />
           <Line type="monotone" dataKey="pv" name={`Vertical align: ${verticalAlign}`} stroke="gold" />
           <CartesianGrid />
-          <Legend
-            align={horizontalAlign}
-            verticalAlign={verticalAlign}
-            offset={offset}
-            wrapperStyle={{ border: '1px dashed black' }}
-          />
+          <Legend align={horizontalAlign} verticalAlign={verticalAlign} wrapperStyle={{ border: '1px dashed black' }} />
         </LineChart>
         <hr style={{ border: '1px dashed black', width: '100%' }} />
       </React.Fragment>
