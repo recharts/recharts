@@ -680,9 +680,9 @@ export const getBandSizeOfAxis = (
     // value cannot dictate the spacing.
     const minMeaningfulGap = maxGap * 1e-4;
     let bandSize = Infinity;
-    for (let i = 0; i < gaps.length; i++) {
-      if (gaps[i] > minMeaningfulGap) {
-        bandSize = Math.min(gaps[i], bandSize);
+    for (const gap of gaps) {
+      if (gap > minMeaningfulGap) {
+        bandSize = Math.min(gap, bandSize);
       }
     }
 
