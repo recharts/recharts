@@ -1,6 +1,6 @@
 import React, { CSSProperties, useState } from 'react';
 import { fireEvent } from '@testing-library/react';
-import { describe, expect, it, test, vi } from 'vitest';
+import { describe, expect, it, Mock, test, vi } from 'vitest';
 import {
   Area,
   AreaChart,
@@ -24,6 +24,7 @@ import {
   Scatter,
   ScatterChart,
   Surface,
+  LegendPayload,
 } from '../../src';
 import { testChartLayoutContext } from '../util/context';
 import { mockGetBoundingClientRect, mockSequenceOfGetBoundingClientRect } from '../helper/mockGetBoundingClientRect';
@@ -927,6 +928,20 @@ describe('<Legend />', () => {
         { fill: 'none', textContent: 'pv', textColor: 'rgb(102, 102, 102)' },
         { fill: 'none', textContent: 'uv', textColor: 'rgb(102, 102, 102)' },
       ]);
+    });
+
+    it('should not forward ID and className to the DOM', () => {
+      // This is arguably a bug - so this test is just documenting the current behavior
+      const { container } = rechartsTestRender(
+        <LineChart width={600} height={300} data={categoricalData}>
+          {/* @ts-expect-error TypeScript is correct here since these props don't do anything */}
+          <Legend id="foo" className="bar" />
+          <Line dataKey="uv" />
+        </LineChart>,
+      );
+
+      expect(container.querySelector('#foo')).toBeNull();
+      expect(container.querySelector('.bar')).toBeNull();
     });
 
     test('label style should not change color of hidden Line', () => {
@@ -3105,7 +3120,9 @@ describe('<Legend />', () => {
 
   describe('click events', () => {
     it('should call onClick when clicked', () => {
-      const onClick = vi.fn();
+      const onClick: Mock<
+        (payload: LegendPayload, index: number, ev: React.MouseEvent<HTMLElement, MouseEvent>) => void
+      > = vi.fn();
       const { container } = rechartsTestRender(
         <ScatterChart width={500} height={500} data={numericalData}>
           <Legend onClick={onClick} />
@@ -3117,6 +3134,34 @@ describe('<Legend />', () => {
       assertNotNull(legend);
       fireEvent.click(legend);
       expect(onClick).toHaveBeenCalledTimes(1);
+      const expectedPayload: LegendPayload = {
+        color: undefined,
+        dataKey: 'percent',
+        inactive: false,
+        payload: {
+          animationBegin: 0,
+          animationDuration: 400,
+          animationEasing: 'linear',
+          animationInterpolateFn: expect.any(Function),
+          animationMatchBy: 'append',
+          dataKey: 'percent',
+          hide: false,
+          isAnimationActive: 'auto',
+          label: false,
+          legendType: 'circle',
+          line: false,
+          lineJointType: 'linear',
+          lineType: 'joint',
+          shape: 'circle',
+          xAxisId: 0,
+          yAxisId: 0,
+          zAxisId: 0,
+          zIndex: 600,
+        },
+        type: 'circle',
+        value: 'percent',
+      };
+      expect(onClick).toHaveBeenLastCalledWith(expectedPayload, 0, expect.objectContaining({ type: 'click' }));
     });
   });
 
