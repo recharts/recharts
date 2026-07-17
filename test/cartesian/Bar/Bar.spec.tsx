@@ -1012,7 +1012,6 @@ describe.each(chartsThatSupportBar)('<Bar /> as a child of $testName', ({ ChartE
         expect(spy).toBeCalledWith(
           {
             angle: 0,
-            fill: undefined,
             height: expect.any(Number),
             index: expect.any(Number),
             offset: 5,
@@ -1022,11 +1021,9 @@ describe.each(chartsThatSupportBar)('<Bar /> as a child of $testName', ({ ChartE
               x: expect.any(Number),
               y: expect.any(Number),
             },
-            textAnchor: 'middle',
             textBreakAll: false,
             position: 'middle',
             value: expect.any(Number),
-            verticalAnchor: 'middle',
             viewBox: {
               height: expect.any(Number),
               width: expect.any(Number),

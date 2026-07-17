@@ -453,13 +453,17 @@ export function Label(outerProps: Props) {
   }
 
   /*
-   * Custom content receives the computed position attributes too, so that
-   * custom labels can be positioned the same way the built-in Text label is.
-   * Explicitly passed props win over the computed values.
+   * Custom content receives the computed x and y too, so that custom labels
+   * can be positioned the same way the built-in Text label is. Explicitly
+   * passed props win over the computed values. We deliberately forward only
+   * x and y (not the anchors): a custom label that spreads its props into a
+   * nested Label would otherwise have that Label's own computed anchors
+   * overridden by the inherited ones.
    * https://github.com/recharts/recharts/issues/5067
    */
   const propsWithViewBox = {
-    ...positionAttrs,
+    ...(positionAttrs?.x !== undefined ? { x: positionAttrs.x } : {}),
+    ...(positionAttrs?.y !== undefined ? { y: positionAttrs.y } : {}),
     ...props,
     viewBox,
   };
