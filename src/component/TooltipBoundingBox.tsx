@@ -94,7 +94,7 @@ function TooltipBoundingBoxImpl(props: TooltipBoundingBoxProps) {
     useTranslate3d: props.useTranslate3d,
     viewBox: props.viewBox,
   });
-  const positionStyle: React.CSSProperties = props.hasPortalFromProps
+  const positionStyle: CSSProperties = props.hasPortalFromProps
     ? {}
     : {
         transition: resolveTransitionProperty({
@@ -110,7 +110,7 @@ function TooltipBoundingBoxImpl(props: TooltipBoundingBoxProps) {
         top: 0,
         left: 0,
       };
-  const outerStyle: React.CSSProperties = {
+  const outerStyle: CSSProperties = {
     ...positionStyle,
     visibility: !state.dismissed && props.active && props.hasPayload ? 'visible' : 'hidden',
     ...props.wrapperStyle,

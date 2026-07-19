@@ -74,7 +74,12 @@ export default function IndexLineChart() {
       <Legend
         position="insideTopRight"
         offset={20}
-        wrapperStyle={{ border: '1px solid black', borderRadius: 5, padding: '1ex', background: 'white' }}
+        wrapperStyle={{
+          border: '1px solid var(--color-border-3)',
+          borderRadius: 5,
+          padding: '1ex',
+          background: 'var(--color-surface-base)',
+        }}
       />
       <RechartsDevtools />
     </LineChart>

@@ -1872,7 +1872,7 @@ describe('<Legend />', () => {
             spy(offset);
           },
         )();
-        // expect(spy).toHaveBeenCalledTimes(2);
+        expect(spy).toHaveBeenCalledTimes(2);
         expectLastCalledWith(spy, {
           brushBottom: 5,
           top: 5,
@@ -1901,7 +1901,7 @@ describe('<Legend />', () => {
             spy(offset);
           },
         )();
-        // expect(spy).toHaveBeenCalledTimes(3);
+        expect(spy).toHaveBeenCalledTimes(3);
         expectLastCalledWith(spy, {
           brushBottom: 5,
           top: 5,
@@ -1930,7 +1930,7 @@ describe('<Legend />', () => {
             spy(offset);
           },
         )();
-        // expect(spy).toHaveBeenCalledTimes(3);
+        expect(spy).toHaveBeenCalledTimes(3);
         expectLastCalledWith(spy, {
           brushBottom: 5,
           top: 5,
@@ -1959,7 +1959,7 @@ describe('<Legend />', () => {
             spy(offset);
           },
         )();
-        // expect(spy).toHaveBeenCalledTimes(3);
+        expect(spy).toHaveBeenCalledTimes(3);
         expectLastCalledWith(spy, {
           brushBottom: 5,
           top: 5,

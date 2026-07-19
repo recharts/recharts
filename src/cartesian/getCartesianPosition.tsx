@@ -288,6 +288,8 @@ export const getCartesianPosition = (options: GetCartesianPositionOptions): Calc
   };
 };
 
+const absolutePositions: ReadonlyArray<CartesianPosition> = ['top', 'left', 'right', 'bottom'];
+
 export function isOutsidePosition(position: CartesianPosition | undefined): boolean {
   if (position == null) {
     return false;
@@ -295,6 +297,5 @@ export function isOutsidePosition(position: CartesianPosition | undefined): bool
   if (typeof position === 'object') {
     return true;
   }
-  const absolutePositions = ['top', 'left', 'right', 'bottom'];
   return absolutePositions.includes(position);
 }

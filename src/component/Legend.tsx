@@ -296,19 +296,22 @@ function LegendImpl(outsideProps: Props) {
   const maxWidth = chartWidth - (margin?.left || 0) - (margin?.right || 0);
   const widthOrHeight = getWidthOrHeight(layout, heightFromProps, widthFromProps, maxWidth);
 
-  const positionResult = getCartesianPosition({
-    /*
-     * When calculating the position we use two different view boxes.
-     * Inside positions use the plot area; outside positions use the margin-inset
-     * chart area, placing the Legend beyond any axes.
-     */
-    viewBox: positionViewBox ?? { x: 0, y: 0, width: chartWidth, height: chartHeight },
-    position: props.position,
-    offset: props.offset ?? 0,
-  });
+  const positionResult =
+    props.position == null
+      ? null
+      : getCartesianPosition({
+          /*
+           * When calculating the position we use two different view boxes.
+           * Inside positions use the plot area; outside positions use the margin-inset
+           * chart area, placing the Legend beyond any axes.
+           */
+          viewBox: positionViewBox ?? { x: 0, y: 0, width: chartWidth, height: chartHeight },
+          position: props.position,
+          offset: props.offset ?? 0,
+        });
   const outsidePositionOffset = getOutsidePositionOffset(props.position, lastBoundingBox);
 
-  const positionStyle: React.CSSProperties | undefined = props.position
+  const positionStyle: React.CSSProperties | undefined = positionResult
     ? {
         width: 'fit-content',
         height: 'fit-content',
