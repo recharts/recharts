@@ -49,7 +49,9 @@ interface DefaultLegendContentProps {
    */
   layout?: CartesianLayout;
   /**
-   * Horizontal alignment of the whole Legend container:
+   * @deprecated use `position` instead which has more options, is more flexible and has more intuitive default styles.
+   *
+   * @description Horizontal alignment of the whole Legend container:
    *
    * - `left`: shows the Legend to the left of the chart, and chart width reduces automatically to make space for it.
    * - `right` shows the Legend to the right of the chart, and chart width reduces automatically.
@@ -58,10 +60,13 @@ interface DefaultLegendContentProps {
    * The exact behavior changes depending on 'verticalAlign' prop.
    *
    * @defaultValue center
+   * @see {@link https://recharts.github.io/examples/LegendPosition/ Legend position playground}
    */
   align?: HorizontalAlignmentType;
   /**
-   * Vertical alignment of the whole Legend container:
+   * @deprecated use `position` instead which has more options, is more flexible and has more intuitive default styles.
+   *
+   * @description Vertical alignment of the whole Legend container:
    *
    * - `bottom`: shows the Legend below chart, and chart height reduces automatically to make space for it.
    * - `top`: shows the Legend above chart, and chart height reduces automatically.
@@ -69,6 +74,7 @@ interface DefaultLegendContentProps {
    * The exact behavior changes depending on `align` prop.
    *
    * @defaultValue middle
+   * @see {@link https://recharts.github.io/examples/LegendPosition/ Legend position playground}
    */
   verticalAlign?: VerticalAlignmentType;
   /**

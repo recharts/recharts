@@ -199,7 +199,9 @@ export type Props = Omit<DefaultLegendContentProps, 'payload' | 'ref' | 'vertica
    */
   itemSorter?: LegendItemSorter | null;
   /**
-   * The alignment of the whole Legend container:
+   * @deprecated use `position` instead which has more options, is more flexible and has more intuitive default styles.
+   *
+   * @description The alignment of the whole Legend container:
    *
    * - `bottom`: shows the Legend below chart, and chart height reduces automatically to make space for it.
    * - `top`: shows the Legend above chart, and chart height reduces automatically.
@@ -207,6 +209,7 @@ export type Props = Omit<DefaultLegendContentProps, 'payload' | 'ref' | 'vertica
    * The exact behavior changes depending on `align` prop.
    *
    * @defaultValue bottom
+   * @see {@link https://recharts.github.io/examples/LegendPosition/ Legend position playground}
    */
   verticalAlign?: VerticalAlignmentType;
   /**
@@ -217,7 +220,7 @@ export type Props = Omit<DefaultLegendContentProps, 'payload' | 'ref' | 'vertica
    */
   position?: CartesianPosition;
   /**
-   * The offset to the specified "position". Direction of the offset depends on the position.
+   * The offset to the specified `position`. Direction of the offset depends on the position.
    *
    * @since 3.10
    */
