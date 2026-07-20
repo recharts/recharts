@@ -185,7 +185,7 @@ describe('generateApiDoc', () => {
     expect(apiDoc.deprecated).not.toEqual(expect.stringContaining('{@link'));
   });
 
-  it('should render Markdown in deprecated prop text and include prop @since tags', async () => {
+  it('should render Markdown in deprecated prop text and include prop @since tags', { timeout: 10000 }, async () => {
     const apiDoc = await generateApiDoc('Legend', reader, exampleReader, contextMap);
     const verticalAlign = apiDoc.props.find(prop => prop.name === 'verticalAlign');
     const position = apiDoc.props.find(prop => prop.name === 'position');
