@@ -55,6 +55,11 @@ export const commentSimilarityExceptions: ReadonlyArray<CommentSimilarityGroup> 
     reason: 'YAxis width allows "auto" value, unlike other components',
   },
   {
+    components: ['XAxis'],
+    props: ['height'],
+    reason: 'XAxis height allows "auto" value, unlike other components',
+  },
+  {
     components: ['Brush'],
     props: ['width'],
     reason: 'Brush width defaults to chart width, unlike other components',

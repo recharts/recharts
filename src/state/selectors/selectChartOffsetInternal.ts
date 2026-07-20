@@ -14,7 +14,7 @@ import { LegendSettings } from '../legendSlice';
 import { appendOffsetOfLegend } from '../../util/ChartUtils';
 import { selectChartHeight, selectChartWidth, selectMargin } from './containerSelectors';
 import { selectAllXAxes, selectAllYAxes } from './selectAllAxes';
-import { DEFAULT_Y_AXIS_WIDTH } from '../../util/Constants';
+import { DEFAULT_X_AXIS_HEIGHT, DEFAULT_Y_AXIS_WIDTH } from '../../util/Constants';
 import { RechartsRootState } from '../store';
 
 export const selectBrushHeight = (state: RechartsRootState) => state.brush.height;
@@ -45,7 +45,8 @@ export function selectTopAxesOffset(state: RechartsRootState): number {
   const xAxes = selectAllXAxes(state);
   return xAxes.reduce((result: number, entry: XAxisSettings): number => {
     if (entry.orientation === 'top' && !entry.mirror && !entry.hide) {
-      return result + entry.height;
+      const height = typeof entry.height === 'number' ? entry.height : DEFAULT_X_AXIS_HEIGHT;
+      return result + height;
     }
     return result;
   }, 0);
@@ -55,7 +56,8 @@ export function selectBottomAxesOffset(state: RechartsRootState): number {
   const xAxes = selectAllXAxes(state);
   return xAxes.reduce((result: number, entry: XAxisSettings): number => {
     if (entry.orientation === 'bottom' && !entry.mirror && !entry.hide) {
-      return result + entry.height;
+      const height = typeof entry.height === 'number' ? entry.height : DEFAULT_X_AXIS_HEIGHT;
+      return result + height;
     }
     return result;
   }, 0);

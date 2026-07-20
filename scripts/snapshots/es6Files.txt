@@ -242,6 +242,7 @@
   "es6/util/ReduceCSSCalc.js",
   "es6/util/ScatterUtils.js",
   "es6/util/TickUtils.js",
+  "es6/util/XAxisUtils.js",
   "es6/util/YAxisUtils.js",
   "es6/util/axisPropsAreEqual.js",
   "es6/util/createCartesianCharts.js",

@@ -29,6 +29,7 @@ import { getTicks } from './getTicks';
 import { svgPropertiesNoEvents, svgPropertiesNoEventsFromUnknown } from '../util/svgPropertiesNoEvents';
 import { AxisId, XAxisOrientation, XAxisPadding, YAxisOrientation, YAxisPadding } from '../state/cartesianAxisSlice';
 import { getCalculatedYAxisWidth } from '../util/YAxisUtils';
+import { getCalculatedXAxisHeight } from '../util/XAxisUtils';
 import { RequiresDefaultProps, resolveDefaultProps } from '../util/resolveDefaultProps';
 import { ZIndexable, ZIndexLayer } from '../zIndex/ZIndexLayer';
 import { DefaultZIndexes } from '../zIndex/DefaultZIndexes';
@@ -92,6 +93,7 @@ export interface CartesianAxisProps extends ZIndexable {
 
 export interface CartesianAxisRef {
   getCalculatedWidth(): number;
+  getCalculatedHeight(): number;
 }
 
 export const defaultCartesianAxisProps = {
@@ -517,6 +519,15 @@ const CartesianAxisComponent = forwardRef<CartesianAxisRef, InternalProps>((prop
   useImperativeHandle(ref, (): CartesianAxisRef => ({
     getCalculatedWidth: (): number => {
       return getCalculatedYAxisWidth({
+        ticks: tickRefs.current,
+        label: props.labelRef?.current,
+        labelGapWithTick: 5,
+        tickSize: props.tickSize,
+        tickMargin: props.tickMargin,
+      });
+    },
+    getCalculatedHeight: (): number => {
+      return getCalculatedXAxisHeight({
         ticks: tickRefs.current,
         label: props.labelRef?.current,
         labelGapWithTick: 5,

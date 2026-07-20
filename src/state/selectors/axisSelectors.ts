@@ -78,7 +78,7 @@ import { AngleAxisSettings, RadiusAxisSettings } from '../polarAxisSlice';
 import { pickAxisType } from './pickAxisType';
 import { pickAxisId } from './pickAxisId';
 import { combineAxisRangeWithReverse } from './combiners/combineAxisRangeWithReverse';
-import { DEFAULT_Y_AXIS_WIDTH } from '../../util/Constants';
+import { DEFAULT_X_AXIS_HEIGHT, DEFAULT_Y_AXIS_WIDTH } from '../../util/Constants';
 import { getStackSeriesIdentifier } from '../../util/stacks/getStackSeriesIdentifier';
 import { AllStackGroups, StackGroup } from '../../util/stacks/stackTypes';
 import { combineDisplayedStackedData, DisplayedStackedData } from './combiners/combineDisplayedStackedData';
@@ -1717,9 +1717,10 @@ const selectAllYAxesWithOffsetType: (
 );
 
 const getXAxisSize = (offset: ChartOffsetInternal, axisSettings: XAxisSettings): Size => {
+  const height = typeof axisSettings.height === 'number' ? axisSettings.height : DEFAULT_X_AXIS_HEIGHT;
   return {
     width: offset.width,
-    height: axisSettings.height,
+    height,
   };
 };
 
