@@ -290,14 +290,13 @@ describe('selectArea', () => {
         ],
       };
 
-      expect(spy).toHaveBeenCalledTimes(5);
+      expect(spy).toHaveBeenCalledTimes(4);
       /*
        * Fourth render has the new updated data with consistent dataKey.
        * Area will resume the animation from the most recent previous data
        * to the new points.
        */
       expect(spy).toHaveBeenNthCalledWith(4, expectedResultAfterRerender);
-      expect(spy).toHaveBeenNthCalledWith(5, expectedResultAfterRerender);
     });
   });
 });

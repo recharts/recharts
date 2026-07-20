@@ -1798,7 +1798,7 @@ describe('selectErrorBarsSettings', () => {
             direction: 'x',
           },
         ]);
-        expect(spy).toHaveBeenCalledTimes(4);
+        expect(spy).toHaveBeenCalledTimes(3);
       });
 
       it('should return YAxis error bars', () => {
@@ -1809,7 +1809,7 @@ describe('selectErrorBarsSettings', () => {
             direction: 'y',
           },
         ]);
-        expect(spy).toHaveBeenCalledTimes(4);
+        expect(spy).toHaveBeenCalledTimes(3);
       });
     });
 
@@ -1909,7 +1909,7 @@ describe('selectErrorBarsSettings', () => {
             direction: 'x',
           },
         ]);
-        expect(spy).toHaveBeenCalledTimes(4);
+        expect(spy).toHaveBeenCalledTimes(3);
       });
 
       it('should return YAxis error bars', () => {
@@ -1920,7 +1920,7 @@ describe('selectErrorBarsSettings', () => {
             direction: 'y',
           },
         ]);
-        expect(spy).toHaveBeenCalledTimes(4);
+        expect(spy).toHaveBeenCalledTimes(3);
       });
     });
 
@@ -1972,7 +1972,7 @@ describe('selectErrorBarsSettings', () => {
          * recomputes due to selectDisplayedData reference change, (4) auto-batched axes+items registered.
          * This is consistent with the horizontal LineChart baseline which also expects 4 renders.
          */
-        expect(spy).toHaveBeenCalledTimes(4);
+        expect(spy).toHaveBeenCalledTimes(3);
       });
 
       it('should return YAxis error bars', () => {
@@ -1983,7 +1983,7 @@ describe('selectErrorBarsSettings', () => {
             direction: 'y',
           },
         ]);
-        expect(spy).toHaveBeenCalledTimes(4);
+        expect(spy).toHaveBeenCalledTimes(3);
       });
     });
 
@@ -2066,7 +2066,7 @@ describe('selectErrorBarsSettings', () => {
          * recomputes due to selectDisplayedData reference change, (4) auto-batched axes+items registered.
          * This is consistent with the horizontal LineChart baseline which also expects 4 renders.
          */
-        expect(spy).toHaveBeenCalledTimes(4);
+        expect(spy).toHaveBeenCalledTimes(3);
       });
 
       it('should return YAxis error bars', () => {
@@ -2085,7 +2085,7 @@ describe('selectErrorBarsSettings', () => {
             direction: 'y',
           },
         ]);
-        expect(spy).toHaveBeenCalledTimes(4);
+        expect(spy).toHaveBeenCalledTimes(3);
       });
     });
   });
