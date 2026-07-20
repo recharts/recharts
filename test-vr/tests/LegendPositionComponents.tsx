@@ -1,10 +1,34 @@
 import * as React from 'react';
-import { Legend, Line, LineChart, CartesianGrid, XAxis, YAxis } from '../../src';
+import { Legend, Line, LineChart, CartesianGrid, XAxis, YAxis, CartesianPosition } from '../../src';
 import { HorizontalAlignmentType, VerticalAlignmentType } from '../../src/component/DefaultLegendContent';
 
 const data = [
-  { name: 'Page A', uv: 4000, pv: 1, amt: 2400 },
-  { name: 'Page B', uv: 1, pv: 3398, amt: 2210 },
+  { name: 'Page A', uv: 4000, pv: 1 },
+  { name: 'Page B', uv: 1, pv: 4000 },
+];
+
+const availablePositions: ReadonlyArray<CartesianPosition> = [
+  'top',
+  'left',
+  'right',
+  'bottom',
+  'insideLeft',
+  'insideRight',
+  'insideTop',
+  'insideBottom',
+  'insideTopLeft',
+  'insideBottomLeft',
+  'insideTopRight',
+  'insideBottomRight',
+  'center',
+  {
+    x: '70%',
+    y: '70%',
+  },
+  {
+    x: 300,
+    y: 100,
+  },
 ];
 
 const wrapperStyle: React.CSSProperties = {
@@ -16,6 +40,44 @@ const wrapperStyle: React.CSSProperties = {
   flexDirection: 'column',
   justifyContent: 'center',
   alignItems: 'center',
+};
+
+export const LegendPositionVRTest = ({ offset }: { offset?: number }) => (
+  <div style={wrapperStyle}>
+    {availablePositions.map(position => (
+      <LineChart
+        key={JSON.stringify(position)}
+        width={500}
+        height={300}
+        data={data}
+        style={{ border: '1px solid red' }}
+      >
+        <Line type="monotone" dataKey="uv" stroke="purple" />
+        <Line type="monotone" dataKey="pv" stroke="gold" />
+        <CartesianGrid />
+        <Legend
+          position={position}
+          offset={offset}
+          // eslint-disable-next-line react/no-unstable-nested-components
+          content={() => <div style={{ border: '1px dashed black' }}>Position: {JSON.stringify(position)}</div>}
+        />
+      </LineChart>
+    ))}
+  </div>
+);
+
+const veryLongText1 = 'Lorem Ipsum dolor sit amet, consectetur adipiscing elit. '.repeat(3);
+const veryLongText2 = 'Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. '.repeat(3);
+
+export const VeryLongLegendText = ({ position }: { position: CartesianPosition }) => {
+  return (
+    <LineChart key={JSON.stringify(position)} width={500} height={300} data={data} style={{ border: '1px solid red' }}>
+      <Line type="monotone" dataKey="uv" stroke="purple" name={veryLongText1} />
+      <Line type="monotone" dataKey="pv" stroke="gold" name={veryLongText2} />
+      <CartesianGrid />
+      <Legend position={position} />
+    </LineChart>
+  );
 };
 
 type Alignment = [HorizontalAlignmentType, VerticalAlignmentType];

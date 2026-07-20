@@ -785,6 +785,8 @@ describe('Tooltip visibility', () => {
         itemSorter: 'value',
         layout: 'horizontal',
         verticalAlign: 'bottom',
+        offset: 0,
+        position: undefined,
       };
       expectLastCalledWith(spy, expected);
     });

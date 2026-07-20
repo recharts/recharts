@@ -19,7 +19,7 @@ import { RechartsRootState } from '../store';
 
 export const selectBrushHeight = (state: RechartsRootState) => state.brush.height;
 
-function selectLeftAxesOffset(state: RechartsRootState): number {
+export function selectLeftAxesOffset(state: RechartsRootState): number {
   const yAxes = selectAllYAxes(state);
   return yAxes.reduce((result: number, entry: YAxisSettings): number => {
     if (entry.orientation === 'left' && !entry.mirror && !entry.hide) {
@@ -30,7 +30,7 @@ function selectLeftAxesOffset(state: RechartsRootState): number {
   }, 0);
 }
 
-function selectRightAxesOffset(state: RechartsRootState): number {
+export function selectRightAxesOffset(state: RechartsRootState): number {
   const yAxes = selectAllYAxes(state);
   return yAxes.reduce((result: number, entry: YAxisSettings): number => {
     if (entry.orientation === 'right' && !entry.mirror && !entry.hide) {
@@ -41,7 +41,7 @@ function selectRightAxesOffset(state: RechartsRootState): number {
   }, 0);
 }
 
-function selectTopAxesOffset(state: RechartsRootState): number {
+export function selectTopAxesOffset(state: RechartsRootState): number {
   const xAxes = selectAllXAxes(state);
   return xAxes.reduce((result: number, entry: XAxisSettings): number => {
     if (entry.orientation === 'top' && !entry.mirror && !entry.hide) {
@@ -51,7 +51,7 @@ function selectTopAxesOffset(state: RechartsRootState): number {
   }, 0);
 }
 
-function selectBottomAxesOffset(state: RechartsRootState): number {
+export function selectBottomAxesOffset(state: RechartsRootState): number {
   const xAxes = selectAllXAxes(state);
   return xAxes.reduce((result: number, entry: XAxisSettings): number => {
     if (entry.orientation === 'bottom' && !entry.mirror && !entry.hide) {

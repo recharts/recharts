@@ -15,7 +15,7 @@ import { isValidTextAnchor, RenderableText, Text, TextAnchor, TextVerticalAnchor
 import { isNullish, isNumber, isNumOrStr, mathSign, uniqueId } from '../util/DataUtils';
 import { polarToCartesian } from '../util/PolarUtils';
 import { CartesianViewBoxRequired, DataKey, PolarViewBoxRequired, TrapezoidViewBox, ViewBox } from '../util/types';
-import { cartesianViewBoxToTrapezoid, useViewBox } from '../context/chartLayoutContext';
+import { useViewBox } from '../context/chartLayoutContext';
 import { useAppSelector } from '../state/hooks';
 import { selectPolarViewBox } from '../state/selectors/polarAxisSelectors';
 import { resolveDefaultProps } from '../util/resolveDefaultProps';
@@ -24,6 +24,7 @@ import { ZIndexable, ZIndexLayer } from '../zIndex/ZIndexLayer';
 import { DefaultZIndexes } from '../zIndex/DefaultZIndexes';
 
 import { CartesianLabelPosition, getCartesianPosition } from '../cartesian/getCartesianPosition';
+import { cartesianViewBoxToTrapezoid } from '../cartesian/cartesianViewBoxToTrapezoid';
 
 /**
  * @inline

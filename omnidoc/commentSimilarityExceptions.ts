@@ -70,6 +70,12 @@ export const commentSimilarityExceptions: ReadonlyArray<CommentSimilarityGroup> 
     reason: 'Legend accepts arbitrary CSS size values, unlike other components',
   },
   {
+    components: ['Legend'],
+    props: ['position'],
+    reason:
+      'Legend position is the same prop as Label.position but the comment adds extra detail on conflict with other Legend props',
+  },
+  {
     components: ['Brush', 'CartesianGrid', 'Cross', 'XAxis', 'YAxis', 'Rectangle', 'ErrorBar', 'Trapezoid'],
     props: ['width', 'height'],
     reason: 'These components only allow number pixel values for width/height',
@@ -99,9 +105,14 @@ export const commentSimilarityExceptions: ReadonlyArray<CommentSimilarityGroup> 
       'Curve layout means something else than the chart layout. AreaRevealShape and LineDrawShape extend CurveProps.',
   },
   {
-    components: ['DefaultLegendContent', 'Legend'],
+    components: ['DefaultLegendContent'],
     props: ['layout'],
     reason: 'Legend layout means something else than the chart layout.',
+  },
+  {
+    components: ['Legend'],
+    props: ['layout'],
+    reason: 'Legend layout is the same prop as DefaultLegendContent layout, but Legend has extra defaults in it',
   },
   {
     components: ['BarStack'],

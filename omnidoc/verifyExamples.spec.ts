@@ -54,7 +54,6 @@ describe('Documentation Examples Coverage', () => {
     'LabelListPropsWithPosition',
     'Layer',
     'LayerProps',
-    'LegendProps',
     'LegendType',
     'LineProps',
     'Margin',

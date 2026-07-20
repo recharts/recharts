@@ -217,9 +217,10 @@ function Icon({
 function Items(props: InternalProps) {
   const { payload, iconSize, layout, formatter, inactiveColor, iconType, labelStyle } = props;
   const viewBox = { x: 0, y: 0, width: SIZE, height: SIZE };
-  const itemStyle = {
+  const itemStyle: CSSProperties = {
     display: layout === 'horizontal' ? 'inline-block' : 'block',
     marginRight: 10,
+    whiteSpace: 'nowrap',
   };
   const svgStyle = { display: 'inline-block', verticalAlign: 'middle', marginRight: 4 };
   return payload.map((entry: LegendPayload, i: number) => {
@@ -236,6 +237,8 @@ function Items(props: InternalProps) {
 
     const finalLabelStyle = typeof labelStyle === 'object' ? { ...labelStyle } : {};
     finalLabelStyle.color = entry.inactive ? inactiveColor : finalLabelStyle.color || entry.color;
+    finalLabelStyle.whiteSpace ??= 'normal';
+    finalLabelStyle.overflowWrap ??= 'break-word';
 
     const finalValue = finalFormatter ? finalFormatter(entry.value, entry, i) : entry.value;
 

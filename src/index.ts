@@ -181,6 +181,8 @@ export type { LineDrawShapeProps } from './cartesian/LineDrawShape';
 export { ZIndexLayer } from './zIndex/ZIndexLayer';
 export { DefaultZIndexes } from './zIndex/DefaultZIndexes';
 
+export type { CartesianPosition } from './cartesian/getCartesianPosition';
+
 /** export getNiceTickValues so this can be used as a replacement for what is in recharts-scale */
 export { getNiceTickValues } from './util/scale/getNiceTickValues';
 
