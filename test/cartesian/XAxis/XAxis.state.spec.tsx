@@ -377,4 +377,24 @@ describe('state integration', () => {
     ];
     expectLastCalledWith(spy, expectedTicks);
   });
+
+  it('should keep rendered ticks referentially stable when re-rendering with unchanged tick values', () => {
+    // https://github.com/recharts/recharts/issues/7563
+    const renderTestCase = createSelectorTestCase(({ children }) => (
+      <BarChart width={100} height={100} data={[{ x: 'x-1' }, { x: 'x-2' }, { x: 'x-3' }]}>
+        <XAxis xAxisId="foo" dataKey="x" />
+        {children}
+      </BarChart>
+    ));
+
+    const { spy, rerenderSameComponent } = renderTestCase(state => selectRenderedTicksOfAxis(state, 'xAxis', 'foo'));
+
+    const ticksBefore = spy.mock.calls[spy.mock.calls.length - 1][0];
+    assertNotNull(ticksBefore);
+
+    rerenderSameComponent();
+
+    const ticksAfter = spy.mock.calls[spy.mock.calls.length - 1][0];
+    expect(ticksAfter).toBe(ticksBefore);
+  });
 });

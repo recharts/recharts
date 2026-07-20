@@ -124,21 +124,21 @@ describe('selectIsTooltipActive', () => {
         activeIndex: null,
         isActive: false,
       });
-      expect(spy).toHaveBeenCalledTimes(4);
+      expect(spy).toHaveBeenCalledTimes(3);
 
       showTooltip(container, scatterChartMouseHoverTooltipSelector);
       expectLastCalledWith(spy, {
         activeIndex: '0',
         isActive: true,
       });
-      expect(spy).toHaveBeenCalledTimes(5);
+      expect(spy).toHaveBeenCalledTimes(4);
 
       hideTooltip(container, scatterChartMouseHoverTooltipSelector);
       expectLastCalledWith(spy, {
         activeIndex: null,
         isActive: false,
       });
-      expect(spy).toHaveBeenCalledTimes(6);
+      expect(spy).toHaveBeenCalledTimes(5);
     });
   });
 
@@ -167,21 +167,21 @@ describe('selectIsTooltipActive', () => {
         activeIndex: '3',
         isActive: true,
       });
-      expect(spy).toHaveBeenCalledTimes(4);
+      expect(spy).toHaveBeenCalledTimes(3);
 
       showTooltip(container, scatterChartMouseHoverTooltipSelector);
       expectLastCalledWith(spy, {
         activeIndex: '0',
         isActive: true,
       });
-      expect(spy).toHaveBeenCalledTimes(5);
+      expect(spy).toHaveBeenCalledTimes(4);
 
       hideTooltip(container, scatterChartMouseHoverTooltipSelector);
       expectLastCalledWith(spy, {
         activeIndex: null,
         isActive: false,
       });
-      expect(spy).toHaveBeenCalledTimes(6);
+      expect(spy).toHaveBeenCalledTimes(5);
     });
   });
 

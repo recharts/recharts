@@ -191,7 +191,7 @@ describe('selectLinePoints', () => {
         },
       ];
 
-      expect(spy).toHaveBeenCalledTimes(5);
+      expect(spy).toHaveBeenCalledTimes(4);
       /*
        * Last render has the new updated data with consistent dataKey.
        * Line will resume animation from the most recent previous data
