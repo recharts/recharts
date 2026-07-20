@@ -1,55 +1,55 @@
 {
   "treemap": {
     "examplePath": "www/src/views/IndexView/IndexLineChart.tsx",
-    "totalSize": 826638,
-    "totalSizeLabel": "807.26 KB",
-    "moduleCount": 326,
-    "generatedAt": "2026-07-20T07:09:00.443Z",
+    "totalSize": 886277,
+    "totalSizeLabel": "865.50 KB",
+    "moduleCount": 364,
+    "generatedAt": "2026-07-20T08:51:29.069Z",
     "stages": [
       {
         "stage": "es6-folder",
-        "bytes": 1276046,
-        "humanReadableSize": "1.22 MB",
+        "bytes": 1285408,
+        "humanReadableSize": "1.23 MB",
         "reductionFromBaselinePercent": 0
       },
       {
         "stage": "tree-shaken",
-        "bytes": 829437,
-        "humanReadableSize": "810.00 KB",
+        "bytes": 889152,
+        "humanReadableSize": "868.31 KB",
         "reductionFromBaselinePercent": 0
       },
       {
         "stage": "minified",
-        "bytes": 284604,
-        "humanReadableSize": "277.93 KB",
-        "reductionFromBaselinePercent": 65.69
+        "bytes": 299908,
+        "humanReadableSize": "292.88 KB",
+        "reductionFromBaselinePercent": 66.27
       },
       {
         "stage": "minified+gzip",
-        "bytes": 93058,
-        "humanReadableSize": "90.88 KB",
-        "reductionFromBaselinePercent": 88.78
+        "bytes": 98232,
+        "humanReadableSize": "95.93 KB",
+        "reductionFromBaselinePercent": 88.95
       }
     ],
     "tree": {
       "name": "bundle",
       "fullPath": "bundle",
-      "value": 826638,
+      "value": 886277,
       "children": [
         {
           "name": "src",
           "fullPath": "src",
-          "value": 457909,
+          "value": 481963,
           "children": [
             {
               "name": "state",
               "fullPath": "src/state",
-              "value": 169814,
+              "value": 170389,
               "children": [
                 {
                   "name": "selectors",
                   "fullPath": "src/state/selectors",
-                  "value": 106931,
+                  "value": 107318,
                   "children": [
                     {
                       "name": "axisSelectors.ts",
@@ -191,7 +191,12 @@
                     {
                       "name": "legendSelectors.ts",
                       "fullPath": "src/state/selectors/legendSelectors.ts",
-                      "value": 380
+                      "value": 408
+                    },
+                    {
+                      "name": "selectLegendArea.ts",
+                      "fullPath": "src/state/selectors/selectLegendArea.ts",
+                      "value": 359
                     },
                     {
                       "name": "selectActivePropsFromChartPointer.ts",
@@ -298,7 +303,7 @@
                 {
                   "name": "legendSlice.ts",
                   "fullPath": "src/state/legendSlice.ts",
-                  "value": 1941
+                  "value": 2129
                 },
                 {
                   "name": "chartDataSlice.ts",
@@ -422,7 +427,7 @@
             {
               "name": "util",
               "fullPath": "src/util",
-              "value": 98752,
+              "value": 104499,
               "children": [
                 {
                   "name": "scale",
@@ -461,7 +466,7 @@
                 {
                   "name": "ChartUtils.ts",
                   "fullPath": "src/util/ChartUtils.ts",
-                  "value": 13007
+                  "value": 14790
                 },
                 {
                   "name": "svgPropertiesNoEvents.ts",
@@ -502,6 +507,11 @@
                   "name": "types.ts",
                   "fullPath": "src/util/types.ts",
                   "value": 3807
+                },
+                {
+                  "name": "useElementOffset.ts",
+                  "fullPath": "src/util/useElementOffset.ts",
+                  "value": 3494
                 },
                 {
                   "name": "excludeEventProps.ts",
@@ -604,6 +614,18 @@
                   "value": 472
                 },
                 {
+                  "name": "payload",
+                  "fullPath": "src/util/payload",
+                  "value": 470,
+                  "children": [
+                    {
+                      "name": "getUniqPayload.ts",
+                      "fullPath": "src/util/payload/getUniqPayload.ts",
+                      "value": 470
+                    }
+                  ]
+                },
+                {
                   "name": "getAxisTypeBasedOnLayout.ts",
                   "fullPath": "src/util/getAxisTypeBasedOnLayout.ts",
                   "value": 446
@@ -665,7 +687,7 @@
             {
               "name": "cartesian",
               "fullPath": "src/cartesian",
-              "value": 77094,
+              "value": 79210,
               "children": [
                 {
                   "name": "Line.tsx",
@@ -683,14 +705,14 @@
                   "value": 11723
                 },
                 {
+                  "name": "getCartesianPosition.tsx",
+                  "fullPath": "src/cartesian/getCartesianPosition.tsx",
+                  "value": 6756
+                },
+                {
                   "name": "YAxis.tsx",
                   "fullPath": "src/cartesian/YAxis.tsx",
                   "value": 6321
-                },
-                {
-                  "name": "getCartesianPosition.tsx",
-                  "fullPath": "src/cartesian/getCartesianPosition.tsx",
-                  "value": 6159
                 },
                 {
                   "name": "LineDrawShape.tsx",
@@ -721,6 +743,68 @@
                   "name": "GraphicalItemClipPath.tsx",
                   "fullPath": "src/cartesian/GraphicalItemClipPath.tsx",
                   "value": 1558
+                },
+                {
+                  "name": "cartesianPositionToCSSTranslate.tsx",
+                  "fullPath": "src/cartesian/cartesianPositionToCSSTranslate.tsx",
+                  "value": 1213
+                },
+                {
+                  "name": "cartesianViewBoxToTrapezoid.tsx",
+                  "fullPath": "src/cartesian/cartesianViewBoxToTrapezoid.tsx",
+                  "value": 306
+                }
+              ]
+            },
+            {
+              "name": "component",
+              "fullPath": "src/component",
+              "value": 37825,
+              "children": [
+                {
+                  "name": "Label.tsx",
+                  "fullPath": "src/component/Label.tsx",
+                  "value": 10622
+                },
+                {
+                  "name": "Legend.tsx",
+                  "fullPath": "src/component/Legend.tsx",
+                  "value": 7854
+                },
+                {
+                  "name": "Text.tsx",
+                  "fullPath": "src/component/Text.tsx",
+                  "value": 7597
+                },
+                {
+                  "name": "DefaultLegendContent.tsx",
+                  "fullPath": "src/component/DefaultLegendContent.tsx",
+                  "value": 4696
+                },
+                {
+                  "name": "LabelList.tsx",
+                  "fullPath": "src/component/LabelList.tsx",
+                  "value": 3115
+                },
+                {
+                  "name": "ActivePoints.tsx",
+                  "fullPath": "src/component/ActivePoints.tsx",
+                  "value": 1870
+                },
+                {
+                  "name": "Dots.tsx",
+                  "fullPath": "src/component/Dots.tsx",
+                  "value": 1775
+                },
+                {
+                  "name": "ResponsiveContainer.tsx",
+                  "fullPath": "src/component/ResponsiveContainer.tsx",
+                  "value": 196
+                },
+                {
+                  "name": "responsiveContainerUtils.ts",
+                  "fullPath": "src/component/responsiveContainerUtils.ts",
+                  "value": 100
                 }
               ]
             },
@@ -773,48 +857,6 @@
                   "name": "AnimationControllerImpl.ts",
                   "fullPath": "src/animation/AnimationControllerImpl.ts",
                   "value": 1107
-                }
-              ]
-            },
-            {
-              "name": "component",
-              "fullPath": "src/component",
-              "value": 25251,
-              "children": [
-                {
-                  "name": "Label.tsx",
-                  "fullPath": "src/component/Label.tsx",
-                  "value": 10598
-                },
-                {
-                  "name": "Text.tsx",
-                  "fullPath": "src/component/Text.tsx",
-                  "value": 7597
-                },
-                {
-                  "name": "LabelList.tsx",
-                  "fullPath": "src/component/LabelList.tsx",
-                  "value": 3115
-                },
-                {
-                  "name": "ActivePoints.tsx",
-                  "fullPath": "src/component/ActivePoints.tsx",
-                  "value": 1870
-                },
-                {
-                  "name": "Dots.tsx",
-                  "fullPath": "src/component/Dots.tsx",
-                  "value": 1775
-                },
-                {
-                  "name": "ResponsiveContainer.tsx",
-                  "fullPath": "src/component/ResponsiveContainer.tsx",
-                  "value": 196
-                },
-                {
-                  "name": "responsiveContainerUtils.ts",
-                  "fullPath": "src/component/responsiveContainerUtils.ts",
-                  "value": 100
                 }
               ]
             },
@@ -875,12 +917,12 @@
             {
               "name": "context",
               "fullPath": "src/context",
-              "value": 8670,
+              "value": 9250,
               "children": [
                 {
                   "name": "chartLayoutContext.tsx",
                   "fullPath": "src/context/chartLayoutContext.tsx",
-                  "value": 7031
+                  "value": 7320
                 },
                 {
                   "name": "chartDataContext.tsx",
@@ -898,6 +940,16 @@
                   "value": 323
                 },
                 {
+                  "name": "legendPayloadContext.tsx",
+                  "fullPath": "src/context/legendPayloadContext.tsx",
+                  "value": 228
+                },
+                {
+                  "name": "legendPortalContext.tsx",
+                  "fullPath": "src/context/legendPortalContext.tsx",
+                  "value": 124
+                },
+                {
                   "name": "PanoramaContext.tsx",
                   "fullPath": "src/context/PanoramaContext.tsx",
                   "value": 122
@@ -911,11 +963,6 @@
                   "name": "tooltipPortalContext.tsx",
                   "fullPath": "src/context/tooltipPortalContext.tsx",
                   "value": 62
-                },
-                {
-                  "name": "legendPortalContext.tsx",
-                  "fullPath": "src/context/legendPortalContext.tsx",
-                  "value": 61
                 }
               ]
             },
@@ -928,6 +975,28 @@
                   "name": "useChartSynchronisation.tsx",
                   "fullPath": "src/synchronisation/useChartSynchronisation.tsx",
                   "value": 8354
+                }
+              ]
+            },
+            {
+              "name": "shape",
+              "fullPath": "src/shape",
+              "value": 7495,
+              "children": [
+                {
+                  "name": "Curve.tsx",
+                  "fullPath": "src/shape/Curve.tsx",
+                  "value": 4366
+                },
+                {
+                  "name": "Symbols.tsx",
+                  "fullPath": "src/shape/Symbols.tsx",
+                  "value": 2462
+                },
+                {
+                  "name": "Dot.tsx",
+                  "fullPath": "src/shape/Dot.tsx",
+                  "value": 667
                 }
               ]
             },
@@ -955,23 +1024,6 @@
                   "name": "Layer.tsx",
                   "fullPath": "src/container/Layer.tsx",
                   "value": 608
-                }
-              ]
-            },
-            {
-              "name": "shape",
-              "fullPath": "src/shape",
-              "value": 5033,
-              "children": [
-                {
-                  "name": "Curve.tsx",
-                  "fullPath": "src/shape/Curve.tsx",
-                  "value": 4366
-                },
-                {
-                  "name": "Dot.tsx",
-                  "fullPath": "src/shape/Dot.tsx",
-                  "value": 667
                 }
               ]
             },
@@ -1019,7 +1071,7 @@
         {
           "name": "node_modules",
           "fullPath": "node_modules",
-          "value": 367313,
+          "value": 402633,
           "children": [
             {
               "name": "@reduxjs",
@@ -1074,41 +1126,150 @@
               ]
             },
             {
-              "name": "decimal.js-light",
-              "fullPath": "node_modules/decimal.js-light",
-              "value": 49559,
-              "children": [
-                {
-                  "name": "decimal.mjs",
-                  "fullPath": "node_modules/decimal.js-light/decimal.mjs",
-                  "value": 49559
-                }
-              ]
-            },
-            {
               "name": "es-toolkit",
               "fullPath": "node_modules/es-toolkit",
-              "value": 29344,
+              "value": 61019,
               "children": [
                 {
                   "name": "dist",
                   "fullPath": "node_modules/es-toolkit/dist",
-                  "value": 29344,
+                  "value": 61019,
                   "children": [
                     {
                       "name": "compat",
                       "fullPath": "node_modules/es-toolkit/dist/compat",
-                      "value": 17281,
+                      "value": 37201,
                       "children": [
+                        {
+                          "name": "predicate",
+                          "fullPath": "node_modules/es-toolkit/dist/compat/predicate",
+                          "value": 14276,
+                          "children": [
+                            {
+                              "name": "isMatchWith.mjs",
+                              "fullPath": "node_modules/es-toolkit/dist/compat/predicate/isMatchWith.mjs",
+                              "value": 6305
+                            },
+                            {
+                              "name": "matchesProperty.mjs",
+                              "fullPath": "node_modules/es-toolkit/dist/compat/predicate/matchesProperty.mjs",
+                              "value": 1666
+                            },
+                            {
+                              "name": "matches.mjs",
+                              "fullPath": "node_modules/es-toolkit/dist/compat/predicate/matches.mjs",
+                              "value": 990
+                            },
+                            {
+                              "name": "isObject.mjs",
+                              "fullPath": "node_modules/es-toolkit/dist/compat/predicate/isObject.mjs",
+                              "value": 979
+                            },
+                            {
+                              "name": "isMatch.mjs",
+                              "fullPath": "node_modules/es-toolkit/dist/compat/predicate/isMatch.mjs",
+                              "value": 977
+                            },
+                            {
+                              "name": "isArguments.mjs",
+                              "fullPath": "node_modules/es-toolkit/dist/compat/predicate/isArguments.mjs",
+                              "value": 956
+                            },
+                            {
+                              "name": "isObjectLike.mjs",
+                              "fullPath": "node_modules/es-toolkit/dist/compat/predicate/isObjectLike.mjs",
+                              "value": 883
+                            },
+                            {
+                              "name": "isArrayLikeObject.mjs",
+                              "fullPath": "node_modules/es-toolkit/dist/compat/predicate/isArrayLikeObject.mjs",
+                              "value": 520
+                            },
+                            {
+                              "name": "isArrayLike.mjs",
+                              "fullPath": "node_modules/es-toolkit/dist/compat/predicate/isArrayLike.mjs",
+                              "value": 518
+                            },
+                            {
+                              "name": "isSymbol.mjs",
+                              "fullPath": "node_modules/es-toolkit/dist/compat/predicate/isSymbol.mjs",
+                              "value": 482
+                            }
+                          ]
+                        },
+                        {
+                          "name": "object",
+                          "fullPath": "node_modules/es-toolkit/dist/compat/object",
+                          "value": 7539,
+                          "children": [
+                            {
+                              "name": "get.mjs",
+                              "fullPath": "node_modules/es-toolkit/dist/compat/object/get.mjs",
+                              "value": 1854
+                            },
+                            {
+                              "name": "cloneDeepWith.mjs",
+                              "fullPath": "node_modules/es-toolkit/dist/compat/object/cloneDeepWith.mjs",
+                              "value": 1852
+                            },
+                            {
+                              "name": "has.mjs",
+                              "fullPath": "node_modules/es-toolkit/dist/compat/object/has.mjs",
+                              "value": 1686
+                            },
+                            {
+                              "name": "cloneDeep.mjs",
+                              "fullPath": "node_modules/es-toolkit/dist/compat/object/cloneDeep.mjs",
+                              "value": 1404
+                            },
+                            {
+                              "name": "property.mjs",
+                              "fullPath": "node_modules/es-toolkit/dist/compat/object/property.mjs",
+                              "value": 743
+                            }
+                          ]
+                        },
+                        {
+                          "name": "util",
+                          "fullPath": "node_modules/es-toolkit/dist/compat/util",
+                          "value": 5460,
+                          "children": [
+                            {
+                              "name": "toPath.mjs",
+                              "fullPath": "node_modules/es-toolkit/dist/compat/util/toPath.mjs",
+                              "value": 1864
+                            },
+                            {
+                              "name": "iteratee.mjs",
+                              "fullPath": "node_modules/es-toolkit/dist/compat/util/iteratee.mjs",
+                              "value": 1697
+                            },
+                            {
+                              "name": "toString.mjs",
+                              "fullPath": "node_modules/es-toolkit/dist/compat/util/toString.mjs",
+                              "value": 772
+                            },
+                            {
+                              "name": "toFinite.mjs",
+                              "fullPath": "node_modules/es-toolkit/dist/compat/util/toFinite.mjs",
+                              "value": 614
+                            },
+                            {
+                              "name": "toNumber.mjs",
+                              "fullPath": "node_modules/es-toolkit/dist/compat/util/toNumber.mjs",
+                              "value": 513
+                            }
+                          ]
+                        },
                         {
                           "name": "_internal",
                           "fullPath": "node_modules/es-toolkit/dist/compat/_internal",
-                          "value": 4983,
+                          "value": 5026,
                           "children": [
                             {
                               "name": "tags.mjs",
                               "fullPath": "node_modules/es-toolkit/dist/compat/_internal/tags.mjs",
-                              "value": 1089
+                              "value": 1132
                             },
                             {
                               "name": "isKey.mjs",
@@ -1153,36 +1314,9 @@
                           ]
                         },
                         {
-                          "name": "util",
-                          "fullPath": "node_modules/es-toolkit/dist/compat/util",
-                          "value": 3763,
-                          "children": [
-                            {
-                              "name": "toPath.mjs",
-                              "fullPath": "node_modules/es-toolkit/dist/compat/util/toPath.mjs",
-                              "value": 1864
-                            },
-                            {
-                              "name": "toString.mjs",
-                              "fullPath": "node_modules/es-toolkit/dist/compat/util/toString.mjs",
-                              "value": 772
-                            },
-                            {
-                              "name": "toFinite.mjs",
-                              "fullPath": "node_modules/es-toolkit/dist/compat/util/toFinite.mjs",
-                              "value": 614
-                            },
-                            {
-                              "name": "toNumber.mjs",
-                              "fullPath": "node_modules/es-toolkit/dist/compat/util/toNumber.mjs",
-                              "value": 513
-                            }
-                          ]
-                        },
-                        {
                           "name": "array",
                           "fullPath": "node_modules/es-toolkit/dist/compat/array",
-                          "value": 3657,
+                          "value": 3855,
                           "children": [
                             {
                               "name": "orderBy.mjs",
@@ -1193,40 +1327,11 @@
                               "name": "sortBy.mjs",
                               "fullPath": "node_modules/es-toolkit/dist/compat/array/sortBy.mjs",
                               "value": 366
-                            }
-                          ]
-                        },
-                        {
-                          "name": "predicate",
-                          "fullPath": "node_modules/es-toolkit/dist/compat/predicate",
-                          "value": 1979,
-                          "children": [
-                            {
-                              "name": "isObject.mjs",
-                              "fullPath": "node_modules/es-toolkit/dist/compat/predicate/isObject.mjs",
-                              "value": 979
                             },
                             {
-                              "name": "isArrayLike.mjs",
-                              "fullPath": "node_modules/es-toolkit/dist/compat/predicate/isArrayLike.mjs",
-                              "value": 518
-                            },
-                            {
-                              "name": "isSymbol.mjs",
-                              "fullPath": "node_modules/es-toolkit/dist/compat/predicate/isSymbol.mjs",
-                              "value": 482
-                            }
-                          ]
-                        },
-                        {
-                          "name": "object",
-                          "fullPath": "node_modules/es-toolkit/dist/compat/object",
-                          "value": 1854,
-                          "children": [
-                            {
-                              "name": "get.mjs",
-                              "fullPath": "node_modules/es-toolkit/dist/compat/object/get.mjs",
-                              "value": 1854
+                              "name": "uniqBy.mjs",
+                              "fullPath": "node_modules/es-toolkit/dist/compat/array/uniqBy.mjs",
+                              "value": 198
                             }
                           ]
                         },
@@ -1247,7 +1352,7 @@
                     {
                       "name": "predicate",
                       "fullPath": "node_modules/es-toolkit/dist/predicate",
-                      "value": 9540,
+                      "value": 10853,
                       "children": [
                         {
                           "name": "isEqualWith.mjs",
@@ -1265,6 +1370,11 @@
                           "value": 851
                         },
                         {
+                          "name": "isPrimitive.mjs",
+                          "fullPath": "node_modules/es-toolkit/dist/predicate/isPrimitive.mjs",
+                          "value": 815
+                        },
+                        {
                           "name": "isBuffer.mjs",
                           "fullPath": "node_modules/es-toolkit/dist/predicate/isBuffer.mjs",
                           "value": 752
@@ -1273,6 +1383,45 @@
                           "name": "isEqual.mjs",
                           "fullPath": "node_modules/es-toolkit/dist/predicate/isEqual.mjs",
                           "value": 570
+                        },
+                        {
+                          "name": "isTypedArray.mjs",
+                          "fullPath": "node_modules/es-toolkit/dist/predicate/isTypedArray.mjs",
+                          "value": 498
+                        }
+                      ]
+                    },
+                    {
+                      "name": "object",
+                      "fullPath": "node_modules/es-toolkit/dist/object",
+                      "value": 8211,
+                      "children": [
+                        {
+                          "name": "cloneDeepWith.mjs",
+                          "fullPath": "node_modules/es-toolkit/dist/object/cloneDeepWith.mjs",
+                          "value": 6740
+                        },
+                        {
+                          "name": "cloneDeep.mjs",
+                          "fullPath": "node_modules/es-toolkit/dist/object/cloneDeep.mjs",
+                          "value": 1471
+                        }
+                      ]
+                    },
+                    {
+                      "name": "array",
+                      "fullPath": "node_modules/es-toolkit/dist/array",
+                      "value": 2164,
+                      "children": [
+                        {
+                          "name": "uniqBy.mjs",
+                          "fullPath": "node_modules/es-toolkit/dist/array/uniqBy.mjs",
+                          "value": 1199
+                        },
+                        {
+                          "name": "flatten.mjs",
+                          "fullPath": "node_modules/es-toolkit/dist/array/flatten.mjs",
+                          "value": 965
                         }
                       ]
                     },
@@ -1299,22 +1448,20 @@
                       ]
                     },
                     {
-                      "name": "array",
-                      "fullPath": "node_modules/es-toolkit/dist/array",
-                      "value": 965,
-                      "children": [
-                        {
-                          "name": "flatten.mjs",
-                          "fullPath": "node_modules/es-toolkit/dist/array/flatten.mjs",
-                          "value": 965
-                        }
-                      ]
-                    },
-                    {
                       "name": "function",
                       "fullPath": "node_modules/es-toolkit/dist/function",
-                      "value": 250,
+                      "value": 1282,
                       "children": [
+                        {
+                          "name": "ary.mjs",
+                          "fullPath": "node_modules/es-toolkit/dist/function/ary.mjs",
+                          "value": 631
+                        },
+                        {
+                          "name": "identity.mjs",
+                          "fullPath": "node_modules/es-toolkit/dist/function/identity.mjs",
+                          "value": 401
+                        },
                         {
                           "name": "noop.mjs",
                           "fullPath": "node_modules/es-toolkit/dist/function/noop.mjs",
@@ -1323,6 +1470,18 @@
                       ]
                     }
                   ]
+                }
+              ]
+            },
+            {
+              "name": "decimal.js-light",
+              "fullPath": "node_modules/decimal.js-light",
+              "value": 49559,
+              "children": [
+                {
+                  "name": "decimal.mjs",
+                  "fullPath": "node_modules/decimal.js-light/decimal.mjs",
+                  "value": 49559
                 }
               ]
             },
@@ -1470,33 +1629,14 @@
               ]
             },
             {
-              "name": "redux",
-              "fullPath": "node_modules/redux",
-              "value": 23594,
-              "children": [
-                {
-                  "name": "es",
-                  "fullPath": "node_modules/redux/es",
-                  "value": 23594,
-                  "children": [
-                    {
-                      "name": "redux.js",
-                      "fullPath": "node_modules/redux/es/redux.js",
-                      "value": 23594
-                    }
-                  ]
-                }
-              ]
-            },
-            {
               "name": "d3-shape",
               "fullPath": "node_modules/d3-shape",
-              "value": 21306,
+              "value": 24951,
               "children": [
                 {
                   "name": "src",
                   "fullPath": "node_modules/d3-shape/src",
-                  "value": 21306,
+                  "value": 24951,
                   "children": [
                     {
                       "name": "curve",
@@ -1556,6 +1696,48 @@
                       "value": 2960
                     },
                     {
+                      "name": "symbol",
+                      "fullPath": "node_modules/d3-shape/src/symbol",
+                      "value": 2644,
+                      "children": [
+                        {
+                          "name": "wye.js",
+                          "fullPath": "node_modules/d3-shape/src/symbol/wye.js",
+                          "value": 787
+                        },
+                        {
+                          "name": "star.js",
+                          "fullPath": "node_modules/d3-shape/src/symbol/star.js",
+                          "value": 562
+                        },
+                        {
+                          "name": "cross.js",
+                          "fullPath": "node_modules/d3-shape/src/symbol/cross.js",
+                          "value": 467
+                        },
+                        {
+                          "name": "diamond.js",
+                          "fullPath": "node_modules/d3-shape/src/symbol/diamond.js",
+                          "value": 302
+                        },
+                        {
+                          "name": "triangle.js",
+                          "fullPath": "node_modules/d3-shape/src/symbol/triangle.js",
+                          "value": 247
+                        },
+                        {
+                          "name": "circle.js",
+                          "fullPath": "node_modules/d3-shape/src/symbol/circle.js",
+                          "value": 148
+                        },
+                        {
+                          "name": "square.js",
+                          "fullPath": "node_modules/d3-shape/src/symbol/square.js",
+                          "value": 131
+                        }
+                      ]
+                    },
+                    {
                       "name": "offset",
                       "fullPath": "node_modules/d3-shape/src/offset",
                       "value": 1635,
@@ -1593,6 +1775,11 @@
                       "value": 1292
                     },
                     {
+                      "name": "symbol.js",
+                      "fullPath": "node_modules/d3-shape/src/symbol.js",
+                      "value": 886
+                    },
+                    {
                       "name": "path.js",
                       "fullPath": "node_modules/d3-shape/src/path.js",
                       "value": 353
@@ -1615,6 +1802,11 @@
                       ]
                     },
                     {
+                      "name": "math.js",
+                      "fullPath": "node_modules/d3-shape/src/math.js",
+                      "value": 115
+                    },
+                    {
                       "name": "constant.js",
                       "fullPath": "node_modules/d3-shape/src/constant.js",
                       "value": 77
@@ -1628,6 +1820,25 @@
                       "name": "noop.js",
                       "fullPath": "node_modules/d3-shape/src/noop.js",
                       "value": 21
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "name": "redux",
+              "fullPath": "node_modules/redux",
+              "value": 23594,
+              "children": [
+                {
+                  "name": "es",
+                  "fullPath": "node_modules/redux/es",
+                  "value": 23594,
+                  "children": [
+                    {
+                      "name": "redux.js",
+                      "fullPath": "node_modules/redux/es/redux.js",
+                      "value": 23594
                     }
                   ]
                 }
@@ -2287,32 +2498,32 @@
         {
           "name": "entry",
           "fullPath": "entry",
-          "value": 1416,
+          "value": 1681,
           "children": [
             {
               "name": "www",
               "fullPath": "entry/www",
-              "value": 1416,
+              "value": 1681,
               "children": [
                 {
                   "name": "src",
                   "fullPath": "entry/www/src",
-                  "value": 1416,
+                  "value": 1681,
                   "children": [
                     {
                       "name": "views",
                       "fullPath": "entry/www/src/views",
-                      "value": 1416,
+                      "value": 1681,
                       "children": [
                         {
                           "name": "IndexView",
                           "fullPath": "entry/www/src/views/IndexView",
-                          "value": 1416,
+                          "value": 1681,
                           "children": [
                             {
                               "name": "IndexLineChart.tsx",
                               "fullPath": "entry/www/src/views/IndexView/IndexLineChart.tsx",
-                              "value": 1416
+                              "value": 1681
                             }
                           ]
                         }
@@ -2329,55 +2540,55 @@
   },
   "sunburst": {
     "examplePath": "www/src/views/IndexView/IndexLineChart.tsx",
-    "totalSize": 826638,
-    "totalSizeLabel": "807.26 KB",
-    "moduleCount": 326,
-    "generatedAt": "2026-07-20T07:09:02.472Z",
+    "totalSize": 886277,
+    "totalSizeLabel": "865.50 KB",
+    "moduleCount": 364,
+    "generatedAt": "2026-07-20T08:51:31.109Z",
     "stages": [
       {
         "stage": "es6-folder",
-        "bytes": 1276046,
-        "humanReadableSize": "1.22 MB",
+        "bytes": 1285408,
+        "humanReadableSize": "1.23 MB",
         "reductionFromBaselinePercent": 0
       },
       {
         "stage": "tree-shaken",
-        "bytes": 829437,
-        "humanReadableSize": "810.00 KB",
+        "bytes": 889152,
+        "humanReadableSize": "868.31 KB",
         "reductionFromBaselinePercent": 0
       },
       {
         "stage": "minified",
-        "bytes": 284604,
-        "humanReadableSize": "277.93 KB",
-        "reductionFromBaselinePercent": 65.69
+        "bytes": 299908,
+        "humanReadableSize": "292.88 KB",
+        "reductionFromBaselinePercent": 66.27
       },
       {
         "stage": "minified+gzip",
-        "bytes": 93058,
-        "humanReadableSize": "90.88 KB",
-        "reductionFromBaselinePercent": 88.78
+        "bytes": 98232,
+        "humanReadableSize": "95.93 KB",
+        "reductionFromBaselinePercent": 88.95
       }
     ],
     "tree": {
       "name": "bundle",
       "fullPath": "bundle",
-      "value": 826638,
+      "value": 886277,
       "children": [
         {
           "name": "src",
           "fullPath": "src",
-          "value": 457909,
+          "value": 481963,
           "children": [
             {
               "name": "state",
               "fullPath": "src/state",
-              "value": 169814,
+              "value": 170389,
               "children": [
                 {
                   "name": "selectors",
                   "fullPath": "src/state/selectors",
-                  "value": 106931,
+                  "value": 107318,
                   "children": [
                     {
                       "name": "axisSelectors.ts",
@@ -2519,7 +2730,12 @@
                     {
                       "name": "legendSelectors.ts",
                       "fullPath": "src/state/selectors/legendSelectors.ts",
-                      "value": 380
+                      "value": 408
+                    },
+                    {
+                      "name": "selectLegendArea.ts",
+                      "fullPath": "src/state/selectors/selectLegendArea.ts",
+                      "value": 359
                     },
                     {
                       "name": "selectActivePropsFromChartPointer.ts",
@@ -2626,7 +2842,7 @@
                 {
                   "name": "legendSlice.ts",
                   "fullPath": "src/state/legendSlice.ts",
-                  "value": 1941
+                  "value": 2129
                 },
                 {
                   "name": "chartDataSlice.ts",
@@ -2750,7 +2966,7 @@
             {
               "name": "util",
               "fullPath": "src/util",
-              "value": 98752,
+              "value": 104499,
               "children": [
                 {
                   "name": "scale",
@@ -2789,7 +3005,7 @@
                 {
                   "name": "ChartUtils.ts",
                   "fullPath": "src/util/ChartUtils.ts",
-                  "value": 13007
+                  "value": 14790
                 },
                 {
                   "name": "svgPropertiesNoEvents.ts",
@@ -2830,6 +3046,11 @@
                   "name": "types.ts",
                   "fullPath": "src/util/types.ts",
                   "value": 3807
+                },
+                {
+                  "name": "useElementOffset.ts",
+                  "fullPath": "src/util/useElementOffset.ts",
+                  "value": 3494
                 },
                 {
                   "name": "excludeEventProps.ts",
@@ -2932,6 +3153,18 @@
                   "value": 472
                 },
                 {
+                  "name": "payload",
+                  "fullPath": "src/util/payload",
+                  "value": 470,
+                  "children": [
+                    {
+                      "name": "getUniqPayload.ts",
+                      "fullPath": "src/util/payload/getUniqPayload.ts",
+                      "value": 470
+                    }
+                  ]
+                },
+                {
                   "name": "getAxisTypeBasedOnLayout.ts",
                   "fullPath": "src/util/getAxisTypeBasedOnLayout.ts",
                   "value": 446
@@ -2993,7 +3226,7 @@
             {
               "name": "cartesian",
               "fullPath": "src/cartesian",
-              "value": 77094,
+              "value": 79210,
               "children": [
                 {
                   "name": "Line.tsx",
@@ -3011,14 +3244,14 @@
                   "value": 11723
                 },
                 {
+                  "name": "getCartesianPosition.tsx",
+                  "fullPath": "src/cartesian/getCartesianPosition.tsx",
+                  "value": 6756
+                },
+                {
                   "name": "YAxis.tsx",
                   "fullPath": "src/cartesian/YAxis.tsx",
                   "value": 6321
-                },
-                {
-                  "name": "getCartesianPosition.tsx",
-                  "fullPath": "src/cartesian/getCartesianPosition.tsx",
-                  "value": 6159
                 },
                 {
                   "name": "LineDrawShape.tsx",
@@ -3049,6 +3282,68 @@
                   "name": "GraphicalItemClipPath.tsx",
                   "fullPath": "src/cartesian/GraphicalItemClipPath.tsx",
                   "value": 1558
+                },
+                {
+                  "name": "cartesianPositionToCSSTranslate.tsx",
+                  "fullPath": "src/cartesian/cartesianPositionToCSSTranslate.tsx",
+                  "value": 1213
+                },
+                {
+                  "name": "cartesianViewBoxToTrapezoid.tsx",
+                  "fullPath": "src/cartesian/cartesianViewBoxToTrapezoid.tsx",
+                  "value": 306
+                }
+              ]
+            },
+            {
+              "name": "component",
+              "fullPath": "src/component",
+              "value": 37825,
+              "children": [
+                {
+                  "name": "Label.tsx",
+                  "fullPath": "src/component/Label.tsx",
+                  "value": 10622
+                },
+                {
+                  "name": "Legend.tsx",
+                  "fullPath": "src/component/Legend.tsx",
+                  "value": 7854
+                },
+                {
+                  "name": "Text.tsx",
+                  "fullPath": "src/component/Text.tsx",
+                  "value": 7597
+                },
+                {
+                  "name": "DefaultLegendContent.tsx",
+                  "fullPath": "src/component/DefaultLegendContent.tsx",
+                  "value": 4696
+                },
+                {
+                  "name": "LabelList.tsx",
+                  "fullPath": "src/component/LabelList.tsx",
+                  "value": 3115
+                },
+                {
+                  "name": "ActivePoints.tsx",
+                  "fullPath": "src/component/ActivePoints.tsx",
+                  "value": 1870
+                },
+                {
+                  "name": "Dots.tsx",
+                  "fullPath": "src/component/Dots.tsx",
+                  "value": 1775
+                },
+                {
+                  "name": "ResponsiveContainer.tsx",
+                  "fullPath": "src/component/ResponsiveContainer.tsx",
+                  "value": 196
+                },
+                {
+                  "name": "responsiveContainerUtils.ts",
+                  "fullPath": "src/component/responsiveContainerUtils.ts",
+                  "value": 100
                 }
               ]
             },
@@ -3101,48 +3396,6 @@
                   "name": "AnimationControllerImpl.ts",
                   "fullPath": "src/animation/AnimationControllerImpl.ts",
                   "value": 1107
-                }
-              ]
-            },
-            {
-              "name": "component",
-              "fullPath": "src/component",
-              "value": 25251,
-              "children": [
-                {
-                  "name": "Label.tsx",
-                  "fullPath": "src/component/Label.tsx",
-                  "value": 10598
-                },
-                {
-                  "name": "Text.tsx",
-                  "fullPath": "src/component/Text.tsx",
-                  "value": 7597
-                },
-                {
-                  "name": "LabelList.tsx",
-                  "fullPath": "src/component/LabelList.tsx",
-                  "value": 3115
-                },
-                {
-                  "name": "ActivePoints.tsx",
-                  "fullPath": "src/component/ActivePoints.tsx",
-                  "value": 1870
-                },
-                {
-                  "name": "Dots.tsx",
-                  "fullPath": "src/component/Dots.tsx",
-                  "value": 1775
-                },
-                {
-                  "name": "ResponsiveContainer.tsx",
-                  "fullPath": "src/component/ResponsiveContainer.tsx",
-                  "value": 196
-                },
-                {
-                  "name": "responsiveContainerUtils.ts",
-                  "fullPath": "src/component/responsiveContainerUtils.ts",
-                  "value": 100
                 }
               ]
             },
@@ -3203,12 +3456,12 @@
             {
               "name": "context",
               "fullPath": "src/context",
-              "value": 8670,
+              "value": 9250,
               "children": [
                 {
                   "name": "chartLayoutContext.tsx",
                   "fullPath": "src/context/chartLayoutContext.tsx",
-                  "value": 7031
+                  "value": 7320
                 },
                 {
                   "name": "chartDataContext.tsx",
@@ -3226,6 +3479,16 @@
                   "value": 323
                 },
                 {
+                  "name": "legendPayloadContext.tsx",
+                  "fullPath": "src/context/legendPayloadContext.tsx",
+                  "value": 228
+                },
+                {
+                  "name": "legendPortalContext.tsx",
+                  "fullPath": "src/context/legendPortalContext.tsx",
+                  "value": 124
+                },
+                {
                   "name": "PanoramaContext.tsx",
                   "fullPath": "src/context/PanoramaContext.tsx",
                   "value": 122
@@ -3239,11 +3502,6 @@
                   "name": "tooltipPortalContext.tsx",
                   "fullPath": "src/context/tooltipPortalContext.tsx",
                   "value": 62
-                },
-                {
-                  "name": "legendPortalContext.tsx",
-                  "fullPath": "src/context/legendPortalContext.tsx",
-                  "value": 61
                 }
               ]
             },
@@ -3256,6 +3514,28 @@
                   "name": "useChartSynchronisation.tsx",
                   "fullPath": "src/synchronisation/useChartSynchronisation.tsx",
                   "value": 8354
+                }
+              ]
+            },
+            {
+              "name": "shape",
+              "fullPath": "src/shape",
+              "value": 7495,
+              "children": [
+                {
+                  "name": "Curve.tsx",
+                  "fullPath": "src/shape/Curve.tsx",
+                  "value": 4366
+                },
+                {
+                  "name": "Symbols.tsx",
+                  "fullPath": "src/shape/Symbols.tsx",
+                  "value": 2462
+                },
+                {
+                  "name": "Dot.tsx",
+                  "fullPath": "src/shape/Dot.tsx",
+                  "value": 667
                 }
               ]
             },
@@ -3283,23 +3563,6 @@
                   "name": "Layer.tsx",
                   "fullPath": "src/container/Layer.tsx",
                   "value": 608
-                }
-              ]
-            },
-            {
-              "name": "shape",
-              "fullPath": "src/shape",
-              "value": 5033,
-              "children": [
-                {
-                  "name": "Curve.tsx",
-                  "fullPath": "src/shape/Curve.tsx",
-                  "value": 4366
-                },
-                {
-                  "name": "Dot.tsx",
-                  "fullPath": "src/shape/Dot.tsx",
-                  "value": 667
                 }
               ]
             },
@@ -3347,7 +3610,7 @@
         {
           "name": "node_modules",
           "fullPath": "node_modules",
-          "value": 367313,
+          "value": 402633,
           "children": [
             {
               "name": "@reduxjs",
@@ -3402,41 +3665,150 @@
               ]
             },
             {
-              "name": "decimal.js-light",
-              "fullPath": "node_modules/decimal.js-light",
-              "value": 49559,
-              "children": [
-                {
-                  "name": "decimal.mjs",
-                  "fullPath": "node_modules/decimal.js-light/decimal.mjs",
-                  "value": 49559
-                }
-              ]
-            },
-            {
               "name": "es-toolkit",
               "fullPath": "node_modules/es-toolkit",
-              "value": 29344,
+              "value": 61019,
               "children": [
                 {
                   "name": "dist",
                   "fullPath": "node_modules/es-toolkit/dist",
-                  "value": 29344,
+                  "value": 61019,
                   "children": [
                     {
                       "name": "compat",
                       "fullPath": "node_modules/es-toolkit/dist/compat",
-                      "value": 17281,
+                      "value": 37201,
                       "children": [
+                        {
+                          "name": "predicate",
+                          "fullPath": "node_modules/es-toolkit/dist/compat/predicate",
+                          "value": 14276,
+                          "children": [
+                            {
+                              "name": "isMatchWith.mjs",
+                              "fullPath": "node_modules/es-toolkit/dist/compat/predicate/isMatchWith.mjs",
+                              "value": 6305
+                            },
+                            {
+                              "name": "matchesProperty.mjs",
+                              "fullPath": "node_modules/es-toolkit/dist/compat/predicate/matchesProperty.mjs",
+                              "value": 1666
+                            },
+                            {
+                              "name": "matches.mjs",
+                              "fullPath": "node_modules/es-toolkit/dist/compat/predicate/matches.mjs",
+                              "value": 990
+                            },
+                            {
+                              "name": "isObject.mjs",
+                              "fullPath": "node_modules/es-toolkit/dist/compat/predicate/isObject.mjs",
+                              "value": 979
+                            },
+                            {
+                              "name": "isMatch.mjs",
+                              "fullPath": "node_modules/es-toolkit/dist/compat/predicate/isMatch.mjs",
+                              "value": 977
+                            },
+                            {
+                              "name": "isArguments.mjs",
+                              "fullPath": "node_modules/es-toolkit/dist/compat/predicate/isArguments.mjs",
+                              "value": 956
+                            },
+                            {
+                              "name": "isObjectLike.mjs",
+                              "fullPath": "node_modules/es-toolkit/dist/compat/predicate/isObjectLike.mjs",
+                              "value": 883
+                            },
+                            {
+                              "name": "isArrayLikeObject.mjs",
+                              "fullPath": "node_modules/es-toolkit/dist/compat/predicate/isArrayLikeObject.mjs",
+                              "value": 520
+                            },
+                            {
+                              "name": "isArrayLike.mjs",
+                              "fullPath": "node_modules/es-toolkit/dist/compat/predicate/isArrayLike.mjs",
+                              "value": 518
+                            },
+                            {
+                              "name": "isSymbol.mjs",
+                              "fullPath": "node_modules/es-toolkit/dist/compat/predicate/isSymbol.mjs",
+                              "value": 482
+                            }
+                          ]
+                        },
+                        {
+                          "name": "object",
+                          "fullPath": "node_modules/es-toolkit/dist/compat/object",
+                          "value": 7539,
+                          "children": [
+                            {
+                              "name": "get.mjs",
+                              "fullPath": "node_modules/es-toolkit/dist/compat/object/get.mjs",
+                              "value": 1854
+                            },
+                            {
+                              "name": "cloneDeepWith.mjs",
+                              "fullPath": "node_modules/es-toolkit/dist/compat/object/cloneDeepWith.mjs",
+                              "value": 1852
+                            },
+                            {
+                              "name": "has.mjs",
+                              "fullPath": "node_modules/es-toolkit/dist/compat/object/has.mjs",
+                              "value": 1686
+                            },
+                            {
+                              "name": "cloneDeep.mjs",
+                              "fullPath": "node_modules/es-toolkit/dist/compat/object/cloneDeep.mjs",
+                              "value": 1404
+                            },
+                            {
+                              "name": "property.mjs",
+                              "fullPath": "node_modules/es-toolkit/dist/compat/object/property.mjs",
+                              "value": 743
+                            }
+                          ]
+                        },
+                        {
+                          "name": "util",
+                          "fullPath": "node_modules/es-toolkit/dist/compat/util",
+                          "value": 5460,
+                          "children": [
+                            {
+                              "name": "toPath.mjs",
+                              "fullPath": "node_modules/es-toolkit/dist/compat/util/toPath.mjs",
+                              "value": 1864
+                            },
+                            {
+                              "name": "iteratee.mjs",
+                              "fullPath": "node_modules/es-toolkit/dist/compat/util/iteratee.mjs",
+                              "value": 1697
+                            },
+                            {
+                              "name": "toString.mjs",
+                              "fullPath": "node_modules/es-toolkit/dist/compat/util/toString.mjs",
+                              "value": 772
+                            },
+                            {
+                              "name": "toFinite.mjs",
+                              "fullPath": "node_modules/es-toolkit/dist/compat/util/toFinite.mjs",
+                              "value": 614
+                            },
+                            {
+                              "name": "toNumber.mjs",
+                              "fullPath": "node_modules/es-toolkit/dist/compat/util/toNumber.mjs",
+                              "value": 513
+                            }
+                          ]
+                        },
                         {
                           "name": "_internal",
                           "fullPath": "node_modules/es-toolkit/dist/compat/_internal",
-                          "value": 4983,
+                          "value": 5026,
                           "children": [
                             {
                               "name": "tags.mjs",
                               "fullPath": "node_modules/es-toolkit/dist/compat/_internal/tags.mjs",
-                              "value": 1089
+                              "value": 1132
                             },
                             {
                               "name": "isKey.mjs",
@@ -3481,36 +3853,9 @@
                           ]
                         },
                         {
-                          "name": "util",
-                          "fullPath": "node_modules/es-toolkit/dist/compat/util",
-                          "value": 3763,
-                          "children": [
-                            {
-                              "name": "toPath.mjs",
-                              "fullPath": "node_modules/es-toolkit/dist/compat/util/toPath.mjs",
-                              "value": 1864
-                            },
-                            {
-                              "name": "toString.mjs",
-                              "fullPath": "node_modules/es-toolkit/dist/compat/util/toString.mjs",
-                              "value": 772
-                            },
-                            {
-                              "name": "toFinite.mjs",
-                              "fullPath": "node_modules/es-toolkit/dist/compat/util/toFinite.mjs",
-                              "value": 614
-                            },
-                            {
-                              "name": "toNumber.mjs",
-                              "fullPath": "node_modules/es-toolkit/dist/compat/util/toNumber.mjs",
-                              "value": 513
-                            }
-                          ]
-                        },
-                        {
                           "name": "array",
                           "fullPath": "node_modules/es-toolkit/dist/compat/array",
-                          "value": 3657,
+                          "value": 3855,
                           "children": [
                             {
                               "name": "orderBy.mjs",
@@ -3521,40 +3866,11 @@
                               "name": "sortBy.mjs",
                               "fullPath": "node_modules/es-toolkit/dist/compat/array/sortBy.mjs",
                               "value": 366
-                            }
-                          ]
-                        },
-                        {
-                          "name": "predicate",
-                          "fullPath": "node_modules/es-toolkit/dist/compat/predicate",
-                          "value": 1979,
-                          "children": [
-                            {
-                              "name": "isObject.mjs",
-                              "fullPath": "node_modules/es-toolkit/dist/compat/predicate/isObject.mjs",
-                              "value": 979
                             },
                             {
-                              "name": "isArrayLike.mjs",
-                              "fullPath": "node_modules/es-toolkit/dist/compat/predicate/isArrayLike.mjs",
-                              "value": 518
-                            },
-                            {
-                              "name": "isSymbol.mjs",
-                              "fullPath": "node_modules/es-toolkit/dist/compat/predicate/isSymbol.mjs",
-                              "value": 482
-                            }
-                          ]
-                        },
-                        {
-                          "name": "object",
-                          "fullPath": "node_modules/es-toolkit/dist/compat/object",
-                          "value": 1854,
-                          "children": [
-                            {
-                              "name": "get.mjs",
-                              "fullPath": "node_modules/es-toolkit/dist/compat/object/get.mjs",
-                              "value": 1854
+                              "name": "uniqBy.mjs",
+                              "fullPath": "node_modules/es-toolkit/dist/compat/array/uniqBy.mjs",
+                              "value": 198
                             }
                           ]
                         },
@@ -3575,7 +3891,7 @@
                     {
                       "name": "predicate",
                       "fullPath": "node_modules/es-toolkit/dist/predicate",
-                      "value": 9540,
+                      "value": 10853,
                       "children": [
                         {
                           "name": "isEqualWith.mjs",
@@ -3593,6 +3909,11 @@
                           "value": 851
                         },
                         {
+                          "name": "isPrimitive.mjs",
+                          "fullPath": "node_modules/es-toolkit/dist/predicate/isPrimitive.mjs",
+                          "value": 815
+                        },
+                        {
                           "name": "isBuffer.mjs",
                           "fullPath": "node_modules/es-toolkit/dist/predicate/isBuffer.mjs",
                           "value": 752
@@ -3601,6 +3922,45 @@
                           "name": "isEqual.mjs",
                           "fullPath": "node_modules/es-toolkit/dist/predicate/isEqual.mjs",
                           "value": 570
+                        },
+                        {
+                          "name": "isTypedArray.mjs",
+                          "fullPath": "node_modules/es-toolkit/dist/predicate/isTypedArray.mjs",
+                          "value": 498
+                        }
+                      ]
+                    },
+                    {
+                      "name": "object",
+                      "fullPath": "node_modules/es-toolkit/dist/object",
+                      "value": 8211,
+                      "children": [
+                        {
+                          "name": "cloneDeepWith.mjs",
+                          "fullPath": "node_modules/es-toolkit/dist/object/cloneDeepWith.mjs",
+                          "value": 6740
+                        },
+                        {
+                          "name": "cloneDeep.mjs",
+                          "fullPath": "node_modules/es-toolkit/dist/object/cloneDeep.mjs",
+                          "value": 1471
+                        }
+                      ]
+                    },
+                    {
+                      "name": "array",
+                      "fullPath": "node_modules/es-toolkit/dist/array",
+                      "value": 2164,
+                      "children": [
+                        {
+                          "name": "uniqBy.mjs",
+                          "fullPath": "node_modules/es-toolkit/dist/array/uniqBy.mjs",
+                          "value": 1199
+                        },
+                        {
+                          "name": "flatten.mjs",
+                          "fullPath": "node_modules/es-toolkit/dist/array/flatten.mjs",
+                          "value": 965
                         }
                       ]
                     },
@@ -3627,22 +3987,20 @@
                       ]
                     },
                     {
-                      "name": "array",
-                      "fullPath": "node_modules/es-toolkit/dist/array",
-                      "value": 965,
-                      "children": [
-                        {
-                          "name": "flatten.mjs",
-                          "fullPath": "node_modules/es-toolkit/dist/array/flatten.mjs",
-                          "value": 965
-                        }
-                      ]
-                    },
-                    {
                       "name": "function",
                       "fullPath": "node_modules/es-toolkit/dist/function",
-                      "value": 250,
+                      "value": 1282,
                       "children": [
+                        {
+                          "name": "ary.mjs",
+                          "fullPath": "node_modules/es-toolkit/dist/function/ary.mjs",
+                          "value": 631
+                        },
+                        {
+                          "name": "identity.mjs",
+                          "fullPath": "node_modules/es-toolkit/dist/function/identity.mjs",
+                          "value": 401
+                        },
                         {
                           "name": "noop.mjs",
                           "fullPath": "node_modules/es-toolkit/dist/function/noop.mjs",
@@ -3651,6 +4009,18 @@
                       ]
                     }
                   ]
+                }
+              ]
+            },
+            {
+              "name": "decimal.js-light",
+              "fullPath": "node_modules/decimal.js-light",
+              "value": 49559,
+              "children": [
+                {
+                  "name": "decimal.mjs",
+                  "fullPath": "node_modules/decimal.js-light/decimal.mjs",
+                  "value": 49559
                 }
               ]
             },
@@ -3798,33 +4168,14 @@
               ]
             },
             {
-              "name": "redux",
-              "fullPath": "node_modules/redux",
-              "value": 23594,
-              "children": [
-                {
-                  "name": "es",
-                  "fullPath": "node_modules/redux/es",
-                  "value": 23594,
-                  "children": [
-                    {
-                      "name": "redux.js",
-                      "fullPath": "node_modules/redux/es/redux.js",
-                      "value": 23594
-                    }
-                  ]
-                }
-              ]
-            },
-            {
               "name": "d3-shape",
               "fullPath": "node_modules/d3-shape",
-              "value": 21306,
+              "value": 24951,
               "children": [
                 {
                   "name": "src",
                   "fullPath": "node_modules/d3-shape/src",
-                  "value": 21306,
+                  "value": 24951,
                   "children": [
                     {
                       "name": "curve",
@@ -3884,6 +4235,48 @@
                       "value": 2960
                     },
                     {
+                      "name": "symbol",
+                      "fullPath": "node_modules/d3-shape/src/symbol",
+                      "value": 2644,
+                      "children": [
+                        {
+                          "name": "wye.js",
+                          "fullPath": "node_modules/d3-shape/src/symbol/wye.js",
+                          "value": 787
+                        },
+                        {
+                          "name": "star.js",
+                          "fullPath": "node_modules/d3-shape/src/symbol/star.js",
+                          "value": 562
+                        },
+                        {
+                          "name": "cross.js",
+                          "fullPath": "node_modules/d3-shape/src/symbol/cross.js",
+                          "value": 467
+                        },
+                        {
+                          "name": "diamond.js",
+                          "fullPath": "node_modules/d3-shape/src/symbol/diamond.js",
+                          "value": 302
+                        },
+                        {
+                          "name": "triangle.js",
+                          "fullPath": "node_modules/d3-shape/src/symbol/triangle.js",
+                          "value": 247
+                        },
+                        {
+                          "name": "circle.js",
+                          "fullPath": "node_modules/d3-shape/src/symbol/circle.js",
+                          "value": 148
+                        },
+                        {
+                          "name": "square.js",
+                          "fullPath": "node_modules/d3-shape/src/symbol/square.js",
+                          "value": 131
+                        }
+                      ]
+                    },
+                    {
                       "name": "offset",
                       "fullPath": "node_modules/d3-shape/src/offset",
                       "value": 1635,
@@ -3921,6 +4314,11 @@
                       "value": 1292
                     },
                     {
+                      "name": "symbol.js",
+                      "fullPath": "node_modules/d3-shape/src/symbol.js",
+                      "value": 886
+                    },
+                    {
                       "name": "path.js",
                       "fullPath": "node_modules/d3-shape/src/path.js",
                       "value": 353
@@ -3943,6 +4341,11 @@
                       ]
                     },
                     {
+                      "name": "math.js",
+                      "fullPath": "node_modules/d3-shape/src/math.js",
+                      "value": 115
+                    },
+                    {
                       "name": "constant.js",
                       "fullPath": "node_modules/d3-shape/src/constant.js",
                       "value": 77
@@ -3956,6 +4359,25 @@
                       "name": "noop.js",
                       "fullPath": "node_modules/d3-shape/src/noop.js",
                       "value": 21
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "name": "redux",
+              "fullPath": "node_modules/redux",
+              "value": 23594,
+              "children": [
+                {
+                  "name": "es",
+                  "fullPath": "node_modules/redux/es",
+                  "value": 23594,
+                  "children": [
+                    {
+                      "name": "redux.js",
+                      "fullPath": "node_modules/redux/es/redux.js",
+                      "value": 23594
                     }
                   ]
                 }
@@ -4615,32 +5037,32 @@
         {
           "name": "entry",
           "fullPath": "entry",
-          "value": 1416,
+          "value": 1681,
           "children": [
             {
               "name": "www",
               "fullPath": "entry/www",
-              "value": 1416,
+              "value": 1681,
               "children": [
                 {
                   "name": "src",
                   "fullPath": "entry/www/src",
-                  "value": 1416,
+                  "value": 1681,
                   "children": [
                     {
                       "name": "views",
                       "fullPath": "entry/www/src/views",
-                      "value": 1416,
+                      "value": 1681,
                       "children": [
                         {
                           "name": "IndexView",
                           "fullPath": "entry/www/src/views/IndexView",
-                          "value": 1416,
+                          "value": 1681,
                           "children": [
                             {
                               "name": "IndexLineChart.tsx",
                               "fullPath": "entry/www/src/views/IndexView/IndexLineChart.tsx",
-                              "value": 1416
+                              "value": 1681
                             }
                           ]
                         }
