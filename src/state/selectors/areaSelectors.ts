@@ -1,6 +1,6 @@
 import { createSelector } from 'reselect';
 import { SeriesPoint } from 'victory-vendor/d3-shape';
-import { NullableCoordinate } from '../../util/types';
+import { DataKey, NullableCoordinate } from '../../util/types';
 import { computeArea } from '../../cartesian/Area';
 import {
   selectAxisWithScale,
@@ -13,6 +13,7 @@ import { AxisId } from '../cartesianAxisSlice';
 import { selectChartLayout } from '../../context/chartLayoutContext';
 import { selectChartDataWithIndexesIfNotInPanoramaPosition3 } from './dataSelectors';
 import { getBandSizeOfAxis, isCategoricalAxis, StackId } from '../../util/ChartUtils';
+import { isNotNil } from '../../util/DataUtils';
 import { ChartData } from '../chartDataSlice';
 import { getStackSeriesIdentifier } from '../../util/stacks/getStackSeriesIdentifier';
 import { StackDataPoint, StackGroup, StackSeries, StackSeriesIdentifier } from '../../util/stacks/stackTypes';
@@ -130,6 +131,31 @@ export const selectGraphicalItemStackedData: (
   },
 );
 
+/*
+ * All dataKeys of the stack group that this graphical item belongs to.
+ * computeArea needs them to tell apart data points where only this series is null
+ * (rendered as zero contribution to keep the stack consistent)
+ * from data points where the whole stack is null
+ * (a break point that connectNulls may connect across).
+ */
+const selectStackDataKeys: (
+  state: RechartsRootState,
+  id: GraphicalItemId,
+  isPanorama: boolean,
+) => ReadonlyArray<DataKey<unknown>> | undefined = createSelector(
+  [selectSynchronisedAreaSettings, selectNumericalAxisStackGroups],
+  (areaSettings: AreaSettings | undefined, stackGroups: Record<StackId, StackGroup> | undefined) => {
+    if (areaSettings == null || areaSettings.stackId == null || stackGroups == null) {
+      return undefined;
+    }
+    const group: StackGroup | undefined = stackGroups[areaSettings.stackId];
+    if (group == null) {
+      return undefined;
+    }
+    return group.graphicalItems.map(item => item.dataKey).filter(isNotNil);
+  },
+);
+
 export const selectArea: (
   state: RechartsRootState,
   id: GraphicalItemId,
@@ -146,6 +172,7 @@ export const selectArea: (
     selectBandSize,
     selectSynchronisedAreaSettings,
     selectChartBaseValue,
+    selectStackDataKeys,
   ],
   (
     layout,
@@ -158,6 +185,7 @@ export const selectArea: (
     bandSize,
     areaSettings,
     chartBaseValue,
+    stackDataKeys,
   ) => {
     if (
       areaSettings == null ||
@@ -197,6 +225,7 @@ export const selectArea: (
       displayedData,
       chartBaseValue,
       bandSize,
+      stackDataKeys,
     });
   },
 );
