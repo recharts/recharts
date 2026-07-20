@@ -1,4 +1,14 @@
-import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, CartesianPosition } from 'recharts';
+import {
+  LineChart,
+  Line,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Tooltip,
+  Legend,
+  CartesianPosition,
+  LegendProps,
+} from 'recharts';
 // #region data and controls
 import { generateMockData, RechartsDevtools } from '@recharts/devtools';
 import type { Lever } from '../../../components/Shared/levers/Levers.tsx';
@@ -6,8 +16,11 @@ import { createSelectLever, createNumberLever } from '../../../components/Shared
 
 const data = generateMockData(4, 12);
 
+type LegendLayout = Exclude<LegendProps['layout'], null | undefined>;
+
 type ControlsState = {
   position: LegendPosition;
+  layout: LegendLayout;
   offset: number;
 };
 
@@ -15,6 +28,7 @@ export type LegendPosition = Extract<CartesianPosition, string>;
 
 export const defaultControlsState: ControlsState = {
   position: 'bottom',
+  layout: 'horizontal',
   offset: 0,
 };
 
@@ -36,7 +50,20 @@ const positionOptions: ReadonlyArray<{ value: LegendPosition; label: string }> =
   ] as const
 ).map(pos => ({ value: pos, label: pos }));
 
+const layoutOptions: ReadonlyArray<{ value: LegendLayout; label: string }> = [
+  { value: 'horizontal', label: 'Horizontal' },
+  { value: 'vertical', label: 'Vertical' },
+  { value: 'auto', label: 'Auto (default from Recharts)' },
+];
+
 export const levers = [
+  createSelectLever<ControlsState, LegendLayout>({
+    key: 'layout',
+    label: 'Legend layout',
+    options: layoutOptions,
+    getValue: state => state.layout ?? defaultControlsState.layout,
+    onChange: (layout, state) => ({ ...state, layout }),
+  }),
   createSelectLever<ControlsState, LegendPosition>({
     key: 'position',
     label: 'Legend position',
@@ -57,7 +84,7 @@ export const levers = [
 // #endregion
 
 export default function LegendPositionExample(props: Partial<ControlsState>) {
-  const { position, offset } = { ...defaultControlsState, ...props };
+  const { position, layout, offset } = { ...defaultControlsState, ...props };
 
   return (
     <LineChart style={{ width: '600px', height: '300px', outline: '2px solid gray' }} responsive={false} data={data}>
@@ -66,6 +93,7 @@ export default function LegendPositionExample(props: Partial<ControlsState>) {
       <YAxis />
       <Tooltip />
       <Legend
+        layout={layout}
         position={position}
         offset={offset}
         wrapperStyle={{

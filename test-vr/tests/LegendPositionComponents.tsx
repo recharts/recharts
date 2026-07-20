@@ -45,15 +45,19 @@ const wrapperStyle: React.CSSProperties = {
 export const LegendPositionVRTest = ({ offset }: { offset?: number }) => (
   <div style={wrapperStyle}>
     {availablePositions.map(position => (
-      <LineChart key={String(position)} width={500} height={300} data={data} style={{ border: '1px solid red' }}>
-        <Line type="monotone" dataKey="uv" stroke="#8884d8" />
-        <Line type="monotone" dataKey="pv" stroke="#8884d8" />
+      <LineChart
+        key={JSON.stringify(position)}
+        width={500}
+        height={300}
+        data={data}
+        style={{ border: '1px solid red' }}
+      >
+        <Line type="monotone" dataKey="uv" stroke="purple" />
+        <Line type="monotone" dataKey="pv" stroke="gold" />
         <CartesianGrid />
         <Legend
           position={position}
           offset={offset}
-          width="fit-content"
-          height="fit-content"
           // eslint-disable-next-line react/no-unstable-nested-components
           content={() => <div style={{ border: '1px dashed black' }}>Position: {JSON.stringify(position)}</div>}
         />
@@ -61,6 +65,20 @@ export const LegendPositionVRTest = ({ offset }: { offset?: number }) => (
     ))}
   </div>
 );
+
+const veryLongText1 = 'Lorem Ipsum dolor sit amet, consectetur adipiscing elit. '.repeat(3);
+const veryLongText2 = 'Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. '.repeat(3);
+
+export const VeryLongLegendText = ({ position }: { position: CartesianPosition }) => {
+  return (
+    <LineChart key={JSON.stringify(position)} width={500} height={300} data={data} style={{ border: '1px solid red' }}>
+      <Line type="monotone" dataKey="uv" stroke="purple" name={veryLongText1} />
+      <Line type="monotone" dataKey="pv" stroke="gold" name={veryLongText2} />
+      <CartesianGrid />
+      <Legend position={position} />
+    </LineChart>
+  );
+};
 
 type Alignment = [HorizontalAlignmentType, VerticalAlignmentType];
 

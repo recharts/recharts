@@ -105,9 +105,14 @@ export const commentSimilarityExceptions: ReadonlyArray<CommentSimilarityGroup> 
       'Curve layout means something else than the chart layout. AreaRevealShape and LineDrawShape extend CurveProps.',
   },
   {
-    components: ['DefaultLegendContent', 'Legend'],
+    components: ['DefaultLegendContent'],
     props: ['layout'],
     reason: 'Legend layout means something else than the chart layout.',
+  },
+  {
+    components: ['Legend'],
+    props: ['layout'],
+    reason: 'Legend layout is the same prop as DefaultLegendContent layout, but Legend has extra defaults in it',
   },
   {
     components: ['BarStack'],

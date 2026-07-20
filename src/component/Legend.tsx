@@ -11,7 +11,7 @@ import {
   VerticalAlignmentType,
 } from './DefaultLegendContent';
 
-import { LayoutType, Margin, Size } from '../util/types';
+import { CartesianLayout, Margin, Size } from '../util/types';
 import { getUniqPayload, UniqueOption } from '../util/payload/getUniqPayload';
 import { useLegendPayload } from '../context/legendPayloadContext';
 import { ElementOffset, useElementOffset } from '../util/useElementOffset';
@@ -29,7 +29,8 @@ function defaultUniqBy(entry: LegendPayload) {
   return entry.value;
 }
 
-type ContentProps = Props & {
+type ContentProps = Omit<Props, 'layout'> & {
+  layout: CartesianLayout;
   margin: Margin | undefined;
   chartWidth: number;
   chartHeight: number;
@@ -60,7 +61,7 @@ type PositionInput = {
   verticalAlign?: Props['verticalAlign'];
 };
 
-function getLayoutForPosition(position: CartesianPosition | undefined): NonNullable<Props['layout']> {
+function getLayoutForPosition(position: CartesianPosition | undefined): CartesianLayout {
   if (position === 'left' || position === 'right' || position === 'insideLeft' || position === 'insideRight') {
     return 'vertical';
   }
@@ -78,19 +79,20 @@ function selectPositionViewBox(state: RechartsRootState, position: CartesianPosi
 
 function getOutsidePositionOffset(
   position: CartesianPosition | undefined,
+  offset: number,
   box: ElementOffset,
 ): { top?: number; left?: number } {
   if (position === 'top') {
-    return { top: box.height };
+    return { top: box.height + offset };
   }
   if (position === 'bottom') {
-    return { top: -box.height };
+    return { top: -box.height - offset };
   }
   if (position === 'left') {
-    return { left: box.width };
+    return { left: box.width + offset };
   }
   if (position === 'right') {
-    return { left: -box.width };
+    return { left: -box.width - offset };
   }
   return {};
 }
@@ -134,7 +136,7 @@ function getDefaultPosition(
 
 export type LegendItemSorter = 'value' | 'dataKey' | ((item: LegendPayload) => number | string);
 
-export type Props = Omit<DefaultLegendContentProps, 'payload' | 'ref' | 'verticalAlign'> & {
+export type Props = Omit<DefaultLegendContentProps, 'payload' | 'ref' | 'verticalAlign' | 'layout'> & {
   /**
    * Renders the content of the legend.
    *
@@ -148,6 +150,19 @@ export type Props = Omit<DefaultLegendContentProps, 'payload' | 'ref' | 'vertica
    * @example <Legend content={renderLegend} />
    */
   content?: ContentType;
+  /**
+   * The layout of legend items inside the legend container.
+   *
+   * When `auto` then the layout is decided based on the `position` prop:
+   * - in `left`|`right` positions, the layout is vertical
+   * - otherwise horizontal
+   * - if position is undefined, also horizontal
+   *
+   * `auto` value is new since 3.10
+   *
+   * @defaultValue auto
+   */
+  layout?: CartesianLayout | 'auto';
   /**
    * CSS styles to be applied to the wrapper `div` element.
    */
@@ -239,7 +254,7 @@ function LegendSizeDispatcher({ width, height }: Size): null {
 }
 
 function getWidthOrHeight(
-  layout: LayoutType | undefined,
+  layout: CartesianLayout | undefined,
   height: number | string | undefined,
   width: number | string | undefined,
   maxWidth: number,
@@ -264,7 +279,7 @@ export const legendDefaultProps = {
   inactiveColor: '#ccc',
   itemSorter: 'value',
   labelStyle: {},
-  layout: 'horizontal',
+  layout: 'auto',
   verticalAlign: 'bottom',
   offset: 0,
 } as const satisfies Partial<Props>;
@@ -275,7 +290,8 @@ export const legendDefaultProps = {
  */
 function LegendImpl(outsideProps: Props) {
   const props = resolveDefaultProps(outsideProps, legendDefaultProps);
-  const layout = outsideProps.layout ?? getLayoutForPosition(props.position);
+  const layout: CartesianLayout =
+    outsideProps.layout && outsideProps.layout !== 'auto' ? outsideProps.layout : getLayoutForPosition(props.position);
   const contextPayload = useLegendPayload();
   const legendPortalFromContext = useLegendPortal();
   const margin = useMargin();
@@ -309,12 +325,18 @@ function LegendImpl(outsideProps: Props) {
           position: props.position,
           offset: props.offset ?? 0,
         });
-  const outsidePositionOffset = getOutsidePositionOffset(props.position, lastBoundingBox);
+  const outsidePositionOffset = getOutsidePositionOffset(props.position, props.offset ?? 0, lastBoundingBox);
+  const positionMaxWidth = layout === 'vertical' ? (positionViewBox?.width ?? 0) / 2 : (positionViewBox?.width ?? 0);
+  const positionMaxHeight =
+    layout === 'horizontal' ? (positionViewBox?.height ?? 0) / 2 : (positionViewBox?.height ?? 0);
 
   const positionStyle: React.CSSProperties | undefined = positionResult
     ? {
-        width: 'fit-content',
-        height: 'fit-content',
+        width: 'max-content',
+        height: 'max-content',
+        maxWidth: positionMaxWidth,
+        maxHeight: positionMaxHeight,
+        overflowY: 'auto',
         top: positionResult.y + (outsidePositionOffset.top ?? 0),
         left: positionResult.x + (outsidePositionOffset.left ?? 0),
         transform: cartesianPositionToCSSTranslate(positionResult.horizontalAnchor, positionResult.verticalAnchor),

@@ -95,22 +95,22 @@ export const appendOffsetOfLegend = (
 ): OffsetVertical & OffsetHorizontal => {
   if (legendSettings && legendSize) {
     const { width: boxWidth, height: boxHeight } = legendSize;
-    const { align, verticalAlign, layout, position } = legendSettings;
+    const { align, verticalAlign, layout, position, offset: legendOffset = 0 } = legendSettings;
 
     if (position != null) {
       // Position-based legends are absolutely placed and must not move the plot area.
       if (isOutsidePosition(position)) {
         if (position === 'top' && isNumber(offset.top)) {
-          return { ...offset, top: offset.top + (boxHeight || 0) };
+          return { ...offset, top: offset.top + (boxHeight || 0) + legendOffset };
         }
         if (position === 'bottom' && isNumber(offset.bottom)) {
-          return { ...offset, bottom: offset.bottom + (boxHeight || 0) };
+          return { ...offset, bottom: offset.bottom + (boxHeight || 0) + legendOffset };
         }
         if (position === 'left' && isNumber(offset.left)) {
-          return { ...offset, left: offset.left + (boxWidth || 0) };
+          return { ...offset, left: offset.left + (boxWidth || 0) + legendOffset };
         }
         if (position === 'right' && isNumber(offset.right)) {
-          return { ...offset, right: offset.right + (boxWidth || 0) };
+          return { ...offset, right: offset.right + (boxWidth || 0) + legendOffset };
         }
       }
       return offset;

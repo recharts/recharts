@@ -133,12 +133,13 @@ describe('appendOffsetOfLegend', () => {
       verticalAlign: 'bottom',
       itemSorter: 'value',
       position: 'bottom',
+      offset: 30,
     };
     const size: Size = {
       width: 100,
       height: 200,
     };
 
-    expect(appendOffsetOfLegend(emptyOffset, settings, size)).toEqual({ ...emptyOffset, bottom: 209 });
+    expect(appendOffsetOfLegend(emptyOffset, settings, size)).toEqual({ ...emptyOffset, bottom: 239 });
   });
 });

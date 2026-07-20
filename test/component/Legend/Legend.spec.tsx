@@ -633,13 +633,14 @@ describe('<Legend />', () => {
 
       const legendWrapper = container.getElementsByClassName('recharts-legend-wrapper')[0];
       // Left
-      // x = 0 - offset + margin = -5
+      // The left offset reserves space between the legend and the plot, so the
+      // legend itself remains aligned with the chart margin.
       // y = 250
       // hAnchor = end (-100%), vAnchor = middle (-50%)
       expect(legendWrapper).toHaveStyle({
         position: 'absolute',
         top: '250px',
-        left: '-5px',
+        left: '5px',
         transform: 'translate(-100%, -50%)',
       });
     });
@@ -682,6 +683,10 @@ describe('<Legend />', () => {
       const items = container.getElementsByClassName('recharts-legend-item');
       expect(items[0]).toHaveStyle({ display: 'block', whiteSpace: 'nowrap' });
       expect(items[2]).toHaveStyle({ display: 'inline-block', whiteSpace: 'nowrap' });
+      expect(items[0].querySelector('.recharts-legend-item-text')).toHaveStyle({
+        whiteSpace: 'normal',
+        overflowWrap: 'break-word',
+      });
     });
 
     it('should allow coordinate object position', () => {

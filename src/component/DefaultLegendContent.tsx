@@ -237,6 +237,8 @@ function Items(props: InternalProps) {
 
     const finalLabelStyle = typeof labelStyle === 'object' ? { ...labelStyle } : {};
     finalLabelStyle.color = entry.inactive ? inactiveColor : finalLabelStyle.color || entry.color;
+    finalLabelStyle.whiteSpace ??= 'normal';
+    finalLabelStyle.overflowWrap ??= 'break-word';
 
     const finalValue = finalFormatter ? finalFormatter(entry.value, entry, i) : entry.value;
 
