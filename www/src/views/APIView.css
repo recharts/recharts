@@ -70,6 +70,18 @@
           .deprecated-label {
             margin-left: 10px;
           }
+
+          .props-section {
+            .sub-title button {
+              appearance: none;
+              background: none;
+              border: 0;
+              color: inherit;
+              cursor: pointer;
+              font: inherit;
+              padding: 0;
+            }
+          }
         }
 
         .type {

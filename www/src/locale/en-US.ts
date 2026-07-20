@@ -107,6 +107,10 @@ export const map = {
     showData: 'Show data format',
     hideData: 'Hide data format',
     animation: 'Animation',
+    current: 'Props',
+    deprecated: 'Deprecated Props',
+    events: 'Events',
+    since: 'Available since Recharts',
   },
   'design-disciplines': {
     'design-disciplines': 'Design Disciplines',
