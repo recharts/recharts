@@ -822,6 +822,52 @@ describe('AreaChart', () => {
     });
   });
 
+  test('connects across points where every stacked series is null if connectNulls is true', () => {
+    const dataWithAllNullPageB = [
+      { name: 'Page A', uv: 400, pv: 2400, amt: 2400 },
+      { name: 'Page B' },
+      { name: 'Page C', uv: 300, pv: 1398, amt: 2400 },
+    ];
+    const { container } = render(
+      <AreaChart width={100} height={50} data={dataWithAllNullPageB}>
+        <Area stackId="1" connectNulls type="monotone" dataKey="uv" stroke="#ff7300" fill="#ff7300" />
+        <Area stackId="1" connectNulls type="monotone" dataKey="pv" stroke="#ff7300" fill="#ff7300" />
+        <Area stackId="1" connectNulls type="monotone" dataKey="amt" stroke="#ff7300" fill="#ff7300" />
+      </AreaChart>,
+    );
+
+    // Page B has no value in any series of the stack, so every area connects Page A directly to Page C.
+    container.querySelectorAll('.recharts-area-curve').forEach(path => {
+      const d = path.getAttribute('d');
+      assertNotNull(d);
+      const commands = [...d.matchAll(/[a-zA-Z][\d ,.-]+/g)];
+      expect(commands).toHaveLength(2);
+      expect(d.startsWith('M5,')).toBe(true);
+    });
+  });
+
+  test('breaks at points where every stacked series is null if connectNulls is false', () => {
+    const dataWithAllNullPageB = [
+      { name: 'Page A', uv: 400, pv: 2400, amt: 2400 },
+      { name: 'Page B' },
+      { name: 'Page C', uv: 300, pv: 1398, amt: 2400 },
+    ];
+    const { container } = render(
+      <AreaChart width={100} height={50} data={dataWithAllNullPageB}>
+        <Area stackId="1" type="monotone" dataKey="uv" stroke="#ff7300" fill="#ff7300" />
+        <Area stackId="1" type="monotone" dataKey="pv" stroke="#ff7300" fill="#ff7300" />
+        <Area stackId="1" type="monotone" dataKey="amt" stroke="#ff7300" fill="#ff7300" />
+      </AreaChart>,
+    );
+
+    // Without connectNulls the areas render as two disconnected single-point segments.
+    container.querySelectorAll('.recharts-area-curve').forEach(path => {
+      const d = path.getAttribute('d');
+      assertNotNull(d);
+      expect([...d.matchAll(/M/g)].length).toBeGreaterThan(1);
+    });
+  });
+
   test('Renders two active dots for ranged Area chart on hover', () => {
     const { container } = render(
       <AreaChart width={400} height={200} data={rangeData}>
