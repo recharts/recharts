@@ -5,6 +5,7 @@ import * as React from 'react';
 import { SVGProps, useState, useRef, useCallback, forwardRef, useImperativeHandle, useEffect } from 'react';
 
 import get from 'es-toolkit/compat/get';
+import isEqual from 'es-toolkit/compat/isEqual';
 import { clsx } from 'clsx';
 import { Layer } from '../container/Layer';
 import { Text, Props as TextProps, TextAnchor, TextVerticalAnchor, isValidTextAnchor } from '../component/Text';
@@ -311,9 +312,17 @@ function RenderedTicksReporter({
   axisId: AxisId | undefined;
 }) {
   const dispatch = useAppDispatch();
+  /*
+   * The ticks array gets a new identity on every render even when its contents are unchanged.
+   * If we dispatched on every identity change, then every parent re-render would trigger
+   * a store update from a passive effect. Under rapid external updates (e.g. a slider
+   * driving chart data), those nested dispatches can trip React's update depth limit.
+   * https://github.com/recharts/recharts/issues/7563
+   */
+  const lastDispatchedTicksRef = useRef<ReadonlyArray<TickItemType> | null>(null);
   useEffect(() => {
     if (axisId == null || axisType == null) {
-      return noop;
+      return;
     }
     // Filter out irrelevant internal properties before exposing externally
     const tickItems = ticks.map(tick => ({
@@ -322,7 +331,17 @@ function RenderedTicksReporter({
       offset: tick.offset,
       index: tick.index,
     }));
+    if (isEqual(lastDispatchedTicksRef.current, tickItems)) {
+      return;
+    }
+    lastDispatchedTicksRef.current = tickItems;
     dispatch(setRenderedTicks({ ticks: tickItems, axisId, axisType }));
+  }, [dispatch, ticks, axisId, axisType]);
+
+  useEffect(() => {
+    if (axisId == null || axisType == null) {
+      return noop;
+    }
     return () => {
       dispatch(
         removeRenderedTicks({
@@ -331,7 +350,7 @@ function RenderedTicksReporter({
         }),
       );
     };
-  }, [dispatch, ticks, axisId, axisType]);
+  }, [dispatch, axisId, axisType]);
 
   return null;
 }
