@@ -319,7 +319,11 @@ function RenderedTicksReporter({
    * driving chart data), those nested dispatches can trip React's update depth limit.
    * https://github.com/recharts/recharts/issues/7563
    */
-  const lastDispatchedTicksRef = useRef<ReadonlyArray<TickItemType> | null>(null);
+  const lastDispatchedTicksRef = useRef<{
+    ticks: ReadonlyArray<TickItemType>;
+    axisId: AxisId;
+    axisType: 'xAxis' | 'yAxis';
+  } | null>(null);
   useEffect(() => {
     if (axisId == null || axisType == null) {
       return;
@@ -331,10 +335,11 @@ function RenderedTicksReporter({
       offset: tick.offset,
       index: tick.index,
     }));
-    if (isEqual(lastDispatchedTicksRef.current, tickItems)) {
+    const last = lastDispatchedTicksRef.current;
+    if (last != null && last.axisId === axisId && last.axisType === axisType && isEqual(last.ticks, tickItems)) {
       return;
     }
-    lastDispatchedTicksRef.current = tickItems;
+    lastDispatchedTicksRef.current = { ticks: tickItems, axisId, axisType };
     dispatch(setRenderedTicks({ ticks: tickItems, axisId, axisType }));
   }, [dispatch, ticks, axisId, axisType]);
 
