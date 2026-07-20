@@ -98,7 +98,7 @@ export const appendOffsetOfLegend = (
     const { align, verticalAlign, layout, position, offset: legendOffset = 0 } = legendSettings;
 
     if (position != null) {
-      // Position-based legends are absolutely placed and must not move the plot area.
+      // Position-based legends are absolutely placed. They only move the plot area if they are positioned outside.
       if (isOutsidePosition(position)) {
         if (position === 'top' && isNumber(offset.top)) {
           return { ...offset, top: offset.top + (boxHeight || 0) + legendOffset };
