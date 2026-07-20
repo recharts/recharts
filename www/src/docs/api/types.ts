@@ -16,6 +16,7 @@ export type ApiProps = {
   format?: ReadonlyArray<string>;
   examples?: ReadonlyArray<PropExample>;
   deprecated?: boolean | string | Partial<Record<SupportedLocale, ReactNode>>;
+  since?: string;
 };
 
 export type ApiDoc = {

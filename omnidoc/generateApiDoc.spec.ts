@@ -185,6 +185,19 @@ describe('generateApiDoc', () => {
     expect(apiDoc.deprecated).not.toEqual(expect.stringContaining('{@link'));
   });
 
+  it('should render Markdown in deprecated prop text and include prop @since tags', { timeout: 10000 }, async () => {
+    const apiDoc = await generateApiDoc('Legend', reader, exampleReader, contextMap);
+    const verticalAlign = apiDoc.props.find(prop => prop.name === 'verticalAlign');
+    const position = apiDoc.props.find(prop => prop.name === 'position');
+
+    expect(verticalAlign?.deprecated).toEqual(
+      expect.objectContaining({
+        'en-US': expect.stringContaining('<code>position</code>'),
+      }),
+    );
+    expect(position?.since).toBe('3.10');
+  });
+
   it('should include return value in API doc for hooks', async () => {
     const apiDoc = await generateApiDoc('useChartHeight', reader, exampleReader, contextMap);
     expect(apiDoc.returnValue).toBeDefined();

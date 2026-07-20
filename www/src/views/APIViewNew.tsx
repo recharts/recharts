@@ -1,5 +1,6 @@
 import Helmet from 'react-helmet';
 import { Link } from 'react-router';
+import { useState } from 'react';
 import { allApiDocs as API } from '../docs/api';
 import { localeGet, parseLocalObj, useLocale } from '../utils/LocaleUtils.ts';
 import './APIView.css';
@@ -40,59 +41,157 @@ type PropsListProps = {
   locale: SupportedLocale;
 };
 
-function PropsList({ props, locale }: PropsListProps) {
-  if (!props || !props.length) {
+type PropsSection = 'current' | 'deprecated' | 'events';
+
+const PROPS_SECTION_STORAGE_KEY = 'recharts-api-props-sections';
+
+function getInitialExpandedSections(): Record<PropsSection, boolean> {
+  if (typeof window === 'undefined') {
+    return { current: true, deprecated: false, events: false };
+  }
+
+  try {
+    const storedValue = window.localStorage.getItem(PROPS_SECTION_STORAGE_KEY);
+    if (storedValue === null) {
+      return { current: true, deprecated: false, events: false };
+    }
+    const parsedValue: unknown = JSON.parse(storedValue);
+    if (typeof parsedValue !== 'object' || parsedValue === null) {
+      return { current: true, deprecated: false, events: false };
+    }
+    return {
+      current: !('current' in parsedValue) || parsedValue.current === true,
+      deprecated: 'deprecated' in parsedValue && parsedValue.deprecated === true,
+      events: 'events' in parsedValue && parsedValue.events === true,
+    };
+  } catch {
+    return { current: true, deprecated: false, events: false };
+  }
+}
+
+type PropsSectionProps = {
+  entries: ReadonlyArray<ApiProps>;
+  locale: SupportedLocale;
+  section: PropsSection;
+  isExpanded: boolean;
+  onToggle: (section: PropsSection) => void;
+};
+
+function PropsSection({ entries, locale, section, isExpanded, onToggle }: PropsSectionProps) {
+  if (entries.length === 0) {
     return null;
   }
 
+  const sectionId = `props-${section}`;
+  return (
+    <section className="props-section">
+      <h4 className="sub-title">
+        <button type="button" aria-expanded={isExpanded} aria-controls={sectionId} onClick={() => onToggle(section)}>
+          {localeGet(locale, 'api', section)}{' '}
+          <i className="expander">{isExpanded ? 'Click to collapse' : 'Click to expand'}</i>
+        </button>
+      </h4>
+      {isExpanded ? (
+        <ul className="props-list" id={sectionId}>
+          {entries.map((entry: ApiProps) => (
+            <li className="props-item" key={entry.name} id={entry.name}>
+              <p className={`header ${entry.deprecated ? 'deprecated' : ''}`}>
+                <span className="title">
+                  <a href={`#${entry.name}`}>{entry.name}</a>
+                </span>
+                <span className="type">{entry.type}</span>
+                {entry.isOptional ? <em className="optional">optional</em> : null}
+                {entry.deprecated ? <em className="deprecated-label">@deprecated</em> : null}
+              </p>
+              {entry.deprecated && entry.deprecated !== true ? (
+                <div className="deprecated-message">
+                  <strong>Deprecated:</strong> {parseLocalObj(locale, entry.deprecated)}
+                </div>
+              ) : null}
+              <p className="desc">{parseLocalObj(locale, entry.desc)}</p>
+              {entry.since ? (
+                <p className="since">
+                  {localeGet(locale, 'api', 'since')} {entry.since}
+                </p>
+              ) : null}
+              {entry.defaultVal !== null &&
+              entry.defaultVal !== undefined &&
+              entry.defaultVal !== 'null' &&
+              entry.defaultVal !== 'undefined' ? (
+                <p className="default">
+                  <span className="title">{localeGet(locale, 'api', 'default')}</span>
+                  <code>{JSON.stringify(entry.defaultVal)}</code>
+                </p>
+              ) : null}
+              {entry.format && entry.format.length ? (
+                <div className="format">
+                  <p className="title">{localeGet(locale, 'api', 'format')}</p>
+                  <pre className="format-code">
+                    <code>{entry.format.join('\n')}</code>
+                  </pre>
+                </div>
+              ) : null}
+              {entry.examples && entry.examples.length ? (
+                <div className="examples">
+                  <p className="title">{localeGet(locale, 'api', 'examples')}</p>
+                  <ul className="list">
+                    <PropsExamples examples={entry.examples} locale={locale} />
+                  </ul>
+                </div>
+              ) : null}
+            </li>
+          ))}
+        </ul>
+      ) : null}
+    </section>
+  );
+}
+
+function PropsList({ props, locale }: PropsListProps) {
+  const [expandedSections, setExpandedSections] = useState(getInitialExpandedSections);
+  const toggleSection = (section: PropsSection) => {
+    setExpandedSections(previousSections => {
+      const nextSections = { ...previousSections, [section]: !previousSections[section] };
+      try {
+        window.localStorage.setItem(PROPS_SECTION_STORAGE_KEY, JSON.stringify(nextSections));
+      } catch {
+        // Storage may be unavailable, so preserve the state for this page only.
+      }
+      return nextSections;
+    });
+  };
+
+  if (!props.length) {
+    return null;
+  }
+
+  const currentProps = props.filter(prop => !prop.deprecated && !prop.name.startsWith('on'));
+  const deprecatedProps = props.filter(prop => prop.deprecated);
+  const events = props.filter(prop => !prop.deprecated && prop.name.startsWith('on'));
+
   return (
     <>
-      <h4 className="sub-title">Props</h4>
-      <ul className="props-list">
-        {props.map((entry: ApiProps) => (
-          <li className="props-item" key={entry.name} id={entry.name}>
-            <p className={`header ${entry.deprecated ? 'deprecated' : ''}`}>
-              <span className="title">
-                <a href={`#${entry.name}`}>{entry.name}</a>
-              </span>
-              <span className="type">{entry.type}</span>
-              {entry.isOptional ? <em className="optional">optional</em> : null}
-              {entry.deprecated ? <em className="deprecated-label">@deprecated</em> : null}
-            </p>
-            {entry.deprecated && entry.deprecated !== true ? (
-              <div className="deprecated-message">
-                <strong>Deprecated:</strong> {parseLocalObj(locale, entry.deprecated)}
-              </div>
-            ) : null}
-            <p className="desc">{parseLocalObj(locale, entry.desc)}</p>
-            {entry.defaultVal !== null &&
-            entry.defaultVal !== undefined &&
-            entry.defaultVal !== 'null' &&
-            entry.defaultVal !== 'undefined' ? (
-              <p className="default">
-                <span className="title">{localeGet(locale, 'api', 'default')}</span>
-                <code>{JSON.stringify(entry.defaultVal)}</code>
-              </p>
-            ) : null}
-            {entry.format && entry.format.length ? (
-              <div className="format">
-                <p className="title">{localeGet(locale, 'api', 'format')}</p>
-                <pre className="format-code">
-                  <code>{entry.format.join('\n')}</code>
-                </pre>
-              </div>
-            ) : null}
-            {entry.examples && entry.examples.length ? (
-              <div className="examples">
-                <p className="title">{localeGet(locale, 'api', 'examples')}</p>
-                <ul className="list">
-                  <PropsExamples examples={entry.examples} locale={locale} />
-                </ul>
-              </div>
-            ) : null}
-          </li>
-        ))}
-      </ul>
+      <PropsSection
+        entries={currentProps}
+        locale={locale}
+        section="current"
+        isExpanded={expandedSections.current}
+        onToggle={toggleSection}
+      />
+      <PropsSection
+        entries={deprecatedProps}
+        locale={locale}
+        section="deprecated"
+        isExpanded={expandedSections.deprecated}
+        onToggle={toggleSection}
+      />
+      <PropsSection
+        entries={events}
+        locale={locale}
+        section="events"
+        isExpanded={expandedSections.events}
+        onToggle={toggleSection}
+      />
     </>
   );
 }

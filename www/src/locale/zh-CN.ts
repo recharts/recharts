@@ -103,6 +103,10 @@ export const map = {
     showData: '显示数据格式',
     hideData: '隐藏数据格式',
     animation: '动画',
+    current: '属性',
+    deprecated: '已弃用的属性',
+    events: '事件',
+    since: 'Recharts 自',
   },
   'design-disciplines': {
     'design-disciplines': '设计原则',

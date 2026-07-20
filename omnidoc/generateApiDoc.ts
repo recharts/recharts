@@ -178,14 +178,23 @@ async function renderJsDocRichText(
 async function renderDeprecatedTagText(
   text: string,
   componentNames?: ReadonlyArray<string>,
-): Promise<string | { [locale: string]: string }> {
+): Promise<{ [locale: string]: string }> {
   const textWithLinks = processInlineLinks(text, componentNames);
-  if (textWithLinks === text) {
-    return text;
-  }
   return {
     'en-US': await marked.parse(textWithLinks),
   };
+}
+
+function getPropTag(
+  propMetaList: ReturnType<ProjectDocReader['getPropMeta']>,
+  tagName: string,
+): { text: string | undefined } | undefined {
+  const rechartsProp = propMetaList.find(prop => prop.origin === 'recharts' && getTagText(prop.jsDoc, tagName));
+  if (rechartsProp) {
+    return getTagText(rechartsProp.jsDoc, tagName);
+  }
+
+  return propMetaList.map(prop => getTagText(prop.jsDoc, tagName)).find(tag => tag !== undefined);
 }
 
 async function generateComponentDescription(
@@ -359,35 +368,19 @@ async function generateApiDoc(
     const isOptional = projectReader.isOptionalProp(componentName, propName);
 
     const propMetaList = projectReader.getPropMeta(componentName, propName);
-    let deprecated: string | boolean | undefined;
-
-    // Prefer recharts origin
-    const rechartsProp = propMetaList.find(p => p.origin === 'recharts');
-    if (rechartsProp && rechartsProp.jsDoc) {
-      const tag = getTagText(rechartsProp.jsDoc, 'deprecated');
-      if (tag) {
-        deprecated = tag.text ? await renderDeprecatedTagText(tag.text, allExports) : true;
-      }
+    const deprecatedTag = getPropTag(propMetaList, 'deprecated');
+    let deprecated: string | boolean | { [locale: string]: string } | undefined;
+    if (deprecatedTag) {
+      deprecated = deprecatedTag.text ? await renderDeprecatedTagText(deprecatedTag.text, allExports) : true;
     }
-
-    // Fallback
-    if (deprecated === undefined) {
-      for (const p of propMetaList) {
-        if (p.jsDoc) {
-          const tag = getTagText(p.jsDoc, 'deprecated');
-          if (tag) {
-            deprecated = tag.text ? await renderDeprecatedTagText(tag.text, allExports) : true;
-            break;
-          }
-        }
-      }
-    }
+    const since = getPropTag(propMetaList, 'since')?.text;
 
     const prop: ApiProps = {
       name: propName,
       type: typeString,
       isOptional,
       deprecated,
+      since,
     };
 
     // Add description if available
@@ -568,6 +561,10 @@ function stringifyApiDoc(apiDoc: ApiDoc): string {
           ? stringifyLocalizedRichText(prop.deprecated)
           : JSON.stringify(prop.deprecated)
       },`;
+    }
+
+    if (prop.since !== undefined) {
+      result += `"since": ${JSON.stringify(prop.since)},`;
     }
 
     result += `},`;
