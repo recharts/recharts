@@ -2,9 +2,9 @@
  * @fileOverview X Axis
  */
 import * as React from 'react';
-import { ReactElement, ReactNode, useLayoutEffect, useMemo, useRef } from 'react';
+import { ReactElement, ReactNode, isValidElement, useLayoutEffect, useMemo, useRef } from 'react';
 import { clsx } from 'clsx';
-import { CartesianAxis, defaultCartesianAxisProps } from './CartesianAxis';
+import { CartesianAxis, CartesianAxisRef, defaultCartesianAxisProps } from './CartesianAxis';
 import {
   AxisInterval,
   AxisTick,
@@ -23,6 +23,7 @@ import {
   addXAxis,
   replaceXAxis,
   removeXAxis,
+  updateXAxisHeight,
   XAxisOrientation,
   XAxisPadding,
   XAxisSettings,
@@ -37,6 +38,7 @@ import {
 } from '../state/selectors/axisSelectors';
 import { selectAxisViewBox } from '../state/selectors/selectChartOffsetInternal';
 import { useIsPanorama } from '../context/PanoramaContext';
+import { isLabelContentAFunction } from '../component/Label';
 import { RequiresDefaultProps, resolveDefaultProps } from '../util/resolveDefaultProps';
 import { axisPropsAreEqual } from '../util/axisPropsAreEqual';
 import { CustomScaleDefinition } from '../util/scale/CustomScaleDefinition';
@@ -71,9 +73,12 @@ interface XAxisProps<DataPointType = any, DataValueType = any> extends Omit<
   /**
    * Height of the axis in pixels.
    *
+   * When set to `'auto'`, the height is calculated dynamically based on the tick labels and the axis label,
+   * mirroring the `YAxis` `width="auto"` behavior. Useful when tick labels are rotated or span multiple lines.
+   *
    * @defaultValue 30
    */
-  height?: number;
+  height?: number | 'auto';
   /**
    * If set true, flips ticks around the axis line, displaying the labels inside the chart instead of outside.
    * @defaultValue false
@@ -248,9 +253,14 @@ function SetXAxisSettings(props: Omit<XAxisSettings, 'type'> & { type: AxisDomai
 }
 
 const XAxisImpl = (props: PropsWithDefaults) => {
-  const { xAxisId, className } = props;
+  const { xAxisId, className, height, label } = props;
+
+  const cartesianAxisRef = useRef<CartesianAxisRef>(null);
+  const labelRef = useRef(null);
+
   const viewBox = useAppSelector(selectAxisViewBox);
   const isPanorama = useIsPanorama();
+  const dispatch = useAppDispatch();
   const axisType = 'xAxis';
   const cartesianTickItems = useAppSelector(state => selectTicksOfAxis(state, axisType, xAxisId, isPanorama));
   const axisSize = useAppSelector(state => selectXAxisSize(state, xAxisId));
@@ -263,6 +273,43 @@ const XAxisImpl = (props: PropsWithDefaults) => {
    */
   const synchronizedSettings = useAppSelector(state => selectXAxisSettingsNoDefaults(state, xAxisId));
 
+  useLayoutEffect(() => {
+    // No dynamic height calculation is done when height !== 'auto'
+    // or when a function/react element is used for label
+    if (
+      height !== 'auto' ||
+      !axisSize ||
+      isLabelContentAFunction(label) ||
+      isValidElement(label) ||
+      synchronizedSettings == null
+    ) {
+      return;
+    }
+
+    const axisComponent = cartesianAxisRef.current;
+    if (!axisComponent) {
+      return;
+    }
+
+    const updatedXAxisHeight = axisComponent.getCalculatedHeight();
+
+    // if the height has changed, dispatch an action to update the height
+    if (Math.round(axisSize.height) !== Math.round(updatedXAxisHeight)) {
+      dispatch(updateXAxisHeight({ id: xAxisId, height: updatedXAxisHeight }));
+    }
+  }, [
+    // The dependency on cartesianAxisRef.current is not needed because useLayoutEffect will run after every render.
+    // The ref will be populated by then.
+    // To re-run this effect when ticks change, we can depend on the ticks array from the store.
+    cartesianTickItems,
+    axisSize,
+    dispatch,
+    label,
+    xAxisId,
+    height,
+    synchronizedSettings,
+  ]);
+
   if (axisSize == null || position == null || synchronizedSettings == null) {
     return null;
   }
@@ -274,6 +321,8 @@ const XAxisImpl = (props: PropsWithDefaults) => {
     <CartesianAxis
       {...allOtherProps}
       {...restSynchronizedSettings}
+      ref={cartesianAxisRef}
+      labelRef={labelRef}
       x={position.x}
       y={position.y}
       width={axisSize.width}

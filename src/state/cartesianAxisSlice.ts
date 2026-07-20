@@ -128,10 +128,13 @@ export type CartesianAxisSettings = BaseCartesianAxis &
     tickFormatter: TickFormatter | undefined;
   };
 
+export type XAxisHeight = number | 'auto';
+
 export type XAxisSettings = CartesianAxisSettings & {
   padding: XAxisPadding;
-  height: number;
+  height: XAxisHeight;
   orientation: XAxisOrientation;
+  heightHistory?: number[];
 };
 
 export type YAxisWidth = number | 'auto';
@@ -267,6 +270,30 @@ const cartesianAxisSlice = createSlice({
         };
       }
     },
+    updateXAxisHeight(state, action: PayloadAction<{ id: AxisId; height: number }>) {
+      const { id, height } = action.payload;
+      const axis = state.xAxis[id];
+      if (axis) {
+        const history = axis.heightHistory || [];
+        // An oscillation is detected when the new height is the same as the height before the last one.
+        // This is a simple A -> B -> A pattern. If the next height is B, and the difference is less than 1 pixel, we ignore it.
+        if (
+          history.length === 3 &&
+          history[0] === history[2] &&
+          height === history[1] &&
+          height !== axis.height &&
+          Math.abs(height - (history[0] ?? 0)) <= 1
+        ) {
+          return;
+        }
+        const newHistory = [...history, height].slice(-3);
+        state.xAxis[id] = {
+          ...axis,
+          height,
+          heightHistory: newHistory,
+        };
+      }
+    },
   },
 });
 
@@ -281,6 +308,7 @@ export const {
   replaceZAxis,
   removeZAxis,
   updateYAxisWidth,
+  updateXAxisHeight,
 } = cartesianAxisSlice.actions;
 
 export const cartesianAxisReducer = cartesianAxisSlice.reducer;

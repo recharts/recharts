@@ -239,6 +239,7 @@
   "lib/util/ReduceCSSCalc.js",
   "lib/util/ScatterUtils.js",
   "lib/util/TickUtils.js",
+  "lib/util/XAxisUtils.js",
   "lib/util/YAxisUtils.js",
   "lib/util/axisPropsAreEqual.js",
   "lib/util/createCartesianCharts.js",

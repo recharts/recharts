@@ -39,3 +39,5 @@ export const DATA_ITEM_INDEX_ATTRIBUTE_NAME = 'data-recharts-item-index';
 export const DATA_ITEM_GRAPHICAL_ITEM_ID_ATTRIBUTE_NAME = 'data-recharts-item-id';
 
 export const DEFAULT_Y_AXIS_WIDTH = 60;
+
+export const DEFAULT_X_AXIS_HEIGHT = 30;
