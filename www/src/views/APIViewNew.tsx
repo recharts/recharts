@@ -87,7 +87,8 @@ function PropsSection({ entries, locale, section, isExpanded, onToggle }: PropsS
     <section className="props-section">
       <h4 className="sub-title">
         <button type="button" aria-expanded={isExpanded} aria-controls={sectionId} onClick={() => onToggle(section)}>
-          {localeGet(locale, 'api', section)}
+          {localeGet(locale, 'api', section)}{' '}
+          <i className="expander">{isExpanded ? 'Click to collapse' : 'Click to expand'}</i>
         </button>
       </h4>
       {isExpanded ? (

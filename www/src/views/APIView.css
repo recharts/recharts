@@ -56,6 +56,9 @@
       cursor: pointer;
       font: inherit;
       padding: 0;
+      .expander {
+        font-size: 1ex;
+      }
     }
   }
 
