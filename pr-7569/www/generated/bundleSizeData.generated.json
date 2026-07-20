@@ -1,60 +1,60 @@
 {
   "treemap": {
     "examplePath": "www/src/views/IndexView/IndexLineChart.tsx",
-    "totalSize": 886297,
-    "totalSizeLabel": "865.52 KB",
-    "moduleCount": 364,
-    "generatedAt": "2026-07-20T13:48:53.427Z",
+    "totalSize": 890429,
+    "totalSizeLabel": "869.56 KB",
+    "moduleCount": 365,
+    "generatedAt": "2026-07-20T20:08:13.239Z",
     "stages": [
       {
         "stage": "es6-folder",
-        "bytes": 1286849,
+        "bytes": 1291809,
         "humanReadableSize": "1.23 MB",
         "reductionFromBaselinePercent": 0
       },
       {
         "stage": "tree-shaken",
-        "bytes": 889172,
-        "humanReadableSize": "868.33 KB",
+        "bytes": 893306,
+        "humanReadableSize": "872.37 KB",
         "reductionFromBaselinePercent": 0
       },
       {
         "stage": "minified",
-        "bytes": 299908,
-        "humanReadableSize": "292.88 KB",
-        "reductionFromBaselinePercent": 66.27
+        "bytes": 301005,
+        "humanReadableSize": "293.95 KB",
+        "reductionFromBaselinePercent": 66.3
       },
       {
         "stage": "minified+gzip",
-        "bytes": 98232,
-        "humanReadableSize": "95.93 KB",
-        "reductionFromBaselinePercent": 88.95
+        "bytes": 98312,
+        "humanReadableSize": "96.01 KB",
+        "reductionFromBaselinePercent": 88.99
       }
     ],
     "tree": {
       "name": "bundle",
       "fullPath": "bundle",
-      "value": 886297,
+      "value": 890429,
       "children": [
         {
           "name": "src",
           "fullPath": "src",
-          "value": 481983,
+          "value": 486115,
           "children": [
             {
               "name": "state",
               "fullPath": "src/state",
-              "value": 170389,
+              "value": 171488,
               "children": [
                 {
                   "name": "selectors",
                   "fullPath": "src/state/selectors",
-                  "value": 107318,
+                  "value": 107577,
                   "children": [
                     {
                       "name": "axisSelectors.ts",
                       "fullPath": "src/state/selectors/axisSelectors.ts",
-                      "value": 53553
+                      "value": 53636
                     },
                     {
                       "name": "combiners",
@@ -139,14 +139,14 @@
                       "value": 3898
                     },
                     {
+                      "name": "selectChartOffsetInternal.ts",
+                      "fullPath": "src/state/selectors/selectChartOffsetInternal.ts",
+                      "value": 3000
+                    },
+                    {
                       "name": "dataSelectors.ts",
                       "fullPath": "src/state/selectors/dataSelectors.ts",
                       "value": 2856
-                    },
-                    {
-                      "name": "selectChartOffsetInternal.ts",
-                      "fullPath": "src/state/selectors/selectChartOffsetInternal.ts",
-                      "value": 2824
                     },
                     {
                       "name": "lineSelectors.ts",
@@ -268,7 +268,7 @@
                 {
                   "name": "cartesianAxisSlice.ts",
                   "fullPath": "src/state/cartesianAxisSlice.ts",
-                  "value": 5517
+                  "value": 6357
                 },
                 {
                   "name": "externalEventsMiddleware.ts",
@@ -427,7 +427,7 @@
             {
               "name": "util",
               "fullPath": "src/util",
-              "value": 104499,
+              "value": 105996,
               "children": [
                 {
                   "name": "scale",
@@ -544,6 +544,11 @@
                   "value": 1902
                 },
                 {
+                  "name": "XAxisUtils.tsx",
+                  "fullPath": "src/util/XAxisUtils.tsx",
+                  "value": 1463
+                },
+                {
                   "name": "YAxisUtils.tsx",
                   "fullPath": "src/util/YAxisUtils.tsx",
                   "value": 1444
@@ -601,7 +606,7 @@
                 {
                   "name": "Constants.ts",
                   "fullPath": "src/util/Constants.ts",
-                  "value": 599
+                  "value": 633
                 },
                 {
                   "name": "useId.ts",
@@ -687,7 +692,7 @@
             {
               "name": "cartesian",
               "fullPath": "src/cartesian",
-              "value": 79230,
+              "value": 80766,
               "children": [
                 {
                   "name": "Line.tsx",
@@ -697,7 +702,7 @@
                 {
                   "name": "CartesianAxis.tsx",
                   "fullPath": "src/cartesian/CartesianAxis.tsx",
-                  "value": 14112
+                  "value": 14375
                 },
                 {
                   "name": "CartesianGrid.tsx",
@@ -715,6 +720,11 @@
                   "value": 6321
                 },
                 {
+                  "name": "XAxis.tsx",
+                  "fullPath": "src/cartesian/XAxis.tsx",
+                  "value": 6281
+                },
+                {
                   "name": "LineDrawShape.tsx",
                   "fullPath": "src/cartesian/LineDrawShape.tsx",
                   "value": 6040
@@ -723,11 +733,6 @@
                   "name": "getTicks.ts",
                   "fullPath": "src/cartesian/getTicks.ts",
                   "value": 5123
-                },
-                {
-                  "name": "XAxis.tsx",
-                  "fullPath": "src/cartesian/XAxis.tsx",
-                  "value": 5008
                 },
                 {
                   "name": "getEquidistantTicks.ts",
@@ -2540,60 +2545,60 @@
   },
   "sunburst": {
     "examplePath": "www/src/views/IndexView/IndexLineChart.tsx",
-    "totalSize": 886297,
-    "totalSizeLabel": "865.52 KB",
-    "moduleCount": 364,
-    "generatedAt": "2026-07-20T13:48:55.812Z",
+    "totalSize": 890429,
+    "totalSizeLabel": "869.56 KB",
+    "moduleCount": 365,
+    "generatedAt": "2026-07-20T20:08:11.014Z",
     "stages": [
       {
         "stage": "es6-folder",
-        "bytes": 1286849,
+        "bytes": 1291809,
         "humanReadableSize": "1.23 MB",
         "reductionFromBaselinePercent": 0
       },
       {
         "stage": "tree-shaken",
-        "bytes": 889172,
-        "humanReadableSize": "868.33 KB",
+        "bytes": 893306,
+        "humanReadableSize": "872.37 KB",
         "reductionFromBaselinePercent": 0
       },
       {
         "stage": "minified",
-        "bytes": 299908,
-        "humanReadableSize": "292.88 KB",
-        "reductionFromBaselinePercent": 66.27
+        "bytes": 301005,
+        "humanReadableSize": "293.95 KB",
+        "reductionFromBaselinePercent": 66.3
       },
       {
         "stage": "minified+gzip",
-        "bytes": 98232,
-        "humanReadableSize": "95.93 KB",
-        "reductionFromBaselinePercent": 88.95
+        "bytes": 98312,
+        "humanReadableSize": "96.01 KB",
+        "reductionFromBaselinePercent": 88.99
       }
     ],
     "tree": {
       "name": "bundle",
       "fullPath": "bundle",
-      "value": 886297,
+      "value": 890429,
       "children": [
         {
           "name": "src",
           "fullPath": "src",
-          "value": 481983,
+          "value": 486115,
           "children": [
             {
               "name": "state",
               "fullPath": "src/state",
-              "value": 170389,
+              "value": 171488,
               "children": [
                 {
                   "name": "selectors",
                   "fullPath": "src/state/selectors",
-                  "value": 107318,
+                  "value": 107577,
                   "children": [
                     {
                       "name": "axisSelectors.ts",
                       "fullPath": "src/state/selectors/axisSelectors.ts",
-                      "value": 53553
+                      "value": 53636
                     },
                     {
                       "name": "combiners",
@@ -2678,14 +2683,14 @@
                       "value": 3898
                     },
                     {
+                      "name": "selectChartOffsetInternal.ts",
+                      "fullPath": "src/state/selectors/selectChartOffsetInternal.ts",
+                      "value": 3000
+                    },
+                    {
                       "name": "dataSelectors.ts",
                       "fullPath": "src/state/selectors/dataSelectors.ts",
                       "value": 2856
-                    },
-                    {
-                      "name": "selectChartOffsetInternal.ts",
-                      "fullPath": "src/state/selectors/selectChartOffsetInternal.ts",
-                      "value": 2824
                     },
                     {
                       "name": "lineSelectors.ts",
@@ -2807,7 +2812,7 @@
                 {
                   "name": "cartesianAxisSlice.ts",
                   "fullPath": "src/state/cartesianAxisSlice.ts",
-                  "value": 5517
+                  "value": 6357
                 },
                 {
                   "name": "externalEventsMiddleware.ts",
@@ -2966,7 +2971,7 @@
             {
               "name": "util",
               "fullPath": "src/util",
-              "value": 104499,
+              "value": 105996,
               "children": [
                 {
                   "name": "scale",
@@ -3083,6 +3088,11 @@
                   "value": 1902
                 },
                 {
+                  "name": "XAxisUtils.tsx",
+                  "fullPath": "src/util/XAxisUtils.tsx",
+                  "value": 1463
+                },
+                {
                   "name": "YAxisUtils.tsx",
                   "fullPath": "src/util/YAxisUtils.tsx",
                   "value": 1444
@@ -3140,7 +3150,7 @@
                 {
                   "name": "Constants.ts",
                   "fullPath": "src/util/Constants.ts",
-                  "value": 599
+                  "value": 633
                 },
                 {
                   "name": "useId.ts",
@@ -3226,7 +3236,7 @@
             {
               "name": "cartesian",
               "fullPath": "src/cartesian",
-              "value": 79230,
+              "value": 80766,
               "children": [
                 {
                   "name": "Line.tsx",
@@ -3236,7 +3246,7 @@
                 {
                   "name": "CartesianAxis.tsx",
                   "fullPath": "src/cartesian/CartesianAxis.tsx",
-                  "value": 14112
+                  "value": 14375
                 },
                 {
                   "name": "CartesianGrid.tsx",
@@ -3254,6 +3264,11 @@
                   "value": 6321
                 },
                 {
+                  "name": "XAxis.tsx",
+                  "fullPath": "src/cartesian/XAxis.tsx",
+                  "value": 6281
+                },
+                {
                   "name": "LineDrawShape.tsx",
                   "fullPath": "src/cartesian/LineDrawShape.tsx",
                   "value": 6040
@@ -3262,11 +3277,6 @@
                   "name": "getTicks.ts",
                   "fullPath": "src/cartesian/getTicks.ts",
                   "value": 5123
-                },
-                {
-                  "name": "XAxis.tsx",
-                  "fullPath": "src/cartesian/XAxis.tsx",
-                  "value": 5008
                 },
                 {
                   "name": "getEquidistantTicks.ts",
