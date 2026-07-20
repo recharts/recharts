@@ -51,9 +51,9 @@ const positionOptions: ReadonlyArray<{ value: LegendPosition; label: string }> =
 ).map(pos => ({ value: pos, label: pos }));
 
 const layoutOptions: ReadonlyArray<{ value: LegendLayout; label: string }> = [
-  { value: 'horizontal', label: 'Horizontal' },
-  { value: 'vertical', label: 'Vertical' },
-  { value: 'auto', label: 'Auto (default from Recharts)' },
+  { value: 'horizontal', label: 'horizontal' },
+  { value: 'vertical', label: 'vertical' },
+  { value: 'auto', label: 'auto (default)' },
 ];
 
 export const levers = [

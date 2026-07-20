@@ -12,17 +12,22 @@ export const legendExamples = {
     Component: LegendEffectOpacity,
     sourceCode,
     name: 'Legend with Opacity',
+    description: (
+      <>
+        Uses event listeners so that when you hover over the Legend items, graphical items in the chart change opacity.
+      </>
+    ),
   },
   LegendPosition: {
     Component: LegendPositionExample,
     sourceCode: legendPositionSource,
     defaultControlsState,
     levers: legendPositionLevers,
-    name: 'Legend Position Controls',
+    name: 'Legend Position',
     description: (
       <>
         This example demonstrates the <code>position</code> prop on the <LinkToApi>Legend</LinkToApi> component. Use the
-        controls above to change the legend position relative to the chart.
+        controls to change the legend position relative to the chart.
       </>
     ),
     defaultTool: 'controls',
