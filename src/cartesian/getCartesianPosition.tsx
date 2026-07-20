@@ -36,6 +36,9 @@ export type CartesianLabelPosition =
       y?: number | string;
     };
 
+/**
+ * @inline
+ */
 export type CartesianPosition =
   | 'top'
   | 'left'
