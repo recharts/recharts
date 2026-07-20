@@ -142,7 +142,7 @@ const selectStackDataKeys: (
   state: RechartsRootState,
   id: GraphicalItemId,
   isPanorama: boolean,
-) => ReadonlyArray<DataKey<any>> | undefined = createSelector(
+) => ReadonlyArray<DataKey<unknown>> | undefined = createSelector(
   [selectSynchronisedAreaSettings, selectNumericalAxisStackGroups],
   (areaSettings: AreaSettings | undefined, stackGroups: Record<StackId, StackGroup> | undefined) => {
     if (areaSettings == null || areaSettings.stackId == null || stackGroups == null) {

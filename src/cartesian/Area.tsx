@@ -980,7 +980,7 @@ export function computeArea({
   xAxisTicks: TickItem[];
   yAxisTicks: TickItem[];
   bandSize: number;
-  stackDataKeys?: ReadonlyArray<DataKey<any>>;
+  stackDataKeys?: ReadonlyArray<DataKey<unknown>>;
 }): ComputedArea {
   const hasStack = stackedData && stackedData.length;
   const baseValue = getBaseValue(layout, chartBaseValue, itemBaseValue, xAxis, yAxis);
