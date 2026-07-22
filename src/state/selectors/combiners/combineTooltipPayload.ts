@@ -139,6 +139,18 @@ export const combineTooltipPayload = (
       tooltipEventType === 'axis'
     ) {
       tooltipPayload = findEntryInArray(sliced, tooltipAxisDataKey, activeLabel);
+      /*
+       * When allowDuplicatedCategory is false and there are duplicate category values
+       * in the data, findEntryInArray returns only the first matching entry.
+       * If the user hovers over a bar that corresponds to a later duplicate,
+       * the activeIndex provides the correct position. We fall back to the index-based
+       * search when the label-based search returns undefined, which can happen
+       * when the activeLabel does not precisely match any data entry (e.g., due to
+       * type coercion differences between tick values and data values).
+       */
+      if (tooltipPayload == null) {
+        tooltipPayload = tooltipPayloadSearcher(sliced, activeIndex, computedData, finalNameKey);
+      }
     } else {
       /*
        * This is a problem because it assumes that the index is pointing to the displayed data
