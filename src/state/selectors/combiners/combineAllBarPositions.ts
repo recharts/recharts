@@ -79,7 +79,7 @@ function getBarPositions(
           stackId: entry.stackId,
           dataKeys: entry.dataKeys,
           position: {
-            offset: offset + (originalSize + realBarGap) * i + (originalSize - size) / 2,
+            offset: offset + (len * (originalSize - size)) / 2 + (size + realBarGap) * i,
             size,
           },
         },
