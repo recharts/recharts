@@ -14522,7 +14522,8 @@ var import_react13, import_memoizerific2, supportedLanguages, themedSyntax, Wrap
         display: "flex",
         flexWrap: "wrap",
         overflow: "hidden",
-        color: theme3.color.defaultText
+        color: theme3.color.defaultText,
+        colorScheme: theme3.base
       }),
       ({ theme: theme3, bordered }) => bordered ? {
         border: `1px solid ${theme3.appBorderColor}`,
@@ -63118,7 +63119,7 @@ init_dist();
 var import_memoizerific9 = __toESM(require_memoizerific(), 1), import_semver = __toESM(require_semver2(), 1);
 
 // src/manager-api/version.ts
-var version = "10.5.3";
+var version = "10.5.4";
 
 // src/manager-api/modules/versions.ts
 var { VERSIONCHECK } = scope, getVersionCheckData = (0, import_memoizerific9.default)(1)(() => {
