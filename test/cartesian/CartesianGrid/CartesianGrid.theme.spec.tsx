@@ -52,7 +52,9 @@ describe('CartesianGrid theme', () => {
       it('should follow the theme', () => {
         const { container } = rechartsTestRender(
           <RechartsThemeProvider
-            value={{ grid: { stroke: 'gold', strokeWidth: 2, strokeOpacity: 0.9, strokeDasharray: [1, 2, 3, 4] } }}
+            value={{
+              grid: { stroke: 'gold', strokeWidth: 2, strokeOpacity: 0.9, strokeDasharray: [1, 2, 3, 4] },
+            }}
           >
             <MyChart>
               <CartesianGrid />
@@ -73,7 +75,9 @@ describe('CartesianGrid theme', () => {
       it('should follow the prop', () => {
         const { container } = rechartsTestRender(
           <RechartsThemeProvider
-            value={{ grid: { stroke: 'red', strokeWidth: 21, strokeOpacity: 0.11, strokeDasharray: [1, 12, 3, 4] } }}
+            value={{
+              grid: { stroke: 'red', strokeWidth: 21, strokeOpacity: 0.11, strokeDasharray: [1, 12, 3, 4] },
+            }}
           >
             <MyChart>
               <CartesianGrid stroke="gold" strokeWidth={2} strokeOpacity={0.9} strokeDasharray={[1, 2, 3, 4]} />

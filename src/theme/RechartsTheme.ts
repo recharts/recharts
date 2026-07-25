@@ -1,3 +1,33 @@
+import { CSSProperties } from 'react';
+import { LegendProps } from '../index';
+
+/**
+ * Styles shared for rectangular or variable shape components that have an area (Area, Bar, Rectangle)
+ */
+type Styles2D = {
+  stroke?: string;
+  strokeOpacity?: number;
+  strokeWidth?: number;
+  strokeDasharray?: string | number | ReadonlyArray<number>;
+  fillOpacity?: number;
+  fill?: string;
+};
+
+/**
+ * Styles shared with components that have a line (Line, ReferenceLine, ErrorBar) but no area
+ */
+type Styles1D = {
+  stroke: string;
+  strokeWidth?: number;
+  strokeOpacity?: number;
+  strokeDasharray?: string | number | ReadonlyArray<number>;
+};
+
+/**
+ * Styles shared with text components (various Labels, Tooltip, Legend)
+ */
+type TextStyles = CSSProperties;
+
 /**
  * Styling presets for Recharts components.
  * The theme can be used to customize the appearance of charts, including colors, fonts, and other visual properties.
@@ -5,12 +35,83 @@
  * @experimental
  */
 export interface RechartsTheme {
-  grid: Partial<{
-    stroke: string;
-    strokeOpacity: number;
-    strokeWidth: number;
-    strokeDasharray: string | number | ReadonlyArray<number>;
-    fillOpacity: number;
-    fill: string;
-  }>;
+  /**
+   * Sets styles for all text elements in Recharts, including Tooltip and Legend
+   */
+  typography?: TextStyles;
+  /**
+   * Colors of main graphical elements (Area, Line, Bar, etc.).
+   * If there are multiple elements in the chart, they will receive different values from this array.
+   * If this array has only one item in it then all graphical items will have the same color.
+   *
+   * Legend and Tooltip items inherit the same color.
+   */
+  graphicalItems?: ReadonlyArray<Styles2D>;
+  /**
+   * CartesianGrid and PolarGrid.
+   *
+   * Recharts grid allows fill color and fill opacity
+   */
+  grid?: Styles2D;
+  /**
+   * XAxis and YAxis and PolarAngleAxis and PolarRadiusAxis ticks and lines and children
+   */
+  axis?: Styles1D;
+  chart?: CSSProperties;
+
+  /**
+   * The CSS cursor style applied to the chart container.
+   * Useful for setting the mouse cursor when hovering over the chart (e.g. `"pointer"`, `"crosshair"`).
+   */
+  cursor?: Styles2D;
+
+  tooltip?: {
+    /**
+     * CSS styles to be applied to the wrapper `div` element.
+     */
+    contentStyle?: CSSProperties;
+    /**
+     * CSS styles of individual items inside the tooltip, a `<li>` element.
+     * These show the data label (name, or dataKey) and value.
+     *
+     * If a chart has multiple graphical items then the Tooltip renders multiple item
+     * and each of them gets this itemStyle applied.
+     */
+    itemStyle?: CSSProperties;
+    /**
+     * CSS styles of the tooltip title.
+     * Renders once on the top of tooltip and shows categorical axis value.
+     *
+     * Even if there are multiple graphical items in the chart, only one label gets rendered.
+     *
+     * Note that "Label" in tooltip is the header, which is different from {@link Legend}
+     * where "labelStyle" are the individual items.
+     */
+    labelStyle?: CSSProperties;
+  };
+  legend?: {
+    /**
+     * CSS styles to be applied to the wrapper `div` element.
+     */
+    wrapperStyle?: CSSProperties;
+    /**
+     * CSS styles of individual items inside the Legend, a `<span>` element.
+     * These show the data label (name, or dataKey) and value.
+     *
+     * If a chart has multiple graphical items then the Legend renders multiple item
+     * and each of them gets this itemStyle applied.
+     *
+     * Pie charts render multiple labels from a single data series.
+     *
+     * Note that this is different from {@link Tooltip}:
+     * - in Tooltip: "labelStyle" styles the title / header
+     * - in Tooltip: "itemStyle" styles the individual data points
+     * - in Legend: "labelStyle" styles the individual data points
+     *
+     * Beware of the naming inconsistency!
+     */
+    labelStyle?: CSSProperties;
+    position?: LegendProps['position'];
+    offset?: LegendProps['offset'];
+  };
 }
