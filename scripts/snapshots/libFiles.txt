@@ -217,7 +217,6 @@
   "lib/theme/RechartsTheme.js",
   "lib/theme/RechartsThemeContext.js",
   "lib/theme/darkTheme.js",
-  "lib/theme/extendTheme.js",
   "lib/theme/graphicalItemIdentity.js",
   "lib/theme/legacyTheme.js",
   "lib/theme/lightTheme.js",

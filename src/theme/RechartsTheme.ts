@@ -52,20 +52,20 @@ export interface RechartsTheme {
    *
    * Recharts grid allows fill color and fill opacity
    */
-  grid: Styles2D;
+  grid?: Styles2D;
   /**
    * XAxis and YAxis and PolarAngleAxis and PolarRadiusAxis ticks and lines and children
    */
-  axis: Styles1D;
+  axis?: Styles1D;
   chart?: CSSProperties;
 
   /**
    * The CSS cursor style applied to the chart container.
    * Useful for setting the mouse cursor when hovering over the chart (e.g. `"pointer"`, `"crosshair"`).
    */
-  cursor: Styles2D;
+  cursor?: Styles2D;
 
-  tooltip: {
+  tooltip?: {
     /**
      * CSS styles to be applied to the wrapper `div` element.
      */

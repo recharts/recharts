@@ -256,7 +256,7 @@ function LineItem({ option, lineItemProps }: { option: GridLineType; lineItemPro
   let lineItem;
 
   if (React.isValidElement(option)) {
-    // @ts-expect-error typescript does not see the props type when cloning an element
+    // @ts-expect-error TypeScript does not see the props type when cloning an element
     lineItem = React.cloneElement(option, lineItemProps);
   } else if (typeof option === 'function') {
     lineItem = option(lineItemProps);
@@ -499,10 +499,10 @@ export function CartesianGrid(props: Props) {
   const theme = useRechartsTheme();
 
   const themeProps: Props = {
-    stroke: propsIncludingDefaults.stroke ?? theme.grid.stroke,
-    strokeWidth: propsIncludingDefaults.strokeWidth ?? theme.grid.strokeWidth,
-    strokeOpacity: propsIncludingDefaults.strokeOpacity ?? theme.grid.strokeOpacity,
-    strokeDasharray: propsIncludingDefaults.strokeDasharray ?? theme.grid.strokeDasharray,
+    stroke: propsIncludingDefaults.stroke ?? theme.grid?.stroke,
+    strokeWidth: propsIncludingDefaults.strokeWidth ?? theme.grid?.strokeWidth,
+    strokeOpacity: propsIncludingDefaults.strokeOpacity ?? theme.grid?.strokeOpacity,
+    strokeDasharray: propsIncludingDefaults.strokeDasharray ?? theme.grid?.strokeDasharray,
   };
 
   if (!isPositiveNumber(width) || !isPositiveNumber(height) || !isNumber(x) || !isNumber(y)) {
@@ -581,8 +581,8 @@ export function CartesianGrid(props: Props) {
     <ZIndexLayer zIndex={propsIncludingDefaults.zIndex}>
       <g className="recharts-cartesian-grid">
         <Background
-          fill={propsIncludingDefaults.fill ?? theme.grid.fill}
-          fillOpacity={propsIncludingDefaults.fillOpacity ?? theme.grid.fillOpacity}
+          fill={propsIncludingDefaults.fill ?? theme.grid?.fill}
+          fillOpacity={propsIncludingDefaults.fillOpacity ?? theme.grid?.fillOpacity}
           x={propsIncludingDefaults.x}
           y={propsIncludingDefaults.y}
           width={propsIncludingDefaults.width}

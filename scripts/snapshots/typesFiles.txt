@@ -217,7 +217,6 @@
   "types/theme/RechartsTheme.d.ts",
   "types/theme/RechartsThemeContext.d.ts",
   "types/theme/darkTheme.d.ts",
-  "types/theme/extendTheme.d.ts",
   "types/theme/graphicalItemIdentity.d.ts",
   "types/theme/legacyTheme.d.ts",
   "types/theme/lightTheme.d.ts",

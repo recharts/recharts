@@ -11,7 +11,6 @@ import {
   YAxis,
 } from 'recharts';
 import { generateMockData } from '@recharts/devtools';
-import { extendTheme } from '../../../src/theme/extendTheme.ts';
 
 const data = generateMockData(6, 123);
 
@@ -44,7 +43,7 @@ export const DarkThemeChart = () => {
 };
 
 export const CustomThemeChart = () => {
-  const customTheme: RechartsTheme = extendTheme(lightTheme, {
+  const customTheme: RechartsTheme = {
     axis: {
       strokeWidth: 3,
       stroke: 'red',
@@ -55,7 +54,7 @@ export const CustomThemeChart = () => {
       strokeWidth: 4,
       strokeOpacity: 0.8,
     },
-  });
+  };
   return (
     <RechartsThemeProvider value={customTheme}>
       <UnthemedChart />
