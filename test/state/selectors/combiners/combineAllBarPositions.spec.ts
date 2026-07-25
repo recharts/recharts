@@ -64,4 +64,44 @@ describe('combineAllBarPositions', () => {
   it('returns undefined for an empty size list', () => {
     expect(combineAllBarPositions([], undefined, 0, 0, 100, 100, undefined)).toBeUndefined();
   });
+
+  /**
+   * Issue #2774: when `maxBarSize` clamps the computed width, each bar used to keep
+   * the stride of the *unclamped* layout and was centred inside its own original
+   * slot, so the visible gap grew to `barGap + (originalSize - size)`.
+   *
+   * bandSize=400, barCategoryGap='10%' => offset = 40, barGap = 1, two bars:
+   *   - originalSize = Math.round((400 - 80 - 1) / 2) = 160
+   *   - size = min(160, maxBarSize=80) = 80
+   * The clamped pair is now centred as a group, so the bars sit `barGap` apart.
+   */
+  it('keeps the requested barGap when maxBarSize clamps the bar width (issue #2774)', () => {
+    const sizeList: SizeList = [
+      { stackId: undefined, dataKeys: ['uv'], barSize: undefined },
+      { stackId: undefined, dataKeys: ['pv'], barSize: undefined },
+    ];
+    const positions = combineAllBarPositions(sizeList, 80, 1, '10%', 400, 400, undefined);
+    expect(positions).toBeDefined();
+    // Was [{ offset: 80, size: 80 }, { offset: 241, size: 80 }] - an 81px gap for barGap={1}.
+    expect(positions!.map(p => p.position)).toEqual([
+      { offset: 120, size: 80 },
+      { offset: 201, size: 80 },
+    ]);
+  });
+
+  it('leaves positions untouched when maxBarSize is larger than the computed size', () => {
+    // size === originalSize, so the group-centring term is 0 and the layout is
+    // byte-identical to the pre-#2774 behaviour.
+    const sizeList: SizeList = [
+      { stackId: undefined, dataKeys: ['uv'], barSize: undefined },
+      { stackId: undefined, dataKeys: ['pv'], barSize: undefined },
+    ];
+    const clamped = combineAllBarPositions(sizeList, 1000, 1, '10%', 400, 400, undefined);
+    const unclamped = combineAllBarPositions(sizeList, undefined, 1, '10%', 400, 400, undefined);
+    expect(clamped!.map(p => p.position)).toEqual(unclamped!.map(p => p.position));
+    expect(clamped!.map(p => p.position)).toEqual([
+      { offset: 40, size: 160 },
+      { offset: 201, size: 160 },
+    ]);
+  });
 });
