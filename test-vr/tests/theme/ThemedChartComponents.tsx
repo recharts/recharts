@@ -44,9 +44,15 @@ export const DarkThemeChart = () => {
 
 export const CustomThemeChart = () => {
   const customTheme: RechartsTheme = {
+    typography: {
+      fontSize: 30,
+      fontWeight: 'bold',
+      fontFamily: 'Roboto',
+    },
     axis: {
       strokeWidth: 3,
       stroke: 'red',
+      strokeOpacity: 0.4,
     },
     grid: {
       stroke: 'blue',

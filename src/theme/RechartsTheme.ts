@@ -20,7 +20,7 @@ type Styles1D = {
   stroke: string;
   strokeWidth?: number;
   strokeOpacity?: number;
-  strokeDasharray?: string | number | ReadonlyArray<number>;
+  strokeDasharray?: string | number;
 };
 
 /**

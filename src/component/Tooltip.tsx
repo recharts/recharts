@@ -166,7 +166,7 @@ export type TooltipProps<TValue extends ValueType = ValueType, TName extends Nam
    */
   itemSorter?: TooltipItemSorter;
   /**
-   * Style of individual items inside the tooltip, a `<li>` element.
+   * CSS styles of individual items inside the tooltip, a `<li>` element.
    * These show the data label (name, or dataKey) and value.
    *
    * If a chart has multiple graphical items then the Tooltip renders multiple item
@@ -180,7 +180,7 @@ export type TooltipProps<TValue extends ValueType = ValueType, TName extends Nam
    */
   labelFormatter?: (label: ReactNode, payload: TooltipPayload) => ReactNode;
   /**
-   * "Label" is the tooltip title.
+   * CSS styles of the tooltip title.
    * Renders once on the top of tooltip and shows categorical axis value.
    *
    * Even if there are multiple graphical items in the chart, only one label gets rendered.

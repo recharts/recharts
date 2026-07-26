@@ -36,7 +36,7 @@ import { DefaultZIndexes } from '../zIndex/DefaultZIndexes';
 import { getClassNameFromUnknown } from '../util/getClassNameFromUnknown';
 import { removeRenderedTicks, setRenderedTicks } from '../state/renderedTicksSlice';
 import { useAppDispatch } from '../state/hooks';
-
+import { useRechartsTheme } from '../theme/RechartsThemeContext';
 /** The orientation of the axis in correspondence to the chart */
 export type Orientation = XAxisOrientation | YAxisOrientation;
 /** A unit to be appended to a value */
@@ -107,7 +107,6 @@ export const defaultCartesianAxisProps = {
   // The ticks
   ticks: [] as CartesianAxisProps['ticks'],
 
-  stroke: '#666',
   tickLine: true,
   axisLine: true,
   tick: true,
@@ -363,6 +362,7 @@ function RenderedTicksReporter({
 }
 
 type TicksProps = {
+  axisId: AxisId | undefined;
   axisType: 'xAxis' | 'yAxis' | undefined;
   events: Omit<PresentationAttributesAdaptChildEvent<any, SVGElement>, 'scale' | 'viewBox'>;
   fontSize: string;
@@ -373,6 +373,10 @@ type TicksProps = {
   orientation: Orientation;
   padding?: Props['padding'];
   stroke?: Props['stroke'];
+  strokeDasharray?: Props['strokeDasharray'];
+  strokeOpacity?: Props['strokeOpacity'];
+  strokeWidth?: Props['strokeWidth'];
+  style?: Props['style'];
   tick?: Props['tick'];
   tickFormatter?: Props['tickFormatter'];
   tickLine?: Props['tickLine'];
@@ -384,33 +388,36 @@ type TicksProps = {
   width: number;
   x: number;
   y: number;
-  axisId: AxisId | undefined;
 };
 
 const Ticks = forwardRef<SVGGElement, TicksProps>((props: TicksProps, ref) => {
   const {
-    ticks = [],
-    tick,
-    tickLine,
-    stroke,
-    tickFormatter,
-    unit,
-    padding,
-    tickTextProps,
-    orientation,
+    axisId,
+    axisType,
+    events,
+    fontSize,
+    getTicksConfig,
+    height,
+    letterSpacing,
     mirror,
+    orientation,
+    padding,
+    stroke,
+    strokeDasharray,
+    strokeOpacity,
+    strokeWidth,
+    style,
+    tick,
+    tickFormatter,
+    tickLine,
+    tickMargin,
+    tickSize,
+    tickTextProps,
+    ticks = [],
+    unit,
+    width,
     x,
     y,
-    width,
-    height,
-    tickSize,
-    tickMargin,
-    fontSize,
-    letterSpacing,
-    getTicksConfig,
-    events,
-    axisType,
-    axisId,
   } = props;
   // @ts-expect-error some properties are optional in props but required in getTicks
   const finalTicks = getTicks({ ...getTicksConfig, ticks }, fontSize, letterSpacing);
@@ -427,6 +434,10 @@ const Ticks = forwardRef<SVGGElement, TicksProps>((props: TicksProps, ref) => {
   }
   const tickLineProps: SVGProps<SVGLineElement> = {
     ...axisProps,
+    stroke,
+    strokeWidth,
+    strokeOpacity,
+    strokeDasharray,
     fill: 'none',
     ...tickLinePropsObject,
   };
@@ -498,7 +509,7 @@ const Ticks = forwardRef<SVGGElement, TicksProps>((props: TicksProps, ref) => {
       <RenderedTicksReporter ticks={finalTicks} axisId={axisId} axisType={axisType} />
       {tickLabels.length > 0 && (
         <ZIndexLayer zIndex={DefaultZIndexes.label}>
-          <g className={`recharts-cartesian-axis-tick-labels recharts-${axisType}-tick-labels`} ref={ref}>
+          <g className={`recharts-cartesian-axis-tick-labels recharts-${axisType}-tick-labels`} ref={ref} style={style}>
             {tickLabels}
           </g>
         </ZIndexLayer>
@@ -558,6 +569,8 @@ const CartesianAxisComponent = forwardRef<CartesianAxisRef, InternalProps>((prop
     [fontSize, letterSpacing],
   );
 
+  const theme = useRechartsTheme();
+
   if (hide) {
     return null;
   }
@@ -581,10 +594,16 @@ const CartesianAxisComponent = forwardRef<CartesianAxisRef, InternalProps>((prop
           orientation={props.orientation}
           mirror={props.mirror}
           axisLine={axisLine}
-          otherSvgProps={svgPropertiesNoEvents(props)}
+          otherSvgProps={{
+            ...svgPropertiesNoEvents(props),
+            stroke: props.stroke ?? theme.axis?.stroke,
+            strokeWidth: props.strokeWidth ?? theme.axis?.strokeWidth,
+            strokeOpacity: props.strokeOpacity ?? theme.axis?.strokeOpacity,
+            strokeDasharray: props.strokeDasharray ?? theme.axis?.strokeDasharray,
+          }}
         />
         <Ticks
-          ref={layerRef}
+          axisId={axisId}
           axisType={axisType}
           events={rest}
           fontSize={fontSize}
@@ -594,7 +613,12 @@ const CartesianAxisComponent = forwardRef<CartesianAxisRef, InternalProps>((prop
           mirror={props.mirror}
           orientation={props.orientation}
           padding={props.padding}
-          stroke={props.stroke}
+          ref={layerRef}
+          stroke={props.stroke ?? theme.axis?.stroke}
+          strokeDasharray={props.strokeDasharray ?? theme.axis?.strokeDasharray}
+          strokeOpacity={props.strokeOpacity ?? theme.axis?.strokeOpacity}
+          strokeWidth={props.strokeWidth ?? theme.axis?.strokeWidth}
+          style={{ ...theme.typography, ...props.style }}
           tick={props.tick}
           tickFormatter={props.tickFormatter}
           tickLine={props.tickLine}
@@ -606,7 +630,6 @@ const CartesianAxisComponent = forwardRef<CartesianAxisRef, InternalProps>((prop
           width={props.width}
           x={props.x}
           y={props.y}
-          axisId={axisId}
         />
         <CartesianLabelContextProvider
           x={props.x}
