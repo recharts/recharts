@@ -1,45 +1,45 @@
 {
   "treemap": {
     "examplePath": "www/src/views/IndexView/IndexLineChart.tsx",
-    "totalSize": 892234,
-    "totalSizeLabel": "871.32 KB",
+    "totalSize": 893086,
+    "totalSizeLabel": "872.15 KB",
     "moduleCount": 365,
-    "generatedAt": "2026-07-25T19:49:25.401Z",
+    "generatedAt": "2026-07-26T21:02:13.733Z",
     "stages": [
       {
         "stage": "es6-folder",
-        "bytes": 1297446,
+        "bytes": 1300000,
         "humanReadableSize": "1.24 MB",
         "reductionFromBaselinePercent": 0
       },
       {
         "stage": "tree-shaken",
-        "bytes": 895111,
-        "humanReadableSize": "874.13 KB",
+        "bytes": 895963,
+        "humanReadableSize": "874.96 KB",
         "reductionFromBaselinePercent": 0
       },
       {
         "stage": "minified",
-        "bytes": 301164,
-        "humanReadableSize": "294.11 KB",
-        "reductionFromBaselinePercent": 66.35
+        "bytes": 301696,
+        "humanReadableSize": "294.63 KB",
+        "reductionFromBaselinePercent": 66.33
       },
       {
         "stage": "minified+gzip",
-        "bytes": 98408,
-        "humanReadableSize": "96.10 KB",
-        "reductionFromBaselinePercent": 89.01
+        "bytes": 98531,
+        "humanReadableSize": "96.22 KB",
+        "reductionFromBaselinePercent": 89
       }
     ],
     "tree": {
       "name": "bundle",
       "fullPath": "bundle",
-      "value": 892234,
+      "value": 893086,
       "children": [
         {
           "name": "src",
           "fullPath": "src",
-          "value": 488399,
+          "value": 489251,
           "children": [
             {
               "name": "state",
@@ -692,17 +692,17 @@
             {
               "name": "cartesian",
               "fullPath": "src/cartesian",
-              "value": 80772,
+              "value": 81578,
               "children": [
+                {
+                  "name": "CartesianAxis.tsx",
+                  "fullPath": "src/cartesian/CartesianAxis.tsx",
+                  "value": 15181
+                },
                 {
                   "name": "Line.tsx",
                   "fullPath": "src/cartesian/Line.tsx",
                   "value": 14832
-                },
-                {
-                  "name": "CartesianAxis.tsx",
-                  "fullPath": "src/cartesian/CartesianAxis.tsx",
-                  "value": 14375
                 },
                 {
                   "name": "CartesianGrid.tsx",
@@ -895,7 +895,7 @@
             {
               "name": "zIndex",
               "fullPath": "src/zIndex",
-              "value": 9406,
+              "value": 9452,
               "children": [
                 {
                   "name": "ZIndexLayer.tsx",
@@ -905,7 +905,7 @@
                 {
                   "name": "DefaultZIndexes.tsx",
                   "fullPath": "src/zIndex/DefaultZIndexes.tsx",
-                  "value": 2271
+                  "value": 2317
                 },
                 {
                   "name": "ZIndexPortal.tsx",
@@ -2545,45 +2545,45 @@
   },
   "sunburst": {
     "examplePath": "www/src/views/IndexView/IndexLineChart.tsx",
-    "totalSize": 892234,
-    "totalSizeLabel": "871.32 KB",
+    "totalSize": 893086,
+    "totalSizeLabel": "872.15 KB",
     "moduleCount": 365,
-    "generatedAt": "2026-07-25T19:49:27.666Z",
+    "generatedAt": "2026-07-26T21:02:11.471Z",
     "stages": [
       {
         "stage": "es6-folder",
-        "bytes": 1297446,
+        "bytes": 1300000,
         "humanReadableSize": "1.24 MB",
         "reductionFromBaselinePercent": 0
       },
       {
         "stage": "tree-shaken",
-        "bytes": 895111,
-        "humanReadableSize": "874.13 KB",
+        "bytes": 895963,
+        "humanReadableSize": "874.96 KB",
         "reductionFromBaselinePercent": 0
       },
       {
         "stage": "minified",
-        "bytes": 301164,
-        "humanReadableSize": "294.11 KB",
-        "reductionFromBaselinePercent": 66.35
+        "bytes": 301696,
+        "humanReadableSize": "294.63 KB",
+        "reductionFromBaselinePercent": 66.33
       },
       {
         "stage": "minified+gzip",
-        "bytes": 98408,
-        "humanReadableSize": "96.10 KB",
-        "reductionFromBaselinePercent": 89.01
+        "bytes": 98531,
+        "humanReadableSize": "96.22 KB",
+        "reductionFromBaselinePercent": 89
       }
     ],
     "tree": {
       "name": "bundle",
       "fullPath": "bundle",
-      "value": 892234,
+      "value": 893086,
       "children": [
         {
           "name": "src",
           "fullPath": "src",
-          "value": 488399,
+          "value": 489251,
           "children": [
             {
               "name": "state",
@@ -3236,17 +3236,17 @@
             {
               "name": "cartesian",
               "fullPath": "src/cartesian",
-              "value": 80772,
+              "value": 81578,
               "children": [
+                {
+                  "name": "CartesianAxis.tsx",
+                  "fullPath": "src/cartesian/CartesianAxis.tsx",
+                  "value": 15181
+                },
                 {
                   "name": "Line.tsx",
                   "fullPath": "src/cartesian/Line.tsx",
                   "value": 14832
-                },
-                {
-                  "name": "CartesianAxis.tsx",
-                  "fullPath": "src/cartesian/CartesianAxis.tsx",
-                  "value": 14375
                 },
                 {
                   "name": "CartesianGrid.tsx",
@@ -3439,7 +3439,7 @@
             {
               "name": "zIndex",
               "fullPath": "src/zIndex",
-              "value": 9406,
+              "value": 9452,
               "children": [
                 {
                   "name": "ZIndexLayer.tsx",
@@ -3449,7 +3449,7 @@
                 {
                   "name": "DefaultZIndexes.tsx",
                   "fullPath": "src/zIndex/DefaultZIndexes.tsx",
-                  "value": 2271
+                  "value": 2317
                 },
                 {
                   "name": "ZIndexPortal.tsx",
