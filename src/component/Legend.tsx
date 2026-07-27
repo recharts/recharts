@@ -24,6 +24,7 @@ import { selectLegendArea } from '../state/selectors/selectLegendArea';
 import { cartesianPositionToCSSTranslate } from '../cartesian/cartesianPositionToCSSTranslate';
 import { selectChartViewBox } from '../state/selectors/selectChartOffsetInternal';
 import { RechartsRootState } from '../state/store';
+import { useRechartsTheme } from '../theme/RechartsThemeContext';
 
 function defaultUniqBy(entry: LegendPayload) {
   return entry.value;
@@ -292,7 +293,20 @@ export const legendDefaultProps = {
  * @consumes PolarChartContext
  */
 function LegendImpl(outsideProps: Props) {
-  const props = resolveDefaultProps(outsideProps, legendDefaultProps);
+  const theme = useRechartsTheme();
+  const themedWrapperStyle =
+    outsideProps.wrapperStyle == null && theme.legend?.wrapperStyle == null
+      ? undefined
+      : { ...theme.legend?.wrapperStyle, ...outsideProps.wrapperStyle };
+  const props = resolveDefaultProps(
+    {
+      ...outsideProps,
+      wrapperStyle: themedWrapperStyle,
+      position: outsideProps.position ?? theme.legend?.position,
+      offset: outsideProps.offset ?? theme.legend?.offset,
+    },
+    legendDefaultProps,
+  );
   const layout: CartesianLayout =
     outsideProps.layout && outsideProps.layout !== 'auto' ? outsideProps.layout : getLayoutForPosition(props.position);
   const contextPayload = useLegendPayload();

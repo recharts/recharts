@@ -32,8 +32,7 @@ export const legacyTheme: RechartsTheme = {
   },
   legend: {
     labelStyle: {
-      marginRight: 10,
-      whiteSpace: 'nowrap',
+      whiteSpace: 'normal',
       overflowWrap: 'break-word',
     },
   },
