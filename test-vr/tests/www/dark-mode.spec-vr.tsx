@@ -3,9 +3,8 @@ import { BrowserRouter, Navigate, Route, Routes } from 'react-router';
 
 import { expect, test } from './fixtures';
 import { ExamplesIndexView } from '../../../www/src/views/ExamplesIndexView.tsx';
-import { darkTheme, RechartsThemeProvider } from '../../../src';
 import { Frame } from '../../../www/src/layouts/Frame.tsx';
-import SimpleLineChart from '../../../www/src/docs/exampleComponents/LineChart/SimpleLineChart.tsx';
+import { DarkModeSimpleLineChart } from './DarkModeSimpleLineChartComponent.tsx';
 
 test.use({
   colorScheme: 'dark',
@@ -42,9 +41,7 @@ test('dark mode: Simple Line Chart', async ({ mount }) => {
         backgroundColor: 'var(--color-surface-base)',
       }}
     >
-      <RechartsThemeProvider value={darkTheme}>
-        <SimpleLineChart />
-      </RechartsThemeProvider>
+      <DarkModeSimpleLineChart />
     </div>,
   );
   await expect(component).toHaveScreenshot();
