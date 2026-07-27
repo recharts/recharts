@@ -1,0 +1,5 @@
+{
+  "onEdit": {
+    "*": "node_modules/.bin/prettier --write --ignore-unknown {file}"
+  }
+}
