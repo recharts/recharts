@@ -112,7 +112,7 @@ interface PieDef {
   cornerRadius?: number | string;
 }
 
-type PieLabelLine =
+export type PieLabelLine =
   ReactElement<SVGElement> | ((props: any) => ReactElement<SVGElement>) | SVGProps<SVGPathElement> | boolean;
 
 interface PieLabelExtraProps {

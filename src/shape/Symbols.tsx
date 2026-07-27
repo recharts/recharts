@@ -17,7 +17,7 @@ import { SymbolType } from '../util/types';
 import { isNumber, upperFirst } from '../util/DataUtils';
 import { svgPropertiesAndEvents } from '../util/svgPropertiesAndEvents';
 
-type SizeType = 'area' | 'diameter';
+export type SizeType = 'area' | 'diameter';
 
 interface SymbolFactory {
   [type: string]: D3SymbolType;

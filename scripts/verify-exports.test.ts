@@ -1,4 +1,4 @@
-import { Project, Symbol, Type, SymbolFlags } from 'ts-morph';
+import { Node, Project, Symbol, SyntaxKind, Type, SymbolFlags } from 'ts-morph';
 import { describe, it, expect } from 'vitest';
 import { resolve } from 'path';
 import { assertNotNull } from '../test/helper/assertNotNull';
@@ -9,6 +9,12 @@ const SRC_INDEX_PATH = resolve(PROJECT_ROOT, 'src/index.ts');
 
 // Types that we explicitly want to ban from public API
 const FORBIDDEN_TYPES = new Set(['RechartsRootState']);
+
+// BFS/DFS Traversal
+// validationErrors will collect strings describing problems
+const missingExports: string[] = [];
+const forbiddenExports: string[] = [];
+const visitedSymbols = new Map<string, boolean>();
 
 // Create a valid vitest test suite
 describe('Public API Exports', () => {
@@ -45,11 +51,110 @@ describe('Public API Exports', () => {
     return `${decl.getSourceFile().getFilePath()}:${decl.getStart()}`;
   }
 
-  // BFS/DFS Traversal
-  // validationErrors will collect strings describing problems
-  const missingExports: string[] = [];
-  const forbiddenExports: string[] = [];
-  const visitedSymbols = new Map<string, boolean>();
+  function isExported(symbol: Symbol): boolean {
+    const name = symbol.getName();
+
+    // Check by name first. This covers cases where an internal interface is exported via a type alias of the same name.
+    if (exportedDeclarations.has(name)) {
+      return true;
+    }
+
+    const declarations = symbol.getDeclarations();
+    if (declarations.length === 0) {
+      return true;
+    }
+
+    const declaration = declarations[0];
+    assertNotNull(declaration);
+    const declarationPath = declaration.getSourceFile().getFilePath();
+    const declarationStart = declaration.getStart();
+
+    for (const exportedSymbol of exportedSymbols) {
+      if (symbol === exportedSymbol) {
+        return true;
+      }
+
+      const exportedDeclarationsOfSymbol = exportedSymbol.getDeclarations();
+      if (
+        exportedDeclarationsOfSymbol.some(
+          exportedDeclaration =>
+            exportedDeclaration.getSourceFile().getFilePath() === declarationPath &&
+            exportedDeclaration.getStart() === declarationStart,
+        )
+      ) {
+        return true;
+      }
+
+      const aliased = exportedSymbol.getAliasedSymbol();
+      if (
+        aliased === symbol ||
+        aliased
+          ?.getDeclarations()
+          .some(
+            aliasedDeclaration =>
+              aliasedDeclaration.getSourceFile().getFilePath() === declarationPath &&
+              aliasedDeclaration.getStart() === declarationStart,
+          )
+      ) {
+        return true;
+      }
+    }
+
+    return false;
+  }
+
+  function verifySymbolExport(symbol: Symbol, trace: string): void {
+    const name = symbol.getName();
+    const declarations = symbol.getDeclarations();
+    const isInSrc = declarations.some(declaration => {
+      const filePath = declaration.getSourceFile().getFilePath();
+      return filePath.includes('/src/') && !filePath.includes('node_modules');
+    });
+
+    if (!isInSrc) {
+      return;
+    }
+
+    if (FORBIDDEN_TYPES.has(name)) {
+      forbiddenExports.push(`Forbidden type "${name}" is reachable via: ${trace}`);
+    }
+
+    const isNamedType =
+      symbol.getFlags() & (SymbolFlags.Class | SymbolFlags.Interface | SymbolFlags.TypeAlias | SymbolFlags.Enum);
+    if (isNamedType && !(symbol.getFlags() & SymbolFlags.TypeParameter) && !isExported(symbol)) {
+      missingExports.push(
+        `Type "${name}" (flags: ${symbol.getFlags()}) is reachable via: ${trace} but not exported from index.ts`,
+      );
+    }
+  }
+
+  function verifyTypeReferences(declaration: Node, trace: string, checkConstituents: boolean): void {
+    if (!checkConstituents || !Node.isTyped(declaration)) {
+      return;
+    }
+
+    const typeNode = declaration.getTypeNode();
+    if (!typeNode) {
+      return;
+    }
+
+    if (!Node.isTypeReference(typeNode)) {
+      return;
+    }
+
+    const symbol = typeNode.getTypeName().getSymbol();
+    const referencedSymbol = symbol?.getAliasedSymbol() || symbol;
+    const referencedDeclaration = referencedSymbol?.getDeclarations()[0];
+    if (
+      referencedSymbol &&
+      referencedSymbol.getFlags() & SymbolFlags.TypeAlias &&
+      referencedDeclaration &&
+      Node.isTypeAliasDeclaration(referencedDeclaration) &&
+      referencedDeclaration.getTypeNode().isKind(SyntaxKind.UnionType)
+    ) {
+      verifySymbolExport(referencedSymbol, trace);
+    }
+  }
 
   // We need a queue for BFS: { type, trace, checkSelf, checkConstituents }
   type QueueItem = {
@@ -91,95 +196,8 @@ describe('Public API Exports', () => {
       // We track "Strong Visit" based on checkConstituents (are we in a public subtree?)
       visitedSymbols.set(symId, checkConstituents || wasVisitedStrongly);
 
-      const name = symbol.getName();
-      const decls = symbol.getDeclarations();
-
-      // Only care about types explicitly defined in this project's src/
-      // Ignore node_modules, and ignore built-in types (no declarations usually or in lib.d.ts)
-      const isInSrc = decls.some(d => {
-        const filePath = d.getSourceFile().getFilePath();
-        return filePath.includes('/src/') && !filePath.includes('node_modules');
-      });
-
-      if (isInSrc) {
-        // Check Forbidden (Always check forbidden, even if weak reachability - we don't want to leak internals ever)
-        if (FORBIDDEN_TYPES.has(name)) {
-          forbiddenExports.push(`Forbidden type "${name}" is reachable via: ${trace}`);
-        }
-
-        // Check Missing Export (Only if STRICT checkSelf is requested)
-        if (checkSelf) {
-          // We check if this symbol (or its alias) is in the exportedSymbols set
-          // We only enforce named exports (Classes, Interfaces, Type Aliases, Enums)
-          const isNamedType =
-            symbol.getFlags() & (SymbolFlags.Class | SymbolFlags.Interface | SymbolFlags.TypeAlias | SymbolFlags.Enum);
-
-          if (isNamedType) {
-            // Check if it is exported.
-            let isExported = false;
-
-            // 1. Check by Name (Fastest & fixes SurfaceProps false positive)
-            // If index.ts exports a symbol with the same name, we accept it.
-            // This covers cases where an internal interface (SurfaceProps) is exported via a type alias of the same name.
-            if (exportedDeclarations.has(name)) {
-              isExported = true;
-            }
-
-            // 2. Declaration Check (for aliases with different names)
-            if (!isExported) {
-              const declsToCheck = symbol.getDeclarations();
-              if (declsToCheck.length > 0) {
-                const element = declsToCheck[0];
-                assertNotNull(element);
-                const declPath = element.getSourceFile().getFilePath();
-                const declStart = element.getStart();
-
-                for (const exportedSym of exportedSymbols) {
-                  if (symbol === exportedSym) {
-                    isExported = true;
-                    break;
-                  }
-                  const exportedDecls = exportedSym.getDeclarations();
-                  for (const ed of exportedDecls) {
-                    if (ed.getSourceFile().getFilePath() === declPath && ed.getStart() === declStart) {
-                      isExported = true;
-                      break;
-                    }
-                  }
-                  if (isExported) break;
-
-                  const aliased = exportedSym.getAliasedSymbol();
-                  if (aliased) {
-                    if (symbol === aliased) {
-                      isExported = true;
-                      break;
-                    }
-                    const aliasedDecls = aliased.getDeclarations();
-                    for (const ad of aliasedDecls) {
-                      if (ad.getSourceFile().getFilePath() === declPath && ad.getStart() === declStart) {
-                        isExported = true;
-                        break;
-                      }
-                    }
-                  }
-                  if (isExported) break;
-                }
-              } else {
-                // Assume exported/safe if no declarations found
-                isExported = true;
-              }
-            }
-
-            if (!isExported) {
-              // Ignore TypeParameters (Generics)
-              if (!(symbol.getFlags() & SymbolFlags.TypeParameter)) {
-                missingExports.push(
-                  `Type "${name}" (flags: ${symbol.getFlags()}) is reachable via: ${trace} but not exported from index.ts`,
-                );
-              }
-            }
-          }
-        }
+      if (checkSelf) {
+        verifySymbolExport(symbol, trace);
       }
 
       // Loop over members
@@ -187,6 +205,9 @@ describe('Public API Exports', () => {
       for (const member of members) {
         // Only public members
         const decl = member.getDeclarations()[0];
+        if (decl) {
+          verifyTypeReferences(decl, `${trace} -> member: ${member.getName()}`, checkConstituents);
+        }
         const memberType = member.getTypeAtLocation(decl || srcIndex);
         const memberName = member.getName();
 
@@ -275,6 +296,10 @@ describe('Public API Exports', () => {
     if (!symbol) {
       const props = type.getProperties();
       for (const prop of props) {
+        const declaration = prop.getDeclarations()[0];
+        if (declaration) {
+          verifyTypeReferences(declaration, `${trace} -> prop: ${prop.getName()}`, checkConstituents);
+        }
         const propType = prop.getTypeAtLocation(srcIndex);
         queue.push({
           type: propType,

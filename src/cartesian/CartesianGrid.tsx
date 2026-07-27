@@ -33,7 +33,7 @@ export type GridLineTypeFunctionProps = Omit<LineItemProps, 'key'> & {
 export type AxisPropsForCartesianGridTicksGeneration = AxisPropsNeededForTicksGenerator &
   Omit<GetTicksInput, 'ticks' | 'viewBox'>;
 
-type GridLineType =
+export type GridLineType =
   | SVGProps<SVGLineElement>
   | ReactElement<SVGElement>
   | ((props: GridLineTypeFunctionProps) => ReactElement<SVGElement>)

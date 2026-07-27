@@ -39,7 +39,7 @@ import { noop } from '../util/DataUtils';
 import { getAxisTypeBasedOnLayout } from '../util/getAxisTypeBasedOnLayout';
 import { getClassNameFromUnknown } from '../util/getClassNameFromUnknown';
 
-type TickOrientation = 'left' | 'right' | 'middle';
+export type TickOrientation = 'left' | 'right' | 'middle';
 
 export interface PolarRadiusAxisProps<DataPointType = any, DataValueType = any>
   extends
