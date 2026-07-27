@@ -1,0 +1,39 @@
+# Instructions
+
+- Following Playwright test failed.
+- Explain why, be concise, respect Playwright best practices.
+- Provide a snippet of code with the fix, if possible.
+
+# Test info
+
+- Name: tests/www/dark-mode.spec-vr.tsx >> dark mode: Simple Line Chart
+- Location: test-vr/tests/www/dark-mode.spec-vr.tsx:38:5
+
+# Error details
+
+```
+RangeError: page._wrapApiCall: Maximum call stack size exceeded
+```
+
+# Test source
+
+```ts
+  1  | import { test as originalTest } from '@playwright/experimental-ct-react';
+  2  | import * as React from 'react';
+  3  | 
+  4  | import { TestColorModeProvider } from './TestColorModeProvider';
+  5  | 
+  6  | export const test = originalTest.extend({
+  7  |   mount: async ({ mount }, use) => {
+  8  |     const customMount: typeof mount = async (component, options) => {
+> 9  |       return mount(<TestColorModeProvider>{component}</TestColorModeProvider>, options);
+     |              ^ RangeError: page._wrapApiCall: Maximum call stack size exceeded
+  10 |     };
+  11 |     // eslint-disable-next-line react-hooks/rules-of-hooks -- we are in a test fixture not a React hook
+  12 |     await use(customMount);
+  13 |   },
+  14 | });
+  15 | 
+  16 | export { expect } from '@playwright/experimental-ct-react';
+  17 | 
+```
