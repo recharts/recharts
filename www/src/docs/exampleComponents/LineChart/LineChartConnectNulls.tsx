@@ -61,6 +61,7 @@ export default function Example() {
           type="monotone"
           dataKey="uv"
           stroke="var(--color-chart-1)"
+          fill="var(--color-chart-1)"
           activeDot={{
             stroke: 'var(--color-surface-base)',
           }}
