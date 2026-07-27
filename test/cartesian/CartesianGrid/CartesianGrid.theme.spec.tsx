@@ -53,7 +53,7 @@ describe('CartesianGrid theme', () => {
         const { container } = rechartsTestRender(
           <RechartsThemeProvider
             value={{
-              grid: { stroke: 'gold', strokeWidth: 2, strokeOpacity: 0.9, strokeDasharray: [1, 2, 3, 4] },
+              grid: { stroke: 'gold', strokeWidth: 2, strokeOpacity: 0.9, strokeDasharray: '1, 2, 3, 4' },
             }}
           >
             <MyChart>
@@ -66,7 +66,7 @@ describe('CartesianGrid theme', () => {
           expect(line.getAttribute('stroke')).toBe('gold');
           expect(line.getAttribute('stroke-width')).toBe('2');
           expect(line.getAttribute('stroke-opacity')).toBe('0.9');
-          expect(line.getAttribute('stroke-dasharray')).toBe('1,2,3,4');
+          expect(line.getAttribute('stroke-dasharray')).toBe('1, 2, 3, 4');
         });
       });
     });
@@ -76,7 +76,7 @@ describe('CartesianGrid theme', () => {
         const { container } = rechartsTestRender(
           <RechartsThemeProvider
             value={{
-              grid: { stroke: 'red', strokeWidth: 21, strokeOpacity: 0.11, strokeDasharray: [1, 12, 3, 4] },
+              grid: { stroke: 'red', strokeWidth: 21, strokeOpacity: 0.11, strokeDasharray: '1, 12, 3, 4' },
             }}
           >
             <MyChart>
