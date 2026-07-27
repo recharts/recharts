@@ -11,9 +11,15 @@ export type { Props as LayerProps } from './container/Layer';
 export { Legend } from './component/Legend';
 export type { Props as LegendProps } from './component/Legend';
 export { DefaultLegendContent } from './component/DefaultLegendContent';
-export type { Props as DefaultLegendContentProps, LegendPayload } from './component/DefaultLegendContent';
+export type {
+  Props as DefaultLegendContentProps,
+  LegendPayload,
+  ContentType as LegendContentType,
+  HorizontalAlignmentType,
+  VerticalAlignmentType,
+} from './component/DefaultLegendContent';
 export { Tooltip } from './component/Tooltip';
-export type { TooltipProps, TooltipContentProps } from './component/Tooltip';
+export type { TooltipProps, TooltipContentProps, ContentType as TooltipContentType } from './component/Tooltip';
 export type { TooltipIndex, TooltipPayload } from './state/tooltipSlice';
 export { DefaultTooltipContent } from './component/DefaultTooltipContent';
 export type {
@@ -29,18 +35,18 @@ export type { Props as CellProps } from './component/Cell';
 export { Text } from './component/Text';
 export type { Props as TextProps, RenderableText, TextAnchor, TextVerticalAnchor } from './component/Text';
 export { Label } from './component/Label';
-export type { Props as LabelProps } from './component/Label';
+export type { Props as LabelProps, LabelContentType, LabelPosition, ImplicitLabelType } from './component/Label';
 export { LabelList } from './component/LabelList';
-export type { Props as LabelListProps, LabelListEntry } from './component/LabelList';
+export type { Props as LabelListProps, LabelListEntry, ImplicitLabelListType } from './component/LabelList';
 export { Customized } from './component/Customized';
 export type { Props as CustomizedProps } from './component/Customized';
 
 export { Sector } from './shape/Sector';
 export type { Props as SectorProps } from './shape/Sector';
 export { Curve } from './shape/Curve';
-export type { Props as CurveProps } from './shape/Curve';
+export type { Props as CurveProps, CurveType, BaseLineType } from './shape/Curve';
 export { Rectangle } from './shape/Rectangle';
-export type { Props as RectangleProps } from './shape/Rectangle';
+export type { Props as RectangleProps, RectRadius } from './shape/Rectangle';
 export { Polygon } from './shape/Polygon';
 export type { Props as PolygonProps } from './shape/Polygon';
 export { Dot } from './shape/Dot';
@@ -50,13 +56,13 @@ export type { DotItemDotProps } from './util/types';
 export { Cross } from './shape/Cross';
 export type { Props as CrossProps } from './shape/Cross';
 export { Symbols } from './shape/Symbols';
-export type { SymbolsProps } from './shape/Symbols';
+export type { SymbolsProps, SizeType } from './shape/Symbols';
 export type { SymbolType } from './util/types';
 
 export { PolarGrid } from './polar/PolarGrid';
 export type { Props as PolarGridProps } from './polar/PolarGrid';
 export { PolarRadiusAxis } from './polar/PolarRadiusAxis';
-export type { Props as PolarRadiusAxisProps } from './polar/PolarRadiusAxis';
+export type { Props as PolarRadiusAxisProps, TickOrientation } from './polar/PolarRadiusAxis';
 export { PolarAngleAxis } from './polar/PolarAngleAxis';
 export type { Props as PolarAngleAxisProps } from './polar/PolarAngleAxis';
 export { Pie } from './polar/Pie';
@@ -68,6 +74,7 @@ export type {
   PieSectorShapeProps,
   LabelListPropsWithPosition,
   PieShape,
+  PieLabelLine,
 } from './polar/Pie';
 export { Radar } from './polar/Radar';
 export type { Props as RadarProps, RadarPoint, InternalRadarProps } from './polar/Radar';
@@ -76,7 +83,7 @@ export type { RadialBarProps, RadialBarDataItem } from './polar/RadialBar';
 export type { RadialBarSectorProps } from './util/RadialBarUtils';
 
 export { Brush } from './cartesian/Brush';
-export type { Props as BrushProps } from './cartesian/Brush';
+export type { Props as BrushProps, BrushTravellerType } from './cartesian/Brush';
 export { ReferenceLine } from './cartesian/ReferenceLine';
 export type { Props as ReferenceLineProps, ReferenceLineSegment } from './cartesian/ReferenceLine';
 export { ReferenceDot } from './cartesian/ReferenceDot';
@@ -84,26 +91,31 @@ export type { Props as ReferenceDotProps } from './cartesian/ReferenceDot';
 export { ReferenceArea } from './cartesian/ReferenceArea';
 export type { Props as ReferenceAreaProps } from './cartesian/ReferenceArea';
 export { CartesianAxis } from './cartesian/CartesianAxis';
-export type { Props as CartesianAxisProps } from './cartesian/CartesianAxis';
+export type { Props as CartesianAxisProps, Orientation, Unit } from './cartesian/CartesianAxis';
 export { CartesianGrid } from './cartesian/CartesianGrid';
-export type { Props as CartesianGridProps } from './cartesian/CartesianGrid';
+export type { Props as CartesianGridProps, GridLineType, GridLineTypeFunctionProps } from './cartesian/CartesianGrid';
 export { Line } from './cartesian/Line';
 export type { Props as LineProps, LinePointItem } from './cartesian/Line';
 export { Area } from './cartesian/Area';
-export type { Props as AreaProps } from './cartesian/Area';
+export type { Props as AreaProps, BaseValue } from './cartesian/Area';
 export type { AreaPointItem } from './state/selectors/areaSelectors';
 export { Bar } from './cartesian/Bar';
 export type { Props as BarProps, BarRectangleItem, BarShapeProps } from './cartesian/Bar';
 export { BarStack } from './cartesian/BarStack';
 export type { BarStackProps } from './cartesian/BarStack';
 export { Scatter } from './cartesian/Scatter';
-export type { Props as ScatterProps, ScatterPointNode, ScatterPointItem } from './cartesian/Scatter';
+export type {
+  Props as ScatterProps,
+  ScatterPointNode,
+  ScatterPointItem,
+  ScatterCustomizedShape,
+} from './cartesian/Scatter';
 export type { ScatterShapeProps } from './util/ScatterUtils';
 export type { BaseTickContentProps, CartesianTickItem } from './util/types';
 export { XAxis } from './cartesian/XAxis';
 export type { Props as XAxisProps } from './cartesian/XAxis';
 export type { XAxisTickContentProps } from './util/types';
-export type { XAxisOrientation, XAxisPadding, NiceTicksAlgorithm } from './state/cartesianAxisSlice';
+export type { XAxisOrientation, XAxisPadding, YAxisWidth, NiceTicksAlgorithm } from './state/cartesianAxisSlice';
 export { YAxis } from './cartesian/YAxis';
 export type { Props as YAxisProps } from './cartesian/YAxis';
 export type { YAxisTickContentProps } from './util/types';
@@ -112,7 +124,7 @@ export { ZAxis } from './cartesian/ZAxis';
 export type { Props as ZAxisProps } from './cartesian/ZAxis';
 export type { CustomScaleDefinition } from './util/scale/CustomScaleDefinition';
 export { ErrorBar } from './cartesian/ErrorBar';
-export type { Props as ErrorBarProps } from './cartesian/ErrorBar';
+export type { Props as ErrorBarProps, ErrorBarDirection } from './cartesian/ErrorBar';
 
 export { LineChart } from './chart/LineChart';
 export { BarChart } from './chart/BarChart';
@@ -126,6 +138,8 @@ export type {
   LinkProps as SankeyLinkProps,
   SankeyData,
   SankeyElementType,
+  SankeyLinkOptions,
+  SankeyVerticalAlign,
 } from './chart/Sankey';
 export type { SankeyNodeOptions } from './chart/Sankey';
 export { RadarChart } from './chart/RadarChart';
@@ -150,6 +164,8 @@ export type {
   LegendType,
   DataKey,
   AxisInterval,
+  AxisDomain,
+  AxisDomainTypeInput,
   Coordinate,
   PolarCoordinate,
   NumberDomain,
@@ -160,6 +176,12 @@ export type {
   SankeyNode,
   RelativePointer,
   TickItem,
+  TickProp,
+  ViewBox,
+  ActiveDotType,
+  DotType,
+  ActiveShape,
+  StackOffsetType,
 } from './util/types';
 export type { IfOverflow } from './util/IfOverflow';
 
@@ -221,7 +243,7 @@ export {
 
 export type { ChartOffset, PlotArea } from './types';
 
-export type { MouseHandlerDataParam, ActiveLabel } from './synchronisation/types';
+export type { MouseHandlerDataParam, ActiveLabel, SyncMethod } from './synchronisation/types';
 
 export type { AxisId } from './state/cartesianAxisSlice';
 export type { AxisRange } from './state/selectors/axisSelectors';
@@ -248,6 +270,12 @@ export type { TypedHorizontalChartContext, TypedVerticalChartContext, NoFunnel }
 export type { TypedCentricChartContext, TypedRadialChartContext, NoRadial, NoCentric } from './util/createPolarCharts';
 
 export { interpolate } from './util/DataUtils';
+
+export type { MinPointSize } from './util/BarUtils';
+export type { StackId } from './util/ChartUtils';
+export type { UniqueOption } from './util/payload/getUniqPayload';
+export type { CursorDefinition } from './component/Cursor';
+export type { TooltipTrigger } from './chart/types';
 
 export type { RechartsTheme } from './theme/RechartsTheme';
 export { RechartsThemeProvider } from './theme/RechartsThemeContext';

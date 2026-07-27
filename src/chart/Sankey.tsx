@@ -207,7 +207,7 @@ const getDepthTree = (tree: SankeyNode[]): SankeyNode[][] => {
 
 type LinkDataItemDy = LinkDataItem & { dy: number; sy?: number; ty?: number };
 
-type SankeyVerticalAlign = 'justify' | 'top';
+export type SankeyVerticalAlign = 'justify' | 'top';
 
 const updateYOfTree = (
   depthTree: SankeyNode[][],
@@ -749,7 +749,7 @@ export interface SankeyData {
 export type SankeyNodeOptions =
   ReactElement<SVGProps<SVGRectElement>> | ((props: NodeProps) => ReactNode) | RectangleProps;
 
-type SankeyLinkOptions =
+export type SankeyLinkOptions =
   | ReactElement<SVGProps<SVGPathElement>>
   | ((props: LinkProps) => ReactElement<SVGProps<SVGPathElement>>)
   | SVGProps<SVGPathElement>;
