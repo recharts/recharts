@@ -146,6 +146,7 @@ export const defaultLegendContentDefaultProps = {
 
 type InternalProps = RequiresDefaultProps<Props, typeof defaultLegendContentDefaultProps> & {
   payload: ReadonlyArray<LegendPayload>;
+  typographyColor?: CSSProperties['color'];
 };
 
 function getStrokeDasharray(input: unknown): string | undefined {
@@ -222,7 +223,7 @@ function Icon({
 }
 
 function Items(props: InternalProps) {
-  const { payload, iconSize, layout, formatter, inactiveColor, iconType, labelStyle } = props;
+  const { payload, iconSize, layout, formatter, inactiveColor, iconType, labelStyle, typographyColor } = props;
   const viewBox = { x: 0, y: 0, width: SIZE, height: SIZE };
   const itemStyle: CSSProperties = {
     display: layout === 'horizontal' ? 'inline-block' : 'block',
@@ -243,7 +244,7 @@ function Items(props: InternalProps) {
     }
 
     const finalLabelStyle = typeof labelStyle === 'object' ? { ...labelStyle } : {};
-    finalLabelStyle.color = entry.inactive ? inactiveColor : finalLabelStyle.color || entry.color;
+    finalLabelStyle.color = entry.inactive ? inactiveColor : (finalLabelStyle.color ?? entry.color ?? typographyColor);
     finalLabelStyle.whiteSpace ??= 'normal';
     finalLabelStyle.overflowWrap ??= 'break-word';
 
@@ -278,6 +279,7 @@ export const DefaultLegendContent = (outsideProps: Props) => {
   const theme = useRechartsTheme();
   const props = resolveDefaultProps(outsideProps, defaultLegendContentDefaultProps);
   const { payload, layout, align } = props;
+  const { color: typographyColor, ...typographyStyle } = theme.typography ?? {};
 
   if (!payload || !payload.length) {
     return null;
@@ -293,8 +295,9 @@ export const DefaultLegendContent = (outsideProps: Props) => {
     <ul className="recharts-default-legend" style={finalStyle}>
       <Items
         {...props}
-        labelStyle={{ ...theme.typography, ...theme.legend?.labelStyle, ...props.labelStyle }}
+        labelStyle={{ ...typographyStyle, ...theme.legend?.labelStyle, ...props.labelStyle }}
         payload={payload}
+        typographyColor={typographyColor}
       />
     </ul>
   );

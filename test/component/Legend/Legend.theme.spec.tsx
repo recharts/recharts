@@ -29,6 +29,12 @@ function getLegendLabel(container: HTMLElement): Element {
   return legendLabel;
 }
 
+function getLegendLabels(container: HTMLElement): NodeListOf<Element> {
+  const legendLabels = container.querySelectorAll('.recharts-legend-item-text');
+  expect(legendLabels).toHaveLength(2);
+  return legendLabels;
+}
+
 describe('Legend theme', () => {
   it('preserves the legacy label styles without a provider', () => {
     const { container } = rechartsTestRender(
@@ -75,6 +81,28 @@ describe('Legend theme', () => {
     expect(labelStyle).toContain('font-family: cursive;');
     expect(labelStyle).toContain('font-size: 24px;');
     expect(labelStyle).toContain('font-weight: bold;');
+  });
+
+  it('uses each graphical item color before the typography color', () => {
+    const { container } = rechartsTestRender(
+      <RechartsThemeProvider value={{ typography: { color: 'purple', fontFamily: 'cursive' } }}>
+        <LineChart width={300} height={200} data={data}>
+          <Legend />
+          <Line dataKey="desktop" isAnimationActive={false} stroke="red" />
+          <Line dataKey="mobile" isAnimationActive={false} stroke="blue" />
+        </LineChart>
+      </RechartsThemeProvider>,
+    );
+
+    const legendLabels = getLegendLabels(container);
+    const firstLabelStyle = legendLabels[0].getAttribute('style');
+    assertNotNull(firstLabelStyle);
+    expect(firstLabelStyle).toContain('color: red;');
+    expect(firstLabelStyle).toContain('font-family: cursive;');
+    const secondLabelStyle = legendLabels[1].getAttribute('style');
+    assertNotNull(secondLabelStyle);
+    expect(secondLabelStyle).toContain('color: blue;');
+    expect(secondLabelStyle).toContain('font-family: cursive;');
   });
 
   it('prefers explicit props while retaining non-conflicting themed style fields', () => {
