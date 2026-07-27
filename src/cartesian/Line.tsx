@@ -62,6 +62,8 @@ import { DefaultZIndexes } from '../zIndex/DefaultZIndexes';
 import { propsAreEqual } from '../util/propsAreEqual';
 import { GraphicalItemId } from '../state/graphicalItemsSlice';
 import { ChartData } from '../state/chartDataSlice';
+import { useRechartsTheme } from '../theme/RechartsThemeContext';
+import { graphicalItemIdentity } from '../theme/graphicalItemIdentity';
 
 export interface LinePointItem {
   readonly value: number;
@@ -914,7 +916,26 @@ export function computeLinePoints({
 }
 
 function LineFn(outsideProps: Props) {
-  const props = resolveDefaultProps(outsideProps, defaultLineProps);
+  const theme = useRechartsTheme();
+  const graphicalItemTheme =
+    outsideProps.dataKey == null || theme.graphicalItems == null
+      ? undefined
+      : theme.graphicalItems[graphicalItemIdentity({ dataKey: outsideProps.dataKey }, theme.graphicalItems.length)];
+  const themeStrokeDasharray = graphicalItemTheme?.strokeDasharray;
+  const props = resolveDefaultProps(
+    {
+      ...outsideProps,
+      fill: outsideProps.fill ?? graphicalItemTheme?.fill,
+      fillOpacity: outsideProps.fillOpacity ?? graphicalItemTheme?.fillOpacity,
+      stroke: outsideProps.stroke ?? graphicalItemTheme?.stroke,
+      strokeOpacity: outsideProps.strokeOpacity ?? graphicalItemTheme?.strokeOpacity,
+      strokeWidth: outsideProps.strokeWidth ?? graphicalItemTheme?.strokeWidth,
+      strokeDasharray:
+        outsideProps.strokeDasharray ??
+        (Array.isArray(themeStrokeDasharray) ? themeStrokeDasharray.join(',') : themeStrokeDasharray),
+    },
+    defaultLineProps,
+  );
   const isPanorama = useIsPanorama();
   return (
     <RegisterGraphicalItemId id={props.id} type="line">

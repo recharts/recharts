@@ -8,7 +8,7 @@ type Styles2D = {
   stroke?: string;
   strokeOpacity?: number;
   strokeWidth?: number;
-  strokeDasharray?: string | number | ReadonlyArray<number>;
+  strokeDasharray?: string | number;
   fillOpacity?: number;
   fill?: string;
 };

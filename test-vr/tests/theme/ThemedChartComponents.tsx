@@ -9,6 +9,8 @@ import {
   LineChart,
   XAxis,
   YAxis,
+  Legend,
+  Tooltip,
 } from 'recharts';
 import { generateMockData } from '@recharts/devtools';
 
@@ -20,6 +22,8 @@ export function UnthemedChart() {
       <CartesianGrid />
       <XAxis dataKey="label" />
       <YAxis />
+      <Legend />
+      <Tooltip defaultIndex={1} />
       <Line type="monotone" dataKey="x" isAnimationActive={false} />
       <Line type="monotone" dataKey="y" isAnimationActive={false} />
     </LineChart>
