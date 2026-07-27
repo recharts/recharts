@@ -1,5 +1,5 @@
 {
   "onEdit": {
-    "*": "npx prettier --write {file}"
+    "*": "node_modules/.bin/prettier --write --ignore-unknown {file}"
   }
 }

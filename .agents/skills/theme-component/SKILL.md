@@ -33,7 +33,7 @@ Read `DEVELOPING.md`, `CONTRIBUTING.md`, and `test/README.md`. Then inspect all 
 - Its existing unit tests and closest visual-regression tests.
 - Files in `src/theme` and `test/theme` folders.
 - The `CartesianGrid` implementation and theme test.
-- `test-vr/README.md` and `.agents/skills/vr-test/SKILL.md`.
+- `test-vr/README.md` for visual-regression test setup and snapshot update commands.
 
 Determine which public props actually control visible styling. Include visual attributes and style objects that reach rendered output. Exclude data, layout, identifiers, event handlers, callbacks, accessibility props, custom render functions/elements, and behavioral configuration.
 
@@ -41,8 +41,8 @@ Reuse an existing semantic theme section when the target shares its visual contr
 
 ## Implement the theme contract
 
-1. The `RechartsTheme` type should already contain all relevant types. It is intentionally a bit generic - and the target component should aim to reuse shared properties instead of focusing narrowly. To give a more specific example, an XAxis tick labels should reuse font size and font weight from the `typography` section. If you can't find any relevant properties then explain the gap and exit early.
-2. The built-in themes (`legacyTheme`, `lightTheme`, `darkTheme`) are already populated and likewise should have all properties available and ready to use. If you see a gap, explain and exit early.
+1. The `RechartsTheme` type should already contain all relevant types. It is intentionally a bit generic - and the target component should aim to reuse shared properties instead of focusing narrowly. To give a more specific example, an XAxis tick labels should reuse font size and font weight from the `typography` section. When a relevant property is missing but a meaningful theme mapping clearly exists for that visual attribute, you may add the minimal shared contract addition to the `RechartsTheme` type along with corresponding built-in theme values. Only exit early when no meaningful theme mapping exists at all for the prop.
+2. The built-in themes (`legacyTheme`, `lightTheme`, `darkTheme`) are already populated and likewise should have all properties available and ready to use. When adding new theme contract properties per item 1, include corresponding values in all three built-in themes.
 3. Read the theme through `useRechartsTheme` at the component's final styling-resolution boundary. Preserve this order for every themed field:
    - explicit component prop;
    - provider theme value;
@@ -78,7 +78,7 @@ Playwright component tests cannot render a React fixture component declared in t
 
 Use `toHaveScreenshot()` for each rendering.
 
-The screenshot generation is done via Docker setup. Your environment does not have docker available; instead, alert the user that they should run `npm run test-vr:update -- --grep <filename>` to update the screenshot on their end.
+The screenshot generation is done via Docker setup. If Docker is available in your environment, run `npm run test-vr:update` to update all snapshots, or use `docker compose run --rm test-vr playwright-test <spec-file-path> --update-snapshots` to update snapshots for a specific test file. If Docker is not available, inform the user to run `npm run test-vr:update -- --grep <filename>` on their end to update the screenshots.
 
 ## Validate
 
@@ -95,4 +95,4 @@ npm run test -- test/<component-path>/<Component>.theme.spec.tsx
 - Explicit component props win over themed values.
 - Unit tests verify rendered behavior, not only types.
 - A deterministic VR test demonstrates the target's themed appearance.
-- User has been informed to run the appropriate `npm run test-vr:update` command
+- Snapshots have been updated (if Docker is available) or user has been informed to run the appropriate snapshot update command
