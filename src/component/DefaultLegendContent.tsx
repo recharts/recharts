@@ -148,7 +148,7 @@ type InternalProps = RequiresDefaultProps<Props, typeof defaultLegendContentDefa
 };
 
 function getStrokeDasharray(input: unknown): string | undefined {
-  if (typeof input === 'object' && input !== null && 'strokeDasharray' in input) {
+  if (typeof input === 'object' && input !== null && 'strokeDasharray' in input && input.strokeDasharray != null) {
     return String(input.strokeDasharray);
   }
   return undefined;
