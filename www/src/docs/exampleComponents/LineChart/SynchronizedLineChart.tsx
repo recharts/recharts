@@ -50,8 +50,8 @@ const data = [
 const common = (
   <>
     <CartesianGrid strokeDasharray="3 3" />
-    <XAxis dataKey="name" stroke="var(--color-text-3)" />
-    <YAxis stroke="var(--color-text-3)" />
+    <XAxis dataKey="name" />
+    <YAxis />
     <Tooltip
       cursor={{ stroke: 'var(--color-border-2)' }}
       contentStyle={{ backgroundColor: 'var(--color-surface-base)', borderColor: 'var(--color-border-2)' }}
