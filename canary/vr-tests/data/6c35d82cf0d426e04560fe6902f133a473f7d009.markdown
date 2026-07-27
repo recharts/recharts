@@ -1,0 +1,323 @@
+# Instructions
+
+- Following Playwright test failed.
+- Explain why, be concise, respect Playwright best practices.
+- Provide a snippet of code with the fix, if possible.
+
+# Test info
+
+- Name: tests/theme/OneChartFourThemes.spec-vr.tsx >> one chart four themes
+- Location: test-vr/tests/theme/OneChartFourThemes.spec-vr.tsx:5:5
+
+# Error details
+
+```
+Error: expect(locator).toHaveScreenshot(expected) failed
+
+Locator: locator('#root').locator('internal:control=component')
+  16069 pixels (ratio 0.01 of all image pixels) are different.
+
+Call log:
+  - Expect "toHaveScreenshot" with timeout 10000ms
+    - verifying given screenshot expectation
+  - waiting for locator('#root').locator('internal:control=component')
+    - locator resolved to <div id="root">…</div>
+  - taking element screenshot
+    - disabled all CSS animations
+  - waiting for fonts to load...
+  - fonts loaded
+  - attempting scroll into view action
+    - waiting for element to be stable
+  - 16069 pixels (ratio 0.01 of all image pixels) are different.
+  - waiting 100ms before taking screenshot
+  - waiting for locator('#root').locator('internal:control=component')
+    - locator resolved to <div id="root">…</div>
+  - taking element screenshot
+    - disabled all CSS animations
+  - waiting for fonts to load...
+  - fonts loaded
+  - attempting scroll into view action
+    - waiting for element to be stable
+  - captured a stable screenshot
+  - 16069 pixels (ratio 0.01 of all image pixels) are different.
+
+```
+
+# Page snapshot
+
+```yaml
+- generic [active] [ref=e1]:
+  - generic [ref=e2]:
+    - heading "UnthemedChart" [level=1] [ref=e3]
+    - generic [ref=e4]:
+      - list [ref=e6]:
+        - listitem [ref=e7]:
+          - img "x legend icon" [ref=e8]
+          - text: x
+        - listitem [ref=e10]:
+          - img "y legend icon" [ref=e11]
+          - text: "y"
+      - generic:
+        - status:
+          - paragraph: "Iter: 1"
+          - list:
+            - listitem: "x : 294"
+            - listitem: "y : 486"
+      - application [ref=e13]:
+        - generic [ref=e52]:
+          - generic [ref=e53]:
+            - generic [ref=e55]: "Iter: 0"
+            - generic [ref=e57]: "Iter: 1"
+            - generic [ref=e59]: "Iter: 2"
+            - generic [ref=e61]: "Iter: 3"
+            - generic [ref=e63]: "Iter: 4"
+            - generic [ref=e65]: "Iter: 5"
+          - generic [ref=e66]:
+            - generic [ref=e68]: "0"
+            - generic [ref=e70]: "200"
+            - generic [ref=e72]: "400"
+            - generic [ref=e74]: "600"
+            - generic [ref=e76]: "800"
+    - heading "LightThemeChart" [level=1] [ref=e77]
+    - generic [ref=e78]:
+      - list [ref=e80]:
+        - listitem [ref=e81]:
+          - img "x legend icon" [ref=e82]
+          - text: x
+        - listitem [ref=e84]:
+          - img "y legend icon" [ref=e85]
+          - text: "y"
+      - generic:
+        - status:
+          - paragraph: "Iter: 1"
+          - list:
+            - listitem: "x : 294"
+            - listitem: "y : 486"
+      - application [ref=e87]:
+        - generic [ref=e126]:
+          - generic [ref=e127]:
+            - generic [ref=e129]: "Iter: 0"
+            - generic [ref=e131]: "Iter: 1"
+            - generic [ref=e133]: "Iter: 2"
+            - generic [ref=e135]: "Iter: 3"
+            - generic [ref=e137]: "Iter: 4"
+            - generic [ref=e139]: "Iter: 5"
+          - generic [ref=e140]:
+            - generic [ref=e142]: "0"
+            - generic [ref=e144]: "200"
+            - generic [ref=e146]: "400"
+            - generic [ref=e148]: "600"
+            - generic [ref=e150]: "800"
+    - heading "DarkThemeChart" [level=1] [ref=e151]
+    - generic [ref=e152]:
+      - list [ref=e154]:
+        - listitem [ref=e155]:
+          - img "x legend icon" [ref=e156]
+          - text: x
+        - listitem [ref=e158]:
+          - img "y legend icon" [ref=e159]
+          - text: "y"
+      - generic:
+        - status:
+          - paragraph: "Iter: 1"
+          - list:
+            - listitem: "x : 294"
+            - listitem: "y : 486"
+      - application [ref=e161]:
+        - generic [ref=e200]:
+          - generic [ref=e201]:
+            - generic [ref=e203]: "Iter: 0"
+            - generic [ref=e205]: "Iter: 1"
+            - generic [ref=e207]: "Iter: 2"
+            - generic [ref=e209]: "Iter: 3"
+            - generic [ref=e211]: "Iter: 4"
+            - generic [ref=e213]: "Iter: 5"
+          - generic [ref=e214]:
+            - generic [ref=e216]: "0"
+            - generic [ref=e218]: "200"
+            - generic [ref=e220]: "400"
+            - generic [ref=e222]: "600"
+            - generic [ref=e224]: "800"
+    - heading "CustomThemeChart" [level=1] [ref=e225]
+    - generic [ref=e226]:
+      - list [ref=e228]:
+        - listitem [ref=e229]:
+          - img "x legend icon" [ref=e230]
+          - text: x
+        - listitem [ref=e232]:
+          - img "y legend icon" [ref=e233]
+          - text: "y"
+      - generic:
+        - status:
+          - paragraph: "Iter: 1"
+          - list:
+            - listitem: "x : 294"
+            - listitem: "y : 486"
+      - application [ref=e235]:
+        - generic [ref=e274]:
+          - generic [ref=e275]:
+            - generic [ref=e277]: "Iter: 1"
+            - generic [ref=e279]: "Iter: 3"
+            - generic [ref=e281]: "Iter: 5"
+          - generic [ref=e282]:
+            - generic [ref=e284]: "0"
+            - generic [ref=e286]: "200"
+            - generic [ref=e288]: "400"
+            - generic [ref=e290]: "600"
+            - generic [ref=e292]: "800"
+    - generic [ref=e293]:
+      - heading "UnthemedChart" [level=1] [ref=e294]
+      - generic [ref=e295]:
+        - list [ref=e297]:
+          - listitem [ref=e298]:
+            - img "x legend icon" [ref=e299]
+            - text: x
+          - listitem [ref=e301]:
+            - img "y legend icon" [ref=e302]
+            - text: "y"
+        - generic:
+          - status:
+            - paragraph: "Iter: 1"
+            - list:
+              - listitem: "x : 294"
+              - listitem: "y : 486"
+        - application [ref=e304]:
+          - generic [ref=e343]:
+            - generic [ref=e344]:
+              - generic [ref=e346]: "Iter: 0"
+              - generic [ref=e348]: "Iter: 1"
+              - generic [ref=e350]: "Iter: 2"
+              - generic [ref=e352]: "Iter: 3"
+              - generic [ref=e354]: "Iter: 4"
+              - generic [ref=e356]: "Iter: 5"
+            - generic [ref=e357]:
+              - generic [ref=e359]: "0"
+              - generic [ref=e361]: "200"
+              - generic [ref=e363]: "400"
+              - generic [ref=e365]: "600"
+              - generic [ref=e367]: "800"
+      - heading "LightThemeChart" [level=1] [ref=e368]
+      - generic [ref=e369]:
+        - list [ref=e371]:
+          - listitem [ref=e372]:
+            - img "x legend icon" [ref=e373]
+            - text: x
+          - listitem [ref=e375]:
+            - img "y legend icon" [ref=e376]
+            - text: "y"
+        - generic:
+          - status:
+            - paragraph: "Iter: 1"
+            - list:
+              - listitem: "x : 294"
+              - listitem: "y : 486"
+        - application [ref=e378]:
+          - generic [ref=e417]:
+            - generic [ref=e418]:
+              - generic [ref=e420]: "Iter: 0"
+              - generic [ref=e422]: "Iter: 1"
+              - generic [ref=e424]: "Iter: 2"
+              - generic [ref=e426]: "Iter: 3"
+              - generic [ref=e428]: "Iter: 4"
+              - generic [ref=e430]: "Iter: 5"
+            - generic [ref=e431]:
+              - generic [ref=e433]: "0"
+              - generic [ref=e435]: "200"
+              - generic [ref=e437]: "400"
+              - generic [ref=e439]: "600"
+              - generic [ref=e441]: "800"
+      - heading "DarkThemeChart" [level=1] [ref=e442]
+      - generic [ref=e443]:
+        - list [ref=e445]:
+          - listitem [ref=e446]:
+            - img "x legend icon" [ref=e447]
+            - text: x
+          - listitem [ref=e449]:
+            - img "y legend icon" [ref=e450]
+            - text: "y"
+        - generic:
+          - status:
+            - paragraph: "Iter: 1"
+            - list:
+              - listitem: "x : 294"
+              - listitem: "y : 486"
+        - application [ref=e452]:
+          - generic [ref=e491]:
+            - generic [ref=e492]:
+              - generic [ref=e494]: "Iter: 0"
+              - generic [ref=e496]: "Iter: 1"
+              - generic [ref=e498]: "Iter: 2"
+              - generic [ref=e500]: "Iter: 3"
+              - generic [ref=e502]: "Iter: 4"
+              - generic [ref=e504]: "Iter: 5"
+            - generic [ref=e505]:
+              - generic [ref=e507]: "0"
+              - generic [ref=e509]: "200"
+              - generic [ref=e511]: "400"
+              - generic [ref=e513]: "600"
+              - generic [ref=e515]: "800"
+      - heading "CustomThemeChart" [level=1] [ref=e516]
+      - generic [ref=e517]:
+        - list [ref=e519]:
+          - listitem [ref=e520]:
+            - img "x legend icon" [ref=e521]
+            - text: x
+          - listitem [ref=e523]:
+            - img "y legend icon" [ref=e524]
+            - text: "y"
+        - generic:
+          - status:
+            - paragraph: "Iter: 1"
+            - list:
+              - listitem: "x : 294"
+              - listitem: "y : 486"
+        - application [ref=e526]:
+          - generic [ref=e565]:
+            - generic [ref=e566]:
+              - generic [ref=e568]: "Iter: 1"
+              - generic [ref=e570]: "Iter: 3"
+              - generic [ref=e572]: "Iter: 5"
+            - generic [ref=e573]:
+              - generic [ref=e575]: "0"
+              - generic [ref=e577]: "200"
+              - generic [ref=e579]: "400"
+              - generic [ref=e581]: "600"
+              - generic [ref=e583]: "800"
+  - generic [ref=e584]: "0"
+```
+
+# Test source
+
+```ts
+  1  | import * as React from 'react';
+  2  | import { expect, test } from '@playwright/experimental-ct-react';
+  3  | import { CustomThemeChart, DarkThemeChart, LightThemeChart, UnthemedChart } from './ThemedChartComponents.tsx';
+  4  | 
+  5  | test('one chart four themes', async ({ mount }) => {
+  6  |   const component = await mount(
+  7  |     <>
+  8  |       <h1>UnthemedChart</h1>
+  9  |       <UnthemedChart />
+  10 |       <h1>LightThemeChart</h1>
+  11 |       <LightThemeChart />
+  12 |       <h1>DarkThemeChart</h1>
+  13 |       <DarkThemeChart />
+  14 |       <h1>CustomThemeChart</h1>
+  15 |       <CustomThemeChart />
+  16 |       <div style={{ backgroundColor: 'black', color: 'white' }}>
+  17 |         <h1>UnthemedChart</h1>
+  18 |         <UnthemedChart />
+  19 |         <h1>LightThemeChart</h1>
+  20 |         <LightThemeChart />
+  21 |         <h1>DarkThemeChart</h1>
+  22 |         <DarkThemeChart />
+  23 |         <h1>CustomThemeChart</h1>
+  24 |         <CustomThemeChart />
+  25 |       </div>
+  26 |     </>,
+  27 |   );
+> 28 |   await expect(component).toHaveScreenshot();
+     |                           ^ Error: expect(locator).toHaveScreenshot(expected) failed
+  29 | });
+  30 | 
+```
