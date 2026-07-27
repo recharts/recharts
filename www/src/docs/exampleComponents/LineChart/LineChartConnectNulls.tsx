@@ -1,5 +1,6 @@
 import { CartesianGrid, Line, LineChart, Tooltip, XAxis, YAxis } from 'recharts';
 import { RechartsDevtools } from '@recharts/devtools';
+import { ReactNode } from 'react';
 
 // #region Sample data
 const data = [
@@ -13,69 +14,58 @@ const data = [
 ];
 
 // #endregion
+
+function BaseChart({ children }: { children: ReactNode }) {
+  return (
+    <LineChart
+      style={{ width: '100%', maxWidth: '700px', maxHeight: '30vh', aspectRatio: 1.618 }}
+      responsive
+      data={data}
+      margin={{
+        top: 10,
+        right: 30,
+        left: 0,
+        bottom: 0,
+      }}
+    >
+      <CartesianGrid strokeDasharray="3 3" />
+      <XAxis dataKey="name" />
+      <YAxis />
+      <Tooltip
+        cursor={{ stroke: 'var(--color-border-2)' }}
+        contentStyle={{ backgroundColor: 'var(--color-surface-base)', borderColor: 'var(--color-border-2)' }}
+      />
+      {children}
+    </LineChart>
+  );
+}
+
 export default function Example() {
   return (
     <div style={{ width: '100%' }}>
-      <LineChart
-        style={{ width: '100%', maxWidth: '700px', maxHeight: '30vh', aspectRatio: 1.618 }}
-        responsive
-        data={data}
-        margin={{
-          top: 10,
-          right: 30,
-          left: 0,
-          bottom: 0,
-        }}
-      >
-        <CartesianGrid strokeDasharray="3 3" />
-        <XAxis dataKey="name" stroke="var(--color-text-3)" />
-        <YAxis stroke="var(--color-text-3)" />
-        <Tooltip
-          cursor={{ stroke: 'var(--color-border-2)' }}
-          contentStyle={{ backgroundColor: 'var(--color-surface-base)', borderColor: 'var(--color-border-2)' }}
-        />
+      <BaseChart>
         <Line
           type="monotone"
           dataKey="uv"
           stroke="var(--color-chart-1)"
-          fill="var(--color-chart-1)"
           activeDot={{
             stroke: 'var(--color-surface-base)',
           }}
         />
         <RechartsDevtools />
-      </LineChart>
+      </BaseChart>
 
-      <LineChart
-        style={{ width: '100%', maxWidth: '700px', maxHeight: '30vh', aspectRatio: 1.618 }}
-        responsive
-        data={data}
-        margin={{
-          top: 10,
-          right: 30,
-          left: 0,
-          bottom: 0,
-        }}
-      >
-        <CartesianGrid strokeDasharray="3 3" />
-        <XAxis dataKey="name" stroke="var(--color-text-3)" />
-        <YAxis stroke="var(--color-text-3)" />
-        <Tooltip
-          cursor={{ stroke: 'var(--color-border-2)' }}
-          contentStyle={{ backgroundColor: 'var(--color-surface-base)', borderColor: 'var(--color-border-2)' }}
-        />
+      <BaseChart>
         <Line
           connectNulls
           type="monotone"
           dataKey="uv"
           stroke="var(--color-chart-1)"
-          fill="var(--color-chart-1)"
           activeDot={{
             stroke: 'var(--color-surface-base)',
           }}
         />
-        <RechartsDevtools />
-      </LineChart>
+      </BaseChart>
     </div>
   );
 }

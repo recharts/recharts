@@ -848,9 +848,7 @@ const App: FC = () => {
         type="number"
         name="Portfolio value"
         tickFormatter={formatUsdCompressed}
-        tick={{ fill: 'var(--color-text-3)' }}
         domain={yAxisDomain}
-        stroke="var(--color-text-3)"
       />
       {/** XAxis is required to show the lowest tick on the y-axis */}
       <XAxis dataKey="date" axisLine={false} tickLine={false} tick={false} tickSize={0} tickMargin={0} />

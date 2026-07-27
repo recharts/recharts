@@ -83,7 +83,6 @@ export default function LineChartNegativeValuesWithReferenceLines() {
         allowDataOverflow
         strokeWidth={minX < 0 ? 0 : 1}
         width="auto"
-        stroke="var(--color-text-3)"
       />
 
       <XAxis
@@ -99,7 +98,6 @@ export default function LineChartNegativeValuesWithReferenceLines() {
         }}
         allowDataOverflow
         strokeWidth={minY < 0 ? 0 : 1}
-        stroke="var(--color-text-3)"
       />
 
       {minY < 0 && <ReferenceLine y={0} stroke="var(--color-text-3)" strokeWidth={1.5} strokeOpacity={0.65} />}

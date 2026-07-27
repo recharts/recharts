@@ -154,24 +154,9 @@ const HighlightAndZoomLineChart = () => {
         onMouseUp={zoom}
       >
         <CartesianGrid strokeDasharray="3 3" />
-        <XAxis allowDataOverflow dataKey="name" domain={[left, right]} type="number" stroke="var(--color-text-3)" />
-        <YAxis
-          allowDataOverflow
-          domain={[bottom, top]}
-          type="number"
-          yAxisId="1"
-          width="auto"
-          stroke="var(--color-text-3)"
-        />
-        <YAxis
-          orientation="right"
-          allowDataOverflow
-          domain={[bottom2, top2]}
-          type="number"
-          yAxisId="2"
-          width="auto"
-          stroke="var(--color-text-3)"
-        />
+        <XAxis allowDataOverflow dataKey="name" domain={[left, right]} type="number" />
+        <YAxis allowDataOverflow domain={[bottom, top]} type="number" yAxisId="1" width="auto" />
+        <YAxis orientation="right" allowDataOverflow domain={[bottom2, top2]} type="number" yAxisId="2" width="auto" />
         <Tooltip
           cursor={{
             stroke: 'var(--color-border-2)',

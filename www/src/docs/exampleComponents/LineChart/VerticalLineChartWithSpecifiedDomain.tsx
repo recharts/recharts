@@ -63,8 +63,8 @@ export default function Example(props: { isAnimationActive?: boolean }) {
       }}
     >
       <CartesianGrid strokeDasharray="3 3" />
-      <XAxis type="number" domain={[0, 'dataMax + 1000']} stroke="var(--color-text-3)" />
-      <YAxis dataKey="name" type="category" width="auto" stroke="var(--color-text-3)" />
+      <XAxis type="number" domain={[0, 'dataMax + 1000']} />
+      <YAxis dataKey="name" type="category" width="auto" />
       <Tooltip
         cursor={{ stroke: 'var(--color-border-2)' }}
         contentStyle={{ backgroundColor: 'var(--color-surface-base)', borderColor: 'var(--color-border-2)' }}

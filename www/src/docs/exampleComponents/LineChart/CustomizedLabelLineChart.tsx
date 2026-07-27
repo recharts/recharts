@@ -1,4 +1,14 @@
-import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, LabelProps } from 'recharts';
+import {
+  LineChart,
+  Line,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Tooltip,
+  Legend,
+  LabelProps,
+  XAxisTickContentProps,
+} from 'recharts';
 import { RechartsDevtools } from '@recharts/devtools';
 
 // #region Sample data
@@ -56,7 +66,7 @@ const CustomizedLabel = ({ x, y, stroke, value }: LabelProps) => {
   );
 };
 
-const CustomizedAxisTick = ({ x, y, payload }: any) => {
+const CustomizedAxisTick = ({ x, y, payload }: XAxisTickContentProps) => {
   return (
     <g transform={`translate(${x},${y})`}>
       <text x={0} y={0} dy={16} textAnchor="end" fill="#666" transform="rotate(-35)">

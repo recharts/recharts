@@ -56,8 +56,8 @@ export default function Example() {
       data={data}
     >
       <CartesianGrid strokeDasharray="3 3" />
-      <XAxis dataKey="name" padding={{ left: 30, right: 30 }} stroke="var(--color-text-3)" />
-      <YAxis width="auto" stroke="var(--color-text-3)" />
+      <XAxis dataKey="name" padding={{ left: 30, right: 30 }} />
+      <YAxis width="auto" />
       <Tooltip
         cursor={{ stroke: 'var(--color-border-2)' }}
         contentStyle={{ backgroundColor: 'var(--color-surface-base)', borderColor: 'var(--color-border-2)' }}

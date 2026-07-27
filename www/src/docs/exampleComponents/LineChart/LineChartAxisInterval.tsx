@@ -56,8 +56,8 @@ const MyChart = (props: { interval: AxisInterval }) => (
     margin={{ left: 0, right: 0, top: 10 }}
   >
     <CartesianGrid strokeDasharray="3 3" />
-    <XAxis dataKey="name" interval={props.interval} stroke="var(--color-text-3)" />
-    <YAxis interval={props.interval} width="auto" stroke="var(--color-text-3)" />
+    <XAxis dataKey="name" interval={props.interval} />
+    <YAxis interval={props.interval} width="auto" />
     <Line
       type="monotone"
       dataKey="pv"

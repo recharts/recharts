@@ -62,9 +62,9 @@ export default function Example() {
       }}
     >
       <CartesianGrid strokeDasharray="3 3" />
-      <XAxis dataKey="name" stroke="var(--color-text-3)" />
-      <YAxis yAxisId="left" width="auto" stroke="var(--color-text-3)" />
-      <YAxis yAxisId="right" orientation="right" width="auto" stroke="var(--color-text-3)" />
+      <XAxis dataKey="name" />
+      <YAxis yAxisId="left" width="auto" />
+      <YAxis yAxisId="right" orientation="right" width="auto" />
       <Tooltip
         cursor={{ stroke: 'var(--color-border-2)' }}
         contentStyle={{ backgroundColor: 'var(--color-surface-base)', borderColor: 'var(--color-border-2)' }}
