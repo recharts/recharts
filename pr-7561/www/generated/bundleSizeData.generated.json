@@ -1,70 +1,70 @@
 {
   "treemap": {
     "examplePath": "www/src/views/IndexView/IndexLineChart.tsx",
-    "totalSize": 814107,
-    "totalSizeLabel": "795.03 KB",
-    "moduleCount": 317,
-    "generatedAt": "2026-07-16T13:36:56.666Z",
+    "totalSize": 897126,
+    "totalSizeLabel": "876.10 KB",
+    "moduleCount": 366,
+    "generatedAt": "2026-07-28T10:58:27.341Z",
     "stages": [
       {
         "stage": "es6-folder",
-        "bytes": 1273930,
-        "humanReadableSize": "1.21 MB",
+        "bytes": 1304649,
+        "humanReadableSize": "1.24 MB",
         "reductionFromBaselinePercent": 0
       },
       {
         "stage": "tree-shaken",
-        "bytes": 816834,
-        "humanReadableSize": "797.69 KB",
+        "bytes": 900005,
+        "humanReadableSize": "878.91 KB",
         "reductionFromBaselinePercent": 0
       },
       {
         "stage": "minified",
-        "bytes": 281205,
-        "humanReadableSize": "274.61 KB",
-        "reductionFromBaselinePercent": 65.57
+        "bytes": 302610,
+        "humanReadableSize": "295.52 KB",
+        "reductionFromBaselinePercent": 66.38
       },
       {
         "stage": "minified+gzip",
-        "bytes": 92025,
-        "humanReadableSize": "89.87 KB",
-        "reductionFromBaselinePercent": 88.73
+        "bytes": 98854,
+        "humanReadableSize": "96.54 KB",
+        "reductionFromBaselinePercent": 89.02
       }
     ],
     "tree": {
       "name": "bundle",
       "fullPath": "bundle",
-      "value": 814107,
+      "value": 897126,
       "children": [
         {
           "name": "src",
           "fullPath": "src",
-          "value": 456245,
+          "value": 493365,
           "children": [
             {
               "name": "state",
               "fullPath": "src/state",
-              "value": 169814,
+              "value": 172217,
               "children": [
                 {
                   "name": "selectors",
                   "fullPath": "src/state/selectors",
-                  "value": 106931,
+                  "value": 108306,
                   "children": [
                     {
                       "name": "axisSelectors.ts",
                       "fullPath": "src/state/selectors/axisSelectors.ts",
-                      "value": 53553
+                      "value": 53636
                     },
                     {
                       "name": "combiners",
                       "fullPath": "src/state/selectors/combiners",
-                      "value": 18984,
+                      "value": 19713,
                       "children": [
                         {
                           "name": "combineTooltipPayload.ts",
                           "fullPath": "src/state/selectors/combiners/combineTooltipPayload.ts",
-                          "value": 5880
+                          "value": 6609
                         },
                         {
                           "name": "combineActiveTooltipIndex.ts",
@@ -139,14 +139,14 @@
                       "value": 3898
                     },
                     {
+                      "name": "selectChartOffsetInternal.ts",
+                      "fullPath": "src/state/selectors/selectChartOffsetInternal.ts",
+                      "value": 3000
+                    },
+                    {
                       "name": "dataSelectors.ts",
                       "fullPath": "src/state/selectors/dataSelectors.ts",
                       "value": 2856
-                    },
-                    {
-                      "name": "selectChartOffsetInternal.ts",
-                      "fullPath": "src/state/selectors/selectChartOffsetInternal.ts",
-                      "value": 2824
                     },
                     {
                       "name": "lineSelectors.ts",
@@ -191,7 +191,12 @@
                     {
                       "name": "legendSelectors.ts",
                       "fullPath": "src/state/selectors/legendSelectors.ts",
-                      "value": 380
+                      "value": 408
+                    },
+                    {
+                      "name": "selectLegendArea.ts",
+                      "fullPath": "src/state/selectors/selectLegendArea.ts",
+                      "value": 359
                     },
                     {
                       "name": "selectActivePropsFromChartPointer.ts",
@@ -263,7 +268,7 @@
                 {
                   "name": "cartesianAxisSlice.ts",
                   "fullPath": "src/state/cartesianAxisSlice.ts",
-                  "value": 5517
+                  "value": 6357
                 },
                 {
                   "name": "externalEventsMiddleware.ts",
@@ -298,7 +303,7 @@
                 {
                   "name": "legendSlice.ts",
                   "fullPath": "src/state/legendSlice.ts",
-                  "value": 1941
+                  "value": 2129
                 },
                 {
                   "name": "chartDataSlice.ts",
@@ -422,7 +427,7 @@
             {
               "name": "util",
               "fullPath": "src/util",
-              "value": 98752,
+              "value": 105996,
               "children": [
                 {
                   "name": "scale",
@@ -461,7 +466,7 @@
                 {
                   "name": "ChartUtils.ts",
                   "fullPath": "src/util/ChartUtils.ts",
-                  "value": 13007
+                  "value": 14790
                 },
                 {
                   "name": "svgPropertiesNoEvents.ts",
@@ -504,6 +509,11 @@
                   "value": 3807
                 },
                 {
+                  "name": "useElementOffset.ts",
+                  "fullPath": "src/util/useElementOffset.ts",
+                  "value": 3494
+                },
+                {
                   "name": "excludeEventProps.ts",
                   "fullPath": "src/util/excludeEventProps.ts",
                   "value": 3126
@@ -532,6 +542,11 @@
                   "name": "svgPropertiesAndEvents.ts",
                   "fullPath": "src/util/svgPropertiesAndEvents.ts",
                   "value": 1902
+                },
+                {
+                  "name": "XAxisUtils.tsx",
+                  "fullPath": "src/util/XAxisUtils.tsx",
+                  "value": 1463
                 },
                 {
                   "name": "YAxisUtils.tsx",
@@ -591,7 +606,7 @@
                 {
                   "name": "Constants.ts",
                   "fullPath": "src/util/Constants.ts",
-                  "value": 599
+                  "value": 633
                 },
                 {
                   "name": "useId.ts",
@@ -602,6 +617,18 @@
                   "name": "useReportScale.ts",
                   "fullPath": "src/util/useReportScale.ts",
                   "value": 472
+                },
+                {
+                  "name": "payload",
+                  "fullPath": "src/util/payload",
+                  "value": 470,
+                  "children": [
+                    {
+                      "name": "getUniqPayload.ts",
+                      "fullPath": "src/util/payload/getUniqPayload.ts",
+                      "value": 470
+                    }
+                  ]
                 },
                 {
                   "name": "getAxisTypeBasedOnLayout.ts",
@@ -665,22 +692,27 @@
             {
               "name": "cartesian",
               "fullPath": "src/cartesian",
-              "value": 76219,
+              "value": 82422,
               "children": [
                 {
                   "name": "Line.tsx",
                   "fullPath": "src/cartesian/Line.tsx",
-                  "value": 14832
+                  "value": 15676
                 },
                 {
                   "name": "CartesianAxis.tsx",
                   "fullPath": "src/cartesian/CartesianAxis.tsx",
-                  "value": 13237
+                  "value": 15181
                 },
                 {
                   "name": "CartesianGrid.tsx",
                   "fullPath": "src/cartesian/CartesianGrid.tsx",
-                  "value": 11723
+                  "value": 11729
+                },
+                {
+                  "name": "getCartesianPosition.tsx",
+                  "fullPath": "src/cartesian/getCartesianPosition.tsx",
+                  "value": 6776
                 },
                 {
                   "name": "YAxis.tsx",
@@ -688,9 +720,9 @@
                   "value": 6321
                 },
                 {
-                  "name": "getCartesianPosition.tsx",
-                  "fullPath": "src/cartesian/getCartesianPosition.tsx",
-                  "value": 6159
+                  "name": "XAxis.tsx",
+                  "fullPath": "src/cartesian/XAxis.tsx",
+                  "value": 6281
                 },
                 {
                   "name": "LineDrawShape.tsx",
@@ -701,11 +733,6 @@
                   "name": "getTicks.ts",
                   "fullPath": "src/cartesian/getTicks.ts",
                   "value": 5123
-                },
-                {
-                  "name": "XAxis.tsx",
-                  "fullPath": "src/cartesian/XAxis.tsx",
-                  "value": 5008
                 },
                 {
                   "name": "getEquidistantTicks.ts",
@@ -721,6 +748,68 @@
                   "name": "GraphicalItemClipPath.tsx",
                   "fullPath": "src/cartesian/GraphicalItemClipPath.tsx",
                   "value": 1558
+                },
+                {
+                  "name": "cartesianPositionToCSSTranslate.tsx",
+                  "fullPath": "src/cartesian/cartesianPositionToCSSTranslate.tsx",
+                  "value": 1213
+                },
+                {
+                  "name": "cartesianViewBoxToTrapezoid.tsx",
+                  "fullPath": "src/cartesian/cartesianViewBoxToTrapezoid.tsx",
+                  "value": 306
+                }
+              ]
+            },
+            {
+              "name": "component",
+              "fullPath": "src/component",
+              "value": 38584,
+              "children": [
+                {
+                  "name": "Label.tsx",
+                  "fullPath": "src/component/Label.tsx",
+                  "value": 10622
+                },
+                {
+                  "name": "Legend.tsx",
+                  "fullPath": "src/component/Legend.tsx",
+                  "value": 8251
+                },
+                {
+                  "name": "Text.tsx",
+                  "fullPath": "src/component/Text.tsx",
+                  "value": 7597
+                },
+                {
+                  "name": "DefaultLegendContent.tsx",
+                  "fullPath": "src/component/DefaultLegendContent.tsx",
+                  "value": 5058
+                },
+                {
+                  "name": "LabelList.tsx",
+                  "fullPath": "src/component/LabelList.tsx",
+                  "value": 3115
+                },
+                {
+                  "name": "ActivePoints.tsx",
+                  "fullPath": "src/component/ActivePoints.tsx",
+                  "value": 1870
+                },
+                {
+                  "name": "Dots.tsx",
+                  "fullPath": "src/component/Dots.tsx",
+                  "value": 1775
+                },
+                {
+                  "name": "ResponsiveContainer.tsx",
+                  "fullPath": "src/component/ResponsiveContainer.tsx",
+                  "value": 196
+                },
+                {
+                  "name": "responsiveContainerUtils.ts",
+                  "fullPath": "src/component/responsiveContainerUtils.ts",
+                  "value": 100
                 }
               ]
             },
@@ -777,48 +866,6 @@
               ]
             },
             {
-              "name": "component",
-              "fullPath": "src/component",
-              "value": 24462,
-              "children": [
-                {
-                  "name": "Label.tsx",
-                  "fullPath": "src/component/Label.tsx",
-                  "value": 9809
-                },
-                {
-                  "name": "Text.tsx",
-                  "fullPath": "src/component/Text.tsx",
-                  "value": 7597
-                },
-                {
-                  "name": "LabelList.tsx",
-                  "fullPath": "src/component/LabelList.tsx",
-                  "value": 3115
-                },
-                {
-                  "name": "ActivePoints.tsx",
-                  "fullPath": "src/component/ActivePoints.tsx",
-                  "value": 1870
-                },
-                {
-                  "name": "Dots.tsx",
-                  "fullPath": "src/component/Dots.tsx",
-                  "value": 1775
-                },
-                {
-                  "name": "ResponsiveContainer.tsx",
-                  "fullPath": "src/component/ResponsiveContainer.tsx",
-                  "value": 196
-                },
-                {
-                  "name": "responsiveContainerUtils.ts",
-                  "fullPath": "src/component/responsiveContainerUtils.ts",
-                  "value": 100
-                }
-              ]
-            },
-            {
               "name": "chart",
               "fullPath": "src/chart",
               "value": 14865,
@@ -848,7 +895,7 @@
             {
               "name": "zIndex",
               "fullPath": "src/zIndex",
-              "value": 9406,
+              "value": 9452,
               "children": [
                 {
                   "name": "ZIndexLayer.tsx",
@@ -858,7 +905,7 @@
                 {
                   "name": "DefaultZIndexes.tsx",
                   "fullPath": "src/zIndex/DefaultZIndexes.tsx",
-                  "value": 2271
+                  "value": 2317
                 },
                 {
                   "name": "ZIndexPortal.tsx",
@@ -875,12 +922,12 @@
             {
               "name": "context",
               "fullPath": "src/context",
-              "value": 8670,
+              "value": 9250,
               "children": [
                 {
                   "name": "chartLayoutContext.tsx",
                   "fullPath": "src/context/chartLayoutContext.tsx",
-                  "value": 7031
+                  "value": 7320
                 },
                 {
                   "name": "chartDataContext.tsx",
@@ -898,6 +945,16 @@
                   "value": 323
                 },
                 {
+                  "name": "legendPayloadContext.tsx",
+                  "fullPath": "src/context/legendPayloadContext.tsx",
+                  "value": 228
+                },
+                {
+                  "name": "legendPortalContext.tsx",
+                  "fullPath": "src/context/legendPortalContext.tsx",
+                  "value": 124
+                },
+                {
                   "name": "PanoramaContext.tsx",
                   "fullPath": "src/context/PanoramaContext.tsx",
                   "value": 122
@@ -911,11 +968,6 @@
                   "name": "tooltipPortalContext.tsx",
                   "fullPath": "src/context/tooltipPortalContext.tsx",
                   "value": 62
-                },
-                {
-                  "name": "legendPortalContext.tsx",
-                  "fullPath": "src/context/legendPortalContext.tsx",
-                  "value": 61
                 }
               ]
             },
@@ -928,6 +980,28 @@
                   "name": "useChartSynchronisation.tsx",
                   "fullPath": "src/synchronisation/useChartSynchronisation.tsx",
                   "value": 8354
+                }
+              ]
+            },
+            {
+              "name": "shape",
+              "fullPath": "src/shape",
+              "value": 7495,
+              "children": [
+                {
+                  "name": "Curve.tsx",
+                  "fullPath": "src/shape/Curve.tsx",
+                  "value": 4366
+                },
+                {
+                  "name": "Symbols.tsx",
+                  "fullPath": "src/shape/Symbols.tsx",
+                  "value": 2462
+                },
+                {
+                  "name": "Dot.tsx",
+                  "fullPath": "src/shape/Dot.tsx",
+                  "value": 667
                 }
               ]
             },
@@ -959,36 +1033,19 @@
               ]
             },
             {
-              "name": "shape",
-              "fullPath": "src/shape",
-              "value": 5033,
-              "children": [
-                {
-                  "name": "Curve.tsx",
-                  "fullPath": "src/shape/Curve.tsx",
-                  "value": 4366
-                },
-                {
-                  "name": "Dot.tsx",
-                  "fullPath": "src/shape/Dot.tsx",
-                  "value": 667
-                }
-              ]
-            },
-            {
-              "name": "hooks.ts",
-              "fullPath": "src/hooks.ts",
-              "value": 1813
-            },
-            {
               "name": "theme",
               "fullPath": "src/theme",
-              "value": 718,
+              "value": 4778,
               "children": [
+                {
+                  "name": "graphicalItemIdentity.ts",
+                  "fullPath": "src/theme/graphicalItemIdentity.ts",
+                  "value": 2534
+                },
                 {
                   "name": "legacyTheme.ts",
                   "fullPath": "src/theme/legacyTheme.ts",
-                  "value": 371
+                  "value": 1897
                 },
                 {
                   "name": "RechartsThemeContext.ts",
@@ -996,6 +1053,11 @@
                   "value": 347
                 }
               ]
+            },
+            {
+              "name": "hooks.ts",
+              "fullPath": "src/hooks.ts",
+              "value": 1813
             },
             {
               "name": "polar",
@@ -1019,27 +1081,27 @@
         {
           "name": "node_modules",
           "fullPath": "node_modules",
-          "value": 356446,
+          "value": 402154,
           "children": [
             {
               "name": "@reduxjs",
               "fullPath": "node_modules/@reduxjs",
-              "value": 73105,
+              "value": 73113,
               "children": [
                 {
                   "name": "toolkit",
                   "fullPath": "node_modules/@reduxjs/toolkit",
-                  "value": 73105,
+                  "value": 73113,
                   "children": [
                     {
                       "name": "dist",
                       "fullPath": "node_modules/@reduxjs/toolkit/dist",
-                      "value": 60427,
+                      "value": 60435,
                       "children": [
                         {
                           "name": "redux-toolkit.esm.js",
                           "fullPath": "node_modules/@reduxjs/toolkit/dist/redux-toolkit.esm.js",
-                          "value": 60427
+                          "value": 60435
                         }
                       ]
                     },
@@ -1066,6 +1128,354 @@
                               ]
                             }
                           ]
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "name": "es-toolkit",
+              "fullPath": "node_modules/es-toolkit",
+              "value": 61019,
+              "children": [
+                {
+                  "name": "dist",
+                  "fullPath": "node_modules/es-toolkit/dist",
+                  "value": 61019,
+                  "children": [
+                    {
+                      "name": "compat",
+                      "fullPath": "node_modules/es-toolkit/dist/compat",
+                      "value": 37201,
+                      "children": [
+                        {
+                          "name": "predicate",
+                          "fullPath": "node_modules/es-toolkit/dist/compat/predicate",
+                          "value": 14276,
+                          "children": [
+                            {
+                              "name": "isMatchWith.mjs",
+                              "fullPath": "node_modules/es-toolkit/dist/compat/predicate/isMatchWith.mjs",
+                              "value": 6305
+                            },
+                            {
+                              "name": "matchesProperty.mjs",
+                              "fullPath": "node_modules/es-toolkit/dist/compat/predicate/matchesProperty.mjs",
+                              "value": 1666
+                            },
+                            {
+                              "name": "matches.mjs",
+                              "fullPath": "node_modules/es-toolkit/dist/compat/predicate/matches.mjs",
+                              "value": 990
+                            },
+                            {
+                              "name": "isObject.mjs",
+                              "fullPath": "node_modules/es-toolkit/dist/compat/predicate/isObject.mjs",
+                              "value": 979
+                            },
+                            {
+                              "name": "isMatch.mjs",
+                              "fullPath": "node_modules/es-toolkit/dist/compat/predicate/isMatch.mjs",
+                              "value": 977
+                            },
+                            {
+                              "name": "isArguments.mjs",
+                              "fullPath": "node_modules/es-toolkit/dist/compat/predicate/isArguments.mjs",
+                              "value": 956
+                            },
+                            {
+                              "name": "isObjectLike.mjs",
+                              "fullPath": "node_modules/es-toolkit/dist/compat/predicate/isObjectLike.mjs",
+                              "value": 883
+                            },
+                            {
+                              "name": "isArrayLikeObject.mjs",
+                              "fullPath": "node_modules/es-toolkit/dist/compat/predicate/isArrayLikeObject.mjs",
+                              "value": 520
+                            },
+                            {
+                              "name": "isArrayLike.mjs",
+                              "fullPath": "node_modules/es-toolkit/dist/compat/predicate/isArrayLike.mjs",
+                              "value": 518
+                            },
+                            {
+                              "name": "isSymbol.mjs",
+                              "fullPath": "node_modules/es-toolkit/dist/compat/predicate/isSymbol.mjs",
+                              "value": 482
+                            }
+                          ]
+                        },
+                        {
+                          "name": "object",
+                          "fullPath": "node_modules/es-toolkit/dist/compat/object",
+                          "value": 7539,
+                          "children": [
+                            {
+                              "name": "get.mjs",
+                              "fullPath": "node_modules/es-toolkit/dist/compat/object/get.mjs",
+                              "value": 1854
+                            },
+                            {
+                              "name": "cloneDeepWith.mjs",
+                              "fullPath": "node_modules/es-toolkit/dist/compat/object/cloneDeepWith.mjs",
+                              "value": 1852
+                            },
+                            {
+                              "name": "has.mjs",
+                              "fullPath": "node_modules/es-toolkit/dist/compat/object/has.mjs",
+                              "value": 1686
+                            },
+                            {
+                              "name": "cloneDeep.mjs",
+                              "fullPath": "node_modules/es-toolkit/dist/compat/object/cloneDeep.mjs",
+                              "value": 1404
+                            },
+                            {
+                              "name": "property.mjs",
+                              "fullPath": "node_modules/es-toolkit/dist/compat/object/property.mjs",
+                              "value": 743
+                            }
+                          ]
+                        },
+                        {
+                          "name": "util",
+                          "fullPath": "node_modules/es-toolkit/dist/compat/util",
+                          "value": 5460,
+                          "children": [
+                            {
+                              "name": "toPath.mjs",
+                              "fullPath": "node_modules/es-toolkit/dist/compat/util/toPath.mjs",
+                              "value": 1864
+                            },
+                            {
+                              "name": "iteratee.mjs",
+                              "fullPath": "node_modules/es-toolkit/dist/compat/util/iteratee.mjs",
+                              "value": 1697
+                            },
+                            {
+                              "name": "toString.mjs",
+                              "fullPath": "node_modules/es-toolkit/dist/compat/util/toString.mjs",
+                              "value": 772
+                            },
+                            {
+                              "name": "toFinite.mjs",
+                              "fullPath": "node_modules/es-toolkit/dist/compat/util/toFinite.mjs",
+                              "value": 614
+                            },
+                            {
+                              "name": "toNumber.mjs",
+                              "fullPath": "node_modules/es-toolkit/dist/compat/util/toNumber.mjs",
+                              "value": 513
+                            }
+                          ]
+                        },
+                        {
+                          "name": "_internal",
+                          "fullPath": "node_modules/es-toolkit/dist/compat/_internal",
+                          "value": 5026,
+                          "children": [
+                            {
+                              "name": "tags.mjs",
+                              "fullPath": "node_modules/es-toolkit/dist/compat/_internal/tags.mjs",
+                              "value": 1132
+                            },
+                            {
+                              "name": "isKey.mjs",
+                              "fullPath": "node_modules/es-toolkit/dist/compat/_internal/isKey.mjs",
+                              "value": 979
+                            },
+                            {
+                              "name": "isDeepKey.mjs",
+                              "fullPath": "node_modules/es-toolkit/dist/compat/_internal/isDeepKey.mjs",
+                              "value": 683
+                            },
+                            {
+                              "name": "compareValues.mjs",
+                              "fullPath": "node_modules/es-toolkit/dist/compat/_internal/compareValues.mjs",
+                              "value": 577
+                            },
+                            {
+                              "name": "toKey.mjs",
+                              "fullPath": "node_modules/es-toolkit/dist/compat/_internal/toKey.mjs",
+                              "value": 388
+                            },
+                            {
+                              "name": "getTag.mjs",
+                              "fullPath": "node_modules/es-toolkit/dist/compat/_internal/getTag.mjs",
+                              "value": 369
+                            },
+                            {
+                              "name": "isIterateeCall.mjs",
+                              "fullPath": "node_modules/es-toolkit/dist/compat/_internal/isIterateeCall.mjs",
+                              "value": 349
+                            },
+                            {
+                              "name": "isIndex.mjs",
+                              "fullPath": "node_modules/es-toolkit/dist/compat/_internal/isIndex.mjs",
+                              "value": 348
+                            },
+                            {
+                              "name": "getSymbols.mjs",
+                              "fullPath": "node_modules/es-toolkit/dist/compat/_internal/getSymbols.mjs",
+                              "value": 201
+                            }
+                          ]
+                        },
+                        {
+                          "name": "array",
+                          "fullPath": "node_modules/es-toolkit/dist/compat/array",
+                          "value": 3855,
+                          "children": [
+                            {
+                              "name": "orderBy.mjs",
+                              "fullPath": "node_modules/es-toolkit/dist/compat/array/orderBy.mjs",
+                              "value": 3291
+                            },
+                            {
+                              "name": "sortBy.mjs",
+                              "fullPath": "node_modules/es-toolkit/dist/compat/array/sortBy.mjs",
+                              "value": 366
+                            },
+                            {
+                              "name": "uniqBy.mjs",
+                              "fullPath": "node_modules/es-toolkit/dist/compat/array/uniqBy.mjs",
+                              "value": 198
+                            }
+                          ]
+                        },
+                        {
+                          "name": "math",
+                          "fullPath": "node_modules/es-toolkit/dist/compat/math",
+                          "value": 1045,
+                          "children": [
+                            {
+                              "name": "range.mjs",
+                              "fullPath": "node_modules/es-toolkit/dist/compat/math/range.mjs",
+                              "value": 1045
+                            }
+                          ]
+                        }
+                      ]
+                    },
+                    {
+                      "name": "predicate",
+                      "fullPath": "node_modules/es-toolkit/dist/predicate",
+                      "value": 10853,
+                      "children": [
+                        {
+                          "name": "isEqualWith.mjs",
+                          "fullPath": "node_modules/es-toolkit/dist/predicate/isEqualWith.mjs",
+                          "value": 5662
+                        },
+                        {
+                          "name": "isPlainObject.mjs",
+                          "fullPath": "node_modules/es-toolkit/dist/predicate/isPlainObject.mjs",
+                          "value": 1705
+                        },
+                        {
+                          "name": "isLength.mjs",
+                          "fullPath": "node_modules/es-toolkit/dist/predicate/isLength.mjs",
+                          "value": 851
+                        },
+                        {
+                          "name": "isPrimitive.mjs",
+                          "fullPath": "node_modules/es-toolkit/dist/predicate/isPrimitive.mjs",
+                          "value": 815
+                        },
+                        {
+                          "name": "isBuffer.mjs",
+                          "fullPath": "node_modules/es-toolkit/dist/predicate/isBuffer.mjs",
+                          "value": 752
+                        },
+                        {
+                          "name": "isEqual.mjs",
+                          "fullPath": "node_modules/es-toolkit/dist/predicate/isEqual.mjs",
+                          "value": 570
+                        },
+                        {
+                          "name": "isTypedArray.mjs",
+                          "fullPath": "node_modules/es-toolkit/dist/predicate/isTypedArray.mjs",
+                          "value": 498
+                        }
+                      ]
+                    },
+                    {
+                      "name": "object",
+                      "fullPath": "node_modules/es-toolkit/dist/object",
+                      "value": 8211,
+                      "children": [
+                        {
+                          "name": "cloneDeepWith.mjs",
+                          "fullPath": "node_modules/es-toolkit/dist/object/cloneDeepWith.mjs",
+                          "value": 6740
+                        },
+                        {
+                          "name": "cloneDeep.mjs",
+                          "fullPath": "node_modules/es-toolkit/dist/object/cloneDeep.mjs",
+                          "value": 1471
+                        }
+                      ]
+                    },
+                    {
+                      "name": "array",
+                      "fullPath": "node_modules/es-toolkit/dist/array",
+                      "value": 2164,
+                      "children": [
+                        {
+                          "name": "uniqBy.mjs",
+                          "fullPath": "node_modules/es-toolkit/dist/array/uniqBy.mjs",
+                          "value": 1199
+                        },
+                        {
+                          "name": "flatten.mjs",
+                          "fullPath": "node_modules/es-toolkit/dist/array/flatten.mjs",
+                          "value": 965
+                        }
+                      ]
+                    },
+                    {
+                      "name": "_internal",
+                      "fullPath": "node_modules/es-toolkit/dist/_internal",
+                      "value": 1308,
+                      "children": [
+                        {
+                          "name": "isEqualsSameValueZero.mjs",
+                          "fullPath": "node_modules/es-toolkit/dist/_internal/isEqualsSameValueZero.mjs",
+                          "value": 560
+                        },
+                        {
+                          "name": "isUnsafeProperty.mjs",
+                          "fullPath": "node_modules/es-toolkit/dist/_internal/isUnsafeProperty.mjs",
+                          "value": 493
+                        },
+                        {
+                          "name": "globalThis.mjs",
+                          "fullPath": "node_modules/es-toolkit/dist/_internal/globalThis.mjs",
+                          "value": 255
+                        }
+                      ]
+                    },
+                    {
+                      "name": "function",
+                      "fullPath": "node_modules/es-toolkit/dist/function",
+                      "value": 1282,
+                      "children": [
+                        {
+                          "name": "ary.mjs",
+                          "fullPath": "node_modules/es-toolkit/dist/function/ary.mjs",
+                          "value": 631
+                        },
+                        {
+                          "name": "identity.mjs",
+                          "fullPath": "node_modules/es-toolkit/dist/function/identity.mjs",
+                          "value": 401
+                        },
+                        {
+                          "name": "noop.mjs",
+                          "fullPath": "node_modules/es-toolkit/dist/function/noop.mjs",
+                          "value": 250
                         }
                       ]
                     }
@@ -1212,36 +1622,17 @@
             {
               "name": "immer",
               "fullPath": "node_modules/immer",
-              "value": 28190,
+              "value": 27717,
               "children": [
                 {
                   "name": "dist",
                   "fullPath": "node_modules/immer/dist",
-                  "value": 28190,
+                  "value": 27717,
                   "children": [
                     {
                       "name": "immer.mjs",
                       "fullPath": "node_modules/immer/dist/immer.mjs",
-                      "value": 28190
-                    }
-                  ]
-                }
-              ]
-            },
-            {
-              "name": "redux",
-              "fullPath": "node_modules/redux",
-              "value": 23594,
-              "children": [
-                {
-                  "name": "es",
-                  "fullPath": "node_modules/redux/es",
-                  "value": 23594,
-                  "children": [
-                    {
-                      "name": "redux.js",
-                      "fullPath": "node_modules/redux/es/redux.js",
-                      "value": 23594
+                      "value": 27717
                     }
                   ]
                 }
@@ -1250,12 +1641,12 @@
             {
               "name": "d3-shape",
               "fullPath": "node_modules/d3-shape",
-              "value": 21306,
+              "value": 24951,
               "children": [
                 {
                   "name": "src",
                   "fullPath": "node_modules/d3-shape/src",
-                  "value": 21306,
+                  "value": 24951,
                   "children": [
                     {
                       "name": "curve",
@@ -1315,6 +1706,48 @@
                       "value": 2960
                     },
                     {
+                      "name": "symbol",
+                      "fullPath": "node_modules/d3-shape/src/symbol",
+                      "value": 2644,
+                      "children": [
+                        {
+                          "name": "wye.js",
+                          "fullPath": "node_modules/d3-shape/src/symbol/wye.js",
+                          "value": 787
+                        },
+                        {
+                          "name": "star.js",
+                          "fullPath": "node_modules/d3-shape/src/symbol/star.js",
+                          "value": 562
+                        },
+                        {
+                          "name": "cross.js",
+                          "fullPath": "node_modules/d3-shape/src/symbol/cross.js",
+                          "value": 467
+                        },
+                        {
+                          "name": "diamond.js",
+                          "fullPath": "node_modules/d3-shape/src/symbol/diamond.js",
+                          "value": 302
+                        },
+                        {
+                          "name": "triangle.js",
+                          "fullPath": "node_modules/d3-shape/src/symbol/triangle.js",
+                          "value": 247
+                        },
+                        {
+                          "name": "circle.js",
+                          "fullPath": "node_modules/d3-shape/src/symbol/circle.js",
+                          "value": 148
+                        },
+                        {
+                          "name": "square.js",
+                          "fullPath": "node_modules/d3-shape/src/symbol/square.js",
+                          "value": 131
+                        }
+                      ]
+                    },
+                    {
                       "name": "offset",
                       "fullPath": "node_modules/d3-shape/src/offset",
                       "value": 1635,
@@ -1352,6 +1785,11 @@
                       "value": 1292
                     },
                     {
+                      "name": "symbol.js",
+                      "fullPath": "node_modules/d3-shape/src/symbol.js",
+                      "value": 886
+                    },
+                    {
                       "name": "path.js",
                       "fullPath": "node_modules/d3-shape/src/path.js",
                       "value": 353
@@ -1374,6 +1812,11 @@
                       ]
                     },
                     {
+                      "name": "math.js",
+                      "fullPath": "node_modules/d3-shape/src/math.js",
+                      "value": 115
+                    },
+                    {
                       "name": "constant.js",
                       "fullPath": "node_modules/d3-shape/src/constant.js",
                       "value": 77
@@ -1387,6 +1830,25 @@
                       "name": "noop.js",
                       "fullPath": "node_modules/d3-shape/src/noop.js",
                       "value": 21
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "name": "redux",
+              "fullPath": "node_modules/redux",
+              "value": 23594,
+              "children": [
+                {
+                  "name": "es",
+                  "fullPath": "node_modules/redux/es",
+                  "value": 23594,
+                  "children": [
+                    {
+                      "name": "redux.js",
+                      "fullPath": "node_modules/redux/es/redux.js",
+                      "value": 23594
                     }
                   ]
                 }
@@ -1411,195 +1873,6 @@
                       "name": "defaultLocale.js",
                       "fullPath": "node_modules/d3-time-format/src/defaultLocale.js",
                       "value": 731
-                    }
-                  ]
-                }
-              ]
-            },
-            {
-              "name": "es-toolkit",
-              "fullPath": "node_modules/es-toolkit",
-              "value": 18491,
-              "children": [
-                {
-                  "name": "dist",
-                  "fullPath": "node_modules/es-toolkit/dist",
-                  "value": 18491,
-                  "children": [
-                    {
-                      "name": "compat",
-                      "fullPath": "node_modules/es-toolkit/dist/compat",
-                      "value": 15622,
-                      "children": [
-                        {
-                          "name": "util",
-                          "fullPath": "node_modules/es-toolkit/dist/compat/util",
-                          "value": 3763,
-                          "children": [
-                            {
-                              "name": "toPath.mjs",
-                              "fullPath": "node_modules/es-toolkit/dist/compat/util/toPath.mjs",
-                              "value": 1864
-                            },
-                            {
-                              "name": "toString.mjs",
-                              "fullPath": "node_modules/es-toolkit/dist/compat/util/toString.mjs",
-                              "value": 772
-                            },
-                            {
-                              "name": "toFinite.mjs",
-                              "fullPath": "node_modules/es-toolkit/dist/compat/util/toFinite.mjs",
-                              "value": 614
-                            },
-                            {
-                              "name": "toNumber.mjs",
-                              "fullPath": "node_modules/es-toolkit/dist/compat/util/toNumber.mjs",
-                              "value": 513
-                            }
-                          ]
-                        },
-                        {
-                          "name": "array",
-                          "fullPath": "node_modules/es-toolkit/dist/compat/array",
-                          "value": 3657,
-                          "children": [
-                            {
-                              "name": "orderBy.mjs",
-                              "fullPath": "node_modules/es-toolkit/dist/compat/array/orderBy.mjs",
-                              "value": 3291
-                            },
-                            {
-                              "name": "sortBy.mjs",
-                              "fullPath": "node_modules/es-toolkit/dist/compat/array/sortBy.mjs",
-                              "value": 366
-                            }
-                          ]
-                        },
-                        {
-                          "name": "_internal",
-                          "fullPath": "node_modules/es-toolkit/dist/compat/_internal",
-                          "value": 3324,
-                          "children": [
-                            {
-                              "name": "isKey.mjs",
-                              "fullPath": "node_modules/es-toolkit/dist/compat/_internal/isKey.mjs",
-                              "value": 979
-                            },
-                            {
-                              "name": "isDeepKey.mjs",
-                              "fullPath": "node_modules/es-toolkit/dist/compat/_internal/isDeepKey.mjs",
-                              "value": 683
-                            },
-                            {
-                              "name": "compareValues.mjs",
-                              "fullPath": "node_modules/es-toolkit/dist/compat/_internal/compareValues.mjs",
-                              "value": 577
-                            },
-                            {
-                              "name": "toKey.mjs",
-                              "fullPath": "node_modules/es-toolkit/dist/compat/_internal/toKey.mjs",
-                              "value": 388
-                            },
-                            {
-                              "name": "isIterateeCall.mjs",
-                              "fullPath": "node_modules/es-toolkit/dist/compat/_internal/isIterateeCall.mjs",
-                              "value": 349
-                            },
-                            {
-                              "name": "isIndex.mjs",
-                              "fullPath": "node_modules/es-toolkit/dist/compat/_internal/isIndex.mjs",
-                              "value": 348
-                            }
-                          ]
-                        },
-                        {
-                          "name": "predicate",
-                          "fullPath": "node_modules/es-toolkit/dist/compat/predicate",
-                          "value": 1979,
-                          "children": [
-                            {
-                              "name": "isObject.mjs",
-                              "fullPath": "node_modules/es-toolkit/dist/compat/predicate/isObject.mjs",
-                              "value": 979
-                            },
-                            {
-                              "name": "isArrayLike.mjs",
-                              "fullPath": "node_modules/es-toolkit/dist/compat/predicate/isArrayLike.mjs",
-                              "value": 518
-                            },
-                            {
-                              "name": "isSymbol.mjs",
-                              "fullPath": "node_modules/es-toolkit/dist/compat/predicate/isSymbol.mjs",
-                              "value": 482
-                            }
-                          ]
-                        },
-                        {
-                          "name": "object",
-                          "fullPath": "node_modules/es-toolkit/dist/compat/object",
-                          "value": 1854,
-                          "children": [
-                            {
-                              "name": "get.mjs",
-                              "fullPath": "node_modules/es-toolkit/dist/compat/object/get.mjs",
-                              "value": 1854
-                            }
-                          ]
-                        },
-                        {
-                          "name": "math",
-                          "fullPath": "node_modules/es-toolkit/dist/compat/math",
-                          "value": 1045,
-                          "children": [
-                            {
-                              "name": "range.mjs",
-                              "fullPath": "node_modules/es-toolkit/dist/compat/math/range.mjs",
-                              "value": 1045
-                            }
-                          ]
-                        }
-                      ]
-                    },
-                    {
-                      "name": "_internal",
-                      "fullPath": "node_modules/es-toolkit/dist/_internal",
-                      "value": 1053,
-                      "children": [
-                        {
-                          "name": "isEqualsSameValueZero.mjs",
-                          "fullPath": "node_modules/es-toolkit/dist/_internal/isEqualsSameValueZero.mjs",
-                          "value": 560
-                        },
-                        {
-                          "name": "isUnsafeProperty.mjs",
-                          "fullPath": "node_modules/es-toolkit/dist/_internal/isUnsafeProperty.mjs",
-                          "value": 493
-                        }
-                      ]
-                    },
-                    {
-                      "name": "array",
-                      "fullPath": "node_modules/es-toolkit/dist/array",
-                      "value": 965,
-                      "children": [
-                        {
-                          "name": "flatten.mjs",
-                          "fullPath": "node_modules/es-toolkit/dist/array/flatten.mjs",
-                          "value": 965
-                        }
-                      ]
-                    },
-                    {
-                      "name": "predicate",
-                      "fullPath": "node_modules/es-toolkit/dist/predicate",
-                      "value": 851,
-                      "children": [
-                        {
-                          "name": "isLength.mjs",
-                          "fullPath": "node_modules/es-toolkit/dist/predicate/isLength.mjs",
-                          "value": 851
-                        }
-                      ]
                     }
                   ]
                 }
@@ -2235,32 +2508,32 @@
         {
           "name": "entry",
           "fullPath": "entry",
-          "value": 1416,
+          "value": 1607,
           "children": [
             {
               "name": "www",
               "fullPath": "entry/www",
-              "value": 1416,
+              "value": 1607,
               "children": [
                 {
                   "name": "src",
                   "fullPath": "entry/www/src",
-                  "value": 1416,
+                  "value": 1607,
                   "children": [
                     {
                       "name": "views",
                       "fullPath": "entry/www/src/views",
-                      "value": 1416,
+                      "value": 1607,
                       "children": [
                         {
                           "name": "IndexView",
                           "fullPath": "entry/www/src/views/IndexView",
-                          "value": 1416,
+                          "value": 1607,
                           "children": [
                             {
                               "name": "IndexLineChart.tsx",
                               "fullPath": "entry/www/src/views/IndexView/IndexLineChart.tsx",
-                              "value": 1416
+                              "value": 1607
                             }
                           ]
                         }
@@ -2277,70 +2550,70 @@
   },
   "sunburst": {
     "examplePath": "www/src/views/IndexView/IndexLineChart.tsx",
-    "totalSize": 814107,
-    "totalSizeLabel": "795.03 KB",
-    "moduleCount": 317,
-    "generatedAt": "2026-07-16T13:36:58.628Z",
+    "totalSize": 897126,
+    "totalSizeLabel": "876.10 KB",
+    "moduleCount": 366,
+    "generatedAt": "2026-07-28T10:58:29.059Z",
     "stages": [
       {
         "stage": "es6-folder",
-        "bytes": 1273930,
-        "humanReadableSize": "1.21 MB",
+        "bytes": 1304649,
+        "humanReadableSize": "1.24 MB",
         "reductionFromBaselinePercent": 0
       },
       {
         "stage": "tree-shaken",
-        "bytes": 816834,
-        "humanReadableSize": "797.69 KB",
+        "bytes": 900005,
+        "humanReadableSize": "878.91 KB",
         "reductionFromBaselinePercent": 0
       },
       {
         "stage": "minified",
-        "bytes": 281205,
-        "humanReadableSize": "274.61 KB",
-        "reductionFromBaselinePercent": 65.57
+        "bytes": 302610,
+        "humanReadableSize": "295.52 KB",
+        "reductionFromBaselinePercent": 66.38
       },
       {
         "stage": "minified+gzip",
-        "bytes": 92025,
-        "humanReadableSize": "89.87 KB",
-        "reductionFromBaselinePercent": 88.73
+        "bytes": 98854,
+        "humanReadableSize": "96.54 KB",
+        "reductionFromBaselinePercent": 89.02
       }
     ],
     "tree": {
       "name": "bundle",
       "fullPath": "bundle",
-      "value": 814107,
+      "value": 897126,
       "children": [
         {
           "name": "src",
           "fullPath": "src",
-          "value": 456245,
+          "value": 493365,
           "children": [
             {
               "name": "state",
               "fullPath": "src/state",
-              "value": 169814,
+              "value": 172217,
               "children": [
                 {
                   "name": "selectors",
                   "fullPath": "src/state/selectors",
-                  "value": 106931,
+                  "value": 108306,
                   "children": [
                     {
                       "name": "axisSelectors.ts",
                       "fullPath": "src/state/selectors/axisSelectors.ts",
-                      "value": 53553
+                      "value": 53636
                     },
                     {
                       "name": "combiners",
                       "fullPath": "src/state/selectors/combiners",
-                      "value": 18984,
+                      "value": 19713,
                       "children": [
                         {
                           "name": "combineTooltipPayload.ts",
                           "fullPath": "src/state/selectors/combiners/combineTooltipPayload.ts",
-                          "value": 5880
+                          "value": 6609
                         },
                         {
                           "name": "combineActiveTooltipIndex.ts",
@@ -2415,14 +2688,14 @@
                       "value": 3898
                     },
                     {
+                      "name": "selectChartOffsetInternal.ts",
+                      "fullPath": "src/state/selectors/selectChartOffsetInternal.ts",
+                      "value": 3000
+                    },
+                    {
                       "name": "dataSelectors.ts",
                       "fullPath": "src/state/selectors/dataSelectors.ts",
                       "value": 2856
-                    },
-                    {
-                      "name": "selectChartOffsetInternal.ts",
-                      "fullPath": "src/state/selectors/selectChartOffsetInternal.ts",
-                      "value": 2824
                     },
                     {
                       "name": "lineSelectors.ts",
@@ -2467,7 +2740,12 @@
                     {
                       "name": "legendSelectors.ts",
                       "fullPath": "src/state/selectors/legendSelectors.ts",
-                      "value": 380
+                      "value": 408
+                    },
+                    {
+                      "name": "selectLegendArea.ts",
+                      "fullPath": "src/state/selectors/selectLegendArea.ts",
+                      "value": 359
                     },
                     {
                       "name": "selectActivePropsFromChartPointer.ts",
@@ -2539,7 +2817,7 @@
                 {
                   "name": "cartesianAxisSlice.ts",
                   "fullPath": "src/state/cartesianAxisSlice.ts",
-                  "value": 5517
+                  "value": 6357
                 },
                 {
                   "name": "externalEventsMiddleware.ts",
@@ -2574,7 +2852,7 @@
                 {
                   "name": "legendSlice.ts",
                   "fullPath": "src/state/legendSlice.ts",
-                  "value": 1941
+                  "value": 2129
                 },
                 {
                   "name": "chartDataSlice.ts",
@@ -2698,7 +2976,7 @@
             {
               "name": "util",
               "fullPath": "src/util",
-              "value": 98752,
+              "value": 105996,
               "children": [
                 {
                   "name": "scale",
@@ -2737,7 +3015,7 @@
                 {
                   "name": "ChartUtils.ts",
                   "fullPath": "src/util/ChartUtils.ts",
-                  "value": 13007
+                  "value": 14790
                 },
                 {
                   "name": "svgPropertiesNoEvents.ts",
@@ -2780,6 +3058,11 @@
                   "value": 3807
                 },
                 {
+                  "name": "useElementOffset.ts",
+                  "fullPath": "src/util/useElementOffset.ts",
+                  "value": 3494
+                },
+                {
                   "name": "excludeEventProps.ts",
                   "fullPath": "src/util/excludeEventProps.ts",
                   "value": 3126
@@ -2808,6 +3091,11 @@
                   "name": "svgPropertiesAndEvents.ts",
                   "fullPath": "src/util/svgPropertiesAndEvents.ts",
                   "value": 1902
+                },
+                {
+                  "name": "XAxisUtils.tsx",
+                  "fullPath": "src/util/XAxisUtils.tsx",
+                  "value": 1463
                 },
                 {
                   "name": "YAxisUtils.tsx",
@@ -2867,7 +3155,7 @@
                 {
                   "name": "Constants.ts",
                   "fullPath": "src/util/Constants.ts",
-                  "value": 599
+                  "value": 633
                 },
                 {
                   "name": "useId.ts",
@@ -2878,6 +3166,18 @@
                   "name": "useReportScale.ts",
                   "fullPath": "src/util/useReportScale.ts",
                   "value": 472
+                },
+                {
+                  "name": "payload",
+                  "fullPath": "src/util/payload",
+                  "value": 470,
+                  "children": [
+                    {
+                      "name": "getUniqPayload.ts",
+                      "fullPath": "src/util/payload/getUniqPayload.ts",
+                      "value": 470
+                    }
+                  ]
                 },
                 {
                   "name": "getAxisTypeBasedOnLayout.ts",
@@ -2941,22 +3241,27 @@
             {
               "name": "cartesian",
               "fullPath": "src/cartesian",
-              "value": 76219,
+              "value": 82422,
               "children": [
                 {
                   "name": "Line.tsx",
                   "fullPath": "src/cartesian/Line.tsx",
-                  "value": 14832
+                  "value": 15676
                 },
                 {
                   "name": "CartesianAxis.tsx",
                   "fullPath": "src/cartesian/CartesianAxis.tsx",
-                  "value": 13237
+                  "value": 15181
                 },
                 {
                   "name": "CartesianGrid.tsx",
                   "fullPath": "src/cartesian/CartesianGrid.tsx",
-                  "value": 11723
+                  "value": 11729
+                },
+                {
+                  "name": "getCartesianPosition.tsx",
+                  "fullPath": "src/cartesian/getCartesianPosition.tsx",
+                  "value": 6776
                 },
                 {
                   "name": "YAxis.tsx",
@@ -2964,9 +3269,9 @@
                   "value": 6321
                 },
                 {
-                  "name": "getCartesianPosition.tsx",
-                  "fullPath": "src/cartesian/getCartesianPosition.tsx",
-                  "value": 6159
+                  "name": "XAxis.tsx",
+                  "fullPath": "src/cartesian/XAxis.tsx",
+                  "value": 6281
                 },
                 {
                   "name": "LineDrawShape.tsx",
@@ -2977,11 +3282,6 @@
                   "name": "getTicks.ts",
                   "fullPath": "src/cartesian/getTicks.ts",
                   "value": 5123
-                },
-                {
-                  "name": "XAxis.tsx",
-                  "fullPath": "src/cartesian/XAxis.tsx",
-                  "value": 5008
                 },
                 {
                   "name": "getEquidistantTicks.ts",
@@ -2997,6 +3297,68 @@
                   "name": "GraphicalItemClipPath.tsx",
                   "fullPath": "src/cartesian/GraphicalItemClipPath.tsx",
                   "value": 1558
+                },
+                {
+                  "name": "cartesianPositionToCSSTranslate.tsx",
+                  "fullPath": "src/cartesian/cartesianPositionToCSSTranslate.tsx",
+                  "value": 1213
+                },
+                {
+                  "name": "cartesianViewBoxToTrapezoid.tsx",
+                  "fullPath": "src/cartesian/cartesianViewBoxToTrapezoid.tsx",
+                  "value": 306
+                }
+              ]
+            },
+            {
+              "name": "component",
+              "fullPath": "src/component",
+              "value": 38584,
+              "children": [
+                {
+                  "name": "Label.tsx",
+                  "fullPath": "src/component/Label.tsx",
+                  "value": 10622
+                },
+                {
+                  "name": "Legend.tsx",
+                  "fullPath": "src/component/Legend.tsx",
+                  "value": 8251
+                },
+                {
+                  "name": "Text.tsx",
+                  "fullPath": "src/component/Text.tsx",
+                  "value": 7597
+                },
+                {
+                  "name": "DefaultLegendContent.tsx",
+                  "fullPath": "src/component/DefaultLegendContent.tsx",
+                  "value": 5058
+                },
+                {
+                  "name": "LabelList.tsx",
+                  "fullPath": "src/component/LabelList.tsx",
+                  "value": 3115
+                },
+                {
+                  "name": "ActivePoints.tsx",
+                  "fullPath": "src/component/ActivePoints.tsx",
+                  "value": 1870
+                },
+                {
+                  "name": "Dots.tsx",
+                  "fullPath": "src/component/Dots.tsx",
+                  "value": 1775
+                },
+                {
+                  "name": "ResponsiveContainer.tsx",
+                  "fullPath": "src/component/ResponsiveContainer.tsx",
+                  "value": 196
+                },
+                {
+                  "name": "responsiveContainerUtils.ts",
+                  "fullPath": "src/component/responsiveContainerUtils.ts",
+                  "value": 100
                 }
               ]
             },
@@ -3053,48 +3415,6 @@
               ]
             },
             {
-              "name": "component",
-              "fullPath": "src/component",
-              "value": 24462,
-              "children": [
-                {
-                  "name": "Label.tsx",
-                  "fullPath": "src/component/Label.tsx",
-                  "value": 9809
-                },
-                {
-                  "name": "Text.tsx",
-                  "fullPath": "src/component/Text.tsx",
-                  "value": 7597
-                },
-                {
-                  "name": "LabelList.tsx",
-                  "fullPath": "src/component/LabelList.tsx",
-                  "value": 3115
-                },
-                {
-                  "name": "ActivePoints.tsx",
-                  "fullPath": "src/component/ActivePoints.tsx",
-                  "value": 1870
-                },
-                {
-                  "name": "Dots.tsx",
-                  "fullPath": "src/component/Dots.tsx",
-                  "value": 1775
-                },
-                {
-                  "name": "ResponsiveContainer.tsx",
-                  "fullPath": "src/component/ResponsiveContainer.tsx",
-                  "value": 196
-                },
-                {
-                  "name": "responsiveContainerUtils.ts",
-                  "fullPath": "src/component/responsiveContainerUtils.ts",
-                  "value": 100
-                }
-              ]
-            },
-            {
               "name": "chart",
               "fullPath": "src/chart",
               "value": 14865,
@@ -3124,7 +3444,7 @@
             {
               "name": "zIndex",
               "fullPath": "src/zIndex",
-              "value": 9406,
+              "value": 9452,
               "children": [
                 {
                   "name": "ZIndexLayer.tsx",
@@ -3134,7 +3454,7 @@
                 {
                   "name": "DefaultZIndexes.tsx",
                   "fullPath": "src/zIndex/DefaultZIndexes.tsx",
-                  "value": 2271
+                  "value": 2317
                 },
                 {
                   "name": "ZIndexPortal.tsx",
@@ -3151,12 +3471,12 @@
             {
               "name": "context",
               "fullPath": "src/context",
-              "value": 8670,
+              "value": 9250,
               "children": [
                 {
                   "name": "chartLayoutContext.tsx",
                   "fullPath": "src/context/chartLayoutContext.tsx",
-                  "value": 7031
+                  "value": 7320
                 },
                 {
                   "name": "chartDataContext.tsx",
@@ -3174,6 +3494,16 @@
                   "value": 323
                 },
                 {
+                  "name": "legendPayloadContext.tsx",
+                  "fullPath": "src/context/legendPayloadContext.tsx",
+                  "value": 228
+                },
+                {
+                  "name": "legendPortalContext.tsx",
+                  "fullPath": "src/context/legendPortalContext.tsx",
+                  "value": 124
+                },
+                {
                   "name": "PanoramaContext.tsx",
                   "fullPath": "src/context/PanoramaContext.tsx",
                   "value": 122
@@ -3187,11 +3517,6 @@
                   "name": "tooltipPortalContext.tsx",
                   "fullPath": "src/context/tooltipPortalContext.tsx",
                   "value": 62
-                },
-                {
-                  "name": "legendPortalContext.tsx",
-                  "fullPath": "src/context/legendPortalContext.tsx",
-                  "value": 61
                 }
               ]
             },
@@ -3204,6 +3529,28 @@
                   "name": "useChartSynchronisation.tsx",
                   "fullPath": "src/synchronisation/useChartSynchronisation.tsx",
                   "value": 8354
+                }
+              ]
+            },
+            {
+              "name": "shape",
+              "fullPath": "src/shape",
+              "value": 7495,
+              "children": [
+                {
+                  "name": "Curve.tsx",
+                  "fullPath": "src/shape/Curve.tsx",
+                  "value": 4366
+                },
+                {
+                  "name": "Symbols.tsx",
+                  "fullPath": "src/shape/Symbols.tsx",
+                  "value": 2462
+                },
+                {
+                  "name": "Dot.tsx",
+                  "fullPath": "src/shape/Dot.tsx",
+                  "value": 667
                 }
               ]
             },
@@ -3235,36 +3582,19 @@
               ]
             },
             {
-              "name": "shape",
-              "fullPath": "src/shape",
-              "value": 5033,
-              "children": [
-                {
-                  "name": "Curve.tsx",
-                  "fullPath": "src/shape/Curve.tsx",
-                  "value": 4366
-                },
-                {
-                  "name": "Dot.tsx",
-                  "fullPath": "src/shape/Dot.tsx",
-                  "value": 667
-                }
-              ]
-            },
-            {
-              "name": "hooks.ts",
-              "fullPath": "src/hooks.ts",
-              "value": 1813
-            },
-            {
               "name": "theme",
               "fullPath": "src/theme",
-              "value": 718,
+              "value": 4778,
               "children": [
+                {
+                  "name": "graphicalItemIdentity.ts",
+                  "fullPath": "src/theme/graphicalItemIdentity.ts",
+                  "value": 2534
+                },
                 {
                   "name": "legacyTheme.ts",
                   "fullPath": "src/theme/legacyTheme.ts",
-                  "value": 371
+                  "value": 1897
                 },
                 {
                   "name": "RechartsThemeContext.ts",
@@ -3272,6 +3602,11 @@
                   "value": 347
                 }
               ]
+            },
+            {
+              "name": "hooks.ts",
+              "fullPath": "src/hooks.ts",
+              "value": 1813
             },
             {
               "name": "polar",
@@ -3295,27 +3630,27 @@
         {
           "name": "node_modules",
           "fullPath": "node_modules",
-          "value": 356446,
+          "value": 402154,
           "children": [
             {
               "name": "@reduxjs",
               "fullPath": "node_modules/@reduxjs",
-              "value": 73105,
+              "value": 73113,
               "children": [
                 {
                   "name": "toolkit",
                   "fullPath": "node_modules/@reduxjs/toolkit",
-                  "value": 73105,
+                  "value": 73113,
                   "children": [
                     {
                       "name": "dist",
                       "fullPath": "node_modules/@reduxjs/toolkit/dist",
-                      "value": 60427,
+                      "value": 60435,
                       "children": [
                         {
                           "name": "redux-toolkit.esm.js",
                           "fullPath": "node_modules/@reduxjs/toolkit/dist/redux-toolkit.esm.js",
-                          "value": 60427
+                          "value": 60435
                         }
                       ]
                     },
@@ -3342,6 +3677,354 @@
                               ]
                             }
                           ]
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "name": "es-toolkit",
+              "fullPath": "node_modules/es-toolkit",
+              "value": 61019,
+              "children": [
+                {
+                  "name": "dist",
+                  "fullPath": "node_modules/es-toolkit/dist",
+                  "value": 61019,
+                  "children": [
+                    {
+                      "name": "compat",
+                      "fullPath": "node_modules/es-toolkit/dist/compat",
+                      "value": 37201,
+                      "children": [
+                        {
+                          "name": "predicate",
+                          "fullPath": "node_modules/es-toolkit/dist/compat/predicate",
+                          "value": 14276,
+                          "children": [
+                            {
+                              "name": "isMatchWith.mjs",
+                              "fullPath": "node_modules/es-toolkit/dist/compat/predicate/isMatchWith.mjs",
+                              "value": 6305
+                            },
+                            {
+                              "name": "matchesProperty.mjs",
+                              "fullPath": "node_modules/es-toolkit/dist/compat/predicate/matchesProperty.mjs",
+                              "value": 1666
+                            },
+                            {
+                              "name": "matches.mjs",
+                              "fullPath": "node_modules/es-toolkit/dist/compat/predicate/matches.mjs",
+                              "value": 990
+                            },
+                            {
+                              "name": "isObject.mjs",
+                              "fullPath": "node_modules/es-toolkit/dist/compat/predicate/isObject.mjs",
+                              "value": 979
+                            },
+                            {
+                              "name": "isMatch.mjs",
+                              "fullPath": "node_modules/es-toolkit/dist/compat/predicate/isMatch.mjs",
+                              "value": 977
+                            },
+                            {
+                              "name": "isArguments.mjs",
+                              "fullPath": "node_modules/es-toolkit/dist/compat/predicate/isArguments.mjs",
+                              "value": 956
+                            },
+                            {
+                              "name": "isObjectLike.mjs",
+                              "fullPath": "node_modules/es-toolkit/dist/compat/predicate/isObjectLike.mjs",
+                              "value": 883
+                            },
+                            {
+                              "name": "isArrayLikeObject.mjs",
+                              "fullPath": "node_modules/es-toolkit/dist/compat/predicate/isArrayLikeObject.mjs",
+                              "value": 520
+                            },
+                            {
+                              "name": "isArrayLike.mjs",
+                              "fullPath": "node_modules/es-toolkit/dist/compat/predicate/isArrayLike.mjs",
+                              "value": 518
+                            },
+                            {
+                              "name": "isSymbol.mjs",
+                              "fullPath": "node_modules/es-toolkit/dist/compat/predicate/isSymbol.mjs",
+                              "value": 482
+                            }
+                          ]
+                        },
+                        {
+                          "name": "object",
+                          "fullPath": "node_modules/es-toolkit/dist/compat/object",
+                          "value": 7539,
+                          "children": [
+                            {
+                              "name": "get.mjs",
+                              "fullPath": "node_modules/es-toolkit/dist/compat/object/get.mjs",
+                              "value": 1854
+                            },
+                            {
+                              "name": "cloneDeepWith.mjs",
+                              "fullPath": "node_modules/es-toolkit/dist/compat/object/cloneDeepWith.mjs",
+                              "value": 1852
+                            },
+                            {
+                              "name": "has.mjs",
+                              "fullPath": "node_modules/es-toolkit/dist/compat/object/has.mjs",
+                              "value": 1686
+                            },
+                            {
+                              "name": "cloneDeep.mjs",
+                              "fullPath": "node_modules/es-toolkit/dist/compat/object/cloneDeep.mjs",
+                              "value": 1404
+                            },
+                            {
+                              "name": "property.mjs",
+                              "fullPath": "node_modules/es-toolkit/dist/compat/object/property.mjs",
+                              "value": 743
+                            }
+                          ]
+                        },
+                        {
+                          "name": "util",
+                          "fullPath": "node_modules/es-toolkit/dist/compat/util",
+                          "value": 5460,
+                          "children": [
+                            {
+                              "name": "toPath.mjs",
+                              "fullPath": "node_modules/es-toolkit/dist/compat/util/toPath.mjs",
+                              "value": 1864
+                            },
+                            {
+                              "name": "iteratee.mjs",
+                              "fullPath": "node_modules/es-toolkit/dist/compat/util/iteratee.mjs",
+                              "value": 1697
+                            },
+                            {
+                              "name": "toString.mjs",
+                              "fullPath": "node_modules/es-toolkit/dist/compat/util/toString.mjs",
+                              "value": 772
+                            },
+                            {
+                              "name": "toFinite.mjs",
+                              "fullPath": "node_modules/es-toolkit/dist/compat/util/toFinite.mjs",
+                              "value": 614
+                            },
+                            {
+                              "name": "toNumber.mjs",
+                              "fullPath": "node_modules/es-toolkit/dist/compat/util/toNumber.mjs",
+                              "value": 513
+                            }
+                          ]
+                        },
+                        {
+                          "name": "_internal",
+                          "fullPath": "node_modules/es-toolkit/dist/compat/_internal",
+                          "value": 5026,
+                          "children": [
+                            {
+                              "name": "tags.mjs",
+                              "fullPath": "node_modules/es-toolkit/dist/compat/_internal/tags.mjs",
+                              "value": 1132
+                            },
+                            {
+                              "name": "isKey.mjs",
+                              "fullPath": "node_modules/es-toolkit/dist/compat/_internal/isKey.mjs",
+                              "value": 979
+                            },
+                            {
+                              "name": "isDeepKey.mjs",
+                              "fullPath": "node_modules/es-toolkit/dist/compat/_internal/isDeepKey.mjs",
+                              "value": 683
+                            },
+                            {
+                              "name": "compareValues.mjs",
+                              "fullPath": "node_modules/es-toolkit/dist/compat/_internal/compareValues.mjs",
+                              "value": 577
+                            },
+                            {
+                              "name": "toKey.mjs",
+                              "fullPath": "node_modules/es-toolkit/dist/compat/_internal/toKey.mjs",
+                              "value": 388
+                            },
+                            {
+                              "name": "getTag.mjs",
+                              "fullPath": "node_modules/es-toolkit/dist/compat/_internal/getTag.mjs",
+                              "value": 369
+                            },
+                            {
+                              "name": "isIterateeCall.mjs",
+                              "fullPath": "node_modules/es-toolkit/dist/compat/_internal/isIterateeCall.mjs",
+                              "value": 349
+                            },
+                            {
+                              "name": "isIndex.mjs",
+                              "fullPath": "node_modules/es-toolkit/dist/compat/_internal/isIndex.mjs",
+                              "value": 348
+                            },
+                            {
+                              "name": "getSymbols.mjs",
+                              "fullPath": "node_modules/es-toolkit/dist/compat/_internal/getSymbols.mjs",
+                              "value": 201
+                            }
+                          ]
+                        },
+                        {
+                          "name": "array",
+                          "fullPath": "node_modules/es-toolkit/dist/compat/array",
+                          "value": 3855,
+                          "children": [
+                            {
+                              "name": "orderBy.mjs",
+                              "fullPath": "node_modules/es-toolkit/dist/compat/array/orderBy.mjs",
+                              "value": 3291
+                            },
+                            {
+                              "name": "sortBy.mjs",
+                              "fullPath": "node_modules/es-toolkit/dist/compat/array/sortBy.mjs",
+                              "value": 366
+                            },
+                            {
+                              "name": "uniqBy.mjs",
+                              "fullPath": "node_modules/es-toolkit/dist/compat/array/uniqBy.mjs",
+                              "value": 198
+                            }
+                          ]
+                        },
+                        {
+                          "name": "math",
+                          "fullPath": "node_modules/es-toolkit/dist/compat/math",
+                          "value": 1045,
+                          "children": [
+                            {
+                              "name": "range.mjs",
+                              "fullPath": "node_modules/es-toolkit/dist/compat/math/range.mjs",
+                              "value": 1045
+                            }
+                          ]
+                        }
+                      ]
+                    },
+                    {
+                      "name": "predicate",
+                      "fullPath": "node_modules/es-toolkit/dist/predicate",
+                      "value": 10853,
+                      "children": [
+                        {
+                          "name": "isEqualWith.mjs",
+                          "fullPath": "node_modules/es-toolkit/dist/predicate/isEqualWith.mjs",
+                          "value": 5662
+                        },
+                        {
+                          "name": "isPlainObject.mjs",
+                          "fullPath": "node_modules/es-toolkit/dist/predicate/isPlainObject.mjs",
+                          "value": 1705
+                        },
+                        {
+                          "name": "isLength.mjs",
+                          "fullPath": "node_modules/es-toolkit/dist/predicate/isLength.mjs",
+                          "value": 851
+                        },
+                        {
+                          "name": "isPrimitive.mjs",
+                          "fullPath": "node_modules/es-toolkit/dist/predicate/isPrimitive.mjs",
+                          "value": 815
+                        },
+                        {
+                          "name": "isBuffer.mjs",
+                          "fullPath": "node_modules/es-toolkit/dist/predicate/isBuffer.mjs",
+                          "value": 752
+                        },
+                        {
+                          "name": "isEqual.mjs",
+                          "fullPath": "node_modules/es-toolkit/dist/predicate/isEqual.mjs",
+                          "value": 570
+                        },
+                        {
+                          "name": "isTypedArray.mjs",
+                          "fullPath": "node_modules/es-toolkit/dist/predicate/isTypedArray.mjs",
+                          "value": 498
+                        }
+                      ]
+                    },
+                    {
+                      "name": "object",
+                      "fullPath": "node_modules/es-toolkit/dist/object",
+                      "value": 8211,
+                      "children": [
+                        {
+                          "name": "cloneDeepWith.mjs",
+                          "fullPath": "node_modules/es-toolkit/dist/object/cloneDeepWith.mjs",
+                          "value": 6740
+                        },
+                        {
+                          "name": "cloneDeep.mjs",
+                          "fullPath": "node_modules/es-toolkit/dist/object/cloneDeep.mjs",
+                          "value": 1471
+                        }
+                      ]
+                    },
+                    {
+                      "name": "array",
+                      "fullPath": "node_modules/es-toolkit/dist/array",
+                      "value": 2164,
+                      "children": [
+                        {
+                          "name": "uniqBy.mjs",
+                          "fullPath": "node_modules/es-toolkit/dist/array/uniqBy.mjs",
+                          "value": 1199
+                        },
+                        {
+                          "name": "flatten.mjs",
+                          "fullPath": "node_modules/es-toolkit/dist/array/flatten.mjs",
+                          "value": 965
+                        }
+                      ]
+                    },
+                    {
+                      "name": "_internal",
+                      "fullPath": "node_modules/es-toolkit/dist/_internal",
+                      "value": 1308,
+                      "children": [
+                        {
+                          "name": "isEqualsSameValueZero.mjs",
+                          "fullPath": "node_modules/es-toolkit/dist/_internal/isEqualsSameValueZero.mjs",
+                          "value": 560
+                        },
+                        {
+                          "name": "isUnsafeProperty.mjs",
+                          "fullPath": "node_modules/es-toolkit/dist/_internal/isUnsafeProperty.mjs",
+                          "value": 493
+                        },
+                        {
+                          "name": "globalThis.mjs",
+                          "fullPath": "node_modules/es-toolkit/dist/_internal/globalThis.mjs",
+                          "value": 255
+                        }
+                      ]
+                    },
+                    {
+                      "name": "function",
+                      "fullPath": "node_modules/es-toolkit/dist/function",
+                      "value": 1282,
+                      "children": [
+                        {
+                          "name": "ary.mjs",
+                          "fullPath": "node_modules/es-toolkit/dist/function/ary.mjs",
+                          "value": 631
+                        },
+                        {
+                          "name": "identity.mjs",
+                          "fullPath": "node_modules/es-toolkit/dist/function/identity.mjs",
+                          "value": 401
+                        },
+                        {
+                          "name": "noop.mjs",
+                          "fullPath": "node_modules/es-toolkit/dist/function/noop.mjs",
+                          "value": 250
                         }
                       ]
                     }
@@ -3488,36 +4171,17 @@
             {
               "name": "immer",
               "fullPath": "node_modules/immer",
-              "value": 28190,
+              "value": 27717,
               "children": [
                 {
                   "name": "dist",
                   "fullPath": "node_modules/immer/dist",
-                  "value": 28190,
+                  "value": 27717,
                   "children": [
                     {
                       "name": "immer.mjs",
                       "fullPath": "node_modules/immer/dist/immer.mjs",
-                      "value": 28190
-                    }
-                  ]
-                }
-              ]
-            },
-            {
-              "name": "redux",
-              "fullPath": "node_modules/redux",
-              "value": 23594,
-              "children": [
-                {
-                  "name": "es",
-                  "fullPath": "node_modules/redux/es",
-                  "value": 23594,
-                  "children": [
-                    {
-                      "name": "redux.js",
-                      "fullPath": "node_modules/redux/es/redux.js",
-                      "value": 23594
+                      "value": 27717
                     }
                   ]
                 }
@@ -3526,12 +4190,12 @@
             {
               "name": "d3-shape",
               "fullPath": "node_modules/d3-shape",
-              "value": 21306,
+              "value": 24951,
               "children": [
                 {
                   "name": "src",
                   "fullPath": "node_modules/d3-shape/src",
-                  "value": 21306,
+                  "value": 24951,
                   "children": [
                     {
                       "name": "curve",
@@ -3591,6 +4255,48 @@
                       "value": 2960
                     },
                     {
+                      "name": "symbol",
+                      "fullPath": "node_modules/d3-shape/src/symbol",
+                      "value": 2644,
+                      "children": [
+                        {
+                          "name": "wye.js",
+                          "fullPath": "node_modules/d3-shape/src/symbol/wye.js",
+                          "value": 787
+                        },
+                        {
+                          "name": "star.js",
+                          "fullPath": "node_modules/d3-shape/src/symbol/star.js",
+                          "value": 562
+                        },
+                        {
+                          "name": "cross.js",
+                          "fullPath": "node_modules/d3-shape/src/symbol/cross.js",
+                          "value": 467
+                        },
+                        {
+                          "name": "diamond.js",
+                          "fullPath": "node_modules/d3-shape/src/symbol/diamond.js",
+                          "value": 302
+                        },
+                        {
+                          "name": "triangle.js",
+                          "fullPath": "node_modules/d3-shape/src/symbol/triangle.js",
+                          "value": 247
+                        },
+                        {
+                          "name": "circle.js",
+                          "fullPath": "node_modules/d3-shape/src/symbol/circle.js",
+                          "value": 148
+                        },
+                        {
+                          "name": "square.js",
+                          "fullPath": "node_modules/d3-shape/src/symbol/square.js",
+                          "value": 131
+                        }
+                      ]
+                    },
+                    {
                       "name": "offset",
                       "fullPath": "node_modules/d3-shape/src/offset",
                       "value": 1635,
@@ -3628,6 +4334,11 @@
                       "value": 1292
                     },
                     {
+                      "name": "symbol.js",
+                      "fullPath": "node_modules/d3-shape/src/symbol.js",
+                      "value": 886
+                    },
+                    {
                       "name": "path.js",
                       "fullPath": "node_modules/d3-shape/src/path.js",
                       "value": 353
@@ -3650,6 +4361,11 @@
                       ]
                     },
                     {
+                      "name": "math.js",
+                      "fullPath": "node_modules/d3-shape/src/math.js",
+                      "value": 115
+                    },
+                    {
                       "name": "constant.js",
                       "fullPath": "node_modules/d3-shape/src/constant.js",
                       "value": 77
@@ -3663,6 +4379,25 @@
                       "name": "noop.js",
                       "fullPath": "node_modules/d3-shape/src/noop.js",
                       "value": 21
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "name": "redux",
+              "fullPath": "node_modules/redux",
+              "value": 23594,
+              "children": [
+                {
+                  "name": "es",
+                  "fullPath": "node_modules/redux/es",
+                  "value": 23594,
+                  "children": [
+                    {
+                      "name": "redux.js",
+                      "fullPath": "node_modules/redux/es/redux.js",
+                      "value": 23594
                     }
                   ]
                 }
@@ -3687,195 +4422,6 @@
                       "name": "defaultLocale.js",
                       "fullPath": "node_modules/d3-time-format/src/defaultLocale.js",
                       "value": 731
-                    }
-                  ]
-                }
-              ]
-            },
-            {
-              "name": "es-toolkit",
-              "fullPath": "node_modules/es-toolkit",
-              "value": 18491,
-              "children": [
-                {
-                  "name": "dist",
-                  "fullPath": "node_modules/es-toolkit/dist",
-                  "value": 18491,
-                  "children": [
-                    {
-                      "name": "compat",
-                      "fullPath": "node_modules/es-toolkit/dist/compat",
-                      "value": 15622,
-                      "children": [
-                        {
-                          "name": "util",
-                          "fullPath": "node_modules/es-toolkit/dist/compat/util",
-                          "value": 3763,
-                          "children": [
-                            {
-                              "name": "toPath.mjs",
-                              "fullPath": "node_modules/es-toolkit/dist/compat/util/toPath.mjs",
-                              "value": 1864
-                            },
-                            {
-                              "name": "toString.mjs",
-                              "fullPath": "node_modules/es-toolkit/dist/compat/util/toString.mjs",
-                              "value": 772
-                            },
-                            {
-                              "name": "toFinite.mjs",
-                              "fullPath": "node_modules/es-toolkit/dist/compat/util/toFinite.mjs",
-                              "value": 614
-                            },
-                            {
-                              "name": "toNumber.mjs",
-                              "fullPath": "node_modules/es-toolkit/dist/compat/util/toNumber.mjs",
-                              "value": 513
-                            }
-                          ]
-                        },
-                        {
-                          "name": "array",
-                          "fullPath": "node_modules/es-toolkit/dist/compat/array",
-                          "value": 3657,
-                          "children": [
-                            {
-                              "name": "orderBy.mjs",
-                              "fullPath": "node_modules/es-toolkit/dist/compat/array/orderBy.mjs",
-                              "value": 3291
-                            },
-                            {
-                              "name": "sortBy.mjs",
-                              "fullPath": "node_modules/es-toolkit/dist/compat/array/sortBy.mjs",
-                              "value": 366
-                            }
-                          ]
-                        },
-                        {
-                          "name": "_internal",
-                          "fullPath": "node_modules/es-toolkit/dist/compat/_internal",
-                          "value": 3324,
-                          "children": [
-                            {
-                              "name": "isKey.mjs",
-                              "fullPath": "node_modules/es-toolkit/dist/compat/_internal/isKey.mjs",
-                              "value": 979
-                            },
-                            {
-                              "name": "isDeepKey.mjs",
-                              "fullPath": "node_modules/es-toolkit/dist/compat/_internal/isDeepKey.mjs",
-                              "value": 683
-                            },
-                            {
-                              "name": "compareValues.mjs",
-                              "fullPath": "node_modules/es-toolkit/dist/compat/_internal/compareValues.mjs",
-                              "value": 577
-                            },
-                            {
-                              "name": "toKey.mjs",
-                              "fullPath": "node_modules/es-toolkit/dist/compat/_internal/toKey.mjs",
-                              "value": 388
-                            },
-                            {
-                              "name": "isIterateeCall.mjs",
-                              "fullPath": "node_modules/es-toolkit/dist/compat/_internal/isIterateeCall.mjs",
-                              "value": 349
-                            },
-                            {
-                              "name": "isIndex.mjs",
-                              "fullPath": "node_modules/es-toolkit/dist/compat/_internal/isIndex.mjs",
-                              "value": 348
-                            }
-                          ]
-                        },
-                        {
-                          "name": "predicate",
-                          "fullPath": "node_modules/es-toolkit/dist/compat/predicate",
-                          "value": 1979,
-                          "children": [
-                            {
-                              "name": "isObject.mjs",
-                              "fullPath": "node_modules/es-toolkit/dist/compat/predicate/isObject.mjs",
-                              "value": 979
-                            },
-                            {
-                              "name": "isArrayLike.mjs",
-                              "fullPath": "node_modules/es-toolkit/dist/compat/predicate/isArrayLike.mjs",
-                              "value": 518
-                            },
-                            {
-                              "name": "isSymbol.mjs",
-                              "fullPath": "node_modules/es-toolkit/dist/compat/predicate/isSymbol.mjs",
-                              "value": 482
-                            }
-                          ]
-                        },
-                        {
-                          "name": "object",
-                          "fullPath": "node_modules/es-toolkit/dist/compat/object",
-                          "value": 1854,
-                          "children": [
-                            {
-                              "name": "get.mjs",
-                              "fullPath": "node_modules/es-toolkit/dist/compat/object/get.mjs",
-                              "value": 1854
-                            }
-                          ]
-                        },
-                        {
-                          "name": "math",
-                          "fullPath": "node_modules/es-toolkit/dist/compat/math",
-                          "value": 1045,
-                          "children": [
-                            {
-                              "name": "range.mjs",
-                              "fullPath": "node_modules/es-toolkit/dist/compat/math/range.mjs",
-                              "value": 1045
-                            }
-                          ]
-                        }
-                      ]
-                    },
-                    {
-                      "name": "_internal",
-                      "fullPath": "node_modules/es-toolkit/dist/_internal",
-                      "value": 1053,
-                      "children": [
-                        {
-                          "name": "isEqualsSameValueZero.mjs",
-                          "fullPath": "node_modules/es-toolkit/dist/_internal/isEqualsSameValueZero.mjs",
-                          "value": 560
-                        },
-                        {
-                          "name": "isUnsafeProperty.mjs",
-                          "fullPath": "node_modules/es-toolkit/dist/_internal/isUnsafeProperty.mjs",
-                          "value": 493
-                        }
-                      ]
-                    },
-                    {
-                      "name": "array",
-                      "fullPath": "node_modules/es-toolkit/dist/array",
-                      "value": 965,
-                      "children": [
-                        {
-                          "name": "flatten.mjs",
-                          "fullPath": "node_modules/es-toolkit/dist/array/flatten.mjs",
-                          "value": 965
-                        }
-                      ]
-                    },
-                    {
-                      "name": "predicate",
-                      "fullPath": "node_modules/es-toolkit/dist/predicate",
-                      "value": 851,
-                      "children": [
-                        {
-                          "name": "isLength.mjs",
-                          "fullPath": "node_modules/es-toolkit/dist/predicate/isLength.mjs",
-                          "value": 851
-                        }
-                      ]
                     }
                   ]
                 }
@@ -4511,32 +5057,32 @@
         {
           "name": "entry",
           "fullPath": "entry",
-          "value": 1416,
+          "value": 1607,
           "children": [
             {
               "name": "www",
               "fullPath": "entry/www",
-              "value": 1416,
+              "value": 1607,
               "children": [
                 {
                   "name": "src",
                   "fullPath": "entry/www/src",
-                  "value": 1416,
+                  "value": 1607,
                   "children": [
                     {
                       "name": "views",
                       "fullPath": "entry/www/src/views",
-                      "value": 1416,
+                      "value": 1607,
                       "children": [
                         {
                           "name": "IndexView",
                           "fullPath": "entry/www/src/views/IndexView",
-                          "value": 1416,
+                          "value": 1607,
                           "children": [
                             {
                               "name": "IndexLineChart.tsx",
                               "fullPath": "entry/www/src/views/IndexView/IndexLineChart.tsx",
-                              "value": 1416
+                              "value": 1607
                             }
                           ]
                         }
