@@ -931,9 +931,18 @@ const defaultPieAnimateItems: AnimationInterpolateFn<PieSectorDataItem, PolarLay
 
   items.forEach((item, index) => {
     if (item.status === 'removed') return;
-    const paddingAngle = index > 0 ? get(item.next, 'paddingAngle', 0) : 0;
 
     if (item.status === 'matched') {
+      /*
+       * The padding angle can itself change between prev and next (for example when a segment's
+       * value crosses zero, its padding drops to 0). Interpolate it the same way as the arc angle
+       * itself, otherwise the gap snaps to its final value on the very first animation frame,
+       * throwing off every angle computed afterwards, including the closing gap of the last sector.
+       */
+      const paddingAngle =
+        index > 0
+          ? interpolate(get(item.prev, 'paddingAngle', 0), get(item.next, 'paddingAngle', 0), animationElapsedTime)
+          : 0;
       const angle = interpolate(
         item.prev.endAngle - item.prev.startAngle,
         item.next.endAngle - item.next.startAngle,
@@ -944,6 +953,7 @@ const defaultPieAnimateItems: AnimationInterpolateFn<PieSectorDataItem, PolarLay
       curAngle = latest.endAngle;
     } else {
       // added
+      const paddingAngle = index > 0 ? get(item.next, 'paddingAngle', 0) : 0;
       const deltaAngle = interpolate(0, item.next.endAngle - item.next.startAngle, animationElapsedTime);
       const latest = {
         ...item.next,
