@@ -931,4 +931,39 @@ describe('PieSectorData and PieSectorDataItem type should include data propertie
       expect(sectors[3].paddingAngle).toBe(5);
     });
   });
+
+  describe('when maxRadius is set', () => {
+    // https://github.com/recharts/recharts/issues/4885
+    // maxRadius should cap the radius that percentage-based innerRadius/outerRadius resolve against,
+    // regardless of how much bigger the chart's own width/height are.
+    const renderMaxRadiusTestCase = (maxRadius: number | undefined) =>
+      createSelectorTestCase(({ children }) => (
+        <PieChart width={800} height={800}>
+          <Pie
+            dataKey="value"
+            data={[{ name: 'A', value: 400 }]}
+            cx="50%"
+            cy="50%"
+            outerRadius="80%"
+            maxRadius={maxRadius}
+            id="pie-id"
+          />
+          {children}
+        </PieChart>
+      ));
+
+    it('should resolve percentage outerRadius against maxRadius when provided', () => {
+      const { spy } = renderMaxRadiusTestCase(100)(state => selectPieSectors(state, 'pie-id', []));
+      const sectors = spy.mock.lastCall?.[0];
+      assertNotNull(sectors);
+      expect(sectors[0].outerRadius).toBe(80);
+    });
+
+    it('should fall back to a radius derived from chart size when maxRadius is not provided', () => {
+      const { spy } = renderMaxRadiusTestCase(undefined)(state => selectPieSectors(state, 'pie-id', []));
+      const sectors = spy.mock.lastCall?.[0];
+      assertNotNull(sectors);
+      expect(sectors[0].outerRadius).toBe(316);
+    });
+  });
 });

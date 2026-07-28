@@ -555,7 +555,7 @@ const getOuterRadius = (
 
 const parseCoordinateOfPie = (pieSettings: PieSettings, offset: ChartOffsetInternal, dataPoint: any): PieCoordinate => {
   const { top, left, width, height } = offset;
-  const maxPieRadius = getMaxRadius(width, height);
+  const maxPieRadius = pieSettings.maxRadius || getMaxRadius(width, height);
   const cx = left + getPercentValue(pieSettings.cx, width, width / 2);
   const cy = top + getPercentValue(pieSettings.cy, height, height / 2);
   const innerRadius = getPercentValue(pieSettings.innerRadius, maxPieRadius, 0);
