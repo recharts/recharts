@@ -220,7 +220,19 @@ export const Rectangle: React.FC<Props> = rectangleProps => {
   const animationIdInput = useMemo(() => ({ x, y, width, height, radius }), [x, y, width, height, radius]);
   const animationId = useAnimationId(animationIdInput, 'rectangle-');
 
-  if (x !== +x || y !== +y || width !== +width || height !== +height || width === 0 || height === 0) {
+  if (x !== +x || y !== +y || width !== +width || height !== +height) {
+    return null;
+  }
+
+  /*
+   * A rectangle with a zero width or height has nothing to paint, so usually we render nothing at all.
+   * The exception is a rectangle that is animating down to zero: bailing out here would unmount it
+   * immediately and the shrinking animation would never run - which is why rectangles used to animate
+   * away from zero but not towards it.
+   */
+  const hasZeroDimension = width === 0 || height === 0;
+  const wasVisibleBefore = prevWidthRef.current !== 0 && prevHeightRef.current !== 0;
+  if (hasZeroDimension && !(isUpdateAnimationActive && wasVisibleBefore)) {
     return null;
   }
 

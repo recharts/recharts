@@ -358,4 +358,80 @@ describe('Rectangle animation', () => {
       });
     },
   );
+
+  describe('when the height changes to zero', () => {
+    function HeightTestCase({
+      startHeight,
+      isUpdateAnimationActive,
+      children,
+    }: {
+      startHeight: number;
+      isUpdateAnimationActive: boolean;
+      children: React.ReactNode;
+    }) {
+      const [height, setHeight] = React.useState(startHeight);
+      return (
+        <>
+          <button type="button" onClick={() => setHeight(h => (h === 0 ? 100 : 0))}>
+            Change height
+          </button>
+          <Surface width={400} height={400}>
+            <Rectangle
+              x={50}
+              y={50}
+              width={80}
+              height={height}
+              radius={4}
+              fill="#ff7300"
+              isAnimationActive
+              isUpdateAnimationActive={isUpdateAnimationActive}
+            />
+            {children}
+          </Surface>
+        </>
+      );
+    }
+
+    function heightTestCase({
+      startHeight,
+      isUpdateAnimationActive,
+    }: {
+      startHeight: number;
+      isUpdateAnimationActive: boolean;
+    }) {
+      return createSelectorTestCase(({ children }) => (
+        <HeightTestCase startHeight={startHeight} isUpdateAnimationActive={isUpdateAnimationActive}>
+          {children}
+        </HeightTestCase>
+      ));
+    }
+
+    function countRectangles(container: Element): number {
+      return container.querySelectorAll('.recharts-rectangle').length;
+    }
+
+    it('should keep the rectangle rendered so that it can animate out', async () => {
+      const renderTestCase = heightTestCase({ startHeight: 100, isUpdateAnimationActive: true });
+      const { container } = renderTestCase();
+      expect(countRectangles(container)).toBe(1);
+
+      await prime(container);
+      expect(countRectangles(container)).toBe(1);
+    });
+
+    it('should remove the rectangle immediately when isUpdateAnimationActive is false', async () => {
+      const renderTestCase = heightTestCase({ startHeight: 100, isUpdateAnimationActive: false });
+      const { container } = renderTestCase();
+      expect(countRectangles(container)).toBe(1);
+
+      await prime(container);
+      expect(countRectangles(container)).toBe(0);
+    });
+
+    it('should render nothing when the height is zero on the initial render', () => {
+      const renderTestCase = heightTestCase({ startHeight: 0, isUpdateAnimationActive: true });
+      const { container } = renderTestCase();
+      expect(countRectangles(container)).toBe(0);
+    });
+  });
 });
