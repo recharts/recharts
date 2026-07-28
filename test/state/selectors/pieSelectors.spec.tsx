@@ -965,5 +965,13 @@ describe('PieSectorData and PieSectorDataItem type should include data propertie
       assertNotNull(sectors);
       expect(sectors[0].outerRadius).toBe(316);
     });
+
+    it('should preserve a zero maxRadius when resolving percentage radii', () => {
+      const { spy } = renderMaxRadiusTestCase(0)(state => selectPieSectors(state, 'pie-id', []));
+      const sectors = spy.mock.lastCall?.[0];
+      assertNotNull(sectors);
+      expect(sectors[0].outerRadius).toBe(0);
+      expect(sectors[0].maxRadius).toBe(0);
+    });
   });
 });
