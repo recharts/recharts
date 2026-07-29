@@ -182,8 +182,10 @@ interface BarProps<DataPointType, ValueAxisType> extends DataConsumer<DataPointT
    * By default, 0 values are not shown.
    * To visualize a 0 (or close to zero) point, set the minimal point size to a pixel value like 3.
    *
-   * In stacked bar charts, minPointSize might not be respected for tightly packed values.
-   * So we strongly recommend not using this props in stacked BarChart.
+   * In stacked bar charts, a segment inflated by minPointSize pushes the segments stacked
+   * on top of it outward by the same amount, so segments never overlap. This does mean that
+   * a stack with several undersized segments can grow taller (or wider) than the axis domain
+   * would otherwise imply.
    *
    * You may provide a function to conditionally change this prop based on Bar value.
    *
@@ -1095,6 +1097,7 @@ export function computeBarRectangles({
   xAxisTicks,
   yAxisTicks,
   stackedData,
+  stackedMinPointSizeShift,
   displayedData,
   offset,
   cells,
@@ -1110,6 +1113,13 @@ export function computeBarRectangles({
   xAxisTicks: TickItem[];
   yAxisTicks: TickItem[];
   stackedData: Series<Record<number, number>, DataKey<any>> | undefined;
+  /**
+   * How far the segments before this one in the same stack were pushed out by their own
+   * `minPointSize` inflation, indexed by data index. This segment's whole rectangle gets
+   * translated by the same amount so it stays attached to its stack neighbor instead of
+   * overlapping it. See {@link selectStackedMinPointSizeShift}.
+   */
+  stackedMinPointSizeShift: ReadonlyArray<number> | undefined;
   offset: ChartOffsetInternal;
   displayedData: ChartData;
   cells: ReadonlyArray<ReactElement> | undefined;
@@ -1163,6 +1173,10 @@ export function computeBarRectangles({
         height = isNan(computedHeight) ? 0 : computedHeight;
         background = { x, y: offset.top, width, height: offset.height };
 
+        if (stackedData && y != null) {
+          y -= stackedMinPointSizeShift?.[index] ?? 0;
+        }
+
         if (Math.abs(minPointSize) > 0 && Math.abs(height) < Math.abs(minPointSize)) {
           const delta = mathSign(height || minPointSize) * (Math.abs(minPointSize) - Math.abs(height));
 
@@ -1187,6 +1201,10 @@ export function computeBarRectangles({
         width = currentValueScale - baseValueScale;
         height = pos.size;
         background = { x: offset.left, y, width: offset.width, height };
+
+        if (stackedData) {
+          x += stackedMinPointSizeShift?.[index] ?? 0;
+        }
 
         if (Math.abs(minPointSize) > 0 && Math.abs(width) < Math.abs(minPointSize)) {
           const delta = mathSign(width || minPointSize) * (Math.abs(minPointSize) - Math.abs(width));
