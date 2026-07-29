@@ -43,6 +43,7 @@ import {
   Coordinate,
   DataConsumer,
   DataKey,
+  DataProvider,
   LegendType,
   PresentationAttributesAdaptChildEvent,
   ShapeAnimationProps,
@@ -127,7 +128,8 @@ export type BarShapeProps = BarRectangleItem &
     index: number;
   };
 
-interface BarProps<DataPointType, ValueAxisType> extends DataConsumer<DataPointType, ValueAxisType>, ZIndexable {
+interface BarProps<DataPointType, ValueAxisType>
+  extends DataProvider<DataPointType>, DataConsumer<DataPointType, ValueAxisType>, ZIndexable {
   className?: string;
   index?: Key;
   /**
@@ -1258,8 +1260,7 @@ function BarFn(outsideProps: Props) {
           <SetCartesianGraphicalItem
             type="bar"
             id={id}
-            // Bar does not allow setting data directly on the graphical item (why?)
-            data={undefined}
+            data={props.data}
             xAxisId={props.xAxisId}
             yAxisId={props.yAxisId}
             zAxisId={0}
