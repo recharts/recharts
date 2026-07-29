@@ -1174,7 +1174,7 @@ export function computeBarRectangles({
         background = { x, y: offset.top, width, height: offset.height };
 
         if (stackedData && y != null) {
-          y -= stackedMinPointSizeShift?.[index] ?? 0;
+          y -= stackedMinPointSizeShift?.[index + dataStartIndex] ?? 0;
         }
 
         if (Math.abs(minPointSize) > 0 && Math.abs(height) < Math.abs(minPointSize)) {
@@ -1203,7 +1203,7 @@ export function computeBarRectangles({
         background = { x: offset.left, y, width: offset.width, height };
 
         if (stackedData) {
-          x += stackedMinPointSizeShift?.[index] ?? 0;
+          x += stackedMinPointSizeShift?.[index + dataStartIndex] ?? 0;
         }
 
         if (Math.abs(minPointSize) > 0 && Math.abs(width) < Math.abs(minPointSize)) {

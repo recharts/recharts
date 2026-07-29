@@ -2,7 +2,18 @@ import React from 'react';
 import { beforeEach, describe, expect, it, test, vi } from 'vitest';
 import { act, fireEvent } from '@testing-library/react';
 import { renderWithStrictMode } from '../../helper/renderWithStrictMode';
-import { Bar, BarChart, BarProps, DefaultZIndexes, Legend, LegendType, Tooltip, XAxis, YAxis } from '../../../src';
+import {
+  Bar,
+  BarChart,
+  BarProps,
+  Brush,
+  DefaultZIndexes,
+  Legend,
+  LegendType,
+  Tooltip,
+  XAxis,
+  YAxis,
+} from '../../../src';
 import {
   allCartesianChartsExcept,
   AreaChartCase,
@@ -1432,6 +1443,32 @@ describe('minPointSize in a stacked bar chart, https://github.com/recharts/recha
 
     expect(seg2.y + seg2.height).toBeCloseTo(seg1.y, 5);
     expect(seg3.y + seg3.height).toBeCloseTo(seg2.y, 5);
+  });
+
+  it('still avoids overlap when a Brush makes dataStartIndex non-zero', () => {
+    const stackData = [
+      { name: 'skipped', small: 50, big: 50 },
+      { name: 'a', small: 1, big: 100 },
+    ];
+
+    const { container } = renderWithStrictMode(
+      <BarChart width={200} height={400} data={stackData}>
+        <XAxis dataKey="name" />
+        <YAxis />
+        <Bar dataKey="small" stackId="s" minPointSize={20} isAnimationActive={false} />
+        <Bar dataKey="big" stackId="s" minPointSize={20} isAnimationActive={false} />
+        <Brush dataKey="name" startIndex={1} endIndex={1} x={0} y={370} width={200} height={20} />
+      </BarChart>,
+    );
+
+    const [smallSegment, bigSegment] = getAllBarPaths(container);
+    const smallY = Number(smallSegment.getAttribute('y'));
+    const smallHeight = Number(smallSegment.getAttribute('height'));
+    const bigY = Number(bigSegment.getAttribute('y'));
+    const bigHeight = Number(bigSegment.getAttribute('height'));
+
+    expect(smallHeight).toBe(20);
+    expect(bigY + bigHeight).toBeCloseTo(smallY, 5);
   });
 });
 
