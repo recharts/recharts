@@ -1,45 +1,45 @@
 {
   "treemap": {
     "examplePath": "www/src/views/IndexView/IndexLineChart.tsx",
-    "totalSize": 897126,
-    "totalSizeLabel": "876.10 KB",
+    "totalSize": 897663,
+    "totalSizeLabel": "876.62 KB",
     "moduleCount": 366,
-    "generatedAt": "2026-07-29T06:41:01.858Z",
+    "generatedAt": "2026-07-29T07:36:18.616Z",
     "stages": [
       {
         "stage": "es6-folder",
-        "bytes": 1305480,
+        "bytes": 1306228,
         "humanReadableSize": "1.25 MB",
         "reductionFromBaselinePercent": 0
       },
       {
         "stage": "tree-shaken",
-        "bytes": 900005,
-        "humanReadableSize": "878.91 KB",
+        "bytes": 900542,
+        "humanReadableSize": "879.44 KB",
         "reductionFromBaselinePercent": 0
       },
       {
         "stage": "minified",
-        "bytes": 302610,
-        "humanReadableSize": "295.52 KB",
+        "bytes": 302762,
+        "humanReadableSize": "295.67 KB",
         "reductionFromBaselinePercent": 66.38
       },
       {
         "stage": "minified+gzip",
-        "bytes": 98854,
-        "humanReadableSize": "96.54 KB",
-        "reductionFromBaselinePercent": 89.02
+        "bytes": 98938,
+        "humanReadableSize": "96.62 KB",
+        "reductionFromBaselinePercent": 89.01
       }
     ],
     "tree": {
       "name": "bundle",
       "fullPath": "bundle",
-      "value": 897126,
+      "value": 897663,
       "children": [
         {
           "name": "src",
           "fullPath": "src",
-          "value": 493365,
+          "value": 493902,
           "children": [
             {
               "name": "state",
@@ -692,7 +692,7 @@
             {
               "name": "cartesian",
               "fullPath": "src/cartesian",
-              "value": 82422,
+              "value": 82959,
               "children": [
                 {
                   "name": "Line.tsx",
@@ -710,14 +710,14 @@
                   "value": 11729
                 },
                 {
+                  "name": "YAxis.tsx",
+                  "fullPath": "src/cartesian/YAxis.tsx",
+                  "value": 6858
+                },
+                {
                   "name": "getCartesianPosition.tsx",
                   "fullPath": "src/cartesian/getCartesianPosition.tsx",
                   "value": 6776
-                },
-                {
-                  "name": "YAxis.tsx",
-                  "fullPath": "src/cartesian/YAxis.tsx",
-                  "value": 6321
                 },
                 {
                   "name": "XAxis.tsx",
@@ -2550,45 +2550,45 @@
   },
   "sunburst": {
     "examplePath": "www/src/views/IndexView/IndexLineChart.tsx",
-    "totalSize": 897126,
-    "totalSizeLabel": "876.10 KB",
+    "totalSize": 897663,
+    "totalSizeLabel": "876.62 KB",
     "moduleCount": 366,
-    "generatedAt": "2026-07-29T06:41:03.931Z",
+    "generatedAt": "2026-07-29T07:36:20.807Z",
     "stages": [
       {
         "stage": "es6-folder",
-        "bytes": 1305480,
+        "bytes": 1306228,
         "humanReadableSize": "1.25 MB",
         "reductionFromBaselinePercent": 0
       },
       {
         "stage": "tree-shaken",
-        "bytes": 900005,
-        "humanReadableSize": "878.91 KB",
+        "bytes": 900542,
+        "humanReadableSize": "879.44 KB",
         "reductionFromBaselinePercent": 0
       },
       {
         "stage": "minified",
-        "bytes": 302610,
-        "humanReadableSize": "295.52 KB",
+        "bytes": 302762,
+        "humanReadableSize": "295.67 KB",
         "reductionFromBaselinePercent": 66.38
       },
       {
         "stage": "minified+gzip",
-        "bytes": 98854,
-        "humanReadableSize": "96.54 KB",
-        "reductionFromBaselinePercent": 89.02
+        "bytes": 98938,
+        "humanReadableSize": "96.62 KB",
+        "reductionFromBaselinePercent": 89.01
       }
     ],
     "tree": {
       "name": "bundle",
       "fullPath": "bundle",
-      "value": 897126,
+      "value": 897663,
       "children": [
         {
           "name": "src",
           "fullPath": "src",
-          "value": 493365,
+          "value": 493902,
           "children": [
             {
               "name": "state",
@@ -3241,7 +3241,7 @@
             {
               "name": "cartesian",
               "fullPath": "src/cartesian",
-              "value": 82422,
+              "value": 82959,
               "children": [
                 {
                   "name": "Line.tsx",
@@ -3259,14 +3259,14 @@
                   "value": 11729
                 },
                 {
+                  "name": "YAxis.tsx",
+                  "fullPath": "src/cartesian/YAxis.tsx",
+                  "value": 6858
+                },
+                {
                   "name": "getCartesianPosition.tsx",
                   "fullPath": "src/cartesian/getCartesianPosition.tsx",
                   "value": 6776
-                },
-                {
-                  "name": "YAxis.tsx",
-                  "fullPath": "src/cartesian/YAxis.tsx",
-                  "value": 6321
                 },
                 {
                   "name": "XAxis.tsx",
