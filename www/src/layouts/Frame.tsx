@@ -36,7 +36,11 @@ export function Frame(props: FrameProps) {
   const colorMode = useColorMode();
 
   if (isIsolated) {
-    return <main>{children}</main>;
+    return (
+      <RechartsThemeProvider value={colorMode.mode === 'light' ? lightTheme : darkTheme}>
+        <main>{children}</main>
+      </RechartsThemeProvider>
+    );
   }
 
   return (

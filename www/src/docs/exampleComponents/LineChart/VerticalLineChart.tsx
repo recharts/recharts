@@ -1,57 +1,13 @@
-import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend } from 'recharts';
-import { RechartsDevtools } from '@recharts/devtools';
+import { Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, createVerticalChart } from 'recharts';
+import { generateMockData, MockDataType, RechartsDevtools } from '@recharts/devtools';
 
-// #region Sample data
-const data = [
-  {
-    name: 'Page A',
-    uv: 4000,
-    pv: 2400,
-    amt: 2400,
-  },
-  {
-    name: 'Page B',
-    uv: 3000,
-    pv: 1398,
-    amt: 2210,
-  },
-  {
-    name: 'Page C',
-    uv: 2000,
-    pv: 9800,
-    amt: 2290,
-  },
-  {
-    name: 'Page D',
-    uv: 2780,
-    pv: 3908,
-    amt: 2000,
-  },
-  {
-    name: 'Page E',
-    uv: 1890,
-    pv: 4800,
-    amt: 2181,
-  },
-  {
-    name: 'Page F',
-    uv: 2390,
-    pv: 3800,
-    amt: 2500,
-  },
-  {
-    name: 'Page G',
-    uv: 3490,
-    pv: 4300,
-    amt: 2100,
-  },
-];
+const data: Array<MockDataType> = generateMockData(6, 294213);
 
-// #endregion
+const Typed = createVerticalChart<MockDataType, string, number>()({ XAxis, YAxis, Tooltip, Line });
+
 export default function Example(props: { isAnimationActive?: boolean }) {
   return (
-    <LineChart
-      layout="vertical"
+    <Typed.LineChart
       style={{ width: '100%', maxWidth: '300px', maxHeight: '70vh', aspectRatio: 1 / 1.618 }}
       responsive
       data={data}
@@ -63,36 +19,16 @@ export default function Example(props: { isAnimationActive?: boolean }) {
       }}
     >
       <CartesianGrid strokeDasharray="3 3" />
-      <XAxis type="number" />
-      <YAxis dataKey="name" type="category" width="auto" />
+      <Typed.XAxis type="number" />
+      <Typed.YAxis dataKey="label" type="category" width="auto" />
       <Tooltip
         cursor={{ stroke: 'var(--color-border-2)' }}
         contentStyle={{ backgroundColor: 'var(--color-surface-base)', borderColor: 'var(--color-border-2)' }}
       />
       <Legend />
-      <Line
-        dataKey="pv"
-        stroke="var(--color-chart-1)"
-        dot={{
-          fill: 'var(--color-surface-base)',
-        }}
-        activeDot={{
-          stroke: 'var(--color-surface-base)',
-        }}
-        isAnimationActive={props.isAnimationActive}
-      />
-      <Line
-        dataKey="uv"
-        stroke="var(--color-chart-2)"
-        dot={{
-          fill: 'var(--color-surface-base)',
-        }}
-        activeDot={{
-          stroke: 'var(--color-surface-base)',
-        }}
-        isAnimationActive={props.isAnimationActive}
-      />
+      <Typed.Line dataKey="x" isAnimationActive={props.isAnimationActive} />
+      <Typed.Line dataKey="y" isAnimationActive={props.isAnimationActive} />
       <RechartsDevtools />
-    </LineChart>
+    </Typed.LineChart>
   );
 }

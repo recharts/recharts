@@ -44,29 +44,12 @@ export default function Example() {
   return (
     <div style={{ width: '100%' }}>
       <BaseChart>
-        <Line
-          type="monotone"
-          dataKey="uv"
-          stroke="var(--color-chart-1)"
-          fill="var(--color-chart-1)"
-          activeDot={{
-            stroke: 'var(--color-surface-base)',
-          }}
-        />
+        <Line type="monotone" dataKey="uv" />
         <RechartsDevtools />
       </BaseChart>
 
       <BaseChart>
-        <Line
-          connectNulls
-          type="monotone"
-          dataKey="uv"
-          stroke="var(--color-chart-1)"
-          fill="var(--color-chart-1)"
-          activeDot={{
-            stroke: 'var(--color-surface-base)',
-          }}
-        />
+        <Line connectNulls type="monotone" dataKey="uv" />
       </BaseChart>
     </div>
   );

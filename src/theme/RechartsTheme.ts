@@ -11,6 +11,14 @@ type Styles2D = {
   strokeDasharray?: string | number;
   fillOpacity?: number;
   fill?: string;
+  /**
+   * Styles applied to the active representation of a graphical item.
+   *
+   * The supported active representation differs by component. For example,
+   * Line uses this for its built-in active dot, while Bar and Pie will use it
+   * for their active shapes when they support graphical item themes.
+   */
+  active?: Omit<Styles2D, 'active'>;
 };
 
 /**

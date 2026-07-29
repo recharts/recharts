@@ -72,7 +72,6 @@ export default function LineChartCustomShapeExample(props: Partial<ControlsType>
         key={replayKey}
         type="monotone"
         dataKey="y"
-        stroke="#8884d8"
         strokeWidth={3}
         shape={OpacityFadeShape}
         animationDuration={animationDuration}

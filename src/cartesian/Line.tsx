@@ -922,9 +922,20 @@ function LineFn(outsideProps: Props) {
       ? undefined
       : theme.graphicalItems[graphicalItemIdentity({ dataKey: outsideProps.dataKey }, theme.graphicalItems.length)];
   const themeStrokeDasharray = graphicalItemTheme?.strokeDasharray;
+  const activeDot =
+    graphicalItemTheme?.active == null ||
+    outsideProps.activeDot === false ||
+    typeof outsideProps.activeDot === 'function' ||
+    React.isValidElement(outsideProps.activeDot)
+      ? outsideProps.activeDot
+      : {
+          ...graphicalItemTheme.active,
+          ...(typeof outsideProps.activeDot === 'object' ? outsideProps.activeDot : {}),
+        };
   const props = resolveDefaultProps(
     {
       ...outsideProps,
+      activeDot,
       fill: outsideProps.fill ?? graphicalItemTheme?.fill,
       fillOpacity: outsideProps.fillOpacity ?? graphicalItemTheme?.fillOpacity,
       stroke: outsideProps.stroke ?? graphicalItemTheme?.stroke,

@@ -1,4 +1,4 @@
-import { CartesianGrid, Legend, Line, LineChart, Tooltip, XAxis, YAxis } from 'recharts';
+import { CartesianGrid, Legend, Line, LineChart, LineProps, Tooltip, useRechartsTheme, XAxis, YAxis } from 'recharts';
 import { RechartsDevtools } from '@recharts/devtools';
 
 // #region Sample data
@@ -29,32 +29,27 @@ const series = [
   },
 ];
 
+function MyLine(props: LineProps & { index: number }) {
+  const { index, ...rest } = props;
+  const theme = useRechartsTheme();
+  return <Line {...theme.graphicalItems?.[index]} {...rest} />;
+}
+
 // #endregion
-export default function LineChartHasMultiSeries() {
+export default function LineChartHasMultiSeries({ defaultIndex }: { defaultIndex?: number }) {
   return (
     <LineChart style={{ width: '100%', maxWidth: '700px', maxHeight: '70vh', aspectRatio: 1.618 }} responsive>
       <CartesianGrid strokeDasharray="3 3" />
       <XAxis dataKey="category" type="category" allowDuplicatedCategory={false} />
       <YAxis dataKey="value" width="auto" />
       <Tooltip
+        defaultIndex={defaultIndex}
         cursor={{ stroke: 'var(--color-border-2)' }}
         contentStyle={{ backgroundColor: 'var(--color-surface-base)', borderColor: 'var(--color-border-2)' }}
       />
       <Legend />
-      {series.map(s => (
-        <Line
-          dataKey="value"
-          data={s.data}
-          name={s.name}
-          key={s.name}
-          stroke="var(--color-chart-1)"
-          dot={{
-            fill: 'var(--color-surface-base)',
-          }}
-          activeDot={{
-            stroke: 'var(--color-surface-base)',
-          }}
-        />
+      {series.map((s, index) => (
+        <MyLine dataKey="value" data={s.data} name={s.name} key={s.name} index={index} />
       ))}
       <RechartsDevtools />
     </LineChart>

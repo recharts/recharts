@@ -163,32 +163,8 @@ const HighlightAndZoomLineChart = () => {
           }}
           contentStyle={{ backgroundColor: 'var(--color-surface-base)', borderColor: 'var(--color-border-2)' }}
         />
-        <Line
-          yAxisId="1"
-          type="natural"
-          dataKey="cost"
-          stroke="#8884d8"
-          animationDuration={300}
-          dot={{
-            fill: 'var(--color-surface-base)',
-          }}
-          activeDot={{
-            stroke: 'var(--color-surface-base)',
-          }}
-        />
-        <Line
-          yAxisId="2"
-          type="natural"
-          dataKey="impression"
-          stroke="#82ca9d"
-          animationDuration={300}
-          dot={{
-            fill: 'var(--color-surface-base)',
-          }}
-          activeDot={{
-            stroke: 'var(--color-surface-base)',
-          }}
-        />
+        <Line yAxisId="1" type="natural" dataKey="cost" animationDuration={300} />
+        <Line yAxisId="2" type="natural" dataKey="impression" animationDuration={300} />
 
         {refAreaLeft && refAreaRight ? (
           <ReferenceArea

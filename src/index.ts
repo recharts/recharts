@@ -278,7 +278,7 @@ export type { CursorDefinition } from './component/Cursor';
 export type { TooltipTrigger } from './chart/types';
 
 export type { RechartsTheme } from './theme/RechartsTheme';
-export { RechartsThemeProvider } from './theme/RechartsThemeContext';
+export { RechartsThemeProvider, useRechartsTheme } from './theme/RechartsThemeContext';
 export { darkTheme } from './theme/darkTheme';
 export { lightTheme } from './theme/lightTheme';
 export { legacyTheme } from './theme/legacyTheme';
