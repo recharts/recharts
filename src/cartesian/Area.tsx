@@ -1083,19 +1083,20 @@ function AreaFn(outsideProps: Props<any, any>) {
           ...graphicalItemTheme.active,
           ...(typeof outsideProps.activeDot === 'object' ? outsideProps.activeDot : {}),
         };
-  const props = resolveDefaultProps(
-    {
-      ...outsideProps,
-      activeDot,
-      fill: outsideProps.fill ?? graphicalItemTheme?.fill,
-      fillOpacity: outsideProps.fillOpacity ?? graphicalItemTheme?.fillOpacity,
-      stroke: outsideProps.stroke ?? graphicalItemTheme?.stroke,
-      strokeOpacity: outsideProps.strokeOpacity ?? graphicalItemTheme?.strokeOpacity,
-      strokeWidth: outsideProps.strokeWidth ?? graphicalItemTheme?.strokeWidth,
-      strokeDasharray:
-        outsideProps.strokeDasharray ??
-        (Array.isArray(themeStrokeDasharray) ? themeStrokeDasharray.join(',') : themeStrokeDasharray),
-    } as Props<any, any>,
+  const propsWithTheme: Props<any, any> = {
+    ...outsideProps,
+    activeDot,
+    fill: outsideProps.fill ?? graphicalItemTheme?.fill,
+    fillOpacity: outsideProps.fillOpacity ?? graphicalItemTheme?.fillOpacity,
+    stroke: outsideProps.stroke ?? graphicalItemTheme?.stroke,
+    strokeOpacity: outsideProps.strokeOpacity ?? graphicalItemTheme?.strokeOpacity,
+    strokeWidth: outsideProps.strokeWidth ?? graphicalItemTheme?.strokeWidth,
+    strokeDasharray:
+      outsideProps.strokeDasharray ??
+      (Array.isArray(themeStrokeDasharray) ? themeStrokeDasharray.join(',') : themeStrokeDasharray),
+  };
+  const props: RequiresDefaultProps<Props<any, any>, typeof defaultAreaProps> = resolveDefaultProps(
+    propsWithTheme,
     defaultAreaProps,
   );
   const isPanorama = useIsPanorama();
