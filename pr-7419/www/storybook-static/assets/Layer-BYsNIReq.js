@@ -1,0 +1,4 @@
+import{a as e,n as t}from"./rolldown-runtime-DkW27tQK.js";import{t as n}from"./react-B6tGW3fj.js";import{d as r,f as i}from"./get-JYKwurb5.js";import{C as a,S as o}from"./resolveDefaultProps-CQN_Mtsc.js";var s,c;function l(){return(l=t((()=>{s=e(n()),i(),o(),c=s.forwardRef((e,t)=>{let{children:n,className:i,...o}=e,c=r(`recharts-layer`,i);return s.createElement(`g`,{className:c,...a(o),ref:t},n)});try{c.displayName=`Layer`,c.__docgenInfo={description:`Creates an SVG group element to group other SVG elements.
+
+Useful if you want to apply transformations or styles to a set of elements
+without affecting other elements in the SVG.`,displayName:`Layer`,filePath:`/__w/recharts/recharts/src/container/Layer.tsx`,methods:[],props:{},tags:{link:`https://developer.mozilla.org/en-US/docs/Web/SVG/Reference/Element/g`}}}catch{}})))()}export{l as n,c as t};

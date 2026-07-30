@@ -1,0 +1,1 @@
+import{n as e}from"./rolldown-runtime-DkW27tQK.js";function t(e,t){if(!e)throw Error(n)}var n;function r(){return(r=e((()=>{n=`Invariant failed`})))()}export{t as n,r as t};
