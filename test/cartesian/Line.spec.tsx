@@ -1,7 +1,17 @@
 import React from 'react';
 import { fireEvent, render } from '@testing-library/react';
 import { beforeEach, describe, expect, it, test, vi } from 'vitest';
-import { ActiveDotProps, Customized, ErrorBar, Line, LineChart, LineProps, Tooltip, XAxis } from '../../src';
+import {
+  ActiveDotProps,
+  Customized,
+  ErrorBar,
+  Line,
+  LineChart,
+  LineProps,
+  RechartsThemeProvider,
+  Tooltip,
+  XAxis,
+} from '../../src';
 import { useAppSelector } from '../../src/state/hooks';
 import { selectErrorBarsSettings } from '../../src/state/selectors/axisSelectors';
 import { createSelectorTestCase } from '../helper/createSelectorTestCase';
@@ -229,6 +239,18 @@ describe('<Line />', () => {
       expect(container.querySelectorAll('.recharts-active-dot')).toHaveLength(0);
     });
 
+    test('Renders active dot when activeDot=undefined', () => {
+      const { container } = render(
+        <LineChart width={400} height={400} data={PageData}>
+          <Line dataKey="uv" />
+          <Tooltip />
+        </LineChart>,
+      );
+
+      showTooltip(container, lineChartMouseHoverTooltipSelector);
+      expect(container.querySelectorAll('.recharts-active-dot')).toHaveLength(1);
+    });
+
     test('passes props to activeDot function', () => {
       const spy = vi.fn<(props: ActiveDotProps) => React.ReactNode>();
       const { container } = render(
@@ -262,6 +284,59 @@ describe('<Line />', () => {
 
       expect(spy).toHaveBeenCalledTimes(1);
       expect(spy).toHaveBeenCalledWith(expectedProps);
+    });
+
+    it('uses fill color from theme in simple chart', () => {
+      const { container } = render(
+        <RechartsThemeProvider value={{ graphicalItems: [{ stroke: 'red', fill: 'green', active: { fill: 'blue' } }] }}>
+          <LineChart width={400} height={400} data={PageData}>
+            <Line dataKey="uv" />
+            <Tooltip />
+          </LineChart>
+        </RechartsThemeProvider>,
+      );
+      showTooltip(container, lineChartMouseHoverTooltipSelector);
+      const line = container.querySelector('.recharts-line-curve');
+      assertNotNull(line);
+      expect(line).toHaveAttribute('stroke', 'red');
+      const dot = container.querySelector('.recharts-dot');
+      assertNotNull(dot);
+      expect(dot).toHaveAttribute('fill', 'green');
+      const activeDot = container.querySelector('.recharts-active-dot circle');
+      assertNotNull(activeDot);
+      expect(activeDot).toHaveAttribute('fill', 'blue');
+    });
+
+    it('uses correct fill color from theme in chart with two lines', () => {
+      const { container } = render(
+        <RechartsThemeProvider
+          value={{
+            graphicalItems: [
+              { stroke: 'red', fill: 'green', active: { fill: 'blue' } },
+              { stroke: 'bronze', fill: 'silver', active: { fill: 'gold' } },
+            ],
+          }}
+        >
+          <LineChart width={400} height={400} data={PageData}>
+            <Line dataKey="uv" id="line1" />
+            <Line dataKey="pv" id="line2" />
+            <Tooltip />
+          </LineChart>
+        </RechartsThemeProvider>,
+      );
+      showTooltip(container, lineChartMouseHoverTooltipSelector);
+      const line1 = container.querySelector('.recharts-line-curve#line1');
+      assertNotNull(line1);
+      expect(line1).toHaveAttribute('stroke', 'red');
+      const line2 = container.querySelector('.recharts-line-curve#line2');
+      assertNotNull(line2);
+      expect(line2).toHaveAttribute('stroke', 'bronze');
+      const dot = container.querySelector('.recharts-dot');
+      assertNotNull(dot);
+      expect(dot).toHaveAttribute('fill', 'green');
+      const activeDot = container.querySelector('.recharts-active-dot circle');
+      assertNotNull(activeDot);
+      expect(activeDot).toHaveAttribute('fill', 'blue');
     });
   });
 

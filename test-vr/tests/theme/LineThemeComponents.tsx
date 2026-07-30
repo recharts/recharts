@@ -1,5 +1,5 @@
 import React from 'react';
-import { Line, LineChart, RechartsThemeProvider, XAxis, YAxis } from 'recharts';
+import { Line, LineChart, RechartsThemeProvider, Tooltip, XAxis, YAxis } from 'recharts';
 
 const data = [
   { name: 'A', revenue: 120 },
@@ -13,6 +13,7 @@ function LineThemeChart() {
     <LineChart style={{ width: '400px', height: '260px' }} data={data}>
       <XAxis dataKey="name" />
       <YAxis />
+      <Tooltip defaultIndex={1} />
       <Line dataKey="revenue" isAnimationActive={false} />
     </LineChart>
   );
@@ -34,6 +35,11 @@ export function LineThemeComparison() {
               strokeDasharray: '10 5',
               strokeOpacity: 0.7,
               strokeWidth: 5,
+              active: {
+                fill: '#facc15',
+                stroke: '#7c3aed',
+                strokeWidth: 3,
+              },
             },
           ],
         }}

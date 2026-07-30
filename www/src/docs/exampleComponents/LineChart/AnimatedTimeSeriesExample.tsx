@@ -59,13 +59,7 @@ export default function AnimatedTimeSeriesExample(props: Partial<ControlsType>) 
       <XAxis dataKey="label" allowDataOverflow />
       <YAxis />
       <Tooltip />
-      <Line
-        dataKey="y"
-        stroke="#8884d8"
-        strokeWidth={2}
-        animationDuration={animationDuration}
-        animationMatchBy={matchProp}
-      />
+      <Line dataKey="y" strokeWidth={2} animationDuration={animationDuration} animationMatchBy={matchProp} />
     </LineChart>
   );
 }
