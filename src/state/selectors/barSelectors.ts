@@ -22,7 +22,6 @@ import { selectAxisViewBox, selectChartOffsetInternal } from './selectChartOffse
 import { selectBarCategoryGap, selectBarGap, selectRootBarSize, selectRootMaxBarSize } from './rootPropsSelectors';
 import { AllStackGroups, StackDataPoint, StackSeriesIdentifier } from '../../util/stacks/stackTypes';
 import { BarSettings } from '../types/BarSettings';
-import { MaybeStackedGraphicalItem } from '../types/StackedGraphicalItem';
 import { GraphicalItemId } from '../graphicalItemsSlice';
 import { BarCategory, combineBarSizeList } from './combiners/combineBarSizeList';
 import { combineAllBarPositions } from './combiners/combineAllBarPositions';
@@ -260,10 +259,6 @@ export const selectStackedDataOfItem: (
  * from the stack's zero baseline", matching whichever direction that already means in `computeBarRectangles`
  * for the given layout.
  */
-function isBarSettings(item: MaybeStackedGraphicalItem): item is BarSettings {
-  return 'type' in item && item.type === 'bar';
-}
-
 export const selectStackedMinPointSizeShift: (
   state: RechartsRootState,
   id: GraphicalItemId,
@@ -297,7 +292,7 @@ export const selectStackedMinPointSizeShift: (
     for (let seriesIndex = 0; seriesIndex < myIndex; seriesIndex++) {
       const series = stackedData[seriesIndex];
       const item = graphicalItems[seriesIndex];
-      if (series == null || item == null || !isBarSettings(item)) {
+      if (series == null || item == null || item.type !== 'bar') {
         continue;
       }
       const minPointSizeProp = item.minPointSize;

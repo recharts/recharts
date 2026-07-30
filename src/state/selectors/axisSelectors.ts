@@ -83,6 +83,9 @@ import { getStackSeriesIdentifier } from '../../util/stacks/getStackSeriesIdenti
 import { AllStackGroups, StackGroup } from '../../util/stacks/stackTypes';
 import { combineDisplayedStackedData, DisplayedStackedData } from './combiners/combineDisplayedStackedData';
 import { DefinitelyStackedGraphicalItem, isStacked } from '../types/StackedGraphicalItem';
+import { AreaSettings } from '../types/AreaSettings';
+import { BarSettings } from '../types/BarSettings';
+import { RadialBarSettings } from '../types/RadialBarSettings';
 import { ErrorBarsSettings, ErrorBarsState } from '../errorBarSlice';
 import { numberDomainEqualityCheck } from './numberDomainEqualityCheck';
 import { emptyArraysAreEqualCheck } from './arrayEqualityCheck';
@@ -707,7 +710,13 @@ export const combineStackGroups = (
         {
           // @ts-expect-error getStackedData requires that the input is array of objects, Recharts does not test for that
           stackedData: getStackedData(displayedData, dataKeys, stackOffsetType),
-          graphicalItems: orderedGraphicalItems,
+          // Area, Bar, and RadialBar are the only graphical items that can ever carry a stackId
+          // (see MaybeStackedGraphicalItem's implementors), so DefinitelyStackedGraphicalItem items
+          // reaching this point are guaranteed - by construction at every call site of this function -
+          // to be one of those three. This is the one place that invariant is asserted; downstream
+          // consumers (e.g. barSelectors.ts) get real discriminated-union narrowing on `item.type`
+          // from here on, with no further casts of their own.
+          graphicalItems: orderedGraphicalItems as ReadonlyArray<AreaSettings | BarSettings | RadialBarSettings>,
         },
       ];
     }),
