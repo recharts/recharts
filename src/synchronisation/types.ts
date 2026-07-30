@@ -38,3 +38,12 @@ export type MouseHandlerDataParam = {
  * argument 2: active tooltip state from the other chart
  */
 export type SyncMethod = 'index' | 'value' | ((ticks: ReadonlyArray<TickItem>, data: MouseHandlerDataParam) => number);
+
+/**
+ * Controls what happens when syncMethod="value" cannot find an exact label match
+ * in the receiving chart's ticks.
+ *
+ * - 'none': the tooltip is hidden (default, preserves existing behavior)
+ * - 'closest': falls back to the nearest tick by string comparison
+ */
+export type SyncValueFallback = 'none' | 'closest';
