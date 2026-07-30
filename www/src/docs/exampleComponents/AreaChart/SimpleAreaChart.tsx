@@ -1,56 +1,13 @@
-import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip } from 'recharts';
-import { RechartsDevtools } from '@recharts/devtools';
+import { Area, AreaChart, XAxis, YAxis, CartesianGrid, Tooltip, createHorizontalChart } from 'recharts';
+import { generateMockData, MockDataType, RechartsDevtools } from '@recharts/devtools';
 
-// #region Sample data
-const data = [
-  {
-    name: 'Page A',
-    uv: 4000,
-    pv: 2400,
-    amt: 2400,
-  },
-  {
-    name: 'Page B',
-    uv: 3000,
-    pv: 1398,
-    amt: 2210,
-  },
-  {
-    name: 'Page C',
-    uv: 2000,
-    pv: 9800,
-    amt: 2290,
-  },
-  {
-    name: 'Page D',
-    uv: 2780,
-    pv: 3908,
-    amt: 2000,
-  },
-  {
-    name: 'Page E',
-    uv: 1890,
-    pv: 4800,
-    amt: 2181,
-  },
-  {
-    name: 'Page F',
-    uv: 2390,
-    pv: 3800,
-    amt: 2500,
-  },
-  {
-    name: 'Page G',
-    uv: 3490,
-    pv: 4300,
-    amt: 2100,
-  },
-];
+const data = generateMockData(6, 4390435);
 
-// #endregion
+const Typed = createHorizontalChart<MockDataType, string, number>()({ AreaChart, Area, XAxis, YAxis, Tooltip });
+
 const SimpleAreaChart = () => {
   return (
-    <AreaChart
+    <Typed.AreaChart
       style={{ width: '100%', maxWidth: '700px', maxHeight: '70vh', aspectRatio: 1.618 }}
       responsive
       data={data}
@@ -63,12 +20,12 @@ const SimpleAreaChart = () => {
       onContextMenu={(_, e) => e.preventDefault()}
     >
       <CartesianGrid strokeDasharray="3 3" />
-      <XAxis dataKey="name" niceTicks="snap125" />
-      <YAxis width="auto" niceTicks="snap125" />
+      <Typed.XAxis dataKey="label" niceTicks="snap125" />
+      <Typed.YAxis width="auto" niceTicks="snap125" />
       <Tooltip />
-      <Area type="monotone" dataKey="uv" stroke="#8884d8" fill="#8884d8" />
+      <Typed.Area type="monotone" dataKey="y" />
       <RechartsDevtools />
-    </AreaChart>
+    </Typed.AreaChart>
   );
 };
 

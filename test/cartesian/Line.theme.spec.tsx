@@ -161,7 +161,7 @@ describe('Line theme', () => {
   });
 
   it('allow to spread a graphical array item directly to Line props', () => {
-    const theme = lightTheme.graphicalItems?.[1];
+    const theme = lightTheme.graphicalItems[1];
     assertNotNull(theme);
     const { container } = rechartsTestRender(
       <MyChart>

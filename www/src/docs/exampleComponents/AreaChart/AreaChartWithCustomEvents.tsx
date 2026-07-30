@@ -75,7 +75,7 @@ export default function AreaChartWithCustomEvents() {
       <XAxis dataKey="label" />
       <YAxis width="auto" />
       <Tooltip />
-      <Area type="step" dataKey="x" stroke="#8884d8" fill="#8884d8" />
+      <Area type="step" dataKey="x" />
       <RechartsDevtools />
     </AreaChart>
   );

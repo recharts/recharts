@@ -54,7 +54,7 @@ export interface RechartsTheme {
    *
    * Legend and Tooltip items inherit the same color.
    */
-  graphicalItems?: ReadonlyArray<Styles2D>;
+  graphicalItems: ReadonlyArray<Styles2D>;
   /**
    * CartesianGrid and PolarGrid.
    *

@@ -48,6 +48,15 @@ export const DarkThemeChart = () => {
 
 export const CustomThemeChart = () => {
   const customTheme: RechartsTheme = {
+    graphicalItems: [
+      {
+        stroke: 'gold',
+        strokeDasharray: '7 9',
+        strokeOpacity: 0.9,
+        fill: 'silver',
+        fillOpacity: 0.3,
+      },
+    ],
     typography: {
       fontSize: 30,
       fontWeight: 'bold',
