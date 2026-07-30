@@ -220,7 +220,7 @@ export const Rectangle: React.FC<Props> = rectangleProps => {
   const animationIdInput = useMemo(() => ({ x, y, width, height, radius }), [x, y, width, height, radius]);
   const animationId = useAnimationId(animationIdInput, 'rectangle-');
 
-  if (x !== +x || y !== +y || width !== +width || height !== +height || width === 0 || height === 0) {
+  if (x !== +x || y !== +y || width !== +width || height !== +height) {
     return null;
   }
 
