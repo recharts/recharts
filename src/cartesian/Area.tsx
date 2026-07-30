@@ -68,6 +68,8 @@ import { propsAreEqual } from '../util/propsAreEqual';
 import { AxisId } from '../state/cartesianAxisSlice';
 import { StackDataPoint } from '../util/stacks/stackTypes';
 import { AreaRevealShape, AreaRevealShapeProps } from './AreaRevealShape';
+import { useRechartsTheme } from '../theme/RechartsThemeContext';
+import { graphicalItemIdentity } from '../theme/graphicalItemIdentity';
 
 /**
  * @inline
@@ -1064,8 +1066,38 @@ export function computeArea({
   };
 }
 
-function AreaFn<DataPointType, ValueAxisType>(outsideProps: Props<DataPointType, ValueAxisType>) {
-  const props = resolveDefaultProps(outsideProps, defaultAreaProps);
+function AreaFn(outsideProps: Props<any, any>) {
+  const theme = useRechartsTheme();
+  const graphicalItemTheme =
+    outsideProps.dataKey == null || theme.graphicalItems == null
+      ? undefined
+      : theme.graphicalItems[graphicalItemIdentity({ dataKey: outsideProps.dataKey }, theme.graphicalItems.length)];
+  const themeStrokeDasharray = graphicalItemTheme?.strokeDasharray;
+  const activeDot =
+    graphicalItemTheme?.active == null ||
+    outsideProps.activeDot === false ||
+    typeof outsideProps.activeDot === 'function' ||
+    React.isValidElement(outsideProps.activeDot)
+      ? outsideProps.activeDot
+      : {
+          ...graphicalItemTheme.active,
+          ...(typeof outsideProps.activeDot === 'object' ? outsideProps.activeDot : {}),
+        };
+  const props = resolveDefaultProps(
+    {
+      ...outsideProps,
+      activeDot,
+      fill: outsideProps.fill ?? graphicalItemTheme?.fill,
+      fillOpacity: outsideProps.fillOpacity ?? graphicalItemTheme?.fillOpacity,
+      stroke: outsideProps.stroke ?? graphicalItemTheme?.stroke,
+      strokeOpacity: outsideProps.strokeOpacity ?? graphicalItemTheme?.strokeOpacity,
+      strokeWidth: outsideProps.strokeWidth ?? graphicalItemTheme?.strokeWidth,
+      strokeDasharray:
+        outsideProps.strokeDasharray ??
+        (Array.isArray(themeStrokeDasharray) ? themeStrokeDasharray.join(',') : themeStrokeDasharray),
+    } as Props<any, any>,
+    defaultAreaProps,
+  );
   const isPanorama = useIsPanorama();
   // Report all props to Redux store first, before calling hooks, to avoid circular dependencies.
   return (
