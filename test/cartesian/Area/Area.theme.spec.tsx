@@ -4,6 +4,9 @@ import React from 'react';
 import { rechartsTestRender } from '../../helper/createSelectorTestCase';
 import { Area, AreaChart, RechartsThemeProvider, XAxis, YAxis } from '../../../src';
 import { assertNotNull } from '../../helper/assertNotNull';
+import { showTooltip } from '../../component/Tooltip/tooltipTestHelpers';
+import { mockGetBoundingClientRect } from '../../helper/mockGetBoundingClientRect';
+import { areaChartMouseHoverTooltipSelector } from '../../component/Tooltip/tooltipMouseHoverSelectors';
 
 const mockData = generateMockData(5, 2);
 
@@ -250,6 +253,10 @@ describe('Area theme', () => {
   });
 
   describe('activeDot', () => {
+    beforeEach(() => {
+      mockGetBoundingClientRect({ width: 100, height: 100 });
+    });
+
     describe('when theme has active and no explicit activeDot prop', () => {
       it('should merge theme active into activeDot object', () => {
         const { container } = rechartsTestRender(
@@ -265,7 +272,7 @@ describe('Area theme', () => {
             }}
           >
             <MyChart>
-              <Area dataKey="x" />
+              <Area dataKey="x" activeDot />
             </MyChart>
           </RechartsThemeProvider>,
         );
@@ -273,6 +280,12 @@ describe('Area theme', () => {
         // We verify by checking that the area renders correctly
         const path = container.querySelector('.recharts-area-area');
         assertNotNull(path);
+        showTooltip(container, areaChartMouseHoverTooltipSelector);
+        const activeDot = container.querySelector('.recharts-active-dot circle');
+        assertNotNull(activeDot);
+        expect(activeDot).toHaveAttribute('fill', 'white');
+        expect(activeDot).toHaveAttribute('stroke', 'red');
+        expect(activeDot).toHaveAttribute('stroke-width', '5');
       });
     });
 
@@ -297,6 +310,13 @@ describe('Area theme', () => {
         );
         const path = container.querySelector('.recharts-area-area');
         assertNotNull(path);
+        showTooltip(container, areaChartMouseHoverTooltipSelector);
+        const activeDot = container.querySelector('.recharts-active-dot circle');
+        assertNotNull(activeDot);
+        expect(activeDot).toHaveAttribute('fill', 'gold');
+        expect(activeDot).toHaveAttribute('stroke', 'red');
+        expect(activeDot).toHaveAttribute('stroke-width', '5');
+        expect(activeDot).toHaveAttribute('r', '10');
       });
     });
   });
