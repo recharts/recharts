@@ -92,3 +92,44 @@ export const selectStackRects: (
   [state => state, pickStackId, pickIsPanorama],
   combineStackRects,
 );
+
+const parseStrokeWidth = (strokeWidth: number | string | undefined): number => {
+  const parsed = typeof strokeWidth === 'string' ? parseFloat(strokeWidth) : strokeWidth;
+  if (parsed == null || !Number.isFinite(parsed) || parsed < 0) {
+    return 0;
+  }
+  return parsed;
+};
+
+export const combineMaxStrokeWidthOfStack = (allBars: ReadonlyArray<Pick<BarSettings, 'strokeWidth'>>): number =>
+  allBars.reduce(
+    (max: number, bar: Pick<BarSettings, 'strokeWidth'>) => Math.max(max, parseStrokeWidth(bar.strokeWidth)),
+    0,
+  );
+
+/**
+ * Selects the largest strokeWidth of all bars in the stack.
+ * The stack clip path grows by half of this value in every direction.
+ */
+export const selectMaxStrokeWidthOfStack: (
+  state: RechartsRootState,
+  stackId: NormalizedStackId,
+  isPanorama: boolean,
+) => number = createSelector([selectAllBarsInStack], combineMaxStrokeWidthOfStack);
+
+/**
+ * Grows the rectangle by the given amount in every direction.
+ * Rectangles with negative width or height (stackOffset="sign") are normalized
+ * so that the returned rectangle always has non-negative dimensions.
+ */
+export const inflateRectangle = (rect: BarStackItem, inflation: number): BarStackItem => {
+  if (inflation === 0) {
+    return rect;
+  }
+  return {
+    x: Math.min(rect.x, rect.x + rect.width) - inflation,
+    y: Math.min(rect.y, rect.y + rect.height) - inflation,
+    width: Math.abs(rect.width) + 2 * inflation,
+    height: Math.abs(rect.height) + 2 * inflation,
+  };
+};

@@ -4,7 +4,7 @@ import { getNormalizedStackId, NormalizedStackId, StackId } from '../util/ChartU
 import { useUniqueId } from '../util/useUniqueId';
 import { resolveDefaultProps } from '../util/resolveDefaultProps';
 import { useAppSelector } from '../state/hooks';
-import { selectStackRects } from '../state/selectors/barStackSelectors';
+import { inflateRectangle, selectMaxStrokeWidthOfStack, selectStackRects } from '../state/selectors/barStackSelectors';
 import { useIsPanorama } from '../context/PanoramaContext';
 import { Layer, Props as LayerProps } from '../container/Layer';
 import { Rectangle, RectRadius } from '../shape/Rectangle';
@@ -89,15 +89,38 @@ export const BarStackClipLayer = ({ index, ...rest }: LayerProps & { index: numb
 };
 
 /**
+ * Grows every rounded corner by the given amount: a stroked rounded rectangle with corner radius `r`
+ * has a natural outer contour of radius `r + strokeWidth / 2`.
+ * Square corners stay square, matching the miter join of a stroked corner.
+ */
+export const inflateRadius = (radius: RectRadius, inflation: number): RectRadius => {
+  if (inflation === 0) {
+    return radius;
+  }
+  const inflateCorner = (corner: number): number => (corner > 0 ? corner + inflation : corner);
+  if (typeof radius === 'number') {
+    return inflateCorner(radius);
+  }
+  return [inflateCorner(radius[0]), inflateCorner(radius[1]), inflateCorner(radius[2]), inflateCorner(radius[3])];
+};
+
+/**
  * This React component will render a clipPath that the individual bars in the stack will reference
  * to achieve rounded corners for the entire stack.
  */
 const BarStackClipPath = ({ stackId, radius }: { stackId: NormalizedStackId; radius: RectRadius }) => {
   const isPanorama = useIsPanorama();
   const positions = useAppSelector(state => selectStackRects(state, stackId, isPanorama));
+  const maxStrokeWidth = useAppSelector(state => selectMaxStrokeWidthOfStack(state, stackId, isPanorama));
   if (positions == null || positions.length === 0) {
     return null;
   }
+  /*
+   * SVG strokes are centered on the shape outline so half of the stroke is painted outside the shape.
+   * A clip path of the exact stack size would clip that outer half away.
+   */
+  const inflation = maxStrokeWidth == null ? 0 : maxStrokeWidth / 2;
+  const clipRadius = inflateRadius(radius, inflation);
   /*
    * Render one clipPath per rectangle in the stack.
    * Each rectangle corresponds to one data entry in the chart.
@@ -109,16 +132,17 @@ const BarStackClipPath = ({ stackId, radius }: { stackId: NormalizedStackId; rad
           return null;
         }
         const clipPathId = getClipPathId(stackId, index);
+        const inflatedPos = inflateRectangle(pos, inflation);
         return (
           <clipPath key={clipPathId} id={clipPathId}>
             <Rectangle
               isAnimationActive={false}
               isUpdateAnimationActive={false}
-              x={pos.x}
-              y={pos.y}
-              width={pos.width}
-              height={pos.height}
-              radius={radius}
+              x={inflatedPos.x}
+              y={inflatedPos.y}
+              width={inflatedPos.width}
+              height={inflatedPos.height}
+              radius={clipRadius}
             />
           </clipPath>
         );
