@@ -672,8 +672,15 @@ describe('BarStack Selectors', () => {
       expect(combineMaxStrokeWidthOfStack([barSettings(2), barSettings(6), barSettings(4)])).toBe(6);
     });
 
-    it('should parse strings with units', () => {
-      expect(combineMaxStrokeWidthOfStack([barSettings('3px'), barSettings('5')])).toBe(5);
+    it('should parse pixel strings', () => {
+      expect(combineMaxStrokeWidthOfStack([barSettings('3px')])).toBe(3);
+      expect(combineMaxStrokeWidthOfStack([barSettings('5')])).toBe(5);
+      expect(combineMaxStrokeWidthOfStack([barSettings(' 4.5 ')])).toBe(4.5);
+      expect(combineMaxStrokeWidthOfStack([barSettings('+5')])).toBe(5);
+      expect(combineMaxStrokeWidthOfStack([barSettings('5.')])).toBe(5);
+      expect(combineMaxStrokeWidthOfStack([barSettings('.5')])).toBe(0.5);
+      expect(combineMaxStrokeWidthOfStack([barSettings('2e1')])).toBe(20);
+      expect(combineMaxStrokeWidthOfStack([barSettings('3PX')])).toBe(3);
     });
 
     it('should ignore undefined, negative, NaN, and non-numeric strokeWidths', () => {
@@ -684,6 +691,18 @@ describe('BarStack Selectors', () => {
           barSettings(NaN),
           barSettings('bogus'),
           barSettings(Infinity),
+        ]),
+      ).toBe(0);
+    });
+
+    it('should reject partially numeric strings and non-px units', () => {
+      expect(
+        combineMaxStrokeWidthOfStack([
+          barSettings('6bogus'),
+          barSettings('50%'),
+          barSettings('2em'),
+          barSettings('-3px'),
+          barSettings('1e400'),
         ]),
       ).toBe(0);
     });

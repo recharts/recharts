@@ -93,12 +93,23 @@ export const selectStackRects: (
   combineStackRects,
 );
 
+/** Complete non-negative number with an optional px suffix. Other units are rejected. */
+const PIXEL_STROKE_WIDTH = /^\+?(?:\d+(?:\.\d*)?|\.\d+)(?:e[+-]?\d+)?(?:px)?$/i;
+
 const parseStrokeWidth = (strokeWidth: number | string | undefined): number => {
-  const parsed = typeof strokeWidth === 'string' ? parseFloat(strokeWidth) : strokeWidth;
-  if (parsed == null || !Number.isFinite(parsed) || parsed < 0) {
+  if (typeof strokeWidth === 'string') {
+    const trimmed = strokeWidth.trim();
+    if (!PIXEL_STROKE_WIDTH.test(trimmed)) {
+      return 0;
+    }
+    // '1e400' matches but overflows to Infinity
+    const parsed = parseFloat(trimmed);
+    return Number.isFinite(parsed) ? parsed : 0;
+  }
+  if (strokeWidth == null || !Number.isFinite(strokeWidth) || strokeWidth < 0) {
     return 0;
   }
-  return parsed;
+  return strokeWidth;
 };
 
 export const combineMaxStrokeWidthOfStack = (allBars: ReadonlyArray<Pick<BarSettings, 'strokeWidth'>>): number =>
