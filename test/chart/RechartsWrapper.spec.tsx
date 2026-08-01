@@ -91,26 +91,28 @@ describe('RechartsWrapper', () => {
     const errorSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
     const warnSpy = vi.spyOn(console, 'warn').mockImplementation(() => {});
 
-    const { unmount } = render(
-      <RechartsWrapper width={100} height={100}>
-        <div />
-      </RechartsWrapper>,
-    );
+    try {
+      const { unmount } = render(
+        <RechartsWrapper width={100} height={100}>
+          <div />
+        </RechartsWrapper>,
+      );
 
-    // Unmount should not trigger "Cannot update during an existing state transition" warnings
-    unmount();
+      // Unmount should not trigger "Cannot update during an existing state transition" warnings
+      unmount();
 
-    const errors = errorSpy.mock.calls
-      .map(call => call[0])
-      .filter(msg => typeof msg === 'string' && msg.includes('state'));
-    const warns = warnSpy.mock.calls
-      .map(call => call[0])
-      .filter(msg => typeof msg === 'string' && msg.includes('state'));
+      const errors = errorSpy.mock.calls
+        .map(call => call[0])
+        .filter(msg => typeof msg === 'string' && msg.includes('state'));
+      const warns = warnSpy.mock.calls
+        .map(call => call[0])
+        .filter(msg => typeof msg === 'string' && msg.includes('state'));
 
-    expect(errors).toHaveLength(0);
-    expect(warns).toHaveLength(0);
-
-    errorSpy.mockRestore();
-    warnSpy.mockRestore();
+      expect(errors).toHaveLength(0);
+      expect(warns).toHaveLength(0);
+    } finally {
+      errorSpy.mockRestore();
+      warnSpy.mockRestore();
+    }
   });
 });
