@@ -61,7 +61,12 @@ export class ExampleReader {
 
       if (!this.isComponentUsed(sourceFile, cleanName)) return;
 
-      if (propName && !this.isPropUsed(sourceFile, cleanName, propName)) return;
+      if (propName) {
+        // Check both direct usage and Typed pattern usage
+        const hasDirect = this.isPropUsed(sourceFile, cleanName, propName);
+        const hasTyped = this.isTypedPropUsed(sourceFile, cleanName, propName);
+        if (!hasDirect && !hasTyped) return;
+      }
 
       exList.forEach(ex => results.set(ex.url, ex));
     });
@@ -297,6 +302,50 @@ export class ExampleReader {
     return false;
   }
 
+  /**
+   * Checks if a variable is a chart factory result (createHorizontalChart or createVerticalChart).
+   * Returns the variable name if found, undefined otherwise.
+   * Handles chained calls like: createHorizontalChart<...>()({ ... })
+   */
+  private getChartFactoryVariable(sourceFile: SourceFile): string | undefined {
+    const variables = sourceFile.getVariableDeclarations();
+    for (const variable of variables) {
+      const initializer = variable.getInitializer();
+      if (!initializer) {
+        continue;
+      }
+
+      // Traverse the call chain to find the base function name
+      // e.g., createHorizontalChart<...>()({...}) -> createHorizontalChart
+      let current: Node = initializer;
+      while (current.getKind() === SyntaxKind.CallExpression) {
+        const callExpr = current as import('ts-morph').CallExpression;
+        current = callExpr.getExpression();
+      }
+
+      const baseText = current.getText();
+      if (baseText === 'createHorizontalChart' || baseText === 'createVerticalChart') {
+        const name = variable.getName();
+        // Also verify the name is used in JSX to avoid false positives
+        const jsxOpeningElements = sourceFile.getDescendantsOfKind(SyntaxKind.JsxOpeningElement);
+        const jsxSelfClosingElements = sourceFile.getDescendantsOfKind(SyntaxKind.JsxSelfClosingElement);
+        const hasJsxMatch = [...jsxOpeningElements, ...jsxSelfClosingElements].some(el => {
+          const tagName = el.getTagNameNode();
+          // In ts-morph, JSX member expressions like <Typed.X> are represented as PropertyAccessExpression
+          if (tagName.getKind() !== SyntaxKind.PropertyAccessExpression) {
+            return false;
+          }
+          const obj = tagName.getExpression();
+          return Node.isIdentifier(obj) && obj.getText() === name;
+        });
+        if (hasJsxMatch) {
+          return name;
+        }
+      }
+    }
+    return undefined;
+  }
+
   private isPropUsed(sourceFile: SourceFile, componentName: string, propName: string): boolean {
     // Find all JSX elements matching componentName
     // We need to resolve local name if aliased
@@ -318,44 +367,140 @@ export class ExampleReader {
     const jsxElements = sourceFile.getDescendantsOfKind(SyntaxKind.JsxOpeningElement);
     const jsxSelfClosingElements = sourceFile.getDescendantsOfKind(SyntaxKind.JsxSelfClosingElement);
 
-    const checkAttributes = (node: JsxOpeningElement | JsxSelfClosingElement) => {
-      if (node.getTagNameNode().getText() === localName) {
-        // Special handling for children
-        if (propName === 'children') {
-          // Check if it's an attribute (rare but possible)
-          if (node.getAttribute('children')) return true;
-
-          // If it's an opening element, check if the parent JsxElement has children
-          if (Node.isJsxOpeningElement(node)) {
-            const jsxElement = node.getParentIfKind(SyntaxKind.JsxElement);
-            if (jsxElement) {
-              const children = jsxElement.getJsxChildren();
-              // Filter out empty text nodes (whitespace)
-              const hasRealChildren = children.some(child => {
-                if (Node.isJsxText(child)) {
-                  return child.getText().trim().length > 0;
-                }
-                return true;
-              });
-              if (hasRealChildren) return true;
-            }
-          }
-          return false;
-        }
-
-        const attr = node.getAttribute(propName);
-        return !!attr;
-      }
-      return false;
-    };
-
     for (const el of jsxElements) {
-      if (checkAttributes(el)) return true;
+      if (this.isElementMatchingTag(el, localName, propName)) {
+        return true;
+      }
     }
     for (const el of jsxSelfClosingElements) {
-      if (checkAttributes(el)) return true;
+      if (this.isElementMatchingTag(el, localName, propName)) {
+        return true;
+      }
     }
 
     return false;
+  }
+
+  /**
+   * Checks if a JSX element matches the given component name and has the given prop.
+   * Handles both direct usage (e.g., <XAxis dataKey="...">) and property access (e.g., <Typed.XAxis dataKey="...">).
+   */
+  private isElementMatchingTag(
+    node: JsxOpeningElement | JsxSelfClosingElement,
+    componentName: string,
+    propName: string,
+  ): boolean {
+    const tagNameNode = node.getTagNameNode();
+
+    let matched = false;
+    // Check direct match (e.g., <XAxis>)
+    if (tagNameNode.getText() === componentName) {
+      matched = true;
+    }
+    // Check property access pattern (e.g., <Typed.XAxis> where tag kind is PropertyAccessExpression)
+    else if (tagNameNode.getKind() === SyntaxKind.PropertyAccessExpression) {
+      if (tagNameNode.getName() === componentName) {
+        matched = true;
+      }
+    }
+
+    if (!matched) {
+      return false;
+    }
+
+    // Special handling for children
+    if (propName === 'children') {
+      if (node.getAttribute('children')) return true;
+      if (Node.isJsxOpeningElement(node)) {
+        const jsxElement = node.getParentIfKind(SyntaxKind.JsxElement);
+        if (jsxElement) {
+          const children = jsxElement.getJsxChildren();
+          const hasRealChildren = children.some(child => {
+            if (Node.isJsxText(child)) {
+              return child.getText().trim().length > 0;
+            }
+            return true;
+          });
+          if (hasRealChildren) return true;
+        }
+      }
+      return false;
+    }
+
+    const attr = node.getAttribute(propName);
+    return !!attr;
+  }
+
+  /**
+   * Checks if a prop is used on a component via the Typed pattern
+   * (e.g., <Typed.XAxis dataKey="label" /> matches XAxis's dataKey prop).
+   */
+  private isTypedPropUsed(sourceFile: SourceFile, componentName: string, propName: string): boolean {
+    const factoryVar = this.getChartFactoryVariable(sourceFile);
+    if (!factoryVar) {
+      return false;
+    }
+
+    const jsxElements = sourceFile.getDescendantsOfKind(SyntaxKind.JsxOpeningElement);
+    const jsxSelfClosingElements = sourceFile.getDescendantsOfKind(SyntaxKind.JsxSelfClosingElement);
+
+    for (const el of jsxElements) {
+      if (this.isTypedElementMatchingTag(el, factoryVar, componentName, propName)) {
+        return true;
+      }
+    }
+    for (const el of jsxSelfClosingElements) {
+      if (this.isTypedElementMatchingTag(el, factoryVar, componentName, propName)) {
+        return true;
+      }
+    }
+
+    return false;
+  }
+
+  /**
+   * Checks if a JSX element matches the Typed pattern (e.g., <Typed.XAxis dataKey="...">).
+   */
+  private isTypedElementMatchingTag(
+    node: JsxOpeningElement | JsxSelfClosingElement,
+    factoryVar: string,
+    componentName: string,
+    propName: string,
+  ): boolean {
+    const tagNameNode = node.getTagNameNode();
+
+    // Check property access pattern (e.g., <Typed.XAxis>)
+    if (tagNameNode.getKind() !== SyntaxKind.PropertyAccessExpression) {
+      return false;
+    }
+
+    const obj = tagNameNode.getExpression();
+    const prop = tagNameNode.getName();
+
+    if (!Node.isIdentifier(obj) || prop !== componentName) {
+      return false;
+    }
+
+    // Special handling for children
+    if (propName === 'children') {
+      if (node.getAttribute('children')) return true;
+      if (Node.isJsxOpeningElement(node)) {
+        const jsxElement = node.getParentIfKind(SyntaxKind.JsxElement);
+        if (jsxElement) {
+          const children = jsxElement.getJsxChildren();
+          const hasRealChildren = children.some(child => {
+            if (Node.isJsxText(child)) {
+              return child.getText().trim().length > 0;
+            }
+            return true;
+          });
+          if (hasRealChildren) return true;
+        }
+      }
+      return false;
+    }
+
+    const attr = node.getAttribute(propName);
+    return !!attr;
   }
 }

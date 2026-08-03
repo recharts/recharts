@@ -34,17 +34,18 @@ export function Frame(props: FrameProps) {
   const fullCommitHash = import.meta.env.VITE_RECHARTS_COMMIT_HASH;
   const shortCommitHash = getShortCommitHash(fullCommitHash);
   const colorMode = useColorMode();
+  const theme = colorMode.mode === 'light' ? lightTheme : darkTheme;
 
   if (isIsolated) {
     return (
-      <RechartsThemeProvider value={colorMode.mode === 'light' ? lightTheme : darkTheme}>
+      <RechartsThemeProvider value={theme}>
         <main>{children}</main>
       </RechartsThemeProvider>
     );
   }
 
   return (
-    <RechartsThemeProvider value={colorMode.mode === 'light' ? lightTheme : darkTheme}>
+    <RechartsThemeProvider value={theme}>
       <div className="container">
         <Helmet titleTemplate="%s | Recharts" />
         <header>

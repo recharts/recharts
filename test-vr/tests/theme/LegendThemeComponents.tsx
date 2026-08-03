@@ -26,6 +26,7 @@ export function LegendThemeExamples() {
       </section>
       <RechartsThemeProvider
         value={{
+          graphicalItems: [],
           typography: { fontFamily: 'cursive' },
           legend: {
             wrapperStyle: { backgroundColor: '#fef3c7', border: '2px solid #b45309', padding: 12 },

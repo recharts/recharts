@@ -126,7 +126,7 @@ export default function CrosshairExample({
     >
       <XAxis dataKey="label" />
       <YAxis width="auto" />
-      <Area type="monotone" dataKey="x" stroke="var(--color-chart-1)" />
+      <Area type="monotone" dataKey="x" />
       {pointers.map((pointer, index) => (
         <PixelCrosshair key={index} pointer={pointer} />
       ))}

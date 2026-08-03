@@ -53,6 +53,7 @@ describe('CartesianGrid theme', () => {
         const { container } = rechartsTestRender(
           <RechartsThemeProvider
             value={{
+              graphicalItems: [],
               grid: { stroke: 'gold', strokeWidth: 2, strokeOpacity: 0.9, strokeDasharray: '1, 2, 3, 4' },
             }}
           >
@@ -76,6 +77,7 @@ describe('CartesianGrid theme', () => {
         const { container } = rechartsTestRender(
           <RechartsThemeProvider
             value={{
+              graphicalItems: [],
               grid: { stroke: 'red', strokeWidth: 21, strokeOpacity: 0.11, strokeDasharray: '1, 12, 3, 4' },
             }}
           >
@@ -153,7 +155,7 @@ describe('CartesianGrid theme', () => {
     describe('when defined as a theme', () => {
       it('should follow the theme fill', () => {
         const { container } = rechartsTestRender(
-          <RechartsThemeProvider value={{ grid: { fill: 'purple' } }}>
+          <RechartsThemeProvider value={{ graphicalItems: [], grid: { fill: 'purple' } }}>
             <MyChart>
               <CartesianGrid />
             </MyChart>
@@ -166,7 +168,7 @@ describe('CartesianGrid theme', () => {
 
       it('should follow the theme fillOpacity when combined with fill', () => {
         const { container } = rechartsTestRender(
-          <RechartsThemeProvider value={{ grid: { fill: 'lime', fillOpacity: 0.5 } }}>
+          <RechartsThemeProvider value={{ graphicalItems: [], grid: { fill: 'lime', fillOpacity: 0.5 } }}>
             <MyChart>
               <CartesianGrid />
             </MyChart>
@@ -182,7 +184,7 @@ describe('CartesianGrid theme', () => {
     describe('when defined as both a prop and a theme', () => {
       it('should follow the prop fill', () => {
         const { container } = rechartsTestRender(
-          <RechartsThemeProvider value={{ grid: { fill: 'red' } }}>
+          <RechartsThemeProvider value={{ graphicalItems: [], grid: { fill: 'red' } }}>
             <MyChart>
               <CartesianGrid fill="gold" />
             </MyChart>
@@ -195,7 +197,7 @@ describe('CartesianGrid theme', () => {
 
       it('should follow the prop fillOpacity when combined with fill', () => {
         const { container } = rechartsTestRender(
-          <RechartsThemeProvider value={{ grid: { fill: 'red', fillOpacity: 0.1 } }}>
+          <RechartsThemeProvider value={{ graphicalItems: [], grid: { fill: 'red', fillOpacity: 0.1 } }}>
             <MyChart>
               <CartesianGrid fill="gold" fillOpacity={0.9} />
             </MyChart>
