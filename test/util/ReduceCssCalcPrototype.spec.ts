@@ -125,4 +125,12 @@ describe('reduceCSSCalc', () => {
       });
     });
   });
+
+  // https://github.com/recharts/recharts/issues/7609
+  it.each(['$&', '$`', "$'", '$1', '$$'])(
+    'should terminate when the expression contains the replacement pattern %s',
+    pattern => {
+      expect(reduceCSSCalc(`calc((${pattern}))`)).toEqual(pattern);
+    },
+  );
 });
