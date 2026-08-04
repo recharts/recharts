@@ -67,6 +67,15 @@ export const lightTheme: RechartsTheme = {
       backgroundColor: 'white',
       borderColor: '#a8a29e',
     },
+    itemStyle: {
+      display: 'block',
+      paddingTop: 4,
+      paddingBottom: 4,
+      color: '#18181b',
+    },
+    labelStyle: {
+      fontWeight: 'bold',
+    },
   },
   typography: {
     color: '#18181b',
