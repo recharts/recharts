@@ -117,9 +117,21 @@ describe('generateApiDoc', () => {
   const reader = new ProjectDocReader();
   const exampleReader = new ExampleReader();
   const contextMap = new Map();
+  const allExports = reader.getAllRuntimeExportedNames();
+
+  const apiDocs = {
+    ResponsiveContainer: generateApiDoc('ResponsiveContainer', reader, exampleReader, contextMap, { allExports }),
+    Text: generateApiDoc('Text', reader, exampleReader, contextMap, { allExports }),
+    Tooltip: generateApiDoc('Tooltip', reader, exampleReader, contextMap, { allExports }),
+    useChartLayout: generateApiDoc('useChartLayout', reader, exampleReader, contextMap, { allExports }),
+    Legend: generateApiDoc('Legend', reader, exampleReader, contextMap, { allExports }),
+    useChartHeight: generateApiDoc('useChartHeight', reader, exampleReader, contextMap, { allExports }),
+    useXAxisDomain: generateApiDoc('useXAxisDomain', reader, exampleReader, contextMap, { allExports }),
+    AreaChart: generateApiDoc('AreaChart', reader, exampleReader, contextMap, { allExports }),
+  };
 
   it('should include component-level links from @see tags', async () => {
-    const apiDoc = await generateApiDoc('ResponsiveContainer', reader, exampleReader, contextMap);
+    const apiDoc = await apiDocs.ResponsiveContainer;
 
     expect(apiDoc.links).toBeDefined();
     expect(apiDoc.links?.length).toBeGreaterThan(0);
@@ -134,7 +146,7 @@ describe('generateApiDoc', () => {
   });
 
   it('should not include links for components without @see or @link tags', async () => {
-    const apiDoc = await generateApiDoc('Text', reader, exampleReader, contextMap);
+    const apiDoc = await apiDocs.Text;
 
     // Text component may or may not have links, so just check it doesn't error
     expect(apiDoc).toBeDefined();
@@ -142,7 +154,7 @@ describe('generateApiDoc', () => {
   });
 
   it('should convert inline {@link} tags to HTML anchor tags in component description', async () => {
-    const apiDoc = await generateApiDoc('ResponsiveContainer', reader, exampleReader, contextMap);
+    const apiDoc = await apiDocs.ResponsiveContainer;
 
     expect(apiDoc.desc).toBeDefined();
     // @ts-expect-error locale fetching is not well typed
@@ -161,7 +173,7 @@ describe('generateApiDoc', () => {
   });
 
   it('should convert inline {@link} tags to HTML anchor tags in prop description', async () => {
-    const apiDoc = await generateApiDoc('Tooltip', reader, exampleReader, contextMap);
+    const apiDoc = await apiDocs.Tooltip;
     const contentProp = apiDoc.props.find(p => p.name === 'content');
     expect(contentProp).toBeDefined();
     // @ts-expect-error locale fetching is not well typed
@@ -170,7 +182,7 @@ describe('generateApiDoc', () => {
   });
 
   it('should convert inline {@link} tags in component deprecated text', async () => {
-    const apiDoc = await generateApiDoc('useChartLayout', reader, exampleReader, contextMap);
+    const apiDoc = await apiDocs.useChartLayout;
 
     expect(apiDoc.deprecated).toEqual(
       expect.objectContaining({
@@ -186,7 +198,7 @@ describe('generateApiDoc', () => {
   });
 
   it('should render Markdown in deprecated prop text and include prop @since tags', { timeout: 10000 }, async () => {
-    const apiDoc = await generateApiDoc('Legend', reader, exampleReader, contextMap);
+    const apiDoc = await apiDocs.Legend;
     const verticalAlign = apiDoc.props.find(prop => prop.name === 'verticalAlign');
     const position = apiDoc.props.find(prop => prop.name === 'position');
 
@@ -199,13 +211,13 @@ describe('generateApiDoc', () => {
   });
 
   it('should include return value in API doc for hooks', async () => {
-    const apiDoc = await generateApiDoc('useChartHeight', reader, exampleReader, contextMap);
+    const apiDoc = await apiDocs.useChartHeight;
     expect(apiDoc.returnValue).toBeDefined();
     expect(apiDoc.returnValue).toBe('number | undefined');
   });
 
   it('should include arguments as props for useXAxisDomain', async () => {
-    const apiDoc = await generateApiDoc('useXAxisDomain', reader, exampleReader, contextMap);
+    const apiDoc = await apiDocs.useXAxisDomain;
     expect(apiDoc.props).toBeDefined();
     expect(apiDoc.props.length).toBeGreaterThan(0);
     const xAxisId = apiDoc.props.find(p => p.name === 'xAxisId');
@@ -215,7 +227,7 @@ describe('generateApiDoc', () => {
   });
 
   it('should include examples from ExampleReader', async () => {
-    const apiDoc = await generateApiDoc('AreaChart', reader, exampleReader, contextMap);
+    const apiDoc = await apiDocs.AreaChart;
     expect(apiDoc.links).toBeDefined();
     const simpleAreaChart = apiDoc.links?.find(l => l.url === '/examples/AreaChartExample/');
     expect(simpleAreaChart).toBeDefined();
