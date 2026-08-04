@@ -6,7 +6,7 @@ import {
   TooltipPayloadEntry,
   TooltipPayloadSearcher,
 } from '../../tooltipSlice';
-import { ChartData, ChartDataState } from '../../chartDataSlice';
+import { ChartData, ChartDataState, getBrushSliceIndexes } from '../../chartDataSlice';
 import { DataKey, TooltipEventType } from '../../../util/types';
 import { findEntryInArray } from '../../../util/DataUtils';
 import { getTooltipEntry, getValueByDataKey } from '../../../util/ChartUtils';
@@ -98,14 +98,15 @@ export const combineTooltipPayload = (
   if (activeIndex == null || tooltipPayloadSearcher == null) {
     return undefined;
   }
-  const { chartData, computedData, dataStartIndex, dataEndIndex } = chartDataState;
+  const { chartData, computedData } = chartDataState;
+  const [sliceStartIndex, sliceEndIndex] = getBrushSliceIndexes(chartDataState);
 
   const init: Array<TooltipPayloadEntry> = [];
 
   return tooltipPayloadConfigurations.reduce((agg, { dataDefinedOnItem, settings }): Array<TooltipPayloadEntry> => {
     const finalData = selectFinalData(dataDefinedOnItem, chartData);
 
-    const sliced = Array.isArray(finalData) ? getSliced(finalData, dataStartIndex, dataEndIndex) : finalData;
+    const sliced = Array.isArray(finalData) ? getSliced(finalData, sliceStartIndex, sliceEndIndex) : finalData;
 
     const finalDataKey: DataKey<any> | undefined = settings?.dataKey ?? tooltipAxisDataKey;
     // BaseAxisProps does not support nameKey but it could!
