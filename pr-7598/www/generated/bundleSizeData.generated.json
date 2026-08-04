@@ -1,45 +1,45 @@
 {
   "treemap": {
     "examplePath": "www/src/views/IndexView/IndexLineChart.tsx",
-    "totalSize": 897126,
-    "totalSizeLabel": "876.10 KB",
+    "totalSize": 897985,
+    "totalSizeLabel": "876.94 KB",
     "moduleCount": 366,
-    "generatedAt": "2026-07-28T13:42:56.048Z",
+    "generatedAt": "2026-08-04T21:22:24.628Z",
     "stages": [
       {
         "stage": "es6-folder",
-        "bytes": 1304649,
-        "humanReadableSize": "1.24 MB",
+        "bytes": 1311446,
+        "humanReadableSize": "1.25 MB",
         "reductionFromBaselinePercent": 0
       },
       {
         "stage": "tree-shaken",
-        "bytes": 900005,
-        "humanReadableSize": "878.91 KB",
+        "bytes": 900864,
+        "humanReadableSize": "879.75 KB",
         "reductionFromBaselinePercent": 0
       },
       {
         "stage": "minified",
-        "bytes": 302610,
-        "humanReadableSize": "295.52 KB",
-        "reductionFromBaselinePercent": 66.38
+        "bytes": 303057,
+        "humanReadableSize": "295.95 KB",
+        "reductionFromBaselinePercent": 66.36
       },
       {
         "stage": "minified+gzip",
-        "bytes": 98854,
-        "humanReadableSize": "96.54 KB",
-        "reductionFromBaselinePercent": 89.02
+        "bytes": 99098,
+        "humanReadableSize": "96.78 KB",
+        "reductionFromBaselinePercent": 89
       }
     ],
     "tree": {
       "name": "bundle",
       "fullPath": "bundle",
-      "value": 897126,
+      "value": 897985,
       "children": [
         {
           "name": "src",
           "fullPath": "src",
-          "value": 493365,
+          "value": 493957,
           "children": [
             {
               "name": "state",
@@ -427,7 +427,7 @@
             {
               "name": "util",
               "fullPath": "src/util",
-              "value": 105996,
+              "value": 106425,
               "children": [
                 {
                   "name": "scale",
@@ -489,14 +489,14 @@
                   "value": 5015
                 },
                 {
+                  "name": "ReduceCSSCalc.ts",
+                  "fullPath": "src/util/ReduceCSSCalc.ts",
+                  "value": 4652
+                },
+                {
                   "name": "getRelativeCoordinate.ts",
                   "fullPath": "src/util/getRelativeCoordinate.ts",
                   "value": 4292
-                },
-                {
-                  "name": "ReduceCSSCalc.ts",
-                  "fullPath": "src/util/ReduceCSSCalc.ts",
-                  "value": 4223
                 },
                 {
                   "name": "resolveDefaultProps.tsx",
@@ -692,12 +692,12 @@
             {
               "name": "cartesian",
               "fullPath": "src/cartesian",
-              "value": 82422,
+              "value": 83324,
               "children": [
                 {
                   "name": "Line.tsx",
                   "fullPath": "src/cartesian/Line.tsx",
-                  "value": 15676
+                  "value": 16041
                 },
                 {
                   "name": "CartesianAxis.tsx",
@@ -710,14 +710,14 @@
                   "value": 11729
                 },
                 {
+                  "name": "YAxis.tsx",
+                  "fullPath": "src/cartesian/YAxis.tsx",
+                  "value": 6858
+                },
+                {
                   "name": "getCartesianPosition.tsx",
                   "fullPath": "src/cartesian/getCartesianPosition.tsx",
                   "value": 6776
-                },
-                {
-                  "name": "YAxis.tsx",
-                  "fullPath": "src/cartesian/YAxis.tsx",
-                  "value": 6321
                 },
                 {
                   "name": "XAxis.tsx",
@@ -1035,7 +1035,7 @@
             {
               "name": "theme",
               "fullPath": "src/theme",
-              "value": 4778,
+              "value": 4039,
               "children": [
                 {
                   "name": "graphicalItemIdentity.ts",
@@ -1045,7 +1045,7 @@
                 {
                   "name": "legacyTheme.ts",
                   "fullPath": "src/theme/legacyTheme.ts",
-                  "value": 1897
+                  "value": 1158
                 },
                 {
                   "name": "RechartsThemeContext.ts",
@@ -1081,7 +1081,7 @@
         {
           "name": "node_modules",
           "fullPath": "node_modules",
-          "value": 402154,
+          "value": 402421,
           "children": [
             {
               "name": "@reduxjs",
@@ -1138,27 +1138,27 @@
             {
               "name": "es-toolkit",
               "fullPath": "node_modules/es-toolkit",
-              "value": 61019,
+              "value": 61286,
               "children": [
                 {
                   "name": "dist",
                   "fullPath": "node_modules/es-toolkit/dist",
-                  "value": 61019,
+                  "value": 61286,
                   "children": [
                     {
                       "name": "compat",
                       "fullPath": "node_modules/es-toolkit/dist/compat",
-                      "value": 37201,
+                      "value": 38047,
                       "children": [
                         {
                           "name": "predicate",
                           "fullPath": "node_modules/es-toolkit/dist/compat/predicate",
-                          "value": 14276,
+                          "value": 14219,
                           "children": [
                             {
                               "name": "isMatchWith.mjs",
                               "fullPath": "node_modules/es-toolkit/dist/compat/predicate/isMatchWith.mjs",
-                              "value": 6305
+                              "value": 6248
                             },
                             {
                               "name": "matchesProperty.mjs",
@@ -1210,7 +1210,7 @@
                         {
                           "name": "object",
                           "fullPath": "node_modules/es-toolkit/dist/compat/object",
-                          "value": 7539,
+                          "value": 7542,
                           "children": [
                             {
                               "name": "get.mjs",
@@ -1225,7 +1225,7 @@
                             {
                               "name": "has.mjs",
                               "fullPath": "node_modules/es-toolkit/dist/compat/object/has.mjs",
-                              "value": 1686
+                              "value": 1689
                             },
                             {
                               "name": "cloneDeep.mjs",
@@ -1242,7 +1242,7 @@
                         {
                           "name": "util",
                           "fullPath": "node_modules/es-toolkit/dist/compat/util",
-                          "value": 5460,
+                          "value": 5958,
                           "children": [
                             {
                               "name": "toPath.mjs",
@@ -1268,13 +1268,18 @@
                               "name": "toNumber.mjs",
                               "fullPath": "node_modules/es-toolkit/dist/compat/util/toNumber.mjs",
                               "value": 513
+                            },
+                            {
+                              "name": "eq.mjs",
+                              "fullPath": "node_modules/es-toolkit/dist/compat/util/eq.mjs",
+                              "value": 498
                             }
                           ]
                         },
                         {
                           "name": "_internal",
                           "fullPath": "node_modules/es-toolkit/dist/compat/_internal",
-                          "value": 5026,
+                          "value": 5428,
                           "children": [
                             {
                               "name": "tags.mjs",
@@ -1282,14 +1287,14 @@
                               "value": 1132
                             },
                             {
+                              "name": "isDeepKey.mjs",
+                              "fullPath": "node_modules/es-toolkit/dist/compat/_internal/isDeepKey.mjs",
+                              "value": 1104
+                            },
+                            {
                               "name": "isKey.mjs",
                               "fullPath": "node_modules/es-toolkit/dist/compat/_internal/isKey.mjs",
                               "value": 979
-                            },
-                            {
-                              "name": "isDeepKey.mjs",
-                              "fullPath": "node_modules/es-toolkit/dist/compat/_internal/isDeepKey.mjs",
-                              "value": 683
                             },
                             {
                               "name": "compareValues.mjs",
@@ -1307,14 +1312,14 @@
                               "value": 369
                             },
                             {
-                              "name": "isIterateeCall.mjs",
-                              "fullPath": "node_modules/es-toolkit/dist/compat/_internal/isIterateeCall.mjs",
-                              "value": 349
-                            },
-                            {
                               "name": "isIndex.mjs",
                               "fullPath": "node_modules/es-toolkit/dist/compat/_internal/isIndex.mjs",
                               "value": 348
+                            },
+                            {
+                              "name": "isIterateeCall.mjs",
+                              "fullPath": "node_modules/es-toolkit/dist/compat/_internal/isIterateeCall.mjs",
+                              "value": 330
                             },
                             {
                               "name": "getSymbols.mjs",
@@ -1362,12 +1367,12 @@
                     {
                       "name": "predicate",
                       "fullPath": "node_modules/es-toolkit/dist/predicate",
-                      "value": 10853,
+                      "value": 10834,
                       "children": [
                         {
                           "name": "isEqualWith.mjs",
                           "fullPath": "node_modules/es-toolkit/dist/predicate/isEqualWith.mjs",
-                          "value": 5662
+                          "value": 5643
                         },
                         {
                           "name": "isPlainObject.mjs",
@@ -1436,28 +1441,6 @@
                       ]
                     },
                     {
-                      "name": "_internal",
-                      "fullPath": "node_modules/es-toolkit/dist/_internal",
-                      "value": 1308,
-                      "children": [
-                        {
-                          "name": "isEqualsSameValueZero.mjs",
-                          "fullPath": "node_modules/es-toolkit/dist/_internal/isEqualsSameValueZero.mjs",
-                          "value": 560
-                        },
-                        {
-                          "name": "isUnsafeProperty.mjs",
-                          "fullPath": "node_modules/es-toolkit/dist/_internal/isUnsafeProperty.mjs",
-                          "value": 493
-                        },
-                        {
-                          "name": "globalThis.mjs",
-                          "fullPath": "node_modules/es-toolkit/dist/_internal/globalThis.mjs",
-                          "value": 255
-                        }
-                      ]
-                    },
-                    {
                       "name": "function",
                       "fullPath": "node_modules/es-toolkit/dist/function",
                       "value": 1282,
@@ -1476,6 +1459,23 @@
                           "name": "noop.mjs",
                           "fullPath": "node_modules/es-toolkit/dist/function/noop.mjs",
                           "value": 250
+                        }
+                      ]
+                    },
+                    {
+                      "name": "_internal",
+                      "fullPath": "node_modules/es-toolkit/dist/_internal",
+                      "value": 748,
+                      "children": [
+                        {
+                          "name": "isUnsafeProperty.mjs",
+                          "fullPath": "node_modules/es-toolkit/dist/_internal/isUnsafeProperty.mjs",
+                          "value": 493
+                        },
+                        {
+                          "name": "globalThis.mjs",
+                          "fullPath": "node_modules/es-toolkit/dist/_internal/globalThis.mjs",
+                          "value": 255
                         }
                       ]
                     }
@@ -2550,45 +2550,45 @@
   },
   "sunburst": {
     "examplePath": "www/src/views/IndexView/IndexLineChart.tsx",
-    "totalSize": 897126,
-    "totalSizeLabel": "876.10 KB",
+    "totalSize": 897985,
+    "totalSizeLabel": "876.94 KB",
     "moduleCount": 366,
-    "generatedAt": "2026-07-28T13:42:58.181Z",
+    "generatedAt": "2026-08-04T21:22:26.361Z",
     "stages": [
       {
         "stage": "es6-folder",
-        "bytes": 1304649,
-        "humanReadableSize": "1.24 MB",
+        "bytes": 1311446,
+        "humanReadableSize": "1.25 MB",
         "reductionFromBaselinePercent": 0
       },
       {
         "stage": "tree-shaken",
-        "bytes": 900005,
-        "humanReadableSize": "878.91 KB",
+        "bytes": 900864,
+        "humanReadableSize": "879.75 KB",
         "reductionFromBaselinePercent": 0
       },
       {
         "stage": "minified",
-        "bytes": 302610,
-        "humanReadableSize": "295.52 KB",
-        "reductionFromBaselinePercent": 66.38
+        "bytes": 303057,
+        "humanReadableSize": "295.95 KB",
+        "reductionFromBaselinePercent": 66.36
       },
       {
         "stage": "minified+gzip",
-        "bytes": 98854,
-        "humanReadableSize": "96.54 KB",
-        "reductionFromBaselinePercent": 89.02
+        "bytes": 99098,
+        "humanReadableSize": "96.78 KB",
+        "reductionFromBaselinePercent": 89
       }
     ],
     "tree": {
       "name": "bundle",
       "fullPath": "bundle",
-      "value": 897126,
+      "value": 897985,
       "children": [
         {
           "name": "src",
           "fullPath": "src",
-          "value": 493365,
+          "value": 493957,
           "children": [
             {
               "name": "state",
@@ -2976,7 +2976,7 @@
             {
               "name": "util",
               "fullPath": "src/util",
-              "value": 105996,
+              "value": 106425,
               "children": [
                 {
                   "name": "scale",
@@ -3038,14 +3038,14 @@
                   "value": 5015
                 },
                 {
+                  "name": "ReduceCSSCalc.ts",
+                  "fullPath": "src/util/ReduceCSSCalc.ts",
+                  "value": 4652
+                },
+                {
                   "name": "getRelativeCoordinate.ts",
                   "fullPath": "src/util/getRelativeCoordinate.ts",
                   "value": 4292
-                },
-                {
-                  "name": "ReduceCSSCalc.ts",
-                  "fullPath": "src/util/ReduceCSSCalc.ts",
-                  "value": 4223
                 },
                 {
                   "name": "resolveDefaultProps.tsx",
@@ -3241,12 +3241,12 @@
             {
               "name": "cartesian",
               "fullPath": "src/cartesian",
-              "value": 82422,
+              "value": 83324,
               "children": [
                 {
                   "name": "Line.tsx",
                   "fullPath": "src/cartesian/Line.tsx",
-                  "value": 15676
+                  "value": 16041
                 },
                 {
                   "name": "CartesianAxis.tsx",
@@ -3259,14 +3259,14 @@
                   "value": 11729
                 },
                 {
+                  "name": "YAxis.tsx",
+                  "fullPath": "src/cartesian/YAxis.tsx",
+                  "value": 6858
+                },
+                {
                   "name": "getCartesianPosition.tsx",
                   "fullPath": "src/cartesian/getCartesianPosition.tsx",
                   "value": 6776
-                },
-                {
-                  "name": "YAxis.tsx",
-                  "fullPath": "src/cartesian/YAxis.tsx",
-                  "value": 6321
                 },
                 {
                   "name": "XAxis.tsx",
@@ -3584,7 +3584,7 @@
             {
               "name": "theme",
               "fullPath": "src/theme",
-              "value": 4778,
+              "value": 4039,
               "children": [
                 {
                   "name": "graphicalItemIdentity.ts",
@@ -3594,7 +3594,7 @@
                 {
                   "name": "legacyTheme.ts",
                   "fullPath": "src/theme/legacyTheme.ts",
-                  "value": 1897
+                  "value": 1158
                 },
                 {
                   "name": "RechartsThemeContext.ts",
@@ -3630,7 +3630,7 @@
         {
           "name": "node_modules",
           "fullPath": "node_modules",
-          "value": 402154,
+          "value": 402421,
           "children": [
             {
               "name": "@reduxjs",
@@ -3687,27 +3687,27 @@
             {
               "name": "es-toolkit",
               "fullPath": "node_modules/es-toolkit",
-              "value": 61019,
+              "value": 61286,
               "children": [
                 {
                   "name": "dist",
                   "fullPath": "node_modules/es-toolkit/dist",
-                  "value": 61019,
+                  "value": 61286,
                   "children": [
                     {
                       "name": "compat",
                       "fullPath": "node_modules/es-toolkit/dist/compat",
-                      "value": 37201,
+                      "value": 38047,
                       "children": [
                         {
                           "name": "predicate",
                           "fullPath": "node_modules/es-toolkit/dist/compat/predicate",
-                          "value": 14276,
+                          "value": 14219,
                           "children": [
                             {
                               "name": "isMatchWith.mjs",
                               "fullPath": "node_modules/es-toolkit/dist/compat/predicate/isMatchWith.mjs",
-                              "value": 6305
+                              "value": 6248
                             },
                             {
                               "name": "matchesProperty.mjs",
@@ -3759,7 +3759,7 @@
                         {
                           "name": "object",
                           "fullPath": "node_modules/es-toolkit/dist/compat/object",
-                          "value": 7539,
+                          "value": 7542,
                           "children": [
                             {
                               "name": "get.mjs",
@@ -3774,7 +3774,7 @@
                             {
                               "name": "has.mjs",
                               "fullPath": "node_modules/es-toolkit/dist/compat/object/has.mjs",
-                              "value": 1686
+                              "value": 1689
                             },
                             {
                               "name": "cloneDeep.mjs",
@@ -3791,7 +3791,7 @@
                         {
                           "name": "util",
                           "fullPath": "node_modules/es-toolkit/dist/compat/util",
-                          "value": 5460,
+                          "value": 5958,
                           "children": [
                             {
                               "name": "toPath.mjs",
@@ -3817,13 +3817,18 @@
                               "name": "toNumber.mjs",
                               "fullPath": "node_modules/es-toolkit/dist/compat/util/toNumber.mjs",
                               "value": 513
+                            },
+                            {
+                              "name": "eq.mjs",
+                              "fullPath": "node_modules/es-toolkit/dist/compat/util/eq.mjs",
+                              "value": 498
                             }
                           ]
                         },
                         {
                           "name": "_internal",
                           "fullPath": "node_modules/es-toolkit/dist/compat/_internal",
-                          "value": 5026,
+                          "value": 5428,
                           "children": [
                             {
                               "name": "tags.mjs",
@@ -3831,14 +3836,14 @@
                               "value": 1132
                             },
                             {
+                              "name": "isDeepKey.mjs",
+                              "fullPath": "node_modules/es-toolkit/dist/compat/_internal/isDeepKey.mjs",
+                              "value": 1104
+                            },
+                            {
                               "name": "isKey.mjs",
                               "fullPath": "node_modules/es-toolkit/dist/compat/_internal/isKey.mjs",
                               "value": 979
-                            },
-                            {
-                              "name": "isDeepKey.mjs",
-                              "fullPath": "node_modules/es-toolkit/dist/compat/_internal/isDeepKey.mjs",
-                              "value": 683
                             },
                             {
                               "name": "compareValues.mjs",
@@ -3856,14 +3861,14 @@
                               "value": 369
                             },
                             {
-                              "name": "isIterateeCall.mjs",
-                              "fullPath": "node_modules/es-toolkit/dist/compat/_internal/isIterateeCall.mjs",
-                              "value": 349
-                            },
-                            {
                               "name": "isIndex.mjs",
                               "fullPath": "node_modules/es-toolkit/dist/compat/_internal/isIndex.mjs",
                               "value": 348
+                            },
+                            {
+                              "name": "isIterateeCall.mjs",
+                              "fullPath": "node_modules/es-toolkit/dist/compat/_internal/isIterateeCall.mjs",
+                              "value": 330
                             },
                             {
                               "name": "getSymbols.mjs",
@@ -3911,12 +3916,12 @@
                     {
                       "name": "predicate",
                       "fullPath": "node_modules/es-toolkit/dist/predicate",
-                      "value": 10853,
+                      "value": 10834,
                       "children": [
                         {
                           "name": "isEqualWith.mjs",
                           "fullPath": "node_modules/es-toolkit/dist/predicate/isEqualWith.mjs",
-                          "value": 5662
+                          "value": 5643
                         },
                         {
                           "name": "isPlainObject.mjs",
@@ -3985,28 +3990,6 @@
                       ]
                     },
                     {
-                      "name": "_internal",
-                      "fullPath": "node_modules/es-toolkit/dist/_internal",
-                      "value": 1308,
-                      "children": [
-                        {
-                          "name": "isEqualsSameValueZero.mjs",
-                          "fullPath": "node_modules/es-toolkit/dist/_internal/isEqualsSameValueZero.mjs",
-                          "value": 560
-                        },
-                        {
-                          "name": "isUnsafeProperty.mjs",
-                          "fullPath": "node_modules/es-toolkit/dist/_internal/isUnsafeProperty.mjs",
-                          "value": 493
-                        },
-                        {
-                          "name": "globalThis.mjs",
-                          "fullPath": "node_modules/es-toolkit/dist/_internal/globalThis.mjs",
-                          "value": 255
-                        }
-                      ]
-                    },
-                    {
                       "name": "function",
                       "fullPath": "node_modules/es-toolkit/dist/function",
                       "value": 1282,
@@ -4025,6 +4008,23 @@
                           "name": "noop.mjs",
                           "fullPath": "node_modules/es-toolkit/dist/function/noop.mjs",
                           "value": 250
+                        }
+                      ]
+                    },
+                    {
+                      "name": "_internal",
+                      "fullPath": "node_modules/es-toolkit/dist/_internal",
+                      "value": 748,
+                      "children": [
+                        {
+                          "name": "isUnsafeProperty.mjs",
+                          "fullPath": "node_modules/es-toolkit/dist/_internal/isUnsafeProperty.mjs",
+                          "value": 493
+                        },
+                        {
+                          "name": "globalThis.mjs",
+                          "fullPath": "node_modules/es-toolkit/dist/_internal/globalThis.mjs",
+                          "value": 255
                         }
                       ]
                     }
