@@ -350,11 +350,12 @@ async function generateApiDoc(
   projectReader: ProjectDocReader,
   exampleReader: ExampleReader,
   contextMap: Map<string, { providers: string[]; consumers: string[] }>,
+  options?: { componentNames?: ReadonlyArray<string>; allExports?: ReadonlyArray<string> },
 ): Promise<ApiDoc> {
   const props: ApiProps[] = [];
   const rechartsPropNames = projectReader.getRechartsPropsOf(componentName);
-  const componentNames = projectReader.getPublicComponentNames();
-  const allExports = projectReader.getAllRuntimeExportedNames();
+  const componentNames = options?.componentNames ?? projectReader.getPublicComponentNames();
+  const allExports = options?.allExports ?? projectReader.getAllRuntimeExportedNames();
 
   for (const propName of rechartsPropNames) {
     const comment = projectReader.getCommentOf(componentName, propName);
@@ -410,17 +411,21 @@ async function generateApiDoc(
   }
 
   // Sort props based on user criteria
+  // Cache prop metadata to avoid calling getPropMeta twice per comparison
+  const propOriginCache = new Map<string, string>();
+  const getOrigin = (pName: string) => {
+    if (propOriginCache.has(pName)) return propOriginCache.get(pName)!;
+    const meta = projectReader.getPropMeta(componentName, pName);
+    const origin = meta.some(m => m.origin === 'recharts') ? 'recharts' : 'dom';
+    propOriginCache.set(pName, origin);
+    return origin;
+  };
+
   props.sort((a, b) => {
     // 1. Required props first
     if (a.isOptional !== b.isOptional) {
       return a.isOptional ? 1 : -1;
     }
-
-    const getOrigin = (pName: string) => {
-      const meta = projectReader.getPropMeta(componentName, pName);
-      // If any definition is from 'recharts', treat as 'recharts'
-      return meta.some(m => m.origin === 'recharts') ? 'recharts' : 'dom';
-    };
 
     const originA = getOrigin(a.name);
     const originB = getOrigin(b.name);
