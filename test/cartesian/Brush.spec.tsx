@@ -1,7 +1,18 @@
 import React, { useState } from 'react';
 import { describe, expect, test, vi } from 'vitest';
 import { act, fireEvent, render, screen, waitFor } from '@testing-library/react';
-import { BarChart, Brush, BrushProps, ComposedChart, Customized, Line, LineChart, ReferenceLine } from '../../src';
+import {
+  Bar,
+  BarChart,
+  Brush,
+  BrushProps,
+  ComposedChart,
+  Customized,
+  Line,
+  LineChart,
+  ReferenceLine,
+  YAxis,
+} from '../../src';
 import { assertNotNull } from '../helper/assertNotNull';
 import { useAppSelector } from '../../src/state/hooks';
 import { selectAxisRangeWithReverse, selectDisplayedData } from '../../src/state/selectors/axisSelectors';
@@ -11,6 +22,7 @@ import { createSelectorTestCase } from '../helper/createSelectorTestCase';
 import { selectChartDataWithIndexes } from '../../src/state/selectors/dataSelectors';
 import { useIsPanorama } from '../../src/context/PanoramaContext';
 import { expectBrush } from '../helper/expectBrush';
+import { expectYAxisTicks } from '../helper/expectAxisTicks';
 import { expectLastCalledWith } from '../helper/expectLastCalledWith';
 import { userEventSetup } from '../helper/userEventSetup';
 
@@ -775,6 +787,27 @@ describe('<Brush />', () => {
         x: '100',
         y: '90',
       });
+    });
+  });
+  describe('when the selection is the first data point only', () => {
+    const singlePointData = [{ value: 10 }, { value: 200 }, { value: 300 }, { value: 400 }];
+
+    it('should compute the axis domain from the selected point alone', () => {
+      const { container } = render(
+        <BarChart width={400} height={300} data={singlePointData}>
+          <YAxis />
+          <Bar dataKey="value" stackId="stack" />
+          <Brush startIndex={0} endIndex={0} />
+        </BarChart>,
+      );
+
+      expectYAxisTicks(container, [
+        { textContent: '0', x: '57', y: '255' },
+        { textContent: '3', x: '57', y: '192.5' },
+        { textContent: '6', x: '57', y: '130' },
+        { textContent: '9', x: '57', y: '67.5' },
+        { textContent: '12', x: '57', y: '5' },
+      ]);
     });
   });
 });
