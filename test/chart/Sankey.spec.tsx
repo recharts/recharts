@@ -994,4 +994,76 @@ describe('<Sankey />', () => {
       expect(container.querySelectorAll('.recharts-sankey-link')).toHaveLength(links.length);
     });
   });
+
+  describe('layout of graphs that contain a cycle', () => {
+    const computeOptions = {
+      width: 1000,
+      height: 500,
+      iterations: 32,
+      nodeWidth: 10,
+      nodePadding: 10,
+      sort: true,
+      verticalAlign: 'justify',
+      align: 'justify',
+    } as const;
+
+    const nodes = [{ name: 'a' }, { name: 'b' }, { name: 'c' }];
+
+    /**
+     * A link that points back to a node already on the path is ordinary flow data: a category that
+     * returns to an earlier stage, or to itself. Depth is the longest path to a node, so it grows on
+     * every trip around a cycle and the recursion has no fixed point.
+     */
+    it('computes the layout for a back edge instead of exhausting the call stack', () => {
+      const data = {
+        nodes,
+        links: [
+          { source: 0, target: 1, value: 10 },
+          { source: 1, target: 2, value: 10 },
+          { source: 2, target: 1, value: 5 },
+        ],
+      };
+
+      expect(() => computeData({ data, ...computeOptions })).not.toThrow();
+      expect(computeData({ data, ...computeOptions }).nodes).toHaveLength(nodes.length);
+    });
+
+    it('computes the layout for a self referencing node', () => {
+      const data = {
+        nodes,
+        links: [
+          { source: 0, target: 1, value: 10 },
+          { source: 1, target: 1, value: 5 },
+        ],
+      };
+
+      expect(() => computeData({ data, ...computeOptions })).not.toThrow();
+      expect(computeData({ data, ...computeOptions }).nodes).toHaveLength(nodes.length);
+    });
+
+    it('renders a graph with a back edge', () => {
+      const links = [
+        { source: 0, target: 1, value: 10 },
+        { source: 1, target: 2, value: 10 },
+        { source: 2, target: 1, value: 5 },
+      ];
+
+      const { container } = render(<Sankey width={1000} height={500} data={{ nodes, links }} />);
+
+      expect(container.querySelectorAll('.recharts-sankey-node')).toHaveLength(nodes.length);
+      expect(container.querySelectorAll('.recharts-sankey-link')).toHaveLength(links.length);
+    });
+
+    it('gives an acyclic graph the same depths as before', () => {
+      const data = {
+        nodes,
+        links: [
+          { source: 0, target: 1, value: 10 },
+          { source: 1, target: 2, value: 10 },
+        ],
+      };
+
+      expect(computeData({ data, ...computeOptions }).nodes.map(node => node.depth)).toEqual([0, 1, 2]);
+    });
+  });
 });
