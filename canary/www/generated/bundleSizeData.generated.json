@@ -1,70 +1,70 @@
 {
   "treemap": {
     "examplePath": "www/src/views/IndexView/IndexLineChart.tsx",
-    "totalSize": 897985,
-    "totalSizeLabel": "876.94 KB",
+    "totalSize": 898751,
+    "totalSizeLabel": "877.69 KB",
     "moduleCount": 366,
-    "generatedAt": "2026-08-04T21:20:10.451Z",
+    "generatedAt": "2026-08-05T09:04:03.687Z",
     "stages": [
       {
         "stage": "es6-folder",
-        "bytes": 1311446,
+        "bytes": 1314070,
         "humanReadableSize": "1.25 MB",
         "reductionFromBaselinePercent": 0
       },
       {
         "stage": "tree-shaken",
-        "bytes": 900864,
-        "humanReadableSize": "879.75 KB",
+        "bytes": 901630,
+        "humanReadableSize": "880.50 KB",
         "reductionFromBaselinePercent": 0
       },
       {
         "stage": "minified",
-        "bytes": 303057,
-        "humanReadableSize": "295.95 KB",
-        "reductionFromBaselinePercent": 66.36
+        "bytes": 303134,
+        "humanReadableSize": "296.03 KB",
+        "reductionFromBaselinePercent": 66.38
       },
       {
         "stage": "minified+gzip",
-        "bytes": 99098,
-        "humanReadableSize": "96.78 KB",
-        "reductionFromBaselinePercent": 89
+        "bytes": 99115,
+        "humanReadableSize": "96.79 KB",
+        "reductionFromBaselinePercent": 89.01
       }
     ],
     "tree": {
       "name": "bundle",
       "fullPath": "bundle",
-      "value": 897985,
+      "value": 898751,
       "children": [
         {
           "name": "src",
           "fullPath": "src",
-          "value": 493957,
+          "value": 494723,
           "children": [
             {
               "name": "state",
               "fullPath": "src/state",
-              "value": 172217,
+              "value": 173047,
               "children": [
                 {
                   "name": "selectors",
                   "fullPath": "src/state/selectors",
-                  "value": 108306,
+                  "value": 108392,
                   "children": [
                     {
                       "name": "axisSelectors.ts",
                       "fullPath": "src/state/selectors/axisSelectors.ts",
-                      "value": 53636
+                      "value": 53677
                     },
                     {
                       "name": "combiners",
                       "fullPath": "src/state/selectors/combiners",
-                      "value": 19713,
+                      "value": 19758,
                       "children": [
                         {
                           "name": "combineTooltipPayload.ts",
                           "fullPath": "src/state/selectors/combiners/combineTooltipPayload.ts",
-                          "value": 6609
+                          "value": 6654
                         },
                         {
                           "name": "combineActiveTooltipIndex.ts",
@@ -296,6 +296,11 @@
                   "value": 2685
                 },
                 {
+                  "name": "chartDataSlice.ts",
+                  "fullPath": "src/state/chartDataSlice.ts",
+                  "value": 2557
+                },
+                {
                   "name": "graphicalItemsSlice.ts",
                   "fullPath": "src/state/graphicalItemsSlice.ts",
                   "value": 2231
@@ -304,11 +309,6 @@
                   "name": "legendSlice.ts",
                   "fullPath": "src/state/legendSlice.ts",
                   "value": 2129
-                },
-                {
-                  "name": "chartDataSlice.ts",
-                  "fullPath": "src/state/chartDataSlice.ts",
-                  "value": 1813
                 },
                 {
                   "name": "RechartsStoreProvider.tsx",
@@ -427,7 +427,7 @@
             {
               "name": "util",
               "fullPath": "src/util",
-              "value": 106425,
+              "value": 106361,
               "children": [
                 {
                   "name": "scale",
@@ -663,11 +663,6 @@
                   "value": 258
                 },
                 {
-                  "name": "getSliced.ts",
-                  "fullPath": "src/util/getSliced.ts",
-                  "value": 208
-                },
-                {
                   "name": "getClassNameFromUnknown.tsx",
                   "fullPath": "src/util/getClassNameFromUnknown.tsx",
                   "value": 171
@@ -681,6 +676,11 @@
                   "name": "Events.ts",
                   "fullPath": "src/util/Events.ts",
                   "value": 149
+                },
+                {
+                  "name": "getSliced.ts",
+                  "fullPath": "src/util/getSliced.ts",
+                  "value": 144
                 },
                 {
                   "name": "ReactUtils.ts",
@@ -2550,70 +2550,70 @@
   },
   "sunburst": {
     "examplePath": "www/src/views/IndexView/IndexLineChart.tsx",
-    "totalSize": 897985,
-    "totalSizeLabel": "876.94 KB",
+    "totalSize": 898751,
+    "totalSizeLabel": "877.69 KB",
     "moduleCount": 366,
-    "generatedAt": "2026-08-04T21:20:08.217Z",
+    "generatedAt": "2026-08-05T09:04:01.472Z",
     "stages": [
       {
         "stage": "es6-folder",
-        "bytes": 1311446,
+        "bytes": 1314070,
         "humanReadableSize": "1.25 MB",
         "reductionFromBaselinePercent": 0
       },
       {
         "stage": "tree-shaken",
-        "bytes": 900864,
-        "humanReadableSize": "879.75 KB",
+        "bytes": 901630,
+        "humanReadableSize": "880.50 KB",
         "reductionFromBaselinePercent": 0
       },
       {
         "stage": "minified",
-        "bytes": 303057,
-        "humanReadableSize": "295.95 KB",
-        "reductionFromBaselinePercent": 66.36
+        "bytes": 303134,
+        "humanReadableSize": "296.03 KB",
+        "reductionFromBaselinePercent": 66.38
       },
       {
         "stage": "minified+gzip",
-        "bytes": 99098,
-        "humanReadableSize": "96.78 KB",
-        "reductionFromBaselinePercent": 89
+        "bytes": 99115,
+        "humanReadableSize": "96.79 KB",
+        "reductionFromBaselinePercent": 89.01
       }
     ],
     "tree": {
       "name": "bundle",
       "fullPath": "bundle",
-      "value": 897985,
+      "value": 898751,
       "children": [
         {
           "name": "src",
           "fullPath": "src",
-          "value": 493957,
+          "value": 494723,
           "children": [
             {
               "name": "state",
               "fullPath": "src/state",
-              "value": 172217,
+              "value": 173047,
               "children": [
                 {
                   "name": "selectors",
                   "fullPath": "src/state/selectors",
-                  "value": 108306,
+                  "value": 108392,
                   "children": [
                     {
                       "name": "axisSelectors.ts",
                       "fullPath": "src/state/selectors/axisSelectors.ts",
-                      "value": 53636
+                      "value": 53677
                     },
                     {
                       "name": "combiners",
                       "fullPath": "src/state/selectors/combiners",
-                      "value": 19713,
+                      "value": 19758,
                       "children": [
                         {
                           "name": "combineTooltipPayload.ts",
                           "fullPath": "src/state/selectors/combiners/combineTooltipPayload.ts",
-                          "value": 6609
+                          "value": 6654
                         },
                         {
                           "name": "combineActiveTooltipIndex.ts",
@@ -2845,6 +2845,11 @@
                   "value": 2685
                 },
                 {
+                  "name": "chartDataSlice.ts",
+                  "fullPath": "src/state/chartDataSlice.ts",
+                  "value": 2557
+                },
+                {
                   "name": "graphicalItemsSlice.ts",
                   "fullPath": "src/state/graphicalItemsSlice.ts",
                   "value": 2231
@@ -2853,11 +2858,6 @@
                   "name": "legendSlice.ts",
                   "fullPath": "src/state/legendSlice.ts",
                   "value": 2129
-                },
-                {
-                  "name": "chartDataSlice.ts",
-                  "fullPath": "src/state/chartDataSlice.ts",
-                  "value": 1813
                 },
                 {
                   "name": "RechartsStoreProvider.tsx",
@@ -2976,7 +2976,7 @@
             {
               "name": "util",
               "fullPath": "src/util",
-              "value": 106425,
+              "value": 106361,
               "children": [
                 {
                   "name": "scale",
@@ -3212,11 +3212,6 @@
                   "value": 258
                 },
                 {
-                  "name": "getSliced.ts",
-                  "fullPath": "src/util/getSliced.ts",
-                  "value": 208
-                },
-                {
                   "name": "getClassNameFromUnknown.tsx",
                   "fullPath": "src/util/getClassNameFromUnknown.tsx",
                   "value": 171
@@ -3230,6 +3225,11 @@
                   "name": "Events.ts",
                   "fullPath": "src/util/Events.ts",
                   "value": 149
+                },
+                {
+                  "name": "getSliced.ts",
+                  "fullPath": "src/util/getSliced.ts",
+                  "value": 144
                 },
                 {
                   "name": "ReactUtils.ts",
