@@ -34,3 +34,5 @@ export const UseActiveTooltipDataPoints = {
   },
   args: getStoryArgsFromArgsTypesObject(TooltipArgs),
 };
+
+export const API = UseActiveTooltipDataPoints;
