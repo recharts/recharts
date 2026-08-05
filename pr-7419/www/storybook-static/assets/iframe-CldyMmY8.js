@@ -1,1 +1,0 @@
-import{t as e}from"./iframe-CRynQy_v.js";e();
