@@ -114,8 +114,19 @@ const searchTargetsAndSources = (links: LinkDataItem[], id: number) => {
   return { sourceNodes, sourceLinks, targetLinks, targetNodes };
 };
 
-const updateDepthOfTargets = (tree: SankeyNode[], curNode: SankeyNode) => {
+const updateDepthOfTargets = (tree: SankeyNode[], curNode: SankeyNode, onPath: Set<SankeyNode> = new Set()): void => {
   const { targetNodes } = curNode;
+
+  /*
+   * `onPath` holds the nodes on the current recursion path, so a link that points back to one of them
+   * is skipped instead of followed. Depth is the longest path to a node, so it grows on every trip
+   * around a cycle and the `newDepth > target.depth` guard below stays true forever: without this the
+   * recursion has no fixed point and exhausts the call stack.
+   *
+   * This tracks the current path and not every node already seen, because a node in a directed acyclic
+   * graph is legitimately reached again by a longer route, and that is the route whose depth wins.
+   */
+  onPath.add(curNode);
 
   for (let i = 0, len = targetNodes.length; i < len; i++) {
     const targetNode = targetNodes[i];
@@ -124,7 +135,7 @@ const updateDepthOfTargets = (tree: SankeyNode[], curNode: SankeyNode) => {
     }
     const target = tree[targetNode];
 
-    if (target) {
+    if (target && !onPath.has(target)) {
       const newDepth = curNode.depth + 1;
       /*
        * Only recurse when the depth grows. Depth is the longest path to a node, so once it stops increasing
@@ -133,10 +144,12 @@ const updateDepthOfTargets = (tree: SankeyNode[], curNode: SankeyNode) => {
        */
       if (newDepth > target.depth) {
         target.depth = newDepth;
-        updateDepthOfTargets(tree, target);
+        updateDepthOfTargets(tree, target, onPath);
       }
     }
   }
+
+  onPath.delete(curNode);
 };
 
 const getNodesTree = (

@@ -994,4 +994,97 @@ describe('<Sankey />', () => {
       expect(container.querySelectorAll('.recharts-sankey-link')).toHaveLength(links.length);
     });
   });
+
+  describe('layout of graphs that contain a cycle', () => {
+    const computeOptions = {
+      width: 1000,
+      height: 500,
+      iterations: 32,
+      nodeWidth: 10,
+      nodePadding: 10,
+      sort: true,
+      verticalAlign: 'justify',
+      align: 'justify',
+    } as const;
+
+    const nodes = [{ name: 'a' }, { name: 'b' }, { name: 'c' }];
+
+    /**
+     * A link that points back to a node already on the path is ordinary flow data: a category that
+     * returns to an earlier stage, or to itself. Depth is the longest path to a node, so it grows on
+     * every trip around a cycle and the recursion has no fixed point.
+     */
+    it('computes the layout for a back edge instead of exhausting the call stack', () => {
+      const data = {
+        nodes,
+        links: [
+          { source: 0, target: 1, value: 10 },
+          { source: 1, target: 2, value: 10 },
+          { source: 2, target: 1, value: 5 },
+        ],
+      };
+
+      expect(() => computeData({ data, ...computeOptions })).not.toThrow();
+      expect(computeData({ data, ...computeOptions }).nodes).toHaveLength(nodes.length);
+    });
+
+    it('computes the layout for a self referencing node', () => {
+      const data = {
+        nodes,
+        links: [
+          { source: 0, target: 1, value: 10 },
+          { source: 1, target: 1, value: 5 },
+        ],
+      };
+
+      expect(() => computeData({ data, ...computeOptions })).not.toThrow();
+      expect(computeData({ data, ...computeOptions }).nodes).toHaveLength(nodes.length);
+    });
+
+    it('renders a graph with a back edge', () => {
+      const links = [
+        { source: 0, target: 1, value: 10 },
+        { source: 1, target: 2, value: 10 },
+        { source: 2, target: 1, value: 5 },
+      ];
+
+      const { container } = render(<Sankey width={1000} height={500} data={{ nodes, links }} />);
+
+      expect(container.querySelectorAll('.recharts-sankey-node')).toHaveLength(nodes.length);
+      expect(container.querySelectorAll('.recharts-sankey-link')).toHaveLength(links.length);
+    });
+
+    /**
+     * `onPath` is cleared as the recursion unwinds, so a node that is no longer an ancestor can be
+     * entered again by a longer route. Node `d` is reached first at depth 2 through `b`, then at
+     * depth 3 through `c` and `e`, and depth is the longest path, so 3 wins. A guard that tracked
+     * every node already seen instead of the current path would keep the first answer.
+     */
+    it('uses the longer acyclic path when a target is revisited', () => {
+      const data = {
+        nodes: [{ name: 'a' }, { name: 'b' }, { name: 'c' }, { name: 'd' }, { name: 'e' }],
+        links: [
+          { source: 0, target: 1, value: 10 },
+          { source: 1, target: 3, value: 10 },
+          { source: 0, target: 2, value: 10 },
+          { source: 2, target: 4, value: 10 },
+          { source: 4, target: 3, value: 10 },
+        ],
+      };
+
+      expect(computeData({ data, ...computeOptions }).nodes.map(node => node.depth)).toEqual([0, 1, 1, 3, 2]);
+    });
+
+    it('gives an acyclic graph the same depths as before', () => {
+      const data = {
+        nodes,
+        links: [
+          { source: 0, target: 1, value: 10 },
+          { source: 1, target: 2, value: 10 },
+        ],
+      };
+
+      expect(computeData({ data, ...computeOptions }).nodes.map(node => node.depth)).toEqual([0, 1, 2]);
+    });
+  });
 });
