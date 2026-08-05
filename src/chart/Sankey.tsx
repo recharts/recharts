@@ -114,7 +114,7 @@ const searchTargetsAndSources = (links: LinkDataItem[], id: number) => {
   return { sourceNodes, sourceLinks, targetLinks, targetNodes };
 };
 
-const updateDepthOfTargets = (tree: SankeyNode[], curNode: SankeyNode, onPath: Set<SankeyNode> = new Set()) => {
+const updateDepthOfTargets = (tree: SankeyNode[], curNode: SankeyNode, onPath: Set<SankeyNode> = new Set()): void => {
   const { targetNodes } = curNode;
 
   /*

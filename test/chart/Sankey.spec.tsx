@@ -1054,6 +1054,27 @@ describe('<Sankey />', () => {
       expect(container.querySelectorAll('.recharts-sankey-link')).toHaveLength(links.length);
     });
 
+    /**
+     * `onPath` is cleared as the recursion unwinds, so a node that is no longer an ancestor can be
+     * entered again by a longer route. Node `d` is reached first at depth 2 through `b`, then at
+     * depth 3 through `c` and `e`, and depth is the longest path, so 3 wins. A guard that tracked
+     * every node already seen instead of the current path would keep the first answer.
+     */
+    it('uses the longer acyclic path when a target is revisited', () => {
+      const data = {
+        nodes: [{ name: 'a' }, { name: 'b' }, { name: 'c' }, { name: 'd' }, { name: 'e' }],
+        links: [
+          { source: 0, target: 1, value: 10 },
+          { source: 1, target: 3, value: 10 },
+          { source: 0, target: 2, value: 10 },
+          { source: 2, target: 4, value: 10 },
+          { source: 4, target: 3, value: 10 },
+        ],
+      };
+
+      expect(computeData({ data, ...computeOptions }).nodes.map(node => node.depth)).toEqual([0, 1, 1, 3, 2]);
+    });
+
     it('gives an acyclic graph the same depths as before', () => {
       const data = {
         nodes,
