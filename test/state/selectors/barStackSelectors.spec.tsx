@@ -5,8 +5,11 @@ import { Bar, BarChart, BarStack, BarRectangleItem } from '../../../src';
 import { PageData } from '../../_data';
 import {
   BarStackItem,
+  combineMaxStrokeWidthOfStack,
   expandRectangle,
+  inflateRectangle,
   selectAllBarsInStack,
+  selectMaxStrokeWidthOfStack,
   selectStackRects,
 } from '../../../src/state/selectors/barStackSelectors';
 import { expectLastCalledWith } from '../../helper/expectLastCalledWith';
@@ -614,6 +617,120 @@ describe('BarStack Selectors', () => {
       expect(stackRects).toHaveLength(2);
       expect(stackRects?.[0]).toBeUndefined();
       expect(stackRects?.[1]).toEqual(expandRectangle(firstRects[0], secondRects[0]));
+    });
+  });
+
+  describe('in chart with stroked bars', () => {
+    const renderTestCase = createSelectorTestCase(({ children }) => (
+      <BarChart width={200} height={200} data={PageData}>
+        <BarStack stackId="strokedstack">
+          <Bar dataKey="uv" id="red" strokeWidth={6} />
+          <Bar dataKey="pv" id="green" strokeWidth="4" />
+          {children}
+        </BarStack>
+        <Bar dataKey="amt" id="blue" strokeWidth={20} />
+      </BarChart>
+    ));
+
+    test('selectMaxStrokeWidthOfStack should return the largest strokeWidth of bars in the stack', () => {
+      const { spy } = renderTestCase(state => selectMaxStrokeWidthOfStack(state, 'strokedstack', false));
+      /*
+       * The bar with strokeWidth=20 is not a part of the stack so it does not count.
+       * The string strokeWidth="4" parses to 4, and the largest in the stack is 6.
+       */
+      expectLastCalledWith(spy, 6);
+    });
+  });
+
+  describe('in chart with bars without strokes', () => {
+    const renderTestCase = createSelectorTestCase(({ children }) => (
+      <BarChart width={200} height={200} data={PageData}>
+        <BarStack stackId="mystackid">
+          <Bar dataKey="uv" id="red" />
+          <Bar dataKey="pv" id="green" />
+          {children}
+        </BarStack>
+      </BarChart>
+    ));
+
+    test('selectMaxStrokeWidthOfStack should return zero', () => {
+      const { spy } = renderTestCase(state => selectMaxStrokeWidthOfStack(state, 'mystackid', false));
+      expectLastCalledWith(spy, 0);
+    });
+  });
+
+  describe('combineMaxStrokeWidthOfStack', () => {
+    const barSettings = (strokeWidth: number | string | undefined): { strokeWidth: number | string | undefined } => ({
+      strokeWidth,
+    });
+
+    it('should return 0 for an empty array', () => {
+      expect(combineMaxStrokeWidthOfStack([])).toBe(0);
+    });
+
+    it('should return the largest of numeric stroke widths', () => {
+      expect(combineMaxStrokeWidthOfStack([barSettings(2), barSettings(6), barSettings(4)])).toBe(6);
+    });
+
+    it('should parse pixel strings', () => {
+      expect(combineMaxStrokeWidthOfStack([barSettings('3px')])).toBe(3);
+      expect(combineMaxStrokeWidthOfStack([barSettings('5')])).toBe(5);
+      expect(combineMaxStrokeWidthOfStack([barSettings(' 4.5 ')])).toBe(4.5);
+      expect(combineMaxStrokeWidthOfStack([barSettings('+5')])).toBe(5);
+      expect(combineMaxStrokeWidthOfStack([barSettings('5.')])).toBe(5);
+      expect(combineMaxStrokeWidthOfStack([barSettings('.5')])).toBe(0.5);
+      expect(combineMaxStrokeWidthOfStack([barSettings('2e1')])).toBe(20);
+      expect(combineMaxStrokeWidthOfStack([barSettings('3PX')])).toBe(3);
+    });
+
+    it('should ignore undefined, negative, NaN, and non-numeric strokeWidths', () => {
+      expect(
+        combineMaxStrokeWidthOfStack([
+          barSettings(undefined),
+          barSettings(-5),
+          barSettings(NaN),
+          barSettings('bogus'),
+          barSettings(Infinity),
+        ]),
+      ).toBe(0);
+    });
+
+    it('should reject partially numeric strings and non-px units', () => {
+      expect(
+        combineMaxStrokeWidthOfStack([
+          barSettings('6bogus'),
+          barSettings('50%'),
+          barSettings('2em'),
+          barSettings('-3px'),
+          barSettings('1e400'),
+        ]),
+      ).toBe(0);
+    });
+  });
+
+  describe('inflateRectangle', () => {
+    it('should return the same rectangle when inflation is 0', () => {
+      const rect = { x: 10, y: 20, width: 30, height: 40 };
+      expect(inflateRectangle(rect, 0)).toBe(rect);
+    });
+
+    it('should grow the rectangle in every direction', () => {
+      const rect = { x: 10, y: 20, width: 30, height: 40 };
+      expect(inflateRectangle(rect, 3)).toEqual({ x: 7, y: 17, width: 36, height: 46 });
+    });
+
+    it('should normalize rectangles with negative height', () => {
+      /*
+       * With stackOffset=sign, height can be negative, meaning that
+       * y is the bottom edge and the bar goes up from there.
+       */
+      const rect = { x: 10, y: 100, width: 30, height: -25 };
+      expect(inflateRectangle(rect, 3)).toEqual({ x: 7, y: 72, width: 36, height: 31 });
+    });
+
+    it('should normalize rectangles with negative width', () => {
+      const rect = { x: 100, y: 25, width: -50, height: 50 };
+      expect(inflateRectangle(rect, 3)).toEqual({ x: 47, y: 22, width: 56, height: 56 });
     });
   });
 

@@ -27,6 +27,7 @@ describe('graphicalItemsSlice', () => {
     hide: false,
     barSize: undefined,
     hasCustomShape: false,
+    strokeWidth: undefined,
   };
 
   const item2: LineSettings = {

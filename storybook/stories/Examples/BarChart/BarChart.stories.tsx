@@ -4,6 +4,7 @@ import { pageData, rangeData } from '../../data';
 import {
   Bar,
   BarChart,
+  BarStack,
   Brush,
   CartesianGrid,
   ErrorBar,
@@ -176,6 +177,38 @@ const dataForBrush = [
   { name: '39', uv: -66, pv: 154 },
   { name: '40', uv: -50, pv: 186 },
 ];
+
+export const BarStackWithStroke = {
+  render: (args: Args) => {
+    return (
+      <ResponsiveContainer width="100%" height="100%">
+        <BarChart {...args}>
+          <CartesianGrid strokeDasharray="3 3" />
+          <XAxis dataKey="name" />
+          <YAxis />
+          <Legend />
+          <Tooltip />
+          <BarStack radius={8}>
+            <Bar dataKey="pv" fill="#8884d8" stroke="#3b3477" strokeWidth={4} />
+            <Bar dataKey="uv" fill="#82ca9d" stroke="#2f7a52" strokeWidth={4} />
+          </BarStack>
+        </BarChart>
+      </ResponsiveContainer>
+    );
+  },
+  args: {
+    ...getStoryArgsFromArgsTypesObject(BarChartArgs),
+    width: 500,
+    height: 300,
+    data: pageData,
+    margin: {
+      top: 20,
+      right: 30,
+      left: 20,
+      bottom: 5,
+    },
+  },
+};
 
 export const XAxisTickMarginWithBrushDy = {
   render: (args: Args) => {
