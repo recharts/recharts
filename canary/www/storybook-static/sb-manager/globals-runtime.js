@@ -14477,7 +14477,7 @@ __export(syntaxhighlighter_exports, {
   default: () => syntaxhighlighter_default,
   supportedLanguages: () => supportedLanguages
 });
-var import_react13, import_memoizerific2, supportedLanguages, themedSyntax, Wrapper, UnstyledScroller, Scroller, Pre, Code, processLineNumber, defaultRenderer2, wrapRenderer, SyntaxHighlighter2, syntaxhighlighter_default, init_syntaxhighlighter = __esm({
+var import_react13, import_memoizerific2, ReactSyntaxHighlighter, supportedLanguages, themedSyntax, Wrapper, UnstyledScroller, Scroller, Pre, Code, processLineNumber, defaultRenderer2, wrapRenderer, SyntaxHighlighter2, syntaxhighlighter_default, init_syntaxhighlighter = __esm({
   "src/components/components/syntaxhighlighter/syntaxhighlighter.tsx"() {
     "use strict";
     import_react13 = __toESM(require_react(), 1), import_memoizerific2 = __toESM(require_memoizerific(), 1);
@@ -14498,7 +14498,7 @@ var import_react13, import_memoizerific2, supportedLanguages, themedSyntax, Wrap
     init_ActionBar();
     init_ScrollArea();
     init_useCopyButton();
-    supportedLanguages = {
+    ReactSyntaxHighlighter = prism_light_default, supportedLanguages = {
       jsextra: js_extras_default,
       jsx: jsx_default,
       json: json_default,
@@ -14512,7 +14512,7 @@ var import_react13, import_memoizerific2, supportedLanguages, themedSyntax, Wrap
       graphql: graphql_default
     };
     Object.entries(supportedLanguages).forEach(([key, val]) => {
-      prism_light_default.registerLanguage(key, val);
+      ReactSyntaxHighlighter.registerLanguage(key, val);
     });
     themedSyntax = (0, import_memoizerific2.default)(2)(
       (theme3) => Object.entries(theme3.code || {}).reduce((acc, [key, val]) => ({ ...acc, [`* .${key}`]: val }), {})
@@ -14605,7 +14605,7 @@ var import_react13, import_memoizerific2, supportedLanguages, themedSyntax, Wrap
           className
         },
         import_react13.default.createElement(Scroller, null, import_react13.default.createElement(
-          prism_light_default,
+          ReactSyntaxHighlighter,
           {
             padded: padded || bordered,
             language,
@@ -14634,7 +14634,7 @@ var import_react13, import_memoizerific2, supportedLanguages, themedSyntax, Wrap
         ) : null
       );
     };
-    SyntaxHighlighter2.registerLanguage = (...args) => prism_light_default.registerLanguage(...args);
+    SyntaxHighlighter2.registerLanguage = (...args) => ReactSyntaxHighlighter.registerLanguage(...args);
     syntaxhighlighter_default = SyntaxHighlighter2;
   }
 });
@@ -30918,9 +30918,9 @@ var globalsNameReferenceMap = {
   "react-dom/client": "__REACT_DOM_CLIENT__",
   "@storybook/icons": "__STORYBOOK_ICONS__",
   "storybook/manager-api": "__STORYBOOK_API__",
-  "storybook/test": "__STORYBOOK_TEST__",
   "storybook/theming": "__STORYBOOK_THEMING__",
   "storybook/theming/create": "__STORYBOOK_THEMING_CREATE__",
+  "storybook/test": "__STORYBOOK_TEST__",
   "storybook/internal/channels": "__STORYBOOK_CHANNELS__",
   "storybook/internal/client-logger": "__STORYBOOK_CLIENT_LOGGER__",
   "storybook/internal/components": "__STORYBOOK_COMPONENTS__",
@@ -63119,7 +63119,7 @@ init_dist();
 var import_memoizerific9 = __toESM(require_memoizerific(), 1), import_semver = __toESM(require_semver2(), 1);
 
 // src/manager-api/version.ts
-var version = "10.5.5";
+var version = "10.5.7";
 
 // src/manager-api/modules/versions.ts
 var { VERSIONCHECK } = scope, getVersionCheckData = (0, import_memoizerific9.default)(1)(() => {

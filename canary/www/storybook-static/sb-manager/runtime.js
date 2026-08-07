@@ -26029,12 +26029,14 @@ var { document: document7 } = scope, DEFAULT_MAX_SEARCH_RESULTS = 50, options = 
     [allComponents, makeFuse]
   ), onSelect = useCallback(
     (selectedItem) => {
-      if (isSearchResult(selectedItem)) {
-        let { id, refId } = selectedItem.item;
-        api?.selectStory(id, void 0, { ref: refId !== DEFAULT_REF_ID && refId }), inputRef.current.blur(), showAllComponents(!1);
-        return;
+      if (selectedItem) {
+        if (isSearchResult(selectedItem)) {
+          let { id, refId } = selectedItem.item;
+          api?.selectStory(id, void 0, { ref: refId !== DEFAULT_REF_ID && refId }), inputRef.current.blur(), showAllComponents(!1);
+          return;
+        }
+        isExpandType(selectedItem) && selectedItem.showAll();
       }
-      isExpandType(selectedItem) && selectedItem.showAll();
     },
     [api]
   ), onInputValueChange = useCallback((inputValue, stateAndHelpers) => {
@@ -26048,7 +26050,7 @@ var { document: document7 } = scope, DEFAULT_MAX_SEARCH_RESULTS = 50, options = 
             // Prevent clearing the input on blur
             inputValue: state.inputValue,
             // Return to the tree view after selecting an item
-            isOpen: state.inputValue && !state.selectedItem
+            isOpen: !!state.inputValue && !state.selectedItem
           };
         case Downshift.stateChangeTypes.mouseUp:
           return state;
@@ -26063,91 +26065,88 @@ var { document: document7 } = scope, DEFAULT_MAX_SEARCH_RESULTS = 50, options = 
     },
     []
   ), { isMobile: isMobile2 } = useLayout(), searchLandmarkRef = useRef(null), { landmarkProps } = useLandmark({ role: "search" }, searchLandmarkRef);
-  return (
-    // @ts-expect-error (non strict)
-    react_default.createElement(
-      Downshift,
-      {
-        initialInputValue: initialQuery,
-        stateReducer: stateReducer2,
-        itemToString: (result) => result?.item?.name || "",
-        scrollIntoView: (e2) => scrollIntoView(e2),
-        onSelect,
-        onInputValueChange
-      },
-      ({
-        isOpen,
-        openMenu,
-        closeMenu,
-        inputValue,
-        getInputProps,
-        getItemProps,
-        getLabelProps,
-        getMenuProps,
-        getRootProps,
-        highlightedIndex,
-        reset
-      }) => {
-        let input = inputValue ? inputValue.trim() : "", results = input ? getResults(input) : [], lastViewed = !input && getLastViewed();
-        lastViewed && lastViewed.length && (results = lastViewed.reduce((acc, { storyId, refId }) => {
-          let data = dataset.hash[refId];
-          if (data && data.index && data.index[storyId]) {
-            let story = data.index[storyId], item = story.type === "story" ? data.index[story.parent] : story;
-            acc.some((res) => res.item.refId === refId && res.item.id === item.id) || acc.push({ item: searchItem(item, dataset.hash[refId]), matches: [], score: 0 });
-          }
-          return acc;
-        }, []));
-        let inputId = "storybook-explorer-searchfield", inputProps = getInputProps({
-          id: inputId,
-          ref: inputRef,
-          required: !0,
-          type: "search",
-          placeholder: inputPlaceholder,
-          onFocus: () => {
-            openMenu(), setPlaceholder("Type to find...");
-          },
-          onBlur: () => setPlaceholder("Find components"),
-          onKeyDown: (e2) => {
-            e2.key === "Escape" && inputValue.length === 0 && inputRef.current.blur();
-          }
-        }), labelProps = getLabelProps({
-          htmlFor: inputId
-        });
-        return react_default.createElement(react_default.Fragment, null, react_default.createElement(ScreenReaderLabel, { ...labelProps }, "Search for components"), react_default.createElement(SearchBar, { ref: searchLandmarkRef, ...landmarkProps }, react_default.createElement(
-          SearchField2,
+  return react_default.createElement(
+    Downshift,
+    {
+      initialInputValue: initialQuery,
+      stateReducer: stateReducer2,
+      itemToString: (result) => result?.item?.name || "",
+      scrollIntoView: (e2) => scrollIntoView(e2),
+      onSelect,
+      onInputValueChange
+    },
+    ({
+      isOpen,
+      openMenu,
+      closeMenu,
+      inputValue,
+      getInputProps,
+      getItemProps,
+      getLabelProps,
+      getMenuProps,
+      getRootProps,
+      highlightedIndex,
+      reset
+    }) => {
+      let input = inputValue ? inputValue.trim() : "", results = input ? getResults(input) : [], lastViewed = !input && getLastViewed();
+      lastViewed && lastViewed.length && (results = lastViewed.reduce((acc, { storyId, refId }) => {
+        let data = dataset.hash[refId];
+        if (data && data.index && data.index[storyId]) {
+          let story = data.index[storyId], item = story.type === "story" ? data.index[story.parent] : story;
+          acc.some((res) => res.item.refId === refId && res.item.id === item.id) || acc.push({ item: searchItem(item, dataset.hash[refId]), matches: [], score: 0 });
+        }
+        return acc;
+      }, []));
+      let inputId = "storybook-explorer-searchfield", inputProps = getInputProps({
+        id: inputId,
+        ref: inputRef,
+        required: !0,
+        type: "search",
+        placeholder: inputPlaceholder,
+        onFocus: () => {
+          openMenu(), setPlaceholder("Type to find...");
+        },
+        onBlur: () => setPlaceholder("Find components"),
+        onKeyDown: (e2) => {
+          e2.key === "Escape" && inputValue.length === 0 && inputRef.current.blur();
+        }
+      }), labelProps = getLabelProps({
+        htmlFor: inputId
+      });
+      return react_default.createElement(react_default.Fragment, null, react_default.createElement(ScreenReaderLabel, { ...labelProps }, "Search for components"), react_default.createElement(SearchBar, { ref: searchLandmarkRef, ...landmarkProps }, react_default.createElement(
+        SearchField2,
+        {
+          ...getRootProps({ refKey: "" }, { suppressRefError: !0 }),
+          isMobile: isMobile2,
+          className: "search-field"
+        },
+        react_default.createElement(IconWrapper, null, react_default.createElement(SearchIcon, null)),
+        react_default.createElement(Input, { ...inputProps, isMobile: isMobile2 }),
+        !isMobile2 && enableShortcuts && !isOpen && react_default.createElement(FocusKey, null, searchShortcut === "\u2318 K" ? react_default.createElement(react_default.Fragment, null, react_default.createElement(FocusKeyCmd, null, "\u2318"), "K") : searchShortcut),
+        react_default.createElement(Actions2, null, input && react_default.createElement(
+          Button,
           {
-            ...getRootProps({ refKey: "" }, { suppressRefError: !0 }),
-            isMobile: isMobile2,
-            className: "search-field"
+            padding: "small",
+            variant: "ghost",
+            ariaLabel: "Clear search",
+            onClick: () => {
+              reset({ inputValue: "" }), closeMenu(), inputRef.current?.focus();
+            }
           },
-          react_default.createElement(IconWrapper, null, react_default.createElement(SearchIcon, null)),
-          react_default.createElement(Input, { ...inputProps, isMobile: isMobile2 }),
-          !isMobile2 && enableShortcuts && !isOpen && react_default.createElement(FocusKey, null, searchShortcut === "\u2318 K" ? react_default.createElement(react_default.Fragment, null, react_default.createElement(FocusKeyCmd, null, "\u2318"), "K") : searchShortcut),
-          react_default.createElement(Actions2, null, input && react_default.createElement(
-            Button,
-            {
-              padding: "small",
-              variant: "ghost",
-              ariaLabel: "Clear search",
-              onClick: () => {
-                reset({ inputValue: "" }), closeMenu(), inputRef.current?.focus();
-              }
-            },
-            react_default.createElement(CloseIcon, null)
-          ), searchFieldContent)
-        ), searchBarContent), react_default.createElement(FocusContainer, { tabIndex: 0, id: "storybook-explorer-menu" }, children({
-          query: input,
-          results,
-          isNavVisible: !isOpen && document7.activeElement !== inputRef.current,
-          isNavReachable: !isOpen || input.length === 0,
-          isSearchResultRendered: isOpen,
-          closeMenu,
-          getMenuProps,
-          getItemProps,
-          highlightedIndex
-        })));
-      }
-    )
+          react_default.createElement(CloseIcon, null)
+        ), searchFieldContent)
+      ), searchBarContent), react_default.createElement(FocusContainer, { tabIndex: 0, id: "storybook-explorer-menu" }, children({
+        query: input,
+        results,
+        isNavVisible: !isOpen && document7.activeElement !== inputRef.current,
+        isNavReachable: !isOpen || input.length === 0,
+        isSearchResultRendered: isOpen,
+        closeMenu,
+        getMenuProps,
+        getItemProps,
+        highlightedIndex
+      })));
+    }
   );
 });
 
