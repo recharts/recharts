@@ -133,4 +133,16 @@ describe('reduceCSSCalc', () => {
       expect(reduceCSSCalc(`calc((${pattern}))`)).toEqual(pattern);
     },
   );
+
+  it.each([
+    () => `calc(${'9'.repeat(50000)}+)`,
+    () => `calc(${'9'.repeat(50000)}*)`,
+    () => `calc(${'9'.repeat(50000)}+@)`,
+  ])('should resolve quickly for a pathological digit run followed by an operator (ReDoS guard)', getInput => {
+    const input = getInput();
+    const start = Date.now();
+    expect(reduceCSSCalc(input)).toEqual('');
+    // Without the length guard this backtracks quadratically and takes many seconds.
+    expect(Date.now() - start).toBeLessThan(1000);
+  });
 });

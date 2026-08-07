@@ -158,7 +158,20 @@ function calculateParentheses(expr: string): string {
   return newExpr;
 }
 
+/*
+ * Guard against pathological input. A long run of digits followed by an
+ * arithmetic operator with no valid right-hand operand makes the operand
+ * regexes above backtrack quadratically (a ReDoS), which can freeze the
+ * rendering thread. Legitimate CSS length expressions used for text layout
+ * are only a few dozen characters, so anything longer is treated as invalid.
+ */
+const MAX_EXPRESSION_LENGTH = 1000;
+
 function evaluateExpression(expression: string): string {
+  if (expression.length > MAX_EXPRESSION_LENGTH) {
+    return STR_NAN;
+  }
+
   let newExpr = expression.replace(/\s+/g, '');
   newExpr = calculateParentheses(newExpr);
   newExpr = calculateArithmetic(newExpr);
