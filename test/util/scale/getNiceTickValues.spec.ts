@@ -301,6 +301,19 @@ describe('getNiceTickValues', () => {
     it('should return 3 reversed ticks when min is bigger than max, the interval contains 0 and 2 ticks are requested', () => {
       expect(getNiceTickValues([10, -10], 2)).toEqual([10, 0, -10]);
     });
+
+    it("should return 3 ticks when the interval contains 0, 2 ticks are requested and niceTicks is 'snap125'", () => {
+      expect(getNiceTickValues([-10, 10], 2, true, 'snap125')).toEqual([-10, 0, 10]);
+    });
+
+    it('should still return 2 ticks when the interval only touches 0 at an end', () => {
+      expect(getNiceTickValues([0, 10], 2)).toEqual([0, 10]);
+      expect(getNiceTickValues([-10, 0], 2)).toEqual([-10, 0]);
+      expect(getNiceTickValues([0, 10], 2, true, 'snap125')).toEqual([0, 10]);
+      expect(getNiceTickValues([-10, 0], 2, true, 'snap125')).toEqual([-10, 0]);
+      expect(getNiceTickValues([0, 10], 2, false)).toEqual([0, 10]);
+      expect(getNiceTickValues([-10, 0], 2, false, 'snap125')).toEqual([-10, 0]);
+    });
   });
 
   describe('getSnap125Step', () => {
