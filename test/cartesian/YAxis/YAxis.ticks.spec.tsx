@@ -18,6 +18,11 @@ const dataWithDecimals = PageData.map(item => ({
   pv: item.pv / 100,
 }));
 
+const dataCrossingZero = [
+  { name: 'a', pv: -10 },
+  { name: 'b', pv: 10 },
+];
+
 const defaultExpectedYAxisSettings: RenderableAxisSettings = {
   allowDataOverflow: false,
   allowDecimals: true,
@@ -269,6 +274,31 @@ describe('YAxis ticks', () => {
         { textContent: '70', x: '57', y: '174' },
         { textContent: '140', x: '57', y: '83.00000000000001' },
         { textContent: '200', x: '57', y: '5' },
+      ]);
+    });
+  });
+
+  describe("with domain=['auto', 'auto'] and tickCount=2 and data that crosses zero", () => {
+    const renderTestCase = createSelectorTestCase(({ children }) => (
+      <LineChart width={500} height={300} data={dataCrossingZero}>
+        <XAxis dataKey="name" />
+        <YAxis domain={['auto', 'auto']} tickCount={2} />
+        <Line dataKey="pv" />
+        {children}
+      </LineChart>
+    ));
+
+    it('should select niceTicks with zero in the middle', () => {
+      const { spy } = renderTestCase(state => selectNiceTicks(state, 'yAxis', 0, false));
+      expectLastCalledWith(spy, [-10, 0, 10]);
+    });
+
+    it('should render 3 ticks', () => {
+      const { container } = renderTestCase();
+      expectYAxisTicks(container, [
+        { textContent: '-10', x: '57', y: '265' },
+        { textContent: '0', x: '57', y: '135' },
+        { textContent: '10', x: '57', y: '5' },
       ]);
     });
   });

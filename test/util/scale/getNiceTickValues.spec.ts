@@ -104,6 +104,13 @@ describe('getNiceTickValues', () => {
       expect(step.tickMin.toNumber()).toBe(-100);
       expect(step.tickMax.toNumber()).toBe(100);
     });
+
+    it('should use 3 ticks when the interval contains 0 but fewer are requested', () => {
+      const step = calculateStep(-100, 100, 2, true, 0);
+      expect(step.step.toNumber()).toBe(100);
+      expect(step.tickMin.toNumber()).toBe(-100);
+      expect(step.tickMax.toNumber()).toBe(100);
+    });
   });
 
   describe('getNiceTickValues', () => {
@@ -281,6 +288,19 @@ describe('getNiceTickValues', () => {
       const scales = getNiceTickValues([0, 0.000013202017268238587], 5);
       expect(scales).toEqual([0, 0.0000035, 0.000007, 0.0000105, 0.000014]);
     });
+
+    it('should return 3 ticks when the interval contains 0 and only 2 ticks are requested', () => {
+      expect(getNiceTickValues([-10, 10], 2)).toEqual([-10, 0, 10]);
+      expect(getNiceTickValues([-1, 100], 2)).toEqual([-100, 0, 100]);
+    });
+
+    it('should return 3 ticks when the interval contains 0, 2 ticks are requested and decimals are not allowed', () => {
+      expect(getNiceTickValues([-0.5, 0.5], 2, false)).toEqual([-1, 0, 1]);
+    });
+
+    it('should return 3 reversed ticks when min is bigger than max, the interval contains 0 and 2 ticks are requested', () => {
+      expect(getNiceTickValues([10, -10], 2)).toEqual([10, 0, -10]);
+    });
   });
 
   describe('getSnap125Step', () => {
@@ -379,6 +399,11 @@ describe('getNiceTickValues', () => {
     it('should handle very large numbers [0, 1e100], 6', () => {
       const scales = getNiceTickValues([0, 1e100], 6, true, 'snap125');
       expect(scales).toEqual([0, 2e99, 4e99, 6e99, 8e99, 1e100]);
+    });
+
+    it('should return 3 ticks when the interval contains 0 and only 2 ticks are requested', () => {
+      expect(getNiceTickValues([-10, 10], 2, true, 'snap125')).toEqual([-10, 0, 10]);
+      expect(getNiceTickValues([-10, 10], 2, false, 'snap125')).toEqual([-10, 0, 10]);
     });
   });
 
