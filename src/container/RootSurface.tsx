@@ -8,6 +8,7 @@ import { useAppSelector } from '../state/hooks';
 import { selectBrushDimensions } from '../state/selectors/brushSelectors';
 import { isPositiveNumber } from '../util/isWellBehavedNumber';
 import { AllZIndexPortals } from '../zIndex/ZIndexPortal';
+import { ClipPathProvider } from './ClipPathProvider';
 
 type RootSurfaceProps = {
   children: ReactNode;
@@ -104,7 +105,9 @@ export const RootSurface = forwardRef<SVGSVGElement, RootSurfaceProps>(
     }
     return (
       <MainChartSurface ref={ref} {...rest}>
-        <AllZIndexPortals isPanorama={false}>{children}</AllZIndexPortals>
+        <ClipPathProvider>
+          <AllZIndexPortals isPanorama={false}>{children}</AllZIndexPortals>
+        </ClipPathProvider>
       </MainChartSurface>
     );
   },

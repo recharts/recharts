@@ -367,4 +367,9 @@ export const commentSimilarityExceptions: ReadonlyArray<CommentSimilarityGroup> 
     reason:
       'labelStyle in Tooltip styles the title, where the same labelStyle in Legend styles the individual items. Naming inconsistency we keep for backwards compatibility.',
   },
+  {
+    components: ['RechartsThemeProvider'],
+    props: ['axis'],
+    reason: 'RechartsThemeProvider.axis contains axis theme styles rather than selecting zoom dimensions.',
+  },
 ];
