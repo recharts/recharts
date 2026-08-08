@@ -65,6 +65,7 @@
   "lib/chart/zoom/doubleClickGesture.js",
   "lib/chart/zoom/keyboardGesture.js",
   "lib/chart/zoom/pointerGesture.js",
+  "lib/chart/zoom/touchGesture.js",
   "lib/chart/zoom/wheelGesture.js",
   "lib/component",
   "lib/component/ActivePoints.js",
