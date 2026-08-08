@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { describe, it, expect } from 'vitest';
 import { createSelectorTestCase } from '../helper/createSelectorTestCase';
-import { Bar, BarChart, BarStack } from '../../src';
+import { Bar, BarChart, BarStack, RechartsThemeProvider } from '../../src';
 import { PageData } from '../_data';
 import { inflateRadius, useBarStackClipPathUrl, useStackId } from '../../src/cartesian/BarStack';
 import { expectLastCalledWith } from '../helper/expectLastCalledWith';
@@ -148,6 +148,43 @@ describe('BarStack', () => {
       expectBarStackClipRects(
         container,
         stackRects200x200.map(rect => ({ ...rect, radius: '8' })),
+      );
+    });
+  });
+
+  describe('clipPath when strokeWidth comes from theme', () => {
+    const renderTestCase = createSelectorTestCase(({ children }) => (
+      <RechartsThemeProvider
+        value={{
+          graphicalItems: [{ strokeWidth: 6 }],
+        }}
+      >
+        <BarChart width={200} height={200} data={PageData}>
+          <BarStack stackId="themed-stack" radius={8}>
+            <Bar dataKey="uv" isAnimationActive={false} />
+            <Bar dataKey="pv" isAnimationActive={false} />
+            {children}
+          </BarStack>
+          <Bar dataKey="amt" isAnimationActive={false} />
+        </BarChart>
+      </RechartsThemeProvider>
+    ));
+
+    it('should expand the clip path by half of the largest theme strokeWidth so the stroke is not clipped', () => {
+      const { container } = renderTestCase();
+      /*
+       * The theme sets strokeWidth 6 for every Bar, so the clip path
+       * must grow by half of it: 6 / 2 = 3 in every direction.
+       */
+      expectBarStackClipRects(
+        container,
+        stackRects200x200.map(rect => ({
+          x: rect.x - 3,
+          y: rect.y - 3,
+          width: rect.width + 6,
+          height: rect.height + 6,
+          radius: '11',
+        })),
       );
     });
   });

@@ -1294,7 +1294,7 @@ function BarFn(outsideProps: Props) {
             maxBarSize={props.maxBarSize}
             isPanorama={isPanorama}
             hasCustomShape={props.shape != null && props.shape !== defaultBarShape}
-            strokeWidth={props.strokeWidth}
+            strokeWidth={themedProps.strokeWidth ?? props.strokeWidth}
           />
           <ZIndexLayer zIndex={props.zIndex}>
             <BarImpl {...props} {...themedProps} id={id} />
