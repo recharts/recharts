@@ -73,6 +73,8 @@ import { ChartData } from '../state/chartDataSlice';
 import { getClassNameFromUnknown } from '../util/getClassNameFromUnknown';
 import { WithIdRequired } from '../util/useUniqueId';
 import { usePolarChartLayout } from '../context/chartLayoutContext';
+import { useRechartsTheme } from '../theme/RechartsThemeContext';
+import { RechartsTheme } from '../theme/RechartsTheme';
 
 interface PieDef {
   /**
@@ -424,14 +426,75 @@ export type PieCoordinate = {
 
 const defaultPieSectorShape = Sector;
 
-function SetPiePayloadLegend(props: { children?: ReactNode; id: GraphicalItemId }) {
+type PieStyleProps = Pick<
+  Props,
+  'fill' | 'fillOpacity' | 'stroke' | 'strokeOpacity' | 'strokeWidth' | 'strokeDasharray'
+>;
+
+type PieGraphicalItems = RechartsTheme['graphicalItems'];
+
+function hasOwnProperty(value: unknown, property: string): boolean {
+  return typeof value === 'object' && value != null && Object.prototype.hasOwnProperty.call(value, property);
+}
+
+function getThemedPieSector(
+  sector: PieSectorDataItem,
+  index: number,
+  graphicalItems: PieGraphicalItems,
+  explicitStyleProps: PieStyleProps,
+): PieSectorDataItem {
+  const graphicalItemStyle = graphicalItems[index % graphicalItems.length];
+  if (graphicalItemStyle == null) {
+    return sector;
+  }
+
+  const hasPayloadStyle = (property: keyof PieStyleProps): boolean => hasOwnProperty(sector.payload, property);
+
+  return {
+    ...sector,
+    fill: hasPayloadStyle('fill') ? sector.fill : (explicitStyleProps.fill ?? graphicalItemStyle.fill ?? sector.fill),
+    fillOpacity: hasPayloadStyle('fillOpacity')
+      ? sector.fillOpacity
+      : (explicitStyleProps.fillOpacity ?? graphicalItemStyle.fillOpacity ?? sector.fillOpacity),
+    stroke: hasPayloadStyle('stroke')
+      ? sector.stroke
+      : (explicitStyleProps.stroke ?? graphicalItemStyle.stroke ?? sector.stroke),
+    strokeOpacity: hasPayloadStyle('strokeOpacity')
+      ? sector.strokeOpacity
+      : (explicitStyleProps.strokeOpacity ?? graphicalItemStyle.strokeOpacity ?? sector.strokeOpacity),
+    strokeWidth: hasPayloadStyle('strokeWidth')
+      ? sector.strokeWidth
+      : (explicitStyleProps.strokeWidth ?? graphicalItemStyle.strokeWidth ?? sector.strokeWidth),
+    strokeDasharray: hasPayloadStyle('strokeDasharray')
+      ? sector.strokeDasharray
+      : (explicitStyleProps.strokeDasharray ?? graphicalItemStyle.strokeDasharray ?? sector.strokeDasharray),
+  };
+}
+
+function SetPiePayloadLegend(props: {
+  children?: ReactNode;
+  id: GraphicalItemId;
+  graphicalItems: PieGraphicalItems;
+  explicitStyleProps: PieStyleProps;
+}) {
   const cells = useMemo(() => findAllByType(props.children, Cell), [props.children]);
 
   const legendPayload = useAppSelector(state => selectPieLegend(state, props.id, cells));
   if (legendPayload == null) {
     return null;
   }
-  return <SetPolarLegendPayload legendPayload={legendPayload} />;
+
+  const themedLegendPayload = legendPayload.map((entry, index) => {
+    const graphicalItemStyle = props.graphicalItems[index % props.graphicalItems.length];
+    const hasCellFill = cells?.[index]?.props?.fill != null;
+    const fill =
+      hasCellFill || hasOwnProperty(entry.payload, 'fill')
+        ? entry.color
+        : (props.explicitStyleProps.fill ?? graphicalItemStyle?.fill ?? entry.color);
+    return { ...entry, color: fill };
+  });
+
+  return <SetPolarLegendPayload legendPayload={themedLegendPayload} />;
 }
 
 type PieSectorsProps = ShapeAnimationProps & {
@@ -447,6 +510,8 @@ type PieSectorsProps = ShapeAnimationProps & {
   shape: PieShape;
   allOtherPieProps: WithoutId<InternalProps>;
   id: GraphicalItemId;
+  graphicalItems: PieGraphicalItems;
+  explicitStyleProps: PieStyleProps;
 };
 
 function getActiveShapeFill(activeShape: ActiveShape<Readonly<PieSectorDataItem>> | undefined): string | undefined {
@@ -704,6 +769,8 @@ function PieSectors(props: PieSectorsProps) {
     animationElapsedTime,
     isAnimating,
     isEntrance,
+    graphicalItems,
+    explicitStyleProps,
   } = props;
 
   const activeIndex = useAppSelector(selectActiveTooltipIndex);
@@ -751,6 +818,35 @@ function PieSectors(props: PieSectorsProps) {
           [DATA_ITEM_INDEX_ATTRIBUTE_NAME]: i,
           [DATA_ITEM_GRAPHICAL_ITEM_ID_ATTRIBUTE_NAME]: id,
         };
+        const activeGraphicalItemStyle = graphicalItems[i % graphicalItems.length]?.active;
+        const activeSectorProps: PieSectorShapeProps =
+          isActive && sectorOptions == null && activeGraphicalItemStyle != null
+            ? {
+                ...sectorProps,
+                fill: hasOwnProperty(entry.payload, 'fill')
+                  ? sectorProps.fill
+                  : (explicitStyleProps.fill ?? activeGraphicalItemStyle.fill ?? sectorProps.fill),
+                fillOpacity: hasOwnProperty(entry.payload, 'fillOpacity')
+                  ? sectorProps.fillOpacity
+                  : (explicitStyleProps.fillOpacity ?? activeGraphicalItemStyle.fillOpacity ?? sectorProps.fillOpacity),
+                stroke: hasOwnProperty(entry.payload, 'stroke')
+                  ? sectorProps.stroke
+                  : (explicitStyleProps.stroke ?? activeGraphicalItemStyle.stroke ?? sectorProps.stroke),
+                strokeOpacity: hasOwnProperty(entry.payload, 'strokeOpacity')
+                  ? sectorProps.strokeOpacity
+                  : (explicitStyleProps.strokeOpacity ??
+                    activeGraphicalItemStyle.strokeOpacity ??
+                    sectorProps.strokeOpacity),
+                strokeWidth: hasOwnProperty(entry.payload, 'strokeWidth')
+                  ? sectorProps.strokeWidth
+                  : (explicitStyleProps.strokeWidth ?? activeGraphicalItemStyle.strokeWidth ?? sectorProps.strokeWidth),
+                strokeDasharray: hasOwnProperty(entry.payload, 'strokeDasharray')
+                  ? sectorProps.strokeDasharray
+                  : (explicitStyleProps.strokeDasharray ??
+                    activeGraphicalItemStyle.strokeDasharray ??
+                    sectorProps.strokeDasharray),
+              }
+            : sectorProps;
 
         return (
           <Layer
@@ -765,7 +861,7 @@ function PieSectors(props: PieSectorsProps) {
             <Shape<PieSectorShapeProps, SVGPathElement>
               option={sectorOptions ?? shape}
               DefaultShape={defaultPieSectorShape}
-              shapeProps={sectorProps}
+              shapeProps={activeSectorProps}
             />
           </Layer>
         );
@@ -920,6 +1016,11 @@ function PieLabelListProvider({
 
 type WithoutId<T> = Omit<T, 'id'>;
 
+type PieImplProps = WithIdRequired<PropsWithResolvedDefaults> & {
+  graphicalItems: PieGraphicalItems;
+  explicitStyleProps: PieStyleProps;
+};
+
 const defaultPieAnimateItems: AnimationInterpolateFn<PieSectorDataItem, PolarLayout> = (
   items,
   animationElapsedTime,
@@ -971,10 +1072,14 @@ function SectorsWithAnimation({
   props,
   previousSectorsRef,
   id,
+  graphicalItems,
+  explicitStyleProps,
 }: {
   props: WithoutId<InternalProps>;
   previousSectorsRef: MutableRefObject<ReadonlyArray<PieSectorDataItem> | null>;
   id: GraphicalItemId;
+  graphicalItems: PieGraphicalItems;
+  explicitStyleProps: PieStyleProps;
 }) {
   const { sectors, activeShape, inactiveShape, animationInterpolateFn } = props;
 
@@ -1015,6 +1120,8 @@ function SectorsWithAnimation({
               allOtherPieProps={props}
               shape={props.shape}
               id={id}
+              graphicalItems={graphicalItems}
+              explicitStyleProps={explicitStyleProps}
               animationElapsedTime={animationElapsedTime}
               isAnimating={isAnimating || animationElapsedTime < 1}
               isEntrance={isEntrance}
@@ -1066,8 +1173,8 @@ export const defaultPieProps = {
   zIndex: DefaultZIndexes.area,
 } as const satisfies Partial<Props>;
 
-function PieImpl(props: WithIdRequired<PropsWithResolvedDefaults>) {
-  const { id, ...propsWithoutId } = props;
+function PieImpl(props: PieImplProps) {
+  const { id, graphicalItems, explicitStyleProps, ...propsWithoutId } = props;
   const { hide, className, rootTabIndex } = props;
 
   const cells = useMemo(() => findAllByType(props.children, Cell), [props.children]);
@@ -1083,12 +1190,16 @@ function PieImpl(props: WithIdRequired<PropsWithResolvedDefaults>) {
     return <Layer tabIndex={rootTabIndex} className={layerClass} />;
   }
 
+  const themedSectors = sectors.map((sector, index) =>
+    getThemedPieSector(sector, index, graphicalItems, explicitStyleProps),
+  );
+
   return (
     <ZIndexLayer zIndex={props.zIndex}>
       <SetPieTooltipEntrySettings
         dataKey={props.dataKey}
         nameKey={props.nameKey}
-        sectors={sectors}
+        sectors={themedSectors}
         stroke={props.stroke}
         strokeWidth={props.strokeWidth}
         fill={props.fill}
@@ -1100,7 +1211,13 @@ function PieImpl(props: WithIdRequired<PropsWithResolvedDefaults>) {
         activeShape={props.activeShape}
       />
       <Layer tabIndex={rootTabIndex} className={layerClass}>
-        <SectorsWithAnimation props={{ ...propsWithoutId, sectors }} previousSectorsRef={previousSectorsRef} id={id} />
+        <SectorsWithAnimation
+          props={{ ...propsWithoutId, sectors: themedSectors }}
+          previousSectorsRef={previousSectorsRef}
+          id={id}
+          graphicalItems={graphicalItems}
+          explicitStyleProps={explicitStyleProps}
+        />
       </Layer>
     </ZIndexLayer>
   );
@@ -1115,6 +1232,15 @@ type PropsWithResolvedDefaults = RequiresDefaultProps<Props, typeof defaultPiePr
  */
 function PieFn(outsideProps: Props) {
   const props: PropsWithResolvedDefaults = resolveDefaultProps(outsideProps, defaultPieProps);
+  const theme = useRechartsTheme();
+  const explicitStyleProps: PieStyleProps = {
+    fill: outsideProps.fill,
+    fillOpacity: outsideProps.fillOpacity,
+    stroke: outsideProps.stroke,
+    strokeOpacity: outsideProps.strokeOpacity,
+    strokeWidth: outsideProps.strokeWidth,
+    strokeDasharray: outsideProps.strokeDasharray,
+  };
   const { id: externalId, ...propsWithoutId } = props;
   const presentationProps: PiePresentationProps | null = svgPropertiesNoEvents(propsWithoutId);
 
@@ -1147,8 +1273,18 @@ function PieFn(outsideProps: Props) {
             presentationProps={presentationProps}
             maxRadius={props.maxRadius}
           />
-          <SetPiePayloadLegend {...propsWithoutId} id={id} />
-          <PieImpl {...propsWithoutId} id={id} />
+          <SetPiePayloadLegend
+            {...propsWithoutId}
+            id={id}
+            graphicalItems={theme.graphicalItems}
+            explicitStyleProps={explicitStyleProps}
+          />
+          <PieImpl
+            {...propsWithoutId}
+            id={id}
+            graphicalItems={theme.graphicalItems}
+            explicitStyleProps={explicitStyleProps}
+          />
         </>
       )}
     </RegisterGraphicalItemId>
