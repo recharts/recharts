@@ -192,6 +192,17 @@ describe('Documentation Examples Coverage', () => {
     'CSSTransitionAnimation',
     'JavascriptAnimation',
     'TimeoutController',
+    /*
+     * Zoom is documented through Storybook and the zoom guide, but these exports do not yet have
+     * examples in the website corpus indexed by ExampleReader. Keep this debt explicit until those
+     * examples move into `www/src/docs/exampleComponents` or `www/src/docs/apiExamples`.
+     */
+    'useZoom',
+    'UseZoomResult',
+    'useZoomState',
+    'ZoomAndPan',
+    'ZoomAndPanProps',
+    'ZoomViewport',
   ];
 
   /*

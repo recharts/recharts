@@ -84,6 +84,9 @@ export type { RadialBarSectorProps } from './util/RadialBarUtils';
 
 export { Brush } from './cartesian/Brush';
 export type { Props as BrushProps, BrushTravellerType } from './cartesian/Brush';
+export { ZoomAndPan } from './chart/zoom/ZoomAndPan';
+export type { ZoomAndPanProps } from './chart/zoom/ZoomAndPan';
+export type { ZoomViewport } from './util/zoom/ZoomOptions';
 export { ReferenceLine } from './cartesian/ReferenceLine';
 export type { Props as ReferenceLineProps, ReferenceLineSegment } from './cartesian/ReferenceLine';
 export { ReferenceDot } from './cartesian/ReferenceDot';
@@ -228,7 +231,10 @@ export {
   useXAxisTicks,
   useYAxisTicks,
   useCartesianScale,
+  useZoom,
+  useZoomState,
 } from './hooks';
+export type { UseZoomResult } from './hooks';
 
 export type { CartesianDataPoint, ScaleFunction, InverseScaleFunction } from './hooks';
 
