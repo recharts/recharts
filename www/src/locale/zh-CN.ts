@@ -55,6 +55,7 @@ export const map = {
     'theme-color-testing': '主题颜色测试',
     'label-colors': '标签颜色',
     patterns: '图案与渐变',
+    zoomAndPan: '缩放和平移',
   },
   guideSections: {
     'getting-started': '入门',
@@ -108,6 +109,7 @@ export const map = {
     deprecated: '已弃用的属性',
     events: '事件',
     since: 'Recharts 自',
+    'zoom-and-pan': '缩放和平移',
   },
   'design-disciplines': {
     'design-disciplines': '设计原则',
