@@ -30,7 +30,7 @@ import { isNullish } from '../../util/DataUtils';
 import { AllStackGroups, StackDataPoint, StackSeries, StackSeriesIdentifier } from '../../util/stacks/stackTypes';
 import { combineDisplayedStackedData, DisplayedStackedData } from './combiners/combineDisplayedStackedData';
 import { RadialBarSettings } from '../types/RadialBarSettings';
-import { DefinitelyStackedGraphicalItem, isStacked } from '../types/StackedGraphicalItem';
+import { isStackedGraphicalItem, type StackedGraphicalItem } from '../types/StackedGraphicalItem';
 import { combineBarSizeList } from './combiners/combineBarSizeList';
 import { combineAllBarPositions } from './combiners/combineAllBarPositions';
 import { combineStackedData } from './combiners/combineStackedData';
@@ -307,10 +307,10 @@ const selectStackedRadialBars: (
   state: RechartsRootState,
   axisType: PolarAxisType,
   polarAxisId: AxisId,
-) => ReadonlyArray<DefinitelyStackedGraphicalItem> = createSelector(
+) => ReadonlyArray<StackedGraphicalItem> = createSelector(
   [selectPolarItemsSettings],
-  (allPolarItems: ReadonlyArray<PolarGraphicalItemSettings>): ReadonlyArray<DefinitelyStackedGraphicalItem> =>
-    allPolarItems.filter(isRadialBar).filter(isStacked),
+  (allPolarItems: ReadonlyArray<PolarGraphicalItemSettings>): ReadonlyArray<StackedGraphicalItem> =>
+    allPolarItems.filter(isStackedGraphicalItem),
 );
 
 const selectPolarCombinedStackedData: (

@@ -3,6 +3,7 @@ import { StackDataPoint, StackSeries } from '../../src/util/stacks/stackTypes';
 import { AreaSettings } from '../../src/state/types/AreaSettings';
 import { BarSettings } from '../../src/state/types/BarSettings';
 import { RadialBarSettings } from '../../src/state/types/RadialBarSettings';
+import type { StackedGraphicalItem } from '../../src/state/types/StackedGraphicalItem';
 
 interface SyncExpectationResult {
   pass: boolean;
@@ -158,6 +159,6 @@ declare module 'vitest' {
  */
 export function expectGraphicalItemSettings(
   expected: Partial<AreaSettings | BarSettings | RadialBarSettings>,
-): AreaSettings | BarSettings | RadialBarSettings {
-  return expect.objectContaining(expected) as unknown as AreaSettings | BarSettings | RadialBarSettings;
+): StackedGraphicalItem {
+  return expect.objectContaining(expected);
 }

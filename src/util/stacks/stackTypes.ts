@@ -1,9 +1,7 @@
 import { Series } from 'victory-vendor/d3-shape';
 import { StackId } from '../ChartUtils';
 import { GraphicalItemId } from '../../state/graphicalItemsSlice';
-import { AreaSettings } from '../../state/types/AreaSettings';
-import { BarSettings } from '../../state/types/BarSettings';
-import { RadialBarSettings } from '../../state/types/RadialBarSettings';
+import type { StackedGraphicalItem } from '../../state/types/StackedGraphicalItem';
 
 /*
  * So chart stacks come in layers:
@@ -38,7 +36,7 @@ export type AllStackGroups = Record<StackId, StackGroup>;
  */
 export type StackGroup = {
   readonly stackedData: ReadonlyArray<StackSeries>;
-  readonly graphicalItems: ReadonlyArray<AreaSettings | BarSettings | RadialBarSettings>;
+  readonly graphicalItems: ReadonlyArray<StackedGraphicalItem>;
 };
 
 /**
