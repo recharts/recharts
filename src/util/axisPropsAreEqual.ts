@@ -2,6 +2,7 @@ import { XAxisProps, YAxisProps } from '../index';
 import { AxisDomain } from './types';
 import { AxisRange } from '../state/selectors/axisSelectors';
 import { propsAreEqual } from './propsAreEqual';
+import { XAxisSettings, YAxisSettings } from '../state/cartesianAxisSlice';
 
 function shortArraysAreEqual(
   arr1: AxisDomain | AxisRange | undefined,
@@ -38,6 +39,20 @@ export function axisPropsAreEqual<T extends YAxisProps | XAxisProps>(prevProps: 
   }
 
   if (!shortArraysAreEqual(prevRange, nextRange)) {
+    return false;
+  }
+
+  return propsAreEqual(prevRest, nextRest);
+}
+
+export function axisSettingsAreEqual<T extends YAxisSettings | XAxisSettings>(prevProps: T, nextProps: T): boolean {
+  if (prevProps === nextProps) {
+    return true;
+  }
+  const { domain: prevDomain, ...prevRest } = prevProps;
+  const { domain: nextDomain, ...nextRest } = nextProps;
+
+  if (!shortArraysAreEqual(prevDomain, nextDomain)) {
     return false;
   }
 

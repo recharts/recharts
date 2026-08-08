@@ -45,6 +45,7 @@ describe('Chart dimensions', () => {
       expectLastCalledWith(spy, {
         bottom: 13,
         brushBottom: 13,
+        brushRight: 12,
         height: 176,
         left: 14,
         right: 12,
@@ -170,6 +171,7 @@ describe('Chart dimensions', () => {
         expectLastCalledWith(spy, {
           bottom: 53,
           brushBottom: 13,
+          brushRight: 12,
           height: 136,
           left: 14,
           right: 12,
@@ -289,6 +291,7 @@ describe('Chart dimensions', () => {
         expectLastCalledWith(spy, {
           bottom: 53,
           brushBottom: 13,
+          brushRight: 12,
           height: 136,
           left: 14,
           right: 12,

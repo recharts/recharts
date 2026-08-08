@@ -22,6 +22,7 @@ export const getMaxRadius = (
     width: 0,
     height: 0,
     brushBottom: 0,
+    brushRight: 0,
   },
 ) =>
   Math.min(

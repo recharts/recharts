@@ -3574,6 +3574,7 @@ describe('<BarChart />', () => {
       expectLastCalledWith(spy, {
         bottom: 80,
         brushBottom: 80,
+        brushRight: 100,
         height: 0,
         left: 160,
         right: 100,
