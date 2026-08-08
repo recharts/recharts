@@ -19,6 +19,7 @@ import { useElementOffset } from '../util/useElementOffset';
 import { Cursor, CursorDefinition } from './Cursor';
 import {
   selectActiveCoordinate,
+  selectActiveCoordinateForTooltip,
   selectActiveLabel,
   selectIsTooltipActive,
   selectTooltipPayload,
@@ -361,6 +362,9 @@ export function Tooltip(outsideProps: TooltipProps<ValueType, NameType>) {
   const coordinate: Coordinate | undefined = useAppSelector(state =>
     selectActiveCoordinate(state, tooltipEventType, trigger, defaultIndexAsString),
   );
+  const tooltipCoordinate: Coordinate | undefined = useAppSelector(state =>
+    selectActiveCoordinateForTooltip(state, tooltipEventType, trigger, defaultIndexAsString),
+  );
   const payload: TooltipPayload | undefined = payloadFromRedux;
   const tooltipPortalFromContext = useTooltipPortal();
   /*
@@ -400,7 +404,7 @@ export function Tooltip(outsideProps: TooltipProps<ValueType, NameType>) {
     label: finalLabel,
     active: finalIsActive,
     activeIndex,
-    coordinate,
+    coordinate: tooltipCoordinate,
     accessibilityLayer,
   };
 
@@ -411,7 +415,7 @@ export function Tooltip(outsideProps: TooltipProps<ValueType, NameType>) {
       animationEasing={animationEasing}
       isAnimationActive={isAnimationActive}
       active={finalIsActive}
-      coordinate={coordinate}
+      coordinate={tooltipCoordinate}
       hasPayload={hasPayload}
       offset={offset}
       position={position}
