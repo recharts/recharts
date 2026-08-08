@@ -56,6 +56,7 @@
   "lib/chart/SunburstChart.js",
   "lib/chart/Treemap.js",
   "lib/chart/ZoomAxisTouchTargets.js",
+  "lib/chart/ZoomScrollbars.js",
   "lib/chart/ZoomStateSync.js",
   "lib/chart/types.js",
   "lib/chart/zoom",

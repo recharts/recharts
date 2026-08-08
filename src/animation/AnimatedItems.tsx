@@ -6,6 +6,8 @@ import { useAnimationId } from '../util/useAnimationId';
 import { AnimationItem, AnimationMatchByProp, matchAnimationItems, matchByIndex } from './matchBy';
 import { useAnimationStartSnapshot } from './useAnimationStartSnapshot';
 import { CartesianLayout, PolarLayout } from '../util/types';
+import { useAppSelector } from '../state/hooks';
+import { selectIsZoomed } from '../state/selectors/zoomSelectors';
 
 /**
  * Hook that tracks animation state and provides callbacks for animation start/end.
@@ -141,7 +143,7 @@ export function AnimatedItems<ItemType, LayoutType extends CartesianLayout | Pol
     animationIdPrefix,
     items,
     previousItemsRef,
-    isAnimationActive,
+    isAnimationActive: isAnimationActiveProp,
     animationBegin,
     animationDuration,
     animationEasing,
@@ -153,6 +155,14 @@ export function AnimatedItems<ItemType, LayoutType extends CartesianLayout | Pol
     children,
     layout,
   } = props;
+
+  /*
+   * While the chart is zoomed/panned the items' positions change on every viewport update; animating
+   * each of those would make panning janky and slow. So we suppress item animation whenever the
+   * chart is zoomed, and restore the requested behavior once it is fully zoomed out.
+   */
+  const isZoomed = useAppSelector(selectIsZoomed) ?? false;
+  const isAnimationActive = isZoomed ? false : isAnimationActiveProp;
 
   const animationId = useAnimationId(animationInput, animationIdPrefix);
   const animationStartItems = useAnimationStartSnapshot(animationId, previousItemsRef);
