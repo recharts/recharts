@@ -49,6 +49,27 @@ export const initialChartDataState: ChartDataState = {
   dataEndIndex: 0,
 };
 
+/**
+ * Brush start and end indexes address the chart-level data array. Their initial value is
+ * `0` and `0`, which is also a valid selection of the first data item, so they can only be
+ * applied when the chart has data of its own. Charts where every graphical item brings its
+ * own data leave the indexes at the initial value, and slicing with them would cut every
+ * item array down to its first entry.
+ *
+ * @param chartDataState the chart data slice state
+ * @returns a `[startIndex, endIndex]` pair, inclusive on both ends
+ */
+export function getBrushSliceIndexes({
+  chartData,
+  dataStartIndex,
+  dataEndIndex,
+}: ChartDataState): [startIndex: number, endIndex: number] {
+  if (chartData == null || chartData.length === 0) {
+    return [0, Infinity];
+  }
+  return [dataStartIndex, dataEndIndex];
+}
+
 type BrushStartEndIndexActionPayload = Partial<BrushStartEndIndex>;
 
 const chartDataSlice = createSlice({

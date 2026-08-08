@@ -46,7 +46,7 @@ import {
   numericalDomainSpecifiedWithoutRequiringData,
   parseNumericalUserDomain,
 } from '../../util/isDomainSpecifiedByUser';
-import { AppliedChartData, ChartData, ChartDataState } from '../chartDataSlice';
+import { AppliedChartData, ChartData, ChartDataState, getBrushSliceIndexes } from '../chartDataSlice';
 import { getPercentValue, hasDuplicate, isNan, isNotNil, isNumOrStr, mathSign } from '../../util/DataUtils';
 import {
   BaseCartesianGraphicalItemSettings,
@@ -731,7 +731,7 @@ export const selectStackGroups: (
 
 export const combineDomainOfStackGroups = (
   stackGroups: AllStackGroups | undefined,
-  { dataStartIndex, dataEndIndex }: ChartDataState,
+  chartDataState: ChartDataState,
   axisType: AllAxisTypes,
   domainFromUserPreference: NumberDomain | undefined,
 ): NumberDomain | undefined => {
@@ -743,7 +743,8 @@ export const combineDomainOfStackGroups = (
     // ZAxis ignores stacks
     return undefined;
   }
-  return getDomainOfStackGroups(stackGroups, dataStartIndex, dataEndIndex);
+  const [startIndex, endIndex] = getBrushSliceIndexes(chartDataState);
+  return getDomainOfStackGroups(stackGroups, startIndex, endIndex);
 };
 
 const selectAllowsDataOverflow: (state: RechartsRootState, axisType: AllAxisTypes, axisId: AxisId) => boolean =

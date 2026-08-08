@@ -53,56 +53,68 @@ export const lineChartExamples = {
     Component: SimpleLineChart,
     sourceCode: simpleLineChartSource,
     name: 'Simple Line Chart',
+    description: 'Basic line chart with two series, Cartesian grid, tooltip, and legend.',
   },
   DashedLineChart: {
     Component: DashedLineChart,
     sourceCode: dashedLineChartSource,
     name: 'Dashed Line Chart',
+    description: 'Line chart with dashed stroke styles on the chart lines.',
   },
   VerticalLineChart: {
     Component: VerticalLineChart,
     sourceCode: verticalLineChartSource,
     name: 'Vertical Line Chart',
+    description: 'Line chart with vertical layout where categories are displayed on the Y axis.',
   },
   BiaxialLineChart: {
     Component: BiaxialLineChart,
     sourceCode: biaxialLineChartSource,
     name: 'Biaxial Line Chart',
+    description: 'Line chart with two Y axes (left and right) for comparing datasets with different scales.',
   },
   VerticalLineChartWithSpecifiedDomain: {
     Component: VerticalLineChartWithSpecifiedDomain,
     sourceCode: verticalLineChartWithSpecifiedDomainSource,
     name: 'Vertical Line Chart With Specified Domain',
+    description: 'Vertical line chart with a custom X axis domain',
   },
   LineChartConnectNulls: {
     Component: LineChartConnectNulls,
     sourceCode: lineChartConnectNullsSource,
     name: 'Line Chart Connect Nulls',
+    description:
+      'Compares a line chart that skips null data points versus one that connects across them using the connectNulls prop.',
   },
   LineChartWithXAxisPadding: {
     Component: LineChartWithXAxisPadding,
     sourceCode: lineChartWithXAxisPaddingSource,
     name: 'Line Chart With X Axis Padding',
+    description: 'Line chart with custom left and right padding on the X axis to add space around the data.',
   },
   LineChartWithReferenceLines: {
     Component: LineChartWithReferenceLines,
     sourceCode: lineChartWithReferenceLinesSource,
     name: 'Line Chart With Reference Lines',
+    description: 'Line chart with reference lines highlighting specific X and Y values.',
   },
   CustomizedDotLineChart: {
     Component: CustomizedDotLineChart,
     sourceCode: customizedDotLineChartSource,
     name: 'Customized Dot Line Chart',
+    description: 'This chart shows different dot on a Line depending on the difference to the other Line value.',
   },
   CustomizedLabelLineChart: {
     Component: CustomizedLabelLineChart,
     sourceCode: customizedLabelLineChartSource,
     name: 'Customized Label Line Chart',
+    description: 'Line chart with custom data point labels and rotated X axis tick labels.',
   },
   SynchronizedLineChart: {
     Component: SynchronizedLineChart,
     sourceCode: synchronizedLineChartSource,
     name: 'Synchronized Line Chart',
+    description: 'Multiple line and area charts synchronized via syncId, with a Brush component for range selection.',
   },
   LineChartCustomShapeExample: {
     Component: LineChartCustomShapeExample,
@@ -129,31 +141,41 @@ export const lineChartExamples = {
     Component: LineChartHasMultiSeries,
     sourceCode: lineChartHasMultiSeriesSource,
     name: 'Line Chart Has Multi Series',
+    description:
+      'Multiple line series with non-overlapping data, using allowDuplicatedCategory={false} to merge categories across series.',
   },
   LineChartAxisInterval: {
     Component: LineChartAxisInterval,
     sourceCode: lineChartAxisIntervalSource,
     name: 'Line Chart Axis Interval',
+    description:
+      'Demonstrates different axis interval settings: preserveStart, preserveEnd, preserveStartEnd, equidistantPreserveStart, and a numeric interval. The charts are narrow with many data points to demonstrate the difference. Look at XAxis ticks and gaps.',
   },
   LineChartNegativeValuesWithReferenceLines: {
     Component: LineChartNegativeValuesWithReferenceLines,
     sourceCode: lineChartNegativeValuesWithReferenceLinesSource,
     name: 'Line Chart Negative Values With Reference Lines',
+    description: 'Line chart with negative values and reference lines at zero to mark the axes crossing point.',
   },
   CompareTwoLines: {
     Component: CompareTwoLines,
     sourceCode: CompareTwoLinesSource,
     name: 'Compare Two Lines',
+    description:
+      'Interactive performance comparison of two investment lines over time, with reference ranges and mouse tracking.',
   },
   DynamicZIndexLineChart: {
     Component: DynamicZIndexLineChart,
     sourceCode: DynamicZIndexLineChartSource,
     name: 'Dynamic Z-Index Line Chart',
+    description:
+      'Line chart that changes z-index on legend hover to demonstrate that lines stay visible during quick hover transitions.',
   },
   TinyLineChart: {
     Component: TinyLineChart,
     sourceCode: tinyLineChartSource,
     name: 'Tiny Line Chart',
+    description: 'Compact line chart suitable for sparklines or small display areas.',
   },
   AnimatedTimeSeriesExample: {
     Component: AnimatedTimeSeriesExample,

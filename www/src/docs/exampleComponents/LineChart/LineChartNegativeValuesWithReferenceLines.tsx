@@ -103,18 +103,7 @@ export default function LineChartNegativeValuesWithReferenceLines() {
       {minY < 0 && <ReferenceLine y={0} stroke="var(--color-text-3)" strokeWidth={1.5} strokeOpacity={0.65} />}
       {minX < 0 && <ReferenceLine x={0} stroke="var(--color-text-3)" strokeWidth={1.5} strokeOpacity={0.65} />}
 
-      <Line
-        strokeWidth={2}
-        data={data}
-        dot={false}
-        activeDot={{
-          stroke: 'var(--color-surface-base)',
-        }}
-        type="monotone"
-        dataKey="y"
-        stroke="var(--color-solid-1)"
-        tooltipType="none"
-      />
+      <Line strokeWidth={2} data={data} dot={false} type="monotone" dataKey="y" tooltipType="none" />
       <RechartsDevtools />
     </LineChart>
   );

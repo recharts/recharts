@@ -146,7 +146,7 @@ export function createSelectorTestCase(Component: ComponentType<{ children: Reac
 
 type RenderResult = {
   container: HTMLElement;
-  debug: () => void;
+  debug: (baseElement?: HTMLElement | SVGElement | undefined, maxLength?: number | undefined) => void;
   /**
    * Rerender the whole test case with a different component.
    * @param NextComponent

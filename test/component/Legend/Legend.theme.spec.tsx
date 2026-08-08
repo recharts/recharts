@@ -53,6 +53,7 @@ describe('Legend theme', () => {
     const { container } = rechartsTestRender(
       <RechartsThemeProvider
         value={{
+          graphicalItems: [],
           typography: { color: 'purple', fontFamily: 'cursive' },
           legend: {
             wrapperStyle: { backgroundColor: 'gold', padding: 12 },
@@ -85,7 +86,7 @@ describe('Legend theme', () => {
 
   it('uses each graphical item color before the typography color', () => {
     const { container } = rechartsTestRender(
-      <RechartsThemeProvider value={{ typography: { color: 'purple', fontFamily: 'cursive' } }}>
+      <RechartsThemeProvider value={{ graphicalItems: [], typography: { color: 'purple', fontFamily: 'cursive' } }}>
         <LineChart width={300} height={200} data={data}>
           <Legend />
           <Line dataKey="desktop" isAnimationActive={false} stroke="red" />
@@ -109,6 +110,7 @@ describe('Legend theme', () => {
     const { container } = rechartsTestRender(
       <RechartsThemeProvider
         value={{
+          graphicalItems: [],
           typography: { color: 'purple', fontFamily: 'cursive', fontWeight: 'bold' },
           legend: {
             wrapperStyle: { backgroundColor: 'gold', padding: 12 },

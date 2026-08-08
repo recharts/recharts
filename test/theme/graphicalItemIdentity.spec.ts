@@ -31,6 +31,12 @@ describe('graphicalItemIdentity', () => {
     expect(index).toBeGreaterThanOrEqual(0);
   });
 
+  it('should return a different index for the default pv/uv data', () => {
+    const indexUv = graphicalItemIdentity({ dataKey: 'uv' }, 7);
+    const indexPv = graphicalItemIdentity({ dataKey: 'pv' }, 7);
+    expect(indexUv).not.toEqual(indexPv);
+  });
+
   it('should return the same index even after page reload', async () => {
     const newItem: ThemableItem = { dataKey: 'newIdentity' };
 

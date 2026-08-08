@@ -1326,6 +1326,7 @@ describe.each(chartsThatSupportBar)('<Bar /> as a child of $testName', ({ ChartE
           minPointSize: 3,
           maxBarSize: 90,
           hasCustomShape: false,
+          strokeWidth: undefined,
         },
       ];
       expectLastCalledWith(spy, expected);
@@ -1368,9 +1369,66 @@ describe.each(chartsThatSupportBar)('<Bar /> as a child of $testName', ({ ChartE
           minPointSize: 0,
           maxBarSize: undefined,
           hasCustomShape: false,
+          strokeWidth: undefined,
         },
       ];
       expectLastCalledWith(spy, expected);
+    });
+
+    it('should report data defined directly on the Bar to redux state, https://github.com/recharts/recharts/issues/3985', () => {
+      const spy = vi.fn();
+      const Comp = (): null => {
+        const cartesianItems = useAppSelector(state => state.graphicalItems.cartesianItems);
+        spy(cartesianItems);
+        return null;
+      };
+      const ownData = [{ value: 1 }, { value: 2 }];
+
+      renderWithStrictMode(
+        <ChartElement>
+          <Bar dataKey="value" data={ownData} />
+          <Comp />
+        </ChartElement>,
+      );
+      const expected: ReadonlyArray<BarSettings> = [
+        {
+          id: expect.stringMatching('^recharts-bar-[:a-z0-9]+$'),
+          isPanorama: false,
+          type: 'bar',
+          data: ownData,
+          dataKey: 'value',
+          xAxisId: 0,
+          yAxisId: 0,
+          zAxisId: 0,
+          stackId: undefined,
+          hide: false,
+          barSize: undefined,
+          minPointSize: 0,
+          maxBarSize: undefined,
+          hasCustomShape: false,
+          strokeWidth: undefined,
+        },
+      ];
+      expectLastCalledWith(spy, expected);
+    });
+  });
+
+  describe('own data, https://github.com/recharts/recharts/issues/3985', () => {
+    it('renders Bar using its own data prop even when the chart root has no data', () => {
+      const ownData = [
+        { name: 'A', value: 10 },
+        { name: 'B', value: 20 },
+      ];
+
+      const { container } = renderWithStrictMode(
+        <ChartElement>
+          <XAxis dataKey="name" />
+          <YAxis />
+          <Bar dataKey="value" data={ownData} isAnimationActive={false} />
+        </ChartElement>,
+      );
+
+      expect(getAllBars(container)).toHaveLength(2);
     });
   });
 });

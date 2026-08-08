@@ -53,7 +53,10 @@ describe('XAxis theme', () => {
       it('should follow the theme for stroke and related attributes', () => {
         const { container } = rechartsTestRender(
           <RechartsThemeProvider
-            value={{ axis: { stroke: 'gold', strokeWidth: 2, strokeOpacity: 0.5, strokeDasharray: '1 3' } }}
+            value={{
+              graphicalItems: [],
+              axis: { stroke: 'gold', strokeWidth: 2, strokeOpacity: 0.5, strokeDasharray: '1 3' },
+            }}
           >
             <MyChart>
               <XAxis dataKey="label" />
@@ -71,7 +74,7 @@ describe('XAxis theme', () => {
     describe('when defined as both a prop and a theme', () => {
       it('should follow the prop if there is conflict', () => {
         const { container } = rechartsTestRender(
-          <RechartsThemeProvider value={{ axis: { stroke: 'purple' } }}>
+          <RechartsThemeProvider value={{ graphicalItems: [], axis: { stroke: 'purple' } }}>
             <MyChart>
               <XAxis dataKey="label" stroke="gold" />
             </MyChart>
@@ -83,7 +86,7 @@ describe('XAxis theme', () => {
 
       it('should merge both if there are no conflicts', () => {
         const { container } = rechartsTestRender(
-          <RechartsThemeProvider value={{ axis: { stroke: 'purple' } }}>
+          <RechartsThemeProvider value={{ graphicalItems: [], axis: { stroke: 'purple' } }}>
             <MyChart>
               <XAxis dataKey="label" strokeDasharray="1 3" />
             </MyChart>
@@ -135,7 +138,10 @@ describe('XAxis theme', () => {
       it('should follow the theme for stroke and related attributes', () => {
         const { container } = rechartsTestRender(
           <RechartsThemeProvider
-            value={{ axis: { stroke: 'gold', strokeWidth: 2, strokeOpacity: 0.5, strokeDasharray: '1 3' } }}
+            value={{
+              graphicalItems: [],
+              axis: { stroke: 'gold', strokeWidth: 2, strokeOpacity: 0.5, strokeDasharray: '1 3' },
+            }}
           >
             <MyChart>
               <XAxis dataKey="label" />
@@ -153,7 +159,7 @@ describe('XAxis theme', () => {
     describe('when defined as both a prop and a theme', () => {
       it('should follow the prop if there is conflict', () => {
         const { container } = rechartsTestRender(
-          <RechartsThemeProvider value={{ axis: { stroke: 'purple' } }}>
+          <RechartsThemeProvider value={{ graphicalItems: [], axis: { stroke: 'purple' } }}>
             <MyChart>
               <XAxis dataKey="label" stroke="gold" />
             </MyChart>
@@ -165,7 +171,7 @@ describe('XAxis theme', () => {
 
       it('should merge both if there are no conflicts', () => {
         const { container } = rechartsTestRender(
-          <RechartsThemeProvider value={{ axis: { stroke: 'purple' } }}>
+          <RechartsThemeProvider value={{ graphicalItems: [], axis: { stroke: 'purple' } }}>
             <MyChart>
               <XAxis dataKey="label" strokeDasharray="1 3" />
             </MyChart>
@@ -214,6 +220,7 @@ describe('XAxis theme', () => {
         const { container } = rechartsTestRender(
           <RechartsThemeProvider
             value={{
+              graphicalItems: [],
               typography: {
                 fontSize: 14,
                 letterSpacing: '0.5px',
@@ -239,7 +246,7 @@ describe('XAxis theme', () => {
     describe('when defined as both a prop and a theme', () => {
       it('should follow the prop if there is conflict', () => {
         const { container } = rechartsTestRender(
-          <RechartsThemeProvider value={{ typography: { fontSize: 24 } }}>
+          <RechartsThemeProvider value={{ graphicalItems: [], typography: { fontSize: 24 } }}>
             <MyChart>
               <XAxis dataKey="label" style={{ fontSize: 16 }} />
             </MyChart>
@@ -251,7 +258,7 @@ describe('XAxis theme', () => {
 
       it('should merge both if there are no conflicts', () => {
         const { container } = rechartsTestRender(
-          <RechartsThemeProvider value={{ typography: { fontSize: 24 } }}>
+          <RechartsThemeProvider value={{ graphicalItems: [], typography: { fontSize: 24 } }}>
             <MyChart>
               <XAxis dataKey="label" style={{ letterSpacing: '2px' }} />
             </MyChart>

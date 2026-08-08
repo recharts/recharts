@@ -43,6 +43,7 @@ import {
   Coordinate,
   DataConsumer,
   DataKey,
+  DataProvider,
   LegendType,
   PresentationAttributesAdaptChildEvent,
   ShapeAnimationProps,
@@ -88,6 +89,7 @@ import { getZIndexFromUnknown } from '../zIndex/getZIndexFromUnknown';
 import { propsAreEqual } from '../util/propsAreEqual';
 import { AxisId } from '../state/cartesianAxisSlice';
 import { BarStackClipLayer, useStackId } from './BarStack';
+import { useRechartsTheme } from '../theme/RechartsThemeContext';
 import { GraphicalItemId } from '../state/graphicalItemsSlice';
 import { ChartData } from '../state/chartDataSlice';
 
@@ -127,7 +129,8 @@ export type BarShapeProps = BarRectangleItem &
     index: number;
   };
 
-interface BarProps<DataPointType, ValueAxisType> extends DataConsumer<DataPointType, ValueAxisType>, ZIndexable {
+interface BarProps<DataPointType, ValueAxisType>
+  extends DataProvider<DataPointType>, DataConsumer<DataPointType, ValueAxisType>, ZIndexable {
   className?: string;
   index?: Key;
   /**
@@ -1251,21 +1254,38 @@ export function computeBarRectangles({
 }
 
 function BarFn(outsideProps: Props) {
+  const theme = useRechartsTheme();
   const props = resolveDefaultProps(outsideProps, defaultBarProps);
   // stackId may arrive from props or from BarStack context
   const stackId = useStackId(props.stackId);
   const isPanorama = useIsPanorama();
+
+  const graphicalItemStyle = theme.graphicalItems?.[0] ?? {};
+
+  const themeFill = outsideProps.fill ?? graphicalItemStyle.fill;
+  const themeStroke = outsideProps.stroke ?? graphicalItemStyle.stroke;
+  const themeStrokeWidth = outsideProps.strokeWidth ?? graphicalItemStyle.strokeWidth;
+  const themeStrokeOpacity = outsideProps.strokeOpacity ?? graphicalItemStyle.strokeOpacity;
+  const themeFillOpacity = outsideProps.fillOpacity ?? graphicalItemStyle.fillOpacity;
+
+  const themedProps: Partial<Props> = {};
+  if (themeFill !== undefined) themedProps.fill = themeFill;
+  if (themeStroke !== undefined) themedProps.stroke = themeStroke;
+  if (themeStrokeWidth !== undefined) themedProps.strokeWidth = themeStrokeWidth;
+  if (themeStrokeOpacity !== undefined) themedProps.strokeOpacity = themeStrokeOpacity;
+  if (themeFillOpacity !== undefined) themedProps.fillOpacity = themeFillOpacity;
+
   // Report all props to Redux store first, before calling any hooks, to avoid circular dependencies.
   return (
     <RegisterGraphicalItemId id={props.id} type="bar">
       {id => (
         <>
-          <SetLegendPayload legendPayload={computeLegendPayloadFromBarData(props)} />
+          <SetLegendPayload legendPayload={computeLegendPayloadFromBarData({ ...props, ...themedProps })} />
           <SetBarTooltipEntrySettings
             dataKey={props.dataKey}
-            stroke={props.stroke}
-            strokeWidth={props.strokeWidth}
-            fill={props.fill}
+            stroke={themedProps.stroke ?? props.stroke}
+            strokeWidth={themedProps.strokeWidth ?? props.strokeWidth}
+            fill={themedProps.fill ?? props.fill}
             name={props.name}
             hide={props.hide}
             unit={props.unit}
@@ -1276,8 +1296,7 @@ function BarFn(outsideProps: Props) {
           <SetCartesianGraphicalItem
             type="bar"
             id={id}
-            // Bar does not allow setting data directly on the graphical item (why?)
-            data={undefined}
+            data={props.data}
             xAxisId={props.xAxisId}
             yAxisId={props.yAxisId}
             zAxisId={0}
@@ -1289,9 +1308,10 @@ function BarFn(outsideProps: Props) {
             maxBarSize={props.maxBarSize}
             isPanorama={isPanorama}
             hasCustomShape={props.shape != null && props.shape !== defaultBarShape}
+            strokeWidth={props.strokeWidth}
           />
           <ZIndexLayer zIndex={props.zIndex}>
-            <BarImpl {...props} id={id} />
+            <BarImpl {...props} {...themedProps} id={id} />
           </ZIndexLayer>
         </>
       )}

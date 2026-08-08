@@ -1,9 +1,11 @@
 import React from 'react';
 import { describe, expect, it } from 'vitest';
-import { lightTheme, Line, LineChart, RechartsThemeProvider } from '../../src';
+import { lightTheme, Line, LineChart, RechartsThemeProvider, Tooltip } from '../../src';
 import { graphicalItemIdentity } from '../../src/theme/graphicalItemIdentity';
 import { assertNotNull } from '../helper/assertNotNull';
 import { rechartsTestRender } from '../helper/createSelectorTestCase';
+import { showTooltip } from '../component/Tooltip/tooltipTestHelpers';
+import { lineChartMouseHoverTooltipSelector } from '../component/Tooltip/tooltipMouseHoverSelectors';
 
 const data = [
   { name: 'A', profit: 100 },
@@ -29,11 +31,18 @@ function getDots(container: HTMLElement): NodeListOf<Element> {
   return dots;
 }
 
+function getActiveDot(container: HTMLElement): Element {
+  const activeDot = container.querySelector('.recharts-active-dot circle');
+  assertNotNull(activeDot);
+  return activeDot;
+}
+
 describe('Line theme', () => {
   it('preserves legacy styles without a provider', () => {
     const { container } = rechartsTestRender(
       <MyChart>
         <Line dataKey="profit" isAnimationActive={false} />
+        <Tooltip />
       </MyChart>,
     );
 
@@ -48,6 +57,12 @@ describe('Line theme', () => {
       expect(dot).toHaveAttribute('stroke', '#3182bd');
       expect(dot).toHaveAttribute('stroke-width', '1');
     });
+
+    showTooltip(container, lineChartMouseHoverTooltipSelector);
+    const activeDot = getActiveDot(container);
+    expect(activeDot).toHaveAttribute('fill', '#3182bd');
+    expect(activeDot).toHaveAttribute('stroke', '#fff');
+    expect(activeDot).toHaveAttribute('stroke-width', '2');
   });
 
   it('uses the graphical-item theme selected from its data key', () => {
@@ -146,7 +161,7 @@ describe('Line theme', () => {
   });
 
   it('allow to spread a graphical array item directly to Line props', () => {
-    const theme = lightTheme.graphicalItems?.[1];
+    const theme = lightTheme.graphicalItems[1];
     assertNotNull(theme);
     const { container } = rechartsTestRender(
       <MyChart>
@@ -168,5 +183,76 @@ describe('Line theme', () => {
       expect(dot).not.toHaveAttribute('stroke-opacity');
       expect(dot).not.toHaveAttribute('stroke-dasharray');
     });
+  });
+
+  it('uses the selected active graphical-item style for the default active dot', () => {
+    const { container } = rechartsTestRender(
+      <RechartsThemeProvider
+        value={{
+          graphicalItems: [
+            {
+              stroke: 'red',
+              active: {
+                fill: 'gold',
+                fillOpacity: 0.7,
+                stroke: 'purple',
+                strokeDasharray: '3 2',
+                strokeOpacity: 0.4,
+                strokeWidth: 5,
+              },
+            },
+          ],
+        }}
+      >
+        <MyChart>
+          <Line dataKey="profit" isAnimationActive={false} />
+          <Tooltip />
+        </MyChart>
+      </RechartsThemeProvider>,
+    );
+
+    showTooltip(container, lineChartMouseHoverTooltipSelector);
+    const activeDot = getActiveDot(container);
+    expect(activeDot).toHaveAttribute('fill', 'gold');
+    expect(activeDot).toHaveAttribute('fill-opacity', '0.7');
+    expect(activeDot).toHaveAttribute('stroke', 'purple');
+    expect(activeDot).toHaveAttribute('stroke-dasharray', '3 2');
+    expect(activeDot).toHaveAttribute('stroke-opacity', '0.4');
+    expect(activeDot).toHaveAttribute('stroke-width', '5');
+  });
+
+  it('lets explicit active dot fields override the active graphical-item style', () => {
+    const { container } = rechartsTestRender(
+      <RechartsThemeProvider
+        value={{
+          graphicalItems: [
+            {
+              active: {
+                fill: 'red',
+                fillOpacity: 0.4,
+                stroke: 'purple',
+                strokeDasharray: '3 2',
+                strokeOpacity: 0.6,
+                strokeWidth: 5,
+              },
+            },
+          ],
+        }}
+      >
+        <MyChart>
+          <Line dataKey="profit" activeDot={{ fill: 'blue', strokeWidth: 3 }} isAnimationActive={false} />
+          <Tooltip />
+        </MyChart>
+      </RechartsThemeProvider>,
+    );
+
+    showTooltip(container, lineChartMouseHoverTooltipSelector);
+    const activeDot = getActiveDot(container);
+    expect(activeDot).toHaveAttribute('fill', 'blue');
+    expect(activeDot).toHaveAttribute('fill-opacity', '0.4');
+    expect(activeDot).toHaveAttribute('stroke', 'purple');
+    expect(activeDot).toHaveAttribute('stroke-dasharray', '3 2');
+    expect(activeDot).toHaveAttribute('stroke-opacity', '0.6');
+    expect(activeDot).toHaveAttribute('stroke-width', '3');
   });
 });

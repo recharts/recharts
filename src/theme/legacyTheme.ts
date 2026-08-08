@@ -10,6 +10,8 @@ import { RechartsTheme } from './RechartsTheme';
  * @experimental
  */
 export const legacyTheme: RechartsTheme = {
+  // In the legacy theme, each graphical item holds different defaults
+  graphicalItems: [],
   /**
    * src/cartesian/CartesianAxis.tsx
    */
@@ -54,42 +56,4 @@ export const legacyTheme: RechartsTheme = {
       color: '#000',
     },
   },
-  // components: {
-  //   /**
-  //    * In 2.x the activeBar does not do anything by default - its styles are identical to inactive bar!
-  //    */
-  //   activeBar: {},
-  //   /**
-  //    * Defined in src/component/ActivePoints.tsx
-  //    */
-  //   activeDot: {
-  //     strokeWidth: 2,
-  //     stroke: '#fff',
-  //     r: 4,
-  //     fill: '#3182bd',
-  //   },
-  //   /**
-  //    * src/cartesian/Area.tsx
-  //    */
-  //   area: {
-  //     stroke: '#3182bd',
-  //     strokeWidth: 1,
-  //     fill: '#3182bd',
-  //     fillOpacity: 0.6,
-  //   },
-  //   bar: {
-  //     fill: 'black',
-  //   },
-  //   barBackground: false,
-  //   /**
-  //    * Defined in src/cartesian/Line.tsx
-  //    */
-  //   line: {
-  //     stroke: '#3182bd',
-  //     strokeWidth: 1,
-  //   },
-  //   scatter: {
-  //     fill: 'black',
-  //   },
-  // },
 };

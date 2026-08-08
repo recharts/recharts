@@ -3,8 +3,44 @@ import { describe, it, expect } from 'vitest';
 import { createSelectorTestCase } from '../helper/createSelectorTestCase';
 import { Bar, BarChart, BarStack } from '../../src';
 import { PageData } from '../_data';
-import { useBarStackClipPathUrl, useStackId } from '../../src/cartesian/BarStack';
+import { inflateRadius, useBarStackClipPathUrl, useStackId } from '../../src/cartesian/BarStack';
 import { expectLastCalledWith } from '../helper/expectLastCalledWith';
+import { assertNotNull } from '../helper/assertNotNull';
+
+type ExpectedClipRect = {
+  x: number;
+  y: number;
+  width: number;
+  height: number;
+  radius: string;
+};
+
+function expectBarStackClipRects(container: Element, expectedRects: ReadonlyArray<ExpectedClipRect>) {
+  assertNotNull(container);
+  const clipRects = container.querySelectorAll('[id^="recharts-bar-stack-clip-path"] path.recharts-rectangle');
+  expect(clipRects).toHaveLength(expectedRects.length);
+  clipRects.forEach((clipRect, index) => {
+    const expected = expectedRects[index];
+    expect(Number(clipRect.getAttribute('x')), `x of clip rect ${index}`).toBeCloseTo(expected.x, 4);
+    expect(Number(clipRect.getAttribute('y')), `y of clip rect ${index}`).toBeCloseTo(expected.y, 4);
+    expect(Number(clipRect.getAttribute('width')), `width of clip rect ${index}`).toBeCloseTo(expected.width, 4);
+    expect(Number(clipRect.getAttribute('height')), `height of clip rect ${index}`).toBeCloseTo(expected.height, 4);
+    expect(clipRect.getAttribute('radius'), `radius of clip rect ${index}`).toBe(expected.radius);
+  });
+}
+
+/*
+ * Union of the `uv` + `pv` stack rectangles in a 200x200 BarChart with PageData.
+ * Same numbers as in test/state/selectors/barStackSelectors.spec.tsx.
+ */
+const stackRects200x200 = [
+  { x: 8.166666666666668, y: 141.8, width: 11, height: 53.19999999999999 },
+  { x: 39.833333333333336, y: 102.52699999999999, width: 11, height: 92.47300000000001 },
+  { x: 71.50000000000001, y: 162.738, width: 11, height: 32.262 },
+  { x: 103.16666666666667, y: 5, width: 11, height: 190 },
+  { x: 134.83333333333334, y: 115.466, width: 11, height: 79.534 },
+  { x: 166.5, y: 100.209, width: 11, height: 94.791 },
+] as const;
 
 describe('BarStack', () => {
   describe('when stackId is provided explicitly', () => {
@@ -61,6 +97,78 @@ describe('BarStack', () => {
       const { spy } = renderTestCase(() => useBarStackClipPathUrl(7));
       const expectedStackIdPrefix = 'url(#recharts-bar-stack-clip-path-';
       expectLastCalledWith(spy, expect.stringContaining(expectedStackIdPrefix));
+    });
+  });
+
+  describe('clipPath when bars have a stroke', () => {
+    const renderTestCase = createSelectorTestCase(({ children }) => (
+      <BarChart width={200} height={200} data={PageData}>
+        <BarStack stackId="stroked-stack" radius={8}>
+          <Bar dataKey="uv" strokeWidth={6} isAnimationActive={false} />
+          <Bar dataKey="pv" strokeWidth={4} isAnimationActive={false} />
+          {children}
+        </BarStack>
+        <Bar dataKey="amt" isAnimationActive={false} />
+      </BarChart>
+    ));
+
+    it('should expand the clip path by half of the largest strokeWidth so the stroke is not clipped', () => {
+      const { container } = renderTestCase();
+      /*
+       * Half of an SVG stroke is painted outside the shape, so the clip path
+       * must grow by half of the largest strokeWidth in the stack: 6 / 2 = 3.
+       */
+      expectBarStackClipRects(
+        container,
+        stackRects200x200.map(rect => ({
+          x: rect.x - 3,
+          y: rect.y - 3,
+          width: rect.width + 6,
+          height: rect.height + 6,
+          radius: '11',
+        })),
+      );
+    });
+  });
+
+  describe('clipPath when bars have no stroke', () => {
+    const renderTestCase = createSelectorTestCase(({ children }) => (
+      <BarChart width={200} height={200} data={PageData}>
+        <BarStack stackId="unstroked-stack" radius={8}>
+          <Bar dataKey="uv" isAnimationActive={false} />
+          <Bar dataKey="pv" isAnimationActive={false} />
+          {children}
+        </BarStack>
+        <Bar dataKey="amt" isAnimationActive={false} />
+      </BarChart>
+    ));
+
+    it('should clip exactly on the union of the stack rectangles', () => {
+      const { container } = renderTestCase();
+      expectBarStackClipRects(
+        container,
+        stackRects200x200.map(rect => ({ ...rect, radius: '8' })),
+      );
+    });
+  });
+
+  describe('inflateRadius', () => {
+    it('should return the same radius when inflation is 0', () => {
+      expect(inflateRadius(8, 0)).toBe(8);
+      const corners: [number, number, number, number] = [1, 2, 3, 4];
+      expect(inflateRadius(corners, 0)).toBe(corners);
+    });
+
+    it('should grow a numeric radius', () => {
+      expect(inflateRadius(8, 3)).toBe(11);
+    });
+
+    it('should keep a zero radius square', () => {
+      expect(inflateRadius(0, 3)).toBe(0);
+    });
+
+    it('should grow only the rounded corners of an array radius', () => {
+      expect(inflateRadius([8, 0, 4, 0], 3)).toEqual([11, 0, 7, 0]);
     });
   });
 
