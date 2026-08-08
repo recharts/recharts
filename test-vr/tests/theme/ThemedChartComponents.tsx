@@ -1,19 +1,19 @@
 import React from 'react';
 import {
-  darkTheme,
-  lightTheme,
-  RechartsTheme,
-  RechartsThemeProvider,
   CartesianGrid,
+  darkTheme,
+  emptyTheme,
+  Legend,
+  lightTheme,
   Line,
   LineChart,
+  RechartsTheme,
+  RechartsThemeProvider,
+  Tooltip,
   XAxis,
   YAxis,
-  Legend,
-  Tooltip,
 } from 'recharts';
 import { generateMockData } from '@recharts/devtools';
-import { emptyTheme } from '../../../src/theme/emptyTheme.ts';
 
 const data = generateMockData(6, 123);
 
