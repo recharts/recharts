@@ -96,7 +96,8 @@ export {
 export type { MinimapPosition, Props as MinimapProps } from './cartesian/Minimap';
 export { ZoomAndPan } from './chart/zoom/ZoomAndPan';
 export type { ZoomAndPanProps } from './chart/zoom/ZoomAndPan';
-export type { ZoomViewport } from './util/zoom/ZoomOptions';
+export type { AxisWindow, ZoomAxis, ZoomOptions, ZoomProp, ZoomViewport } from './util/zoom/ZoomOptions';
+export type { ZoomDimension } from './state/zoomSlice';
 export {
   MouseWheelZoom,
   PanOnDrag,
