@@ -623,6 +623,7 @@ function ScatterPoint({
     ...(baseProps.strokeWidth !== undefined && { strokeWidth: baseProps.strokeWidth }),
     ...(baseProps.strokeOpacity !== undefined && { strokeOpacity: baseProps.strokeOpacity }),
     ...(baseProps.fillOpacity !== undefined && { fillOpacity: baseProps.fillOpacity }),
+    ...(baseProps.strokeDasharray !== undefined && { strokeDasharray: baseProps.strokeDasharray }),
   };
   const symbolProps: ScatterShapeProps = {
     ...filteredBaseProps,
@@ -1032,6 +1033,11 @@ function ScatterFn(outsideProps: Props) {
       stroke: outsideProps.stroke ?? graphicalItemTheme?.stroke,
       strokeOpacity: outsideProps.strokeOpacity ?? graphicalItemTheme?.strokeOpacity,
       strokeWidth: outsideProps.strokeWidth ?? graphicalItemTheme?.strokeWidth,
+      strokeDasharray:
+        outsideProps.strokeDasharray ??
+        (Array.isArray(graphicalItemTheme?.strokeDasharray)
+          ? graphicalItemTheme.strokeDasharray.join(',')
+          : graphicalItemTheme?.strokeDasharray),
     },
     defaultScatterProps,
   );

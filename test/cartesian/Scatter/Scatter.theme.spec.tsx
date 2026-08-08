@@ -29,10 +29,11 @@ describe('Scatter theme', () => {
         );
         const allPaths = getAllScatterPoints(container);
         expect(allPaths).toHaveLength(scatterData.length);
-        // No theme values applied, so fill and stroke are undefined
+        // No theme values applied, so fill, stroke and stroke-dasharray are undefined
         allPaths.forEach(path => {
           expect(path.getAttribute('fill')).toBe(null);
           expect(path.getAttribute('stroke')).toBe(null);
+          expect(path.getAttribute('stroke-dasharray')).toBe(null);
         });
       });
     });
@@ -41,7 +42,14 @@ describe('Scatter theme', () => {
       it('should follow the prop for fill and stroke', () => {
         const { container } = rechartsTestRender(
           <MyChart>
-            <Scatter data={scatterData} dataKey="x" fill="gold" stroke="red" isAnimationActive={false} />
+            <Scatter
+              data={scatterData}
+              dataKey="x"
+              fill="gold"
+              stroke="red"
+              strokeDasharray="5 5"
+              isAnimationActive={false}
+            />
           </MyChart>,
         );
         const allPaths = getAllScatterPoints(container);
@@ -49,6 +57,7 @@ describe('Scatter theme', () => {
         allPaths.forEach(path => {
           expect(path.getAttribute('fill')).toBe('gold');
           expect(path.getAttribute('stroke')).toBe('red');
+          expect(path.getAttribute('stroke-dasharray')).toBe('5 5');
         });
       });
     });
@@ -62,6 +71,7 @@ describe('Scatter theme', () => {
                 {
                   fill: '#8884d8',
                   stroke: '#8884d8',
+                  strokeDasharray: '3 3',
                 },
               ],
             }}
@@ -76,6 +86,7 @@ describe('Scatter theme', () => {
         allPaths.forEach(path => {
           expect(path.getAttribute('fill')).toBe('#8884d8');
           expect(path.getAttribute('stroke')).toBe('#8884d8');
+          expect(path.getAttribute('stroke-dasharray')).toBe('3 3');
         });
       });
     });
@@ -89,12 +100,20 @@ describe('Scatter theme', () => {
                 {
                   fill: '#8884d8',
                   stroke: '#8884d8',
+                  strokeDasharray: '3 3',
                 },
               ],
             }}
           >
             <MyChart>
-              <Scatter data={scatterData} dataKey="x" fill="green" stroke="blue" isAnimationActive={false} />
+              <Scatter
+                data={scatterData}
+                dataKey="x"
+                fill="green"
+                stroke="blue"
+                strokeDasharray="6 2"
+                isAnimationActive={false}
+              />
             </MyChart>
           </RechartsThemeProvider>,
         );
@@ -103,6 +122,7 @@ describe('Scatter theme', () => {
         allPaths.forEach(path => {
           expect(path.getAttribute('fill')).toBe('green');
           expect(path.getAttribute('stroke')).toBe('blue');
+          expect(path.getAttribute('stroke-dasharray')).toBe('6 2');
         });
       });
     });
@@ -116,6 +136,7 @@ describe('Scatter theme', () => {
             graphicalItems: [
               {
                 strokeWidth: 5,
+                strokeDasharray: '4 4',
               },
             ],
           }}
@@ -129,6 +150,7 @@ describe('Scatter theme', () => {
       expect(allPaths).toHaveLength(scatterData.length);
       allPaths.forEach(path => {
         expect(path.getAttribute('stroke-width')).toBe('5');
+        expect(path.getAttribute('stroke-dasharray')).toBe('4 4');
       });
     });
 
@@ -139,6 +161,7 @@ describe('Scatter theme', () => {
             graphicalItems: [
               {
                 strokeOpacity: 0.5,
+                strokeDasharray: '4 4',
               },
             ],
           }}
@@ -152,6 +175,7 @@ describe('Scatter theme', () => {
       expect(allPaths).toHaveLength(scatterData.length);
       allPaths.forEach(path => {
         expect(path.getAttribute('stroke-opacity')).toBe('0.5');
+        expect(path.getAttribute('stroke-dasharray')).toBe('4 4');
       });
     });
 
@@ -162,6 +186,7 @@ describe('Scatter theme', () => {
             graphicalItems: [
               {
                 fillOpacity: 0.6,
+                strokeDasharray: '4 4',
               },
             ],
           }}
@@ -175,6 +200,7 @@ describe('Scatter theme', () => {
       expect(allPaths).toHaveLength(scatterData.length);
       allPaths.forEach(path => {
         expect(path.getAttribute('fill-opacity')).toBe('0.6');
+        expect(path.getAttribute('stroke-dasharray')).toBe('4 4');
       });
     });
 
@@ -185,6 +211,7 @@ describe('Scatter theme', () => {
             graphicalItems: [
               {
                 fill: '#ff6600',
+                strokeDasharray: '4 4',
               },
             ],
           }}
@@ -199,6 +226,7 @@ describe('Scatter theme', () => {
       allPaths.forEach(path => {
         expect(path.getAttribute('fill')).toBe('#ff6600');
         expect(path.getAttribute('stroke')).toBe('red');
+        expect(path.getAttribute('stroke-dasharray')).toBe('4 4');
       });
     });
 
@@ -210,12 +238,13 @@ describe('Scatter theme', () => {
               {
                 fill: '#ff6600',
                 stroke: '#00ff00',
+                strokeDasharray: '3 3',
               },
             ],
           }}
         >
           <MyChart>
-            <Scatter data={scatterData} dataKey="x" fill="purple" isAnimationActive={false} />
+            <Scatter data={scatterData} dataKey="x" fill="purple" strokeDasharray="7 1" isAnimationActive={false} />
           </MyChart>
         </RechartsThemeProvider>,
       );
@@ -224,6 +253,7 @@ describe('Scatter theme', () => {
       allPaths.forEach(path => {
         expect(path.getAttribute('fill')).toBe('purple');
         expect(path.getAttribute('stroke')).toBe('#00ff00');
+        expect(path.getAttribute('stroke-dasharray')).toBe('7 1');
       });
     });
   });
