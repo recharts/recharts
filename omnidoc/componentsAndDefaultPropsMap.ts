@@ -37,6 +37,9 @@ import { defaultCurveProps } from '../src/shape/Curve';
 import { defaultSunburstChartProps } from '../src/chart/SunburstChart';
 import { defaultDefaultTooltipContentProps } from '../src/component/DefaultTooltipContent';
 import { defaultLegendContentDefaultProps } from '../src/component/DefaultLegendContent';
+import { resolveZoomOptions } from '../src/util/zoom/ZoomOptions';
+
+const zoomDefaults = resolveZoomOptions(true);
 
 type ComponentMeta = {
   defaultProps: Record<string, unknown> | undefined;
@@ -88,4 +91,11 @@ export const componentMetaMap: Record<string, ComponentMeta> = {
   XAxis: { defaultProps: xAxisDefaultProps },
   YAxis: { defaultProps: yAxisDefaultProps },
   ZAxis: { defaultProps: zAxisDefaultProps },
+  ZoomAndPan: {
+    defaultProps: {
+      ...zoomDefaults,
+      pinch: zoomDefaults.touch,
+      touchDoubleTapDrag: 'zoom',
+    },
+  },
 };
