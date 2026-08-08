@@ -84,7 +84,7 @@ import { StackGroup } from '../../util/stacks/stackTypes';
 import { selectTooltipAxisId } from './selectTooltipAxisId';
 import { RenderableAxisType, selectTooltipAxisType } from './selectTooltipAxisType';
 import { combineDisplayedStackedData, DisplayedStackedData } from './combiners/combineDisplayedStackedData';
-import { DefinitelyStackedGraphicalItem, isStacked } from '../types/StackedGraphicalItem';
+import { isStackedGraphicalItem, type StackedGraphicalItem } from '../types/StackedGraphicalItem';
 import { numericalDomainSpecifiedWithoutRequiringData } from '../../util/isDomainSpecifiedByUser';
 import { numberDomainEqualityCheck } from './numberDomainEqualityCheck';
 import { emptyArraysAreEqualCheck } from './arrayEqualityCheck';
@@ -121,13 +121,12 @@ export const selectAllGraphicalItemsSettings: (state: RechartsRootState) => Read
     },
   );
 
-const selectAllStackedGraphicalItemsSettings: (
-  state: RechartsRootState,
-) => ReadonlyArray<DefinitelyStackedGraphicalItem> = createSelector(
-  [selectAllGraphicalItemsSettings],
-  (graphicalItems: ReadonlyArray<GraphicalItemSettings>): ReadonlyArray<DefinitelyStackedGraphicalItem> =>
-    graphicalItems.filter(isStacked),
-);
+const selectAllStackedGraphicalItemsSettings: (state: RechartsRootState) => ReadonlyArray<StackedGraphicalItem> =
+  createSelector(
+    [selectAllGraphicalItemsSettings],
+    (graphicalItems: ReadonlyArray<GraphicalItemSettings>): ReadonlyArray<StackedGraphicalItem> =>
+      graphicalItems.filter(isStackedGraphicalItem),
+  );
 
 export const selectTooltipGraphicalItemsData = createSelector(
   [selectAllGraphicalItemsSettings],
@@ -187,9 +186,9 @@ const selectTooltipDomainFromUserPreferences: (state: RechartsRootState) => Numb
   numericalDomainSpecifiedWithoutRequiringData,
 );
 
-const selectAllStackedGraphicalItems: (state: RechartsRootState) => ReadonlyArray<DefinitelyStackedGraphicalItem> =
+const selectAllStackedGraphicalItems: (state: RechartsRootState) => ReadonlyArray<StackedGraphicalItem> =
   createSelector([selectAllGraphicalItemsSettings], (graphicalItems: ReadonlyArray<GraphicalItemSettings>) =>
-    graphicalItems.filter(isStacked),
+    graphicalItems.filter(isStackedGraphicalItem),
   );
 
 const selectTooltipStackGroups: (state: RechartsRootState) => Record<StackId, StackGroup> = createSelector(

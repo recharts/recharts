@@ -14,7 +14,7 @@ import { PageData } from '../../_data';
 import { createSelectorTestCase } from '../../helper/createSelectorTestCase';
 import { assertNotNull } from '../../helper/assertNotNull';
 import { expectLastCalledWith } from '../../helper/expectLastCalledWith';
-import { AreaSettings } from '../../../src/state/types/AreaSettings';
+import type { StackedGraphicalItem } from '../../../src/state/types/StackedGraphicalItem';
 
 describe('selectStackGroups', () => {
   const selector = (state: RechartsRootState) => selectStackGroups(state, 'xAxis', 0, false);
@@ -212,7 +212,7 @@ describe('selectStackGroups', () => {
     describe('on initial render', () => {
       it('should select two graphical items in stack group in the DOM insertion order', () => {
         const { spy } = renderTestCase((state: RechartsRootState) => selectStackGroups(state, 'xAxis', 0, false));
-        const expectedArea1: AreaSettings = {
+        const expectedArea1: StackedGraphicalItem = {
           id: expect.stringMatching('^recharts-area-[:a-z0-9]+$'),
           barSize: undefined,
           baseValue: undefined,
@@ -227,7 +227,7 @@ describe('selectStackGroups', () => {
           yAxisId: 0,
           zAxisId: 0,
         };
-        const expectedArea2: AreaSettings = {
+        const expectedArea2: StackedGraphicalItem = {
           id: expect.stringMatching('^recharts-area-[:a-z0-9]+$'),
           barSize: undefined,
           baseValue: undefined,

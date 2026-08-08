@@ -1,6 +1,9 @@
 import { expect } from 'vitest';
 import { StackDataPoint, StackSeries } from '../../src/util/stacks/stackTypes';
-import { MaybeStackedGraphicalItem } from '../../src/state/types/StackedGraphicalItem';
+import { AreaSettings } from '../../src/state/types/AreaSettings';
+import { BarSettings } from '../../src/state/types/BarSettings';
+import { RadialBarSettings } from '../../src/state/types/RadialBarSettings';
+import type { StackedGraphicalItem } from '../../src/state/types/StackedGraphicalItem';
 
 interface SyncExpectationResult {
   pass: boolean;
@@ -154,6 +157,8 @@ declare module 'vitest' {
  * @param expected the expected settings for the graphical item
  * @return the expected settings wrapped in an object containing matcher functions
  */
-export function expectGraphicalItemSettings(expected: MaybeStackedGraphicalItem): MaybeStackedGraphicalItem {
+export function expectGraphicalItemSettings(
+  expected: Partial<AreaSettings | BarSettings | RadialBarSettings>,
+): StackedGraphicalItem {
   return expect.objectContaining(expected);
 }
