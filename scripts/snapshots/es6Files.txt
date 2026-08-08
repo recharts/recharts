@@ -65,6 +65,7 @@
   "es6/chart/zoom/doubleClickGesture.js",
   "es6/chart/zoom/keyboardGesture.js",
   "es6/chart/zoom/pointerGesture.js",
+  "es6/chart/zoom/touchGesture.js",
   "es6/chart/zoom/wheelGesture.js",
   "es6/component",
   "es6/component/ActivePoints.js",
