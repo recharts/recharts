@@ -87,6 +87,27 @@ export type { Props as BrushProps, BrushTravellerType } from './cartesian/Brush'
 export { ZoomAndPan } from './chart/zoom/ZoomAndPan';
 export type { ZoomAndPanProps } from './chart/zoom/ZoomAndPan';
 export type { ZoomViewport } from './util/zoom/ZoomOptions';
+export {
+  MouseWheelZoom,
+  PanOnDrag,
+  DragToZoom,
+  DragToSelect,
+  AxisZoom,
+  ZoomPanKeyboard,
+  DoubleClickReset,
+  PinchZoom,
+  ZoomScrollbar,
+} from './chart/zoom/interactionComponents';
+export type {
+  CommonZoomProps,
+  MouseWheelZoomProps,
+  AxisZoomProps,
+  ZoomPanKeyboardProps,
+  PinchZoomProps,
+  ZoomScrollbarProps,
+  DragToZoomProps,
+  DragToSelectProps,
+} from './chart/zoom/interactionComponents';
 export { ReferenceLine } from './cartesian/ReferenceLine';
 export type { Props as ReferenceLineProps, ReferenceLineSegment } from './cartesian/ReferenceLine';
 export { ReferenceDot } from './cartesian/ReferenceDot';

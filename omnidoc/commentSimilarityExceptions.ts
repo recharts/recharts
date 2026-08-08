@@ -368,6 +368,17 @@ export const commentSimilarityExceptions: ReadonlyArray<CommentSimilarityGroup> 
       'labelStyle in Tooltip styles the title, where the same labelStyle in Legend styles the individual items. Naming inconsistency we keep for backwards compatibility.',
   },
   {
+    components: ['ZoomScrollbar'],
+    props: ['className', 'style'],
+    reason: 'ZoomScrollbar className and style target its scrollbar track rather than a generic component container.',
+  },
+  {
+    components: ['ZoomAndPan', 'ZoomPanKeyboard'],
+    props: ['panStep'],
+    reason:
+      'Keyboard panStep is a base viewport fraction multiplied for Shift+Arrow panning, unlike wheel controls where panStep is applied per wheel delta unit.',
+  },
+  {
     components: ['RechartsThemeProvider'],
     props: ['axis'],
     reason: 'RechartsThemeProvider.axis contains axis theme styles rather than selecting zoom dimensions.',
