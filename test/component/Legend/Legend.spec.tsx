@@ -1880,6 +1880,7 @@ describe('<Legend />', () => {
         expect(spy).toHaveBeenCalledTimes(2);
         expectLastCalledWith(spy, {
           brushBottom: 5,
+          brushRight: 5,
           top: 5,
           bottom: 5 + 13,
           left: 5,
@@ -1909,6 +1910,7 @@ describe('<Legend />', () => {
         expect(spy).toHaveBeenCalledTimes(3);
         expectLastCalledWith(spy, {
           brushBottom: 5,
+          brushRight: 5,
           top: 5,
           bottom: 5,
           left: 5,
@@ -1938,6 +1940,7 @@ describe('<Legend />', () => {
         expect(spy).toHaveBeenCalledTimes(3);
         expectLastCalledWith(spy, {
           brushBottom: 5,
+          brushRight: 5,
           top: 5,
           bottom: 5,
           left: 5 + 17,
@@ -1967,6 +1970,7 @@ describe('<Legend />', () => {
         expect(spy).toHaveBeenCalledTimes(3);
         expectLastCalledWith(spy, {
           brushBottom: 5,
+          brushRight: 5,
           top: 5,
           bottom: 5 + 13,
           left: 5,
@@ -1998,6 +2002,7 @@ describe('<Legend />', () => {
         // The final offset should reflect the larger legend height (60px)
         expectLastCalledWith(spy, {
           brushBottom: 5,
+          brushRight: 5,
           top: 5,
           bottom: 5 + 60,
           left: 5,
