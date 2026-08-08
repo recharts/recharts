@@ -82,8 +82,18 @@ export { RadialBar } from './polar/RadialBar';
 export type { RadialBarProps, RadialBarDataItem } from './polar/RadialBar';
 export type { RadialBarSectorProps } from './util/RadialBarUtils';
 
-export { Brush } from './cartesian/Brush';
-export type { Props as BrushProps, BrushTravellerType } from './cartesian/Brush';
+export { Brush, BrushPinchZoom, BrushWheelZoom, BrushZoomControls, useBrushZoomControls } from './cartesian/Brush';
+export type { BrushMode, Props as BrushProps, BrushTravellerType } from './cartesian/Brush';
+export {
+  Minimap,
+  MinimapControls,
+  MinimapDrag,
+  MinimapKeyboard,
+  MinimapPinch,
+  MinimapWheel,
+  useMinimapControls,
+} from './cartesian/Minimap';
+export type { MinimapPosition, Props as MinimapProps } from './cartesian/Minimap';
 export { ZoomAndPan } from './chart/zoom/ZoomAndPan';
 export type { ZoomAndPanProps } from './chart/zoom/ZoomAndPan';
 export type { ZoomViewport } from './util/zoom/ZoomOptions';
