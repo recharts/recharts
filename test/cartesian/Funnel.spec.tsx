@@ -162,7 +162,16 @@ describe('<Funnel />', () => {
       { value: 0, name: 'B' },
       { value: 0, name: 'C' },
     ];
-    const offset = { left: 10, top: 20, width: 400, height: 300, right: 10, bottom: 10, brushBottom: 0 };
+    const offset = {
+      left: 10,
+      top: 20,
+      width: 400,
+      height: 300,
+      right: 10,
+      bottom: 10,
+      brushBottom: 0,
+      brushRight: 0,
+    };
 
     const trapezoids = computeFunnelTrapezoids({
       dataKey: 'value',

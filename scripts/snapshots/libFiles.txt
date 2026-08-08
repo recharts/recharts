@@ -68,6 +68,7 @@
   "lib/chart/zoom/ZoomAndPan.js",
   "lib/chart/zoom/ZoomGestureApi.js",
   "lib/chart/zoom/ZoomPropBridge.js",
+  "lib/chart/zoom/ZoomTransformLayer.js",
   "lib/chart/zoom/axisGesture.js",
   "lib/chart/zoom/doubleClickGesture.js",
   "lib/chart/zoom/interactionComponents.js",
