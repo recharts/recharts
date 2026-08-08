@@ -40,6 +40,24 @@ import { defaultLegendContentDefaultProps } from '../src/component/DefaultLegend
 import { resolveZoomOptions } from '../src/util/zoom/ZoomOptions';
 
 const zoomDefaults = resolveZoomOptions(true);
+const commonZoomDefaultProps = {
+  axis: zoomDefaults.axis,
+  xAxisId: zoomDefaults.xAxisId,
+  yAxisId: zoomDefaults.yAxisId,
+  minZoom: zoomDefaults.minZoom,
+  maxZoom: zoomDefaults.maxZoom,
+};
+const mouseWheelZoomDefaultProps = {
+  ...commonZoomDefaultProps,
+  step: zoomDefaults.wheelStep,
+  panStep: zoomDefaults.wheelPanStep,
+};
+const zoomPanKeyboardDefaultProps = {
+  ...commonZoomDefaultProps,
+  step: zoomDefaults.wheelStep,
+  panStep: zoomDefaults.panStep,
+  panFastMultiplier: zoomDefaults.panFastMultiplier,
+};
 
 type ComponentMeta = {
   defaultProps: Record<string, unknown> | undefined;
@@ -48,6 +66,7 @@ type ComponentMeta = {
 export const componentMetaMap: Record<string, ComponentMeta> = {
   Area: { defaultProps: defaultAreaProps },
   AreaChart: { defaultProps: defaultCartesianChartProps },
+  AxisZoom: { defaultProps: mouseWheelZoomDefaultProps },
   Bar: { defaultProps: defaultBarProps },
   BarChart: { defaultProps: defaultCartesianChartProps },
   BarStack: { defaultProps: defaultBarStackProps },
@@ -56,6 +75,9 @@ export const componentMetaMap: Record<string, ComponentMeta> = {
   ComposedChart: { defaultProps: defaultCartesianChartProps },
   Curve: { defaultProps: defaultCurveProps },
   DefaultTooltipContent: { defaultProps: defaultDefaultTooltipContentProps },
+  DoubleClickReset: { defaultProps: commonZoomDefaultProps },
+  DragToSelect: { defaultProps: { ...commonZoomDefaultProps, modifier: 'none' } },
+  DragToZoom: { defaultProps: { ...commonZoomDefaultProps, modifier: 'none' } },
   DefaultLegendContent: { defaultProps: defaultLegendContentDefaultProps },
   ErrorBar: { defaultProps: errorBarDefaultProps },
   Funnel: { defaultProps: defaultFunnelProps },
@@ -65,8 +87,18 @@ export const componentMetaMap: Record<string, ComponentMeta> = {
   Legend: { defaultProps: legendDefaultProps },
   Line: { defaultProps: defaultLineProps },
   LineChart: { defaultProps: defaultCartesianChartProps },
+  MouseWheelZoom: { defaultProps: mouseWheelZoomDefaultProps },
+  PanOnDrag: { defaultProps: commonZoomDefaultProps },
   Pie: { defaultProps: defaultPieProps },
   PieChart: { defaultProps: defaultPieChartProps },
+  PinchZoom: {
+    defaultProps: {
+      ...commonZoomDefaultProps,
+      threshold: zoomDefaults.pinchThreshold,
+      doubleTapDrag: 'none',
+      touchDrag: zoomDefaults.touchDrag,
+    },
+  },
   PolarAngleAxis: { defaultProps: defaultPolarAngleAxisProps },
   PolarGrid: { defaultProps: defaultPolarGridProps },
   PolarRadiusAxis: { defaultProps: defaultPolarRadiusAxisProps },
@@ -96,6 +128,15 @@ export const componentMetaMap: Record<string, ComponentMeta> = {
       ...zoomDefaults,
       pinch: zoomDefaults.touch,
       touchDoubleTapDrag: 'zoom',
+    },
+  },
+  ZoomPanKeyboard: { defaultProps: zoomPanKeyboardDefaultProps },
+  ZoomScrollbar: {
+    defaultProps: {
+      ...commonZoomDefaultProps,
+      axis: 'x',
+      panStep: zoomDefaults.wheelPanStep,
+      thickness: 10,
     },
   },
 };

@@ -67,6 +67,7 @@
   "es6/chart/zoom/ZoomPropBridge.js",
   "es6/chart/zoom/axisGesture.js",
   "es6/chart/zoom/doubleClickGesture.js",
+  "es6/chart/zoom/interactionComponents.js",
   "es6/chart/zoom/keyboardGesture.js",
   "es6/chart/zoom/pointerGesture.js",
   "es6/chart/zoom/touchGesture.js",
