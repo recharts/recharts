@@ -106,7 +106,7 @@ export function propsAreEqual<T extends Record<string, unknown>>(prevProps: T, n
  * High-frequency zoom/pan gestures recompute geometry on every event; positions can differ by
  * sub-pixel float noise even when nothing visibly moved. These helpers let reporters, reducers and
  * selector subscriptions treat such values as unchanged, which breaks render feedback loops and
- * keeps drags smooth. Shared by the rendered-ticks reporter/slice and CartesianGrid.
+ * keeps drags smooth. Shared by the rendered-ticks reporter/slice, CartesianGrid and useScatterLOD.
  */
 
 const EPSILON = 1e-6;

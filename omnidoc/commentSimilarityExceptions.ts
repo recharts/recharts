@@ -368,6 +368,17 @@ export const commentSimilarityExceptions: ReadonlyArray<CommentSimilarityGroup> 
       'labelStyle in Tooltip styles the title, where the same labelStyle in Legend styles the individual items. Naming inconsistency we keep for backwards compatibility.',
   },
   {
+    components: ['AutoScaleAxis'],
+    props: ['axis', 'padding'],
+    reason:
+      'AutoScaleAxis.axis selects the axis to fit, and padding is fractional data headroom rather than axis or container padding.',
+  },
+  {
+    components: ['FollowSeries'],
+    props: ['padding'],
+    reason: 'FollowSeries padding is fractional headroom around a followed series, not axis or container padding.',
+  },
+  {
     components: ['ZoomScrollbar'],
     props: ['className', 'style'],
     reason: 'ZoomScrollbar className and style target its scrollbar track rather than a generic component container.',
