@@ -151,7 +151,7 @@ export const getTickOfSingleValue = (value: number, tickCount: number, allowDeci
  *
  * @param  min              The minimum value of an interval
  * @param  max              The maximum value of an interval
- * @param  tickCount        The count of ticks
+ * @param  tickCount        The count of ticks. An interval with 0 strictly inside it always uses at least 3.
  * @param  allowDecimals    Allow the ticks to be decimals or not
  * @param  correctionFactor A correction factor
  * @return The step, minimum value of ticks, maximum value of ticks
@@ -177,8 +177,12 @@ export const calculateStep = (
     };
   }
 
+  // An interval with 0 strictly inside it gets a tick at 0 plus one on either side of it,
+  // so fewer than three ticks never fit and the correction below would recurse forever.
+  const count = min < 0 && max > 0 ? Math.max(tickCount, 3) : tickCount;
+
   // The step which is easy to understand between two ticks
-  const step = stepFn(new Decimal(max).sub(min).div(tickCount - 1), allowDecimals, correctionFactor);
+  const step = stepFn(new Decimal(max).sub(min).div(count - 1), allowDecimals, correctionFactor);
 
   // A medial value of ticks
   let middle;
@@ -197,14 +201,14 @@ export const calculateStep = (
   let upCount = Math.ceil(new Decimal(max).sub(middle).div(step).toNumber());
   const scaleCount = belowCount + upCount + 1;
 
-  if (scaleCount > tickCount) {
+  if (scaleCount > count) {
     // When more ticks need to cover the interval, step should be bigger.
-    return calculateStep(min, max, tickCount, allowDecimals, correctionFactor + 1, stepFn);
+    return calculateStep(min, max, count, allowDecimals, correctionFactor + 1, stepFn);
   }
-  if (scaleCount < tickCount) {
+  if (scaleCount < count) {
     // When less ticks can cover the interval, we should add some additional ticks
-    upCount = max > 0 ? upCount + (tickCount - scaleCount) : upCount;
-    belowCount = max > 0 ? belowCount : belowCount + (tickCount - scaleCount);
+    upCount = max > 0 ? upCount + (count - scaleCount) : upCount;
+    belowCount = max > 0 ? belowCount : belowCount + (count - scaleCount);
   }
 
   return {
@@ -219,7 +223,8 @@ export const calculateStep = (
  * if it makes them more rounded and nice.
  *
  * @param tuple of [min,max] min: The minimum value, max: The maximum value
- * @param tickCount     The count of ticks
+ * @param tickCount     The count of ticks. An interval with 0 strictly inside it always returns at least
+ *                      3 ticks because 0 itself is always one of them.
  * @param allowDecimals Allow the ticks to be decimals or not
  * @param niceTicksMode The algorithm to use for calculating nice ticks.
  * @return array of ticks
