@@ -46,6 +46,7 @@ import {
   isInCartesianRange,
 } from '../../util/getActiveCoordinate';
 import { inRangeOfSector } from '../../util/PolarUtils';
+import { transformCoordinateByCameraZoom } from '../../util/zoom/transform';
 
 export const useChartName = (): string | undefined => {
   return useAppSelector(selectChartName);
@@ -155,6 +156,32 @@ export const selectActiveCoordinate: (
     defaultIndexCoordinate: Coordinate | undefined,
   ): Coordinate | undefined => {
     return tooltipInteractionState.coordinate ?? defaultIndexCoordinate;
+  },
+);
+
+/**
+ * Coordinate consumed by the HTML Tooltip. Camera charts render their SVG geometry in a transformed
+ * group, while the Tooltip portal sits outside that SVG transform, so its coordinate needs the same
+ * projection. The raw coordinate remains available through {@link selectActiveCoordinate} for the
+ * SVG cursor, which is already inside the transformed group.
+ */
+export const selectActiveCoordinateForTooltip: (
+  state: RechartsRootState,
+  tooltipEventType: TooltipEventType | undefined,
+  trigger: TooltipTrigger,
+  defaultIndex: TooltipIndex | undefined,
+) => Coordinate | undefined = createSelector(
+  [selectActiveCoordinate, selectChartName, selectChartOffsetInternal, (state: RechartsRootState) => state.zoom],
+  (coordinate, chartName, offset, zoom): Coordinate | undefined => {
+    if (coordinate == null || offset == null) {
+      return coordinate;
+    }
+    return transformCoordinateByCameraZoom(
+      coordinate,
+      { x: offset.left, y: offset.top, width: offset.width, height: offset.height },
+      chartName,
+      zoom,
+    );
   },
 );
 
