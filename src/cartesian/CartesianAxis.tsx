@@ -349,6 +349,7 @@ function RenderedTicksReporter({
       return noop;
     }
     return () => {
+      lastDispatchedTicksRef.current = null;
       dispatch(
         removeRenderedTicks({
           axisId,
