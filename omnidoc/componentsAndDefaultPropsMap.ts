@@ -66,6 +66,7 @@ type ComponentMeta = {
 export const componentMetaMap: Record<string, ComponentMeta> = {
   Area: { defaultProps: defaultAreaProps },
   AreaChart: { defaultProps: defaultCartesianChartProps },
+  AutoScaleAxis: { defaultProps: { xAxisId: 0, yAxisId: 0, padding: 0.05 } },
   AxisZoom: { defaultProps: mouseWheelZoomDefaultProps },
   Bar: { defaultProps: defaultBarProps },
   BarChart: { defaultProps: defaultCartesianChartProps },
@@ -82,6 +83,9 @@ export const componentMetaMap: Record<string, ComponentMeta> = {
   ErrorBar: { defaultProps: errorBarDefaultProps },
   Funnel: { defaultProps: defaultFunnelProps },
   FunnelChart: { defaultProps: defaultCartesianChartProps },
+  FollowSeries: {
+    defaultProps: { autoScale: false, span: 0.5, padding: 0.1, xAxisId: 0, yAxisId: 0 },
+  },
   Label: { defaultProps: defaultLabelProps },
   LabelList: { defaultProps: defaultLabelProps },
   Legend: { defaultProps: legendDefaultProps },

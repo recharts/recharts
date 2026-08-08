@@ -201,6 +201,8 @@ describe('Documentation Examples Coverage', () => {
      * examples in the website corpus indexed by ExampleReader. Keep this debt explicit until those
      * examples move into `www/src/docs/exampleComponents` or `www/src/docs/apiExamples`.
      */
+    'AutoScaleAxis',
+    'AutoScaleAxisProps',
     'AxisZoom',
     'AxisZoomProps',
     'CommonZoomProps',
@@ -209,11 +211,15 @@ describe('Documentation Examples Coverage', () => {
     'DragToSelectProps',
     'DragToZoom',
     'DragToZoomProps',
+    'FollowSeries',
+    'FollowSeriesProps',
     'MouseWheelZoom',
     'MouseWheelZoomProps',
     'PanOnDrag',
     'PinchZoom',
     'PinchZoomProps',
+    'ScatterLODOptions',
+    'useScatterLOD',
     'useZoom',
     'UseZoomResult',
     'useZoomState',
