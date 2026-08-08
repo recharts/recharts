@@ -24,7 +24,7 @@ import {
   selectYAxisSize,
 } from '../state/selectors/axisSelectors';
 import { selectAxisViewBox } from '../state/selectors/selectChartOffsetInternal';
-import { axisPropsAreEqual } from '../util/axisPropsAreEqual';
+import { axisPropsAreEqual, axisSettingsAreEqual } from '../util/axisPropsAreEqual';
 import { DEFAULT_Y_AXIS_WIDTH } from '../util/Constants';
 import { getAxisTypeBasedOnLayout } from '../util/getAxisTypeBasedOnLayout';
 import { RequiresDefaultProps, resolveDefaultProps } from '../util/resolveDefaultProps';
@@ -251,7 +251,7 @@ function SetYAxisSettings(props: Omit<YAxisSettings, 'type'> & { type: AxisDomai
     }
     if (prevSettingsRef.current === null) {
       dispatch(addYAxis(settings));
-    } else if (prevSettingsRef.current !== settings) {
+    } else if (!axisSettingsAreEqual(prevSettingsRef.current, settings)) {
       dispatch(replaceYAxis({ prev: prevSettingsRef.current, next: settings }));
     }
     prevSettingsRef.current = settings;

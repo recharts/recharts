@@ -102,6 +102,7 @@ describe('getCursorPoints', () => {
       const fullOffset: ChartOffsetInternal = {
         bottom: 87,
         brushBottom: 23,
+        brushRight: 0,
         height: 35,
         left: 1,
         right: 9,

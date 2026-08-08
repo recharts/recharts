@@ -23,7 +23,7 @@ import { useChartData, useDataIndex } from '../context/chartDataContext';
 import { BrushStartEndIndex, BrushUpdateDispatchContext, OnBrushUpdate } from '../context/brushUpdateContext';
 import { useAppDispatch, useAppSelector } from '../state/hooks';
 import { ChartData, setDataStartEndIndexes } from '../state/chartDataSlice';
-import { BrushSettings, setBrushSettings } from '../state/brushSlice';
+import { HorizontalBrushSettings, setBrushSettings } from '../state/brushSlice';
 import { PanoramaContextProvider } from '../context/PanoramaContext';
 import { selectBrushDimensions } from '../state/selectors/brushSelectors';
 import { useBrushChartSynchronisation } from '../synchronisation/useChartSynchronisation';
@@ -1121,7 +1121,7 @@ function BrushInternal(props: BrushInternalProps) {
   );
 }
 
-function BrushSettingsDispatcher(props: BrushSettings): null {
+function BrushSettingsDispatcher(props: HorizontalBrushSettings): null {
   const dispatch = useAppDispatch();
   useEffect(() => {
     dispatch(setBrushSettings(props));
