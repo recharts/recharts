@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { MutableRefObject, ReactElement, ReactNode, useMemo, useRef } from 'react';
+import { MutableRefObject, ReactElement, ReactNode, SVGProps, useMemo, useRef } from 'react';
 
 import { clsx } from 'clsx';
 import { Layer } from '../container/Layer';
@@ -61,7 +61,11 @@ import { resolveDefaultProps } from '../util/resolveDefaultProps';
 import { RegisterGraphicalItemId } from '../context/RegisterGraphicalItemId';
 import { ScatterSettings } from '../state/types/ScatterSettings';
 import { SetCartesianGraphicalItem } from '../state/SetGraphicalItem';
-import { svgPropertiesNoEvents, svgPropertiesNoEventsFromUnknown } from '../util/svgPropertiesNoEvents';
+import {
+  svgPropertiesNoEvents,
+  svgPropertiesNoEventsFromUnknown,
+  SVGPropsNoEvents,
+} from '../util/svgPropertiesNoEvents';
 import { useCartesianChartLayout, useViewBox } from '../context/chartLayoutContext';
 import { AnimatedItems, AnimationInterpolateFn, useAnimationCallbacks } from '../animation/AnimatedItems';
 import { AnimationMatchByProp, matchAppend } from '../animation/matchBy';
@@ -70,6 +74,8 @@ import { GraphicalItemId } from '../state/graphicalItemsSlice';
 import { ZIndexable, ZIndexLayer } from '../zIndex/ZIndexLayer';
 import { DefaultZIndexes } from '../zIndex/DefaultZIndexes';
 import { propsAreEqual } from '../util/propsAreEqual';
+import { useRechartsTheme } from '../theme/RechartsThemeContext';
+import { graphicalItemIdentity } from '../theme/graphicalItemIdentity';
 import { ChartData } from '../state/chartDataSlice';
 
 export interface ScatterPointNode {
@@ -588,7 +594,7 @@ function ScatterPoint({
   index: number;
   shape: ScatterCustomizedShape;
   activeShape: ScatterCustomizedShape | undefined;
-  baseProps: ReturnType<typeof svgPropertiesNoEvents>;
+  baseProps: WithoutId<SVGPropsNoEvents<InternalProps>>;
   id: GraphicalItemId;
   restOfAllOtherProps: InternalProps;
   onMouseEnterFromContext: (
@@ -610,8 +616,17 @@ function ScatterPoint({
 
   // isActive is only true when hasActiveShape is true, so activeShape is defined here
   const option = isActive && activeShape != null && activeShape !== false ? activeShape : shape;
+  // Filter out undefined values from baseProps so data fill/stroke aren't clobbered
+  const filteredBaseProps: SVGProps<SVGGraphicsElement> = {
+    ...(baseProps.fill !== undefined && { fill: baseProps.fill }),
+    ...(baseProps.stroke !== undefined && { stroke: baseProps.stroke }),
+    ...(baseProps.strokeWidth !== undefined && { strokeWidth: baseProps.strokeWidth }),
+    ...(baseProps.strokeOpacity !== undefined && { strokeOpacity: baseProps.strokeOpacity }),
+    ...(baseProps.fillOpacity !== undefined && { fillOpacity: baseProps.fillOpacity }),
+    ...(baseProps.strokeDasharray !== undefined && { strokeDasharray: baseProps.strokeDasharray }),
+  };
   const symbolProps: ScatterShapeProps = {
-    ...baseProps,
+    ...filteredBaseProps,
     ...entry,
     isActive,
     index,
@@ -662,7 +677,7 @@ function ScatterSymbols(props: ScatterSymbolsProps) {
     return null;
   }
 
-  const baseProps = svgPropertiesNoEvents(allOtherPropsWithoutId);
+  const baseProps: WithoutId<SVGPropsNoEvents<InternalProps>> = svgPropertiesNoEvents(allOtherPropsWithoutId);
 
   return (
     <>
@@ -1005,7 +1020,27 @@ function ScatterImpl(props: WithIdRequired<Props>) {
 }
 
 function ScatterFn(outsideProps: Props) {
-  const props = resolveDefaultProps(outsideProps, defaultScatterProps);
+  const theme = useRechartsTheme();
+  const graphicalItemTheme =
+    outsideProps.dataKey == null || theme == null || theme.graphicalItems == null
+      ? undefined
+      : theme.graphicalItems[graphicalItemIdentity({ dataKey: outsideProps.dataKey }, theme.graphicalItems.length)];
+  const props = resolveDefaultProps(
+    {
+      ...outsideProps,
+      fill: outsideProps.fill ?? graphicalItemTheme?.fill,
+      fillOpacity: outsideProps.fillOpacity ?? graphicalItemTheme?.fillOpacity,
+      stroke: outsideProps.stroke ?? graphicalItemTheme?.stroke,
+      strokeOpacity: outsideProps.strokeOpacity ?? graphicalItemTheme?.strokeOpacity,
+      strokeWidth: outsideProps.strokeWidth ?? graphicalItemTheme?.strokeWidth,
+      strokeDasharray:
+        outsideProps.strokeDasharray ??
+        (Array.isArray(graphicalItemTheme?.strokeDasharray)
+          ? graphicalItemTheme.strokeDasharray.join(',')
+          : graphicalItemTheme?.strokeDasharray),
+    },
+    defaultScatterProps,
+  );
   const isPanorama = useIsPanorama();
   return (
     <RegisterGraphicalItemId id={props.id} type="scatter">
