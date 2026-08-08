@@ -1,8 +1,9 @@
 import * as React from 'react';
-import { test, expect } from '@playwright/experimental-ct-react';
+import { expect } from '@playwright/experimental-ct-react';
 import TooltipStylesExample from '../../../www/src/docs/exampleComponents/Tooltip/TooltipStylesExample';
+import { testWithLightTheme } from './fixtures.tsx';
 
-test('TooltipStylesExample', async ({ mount }) => {
+testWithLightTheme('TooltipStylesExample', async ({ mount }) => {
   const component = await mount(<TooltipStylesExample />);
   await expect(component).toHaveScreenshot();
 });

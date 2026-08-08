@@ -1,4 +1,4 @@
-import { BarChart, XAxis, YAxis, Tooltip, Bar, BarStack, TooltipIndex } from 'recharts';
+import { BarChart, XAxis, YAxis, Tooltip, Bar, BarStack, TooltipIndex, lightTheme } from 'recharts';
 import { RechartsDevtools } from '@recharts/devtools';
 
 // #region Sample data
@@ -35,24 +35,24 @@ const RangedStackedBarChart = ({
     <BarStack radius={25}>
       <Bar
         dataKey="value1"
+        {...lightTheme.graphicalItems[0]}
         maxBarSize={50}
-        fill="#8884d8"
         isAnimationActive={isAnimationActive}
-        activeBar={{ fill: '#5550bd' }}
+        activeBar={{ fillOpacity: 1 }}
       />
       <Bar
         dataKey="value2"
+        {...lightTheme.graphicalItems[1]}
         maxBarSize={50}
-        fill="#82ca9d"
         isAnimationActive={isAnimationActive}
-        activeBar={{ fill: '#55bd50' }}
+        activeBar={{ fillOpacity: 1 }}
       />
       <Bar
         dataKey="value3"
+        {...lightTheme.graphicalItems[2]}
         maxBarSize={50}
-        fill="#ffc658"
         isAnimationActive={isAnimationActive}
-        activeBar={{ fill: '#ffc658' }}
+        activeBar={{ fillOpacity: 1 }}
       />
     </BarStack>
     <RechartsDevtools />

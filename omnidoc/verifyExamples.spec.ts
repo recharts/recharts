@@ -25,7 +25,6 @@ describe('Documentation Examples Coverage', () => {
     'AxisDomainItem',
     'AxisId',
     'AxisRange',
-    'BarProps',
     'BarStackProps',
     'BaseLineType',
     'BaseValue',

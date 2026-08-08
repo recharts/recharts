@@ -64,14 +64,7 @@ const ReferenceLineExample = ({ isAnimationActive = true }: { isAnimationActive?
     <YAxis width="auto" />
     <CartesianGrid strokeDasharray="3 3" />
     <Tooltip />
-    <Area
-      type="monotone"
-      dataKey="uv"
-      stroke="#8884d8"
-      fill="#8884d8"
-      fillOpacity={0.3}
-      isAnimationActive={isAnimationActive}
-    />
+    <Area type="monotone" dataKey="uv" fillOpacity={0.3} isAnimationActive={isAnimationActive} />
     <ReferenceLine
       x="Page C"
       stroke="green"

@@ -168,10 +168,6 @@ export default function AnimatedBarTimeSeriesExample(props: Partial<ControlsType
       <Tooltip />
       <Bar
         dataKey="y"
-        stroke="#8884d8"
-        strokeWidth={2}
-        fill="#9995e9"
-        fillOpacity={0.6}
         animationDuration={animationDuration}
         animationMatchBy={matchProp}
         animationInterpolateFn={animationVariant === 'custom' ? animationInterpolateFn : undefined}

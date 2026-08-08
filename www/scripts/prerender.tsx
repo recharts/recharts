@@ -87,7 +87,6 @@ async function prerender() {
         html = createRedirectHtml(redirects[route]);
         console.log(`✓ ${route} (redirect to ${redirects[route]})`);
       } else {
-        // eslint-disable-next-line no-await-in-loop
         html = await render(route, baseHtml);
         console.log(`✓ ${route}`);
       }

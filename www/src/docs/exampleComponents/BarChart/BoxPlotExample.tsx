@@ -62,7 +62,7 @@ const BoxShape = (props: BarShapeProps) => {
 
   return (
     <g>
-      <Rectangle {...props} fill="#8884d8" />
+      <Rectangle {...props} />
       <line x1={props.x} x2={props.x + props.width} y1={medianY} y2={medianY} stroke="#1f2937" strokeWidth={2} />
     </g>
   );
@@ -106,7 +106,7 @@ export default function BoxPlotExample({ defaultIndex }: { defaultIndex?: Toolti
       <XAxis dataKey="category" allowDuplicatedCategory={false} />
       <YAxis width="auto" />
       <CartesianGrid vertical={false} />
-      <Bar dataKey={boxDataKey} shape={BoxShape}>
+      <Bar dataKey={boxDataKey} shape={BoxShape} fillOpacity={1}>
         <ErrorBar dataKey={whiskerDataKey} width={0} zIndex={DefaultZIndexes.bar - 1} />
       </Bar>
       <Scatter data={outliers} dataKey="value" fill="#e11d48" />

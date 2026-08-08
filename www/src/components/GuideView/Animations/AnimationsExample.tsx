@@ -62,7 +62,6 @@ export default function AnimationsExample(props: Partial<AnimationsControlsState
       <Tooltip />
       <Bar
         dataKey="revenue"
-        fill="#8884d8"
         isAnimationActive={isAnimationActive}
         animationBegin={animationBegin}
         animationDuration={animationDuration}

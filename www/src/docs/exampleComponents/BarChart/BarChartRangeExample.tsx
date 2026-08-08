@@ -30,7 +30,7 @@ const BarChartRangeExample = ({ isAnimationActive = true }) => (
     <XAxis dataKey="day" />
     <YAxis width="auto" />
     <Tooltip />
-    <Bar dataKey="temperature" fill="#8884d8" isAnimationActive={isAnimationActive} />
+    <Bar dataKey="temperature" isAnimationActive={isAnimationActive} />
     <RechartsDevtools />
   </BarChart>
 );

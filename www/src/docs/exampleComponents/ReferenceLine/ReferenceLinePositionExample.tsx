@@ -31,7 +31,7 @@ export const ReferenceLinePositionExample = ({ isAnimationActive = true }: { isA
     <ReferenceLine x="Page B" label={{ value: 'position: start', fill: 'black' }} stroke="black" position="start" />
     <ReferenceLine x="Page B" label={{ value: 'position: middle', fill: 'black' }} stroke="black" position="middle" />
     <ReferenceLine x="Page B" label={{ value: 'position: end', fill: 'black' }} stroke="black" position="end" />
-    <Bar dataKey="pv" fill="#8884d8" fillOpacity={0.3} isAnimationActive={isAnimationActive} />
+    <Bar dataKey="pv" fillOpacity={0.3} isAnimationActive={isAnimationActive} />
     <RechartsDevtools />
   </BarChart>
 );

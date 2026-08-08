@@ -13,10 +13,11 @@ import {
   Tooltip,
 } from 'recharts';
 import { generateMockData } from '@recharts/devtools';
+import { emptyTheme } from '../../../src/theme/emptyTheme.ts';
 
 const data = generateMockData(6, 123);
 
-export function UnthemedChart() {
+export function DefaultThemeChart() {
   return (
     <LineChart style={{ width: '400px', height: '300px' }} data={data}>
       <CartesianGrid />
@@ -30,10 +31,26 @@ export function UnthemedChart() {
   );
 }
 
+export function EmptyThemeChart() {
+  return (
+    <RechartsThemeProvider value={emptyTheme}>
+      <LineChart style={{ width: '400px', height: '300px' }} data={data}>
+        <CartesianGrid />
+        <XAxis dataKey="label" />
+        <YAxis />
+        <Legend />
+        <Tooltip defaultIndex={1} />
+        <Line type="monotone" dataKey="x" isAnimationActive={false} />
+        <Line type="monotone" dataKey="y" isAnimationActive={false} />
+      </LineChart>
+    </RechartsThemeProvider>
+  );
+}
+
 export const LightThemeChart = () => {
   return (
     <RechartsThemeProvider value={lightTheme}>
-      <UnthemedChart />
+      <DefaultThemeChart />
     </RechartsThemeProvider>
   );
 };
@@ -41,7 +58,7 @@ export const LightThemeChart = () => {
 export const DarkThemeChart = () => {
   return (
     <RechartsThemeProvider value={darkTheme}>
-      <UnthemedChart />
+      <DefaultThemeChart />
     </RechartsThemeProvider>
   );
 };
@@ -76,7 +93,7 @@ export const CustomThemeChart = () => {
   };
   return (
     <RechartsThemeProvider value={customTheme}>
-      <UnthemedChart />
+      <DefaultThemeChart />
     </RechartsThemeProvider>
   );
 };

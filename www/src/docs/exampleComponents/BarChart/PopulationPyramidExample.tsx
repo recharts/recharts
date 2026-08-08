@@ -103,6 +103,7 @@ export default function PopulationPyramidExample({ defaultIndex }: { defaultInde
         name="Female"
         dataKey="female"
         fill="#ed7485"
+        stroke="none"
         radius={[0, 5, 5, 0]}
         label={{ position: 'right', formatter: formatPercent }}
       />
@@ -111,6 +112,7 @@ export default function PopulationPyramidExample({ defaultIndex }: { defaultInde
         name="Male"
         dataKey="male"
         fill="#6ea1c7"
+        stroke="none"
         radius={[0, 5, 5, 0]}
         label={{ position: 'right', formatter: formatPercent }}
       />

@@ -1,4 +1,16 @@
-import { Bar, BarChart, BarShapeProps, Rectangle, Tooltip, TooltipIndex, usePlotArea, XAxis, YAxis } from 'recharts';
+import {
+  Bar,
+  BarChart,
+  BarShapeProps,
+  RechartsTheme,
+  RechartsThemeProvider,
+  Rectangle,
+  Tooltip,
+  TooltipIndex,
+  usePlotArea,
+  XAxis,
+  YAxis,
+} from 'recharts';
 import { generateMockData, RechartsDevtools } from '@recharts/devtools';
 
 const data = generateMockData(15, 5);
@@ -26,7 +38,6 @@ const AnimatedShape = (props: BarShapeProps) => {
       */}
       <Rectangle
         {...props}
-        fill="black"
         style={{
           transform: props.isActive ? undefined : `scaleX(20%)`,
           transformOrigin: `${props.x}px center`,
@@ -46,6 +57,16 @@ const BottomTooltip = ({ defaultIndex }: { defaultIndex?: TooltipIndex }) => {
   return <Tooltip defaultIndex={defaultIndex} cursor={false} position={{ y: plotArea.y + plotArea.height - 100 }} />;
 };
 
+const MonochromeTheme: RechartsTheme = {
+  graphicalItems: [
+    {
+      fill: 'black',
+      stroke: 'none',
+      fillOpacity: 1,
+    },
+  ],
+};
+
 export default function AnimatedBarWidthExample({
   isAnimationActive = true,
   defaultIndex,
@@ -54,29 +75,31 @@ export default function AnimatedBarWidthExample({
   defaultIndex?: TooltipIndex;
 }) {
   return (
-    <BarChart
-      style={{ width: '100%', maxWidth: '700px', maxHeight: '70vh', aspectRatio: 1.618 }}
-      responsive
-      data={data}
-      barCategoryGap={4}
-    >
-      <XAxis dataKey="label" mirror padding={{ right: 30 }} interval={1} />
-      <YAxis
-        mirror
-        orientation="right"
-        tickLine={false}
-        tick={{ angle: 90, textAnchor: 'start' }}
-        padding={{ bottom: 30 }}
-      />
-      <Bar
-        dataKey="y"
-        isAnimationActive={isAnimationActive}
-        activeBar={AnimatedShape}
-        shape={AnimatedShape}
-        label={{ fill: 'white', position: 'insideTopRight', angle: 90, textAnchor: 'start' }}
-      />
-      <BottomTooltip defaultIndex={defaultIndex} />
-      <RechartsDevtools />
-    </BarChart>
+    <RechartsThemeProvider value={MonochromeTheme}>
+      <BarChart
+        style={{ width: '100%', maxWidth: '700px', maxHeight: '70vh', aspectRatio: 1.618 }}
+        responsive
+        data={data}
+        barCategoryGap={4}
+      >
+        <XAxis dataKey="label" mirror padding={{ right: 30 }} interval={1} />
+        <YAxis
+          mirror
+          orientation="right"
+          tickLine={false}
+          tick={{ angle: 90, textAnchor: 'start' }}
+          padding={{ bottom: 30 }}
+        />
+        <Bar
+          dataKey="y"
+          isAnimationActive={isAnimationActive}
+          activeBar={AnimatedShape}
+          shape={AnimatedShape}
+          label={{ fill: 'white', position: 'insideTopRight', angle: 90, textAnchor: 'start' }}
+        />
+        <BottomTooltip defaultIndex={defaultIndex} />
+        <RechartsDevtools />
+      </BarChart>
+    </RechartsThemeProvider>
   );
 }
