@@ -2580,7 +2580,8 @@ describe('<BarChart />', () => {
           stackId: undefined,
         },
       ]);
-      expect(barPositionsSpy).toHaveBeenCalledTimes(3);
+      // One render fewer than before: offset and axis-settings updates are equality-guarded.
+      expect(barPositionsSpy).toHaveBeenCalledTimes(2);
 
       expectBars(container, [
         {
