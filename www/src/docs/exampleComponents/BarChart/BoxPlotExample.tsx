@@ -109,7 +109,7 @@ export default function BoxPlotExample({ defaultIndex }: { defaultIndex?: Toolti
       <Bar dataKey={boxDataKey} shape={BoxShape} fillOpacity={1}>
         <ErrorBar dataKey={whiskerDataKey} width={0} zIndex={DefaultZIndexes.bar - 1} />
       </Bar>
-      <Scatter data={outliers} dataKey="value" fill="#e11d48" />
+      <Scatter data={outliers} dataKey="value" fill="#e11d48" stroke="none" />
       <Tooltip content={TooltipContent} defaultIndex={defaultIndex} />
       <RechartsDevtools />
     </BarChart>
