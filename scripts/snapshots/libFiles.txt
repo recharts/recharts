@@ -299,6 +299,7 @@
   "lib/util/useUniqueId.js",
   "lib/util/zoom",
   "lib/util/zoom/ZoomOptions.js",
+  "lib/util/zoom/transform.js",
   "lib/util/zoom/viewport.js",
   "lib/util/zoom/viewportWindow.js",
   "lib/util/zoom/zoomActions.js",

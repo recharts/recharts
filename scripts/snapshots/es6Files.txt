@@ -299,6 +299,7 @@
   "es6/util/useUniqueId.js",
   "es6/util/zoom",
   "es6/util/zoom/ZoomOptions.js",
+  "es6/util/zoom/transform.js",
   "es6/util/zoom/viewport.js",
   "es6/util/zoom/viewportWindow.js",
   "es6/util/zoom/zoomActions.js",

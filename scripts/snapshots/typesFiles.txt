@@ -299,6 +299,7 @@
   "types/util/useUniqueId.d.ts",
   "types/util/zoom",
   "types/util/zoom/ZoomOptions.d.ts",
+  "types/util/zoom/transform.d.ts",
   "types/util/zoom/viewport.d.ts",
   "types/util/zoom/viewportWindow.d.ts",
   "types/util/zoom/zoomActions.d.ts",
