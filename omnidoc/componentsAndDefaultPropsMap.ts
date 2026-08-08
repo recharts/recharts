@@ -91,6 +91,13 @@ export const componentMetaMap: Record<string, ComponentMeta> = {
   Legend: { defaultProps: legendDefaultProps },
   Line: { defaultProps: defaultLineProps },
   LineChart: { defaultProps: defaultCartesianChartProps },
+  MinimapWheel: {
+    defaultProps: {
+      enabled: true,
+      step: zoomDefaults.wheelStep,
+      panStep: zoomDefaults.wheelPanStep,
+    },
+  },
   MouseWheelZoom: { defaultProps: mouseWheelZoomDefaultProps },
   PanOnDrag: { defaultProps: commonZoomDefaultProps },
   Pie: { defaultProps: defaultPieProps },
