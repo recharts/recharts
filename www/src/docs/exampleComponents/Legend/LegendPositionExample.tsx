@@ -102,8 +102,8 @@ export default function LegendPositionExample(props: Partial<ControlsState>) {
           backgroundColor: 'white',
         }}
       />
-      <Line name="Line 1" type="monotone" dataKey="x" stroke="#8884d8" />
-      <Line name="Line 2" type="monotone" dataKey="y" stroke="#82ca9d" />
+      <Line name="Line 1" type="monotone" dataKey="x" />
+      <Line name="Line 2" type="monotone" dataKey="y" />
       <RechartsDevtools />
     </LineChart>
   );
