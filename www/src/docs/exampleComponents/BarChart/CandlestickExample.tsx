@@ -37,7 +37,7 @@ const formatDollars = (value: number) => `$${value.toFixed(2)}`;
 const Candlestick = (props: BarShapeProps) => {
   // @ts-expect-error Recharts does spread MarketCandle on the props but the types don't reflect that
   const color = props.open < props.close ? 'green' : 'red';
-  return <Rectangle {...props} fill={color} />;
+  return <Rectangle {...props} fill={color} stroke="none" />;
 };
 
 const TooltipContent = (props: TooltipContentProps) => {

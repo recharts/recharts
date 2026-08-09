@@ -1,54 +1,27 @@
 import { useState } from 'react';
-import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, LegendPayload } from 'recharts';
-import { RechartsDevtools } from '@recharts/devtools';
+import {
+  BarChart,
+  Bar,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Tooltip,
+  Legend,
+  LegendPayload,
+  createHorizontalChart,
+} from 'recharts';
+import { generateMockData, MockDataType, RechartsDevtools } from '@recharts/devtools';
 
-// #region Sample data
-const data = [
-  {
-    name: 'Page A',
-    uv: 4000,
-    pv: 2400,
-    amt: 2400,
-  },
-  {
-    name: 'Page B',
-    uv: 3000,
-    pv: 1398,
-    amt: 2210,
-  },
-  {
-    name: 'Page C',
-    uv: 2000,
-    pv: 9800,
-    amt: 2290,
-  },
-  {
-    name: 'Page D',
-    uv: 2780,
-    pv: 3908,
-    amt: 2000,
-  },
-  {
-    name: 'Page E',
-    uv: 1890,
-    pv: 4800,
-    amt: 2181,
-  },
-  {
-    name: 'Page F',
-    uv: 2390,
-    pv: 3800,
-    amt: 2500,
-  },
-  {
-    name: 'Page G',
-    uv: 3490,
-    pv: 4300,
-    amt: 2100,
-  },
-];
+const data: ReadonlyArray<MockDataType> = generateMockData(6, 823);
 
-// #endregion
+const Typed = createHorizontalChart<MockDataType, string, number>()({
+  BarChart,
+  Bar,
+  XAxis,
+  YAxis,
+  Tooltip,
+});
+
 const MixBarChart = () => {
   const [focusedDataKey, setFocusedDataKey] = useState<string | null>(null);
   const [locked, setLocked] = useState<boolean>(false);
@@ -80,7 +53,7 @@ const MixBarChart = () => {
   };
 
   return (
-    <BarChart
+    <Typed.BarChart
       style={{ width: '100%', maxWidth: '700px', maxHeight: '70vh', aspectRatio: 1.618 }}
       responsive
       data={data}
@@ -92,15 +65,29 @@ const MixBarChart = () => {
       }}
     >
       <CartesianGrid strokeDasharray="3 3" />
-      <XAxis dataKey="name" />
-      <YAxis width="auto" niceTicks="snap125" />
+      <Typed.XAxis dataKey="label" />
+      <Typed.YAxis width="auto" niceTicks="snap125" />
       <Tooltip />
       <Legend onMouseEnter={onLegendMouseEnter} onMouseOut={onLegendMouseOut} onClick={onLegendClick} />
-      <Bar dataKey="pv" stackId="a" fill={focusedDataKey == null || focusedDataKey === 'pv' ? '#8884d8' : '#eee'} />
-      <Bar dataKey="amt" stackId="a" fill={focusedDataKey == null || focusedDataKey === 'amt' ? '#82ca9d' : '#eee'} />
-      <Bar dataKey="uv" fill={focusedDataKey == null || focusedDataKey === 'uv' ? '#ffc658' : '#eee'} />
+      <Typed.Bar
+        dataKey="x"
+        stackId="a"
+        stroke="none"
+        fill={focusedDataKey == null || focusedDataKey === 'x' ? '#8884d8' : '#eee'}
+      />
+      <Typed.Bar
+        dataKey="y"
+        stackId="a"
+        stroke="none"
+        fill={focusedDataKey == null || focusedDataKey === 'y' ? '#82ca9d' : '#eee'}
+      />
+      <Typed.Bar
+        dataKey="z"
+        stroke="none"
+        fill={focusedDataKey == null || focusedDataKey === 'z' ? '#ffc658' : '#eee'}
+      />
       <RechartsDevtools />
-    </BarChart>
+    </Typed.BarChart>
   );
 };
 

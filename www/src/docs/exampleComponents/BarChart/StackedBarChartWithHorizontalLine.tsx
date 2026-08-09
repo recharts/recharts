@@ -128,9 +128,9 @@ const StackedBarChartWithHorizontalLine = () => {
         strokeWidth={2}
         label={{ value: 'Threshold', fill: 'red', position: 'left' }}
       />
-      <Bar dataKey="data1" stackId="a" fill="#C7CEEA" />
-      <Bar dataKey="data2" stackId="a" fill="#B5EAD7" />
-      <Bar dataKey="data3" stackId="a" fill="#E2F0CB">
+      <Bar dataKey="data1" stackId="a" />
+      <Bar dataKey="data2" stackId="a" />
+      <Bar dataKey="data3" stackId="a">
         <LabelList
           content={StackTotalLabel}
           position="top"

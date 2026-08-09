@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { test, expect } from '@playwright/experimental-ct-react';
+import { expect } from '@playwright/experimental-ct-react';
 import BarChartRangeExample from '../../../www/src/docs/exampleComponents/BarChart/BarChartRangeExample';
 import TinyBarChart from '../../../www/src/docs/exampleComponents/BarChart/TinyBarChart';
 import SimpleBarChart from '../../../www/src/docs/exampleComponents/BarChart/SimpleBarChart';
@@ -21,18 +21,19 @@ import TimelineExample from '../../../www/src/docs/exampleComponents/BarChart/Ti
 import CandlestickExample from '../../../www/src/docs/exampleComponents/BarChart/CandlestickExample';
 import BoxPlotExample from '../../../www/src/docs/exampleComponents/BarChart/BoxPlotExample';
 import AnimatedBarWidthExample from '../../../www/src/docs/exampleComponents/BarChart/AnimatedBarWidthExample';
+import { testWithDarkTheme, testWithLightTheme } from './fixtures.tsx';
 
-test('CandlestickExample', async ({ mount }) => {
+testWithLightTheme('CandlestickExample', async ({ mount }) => {
   const component = await mount(<CandlestickExample defaultIndex="50" />);
   await expect(component).toHaveScreenshot();
 });
 
-test('BoxPlotExample', async ({ mount }) => {
+testWithLightTheme('BoxPlotExample', async ({ mount }) => {
   const component = await mount(<BoxPlotExample defaultIndex="2" />);
   await expect(component).toHaveScreenshot();
 });
 
-test('TimelineExample', async ({ mount }) => {
+testWithLightTheme('TimelineExample', async ({ mount }) => {
   /*
    * This shows a bug where defaultIndex highlights all items in the row
    * but mouse hover only highlights one item in the stack.
@@ -41,92 +42,97 @@ test('TimelineExample', async ({ mount }) => {
   await expect(component).toHaveScreenshot();
 });
 
-test('PopulationPyramidExample', async ({ mount }) => {
+testWithLightTheme('PopulationPyramidExample', async ({ mount }) => {
   const component = await mount(<PopulationPyramidExample defaultIndex={4} />);
   await expect(component).toHaveScreenshot();
 });
 
-test('BarChartNavExample', async ({ mount }) => {
+testWithLightTheme('BarChartNavExample', async ({ mount }) => {
   const component = await mount(<BarChartNavExample />);
   await expect(component).toHaveScreenshot();
 });
 
-test('BarChartWithMultiXAxis', async ({ mount }) => {
+testWithLightTheme('BarChartWithMultiXAxis', async ({ mount }) => {
   const component = await mount(<BarChartWithMultiXAxis />);
   await expect(component).toHaveScreenshot();
 });
 
-test('BarChartHasBackground', async ({ mount }) => {
+testWithLightTheme('BarChartHasBackground', async ({ mount }) => {
   const component = await mount(<BarChartHasBackground />);
   await expect(component).toHaveScreenshot();
 });
 
-test('BiaxialBarChart', async ({ mount }) => {
+testWithDarkTheme('BarChartHasBackground dark theme', async ({ mount }) => {
+  const component = await mount(<BarChartHasBackground />);
+  await expect(component).toHaveScreenshot();
+});
+
+testWithLightTheme('BiaxialBarChart', async ({ mount }) => {
   const component = await mount(<BiaxialBarChart />);
   await expect(component).toHaveScreenshot();
 });
 
-test('BarChartStackedBySign', async ({ mount }) => {
+testWithLightTheme('BarChartStackedBySign', async ({ mount }) => {
   const component = await mount(<BarChartStackedBySign />);
   await expect(component).toHaveScreenshot();
 });
 
-test('BarChartWithMinHeight', async ({ mount }) => {
+testWithLightTheme('BarChartWithMinHeight', async ({ mount }) => {
   const component = await mount(<BarChartWithMinHeight />);
   await expect(component).toHaveScreenshot();
 });
 
-test('BarChartWithCustomizedEvent', async ({ mount }) => {
+testWithLightTheme('BarChartWithCustomizedEvent', async ({ mount }) => {
   const component = await mount(<BarChartWithCustomizedEvent />);
   await expect(component).toHaveScreenshot();
 });
 
-test('BrushBarChart', async ({ mount }) => {
+testWithLightTheme('BrushBarChart', async ({ mount }) => {
   const component = await mount(<BrushBarChart />);
   await expect(component).toHaveScreenshot();
 });
 
-test('PositiveAndNegativeBarChart', async ({ mount }) => {
+testWithLightTheme('PositiveAndNegativeBarChart', async ({ mount }) => {
   const component = await mount(<PositiveAndNegativeBarChart />);
   await expect(component).toHaveScreenshot();
 });
 
-test('CustomShapeBarChart', async ({ mount }) => {
+testWithLightTheme('CustomShapeBarChart', async ({ mount }) => {
   const component = await mount(<CustomShapeBarChart />);
   await expect(component).toHaveScreenshot();
 });
 
-test('MixBarChart', async ({ mount }) => {
+testWithLightTheme('MixBarChart', async ({ mount }) => {
   const component = await mount(<MixBarChart />);
   await expect(component).toHaveScreenshot();
 });
 
-test('StackedBarChart', async ({ mount }) => {
+testWithLightTheme('StackedBarChart', async ({ mount }) => {
   const component = await mount(<StackedBarChart />);
   await expect(component).toHaveScreenshot();
 });
 
-test('SimpleBarChart', async ({ mount }) => {
+testWithLightTheme('SimpleBarChart', async ({ mount }) => {
   const component = await mount(<SimpleBarChart />);
   await expect(component).toHaveScreenshot();
 });
 
-test('TinyBarChart', async ({ mount }) => {
+testWithLightTheme('TinyBarChart', async ({ mount }) => {
   const component = await mount(<TinyBarChart />);
   await expect(component).toHaveScreenshot();
 });
 
-test('BarChartRangeExample', async ({ mount }) => {
+testWithLightTheme('BarChartRangeExample', async ({ mount }) => {
   const component = await mount(<BarChartRangeExample isAnimationActive={false} />);
   await expect(component).toHaveScreenshot();
 });
 
-test('RangedStackedBarChart', async ({ mount }) => {
+testWithLightTheme('RangedStackedBarChart', async ({ mount }) => {
   const component = await mount(<RangedStackedBarChart isAnimationActive={false} defaultIndex="1" />);
   await expect(component).toHaveScreenshot();
 });
 
-test('AnimatedBarWidthExample', async ({ mount }) => {
+testWithLightTheme('AnimatedBarWidthExample', async ({ mount }) => {
   const component = await mount(<AnimatedBarWidthExample isAnimationActive={false} defaultIndex="2" />);
   await expect(component).toHaveScreenshot();
 });

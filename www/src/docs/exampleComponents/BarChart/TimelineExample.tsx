@@ -1,4 +1,16 @@
-import { Bar, BarChart, BarShapeProps, CartesianGrid, Rectangle, Tooltip, XAxis, YAxis } from 'recharts';
+import {
+  Bar,
+  BarChart,
+  BarProps,
+  BarShapeProps,
+  CartesianGrid,
+  emptyTheme,
+  RechartsThemeProvider,
+  Rectangle,
+  Tooltip,
+  XAxis,
+  YAxis,
+} from 'recharts';
 import { RechartsDevtools } from '@recharts/devtools';
 
 // #region Data and helper functions
@@ -82,41 +94,46 @@ const getBarColor = (outcome: TimelineDataType['outcome']) => {
 
 const CustomFillRectangle = (props: BarShapeProps) => {
   // @ts-expect-error props.outcome is injected from the data array which Recharts doesn't know about
-  const { outcome } = props;
-  return <Rectangle {...props} fill={getBarColor(outcome)} />;
+  const { outcome, isActive } = props;
+  const barColor = getBarColor(outcome);
+  return (
+    <Rectangle {...props} stroke={isActive ? 'orange' : barColor} strokeWidth={isActive ? 3 : 1} fill={barColor} />
+  );
 };
 
-const ActiveRectangle = (props: BarShapeProps) => {
-  return <CustomFillRectangle {...props} stroke="orange" strokeWidth={3} />;
+const MyBar = (props: BarProps) => {
+  return <Bar {...props} stackId="a" radius={25} activeBar shape={CustomFillRectangle} />;
 };
 
 // #endregion
 export default function TimelineExample({ defaultIndex }: { defaultIndex?: number }) {
   return (
-    <BarChart
-      layout="vertical"
-      style={{ width: '100%', maxWidth: '700px', maxHeight: '70vh', aspectRatio: 1.618 }}
-      responsive
-      data={data}
-      margin={{ bottom: 20 }}
-    >
-      <CartesianGrid strokeDasharray="2 2" />
-      <Tooltip shared={false} defaultIndex={defaultIndex} />
-      <XAxis type="number" height={50} label={{ value: 'Time (s)', position: 'insideBottomRight' }} />
-      <YAxis
-        type="category"
-        dataKey="name"
-        width="auto"
-        label={{
-          value: 'Test run',
-          angle: -90,
-          position: 'insideTopLeft',
-          textAnchor: 'end',
-        }}
-      />
-      <Bar dataKey="firstCycle" stackId="a" radius={25} shape={CustomFillRectangle} activeBar={ActiveRectangle} />
-      <Bar dataKey="secondCycle" stackId="a" radius={25} shape={CustomFillRectangle} activeBar={ActiveRectangle} />
-      <RechartsDevtools />
-    </BarChart>
+    <RechartsThemeProvider value={emptyTheme}>
+      <BarChart
+        layout="vertical"
+        style={{ width: '100%', maxWidth: '700px', maxHeight: '70vh', aspectRatio: 1.618 }}
+        responsive
+        data={data}
+        margin={{ bottom: 20 }}
+      >
+        <CartesianGrid strokeDasharray="2 2" />
+        <Tooltip shared={false} defaultIndex={defaultIndex} />
+        <XAxis type="number" height={50} label={{ value: 'Time (s)', position: 'insideBottomRight' }} />
+        <YAxis
+          type="category"
+          dataKey="name"
+          width="auto"
+          label={{
+            value: 'Test run',
+            angle: -90,
+            position: 'insideTopLeft',
+            textAnchor: 'end',
+          }}
+        />
+        <MyBar dataKey="firstCycle" />
+        <MyBar dataKey="secondCycle" />
+        <RechartsDevtools />
+      </BarChart>
+    </RechartsThemeProvider>
   );
 }

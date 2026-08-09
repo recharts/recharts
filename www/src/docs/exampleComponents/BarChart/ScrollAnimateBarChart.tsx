@@ -68,8 +68,8 @@ const ScrollAnimateBarChart = () => {
         <Typed.YAxis width="auto" />
         <Typed.Tooltip />
         <Legend />
-        <Typed.Bar dataKey="y" fill="#8884d8" activeBar={{ fill: 'pink', stroke: 'blue' }} radius={[10, 10, 0, 0]} />
-        <Typed.Bar dataKey="x" fill="#82ca9d" activeBar={{ fill: 'gold', stroke: 'purple' }} radius={[10, 10, 0, 0]} />
+        <Typed.Bar dataKey="y" activeBar radius={[10, 10, 0, 0]} />
+        <Typed.Bar dataKey="x" activeBar radius={[10, 10, 0, 0]} />
         <RechartsDevtools />
       </Typed.BarChart>
     </AnimationControllerProvider>

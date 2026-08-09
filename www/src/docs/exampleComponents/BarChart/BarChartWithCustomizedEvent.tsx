@@ -54,8 +54,8 @@ const MyCustomShape = (props: BarShapeProps) => {
   const handleMouseClick = () => {
     setIsActive(curr => !curr);
   };
-  const fill = isActive ? '#82ca9d' : '#8884d8';
-  return <Rectangle {...props} onClick={handleMouseClick} fill={fill} />;
+  const fillOpacity = isActive ? 1 : 0.5;
+  return <Rectangle {...props} onClick={handleMouseClick} fillOpacity={fillOpacity} />;
 };
 
 const BarChartWithCustomizedEvent = () => {

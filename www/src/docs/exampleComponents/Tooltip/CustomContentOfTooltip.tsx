@@ -83,7 +83,7 @@ const CustomTooltip = ({ active, payload, label }: TooltipContentProps) => {
   const firstPayload = payload?.[0];
   const isVisible = active && firstPayload != null;
   return (
-    <div className="custom-tooltip" style={{ visibility: isVisible ? 'visible' : 'hidden' }}>
+    <div className="custom-tooltip" style={{ visibility: isVisible ? 'visible' : 'hidden', backgroundColor: 'white' }}>
       {isVisible && (
         <>
           <p className="label">{`${label} : ${firstPayload.value}`}</p>
@@ -119,7 +119,7 @@ const CustomContentOfTooltip = ({
       <YAxis width="auto" niceTicks="snap125" />
       <Tooltip content={CustomTooltip} isAnimationActive={isAnimationActive} defaultIndex={defaultIndex} />
       <Legend />
-      <Bar dataKey="pv" barSize={20} fill="#8884d8" isAnimationActive={isAnimationActive} />
+      <Bar dataKey="pv" barSize={20} isAnimationActive={isAnimationActive} />
     </BarChart>
   );
 };

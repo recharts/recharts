@@ -38,11 +38,10 @@ export default function LegendStylesExample() {
         iconType="line"
         inactiveColor="#aaa"
         labelStyle={customLabelStyles}
-        verticalAlign="bottom"
-        align="center"
+        position="bottom"
       />
-      <Bar dataKey="x" fill="#8884d8" name="Series A" />
-      <Bar dataKey="y" fill="#82ca9d" name="Series B" />
+      <Bar dataKey="x" name="Series A" />
+      <Bar dataKey="y" name="Series B" />
       <RechartsDevtools />
     </BarChart>
   );

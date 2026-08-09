@@ -92,6 +92,7 @@ import { BarStackClipLayer, useStackId } from './BarStack';
 import { useRechartsTheme } from '../theme/RechartsThemeContext';
 import { GraphicalItemId } from '../state/graphicalItemsSlice';
 import { ChartData } from '../state/chartDataSlice';
+import { graphicalItemIdentity } from '../theme/graphicalItemIdentity';
 
 type BarRectangleType = {
   x: number | null;
@@ -1242,13 +1243,16 @@ function BarFn(outsideProps: Props) {
   const stackId = useStackId(props.stackId);
   const isPanorama = useIsPanorama();
 
-  const graphicalItemStyle = theme.graphicalItems?.[0] ?? {};
+  const graphicalItemStyle =
+    outsideProps.dataKey == null || theme.graphicalItems == null
+      ? undefined
+      : theme.graphicalItems[graphicalItemIdentity({ dataKey: outsideProps.dataKey }, theme.graphicalItems.length)];
 
-  const themeFill = outsideProps.fill ?? graphicalItemStyle.fill;
-  const themeStroke = outsideProps.stroke ?? graphicalItemStyle.stroke;
-  const themeStrokeWidth = outsideProps.strokeWidth ?? graphicalItemStyle.strokeWidth;
-  const themeStrokeOpacity = outsideProps.strokeOpacity ?? graphicalItemStyle.strokeOpacity;
-  const themeFillOpacity = outsideProps.fillOpacity ?? graphicalItemStyle.fillOpacity;
+  const themeFill = outsideProps.fill ?? graphicalItemStyle?.fill;
+  const themeStroke = outsideProps.stroke ?? graphicalItemStyle?.stroke;
+  const themeStrokeWidth = outsideProps.strokeWidth ?? graphicalItemStyle?.strokeWidth;
+  const themeStrokeOpacity = outsideProps.strokeOpacity ?? graphicalItemStyle?.strokeOpacity;
+  const themeFillOpacity = outsideProps.fillOpacity ?? graphicalItemStyle?.fillOpacity;
 
   const themedProps: Partial<Props> = {};
   if (themeFill !== undefined) themedProps.fill = themeFill;
@@ -1290,7 +1294,7 @@ function BarFn(outsideProps: Props) {
             maxBarSize={props.maxBarSize}
             isPanorama={isPanorama}
             hasCustomShape={props.shape != null && props.shape !== defaultBarShape}
-            strokeWidth={props.strokeWidth}
+            strokeWidth={themedProps.strokeWidth ?? props.strokeWidth}
           />
           <ZIndexLayer zIndex={props.zIndex}>
             <BarImpl {...props} {...themedProps} id={id} />
