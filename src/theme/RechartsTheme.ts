@@ -4,7 +4,7 @@ import { LegendProps } from '../index';
 /**
  * Styles shared for rectangular or variable shape components that have an area (Area, Bar, Rectangle)
  */
-type Styles2D = {
+export type Styles2D = {
   stroke?: string;
   strokeOpacity?: number;
   strokeWidth?: number;

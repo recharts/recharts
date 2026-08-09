@@ -19,6 +19,12 @@ export type ResolvedFunnelSettings = {
   customWidth?: string | number;
   cells: ReadonlyArray<ReactElement>;
   presentationProps: Record<string, any> | null;
+  /**
+   * Per-index theme styles for the funnel items. Each item at index `i` gets the style at
+   * `i % indexedStyles.length`. Only values not explicitly provided via props are set,
+   * so an explicit prop still wins over the theme.
+   */
+  indexedStyles: ReadonlyArray<Record<string, any>>;
   id: GraphicalItemId;
 };
 
@@ -44,6 +50,7 @@ export const selectFunnelTrapezoids: (
       customWidth,
       cells,
       presentationProps,
+      indexedStyles,
       id: graphicalItemId,
     },
     { chartData },
@@ -55,15 +62,23 @@ export const selectFunnelTrapezoids: (
       displayedData = chartData;
     }
 
+    const styleForIndex = (index: number) =>
+      indexedStyles != null && indexedStyles.length > 0 ? indexedStyles[index % indexedStyles.length] : {};
+
     if (displayedData && displayedData.length) {
       displayedData = displayedData.map((entry: any, index: number) => ({
         payload: entry,
         ...presentationProps,
+        ...styleForIndex(index),
         ...entry,
         ...(cells && cells[index] && cells[index].props),
       }));
     } else if (cells && cells.length) {
-      displayedData = cells.map((cell: ReactElement<CellProps>) => ({ ...presentationProps, ...cell.props }));
+      displayedData = cells.map((cell: ReactElement<CellProps>, index: number) => ({
+        ...presentationProps,
+        ...styleForIndex(index),
+        ...cell.props,
+      }));
     } else {
       return [];
     }

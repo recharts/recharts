@@ -54,6 +54,7 @@ import { GraphicalItemId } from '../state/graphicalItemsSlice';
 import { RegisterGraphicalItemId } from '../context/RegisterGraphicalItemId';
 import { WithIdRequired } from '../util/useUniqueId';
 import { useCartesianChartLayout } from '../context/chartLayoutContext';
+import { useRechartsTheme } from '../theme/RechartsThemeContext';
 
 export type FunnelTrapezoidItem = TrapezoidProps &
   TrapezoidViewBox & {
@@ -514,7 +515,11 @@ export const defaultFunnelProps = {
   stroke: '#fff',
 } as const satisfies Partial<Props>;
 
-function FunnelImpl(props: WithIdRequired<RequiresDefaultProps<Props, typeof defaultFunnelProps>>) {
+function FunnelImpl(
+  props: WithIdRequired<RequiresDefaultProps<Props, typeof defaultFunnelProps>> & {
+    indexedStyles: ReadonlyArray<Record<string, unknown>>;
+  },
+) {
   const plotArea = usePlotArea();
 
   const {
@@ -529,6 +534,7 @@ function FunnelImpl(props: WithIdRequired<RequiresDefaultProps<Props, typeof def
     nameKey,
     lastShapeType,
     id,
+    indexedStyles,
     ...everythingElse
   } = props;
 
@@ -546,6 +552,7 @@ function FunnelImpl(props: WithIdRequired<RequiresDefaultProps<Props, typeof def
       customWidth: props.width,
       cells,
       presentationProps,
+      indexedStyles,
       id,
     }),
     [
@@ -558,6 +565,7 @@ function FunnelImpl(props: WithIdRequired<RequiresDefaultProps<Props, typeof def
       props.width,
       cells,
       presentationProps,
+      indexedStyles,
       id,
     ],
   );
@@ -745,12 +753,45 @@ export function computeFunnelTrapezoids({
  * @consumes CartesianViewBoxContext
  * @provides LabelListContext
  * @provides CellReader
+ * @consumes RechartsThemeContext
  */
 function FunnelFn(outsideProps: Props) {
-  const { id: externalId, ...props } = resolveDefaultProps(outsideProps, defaultFunnelProps);
+  const theme = useRechartsTheme();
+
+  /*
+   * Funnel is per-index: each trapezoid at index `i` picks its styles from
+   * graphical[i % graphicalItems.length]. The user's explicit presentation
+   * props still win, so the theme only supplies the values that were omitted.
+   */
+  const indexedStyles: ReadonlyArray<Record<string, unknown>> = useMemo(() => {
+    const { graphicalItems } = theme;
+    if (graphicalItems == null || graphicalItems.length === 0) {
+      return [];
+    }
+    return graphicalItems.map((style): Record<string, unknown> => {
+      const themed: Record<string, unknown> = {};
+      if (outsideProps.fill === undefined && style.fill !== undefined) themed.fill = style.fill;
+      if (outsideProps.stroke === undefined && style.stroke !== undefined) themed.stroke = style.stroke;
+      if (outsideProps.strokeWidth === undefined && style.strokeWidth !== undefined) {
+        themed.strokeWidth = style.strokeWidth;
+      }
+      if (outsideProps.strokeOpacity === undefined && style.strokeOpacity !== undefined) {
+        themed.strokeOpacity = style.strokeOpacity;
+      }
+      if (outsideProps.fillOpacity === undefined && style.fillOpacity !== undefined) {
+        themed.fillOpacity = style.fillOpacity;
+      }
+      if (outsideProps.strokeDasharray === undefined && style.strokeDasharray !== undefined) {
+        themed.strokeDasharray = style.strokeDasharray;
+      }
+      return themed;
+    });
+  }, [outsideProps, theme]);
+
+  const { id: externalId, ...resolvedProps } = resolveDefaultProps(outsideProps, defaultFunnelProps);
   return (
     <RegisterGraphicalItemId id={externalId} type="funnel">
-      {id => <FunnelImpl {...props} id={id} />}
+      {id => <FunnelImpl {...resolvedProps} id={id} indexedStyles={indexedStyles} />}
     </RegisterGraphicalItemId>
   );
 }
