@@ -1,21 +1,27 @@
 import * as React from 'react';
-import { test, expect } from '@playwright/experimental-ct-react';
+import { expect } from '@playwright/experimental-ct-react';
 
 import SimpleRadialBarChart from '../../../www/src/docs/exampleComponents/RadialBarChart/SimpleRadialBarChart';
 import RadialBarChartNavExample from '../../../www/src/docs/exampleComponents/RadialBarChart/RadialBarChartNavExample';
 import RadialBarChartClickToFocusLegendExample from '../../../www/src/docs/exampleComponents/RadialBarChart/RadialBarChartClickToFocusLegendExample';
+import { testWithDarkTheme, testWithLightTheme } from './fixtures.tsx';
 
-test('RadialBarChartNavExample', async ({ mount }) => {
+testWithLightTheme('RadialBarChartNavExample', async ({ mount }) => {
   const component = await mount(<RadialBarChartNavExample />);
   await expect(component).toHaveScreenshot();
 });
 
-test('SimpleRadialBarChart', async ({ mount }) => {
+testWithLightTheme('SimpleRadialBarChart', async ({ mount }) => {
   const component = await mount(<SimpleRadialBarChart />);
   await expect(component).toHaveScreenshot();
 });
 
-test('RadialBarChartClickToFocusLegendExample', async ({ mount }) => {
+testWithDarkTheme('SimpleRadialBarChart dark theme', async ({ mount }) => {
+  const component = await mount(<SimpleRadialBarChart />);
+  await expect(component).toHaveScreenshot();
+});
+
+testWithLightTheme('RadialBarChartClickToFocusLegendExample', async ({ mount }) => {
   const component = await mount(<RadialBarChartClickToFocusLegendExample />);
   await expect(component).toHaveScreenshot();
 });

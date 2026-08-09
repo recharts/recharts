@@ -72,6 +72,8 @@ import { ZIndexable, ZIndexLayer } from '../zIndex/ZIndexLayer';
 import { DefaultZIndexes } from '../zIndex/DefaultZIndexes';
 import { getZIndexFromUnknown } from '../zIndex/getZIndexFromUnknown';
 import { usePolarChartLayout } from '../context/chartLayoutContext';
+import { useRechartsTheme } from '../theme/RechartsThemeContext';
+import { graphicalItemIdentity } from '../theme/graphicalItemIdentity';
 
 const STABLE_EMPTY_ARRAY: readonly RadialBarDataItem[] = [];
 
@@ -487,7 +489,11 @@ type InternalProps = WithIdRequired<PropsWithDefaults> & Pick<InternalRadialBarP
 
 function SetRadialBarPayloadLegend(props: RadialBarProps) {
   const legendPayload = useAppSelector(state => selectRadialBarLegendPayload(state, props.legendType));
-  return <SetPolarLegendPayload legendPayload={legendPayload ?? []} />;
+  const themedLegendPayload = legendPayload?.map(entry => ({
+    ...entry,
+    color: entry.color ?? props.fill,
+  }));
+  return <SetPolarLegendPayload legendPayload={themedLegendPayload ?? []} />;
 }
 
 const SetRadialBarTooltipEntrySettings = React.memo(
@@ -810,10 +816,33 @@ export function computeRadialBarDataItems({
 export function RadialBar<DataPointType = any, DataValueType = any>(
   outsideProps: RadialBarProps<DataPointType, DataValueType>,
 ) {
+  const theme = useRechartsTheme();
   const props: PropsWithDefaults<DataPointType, DataValueType> = resolveDefaultProps(
     outsideProps,
     defaultRadialBarProps,
   );
+  const graphicalItemStyle =
+    outsideProps.dataKey == null || theme.graphicalItems == null
+      ? undefined
+      : theme.graphicalItems[
+          graphicalItemIdentity({ dataKey: String(outsideProps.dataKey) }, theme.graphicalItems.length)
+        ];
+
+  const themeFill = outsideProps.fill ?? graphicalItemStyle?.fill;
+  const themeStroke = outsideProps.stroke ?? graphicalItemStyle?.stroke;
+  const themeStrokeWidth = outsideProps.strokeWidth ?? graphicalItemStyle?.strokeWidth;
+  const themeStrokeOpacity = outsideProps.strokeOpacity ?? graphicalItemStyle?.strokeOpacity;
+  const themeStrokeDasharray = outsideProps.strokeDasharray ?? graphicalItemStyle?.strokeDasharray;
+  const themeFillOpacity = outsideProps.fillOpacity ?? graphicalItemStyle?.fillOpacity;
+
+  const themedProps: Partial<RadialBarProps<DataPointType, DataValueType>> = {};
+  if (themeFill !== undefined) themedProps.fill = themeFill;
+  if (themeStroke !== undefined) themedProps.stroke = themeStroke;
+  if (themeStrokeWidth !== undefined) themedProps.strokeWidth = themeStrokeWidth;
+  if (themeStrokeOpacity !== undefined) themedProps.strokeOpacity = themeStrokeOpacity;
+  if (themeStrokeDasharray !== undefined) themedProps.strokeDasharray = themeStrokeDasharray;
+  if (themeFillOpacity !== undefined) themedProps.fillOpacity = themeFillOpacity;
+
   return (
     <RegisterGraphicalItemId id={props.id} type="radialBar">
       {id => (
@@ -831,8 +860,8 @@ export function RadialBar<DataPointType = any, DataValueType = any>(
             minPointSize={props.minPointSize}
             maxBarSize={props.maxBarSize}
           />
-          <SetRadialBarPayloadLegend {...props} />
-          <RadialBarImpl {...props} id={id} />
+          <SetRadialBarPayloadLegend {...props} {...themedProps} />
+          <RadialBarImpl {...props} {...themedProps} id={id} />
         </>
       )}
     </RegisterGraphicalItemId>
