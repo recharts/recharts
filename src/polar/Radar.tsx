@@ -48,6 +48,8 @@ import { ZIndexable, ZIndexLayer } from '../zIndex/ZIndexLayer';
 import { DefaultZIndexes } from '../zIndex/DefaultZIndexes';
 import { RechartsScale } from '../util/scale/RechartsScale';
 import { usePolarChartLayout } from '../context/chartLayoutContext';
+import { useRechartsTheme } from '../theme/RechartsThemeContext';
+import { graphicalItemIdentity } from '../theme/graphicalItemIdentity';
 
 export interface RadarPoint {
   x: number;
@@ -637,7 +639,35 @@ function RadarImpl(props: WithIdRequired<PropsWithDefaults>) {
  * @provides LabelListContext
  */
 export function Radar<DataPointType = any, DataValueType = any>(outsideProps: Props<DataPointType, DataValueType>) {
-  const props: PropsWithDefaults = resolveDefaultProps(outsideProps, defaultRadarProps);
+  const theme = useRechartsTheme();
+  const graphicalItemTheme =
+    outsideProps.dataKey == null || theme.graphicalItems == null
+      ? undefined
+      : theme.graphicalItems[graphicalItemIdentity({ dataKey: outsideProps.dataKey }, theme.graphicalItems.length)];
+  const themeStrokeDasharray = graphicalItemTheme?.strokeDasharray;
+  const activeDot =
+    graphicalItemTheme?.active == null ||
+    outsideProps.activeDot === false ||
+    typeof outsideProps.activeDot === 'function' ||
+    React.isValidElement(outsideProps.activeDot)
+      ? outsideProps.activeDot
+      : {
+          ...graphicalItemTheme.active,
+          ...(typeof outsideProps.activeDot === 'object' ? outsideProps.activeDot : {}),
+        };
+  const propsWithTheme: Props<DataPointType, DataValueType> = {
+    ...outsideProps,
+    activeDot,
+    fill: outsideProps.fill ?? graphicalItemTheme?.fill,
+    fillOpacity: outsideProps.fillOpacity ?? graphicalItemTheme?.fillOpacity,
+    stroke: outsideProps.stroke ?? graphicalItemTheme?.stroke,
+    strokeOpacity: outsideProps.strokeOpacity ?? graphicalItemTheme?.strokeOpacity,
+    strokeWidth: outsideProps.strokeWidth ?? graphicalItemTheme?.strokeWidth,
+    strokeDasharray:
+      outsideProps.strokeDasharray ??
+      (Array.isArray(themeStrokeDasharray) ? themeStrokeDasharray.join(',') : themeStrokeDasharray),
+  };
+  const props: PropsWithDefaults = resolveDefaultProps(propsWithTheme, defaultRadarProps);
   return (
     <RegisterGraphicalItemId id={props.id} type="radar">
       {id => (
