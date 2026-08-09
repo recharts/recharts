@@ -58,10 +58,8 @@ describe('Funnel theme', () => {
 
       expect(fills).toHaveLength(data.length);
       expect(strokes).toHaveLength(data.length);
-      expect(fills[0]).toBe('red');
-      expect(strokes[0]).toBe('darkred');
-      expect(fills[1]).toBe('blue');
-      expect(strokes[1]).toBe('darkblue');
+      expect(fills).toEqual(['red', 'blue', 'red', 'blue', 'red']);
+      expect(strokes).toEqual(['darkred', 'darkblue', 'darkred', 'darkblue', 'darkred']);
     });
 
     it('should wrap around when there are more items than theme graphical items', () => {
