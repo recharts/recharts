@@ -1,5 +1,6 @@
 import * as React from 'react';
-import { test, expect } from '@playwright/experimental-ct-react';
+import { expect } from '@playwright/experimental-ct-react';
+import { testWithLightTheme } from './fixtures.tsx';
 
 import TwoLevelPieChart from '../../../www/src/docs/exampleComponents/PieChart/TwoLevelPieChart';
 import StraightAnglePieChart from '../../../www/src/docs/exampleComponents/PieChart/StraightAnglePieChart';
@@ -12,53 +13,53 @@ import PieChartNavExample from '../../../www/src/docs/exampleComponents/PieChart
 import PieWithGradient from '../../../www/src/docs/exampleComponents/PieChart/PieWithGradient';
 // import PieChartInGrid from '../../../www/src/docs/exampleComponents/PieChart/PieChartInGrid';
 
-test('PieChartNavExample', async ({ mount }) => {
+testWithLightTheme('PieChartNavExample', async ({ mount }) => {
   const component = await mount(<PieChartNavExample isAnimationActive={false} />);
   await expect(component).toHaveScreenshot();
 });
 
 // The grid test is wild, it's failing in firefox in CI but passing on local. And timing out in Chrome and Safari - even though in real browser it looks just fine.
-// test('PieChartInGrid', async ({ mount }) => {
+// testWithLightTheme('PieChartInGrid', async ({ mount }) => {
 //   const component = await mount(<PieChartInGrid />);
 //   await expect(component).toHaveScreenshot();
 // });
 
-test('PieChartInFlexbox', async ({ mount }) => {
+testWithLightTheme('PieChartInFlexbox', async ({ mount }) => {
   const component = await mount(<PieChartInFlexbox />);
   await expect(component).toHaveScreenshot();
 });
 
-test('PieChartWithNeedle', async ({ mount }) => {
+testWithLightTheme('PieChartWithNeedle', async ({ mount }) => {
   const component = await mount(<PieChartWithNeedle isAnimationActive={false} />);
   await expect(component).toHaveScreenshot();
 });
 
-test('PieChartWithPaddingAngle', async ({ mount }) => {
+testWithLightTheme('PieChartWithPaddingAngle', async ({ mount }) => {
   const component = await mount(<PieChartWithPaddingAngle isAnimationActive={false} />);
   await expect(component).toHaveScreenshot();
 });
 
-test('PieChartWithCustomizedLabel', async ({ mount }) => {
+testWithLightTheme('PieChartWithCustomizedLabel', async ({ mount }) => {
   const component = await mount(<PieChartWithCustomizedLabel isAnimationActive={false} />);
   await expect(component).toHaveScreenshot();
 });
 
-test('CustomActiveShapePieChart', async ({ mount }) => {
+testWithLightTheme('CustomActiveShapePieChart', async ({ mount }) => {
   const component = await mount(<CustomActiveShapePieChart isAnimationActive={false} defaultIndex="0" />);
   await expect(component).toHaveScreenshot();
 });
 
-test('StraightAnglePieChart', async ({ mount }) => {
+testWithLightTheme('StraightAnglePieChart', async ({ mount }) => {
   const component = await mount(<StraightAnglePieChart isAnimationActive={false} />);
   await expect(component).toHaveScreenshot();
 });
 
-test('TwoLevelPieChart', async ({ mount }) => {
+testWithLightTheme('TwoLevelPieChart', async ({ mount }) => {
   const component = await mount(<TwoLevelPieChart isAnimationActive={false} defaultIndex="1" />);
   await expect(component).toHaveScreenshot();
 });
 
-test('PieWithGradient', async ({ mount }) => {
+testWithLightTheme('PieWithGradient', async ({ mount }) => {
   const component = await mount(<PieWithGradient isAnimationActive={false} defaultIndex="1" />);
   await expect(component).toHaveScreenshot();
 });

@@ -52,6 +52,7 @@ const MyCustomPie = (props: PieSectorShapeProps) => {
     <Sector
       {...props}
       fill={COLORS[props.index % COLORS.length]}
+      stroke="none"
       fillOpacity={fillOpacity}
       style={{ transition: 'fill-opacity 0.3s ease' }}
     />
@@ -65,7 +66,6 @@ export default function PieChartWithCustomizedLabel({ isAnimationActive = true }
         data={data}
         labelLine={false}
         label={renderCustomizedLabel}
-        fill="#8884d8"
         dataKey="value"
         isAnimationActive={isAnimationActive}
         shape={MyCustomPie}
