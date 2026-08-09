@@ -491,7 +491,7 @@ function SetRadialBarPayloadLegend(props: RadialBarProps) {
   const legendPayload = useAppSelector(state => selectRadialBarLegendPayload(state, props.legendType));
   const themedLegendPayload = legendPayload?.map(entry => ({
     ...entry,
-    color: props.fill ?? entry.color,
+    color: entry.color ?? props.fill,
   }));
   return <SetPolarLegendPayload legendPayload={themedLegendPayload ?? []} />;
 }

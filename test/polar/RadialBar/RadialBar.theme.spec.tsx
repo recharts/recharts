@@ -101,6 +101,46 @@ describe('RadialBar theme', () => {
     );
     const legendIcon = container.querySelector('.recharts-legend-icon');
     assertNotNull(legendIcon);
-    expect(legendIcon.getAttribute('fill')).toBe('purple');
+    expect(legendIcon).toHaveAttribute('fill', 'purple');
+  });
+
+  it('applies the data-entry fill to the Legend icon when outside of a theme', () => {
+    const dataWithFill = [
+      { value: 1, fill: 'purple' },
+      { value: 2, fill: 'gold' },
+      { value: 3, fill: 'green' },
+    ];
+    const { container } = rechartsTestRender(
+      <RadialBarChart width={400} height={400} data={dataWithFill}>
+        <RadialBar dataKey="value" isAnimationActive={false} />
+        <Legend />
+      </RadialBarChart>,
+    );
+    const legendIcon = container.querySelectorAll('.recharts-legend-icon');
+    expect(legendIcon).toHaveLength(3);
+    expect(legendIcon[0]).toHaveAttribute('fill', 'purple');
+    expect(legendIcon[1]).toHaveAttribute('fill', 'gold');
+    expect(legendIcon[2]).toHaveAttribute('fill', 'green');
+  });
+
+  it('applies the data-entry fill to the Legend icon when inside a theme that applied a different color because more specific should win', () => {
+    const dataWithFill = [
+      { value: 1, fill: 'purple' },
+      { value: 2, fill: 'gold' },
+      { value: 3, fill: 'green' },
+    ];
+    const { container } = rechartsTestRender(
+      <RechartsThemeProvider value={{ graphicalItems: [{ fill: 'red' }] }}>
+        <RadialBarChart width={400} height={400} data={dataWithFill}>
+          <RadialBar dataKey="value" isAnimationActive={false} />
+          <Legend />
+        </RadialBarChart>
+      </RechartsThemeProvider>,
+    );
+    const legendIcon = container.querySelectorAll('.recharts-legend-icon');
+    expect(legendIcon).toHaveLength(3);
+    expect(legendIcon[0]).toHaveAttribute('fill', 'purple');
+    expect(legendIcon[1]).toHaveAttribute('fill', 'gold');
+    expect(legendIcon[2]).toHaveAttribute('fill', 'green');
   });
 });
