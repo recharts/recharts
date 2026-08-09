@@ -107,8 +107,6 @@ export default function RangeRadarChartCustomAnimation(props: Partial<ControlsTy
       <Radar
         name="Range"
         dataKey="range"
-        stroke="#82ca9d"
-        fill="#82ca9d"
         fillOpacity={0.35}
         isAnimationActive
         animationDuration={animationDuration}
