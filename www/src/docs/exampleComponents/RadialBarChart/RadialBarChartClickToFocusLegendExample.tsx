@@ -7,6 +7,7 @@ import {
   RadialBarChart,
   RadialBarSectorProps,
   Sector,
+  useRechartsTheme,
 } from 'recharts';
 import { generateMockData, RechartsDevtools } from '@recharts/devtools';
 
@@ -44,12 +45,13 @@ const LegendItem = ({ entry }: { entry: LegendPayload }) => {
   // @ts-expect-error label is always present in our case, the typings are just not accurate enough
   const l = entry.payload.label;
   const isSelected = selectedLabel === l || selectedLabel == null;
+  const theme = useRechartsTheme();
   return (
     // eslint-disable-next-line jsx-a11y/click-events-have-key-events,jsx-a11y/no-noninteractive-element-interactions
     <li
       onClick={() => setSelectedLabel(l)}
       style={{
-        color: entry.color,
+        color: theme.typography?.color,
         opacity: isSelected ? 1 : 0.2,
         transition: 'opacity 0.3s ease',
       }}
@@ -84,16 +86,8 @@ export default function RadialBarChartClickToFocusLegendExample() {
   return (
     <SelectedLabelContext.Provider value={providerValue}>
       <RadialBarChart data={data} style={{ width: '100%', maxWidth: '500px', aspectRatio: 2 }} responsive>
-        <RadialBar background dataKey="x" name="foo" shape={CustomSector} cornerRadius={10} />
-        <Legend
-          iconSize={10}
-          width={120}
-          height={140}
-          layout="vertical"
-          verticalAlign="middle"
-          align="right"
-          content={LegendContent}
-        />
+        <RadialBar background dataKey="x" name="foo" shape={CustomSector} cornerRadius={10} stroke="none" />
+        <Legend iconSize={10} width={120} height={140} position="right" content={LegendContent} />
         <RechartsDevtools />
       </RadialBarChart>
     </SelectedLabelContext.Provider>
