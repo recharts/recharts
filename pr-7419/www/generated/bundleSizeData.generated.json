@@ -1,45 +1,45 @@
 {
   "treemap": {
     "examplePath": "www/src/views/IndexView/IndexLineChart.tsx",
-    "totalSize": 898751,
-    "totalSizeLabel": "877.69 KB",
+    "totalSize": 899672,
+    "totalSizeLabel": "878.59 KB",
     "moduleCount": 366,
-    "generatedAt": "2026-08-06T13:34:06.142Z",
+    "generatedAt": "2026-08-10T13:38:46.947Z",
     "stages": [
       {
         "stage": "es6-folder",
-        "bytes": 1314863,
-        "humanReadableSize": "1.25 MB",
+        "bytes": 1339194,
+        "humanReadableSize": "1.28 MB",
         "reductionFromBaselinePercent": 0
       },
       {
         "stage": "tree-shaken",
-        "bytes": 901630,
-        "humanReadableSize": "880.50 KB",
+        "bytes": 902551,
+        "humanReadableSize": "881.40 KB",
         "reductionFromBaselinePercent": 0
       },
       {
         "stage": "minified",
-        "bytes": 303134,
-        "humanReadableSize": "296.03 KB",
-        "reductionFromBaselinePercent": 66.38
+        "bytes": 303187,
+        "humanReadableSize": "296.08 KB",
+        "reductionFromBaselinePercent": 66.41
       },
       {
         "stage": "minified+gzip",
-        "bytes": 99115,
-        "humanReadableSize": "96.79 KB",
-        "reductionFromBaselinePercent": 89.01
+        "bytes": 99138,
+        "humanReadableSize": "96.81 KB",
+        "reductionFromBaselinePercent": 89.02
       }
     ],
     "tree": {
       "name": "bundle",
       "fullPath": "bundle",
-      "value": 898751,
+      "value": 899672,
       "children": [
         {
           "name": "src",
           "fullPath": "src",
-          "value": 494723,
+          "value": 495644,
           "children": [
             {
               "name": "state",
@@ -427,17 +427,17 @@
             {
               "name": "util",
               "fullPath": "src/util",
-              "value": 106361,
+              "value": 107282,
               "children": [
                 {
                   "name": "scale",
                   "fullPath": "src/util/scale",
-                  "value": 15313,
+                  "value": 15741,
                   "children": [
                     {
                       "name": "getNiceTickValues.ts",
                       "fullPath": "src/util/scale/getNiceTickValues.ts",
-                      "value": 10336
+                      "value": 10764
                     },
                     {
                       "name": "createCategoricalInverse.ts",
@@ -484,14 +484,14 @@
                   "value": 5637
                 },
                 {
+                  "name": "ReduceCSSCalc.ts",
+                  "fullPath": "src/util/ReduceCSSCalc.ts",
+                  "value": 5145
+                },
+                {
                   "name": "DataUtils.ts",
                   "fullPath": "src/util/DataUtils.ts",
                   "value": 5015
-                },
-                {
-                  "name": "ReduceCSSCalc.ts",
-                  "fullPath": "src/util/ReduceCSSCalc.ts",
-                  "value": 4652
                 },
                 {
                   "name": "getRelativeCoordinate.ts",
@@ -2550,45 +2550,45 @@
   },
   "sunburst": {
     "examplePath": "www/src/views/IndexView/IndexLineChart.tsx",
-    "totalSize": 898751,
-    "totalSizeLabel": "877.69 KB",
+    "totalSize": 899672,
+    "totalSizeLabel": "878.59 KB",
     "moduleCount": 366,
-    "generatedAt": "2026-08-06T13:34:08.226Z",
+    "generatedAt": "2026-08-10T13:38:44.770Z",
     "stages": [
       {
         "stage": "es6-folder",
-        "bytes": 1314863,
-        "humanReadableSize": "1.25 MB",
+        "bytes": 1339194,
+        "humanReadableSize": "1.28 MB",
         "reductionFromBaselinePercent": 0
       },
       {
         "stage": "tree-shaken",
-        "bytes": 901630,
-        "humanReadableSize": "880.50 KB",
+        "bytes": 902551,
+        "humanReadableSize": "881.40 KB",
         "reductionFromBaselinePercent": 0
       },
       {
         "stage": "minified",
-        "bytes": 303134,
-        "humanReadableSize": "296.03 KB",
-        "reductionFromBaselinePercent": 66.38
+        "bytes": 303187,
+        "humanReadableSize": "296.08 KB",
+        "reductionFromBaselinePercent": 66.41
       },
       {
         "stage": "minified+gzip",
-        "bytes": 99115,
-        "humanReadableSize": "96.79 KB",
-        "reductionFromBaselinePercent": 89.01
+        "bytes": 99138,
+        "humanReadableSize": "96.81 KB",
+        "reductionFromBaselinePercent": 89.02
       }
     ],
     "tree": {
       "name": "bundle",
       "fullPath": "bundle",
-      "value": 898751,
+      "value": 899672,
       "children": [
         {
           "name": "src",
           "fullPath": "src",
-          "value": 494723,
+          "value": 495644,
           "children": [
             {
               "name": "state",
@@ -2976,17 +2976,17 @@
             {
               "name": "util",
               "fullPath": "src/util",
-              "value": 106361,
+              "value": 107282,
               "children": [
                 {
                   "name": "scale",
                   "fullPath": "src/util/scale",
-                  "value": 15313,
+                  "value": 15741,
                   "children": [
                     {
                       "name": "getNiceTickValues.ts",
                       "fullPath": "src/util/scale/getNiceTickValues.ts",
-                      "value": 10336
+                      "value": 10764
                     },
                     {
                       "name": "createCategoricalInverse.ts",
@@ -3033,14 +3033,14 @@
                   "value": 5637
                 },
                 {
+                  "name": "ReduceCSSCalc.ts",
+                  "fullPath": "src/util/ReduceCSSCalc.ts",
+                  "value": 5145
+                },
+                {
                   "name": "DataUtils.ts",
                   "fullPath": "src/util/DataUtils.ts",
                   "value": 5015
-                },
-                {
-                  "name": "ReduceCSSCalc.ts",
-                  "fullPath": "src/util/ReduceCSSCalc.ts",
-                  "value": 4652
                 },
                 {
                   "name": "getRelativeCoordinate.ts",

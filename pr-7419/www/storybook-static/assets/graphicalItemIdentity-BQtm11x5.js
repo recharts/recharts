@@ -1,0 +1,1 @@
+import{n as e}from"./rolldown-runtime-DkW27tQK.js";function t(e){let t=5381;for(let n=0;n<e.length;n++)t=(t<<5)+t+e.charCodeAt(n);return t^=t>>>16,t*=2246822507,t^=t>>>16,t&2147483647}function n(e,n){if(n!=null&&n<=0)return 0;let r=t(String(e.dataKey));return n!=null&&n>0?r%n:r}function r(){return(r=e((()=>{})))()}export{r as n,n as t};
