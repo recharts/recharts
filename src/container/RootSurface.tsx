@@ -8,6 +8,8 @@ import { useAppSelector } from '../state/hooks';
 import { selectBrushDimensions } from '../state/selectors/brushSelectors';
 import { isPositiveNumber } from '../util/isWellBehavedNumber';
 import { AllZIndexPortals } from '../zIndex/ZIndexPortal';
+import { ClipPathProvider } from './ClipPathProvider';
+import { ZoomTransformLayer } from '../chart/zoom/ZoomTransformLayer';
 
 type RootSurfaceProps = {
   children: ReactNode;
@@ -96,6 +98,8 @@ export const RootSurface = forwardRef<SVGSVGElement, RootSurfaceProps>(
     const isPanorama = useIsPanorama();
 
     if (isPanorama) {
+      // The panorama is the un-zoomed overview by definition: zoom never applies inside it (the axis
+      // range injection skips panoramas too), so it gets neither the transform layer nor a clip path.
       return (
         <BrushPanoramaSurface>
           <AllZIndexPortals isPanorama>{children}</AllZIndexPortals>
@@ -104,7 +108,11 @@ export const RootSurface = forwardRef<SVGSVGElement, RootSurfaceProps>(
     }
     return (
       <MainChartSurface ref={ref} {...rest}>
-        <AllZIndexPortals isPanorama={false}>{children}</AllZIndexPortals>
+        <ClipPathProvider>
+          <ZoomTransformLayer>
+            <AllZIndexPortals isPanorama={false}>{children}</AllZIndexPortals>
+          </ZoomTransformLayer>
+        </ClipPathProvider>
       </MainChartSurface>
     );
   },

@@ -361,4 +361,42 @@ export const commentSimilarityExceptions: ReadonlyArray<CommentSimilarityGroup> 
     reason:
       'labelStyle in Tooltip styles the title, where the same labelStyle in Legend styles the individual items. Naming inconsistency we keep for backwards compatibility.',
   },
+  {
+    components: ['Brush'],
+    props: ['axis', 'layout', 'xAxisId', 'yAxisId', 'minZoom', 'maxZoom', 'wheelStep'],
+    reason:
+      'These Brush props configure its zoom-mode rail and inherit chart-level limits, unlike the equivalent chart interaction props.',
+  },
+  {
+    components: ['AutoScaleAxis'],
+    props: ['axis', 'padding'],
+    reason:
+      'AutoScaleAxis.axis selects the axis to fit, and padding is fractional data headroom rather than axis or container padding.',
+  },
+  {
+    components: ['FollowSeries'],
+    props: ['padding'],
+    reason: 'FollowSeries padding is fractional headroom around a followed series, not axis or container padding.',
+  },
+  {
+    components: ['Minimap'],
+    props: ['fill', 'stroke'],
+    reason: 'Minimap fill and stroke style its overview frame rather than a plotted graphical item.',
+  },
+  {
+    components: ['ZoomScrollbar'],
+    props: ['className', 'style'],
+    reason: 'ZoomScrollbar className and style target its scrollbar track rather than a generic component container.',
+  },
+  {
+    components: ['ZoomAndPan', 'ZoomPanKeyboard'],
+    props: ['panStep'],
+    reason:
+      'Keyboard panStep is a base viewport fraction multiplied for Shift+Arrow panning, unlike wheel controls where panStep is applied per wheel delta unit.',
+  },
+  {
+    components: ['RechartsThemeProvider'],
+    props: ['axis'],
+    reason: 'RechartsThemeProvider.axis contains axis theme styles rather than selecting zoom dimensions.',
+  },
 ];
