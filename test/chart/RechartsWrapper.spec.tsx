@@ -93,7 +93,7 @@ describe('RechartsWrapper', () => {
 
     try {
       const { unmount } = render(
-        <RechartsWrapper width={100} height={100}>
+        <RechartsWrapper responsive width={100} height={100}>
           <div />
         </RechartsWrapper>,
       );
