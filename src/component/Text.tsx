@@ -9,6 +9,7 @@ import { reduceCSSCalc } from '../util/ReduceCSSCalc';
 import { svgPropertiesAndEvents } from '../util/svgPropertiesAndEvents';
 import { resolveDefaultProps } from '../util/resolveDefaultProps';
 import { isWellBehavedNumber } from '../util/isWellBehavedNumber';
+import { useRechartsTheme } from '../theme/RechartsThemeContext';
 
 const BREAKING_SPACES = /[ \f\n\r\t\v\u2028\u2029]+/;
 
@@ -383,6 +384,7 @@ export const textDefaultProps = {
 } as const satisfies Partial<Props>;
 
 export const Text = forwardRef<SVGTextElement, Props>((outsideProps, ref) => {
+  const theme = useRechartsTheme();
   const {
     x: propsX,
     y: propsY,
@@ -392,20 +394,32 @@ export const Text = forwardRef<SVGTextElement, Props>((outsideProps, ref) => {
     scaleToFit,
     textAnchor,
     verticalAnchor,
+    style: propsStyle,
     ...props
   } = resolveDefaultProps(outsideProps, textDefaultProps);
+  const themeFill = theme.typography?.fill;
+  const style = useMemo(() => {
+    const { fill: themedFill, ...themeTypography } = theme.typography ?? {};
+    return {
+      ...themeTypography,
+      ...(outsideProps.fill == null && themedFill !== undefined ? { fill: themedFill } : {}),
+      ...propsStyle,
+    };
+  }, [outsideProps.fill, propsStyle, theme.typography]);
+  const resolvedFill =
+    outsideProps.fill ?? propsStyle?.color ?? theme.typography?.color ?? themeFill ?? fill ?? textDefaultProps.fill;
   const wordsByLines: ReadonlyArray<Words> = useMemo(() => {
     return getWordsByLines({
       breakAll: props.breakAll,
       children: props.children,
       maxLines: props.maxLines,
       scaleToFit,
-      style: props.style,
+      style,
       width: props.width,
     });
-  }, [props.breakAll, props.children, props.maxLines, scaleToFit, props.style, props.width]);
+  }, [props.breakAll, props.children, props.maxLines, scaleToFit, style, props.width]);
 
-  const { dx, dy, angle, className, breakAll, ...textProps } = props;
+  const { dx, dy, angle, className, breakAll, ...textProps } = { ...props, style };
 
   if (!isNumOrStr(propsX) || !isNumOrStr(propsY) || wordsByLines.length === 0) {
     return null;
@@ -452,7 +466,7 @@ export const Text = forwardRef<SVGTextElement, Props>((outsideProps, ref) => {
       y={y}
       className={clsx('recharts-text', className)}
       textAnchor={textAnchor}
-      fill={fill.includes('url') ? DEFAULT_FILL : fill}
+      fill={resolvedFill.includes('url') ? DEFAULT_FILL : resolvedFill}
     >
       {wordsByLines.map((line, index) => {
         const words = line.words.join(breakAll ? '' : ' ');

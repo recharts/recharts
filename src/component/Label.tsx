@@ -3,6 +3,7 @@ import {
   cloneElement,
   createContext,
   createElement,
+  CSSProperties,
   isValidElement,
   ReactElement,
   ReactNode,
@@ -22,6 +23,7 @@ import { resolveDefaultProps } from '../util/resolveDefaultProps';
 import { svgPropertiesAndEvents } from '../util/svgPropertiesAndEvents';
 import { ZIndexable, ZIndexLayer } from '../zIndex/ZIndexLayer';
 import { DefaultZIndexes } from '../zIndex/DefaultZIndexes';
+import { useRechartsTheme } from '../theme/RechartsThemeContext';
 
 import { CartesianLabelPosition, getCartesianPosition } from '../cartesian/getCartesianPosition';
 import { cartesianViewBoxToTrapezoid } from '../cartesian/cartesianViewBoxToTrapezoid';
@@ -237,8 +239,16 @@ const renderRadialLabel = (
   label: ReactNode,
   attrs: SVGProps<SVGTextElement>,
   viewBox: PolarViewBoxRequired,
+  typography: CSSProperties | undefined,
 ) => {
   const { offset, className } = labelProps;
+  const { fill: themeFill, ...themeTypography } = typography ?? {};
+  const style = {
+    ...themeTypography,
+    ...(labelProps.fill == null && themeFill !== undefined ? { fill: themeFill } : {}),
+    ...labelProps.style,
+  };
+  const fill = labelProps.fill ?? labelProps.style?.color ?? typography?.color ?? themeFill;
   const { cx, cy, innerRadius, outerRadius, startAngle, endAngle, clockWise } = viewBox;
   const radius = (innerRadius + outerRadius) / 2;
   const deltaAngle = getDeltaAngle(startAngle, endAngle);
@@ -272,7 +282,13 @@ const renderRadialLabel = (
   const id = isNullish(labelProps.id) ? uniqueId('recharts-radial-line-') : labelProps.id;
 
   return (
-    <text {...attrs} dominantBaseline="central" className={clsx('recharts-radial-bar-label', className)}>
+    <text
+      {...attrs}
+      {...(fill !== undefined ? { fill } : {})}
+      style={style}
+      dominantBaseline="central"
+      className={clsx('recharts-radial-bar-label', className)}
+    >
       <defs>
         <path id={id} d={path} />
       </defs>
@@ -384,6 +400,7 @@ function polarViewBoxToTrapezoid(
  * @consumes PolarLabelContext
  */
 export function Label(outerProps: Props) {
+  const theme = useRechartsTheme();
   const props: PropsWithDefaults = resolveDefaultProps(outerProps, defaultLabelProps);
   const {
     viewBox: viewBoxFromProps,
@@ -489,7 +506,7 @@ export function Label(outerProps: Props) {
   const attrs = svgPropertiesAndEvents(props);
 
   if (isRadialPolarLabel && isPolar(viewBox)) {
-    return renderRadialLabel(props, position, label, attrs, viewBox);
+    return renderRadialLabel(props, position, label, attrs, viewBox, theme.typography);
   }
 
   if (positionAttrs == null) {
