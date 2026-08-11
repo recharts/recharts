@@ -45,6 +45,8 @@ import { RequiresDefaultProps, resolveDefaultProps } from '../util/resolveDefaul
 import { RegisterGraphicalItemId } from '../context/RegisterGraphicalItemId';
 import { GraphicalItemId } from '../state/graphicalItemsSlice';
 import { initialEventSettingsState } from '../state/eventSettingsSlice';
+import { RechartsTheme } from '../theme/RechartsTheme';
+import { useRechartsTheme } from '../theme/RechartsThemeContext';
 
 const NODE_VALUE_KEY = 'value';
 
@@ -622,6 +624,8 @@ type ContentItemProps = {
   nodeProps: TreemapNode;
   type: string;
   colorPanel: ReadonlyArray<string> | undefined;
+  themeGraphicalItems: RechartsTheme['graphicalItems'];
+  typography: React.CSSProperties | undefined;
   dataKey: DataKey<any>;
   onClick?: (e: React.MouseEvent<SVGPathElement, MouseEvent>) => void;
   onMouseEnter?: (e: React.MouseEvent<SVGPathElement, MouseEvent>) => void;
@@ -633,6 +637,8 @@ function ContentItem({
   nodeProps,
   type,
   colorPanel,
+  themeGraphicalItems,
+  typography,
   onMouseEnter,
   onMouseLeave,
   onClick,
@@ -669,18 +675,27 @@ function ContentItem({
   const nameSize = getStringSize(nodeProps.name);
   if (width > 20 && height > 20 && nameSize.width < width && nameSize.height < height) {
     text = (
-      <text x={x + 8} y={y + height / 2 + 7} fontSize={14}>
+      <text
+        x={x + 8}
+        y={y + height / 2 + 7}
+        fontSize={typography?.fontSize ?? 14}
+        fill={typography?.fill ?? typography?.color}
+        style={typography}
+      >
         {nodeProps.name}
       </text>
     );
   }
 
   const colors = colorPanel || COLOR_PANEL;
+  const themeGraphicalItem =
+    themeGraphicalItems.length === 0 ? undefined : themeGraphicalItems[nodeProps.depth % themeGraphicalItems.length];
+  const defaultFill = nodeProps.depth < 2 ? colors[index % colors.length] : 'rgba(255,255,255,0)';
   return (
     <g>
       <Rectangle
-        fill={nodeProps.depth < 2 ? colors[index % colors.length] : 'rgba(255,255,255,0)'}
-        stroke="#fff"
+        fill={colorPanel == null ? (themeGraphicalItem?.fill ?? defaultFill) : defaultFill}
+        stroke={themeGraphicalItem?.stroke ?? '#fff'}
         {...omit(nodeProps, ['children'])}
         onMouseEnter={onMouseEnter}
         onMouseLeave={onMouseLeave}
@@ -795,6 +810,8 @@ function TreemapItem({
     onMouseEnter: onMouseEnterFromProps,
     onClick: onItemClickFromProps,
     onMouseLeave: onMouseLeaveFromProps,
+    themeGraphicalItems,
+    typography,
   } = treemapProps;
   const { width, height, x, y } = nodeProps;
   const translateX = -x - width;
@@ -868,6 +885,8 @@ function TreemapItem({
             }}
             type={type}
             colorPanel={colorPanel}
+            themeGraphicalItems={themeGraphicalItems}
+            typography={typography}
           />
         </Layer>
       )}
@@ -880,6 +899,8 @@ type InternalTreemapProps = RequiresDefaultProps<Props, typeof defaultTreeMapPro
   height: number;
   dispatch: AppDispatch;
   id: GraphicalItemId;
+  themeGraphicalItems: RechartsTheme['graphicalItems'];
+  typography?: React.CSSProperties;
 };
 
 class TreemapWithState extends PureComponent<InternalTreemapProps, State> {
@@ -1066,6 +1087,7 @@ class TreemapWithState extends PureComponent<InternalTreemapProps, State> {
                 background: '#000',
                 color: '#fff',
                 marginRight: '3px',
+                ...this.props.typography,
               }}
             >
               {content}
@@ -1119,8 +1141,8 @@ class TreemapWithState extends PureComponent<InternalTreemapProps, State> {
         <SetTreemapTooltipEntrySettings
           dataKey={this.props.dataKey}
           nameKey={this.props.nameKey}
-          stroke={this.props.stroke}
-          fill={this.props.fill}
+          stroke={this.props.stroke ?? this.props.themeGraphicalItems[0]?.stroke}
+          fill={this.props.fill ?? this.props.themeGraphicalItems[0]?.fill}
           currentRoot={this.state.currentRoot}
           id={this.props.id}
         />
@@ -1139,7 +1161,10 @@ class TreemapWithState extends PureComponent<InternalTreemapProps, State> {
   }
 }
 
-function TreemapDispatchInject(props: RequiresDefaultProps<Props, typeof defaultTreeMapProps>) {
+function TreemapDispatchInject(
+  props: RequiresDefaultProps<Props, typeof defaultTreeMapProps> &
+    Pick<InternalTreemapProps, 'themeGraphicalItems' | 'typography'>,
+) {
   const dispatch = useAppDispatch();
   const width = useChartWidth();
   const height = useChartHeight();
@@ -1158,9 +1183,11 @@ function TreemapDispatchInject(props: RequiresDefaultProps<Props, typeof default
  * The Treemap chart is used to visualize hierarchical data using nested rectangles.
  *
  * @consumes ResponsiveContainerContext
+ * @consumes RechartsThemeContext
  * @provides TooltipEntrySettings
  */
 export function Treemap(outsideProps: Props) {
+  const theme = useRechartsTheme();
   const props = resolveDefaultProps(outsideProps, defaultTreeMapProps);
   const { className, style, width, height, throttleDelay, throttledEvents } = props;
 
@@ -1200,7 +1227,7 @@ export function Treemap(outsideProps: Props) {
         onTouchEnd={undefined}
       >
         <TooltipPortalContext.Provider value={tooltipPortal}>
-          <TreemapDispatchInject {...props} />
+          <TreemapDispatchInject {...props} themeGraphicalItems={theme.graphicalItems} typography={theme.typography} />
         </TooltipPortalContext.Provider>
       </RechartsWrapper>
     </RechartsStoreProvider>

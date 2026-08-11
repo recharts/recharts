@@ -48,7 +48,7 @@ export interface RechartsTheme {
    */
   typography?: TextStyles;
   /**
-   * Colors of main graphical elements (Area, Line, Bar, etc.).
+   * Colors of main graphical elements (Area, Bar, Line, Treemap, etc.).
    * If there are multiple elements in the chart, they will receive different values from this array.
    * If this array has only one item in it then all graphical items will have the same color.
    *
