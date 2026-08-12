@@ -1,0 +1,1 @@
+const u=t=>{const a={};return Object.keys(t).forEach(l=>{const e=t[l];if("defaultValue"in e)a[l]=e.defaultValue;else if("table"in e&&e.table!=null&&"defaultValue"in e.table){if(typeof e.table.defaultValue=="object"&&e.table.defaultValue!=null&&"summary"in e.table.defaultValue){a[l]=e.table.defaultValue.summary;return}a[l]=e.table.defaultValue}}),a};export{u as g};
