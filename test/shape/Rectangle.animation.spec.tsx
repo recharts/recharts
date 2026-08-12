@@ -381,7 +381,7 @@ describe('Rectangle animation', () => {
               y={50}
               width={80}
               height={height}
-              radius={4}
+              radius={0}
               fill="#ff7300"
               isAnimationActive
               isUpdateAnimationActive={isUpdateAnimationActive}
@@ -410,6 +410,18 @@ describe('Rectangle animation', () => {
       return container.querySelectorAll('.recharts-rectangle').length;
     }
 
+    /*
+     * The test case renders with radius={0}, so the path is always
+     * "M 50,50 h 80 v {height} h -80 Z" and the height is the argument of the v command.
+     */
+    function getRectHeight(container: Element): number {
+      const path = getRectPath(container);
+      assertNotNull(path);
+      const match = /v ([\d.-]+)/.exec(path);
+      assertNotNull(match);
+      return Number(match[1]);
+    }
+
     it('should keep the rectangle rendered so that it can animate out', async () => {
       const renderTestCase = heightTestCase({ startHeight: 100, isUpdateAnimationActive: true });
       const { container } = renderTestCase();
@@ -417,6 +429,34 @@ describe('Rectangle animation', () => {
 
       await prime(container);
       expect(countRectangles(container)).toBe(1);
+    });
+
+    it('should shrink the height through the animation and unmount the rectangle at the end', async () => {
+      const renderTestCase = heightTestCase({ startHeight: 100, isUpdateAnimationActive: true });
+      const { container, animationManager } = renderTestCase();
+      expect(getRectHeight(container)).toBe(100);
+
+      await prime(container);
+
+      const heights: Array<number> = [getRectHeight(container)];
+      for (const progress of [0.25, 0.5, 0.75]) {
+        // eslint-disable-next-line no-await-in-loop
+        await animationManager.setAnimationProgress(progress);
+        heights.push(getRectHeight(container));
+      }
+
+      // the rectangle shrinks frame by frame instead of snapping straight to zero
+      const [firstHeight, ...laterHeights] = heights;
+      expect(firstHeight).toBe(100);
+      laterHeights.forEach((currentHeight, index) => {
+        expect(currentHeight).toBeLessThan(heights[index]);
+        expect(currentHeight).toBeGreaterThanOrEqual(0);
+      });
+      expect(countRectangles(container)).toBe(1);
+
+      // and it is gone once the animation is over
+      await animationManager.completeAnimation();
+      expect(countRectangles(container)).toBe(0);
     });
 
     it('should remove the rectangle immediately when isUpdateAnimationActive is false', async () => {

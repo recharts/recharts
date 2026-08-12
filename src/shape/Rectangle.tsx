@@ -2,7 +2,7 @@
  * @fileOverview Rectangle
  */
 import * as React from 'react';
-import { SVGProps, useEffect, useMemo, useRef, useState } from 'react';
+import { SVGProps, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { clsx } from 'clsx';
 import { AnimationDuration } from '../util/types';
 import { resolveDefaultProps } from '../util/resolveDefaultProps';
@@ -220,6 +220,16 @@ export const Rectangle: React.FC<Props> = rectangleProps => {
   const animationIdInput = useMemo(() => ({ x, y, width, height, radius }), [x, y, width, height, radius]);
   const animationId = useAnimationId(animationIdInput, 'rectangle-');
 
+  /*
+   * Re-render once the shrink-to-zero animation is over. By then the tracked previous size is zero
+   * too, so the zero-dimension check below unmounts the rectangle instead of leaving an invisible
+   * zero-size path behind.
+   */
+  const [, setAnimationEndTick] = useState(0);
+  const handleAnimationEnd = useCallback(() => {
+    setAnimationEndTick(tick => tick + 1);
+  }, []);
+
   if (x !== +x || y !== +y || width !== +width || height !== +height) {
     return null;
   }
@@ -275,6 +285,7 @@ export const Rectangle: React.FC<Props> = rectangleProps => {
       easing={animationEasing}
       isActive={isUpdateAnimationActive}
       begin={animationBegin}
+      onAnimationEnd={hasZeroDimension ? handleAnimationEnd : undefined}
     >
       {(animationElapsedTime: number) => {
         const currWidth = interpolate(prevWidth, width, animationElapsedTime);
