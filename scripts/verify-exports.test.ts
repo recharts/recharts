@@ -406,9 +406,13 @@ describe('Consumer declaration emit', () => {
       },
     });
 
+    // TypeScript takes forward slashes in absolute specifiers on every platform,
+    // while the backslashes resolve() returns on Windows would be read as escapes.
+    const srcIndexSpecifier = SRC_INDEX_PATH.replace(/\.ts$/, '').replace(/\\/g, '/');
+
     const consumerSource = [
       `import { forwardRef } from 'react';`,
-      `import type { ${WRAPPED_COMPONENTS.join(', ')} } from '${SRC_INDEX_PATH.replace(/\.ts$/, '')}';`,
+      `import type { ${WRAPPED_COMPONENTS.join(', ')} } from '${srcIndexSpecifier}';`,
       '',
       ...WRAPPED_COMPONENTS.map(
         (props, index) => `export const Wrapped${index} = forwardRef<HTMLElement, ${props}>(() => null);`,
