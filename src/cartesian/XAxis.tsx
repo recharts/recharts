@@ -45,7 +45,7 @@ import { CustomScaleDefinition } from '../util/scale/CustomScaleDefinition';
 import { useCartesianChartLayout } from '../context/chartLayoutContext';
 import { getAxisTypeBasedOnLayout } from '../util/getAxisTypeBasedOnLayout';
 
-interface XAxisProps<DataPointType = any, DataValueType = any> extends Omit<
+export interface XAxisProps<DataPointType = any, DataValueType = any> extends Omit<
   RenderableAxisProps<DataPointType, DataValueType>,
   'domain' | 'scale' | 'tick'
 > {

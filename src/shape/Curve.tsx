@@ -109,7 +109,7 @@ const getCurveFactory = (type: CurveType, layout: LayoutType | undefined): Curve
   return CURVE_FACTORIES[name] || curveLinear;
 };
 
-interface CurveProps {
+export interface CurveProps {
   className?: string;
   /**
    * The interpolation type of curve. Allows custom interpolation function.

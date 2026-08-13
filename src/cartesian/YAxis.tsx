@@ -45,7 +45,7 @@ import {
 } from '../util/types';
 import { CartesianAxis, CartesianAxisRef, defaultCartesianAxisProps } from './CartesianAxis';
 
-interface YAxisProps<DataPointType = any, DataValueType = any> extends Omit<
+export interface YAxisProps<DataPointType = any, DataValueType = any> extends Omit<
   RenderableAxisProps<DataPointType, DataValueType>,
   'axisLine' | 'domain' | 'scale' | 'tick'
 > {

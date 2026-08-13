@@ -346,3 +346,85 @@ describe('Public API Exports', () => {
     expect(missingExports).toEqual([]);
   });
 });
+
+// The components a consumer is most likely to wrap. Each one is re-declared through
+// `forwardRef`, which forces TypeScript to write the prop type into the consumer's own
+// declaration file - the situation that surfaces unnameable types.
+const WRAPPED_COMPONENTS = [
+  'AreaProps',
+  'BarProps',
+  'BrushProps',
+  'CartesianGridProps',
+  'CellProps',
+  'CustomizedProps',
+  'ErrorBarProps',
+  'FunnelProps',
+  'LabelProps',
+  'LegendProps',
+  'LineProps',
+  'PieProps',
+  'PolarAngleAxisProps',
+  'PolarGridProps',
+  'PolarRadiusAxisProps',
+  'RadarProps',
+  'RadialBarProps',
+  'ReferenceAreaProps',
+  'ReferenceDotProps',
+  'ReferenceLineProps',
+  'ResponsiveContainerProps',
+  'SankeyProps',
+  'ScatterProps',
+  'TextProps',
+  'TooltipProps',
+  'TreemapProps',
+  'XAxisProps',
+  'YAxisProps',
+];
+
+/**
+ * A type that is referenced by a public prop type but not exported from the module it lives in
+ * cannot be written into a consumer's `.d.ts`. TypeScript then fails the consumer's build with
+ * TS4023, even though the same code type-checks fine without declaration emit.
+ *
+ * @see {@link https://github.com/recharts/recharts/issues/6291 Issue 6291}
+ */
+describe('Consumer declaration emit', () => {
+  it('should let a consumer re-declare every component without unnameable types', () => {
+    const project = new Project({
+      tsConfigFilePath: TS_CONFIG_PATH,
+      skipAddingFilesFromTsConfig: true,
+      compilerOptions: {
+        composite: false,
+        declaration: true,
+        declarationDir: undefined,
+        emitDeclarationOnly: true,
+        noEmit: false,
+        outDir: resolve(PROJECT_ROOT, 'node_modules/.cache/verify-exports'),
+        rootDir: PROJECT_ROOT,
+      },
+    });
+
+    const consumerSource = [
+      `import { forwardRef } from 'react';`,
+      `import type { ${WRAPPED_COMPONENTS.join(', ')} } from '${SRC_INDEX_PATH.replace(/\.ts$/, '')}';`,
+      '',
+      ...WRAPPED_COMPONENTS.map(
+        (props, index) => `export const Wrapped${index} = forwardRef<HTMLElement, ${props}>(() => null);`,
+      ),
+    ].join('\n');
+
+    project.createSourceFile(resolve(PROJECT_ROOT, 'scripts/verify-exports.consumer.ts'), consumerSource, {
+      overwrite: true,
+    });
+
+    // TS4023: "Exported variable X has or is using name Y from external module Z but cannot be named."
+    const unnameable = project
+      .emitToMemory({ emitOnlyDtsFiles: true })
+      .getDiagnostics()
+      .filter(diagnostic => diagnostic.getCode() === 4023)
+      .map(diagnostic => diagnostic.getMessageText())
+      .map(message => (typeof message === 'string' ? message : message.getMessageText()));
+
+    expect(unnameable).toEqual([]);
+  });
+});

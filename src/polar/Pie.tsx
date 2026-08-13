@@ -244,7 +244,7 @@ interface InternalPieProps extends PropsWithResolvedDefaults {
   sectors: ReadonlyArray<PieSectorDataItem>;
 }
 
-interface PieProps<DataPointType = any, DataValueType = any>
+export interface PieProps<DataPointType = any, DataValueType = any>
   extends DataProvider<DataPointType>, DataConsumer<DataPointType, DataValueType>, PieDef, PieEvents, ZIndexable {
   /**
    * This component is rendered when this graphical item is activated

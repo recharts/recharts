@@ -297,7 +297,7 @@ function RenderSectors(props: InternalProps) {
   return <SectorsWithAnimation props={props} previousSectorsRef={previousSectorsRef} />;
 }
 
-interface InternalRadialBarProps<DataPointType = any, DataValueType = any>
+export interface InternalRadialBarProps<DataPointType = any, DataValueType = any>
   extends DataConsumer<DataPointType, DataValueType>, ZIndexable {
   activeShape?: ActiveShape<RadialBarSectorProps, SVGPathElement>;
   /**

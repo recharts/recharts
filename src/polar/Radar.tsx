@@ -63,7 +63,7 @@ export interface RadarPoint {
   name?: string | number;
 }
 
-interface RadarProps<DataPointType = any, DataValueType = any>
+export interface RadarProps<DataPointType = any, DataValueType = any>
   extends ZIndexable, DataConsumer<DataPointType, DataValueType> {
   /**
    * @defaultValue true

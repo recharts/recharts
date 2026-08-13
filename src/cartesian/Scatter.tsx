@@ -172,7 +172,7 @@ interface ScatterInternalProps extends ZIndexable {
 /**
  * External props, intended for end users to fill in
  */
-interface ScatterProps<DataPointType = any, DataValueType = any>
+export interface ScatterProps<DataPointType = any, DataValueType = any>
   extends DataProvider<DataPointType>, DataConsumer<DataPointType, DataValueType>, ZIndexable {
   /**
    * Unique identifier of this component.

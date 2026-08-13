@@ -130,7 +130,7 @@ export type BarShapeProps = BarRectangleItem &
     index: number;
   };
 
-interface BarProps<DataPointType, ValueAxisType>
+export interface BarProps<DataPointType, ValueAxisType>
   extends DataProvider<DataPointType>, DataConsumer<DataPointType, ValueAxisType>, ZIndexable {
   className?: string;
   index?: Key;
@@ -363,7 +363,7 @@ type BarMouseEvent = (
   event: React.MouseEvent<SVGPathElement, MouseEvent>,
 ) => void;
 
-interface BarEvents {
+export interface BarEvents {
   /**
    * The customized event handler of click on the bars in this group
    *
