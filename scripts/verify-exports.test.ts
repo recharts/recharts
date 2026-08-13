@@ -389,7 +389,9 @@ const WRAPPED_COMPONENTS = [
  * @see {@link https://github.com/recharts/recharts/issues/6291 Issue 6291}
  */
 describe('Consumer declaration emit', () => {
-  it('should let a consumer re-declare every component without unnameable types', () => {
+  // Building a second program and emitting declarations for it takes a few seconds,
+  // which is more than the default per-test timeout allows for on CI.
+  it('should let a consumer re-declare every component without unnameable types', { timeout: 60_000 }, () => {
     const project = new Project({
       tsConfigFilePath: TS_CONFIG_PATH,
       skipAddingFilesFromTsConfig: true,
