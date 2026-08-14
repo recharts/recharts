@@ -7,7 +7,7 @@ import { LegendProps } from '../index';
 export type Styles2D = {
   stroke?: string;
   strokeOpacity?: number;
-  strokeWidth?: number;
+  strokeWidth?: number | string;
   strokeDasharray?: string | number;
   fillOpacity?: number;
   fill?: string;
