@@ -54,7 +54,8 @@ import { GraphicalItemId } from '../state/graphicalItemsSlice';
 import { RegisterGraphicalItemId } from '../context/RegisterGraphicalItemId';
 import { WithIdRequired } from '../util/useUniqueId';
 import { useCartesianChartLayout } from '../context/chartLayoutContext';
-import { useRechartsTheme } from '../theme/RechartsThemeContext';
+import { RechartsTheme } from '../theme/RechartsTheme';
+import { useBackwardsCompatibleTheme } from '../theme/useBackwardsCompatibleTheme';
 
 export type FunnelTrapezoidItem = TrapezoidProps &
   TrapezoidViewBox & {
@@ -756,7 +757,11 @@ export function computeFunnelTrapezoids({
  * @consumes RechartsThemeContext
  */
 function FunnelFn(outsideProps: Props) {
-  const theme = useRechartsTheme();
+  const theme = useBackwardsCompatibleTheme<{ graphicalItems: RechartsTheme['graphicalItems'] }>(
+    (rechartsTheme: RechartsTheme) => ({ graphicalItems: rechartsTheme.graphicalItems }),
+    {},
+    {},
+  );
 
   /*
    * Funnel is per-index: each trapezoid at index `i` picks its styles from
