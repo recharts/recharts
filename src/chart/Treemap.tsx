@@ -1187,7 +1187,7 @@ function TreemapDispatchInject(
  * @provides TooltipEntrySettings
  */
 export function Treemap(outsideProps: Props) {
-  const theme = useBackwardsCompatibleTheme<Pick<RechartsTheme, 'graphicalItems' | 'typography'>>(
+  const theme = useBackwardsCompatibleTheme<Partial<Pick<RechartsTheme, 'graphicalItems' | 'typography'>>>(
     (rechartsTheme: RechartsTheme) => ({
       graphicalItems: rechartsTheme.graphicalItems,
       typography: rechartsTheme.typography,
