@@ -68,9 +68,9 @@ import { propsAreEqual } from '../util/propsAreEqual';
 import { AxisId } from '../state/cartesianAxisSlice';
 import { StackDataPoint } from '../util/stacks/stackTypes';
 import { AreaRevealShape, AreaRevealShapeProps } from './AreaRevealShape';
-import { useBackwardsCompatibleTheme } from '../theme/RechartsThemeContext';
 import { graphicalItemIdentity } from '../theme/graphicalItemIdentity';
 import { GraphicalItemStyle, RechartsTheme, Styles2D } from '../theme/RechartsTheme';
+import { useBackwardsCompatibleTheme } from '../theme/useBackwardsCompatibleTheme';
 
 /**
  * @inline

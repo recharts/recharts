@@ -36,8 +36,8 @@ import { DefaultZIndexes } from '../zIndex/DefaultZIndexes';
 import { getClassNameFromUnknown } from '../util/getClassNameFromUnknown';
 import { removeRenderedTicks, setRenderedTicks } from '../state/renderedTicksSlice';
 import { useAppDispatch } from '../state/hooks';
-import { useBackwardsCompatibleTheme } from '../theme/RechartsThemeContext';
 import { Styles1D, TextStyles } from '../theme/RechartsTheme';
+import { useBackwardsCompatibleTheme } from '../theme/useBackwardsCompatibleTheme';
 /** The orientation of the axis in correspondence to the chart */
 export type Orientation = XAxisOrientation | YAxisOrientation;
 /** A unit to be appended to a value */

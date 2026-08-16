@@ -9,7 +9,8 @@ import { reduceCSSCalc } from '../util/ReduceCSSCalc';
 import { svgPropertiesAndEvents } from '../util/svgPropertiesAndEvents';
 import { resolveDefaultProps } from '../util/resolveDefaultProps';
 import { isWellBehavedNumber } from '../util/isWellBehavedNumber';
-import { useBackwardsCompatibleTheme } from '../theme/RechartsThemeContext';
+
+import { useBackwardsCompatibleTheme } from '../theme/useBackwardsCompatibleTheme';
 
 const BREAKING_SPACES = /[ \f\n\r\t\v\u2028\u2029]+/;
 
