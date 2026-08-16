@@ -24,7 +24,8 @@ import { selectLegendArea } from '../state/selectors/selectLegendArea';
 import { cartesianPositionToCSSTranslate } from '../cartesian/cartesianPositionToCSSTranslate';
 import { selectChartViewBox } from '../state/selectors/selectChartOffsetInternal';
 import { RechartsRootState } from '../state/store';
-import { useRechartsTheme } from '../theme/RechartsThemeContext';
+import { RechartsTheme } from '../theme/RechartsTheme';
+import { useBackwardsCompatibleTheme } from '../theme/useBackwardsCompatibleTheme';
 
 function defaultUniqBy(entry: LegendPayload) {
   return entry.value;
@@ -293,7 +294,11 @@ export const legendDefaultProps = {
  * @consumes PolarChartContext
  */
 function LegendImpl(outsideProps: Props) {
-  const theme = useRechartsTheme();
+  const theme = useBackwardsCompatibleTheme<Pick<RechartsTheme, 'legend'>>(
+    (rechartsTheme: RechartsTheme) => ({ legend: rechartsTheme.legend }),
+    {},
+    {},
+  );
   const themedWrapperStyle =
     outsideProps.wrapperStyle == null && theme?.legend?.wrapperStyle == null
       ? undefined
