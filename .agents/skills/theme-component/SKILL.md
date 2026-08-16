@@ -42,7 +42,7 @@ Reuse an existing semantic theme section when the target shares its visual contr
 ## Implement the theme contract
 
 1. The `RechartsTheme` type should already contain all relevant types. It is intentionally a bit generic - and the target component should aim to reuse shared properties instead of focusing narrowly. To give a more specific example, an XAxis tick labels should reuse font size and font weight from the `typography` section. When a relevant property is missing but a meaningful theme mapping clearly exists for that visual attribute, you may add the minimal shared contract addition to the `RechartsTheme` type along with corresponding built-in theme values. Only exit early when no meaningful theme mapping exists at all for the prop.
-2. The built-in themes (`lightTheme`, `darkTheme`) are already populated and likewise should have all properties available and ready to use. When adding new theme contract properties per item 1, include corresponding values in all three built-in themes.
+2. The built-in themes (`lightTheme`, `darkTheme`) are already populated and likewise should have all properties available and ready to use. When adding new theme contract properties per item 1, include corresponding values in all built-in themes.
 3. Read the theme through `useRechartsTheme` at the component's final styling-resolution boundary. Preserve this order for every themed field:
    - explicit component prop;
    - provider theme value;
