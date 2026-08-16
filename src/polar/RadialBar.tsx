@@ -72,8 +72,9 @@ import { ZIndexable, ZIndexLayer } from '../zIndex/ZIndexLayer';
 import { DefaultZIndexes } from '../zIndex/DefaultZIndexes';
 import { getZIndexFromUnknown } from '../zIndex/getZIndexFromUnknown';
 import { usePolarChartLayout } from '../context/chartLayoutContext';
-import { useRechartsTheme } from '../theme/RechartsThemeContext';
 import { graphicalItemIdentity } from '../theme/graphicalItemIdentity';
+import { GraphicalItemStyle, RechartsTheme } from '../theme/RechartsTheme';
+import { useBackwardsCompatibleTheme } from '../theme/useBackwardsCompatibleTheme';
 
 const STABLE_EMPTY_ARRAY: readonly RadialBarDataItem[] = [];
 
@@ -816,17 +817,20 @@ export function computeRadialBarDataItems({
 export function RadialBar<DataPointType = any, DataValueType = any>(
   outsideProps: RadialBarProps<DataPointType, DataValueType>,
 ) {
-  const theme = useRechartsTheme();
+  const graphicalItemStyle = useBackwardsCompatibleTheme<GraphicalItemStyle>(
+    (theme: RechartsTheme) =>
+      outsideProps.dataKey == null
+        ? undefined
+        : theme.graphicalItems[
+            graphicalItemIdentity({ dataKey: String(outsideProps.dataKey) }, theme.graphicalItems.length)
+          ],
+    outsideProps,
+    {},
+  );
   const props: PropsWithDefaults<DataPointType, DataValueType> = resolveDefaultProps(
     outsideProps,
     defaultRadialBarProps,
   );
-  const graphicalItemStyle =
-    outsideProps.dataKey == null || theme?.graphicalItems == null
-      ? undefined
-      : theme.graphicalItems[
-          graphicalItemIdentity({ dataKey: String(outsideProps.dataKey) }, theme.graphicalItems.length)
-        ];
 
   const themeFill = outsideProps.fill ?? graphicalItemStyle?.fill;
   const themeStroke = outsideProps.stroke ?? graphicalItemStyle?.stroke;
