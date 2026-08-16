@@ -1,60 +1,60 @@
 {
   "treemap": {
     "examplePath": "www/src/views/IndexView/IndexLineChart.tsx",
-    "totalSize": 900767,
-    "totalSizeLabel": "879.66 KB",
+    "totalSize": 900964,
+    "totalSizeLabel": "879.85 KB",
     "moduleCount": 366,
-    "generatedAt": "2026-08-11T20:47:20.620Z",
+    "generatedAt": "2026-08-16T06:30:31.466Z",
     "stages": [
       {
         "stage": "es6-folder",
-        "bytes": 1345354,
-        "humanReadableSize": "1.28 MB",
+        "bytes": 1349484,
+        "humanReadableSize": "1.29 MB",
         "reductionFromBaselinePercent": 0
       },
       {
         "stage": "tree-shaken",
-        "bytes": 903646,
-        "humanReadableSize": "882.47 KB",
+        "bytes": 903843,
+        "humanReadableSize": "882.66 KB",
         "reductionFromBaselinePercent": 0
       },
       {
         "stage": "minified",
-        "bytes": 303583,
-        "humanReadableSize": "296.47 KB",
-        "reductionFromBaselinePercent": 66.4
+        "bytes": 303631,
+        "humanReadableSize": "296.51 KB",
+        "reductionFromBaselinePercent": 66.41
       },
       {
         "stage": "minified+gzip",
-        "bytes": 99289,
-        "humanReadableSize": "96.96 KB",
+        "bytes": 99308,
+        "humanReadableSize": "96.98 KB",
         "reductionFromBaselinePercent": 89.01
       }
     ],
     "tree": {
       "name": "bundle",
       "fullPath": "bundle",
-      "value": 900767,
+      "value": 900964,
       "children": [
         {
           "name": "src",
           "fullPath": "src",
-          "value": 496739,
+          "value": 496936,
           "children": [
             {
               "name": "state",
               "fullPath": "src/state",
-              "value": 173047,
+              "value": 173244,
               "children": [
                 {
                   "name": "selectors",
                   "fullPath": "src/state/selectors",
-                  "value": 108392,
+                  "value": 108371,
                   "children": [
                     {
                       "name": "axisSelectors.ts",
                       "fullPath": "src/state/selectors/axisSelectors.ts",
-                      "value": 53677
+                      "value": 53630
                     },
                     {
                       "name": "combiners",
@@ -126,7 +126,7 @@
                     {
                       "name": "tooltipSelectors.ts",
                       "fullPath": "src/state/selectors/tooltipSelectors.ts",
-                      "value": 11302
+                      "value": 11328
                     },
                     {
                       "name": "polarAxisSelectors.ts",
@@ -381,6 +381,18 @@
                   "value": 691
                 },
                 {
+                  "name": "types",
+                  "fullPath": "src/state/types",
+                  "value": 665,
+                  "children": [
+                    {
+                      "name": "StackedGraphicalItem.ts",
+                      "fullPath": "src/state/types/StackedGraphicalItem.ts",
+                      "value": 665
+                    }
+                  ]
+                },
+                {
                   "name": "polarAxisSlice.ts",
                   "fullPath": "src/state/polarAxisSlice.ts",
                   "value": 633
@@ -394,18 +406,6 @@
                   "name": "polarOptionsSlice.ts",
                   "fullPath": "src/state/polarOptionsSlice.ts",
                   "value": 592
-                },
-                {
-                  "name": "types",
-                  "fullPath": "src/state/types",
-                  "value": 447,
-                  "children": [
-                    {
-                      "name": "StackedGraphicalItem.ts",
-                      "fullPath": "src/state/types/StackedGraphicalItem.ts",
-                      "value": 447
-                    }
-                  ]
                 },
                 {
                   "name": "reduxDevtoolsJsonStringifyReplacer.ts",
@@ -2550,60 +2550,60 @@
   },
   "sunburst": {
     "examplePath": "www/src/views/IndexView/IndexLineChart.tsx",
-    "totalSize": 900767,
-    "totalSizeLabel": "879.66 KB",
+    "totalSize": 900964,
+    "totalSizeLabel": "879.85 KB",
     "moduleCount": 366,
-    "generatedAt": "2026-08-11T20:47:22.767Z",
+    "generatedAt": "2026-08-16T06:30:33.622Z",
     "stages": [
       {
         "stage": "es6-folder",
-        "bytes": 1345354,
-        "humanReadableSize": "1.28 MB",
+        "bytes": 1349484,
+        "humanReadableSize": "1.29 MB",
         "reductionFromBaselinePercent": 0
       },
       {
         "stage": "tree-shaken",
-        "bytes": 903646,
-        "humanReadableSize": "882.47 KB",
+        "bytes": 903843,
+        "humanReadableSize": "882.66 KB",
         "reductionFromBaselinePercent": 0
       },
       {
         "stage": "minified",
-        "bytes": 303583,
-        "humanReadableSize": "296.47 KB",
-        "reductionFromBaselinePercent": 66.4
+        "bytes": 303631,
+        "humanReadableSize": "296.51 KB",
+        "reductionFromBaselinePercent": 66.41
       },
       {
         "stage": "minified+gzip",
-        "bytes": 99289,
-        "humanReadableSize": "96.96 KB",
+        "bytes": 99308,
+        "humanReadableSize": "96.98 KB",
         "reductionFromBaselinePercent": 89.01
       }
     ],
     "tree": {
       "name": "bundle",
       "fullPath": "bundle",
-      "value": 900767,
+      "value": 900964,
       "children": [
         {
           "name": "src",
           "fullPath": "src",
-          "value": 496739,
+          "value": 496936,
           "children": [
             {
               "name": "state",
               "fullPath": "src/state",
-              "value": 173047,
+              "value": 173244,
               "children": [
                 {
                   "name": "selectors",
                   "fullPath": "src/state/selectors",
-                  "value": 108392,
+                  "value": 108371,
                   "children": [
                     {
                       "name": "axisSelectors.ts",
                       "fullPath": "src/state/selectors/axisSelectors.ts",
-                      "value": 53677
+                      "value": 53630
                     },
                     {
                       "name": "combiners",
@@ -2675,7 +2675,7 @@
                     {
                       "name": "tooltipSelectors.ts",
                       "fullPath": "src/state/selectors/tooltipSelectors.ts",
-                      "value": 11302
+                      "value": 11328
                     },
                     {
                       "name": "polarAxisSelectors.ts",
@@ -2930,6 +2930,18 @@
                   "value": 691
                 },
                 {
+                  "name": "types",
+                  "fullPath": "src/state/types",
+                  "value": 665,
+                  "children": [
+                    {
+                      "name": "StackedGraphicalItem.ts",
+                      "fullPath": "src/state/types/StackedGraphicalItem.ts",
+                      "value": 665
+                    }
+                  ]
+                },
+                {
                   "name": "polarAxisSlice.ts",
                   "fullPath": "src/state/polarAxisSlice.ts",
                   "value": 633
@@ -2943,18 +2955,6 @@
                   "name": "polarOptionsSlice.ts",
                   "fullPath": "src/state/polarOptionsSlice.ts",
                   "value": 592
-                },
-                {
-                  "name": "types",
-                  "fullPath": "src/state/types",
-                  "value": 447,
-                  "children": [
-                    {
-                      "name": "StackedGraphicalItem.ts",
-                      "fullPath": "src/state/types/StackedGraphicalItem.ts",
-                      "value": 447
-                    }
-                  ]
                 },
                 {
                   "name": "reduxDevtoolsJsonStringifyReplacer.ts",
