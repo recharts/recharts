@@ -336,14 +336,10 @@ interface LineProps<DataPointType = any, DataValueType = any>
   zIndex?: number;
   /**
    * The stroke color. If `"none"`, no line will be drawn.
-   *
-   * @defaultValue #3182bd
    */
   stroke?: string;
   /**
    * The width of the stroke
-   *
-   * @defaultValue 1
    */
   strokeWidth?: string | number;
   /**
@@ -430,6 +426,12 @@ const defaultLineAnimateItems: AnimationInterpolateFn<LinePointItem, CartesianLa
   return result;
 };
 
+const defaultLegacyThemeProps: GraphicalItemStyle = {
+  fill: '#fff',
+  stroke: '#3182bd',
+  strokeWidth: 1,
+};
+
 export const defaultLineProps = {
   activeDot: true,
   animateNewValues: true,
@@ -440,14 +442,11 @@ export const defaultLineProps = {
   animationMatchBy: matchByIndex,
   connectNulls: false,
   dot: true,
-  fill: '#fff',
   hide: false,
   isAnimationActive: 'auto',
   label: false,
   legendType: 'line',
   shape: LineDrawShape,
-  stroke: '#3182bd',
-  strokeWidth: 1,
   xAxisId: 0,
   yAxisId: 0,
   zIndex: DefaultZIndexes.line,
@@ -923,7 +922,7 @@ function LineFn(outsideProps: Props) {
         ? undefined
         : theme.graphicalItems[graphicalItemIdentity({ dataKey: outsideProps.dataKey }, theme.graphicalItems.length)],
     outsideProps,
-    {},
+    defaultLegacyThemeProps,
   );
   const themeStrokeDasharray = graphicalItemTheme?.strokeDasharray;
   const activeDot =

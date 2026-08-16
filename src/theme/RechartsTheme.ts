@@ -6,10 +6,10 @@ import { LegendProps } from '../index';
  */
 export type Styles2D = {
   stroke?: string;
-  strokeOpacity?: number;
+  strokeOpacity?: number | string;
   strokeWidth?: number | string;
   strokeDasharray?: string | number;
-  fillOpacity?: number;
+  fillOpacity?: number | string;
   fill?: string;
 };
 

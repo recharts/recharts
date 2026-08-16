@@ -397,12 +397,15 @@ const defaultAreaAnimateItems: AnimationInterpolateFn<AreaPointItem, CartesianLa
   });
 };
 
+/**
+ * Default styling that was applied before themes existed
+ */
 const defaultLegacyThemeProps: GraphicalItemStyle = {
   fill: '#3182bd',
   fillOpacity: 0.6,
   stroke: '#3182bd',
   strokeWidth: 1,
-} as const satisfies Partial<Props<never, never>>;
+};
 
 export const defaultAreaProps = {
   activeDot: true,
