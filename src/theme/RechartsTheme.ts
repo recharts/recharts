@@ -11,6 +11,9 @@ export type Styles2D = {
   strokeDasharray?: string | number;
   fillOpacity?: number;
   fill?: string;
+};
+
+export type GraphicalItemStyle = Styles2D & {
   /**
    * Styles applied to the active representation of a graphical item.
    *
@@ -18,7 +21,7 @@ export type Styles2D = {
    * Line uses this for its built-in active dot, while Bar and Pie will use it
    * for their active shapes when they support graphical item themes.
    */
-  active?: Omit<Styles2D, 'active'>;
+  active?: Styles2D;
 };
 
 /**
@@ -54,7 +57,7 @@ export interface RechartsTheme {
    *
    * Legend and Tooltip items inherit the same color.
    */
-  graphicalItems: ReadonlyArray<Styles2D>;
+  graphicalItems: ReadonlyArray<GraphicalItemStyle>;
   /**
    * CartesianGrid and PolarGrid.
    *

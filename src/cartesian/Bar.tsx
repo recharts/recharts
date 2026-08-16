@@ -1262,7 +1262,7 @@ function BarFn(outsideProps: Props) {
   const isPanorama = useIsPanorama();
 
   const graphicalItemStyle =
-    outsideProps.dataKey == null || theme.graphicalItems == null
+    outsideProps.dataKey == null || theme?.graphicalItems == null
       ? undefined
       : theme.graphicalItems[graphicalItemIdentity({ dataKey: outsideProps.dataKey }, theme.graphicalItems.length)];
 

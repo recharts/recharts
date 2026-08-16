@@ -295,15 +295,15 @@ export const legendDefaultProps = {
 function LegendImpl(outsideProps: Props) {
   const theme = useRechartsTheme();
   const themedWrapperStyle =
-    outsideProps.wrapperStyle == null && theme.legend?.wrapperStyle == null
+    outsideProps.wrapperStyle == null && theme?.legend?.wrapperStyle == null
       ? undefined
-      : { ...theme.legend?.wrapperStyle, ...outsideProps.wrapperStyle };
+      : { ...theme?.legend?.wrapperStyle, ...outsideProps.wrapperStyle };
   const props = resolveDefaultProps(
     {
       ...outsideProps,
       wrapperStyle: themedWrapperStyle,
-      position: outsideProps.position ?? theme.legend?.position,
-      offset: outsideProps.offset ?? theme.legend?.offset,
+      position: outsideProps.position ?? theme?.legend?.position,
+      offset: outsideProps.offset ?? theme?.legend?.offset,
     },
     legendDefaultProps,
   );

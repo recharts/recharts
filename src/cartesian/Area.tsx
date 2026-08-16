@@ -70,7 +70,7 @@ import { StackDataPoint } from '../util/stacks/stackTypes';
 import { AreaRevealShape, AreaRevealShapeProps } from './AreaRevealShape';
 import { useBackwardsCompatibleTheme } from '../theme/RechartsThemeContext';
 import { graphicalItemIdentity } from '../theme/graphicalItemIdentity';
-import { RechartsTheme, Styles2D } from '../theme/RechartsTheme';
+import { GraphicalItemStyle, RechartsTheme, Styles2D } from '../theme/RechartsTheme';
 
 /**
  * @inline
@@ -131,18 +131,6 @@ interface InternalAreaProps extends ZIndexable {
   width: number;
   xAxisId: string | number;
   yAxisId: string | number;
-}
-
-interface AreaThemeProps {
-  /**
-   * The stroke color. If "none", no line will be drawn.
-   * @defaultValue '#3182bd'
-   */
-  stroke?: string;
-  fill?: string;
-  fillOpacity?: number;
-  strokeWidth?: string | number;
-  strokeDasharray?: string;
 }
 
 /**
@@ -334,11 +322,6 @@ interface AreaProps<DataPointType = any, DataValueType = any>
    * When two Areas have the same axisId and same stackId, then the two Areas are stacked in the chart.
    */
   stackId?: StackId;
-  /**
-   * The width of the stroke
-   * @defaultValue 1
-   */
-  strokeWidth?: string | number;
   tooltipType?: TooltipType;
   /**
    * The interpolation type of curve. Allows custom interpolation function.
@@ -414,7 +397,7 @@ const defaultAreaAnimateItems: AnimationInterpolateFn<AreaPointItem, CartesianLa
   });
 };
 
-const defaultLegacyThemeProps: AreaThemeProps = {
+const defaultLegacyThemeProps: GraphicalItemStyle = {
   fill: '#3182bd',
   fillOpacity: 0.6,
   stroke: '#3182bd',
@@ -1089,7 +1072,7 @@ function AreaFn(outsideProps: Props<any, any>) {
     },
     [outsideProps.dataKey],
   );
-  const theme = useBackwardsCompatibleTheme(themeSelector, outsideProps, defaultLegacyThemeProps);
+  const theme = useBackwardsCompatibleTheme<GraphicalItemStyle>(themeSelector, outsideProps, defaultLegacyThemeProps);
   const activeDot =
     theme?.active == null ||
     outsideProps.activeDot === false ||

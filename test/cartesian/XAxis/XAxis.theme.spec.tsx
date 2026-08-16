@@ -35,7 +35,7 @@ describe('XAxis theme', () => {
         expect(firstTick).not.toHaveAttribute('stroke-dasharray');
       });
 
-      it('should retain legacy defaults when a theme does not define axis styles', () => {
+      it('should not provide any defaults when a theme exists but does not define axis styles', () => {
         const { container } = rechartsTestRender(
           <RechartsThemeProvider value={{ graphicalItems: [] }}>
             <MyChart>
@@ -43,7 +43,7 @@ describe('XAxis theme', () => {
             </MyChart>
           </RechartsThemeProvider>,
         );
-        expect(getFirstTick(container)).toHaveAttribute('stroke', '#666');
+        expect(getFirstTick(container)).not.toHaveAttribute('stroke');
       });
     });
 

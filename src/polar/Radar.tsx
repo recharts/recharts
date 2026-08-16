@@ -641,7 +641,7 @@ function RadarImpl(props: WithIdRequired<PropsWithDefaults>) {
 export function Radar<DataPointType = any, DataValueType = any>(outsideProps: Props<DataPointType, DataValueType>) {
   const theme = useRechartsTheme();
   const graphicalItemTheme =
-    outsideProps.dataKey == null || theme.graphicalItems == null
+    outsideProps.dataKey == null || theme?.graphicalItems == null
       ? undefined
       : theme.graphicalItems[graphicalItemIdentity({ dataKey: outsideProps.dataKey }, theme.graphicalItems.length)];
   const themeStrokeDasharray = graphicalItemTheme?.strokeDasharray;

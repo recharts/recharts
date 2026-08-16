@@ -30,7 +30,7 @@ describe('CartesianGrid theme', () => {
         });
       });
 
-      it('should retain legacy defaults when a theme does not define grid styles', () => {
+      it('should not provide any defaults when a theme exists but does not define grid styles', () => {
         const { container } = rechartsTestRender(
           <RechartsThemeProvider value={{ graphicalItems: [] }}>
             <MyChart>
@@ -40,7 +40,7 @@ describe('CartesianGrid theme', () => {
         );
         const allLines = container.querySelectorAll('.recharts-cartesian-grid line');
         allLines.forEach(line => {
-          expect(line.getAttribute('stroke')).toBe('#ccc');
+          expect(line).not.toHaveAttribute('stroke');
         });
       });
     });

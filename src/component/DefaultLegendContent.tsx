@@ -279,7 +279,7 @@ export const DefaultLegendContent = (outsideProps: Props) => {
   const theme = useRechartsTheme();
   const props = resolveDefaultProps(outsideProps, defaultLegendContentDefaultProps);
   const { payload, layout, align } = props;
-  const { color: typographyColor, ...typographyStyle } = theme.typography ?? {};
+  const { color: typographyColor, ...typographyStyle } = theme?.typography ?? {};
 
   if (!payload || !payload.length) {
     return null;
@@ -295,7 +295,7 @@ export const DefaultLegendContent = (outsideProps: Props) => {
     <ul className="recharts-default-legend" style={finalStyle}>
       <Items
         {...props}
-        labelStyle={{ ...typographyStyle, ...theme.legend?.labelStyle, ...props.labelStyle }}
+        labelStyle={{ ...typographyStyle, ...theme?.legend?.labelStyle, ...props.labelStyle }}
         payload={payload}
         typographyColor={typographyColor}
       />

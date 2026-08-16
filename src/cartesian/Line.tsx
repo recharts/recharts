@@ -918,7 +918,7 @@ export function computeLinePoints({
 function LineFn(outsideProps: Props) {
   const theme = useRechartsTheme();
   const graphicalItemTheme =
-    outsideProps.dataKey == null || theme.graphicalItems == null
+    outsideProps.dataKey == null || theme?.graphicalItems == null
       ? undefined
       : theme.graphicalItems[graphicalItemIdentity({ dataKey: outsideProps.dataKey }, theme.graphicalItems.length)];
   const themeStrokeDasharray = graphicalItemTheme?.strokeDasharray;

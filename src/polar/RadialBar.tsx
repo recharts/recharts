@@ -822,7 +822,7 @@ export function RadialBar<DataPointType = any, DataValueType = any>(
     defaultRadialBarProps,
   );
   const graphicalItemStyle =
-    outsideProps.dataKey == null || theme.graphicalItems == null
+    outsideProps.dataKey == null || theme?.graphicalItems == null
       ? undefined
       : theme.graphicalItems[
           graphicalItemIdentity({ dataKey: String(outsideProps.dataKey) }, theme.graphicalItems.length)

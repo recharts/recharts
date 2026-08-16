@@ -506,7 +506,7 @@ export function Label(outerProps: Props) {
   const attrs = svgPropertiesAndEvents(props);
 
   if (isRadialPolarLabel && isPolar(viewBox)) {
-    return renderRadialLabel(props, position, label, attrs, viewBox, theme.typography);
+    return renderRadialLabel(props, position, label, attrs, viewBox, theme?.typography);
   }
 
   if (positionAttrs == null) {

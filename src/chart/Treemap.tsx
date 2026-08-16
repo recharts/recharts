@@ -1227,7 +1227,11 @@ export function Treemap(outsideProps: Props) {
         onTouchEnd={undefined}
       >
         <TooltipPortalContext.Provider value={tooltipPortal}>
-          <TreemapDispatchInject {...props} themeGraphicalItems={theme.graphicalItems} typography={theme.typography} />
+          <TreemapDispatchInject
+            {...props}
+            themeGraphicalItems={theme?.graphicalItems ?? []}
+            typography={theme?.typography}
+          />
         </TooltipPortalContext.Provider>
       </RechartsWrapper>
     </RechartsStoreProvider>

@@ -1276,13 +1276,13 @@ function PieFn(outsideProps: Props) {
           <SetPiePayloadLegend
             {...propsWithoutId}
             id={id}
-            graphicalItems={theme.graphicalItems}
+            graphicalItems={theme?.graphicalItems ?? []}
             explicitStyleProps={explicitStyleProps}
           />
           <PieImpl
             {...propsWithoutId}
             id={id}
-            graphicalItems={theme.graphicalItems}
+            graphicalItems={theme?.graphicalItems ?? []}
             explicitStyleProps={explicitStyleProps}
           />
         </>

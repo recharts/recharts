@@ -939,10 +939,15 @@ describe('readProject', () => {
   });
 
   it('should return the Recharts description if the prop shadows a DOM prop', () => {
-    // stroke has no JSDoc in React props, but it does in Recharts props
-    const comment = reader.getCommentOf('Area', 'stroke');
+    // id has no JSDoc in React props, but it does in Recharts props
+    const comment = reader.getCommentOf('Area', 'id');
     // In that case, we want to see the Recharts variant here
-    expect(comment).toMatchInlineSnapshot(`"The stroke color. If "none", no line will be drawn."`);
+    expect(comment).toMatchInlineSnapshot(`
+      "Unique identifier of this component.
+      Used as an HTML attribute \`id\`, and also to identify this element internally.
+
+      If undefined, Recharts will generate a unique ID automatically."
+    `);
   });
 
   it('should read @example tags', () => {

@@ -51,7 +51,7 @@ const LegendItem = ({ entry }: { entry: LegendPayload }) => {
     <li
       onClick={() => setSelectedLabel(l)}
       style={{
-        color: theme.typography?.color,
+        color: theme?.typography?.color,
         opacity: isSelected ? 1 : 0.2,
         transition: 'opacity 0.3s ease',
       }}

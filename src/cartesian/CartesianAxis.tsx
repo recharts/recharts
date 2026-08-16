@@ -577,7 +577,6 @@ const CartesianAxisComponent = forwardRef<CartesianAxisRef, InternalProps>((prop
   );
 
   const axisTheme = useBackwardsCompatibleTheme(theme => theme.axis, props, defaultLegacyAxisThemeProps);
-  console.log({ axisType, axisTheme });
   const typography = useBackwardsCompatibleTheme(theme => theme.typography, emptyTextThemeProps, emptyTextThemeProps);
 
   if (hide) {

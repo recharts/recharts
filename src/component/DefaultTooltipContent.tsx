@@ -123,7 +123,7 @@ export const DefaultTooltipContent = (props: Props) => {
     accessibilityLayer = defaultDefaultTooltipContentProps.accessibilityLayer,
   } = props;
 
-  const themeTooltip = theme.tooltip ?? {};
+  const themeTooltip = theme?.tooltip ?? {};
   const themeContentStyle = themeTooltip.contentStyle ?? {};
   const themeItemStyle = themeTooltip.itemStyle ?? {};
   const themeLabelStyle = themeTooltip.labelStyle ?? {};

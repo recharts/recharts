@@ -764,7 +764,7 @@ function FunnelFn(outsideProps: Props) {
    * props still win, so the theme only supplies the values that were omitted.
    */
   const indexedStyles: ReadonlyArray<Record<string, unknown>> = useMemo(() => {
-    const { graphicalItems } = theme;
+    const graphicalItems = theme?.graphicalItems;
     if (graphicalItems == null || graphicalItems.length === 0) {
       return [];
     }
