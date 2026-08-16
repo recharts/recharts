@@ -404,7 +404,7 @@ export function Label(outerProps: Props) {
   const theme = useBackwardsCompatibleTheme<Pick<RechartsTheme, 'typography'>>(
     (rechartsTheme: RechartsTheme) => ({ typography: rechartsTheme.typography }),
     {},
-    {},
+    undefined,
   );
   const props: PropsWithDefaults = resolveDefaultProps(outerProps, defaultLabelProps);
   const {

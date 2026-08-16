@@ -20,10 +20,17 @@ const noStyles = {};
 export const useBackwardsCompatibleTheme = <Props extends object>(
   themeSelector: (theme: RechartsTheme) => Partial<Props> | undefined,
   explicitProps: Props,
-  legacyDefaults: Partial<Props>,
+  legacyDefaults: Partial<Props> | undefined,
 ): Partial<Props> => {
   const theme = useRechartsTheme();
   if (theme == null) {
+    if (legacyDefaults == null) {
+      /*
+       * Theme is not set at all, and the parent component has no defaults.
+       * We have nothing else to do other than returning the props as-is.
+       */
+      return explicitProps;
+    }
     /*
      * Theme is not set at all - this means lack of any `RechartsThemeProvider` (or it was given null/undefined).
      * This is the 2.x path - each component sets its own defaults. Let them!

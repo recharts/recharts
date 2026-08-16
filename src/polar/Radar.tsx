@@ -646,7 +646,7 @@ export function Radar<DataPointType = any, DataValueType = any>(outsideProps: Pr
         ? undefined
         : theme.graphicalItems[graphicalItemIdentity({ dataKey: outsideProps.dataKey }, theme.graphicalItems.length)],
     outsideProps,
-    {},
+    undefined,
   );
   const themeStrokeDasharray = graphicalItemTheme?.strokeDasharray;
   const activeDot =

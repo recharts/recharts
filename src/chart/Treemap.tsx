@@ -1193,7 +1193,7 @@ export function Treemap(outsideProps: Props) {
       typography: rechartsTheme.typography,
     }),
     {},
-    {},
+    undefined,
   );
   const props = resolveDefaultProps(outsideProps, defaultTreeMapProps);
   const { className, style, width, height, throttleDelay, throttledEvents } = props;

@@ -825,7 +825,7 @@ export function RadialBar<DataPointType = any, DataValueType = any>(
             graphicalItemIdentity({ dataKey: String(outsideProps.dataKey) }, theme.graphicalItems.length)
           ],
     outsideProps,
-    {},
+    undefined,
   );
   const props: PropsWithDefaults<DataPointType, DataValueType> = resolveDefaultProps(
     outsideProps,

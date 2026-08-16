@@ -297,7 +297,7 @@ function LegendImpl(outsideProps: Props) {
   const theme = useBackwardsCompatibleTheme<Pick<RechartsTheme, 'legend'>>(
     (rechartsTheme: RechartsTheme) => ({ legend: rechartsTheme.legend }),
     {},
-    {},
+    undefined,
   );
   const themedWrapperStyle =
     outsideProps.wrapperStyle == null && theme?.legend?.wrapperStyle == null

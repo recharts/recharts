@@ -1235,7 +1235,7 @@ function PieFn(outsideProps: Props) {
   const theme = useBackwardsCompatibleTheme<Partial<Pick<RechartsTheme, 'graphicalItems'>>>(
     (rechartsTheme: RechartsTheme) => ({ graphicalItems: rechartsTheme.graphicalItems }),
     {},
-    {},
+    undefined,
   );
   const explicitStyleProps: PieStyleProps = {
     fill: outsideProps.fill,

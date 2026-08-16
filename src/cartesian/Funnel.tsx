@@ -760,7 +760,7 @@ function FunnelFn(outsideProps: Props) {
   const theme = useBackwardsCompatibleTheme<Partial<Pick<RechartsTheme, 'graphicalItems'>>>(
     (rechartsTheme: RechartsTheme) => ({ graphicalItems: rechartsTheme.graphicalItems }),
     {},
-    {},
+    undefined,
   );
 
   /*

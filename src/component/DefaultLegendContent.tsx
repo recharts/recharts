@@ -283,7 +283,7 @@ export const DefaultLegendContent = (outsideProps: Props) => {
       legend: rechartsTheme.legend,
     }),
     {},
-    {},
+    undefined,
   );
   const props = resolveDefaultProps(outsideProps, defaultLegendContentDefaultProps);
   const { payload, layout, align } = props;

@@ -114,7 +114,7 @@ export const DefaultTooltipContent = (props: Props) => {
       tooltip: rechartsTheme.tooltip,
     }),
     {},
-    {},
+    undefined,
   );
   const {
     separator = defaultDefaultTooltipContentProps.separator,

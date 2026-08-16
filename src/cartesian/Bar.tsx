@@ -1262,7 +1262,7 @@ function BarFn(outsideProps: Props) {
         ? undefined
         : theme.graphicalItems[graphicalItemIdentity({ dataKey: outsideProps.dataKey }, theme.graphicalItems.length)],
     outsideProps,
-    {},
+    undefined,
   );
   const props = resolveDefaultProps(outsideProps, defaultBarProps);
   // stackId may arrive from props or from BarStack context
