@@ -1,45 +1,45 @@
 {
   "treemap": {
     "examplePath": "www/src/views/IndexView/IndexLineChart.tsx",
-    "totalSize": 900964,
-    "totalSizeLabel": "879.85 KB",
+    "totalSize": 902693,
+    "totalSizeLabel": "881.54 KB",
     "moduleCount": 366,
-    "generatedAt": "2026-08-16T06:30:31.466Z",
+    "generatedAt": "2026-08-16T15:46:01.727Z",
     "stages": [
       {
         "stage": "es6-folder",
-        "bytes": 1349484,
+        "bytes": 1349459,
         "humanReadableSize": "1.29 MB",
         "reductionFromBaselinePercent": 0
       },
       {
         "stage": "tree-shaken",
-        "bytes": 903843,
-        "humanReadableSize": "882.66 KB",
+        "bytes": 905572,
+        "humanReadableSize": "884.35 KB",
         "reductionFromBaselinePercent": 0
       },
       {
         "stage": "minified",
-        "bytes": 303631,
-        "humanReadableSize": "296.51 KB",
-        "reductionFromBaselinePercent": 66.41
+        "bytes": 303293,
+        "humanReadableSize": "296.18 KB",
+        "reductionFromBaselinePercent": 66.51
       },
       {
         "stage": "minified+gzip",
-        "bytes": 99308,
-        "humanReadableSize": "96.98 KB",
-        "reductionFromBaselinePercent": 89.01
+        "bytes": 99252,
+        "humanReadableSize": "96.93 KB",
+        "reductionFromBaselinePercent": 89.04
       }
     ],
     "tree": {
       "name": "bundle",
       "fullPath": "bundle",
-      "value": 900964,
+      "value": 902693,
       "children": [
         {
           "name": "src",
           "fullPath": "src",
-          "value": 496936,
+          "value": 498665,
           "children": [
             {
               "name": "state",
@@ -427,7 +427,7 @@
             {
               "name": "util",
               "fullPath": "src/util",
-              "value": 107282,
+              "value": 107880,
               "children": [
                 {
                   "name": "scale",
@@ -494,14 +494,14 @@
                   "value": 5015
                 },
                 {
+                  "name": "resolveDefaultProps.tsx",
+                  "fullPath": "src/util/resolveDefaultProps.tsx",
+                  "value": 4469
+                },
+                {
                   "name": "getRelativeCoordinate.ts",
                   "fullPath": "src/util/getRelativeCoordinate.ts",
                   "value": 4292
-                },
-                {
-                  "name": "resolveDefaultProps.tsx",
-                  "fullPath": "src/util/resolveDefaultProps.tsx",
-                  "value": 3871
                 },
                 {
                   "name": "types.ts",
@@ -692,22 +692,22 @@
             {
               "name": "cartesian",
               "fullPath": "src/cartesian",
-              "value": 83324,
+              "value": 83197,
               "children": [
                 {
                   "name": "Line.tsx",
                   "fullPath": "src/cartesian/Line.tsx",
-                  "value": 16041
+                  "value": 16086
                 },
                 {
                   "name": "CartesianAxis.tsx",
                   "fullPath": "src/cartesian/CartesianAxis.tsx",
-                  "value": 15181
+                  "value": 15268
                 },
                 {
                   "name": "CartesianGrid.tsx",
                   "fullPath": "src/cartesian/CartesianGrid.tsx",
-                  "value": 11729
+                  "value": 11470
                 },
                 {
                   "name": "YAxis.tsx",
@@ -764,27 +764,27 @@
             {
               "name": "component",
               "fullPath": "src/component",
-              "value": 39679,
+              "value": 40074,
               "children": [
                 {
                   "name": "Label.tsx",
                   "fullPath": "src/component/Label.tsx",
-                  "value": 11101
+                  "value": 11193
                 },
                 {
                   "name": "Legend.tsx",
                   "fullPath": "src/component/Legend.tsx",
-                  "value": 8251
+                  "value": 8338
                 },
                 {
                   "name": "Text.tsx",
                   "fullPath": "src/component/Text.tsx",
-                  "value": 8213
+                  "value": 8302
                 },
                 {
                   "name": "DefaultLegendContent.tsx",
                   "fullPath": "src/component/DefaultLegendContent.tsx",
-                  "value": 5058
+                  "value": 5185
                 },
                 {
                   "name": "LabelList.tsx",
@@ -1035,7 +1035,7 @@
             {
               "name": "theme",
               "fullPath": "src/theme",
-              "value": 4039,
+              "value": 4902,
               "children": [
                 {
                   "name": "graphicalItemIdentity.ts",
@@ -1043,14 +1043,14 @@
                   "value": 2534
                 },
                 {
-                  "name": "legacyTheme.ts",
-                  "fullPath": "src/theme/legacyTheme.ts",
-                  "value": 1158
+                  "name": "useBackwardsCompatibleTheme.ts",
+                  "fullPath": "src/theme/useBackwardsCompatibleTheme.ts",
+                  "value": 1863
                 },
                 {
                   "name": "RechartsThemeContext.ts",
                   "fullPath": "src/theme/RechartsThemeContext.ts",
-                  "value": 347
+                  "value": 505
                 }
               ]
             },
@@ -2550,45 +2550,45 @@
   },
   "sunburst": {
     "examplePath": "www/src/views/IndexView/IndexLineChart.tsx",
-    "totalSize": 900964,
-    "totalSizeLabel": "879.85 KB",
+    "totalSize": 902693,
+    "totalSizeLabel": "881.54 KB",
     "moduleCount": 366,
-    "generatedAt": "2026-08-16T06:30:33.622Z",
+    "generatedAt": "2026-08-16T15:46:03.721Z",
     "stages": [
       {
         "stage": "es6-folder",
-        "bytes": 1349484,
+        "bytes": 1349459,
         "humanReadableSize": "1.29 MB",
         "reductionFromBaselinePercent": 0
       },
       {
         "stage": "tree-shaken",
-        "bytes": 903843,
-        "humanReadableSize": "882.66 KB",
+        "bytes": 905572,
+        "humanReadableSize": "884.35 KB",
         "reductionFromBaselinePercent": 0
       },
       {
         "stage": "minified",
-        "bytes": 303631,
-        "humanReadableSize": "296.51 KB",
-        "reductionFromBaselinePercent": 66.41
+        "bytes": 303293,
+        "humanReadableSize": "296.18 KB",
+        "reductionFromBaselinePercent": 66.51
       },
       {
         "stage": "minified+gzip",
-        "bytes": 99308,
-        "humanReadableSize": "96.98 KB",
-        "reductionFromBaselinePercent": 89.01
+        "bytes": 99252,
+        "humanReadableSize": "96.93 KB",
+        "reductionFromBaselinePercent": 89.04
       }
     ],
     "tree": {
       "name": "bundle",
       "fullPath": "bundle",
-      "value": 900964,
+      "value": 902693,
       "children": [
         {
           "name": "src",
           "fullPath": "src",
-          "value": 496936,
+          "value": 498665,
           "children": [
             {
               "name": "state",
@@ -2976,7 +2976,7 @@
             {
               "name": "util",
               "fullPath": "src/util",
-              "value": 107282,
+              "value": 107880,
               "children": [
                 {
                   "name": "scale",
@@ -3043,14 +3043,14 @@
                   "value": 5015
                 },
                 {
+                  "name": "resolveDefaultProps.tsx",
+                  "fullPath": "src/util/resolveDefaultProps.tsx",
+                  "value": 4469
+                },
+                {
                   "name": "getRelativeCoordinate.ts",
                   "fullPath": "src/util/getRelativeCoordinate.ts",
                   "value": 4292
-                },
-                {
-                  "name": "resolveDefaultProps.tsx",
-                  "fullPath": "src/util/resolveDefaultProps.tsx",
-                  "value": 3871
                 },
                 {
                   "name": "types.ts",
@@ -3241,22 +3241,22 @@
             {
               "name": "cartesian",
               "fullPath": "src/cartesian",
-              "value": 83324,
+              "value": 83197,
               "children": [
                 {
                   "name": "Line.tsx",
                   "fullPath": "src/cartesian/Line.tsx",
-                  "value": 16041
+                  "value": 16086
                 },
                 {
                   "name": "CartesianAxis.tsx",
                   "fullPath": "src/cartesian/CartesianAxis.tsx",
-                  "value": 15181
+                  "value": 15268
                 },
                 {
                   "name": "CartesianGrid.tsx",
                   "fullPath": "src/cartesian/CartesianGrid.tsx",
-                  "value": 11729
+                  "value": 11470
                 },
                 {
                   "name": "YAxis.tsx",
@@ -3313,27 +3313,27 @@
             {
               "name": "component",
               "fullPath": "src/component",
-              "value": 39679,
+              "value": 40074,
               "children": [
                 {
                   "name": "Label.tsx",
                   "fullPath": "src/component/Label.tsx",
-                  "value": 11101
+                  "value": 11193
                 },
                 {
                   "name": "Legend.tsx",
                   "fullPath": "src/component/Legend.tsx",
-                  "value": 8251
+                  "value": 8338
                 },
                 {
                   "name": "Text.tsx",
                   "fullPath": "src/component/Text.tsx",
-                  "value": 8213
+                  "value": 8302
                 },
                 {
                   "name": "DefaultLegendContent.tsx",
                   "fullPath": "src/component/DefaultLegendContent.tsx",
-                  "value": 5058
+                  "value": 5185
                 },
                 {
                   "name": "LabelList.tsx",
@@ -3584,7 +3584,7 @@
             {
               "name": "theme",
               "fullPath": "src/theme",
-              "value": 4039,
+              "value": 4902,
               "children": [
                 {
                   "name": "graphicalItemIdentity.ts",
@@ -3592,14 +3592,14 @@
                   "value": 2534
                 },
                 {
-                  "name": "legacyTheme.ts",
-                  "fullPath": "src/theme/legacyTheme.ts",
-                  "value": 1158
+                  "name": "useBackwardsCompatibleTheme.ts",
+                  "fullPath": "src/theme/useBackwardsCompatibleTheme.ts",
+                  "value": 1863
                 },
                 {
                   "name": "RechartsThemeContext.ts",
                   "fullPath": "src/theme/RechartsThemeContext.ts",
-                  "value": 347
+                  "value": 505
                 }
               ]
             },
