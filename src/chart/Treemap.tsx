@@ -46,7 +46,7 @@ import { RegisterGraphicalItemId } from '../context/RegisterGraphicalItemId';
 import { GraphicalItemId } from '../state/graphicalItemsSlice';
 import { initialEventSettingsState } from '../state/eventSettingsSlice';
 import { RechartsTheme } from '../theme/RechartsTheme';
-import { useRechartsTheme } from '../theme/RechartsThemeContext';
+import { useBackwardsCompatibleTheme } from '../theme/useBackwardsCompatibleTheme';
 
 const NODE_VALUE_KEY = 'value';
 
@@ -1187,7 +1187,14 @@ function TreemapDispatchInject(
  * @provides TooltipEntrySettings
  */
 export function Treemap(outsideProps: Props) {
-  const theme = useRechartsTheme();
+  const theme = useBackwardsCompatibleTheme<Pick<RechartsTheme, 'graphicalItems' | 'typography'>>(
+    (rechartsTheme: RechartsTheme) => ({
+      graphicalItems: rechartsTheme.graphicalItems,
+      typography: rechartsTheme.typography,
+    }),
+    {},
+    {},
+  );
   const props = resolveDefaultProps(outsideProps, defaultTreeMapProps);
   const { className, style, width, height, throttleDelay, throttledEvents } = props;
 
