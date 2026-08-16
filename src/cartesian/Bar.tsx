@@ -92,7 +92,7 @@ import { BarStackClipLayer, useStackId } from './BarStack';
 import { GraphicalItemId } from '../state/graphicalItemsSlice';
 import { ChartData } from '../state/chartDataSlice';
 import { graphicalItemIdentity } from '../theme/graphicalItemIdentity';
-import { GraphicalItemStyle, RechartsTheme } from '../theme/RechartsTheme';
+import { RechartsTheme } from '../theme/RechartsTheme';
 import { useBackwardsCompatibleTheme } from '../theme/useBackwardsCompatibleTheme';
 
 type BarRectangleType = {
@@ -1256,7 +1256,7 @@ export function computeBarRectangles({
 }
 
 function BarFn(outsideProps: Props) {
-  const graphicalItemStyle = useBackwardsCompatibleTheme<GraphicalItemStyle>(
+  const graphicalItemStyle = useBackwardsCompatibleTheme<Props>(
     (theme: RechartsTheme) =>
       outsideProps.dataKey == null
         ? undefined
