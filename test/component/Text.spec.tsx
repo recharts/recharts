@@ -23,7 +23,9 @@ describe('<Text />', () => {
       </RechartsThemeProvider>,
     );
 
-    expect(container.querySelector('text')).toHaveAttribute('fill', '#808080');
+    const text = container.querySelector('text');
+    assertNotNull(text);
+    expect(text).toHaveAttribute('fill', '#808080');
   });
 
   test('Does not wrap long text if enough width', () => {
@@ -36,9 +38,10 @@ describe('<Text />', () => {
     );
 
     const text = screen.getByRole('img');
+    assertNotNull(text);
     expect(text).toBeInTheDocument();
 
-    expect(text?.children).toHaveLength(1);
+    expect(text.children).toHaveLength(1);
   });
 
   test('renders number children', () => {
