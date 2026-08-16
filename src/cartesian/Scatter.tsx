@@ -75,7 +75,7 @@ import { ZIndexable, ZIndexLayer } from '../zIndex/ZIndexLayer';
 import { DefaultZIndexes } from '../zIndex/DefaultZIndexes';
 import { propsAreEqual } from '../util/propsAreEqual';
 import { graphicalItemIdentity } from '../theme/graphicalItemIdentity';
-import { GraphicalItemStyle, RechartsTheme } from '../theme/RechartsTheme';
+import { RechartsTheme } from '../theme/RechartsTheme';
 import { useBackwardsCompatibleTheme } from '../theme/useBackwardsCompatibleTheme';
 import { ChartData } from '../state/chartDataSlice';
 
@@ -1021,7 +1021,7 @@ function ScatterImpl(props: WithIdRequired<Props>) {
 }
 
 function ScatterFn(outsideProps: Props) {
-  const graphicalItemTheme = useBackwardsCompatibleTheme<GraphicalItemStyle>(
+  const graphicalItemTheme = useBackwardsCompatibleTheme<Props>(
     (theme: RechartsTheme) =>
       outsideProps.dataKey == null
         ? undefined
