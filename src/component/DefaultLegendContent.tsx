@@ -6,7 +6,8 @@ import { Surface } from '../container/Surface';
 import { Symbols } from '../shape/Symbols';
 import { DataKey, LegendType, adaptEventsOfChild, PresentationAttributesForHTML, CartesianLayout } from '../util/types';
 import { RequiresDefaultProps, resolveDefaultProps } from '../util/resolveDefaultProps';
-import { useRechartsTheme } from '../theme/RechartsThemeContext';
+import { RechartsTheme } from '../theme/RechartsTheme';
+import { useBackwardsCompatibleTheme } from '../theme/useBackwardsCompatibleTheme';
 
 const SIZE = 32;
 export type ContentType = ReactElement | ((props: Props) => ReactNode);
@@ -276,7 +277,14 @@ function Items(props: InternalProps) {
  * or you can provide your own completely independent content.
  */
 export const DefaultLegendContent = (outsideProps: Props) => {
-  const theme = useRechartsTheme();
+  const theme = useBackwardsCompatibleTheme<Pick<RechartsTheme, 'typography' | 'legend'>>(
+    (rechartsTheme: RechartsTheme) => ({
+      typography: rechartsTheme.typography,
+      legend: rechartsTheme.legend,
+    }),
+    {},
+    {},
+  );
   const props = resolveDefaultProps(outsideProps, defaultLegendContentDefaultProps);
   const { payload, layout, align } = props;
   const { color: typographyColor, ...typographyStyle } = theme?.typography ?? {};
