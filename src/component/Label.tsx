@@ -23,7 +23,8 @@ import { resolveDefaultProps } from '../util/resolveDefaultProps';
 import { svgPropertiesAndEvents } from '../util/svgPropertiesAndEvents';
 import { ZIndexable, ZIndexLayer } from '../zIndex/ZIndexLayer';
 import { DefaultZIndexes } from '../zIndex/DefaultZIndexes';
-import { useRechartsTheme } from '../theme/RechartsThemeContext';
+import { RechartsTheme } from '../theme/RechartsTheme';
+import { useBackwardsCompatibleTheme } from '../theme/useBackwardsCompatibleTheme';
 
 import { CartesianLabelPosition, getCartesianPosition } from '../cartesian/getCartesianPosition';
 import { cartesianViewBoxToTrapezoid } from '../cartesian/cartesianViewBoxToTrapezoid';
@@ -400,7 +401,11 @@ function polarViewBoxToTrapezoid(
  * @consumes PolarLabelContext
  */
 export function Label(outerProps: Props) {
-  const theme = useRechartsTheme();
+  const theme = useBackwardsCompatibleTheme<Pick<RechartsTheme, 'typography'>>(
+    (rechartsTheme: RechartsTheme) => ({ typography: rechartsTheme.typography }),
+    {},
+    {},
+  );
   const props: PropsWithDefaults = resolveDefaultProps(outerProps, defaultLabelProps);
   const {
     viewBox: viewBoxFromProps,
