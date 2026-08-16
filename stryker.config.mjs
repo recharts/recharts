@@ -18,8 +18,7 @@ const config = {
     prioritizePerformanceOverAccuracy: true,
   },
   ignoreStatic: true,
-  mutate: ['src/animation/AnimationControllerImpl.ts', 'src/animation/RechartsAnimation.ts'],
-  // mutate: ['src/animation/AnimationManager.ts'],
+  mutate: ['src/theme/useBackwardsCompatibleTheme.ts'],
   commandRunner: {
     command: 'vitest run --config ./vitest.config-mutation.mts',
   },

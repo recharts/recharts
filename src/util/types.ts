@@ -1236,7 +1236,7 @@ export type ActiveDotProps = DotProps & {
   cy: number | undefined;
   r: number | string | undefined;
   fill: string;
-  strokeWidth: number;
+  strokeWidth: number | string;
   stroke: string;
   value: any;
 };

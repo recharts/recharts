@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { resolveDefaultProps } from '../../src/util/resolveDefaultProps';
+import { resolveDefaultProps, resolvePartialDefaultProps } from '../../src/util/resolveDefaultProps';
 
 type MyExampleType = Record<string, unknown>;
 
@@ -67,6 +67,109 @@ describe('resolveDefaultProps', () => {
     const defaults: MyExampleType = {};
     const result = resolveDefaultProps(original, defaults);
     expect(result).toEqual(original);
+  });
+});
+
+describe('resolvePartialDefaultProps', () => {
+  type PartialProps = {
+    required: string;
+    optional?: number;
+    nullable?: string | null;
+    missing?: boolean;
+  };
+
+  it('should apply defined defaults only to undefined properties', () => {
+    const original: PartialProps = {
+      required: 'original',
+      optional: undefined,
+      nullable: undefined,
+    };
+    const defaults: Partial<PartialProps> = {
+      required: 'default',
+      optional: 42,
+      nullable: 'fallback',
+      missing: true,
+    };
+
+    expect(resolvePartialDefaultProps(original, defaults)).toEqual({
+      required: 'original',
+      optional: 42,
+      nullable: 'fallback',
+      missing: true,
+    });
+  });
+
+  it.each(valuesThatShouldBeKept)('should keep an already-defined value: %s', value => {
+    const original: Record<string, unknown> = {
+      optional: value,
+      nullable: value,
+    };
+    const defaults: Record<string, unknown> = {
+      optional: 1,
+      nullable: 'fallback',
+    };
+
+    expect(resolvePartialDefaultProps(original, defaults)).toEqual(original);
+  });
+
+  it('should not replace undefined with an undefined default', () => {
+    const original: PartialProps = {
+      required: 'required',
+      optional: undefined,
+    };
+    const defaults: Partial<PartialProps> = {
+      optional: undefined,
+      nullable: undefined,
+    };
+
+    expect(resolvePartialDefaultProps(original, defaults)).toEqual(original);
+  });
+
+  it('should preserve properties that are not present in the defaults', () => {
+    const original: PartialProps & { extra: string } = {
+      required: 'required',
+      optional: undefined,
+      extra: 'extra',
+    };
+    const defaults: Partial<PartialProps> = {
+      nullable: 'fallback',
+    };
+
+    expect(resolvePartialDefaultProps(original, defaults)).toEqual({
+      required: 'required',
+      optional: undefined,
+      extra: 'extra',
+      nullable: 'fallback',
+    });
+  });
+
+  it('should return a shallow copy without mutating the original object', () => {
+    const nested = { value: 1 };
+    type PropsWithNested = PartialProps & { nested: typeof nested };
+    const original: PropsWithNested = {
+      required: 'required',
+      nested,
+    };
+    const defaults: Partial<PartialProps> = {
+      optional: 1,
+    };
+
+    const result = resolvePartialDefaultProps<PropsWithNested>(original, defaults);
+
+    expect(result).toEqual({ ...original, optional: 1 });
+    expect(result).not.toBe(original);
+    expect(original).toEqual({ required: 'required', nested });
+    expect(result.nested).toBe(nested);
+  });
+
+  it('should return a copy when both objects are empty', () => {
+    const original: Record<string, never> = {};
+    const defaults: Record<string, never> = {};
+
+    const result = resolvePartialDefaultProps(original, defaults);
+
+    expect(result).toEqual({});
+    expect(result).not.toBe(original);
   });
 });
 

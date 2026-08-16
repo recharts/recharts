@@ -18,7 +18,8 @@ import { svgPropertiesNoEvents } from '../util/svgPropertiesNoEvents';
 import { isPositiveNumber } from '../util/isWellBehavedNumber';
 import { ZIndexable, ZIndexLayer } from '../zIndex/ZIndexLayer';
 import { DefaultZIndexes } from '../zIndex/DefaultZIndexes';
-import { useRechartsTheme } from '../theme/RechartsThemeContext';
+import { Styles2D } from '../theme/RechartsTheme';
+import { useBackwardsCompatibleTheme } from '../theme/useBackwardsCompatibleTheme';
 
 /**
  * The <CartesianGrid horizontal
@@ -468,6 +469,11 @@ export const defaultCartesianGridProps = {
   zIndex: DefaultZIndexes.grid,
 } as const satisfies Partial<Props>;
 
+const defaultLegacyGridThemeProps: Styles2D = {
+  fill: 'none',
+  stroke: '#ccc',
+};
+
 /**
  * Renders background grid with lines and fill colors in a Cartesian chart.
  *
@@ -496,14 +502,11 @@ export function CartesianGrid(props: Props) {
     selectAxisPropsNeededForCartesianGridTicksGenerator(state, 'yAxis', yAxisId, isPanorama),
   );
 
-  const theme = useRechartsTheme();
-
-  const themeProps: Props = {
-    stroke: propsIncludingDefaults.stroke ?? theme.grid?.stroke,
-    strokeWidth: propsIncludingDefaults.strokeWidth ?? theme.grid?.strokeWidth,
-    strokeOpacity: propsIncludingDefaults.strokeOpacity ?? theme.grid?.strokeOpacity,
-    strokeDasharray: propsIncludingDefaults.strokeDasharray ?? theme.grid?.strokeDasharray,
-  };
+  const themeProps = useBackwardsCompatibleTheme(
+    theme => theme.grid,
+    propsIncludingDefaults,
+    defaultLegacyGridThemeProps,
+  );
 
   if (!isPositiveNumber(width) || !isPositiveNumber(height) || !isNumber(x) || !isNumber(y)) {
     return null;
@@ -581,8 +584,8 @@ export function CartesianGrid(props: Props) {
     <ZIndexLayer zIndex={propsIncludingDefaults.zIndex}>
       <g className="recharts-cartesian-grid">
         <Background
-          fill={propsIncludingDefaults.fill ?? theme.grid?.fill}
-          fillOpacity={propsIncludingDefaults.fillOpacity ?? theme.grid?.fillOpacity}
+          fill={themeProps.fill}
+          fillOpacity={themeProps.fillOpacity}
           x={propsIncludingDefaults.x}
           y={propsIncludingDefaults.y}
           width={propsIncludingDefaults.width}

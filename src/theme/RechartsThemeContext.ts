@@ -1,8 +1,7 @@
 import { createContext, useContext } from 'react';
 import { RechartsTheme } from './RechartsTheme';
-import { legacyTheme } from './legacyTheme';
 
-const RechartsThemeContext = createContext<RechartsTheme>(legacyTheme);
+const RechartsThemeContext = createContext<RechartsTheme | undefined>(undefined);
 
 /**
  * Applies the provided theme to all charts in the children tree.
@@ -13,7 +12,10 @@ export const RechartsThemeProvider = RechartsThemeContext.Provider;
 
 /**
  * Reads the currently active theme in the children tree.
+ * Returns the theme as-is, without modifications and without defaults.
  *
- * @experimental
+ * Can return undefined if used outside of Recharts context, or if no theme is set.
+ *
+ *  @experimental
  */
-export const useRechartsTheme = () => useContext(RechartsThemeContext);
+export const useRechartsTheme = (): RechartsTheme | undefined => useContext(RechartsThemeContext);

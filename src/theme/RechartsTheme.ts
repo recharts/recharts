@@ -6,11 +6,14 @@ import { LegendProps } from '../index';
  */
 export type Styles2D = {
   stroke?: string;
-  strokeOpacity?: number;
-  strokeWidth?: number;
+  strokeOpacity?: number | string;
+  strokeWidth?: number | string;
   strokeDasharray?: string | number;
-  fillOpacity?: number;
+  fillOpacity?: number | string;
   fill?: string;
+};
+
+export type GraphicalItemStyle = Styles2D & {
   /**
    * Styles applied to the active representation of a graphical item.
    *
@@ -18,13 +21,13 @@ export type Styles2D = {
    * Line uses this for its built-in active dot, while Bar and Pie will use it
    * for their active shapes when they support graphical item themes.
    */
-  active?: Omit<Styles2D, 'active'>;
+  active?: Styles2D;
 };
 
 /**
  * Styles shared with components that have a line (Line, ReferenceLine, ErrorBar) but no area
  */
-type Styles1D = {
+export type Styles1D = {
   stroke: string;
   strokeWidth?: number;
   strokeOpacity?: number;
@@ -34,7 +37,7 @@ type Styles1D = {
 /**
  * Styles shared with text components (various Labels, Tooltip, Legend)
  */
-type TextStyles = CSSProperties;
+export type TextStyles = CSSProperties;
 
 /**
  * Styling presets for Recharts components.
@@ -54,7 +57,7 @@ export interface RechartsTheme {
    *
    * Legend and Tooltip items inherit the same color.
    */
-  graphicalItems: ReadonlyArray<Styles2D>;
+  graphicalItems: ReadonlyArray<GraphicalItemStyle>;
   /**
    * CartesianGrid and PolarGrid.
    *

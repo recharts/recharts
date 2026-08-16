@@ -1,7 +1,7 @@
 import { render, screen } from '@testing-library/react';
 import React from 'react';
 import { vi } from 'vitest';
-import { Surface, Text } from '../../src';
+import { RechartsThemeProvider, Surface, Text } from '../../src';
 import { mockGetBoundingClientRect } from '../helper/mockGetBoundingClientRect';
 import { getWordsByLines } from '../../src/component/Text';
 import * as DOMUtils from '../../src/util/DOMUtils';
@@ -14,6 +14,20 @@ describe('<Text />', () => {
   };
   beforeEach(() => mockGetBoundingClientRect(mockRect));
 
+  test('retains the legacy fill when a theme does not define typography', () => {
+    const { container } = render(
+      <RechartsThemeProvider value={{ graphicalItems: [] }}>
+        <Surface width={300} height={300}>
+          <Text>text</Text>
+        </Surface>
+      </RechartsThemeProvider>,
+    );
+
+    const text = container.querySelector('text');
+    assertNotNull(text);
+    expect(text).toHaveAttribute('fill', '#808080');
+  });
+
   test('Does not wrap long text if enough width', () => {
     render(
       <Surface width={300} height={300}>
@@ -24,9 +38,10 @@ describe('<Text />', () => {
     );
 
     const text = screen.getByRole('img');
+    assertNotNull(text);
     expect(text).toBeInTheDocument();
 
-    expect(text?.children).toHaveLength(1);
+    expect(text.children).toHaveLength(1);
   });
 
   test('renders number children', () => {

@@ -73,8 +73,8 @@ import { ChartData } from '../state/chartDataSlice';
 import { getClassNameFromUnknown } from '../util/getClassNameFromUnknown';
 import { WithIdRequired } from '../util/useUniqueId';
 import { usePolarChartLayout } from '../context/chartLayoutContext';
-import { useRechartsTheme } from '../theme/RechartsThemeContext';
 import { RechartsTheme } from '../theme/RechartsTheme';
+import { useBackwardsCompatibleTheme } from '../theme/useBackwardsCompatibleTheme';
 
 interface PieDef {
   /**
@@ -1232,7 +1232,11 @@ type PropsWithResolvedDefaults = RequiresDefaultProps<Props, typeof defaultPiePr
  */
 function PieFn(outsideProps: Props) {
   const props: PropsWithResolvedDefaults = resolveDefaultProps(outsideProps, defaultPieProps);
-  const theme = useRechartsTheme();
+  const theme = useBackwardsCompatibleTheme<Partial<Pick<RechartsTheme, 'graphicalItems'>>>(
+    (rechartsTheme: RechartsTheme) => ({ graphicalItems: rechartsTheme.graphicalItems }),
+    {},
+    undefined,
+  );
   const explicitStyleProps: PieStyleProps = {
     fill: outsideProps.fill,
     fillOpacity: outsideProps.fillOpacity,
@@ -1276,13 +1280,13 @@ function PieFn(outsideProps: Props) {
           <SetPiePayloadLegend
             {...propsWithoutId}
             id={id}
-            graphicalItems={theme.graphicalItems}
+            graphicalItems={theme?.graphicalItems ?? []}
             explicitStyleProps={explicitStyleProps}
           />
           <PieImpl
             {...propsWithoutId}
             id={id}
-            graphicalItems={theme.graphicalItems}
+            graphicalItems={theme?.graphicalItems ?? []}
             explicitStyleProps={explicitStyleProps}
           />
         </>

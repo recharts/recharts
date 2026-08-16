@@ -9,7 +9,8 @@ import { reduceCSSCalc } from '../util/ReduceCSSCalc';
 import { svgPropertiesAndEvents } from '../util/svgPropertiesAndEvents';
 import { resolveDefaultProps } from '../util/resolveDefaultProps';
 import { isWellBehavedNumber } from '../util/isWellBehavedNumber';
-import { useRechartsTheme } from '../theme/RechartsThemeContext';
+
+import { useBackwardsCompatibleTheme } from '../theme/useBackwardsCompatibleTheme';
 
 const BREAKING_SPACES = /[ \f\n\r\t\v\u2028\u2029]+/;
 
@@ -383,8 +384,10 @@ export const textDefaultProps = {
   y: 0,
 } as const satisfies Partial<Props>;
 
+const emptyTextThemeProps: CSSProperties = {};
+
 export const Text = forwardRef<SVGTextElement, Props>((outsideProps, ref) => {
-  const theme = useRechartsTheme();
+  const typography = useBackwardsCompatibleTheme(theme => theme.typography, emptyTextThemeProps, emptyTextThemeProps);
   const {
     x: propsX,
     y: propsY,
@@ -397,17 +400,17 @@ export const Text = forwardRef<SVGTextElement, Props>((outsideProps, ref) => {
     style: propsStyle,
     ...props
   } = resolveDefaultProps(outsideProps, textDefaultProps);
-  const themeFill = theme.typography?.fill;
+  const themeFill = typography.fill;
   const style = useMemo(() => {
-    const { fill: themedFill, ...themeTypography } = theme.typography ?? {};
+    const { fill: themedFill, ...themeTypography } = typography;
     return {
       ...themeTypography,
       ...(outsideProps.fill == null && themedFill !== undefined ? { fill: themedFill } : {}),
       ...propsStyle,
     };
-  }, [outsideProps.fill, propsStyle, theme.typography]);
+  }, [outsideProps.fill, propsStyle, typography]);
   const resolvedFill =
-    outsideProps.fill ?? propsStyle?.color ?? theme.typography?.color ?? themeFill ?? fill ?? textDefaultProps.fill;
+    outsideProps.fill ?? propsStyle?.color ?? typography.color ?? themeFill ?? fill ?? textDefaultProps.fill;
   const wordsByLines: ReadonlyArray<Words> = useMemo(() => {
     return getWordsByLines({
       breakAll: props.breakAll,

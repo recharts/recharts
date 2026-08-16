@@ -1309,6 +1309,7 @@ describe.each(allChartsThatSupportCartesianGrid)('<CartesianGrid /> when child o
           expect(horizontal).toHaveBeenCalledTimes(horizontalPoints.length);
 
           const expectedProps: GridLineTypeFunctionProps = {
+            fill: 'none',
             stroke: '#ccc',
             syncWithTicks: false,
             height: 200,
@@ -1405,6 +1406,7 @@ describe.each(allChartsThatSupportCartesianGrid)('<CartesianGrid /> when child o
           expect(spy).toHaveBeenCalledTimes(horizontalPoints.length);
 
           const expectedProps: GridLineTypeFunctionProps = {
+            fill: 'none',
             stroke: '#ccc',
             syncWithTicks: false,
             height: 200,
@@ -1496,6 +1498,7 @@ describe.each(allChartsThatSupportCartesianGrid)('<CartesianGrid /> when child o
           expect(vertical).toHaveBeenCalledTimes(verticalPoints.length);
 
           const expectedProps: GridLineTypeFunctionProps = {
+            fill: 'none',
             stroke: '#ccc',
             syncWithTicks: false,
             height: 200,
@@ -1591,6 +1594,7 @@ describe.each(allChartsThatSupportCartesianGrid)('<CartesianGrid /> when child o
           expect(spy).toHaveBeenCalledTimes(verticalPoints.length);
 
           const expectedProps: GridLineTypeFunctionProps = {
+            fill: 'none',
             stroke: '#ccc',
             syncWithTicks: false,
             height: 200,

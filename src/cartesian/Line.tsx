@@ -62,8 +62,9 @@ import { DefaultZIndexes } from '../zIndex/DefaultZIndexes';
 import { propsAreEqual } from '../util/propsAreEqual';
 import { GraphicalItemId } from '../state/graphicalItemsSlice';
 import { ChartData } from '../state/chartDataSlice';
-import { useRechartsTheme } from '../theme/RechartsThemeContext';
 import { graphicalItemIdentity } from '../theme/graphicalItemIdentity';
+import { GraphicalItemStyle, RechartsTheme } from '../theme/RechartsTheme';
+import { useBackwardsCompatibleTheme } from '../theme/useBackwardsCompatibleTheme';
 
 export interface LinePointItem {
   readonly value: number;
@@ -335,14 +336,10 @@ interface LineProps<DataPointType = any, DataValueType = any>
   zIndex?: number;
   /**
    * The stroke color. If `"none"`, no line will be drawn.
-   *
-   * @defaultValue #3182bd
    */
   stroke?: string;
   /**
    * The width of the stroke
-   *
-   * @defaultValue 1
    */
   strokeWidth?: string | number;
   /**
@@ -429,6 +426,12 @@ const defaultLineAnimateItems: AnimationInterpolateFn<LinePointItem, CartesianLa
   return result;
 };
 
+const defaultLegacyThemeProps: GraphicalItemStyle = {
+  fill: '#fff',
+  stroke: '#3182bd',
+  strokeWidth: 1,
+};
+
 export const defaultLineProps = {
   activeDot: true,
   animateNewValues: true,
@@ -439,14 +442,11 @@ export const defaultLineProps = {
   animationMatchBy: matchByIndex,
   connectNulls: false,
   dot: true,
-  fill: '#fff',
   hide: false,
   isAnimationActive: 'auto',
   label: false,
   legendType: 'line',
   shape: LineDrawShape,
-  stroke: '#3182bd',
-  strokeWidth: 1,
   xAxisId: 0,
   yAxisId: 0,
   zIndex: DefaultZIndexes.line,
@@ -916,11 +916,14 @@ export function computeLinePoints({
 }
 
 function LineFn(outsideProps: Props) {
-  const theme = useRechartsTheme();
-  const graphicalItemTheme =
-    outsideProps.dataKey == null || theme.graphicalItems == null
-      ? undefined
-      : theme.graphicalItems[graphicalItemIdentity({ dataKey: outsideProps.dataKey }, theme.graphicalItems.length)];
+  const graphicalItemTheme = useBackwardsCompatibleTheme<GraphicalItemStyle>(
+    (theme: RechartsTheme) =>
+      outsideProps.dataKey == null
+        ? undefined
+        : theme.graphicalItems[graphicalItemIdentity({ dataKey: outsideProps.dataKey }, theme.graphicalItems.length)],
+    outsideProps,
+    defaultLegacyThemeProps,
+  );
   const themeStrokeDasharray = graphicalItemTheme?.strokeDasharray;
   const activeDot =
     graphicalItemTheme?.active == null ||
