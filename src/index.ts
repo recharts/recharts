@@ -282,4 +282,3 @@ export { RechartsThemeProvider, useRechartsTheme } from './theme/RechartsThemeCo
 export { darkTheme } from './theme/darkTheme';
 export { lightTheme } from './theme/lightTheme';
 export { emptyTheme } from './theme/emptyTheme';
-export { legacyTheme } from './theme/legacyTheme';

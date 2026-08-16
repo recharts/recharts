@@ -1,9 +1,8 @@
 import { createContext, useContext } from 'react';
-import { RechartsTheme, Styles2D } from './RechartsTheme';
-import { legacyTheme } from './legacyTheme';
-import { resolveDefaultProps } from '../util/resolveDefaultProps';
+import { RechartsTheme } from './RechartsTheme';
+import { resolvePartialDefaultProps } from '../util/resolveDefaultProps';
 
-const RechartsThemeContext = createContext<RechartsTheme>(legacyTheme);
+const RechartsThemeContext = createContext<RechartsTheme | undefined>(undefined);
 
 /**
  * Applies the provided theme to all charts in the children tree.
@@ -20,36 +19,48 @@ export const RechartsThemeProvider = RechartsThemeContext.Provider;
  *
  *  @experimental
  */
-export const useRechartsTheme = (): RechartsTheme => useContext(RechartsThemeContext);
+export const useRechartsTheme = (): RechartsTheme | undefined => useContext(RechartsThemeContext);
+
+const noStyles = {};
 
 /**
  * Backwards compatible hook for theming.
  *
- * - If a theme is set:
- *    - merges the `explicitProps` with the theme context
- *    - the theme acts as defaults
- *    - ignores `legacyDefaults` completely
- * - If a theme is not set:
- *   - then returns `explicitProps` merged with `legacyDefaults`
- *   - this is intended for backwards compatibility with existing charts that rely on the 2.x defaults
+ * - If the selector returns a theme slice, it is merged with `explicitProps` and acts as defaults.
+ * - If no matching theme slice is present, no props are returned - this allows us to set an "empty theme" with completely unstyled chart
+ *   This preserves the 2.x defaults for existing charts.
  *
  * `themeSelector` selects the subset of theme which this component is interested in.
  * The selector is not called in case the theme is undefined.
  *
  * @experimental
  */
-export const useBackwardsCompatibleTheme = (
-  themeSelector: (theme: RechartsTheme) => Styles2D | undefined,
-  explicitProps: Styles2D,
-  legacyDefaults: Styles2D,
-): Styles2D => {
+export const useBackwardsCompatibleTheme = <Props extends object>(
+  themeSelector: (theme: RechartsTheme) => Partial<Props> | undefined,
+  explicitProps: Props,
+  legacyDefaults: Partial<Props>,
+): Partial<Props> => {
   const theme = useRechartsTheme();
   if (theme == null) {
-    return resolveDefaultProps(explicitProps, legacyDefaults);
+    /*
+     * Theme is not set at all - this means lack of any `RechartsThemeProvider` (or it was given null/undefined).
+     * This is the 2.x path - each component sets its own defaults. Let them!
+     */
+    return resolvePartialDefaultProps(explicitProps, legacyDefaults);
   }
   const slice = themeSelector(theme);
   if (slice == null) {
-    return resolveDefaultProps(explicitProps, legacyDefaults);
+    /*
+     * In this case the theme exists but the particular slice does not.
+     * This could be that a chunk of the theme is not defined,
+     * or it could be the emptyTheme.
+     * Here we see the new theme so let's not mix it with old defaults.
+     */
+    return noStyles;
   }
-  return resolveDefaultProps(explicitProps, slice);
+  /*
+   * And finally a mix of the theme and explicit props.
+   * Old default styles don't apply here either.
+   */
+  return resolvePartialDefaultProps(explicitProps, slice);
 };

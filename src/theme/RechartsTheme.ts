@@ -24,7 +24,7 @@ export type Styles2D = {
 /**
  * Styles shared with components that have a line (Line, ReferenceLine, ErrorBar) but no area
  */
-type Styles1D = {
+export type Styles1D = {
   stroke: string;
   strokeWidth?: number;
   strokeOpacity?: number;
@@ -34,7 +34,7 @@ type Styles1D = {
 /**
  * Styles shared with text components (various Labels, Tooltip, Legend)
  */
-type TextStyles = CSSProperties;
+export type TextStyles = CSSProperties;
 
 /**
  * Styling presets for Recharts components.

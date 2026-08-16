@@ -29,6 +29,20 @@ describe('CartesianGrid theme', () => {
           expect(line.getAttribute('stroke-dasharray')).toBe(null);
         });
       });
+
+      it('should retain legacy defaults when a theme does not define grid styles', () => {
+        const { container } = rechartsTestRender(
+          <RechartsThemeProvider value={{ graphicalItems: [] }}>
+            <MyChart>
+              <CartesianGrid />
+            </MyChart>
+          </RechartsThemeProvider>,
+        );
+        const allLines = container.querySelectorAll('.recharts-cartesian-grid line');
+        allLines.forEach(line => {
+          expect(line.getAttribute('stroke')).toBe('#ccc');
+        });
+      });
     });
 
     describe('when defined as a prop', () => {
