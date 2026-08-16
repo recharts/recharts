@@ -757,7 +757,7 @@ export function computeFunnelTrapezoids({
  * @consumes RechartsThemeContext
  */
 function FunnelFn(outsideProps: Props) {
-  const theme = useBackwardsCompatibleTheme<{ graphicalItems: RechartsTheme['graphicalItems'] }>(
+  const theme = useBackwardsCompatibleTheme<Partial<Pick<RechartsTheme, 'graphicalItems'>>>(
     (rechartsTheme: RechartsTheme) => ({ graphicalItems: rechartsTheme.graphicalItems }),
     {},
     {},
