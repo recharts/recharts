@@ -73,7 +73,7 @@ import { DefaultZIndexes } from '../zIndex/DefaultZIndexes';
 import { getZIndexFromUnknown } from '../zIndex/getZIndexFromUnknown';
 import { usePolarChartLayout } from '../context/chartLayoutContext';
 import { graphicalItemIdentity } from '../theme/graphicalItemIdentity';
-import { GraphicalItemStyle, RechartsTheme } from '../theme/RechartsTheme';
+import { RechartsTheme } from '../theme/RechartsTheme';
 import { useBackwardsCompatibleTheme } from '../theme/useBackwardsCompatibleTheme';
 
 const STABLE_EMPTY_ARRAY: readonly RadialBarDataItem[] = [];
@@ -817,7 +817,7 @@ export function computeRadialBarDataItems({
 export function RadialBar<DataPointType = any, DataValueType = any>(
   outsideProps: RadialBarProps<DataPointType, DataValueType>,
 ) {
-  const graphicalItemStyle = useBackwardsCompatibleTheme<GraphicalItemStyle>(
+  const graphicalItemStyle = useBackwardsCompatibleTheme<RadialBarProps<DataPointType, DataValueType>>(
     (theme: RechartsTheme) =>
       outsideProps.dataKey == null
         ? undefined
