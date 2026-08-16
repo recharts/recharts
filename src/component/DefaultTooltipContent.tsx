@@ -9,7 +9,8 @@ import { clsx } from 'clsx';
 import { isNullish, isNumOrStr } from '../util/DataUtils';
 import { DataKey } from '../util/types';
 import { TooltipPayload, TooltipPayloadEntry } from '../state/tooltipSlice';
-import { useRechartsTheme } from '../theme/RechartsThemeContext';
+import { RechartsTheme } from '../theme/RechartsTheme';
+import { useBackwardsCompatibleTheme } from '../theme/useBackwardsCompatibleTheme';
 
 function defaultFormatter(value: ValueType | undefined): React.ReactNode {
   return Array.isArray(value) && isNumOrStr(value[0]) && isNumOrStr(value[1]) ? value.join(' ~ ') : value;
@@ -107,7 +108,14 @@ function lodashLikeSortBy<T>(array: ReadonlyArray<T>, itemSorter: TooltipItemSor
  * or you can provide your own completely independent content.
  */
 export const DefaultTooltipContent = (props: Props) => {
-  const theme = useRechartsTheme();
+  const theme = useBackwardsCompatibleTheme<Pick<RechartsTheme, 'typography' | 'tooltip'>>(
+    (rechartsTheme: RechartsTheme) => ({
+      typography: rechartsTheme.typography,
+      tooltip: rechartsTheme.tooltip,
+    }),
+    {},
+    {},
+  );
   const {
     separator = defaultDefaultTooltipContentProps.separator,
     contentStyle,
