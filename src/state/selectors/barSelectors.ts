@@ -10,8 +10,9 @@ import {
   selectTicksOfGraphicalItem,
   selectUnfilteredCartesianItems,
 } from './axisSelectors';
-import { isNullish } from '../../util/DataUtils';
+import { isNullish, mathSign } from '../../util/DataUtils';
 import { BarPositionPosition, getBandSizeOfAxis, StackId } from '../../util/ChartUtils';
+import { minPointSizeCallback } from '../../util/BarUtils';
 import { CartesianViewBoxRequired, ChartOffsetInternal, DataKey, LayoutType, TickItem } from '../../util/types';
 import { BarRectangleItem, computeBarRectangles } from '../../cartesian/Bar';
 import { selectChartLayout } from '../../context/chartLayoutContext';
@@ -244,6 +245,78 @@ export const selectStackedDataOfItem: (
   combineStackedData,
 );
 
+/**
+ * When a stacked segment is shorter than its `minPointSize`, it gets inflated to that minimum size.
+ * That inflation always keeps the segment's base-ward edge (the edge touching the previous segment in
+ * the stack) fixed and only extends the far edge - so a segment stacked on top of an inflated one would
+ * otherwise start from the segment's *natural* (un-inflated) position and overlap it.
+ *
+ * This selector computes, per data index, how far the segments *before* this one in the stack were
+ * pushed out by their own `minPointSize` inflation, so that this segment's whole rectangle can be
+ * translated by the same amount and stay attached without overlapping.
+ *
+ * Sign follows the same convention as the per-segment inflation delta: positive means "further away
+ * from the stack's zero baseline", matching whichever direction that already means in `computeBarRectangles`
+ * for the given layout.
+ */
+export const selectStackedMinPointSizeShift: (
+  state: RechartsRootState,
+  id: GraphicalItemId,
+  isPanorama: boolean,
+) => ReadonlyArray<number> | undefined = createSelector(
+  [selectBarStackGroups, selectSynchronisedBarSettings, selectChartLayout, selectXAxisWithScale, selectYAxisWithScale],
+  (
+    stackGroups: AllStackGroups | undefined,
+    barSettings: BarSettings | undefined,
+    layout: LayoutType,
+    xAxis: BaseAxisWithScale | undefined,
+    yAxis: BaseAxisWithScale | undefined,
+  ): ReadonlyArray<number> | undefined => {
+    if (stackGroups == null || barSettings?.stackId == null) {
+      return undefined;
+    }
+    const stackGroup = stackGroups[barSettings.stackId];
+    if (stackGroup == null) {
+      return undefined;
+    }
+    const numericAxis = layout === 'horizontal' ? yAxis : xAxis;
+    if (numericAxis?.scale == null) {
+      return undefined;
+    }
+    const { stackedData, graphicalItems } = stackGroup;
+    const myIndex = graphicalItems.findIndex(item => item.id === barSettings.id);
+    if (myIndex <= 0) {
+      return undefined;
+    }
+    const shifts: Array<number> = [];
+    for (let seriesIndex = 0; seriesIndex < myIndex; seriesIndex++) {
+      const series = stackedData[seriesIndex];
+      const item = graphicalItems[seriesIndex];
+      if (series == null || item == null || item.type !== 'bar') {
+        continue;
+      }
+      const minPointSizeProp = item.minPointSize;
+      series.forEach((point, dataIndex) => {
+        if (point == null) {
+          return;
+        }
+        const start = numericAxis.scale.map(point[0]);
+        const end = numericAxis.scale.map(point[1]);
+        if (start == null || end == null) {
+          return;
+        }
+        const naturalSize = layout === 'horizontal' ? start - end : end - start;
+        const minPointSize = minPointSizeCallback(minPointSizeProp, 0)(point[1], dataIndex);
+        if (Math.abs(minPointSize) > 0 && Math.abs(naturalSize) < Math.abs(minPointSize)) {
+          const delta = mathSign(naturalSize || minPointSize) * (Math.abs(minPointSize) - Math.abs(naturalSize));
+          shifts[dataIndex] = (shifts[dataIndex] ?? 0) + delta;
+        }
+      });
+    }
+    return shifts;
+  },
+);
+
 export const selectBarRectangles: (
   state: RechartsRootState,
   id: GraphicalItemId,
@@ -262,6 +335,7 @@ export const selectBarRectangles: (
     selectChartDataWithIndexesIfNotInPanoramaPosition3,
     selectAxisBandSize,
     selectStackedDataOfItem,
+    selectStackedMinPointSizeShift,
     selectSynchronisedBarSettings,
     pickCells,
   ],
@@ -277,6 +351,7 @@ export const selectBarRectangles: (
     { chartData, dataStartIndex, dataEndIndex },
     bandSize,
     stackedData,
+    stackedMinPointSizeShift: ReadonlyArray<number> | undefined,
     barSettings: BarSettings | undefined,
     cells,
   ): ReadonlyArray<BarRectangleItem> | undefined => {
@@ -317,6 +392,7 @@ export const selectBarRectangles: (
       xAxisTicks,
       yAxisTicks,
       stackedData,
+      stackedMinPointSizeShift,
       displayedData,
       offset,
       cells,
