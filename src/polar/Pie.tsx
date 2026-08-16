@@ -1232,7 +1232,7 @@ type PropsWithResolvedDefaults = RequiresDefaultProps<Props, typeof defaultPiePr
  */
 function PieFn(outsideProps: Props) {
   const props: PropsWithResolvedDefaults = resolveDefaultProps(outsideProps, defaultPieProps);
-  const theme = useBackwardsCompatibleTheme<Pick<RechartsTheme, 'graphicalItems'>>(
+  const theme = useBackwardsCompatibleTheme<Partial<Pick<RechartsTheme, 'graphicalItems'>>>(
     (rechartsTheme: RechartsTheme) => ({ graphicalItems: rechartsTheme.graphicalItems }),
     {},
     {},
