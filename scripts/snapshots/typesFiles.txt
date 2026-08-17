@@ -288,6 +288,7 @@
   "types/util/typedDataKey.d.ts",
   "types/util/types.d.ts",
   "types/util/useAnimationId.d.ts",
+  "types/util/useCells.d.ts",
   "types/util/useElementOffset.d.ts",
   "types/util/useId.d.ts",
   "types/util/usePrefersReducedMotion.d.ts",

@@ -288,6 +288,7 @@
   "es6/util/typedDataKey.js",
   "es6/util/types.js",
   "es6/util/useAnimationId.js",
+  "es6/util/useCells.js",
   "es6/util/useElementOffset.js",
   "es6/util/useId.js",
   "es6/util/usePrefersReducedMotion.js",

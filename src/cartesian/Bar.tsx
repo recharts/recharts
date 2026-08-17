@@ -15,7 +15,6 @@ import { Series } from 'victory-vendor/d3-shape';
 import { Props as RectangleProps, RectRadius } from '../shape/Rectangle';
 import { Layer } from '../container/Layer';
 import { ErrorBarDataItem, ErrorBarDataPointFormatter } from './ErrorBar';
-import { Cell } from '../component/Cell';
 import {
   CartesianLabelListContextProvider,
   CartesianLabelListEntry,
@@ -23,7 +22,6 @@ import {
   LabelListFromLabelProp,
 } from '../component/LabelList';
 import { interpolate, isNan, mathSign, noop } from '../util/DataUtils';
-import { findAllByType } from '../util/ReactUtils';
 import {
   BarPositionPosition,
   getBaseValueOfBar,
@@ -87,6 +85,7 @@ import { ZIndexable, ZIndexLayer } from '../zIndex/ZIndexLayer';
 import { DefaultZIndexes } from '../zIndex/DefaultZIndexes';
 import { getZIndexFromUnknown } from '../zIndex/getZIndexFromUnknown';
 import { propsAreEqual } from '../util/propsAreEqual';
+import { useCells } from '../util/useCells';
 import { AxisId } from '../state/cartesianAxisSlice';
 import { BarStackClipLayer, useStackId } from './BarStack';
 import { GraphicalItemId } from '../state/graphicalItemsSlice';
@@ -1046,7 +1045,12 @@ function BarImpl(props: BarImplProps) {
 
   const isPanorama = useIsPanorama();
 
-  const cells = findAllByType(props.children, Cell);
+  /*
+   * `cells` is an argument to the memoized selector below, so it has to be referentially stable,
+   * otherwise every render of this component is a cache miss that returns a brand new `rects` array,
+   * which changes the animationId, which starts a spurious animation.
+   */
+  const cells = useCells(props.children);
 
   const rects: ReadonlyArray<BarRectangleItem> | undefined = useAppSelector(state =>
     selectBarRectangles(state, props.id, isPanorama, cells),
