@@ -131,6 +131,8 @@ export function SourceCodeEditor({
   useEffect(() => {
     if (!editorRef.current || viewRef.current) return () => {};
 
+    editorRef.current.replaceChildren();
+
     const extensions: Extension[] = [
       javascript({ jsx: true, typescript: true }),
       syntaxHighlighting(accessibleHighlightStyle),
@@ -236,6 +238,8 @@ export function SourceCodeEditor({
       ref={editorRef}
       className={`codemirror-example-editor ${className}`}
       style={{ height: '100%', overflow: 'auto' }}
-    />
+    >
+      <pre>{valueWithoutTrailingNewline}</pre>
+    </div>
   );
 }
