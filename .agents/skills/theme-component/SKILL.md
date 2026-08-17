@@ -23,7 +23,7 @@ The completed change must include:
 2. Focused unit coverage of the rendered result and precedence rules.
 3. A focused Playwright visual-regression test and its three browser snapshots.
 
-`src/cartesian/CartesianGrid.tsx` and `test/cartesian/CartesianGrid/CartesianGrid.theme.spec.tsx` are the current reference implementation. Use them to understand the established API, but adapt the design to the target instead of copying their tests or implementation mechanically.
+`src/cartesian/CartesianGrid.tsx` and `test/cartesian/CartesianGrid/CartesianGrid.theme.spec.tsx` are the current reference implementation for grid styling. `src/cartesian/CartesianAxis.tsx` is the reference for axis styling and for separating theme defaults from other component defaults. Use these files to understand the established API, but adapt the design to the target instead of copying their tests or implementation mechanically.
 
 ## Before editing
 
@@ -43,12 +43,16 @@ Reuse an existing semantic theme section when the target shares its visual contr
 
 1. The `RechartsTheme` type should already contain all relevant types. It is intentionally a bit generic - and the target component should aim to reuse shared properties instead of focusing narrowly. To give a more specific example, an XAxis tick labels should reuse font size and font weight from the `typography` section. When a relevant property is missing but a meaningful theme mapping clearly exists for that visual attribute, you may add the minimal shared contract addition to the `RechartsTheme` type along with corresponding built-in theme values. Only exit early when no meaningful theme mapping exists at all for the prop.
 2. The built-in themes (`lightTheme`, `darkTheme`) are already populated and likewise should have all properties available and ready to use. When adding new theme contract properties per item 1, include corresponding values in all built-in themes.
-3. Read the theme through `useRechartsTheme` at the component's final styling-resolution boundary. Preserve this order for every themed field:
+3. Resolve the theme at the component's final styling-resolution boundary. For ordinary visual defaults, use `useBackwardsCompatibleTheme` with the relevant theme selector, the explicit visual props, and a separate legacy-default object. This preserves the established three-level precedence:
    - explicit component prop;
    - provider theme value;
-   - legacy/default behavior.
+   - legacy/default behavior when no provider is present.
 
-Do not merge theme values after a user prop in JSX, and do not allow a resolved default to hide an omitted prop before the theme is considered. When the component has nested style objects, merge them field-by-field so explicit user fields win while omitted fields can still come from the theme.
+   Keep theme defaults separate from the component's other default props. If a visual prop has a legacy value in `default*Props`, remove it from that object and provide the legacy value to `useBackwardsCompatibleTheme` instead; otherwise the resolved component default can hide an omitted prop before the theme is considered. A provider with no matching theme slice intentionally suppresses legacy styling, so do not add a fallback after the hook result.
+
+   `useBackwardsCompatibleTheme` merges explicit fields over the selected theme slice and returns no styles for a missing slice. Use an empty legacy-default object for optional style groups such as typography. Use `useRechartsTheme` directly only when the component needs behavior that the compatibility helper cannot express.
+
+   Do not merge theme values after a user prop in JSX. When the component has nested style objects, merge them field-by-field at the styling boundary, with provider values first and explicit user fields second.
 
 Keep custom renderers and component/element props intact. A theme supplies defaults for Recharts' own output; it must not mutate or replace user-provided custom output.
 
@@ -59,6 +63,7 @@ Create or extend `test/<component-path>/<Component>.theme.spec.tsx`, using the t
 Cover each distinct rendered style surface concisely:
 
 - no provider: preserves the legacy/default rendered appearance;
+- a provider without the target's theme slice: does not reintroduce legacy styling;
 - a custom provider: every supported themed field reaches the correct output;
 - an explicit prop conflicting with the provider: the prop wins;
 - if styles are objects or independently merged fields, an omitted prop field still receives the theme value.
@@ -92,6 +97,7 @@ npm run test -- test/<component-path>/<Component>.theme.spec.tsx
 
 - The target's visual props are available from an appropriately named, precise theme section.
 - Existing output remains unchanged without a provider.
+- A provider with no matching slice does not accidentally receive legacy visual defaults.
 - Explicit component props win over themed values.
 - Unit tests verify rendered behavior, not only types.
 - A deterministic VR test demonstrates the target's themed appearance.

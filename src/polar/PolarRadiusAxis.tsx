@@ -38,6 +38,8 @@ import { usePolarChartLayout } from '../context/chartLayoutContext';
 import { noop } from '../util/DataUtils';
 import { getAxisTypeBasedOnLayout } from '../util/getAxisTypeBasedOnLayout';
 import { getClassNameFromUnknown } from '../util/getClassNameFromUnknown';
+import { Styles1D, TextStyles } from '../theme/RechartsTheme';
+import { useBackwardsCompatibleTheme } from '../theme/useBackwardsCompatibleTheme';
 
 export type TickOrientation = 'left' | 'right' | 'middle';
 
@@ -228,6 +230,12 @@ type InsideProps = Omit<PropsWithDefaults, 'scale'> &
 
 const AXIS_TYPE = 'radiusAxis';
 
+const defaultLegacyRadiusAxisThemeProps: Styles1D = {
+  stroke: '#ccc',
+};
+
+const emptyTextThemeProps: TextStyles = {};
+
 function SetRadiusAxisSettings(props: Omit<RadiusAxisSettings, 'type'> & { type: AxisDomainTypeInput }): null {
   const dispatch = useAppDispatch();
   const layout = usePolarChartLayout();
@@ -380,6 +388,17 @@ const renderTicks = (props: InsideProps, ticks: ReadonlyArray<TickItem>): ReactE
 
 export const PolarRadiusAxisWrapper: FunctionComponent<PropsWithDefaults> = (defaultsAndInputs: PropsWithDefaults) => {
   const { radiusAxisId } = defaultsAndInputs;
+  const axisTheme = useBackwardsCompatibleTheme(
+    theme => theme.axis,
+    {
+      stroke: defaultsAndInputs.stroke,
+      strokeWidth: defaultsAndInputs.strokeWidth,
+      strokeOpacity: defaultsAndInputs.strokeOpacity,
+      strokeDasharray: defaultsAndInputs.strokeDasharray,
+    },
+    defaultLegacyRadiusAxisThemeProps,
+  );
+  const typography = useBackwardsCompatibleTheme(theme => theme.typography, emptyTextThemeProps, emptyTextThemeProps);
 
   const viewBox = useAppSelector(selectPolarViewBox);
   const scale = useAppSelector(state => selectPolarAxisScale(state, 'radiusAxis', radiusAxisId));
@@ -391,6 +410,8 @@ export const PolarRadiusAxisWrapper: FunctionComponent<PropsWithDefaults> = (def
 
   const props: InsideProps = {
     ...defaultsAndInputs,
+    ...axisTheme,
+    style: { ...typography, ...defaultsAndInputs.style },
     scale,
     ...viewBox,
   };
