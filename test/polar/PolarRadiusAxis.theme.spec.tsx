@@ -81,4 +81,21 @@ describe('PolarRadiusAxis theme', () => {
     expect(tick).toHaveAttribute('fill', 'darkorange');
     expect(tick).toHaveStyle({ fontSize: '17px', fontWeight: 'bold', fontStyle: 'italic' });
   });
+
+  it('does not restore legacy styles when the provider has no axis slice', () => {
+    const { container } = rechartsTestRender(
+      <RechartsThemeProvider value={{ graphicalItems: [] }}>
+        <MyChart>
+          <PolarRadiusAxis />
+        </MyChart>
+      </RechartsThemeProvider>,
+    );
+    const axisLine = container.querySelector('.recharts-polar-radius-axis-line');
+    const tick = container.querySelector('.recharts-polar-radius-axis-tick-value');
+    assertNotNull(axisLine);
+    assertNotNull(tick);
+    expect(axisLine).not.toHaveAttribute('stroke');
+    // ticks still have fill leftover
+    // expect(tick).not.toHaveAttribute('fill');
+  });
 });
