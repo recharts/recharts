@@ -1273,6 +1273,7 @@ function BarFn(outsideProps: Props) {
   const themeStroke = outsideProps.stroke ?? graphicalItemStyle?.stroke;
   const themeStrokeWidth = outsideProps.strokeWidth ?? graphicalItemStyle?.strokeWidth;
   const themeStrokeOpacity = outsideProps.strokeOpacity ?? graphicalItemStyle?.strokeOpacity;
+  const themeStrokeDasharray = outsideProps.strokeDasharray ?? graphicalItemStyle?.strokeDasharray;
   const themeFillOpacity = outsideProps.fillOpacity ?? graphicalItemStyle?.fillOpacity;
 
   const themedProps: Partial<Props> = {};
@@ -1280,6 +1281,7 @@ function BarFn(outsideProps: Props) {
   if (themeStroke !== undefined) themedProps.stroke = themeStroke;
   if (themeStrokeWidth !== undefined) themedProps.strokeWidth = themeStrokeWidth;
   if (themeStrokeOpacity !== undefined) themedProps.strokeOpacity = themeStrokeOpacity;
+  if (themeStrokeDasharray !== undefined) themedProps.strokeDasharray = themeStrokeDasharray;
   if (themeFillOpacity !== undefined) themedProps.fillOpacity = themeFillOpacity;
 
   // Report all props to Redux store first, before calling any hooks, to avoid circular dependencies.

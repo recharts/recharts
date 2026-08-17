@@ -46,6 +46,11 @@ describe('Bar theme', () => {
     return bar?.getAttribute('fill-opacity') ?? null;
   }
 
+  function getBarStrokeDasharray(container: ReturnType<typeof rechartsTestRender>['container']): string | null {
+    const bar = getAllBarPaths(container)[0];
+    return bar?.getAttribute('stroke-dasharray') ?? null;
+  }
+
   describe('fill', () => {
     describe('when not defined at all (no provider)', () => {
       it('should have no fill (legacy behavior)', () => {
@@ -178,6 +183,38 @@ describe('Bar theme', () => {
           </RechartsThemeProvider>,
         );
         expect(getBarFillOpacity(container)).toBe('0.7');
+      });
+    });
+  });
+
+  describe('strokeDasharray', () => {
+    describe('when defined as a theme', () => {
+      it('should use the theme strokeDasharray value', () => {
+        const { container } = rechartsTestRender(
+          <RechartsThemeProvider
+            value={{
+              graphicalItems: [{ stroke: 'red', strokeDasharray: '5 10' }],
+            }}
+          >
+            <MyChart />
+          </RechartsThemeProvider>,
+        );
+        expect(getBarStrokeDasharray(container)).toBe('5 10');
+      });
+    });
+
+    describe('when both prop and theme are defined', () => {
+      it('should prefer the prop over the theme', () => {
+        const { container } = rechartsTestRender(
+          <RechartsThemeProvider
+            value={{
+              graphicalItems: [{ stroke: 'red', strokeDasharray: '5 10' }],
+            }}
+          >
+            <MyChart barProps={{ strokeDasharray: '1 2' }} />
+          </RechartsThemeProvider>,
+        );
+        expect(getBarStrokeDasharray(container)).toBe('1 2');
       });
     });
   });
