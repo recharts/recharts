@@ -9,7 +9,7 @@
 
 ## Introduction
 
-Recharts is a **Redefined** chart library built with [React](https://facebook.github.io/react/) and [D3](http://d3js.org).
+Recharts is a **Redefined** chart library built with [React](https://react.dev/) and [D3](https://d3js.org).
 
 The main purpose of this library is to help you to write charts in React applications without any pain. Main principles of Recharts are:
 
