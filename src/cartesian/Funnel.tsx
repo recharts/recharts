@@ -54,7 +54,8 @@ import { GraphicalItemId } from '../state/graphicalItemsSlice';
 import { RegisterGraphicalItemId } from '../context/RegisterGraphicalItemId';
 import { WithIdRequired } from '../util/useUniqueId';
 import { useCartesianChartLayout } from '../context/chartLayoutContext';
-import { useRechartsTheme } from '../theme/RechartsThemeContext';
+import { RechartsTheme } from '../theme/RechartsTheme';
+import { useBackwardsCompatibleTheme } from '../theme/useBackwardsCompatibleTheme';
 
 export type FunnelTrapezoidItem = TrapezoidProps &
   TrapezoidViewBox & {
@@ -761,7 +762,11 @@ export function computeFunnelTrapezoids({
  * @consumes RechartsThemeContext
  */
 function FunnelFn(outsideProps: Props) {
-  const theme = useRechartsTheme();
+  const theme = useBackwardsCompatibleTheme<Partial<Pick<RechartsTheme, 'graphicalItems'>>>(
+    (rechartsTheme: RechartsTheme) => ({ graphicalItems: rechartsTheme.graphicalItems }),
+    {},
+    undefined,
+  );
 
   /*
    * Funnel is per-index: each trapezoid at index `i` picks its styles from
@@ -769,7 +774,7 @@ function FunnelFn(outsideProps: Props) {
    * props still win, so the theme only supplies the values that were omitted.
    */
   const indexedStyles: ReadonlyArray<Record<string, unknown>> = useMemo(() => {
-    const { graphicalItems } = theme;
+    const graphicalItems = theme?.graphicalItems;
     if (graphicalItems == null || graphicalItems.length === 0) {
       return [];
     }

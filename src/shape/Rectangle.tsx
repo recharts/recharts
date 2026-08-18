@@ -2,7 +2,7 @@
  * @fileOverview Rectangle
  */
 import * as React from 'react';
-import { SVGProps, useEffect, useMemo, useRef, useState } from 'react';
+import { SVGProps, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { clsx } from 'clsx';
 import { AnimationDuration } from '../util/types';
 import { resolveDefaultProps } from '../util/resolveDefaultProps';
@@ -220,7 +220,29 @@ export const Rectangle: React.FC<Props> = rectangleProps => {
   const animationIdInput = useMemo(() => ({ x, y, width, height, radius }), [x, y, width, height, radius]);
   const animationId = useAnimationId(animationIdInput, 'rectangle-');
 
-  if (x !== +x || y !== +y || width !== +width || height !== +height || width === 0 || height === 0) {
+  /*
+   * Re-render once the shrink-to-zero animation is over. By then the tracked previous size is zero
+   * too, so the zero-dimension check below unmounts the rectangle instead of leaving an invisible
+   * zero-size path behind.
+   */
+  const [, setAnimationEndTick] = useState(0);
+  const handleAnimationEnd = useCallback(() => {
+    setAnimationEndTick(tick => tick + 1);
+  }, []);
+
+  if (x !== +x || y !== +y || width !== +width || height !== +height) {
+    return null;
+  }
+
+  /*
+   * A rectangle with a zero width or height has nothing to paint, so usually we render nothing at all.
+   * The exception is a rectangle that is animating down to zero: bailing out here would unmount it
+   * immediately and the shrinking animation would never run - which is why rectangles used to animate
+   * away from zero but not towards it.
+   */
+  const hasZeroDimension = width === 0 || height === 0;
+  const wasVisibleBefore = prevWidthRef.current !== 0 && prevHeightRef.current !== 0;
+  if (hasZeroDimension && !(isUpdateAnimationActive && wasVisibleBefore)) {
     return null;
   }
 
@@ -263,6 +285,7 @@ export const Rectangle: React.FC<Props> = rectangleProps => {
       easing={animationEasing}
       isActive={isUpdateAnimationActive}
       begin={animationBegin}
+      onAnimationEnd={hasZeroDimension ? handleAnimationEnd : undefined}
     >
       {(animationElapsedTime: number) => {
         const currWidth = interpolate(prevWidth, width, animationElapsedTime);

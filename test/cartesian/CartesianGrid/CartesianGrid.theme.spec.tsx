@@ -3,6 +3,7 @@ import { generateMockData } from '@recharts/devtools';
 import React from 'react';
 import { rechartsTestRender } from '../../helper/createSelectorTestCase';
 import { CartesianGrid, CartesianGridProps, ComposedChart, RechartsThemeProvider } from '../../../src';
+import { assertNotNull } from '../../helper/assertNotNull';
 
 const mockData = generateMockData(5, 2);
 
@@ -22,11 +23,27 @@ describe('CartesianGrid theme', () => {
           </MyChart>,
         );
         const allLines = container.querySelectorAll('.recharts-cartesian-grid line');
+        expect(allLines.length).toBeGreaterThan(0);
         allLines.forEach(line => {
           expect(line.getAttribute('stroke')).toBe('#ccc');
           expect(line.getAttribute('stroke-width')).toBe(null);
           expect(line.getAttribute('stroke-opacity')).toBe(null);
           expect(line.getAttribute('stroke-dasharray')).toBe(null);
+        });
+      });
+
+      it('should not provide any defaults when a theme exists but does not define grid styles', () => {
+        const { container } = rechartsTestRender(
+          <RechartsThemeProvider value={{ graphicalItems: [] }}>
+            <MyChart>
+              <CartesianGrid />
+            </MyChart>
+          </RechartsThemeProvider>,
+        );
+        const allLines = container.querySelectorAll('.recharts-cartesian-grid line');
+        expect(allLines.length).toBeGreaterThan(0);
+        allLines.forEach(line => {
+          expect(line).not.toHaveAttribute('stroke');
         });
       });
     });
@@ -39,6 +56,7 @@ describe('CartesianGrid theme', () => {
           </MyChart>,
         );
         const allLines = container.querySelectorAll('.recharts-cartesian-grid line');
+        expect(allLines.length).toBeGreaterThan(0);
         allLines.forEach(line => {
           expect(line.getAttribute('stroke')).toBe('gold');
           expect(line.getAttribute('stroke-width')).toBe('2');
@@ -63,6 +81,7 @@ describe('CartesianGrid theme', () => {
           </RechartsThemeProvider>,
         );
         const allLines = container.querySelectorAll('.recharts-cartesian-grid line');
+        expect(allLines.length).toBeGreaterThan(0);
         allLines.forEach(line => {
           expect(line.getAttribute('stroke')).toBe('gold');
           expect(line.getAttribute('stroke-width')).toBe('2');
@@ -87,6 +106,7 @@ describe('CartesianGrid theme', () => {
           </RechartsThemeProvider>,
         );
         const allLines = container.querySelectorAll('.recharts-cartesian-grid line');
+        expect(allLines.length).toBeGreaterThan(0);
         allLines.forEach(line => {
           expect(line.getAttribute('stroke')).toBe('gold');
           expect(line.getAttribute('stroke-width')).toBe('2');
@@ -104,7 +124,8 @@ describe('CartesianGrid theme', () => {
           </MyChart>,
         );
         const firstLine = container.querySelector('.recharts-cartesian-grid line');
-        return firstLine?.getAttribute('stroke-dasharray') ?? null;
+        assertNotNull(firstLine);
+        return firstLine.getAttribute('stroke-dasharray');
       }
 
       it('should use strings as-is', () => {

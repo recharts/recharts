@@ -11,6 +11,8 @@ import { svgPropertiesNoEvents } from '../util/svgPropertiesNoEvents';
 import { ZIndexable, ZIndexLayer } from '../zIndex/ZIndexLayer';
 import { DefaultZIndexes } from '../zIndex/DefaultZIndexes';
 import { resolveDefaultProps } from '../util/resolveDefaultProps';
+import { useBackwardsCompatibleTheme } from '../theme/useBackwardsCompatibleTheme';
+import { Styles2D } from '../theme/RechartsTheme';
 
 interface PolarGridProps extends ZIndexable {
   /**
@@ -83,12 +85,10 @@ interface PolarGridProps extends ZIndexable {
   zIndex?: number;
   /**
    * The stroke color. If "none", no line will be drawn.
-   * @defaultValue #ccc
    */
   stroke?: string;
   /**
    * The width of the stroke.
-   * @defaultValue 1
    */
   strokeWidth?: number | string;
   /**
@@ -98,7 +98,6 @@ interface PolarGridProps extends ZIndexable {
   strokeDasharray?: string | number;
   /**
    * The background color used to fill the space between grid lines.
-   * @defaultValue none
    */
   fill?: string;
   /**
@@ -228,21 +227,32 @@ const ConcentricGridPath = (props: PropsWithDefaults) => {
   );
 };
 
+/**
+ * Default styling that was applied before themes existed
+ */
+const defaultLegacyThemeProps: Styles2D = {
+  stroke: '#ccc',
+  strokeWidth: 1,
+  fill: 'none',
+};
+
 export const defaultPolarGridProps = {
   angleAxisId: 0,
   radiusAxisId: 0,
   gridType: 'polygon',
   radialLines: true,
   zIndex: DefaultZIndexes.grid,
-  stroke: '#ccc',
-  strokeWidth: 1,
-  fill: 'none',
 } as const satisfies Partial<Props>;
 
 /**
  * @consumes PolarViewBoxContext
  */
 export const PolarGrid = (outsideProps: Props) => {
+  const themeProps = useBackwardsCompatibleTheme(theme => theme.grid, outsideProps, defaultLegacyThemeProps);
+  const propsWithTheme: Props = {
+    ...outsideProps,
+    ...themeProps,
+  };
   const {
     gridType,
     radialLines,
@@ -256,7 +266,7 @@ export const PolarGrid = (outsideProps: Props) => {
     polarRadius: polarRadiusInput,
     zIndex,
     ...inputs
-  } = resolveDefaultProps(outsideProps, defaultPolarGridProps);
+  } = resolveDefaultProps(propsWithTheme, defaultPolarGridProps);
   const polarViewBox: PolarViewBoxRequired | undefined = useAppSelector(selectPolarViewBox);
 
   const polarAnglesFromRedux = useAppSelector(state => selectPolarGridAngles(state, angleAxisId));

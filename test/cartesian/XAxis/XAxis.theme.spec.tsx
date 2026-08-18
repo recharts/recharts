@@ -34,6 +34,17 @@ describe('XAxis theme', () => {
         expect(firstTick).not.toHaveAttribute('stroke-opacity');
         expect(firstTick).not.toHaveAttribute('stroke-dasharray');
       });
+
+      it('should not provide any defaults when a theme exists but does not define axis styles', () => {
+        const { container } = rechartsTestRender(
+          <RechartsThemeProvider value={{ graphicalItems: [] }}>
+            <MyChart>
+              <XAxis dataKey="label" />
+            </MyChart>
+          </RechartsThemeProvider>,
+        );
+        expect(getFirstTick(container)).not.toHaveAttribute('stroke');
+      });
     });
 
     describe('when defined as a prop', () => {

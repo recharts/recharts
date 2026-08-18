@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { MutableRefObject, PureComponent, ReactElement, ReactNode, useMemo, useRef } from 'react';
+import { MutableRefObject, PureComponent, ReactElement, ReactNode, useCallback, useMemo, useRef } from 'react';
 import { clsx } from 'clsx';
 import { BaseLineType, CurveType, Props as CurveProps } from '../shape/Curve';
 import { Layer } from '../container/Layer';
@@ -68,8 +68,9 @@ import { propsAreEqual } from '../util/propsAreEqual';
 import { AxisId } from '../state/cartesianAxisSlice';
 import { StackDataPoint } from '../util/stacks/stackTypes';
 import { AreaRevealShape, AreaRevealShapeProps } from './AreaRevealShape';
-import { useRechartsTheme } from '../theme/RechartsThemeContext';
 import { graphicalItemIdentity } from '../theme/graphicalItemIdentity';
+import { GraphicalItemStyle, RechartsTheme, Styles2D } from '../theme/RechartsTheme';
+import { useBackwardsCompatibleTheme } from '../theme/useBackwardsCompatibleTheme';
 
 /**
  * @inline
@@ -141,7 +142,7 @@ interface InternalAreaProps extends ZIndexable {
  * @internal
  */
 export interface AreaProps<DataPointType = any, DataValueType = any>
-  extends DataProvider<DataPointType>, Required<DataConsumer<DataPointType, DataValueType>>, ZIndexable {
+  extends Styles2D, DataProvider<DataPointType>, Required<DataConsumer<DataPointType, DataValueType>>, ZIndexable {
   /**
    * The active dot is rendered on the closest data point when user interacts with the chart. Options:
    *
@@ -326,16 +327,6 @@ export interface AreaProps<DataPointType = any, DataValueType = any>
    * When two Areas have the same axisId and same stackId, then the two Areas are stacked in the chart.
    */
   stackId?: StackId;
-  /**
-   * The stroke color. If "none", no line will be drawn.
-   * @defaultValue '#3182bd'
-   */
-  stroke?: string;
-  /**
-   * The width of the stroke
-   * @defaultValue 1
-   */
-  strokeWidth?: string | number;
   tooltipType?: TooltipType;
   /**
    * The interpolation type of curve. Allows custom interpolation function.
@@ -411,6 +402,16 @@ const defaultAreaAnimateItems: AnimationInterpolateFn<AreaPointItem, CartesianLa
   });
 };
 
+/**
+ * Default styling that was applied before themes existed
+ */
+const defaultLegacyThemeProps: GraphicalItemStyle = {
+  fill: '#3182bd',
+  fillOpacity: 0.6,
+  stroke: '#3182bd',
+  strokeWidth: 1,
+};
+
 export const defaultAreaProps = {
   activeDot: true,
   animationBegin: 0,
@@ -420,13 +421,9 @@ export const defaultAreaProps = {
   animationInterpolateFn: defaultAreaAnimateItems,
   connectNulls: false,
   dot: false,
-  fill: '#3182bd',
-  fillOpacity: 0.6,
   hide: false,
   isAnimationActive: 'auto',
   legendType: 'line',
-  stroke: '#3182bd',
-  strokeWidth: 1,
   type: 'linear',
   label: false,
   shape: AreaRevealShape,
@@ -1072,33 +1069,32 @@ export function computeArea({
 }
 
 function AreaFn(outsideProps: Props<any, any>) {
-  const theme = useRechartsTheme();
-  const graphicalItemTheme =
-    outsideProps.dataKey == null || theme.graphicalItems == null
-      ? undefined
-      : theme.graphicalItems[graphicalItemIdentity({ dataKey: outsideProps.dataKey }, theme.graphicalItems.length)];
-  const themeStrokeDasharray = graphicalItemTheme?.strokeDasharray;
+  const themeSelector = useCallback(
+    (theme: RechartsTheme): Styles2D | undefined => {
+      if (outsideProps.dataKey == null) {
+        return undefined;
+      }
+      return theme.graphicalItems[
+        graphicalItemIdentity({ dataKey: outsideProps.dataKey }, theme.graphicalItems.length)
+      ];
+    },
+    [outsideProps.dataKey],
+  );
+  const theme = useBackwardsCompatibleTheme<GraphicalItemStyle>(themeSelector, outsideProps, defaultLegacyThemeProps);
   const activeDot =
-    graphicalItemTheme?.active == null ||
+    theme?.active == null ||
     outsideProps.activeDot === false ||
     typeof outsideProps.activeDot === 'function' ||
     React.isValidElement(outsideProps.activeDot)
       ? outsideProps.activeDot
       : {
-          ...graphicalItemTheme.active,
+          ...theme.active,
           ...(typeof outsideProps.activeDot === 'object' ? outsideProps.activeDot : {}),
         };
   const propsWithTheme: Props<any, any> = {
     ...outsideProps,
+    ...theme,
     activeDot,
-    fill: outsideProps.fill ?? graphicalItemTheme?.fill,
-    fillOpacity: outsideProps.fillOpacity ?? graphicalItemTheme?.fillOpacity,
-    stroke: outsideProps.stroke ?? graphicalItemTheme?.stroke,
-    strokeOpacity: outsideProps.strokeOpacity ?? graphicalItemTheme?.strokeOpacity,
-    strokeWidth: outsideProps.strokeWidth ?? graphicalItemTheme?.strokeWidth,
-    strokeDasharray:
-      outsideProps.strokeDasharray ??
-      (Array.isArray(themeStrokeDasharray) ? themeStrokeDasharray.join(',') : themeStrokeDasharray),
   };
   const props: RequiresDefaultProps<Props<any, any>, typeof defaultAreaProps> = resolveDefaultProps(
     propsWithTheme,

@@ -2,7 +2,18 @@ import React from 'react';
 import { beforeEach, describe, expect, it, test, vi } from 'vitest';
 import { act, fireEvent } from '@testing-library/react';
 import { renderWithStrictMode } from '../../helper/renderWithStrictMode';
-import { Bar, BarChart, BarProps, DefaultZIndexes, Legend, LegendType, Tooltip, XAxis, YAxis } from '../../../src';
+import {
+  Bar,
+  BarChart,
+  BarProps,
+  Brush,
+  DefaultZIndexes,
+  Legend,
+  LegendType,
+  Tooltip,
+  XAxis,
+  YAxis,
+} from '../../../src';
 import {
   allCartesianChartsExcept,
   AreaChartCase,
@@ -15,7 +26,7 @@ import {
 } from '../../helper/parameterizedTestCases';
 import { useAppSelector } from '../../../src/state/hooks';
 import { CartesianGraphicalItemSettings } from '../../../src/state/graphicalItemsSlice';
-import { expectActiveBars, expectBars, getAllBars } from '../../helper/expectBars';
+import { expectActiveBars, expectBars, getAllBarPaths, getAllBars } from '../../helper/expectBars';
 import { expectLabels } from '../../helper/expectLabel';
 import { createSelectorTestCase, rechartsTestRender } from '../../helper/createSelectorTestCase';
 import {
@@ -1419,6 +1430,103 @@ describe.each(chartsThatSupportBar)('<Bar /> as a child of $testName', ({ ChartE
 
       expect(getAllBars(container)).toHaveLength(2);
     });
+  });
+});
+
+describe('minPointSize in a stacked bar chart, https://github.com/recharts/recharts/issues/2460', () => {
+  it('shifts a stack segment outward instead of overlapping the segment inflated by minPointSize below it (horizontal layout)', () => {
+    const stackData = [{ name: 'a', small: 1, big: 100 }];
+
+    const { container } = renderWithStrictMode(
+      <BarChart width={200} height={400} data={stackData}>
+        <XAxis dataKey="name" />
+        <YAxis />
+        <Bar dataKey="small" stackId="s" minPointSize={20} isAnimationActive={false} />
+        <Bar dataKey="big" stackId="s" minPointSize={20} isAnimationActive={false} />
+      </BarChart>,
+    );
+
+    const [smallSegment, bigSegment] = getAllBarPaths(container);
+    const smallY = Number(smallSegment.getAttribute('y'));
+    const smallHeight = Number(smallSegment.getAttribute('height'));
+    const bigY = Number(bigSegment.getAttribute('y'));
+    const bigHeight = Number(bigSegment.getAttribute('height'));
+
+    // the inflated "small" segment keeps its own base edge fixed...
+    expect(smallHeight).toBe(20);
+    // ...and the "big" segment on top of it is pushed up by exactly the same amount it was inflated by,
+    // so its bottom edge lands exactly where the small segment's top edge is - no overlap, no gap.
+    expect(bigY + bigHeight).toBeCloseTo(smallY, 5);
+  });
+
+  it('shifts a stack segment outward instead of overlapping the segment inflated by minPointSize before it (vertical layout)', () => {
+    const stackData = [{ name: 'a', small: 1, big: 100 }];
+
+    const { container } = renderWithStrictMode(
+      <BarChart layout="vertical" width={400} height={200} data={stackData}>
+        <XAxis type="number" />
+        <YAxis dataKey="name" type="category" />
+        <Bar dataKey="small" stackId="s" minPointSize={20} isAnimationActive={false} />
+        <Bar dataKey="big" stackId="s" minPointSize={20} isAnimationActive={false} />
+      </BarChart>,
+    );
+
+    const [smallSegment, bigSegment] = getAllBarPaths(container);
+    const smallX = Number(smallSegment.getAttribute('x'));
+    const smallWidth = Number(smallSegment.getAttribute('width'));
+    const bigX = Number(bigSegment.getAttribute('x'));
+
+    expect(smallWidth).toBe(20);
+    // the "big" segment starts exactly where the inflated "small" segment ends - no overlap, no gap.
+    expect(bigX).toBeCloseTo(smallX + smallWidth, 5);
+  });
+
+  it('cascades the shift across more than two segments in the same stack', () => {
+    const stackData = [{ name: 'a', s1: 50, s2: 1, s3: 50 }];
+
+    const { container } = renderWithStrictMode(
+      <BarChart width={200} height={400} data={stackData}>
+        <XAxis dataKey="name" />
+        <YAxis domain={[0, 101]} />
+        <Bar dataKey="s1" stackId="s" minPointSize={20} isAnimationActive={false} />
+        <Bar dataKey="s2" stackId="s" minPointSize={20} isAnimationActive={false} />
+        <Bar dataKey="s3" stackId="s" minPointSize={20} isAnimationActive={false} />
+      </BarChart>,
+    );
+
+    const [seg1, seg2, seg3] = Array.from(getAllBarPaths(container)).map(path => ({
+      y: Number(path.getAttribute('y')),
+      height: Number(path.getAttribute('height')),
+    }));
+
+    expect(seg2.y + seg2.height).toBeCloseTo(seg1.y, 5);
+    expect(seg3.y + seg3.height).toBeCloseTo(seg2.y, 5);
+  });
+
+  it('still avoids overlap when a Brush makes dataStartIndex non-zero', () => {
+    const stackData = [
+      { name: 'skipped', small: 50, big: 50 },
+      { name: 'a', small: 1, big: 100 },
+    ];
+
+    const { container } = renderWithStrictMode(
+      <BarChart width={200} height={400} data={stackData}>
+        <XAxis dataKey="name" />
+        <YAxis />
+        <Bar dataKey="small" stackId="s" minPointSize={20} isAnimationActive={false} />
+        <Bar dataKey="big" stackId="s" minPointSize={20} isAnimationActive={false} />
+        <Brush dataKey="name" startIndex={1} endIndex={1} x={0} y={370} width={200} height={20} />
+      </BarChart>,
+    );
+
+    const [smallSegment, bigSegment] = getAllBarPaths(container);
+    const smallY = Number(smallSegment.getAttribute('y'));
+    const smallHeight = Number(smallSegment.getAttribute('height'));
+    const bigY = Number(bigSegment.getAttribute('y'));
+    const bigHeight = Number(bigSegment.getAttribute('height'));
+
+    expect(smallHeight).toBe(20);
+    expect(bigY + bigHeight).toBeCloseTo(smallY, 5);
   });
 });
 

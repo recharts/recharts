@@ -32,7 +32,7 @@ const series = [
 function MyLine(props: LineProps & { index: number }) {
   const { index, ...rest } = props;
   const theme = useRechartsTheme();
-  return <Line {...theme.graphicalItems?.[index]} {...rest} />;
+  return <Line {...theme?.graphicalItems?.[index]} {...rest} />;
 }
 
 // #endregion

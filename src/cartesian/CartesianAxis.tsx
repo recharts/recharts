@@ -36,7 +36,8 @@ import { DefaultZIndexes } from '../zIndex/DefaultZIndexes';
 import { getClassNameFromUnknown } from '../util/getClassNameFromUnknown';
 import { removeRenderedTicks, setRenderedTicks } from '../state/renderedTicksSlice';
 import { useAppDispatch } from '../state/hooks';
-import { useRechartsTheme } from '../theme/RechartsThemeContext';
+import { Styles1D, TextStyles } from '../theme/RechartsTheme';
+import { useBackwardsCompatibleTheme } from '../theme/useBackwardsCompatibleTheme';
 /** The orientation of the axis in correspondence to the chart */
 export type Orientation = XAxisOrientation | YAxisOrientation;
 /** A unit to be appended to a value */
@@ -119,6 +120,12 @@ export const defaultCartesianAxisProps = {
   interval: 'preserveEnd',
   zIndex: DefaultZIndexes.axis,
 } as const satisfies Partial<Props>;
+
+const defaultLegacyAxisThemeProps: Styles1D = {
+  stroke: '#666',
+};
+
+const emptyTextThemeProps: TextStyles = {};
 
 /*
  * `viewBox` and `scale` are SVG attributes.
@@ -569,7 +576,8 @@ const CartesianAxisComponent = forwardRef<CartesianAxisRef, InternalProps>((prop
     [fontSize, letterSpacing],
   );
 
-  const theme = useRechartsTheme();
+  const axisTheme = useBackwardsCompatibleTheme(theme => theme.axis, props, defaultLegacyAxisThemeProps);
+  const typography = useBackwardsCompatibleTheme(theme => theme.typography, emptyTextThemeProps, emptyTextThemeProps);
 
   if (hide) {
     return null;
@@ -596,10 +604,10 @@ const CartesianAxisComponent = forwardRef<CartesianAxisRef, InternalProps>((prop
           axisLine={axisLine}
           otherSvgProps={{
             ...svgPropertiesNoEvents(props),
-            stroke: props.stroke ?? theme.axis?.stroke,
-            strokeWidth: props.strokeWidth ?? theme.axis?.strokeWidth,
-            strokeOpacity: props.strokeOpacity ?? theme.axis?.strokeOpacity,
-            strokeDasharray: props.strokeDasharray ?? theme.axis?.strokeDasharray,
+            stroke: axisTheme.stroke,
+            strokeWidth: axisTheme.strokeWidth,
+            strokeOpacity: axisTheme.strokeOpacity,
+            strokeDasharray: axisTheme.strokeDasharray,
           }}
         />
         <Ticks
@@ -614,11 +622,11 @@ const CartesianAxisComponent = forwardRef<CartesianAxisRef, InternalProps>((prop
           orientation={props.orientation}
           padding={props.padding}
           ref={layerRef}
-          stroke={props.stroke ?? theme.axis?.stroke}
-          strokeDasharray={props.strokeDasharray ?? theme.axis?.strokeDasharray}
-          strokeOpacity={props.strokeOpacity ?? theme.axis?.strokeOpacity}
-          strokeWidth={props.strokeWidth ?? theme.axis?.strokeWidth}
-          style={{ ...theme.typography, ...props.style }}
+          stroke={axisTheme.stroke}
+          strokeDasharray={axisTheme.strokeDasharray}
+          strokeOpacity={axisTheme.strokeOpacity}
+          strokeWidth={axisTheme.strokeWidth}
+          style={{ ...typography, ...props.style }}
           tick={props.tick}
           tickFormatter={props.tickFormatter}
           tickLine={props.tickLine}

@@ -53,6 +53,26 @@ export function resolveDefaultProps<T, D extends Partial<T>>(
 }
 
 /**
+ * Resolves optional defaults without changing the static shape of the input props.
+ *
+ * Use this when defaults are selected dynamically and therefore cannot make particular
+ * properties required at compile time.
+ */
+export function resolvePartialDefaultProps<T extends object>(realProps: T, defaultProps: Partial<T>): T {
+  const resolvedProps: T = { ...realProps };
+  const keys = Object.keys(defaultProps) as Array<keyof T>;
+
+  keys.forEach(key => {
+    const defaultValue = defaultProps[key];
+    if (resolvedProps[key] === undefined && defaultValue !== undefined) {
+      resolvedProps[key] = defaultValue;
+    }
+  });
+
+  return resolvedProps;
+}
+
+/**
  * Helper type to extract the keys of T that are required.
  * It iterates through each key K in T. If Pick<T, K> cannot be assigned an empty object {},
  * it means K is required, so we keep K; otherwise, we discard it (never).

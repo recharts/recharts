@@ -82,7 +82,7 @@ import { DEFAULT_X_AXIS_HEIGHT, DEFAULT_Y_AXIS_WIDTH } from '../../util/Constant
 import { getStackSeriesIdentifier } from '../../util/stacks/getStackSeriesIdentifier';
 import { AllStackGroups, StackGroup } from '../../util/stacks/stackTypes';
 import { combineDisplayedStackedData, DisplayedStackedData } from './combiners/combineDisplayedStackedData';
-import { DefinitelyStackedGraphicalItem, isStacked } from '../types/StackedGraphicalItem';
+import { isStackedGraphicalItem, type StackedGraphicalItem } from '../types/StackedGraphicalItem';
 import { ErrorBarsSettings, ErrorBarsState } from '../errorBarSlice';
 import { numberDomainEqualityCheck } from './numberDomainEqualityCheck';
 import { emptyArraysAreEqualCheck } from './arrayEqualityCheck';
@@ -361,10 +361,10 @@ export const selectStackedCartesianItemsSettings: (
   state: RechartsRootState,
   axisType: AllAxisTypes,
   axisId: AxisId,
-) => ReadonlyArray<DefinitelyStackedGraphicalItem> = createSelector(
+) => ReadonlyArray<StackedGraphicalItem> = createSelector(
   [selectCartesianItemsSettings],
-  (cartesianItems: ReadonlyArray<CartesianGraphicalItemSettings>): ReadonlyArray<DefinitelyStackedGraphicalItem> => {
-    return cartesianItems.filter(item => item.type === 'area' || item.type === 'bar').filter(isStacked);
+  (cartesianItems: ReadonlyArray<CartesianGraphicalItemSettings>): ReadonlyArray<StackedGraphicalItem> => {
+    return cartesianItems.filter(isStackedGraphicalItem);
   },
 );
 
@@ -677,13 +677,13 @@ export const selectDisplayedStackedData: (
 
 export const combineStackGroups = (
   displayedData: DisplayedStackedData,
-  items: ReadonlyArray<DefinitelyStackedGraphicalItem>,
+  items: ReadonlyArray<StackedGraphicalItem>,
   stackOffsetType: StackOffsetType,
   reverseStackOrder: boolean,
 ): AllStackGroups => {
-  const initialItemsGroups: Record<StackId, Array<DefinitelyStackedGraphicalItem>> = {};
-  const itemsGroup: Record<StackId, ReadonlyArray<DefinitelyStackedGraphicalItem>> = items.reduce(
-    (acc: Record<StackId, Array<DefinitelyStackedGraphicalItem>>, item: DefinitelyStackedGraphicalItem) => {
+  const initialItemsGroups: Record<StackId, Array<StackedGraphicalItem>> = {};
+  const itemsGroup: Record<StackId, ReadonlyArray<StackedGraphicalItem>> = items.reduce(
+    (acc: Record<StackId, Array<StackedGraphicalItem>>, item: StackedGraphicalItem) => {
       if (item.stackId == null) {
         return acc;
       }

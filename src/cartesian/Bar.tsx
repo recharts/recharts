@@ -15,7 +15,6 @@ import { Series } from 'victory-vendor/d3-shape';
 import { Props as RectangleProps, RectRadius } from '../shape/Rectangle';
 import { Layer } from '../container/Layer';
 import { ErrorBarDataItem, ErrorBarDataPointFormatter } from './ErrorBar';
-import { Cell } from '../component/Cell';
 import {
   CartesianLabelListContextProvider,
   CartesianLabelListEntry,
@@ -23,7 +22,6 @@ import {
   LabelListFromLabelProp,
 } from '../component/LabelList';
 import { interpolate, isNan, mathSign, noop } from '../util/DataUtils';
-import { findAllByType } from '../util/ReactUtils';
 import {
   BarPositionPosition,
   getBaseValueOfBar,
@@ -87,12 +85,14 @@ import { ZIndexable, ZIndexLayer } from '../zIndex/ZIndexLayer';
 import { DefaultZIndexes } from '../zIndex/DefaultZIndexes';
 import { getZIndexFromUnknown } from '../zIndex/getZIndexFromUnknown';
 import { propsAreEqual } from '../util/propsAreEqual';
+import { useCells } from '../util/useCells';
 import { AxisId } from '../state/cartesianAxisSlice';
 import { BarStackClipLayer, useStackId } from './BarStack';
-import { useRechartsTheme } from '../theme/RechartsThemeContext';
 import { GraphicalItemId } from '../state/graphicalItemsSlice';
 import { ChartData } from '../state/chartDataSlice';
 import { graphicalItemIdentity } from '../theme/graphicalItemIdentity';
+import { RechartsTheme } from '../theme/RechartsTheme';
+import { useBackwardsCompatibleTheme } from '../theme/useBackwardsCompatibleTheme';
 
 type BarRectangleType = {
   x: number | null;
@@ -192,8 +192,10 @@ export interface BarProps<DataPointType, ValueAxisType>
    * By default, 0 values are not shown.
    * To visualize a 0 (or close to zero) point, set the minimal point size to a pixel value like 3.
    *
-   * In stacked bar charts, minPointSize might not be respected for tightly packed values.
-   * So we strongly recommend not using this props in stacked BarChart.
+   * In stacked bar charts, a segment inflated by minPointSize pushes the segments stacked
+   * on top of it outward by the same amount, so segments never overlap. This does mean that
+   * a stack with several undersized segments can grow taller (or wider) than the axis domain
+   * would otherwise imply.
    *
    * You may provide a function to conditionally change this prop based on Bar value.
    *
@@ -1055,7 +1057,12 @@ function BarImpl(props: BarImplProps) {
 
   const isPanorama = useIsPanorama();
 
-  const cells = findAllByType(props.children, Cell);
+  /*
+   * `cells` is an argument to the memoized selector below, so it has to be referentially stable,
+   * otherwise every render of this component is a cache miss that returns a brand new `rects` array,
+   * which changes the animationId, which starts a spurious animation.
+   */
+  const cells = useCells(props.children);
 
   const rects: ReadonlyArray<BarRectangleItem> | undefined = useAppSelector(state =>
     selectBarRectangles(state, props.id, isPanorama, cells),
@@ -1111,6 +1118,7 @@ export function computeBarRectangles({
   xAxisTicks,
   yAxisTicks,
   stackedData,
+  stackedMinPointSizeShift,
   displayedData,
   offset,
   cells,
@@ -1126,6 +1134,13 @@ export function computeBarRectangles({
   xAxisTicks: TickItem[];
   yAxisTicks: TickItem[];
   stackedData: Series<Record<number, number>, DataKey<any>> | undefined;
+  /**
+   * How far the segments before this one in the same stack were pushed out by their own
+   * `minPointSize` inflation, indexed by data index. This segment's whole rectangle gets
+   * translated by the same amount so it stays attached to its stack neighbor instead of
+   * overlapping it. See {@link selectStackedMinPointSizeShift}.
+   */
+  stackedMinPointSizeShift: ReadonlyArray<number> | undefined;
   offset: ChartOffsetInternal;
   displayedData: ChartData;
   cells: ReadonlyArray<ReactElement> | undefined;
@@ -1179,6 +1194,10 @@ export function computeBarRectangles({
         height = isNan(computedHeight) ? 0 : computedHeight;
         background = { x, y: offset.top, width, height: offset.height };
 
+        if (stackedData && y != null) {
+          y -= stackedMinPointSizeShift?.[index + dataStartIndex] ?? 0;
+        }
+
         if (Math.abs(minPointSize) > 0 && Math.abs(height) < Math.abs(minPointSize)) {
           const delta = mathSign(height || minPointSize) * (Math.abs(minPointSize) - Math.abs(height));
 
@@ -1203,6 +1222,10 @@ export function computeBarRectangles({
         width = currentValueScale - baseValueScale;
         height = pos.size;
         background = { x: offset.left, y, width: offset.width, height };
+
+        if (stackedData) {
+          x += stackedMinPointSizeShift?.[index + dataStartIndex] ?? 0;
+        }
 
         if (Math.abs(minPointSize) > 0 && Math.abs(width) < Math.abs(minPointSize)) {
           const delta = mathSign(width || minPointSize) * (Math.abs(minPointSize) - Math.abs(width));
@@ -1249,21 +1272,24 @@ export function computeBarRectangles({
 }
 
 function BarFn(outsideProps: Props) {
-  const theme = useRechartsTheme();
+  const graphicalItemStyle = useBackwardsCompatibleTheme<Props>(
+    (theme: RechartsTheme) =>
+      outsideProps.dataKey == null
+        ? undefined
+        : theme.graphicalItems[graphicalItemIdentity({ dataKey: outsideProps.dataKey }, theme.graphicalItems.length)],
+    outsideProps,
+    undefined,
+  );
   const props = resolveDefaultProps(outsideProps, defaultBarProps);
   // stackId may arrive from props or from BarStack context
   const stackId = useStackId(props.stackId);
   const isPanorama = useIsPanorama();
 
-  const graphicalItemStyle =
-    outsideProps.dataKey == null || theme.graphicalItems == null
-      ? undefined
-      : theme.graphicalItems[graphicalItemIdentity({ dataKey: outsideProps.dataKey }, theme.graphicalItems.length)];
-
   const themeFill = outsideProps.fill ?? graphicalItemStyle?.fill;
   const themeStroke = outsideProps.stroke ?? graphicalItemStyle?.stroke;
   const themeStrokeWidth = outsideProps.strokeWidth ?? graphicalItemStyle?.strokeWidth;
   const themeStrokeOpacity = outsideProps.strokeOpacity ?? graphicalItemStyle?.strokeOpacity;
+  const themeStrokeDasharray = outsideProps.strokeDasharray ?? graphicalItemStyle?.strokeDasharray;
   const themeFillOpacity = outsideProps.fillOpacity ?? graphicalItemStyle?.fillOpacity;
 
   const themedProps: Partial<Props> = {};
@@ -1271,6 +1297,7 @@ function BarFn(outsideProps: Props) {
   if (themeStroke !== undefined) themedProps.stroke = themeStroke;
   if (themeStrokeWidth !== undefined) themedProps.strokeWidth = themeStrokeWidth;
   if (themeStrokeOpacity !== undefined) themedProps.strokeOpacity = themeStrokeOpacity;
+  if (themeStrokeDasharray !== undefined) themedProps.strokeDasharray = themeStrokeDasharray;
   if (themeFillOpacity !== undefined) themedProps.fillOpacity = themeFillOpacity;
 
   // Report all props to Redux store first, before calling any hooks, to avoid circular dependencies.

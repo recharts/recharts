@@ -1,7 +1,7 @@
 import { Series } from 'victory-vendor/d3-shape';
 import { StackId } from '../ChartUtils';
 import { GraphicalItemId } from '../../state/graphicalItemsSlice';
-import { MaybeStackedGraphicalItem } from '../../state/types/StackedGraphicalItem';
+import type { StackedGraphicalItem } from '../../state/types/StackedGraphicalItem';
 
 /*
  * So chart stacks come in layers:
@@ -28,10 +28,15 @@ export type AllStackGroups = Record<StackId, StackGroup>;
 /**
  * One stack group is a collection of series that are stacked together.
  * The stack series and graphical items are joined by the StackSeriesIdentifier.
+ *
+ * Bar, Area, and RadialBar are the only graphical items that support stacking
+ * (see MaybeStackedGraphicalItem's usages), and a stack is always populated from
+ * exactly one of the cartesian (Area | Bar) or polar (RadialBar) domains, never a mix -
+ * so this union lets selectors narrow by `item.type` without an unsafe cast.
  */
 export type StackGroup = {
   readonly stackedData: ReadonlyArray<StackSeries>;
-  readonly graphicalItems: ReadonlyArray<MaybeStackedGraphicalItem>;
+  readonly graphicalItems: ReadonlyArray<StackedGraphicalItem>;
 };
 
 /**

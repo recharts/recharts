@@ -9,7 +9,7 @@
 
 ## Introduction
 
-Recharts is a **Redefined** chart library built with [React](https://facebook.github.io/react/) and [D3](http://d3js.org).
+Recharts is a **Redefined** chart library built with [React](https://react.dev/) and [D3](https://d3js.org).
 
 The main purpose of this library is to help you to write charts in React applications without any pain. Main principles of Recharts are:
 
@@ -63,10 +63,10 @@ $ deno add recharts react-is
 The UMD build is also available on unpkg.com:
 
 ```html
-<script src="https://unpkg.com/react/umd/react.production.min.js"></script>
-<script src="https://unpkg.com/react-dom/umd/react-dom.production.min.js"></script>
-<script src="https://unpkg.com/react-is/umd/react-is.production.min.js"></script>
-<script src="https://unpkg.com/recharts/umd/Recharts.min.js"></script>
+<script src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+<script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+<script src="https://unpkg.com/react-is@18/umd/react-is.production.min.js"></script>
+<script src="https://unpkg.com/recharts/umd/Recharts.js"></script>
 ```
 
 Then you can find the library on `window.Recharts`.
