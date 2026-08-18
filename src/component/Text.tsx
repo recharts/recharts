@@ -7,11 +7,13 @@ import { Global } from '../util/Global';
 import { getStringSize } from '../util/DOMUtils';
 import { reduceCSSCalc } from '../util/ReduceCSSCalc';
 import { svgPropertiesAndEvents } from '../util/svgPropertiesAndEvents';
-import { resolveDefaultProps } from '../util/resolveDefaultProps';
 import { isWellBehavedNumber } from '../util/isWellBehavedNumber';
 import { useId } from '../util/useId';
 
 import { useBackwardsCompatibleTheme } from '../theme/useBackwardsCompatibleTheme';
+import { TextStyles } from '../theme/RechartsTheme';
+import { resolveDefaultProps } from '../util/resolveDefaultProps';
+import { cssStylesToSvgStyles } from '../theme/cssStylesToSvgStyles';
 
 const BREAKING_SPACES = /[ \f\n\r\t\v\u2028\u2029]+/;
 
@@ -385,12 +387,15 @@ export const getWordsByLines = ({ width, scaleToFit, children, style, breakAll, 
 
 const DEFAULT_FILL = '#808080';
 
+const defaultLegacyThemeProps: TextStyles = {
+  fill: DEFAULT_FILL,
+};
+
 export const textDefaultProps = {
   angle: 0,
   breakAll: false,
   // Magic number from d3
   capHeight: '0.71em',
-  fill: DEFAULT_FILL,
   lineHeight: '1em',
   scaleToFit: false,
   textAnchor: 'start',
@@ -400,25 +405,28 @@ export const textDefaultProps = {
   y: 0,
 } as const satisfies Partial<Props>;
 
-const emptyTextThemeProps: CSSProperties = {};
-
 export const Text = forwardRef<SVGTextElement, Props>((outsideProps, ref) => {
-  const typography = useBackwardsCompatibleTheme(theme => theme.typography, emptyTextThemeProps, emptyTextThemeProps);
+  const typography: TextStyles = useBackwardsCompatibleTheme<TextStyles>(
+    theme => theme.typography,
+    {
+      fill: outsideProps.fill,
+    },
+    defaultLegacyThemeProps,
+  );
+  const propsWithDefaults = resolveDefaultProps(outsideProps, textDefaultProps);
   const textPathId = useId();
   const {
     x: propsX,
     y: propsY,
     lineHeight,
     capHeight,
-    fill,
     scaleToFit,
     textAnchor,
     verticalAnchor,
     style: propsStyle,
     textPath,
     ...props
-  } = resolveDefaultProps(outsideProps, textDefaultProps);
-  const themeFill = typography.fill;
+  } = propsWithDefaults;
   // Here it is important to actually remove these three props, and not put them to DOM
   const { angle, dx, dy, className, breakAll, ...textProps } = props;
   const { width } = textProps;
@@ -427,13 +435,11 @@ export const Text = forwardRef<SVGTextElement, Props>((outsideProps, ref) => {
   const y = Number(propsY) + (isNumber(dy) ? dy : 0);
 
   const styleTemp: CSSProperties = useMemo(() => {
-    const { fill: themedFill, ...themeTypography } = typography;
-    return {
-      ...themeTypography,
-      ...(outsideProps.fill == null && themedFill !== undefined ? { fill: themedFill } : {}),
+    return cssStylesToSvgStyles({
+      ...typography,
       ...propsStyle,
-    };
-  }, [outsideProps.fill, propsStyle, typography]);
+    });
+  }, [propsStyle, typography]);
 
   const wordsByLines: ReadonlyArray<Words> = useMemo(() => {
     return getWordsByLines({
@@ -462,9 +468,6 @@ export const Text = forwardRef<SVGTextElement, Props>((outsideProps, ref) => {
     }
     return transformsMemo;
   }, [scaleToFit, wordsByLines, width, angle, x, y, textPath]);
-
-  const resolvedFill =
-    outsideProps.fill ?? propsStyle?.color ?? typography.color ?? themeFill ?? fill ?? textDefaultProps.fill;
 
   const styleFinal: CSSProperties = useMemo(() => {
     /*
@@ -518,7 +521,6 @@ export const Text = forwardRef<SVGTextElement, Props>((outsideProps, ref) => {
       y={y}
       className={clsx('recharts-text', className)}
       textAnchor={textAnchor}
-      fill={resolvedFill.includes('url') ? DEFAULT_FILL : resolvedFill}
     >
       {textPath == null ? (
         wordsByLines.map((line, index) => {

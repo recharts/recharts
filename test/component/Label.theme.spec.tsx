@@ -1,6 +1,6 @@
 import React from 'react';
 import { describe, expect, it } from 'vitest';
-import { Bar, BarChart, Label, LabelList, RechartsThemeProvider, Surface, XAxis } from '../../src';
+import { Bar, BarChart, Label, LabelList, RechartsThemeProvider, Surface, XAxis, YAxis } from '../../src';
 import { rechartsTestRender } from '../helper/createSelectorTestCase';
 import { assertNotNull } from '../helper/assertNotNull';
 
@@ -45,8 +45,8 @@ describe('Label theme', () => {
     const { container } = renderLabel();
     const label = getLabel(container);
 
-    expect(label).toHaveAttribute('fill', '#808080');
-    expect(label).not.toHaveAttribute('style');
+    expect(label).toHaveStyle({ fill: '#808080' });
+    expect(label).not.toHaveAttribute('fill');
   });
 
   it('applies typography to labels and label lists', () => {
@@ -55,7 +55,7 @@ describe('Label theme', () => {
         value={{
           graphicalItems: [],
           typography: {
-            color: 'purple',
+            color: 'rgb(128, 0, 128)',
             fontFamily: 'cursive',
             fontSize: 24,
             fontWeight: 'bold',
@@ -70,8 +70,8 @@ describe('Label theme', () => {
     );
     const label = getLabel(container);
 
-    expect(label).toHaveAttribute('fill', 'purple');
     expect(label).toHaveStyle({
+      color: 'rgb(128, 0, 128)',
       fontFamily: 'cursive',
       fontSize: '24px',
       fontWeight: 'bold',
@@ -106,7 +106,7 @@ describe('Label theme', () => {
       <RechartsThemeProvider
         value={{
           graphicalItems: [],
-          typography: { color: 'purple', fontFamily: 'cursive', fontSize: 20 },
+          typography: { color: 'rgb(128, 0, 128)', fontFamily: 'cursive', fontSize: 20 },
         }}
       >
         <BarChart width={200} height={100} data={data}>
@@ -116,8 +116,7 @@ describe('Label theme', () => {
     );
     const label = getLabel(container);
 
-    expect(label).toHaveAttribute('fill', 'purple');
-    expect(label).toHaveStyle({ fontFamily: 'cursive', fontSize: '20px' });
+    expect(label).toHaveStyle({ fontFamily: 'cursive', fontSize: '20px', color: 'rgb(128, 0, 128)' });
   });
 
   it('prefers explicit label props while retaining non-conflicting themed styles', () => {
@@ -161,7 +160,7 @@ describe('Label theme', () => {
       <RechartsThemeProvider
         value={{
           graphicalItems: [],
-          typography: { color: 'purple', fontFamily: 'cursive', fontSize: 20 },
+          typography: { color: 'rgb(128, 0, 128)', fontFamily: 'cursive', fontSize: 20 },
         }}
       >
         <Surface width={200} height={100}>
@@ -172,7 +171,37 @@ describe('Label theme', () => {
     const label = container.querySelector('.recharts-radial-bar-label');
     assertNotNull(label);
 
-    expect(label).toHaveAttribute('fill', 'purple');
-    expect(label).toHaveStyle({ fontFamily: 'cursive', fontSize: '20px' });
+    expect(label).not.toHaveAttribute('fill');
+    expect(label).toHaveStyle({ fontFamily: 'cursive', fontSize: '20px', color: 'rgb(128, 0, 128)' });
+  });
+
+  it('applies color via LabelList', () => {
+    const { container } = rechartsTestRender(
+      <RechartsThemeProvider
+        value={{
+          graphicalItems: [],
+          typography: {
+            fill: 'rgb(128, 0, 128)',
+            fontFamily: 'cursive',
+            fontSize: 18,
+            fontWeight: 'bold',
+          },
+        }}
+      >
+        <BarChart width={360} height={240} data={data}>
+          <XAxis dataKey="name" label="Category" />
+          <YAxis />
+          <Bar dataKey="value" fill="#60a5fa" isAnimationActive={false}>
+            <LabelList dataKey="value" position="top" />
+          </Bar>
+        </BarChart>
+      </RechartsThemeProvider>,
+    );
+    const allTexts = container.querySelectorAll('text');
+    expect(allTexts).toHaveLength(10);
+    allTexts.forEach(text => {
+      expect(text).toHaveStyle({ fill: 'rgb(128, 0, 128)', fontFamily: 'cursive', fontSize: 18, fontWeight: 'bold' });
+      expect(text).not.toHaveAttribute('fill');
+    });
   });
 });
