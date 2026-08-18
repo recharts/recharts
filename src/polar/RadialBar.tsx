@@ -297,6 +297,12 @@ function RenderSectors(props: InternalProps) {
   return <SectorsWithAnimation props={props} previousSectorsRef={previousSectorsRef} />;
 }
 
+/**
+ * The type is exported only so that TypeScript can name it in the declaration files of projects
+ * that wrap Recharts components. It is not part of the public API and may change in any release.
+ *
+ * @internal
+ */
 export interface InternalRadialBarProps<DataPointType = any, DataValueType = any>
   extends DataConsumer<DataPointType, DataValueType>, ZIndexable {
   activeShape?: ActiveShape<RadialBarSectorProps, SVGPathElement>;

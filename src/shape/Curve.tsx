@@ -109,6 +109,12 @@ const getCurveFactory = (type: CurveType, layout: LayoutType | undefined): Curve
   return CURVE_FACTORIES[name] || curveLinear;
 };
 
+/**
+ * The type is exported only so that TypeScript can name it in the declaration files of projects
+ * that wrap Recharts components. It is not part of the public API and may change in any release.
+ *
+ * @internal
+ */
 export interface CurveProps {
   className?: string;
   /**

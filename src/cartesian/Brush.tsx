@@ -35,6 +35,12 @@ export type BrushTravellerType = ReactElement<SVGElement> | ((props: TravellerPr
 // Why is this tickFormatter different from the other TickFormatters? This one allows to return numbers too for some reason.
 type BrushTickFormatter = (value: any, index: number) => number | string;
 
+/**
+ * The type is exported only so that TypeScript can name it in the declaration files of projects
+ * that wrap Recharts components. It is not part of the public API and may change in any release.
+ *
+ * @internal
+ */
 export interface BrushProps<DataPointType = any, DataValueType = any> extends DataConsumer<
   DataPointType,
   DataValueType

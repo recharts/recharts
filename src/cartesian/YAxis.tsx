@@ -45,6 +45,12 @@ import {
 } from '../util/types';
 import { CartesianAxis, CartesianAxisRef, defaultCartesianAxisProps } from './CartesianAxis';
 
+/**
+ * The type is exported only so that TypeScript can name it in the declaration files of projects
+ * that wrap Recharts components. It is not part of the public API and may change in any release.
+ *
+ * @internal
+ */
 export interface YAxisProps<DataPointType = any, DataValueType = any> extends Omit<
   RenderableAxisProps<DataPointType, DataValueType>,
   'axisLine' | 'domain' | 'scale' | 'tick'
