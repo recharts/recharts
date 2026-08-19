@@ -29,7 +29,7 @@
       rel="stylesheet"
       type="text/css"
     />
-    <script type="module" crossorigin src="/recharts/canary/www/assets/index-CHiIJsKg.js"></script>
+    <script type="module" crossorigin src="/recharts/canary/www/assets/index-Cf0Yty6T.js"></script>
     <link rel="stylesheet" crossorigin href="/recharts/canary/www/assets/index-DB45zsAB.css">
     <link rel="sitemap" type="application/xml" title="Sitemap" href="/sitemap.xml">
   </head>
@@ -48,6 +48,568 @@
             L 15,13
             A 2,2,0,0,1,13,15
             L 7,15
-            A 2,2,0,0,1,5,13 Z" style="stroke-dasharray:0px 1px"></path></svg>Copy to clipboard</button><button type="button" class="codemirror-toolbar-item"><svg stroke="currentColor" fill="none" stroke-width="2" viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round" height="1em" width="1em" xmlns="http://www.w3.org/2000/svg"><path d="M21.174 6.812a1 1 0 0 0-3.986-3.987L3.842 16.174a2 2 0 0 0-.5.83l-1.321 4.352a.5.5 0 0 0 .623.622l4.353-1.32a2 2 0 0 0 .83-.497z"></path><path d="m15 5 4 4"></path></svg><span>Edit</span></button><button type="button" class="codemirror-toolbar-item"><svg stroke="currentColor" fill="none" stroke-width="2" viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round" height="1em" width="1em" xmlns="http://www.w3.org/2000/svg"><circle cx="18" cy="5" r="3"></circle><circle cx="6" cy="12" r="3"></circle><circle cx="18" cy="19" r="3"></circle><line x1="8.59" x2="15.42" y1="13.51" y2="17.49"></line><line x1="15.41" x2="8.59" y1="6.51" y2="10.49"></line></svg><span>Open in StackBlitz</span></button></div><div style="height:100%;display:block;overflow:hidden"><div class="codemirror-example-editor tsx" style="height:100%;overflow:auto"></div></div><div style="height:100%;display:none;overflow:hidden"><div id="recharts-devtools-portal-R5a9" style="height:100%;background:var(--color-bg);color:var(--color-text);overflow:auto;padding:10px;display:block" class=""></div></div><div style="height:100%;display:none;overflow:hidden"><div id="recharts-devtools-portal-R5a9-annotations" style="height:100%;background:var(--color-bg);color:var(--color-text);overflow:auto;padding:10px;display:block" class=""></div></div><div style="height:100%;display:none;overflow:hidden"><div style="padding:10px;height:100%;overflow:auto"><div style="display:flex;gap:12px;margin:1ex"><label style="display:flex;align-items:center;gap:8px;cursor:pointer"><input style="margin:0;width:16px;height:16px;cursor:pointer" type="radio" name=":R55da9:" checked=""/>Autoplay Animations (default)</label><label style="display:flex;align-items:center;gap:8px;cursor:pointer"><input style="margin:0;width:16px;height:16px;cursor:pointer" type="radio" name=":R55da9:"/>Manual Animations</label></div></div></div></div></div></div></div></div></div></main><footer><p><span>Released under the </span><a href="https://opensource.org/licenses/MIT" target="_blank" rel="noreferrer">MIT License</a></p><p>Copyright (c) 2016-<!-- -->2026<!-- --> Recharts Group</p><p>Commit: <code title="95753c3b8eb6b6a9ca277b9239bee999fe034ad4">95753c3b</code></p></footer></div></div>
+            A 2,2,0,0,1,5,13 Z" style="stroke-dasharray:0px 1px"></path></svg>Copy to clipboard</button><button type="button" class="codemirror-toolbar-item"><svg stroke="currentColor" fill="none" stroke-width="2" viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round" height="1em" width="1em" xmlns="http://www.w3.org/2000/svg"><path d="M21.174 6.812a1 1 0 0 0-3.986-3.987L3.842 16.174a2 2 0 0 0-.5.83l-1.321 4.352a.5.5 0 0 0 .623.622l4.353-1.32a2 2 0 0 0 .83-.497z"></path><path d="m15 5 4 4"></path></svg><span>Edit</span></button><button type="button" class="codemirror-toolbar-item"><svg stroke="currentColor" fill="none" stroke-width="2" viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round" height="1em" width="1em" xmlns="http://www.w3.org/2000/svg"><circle cx="18" cy="5" r="3"></circle><circle cx="6" cy="12" r="3"></circle><circle cx="18" cy="19" r="3"></circle><line x1="8.59" x2="15.42" y1="13.51" y2="17.49"></line><line x1="15.41" x2="8.59" y1="6.51" y2="10.49"></line></svg><span>Open in StackBlitz</span></button></div><div style="height:100%;display:block;overflow:hidden"><div class="codemirror-example-editor tsx" style="height:100%;overflow:auto"><pre>import { useEffect, useMemo, useState } from &#x27;react&#x27;;
+import { Treemap, type TreemapNode, Tooltip } from &#x27;recharts&#x27;;
+
+// #region Types, styles, and data helpers
+type BundleVisualizationStage = {
+  readonly stage: &#x27;es6-folder&#x27; | &#x27;tree-shaken&#x27; | &#x27;minified&#x27; | &#x27;minified+gzip&#x27;;
+  readonly bytes: number;
+  readonly humanReadableSize: string;
+  readonly reductionFromBaselinePercent: number;
+};
+
+type BundleVisualizationNode = {
+  readonly name: string;
+  readonly fullPath: string;
+  readonly value: number;
+  readonly children?: ReadonlyArray&lt;BundleVisualizationNode&gt;;
+};
+
+type BundleVisualizationEntry = {
+  readonly examplePath: string;
+  readonly totalSize: number;
+  readonly totalSizeLabel: string;
+  readonly moduleCount: number;
+  readonly generatedAt: string;
+  readonly stages: ReadonlyArray&lt;BundleVisualizationStage&gt;;
+  readonly tree: BundleVisualizationNode;
+};
+
+type BundleVisualizationData = {
+  readonly treemap: BundleVisualizationEntry;
+};
+
+type TreemapDisplayNode = {
+  readonly name: string;
+  readonly fullPath: string;
+  readonly value: number;
+  readonly fill: string;
+  readonly children?: ReadonlyArray&lt;TreemapDisplayNode&gt;;
+};
+
+type ColorSeed = {
+  readonly hue: number;
+  readonly saturation: number;
+  readonly lightness: number;
+};
+
+type BuildNode = {
+  name: string;
+  fullPath: string;
+  value: number;
+  children: Map&lt;string, BuildNode&gt;;
+};
+
+const generatedBundleVisualizationAssetPath = &#x27;generated/bundleSizeData.generated.json&#x27;;
+const libraryColorSeeds: Record&lt;string, ColorSeed&gt; = {
+  recharts: { hue: 145, saturation: 46, lightness: 40 },
+  d3: { hue: 210, saturation: 66, lightness: 45 },
+  redux: { hue: 270, saturation: 46, lightness: 50 },
+  react: { hue: 194, saturation: 70, lightness: 47 },
+  example: { hue: 32, saturation: 78, lightness: 52 },
+  &#x27;es-toolkit&#x27;: { hue: 18, saturation: 70, lightness: 49 },
+};
+
+const containerStyle = {
+  width: &#x27;100%&#x27;,
+  maxWidth: &#x27;720px&#x27;,
+  display: &#x27;flex&#x27;,
+  flexDirection: &#x27;column&#x27; as const,
+  gap: &#x27;1rem&#x27;,
+};
+
+const summaryGridStyle = {
+  display: &#x27;grid&#x27;,
+  gap: &#x27;0.75rem&#x27;,
+  gridTemplateColumns: &#x27;repeat(auto-fit, minmax(180px, 1fr))&#x27;,
+};
+
+const summaryCardStyle = {
+  border: &#x27;1px solid var(--color-border-1, #d0d7de)&#x27;,
+  borderRadius: &#x27;0.75rem&#x27;,
+  padding: &#x27;0.75rem 1rem&#x27;,
+  backgroundColor: &#x27;var(--color-surface-raised, #fff)&#x27;,
+};
+
+const detailTextStyle = {
+  display: &#x27;block&#x27;,
+  opacity: 0.8,
+  wordBreak: &#x27;break-word&#x27; as const,
+};
+
+const fallbackTree = {
+  name: &#x27;bundle&#x27;,
+  fullPath: &#x27;bundle&#x27;,
+  value: 9728,
+  children: [
+    {
+      name: &#x27;node_modules&#x27;,
+      fullPath: &#x27;node_modules&#x27;,
+      value: 4096,
+      children: [
+        {
+          name: &#x27;react-redux&#x27;,
+          fullPath: &#x27;node_modules/react-redux&#x27;,
+          value: 2304,
+          children: [{ name: &#x27;es&#x27;, fullPath: &#x27;node_modules/react-redux/es&#x27;, value: 2304 }],
+        },
+        {
+          name: &#x27;victory-vendor&#x27;,
+          fullPath: &#x27;node_modules/victory-vendor&#x27;,
+          value: 1792,
+          children: [{ name: &#x27;es&#x27;, fullPath: &#x27;node_modules/victory-vendor/es&#x27;, value: 1792 }],
+        },
+      ],
+    },
+    {
+      name: &#x27;src&#x27;,
+      fullPath: &#x27;src&#x27;,
+      value: 4608,
+      children: [
+        {
+          name: &#x27;chart&#x27;,
+          fullPath: &#x27;src/chart&#x27;,
+          value: 2816,
+          children: [
+            { name: &#x27;Treemap.tsx&#x27;, fullPath: &#x27;src/chart/Treemap.tsx&#x27;, value: 1536 },
+            { name: &#x27;SunburstChart.tsx&#x27;, fullPath: &#x27;src/chart/SunburstChart.tsx&#x27;, value: 1280 },
+          ],
+        },
+        {
+          name: &#x27;component&#x27;,
+          fullPath: &#x27;src/component&#x27;,
+          value: 1152,
+          children: [{ name: &#x27;Tooltip.tsx&#x27;, fullPath: &#x27;src/component/Tooltip.tsx&#x27;, value: 1152 }],
+        },
+        {
+          name: &#x27;util&#x27;,
+          fullPath: &#x27;src/util&#x27;,
+          value: 640,
+          children: [{ name: &#x27;ChartUtils.ts&#x27;, fullPath: &#x27;src/util/ChartUtils.ts&#x27;, value: 640 }],
+        },
+      ],
+    },
+    {
+      name: &#x27;entry&#x27;,
+      fullPath: &#x27;entry&#x27;,
+      value: 1024,
+      children: [
+        {
+          name: &#x27;www&#x27;,
+          fullPath: &#x27;entry/www&#x27;,
+          value: 1024,
+          children: [
+            {
+              name: &#x27;src&#x27;,
+              fullPath: &#x27;entry/www/src&#x27;,
+              value: 1024,
+              children: [{ name: &#x27;docs&#x27;, fullPath: &#x27;entry/www/src/docs&#x27;, value: 1024 }],
+            },
+          ],
+        },
+      ],
+    },
+  ],
+} as const;
+
+const fallbackStages = [
+  {
+    stage: &#x27;es6-folder&#x27;,
+    bytes: 65536,
+    humanReadableSize: &#x27;64.00 KB&#x27;,
+    reductionFromBaselinePercent: 0,
+  },
+  {
+    stage: &#x27;tree-shaken&#x27;,
+    bytes: 9728,
+    humanReadableSize: &#x27;9.50 KB&#x27;,
+    reductionFromBaselinePercent: 0,
+  },
+  {
+    stage: &#x27;minified&#x27;,
+    bytes: 6144,
+    humanReadableSize: &#x27;6.00 KB&#x27;,
+    reductionFromBaselinePercent: 36.84,
+  },
+  {
+    stage: &#x27;minified+gzip&#x27;,
+    bytes: 3072,
+    humanReadableSize: &#x27;3.00 KB&#x27;,
+    reductionFromBaselinePercent: 68.42,
+  },
+] as const satisfies ReadonlyArray&lt;BundleVisualizationStage&gt;;
+
+const fallbackEntry: BundleVisualizationEntry = {
+  examplePath: &#x27;www/src/views/IndexView/IndexLineChart.tsx&#x27;,
+  totalSize: fallbackTree.value,
+  totalSizeLabel: &#x27;9.50 KB&#x27;,
+  moduleCount: 7,
+  generatedAt: &#x27;placeholder&#x27;,
+  stages: fallbackStages,
+  tree: fallbackTree,
+};
+
+type BundleVisualizationLoadState = {
+  readonly entry: BundleVisualizationEntry;
+};
+
+type BundleSizeTreemapProps = {
+  readonly forceFallbackData?: boolean;
+};
+
+type CustomizedTreemapNode = TreemapNode &amp; {
+  readonly fill?: string;
+};
+
+let bundleVisualizationEntryPromise: Promise&lt;BundleVisualizationEntry | null&gt; | undefined;
+
+function clamp(value: number, minimum: number, maximum: number): number {
+  return Math.max(minimum, Math.min(maximum, value));
+}
+
+function hashString(value: string): number {
+  let hash = 0;
+
+  for (let index = 0; index &lt; value.length; index += 1) {
+    hash = (hash &lt;&lt; 5) - hash + value.charCodeAt(index);
+    hash |= 0;
+  }
+
+  return Math.abs(hash);
+}
+
+function createBuildNode(name: string, fullPath: string): BuildNode {
+  return {
+    name,
+    fullPath,
+    value: 0,
+    children: new Map&lt;string, BuildNode&gt;(),
+  };
+}
+
+function getWebsiteBaseUrl(): string {
+  if (typeof document === &#x27;undefined&#x27;) {
+    return &#x27;/&#x27;;
+  }
+
+  const moduleScript = document.querySelector&lt;HTMLScriptElement&gt;(&#x27;script[type=&quot;module&quot;][src]&#x27;);
+  if (moduleScript?.src != null) {
+    const scriptUrl = new URL(moduleScript.src, window.location.href);
+
+    for (const marker of [&#x27;/src/&#x27;, &#x27;/assets/&#x27;]) {
+      const markerIndex = scriptUrl.pathname.indexOf(marker);
+      if (markerIndex &gt;= 0) {
+        scriptUrl.pathname = scriptUrl.pathname.slice(0, markerIndex + 1);
+        scriptUrl.search = &#x27;&#x27;;
+        scriptUrl.hash = &#x27;&#x27;;
+        return scriptUrl.toString();
+      }
+    }
+  }
+
+  return new URL(&#x27;/&#x27;, window.location.href).toString();
+}
+
+function loadGeneratedBundleVisualizationEntry(): Promise&lt;BundleVisualizationEntry | null&gt; {
+  if (bundleVisualizationEntryPromise != null) {
+    return bundleVisualizationEntryPromise;
+  }
+
+  bundleVisualizationEntryPromise = fetch(new URL(generatedBundleVisualizationAssetPath, getWebsiteBaseUrl()))
+    .then(response =&gt; (response.ok ? response.json() : null))
+    .then((bundleVisualizationData: BundleVisualizationData | null) =&gt; bundleVisualizationData?.treemap ?? null)
+    .catch(() =&gt; null);
+
+  return bundleVisualizationEntryPromise;
+}
+
+function useBundleVisualizationEntry(forceFallbackData: boolean = false): BundleVisualizationLoadState {
+  const [loadState, setLoadState] = useState&lt;BundleVisualizationLoadState&gt;({
+    entry: fallbackEntry,
+  });
+
+  useEffect(() =&gt; {
+    if (forceFallbackData) {
+      setLoadState({
+        entry: fallbackEntry,
+      });
+      return undefined;
+    }
+
+    let isMounted = true;
+
+    loadGeneratedBundleVisualizationEntry().then(entry =&gt; {
+      if (entry == null || !isMounted) {
+        return;
+      }
+
+      setLoadState({
+        entry,
+      });
+    });
+
+    return () =&gt; {
+      isMounted = false;
+    };
+  }, [forceFallbackData]);
+
+  return loadState;
+}
+
+function collectLeafNodes(node: BundleVisualizationNode): Array&lt;BundleVisualizationNode&gt; {
+  if (node.children == null || node.children.length === 0) {
+    return [node];
+  }
+
+  return node.children.flatMap(collectLeafNodes);
+}
+
+function getPackageName(pathSegments: ReadonlyArray&lt;string&gt;): { packageName: string; packageSegmentCount: number } {
+  if (pathSegments[1]?.startsWith(&#x27;@&#x27;) &amp;&amp; pathSegments[2] != null) {
+    return {
+      packageName: `${pathSegments[1]}/${pathSegments[2]}`,
+      packageSegmentCount: 2,
+    };
+  }
+
+  return {
+    packageName: pathSegments[1] ?? &#x27;unknown-package&#x27;,
+    packageSegmentCount: 1,
+  };
+}
+
+function inferLibraryFamily(packageName: string): string {
+  if (packageName.startsWith(&#x27;d3-&#x27;)) {
+    return &#x27;d3&#x27;;
+  }
+
+  if (packageName === &#x27;@reduxjs/toolkit&#x27; || packageName === &#x27;react-redux&#x27; || packageName === &#x27;redux&#x27;) {
+    return &#x27;redux&#x27;;
+  }
+
+  if (packageName === &#x27;react&#x27; || packageName === &#x27;react-dom&#x27; || packageName === &#x27;scheduler&#x27;) {
+    return &#x27;react&#x27;;
+  }
+
+  if (packageName === &#x27;use-sync-external-store&#x27;) {
+    return &#x27;react&#x27;;
+  }
+
+  return packageName;
+}
+
+function getDisplayPathSegments(fullPath: string): Array&lt;string&gt; {
+  const pathSegments = fullPath.split(&#x27;/&#x27;);
+
+  if (pathSegments[0] === &#x27;src&#x27;) {
+    return [&#x27;recharts&#x27;, ...pathSegments.slice(1)];
+  }
+
+  if (pathSegments[0] === &#x27;entry&#x27;) {
+    return [&#x27;example&#x27;, ...pathSegments.slice(1)];
+  }
+
+  if (pathSegments[0] === &#x27;node_modules&#x27;) {
+    const { packageName, packageSegmentCount } = getPackageName(pathSegments);
+    const libraryFamily = inferLibraryFamily(packageName);
+    const pathInsidePackage = pathSegments.slice(1 + packageSegmentCount);
+
+    if (libraryFamily === packageName) {
+      return [libraryFamily, ...pathInsidePackage];
+    }
+
+    return [libraryFamily, packageName, ...pathInsidePackage];
+  }
+
+  return pathSegments;
+}
+
+function insertLeaf(root: BuildNode, pathSegments: ReadonlyArray&lt;string&gt;, value: number): void {
+  // eslint-disable-next-line no-param-reassign
+  root.value += value;
+
+  let currentNode = root;
+  const accumulatedPath: Array&lt;string&gt; = [];
+
+  pathSegments.forEach(segment =&gt; {
+    accumulatedPath.push(segment);
+
+    const existingChild = currentNode.children.get(segment);
+    const nextNode = existingChild ?? createBuildNode(segment, accumulatedPath.join(&#x27;/&#x27;));
+    nextNode.value += value;
+
+    currentNode.children.set(segment, nextNode);
+    currentNode = nextNode;
+  });
+}
+// #endregion
+
+function getLibraryColorSeed(libraryFamily: string): ColorSeed {
+  const predefinedColor = libraryColorSeeds[libraryFamily];
+  if (predefinedColor != null) {
+    return predefinedColor;
+  }
+
+  return {
+    hue: hashString(libraryFamily) % 360,
+    saturation: 44 + (hashString(`${libraryFamily}-s`) % 18),
+    lightness: 42 + (hashString(`${libraryFamily}-l`) % 8),
+  };
+}
+
+function getNodeFill(
+  libraryFamily: string,
+  fullPath: string,
+  depth: number,
+  siblingIndex: number,
+  siblingCount: number,
+): string {
+  const baseColor = getLibraryColorSeed(libraryFamily);
+  const siblingPosition = siblingCount &gt; 1 ? siblingIndex / (siblingCount - 1) - 0.5 : 0;
+  const lightnessOffset = siblingPosition * 16 + depth * 6 + ((hashString(fullPath) % 5) - 2);
+  const saturationOffset = -depth * 4 + ((hashString(`${fullPath}-sat`) % 5) - 2);
+
+  return `hsl(${baseColor.hue} ${clamp(baseColor.saturation + saturationOffset, 28, 82)}% ${clamp(baseColor.lightness + lightnessOffset, 24, 78)}%)`;
+}
+
+function finalizeDisplayNode(
+  node: BuildNode,
+  libraryFamily: string,
+  depth: number,
+  siblingIndex: number,
+  siblingCount: number,
+): TreemapDisplayNode {
+  const sortedChildren = Array.from(node.children.values()).sort((left, right) =&gt; right.value - left.value);
+
+  return {
+    name: node.name,
+    fullPath: node.fullPath,
+    value: node.value,
+    fill: getNodeFill(libraryFamily, node.fullPath, depth, siblingIndex, siblingCount),
+    children:
+      sortedChildren.length &gt; 0
+        ? sortedChildren.map((child, index) =&gt;
+            finalizeDisplayNode(child, libraryFamily, depth + 1, index, sortedChildren.length),
+          )
+        : undefined,
+  };
+}
+
+function buildTreemapDisplayData(tree: BundleVisualizationNode): ReadonlyArray&lt;TreemapDisplayNode&gt; {
+  const displayRoot = createBuildNode(&#x27;bundle&#x27;, &#x27;bundle&#x27;);
+
+  collectLeafNodes(tree).forEach(leafNode =&gt; {
+    insertLeaf(displayRoot, getDisplayPathSegments(leafNode.fullPath), leafNode.value);
+  });
+
+  const topLevelLibraries = Array.from(displayRoot.children.values()).sort((left, right) =&gt; right.value - left.value);
+
+  return topLevelLibraries.map((libraryNode, index) =&gt;
+    finalizeDisplayNode(libraryNode, libraryNode.name, 0, index, topLevelLibraries.length),
+  );
+}
+
+function getHumanReadableSize(sizeInBytes: number): string {
+  if (sizeInBytes &lt; 1024) {
+    return `${sizeInBytes} B`;
+  }
+
+  const units = [&#x27;KB&#x27;, &#x27;MB&#x27;, &#x27;GB&#x27;, &#x27;TB&#x27;];
+  let value = sizeInBytes;
+  let unitIndex = -1;
+  while (value &gt;= 1024 &amp;&amp; unitIndex &lt; units.length - 1) {
+    value /= 1024;
+    unitIndex += 1;
+  }
+
+  return `${value.toFixed(2)} ${units[unitIndex]}`;
+}
+
+function renderCustomizedTreemapNode(props: CustomizedTreemapNode) {
+  const { x = 0, y = 0, width = 0, height = 0, depth = 0, name, fill = &#x27;#8884d8&#x27; } = props;
+
+  if (width &lt;= 1 || height &lt;= 1) {
+    return &lt;g /&gt;;
+  }
+
+  const canRenderLabel = width &gt; 72 &amp;&amp; height &gt; 26;
+  const canRenderValue = width &gt; 112 &amp;&amp; height &gt; 42;
+  const fontSize = depth === 0 ? 15 : 12;
+  const strokeWidth = depth === 0 ? 2 : 1;
+
+  return (
+    &lt;g&gt;
+      &lt;rect
+        x={x}
+        y={y}
+        width={width}
+        height={height}
+        fill={fill}
+        stroke=&quot;var(--color-surface-base)&quot;
+        strokeWidth={strokeWidth}
+        rx={4}
+      /&gt;
+      {canRenderLabel ? (
+        &lt;text x={x + 8} y={y + 18} fill=&quot;#fff&quot; fontSize={fontSize} fontWeight={depth === 0 ? 700 : 500}&gt;
+          {name}
+        &lt;/text&gt;
+      ) : null}
+      {canRenderValue ? (
+        &lt;text x={x + 8} y={y + 34} fill=&quot;rgba(255, 255, 255, 0.85)&quot; fontSize={11}&gt;
+          {getHumanReadableSize(props.value)}
+        &lt;/text&gt;
+      ) : null}
+    &lt;/g&gt;
+  );
+}
+
+function BundleSizeTreemap({ forceFallbackData = false }: BundleSizeTreemapProps) {
+  const { entry: bundleVisualizationEntry } = useBundleVisualizationEntry(forceFallbackData);
+  const minifiedGzipStage = useMemo(
+    () =&gt; bundleVisualizationEntry.stages.find(stage =&gt; stage.stage === &#x27;minified+gzip&#x27;),
+    [bundleVisualizationEntry.stages],
+  );
+  const treemapData = useMemo(
+    () =&gt; buildTreemapDisplayData(bundleVisualizationEntry.tree),
+    [bundleVisualizationEntry.tree],
+  );
+
+  return (
+    &lt;div style={containerStyle}&gt;
+      &lt;div style={summaryGridStyle}&gt;
+        &lt;div style={summaryCardStyle}&gt;
+          &lt;strong&gt;Measured entry&lt;/strong&gt;
+          &lt;span style={detailTextStyle}&gt;
+            &lt;code&gt;{bundleVisualizationEntry.examplePath}&lt;/code&gt;
+          &lt;/span&gt;
+        &lt;/div&gt;
+        &lt;div style={summaryCardStyle}&gt;
+          &lt;strong&gt;Tree-shaken total&lt;/strong&gt;
+          &lt;span style={detailTextStyle}&gt;{bundleVisualizationEntry.totalSizeLabel}&lt;/span&gt;
+        &lt;/div&gt;
+        &lt;div style={summaryCardStyle}&gt;
+          &lt;strong&gt;Minified + gzip&lt;/strong&gt;
+          &lt;span style={detailTextStyle}&gt;{minifiedGzipStage?.humanReadableSize ?? &#x27;n/a&#x27;}&lt;/span&gt;
+        &lt;/div&gt;
+      &lt;/div&gt;
+      &lt;Treemap
+        style={{ width: &#x27;100%&#x27;, maxWidth: &#x27;720px&#x27;, maxHeight: &#x27;80vh&#x27;, aspectRatio: 4 / 3 }}
+        data={treemapData}
+        dataKey=&quot;value&quot;
+        nameKey=&quot;name&quot;
+        aspectRatio={4 / 3}
+        stroke=&quot;#fff&quot;
+        fill=&quot;#2f855a&quot;
+        type=&quot;nest&quot;
+        content={renderCustomizedTreemapNode}
+      &gt;
+        &lt;Tooltip /&gt;
+      &lt;/Treemap&gt;
+    &lt;/div&gt;
+  );
+}
+
+export default BundleSizeTreemap;</pre><div></div></div></div><div style="height:100%;display:none;overflow:hidden"><div id="recharts-devtools-portal-R5a9" style="height:100%;background:var(--color-bg);color:var(--color-text);overflow:auto;padding:10px;display:block" class=""></div></div><div style="height:100%;display:none;overflow:hidden"><div id="recharts-devtools-portal-R5a9-annotations" style="height:100%;background:var(--color-bg);color:var(--color-text);overflow:auto;padding:10px;display:block" class=""></div></div><div style="height:100%;display:none;overflow:hidden"><div style="padding:10px;height:100%;overflow:auto"><div style="display:flex;gap:12px;margin:1ex"><label style="display:flex;align-items:center;gap:8px;cursor:pointer"><input style="margin:0;width:16px;height:16px;cursor:pointer" type="radio" name=":R55da9:" checked=""/>Autoplay Animations (default)</label><label style="display:flex;align-items:center;gap:8px;cursor:pointer"><input style="margin:0;width:16px;height:16px;cursor:pointer" type="radio" name=":R55da9:"/>Manual Animations</label></div></div></div></div></div></div></div></div></div></main><footer><p><span>Released under the </span><a href="https://opensource.org/licenses/MIT" target="_blank" rel="noreferrer">MIT License</a></p><p>Copyright (c) 2016-<!-- -->2026<!-- --> Recharts Group</p><p>Commit: <code title="4814a7cda79dc2b8a2de7359f636ce237955d020">4814a7cd</code></p></footer></div></div>
   </body>
 </html>

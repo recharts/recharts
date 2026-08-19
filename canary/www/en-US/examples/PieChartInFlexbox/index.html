@@ -29,7 +29,7 @@
       rel="stylesheet"
       type="text/css"
     />
-    <script type="module" crossorigin src="/recharts/canary/www/assets/index-CHiIJsKg.js"></script>
+    <script type="module" crossorigin src="/recharts/canary/www/assets/index-Cf0Yty6T.js"></script>
     <link rel="stylesheet" crossorigin href="/recharts/canary/www/assets/index-DB45zsAB.css">
     <link rel="sitemap" type="application/xml" title="Sitemap" href="/sitemap.xml">
   </head>
@@ -48,6 +48,67 @@
             L 15,13
             A 2,2,0,0,1,13,15
             L 7,15
-            A 2,2,0,0,1,5,13 Z" style="stroke-dasharray:0px 1px"></path></svg>Copy to clipboard</button><button type="button" class="codemirror-toolbar-item"><svg stroke="currentColor" fill="none" stroke-width="2" viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round" height="1em" width="1em" xmlns="http://www.w3.org/2000/svg"><path d="M21.174 6.812a1 1 0 0 0-3.986-3.987L3.842 16.174a2 2 0 0 0-.5.83l-1.321 4.352a.5.5 0 0 0 .623.622l4.353-1.32a2 2 0 0 0 .83-.497z"></path><path d="m15 5 4 4"></path></svg><span>Edit</span></button><button type="button" class="codemirror-toolbar-item"><svg stroke="currentColor" fill="none" stroke-width="2" viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round" height="1em" width="1em" xmlns="http://www.w3.org/2000/svg"><circle cx="18" cy="5" r="3"></circle><circle cx="6" cy="12" r="3"></circle><circle cx="18" cy="19" r="3"></circle><line x1="8.59" x2="15.42" y1="13.51" y2="17.49"></line><line x1="15.41" x2="8.59" y1="6.51" y2="10.49"></line></svg><span>Open in StackBlitz</span></button></div><div style="height:100%;display:block;overflow:hidden"><div class="codemirror-example-editor tsx" style="height:100%;overflow:auto"></div></div><div style="height:100%;display:none;overflow:hidden"><div id="recharts-devtools-portal-R5a9" style="height:100%;background:var(--color-bg);color:var(--color-text);overflow:auto;padding:10px;display:block" class=""></div></div><div style="height:100%;display:none;overflow:hidden"><div id="recharts-devtools-portal-R5a9-annotations" style="height:100%;background:var(--color-bg);color:var(--color-text);overflow:auto;padding:10px;display:block" class=""></div></div><div style="height:100%;display:none;overflow:hidden"><div style="padding:10px;height:100%;overflow:auto"><div style="display:flex;gap:12px;margin:1ex"><label style="display:flex;align-items:center;gap:8px;cursor:pointer"><input style="margin:0;width:16px;height:16px;cursor:pointer" type="radio" name=":R55da9:" checked=""/>Autoplay Animations (default)</label><label style="display:flex;align-items:center;gap:8px;cursor:pointer"><input style="margin:0;width:16px;height:16px;cursor:pointer" type="radio" name=":R55da9:"/>Manual Animations</label></div></div></div></div></div></div></div></div></div></main><footer><p><span>Released under the </span><a href="https://opensource.org/licenses/MIT" target="_blank" rel="noreferrer">MIT License</a></p><p>Copyright (c) 2016-<!-- -->2026<!-- --> Recharts Group</p><p>Commit: <code title="95753c3b8eb6b6a9ca277b9239bee999fe034ad4">95753c3b</code></p></footer></div></div>
+            A 2,2,0,0,1,5,13 Z" style="stroke-dasharray:0px 1px"></path></svg>Copy to clipboard</button><button type="button" class="codemirror-toolbar-item"><svg stroke="currentColor" fill="none" stroke-width="2" viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round" height="1em" width="1em" xmlns="http://www.w3.org/2000/svg"><path d="M21.174 6.812a1 1 0 0 0-3.986-3.987L3.842 16.174a2 2 0 0 0-.5.83l-1.321 4.352a.5.5 0 0 0 .623.622l4.353-1.32a2 2 0 0 0 .83-.497z"></path><path d="m15 5 4 4"></path></svg><span>Edit</span></button><button type="button" class="codemirror-toolbar-item"><svg stroke="currentColor" fill="none" stroke-width="2" viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round" height="1em" width="1em" xmlns="http://www.w3.org/2000/svg"><circle cx="18" cy="5" r="3"></circle><circle cx="6" cy="12" r="3"></circle><circle cx="18" cy="19" r="3"></circle><line x1="8.59" x2="15.42" y1="13.51" y2="17.49"></line><line x1="15.41" x2="8.59" y1="6.51" y2="10.49"></line></svg><span>Open in StackBlitz</span></button></div><div style="height:100%;display:block;overflow:hidden"><div class="codemirror-example-editor tsx" style="height:100%;overflow:auto"><pre>import { PieChart, Pie, Label } from &#x27;recharts&#x27;;
+import { RechartsDevtools } from &#x27;@recharts/devtools&#x27;;
+
+// #region Sample data
+const data = [
+  { name: &#x27;Group A&#x27;, value: 400 },
+  { name: &#x27;Group B&#x27;, value: 300 },
+  { name: &#x27;Group C&#x27;, value: 300 },
+  { name: &#x27;Group D&#x27;, value: 200 },
+];
+
+// #endregion
+const MyPie = () =&gt; (
+  &lt;Pie data={data} dataKey=&quot;value&quot; nameKey=&quot;name&quot; outerRadius=&quot;80%&quot; innerRadius=&quot;60%&quot; isAnimationActive={false} /&gt;
+);
+
+/**
+ * This example shows how to use the `responsive` prop on charts inside a flexbox container.
+ * The `responsive` prop makes the chart automatically resize to fit its parent container.
+ * By combining it with flexbox properties and CSS like `maxWidth` or `aspectRatio`,
+ * you can create complex and responsive chart layouts.
+ */
+export default function PieChartInFlexbox() {
+  return (
+    &lt;div
+      style={{
+        display: &#x27;flex&#x27;,
+        flexWrap: &#x27;wrap&#x27;,
+        width: &#x27;100%&#x27;,
+        minHeight: &#x27;300px&#x27;,
+        border: &#x27;1px solid #ccc&#x27;,
+        padding: &#x27;10px&#x27;,
+        justifyContent: &#x27;space-around&#x27;,
+        alignItems: &#x27;stretch&#x27;,
+      }}
+    &gt;
+      &lt;PieChart responsive style={{ height: &#x27;calc(100% - 20px)&#x27;, width: &#x27;33%&#x27;, flex: &#x27;1 1 200px&#x27;, aspectRatio: 1 }}&gt;
+        &lt;MyPie /&gt;
+        &lt;Label position=&quot;center&quot; fill=&quot;#666&quot;&gt;
+          Flex: 1 1 200px
+        &lt;/Label&gt;
+        &lt;RechartsDevtools /&gt;
+      &lt;/PieChart&gt;
+
+      &lt;PieChart responsive style={{ height: &#x27;calc(100% - 20px)&#x27;, width: &#x27;33%&#x27;, maxWidth: &#x27;300px&#x27;, aspectRatio: 1 }}&gt;
+        &lt;MyPie /&gt;
+        &lt;Label position=&quot;center&quot; fill=&quot;#666&quot;&gt;
+          maxWidth: &amp;#39;300px&amp;#39;
+        &lt;/Label&gt;
+        &lt;RechartsDevtools /&gt;
+      &lt;/PieChart&gt;
+
+      &lt;PieChart responsive style={{ height: &#x27;calc(100% - 20px)&#x27;, maxHeight: &#x27;20vh&#x27;, width: &#x27;33%&#x27;, aspectRatio: 1 }}&gt;
+        &lt;MyPie /&gt;
+        &lt;Label position=&quot;center&quot; fill=&quot;#666&quot;&gt;
+          maxHeight: &amp;#39;20vh&amp;#39;
+        &lt;/Label&gt;
+        &lt;RechartsDevtools /&gt;
+      &lt;/PieChart&gt;
+    &lt;/div&gt;
+  );
+}</pre><div></div></div></div><div style="height:100%;display:none;overflow:hidden"><div id="recharts-devtools-portal-R5a9" style="height:100%;background:var(--color-bg);color:var(--color-text);overflow:auto;padding:10px;display:block" class=""></div></div><div style="height:100%;display:none;overflow:hidden"><div id="recharts-devtools-portal-R5a9-annotations" style="height:100%;background:var(--color-bg);color:var(--color-text);overflow:auto;padding:10px;display:block" class=""></div></div><div style="height:100%;display:none;overflow:hidden"><div style="padding:10px;height:100%;overflow:auto"><div style="display:flex;gap:12px;margin:1ex"><label style="display:flex;align-items:center;gap:8px;cursor:pointer"><input style="margin:0;width:16px;height:16px;cursor:pointer" type="radio" name=":R55da9:" checked=""/>Autoplay Animations (default)</label><label style="display:flex;align-items:center;gap:8px;cursor:pointer"><input style="margin:0;width:16px;height:16px;cursor:pointer" type="radio" name=":R55da9:"/>Manual Animations</label></div></div></div></div></div></div></div></div></div></main><footer><p><span>Released under the </span><a href="https://opensource.org/licenses/MIT" target="_blank" rel="noreferrer">MIT License</a></p><p>Copyright (c) 2016-<!-- -->2026<!-- --> Recharts Group</p><p>Commit: <code title="4814a7cda79dc2b8a2de7359f636ce237955d020">4814a7cd</code></p></footer></div></div>
   </body>
 </html>

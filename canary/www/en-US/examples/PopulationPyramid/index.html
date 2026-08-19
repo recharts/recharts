@@ -29,7 +29,7 @@
       rel="stylesheet"
       type="text/css"
     />
-    <script type="module" crossorigin src="/recharts/canary/www/assets/index-CHiIJsKg.js"></script>
+    <script type="module" crossorigin src="/recharts/canary/www/assets/index-Cf0Yty6T.js"></script>
     <link rel="stylesheet" crossorigin href="/recharts/canary/www/assets/index-DB45zsAB.css">
     <link rel="sitemap" type="application/xml" title="Sitemap" href="/sitemap.xml">
   </head>
@@ -48,6 +48,129 @@
             L 15,13
             A 2,2,0,0,1,13,15
             L 7,15
-            A 2,2,0,0,1,5,13 Z" style="stroke-dasharray:0px 1px"></path></svg>Copy to clipboard</button><button type="button" class="codemirror-toolbar-item"><svg stroke="currentColor" fill="none" stroke-width="2" viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round" height="1em" width="1em" xmlns="http://www.w3.org/2000/svg"><path d="M21.174 6.812a1 1 0 0 0-3.986-3.987L3.842 16.174a2 2 0 0 0-.5.83l-1.321 4.352a.5.5 0 0 0 .623.622l4.353-1.32a2 2 0 0 0 .83-.497z"></path><path d="m15 5 4 4"></path></svg><span>Edit</span></button><button type="button" class="codemirror-toolbar-item"><svg stroke="currentColor" fill="none" stroke-width="2" viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round" height="1em" width="1em" xmlns="http://www.w3.org/2000/svg"><circle cx="18" cy="5" r="3"></circle><circle cx="6" cy="12" r="3"></circle><circle cx="18" cy="19" r="3"></circle><line x1="8.59" x2="15.42" y1="13.51" y2="17.49"></line><line x1="15.41" x2="8.59" y1="6.51" y2="10.49"></line></svg><span>Open in StackBlitz</span></button></div><div style="height:100%;display:block;overflow:hidden"><div class="codemirror-example-editor tsx" style="height:100%;overflow:auto"></div></div><div style="height:100%;display:none;overflow:hidden"><div id="recharts-devtools-portal-R5a9" style="height:100%;background:var(--color-bg);color:var(--color-text);overflow:auto;padding:10px;display:block" class=""></div></div><div style="height:100%;display:none;overflow:hidden"><div id="recharts-devtools-portal-R5a9-annotations" style="height:100%;background:var(--color-bg);color:var(--color-text);overflow:auto;padding:10px;display:block" class=""></div></div><div style="height:100%;display:none;overflow:hidden"><div style="padding:10px;height:100%;overflow:auto"><div style="display:flex;gap:12px;margin:1ex"><label style="display:flex;align-items:center;gap:8px;cursor:pointer"><input style="margin:0;width:16px;height:16px;cursor:pointer" type="radio" name=":R55da9:" checked=""/>Autoplay Animations (default)</label><label style="display:flex;align-items:center;gap:8px;cursor:pointer"><input style="margin:0;width:16px;height:16px;cursor:pointer" type="radio" name=":R55da9:"/>Manual Animations</label></div></div></div></div></div></div></div></div></div></main><footer><p><span>Released under the </span><a href="https://opensource.org/licenses/MIT" target="_blank" rel="noreferrer">MIT License</a></p><p>Copyright (c) 2016-<!-- -->2026<!-- --> Recharts Group</p><p>Commit: <code title="95753c3b8eb6b6a9ca277b9239bee999fe034ad4">95753c3b</code></p></footer></div></div>
+            A 2,2,0,0,1,5,13 Z" style="stroke-dasharray:0px 1px"></path></svg>Copy to clipboard</button><button type="button" class="codemirror-toolbar-item"><svg stroke="currentColor" fill="none" stroke-width="2" viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round" height="1em" width="1em" xmlns="http://www.w3.org/2000/svg"><path d="M21.174 6.812a1 1 0 0 0-3.986-3.987L3.842 16.174a2 2 0 0 0-.5.83l-1.321 4.352a.5.5 0 0 0 .623.622l4.353-1.32a2 2 0 0 0 .83-.497z"></path><path d="m15 5 4 4"></path></svg><span>Edit</span></button><button type="button" class="codemirror-toolbar-item"><svg stroke="currentColor" fill="none" stroke-width="2" viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round" height="1em" width="1em" xmlns="http://www.w3.org/2000/svg"><circle cx="18" cy="5" r="3"></circle><circle cx="6" cy="12" r="3"></circle><circle cx="18" cy="19" r="3"></circle><line x1="8.59" x2="15.42" y1="13.51" y2="17.49"></line><line x1="15.41" x2="8.59" y1="6.51" y2="10.49"></line></svg><span>Open in StackBlitz</span></button></div><div style="height:100%;display:block;overflow:hidden"><div class="codemirror-example-editor tsx" style="height:100%;overflow:auto"><pre>import {
+  Bar,
+  BarChart,
+  Legend,
+  LegendPayload,
+  Tooltip,
+  XAxis,
+  YAxis,
+  RenderableText,
+  TooltipValueType,
+} from &#x27;recharts&#x27;;
+import { RechartsDevtools } from &#x27;@recharts/devtools&#x27;;
+
+// #region Data and helper functions
+/**
+ * Data source: https://www.populationpyramid.net/world/2024/
+ * CSV columns: Age,M,F
+ */
+const rawData = `
+100+,110838,476160
+95-99,1141691,3389124
+90-94,6038458,13078242
+85-89,18342182,31348041
+80-84,37166893,53013079
+75-79,65570812,83217973
+70-74,103998992,124048996
+65-69,138182244,154357035
+60-64,170525048,180992721
+55-59,206686596,212285997
+50-54,231342779,232097236
+45-49,240153677,236696232
+40-44,270991534,263180352
+35-39,301744799,289424003
+30-34,310384416,294303405
+25-29,308889349,291429439
+20-24,318912554,300510028
+15-19,335882343,315258559
+10-14,353666705,331681954
+5-9,351991008,332121131
+0-4,331889289,315450649
+`
+  .trim()
+  .split(&#x27;\n&#x27;)
+  .map(line =&gt; {
+    const [age, m, f] = line.split(&#x27;,&#x27;);
+    return { age, male: Number(m), female: Number(f) };
+  });
+
+const totalPopulation: number = rawData.reduce((sum, entry) =&gt; sum + entry.male + entry.female, 0);
+
+const percentageData = rawData.map(entry =&gt; {
+  return {
+    age: entry.age,
+    male: (entry.male / totalPopulation) * -100, // Negative for left side
+    female: (entry.female / totalPopulation) * 100,
+  };
+});
+
+function formatPercent(val: RenderableText | TooltipValueType): string {
+  return `${Math.abs(Number(val)).toFixed(1)}%`;
+}
+
+function itemSorter(item: LegendPayload): number {
+  // Make legend order match the chart bar order
+  return item.value === &#x27;Male&#x27; ? 0 : 1;
+}
+// #endregion
+
+export default function PopulationPyramidExample({ defaultIndex }: { defaultIndex?: number }) {
+  return (
+    &lt;BarChart
+      data={percentageData}
+      layout=&quot;vertical&quot;
+      style={{ width: &#x27;100%&#x27;, maxWidth: &#x27;700px&#x27;, maxHeight: &#x27;70vh&#x27;, aspectRatio: 1 }}
+      responsive
+      stackOffset=&quot;sign&quot;
+      barCategoryGap={1}
+    &gt;
+      &lt;XAxis
+        type=&quot;number&quot;
+        domain={[-10, 10]}
+        tickFormatter={formatPercent}
+        height={50}
+        label={{
+          value: &#x27;% of total population&#x27;,
+          position: &#x27;insideBottom&#x27;,
+        }}
+      /&gt;
+      &lt;YAxis
+        width=&quot;auto&quot;
+        type=&quot;category&quot;
+        dataKey=&quot;age&quot;
+        name=&quot;Age group&quot;
+        label={{
+          value: &#x27;Age group&#x27;,
+          angle: -90,
+          position: &#x27;insideLeft&#x27;,
+          offset: 10,
+        }}
+      /&gt;
+      &lt;Bar
+        stackId=&quot;age&quot;
+        name=&quot;Female&quot;
+        dataKey=&quot;female&quot;
+        fill=&quot;#ed7485&quot;
+        stroke=&quot;none&quot;
+        radius={[0, 5, 5, 0]}
+        label={{ position: &#x27;right&#x27;, formatter: formatPercent }}
+      /&gt;
+      &lt;Bar
+        stackId=&quot;age&quot;
+        name=&quot;Male&quot;
+        dataKey=&quot;male&quot;
+        fill=&quot;#6ea1c7&quot;
+        stroke=&quot;none&quot;
+        radius={[0, 5, 5, 0]}
+        label={{ position: &#x27;right&#x27;, formatter: formatPercent }}
+      /&gt;
+      &lt;Tooltip formatter={formatPercent} defaultIndex={defaultIndex} /&gt;
+      &lt;Legend itemSorter={itemSorter} verticalAlign=&quot;top&quot; align=&quot;right&quot; /&gt;
+      &lt;RechartsDevtools /&gt;
+    &lt;/BarChart&gt;
+  );
+}</pre><div></div></div></div><div style="height:100%;display:none;overflow:hidden"><div id="recharts-devtools-portal-R5a9" style="height:100%;background:var(--color-bg);color:var(--color-text);overflow:auto;padding:10px;display:block" class=""></div></div><div style="height:100%;display:none;overflow:hidden"><div id="recharts-devtools-portal-R5a9-annotations" style="height:100%;background:var(--color-bg);color:var(--color-text);overflow:auto;padding:10px;display:block" class=""></div></div><div style="height:100%;display:none;overflow:hidden"><div style="padding:10px;height:100%;overflow:auto"><div style="display:flex;gap:12px;margin:1ex"><label style="display:flex;align-items:center;gap:8px;cursor:pointer"><input style="margin:0;width:16px;height:16px;cursor:pointer" type="radio" name=":R55da9:" checked=""/>Autoplay Animations (default)</label><label style="display:flex;align-items:center;gap:8px;cursor:pointer"><input style="margin:0;width:16px;height:16px;cursor:pointer" type="radio" name=":R55da9:"/>Manual Animations</label></div></div></div></div></div></div></div></div></div></main><footer><p><span>Released under the </span><a href="https://opensource.org/licenses/MIT" target="_blank" rel="noreferrer">MIT License</a></p><p>Copyright (c) 2016-<!-- -->2026<!-- --> Recharts Group</p><p>Commit: <code title="4814a7cda79dc2b8a2de7359f636ce237955d020">4814a7cd</code></p></footer></div></div>
   </body>
 </html>

@@ -29,7 +29,7 @@
       rel="stylesheet"
       type="text/css"
     />
-    <script type="module" crossorigin src="/recharts/canary/www/assets/index-CHiIJsKg.js"></script>
+    <script type="module" crossorigin src="/recharts/canary/www/assets/index-Cf0Yty6T.js"></script>
     <link rel="stylesheet" crossorigin href="/recharts/canary/www/assets/index-DB45zsAB.css">
     <link rel="sitemap" type="application/xml" title="Sitemap" href="/sitemap.xml">
   </head>
@@ -48,6 +48,190 @@
             L 15,13
             A 2,2,0,0,1,13,15
             L 7,15
-            A 2,2,0,0,1,5,13 Z" style="stroke-dasharray:0px 1px"></path></svg>Copy to clipboard</button><button type="button" class="codemirror-toolbar-item"><svg stroke="currentColor" fill="none" stroke-width="2" viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round" height="1em" width="1em" xmlns="http://www.w3.org/2000/svg"><path d="M21.174 6.812a1 1 0 0 0-3.986-3.987L3.842 16.174a2 2 0 0 0-.5.83l-1.321 4.352a.5.5 0 0 0 .623.622l4.353-1.32a2 2 0 0 0 .83-.497z"></path><path d="m15 5 4 4"></path></svg><span>Edit</span></button><button type="button" class="codemirror-toolbar-item"><svg stroke="currentColor" fill="none" stroke-width="2" viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round" height="1em" width="1em" xmlns="http://www.w3.org/2000/svg"><circle cx="18" cy="5" r="3"></circle><circle cx="6" cy="12" r="3"></circle><circle cx="18" cy="19" r="3"></circle><line x1="8.59" x2="15.42" y1="13.51" y2="17.49"></line><line x1="15.41" x2="8.59" y1="6.51" y2="10.49"></line></svg><span>Open in StackBlitz</span></button></div><div style="height:100%;display:block;overflow:hidden"><div class="codemirror-example-editor tsx" style="height:100%;overflow:auto"></div></div><div style="height:100%;display:none;overflow:hidden"><div id="recharts-devtools-portal-R5a9" style="height:100%;background:var(--color-bg);color:var(--color-text);overflow:auto;padding:10px;display:block" class=""></div></div><div style="height:100%;display:none;overflow:hidden"><div id="recharts-devtools-portal-R5a9-annotations" style="height:100%;background:var(--color-bg);color:var(--color-text);overflow:auto;padding:10px;display:block" class=""></div></div><div style="height:100%;display:none;overflow:hidden"><div style="padding:10px;height:100%;overflow:auto"><div style="display:flex;gap:12px;margin:1ex"><label style="display:flex;align-items:center;gap:8px;cursor:pointer"><input style="margin:0;width:16px;height:16px;cursor:pointer" type="radio" name=":R55da9:" checked=""/>Autoplay Animations (default)</label><label style="display:flex;align-items:center;gap:8px;cursor:pointer"><input style="margin:0;width:16px;height:16px;cursor:pointer" type="radio" name=":R55da9:"/>Manual Animations</label></div></div></div></div></div></div></div></div></div></main><footer><p><span>Released under the </span><a href="https://opensource.org/licenses/MIT" target="_blank" rel="noreferrer">MIT License</a></p><p>Copyright (c) 2016-<!-- -->2026<!-- --> Recharts Group</p><p>Commit: <code title="95753c3b8eb6b6a9ca277b9239bee999fe034ad4">95753c3b</code></p></footer></div></div>
+            A 2,2,0,0,1,5,13 Z" style="stroke-dasharray:0px 1px"></path></svg>Copy to clipboard</button><button type="button" class="codemirror-toolbar-item"><svg stroke="currentColor" fill="none" stroke-width="2" viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round" height="1em" width="1em" xmlns="http://www.w3.org/2000/svg"><path d="M21.174 6.812a1 1 0 0 0-3.986-3.987L3.842 16.174a2 2 0 0 0-.5.83l-1.321 4.352a.5.5 0 0 0 .623.622l4.353-1.32a2 2 0 0 0 .83-.497z"></path><path d="m15 5 4 4"></path></svg><span>Edit</span></button><button type="button" class="codemirror-toolbar-item"><svg stroke="currentColor" fill="none" stroke-width="2" viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round" height="1em" width="1em" xmlns="http://www.w3.org/2000/svg"><circle cx="18" cy="5" r="3"></circle><circle cx="6" cy="12" r="3"></circle><circle cx="18" cy="19" r="3"></circle><line x1="8.59" x2="15.42" y1="13.51" y2="17.49"></line><line x1="15.41" x2="8.59" y1="6.51" y2="10.49"></line></svg><span>Open in StackBlitz</span></button></div><div style="height:100%;display:block;overflow:hidden"><div class="codemirror-example-editor tsx" style="height:100%;overflow:auto"><pre>import { useCallback, useState } from &#x27;react&#x27;;
+import { LineChart, Line, CartesianGrid, XAxis, YAxis, Tooltip, ReferenceArea, MouseHandlerDataParam } from &#x27;recharts&#x27;;
+import { RechartsDevtools } from &#x27;@recharts/devtools&#x27;;
+
+type Impressions = { name: number; cost: number; impression: number };
+
+// #region Sample data
+const impressionsData = [
+  { name: 1, cost: 4.11, impression: 100 },
+  { name: 2, cost: 2.39, impression: 120 },
+  { name: 3, cost: 1.37, impression: 150 },
+  { name: 4, cost: 1.16, impression: 180 },
+  { name: 5, cost: 2.29, impression: 200 },
+  { name: 6, cost: 3, impression: 499 },
+  { name: 7, cost: 0.53, impression: 50 },
+  { name: 8, cost: 2.52, impression: 100 },
+  { name: 9, cost: 1.79, impression: 200 },
+  { name: 10, cost: 2.94, impression: 222 },
+  { name: 11, cost: 4.3, impression: 210 },
+  { name: 12, cost: 4.41, impression: 300 },
+  { name: 13, cost: 2.1, impression: 50 },
+  { name: 14, cost: 8, impression: 190 },
+  { name: 15, cost: 0, impression: 300 },
+  { name: 16, cost: 9, impression: 400 },
+  { name: 17, cost: 3, impression: 200 },
+  { name: 18, cost: 2, impression: 50 },
+  { name: 19, cost: 3, impression: 100 },
+  { name: 20, cost: 7, impression: 100 },
+];
+
+// #endregion
+type ZoomAndHighlightState = {
+  left: string | number;
+  right: string | number;
+  refAreaLeft: string | number | undefined;
+  refAreaRight: string | number | undefined;
+  top: string | number;
+  bottom: string | number;
+  top2: string | number;
+  bottom2: string | number;
+  animation: boolean;
+};
+
+type AxisDomain = [string | number, string | number];
+
+const initialState: ZoomAndHighlightState = {
+  left: &#x27;dataMin&#x27;,
+  right: &#x27;dataMax&#x27;,
+  refAreaLeft: undefined,
+  refAreaRight: undefined,
+  top: &#x27;dataMax+1&#x27;,
+  bottom: &#x27;dataMin-1&#x27;,
+  top2: &#x27;dataMax+20&#x27;,
+  bottom2: &#x27;dataMin-20&#x27;,
+  animation: true,
+};
+
+const getAxisYDomain = (
+  from: string | number | undefined,
+  to: string | number | undefined,
+  ref: keyof Impressions,
+  offset: number,
+): AxisDomain =&gt; {
+  if (from != null &amp;&amp; to != null) {
+    const refData = impressionsData.slice(Number(from) - 1, Number(to));
+    const firstDatum = refData[0];
+    if (firstDatum == null) {
+      return [initialState.bottom, initialState.top];
+    }
+    let bottom = firstDatum[ref];
+    let top = firstDatum[ref];
+    refData.forEach(d =&gt; {
+      if (d[ref] &gt; top) top = d[ref];
+      if (d[ref] &lt; bottom) bottom = d[ref];
+    });
+
+    return [(bottom | 0) - offset, (top | 0) + offset];
+  }
+  return [initialState.bottom, initialState.top];
+};
+
+const HighlightAndZoomLineChart = () =&gt; {
+  const [zoomGraph, setZoomGraph] = useState&lt;ZoomAndHighlightState&gt;(initialState);
+
+  const zoom = useCallback(() =&gt; {
+    setZoomGraph((prev: ZoomAndHighlightState): ZoomAndHighlightState =&gt; {
+      let { refAreaLeft, refAreaRight } = prev;
+
+      if (refAreaLeft === refAreaRight || !refAreaRight) {
+        return {
+          ...prev,
+          refAreaLeft: undefined,
+          refAreaRight: undefined,
+        };
+      }
+
+      if (refAreaLeft &amp;&amp; refAreaRight &amp;&amp; refAreaLeft &gt; refAreaRight)
+        [refAreaLeft, refAreaRight] = [refAreaRight, refAreaLeft];
+
+      const [bottom, top] = getAxisYDomain(refAreaLeft, refAreaRight, &#x27;cost&#x27;, 1);
+      const [bottom2, top2] = getAxisYDomain(refAreaLeft, refAreaRight, &#x27;impression&#x27;, 50);
+
+      return {
+        ...prev,
+        refAreaLeft: undefined,
+        refAreaRight: undefined,
+        left: refAreaLeft ?? initialState.left,
+        right: refAreaRight ?? initialState.right,
+        bottom,
+        top,
+        bottom2,
+        top2,
+      };
+    });
+  }, [setZoomGraph]);
+
+  const zoomOut = useCallback(() =&gt; {
+    setZoomGraph(initialState);
+  }, [setZoomGraph]);
+
+  const onMouseDown = useCallback(
+    (e: MouseHandlerDataParam) =&gt; {
+      setZoomGraph((prev: ZoomAndHighlightState): ZoomAndHighlightState =&gt; ({ ...prev, refAreaLeft: e.activeLabel }));
+    },
+    [setZoomGraph],
+  );
+
+  const onMouseMove = useCallback(
+    (e: MouseHandlerDataParam) =&gt; {
+      setZoomGraph(prev =&gt; {
+        if (prev.refAreaLeft) {
+          return { ...prev, refAreaRight: e.activeLabel };
+        }
+        return prev;
+      });
+    },
+    [setZoomGraph],
+  );
+
+  const { refAreaLeft, refAreaRight, left, right, top, bottom, top2, bottom2 } = zoomGraph;
+
+  return (
+    &lt;div className=&quot;highlight-bar-charts&quot; style={{ userSelect: &#x27;none&#x27;, width: &#x27;100%&#x27; }}&gt;
+      &lt;button type=&quot;button&quot; className=&quot;btn update&quot; onClick={zoomOut}&gt;
+        Zoom Out
+      &lt;/button&gt;
+
+      &lt;LineChart
+        style={{ width: &#x27;100%&#x27;, maxWidth: &#x27;700px&#x27;, maxHeight: &#x27;70vh&#x27;, aspectRatio: 1.618 }}
+        responsive
+        data={impressionsData}
+        onMouseDown={onMouseDown}
+        onMouseMove={onMouseMove}
+        onMouseUp={zoom}
+      &gt;
+        &lt;CartesianGrid strokeDasharray=&quot;3 3&quot; /&gt;
+        &lt;XAxis allowDataOverflow dataKey=&quot;name&quot; domain={[left, right]} type=&quot;number&quot; /&gt;
+        &lt;YAxis allowDataOverflow domain={[bottom, top]} type=&quot;number&quot; yAxisId=&quot;1&quot; width=&quot;auto&quot; /&gt;
+        &lt;YAxis orientation=&quot;right&quot; allowDataOverflow domain={[bottom2, top2]} type=&quot;number&quot; yAxisId=&quot;2&quot; width=&quot;auto&quot; /&gt;
+        &lt;Tooltip
+          cursor={{
+            stroke: &#x27;var(--color-border-2)&#x27;,
+          }}
+          contentStyle={{ backgroundColor: &#x27;var(--color-surface-base)&#x27;, borderColor: &#x27;var(--color-border-2)&#x27; }}
+        /&gt;
+        &lt;Line yAxisId=&quot;1&quot; type=&quot;natural&quot; dataKey=&quot;cost&quot; animationDuration={300} /&gt;
+        &lt;Line yAxisId=&quot;2&quot; type=&quot;natural&quot; dataKey=&quot;impression&quot; animationDuration={300} /&gt;
+
+        {refAreaLeft &amp;&amp; refAreaRight ? (
+          &lt;ReferenceArea
+            yAxisId=&quot;1&quot;
+            x1={refAreaLeft}
+            x2={refAreaRight}
+            strokeOpacity={0.3}
+            stroke=&quot;var(--color-border-2)&quot;
+            fill=&quot;var(--color-solid-7a)&quot;
+          /&gt;
+        ) : null}
+        &lt;RechartsDevtools /&gt;
+      &lt;/LineChart&gt;
+    &lt;/div&gt;
+  );
+};
+
+export default HighlightAndZoomLineChart;</pre><div></div></div></div><div style="height:100%;display:none;overflow:hidden"><div id="recharts-devtools-portal-R5a9" style="height:100%;background:var(--color-bg);color:var(--color-text);overflow:auto;padding:10px;display:block" class=""></div></div><div style="height:100%;display:none;overflow:hidden"><div id="recharts-devtools-portal-R5a9-annotations" style="height:100%;background:var(--color-bg);color:var(--color-text);overflow:auto;padding:10px;display:block" class=""></div></div><div style="height:100%;display:none;overflow:hidden"><div style="padding:10px;height:100%;overflow:auto"><div style="display:flex;gap:12px;margin:1ex"><label style="display:flex;align-items:center;gap:8px;cursor:pointer"><input style="margin:0;width:16px;height:16px;cursor:pointer" type="radio" name=":R55da9:" checked=""/>Autoplay Animations (default)</label><label style="display:flex;align-items:center;gap:8px;cursor:pointer"><input style="margin:0;width:16px;height:16px;cursor:pointer" type="radio" name=":R55da9:"/>Manual Animations</label></div></div></div></div></div></div></div></div></div></main><footer><p><span>Released under the </span><a href="https://opensource.org/licenses/MIT" target="_blank" rel="noreferrer">MIT License</a></p><p>Copyright (c) 2016-<!-- -->2026<!-- --> Recharts Group</p><p>Commit: <code title="4814a7cda79dc2b8a2de7359f636ce237955d020">4814a7cd</code></p></footer></div></div>
   </body>
 </html>

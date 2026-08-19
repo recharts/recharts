@@ -29,7 +29,7 @@
       rel="stylesheet"
       type="text/css"
     />
-    <script type="module" crossorigin src="/recharts/canary/www/assets/index-CHiIJsKg.js"></script>
+    <script type="module" crossorigin src="/recharts/canary/www/assets/index-Cf0Yty6T.js"></script>
     <link rel="stylesheet" crossorigin href="/recharts/canary/www/assets/index-DB45zsAB.css">
     <link rel="sitemap" type="application/xml" title="Sitemap" href="/sitemap.xml">
   </head>
@@ -48,6 +48,44 @@
             L 15,13
             A 2,2,0,0,1,13,15
             L 7,15
-            A 2,2,0,0,1,5,13 Z" style="stroke-dasharray:0px 1px"></path></svg>Copy to clipboard</button></div><div style="height:100%;display:none;overflow:hidden"><div class="codemirror-example-editor tsx" style="height:100%;overflow:auto"></div></div><div style="height:100%;display:block;overflow:hidden"><div id="recharts-devtools-portal-Raq9" data-initial-tab="useMargin" style="height:100%;background:var(--color-bg);color:var(--color-text);overflow:auto;padding:10px;display:block" class=""></div></div><div style="height:100%;display:none;overflow:hidden"><div id="recharts-devtools-portal-Raq9-annotations" style="height:100%;background:var(--color-bg);color:var(--color-text);overflow:auto;padding:10px;display:block" class=""></div></div><div style="height:100%;display:none;overflow:hidden"><div style="padding:10px;height:100%;overflow:auto"><div style="display:flex;gap:12px;margin:1ex"><label style="display:flex;align-items:center;gap:8px;cursor:pointer"><input style="margin:0;width:16px;height:16px;cursor:pointer" type="radio" name=":Raaqq9:" checked=""/>Autoplay Animations (default)</label><label style="display:flex;align-items:center;gap:8px;cursor:pointer"><input style="margin:0;width:16px;height:16px;cursor:pointer" type="radio" name=":Raaqq9:"/>Manual Animations</label></div></div></div></div></div></div></div></div></div></div><div><h4 class="sub-title">Return value</h4><p><code>Margin | undefined</code></p><p class="desc"><section><p>The margin of the chart in pixels, or <code>undefined</code> if not in a chart context.</p></section></p></div></div></div></main><footer><p><span>Released under the </span><a href="https://opensource.org/licenses/MIT" target="_blank" rel="noreferrer">MIT License</a></p><p>Copyright (c) 2016-<!-- -->2026<!-- --> Recharts Group</p><p>Commit: <code title="95753c3b8eb6b6a9ca277b9239bee999fe034ad4">95753c3b</code></p></footer></div></div>
+            A 2,2,0,0,1,5,13 Z" style="stroke-dasharray:0px 1px"></path></svg>Copy to clipboard</button></div><div style="height:100%;display:none;overflow:hidden"><div class="codemirror-example-editor tsx" style="height:100%;overflow:auto"><pre>import { Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, createHorizontalChart } from &#x27;recharts&#x27;;
+import { generateMockData, MockDataType, RechartsDevtools } from &#x27;@recharts/devtools&#x27;;
+
+const data: Array&lt;MockDataType&gt; = generateMockData(6, 26213);
+
+const Typed = createHorizontalChart&lt;MockDataType, string, number&gt;()({ XAxis, YAxis, Tooltip, Line });
+
+export default function Example() {
+  return (
+    &lt;Typed.LineChart
+      style={{ width: &#x27;100%&#x27;, maxWidth: &#x27;700px&#x27;, height: &#x27;100%&#x27;, maxHeight: &#x27;70vh&#x27;, aspectRatio: 1.618 }}
+      responsive
+      data={data}
+      margin={{
+        top: 5,
+        right: 0,
+        left: 0,
+        bottom: 5,
+      }}
+    &gt;
+      &lt;CartesianGrid strokeDasharray=&quot;3 3&quot; /&gt;
+      &lt;Typed.XAxis dataKey=&quot;label&quot; /&gt;
+      &lt;Typed.YAxis width=&quot;auto&quot; /&gt;
+      &lt;Tooltip
+        cursor={{
+          stroke: &#x27;var(--color-border-2)&#x27;,
+        }}
+        contentStyle={{
+          backgroundColor: &#x27;var(--color-surface-raised)&#x27;,
+          borderColor: &#x27;var(--color-border-2)&#x27;,
+        }}
+      /&gt;
+      &lt;Legend /&gt;
+      &lt;Typed.Line dataKey=&quot;x&quot; /&gt;
+      &lt;Typed.Line dataKey=&quot;y&quot; /&gt;
+      &lt;RechartsDevtools /&gt;
+    &lt;/Typed.LineChart&gt;
+  );
+}</pre><div></div></div></div><div style="height:100%;display:block;overflow:hidden"><div id="recharts-devtools-portal-Raq9" data-initial-tab="useMargin" style="height:100%;background:var(--color-bg);color:var(--color-text);overflow:auto;padding:10px;display:block" class=""></div></div><div style="height:100%;display:none;overflow:hidden"><div id="recharts-devtools-portal-Raq9-annotations" style="height:100%;background:var(--color-bg);color:var(--color-text);overflow:auto;padding:10px;display:block" class=""></div></div><div style="height:100%;display:none;overflow:hidden"><div style="padding:10px;height:100%;overflow:auto"><div style="display:flex;gap:12px;margin:1ex"><label style="display:flex;align-items:center;gap:8px;cursor:pointer"><input style="margin:0;width:16px;height:16px;cursor:pointer" type="radio" name=":Raaqq9:" checked=""/>Autoplay Animations (default)</label><label style="display:flex;align-items:center;gap:8px;cursor:pointer"><input style="margin:0;width:16px;height:16px;cursor:pointer" type="radio" name=":Raaqq9:"/>Manual Animations</label></div></div></div></div></div></div></div></div></div></div><div><h4 class="sub-title">Return value</h4><p><code>Margin | undefined</code></p><p class="desc"><section><p>The margin of the chart in pixels, or <code>undefined</code> if not in a chart context.</p></section></p></div></div></div></main><footer><p><span>Released under the </span><a href="https://opensource.org/licenses/MIT" target="_blank" rel="noreferrer">MIT License</a></p><p>Copyright (c) 2016-<!-- -->2026<!-- --> Recharts Group</p><p>Commit: <code title="4814a7cda79dc2b8a2de7359f636ce237955d020">4814a7cd</code></p></footer></div></div>
   </body>
 </html>

@@ -29,7 +29,7 @@
       rel="stylesheet"
       type="text/css"
     />
-    <script type="module" crossorigin src="/recharts/canary/www/assets/index-CHiIJsKg.js"></script>
+    <script type="module" crossorigin src="/recharts/canary/www/assets/index-Cf0Yty6T.js"></script>
     <link rel="stylesheet" crossorigin href="/recharts/canary/www/assets/index-DB45zsAB.css">
     <link rel="sitemap" type="application/xml" title="Sitemap" href="/sitemap.xml">
   </head>
@@ -48,6 +48,144 @@
             L 15,13
             A 2,2,0,0,1,13,15
             L 7,15
-            A 2,2,0,0,1,5,13 Z" style="stroke-dasharray:0px 1px"></path></svg>Copy to clipboard</button><button type="button" class="codemirror-toolbar-item"><svg stroke="currentColor" fill="none" stroke-width="2" viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round" height="1em" width="1em" xmlns="http://www.w3.org/2000/svg"><path d="M21.174 6.812a1 1 0 0 0-3.986-3.987L3.842 16.174a2 2 0 0 0-.5.83l-1.321 4.352a.5.5 0 0 0 .623.622l4.353-1.32a2 2 0 0 0 .83-.497z"></path><path d="m15 5 4 4"></path></svg><span>Edit</span></button><button type="button" class="codemirror-toolbar-item"><svg stroke="currentColor" fill="none" stroke-width="2" viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round" height="1em" width="1em" xmlns="http://www.w3.org/2000/svg"><circle cx="18" cy="5" r="3"></circle><circle cx="6" cy="12" r="3"></circle><circle cx="18" cy="19" r="3"></circle><line x1="8.59" x2="15.42" y1="13.51" y2="17.49"></line><line x1="15.41" x2="8.59" y1="6.51" y2="10.49"></line></svg><span>Open in StackBlitz</span></button></div><div style="height:100%;display:block;overflow:hidden"><div class="codemirror-example-editor tsx" style="height:100%;overflow:auto"></div></div><div style="height:100%;display:none;overflow:hidden"><div id="recharts-devtools-portal-R5a9" style="height:100%;background:var(--color-bg);color:var(--color-text);overflow:auto;padding:10px;display:block" class=""></div></div><div style="height:100%;display:none;overflow:hidden"><div id="recharts-devtools-portal-R5a9-annotations" style="height:100%;background:var(--color-bg);color:var(--color-text);overflow:auto;padding:10px;display:block" class=""></div></div><div style="height:100%;display:none;overflow:hidden"><div style="padding:10px;height:100%;overflow:auto"><div style="display:flex;gap:12px;margin:1ex"><label style="display:flex;align-items:center;gap:8px;cursor:pointer"><input style="margin:0;width:16px;height:16px;cursor:pointer" type="radio" name=":R55da9:" checked=""/>Autoplay Animations (default)</label><label style="display:flex;align-items:center;gap:8px;cursor:pointer"><input style="margin:0;width:16px;height:16px;cursor:pointer" type="radio" name=":R55da9:"/>Manual Animations</label></div></div></div></div></div></div></div></div></div></main><footer><p><span>Released under the </span><a href="https://opensource.org/licenses/MIT" target="_blank" rel="noreferrer">MIT License</a></p><p>Copyright (c) 2016-<!-- -->2026<!-- --> Recharts Group</p><p>Commit: <code title="95753c3b8eb6b6a9ca277b9239bee999fe034ad4">95753c3b</code></p></footer></div></div>
+            A 2,2,0,0,1,5,13 Z" style="stroke-dasharray:0px 1px"></path></svg>Copy to clipboard</button><button type="button" class="codemirror-toolbar-item"><svg stroke="currentColor" fill="none" stroke-width="2" viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round" height="1em" width="1em" xmlns="http://www.w3.org/2000/svg"><path d="M21.174 6.812a1 1 0 0 0-3.986-3.987L3.842 16.174a2 2 0 0 0-.5.83l-1.321 4.352a.5.5 0 0 0 .623.622l4.353-1.32a2 2 0 0 0 .83-.497z"></path><path d="m15 5 4 4"></path></svg><span>Edit</span></button><button type="button" class="codemirror-toolbar-item"><svg stroke="currentColor" fill="none" stroke-width="2" viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round" height="1em" width="1em" xmlns="http://www.w3.org/2000/svg"><circle cx="18" cy="5" r="3"></circle><circle cx="6" cy="12" r="3"></circle><circle cx="18" cy="19" r="3"></circle><line x1="8.59" x2="15.42" y1="13.51" y2="17.49"></line><line x1="15.41" x2="8.59" y1="6.51" y2="10.49"></line></svg><span>Open in StackBlitz</span></button></div><div style="height:100%;display:block;overflow:hidden"><div class="codemirror-example-editor tsx" style="height:100%;overflow:auto"><pre>import {
+  Bar,
+  BarChart,
+  BarProps,
+  BarShapeProps,
+  CartesianGrid,
+  emptyTheme,
+  RechartsThemeProvider,
+  Rectangle,
+  Tooltip,
+  XAxis,
+  YAxis,
+} from &#x27;recharts&#x27;;
+import { RechartsDevtools } from &#x27;@recharts/devtools&#x27;;
+
+// #region Data and helper functions
+type TimelineDataType = {
+  name: string;
+  type: string;
+  outcome: &#x27;success&#x27; | &#x27;error&#x27; | &#x27;pending&#x27;;
+  firstCycle: [number, number];
+  secondCycle: [number, number];
+};
+
+const data: Array&lt;TimelineDataType&gt; = [
+  {
+    name: &#x27;TEST 1&#x27;,
+    type: &#x27;TR&#x27;,
+    outcome: &#x27;success&#x27;,
+    firstCycle: [0, 3],
+    secondCycle: [4.11, 14.11],
+  },
+  {
+    name: &#x27;TEST 2&#x27;,
+    type: &#x27;MT&#x27;,
+    outcome: &#x27;error&#x27;,
+    firstCycle: [0, 1.5],
+    secondCycle: [9.11, 12.11],
+  },
+  {
+    name: &#x27;TEST 3&#x27;,
+    type: &#x27;MT&#x27;,
+    outcome: &#x27;success&#x27;,
+    firstCycle: [3, 5.37],
+    secondCycle: [8.74, 14.48],
+  },
+  {
+    name: &#x27;TEST 4&#x27;,
+    type: &#x27;MT&#x27;,
+    outcome: &#x27;error&#x27;,
+    firstCycle: [5.37, 7.87],
+    secondCycle: [9.61, 16.98],
+  },
+  {
+    name: &#x27;TEST 5&#x27;,
+    type: &#x27;MT&#x27;,
+    outcome: &#x27;success&#x27;,
+    firstCycle: [4.87, 8.24],
+    secondCycle: [10.74, 17.35],
+  },
+  {
+    name: &#x27;TEST 6&#x27;,
+    type: &#x27;MT&#x27;,
+    outcome: &#x27;success&#x27;,
+    firstCycle: [3.24, 5.74],
+    secondCycle: [8.61, 17.85],
+  },
+  {
+    name: &#x27;TEST 7&#x27;,
+    type: &#x27;MT&#x27;,
+    outcome: &#x27;success&#x27;,
+    firstCycle: [2.74, 9.11],
+    secondCycle: [9.74, 18.22],
+  },
+  {
+    name: &#x27;TEST 8&#x27;,
+    type: &#x27;MT&#x27;,
+    outcome: &#x27;pending&#x27;,
+    firstCycle: [9.11, 10.61],
+    secondCycle: [12.11, 19.72],
+  },
+];
+
+const getBarColor = (outcome: TimelineDataType[&#x27;outcome&#x27;]) =&gt; {
+  switch (outcome) {
+    case &#x27;success&#x27;:
+      return &#x27;blue&#x27;;
+    case &#x27;error&#x27;:
+      return &#x27;red&#x27;;
+    default:
+      return &#x27;grey&#x27;;
+  }
+};
+
+const CustomFillRectangle = (props: BarShapeProps) =&gt; {
+  // @ts-expect-error props.outcome is injected from the data array which Recharts doesn&#x27;t know about
+  const { outcome, isActive } = props;
+  const barColor = getBarColor(outcome);
+  return (
+    &lt;Rectangle {...props} stroke={isActive ? &#x27;orange&#x27; : barColor} strokeWidth={isActive ? 3 : 1} fill={barColor} /&gt;
+  );
+};
+
+const MyBar = (props: BarProps) =&gt; {
+  return &lt;Bar {...props} stackId=&quot;a&quot; radius={25} activeBar shape={CustomFillRectangle} /&gt;;
+};
+
+// #endregion
+export default function TimelineExample({ defaultIndex }: { defaultIndex?: number }) {
+  return (
+    &lt;RechartsThemeProvider value={emptyTheme}&gt;
+      &lt;BarChart
+        layout=&quot;vertical&quot;
+        style={{ width: &#x27;100%&#x27;, maxWidth: &#x27;700px&#x27;, maxHeight: &#x27;70vh&#x27;, aspectRatio: 1.618 }}
+        responsive
+        data={data}
+        margin={{ bottom: 20 }}
+      &gt;
+        &lt;CartesianGrid strokeDasharray=&quot;2 2&quot; /&gt;
+        &lt;Tooltip shared={false} defaultIndex={defaultIndex} /&gt;
+        &lt;XAxis type=&quot;number&quot; height={50} label={{ value: &#x27;Time (s)&#x27;, position: &#x27;insideBottomRight&#x27; }} /&gt;
+        &lt;YAxis
+          type=&quot;category&quot;
+          dataKey=&quot;name&quot;
+          width=&quot;auto&quot;
+          label={{
+            value: &#x27;Test run&#x27;,
+            angle: -90,
+            position: &#x27;insideTopLeft&#x27;,
+            textAnchor: &#x27;end&#x27;,
+          }}
+        /&gt;
+        &lt;MyBar dataKey=&quot;firstCycle&quot; /&gt;
+        &lt;MyBar dataKey=&quot;secondCycle&quot; /&gt;
+        &lt;RechartsDevtools /&gt;
+      &lt;/BarChart&gt;
+    &lt;/RechartsThemeProvider&gt;
+  );
+}</pre><div></div></div></div><div style="height:100%;display:none;overflow:hidden"><div id="recharts-devtools-portal-R5a9" style="height:100%;background:var(--color-bg);color:var(--color-text);overflow:auto;padding:10px;display:block" class=""></div></div><div style="height:100%;display:none;overflow:hidden"><div id="recharts-devtools-portal-R5a9-annotations" style="height:100%;background:var(--color-bg);color:var(--color-text);overflow:auto;padding:10px;display:block" class=""></div></div><div style="height:100%;display:none;overflow:hidden"><div style="padding:10px;height:100%;overflow:auto"><div style="display:flex;gap:12px;margin:1ex"><label style="display:flex;align-items:center;gap:8px;cursor:pointer"><input style="margin:0;width:16px;height:16px;cursor:pointer" type="radio" name=":R55da9:" checked=""/>Autoplay Animations (default)</label><label style="display:flex;align-items:center;gap:8px;cursor:pointer"><input style="margin:0;width:16px;height:16px;cursor:pointer" type="radio" name=":R55da9:"/>Manual Animations</label></div></div></div></div></div></div></div></div></div></main><footer><p><span>Released under the </span><a href="https://opensource.org/licenses/MIT" target="_blank" rel="noreferrer">MIT License</a></p><p>Copyright (c) 2016-<!-- -->2026<!-- --> Recharts Group</p><p>Commit: <code title="4814a7cda79dc2b8a2de7359f636ce237955d020">4814a7cd</code></p></footer></div></div>
   </body>
 </html>
