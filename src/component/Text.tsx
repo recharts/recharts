@@ -196,6 +196,8 @@ interface TextProps {
   /**
    * When set, renders the text along the SVG path described by this `d` attribute.
    * In path mode, `breakAll`, `lineHeight`, `maxLines`, and `verticalAnchor` are ignored.
+   *
+   * @since 3.11
    */
   textPath?: string;
 }
