@@ -9,6 +9,7 @@ import { reduceCSSCalc } from '../util/ReduceCSSCalc';
 import { svgPropertiesAndEvents } from '../util/svgPropertiesAndEvents';
 import { resolveDefaultProps } from '../util/resolveDefaultProps';
 import { isWellBehavedNumber } from '../util/isWellBehavedNumber';
+import { useId } from '../util/useId';
 
 import { useBackwardsCompatibleTheme } from '../theme/useBackwardsCompatibleTheme';
 
@@ -111,6 +112,7 @@ interface TextProps {
    * - 'inherit': Inherits the text-anchor from parent element
    *
    * **Note:** This controls horizontal alignment only and does not affect RTL text behavior.
+   * This prop is also used when `textPath` is set.
    * @defaultValue 'start'
    */
   textAnchor?: TextAnchor;
@@ -123,6 +125,7 @@ interface TextProps {
    *
    * **Note:** This controls vertical positioning only and does not affect RTL (right-to-left) text behavior.
    * The alignment calculation uses capHeight and lineHeight to determine the starting dy offset.
+   * Ignored when `textPath` is set because the path controls the text's positioning.
    *
    * @defaultValue 'end'
    */
@@ -132,6 +135,7 @@ interface TextProps {
    * CSS styles to apply to the text element.
    * These styles are used for text measurement calculations when width constraints or scaleToFit are used.
    * Font-related properties (fontSize, fontFamily, fontWeight, etc.) are particularly important for accurate measurements.
+   * When `textPath` is set, styles still apply to the rendered text, but only `scaleToFit` uses them for measurement.
    */
   style?: CSSProperties;
 
@@ -140,6 +144,7 @@ interface TextProps {
    * Can be a number (height in pixels) or a string with CSS units.
    * Used to calculate spacing between lines when text wraps to multiple lines.
    * Also used in verticalAnchor calculations for positioning the text block.
+   * Ignored when `textPath` is set because the text is rendered along a single path.
    * @defaultValue '1em'
    */
   lineHeight?: number | string;
@@ -150,6 +155,7 @@ interface TextProps {
    * - true: Text can break between any characters, useful for languages without spaces
    *
    * **Note:** Only effective when `width` is defined to enable line breaking.
+   * Ignored when `textPath` is set because path text is not split into lines.
    * @defaultValue false
    */
   breakAll?: boolean;
@@ -158,6 +164,7 @@ interface TextProps {
    * The text content to render.
    * Can be a string or number. Numbers will be converted to strings.
    * undefined or null values will result in no text being rendered.
+   * When `textPath` is set, the content is rendered directly inside the SVG `textPath` element.
    */
   children?: RenderableText;
 
@@ -178,12 +185,21 @@ interface TextProps {
    * **Interaction with other props:**
    * - When `scaleToFit` is true, this property is ignored
    * - Requires `width` to be set for line breaking to occur
+   * - Ignored when `textPath` is set because path text is rendered directly without truncation
    */
   maxLines?: number;
   /**
    * When width is specified, the text will automatically wrap by calculating the width of text.
+   * When `textPath` is set, this prop does not wrap or constrain the path text; it only affects scaling when `scaleToFit` is enabled.
    */
   width?: number | string;
+  /**
+   * When set, renders the text along the SVG path described by this `d` attribute.
+   * In path mode, `breakAll`, `lineHeight`, `maxLines`, and `verticalAnchor` are ignored.
+   *
+   * @since 3.11
+   */
+  textPath?: string;
 }
 
 export type Props = Omit<SVGProps<SVGTextElement>, 'textAnchor' | 'verticalAnchor'> & TextProps;
@@ -388,6 +404,7 @@ const emptyTextThemeProps: CSSProperties = {};
 
 export const Text = forwardRef<SVGTextElement, Props>((outsideProps, ref) => {
   const typography = useBackwardsCompatibleTheme(theme => theme.typography, emptyTextThemeProps, emptyTextThemeProps);
+  const textPathId = useId();
   const {
     x: propsX,
     y: propsY,
@@ -398,10 +415,18 @@ export const Text = forwardRef<SVGTextElement, Props>((outsideProps, ref) => {
     textAnchor,
     verticalAnchor,
     style: propsStyle,
+    textPath,
     ...props
   } = resolveDefaultProps(outsideProps, textDefaultProps);
   const themeFill = typography.fill;
-  const style = useMemo(() => {
+  // Here it is important to actually remove these three props, and not put them to DOM
+  const { angle, dx, dy, className, breakAll, ...textProps } = props;
+  const { width } = textProps;
+
+  const x = Number(propsX) + (isNumber(dx) ? dx : 0);
+  const y = Number(propsY) + (isNumber(dy) ? dy : 0);
+
+  const styleTemp: CSSProperties = useMemo(() => {
     const { fill: themedFill, ...themeTypography } = typography;
     return {
       ...themeTypography,
@@ -409,26 +434,62 @@ export const Text = forwardRef<SVGTextElement, Props>((outsideProps, ref) => {
       ...propsStyle,
     };
   }, [outsideProps.fill, propsStyle, typography]);
-  const resolvedFill =
-    outsideProps.fill ?? propsStyle?.color ?? typography.color ?? themeFill ?? fill ?? textDefaultProps.fill;
+
   const wordsByLines: ReadonlyArray<Words> = useMemo(() => {
     return getWordsByLines({
       breakAll: props.breakAll,
       children: props.children,
       maxLines: props.maxLines,
       scaleToFit,
-      style,
+      style: styleTemp,
       width: props.width,
     });
-  }, [props.breakAll, props.children, props.maxLines, scaleToFit, style, props.width]);
+  }, [props.breakAll, props.children, props.maxLines, scaleToFit, styleTemp, props.width]);
 
-  const { dx, dy, angle, className, breakAll, ...textProps } = { ...props, style };
+  const svgTransforms: string[] = useMemo(() => {
+    const transformsMemo = [];
+    const firstLine = wordsByLines[0];
+    if (scaleToFit && firstLine != null) {
+      const lineWidth = firstLine.width;
+      transformsMemo.push(`scale(${isNumber(width) && isNumber(lineWidth) ? width / lineWidth : 1})`);
+    }
+    if (angle && textPath == null) {
+      /*
+       * textPath-driven labels are rotated using CSS transforms
+       * to keep previous behavior unchanged.
+       */
+      transformsMemo.push(`rotate(${angle}, ${x}, ${y})`);
+    }
+    return transformsMemo;
+  }, [scaleToFit, wordsByLines, width, angle, x, y, textPath]);
+
+  const resolvedFill =
+    outsideProps.fill ?? propsStyle?.color ?? typography.color ?? themeFill ?? fill ?? textDefaultProps.fill;
+
+  const styleFinal: CSSProperties = useMemo(() => {
+    /*
+     * If the Text is driven by a textPath then we apply CSS rotations
+     * where we can set transform-box: 'fill-box'
+     */
+    const cssTransforms = angle && textPath != null ? `rotate(${angle}deg)` : undefined;
+
+    const temp: CSSProperties =
+      cssTransforms != null
+        ? {
+            transform: cssTransforms,
+            transformOrigin: 'center',
+            transformBox: 'fill-box',
+          }
+        : {};
+    return {
+      ...temp,
+      ...styleTemp,
+    };
+  }, [styleTemp, angle, textPath]);
 
   if (!isNumOrStr(propsX) || !isNumOrStr(propsY) || wordsByLines.length === 0) {
     return null;
   }
-  const x = Number(propsX) + (isNumber(dx) ? dx : 0);
-  const y = Number(propsY) + (isNumber(dy) ? dy : 0);
 
   if (!isWellBehavedNumber(x) || !isWellBehavedNumber(y)) {
     return null;
@@ -447,23 +508,11 @@ export const Text = forwardRef<SVGTextElement, Props>((outsideProps, ref) => {
       break;
   }
 
-  const transforms = [];
-  const firstLine = wordsByLines[0];
-  if (scaleToFit && firstLine != null) {
-    const lineWidth = firstLine.width;
-    const { width } = props;
-    transforms.push(`scale(${isNumber(width) && isNumber(lineWidth) ? width / lineWidth : 1})`);
-  }
-  if (angle) {
-    transforms.push(`rotate(${angle}, ${x}, ${y})`);
-  }
-  if (transforms.length) {
-    textProps.transform = transforms.join(' ');
-  }
-
   return (
     <text
+      transform={svgTransforms.length > 0 ? svgTransforms.join(' ') : undefined}
       {...svgPropertiesAndEvents(textProps)}
+      style={styleFinal}
       ref={ref}
       x={x}
       y={y}
@@ -471,15 +520,24 @@ export const Text = forwardRef<SVGTextElement, Props>((outsideProps, ref) => {
       textAnchor={textAnchor}
       fill={resolvedFill.includes('url') ? DEFAULT_FILL : resolvedFill}
     >
-      {wordsByLines.map((line, index) => {
-        const words = line.words.join(breakAll ? '' : ' ');
-        return (
-          // duplicate words will cause duplicate keys which is why we add the array index here
-          <tspan x={x} dy={index === 0 ? startDy : lineHeight} key={`${words}-${index}`}>
-            {words}
-          </tspan>
-        );
-      })}
+      {textPath == null ? (
+        wordsByLines.map((line, index) => {
+          const words = line.words.join(breakAll ? '' : ' ');
+          return (
+            // duplicate words will cause duplicate keys which is why we add the array index here
+            <tspan x={x} dy={index === 0 ? startDy : lineHeight} key={`${words}-${index}`}>
+              {words}
+            </tspan>
+          );
+        })
+      ) : (
+        <>
+          <defs>
+            <path id={textPathId} d={textPath} />
+          </defs>
+          <textPath xlinkHref={`#${textPathId}`}>{props.children}</textPath>
+        </>
+      )}
     </text>
   );
 });

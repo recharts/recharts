@@ -3,7 +3,6 @@ import {
   cloneElement,
   createContext,
   createElement,
-  CSSProperties,
   isValidElement,
   ReactElement,
   ReactNode,
@@ -13,7 +12,7 @@ import {
 } from 'react';
 import { clsx } from 'clsx';
 import { isValidTextAnchor, RenderableText, Text, TextAnchor, TextVerticalAnchor } from './Text';
-import { isNullish, isNumber, isNumOrStr, mathSign, uniqueId } from '../util/DataUtils';
+import { isNullish, isNumber, isNumOrStr, mathSign } from '../util/DataUtils';
 import { polarToCartesian } from '../util/PolarUtils';
 import { CartesianViewBoxRequired, DataKey, PolarViewBoxRequired, TrapezoidViewBox, ViewBox } from '../util/types';
 import { useViewBox } from '../context/chartLayoutContext';
@@ -23,8 +22,6 @@ import { resolveDefaultProps } from '../util/resolveDefaultProps';
 import { svgPropertiesAndEvents } from '../util/svgPropertiesAndEvents';
 import { ZIndexable, ZIndexLayer } from '../zIndex/ZIndexLayer';
 import { DefaultZIndexes } from '../zIndex/DefaultZIndexes';
-import { RechartsTheme } from '../theme/RechartsTheme';
-import { useBackwardsCompatibleTheme } from '../theme/useBackwardsCompatibleTheme';
 
 import { CartesianLabelPosition, getCartesianPosition } from '../cartesian/getCartesianPosition';
 import { cartesianViewBoxToTrapezoid } from '../cartesian/cartesianViewBoxToTrapezoid';
@@ -237,19 +234,11 @@ const getDeltaAngle = (startAngle: number, endAngle: number) => {
 const renderRadialLabel = (
   labelProps: PropsWithDefaults,
   position: PolarLabelPosition,
-  label: ReactNode,
+  label: RenderableText,
   attrs: SVGProps<SVGTextElement>,
   viewBox: PolarViewBoxRequired,
-  typography: CSSProperties | undefined,
 ) => {
   const { offset, className } = labelProps;
-  const { fill: themeFill, ...themeTypography } = typography ?? {};
-  const style = {
-    ...themeTypography,
-    ...(labelProps.fill == null && themeFill !== undefined ? { fill: themeFill } : {}),
-    ...labelProps.style,
-  };
-  const fill = labelProps.fill ?? labelProps.style?.color ?? typography?.color ?? themeFill;
   const { cx, cy, innerRadius, outerRadius, startAngle, endAngle, clockWise } = viewBox;
   const radius = (innerRadius + outerRadius) / 2;
   const deltaAngle = getDeltaAngle(startAngle, endAngle);
@@ -280,21 +269,17 @@ const renderRadialLabel = (
   const path = `M${startPoint.x},${startPoint.y}
     A${radius},${radius},0,1,${direction ? 0 : 1},
     ${endPoint.x},${endPoint.y}`;
-  const id = isNullish(labelProps.id) ? uniqueId('recharts-radial-line-') : labelProps.id;
-
+  const { textAnchor, ...textAttrs } = attrs;
   return (
-    <text
-      {...attrs}
-      {...(fill !== undefined ? { fill } : {})}
-      style={style}
+    <Text
+      {...textAttrs}
       dominantBaseline="central"
       className={clsx('recharts-radial-bar-label', className)}
+      textAnchor={isValidTextAnchor(textAnchor) ? textAnchor : undefined}
+      textPath={path}
     >
-      <defs>
-        <path id={id} d={path} />
-      </defs>
-      <textPath xlinkHref={`#${id}`}>{label}</textPath>
-    </text>
+      {label}
+    </Text>
   );
 };
 
@@ -401,11 +386,6 @@ function polarViewBoxToTrapezoid(
  * @consumes PolarLabelContext
  */
 export function Label(outerProps: Props) {
-  const theme = useBackwardsCompatibleTheme<Pick<RechartsTheme, 'typography'>>(
-    (rechartsTheme: RechartsTheme) => ({ typography: rechartsTheme.typography }),
-    {},
-    undefined,
-  );
   const props: PropsWithDefaults = resolveDefaultProps(outerProps, defaultLabelProps);
   const {
     viewBox: viewBoxFromProps,
@@ -511,7 +491,7 @@ export function Label(outerProps: Props) {
   const attrs = svgPropertiesAndEvents(props);
 
   if (isRadialPolarLabel && isPolar(viewBox)) {
-    return renderRadialLabel(props, position, label, attrs, viewBox, theme?.typography);
+    return renderRadialLabel(props, position, label, attrs, viewBox);
   }
 
   if (positionAttrs == null) {

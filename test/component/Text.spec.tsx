@@ -60,6 +60,186 @@ describe('<Text />', () => {
     expect(text.textContent).toBe('12345');
   });
 
+  test('renders text along a path', () => {
+    const pathData = 'M0,0 A10,10,0,1,0,20,0';
+    const { container } = render(
+      <Surface width={300} height={300}>
+        <Text textPath={pathData}>text</Text>
+      </Surface>,
+    );
+
+    const text = container.querySelector('text');
+    assertNotNull(text);
+    const path = text.querySelector('defs path');
+    const textPath = text.querySelector('textPath');
+    assertNotNull(path);
+    assertNotNull(textPath);
+
+    expect(path).toHaveAttribute('d', pathData);
+    expect(textPath).toHaveAttribute('xlink:href', `#${path.id}`);
+    expect(textPath).toHaveTextContent('text');
+  });
+
+  describe('textPath interactions', () => {
+    const pathData = 'M0,0 A10,10,0,1,0,20,0';
+
+    function getText(container: HTMLElement, id: string): SVGTextElement {
+      const text = container.querySelector<SVGTextElement>(`text#${id}`);
+      assertNotNull(text);
+      return text;
+    }
+
+    function getTextPath(text: SVGTextElement): SVGTextPathElement {
+      const textPath = text.querySelector<SVGTextPathElement>('textPath');
+      assertNotNull(textPath);
+      return textPath;
+    }
+
+    test('uses width to wrap regular text but not textPath text', () => {
+      const content = 'one two';
+      const { container } = render(
+        <Surface width={300} height={300}>
+          <Text id="wrapped" width={50}>
+            {content}
+          </Text>
+          <Text id="path" textPath={pathData} width={50}>
+            {content}
+          </Text>
+        </Surface>,
+      );
+
+      expect(getText(container, 'wrapped').querySelectorAll('tspan')).toHaveLength(2);
+
+      const pathText = getText(container, 'path');
+      expect(pathText.querySelectorAll('tspan')).toHaveLength(0);
+      expect(getTextPath(pathText)).toHaveTextContent(content);
+    });
+
+    test('uses breakAll for regular text but not textPath text', () => {
+      const content = 'abcd';
+      const { container } = render(
+        <Surface width={300} height={300}>
+          <Text id="word-break" width={50}>
+            {content}
+          </Text>
+          <Text id="character-break" width={50} breakAll>
+            {content}
+          </Text>
+          <Text id="path" textPath={pathData} width={50} breakAll>
+            {content}
+          </Text>
+        </Surface>,
+      );
+
+      expect(getText(container, 'word-break').querySelectorAll('tspan')).toHaveLength(1);
+      expect(getText(container, 'character-break').querySelectorAll('tspan')).toHaveLength(4);
+
+      const pathText = getText(container, 'path');
+      expect(pathText.querySelectorAll('tspan')).toHaveLength(0);
+      expect(getTextPath(pathText)).toHaveTextContent(content);
+    });
+
+    test('uses lineHeight for regular text but not textPath text', () => {
+      const content = 'one two';
+      const { container } = render(
+        <Surface width={300} height={300}>
+          <Text id="line-height" width={50} lineHeight="2em">
+            {content}
+          </Text>
+          <Text id="path" textPath={pathData} width={50} lineHeight="2em">
+            {content}
+          </Text>
+        </Surface>,
+      );
+
+      const lineHeightText = getText(container, 'line-height');
+      const lineHeightTspans = lineHeightText.querySelectorAll('tspan');
+      expect(lineHeightTspans).toHaveLength(2);
+      expect(lineHeightTspans[1]).toHaveAttribute('dy', '2em');
+
+      const pathText = getText(container, 'path');
+      expect(pathText.querySelectorAll('tspan')).toHaveLength(0);
+      expect(getTextPath(pathText)).not.toHaveAttribute('dy');
+    });
+
+    test('uses maxLines for regular text but not textPath text', () => {
+      const content = 'one two three four five six';
+      const { container } = render(
+        <Surface width={300} height={300}>
+          <Text id="unlimited" width={100}>
+            {content}
+          </Text>
+          <Text id="limited" width={100} maxLines={1}>
+            {content}
+          </Text>
+          <Text id="path" textPath={pathData} width={100} maxLines={1}>
+            {content}
+          </Text>
+        </Surface>,
+      );
+
+      expect(getText(container, 'unlimited').querySelectorAll('tspan').length).toBeGreaterThan(1);
+
+      const limitedText = getText(container, 'limited');
+      expect(limitedText.querySelectorAll('tspan')).toHaveLength(1);
+      expect(limitedText.textContent).toMatch(/…$/);
+
+      const pathText = getText(container, 'path');
+      expect(pathText.querySelectorAll('tspan')).toHaveLength(0);
+      expect(getTextPath(pathText)).toHaveTextContent(content);
+    });
+
+    test('uses verticalAnchor for regular text but not textPath text', () => {
+      const { container } = render(
+        <Surface width={300} height={300}>
+          <Text id="start" verticalAnchor="start">
+            text
+          </Text>
+          <Text id="end" verticalAnchor="end">
+            text
+          </Text>
+          <Text id="path-start" textPath={pathData} verticalAnchor="start">
+            text
+          </Text>
+          <Text id="path-end" textPath={pathData} verticalAnchor="end">
+            text
+          </Text>
+        </Surface>,
+      );
+
+      const startText = getText(container, 'start').querySelector('tspan');
+      const endText = getText(container, 'end').querySelector('tspan');
+      assertNotNull(startText);
+      assertNotNull(endText);
+      expect(startText.getAttribute('dy')).not.toEqual(endText.getAttribute('dy'));
+
+      for (const id of ['path-start', 'path-end']) {
+        const pathText = getText(container, id);
+        expect(pathText.querySelectorAll('tspan')).toHaveLength(0);
+        expect(getTextPath(pathText)).not.toHaveAttribute('dy');
+      }
+    });
+
+    test('keeps textAnchor and styles when textPath is set', () => {
+      const { container } = render(
+        <Surface width={300} height={300}>
+          <Text id="regular" textAnchor="middle" style={{ fontSize: 20 }}>
+            text
+          </Text>
+          <Text id="path" textPath={pathData} textAnchor="middle" style={{ fontSize: 20 }}>
+            text
+          </Text>
+        </Surface>,
+      );
+
+      for (const id of ['regular', 'path']) {
+        const text = getText(container, id);
+        expect(text).toHaveAttribute('text-anchor', 'middle');
+        expect(text).toHaveStyle({ fontSize: '20px' });
+      }
+    });
+  });
+
   test('renders boolean children', () => {
     const { container } = render(
       <Surface width={300} height={300}>
