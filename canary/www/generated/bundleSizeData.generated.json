@@ -1,28 +1,28 @@
 {
   "treemap": {
     "examplePath": "www/src/views/IndexView/IndexLineChart.tsx",
-    "totalSize": 902693,
-    "totalSizeLabel": "881.54 KB",
+    "totalSize": 902913,
+    "totalSizeLabel": "881.75 KB",
     "moduleCount": 366,
-    "generatedAt": "2026-08-18T15:47:26.616Z",
+    "generatedAt": "2026-08-19T11:19:20.417Z",
     "stages": [
       {
         "stage": "es6-folder",
-        "bytes": 1354333,
+        "bytes": 1357174,
         "humanReadableSize": "1.29 MB",
         "reductionFromBaselinePercent": 0
       },
       {
         "stage": "tree-shaken",
-        "bytes": 905572,
-        "humanReadableSize": "884.35 KB",
+        "bytes": 905792,
+        "humanReadableSize": "884.56 KB",
         "reductionFromBaselinePercent": 0
       },
       {
         "stage": "minified",
         "bytes": 303293,
         "humanReadableSize": "296.18 KB",
-        "reductionFromBaselinePercent": 66.51
+        "reductionFromBaselinePercent": 66.52
       },
       {
         "stage": "minified+gzip",
@@ -34,12 +34,12 @@
     "tree": {
       "name": "bundle",
       "fullPath": "bundle",
-      "value": 902693,
+      "value": 902913,
       "children": [
         {
           "name": "src",
           "fullPath": "src",
-          "value": 498665,
+          "value": 498885,
           "children": [
             {
               "name": "state",
@@ -986,12 +986,12 @@
             {
               "name": "shape",
               "fullPath": "src/shape",
-              "value": 7495,
+              "value": 7715,
               "children": [
                 {
                   "name": "Curve.tsx",
                   "fullPath": "src/shape/Curve.tsx",
-                  "value": 4366
+                  "value": 4586
                 },
                 {
                   "name": "Symbols.tsx",
@@ -2550,28 +2550,28 @@
   },
   "sunburst": {
     "examplePath": "www/src/views/IndexView/IndexLineChart.tsx",
-    "totalSize": 902693,
-    "totalSizeLabel": "881.54 KB",
+    "totalSize": 902913,
+    "totalSizeLabel": "881.75 KB",
     "moduleCount": 366,
-    "generatedAt": "2026-08-18T15:47:28.776Z",
+    "generatedAt": "2026-08-19T11:19:18.192Z",
     "stages": [
       {
         "stage": "es6-folder",
-        "bytes": 1354333,
+        "bytes": 1357174,
         "humanReadableSize": "1.29 MB",
         "reductionFromBaselinePercent": 0
       },
       {
         "stage": "tree-shaken",
-        "bytes": 905572,
-        "humanReadableSize": "884.35 KB",
+        "bytes": 905792,
+        "humanReadableSize": "884.56 KB",
         "reductionFromBaselinePercent": 0
       },
       {
         "stage": "minified",
         "bytes": 303293,
         "humanReadableSize": "296.18 KB",
-        "reductionFromBaselinePercent": 66.51
+        "reductionFromBaselinePercent": 66.52
       },
       {
         "stage": "minified+gzip",
@@ -2583,12 +2583,12 @@
     "tree": {
       "name": "bundle",
       "fullPath": "bundle",
-      "value": 902693,
+      "value": 902913,
       "children": [
         {
           "name": "src",
           "fullPath": "src",
-          "value": 498665,
+          "value": 498885,
           "children": [
             {
               "name": "state",
@@ -3535,12 +3535,12 @@
             {
               "name": "shape",
               "fullPath": "src/shape",
-              "value": 7495,
+              "value": 7715,
               "children": [
                 {
                   "name": "Curve.tsx",
                   "fullPath": "src/shape/Curve.tsx",
-                  "value": 4366
+                  "value": 4586
                 },
                 {
                   "name": "Symbols.tsx",
