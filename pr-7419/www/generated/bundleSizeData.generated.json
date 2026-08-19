@@ -1,32 +1,32 @@
 {
   "treemap": {
     "examplePath": "www/src/views/IndexView/IndexLineChart.tsx",
-    "totalSize": 902693,
-    "totalSizeLabel": "881.54 KB",
+    "totalSize": 903107,
+    "totalSizeLabel": "881.94 KB",
     "moduleCount": 366,
-    "generatedAt": "2026-08-18T13:46:54.953Z",
+    "generatedAt": "2026-08-19T13:38:10.960Z",
     "stages": [
       {
         "stage": "es6-folder",
-        "bytes": 1354333,
+        "bytes": 1357366,
         "humanReadableSize": "1.29 MB",
         "reductionFromBaselinePercent": 0
       },
       {
         "stage": "tree-shaken",
-        "bytes": 905572,
-        "humanReadableSize": "884.35 KB",
+        "bytes": 905986,
+        "humanReadableSize": "884.75 KB",
         "reductionFromBaselinePercent": 0
       },
       {
         "stage": "minified",
-        "bytes": 303293,
-        "humanReadableSize": "296.18 KB",
-        "reductionFromBaselinePercent": 66.51
+        "bytes": 303302,
+        "humanReadableSize": "296.19 KB",
+        "reductionFromBaselinePercent": 66.52
       },
       {
         "stage": "minified+gzip",
-        "bytes": 99252,
+        "bytes": 99260,
         "humanReadableSize": "96.93 KB",
         "reductionFromBaselinePercent": 89.04
       }
@@ -34,12 +34,12 @@
     "tree": {
       "name": "bundle",
       "fullPath": "bundle",
-      "value": 902693,
+      "value": 903107,
       "children": [
         {
           "name": "src",
           "fullPath": "src",
-          "value": 498665,
+          "value": 499079,
           "children": [
             {
               "name": "state",
@@ -427,7 +427,7 @@
             {
               "name": "util",
               "fullPath": "src/util",
-              "value": 107880,
+              "value": 108074,
               "children": [
                 {
                   "name": "scale",
@@ -484,14 +484,14 @@
                   "value": 5637
                 },
                 {
+                  "name": "DataUtils.ts",
+                  "fullPath": "src/util/DataUtils.ts",
+                  "value": 5209
+                },
+                {
                   "name": "ReduceCSSCalc.ts",
                   "fullPath": "src/util/ReduceCSSCalc.ts",
                   "value": 5145
-                },
-                {
-                  "name": "DataUtils.ts",
-                  "fullPath": "src/util/DataUtils.ts",
-                  "value": 5015
                 },
                 {
                   "name": "resolveDefaultProps.tsx",
@@ -986,12 +986,12 @@
             {
               "name": "shape",
               "fullPath": "src/shape",
-              "value": 7495,
+              "value": 7715,
               "children": [
                 {
                   "name": "Curve.tsx",
                   "fullPath": "src/shape/Curve.tsx",
-                  "value": 4366
+                  "value": 4586
                 },
                 {
                   "name": "Symbols.tsx",
@@ -2550,32 +2550,32 @@
   },
   "sunburst": {
     "examplePath": "www/src/views/IndexView/IndexLineChart.tsx",
-    "totalSize": 902693,
-    "totalSizeLabel": "881.54 KB",
+    "totalSize": 903107,
+    "totalSizeLabel": "881.94 KB",
     "moduleCount": 366,
-    "generatedAt": "2026-08-18T13:46:52.826Z",
+    "generatedAt": "2026-08-19T13:38:08.886Z",
     "stages": [
       {
         "stage": "es6-folder",
-        "bytes": 1354333,
+        "bytes": 1357366,
         "humanReadableSize": "1.29 MB",
         "reductionFromBaselinePercent": 0
       },
       {
         "stage": "tree-shaken",
-        "bytes": 905572,
-        "humanReadableSize": "884.35 KB",
+        "bytes": 905986,
+        "humanReadableSize": "884.75 KB",
         "reductionFromBaselinePercent": 0
       },
       {
         "stage": "minified",
-        "bytes": 303293,
-        "humanReadableSize": "296.18 KB",
-        "reductionFromBaselinePercent": 66.51
+        "bytes": 303302,
+        "humanReadableSize": "296.19 KB",
+        "reductionFromBaselinePercent": 66.52
       },
       {
         "stage": "minified+gzip",
-        "bytes": 99252,
+        "bytes": 99260,
         "humanReadableSize": "96.93 KB",
         "reductionFromBaselinePercent": 89.04
       }
@@ -2583,12 +2583,12 @@
     "tree": {
       "name": "bundle",
       "fullPath": "bundle",
-      "value": 902693,
+      "value": 903107,
       "children": [
         {
           "name": "src",
           "fullPath": "src",
-          "value": 498665,
+          "value": 499079,
           "children": [
             {
               "name": "state",
@@ -2976,7 +2976,7 @@
             {
               "name": "util",
               "fullPath": "src/util",
-              "value": 107880,
+              "value": 108074,
               "children": [
                 {
                   "name": "scale",
@@ -3033,14 +3033,14 @@
                   "value": 5637
                 },
                 {
+                  "name": "DataUtils.ts",
+                  "fullPath": "src/util/DataUtils.ts",
+                  "value": 5209
+                },
+                {
                   "name": "ReduceCSSCalc.ts",
                   "fullPath": "src/util/ReduceCSSCalc.ts",
                   "value": 5145
-                },
-                {
-                  "name": "DataUtils.ts",
-                  "fullPath": "src/util/DataUtils.ts",
-                  "value": 5015
                 },
                 {
                   "name": "resolveDefaultProps.tsx",
@@ -3535,12 +3535,12 @@
             {
               "name": "shape",
               "fullPath": "src/shape",
-              "value": 7495,
+              "value": 7715,
               "children": [
                 {
                   "name": "Curve.tsx",
                   "fullPath": "src/shape/Curve.tsx",
-                  "value": 4366
+                  "value": 4586
                 },
                 {
                   "name": "Symbols.tsx",
