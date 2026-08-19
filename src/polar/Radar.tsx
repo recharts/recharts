@@ -64,7 +64,13 @@ export interface RadarPoint {
   name?: string | number;
 }
 
-interface RadarProps<DataPointType = any, DataValueType = any>
+/**
+ * The type is exported only so that TypeScript can name it in the declaration files of projects
+ * that wrap Recharts components. It is not part of the public API and may change in any release.
+ *
+ * @internal
+ */
+export interface RadarProps<DataPointType = any, DataValueType = any>
   extends ZIndexable, DataConsumer<DataPointType, DataValueType> {
   /**
    * @defaultValue true
