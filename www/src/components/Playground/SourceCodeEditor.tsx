@@ -108,6 +108,7 @@ export function SourceCodeEditor({
   const viewRef: React.MutableRefObject<EditorView | null> = useRef<EditorView | null>(null);
   const editableCompartment = useRef(new Compartment());
   const [editExtensions, setEditExtensions] = useState<Extension[]>([]);
+  const [showFallback, setShowFallback] = useState(true);
 
   const valueWithoutTrailingNewline = trimNewlinesFromStartAndEnd(value);
 
@@ -130,8 +131,6 @@ export function SourceCodeEditor({
   // Initialize editor
   useEffect(() => {
     if (!editorRef.current || viewRef.current) return () => {};
-
-    editorRef.current.replaceChildren();
 
     const extensions: Extension[] = [
       javascript({ jsx: true, typescript: true }),
@@ -162,6 +161,7 @@ export function SourceCodeEditor({
       state: startState,
       parent: editorRef.current,
     });
+    setShowFallback(false);
 
     // Fold logic
     const view = viewRef.current;
@@ -234,12 +234,9 @@ export function SourceCodeEditor({
   }, [readOnly, editExtensions, onChange]);
 
   return (
-    <div
-      ref={editorRef}
-      className={`codemirror-example-editor ${className}`}
-      style={{ height: '100%', overflow: 'auto' }}
-    >
-      <pre>{valueWithoutTrailingNewline}</pre>
+    <div className={`codemirror-example-editor ${className}`} style={{ height: '100%', overflow: 'auto' }}>
+      {showFallback && <pre>{valueWithoutTrailingNewline}</pre>}
+      <div ref={editorRef} />
     </div>
   );
 }
