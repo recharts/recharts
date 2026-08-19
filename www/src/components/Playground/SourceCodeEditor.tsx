@@ -108,6 +108,7 @@ export function SourceCodeEditor({
   const viewRef: React.MutableRefObject<EditorView | null> = useRef<EditorView | null>(null);
   const editableCompartment = useRef(new Compartment());
   const [editExtensions, setEditExtensions] = useState<Extension[]>([]);
+  const [showFallback, setShowFallback] = useState(true);
 
   const valueWithoutTrailingNewline = trimNewlinesFromStartAndEnd(value);
 
@@ -160,6 +161,7 @@ export function SourceCodeEditor({
       state: startState,
       parent: editorRef.current,
     });
+    setShowFallback(false);
 
     // Fold logic
     const view = viewRef.current;
@@ -232,10 +234,9 @@ export function SourceCodeEditor({
   }, [readOnly, editExtensions, onChange]);
 
   return (
-    <div
-      ref={editorRef}
-      className={`codemirror-example-editor ${className}`}
-      style={{ height: '100%', overflow: 'auto' }}
-    />
+    <div className={`codemirror-example-editor ${className}`} style={{ height: '100%', overflow: 'auto' }}>
+      {showFallback && <pre>{valueWithoutTrailingNewline}</pre>}
+      <div ref={editorRef} />
+    </div>
   );
 }
