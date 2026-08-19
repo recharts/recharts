@@ -149,6 +149,21 @@ describe('hasDuplicate', () => {
   it('[1, 12] should return false', () => {
     expect(hasDuplicate([1, 12])).toBe(false);
   });
+
+  it.each(['constructor', 'toString', 'valueOf', 'hasOwnProperty', 'isPrototypeOf', '__proto__'])(
+    'a single %s should return false',
+    key => {
+      expect(hasDuplicate([key])).toBe(false);
+    },
+  );
+
+  it('should still find a duplicate among Object.prototype keys', () => {
+    expect(hasDuplicate(['constructor', 'toString', 'constructor'])).toBe(true);
+  });
+
+  it('should not treat a category named like an Object.prototype key as a duplicate', () => {
+    expect(hasDuplicate(['apples', 'constructor', 'pears'])).toBe(false);
+  });
 });
 
 describe('interpolate', () => {
