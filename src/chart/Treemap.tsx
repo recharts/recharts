@@ -973,12 +973,12 @@ class TreemapWithState extends PureComponent<InternalTreemapProps, State> {
       const formatRoot = squarify(root, aspectRatio, nodeInset, nodeGap);
 
       const { nestIndex } = this.state;
-      nestIndex.push(node);
+      const nextNestIndex = [...nestIndex, node];
 
       this.setState({
         formatRoot,
         currentRoot: root,
-        nestIndex,
+        nestIndex: nextNestIndex,
       });
     }
     if (onClick) {
