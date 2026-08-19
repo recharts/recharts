@@ -94,14 +94,16 @@ export const hasDuplicate = (ary: ReadonlyArray<unknown>): boolean => {
   }
 
   const len = ary.length;
-  const cache: Record<string, boolean> = {};
+  // A Set rather than an object literal: keys like `constructor` or `toString` are inherited from
+  // Object.prototype, so an object lookup reports them as seen before they have been added.
+  const cache = new Set<string>();
 
   for (let i = 0; i < len; i++) {
-    if (!cache[String(ary[i])]) {
-      cache[String(ary[i])] = true;
-    } else {
+    const key = String(ary[i]);
+    if (cache.has(key)) {
       return true;
     }
+    cache.add(key);
   }
 
   return false;
