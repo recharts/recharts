@@ -346,3 +346,110 @@ describe('Public API Exports', () => {
     expect(missingExports).toEqual([]);
   });
 });
+
+// The components a consumer is most likely to wrap. Each one is re-declared through
+// `forwardRef`, which forces TypeScript to write the prop type into the consumer's own
+// declaration file - the situation that surfaces unnameable types.
+const WRAPPED_COMPONENTS = [
+  'AreaProps',
+  'BarProps',
+  'BrushProps',
+  'CartesianGridProps',
+  'CellProps',
+  'CustomizedProps',
+  'ErrorBarProps',
+  'FunnelProps',
+  'LabelProps',
+  'LegendProps',
+  'LineProps',
+  'PieProps',
+  'PolarAngleAxisProps',
+  'PolarGridProps',
+  'PolarRadiusAxisProps',
+  'RadarProps',
+  'RadialBarProps',
+  'ReferenceAreaProps',
+  'ReferenceDotProps',
+  'ReferenceLineProps',
+  'ResponsiveContainerProps',
+  'SankeyProps',
+  'ScatterProps',
+  'TextProps',
+  'TooltipProps',
+  'TreemapProps',
+  'XAxisProps',
+  'YAxisProps',
+];
+
+// A few of those take type parameters that have no defaults, so the fixture has to fill them in.
+// Getting this wrong is not harmless: the line then fails to compile and never reaches declaration
+// emit, so it silently stops covering anything.
+const TYPE_ARGUMENTS: Record<string, string> = {
+  AreaProps: '<any, any>',
+  CustomizedProps: '<any, any>',
+};
+
+const toMessage = (diagnostic: { getMessageText: () => string | { getMessageText: () => string } }): string => {
+  const message = diagnostic.getMessageText();
+  return typeof message === 'string' ? message : message.getMessageText();
+};
+
+/**
+ * A type that is referenced by a public prop type but not exported from the module it lives in
+ * cannot be written into a consumer's `.d.ts`. TypeScript then fails the consumer's build with
+ * TS4023, even though the same code type-checks fine without declaration emit.
+ *
+ * @see {@link https://github.com/recharts/recharts/issues/6291 Issue 6291}
+ */
+describe('Consumer declaration emit', () => {
+  // Building a second program and emitting declarations for it takes a few seconds,
+  // which is more than the default per-test timeout allows for on CI.
+  it('should let a consumer re-declare every component without unnameable types', { timeout: 60_000 }, () => {
+    const project = new Project({
+      tsConfigFilePath: TS_CONFIG_PATH,
+      skipAddingFilesFromTsConfig: true,
+      compilerOptions: {
+        composite: false,
+        declaration: true,
+        declarationDir: undefined,
+        emitDeclarationOnly: true,
+        noEmit: false,
+        outDir: resolve(PROJECT_ROOT, 'node_modules/.cache/verify-exports'),
+        rootDir: PROJECT_ROOT,
+      },
+    });
+
+    // TypeScript takes forward slashes in absolute specifiers on every platform,
+    // while the backslashes resolve() returns on Windows would be read as escapes.
+    const srcIndexSpecifier = SRC_INDEX_PATH.replace(/\.ts$/, '').replace(/\\/g, '/');
+
+    const consumerSource = [
+      `import { forwardRef } from 'react';`,
+      `import type { ${WRAPPED_COMPONENTS.join(', ')} } from '${srcIndexSpecifier}';`,
+      '',
+      ...WRAPPED_COMPONENTS.map(
+        (props, index) =>
+          `export const Wrapped${index} = forwardRef<HTMLElement, ${props}${TYPE_ARGUMENTS[props] ?? ''}>(() => null);`,
+      ),
+    ].join('\n');
+
+    const consumer = project.createSourceFile(
+      resolve(PROJECT_ROOT, 'scripts/verify-exports.consumer.ts'),
+      consumerSource,
+      { overwrite: true },
+    );
+
+    // The fixture itself has to compile, otherwise the lines that don't are quietly dropped
+    // from the declaration emit below and stop being checked at all.
+    expect(consumer.getPreEmitDiagnostics().map(toMessage)).toEqual([]);
+
+    // TS4023: "Exported variable X has or is using name Y from external module Z but cannot be named."
+    const unnameable = project
+      .emitToMemory({ emitOnlyDtsFiles: true })
+      .getDiagnostics()
+      .filter(diagnostic => diagnostic.getCode() === 4023)
+      .map(toMessage);
+
+    expect(unnameable).toEqual([]);
+  });
+});

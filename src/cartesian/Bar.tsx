@@ -130,7 +130,13 @@ export type BarShapeProps = BarRectangleItem &
     index: number;
   };
 
-interface BarProps<DataPointType, ValueAxisType>
+/**
+ * The type is exported only so that TypeScript can name it in the declaration files of projects
+ * that wrap Recharts components. It is not part of the public API and may change in any release.
+ *
+ * @internal
+ */
+export interface BarProps<DataPointType, ValueAxisType>
   extends DataProvider<DataPointType>, DataConsumer<DataPointType, ValueAxisType>, ZIndexable {
   className?: string;
   index?: Key;
@@ -365,7 +371,13 @@ type BarMouseEvent = (
   event: React.MouseEvent<SVGPathElement, MouseEvent>,
 ) => void;
 
-interface BarEvents {
+/**
+ * The type is exported only so that TypeScript can name it in the declaration files of projects
+ * that wrap Recharts components. It is not part of the public API and may change in any release.
+ *
+ * @internal
+ */
+export interface BarEvents {
   /**
    * The customized event handler of click on the bars in this group
    *

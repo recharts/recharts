@@ -123,8 +123,13 @@ interface InternalLineProps extends ZIndexable {
 
 /**
  * External props, intended for end users to fill in
+ *
+ * The type is exported only so that TypeScript can name it in the declaration files of projects
+ * that wrap Recharts components. It is not part of the public API and may change in any release.
+ *
+ * @internal
  */
-interface LineProps<DataPointType = any, DataValueType = any>
+export interface LineProps<DataPointType = any, DataValueType = any>
   extends DataProvider<DataPointType>, DataConsumer<DataPointType, DataValueType>, ZIndexable {
   /**
    * The active dot is rendered on the closest data point when user interacts with the chart. Options:

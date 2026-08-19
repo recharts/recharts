@@ -15,7 +15,6 @@ export const defaultPolarRadiusAxisProps = {
   radiusAxisId: 0,
   reversed: false,
   scale: 'auto',
-  stroke: '#ccc',
   tick: true,
   tickCount: 5,
   tickLine: true,

@@ -79,8 +79,13 @@ type InternalFunnelProps = RequiresDefaultProps<FunnelProps, typeof defaultFunne
 
 /**
  * External props, intended for end users to fill in
+ *
+ * The type is exported only so that TypeScript can name it in the declaration files of projects
+ * that wrap Recharts components. It is not part of the public API and may change in any release.
+ *
+ * @internal
  */
-interface FunnelProps<DataPointType = any, DataValueType = any>
+export interface FunnelProps<DataPointType = any, DataValueType = any>
   extends DataProvider<DataPointType>, Required<DataConsumer<DataPointType, DataValueType>> {
   /**
    * This component is rendered when this graphical item is activated
