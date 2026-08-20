@@ -19,6 +19,8 @@ import { ZIndexable, ZIndexLayer } from '../zIndex/ZIndexLayer';
 import { DefaultZIndexes } from '../zIndex/DefaultZIndexes';
 import { Coordinate } from '../util/types';
 import { CartesianScaleHelperImpl } from '../util/scale/CartesianScaleHelper';
+import { Styles2D } from '../theme/RechartsTheme';
+import { useBackwardsCompatibleTheme } from '../theme/useBackwardsCompatibleTheme';
 
 type ReferenceCoordinateValue = number | string;
 
@@ -240,12 +242,15 @@ export const referenceDotDefaultProps = {
   yAxisId: 0,
   r: 10,
   label: false,
+  zIndex: DefaultZIndexes.scatter,
+} as const satisfies Partial<Props>;
+
+const defaultLegacyReferenceDotThemeProps: Styles2D = {
   fill: '#fff',
   stroke: '#ccc',
   fillOpacity: 1,
   strokeWidth: 1,
-  zIndex: DefaultZIndexes.scatter,
-} as const satisfies Partial<Props>;
+};
 
 type PropsWithDefaults = RequiresDefaultProps<Props, typeof referenceDotDefaultProps>;
 
@@ -267,7 +272,12 @@ export function ReferenceDot<
   XValueType extends ReferenceCoordinateValue = any,
   YValueType extends ReferenceCoordinateValue = any,
 >(outsideProps: Props<XValueType, YValueType>) {
-  const props = resolveDefaultProps(outsideProps, referenceDotDefaultProps);
+  const themeProps = useBackwardsCompatibleTheme(
+    theme => theme.reference,
+    outsideProps,
+    defaultLegacyReferenceDotThemeProps,
+  );
+  const props: PropsWithDefaults = resolveDefaultProps({ ...outsideProps, ...themeProps }, referenceDotDefaultProps);
   const { x, y, r, ifOverflow, yAxisId, xAxisId } = props;
   return (
     <>

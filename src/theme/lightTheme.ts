@@ -59,6 +59,12 @@ export const lightTheme: RechartsTheme = {
     strokeDasharray: '3 3',
     fill: 'none',
   },
+  reference: {
+    stroke: '#a8a29e',
+    strokeWidth: 1,
+    fill: '#d6d3d1',
+    fillOpacity: 0.25,
+  },
   cursor: {
     stroke: '#a8a29e',
   },

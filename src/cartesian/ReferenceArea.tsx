@@ -21,6 +21,8 @@ import { ZIndexable, ZIndexLayer } from '../zIndex/ZIndexLayer';
 import { DefaultZIndexes } from '../zIndex/DefaultZIndexes';
 import { RechartsScale } from '../util/scale/RechartsScale';
 import { CartesianScaleHelperImpl } from '../util/scale/CartesianScaleHelper';
+import { Styles2D } from '../theme/RechartsTheme';
+import { useBackwardsCompatibleTheme } from '../theme/useBackwardsCompatibleTheme';
 
 type ReferenceCoordinateValue = number | string;
 
@@ -243,13 +245,16 @@ export const referenceAreaDefaultProps = {
   xAxisId: 0,
   yAxisId: 0,
   radius: 0,
-  fill: '#ccc',
   label: false,
+  zIndex: DefaultZIndexes.area,
+} as const satisfies Partial<Props>;
+
+const defaultLegacyReferenceAreaThemeProps: Styles2D = {
+  fill: '#ccc',
   fillOpacity: 0.5,
   stroke: 'none',
   strokeWidth: 1,
-  zIndex: DefaultZIndexes.area,
-} as const satisfies Partial<Props>;
+};
 
 type PropsWithDefaults = RequiresDefaultProps<Props, typeof referenceAreaDefaultProps>;
 
@@ -271,7 +276,12 @@ export function ReferenceArea<
   XValueType extends ReferenceCoordinateValue = any,
   YValueType extends ReferenceCoordinateValue = any,
 >(outsideProps: Props<XValueType, YValueType>) {
-  const props = resolveDefaultProps(outsideProps, referenceAreaDefaultProps);
+  const themeProps = useBackwardsCompatibleTheme(
+    theme => theme.reference,
+    outsideProps,
+    defaultLegacyReferenceAreaThemeProps,
+  );
+  const props: PropsWithDefaults = resolveDefaultProps({ ...outsideProps, ...themeProps }, referenceAreaDefaultProps);
   return (
     <>
       <ReportReferenceArea
