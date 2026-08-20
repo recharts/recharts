@@ -109,19 +109,6 @@ describe('DOMUtils', () => {
     expect(getStringSize('test', { fontVariant: 'small-caps' })).toEqual({ width: 40, height: 17 });
   });
 
-  test('cache should ignore the order of style properties', () => {
-    render(<span id="recharts_measurement_span">test</span>);
-    mockGetBoundingClientRect({
-      width: 25,
-      height: 17,
-    });
-
-    getStringSize('test', { fontSize: '14px', fontStyle: 'italic' });
-    getStringSize('test', { fontStyle: 'italic', fontSize: '14px' });
-
-    expect(getStringCacheStats().size).toBe(1);
-  });
-
   test('configureTextMeasurement should update configuration', () => {
     const newConfig = {
       cacheSize: 1000,

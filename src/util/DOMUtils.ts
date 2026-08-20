@@ -33,15 +33,15 @@ function createCacheKey(text: string | number, style: CSSProperties): string {
   // Simple string concatenation for better performance than JSON.stringify.
   // Every property has to take part in the key because measureTextWithDOM applies the whole style
   // object to the measurement span - listing only a few of them makes two different styles share
-  // one cache entry. Keys are sorted so that the same style always produces the same key.
-  const names = Object.keys(style).sort();
+  // one cache entry.
   let key = `${text}`;
 
-  for (let i = 0; i < names.length; i++) {
-    const name = names[i];
-    const value = style[name as keyof CSSProperties];
-    if (value != null && value !== '') {
-      key += `|${name}:${value}`;
+  for (const name in style) {
+    if (Object.prototype.hasOwnProperty.call(style, name)) {
+      const value = style[name as keyof CSSProperties];
+      if (value != null && value !== '') {
+        key += `|${name}:${value}`;
+      }
     }
   }
 
