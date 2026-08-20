@@ -141,7 +141,6 @@ interface ReferenceLineProps<
   zIndex?: number;
   /**
    * The width of the stroke
-   * @defaultValue 1
    */
   strokeWidth?: number | string;
 }
