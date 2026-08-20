@@ -220,7 +220,6 @@
   "es6/theme/darkTheme.js",
   "es6/theme/emptyTheme.js",
   "es6/theme/graphicalItemIdentity.js",
-  "es6/theme/legacyTheme.js",
   "es6/theme/lightTheme.js",
   "es6/theme/useBackwardsCompatibleTheme.js",
   "es6/types.js",
