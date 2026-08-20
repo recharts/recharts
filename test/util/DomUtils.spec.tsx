@@ -7,7 +7,7 @@ import {
   configureTextMeasurement,
   getTextMeasurementConfig,
 } from '../../src/util/DOMUtils';
-import { mockGetBoundingClientRect } from '../helper/mockGetBoundingClientRect';
+import { mockGetBoundingClientRect, mockSequenceOfGetBoundingClientRect } from '../helper/mockGetBoundingClientRect';
 
 describe('DOMUtils', () => {
   beforeEach(() => {
@@ -83,6 +83,43 @@ describe('DOMUtils', () => {
     getStringSize('test', { fontSize: '16px' });
 
     expect(getStringCacheStats().size).toBe(2);
+  });
+
+  test('cache should handle styles that differ only outside the font shorthand properties', () => {
+    render(<span id="recharts_measurement_span">test</span>);
+    mockGetBoundingClientRect({
+      width: 25,
+      height: 17,
+    });
+
+    getStringSize('test', { wordSpacing: '1px' });
+    getStringSize('test', { wordSpacing: '9px' });
+
+    expect(getStringCacheStats().size).toBe(2);
+  });
+
+  test('cache should not return a size measured with a different style', () => {
+    render(<span id="recharts_measurement_span">test</span>);
+    mockSequenceOfGetBoundingClientRect([
+      { width: 25, height: 17 },
+      { width: 40, height: 17 },
+    ]);
+
+    expect(getStringSize('test', { fontVariant: 'normal' })).toEqual({ width: 25, height: 17 });
+    expect(getStringSize('test', { fontVariant: 'small-caps' })).toEqual({ width: 40, height: 17 });
+  });
+
+  test('cache should ignore the order of style properties', () => {
+    render(<span id="recharts_measurement_span">test</span>);
+    mockGetBoundingClientRect({
+      width: 25,
+      height: 17,
+    });
+
+    getStringSize('test', { fontSize: '14px', fontStyle: 'italic' });
+    getStringSize('test', { fontStyle: 'italic', fontSize: '14px' });
+
+    expect(getStringCacheStats().size).toBe(1);
   });
 
   test('configureTextMeasurement should update configuration', () => {
