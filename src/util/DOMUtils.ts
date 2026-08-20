@@ -64,7 +64,10 @@ const measureTextWithDOM = (text: string | number, style: CSSProperties): Size =
       document.body.appendChild(measurementSpan);
     }
 
-    // Apply styles directly without unnecessary object creation
+    // The span is reused between calls, and Object.assign only adds properties - it never removes
+    // the ones a previous style set. Without the reset, a measurement inherits leftovers from
+    // whatever was measured before it.
+    measurementSpan.style.cssText = '';
     Object.assign(measurementSpan.style, SPAN_STYLE, style);
     measurementSpan.textContent = `${text}`;
 

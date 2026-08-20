@@ -109,6 +109,21 @@ describe('DOMUtils', () => {
     expect(getStringSize('test', { fontVariant: 'small-caps' })).toEqual({ width: 40, height: 17 });
   });
 
+  test('measurement span should not keep styles from an earlier measurement', () => {
+    render(<span id="recharts_measurement_span">test</span>);
+    mockGetBoundingClientRect({
+      width: 25,
+      height: 17,
+    });
+    const measurementSpan = document.getElementById('recharts_measurement_span');
+
+    getStringSize('test', { fontStretch: 'expanded', wordSpacing: '9px' });
+    getStringSize('test', {});
+
+    expect(measurementSpan?.style.wordSpacing).toBe('');
+    expect(measurementSpan?.style.fontStretch).toBe('');
+  });
+
   test('configureTextMeasurement should update configuration', () => {
     const newConfig = {
       cacheSize: 1000,
