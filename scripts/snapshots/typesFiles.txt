@@ -220,7 +220,6 @@
   "types/theme/darkTheme.d.ts",
   "types/theme/emptyTheme.d.ts",
   "types/theme/graphicalItemIdentity.d.ts",
-  "types/theme/legacyTheme.d.ts",
   "types/theme/lightTheme.d.ts",
   "types/theme/useBackwardsCompatibleTheme.d.ts",
   "types/types.d.ts",

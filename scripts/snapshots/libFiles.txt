@@ -220,7 +220,6 @@
   "lib/theme/darkTheme.js",
   "lib/theme/emptyTheme.js",
   "lib/theme/graphicalItemIdentity.js",
-  "lib/theme/legacyTheme.js",
   "lib/theme/lightTheme.js",
   "lib/theme/useBackwardsCompatibleTheme.js",
   "lib/types.js",
