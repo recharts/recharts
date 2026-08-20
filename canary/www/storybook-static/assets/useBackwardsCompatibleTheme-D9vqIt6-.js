@@ -1,0 +1,1 @@
+import{l as n}from"./resolveDefaultProps-BrjTargu.js";import{r as s}from"./iframe-D9AiK7MA.js";const a=s.createContext(void 0);a.Provider;const c=()=>s.useContext(a),l={},i=(u,e,t)=>{const r=c();if(r==null)return t==null?e:n(e,t);const o=u(r);return o==null?l:n(e,o)};export{i as u};
