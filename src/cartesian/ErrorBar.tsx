@@ -16,6 +16,8 @@ import { useChartLayout } from '../context/chartLayoutContext';
 import { CSSTransitionAnimate, extractCssEasing } from '../animation/CSSTransitionAnimate';
 import { ZIndexable, ZIndexLayer } from '../zIndex/ZIndexLayer';
 import { DefaultZIndexes } from '../zIndex/DefaultZIndexes';
+import { Styles1D } from '../theme/RechartsTheme';
+import { useBackwardsCompatibleTheme } from '../theme/useBackwardsCompatibleTheme';
 
 export interface ErrorBarDataItem {
   x: number | undefined;
@@ -91,8 +93,6 @@ interface ErrorBarProps<DataPointType = any, DataValueType = any> extends ZIndex
   strokeWidth?: number | string;
   /**
    * The stroke color. If "none", no line will be drawn.
-   *
-   * @defaultValue black
    */
   stroke?: string;
   /**
@@ -251,9 +251,12 @@ function useErrorBarDirection(directionFromProps: ErrorBarDirection | undefined)
   return 'x';
 }
 
-export const errorBarDefaultProps = {
+const defaultLegacyErrorBarThemeProps: Styles1D = {
   stroke: 'black',
   strokeWidth: 1.5,
+};
+
+export const errorBarDefaultProps = {
   width: 5,
   offset: 0,
   isAnimationActive: true,
@@ -287,7 +290,23 @@ export const errorBarDefaultProps = {
  */
 export function ErrorBar(outsideProps: Props) {
   const realDirection: ErrorBarDirection = useErrorBarDirection(outsideProps.direction);
-  const props = resolveDefaultProps(outsideProps, errorBarDefaultProps);
+  const themeProps = useBackwardsCompatibleTheme(
+    theme => theme.errorBar,
+    {
+      stroke: outsideProps.stroke,
+      strokeWidth: outsideProps.strokeWidth,
+      strokeOpacity: outsideProps.strokeOpacity,
+      strokeDasharray: outsideProps.strokeDasharray,
+    },
+    defaultLegacyErrorBarThemeProps,
+  );
+  const props = resolveDefaultProps(
+    {
+      ...outsideProps,
+      ...themeProps,
+    },
+    errorBarDefaultProps,
+  );
   const { width, isAnimationActive, animationBegin, animationDuration, animationEasing, zIndex } = props;
 
   return (
