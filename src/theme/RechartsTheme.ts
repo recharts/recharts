@@ -67,6 +67,10 @@ export interface RechartsTheme {
    */
   grid?: Styles2D;
   /**
+   * ReferenceLine, ReferenceArea, and ReferenceDot.
+   */
+  reference?: Styles2D;
+  /**
    * XAxis and YAxis and PolarAngleAxis and PolarRadiusAxis ticks and lines and children
    */
   axis?: Styles1D;
