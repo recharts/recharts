@@ -54,7 +54,7 @@ function expectStyles(element: Element, styles: Styles2D) {
 }
 
 function expectNoStyles(element: Element) {
-  ['fill', 'fill-opacity', 'stroke', 'stroke-width', 'stroke-dasharray'].forEach(attribute => {
+  ['fill', 'fill-opacity', 'stroke', 'stroke-width', 'stroke-dasharray', 'stroke-opacity'].forEach(attribute => {
     expect(element).not.toHaveAttribute(attribute);
   });
 }
