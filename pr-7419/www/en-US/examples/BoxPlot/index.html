@@ -29,7 +29,7 @@
       rel="stylesheet"
       type="text/css"
     />
-    <script type="module" crossorigin src="/recharts/pr-7419/www/assets/index-Cp81VReZ.js"></script>
+    <script type="module" crossorigin src="/recharts/pr-7419/www/assets/index-BYFiEWpy.js"></script>
     <link rel="stylesheet" crossorigin href="/recharts/pr-7419/www/assets/index-DB45zsAB.css">
     <link rel="sitemap" type="application/xml" title="Sitemap" href="/sitemap.xml">
   </head>
@@ -48,6 +48,122 @@
             L 15,13
             A 2,2,0,0,1,13,15
             L 7,15
-            A 2,2,0,0,1,5,13 Z" style="stroke-dasharray:0px 1px"></path></svg>Copy to clipboard</button><button type="button" class="codemirror-toolbar-item"><svg stroke="currentColor" fill="none" stroke-width="2" viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round" height="1em" width="1em" xmlns="http://www.w3.org/2000/svg"><path d="M21.174 6.812a1 1 0 0 0-3.986-3.987L3.842 16.174a2 2 0 0 0-.5.83l-1.321 4.352a.5.5 0 0 0 .623.622l4.353-1.32a2 2 0 0 0 .83-.497z"></path><path d="m15 5 4 4"></path></svg><span>Edit</span></button><button type="button" class="codemirror-toolbar-item"><svg stroke="currentColor" fill="none" stroke-width="2" viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round" height="1em" width="1em" xmlns="http://www.w3.org/2000/svg"><circle cx="18" cy="5" r="3"></circle><circle cx="6" cy="12" r="3"></circle><circle cx="18" cy="19" r="3"></circle><line x1="8.59" x2="15.42" y1="13.51" y2="17.49"></line><line x1="15.41" x2="8.59" y1="6.51" y2="10.49"></line></svg><span>Open in StackBlitz</span></button></div><div style="height:100%;display:block;overflow:hidden"><div class="codemirror-example-editor tsx" style="height:100%;overflow:auto"></div></div><div style="height:100%;display:none;overflow:hidden"><div id="recharts-devtools-portal-R5a9" style="height:100%;background:var(--color-bg);color:var(--color-text);overflow:auto;padding:10px;display:block" class=""></div></div><div style="height:100%;display:none;overflow:hidden"><div id="recharts-devtools-portal-R5a9-annotations" style="height:100%;background:var(--color-bg);color:var(--color-text);overflow:auto;padding:10px;display:block" class=""></div></div><div style="height:100%;display:none;overflow:hidden"><div style="padding:10px;height:100%;overflow:auto"><div style="display:flex;gap:12px;margin:1ex"><label style="display:flex;align-items:center;gap:8px;cursor:pointer"><input style="margin:0;width:16px;height:16px;cursor:pointer" type="radio" name=":R55da9:" checked=""/>Autoplay Animations (default)</label><label style="display:flex;align-items:center;gap:8px;cursor:pointer"><input style="margin:0;width:16px;height:16px;cursor:pointer" type="radio" name=":R55da9:"/>Manual Animations</label></div></div></div></div></div></div></div></div></div></main><footer><p><span>Released under the </span><a href="https://opensource.org/licenses/MIT" target="_blank" rel="noreferrer">MIT License</a></p><p>Copyright (c) 2016-<!-- -->2026<!-- --> Recharts Group</p><p>Commit: <code title="0cfdf3369494ba110afefebca88abefb2377fa46">0cfdf336</code></p></footer></div></div>
+            A 2,2,0,0,1,5,13 Z" style="stroke-dasharray:0px 1px"></path></svg>Copy to clipboard</button><button type="button" class="codemirror-toolbar-item"><svg stroke="currentColor" fill="none" stroke-width="2" viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round" height="1em" width="1em" xmlns="http://www.w3.org/2000/svg"><path d="M21.174 6.812a1 1 0 0 0-3.986-3.987L3.842 16.174a2 2 0 0 0-.5.83l-1.321 4.352a.5.5 0 0 0 .623.622l4.353-1.32a2 2 0 0 0 .83-.497z"></path><path d="m15 5 4 4"></path></svg><span>Edit</span></button><button type="button" class="codemirror-toolbar-item"><svg stroke="currentColor" fill="none" stroke-width="2" viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round" height="1em" width="1em" xmlns="http://www.w3.org/2000/svg"><circle cx="18" cy="5" r="3"></circle><circle cx="6" cy="12" r="3"></circle><circle cx="18" cy="19" r="3"></circle><line x1="8.59" x2="15.42" y1="13.51" y2="17.49"></line><line x1="15.41" x2="8.59" y1="6.51" y2="10.49"></line></svg><span>Open in StackBlitz</span></button></div><div style="height:100%;display:block;overflow:hidden"><div class="codemirror-example-editor tsx" style="height:100%;overflow:auto"><pre>import { RechartsDevtools } from &#x27;@recharts/devtools&#x27;;
+import {
+  Bar,
+  BarChart,
+  BarShapeProps,
+  CartesianGrid,
+  DefaultZIndexes,
+  ErrorBar,
+  Rectangle,
+  Scatter,
+  Tooltip,
+  TooltipContentProps,
+  TooltipIndex,
+  XAxis,
+  YAxis,
+} from &#x27;recharts&#x27;;
+
+type BoxPlotDatum = {
+  category: string;
+  min: number;
+  q1: number;
+  median: number;
+  q3: number;
+  max: number;
+};
+
+const data: ReadonlyArray&lt;BoxPlotDatum&gt; = [
+  { category: &#x27;A&#x27;, min: 16, q1: 20, median: 24, q3: 29, max: 35 },
+  { category: &#x27;B&#x27;, min: 12, q1: 15, median: 18, q3: 21, max: 27 },
+  { category: &#x27;C&#x27;, min: 22, q1: 26, median: 30, q3: 34, max: 49 },
+  { category: &#x27;D&#x27;, min: 9, q1: 13, median: 17, q3: 20, max: 26 },
+  { category: &#x27;E&#x27;, min: 18, q1: 22, median: 25, q3: 28, max: 32 },
+];
+
+type OutlierDatum = {
+  category: string;
+  value: number;
+};
+
+const outliers: ReadonlyArray&lt;OutlierDatum&gt; = [
+  { category: &#x27;A&#x27;, value: 10 },
+  { category: &#x27;A&#x27;, value: 11 },
+  { category: &#x27;A&#x27;, value: 12 },
+  { category: &#x27;A&#x27;, value: 5 },
+  { category: &#x27;B&#x27;, value: 0 },
+  { category: &#x27;A&#x27;, value: 40 },
+  { category: &#x27;D&#x27;, value: 8 },
+  { category: &#x27;E&#x27;, value: 33 },
+];
+
+const boxDataKey: (entry: BoxPlotDatum) =&gt; [number, number] = entry =&gt; [entry.q1, entry.q3];
+
+const whiskerDataKey: (entry: BoxPlotDatum) =&gt; [number, number] = entry =&gt; [entry.q3 - entry.min, entry.max - entry.q3];
+
+const BoxShape = (props: BarShapeProps) =&gt; {
+  // @ts-expect-error Recharts does spread datum on the props but the types don&#x27;t reflect that
+  const entry: BoxPlotDatum = props;
+  const quartileRange = entry.q3 - entry.q1;
+  const medianOffset =
+    quartileRange === 0 ? props.height / 2 : ((entry.q3 - entry.median) / quartileRange) * props.height;
+  const medianY = props.y + medianOffset;
+
+  return (
+    &lt;g&gt;
+      &lt;Rectangle {...props} /&gt;
+      &lt;line x1={props.x} x2={props.x + props.width} y1={medianY} y2={medianY} stroke=&quot;#1f2937&quot; strokeWidth={2} /&gt;
+    &lt;/g&gt;
+  );
+};
+
+const TooltipContent = (props: TooltipContentProps) =&gt; {
+  const { active, payload } = props;
+  if (active &amp;&amp; payload &amp;&amp; payload.length) {
+    const firstPayload = payload[0];
+    if (firstPayload == null) {
+      return null;
+    }
+    const entry: BoxPlotDatum = firstPayload.payload;
+    return (
+      &lt;div
+        style={{
+          backgroundColor: &#x27;white&#x27;,
+          border: &#x27;1px solid #ccc&#x27;,
+          padding: &#x27;0 1em&#x27;,
+        }}
+      &gt;
+        &lt;p style={{ margin: 0 }}&gt;{`Category: ${entry.category}`}&lt;/p&gt;
+        &lt;p style={{ margin: 0 }}&gt;{`Min: ${entry.min}`}&lt;/p&gt;
+        &lt;p style={{ margin: 0 }}&gt;{`Q1: ${entry.q1}`}&lt;/p&gt;
+        &lt;p style={{ margin: 0 }}&gt;{`Median: ${entry.median}`}&lt;/p&gt;
+        &lt;p style={{ margin: 0 }}&gt;{`Q3: ${entry.q3}`}&lt;/p&gt;
+        &lt;p style={{ margin: 0 }}&gt;{`Max: ${entry.max}`}&lt;/p&gt;
+      &lt;/div&gt;
+    );
+  }
+  return null;
+};
+
+export default function BoxPlotExample({ defaultIndex }: { defaultIndex?: TooltipIndex }) {
+  return (
+    &lt;BarChart
+      data={data}
+      style={{ width: &#x27;100%&#x27;, maxWidth: &#x27;700px&#x27;, maxHeight: &#x27;70vh&#x27;, aspectRatio: 1.618 }}
+      responsive
+    &gt;
+      &lt;XAxis dataKey=&quot;category&quot; allowDuplicatedCategory={false} /&gt;
+      &lt;YAxis width=&quot;auto&quot; /&gt;
+      &lt;CartesianGrid vertical={false} /&gt;
+      &lt;Bar dataKey={boxDataKey} shape={BoxShape} fillOpacity={1}&gt;
+        &lt;ErrorBar dataKey={whiskerDataKey} width={0} zIndex={DefaultZIndexes.bar - 1} /&gt;
+      &lt;/Bar&gt;
+      &lt;Scatter data={outliers} dataKey=&quot;value&quot; fill=&quot;#e11d48&quot; stroke=&quot;none&quot; /&gt;
+      &lt;Tooltip content={TooltipContent} defaultIndex={defaultIndex} /&gt;
+      &lt;RechartsDevtools /&gt;
+    &lt;/BarChart&gt;
+  );
+}</pre><div></div></div></div><div style="height:100%;display:none;overflow:hidden"><div id="recharts-devtools-portal-R5a9" style="height:100%;background:var(--color-bg);color:var(--color-text);overflow:auto;padding:10px;display:block" class=""></div></div><div style="height:100%;display:none;overflow:hidden"><div id="recharts-devtools-portal-R5a9-annotations" style="height:100%;background:var(--color-bg);color:var(--color-text);overflow:auto;padding:10px;display:block" class=""></div></div><div style="height:100%;display:none;overflow:hidden"><div style="padding:10px;height:100%;overflow:auto"><div style="display:flex;gap:12px;margin:1ex"><label style="display:flex;align-items:center;gap:8px;cursor:pointer"><input style="margin:0;width:16px;height:16px;cursor:pointer" type="radio" name=":R55da9:" checked=""/>Autoplay Animations (default)</label><label style="display:flex;align-items:center;gap:8px;cursor:pointer"><input style="margin:0;width:16px;height:16px;cursor:pointer" type="radio" name=":R55da9:"/>Manual Animations</label></div></div></div></div></div></div></div></div></div></main><footer><p><span>Released under the </span><a href="https://opensource.org/licenses/MIT" target="_blank" rel="noreferrer">MIT License</a></p><p>Copyright (c) 2016-<!-- -->2026<!-- --> Recharts Group</p><p>Commit: <code title="865df6a4e4a97911656ead49539a694351d7ca72">865df6a4</code></p></footer></div></div>
   </body>
 </html>

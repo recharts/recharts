@@ -1,0 +1,1 @@
+import{a as e,n as t}from"./rolldown-runtime-DkW27tQK.js";import{t as n}from"./react-B6tGW3fj.js";import{c as r,v as i}from"./resolveDefaultProps-CQ5bxg0S.js";var a,o,s;function c(){return(c=t((()=>{a=e(n()),r(),o=()=>{let[e]=a.useState(()=>i(`uid-`));return e},s=a.useId??o})))()}export{s as n,c as t};

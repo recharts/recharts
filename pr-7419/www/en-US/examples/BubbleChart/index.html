@@ -29,7 +29,7 @@
       rel="stylesheet"
       type="text/css"
     />
-    <script type="module" crossorigin src="/recharts/pr-7419/www/assets/index-Cp81VReZ.js"></script>
+    <script type="module" crossorigin src="/recharts/pr-7419/www/assets/index-BYFiEWpy.js"></script>
     <link rel="stylesheet" crossorigin href="/recharts/pr-7419/www/assets/index-DB45zsAB.css">
     <link rel="sitemap" type="application/xml" title="Sitemap" href="/sitemap.xml">
   </head>
@@ -48,6 +48,206 @@
             L 15,13
             A 2,2,0,0,1,13,15
             L 7,15
-            A 2,2,0,0,1,5,13 Z" style="stroke-dasharray:0px 1px"></path></svg>Copy to clipboard</button><button type="button" class="codemirror-toolbar-item"><svg stroke="currentColor" fill="none" stroke-width="2" viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round" height="1em" width="1em" xmlns="http://www.w3.org/2000/svg"><path d="M21.174 6.812a1 1 0 0 0-3.986-3.987L3.842 16.174a2 2 0 0 0-.5.83l-1.321 4.352a.5.5 0 0 0 .623.622l4.353-1.32a2 2 0 0 0 .83-.497z"></path><path d="m15 5 4 4"></path></svg><span>Edit</span></button><button type="button" class="codemirror-toolbar-item"><svg stroke="currentColor" fill="none" stroke-width="2" viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round" height="1em" width="1em" xmlns="http://www.w3.org/2000/svg"><circle cx="18" cy="5" r="3"></circle><circle cx="6" cy="12" r="3"></circle><circle cx="18" cy="19" r="3"></circle><line x1="8.59" x2="15.42" y1="13.51" y2="17.49"></line><line x1="15.41" x2="8.59" y1="6.51" y2="10.49"></line></svg><span>Open in StackBlitz</span></button></div><div style="height:100%;display:block;overflow:hidden"><div class="codemirror-example-editor tsx" style="height:100%;overflow:auto"></div></div><div style="height:100%;display:none;overflow:hidden"><div id="recharts-devtools-portal-R5a9" style="height:100%;background:var(--color-bg);color:var(--color-text);overflow:auto;padding:10px;display:block" class=""></div></div><div style="height:100%;display:none;overflow:hidden"><div id="recharts-devtools-portal-R5a9-annotations" style="height:100%;background:var(--color-bg);color:var(--color-text);overflow:auto;padding:10px;display:block" class=""></div></div><div style="height:100%;display:none;overflow:hidden"><div style="padding:10px;height:100%;overflow:auto"><div style="display:flex;gap:12px;margin:1ex"><label style="display:flex;align-items:center;gap:8px;cursor:pointer"><input style="margin:0;width:16px;height:16px;cursor:pointer" type="radio" name=":R55da9:" checked=""/>Autoplay Animations (default)</label><label style="display:flex;align-items:center;gap:8px;cursor:pointer"><input style="margin:0;width:16px;height:16px;cursor:pointer" type="radio" name=":R55da9:"/>Manual Animations</label></div></div></div></div></div></div></div></div></div></main><footer><p><span>Released under the </span><a href="https://opensource.org/licenses/MIT" target="_blank" rel="noreferrer">MIT License</a></p><p>Copyright (c) 2016-<!-- -->2026<!-- --> Recharts Group</p><p>Commit: <code title="0cfdf3369494ba110afefebca88abefb2377fa46">0cfdf336</code></p></footer></div></div>
+            A 2,2,0,0,1,5,13 Z" style="stroke-dasharray:0px 1px"></path></svg>Copy to clipboard</button><button type="button" class="codemirror-toolbar-item"><svg stroke="currentColor" fill="none" stroke-width="2" viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round" height="1em" width="1em" xmlns="http://www.w3.org/2000/svg"><path d="M21.174 6.812a1 1 0 0 0-3.986-3.987L3.842 16.174a2 2 0 0 0-.5.83l-1.321 4.352a.5.5 0 0 0 .623.622l4.353-1.32a2 2 0 0 0 .83-.497z"></path><path d="m15 5 4 4"></path></svg><span>Edit</span></button><button type="button" class="codemirror-toolbar-item"><svg stroke="currentColor" fill="none" stroke-width="2" viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round" height="1em" width="1em" xmlns="http://www.w3.org/2000/svg"><circle cx="18" cy="5" r="3"></circle><circle cx="6" cy="12" r="3"></circle><circle cx="18" cy="19" r="3"></circle><line x1="8.59" x2="15.42" y1="13.51" y2="17.49"></line><line x1="15.41" x2="8.59" y1="6.51" y2="10.49"></line></svg><span>Open in StackBlitz</span></button></div><div style="height:100%;display:block;overflow:hidden"><div class="codemirror-example-editor tsx" style="height:100%;overflow:auto"><pre>import { Scatter, ScatterChart, Tooltip, XAxis, YAxis, ZAxis, TooltipContentProps, TooltipIndex } from &#x27;recharts&#x27;;
+import { ReactNode } from &#x27;react&#x27;;
+import { RechartsDevtools } from &#x27;@recharts/devtools&#x27;;
+
+// #region Sample data
+const data01 = [
+  { hour: &#x27;12a&#x27;, index: 1, value: 170 },
+  { hour: &#x27;1a&#x27;, index: 1, value: 180 },
+  { hour: &#x27;2a&#x27;, index: 1, value: 150 },
+  { hour: &#x27;3a&#x27;, index: 1, value: 120 },
+  { hour: &#x27;4a&#x27;, index: 1, value: 200 },
+  { hour: &#x27;5a&#x27;, index: 1, value: 300 },
+  { hour: &#x27;6a&#x27;, index: 1, value: 400 },
+  { hour: &#x27;7a&#x27;, index: 1, value: 200 },
+  { hour: &#x27;8a&#x27;, index: 1, value: 100 },
+  { hour: &#x27;9a&#x27;, index: 1, value: 150 },
+  { hour: &#x27;10a&#x27;, index: 1, value: 160 },
+  { hour: &#x27;11a&#x27;, index: 1, value: 170 },
+  { hour: &#x27;12a&#x27;, index: 1, value: 180 },
+  { hour: &#x27;1p&#x27;, index: 1, value: 144 },
+  { hour: &#x27;2p&#x27;, index: 1, value: 166 },
+  { hour: &#x27;3p&#x27;, index: 1, value: 145 },
+  { hour: &#x27;4p&#x27;, index: 1, value: 150 },
+  { hour: &#x27;5p&#x27;, index: 1, value: 170 },
+  { hour: &#x27;6p&#x27;, index: 1, value: 180 },
+  { hour: &#x27;7p&#x27;, index: 1, value: 165 },
+  { hour: &#x27;8p&#x27;, index: 1, value: 130 },
+  { hour: &#x27;9p&#x27;, index: 1, value: 140 },
+  { hour: &#x27;10p&#x27;, index: 1, value: 170 },
+  { hour: &#x27;11p&#x27;, index: 1, value: 180 },
+];
+
+const data02 = [
+  { hour: &#x27;12a&#x27;, index: 1, value: 160 },
+  { hour: &#x27;1a&#x27;, index: 1, value: 180 },
+  { hour: &#x27;2a&#x27;, index: 1, value: 150 },
+  { hour: &#x27;3a&#x27;, index: 1, value: 120 },
+  { hour: &#x27;4a&#x27;, index: 1, value: 200 },
+  { hour: &#x27;5a&#x27;, index: 1, value: 300 },
+  { hour: &#x27;6a&#x27;, index: 1, value: 100 },
+  { hour: &#x27;7a&#x27;, index: 1, value: 200 },
+  { hour: &#x27;8a&#x27;, index: 1, value: 100 },
+  { hour: &#x27;9a&#x27;, index: 1, value: 150 },
+  { hour: &#x27;10a&#x27;, index: 1, value: 160 },
+  { hour: &#x27;11a&#x27;, index: 1, value: 160 },
+  { hour: &#x27;12a&#x27;, index: 1, value: 180 },
+  { hour: &#x27;1p&#x27;, index: 1, value: 144 },
+  { hour: &#x27;2p&#x27;, index: 1, value: 166 },
+  { hour: &#x27;3p&#x27;, index: 1, value: 145 },
+  { hour: &#x27;4p&#x27;, index: 1, value: 150 },
+  { hour: &#x27;5p&#x27;, index: 1, value: 160 },
+  { hour: &#x27;6p&#x27;, index: 1, value: 180 },
+  { hour: &#x27;7p&#x27;, index: 1, value: 165 },
+  { hour: &#x27;8p&#x27;, index: 1, value: 130 },
+  { hour: &#x27;9p&#x27;, index: 1, value: 140 },
+  { hour: &#x27;10p&#x27;, index: 1, value: 160 },
+  { hour: &#x27;11p&#x27;, index: 1, value: 180 },
+];
+
+// #endregion
+const parseDomain = () =&gt; [
+  0,
+  Math.max(
+    Math.max.apply(
+      null,
+      data01.map(entry =&gt; entry.value),
+    ),
+    Math.max.apply(
+      null,
+      data02.map(entry =&gt; entry.value),
+    ),
+  ),
+];
+
+const domain = parseDomain();
+const range = [16, 225] as const;
+const margin = { top: 10, right: 0, bottom: 0, left: 0 };
+
+const renderTooltip = (props: TooltipContentProps) =&gt; {
+  const { active, payload } = props;
+
+  if (active &amp;&amp; payload &amp;&amp; payload.length) {
+    const data = payload[0] &amp;&amp; payload[0].payload;
+
+    return (
+      &lt;div
+        style={{
+          backgroundColor: &#x27;#fff&#x27;,
+          border: &#x27;1px solid #999&#x27;,
+          margin: 0,
+          padding: 10,
+        }}
+      &gt;
+        &lt;p&gt;{data.hour}&lt;/p&gt;
+        &lt;p&gt;
+          &lt;span&gt;value: &lt;/span&gt;
+          {data.value}
+        &lt;/p&gt;
+      &lt;/div&gt;
+    );
+  }
+
+  return null;
+};
+
+const BubbleAxes = ({ day, showXTicks = false }: { day: string; showXTicks?: boolean }) =&gt; (
+  &lt;&gt;
+    &lt;XAxis
+      type=&quot;category&quot;
+      dataKey=&quot;hour&quot;
+      name=&quot;hour&quot;
+      interval={0}
+      tick={showXTicks || { fontSize: 0 }}
+      tickLine={{ transform: &#x27;translate(0, -6)&#x27; }}
+    /&gt;
+    &lt;YAxis
+      type=&quot;number&quot;
+      dataKey=&quot;index&quot;
+      name=&quot;sunday&quot;
+      height={10}
+      width={80}
+      tick={false}
+      tickLine={false}
+      axisLine={false}
+      label={{ value: day, position: &#x27;insideRight&#x27; }}
+    /&gt;
+    &lt;ZAxis type=&quot;number&quot; dataKey=&quot;value&quot; domain={domain} range={range} /&gt;
+  &lt;/&gt;
+);
+
+const MyTooltip = ({ defaultIndex }: { defaultIndex?: TooltipIndex }) =&gt; (
+  &lt;Tooltip
+    cursor={{ strokeDasharray: &#x27;3 3&#x27; }}
+    wrapperStyle={{ zIndex: 100 }}
+    content={renderTooltip}
+    defaultIndex={defaultIndex}
+  /&gt;
+);
+
+const Bubbles = ({ data }: { data: Array&lt;unknown&gt; }) =&gt; &lt;Scatter data={data} fill=&quot;#8884d8&quot; /&gt;;
+
+const DayChart = ({ children }: { children: ReactNode }) =&gt; (
+  &lt;ScatterChart
+    margin={margin}
+    style={{ width: &#x27;100%&#x27;, minWidth: &#x27;700px&#x27;, maxWidth: &#x27;900px&#x27;, height: &#x27;60px&#x27; }}
+    responsive
+  &gt;
+    {children}
+    &lt;RechartsDevtools /&gt;
+  &lt;/ScatterChart&gt;
+);
+
+const BubbleChart = ({ defaultIndex }: { defaultIndex?: TooltipIndex }) =&gt; {
+  return (
+    &lt;div style={{ width: &#x27;100%&#x27;, maxWidth: &#x27;900px&#x27; }}&gt;
+      &lt;DayChart&gt;
+        &lt;BubbleAxes day=&quot;Sunday&quot; /&gt;
+        &lt;Bubbles data={data01} /&gt;
+        &lt;MyTooltip defaultIndex={defaultIndex} /&gt;
+      &lt;/DayChart&gt;
+
+      &lt;DayChart&gt;
+        &lt;BubbleAxes day=&quot;Monday&quot; /&gt;
+        &lt;Bubbles data={data02} /&gt;
+        &lt;MyTooltip /&gt;
+      &lt;/DayChart&gt;
+
+      &lt;DayChart&gt;
+        &lt;BubbleAxes day=&quot;Tuesday&quot; /&gt;
+        &lt;Bubbles data={data01} /&gt;
+        &lt;MyTooltip /&gt;
+      &lt;/DayChart&gt;
+
+      &lt;DayChart&gt;
+        &lt;BubbleAxes day=&quot;Wednesday&quot; /&gt;
+        &lt;Bubbles data={data02} /&gt;
+        &lt;MyTooltip /&gt;
+      &lt;/DayChart&gt;
+
+      &lt;DayChart&gt;
+        &lt;BubbleAxes day=&quot;Thursday&quot; /&gt;
+        &lt;Bubbles data={data01} /&gt;
+        &lt;MyTooltip /&gt;
+      &lt;/DayChart&gt;
+
+      &lt;DayChart&gt;
+        &lt;BubbleAxes day=&quot;Friday&quot; /&gt;
+        &lt;Bubbles data={data02} /&gt;
+        &lt;MyTooltip /&gt;
+      &lt;/DayChart&gt;
+
+      &lt;DayChart&gt;
+        &lt;BubbleAxes day=&quot;Saturday&quot; showXTicks /&gt;
+        &lt;Bubbles data={data01} /&gt;
+        &lt;MyTooltip /&gt;
+      &lt;/DayChart&gt;
+    &lt;/div&gt;
+  );
+};
+
+export default BubbleChart;</pre><div></div></div></div><div style="height:100%;display:none;overflow:hidden"><div id="recharts-devtools-portal-R5a9" style="height:100%;background:var(--color-bg);color:var(--color-text);overflow:auto;padding:10px;display:block" class=""></div></div><div style="height:100%;display:none;overflow:hidden"><div id="recharts-devtools-portal-R5a9-annotations" style="height:100%;background:var(--color-bg);color:var(--color-text);overflow:auto;padding:10px;display:block" class=""></div></div><div style="height:100%;display:none;overflow:hidden"><div style="padding:10px;height:100%;overflow:auto"><div style="display:flex;gap:12px;margin:1ex"><label style="display:flex;align-items:center;gap:8px;cursor:pointer"><input style="margin:0;width:16px;height:16px;cursor:pointer" type="radio" name=":R55da9:" checked=""/>Autoplay Animations (default)</label><label style="display:flex;align-items:center;gap:8px;cursor:pointer"><input style="margin:0;width:16px;height:16px;cursor:pointer" type="radio" name=":R55da9:"/>Manual Animations</label></div></div></div></div></div></div></div></div></div></main><footer><p><span>Released under the </span><a href="https://opensource.org/licenses/MIT" target="_blank" rel="noreferrer">MIT License</a></p><p>Copyright (c) 2016-<!-- -->2026<!-- --> Recharts Group</p><p>Commit: <code title="865df6a4e4a97911656ead49539a694351d7ca72">865df6a4</code></p></footer></div></div>
   </body>
 </html>
