@@ -1,0 +1,502 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <title>Recharts</title>
+    <meta charset="utf-8" />
+    <meta name="description" content="Recharts - Re-designed charting library built with React and D3." />
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5" />
+    <script>
+      /**
+       * @note this is duplicated in defineColorModeStore.ts, to avoid FOUC on initial load. Please keep in sync.
+       */
+      (function () {
+        try {
+          var storedMode = localStorage.getItem('recharts-color-mode');
+          var mode =
+            storedMode === 'light' || storedMode === 'dark'
+              ? storedMode
+              : window.matchMedia('(prefers-color-scheme: dark)').matches
+                ? 'dark'
+                : 'light';
+          document.documentElement.setAttribute('data-mode', mode);
+        } catch (e) {
+          // Do nothing
+        }
+      })();
+    </script>
+    <link
+      href="//fonts.googleapis.com/css?family=Source+Sans+Pro:400,600|Roboto Mono|Oswald:300"
+      rel="stylesheet"
+      type="text/css"
+    />
+    <script type="module" crossorigin src="/recharts/pr-7660/www/assets/index-CqgjI7s5.js"></script>
+    <link rel="stylesheet" crossorigin href="/recharts/pr-7660/www/assets/index-DB45zsAB.css">
+    <link rel="sitemap" type="application/xml" title="Sitemap" href="/sitemap.xml">
+  </head>
+  <body>
+    <div id="app"><div class="container"><header><a class="logo" href="/zh-CN/" data-discover="true"><div width="200" height="60" class="recharts-wrapper" style="position:relative;cursor:default;width:200px;height:60px"></div></a><nav class="desktop-only"><ul class="navigation-items"><li><a aria-current="page" class="active" href="/zh-CN/guide/" data-discover="true">教程</a></li><li><a class="" href="/zh-CN/api/" data-discover="true">API</a></li><li><a class="" href="/zh-CN/examples/" data-discover="true">示例</a></li><li><a class="" href="/zh-CN/storybook/" data-discover="true">Storybook (工作正在进行中)</a></li><li><a href="https://github.com/recharts/recharts/wiki" target="_blank" rel="noopener noreferrer" style="white-space:nowrap;display:inline-flex;align-items:center;gap:0.25rem">Wiki<svg stroke="currentColor" fill="none" stroke-width="2" viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round" height="1em" width="1em" xmlns="http://www.w3.org/2000/svg"><path d="M15 3h6v6"></path><path d="M10 14 21 3"></path><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path></svg></a></li><li><a href="https://github.com/recharts/recharts" target="_blank" rel="noopener noreferrer" style="white-space:nowrap;display:inline-flex;align-items:center;gap:0.25rem">GitHub<svg stroke="currentColor" fill="none" stroke-width="2" viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round" height="1em" width="1em" xmlns="http://www.w3.org/2000/svg"><path d="M15 3h6v6"></path><path d="M10 14 21 3"></path><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path></svg></a></li><li><a href="https://www.npmjs.com/package/recharts" target="_blank" rel="noopener noreferrer" style="white-space:nowrap;display:inline-flex;align-items:center;gap:0.25rem">npm<svg stroke="currentColor" fill="none" stroke-width="2" viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round" height="1em" width="1em" xmlns="http://www.w3.org/2000/svg"><path d="M15 3h6v6"></path><path d="M10 14 21 3"></path><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path></svg></a></li><li><a href="https://github.com/recharts/recharts/wiki/3.0-migration-guide" target="_blank" rel="noopener noreferrer" style="white-space:nowrap;display:inline-flex;align-items:center;gap:0.25rem">3.0 migration guide<svg stroke="currentColor" fill="none" stroke-width="2" viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round" height="1em" width="1em" xmlns="http://www.w3.org/2000/svg"><path d="M15 3h6v6"></path><path d="M10 14 21 3"></path><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path></svg></a></li></ul><div class="nav-actions"><span class="no-wrap"><span><a class="switch-item" href="/en-US/guide/customize/" data-discover="true">En</a></span><span><span>  |  </span><span class="switch-item active">中文</span></span></span><button class="_ColorModePicker_1b4l5_1" type="button" aria-label="system"><svg stroke="currentColor" fill="none" stroke-width="2" viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round" height="1em" width="1em" xmlns="http://www.w3.org/2000/svg"><rect width="20" height="14" x="2" y="3" rx="2"></rect><line x1="8" x2="16" y1="21" y2="21"></line><line x1="12" x2="12" y1="17" y2="21"></line></svg></button></div></nav><nav class="mobile-only"><button type="button" class="mobile-nav-toggle mobile-only" aria-label="Toggle navigation"><span>Menu</span><div width="3rem" height="3rem" class="recharts-wrapper" style="position:relative;cursor:pointer;width:3rem;height:3rem"></div></button><div class="mobile-nav-backdrop " aria-hidden="true"></div><div class="slide-right-mobile-nav "><ul class="navigation-items"><li class="collapsible "><button type="button" class="collapsible-trigger"><span>教程</span><div width="3rem" height="3rem" class="recharts-wrapper" style="position:relative;cursor:default;width:3rem;height:3rem"></div></button></li><li class="collapsible "><button type="button" class="collapsible-trigger"><span>API</span><div width="3rem" height="3rem" class="recharts-wrapper" style="position:relative;cursor:default;width:3rem;height:3rem"></div></button></li><li class="collapsible "><button type="button" class="collapsible-trigger"><span>示例</span><div width="3rem" height="3rem" class="recharts-wrapper" style="position:relative;cursor:default;width:3rem;height:3rem"></div></button></li><li><a class="" href="/zh-CN/storybook/" data-discover="true">Storybook (工作正在进行中)</a></li><li><a href="https://github.com/recharts/recharts/wiki" target="_blank" rel="noopener noreferrer" style="white-space:nowrap;display:inline-flex;align-items:center;gap:0.25rem">Wiki<svg stroke="currentColor" fill="none" stroke-width="2" viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round" height="1em" width="1em" xmlns="http://www.w3.org/2000/svg"><path d="M15 3h6v6"></path><path d="M10 14 21 3"></path><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path></svg></a></li><li><a href="https://github.com/recharts/recharts" target="_blank" rel="noopener noreferrer" style="white-space:nowrap;display:inline-flex;align-items:center;gap:0.25rem">GitHub<svg stroke="currentColor" fill="none" stroke-width="2" viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round" height="1em" width="1em" xmlns="http://www.w3.org/2000/svg"><path d="M15 3h6v6"></path><path d="M10 14 21 3"></path><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path></svg></a></li><li><a href="https://www.npmjs.com/package/recharts" target="_blank" rel="noopener noreferrer" style="white-space:nowrap;display:inline-flex;align-items:center;gap:0.25rem">npm<svg stroke="currentColor" fill="none" stroke-width="2" viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round" height="1em" width="1em" xmlns="http://www.w3.org/2000/svg"><path d="M15 3h6v6"></path><path d="M10 14 21 3"></path><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path></svg></a></li><li><a href="https://github.com/recharts/recharts/wiki/3.0-migration-guide" target="_blank" rel="noopener noreferrer" style="white-space:nowrap;display:inline-flex;align-items:center;gap:0.25rem">3.0 migration guide<svg stroke="currentColor" fill="none" stroke-width="2" viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round" height="1em" width="1em" xmlns="http://www.w3.org/2000/svg"><path d="M15 3h6v6"></path><path d="M10 14 21 3"></path><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path></svg></a></li></ul><div class="nav-actions"><span class="no-wrap"><span><a class="switch-item" href="/en-US/guide/customize/" data-discover="true">En</a></span><span><span>  |  </span><span class="switch-item active">中文</span></span></span><button class="_ColorModePicker_1b4l5_1" type="button" aria-label="system"><svg stroke="currentColor" fill="none" stroke-width="2" viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round" height="1em" width="1em" xmlns="http://www.w3.org/2000/svg"><rect width="20" height="14" x="2" y="3" rx="2"></rect><line x1="8" x2="16" y1="21" y2="21"></line><line x1="12" x2="12" y1="17" y2="21"></line></svg></button></div></div></nav></header><div class="sidebar desktop-only"><h2>教程</h2><div class="sidebar-cate"><ul class="menu"><li><a class="" href="/zh-CN/guide/installation/" data-discover="true">安装</a></li><li><a class="" href="/zh-CN/guide/getting-started/" data-discover="true">起步</a></li><li><a aria-current="page" class="active" href="/zh-CN/guide/customize/" data-discover="true">组件自定义</a></li><li><a class="" href="/zh-CN/guide/activeIndex/" data-discover="true">活动索引</a></li><li><a class="" href="/zh-CN/guide/domainAndTicks/" data-discover="true">定义域与刻度</a></li><li><a class="" href="/zh-CN/guide/axisTicks/" data-discover="true">轴刻度</a></li><li><a class="" href="/zh-CN/guide/sizes/" data-discover="true">图表尺寸</a></li><li><a class="" href="/zh-CN/guide/zIndex/" data-discover="true">Z-Index 和图层</a></li><li><a class="" href="/zh-CN/guide/coordinateSystems/" data-discover="true">坐标系与维度系统</a></li><li><a class="" href="/zh-CN/guide/performance/" data-discover="true">性能优化</a></li><li><a class="" href="/zh-CN/guide/roundedBars/" data-discover="true">圆角柱状图</a></li><li><a class="" href="/zh-CN/guide/barAlignment/" data-discover="true">柱子对齐方式</a></li><li><a class="" href="/zh-CN/guide/cell/" data-discover="true">从 Cell 组件迁移到 shape 属性</a></li><li><a class="" href="/zh-CN/guide/typescript/" data-discover="true">TypeScript</a></li><li><a class="" href="/zh-CN/guide/animations/" data-discover="true">动画</a></li></ul></div></div><main><div class="page page-guide"><div class="content"><article><h3 class="page-title">组件自定义</h3><h4 class="sub-title">1. 组件 Line , Area , Bar , XAxis, YAxis 的 labels 支持自定义</h4><p class="paragraph-title">例如，我们可以创建具有自定义label的&lt;Bar /&gt;，以及自定义&lt;XAxis /&gt; 的刻度。</p><div width="600" height="300" class="recharts-wrapper" style="position:relative;cursor:default;width:600px;height:300px"></div><div class="codemirror-wrapper "><div id="codemirror-container"><div class="codemirror-toolbar"><select class="codemirror-toolbar-item" style="padding-right:12px"><option value="source" selected="">Source code</option><option value="devtools">Hook inspector</option><option value="annotations">Annotations</option><option value="controls">Controls</option></select><button class="codemirror-toolbar-item" type="button"><svg class="recharts-surface" width="16" height="16" viewBox="0 0 16 16"><title></title><desc></desc><path fill="none" stroke="var(--color-text-1)" stroke-width="1" width="10" height="10" x="1" y="1" radius="2" class="recharts-rectangle" d="M 1,3
+            A 2,2,0,0,1,3,1
+            L 9,1
+            A 2,2,0,0,1,11,3
+            L 11,9
+            A 2,2,0,0,1,9,11
+            L 3,11
+            A 2,2,0,0,1,1,9 Z" style="stroke-dasharray:0px 1px"></path><path fill="none" stroke="var(--color-text-1)" stroke-width="1" width="10" height="10" x="5" y="5" radius="2" class="recharts-rectangle" d="M 5,7
+            A 2,2,0,0,1,7,5
+            L 13,5
+            A 2,2,0,0,1,15,7
+            L 15,13
+            A 2,2,0,0,1,13,15
+            L 7,15
+            A 2,2,0,0,1,5,13 Z" style="stroke-dasharray:0px 1px"></path></svg>Copy to clipboard</button><button type="button" class="codemirror-toolbar-item"><svg stroke="currentColor" fill="none" stroke-width="2" viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round" height="1em" width="1em" xmlns="http://www.w3.org/2000/svg"><path d="M21.174 6.812a1 1 0 0 0-3.986-3.987L3.842 16.174a2 2 0 0 0-.5.83l-1.321 4.352a.5.5 0 0 0 .623.622l4.353-1.32a2 2 0 0 0 .83-.497z"></path><path d="m15 5 4 4"></path></svg><span>Edit</span></button><button type="button" class="codemirror-toolbar-item"><svg stroke="currentColor" fill="none" stroke-width="2" viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round" height="1em" width="1em" xmlns="http://www.w3.org/2000/svg"><circle cx="18" cy="5" r="3"></circle><circle cx="6" cy="12" r="3"></circle><circle cx="18" cy="19" r="3"></circle><line x1="8.59" x2="15.42" y1="13.51" y2="17.49"></line><line x1="15.41" x2="8.59" y1="6.51" y2="10.49"></line></svg><span>Open in StackBlitz</span></button></div><div style="height:100%;display:block;overflow:hidden"><div class="codemirror-example-editor tsx" style="height:100%;overflow:auto"><pre>import { Bar, BarChart, XAxis, YAxis } from &#x27;recharts&#x27;;
+import { RechartsDevtools } from &#x27;@recharts/devtools&#x27;;
+
+// #region Sample data
+const data = [
+  {
+    name: &#x27;Page A&#x27;,
+    uv: 400,
+    pv: 2400,
+    amt: 2400,
+  },
+  {
+    name: &#x27;Page B&#x27;,
+    uv: 300,
+    pv: 4567,
+    amt: 2400,
+  },
+  {
+    name: &#x27;Page C&#x27;,
+    uv: 300,
+    pv: 1398,
+    amt: 2400,
+  },
+  {
+    name: &#x27;Page D&#x27;,
+    uv: 200,
+    pv: 9800,
+    amt: 2400,
+  },
+  {
+    name: &#x27;Page E&#x27;,
+    uv: 278,
+    pv: 3908,
+    amt: 2400,
+  },
+  {
+    name: &#x27;Page F&#x27;,
+    uv: 189,
+    pv: 4800,
+    amt: 2400,
+  },
+];
+
+const margin = {
+  top: 20,
+  right: 30,
+  left: 20,
+  bottom: 25,
+};
+// #endregion
+
+const formatAxisTick = (value: any): string =&gt; {
+  return `*${value}*`;
+};
+
+const renderCustomBarLabel = ({ x, y, width, value }: any) =&gt; {
+  return &lt;text x={x + width / 2} y={y} fill=&quot;#666&quot; textAnchor=&quot;middle&quot; dy={-6}&gt;{`value: ${value}`}&lt;/text&gt;;
+};
+
+export default function CustomizeLabels() {
+  return (
+    &lt;BarChart width={600} height={300} data={data} margin={margin}&gt;
+      &lt;XAxis
+        dataKey=&quot;name&quot;
+        tickFormatter={formatAxisTick}
+        label={{ position: &#x27;insideBottomRight&#x27;, value: &#x27;XAxis title&#x27;, offset: -10 }}
+      /&gt;
+      &lt;YAxis label={{ position: &#x27;insideTopLeft&#x27;, value: &#x27;YAxis title&#x27;, angle: -90, dy: 60 }} /&gt;
+      &lt;Bar dataKey=&quot;uv&quot; fill=&quot;#8884d8&quot; label={renderCustomBarLabel} /&gt;
+      &lt;RechartsDevtools /&gt;
+    &lt;/BarChart&gt;
+  );
+}</pre><div></div></div></div><div style="height:100%;display:none;overflow:hidden"><div id="recharts-devtools-portal-R2a9" style="height:100%;background:var(--color-bg);color:var(--color-text);overflow:auto;padding:10px;display:block" class=""></div></div><div style="height:100%;display:none;overflow:hidden"><div id="recharts-devtools-portal-R2a9-annotations" style="height:100%;background:var(--color-bg);color:var(--color-text);overflow:auto;padding:10px;display:block" class=""></div></div><div style="height:100%;display:none;overflow:hidden"><div style="padding:10px;height:100%;overflow:auto"><div style="display:flex;gap:12px;margin:1ex"><label style="display:flex;align-items:center;gap:8px;cursor:pointer"><input style="margin:0;width:16px;height:16px;cursor:pointer" type="radio" name=":Raaia9:" checked=""/>Autoplay Animations (default)</label><label style="display:flex;align-items:center;gap:8px;cursor:pointer"><input style="margin:0;width:16px;height:16px;cursor:pointer" type="radio" name=":Raaia9:"/>Manual Animations</label></div></div></div></div></div><h4 class="sub-title">2. 组件的形状可以自定义</h4><p class="paragraph-title">例如，当 &lt;Bar /&gt; 的属性 shape 是一个函数或者 react element 的时候，可以用来自定义柱子的形状。</p><div width="600" height="300" class="recharts-wrapper" style="position:relative;cursor:default;width:600px;height:300px"></div><div class="codemirror-wrapper "><div id="codemirror-container"><div class="codemirror-toolbar"><select class="codemirror-toolbar-item" style="padding-right:12px"><option value="source" selected="">Source code</option><option value="devtools">Hook inspector</option><option value="annotations">Annotations</option><option value="controls">Controls</option></select><button class="codemirror-toolbar-item" type="button"><svg class="recharts-surface" width="16" height="16" viewBox="0 0 16 16"><title></title><desc></desc><path fill="none" stroke="var(--color-text-1)" stroke-width="1" width="10" height="10" x="1" y="1" radius="2" class="recharts-rectangle" d="M 1,3
+            A 2,2,0,0,1,3,1
+            L 9,1
+            A 2,2,0,0,1,11,3
+            L 11,9
+            A 2,2,0,0,1,9,11
+            L 3,11
+            A 2,2,0,0,1,1,9 Z" style="stroke-dasharray:0px 1px"></path><path fill="none" stroke="var(--color-text-1)" stroke-width="1" width="10" height="10" x="5" y="5" radius="2" class="recharts-rectangle" d="M 5,7
+            A 2,2,0,0,1,7,5
+            L 13,5
+            A 2,2,0,0,1,15,7
+            L 15,13
+            A 2,2,0,0,1,13,15
+            L 7,15
+            A 2,2,0,0,1,5,13 Z" style="stroke-dasharray:0px 1px"></path></svg>Copy to clipboard</button><button type="button" class="codemirror-toolbar-item"><svg stroke="currentColor" fill="none" stroke-width="2" viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round" height="1em" width="1em" xmlns="http://www.w3.org/2000/svg"><path d="M21.174 6.812a1 1 0 0 0-3.986-3.987L3.842 16.174a2 2 0 0 0-.5.83l-1.321 4.352a.5.5 0 0 0 .623.622l4.353-1.32a2 2 0 0 0 .83-.497z"></path><path d="m15 5 4 4"></path></svg><span>Edit</span></button><button type="button" class="codemirror-toolbar-item"><svg stroke="currentColor" fill="none" stroke-width="2" viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round" height="1em" width="1em" xmlns="http://www.w3.org/2000/svg"><circle cx="18" cy="5" r="3"></circle><circle cx="6" cy="12" r="3"></circle><circle cx="18" cy="19" r="3"></circle><line x1="8.59" x2="15.42" y1="13.51" y2="17.49"></line><line x1="15.41" x2="8.59" y1="6.51" y2="10.49"></line></svg><span>Open in StackBlitz</span></button></div><div style="height:100%;display:block;overflow:hidden"><div class="codemirror-example-editor tsx" style="height:100%;overflow:auto"><pre>import { Bar, BarChart, BarShapeProps, XAxis, YAxis } from &#x27;recharts&#x27;;
+import { RechartsDevtools } from &#x27;@recharts/devtools&#x27;;
+
+// #region Sample data
+const data = [
+  {
+    name: &#x27;Page A&#x27;,
+    uv: 400,
+    pv: 2400,
+    amt: 2400,
+  },
+  {
+    name: &#x27;Page B&#x27;,
+    uv: 300,
+    pv: 4567,
+    amt: 2400,
+  },
+  {
+    name: &#x27;Page C&#x27;,
+    uv: 300,
+    pv: 1398,
+    amt: 2400,
+  },
+  {
+    name: &#x27;Page D&#x27;,
+    uv: 200,
+    pv: 9800,
+    amt: 2400,
+  },
+  {
+    name: &#x27;Page E&#x27;,
+    uv: 278,
+    pv: 3908,
+    amt: 2400,
+  },
+  {
+    name: &#x27;Page F&#x27;,
+    uv: 189,
+    pv: 4800,
+    amt: 2400,
+  },
+];
+
+const margin = {
+  top: 20,
+  right: 30,
+  left: 20,
+  bottom: 5,
+};
+// #endregion
+
+const getPath = (x: number, y: number, width: number, height: number) =&gt;
+  `M${x},${y + height}
+   C${x + width / 3},${y + height} ${x + width / 2},${y + height / 3} ${x + width / 2}, ${y}
+   C${x + width / 2},${y + height / 3} ${x + (2 * width) / 3},${y + height} ${x + width}, ${y + height}
+   Z`;
+
+export function TriangleBar(props: BarShapeProps) {
+  const { fill, x, y, width, height } = props;
+
+  if (x == null || y == null || width == null || height == null) {
+    return null;
+  }
+
+  return &lt;path d={getPath(Number(x), Number(y), Number(width), Number(height))} stroke=&quot;none&quot; fill={fill} /&gt;;
+}
+
+export default function CustomizeBarShape() {
+  return (
+    &lt;BarChart width={600} height={300} data={data} margin={margin}&gt;
+      &lt;XAxis dataKey=&quot;name&quot; /&gt;
+      &lt;YAxis /&gt;
+      &lt;Bar dataKey=&quot;uv&quot; fill=&quot;#8884d8&quot; shape={TriangleBar} /&gt;
+      &lt;RechartsDevtools /&gt;
+    &lt;/BarChart&gt;
+  );
+}</pre><div></div></div></div><div style="height:100%;display:none;overflow:hidden"><div id="recharts-devtools-portal-R3q9" style="height:100%;background:var(--color-bg);color:var(--color-text);overflow:auto;padding:10px;display:block" class=""></div></div><div style="height:100%;display:none;overflow:hidden"><div id="recharts-devtools-portal-R3q9-annotations" style="height:100%;background:var(--color-bg);color:var(--color-text);overflow:auto;padding:10px;display:block" class=""></div></div><div style="height:100%;display:none;overflow:hidden"><div style="padding:10px;height:100%;overflow:auto"><div style="display:flex;gap:12px;margin:1ex"><label style="display:flex;align-items:center;gap:8px;cursor:pointer"><input style="margin:0;width:16px;height:16px;cursor:pointer" type="radio" name=":Raajq9:" checked=""/>Autoplay Animations (default)</label><label style="display:flex;align-items:center;gap:8px;cursor:pointer"><input style="margin:0;width:16px;height:16px;cursor:pointer" type="radio" name=":Raajq9:"/>Manual Animations</label></div></div></div></div></div><h4 class="sub-title">3. Tooltip 的内容可以自定义</h4><p class="paragraph-title">我们经常需要在提示浮层中展示更多的信息，这时候就可以时候自定义的 content 。</p><div width="600" height="300" class="recharts-wrapper" style="position:relative;cursor:default;width:600px;height:300px"></div><div class="codemirror-wrapper "><div id="codemirror-container"><div class="codemirror-toolbar"><select class="codemirror-toolbar-item" style="padding-right:12px"><option value="source" selected="">Source code</option><option value="devtools">Hook inspector</option><option value="annotations">Annotations</option><option value="controls">Controls</option></select><button class="codemirror-toolbar-item" type="button"><svg class="recharts-surface" width="16" height="16" viewBox="0 0 16 16"><title></title><desc></desc><path fill="none" stroke="var(--color-text-1)" stroke-width="1" width="10" height="10" x="1" y="1" radius="2" class="recharts-rectangle" d="M 1,3
+            A 2,2,0,0,1,3,1
+            L 9,1
+            A 2,2,0,0,1,11,3
+            L 11,9
+            A 2,2,0,0,1,9,11
+            L 3,11
+            A 2,2,0,0,1,1,9 Z" style="stroke-dasharray:0px 1px"></path><path fill="none" stroke="var(--color-text-1)" stroke-width="1" width="10" height="10" x="5" y="5" radius="2" class="recharts-rectangle" d="M 5,7
+            A 2,2,0,0,1,7,5
+            L 13,5
+            A 2,2,0,0,1,15,7
+            L 15,13
+            A 2,2,0,0,1,13,15
+            L 7,15
+            A 2,2,0,0,1,5,13 Z" style="stroke-dasharray:0px 1px"></path></svg>Copy to clipboard</button><button type="button" class="codemirror-toolbar-item"><svg stroke="currentColor" fill="none" stroke-width="2" viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round" height="1em" width="1em" xmlns="http://www.w3.org/2000/svg"><path d="M21.174 6.812a1 1 0 0 0-3.986-3.987L3.842 16.174a2 2 0 0 0-.5.83l-1.321 4.352a.5.5 0 0 0 .623.622l4.353-1.32a2 2 0 0 0 .83-.497z"></path><path d="m15 5 4 4"></path></svg><span>Edit</span></button><button type="button" class="codemirror-toolbar-item"><svg stroke="currentColor" fill="none" stroke-width="2" viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round" height="1em" width="1em" xmlns="http://www.w3.org/2000/svg"><circle cx="18" cy="5" r="3"></circle><circle cx="6" cy="12" r="3"></circle><circle cx="18" cy="19" r="3"></circle><line x1="8.59" x2="15.42" y1="13.51" y2="17.49"></line><line x1="15.41" x2="8.59" y1="6.51" y2="10.49"></line></svg><span>Open in StackBlitz</span></button></div><div style="height:100%;display:block;overflow:hidden"><div class="codemirror-example-editor tsx" style="height:100%;overflow:auto"><pre>import { Bar, BarChart, Tooltip, XAxis, YAxis } from &#x27;recharts&#x27;;
+import { RechartsDevtools } from &#x27;@recharts/devtools&#x27;;
+
+// #region Sample data
+const data = [
+  {
+    name: &#x27;Page A&#x27;,
+    uv: 400,
+    pv: 2400,
+    amt: 2400,
+  },
+  {
+    name: &#x27;Page B&#x27;,
+    uv: 300,
+    pv: 4567,
+    amt: 2400,
+  },
+  {
+    name: &#x27;Page C&#x27;,
+    uv: 300,
+    pv: 1398,
+    amt: 2400,
+  },
+  {
+    name: &#x27;Page D&#x27;,
+    uv: 200,
+    pv: 9800,
+    amt: 2400,
+  },
+  {
+    name: &#x27;Page E&#x27;,
+    uv: 278,
+    pv: 3908,
+    amt: 2400,
+  },
+  {
+    name: &#x27;Page F&#x27;,
+    uv: 189,
+    pv: 4800,
+    amt: 2400,
+  },
+];
+
+const margin = {
+  top: 20,
+  right: 30,
+  left: 20,
+  bottom: 5,
+};
+// #endregion
+
+function getIntroOfPage(label: string): string {
+  if (label === &#x27;Page A&#x27;) {
+    return &quot;Page A is about men&#x27;s clothing&quot;;
+  }
+  if (label === &#x27;Page B&#x27;) {
+    return &quot;Page B is about women&#x27;s dress&quot;;
+  }
+  if (label === &#x27;Page C&#x27;) {
+    return &quot;Page C is about women&#x27;s bag&quot;;
+  }
+  if (label === &#x27;Page D&#x27;) {
+    return &#x27;Page D is about household goods&#x27;;
+  }
+  if (label === &#x27;Page E&#x27;) {
+    return &#x27;Page E is about food&#x27;;
+  }
+  if (label === &#x27;Page F&#x27;) {
+    return &#x27;Page F is about baby food&#x27;;
+  }
+  return &#x27;&#x27;;
+}
+
+function CustomTooltip({ payload, label, active }: any) {
+  if (active &amp;&amp; payload &amp;&amp; payload.length) {
+    return (
+      &lt;div
+        className=&quot;custom-tooltip&quot;
+        style={{
+          border: &#x27;1px solid #d88488&#x27;,
+          backgroundColor: &#x27;#fff&#x27;,
+          padding: &#x27;10px&#x27;,
+          borderRadius: &#x27;5px&#x27;,
+          boxShadow: &#x27;1px 1px 2px #d88488&#x27;,
+        }}
+      &gt;
+        &lt;p className=&quot;label&quot; style={{ margin: &#x27;0&#x27;, fontWeight: &#x27;700&#x27; }}&gt;{`${label} : ${payload[0].value}`}&lt;/p&gt;
+        &lt;p className=&quot;intro&quot; style={{ margin: &#x27;0&#x27; }}&gt;
+          {getIntroOfPage(label)}
+        &lt;/p&gt;
+        &lt;p className=&quot;desc&quot; style={{ margin: &#x27;0&#x27;, borderTop: &#x27;1px dashed #f5f5f5&#x27; }}&gt;
+          Anything you want can be displayed here.
+        &lt;/p&gt;
+      &lt;/div&gt;
+    );
+  }
+
+  return null;
+}
+
+export default function CustomizeTooltipContent() {
+  return (
+    &lt;BarChart width={600} height={300} data={data} margin={margin}&gt;
+      &lt;XAxis dataKey=&quot;name&quot; /&gt;
+      &lt;YAxis /&gt;
+      &lt;Tooltip content={CustomTooltip} defaultIndex={2} active /&gt;
+      &lt;Bar dataKey=&quot;uv&quot; fill=&quot;#8884d8&quot; /&gt;
+      &lt;RechartsDevtools /&gt;
+    &lt;/BarChart&gt;
+  );
+}</pre><div></div></div></div><div style="height:100%;display:none;overflow:hidden"><div id="recharts-devtools-portal-R5a9" style="height:100%;background:var(--color-bg);color:var(--color-text);overflow:auto;padding:10px;display:block" class=""></div></div><div style="height:100%;display:none;overflow:hidden"><div id="recharts-devtools-portal-R5a9-annotations" style="height:100%;background:var(--color-bg);color:var(--color-text);overflow:auto;padding:10px;display:block" class=""></div></div><div style="height:100%;display:none;overflow:hidden"><div style="padding:10px;height:100%;overflow:auto"><div style="display:flex;gap:12px;margin:1ex"><label style="display:flex;align-items:center;gap:8px;cursor:pointer"><input style="margin:0;width:16px;height:16px;cursor:pointer" type="radio" name=":Raala9:" checked=""/>Autoplay Animations (default)</label><label style="display:flex;align-items:center;gap:8px;cursor:pointer"><input style="margin:0;width:16px;height:16px;cursor:pointer" type="radio" name=":Raala9:"/>Manual Animations</label></div></div></div></div></div><h4 class="sub-title">4. 组件样式支持 svg 属性</h4><p class="paragraph-title">除了 Tooltip 和 Legend 使用 html 实现的，其他的组件都是纯 svg 实现，支持 svg 的所有属性。</p><div width="600" height="300" class="recharts-wrapper" style="position:relative;cursor:default;width:600px;height:300px"></div><div class="codemirror-wrapper "><div id="codemirror-container"><div class="codemirror-toolbar"><select class="codemirror-toolbar-item" style="padding-right:12px"><option value="source" selected="">Source code</option><option value="devtools">Hook inspector</option><option value="annotations">Annotations</option><option value="controls">Controls</option></select><button class="codemirror-toolbar-item" type="button"><svg class="recharts-surface" width="16" height="16" viewBox="0 0 16 16"><title></title><desc></desc><path fill="none" stroke="var(--color-text-1)" stroke-width="1" width="10" height="10" x="1" y="1" radius="2" class="recharts-rectangle" d="M 1,3
+            A 2,2,0,0,1,3,1
+            L 9,1
+            A 2,2,0,0,1,11,3
+            L 11,9
+            A 2,2,0,0,1,9,11
+            L 3,11
+            A 2,2,0,0,1,1,9 Z" style="stroke-dasharray:0px 1px"></path><path fill="none" stroke="var(--color-text-1)" stroke-width="1" width="10" height="10" x="5" y="5" radius="2" class="recharts-rectangle" d="M 5,7
+            A 2,2,0,0,1,7,5
+            L 13,5
+            A 2,2,0,0,1,15,7
+            L 15,13
+            A 2,2,0,0,1,13,15
+            L 7,15
+            A 2,2,0,0,1,5,13 Z" style="stroke-dasharray:0px 1px"></path></svg>Copy to clipboard</button><button type="button" class="codemirror-toolbar-item"><svg stroke="currentColor" fill="none" stroke-width="2" viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round" height="1em" width="1em" xmlns="http://www.w3.org/2000/svg"><path d="M21.174 6.812a1 1 0 0 0-3.986-3.987L3.842 16.174a2 2 0 0 0-.5.83l-1.321 4.352a.5.5 0 0 0 .623.622l4.353-1.32a2 2 0 0 0 .83-.497z"></path><path d="m15 5 4 4"></path></svg><span>Edit</span></button><button type="button" class="codemirror-toolbar-item"><svg stroke="currentColor" fill="none" stroke-width="2" viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round" height="1em" width="1em" xmlns="http://www.w3.org/2000/svg"><circle cx="18" cy="5" r="3"></circle><circle cx="6" cy="12" r="3"></circle><circle cx="18" cy="19" r="3"></circle><line x1="8.59" x2="15.42" y1="13.51" y2="17.49"></line><line x1="15.41" x2="8.59" y1="6.51" y2="10.49"></line></svg><span>Open in StackBlitz</span></button></div><div style="height:100%;display:block;overflow:hidden"><div class="codemirror-example-editor tsx" style="height:100%;overflow:auto"><pre>import { Bar, BarChart, CartesianGrid, Tooltip, XAxis, YAxis } from &#x27;recharts&#x27;;
+import { RechartsDevtools } from &#x27;@recharts/devtools&#x27;;
+
+// #region Sample data
+const data = [
+  {
+    name: &#x27;Page A&#x27;,
+    uv: 400,
+    pv: 2400,
+    amt: 2400,
+  },
+  {
+    name: &#x27;Page B&#x27;,
+    uv: 300,
+    pv: 4567,
+    amt: 2400,
+  },
+  {
+    name: &#x27;Page C&#x27;,
+    uv: 300,
+    pv: 1398,
+    amt: 2400,
+  },
+  {
+    name: &#x27;Page D&#x27;,
+    uv: 200,
+    pv: 9800,
+    amt: 2400,
+  },
+  {
+    name: &#x27;Page E&#x27;,
+    uv: 278,
+    pv: 3908,
+    amt: 2400,
+  },
+  {
+    name: &#x27;Page F&#x27;,
+    uv: 189,
+    pv: 4800,
+    amt: 2400,
+  },
+];
+
+const margin = {
+  top: 20,
+  right: 30,
+  left: 20,
+  bottom: 5,
+};
+// #endregion
+
+export default function CustomizeSizeAndStroke() {
+  return (
+    &lt;BarChart width={600} height={300} data={data} margin={margin}&gt;
+      &lt;XAxis dataKey=&quot;name&quot; stroke=&quot;red&quot; /&gt;
+      &lt;YAxis stroke=&quot;red&quot; /&gt;
+      &lt;Tooltip /&gt;
+      &lt;CartesianGrid stroke=&quot;#ccc&quot; strokeDasharray=&quot;5 5&quot; /&gt;
+      &lt;Bar dataKey=&quot;uv&quot; fill=&quot;green&quot; barSize={30} /&gt;
+      &lt;RechartsDevtools /&gt;
+    &lt;/BarChart&gt;
+  );
+}</pre><div></div></div></div><div style="height:100%;display:none;overflow:hidden"><div id="recharts-devtools-portal-R6q9" style="height:100%;background:var(--color-bg);color:var(--color-text);overflow:auto;padding:10px;display:block" class=""></div></div><div style="height:100%;display:none;overflow:hidden"><div id="recharts-devtools-portal-R6q9-annotations" style="height:100%;background:var(--color-bg);color:var(--color-text);overflow:auto;padding:10px;display:block" class=""></div></div><div style="height:100%;display:none;overflow:hidden"><div style="padding:10px;height:100%;overflow:auto"><div style="display:flex;gap:12px;margin:1ex"><label style="display:flex;align-items:center;gap:8px;cursor:pointer"><input style="margin:0;width:16px;height:16px;cursor:pointer" type="radio" name=":Raamq9:" checked=""/>Autoplay Animations (default)</label><label style="display:flex;align-items:center;gap:8px;cursor:pointer"><input style="margin:0;width:16px;height:16px;cursor:pointer" type="radio" name=":Raamq9:"/>Manual Animations</label></div></div></div></div></div><h4 class="sub-title">5. Tooltip 和 Legend 支持自定义的 style</h4><p class="paragraph-title">Tooltip 和 Legend 是使用 html 实现的，开放了 style 相关的 api ，当然也可以通过 css 来改变样式。</p><div width="600" height="300" class="recharts-wrapper" style="position:relative;cursor:default;width:600px;height:300px"></div><div class="codemirror-wrapper "><div id="codemirror-container"><div class="codemirror-toolbar"><select class="codemirror-toolbar-item" style="padding-right:12px"><option value="source" selected="">Source code</option><option value="devtools">Hook inspector</option><option value="annotations">Annotations</option><option value="controls">Controls</option></select><button class="codemirror-toolbar-item" type="button"><svg class="recharts-surface" width="16" height="16" viewBox="0 0 16 16"><title></title><desc></desc><path fill="none" stroke="var(--color-text-1)" stroke-width="1" width="10" height="10" x="1" y="1" radius="2" class="recharts-rectangle" d="M 1,3
+            A 2,2,0,0,1,3,1
+            L 9,1
+            A 2,2,0,0,1,11,3
+            L 11,9
+            A 2,2,0,0,1,9,11
+            L 3,11
+            A 2,2,0,0,1,1,9 Z" style="stroke-dasharray:0px 1px"></path><path fill="none" stroke="var(--color-text-1)" stroke-width="1" width="10" height="10" x="5" y="5" radius="2" class="recharts-rectangle" d="M 5,7
+            A 2,2,0,0,1,7,5
+            L 13,5
+            A 2,2,0,0,1,15,7
+            L 15,13
+            A 2,2,0,0,1,13,15
+            L 7,15
+            A 2,2,0,0,1,5,13 Z" style="stroke-dasharray:0px 1px"></path></svg>Copy to clipboard</button><button type="button" class="codemirror-toolbar-item"><svg stroke="currentColor" fill="none" stroke-width="2" viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round" height="1em" width="1em" xmlns="http://www.w3.org/2000/svg"><path d="M21.174 6.812a1 1 0 0 0-3.986-3.987L3.842 16.174a2 2 0 0 0-.5.83l-1.321 4.352a.5.5 0 0 0 .623.622l4.353-1.32a2 2 0 0 0 .83-.497z"></path><path d="m15 5 4 4"></path></svg><span>Edit</span></button><button type="button" class="codemirror-toolbar-item"><svg stroke="currentColor" fill="none" stroke-width="2" viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round" height="1em" width="1em" xmlns="http://www.w3.org/2000/svg"><circle cx="18" cy="5" r="3"></circle><circle cx="6" cy="12" r="3"></circle><circle cx="18" cy="19" r="3"></circle><line x1="8.59" x2="15.42" y1="13.51" y2="17.49"></line><line x1="15.41" x2="8.59" y1="6.51" y2="10.49"></line></svg><span>Open in StackBlitz</span></button></div><div style="height:100%;display:block;overflow:hidden"><div class="codemirror-example-editor tsx" style="height:100%;overflow:auto"><pre>// #region Sample data
+import { Bar, BarChart, CartesianGrid, Legend, Tooltip, XAxis, YAxis } from &#x27;recharts&#x27;;
+import { RechartsDevtools } from &#x27;@recharts/devtools&#x27;;
+
+const data = [
+  {
+    name: &#x27;Page A&#x27;,
+    uv: 400,
+    pv: 2400,
+    amt: 2400,
+  },
+  {
+    name: &#x27;Page B&#x27;,
+    uv: 300,
+    pv: 4567,
+    amt: 2400,
+  },
+  {
+    name: &#x27;Page C&#x27;,
+    uv: 300,
+    pv: 1398,
+    amt: 2400,
+  },
+  {
+    name: &#x27;Page D&#x27;,
+    uv: 200,
+    pv: 9800,
+    amt: 2400,
+  },
+  {
+    name: &#x27;Page E&#x27;,
+    uv: 278,
+    pv: 3908,
+    amt: 2400,
+  },
+  {
+    name: &#x27;Page F&#x27;,
+    uv: 189,
+    pv: 4800,
+    amt: 2400,
+  },
+];
+
+const margin = {
+  top: 20,
+  right: 30,
+  left: 20,
+  bottom: 5,
+};
+// #endregion
+
+export default function CustomizeLegendAndTooltipStyle() {
+  return (
+    &lt;BarChart width={600} height={300} data={data} margin={margin}&gt;
+      &lt;XAxis dataKey=&quot;name&quot; stroke=&quot;#8884d8&quot; /&gt;
+      &lt;YAxis /&gt;
+      &lt;Tooltip wrapperStyle={{ width: 100, backgroundColor: &#x27;#ccc&#x27; }} /&gt;
+      &lt;Legend
+        width={100}
+        wrapperStyle={{
+          top: 40,
+          right: 20,
+          backgroundColor: &#x27;#f5f5f5&#x27;,
+          border: &#x27;1px solid #d5d5d5&#x27;,
+          borderRadius: 3,
+          lineHeight: &#x27;40px&#x27;,
+        }}
+      /&gt;
+      &lt;CartesianGrid stroke=&quot;#ccc&quot; strokeDasharray=&quot;5 5&quot; /&gt;
+      &lt;Bar dataKey=&quot;uv&quot; fill=&quot;#8884d8&quot; barSize={30} /&gt;
+      &lt;RechartsDevtools /&gt;
+    &lt;/BarChart&gt;
+  );
+}</pre><div></div></div></div><div style="height:100%;display:none;overflow:hidden"><div id="recharts-devtools-portal-R8a9" style="height:100%;background:var(--color-bg);color:var(--color-text);overflow:auto;padding:10px;display:block" class=""></div></div><div style="height:100%;display:none;overflow:hidden"><div id="recharts-devtools-portal-R8a9-annotations" style="height:100%;background:var(--color-bg);color:var(--color-text);overflow:auto;padding:10px;display:block" class=""></div></div><div style="height:100%;display:none;overflow:hidden"><div style="padding:10px;height:100%;overflow:auto"><div style="display:flex;gap:12px;margin:1ex"><label style="display:flex;align-items:center;gap:8px;cursor:pointer"><input style="margin:0;width:16px;height:16px;cursor:pointer" type="radio" name=":Raaoa9:" checked=""/>Autoplay Animations (default)</label><label style="display:flex;align-items:center;gap:8px;cursor:pointer"><input style="margin:0;width:16px;height:16px;cursor:pointer" type="radio" name=":Raaoa9:"/>Manual Animations</label></div></div></div></div></div></article></div></div></main><footer><p><span>Released under the </span><a href="https://opensource.org/licenses/MIT" target="_blank" rel="noreferrer">MIT License</a></p><p>Copyright (c) 2016-<!-- -->2026<!-- --> Recharts Group</p><p>Commit: <code title="99b2ee4edf3811ea7880731dcf4914dafe19b2c6">99b2ee4e</code></p></footer></div></div>
+  </body>
+</html>
