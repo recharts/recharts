@@ -54,6 +54,10 @@ export const lightTheme: RechartsTheme = {
   axis: {
     stroke: '#52525b',
   },
+  errorBar: {
+    stroke: '#52525b',
+    strokeWidth: 1.5,
+  },
   grid: {
     stroke: '#d6d3d1',
     strokeDasharray: '3 3',

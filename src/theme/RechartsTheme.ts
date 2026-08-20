@@ -70,6 +70,10 @@ export interface RechartsTheme {
    * XAxis and YAxis and PolarAngleAxis and PolarRadiusAxis ticks and lines and children
    */
   axis?: Styles1D;
+  /**
+   * ErrorBar lines.
+   */
+  errorBar?: Styles1D;
   chart?: CSSProperties;
 
   /**

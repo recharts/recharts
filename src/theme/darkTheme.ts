@@ -59,6 +59,10 @@ export const darkTheme: RechartsTheme = {
   axis: {
     stroke: '#d6d3d1',
   },
+  errorBar: {
+    stroke: '#d6d3d1',
+    strokeWidth: 1.5,
+  },
   cursor: {
     stroke: '#52525b',
   },
