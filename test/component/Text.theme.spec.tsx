@@ -100,7 +100,7 @@ describe('<Text /> theme', () => {
   });
 
   it('prefers explicit props passed through the label prop', () => {
-    const { container, debug } = render(
+    const { container } = render(
       <RechartsThemeProvider
         value={{
           graphicalItems: [],
@@ -129,7 +129,7 @@ describe('<Text /> theme', () => {
         </BarChart>
       </RechartsThemeProvider>,
     );
-    debug();
+
     const text = container.querySelector('text.bar-label');
     assertNotNull(text);
     expect(text).toHaveStyle({
