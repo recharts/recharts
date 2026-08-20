@@ -35,7 +35,9 @@ export type Styles1D = {
 };
 
 /**
- * Styles shared with text components (various Labels, Tooltip, Legend)
+ * Styles shared with text components (various Labels, Tooltip, Legend, labels, text).
+ *
+ * These styles are applied to both SVG elements (Label, Text) and HTML elements (Legend, Tooltip).
  */
 export type TextStyles = CSSProperties;
 

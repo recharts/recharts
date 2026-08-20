@@ -29,6 +29,7 @@ describe('PolarRadiusAxis theme', () => {
     assertNotNull(axisLine);
     assertNotNull(tick);
     expect(axisLine).toHaveAttribute('stroke', '#ccc');
+    // Ticks inherit stroke value from the axis line in the legacy system
     expect(tick).toHaveAttribute('fill', '#ccc');
   });
 
@@ -38,7 +39,7 @@ describe('PolarRadiusAxis theme', () => {
         value={{
           graphicalItems: [],
           axis: { stroke: 'rebeccapurple', strokeWidth: 3, strokeOpacity: 0.7, strokeDasharray: '4 2' },
-          typography: { fontSize: 17, fontWeight: 'bold' },
+          typography: { fontSize: 17, fontWeight: 'bold', color: 'rgb(200, 0, 0)' },
         }}
       >
         <MyChart>
@@ -96,6 +97,6 @@ describe('PolarRadiusAxis theme', () => {
     assertNotNull(tick);
     expect(axisLine).not.toHaveAttribute('stroke');
     // ticks still have fill leftover
-    // expect(tick).not.toHaveAttribute('fill');
+    expect(tick).not.toHaveAttribute('fill');
   });
 });

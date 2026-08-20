@@ -43,10 +43,10 @@ describe('<ReferenceDot />', () => {
     const labels = container.querySelectorAll('.recharts-label');
     expect(labels).toHaveLength(1);
     const label = labels[0];
-    expect.soft(label.getAttributeNames().sort()).toEqual(['class', 'fill', 'offset', 'text-anchor', 'x', 'y']);
+    expect.soft(label.getAttributeNames().sort()).toEqual(['class', 'offset', 'style', 'text-anchor', 'x', 'y']);
     expect(label.getAttribute('x')).toEqual('472.72727272727275');
     expect(label.getAttribute('y')).toEqual('86.66666666666667');
-    expect(label.getAttribute('fill')).toEqual('#808080');
+    expect(label).toHaveStyle({ fill: '#808080' });
     expect(label.getAttribute('class')).toEqual('recharts-text recharts-label');
     expect(label.getAttribute('text-anchor')).toEqual('middle');
     expect(label.textContent).toEqual('201106');

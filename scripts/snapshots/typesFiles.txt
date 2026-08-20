@@ -216,6 +216,7 @@
   "types/theme",
   "types/theme/RechartsTheme.d.ts",
   "types/theme/RechartsThemeContext.d.ts",
+  "types/theme/cssStylesToSvgStyles.d.ts",
   "types/theme/darkTheme.d.ts",
   "types/theme/emptyTheme.d.ts",
   "types/theme/graphicalItemIdentity.d.ts",

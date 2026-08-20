@@ -38,7 +38,7 @@ import { usePolarChartLayout } from '../context/chartLayoutContext';
 import { noop } from '../util/DataUtils';
 import { getAxisTypeBasedOnLayout } from '../util/getAxisTypeBasedOnLayout';
 import { getClassNameFromUnknown } from '../util/getClassNameFromUnknown';
-import { Styles1D, TextStyles } from '../theme/RechartsTheme';
+import { Styles1D } from '../theme/RechartsTheme';
 import { useBackwardsCompatibleTheme } from '../theme/useBackwardsCompatibleTheme';
 
 export type TickOrientation = 'left' | 'right' | 'middle';
@@ -234,8 +234,6 @@ const defaultLegacyRadiusAxisThemeProps: Styles1D = {
   stroke: '#ccc',
 };
 
-const emptyTextThemeProps: TextStyles = {};
-
 function SetRadiusAxisSettings(props: Omit<RadiusAxisSettings, 'type'> & { type: AxisDomainTypeInput }): null {
   const dispatch = useAppDispatch();
   const layout = usePolarChartLayout();
@@ -398,7 +396,6 @@ export const PolarRadiusAxisWrapper: FunctionComponent<PropsWithDefaults> = (def
     },
     defaultLegacyRadiusAxisThemeProps,
   );
-  const typography = useBackwardsCompatibleTheme(theme => theme.typography, emptyTextThemeProps, emptyTextThemeProps);
 
   const viewBox = useAppSelector(selectPolarViewBox);
   const scale = useAppSelector(state => selectPolarAxisScale(state, 'radiusAxis', radiusAxisId));
@@ -411,7 +408,6 @@ export const PolarRadiusAxisWrapper: FunctionComponent<PropsWithDefaults> = (def
   const props: InsideProps = {
     ...defaultsAndInputs,
     ...axisTheme,
-    style: { ...typography, ...defaultsAndInputs.style },
     scale,
     ...viewBox,
   };

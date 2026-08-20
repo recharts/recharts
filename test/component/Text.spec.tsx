@@ -1,7 +1,7 @@
 import { render, screen } from '@testing-library/react';
 import React from 'react';
 import { vi } from 'vitest';
-import { RechartsThemeProvider, Surface, Text } from '../../src';
+import { Surface, Text } from '../../src';
 import { mockGetBoundingClientRect } from '../helper/mockGetBoundingClientRect';
 import { getWordsByLines } from '../../src/component/Text';
 import * as DOMUtils from '../../src/util/DOMUtils';
@@ -14,18 +14,16 @@ describe('<Text />', () => {
   };
   beforeEach(() => mockGetBoundingClientRect(mockRect));
 
-  test('retains the legacy fill when a theme does not define typography', () => {
+  test('retains the legacy fill when no theme is provided', () => {
     const { container } = render(
-      <RechartsThemeProvider value={{ graphicalItems: [] }}>
-        <Surface width={300} height={300}>
-          <Text>text</Text>
-        </Surface>
-      </RechartsThemeProvider>,
+      <Surface width={300} height={300}>
+        <Text>text</Text>
+      </Surface>,
     );
 
     const text = container.querySelector('text');
     assertNotNull(text);
-    expect(text).toHaveAttribute('fill', '#808080');
+    expect(text).toHaveStyle({ fill: '#808080' });
   });
 
   test('Does not wrap long text if enough width', () => {

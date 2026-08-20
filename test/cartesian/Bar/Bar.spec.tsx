@@ -906,7 +906,7 @@ describe.each(chartsThatSupportBar)('<Bar /> as a child of $testName', ({ ChartE
           expect(l).toHaveAttribute('offset', '5');
           expect(l).toHaveAttribute('text-anchor', 'middle');
           expect(l).toHaveAttribute('width', '78');
-          expect(l).toHaveAttribute('fill', '#808080');
+          expect(l).toHaveStyle({ fill: '#808080' });
         });
       });
 

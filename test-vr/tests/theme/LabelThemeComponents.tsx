@@ -37,7 +37,7 @@ export function LabelThemeExamples() {
         value={{
           graphicalItems: [],
           typography: {
-            color: '#7c2d12',
+            fill: '#7c2d12',
             fontFamily: 'cursive',
             fontSize: 18,
             fontWeight: 'bold',
