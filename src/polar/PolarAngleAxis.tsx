@@ -34,6 +34,7 @@ import { usePolarChartLayout } from '../context/chartLayoutContext';
 import { noop } from '../util/DataUtils';
 import { getAxisTypeBasedOnLayout } from '../util/getAxisTypeBasedOnLayout';
 import { getClassNameFromUnknown } from '../util/getClassNameFromUnknown';
+import { useRechartsTheme } from '../theme/RechartsThemeContext';
 
 const eps = 1e-5;
 const COS_45 = Math.cos(degreeToRadian(45));
@@ -472,6 +473,7 @@ export const PolarAngleAxisWrapper: FunctionComponent<PropsWithDefaults> = (defa
   const scale = useAppSelector(state => selectPolarAxisScale(state, 'angleAxis', angleAxisId));
   const isPanorama = useIsPanorama();
   const ticks = useAppSelector(state => selectPolarAngleAxisTicks(state, 'angleAxis', angleAxisId, isPanorama));
+  const theme = useRechartsTheme();
 
   if (viewBox == null || !ticks || !ticks.length || scale == null) {
     return null;
@@ -488,8 +490,8 @@ export const PolarAngleAxisWrapper: FunctionComponent<PropsWithDefaults> = (defa
   return (
     <ZIndexLayer zIndex={props.zIndex}>
       <Layer className={clsx('recharts-polar-angle-axis', AXIS_TYPE, props.className)}>
-        <AxisLine {...props} />
-        <Ticks {...props} />
+        <AxisLine {...theme?.axis} {...props} />
+        <Ticks {...theme?.axis} {...props} />
       </Layer>
     </ZIndexLayer>
   );
