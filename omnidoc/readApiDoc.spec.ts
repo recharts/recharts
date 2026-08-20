@@ -40,7 +40,7 @@ describe('readApiDoc', () => {
   });
 
   it('should get default value of a prop', () => {
-    expect(reader.getDefaultValueOf('ReferenceLine', 'strokeWidth')).toEqual({ type: 'known', value: 1 });
+    expect(reader.getDefaultValueOf('ReferenceLine', 'position')).toEqual({ type: 'known', value: 'middle' });
   });
 
   it('should get comment of known prop', () => {

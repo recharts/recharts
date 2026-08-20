@@ -24,6 +24,8 @@ import { DefaultZIndexes } from '../zIndex/DefaultZIndexes';
 import { isWellBehavedNumber } from '../util/isWellBehavedNumber';
 import { BandPosition, RechartsScale } from '../util/scale/RechartsScale';
 import { CartesianScaleHelper, CartesianScaleHelperImpl } from '../util/scale/CartesianScaleHelper';
+import { Styles2D } from '../theme/RechartsTheme';
+import { useBackwardsCompatibleTheme } from '../theme/useBackwardsCompatibleTheme';
 
 /**
  * Single point that defines one end of a segment.
@@ -139,7 +141,6 @@ interface ReferenceLineProps<
   zIndex?: number;
   /**
    * The width of the stroke
-   * @defaultValue 1
    */
   strokeWidth?: number | string;
 }
@@ -359,14 +360,17 @@ export const referenceLineDefaultProps = {
   ifOverflow: 'discard',
   xAxisId: 0,
   yAxisId: 0,
-  fill: 'none',
   label: false,
-  stroke: '#ccc',
-  fillOpacity: 1,
-  strokeWidth: 1,
   position: 'middle',
   zIndex: DefaultZIndexes.line,
 } as const satisfies Partial<Props>;
+
+const defaultLegacyReferenceLineThemeProps: Styles2D = {
+  fill: 'none',
+  stroke: '#ccc',
+  fillOpacity: 1,
+  strokeWidth: 1,
+};
 
 type PropsWithDefaults = RequiresDefaultProps<Props, typeof referenceLineDefaultProps>;
 
@@ -388,7 +392,12 @@ export function ReferenceLine<
   XValueType extends ReferenceCoordinateValue = any,
   YValueType extends ReferenceCoordinateValue = any,
 >(outsideProps: Props<XValueType, YValueType>) {
-  const props: PropsWithDefaults = resolveDefaultProps(outsideProps, referenceLineDefaultProps);
+  const themeProps = useBackwardsCompatibleTheme(
+    theme => theme.reference,
+    outsideProps,
+    defaultLegacyReferenceLineThemeProps,
+  );
+  const props: PropsWithDefaults = resolveDefaultProps({ ...outsideProps, ...themeProps }, referenceLineDefaultProps);
   return (
     <>
       <ReportReferenceLine
