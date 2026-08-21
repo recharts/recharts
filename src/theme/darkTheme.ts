@@ -70,7 +70,9 @@ export const darkTheme: RechartsTheme = {
     fillOpacity: 0.3,
   },
   cursor: {
-    stroke: '#52525b',
+    stroke: '#444',
+    fill: '#333',
+    fillOpacity: 0.7,
   },
   tooltip: {
     contentStyle: {

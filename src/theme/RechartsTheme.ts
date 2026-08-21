@@ -81,8 +81,7 @@ export interface RechartsTheme {
   chart?: CSSProperties;
 
   /**
-   * The CSS cursor style applied to the chart container.
-   * Useful for setting the mouse cursor when hovering over the chart (e.g. `"pointer"`, `"crosshair"`).
+   * Styles applied to the cursor highlight shown with an active Tooltip.
    */
   cursor?: Styles2D;
 

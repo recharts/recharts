@@ -21,8 +21,6 @@ describe('getCursorRectangle', () => {
       const layout = 'horizontal';
       const result = getCursorRectangle(layout, activeCoordinate, offset, tooltipAxisBandSize);
       const expected: CursorRectangle = {
-        stroke: 'none',
-        fill: '#ccc',
         x: -28,
         y: 80.5,
         width: 256,
@@ -37,8 +35,6 @@ describe('getCursorRectangle', () => {
     it('should return rectangle props', () => {
       const result = getCursorRectangle(layout, activeCoordinate, offset, tooltipAxisBandSize);
       const expected: CursorRectangle = {
-        stroke: 'none',
-        fill: '#ccc',
         x: 10.5,
         y: 42,
         width: 12,

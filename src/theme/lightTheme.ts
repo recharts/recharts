@@ -70,7 +70,9 @@ export const lightTheme: RechartsTheme = {
     fillOpacity: 0.25,
   },
   cursor: {
-    stroke: '#a8a29e',
+    stroke: '#ccc',
+    fill: '#ddd',
+    fillOpacity: 0.7,
   },
   tooltip: {
     contentStyle: {
