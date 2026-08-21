@@ -88,6 +88,7 @@ const CustomTooltip = ({ active, payload, label }: TooltipContentProps) => {
     <div
       className="custom-tooltip"
       style={{
+        ...theme?.typography,
         backgroundColor: 'white',
         ...theme?.tooltip?.contentStyle,
         visibility: isVisible ? 'visible' : 'hidden',
