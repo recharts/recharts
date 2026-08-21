@@ -268,6 +268,33 @@ describe('<Treemap />', () => {
     expect(container.querySelectorAll('.recharts-rectangle').length).toBe(initialNodeCount);
   });
 
+  test('keeps the same breadcrumb elements across re-renders', () => {
+    const props = {
+      data: exampleTreemapData,
+      dataKey: 'value',
+      height: 250,
+      isAnimationActive: false,
+      nameKey: 'name',
+      type: 'nest' as const,
+      width: 500,
+    };
+    const { container, getByText, rerender } = render(<Treemap {...props} />);
+
+    fireEvent.click(getByText('A'));
+
+    const before = Array.from(container.querySelectorAll('.recharts-treemap-nest-index-box'));
+    expect(before).toHaveLength(2);
+
+    rerender(<Treemap {...props} />);
+
+    const after = Array.from(container.querySelectorAll('.recharts-treemap-nest-index-box'));
+    expect(after).toHaveLength(2);
+    // React must reuse the nodes rather than unmounting and recreating them: a breadcrumb that is
+    // replaced between mousedown and mouseup never receives the click.
+    expect(after[0]).toBe(before[0]);
+    expect(after[1]).toBe(before[1]);
+  });
+
   test('clicking current root cell in nest mode does not drill repeatedly', () => {
     const { container, getByText } = render(
       <Treemap
