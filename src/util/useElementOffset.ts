@@ -133,14 +133,5 @@ export function useElementOffset(extraDependencies: ReadonlyArray<unknown> = [])
 
   useEffect(measureElement, [measureElement, ...extraDependencies]);
 
-  // Cleanup on unmount
-  useEffect(() => {
-    return () => {
-      observerRef.current?.disconnect();
-      observerRef.current = null;
-      elementRef.current = null;
-    };
-  }, []);
-
   return [lastBoundingBox, updateBoundingBox];
 }
