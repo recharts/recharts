@@ -4,7 +4,7 @@ import { useElementOffset } from '../../src/util/useElementOffset';
 import { getMockDomRect } from '../helper/mockGetBoundingClientRect';
 
 describe('useElementOffset', () => {
-  let resizeObserverCallback: ((entries: ResizeObserverEntry[]) => void) | undefined,
+  let resizeObserverCallback: (() => void) | undefined,
     observeSpy: ReturnType<typeof vi.fn>,
     disconnectSpy: ReturnType<typeof vi.fn>;
 
@@ -14,7 +14,7 @@ describe('useElementOffset', () => {
     disconnectSpy = vi.fn();
     vi.stubGlobal(
       'ResizeObserver',
-      vi.fn(function ResizeObserverMock(cb: (entries: ResizeObserverEntry[]) => void) {
+      vi.fn(function ResizeObserverMock(cb: () => void) {
         resizeObserverCallback = cb;
         return { observe: observeSpy, unobserve: vi.fn(), disconnect: disconnectSpy };
       }),
@@ -65,7 +65,7 @@ describe('useElementOffset', () => {
     expect(result.current[0].height).toBe(50);
 
     act(() => {
-      resizeObserverCallback?.([] as unknown as ResizeObserverEntry[]);
+      resizeObserverCallback?.();
     });
     expect(result.current[0].height).toBe(120);
   });
@@ -83,10 +83,63 @@ describe('useElementOffset', () => {
     expect(result.current[0].height).toBe(50);
 
     act(() => {
-      resizeObserverCallback?.([] as unknown as ResizeObserverEntry[]);
+      resizeObserverCallback?.();
     });
     // Height change of 0.5 is below EPS=1, should not update
     expect(result.current[0].height).toBe(50);
+  });
+
+  it('should ignore position-only changes', () => {
+    const node = document.createElement('div');
+    const getBoundingClientRect = vi
+      .spyOn(node, 'getBoundingClientRect')
+      .mockReturnValueOnce(getMockDomRect({ width: 100, height: 50, left: 10, top: 20 }))
+      .mockReturnValue(getMockDomRect({ width: 100, height: 50, left: 110, top: 220 }));
+
+    const { result } = renderHook(() => useElementOffset());
+    act(() => {
+      result.current[1](node);
+    });
+    const initialOffset = result.current[0];
+
+    act(() => {
+      resizeObserverCallback?.();
+    });
+
+    expect(getBoundingClientRect).toHaveBeenCalledTimes(2);
+    expect(result.current[0]).toBe(initialOffset);
+  });
+
+  it('should keep the ref callback stable when an extra dependency changes', () => {
+    const { result, rerender } = renderHook(({ dependency }) => useElementOffset([dependency]), {
+      initialProps: { dependency: 'before' },
+    });
+    const initialRefCallback = result.current[1];
+
+    rerender({ dependency: 'after' });
+
+    expect(result.current[1]).toBe(initialRefCallback);
+  });
+
+  it('should remeasure the current node without recreating its observer when an extra dependency changes', () => {
+    const node = document.createElement('div');
+    let currentRect = getMockDomRect({ width: 100, height: 50 });
+    vi.spyOn(node, 'getBoundingClientRect').mockImplementation(() => currentRect);
+
+    const { result, rerender } = renderHook(({ dependency }) => useElementOffset([dependency]), {
+      initialProps: { dependency: 'before' },
+    });
+    act(() => {
+      result.current[1](node);
+    });
+    expect(result.current[0]).toEqual({ width: 100, height: 50, left: 0, top: 0 });
+
+    currentRect = getMockDomRect({ width: 200, height: 80 });
+    rerender({ dependency: 'after' });
+
+    expect(result.current[0]).toEqual({ width: 200, height: 80, left: 0, top: 0 });
+    expect(observeSpy).toHaveBeenCalledTimes(1);
+    expect(disconnectSpy).not.toHaveBeenCalled();
   });
 
   it('should not create a ResizeObserver when node is null', () => {
