@@ -33,6 +33,11 @@ testWithLightTheme('BoxPlotExample', async ({ mount }) => {
   await expect(component).toHaveScreenshot();
 });
 
+testWithDarkTheme('BoxPlotExample dark', async ({ mount }) => {
+  const component = await mount(<BoxPlotExample defaultIndex="2" />);
+  await expect(component).toHaveScreenshot();
+});
+
 testWithLightTheme('TimelineExample', async ({ mount }) => {
   /*
    * This shows a bug where defaultIndex highlights all items in the row

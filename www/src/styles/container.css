@@ -15,7 +15,6 @@ footer {
   h1,
   .page-title {
     padding-top: 30px;
-    margin-bottom: 30px;
     margin: 0;
     font-size: 30px;
     color: var(--color-text-1);
@@ -29,7 +28,6 @@ footer {
     border-bottom: 1px solid var(--color-border-3);
   }
 
-  p,
   .paragraph-title {
     margin: 20px 0;
   }

@@ -37,7 +37,7 @@ class ExamplesIndexViewImpl extends PureComponent<ExamplesIndexViewProps> {
         <Helmet title="Examples" />
         <div className="content">
           <h1 className="page-title">Examples</h1>
-          <p className="page-description">
+          <p className="page-description paragraph-title">
             Explore interactive examples of different chart types and features. Click on any category to see it in
             action.
           </p>

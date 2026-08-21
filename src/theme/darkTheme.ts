@@ -74,8 +74,11 @@ export const darkTheme: RechartsTheme = {
   },
   tooltip: {
     contentStyle: {
+      margin: 0,
+      padding: 10,
       backgroundColor: '#18181b',
-      borderColor: '#52525b',
+      border: '1px solid #52525b',
+      whiteSpace: 'nowrap',
     },
     itemStyle: {
       display: 'block',
@@ -84,6 +87,7 @@ export const darkTheme: RechartsTheme = {
       color: '#f5f5f4',
     },
     labelStyle: {
+      margin: 0,
       fontWeight: 'bold',
     },
   },
