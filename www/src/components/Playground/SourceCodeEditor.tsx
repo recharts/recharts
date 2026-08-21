@@ -12,6 +12,7 @@ import {
 } from '@codemirror/language';
 import { tags as t } from '@lezer/highlight';
 import '../../utils/CodeMirrorEditor.css'; // Keep using the same CSS for now
+import { useColorMode } from '../color-mode';
 
 // Custom highlight style with improved color contrast for accessibility
 const accessibleHighlightStyle = HighlightStyle.define([
@@ -109,6 +110,7 @@ export function SourceCodeEditor({
   const editableCompartment = useRef(new Compartment());
   const [editExtensions, setEditExtensions] = useState<Extension[]>([]);
   const [showFallback, setShowFallback] = useState(true);
+  const colorMode = useColorMode();
 
   const valueWithoutTrailingNewline = trimNewlinesFromStartAndEnd(value);
 
@@ -139,17 +141,19 @@ export function SourceCodeEditor({
       foldGutter(),
       keymap.of(foldKeymap),
       EditorView.lineWrapping,
-      EditorView.theme({
-        '&': { height: '100%', fontSize: '14px' },
-        '.cm-scroller': { fontFamily: 'monospace' },
-        '.cm-foldGutter': { width: '20px' },
-        '.cm-content': { maxWidth: '100%' },
-        '&.cm-focused .cm-cursor': { borderLeftColor: 'var(--color-text-1)' },
-        '.cm-gutters': {
-          backgroundColor: 'var(--color-surface-sunken)',
-          borderColor: 'var(--color-border-3)',
+      EditorView.theme(
+        {
+          '&': { height: '100%', fontSize: '14px' },
+          '.cm-scroller': { fontFamily: 'monospace' },
+          '.cm-foldGutter': { width: '20px' },
+          '.cm-content': { maxWidth: '100%' },
+          '.cm-gutters': {
+            backgroundColor: 'var(--color-surface-sunken)',
+            borderColor: 'var(--color-border-3)',
+          },
         },
-      }),
+        { dark: colorMode.mode === 'dark' },
+      ),
       editableCompartment.current.of([]),
     ];
 
@@ -200,7 +204,7 @@ export function SourceCodeEditor({
       }
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [colorMode]);
 
   // Update doc when value changes externally
   useEffect(() => {
