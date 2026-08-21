@@ -7,7 +7,11 @@ import {
   configureTextMeasurement,
   getTextMeasurementConfig,
 } from '../../src/util/DOMUtils';
-import { mockGetBoundingClientRect, mockSequenceOfGetBoundingClientRect } from '../helper/mockGetBoundingClientRect';
+import {
+  getMockDomRect,
+  mockGetBoundingClientRect,
+  mockSequenceOfGetBoundingClientRect,
+} from '../helper/mockGetBoundingClientRect';
 
 describe('DOMUtils', () => {
   beforeEach(() => {
@@ -124,17 +128,23 @@ describe('DOMUtils', () => {
 
   test('measurement span should not keep styles from an earlier measurement', () => {
     render(<span id="recharts_measurement_span">test</span>);
-    mockGetBoundingClientRect({
-      width: 25,
-      height: 17,
+
+    // Record what the span looks like while it is being measured, not afterwards: clearing the
+    // styles after the read would leave the measurement itself wrong.
+    const observed: Array<{ fontStretch: string; wordSpacing: string }> = [];
+    vi.spyOn(Element.prototype, 'getBoundingClientRect').mockImplementation(function mock(this: Element) {
+      const { style } = this as HTMLElement;
+      observed.push({ fontStretch: style.fontStretch, wordSpacing: style.wordSpacing });
+      return getMockDomRect({ width: 25, height: 17 });
     });
-    const measurementSpan = document.getElementById('recharts_measurement_span');
 
     getStringSize('test', { fontStretch: 'expanded', wordSpacing: '9px' });
     getStringSize('test', {});
 
-    expect(measurementSpan?.style.wordSpacing).toBe('');
-    expect(measurementSpan?.style.fontStretch).toBe('');
+    expect(observed).toEqual([
+      { fontStretch: 'expanded', wordSpacing: '9px' },
+      { fontStretch: '', wordSpacing: '' },
+    ]);
   });
 
   test('configureTextMeasurement should update configuration', () => {
