@@ -44,3 +44,5 @@ export const General = {
     dot: true,
   },
 };
+
+export const API = General;
