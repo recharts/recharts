@@ -77,12 +77,26 @@ const getRanglePath = (
 };
 
 interface PolygonProps {
+  /**
+   * The SVG element's class name.
+   */
   className?: string;
+
   /**
    * The coordinates of all the vertexes of the polygon, like an array of objects with x and y coordinates.
    */
   points?: ReadonlyArray<Coordinate>;
+  /**
+   * An optional second set of coordinates. When provided, Polygon fills the
+   * area enclosed between `points` and `baseLinePoints` similar to a data
+   * line and its baseline. If `stroke` is set (and isn't `"none"`), the
+   * outline of `points` and of `baseLinePoints` are also each stroked
+   * separately. Used e.g. by Radar in "range" mode to draw a min/max band.
+   */
   baseLinePoints?: ReadonlyArray<Coordinate>;
+  /**
+   * Whether to connect the curve across null points.
+   */
   connectNulls?: boolean;
 
   /**
@@ -121,6 +135,16 @@ interface PolygonProps {
 
 export type Props = Omit<SVGProps<SVGPolygonElement>, 'points'> & PolygonProps;
 
+/**
+ * Renders a polygon shape from an array of x/y coordinates, closing the
+ * outline into a filled shape by default. If the given points contain a
+ * gap (an invalid or missing coordinate) and `connectNulls` is not set,
+ * the outline is split into separate, unclosed subpaths around that gap
+ * instead of forming a single closed shape. Used internally by polar
+ * components such as Radar and PolarGrid to draw chart shapes. Accepts
+ * standard SVG presentation attributes (e.g. `stroke`, `fill`,
+ * `strokeWidth`) for styling, since it wraps a native SVG path element.
+ */
 export const Polygon: React.FC<Props> = props => {
   const { points, className, baseLinePoints, connectNulls, ...others } = props;
 
