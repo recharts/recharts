@@ -109,6 +109,19 @@ describe('DOMUtils', () => {
     expect(getStringSize('test', { fontVariant: 'small-caps' })).toEqual({ width: 40, height: 17 });
   });
 
+  test('cache should treat empty style values as absent', () => {
+    render(<span id="recharts_measurement_span">test</span>);
+    mockGetBoundingClientRect({
+      width: 25,
+      height: 17,
+    });
+
+    getStringSize('test', { fontSize: '14px' });
+    getStringSize('test', { fontSize: '14px', fontStretch: undefined, wordSpacing: '' });
+
+    expect(getStringCacheStats().size).toBe(1);
+  });
+
   test('measurement span should not keep styles from an earlier measurement', () => {
     render(<span id="recharts_measurement_span">test</span>);
     mockGetBoundingClientRect({
