@@ -11,6 +11,7 @@ import {
   Tooltip,
   TooltipContentProps,
   TooltipIndex,
+  useRechartsTheme,
   XAxis,
   YAxis,
 } from 'recharts';
@@ -70,6 +71,7 @@ const BoxShape = (props: BarShapeProps) => {
 
 const TooltipContent = (props: TooltipContentProps) => {
   const { active, payload } = props;
+  const theme = useRechartsTheme();
   if (active && payload && payload.length) {
     const firstPayload = payload[0];
     if (firstPayload == null) {
@@ -79,9 +81,10 @@ const TooltipContent = (props: TooltipContentProps) => {
     return (
       <div
         style={{
-          backgroundColor: 'white',
-          border: '1px solid #ccc',
+          color: theme?.typography?.color,
+          ...theme?.tooltip?.contentStyle,
           padding: '0 1em',
+          borderRadius: '4px',
         }}
       >
         <p style={{ margin: 0 }}>{`Category: ${entry.category}`}</p>

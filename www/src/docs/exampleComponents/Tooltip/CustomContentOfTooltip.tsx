@@ -8,6 +8,7 @@ import {
   Legend,
   TooltipContentProps,
   TooltipIndex,
+  useRechartsTheme,
 } from 'recharts';
 
 // #region Sample data
@@ -80,10 +81,19 @@ const getIntroOfPage = (label: string | number | undefined) => {
 };
 
 const CustomTooltip = ({ active, payload, label }: TooltipContentProps) => {
+  const theme = useRechartsTheme();
   const firstPayload = payload?.[0];
   const isVisible = active && firstPayload != null;
   return (
-    <div className="custom-tooltip" style={{ visibility: isVisible ? 'visible' : 'hidden', backgroundColor: 'white' }}>
+    <div
+      className="custom-tooltip"
+      style={{
+        ...theme?.typography,
+        backgroundColor: 'white',
+        ...theme?.tooltip?.contentStyle,
+        visibility: isVisible ? 'visible' : 'hidden',
+      }}
+    >
       {isVisible && (
         <>
           <p className="label">{`${label} : ${firstPayload.value}`}</p>

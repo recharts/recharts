@@ -74,8 +74,7 @@ export interface Props<TValue extends ValueType = ValueType, TName extends NameT
   accessibilityLayer?: boolean;
 }
 
-export const defaultDefaultTooltipContentProps = {
-  separator: ' : ',
+const defaultLegacyTooltipContentProps = {
   contentStyle: {
     margin: 0,
     padding: 10,
@@ -89,7 +88,13 @@ export const defaultDefaultTooltipContentProps = {
     paddingBottom: 4,
     color: '#000',
   },
-  labelStyle: {},
+  labelStyle: {
+    margin: 0,
+  },
+} satisfies Pick<Props<any, any>, 'contentStyle' | 'itemStyle' | 'labelStyle'>;
+
+export const defaultDefaultTooltipContentProps = {
+  separator: ' : ',
   accessibilityLayer: false,
 } as const satisfies Partial<Props<any, any>>;
 
@@ -114,13 +119,15 @@ export const DefaultTooltipContent = (props: Props) => {
       tooltip: rechartsTheme.tooltip,
     }),
     {},
-    undefined,
+    {
+      tooltip: defaultLegacyTooltipContentProps,
+    },
   );
   const {
     separator = defaultDefaultTooltipContentProps.separator,
     contentStyle,
     itemStyle,
-    labelStyle = defaultDefaultTooltipContentProps.labelStyle,
+    labelStyle,
     payload,
     formatter,
     itemSorter,
@@ -132,6 +139,7 @@ export const DefaultTooltipContent = (props: Props) => {
   } = props;
 
   const themeTooltip = theme?.tooltip ?? {};
+  const typographyStyle = theme?.typography ?? {};
   const themeContentStyle = themeTooltip.contentStyle ?? {};
   const themeItemStyle = themeTooltip.itemStyle ?? {};
   const themeLabelStyle = themeTooltip.labelStyle ?? {};
@@ -162,9 +170,9 @@ export const DefaultTooltipContent = (props: Props) => {
         }
 
         const finalItemStyle = {
-          ...defaultDefaultTooltipContentProps.itemStyle,
+          ...typographyStyle,
           ...themeItemStyle,
-          color: entry.color || defaultDefaultTooltipContentProps.itemStyle.color,
+          ...(entry.color ? { color: entry.color } : {}),
           ...itemStyle,
         };
 
@@ -189,13 +197,12 @@ export const DefaultTooltipContent = (props: Props) => {
   };
 
   const finalStyle: React.CSSProperties = {
-    ...defaultDefaultTooltipContentProps.contentStyle,
+    ...typographyStyle,
     ...themeContentStyle,
     ...contentStyle,
   };
   const finalLabelStyle = {
-    margin: 0,
-    ...defaultDefaultTooltipContentProps.labelStyle,
+    ...typographyStyle,
     ...themeLabelStyle,
     ...labelStyle,
   };
