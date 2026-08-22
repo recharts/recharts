@@ -55,14 +55,24 @@ export interface BrushProps<DataPointType = any, DataValueType = any> extends Da
    * If left undefined, it will be computed from the chart's offset and margins.
    */
   y?: number;
+  /**
+   * Vertical offset added to the brush's computed y-coordinate.
+   */
   dy?: number;
   /**
    * Width of the brush in pixels.
    * If undefined, defaults to the chart width.
    */
   width?: number;
+  /**
+   * The SVG element's class name.
+   */
   className?: string;
-
+  /**
+   * Custom accessible label applied to the brush's traveller handles. If
+   * not provided, one is generated automatically from the data at the
+   * current start and end index.
+   */
   ariaLabel?: string;
 
   /**
@@ -77,6 +87,11 @@ export interface BrushProps<DataPointType = any, DataValueType = any> extends Da
    * @defaultValue 5
    */
   travellerWidth?: number;
+  /**
+   * Custom element or render function used to render each draggable handle
+   * (the "traveller") at the start and end of the selection. Defaults to a
+   * small rectangle with two vertical lines.
+   */
   traveller?: BrushTravellerType;
   /**
    * Number of data points to skip between chart refreshes.
@@ -84,6 +99,13 @@ export interface BrushProps<DataPointType = any, DataValueType = any> extends Da
    * @defaultValue 1
    */
   gap?: number;
+  /**
+   * Padding applied only to the small overview chart rendered inside the
+   * brush (via `children`) has no effect on the brush's own position or
+   * size.
+   *
+   * @defaultValue {"top":1,"right":1,"bottom":1,"left":1}
+   */
   padding?: Padding;
   /**
    * The default start index of brush.
@@ -99,18 +121,33 @@ export interface BrushProps<DataPointType = any, DataValueType = any> extends Da
    * The formatter function of ticks.
    */
   tickFormatter?: BrushTickFormatter;
-
+  /**
+   * A single chart element (e.g. an AreaChart) rendered as a small preview
+   * inside the brush, showing an overview of the full dataset. If zero or
+   * more than one child is passed, nothing is rendered.
+   */
   children?: ReactElement;
   /**
    * The handler of changing the active scope of brush.
    */
   onChange?: OnBrushUpdate;
+  /**
+   * The handler called when the user finishes dragging a traveller or the
+   * brush slide, receiving the final startIndex and endIndex.
+   */
   onDragEnd?: OnBrushUpdate;
   /**
+   * Delay, in milliseconds, after the mouse leaves the brush, before an
+   * in-progress drag interaction is ended.
+   *
    * @defaultValue 1000
    */
   leaveTimeOut?: number;
   /**
+   * When true, the start and end index labels are always visible. By
+   * default, they only appear while the user is interacting with the brush
+   * (dragging, hovering, or focused via keyboard).
+   *
    * @defaultValue false
    */
   alwaysShowText?: boolean;
