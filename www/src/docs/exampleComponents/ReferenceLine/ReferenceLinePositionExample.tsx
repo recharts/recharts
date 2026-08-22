@@ -26,11 +26,11 @@ export const ReferenceLinePositionExample = ({ isAnimationActive = true }: { isA
   >
     <XAxis dataKey="name" />
     <YAxis width="auto" />
-    <CartesianGrid strokeDasharray="3 3" />
+    <CartesianGrid />
     <Tooltip />
-    <ReferenceLine x="Page B" label={{ value: 'position: start', fill: 'black' }} stroke="black" position="start" />
-    <ReferenceLine x="Page B" label={{ value: 'position: middle', fill: 'black' }} stroke="black" position="middle" />
-    <ReferenceLine x="Page B" label={{ value: 'position: end', fill: 'black' }} stroke="black" position="end" />
+    <ReferenceLine x="Page B" label={{ value: 'position: start' }} position="start" />
+    <ReferenceLine x="Page B" label={{ value: 'position: middle' }} position="middle" />
+    <ReferenceLine x="Page B" label={{ value: 'position: end' }} position="end" />
     <Bar dataKey="pv" fillOpacity={0.3} isAnimationActive={isAnimationActive} />
     <RechartsDevtools />
   </BarChart>

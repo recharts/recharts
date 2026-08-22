@@ -56,7 +56,7 @@ const VerticalComposedChart = () => {
         left: 0,
       }}
     >
-      <CartesianGrid stroke="#f5f5f5" />
+      <CartesianGrid />
       <XAxis type="number" niceTicks="snap125" />
       <YAxis dataKey="name" type="category" scale="band" width="auto" />
       <Tooltip />

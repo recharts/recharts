@@ -198,7 +198,7 @@ function MetroLine(props: LineProps) {
       type="monotone"
       dataKey="yPos"
       strokeWidth={15}
-      dot={{ strokeWidth: 3, stroke: '#fff', r: 10, fill: props.stroke }}
+      dot={{ strokeWidth: 3, stroke: '#fff', r: 10, fill: props.stroke, fillOpacity: 1 }}
       isAnimationActive={false}
       activeDot={false}
       {...props}
@@ -256,6 +256,7 @@ export default function PrahaMetro() {
         }}
         r={18}
         fill={lineA.color}
+        fillOpacity={1}
         // one lower zIndex so that these dots render as a background behind the line dots
         zIndex={DefaultZIndexes.scatter - 1}
       />
@@ -272,6 +273,7 @@ export default function PrahaMetro() {
         }}
         r={18}
         fill={lineC.color}
+        fillOpacity={1}
         // one lower zIndex so that these dots render as a background behind the line dots
         zIndex={DefaultZIndexes.scatter - 1}
       />
@@ -289,6 +291,7 @@ export default function PrahaMetro() {
         }}
         r={18}
         fill={lineC.color}
+        fillOpacity={1}
         // one lower zIndex so that these dots render as a background behind the line dots
         zIndex={DefaultZIndexes.scatter - 1}
       />
@@ -308,6 +311,7 @@ export default function PrahaMetro() {
         // one higher zIndex so that this dot renders over the line dot - we want to highlight this station
         zIndex={DefaultZIndexes.scatter + 1}
         fill={lineC.color}
+        fillOpacity={1}
         stroke="#fff"
         strokeWidth={3}
       />
@@ -327,6 +331,7 @@ export default function PrahaMetro() {
         // one higher zIndex so that this dot renders over the line dot - we want to highlight this station
         zIndex={DefaultZIndexes.scatter + 1}
         fill={lineA.color}
+        fillOpacity={1}
         stroke="#fff"
         strokeWidth={3}
       />

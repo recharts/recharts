@@ -48,7 +48,7 @@ export default function ScatterChartWithCells() {
       <CartesianGrid />
       <XAxis type="number" dataKey="x" name="stature" unit="cm" />
       <YAxis type="number" dataKey="y" name="weight" unit="kg" width="auto" />
-      <Tooltip cursor={{ strokeDasharray: '3 3' }} />
+      <Tooltip />
       <Scatter name="A school" data={data} shape={MyCustomSymbol} />
       <RechartsDevtools />
     </ScatterChart>

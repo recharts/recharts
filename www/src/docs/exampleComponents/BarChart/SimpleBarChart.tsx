@@ -16,7 +16,7 @@ const SimpleBarChart = () => {
         bottom: 5,
       }}
     >
-      <CartesianGrid strokeDasharray="3 3" />
+      <CartesianGrid />
       <XAxis dataKey="label" />
       <YAxis width="auto" />
       <Tooltip />

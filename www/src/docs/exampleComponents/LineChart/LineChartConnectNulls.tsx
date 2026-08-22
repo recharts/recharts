@@ -28,13 +28,10 @@ function BaseChart({ children }: { children: ReactNode }) {
         bottom: 0,
       }}
     >
-      <CartesianGrid strokeDasharray="3 3" />
+      <CartesianGrid />
       <XAxis dataKey="name" />
       <YAxis />
-      <Tooltip
-        cursor={{ stroke: 'var(--color-border-2)' }}
-        contentStyle={{ backgroundColor: 'var(--color-surface-base)', borderColor: 'var(--color-border-2)' }}
-      />
+      <Tooltip />
       {children}
     </LineChart>
   );

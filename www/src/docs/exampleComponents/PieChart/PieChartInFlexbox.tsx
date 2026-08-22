@@ -28,7 +28,7 @@ export default function PieChartInFlexbox() {
         flexWrap: 'wrap',
         width: '100%',
         minHeight: '300px',
-        border: '1px solid #ccc',
+        border: '1px solid var(--color-border-1)',
         padding: '10px',
         justifyContent: 'space-around',
         alignItems: 'stretch',
@@ -36,25 +36,19 @@ export default function PieChartInFlexbox() {
     >
       <PieChart responsive style={{ height: 'calc(100% - 20px)', width: '33%', flex: '1 1 200px', aspectRatio: 1 }}>
         <MyPie />
-        <Label position="center" fill="#666">
-          Flex: 1 1 200px
-        </Label>
+        <Label position="center">Flex: 1 1 200px</Label>
         <RechartsDevtools />
       </PieChart>
 
       <PieChart responsive style={{ height: 'calc(100% - 20px)', width: '33%', maxWidth: '300px', aspectRatio: 1 }}>
         <MyPie />
-        <Label position="center" fill="#666">
-          maxWidth: &#39;300px&#39;
-        </Label>
+        <Label position="center">maxWidth: &#39;300px&#39;</Label>
         <RechartsDevtools />
       </PieChart>
 
       <PieChart responsive style={{ height: 'calc(100% - 20px)', maxHeight: '20vh', width: '33%', aspectRatio: 1 }}>
         <MyPie />
-        <Label position="center" fill="#666">
-          maxHeight: &#39;20vh&#39;
-        </Label>
+        <Label position="center">maxHeight: &#39;20vh&#39;</Label>
         <RechartsDevtools />
       </PieChart>
     </div>

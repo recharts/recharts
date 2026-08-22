@@ -1,15 +1,16 @@
 import * as React from 'react';
-import { test, expect } from '@playwright/experimental-ct-react';
+import { expect } from '@playwright/experimental-ct-react';
 
 import LegendExample from '../../../www/src/docs/exampleComponents/Legend/LegendExample';
 import LegendEffectOpacity from '../../../www/src/docs/exampleComponents/Legend/LegendEffectOpacity';
+import { testWithLightTheme } from './fixtures.tsx';
 
-test('LegendEffectOpacity', async ({ mount }) => {
+testWithLightTheme('LegendEffectOpacity', async ({ mount }) => {
   const component = await mount(<LegendEffectOpacity />);
   await expect(component).toHaveScreenshot();
 });
 
-test('LegendExample', async ({ mount }) => {
+testWithLightTheme('LegendExample', async ({ mount }) => {
   const component = await mount(<LegendExample isAnimationActive={false} />);
   await expect(component).toHaveScreenshot();
 });

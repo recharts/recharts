@@ -1,4 +1,14 @@
-import { Scatter, ScatterChart, Tooltip, XAxis, YAxis, ZAxis, TooltipContentProps, TooltipIndex } from 'recharts';
+import {
+  Scatter,
+  ScatterChart,
+  Tooltip,
+  XAxis,
+  YAxis,
+  ZAxis,
+  TooltipContentProps,
+  TooltipIndex,
+  useRechartsTheme,
+} from 'recharts';
 import { ReactNode } from 'react';
 import { RechartsDevtools } from '@recharts/devtools';
 
@@ -76,7 +86,8 @@ const domain = parseDomain();
 const range = [16, 225] as const;
 const margin = { top: 10, right: 0, bottom: 0, left: 0 };
 
-const renderTooltip = (props: TooltipContentProps) => {
+const RenderTooltip = (props: TooltipContentProps) => {
+  const theme = useRechartsTheme();
   const { active, payload } = props;
 
   if (active && payload && payload.length) {
@@ -85,10 +96,8 @@ const renderTooltip = (props: TooltipContentProps) => {
     return (
       <div
         style={{
-          backgroundColor: '#fff',
-          border: '1px solid #999',
-          margin: 0,
-          padding: 10,
+          ...theme?.typography,
+          ...theme?.tooltip?.contentStyle,
         }}
       >
         <p>{data.hour}</p>
@@ -129,15 +138,10 @@ const BubbleAxes = ({ day, showXTicks = false }: { day: string; showXTicks?: boo
 );
 
 const MyTooltip = ({ defaultIndex }: { defaultIndex?: TooltipIndex }) => (
-  <Tooltip
-    cursor={{ strokeDasharray: '3 3' }}
-    wrapperStyle={{ zIndex: 100 }}
-    content={renderTooltip}
-    defaultIndex={defaultIndex}
-  />
+  <Tooltip wrapperStyle={{ zIndex: 100 }} content={RenderTooltip} defaultIndex={defaultIndex} />
 );
 
-const Bubbles = ({ data }: { data: Array<unknown> }) => <Scatter data={data} fill="#8884d8" />;
+const Bubbles = ({ data }: { data: Array<unknown> }) => <Scatter data={data} dataKey="value" />;
 
 const DayChart = ({ children }: { children: ReactNode }) => (
   <ScatterChart

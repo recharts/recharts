@@ -55,14 +55,14 @@ const ComposedChartWithAxisLabels = () => {
         left: 0,
       }}
     >
-      <CartesianGrid stroke="#f5f5f5" />
+      <CartesianGrid />
       <XAxis dataKey="name" label={{ value: 'Pages', position: 'insideBottomRight', offset: 0 }} scale="band" />
       <YAxis label={{ value: 'Index', angle: -90, position: 'insideLeft' }} width="auto" />
       <Tooltip />
       <Legend />
-      <Area type="monotone" dataKey="amt" fill="#8884d8" stroke="#8884d8" />
-      <Bar dataKey="pv" barSize={20} fill="#413ea0" />
-      <Line type="monotone" dataKey="uv" stroke="#ff7300" />
+      <Area type="monotone" dataKey="amt" />
+      <Bar dataKey="pv" barSize={20} />
+      <Line type="monotone" dataKey="uv" />
       <RechartsDevtools />
     </ComposedChart>
   );

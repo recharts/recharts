@@ -35,7 +35,7 @@ export default function TooltipStylesExample() {
       data={data}
       margin={{ top: 10, right: 10, left: 10, bottom: 5 }}
     >
-      <CartesianGrid strokeDasharray="3 3" />
+      <CartesianGrid />
       <XAxis dataKey="label" />
       <YAxis domain={[0, 'dataMax + 20']} />
       <Tooltip

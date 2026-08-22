@@ -62,7 +62,7 @@ export default function Example() {
       data={data}
       margin={{ top: 5, right: 0, left: 0, bottom: 5 }}
     >
-      <CartesianGrid strokeDasharray="3 3" />
+      <CartesianGrid />
       <XAxis dataKey="name" />
       <YAxis width="auto" />
       <Tooltip />

@@ -162,7 +162,7 @@ export default function AnimatedBarTimeSeriesExample(props: Partial<ControlsType
       margin={{ top: 20, right: 30, left: 20, bottom: 5 }}
       layout={layout}
     >
-      <CartesianGrid strokeDasharray="3 3" />
+      <CartesianGrid />
       <XAxis allowDataOverflow type="auto" />
       <YAxis type="auto" />
       <Tooltip />

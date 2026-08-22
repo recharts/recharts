@@ -71,7 +71,7 @@ export default function BandedChart() {
         bottom: 0,
       }}
     >
-      <CartesianGrid strokeDasharray="3 3" />
+      <CartesianGrid />
       <XAxis dataKey="name" />
       <YAxis width="auto" />
       <Legend content={renderLegendWithoutRange} />

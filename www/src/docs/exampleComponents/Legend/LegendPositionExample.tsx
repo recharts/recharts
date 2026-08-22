@@ -88,7 +88,7 @@ export default function LegendPositionExample(props: Partial<ControlsState>) {
 
   return (
     <LineChart style={{ width: '600px', height: '300px', outline: '2px solid gray' }} responsive={false} data={data}>
-      <CartesianGrid strokeDasharray="3 3" />
+      <CartesianGrid />
       <XAxis dataKey="label" />
       <YAxis />
       <Tooltip />

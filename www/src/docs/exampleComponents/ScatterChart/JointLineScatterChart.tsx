@@ -35,10 +35,10 @@ const JointLineScatterChart = ({ defaultIndex }: { defaultIndex?: TooltipIndex }
       <XAxis type="number" dataKey="x" name="stature" unit="cm" />
       <YAxis type="number" dataKey="y" name="weight" unit="kg" width="auto" />
       <ZAxis type="number" range={[100, 100]} />
-      <Tooltip cursor={{ strokeDasharray: '3 3' }} defaultIndex={defaultIndex} />
+      <Tooltip defaultIndex={defaultIndex} />
       <Legend />
-      <Scatter name="A school" data={data01} fill="#8884d8" line shape="cross" />
-      <Scatter name="B school" data={data02} fill="#82ca9d" line lineJointType="monotone" shape="diamond" />
+      <Scatter name="A school" data={data01} dataKey="x" line shape="cross" />
+      <Scatter name="B school" data={data02} dataKey="y" line lineJointType="monotone" shape="diamond" />
       <RechartsDevtools />
     </ScatterChart>
   );

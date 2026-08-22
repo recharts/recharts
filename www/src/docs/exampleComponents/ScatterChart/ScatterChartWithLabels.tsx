@@ -27,9 +27,9 @@ const ScatterChartWithLabels = ({ defaultIndex }: { defaultIndex?: TooltipIndex 
       <CartesianGrid />
       <XAxis type="number" dataKey="x" name="stature" unit="cm" />
       <YAxis type="number" dataKey="y" name="weight" unit="kg" width="auto" />
-      <Tooltip cursor={{ strokeDasharray: '3 3' }} defaultIndex={defaultIndex} />
-      <Scatter name="A school" data={data} fill="#8884d8" activeShape={{ fill: 'green' }}>
-        <LabelList dataKey="x" fill="black" />
+      <Tooltip defaultIndex={defaultIndex} />
+      <Scatter name="A school" data={data} dataKey="x" activeShape={{ fill: 'green' }}>
+        <LabelList dataKey="x" />
       </Scatter>
       <ZAxis range={[900, 4000]} dataKey="z" />
       <RechartsDevtools />

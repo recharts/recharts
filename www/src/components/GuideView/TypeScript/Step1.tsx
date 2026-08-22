@@ -23,11 +23,11 @@ export default function Example() {
         bottom: 0,
       }}
     >
-      <CartesianGrid strokeDasharray="3 3" />
+      <CartesianGrid />
       <XAxis dataKey="name" />
       <YAxis />
       <Tooltip />
-      <Area type="monotone" dataKey="uv" stroke="#8884d8" fill="#8884d8" />
+      <Area type="monotone" dataKey="uv" />
     </AreaChart>
   );
 }

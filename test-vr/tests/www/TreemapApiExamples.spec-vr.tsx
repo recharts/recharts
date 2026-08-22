@@ -1,33 +1,34 @@
 import * as React from 'react';
-import { test, expect } from '@playwright/experimental-ct-react';
+import { expect } from '@playwright/experimental-ct-react';
 
 import SimpleTreemap from '../../../www/src/docs/exampleComponents/TreeMap/SimpleTreemap';
 import BundleSizeTreemap from '../../../www/src/docs/exampleComponents/TreeMap/BundleSizeTreemap';
 import CustomContentTreemap from '../../../www/src/docs/exampleComponents/TreeMap/CustomContentTreemap';
 import TreeMapNavExample from '../../../www/src/docs/exampleComponents/TreeMap/TreeMapNavExample';
 import TreemapWithPaddingAndGaps from '../../../www/src/docs/exampleComponents/TreeMap/TreemapWithPaddingAndGaps';
+import { testWithLightTheme } from './fixtures.tsx';
 
-test('TreeMapNavExample', async ({ mount }) => {
+testWithLightTheme('TreeMapNavExample', async ({ mount }) => {
   const component = await mount(<TreeMapNavExample />);
   await expect(component).toHaveScreenshot();
 });
 
-test('CustomContentTreemap', async ({ mount }) => {
+testWithLightTheme('CustomContentTreemap', async ({ mount }) => {
   const component = await mount(<CustomContentTreemap />);
   await expect(component).toHaveScreenshot();
 });
 
-test('SimpleTreemap', async ({ mount }) => {
+testWithLightTheme('SimpleTreemap', async ({ mount }) => {
   const component = await mount(<SimpleTreemap />);
   await expect(component).toHaveScreenshot();
 });
 
-test('TreemapWithPaddingAndGaps', async ({ mount }) => {
+testWithLightTheme('TreemapWithPaddingAndGaps', async ({ mount }) => {
   const component = await mount(<TreemapWithPaddingAndGaps />);
   await expect(component).toHaveScreenshot();
 });
 
-test('BundleSizeTreemap', async ({ mount }) => {
+testWithLightTheme('BundleSizeTreemap', async ({ mount }) => {
   const component = await mount(<BundleSizeTreemap forceFallbackData />);
   await expect(component).toHaveScreenshot();
 });

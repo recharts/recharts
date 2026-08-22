@@ -12,7 +12,7 @@ const MyChart = (props: { interval: AxisInterval }) => (
     data={data}
     margin={{ left: 0, right: 0, top: 10 }}
   >
-    <CartesianGrid strokeDasharray="3 3" />
+    <CartesianGrid />
     <Typed.XAxis dataKey="label" interval={props.interval} />
     <Typed.YAxis interval={props.interval} width="auto" />
     <Typed.Line type="monotone" dataKey="x" activeDot={{ r: 8 }} />

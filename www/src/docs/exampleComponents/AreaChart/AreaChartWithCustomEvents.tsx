@@ -71,7 +71,7 @@ export default function AreaChartWithCustomEvents() {
         console.log('AreaChart touch end:', mouseEventData, event, chartPointer);
       }}
     >
-      <CartesianGrid strokeDasharray="3 3" />
+      <CartesianGrid />
       <XAxis dataKey="label" />
       <YAxis width="auto" />
       <Tooltip />

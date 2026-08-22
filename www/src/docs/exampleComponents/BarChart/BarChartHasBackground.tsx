@@ -28,7 +28,7 @@ const BarChartHasBackground = ({ defaultIndex }: { defaultIndex?: number }) => {
         bottom: 5,
       }}
     >
-      <Typed.CartesianGrid strokeDasharray="3 3" />
+      <Typed.CartesianGrid />
       <Typed.XAxis dataKey="label" />
       <Typed.YAxis width="auto" />
       <Typed.Tooltip defaultIndex={defaultIndex} />

@@ -42,7 +42,7 @@ const LabelListChartExample = ({ isAnimationActive = true }: { isAnimationActive
       bottom: 5,
     }}
   >
-    <CartesianGrid strokeDasharray="3 3" />
+    <CartesianGrid />
     <XAxis dataKey="name">
       <Label value="Pages of my website" offset={0} position="insideBottom" />
     </XAxis>

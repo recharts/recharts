@@ -62,11 +62,11 @@ export const LegendExample = ({ isAnimationActive = true }: { isAnimationActive?
   >
     <XAxis dataKey="name" />
     <YAxis width="auto" />
-    <CartesianGrid strokeDasharray="3 3" />
+    <CartesianGrid />
     <Tooltip />
-    <Legend verticalAlign="top" height={36} />
-    <Line name="pv of pages" type="monotone" dataKey="pv" stroke="#8884d8" isAnimationActive={isAnimationActive} />
-    <Line name="uv of pages" type="monotone" dataKey="uv" stroke="#82ca9d" isAnimationActive={isAnimationActive} />
+    <Legend position="top" height={36} />
+    <Line name="pv of pages" type="monotone" dataKey="pv" isAnimationActive={isAnimationActive} />
+    <Line name="uv of pages" type="monotone" dataKey="uv" isAnimationActive={isAnimationActive} />
     <RechartsDevtools />
   </LineChart>
 );
