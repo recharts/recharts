@@ -9,7 +9,7 @@ import { Polygon } from '../shape/Polygon';
 import { Rectangle } from '../shape/Rectangle';
 import { getValueByDataKey } from '../util/ChartUtils';
 import { COLOR_PANEL } from '../util/Constants';
-import { isNan, noop, uniqueId } from '../util/DataUtils';
+import { isNan, noop } from '../util/DataUtils';
 import { getStringSize } from '../util/DOMUtils';
 import {
   AnimationDuration,
@@ -1078,7 +1078,7 @@ class TreemapWithState extends PureComponent<InternalTreemapProps, State> {
             // eslint-disable-next-line jsx-a11y/click-events-have-key-events, jsx-a11y/no-static-element-interactions
             <div
               onClick={this.handleNestIndex.bind(this, item, i)}
-              key={`nest-index-${uniqueId()}`}
+              key={`nest-index-${i}-${name}`}
               className="recharts-treemap-nest-index-box"
               style={{
                 cursor: 'pointer',
