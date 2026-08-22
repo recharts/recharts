@@ -148,7 +148,26 @@ test('updates when localStorage changes', async () => {
   });
 });
 
-test('updates when the system color scheme changes', async () => {
+test('updates the mode when the system color scheme changes while following the system', async () => {
+  setupEnvironment({ preferredColorMode: 'light' });
+  render(
+    <ColorModeProvider>
+      <StateHeading />
+    </ColorModeProvider>,
+  );
+
+  await waitFor(() => {
+    expect(screen.getByRole('heading', { name: 'origin: system; mode: light' })).toBeInTheDocument();
+  });
+
+  window.matchMedia('(prefers-color-scheme: dark)').dispatchEvent(new Event('change'));
+  await waitFor(() => {
+    expect(screen.getByRole('heading', { name: 'origin: system; mode: dark' })).toBeInTheDocument();
+  });
+  expect(localStorage.getItem(STORAGE_KEY)).toBeNull();
+});
+
+test('keeps an explicitly stored color mode when the system color scheme changes', async () => {
   setupEnvironment({ preferredColorMode: 'light', storedColorMode: 'light' });
   render(
     <ColorModeProvider>
@@ -161,10 +180,12 @@ test('updates when the system color scheme changes', async () => {
   });
 
   window.matchMedia('(prefers-color-scheme: dark)').dispatchEvent(new Event('change'));
+
+  // The system preference flipped to dark, but the explicit stored choice must win.
   await waitFor(() => {
-    expect(screen.getByRole('heading', { name: 'origin: system; mode: dark' })).toBeInTheDocument();
+    expect(screen.getByRole('heading', { name: 'origin: storage; mode: light' })).toBeInTheDocument();
   });
-  expect(localStorage.getItem(STORAGE_KEY)).toBeNull();
+  expect(localStorage.getItem(STORAGE_KEY)).toBe('light');
 });
 
 test('ColorModePicker', async () => {
