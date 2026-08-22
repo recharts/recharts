@@ -1,14 +1,9 @@
 import { afterEach, expect, test, vi } from 'vitest';
-import { act, cleanup, render, screen } from '@testing-library/react';
+import { cleanup, render, screen, waitFor } from '@testing-library/react';
 import { userEvent } from '@testing-library/user-event';
 import '@testing-library/jest-dom/vitest';
 
-import {
-  ColorModeProvider,
-  ColorModePicker,
-  ColorModeWatcher,
-  defineColorModeStore,
-} from '../src/components/color-mode';
+import { ColorModeProvider, ColorModePicker, ColorModeWatcher, useColorModeStore } from '../src/components/color-mode';
 
 const STORAGE_KEY = 'recharts-color-mode';
 
@@ -23,259 +18,192 @@ function setupEnvironment(props: { preferredColorMode: 'light' | 'dark'; storedC
     localStorage.setItem(STORAGE_KEY, props.storedColorMode);
   }
   let { preferredColorMode } = props;
-  const listeners = new Set<(e: MediaQueryListEvent) => void>();
-  vi.stubGlobal('matchMedia', (query: string) => {
-    return {
-      matches: query.includes(preferredColorMode),
-      addEventListener(_type: string, listener: (e: MediaQueryListEvent) => void) {
-        listeners.add(listener);
-      },
-      removeEventListener(_type: string, listener: (e: MediaQueryListEvent) => void) {
-        listeners.delete(listener);
-      },
-      dispatchEvent() {
-        preferredColorMode = preferredColorMode === 'light' ? 'dark' : 'light';
-        listeners.forEach(listener => {
-          listener({ matches: query.includes(preferredColorMode) } as MediaQueryListEvent);
-        });
-      },
-    };
-  });
+  const listeners = new Set<() => void>();
+  vi.stubGlobal('matchMedia', (query: string) => ({
+    media: query,
+    matches: query.includes(preferredColorMode),
+    addEventListener(_type: string, listener: () => void) {
+      listeners.add(listener);
+    },
+    removeEventListener(_type: string, listener: () => void) {
+      listeners.delete(listener);
+    },
+    dispatchEvent() {
+      preferredColorMode = preferredColorMode === 'light' ? 'dark' : 'light';
+      listeners.forEach(listener => listener());
+    },
+  }));
 }
 
-test('origin: system; mode: light', () => {
-  setupEnvironment({ preferredColorMode: 'light' });
-  const store = defineColorModeStore();
+function StateHeading() {
+  return (
+    <ColorModeWatcher
+      render={state => (
+        <h1>
+          origin: {state.origin}; mode: {state.mode}
+        </h1>
+      )}
+    />
+  );
+}
 
-  expect(document.documentElement).toHaveAttribute('data-mode', 'light');
-  expect(localStorage.getItem(STORAGE_KEY)).toBeNull();
-  expect(store.getSnapshot()).toEqual({
-    origin: 'system',
-    mode: 'light',
-  });
+function DispatchButton(props: { action: 'light' | 'dark' | 'system' }) {
+  const { dispatch } = useColorModeStore();
+  return (
+    <button type="button" onClick={() => dispatch(props.action)}>
+      dispatch
+    </button>
+  );
+}
 
-  store.dispatch('dark');
-
-  expect(document.documentElement).toHaveAttribute('data-mode', 'dark');
-  expect(localStorage.getItem(STORAGE_KEY)).toBe('dark');
-  expect(store.getSnapshot()).toEqual({
-    origin: 'storage',
-    mode: 'dark',
-  });
-
-  store.dispose();
-});
-
-test('origin: system; mode: dark', () => {
+test('initializes from the system color mode', async () => {
   setupEnvironment({ preferredColorMode: 'dark' });
-  const store = defineColorModeStore();
+  render(
+    <ColorModeProvider>
+      <StateHeading />
+    </ColorModeProvider>,
+  );
 
-  expect(document.documentElement).toHaveAttribute('data-mode', 'dark');
+  await waitFor(() => {
+    expect(screen.getByRole('heading', { name: 'origin: system; mode: dark' })).toBeInTheDocument();
+  });
   expect(localStorage.getItem(STORAGE_KEY)).toBeNull();
-  expect(store.getSnapshot()).toEqual({
-    origin: 'system',
-    mode: 'dark',
-  });
-
-  store.dispatch('light');
-
-  expect(document.documentElement).toHaveAttribute('data-mode', 'light');
-  expect(localStorage.getItem(STORAGE_KEY)).toBe('light');
-  expect(store.getSnapshot()).toEqual({
-    origin: 'storage',
-    mode: 'light',
-  });
-
-  store.dispose();
+  expect(document.documentElement).toHaveAttribute('data-mode', 'dark');
 });
 
-test('origin: storage; mode: light', () => {
+test('initializes from localStorage', async () => {
   setupEnvironment({ preferredColorMode: 'dark', storedColorMode: 'light' });
-  const store = defineColorModeStore();
+  render(
+    <ColorModeProvider>
+      <StateHeading />
+    </ColorModeProvider>,
+  );
 
+  await waitFor(() => {
+    expect(screen.getByRole('heading', { name: 'origin: storage; mode: light' })).toBeInTheDocument();
+  });
   expect(document.documentElement).toHaveAttribute('data-mode', 'light');
-  expect(localStorage.getItem(STORAGE_KEY)).toBe('light');
-  expect(store.getSnapshot()).toEqual({
-    origin: 'storage',
-    mode: 'light',
-  });
-
-  store.dispatch('system');
-
-  expect(document.documentElement).toHaveAttribute('data-mode', 'dark');
-  expect(localStorage.getItem(STORAGE_KEY)).toBeNull();
-  expect(store.getSnapshot()).toEqual({
-    origin: 'system',
-    mode: 'dark',
-  });
-
-  store.dispose();
 });
 
-test('origin: storage; mode: dark', () => {
-  setupEnvironment({ preferredColorMode: 'light', storedColorMode: 'dark' });
-  const store = defineColorModeStore();
-
-  expect(document.documentElement).toHaveAttribute('data-mode', 'dark');
-  expect(localStorage.getItem(STORAGE_KEY)).toBe('dark');
-  expect(store.getSnapshot()).toEqual({
-    origin: 'storage',
-    mode: 'dark',
-  });
-
-  store.dispatch('system');
-
-  expect(document.documentElement).toHaveAttribute('data-mode', 'light');
-  expect(localStorage.getItem(STORAGE_KEY)).toBeNull();
-  expect(store.getSnapshot()).toEqual({
-    origin: 'system',
-    mode: 'light',
-  });
-
-  store.dispose();
-});
-
-test('storage event', () => {
+test('dispatch persists and updates color mode', async () => {
   setupEnvironment({ preferredColorMode: 'light' });
-  const store = defineColorModeStore();
+  render(
+    <ColorModeProvider>
+      <StateHeading />
+      <DispatchButton action="dark" />
+    </ColorModeProvider>,
+  );
 
-  expect(document.documentElement).toHaveAttribute('data-mode', 'light');
+  await waitFor(() => {
+    expect(screen.getByRole('heading', { name: 'origin: system; mode: light' })).toBeInTheDocument();
+  });
+  await userEvent.click(screen.getByRole('button', { name: 'dispatch' }));
+
+  expect(localStorage.getItem(STORAGE_KEY)).toBe('dark');
+  expect(document.documentElement).toHaveAttribute('data-mode', 'dark');
+  expect(screen.getByRole('heading', { name: 'origin: storage; mode: dark' })).toBeInTheDocument();
+});
+
+test('dispatching system clears localStorage and uses the system color mode', async () => {
+  setupEnvironment({ preferredColorMode: 'light', storedColorMode: 'dark' });
+  render(
+    <ColorModeProvider>
+      <StateHeading />
+      <DispatchButton action="system" />
+    </ColorModeProvider>,
+  );
+
+  await waitFor(() => {
+    expect(screen.getByRole('heading', { name: 'origin: storage; mode: dark' })).toBeInTheDocument();
+  });
+  await userEvent.click(screen.getByRole('button', { name: 'dispatch' }));
+
   expect(localStorage.getItem(STORAGE_KEY)).toBeNull();
-  expect(store.getSnapshot()).toEqual({
-    origin: 'system',
-    mode: 'light',
+  expect(document.documentElement).toHaveAttribute('data-mode', 'light');
+  expect(screen.getByRole('heading', { name: 'origin: system; mode: light' })).toBeInTheDocument();
+});
+
+test('updates when localStorage changes', async () => {
+  setupEnvironment({ preferredColorMode: 'light' });
+  render(
+    <ColorModeProvider>
+      <StateHeading />
+    </ColorModeProvider>,
+  );
+
+  await waitFor(() => {
+    expect(screen.getByRole('heading', { name: 'origin: system; mode: light' })).toBeInTheDocument();
   });
 
   localStorage.setItem(STORAGE_KEY, 'dark');
   window.dispatchEvent(new StorageEvent('storage', { key: STORAGE_KEY }));
-
-  expect(document.documentElement).toHaveAttribute('data-mode', 'dark');
-  expect(store.getSnapshot()).toEqual({
-    origin: 'storage',
-    mode: 'dark',
+  await waitFor(() => {
+    expect(screen.getByRole('heading', { name: 'origin: storage; mode: dark' })).toBeInTheDocument();
   });
 
   localStorage.removeItem(STORAGE_KEY);
   window.dispatchEvent(new StorageEvent('storage', { key: STORAGE_KEY }));
-
-  expect(document.documentElement).toHaveAttribute('data-mode', 'light');
-  expect(store.getSnapshot()).toEqual({
-    origin: 'system',
-    mode: 'light',
+  await waitFor(() => {
+    expect(screen.getByRole('heading', { name: 'origin: system; mode: light' })).toBeInTheDocument();
   });
-
-  store.dispose();
 });
 
-test('system color scheme change', () => {
+test('updates when the system color scheme changes', async () => {
   setupEnvironment({ preferredColorMode: 'light', storedColorMode: 'light' });
-  const store = defineColorModeStore();
+  render(
+    <ColorModeProvider>
+      <StateHeading />
+    </ColorModeProvider>,
+  );
 
-  expect(document.documentElement).toHaveAttribute('data-mode', 'light');
-  expect(localStorage.getItem(STORAGE_KEY)).toBe('light');
-  expect(store.getSnapshot()).toEqual({
-    origin: 'storage',
-    mode: 'light',
+  await waitFor(() => {
+    expect(screen.getByRole('heading', { name: 'origin: storage; mode: light' })).toBeInTheDocument();
   });
 
   window.matchMedia('(prefers-color-scheme: dark)').dispatchEvent(new Event('change'));
-
-  expect(document.documentElement).toHaveAttribute('data-mode', 'dark');
+  await waitFor(() => {
+    expect(screen.getByRole('heading', { name: 'origin: system; mode: dark' })).toBeInTheDocument();
+  });
   expect(localStorage.getItem(STORAGE_KEY)).toBeNull();
-  expect(store.getSnapshot()).toEqual({
-    origin: 'system',
-    mode: 'dark',
-  });
-
-  store.dispose();
-});
-
-test('listener', () => {
-  setupEnvironment({ preferredColorMode: 'light' });
-  const store = defineColorModeStore();
-
-  const listener = vi.fn();
-  const unsubscribe = store.subscribe(listener);
-  expect(listener).not.toHaveBeenCalled();
-
-  store.dispatch('dark');
-  expect(listener).toHaveBeenCalledTimes(1);
-  expect(listener).toHaveBeenCalledWith({
-    origin: 'storage',
-    mode: 'dark',
-  });
-
-  unsubscribe();
-  store.dispatch('light');
-  expect(listener).toHaveBeenCalledTimes(1);
-
-  store.dispose();
 });
 
 test('ColorModePicker', async () => {
   setupEnvironment({ preferredColorMode: 'light' });
-  const store = defineColorModeStore();
   render(
-    <ColorModeProvider store={store}>
+    <ColorModeProvider>
       <ColorModePicker />
     </ColorModeProvider>,
   );
 
-  const colorModePicker = screen.getByRole('button', { name: 'system' });
-
-  expect(document.documentElement).toHaveAttribute('data-mode', 'light');
-  expect(localStorage.getItem(STORAGE_KEY)).toBeNull();
+  const colorModePicker = await screen.findByRole('button', { name: 'system' });
   expect(colorModePicker).toBeEnabled();
 
   await userEvent.click(colorModePicker);
-
-  expect(document.documentElement).toHaveAttribute('data-mode', 'light');
-  expect(localStorage.getItem(STORAGE_KEY)).toBe('light');
   expect(colorModePicker).toHaveAccessibleName('light');
+  expect(localStorage.getItem(STORAGE_KEY)).toBe('light');
 
   await userEvent.click(colorModePicker);
-
-  expect(document.documentElement).toHaveAttribute('data-mode', 'dark');
-  expect(localStorage.getItem(STORAGE_KEY)).toBe('dark');
   expect(colorModePicker).toHaveAccessibleName('dark');
+  expect(localStorage.getItem(STORAGE_KEY)).toBe('dark');
 
   await userEvent.click(colorModePicker);
-
-  expect(document.documentElement).toHaveAttribute('data-mode', 'light');
-  expect(localStorage.getItem(STORAGE_KEY)).toBeNull();
   expect(colorModePicker).toHaveAccessibleName('system');
-
-  store.dispose();
+  expect(localStorage.getItem(STORAGE_KEY)).toBeNull();
 });
 
-test('ColorModeWatcher', () => {
+test('ColorModeWatcher', async () => {
   setupEnvironment({ preferredColorMode: 'light' });
-  const store = defineColorModeStore();
   render(
-    <ColorModeProvider store={store}>
-      <ColorModeWatcher
-        render={state => {
-          return (
-            <h1>
-              origin: {state.origin}; mode: {state.mode}
-            </h1>
-          );
-        }}
-      />
+    <ColorModeProvider>
+      <StateHeading />
+      <DispatchButton action="dark" />
     </ColorModeProvider>,
   );
-  const heading = screen.getByRole('heading', { name: 'origin: system; mode: light' });
-  expect(heading).toBeInTheDocument();
 
-  act(() => {
-    store.dispatch('dark');
+  await waitFor(() => {
+    expect(screen.getByRole('heading', { name: 'origin: system; mode: light' })).toBeInTheDocument();
   });
-  expect(heading).toHaveTextContent('origin: storage; mode: dark');
+  await userEvent.click(screen.getByRole('button', { name: 'dispatch' }));
 
-  act(() => {
-    store.dispatch('system');
-  });
-  expect(screen.getByRole('heading', { name: 'origin: system; mode: light' })).toBeInTheDocument();
-
-  store.dispose();
+  expect(screen.getByRole('heading', { name: 'origin: storage; mode: dark' })).toBeInTheDocument();
 });

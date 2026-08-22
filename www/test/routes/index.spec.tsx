@@ -4,31 +4,29 @@ import { render } from '@testing-library/react';
 import '@testing-library/jest-dom';
 import { RouterProvider, createMemoryRouter } from 'react-router';
 import { routes } from '../../src/routes';
-import { ColorModeProvider, defineColorModeStore } from '../../src/components/color-mode';
+import { ColorModeProvider } from '../../src/components/color-mode';
 
 vi.mock('react-github-btn', () => ({ default: () => null }));
 
 function baseRender(url: string) {
-  const colorModeStore = defineColorModeStore();
   const router = createMemoryRouter(routes, { initialEntries: [url] });
   const renderResult = render(
-    <ColorModeProvider store={colorModeStore}>
+    <ColorModeProvider>
       <RouterProvider router={router} />
     </ColorModeProvider>,
   );
   expect(renderResult.getByRole('main')).toBeInTheDocument();
-  return { screen: renderResult, dispose: colorModeStore.dispose } as const;
+  return { screen: renderResult } as const;
 }
 
 function testIndexView(url: string) {
-  const { screen, dispose } = baseRender(url);
+  const { screen } = baseRender(url);
   expect(screen.getByRole('heading', { name: 'Recharts' })).toBeInTheDocument();
   expect(screen.getByRole('heading', { name: 'Features' })).toBeInTheDocument();
-  dispose();
 }
 
 function testInstallationView(url: string) {
-  const { screen, dispose } = baseRender(url);
+  const { screen } = baseRender(url);
   expect(screen.getByRole('main')).toBeInTheDocument();
   // h2 in the nav
   expect(screen.getByRole('heading', { name: 'Guide', level: 2 })).toBeInTheDocument();
@@ -39,50 +37,43 @@ function testInstallationView(url: string) {
   expect(screen.getByRole('link', { name: 'Customize' })).toBeInTheDocument();
   expect(screen.getByRole('link', { name: 'API' })).toBeInTheDocument();
   expect(screen.getByRole('link', { name: 'Examples' })).toBeInTheDocument();
-  dispose();
 }
 
 function testGettingStartedView(url: string) {
-  const { screen, dispose } = baseRender(url);
+  const { screen } = baseRender(url);
   expect(screen.getByRole('heading', { name: 'Getting Started' })).toBeInTheDocument();
-  dispose();
 }
 
 function testAPIView(url: string, heading: string) {
-  const { screen, dispose } = baseRender(url);
+  const { screen } = baseRender(url);
   expect(screen.getByRole('heading', { name: heading })).toBeInTheDocument();
-  dispose();
 }
 
 function testExamplesIndexView(url: string) {
-  const { screen, dispose } = baseRender(url);
+  const { screen } = baseRender(url);
   // h1 for the page title
   expect(screen.getByRole('heading', { name: 'Examples', level: 1 })).toBeInTheDocument();
   // h2 in navigation sidebar
   expect(screen.getByRole('heading', { name: 'Examples', level: 2 })).toBeInTheDocument();
-  dispose();
 }
 
 function testExamplesView(url: string, heading: string) {
-  const { screen, dispose } = baseRender(url);
+  const { screen } = baseRender(url);
   expect(screen.getByRole('heading', { name: heading })).toBeInTheDocument();
   // h2 in navigation sidebar
   expect(screen.getByRole('heading', { name: 'Examples', level: 2 })).toBeInTheDocument();
-  dispose();
 }
 
 function testStorybookView(url: string) {
-  const { screen, dispose } = baseRender(url);
+  const { screen } = baseRender(url);
   expect(screen.container.querySelector('iframe.fullscreen')).toBeInTheDocument();
-  dispose();
 }
 
 function testNotFoundView(url: string) {
-  const { screen, dispose } = baseRender(url);
+  const { screen } = baseRender(url);
   expect(screen.getByRole('heading', { name: '404' })).toBeInTheDocument();
   expect(screen.getByRole('heading', { name: 'Page Not Found' })).toBeInTheDocument();
   expect(screen.getByRole('link', { name: 'Go to Homepage' })).toBeInTheDocument();
-  dispose();
 }
 
 describe('routes', () => {
