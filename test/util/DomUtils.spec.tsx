@@ -7,7 +7,11 @@ import {
   configureTextMeasurement,
   getTextMeasurementConfig,
 } from '../../src/util/DOMUtils';
-import { mockGetBoundingClientRect } from '../helper/mockGetBoundingClientRect';
+import {
+  getMockDomRect,
+  mockGetBoundingClientRect,
+  mockSequenceOfGetBoundingClientRect,
+} from '../helper/mockGetBoundingClientRect';
 
 describe('DOMUtils', () => {
   beforeEach(() => {
@@ -83,6 +87,64 @@ describe('DOMUtils', () => {
     getStringSize('test', { fontSize: '16px' });
 
     expect(getStringCacheStats().size).toBe(2);
+  });
+
+  test('cache should handle styles that differ only outside the font shorthand properties', () => {
+    render(<span id="recharts_measurement_span">test</span>);
+    mockGetBoundingClientRect({
+      width: 25,
+      height: 17,
+    });
+
+    getStringSize('test', { wordSpacing: '1px' });
+    getStringSize('test', { wordSpacing: '9px' });
+
+    expect(getStringCacheStats().size).toBe(2);
+  });
+
+  test('cache should not return a size measured with a different style', () => {
+    render(<span id="recharts_measurement_span">test</span>);
+    mockSequenceOfGetBoundingClientRect([
+      { width: 25, height: 17 },
+      { width: 40, height: 17 },
+    ]);
+
+    expect(getStringSize('test', { fontVariant: 'normal' })).toEqual({ width: 25, height: 17 });
+    expect(getStringSize('test', { fontVariant: 'small-caps' })).toEqual({ width: 40, height: 17 });
+  });
+
+  test('cache should treat empty style values as absent', () => {
+    render(<span id="recharts_measurement_span">test</span>);
+    mockGetBoundingClientRect({
+      width: 25,
+      height: 17,
+    });
+
+    getStringSize('test', { fontSize: '14px' });
+    getStringSize('test', { fontSize: '14px', fontStretch: undefined, wordSpacing: '' });
+
+    expect(getStringCacheStats().size).toBe(1);
+  });
+
+  test('measurement span should not keep styles from an earlier measurement', () => {
+    render(<span id="recharts_measurement_span">test</span>);
+
+    // Record what the span looks like while it is being measured, not afterwards: clearing the
+    // styles after the read would leave the measurement itself wrong.
+    const observed: Array<{ fontStretch: string; wordSpacing: string }> = [];
+    vi.spyOn(Element.prototype, 'getBoundingClientRect').mockImplementation(function mock(this: Element) {
+      const { style } = this as HTMLElement;
+      observed.push({ fontStretch: style.fontStretch, wordSpacing: style.wordSpacing });
+      return getMockDomRect({ width: 25, height: 17 });
+    });
+
+    getStringSize('test', { fontStretch: 'expanded', wordSpacing: '9px' });
+    getStringSize('test', {});
+
+    expect(observed).toEqual([
+      { fontStretch: 'expanded', wordSpacing: '9px' },
+      { fontStretch: '', wordSpacing: '' },
+    ]);
   });
 
   test('configureTextMeasurement should update configuration', () => {
