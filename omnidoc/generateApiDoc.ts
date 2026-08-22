@@ -454,6 +454,7 @@ async function generateApiDoc(
   const apiDoc: ApiDoc = {
     name: componentName,
     props,
+    svgParent: projectReader.getSVGParentOf(componentName) ?? undefined,
   };
 
   if (!componentNames.includes(componentName)) {
@@ -536,7 +537,13 @@ function stringifyLocalizedRichText(value: Partial<Record<string, string>>): str
 }
 
 function stringifyApiDoc(apiDoc: ApiDoc): string {
-  let result = `{"name": "${apiDoc.name}","props": [`;
+  let result = `{"name": "${apiDoc.name}",`;
+
+  if (apiDoc.svgParent) {
+    result += `"svgParent": ${JSON.stringify(apiDoc.svgParent)},`;
+  }
+
+  result += `"props": [`;
 
   apiDoc.props.forEach(prop => {
     result += `{`;

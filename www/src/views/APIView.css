@@ -62,6 +62,10 @@
     }
   }
 
+  .svg-props-note {
+    line-height: 1.5;
+  }
+
   .props-list {
     .props-item {
       border-bottom: 1px solid #f5f5f5;
