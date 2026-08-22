@@ -27,7 +27,7 @@ const ScatterAndLineOfBestFit = () => {
         left: 0,
       }}
     >
-      <CartesianGrid stroke="#f5f5f5" />
+      <CartesianGrid />
       <Tooltip />
       <Legend />
 

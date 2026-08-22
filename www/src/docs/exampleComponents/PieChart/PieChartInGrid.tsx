@@ -34,7 +34,7 @@ export default function PieChartInGrid() {
           gap: '10px',
           width: '100%',
           minHeight: '400px',
-          border: '1px solid #ccc',
+          border: '1px solid var(--color-border-1)',
           padding: '10px',
         }}
       >
@@ -43,16 +43,14 @@ export default function PieChartInGrid() {
           style={{
             gridColumn: '1 / 3',
             gridRow: '1 / 3',
-            border: '1px solid #ddd',
+            border: '1px solid var(--color-border-1)',
             maxWidth: '100%',
             maxHeight: '100%',
             aspectRatio: 1,
           }}
         >
           <MyPie />
-          <Label position="center" fill="#666">
-            2x2 cell
-          </Label>
+          <Label position="center">2x2 cell</Label>
           <RechartsDevtools />
         </PieChart>
 
@@ -61,16 +59,14 @@ export default function PieChartInGrid() {
           style={{
             gridColumn: '3 / 4',
             gridRow: '1 / 2',
-            border: '1px solid #ddd',
+            border: '1px solid var(--color-border-1)',
             maxWidth: '100%',
             maxHeight: '100%',
             aspectRatio: 1,
           }}
         >
           <MyPie />
-          <Label position="center" fill="#666">
-            1x1 cell
-          </Label>
+          <Label position="center">1x1 cell</Label>
           <RechartsDevtools />
         </PieChart>
 
@@ -79,16 +75,14 @@ export default function PieChartInGrid() {
           style={{
             gridColumn: '3 / 4',
             gridRow: '2 / 3',
-            border: '1px solid #ddd',
+            border: '1px solid var(--color-border-1)',
             maxWidth: '100%',
             maxHeight: '100%',
             aspectRatio: 1,
           }}
         >
           <MyPie />
-          <Label position="center" fill="#666">
-            1x1 cell
-          </Label>
+          <Label position="center">1x1 cell</Label>
           <RechartsDevtools />
         </PieChart>
 
@@ -97,7 +91,7 @@ export default function PieChartInGrid() {
           style={{
             gridColumn: '1 / 4',
             gridRow: '3 / 4',
-            border: '1px solid #ddd',
+            border: '1px solid var(--color-border-1)',
             height: '100%',
             // maxHeight: '200px',
             aspectRatio: 1,
@@ -105,9 +99,7 @@ export default function PieChartInGrid() {
           }}
         >
           <MyPie />
-          <Label position="center" fill="#666">
-            3x1 cell
-          </Label>
+          <Label position="center">3x1 cell</Label>
           <RechartsDevtools />
         </PieChart>
       </div>

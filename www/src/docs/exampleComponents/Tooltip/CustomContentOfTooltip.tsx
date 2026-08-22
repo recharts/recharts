@@ -89,7 +89,6 @@ const CustomTooltip = ({ active, payload, label }: TooltipContentProps) => {
       className="custom-tooltip"
       style={{
         ...theme?.typography,
-        backgroundColor: 'white',
         ...theme?.tooltip?.contentStyle,
         visibility: isVisible ? 'visible' : 'hidden',
       }}
@@ -124,7 +123,7 @@ const CustomContentOfTooltip = ({
         bottom: 0,
       }}
     >
-      <CartesianGrid strokeDasharray="3 3" />
+      <CartesianGrid />
       <XAxis dataKey="name" niceTicks="snap125" />
       <YAxis width="auto" niceTicks="snap125" />
       <Tooltip content={CustomTooltip} isAnimationActive={isAnimationActive} defaultIndex={defaultIndex} />

@@ -18,13 +18,10 @@ export default function Example() {
         bottom: 5,
       }}
     >
-      <CartesianGrid strokeDasharray="3 3" />
+      <CartesianGrid />
       <Typed.XAxis dataKey="label" />
       <Typed.YAxis width="auto" />
-      <Tooltip
-        cursor={{ stroke: 'var(--color-border-2)' }}
-        contentStyle={{ backgroundColor: 'var(--color-surface-base)', borderColor: 'var(--color-border-2)' }}
-      />
+      <Tooltip />
       <Legend />
       <Typed.Line type="monotone" dataKey="x" strokeDasharray="5 5" />
       <Typed.Line type="monotone" dataKey="y" strokeDasharray="3 4 5 2" />

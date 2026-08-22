@@ -1,4 +1,4 @@
-import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, lightTheme } from 'recharts';
+import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip } from 'recharts';
 import { RechartsDevtools } from '@recharts/devtools';
 
 // #region Sample data
@@ -98,7 +98,7 @@ const AreaChartConnectNulls = () => {
           bottom: 0,
         }}
       >
-        <CartesianGrid strokeDasharray="3 3" />
+        <CartesianGrid />
         <XAxis dataKey="name" />
         <YAxis width="auto" />
         <Tooltip />
@@ -117,7 +117,7 @@ const AreaChartConnectNulls = () => {
           bottom: 0,
         }}
       >
-        <CartesianGrid strokeDasharray="3 3" />
+        <CartesianGrid />
         <XAxis dataKey="name" />
         <YAxis width="auto" />
         <Tooltip />
@@ -136,13 +136,13 @@ const AreaChartConnectNulls = () => {
           bottom: 0,
         }}
       >
-        <CartesianGrid strokeDasharray="3 3" />
+        <CartesianGrid />
         <XAxis dataKey="name" />
         <YAxis />
         <Tooltip />
         <Area type="monotone" dataKey="uv" stackId="1" />
         <Area type="monotone" dataKey="pv" stackId="1" />
-        <Area type="monotone" dataKey="amt" stackId="1" {...lightTheme.graphicalItems[1]} />
+        <Area type="monotone" dataKey="amt" stackId="1" />
         <RechartsDevtools />
       </AreaChart>
 
@@ -157,13 +157,13 @@ const AreaChartConnectNulls = () => {
           bottom: 0,
         }}
       >
-        <CartesianGrid strokeDasharray="3 3" />
+        <CartesianGrid />
         <XAxis dataKey="name" />
         <YAxis />
         <Tooltip />
         <Area connectNulls type="monotone" dataKey="uv" stackId="1" />
         <Area connectNulls type="monotone" dataKey="pv" stackId="1" />
-        <Area connectNulls type="monotone" dataKey="amt" stackId="1" {...lightTheme.graphicalItems[1]} />
+        <Area connectNulls type="monotone" dataKey="amt" stackId="1" />
         <RechartsDevtools />
       </AreaChart>
 
@@ -178,13 +178,13 @@ const AreaChartConnectNulls = () => {
           bottom: 0,
         }}
       >
-        <CartesianGrid strokeDasharray="3 3" />
+        <CartesianGrid />
         <XAxis dataKey="name" />
         <YAxis />
         <Tooltip />
         <Area type="monotone" dataKey="uv" stackId="1" />
         <Area type="monotone" dataKey="pv" stackId="1" />
-        <Area type="monotone" dataKey="amt" stackId="1" {...lightTheme.graphicalItems[1]} />
+        <Area type="monotone" dataKey="amt" stackId="1" />
         <RechartsDevtools />
       </AreaChart>
 
@@ -199,13 +199,13 @@ const AreaChartConnectNulls = () => {
           bottom: 0,
         }}
       >
-        <CartesianGrid strokeDasharray="3 3" />
+        <CartesianGrid />
         <XAxis dataKey="name" />
         <YAxis />
         <Tooltip />
         <Area connectNulls type="monotone" dataKey="uv" stackId="1" />
         <Area connectNulls type="monotone" dataKey="pv" stackId="1" />
-        <Area connectNulls type="monotone" dataKey="amt" stackId="1" {...lightTheme.graphicalItems[1]} />
+        <Area connectNulls type="monotone" dataKey="amt" stackId="1" />
         <RechartsDevtools />
       </AreaChart>
     </div>

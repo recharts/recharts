@@ -40,20 +40,11 @@ const MultipleYAxesScatterChart = () => {
     >
       <CartesianGrid />
       <XAxis type="number" dataKey="x" name="stature" unit="cm" />
-      <YAxis yAxisId="left" type="number" dataKey="y" name="weight" unit="kg" stroke="#8884d8" width="auto" />
-      <YAxis
-        yAxisId="right"
-        type="number"
-        dataKey="y"
-        name="weight"
-        unit="kg"
-        orientation="right"
-        stroke="#82ca9d"
-        width="auto"
-      />
-      <Tooltip cursor={{ strokeDasharray: '3 3' }} />
-      <Scatter yAxisId="left" name="A school" data={data01} fill="#8884d8" />
-      <Scatter yAxisId="right" name="A school" data={data02} fill="#82ca9d" />
+      <YAxis yAxisId="left" type="number" dataKey="y" name="weight" unit="kg" width="auto" />
+      <YAxis yAxisId="right" type="number" dataKey="y" name="weight" unit="kg" orientation="right" width="auto" />
+      <Tooltip />
+      <Scatter yAxisId="left" name="A school" data={data01} dataKey="x" />
+      <Scatter yAxisId="right" name="A school" data={data02} dataKey="y" />
       <RechartsDevtools />
     </ScatterChart>
   );

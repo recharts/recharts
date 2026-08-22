@@ -146,7 +146,7 @@ export default function RangeAreaChartCustomAnimation(props: Partial<ControlsTyp
           <stop offset="95%" stopColor="#84d888" stopOpacity={0.1} />
         </linearGradient>
       </defs>
-      <CartesianGrid strokeDasharray="3 3" />
+      <CartesianGrid />
       <XAxis dataKey="name" />
       <YAxis width="auto" domain={[0, 5200]} />
       <Tooltip />

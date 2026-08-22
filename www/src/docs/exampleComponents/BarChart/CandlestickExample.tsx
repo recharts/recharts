@@ -12,6 +12,7 @@ import {
   TooltipIndex,
   XAxis,
   YAxis,
+  useRechartsTheme,
 } from 'recharts';
 import { MarketCandle } from '@recharts/devtools/dist/generateMockMarketData';
 
@@ -41,6 +42,7 @@ const Candlestick = (props: BarShapeProps) => {
 };
 
 const TooltipContent = (props: TooltipContentProps) => {
+  const theme = useRechartsTheme();
   const { active, payload } = props;
   if (active && payload && payload.length) {
     const firstPayload = payload[0];
@@ -51,8 +53,8 @@ const TooltipContent = (props: TooltipContentProps) => {
     return (
       <div
         style={{
-          backgroundColor: 'white',
-          border: '1px solid #ccc',
+          ...theme?.typography,
+          ...theme?.tooltip?.contentStyle,
           padding: '0 1em',
         }}
       >

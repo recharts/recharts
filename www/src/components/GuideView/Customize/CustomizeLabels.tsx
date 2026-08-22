@@ -66,7 +66,7 @@ export default function CustomizeLabels() {
         label={{ position: 'insideBottomRight', value: 'XAxis title', offset: -10 }}
       />
       <YAxis label={{ position: 'insideTopLeft', value: 'YAxis title', angle: -90, dy: 60 }} />
-      <Bar dataKey="uv" fill="#8884d8" label={renderCustomBarLabel} />
+      <Bar dataKey="uv" label={renderCustomBarLabel} />
       <RechartsDevtools />
     </BarChart>
   );

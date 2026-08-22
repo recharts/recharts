@@ -19,11 +19,11 @@ const data = [
 export default function DataCoordinatesExample() {
   return (
     <LineChart width={500} height={300} data={data} margin={{ top: 20, right: 30, left: 20, bottom: 5 }}>
-      <CartesianGrid strokeDasharray="3 3" />
+      <CartesianGrid />
       <XAxis dataKey="name" />
       <YAxis domain={[0, 7000]} />
       <Tooltip />
-      <Line type="monotone" dataKey="sales" stroke="#8884d8" strokeWidth={2} />
+      <Line type="monotone" dataKey="sales" strokeWidth={2} />
 
       {/* Data-based horizontal line at y=3500 (the target) */}
       <ReferenceLine y={3500} stroke="red" strokeDasharray="5 5">

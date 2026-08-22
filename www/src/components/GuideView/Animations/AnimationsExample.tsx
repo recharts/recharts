@@ -56,7 +56,7 @@ export default function AnimationsExample(props: Partial<AnimationsControlsState
       data={data}
       margin={{ top: 20, right: 30, left: 20, bottom: 5 }}
     >
-      <CartesianGrid strokeDasharray="3 3" />
+      <CartesianGrid />
       <XAxis dataKey="month" />
       <YAxis />
       <Tooltip />

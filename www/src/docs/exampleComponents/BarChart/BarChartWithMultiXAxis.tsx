@@ -122,7 +122,7 @@ const BarChartWithMultiXAxis = () => {
         bottom: 5,
       }}
     >
-      <CartesianGrid strokeDasharray="3 3" />
+      <CartesianGrid />
       <XAxis dataKey="date" tickFormatter={monthTickFormatter} />
       <XAxis
         dataKey="date"

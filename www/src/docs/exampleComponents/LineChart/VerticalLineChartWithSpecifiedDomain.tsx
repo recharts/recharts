@@ -62,36 +62,13 @@ export default function Example(props: { isAnimationActive?: boolean }) {
         bottom: 5,
       }}
     >
-      <CartesianGrid strokeDasharray="3 3" />
+      <CartesianGrid />
       <XAxis type="number" domain={[0, 'dataMax + 1000']} />
       <YAxis dataKey="name" type="category" width="auto" />
-      <Tooltip
-        cursor={{ stroke: 'var(--color-border-2)' }}
-        contentStyle={{ backgroundColor: 'var(--color-surface-base)', borderColor: 'var(--color-border-2)' }}
-      />
+      <Tooltip />
       <Legend />
-      <Line
-        dataKey="pv"
-        stroke="var(--color-chart-1)"
-        dot={{
-          fill: 'var(--color-surface-base)',
-        }}
-        activeDot={{
-          stroke: 'var(--color-surface-base)',
-        }}
-        isAnimationActive={props.isAnimationActive}
-      />
-      <Line
-        dataKey="uv"
-        stroke="var(--color-chart-2)"
-        dot={{
-          fill: 'var(--color-surface-base)',
-        }}
-        activeDot={{
-          stroke: 'var(--color-surface-base)',
-        }}
-        isAnimationActive={props.isAnimationActive}
-      />
+      <Line dataKey="pv" isAnimationActive={props.isAnimationActive} />
+      <Line dataKey="uv" isAnimationActive={props.isAnimationActive} />
       <RechartsDevtools />
     </LineChart>
   );

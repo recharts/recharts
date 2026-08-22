@@ -7,6 +7,7 @@ import {
   TooltipContentProps,
   TooltipValueType,
   createHorizontalChart,
+  useRechartsTheme,
 } from 'recharts';
 import { generateMockData, MockDataType, RechartsDevtools } from '@recharts/devtools';
 
@@ -45,7 +46,8 @@ const getPercent = (value: TooltipValueType | undefined, total: number): string 
 };
 
 // #endregion
-const renderTooltipContent = (o: TooltipContentProps<number, keyof MockDataType>) => {
+const RenderTooltipContent = (o: TooltipContentProps<number, keyof MockDataType>) => {
+  const theme = useRechartsTheme();
   const { payload, label } = o;
   const total = payload.reduce((result, entry) => result + Number(entry.value), 0);
 
@@ -53,8 +55,8 @@ const renderTooltipContent = (o: TooltipContentProps<number, keyof MockDataType>
     <div
       className="customized-tooltip-content"
       style={{
-        backgroundColor: 'white',
-        border: '1px solid #ccc',
+        ...theme?.typography,
+        ...theme?.tooltip?.contentStyle,
         padding: '10px',
         borderRadius: '10px',
         boxShadow: '0 0 10px rgba(0,0,0,0.2)',
@@ -86,10 +88,10 @@ const PercentAreaChart = () => {
         bottom: 0,
       }}
     >
-      <CartesianGrid strokeDasharray="3 3" />
+      <CartesianGrid />
       <Typed.XAxis dataKey="label" />
       <Typed.YAxis tickFormatter={toPercent} width="auto" />
-      <Typed.Tooltip content={renderTooltipContent} />
+      <Typed.Tooltip content={RenderTooltipContent} />
       <Typed.Area type="monotone" dataKey="x" stackId="1" />
       <Typed.Area type="monotone" dataKey="y" stackId="1" />
       <Typed.Area type="monotone" dataKey="z" stackId="1" />

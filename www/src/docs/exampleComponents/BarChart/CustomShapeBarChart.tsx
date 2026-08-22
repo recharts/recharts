@@ -104,11 +104,11 @@ export default function CustomShapeBarChart() {
         bottom: 5,
       }}
     >
-      <CartesianGrid strokeDasharray="3 3" />
+      <CartesianGrid />
       <Tooltip cursor={{ fillOpacity: 0.5 }} />
       <XAxis dataKey="name" />
       <YAxis width="auto" />
-      <Bar dataKey="uv" fill="#8884d8" shape={TriangleBar} activeBar>
+      <Bar dataKey="uv" shape={TriangleBar} activeBar>
         <LabelList content={CustomColorLabel} position="top" />
       </Bar>
       <RechartsDevtools />

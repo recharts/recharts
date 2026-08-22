@@ -89,8 +89,6 @@ const NestedTreemap = () => {
       dataKey="size"
       nameKey="name"
       aspectRatio={4 / 3}
-      stroke="#fff"
-      fill="#8884d8"
       type="nest"
     >
       <Tooltip />

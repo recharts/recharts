@@ -19,7 +19,7 @@ const SimpleAreaChart = () => {
       }}
       onContextMenu={(_, e) => e.preventDefault()}
     >
-      <CartesianGrid strokeDasharray="3 3" />
+      <CartesianGrid />
       <Typed.XAxis dataKey="label" niceTicks="snap125" />
       <Typed.YAxis width="auto" niceTicks="snap125" />
       <Tooltip />

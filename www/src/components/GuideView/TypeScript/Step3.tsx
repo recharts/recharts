@@ -46,12 +46,12 @@ export default function Example() {
         bottom: 0,
       }}
     >
-      <CartesianGrid strokeDasharray="3 3" />
+      <CartesianGrid />
       <Typed.XAxis dataKey="name" />
       <Typed.YAxis />
       <Tooltip />
       {/* dataKey is automatically restricted to numbers on MyData without redeclaring! */}
-      <Typed.Area type="monotone" dataKey="uv" stroke="#ffc658" fill="#ffc658" />
+      <Typed.Area type="monotone" dataKey="uv" />
     </Typed.AreaChart>
   );
 }

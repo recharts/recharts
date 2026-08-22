@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { test, expect } from '@playwright/experimental-ct-react';
+import { expect } from '@playwright/experimental-ct-react';
 
 import LineBarAreaComposedChart from '../../../www/src/docs/exampleComponents/ComposedChart/LineBarAreaComposedChart';
 import SameDataComposedChart from '../../../www/src/docs/exampleComponents/ComposedChart/SameDataComposedChart';
@@ -9,43 +9,44 @@ import ScatterAndLineOfBestFit from '../../../www/src/docs/exampleComponents/Com
 import BandedChart from '../../../www/src/docs/exampleComponents/ComposedChart/BandedChart';
 import ComposedChartNavExample from '../../../www/src/docs/exampleComponents/ComposedChart/ComposedChartNavExample';
 import TargetPriceChart from '../../../www/src/docs/exampleComponents/ComposedChart/TargetPriceChart';
+import { testWithLightTheme } from './fixtures.tsx';
 
-test('TargetPriceChart', async ({ mount }) => {
+testWithLightTheme('TargetPriceChart', async ({ mount }) => {
   const component = await mount(<TargetPriceChart isAnimationActive={false} defaultIndex={50} />);
   await expect(component).toHaveScreenshot();
 });
 
-test('ComposedChartNavExample', async ({ mount }) => {
+testWithLightTheme('ComposedChartNavExample', async ({ mount }) => {
   const component = await mount(<ComposedChartNavExample />);
   await expect(component).toHaveScreenshot();
 });
 
-test('BandedChart', async ({ mount }) => {
+testWithLightTheme('BandedChart', async ({ mount }) => {
   const component = await mount(<BandedChart />);
   await expect(component).toHaveScreenshot();
 });
 
-test('ScatterAndLineOfBestFit', async ({ mount }) => {
+testWithLightTheme('ScatterAndLineOfBestFit', async ({ mount }) => {
   const component = await mount(<ScatterAndLineOfBestFit />);
   await expect(component).toHaveScreenshot();
 });
 
-test('ComposedChartWithAxisLabels', async ({ mount }) => {
+testWithLightTheme('ComposedChartWithAxisLabels', async ({ mount }) => {
   const component = await mount(<ComposedChartWithAxisLabels />);
   await expect(component).toHaveScreenshot();
 });
 
-test('VerticalComposedChart', async ({ mount }) => {
+testWithLightTheme('VerticalComposedChart', async ({ mount }) => {
   const component = await mount(<VerticalComposedChart />);
   await expect(component).toHaveScreenshot();
 });
 
-test('SameDataComposedChart', async ({ mount }) => {
+testWithLightTheme('SameDataComposedChart', async ({ mount }) => {
   const component = await mount(<SameDataComposedChart />);
   await expect(component).toHaveScreenshot();
 });
 
-test('LineBarAreaComposedChart', async ({ mount }) => {
+testWithLightTheme('LineBarAreaComposedChart', async ({ mount }) => {
   const component = await mount(<LineBarAreaComposedChart />);
   await expect(component).toHaveScreenshot();
 });
