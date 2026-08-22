@@ -1,32 +1,32 @@
 {
   "treemap": {
     "examplePath": "www/src/views/IndexView/IndexLineChart.tsx",
-    "totalSize": 903685,
-    "totalSizeLabel": "882.50 KB",
+    "totalSize": 903569,
+    "totalSizeLabel": "882.39 KB",
     "moduleCount": 367,
-    "generatedAt": "2026-08-21T18:48:49.620Z",
+    "generatedAt": "2026-08-22T06:46:22.423Z",
     "stages": [
       {
         "stage": "es6-folder",
-        "bytes": 1359588,
+        "bytes": 1360664,
         "humanReadableSize": "1.30 MB",
         "reductionFromBaselinePercent": 0
       },
       {
         "stage": "tree-shaken",
-        "bytes": 906566,
-        "humanReadableSize": "885.32 KB",
+        "bytes": 906450,
+        "humanReadableSize": "885.21 KB",
         "reductionFromBaselinePercent": 0
       },
       {
         "stage": "minified",
-        "bytes": 303256,
-        "humanReadableSize": "296.15 KB",
+        "bytes": 303184,
+        "humanReadableSize": "296.08 KB",
         "reductionFromBaselinePercent": 66.55
       },
       {
         "stage": "minified+gzip",
-        "bytes": 99241,
+        "bytes": 99249,
         "humanReadableSize": "96.92 KB",
         "reductionFromBaselinePercent": 89.05
       }
@@ -34,12 +34,12 @@
     "tree": {
       "name": "bundle",
       "fullPath": "bundle",
-      "value": 903685,
+      "value": 903569,
       "children": [
         {
           "name": "src",
           "fullPath": "src",
-          "value": 499657,
+          "value": 499541,
           "children": [
             {
               "name": "state",
@@ -427,7 +427,7 @@
             {
               "name": "util",
               "fullPath": "src/util",
-              "value": 108074,
+              "value": 107958,
               "children": [
                 {
                   "name": "scale",
@@ -511,7 +511,7 @@
                 {
                   "name": "useElementOffset.ts",
                   "fullPath": "src/util/useElementOffset.ts",
-                  "value": 3494
+                  "value": 3378
                 },
                 {
                   "name": "excludeEventProps.ts",
@@ -2555,32 +2555,32 @@
   },
   "sunburst": {
     "examplePath": "www/src/views/IndexView/IndexLineChart.tsx",
-    "totalSize": 903685,
-    "totalSizeLabel": "882.50 KB",
+    "totalSize": 903569,
+    "totalSizeLabel": "882.39 KB",
     "moduleCount": 367,
-    "generatedAt": "2026-08-21T18:48:51.802Z",
+    "generatedAt": "2026-08-22T06:46:20.107Z",
     "stages": [
       {
         "stage": "es6-folder",
-        "bytes": 1359588,
+        "bytes": 1360664,
         "humanReadableSize": "1.30 MB",
         "reductionFromBaselinePercent": 0
       },
       {
         "stage": "tree-shaken",
-        "bytes": 906566,
-        "humanReadableSize": "885.32 KB",
+        "bytes": 906450,
+        "humanReadableSize": "885.21 KB",
         "reductionFromBaselinePercent": 0
       },
       {
         "stage": "minified",
-        "bytes": 303256,
-        "humanReadableSize": "296.15 KB",
+        "bytes": 303184,
+        "humanReadableSize": "296.08 KB",
         "reductionFromBaselinePercent": 66.55
       },
       {
         "stage": "minified+gzip",
-        "bytes": 99241,
+        "bytes": 99249,
         "humanReadableSize": "96.92 KB",
         "reductionFromBaselinePercent": 89.05
       }
@@ -2588,12 +2588,12 @@
     "tree": {
       "name": "bundle",
       "fullPath": "bundle",
-      "value": 903685,
+      "value": 903569,
       "children": [
         {
           "name": "src",
           "fullPath": "src",
-          "value": 499657,
+          "value": 499541,
           "children": [
             {
               "name": "state",
@@ -2981,7 +2981,7 @@
             {
               "name": "util",
               "fullPath": "src/util",
-              "value": 108074,
+              "value": 107958,
               "children": [
                 {
                   "name": "scale",
@@ -3065,7 +3065,7 @@
                 {
                   "name": "useElementOffset.ts",
                   "fullPath": "src/util/useElementOffset.ts",
-                  "value": 3494
+                  "value": 3378
                 },
                 {
                   "name": "excludeEventProps.ts",
