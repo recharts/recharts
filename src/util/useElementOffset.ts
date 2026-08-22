@@ -50,19 +50,14 @@ export type ElementOffset = {
 export type SetElementOffset = (node: HTMLElement | null) => void;
 
 /**
- * Checks whether two ElementOffset values differ by more than `EPS` (1px) in any dimension.
+ * Checks whether two ElementOffset sizes differ by more than `EPS` (1px).
  *
  * @param a - the first ElementOffset to compare
  * @param b - the second ElementOffset to compare
- * @returns true if any dimension differs by more than 1px
+ * @returns true if width or height differs by more than 1px
  */
-function hasSignificantChange(a: ElementOffset, b: ElementOffset): boolean {
-  return (
-    Math.abs(a.height - b.height) > EPS ||
-    Math.abs(a.left - b.left) > EPS ||
-    Math.abs(a.top - b.top) > EPS ||
-    Math.abs(a.width - b.width) > EPS
-  );
+function hasSignificantSizeChange(a: ElementOffset, b: ElementOffset): boolean {
+  return Math.abs(a.height - b.height) > EPS || Math.abs(a.width - b.width) > EPS;
 }
 
 /**
@@ -82,9 +77,10 @@ function readElementOffset(node: HTMLElement): ElementOffset {
 }
 
 /**
- * Use this to listen to element layout changes.
+ * Use this to listen to element size changes.
  *
- * Very useful for reading actual sizes of DOM elements relative to the viewport.
+ * Very useful for reading actual sizes of DOM elements. The returned position is a snapshot from the last size change;
+ * position changes alone do not update the returned value.
  *
  * Uses ResizeObserver to automatically detect size changes of the observed element.
  *
@@ -94,47 +90,48 @@ function readElementOffset(node: HTMLElement): ElementOffset {
 export function useElementOffset(extraDependencies: ReadonlyArray<unknown> = []): [ElementOffset, SetElementOffset] {
   const [lastBoundingBox, setLastBoundingBox] = useState<ElementOffset>({ height: 0, left: 0, top: 0, width: 0 });
   const observerRef = useRef<ResizeObserver | null>(null);
+  const elementRef = useRef<HTMLElement | null>(null);
   const lastBoundingBoxRef = useRef(lastBoundingBox);
-  lastBoundingBoxRef.current = lastBoundingBox;
+
+  const measureElement = useCallback(() => {
+    const node = elementRef.current;
+    if (node == null) {
+      return;
+    }
+
+    const box = readElementOffset(node);
+    if (hasSignificantSizeChange(box, lastBoundingBoxRef.current)) {
+      lastBoundingBoxRef.current = box;
+      setLastBoundingBox(box);
+    }
+  }, []);
 
   const updateBoundingBox = useCallback(
     (node: HTMLElement | null) => {
+      elementRef.current = node;
+
       // Disconnect any previously active ResizeObserver
-      if (observerRef.current != null) {
-        observerRef.current.disconnect();
-        observerRef.current = null;
+      observerRef.current?.disconnect();
+      observerRef.current = null;
+
+      if (node == null) {
+        return;
       }
 
-      if (node != null) {
-        // Measure immediately on ref attach
-        const box = readElementOffset(node);
-        if (hasSignificantChange(box, lastBoundingBoxRef.current)) {
-          setLastBoundingBox(box);
-        }
+      // Measure immediately on ref attach
+      measureElement();
 
-        // Set up ResizeObserver for future size changes
-        if (typeof ResizeObserver !== 'undefined') {
-          const observer = new ResizeObserver(() => {
-            const newBox = readElementOffset(node);
-            if (hasSignificantChange(newBox, lastBoundingBoxRef.current)) {
-              setLastBoundingBox(newBox);
-            }
-          });
-          observer.observe(node);
-          observerRef.current = observer;
-        }
+      // Set up ResizeObserver for future size changes
+      if (typeof ResizeObserver !== 'undefined') {
+        const observer = new ResizeObserver(measureElement);
+        observer.observe(node);
+        observerRef.current = observer;
       }
     },
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    [...extraDependencies],
+    [measureElement],
   );
 
-  // Cleanup on unmount
-  useEffect(() => {
-    return () => {
-      observerRef.current?.disconnect();
-    };
-  }, []);
+  useEffect(measureElement, [measureElement, ...extraDependencies]);
 
   return [lastBoundingBox, updateBoundingBox];
 }
