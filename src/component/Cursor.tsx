@@ -21,6 +21,9 @@ import { useTooltipAxisBandSize } from '../context/useTooltipAxis';
 import { useChartName } from '../state/selectors/selectors';
 import { TooltipIndex, TooltipPayload } from '../state/tooltipSlice';
 import { svgPropertiesNoEventsFromUnknown } from '../util/svgPropertiesNoEvents';
+import { Styles2D } from '../theme/RechartsTheme';
+import { useBackwardsCompatibleTheme } from '../theme/useBackwardsCompatibleTheme';
+import { useRechartsTheme } from '../theme/RechartsThemeContext';
 import { ZIndexable, ZIndexLayer } from '../zIndex/ZIndexLayer';
 import { DefaultZIndexes } from '../zIndex/DefaultZIndexes';
 
@@ -46,6 +49,11 @@ export type CursorConnectedProps = CursorProps & {
   chartName: string;
 };
 
+const defaultLegacyCursorThemeProps: Styles2D = {
+  stroke: '#ccc',
+  fill: '#ccc',
+};
+
 function RenderCursor({
   cursor,
   cursorComp,
@@ -64,6 +72,19 @@ function RenderCursor({
 export function CursorInternal(props: CursorConnectedProps) {
   const { coordinate, payload, index, offset, tooltipAxisBandSize, layout, cursor, tooltipEventType, chartName } =
     props;
+  const cursorPropsFromDefinition = svgPropertiesNoEventsFromUnknown(cursor) ?? {};
+  const activeTheme = useRechartsTheme();
+  const cursorThemeProps = useBackwardsCompatibleTheme(
+    theme => (isValidElement(cursor) ? undefined : theme.cursor),
+    cursorPropsFromDefinition,
+    defaultLegacyCursorThemeProps,
+  );
+  /*
+   * Bar cursor geometry includes its own legacy fill and stroke. Keep compatibility defaults before geometry,
+   * while provider styles must override those shape-specific defaults.
+   */
+  const cursorPropsBeforeGeometry = activeTheme == null ? cursorThemeProps : {};
+  const cursorPropsAfterGeometry = activeTheme?.cursor != null && !isValidElement(cursor) ? cursorThemeProps : {};
 
   // The cursor is a part of the Tooltip, and it should be shown (by default) when the Tooltip is active.
   const activeCoordinate = coordinate;
@@ -104,11 +125,12 @@ export function CursorInternal(props: CursorConnectedProps) {
     typeof cursor === 'object' && 'className' in cursor ? cursor.className : undefined;
 
   const cursorProps = {
-    stroke: '#ccc',
+    ...cursorPropsBeforeGeometry,
     pointerEvents: 'none',
     ...offset,
     ...restProps,
-    ...svgPropertiesNoEventsFromUnknown(cursor),
+    ...cursorPropsFromDefinition,
+    ...cursorPropsAfterGeometry,
     payload: activePayload,
     payloadIndex: activeTooltipIndex,
     className: clsx('recharts-tooltip-cursor', extraClassName),
