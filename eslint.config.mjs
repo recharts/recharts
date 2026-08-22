@@ -42,8 +42,8 @@ const customIgnores = [
     ignores: ['./www/docs'],
   },
   {
-    name: 'bundle-viz',
-    ignores: ['./bundle-viz'],
+    name: 'claude',
+    ignores: ['.claude', '**/CLAUDE.local.md', '**/*.claude-checkpoint'],
   },
 ];
 
