@@ -29,7 +29,7 @@
       rel="stylesheet"
       type="text/css"
     />
-    <script type="module" crossorigin src="/recharts/canary/www/assets/index-BfQBuU0P.js"></script>
+    <script type="module" crossorigin src="/recharts/canary/www/assets/index-okV2yJIW.js"></script>
     <link rel="stylesheet" crossorigin href="/recharts/canary/www/assets/index-DAzBVns1.css">
     <link rel="sitemap" type="application/xml" title="Sitemap" href="/sitemap.xml">
   </head>
@@ -239,11 +239,11 @@ export default function Step3() {
         left: 0,
       }}
     &gt;
-      &lt;CartesianGrid stroke=&quot;#aaa&quot; strokeDasharray=&quot;5 5&quot; /&gt;
-      &lt;Line type=&quot;monotone&quot; dataKey=&quot;uv&quot; stroke=&quot;purple&quot; strokeWidth={2} name=&quot;My data series name&quot; /&gt;
+      &lt;CartesianGrid strokeDasharray=&quot;5 5&quot; /&gt;
+      &lt;Line type=&quot;monotone&quot; dataKey=&quot;uv&quot; strokeWidth={2} name=&quot;My data series name&quot; /&gt;
       &lt;XAxis dataKey=&quot;name&quot; /&gt;
       &lt;YAxis width=&quot;auto&quot; label={{ value: &#x27;UV&#x27;, position: &#x27;insideLeft&#x27;, angle: -90 }} /&gt;
-      &lt;Legend align=&quot;right&quot; /&gt;
+      &lt;Legend position=&quot;insideBottomRight&quot; /&gt;
       &lt;RechartsDevtools /&gt;
     &lt;/LineChart&gt;
   );
@@ -318,11 +318,11 @@ export default function Step4() {
         left: 0,
       }}
     &gt;
-      &lt;CartesianGrid stroke=&quot;#aaa&quot; strokeDasharray=&quot;5 5&quot; /&gt;
-      &lt;Line type=&quot;monotone&quot; dataKey=&quot;uv&quot; stroke=&quot;purple&quot; strokeWidth={2} name=&quot;My data series name&quot; /&gt;
+      &lt;CartesianGrid strokeDasharray=&quot;5 5&quot; /&gt;
+      &lt;Line type=&quot;monotone&quot; dataKey=&quot;uv&quot; strokeWidth={2} name=&quot;My data series name&quot; /&gt;
       &lt;XAxis dataKey=&quot;name&quot; /&gt;
       &lt;YAxis width=&quot;auto&quot; label={{ value: &#x27;UV&#x27;, position: &#x27;insideLeft&#x27;, angle: -90 }} /&gt;
-      &lt;Legend align=&quot;right&quot; /&gt;
+      &lt;Legend position=&quot;insideBottomRight&quot; /&gt;
       &lt;Tooltip /&gt;
       &lt;RechartsDevtools /&gt;
     &lt;/LineChart&gt;
@@ -388,7 +388,7 @@ const data = [
 
 // #region Custom Axis Tick function
 const renderCustomAxisTick = ({ x, y, payload }: any) =&gt; {
-  let path = &#x27;&#x27;;
+  let path: string;
 
   switch (payload.value) {
     case &#x27;Page A&#x27;:
@@ -440,11 +440,11 @@ export default function Step5() {
         left: 0,
       }}
     &gt;
-      &lt;CartesianGrid stroke=&quot;#aaa&quot; strokeDasharray=&quot;5 5&quot; /&gt;
-      &lt;Line type=&quot;monotone&quot; dataKey=&quot;uv&quot; stroke=&quot;purple&quot; strokeWidth={2} name=&quot;My data series name&quot; /&gt;
+      &lt;CartesianGrid strokeDasharray=&quot;5 5&quot; /&gt;
+      &lt;Line type=&quot;monotone&quot; dataKey=&quot;uv&quot; strokeWidth={2} name=&quot;My data series name&quot; /&gt;
       &lt;XAxis dataKey=&quot;name&quot; tick={renderCustomAxisTick} height={50} /&gt;
       &lt;YAxis width=&quot;auto&quot; label={{ value: &#x27;UV&#x27;, position: &#x27;insideLeft&#x27;, angle: -90 }} /&gt;
-      &lt;Legend align=&quot;right&quot; /&gt;
+      &lt;Legend position=&quot;insideBottomRight&quot; /&gt;
       &lt;Tooltip /&gt;
       &lt;RechartsDevtools /&gt;
     &lt;/LineChart&gt;
@@ -510,7 +510,7 @@ const data = [
 
 // #region Custom Axis Tick function
 const renderCustomAxisTick = ({ x, y, payload }: any) =&gt; {
-  let path = &#x27;&#x27;;
+  let path: string;
 
   switch (payload.value) {
     case &#x27;Page A&#x27;:
@@ -562,15 +562,15 @@ export default function Step5() {
         left: 0,
       }}
     &gt;
-      &lt;CartesianGrid stroke=&quot;#aaa&quot; strokeDasharray=&quot;5 5&quot; /&gt;
-      &lt;Line type=&quot;monotone&quot; dataKey=&quot;uv&quot; stroke=&quot;purple&quot; strokeWidth={2} name=&quot;My data series name&quot; /&gt;
+      &lt;CartesianGrid strokeDasharray=&quot;5 5&quot; /&gt;
+      &lt;Line type=&quot;monotone&quot; dataKey=&quot;uv&quot; strokeWidth={2} name=&quot;My data series name&quot; /&gt;
       &lt;XAxis dataKey=&quot;name&quot; tick={renderCustomAxisTick} height={50} /&gt;
       &lt;YAxis width=&quot;auto&quot; label={{ value: &#x27;UV&#x27;, position: &#x27;insideLeft&#x27;, angle: -90 }} /&gt;
-      &lt;Legend align=&quot;right&quot; /&gt;
+      &lt;Legend position=&quot;insideBottomRight&quot; /&gt;
       &lt;Tooltip /&gt;
       &lt;RechartsDevtools /&gt;
     &lt;/LineChart&gt;
   );
-}</pre><div></div></div></div><div style="height:100%;display:block;overflow:hidden"><div id="recharts-devtools-portal-Raa9" style="height:100%;background:var(--color-bg);color:var(--color-text);overflow:auto;padding:10px;display:block" class=""></div></div><div style="height:100%;display:none;overflow:hidden"><div id="recharts-devtools-portal-Raa9-annotations" style="height:100%;background:var(--color-bg);color:var(--color-text);overflow:auto;padding:10px;display:block" class=""></div></div><div style="height:100%;display:none;overflow:hidden"><div style="padding:10px;height:100%;overflow:auto"><div style="display:flex;gap:12px;margin:1ex"><label style="display:flex;align-items:center;gap:8px;cursor:pointer"><input style="margin:0;width:16px;height:16px;cursor:pointer" type="radio" name=":Raaqa9:" checked=""/>Autoplay Animations (default)</label><label style="display:flex;align-items:center;gap:8px;cursor:pointer"><input style="margin:0;width:16px;height:16px;cursor:pointer" type="radio" name=":Raaqa9:"/>Manual Animations</label></div></div></div></div></div></div></div></div></main><footer><p><span>Released under the </span><a href="https://opensource.org/licenses/MIT" target="_blank" rel="noreferrer">MIT License</a></p><p>Copyright (c) 2016-<!-- -->2026<!-- --> Recharts Group</p><p>Commit: <code title="31b5712e040396afd5a630daa3694309e3d6d6d2">31b5712e</code></p></footer></div></div>
+}</pre><div></div></div></div><div style="height:100%;display:block;overflow:hidden"><div id="recharts-devtools-portal-Raa9" style="height:100%;background:var(--color-bg);color:var(--color-text);overflow:auto;padding:10px;display:block" class=""></div></div><div style="height:100%;display:none;overflow:hidden"><div id="recharts-devtools-portal-Raa9-annotations" style="height:100%;background:var(--color-bg);color:var(--color-text);overflow:auto;padding:10px;display:block" class=""></div></div><div style="height:100%;display:none;overflow:hidden"><div style="padding:10px;height:100%;overflow:auto"><div style="display:flex;gap:12px;margin:1ex"><label style="display:flex;align-items:center;gap:8px;cursor:pointer"><input style="margin:0;width:16px;height:16px;cursor:pointer" type="radio" name=":Raaqa9:" checked=""/>Autoplay Animations (default)</label><label style="display:flex;align-items:center;gap:8px;cursor:pointer"><input style="margin:0;width:16px;height:16px;cursor:pointer" type="radio" name=":Raaqa9:"/>Manual Animations</label></div></div></div></div></div></div></div></div></main><footer><p><span>Released under the </span><a href="https://opensource.org/licenses/MIT" target="_blank" rel="noreferrer">MIT License</a></p><p>Copyright (c) 2016-<!-- -->2026<!-- --> Recharts Group</p><p>Commit: <code title="d56d6660f7db52d37cb2113b39a2be010d32fe37">d56d6660</code></p></footer></div></div>
   </body>
 </html>

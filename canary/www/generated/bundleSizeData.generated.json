@@ -1,10 +1,10 @@
 {
   "treemap": {
     "examplePath": "www/src/views/IndexView/IndexLineChart.tsx",
-    "totalSize": 903569,
-    "totalSizeLabel": "882.39 KB",
+    "totalSize": 903003,
+    "totalSizeLabel": "881.84 KB",
     "moduleCount": 367,
-    "generatedAt": "2026-08-22T13:08:04.890Z",
+    "generatedAt": "2026-08-22T19:17:45.507Z",
     "stages": [
       {
         "stage": "es6-folder",
@@ -14,27 +14,27 @@
       },
       {
         "stage": "tree-shaken",
-        "bytes": 906450,
-        "humanReadableSize": "885.21 KB",
+        "bytes": 905884,
+        "humanReadableSize": "884.65 KB",
         "reductionFromBaselinePercent": 0
       },
       {
         "stage": "minified",
-        "bytes": 303184,
-        "humanReadableSize": "296.08 KB",
-        "reductionFromBaselinePercent": 66.55
+        "bytes": 302797,
+        "humanReadableSize": "295.70 KB",
+        "reductionFromBaselinePercent": 66.57
       },
       {
         "stage": "minified+gzip",
-        "bytes": 99249,
-        "humanReadableSize": "96.92 KB",
-        "reductionFromBaselinePercent": 89.05
+        "bytes": 99147,
+        "humanReadableSize": "96.82 KB",
+        "reductionFromBaselinePercent": 89.06
       }
     ],
     "tree": {
       "name": "bundle",
       "fullPath": "bundle",
-      "value": 903569,
+      "value": 903003,
       "children": [
         {
           "name": "src",
@@ -2513,32 +2513,32 @@
         {
           "name": "entry",
           "fullPath": "entry",
-          "value": 1607,
+          "value": 1041,
           "children": [
             {
               "name": "www",
               "fullPath": "entry/www",
-              "value": 1607,
+              "value": 1041,
               "children": [
                 {
                   "name": "src",
                   "fullPath": "entry/www/src",
-                  "value": 1607,
+                  "value": 1041,
                   "children": [
                     {
                       "name": "views",
                       "fullPath": "entry/www/src/views",
-                      "value": 1607,
+                      "value": 1041,
                       "children": [
                         {
                           "name": "IndexView",
                           "fullPath": "entry/www/src/views/IndexView",
-                          "value": 1607,
+                          "value": 1041,
                           "children": [
                             {
                               "name": "IndexLineChart.tsx",
                               "fullPath": "entry/www/src/views/IndexView/IndexLineChart.tsx",
-                              "value": 1607
+                              "value": 1041
                             }
                           ]
                         }
@@ -2555,10 +2555,10 @@
   },
   "sunburst": {
     "examplePath": "www/src/views/IndexView/IndexLineChart.tsx",
-    "totalSize": 903569,
-    "totalSizeLabel": "882.39 KB",
+    "totalSize": 903003,
+    "totalSizeLabel": "881.84 KB",
     "moduleCount": 367,
-    "generatedAt": "2026-08-22T13:08:03.123Z",
+    "generatedAt": "2026-08-22T19:17:47.582Z",
     "stages": [
       {
         "stage": "es6-folder",
@@ -2568,27 +2568,27 @@
       },
       {
         "stage": "tree-shaken",
-        "bytes": 906450,
-        "humanReadableSize": "885.21 KB",
+        "bytes": 905884,
+        "humanReadableSize": "884.65 KB",
         "reductionFromBaselinePercent": 0
       },
       {
         "stage": "minified",
-        "bytes": 303184,
-        "humanReadableSize": "296.08 KB",
-        "reductionFromBaselinePercent": 66.55
+        "bytes": 302797,
+        "humanReadableSize": "295.70 KB",
+        "reductionFromBaselinePercent": 66.57
       },
       {
         "stage": "minified+gzip",
-        "bytes": 99249,
-        "humanReadableSize": "96.92 KB",
-        "reductionFromBaselinePercent": 89.05
+        "bytes": 99147,
+        "humanReadableSize": "96.82 KB",
+        "reductionFromBaselinePercent": 89.06
       }
     ],
     "tree": {
       "name": "bundle",
       "fullPath": "bundle",
-      "value": 903569,
+      "value": 903003,
       "children": [
         {
           "name": "src",
@@ -5067,32 +5067,32 @@
         {
           "name": "entry",
           "fullPath": "entry",
-          "value": 1607,
+          "value": 1041,
           "children": [
             {
               "name": "www",
               "fullPath": "entry/www",
-              "value": 1607,
+              "value": 1041,
               "children": [
                 {
                   "name": "src",
                   "fullPath": "entry/www/src",
-                  "value": 1607,
+                  "value": 1041,
                   "children": [
                     {
                       "name": "views",
                       "fullPath": "entry/www/src/views",
-                      "value": 1607,
+                      "value": 1041,
                       "children": [
                         {
                           "name": "IndexView",
                           "fullPath": "entry/www/src/views/IndexView",
-                          "value": 1607,
+                          "value": 1041,
                           "children": [
                             {
                               "name": "IndexLineChart.tsx",
                               "fullPath": "entry/www/src/views/IndexView/IndexLineChart.tsx",
-                              "value": 1607
+                              "value": 1041
                             }
                           ]
                         }

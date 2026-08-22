@@ -29,7 +29,7 @@
       rel="stylesheet"
       type="text/css"
     />
-    <script type="module" crossorigin src="/recharts/canary/www/assets/index-BfQBuU0P.js"></script>
+    <script type="module" crossorigin src="/recharts/canary/www/assets/index-okV2yJIW.js"></script>
     <link rel="stylesheet" crossorigin href="/recharts/canary/www/assets/index-DAzBVns1.css">
     <link rel="sitemap" type="application/xml" title="Sitemap" href="/sitemap.xml">
   </head>
@@ -69,11 +69,11 @@ const data = [
 export default function DataCoordinatesExample() {
   return (
     &lt;LineChart width={500} height={300} data={data} margin={{ top: 20, right: 30, left: 20, bottom: 5 }}&gt;
-      &lt;CartesianGrid strokeDasharray=&quot;3 3&quot; /&gt;
+      &lt;CartesianGrid /&gt;
       &lt;XAxis dataKey=&quot;name&quot; /&gt;
       &lt;YAxis domain={[0, 7000]} /&gt;
       &lt;Tooltip /&gt;
-      &lt;Line type=&quot;monotone&quot; dataKey=&quot;sales&quot; stroke=&quot;#8884d8&quot; strokeWidth={2} /&gt;
+      &lt;Line type=&quot;monotone&quot; dataKey=&quot;sales&quot; strokeWidth={2} /&gt;
 
       {/* Data-based horizontal line at y=3500 (the target) */}
       &lt;ReferenceLine y={3500} stroke=&quot;red&quot; strokeDasharray=&quot;5 5&quot;&gt;
@@ -155,10 +155,10 @@ function PixelAnnotations() {
 export default function PixelCoordinatesExample() {
   return (
     &lt;LineChart width={500} height={300} data={data} margin={{ top: 20, right: 30, left: 20, bottom: 5 }}&gt;
-      &lt;CartesianGrid strokeDasharray=&quot;3 3&quot; /&gt;
+      &lt;CartesianGrid /&gt;
       &lt;XAxis dataKey=&quot;name&quot; /&gt;
       &lt;YAxis /&gt;
-      &lt;Line type=&quot;monotone&quot; dataKey=&quot;sales&quot; stroke=&quot;#8884d8&quot; strokeWidth={2} /&gt;
+      &lt;Line type=&quot;monotone&quot; dataKey=&quot;sales&quot; strokeWidth={2} /&gt;
       &lt;PixelAnnotations /&gt;
     &lt;/LineChart&gt;
   );
@@ -462,10 +462,10 @@ export default function DataSnapExample({
       onTouchMove={handleTouchMove}
       onTouchEnd={handleLeave}
     &gt;
-      &lt;CartesianGrid strokeDasharray=&quot;3 3&quot; /&gt;
+      &lt;CartesianGrid /&gt;
       &lt;XAxis dataKey=&quot;name&quot; /&gt;
       &lt;YAxis width=&quot;auto&quot; /&gt;
-      &lt;Line type=&quot;monotone&quot; dataKey=&quot;sales&quot; stroke=&quot;#8884d8&quot; strokeWidth={2} /&gt;
+      &lt;Line type=&quot;monotone&quot; dataKey=&quot;sales&quot; strokeWidth={2} /&gt;
 
       {pointers.map(pointer =&gt; (
         &lt;DomainCrosshair key={`crosshair-${pointer.relativeX}-${pointer.relativeY}`} pointer={pointer} /&gt;
@@ -624,10 +624,10 @@ export default function AxisTickSnapExample({
       onTouchMove={handleTouchMove}
       onTouchEnd={handleLeave}
     &gt;
-      &lt;CartesianGrid strokeDasharray=&quot;3 3&quot; /&gt;
+      &lt;CartesianGrid /&gt;
       &lt;XAxis dataKey=&quot;name&quot; /&gt;
       &lt;YAxis width=&quot;auto&quot; /&gt;
-      &lt;Line type=&quot;monotone&quot; dataKey=&quot;sales&quot; stroke=&quot;#8884d8&quot; strokeWidth={2} /&gt;
+      &lt;Line type=&quot;monotone&quot; dataKey=&quot;sales&quot; strokeWidth={2} /&gt;
 
       {pointers.map(pointer =&gt; (
         &lt;AxisTickCrosshair key={`crosshair-${pointer.relativeX}-${pointer.relativeY}`} pointer={pointer} /&gt;
@@ -636,6 +636,6 @@ export default function AxisTickSnapExample({
       &lt;RechartsDevtools /&gt;
     &lt;/LineChart&gt;
   );
-}</pre><div></div></div></div><div style="height:100%;display:none;overflow:hidden"><div id="recharts-devtools-portal-Rja9" style="height:100%;background:var(--color-bg);color:var(--color-text);overflow:auto;padding:10px;display:block" class=""></div></div><div style="height:100%;display:none;overflow:hidden"><div id="recharts-devtools-portal-Rja9-annotations" style="height:100%;background:var(--color-bg);color:var(--color-text);overflow:auto;padding:10px;display:block" class=""></div></div><div style="height:100%;display:none;overflow:hidden"><div style="padding:10px;height:100%;overflow:auto"><div style="display:flex;gap:12px;margin:1ex"><label style="display:flex;align-items:center;gap:8px;cursor:pointer"><input style="margin:0;width:16px;height:16px;cursor:pointer" type="radio" name=":Rklja9:" checked=""/>Autoplay Animations (default)</label><label style="display:flex;align-items:center;gap:8px;cursor:pointer"><input style="margin:0;width:16px;height:16px;cursor:pointer" type="radio" name=":Rklja9:"/>Manual Animations</label></div></div></div></div></div><h2>Choosing the Right Coordinate System</h2><table class="_table_9deko_1"><thead><tr><th>I want to...</th><th>Use</th></tr></thead><tbody><tr><td>Mark a specific data value</td><td>Data coordinates (<a href="/en-US/api/ReferenceArea" data-discover="true">ReferenceArea</a>,<a href="/en-US/api/ReferenceLine" data-discover="true">ReferenceLine</a>,<!-- --> <a href="/en-US/api/ReferenceDot" data-discover="true">ReferenceDot</a>)</td></tr><tr><td>Show a target line that moves with zoom/brush</td><td>Data coordinates (<a href="/en-US/api/ReferenceLine" data-discover="true">ReferenceLine</a>)</td></tr><tr><td>Add a watermark at a fixed position</td><td>Pixel coordinates (<a href="/en-US/api/useOffset" data-discover="true">useOffset</a> + custom SVG)</td></tr><tr><td>Create a crosshair that follows the mouse</td><td>Mouse coordinates (<a href="/en-US/api/getRelativeCoordinate" data-discover="true">getRelativeCoordinate</a>)</td></tr><tr><td>Click to add an annotation at a data point</td><td>Mouse → Data conversion (<a href="/en-US/api/getRelativeCoordinate" data-discover="true">getRelativeCoordinate</a> +<!-- --> <a href="/en-US/api/useXAxisInverseScale" data-discover="true">useXAxisInverseScale</a>)</td></tr><tr><td>Draw custom shapes at data positions</td><td>Data → Pixel conversion (<a href="/en-US/api/useXAxisScale" data-discover="true">useXAxisScale</a> + <a href="/en-US/api/useYAxisScale" data-discover="true">useYAxisScale</a>)</td></tr></tbody></table></article></div></div></main><footer><p><span>Released under the </span><a href="https://opensource.org/licenses/MIT" target="_blank" rel="noreferrer">MIT License</a></p><p>Copyright (c) 2016-<!-- -->2026<!-- --> Recharts Group</p><p>Commit: <code title="31b5712e040396afd5a630daa3694309e3d6d6d2">31b5712e</code></p></footer></div></div>
+}</pre><div></div></div></div><div style="height:100%;display:none;overflow:hidden"><div id="recharts-devtools-portal-Rja9" style="height:100%;background:var(--color-bg);color:var(--color-text);overflow:auto;padding:10px;display:block" class=""></div></div><div style="height:100%;display:none;overflow:hidden"><div id="recharts-devtools-portal-Rja9-annotations" style="height:100%;background:var(--color-bg);color:var(--color-text);overflow:auto;padding:10px;display:block" class=""></div></div><div style="height:100%;display:none;overflow:hidden"><div style="padding:10px;height:100%;overflow:auto"><div style="display:flex;gap:12px;margin:1ex"><label style="display:flex;align-items:center;gap:8px;cursor:pointer"><input style="margin:0;width:16px;height:16px;cursor:pointer" type="radio" name=":Rklja9:" checked=""/>Autoplay Animations (default)</label><label style="display:flex;align-items:center;gap:8px;cursor:pointer"><input style="margin:0;width:16px;height:16px;cursor:pointer" type="radio" name=":Rklja9:"/>Manual Animations</label></div></div></div></div></div><h2>Choosing the Right Coordinate System</h2><table class="_table_9deko_1"><thead><tr><th>I want to...</th><th>Use</th></tr></thead><tbody><tr><td>Mark a specific data value</td><td>Data coordinates (<a href="/en-US/api/ReferenceArea" data-discover="true">ReferenceArea</a>,<a href="/en-US/api/ReferenceLine" data-discover="true">ReferenceLine</a>,<!-- --> <a href="/en-US/api/ReferenceDot" data-discover="true">ReferenceDot</a>)</td></tr><tr><td>Show a target line that moves with zoom/brush</td><td>Data coordinates (<a href="/en-US/api/ReferenceLine" data-discover="true">ReferenceLine</a>)</td></tr><tr><td>Add a watermark at a fixed position</td><td>Pixel coordinates (<a href="/en-US/api/useOffset" data-discover="true">useOffset</a> + custom SVG)</td></tr><tr><td>Create a crosshair that follows the mouse</td><td>Mouse coordinates (<a href="/en-US/api/getRelativeCoordinate" data-discover="true">getRelativeCoordinate</a>)</td></tr><tr><td>Click to add an annotation at a data point</td><td>Mouse → Data conversion (<a href="/en-US/api/getRelativeCoordinate" data-discover="true">getRelativeCoordinate</a> +<!-- --> <a href="/en-US/api/useXAxisInverseScale" data-discover="true">useXAxisInverseScale</a>)</td></tr><tr><td>Draw custom shapes at data positions</td><td>Data → Pixel conversion (<a href="/en-US/api/useXAxisScale" data-discover="true">useXAxisScale</a> + <a href="/en-US/api/useYAxisScale" data-discover="true">useYAxisScale</a>)</td></tr></tbody></table></article></div></div></main><footer><p><span>Released under the </span><a href="https://opensource.org/licenses/MIT" target="_blank" rel="noreferrer">MIT License</a></p><p>Copyright (c) 2016-<!-- -->2026<!-- --> Recharts Group</p><p>Commit: <code title="d56d6660f7db52d37cb2113b39a2be010d32fe37">d56d6660</code></p></footer></div></div>
   </body>
 </html>

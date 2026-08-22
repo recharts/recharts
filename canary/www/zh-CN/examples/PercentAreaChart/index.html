@@ -29,7 +29,7 @@
       rel="stylesheet"
       type="text/css"
     />
-    <script type="module" crossorigin src="/recharts/canary/www/assets/index-BfQBuU0P.js"></script>
+    <script type="module" crossorigin src="/recharts/canary/www/assets/index-okV2yJIW.js"></script>
     <link rel="stylesheet" crossorigin href="/recharts/canary/www/assets/index-DAzBVns1.css">
     <link rel="sitemap" type="application/xml" title="Sitemap" href="/sitemap.xml">
   </head>
@@ -57,6 +57,7 @@
   TooltipContentProps,
   TooltipValueType,
   createHorizontalChart,
+  useRechartsTheme,
 } from &#x27;recharts&#x27;;
 import { generateMockData, MockDataType, RechartsDevtools } from &#x27;@recharts/devtools&#x27;;
 
@@ -95,7 +96,8 @@ const getPercent = (value: TooltipValueType | undefined, total: number): string 
 };
 
 // #endregion
-const renderTooltipContent = (o: TooltipContentProps&lt;number, keyof MockDataType&gt;) =&gt; {
+const RenderTooltipContent = (o: TooltipContentProps&lt;number, keyof MockDataType&gt;) =&gt; {
+  const theme = useRechartsTheme();
   const { payload, label } = o;
   const total = payload.reduce((result, entry) =&gt; result + Number(entry.value), 0);
 
@@ -103,8 +105,8 @@ const renderTooltipContent = (o: TooltipContentProps&lt;number, keyof MockDataTy
     &lt;div
       className=&quot;customized-tooltip-content&quot;
       style={{
-        backgroundColor: &#x27;white&#x27;,
-        border: &#x27;1px solid #ccc&#x27;,
+        ...theme?.typography,
+        ...theme?.tooltip?.contentStyle,
         padding: &#x27;10px&#x27;,
         borderRadius: &#x27;10px&#x27;,
         boxShadow: &#x27;0 0 10px rgba(0,0,0,0.2)&#x27;,
@@ -136,10 +138,10 @@ const PercentAreaChart = () =&gt; {
         bottom: 0,
       }}
     &gt;
-      &lt;CartesianGrid strokeDasharray=&quot;3 3&quot; /&gt;
+      &lt;CartesianGrid /&gt;
       &lt;Typed.XAxis dataKey=&quot;label&quot; /&gt;
       &lt;Typed.YAxis tickFormatter={toPercent} width=&quot;auto&quot; /&gt;
-      &lt;Typed.Tooltip content={renderTooltipContent} /&gt;
+      &lt;Typed.Tooltip content={RenderTooltipContent} /&gt;
       &lt;Typed.Area type=&quot;monotone&quot; dataKey=&quot;x&quot; stackId=&quot;1&quot; /&gt;
       &lt;Typed.Area type=&quot;monotone&quot; dataKey=&quot;y&quot; stackId=&quot;1&quot; /&gt;
       &lt;Typed.Area type=&quot;monotone&quot; dataKey=&quot;z&quot; stackId=&quot;1&quot; /&gt;
@@ -148,6 +150,6 @@ const PercentAreaChart = () =&gt; {
   );
 };
 
-export default PercentAreaChart;</pre><div></div></div></div><div style="height:100%;display:none;overflow:hidden"><div id="recharts-devtools-portal-R5a9" style="height:100%;background:var(--color-bg);color:var(--color-text);overflow:auto;padding:10px;display:block" class=""></div></div><div style="height:100%;display:none;overflow:hidden"><div id="recharts-devtools-portal-R5a9-annotations" style="height:100%;background:var(--color-bg);color:var(--color-text);overflow:auto;padding:10px;display:block" class=""></div></div><div style="height:100%;display:none;overflow:hidden"><div style="padding:10px;height:100%;overflow:auto"><div style="display:flex;gap:12px;margin:1ex"><label style="display:flex;align-items:center;gap:8px;cursor:pointer"><input style="margin:0;width:16px;height:16px;cursor:pointer" type="radio" name=":R55da9:" checked=""/>Autoplay Animations (default)</label><label style="display:flex;align-items:center;gap:8px;cursor:pointer"><input style="margin:0;width:16px;height:16px;cursor:pointer" type="radio" name=":R55da9:"/>Manual Animations</label></div></div></div></div></div></div></div></div></div></main><footer><p><span>Released under the </span><a href="https://opensource.org/licenses/MIT" target="_blank" rel="noreferrer">MIT License</a></p><p>Copyright (c) 2016-<!-- -->2026<!-- --> Recharts Group</p><p>Commit: <code title="31b5712e040396afd5a630daa3694309e3d6d6d2">31b5712e</code></p></footer></div></div>
+export default PercentAreaChart;</pre><div></div></div></div><div style="height:100%;display:none;overflow:hidden"><div id="recharts-devtools-portal-R5a9" style="height:100%;background:var(--color-bg);color:var(--color-text);overflow:auto;padding:10px;display:block" class=""></div></div><div style="height:100%;display:none;overflow:hidden"><div id="recharts-devtools-portal-R5a9-annotations" style="height:100%;background:var(--color-bg);color:var(--color-text);overflow:auto;padding:10px;display:block" class=""></div></div><div style="height:100%;display:none;overflow:hidden"><div style="padding:10px;height:100%;overflow:auto"><div style="display:flex;gap:12px;margin:1ex"><label style="display:flex;align-items:center;gap:8px;cursor:pointer"><input style="margin:0;width:16px;height:16px;cursor:pointer" type="radio" name=":R55da9:" checked=""/>Autoplay Animations (default)</label><label style="display:flex;align-items:center;gap:8px;cursor:pointer"><input style="margin:0;width:16px;height:16px;cursor:pointer" type="radio" name=":R55da9:"/>Manual Animations</label></div></div></div></div></div></div></div></div></div></main><footer><p><span>Released under the </span><a href="https://opensource.org/licenses/MIT" target="_blank" rel="noreferrer">MIT License</a></p><p>Copyright (c) 2016-<!-- -->2026<!-- --> Recharts Group</p><p>Commit: <code title="d56d6660f7db52d37cb2113b39a2be010d32fe37">d56d6660</code></p></footer></div></div>
   </body>
 </html>

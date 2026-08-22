@@ -29,7 +29,7 @@
       rel="stylesheet"
       type="text/css"
     />
-    <script type="module" crossorigin src="/recharts/canary/www/assets/index-BfQBuU0P.js"></script>
+    <script type="module" crossorigin src="/recharts/canary/www/assets/index-okV2yJIW.js"></script>
     <link rel="stylesheet" crossorigin href="/recharts/canary/www/assets/index-DAzBVns1.css">
     <link rel="sitemap" type="application/xml" title="Sitemap" href="/sitemap.xml">
   </head>
@@ -115,7 +115,7 @@ export default function LineChartNegativeValuesWithReferenceLines() {
         bottom: 5,
       }}
     &gt;
-      &lt;CartesianGrid strokeDasharray=&quot;3 3&quot; /&gt;
+      &lt;CartesianGrid /&gt;
 
       &lt;YAxis
         dataKey=&quot;y&quot;
@@ -128,7 +128,6 @@ export default function LineChartNegativeValuesWithReferenceLines() {
           angle: -90,
           position: &#x27;left&#x27;,
           offset: 0,
-          fill: &#x27;var(--color-text-3)&#x27;,
         }}
         allowDataOverflow
         strokeWidth={minX &lt; 0 ? 0 : 1}
@@ -144,19 +143,18 @@ export default function LineChartNegativeValuesWithReferenceLines() {
           key: &#x27;xAxisLabel&#x27;,
           value: &#x27;x&#x27;,
           position: &#x27;bottom&#x27;,
-          fill: &#x27;var(--color-text-3)&#x27;,
         }}
         allowDataOverflow
         strokeWidth={minY &lt; 0 ? 0 : 1}
       /&gt;
 
-      {minY &lt; 0 &amp;&amp; &lt;ReferenceLine y={0} stroke=&quot;var(--color-text-3)&quot; strokeWidth={1.5} strokeOpacity={0.65} /&gt;}
-      {minX &lt; 0 &amp;&amp; &lt;ReferenceLine x={0} stroke=&quot;var(--color-text-3)&quot; strokeWidth={1.5} strokeOpacity={0.65} /&gt;}
+      {minY &lt; 0 &amp;&amp; &lt;ReferenceLine y={0} strokeWidth={1.5} strokeOpacity={0.65} /&gt;}
+      {minX &lt; 0 &amp;&amp; &lt;ReferenceLine x={0} strokeWidth={1.5} strokeOpacity={0.65} /&gt;}
 
       &lt;Line strokeWidth={2} data={data} dot={false} type=&quot;monotone&quot; dataKey=&quot;y&quot; tooltipType=&quot;none&quot; /&gt;
       &lt;RechartsDevtools /&gt;
     &lt;/LineChart&gt;
   );
-}</pre><div></div></div></div><div style="height:100%;display:none;overflow:hidden"><div id="recharts-devtools-portal-R5a9" style="height:100%;background:var(--color-bg);color:var(--color-text);overflow:auto;padding:10px;display:block" class=""></div></div><div style="height:100%;display:none;overflow:hidden"><div id="recharts-devtools-portal-R5a9-annotations" style="height:100%;background:var(--color-bg);color:var(--color-text);overflow:auto;padding:10px;display:block" class=""></div></div><div style="height:100%;display:none;overflow:hidden"><div style="padding:10px;height:100%;overflow:auto"><div style="display:flex;gap:12px;margin:1ex"><label style="display:flex;align-items:center;gap:8px;cursor:pointer"><input style="margin:0;width:16px;height:16px;cursor:pointer" type="radio" name=":R55da9:" checked=""/>Autoplay Animations (default)</label><label style="display:flex;align-items:center;gap:8px;cursor:pointer"><input style="margin:0;width:16px;height:16px;cursor:pointer" type="radio" name=":R55da9:"/>Manual Animations</label></div></div></div></div></div></div></div></div></div></main><footer><p><span>Released under the </span><a href="https://opensource.org/licenses/MIT" target="_blank" rel="noreferrer">MIT License</a></p><p>Copyright (c) 2016-<!-- -->2026<!-- --> Recharts Group</p><p>Commit: <code title="31b5712e040396afd5a630daa3694309e3d6d6d2">31b5712e</code></p></footer></div></div>
+}</pre><div></div></div></div><div style="height:100%;display:none;overflow:hidden"><div id="recharts-devtools-portal-R5a9" style="height:100%;background:var(--color-bg);color:var(--color-text);overflow:auto;padding:10px;display:block" class=""></div></div><div style="height:100%;display:none;overflow:hidden"><div id="recharts-devtools-portal-R5a9-annotations" style="height:100%;background:var(--color-bg);color:var(--color-text);overflow:auto;padding:10px;display:block" class=""></div></div><div style="height:100%;display:none;overflow:hidden"><div style="padding:10px;height:100%;overflow:auto"><div style="display:flex;gap:12px;margin:1ex"><label style="display:flex;align-items:center;gap:8px;cursor:pointer"><input style="margin:0;width:16px;height:16px;cursor:pointer" type="radio" name=":R55da9:" checked=""/>Autoplay Animations (default)</label><label style="display:flex;align-items:center;gap:8px;cursor:pointer"><input style="margin:0;width:16px;height:16px;cursor:pointer" type="radio" name=":R55da9:"/>Manual Animations</label></div></div></div></div></div></div></div></div></div></main><footer><p><span>Released under the </span><a href="https://opensource.org/licenses/MIT" target="_blank" rel="noreferrer">MIT License</a></p><p>Copyright (c) 2016-<!-- -->2026<!-- --> Recharts Group</p><p>Commit: <code title="d56d6660f7db52d37cb2113b39a2be010d32fe37">d56d6660</code></p></footer></div></div>
   </body>
 </html>

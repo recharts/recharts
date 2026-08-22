@@ -29,7 +29,7 @@
       rel="stylesheet"
       type="text/css"
     />
-    <script type="module" crossorigin src="/recharts/canary/www/assets/index-BfQBuU0P.js"></script>
+    <script type="module" crossorigin src="/recharts/canary/www/assets/index-okV2yJIW.js"></script>
     <link rel="stylesheet" crossorigin href="/recharts/canary/www/assets/index-DAzBVns1.css">
     <link rel="sitemap" type="application/xml" title="Sitemap" href="/sitemap.xml">
   </head>
@@ -82,14 +82,14 @@ const ReferenceAreaExample = ({ isAnimationActive = true }) =&gt; (
       left: 0,
     }}
   &gt;
-    &lt;CartesianGrid strokeDasharray=&quot;3 3&quot; /&gt;
+    &lt;CartesianGrid /&gt;
     &lt;XAxis dataKey=&quot;x&quot; type=&quot;number&quot; name=&quot;stature&quot; unit=&quot;cm&quot; /&gt;
     &lt;YAxis dataKey=&quot;y&quot; type=&quot;number&quot; name=&quot;weight&quot; unit=&quot;kg&quot; width=&quot;auto&quot; /&gt;
     &lt;ZAxis dataKey=&quot;z&quot; type=&quot;number&quot; range={[16, 100]} name=&quot;score&quot; unit=&quot;km&quot; /&gt;
-    &lt;Tooltip cursor={{ strokeDasharray: &#x27;3 3&#x27; }} /&gt;
+    &lt;Tooltip /&gt;
     &lt;Legend /&gt;
-    &lt;Scatter name=&quot;A school&quot; data={data01} fill=&quot;#8884d8&quot; isAnimationActive={isAnimationActive} /&gt;
-    &lt;Scatter name=&quot;B school&quot; data={data02} fill=&quot;#82ca9d&quot; isAnimationActive={isAnimationActive} /&gt;
+    &lt;Scatter name=&quot;A school&quot; data={data01} dataKey=&quot;x&quot; isAnimationActive={isAnimationActive} /&gt;
+    &lt;Scatter name=&quot;B school&quot; data={data02} dataKey=&quot;y&quot; isAnimationActive={isAnimationActive} /&gt;
     &lt;ReferenceArea x1={150} x2={180} y1={200} y2={300} stroke=&quot;red&quot; strokeOpacity={0.3} /&gt;
     &lt;RechartsDevtools /&gt;
   &lt;/ScatterChart&gt;
@@ -103,6 +103,6 @@ export default ReferenceAreaExample;</pre><div></div></div></div><div style="hei
 &lt;ReferenceArea y1=&quot;low&quot; y2=&quot;high&quot; /&gt;
 &lt;ReferenceArea y1={200} /&gt;</code></pre></div></li><li class="props-item" id="y2"><p class="header "><span class="title"><a href="#y2">y2</a></span><span class="type">number | string</span><em class="optional">optional</em></p><p class="desc"><section><p>Ending Y-coordinate of the area. This value is using your chart&#x27;s domain, so you will provide a data value instead of a pixel value. ReferenceArea will internally calculate the correct pixel position.</p><p>If undefined then the area will extend to the bottom edge of the chart plot area.</p></section></p><div class="format"><p class="title">FORMAT: </p><pre class="format-code"><code>&lt;ReferenceArea y1={100} y2={500} /&gt;
 &lt;ReferenceArea y1=&quot;low&quot; y2=&quot;high&quot; /&gt;
-&lt;ReferenceArea y2={400} /&gt;</code></pre></div></li><li class="props-item" id="yAxisId"><p class="header "><span class="title"><a href="#yAxisId">yAxisId</a></span><span class="type">number | string</span><em class="optional">optional</em></p><p class="desc"><section><p>The id of YAxis which is corresponding to the data. Required when there are multiple YAxes.</p></section></p><p class="default"><span class="title">DEFAULT: </span><code>0</code></p><div class="examples"><p class="title">Examples: </p><ul class="list"><li><a href="/en-US/examples/HighlightAndZoomLineChart/" data-discover="true">Highlight And Zoom Line Chart</a></li></ul></div></li><li class="props-item" id="zIndex"><p class="header "><span class="title"><a href="#zIndex">zIndex</a></span><span class="type">number</span><em class="optional">optional</em></p><p class="desc"><section><p>Z-Index of this component and its children. The higher the value, the more on top it will be rendered. Components with higher zIndex will appear in front of components with lower zIndex. If undefined or 0, the content is rendered in the default layer without portals.</p></section></p><p class="since">Available since Recharts<!-- --> <!-- -->3.4</p><p class="default"><span class="title">DEFAULT: </span><code>100</code></p><div class="examples"><p class="title">Examples: </p><ul class="list"><li><a href="/en-US/guide/zIndex/" data-discover="true">Z-Index and layers guide</a></li></ul></div></li></ul></section><section class="props-section"><h4 class="sub-title"><button type="button" aria-expanded="false" aria-controls="props-events">Events<!-- --> <i class="expander">Click to expand</i></button></h4></section></div></div></main><footer><p><span>Released under the </span><a href="https://opensource.org/licenses/MIT" target="_blank" rel="noreferrer">MIT License</a></p><p>Copyright (c) 2016-<!-- -->2026<!-- --> Recharts Group</p><p>Commit: <code title="31b5712e040396afd5a630daa3694309e3d6d6d2">31b5712e</code></p></footer></div></div>
+&lt;ReferenceArea y2={400} /&gt;</code></pre></div></li><li class="props-item" id="yAxisId"><p class="header "><span class="title"><a href="#yAxisId">yAxisId</a></span><span class="type">number | string</span><em class="optional">optional</em></p><p class="desc"><section><p>The id of YAxis which is corresponding to the data. Required when there are multiple YAxes.</p></section></p><p class="default"><span class="title">DEFAULT: </span><code>0</code></p><div class="examples"><p class="title">Examples: </p><ul class="list"><li><a href="/en-US/examples/HighlightAndZoomLineChart/" data-discover="true">Highlight And Zoom Line Chart</a></li></ul></div></li><li class="props-item" id="zIndex"><p class="header "><span class="title"><a href="#zIndex">zIndex</a></span><span class="type">number</span><em class="optional">optional</em></p><p class="desc"><section><p>Z-Index of this component and its children. The higher the value, the more on top it will be rendered. Components with higher zIndex will appear in front of components with lower zIndex. If undefined or 0, the content is rendered in the default layer without portals.</p></section></p><p class="since">Available since Recharts<!-- --> <!-- -->3.4</p><p class="default"><span class="title">DEFAULT: </span><code>100</code></p><div class="examples"><p class="title">Examples: </p><ul class="list"><li><a href="/en-US/guide/zIndex/" data-discover="true">Z-Index and layers guide</a></li></ul></div></li></ul></section><section class="props-section"><h4 class="sub-title"><button type="button" aria-expanded="false" aria-controls="props-events">Events<!-- --> <i class="expander">Click to expand</i></button></h4></section></div></div></main><footer><p><span>Released under the </span><a href="https://opensource.org/licenses/MIT" target="_blank" rel="noreferrer">MIT License</a></p><p>Copyright (c) 2016-<!-- -->2026<!-- --> Recharts Group</p><p>Commit: <code title="d56d6660f7db52d37cb2113b39a2be010d32fe37">d56d6660</code></p></footer></div></div>
   </body>
 </html>
