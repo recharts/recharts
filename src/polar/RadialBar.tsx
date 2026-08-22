@@ -545,7 +545,7 @@ const defaultLegacyBarBackgroundProps: Styles2D = {
   fill: '#eee',
 };
 
-function RadialBarBackground({
+function RadialBarBackgroundSectors({
   sectors,
   allOtherRadialBarProps,
 }: {
@@ -600,7 +600,7 @@ function RadialBarBackground({
 
 class RadialBarWithState extends PureComponent<InternalProps> {
   renderBackground(sectors?: ReadonlyArray<RadialBarDataItem>) {
-    return <RadialBarBackground sectors={sectors} allOtherRadialBarProps={this.props} />;
+    return <RadialBarBackgroundSectors sectors={sectors} allOtherRadialBarProps={this.props} />;
   }
 
   render() {
