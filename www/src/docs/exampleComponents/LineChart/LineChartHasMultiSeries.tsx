@@ -39,14 +39,10 @@ function MyLine(props: LineProps & { index: number }) {
 export default function LineChartHasMultiSeries({ defaultIndex }: { defaultIndex?: number }) {
   return (
     <LineChart style={{ width: '100%', maxWidth: '700px', maxHeight: '70vh', aspectRatio: 1.618 }} responsive>
-      <CartesianGrid strokeDasharray="3 3" />
+      <CartesianGrid />
       <XAxis dataKey="category" type="category" allowDuplicatedCategory={false} />
       <YAxis dataKey="value" width="auto" />
-      <Tooltip
-        defaultIndex={defaultIndex}
-        cursor={{ stroke: 'var(--color-border-2)' }}
-        contentStyle={{ backgroundColor: 'var(--color-surface-base)', borderColor: 'var(--color-border-2)' }}
-      />
+      <Tooltip defaultIndex={defaultIndex} />
       <Legend />
       {series.map((s, index) => (
         <MyLine dataKey="value" data={s.data} name={s.name} key={s.name} index={index} />

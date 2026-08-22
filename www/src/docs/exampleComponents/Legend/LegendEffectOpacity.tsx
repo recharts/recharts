@@ -83,13 +83,13 @@ const LegendEffectOpacity = () => {
         bottom: 0,
       }}
     >
-      <CartesianGrid strokeDasharray="3 3" />
+      <CartesianGrid />
       <XAxis dataKey="name" niceTicks="snap125" />
       <YAxis width="auto" niceTicks="snap125" />
       <Tooltip />
       <Legend onMouseEnter={handleMouseEnter} onMouseLeave={handleMouseLeave} />
-      <Line type="monotone" dataKey="pv" strokeOpacity={pvOpacity} stroke="#8884d8" activeDot={{ r: 8 }} />
-      <Line type="monotone" dataKey="uv" strokeOpacity={uvOpacity} stroke="#82ca9d" />
+      <Line type="monotone" dataKey="pv" strokeOpacity={pvOpacity} activeDot={{ r: 8 }} />
+      <Line type="monotone" dataKey="uv" strokeOpacity={uvOpacity} />
       <RechartsDevtools />
     </LineChart>
   );

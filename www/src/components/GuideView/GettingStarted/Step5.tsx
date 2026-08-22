@@ -45,7 +45,7 @@ const data = [
 
 // #region Custom Axis Tick function
 const renderCustomAxisTick = ({ x, y, payload }: any) => {
-  let path = '';
+  let path: string;
 
   switch (payload.value) {
     case 'Page A':
@@ -97,11 +97,11 @@ export default function Step5() {
         left: 0,
       }}
     >
-      <CartesianGrid stroke="#aaa" strokeDasharray="5 5" />
-      <Line type="monotone" dataKey="uv" stroke="purple" strokeWidth={2} name="My data series name" />
+      <CartesianGrid strokeDasharray="5 5" />
+      <Line type="monotone" dataKey="uv" strokeWidth={2} name="My data series name" />
       <XAxis dataKey="name" tick={renderCustomAxisTick} height={50} />
       <YAxis width="auto" label={{ value: 'UV', position: 'insideLeft', angle: -90 }} />
-      <Legend align="right" />
+      <Legend position="insideBottomRight" />
       <Tooltip />
       <RechartsDevtools />
     </LineChart>

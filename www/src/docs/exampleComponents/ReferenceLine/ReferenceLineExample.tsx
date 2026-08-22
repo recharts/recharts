@@ -62,22 +62,22 @@ const ReferenceLineExample = ({ isAnimationActive = true }: { isAnimationActive?
   >
     <XAxis dataKey="name" />
     <YAxis width="auto" />
-    <CartesianGrid strokeDasharray="3 3" />
+    <CartesianGrid />
     <Tooltip />
     <Area type="monotone" dataKey="uv" fillOpacity={0.3} isAnimationActive={isAnimationActive} />
     <ReferenceLine
       x="Page C"
       stroke="green"
-      label={{ value: 'prop `x` creates vertical lines', fill: 'black', position: 'insideTop', offset: 70 }}
+      label={{ value: 'prop `x` creates vertical lines', position: 'insideTop', offset: 70 }}
     />
     <ReferenceLine
       y={4000}
-      label={{ value: 'prop `y` creates horizontal lines', fill: 'black', position: 'insideTopRight' }}
+      label={{ value: 'prop `y` creates horizontal lines', position: 'insideTopRight' }}
       stroke="red"
       strokeDasharray="3 3"
     />
     <ReferenceLine
-      label={{ value: 'prop `segment` connects two arbitrary points', fill: 'black', position: 'middle' }}
+      label={{ value: 'prop `segment` connects two arbitrary points', position: 'middle' }}
       stroke="green"
       strokeDasharray="3 3"
       segment={[

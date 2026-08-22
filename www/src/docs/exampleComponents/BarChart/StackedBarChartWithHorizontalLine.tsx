@@ -117,7 +117,7 @@ const StackedBarChartWithHorizontalLine = () => {
         bottom: 5,
       }}
     >
-      <CartesianGrid strokeDasharray="3 3" />
+      <CartesianGrid />
       <XAxis dataKey="name" niceTicks="snap125" />
       <YAxis width="auto" niceTicks="snap125" />
       <Tooltip cursor={false} />

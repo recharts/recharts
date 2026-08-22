@@ -51,10 +51,10 @@ function PixelAnnotations() {
 export default function PixelCoordinatesExample() {
   return (
     <LineChart width={500} height={300} data={data} margin={{ top: 20, right: 30, left: 20, bottom: 5 }}>
-      <CartesianGrid strokeDasharray="3 3" />
+      <CartesianGrid />
       <XAxis dataKey="name" />
       <YAxis />
-      <Line type="monotone" dataKey="sales" stroke="#8884d8" strokeWidth={2} />
+      <Line type="monotone" dataKey="sales" strokeWidth={2} />
       <PixelAnnotations />
     </LineChart>
   );

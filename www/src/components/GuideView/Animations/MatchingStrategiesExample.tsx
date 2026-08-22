@@ -74,30 +74,21 @@ export default function MatchingStrategiesExample(props: Partial<MatchingStrateg
       data={data}
       margin={{ top: 20, right: 30, left: 20, bottom: 5 }}
     >
-      <CartesianGrid strokeDasharray="3 3" />
+      <CartesianGrid />
       <XAxis dataKey="label" />
       <YAxis />
       <Tooltip />
-      <Line
-        type="monotone"
-        dataKey="x"
-        stroke="#8884d8"
-        strokeWidth={2}
-        animationDuration={1500}
-        animationMatchBy={matchProp}
-      />
+      <Line type="monotone" dataKey="x" strokeWidth={2} animationDuration={1500} animationMatchBy={matchProp} />
       <Area
         dot
         type="monotone"
         dataKey={entry => entry.y * 2}
-        stroke="#84d888"
-        fill="#84d888"
         fillOpacity={0.6}
         animationDuration={1500}
         animationMatchBy={matchProp}
       />
-      <Bar dataKey="y" animationMatchBy={matchProp} fill="salmon" animationDuration={1500} />
-      <Scatter dataKey="z" animationMatchBy={matchProp} fill="gold" animationDuration={1500} />
+      <Bar dataKey="y" animationMatchBy={matchProp} animationDuration={1500} />
+      <Scatter dataKey="z" animationMatchBy={matchProp} animationDuration={1500} />
       <RechartsDevtools />
     </ComposedChart>
   );

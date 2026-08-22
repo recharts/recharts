@@ -7,13 +7,10 @@ const Typed = createHorizontalChart<MockDataType, string, number>()({ Area, XAxi
 
 const common = (
   <>
-    <CartesianGrid strokeDasharray="3 3" />
+    <CartesianGrid />
     <Typed.XAxis dataKey="label" />
     <Typed.YAxis />
-    <Tooltip
-      cursor={{ stroke: 'var(--color-border-2)' }}
-      contentStyle={{ backgroundColor: 'var(--color-surface-base)', borderColor: 'var(--color-border-2)' }}
-    />
+    <Tooltip />
   </>
 );
 

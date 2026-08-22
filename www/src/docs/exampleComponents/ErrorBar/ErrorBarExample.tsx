@@ -70,7 +70,7 @@ const ErrorBarExample = ({ isAnimationActive = true }) => (
     <XAxis dataKey="x" type="number" name="stature" unit="cm" />
     <YAxis dataKey="y" type="number" name="weight" unit="kg" width="auto" />
     <Tooltip />
-    <Scatter name="A school" data={data} fill="#ff7300" isAnimationActive={isAnimationActive}>
+    <Scatter name="A school" data={data} dataKey="x" isAnimationActive={isAnimationActive}>
       <ErrorBar
         dataKey="errorY"
         width={4}

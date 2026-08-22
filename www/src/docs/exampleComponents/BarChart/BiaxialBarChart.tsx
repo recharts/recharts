@@ -23,10 +23,10 @@ const BiaxialBarChart = () => {
         bottom: 5,
       }}
     >
-      <CartesianGrid strokeDasharray="3 3" />
+      <CartesianGrid />
       <Typed.XAxis dataKey="label" />
-      <Typed.YAxis yAxisId="left" orientation="left" stroke="#8884d8" width="auto" />
-      <Typed.YAxis yAxisId="right" orientation="right" stroke="#82ca9d" width="auto" />
+      <Typed.YAxis yAxisId="left" orientation="left" width="auto" />
+      <Typed.YAxis yAxisId="right" orientation="right" width="auto" />
       <Tooltip />
       <Legend />
       <Typed.Bar yAxisId="left" dataKey="x" />

@@ -46,41 +46,12 @@ const data = [
 export default function IndexLineChart() {
   return (
     <LineChart style={{ width: '100%', aspectRatio: 1.618, maxWidth: 800, margin: 'auto' }} responsive data={data}>
-      <CartesianGrid stroke="var(--color-border-3)" strokeDasharray="5 5" />
+      <CartesianGrid strokeDasharray="5 5" />
       <XAxis dataKey="name" />
       <YAxis width="auto" />
-      <Line
-        type="monotone"
-        dataKey="uv"
-        stroke="var(--color-chart-1)"
-        dot={{
-          fill: 'var(--color-surface-base)',
-        }}
-        activeDot={{
-          stroke: 'var(--color-surface-base)',
-        }}
-      />
-      <Line
-        type="monotone"
-        dataKey="pv"
-        stroke="var(--color-chart-2)"
-        dot={{
-          fill: 'var(--color-surface-base)',
-        }}
-        activeDot={{
-          stroke: 'var(--color-surface-base)',
-        }}
-      />
-      <Legend
-        position="insideTopRight"
-        offset={20}
-        wrapperStyle={{
-          border: '1px solid var(--color-border-3)',
-          borderRadius: 5,
-          padding: '1ex',
-          background: 'var(--color-surface-base)',
-        }}
-      />
+      <Line type="monotone" dataKey="uv" />
+      <Line type="monotone" dataKey="pv" />
+      <Legend position="insideTopRight" offset={20} />
       <RechartsDevtools />
     </LineChart>
   );

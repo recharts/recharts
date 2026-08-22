@@ -23,7 +23,7 @@ const AreaChartExample = ({ isAnimationActive = true }) => (
         <stop offset="95%" stopColor="#82ca9d" stopOpacity={0} />
       </linearGradient>
     </defs>
-    <CartesianGrid strokeDasharray="3 3" />
+    <CartesianGrid />
     <Typed.XAxis dataKey="label" />
     <Typed.YAxis width="auto" />
     <Tooltip />

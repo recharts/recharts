@@ -58,12 +58,12 @@ const BrushBarChart = () => {
         bottom: 5,
       }}
     >
-      <CartesianGrid strokeDasharray="3 3" />
+      <CartesianGrid />
       <XAxis dataKey="name" />
       <YAxis width="auto" niceTicks="snap125" />
       <Tooltip />
       <Legend position="top" wrapperStyle={{ lineHeight: '40px' }} />
-      <ReferenceLine y={0} stroke="#000" />
+      <ReferenceLine y={0} />
       <Brush dataKey="name" height={30} stroke="#8884d8" />
       <Bar dataKey="pv" />
       <Bar dataKey="uv" />

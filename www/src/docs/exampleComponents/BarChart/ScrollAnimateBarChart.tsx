@@ -63,7 +63,7 @@ const ScrollAnimateBarChart = () => {
           bottom: 5,
         }}
       >
-        <CartesianGrid strokeDasharray="3 3" />
+        <CartesianGrid />
         <Typed.XAxis dataKey="label" />
         <Typed.YAxis width="auto" />
         <Typed.Tooltip />

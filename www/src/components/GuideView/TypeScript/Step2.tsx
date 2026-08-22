@@ -30,12 +30,12 @@ export default function Example() {
         bottom: 0,
       }}
     >
-      <CartesianGrid strokeDasharray="3 3" />
+      <CartesianGrid />
       {/* By specifying MyData and string, we get type safety on dataKey! */}
       <XAxis<MyData, string> dataKey="name" />
       <YAxis<MyData, number> />
       <Tooltip />
-      <Area<MyData, number> type="monotone" dataKey="uv" stroke="#82ca9d" fill="#82ca9d" />
+      <Area<MyData, number> type="monotone" dataKey="uv" />
     </AreaChart>
   );
 }

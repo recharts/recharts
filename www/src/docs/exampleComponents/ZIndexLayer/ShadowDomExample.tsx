@@ -62,7 +62,6 @@ export default function ShadowDomExample({ isAnimationActive = true }: { isAnima
           labelLine={false}
           label={({ name, percent }) => `${name} ${((percent ?? 0) * 100).toFixed(0)}%`}
           outerRadius={100}
-          fill="#8884d8"
           dataKey="value"
           isAnimationActive={isAnimationActive}
         />
