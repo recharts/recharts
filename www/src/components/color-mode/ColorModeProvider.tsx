@@ -38,7 +38,7 @@ export function ColorModeProvider({ children }: { children: React.ReactNode }) {
       }
     };
     const handleSystemColorSchemeChange = () => {
-      updateState(dispatchColorModeAction('system'));
+      updateState(getColorModeState());
     };
     const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
 
