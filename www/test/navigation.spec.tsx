@@ -6,7 +6,7 @@ import '@testing-library/jest-dom/vitest';
 
 import { normalizePathnameToLocale } from '../src/navigation';
 import { Navigation } from '../src/components/Navigation';
-import { ColorModeProvider, defineColorModeStore } from '../src/components/color-mode';
+import { ColorModeProvider } from '../src/components/color-mode';
 
 describe('normalizePathnameToLocale', () => {
   it('should return the same pathname if it already includes locale', () => {
@@ -33,9 +33,8 @@ describe('ColorModePicker', () => {
       removeEventListener() {},
       dispatchEvent() {},
     }));
-    const store = defineColorModeStore();
     render(
-      <ColorModeProvider store={store}>
+      <ColorModeProvider>
         <MemoryRouter>
           <Navigation />
         </MemoryRouter>
@@ -53,6 +52,5 @@ describe('ColorModePicker', () => {
       expect(picker).toHaveAccessibleName('light');
     });
     expect(document.documentElement).toHaveAttribute('data-mode', 'light');
-    store.dispose();
   });
 });

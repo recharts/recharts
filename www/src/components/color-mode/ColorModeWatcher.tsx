@@ -1,4 +1,3 @@
-import { useSyncExternalStore } from 'react';
 import { useColorModeStore } from './ColorModeProvider';
 import { ColorModeState } from './defineColorModeStore';
 
@@ -16,12 +15,10 @@ import { ColorModeState } from './defineColorModeStore';
  * />
  */
 export function ColorModeWatcher(props: { render: (state: ColorModeState) => React.ReactNode }) {
-  const store = useColorModeStore();
-  const state = useSyncExternalStore(store.subscribe, store.getSnapshot, store.getServerSnapshot);
+  const { state } = useColorModeStore();
   return props.render(state);
 }
 
 export function useColorMode(): ColorModeState {
-  const store = useColorModeStore();
-  return useSyncExternalStore(store.subscribe, store.getSnapshot, store.getServerSnapshot);
+  return useColorModeStore().state;
 }

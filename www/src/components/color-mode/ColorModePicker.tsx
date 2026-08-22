@@ -1,4 +1,3 @@
-import { useSyncExternalStore } from 'react';
 import { LuMonitor, LuMoon, LuSun } from 'react-icons/lu';
 
 import styles from './ColorModePicker.module.css';
@@ -16,8 +15,7 @@ function ColorModePickerIcon(props: ColorModeState) {
 }
 
 export function ColorModePicker(props: React.ComponentPropsWithRef<'button'>) {
-  const store = useColorModeStore();
-  const state = useSyncExternalStore(store.subscribe, store.getSnapshot, store.getServerSnapshot);
+  const { state, dispatch } = useColorModeStore();
   return (
     <button
       {...props}
@@ -25,15 +23,15 @@ export function ColorModePicker(props: React.ComponentPropsWithRef<'button'>) {
       type="button"
       onClick={() => {
         if (state.origin === 'system') {
-          store.dispatch('light');
+          dispatch('light');
           return;
         }
         if (state.mode === 'light') {
-          store.dispatch('dark');
+          dispatch('dark');
           return;
         }
         if (state.mode === 'dark') {
-          store.dispatch('system');
+          dispatch('system');
         }
       }}
       aria-label={state.origin === 'system' ? 'system' : state.mode}
