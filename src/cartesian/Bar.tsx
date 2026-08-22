@@ -91,7 +91,7 @@ import { BarStackClipLayer, useStackId } from './BarStack';
 import { GraphicalItemId } from '../state/graphicalItemsSlice';
 import { ChartData } from '../state/chartDataSlice';
 import { graphicalItemIdentity } from '../theme/graphicalItemIdentity';
-import { RechartsTheme } from '../theme/RechartsTheme';
+import { RechartsTheme, Styles2D } from '../theme/RechartsTheme';
 import { useBackwardsCompatibleTheme } from '../theme/useBackwardsCompatibleTheme';
 
 type BarRectangleType = {
@@ -535,10 +535,20 @@ type BarBackgroundProps = {
   allOtherBarProps: InternalProps;
 };
 
+const defaultLegacyBarBackgroundProps: Styles2D = {
+  fill: '#eee',
+};
+
 function BarBackground(props: BarBackgroundProps) {
   const activeIndex = useAppSelector(selectActiveTooltipIndex);
 
   const { data, dataKey, background: backgroundFromProps, allOtherBarProps } = props;
+  const backgroundProps = svgPropertiesNoEventsFromUnknown(backgroundFromProps);
+  const backgroundThemeProps = useBackwardsCompatibleTheme(
+    theme => theme.barBackground,
+    backgroundProps ?? {},
+    defaultLegacyBarBackgroundProps,
+  );
 
   const {
     onMouseEnter: onMouseEnterFromProps,
@@ -554,8 +564,6 @@ function BarBackground(props: BarBackgroundProps) {
     return null;
   }
 
-  const backgroundProps = svgPropertiesNoEventsFromUnknown(backgroundFromProps);
-
   return (
     <ZIndexLayer zIndex={getZIndexFromUnknown(backgroundFromProps, DefaultZIndexes.barBackground)}>
       {data.map((entry: BarRectangleItem, i: number) => {
@@ -569,12 +577,12 @@ function BarBackground(props: BarBackgroundProps) {
         const onMouseLeave = onMouseLeaveFromContext(entry, entry.originalDataIndex);
         const onClick = onClickFromContext(entry, entry.originalDataIndex);
 
+        // @ts-expect-error backgroundProps is contributing unknown props
         const barRectangleProps: BarRectangleProps = {
           option: backgroundFromProps,
           isActive: String(entry.originalDataIndex) === activeIndex,
           ...rest,
-          // @ts-expect-error backgroundProps is contributing unknown props
-          fill: '#eee',
+          ...backgroundThemeProps,
           ...backgroundFromDataEntry,
           ...backgroundProps,
           ...adaptEventsOfChild(restOfAllOtherProps, entry, i),

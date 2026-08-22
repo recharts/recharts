@@ -13,7 +13,7 @@ function BarThemeChart() {
     <BarChart style={{ width: '400px', height: '260px' }} data={data}>
       <XAxis dataKey="name" />
       <YAxis />
-      <Bar dataKey="value" isAnimationActive={false} />
+      <Bar dataKey="value" background isAnimationActive={false} />
     </BarChart>
   );
 }
@@ -35,6 +35,14 @@ export function BarThemeComparison() {
               strokeOpacity: 0.7,
             },
           ],
+          barBackground: {
+            fill: '#bfdbfe',
+            fillOpacity: 0.7,
+            stroke: '#1d4ed8',
+            strokeWidth: 2,
+            strokeOpacity: 0.9,
+            strokeDasharray: '4 3',
+          },
         }}
       >
         <BarThemeChart />

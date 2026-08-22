@@ -4,6 +4,7 @@ import React from 'react';
 import { rechartsTestRender } from '../../helper/createSelectorTestCase';
 import { Bar, BarChart, RechartsThemeProvider } from '../../../src';
 import { getAllBarPaths } from '../../helper/expectBars';
+import { assertNotNull } from '../../helper/assertNotNull';
 
 const mockData = generateMockData(5, 2);
 
@@ -49,6 +50,12 @@ describe('Bar theme', () => {
   function getBarStrokeDasharray(container: ReturnType<typeof rechartsTestRender>['container']): string | null {
     const bar = getAllBarPaths(container)[0];
     return bar?.getAttribute('stroke-dasharray') ?? null;
+  }
+
+  function getBarBackground(container: ReturnType<typeof rechartsTestRender>['container']): SVGPathElement {
+    const background = container.querySelector<SVGPathElement>('.recharts-bar-background-rectangle');
+    assertNotNull(background);
+    return background;
   }
 
   describe('fill', () => {
@@ -260,6 +267,74 @@ describe('Bar theme', () => {
       expect(getBarFill(container)).toBe('orange');
       expect(getBarStroke(container)).toBe(null);
       expect(getBarStrokeWidth(container)).toBe(null);
+    });
+  });
+
+  describe('background', () => {
+    it('preserves the legacy fill without a provider', () => {
+      const { container } = rechartsTestRender(<MyChart barProps={{ background: true }} />);
+      expect(getBarBackground(container)).toHaveAttribute('fill', '#eee');
+    });
+
+    it('does not provide legacy styles when a provider has no background theme', () => {
+      const { container } = rechartsTestRender(
+        <RechartsThemeProvider value={{ graphicalItems: [] }}>
+          <MyChart barProps={{ background: true }} />
+        </RechartsThemeProvider>,
+      );
+      expect(getBarBackground(container)).not.toHaveAttribute('fill');
+    });
+
+    it('applies all background theme properties when props are omitted', () => {
+      const { container } = rechartsTestRender(
+        <RechartsThemeProvider
+          value={{
+            graphicalItems: [],
+            barBackground: {
+              fill: 'teal',
+              stroke: 'navy',
+              strokeWidth: 3,
+              strokeOpacity: 0.8,
+              strokeDasharray: '5 10',
+              fillOpacity: 0.6,
+            },
+          }}
+        >
+          <MyChart barProps={{ background: true }} />
+        </RechartsThemeProvider>,
+      );
+      const background = getBarBackground(container);
+      expect(background).toHaveAttribute('fill', 'teal');
+      expect(background).toHaveAttribute('stroke', 'navy');
+      expect(background).toHaveAttribute('stroke-width', '3');
+      expect(background).toHaveAttribute('stroke-opacity', '0.8');
+      expect(background).toHaveAttribute('stroke-dasharray', '5 10');
+      expect(background).toHaveAttribute('fill-opacity', '0.6');
+    });
+
+    it('prefers explicit background props over the theme', () => {
+      const { container } = rechartsTestRender(
+        <RechartsThemeProvider
+          value={{
+            graphicalItems: [],
+            barBackground: {
+              fill: 'teal',
+              stroke: 'navy',
+              strokeWidth: 3,
+              strokeOpacity: 0.8,
+              fillOpacity: 0.6,
+            },
+          }}
+        >
+          <MyChart barProps={{ background: { fill: 'gold', strokeWidth: 2 } }} />
+        </RechartsThemeProvider>,
+      );
+      const background = getBarBackground(container);
+      expect(background).toHaveAttribute('fill', 'gold');
+      expect(background).toHaveAttribute('stroke', 'navy');
+      expect(background).toHaveAttribute('stroke-width', '2');
+      expect(background).toHaveAttribute('stroke-opacity', '0.8');
+      expect(background).toHaveAttribute('fill-opacity', '0.6');
     });
   });
 });
