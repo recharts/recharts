@@ -68,6 +68,21 @@ const regionFoldService = foldService.of((state, from, _to) => {
 
 const trimNewlinesFromStartAndEnd = (s: string): string => s.replace(/^\n+|\n+$/g, '');
 
+const createEditorTheme = (dark: boolean) =>
+  EditorView.theme(
+    {
+      '&': { height: '100%', fontSize: '14px' },
+      '.cm-scroller': { fontFamily: 'monospace' },
+      '.cm-foldGutter': { width: '20px' },
+      '.cm-content': { maxWidth: '100%' },
+      '.cm-gutters': {
+        backgroundColor: 'var(--color-surface-sunken)',
+        borderColor: 'var(--color-border-3)',
+      },
+    },
+    { dark },
+  );
+
 /**
  * Props for the SourceCodeEditor component.
  */
@@ -108,6 +123,7 @@ export function SourceCodeEditor({
   const editorRef = useRef<HTMLDivElement>(null);
   const viewRef: React.MutableRefObject<EditorView | null> = useRef<EditorView | null>(null);
   const editableCompartment = useRef(new Compartment());
+  const themeCompartment = useRef(new Compartment());
   const [editExtensions, setEditExtensions] = useState<Extension[]>([]);
   const [showFallback, setShowFallback] = useState(true);
   const colorMode = useColorMode();
@@ -141,19 +157,7 @@ export function SourceCodeEditor({
       foldGutter(),
       keymap.of(foldKeymap),
       EditorView.lineWrapping,
-      EditorView.theme(
-        {
-          '&': { height: '100%', fontSize: '14px' },
-          '.cm-scroller': { fontFamily: 'monospace' },
-          '.cm-foldGutter': { width: '20px' },
-          '.cm-content': { maxWidth: '100%' },
-          '.cm-gutters': {
-            backgroundColor: 'var(--color-surface-sunken)',
-            borderColor: 'var(--color-border-3)',
-          },
-        },
-        { dark: colorMode.mode === 'dark' },
-      ),
+      themeCompartment.current.of(createEditorTheme(colorMode.mode === 'dark')),
       editableCompartment.current.of([]),
     ];
 
@@ -204,7 +208,15 @@ export function SourceCodeEditor({
       }
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [colorMode]);
+  }, []);
+
+  // Reconfigure the theme in place when color mode changes, preserving editor state
+  useEffect(() => {
+    if (!viewRef.current) return;
+    viewRef.current.dispatch({
+      effects: themeCompartment.current.reconfigure(createEditorTheme(colorMode.mode === 'dark')),
+    });
+  }, [colorMode.mode]);
 
   // Update doc when value changes externally
   useEffect(() => {
