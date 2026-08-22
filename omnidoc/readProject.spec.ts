@@ -902,6 +902,14 @@ describe('readProject', () => {
     expect(reader.getSVGParentOf('ReferenceLine')).toBe('SVGLineElement');
   });
 
+  it('should resolve SVG components through nested aliases and interfaces', () => {
+    expect(reader.getSVGParentOf('Area')).toBe('SVGPathElement');
+    expect(reader.getSVGParentOf('Line')).toBe('SVGPathElement');
+    expect(reader.getSVGParentOf('Bar')).toBe('SVGPathElement');
+    expect(reader.getSVGParentOf('ReferenceArea')).toBe('SVGPathElement');
+    expect(reader.getSVGParentOf('Cell')).toBe('SVGElement');
+  });
+
   it('should get default value of a prop', () => {
     expect(reader.getDefaultValueOf('ReferenceLine', 'position')).toEqual({ type: 'known', value: 'middle' });
   });

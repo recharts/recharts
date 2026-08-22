@@ -39,6 +39,8 @@ function PropsExamples({ examples, locale }: PropsExamplesProps) {
 type PropsListProps = {
   props: ReadonlyArray<ApiProps>;
   locale: SupportedLocale;
+  componentName: string;
+  svgParent?: string;
 };
 
 type PropsSection = 'current' | 'deprecated' | 'events';
@@ -75,10 +77,60 @@ type PropsSectionProps = {
   section: PropsSection;
   isExpanded: boolean;
   onToggle: (section: PropsSection) => void;
+  componentName?: string;
+  svgAttributeTarget?: SvgAttributeTarget;
 };
 
-function PropsSection({ entries, locale, section, isExpanded, onToggle }: PropsSectionProps) {
-  if (entries.length === 0) {
+type SvgAttributeTarget = {
+  linkText: string;
+  suffix: string;
+  url: string;
+};
+
+function getSvgAttributeTarget(svgParent: string): SvgAttributeTarget {
+  if (svgParent === 'SVGElement') {
+    return {
+      linkText: 'SVG attributes',
+      suffix: '',
+      url: 'https://developer.mozilla.org/en-US/docs/Web/SVG/Reference/Attribute',
+    };
+  }
+
+  if (svgParent === 'SVGGraphicsElement') {
+    return {
+      linkText: 'graphics',
+      suffix: ' SVG attributes',
+      url: 'https://developer.mozilla.org/en-US/docs/Web/API/SVGGraphicsElement',
+    };
+  }
+
+  const elementName = /^SVG(.+)Element$/.exec(svgParent)?.[1];
+  if (!elementName) {
+    return {
+      linkText: svgParent,
+      suffix: ' SVG attributes',
+      url: 'https://developer.mozilla.org/en-US/docs/Web/SVG',
+    };
+  }
+
+  const tagName = elementName === 'SVG' ? 'svg' : elementName.charAt(0).toLowerCase() + elementName.slice(1);
+  return {
+    linkText: tagName,
+    suffix: ' SVG attributes',
+    url: `https://developer.mozilla.org/en-US/docs/Web/SVG/Reference/Element/${tagName}`,
+  };
+}
+
+function PropsSection({
+  entries,
+  locale,
+  section,
+  isExpanded,
+  onToggle,
+  componentName,
+  svgAttributeTarget,
+}: PropsSectionProps) {
+  if (entries.length === 0 && !svgAttributeTarget) {
     return null;
   }
 
@@ -91,7 +143,16 @@ function PropsSection({ entries, locale, section, isExpanded, onToggle }: PropsS
           <i className="expander">{isExpanded ? 'Click to collapse' : 'Click to expand'}</i>
         </button>
       </h4>
-      {isExpanded ? (
+      {svgAttributeTarget && componentName ? (
+        <p className="svg-props-note">
+          {componentName} also accepts all{' '}
+          <a href={svgAttributeTarget.url} target="_blank" rel="noreferrer">
+            {svgAttributeTarget.linkText}
+          </a>
+          {svgAttributeTarget.suffix}.
+        </p>
+      ) : null}
+      {isExpanded && entries.length > 0 ? (
         <ul className="props-list" id={sectionId}>
           {entries.map((entry: ApiProps) => (
             <li className="props-item" key={entry.name} id={entry.name}>
@@ -147,7 +208,7 @@ function PropsSection({ entries, locale, section, isExpanded, onToggle }: PropsS
   );
 }
 
-function PropsList({ props, locale }: PropsListProps) {
+function PropsList({ props, locale, componentName, svgParent }: PropsListProps) {
   const [expandedSections, setExpandedSections] = useState(getInitialExpandedSections);
   const toggleSection = (section: PropsSection) => {
     setExpandedSections(previousSections => {
@@ -161,13 +222,14 @@ function PropsList({ props, locale }: PropsListProps) {
     });
   };
 
-  if (!props.length) {
+  if (!props.length && !svgParent) {
     return null;
   }
 
   const currentProps = props.filter(prop => !prop.deprecated && !prop.name.startsWith('on'));
   const deprecatedProps = props.filter(prop => prop.deprecated);
   const events = props.filter(prop => !prop.deprecated && prop.name.startsWith('on'));
+  const svgAttributeTarget = svgParent ? getSvgAttributeTarget(svgParent) : undefined;
 
   return (
     <>
@@ -177,6 +239,8 @@ function PropsList({ props, locale }: PropsListProps) {
         section="current"
         isExpanded={expandedSections.current}
         onToggle={toggleSection}
+        componentName={componentName}
+        svgAttributeTarget={svgAttributeTarget}
       />
       <PropsSection
         entries={deprecatedProps}
@@ -346,7 +410,7 @@ function APIViewNewImpl({ params }: APIViewNewImplProps) {
           </div>
         )}
 
-        <PropsList props={api && api.props} locale={locale} />
+        <PropsList props={api && api.props} locale={locale} componentName={api.name} svgParent={api.svgParent} />
       </div>
     </div>
   );
