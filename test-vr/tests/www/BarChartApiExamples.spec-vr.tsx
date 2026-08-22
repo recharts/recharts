@@ -63,12 +63,12 @@ testWithLightTheme('BarChartWithMultiXAxis', async ({ mount }) => {
 });
 
 testWithLightTheme('BarChartHasBackground', async ({ mount }) => {
-  const component = await mount(<BarChartHasBackground />);
+  const component = await mount(<BarChartHasBackground defaultIndex={1} />);
   await expect(component).toHaveScreenshot();
 });
 
 testWithDarkTheme('BarChartHasBackground dark theme', async ({ mount }) => {
-  const component = await mount(<BarChartHasBackground />);
+  const component = await mount(<BarChartHasBackground defaultIndex={1} />);
   await expect(component).toHaveScreenshot();
 });
 

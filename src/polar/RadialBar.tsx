@@ -73,7 +73,7 @@ import { DefaultZIndexes } from '../zIndex/DefaultZIndexes';
 import { getZIndexFromUnknown } from '../zIndex/getZIndexFromUnknown';
 import { usePolarChartLayout } from '../context/chartLayoutContext';
 import { graphicalItemIdentity } from '../theme/graphicalItemIdentity';
-import { RechartsTheme } from '../theme/RechartsTheme';
+import { RechartsTheme, Styles2D } from '../theme/RechartsTheme';
 import { useBackwardsCompatibleTheme } from '../theme/useBackwardsCompatibleTheme';
 
 const STABLE_EMPTY_ARRAY: readonly RadialBarDataItem[] = [];
@@ -541,45 +541,66 @@ const SetRadialBarTooltipEntrySettings = React.memo(
   },
 );
 
+const defaultLegacyBarBackgroundProps: Styles2D = {
+  fill: '#eee',
+};
+
+function RadialBarBackground({
+  sectors,
+  allOtherRadialBarProps,
+}: {
+  sectors?: ReadonlyArray<RadialBarDataItem>;
+  allOtherRadialBarProps: InternalProps;
+}) {
+  const { cornerRadius, background: backgroundFromProps } = allOtherRadialBarProps;
+  const backgroundProps = svgPropertiesNoEventsFromUnknown(backgroundFromProps);
+  const backgroundThemeProps = useBackwardsCompatibleTheme(
+    theme => theme.barBackground,
+    backgroundProps ?? {},
+    defaultLegacyBarBackgroundProps,
+  );
+
+  if (sectors == null) {
+    return null;
+  }
+
+  return (
+    <ZIndexLayer zIndex={getZIndexFromUnknown(backgroundFromProps, DefaultZIndexes.barBackground)}>
+      {sectors.map((entry, i) => {
+        const { value, background, ...rest } = entry;
+
+        if (!background) {
+          return null;
+        }
+
+        // @ts-expect-error backgroundProps is contributing unknown props
+        const props: React.ComponentProps<typeof RadialBarSector> = {
+          cornerRadius: parseCornerRadius(cornerRadius),
+          ...rest,
+          ...backgroundThemeProps,
+          ...background,
+          ...backgroundProps,
+          ...adaptEventsOfChild(allOtherRadialBarProps, entry, i),
+          index: i,
+          className: clsx('recharts-radial-bar-background-sector', String(backgroundProps?.className)),
+          option: background,
+          isActive: false,
+        };
+
+        return (
+          <RadialBarSector
+            key={`background-${rest.cx}-${rest.cy}-${rest.innerRadius}-${rest.outerRadius}-${rest.startAngle}-${rest.endAngle}-${i}`}
+            {...props}
+          />
+        );
+      })}
+    </ZIndexLayer>
+  );
+}
+
 class RadialBarWithState extends PureComponent<InternalProps> {
   renderBackground(sectors?: ReadonlyArray<RadialBarDataItem>) {
-    if (sectors == null) {
-      return null;
-    }
-    const { cornerRadius } = this.props;
-    const backgroundProps = svgPropertiesNoEventsFromUnknown(this.props.background);
-    return (
-      <ZIndexLayer zIndex={getZIndexFromUnknown(this.props.background, DefaultZIndexes.barBackground)}>
-        {sectors.map((entry, i) => {
-          const { value, background, ...rest } = entry;
-
-          if (!background) {
-            return null;
-          }
-
-          const props: React.ComponentProps<typeof RadialBarSector> = {
-            cornerRadius: parseCornerRadius(cornerRadius),
-            ...rest,
-            // @ts-expect-error backgroundProps is contributing unknown props
-            fill: '#eee',
-            ...background,
-            ...backgroundProps,
-            ...adaptEventsOfChild(this.props, entry, i),
-            index: i,
-            className: clsx('recharts-radial-bar-background-sector', String(backgroundProps?.className)),
-            option: background,
-            isActive: false,
-          };
-
-          return (
-            <RadialBarSector
-              key={`background-${rest.cx}-${rest.cy}-${rest.innerRadius}-${rest.outerRadius}-${rest.startAngle}-${rest.endAngle}-${i}`}
-              {...props}
-            />
-          );
-        })}
-      </ZIndexLayer>
-    );
+    return <RadialBarBackground sectors={sectors} allOtherRadialBarProps={this.props} />;
   }
 
   render() {

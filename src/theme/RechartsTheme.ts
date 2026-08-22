@@ -61,6 +61,10 @@ export interface RechartsTheme {
    */
   graphicalItems: ReadonlyArray<GraphicalItemStyle>;
   /**
+   * Styles applied to Bar and RadialBar backgrounds.
+   */
+  barBackground?: Styles2D;
+  /**
    * CartesianGrid and PolarGrid.
    *
    * Recharts grid allows fill color and fill opacity
