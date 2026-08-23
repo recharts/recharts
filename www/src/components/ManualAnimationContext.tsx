@@ -24,7 +24,7 @@ import {
   YAxis,
   ZIndexLayer,
 } from 'recharts';
-import { Blanket } from '@recharts/devtools/dist/annotations';
+import { Blanket } from '@recharts/devtools';
 
 export const MockTimeContext = createContext<MockClock>([0, () => {}]);
 

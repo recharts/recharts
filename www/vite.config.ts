@@ -5,7 +5,7 @@ import sitemap from 'vite-plugin-sitemap';
 import { getSiteRoutes } from './src/navigation.data';
 import { supportedLocales } from './src/locale';
 
-// Use USE_LOCAL_DEVTOOLS=true to use the local source code of @recharts/devtools
+// Use `USE_LOCAL_DEVTOOLS=true npm run start -- --force` to use the local source code of @recharts/devtools
 // This is useful for developing the devtools package itself, as it shares the same Context as the app.
 const useLocalDevtools = process.env.USE_LOCAL_DEVTOOLS === 'true';
 
