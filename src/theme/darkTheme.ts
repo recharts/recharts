@@ -53,6 +53,10 @@ export const darkTheme: RechartsTheme = {
   barBackground: {
     fill: '#3f3f46',
   },
+  brush: {
+    fill: '#3f3f46',
+    stroke: '#d6d3d1',
+  },
   grid: {
     stroke: '#3f3f46',
     strokeDasharray: '3 3',

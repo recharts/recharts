@@ -27,6 +27,9 @@ import { BrushSettings, setBrushSettings } from '../state/brushSlice';
 import { PanoramaContextProvider } from '../context/PanoramaContext';
 import { selectBrushDimensions } from '../state/selectors/brushSelectors';
 import { useBrushChartSynchronisation } from '../synchronisation/useChartSynchronisation';
+import { Styles2D } from '../theme/RechartsTheme';
+import { useBackwardsCompatibleTheme } from '../theme/useBackwardsCompatibleTheme';
+import { useRechartsTheme } from '../theme/RechartsThemeContext';
 import { RequiresDefaultProps, resolveDefaultProps } from '../util/resolveDefaultProps';
 import { svgPropertiesNoEvents } from '../util/svgPropertiesNoEvents';
 
@@ -34,6 +37,8 @@ export type BrushTravellerType = ReactElement<SVGElement> | ((props: TravellerPr
 
 // Why is this tickFormatter different from the other TickFormatters? This one allows to return numbers too for some reason.
 type BrushTickFormatter = (value: any, index: number) => number | string;
+
+type BrushStyleProps = Pick<Styles2D, 'fill' | 'stroke'>;
 
 /**
  * The type is exported only so that TypeScript can name it in the declaration files of projects
@@ -158,6 +163,10 @@ export type Props = Omit<SVGProps<SVGElement>, 'onChange' | 'onDragEnd' | 'ref'>
 type InternalProps = Omit<SVGProps<SVGElement>, 'onChange' | 'onDragEnd' | 'ref'> &
   RequiresDefaultProps<BrushProps, typeof defaultBrushProps>;
 
+type BrushInternalProps = InternalProps & {
+  travellerStyleProps: BrushStyleProps;
+};
+
 type PropertiesFromContext = {
   x: number;
   y: number;
@@ -183,15 +192,19 @@ function DefaultTraveller(props: TravellerProps) {
   );
 }
 
-function Traveller(props: { travellerType: BrushTravellerType | undefined; travellerProps: TravellerProps }) {
-  const { travellerProps, travellerType } = props;
+function Traveller(props: {
+  travellerType: BrushTravellerType | undefined;
+  travellerProps: TravellerProps;
+  customTravellerProps: TravellerProps;
+}) {
+  const { customTravellerProps, travellerProps, travellerType } = props;
 
   if (React.isValidElement(travellerType)) {
     // @ts-expect-error element cloning disagrees with the types (and it should)
-    return React.cloneElement(travellerType, travellerProps);
+    return React.cloneElement(travellerType, customTravellerProps);
   }
   if (typeof travellerType === 'function') {
-    return travellerType(travellerProps);
+    return travellerType(customTravellerProps);
   }
   return <DefaultTraveller {...travellerProps} />;
 }
@@ -233,6 +246,7 @@ function TravellerLayer({
   onBlur: () => void;
 }) {
   const { y, x: xFromProps, travellerWidth, height, traveller, ariaLabel, data, startIndex, endIndex } = otherProps;
+  const { travellerStyleProps } = otherProps;
   const x = Math.max(travellerX, xFromProps);
   const travellerProps: TravellerProps = {
     ...svgPropertiesNoEvents(otherProps),
@@ -241,6 +255,17 @@ function TravellerLayer({
     width: travellerWidth,
     height,
   };
+  const customTravellerProps: TravellerProps = { ...travellerProps };
+  if (travellerStyleProps.fill === undefined) {
+    delete customTravellerProps.fill;
+  } else {
+    customTravellerProps.fill = travellerStyleProps.fill;
+  }
+  if (travellerStyleProps.stroke === undefined) {
+    delete customTravellerProps.stroke;
+  } else {
+    customTravellerProps.stroke = travellerStyleProps.stroke;
+  }
 
   const ariaLabelBrush = ariaLabel || getAriaLabel(data, startIndex, endIndex);
 
@@ -267,7 +292,11 @@ function TravellerLayer({
       onBlur={onBlur}
       style={{ cursor: 'col-resize' }}
     >
-      <Traveller travellerType={traveller} travellerProps={travellerProps} />
+      <Traveller
+        travellerType={traveller}
+        travellerProps={travellerProps}
+        customTravellerProps={customTravellerProps}
+      />
     </Layer>
   );
 }
@@ -517,6 +546,7 @@ type TravellerProps = {
   y: number;
   width: number;
   height: number;
+  fill?: SVGAttributes<SVGElement>['fill'];
   stroke?: SVGAttributes<SVGElement>['stroke'];
 };
 
@@ -565,7 +595,7 @@ const isTouch = (e: TouchEvent<SVGElement> | React.MouseEvent<SVGElement>): e is
 
 type MouseOrTouchEvent = React.MouseEvent<SVGGElement> | TouchEvent<SVGGElement>;
 
-type BrushWithStateProps = InternalProps &
+type BrushWithStateProps = BrushInternalProps &
   PropertiesFromContext & { startIndexControlledFromProps?: number; endIndexControlledFromProps?: number };
 
 class BrushWithState extends PureComponent<BrushWithStateProps, State> {
@@ -1029,7 +1059,7 @@ class BrushWithState extends PureComponent<BrushWithStateProps, State> {
   }
 }
 
-function BrushInternal(props: InternalProps) {
+function BrushInternal(props: BrushInternalProps) {
   const dispatch = useAppDispatch();
   const chartData = useChartData();
   const dataIndexes = useDataIndex();
@@ -1102,12 +1132,15 @@ function BrushSettingsDispatcher(props: BrushSettings): null {
   return null;
 }
 
+const defaultLegacyBrushThemeProps: BrushStyleProps = {
+  fill: '#fff',
+  stroke: '#666',
+};
+
 export const defaultBrushProps = {
   height: 40,
   travellerWidth: 5,
   gap: 1,
-  fill: '#fff',
-  stroke: '#666',
   padding: { top: 1, right: 1, bottom: 1, left: 1 },
   leaveTimeOut: 1000,
   alwaysShowText: false,
@@ -1127,7 +1160,23 @@ export const defaultBrushProps = {
  * @consumes CartesianChartContext
  */
 export function Brush(outsideProps: Props) {
-  const props = resolveDefaultProps(outsideProps, defaultBrushProps);
+  const activeTheme = useRechartsTheme();
+  const themeProps = useBackwardsCompatibleTheme<BrushStyleProps>(
+    theme => theme.brush,
+    {
+      fill: outsideProps.fill,
+      stroke: outsideProps.stroke,
+    },
+    defaultLegacyBrushThemeProps,
+  );
+  const props = resolveDefaultProps({ ...outsideProps, ...themeProps }, defaultBrushProps);
+  const travellerStyleProps: BrushStyleProps =
+    activeTheme == null
+      ? themeProps
+      : {
+          fill: outsideProps.fill,
+          stroke: outsideProps.stroke,
+        };
   return (
     <>
       <BrushSettingsDispatcher
@@ -1137,7 +1186,7 @@ export function Brush(outsideProps: Props) {
         width={props.width}
         padding={props.padding}
       />
-      <BrushInternal {...props} />
+      <BrushInternal {...props} travellerStyleProps={travellerStyleProps} />
     </>
   );
 }

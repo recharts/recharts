@@ -53,6 +53,10 @@ export const lightTheme: RechartsTheme = {
   barBackground: {
     fill: '#eee',
   },
+  brush: {
+    fill: '#eee',
+    stroke: '#52525b',
+  },
   axis: {
     stroke: '#52525b',
   },
