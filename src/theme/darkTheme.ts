@@ -53,6 +53,10 @@ export const darkTheme: RechartsTheme = {
   barBackground: {
     fill: '#3f3f46',
   },
+  brush: {
+    fill: '#3f3f46',
+    stroke: '#d6d3d1',
+  },
   chart: { width: '100%', maxWidth: '700px', maxHeight: '70vh', aspectRatio: 1.618 },
   grid: {
     stroke: '#3f3f46',

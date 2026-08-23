@@ -65,6 +65,10 @@ export interface RechartsTheme {
    */
   barBackground?: Styles2D;
   /**
+   * Styles applied to the Brush background, slide, travellers, and text.
+   */
+  brush?: Pick<Styles2D, 'fill' | 'stroke'>;
+  /**
    * CartesianGrid and PolarGrid.
    *
    * Recharts grid allows fill color and fill opacity
