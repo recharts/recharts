@@ -1,6 +1,6 @@
 {
   "name": "recharts",
-  "version": "3.10.1",
+  "version": "3.11.0-canary.0",
   "description": "React charts",
   "main": "lib/index.js",
   "module": "es6/index.js",
