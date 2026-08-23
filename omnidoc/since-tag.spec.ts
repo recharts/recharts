@@ -38,6 +38,33 @@ describe('@since tags on public exports', () => {
     expect(malformed, 'A @since tag must contain only a version number, such as `@since 3.10`.').toEqual([]);
   });
 
+  describe('tag cardinality', () => {
+    function countTag(name: string, tagName: string): number {
+      const jsDoc = projectReader.getComponentJsDocMeta(name);
+      return jsDoc?.tags.filter(([tag]) => tag === tagName).length ?? 0;
+    }
+
+    it('should not have more than one @since tag on the same export', () => {
+      const duplicated = allExports.filter(name => countTag(name, 'since') > 1);
+
+      expect(duplicated, 'An export must have at most one @since tag - remove the extra one(s).').toEqual([]);
+    });
+
+    it('should not have more than one @experimental tag on the same export', () => {
+      const duplicated = allExports.filter(name => countTag(name, 'experimental') > 1);
+
+      expect(duplicated, 'An export must have at most one @experimental tag - remove the extra one(s).').toEqual([]);
+    });
+
+    it('should not have both @since and @experimental tags on the same export', () => {
+      const both = allExports.filter(name => countTag(name, 'since') >= 1 && countTag(name, 'experimental') >= 1);
+
+      expect(both, 'An export cannot be both stable (@since) and @experimental at the same time - pick one.').toEqual(
+        [],
+      );
+    });
+  });
+
   describe('grandfathered list hygiene', () => {
     it('should only list exports that still exist in src/index.ts', () => {
       const currentExports = new Set(allExports);
