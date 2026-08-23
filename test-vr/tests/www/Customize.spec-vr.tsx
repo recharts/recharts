@@ -5,6 +5,7 @@ import CustomizeBarShape from '../../../www/src/components/GuideView/Customize/C
 import CustomizeTooltipContent from '../../../www/src/components/GuideView/Customize/CustomizeTooltipContent';
 import CustomizeSizeAndStroke from '../../../www/src/components/GuideView/Customize/CustomizeSizeAndStroke';
 import CustomizeLegendAndTooltipStyle from '../../../www/src/components/GuideView/Customize/CustomizeLegendAndTooltipStyle';
+import CustomizeCustomElement from '../../../www/src/components/GuideView/Customize/CustomizeCustomElement';
 import { testWithLightTheme } from './fixtures';
 
 testWithLightTheme('CustomizeLabels', async ({ mount }) => {
@@ -29,5 +30,10 @@ testWithLightTheme('CustomizeSizeAndStroke', async ({ mount }) => {
 
 testWithLightTheme('CustomizeLegendAndTooltipStyle', async ({ mount }) => {
   const component = await mount(<CustomizeLegendAndTooltipStyle />);
+  await expect(component).toHaveScreenshot();
+});
+
+testWithLightTheme('CustomizeCustomElement', async ({ mount }) => {
+  const component = await mount(<CustomizeCustomElement />);
   await expect(component).toHaveScreenshot();
 });

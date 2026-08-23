@@ -20,6 +20,7 @@ import { RoundedBars } from '../components/GuideView/RoundedBars';
 import { BarAlign } from '../components/GuideView/BarAlign';
 import { CellDeprecationNotice } from '../components/GuideView/CellDeprecationNotice';
 import { AnimationsGuide } from '../components/GuideView/Animations';
+import { ThemingGuide } from '../components/GuideView/Theming';
 
 const guideMap: Record<string, ComponentType<{ locale: SupportedLocale }>> = {
   installation: Installation,
@@ -37,6 +38,7 @@ const guideMap: Record<string, ComponentType<{ locale: SupportedLocale }>> = {
   cell: CellDeprecationNotice,
   typescript: TypeScript,
   animations: AnimationsGuide,
+  theming: ThemingGuide,
 };
 
 export const allGuides = Object.keys(guideMap);
