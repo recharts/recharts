@@ -50,6 +50,7 @@ export const map = {
     cell: 'Migrate from Cell component to shape prop',
     coordinateSystems: 'Coordinate and dimension systems',
     animations: 'Animation',
+    theming: 'Theming',
   },
   installation: {
     installation: 'Installation',

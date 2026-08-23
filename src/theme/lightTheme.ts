@@ -53,7 +53,6 @@ export const lightTheme: RechartsTheme = {
   barBackground: {
     fill: '#eee',
   },
-  chart: { width: '100%', maxWidth: '700px', maxHeight: '70vh', aspectRatio: 1.618 },
   axis: {
     stroke: '#52525b',
   },
