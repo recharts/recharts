@@ -118,7 +118,7 @@
     "@eslint/js": "^9.35.0",
     "@flakiness/playwright": "^2.0.0",
     "@playwright/experimental-ct-react": "1.62.1",
-    "@recharts/devtools": "^0.0.16",
+    "@recharts/devtools": "^0.0.17",
     "@reduxjs/toolkit": "^1.9.7",
     "@rollup/plugin-babel": "^7.1.0",
     "@rollup/plugin-commonjs": "^29.0.2",
