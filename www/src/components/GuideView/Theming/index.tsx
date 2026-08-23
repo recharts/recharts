@@ -603,8 +603,8 @@ export function ThemingGuide() {
           The API is marked experimental. <code>RechartsTheme</code> can change shape in a minor or patch release.
         </li>
         <li>
-          Not every component is themed yet. <LinkToApi>Brush</LinkToApi>, <LinkToApi>Sankey</LinkToApi> and{' '}
-          <LinkToApi>SunburstChart</LinkToApi> still use their own defaults regardless of the theme.
+          Not every component is themed yet. <LinkToApi>Sankey</LinkToApi> and <LinkToApi>SunburstChart</LinkToApi>{' '}
+          still use their own defaults regardless of the theme.
         </li>
         <li>
           Themes are not deep-merged. Nested providers replace, and there is no <code>createTheme</code> helper to merge
