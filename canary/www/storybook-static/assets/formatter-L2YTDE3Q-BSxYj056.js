@@ -1,0 +1,1 @@
+import{r as m}from"./blocks-PliCEL_q.js";import{d as o,c as t}from"./iframe-J2FnkNkN.js";import"./preload-helper-Dp1pzeXC.js";import"./index-DOkoL7Wj.js";import"./index-DRH1Q61C.js";import"./index--ngLRj4u.js";import"./index-B1zoM-7H.js";var e=t(m(),1),l=(0,e.default)(2)(async(i,r)=>i===!1?r:o(r));export{l as formatter};
