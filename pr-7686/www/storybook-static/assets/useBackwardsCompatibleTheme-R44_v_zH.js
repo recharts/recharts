@@ -1,0 +1,1 @@
+import{l as s}from"./resolveDefaultProps-CqMML5sA.js";import{r as n}from"./iframe-BcaWFD7u.js";const a=n.createContext(void 0);a.Provider;const c=()=>n.useContext(a),l={},i=(u,e,t)=>{const r=c();if(r==null)return t==null?e:s(e,t);const o=u(r);return o==null?l:s(e,o)};export{c as a,i as u};
