@@ -75,19 +75,6 @@ export const map = {
       '例如，你可以通过传入自定义的刻度函数来实现定制化的功能，当然其他的组件也支持类似的功能，比如 Bar 组件也能接收自定义的 shape 组件或者 shape 函数。',
   },
 
-  customize: {
-    customize: '组件自定义',
-    'step-1-title': '1. 组件 Line , Area , Bar , XAxis, YAxis 的 labels 支持自定义',
-    'step-1-desc': '例如，我们可以创建具有自定义label的<Bar />，以及自定义<XAxis /> 的刻度。',
-    'step-2-title': '2. 组件的形状可以自定义',
-    'step-2-desc': '例如，当 <Bar /> 的属性 shape 是一个函数或者 react element 的时候，可以用来自定义柱子的形状。',
-    'step-3-title': '3. Tooltip 的内容可以自定义',
-    'step-3-desc': '我们经常需要在提示浮层中展示更多的信息，这时候就可以时候自定义的 content 。',
-    'step-4-title': '4. 组件样式支持 svg 属性',
-    'step-4-desc': '除了 Tooltip 和 Legend 使用 html 实现的，其他的组件都是纯 svg 实现，支持 svg 的所有属性。',
-    'step-5-title': '5. Tooltip 和 Legend 支持自定义的 style',
-    'step-5-desc': 'Tooltip 和 Legend 是使用 html 实现的，开放了 style 相关的 api ，当然也可以通过 css 来改变样式。',
-  },
   api: {
     charts: '图表类型',
     'general-components': '通用组件',

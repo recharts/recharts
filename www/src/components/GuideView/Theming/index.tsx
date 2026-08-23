@@ -9,6 +9,7 @@ import CustomThemeExample from './CustomThemeExample.tsx';
 import CustomThemeExampleSource from './CustomThemeExample.tsx?raw';
 import NestedThemeExample from './NestedThemeExample.tsx';
 import NestedThemeExampleSource from './NestedThemeExample.tsx?raw';
+import { TargetBlankLink } from '../../Shared/TargetBlankLink.tsx';
 
 const quickStartExample = `import { Bar, BarChart, CartesianGrid, Legend, RechartsThemeProvider, Tooltip, XAxis, YAxis, lightTheme } from 'recharts';
 
@@ -179,10 +180,16 @@ export function ThemingGuide() {
         they work, but the shape of <code>RechartsTheme</code> can still change in a minor or patch release. Charts
         without a theme provider keep rendering exactly as they always have.
       </p>
+      <p>
+        A theme is the defaults layer. When a single chart needs to differ - one bar with its own shape, one axis with
+        its own tick format, one custom tooltip - that is a prop on that component, and the{' '}
+        <RechartsLink to="guide/customize">Customize guide</RechartsLink> covers it. Explicit props always win over the
+        theme, so the two never fight.
+      </p>
 
       <h2>Quick start</h2>
       <p>
-        Wrap your charts in <code>RechartsThemeProvider</code> and give it a theme::
+        Wrap your charts in <code>RechartsThemeProvider</code> and give it a theme:
       </p>
       <SourceCodeEditor value={quickStartExample} />
       <p>
@@ -550,12 +557,9 @@ export function ThemingGuide() {
         <code>RechartsThemeProvider</code> around the entire page with either <code>lightTheme</code> or{' '}
         <code>darkTheme</code>. Every chart in these docs, in every guide and every example, is themed by that single
         provider. Press it and watch the charts on this page change. See the source code of this page here:{' '}
-        <a
-          href="https://github.com/recharts/recharts/blob/d56d6660f7db52d37cb2113b39a2be010d32fe37/www/src/layouts/Frame.tsx#L37"
-          rel="noopener noreferrer"
-        >
+        <TargetBlankLink href="https://github.com/recharts/recharts/blob/d56d6660f7db52d37cb2113b39a2be010d32fe37/www/src/layouts/Frame.tsx#L37">
           on github
-        </a>
+        </TargetBlankLink>
         .
       </p>
       <p>
@@ -586,8 +590,9 @@ export function ThemingGuide() {
 
       <h2>Reading the theme yourself</h2>
       <p>
-        Custom shapes, custom tooltip content and custom legends are your components, so Recharts does not style them.
-        If you want them to follow the theme, read it with <code>useRechartsTheme</code>. It returns the nearest theme
+        Custom shapes, custom tooltip content and custom legends are your components, so Recharts does not style them -
+        see the <RechartsLink to="guide/customize">Customize guide</RechartsLink> for how those render props work. If
+        you want them to follow the theme, read it with <code>useRechartsTheme</code>. It returns the nearest theme
         as-is, with no defaults applied, and <code>undefined</code> when there is no provider.
       </p>
       <SourceCodeEditor value={readThemeExample} />

@@ -1,110 +1,61 @@
-import { Bar, BarChart, Tooltip, XAxis, YAxis } from 'recharts';
+import { Bar, BarChart, Tooltip, TooltipContentProps, XAxis, YAxis } from 'recharts';
 import { RechartsDevtools } from '@recharts/devtools';
 
-// #region Sample data
 const data = [
-  {
-    name: 'Page A',
-    uv: 400,
-    pv: 2400,
-    amt: 2400,
-  },
-  {
-    name: 'Page B',
-    uv: 300,
-    pv: 4567,
-    amt: 2400,
-  },
-  {
-    name: 'Page C',
-    uv: 300,
-    pv: 1398,
-    amt: 2400,
-  },
-  {
-    name: 'Page D',
-    uv: 200,
-    pv: 9800,
-    amt: 2400,
-  },
-  {
-    name: 'Page E',
-    uv: 278,
-    pv: 3908,
-    amt: 2400,
-  },
-  {
-    name: 'Page F',
-    uv: 189,
-    pv: 4800,
-    amt: 2400,
-  },
+  { month: 'Jan', revenue: 4200, note: 'New year promo' },
+  { month: 'Feb', revenue: 5800, note: 'Referral campaign' },
+  { month: 'Mar', revenue: 7200, note: 'Spring launch' },
+  { month: 'Apr', revenue: 6100, note: 'Steady state' },
+  { month: 'May', revenue: 8900, note: 'Conference season' },
+  { month: 'Jun', revenue: 7400, note: 'Summer slowdown' },
 ];
 
-const margin = {
-  top: 20,
-  right: 30,
-  left: 20,
-  bottom: 5,
-};
-// #endregion
-
-function getIntroOfPage(label: string): string {
-  if (label === 'Page A') {
-    return "Page A is about men's clothing";
-  }
-  if (label === 'Page B') {
-    return "Page B is about women's dress";
-  }
-  if (label === 'Page C') {
-    return "Page C is about women's bag";
-  }
-  if (label === 'Page D') {
-    return 'Page D is about household goods';
-  }
-  if (label === 'Page E') {
-    return 'Page E is about food';
-  }
-  if (label === 'Page F') {
-    return 'Page F is about baby food';
-  }
-  return '';
-}
-
-function CustomTooltip({ payload, label, active }: any) {
-  if (active && payload && payload.length) {
-    return (
-      <div
-        className="custom-tooltip"
-        style={{
-          border: '1px solid #d88488',
-          backgroundColor: '#fff',
-          padding: '10px',
-          borderRadius: '5px',
-          boxShadow: '1px 1px 2px #d88488',
-        }}
-      >
-        <p className="label" style={{ margin: '0', fontWeight: '700' }}>{`${label} : ${payload[0].value}`}</p>
-        <p className="intro" style={{ margin: '0' }}>
-          {getIntroOfPage(label)}
-        </p>
-        <p className="desc" style={{ margin: '0', borderTop: '1px dashed #f5f5f5' }}>
-          Anything you want can be displayed here.
-        </p>
-      </div>
-    );
+/**
+ * `content` hands you the whole tooltip: the active payload, the label and
+ * whether the tooltip is currently visible. Return any React - it is plain HTML,
+ * not SVG, so normal CSS applies.
+ */
+function RevenueTooltip({ active, payload, label }: TooltipContentProps) {
+  if (!active || payload == null || payload.length === 0) {
+    return null;
   }
 
-  return null;
+  const entry = payload[0];
+  const point = entry?.payload;
+
+  return (
+    <div
+      style={{
+        border: '1px solid #d88488',
+        backgroundColor: '#fff',
+        color: '#18181b',
+        padding: 10,
+        borderRadius: 5,
+        boxShadow: '1px 1px 2px #d88488',
+      }}
+    >
+      <p style={{ margin: 0, fontWeight: 700 }}>
+        {label}: {entry?.value}
+      </p>
+      <p style={{ margin: 0 }}>{point?.note}</p>
+      {/* The payload carries your original data point, so anything in it is available here. */}
+      <p style={{ margin: 0, borderTop: '1px dashed #f5f5f5' }}>Anything you want can be displayed here.</p>
+    </div>
+  );
 }
 
 export default function CustomizeTooltipContent() {
   return (
-    <BarChart width={600} height={300} data={data} margin={margin}>
-      <XAxis dataKey="name" />
+    <BarChart
+      style={{ width: '100%', maxWidth: 600, maxHeight: '70vh', aspectRatio: 1.618 }}
+      responsive
+      data={data}
+      margin={{ top: 20, right: 30, left: 20, bottom: 5 }}
+    >
+      <XAxis dataKey="month" />
       <YAxis />
-      <Tooltip content={CustomTooltip} defaultIndex={2} active />
-      <Bar dataKey="uv" />
+      <Tooltip content={RevenueTooltip} defaultIndex={2} active />
+      <Bar dataKey="revenue" />
       <RechartsDevtools />
     </BarChart>
   );

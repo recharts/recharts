@@ -1,62 +1,38 @@
 import { Bar, BarChart, CartesianGrid, Tooltip, XAxis, YAxis } from 'recharts';
 import { RechartsDevtools } from '@recharts/devtools';
 
-// #region Sample data
 const data = [
-  {
-    name: 'Page A',
-    uv: 400,
-    pv: 2400,
-    amt: 2400,
-  },
-  {
-    name: 'Page B',
-    uv: 300,
-    pv: 4567,
-    amt: 2400,
-  },
-  {
-    name: 'Page C',
-    uv: 300,
-    pv: 1398,
-    amt: 2400,
-  },
-  {
-    name: 'Page D',
-    uv: 200,
-    pv: 9800,
-    amt: 2400,
-  },
-  {
-    name: 'Page E',
-    uv: 278,
-    pv: 3908,
-    amt: 2400,
-  },
-  {
-    name: 'Page F',
-    uv: 189,
-    pv: 4800,
-    amt: 2400,
-  },
+  { month: 'Jan', revenue: 4200 },
+  { month: 'Feb', revenue: 5800 },
+  { month: 'Mar', revenue: 7200 },
+  { month: 'Apr', revenue: 6100 },
+  { month: 'May', revenue: 8900 },
+  { month: 'Jun', revenue: 7400 },
 ];
-
-const margin = {
-  top: 20,
-  right: 30,
-  left: 20,
-  bottom: 5,
-};
-// #endregion
 
 export default function CustomizeSizeAndStroke() {
   return (
-    <BarChart width={600} height={300} data={data} margin={margin}>
-      <XAxis dataKey="name" stroke="red" />
-      <YAxis stroke="red" />
-      <Tooltip />
-      <CartesianGrid stroke="#ccc" strokeDasharray="5 5" />
-      <Bar dataKey="uv" fill="green" barSize={30} />
+    <BarChart
+      style={{ width: '100%', maxWidth: 600, maxHeight: '70vh', aspectRatio: 1.618 }}
+      responsive
+      data={data}
+      margin={{ top: 20, right: 30, left: 20, bottom: 5 }}
+    >
+      {/* Every SVG presentation attribute is available as a prop. */}
+      <CartesianGrid stroke="#94a3b8" strokeDasharray="5 5" strokeOpacity={0.5} />
+      <XAxis dataKey="month" stroke="#e11d48" />
+      <YAxis stroke="#e11d48" strokeWidth={2} />
+      {/* Tooltip is HTML, so it takes `style` and `className` rather than SVG attributes. */}
+      <Tooltip defaultIndex={2} />
+      <Bar
+        dataKey="revenue"
+        fill="#0ea5e9"
+        fillOpacity={0.85}
+        stroke="#0369a1"
+        strokeWidth={2}
+        radius={4}
+        barSize={30}
+      />
       <RechartsDevtools />
     </BarChart>
   );
