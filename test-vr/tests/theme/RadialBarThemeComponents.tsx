@@ -13,7 +13,7 @@ function RadialBarThemeChart() {
     <RadialBarChart style={{ width: '400px', height: '300px' }} data={data}>
       <XAxis dataKey="name" />
       <YAxis />
-      <RadialBar dataKey="value" isAnimationActive={false} />
+      <RadialBar dataKey="value" background isAnimationActive={false} />
     </RadialBarChart>
   );
 }
@@ -36,6 +36,14 @@ export function RadialBarThemeComparison() {
               strokeDasharray: '7 9',
             },
           ],
+          barBackground: {
+            fill: '#bfdbfe',
+            fillOpacity: 0.7,
+            stroke: '#1d4ed8',
+            strokeWidth: 2,
+            strokeOpacity: 0.9,
+            strokeDasharray: '4 3',
+          },
         }}
       >
         <RadialBarThemeChart />

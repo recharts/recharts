@@ -61,6 +61,14 @@ export interface RechartsTheme {
    */
   graphicalItems: ReadonlyArray<GraphicalItemStyle>;
   /**
+   * Styles applied to Bar and RadialBar backgrounds.
+   */
+  barBackground?: Styles2D;
+  /**
+   * Styles applied to the Brush background, slide, travellers, and text.
+   */
+  brush?: Pick<Styles2D, 'fill' | 'stroke'>;
+  /**
    * CartesianGrid and PolarGrid.
    *
    * Recharts grid allows fill color and fill opacity
@@ -81,8 +89,7 @@ export interface RechartsTheme {
   chart?: CSSProperties;
 
   /**
-   * The CSS cursor style applied to the chart container.
-   * Useful for setting the mouse cursor when hovering over the chart (e.g. `"pointer"`, `"crosshair"`).
+   * Styles applied to the cursor highlight shown with an active Tooltip.
    */
   cursor?: Styles2D;
 

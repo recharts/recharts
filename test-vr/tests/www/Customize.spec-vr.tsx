@@ -1,32 +1,39 @@
 import * as React from 'react';
-import { test, expect } from '@playwright/experimental-ct-react';
+import { expect } from '@playwright/experimental-ct-react';
 import CustomizeLabels from '../../../www/src/components/GuideView/Customize/CustomizeLabels';
 import CustomizeBarShape from '../../../www/src/components/GuideView/Customize/CustomizeBarShape';
 import CustomizeTooltipContent from '../../../www/src/components/GuideView/Customize/CustomizeTooltipContent';
 import CustomizeSizeAndStroke from '../../../www/src/components/GuideView/Customize/CustomizeSizeAndStroke';
 import CustomizeLegendAndTooltipStyle from '../../../www/src/components/GuideView/Customize/CustomizeLegendAndTooltipStyle';
+import CustomizeCustomElement from '../../../www/src/components/GuideView/Customize/CustomizeCustomElement';
+import { testWithLightTheme } from './fixtures';
 
-test('CustomizeLabels', async ({ mount }) => {
+testWithLightTheme('CustomizeLabels', async ({ mount }) => {
   const component = await mount(<CustomizeLabels />);
   await expect(component).toHaveScreenshot();
 });
 
-test('CustomizeBarShape', async ({ mount }) => {
+testWithLightTheme('CustomizeBarShape', async ({ mount }) => {
   const component = await mount(<CustomizeBarShape />);
   await expect(component).toHaveScreenshot();
 });
 
-test('CustomizeTooltipContent', async ({ mount }) => {
+testWithLightTheme('CustomizeTooltipContent', async ({ mount }) => {
   const component = await mount(<CustomizeTooltipContent />);
   await expect(component).toHaveScreenshot();
 });
 
-test('CustomizeSizeAndStroke', async ({ mount }) => {
+testWithLightTheme('CustomizeSizeAndStroke', async ({ mount }) => {
   const component = await mount(<CustomizeSizeAndStroke />);
   await expect(component).toHaveScreenshot();
 });
 
-test('CustomizeLegendAndTooltipStyle', async ({ mount }) => {
+testWithLightTheme('CustomizeLegendAndTooltipStyle', async ({ mount }) => {
   const component = await mount(<CustomizeLegendAndTooltipStyle />);
+  await expect(component).toHaveScreenshot();
+});
+
+testWithLightTheme('CustomizeCustomElement', async ({ mount }) => {
+  const component = await mount(<CustomizeCustomElement />);
   await expect(component).toHaveScreenshot();
 });

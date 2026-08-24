@@ -38,11 +38,11 @@ export default function CustomAxisTicks(props: Partial<AxisTicksControlsType>) {
 
   return (
     <LineChart style={{ width: '100%', aspectRatio: 1.618, maxWidth: 700 }} responsive data={data}>
-      <CartesianGrid strokeDasharray="3 3" />
+      <CartesianGrid />
       <XAxis type="number" dataKey="x" ticks={xTicks} scale={scale} />
       <YAxis width="auto" ticks={yTicks} scale={scale} />
       <Tooltip />
-      <Line type="monotone" dataKey="y" stroke="#12978f" isAnimationActive={false} />
+      <Line type="monotone" dataKey="y" isAnimationActive={false} />
       <RechartsDevtools />
     </LineChart>
   );

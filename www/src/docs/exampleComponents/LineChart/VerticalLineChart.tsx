@@ -18,13 +18,10 @@ export default function Example(props: { isAnimationActive?: boolean }) {
         bottom: 5,
       }}
     >
-      <CartesianGrid strokeDasharray="3 3" />
+      <CartesianGrid />
       <Typed.XAxis type="number" />
       <Typed.YAxis dataKey="label" type="category" width="auto" />
-      <Tooltip
-        cursor={{ stroke: 'var(--color-border-2)' }}
-        contentStyle={{ backgroundColor: 'var(--color-surface-base)', borderColor: 'var(--color-border-2)' }}
-      />
+      <Tooltip />
       <Legend />
       <Typed.Line dataKey="x" isAnimationActive={props.isAnimationActive} />
       <Typed.Line dataKey="y" isAnimationActive={props.isAnimationActive} />

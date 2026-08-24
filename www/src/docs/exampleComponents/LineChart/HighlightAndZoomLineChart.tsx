@@ -153,16 +153,11 @@ const HighlightAndZoomLineChart = () => {
         onMouseMove={onMouseMove}
         onMouseUp={zoom}
       >
-        <CartesianGrid strokeDasharray="3 3" />
+        <CartesianGrid />
         <XAxis allowDataOverflow dataKey="name" domain={[left, right]} type="number" />
         <YAxis allowDataOverflow domain={[bottom, top]} type="number" yAxisId="1" width="auto" />
         <YAxis orientation="right" allowDataOverflow domain={[bottom2, top2]} type="number" yAxisId="2" width="auto" />
-        <Tooltip
-          cursor={{
-            stroke: 'var(--color-border-2)',
-          }}
-          contentStyle={{ backgroundColor: 'var(--color-surface-base)', borderColor: 'var(--color-border-2)' }}
-        />
+        <Tooltip />
         <Line yAxisId="1" type="natural" dataKey="cost" animationDuration={300} />
         <Line yAxisId="2" type="natural" dataKey="impression" animationDuration={300} />
 

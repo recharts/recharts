@@ -64,7 +64,7 @@ export default function LineChartCustomShapeExample(props: Partial<ControlsType>
       data={data}
       margin={{ top: 10, right: 30, left: 0, bottom: 0 }}
     >
-      <CartesianGrid strokeDasharray="3 3" />
+      <CartesianGrid />
       <XAxis dataKey="label" />
       <YAxis width="auto" />
       <Tooltip />

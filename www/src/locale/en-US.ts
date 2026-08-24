@@ -50,6 +50,7 @@ export const map = {
     cell: 'Migrate from Cell component to shape prop',
     coordinateSystems: 'Coordinate and dimension systems',
     animations: 'Animation',
+    theming: 'Theming',
   },
   installation: {
     installation: 'Installation',
@@ -77,20 +78,6 @@ export const map = {
      charts and much more!`,
   },
 
-  customize: {
-    customize: 'Customize',
-    'step-1-title': '1. Labels of line, area, bar, axis can be customized',
-    'step-1-desc': 'For example, we can create a bar with customized label and customized axis tick.',
-    'step-2-title': '2. The shape of bar can be customized',
-    'step-2-desc':
-      'The props shape of <Bar /> can be set to be a function or a react element to render customized shape.',
-    'step-3-title': '3. The content of tooltip can be customized',
-    'step-3-desc': 'Sometime we may want tooltip to display much more information.',
-    'step-4-title': '4. The style of each chart element can be customized',
-    'step-4-desc': `Change the attributes of each chart element conveniently. Tooltip and Legend are HTML elements, everything else is an SVG element.`,
-    'step-5-title': '5. Customize Legend and Tooltip',
-    'step-5-desc': `Tooltip and legend are HTML elements. They accept several Recharts-specific props, and the usual style and className props too.`,
-  },
   api: {
     charts: 'Charts',
     'general-components': 'General Components',

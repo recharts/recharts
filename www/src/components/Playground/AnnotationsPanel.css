@@ -1,0 +1,17 @@
+/*
+ * @recharts/devtools renders the annotations controller UI (buttons, inputs,
+ * annotation cards) using these CSS custom properties, falling back to its
+ * own light-theme defaults when they are unset. Map them to this site's
+ * theme tokens so the panel follows light/dark mode.
+ */
+.recharts-annotations {
+  --rd-surface: var(--color-surface-base);
+  --rd-surface-active: var(--color-solid-7);
+  --rd-surface-raised: var(--color-surface-raised);
+  --rd-border: var(--color-border-3);
+  --rd-border-strong: var(--color-border-1);
+  --rd-border-subtle: var(--color-border-4);
+  --rd-text: var(--color-text-1);
+  --rd-text-muted: var(--color-text-3);
+  --rd-accent: var(--color-solid-brand-1);
+}

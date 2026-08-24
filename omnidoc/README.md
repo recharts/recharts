@@ -18,6 +18,26 @@ Run with:
 npm run test-omnidoc
 ```
 
+### `@since` Tag Enforcement (`since-tag.spec.ts`)
+
+Every export from `src/index.ts` - components, hooks, utilities and types alike - must carry a JSDoc
+`@since <version>` tag naming the Recharts version that first shipped it:
+
+```ts
+/**
+ * @since 3.11
+ */
+export function useSomethingNew() {}
+```
+
+The one exemption is `@experimental`: an export marked `@experimental` does not need a `@since` tag,
+since its API isn't considered stable yet and may still change before it gets a version to point to.
+
+Exports that predate this rule are grandfathered in `exportsGrandfatheredWithoutSinceTag.ts`.
+That list may only shrink: adding a new name to it instead of documenting the export defeats the
+whole point. To shrink it, add the `@since` tag and delete the name - the test fails if a listed
+export turns out to be documented after all, or to no longer exist.
+
 ### API Documentation Generator (`generateApiDoc.ts`)
 
 Auto-generates API documentation files from TypeScript source code. This tool:
@@ -74,4 +94,5 @@ All readers implement the `DocReader` interface defined in `DocReader.ts`.
 
 - **componentsAndDefaultPropsMap.ts**: Manual mapping of component default props
 - **componentsWithInconsistentCommentsInApiDoc.ts**: Temporary list of components with known inconsistencies
+- **exportsGrandfatheredWithoutSinceTag.ts**: Shrinking list of exports that predate the `@since` tag requirement
 - **util/**: Helper functions for text normalization and diffing

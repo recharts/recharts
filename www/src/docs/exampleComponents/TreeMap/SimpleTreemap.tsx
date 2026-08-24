@@ -143,8 +143,6 @@ const SimpleTreemap = () => {
       data={data}
       dataKey="size"
       aspectRatio={4 / 3}
-      stroke="#fff"
-      fill="#8884d8"
     >
       <RechartsDevtools />
     </Treemap>

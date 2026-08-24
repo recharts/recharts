@@ -8,6 +8,7 @@ import {
   TooltipContentProps,
   XAxis,
   YAxis,
+  useRechartsTheme,
 } from 'recharts';
 
 // #region Waterfall computation helper
@@ -86,6 +87,7 @@ const WaterfallBar = (props: BarShapeProps) => {
 };
 
 const WaterfallTooltip = ({ active, payload }: TooltipContentProps) => {
+  const theme = useRechartsTheme();
   if (active && payload && payload.length) {
     const firstPayload = payload[0];
     if (firstPayload == null) {
@@ -93,7 +95,13 @@ const WaterfallTooltip = ({ active, payload }: TooltipContentProps) => {
     }
     const entry: WaterfallDatum = firstPayload.payload;
     return (
-      <div style={{ backgroundColor: 'white', border: '1px solid #ccc', padding: '0.5em 1em' }}>
+      <div
+        style={{
+          ...theme?.typography,
+          ...theme?.tooltip?.contentStyle,
+          padding: '0.5em 1em',
+        }}
+      >
         <p style={{ margin: 0, fontWeight: 'bold' }}>{entry.name}</p>
         <p style={{ margin: 0 }}>{`Value: ${entry.value >= 0 ? '+' : ''}${entry.value}`}</p>
         {entry.isTotal && <p style={{ margin: 0, fontStyle: 'italic' }}>Total</p>}
@@ -112,7 +120,7 @@ export default function WaterfallExample() {
       responsive
       margin={{ top: 20, right: 30, bottom: 5, left: 20 }}
     >
-      <CartesianGrid strokeDasharray="3 3" vertical={false} />
+      <CartesianGrid vertical={false} />
       <XAxis dataKey="name" />
       <YAxis />
       <Tooltip content={WaterfallTooltip} />

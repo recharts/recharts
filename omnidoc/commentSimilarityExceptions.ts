@@ -65,6 +65,12 @@ export const commentSimilarityExceptions: ReadonlyArray<CommentSimilarityGroup> 
     reason: 'Brush width defaults to chart width, unlike other components',
   },
   {
+    components: ['Brush'],
+    props: ['padding'],
+    reason:
+      'Brush padding applies only to the small overview chart rendered inside the brush, unlike axis padding which is distance from the plot area edge to the first/last tick',
+  },
+  {
     components: ['ErrorBar'],
     props: ['width'],
     reason: 'ErrorBar width describes the width of the serifs, not the whole component',

@@ -47,13 +47,10 @@ const CustomizedLabelLineChart = () => {
         bottom: 10,
       }}
     >
-      <CartesianGrid strokeDasharray="3 3" />
+      <CartesianGrid />
       <Typed.XAxis dataKey="label" height={60} tick={CustomizedAxisTick} />
       <Typed.YAxis width="auto" />
-      <Tooltip
-        cursor={{ stroke: 'var(--color-border-2)' }}
-        contentStyle={{ backgroundColor: 'var(--color-surface-base)', borderColor: 'var(--color-border-2)' }}
-      />
+      <Tooltip />
       <Legend />
       <Typed.Line type="monotone" dataKey="x" label={CustomizedLabel} />
       <Typed.Line type="monotone" dataKey="y" />

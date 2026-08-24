@@ -62,12 +62,12 @@ const BarChartStackedBySign = () => {
         bottom: 5,
       }}
     >
-      <CartesianGrid strokeDasharray="3 3" />
+      <CartesianGrid />
       <XAxis dataKey="name" />
       <YAxis width="auto" />
       <Tooltip />
       <Legend />
-      <ReferenceLine y={0} stroke="#000" />
+      <ReferenceLine y={0} />
       <Bar dataKey="pv" stackId="stack" />
       <Bar dataKey="uv" stackId="stack" />
       <RechartsDevtools />

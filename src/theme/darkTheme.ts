@@ -50,7 +50,13 @@ export const darkTheme: RechartsTheme = {
       active: { fill: '#18181b', stroke: '#ed7485', strokeWidth: 2 },
     },
   ],
-  chart: { width: '100%', maxWidth: '700px', maxHeight: '70vh', aspectRatio: 1.618 },
+  barBackground: {
+    fill: '#3f3f46',
+  },
+  brush: {
+    fill: '#3f3f46',
+    stroke: '#d6d3d1',
+  },
   grid: {
     stroke: '#3f3f46',
     strokeDasharray: '3 3',
@@ -70,7 +76,9 @@ export const darkTheme: RechartsTheme = {
     fillOpacity: 0.3,
   },
   cursor: {
-    stroke: '#52525b',
+    stroke: '#444',
+    fill: '#333',
+    fillOpacity: 0.7,
   },
   tooltip: {
     contentStyle: {

@@ -90,7 +90,6 @@ function MyAnimatedArea({
     <Area
       type="monotone"
       dataKey="uv"
-      stroke="#8884d8"
       fillOpacity={1}
       fill="url(#colorUv)"
       animationDuration={animationDuration}
@@ -141,7 +140,7 @@ export default function AreaChartCustomAnimationExample(props: Partial<ControlsT
           <stop offset="95%" stopColor="#8884d8" stopOpacity={0} />
         </linearGradient>
       </defs>
-      <CartesianGrid strokeDasharray="3 3" />
+      <CartesianGrid />
       <XAxis dataKey="name" />
       <YAxis width="auto" />
       <Tooltip />

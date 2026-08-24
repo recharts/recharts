@@ -1,4 +1,5 @@
 import { RechartsAnnotationsPortal } from '@recharts/devtools';
+import './AnnotationsPanel.css';
 
 /**
  * Props for the AnnotationsPanel component.
@@ -19,8 +20,8 @@ export function AnnotationsPanel({ className = '' }: AnnotationsPanelProps) {
     <RechartsAnnotationsPortal
       style={{
         height: '100%',
-        background: 'var(--color-bg)',
-        color: 'var(--color-text)',
+        background: 'var(--color-surface-base)',
+        color: 'var(--color-text-1)',
         overflow: 'auto',
         padding: '10px',
         display: 'block',

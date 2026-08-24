@@ -134,10 +134,10 @@ export default function AxisTickSnapExample({
       onTouchMove={handleTouchMove}
       onTouchEnd={handleLeave}
     >
-      <CartesianGrid strokeDasharray="3 3" />
+      <CartesianGrid />
       <XAxis dataKey="name" />
       <YAxis width="auto" />
-      <Line type="monotone" dataKey="sales" stroke="#8884d8" strokeWidth={2} />
+      <Line type="monotone" dataKey="sales" strokeWidth={2} />
 
       {pointers.map(pointer => (
         <AxisTickCrosshair key={`crosshair-${pointer.relativeX}-${pointer.relativeY}`} pointer={pointer} />

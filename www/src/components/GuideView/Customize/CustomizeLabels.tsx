@@ -1,72 +1,61 @@
-import { Bar, BarChart, XAxis, YAxis } from 'recharts';
+import { Bar, BarChart, LabelList, LabelProps, XAxis, YAxis } from 'recharts';
 import { RechartsDevtools } from '@recharts/devtools';
 
-// #region Sample data
 const data = [
-  {
-    name: 'Page A',
-    uv: 400,
-    pv: 2400,
-    amt: 2400,
-  },
-  {
-    name: 'Page B',
-    uv: 300,
-    pv: 4567,
-    amt: 2400,
-  },
-  {
-    name: 'Page C',
-    uv: 300,
-    pv: 1398,
-    amt: 2400,
-  },
-  {
-    name: 'Page D',
-    uv: 200,
-    pv: 9800,
-    amt: 2400,
-  },
-  {
-    name: 'Page E',
-    uv: 278,
-    pv: 3908,
-    amt: 2400,
-  },
-  {
-    name: 'Page F',
-    uv: 189,
-    pv: 4800,
-    amt: 2400,
-  },
+  { month: 'Jan', revenue: 4200, profit: 1100 },
+  { month: 'Feb', revenue: 5800, profit: 1500 },
+  { month: 'Mar', revenue: 7200, profit: 2400 },
+  { month: 'Apr', revenue: 6100, profit: 1800 },
+  { month: 'May', revenue: 8900, profit: 3100 },
+  { month: 'Jun', revenue: 7400, profit: 2600 },
 ];
 
-const margin = {
-  top: 20,
-  right: 30,
-  left: 20,
-  bottom: 25,
-};
-// #endregion
+const formatMonth = (value: string): string => value.toUpperCase();
 
-const formatAxisTick = (value: any): string => {
-  return `*${value}*`;
-};
+const formatThousands = (value: number): string => `${value / 1000}k`;
 
-const renderCustomBarLabel = ({ x, y, width, value }: any) => {
-  return <text x={x + width / 2} y={y} fill="#666" textAnchor="middle" dy={-6}>{`value: ${value}`}</text>;
-};
+/**
+ * A `content` render function gets the resolved geometry of the label,
+ * so you can place and shape it however you like.
+ */
+function ProfitLabel({ x, y, width, value }: LabelProps) {
+  if (x == null || y == null || width == null) {
+    return null;
+  }
+
+  return (
+    <text x={Number(x) + Number(width) / 2} y={Number(y)} dy={-6} textAnchor="middle" fontSize={11}>
+      ▲ {value}
+    </text>
+  );
+}
 
 export default function CustomizeLabels() {
   return (
-    <BarChart width={600} height={300} data={data} margin={margin}>
+    <BarChart
+      style={{ width: '100%', maxWidth: 600, maxHeight: '70vh', aspectRatio: 1.618 }}
+      responsive
+      data={data}
+      margin={{ top: 25, right: 30, left: 20, bottom: 25 }}
+    >
+      {/* Axis titles are the `label` prop; tick text goes through `tickFormatter`. */}
       <XAxis
-        dataKey="name"
-        tickFormatter={formatAxisTick}
-        label={{ position: 'insideBottomRight', value: 'XAxis title', offset: -10 }}
+        dataKey="month"
+        tickFormatter={formatMonth}
+        label={{ position: 'insideBottomRight', value: 'Month', offset: -10 }}
       />
-      <YAxis label={{ position: 'insideTopLeft', value: 'YAxis title', angle: -90, dy: 60 }} />
-      <Bar dataKey="uv" fill="#8884d8" label={renderCustomBarLabel} />
+      <YAxis
+        tickFormatter={formatThousands}
+        label={{ position: 'insideTopLeft', value: 'Revenue', angle: -90, dy: 60 }}
+      />
+      {/* LabelList with a formatter covers the common case ... */}
+      <Bar dataKey="revenue">
+        <LabelList dataKey="revenue" position="top" formatter={label => `${Number(label) / 1000}k`} fontSize={11} />
+      </Bar>
+      {/* ... and a `content` component covers everything else. */}
+      <Bar dataKey="profit">
+        <LabelList dataKey="profit" content={ProfitLabel} />
+      </Bar>
       <RechartsDevtools />
     </BarChart>
   );

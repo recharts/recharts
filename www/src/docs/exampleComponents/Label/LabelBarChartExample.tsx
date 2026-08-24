@@ -60,7 +60,7 @@ const LabelBarChartExample = ({ isAnimationActive = true }: { isAnimationActive?
       bottom: 15,
     }}
   >
-    <CartesianGrid strokeDasharray="3 3" />
+    <CartesianGrid />
     <XAxis dataKey="name">
       <Label value="insideBottom" offset={-10} position="insideBottom" />
     </XAxis>
@@ -73,7 +73,7 @@ const LabelBarChartExample = ({ isAnimationActive = true }: { isAnimationActive?
         textAnchor: 'middle',
       }}
     />
-    <Bar dataKey="pv" fill="#8884d8" isAnimationActive={isAnimationActive}>
+    <Bar dataKey="pv" isAnimationActive={isAnimationActive}>
       <LabelList dataKey="name" position="top" />
     </Bar>
     <RechartsDevtools />

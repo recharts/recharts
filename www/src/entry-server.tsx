@@ -3,12 +3,12 @@ import { RouterProvider, createMemoryRouter } from 'react-router';
 import { routes } from './routes';
 import { supportedLocales } from './locale';
 import { getSiteRoutes } from './navigation.data';
-import { ColorModeProvider, defineColorModeStore } from './components/color-mode';
+import { ColorModeProvider } from './components/color-mode';
 
 export function render(url: string, template: string) {
   const router = createMemoryRouter(routes, { initialEntries: [url] });
   const appHtml = renderToString(
-    <ColorModeProvider store={defineColorModeStore()}>
+    <ColorModeProvider>
       <RouterProvider router={router} />
     </ColorModeProvider>,
   );

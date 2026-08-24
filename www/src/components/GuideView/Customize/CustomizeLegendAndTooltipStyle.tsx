@@ -1,73 +1,55 @@
-// #region Sample data
 import { Bar, BarChart, CartesianGrid, Legend, Tooltip, XAxis, YAxis } from 'recharts';
 import { RechartsDevtools } from '@recharts/devtools';
 
 const data = [
-  {
-    name: 'Page A',
-    uv: 400,
-    pv: 2400,
-    amt: 2400,
-  },
-  {
-    name: 'Page B',
-    uv: 300,
-    pv: 4567,
-    amt: 2400,
-  },
-  {
-    name: 'Page C',
-    uv: 300,
-    pv: 1398,
-    amt: 2400,
-  },
-  {
-    name: 'Page D',
-    uv: 200,
-    pv: 9800,
-    amt: 2400,
-  },
-  {
-    name: 'Page E',
-    uv: 278,
-    pv: 3908,
-    amt: 2400,
-  },
-  {
-    name: 'Page F',
-    uv: 189,
-    pv: 4800,
-    amt: 2400,
-  },
+  { month: 'Jan', revenue: 4200, profit: 1100 },
+  { month: 'Feb', revenue: 5800, profit: 1500 },
+  { month: 'Mar', revenue: 7200, profit: 2400 },
+  { month: 'Apr', revenue: 6100, profit: 1800 },
+  { month: 'May', revenue: 8900, profit: 3100 },
+  { month: 'Jun', revenue: 7400, profit: 2600 },
 ];
-
-const margin = {
-  top: 20,
-  right: 30,
-  left: 20,
-  bottom: 5,
-};
-// #endregion
 
 export default function CustomizeLegendAndTooltipStyle() {
   return (
-    <BarChart width={600} height={300} data={data} margin={margin}>
-      <XAxis dataKey="name" stroke="#8884d8" />
+    <BarChart
+      style={{ width: '100%', maxWidth: 600, maxHeight: '70vh', aspectRatio: 1.618 }}
+      responsive
+      data={data}
+      margin={{ top: 20, right: 30, left: 20, bottom: 5 }}
+    >
+      <CartesianGrid />
+      <XAxis dataKey="month" />
       <YAxis />
-      <Tooltip wrapperStyle={{ width: 100, backgroundColor: '#ccc' }} />
-      <Legend
-        width={100}
-        wrapperStyle={{
-          top: 40,
-          right: 20,
-          backgroundColor: '#f5f5f5',
-          border: '1px solid #d5d5d5',
-          borderRadius: 3,
-          lineHeight: '40px',
-        }}
+      {/*
+       * Tooltip has three style slots:
+       * wrapperStyle positions the floating box, contentStyle paints it,
+       * labelStyle is the header and itemStyle is one data row.
+       */}
+      <Tooltip
+        defaultIndex={3}
+        contentStyle={{ backgroundColor: '#f8fafc', border: '2px solid #64748b', borderRadius: 8, padding: 10 }}
+        labelStyle={{ margin: 0, fontWeight: 700, color: '#0f172a' }}
+        itemStyle={{ display: 'block', paddingTop: 2, paddingBottom: 2 }}
       />
-      <CartesianGrid stroke="#ccc" strokeDasharray="5 5" />
-      <Bar dataKey="uv" fill="#8884d8" barSize={30} />
+      {/*
+       * Legend uses wrapperStyle for the box and labelStyle for the individual
+       * entries - note that `labelStyle` means the opposite thing here than it
+       * does on Tooltip.
+       */}
+      <Legend
+        wrapperStyle={{
+          backgroundColor: '#f1f5f9',
+          border: '1px solid #cbd5e1',
+          borderRadius: 4,
+          paddingTop: 4,
+          paddingBottom: 4,
+        }}
+        labelStyle={{ color: '#0f172a', textTransform: 'uppercase', letterSpacing: '0.05em' }}
+        iconType="circle"
+      />
+      <Bar dataKey="revenue" barSize={20} />
+      <Bar dataKey="profit" barSize={20} />
       <RechartsDevtools />
     </BarChart>
   );

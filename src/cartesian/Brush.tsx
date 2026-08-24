@@ -27,6 +27,9 @@ import { BrushSettings, setBrushSettings } from '../state/brushSlice';
 import { PanoramaContextProvider } from '../context/PanoramaContext';
 import { selectBrushDimensions } from '../state/selectors/brushSelectors';
 import { useBrushChartSynchronisation } from '../synchronisation/useChartSynchronisation';
+import { Styles2D } from '../theme/RechartsTheme';
+import { useBackwardsCompatibleTheme } from '../theme/useBackwardsCompatibleTheme';
+import { useRechartsTheme } from '../theme/RechartsThemeContext';
 import { RequiresDefaultProps, resolveDefaultProps } from '../util/resolveDefaultProps';
 import { svgPropertiesNoEvents } from '../util/svgPropertiesNoEvents';
 
@@ -34,6 +37,8 @@ export type BrushTravellerType = ReactElement<SVGElement> | ((props: TravellerPr
 
 // Why is this tickFormatter different from the other TickFormatters? This one allows to return numbers too for some reason.
 type BrushTickFormatter = (value: any, index: number) => number | string;
+
+type BrushStyleProps = Pick<Styles2D, 'fill' | 'stroke'>;
 
 /**
  * The type is exported only so that TypeScript can name it in the declaration files of projects
@@ -55,14 +60,24 @@ export interface BrushProps<DataPointType = any, DataValueType = any> extends Da
    * If left undefined, it will be computed from the chart's offset and margins.
    */
   y?: number;
+  /**
+   * Vertical offset added to the brush's computed y-coordinate.
+   */
   dy?: number;
   /**
    * Width of the brush in pixels.
    * If undefined, defaults to the chart width.
    */
   width?: number;
+  /**
+   * The SVG element's class name.
+   */
   className?: string;
-
+  /**
+   * Custom accessible label applied to the brush's traveller handles. If
+   * not provided, one is generated automatically from the data at the
+   * current start and end index.
+   */
   ariaLabel?: string;
 
   /**
@@ -77,6 +92,11 @@ export interface BrushProps<DataPointType = any, DataValueType = any> extends Da
    * @defaultValue 5
    */
   travellerWidth?: number;
+  /**
+   * Custom element or render function used to render each draggable handle
+   * (the "traveller") at the start and end of the selection. Defaults to a
+   * small rectangle with two vertical lines.
+   */
   traveller?: BrushTravellerType;
   /**
    * Number of data points to skip between chart refreshes.
@@ -84,6 +104,13 @@ export interface BrushProps<DataPointType = any, DataValueType = any> extends Da
    * @defaultValue 1
    */
   gap?: number;
+  /**
+   * Padding applied only to the small overview chart rendered inside the
+   * brush (via `children`) has no effect on the brush's own position or
+   * size.
+   *
+   * @defaultValue {"top":1,"right":1,"bottom":1,"left":1}
+   */
   padding?: Padding;
   /**
    * The default start index of brush.
@@ -99,18 +126,33 @@ export interface BrushProps<DataPointType = any, DataValueType = any> extends Da
    * The formatter function of ticks.
    */
   tickFormatter?: BrushTickFormatter;
-
+  /**
+   * A single chart element (e.g. an AreaChart) rendered as a small preview
+   * inside the brush, showing an overview of the full dataset. If zero or
+   * more than one child is passed, nothing is rendered.
+   */
   children?: ReactElement;
   /**
    * The handler of changing the active scope of brush.
    */
   onChange?: OnBrushUpdate;
+  /**
+   * The handler called when the user finishes dragging a traveller or the
+   * brush slide, receiving the final startIndex and endIndex.
+   */
   onDragEnd?: OnBrushUpdate;
   /**
+   * Delay, in milliseconds, after the mouse leaves the brush, before an
+   * in-progress drag interaction is ended.
+   *
    * @defaultValue 1000
    */
   leaveTimeOut?: number;
   /**
+   * When true, the start and end index labels are always visible. By
+   * default, they only appear while the user is interacting with the brush
+   * (dragging, hovering, or focused via keyboard).
+   *
    * @defaultValue false
    */
   alwaysShowText?: boolean;
@@ -120,6 +162,10 @@ export type Props = Omit<SVGProps<SVGElement>, 'onChange' | 'onDragEnd' | 'ref'>
 
 type InternalProps = Omit<SVGProps<SVGElement>, 'onChange' | 'onDragEnd' | 'ref'> &
   RequiresDefaultProps<BrushProps, typeof defaultBrushProps>;
+
+type BrushInternalProps = InternalProps & {
+  travellerStyleProps: BrushStyleProps;
+};
 
 type PropertiesFromContext = {
   x: number;
@@ -146,15 +192,19 @@ function DefaultTraveller(props: TravellerProps) {
   );
 }
 
-function Traveller(props: { travellerType: BrushTravellerType | undefined; travellerProps: TravellerProps }) {
-  const { travellerProps, travellerType } = props;
+function Traveller(props: {
+  travellerType: BrushTravellerType | undefined;
+  travellerProps: TravellerProps;
+  customTravellerProps: TravellerProps;
+}) {
+  const { customTravellerProps, travellerProps, travellerType } = props;
 
   if (React.isValidElement(travellerType)) {
     // @ts-expect-error element cloning disagrees with the types (and it should)
-    return React.cloneElement(travellerType, travellerProps);
+    return React.cloneElement(travellerType, customTravellerProps);
   }
   if (typeof travellerType === 'function') {
-    return travellerType(travellerProps);
+    return travellerType(customTravellerProps);
   }
   return <DefaultTraveller {...travellerProps} />;
 }
@@ -196,6 +246,7 @@ function TravellerLayer({
   onBlur: () => void;
 }) {
   const { y, x: xFromProps, travellerWidth, height, traveller, ariaLabel, data, startIndex, endIndex } = otherProps;
+  const { travellerStyleProps } = otherProps;
   const x = Math.max(travellerX, xFromProps);
   const travellerProps: TravellerProps = {
     ...svgPropertiesNoEvents(otherProps),
@@ -204,6 +255,17 @@ function TravellerLayer({
     width: travellerWidth,
     height,
   };
+  const customTravellerProps: TravellerProps = { ...travellerProps };
+  if (travellerStyleProps.fill === undefined) {
+    delete customTravellerProps.fill;
+  } else {
+    customTravellerProps.fill = travellerStyleProps.fill;
+  }
+  if (travellerStyleProps.stroke === undefined) {
+    delete customTravellerProps.stroke;
+  } else {
+    customTravellerProps.stroke = travellerStyleProps.stroke;
+  }
 
   const ariaLabelBrush = ariaLabel || getAriaLabel(data, startIndex, endIndex);
 
@@ -230,7 +292,11 @@ function TravellerLayer({
       onBlur={onBlur}
       style={{ cursor: 'col-resize' }}
     >
-      <Traveller travellerType={traveller} travellerProps={travellerProps} />
+      <Traveller
+        travellerType={traveller}
+        travellerProps={travellerProps}
+        customTravellerProps={customTravellerProps}
+      />
     </Layer>
   );
 }
@@ -480,6 +546,7 @@ type TravellerProps = {
   y: number;
   width: number;
   height: number;
+  fill?: SVGAttributes<SVGElement>['fill'];
   stroke?: SVGAttributes<SVGElement>['stroke'];
 };
 
@@ -528,7 +595,7 @@ const isTouch = (e: TouchEvent<SVGElement> | React.MouseEvent<SVGElement>): e is
 
 type MouseOrTouchEvent = React.MouseEvent<SVGGElement> | TouchEvent<SVGGElement>;
 
-type BrushWithStateProps = InternalProps &
+type BrushWithStateProps = BrushInternalProps &
   PropertiesFromContext & { startIndexControlledFromProps?: number; endIndexControlledFromProps?: number };
 
 class BrushWithState extends PureComponent<BrushWithStateProps, State> {
@@ -992,7 +1059,7 @@ class BrushWithState extends PureComponent<BrushWithStateProps, State> {
   }
 }
 
-function BrushInternal(props: InternalProps) {
+function BrushInternal(props: BrushInternalProps) {
   const dispatch = useAppDispatch();
   const chartData = useChartData();
   const dataIndexes = useDataIndex();
@@ -1065,12 +1132,15 @@ function BrushSettingsDispatcher(props: BrushSettings): null {
   return null;
 }
 
+const defaultLegacyBrushThemeProps: BrushStyleProps = {
+  fill: '#fff',
+  stroke: '#666',
+};
+
 export const defaultBrushProps = {
   height: 40,
   travellerWidth: 5,
   gap: 1,
-  fill: '#fff',
-  stroke: '#666',
   padding: { top: 1, right: 1, bottom: 1, left: 1 },
   leaveTimeOut: 1000,
   alwaysShowText: false,
@@ -1090,7 +1160,23 @@ export const defaultBrushProps = {
  * @consumes CartesianChartContext
  */
 export function Brush(outsideProps: Props) {
-  const props = resolveDefaultProps(outsideProps, defaultBrushProps);
+  const activeTheme = useRechartsTheme();
+  const themeProps = useBackwardsCompatibleTheme<BrushStyleProps>(
+    theme => theme.brush,
+    {
+      fill: outsideProps.fill,
+      stroke: outsideProps.stroke,
+    },
+    defaultLegacyBrushThemeProps,
+  );
+  const props = resolveDefaultProps({ ...outsideProps, ...themeProps }, defaultBrushProps);
+  const travellerStyleProps: BrushStyleProps =
+    activeTheme == null
+      ? themeProps
+      : {
+          fill: outsideProps.fill,
+          stroke: outsideProps.stroke,
+        };
   return (
     <>
       <BrushSettingsDispatcher
@@ -1100,7 +1186,7 @@ export function Brush(outsideProps: Props) {
         width={props.width}
         padding={props.padding}
       />
-      <BrushInternal {...props} />
+      <BrushInternal {...props} travellerStyleProps={travellerStyleProps} />
     </>
   );
 }

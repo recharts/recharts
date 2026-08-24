@@ -127,16 +127,16 @@ export default function CustomAnimationExample(props: Partial<ControlsType>) {
       responsive
       margin={{ top: 20, right: 30, left: 20, bottom: 5 }}
     >
-      <CartesianGrid strokeDasharray="3 3" />
+      <CartesianGrid />
       <XAxis dataKey="x" name="x" type="number" />
       <YAxis dataKey="y" name="y" type="number" />
       <ZAxis dataKey="z" range={[1, 1000]} domain={['dataMin', 'dataMax']} />
-      <Tooltip cursor={{ strokeDasharray: '3 3' }} />
+      <Tooltip />
       <Scatter
         name="Data"
         data={dataSet === 'a' ? dataA : dataB}
-        fill="#8884d8"
         fillOpacity={0.85}
+        dataKey="x"
         animationDuration={animationDuration}
         animationInterpolateFn={animationInterpolateFn}
       />
