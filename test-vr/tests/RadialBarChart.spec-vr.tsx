@@ -78,6 +78,9 @@ test('Rings With Default Axes', async ({ mount }) => {
   await expect(component).toHaveScreenshot();
 });
 
+// Explicitly setting PolarAngleAxis/PolarRadiusAxis type resolves the same as
+// letting them be inferred from the data key — asserted, not coincidental.
+const RINGS_EXPLICIT_AXIS_TYPES_EQUAL_INFERRED = 'RadialBarChart-rings-explicit-axis-types-equal-inferred.png';
 test('Rings With Data Keys', async ({ mount }) => {
   const component = await mount(
     <RadialBarChart width={800} height={800} data={ringsData}>
@@ -89,7 +92,7 @@ test('Rings With Data Keys', async ({ mount }) => {
       <Tooltip defaultIndex={0} />
     </RadialBarChart>,
   );
-  await expect(component).toHaveScreenshot();
+  await expect(component).toHaveScreenshot(RINGS_EXPLICIT_AXIS_TYPES_EQUAL_INFERRED);
 });
 
 test('Rings With Types', async ({ mount }) => {
@@ -117,7 +120,7 @@ test('Rings With Data Keys And Types', async ({ mount }) => {
       <Tooltip defaultIndex={0} />
     </RadialBarChart>,
   );
-  await expect(component).toHaveScreenshot();
+  await expect(component).toHaveScreenshot(RINGS_EXPLICIT_AXIS_TYPES_EQUAL_INFERRED);
 });
 
 test('Rings With Custom Domain', async ({ mount }) => {

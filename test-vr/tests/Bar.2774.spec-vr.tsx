@@ -25,6 +25,10 @@ const bars = (
  * The bars are wide enough here that `maxBarSize` does nothing, so this chart must look
  * exactly the same before and after the fix. It is the control for the two tests below.
  */
+
+// The chart-level clamp and the equivalent per-Bar clamp resolve through the same
+// childMaxBarSize branch of combineAllBarPositions and must render identically.
+const MAX_BAR_SIZE_ON_CHART_OR_PER_BAR_EQUIVALENT = 'BarChart-maxBarSize-chart-or-perBar-equivalent.png';
 test('BarChart with barGap and a maxBarSize that does not clamp', async ({ mount }) => {
   const component = await mount(
     <BarChart width={600} height={370} data={data} barCategoryGap="10%" barGap={4} maxBarSize={1000}>
@@ -53,7 +57,7 @@ test('BarChart with barGap and a maxBarSize that clamps', async ({ mount }) => {
       {bars}
     </BarChart>,
   );
-  await expect(component).toHaveScreenshot();
+  await expect(component).toHaveScreenshot(MAX_BAR_SIZE_ON_CHART_OR_PER_BAR_EQUIVALENT);
 });
 
 /*
@@ -72,5 +76,5 @@ test('BarChart with barGap and a clamping maxBarSize set on each Bar', async ({ 
       <Bar dataKey="z" fill="#a16712" maxBarSize={12} isAnimationActive={false} />
     </BarChart>,
   );
-  await expect(component).toHaveScreenshot();
+  await expect(component).toHaveScreenshot(MAX_BAR_SIZE_ON_CHART_OR_PER_BAR_EQUIVALENT);
 });
