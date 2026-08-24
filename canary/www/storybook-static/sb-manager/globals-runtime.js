@@ -28575,6 +28575,7 @@ var import_react159, import_react_dom7, import_memoizerific11, document12, match
             drop-shadow(0 1px 3px rgba(0,0,0,0.1))
           `,
         borderRadius: theme3.appBorderRadius + 2,
+        fontFamily: theme3.typography.fonts.base,
         fontSize: theme3.typography.size.s1
       } : {}
     ), Tooltip3 = import_react159.default.forwardRef(
@@ -42131,7 +42132,7 @@ function getService(serviceId) {
 }
 
 // src/shared/open-service/static-fetch.ts
-var STATIC_SERVICES_PREFIX = "/services/";
+var STATIC_SERVICES_PREFIX = "./services/";
 function shouldUseBrowserStaticLoader() {
   return globalThis.CONFIG_TYPE === "PRODUCTION";
 }
@@ -63119,7 +63120,7 @@ init_dist();
 var import_memoizerific9 = __toESM(require_memoizerific(), 1), import_semver = __toESM(require_semver2(), 1);
 
 // src/manager-api/version.ts
-var version = "10.5.9";
+var version = "10.5.10";
 
 // src/manager-api/modules/versions.ts
 var { VERSIONCHECK } = scope, getVersionCheckData = (0, import_memoizerific9.default)(1)(() => {
@@ -63820,6 +63821,7 @@ var import_react92 = __toESM(require_react(), 1);
 var import_react24 = __toESM(require_react(), 1);
 init_theming();
 var Note = styled.div(({ theme: theme3 }) => ({
+  fontFamily: theme3.typography.fonts.base,
   padding: "2px 6px",
   lineHeight: "16px",
   fontSize: 10,
@@ -72890,6 +72892,7 @@ var Wrapper4 = styled.div(
             drop-shadow(0 1px 3px rgba(0,0,0,0.1))
           `,
     borderRadius: theme3.appBorderRadius + 2,
+    fontFamily: theme3.typography.fonts.base,
     fontSize: theme3.typography.size.s1
   } : {},
   ({ theme: theme3, bgColor }) => bgColor === "default" && {

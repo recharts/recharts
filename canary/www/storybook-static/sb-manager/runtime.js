@@ -4784,6 +4784,7 @@ init_react();
 // src/components/components/tooltip/TooltipNote.tsx
 init_react();
 var Note = styled.div(({ theme }) => ({
+  fontFamily: theme.typography.fonts.base,
   padding: "2px 6px",
   lineHeight: "16px",
   fontSize: 10,
