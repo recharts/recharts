@@ -29,8 +29,8 @@
       rel="stylesheet"
       type="text/css"
     />
-    <script type="module" crossorigin src="/recharts/pr-7419/www/assets/index-BXm4az7X.js"></script>
-    <link rel="stylesheet" crossorigin href="/recharts/pr-7419/www/assets/index-DAzBVns1.css">
+    <script type="module" crossorigin src="/recharts/pr-7419/www/assets/index-CQI-cOY7.js"></script>
+    <link rel="stylesheet" crossorigin href="/recharts/pr-7419/www/assets/index-Dngh0Ezp.css">
     <link rel="sitemap" type="application/xml" title="Sitemap" href="/sitemap.xml">
   </head>
   <body>
@@ -58,6 +58,7 @@
   TooltipContentProps,
   XAxis,
   YAxis,
+  useRechartsTheme,
 } from &#x27;recharts&#x27;;
 
 // #region Waterfall computation helper
@@ -136,6 +137,7 @@ const WaterfallBar = (props: BarShapeProps) =&gt; {
 };
 
 const WaterfallTooltip = ({ active, payload }: TooltipContentProps) =&gt; {
+  const theme = useRechartsTheme();
   if (active &amp;&amp; payload &amp;&amp; payload.length) {
     const firstPayload = payload[0];
     if (firstPayload == null) {
@@ -143,7 +145,13 @@ const WaterfallTooltip = ({ active, payload }: TooltipContentProps) =&gt; {
     }
     const entry: WaterfallDatum = firstPayload.payload;
     return (
-      &lt;div style={{ backgroundColor: &#x27;white&#x27;, border: &#x27;1px solid #ccc&#x27;, padding: &#x27;0.5em 1em&#x27; }}&gt;
+      &lt;div
+        style={{
+          ...theme?.typography,
+          ...theme?.tooltip?.contentStyle,
+          padding: &#x27;0.5em 1em&#x27;,
+        }}
+      &gt;
         &lt;p style={{ margin: 0, fontWeight: &#x27;bold&#x27; }}&gt;{entry.name}&lt;/p&gt;
         &lt;p style={{ margin: 0 }}&gt;{`Value: ${entry.value &gt;= 0 ? &#x27;+&#x27; : &#x27;&#x27;}${entry.value}`}&lt;/p&gt;
         {entry.isTotal &amp;&amp; &lt;p style={{ margin: 0, fontStyle: &#x27;italic&#x27; }}&gt;Total&lt;/p&gt;}
@@ -162,13 +170,13 @@ export default function WaterfallExample() {
       responsive
       margin={{ top: 20, right: 30, bottom: 5, left: 20 }}
     &gt;
-      &lt;CartesianGrid strokeDasharray=&quot;3 3&quot; vertical={false} /&gt;
+      &lt;CartesianGrid vertical={false} /&gt;
       &lt;XAxis dataKey=&quot;name&quot; /&gt;
       &lt;YAxis /&gt;
       &lt;Tooltip content={WaterfallTooltip} /&gt;
       &lt;Bar dataKey=&quot;waterfallRange&quot; shape={WaterfallBar} isAnimationActive={false} /&gt;
     &lt;/BarChart&gt;
   );
-}</pre><div></div></div></div><div style="height:100%;display:none;overflow:hidden"><div id="recharts-devtools-portal-R5a9" style="height:100%;background:var(--color-bg);color:var(--color-text);overflow:auto;padding:10px;display:block" class=""></div></div><div style="height:100%;display:none;overflow:hidden"><div id="recharts-devtools-portal-R5a9-annotations" style="height:100%;background:var(--color-bg);color:var(--color-text);overflow:auto;padding:10px;display:block" class=""></div></div><div style="height:100%;display:none;overflow:hidden"><div style="padding:10px;height:100%;overflow:auto"><div style="display:flex;gap:12px;margin:1ex"><label style="display:flex;align-items:center;gap:8px;cursor:pointer"><input style="margin:0;width:16px;height:16px;cursor:pointer" type="radio" name=":R55da9:" checked=""/>Autoplay Animations (default)</label><label style="display:flex;align-items:center;gap:8px;cursor:pointer"><input style="margin:0;width:16px;height:16px;cursor:pointer" type="radio" name=":R55da9:"/>Manual Animations</label></div></div></div></div></div></div></div></div></div></main><footer><p><span>Released under the </span><a href="https://opensource.org/licenses/MIT" target="_blank" rel="noreferrer">MIT License</a></p><p>Copyright (c) 2016-<!-- -->2026<!-- --> Recharts Group</p><p>Commit: <code title="661456c3428d73de98eff562a39ba15e06c89626">661456c3</code></p></footer></div></div>
+}</pre><div></div></div></div><div style="height:100%;display:none;overflow:hidden"><div id="recharts-devtools-portal-R5a9" style="height:100%;background:var(--color-bg);color:var(--color-text);overflow:auto;padding:10px;display:block" class=""></div></div><div style="height:100%;display:none;overflow:hidden"><div id="recharts-devtools-portal-R5a9-annotations" style="height:100%;background:var(--color-surface-base);color:var(--color-text-1);overflow:auto;padding:10px;display:block" class=""></div></div><div style="height:100%;display:none;overflow:hidden"><div style="padding:10px;height:100%;overflow:auto"><div style="display:flex;gap:12px;margin:1ex"><label style="display:flex;align-items:center;gap:8px;cursor:pointer"><input style="margin:0;width:16px;height:16px;cursor:pointer" type="radio" name=":R55da9:" checked=""/>Autoplay Animations (default)</label><label style="display:flex;align-items:center;gap:8px;cursor:pointer"><input style="margin:0;width:16px;height:16px;cursor:pointer" type="radio" name=":R55da9:"/>Manual Animations</label></div></div></div></div></div></div></div></div></div></main><footer><p><span>Released under the </span><a href="https://opensource.org/licenses/MIT" target="_blank" rel="noreferrer">MIT License</a></p><p>Copyright (c) 2016-<!-- -->2026<!-- --> Recharts Group</p><p>Commit: <code title="5d56d0ca662483d981d0dd7a6731a9cd1770e659">5d56d0ca</code></p></footer></div></div>
   </body>
 </html>

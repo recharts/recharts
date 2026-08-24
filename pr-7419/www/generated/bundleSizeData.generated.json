@@ -1,45 +1,45 @@
 {
   "treemap": {
     "examplePath": "www/src/views/IndexView/IndexLineChart.tsx",
-    "totalSize": 903685,
-    "totalSizeLabel": "882.50 KB",
+    "totalSize": 903003,
+    "totalSizeLabel": "881.84 KB",
     "moduleCount": 367,
-    "generatedAt": "2026-08-21T13:37:30.117Z",
+    "generatedAt": "2026-08-24T13:56:16.293Z",
     "stages": [
       {
         "stage": "es6-folder",
-        "bytes": 1359588,
+        "bytes": 1362692,
         "humanReadableSize": "1.30 MB",
         "reductionFromBaselinePercent": 0
       },
       {
         "stage": "tree-shaken",
-        "bytes": 906566,
-        "humanReadableSize": "885.32 KB",
+        "bytes": 905884,
+        "humanReadableSize": "884.65 KB",
         "reductionFromBaselinePercent": 0
       },
       {
         "stage": "minified",
-        "bytes": 303256,
-        "humanReadableSize": "296.15 KB",
-        "reductionFromBaselinePercent": 66.55
+        "bytes": 302797,
+        "humanReadableSize": "295.70 KB",
+        "reductionFromBaselinePercent": 66.57
       },
       {
         "stage": "minified+gzip",
-        "bytes": 99241,
-        "humanReadableSize": "96.92 KB",
-        "reductionFromBaselinePercent": 89.05
+        "bytes": 99147,
+        "humanReadableSize": "96.82 KB",
+        "reductionFromBaselinePercent": 89.06
       }
     ],
     "tree": {
       "name": "bundle",
       "fullPath": "bundle",
-      "value": 903685,
+      "value": 903003,
       "children": [
         {
           "name": "src",
           "fullPath": "src",
-          "value": 499657,
+          "value": 499541,
           "children": [
             {
               "name": "state",
@@ -427,7 +427,7 @@
             {
               "name": "util",
               "fullPath": "src/util",
-              "value": 108074,
+              "value": 107958,
               "children": [
                 {
                   "name": "scale",
@@ -511,7 +511,7 @@
                 {
                   "name": "useElementOffset.ts",
                   "fullPath": "src/util/useElementOffset.ts",
-                  "value": 3494
+                  "value": 3378
                 },
                 {
                   "name": "excludeEventProps.ts",
@@ -2513,32 +2513,32 @@
         {
           "name": "entry",
           "fullPath": "entry",
-          "value": 1607,
+          "value": 1041,
           "children": [
             {
               "name": "www",
               "fullPath": "entry/www",
-              "value": 1607,
+              "value": 1041,
               "children": [
                 {
                   "name": "src",
                   "fullPath": "entry/www/src",
-                  "value": 1607,
+                  "value": 1041,
                   "children": [
                     {
                       "name": "views",
                       "fullPath": "entry/www/src/views",
-                      "value": 1607,
+                      "value": 1041,
                       "children": [
                         {
                           "name": "IndexView",
                           "fullPath": "entry/www/src/views/IndexView",
-                          "value": 1607,
+                          "value": 1041,
                           "children": [
                             {
                               "name": "IndexLineChart.tsx",
                               "fullPath": "entry/www/src/views/IndexView/IndexLineChart.tsx",
-                              "value": 1607
+                              "value": 1041
                             }
                           ]
                         }
@@ -2555,45 +2555,45 @@
   },
   "sunburst": {
     "examplePath": "www/src/views/IndexView/IndexLineChart.tsx",
-    "totalSize": 903685,
-    "totalSizeLabel": "882.50 KB",
+    "totalSize": 903003,
+    "totalSizeLabel": "881.84 KB",
     "moduleCount": 367,
-    "generatedAt": "2026-08-21T13:37:32.257Z",
+    "generatedAt": "2026-08-24T13:56:14.036Z",
     "stages": [
       {
         "stage": "es6-folder",
-        "bytes": 1359588,
+        "bytes": 1362692,
         "humanReadableSize": "1.30 MB",
         "reductionFromBaselinePercent": 0
       },
       {
         "stage": "tree-shaken",
-        "bytes": 906566,
-        "humanReadableSize": "885.32 KB",
+        "bytes": 905884,
+        "humanReadableSize": "884.65 KB",
         "reductionFromBaselinePercent": 0
       },
       {
         "stage": "minified",
-        "bytes": 303256,
-        "humanReadableSize": "296.15 KB",
-        "reductionFromBaselinePercent": 66.55
+        "bytes": 302797,
+        "humanReadableSize": "295.70 KB",
+        "reductionFromBaselinePercent": 66.57
       },
       {
         "stage": "minified+gzip",
-        "bytes": 99241,
-        "humanReadableSize": "96.92 KB",
-        "reductionFromBaselinePercent": 89.05
+        "bytes": 99147,
+        "humanReadableSize": "96.82 KB",
+        "reductionFromBaselinePercent": 89.06
       }
     ],
     "tree": {
       "name": "bundle",
       "fullPath": "bundle",
-      "value": 903685,
+      "value": 903003,
       "children": [
         {
           "name": "src",
           "fullPath": "src",
-          "value": 499657,
+          "value": 499541,
           "children": [
             {
               "name": "state",
@@ -2981,7 +2981,7 @@
             {
               "name": "util",
               "fullPath": "src/util",
-              "value": 108074,
+              "value": 107958,
               "children": [
                 {
                   "name": "scale",
@@ -3065,7 +3065,7 @@
                 {
                   "name": "useElementOffset.ts",
                   "fullPath": "src/util/useElementOffset.ts",
-                  "value": 3494
+                  "value": 3378
                 },
                 {
                   "name": "excludeEventProps.ts",
@@ -5067,32 +5067,32 @@
         {
           "name": "entry",
           "fullPath": "entry",
-          "value": 1607,
+          "value": 1041,
           "children": [
             {
               "name": "www",
               "fullPath": "entry/www",
-              "value": 1607,
+              "value": 1041,
               "children": [
                 {
                   "name": "src",
                   "fullPath": "entry/www/src",
-                  "value": 1607,
+                  "value": 1041,
                   "children": [
                     {
                       "name": "views",
                       "fullPath": "entry/www/src/views",
-                      "value": 1607,
+                      "value": 1041,
                       "children": [
                         {
                           "name": "IndexView",
                           "fullPath": "entry/www/src/views/IndexView",
-                          "value": 1607,
+                          "value": 1041,
                           "children": [
                             {
                               "name": "IndexLineChart.tsx",
                               "fullPath": "entry/www/src/views/IndexView/IndexLineChart.tsx",
-                              "value": 1607
+                              "value": 1041
                             }
                           ]
                         }
