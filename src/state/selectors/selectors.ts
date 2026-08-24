@@ -37,6 +37,7 @@ import { combineActiveTooltipIndex } from './combiners/combineActiveTooltipIndex
 import { combineCoordinateForDefaultIndex } from './combiners/combineCoordinateForDefaultIndex';
 import { combineTooltipPayloadConfigurations } from './combiners/combineTooltipPayloadConfigurations';
 import { selectTooltipPayloadSearcher } from './selectTooltipPayloadSearcher';
+import { selectPolarViewBox } from './polarAxisSelectors';
 import { selectTooltipState } from './selectTooltipState';
 import { combineTooltipPayload } from './combiners/combineTooltipPayload';
 import {
@@ -130,7 +131,7 @@ export const selectCoordinateForDefaultIndex: (
   tooltipEventType: TooltipEventType | undefined,
   trigger: TooltipTrigger,
   defaultIndex: TooltipIndex | undefined,
-) => Coordinate | undefined = createSelector(
+) => Coordinate | PolarCoordinate | undefined = createSelector(
   [
     selectChartWidth,
     selectChartHeight,
@@ -139,6 +140,7 @@ export const selectCoordinateForDefaultIndex: (
     selectTooltipAxisTicks,
     pickDefaultIndex,
     selectTooltipPayloadConfigurations,
+    selectPolarViewBox,
   ],
   combineCoordinateForDefaultIndex,
 );
@@ -148,12 +150,12 @@ export const selectActiveCoordinate: (
   tooltipEventType: TooltipEventType | undefined,
   trigger: TooltipTrigger,
   defaultIndex: TooltipIndex | undefined,
-) => Coordinate | undefined = createSelector(
+) => Coordinate | PolarCoordinate | undefined = createSelector(
   [selectTooltipInteractionState, selectCoordinateForDefaultIndex],
   (
     tooltipInteractionState: TooltipInteractionState,
-    defaultIndexCoordinate: Coordinate | undefined,
-  ): Coordinate | undefined => {
+    defaultIndexCoordinate: Coordinate | PolarCoordinate | undefined,
+  ): Coordinate | PolarCoordinate | undefined => {
     return tooltipInteractionState.coordinate ?? defaultIndexCoordinate;
   },
 );
