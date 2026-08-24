@@ -9,6 +9,11 @@ const rangedStackedBarData = [
   { name: 'D', value1: 400, value2: -100, value3: -300 },
 ];
 
+// stackOffset="none" is the documented default, for both BarChart and BarStack —
+// each pair below asserts that leaving the prop unset renders identically to
+// setting it explicitly.
+const BAR_CHART_STACK_OFFSET_DEFAULT_EQUALS_NONE = 'BarChart-stackOffset-default-equals-none.png';
+const BAR_STACK_STACK_OFFSET_DEFAULT_EQUALS_NONE = 'BarStack-stackOffset-default-equals-none.png';
 test('BarChart with default stackOffset', async ({ mount }) => {
   const component = await mount(
     <BarChart data={rangedStackedBarData} width={200} height={200}>
@@ -19,7 +24,7 @@ test('BarChart with default stackOffset', async ({ mount }) => {
       <Bar dataKey="value3" stackId="a" isAnimationActive={false} fill="blue" />
     </BarChart>,
   );
-  await expect(component).toHaveScreenshot();
+  await expect(component).toHaveScreenshot(BAR_CHART_STACK_OFFSET_DEFAULT_EQUALS_NONE);
 });
 
 test('BarChart with stackOffset=expand', async ({ mount }) => {
@@ -58,7 +63,7 @@ test('BarChart with stackOffset=none', async ({ mount }) => {
       <Bar dataKey="value3" stackId="a" isAnimationActive={false} fill="blue" />
     </BarChart>,
   );
-  await expect(component).toHaveScreenshot();
+  await expect(component).toHaveScreenshot(BAR_CHART_STACK_OFFSET_DEFAULT_EQUALS_NONE);
 });
 
 test('BarChart with stackOffset=wiggle', async ({ mount }) => {
@@ -112,7 +117,7 @@ test('BarStack with default stackOffset', async ({ mount }) => {
       </BarStack>
     </BarChart>,
   );
-  await expect(component).toHaveScreenshot();
+  await expect(component).toHaveScreenshot(BAR_STACK_STACK_OFFSET_DEFAULT_EQUALS_NONE);
 });
 
 test('BarStack with stackOffset=expand', async ({ mount }) => {
@@ -157,7 +162,7 @@ test('BarStack with stackOffset=none', async ({ mount }) => {
       </BarStack>
     </BarChart>,
   );
-  await expect(component).toHaveScreenshot();
+  await expect(component).toHaveScreenshot(BAR_STACK_STACK_OFFSET_DEFAULT_EQUALS_NONE);
 });
 
 test('BarStack with stackOffset=wiggle', async ({ mount }) => {

@@ -32,6 +32,15 @@ test('YAxis with width={80}', async ({ mount }) => {
   await expect(component).toHaveScreenshot();
 });
 
+// tick defaults to true, so leaving it unset and setting it explicitly must render
+// the same.
+const WIDTH_AUTO_TICK_DEFAULT_EQUALS_TRUE = 'YAxis-width-auto-tick-default-equals-true.png';
+// At this font size the tick text already fits on one line, so maxLines={1} is a
+// no-op here — asserted so a future change to the wrapping threshold that breaks
+// this assumption is caught, rather than quietly producing two different-but-both-
+// unread baselines.
+const WIDTH_AUTO_LONG_TICKS_MAX_LINES_1_IS_NOOP_AT_THIS_SIZE =
+  'YAxis-width-auto-longTicks-maxLines1-noop-at-this-size.png';
 test('YAxis with width="auto"', async ({ mount }) => {
   const component = await mount(
     <LineChart width={300} height={100} data={pageData}>
@@ -40,7 +49,7 @@ test('YAxis with width="auto"', async ({ mount }) => {
       <Line type="monotone" dataKey="uv" stroke="#8884d8" />
     </LineChart>,
   );
-  await expect(component).toHaveScreenshot();
+  await expect(component).toHaveScreenshot(WIDTH_AUTO_TICK_DEFAULT_EQUALS_TRUE);
 });
 
 test('YAxis with width="auto" and long tick values', async ({ mount }) => {
@@ -66,7 +75,7 @@ test('YAxis with width="auto" and tick=true', async ({ mount }) => {
       <Line type="monotone" dataKey="uv" stroke="#8884d8" />
     </LineChart>,
   );
-  await expect(component).toHaveScreenshot();
+  await expect(component).toHaveScreenshot(WIDTH_AUTO_TICK_DEFAULT_EQUALS_TRUE);
 });
 
 test('YAxis with width="auto" and smaller tick fontsize', async ({ mount }) => {
@@ -130,12 +139,12 @@ test('YAxis with width="auto" and long ticks', async ({ mount }) => {
 
 test('YAxis with width="auto" and long ticks and tick object', async ({ mount }) => {
   const component = await mount(<YAxisWithLongTicksAndTickObjectAndWidthAuto />);
-  await expect(component).toHaveScreenshot();
+  await expect(component).toHaveScreenshot(WIDTH_AUTO_LONG_TICKS_MAX_LINES_1_IS_NOOP_AT_THIS_SIZE);
 });
 
 test('YAxis with width="auto" and long ticks and tick object and smaller font size and maxLines=1', async ({
   mount,
 }) => {
   const component = await mount(<YAxisWithLongTicksAndMaxLines1 />);
-  await expect(component).toHaveScreenshot();
+  await expect(component).toHaveScreenshot(WIDTH_AUTO_LONG_TICKS_MAX_LINES_1_IS_NOOP_AT_THIS_SIZE);
 });
