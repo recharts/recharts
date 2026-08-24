@@ -137,6 +137,8 @@ export type TooltipProps<TValue extends ValueType = ValueType, TName extends Nam
   /**
    * Function to customize the value in the tooltip.
    * If you return an array, the first entry will be the formatted "value", and the second entry will be the formatted "name"
+   *
+   * @example <Tooltip formatter={(value) => new Intl.NumberFormat('ar', { numberingSystem: 'arab' }).format(value)} />
    */
   formatter?: (
     value: TValue,
@@ -177,6 +179,8 @@ export type TooltipProps<TValue extends ValueType = ValueType, TName extends Nam
   itemStyle?: CSSProperties;
   /**
    * The formatter function of label in tooltip.
+   *
+   * @example <Tooltip labelFormatter={(label) => new Intl.NumberFormat('ar', { numberingSystem: 'arab' }).format(label)} />
    */
   labelFormatter?: (label: ReactNode, payload: TooltipPayload) => ReactNode;
   /**
