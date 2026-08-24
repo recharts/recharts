@@ -169,6 +169,16 @@ export class ProjectDocReader implements DocReader {
     return this.getPublicSymbolNames();
   }
 
+  /**
+   * Returns the raw text of the `@since` JSDoc tag of a top-level export,
+   * or undefined when the export carries no such tag.
+   * The text is not validated here; see `since-tag.spec.ts` for that.
+   */
+  getSinceVersionOf(exportName: string): string | undefined {
+    const jsdoc: JSDocMeta | undefined = this.getComponentJsDocMeta(exportName);
+    return getTagText(jsdoc, 'since')?.text;
+  }
+
   private getComponentDeclaration(component: string): ExportedDeclarations {
     const sourceFile = this.project.getSourceFileOrThrow('src/index.ts');
     const exportedDeclarations = sourceFile.getExportedDeclarations();

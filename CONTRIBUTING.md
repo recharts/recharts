@@ -84,6 +84,7 @@ We use `omnidoc` to auto-generate API documentation from TypeScript types and JS
 - To update documentation, update the TypeScript interfaces and JSDoc comments in the source code (`src/`).
 - Run `npm run omnidoc` to regenerate the documentation files locally and verify your changes.
 - Documentation is also regenerated automatically when running `npm run build`.
+- **Every new export from `src/index.ts` needs a JSDoc `@since <version>` tag** naming the Recharts version that first ships it, for example `@since 3.11`. Exports marked `@experimental` are exempt. `npm run test-omnidoc` enforces this.
 
 ## Types
 
