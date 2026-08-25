@@ -29,10 +29,9 @@ import { RegisterGraphicalItemId } from '../context/RegisterGraphicalItemId';
 import { WithIdRequired } from '../util/useUniqueId';
 import { RequiresDefaultProps, resolveDefaultProps } from '../util/resolveDefaultProps';
 import { initialEventSettingsState } from '../state/eventSettingsSlice';
-import { ClipPathProvider } from '../container/ClipPathProvider';
 import { ZoomPropBridge } from './zoom/ZoomPropBridge';
 import { ZoomProp } from '../util/zoom/ZoomOptions';
-import { ZoomTransformLayer } from './zoom/ZoomTransformLayer';
+import { ZoomableChartContent } from './zoom/ZoomableChartContent';
 
 export interface SunburstData {
   [key: string]: any;
@@ -430,11 +429,9 @@ const SunburstChartImpl = ({
   const tabIndex = tabIndexFromProps ?? (accessibilityLayer ? 0 : undefined);
   return (
     <Surface width={width} height={height} title={title} desc={desc} role={role} tabIndex={tabIndex}>
-      <ClipPathProvider>
-        <ZoomTransformLayer>
-          <Layer className={layerClass}>{sectors}</Layer>
-        </ZoomTransformLayer>
-      </ClipPathProvider>
+      <ZoomableChartContent>
+        <Layer className={layerClass}>{sectors}</Layer>
+      </ZoomableChartContent>
       <SetSunburstTooltipEntrySettings
         dataKey={dataKey}
         nameKey={nameKey}

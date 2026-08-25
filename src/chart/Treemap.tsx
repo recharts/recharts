@@ -47,10 +47,9 @@ import { GraphicalItemId } from '../state/graphicalItemsSlice';
 import { initialEventSettingsState } from '../state/eventSettingsSlice';
 import { RechartsTheme } from '../theme/RechartsTheme';
 import { useBackwardsCompatibleTheme } from '../theme/useBackwardsCompatibleTheme';
-import { ClipPathProvider } from '../container/ClipPathProvider';
 import { ZoomPropBridge } from './zoom/ZoomPropBridge';
 import { ZoomProp } from '../util/zoom/ZoomOptions';
-import { ZoomTransformLayer } from './zoom/ZoomTransformLayer';
+import { ZoomableChartContent } from './zoom/ZoomableChartContent';
 
 const NODE_VALUE_KEY = 'value';
 
@@ -1182,9 +1181,7 @@ class TreemapWithState extends PureComponent<InternalTreemapProps, State> {
           height={getTreemapRenderHeight(height, type)}
           onTouchMove={this.handleTouchMove}
         >
-          <ClipPathProvider>
-            <ZoomTransformLayer>{this.renderAllNodes()}</ZoomTransformLayer>
-          </ClipPathProvider>
+          <ZoomableChartContent>{this.renderAllNodes()}</ZoomableChartContent>
           {children}
         </Surface>
         {type === 'nest' && this.renderNestIndex()}

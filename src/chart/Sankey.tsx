@@ -33,10 +33,9 @@ import { WithIdRequired } from '../util/useUniqueId';
 import { RegisterGraphicalItemId } from '../context/RegisterGraphicalItemId';
 import { GraphicalItemId } from '../state/graphicalItemsSlice';
 import { initialEventSettingsState } from '../state/eventSettingsSlice';
-import { ClipPathProvider } from '../container/ClipPathProvider';
 import { ZoomPropBridge } from './zoom/ZoomPropBridge';
 import { ZoomProp } from '../util/zoom/ZoomOptions';
-import { ZoomTransformLayer } from './zoom/ZoomTransformLayer';
+import { ZoomableChartContent } from './zoom/ZoomableChartContent';
 
 const interpolationGenerator = (a: number, b: number) => {
   const ka = +a;
@@ -1422,37 +1421,35 @@ function SankeyImpl(props: InternalSankeyProps) {
         {/* Children stay outside the clip/zoom layer: Sankey's public contract is that they do NOT
             receive a clipPathId, and overlays (Tooltip & co.) must not be transform-zoomed. */}
         {children}
-        <ClipPathProvider>
-          <ZoomTransformLayer>
-            <AllSankeyLinkElements
-              graphicalItemId={id}
-              links={links}
-              modifiedLinks={modifiedLinks}
-              linkContent={link}
-              dataKey={dataKey}
-              onMouseEnter={(linkProps: LinkProps, e: MouseEvent<SVGGraphicsElement>) =>
-                handleMouseEnter(linkProps, 'link', e)
-              }
-              onMouseLeave={(linkProps: LinkProps, e: MouseEvent<SVGGraphicsElement>) =>
-                handleMouseLeave(linkProps, 'link', e)
-              }
-              onClick={(linkProps: LinkProps, e: MouseEvent<SVGGraphicsElement>) => handleClick(linkProps, 'link', e)}
-            />
-            <AllNodeElements
-              graphicalItemId={id}
-              modifiedNodes={modifiedNodes}
-              nodeContent={node}
-              dataKey={dataKey}
-              onMouseEnter={(nodeProps: NodeProps, e: MouseEvent<SVGGraphicsElement>) =>
-                handleMouseEnter(nodeProps, 'node', e)
-              }
-              onMouseLeave={(nodeProps: NodeProps, e: MouseEvent<SVGGraphicsElement>) =>
-                handleMouseLeave(nodeProps, 'node', e)
-              }
-              onClick={(nodeProps: NodeProps, e: MouseEvent<SVGGraphicsElement>) => handleClick(nodeProps, 'node', e)}
-            />
-          </ZoomTransformLayer>
-        </ClipPathProvider>
+        <ZoomableChartContent>
+          <AllSankeyLinkElements
+            graphicalItemId={id}
+            links={links}
+            modifiedLinks={modifiedLinks}
+            linkContent={link}
+            dataKey={dataKey}
+            onMouseEnter={(linkProps: LinkProps, e: MouseEvent<SVGGraphicsElement>) =>
+              handleMouseEnter(linkProps, 'link', e)
+            }
+            onMouseLeave={(linkProps: LinkProps, e: MouseEvent<SVGGraphicsElement>) =>
+              handleMouseLeave(linkProps, 'link', e)
+            }
+            onClick={(linkProps: LinkProps, e: MouseEvent<SVGGraphicsElement>) => handleClick(linkProps, 'link', e)}
+          />
+          <AllNodeElements
+            graphicalItemId={id}
+            modifiedNodes={modifiedNodes}
+            nodeContent={node}
+            dataKey={dataKey}
+            onMouseEnter={(nodeProps: NodeProps, e: MouseEvent<SVGGraphicsElement>) =>
+              handleMouseEnter(nodeProps, 'node', e)
+            }
+            onMouseLeave={(nodeProps: NodeProps, e: MouseEvent<SVGGraphicsElement>) =>
+              handleMouseLeave(nodeProps, 'node', e)
+            }
+            onClick={(nodeProps: NodeProps, e: MouseEvent<SVGGraphicsElement>) => handleClick(nodeProps, 'node', e)}
+          />
+        </ZoomableChartContent>
       </Surface>
     </>
   );

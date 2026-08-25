@@ -69,6 +69,7 @@
   "types/chart/zoom/ZoomGestureApi.d.ts",
   "types/chart/zoom/ZoomPropBridge.d.ts",
   "types/chart/zoom/ZoomTransformLayer.d.ts",
+  "types/chart/zoom/ZoomableChartContent.d.ts",
   "types/chart/zoom/axisGesture.d.ts",
   "types/chart/zoom/doubleClickGesture.d.ts",
   "types/chart/zoom/interactionComponents.d.ts",
