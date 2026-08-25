@@ -29,8 +29,8 @@
       rel="stylesheet"
       type="text/css"
     />
-    <script type="module" crossorigin src="/recharts/pr-7640/www/assets/index-Ch-rsaWQ.js"></script>
-    <link rel="stylesheet" crossorigin href="/recharts/pr-7640/www/assets/index-DB45zsAB.css">
+    <script type="module" crossorigin src="/recharts/pr-7640/www/assets/index-Bfu0FljM.js"></script>
+    <link rel="stylesheet" crossorigin href="/recharts/pr-7640/www/assets/index-Dngh0Ezp.css">
     <link rel="sitemap" type="application/xml" title="Sitemap" href="/sitemap.xml">
   </head>
   <body>
@@ -48,6 +48,71 @@
             L 15,13
             A 2,2,0,0,1,13,15
             L 7,15
-            A 2,2,0,0,1,5,13 Z" style="stroke-dasharray:0px 1px"></path></svg>Copy to clipboard</button><button type="button" class="codemirror-toolbar-item"><svg stroke="currentColor" fill="none" stroke-width="2" viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round" height="1em" width="1em" xmlns="http://www.w3.org/2000/svg"><path d="M21.174 6.812a1 1 0 0 0-3.986-3.987L3.842 16.174a2 2 0 0 0-.5.83l-1.321 4.352a.5.5 0 0 0 .623.622l4.353-1.32a2 2 0 0 0 .83-.497z"></path><path d="m15 5 4 4"></path></svg><span>Edit</span></button><button type="button" class="codemirror-toolbar-item"><svg stroke="currentColor" fill="none" stroke-width="2" viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round" height="1em" width="1em" xmlns="http://www.w3.org/2000/svg"><circle cx="18" cy="5" r="3"></circle><circle cx="6" cy="12" r="3"></circle><circle cx="18" cy="19" r="3"></circle><line x1="8.59" x2="15.42" y1="13.51" y2="17.49"></line><line x1="15.41" x2="8.59" y1="6.51" y2="10.49"></line></svg><span>Open in StackBlitz</span></button></div><div style="height:100%;display:block;overflow:hidden"><div class="codemirror-example-editor tsx" style="height:100%;overflow:auto"></div></div><div style="height:100%;display:none;overflow:hidden"><div id="recharts-devtools-portal-R5a9" style="height:100%;background:var(--color-bg);color:var(--color-text);overflow:auto;padding:10px;display:block" class=""></div></div><div style="height:100%;display:none;overflow:hidden"><div id="recharts-devtools-portal-R5a9-annotations" style="height:100%;background:var(--color-bg);color:var(--color-text);overflow:auto;padding:10px;display:block" class=""></div></div><div style="height:100%;display:none;overflow:hidden"><div style="padding:10px;height:100%;overflow:auto"><div style="display:flex;gap:12px;margin:1ex"><label style="display:flex;align-items:center;gap:8px;cursor:pointer"><input style="margin:0;width:16px;height:16px;cursor:pointer" type="radio" name=":R55da9:" checked=""/>Autoplay Animations (default)</label><label style="display:flex;align-items:center;gap:8px;cursor:pointer"><input style="margin:0;width:16px;height:16px;cursor:pointer" type="radio" name=":R55da9:"/>Manual Animations</label></div></div></div></div></div></div></div></div></div></main><footer><p><span>Released under the </span><a href="https://opensource.org/licenses/MIT" target="_blank" rel="noreferrer">MIT License</a></p><p>Copyright (c) 2016-<!-- -->2026<!-- --> Recharts Group</p><p>Commit: <code title="56bcf427c09e60ddb078cf12719ed78c483a3283">56bcf427</code></p></footer></div></div>
+            A 2,2,0,0,1,5,13 Z" style="stroke-dasharray:0px 1px"></path></svg>Copy to clipboard</button><button type="button" class="codemirror-toolbar-item"><svg stroke="currentColor" fill="none" stroke-width="2" viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round" height="1em" width="1em" xmlns="http://www.w3.org/2000/svg"><path d="M21.174 6.812a1 1 0 0 0-3.986-3.987L3.842 16.174a2 2 0 0 0-.5.83l-1.321 4.352a.5.5 0 0 0 .623.622l4.353-1.32a2 2 0 0 0 .83-.497z"></path><path d="m15 5 4 4"></path></svg><span>Edit</span></button><button type="button" class="codemirror-toolbar-item"><svg stroke="currentColor" fill="none" stroke-width="2" viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round" height="1em" width="1em" xmlns="http://www.w3.org/2000/svg"><circle cx="18" cy="5" r="3"></circle><circle cx="6" cy="12" r="3"></circle><circle cx="18" cy="19" r="3"></circle><line x1="8.59" x2="15.42" y1="13.51" y2="17.49"></line><line x1="15.41" x2="8.59" y1="6.51" y2="10.49"></line></svg><span>Open in StackBlitz</span></button></div><div style="height:100%;display:block;overflow:hidden"><div class="codemirror-example-editor tsx" style="height:100%;overflow:auto"><pre>import { Pie, PieChart, PieProps, PieSectorDataItem, Tooltip } from &#x27;recharts&#x27;;
+import { RechartsDevtools } from &#x27;@recharts/devtools&#x27;;
+
+// #region Sample data
+const chartData = [
+  { name: &#x27;A&#x27;, value: 80, fill: &#x27;#ff0000&#x27; },
+  { name: &#x27;B&#x27;, value: 45, fill: &#x27;#00ff00&#x27; },
+  { name: &#x27;C&#x27;, value: 25, fill: &#x27;#0000ff&#x27; },
+];
+
+// #endregion
+const NEEDLE_BASE_RADIUS_PX = 5;
+const NEEDLE_COLOR = &#x27;#d0d000&#x27;;
+const Needle = ({ cx, cy, midAngle, innerRadius, outerRadius }: PieSectorDataItem) =&gt; {
+  const needleBaseCenterX = cx;
+  const needleBaseCenterY = cy;
+  const needleLength = innerRadius + (outerRadius - innerRadius) / 2;
+
+  return (
+    &lt;g&gt;
+      &lt;circle
+        cx={needleBaseCenterX}
+        cy={needleBaseCenterY}
+        r={NEEDLE_BASE_RADIUS_PX}
+        fill={NEEDLE_COLOR}
+        stroke=&quot;none&quot;
+      /&gt;
+      &lt;path
+        d={`M${needleBaseCenterX},${needleBaseCenterY}l${needleLength},0`}
+        strokeWidth={2}
+        stroke={NEEDLE_COLOR}
+        fill={NEEDLE_COLOR}
+        style={{
+          transform: `rotate(-${midAngle}deg)`,
+          transformOrigin: `${needleBaseCenterX}px ${needleBaseCenterY}px`,
+        }}
+      /&gt;
+    &lt;/g&gt;
+  );
+};
+
+const HalfPie = (props: PieProps) =&gt; (
+  &lt;Pie
+    {...props}
+    stroke=&quot;none&quot;
+    dataKey=&quot;value&quot;
+    startAngle={180}
+    endAngle={0}
+    data={chartData}
+    cx={100}
+    cy={100}
+    innerRadius={50}
+    outerRadius={100}
+  /&gt;
+);
+
+export default function PieChartWithNeedle({ isAnimationActive = true }: { isAnimationActive?: boolean }) {
+  return (
+    &lt;PieChart width={210} height={120} style={{ margin: &#x27;0 auto&#x27; }}&gt;
+      &lt;HalfPie isAnimationActive={isAnimationActive} /&gt;
+      &lt;HalfPie isAnimationActive={isAnimationActive} activeShape={Needle} /&gt;
+      &lt;Tooltip defaultIndex={0} content={() =&gt; null} active /&gt;
+      &lt;RechartsDevtools /&gt;
+    &lt;/PieChart&gt;
+  );
+}</pre><div></div></div></div><div style="height:100%;display:none;overflow:hidden"><div id="recharts-devtools-portal-R5a9" style="height:100%;background:var(--color-bg);color:var(--color-text);overflow:auto;padding:10px;display:block" class=""></div></div><div style="height:100%;display:none;overflow:hidden"><div id="recharts-devtools-portal-R5a9-annotations" style="height:100%;background:var(--color-surface-base);color:var(--color-text-1);overflow:auto;padding:10px;display:block" class=""></div></div><div style="height:100%;display:none;overflow:hidden"><div style="padding:10px;height:100%;overflow:auto"><div style="display:flex;gap:12px;margin:1ex"><label style="display:flex;align-items:center;gap:8px;cursor:pointer"><input style="margin:0;width:16px;height:16px;cursor:pointer" type="radio" name=":R55da9:" checked=""/>Autoplay Animations (default)</label><label style="display:flex;align-items:center;gap:8px;cursor:pointer"><input style="margin:0;width:16px;height:16px;cursor:pointer" type="radio" name=":R55da9:"/>Manual Animations</label></div></div></div></div></div></div></div></div></div></main><footer><p><span>Released under the </span><a href="https://opensource.org/licenses/MIT" target="_blank" rel="noreferrer">MIT License</a></p><p>Copyright (c) 2016-<!-- -->2026<!-- --> Recharts Group</p><p>Commit: <code title="4c1b5ee426295daeee902e588a9dbbb72909ff56">4c1b5ee4</code></p></footer></div></div>
   </body>
 </html>

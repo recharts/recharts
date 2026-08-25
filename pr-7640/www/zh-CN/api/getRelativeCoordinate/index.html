@@ -29,8 +29,8 @@
       rel="stylesheet"
       type="text/css"
     />
-    <script type="module" crossorigin src="/recharts/pr-7640/www/assets/index-Ch-rsaWQ.js"></script>
-    <link rel="stylesheet" crossorigin href="/recharts/pr-7640/www/assets/index-DB45zsAB.css">
+    <script type="module" crossorigin src="/recharts/pr-7640/www/assets/index-Bfu0FljM.js"></script>
+    <link rel="stylesheet" crossorigin href="/recharts/pr-7640/www/assets/index-Dngh0Ezp.css">
     <link rel="sitemap" type="application/xml" title="Sitemap" href="/sitemap.xml">
   </head>
   <body>
@@ -48,6 +48,142 @@
             L 15,13
             A 2,2,0,0,1,13,15
             L 7,15
-            A 2,2,0,0,1,5,13 Z" style="stroke-dasharray:0px 1px"></path></svg>Copy to clipboard</button><button type="button" class="codemirror-toolbar-item"><svg stroke="currentColor" fill="none" stroke-width="2" viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round" height="1em" width="1em" xmlns="http://www.w3.org/2000/svg"><path d="M21.174 6.812a1 1 0 0 0-3.986-3.987L3.842 16.174a2 2 0 0 0-.5.83l-1.321 4.352a.5.5 0 0 0 .623.622l4.353-1.32a2 2 0 0 0 .83-.497z"></path><path d="m15 5 4 4"></path></svg><span>Edit</span></button><button type="button" class="codemirror-toolbar-item"><svg stroke="currentColor" fill="none" stroke-width="2" viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round" height="1em" width="1em" xmlns="http://www.w3.org/2000/svg"><circle cx="18" cy="5" r="3"></circle><circle cx="6" cy="12" r="3"></circle><circle cx="18" cy="19" r="3"></circle><line x1="8.59" x2="15.42" y1="13.51" y2="17.49"></line><line x1="15.41" x2="8.59" y1="6.51" y2="10.49"></line></svg><span>Open in StackBlitz</span></button></div><div style="height:100%;display:block;overflow:hidden"><div class="codemirror-example-editor tsx" style="height:100%;overflow:auto"></div></div><div style="height:100%;display:none;overflow:hidden"><div id="recharts-devtools-portal-Raq9" style="height:100%;background:var(--color-bg);color:var(--color-text);overflow:auto;padding:10px;display:block" class=""></div></div><div style="height:100%;display:none;overflow:hidden"><div id="recharts-devtools-portal-Raq9-annotations" style="height:100%;background:var(--color-bg);color:var(--color-text);overflow:auto;padding:10px;display:block" class=""></div></div><div style="height:100%;display:none;overflow:hidden"><div style="padding:10px;height:100%;overflow:auto"><div style="display:flex;gap:12px;margin:1ex"><label style="display:flex;align-items:center;gap:8px;cursor:pointer"><input style="margin:0;width:16px;height:16px;cursor:pointer" type="radio" name=":Raaqq9:" checked=""/>Autoplay Animations (default)</label><label style="display:flex;align-items:center;gap:8px;cursor:pointer"><input style="margin:0;width:16px;height:16px;cursor:pointer" type="radio" name=":Raaqq9:"/>Manual Animations</label></div></div></div></div></div></div></div></div></div></div><div><h4 class="sub-title">Return value</h4><p><code>RelativePointer</code></p><p class="desc"><section><p>Coordinates relative to the top-left corner of the element. Single object for Mouse events, array of objects for Touch events.</p></section></p></div><section class="props-section"><h4 class="sub-title"><button type="button" aria-expanded="true" aria-controls="props-current">属性<!-- --> <i class="expander">Click to collapse</i></button></h4><ul class="props-list" id="props-current"><li class="props-item" id="event"><p class="header "><span class="title"><a href="#event">event</a></span><span class="type">HTMLMousePointer | SVGMousePointer</span></p><p class="desc"><section><p>The mouse or touch event from React event handlers (works with both HTML and SVG elements)</p></section></p></li></ul></section></div></div></main><footer><p><span>Released under the </span><a href="https://opensource.org/licenses/MIT" target="_blank" rel="noreferrer">MIT License</a></p><p>Copyright (c) 2016-<!-- -->2026<!-- --> Recharts Group</p><p>Commit: <code title="56bcf427c09e60ddb078cf12719ed78c483a3283">56bcf427</code></p></footer></div></div>
+            A 2,2,0,0,1,5,13 Z" style="stroke-dasharray:0px 1px"></path></svg>Copy to clipboard</button><button type="button" class="codemirror-toolbar-item"><svg stroke="currentColor" fill="none" stroke-width="2" viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round" height="1em" width="1em" xmlns="http://www.w3.org/2000/svg"><path d="M21.174 6.812a1 1 0 0 0-3.986-3.987L3.842 16.174a2 2 0 0 0-.5.83l-1.321 4.352a.5.5 0 0 0 .623.622l4.353-1.32a2 2 0 0 0 .83-.497z"></path><path d="m15 5 4 4"></path></svg><span>Edit</span></button><button type="button" class="codemirror-toolbar-item"><svg stroke="currentColor" fill="none" stroke-width="2" viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round" height="1em" width="1em" xmlns="http://www.w3.org/2000/svg"><circle cx="18" cy="5" r="3"></circle><circle cx="6" cy="12" r="3"></circle><circle cx="18" cy="19" r="3"></circle><line x1="8.59" x2="15.42" y1="13.51" y2="17.49"></line><line x1="15.41" x2="8.59" y1="6.51" y2="10.49"></line></svg><span>Open in StackBlitz</span></button></div><div style="height:100%;display:block;overflow:hidden"><div class="codemirror-example-editor tsx" style="height:100%;overflow:auto"><pre>import {
+  RelativePointer,
+  MouseHandlerDataParam,
+  getRelativeCoordinate,
+  Area,
+  AreaChart,
+  XAxis,
+  YAxis,
+  Cross,
+  useChartWidth,
+  useChartHeight,
+  Legend,
+  Text,
+  TextProps,
+  ZIndexLayer,
+  DefaultZIndexes,
+} from &#x27;recharts&#x27;;
+import { generateMockData, RechartsDevtools } from &#x27;@recharts/devtools&#x27;;
+import { useState, MouseEvent, TouchEvent, useCallback } from &#x27;react&#x27;;
+
+const data = generateMockData(30, 123);
+
+const TextWithOutline = (textProps: TextProps) =&gt; (
+  &lt;Text stroke=&quot;white&quot; strokeWidth={3} fill=&quot;black&quot; paintOrder=&quot;stroke&quot; {...textProps} /&gt;
+);
+
+const PixelCrosshair = ({ pointer }: { pointer: RelativePointer | null }) =&gt; {
+  const width = useChartWidth();
+  const height = useChartHeight();
+  if (pointer == null || width == null || height == null) {
+    return null;
+  }
+  return (
+    &lt;ZIndexLayer zIndex={DefaultZIndexes.cursorLine}&gt;
+      &lt;TextWithOutline
+        x={pointer.relativeX + 5}
+        y={0}
+        verticalAnchor=&quot;start&quot;
+      &gt;{`x: ${pointer.relativeX}`}&lt;/TextWithOutline&gt;
+      &lt;TextWithOutline
+        y={pointer.relativeY + 5}
+        x={width}
+        verticalAnchor=&quot;start&quot;
+        textAnchor=&quot;end&quot;
+      &gt;{`y: ${pointer.relativeY}`}&lt;/TextWithOutline&gt;
+      &lt;Cross
+        /*
+         * pointerEvents: none is necessary because without it, browser will detect hovering over the Cross itself
+         * which makes it trigger mouseLeave on the chart which makes it erase the Cross which looks like it&#x27;s blinking.
+         * If we skip pointer events on the cross then we can skip the mouseLeave and the movement is smooth.
+         */
+        style={{ pointerEvents: &#x27;none&#x27; }}
+        x={pointer.relativeX}
+        y={pointer.relativeY}
+        top={0}
+        left={0}
+        width={width}
+        height={height}
+        stroke=&quot;green&quot;
+        strokeWidth={1}
+        strokeDasharray=&quot;4&quot;
+      /&gt;
+    &lt;/ZIndexLayer&gt;
+  );
+};
+
+export default function CrosshairExample({
+  initialPointers = [],
+}: {
+  initialPointers?: ReadonlyArray&lt;RelativePointer&gt;;
+}) {
+  const [pointers, setPointers] = useState&lt;ReadonlyArray&lt;RelativePointer&gt;&gt;(initialPointers);
+
+  const handleMouseMove = useCallback(
+    (_data: MouseHandlerDataParam, event: MouseEvent&lt;SVGGraphicsElement&gt;) =&gt; {
+      /*
+       * Here you have three coordinates available to your use:
+       * 1. MouseHandlerDataParam.activeCoordinate
+       *    - this is the coordinate where Recharts decided to display the Tooltip
+       *    - may or may not be close to the mouse position
+       *    - relative to chart position
+       * 2. RelativePointer resolved by getRelativeCoordinate
+       *    - mouse pointer position
+       *    - relative to the element position
+       *    - because we have registered this event on the chart, the coordinates here are also relative to the chart
+       * 3. event.clientX (and pageX and screenX)
+       *    - these are the standard browser event coordinates
+       *    - some absolute some relative, depending on scroll and viewport, see the docs for details
+       *    - https://developer.mozilla.org/en-US/docs/Web/API/MouseEvent
+       *
+       * This particular example demonstrates the use of (2.)
+       */
+      const chartPointer: RelativePointer = getRelativeCoordinate(event);
+      setPointers([chartPointer]);
+    },
+    [setPointers],
+  );
+
+  const handleTouchMove = useCallback(
+    (_data: unknown, event: TouchEvent&lt;SVGGraphicsElement&gt;) =&gt; {
+      const chartPointers: RelativePointer[] = getRelativeCoordinate(event);
+      setPointers(chartPointers);
+    },
+    [setPointers],
+  );
+
+  const handleLeave = useCallback(() =&gt; {
+    setPointers([]);
+  }, [setPointers]);
+
+  return (
+    &lt;AreaChart
+      style={{
+        width: &#x27;100%&#x27;,
+        maxWidth: &#x27;500px&#x27;,
+        maxHeight: &#x27;200px&#x27;,
+        aspectRatio: 1,
+        touchAction: &#x27;none&#x27;,
+      }}
+      responsive
+      data={data}
+      onMouseMove={handleMouseMove}
+      onMouseLeave={handleLeave}
+      onTouchMove={handleTouchMove}
+      onTouchEnd={handleLeave}
+    &gt;
+      &lt;XAxis dataKey=&quot;label&quot; /&gt;
+      &lt;YAxis width=&quot;auto&quot; /&gt;
+      &lt;Area type=&quot;monotone&quot; dataKey=&quot;x&quot; /&gt;
+      {pointers.map((pointer, index) =&gt; (
+        &lt;PixelCrosshair key={index} pointer={pointer} /&gt;
+      ))}
+      &lt;Legend /&gt;
+      &lt;RechartsDevtools /&gt;
+    &lt;/AreaChart&gt;
+  );
+}</pre><div></div></div></div><div style="height:100%;display:none;overflow:hidden"><div id="recharts-devtools-portal-Raq9" style="height:100%;background:var(--color-bg);color:var(--color-text);overflow:auto;padding:10px;display:block" class=""></div></div><div style="height:100%;display:none;overflow:hidden"><div id="recharts-devtools-portal-Raq9-annotations" style="height:100%;background:var(--color-surface-base);color:var(--color-text-1);overflow:auto;padding:10px;display:block" class=""></div></div><div style="height:100%;display:none;overflow:hidden"><div style="padding:10px;height:100%;overflow:auto"><div style="display:flex;gap:12px;margin:1ex"><label style="display:flex;align-items:center;gap:8px;cursor:pointer"><input style="margin:0;width:16px;height:16px;cursor:pointer" type="radio" name=":Raaqq9:" checked=""/>Autoplay Animations (default)</label><label style="display:flex;align-items:center;gap:8px;cursor:pointer"><input style="margin:0;width:16px;height:16px;cursor:pointer" type="radio" name=":Raaqq9:"/>Manual Animations</label></div></div></div></div></div></div></div></div></div></div><div><h4 class="sub-title">Return value</h4><p><code>RelativePointer</code></p><p class="desc"><section><p>Coordinates relative to the top-left corner of the element. Single object for Mouse events, array of objects for Touch events.</p></section></p></div><section class="props-section"><h4 class="sub-title"><button type="button" aria-expanded="true" aria-controls="props-current">属性<!-- --> <i class="expander">Click to collapse</i></button></h4><ul class="props-list" id="props-current"><li class="props-item" id="event"><p class="header "><span class="title"><a href="#event">event</a></span><span class="type">HTMLMousePointer | SVGMousePointer</span></p><p class="desc"><section><p>The mouse or touch event from React event handlers (works with both HTML and SVG elements)</p></section></p></li></ul></section></div></div></main><footer><p><span>Released under the </span><a href="https://opensource.org/licenses/MIT" target="_blank" rel="noreferrer">MIT License</a></p><p>Copyright (c) 2016-<!-- -->2026<!-- --> Recharts Group</p><p>Commit: <code title="4c1b5ee426295daeee902e588a9dbbb72909ff56">4c1b5ee4</code></p></footer></div></div>
   </body>
 </html>

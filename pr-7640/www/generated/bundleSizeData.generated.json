@@ -1,45 +1,45 @@
 {
   "treemap": {
     "examplePath": "www/src/views/IndexView/IndexLineChart.tsx",
-    "totalSize": 902693,
-    "totalSizeLabel": "881.54 KB",
-    "moduleCount": 366,
-    "generatedAt": "2026-08-18T15:46:21.528Z",
+    "totalSize": 903003,
+    "totalSizeLabel": "881.84 KB",
+    "moduleCount": 367,
+    "generatedAt": "2026-08-25T19:40:47.670Z",
     "stages": [
       {
         "stage": "es6-folder",
-        "bytes": 1354333,
-        "humanReadableSize": "1.29 MB",
+        "bytes": 1362961,
+        "humanReadableSize": "1.30 MB",
         "reductionFromBaselinePercent": 0
       },
       {
         "stage": "tree-shaken",
-        "bytes": 905572,
-        "humanReadableSize": "884.35 KB",
+        "bytes": 905884,
+        "humanReadableSize": "884.65 KB",
         "reductionFromBaselinePercent": 0
       },
       {
         "stage": "minified",
-        "bytes": 303293,
-        "humanReadableSize": "296.18 KB",
-        "reductionFromBaselinePercent": 66.51
+        "bytes": 302797,
+        "humanReadableSize": "295.70 KB",
+        "reductionFromBaselinePercent": 66.57
       },
       {
         "stage": "minified+gzip",
-        "bytes": 99252,
-        "humanReadableSize": "96.93 KB",
-        "reductionFromBaselinePercent": 89.04
+        "bytes": 99147,
+        "humanReadableSize": "96.82 KB",
+        "reductionFromBaselinePercent": 89.06
       }
     ],
     "tree": {
       "name": "bundle",
       "fullPath": "bundle",
-      "value": 902693,
+      "value": 903003,
       "children": [
         {
           "name": "src",
           "fullPath": "src",
-          "value": 498665,
+          "value": 499541,
           "children": [
             {
               "name": "state",
@@ -427,7 +427,7 @@
             {
               "name": "util",
               "fullPath": "src/util",
-              "value": 107880,
+              "value": 107958,
               "children": [
                 {
                   "name": "scale",
@@ -484,14 +484,14 @@
                   "value": 5637
                 },
                 {
+                  "name": "DataUtils.ts",
+                  "fullPath": "src/util/DataUtils.ts",
+                  "value": 5209
+                },
+                {
                   "name": "ReduceCSSCalc.ts",
                   "fullPath": "src/util/ReduceCSSCalc.ts",
                   "value": 5145
-                },
-                {
-                  "name": "DataUtils.ts",
-                  "fullPath": "src/util/DataUtils.ts",
-                  "value": 5015
                 },
                 {
                   "name": "resolveDefaultProps.tsx",
@@ -511,7 +511,7 @@
                 {
                   "name": "useElementOffset.ts",
                   "fullPath": "src/util/useElementOffset.ts",
-                  "value": 3494
+                  "value": 3378
                 },
                 {
                   "name": "excludeEventProps.ts",
@@ -764,22 +764,22 @@
             {
               "name": "component",
               "fullPath": "src/component",
-              "value": 40074,
+              "value": 40278,
               "children": [
                 {
                   "name": "Label.tsx",
                   "fullPath": "src/component/Label.tsx",
-                  "value": 11193
+                  "value": 10478
+                },
+                {
+                  "name": "Text.tsx",
+                  "fullPath": "src/component/Text.tsx",
+                  "value": 9221
                 },
                 {
                   "name": "Legend.tsx",
                   "fullPath": "src/component/Legend.tsx",
                   "value": 8338
-                },
-                {
-                  "name": "Text.tsx",
-                  "fullPath": "src/component/Text.tsx",
-                  "value": 8302
                 },
                 {
                   "name": "DefaultLegendContent.tsx",
@@ -986,12 +986,12 @@
             {
               "name": "shape",
               "fullPath": "src/shape",
-              "value": 7495,
+              "value": 7715,
               "children": [
                 {
                   "name": "Curve.tsx",
                   "fullPath": "src/shape/Curve.tsx",
-                  "value": 4366
+                  "value": 4586
                 },
                 {
                   "name": "Symbols.tsx",
@@ -1002,6 +1002,33 @@
                   "name": "Dot.tsx",
                   "fullPath": "src/shape/Dot.tsx",
                   "value": 667
+                }
+              ]
+            },
+            {
+              "name": "theme",
+              "fullPath": "src/theme",
+              "value": 5276,
+              "children": [
+                {
+                  "name": "graphicalItemIdentity.ts",
+                  "fullPath": "src/theme/graphicalItemIdentity.ts",
+                  "value": 2534
+                },
+                {
+                  "name": "useBackwardsCompatibleTheme.ts",
+                  "fullPath": "src/theme/useBackwardsCompatibleTheme.ts",
+                  "value": 1863
+                },
+                {
+                  "name": "RechartsThemeContext.ts",
+                  "fullPath": "src/theme/RechartsThemeContext.ts",
+                  "value": 505
+                },
+                {
+                  "name": "cssStylesToSvgStyles.ts",
+                  "fullPath": "src/theme/cssStylesToSvgStyles.ts",
+                  "value": 374
                 }
               ]
             },
@@ -1029,28 +1056,6 @@
                   "name": "Layer.tsx",
                   "fullPath": "src/container/Layer.tsx",
                   "value": 608
-                }
-              ]
-            },
-            {
-              "name": "theme",
-              "fullPath": "src/theme",
-              "value": 4902,
-              "children": [
-                {
-                  "name": "graphicalItemIdentity.ts",
-                  "fullPath": "src/theme/graphicalItemIdentity.ts",
-                  "value": 2534
-                },
-                {
-                  "name": "useBackwardsCompatibleTheme.ts",
-                  "fullPath": "src/theme/useBackwardsCompatibleTheme.ts",
-                  "value": 1863
-                },
-                {
-                  "name": "RechartsThemeContext.ts",
-                  "fullPath": "src/theme/RechartsThemeContext.ts",
-                  "value": 505
                 }
               ]
             },
@@ -2508,32 +2513,32 @@
         {
           "name": "entry",
           "fullPath": "entry",
-          "value": 1607,
+          "value": 1041,
           "children": [
             {
               "name": "www",
               "fullPath": "entry/www",
-              "value": 1607,
+              "value": 1041,
               "children": [
                 {
                   "name": "src",
                   "fullPath": "entry/www/src",
-                  "value": 1607,
+                  "value": 1041,
                   "children": [
                     {
                       "name": "views",
                       "fullPath": "entry/www/src/views",
-                      "value": 1607,
+                      "value": 1041,
                       "children": [
                         {
                           "name": "IndexView",
                           "fullPath": "entry/www/src/views/IndexView",
-                          "value": 1607,
+                          "value": 1041,
                           "children": [
                             {
                               "name": "IndexLineChart.tsx",
                               "fullPath": "entry/www/src/views/IndexView/IndexLineChart.tsx",
-                              "value": 1607
+                              "value": 1041
                             }
                           ]
                         }
@@ -2550,45 +2555,45 @@
   },
   "sunburst": {
     "examplePath": "www/src/views/IndexView/IndexLineChart.tsx",
-    "totalSize": 902693,
-    "totalSizeLabel": "881.54 KB",
-    "moduleCount": 366,
-    "generatedAt": "2026-08-18T15:46:23.446Z",
+    "totalSize": 903003,
+    "totalSizeLabel": "881.84 KB",
+    "moduleCount": 367,
+    "generatedAt": "2026-08-25T19:40:45.592Z",
     "stages": [
       {
         "stage": "es6-folder",
-        "bytes": 1354333,
-        "humanReadableSize": "1.29 MB",
+        "bytes": 1362961,
+        "humanReadableSize": "1.30 MB",
         "reductionFromBaselinePercent": 0
       },
       {
         "stage": "tree-shaken",
-        "bytes": 905572,
-        "humanReadableSize": "884.35 KB",
+        "bytes": 905884,
+        "humanReadableSize": "884.65 KB",
         "reductionFromBaselinePercent": 0
       },
       {
         "stage": "minified",
-        "bytes": 303293,
-        "humanReadableSize": "296.18 KB",
-        "reductionFromBaselinePercent": 66.51
+        "bytes": 302797,
+        "humanReadableSize": "295.70 KB",
+        "reductionFromBaselinePercent": 66.57
       },
       {
         "stage": "minified+gzip",
-        "bytes": 99252,
-        "humanReadableSize": "96.93 KB",
-        "reductionFromBaselinePercent": 89.04
+        "bytes": 99147,
+        "humanReadableSize": "96.82 KB",
+        "reductionFromBaselinePercent": 89.06
       }
     ],
     "tree": {
       "name": "bundle",
       "fullPath": "bundle",
-      "value": 902693,
+      "value": 903003,
       "children": [
         {
           "name": "src",
           "fullPath": "src",
-          "value": 498665,
+          "value": 499541,
           "children": [
             {
               "name": "state",
@@ -2976,7 +2981,7 @@
             {
               "name": "util",
               "fullPath": "src/util",
-              "value": 107880,
+              "value": 107958,
               "children": [
                 {
                   "name": "scale",
@@ -3033,14 +3038,14 @@
                   "value": 5637
                 },
                 {
+                  "name": "DataUtils.ts",
+                  "fullPath": "src/util/DataUtils.ts",
+                  "value": 5209
+                },
+                {
                   "name": "ReduceCSSCalc.ts",
                   "fullPath": "src/util/ReduceCSSCalc.ts",
                   "value": 5145
-                },
-                {
-                  "name": "DataUtils.ts",
-                  "fullPath": "src/util/DataUtils.ts",
-                  "value": 5015
                 },
                 {
                   "name": "resolveDefaultProps.tsx",
@@ -3060,7 +3065,7 @@
                 {
                   "name": "useElementOffset.ts",
                   "fullPath": "src/util/useElementOffset.ts",
-                  "value": 3494
+                  "value": 3378
                 },
                 {
                   "name": "excludeEventProps.ts",
@@ -3313,22 +3318,22 @@
             {
               "name": "component",
               "fullPath": "src/component",
-              "value": 40074,
+              "value": 40278,
               "children": [
                 {
                   "name": "Label.tsx",
                   "fullPath": "src/component/Label.tsx",
-                  "value": 11193
+                  "value": 10478
+                },
+                {
+                  "name": "Text.tsx",
+                  "fullPath": "src/component/Text.tsx",
+                  "value": 9221
                 },
                 {
                   "name": "Legend.tsx",
                   "fullPath": "src/component/Legend.tsx",
                   "value": 8338
-                },
-                {
-                  "name": "Text.tsx",
-                  "fullPath": "src/component/Text.tsx",
-                  "value": 8302
                 },
                 {
                   "name": "DefaultLegendContent.tsx",
@@ -3535,12 +3540,12 @@
             {
               "name": "shape",
               "fullPath": "src/shape",
-              "value": 7495,
+              "value": 7715,
               "children": [
                 {
                   "name": "Curve.tsx",
                   "fullPath": "src/shape/Curve.tsx",
-                  "value": 4366
+                  "value": 4586
                 },
                 {
                   "name": "Symbols.tsx",
@@ -3551,6 +3556,33 @@
                   "name": "Dot.tsx",
                   "fullPath": "src/shape/Dot.tsx",
                   "value": 667
+                }
+              ]
+            },
+            {
+              "name": "theme",
+              "fullPath": "src/theme",
+              "value": 5276,
+              "children": [
+                {
+                  "name": "graphicalItemIdentity.ts",
+                  "fullPath": "src/theme/graphicalItemIdentity.ts",
+                  "value": 2534
+                },
+                {
+                  "name": "useBackwardsCompatibleTheme.ts",
+                  "fullPath": "src/theme/useBackwardsCompatibleTheme.ts",
+                  "value": 1863
+                },
+                {
+                  "name": "RechartsThemeContext.ts",
+                  "fullPath": "src/theme/RechartsThemeContext.ts",
+                  "value": 505
+                },
+                {
+                  "name": "cssStylesToSvgStyles.ts",
+                  "fullPath": "src/theme/cssStylesToSvgStyles.ts",
+                  "value": 374
                 }
               ]
             },
@@ -3578,28 +3610,6 @@
                   "name": "Layer.tsx",
                   "fullPath": "src/container/Layer.tsx",
                   "value": 608
-                }
-              ]
-            },
-            {
-              "name": "theme",
-              "fullPath": "src/theme",
-              "value": 4902,
-              "children": [
-                {
-                  "name": "graphicalItemIdentity.ts",
-                  "fullPath": "src/theme/graphicalItemIdentity.ts",
-                  "value": 2534
-                },
-                {
-                  "name": "useBackwardsCompatibleTheme.ts",
-                  "fullPath": "src/theme/useBackwardsCompatibleTheme.ts",
-                  "value": 1863
-                },
-                {
-                  "name": "RechartsThemeContext.ts",
-                  "fullPath": "src/theme/RechartsThemeContext.ts",
-                  "value": 505
                 }
               ]
             },
@@ -5057,32 +5067,32 @@
         {
           "name": "entry",
           "fullPath": "entry",
-          "value": 1607,
+          "value": 1041,
           "children": [
             {
               "name": "www",
               "fullPath": "entry/www",
-              "value": 1607,
+              "value": 1041,
               "children": [
                 {
                   "name": "src",
                   "fullPath": "entry/www/src",
-                  "value": 1607,
+                  "value": 1041,
                   "children": [
                     {
                       "name": "views",
                       "fullPath": "entry/www/src/views",
-                      "value": 1607,
+                      "value": 1041,
                       "children": [
                         {
                           "name": "IndexView",
                           "fullPath": "entry/www/src/views/IndexView",
-                          "value": 1607,
+                          "value": 1041,
                           "children": [
                             {
                               "name": "IndexLineChart.tsx",
                               "fullPath": "entry/www/src/views/IndexView/IndexLineChart.tsx",
-                              "value": 1607
+                              "value": 1041
                             }
                           ]
                         }
