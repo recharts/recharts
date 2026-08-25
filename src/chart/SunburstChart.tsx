@@ -52,10 +52,9 @@ import {
   DataLabelThemeContextProvider,
   filledShapeLabelColors,
 } from '../theme/labelTheme';
-import { ClipPathProvider } from '../container/ClipPathProvider';
 import { ZoomPropBridge } from './zoom/ZoomPropBridge';
 import { ZoomProp } from '../util/zoom/ZoomOptions';
-import { ZoomTransformLayer } from './zoom/ZoomTransformLayer';
+import { ZoomableChartContent } from './zoom/ZoomableChartContent';
 
 /**
  * @public
@@ -791,16 +790,14 @@ const SunburstChartContent = ({
         <DataLabelThemeContextProvider value={layout.resolveLabelTheme}>
           <DataLabelColorsContextProvider value={filledShapeLabelColors}>
             {/* The z-index portals live inside the zoom layer so that labels follow the sectors. */}
-            <ClipPathProvider>
-              <ZoomTransformLayer>
-                <Layer className={layerClass}>
-                  <AllZIndexPortals isPanorama={false}>
-                    {layout.sectors}
-                    <SunburstLabels label={label} textOptions={textOptions} />
-                  </AllZIndexPortals>
-                </Layer>
-              </ZoomTransformLayer>
-            </ClipPathProvider>
+            <ZoomableChartContent>
+              <Layer className={layerClass}>
+                <AllZIndexPortals isPanorama={false}>
+                  {layout.sectors}
+                  <SunburstLabels label={label} textOptions={textOptions} />
+                </AllZIndexPortals>
+              </Layer>
+            </ZoomableChartContent>
             {children}
           </DataLabelColorsContextProvider>
         </DataLabelThemeContextProvider>

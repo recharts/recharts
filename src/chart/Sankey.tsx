@@ -61,10 +61,9 @@ import { useRechartsTheme } from '../theme/RechartsThemeContext';
 import { getOwnStyles, hasOwnColors, withoutColors } from '../theme/dataEntryStyles';
 import { RechartsFill, RechartsFillDefinitionProps } from '../fill/RechartsFill';
 import { readEntryFill, useThemeFillObjects } from '../fill/fillDefinitions';
-import { ClipPathProvider } from '../container/ClipPathProvider';
 import { ZoomPropBridge } from './zoom/ZoomPropBridge';
 import { ZoomProp } from '../util/zoom/ZoomOptions';
-import { ZoomTransformLayer } from './zoom/ZoomTransformLayer';
+import { ZoomableChartContent } from './zoom/ZoomableChartContent';
 
 const interpolationGenerator = (a: number, b: number) => {
   const ka = +a;
@@ -1856,45 +1855,39 @@ function SankeyImpl(props: InternalSankeyProps) {
               receive a clipPathId, and overlays (Tooltip & co.) must not be transform-zoomed. The z-index
               portals live inside the zoom layer so that labels rendered through them follow the nodes. */}
           {children}
-          <ClipPathProvider>
-            <ZoomTransformLayer>
-              <AllZIndexPortals isPanorama={false}>
-                <AllSankeyLinkElements
-                  graphicalItemId={id}
-                  links={links}
-                  modifiedLinks={modifiedLinks}
-                  linkContent={link}
-                  dataKey={dataKey}
-                  onMouseEnter={(linkProps: LinkProps, e: MouseEvent<SVGGraphicsElement>) =>
-                    handleMouseEnter(linkProps, 'link', e)
-                  }
-                  onMouseLeave={(linkProps: LinkProps, e: MouseEvent<SVGGraphicsElement>) =>
-                    handleMouseLeave(linkProps, 'link', e)
-                  }
-                  onClick={(linkProps: LinkProps, e: MouseEvent<SVGGraphicsElement>) =>
-                    handleClick(linkProps, 'link', e)
-                  }
-                />
-                <AllNodeElements
-                  graphicalItemId={id}
-                  modifiedNodes={modifiedNodes}
-                  nodeFillDefinitions={nodeFillDefinitions}
-                  nodeContent={node}
-                  dataKey={dataKey}
-                  onMouseEnter={(nodeProps: NodeProps, e: MouseEvent<SVGGraphicsElement>) =>
-                    handleMouseEnter(nodeProps, 'node', e)
-                  }
-                  onMouseLeave={(nodeProps: NodeProps, e: MouseEvent<SVGGraphicsElement>) =>
-                    handleMouseLeave(nodeProps, 'node', e)
-                  }
-                  onClick={(nodeProps: NodeProps, e: MouseEvent<SVGGraphicsElement>) =>
-                    handleClick(nodeProps, 'node', e)
-                  }
-                />
-                <LabelListFromLabelProp label={label} pointerEvents="none" />
-              </AllZIndexPortals>
-            </ZoomTransformLayer>
-          </ClipPathProvider>
+          <ZoomableChartContent>
+            <AllZIndexPortals isPanorama={false}>
+              <AllSankeyLinkElements
+                graphicalItemId={id}
+                links={links}
+                modifiedLinks={modifiedLinks}
+                linkContent={link}
+                dataKey={dataKey}
+                onMouseEnter={(linkProps: LinkProps, e: MouseEvent<SVGGraphicsElement>) =>
+                  handleMouseEnter(linkProps, 'link', e)
+                }
+                onMouseLeave={(linkProps: LinkProps, e: MouseEvent<SVGGraphicsElement>) =>
+                  handleMouseLeave(linkProps, 'link', e)
+                }
+                onClick={(linkProps: LinkProps, e: MouseEvent<SVGGraphicsElement>) => handleClick(linkProps, 'link', e)}
+              />
+              <AllNodeElements
+                graphicalItemId={id}
+                modifiedNodes={modifiedNodes}
+                nodeFillDefinitions={nodeFillDefinitions}
+                nodeContent={node}
+                dataKey={dataKey}
+                onMouseEnter={(nodeProps: NodeProps, e: MouseEvent<SVGGraphicsElement>) =>
+                  handleMouseEnter(nodeProps, 'node', e)
+                }
+                onMouseLeave={(nodeProps: NodeProps, e: MouseEvent<SVGGraphicsElement>) =>
+                  handleMouseLeave(nodeProps, 'node', e)
+                }
+                onClick={(nodeProps: NodeProps, e: MouseEvent<SVGGraphicsElement>) => handleClick(nodeProps, 'node', e)}
+              />
+              <LabelListFromLabelProp label={label} pointerEvents="none" />
+            </AllZIndexPortals>
+          </ZoomableChartContent>
         </SankeyLabelListProvider>
       </Surface>
     </>

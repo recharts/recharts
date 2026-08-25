@@ -8,8 +8,7 @@ import { useAppSelector } from '../state/hooks';
 import { selectBrushDimensions } from '../state/selectors/brushSelectors';
 import { isPositiveNumber } from '../util/isWellBehavedNumber';
 import { AllZIndexPortals } from '../zIndex/ZIndexPortal';
-import { ClipPathProvider } from './ClipPathProvider';
-import { ZoomTransformLayer } from '../chart/zoom/ZoomTransformLayer';
+import { ZoomableChartContent } from '../chart/zoom/ZoomableChartContent';
 
 type RootSurfaceProps = {
   children: ReactNode;
@@ -108,11 +107,9 @@ export const RootSurface = forwardRef<SVGSVGElement, RootSurfaceProps>(
     }
     return (
       <MainChartSurface ref={ref} {...rest}>
-        <ClipPathProvider>
-          <ZoomTransformLayer>
-            <AllZIndexPortals isPanorama={false}>{children}</AllZIndexPortals>
-          </ZoomTransformLayer>
-        </ClipPathProvider>
+        <ZoomableChartContent>
+          <AllZIndexPortals isPanorama={false}>{children}</AllZIndexPortals>
+        </ZoomableChartContent>
       </MainChartSurface>
     );
   },

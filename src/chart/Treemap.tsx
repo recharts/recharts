@@ -60,10 +60,9 @@ import { AllZIndexPortals } from '../zIndex/ZIndexPortal';
 import { DataLabelColorsContextProvider, DataLabelThemeContextProvider } from '../theme/labelTheme';
 import { RechartsFill } from '../fill/RechartsFill';
 import { readEntryFill, splitFill } from '../fill/fillDefinitions';
-import { ClipPathProvider } from '../container/ClipPathProvider';
 import { ZoomPropBridge } from './zoom/ZoomPropBridge';
 import { ZoomProp } from '../util/zoom/ZoomOptions';
-import { ZoomTransformLayer } from './zoom/ZoomTransformLayer';
+import { ZoomableChartContent } from './zoom/ZoomableChartContent';
 
 const NODE_VALUE_KEY = 'value';
 
@@ -1686,16 +1685,14 @@ class TreemapWithState extends PureComponent<InternalTreemapProps, State> {
           onTouchMove={this.handleTouchMove}
         >
           {/* The z-index portals live inside the zoom layer so that labels follow the tiles. */}
-          <ClipPathProvider>
-            <ZoomTransformLayer>
-              <AllZIndexPortals isPanorama={false}>
-                {this.renderAllNodes(defaultLabels)}
-                <TreemapLabelListProvider entries={labelEntries} graphicalItems={themeGraphicalItems}>
-                  <LabelListFromLabelProp label={label === true ? undefined : label} pointerEvents="none" />
-                </TreemapLabelListProvider>
-              </AllZIndexPortals>
-            </ZoomTransformLayer>
-          </ClipPathProvider>
+          <ZoomableChartContent>
+            <AllZIndexPortals isPanorama={false}>
+              {this.renderAllNodes(defaultLabels)}
+              <TreemapLabelListProvider entries={labelEntries} graphicalItems={themeGraphicalItems}>
+                <LabelListFromLabelProp label={label === true ? undefined : label} pointerEvents="none" />
+              </TreemapLabelListProvider>
+            </AllZIndexPortals>
+          </ZoomableChartContent>
           {/* Children stay outside the clip/zoom layer: overlays such as ZoomAndPan must not be transform-zoomed. */}
           <TreemapLabelListProvider entries={labelEntries} graphicalItems={themeGraphicalItems}>
             {children}
