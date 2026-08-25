@@ -2,6 +2,7 @@ import * as React from 'react';
 import { act, fireEvent, render, waitFor } from '@testing-library/react';
 import { describe, expect, it, vi } from 'vitest';
 import {
+  Brush,
   Line,
   LineChart,
   Minimap,
@@ -183,7 +184,7 @@ describe('<Minimap />', () => {
     expect(next.x.start).toBeGreaterThan(0.2);
   });
 
-  it('does not jump or pan on one-finger touch outside the viewport', async () => {
+  it('centres and drags the viewport from the shaded area without driving parent touch interactions', async () => {
     const onZoomChange = vi.fn();
     const { container } = render(
       <LineChart width={400} height={300} data={data}>
@@ -209,13 +210,21 @@ describe('<Minimap />', () => {
       return el;
     });
     onZoomChange.mockClear();
+    const parentTouchMove = vi.fn();
+    container.addEventListener('touchmove', parentTouchMove);
 
     fireEvent.touchStart(overlay, { touches: [{ clientX: 80, clientY: 20 }] });
     fireEvent.touchMove(overlay, { touches: [{ clientX: 90, clientY: 20 }] });
     fireEvent.touchEnd(overlay);
     flushRaf();
 
-    expect(onZoomChange).not.toHaveBeenCalled();
+    expect(onZoomChange).toHaveBeenCalled();
+    const lastCall = onZoomChange.mock.calls.at(-1);
+    expect(lastCall).toBeDefined();
+    const next = lastCall?.[0];
+    expect(next?.x.start).toBeCloseTo(0.7, 5);
+    expect(next?.x.end).toBeCloseTo(1, 5);
+    expect(parentTouchMove).not.toHaveBeenCalled();
   });
 
   it('does not jump from the touch pointerdown before a pinch starts', async () => {
@@ -249,6 +258,47 @@ describe('<Minimap />', () => {
     flushRaf();
 
     expect(onZoomChange).not.toHaveBeenCalled();
+  });
+
+  it('defers a real one-finger touch so a second finger can start a pinch without recentering', async () => {
+    const onZoomChange = vi.fn();
+    const { container } = render(
+      <LineChart width={400} height={300} data={data}>
+        <ZoomAndPan axis="x" initialZoom={{ x: { start: 0.2, end: 0.5 } }} onZoomChange={onZoomChange} />
+        <Minimap
+          ariaLabel="Chart overview"
+          x={0}
+          y={0}
+          width={100}
+          height={40}
+          axis="x"
+          padding={{ top: 0, right: 0, bottom: 0, left: 0 }}
+        />
+      </LineChart>,
+    );
+
+    const overlay = await waitFor(() => {
+      const element = container.querySelector<SVGRectElement>('.recharts-minimap-overlay');
+      expect(element).not.toBeNull();
+      return element;
+    });
+    if (overlay == null) {
+      throw new Error('Expected the minimap overlay');
+    }
+    onZoomChange.mockClear();
+
+    fireEvent.touchStart(overlay, { touches: [{ clientX: 80, clientY: 20 }] });
+    expect(onZoomChange).not.toHaveBeenCalled();
+
+    fireEvent.touchStart(overlay, {
+      touches: [
+        { clientX: 80, clientY: 20 },
+        { clientX: 90, clientY: 20 },
+      ],
+    });
+    expect(onZoomChange).not.toHaveBeenCalled();
+
+    fireEvent.touchEnd(overlay);
   });
 
   it('zooms from two-finger pinch on the minimap overlay', () => {
@@ -295,11 +345,58 @@ describe('<Minimap />', () => {
     expect(next.x.end - next.x.start).toBeLessThan(1);
   });
 
-  it('supports configurable minimap positions', () => {
+  it('keeps the previous pinch midpoint as the zoom pivot before applying two-finger pan', () => {
+    const onZoomChange = vi.fn();
+    const { container } = render(
+      <LineChart width={400} height={300} data={data}>
+        <ZoomAndPan axis="x" initialZoom={{ x: { start: 0.2, end: 0.6 } }} onZoomChange={onZoomChange} />
+        <Minimap
+          ariaLabel="Chart overview"
+          x={0}
+          y={0}
+          width={100}
+          height={40}
+          axis="x"
+          padding={{ top: 0, right: 0, bottom: 0, left: 0 }}
+        />
+      </LineChart>,
+    );
+
+    flushRaf();
+    const overlay = container.querySelector<SVGRectElement>('.recharts-minimap-overlay');
+    if (overlay == null) {
+      throw new Error('Expected the minimap overlay');
+    }
+    onZoomChange.mockClear();
+
+    fireEvent.touchStart(overlay, {
+      touches: [
+        { clientX: 20, clientY: 20 },
+        { clientX: 40, clientY: 20 },
+      ],
+    });
+    fireEvent.touchMove(overlay, {
+      touches: [
+        { clientX: 20, clientY: 20 },
+        { clientX: 60, clientY: 20 },
+      ],
+    });
+    fireEvent.touchEnd(overlay);
+    flushRaf();
+
+    const lastCall = onZoomChange.mock.calls.at(-1);
+    expect(lastCall).toBeDefined();
+    const next = lastCall?.[0];
+    // The stationary first finger remains over datum 0.28, matching the main plot gesture.
+    expect(next?.x.start).toBeCloseTo(0.24, 5);
+    expect(next?.x.end).toBeCloseTo(0.44, 5);
+  });
+
+  it('uses the shared Cartesian position names and offset semantics', () => {
     const { container, rerender } = render(
       <LineChart width={400} height={300} data={data}>
         <ZoomAndPan axis="x" />
-        <Minimap ariaLabel="Chart overview" position="top-left" width={100} height={40} axis="x" />
+        <Minimap ariaLabel="Chart overview" position="insideTopLeft" offset={10} width={100} height={40} axis="x" />
       </LineChart>,
     );
 
@@ -316,7 +413,7 @@ describe('<Minimap />', () => {
     rerender(
       <LineChart width={400} height={300} data={data}>
         <ZoomAndPan axis="x" />
-        <Minimap ariaLabel="Chart overview" position="bottom-right" width={100} height={40} axis="x" />
+        <Minimap ariaLabel="Chart overview" position="insideBottomRight" offset={10} width={100} height={40} axis="x" />
       </LineChart>,
     );
     flushRaf();
@@ -327,6 +424,102 @@ describe('<Minimap />', () => {
     }
     expect(Number(bottomRightFrame.getAttribute('x'))).toBeGreaterThan(topLeft.x);
     expect(Number(bottomRightFrame.getAttribute('y'))).toBeGreaterThan(topLeft.y);
+  });
+
+  it('renders and controls the category viewport in a vertical chart', async () => {
+    const onZoomChange = vi.fn();
+    const { container } = render(
+      <LineChart width={400} height={300} data={data} layout="vertical">
+        <XAxis type="number" />
+        <YAxis type="category" dataKey="name" />
+        <ZoomAndPan axis="y" initialZoom={{ y: { start: 0.2, end: 0.5 } }} onZoomChange={onZoomChange} />
+        <Minimap
+          ariaLabel="Chart overview"
+          x={0}
+          y={0}
+          width={100}
+          height={100}
+          axis="y"
+          padding={{ top: 0, right: 0, bottom: 0, left: 0 }}
+        />
+      </LineChart>,
+    );
+
+    const viewport = await waitFor(() => {
+      const element = container.querySelector<SVGRectElement>('.recharts-minimap-viewport');
+      expect(element).not.toBeNull();
+      return element;
+    });
+    expect(Number(viewport?.getAttribute('y'))).toBeCloseTo(20, 5);
+    expect(Number(viewport?.getAttribute('height'))).toBeCloseTo(30, 5);
+
+    const overlay = container.querySelector<SVGRectElement>('.recharts-minimap-overlay');
+    if (overlay == null) {
+      throw new Error('Expected the minimap overlay');
+    }
+    onZoomChange.mockClear();
+
+    fireEvent.mouseDown(overlay, { button: 0, clientX: 50, clientY: 30 });
+    fireEvent.mouseMove(overlay, { clientX: 50, clientY: 40 });
+    fireEvent.mouseUp(overlay, { clientX: 50, clientY: 40 });
+
+    await waitFor(() => expect(onZoomChange).toHaveBeenCalled());
+    const next = onZoomChange.mock.calls.at(-1)?.[0];
+    expect(next?.x).toEqual({ start: 0, end: 1 });
+    expect(next?.y.start).toBeCloseTo(0.3, 5);
+    expect(next?.y.end).toBeCloseTo(0.6, 5);
+  });
+
+  it('coexists independently with the default slice-mode Brush without stealing either callback', async () => {
+    const onBrushChange = vi.fn();
+    const onZoomChange = vi.fn();
+    const { container } = render(
+      <LineChart width={400} height={300} data={data}>
+        <XAxis dataKey="name" />
+        <ZoomAndPan axis="x" initialZoom={{ x: { start: 0.2, end: 0.5 } }} onZoomChange={onZoomChange} />
+        <Brush x={0} y={250} width={200} height={40} startIndex={2} endIndex={10} onChange={onBrushChange} />
+        <Minimap
+          ariaLabel="Chart overview"
+          x={220}
+          y={220}
+          width={100}
+          height={40}
+          axis="x"
+          padding={{ top: 0, right: 0, bottom: 0, left: 0 }}
+        />
+      </LineChart>,
+    );
+
+    const overlay = await waitFor(() => {
+      const element = container.querySelector<SVGRectElement>('.recharts-minimap-overlay');
+      expect(element).not.toBeNull();
+      return element;
+    });
+    if (overlay == null) {
+      throw new Error('Expected the minimap overlay');
+    }
+    onBrushChange.mockClear();
+    onZoomChange.mockClear();
+
+    fireEvent.mouseDown(overlay, { button: 0, clientX: 30, clientY: 20 });
+    fireEvent.mouseMove(overlay, { clientX: 40, clientY: 20 });
+    fireEvent.mouseUp(overlay, { clientX: 40, clientY: 20 });
+
+    await waitFor(() => expect(onZoomChange).toHaveBeenCalled());
+    expect(onBrushChange).not.toHaveBeenCalled();
+
+    onZoomChange.mockClear();
+    const slide = container.querySelector<SVGRectElement>('.recharts-brush-slide');
+    if (slide == null) {
+      throw new Error('Expected the classic Brush slide');
+    }
+    const slideStart = Number(slide.getAttribute('x')) + 10;
+    fireEvent.mouseDown(slide, { clientX: slideStart, pageX: slideStart });
+    fireEvent.mouseMove(window, { clientX: slideStart + 30, pageX: slideStart + 30 });
+    fireEvent.mouseUp(window);
+
+    await waitFor(() => expect(onBrushChange).toHaveBeenCalled());
+    expect(onZoomChange).not.toHaveBeenCalled();
   });
 
   it('zooms from keyboard interaction on the minimap overlay', () => {

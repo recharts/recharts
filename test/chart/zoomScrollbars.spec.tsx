@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { fireEvent, render, waitFor } from '@testing-library/react';
-import { describe, it, expect } from 'vitest';
+import { describe, it, expect, vi } from 'vitest';
 import { Line, LineChart, XAxis, YAxis, ZoomAndPan } from '../../src';
 import type { ZoomAndPanProps } from '../../src';
 
@@ -103,5 +103,48 @@ describe('zoom scrollbars', () => {
 
     fireEvent.keyDown(scrollbar, { key: 'ArrowDown' });
     await waitFor(() => expect(Number(scrollbar.getAttribute('aria-valuenow'))).toBeCloseTo(0.44));
+  });
+
+  it('queries coarse-pointer media once instead of on every drag-frame render', async () => {
+    const originalMatchMedia = Object.getOwnPropertyDescriptor(window, 'matchMedia');
+    const matchMedia = vi.fn().mockImplementation((query: string) => ({
+      matches: false,
+      media: query,
+      onchange: null,
+      addListener: vi.fn(),
+      removeListener: vi.fn(),
+      addEventListener: vi.fn(),
+      removeEventListener: vi.fn(),
+      dispatchEvent: vi.fn(),
+    }));
+    Object.defineProperty(window, 'matchMedia', { configurable: true, value: matchMedia });
+
+    try {
+      const { container, unmount } = renderChart({
+        axis: 'x',
+        initialZoom: { x: { start: 0.2, end: 0.6 } },
+      });
+      const thumb = await waitFor(() => {
+        const element = container.querySelector<HTMLElement>('.recharts-zoom-scrollbar-thumb');
+        expect(element).not.toBeNull();
+        return element;
+      });
+      const callsAfterMount = matchMedia.mock.calls.length;
+      expect(callsAfterMount).toBeGreaterThan(0);
+
+      if (thumb == null) {
+        throw new Error('Expected a scrollbar thumb');
+      }
+      fireEvent.mouseEnter(thumb);
+      await waitFor(() => expect(thumb.style.background).toBe('rgba(0, 0, 0, 0.55)'));
+      expect(matchMedia).toHaveBeenCalledTimes(callsAfterMount);
+      unmount();
+    } finally {
+      if (originalMatchMedia == null) {
+        Reflect.deleteProperty(window, 'matchMedia');
+      } else {
+        Object.defineProperty(window, 'matchMedia', originalMatchMedia);
+      }
+    }
   });
 });

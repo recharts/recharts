@@ -23,7 +23,6 @@ import { selectSharedZoomLimits, selectZoom } from '../state/selectors/zoomSelec
 import { selectChartOffsetInternal } from '../state/selectors/selectChartOffsetInternal';
 import { selectAxisRangeWithReverse } from '../state/selectors/axisSelectors';
 import { selectAllXAxes, selectAllYAxes } from '../state/selectors/selectAllAxes';
-import { selectChartHeight, selectChartWidth } from '../state/selectors/containerSelectors';
 import { Padding } from '../util/types';
 import { generatePrefixStyle } from '../util/CssPrefixUtils';
 import { isFullViewport, isRangeFlipped, FULL_VIEWPORT } from '../util/zoom/viewport';
@@ -42,8 +41,17 @@ import {
 } from '../util/zoom/viewportWindow';
 import { useUniqueId } from '../util/useUniqueId';
 import { ZOOM_SCROLLBAR_ATTR } from '../chart/ZoomScrollbars';
+import { CartesianPosition, getCartesianPosition } from './getCartesianPosition';
 
-export type MinimapPosition = 'top-left' | 'top-right' | 'bottom-left' | 'bottom-right';
+type LegacyMinimapPosition = 'top-left' | 'top-right' | 'bottom-left' | 'bottom-right';
+type OverlayCartesianPosition = Exclude<CartesianPosition, 'top' | 'right' | 'bottom' | 'left'>;
+
+/**
+ * Overlay position within the plot, using the same Cartesian position names and offset semantics
+ * as Label and Legend. Outside positions are excluded because Minimap does not reserve chart layout
+ * space. The four kebab-case corner names remain accepted as backwards-compatible aliases.
+ */
+export type MinimapPosition = OverlayCartesianPosition | LegacyMinimapPosition;
 
 type MinimapStyleProps = {
   /** Background fill of the minimap frame. */
@@ -69,6 +77,9 @@ type MinimapOwnProps = MinimapStyleProps & {
   padding?: Padding;
   children?: ReactElement;
   position?: MinimapPosition;
+  /** Offset from the selected Cartesian position. */
+  offset?: number;
+  /** @deprecated Use `offset` instead. */
   margin?: number;
   axis?: ZoomAxis;
   xAxisId?: AxisId;
@@ -143,6 +154,31 @@ function getRatioInArea(value: number, start: number, size: number, flipped: boo
   }
   const ratio = Math.min(Math.max((value - start) / size, 0), 1);
   return flipped ? 1 - ratio : ratio;
+}
+
+function normalizePosition(position: MinimapPosition): CartesianPosition {
+  switch (position) {
+    case 'top-left':
+      return 'insideTopLeft';
+    case 'top-right':
+      return 'insideTopRight';
+    case 'bottom-left':
+      return 'insideBottomLeft';
+    case 'bottom-right':
+      return 'insideBottomRight';
+    default:
+      return position;
+  }
+}
+
+function getRectangleStart(position: number, size: number, anchor: 'start' | 'middle' | 'end' | 'inherit'): number {
+  if (anchor === 'middle') {
+    return position - size / 2;
+  }
+  if (anchor === 'end') {
+    return position - size;
+  }
+  return position;
 }
 
 function getCursor(hit: ViewportWindowHit): React.CSSProperties['cursor'] {
@@ -251,7 +287,8 @@ function MinimapInternal(props: Props) {
     shadeFill = '#000',
     shadeOpacity = 0.25,
     children,
-    position = 'bottom-right',
+    position = 'insideBottomRight',
+    offset: positionOffset,
     margin = 10,
     axis = 'xy',
     xAxisId,
@@ -271,8 +308,6 @@ function MinimapInternal(props: Props) {
   const chartData = useChartData();
   const zoom = useAppSelector(selectZoom);
   const offset = useAppSelector(selectChartOffsetInternal);
-  const chartWidth = useAppSelector(selectChartWidth);
-  const chartHeight = useAppSelector(selectChartHeight);
   const xAxes = useAppSelector(selectAllXAxes) ?? [];
   const yAxes = useAppSelector(selectAllYAxes) ?? [];
   const primaryXAxisId = getPrimaryAxisId(xAxes, xAxisId);
@@ -291,26 +326,25 @@ function MinimapInternal(props: Props) {
   zoomRef.current = zoom;
 
   const frame = useMemo(() => {
-    if (offset == null || chartWidth == null || chartHeight == null) {
+    if (offset == null) {
       return null;
     }
     if (x != null && y != null) {
       return { x, y, width, height };
     }
-    const plotRight = offset.left + offset.width;
-    const plotBottom = offset.top + offset.height;
-    switch (position) {
-      case 'top-left':
-        return { x: offset.left + margin, y: offset.top + margin, width, height };
-      case 'top-right':
-        return { x: plotRight - width - margin, y: offset.top + margin, width, height };
-      case 'bottom-left':
-        return { x: offset.left + margin, y: plotBottom - height - margin, width, height };
-      case 'bottom-right':
-      default:
-        return { x: plotRight - width - margin, y: plotBottom - height - margin, width, height };
-    }
-  }, [chartHeight, chartWidth, height, margin, offset, position, width, x, y]);
+    const normalizedPosition = normalizePosition(position);
+    const result = getCartesianPosition({
+      viewBox: { x: offset.left, y: offset.top, width: offset.width, height: offset.height },
+      position: normalizedPosition,
+      offset: positionOffset ?? margin,
+    });
+    return {
+      x: x ?? getRectangleStart(result.x, width, result.horizontalAnchor),
+      y: y ?? getRectangleStart(result.y, height, result.verticalAnchor),
+      width,
+      height,
+    };
+  }, [height, margin, offset, position, positionOffset, width, x, y]);
 
   const content = useMemo<ViewportWindowArea | null>(() => {
     if (frame == null) {
@@ -548,6 +582,7 @@ export function MinimapDrag() {
     viewportRect,
   } = useInternalMinimapControls();
   const dragRef = useRef<DragState | null>(null);
+  const pendingTouchRef = useRef<{ x: number; y: number } | null>(null);
 
   useEffect(() => {
     if (overlayNode == null) {
@@ -556,20 +591,22 @@ export function MinimapDrag() {
 
     const end = () => {
       dragRef.current = null;
+      pendingTouchRef.current = null;
       setDragHit(null);
     };
     const unregisterCancelDrag = registerCancelDrag(end);
 
-    const beginDrag = (point: { x: number; y: number }, jumpOutside: boolean) => {
+    const beginDrag = (point: { x: number; y: number }) => {
       const currentZoom = getCurrentZoom();
       const currentRect = zoomStateToRect(currentZoom, area, flipped);
       const hit = restrictHitToAxis(hitTestViewportWindow(currentRect, point.x, point.y), axis);
       setHoverHit(hit);
       setDragHit(null);
       if (hit === 'outside') {
-        if (jumpOutside) {
-          apply(centerZoomStateAtPoint(currentZoom, area, flipped, point.x, point.y));
-        }
+        const centeredZoom = centerZoomStateAtPoint(currentZoom, area, flipped, point.x, point.y);
+        apply(centeredZoom);
+        dragRef.current = { hit: 'body', startX: point.x, startY: point.y, zoom: centeredZoom };
+        setDragHit('body');
         return;
       }
       dragRef.current = { hit, startX: point.x, startY: point.y, zoom: currentZoom };
@@ -594,7 +631,7 @@ export function MinimapDrag() {
       }
       event.preventDefault();
       event.stopPropagation();
-      beginDrag(getPointFromClient(event.clientX, event.clientY, overlayNode, area), true);
+      beginDrag(getPointFromClient(event.clientX, event.clientY, overlayNode, area));
       overlayNode.setPointerCapture?.(event.pointerId);
     };
     const pointerMove = (event: PointerEvent) => {
@@ -617,7 +654,7 @@ export function MinimapDrag() {
       }
       event.preventDefault();
       event.stopPropagation();
-      beginDrag(getPointFromClient(event.clientX, event.clientY, overlayNode, area), true);
+      beginDrag(getPointFromClient(event.clientX, event.clientY, overlayNode, area));
     };
     const mouseMove = (event: MouseEvent) => {
       const point = getPointFromClient(event.clientX, event.clientY, overlayNode, area);
@@ -641,10 +678,16 @@ export function MinimapDrag() {
       event.preventDefault();
       event.stopPropagation();
       cancelPinch();
-      beginDrag(getTouchPoint(touch, overlayNode, area), false);
+      /*
+       * Do not commit the one-finger gesture on touchstart. A second finger may arrive next to
+       * start a pinch, and immediately centring a shaded-area press would make the viewport jump
+       * before the pinch recogniser can claim it. The first move commits the drag from this point;
+       * a stationary one-finger tap is committed by touchEnd below.
+       */
+      pendingTouchRef.current = getTouchPoint(touch, overlayNode, area);
     };
     const touchMove = (event: TouchEvent) => {
-      if (event.touches.length !== 1 || dragRef.current == null) {
+      if (event.touches.length !== 1) {
         if (event.touches.length !== 1) {
           end();
         }
@@ -656,7 +699,26 @@ export function MinimapDrag() {
       }
       event.preventDefault();
       event.stopPropagation();
-      moveDrag(getTouchPoint(touch, overlayNode, area));
+      const point = getTouchPoint(touch, overlayNode, area);
+      if (dragRef.current == null) {
+        const pending = pendingTouchRef.current;
+        if (pending == null) {
+          return;
+        }
+        pendingTouchRef.current = null;
+        beginDrag(pending);
+      }
+      moveDrag(point);
+    };
+    const touchEnd = (event: TouchEvent) => {
+      const pending = pendingTouchRef.current;
+      if (event.touches.length === 0 && pending != null) {
+        event.preventDefault();
+        event.stopPropagation();
+        pendingTouchRef.current = null;
+        beginDrag(pending);
+      }
+      end();
     };
 
     overlayNode.addEventListener('pointerdown', pointerDown);
@@ -669,7 +731,7 @@ export function MinimapDrag() {
     overlayNode.addEventListener('mouseleave', end);
     overlayNode.addEventListener('touchstart', touchStart, { passive: false });
     overlayNode.addEventListener('touchmove', touchMove, { passive: false });
-    overlayNode.addEventListener('touchend', end);
+    overlayNode.addEventListener('touchend', touchEnd);
     overlayNode.addEventListener('touchcancel', end);
     return () => {
       overlayNode.removeEventListener('pointerdown', pointerDown);
@@ -682,7 +744,7 @@ export function MinimapDrag() {
       overlayNode.removeEventListener('mouseleave', end);
       overlayNode.removeEventListener('touchstart', touchStart);
       overlayNode.removeEventListener('touchmove', touchMove);
-      overlayNode.removeEventListener('touchend', end);
+      overlayNode.removeEventListener('touchend', touchEnd);
       overlayNode.removeEventListener('touchcancel', end);
       unregisterCancelDrag();
     };
@@ -818,20 +880,39 @@ export function MinimapPinch() {
       const b = getTouchPoint(second, overlayNode, area);
       const midpoint = { x: (a.x + b.x) / 2, y: (a.y + b.y) / 2 };
       const distance = Math.hypot(a.x - b.x, a.y - b.y);
-      const factor = pinchState.distance === 0 ? 1 : distance / pinchState.distance;
+      if (pinchState.distance <= 0 || distance <= 0) {
+        pinchRef.current = { distance, midpoint, zoom: pinchState.zoom };
+        return;
+      }
+      const factor = distance / pinchState.distance;
       const zoomed: ZoomState = {
-        x: zoomDimension(pinchState.zoom.x, factor, getRatioInArea(midpoint.x, area.x, area.width, flipped.x), limits),
-        y: zoomDimension(pinchState.zoom.y, factor, getRatioInArea(midpoint.y, area.y, area.height, flipped.y), limits),
-      };
-      apply(
-        panZoomStateByPixels(
-          zoomed,
-          area,
-          flipped,
-          midpoint.x - pinchState.midpoint.x,
-          midpoint.y - pinchState.midpoint.y,
+        x: zoomDimension(
+          pinchState.zoom.x,
+          factor,
+          getRatioInArea(pinchState.midpoint.x, area.x, area.width, flipped.x),
+          limits,
         ),
-      );
+        y: zoomDimension(
+          pinchState.zoom.y,
+          factor,
+          getRatioInArea(pinchState.midpoint.y, area.y, area.height, flipped.y),
+          limits,
+        ),
+      };
+      /*
+       * Match the main plot's pinch affine transform: zoom around the previous midpoint, then move
+       * the chart content with the midpoint. The midpoint delta is a fraction of the visible window,
+       * with the opposite sign from directly dragging the overview rectangle. A stationary finger
+       * therefore remains over the same datum in both views.
+       */
+      const deltaX = midpoint.x - pinchState.midpoint.x;
+      const deltaY = midpoint.y - pinchState.midpoint.y;
+      const next: ZoomState = {
+        x: panDimension(zoomed.x, area.width === 0 ? 0 : ((flipped.x ? 1 : -1) * deltaX) / area.width),
+        y: panDimension(zoomed.y, area.height === 0 ? 0 : ((flipped.y ? 1 : -1) * deltaY) / area.height),
+      };
+      apply(next);
+      pinchRef.current = { distance, midpoint, zoom: next };
     };
     overlayNode.addEventListener('touchstart', touchStart, { passive: false });
     overlayNode.addEventListener('touchmove', touchMove, { passive: false });

@@ -796,6 +796,40 @@ function getPrimarySize(props: Pick<BrushWithStateProps, 'height' | 'layout' | '
   return props.layout === 'vertical' ? props.height : props.width;
 }
 
+function clampSlideDelta(
+  delta: number,
+  windowStart: number,
+  windowEnd: number,
+  railStart: number,
+  railSize: number,
+  travellerWidth: number,
+): number {
+  const railEnd = railStart + railSize - travellerWidth;
+  if (delta > 0) {
+    return Math.min(delta, railEnd - windowEnd, railEnd - windowStart);
+  }
+  if (delta < 0) {
+    return Math.max(delta, railStart - windowStart, railStart - windowEnd);
+  }
+  return 0;
+}
+
+function clampTravellerDelta(
+  delta: number,
+  travellerPosition: number,
+  railStart: number,
+  railSize: number,
+  travellerWidth: number,
+): number {
+  if (delta > 0) {
+    return Math.min(delta, railStart + railSize - travellerWidth - travellerPosition);
+  }
+  if (delta < 0) {
+    return Math.max(delta, railStart - travellerPosition);
+  }
+  return 0;
+}
+
 type BrushWithStateProps = BrushInternalProps &
   PropertiesFromContext & {
     startIndexControlledFromProps?: number;
@@ -1107,17 +1141,14 @@ class BrushWithState extends PureComponent<BrushWithStateProps, State> {
     const { travellerWidth, startIndex, endIndex, onChange, data, gap, onZoomWindowChange, zoomMode } = this.props;
     const primaryStart = this.state.dragRailStart ?? getPrimaryStart(this.props);
     const primarySize = (this.state.dragRailLength ?? getPrimarySize(this.props) - travellerWidth) + travellerWidth;
-    let delta = getPrimaryPageCoordinate(e, this.props.layout) - slideMoveStartX;
-
-    if (delta > 0) {
-      delta = Math.min(
-        delta,
-        primaryStart + primarySize - travellerWidth - endX,
-        primaryStart + primarySize - travellerWidth - startX,
-      );
-    } else if (delta < 0) {
-      delta = Math.max(delta, primaryStart - startX, primaryStart - endX);
-    }
+    const delta = clampSlideDelta(
+      getPrimaryPageCoordinate(e, this.props.layout) - slideMoveStartX,
+      startX,
+      endX,
+      primaryStart,
+      primarySize,
+      travellerWidth,
+    );
     const newIndex = getIndex({
       startX: startX + delta,
       endX: endX + delta,
@@ -1129,18 +1160,16 @@ class BrushWithState extends PureComponent<BrushWithStateProps, State> {
     if (zoomMode) {
       // Absolute position: compute from frozen drag-start values to avoid float drift.
       const { dragMouseStart, dragStartXInitial, dragEndXInitial } = this.state;
-      let totalDelta = getPrimaryPageCoordinate(e, this.props.layout) - (dragMouseStart ?? slideMoveStartX);
       const initStart = dragStartXInitial ?? startX;
       const initEnd = dragEndXInitial ?? endX;
-      if (totalDelta > 0) {
-        totalDelta = Math.min(
-          totalDelta,
-          primaryStart + primarySize - travellerWidth - initEnd,
-          primaryStart + primarySize - travellerWidth - initStart,
-        );
-      } else if (totalDelta < 0) {
-        totalDelta = Math.max(totalDelta, primaryStart - initStart, primaryStart - initEnd);
-      }
+      const totalDelta = clampSlideDelta(
+        getPrimaryPageCoordinate(e, this.props.layout) - (dragMouseStart ?? slideMoveStartX),
+        initStart,
+        initEnd,
+        primaryStart,
+        primarySize,
+        travellerWidth,
+      );
       const newStartX = initStart + totalDelta;
       const newEndX = initEnd + totalDelta;
       // Dispatch only: the positions come back as controlled props in the same commit as the chart
@@ -1200,12 +1229,13 @@ class BrushWithState extends PureComponent<BrushWithStateProps, State> {
     const primarySize = (this.state.dragRailLength ?? getPrimarySize(this.props) - travellerWidth) + travellerWidth;
     const params = { startX: this.state.startX, endX: this.state.endX, data, gap, scaleValues };
 
-    let delta = getPrimaryPageCoordinate(e, this.props.layout) - brushMoveStartX;
-    if (delta > 0) {
-      delta = Math.min(delta, primaryStart + primarySize - travellerWidth - prevValue);
-    } else if (delta < 0) {
-      delta = Math.max(delta, primaryStart - prevValue);
-    }
+    const delta = clampTravellerDelta(
+      getPrimaryPageCoordinate(e, this.props.layout) - brushMoveStartX,
+      prevValue,
+      primaryStart,
+      primarySize,
+      travellerWidth,
+    );
 
     params[movingTravellerId] = prevValue + delta;
 
@@ -1234,12 +1264,13 @@ class BrushWithState extends PureComponent<BrushWithStateProps, State> {
        */
       const { dragTravellerStart, dragMouseStart, dragStartXInitial, dragEndXInitial } = this.state;
       const initValue = dragTravellerStart ?? prevValue;
-      let totalDelta = getPrimaryPageCoordinate(e, this.props.layout) - (dragMouseStart ?? brushMoveStartX);
-      if (totalDelta > 0) {
-        totalDelta = Math.min(totalDelta, primaryStart + primarySize - travellerWidth - initValue);
-      } else if (totalDelta < 0) {
-        totalDelta = Math.max(totalDelta, primaryStart - initValue);
-      }
+      const totalDelta = clampTravellerDelta(
+        getPrimaryPageCoordinate(e, this.props.layout) - (dragMouseStart ?? brushMoveStartX),
+        initValue,
+        primaryStart,
+        primarySize,
+        travellerWidth,
+      );
       const newValue = initValue + totalDelta;
       const newStartX = movingTravellerId === 'startX' ? newValue : (dragStartXInitial ?? startX);
       const newEndX = movingTravellerId === 'endX' ? newValue : (dragEndXInitial ?? endX);

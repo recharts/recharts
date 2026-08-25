@@ -257,6 +257,33 @@ describe('<Brush /> zoom mode', () => {
     expect(zoomApi.viewport.x).toEqual({ start: 0, end: 1 });
   });
 
+  it('gives an isolated panorama explicit dimensions in a vertical brush', async () => {
+    const { container } = render(
+      <LineChart width={400} height={300} data={data}>
+        <XAxis dataKey="name" />
+        <YAxis />
+        <Line dataKey="value" isAnimationActive={false} />
+        <Brush layout="vertical" mode="zoom" axis="y" x={350} y={20} width={30} height={200}>
+          <LineChart layout="vertical">
+            <XAxis type="number" />
+            <YAxis type="category" dataKey="name" />
+            <Line dataKey="value" isAnimationActive={false} />
+          </LineChart>
+        </Brush>
+      </LineChart>,
+    );
+
+    const panorama = await waitFor(() => {
+      const element = container.querySelectorAll<SVGSVGElement>('.recharts-surface').item(1);
+      expect(element).not.toBeNull();
+      return element;
+    });
+    expect(panorama?.getAttribute('x')).toBe('350');
+    expect(panorama?.getAttribute('y')).toBe('20');
+    expect(panorama?.getAttribute('width')).toBe('30');
+    expect(panorama?.getAttribute('height')).toBe('200');
+  });
+
   it('reserves right-side layout space for a default vertical brush', async () => {
     const { container } = render(
       <LineChart width={400} height={300} data={data}>
