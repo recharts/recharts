@@ -1,4 +1,4 @@
-import { Pie, PieChart, Sankey, Tooltip, ZoomAndPan } from 'recharts';
+import { Pie, PieChart, ResponsiveContainer, Sankey, Tooltip, ZoomAndPan } from 'recharts';
 
 const pieData = [
   { name: 'Group A', value: 400 },
@@ -17,21 +17,26 @@ const sankeyData = {
   ],
 };
 
+const pieChartStyle = { width: '100%', height: 260 };
+const sankeyZoom = { scrollbars: false };
+
 /*
  * Charts without cartesian axes zoom as a camera: wheel over them, drag to pan, double-click to
  * reset. Centric charts (the pie) zoom uniformly so they keep their aspect ratio.
  */
 export default function SpecialChartsExample() {
   return (
-    <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16 }}>
-      <PieChart width={340} height={260} responsive>
+    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 300px), 1fr))', gap: 16 }}>
+      <PieChart style={pieChartStyle} responsive>
         <Tooltip />
         <Pie data={pieData} dataKey="value" nameKey="name" outerRadius={90} fill="#8884d8" />
         <ZoomAndPan scrollbars={false} />
       </PieChart>
-      <Sankey width={340} height={260} data={sankeyData} zoom={{ scrollbars: false }}>
-        <Tooltip />
-      </Sankey>
+      <ResponsiveContainer width="100%" height={260} minWidth={0}>
+        <Sankey data={sankeyData} zoom={sankeyZoom}>
+          <Tooltip />
+        </Sankey>
+      </ResponsiveContainer>
     </div>
   );
 }

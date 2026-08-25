@@ -130,8 +130,9 @@ type Viewport = { x?: AxisWindow; y?: AxisWindow };
               <code>&lt;MouseWheelZoom /&gt;</code>
             </td>
             <td>
-              Wheel / trackpad to zoom around the pointer. <code>Shift</code> pans horizontally,{' '}
-              <code>Ctrl/Cmd + Shift</code> pans vertically.
+              Wheel / trackpad to zoom around the pointer. <code>Shift + wheel</code> pans horizontally;{' '}
+              <code>Ctrl/Cmd + Shift + wheel</code> pans vertically. <code>Ctrl/Cmd + wheel</code> without{' '}
+              <code>Shift</code> still zooms.
             </td>
           </tr>
           <tr>
@@ -217,7 +218,7 @@ type Viewport = { x?: AxisWindow; y?: AxisWindow };
 <DragToZoom modifier="shift" minZoom={1} maxZoom={25} />
 <PinchZoom threshold={12} touchDrag="pan" />
 <ZoomScrollbar axis="y" ariaLabel="Visible y range" thumbClassName="zoom-thumb" />
-<Minimap axis="x" ariaLabel="Chart overview" position="bottom-right" width={180} />
+<Minimap axis="x" ariaLabel="Chart overview" position="insideBottomRight" width={180} />
 <Minimap axis="x" ariaLabel="Chart overview" controls={<><MinimapDrag /><MinimapWheel /></>} />
 <Brush mode="zoom" axis="x" autoScaleYDomain />
 <Brush mode="zoom" controls={<BrushZoomControls wheel={false} />} />`}</pre>
@@ -251,14 +252,20 @@ type Viewport = { x?: AxisWindow; y?: AxisWindow };
         sourceCode={controlledSyncExampleSource}
         stackBlitzTitle="Recharts synced zoom across two charts"
       />
+      <p>
+        Alternatively, charts with the same <code>syncId</code> synchronize the tooltip, classic Brush window, and the
+        semantic x/y zoom viewport. A zoom or pan in one chart therefore updates the others without a separate shared
+        React state value.
+      </p>
 
       <h2>Auto-scaling, follow &amp; level of detail</h2>
       <p>
         A few headless helpers react to the viewport. <code>&lt;AutoScaleAxis /&gt;</code> re-fits the value axis to the
-        data visible in the current window as you pan or zoom - zoom into a slice of x below, then pan, and watch the y
-        axis re-fit; <code>&lt;FollowSeries /&gt;</code> keeps one series vertically centred while panning (optionally
-        auto-scaling the span around it); and <code>useScatterLOD</code> decimates dense scatter data against the zoomed
-        scales, so you draw fewer points when zoomed out and reveal more detail as you zoom in.
+        data visible in the current window as you pan or zoom - zoom or pinch into the rising series below, then pan,
+        and watch the y axis re-fit to each much narrower local range; <code>&lt;FollowSeries /&gt;</code> keeps one
+        series vertically centred while panning (optionally auto-scaling the span around it); and{' '}
+        <code>useScatterLOD</code> decimates dense scatter data against the zoomed scales, so you draw fewer points when
+        zoomed out and reveal more detail as you zoom in.
       </p>
       <CodeEditorWithPreview
         Component={AutoScaleFollowExample}
@@ -312,8 +319,10 @@ type Viewport = { x?: AxisWindow; y?: AxisWindow };
         They meet in <code>&lt;Brush mode=&quot;zoom&quot;&gt;</code>: the familiar Brush UI (travellers, panorama)
         editing the range-driven viewport instead of slicing, in sync with every other zoom control. Use classic Brush
         when stepping through whole data windows is the point; use the zoom viewport when you want smooth, gesture-led
-        exploration; use Brush zoom mode when you want both. Drag the travellers below, wheel over the rail, or zoom the
-        plot itself - they edit the same viewport. To customize the Brush gestures, replace its default{' '}
+        exploration; use Brush zoom mode when you want both. A classic Brush and a Minimap can coexist without stealing
+        each other&apos;s events, but they deliberately edit independent windows: the Brush slices data indexes while
+        the Minimap edits the semantic zoom viewport. Drag the travellers below, wheel over the rail, or zoom the plot
+        itself - in zoom mode they edit the same viewport. To customize the Brush gestures, replace its default{' '}
         <code>&lt;BrushZoomControls /&gt;</code> bundle through the <code>controls</code> prop:
       </p>
       <CodeEditorWithPreview
@@ -402,9 +411,10 @@ type Viewport = { x?: AxisWindow; y?: AxisWindow };
 
       <h2>Accessibility</h2>
       <p>
-        <code>&lt;ZoomPanKeyboard /&gt;</code> makes the chart focusable and pannable from the keyboard. When zoomed,
-        data-point navigation is scoped to the visible window, so you never tab to a point that is off screen.
-        Everything is reachable without a pointer.
+        <code>&lt;ZoomPanKeyboard /&gt;</code> makes the chart focusable and operable from the keyboard. Focus it with{' '}
+        <code>Tab</code>, use <code>+</code>/<code>-</code> to zoom, <code>Shift</code> + arrow keys to pan, and{' '}
+        <code>0</code> or <code>Esc</code> to reset. Unmodified arrow keys remain available for data-point navigation,
+        which is scoped to the visible window while zoomed. Everything is reachable without a pointer.
       </p>
 
       <h2>How it renders</h2>

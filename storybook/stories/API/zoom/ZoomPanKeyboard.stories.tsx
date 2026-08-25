@@ -22,7 +22,7 @@ export default {
     step: { control: { type: 'range', min: 1.05, max: 2, step: 0.05 }, description: 'Zoom factor per +/- press.' },
     panStep: {
       control: { type: 'range', min: 0.01, max: 0.5, step: 0.01 },
-      description: 'Pan distance per arrow press, as a fraction of the visible window.',
+      description: 'Base pan distance per Shift + arrow press, as a fraction of the visible window.',
     },
     panFastMultiplier: {
       control: { type: 'range', min: 1, max: 10, step: 0.5 },
@@ -32,7 +32,8 @@ export default {
 };
 
 /**
- * Click the chart, then press + to zoom in and the arrow keys to pan.
+ * Click the chart, then press + to zoom in and Shift + arrow keys to pan. Unmodified arrows remain
+ * available for accessible data navigation.
  */
 export const API = {
   render: (args: Args) => (

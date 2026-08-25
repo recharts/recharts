@@ -1,3 +1,4 @@
+import { useMemo } from 'react';
 import {
   CartesianGrid,
   Line,
@@ -17,8 +18,10 @@ import type { Lever } from '../../Shared/levers/Levers.tsx';
 import { createCheckboxLever, createSelectLever } from '../../Shared/levers/Levers.tsx';
 
 const data = generateMockData(80, 3);
+const chartStyle = { width: '100%', maxWidth: 700, height: 320 };
+const initialZoom = { x: { start: 0.2, end: 0.5 } };
 
-type MinimapPosition = 'top-left' | 'top-right' | 'bottom-left' | 'bottom-right';
+type MinimapPosition = 'insideTopLeft' | 'insideTopRight' | 'insideBottomLeft' | 'insideBottomRight';
 
 type ControlsType = {
   minimapPosition: MinimapPosition;
@@ -28,13 +31,18 @@ type ControlsType = {
 };
 
 export const minimapExampleDefaultState: ControlsType = {
-  minimapPosition: 'bottom-right',
+  minimapPosition: 'insideBottomRight',
   minimapWheel: true,
   minimapPinch: true,
   globalWheel: true,
 };
 
-const minimapPositions: ReadonlyArray<MinimapPosition> = ['top-left', 'top-right', 'bottom-left', 'bottom-right'];
+const minimapPositions: ReadonlyArray<MinimapPosition> = [
+  'insideTopLeft',
+  'insideTopRight',
+  'insideBottomLeft',
+  'insideBottomRight',
+];
 
 export const minimapExampleLevers = [
   createSelectLever<ControlsType, MinimapPosition>({
@@ -69,16 +77,27 @@ export default function MinimapExample(props: Partial<ControlsType>) {
     ...minimapExampleDefaultState,
     ...props,
   };
+  const minimapControls = useMemo(
+    () => (
+      <>
+        <MinimapDrag />
+        <MinimapWheel enabled={minimapWheel} />
+        {minimapPinch && <MinimapPinch />}
+        <MinimapKeyboard />
+      </>
+    ),
+    [minimapWheel, minimapPinch],
+  );
 
   return (
-    <LineChart width={700} height={320} data={data} responsive>
+    <LineChart style={chartStyle} data={data} responsive>
       <CartesianGrid strokeDasharray="3 3" />
       <XAxis dataKey="label" />
       <YAxis />
       <Tooltip />
       <Line type="monotone" dataKey="x" stroke="#8884d8" dot={false} isAnimationActive={false} />
       <Line type="monotone" dataKey="y" stroke="#82ca9d" dot={false} isAnimationActive={false} />
-      <ZoomAndPan axis="x" initialZoom={{ x: { start: 0.2, end: 0.5 } }} scrollbars={false} wheel={globalWheel} />
+      <ZoomAndPan axis="x" initialZoom={initialZoom} scrollbars={false} wheel={globalWheel} />
       {/* Drag the rectangle to pan, resize its edges to zoom, click outside it to jump. */}
       <Minimap
         ariaLabel="Chart overview"
@@ -87,14 +106,7 @@ export default function MinimapExample(props: Partial<ControlsType>) {
         width={200}
         height={70}
         viewportStroke="#1d4ed8"
-        controls={
-          <>
-            <MinimapDrag />
-            <MinimapWheel enabled={minimapWheel} />
-            {minimapPinch && <MinimapPinch />}
-            <MinimapKeyboard />
-          </>
-        }
+        controls={minimapControls}
       >
         <LineChart data={data}>
           <Line type="monotone" dataKey="x" stroke="#8884d8" dot={false} isAnimationActive={false} />

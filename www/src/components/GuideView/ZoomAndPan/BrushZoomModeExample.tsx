@@ -1,9 +1,12 @@
+import { useMemo } from 'react';
 import { Brush, BrushZoomControls, CartesianGrid, Line, LineChart, Tooltip, XAxis, YAxis, ZoomAndPan } from 'recharts';
 import { generateMockData } from '@recharts/devtools';
 import type { Lever } from '../../Shared/levers/Levers.tsx';
 import { createCheckboxLever } from '../../Shared/levers/Levers.tsx';
 
 const data = generateMockData(80, 9);
+const chartStyle = { width: '100%', maxWidth: 700, height: 340 };
+const initialZoom = { x: { start: 0.25, end: 0.6 } };
 
 type ControlsType = {
   autoScaleYDomain: boolean;
@@ -56,22 +59,20 @@ export default function BrushZoomModeExample(props: Partial<ControlsType>) {
     ...brushZoomModeExampleDefaultState,
     ...props,
   };
+  const brushControls = useMemo(
+    () => <BrushZoomControls wheel={brushWheel} pinch={brushPinch} />,
+    [brushWheel, brushPinch],
+  );
 
   return (
-    <LineChart width={700} height={340} data={data} responsive>
+    <LineChart style={chartStyle} data={data} responsive>
       <CartesianGrid strokeDasharray="3 3" />
       <XAxis dataKey="label" />
       <YAxis />
       <Tooltip />
       <Line type="monotone" dataKey="x" stroke="#8884d8" dot={false} isAnimationActive={false} />
-      <ZoomAndPan axis="x" initialZoom={{ x: { start: 0.25, end: 0.6 } }} scrollbars={false} wheel={globalWheel} />
-      <Brush
-        mode="zoom"
-        autoScaleYDomain={autoScaleYDomain}
-        height={48}
-        stroke="#1d4ed8"
-        controls={<BrushZoomControls wheel={brushWheel} pinch={brushPinch} />}
-      >
+      <ZoomAndPan axis="x" initialZoom={initialZoom} scrollbars={false} wheel={globalWheel} />
+      <Brush mode="zoom" autoScaleYDomain={autoScaleYDomain} height={48} stroke="#1d4ed8" controls={brushControls}>
         <LineChart data={data}>
           <Line type="monotone" dataKey="x" stroke="#8884d8" dot={false} isAnimationActive={false} />
         </LineChart>

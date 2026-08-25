@@ -2,10 +2,11 @@ import { CartesianGrid, Line, LineChart, Tooltip, XAxis, YAxis, ZoomAndPan } fro
 import { generateMockData } from '@recharts/devtools';
 
 const data = generateMockData(60, 7);
+const chartStyle = { width: '100%', maxWidth: 700, height: 300 };
 
 export default function QuickStartExample() {
   return (
-    <LineChart width={700} height={300} data={data} responsive>
+    <LineChart style={chartStyle} data={data} responsive>
       <CartesianGrid strokeDasharray="3 3" />
       <XAxis dataKey="label" />
       <YAxis />

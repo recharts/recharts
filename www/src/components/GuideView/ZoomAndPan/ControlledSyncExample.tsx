@@ -4,6 +4,7 @@ import { generateMockData } from '@recharts/devtools';
 
 const data = generateMockData(60, 17);
 const fullViewport = { x: { start: 0, end: 1 }, y: { start: 0, end: 1 } };
+const chartStyle = { width: '100%', maxWidth: 700, height: 200 };
 
 /*
  * The viewport lives in React state and both charts receive it as a controlled prop: zoom or pan
@@ -16,7 +17,7 @@ export default function ControlledSyncExample() {
 
   return (
     <div>
-      <LineChart width={700} height={200} data={data} responsive>
+      <LineChart style={chartStyle} data={data} responsive>
         <CartesianGrid strokeDasharray="3 3" />
         <XAxis dataKey="label" />
         <YAxis />
@@ -24,7 +25,7 @@ export default function ControlledSyncExample() {
         <Line type="monotone" dataKey="x" stroke="#8884d8" dot={false} isAnimationActive={false} />
         <ZoomAndPan {...zoom} />
       </LineChart>
-      <LineChart width={700} height={200} data={data} responsive>
+      <LineChart style={chartStyle} data={data} responsive>
         <CartesianGrid strokeDasharray="3 3" />
         <XAxis dataKey="label" />
         <YAxis />

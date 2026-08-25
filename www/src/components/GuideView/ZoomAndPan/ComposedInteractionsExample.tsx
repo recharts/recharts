@@ -18,6 +18,7 @@ import type { Lever } from '../../Shared/levers/Levers.tsx';
 import { createCheckboxLever } from '../../Shared/levers/Levers.tsx';
 
 const data = generateMockData(60, 5);
+const chartStyle = { width: '100%', maxWidth: 700, height: 300 };
 
 type ControlsType = {
   wheel: boolean;
@@ -96,7 +97,7 @@ export default function ComposedInteractionsExample(props: Partial<ControlsType>
   };
 
   return (
-    <LineChart width={700} height={300} data={data} responsive>
+    <LineChart style={chartStyle} data={data} responsive>
       <CartesianGrid strokeDasharray="3 3" />
       <XAxis dataKey="label" />
       <YAxis />

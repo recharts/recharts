@@ -53,7 +53,7 @@ import {
 
 type ChartType = 'LineChart' | 'BarChart' | 'AreaChart' | 'ScatterChart';
 type AutoScaleMode = 'off' | 'autoscale' | 'follow';
-type MinimapPosition = 'top-left' | 'top-right' | 'bottom-left' | 'bottom-right';
+type PlaygroundMinimapPosition = 'insideTopLeft' | 'insideTopRight' | 'insideBottomLeft' | 'insideBottomRight';
 type BrushMode = 'off' | 'horizontal' | 'vertical' | 'both';
 
 type ZoomPlaygroundArgs = {
@@ -80,7 +80,7 @@ type ZoomPlaygroundArgs = {
   animate: boolean;
   controlled: boolean;
   minimap: boolean;
-  minimapPosition: MinimapPosition;
+  minimapPosition: PlaygroundMinimapPosition;
   minimapWheel: boolean;
   minimapPinch: boolean;
   brushMode: BrushMode;
@@ -142,7 +142,7 @@ export default {
     pan: { control: { type: 'boolean' }, description: 'Drag to pan' },
     panStep: {
       control: { type: 'range', min: 0.01, max: 0.5, step: 0.01 },
-      description: 'Pan distance per arrow-key press',
+      description: 'Base pan distance per Shift + arrow press',
     },
     panFastMultiplier: {
       control: { type: 'range', min: 1, max: 10, step: 0.5 },
@@ -176,7 +176,7 @@ export default {
     minimap: { control: { type: 'boolean' }, description: 'Show the editable minimap overview' },
     minimapPosition: {
       control: { type: 'inline-radio' },
-      options: ['top-left', 'top-right', 'bottom-left', 'bottom-right'],
+      options: ['insideTopLeft', 'insideTopRight', 'insideBottomLeft', 'insideBottomRight'],
       description: 'Minimap placement inside the plot',
     },
     minimapWheel: { control: { type: 'boolean' }, description: 'Wheel / trackpad over the minimap' },
@@ -224,7 +224,7 @@ export default {
     animate: false,
     controlled: false,
     minimap: true,
-    minimapPosition: 'bottom-right',
+    minimapPosition: 'insideBottomRight',
     minimapWheel: true,
     minimapPinch: true,
     brushMode: 'both',
