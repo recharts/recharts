@@ -1,6 +1,8 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
-import { ZoomLimits } from '../util/zoom/zoomActions';
-import { ZoomAxis } from '../util/zoom/ZoomOptions';
+import type { ZoomLimits } from '../util/zoom/zoomActions';
+import type { ZoomAxis } from '../util/zoom/ZoomOptions';
+import type { ZoomState } from './zoomSlice';
+import { viewportsEqual } from '../util/zoom/viewport';
 
 /**
  * Chart-level zoom configuration shared across zoom consumers.
@@ -13,11 +15,13 @@ import { ZoomAxis } from '../util/zoom/ZoomOptions';
 export type ZoomSettingsState = {
   limits: ZoomLimits | null;
   axis: ZoomAxis | null;
+  controlledViewport: ZoomState | null;
 };
 
 const initialState: ZoomSettingsState = {
   limits: null,
   axis: null,
+  controlledViewport: null,
 };
 
 const zoomSettingsSlice = createSlice({
@@ -34,8 +38,19 @@ const zoomSettingsSlice = createSlice({
     setZoomAxis(state: ZoomSettingsState, action: PayloadAction<ZoomAxis | null>) {
       state.axis = action.payload;
     },
+    setControlledZoomViewport(state: ZoomSettingsState, action: PayloadAction<ZoomState | null>) {
+      const next = action.payload;
+      const current = state.controlledViewport;
+      if (
+        (current == null && next == null) ||
+        (current != null && next != null && viewportsEqual(current.x, next.x) && viewportsEqual(current.y, next.y))
+      ) {
+        return;
+      }
+      state.controlledViewport = next;
+    },
   },
 });
 
-export const { setZoomAxis, setZoomLimits } = zoomSettingsSlice.actions;
+export const { setControlledZoomViewport, setZoomAxis, setZoomLimits } = zoomSettingsSlice.actions;
 export const zoomSettingsReducer = zoomSettingsSlice.reducer;

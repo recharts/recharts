@@ -28,3 +28,5 @@ export const selectIsZoomed = (state: RechartsRootState): boolean =>
 export const selectSharedZoomLimits = (state: RechartsRootState) => state.zoomSettings.limits;
 
 export const selectSharedZoomAxis = (state: RechartsRootState) => state.zoomSettings.axis;
+
+export const selectControlledZoomViewport = (state: RechartsRootState) => state.zoomSettings.controlledViewport;
