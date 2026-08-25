@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { useAppSelector } from '../../state/hooks';
 import { selectChartOffsetInternal } from '../../state/selectors/selectChartOffsetInternal';
 import { getValueByDataKey } from '../../util/ChartUtils';
@@ -28,6 +28,84 @@ export type ScatterLODOptions<T = unknown> = {
   /** Drop points outside the visible plot (plus a margin) so only what's on screen is drawn. @defaultValue true */
   cull?: boolean;
 };
+
+type ScatterLODComputation<T> = {
+  data: ReadonlyArray<T>;
+  x: DataKey<T>;
+  y: DataKey<T>;
+  xScale: RechartsScale | undefined;
+  yScale: RechartsScale | undefined;
+  cellSize: number;
+  cull: boolean;
+  measured: boolean;
+  plotLeft: number;
+  plotTop: number;
+  plotWidth: number;
+  plotHeight: number;
+};
+
+function computeScatterLOD<T>({
+  data,
+  x,
+  y,
+  xScale,
+  yScale,
+  cellSize,
+  cull,
+  measured,
+  plotLeft,
+  plotTop,
+  plotWidth,
+  plotHeight,
+}: ScatterLODComputation<T>): ReadonlyArray<T> {
+  if (xScale == null || yScale == null || !measured) {
+    return data;
+  }
+  const cell = cellSize > 0 ? cellSize : 1;
+  /*
+   * Cull with half a plot of slack on every side. The decimated result is fed back to
+   * <Scatter data>, and with an automatic axis domain the kept points define the next domain: a
+   * tight cull would let small domain shifts drop/add edge points, which shifts the domain again -
+   * an oscillation that can crash with "Maximum update depth exceeded" under fast wheel bursts.
+   * The generous margin makes the kept set a fixed point of that feedback.
+   */
+  const cullMarginX = plotWidth / 2 + cell;
+  const cullMarginY = plotHeight / 2 + cell;
+  const minX = plotLeft - cullMarginX;
+  const maxX = plotLeft + plotWidth + cullMarginX;
+  const minY = plotTop - cullMarginY;
+  const maxY = plotTop + plotHeight + cullMarginY;
+  /*
+   * One flat key per grid cell. The grid is anchored on the culled band (not the plot) and the
+   * column/row indexes are clamped into it, so points outside the band (cull=false) can never
+   * collide with interior cells - they merge into the invisible edge cells instead.
+   */
+  const columns = Math.max(Math.ceil((maxX - minX) / cell) + 1, 1);
+  const rows = Math.max(Math.ceil((maxY - minY) / cell) + 1, 1);
+
+  const seen = new Set<number>();
+  const result: T[] = [];
+  data.forEach(point => {
+    const px = xScale.map(getValueByDataKey(point, x));
+    const py = yScale.map(getValueByDataKey(point, y));
+    if (px == null || py == null || Number.isNaN(px) || Number.isNaN(py)) {
+      return;
+    }
+    if (cull && (px < minX || px > maxX || py < minY || py > maxY)) {
+      return;
+    }
+    const col = Math.min(Math.max(Math.round((px - minX) / cell), 0), columns - 1);
+    const row = Math.min(Math.max(Math.round((py - minY) / cell), 0), rows - 1);
+    const key = row * columns + col;
+    if (seen.has(key)) {
+      return;
+    }
+    seen.add(key);
+    result.push(point);
+  });
+
+  return result.length === data.length ? data : result;
+}
 
 /**
  * Zoom-aware level-of-detail for scatter data: returns a decimated subset of `data` using the current
@@ -65,70 +143,70 @@ export function useScatterLOD<T>(data: ReadonlyArray<T>, options: ScatterLODOpti
   const plotHeight = offset?.height ?? 0;
   const measured = offset != null;
 
-  const computed = useMemo(() => {
-    if (xScale == null || yScale == null || !measured) {
-      return data;
-    }
-    const cell = cellSize > 0 ? cellSize : 1;
-    /*
-     * Cull with half a plot of slack on every side. The decimated result is fed back to
-     * <Scatter data>, and with an automatic axis domain the kept points define the next domain: a
-     * tight cull would let small domain shifts drop/add edge points, which shifts the domain again -
-     * an oscillation that can crash with "Maximum update depth exceeded" under fast wheel bursts.
-     * The generous margin makes the kept set a fixed point of that feedback.
-     */
-    const cullMarginX = plotWidth / 2 + cell;
-    const cullMarginY = plotHeight / 2 + cell;
-    const minX = plotLeft - cullMarginX;
-    const maxX = plotLeft + plotWidth + cullMarginX;
-    const minY = plotTop - cullMarginY;
-    const maxY = plotTop + plotHeight + cullMarginY;
-    /*
-     * One flat key per grid cell. The grid is anchored on the culled band (not the plot) and the
-     * column/row indexes are clamped into it, so points outside the band (cull=false) can never
-     * collide with interior cells - they merge into the invisible edge cells instead.
-     */
-    const columns = Math.max(Math.ceil((maxX - minX) / cell) + 1, 1);
-    const rows = Math.max(Math.ceil((maxY - minY) / cell) + 1, 1);
-
-    const seen = new Set<number>();
-    const result: T[] = [];
-    data.forEach(point => {
-      const px = xScale.map(getValueByDataKey(point, x));
-      const py = yScale.map(getValueByDataKey(point, y));
-      if (px == null || py == null || Number.isNaN(px) || Number.isNaN(py)) {
-        return;
-      }
-      if (cull && (px < minX || px > maxX || py < minY || py > maxY)) {
-        return;
-      }
-      const col = Math.min(Math.max(Math.round((px - minX) / cell), 0), columns - 1);
-      const row = Math.min(Math.max(Math.round((py - minY) / cell), 0), rows - 1);
-      const key = row * columns + col;
-      if (seen.has(key)) {
-        return;
-      }
-      seen.add(key);
-      result.push(point);
-    });
-
-    return result.length === data.length ? data : result;
-  }, [data, xScale, yScale, measured, plotLeft, plotTop, plotWidth, plotHeight, x, y, cellSize, cull]);
+  const latestComputationRef = useRef<ScatterLODComputation<T>>({
+    data,
+    x,
+    y,
+    xScale,
+    yScale,
+    cellSize,
+    cull,
+    measured,
+    plotLeft,
+    plotTop,
+    plotWidth,
+    plotHeight,
+  });
+  latestComputationRef.current = {
+    data,
+    x,
+    y,
+    xScale,
+    yScale,
+    cellSize,
+    cull,
+    measured,
+    plotLeft,
+    plotTop,
+    plotWidth,
+    plotHeight,
+  };
 
   /*
-   * Emit through state from a passive effect rather than returning the memo directly. Feeding the
-   * result straight back into <Scatter data> inside the same commit chains a dispatch onto every
-   * zoom dispatch (data re-registration -> domain -> scale -> ...); under a fast wheel burst those
-   * nested synchronous updates pile up and React aborts with "Maximum update depth exceeded".
-   * Deferring to a passive effect puts a commit boundary in the loop, and the equality guard reuses
-   * the previous array while the kept set is unchanged so the chain terminates.
+   * Grid construction is O(n), so doing it synchronously in every render makes a wheel or pinch
+   * burst block once per Redux update. Keep the latest inputs in a ref and coalesce work to one
+   * passive animation-frame job. This preserves the exact decimation while allowing React to paint
+   * the viewport first and dropping redundant intermediate grids from high-frequency input.
+   *
+   * State also keeps a commit boundary between the decimated data and Scatter's data registration,
+   * while the identity guard terminates the domain/scale feedback loop when the kept set is stable.
    */
-  const [stable, setStable] = useState(computed);
+  const [stable, setStable] = useState<ReadonlyArray<T>>(data);
+  const frameRef = useRef<number | null>(null);
   useEffect(() => {
-    setStable(previous =>
-      previous.length === computed.length && previous.every((point, i) => point === computed[i]) ? previous : computed,
-    );
-  }, [computed]);
+    if (frameRef.current != null) {
+      return;
+    }
+    frameRef.current = requestAnimationFrame(() => {
+      frameRef.current = null;
+      const computed = computeScatterLOD(latestComputationRef.current);
+      setStable(previous =>
+        previous.length === computed.length && previous.every((point, i) => point === computed[i])
+          ? previous
+          : computed,
+      );
+    });
+  }, [data, xScale, yScale, measured, plotLeft, plotTop, plotWidth, plotHeight, x, y, cellSize, cull]);
+
+  useEffect(
+    () => () => {
+      if (frameRef.current != null) {
+        cancelAnimationFrame(frameRef.current);
+        frameRef.current = null;
+      }
+    },
+    [],
+  );
 
   return stable;
 }
