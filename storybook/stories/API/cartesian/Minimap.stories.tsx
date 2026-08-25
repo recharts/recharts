@@ -31,8 +31,18 @@ export default {
       options: ['x', 'y', 'xy'],
     },
     position: {
-      control: { type: 'inline-radio' },
-      options: ['top-left', 'top-right', 'bottom-left', 'bottom-right'],
+      control: { type: 'select' },
+      options: [
+        'center',
+        'insideTopLeft',
+        'insideTop',
+        'insideTopRight',
+        'insideLeft',
+        'insideRight',
+        'insideBottomLeft',
+        'insideBottom',
+        'insideBottomRight',
+      ],
     },
     width: { control: { type: 'range', min: 80, max: 320, step: 10 } },
     height: { control: { type: 'range', min: 40, max: 160, step: 5 } },
@@ -76,7 +86,7 @@ export const API = {
   args: {
     ariaLabel: 'Chart overview',
     axis: 'x',
-    position: 'bottom-right',
+    position: 'insideBottomRight',
     width: 200,
     height: 80,
     minimapWheel: true,
@@ -87,4 +97,32 @@ export const API = {
     shadeOpacity: 0.25,
     zIndex: 2500,
   },
+};
+
+export const VerticalChart = {
+  render: () => (
+    <ResponsiveContainer width="100%" height={400}>
+      <LineChart data={pageData} layout="vertical">
+        <XAxis type="number" />
+        <YAxis type="category" dataKey="name" width={80} />
+        <Tooltip />
+        <Line dataKey="uv" stroke="#8884d8" dot={false} isAnimationActive={false} />
+        <ZoomAndPan axis="y" initialZoom={{ y: { start: 0.2, end: 0.55 } }} scrollbars={false} />
+        <Minimap
+          ariaLabel="Vertical chart overview"
+          axis="y"
+          position="insideBottomRight"
+          width={200}
+          height={100}
+          viewportStroke="#1d4ed8"
+        >
+          <LineChart layout="vertical">
+            <XAxis type="number" />
+            <YAxis type="category" dataKey="name" />
+            <Line dataKey="uv" stroke="#8884d8" dot={false} isAnimationActive={false} />
+          </LineChart>
+        </Minimap>
+      </LineChart>
+    </ResponsiveContainer>
+  ),
 };

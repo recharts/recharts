@@ -87,10 +87,13 @@ function AxisScrollbar({
   const horizontal = dimension === 'x';
   const trackLength = horizontal ? plot.width : plot.height;
   const windowRatio = getViewportWidth(viewport);
-  const coarsePointer =
-    typeof window !== 'undefined' && typeof window.matchMedia === 'function'
-      ? window.matchMedia('(pointer: coarse), (any-pointer: coarse)').matches
-      : false;
+  const coarsePointer = useMemo(
+    () =>
+      typeof window !== 'undefined' && typeof window.matchMedia === 'function'
+        ? window.matchMedia('(pointer: coarse), (any-pointer: coarse)').matches
+        : false,
+    [],
+  );
   // The visible bar keeps its (customizable) thickness; on touch the draggable hit area is enlarged.
   const barThickness = scrollbarStyle.thickness ?? SCROLLBAR_THICKNESS;
   const hitThickness = coarsePointer ? Math.max(SCROLLBAR_TOUCH_HIT, barThickness) : barThickness;
