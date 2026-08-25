@@ -444,6 +444,12 @@ function zoomAxisEnabled(axis: ZoomAxis, dimension: 'x' | 'y'): boolean {
   return axis === 'xy' || axis === dimension;
 }
 
+/**
+ * Programmatic controls and state returned by {@link useZoom}.
+ *
+ * @since 3.11
+ * @public
+ */
 export type UseZoomResult = {
   /** The visible window of each axis, as `{ start, end }` fractions in `[0, 1]`. */
   viewport: Required<ZoomViewport>;
@@ -468,7 +474,8 @@ export type UseZoomResult = {
  * The chart zooms whenever the viewport is not full, so this works on its own, with none of the
  * built-in interaction components mounted (the "bring your own controls" case).
  *
- * @since 4.0
+ * @since 3.11
+ * @public
  */
 export const useZoom = (): UseZoomResult => {
   const dispatch = useAppDispatch();
@@ -544,6 +551,9 @@ export const useZoom = (): UseZoomResult => {
  * replaces the whole viewport instead of merging).
  *
  * Must be used inside a chart.
+ *
+ * @since 3.11
+ * @public
  */
 export const useZoomState = (): [Required<ZoomViewport>, (viewport: ZoomViewport) => void] => {
   const dispatch = useAppDispatch();

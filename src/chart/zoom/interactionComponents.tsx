@@ -24,7 +24,12 @@ import { renderSelectionOverlay } from './SelectionOverlay';
  * children of a cartesian chart, or use {@link ZoomAndPan} for the default bundle.
  */
 
-/** Limit props shared by every interaction component. */
+/**
+ * Limit props shared by every interaction component.
+ *
+ * @since 3.11
+ * @public
+ */
 export type CommonZoomProps = {
   /** Which dimensions can be zoomed and panned. @defaultValue 'xy' */
   axis?: ZoomAxis;
@@ -113,9 +118,20 @@ const KEYBOARD: readonly ZoomGestureInstaller[] = [installKeyboardGesture];
 const TOUCH: readonly ZoomGestureInstaller[] = [installTouchGesture];
 const DOUBLE_CLICK: readonly ZoomGestureInstaller[] = [installDoubleClickGesture];
 
+/**
+ * Props for {@link MouseWheelZoom}.
+ *
+ * @since 3.11
+ * @public
+ */
 export type MouseWheelZoomProps = CommonZoomProps & WheelStepProps & WheelPanStepProps;
 
-/** Wheel / trackpad over the plot to zoom around the pointer (Shift = pan x, Ctrl/Cmd + Shift = pan y). */
+/**
+ * Wheel / trackpad over the plot to zoom around the pointer (Shift = pan x, Ctrl/Cmd + Shift = pan y).
+ *
+ * @since 3.11
+ * @public
+ */
 export function MouseWheelZoom({ axis, xAxisId, yAxisId, minZoom, maxZoom, step, panStep }: MouseWheelZoomProps) {
   useZoomGesture(
     buildOptions(
@@ -127,7 +143,12 @@ export function MouseWheelZoom({ axis, xAxisId, yAxisId, minZoom, maxZoom, step,
   return null;
 }
 
-/** Drag the plot to pan. */
+/**
+ * Drag the plot to pan.
+ *
+ * @since 3.11
+ * @public
+ */
 export function PanOnDrag({ axis, xAxisId, yAxisId, minZoom, maxZoom }: CommonZoomProps) {
   useZoomGesture(
     buildOptions({ axis, xAxisId, yAxisId, minZoom, maxZoom }, { pan: true, pointerMode: 'pan' }),
@@ -147,10 +168,20 @@ type SelectionStyleProps = {
   selectionStyle?: React.CSSProperties;
 };
 
-/** Props for {@link DragToZoom}. */
+/**
+ * Props for {@link DragToZoom}.
+ *
+ * @since 3.11
+ * @public
+ */
 export type DragToZoomProps = CommonZoomProps & SelectModifier & SelectionStyleProps;
 
-/** Drag a rectangle to zoom into it. Hold Shift instead (`modifier="shift"`) to coexist with PanOnDrag. */
+/**
+ * Drag a rectangle to zoom into it. Hold Shift instead (`modifier="shift"`) to coexist with PanOnDrag.
+ *
+ * @since 3.11
+ * @public
+ */
 export function DragToZoom({
   axis,
   xAxisId,
@@ -189,7 +220,12 @@ export function DragToZoom({
   return renderSelectionOverlay(selection, element, { className: selectionClassName, style: selectionStyle });
 }
 
-/** Props for {@link DragToSelect}. */
+/**
+ * Props for {@link DragToSelect}.
+ *
+ * @since 3.11
+ * @public
+ */
 export type DragToSelectProps = CommonZoomProps &
   SelectModifier &
   SelectionStyleProps & {
@@ -205,6 +241,9 @@ export type DragToSelectProps = CommonZoomProps &
  * Drag a rectangle to *select* a region (instead of zooming into it). Draws the same overlay while
  * dragging and emits the selected window through `onSelect`. Hold Shift (`modifier="shift"`) to let
  * it coexist with `<PanOnDrag/>`.
+ *
+ * @since 3.11
+ * @public
  */
 export function DragToSelect({
   axis,
@@ -248,9 +287,20 @@ export function DragToSelect({
   return renderSelectionOverlay(selection, element, { className: selectionClassName, style: selectionStyle });
 }
 
+/**
+ * Props for {@link AxisZoom}.
+ *
+ * @since 3.11
+ * @public
+ */
 export type AxisZoomProps = CommonZoomProps & WheelStepProps & WheelPanStepProps;
 
-/** Wheel or drag directly on an axis band to zoom / pan only that axis. */
+/**
+ * Wheel or drag directly on an axis band to zoom / pan only that axis.
+ *
+ * @since 3.11
+ * @public
+ */
 export function AxisZoom({ axis, xAxisId, yAxisId, minZoom, maxZoom, step, panStep }: AxisZoomProps) {
   useZoomGesture(
     buildOptions(
@@ -269,6 +319,12 @@ export function AxisZoom({ axis, xAxisId, yAxisId, minZoom, maxZoom, step, panSt
   return null;
 }
 
+/**
+ * Props for {@link ZoomPanKeyboard}.
+ *
+ * @since 3.11
+ * @public
+ */
 export type ZoomPanKeyboardProps = CommonZoomProps &
   WheelStepProps & {
     /**
@@ -280,7 +336,12 @@ export type ZoomPanKeyboardProps = CommonZoomProps &
     panFastMultiplier?: number;
   };
 
-/** Keyboard zoom/pan while the chart is focused (`+`/`-` zoom, Shift + arrows pan, `0`/`Esc` reset). */
+/**
+ * Keyboard zoom/pan while the chart is focused (`+`/`-` zoom, Shift + arrows pan, `0`/`Esc` reset).
+ *
+ * @since 3.11
+ * @public
+ */
 export function ZoomPanKeyboard({
   axis,
   xAxisId,
@@ -301,13 +362,23 @@ export function ZoomPanKeyboard({
   return null;
 }
 
-/** Double-click to reset the chart to the configured zoom floor. */
+/**
+ * Double-click to reset the chart to the configured zoom floor.
+ *
+ * @since 3.11
+ * @public
+ */
 export function DoubleClickReset({ axis, xAxisId, yAxisId, minZoom, maxZoom }: CommonZoomProps) {
   useZoomGesture(buildOptions({ axis, xAxisId, yAxisId, minZoom, maxZoom }, { doubleClickReset: true }), DOUBLE_CLICK);
   return null;
 }
 
-/** Touch: two-finger pinch to zoom + pan, double-tap to reset, double-tap-then-drag to zoom. */
+/**
+ * Props for {@link PinchZoom}.
+ *
+ * @since 3.11
+ * @public
+ */
 export type PinchZoomProps = CommonZoomProps &
   SelectionStyleProps & {
     /** Finger-spread in px before pinch zooming starts. @defaultValue 12 */
@@ -332,6 +403,12 @@ export type PinchZoomProps = CommonZoomProps &
     onSelect?: (selection: ZoomViewport) => void;
   };
 
+/**
+ * Touch: two-finger pinch to zoom + pan, double-tap to reset, double-tap-then-drag to zoom.
+ *
+ * @since 3.11
+ * @public
+ */
 export function PinchZoom({
   axis,
   xAxisId,
@@ -383,7 +460,12 @@ export function PinchZoom({
   );
 }
 
-/** Props for {@link ZoomScrollbar}: which axis, zoom limits, plus the scrollbar look. */
+/**
+ * Props for {@link ZoomScrollbar}: which axis, zoom limits, plus the scrollbar look.
+ *
+ * @since 3.11
+ * @public
+ */
 export type ZoomScrollbarProps = { axis?: 'x' | 'y'; ariaLabel: string } & Pick<
   CommonZoomProps,
   'xAxisId' | 'yAxisId' | 'minZoom' | 'maxZoom'
@@ -395,6 +477,9 @@ export type ZoomScrollbarProps = { axis?: 'x' | 'y'; ariaLabel: string } & Pick<
  * An on-canvas scrollbar for one zoomed axis: drag the band to pan, wheel to pan (Shift = zoom).
  * Style it with `thickness` (geometry) and `className`/`style` (track) + `thumbClassName`/`thumbStyle`
  * (thumb); the `.recharts-zoom-scrollbar` / `.recharts-zoom-scrollbar-thumb` classes are stable too.
+ *
+ * @since 3.11
+ * @public
  */
 export function ZoomScrollbar({
   axis = 'x',
