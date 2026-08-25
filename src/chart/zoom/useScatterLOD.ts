@@ -10,7 +10,11 @@ import { RechartsRootState } from '../../state/store';
 import { RechartsScale } from '../../util/scale/RechartsScale';
 import { areScalesApproximatelyEqual } from '../../util/propsAreEqual';
 
-/** Options for {@link useScatterLOD}. */
+/**
+ * Options for {@link useScatterLOD}.
+ *
+ * @since 3.11
+ */
 export type ScatterLODOptions<T = unknown> = {
   /** Data key for the x value. */
   x: DataKey<T>;
@@ -119,6 +123,8 @@ function computeScatterLOD<T>({
  * @example
  * const points = useScatterLOD(bigData, { x: 'x', y: 'y' });
  * return <Scatter data={points} />;
+ *
+ * @since 3.11
  */
 export function useScatterLOD<T>(data: ReadonlyArray<T>, options: ScatterLODOptions<T>): ReadonlyArray<T> {
   const { x, y, xAxisId = 0, yAxisId = 0, cellSize = 2, cull = true } = options;

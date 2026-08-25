@@ -11,6 +11,8 @@ import { ZoomAxisTouchTargets } from '../ZoomAxisTouchTargets';
 
 /**
  * Props for {@link ZoomAndPan}: every gesture / limit option plus controlled-state hooks.
+ *
+ * @since 3.11
  */
 export type ZoomAndPanProps = ZoomOptions & {
   /** Friendly alias for {@link ZoomOptions.touch} (two-finger pinch / pan, double-tap). @defaultValue true */
@@ -36,6 +38,8 @@ export type ZoomAndPanProps = ZoomOptions & {
  *
  * It mounts the same headless infrastructure the legacy `zoom` prop does, portalled into the chart
  * wrapper (so its HTML overlays sit alongside the SVG), and is inert on the brush panorama.
+ *
+ * @since 3.11
  */
 export function ZoomAndPan({
   pinch,

@@ -18,7 +18,11 @@ import { clampViewport } from '../../util/zoom/viewport';
 import { useCartesianChartLayout } from '../../context/chartLayoutContext';
 import { scaleValueToDomainRatio, toFiniteNumber } from '../../util/zoom/scaleValue';
 
-/** Props for {@link FollowSeries}. */
+/**
+ * Props for {@link FollowSeries}.
+ *
+ * @since 3.11
+ */
 export type FollowSeriesProps<DataPointType = unknown> = {
   /**
    * The data that you provide via the `data` prop is an array of objects.
@@ -67,6 +71,8 @@ export type FollowSeriesProps<DataPointType = unknown> = {
  *
  * Headless (renders nothing). Drives the value axis one-way from the category window, so there's no
  * feedback loop; the value axis becomes auto-managed. Numeric value axis only.
+ *
+ * @since 3.11
  */
 export function FollowSeries<DataPointType = unknown>({
   dataKey,

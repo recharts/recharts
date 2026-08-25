@@ -61,6 +61,12 @@ export type BrushTravellerType =
 
 // Why is this tickFormatter different from the other TickFormatters? This one allows to return numbers too for some reason.
 type BrushTickFormatter = (value: any, index: number) => number | string;
+
+/**
+ * Determines whether Brush selects a data slice or controls the semantic zoom viewport.
+ *
+ * @since 3.11
+ */
 export type BrushMode = 'slice' | 'zoom';
 const DEFAULT_VERTICAL_BRUSH_WIDTH = 64;
 const DEFAULT_VERTICAL_BRUSH_GAP = 8;
@@ -100,11 +106,7 @@ export interface BrushProps<DataPointType = any, DataValueType = any> extends Da
    * The SVG element's class name.
    */
   className?: string;
-  /**
-   * Custom accessible label applied to the brush's traveller handles. If
-   * not provided, one is generated automatically from the data at the
-   * current start and end index.
-   */
+  /** Accessible name for the focusable controls. */
   ariaLabel?: string;
 
   /**
@@ -1525,6 +1527,11 @@ type BrushZoomControlsContextValue = {
 
 const BrushZoomControlsContext = createContext<BrushZoomControlsContextValue | null>(null);
 
+/**
+ * Returns the interaction context for controls rendered inside a `<Brush mode="zoom" />`.
+ *
+ * @since 3.11
+ */
 export function useBrushZoomControls(): BrushZoomControlsContextValue {
   const context = useContext(BrushZoomControlsContext);
   if (context == null) {
@@ -1537,6 +1544,11 @@ type BrushPinchState = {
   distance: number;
 };
 
+/**
+ * Adds wheel zoom and Shift+wheel panning to a `<Brush mode="zoom" />`.
+ *
+ * @since 3.11
+ */
 export function BrushWheelZoom({ enabled = true }: { enabled?: boolean }) {
   const { brushNode, layout, railLength, railStart, wheelPanStep, wheelStep, zoomBy } = useBrushZoomControls();
 
@@ -1573,6 +1585,11 @@ export function BrushWheelZoom({ enabled = true }: { enabled?: boolean }) {
   return null;
 }
 
+/**
+ * Adds two-finger pinch zoom to a `<Brush mode="zoom" />`.
+ *
+ * @since 3.11
+ */
 export function BrushPinchZoom({ enabled = true }: { enabled?: boolean }) {
   const { brushNode, layout, railLength, railStart, zoomBy } = useBrushZoomControls();
   const pinchState = React.useRef<BrushPinchState | null>(null);
@@ -1655,6 +1672,11 @@ export function BrushPinchZoom({ enabled = true }: { enabled?: boolean }) {
   return null;
 }
 
+/**
+ * Default Brush zoom interaction bundle: wheel and pinch controls.
+ *
+ * @since 3.11
+ */
 export function BrushZoomControls({ wheel = true, pinch = true }: { wheel?: boolean; pinch?: boolean }) {
   return (
     <>

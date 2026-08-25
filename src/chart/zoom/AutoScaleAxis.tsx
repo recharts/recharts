@@ -17,7 +17,11 @@ import { clampViewport } from '../../util/zoom/viewport';
 import { useCartesianChartLayout } from '../../context/chartLayoutContext';
 import { scaleValueToDomainRatio, toFiniteNumber } from '../../util/zoom/scaleValue';
 
-/** Props for {@link AutoScaleAxis}. */
+/**
+ * Props for {@link AutoScaleAxis}.
+ *
+ * @since 3.11
+ */
 export type AutoScaleAxisProps = {
   /**
    * Which axis to auto-fit to the data currently visible on the other one.
@@ -54,6 +58,8 @@ const MIN_HALF_SPAN = 0.05;
  * Layout-aware: in a vertical layout the roles swap (categories on y, values on x), so the default
  * target becomes the x axis. Note the SCREEN orientation of each axis never changes with layout:
  * x always runs horizontally (left/width) and y vertically (top/height).
+ *
+ * @since 3.11
  */
 export function AutoScaleAxis({ axis, xAxisId = 0, yAxisId = 0, padding = 0.05 }: AutoScaleAxisProps) {
   const dispatch = useAppDispatch();

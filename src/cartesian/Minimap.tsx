@@ -50,6 +50,8 @@ type OverlayCartesianPosition = Exclude<CartesianPosition, 'top' | 'right' | 'bo
  * Overlay position within the plot, using the same Cartesian position names and offset semantics
  * as Label and Legend. Outside positions are excluded because Minimap does not reserve chart layout
  * space. The four kebab-case corner names remain accepted as backwards-compatible aliases.
+ *
+ * @since 3.11
  */
 export type MinimapPosition = OverlayCartesianPosition | LegacyMinimapPosition;
 
@@ -77,7 +79,7 @@ type MinimapOwnProps = MinimapStyleProps & {
   padding?: Padding;
   children?: ReactElement;
   position?: MinimapPosition;
-  /** Offset from the selected Cartesian position. */
+  /** The offset to the specified "position". Direction of the offset depends on the position. */
   offset?: number;
   /** @deprecated Use `offset` instead. */
   margin?: number;
@@ -87,7 +89,7 @@ type MinimapOwnProps = MinimapStyleProps & {
   minZoom?: number;
   maxZoom?: number;
   controls?: ReactNode;
-  /** Accessible name for the focusable minimap controls. */
+  /** Accessible name for the focusable controls. */
   ariaLabel: string;
   /**
    * Z-Index of this component and its children. The higher the value,
@@ -102,6 +104,11 @@ type MinimapOwnProps = MinimapStyleProps & {
   zIndex?: number;
 };
 
+/**
+ * Properties accepted by `<Minimap />`.
+ *
+ * @since 3.11
+ */
 export type Props = Omit<SVGProps<SVGElement>, 'aria-label' | 'children' | 'ref'> & MinimapOwnProps;
 
 const DEFAULT_WIDTH = 160;
@@ -268,6 +275,11 @@ function useInternalMinimapControls(): InternalMinimapControlsContextValue {
   return context;
 }
 
+/**
+ * Returns the shared state and actions for controls rendered inside a `<Minimap />`.
+ *
+ * @since 3.11
+ */
 export function useMinimapControls(): MinimapControlsContextValue {
   return useInternalMinimapControls();
 }
@@ -565,6 +577,8 @@ function MinimapInternal(props: Props) {
 
 /**
  * Adds mouse, pen and one-finger drag or resize interactions to the containing `<Minimap />`.
+ *
+ * @since 3.11
  */
 export function MinimapDrag() {
   const {
@@ -769,6 +783,8 @@ export function MinimapDrag() {
 /**
  * Adds wheel zoom and Shift+wheel panning to the containing `<Minimap />`.
  * Ctrl+Shift+wheel or Meta+Shift+wheel pans the y viewport instead of x.
+ *
+ * @since 3.11
  */
 export function MinimapWheel({
   enabled = true,
@@ -829,6 +845,8 @@ export function MinimapWheel({
 
 /**
  * Adds two-finger pinch zoom and pan interactions to the containing `<Minimap />`.
+ *
+ * @since 3.11
  */
 export function MinimapPinch() {
   const { area, apply, cancelDrag, flipped, getCurrentZoom, limits, overlayNode, registerCancelPinch } =
@@ -932,6 +950,8 @@ export function MinimapPinch() {
 
 /**
  * Adds arrow-key panning, +/- zooming and 0/Home reset to the containing `<Minimap />`.
+ *
+ * @since 3.11
  */
 export function MinimapKeyboard({
   step = DEFAULT_WHEEL_STEP,
@@ -991,6 +1011,8 @@ export function MinimapKeyboard({
 
 /**
  * Default minimap interaction bundle: drag, wheel, pinch and keyboard controls.
+ *
+ * @since 3.11
  */
 export function MinimapControls() {
   return (
@@ -1013,6 +1035,7 @@ export function MinimapControls() {
  * `ZoomAndPan`, so it stays in sync with plot gestures, scrollbars, Brush zoom mode and controlled zoom state.
  *
  * @consumes CartesianChartContext
+ * @since 3.11
  */
 export function Minimap(outsideProps: Props) {
   return <MinimapInternal {...outsideProps} />;

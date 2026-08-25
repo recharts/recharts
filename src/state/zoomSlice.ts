@@ -4,6 +4,8 @@ import { AxisViewport, clampViewport, FULL_VIEWPORT, viewportsEqual } from '../u
 /**
  * The two spatial dimensions a cartesian chart can be zoomed along.
  * `x` is shared by every horizontal axis, `y` by every vertical axis.
+ *
+ * @since 3.11
  */
 export type ZoomDimension = 'x' | 'y';
 

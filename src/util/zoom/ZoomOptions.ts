@@ -4,17 +4,23 @@ import { AxisViewport, clampViewport, FULL_VIEWPORT } from './viewport';
 
 /**
  * Which dimensions a chart can be zoomed and panned along.
+ *
+ * @since 3.11
  */
 export type ZoomAxis = 'x' | 'y' | 'xy';
 
 /**
  * A visible window along a single axis, expressed as fractions in `[0, 1]` of the axis.
  * `{ start: 0, end: 1 }` is the whole axis (not zoomed).
+ *
+ * @since 3.11
  */
 export type AxisWindow = { start: number; end: number };
 
 /**
  * A per-dimension viewport in public form. Omitting a dimension means it is not zoomed.
+ *
+ * @since 3.11
  */
 export type ZoomViewport = { x?: AxisWindow; y?: AxisWindow };
 
@@ -95,6 +101,8 @@ type ZoomGestureOptions = {
 
 /**
  * Public configuration for the cartesian zoom/pan feature. See the "Zoom and Pan" guide.
+ *
+ * @since 3.11
  */
 export type ZoomOptions = ZoomGestureOptions & {
   /**
@@ -119,6 +127,8 @@ export type ZoomOptions = ZoomGestureOptions & {
 
 /**
  * The `zoom` prop accepts `true` (enable with defaults), an axis shorthand (`"x"`), or full options.
+ *
+ * @since 3.11
  */
 export type ZoomProp = boolean | ZoomAxis | ZoomOptions;
 
