@@ -190,6 +190,9 @@ const getSectorWithCorner = ({
 };
 
 interface SectorProps {
+  /**
+   * The SVG element's class name.
+   */
   className?: string;
   /**
    * The x-coordinate of center.
@@ -231,6 +234,12 @@ interface SectorProps {
    * @default false
    */
   forceCornerRadius?: boolean;
+  /**
+   * When false (default), the rounded corners are inset within the
+   * angle defined by `startAngle`/`endAngle`, keeping the sector within
+   * its nominal bounds. When true, the corners extend beyond that
+   * angle, making the sector appear visually wider at its rounded ends.
+   */
   cornerIsExternal?: boolean;
   /**
    * The customized event handler of click on the sector
@@ -284,6 +293,12 @@ export const defaultSectorProps = {
   cornerIsExternal: false,
 } as const satisfies Partial<Props>;
 
+/**
+ * Renders a sector (pie-slice or donut-segment shape) from center
+ * coordinates, inner/outer radius, and start/end angles. Used by polar
+ * components such as Pie, RadialBar, and PolarGrid, and as the radial
+ * cursor shape shown by Tooltip on polar charts.
+ */
 export const Sector: React.FC<Props> = sectorProps => {
   const props = resolveDefaultProps(sectorProps, defaultSectorProps);
   const {
