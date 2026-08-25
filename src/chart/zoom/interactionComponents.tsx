@@ -278,7 +278,7 @@ export type ZoomPanKeyboardProps = CommonZoomProps &
     panFastMultiplier?: number;
   };
 
-/** Keyboard zoom/pan while the chart is focused (`+`/`-` zoom, arrows pan, `0`/`Esc` reset). */
+/** Keyboard zoom/pan while the chart is focused (`+`/`-` zoom, Shift + arrows pan, `0`/`Esc` reset). */
 export function ZoomPanKeyboard({
   axis,
   xAxisId,

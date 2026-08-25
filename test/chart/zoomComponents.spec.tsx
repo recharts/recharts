@@ -58,6 +58,24 @@ describe('zoom interaction components', () => {
     await waitFor(() => expect(zoomApi.isZoomed).toBe(true));
   });
 
+  it('<PanOnDrag/> suppresses native text selection only while a mouse drag is active', () => {
+    const { wrapper } = renderWith(<PanOnDrag />);
+
+    const beforeDrag = new Event('selectstart', { bubbles: true, cancelable: true });
+    document.dispatchEvent(beforeDrag);
+    expect(beforeDrag.defaultPrevented).toBe(false);
+
+    fireEvent.pointerDown(wrapper, { button: 0, pointerType: 'mouse', clientX: 200, clientY: 150 });
+    const duringDrag = new Event('selectstart', { bubbles: true, cancelable: true });
+    document.dispatchEvent(duringDrag);
+    expect(duringDrag.defaultPrevented).toBe(true);
+
+    fireEvent.pointerUp(window, { pointerType: 'mouse', clientX: 220, clientY: 150 });
+    const afterDrag = new Event('selectstart', { bubbles: true, cancelable: true });
+    document.dispatchEvent(afterDrag);
+    expect(afterDrag.defaultPrevented).toBe(false);
+  });
+
   it('<ZoomPanKeyboard/> zooms on "+"', async () => {
     const { wrapper } = renderWith(<ZoomPanKeyboard />);
     fireEvent.keyDown(wrapper, { key: '+' });

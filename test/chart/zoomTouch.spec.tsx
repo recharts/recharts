@@ -1,8 +1,8 @@
 import * as React from 'react';
 import { act, render, fireEvent, waitFor } from '@testing-library/react';
 import { describe, it, expect, vi } from 'vitest';
-import { Line, LineChart, XAxis, YAxis, ZoomAndPan } from '../../src';
-import type { ZoomAndPanProps } from '../../src';
+import { Line, LineChart, Tooltip, XAxis, YAxis, ZoomAndPan } from '../../src';
+import type { ZoomAndPanProps, ZoomViewport } from '../../src';
 
 const data = Array.from({ length: 20 }, (_, i) => ({ name: `#${i}`, uv: 1000 + i * 50 }));
 
@@ -151,8 +151,8 @@ describe('touch zoom gestures', () => {
   });
 
   it('double-tap then drag zooms into the selected region when configured', async () => {
-    const onZoomChange = vi.fn();
-    const onTouchSelect = vi.fn();
+    const onZoomChange = vi.fn<(viewport: Required<ZoomViewport>) => void>();
+    const onTouchSelect = vi.fn<(selection: ZoomViewport) => void>();
     const { wrapper } = renderChart({ axis: 'xy', touchDoubleTapDrag: 'select', onTouchSelect, onZoomChange });
     fireEvent.touchStart(wrapper, { touches: [{ clientX: 150, clientY: 150 }] });
     fireEvent.touchEnd(wrapper, { touches: [] });
@@ -162,13 +162,175 @@ describe('touch zoom gestures', () => {
 
     await waitFor(() => expect(onTouchSelect).toHaveBeenCalled());
     await waitFor(() => expect(onZoomChange).toHaveBeenCalled());
-    expect(onTouchSelect.mock.calls.at(-1)![0]).toMatchObject({
+    const selected = onTouchSelect.mock.calls.at(-1)?.[0];
+    expect(selected).toMatchObject({
       x: expect.objectContaining({ start: expect.any(Number), end: expect.any(Number) }),
       y: expect.objectContaining({ start: expect.any(Number), end: expect.any(Number) }),
     });
-    const last = onZoomChange.mock.calls.at(-1)![0];
+    const last = onZoomChange.mock.calls.at(-1)?.[0];
+    if (selected?.x == null || selected.y == null || last == null) {
+      throw new Error('Expected both the selected and applied x/y viewports');
+    }
+    expect(selected.x.start).toBeCloseTo(last.x.start);
+    expect(selected.x.end).toBeCloseTo(last.x.end);
+    expect(selected.y.start).toBeCloseTo(last.y.start);
+    expect(selected.y.end).toBeCloseTo(last.y.end);
     expect(last.x.end - last.x.start).toBeLessThan(1);
     expect(last.y.end - last.y.start).toBeLessThan(1);
+  });
+
+  it('keeps a stationary finger over the same data while the other finger pinches', async () => {
+    const onZoomChange = vi.fn<(viewport: Required<ZoomViewport>) => void>();
+    const initialX = { start: 0.2, end: 0.8 };
+    const { wrapper } = renderChart({
+      axis: 'x',
+      initialZoom: { x: initialX },
+      onZoomChange,
+      pinchThreshold: 0,
+      scrollbars: false,
+    });
+    await waitFor(() => expect(onZoomChange).toHaveBeenCalled());
+    onZoomChange.mockClear();
+
+    const axisLine = wrapper.querySelector<SVGLineElement>('.recharts-xAxis .recharts-cartesian-axis-line');
+    if (axisLine == null) {
+      throw new Error('Expected an x-axis line');
+    }
+    const plotStart = Number(axisLine.getAttribute('x1'));
+    const plotEnd = Number(axisLine.getAttribute('x2'));
+    const plotWidth = plotEnd - plotStart;
+    const stationaryFraction = 0.25;
+    const stationaryX = plotStart + plotWidth * stationaryFraction;
+    const movingStartX = plotStart + plotWidth * 0.5;
+    const movingEndX = plotStart + plotWidth * 0.75;
+    const y = 150;
+
+    fireEvent.touchStart(wrapper, {
+      cancelable: true,
+      touches: [
+        { clientX: stationaryX, clientY: y },
+        { clientX: movingStartX, clientY: y },
+      ],
+    });
+    fireEvent.touchMove(wrapper, {
+      cancelable: true,
+      touches: [
+        { clientX: stationaryX, clientY: y },
+        { clientX: movingEndX, clientY: y },
+      ],
+    });
+
+    await waitFor(() => expect(onZoomChange).toHaveBeenCalled());
+    const next = onZoomChange.mock.calls.at(-1)?.[0];
+    if (next == null) {
+      throw new Error('Expected the pinch to update the viewport');
+    }
+    const dataAtStationaryFinger = initialX.start + stationaryFraction * (initialX.end - initialX.start);
+    const dataAfterPinch = next.x.start + stationaryFraction * (next.x.end - next.x.start);
+    expect(dataAfterPinch).toBeCloseTo(dataAtStationaryFinger);
+  });
+
+  it('does not route an accepted two-finger gesture through the tooltip touch handler', async () => {
+    const onZoomChange = vi.fn<(viewport: Required<ZoomViewport>) => void>();
+    const onTouchMove: NonNullable<React.ComponentProps<typeof LineChart>['onTouchMove']> = vi.fn();
+    const { container } = render(
+      <LineChart width={400} height={300} data={data} onTouchMove={onTouchMove}>
+        <XAxis dataKey="name" />
+        <YAxis />
+        <Tooltip isAnimationActive={false} />
+        <Line type="monotone" dataKey="uv" isAnimationActive={false} />
+        <ZoomAndPan axis="x" onZoomChange={onZoomChange} pinchThreshold={0} scrollbars={false} />
+      </LineChart>,
+    );
+    const wrapper = container.querySelector<HTMLElement>('.recharts-wrapper');
+    const tooltip = container.querySelector<HTMLElement>('.recharts-tooltip-wrapper');
+    if (wrapper == null || tooltip == null) {
+      throw new Error('Expected the chart wrapper and tooltip wrapper');
+    }
+
+    fireEvent.touchStart(wrapper, {
+      cancelable: true,
+      touches: [
+        { clientX: 140, clientY: 150 },
+        { clientX: 220, clientY: 150 },
+      ],
+    });
+    fireEvent.touchMove(wrapper, {
+      cancelable: true,
+      touches: [
+        { clientX: 120, clientY: 150 },
+        { clientX: 240, clientY: 150 },
+      ],
+    });
+    flushRaf();
+
+    await waitFor(() => expect(onZoomChange).toHaveBeenCalled());
+    expect(onTouchMove).toHaveBeenCalledTimes(1);
+    expect(tooltip).toHaveTextContent('');
+  });
+
+  it('cancels a pending one-finger Tooltip update when a pinch claims the gesture', async () => {
+    const onZoomChange = vi.fn<(viewport: Required<ZoomViewport>) => void>();
+    const { container } = render(
+      <LineChart width={400} height={300} data={data}>
+        <XAxis dataKey="name" />
+        <YAxis />
+        <Tooltip isAnimationActive={false} />
+        <Line type="monotone" dataKey="uv" isAnimationActive={false} />
+        <ZoomAndPan axis="x" onZoomChange={onZoomChange} pinchThreshold={0} scrollbars={false} />
+      </LineChart>,
+    );
+    const wrapper = container.querySelector<HTMLElement>('.recharts-wrapper');
+    const tooltip = container.querySelector<HTMLElement>('.recharts-tooltip-wrapper');
+    if (wrapper == null || tooltip == null) {
+      throw new Error('Expected the chart wrapper and tooltip wrapper');
+    }
+
+    fireEvent.touchStart(wrapper, { cancelable: true, touches: [{ clientX: 200, clientY: 150 }] });
+    // This unclaimed move schedules the Tooltip middleware's animation-frame work.
+    fireEvent.touchMove(wrapper, { cancelable: true, touches: [{ clientX: 202, clientY: 150 }] });
+
+    fireEvent.touchStart(wrapper, {
+      cancelable: true,
+      touches: [
+        { clientX: 202, clientY: 150 },
+        { clientX: 220, clientY: 150 },
+      ],
+    });
+    fireEvent.touchMove(wrapper, {
+      cancelable: true,
+      touches: [
+        { clientX: 190, clientY: 150 },
+        { clientX: 240, clientY: 150 },
+      ],
+    });
+    flushRaf();
+
+    await waitFor(() => expect(onZoomChange).toHaveBeenCalled());
+    expect(tooltip).toHaveTextContent('');
+  });
+
+  it('continues routing an unclaimed one-finger touch move to the tooltip', async () => {
+    const { container } = render(
+      <LineChart width={400} height={300} data={data}>
+        <XAxis dataKey="name" />
+        <YAxis />
+        <Tooltip isAnimationActive={false} />
+        <Line type="monotone" dataKey="uv" isAnimationActive={false} />
+        <ZoomAndPan axis="x" scrollbars={false} />
+      </LineChart>,
+    );
+    const wrapper = container.querySelector<HTMLElement>('.recharts-wrapper');
+    const tooltip = container.querySelector<HTMLElement>('.recharts-tooltip-wrapper');
+    if (wrapper == null || tooltip == null) {
+      throw new Error('Expected the chart wrapper and tooltip wrapper');
+    }
+
+    fireEvent.touchStart(wrapper, { touches: [{ clientX: 200, clientY: 150 }] });
+    fireEvent.touchMove(wrapper, { touches: [{ clientX: 210, clientY: 150 }] });
+    flushRaf();
+
+    await waitFor(() => expect(tooltip.textContent).not.toBe(''));
   });
 
   it('double-tap resets', async () => {

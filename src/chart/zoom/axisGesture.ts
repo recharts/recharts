@@ -1,5 +1,6 @@
 import { isInteractiveZoomTarget, ZoomGestureInstaller } from './ZoomGestureApi';
 import { ZoomDimension } from '../../state/zoomSlice';
+import { suppressTextSelectionWhile } from './textSelection';
 
 /**
  * Dragging on an axis band pans only that axis. Wheel over an axis is handled by the wheel gesture.
@@ -54,12 +55,15 @@ export const installAxisGesture: ZoomGestureInstaller = api => {
     panAxis = null;
   };
 
+  const removeTextSelectionSuppression = suppressTextSelectionWhile(() => panAxis != null);
+
   api.element.addEventListener('pointerdown', onPointerDown);
   window.addEventListener('pointermove', onPointerMove);
   window.addEventListener('pointerup', onPointerUp);
   window.addEventListener('pointercancel', onPointerUp);
   return () => {
     api.element.removeEventListener('pointerdown', onPointerDown);
+    removeTextSelectionSuppression();
     window.removeEventListener('pointermove', onPointerMove);
     window.removeEventListener('pointerup', onPointerUp);
     window.removeEventListener('pointercancel', onPointerUp);

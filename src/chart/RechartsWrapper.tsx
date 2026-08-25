@@ -20,7 +20,7 @@ import { focusAction, keyDownAction, blurAction } from '../state/keyboardEventsM
 import { useReportScale } from '../util/useReportScale';
 import { ExternalMouseEvents } from './types';
 import { externalEventAction } from '../state/externalEventsMiddleware';
-import { touchEventAction } from '../state/touchEventsMiddleware';
+import { cancelTouchEventAction, touchEventAction } from '../state/touchEventsMiddleware';
 import { TooltipPortalContext } from '../context/tooltipPortalContext';
 import { LegendPortalContext } from '../context/legendPortalContext';
 import { ReportChartSize } from '../context/chartLayoutContext';
@@ -372,8 +372,17 @@ export const RechartsWrapper = forwardRef<HTMLDivElement | null, RechartsWrapper
      */
     const myOnTouchMove = useCallback(
       (e: React.TouchEvent<HTMLDivElement>) => {
+        // Native chart controls prevent the browser default once they claim a touch gesture. Keep
+        // those gestures out of the one-finger Tooltip pipeline without swallowing the public
+        // onTouchMove callback.
         if (dispatchTouchEvents) {
-          dispatch(touchEventAction(e));
+          if (e.defaultPrevented) {
+            // A pinch may claim the gesture after a small one-finger move already queued Tooltip
+            // work. Cancel that pending work as well as suppressing this claimed move.
+            dispatch(cancelTouchEventAction(e.currentTarget));
+          } else {
+            dispatch(touchEventAction(e));
+          }
         }
         dispatch(externalEventAction({ handler: onTouchMove, reactEvent: e }));
       },
