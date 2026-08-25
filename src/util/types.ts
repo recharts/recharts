@@ -951,6 +951,8 @@ export interface RenderableAxisProps<DataPointType, DataValueType> extends BaseA
   tickSize?: number;
   /**
    * The formatter function of tick.
+   *
+   * @example <XAxis tickFormatter={(value) => typeof value === 'number' ? new Intl.NumberFormat('ar', { numberingSystem: 'arab' }).format(value) : String(value)} />
    */
   tickFormatter?: (value: any, index: number) => string;
   /**
