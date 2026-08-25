@@ -2,7 +2,7 @@ import { useLayoutEffect, useRef } from 'react';
 import { useAppDispatch, useAppSelector } from '../state/hooks';
 import { selectZoom } from '../state/selectors/zoomSelectors';
 import { setZoom, ZoomState } from '../state/zoomSlice';
-import { setZoomAxis, setZoomLimits } from '../state/zoomSettingsSlice';
+import { setControlledZoomViewport, setZoomAxis, setZoomLimits } from '../state/zoomSettingsSlice';
 import { useIsPanorama } from '../context/PanoramaContext';
 import { viewportsEqual } from '../util/zoom/viewport';
 import { clampDimensionToLimits, resetDimensionWithLimits } from '../util/zoom/zoomActions';
@@ -50,6 +50,18 @@ export function ZoomStateSync({ options }: { options: ResolvedZoomOptions }): nu
       dispatch(setZoomAxis(null));
     };
   }, [dispatch, isPanorama, options.axis, options.minZoom, options.maxZoom]);
+
+  // Register controlled-state provenance for the chart-level sync listener. It uses this target to
+  // suppress both an incoming proposal and the rollback when the parent rejects that proposal.
+  useLayoutEffect(() => {
+    if (isPanorama) {
+      return undefined;
+    }
+    dispatch(setControlledZoomViewport(viewport == null ? null : zoomStateFromViewport(viewport)));
+    return () => {
+      dispatch(setControlledZoomViewport(null));
+    };
+  }, [dispatch, isPanorama, viewport]);
 
   // 1. Initial (uncontrolled) viewport, applied once.
   const didApplyInitial = useRef(false);

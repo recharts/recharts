@@ -5,6 +5,7 @@ import { ZoomAxis } from '../../src/util/zoom/ZoomOptions';
 const initialState: ZoomSettingsState = {
   limits: null,
   axis: null,
+  controlledViewport: null,
 };
 
 describe('zoomSettingsSlice', () => {
