@@ -74,6 +74,7 @@
   "lib/chart/zoom/interactionComponents.js",
   "lib/chart/zoom/keyboardGesture.js",
   "lib/chart/zoom/pointerGesture.js",
+  "lib/chart/zoom/textSelection.js",
   "lib/chart/zoom/touchGesture.js",
   "lib/chart/zoom/useScatterLOD.js",
   "lib/chart/zoom/useZoomApi.js",

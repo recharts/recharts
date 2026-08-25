@@ -1,5 +1,6 @@
 import { isInteractiveZoomTarget, ZoomGestureInstaller, SelectionRect } from './ZoomGestureApi';
 import { ZoomViewport, viewportToWindow, zoomEnabledForDimension } from '../../util/zoom/ZoomOptions';
+import { suppressTextSelectionWhile } from './textSelection';
 
 /** Minimum drag length (as a fraction of the visible window) before a drag-to-zoom selection counts. */
 const MIN_SELECT_FRACTION = 0.01;
@@ -158,12 +159,15 @@ export const installPointerGesture: ZoomGestureInstaller = api => {
     startPixels = null;
   };
 
+  const removeTextSelectionSuppression = suppressTextSelectionWhile(() => mode != null);
+
   api.element.addEventListener('pointerdown', onPointerDown);
   window.addEventListener('pointermove', onPointerMove);
   window.addEventListener('pointerup', onPointerUp);
   window.addEventListener('pointercancel', onPointerCancel);
   return () => {
     api.element.removeEventListener('pointerdown', onPointerDown);
+    removeTextSelectionSuppression();
     window.removeEventListener('pointermove', onPointerMove);
     window.removeEventListener('pointerup', onPointerUp);
     window.removeEventListener('pointercancel', onPointerCancel);

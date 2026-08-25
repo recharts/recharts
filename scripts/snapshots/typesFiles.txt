@@ -74,6 +74,7 @@
   "types/chart/zoom/interactionComponents.d.ts",
   "types/chart/zoom/keyboardGesture.d.ts",
   "types/chart/zoom/pointerGesture.d.ts",
+  "types/chart/zoom/textSelection.d.ts",
   "types/chart/zoom/touchGesture.d.ts",
   "types/chart/zoom/useScatterLOD.d.ts",
   "types/chart/zoom/useZoomApi.d.ts",

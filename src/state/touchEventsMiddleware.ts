@@ -13,6 +13,7 @@ import { RelativePointer } from '../util/types';
 import { createEventProxy } from '../util/createEventProxy';
 
 export const touchEventAction = createAction<React.TouchEvent<HTMLDivElement>>('touchMove');
+export const cancelTouchEventAction = createAction<HTMLDivElement>('touchMove/cancel');
 
 export const touchEventMiddleware = createListenerMiddleware<RechartsRootState>();
 
@@ -20,6 +21,32 @@ let rafId: number | null = null;
 let timeoutId: ReturnType<typeof setTimeout> | null = null;
 let latestChartPointers: ReadonlyArray<RelativePointer> | null = null;
 let latestTouchEvent: React.TouchEvent<HTMLDivElement> | null = null;
+
+function clearPendingTouchEvent(): void {
+  if (rafId !== null) {
+    cancelAnimationFrame(rafId);
+  }
+  if (timeoutId !== null) {
+    clearTimeout(timeoutId);
+  }
+  rafId = null;
+  timeoutId = null;
+  latestChartPointers = null;
+  latestTouchEvent = null;
+}
+
+touchEventMiddleware.startListening({
+  actionCreator: cancelTouchEventAction,
+  effect: action => {
+    /*
+     * The middleware instance is shared by chart stores, so only cancel work queued by the same
+     * wrapper. A pinch in one chart must not discard a one-finger Tooltip update in another.
+     */
+    if (latestTouchEvent?.currentTarget === action.payload) {
+      clearPendingTouchEvent();
+    }
+  },
+});
 
 touchEventMiddleware.startListening({
   actionCreator: touchEventAction,

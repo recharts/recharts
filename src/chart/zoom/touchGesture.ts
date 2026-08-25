@@ -121,14 +121,13 @@ export const installTouchGesture: ZoomGestureInstaller = api => {
     return { x, y, width, height };
   };
 
-  const emitTouchSelection = (endClient: Pt) => {
-    const { onTouchSelectRegion } = api.getOptions();
-    if (anchor == null || onTouchSelectRegion == null) {
-      return;
+  const previewTouchSelection = (endClient: Pt): ZoomViewport | null => {
+    if (anchor == null) {
+      return null;
     }
     const to = api.plotFractions(endClient.clientX, endClient.clientY);
     if (to == null) {
-      return;
+      return null;
     }
     const selection: ZoomViewport = {};
     const options = api.getOptions();
@@ -146,7 +145,12 @@ export const installTouchGesture: ZoomGestureInstaller = api => {
     if (vy != null) {
       selection.y = viewportToWindow(vy);
     }
-    if (selection.x != null || selection.y != null) {
+    return selection.x != null || selection.y != null ? selection : null;
+  };
+
+  const emitTouchSelection = (selection: ZoomViewport | null) => {
+    const { onTouchSelectRegion } = api.getOptions();
+    if (selection != null && onTouchSelectRegion != null) {
       onTouchSelectRegion(selection);
     }
   };
@@ -277,6 +281,8 @@ export const installTouchGesture: ZoomGestureInstaller = api => {
 
     if (mode === 'pinch' && touches.length >= 2) {
       invalidateTapCandidate();
+      // This also marks the event as claimed so RechartsWrapper leaves it out of the one-finger
+      // Tooltip pipeline while still forwarding the public onTouchMove callback.
       if (event.cancelable) {
         event.preventDefault();
       }
@@ -295,7 +301,14 @@ export const installTouchGesture: ZoomGestureInstaller = api => {
         zoomDistance = initialDistance + Math.sign(d - initialDistance) * threshold;
       }
       if (zooming && zoomDistance > 0 && d > 0) {
-        const fractions = api.plotFractions(m.clientX, m.clientY);
+        /*
+         * Zoom around the previous midpoint, then pan by the midpoint's movement below. Together
+         * those two operations are the affine transform described by the two pairs of touch
+         * positions. Using the new midpoint for both operations biases the pivot toward the moving
+         * finger when the other finger stays still.
+         */
+        const zoomFocus = lastMid ?? m;
+        const fractions = api.plotFractions(zoomFocus.clientX, zoomFocus.clientY);
         if (fractions != null) {
           const factor = d / zoomDistance;
           if (pinchAxis === 'both' || pinchAxis === 'x') {
@@ -315,7 +328,6 @@ export const installTouchGesture: ZoomGestureInstaller = api => {
         if (pinchAxis === 'both' || pinchAxis === 'y') {
           api.panByPixels('y', m.clientY - lastMid.clientY);
         }
-        api.refreshPointer(m.clientX, m.clientY);
       }
       lastMid = m;
       return;
@@ -426,10 +438,13 @@ export const installTouchGesture: ZoomGestureInstaller = api => {
         : null;
     if (mode === 'doubleTapDrag' && lastDragClient != null) {
       if (api.getOptions().touchDoubleTapDrag === 'selectCallback') {
-        emitTouchSelection(lastDragClient);
+        emitTouchSelection(previewTouchSelection(lastDragClient));
       } else if (api.getOptions().touchDoubleTapDrag === 'selectZoom') {
+        // Compute the public selection before selectInto updates the live viewport. Recomputing it
+        // afterwards would apply the same fractions twice.
+        const selection = previewTouchSelection(lastDragClient);
         zoomIntoTouchSelection(lastDragClient);
-        emitTouchSelection(lastDragClient);
+        emitTouchSelection(selection);
         api.refreshPointer(lastDragClient.clientX, lastDragClient.clientY);
       }
       api.setSelection(null);
