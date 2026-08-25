@@ -58,7 +58,7 @@ export default function BrushZoomModeExample(props: Partial<ControlsType>) {
   };
 
   return (
-    <LineChart width={700} height={340} data={data} responsive>
+    <LineChart style={{ width: '100%', maxWidth: 700, height: 340 }} data={data} responsive>
       <CartesianGrid strokeDasharray="3 3" />
       <XAxis dataKey="label" />
       <YAxis />

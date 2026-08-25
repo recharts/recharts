@@ -42,7 +42,7 @@ export default {
     pan: { control: { type: 'boolean' }, description: 'Drag the plot to pan.' },
     panStep: {
       control: { type: 'range', min: 0.01, max: 0.5, step: 0.01 },
-      description: 'Pan distance per arrow-key press, as a fraction of the visible window.',
+      description: 'Base pan distance per Shift + arrow press, as a fraction of the visible window.',
     },
     panFastMultiplier: {
       control: { type: 'range', min: 1, max: 10, step: 0.5 },
@@ -56,7 +56,7 @@ export default {
     doubleClickReset: { control: { type: 'boolean' }, description: 'Double-click / double-tap resets the view.' },
     keyboard: {
       control: { type: 'boolean' },
-      description: 'With the chart focused: +/- zoom, arrows pan (Shift = faster), 0/Esc reset.',
+      description: 'With the chart focused: +/- zoom, Shift + arrows pan, 0/Esc reset.',
     },
     touch: {
       control: { type: 'boolean' },

@@ -16,7 +16,7 @@ export default function ControlledSyncExample() {
 
   return (
     <div>
-      <LineChart width={700} height={200} data={data} responsive>
+      <LineChart style={{ width: '100%', maxWidth: 700, height: 200 }} data={data} responsive>
         <CartesianGrid strokeDasharray="3 3" />
         <XAxis dataKey="label" />
         <YAxis />
@@ -24,7 +24,7 @@ export default function ControlledSyncExample() {
         <Line type="monotone" dataKey="x" stroke="#8884d8" dot={false} isAnimationActive={false} />
         <ZoomAndPan {...zoom} />
       </LineChart>
-      <LineChart width={700} height={200} data={data} responsive>
+      <LineChart style={{ width: '100%', maxWidth: 700, height: 200 }} data={data} responsive>
         <CartesianGrid strokeDasharray="3 3" />
         <XAxis dataKey="label" />
         <YAxis />

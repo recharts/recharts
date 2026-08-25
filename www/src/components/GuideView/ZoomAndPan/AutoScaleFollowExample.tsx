@@ -6,16 +6,21 @@ import {
   LineChart,
   MouseWheelZoom,
   PanOnDrag,
+  PinchZoom,
   Tooltip,
   XAxis,
   YAxis,
   ZoomScrollbar,
 } from 'recharts';
-import { generateMockData } from '@recharts/devtools';
 import type { Lever } from '../../Shared/levers/Levers.tsx';
 import { createCheckboxLever } from '../../Shared/levers/Levers.tsx';
 
-const data = generateMockData(80, 13);
+// A rising series gives each visible x window a much narrower and clearly different y extent than
+// the complete dataset, so AutoScaleAxis' re-fit is immediately visible while panning.
+const data = Array.from({ length: 80 }, (_, index) => ({
+  label: `Point ${index + 1}`,
+  x: Math.round(30 + index * 5 + Math.sin(index / 2) * 12),
+}));
 
 type ControlsType = {
   autoScale: boolean;
@@ -51,14 +56,15 @@ export default function AutoScaleFollowExample(props: Partial<ControlsType>) {
   const { autoScale, follow } = { ...autoScaleFollowExampleDefaultState, ...props };
 
   return (
-    <LineChart width={700} height={300} data={data} responsive>
+    <LineChart style={{ width: '100%', maxWidth: 700, height: 300 }} data={data} responsive>
       <CartesianGrid strokeDasharray="3 3" />
       <XAxis dataKey="label" />
-      <YAxis />
+      <YAxis tickCount={8} />
       <Tooltip />
       <Line type="monotone" dataKey="x" stroke="#8884d8" dot={false} isAnimationActive={false} />
       <MouseWheelZoom axis="x" />
       <PanOnDrag axis="x" />
+      <PinchZoom axis="x" touchDrag="pan" />
       <ZoomScrollbar axis="x" ariaLabel="Visible x range" />
       {autoScale && !follow && <AutoScaleAxis />}
       {follow && <FollowSeries dataKey="x" autoScale={autoScale} />}

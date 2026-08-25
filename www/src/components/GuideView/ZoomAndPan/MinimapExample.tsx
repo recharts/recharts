@@ -18,7 +18,7 @@ import { createCheckboxLever, createSelectLever } from '../../Shared/levers/Leve
 
 const data = generateMockData(80, 3);
 
-type MinimapPosition = 'top-left' | 'top-right' | 'bottom-left' | 'bottom-right';
+type MinimapPosition = 'insideTopLeft' | 'insideTopRight' | 'insideBottomLeft' | 'insideBottomRight';
 
 type ControlsType = {
   minimapPosition: MinimapPosition;
@@ -28,13 +28,18 @@ type ControlsType = {
 };
 
 export const minimapExampleDefaultState: ControlsType = {
-  minimapPosition: 'bottom-right',
+  minimapPosition: 'insideBottomRight',
   minimapWheel: true,
   minimapPinch: true,
   globalWheel: true,
 };
 
-const minimapPositions: ReadonlyArray<MinimapPosition> = ['top-left', 'top-right', 'bottom-left', 'bottom-right'];
+const minimapPositions: ReadonlyArray<MinimapPosition> = [
+  'insideTopLeft',
+  'insideTopRight',
+  'insideBottomLeft',
+  'insideBottomRight',
+];
 
 export const minimapExampleLevers = [
   createSelectLever<ControlsType, MinimapPosition>({
@@ -71,7 +76,7 @@ export default function MinimapExample(props: Partial<ControlsType>) {
   };
 
   return (
-    <LineChart width={700} height={320} data={data} responsive>
+    <LineChart style={{ width: '100%', maxWidth: 700, height: 320 }} data={data} responsive>
       <CartesianGrid strokeDasharray="3 3" />
       <XAxis dataKey="label" />
       <YAxis />

@@ -8,8 +8,8 @@ function ZoomButtons() {
   const [zoom, setZoom] = useZoomState();
 
   return (
-    <foreignObject x={8} y={308} width={684} height={46}>
-      <div style={{ display: 'flex', gap: 6, alignItems: 'center' }}>
+    <foreignObject x={8} y={308} width="calc(100% - 16px)" height={64}>
+      <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6, alignItems: 'center' }}>
         <button type="button" onClick={() => zoomIn()}>
           Zoom in
         </button>
@@ -32,7 +32,7 @@ function ZoomButtons() {
 
 export default function CustomControlsExample() {
   return (
-    <LineChart width={700} height={360} data={data} margin={{ bottom: 64 }} responsive>
+    <LineChart style={{ width: '100%', maxWidth: 700, height: 380 }} data={data} margin={{ bottom: 84 }} responsive>
       <CartesianGrid strokeDasharray="3 3" />
       <XAxis dataKey="label" />
       <YAxis />
