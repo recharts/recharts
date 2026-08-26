@@ -47,6 +47,7 @@
     "test-treeshaking": "vitest run scripts/treeshaking.test.ts scripts/generate-bundle-data.test.ts",
     "omnidoc": "npm exec --prefix ./www -- tsx ./omnidoc/generateApiDoc.ts && npm exec --prefix ./www -- tsx ./omnidoc/generateStorybookArgs.ts",
     "test-mutation": "stryker run",
+    "test-mutation-file": "stryker run --checkers \"\" --incremental --mutate",
     "test-watch": "vitest --config vitest.config.mts --project unit:*",
     "lint": "eslint .",
     "autofix": "eslint . --fix",
