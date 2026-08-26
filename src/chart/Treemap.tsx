@@ -47,6 +47,9 @@ import { GraphicalItemId } from '../state/graphicalItemsSlice';
 import { initialEventSettingsState } from '../state/eventSettingsSlice';
 import { RechartsTheme } from '../theme/RechartsTheme';
 import { useBackwardsCompatibleTheme } from '../theme/useBackwardsCompatibleTheme';
+import { ZoomPropBridge } from './zoom/ZoomPropBridge';
+import { ZoomProp } from '../util/zoom/ZoomOptions';
+import { ZoomableChartContent } from './zoom/ZoomableChartContent';
 
 const NODE_VALUE_KEY = 'value';
 
@@ -423,6 +426,23 @@ export type TreemapContentType = ReactNode | ((props: TreemapNode) => React.Reac
 export interface Props<DataPointType extends TreemapDataType = TreemapDataType, DataValueType = any>
   extends DataConsumer<DataPointType, DataValueType>, EventThrottlingProps {
   /**
+   * Turn on accessibility support for keyboard-only and screen reader users.
+   *
+   * @defaultValue true
+   */
+  accessibilityLayer?: boolean;
+  title?: string;
+  desc?: string;
+  role?: React.AriaRole;
+  tabIndex?: number;
+  /**
+   * Enables the built-in zoom and pan controls.
+   *
+   * Accepts `true` for defaults, `'x' | 'y' | 'xy'` as shorthand, or a full options object.
+   * Equivalent to mounting `<ZoomAndPan />` as a child.
+   */
+  zoom?: ZoomProp;
+  /**
    * The width of chart container.
    * Can be a number or a percent string like "100%".
    */
@@ -593,6 +613,7 @@ interface State {
 }
 
 export const defaultTreeMapProps = {
+  accessibilityLayer: true,
   aspectRatio: 0.5 * (1 + Math.sqrt(5)),
   nodeInset: 0,
   nodeGap: 0,
@@ -1133,8 +1154,12 @@ class TreemapWithState extends PureComponent<InternalTreemapProps, State> {
   };
 
   render() {
-    const { width, height, className, style, children, type, ...others } = this.props;
+    const { width, height, className, style, children, type, dispatch, accessibilityLayer, title, desc, ...others } =
+      this.props;
     const attrs = svgPropertiesNoEvents(others);
+
+    const role = attrs.role ?? (accessibilityLayer ? 'application' : undefined);
+    const tabIndex = attrs.tabIndex ?? (accessibilityLayer ? 0 : undefined);
 
     return (
       <>
@@ -1148,11 +1173,15 @@ class TreemapWithState extends PureComponent<InternalTreemapProps, State> {
         />
         <Surface
           {...attrs}
+          title={title}
+          desc={desc}
+          role={role}
+          tabIndex={tabIndex}
           width={width}
           height={getTreemapRenderHeight(height, type)}
           onTouchMove={this.handleTouchMove}
         >
-          {this.renderAllNodes()}
+          <ZoomableChartContent>{this.renderAllNodes()}</ZoomableChartContent>
           {children}
         </Surface>
         {type === 'nest' && this.renderNestIndex()}
@@ -1239,6 +1268,7 @@ export function Treemap(outsideProps: Props) {
             themeGraphicalItems={theme?.graphicalItems ?? []}
             typography={theme?.typography}
           />
+          <ZoomPropBridge zoom={props.zoom} />
         </TooltipPortalContext.Provider>
       </RechartsWrapper>
     </RechartsStoreProvider>

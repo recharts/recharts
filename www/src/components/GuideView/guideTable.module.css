@@ -14,3 +14,10 @@
   border: 1px solid var(--color-border-4);
   text-align: left;
 }
+
+@media (max-width: 480px) {
+  .table {
+    display: block;
+    overflow-x: auto;
+  }
+}

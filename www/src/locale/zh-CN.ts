@@ -51,6 +51,7 @@ export const map = {
     coordinateSystems: '坐标系与维度系统',
     animations: '动画',
     theming: '主题',
+    zoomAndPan: '缩放和平移',
   },
   installation: {
     installation: '安装',
@@ -95,6 +96,7 @@ export const map = {
     deprecated: '已弃用的属性',
     events: '事件',
     since: 'Recharts 自',
+    'zoom-and-pan': '缩放和平移',
   },
   'design-disciplines': {
     'design-disciplines': '设计原则',

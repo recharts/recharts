@@ -458,6 +458,9 @@ describe('axis domain hooks', () => {
         <XAxis dataKey="name" />
         <Brush startIndex={1} endIndex={2}>
           <LineChart>
+            {/* The preview is an isolated chart, so it declares its own (hidden) categorical
+                axis: it no longer inherits the main chart's axis configuration. */}
+            <XAxis dataKey="name" hide />
             <Line dataKey="uv" />
             {children}
           </LineChart>

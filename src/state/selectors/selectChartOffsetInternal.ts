@@ -18,6 +18,7 @@ import { DEFAULT_X_AXIS_HEIGHT, DEFAULT_Y_AXIS_WIDTH } from '../../util/Constant
 import { RechartsRootState } from '../store';
 
 export const selectBrushHeight = (state: RechartsRootState) => state.brush.height;
+export const selectVerticalBrushWidth = (state: RechartsRootState) => state.brush.verticalWidth;
 
 export function selectLeftAxesOffset(state: RechartsRootState): number {
   const yAxes = selectAllYAxes(state);
@@ -75,6 +76,7 @@ export const selectChartOffsetInternal: (state: RechartsRootState) => ChartOffse
     selectChartHeight,
     selectMargin,
     selectBrushHeight,
+    selectVerticalBrushWidth,
     selectLeftAxesOffset,
     selectRightAxesOffset,
     selectTopAxesOffset,
@@ -87,6 +89,7 @@ export const selectChartOffsetInternal: (state: RechartsRootState) => ChartOffse
     chartHeight: number,
     margin: Margin,
     brushHeight: number,
+    verticalBrushWidth: number,
     leftAxesOffset: number,
     rightAxesOffset: number,
     topAxesOffset: number,
@@ -107,8 +110,10 @@ export const selectChartOffsetInternal: (state: RechartsRootState) => ChartOffse
     let offset = { ...offsetV, ...offsetH };
 
     const brushBottom = offset.bottom;
+    const brushRight = offset.right;
 
     offset.bottom += brushHeight;
+    offset.right += verticalBrushWidth;
 
     offset = appendOffsetOfLegend(offset, legendSettings, legendSize);
 
@@ -117,6 +122,9 @@ export const selectChartOffsetInternal: (state: RechartsRootState) => ChartOffse
 
     return {
       brushBottom,
+      // Always present (0-adjusted when there is no vertical brush) so the offset object keeps one
+      // stable shape - consumers and tests compare offsets by value.
+      brushRight,
       ...offset,
       // never return negative values for height and width
       width: Math.max(offsetWidth, 0),

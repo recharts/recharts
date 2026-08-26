@@ -1,8 +1,8 @@
-import { useEffect } from 'react';
-import { PayloadAction } from '@reduxjs/toolkit';
+import { useEffect, useRef, useState } from 'react';
+import type { PayloadAction } from '@reduxjs/toolkit';
 import { useAppDispatch, useAppSelector } from '../state/hooks';
 import { selectEventEmitter, selectSyncId, selectSyncMethod } from '../state/selectors/rootPropsSelectors';
-import { BRUSH_SYNC_EVENT, eventCenter, TOOLTIP_SYNC_EVENT } from '../util/Events';
+import { BRUSH_SYNC_EVENT, eventCenter, TOOLTIP_SYNC_EVENT, ZOOM_SYNC_EVENT } from '../util/Events';
 import { createEventEmitter } from '../state/optionsSlice';
 import { setSyncInteraction, TooltipIndex, TooltipSyncState } from '../state/tooltipSlice';
 import { selectTooltipDataKey } from '../state/selectors/selectors';
@@ -15,6 +15,21 @@ import { BrushStartEndIndex } from '../context/brushUpdateContext';
 import { setDataStartEndIndexes } from '../state/chartDataSlice';
 import { ActiveLabel, MouseHandlerDataParam } from './types';
 import { noop } from '../util/DataUtils';
+import { setZoom } from '../state/zoomSlice';
+import type { ZoomState } from '../state/zoomSlice';
+import { clampDimensionToLimits } from '../util/zoom/zoomActions';
+import { viewportsEqual } from '../util/zoom/viewport';
+import {
+  selectControlledZoomViewport,
+  selectSharedZoomAxis,
+  selectSharedZoomLimits,
+  selectZoom,
+} from '../state/selectors/zoomSelectors';
+import { useIsPanorama } from '../context/PanoramaContext';
+
+function zoomStatesEqual(a: ZoomState, b: ZoomState): boolean {
+  return viewportsEqual(a.x, b.x) && viewportsEqual(a.y, b.y);
+}
 
 /**
  * Listens for tooltip sync events from other charts and dispatches the appropriate
@@ -229,23 +244,6 @@ function useBrushSyncEventsListener() {
 }
 
 /**
- * Will receive synchronisation events from other charts.
- *
- * Reads syncMethod from state and decides how to synchronise the tooltip based on that.
- *
- * @returns void
- */
-export function useSynchronisedEventsFromOtherCharts() {
-  const dispatch = useAppDispatch();
-  useEffect(() => {
-    dispatch(createEventEmitter());
-  }, [dispatch]);
-
-  useTooltipSyncEventsListener();
-  useBrushSyncEventsListener();
-}
-
-/**
  * Will send events to other charts.
  * If syncId is undefined, no events will be sent.
  *
@@ -355,4 +353,121 @@ export function useBrushChartSynchronisation() {
     const syncAction: BrushStartEndIndex = { startIndex: brushStartIndex, endIndex: brushEndIndex };
     eventCenter.emit(BRUSH_SYNC_EVENT, syncId, syncAction, eventEmitterSymbol);
   }, [brushEndIndex, brushStartIndex, eventEmitterSymbol, syncId]);
+}
+
+/**
+ * Keeps the semantic zoom viewport in step for charts that share a `syncId`.
+ *
+ * The receiving chart applies its registered chart-level axis and limit configuration when present;
+ * granular or programmatic-only charts accept the full semantic x/y viewport. Incoming updates are
+ * marked so the passive sender does not echo them back. The sequence counter is intentional: a
+ * controlled receiver may propose and roll an incoming viewport back before passive effects run,
+ * and that no-net-change transaction still needs to consume the incoming marker.
+ */
+function useZoomChartSynchronisation(): void {
+  const syncId = useAppSelector(selectSyncId);
+  const eventEmitterSymbol = useAppSelector(selectEventEmitter);
+  const zoom = useAppSelector(selectZoom);
+  const axis = useAppSelector(selectSharedZoomAxis);
+  const limits = useAppSelector(selectSharedZoomLimits);
+  const controlledViewport = useAppSelector(selectControlledZoomViewport);
+  const isPanorama = useIsPanorama();
+  const dispatch = useAppDispatch();
+  const [incomingSequence, setIncomingSequence] = useState(0);
+  const incomingUpdateRef = useRef<'controlled' | 'uncontrolled' | null>(null);
+  const liveRef = useRef({ zoom, axis, limits, controlledViewport });
+  const lastObservedZoomRef = useRef(zoom);
+  liveRef.current = { zoom, axis, limits, controlledViewport };
+
+  useEffect(() => {
+    if (syncId == null || isPanorama) {
+      return noop;
+    }
+
+    const listener = (incomingSyncId: number | string, incomingZoom: ZoomState, emitter: symbol) => {
+      if (eventEmitterSymbol === emitter || incomingSyncId !== syncId) {
+        return;
+      }
+
+      const { zoom: current, axis: liveAxis, limits: liveLimits, controlledViewport: controlled } = liveRef.current;
+      if (current == null) {
+        return;
+      }
+      const xEnabled = liveAxis == null || liveAxis === 'x' || liveAxis === 'xy';
+      const yEnabled = liveAxis == null || liveAxis === 'y' || liveAxis === 'xy';
+      let nextX = current.x;
+      let nextY = current.y;
+      if (xEnabled) {
+        nextX = liveLimits == null ? incomingZoom.x : clampDimensionToLimits(incomingZoom.x, liveLimits);
+      }
+      if (yEnabled) {
+        nextY = liveLimits == null ? incomingZoom.y : clampDimensionToLimits(incomingZoom.y, liveLimits);
+      }
+      const next: ZoomState = {
+        x: nextX,
+        y: nextY,
+      };
+      if (zoomStatesEqual(current, next)) {
+        return;
+      }
+
+      incomingUpdateRef.current = controlled == null ? 'uncontrolled' : 'controlled';
+      setIncomingSequence(sequence => sequence + 1);
+      dispatch(setZoom(next));
+    };
+
+    eventCenter.on(ZOOM_SYNC_EVENT, listener);
+    return () => {
+      eventCenter.off(ZOOM_SYNC_EVENT, listener);
+    };
+  }, [dispatch, eventEmitterSymbol, isPanorama, syncId]);
+
+  useEffect(() => {
+    const previous = lastObservedZoomRef.current;
+    lastObservedZoomRef.current = zoom;
+
+    if (incomingUpdateRef.current === 'uncontrolled') {
+      incomingUpdateRef.current = null;
+      return;
+    }
+    if (incomingUpdateRef.current === 'controlled') {
+      const controlled = liveRef.current.controlledViewport;
+      // A controlled receiver can render the proposal and its rollback in separate commits. Keep
+      // suppressing both until the store has settled on the controlled prop.
+      if (controlled == null || (zoom != null && zoomStatesEqual(controlled, zoom))) {
+        incomingUpdateRef.current = null;
+      }
+      return;
+    }
+    if (
+      syncId == null ||
+      eventEmitterSymbol == null ||
+      previous == null ||
+      zoom == null ||
+      zoomStatesEqual(previous, zoom)
+    ) {
+      return;
+    }
+
+    eventCenter.emit(ZOOM_SYNC_EVENT, syncId, zoom, eventEmitterSymbol);
+  }, [eventEmitterSymbol, incomingSequence, syncId, zoom]);
+}
+
+/**
+ * Will receive synchronisation events from other charts.
+ *
+ * Reads syncMethod from state and decides how to synchronise the tooltip based on that. The same
+ * chart-level listener also receives classic Brush and semantic zoom viewport updates.
+ *
+ * @returns void
+ */
+export function useSynchronisedEventsFromOtherCharts() {
+  const dispatch = useAppDispatch();
+  useEffect(() => {
+    dispatch(createEventEmitter());
+  }, [dispatch]);
+
+  useTooltipSyncEventsListener();
+  useBrushSyncEventsListener();
+  useZoomChartSynchronisation();
 }

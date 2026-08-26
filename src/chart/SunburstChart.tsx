@@ -29,6 +29,9 @@ import { RegisterGraphicalItemId } from '../context/RegisterGraphicalItemId';
 import { WithIdRequired } from '../util/useUniqueId';
 import { RequiresDefaultProps, resolveDefaultProps } from '../util/resolveDefaultProps';
 import { initialEventSettingsState } from '../state/eventSettingsSlice';
+import { ZoomPropBridge } from './zoom/ZoomPropBridge';
+import { ZoomProp } from '../util/zoom/ZoomOptions';
+import { ZoomableChartContent } from './zoom/ZoomableChartContent';
 
 export interface SunburstData {
   [key: string]: any;
@@ -49,6 +52,23 @@ interface SunburstNode extends SunburstData {
 
 export interface SunburstChartProps extends EventThrottlingProps {
   className?: string;
+  /**
+   * Turn on accessibility support for keyboard-only and screen reader users.
+   *
+   * @defaultValue true
+   */
+  accessibilityLayer?: boolean;
+  title?: string;
+  desc?: string;
+  role?: React.AriaRole;
+  tabIndex?: number;
+  /**
+   * Enables the built-in zoom and pan controls.
+   *
+   * Accepts `true` for defaults, `'x' | 'y' | 'xy'` as shorthand, or a full options object.
+   * Equivalent to mounting `<ZoomAndPan />` as a child.
+   */
+  zoom?: ZoomProp;
   /**
    * The source data. Each element should be an object.
    * The properties of each object represent the values of different data dimensions.
@@ -243,9 +263,10 @@ const preloadedState: Partial<RechartsRootState> = {
   },
 };
 
-type SunburstPositionMap = Map<string, ChartCoordinate>;
+type SunburstPositionMap = Map<TooltipIndex, ChartCoordinate>;
 
 export const defaultSunburstChartProps = {
+  accessibilityLayer: true,
   padding: 2,
   dataKey: 'value',
   nameKey: 'name',
@@ -285,6 +306,11 @@ const SunburstChartImpl = ({
   onMouseEnter,
   onMouseLeave,
   id,
+  accessibilityLayer,
+  title,
+  desc,
+  role: roleFromProps,
+  tabIndex: tabIndexFromProps,
 }: InternalSunburstChartProps) => {
   const dispatch = useAppDispatch();
 
@@ -314,7 +340,7 @@ const SunburstChartImpl = ({
       setActiveMouseOverItemIndex({
         activeIndex: node.tooltipIndex,
         activeDataKey: dataKey,
-        activeCoordinate: positions.get(node.name),
+        activeCoordinate: positions.get(node.tooltipIndex),
         activeGraphicalItemId: id,
       }),
     );
@@ -333,7 +359,7 @@ const SunburstChartImpl = ({
       setActiveClickItemIndex({
         activeIndex: node.tooltipIndex,
         activeDataKey: dataKey,
-        activeCoordinate: positions.get(node.name),
+        activeCoordinate: positions.get(node.tooltipIndex),
         activeGraphicalItemId: id,
       }),
     );
@@ -380,7 +406,7 @@ const SunburstChartImpl = ({
       );
 
       const { x: tooltipX, y: tooltipY } = polarToCartesian(cx, cy, innerR + radius / 2, start);
-      positions.set(d.name, { x: tooltipX, y: tooltipY });
+      positions.set(currentTooltipIndex, { x: tooltipX, y: tooltipY });
 
       return drawArcs(
         d.children,
@@ -399,9 +425,13 @@ const SunburstChartImpl = ({
   drawArcs(data.children, { radius: thickness, innerR: innerRadius, initialAngle: startAngle });
 
   const layerClass = clsx('recharts-sunburst', className);
+  const role = roleFromProps ?? (accessibilityLayer ? 'application' : undefined);
+  const tabIndex = tabIndexFromProps ?? (accessibilityLayer ? 0 : undefined);
   return (
-    <Surface width={width} height={height}>
-      <Layer className={layerClass}>{sectors}</Layer>
+    <Surface width={width} height={height} title={title} desc={desc} role={role} tabIndex={tabIndex}>
+      <ZoomableChartContent>
+        <Layer className={layerClass}>{sectors}</Layer>
+      </ZoomableChartContent>
       <SetSunburstTooltipEntrySettings
         dataKey={dataKey}
         nameKey={nameKey}
@@ -461,6 +491,7 @@ export const SunburstChart = (outsideProps: SunburstChartProps) => {
           <RegisterGraphicalItemId id={externalId} type="sunburst">
             {id => <SunburstChartImpl {...props} id={id} />}
           </RegisterGraphicalItemId>
+          <ZoomPropBridge zoom={props.zoom} />
         </RechartsWrapper>
       </TooltipPortalContext.Provider>
     </RechartsStoreProvider>
