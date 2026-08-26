@@ -35,6 +35,14 @@ describe('zoomSlice', () => {
       );
       expect(state.x).toEqual(FULL_VIEWPORT);
     });
+
+    it('does not change state when a normalized viewport is set repeatedly', () => {
+      const viewport = { startRatio: 0.9, endRatio: 0.1 };
+      const state = zoomReducer(initialState, setAxisViewport({ dimension: 'x', viewport }));
+      const repeated = zoomReducer(state, setAxisViewport({ dimension: 'x', viewport }));
+
+      expect(repeated).toBe(state);
+    });
   });
 
   describe('setZoom', () => {
@@ -54,6 +62,17 @@ describe('zoomSlice', () => {
       expect(getViewportWidth(state.x)).toBeCloseTo(MIN_VIEWPORT_WIDTH);
       expect(state.y).toEqual(FULL_VIEWPORT);
     });
+
+    it('does not change state when normalized viewports are set repeatedly', () => {
+      const viewports = {
+        x: { startRatio: 0.9, endRatio: 0.1 },
+        y: { startRatio: -1, endRatio: 2 },
+      };
+      const state = zoomReducer(initialState, setZoom(viewports));
+      const repeated = zoomReducer(state, setZoom(viewports));
+
+      expect(repeated).toBe(state);
+    });
   });
 
   describe('resetZoom', () => {
@@ -63,6 +82,10 @@ describe('zoomSlice', () => {
         setZoom({ x: { startRatio: 0.1, endRatio: 0.4 }, y: { startRatio: 0.3, endRatio: 0.5 } }),
       );
       expect(zoomReducer(zoomed, resetZoom())).toEqual(initialState);
+    });
+
+    it('does not change state when already at the full viewport', () => {
+      expect(zoomReducer(initialState, resetZoom())).toBe(initialState);
     });
   });
 });

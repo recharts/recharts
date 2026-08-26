@@ -1,7 +1,14 @@
 import { describe, it, expect } from 'vitest';
 import { createRechartsStore } from '../../../src/state/store';
 import { setAxisViewport } from '../../../src/state/zoomSlice';
-import { selectAxisViewport, selectIsZoomed, selectZoom } from '../../../src/state/selectors/zoomSelectors';
+import { setZoomAxis, setZoomLimits } from '../../../src/state/zoomSettingsSlice';
+import {
+  selectAxisViewport,
+  selectIsZoomed,
+  selectSharedZoomAxis,
+  selectSharedZoomLimits,
+  selectZoom,
+} from '../../../src/state/selectors/zoomSelectors';
 import { FULL_VIEWPORT } from '../../../src/util/zoom/viewport';
 
 describe('zoom selectors', () => {
@@ -15,6 +22,27 @@ describe('zoom selectors', () => {
     store.dispatch(setAxisViewport({ dimension: 'x', viewport: { startRatio: 0.2, endRatio: 0.6 } }));
     expect(selectAxisViewport(store.getState(), 'x')).toEqual({ startRatio: 0.2, endRatio: 0.6 });
     expect(selectAxisViewport(store.getState(), 'y')).toEqual(FULL_VIEWPORT);
+  });
+
+  it('selectSharedZoomLimits returns the chart-level zoom limits', () => {
+    const store = createRechartsStore();
+    const limits = { minZoom: 2, maxZoom: 10 };
+
+    expect(selectSharedZoomLimits(store.getState())).toBeNull();
+
+    store.dispatch(setZoomLimits(limits));
+
+    expect(selectSharedZoomLimits(store.getState())).toEqual(limits);
+  });
+
+  it('selectSharedZoomAxis returns the chart-level zoom axis', () => {
+    const store = createRechartsStore();
+
+    expect(selectSharedZoomAxis(store.getState())).toBeNull();
+
+    store.dispatch(setZoomAxis('x'));
+
+    expect(selectSharedZoomAxis(store.getState())).toBe('x');
   });
 
   describe('selectIsZoomed', () => {
