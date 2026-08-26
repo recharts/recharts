@@ -1,45 +1,45 @@
 {
   "treemap": {
     "examplePath": "www/src/views/IndexView/IndexLineChart.tsx",
-    "totalSize": 903003,
-    "totalSizeLabel": "881.84 KB",
+    "totalSize": 903733,
+    "totalSizeLabel": "882.55 KB",
     "moduleCount": 367,
-    "generatedAt": "2026-08-25T19:35:50.247Z",
+    "generatedAt": "2026-08-26T12:13:35.411Z",
     "stages": [
       {
         "stage": "es6-folder",
-        "bytes": 1362961,
+        "bytes": 1365046,
         "humanReadableSize": "1.30 MB",
         "reductionFromBaselinePercent": 0
       },
       {
         "stage": "tree-shaken",
-        "bytes": 905884,
-        "humanReadableSize": "884.65 KB",
+        "bytes": 906614,
+        "humanReadableSize": "885.37 KB",
         "reductionFromBaselinePercent": 0
       },
       {
         "stage": "minified",
-        "bytes": 302797,
-        "humanReadableSize": "295.70 KB",
-        "reductionFromBaselinePercent": 66.57
+        "bytes": 302899,
+        "humanReadableSize": "295.80 KB",
+        "reductionFromBaselinePercent": 66.59
       },
       {
         "stage": "minified+gzip",
-        "bytes": 99147,
-        "humanReadableSize": "96.82 KB",
+        "bytes": 99218,
+        "humanReadableSize": "96.89 KB",
         "reductionFromBaselinePercent": 89.06
       }
     ],
     "tree": {
       "name": "bundle",
       "fullPath": "bundle",
-      "value": 903003,
+      "value": 903733,
       "children": [
         {
           "name": "src",
           "fullPath": "src",
-          "value": 499541,
+          "value": 500271,
           "children": [
             {
               "name": "state",
@@ -692,7 +692,7 @@
             {
               "name": "cartesian",
               "fullPath": "src/cartesian",
-              "value": 83197,
+              "value": 83927,
               "children": [
                 {
                   "name": "Line.tsx",
@@ -737,7 +737,7 @@
                 {
                   "name": "getEquidistantTicks.ts",
                   "fullPath": "src/cartesian/getEquidistantTicks.ts",
-                  "value": 4068
+                  "value": 4798
                 },
                 {
                   "name": "useAnimatedLineLength.ts",
@@ -2555,45 +2555,45 @@
   },
   "sunburst": {
     "examplePath": "www/src/views/IndexView/IndexLineChart.tsx",
-    "totalSize": 903003,
-    "totalSizeLabel": "881.84 KB",
+    "totalSize": 903733,
+    "totalSizeLabel": "882.55 KB",
     "moduleCount": 367,
-    "generatedAt": "2026-08-25T19:35:52.333Z",
+    "generatedAt": "2026-08-26T12:13:33.230Z",
     "stages": [
       {
         "stage": "es6-folder",
-        "bytes": 1362961,
+        "bytes": 1365046,
         "humanReadableSize": "1.30 MB",
         "reductionFromBaselinePercent": 0
       },
       {
         "stage": "tree-shaken",
-        "bytes": 905884,
-        "humanReadableSize": "884.65 KB",
+        "bytes": 906614,
+        "humanReadableSize": "885.37 KB",
         "reductionFromBaselinePercent": 0
       },
       {
         "stage": "minified",
-        "bytes": 302797,
-        "humanReadableSize": "295.70 KB",
-        "reductionFromBaselinePercent": 66.57
+        "bytes": 302899,
+        "humanReadableSize": "295.80 KB",
+        "reductionFromBaselinePercent": 66.59
       },
       {
         "stage": "minified+gzip",
-        "bytes": 99147,
-        "humanReadableSize": "96.82 KB",
+        "bytes": 99218,
+        "humanReadableSize": "96.89 KB",
         "reductionFromBaselinePercent": 89.06
       }
     ],
     "tree": {
       "name": "bundle",
       "fullPath": "bundle",
-      "value": 903003,
+      "value": 903733,
       "children": [
         {
           "name": "src",
           "fullPath": "src",
-          "value": 499541,
+          "value": 500271,
           "children": [
             {
               "name": "state",
@@ -3246,7 +3246,7 @@
             {
               "name": "cartesian",
               "fullPath": "src/cartesian",
-              "value": 83197,
+              "value": 83927,
               "children": [
                 {
                   "name": "Line.tsx",
@@ -3291,7 +3291,7 @@
                 {
                   "name": "getEquidistantTicks.ts",
                   "fullPath": "src/cartesian/getEquidistantTicks.ts",
-                  "value": 4068
+                  "value": 4798
                 },
                 {
                   "name": "useAnimatedLineLength.ts",
