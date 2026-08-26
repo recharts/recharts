@@ -71,4 +71,23 @@ describe('getEquidistantPreserveEndTicks', () => {
     // We expect indices 0, 2, 4 (Values A, C, E)
     expect(result.map(t => t.value)).toEqual(['A', 'C', 'E']);
   });
+
+  it('should move the end tick inwards instead of dropping every other tick', () => {
+    // 10 ticks, 50px apart, the last one centered on the end of the axis so that
+    // half of its 100px wide label overflows the boundary.
+    const ticks: ReadonlyArray<CartesianTickItem> = Array.from({ length: 10 }, (_, index) => ({
+      value: index,
+      coordinate: (index + 1) * 50,
+      index,
+      offset: 0,
+    }));
+
+    const result = getEquidistantPreserveEndTicks(1, { start: 0, end: 500 }, () => 100, ticks, 20);
+
+    // Every third tick collides with the moved end tick, so every fourth one is shown.
+    expect(result.map(t => t.value)).toEqual([1, 5, 9]);
+    // The end tick keeps its coordinate, only its label moves inside the boundary.
+    expect(result[result.length - 1].coordinate).toBe(500);
+    expect(result[result.length - 1].tickCoord).toBe(450);
+  });
 });
