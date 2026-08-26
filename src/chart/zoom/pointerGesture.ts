@@ -45,6 +45,11 @@ export const installPointerGesture: ZoomGestureInstaller = api => {
   };
 
   const onPointerDown = (event: PointerEvent) => {
+    // The pointer that started the gesture stays authoritative until it ends, so a second one cannot
+    // take the gesture over and strand the first pointer's pointerup behind the active-id guard.
+    if (activePointerId != null) {
+      return;
+    }
     if (event.button !== 0 || isInteractiveZoomTarget(event.target)) {
       return;
     }
