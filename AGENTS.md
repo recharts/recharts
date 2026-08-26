@@ -18,6 +18,9 @@ npm run test -- path/to/TestFile.spec.tsx
 If you run all tests at once using `npm test`, it may take a long time to complete.
 Only do that when you want to verify that everything is working correctly.
 
+This project has a thorough pre-push git hook (build, test, check-types, lint) that can take around
+5 minutes to complete. When running `git push`, allow a timeout of up to 10 minutes.
+
 This project has a long history. You may observe some inconsistencies in coding style.
 When making changes, prefer current best practices as described in CONTRIBUTING.md,
 and try to improve the code style where possible and where relevant to the current task.
