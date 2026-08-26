@@ -1,50 +1,50 @@
 {
   "treemap": {
     "examplePath": "www/src/views/IndexView/IndexLineChart.tsx",
-    "totalSize": 903003,
-    "totalSizeLabel": "881.84 KB",
-    "moduleCount": 367,
-    "generatedAt": "2026-08-25T13:38:54.199Z",
+    "totalSize": 910148,
+    "totalSizeLabel": "888.82 KB",
+    "moduleCount": 370,
+    "generatedAt": "2026-08-26T13:43:28.070Z",
     "stages": [
       {
         "stage": "es6-folder",
-        "bytes": 1362961,
-        "humanReadableSize": "1.30 MB",
+        "bytes": 1393740,
+        "humanReadableSize": "1.33 MB",
         "reductionFromBaselinePercent": 0
       },
       {
         "stage": "tree-shaken",
-        "bytes": 905884,
-        "humanReadableSize": "884.65 KB",
+        "bytes": 913035,
+        "humanReadableSize": "891.64 KB",
         "reductionFromBaselinePercent": 0
       },
       {
         "stage": "minified",
-        "bytes": 302797,
-        "humanReadableSize": "295.70 KB",
-        "reductionFromBaselinePercent": 66.57
+        "bytes": 303849,
+        "humanReadableSize": "296.73 KB",
+        "reductionFromBaselinePercent": 66.72
       },
       {
         "stage": "minified+gzip",
-        "bytes": 99147,
-        "humanReadableSize": "96.82 KB",
-        "reductionFromBaselinePercent": 89.06
+        "bytes": 99584,
+        "humanReadableSize": "97.25 KB",
+        "reductionFromBaselinePercent": 89.09
       }
     ],
     "tree": {
       "name": "bundle",
       "fullPath": "bundle",
-      "value": 903003,
+      "value": 910148,
       "children": [
         {
           "name": "src",
           "fullPath": "src",
-          "value": 499541,
+          "value": 506686,
           "children": [
             {
               "name": "state",
               "fullPath": "src/state",
-              "value": 173244,
+              "value": 176420,
               "children": [
                 {
                   "name": "selectors",
@@ -293,7 +293,7 @@
                 {
                   "name": "store.ts",
                   "fullPath": "src/state/store.ts",
-                  "value": 2685
+                  "value": 2743
                 },
                 {
                   "name": "chartDataSlice.ts",
@@ -304,6 +304,11 @@
                   "name": "graphicalItemsSlice.ts",
                   "fullPath": "src/state/graphicalItemsSlice.ts",
                   "value": 2231
+                },
+                {
+                  "name": "zoomSlice.ts",
+                  "fullPath": "src/state/zoomSlice.ts",
+                  "value": 2148
                 },
                 {
                   "name": "legendSlice.ts",
@@ -361,6 +366,11 @@
                   "value": 980
                 },
                 {
+                  "name": "zoomSettingsSlice.ts",
+                  "fullPath": "src/state/zoomSettingsSlice.ts",
+                  "value": 952
+                },
+                {
                   "name": "layoutSlice.ts",
                   "fullPath": "src/state/layoutSlice.ts",
                   "value": 949
@@ -405,7 +415,7 @@
                 {
                   "name": "polarOptionsSlice.ts",
                   "fullPath": "src/state/polarOptionsSlice.ts",
-                  "value": 592
+                  "value": 610
                 },
                 {
                   "name": "reduxDevtoolsJsonStringifyReplacer.ts",
@@ -427,7 +437,7 @@
             {
               "name": "util",
               "fullPath": "src/util",
-              "value": 107958,
+              "value": 111197,
               "children": [
                 {
                   "name": "scale",
@@ -512,6 +522,18 @@
                   "name": "useElementOffset.ts",
                   "fullPath": "src/util/useElementOffset.ts",
                   "value": 3378
+                },
+                {
+                  "name": "zoom",
+                  "fullPath": "src/util/zoom",
+                  "value": 3239,
+                  "children": [
+                    {
+                      "name": "viewport.ts",
+                      "fullPath": "src/util/zoom/viewport.ts",
+                      "value": 3239
+                    }
+                  ]
                 },
                 {
                   "name": "excludeEventProps.ts",
@@ -692,7 +714,7 @@
             {
               "name": "cartesian",
               "fullPath": "src/cartesian",
-              "value": 83197,
+              "value": 83927,
               "children": [
                 {
                   "name": "Line.tsx",
@@ -737,7 +759,7 @@
                 {
                   "name": "getEquidistantTicks.ts",
                   "fullPath": "src/cartesian/getEquidistantTicks.ts",
-                  "value": 4068
+                  "value": 4798
                 },
                 {
                   "name": "useAnimatedLineLength.ts",
@@ -2555,50 +2577,50 @@
   },
   "sunburst": {
     "examplePath": "www/src/views/IndexView/IndexLineChart.tsx",
-    "totalSize": 903003,
-    "totalSizeLabel": "881.84 KB",
-    "moduleCount": 367,
-    "generatedAt": "2026-08-25T13:38:56.344Z",
+    "totalSize": 910148,
+    "totalSizeLabel": "888.82 KB",
+    "moduleCount": 370,
+    "generatedAt": "2026-08-26T13:43:25.947Z",
     "stages": [
       {
         "stage": "es6-folder",
-        "bytes": 1362961,
-        "humanReadableSize": "1.30 MB",
+        "bytes": 1393740,
+        "humanReadableSize": "1.33 MB",
         "reductionFromBaselinePercent": 0
       },
       {
         "stage": "tree-shaken",
-        "bytes": 905884,
-        "humanReadableSize": "884.65 KB",
+        "bytes": 913035,
+        "humanReadableSize": "891.64 KB",
         "reductionFromBaselinePercent": 0
       },
       {
         "stage": "minified",
-        "bytes": 302797,
-        "humanReadableSize": "295.70 KB",
-        "reductionFromBaselinePercent": 66.57
+        "bytes": 303849,
+        "humanReadableSize": "296.73 KB",
+        "reductionFromBaselinePercent": 66.72
       },
       {
         "stage": "minified+gzip",
-        "bytes": 99147,
-        "humanReadableSize": "96.82 KB",
-        "reductionFromBaselinePercent": 89.06
+        "bytes": 99584,
+        "humanReadableSize": "97.25 KB",
+        "reductionFromBaselinePercent": 89.09
       }
     ],
     "tree": {
       "name": "bundle",
       "fullPath": "bundle",
-      "value": 903003,
+      "value": 910148,
       "children": [
         {
           "name": "src",
           "fullPath": "src",
-          "value": 499541,
+          "value": 506686,
           "children": [
             {
               "name": "state",
               "fullPath": "src/state",
-              "value": 173244,
+              "value": 176420,
               "children": [
                 {
                   "name": "selectors",
@@ -2847,7 +2869,7 @@
                 {
                   "name": "store.ts",
                   "fullPath": "src/state/store.ts",
-                  "value": 2685
+                  "value": 2743
                 },
                 {
                   "name": "chartDataSlice.ts",
@@ -2858,6 +2880,11 @@
                   "name": "graphicalItemsSlice.ts",
                   "fullPath": "src/state/graphicalItemsSlice.ts",
                   "value": 2231
+                },
+                {
+                  "name": "zoomSlice.ts",
+                  "fullPath": "src/state/zoomSlice.ts",
+                  "value": 2148
                 },
                 {
                   "name": "legendSlice.ts",
@@ -2915,6 +2942,11 @@
                   "value": 980
                 },
                 {
+                  "name": "zoomSettingsSlice.ts",
+                  "fullPath": "src/state/zoomSettingsSlice.ts",
+                  "value": 952
+                },
+                {
                   "name": "layoutSlice.ts",
                   "fullPath": "src/state/layoutSlice.ts",
                   "value": 949
@@ -2959,7 +2991,7 @@
                 {
                   "name": "polarOptionsSlice.ts",
                   "fullPath": "src/state/polarOptionsSlice.ts",
-                  "value": 592
+                  "value": 610
                 },
                 {
                   "name": "reduxDevtoolsJsonStringifyReplacer.ts",
@@ -2981,7 +3013,7 @@
             {
               "name": "util",
               "fullPath": "src/util",
-              "value": 107958,
+              "value": 111197,
               "children": [
                 {
                   "name": "scale",
@@ -3066,6 +3098,18 @@
                   "name": "useElementOffset.ts",
                   "fullPath": "src/util/useElementOffset.ts",
                   "value": 3378
+                },
+                {
+                  "name": "zoom",
+                  "fullPath": "src/util/zoom",
+                  "value": 3239,
+                  "children": [
+                    {
+                      "name": "viewport.ts",
+                      "fullPath": "src/util/zoom/viewport.ts",
+                      "value": 3239
+                    }
+                  ]
                 },
                 {
                   "name": "excludeEventProps.ts",
@@ -3246,7 +3290,7 @@
             {
               "name": "cartesian",
               "fullPath": "src/cartesian",
-              "value": 83197,
+              "value": 83927,
               "children": [
                 {
                   "name": "Line.tsx",
@@ -3291,7 +3335,7 @@
                 {
                   "name": "getEquidistantTicks.ts",
                   "fullPath": "src/cartesian/getEquidistantTicks.ts",
-                  "value": 4068
+                  "value": 4798
                 },
                 {
                   "name": "useAnimatedLineLength.ts",
