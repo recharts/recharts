@@ -10,6 +10,9 @@ const MIN_SELECT_FRACTION = 0.01;
  */
 export const installPointerGesture: ZoomGestureInstaller = api => {
   let mode: 'pan' | 'select' | null = null;
+  // The window listeners see every pointer, so a second pointer (touch or pen on a hybrid device)
+  // must not drive or commit the gesture the first one started.
+  let activePointerId: number | null = null;
   let lastX = 0;
   let lastY = 0;
   let startClientX = 0;
@@ -79,18 +82,23 @@ export const installPointerGesture: ZoomGestureInstaller = api => {
         return;
       }
       mode = 'select';
+      activePointerId = event.pointerId;
       startClientX = event.clientX;
       startClientY = event.clientY;
       startPixels = pixels;
       api.setSelection(buildSelectionRect(pixels));
     } else if (options.pan) {
       mode = 'pan';
+      activePointerId = event.pointerId;
       lastX = event.clientX;
       lastY = event.clientY;
     }
   };
 
   const onPointerMove = (event: PointerEvent) => {
+    if (event.pointerId !== activePointerId) {
+      return;
+    }
     if (mode === 'pan') {
       const dx = event.clientX - lastX;
       const dy = event.clientY - lastY;
@@ -108,6 +116,9 @@ export const installPointerGesture: ZoomGestureInstaller = api => {
   };
 
   const onPointerUp = (event: PointerEvent) => {
+    if (event.pointerId !== activePointerId) {
+      return;
+    }
     if (mode === 'select' && startPixels != null) {
       const from = api.plotFractions(startClientX, startClientY);
       const to = api.plotFractions(event.clientX, event.clientY);
@@ -146,16 +157,21 @@ export const installPointerGesture: ZoomGestureInstaller = api => {
     }
     mode = null;
     startPixels = null;
+    activePointerId = null;
   };
 
   // A canceled drag (browser took over the gesture, window lost focus, ...) must not commit the
   // selection or zoom; it only clears the in-progress state.
-  const onPointerCancel = () => {
+  const onPointerCancel = (event: PointerEvent) => {
+    if (event.pointerId !== activePointerId) {
+      return;
+    }
     if (mode === 'select') {
       api.setSelection(null);
     }
     mode = null;
     startPixels = null;
+    activePointerId = null;
   };
 
   api.element.addEventListener('pointerdown', onPointerDown);

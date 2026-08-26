@@ -104,6 +104,7 @@ const TOUCH_STYLE_PROPERTIES = ['user-select', '-webkit-user-select', '-webkit-t
 type StyleSnapshot = {
   style: CSSStyleDeclaration;
   values: ReadonlyArray<string>;
+  priorities: ReadonlyArray<string>;
 };
 
 type DecorationSnapshot = {
@@ -116,7 +117,18 @@ type DecorationSnapshot = {
 const touchDecorationOwners = new WeakMap<HTMLElement, DecorationSnapshot>();
 
 function snapshot(style: CSSStyleDeclaration): StyleSnapshot {
-  return { style, values: TOUCH_STYLE_PROPERTIES.map(property => style.getPropertyValue(property)) };
+  return {
+    style,
+    values: TOUCH_STYLE_PROPERTIES.map(property => style.getPropertyValue(property)),
+    // Kept alongside the values so restoring does not silently drop a pre-existing `!important`.
+    priorities: TOUCH_STYLE_PROPERTIES.map(property => style.getPropertyPriority(property)),
+  };
+}
+
+function restore({ style, values, priorities }: StyleSnapshot): void {
+  TOUCH_STYLE_PROPERTIES.forEach((property, index) =>
+    style.setProperty(property, values[index] ?? '', priorities[index] ?? ''),
+  );
 }
 
 function applyTouchBrowserStyle(target: HTMLElement | SVGElement): void {
@@ -156,9 +168,7 @@ export function suppressTouchBrowserDecorations(element: HTMLElement): () => voi
       if (active.count > 0) {
         return;
       }
-      active.styles.forEach(({ style, values }) => {
-        TOUCH_STYLE_PROPERTIES.forEach((property, index) => style.setProperty(property, values[index] ?? ''));
-      });
+      active.styles.forEach(restore);
       active.stylesheet?.remove();
       if (!active.hadClass) {
         element.classList.remove(TOUCH_DECORATION_CLASS);
@@ -191,9 +201,7 @@ export function suppressTouchBrowserDecorations(element: HTMLElement): () => voi
     if (previous.count > 0) {
       return;
     }
-    previous.styles.forEach(({ style, values }) => {
-      TOUCH_STYLE_PROPERTIES.forEach((property, index) => style.setProperty(property, values[index] ?? ''));
-    });
+    previous.styles.forEach(restore);
     previous.stylesheet?.remove();
     if (!previous.hadClass) {
       element.classList.remove(TOUCH_DECORATION_CLASS);

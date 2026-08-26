@@ -40,8 +40,10 @@ export const installWheelGesture: ZoomGestureInstaller = api => {
     event.preventDefault();
 
     const step = options.wheelStep > 1 ? options.wheelStep : 1.15;
-    const zoomFactor = event.deltaY < 0 ? step : 1 / step;
+    // Trackpads can report a horizontal-only swipe (deltaY === 0), so the dominant axis - not deltaY -
+    // decides both the zoom direction and the pan amount.
     const rawDelta = Math.abs(event.deltaY) >= Math.abs(event.deltaX) ? event.deltaY : event.deltaX;
+    const zoomFactor = rawDelta < 0 ? step : 1 / step;
     const panAmount = rawDelta * options.wheelPanStep;
 
     // Flip the wheel-pan direction on a flipped axis so scrolling moves the view the same screen way
