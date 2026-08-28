@@ -1,50 +1,50 @@
 {
   "treemap": {
     "examplePath": "www/src/views/IndexView/IndexLineChart.tsx",
-    "totalSize": 924833,
-    "totalSizeLabel": "903.16 KB",
+    "totalSize": 925692,
+    "totalSizeLabel": "904.00 KB",
     "moduleCount": 372,
-    "generatedAt": "2026-08-27T05:41:40.857Z",
+    "generatedAt": "2026-08-28T18:24:02.260Z",
     "stages": [
       {
         "stage": "es6-folder",
-        "bytes": 1435647,
+        "bytes": 1436772,
         "humanReadableSize": "1.37 MB",
         "reductionFromBaselinePercent": 0
       },
       {
         "stage": "tree-shaken",
-        "bytes": 927724,
-        "humanReadableSize": "905.98 KB",
+        "bytes": 928583,
+        "humanReadableSize": "906.82 KB",
         "reductionFromBaselinePercent": 0
       },
       {
         "stage": "minified",
-        "bytes": 307458,
-        "humanReadableSize": "300.25 KB",
-        "reductionFromBaselinePercent": 66.86
+        "bytes": 307478,
+        "humanReadableSize": "300.27 KB",
+        "reductionFromBaselinePercent": 66.89
       },
       {
         "stage": "minified+gzip",
-        "bytes": 100852,
-        "humanReadableSize": "98.49 KB",
-        "reductionFromBaselinePercent": 89.13
+        "bytes": 100859,
+        "humanReadableSize": "98.50 KB",
+        "reductionFromBaselinePercent": 89.14
       }
     ],
     "tree": {
       "name": "bundle",
       "fullPath": "bundle",
-      "value": 924833,
+      "value": 925692,
       "children": [
         {
           "name": "src",
           "fullPath": "src",
-          "value": 521371,
+          "value": 522116,
           "children": [
             {
               "name": "state",
               "fullPath": "src/state",
-              "value": 180872,
+              "value": 181617,
               "children": [
                 {
                   "name": "selectors",
@@ -321,6 +321,11 @@
                   "value": 2129
                 },
                 {
+                  "name": "hooks.ts",
+                  "fullPath": "src/state/hooks.ts",
+                  "value": 1645
+                },
+                {
                   "name": "RechartsStoreProvider.tsx",
                   "fullPath": "src/state/RechartsStoreProvider.tsx",
                   "value": 1614
@@ -374,11 +379,6 @@
                   "name": "layoutSlice.ts",
                   "fullPath": "src/state/layoutSlice.ts",
                   "value": 949
-                },
-                {
-                  "name": "hooks.ts",
-                  "fullPath": "src/state/hooks.ts",
-                  "value": 900
                 },
                 {
                   "name": "SetLegendPayload.ts",
@@ -1118,7 +1118,7 @@
         {
           "name": "node_modules",
           "fullPath": "node_modules",
-          "value": 402421,
+          "value": 402535,
           "children": [
             {
               "name": "@reduxjs",
@@ -1659,17 +1659,17 @@
             {
               "name": "immer",
               "fullPath": "node_modules/immer",
-              "value": 27717,
+              "value": 27831,
               "children": [
                 {
                   "name": "dist",
                   "fullPath": "node_modules/immer/dist",
-                  "value": 27717,
+                  "value": 27831,
                   "children": [
                     {
                       "name": "immer.mjs",
                       "fullPath": "node_modules/immer/dist/immer.mjs",
-                      "value": 27717
+                      "value": 27831
                     }
                   ]
                 }
@@ -2587,50 +2587,50 @@
   },
   "sunburst": {
     "examplePath": "www/src/views/IndexView/IndexLineChart.tsx",
-    "totalSize": 924833,
-    "totalSizeLabel": "903.16 KB",
+    "totalSize": 925692,
+    "totalSizeLabel": "904.00 KB",
     "moduleCount": 372,
-    "generatedAt": "2026-08-27T05:41:43.039Z",
+    "generatedAt": "2026-08-28T18:24:00.362Z",
     "stages": [
       {
         "stage": "es6-folder",
-        "bytes": 1435647,
+        "bytes": 1436772,
         "humanReadableSize": "1.37 MB",
         "reductionFromBaselinePercent": 0
       },
       {
         "stage": "tree-shaken",
-        "bytes": 927724,
-        "humanReadableSize": "905.98 KB",
+        "bytes": 928583,
+        "humanReadableSize": "906.82 KB",
         "reductionFromBaselinePercent": 0
       },
       {
         "stage": "minified",
-        "bytes": 307458,
-        "humanReadableSize": "300.25 KB",
-        "reductionFromBaselinePercent": 66.86
+        "bytes": 307478,
+        "humanReadableSize": "300.27 KB",
+        "reductionFromBaselinePercent": 66.89
       },
       {
         "stage": "minified+gzip",
-        "bytes": 100852,
-        "humanReadableSize": "98.49 KB",
-        "reductionFromBaselinePercent": 89.13
+        "bytes": 100859,
+        "humanReadableSize": "98.50 KB",
+        "reductionFromBaselinePercent": 89.14
       }
     ],
     "tree": {
       "name": "bundle",
       "fullPath": "bundle",
-      "value": 924833,
+      "value": 925692,
       "children": [
         {
           "name": "src",
           "fullPath": "src",
-          "value": 521371,
+          "value": 522116,
           "children": [
             {
               "name": "state",
               "fullPath": "src/state",
-              "value": 180872,
+              "value": 181617,
               "children": [
                 {
                   "name": "selectors",
@@ -2907,6 +2907,11 @@
                   "value": 2129
                 },
                 {
+                  "name": "hooks.ts",
+                  "fullPath": "src/state/hooks.ts",
+                  "value": 1645
+                },
+                {
                   "name": "RechartsStoreProvider.tsx",
                   "fullPath": "src/state/RechartsStoreProvider.tsx",
                   "value": 1614
@@ -2960,11 +2965,6 @@
                   "name": "layoutSlice.ts",
                   "fullPath": "src/state/layoutSlice.ts",
                   "value": 949
-                },
-                {
-                  "name": "hooks.ts",
-                  "fullPath": "src/state/hooks.ts",
-                  "value": 900
                 },
                 {
                   "name": "SetLegendPayload.ts",
@@ -3704,7 +3704,7 @@
         {
           "name": "node_modules",
           "fullPath": "node_modules",
-          "value": 402421,
+          "value": 402535,
           "children": [
             {
               "name": "@reduxjs",
@@ -4245,17 +4245,17 @@
             {
               "name": "immer",
               "fullPath": "node_modules/immer",
-              "value": 27717,
+              "value": 27831,
               "children": [
                 {
                   "name": "dist",
                   "fullPath": "node_modules/immer/dist",
-                  "value": 27717,
+                  "value": 27831,
                   "children": [
                     {
                       "name": "immer.mjs",
                       "fullPath": "node_modules/immer/dist/immer.mjs",
-                      "value": 27717
+                      "value": 27831
                     }
                   ]
                 }
