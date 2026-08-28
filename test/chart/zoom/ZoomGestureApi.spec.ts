@@ -1,8 +1,9 @@
 import { afterEach, describe, expect, it } from 'vitest';
-import { isInteractiveZoomTarget, suppressTouchBrowserDecorations } from '../../../src/chart/zoom/ZoomGestureApi';
-
-/** Kept in sync with the (unexported) class the module toggles on the wrapper. */
-const TOUCH_DECORATION_CLASS = 'recharts-zoom-touch-interactions';
+import {
+  isInteractiveZoomTarget,
+  suppressTouchBrowserDecorations,
+  TOUCH_DECORATION_CLASS,
+} from '../../../src/chart/zoom/ZoomGestureApi';
 
 function createWrapper(surfaceContent = '<g id="mark"></g>'): HTMLElement {
   const wrapper = document.createElement('div');

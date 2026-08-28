@@ -61,7 +61,8 @@ export type ZoomGestureApi = {
  */
 export type ZoomGestureInstaller = (api: ZoomGestureApi) => () => void;
 
-const TOUCH_DECORATION_CLASS = 'recharts-zoom-touch-interactions';
+/** Class toggled on the wrapper element while touch zoom gestures are installed. */
+export const TOUCH_DECORATION_CLASS = 'recharts-zoom-touch-interactions';
 
 const INTERACTIVE_ZOOM_TARGET_SELECTORS = [
   'a[href]',
