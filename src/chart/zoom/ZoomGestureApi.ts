@@ -40,7 +40,17 @@ export type ZoomGestureApi = {
   panBy: (dimension: ZoomDimension, deltaPlotFraction: number) => void;
   /** Pan one axis by a screen-pixel delta (down / right positive), accounting for axis orientation. */
   panByPixels: (dimension: ZoomDimension, deltaPixels: number) => void;
-  /** Whether each screen axis' domain grows toward the low-pixel edge (depends on layout / reverse). */
+  /**
+   * Whether each axis is "flipped": its domain minimum sits at the far (bottom / right) edge, so
+   * increasing the domain value moves toward pixel `0` instead of away from it. True for a normal
+   * value y axis (SVG y grows downward, domain grows upward), false for a normal x axis or a
+   * vertical-layout category y axis; also true for an axis with `reversed` set. See
+   * `isRangeFlipped` in `util/zoom/viewport.ts` for the derivation.
+   *
+   * This is a screen-vs-domain orientation flag, not a data transform. Gestures use it purely to
+   * keep interactions feeling screen-consistent: flipping the sign of a pan delta, or mirroring a
+   * pixel-space focus ratio (`1 - ratio`) into a domain-space one before zooming.
+   */
   getFlipped: () => { x: boolean; y: boolean };
   /** Zoom one axis into `[from, to]` fractions of the visible window (drag-to-zoom). */
   selectInto: (dimension: ZoomDimension, fromPlotFraction: number, toPlotFraction: number) => void;

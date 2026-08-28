@@ -43,8 +43,16 @@ export const MIN_VIEWPORT_WIDTH = 1e-4;
 
 /**
  * Whether a pixel range runs from a high to a low coordinate - i.e. the axis' domain minimum sits at
- * the far (bottom / right) edge. True for a value y axis (values grow upward), false for a normal x
- * axis or a vertical-layout category y. Used to orient zoom/pan gestures and scrollbars per layout.
+ * the far (bottom / right) edge, and increasing the domain value moves *toward* pixel `0`.
+ *
+ * True for a normal value y axis: SVG y grows downward, but the domain grows upward, so the range
+ * comes out as e.g. `[400, 5]`. False for a normal x axis or a vertical-layout category y axis. Also
+ * picks up an explicit `reversed` axis, since callers pass a range already adjusted for it (see
+ * `selectAxisRangeWithReverse`).
+ *
+ * This is a screen-space-vs-domain-space orientation flag, not a data transform: it does not change
+ * any values, it only tells gesture code which way is "up" for this axis. See {@link ZoomGestureApi.getFlipped}
+ * for how gestures use it.
  */
 export function isRangeFlipped(range: readonly [number, number] | undefined): boolean {
   if (range == null) {
