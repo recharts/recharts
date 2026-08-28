@@ -22,6 +22,16 @@ type EqualityFn<T> = (a: T, b: T) => boolean;
 const refEquality: EqualityFn<unknown> = (a, b) => a === b;
 
 /**
+ * Returns a stable function that reads the current Redux state on demand (or `undefined` outside
+ * of a chart). Unlike {@link useAppSelector} it does NOT subscribe: use it to resolve state lazily
+ * inside event handlers when subscribing would re-render on every store update.
+ */
+export function useAppStateReader(): () => RechartsRootState | undefined {
+  const context = useContext(RechartsReduxContext);
+  return useMemo(() => (context ? context.store.getState : noop), [context]);
+}
+
+/**
  * This is a recharts variant of `useSelector` from 'react-redux' package.
  *
  * The difference is that react-redux version will throw an Error when used outside of Redux context.
