@@ -1,9 +1,14 @@
 import { createSelector } from 'reselect';
 import { RechartsRootState } from '../store';
 import { AngleAxisForRadar, computeRadarPoints, RadarComposedData, RadiusAxisForRadar } from '../../polar/Radar';
-import { BaseAxisWithScale } from './axisSelectors';
+import { AxisRange, BaseAxisWithScale } from './axisSelectors';
 import { selectPolarAxisScale, selectPolarAxisTicks } from './polarScaleSelectors';
-import { selectAngleAxis, selectPolarViewBox, selectRadiusAxis } from './polarAxisSelectors';
+import {
+  selectAngleAxis,
+  selectAngleAxisRangeWithReversed,
+  selectPolarViewBox,
+  selectRadiusAxis,
+} from './polarAxisSelectors';
 import { AxisId } from '../cartesianAxisSlice';
 import { selectChartDataAndAlwaysIgnoreIndexes } from './dataSelectors';
 import { ChartDataState } from '../chartDataSlice';
@@ -89,18 +94,25 @@ const selectAngleAxisTicks = (
   return selectPolarAxisTicks(state, 'angleAxis', angleAxisId, isPanorama);
 };
 
+const selectAngleAxisRangeForRadar = (
+  state: RechartsRootState,
+  _radiusAxisId: AxisId,
+  angleAxisId: AxisId,
+): AxisRange | undefined => selectAngleAxisRangeWithReversed(state, angleAxisId);
+
 export const selectAngleAxisWithScaleAndViewport: (
   state: RechartsRootState,
   _radiusAxisId: AxisId,
   angleAxisId: AxisId,
 ) => AngleAxisForRadar | undefined = createSelector(
-  [selectAngleAxisForRadar, selectPolarAxisScaleForRadar, selectPolarViewBox],
+  [selectAngleAxisForRadar, selectPolarAxisScaleForRadar, selectPolarViewBox, selectAngleAxisRangeForRadar],
   (
     axisOptions: AngleAxisSettings,
     scale: RechartsScale | undefined,
     polarViewBox: PolarViewBoxRequired | undefined,
+    range: AxisRange | undefined,
   ): AngleAxisForRadar | undefined => {
-    if (polarViewBox == null || scale == null) {
+    if (polarViewBox == null || scale == null || range == null) {
       return undefined;
     }
     return {
@@ -109,6 +121,7 @@ export const selectAngleAxisWithScaleAndViewport: (
       dataKey: axisOptions.dataKey,
       cx: polarViewBox.cx,
       cy: polarViewBox.cy,
+      range,
     };
   },
 );
