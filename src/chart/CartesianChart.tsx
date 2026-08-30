@@ -24,6 +24,7 @@ export const defaultCartesianChartProps = {
   reverseStackOrder: false,
   stackOffset: 'none',
   syncMethod: 'index',
+  syncValueFallback: 'none',
   ...initialEventSettingsState,
 } as const satisfies Partial<CartesianChartProps>;
 
@@ -80,6 +81,7 @@ export const CartesianChart = forwardRef<SVGSVGElement, CartesianChartOptions>(f
         barSize={rootChartProps.barSize}
         syncId={rootChartProps.syncId}
         syncMethod={rootChartProps.syncMethod}
+        syncValueFallback={rootChartProps.syncValueFallback}
         className={rootChartProps.className}
         reverseStackOrder={rootChartProps.reverseStackOrder}
       />
