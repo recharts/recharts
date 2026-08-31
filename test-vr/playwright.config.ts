@@ -1,10 +1,7 @@
-import { defineConfig, devices } from '@playwright/experimental-ct-react';
+import { defineConfig, devices } from '@playwright/test';
 import path from 'path';
 
-// This config is loaded from test-vr/, so __dirname works as the test-vr root
-// whether running inside the local Docker container (/recharts/test-vr) or
-// directly on a CI runner (<workspace>/test-vr).
-const repoRoot = path.join(__dirname, '..');
+const galleryUrl = 'http://localhost:3100/gallery/index.html';
 
 /**
  * See https://playwright.dev/docs/test-configuration.
@@ -71,28 +68,44 @@ export default defineConfig({
           },
         ],
       ],
+  /*
+   * The gallery dev server that renders the stories. Playwright starts it
+   * before the tests and mounts stories through window.mount() on this page.
+   */
+  webServer: {
+    command: 'npx vite --config vite.config.ts --port 3100 --strictPort',
+    /*
+     * The command runs in the directory of the config file by default, but
+     * being explicit keeps the behavior identical locally, in Docker and in CI.
+     */
+    cwd: __dirname,
+    url: galleryUrl,
+    reuseExistingServer: !process.env.CI,
+    timeout: 60_000,
+  },
   /* Shared settings for all the projects below. See https://playwright.dev/docs/api/class-testoptions. */
   use: {
     /* Collect trace when retrying the failed test. See https://playwright.dev/docs/trace-viewer */
     trace: 'on-first-retry',
 
-    /* Port to use for Playwright component endpoint. */
-    ctPort: 3100,
+    /*
+     * The gallery page that the mount() fixture navigates to.
+     * See https://playwright.dev/docs/test-components.
+     */
+    baseURL: galleryUrl,
 
-    ctViteConfig: {
-      resolve: {
-        alias: {
-          recharts: path.join(repoRoot, 'src'),
-          /*
-           * Ensure that we are using the same React instance
-           * to avoid issues with hooks and context.
-           */
-          react: path.join(repoRoot, 'node_modules/react'),
-          'react-dom': path.join(repoRoot, 'node_modules/react-dom'),
-          'react-is': path.join(repoRoot, 'node_modules/react-is'),
-        },
-      },
-    },
+    /*
+     * Keep the app's own service worker from serving cached responses that
+     * would shadow page.route() mocks. See https://playwright.dev/docs/test-components.
+     */
+    serviceWorkers: 'block',
+
+    /*
+     * Reuse the browser context between tests in a worker, as the old
+     * component testing runtime did. Playwright resets the state that
+     * component tests typically touch between tests.
+     */
+    reuseContext: true,
   },
 
   /* Configure projects for major browsers */

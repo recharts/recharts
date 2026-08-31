@@ -87,6 +87,11 @@ npm run test-storybook
 
 ## Run visual regression tests (using playwright)
 
+The VR tests use the Playwright component testing model with stories and a gallery:
+https://playwright.dev/docs/test-components.
+The JSX for each scenario lives in a `*.story.tsx` file next to the spec, and the spec mounts it
+by story id with the `mountStory` fixture. See `test-vr/README.md` for details.
+
 ### Prerequisites
 
 Playwright tests are running inside Docker. You will need to have Docker installed and running.
