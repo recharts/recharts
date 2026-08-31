@@ -8,6 +8,10 @@ describe('stripLinks', () => {
     );
   });
 
+  it('should strip <LinkToApi> tags whose content spans multiple lines', () => {
+    expect(stripLinks('Use <LinkToApi>Reference\nArea</LinkToApi> instead.')).toBe('Use Reference\nArea instead.');
+  });
+
   it('should strip a mix of <a>, <Link> and <LinkToApi> tags in a single string', () => {
     const input =
       'See <a href="https://example.com">external docs</a>, ' +

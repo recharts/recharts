@@ -230,7 +230,7 @@ export function stripLinks(html: string): string {
   return html
     .replace(/<Link\s+[^>]*>(.*?)<\/Link>/g, '$1')
     .replace(/<a\s+[^>]*>(.*?)<\/a>/g, '$1')
-    .replace(/<LinkToApi(?:\s+[^>]*)?>(.*?)<\/LinkToApi>/g, '$1');
+    .replace(/<LinkToApi(?:\s+[^>]*)?>([\s\S]*?)<\/LinkToApi>/g, '$1');
 }
 
 /**
@@ -349,6 +349,12 @@ async function main() {
 
         if (storyName == null) {
           console.warn(`⚠ No exported stories found in ${storiesFile}, skipping MDX generation.`);
+          // Remove any stale MDX from a previous run, since it may reference a story that no longer exists.
+          const staleMdxPath = absoluteStoriesPath.replace(/\.stories\.tsx$/, '.mdx');
+          if (fs.existsSync(staleMdxPath)) {
+            await fs.promises.unlink(staleMdxPath);
+            console.warn(`⚠ Removed stale ${staleMdxPath}.`);
+          }
           continue;
         }
 
