@@ -24,7 +24,7 @@ next to the spec — and the test mounts it by its story id with the `mountStory
 // test-vr/tests/App.story.tsx
 import { LineChart as RechartsLineChart } from 'recharts';
 
-export function LineChartStory() {
+export function LineChart() {
   return (
     <RechartsLineChart width={800} height={500} data={pageData}>
       {/* ... */}
@@ -62,6 +62,8 @@ export const LegendPosition = (props: React.ComponentProps<typeof LegendPosition
 ```
 
 ```tsx
+import type { LegendPosition } from './LegendPosition.story';
+
 const component = await mountStory<typeof LegendPosition>('LegendPosition/LegendPosition', { offset: 30 });
 ```
 
