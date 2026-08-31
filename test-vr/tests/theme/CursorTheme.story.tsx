@@ -1,4 +1,4 @@
-import React from 'react';
+import * as React from 'react';
 import {
   Bar,
   BarChart,
@@ -97,16 +97,16 @@ function CursorVariantGrid() {
   );
 }
 
-export function UnthemedCursor() {
+export const UnthemedCursor = () => {
   return (
     <div style={{ padding: 20 }}>
       <h3>Unthemed Cursor</h3>
       <CursorVariantGrid />
     </div>
   );
-}
+};
 
-export function ThemedCursor() {
+export const ThemedCursor = () => {
   return (
     <RechartsThemeProvider
       value={{
@@ -127,4 +127,4 @@ export function ThemedCursor() {
       </div>
     </RechartsThemeProvider>
   );
-}
+};

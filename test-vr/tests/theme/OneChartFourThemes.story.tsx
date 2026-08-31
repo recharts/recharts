@@ -97,3 +97,32 @@ export const CustomThemeChart = () => {
     </RechartsThemeProvider>
   );
 };
+
+export const OneChartFourThemes = () => {
+  return (
+    <>
+      <h1>DefaultThemeChart</h1>
+      <DefaultThemeChart />
+      <h1>UnthemedChart</h1>
+      <EmptyThemeChart />
+      <h1>LightThemeChart</h1>
+      <LightThemeChart />
+      <h1>DarkThemeChart</h1>
+      <DarkThemeChart />
+      <h1>CustomThemeChart</h1>
+      <CustomThemeChart />
+      <div style={{ backgroundColor: 'black', color: 'white' }}>
+        <h1>DefaultThemeChart</h1>
+        <DefaultThemeChart />
+        <h1>UnthemedChart</h1>
+        <EmptyThemeChart />
+        <h1>LightThemeChart</h1>
+        <LightThemeChart />
+        <h1>DarkThemeChart</h1>
+        <DarkThemeChart />
+        <h1>CustomThemeChart</h1>
+        <CustomThemeChart />
+      </div>
+    </>
+  );
+};

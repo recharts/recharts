@@ -1,64 +1,21 @@
-import * as React from 'react';
-import { test, expect } from '@playwright/experimental-ct-react';
-import { Treemap } from '../../src';
-import { exampleTreemapData } from '../../test/_data';
-import { CustomContent } from './TreemapComponents';
+import { expect, test } from './fixtures';
 
-test('simple treemap', async ({ mount }) => {
-  const component = await mount(
-    <Treemap
-      width={500}
-      height={250}
-      data={exampleTreemapData}
-      isAnimationActive={false}
-      nameKey="name"
-      dataKey="value"
-    />,
-  );
+test('simple treemap', async ({ mountStory }) => {
+  const component = await mountStory('Treemap/SimpleTreemap');
   await expect(component).toHaveScreenshot();
 });
 
-test('nested treemap', async ({ mount }) => {
-  const component = await mount(
-    <Treemap
-      width={500}
-      height={250}
-      data={exampleTreemapData}
-      isAnimationActive={false}
-      nameKey="name"
-      dataKey="value"
-      type="nest"
-    />,
-  );
+test('nested treemap', async ({ mountStory }) => {
+  const component = await mountStory('Treemap/NestedTreemap');
   await expect(component).toHaveScreenshot();
 });
 
-test('custom aspect ratio', async ({ mount }) => {
-  const component = await mount(
-    <Treemap
-      width={500}
-      height={500}
-      data={exampleTreemapData}
-      isAnimationActive={false}
-      nameKey="name"
-      dataKey="value"
-      aspectRatio={1}
-    />,
-  );
+test('custom aspect ratio', async ({ mountStory }) => {
+  const component = await mountStory('Treemap/CustomAspectRatio');
   await expect(component).toHaveScreenshot();
 });
 
-test('custom content', async ({ mount }) => {
-  const component = await mount(
-    <Treemap
-      width={500}
-      height={250}
-      data={exampleTreemapData}
-      isAnimationActive={false}
-      nameKey="name"
-      dataKey="value"
-      content={<CustomContent />}
-    />,
-  );
+test('custom content', async ({ mountStory }) => {
+  const component = await mountStory('Treemap/CustomTreemapContent');
   await expect(component).toHaveScreenshot();
 });

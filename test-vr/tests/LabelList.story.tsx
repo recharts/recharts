@@ -1,7 +1,3 @@
-/*
- * Workaround file for https://playwright.dev/docs/test-components#test-stories
- */
-
 import * as React from 'react';
 import {
   Area,
@@ -32,7 +28,7 @@ const shortFillColorData = pageDataWithFillColor.slice(2, 4);
 
 const margin = { top: 155, right: 180, left: 180, bottom: 0 };
 
-export const availablePositions = [
+const availablePositions = [
   'top',
   'left',
   'right',
@@ -338,3 +334,20 @@ export const FunnelExplicitLabelListTest = () => (
     </Funnel>
   </FunnelChart>
 );
+
+export const AreaImplicitLabelList = () => <AreaImplicitLabelListTest />;
+export const AreaExplicitLabelList = () => <AreaExplicitLabelListTest />;
+export const BarImplicitLabelList = () => <BarImplicitLabelListTest />;
+export const BarExplicitLabelList = () => <BarExplicitLabelListTest />;
+export const LineImplicitLabelList = () => <LineImplicitLabelListTest />;
+export const LineExplicitLabelList = () => <LineExplicitLabelListTest />;
+export const ScatterImplicitLabelList = () => <ScatterImplicitLabelListTest />;
+export const ScatterExplicitLabelList = () => <ScatterExplicitLabelListTest />;
+export const PieImplicitLabelList = () => <PieImplicitLabelListTest />;
+export const PieExplicitLabelList = () => <PieExplicitLabelListTest />;
+export const RadarImplicitLabelList = () => <RadarImplicitLabelListTest />;
+export const RadarExplicitLabelList = () => <RadarExplicitLabelListTest />;
+export const RadialBarImplicitLabelList = () => <RadialBarImplicitLabelListTest />;
+export const RadialBarExplicitLabelList = () => <RadialBarExplicitLabelListTest />;
+export const FunnelImplicitLabelList = () => <FunnelImplicitLabelListTest />;
+export const FunnelExplicitLabelList = () => <FunnelExplicitLabelListTest />;

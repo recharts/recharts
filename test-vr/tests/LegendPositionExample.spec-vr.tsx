@@ -1,7 +1,5 @@
-import * as React from 'react';
-import { expect } from '@playwright/experimental-ct-react';
-import LegendPositionExample from '../../www/src/docs/exampleComponents/Legend/LegendPositionExample.tsx';
-import { testWithLightTheme } from './www/fixtures.tsx';
+import type { LegendPositionExample as LegendPositionExampleStory } from './LegendPositionExample.story';
+import { expect, test } from './fixtures';
 
 const positions = [
   'top',
@@ -20,8 +18,13 @@ const positions = [
 ] as const;
 
 for (const position of positions) {
-  testWithLightTheme(`LegendPositionExample - ${position}`, async ({ mount }) => {
-    const component = await mount(<LegendPositionExample position={position} />);
+  test(`LegendPositionExample - ${position}`, async ({ mountStory }) => {
+    const component = await mountStory<typeof LegendPositionExampleStory>(
+      'LegendPositionExample/LegendPositionExample',
+      {
+        position,
+      },
+    );
     await expect(component).toHaveScreenshot();
   });
 }

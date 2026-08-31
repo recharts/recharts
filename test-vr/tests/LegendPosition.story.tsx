@@ -111,3 +111,13 @@ export const LegendAlignVRTest = () => (
     ))}
   </div>
 );
+
+export const LegendPosition = (props: React.ComponentProps<typeof LegendPositionVRTest>) => (
+  <LegendPositionVRTest {...props} />
+);
+
+export const LegendAlign = () => <LegendAlignVRTest />;
+
+export const VeryLongLegendTextStory = (props: React.ComponentProps<typeof VeryLongLegendText>) => (
+  <VeryLongLegendText {...props} />
+);

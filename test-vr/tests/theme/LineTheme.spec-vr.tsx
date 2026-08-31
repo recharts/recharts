@@ -1,9 +1,7 @@
-import * as React from 'react';
-import { expect, test } from '@playwright/experimental-ct-react';
-import { LineThemeComparison } from './LineThemeComponents.tsx';
+import { expect, test } from '../fixtures';
 
-test('Line theme', async ({ mount }) => {
-  const component = await mount(<LineThemeComparison />);
+test('Line theme', async ({ mountStory }) => {
+  const component = await mountStory('theme/LineTheme/LineThemeComparison');
 
   await expect(component).toHaveScreenshot();
 });

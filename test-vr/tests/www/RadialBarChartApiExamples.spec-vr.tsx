@@ -1,27 +1,23 @@
-import * as React from 'react';
-import { expect } from '@playwright/experimental-ct-react';
+import { expect, test } from '../fixtures';
 
-import SimpleRadialBarChart from '../../../www/src/docs/exampleComponents/RadialBarChart/SimpleRadialBarChart';
-import RadialBarChartNavExample from '../../../www/src/docs/exampleComponents/RadialBarChart/RadialBarChartNavExample';
-import RadialBarChartClickToFocusLegendExample from '../../../www/src/docs/exampleComponents/RadialBarChart/RadialBarChartClickToFocusLegendExample';
-import { testWithDarkTheme, testWithLightTheme } from './fixtures.tsx';
-
-testWithLightTheme('RadialBarChartNavExample', async ({ mount }) => {
-  const component = await mount(<RadialBarChartNavExample />);
+test('RadialBarChartNavExample', async ({ mountStory }) => {
+  const component = await mountStory('www/RadialBarChartApiExamples/RadialBarChartNavExample', { testTheme: 'light' });
   await expect(component).toHaveScreenshot();
 });
 
-testWithLightTheme('SimpleRadialBarChart', async ({ mount }) => {
-  const component = await mount(<SimpleRadialBarChart />);
+test('SimpleRadialBarChart', async ({ mountStory }) => {
+  const component = await mountStory('www/RadialBarChartApiExamples/SimpleRadialBarChart', { testTheme: 'light' });
   await expect(component).toHaveScreenshot();
 });
 
-testWithDarkTheme('SimpleRadialBarChart dark theme', async ({ mount }) => {
-  const component = await mount(<SimpleRadialBarChart />);
+test('SimpleRadialBarChart dark theme', async ({ mountStory }) => {
+  const component = await mountStory('www/RadialBarChartApiExamples/SimpleRadialBarChart', { testTheme: 'dark' });
   await expect(component).toHaveScreenshot();
 });
 
-testWithLightTheme('RadialBarChartClickToFocusLegendExample', async ({ mount }) => {
-  const component = await mount(<RadialBarChartClickToFocusLegendExample />);
+test('RadialBarChartClickToFocusLegendExample', async ({ mountStory }) => {
+  const component = await mountStory('www/RadialBarChartApiExamples/RadialBarChartClickToFocusLegendExample', {
+    testTheme: 'light',
+  });
   await expect(component).toHaveScreenshot();
 });

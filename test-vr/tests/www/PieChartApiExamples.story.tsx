@@ -1,0 +1,20 @@
+import TwoLevelPieChartComponent from '../../../www/src/docs/exampleComponents/PieChart/TwoLevelPieChart';
+import StraightAnglePieChartComponent from '../../../www/src/docs/exampleComponents/PieChart/StraightAnglePieChart';
+import CustomActiveShapePieChartComponent from '../../../www/src/docs/exampleComponents/PieChart/CustomActiveShapePieChart';
+import PieChartWithCustomizedLabelComponent from '../../../www/src/docs/exampleComponents/PieChart/PieChartWithCustomizedLabel';
+import PieChartWithPaddingAngleComponent from '../../../www/src/docs/exampleComponents/PieChart/PieChartWithPaddingAngle';
+import PieChartWithNeedleComponent from '../../../www/src/docs/exampleComponents/PieChart/PieChartWithNeedle';
+import PieChartInFlexboxComponent from '../../../www/src/docs/exampleComponents/PieChart/PieChartInFlexbox';
+import PieChartNavExampleComponent from '../../../www/src/docs/exampleComponents/PieChart/PieChartNavExample';
+import PieWithGradientComponent from '../../../www/src/docs/exampleComponents/PieChart/PieWithGradient';
+import { themedStory } from './StoryTheme';
+
+export const PieChartNavExample = themedStory(PieChartNavExampleComponent);
+export const PieChartInFlexbox = themedStory(PieChartInFlexboxComponent);
+export const PieChartWithNeedle = themedStory(PieChartWithNeedleComponent);
+export const PieChartWithPaddingAngle = themedStory(PieChartWithPaddingAngleComponent);
+export const PieChartWithCustomizedLabel = themedStory(PieChartWithCustomizedLabelComponent);
+export const CustomActiveShapePieChart = themedStory(CustomActiveShapePieChartComponent);
+export const StraightAnglePieChart = themedStory(StraightAnglePieChartComponent);
+export const TwoLevelPieChart = themedStory(TwoLevelPieChartComponent);
+export const PieWithGradient = themedStory(PieWithGradientComponent);

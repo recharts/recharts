@@ -19,3 +19,7 @@ export function IfOverflowTestWithSegment(props: { ifOverflow: IfOverflow | unde
     </LineChart>
   );
 }
+
+export const IfOverflowWithSegment = (props: React.ComponentProps<typeof IfOverflowTestWithSegment>) => (
+  <IfOverflowTestWithSegment {...props} />
+);
