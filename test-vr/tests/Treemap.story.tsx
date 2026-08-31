@@ -2,7 +2,7 @@ import React from 'react';
 import { Treemap } from '../../src';
 import { exampleTreemapData } from '../../test/_data';
 
-export const CustomContent = (props: any) => {
+const CustomContent = (props: any) => {
   const { depth, x, y, width, height, index, name } = props;
 
   return (

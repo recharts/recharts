@@ -2,11 +2,9 @@
  * Vite dev server for the Playwright story gallery (test-vr/gallery).
  * Started automatically by the webServer option in test-vr/playwright.config.ts.
  *
- * CSS imported by story files or test helpers is not applied to the page,
- * mirroring the old component testing runtime: the committed snapshots were
- * generated without CSS from the test side (e.g. www/src/styles/app.css
- * changes the body margin and fonts). CSS imported by the website components
- * themselves is applied normally.
+ * The gallery itself does not add global CSS, while individual stories or
+ * story helpers may opt in (for example www/src/styles/app.css imported by
+ * test-vr/tests/www/StoryTheme.tsx).
  */
 import path from 'node:path';
 import { defineConfig } from 'vite';
@@ -19,6 +17,10 @@ export default defineConfig({
    * http://localhost:3100/gallery/index.html.
    */
   root: __dirname,
+  cacheDir: path.join(repoRoot, 'node_modules/.vite-test-vr'),
+  optimizeDeps: {
+    entries: ['gallery/index.html', 'tests/**/*.story.tsx'],
+  },
   resolve: {
     alias: {
       /*

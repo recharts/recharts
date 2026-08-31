@@ -42,7 +42,7 @@ const wrapperStyle: React.CSSProperties = {
   alignItems: 'center',
 };
 
-export const LegendPositionVRTest = ({ offset }: { offset?: number }) => (
+const LegendPositionVRTest = ({ offset }: { offset?: number }) => (
   <div style={wrapperStyle}>
     {availablePositions.map(position => (
       <LineChart
@@ -69,7 +69,7 @@ export const LegendPositionVRTest = ({ offset }: { offset?: number }) => (
 const veryLongText1 = 'Lorem Ipsum dolor sit amet, consectetur adipiscing elit. '.repeat(3);
 const veryLongText2 = 'Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. '.repeat(3);
 
-export const VeryLongLegendText = ({ position }: { position: CartesianPosition }) => {
+const VeryLongLegendText = ({ position }: { position: CartesianPosition }) => {
   return (
     <LineChart key={JSON.stringify(position)} width={500} height={300} data={data} style={{ border: '1px solid red' }}>
       <Line type="monotone" dataKey="uv" stroke="purple" name={veryLongText1} />
@@ -94,7 +94,7 @@ const allAlignmentCombinations: ReadonlyArray<Alignment> = [
   ['right', 'bottom'],
 ];
 
-export const LegendAlignVRTest = () => (
+const LegendAlignVRTest = () => (
   <div style={wrapperStyle}>
     {allAlignmentCombinations.map(([horizontalAlign, verticalAlign]) => (
       <React.Fragment key={`${horizontalAlign}-${verticalAlign}`}>

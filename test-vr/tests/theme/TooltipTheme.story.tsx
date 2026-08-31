@@ -16,7 +16,7 @@ function TooltipChart() {
   );
 }
 
-export function UnthemedTooltip() {
+function UnthemedTooltip() {
   return (
     <div style={{ padding: 20 }}>
       <h3>Unthemed Tooltip</h3>
@@ -25,7 +25,7 @@ export function UnthemedTooltip() {
   );
 }
 
-export function ThemedTooltip() {
+function ThemedTooltip() {
   return (
     <RechartsThemeProvider
       value={{

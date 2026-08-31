@@ -52,7 +52,7 @@ const availablePositions = [
   'middle',
 ] as const;
 
-export const AreaImplicitLabelListTest = () => (
+const AreaImplicitLabelListTest = () => (
   <AreaChart width={900} height={500} data={shortData} margin={margin}>
     {availablePositions.map(position => (
       <Area
@@ -68,7 +68,7 @@ export const AreaImplicitLabelListTest = () => (
   </AreaChart>
 );
 
-export const AreaExplicitLabelListTest = () => (
+const AreaExplicitLabelListTest = () => (
   <AreaChart width={900} height={500} data={shortData} margin={margin}>
     <Area type="monotone" dataKey="uv" stroke="#8884d8" fill="none">
       {availablePositions.map(position => (
@@ -85,7 +85,7 @@ export const AreaExplicitLabelListTest = () => (
   </AreaChart>
 );
 
-export const BarImplicitLabelListTest = () => (
+const BarImplicitLabelListTest = () => (
   <BarChart width={900} height={500} data={shortData} margin={margin}>
     {availablePositions.map(position => (
       <Bar
@@ -100,7 +100,7 @@ export const BarImplicitLabelListTest = () => (
   </BarChart>
 );
 
-export const BarExplicitLabelListTest = () => (
+const BarExplicitLabelListTest = () => (
   <BarChart width={900} height={500} data={shortData} margin={margin}>
     <Bar dataKey="uv" fill="none" stroke="green">
       {availablePositions.map(position => (
@@ -117,7 +117,7 @@ export const BarExplicitLabelListTest = () => (
   </BarChart>
 );
 
-export const LineImplicitLabelListTest = () => (
+const LineImplicitLabelListTest = () => (
   <LineChart width={900} height={500} data={shortData} margin={margin}>
     {availablePositions.map(position => (
       <Line
@@ -132,7 +132,7 @@ export const LineImplicitLabelListTest = () => (
   </LineChart>
 );
 
-export const LineExplicitLabelListTest = () => (
+const LineExplicitLabelListTest = () => (
   <LineChart width={900} height={500} data={shortData} margin={margin}>
     <Line type="monotone" dataKey="uv" stroke="#8884d8">
       {availablePositions.map(position => (
@@ -149,7 +149,7 @@ export const LineExplicitLabelListTest = () => (
   </LineChart>
 );
 
-export const ScatterImplicitLabelListTest = () => (
+const ScatterImplicitLabelListTest = () => (
   <ScatterChart width={900} height={500} margin={margin}>
     <XAxis dataKey="name" allowDuplicatedCategory={false} />
     <YAxis dataKey="uv" />
@@ -165,7 +165,7 @@ export const ScatterImplicitLabelListTest = () => (
   </ScatterChart>
 );
 
-export const ScatterExplicitLabelListTest = () => (
+const ScatterExplicitLabelListTest = () => (
   <ScatterChart width={900} height={500} margin={margin}>
     <XAxis dataKey="name" />
     <YAxis dataKey="uv" />
@@ -184,7 +184,7 @@ export const ScatterExplicitLabelListTest = () => (
   </ScatterChart>
 );
 
-export const PieImplicitLabelListTest = () => (
+const PieImplicitLabelListTest = () => (
   <PieChart width={900} height={500}>
     {availablePositions.map(position => (
       <Pie
@@ -201,7 +201,7 @@ export const PieImplicitLabelListTest = () => (
   </PieChart>
 );
 
-export const PieExplicitLabelListTest = () => (
+const PieExplicitLabelListTest = () => (
   <PieChart width={900} height={500}>
     <Pie data={shortFillColorData} dataKey="uv" isAnimationActive={false}>
       {availablePositions.map(position => (
@@ -219,7 +219,7 @@ export const PieExplicitLabelListTest = () => (
   </PieChart>
 );
 
-export const RadarImplicitLabelListTest = () => (
+const RadarImplicitLabelListTest = () => (
   <RadarChart width={900} height={500} data={shortData} margin={margin}>
     {availablePositions.map(position => (
       <Radar
@@ -234,7 +234,7 @@ export const RadarImplicitLabelListTest = () => (
   </RadarChart>
 );
 
-export const RadarExplicitLabelListTest = () => (
+const RadarExplicitLabelListTest = () => (
   <RadarChart width={900} height={500} data={shortData} margin={margin}>
     <Radar dataKey="uv" stroke="#8884d8" fill="none">
       {availablePositions.map(position => (
@@ -251,7 +251,7 @@ export const RadarExplicitLabelListTest = () => (
   </RadarChart>
 );
 
-export const RadialBarImplicitLabelListTest = () => (
+const RadialBarImplicitLabelListTest = () => (
   <RadialBarChart
     width={900}
     height={500}
@@ -276,7 +276,7 @@ export const RadialBarImplicitLabelListTest = () => (
   </RadialBarChart>
 );
 
-export const RadialBarExplicitLabelListTest = () => (
+const RadialBarExplicitLabelListTest = () => (
   <RadialBarChart
     width={900}
     height={500}
@@ -302,7 +302,7 @@ export const RadialBarExplicitLabelListTest = () => (
   </RadialBarChart>
 );
 
-export const FunnelImplicitLabelListTest = () => (
+const FunnelImplicitLabelListTest = () => (
   <FunnelChart width={800} height={500} data={shortData} margin={margin}>
     {availablePositions.map(position => (
       <Funnel
@@ -319,7 +319,7 @@ export const FunnelImplicitLabelListTest = () => (
   </FunnelChart>
 );
 
-export const FunnelExplicitLabelListTest = () => (
+const FunnelExplicitLabelListTest = () => (
   <FunnelChart width={800} height={500} data={shortData} margin={margin}>
     <Funnel type="monotone" dataKey="uv" stroke="black" fill="none" isAnimationActive={false}>
       {availablePositions.map(position => (

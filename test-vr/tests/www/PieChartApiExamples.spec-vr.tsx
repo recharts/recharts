@@ -1,7 +1,11 @@
 import type {
   CustomActiveShapePieChart,
   PieChartNavExample,
+  PieChartWithCustomizedLabel,
+  PieChartWithNeedle,
+  PieChartWithPaddingAngle,
   PieWithGradient,
+  StraightAnglePieChart,
   TwoLevelPieChart,
 } from './PieChartApiExamples.story';
 import { expect, test } from '../fixtures';
@@ -26,7 +30,7 @@ test('PieChartInFlexbox', async ({ mountStory }) => {
 });
 
 test('PieChartWithNeedle', async ({ mountStory }) => {
-  const component = await mountStory('www/PieChartApiExamples/PieChartWithNeedle', {
+  const component = await mountStory<typeof PieChartWithNeedle>('www/PieChartApiExamples/PieChartWithNeedle', {
     testTheme: 'light',
     isAnimationActive: false,
   });
@@ -34,18 +38,24 @@ test('PieChartWithNeedle', async ({ mountStory }) => {
 });
 
 test('PieChartWithPaddingAngle', async ({ mountStory }) => {
-  const component = await mountStory('www/PieChartApiExamples/PieChartWithPaddingAngle', {
-    testTheme: 'light',
-    isAnimationActive: false,
-  });
+  const component = await mountStory<typeof PieChartWithPaddingAngle>(
+    'www/PieChartApiExamples/PieChartWithPaddingAngle',
+    {
+      testTheme: 'light',
+      isAnimationActive: false,
+    },
+  );
   await expect(component).toHaveScreenshot();
 });
 
 test('PieChartWithCustomizedLabel', async ({ mountStory }) => {
-  const component = await mountStory('www/PieChartApiExamples/PieChartWithCustomizedLabel', {
-    testTheme: 'light',
-    isAnimationActive: false,
-  });
+  const component = await mountStory<typeof PieChartWithCustomizedLabel>(
+    'www/PieChartApiExamples/PieChartWithCustomizedLabel',
+    {
+      testTheme: 'light',
+      isAnimationActive: false,
+    },
+  );
   await expect(component).toHaveScreenshot();
 });
 
@@ -62,7 +72,7 @@ test('CustomActiveShapePieChart', async ({ mountStory }) => {
 });
 
 test('StraightAnglePieChart', async ({ mountStory }) => {
-  const component = await mountStory('www/PieChartApiExamples/StraightAnglePieChart', {
+  const component = await mountStory<typeof StraightAnglePieChart>('www/PieChartApiExamples/StraightAnglePieChart', {
     testTheme: 'light',
     isAnimationActive: false,
   });

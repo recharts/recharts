@@ -1,17 +1,7 @@
 import React from 'react';
 import { Surface, Text } from '../../src';
 
-export function Crosshair({
-  x,
-  y,
-  className,
-  color = 'red',
-}: {
-  x: number;
-  y: number;
-  className?: string;
-  color?: string;
-}) {
+function Crosshair({ x, y, className, color = 'red' }: { x: number; y: number; className?: string; color?: string }) {
   const coordinateText = `${x.toFixed(1)}, ${y.toFixed(1)}`;
   // Approximate text width calculation (roughly 6.5 pixels per character for 10px bold monospace)
   const textWidth = coordinateText.length * 6.5;

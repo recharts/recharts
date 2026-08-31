@@ -17,7 +17,7 @@ import { generateMockData } from '@recharts/devtools';
 
 const data = generateMockData(6, 123);
 
-export function DefaultThemeChart() {
+function DefaultThemeChart() {
   return (
     <LineChart style={{ width: '400px', height: '300px' }} data={data}>
       <CartesianGrid />
@@ -31,7 +31,7 @@ export function DefaultThemeChart() {
   );
 }
 
-export function EmptyThemeChart() {
+function EmptyThemeChart() {
   return (
     <RechartsThemeProvider value={emptyTheme}>
       <LineChart style={{ width: '400px', height: '300px' }} data={data}>
@@ -47,7 +47,7 @@ export function EmptyThemeChart() {
   );
 }
 
-export const LightThemeChart = () => {
+const LightThemeChart = () => {
   return (
     <RechartsThemeProvider value={lightTheme}>
       <DefaultThemeChart />
@@ -55,7 +55,7 @@ export const LightThemeChart = () => {
   );
 };
 
-export const DarkThemeChart = () => {
+const DarkThemeChart = () => {
   return (
     <RechartsThemeProvider value={darkTheme}>
       <DefaultThemeChart />
@@ -63,7 +63,7 @@ export const DarkThemeChart = () => {
   );
 };
 
-export const CustomThemeChart = () => {
+const CustomThemeChart = () => {
   const customTheme: RechartsTheme = {
     graphicalItems: [
       {

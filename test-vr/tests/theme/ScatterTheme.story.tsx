@@ -9,7 +9,7 @@ const scatterData = [
   { x: 70, y: 60, z: 180 },
 ];
 
-export function UnthemedScatter() {
+function UnthemedScatter() {
   return (
     <ScatterChart style={{ width: '400px', height: '300px' }}>
       <XAxis dataKey="x" type="number" />
@@ -20,7 +20,7 @@ export function UnthemedScatter() {
   );
 }
 
-export function ThemedScatter() {
+function ThemedScatter() {
   return (
     <RechartsThemeProvider
       value={{

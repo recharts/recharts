@@ -1,3 +1,4 @@
+import type { AreaChartExample, AreaChartRangeExample, CrosshairExample } from './AreaChartApiExamples.story';
 import { expect, test } from '../fixtures';
 
 test('AreaChartNavExample', async ({ mountStory }) => {
@@ -51,7 +52,7 @@ test('SimpleAreaChart', async ({ mountStory }) => {
 });
 
 test('AreaChartExample', async ({ mountStory }) => {
-  const component = await mountStory('www/AreaChartApiExamples/AreaChartExample', {
+  const component = await mountStory<typeof AreaChartExample>('www/AreaChartApiExamples/AreaChartExample', {
     testTheme: 'light',
     isAnimationActive: false,
   });
@@ -59,7 +60,7 @@ test('AreaChartExample', async ({ mountStory }) => {
 });
 
 test('AreaChartRangeExample', async ({ mountStory }) => {
-  const component = await mountStory('www/AreaChartApiExamples/AreaChartRangeExample', {
+  const component = await mountStory<typeof AreaChartRangeExample>('www/AreaChartApiExamples/AreaChartRangeExample', {
     testTheme: 'light',
     isAnimationActive: false,
   });
@@ -67,7 +68,7 @@ test('AreaChartRangeExample', async ({ mountStory }) => {
 });
 
 test('CrosshairExample', async ({ mountStory }) => {
-  const component = await mountStory('www/AreaChartApiExamples/CrosshairExample', {
+  const component = await mountStory<typeof CrosshairExample>('www/AreaChartApiExamples/CrosshairExample', {
     testTheme: 'light',
     initialPointers: [{ relativeX: 100, relativeY: 100 }],
   });

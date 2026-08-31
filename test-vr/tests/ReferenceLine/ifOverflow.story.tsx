@@ -2,7 +2,7 @@ import * as React from 'react';
 import { Line, LineChart, ReferenceLine, YAxis, IfOverflow, XAxis } from '../../../src';
 import { pageData } from '../../../storybook/stories/data';
 
-export function IfOverflowTestWithSegment(props: { ifOverflow: IfOverflow | undefined }) {
+function IfOverflowTestWithSegment(props: { ifOverflow: IfOverflow | undefined }) {
   return (
     <LineChart width={800} height={500} data={pageData}>
       <YAxis width="auto" />

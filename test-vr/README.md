@@ -22,13 +22,15 @@ next to the spec — and the test mounts it by its story id with the `mountStory
 
 ```tsx
 // test-vr/tests/App.story.tsx
-export const LineChart = () => {
+import { LineChart as RechartsLineChart } from 'recharts';
+
+export function LineChartStory() {
   return (
-    <LineChart width={800} height={500} data={pageData}>
-      ...
-    </LineChart>
+    <RechartsLineChart width={800} height={500} data={pageData}>
+      {/* ... */}
+    </RechartsLineChart>
   );
-};
+}
 ```
 
 ```tsx
@@ -50,13 +52,17 @@ capturing the same bounding box as before.
 Stories can take plain serializable props (data, booleans, strings) that the test passes as the second argument:
 
 ```tsx
+function LegendPositionVRTest({ offset }: { offset?: number }) {
+  // ...
+}
+
 export const LegendPosition = (props: React.ComponentProps<typeof LegendPositionVRTest>) => (
   <LegendPositionVRTest {...props} />
 );
 ```
 
 ```tsx
-const component = await mountStory('LegendPosition/LegendPosition', { position: 'bottom' });
+const component = await mountStory<typeof LegendPosition>('LegendPosition/LegendPosition', { offset: 30 });
 ```
 
 The `www` tests have a shared story helper `test-vr/tests/www/StoryTheme.tsx` with a `themedStory()` factory and a
@@ -97,10 +103,7 @@ to avoid unexpected changes in the tests. But let's see how it goes.
 
 ## File structure
 
-This whole setup in its own directory mainly because the storybook/test-runner will break
-if a "playwright/index.tsx" file exists.
-So we need to move that somewhere else and while we're at it, we can
-also move everything else with it.
+All visual regression testing infrastructure, stories, specs, and baseline snapshots live in the `test-vr` directory.
 
 ### `.bin`
 
@@ -143,11 +146,9 @@ Each spec file has a matching `*.story.tsx` file with the story exports it mount
 This config uses the plain `defineConfig` from `@playwright/test` with the `webServer` option
 that starts the Vite dev server serving the story gallery.
 
-Note that our `playwright.config.ts` file contains all absolute paths. This is intentional
-because the tests are run inside a Docker container and the paths will be consistent.
-
-You will not be able to run the tests outside of Docker because of this.
-Please do not modify the paths because they are hardcoded all over the place.
+Docker is the recommended environment for running visual regression tests and updating snapshots
+so that screenshots remain consistent across different development machines and operating systems
+(avoiding font, subpixel rendering, and OS differences).
 
 ## Error: browserType.launch: Executable doesn't exist
 
