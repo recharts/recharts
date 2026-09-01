@@ -78,4 +78,32 @@ describe('LRUCache', () => {
     expect(singleCache.get('b')).toBe(2);
     expect(singleCache.size()).toBe(1);
   });
+
+  test('should evict when the oldest key is nullish', () => {
+    const nullishCache = new LRUCache<string | null | undefined, number>(2);
+
+    nullishCache.set(null, 1);
+    nullishCache.set(undefined, 2);
+    nullishCache.set('c', 3);
+
+    expect(nullishCache.size()).toBe(2);
+    expect(nullishCache.get(null)).toBeUndefined();
+    expect(nullishCache.get(undefined)).toBe(2);
+    expect(nullishCache.get('c')).toBe(3);
+  });
+
+  test('should update LRU order when accessing an entry stored as undefined', () => {
+    const undefinedCache = new LRUCache<string, number | undefined>(2);
+
+    undefinedCache.set('a', undefined);
+    undefinedCache.set('b', 2);
+
+    // Reading 'a' makes it the most recently used, so 'b' is the one to evict.
+    undefinedCache.get('a');
+    undefinedCache.set('c', 3);
+
+    expect(undefinedCache.size()).toBe(2);
+    expect(undefinedCache.get('b')).toBeUndefined();
+    expect(undefinedCache.get('c')).toBe(3);
+  });
 });
