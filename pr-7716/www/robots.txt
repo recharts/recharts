@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://recharts.github.io/sitemap.xml
