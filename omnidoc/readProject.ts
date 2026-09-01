@@ -10,6 +10,7 @@ import {
   Symbol as TsMorphSymbol,
   SymbolFlags,
   Type,
+  TypeNode,
 } from 'ts-morph';
 import { isReactComponent } from './isReactComponent';
 import { DefaultValue, DocReader } from './DocReader';
@@ -411,33 +412,102 @@ export class ProjectDocReader implements DocReader {
     return properties.filter(p => p.name === prop);
   }
 
-  private extractSVGElementFromType(type: Type | undefined): string | null {
+  private extractSVGElementFromTypeNode(
+    typeNode: TypeNode | undefined,
+    visitedTypes: Set<Type>,
+    visitedDeclarations: Set<Node>,
+  ): string | null {
+    if (!typeNode) {
+      return null;
+    }
+
+    if (Node.isTypeReference(typeNode)) {
+      const typeResult = this.extractSVGElementFromType(typeNode.getType(), visitedTypes, visitedDeclarations);
+      if (typeResult) return typeResult;
+
+      for (const typeArgument of typeNode.getTypeArguments()) {
+        const argumentResult = this.extractSVGElementFromTypeNode(typeArgument, visitedTypes, visitedDeclarations);
+        if (argumentResult) return argumentResult;
+      }
+    } else if (Node.isIntersectionTypeNode(typeNode) || Node.isUnionTypeNode(typeNode)) {
+      for (const childTypeNode of typeNode.getTypeNodes()) {
+        const childResult = this.extractSVGElementFromTypeNode(childTypeNode, visitedTypes, visitedDeclarations);
+        if (childResult) return childResult;
+      }
+    } else if (Node.isParenthesizedTypeNode(typeNode)) {
+      return this.extractSVGElementFromTypeNode(typeNode.getTypeNode(), visitedTypes, visitedDeclarations);
+    }
+
+    return null;
+  }
+
+  private extractSVGElementFromType(
+    type: Type | undefined,
+    visitedTypes: Set<Type> = new Set(),
+    visitedDeclarations: Set<Node> = new Set(),
+  ): string | null {
     if (!type) {
       return null;
     }
-    // Handle intersection types
+
+    if (visitedTypes.has(type)) {
+      return null;
+    }
+    visitedTypes.add(type);
+
+    const svgElementMatch = type.getText().match(/\b(SVG[A-Za-z]*Element)\b/);
+    if (svgElementMatch) {
+      return svgElementMatch[1] ?? null;
+    }
+
+    // Handle intersection and union types.
     if (type.isIntersection()) {
       for (const intersectionType of type.getIntersectionTypes()) {
-        const result = this.extractSVGElementFromType(intersectionType);
+        const result = this.extractSVGElementFromType(intersectionType, visitedTypes, visitedDeclarations);
+        if (result) return result;
+      }
+    }
+    if (type.isUnion()) {
+      for (const unionType of type.getUnionTypes()) {
+        const result = this.extractSVGElementFromType(unionType, visitedTypes, visitedDeclarations);
         if (result) return result;
       }
     }
 
-    // Check if this is a type reference
-    const typeNode = type.getSymbol()?.getDeclarations()?.[0];
-    if (typeNode) {
-      const typeText = type.getText();
+    // Follow instantiated type arguments, which is needed for aliases such as
+    // SVGPropsAndEvents<RectangleProps>.
+    for (const typeArgument of type.getAliasTypeArguments()) {
+      const result = this.extractSVGElementFromType(typeArgument, visitedTypes, visitedDeclarations);
+      if (result) return result;
+    }
 
-      // Look for SVGProps<SVGXxxElement> pattern
-      const svgPropsMatch = typeText.match(/SVGProps<(SVG\w+Element)>/);
-      if (svgPropsMatch) {
-        return svgPropsMatch[1];
+    // Follow local type aliases and interface inheritance without inspecting
+    // interface members, where SVG element types may only be used as callback
+    // parameters or custom shape types.
+    const typeSymbol = type.getAliasSymbol() ?? type.getSymbol();
+    for (const declaration of typeSymbol?.getDeclarations() ?? []) {
+      if (visitedDeclarations.has(declaration)) {
+        continue;
       }
+      visitedDeclarations.add(declaration);
 
-      // Look for Omit<SVGProps<SVGXxxElement>, ...> pattern
-      const omitMatch = typeText.match(/Omit<[^,]*SVGProps<(SVG\w+Element)>/);
-      if (omitMatch) {
-        return omitMatch[1];
+      if (Node.isTypeAliasDeclaration(declaration)) {
+        const typeNode = declaration.getTypeNode();
+        const aliasSvgElementMatch = typeNode?.getText().match(/\b(SVG[A-Za-z]*Element)\b/);
+        if (aliasSvgElementMatch) {
+          return aliasSvgElementMatch[1] ?? null;
+        }
+
+        const result = this.extractSVGElementFromType(typeNode?.getType(), visitedTypes, visitedDeclarations);
+        if (result) return result;
+
+        const nodeResult = this.extractSVGElementFromTypeNode(typeNode, visitedTypes, visitedDeclarations);
+        if (nodeResult) return nodeResult;
+      } else if (Node.isInterfaceDeclaration(declaration)) {
+        for (const extendedType of declaration.getExtends()) {
+          const result = this.extractSVGElementFromType(extendedType.getType(), visitedTypes, visitedDeclarations);
+          if (result) return result;
+        }
       }
     }
 

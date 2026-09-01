@@ -233,4 +233,9 @@ describe('generateApiDoc', () => {
     expect(simpleAreaChart).toBeDefined();
     expect(simpleAreaChart?.name).toBe('Simple Area Chart');
   });
+
+  it('should include the inherited SVG element in API metadata', async () => {
+    const apiDoc = await generateApiDoc('Bar', reader, exampleReader, contextMap, { allExports });
+    expect(apiDoc.svgParent).toBe('SVGPathElement');
+  });
 });
