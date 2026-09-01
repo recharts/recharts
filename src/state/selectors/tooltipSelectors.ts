@@ -40,6 +40,7 @@ import {
   CategoricalDomain,
   CategoricalDomainItem,
   Coordinate,
+  PolarCoordinate,
   RechartsScaleType,
   DataKey,
   LayoutType,
@@ -79,6 +80,7 @@ import { selectChartHeight, selectChartWidth } from './containerSelectors';
 import { selectChartOffsetInternal } from './selectChartOffsetInternal';
 import { combineTooltipPayloadConfigurations } from './combiners/combineTooltipPayloadConfigurations';
 import { selectTooltipPayloadSearcher } from './selectTooltipPayloadSearcher';
+import { selectPolarViewBox } from './polarAxisSelectors';
 import { selectTooltipState } from './selectTooltipState';
 
 import { combineTooltipPayload } from './combiners/combineTooltipPayload';
@@ -503,18 +505,20 @@ const selectTooltipPayloadConfigurations = createSelector(
   combineTooltipPayloadConfigurations,
 );
 
-const selectTooltipCoordinateForDefaultIndex: (state: RechartsRootState) => Coordinate | undefined = createSelector(
-  [
-    selectChartWidth,
-    selectChartHeight,
-    selectChartLayout,
-    selectChartOffsetInternal,
-    selectTooltipAxisTicks,
-    selectDefaultIndex,
-    selectTooltipPayloadConfigurations,
-  ],
-  combineCoordinateForDefaultIndex,
-);
+const selectTooltipCoordinateForDefaultIndex: (state: RechartsRootState) => Coordinate | PolarCoordinate | undefined =
+  createSelector(
+    [
+      selectChartWidth,
+      selectChartHeight,
+      selectChartLayout,
+      selectChartOffsetInternal,
+      selectTooltipAxisTicks,
+      selectDefaultIndex,
+      selectTooltipPayloadConfigurations,
+      selectPolarViewBox,
+    ],
+    combineCoordinateForDefaultIndex,
+  );
 
 /**
  * The active tooltip's coordinate recomputed from its index against the current (zoomed) ticks, so it
