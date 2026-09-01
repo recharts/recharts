@@ -416,9 +416,7 @@ export interface InternalRadialBarProps<DataPointType = any, DataValueType = any
   legendType?: LegendType;
   maxBarSize?: number;
   /**
-   * The minimum angle, in degrees, for a non-zero bar in `radial` layout (the default). Bars whose
-   * natural angle would fall below this threshold are extended to meet it, so small values stay visible.
-   * Bars with a value of zero are never extended.
+   * The minimum angle of each non-zero bar.
    * @defaultValue 0
    */
   minAngle?: number;
