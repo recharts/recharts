@@ -1,32 +1,32 @@
 {
   "treemap": {
     "examplePath": "www/src/views/IndexView/IndexLineChart.tsx",
-    "totalSize": 925671,
-    "totalSizeLabel": "903.98 KB",
+    "totalSize": 926085,
+    "totalSizeLabel": "904.38 KB",
     "moduleCount": 372,
-    "generatedAt": "2026-08-28T17:55:11.411Z",
+    "generatedAt": "2026-09-01T04:31:01.528Z",
     "stages": [
       {
         "stage": "es6-folder",
-        "bytes": 1409728,
+        "bytes": 1410142,
         "humanReadableSize": "1.34 MB",
         "reductionFromBaselinePercent": 0
       },
       {
         "stage": "tree-shaken",
-        "bytes": 928562,
-        "humanReadableSize": "906.80 KB",
+        "bytes": 928976,
+        "humanReadableSize": "907.20 KB",
         "reductionFromBaselinePercent": 0
       },
       {
         "stage": "minified",
-        "bytes": 307478,
-        "humanReadableSize": "300.27 KB",
-        "reductionFromBaselinePercent": 66.89
+        "bytes": 307492,
+        "humanReadableSize": "300.29 KB",
+        "reductionFromBaselinePercent": 66.9
       },
       {
         "stage": "minified+gzip",
-        "bytes": 100859,
+        "bytes": 100863,
         "humanReadableSize": "98.50 KB",
         "reductionFromBaselinePercent": 89.14
       }
@@ -34,12 +34,12 @@
     "tree": {
       "name": "bundle",
       "fullPath": "bundle",
-      "value": 925671,
+      "value": 926085,
       "children": [
         {
           "name": "src",
           "fullPath": "src",
-          "value": 522095,
+          "value": 522509,
           "children": [
             {
               "name": "state",
@@ -442,7 +442,7 @@
             {
               "name": "util",
               "fullPath": "src/util",
-              "value": 118935,
+              "value": 119349,
               "children": [
                 {
                   "name": "scale",
@@ -591,6 +591,11 @@
                   "value": 1319
                 },
                 {
+                  "name": "LRUCache.ts",
+                  "fullPath": "src/util/LRUCache.ts",
+                  "value": 1136
+                },
+                {
                   "name": "TickUtils.ts",
                   "fullPath": "src/util/TickUtils.ts",
                   "value": 1134
@@ -619,11 +624,6 @@
                   "name": "getEveryNth.ts",
                   "fullPath": "src/util/getEveryNth.ts",
                   "value": 799
-                },
-                {
-                  "name": "LRUCache.ts",
-                  "fullPath": "src/util/LRUCache.ts",
-                  "value": 722
                 },
                 {
                   "name": "getRadiusAndStrokeWidthFromDot.tsx",
@@ -2587,32 +2587,32 @@
   },
   "sunburst": {
     "examplePath": "www/src/views/IndexView/IndexLineChart.tsx",
-    "totalSize": 925671,
-    "totalSizeLabel": "903.98 KB",
+    "totalSize": 926085,
+    "totalSizeLabel": "904.38 KB",
     "moduleCount": 372,
-    "generatedAt": "2026-08-28T17:55:09.492Z",
+    "generatedAt": "2026-09-01T04:30:59.446Z",
     "stages": [
       {
         "stage": "es6-folder",
-        "bytes": 1409728,
+        "bytes": 1410142,
         "humanReadableSize": "1.34 MB",
         "reductionFromBaselinePercent": 0
       },
       {
         "stage": "tree-shaken",
-        "bytes": 928562,
-        "humanReadableSize": "906.80 KB",
+        "bytes": 928976,
+        "humanReadableSize": "907.20 KB",
         "reductionFromBaselinePercent": 0
       },
       {
         "stage": "minified",
-        "bytes": 307478,
-        "humanReadableSize": "300.27 KB",
-        "reductionFromBaselinePercent": 66.89
+        "bytes": 307492,
+        "humanReadableSize": "300.29 KB",
+        "reductionFromBaselinePercent": 66.9
       },
       {
         "stage": "minified+gzip",
-        "bytes": 100859,
+        "bytes": 100863,
         "humanReadableSize": "98.50 KB",
         "reductionFromBaselinePercent": 89.14
       }
@@ -2620,12 +2620,12 @@
     "tree": {
       "name": "bundle",
       "fullPath": "bundle",
-      "value": 925671,
+      "value": 926085,
       "children": [
         {
           "name": "src",
           "fullPath": "src",
-          "value": 522095,
+          "value": 522509,
           "children": [
             {
               "name": "state",
@@ -3028,7 +3028,7 @@
             {
               "name": "util",
               "fullPath": "src/util",
-              "value": 118935,
+              "value": 119349,
               "children": [
                 {
                   "name": "scale",
@@ -3177,6 +3177,11 @@
                   "value": 1319
                 },
                 {
+                  "name": "LRUCache.ts",
+                  "fullPath": "src/util/LRUCache.ts",
+                  "value": 1136
+                },
+                {
                   "name": "TickUtils.ts",
                   "fullPath": "src/util/TickUtils.ts",
                   "value": 1134
@@ -3205,11 +3210,6 @@
                   "name": "getEveryNth.ts",
                   "fullPath": "src/util/getEveryNth.ts",
                   "value": 799
-                },
-                {
-                  "name": "LRUCache.ts",
-                  "fullPath": "src/util/LRUCache.ts",
-                  "value": 722
                 },
                 {
                   "name": "getRadiusAndStrokeWidthFromDot.tsx",
