@@ -51,6 +51,7 @@ describe('<RadialBar />', () => {
     const radialBarSettings: RadialBarSettings = {
       id: 'radial-bar-uv',
       dataKey: 'pv',
+      minAngle: 0,
       minPointSize: 0,
       stackId: undefined,
       maxBarSize: undefined,
@@ -75,6 +76,7 @@ describe('<RadialBar />', () => {
         {
           id: expect.stringMatching('radialBar-'),
           maxBarSize: undefined,
+          minAngle: 0,
           minPointSize: 0,
           angleAxisId: 0,
           barSize: undefined,
@@ -436,10 +438,76 @@ describe('<RadialBar />', () => {
     });
   });
 
+  describe('minAngle', () => {
+    // https://github.com/recharts/recharts/issues/2986
+    const data = [
+      { name: 'A', pv: 100 },
+      { name: 'B', pv: 5 },
+      { name: 'C', pv: 0 },
+    ];
+
+    const radialBarSettings: RadialBarSettings = {
+      id: 'radial-bar-min-angle',
+      dataKey: 'pv',
+      minAngle: 30,
+      minPointSize: 0,
+      stackId: undefined,
+      maxBarSize: undefined,
+      barSize: undefined,
+      type: 'radialBar',
+      angleAxisId: 0,
+      radiusAxisId: 0,
+      data: undefined,
+      hide: false,
+    };
+
+    const renderTestCase = createSelectorTestCase(({ children }) => (
+      <RadialBarChart width={500} height={500} data={data}>
+        <RadialBar isAnimationActive={false} dataKey="pv" minAngle={30} />
+        {children}
+      </RadialBarChart>
+    ));
+
+    it('forwards the minAngle prop from RadialBar into its Redux settings', () => {
+      const { spy } = renderTestCase(state => selectPolarItemsSettings(state, 'angleAxis', 0));
+      expectLastCalledWith(spy, [
+        {
+          id: expect.stringMatching('radialBar-'),
+          maxBarSize: undefined,
+          minAngle: 30,
+          minPointSize: 0,
+          angleAxisId: 0,
+          barSize: undefined,
+          data: undefined,
+          dataKey: 'pv',
+          hide: false,
+          radiusAxisId: 0,
+          stackId: undefined,
+          type: 'radialBar',
+        },
+      ]);
+    });
+
+    it('extends a bar below the threshold, leaves a zero-value bar at zero degrees, and leaves an already-large bar untouched', () => {
+      const { spy } = renderTestCase(state => selectRadialBarSectors(state, 0, 0, radialBarSettings, undefined));
+      const lastResult = spy.mock.calls.at(-1)?.[0] as ReadonlyArray<RadialBarDataItem>;
+      const angles = lastResult.map(({ startAngle, endAngle }) => ({ startAngle, endAngle }));
+      expect(angles).toEqual([
+        // 100 out of a domain of [0, 100] naturally reaches the full 360°, well above minAngle
+        { startAngle: 0, endAngle: 360 },
+        // 5 out of 100 naturally is only 18°, extended up to the 30° minAngle
+        { startAngle: 0, endAngle: 30 },
+        // 0 stays at 0°, minAngle must never manufacture a visible sliver for an empty bar
+        { startAngle: 0, endAngle: 0 },
+      ]);
+    });
+  });
+
   describe('with configured axes', () => {
     const radialBarSettings: RadialBarSettings = {
       id: 'my-radial-bar',
       dataKey: 'pv',
+      minAngle: 0,
       minPointSize: 0,
       stackId: undefined,
       maxBarSize: undefined,
@@ -474,6 +542,7 @@ describe('<RadialBar />', () => {
           stackId: undefined,
           type: 'radialBar',
           maxBarSize: undefined,
+          minAngle: 0,
           minPointSize: 0,
         },
       ]);
@@ -826,6 +895,7 @@ describe('<RadialBar />', () => {
     const radialBarSettings: RadialBarSettings = {
       id: 'my-radial-bar',
       dataKey: 'rings',
+      minAngle: 0,
       minPointSize: 0,
       stackId: undefined,
       maxBarSize: undefined,
@@ -861,6 +931,7 @@ describe('<RadialBar />', () => {
           stackId: undefined,
           type: 'radialBar',
           maxBarSize: undefined,
+          minAngle: 0,
           minPointSize: 0,
         },
       ]);
@@ -1304,6 +1375,7 @@ describe('<RadialBar />', () => {
         dataKey: 'value',
         hide: false,
         radiusAxisId: 0,
+        minAngle: 0,
         minPointSize: 0,
         maxBarSize: undefined,
       };

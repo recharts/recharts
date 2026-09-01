@@ -1754,6 +1754,7 @@ describe('<PolarAngleAxis />', () => {
           {
             id: expect.stringMatching('radialBar-'),
             maxBarSize: undefined,
+            minAngle: 0,
             minPointSize: 0,
             barSize: undefined,
             stackId: undefined,
@@ -1927,6 +1928,7 @@ describe('<PolarAngleAxis />', () => {
           {
             id: expect.stringMatching('radialBar-'),
             maxBarSize: undefined,
+            minAngle: 0,
             minPointSize: 0,
             barSize: undefined,
             stackId: undefined,
@@ -2036,6 +2038,7 @@ describe('<PolarAngleAxis />', () => {
           {
             id: expect.stringMatching('radialBar-'),
             maxBarSize: undefined,
+            minAngle: 0,
             minPointSize: 0,
             barSize: undefined,
             stackId: undefined,
