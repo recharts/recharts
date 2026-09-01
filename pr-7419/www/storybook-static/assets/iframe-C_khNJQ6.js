@@ -1,1 +1,0 @@
-import{t as e}from"./iframe-CMWlATf5.js";e();
