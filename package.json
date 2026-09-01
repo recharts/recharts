@@ -90,7 +90,13 @@
   "peerDependencies": {
     "react": "^16.8.0 || ^17.0.0 || ^18.0.0 || ^19.0.0",
     "react-dom": "^16.0.0 || ^17.0.0 || ^18.0.0 || ^19.0.0",
-    "react-is": "^16.8.0 || ^17.0.0 || ^18.0.0 || ^19.0.0"
+    "react-is": "^16.8.0 || ^17.0.0 || ^18.0.0 || ^19.0.0",
+    "@types/react": "*"
+  },
+  "peerDependenciesMeta": {
+    "@types/react": {
+      "optional": true
+    }
   },
   "dependencies": {
     "@reduxjs/toolkit": "^1.9.0 || 2.x.x",
