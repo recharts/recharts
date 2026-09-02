@@ -424,38 +424,68 @@ function VerticalStripes(props: CartesianGridInternalProps) {
   return <g className="recharts-cartesian-gridstripes-vertical">{items}</g>;
 }
 
+type TickFontStyle = { fontSize?: string; letterSpacing?: string };
+
+/**
+ * Extracts fontSize/letterSpacing from an axis's `tick` prop, when it's a
+ * plain style object (e.g. `tick={{ fontSize: 30 }}`). CartesianGrid can't
+ * read the DOM like CartesianAxis does (via getComputedStyle), so this is
+ * the best it can do — function/ReactElement ticks with external CSS are
+ * not covered, same limitation applies to unit tests that mock ticks.
+ */
+function getTickFontStyle(tick: unknown): TickFontStyle {
+  if (tick == null || typeof tick !== 'object' || React.isValidElement(tick)) {
+    return {};
+  }
+  const { fontSize, letterSpacing } = tick as { fontSize?: unknown; letterSpacing?: unknown };
+  return {
+    fontSize: fontSize != null ? String(fontSize) : undefined,
+    letterSpacing: letterSpacing != null ? String(letterSpacing) : undefined,
+  };
+}
+
 const defaultVerticalCoordinatesGenerator: VerticalCoordinatesGenerator = (
   { xAxis, width, height, offset },
   syncWithTicks,
-) =>
-  getCoordinatesOfGrid(
-    getTicks({
-      ...defaultCartesianAxisProps,
-      ...xAxis,
-      ticks: getTicksOfAxis(xAxis, true),
-      viewBox: { x: 0, y: 0, width, height },
-    }),
+) => {
+  const { fontSize, letterSpacing } = getTickFontStyle(xAxis?.tick);
+  return getCoordinatesOfGrid(
+    getTicks(
+      {
+        ...defaultCartesianAxisProps,
+        ...xAxis,
+        ticks: getTicksOfAxis(xAxis, true),
+        viewBox: { x: 0, y: 0, width, height },
+      },
+      fontSize,
+      letterSpacing,
+    ),
     offset.left,
     offset.left + offset.width,
     syncWithTicks,
   );
-
+};
 const defaultHorizontalCoordinatesGenerator: HorizontalCoordinatesGenerator = (
   { yAxis, width, height, offset },
   syncWithTicks,
-) =>
-  getCoordinatesOfGrid(
-    getTicks({
-      ...defaultCartesianAxisProps,
-      ...yAxis,
-      ticks: getTicksOfAxis(yAxis, true),
-      viewBox: { x: 0, y: 0, width, height },
-    }),
+) => {
+  const { fontSize, letterSpacing } = getTickFontStyle(yAxis?.tick);
+  return getCoordinatesOfGrid(
+    getTicks(
+      {
+        ...defaultCartesianAxisProps,
+        ...yAxis,
+        ticks: getTicksOfAxis(yAxis, true),
+        viewBox: { x: 0, y: 0, width, height },
+      },
+      fontSize,
+      letterSpacing,
+    ),
     offset.top,
     offset.top + offset.height,
     syncWithTicks,
   );
-
+};
 function areGridAxisScalesEqual(
   a: AxisPropsForCartesianGridTicksGeneration['scale'],
   b: AxisPropsForCartesianGridTicksGeneration['scale'],
