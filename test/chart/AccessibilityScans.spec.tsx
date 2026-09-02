@@ -241,4 +241,24 @@ describe('Static scanning for accessibility markup issues', () => {
 
     expect((await axe(container)).violations).toHaveLength(0);
   });
+
+  // https://github.com/recharts/recharts/issues/3005
+  // Each bar should announce its category and value together so screen readers
+  // don't read axis tick labels and data values as separate unrelated elements.
+  test('Bar chart bars have aria-label combining category and value (issue #3005)', () => {
+    const { container } = render(
+      <BarChart width={400} height={300} data={data}>
+        <XAxis dataKey="name" />
+        <YAxis />
+        <Bar dataKey="uv" isAnimationActive={false} />
+      </BarChart>,
+    );
+
+    const barGroups = container.querySelectorAll('.recharts-bar-rectangle');
+    expect(barGroups).toHaveLength(data.length);
+    barGroups.forEach((bar, i) => {
+      expect(bar).toHaveAttribute('role', 'img');
+      expect(bar).toHaveAttribute('aria-label', `${data[i].name}: ${data[i].uv}`);
+    });
+  });
 });
