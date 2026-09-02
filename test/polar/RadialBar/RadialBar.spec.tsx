@@ -44,6 +44,7 @@ import { RadialBarSettings } from '../../../src/state/types/RadialBarSettings';
 import { expectLastCalledWith } from '../../helper/expectLastCalledWith';
 import { userEventSetup } from '../../helper/userEventSetup';
 import { assertZIndexLayerOrder } from '../../helper/assertZIndexLayerOrder';
+import { assertNotNull } from '../../helper/assertNotNull';
 import { RadialBarDataItem } from '../../../src/polar/RadialBar';
 
 describe('<RadialBar />', () => {
@@ -490,7 +491,8 @@ describe('<RadialBar />', () => {
 
     it('extends a bar below the threshold, leaves a zero-value bar at zero degrees, and leaves an already-large bar untouched', () => {
       const { spy } = renderTestCase(state => selectRadialBarSectors(state, 0, 0, radialBarSettings, undefined));
-      const lastResult = spy.mock.calls.at(-1)?.[0] as ReadonlyArray<RadialBarDataItem>;
+      const lastResult: ReadonlyArray<RadialBarDataItem> | undefined = spy.mock.calls.at(-1)?.[0];
+      assertNotNull(lastResult);
       const angles = lastResult.map(({ startAngle, endAngle }) => ({ startAngle, endAngle }));
       expect(angles).toEqual([
         // 100 out of a domain of [0, 100] naturally reaches the full 360°, well above minAngle
