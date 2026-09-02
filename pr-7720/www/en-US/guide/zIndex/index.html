@@ -1,0 +1,499 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <title>Recharts</title>
+    <meta charset="utf-8" />
+    <meta name="description" content="Recharts - Re-designed charting library built with React and D3." />
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5" />
+    <script>
+      /**
+       * @note this is duplicated in defineColorModeStore.ts, to avoid FOUC on initial load. Please keep in sync.
+       */
+      (function () {
+        try {
+          var storedMode = localStorage.getItem('recharts-color-mode');
+          var mode =
+            storedMode === 'light' || storedMode === 'dark'
+              ? storedMode
+              : window.matchMedia('(prefers-color-scheme: dark)').matches
+                ? 'dark'
+                : 'light';
+          document.documentElement.setAttribute('data-mode', mode);
+        } catch (e) {
+          // Do nothing
+        }
+      })();
+    </script>
+    <link
+      href="//fonts.googleapis.com/css?family=Source+Sans+Pro:400,600|Roboto Mono|Oswald:300"
+      rel="stylesheet"
+      type="text/css"
+    />
+    <script type="module" crossorigin src="/recharts/pr-7720/www/assets/index-BZic-BWq.js"></script>
+    <link rel="stylesheet" crossorigin href="/recharts/pr-7720/www/assets/index-Dngh0Ezp.css">
+    <link rel="sitemap" type="application/xml" title="Sitemap" href="/sitemap.xml">
+  </head>
+  <body>
+    <div id="app"><div class="container"><header><a class="logo" href="/en-US/" data-discover="true"><div width="200" height="60" class="recharts-wrapper" style="position:relative;cursor:default;width:200px;height:60px"></div></a><nav class="desktop-only"><ul class="navigation-items"><li><a aria-current="page" class="active" href="/en-US/guide/" data-discover="true">Guide</a></li><li><a class="" href="/en-US/api/" data-discover="true">API</a></li><li><a class="" href="/en-US/examples/" data-discover="true">Examples</a></li><li><a class="" href="/en-US/storybook/" data-discover="true">Storybook</a></li><li><a href="https://github.com/recharts/recharts/wiki" target="_blank" rel="noopener noreferrer" style="white-space:nowrap;display:inline-flex;align-items:center;gap:0.25rem">Wiki<svg stroke="currentColor" fill="none" stroke-width="2" viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round" height="1em" width="1em" xmlns="http://www.w3.org/2000/svg"><path d="M15 3h6v6"></path><path d="M10 14 21 3"></path><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path></svg></a></li><li><a href="https://github.com/recharts/recharts" target="_blank" rel="noopener noreferrer" style="white-space:nowrap;display:inline-flex;align-items:center;gap:0.25rem">GitHub<svg stroke="currentColor" fill="none" stroke-width="2" viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round" height="1em" width="1em" xmlns="http://www.w3.org/2000/svg"><path d="M15 3h6v6"></path><path d="M10 14 21 3"></path><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path></svg></a></li><li><a href="https://www.npmjs.com/package/recharts" target="_blank" rel="noopener noreferrer" style="white-space:nowrap;display:inline-flex;align-items:center;gap:0.25rem">npm<svg stroke="currentColor" fill="none" stroke-width="2" viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round" height="1em" width="1em" xmlns="http://www.w3.org/2000/svg"><path d="M15 3h6v6"></path><path d="M10 14 21 3"></path><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path></svg></a></li><li><a href="https://github.com/recharts/recharts/wiki/3.0-migration-guide" target="_blank" rel="noopener noreferrer" style="white-space:nowrap;display:inline-flex;align-items:center;gap:0.25rem">3.0 migration guide<svg stroke="currentColor" fill="none" stroke-width="2" viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round" height="1em" width="1em" xmlns="http://www.w3.org/2000/svg"><path d="M15 3h6v6"></path><path d="M10 14 21 3"></path><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path></svg></a></li></ul><div class="nav-actions"><span class="no-wrap"><span><span class="switch-item active">En</span></span><span><span>  |  </span><a class="switch-item" href="/zh-CN/guide/zIndex/" data-discover="true">中文</a></span></span><button class="_ColorModePicker_1b4l5_1" type="button" aria-label="system"><svg stroke="currentColor" fill="none" stroke-width="2" viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round" height="1em" width="1em" xmlns="http://www.w3.org/2000/svg"><rect width="20" height="14" x="2" y="3" rx="2"></rect><line x1="8" x2="16" y1="21" y2="21"></line><line x1="12" x2="12" y1="17" y2="21"></line></svg></button></div></nav><nav class="mobile-only"><button type="button" class="mobile-nav-toggle mobile-only" aria-label="Toggle navigation"><span>Menu</span><div width="3rem" height="3rem" class="recharts-wrapper" style="position:relative;cursor:pointer;width:3rem;height:3rem"></div></button><div class="mobile-nav-backdrop " aria-hidden="true"></div><div class="slide-right-mobile-nav "><ul class="navigation-items"><li class="collapsible "><button type="button" class="collapsible-trigger"><span>Guide</span><div width="3rem" height="3rem" class="recharts-wrapper" style="position:relative;cursor:default;width:3rem;height:3rem"></div></button></li><li class="collapsible "><button type="button" class="collapsible-trigger"><span>API</span><div width="3rem" height="3rem" class="recharts-wrapper" style="position:relative;cursor:default;width:3rem;height:3rem"></div></button></li><li class="collapsible "><button type="button" class="collapsible-trigger"><span>Examples</span><div width="3rem" height="3rem" class="recharts-wrapper" style="position:relative;cursor:default;width:3rem;height:3rem"></div></button></li><li><a class="" href="/en-US/storybook/" data-discover="true">Storybook</a></li><li><a href="https://github.com/recharts/recharts/wiki" target="_blank" rel="noopener noreferrer" style="white-space:nowrap;display:inline-flex;align-items:center;gap:0.25rem">Wiki<svg stroke="currentColor" fill="none" stroke-width="2" viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round" height="1em" width="1em" xmlns="http://www.w3.org/2000/svg"><path d="M15 3h6v6"></path><path d="M10 14 21 3"></path><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path></svg></a></li><li><a href="https://github.com/recharts/recharts" target="_blank" rel="noopener noreferrer" style="white-space:nowrap;display:inline-flex;align-items:center;gap:0.25rem">GitHub<svg stroke="currentColor" fill="none" stroke-width="2" viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round" height="1em" width="1em" xmlns="http://www.w3.org/2000/svg"><path d="M15 3h6v6"></path><path d="M10 14 21 3"></path><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path></svg></a></li><li><a href="https://www.npmjs.com/package/recharts" target="_blank" rel="noopener noreferrer" style="white-space:nowrap;display:inline-flex;align-items:center;gap:0.25rem">npm<svg stroke="currentColor" fill="none" stroke-width="2" viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round" height="1em" width="1em" xmlns="http://www.w3.org/2000/svg"><path d="M15 3h6v6"></path><path d="M10 14 21 3"></path><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path></svg></a></li><li><a href="https://github.com/recharts/recharts/wiki/3.0-migration-guide" target="_blank" rel="noopener noreferrer" style="white-space:nowrap;display:inline-flex;align-items:center;gap:0.25rem">3.0 migration guide<svg stroke="currentColor" fill="none" stroke-width="2" viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round" height="1em" width="1em" xmlns="http://www.w3.org/2000/svg"><path d="M15 3h6v6"></path><path d="M10 14 21 3"></path><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path></svg></a></li></ul><div class="nav-actions"><span class="no-wrap"><span><span class="switch-item active">En</span></span><span><span>  |  </span><a class="switch-item" href="/zh-CN/guide/zIndex/" data-discover="true">中文</a></span></span><button class="_ColorModePicker_1b4l5_1" type="button" aria-label="system"><svg stroke="currentColor" fill="none" stroke-width="2" viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round" height="1em" width="1em" xmlns="http://www.w3.org/2000/svg"><rect width="20" height="14" x="2" y="3" rx="2"></rect><line x1="8" x2="16" y1="21" y2="21"></line><line x1="12" x2="12" y1="17" y2="21"></line></svg></button></div></div></nav></header><div class="sidebar desktop-only"><h2>Guide</h2><div class="sidebar-cate"><ul class="menu"><li><a class="" href="/en-US/guide/installation/" data-discover="true">Installation</a></li><li><a class="" href="/en-US/guide/getting-started/" data-discover="true">Getting Started</a></li><li><a class="" href="/en-US/guide/customize/" data-discover="true">Customize</a></li><li><a class="" href="/en-US/guide/activeIndex/" data-discover="true">Active Index</a></li><li><a class="" href="/en-US/guide/domainAndTicks/" data-discover="true">Domain and Ticks</a></li><li><a class="" href="/en-US/guide/axisTicks/" data-discover="true">Axis ticks</a></li><li><a class="" href="/en-US/guide/sizes/" data-discover="true">Chart size</a></li><li><a aria-current="page" class="active" href="/en-US/guide/zIndex/" data-discover="true">Z-Index and layers</a></li><li><a class="" href="/en-US/guide/coordinateSystems/" data-discover="true">Coordinate and dimension systems</a></li><li><a class="" href="/en-US/guide/performance/" data-discover="true">Performance</a></li><li><a class="" href="/en-US/guide/roundedBars/" data-discover="true">Rounded Bar corners</a></li><li><a class="" href="/en-US/guide/barAlignment/" data-discover="true">Bar Alignment</a></li><li><a class="" href="/en-US/guide/cell/" data-discover="true">Migrate from Cell component to shape prop</a></li><li><a class="" href="/en-US/guide/typescript/" data-discover="true">TypeScript</a></li><li><a class="" href="/en-US/guide/animations/" data-discover="true">Animation</a></li><li><a class="" href="/en-US/guide/theming/" data-discover="true">Theming</a></li></ul></div></div><main><div class="page page-guide"><div class="content"><article><h1>Z-Index and layers</h1><p><code>zIndex</code> and layers were introduced in version 3.4.</p><p>Recharts will render your components in a specific order by default. For example, Lines are on top of Areas, and Areas are on top of background.</p><p>You can see the specific defaults in<!-- --> <a href="https://github.com/recharts/recharts/blob/main/src/zIndex/DefaultZIndexes.tsx" target="_blank" rel="noopener noreferrer" style="white-space:nowrap;display:inline-flex;align-items:center;gap:0.25rem"><code>DefaultZIndexes.tsx</code><svg stroke="currentColor" fill="none" stroke-width="2" viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round" height="1em" width="1em" xmlns="http://www.w3.org/2000/svg"><path d="M15 3h6v6"></path><path d="M10 14 21 3"></path><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path></svg></a>.</p><p>Components with the same z-index are rendered in the order they appended to the DOM: later components are on top of earlier ones. This is called the “painting order”, or a “painter&#x27;s algorithm”.</p><div width="100%" class="recharts-wrapper" style="position:relative;cursor:default;width:100%;max-width:700px;max-height:70vh;aspect-ratio:1.618"></div><div class="codemirror-wrapper "><div id="codemirror-container"><div class="codemirror-toolbar"><select class="codemirror-toolbar-item" style="padding-right:12px"><option value="source" selected="">Source code</option><option value="devtools">Hook inspector</option><option value="annotations">Annotations</option><option value="controls">Controls</option></select><button class="codemirror-toolbar-item" type="button"><svg class="recharts-surface" width="16" height="16" viewBox="0 0 16 16"><title></title><desc></desc><path fill="none" stroke="var(--color-text-1)" stroke-width="1" width="10" height="10" x="1" y="1" radius="2" class="recharts-rectangle" d="M 1,3
+            A 2,2,0,0,1,3,1
+            L 9,1
+            A 2,2,0,0,1,11,3
+            L 11,9
+            A 2,2,0,0,1,9,11
+            L 3,11
+            A 2,2,0,0,1,1,9 Z" style="stroke-dasharray:0px 1px"></path><path fill="none" stroke="var(--color-text-1)" stroke-width="1" width="10" height="10" x="5" y="5" radius="2" class="recharts-rectangle" d="M 5,7
+            A 2,2,0,0,1,7,5
+            L 13,5
+            A 2,2,0,0,1,15,7
+            L 15,13
+            A 2,2,0,0,1,13,15
+            L 7,15
+            A 2,2,0,0,1,5,13 Z" style="stroke-dasharray:0px 1px"></path></svg>Copy to clipboard</button><button type="button" class="codemirror-toolbar-item"><svg stroke="currentColor" fill="none" stroke-width="2" viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round" height="1em" width="1em" xmlns="http://www.w3.org/2000/svg"><path d="M21.174 6.812a1 1 0 0 0-3.986-3.987L3.842 16.174a2 2 0 0 0-.5.83l-1.321 4.352a.5.5 0 0 0 .623.622l4.353-1.32a2 2 0 0 0 .83-.497z"></path><path d="m15 5 4 4"></path></svg><span>Edit</span></button><button type="button" class="codemirror-toolbar-item"><svg stroke="currentColor" fill="none" stroke-width="2" viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round" height="1em" width="1em" xmlns="http://www.w3.org/2000/svg"><circle cx="18" cy="5" r="3"></circle><circle cx="6" cy="12" r="3"></circle><circle cx="18" cy="19" r="3"></circle><line x1="8.59" x2="15.42" y1="13.51" y2="17.49"></line><line x1="15.41" x2="8.59" y1="6.51" y2="10.49"></line></svg><span>Open in StackBlitz</span></button></div><div style="height:100%;display:block;overflow:hidden"><div class="codemirror-example-editor tsx" style="height:100%;overflow:auto"><pre>// #region Sample data, imports, and helper functions
+import {
+  ComposedChart,
+  Line,
+  Area,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Tooltip,
+  Legend,
+  DefaultLegendContent,
+  DefaultLegendContentProps,
+  DefaultTooltipContent,
+  TooltipContentProps,
+} from &#x27;recharts&#x27;;
+import { RechartsDevtools } from &#x27;@recharts/devtools&#x27;;
+
+const data = [
+  {
+    name: &#x27;Page A&#x27;,
+    a: [0, 0],
+    b: 0,
+  },
+  {
+    name: &#x27;Page B&#x27;,
+    a: [50, 300],
+    b: 106,
+  },
+  {
+    name: &#x27;Page C&#x27;,
+    a: [150, 423],
+    b: 229,
+  },
+  {
+    name: &#x27;Page D&#x27;,
+    b: 312,
+  },
+  {
+    name: &#x27;Page E&#x27;,
+    a: [367, 678],
+    b: 451,
+  },
+  {
+    name: &#x27;Page F&#x27;,
+    a: [305, 821],
+    b: 623,
+  },
+];
+
+const renderTooltipWithoutRange = ({ payload, content, ...rest }: TooltipContentProps) =&gt; {
+  const newPayload = payload.filter(x =&gt; x.dataKey !== &#x27;a&#x27;);
+  return &lt;DefaultTooltipContent payload={newPayload} {...rest} /&gt;;
+};
+
+const renderLegendWithoutRange = ({ payload, ...rest }: DefaultLegendContentProps) =&gt; {
+  const newPayload = payload?.filter(x =&gt; x.dataKey !== &#x27;a&#x27;);
+  return &lt;DefaultLegendContent payload={newPayload} {...rest} /&gt;;
+};
+// #endregion
+
+export default function BandedChart() {
+  return (
+    &lt;ComposedChart
+      style={{ width: &#x27;100%&#x27;, maxWidth: &#x27;700px&#x27;, maxHeight: &#x27;70vh&#x27;, aspectRatio: 1.618 }}
+      responsive
+      data={data}
+      margin={{
+        top: 20,
+        right: 0,
+        left: 0,
+        bottom: 0,
+      }}
+    &gt;
+      &lt;CartesianGrid /&gt;
+      &lt;XAxis dataKey=&quot;name&quot; /&gt;
+      &lt;YAxis width=&quot;auto&quot; /&gt;
+      &lt;Legend content={renderLegendWithoutRange} /&gt;
+      &lt;Tooltip content={renderTooltipWithoutRange} /&gt;
+      &lt;Line type=&quot;natural&quot; dataKey=&quot;b&quot; stroke=&quot;#ff00ff&quot; connectNulls /&gt;
+      &lt;Area type=&quot;monotone&quot; dataKey=&quot;a&quot; stroke=&quot;none&quot; fill=&quot;#cccccc&quot; connectNulls dot={false} activeDot={false} /&gt;
+      &lt;RechartsDevtools /&gt;
+    &lt;/ComposedChart&gt;
+  );
+}</pre><div></div></div></div><div style="height:100%;display:none;overflow:hidden"><div id="recharts-devtools-portal-R3a9" style="height:100%;background:var(--color-bg);color:var(--color-text);overflow:auto;padding:10px;display:block" class=""></div></div><div style="height:100%;display:none;overflow:hidden"><div id="recharts-devtools-portal-R3a9-annotations" style="height:100%;background:var(--color-surface-base);color:var(--color-text-1);overflow:auto;padding:10px;display:block" class=""></div></div><div style="height:100%;display:none;overflow:hidden"><div style="padding:10px;height:100%;overflow:auto"><div style="display:flex;gap:12px;margin:1ex"><label style="display:flex;align-items:center;gap:8px;cursor:pointer"><input style="margin:0;width:16px;height:16px;cursor:pointer" type="radio" name=":R55ba9:" checked=""/>Autoplay Animations (default)</label><label style="display:flex;align-items:center;gap:8px;cursor:pointer"><input style="margin:0;width:16px;height:16px;cursor:pointer" type="radio" name=":R55ba9:"/>Manual Animations</label></div></div></div></div></div><h2>Custom z-index</h2><p>You can pass a number to the <code>zIndex</code> prop in various components:</p><p>Custom SVG and other Recharts components without direct zIndex support render as if they had zIndex=0. If you want to set a custom zIndex, wrap your component in <a href="/en-US/api/ZIndexLayer" data-discover="true">ZIndexLayer</a>.</p><div width="900" height="480" class="recharts-wrapper" style="position:relative;cursor:default;width:900px;height:480px"></div><div class="codemirror-wrapper "><div id="codemirror-container"><div class="codemirror-toolbar"><select class="codemirror-toolbar-item" style="padding-right:12px"><option value="source" selected="">Source code</option><option value="devtools">Hook inspector</option><option value="annotations">Annotations</option><option value="controls">Controls</option></select><button class="codemirror-toolbar-item" type="button"><svg class="recharts-surface" width="16" height="16" viewBox="0 0 16 16"><title></title><desc></desc><path fill="none" stroke="var(--color-text-1)" stroke-width="1" width="10" height="10" x="1" y="1" radius="2" class="recharts-rectangle" d="M 1,3
+            A 2,2,0,0,1,3,1
+            L 9,1
+            A 2,2,0,0,1,11,3
+            L 11,9
+            A 2,2,0,0,1,9,11
+            L 3,11
+            A 2,2,0,0,1,1,9 Z" style="stroke-dasharray:0px 1px"></path><path fill="none" stroke="var(--color-text-1)" stroke-width="1" width="10" height="10" x="5" y="5" radius="2" class="recharts-rectangle" d="M 5,7
+            A 2,2,0,0,1,7,5
+            L 13,5
+            A 2,2,0,0,1,15,7
+            L 15,13
+            A 2,2,0,0,1,13,15
+            L 7,15
+            A 2,2,0,0,1,5,13 Z" style="stroke-dasharray:0px 1px"></path></svg>Copy to clipboard</button><button type="button" class="codemirror-toolbar-item"><svg stroke="currentColor" fill="none" stroke-width="2" viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round" height="1em" width="1em" xmlns="http://www.w3.org/2000/svg"><path d="M21.174 6.812a1 1 0 0 0-3.986-3.987L3.842 16.174a2 2 0 0 0-.5.83l-1.321 4.352a.5.5 0 0 0 .623.622l4.353-1.32a2 2 0 0 0 .83-.497z"></path><path d="m15 5 4 4"></path></svg><span>Edit</span></button><button type="button" class="codemirror-toolbar-item"><svg stroke="currentColor" fill="none" stroke-width="2" viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round" height="1em" width="1em" xmlns="http://www.w3.org/2000/svg"><circle cx="18" cy="5" r="3"></circle><circle cx="6" cy="12" r="3"></circle><circle cx="18" cy="19" r="3"></circle><line x1="8.59" x2="15.42" y1="13.51" y2="17.49"></line><line x1="15.41" x2="8.59" y1="6.51" y2="10.49"></line></svg><span>Open in StackBlitz</span></button></div><div style="height:100%;display:block;overflow:hidden"><div class="codemirror-example-editor tsx" style="height:100%;overflow:auto"><pre>// #region Imports, data, and helper functions
+import {
+  LabelList,
+  Line,
+  LineChart,
+  LineProps,
+  ReferenceDot,
+  XAxis,
+  YAxis,
+  DefaultZIndexes,
+  ZIndexLayer,
+  LabelListEntry,
+} from &#x27;recharts&#x27;;
+import { RechartsDevtools } from &#x27;@recharts/devtools&#x27;;
+
+const AirplaneIcon = () =&gt; (
+  // https://upload.wikimedia.org/wikipedia/commons/7/7d/Plane_icon.svg
+  &lt;svg xmlns=&quot;http://www.w3.org/2000/svg&quot; width=&quot;238.45445&quot; height=&quot;228.24998&quot; version=&quot;1.0&quot;&gt;
+    &lt;path
+      transform=&quot;scale(0.1)&quot;
+      fillRule=&quot;evenodd&quot;
+      d=&quot;M194.67321 0 70.641958 53.625c-10.38227-6.92107-34.20058-21.27539-38.90545-23.44898-39.4400301-18.22079-36.9454001 14.73107-20.34925 24.6052 4.53917 2.70065 27.72352 17.17823 43.47345 26.37502l17.90625 133.9375 22.21875 13.15625 11.531252-120.9375 71.53125 36.6875 3.84375 39.21875 14.53125 8.625 11.09375-42.40625.125.0625 30.8125-31.53125-14.875-8-35.625 16.90625-68.28125-42.4375L217.36071 12.25 194.67321 0z&quot;
+    /&gt;
+  &lt;/svg&gt;
+);
+
+function between(a: number, b: number) {
+  return Math.min(a, b) + Math.abs(a - b) / 2;
+}
+
+const topRow = 4;
+const midRow = 2;
+const bottomRow = 0;
+const startA = 0;
+const gapA = 11;
+const mustek = { name: &#x27;Můstek&#x27;, yPos: between(topRow, midRow), xPos: 94 };
+const florenc = { name: &#x27;Florenc&#x27;, yPos: mustek.yPos, xPos: 127 };
+const muzeum = { name: &#x27;Muzeum&#x27;, yPos: between(midRow, bottomRow), xPos: between(mustek.xPos, florenc.xPos) };
+const hlavak = {
+  name: &#x27;Hlavní nádraží&#x27;,
+  yPos: muzeum.yPos + (florenc.yPos - muzeum.yPos) / 2,
+  xPos: muzeum.xPos + (florenc.xPos - muzeum.xPos) / 2,
+};
+
+const motol = { name: &#x27;Nemocnice Motol&#x27;, yPos: topRow, xPos: startA };
+const petriny = { name: &#x27;Petřiny&#x27;, yPos: topRow, xPos: motol.xPos + gapA };
+const veleslavin = { name: &#x27;Nádraží Veleslavín&#x27;, yPos: topRow, xPos: petriny.xPos + gapA };
+const borislavka = { name: &#x27;Bořislavka&#x27;, yPos: topRow, xPos: veleslavin.xPos + gapA };
+const dejvicka = { name: &#x27;Dejvická&#x27;, yPos: topRow, xPos: borislavka.xPos + gapA };
+const hradcanska = { name: &#x27;Hradčanská&#x27;, yPos: topRow, xPos: dejvicka.xPos + gapA };
+const malostranska = { name: &#x27;Malostranská&#x27;, yPos: topRow, xPos: hradcanska.xPos + gapA };
+const staromestska = { name: &#x27;Staroměstská&#x27;, yPos: topRow, xPos: malostranska.xPos + gapA };
+// mustek
+// muzeum
+const mirak = { name: &#x27;Náměstí Míru&#x27;, yPos: bottomRow, xPos: muzeum.xPos + 13 };
+const jzp = { name: &#x27;Jiřího z Poděbrad&#x27;, yPos: bottomRow, xPos: mirak.xPos + gapA };
+const flora = { name: &#x27;Flora&#x27;, yPos: bottomRow, xPos: jzp.xPos + gapA };
+const zelivarna = { name: &#x27;Želivského&#x27;, yPos: bottomRow, xPos: flora.xPos + gapA };
+const strasnicka = { name: &#x27;Strašnická&#x27;, yPos: bottomRow, xPos: zelivarna.xPos + gapA };
+const skalka = { name: &#x27;Skalka&#x27;, yPos: bottomRow, xPos: strasnicka.xPos + gapA };
+const depohostivar = { name: &#x27;Depo Hostivař&#x27;, yPos: bottomRow, xPos: skalka.xPos + gapA };
+const lineA = {
+  name: &#x27;A&#x27;,
+  color: &#x27;#1aa300&#x27;,
+  stations: [
+    motol,
+    petriny,
+    veleslavin,
+    borislavka,
+    dejvicka,
+    hradcanska,
+    malostranska,
+    staromestska,
+    mustek,
+    muzeum,
+    mirak,
+    jzp,
+    flora,
+    zelivarna,
+    strasnicka,
+    skalka,
+    depohostivar,
+  ],
+};
+
+const gapB = 8;
+const narodka = { name: &#x27;Národní třída&#x27;, yPos: midRow, xPos: mustek.xPos - 20 };
+const karlak = { name: &#x27;Karlovo náměstí&#x27;, yPos: midRow, xPos: narodka.xPos - gapB };
+const andel = { name: &#x27;Anděl&#x27;, yPos: midRow, xPos: karlak.xPos - gapB };
+const smichac = { name: &#x27;Smíchovské nádraží&#x27;, yPos: midRow, xPos: andel.xPos - gapB };
+const radlicka = { name: &#x27;Radlická&#x27;, yPos: midRow, xPos: smichac.xPos - gapB };
+const jinonice = { name: &#x27;Jinonice&#x27;, yPos: midRow, xPos: radlicka.xPos - gapB };
+const novebutovice = { name: &#x27;Nové Butovice&#x27;, yPos: midRow, xPos: jinonice.xPos - gapB };
+const hurka = { name: &#x27;Hůrka&#x27;, yPos: midRow, xPos: novebutovice.xPos - gapB };
+const luziny = { name: &#x27;Lužiny&#x27;, yPos: midRow, xPos: hurka.xPos - gapB };
+const luka = { name: &#x27;Luka&#x27;, yPos: midRow, xPos: luziny.xPos - gapB };
+const stodulky = { name: &#x27;Stodůlky&#x27;, yPos: midRow, xPos: luka.xPos - gapB };
+const zlicin = { name: &#x27;Zličín&#x27;, yPos: midRow, xPos: stodulky.xPos - gapB };
+// mustek
+const namestirepubliky = {
+  name: &#x27;Náměstí Republiky&#x27;,
+  yPos: mustek.yPos,
+  xPos: muzeum.xPos,
+};
+// florenc
+const krizikova = { name: &#x27;Křižíkova&#x27;, yPos: midRow, xPos: florenc.xPos + 20 };
+const invalidovna = { name: &#x27;Invalidovna&#x27;, yPos: midRow, xPos: krizikova.xPos + gapB };
+const ceskomoravska = { name: &#x27;Českomoravská&#x27;, yPos: midRow, xPos: invalidovna.xPos + gapB };
+const palmovka = { name: &#x27;Palmovka&#x27;, yPos: midRow, xPos: ceskomoravska.xPos + gapB };
+const vysocanska = { name: &#x27;Vysočanská&#x27;, yPos: midRow, xPos: palmovka.xPos + gapB };
+const kolbenova = { name: &#x27;Kolbenova&#x27;, yPos: midRow, xPos: vysocanska.xPos + gapB };
+const hloubetin = { name: &#x27;Hloubětín&#x27;, yPos: midRow, xPos: kolbenova.xPos + gapB };
+const rajskazahrada = { name: &#x27;Rajská zahrada&#x27;, yPos: midRow, xPos: hloubetin.xPos + gapB };
+const cernak = { name: &#x27;Černý Most&#x27;, yPos: midRow, xPos: rajskazahrada.xPos + gapB };
+const lineB = {
+  name: &#x27;B&#x27;,
+  color: &#x27;#fed330&#x27;,
+  stations: [
+    zlicin,
+    stodulky,
+    luka,
+    luziny,
+    hurka,
+    novebutovice,
+    jinonice,
+    radlicka,
+    smichac,
+    andel,
+    karlak,
+    narodka,
+    mustek,
+    namestirepubliky,
+    florenc,
+    krizikova,
+    invalidovna,
+    ceskomoravska,
+    palmovka,
+    vysocanska,
+    kolbenova,
+    hloubetin,
+    rajskazahrada,
+    cernak,
+  ],
+};
+
+const gapC = 9;
+const ipak = { name: &#x27;I. P. Pavlova&#x27;, yPos: bottomRow, xPos: muzeum.xPos - 18 };
+const vysehrad = { name: &#x27;Vyšehrad&#x27;, yPos: bottomRow, xPos: ipak.xPos - gapC };
+const povstani = { name: &#x27;Pražského povstání&#x27;, yPos: bottomRow, xPos: vysehrad.xPos - gapC };
+const pankrac = { name: &#x27;Pankrác&#x27;, yPos: bottomRow, xPos: povstani.xPos - gapC };
+const budejarna = { name: &#x27;Budějovická&#x27;, yPos: bottomRow, xPos: pankrac.xPos - gapC };
+const kacerov = { name: &#x27;Kačerov&#x27;, yPos: bottomRow, xPos: budejarna.xPos - gapC };
+const roztyly = { name: &#x27;Roztyly&#x27;, yPos: bottomRow, xPos: kacerov.xPos - gapC };
+const chodov = { name: &#x27;Chodov&#x27;, yPos: bottomRow, xPos: roztyly.xPos - gapC };
+const opatov = { name: &#x27;Opatov&#x27;, yPos: bottomRow, xPos: chodov.xPos - gapC };
+const haje = { name: &#x27;Háje&#x27;, yPos: bottomRow, xPos: opatov.xPos - gapC };
+
+const vltavska = { name: &#x27;Vltavská&#x27;, yPos: topRow, xPos: florenc.xPos + 13 };
+const holesky = { name: &#x27;Nádraží Holešovice&#x27;, yPos: topRow, xPos: vltavska.xPos + gapC };
+const kobylisy = { name: &#x27;Kobylisy&#x27;, yPos: topRow, xPos: holesky.xPos + gapC };
+const ladvi = { name: &#x27;Ládví&#x27;, yPos: topRow, xPos: kobylisy.xPos + gapC };
+const letnany = { name: &#x27;Letňany&#x27;, yPos: topRow, xPos: ladvi.xPos + gapC };
+const strizkov = { name: &#x27;Střížkov&#x27;, yPos: topRow, xPos: letnany.xPos + gapC };
+const prosek = { name: &#x27;Prosek&#x27;, yPos: topRow, xPos: strizkov.xPos + gapC };
+const lineC = {
+  name: &#x27;C&#x27;,
+  color: &#x27;#ff242e&#x27;,
+  stations: [
+    haje,
+    opatov,
+    chodov,
+    roztyly,
+    kacerov,
+    budejarna,
+    pankrac,
+    povstani,
+    vysehrad,
+    ipak,
+    muzeum,
+    hlavak,
+    florenc,
+    vltavska,
+    holesky,
+    kobylisy,
+    ladvi,
+    letnany,
+    strizkov,
+    prosek,
+  ],
+};
+
+// Some labels are rendering overlapped so we need to show them in custom positions
+const customLabels = [mustek, muzeum, florenc, hlavak, veleslavin].map(s =&gt; s.name);
+
+function MetroLine(props: LineProps) {
+  return (
+    &lt;Line
+      type=&quot;monotone&quot;
+      dataKey=&quot;yPos&quot;
+      strokeWidth={15}
+      dot={{ strokeWidth: 3, stroke: &#x27;#fff&#x27;, r: 10, fill: props.stroke, fillOpacity: 1 }}
+      isAnimationActive={false}
+      activeDot={false}
+      {...props}
+    &gt;
+      &lt;LabelList
+        angle={-65}
+        fill={props.stroke}
+        fontWeight=&quot;bold&quot;
+        textAnchor=&quot;start&quot;
+        // dataKey=&quot;name&quot;
+        position=&quot;top&quot;
+        dy={-15}
+        dx={5}
+        valueAccessor={(entry: LabelListEntry) =&gt; {
+          const label: string | undefined = entry.payload?.name;
+          if (label != null &amp;&amp; customLabels.includes(label)) {
+            return undefined;
+          }
+          return label;
+        }}
+      /&gt;
+    &lt;/Line&gt;
+  );
+}
+// #endregion
+
+export default function PrahaMetro() {
+  return (
+    &lt;LineChart
+      width={900}
+      height={480}
+      margin={{
+        left: 30,
+        bottom: 30,
+        right: 60,
+        top: 150,
+      }}
+    &gt;
+      &lt;MetroLine id=&quot;C&quot; data={lineC.stations} stroke={lineC.color} /&gt;
+      &lt;MetroLine id=&quot;A&quot; data={lineA.stations} stroke={lineA.color} /&gt;
+      &lt;MetroLine id=&quot;B&quot; data={lineB.stations} stroke={lineB.color} /&gt;
+      &lt;XAxis type=&quot;number&quot; dataKey=&quot;xPos&quot; domain={[&#x27;dataMin&#x27;, &#x27;dataMax&#x27;]} hide /&gt;
+      &lt;YAxis domain={[0, &#x27;dataMax&#x27;]} hide /&gt;
+      &lt;ReferenceDot
+        x={mustek.xPos}
+        y={mustek.yPos}
+        label={{
+          value: mustek.name,
+          fill: &#x27;#000&#x27;,
+          angle: -65,
+          textAnchor: &#x27;start&#x27;,
+          fontWeight: &#x27;bold&#x27;,
+          dy: -18,
+          dx: 10,
+        }}
+        r={18}
+        fill={lineA.color}
+        fillOpacity={1}
+        // one lower zIndex so that these dots render as a background behind the line dots
+        zIndex={DefaultZIndexes.scatter - 1}
+      /&gt;
+      &lt;ReferenceDot
+        x={muzeum.xPos}
+        y={muzeum.yPos}
+        label={{
+          value: muzeum.name,
+          fill: &#x27;#000&#x27;,
+          angle: -65,
+          textAnchor: &#x27;end&#x27;,
+          fontWeight: &#x27;bold&#x27;,
+          dy: 45,
+        }}
+        r={18}
+        fill={lineC.color}
+        fillOpacity={1}
+        // one lower zIndex so that these dots render as a background behind the line dots
+        zIndex={DefaultZIndexes.scatter - 1}
+      /&gt;
+      &lt;ReferenceDot
+        x={florenc.xPos}
+        y={florenc.yPos}
+        label={{
+          value: florenc.name,
+          fill: &#x27;#000&#x27;,
+          angle: -65,
+          textAnchor: &#x27;start&#x27;,
+          fontWeight: &#x27;bold&#x27;,
+          dy: -18,
+          dx: -15,
+        }}
+        r={18}
+        fill={lineC.color}
+        fillOpacity={1}
+        // one lower zIndex so that these dots render as a background behind the line dots
+        zIndex={DefaultZIndexes.scatter - 1}
+      /&gt;
+      &lt;ReferenceDot
+        x={hlavak.xPos}
+        y={hlavak.yPos}
+        label={{
+          value: hlavak.name,
+          fill: &#x27;#000&#x27;,
+          angle: -73,
+          textAnchor: &#x27;start&#x27;,
+          fontWeight: &#x27;bold&#x27;,
+          dy: 45,
+          dx: 15,
+        }}
+        r={20}
+        // one higher zIndex so that this dot renders over the line dot - we want to highlight this station
+        zIndex={DefaultZIndexes.scatter + 1}
+        fill={lineC.color}
+        fillOpacity={1}
+        stroke=&quot;#fff&quot;
+        strokeWidth={3}
+      /&gt;
+      &lt;ReferenceDot
+        x={veleslavin.xPos}
+        y={veleslavin.yPos}
+        label={{
+          value: veleslavin.name,
+          fill: lineA.color,
+          angle: -65,
+          textAnchor: &#x27;start&#x27;,
+          fontWeight: &#x27;bold&#x27;,
+          dy: -25,
+          dx: 0,
+        }}
+        r={20}
+        // one higher zIndex so that this dot renders over the line dot - we want to highlight this station
+        zIndex={DefaultZIndexes.scatter + 1}
+        fill={lineA.color}
+        fillOpacity={1}
+        stroke=&quot;#fff&quot;
+        strokeWidth={3}
+      /&gt;
+      {/* Position the Airplane icon on top of the dot */}
+      &lt;ZIndexLayer zIndex={DefaultZIndexes.scatter + 2}&gt;
+        &lt;svg xmlns=&quot;http://www.w3.org/2000/svg&quot; x={495} y={290}&gt;
+          &lt;AirplaneIcon /&gt;
+        &lt;/svg&gt;
+        &lt;svg xmlns=&quot;http://www.w3.org/2000/svg&quot; x={147} y={140}&gt;
+          &lt;AirplaneIcon /&gt;
+        &lt;/svg&gt;
+      &lt;/ZIndexLayer&gt;
+      &lt;RechartsDevtools /&gt;
+    &lt;/LineChart&gt;
+  );
+}</pre><div></div></div></div><div style="height:100%;display:none;overflow:hidden"><div id="recharts-devtools-portal-R5a9" style="height:100%;background:var(--color-bg);color:var(--color-text);overflow:auto;padding:10px;display:block" class=""></div></div><div style="height:100%;display:none;overflow:hidden"><div id="recharts-devtools-portal-R5a9-annotations" style="height:100%;background:var(--color-surface-base);color:var(--color-text-1);overflow:auto;padding:10px;display:block" class=""></div></div><div style="height:100%;display:none;overflow:hidden"><div style="padding:10px;height:100%;overflow:auto"><div style="display:flex;gap:12px;margin:1ex"><label style="display:flex;align-items:center;gap:8px;cursor:pointer"><input style="margin:0;width:16px;height:16px;cursor:pointer" type="radio" name=":R55da9:" checked=""/>Autoplay Animations (default)</label><label style="display:flex;align-items:center;gap:8px;cursor:pointer"><input style="margin:0;width:16px;height:16px;cursor:pointer" type="radio" name=":R55da9:"/>Manual Animations</label></div></div></div></div></div><h2>Limitations</h2><p>SVG does not support z-index directly. Recharts has a custom implementation that at first looks and feels like the Real z-index but if you dig long enough you will discover that there are some limitations:</p><ul><li>z-index only works within a single chart. You cannot have a component in one chart overlap a component in another chart using z-index. You can set <code>style={{ zIndex: 123 }}</code>on the chart container itself to have the whole chart overlap another chart. But you cannot have individual components overlap across charts.</li><li>The painter&#x27;s algorithm follows DOM insertion order, not JSX order. This means that if you have conditional rendering in your JSX, the actual DOM insertion order may not match the visual order you expect. If you rely on specific painting order, it&#x27;s safer to use explicit <code>zIndex</code> values.</li></ul></article></div></div></main><footer><p><span>Released under the </span><a href="https://opensource.org/licenses/MIT" target="_blank" rel="noreferrer">MIT License</a></p><p>Copyright (c) 2016-<!-- -->2026<!-- --> Recharts Group</p><p>Commit: <code title="14365e660587a4a9a147afa6372a672384e078ae">14365e66</code></p></footer></div></div>
+  </body>
+</html>

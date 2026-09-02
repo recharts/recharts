@@ -1,0 +1,465 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <title>Recharts</title>
+    <meta charset="utf-8" />
+    <meta name="description" content="Recharts - Re-designed charting library built with React and D3." />
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5" />
+    <script>
+      /**
+       * @note this is duplicated in defineColorModeStore.ts, to avoid FOUC on initial load. Please keep in sync.
+       */
+      (function () {
+        try {
+          var storedMode = localStorage.getItem('recharts-color-mode');
+          var mode =
+            storedMode === 'light' || storedMode === 'dark'
+              ? storedMode
+              : window.matchMedia('(prefers-color-scheme: dark)').matches
+                ? 'dark'
+                : 'light';
+          document.documentElement.setAttribute('data-mode', mode);
+        } catch (e) {
+          // Do nothing
+        }
+      })();
+    </script>
+    <link
+      href="//fonts.googleapis.com/css?family=Source+Sans+Pro:400,600|Roboto Mono|Oswald:300"
+      rel="stylesheet"
+      type="text/css"
+    />
+    <script type="module" crossorigin src="/recharts/pr-7720/www/assets/index-BZic-BWq.js"></script>
+    <link rel="stylesheet" crossorigin href="/recharts/pr-7720/www/assets/index-Dngh0Ezp.css">
+    <link rel="sitemap" type="application/xml" title="Sitemap" href="/sitemap.xml">
+  </head>
+  <body>
+    <div id="app"><div class="container"><header><a class="logo" href="/zh-CN/" data-discover="true"><div width="200" height="60" class="recharts-wrapper" style="position:relative;cursor:default;width:200px;height:60px"></div></a><nav class="desktop-only"><ul class="navigation-items"><li><a aria-current="page" class="active" href="/zh-CN/guide/" data-discover="true">教程</a></li><li><a class="" href="/zh-CN/api/" data-discover="true">API</a></li><li><a class="" href="/zh-CN/examples/" data-discover="true">示例</a></li><li><a class="" href="/zh-CN/storybook/" data-discover="true">Storybook (工作正在进行中)</a></li><li><a href="https://github.com/recharts/recharts/wiki" target="_blank" rel="noopener noreferrer" style="white-space:nowrap;display:inline-flex;align-items:center;gap:0.25rem">Wiki<svg stroke="currentColor" fill="none" stroke-width="2" viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round" height="1em" width="1em" xmlns="http://www.w3.org/2000/svg"><path d="M15 3h6v6"></path><path d="M10 14 21 3"></path><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path></svg></a></li><li><a href="https://github.com/recharts/recharts" target="_blank" rel="noopener noreferrer" style="white-space:nowrap;display:inline-flex;align-items:center;gap:0.25rem">GitHub<svg stroke="currentColor" fill="none" stroke-width="2" viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round" height="1em" width="1em" xmlns="http://www.w3.org/2000/svg"><path d="M15 3h6v6"></path><path d="M10 14 21 3"></path><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path></svg></a></li><li><a href="https://www.npmjs.com/package/recharts" target="_blank" rel="noopener noreferrer" style="white-space:nowrap;display:inline-flex;align-items:center;gap:0.25rem">npm<svg stroke="currentColor" fill="none" stroke-width="2" viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round" height="1em" width="1em" xmlns="http://www.w3.org/2000/svg"><path d="M15 3h6v6"></path><path d="M10 14 21 3"></path><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path></svg></a></li><li><a href="https://github.com/recharts/recharts/wiki/3.0-migration-guide" target="_blank" rel="noopener noreferrer" style="white-space:nowrap;display:inline-flex;align-items:center;gap:0.25rem">3.0 migration guide<svg stroke="currentColor" fill="none" stroke-width="2" viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round" height="1em" width="1em" xmlns="http://www.w3.org/2000/svg"><path d="M15 3h6v6"></path><path d="M10 14 21 3"></path><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path></svg></a></li></ul><div class="nav-actions"><span class="no-wrap"><span><a class="switch-item" href="/en-US/guide/theming/" data-discover="true">En</a></span><span><span>  |  </span><span class="switch-item active">中文</span></span></span><button class="_ColorModePicker_1b4l5_1" type="button" aria-label="system"><svg stroke="currentColor" fill="none" stroke-width="2" viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round" height="1em" width="1em" xmlns="http://www.w3.org/2000/svg"><rect width="20" height="14" x="2" y="3" rx="2"></rect><line x1="8" x2="16" y1="21" y2="21"></line><line x1="12" x2="12" y1="17" y2="21"></line></svg></button></div></nav><nav class="mobile-only"><button type="button" class="mobile-nav-toggle mobile-only" aria-label="Toggle navigation"><span>Menu</span><div width="3rem" height="3rem" class="recharts-wrapper" style="position:relative;cursor:pointer;width:3rem;height:3rem"></div></button><div class="mobile-nav-backdrop " aria-hidden="true"></div><div class="slide-right-mobile-nav "><ul class="navigation-items"><li class="collapsible "><button type="button" class="collapsible-trigger"><span>教程</span><div width="3rem" height="3rem" class="recharts-wrapper" style="position:relative;cursor:default;width:3rem;height:3rem"></div></button></li><li class="collapsible "><button type="button" class="collapsible-trigger"><span>API</span><div width="3rem" height="3rem" class="recharts-wrapper" style="position:relative;cursor:default;width:3rem;height:3rem"></div></button></li><li class="collapsible "><button type="button" class="collapsible-trigger"><span>示例</span><div width="3rem" height="3rem" class="recharts-wrapper" style="position:relative;cursor:default;width:3rem;height:3rem"></div></button></li><li><a class="" href="/zh-CN/storybook/" data-discover="true">Storybook (工作正在进行中)</a></li><li><a href="https://github.com/recharts/recharts/wiki" target="_blank" rel="noopener noreferrer" style="white-space:nowrap;display:inline-flex;align-items:center;gap:0.25rem">Wiki<svg stroke="currentColor" fill="none" stroke-width="2" viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round" height="1em" width="1em" xmlns="http://www.w3.org/2000/svg"><path d="M15 3h6v6"></path><path d="M10 14 21 3"></path><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path></svg></a></li><li><a href="https://github.com/recharts/recharts" target="_blank" rel="noopener noreferrer" style="white-space:nowrap;display:inline-flex;align-items:center;gap:0.25rem">GitHub<svg stroke="currentColor" fill="none" stroke-width="2" viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round" height="1em" width="1em" xmlns="http://www.w3.org/2000/svg"><path d="M15 3h6v6"></path><path d="M10 14 21 3"></path><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path></svg></a></li><li><a href="https://www.npmjs.com/package/recharts" target="_blank" rel="noopener noreferrer" style="white-space:nowrap;display:inline-flex;align-items:center;gap:0.25rem">npm<svg stroke="currentColor" fill="none" stroke-width="2" viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round" height="1em" width="1em" xmlns="http://www.w3.org/2000/svg"><path d="M15 3h6v6"></path><path d="M10 14 21 3"></path><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path></svg></a></li><li><a href="https://github.com/recharts/recharts/wiki/3.0-migration-guide" target="_blank" rel="noopener noreferrer" style="white-space:nowrap;display:inline-flex;align-items:center;gap:0.25rem">3.0 migration guide<svg stroke="currentColor" fill="none" stroke-width="2" viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round" height="1em" width="1em" xmlns="http://www.w3.org/2000/svg"><path d="M15 3h6v6"></path><path d="M10 14 21 3"></path><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path></svg></a></li></ul><div class="nav-actions"><span class="no-wrap"><span><a class="switch-item" href="/en-US/guide/theming/" data-discover="true">En</a></span><span><span>  |  </span><span class="switch-item active">中文</span></span></span><button class="_ColorModePicker_1b4l5_1" type="button" aria-label="system"><svg stroke="currentColor" fill="none" stroke-width="2" viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round" height="1em" width="1em" xmlns="http://www.w3.org/2000/svg"><rect width="20" height="14" x="2" y="3" rx="2"></rect><line x1="8" x2="16" y1="21" y2="21"></line><line x1="12" x2="12" y1="17" y2="21"></line></svg></button></div></div></nav></header><div class="sidebar desktop-only"><h2>教程</h2><div class="sidebar-cate"><ul class="menu"><li><a class="" href="/zh-CN/guide/installation/" data-discover="true">安装</a></li><li><a class="" href="/zh-CN/guide/getting-started/" data-discover="true">起步</a></li><li><a class="" href="/zh-CN/guide/customize/" data-discover="true">组件自定义</a></li><li><a class="" href="/zh-CN/guide/activeIndex/" data-discover="true">活动索引</a></li><li><a class="" href="/zh-CN/guide/domainAndTicks/" data-discover="true">定义域与刻度</a></li><li><a class="" href="/zh-CN/guide/axisTicks/" data-discover="true">轴刻度</a></li><li><a class="" href="/zh-CN/guide/sizes/" data-discover="true">图表尺寸</a></li><li><a class="" href="/zh-CN/guide/zIndex/" data-discover="true">Z-Index 和图层</a></li><li><a class="" href="/zh-CN/guide/coordinateSystems/" data-discover="true">坐标系与维度系统</a></li><li><a class="" href="/zh-CN/guide/performance/" data-discover="true">性能优化</a></li><li><a class="" href="/zh-CN/guide/roundedBars/" data-discover="true">圆角柱状图</a></li><li><a class="" href="/zh-CN/guide/barAlignment/" data-discover="true">柱子对齐方式</a></li><li><a class="" href="/zh-CN/guide/cell/" data-discover="true">从 Cell 组件迁移到 shape 属性</a></li><li><a class="" href="/zh-CN/guide/typescript/" data-discover="true">TypeScript</a></li><li><a class="" href="/zh-CN/guide/animations/" data-discover="true">动画</a></li><li><a aria-current="page" class="active" href="/zh-CN/guide/theming/" data-discover="true">主题</a></li></ul></div></div><main><div class="page page-guide"><div class="content"><article><h1>Theming</h1><p>A theme is a single object that sets the default visual style - colors, fonts, strokes, tooltip and legend styles - for every chart below it in the React tree. Instead of repeating <code>stroke</code>, <code>fill</code> <!-- -->and <code>style</code> props on every component in every chart, you set them once.</p><p><strong>Themes are experimental.</strong> They are exported from the main <code>recharts</code> entry point and they work, but the shape of <code>RechartsTheme</code> can still change in a minor or patch release. Charts without a theme provider keep rendering exactly as they always have.</p><p>A theme is the defaults layer. When a single chart needs to differ - one bar with its own shape, one axis with its own tick format, one custom tooltip - that is a prop on that component, and the<!-- --> <a href="/zh-CN/guide/customize" data-discover="true">Customize guide</a> covers it. Explicit props always win over the theme, so the two never fight.</p><h2>Quick start</h2><p>Wrap your charts in <code>RechartsThemeProvider</code> and give it a theme:</p><div class="codemirror-example-editor " style="height:100%;overflow:auto"><pre>import { Bar, BarChart, CartesianGrid, Legend, RechartsThemeProvider, Tooltip, XAxis, YAxis, lightTheme } from &#x27;recharts&#x27;;
+
+export function App() {
+  return (
+    &lt;RechartsThemeProvider value={lightTheme}&gt;
+      &lt;BarChart data={data}&gt;
+        &lt;CartesianGrid /&gt;
+        &lt;XAxis dataKey=&quot;month&quot; /&gt;
+        &lt;YAxis /&gt;
+        &lt;Tooltip /&gt;
+        &lt;Legend /&gt;
+        &lt;Bar dataKey=&quot;revenue&quot; /&gt;
+        &lt;Bar dataKey=&quot;profit&quot; /&gt;
+      &lt;/BarChart&gt;
+    &lt;/RechartsThemeProvider&gt;
+  );
+}</pre><div></div></div><p>That is the whole API surface. There is no <code>theme</code> prop on the chart root; a provider around one chart is how you theme one chart.</p><h2>Built-in themes</h2><p>Recharts ships three themes:</p><table class="_table_9deko_1"><thead><tr><th>Theme</th><th>What it does</th></tr></thead><tbody><tr><td><code>lightTheme</code></td><td>A complete light-mode style: dark text, light grid, the familiar Recharts palette.</td></tr><tr><td><code>darkTheme</code></td><td>The dark-mode counterpart. It does not paint a background behind the chart - that is your page&#x27;s job.</td></tr><tr><td><code>emptyTheme</code></td><td>Deliberately blank. It removes all built-in styling so you can style everything yourself, the same idea as a CSS reset. Useful when a chart is fully custom and the legacy defaults get in the way.</td></tr></tbody></table><p>You can try <code>lightTheme</code> and <code>darkTheme</code> right here: the sun / moon button in the navigation bar at the top of this page switches this whole website between the two, and every chart on the page - including the one below - follows along. That button is not a documentation gimmick, it is the real thing:<!-- --> <code>ColorModePicker</code> flips a color mode and the site&#x27;s layout hands the matching Recharts theme to a single <code>RechartsThemeProvider</code>.</p><p>The chart below has no theme provider of its own, so it inherits whatever the page is using. The control lets you swap that inherited theme for the two states the navigation bar cannot express: <code>emptyTheme</code>, and no provider at all. The difference between those two is the interesting one - no provider means every component falls back to its own historical defaults, while <code>emptyTheme</code> means &quot;a theme is in charge, and it says: nothing&quot;.</p><div style="padding:12px;border-radius:8px"><div width="100%" class="recharts-wrapper" style="position:relative;cursor:default;width:100%;max-width:600px;max-height:70vh;aspect-ratio:1.618"></div></div><div class="codemirror-wrapper "><div id="codemirror-container"><div class="codemirror-toolbar"><select class="codemirror-toolbar-item" style="padding-right:12px"><option value="source">Source code</option><option value="devtools">Hook inspector</option><option value="annotations">Annotations</option><option value="controls" selected="">Controls</option></select></div><div style="height:100%;display:none;overflow:hidden"><div class="codemirror-example-editor tsx" style="height:100%;overflow:auto"><pre>import { CSSProperties, ReactNode } from &#x27;react&#x27;;
+import {
+  Bar,
+  BarChart,
+  CartesianGrid,
+  emptyTheme,
+  Legend,
+  RechartsTheme,
+  RechartsThemeProvider,
+  ReferenceLine,
+  Tooltip,
+  XAxis,
+  YAxis,
+} from &#x27;recharts&#x27;;
+import { generateMockData, RechartsDevtools } from &#x27;@recharts/devtools&#x27;;
+import type { Lever } from &#x27;../../Shared/levers/Levers.tsx&#x27;;
+import { themeLever, ThemeLeverValue } from &#x27;../../Shared/levers/gallery/themeLever.tsx&#x27;;
+
+const data = generateMockData(7, 314);
+
+/*
+ * `undefined` is a valid value for the provider and it means the same thing as
+ * having no provider at all: every component falls back to its own legacy defaults.
+ * We need it here because this documentation website already wraps everything
+ * in a theme provider, so the example has to reset it explicitly.
+ */
+const themeOverrides: Record&lt;Exclude&lt;ThemeLeverValue, &#x27;inherit&#x27;&gt;, RechartsTheme | undefined&gt; = {
+  empty: emptyTheme,
+  none: undefined,
+};
+
+/*
+ * Neither `emptyTheme` nor the legacy defaults give Bar a color, so those two
+ * variants draw black bars. We put them on a light surface on purpose - on a dark
+ * page they would be invisible, which is exactly the point of those two options.
+ * The `inherit` variant paints nothing and lets the page background show through.
+ */
+const surfaceStyles: Record&lt;ThemeLeverValue, CSSProperties&gt; = {
+  inherit: {},
+  empty: { backgroundColor: &#x27;#ffffff&#x27; },
+  none: { backgroundColor: &#x27;#ffffff&#x27; },
+};
+
+type ThemeSwitcherControlsState = {
+  themeName: ThemeLeverValue;
+};
+
+export const themeSwitcherDefaultState: ThemeSwitcherControlsState = {
+  themeName: &#x27;inherit&#x27;,
+};
+
+export const themeSwitcherLevers = [themeLever&lt;ThemeSwitcherControlsState&gt;()] satisfies ReadonlyArray&lt;
+  Lever&lt;ThemeSwitcherControlsState&gt;
+&gt;;
+
+function WithTheme({ themeName, children }: { themeName: ThemeLeverValue; children: ReactNode }) {
+  if (themeName === &#x27;inherit&#x27;) {
+    // No provider of our own: the chart uses whichever theme the page provides.
+    return children;
+  }
+
+  return &lt;RechartsThemeProvider value={themeOverrides[themeName]}&gt;{children}&lt;/RechartsThemeProvider&gt;;
+}
+
+export default function ThemeSwitcherExample(props: Partial&lt;ThemeSwitcherControlsState&gt;) {
+  const { themeName } = { ...themeSwitcherDefaultState, ...props };
+
+  return (
+    &lt;div style={{ padding: 12, borderRadius: 8, ...surfaceStyles[themeName] }}&gt;
+      &lt;WithTheme themeName={themeName}&gt;
+        &lt;BarChart
+          style={{ width: &#x27;100%&#x27;, maxWidth: 600, maxHeight: &#x27;70vh&#x27;, aspectRatio: 1.618 }}
+          responsive
+          data={data}
+          margin={{ top: 10, right: 10, left: 10, bottom: 10 }}
+        &gt;
+          &lt;CartesianGrid /&gt;
+          &lt;XAxis dataKey=&quot;label&quot; /&gt;
+          &lt;YAxis /&gt;
+          &lt;ReferenceLine y={600} label=&quot;target&quot; /&gt;
+          &lt;Tooltip defaultIndex={3} /&gt;
+          &lt;Legend /&gt;
+          &lt;Bar dataKey=&quot;x&quot; isAnimationActive={false} /&gt;
+          &lt;Bar dataKey=&quot;y&quot; isAnimationActive={false} /&gt;
+          &lt;RechartsDevtools /&gt;
+        &lt;/BarChart&gt;
+      &lt;/WithTheme&gt;
+    &lt;/div&gt;
+  );
+}</pre><div></div></div></div><div style="height:100%;display:none;overflow:hidden"><div id="recharts-devtools-portal-R7a9" style="height:100%;background:var(--color-bg);color:var(--color-text);overflow:auto;padding:10px;display:block" class=""></div></div><div style="height:100%;display:none;overflow:hidden"><div id="recharts-devtools-portal-R7a9-annotations" style="height:100%;background:var(--color-surface-base);color:var(--color-text-1);overflow:auto;padding:10px;display:block" class=""></div></div><div style="height:100%;display:block;overflow:hidden"><div style="padding:10px;height:100%;overflow:auto"><form><table style="border-collapse:collapse"><tbody><tr><td style="padding:1ex;border:1px solid var(--color-border-4)"><label for=":R1cl7a9:">theme</label></td><td style="padding:1ex;border:1px solid var(--color-border-4)"><select id=":R1cl7a9:"><option value="inherit" selected="">page theme</option><option value="empty">emptyTheme</option><option value="none">no provider</option></select></td></tr></tbody></table></form><div style="display:flex;gap:12px;margin:1ex"><label style="display:flex;align-items:center;gap:8px;cursor:pointer"><input style="margin:0;width:16px;height:16px;cursor:pointer" type="radio" name=":Rkl7a9:" checked=""/>Autoplay Animations (default)</label><label style="display:flex;align-items:center;gap:8px;cursor:pointer"><input style="margin:0;width:16px;height:16px;cursor:pointer" type="radio" name=":Rkl7a9:"/>Manual Animations</label></div></div></div></div></div><p>The &quot;no provider&quot; option is worth a closer look: the grid, the axes and the reference line all fall back to the greys they have used since Recharts 2.x, but the bars come out black. That is not a bug -<!-- --> <a href="/zh-CN/api/Bar" data-discover="true">Bar</a> and <a href="/zh-CN/api/Scatter" data-discover="true">Scatter</a> have never had a default color, so without a theme you have to pass <code>fill</code> yourself. <a href="/zh-CN/api/Line" data-discover="true">Line</a> and <a href="/zh-CN/api/Area" data-discover="true">Area</a> do have a legacy default, but it is a single blue for every series. Giving multi-series charts sensible colors out of the box is one of the reasons themes exist.</p><p>Both of those unstyled variants draw black bars, so the example puts them on a white surface. On a dark page they would simply be invisible - which is the honest answer to &quot;what does an unthemed chart look like in dark mode&quot;.</p><h2>How a style is resolved</h2><p>For every themed property, Recharts asks three questions in order:</p><ol><li><strong>Did you pass the prop explicitly?</strong> If yes, your prop wins. Always. A theme never overrides something you wrote in JSX.</li><li><strong>Is there a theme provider, and does its theme contain the relevant section?</strong> If yes, the theme value is used.</li><li><strong>Is there no theme provider at all?</strong> Then the component uses its own legacy default - the value it has used since Recharts 2.x.</li></ol><p>The case worth calling out is the combination of &quot;there is a provider&quot; and &quot;the theme does not define this section&quot;. In that case Recharts renders <em>nothing</em> for that property rather than falling back to the legacy default. This is what makes <code>emptyTheme</code> possible, and it means a partial theme is a real design decision: a theme with no <code>grid</code> section gives you an unstyled<!-- --> <a href="/zh-CN/api/CartesianGrid" data-discover="true">CartesianGrid</a>, not the default dashed grey one.</p><table class="_table_9deko_1"><thead><tr><th>Explicit prop</th><th>Provider</th><th>Theme section</th><th>Result</th></tr></thead><tbody><tr><td>set</td><td>any</td><td>any</td><td>Your prop.</td></tr><tr><td>not set</td><td>absent</td><td>—</td><td>Legacy Recharts default.</td></tr><tr><td>not set</td><td>present</td><td>present</td><td>The theme value.</td></tr><tr><td>not set</td><td>present</td><td>missing</td><td>No style at all - legacy defaults are intentionally not restored.</td></tr></tbody></table><p>Merging happens field by field, not object by object. If a theme sets <code>stroke</code> and<!-- --> <code>strokeWidth</code> and you only pass <code>stroke</code>, you keep the theme&#x27;s<!-- --> <code>strokeWidth</code>.</p><h2>What a theme contains</h2><p>A theme is a flat set of semantic sections rather than a per-component configuration object. Several components usually share one section, which is what keeps a theme small enough to write by hand.</p><table class="_table_9deko_1"><thead><tr><th>Section</th><th>Shape</th><th>Applies to</th></tr></thead><tbody><tr><td><code>graphicalItems</code> <em>(required)</em></td><td>array of<!-- --> <code>{ fill, fillOpacity, stroke, strokeWidth, strokeOpacity, strokeDasharray, active }</code></td><td><a href="/zh-CN/api/Area" data-discover="true">Area</a>, <a href="/zh-CN/api/Bar" data-discover="true">Bar</a>, <a href="/zh-CN/api/Line" data-discover="true">Line</a>,<!-- --> <a href="/zh-CN/api/Scatter" data-discover="true">Scatter</a>, <a href="/zh-CN/api/Radar" data-discover="true">Radar</a>, <a href="/zh-CN/api/RadialBar" data-discover="true">RadialBar</a>,<!-- --> <a href="/zh-CN/api/Pie" data-discover="true">Pie</a>, <a href="/zh-CN/api/Funnel" data-discover="true">Funnel</a>, <a href="/zh-CN/api/Treemap" data-discover="true">Treemap</a>. Legend and Tooltip entries inherit the same colors.</td></tr><tr><td><code>typography</code></td><td><code>CSSProperties</code></td><td>Every piece of text Recharts draws: axis ticks, <a href="/zh-CN/api/Label" data-discover="true">Label</a>,<!-- --> <a href="/zh-CN/api/LabelList" data-discover="true">LabelList</a>, <a href="/zh-CN/api/Text" data-discover="true">Text</a>, and the HTML in<!-- --> <a href="/zh-CN/api/Tooltip" data-discover="true">Tooltip</a> and <a href="/zh-CN/api/Legend" data-discover="true">Legend</a>. Because it covers both SVG and HTML,<!-- --> <code>color</code> is translated to <code>fill</code> for SVG text automatically.</td></tr><tr><td><code>axis</code></td><td><code>{ stroke, strokeWidth, strokeOpacity, strokeDasharray }</code></td><td><a href="/zh-CN/api/XAxis" data-discover="true">XAxis</a>, <a href="/zh-CN/api/YAxis" data-discover="true">YAxis</a>, <a href="/zh-CN/api/PolarAngleAxis" data-discover="true">PolarAngleAxis</a>,<!-- --> <a href="/zh-CN/api/PolarRadiusAxis" data-discover="true">PolarRadiusAxis</a> - their lines and ticks.</td></tr><tr><td><code>grid</code></td><td><code>{ stroke, strokeWidth, strokeDasharray, fill, fillOpacity }</code></td><td><a href="/zh-CN/api/CartesianGrid" data-discover="true">CartesianGrid</a> and <a href="/zh-CN/api/PolarGrid" data-discover="true">PolarGrid</a>. The grid supports a fill, which is why it takes the 2D shape rather than the line-only one.</td></tr><tr><td><code>reference</code></td><td><code>{ stroke, strokeWidth, strokeDasharray, fill, fillOpacity }</code></td><td><a href="/zh-CN/api/ReferenceLine" data-discover="true">ReferenceLine</a>, <a href="/zh-CN/api/ReferenceArea" data-discover="true">ReferenceArea</a>,<!-- --> <a href="/zh-CN/api/ReferenceDot" data-discover="true">ReferenceDot</a>.</td></tr><tr><td><code>errorBar</code></td><td><code>{ stroke, strokeWidth, ... }</code></td><td><a href="/zh-CN/api/ErrorBar" data-discover="true">ErrorBar</a>.</td></tr><tr><td><code>barBackground</code></td><td><code>{ fill, fillOpacity, stroke, ... }</code></td><td>The <code>background</code> rectangles of <a href="/zh-CN/api/Bar" data-discover="true">Bar</a> and <a href="/zh-CN/api/RadialBar" data-discover="true">RadialBar</a>.</td></tr><tr><td><code>cursor</code></td><td><code>{ fill, fillOpacity, stroke, ... }</code></td><td>The highlight drawn behind the active tooltip.</td></tr><tr><td><code>tooltip</code></td><td><code>{ contentStyle, itemStyle, labelStyle }</code></td><td><a href="/zh-CN/api/Tooltip" data-discover="true">Tooltip</a>&#x27;s default content. <code>contentStyle</code> is the wrapper,<!-- --> <code>itemStyle</code> is one data row, <code>labelStyle</code> is the header.</td></tr><tr><td><code>legend</code></td><td><code>{ wrapperStyle, labelStyle, position, offset }</code></td><td><a href="/zh-CN/api/Legend" data-discover="true">Legend</a>. Here <code>labelStyle</code> styles the individual entries - the opposite of what the same name means in <code>tooltip</code>. Sorry about that.</td></tr></tbody></table><p>The theme does not set the chart size. Set the chart size with the <code>style</code> prop instead - see the<!-- --> <a href="/zh-CN/guide/sizes" data-discover="true">chart size guide</a>.</p><h2>Colors for multiple series</h2><p><code>graphicalItems</code> is an array, and each graphical item in a chart picks one entry from it. The interesting question is <em>which</em> entry.</p><p>Recharts does not use render order. Render order is not stable: series get toggled, conditionally rendered, or reordered, and React does not guarantee the traversal order you might expect. Coloring by position means colors jump around when any of that happens.</p><p>Instead, most graphical items derive their index from a<!-- --> <strong>hash of their <code>dataKey</code></strong>. The same <code>dataKey</code> therefore always gets the same color, in every chart, across renders and reloads.</p><ul><li><a href="/zh-CN/api/Line" data-discover="true">Line</a>, <a href="/zh-CN/api/Area" data-discover="true">Area</a>, <a href="/zh-CN/api/Bar" data-discover="true">Bar</a>,<!-- --> <a href="/zh-CN/api/Scatter" data-discover="true">Scatter</a>, <a href="/zh-CN/api/Radar" data-discover="true">Radar</a> and <a href="/zh-CN/api/RadialBar" data-discover="true">RadialBar</a> hash their<!-- --> <code>dataKey</code> into the array. An item with no <code>dataKey</code> gets no themed color.</li><li><a href="/zh-CN/api/Pie" data-discover="true">Pie</a>, <a href="/zh-CN/api/Funnel" data-discover="true">Funnel</a> and <a href="/zh-CN/api/Treemap" data-discover="true">Treemap</a> draw many shapes from a single series, so they walk the array by position instead: sector <code>i</code> gets entry<!-- --> <code>i % graphicalItems.length</code>.</li></ul><p>Hashing is best-effort, not a guarantee. Two dataKeys can land on the same entry, especially with a short array - <code>&quot;x&quot;</code> and <code>&quot;y&quot;</code> collide in a two-color theme, for instance. A longer palette makes collisions less likely; an explicit <code>fill</code> or <code>stroke</code> prop removes the question entirely.</p><p>Each entry can also carry an <code>active</code> block, which styles the highlighted representation of that item: the active dot of <a href="/zh-CN/api/Line" data-discover="true">Line</a>, <a href="/zh-CN/api/Area" data-discover="true">Area</a> and<!-- --> <a href="/zh-CN/api/Radar" data-discover="true">Radar</a>, and the active sector of <a href="/zh-CN/api/Pie" data-discover="true">Pie</a>.</p><h2>Writing your own theme</h2><p>A <code>RechartsTheme</code> is a plain object: build it inline, import it from a shared module, or fetch it as JSON. Only <code>graphicalItems</code> is required.</p><div class="codemirror-example-editor " style="height:100%;overflow:auto"><pre>import { RechartsThemeProvider, lightTheme, type RechartsTheme } from &#x27;recharts&#x27;;
+
+/*
+ * Option 1: start from scratch. Only `graphicalItems` is required.
+ * Everything you leave out renders unstyled.
+ */
+const minimalTheme: RechartsTheme = {
+  graphicalItems: [{ fill: &#x27;#4338ca&#x27; }, { fill: &#x27;#0f766e&#x27; }],
+};
+
+/*
+ * Option 2: start from a built-in theme and override what you need.
+ * These are plain objects, so a spread is all it takes.
+ */
+const brandTheme: RechartsTheme = {
+  ...lightTheme,
+  typography: { ...lightTheme.typography, fontFamily: &#x27;Inter, sans-serif&#x27; },
+  grid: { ...lightTheme.grid, stroke: &#x27;#e2e8f0&#x27;, strokeDasharray: &#x27;1 4&#x27; },
+};
+
+export function App() {
+  return &lt;RechartsThemeProvider value={brandTheme}&gt;...&lt;/RechartsThemeProvider&gt;;
+}</pre><div></div></div><p>The example below defines a complete theme from scratch and applies it to a line chart:</p><div style="padding:12px;border-radius:8px;background-color:#ffffff"><div width="100%" class="recharts-wrapper" style="position:relative;cursor:default;width:100%;max-width:600px;max-height:70vh;aspect-ratio:1.618"></div></div><div class="codemirror-wrapper "><div id="codemirror-container"><div class="codemirror-toolbar"><select class="codemirror-toolbar-item" style="padding-right:12px"><option value="source" selected="">Source code</option><option value="devtools">Hook inspector</option><option value="annotations">Annotations</option><option value="controls">Controls</option></select><button class="codemirror-toolbar-item" type="button"><svg class="recharts-surface" width="16" height="16" viewBox="0 0 16 16"><title></title><desc></desc><path fill="none" stroke="var(--color-text-1)" stroke-width="1" width="10" height="10" x="1" y="1" radius="2" class="recharts-rectangle" d="M 1,3
+            A 2,2,0,0,1,3,1
+            L 9,1
+            A 2,2,0,0,1,11,3
+            L 11,9
+            A 2,2,0,0,1,9,11
+            L 3,11
+            A 2,2,0,0,1,1,9 Z" style="stroke-dasharray:0px 1px"></path><path fill="none" stroke="var(--color-text-1)" stroke-width="1" width="10" height="10" x="5" y="5" radius="2" class="recharts-rectangle" d="M 5,7
+            A 2,2,0,0,1,7,5
+            L 13,5
+            A 2,2,0,0,1,15,7
+            L 15,13
+            A 2,2,0,0,1,13,15
+            L 7,15
+            A 2,2,0,0,1,5,13 Z" style="stroke-dasharray:0px 1px"></path></svg>Copy to clipboard</button><button type="button" class="codemirror-toolbar-item"><svg stroke="currentColor" fill="none" stroke-width="2" viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round" height="1em" width="1em" xmlns="http://www.w3.org/2000/svg"><path d="M21.174 6.812a1 1 0 0 0-3.986-3.987L3.842 16.174a2 2 0 0 0-.5.83l-1.321 4.352a.5.5 0 0 0 .623.622l4.353-1.32a2 2 0 0 0 .83-.497z"></path><path d="m15 5 4 4"></path></svg><span>Edit</span></button><button type="button" class="codemirror-toolbar-item"><svg stroke="currentColor" fill="none" stroke-width="2" viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round" height="1em" width="1em" xmlns="http://www.w3.org/2000/svg"><circle cx="18" cy="5" r="3"></circle><circle cx="6" cy="12" r="3"></circle><circle cx="18" cy="19" r="3"></circle><line x1="8.59" x2="15.42" y1="13.51" y2="17.49"></line><line x1="15.41" x2="8.59" y1="6.51" y2="10.49"></line></svg><span>Open in StackBlitz</span></button></div><div style="height:100%;display:block;overflow:hidden"><div class="codemirror-example-editor tsx" style="height:100%;overflow:auto"><pre>import {
+  CartesianGrid,
+  Legend,
+  Line,
+  LineChart,
+  RechartsTheme,
+  RechartsThemeProvider,
+  ReferenceLine,
+  Tooltip,
+  XAxis,
+  YAxis,
+} from &#x27;recharts&#x27;;
+import { RechartsDevtools } from &#x27;@recharts/devtools&#x27;;
+
+const data = [
+  { month: &#x27;Jan&#x27;, revenue: 4200, profit: 1100 },
+  { month: &#x27;Feb&#x27;, revenue: 5800, profit: 1500 },
+  { month: &#x27;Mar&#x27;, revenue: 7200, profit: 2400 },
+  { month: &#x27;Apr&#x27;, revenue: 6100, profit: 1800 },
+  { month: &#x27;May&#x27;, revenue: 8900, profit: 3100 },
+  { month: &#x27;Jun&#x27;, revenue: 7400, profit: 2600 },
+];
+
+/*
+ * A theme is a plain object. There is no `createTheme` helper and none is needed:
+ * you can build it inline, import it from a shared module, or parse it from JSON.
+ */
+const brandTheme: RechartsTheme = {
+  typography: {
+    color: &#x27;#1e1b4b&#x27;,
+    fontFamily: &#x27;Georgia, serif&#x27;,
+    fontSize: 13,
+  },
+  /*
+   * `revenue` picks index 0 and `profit` picks index 1 of this array.
+   * The index comes from a hash of the dataKey, not from the render order.
+   */
+  graphicalItems: [
+    {
+      stroke: &#x27;#4338ca&#x27;,
+      strokeWidth: 3,
+      active: { fill: &#x27;#ffffff&#x27;, stroke: &#x27;#4338ca&#x27;, strokeWidth: 3 },
+    },
+    {
+      stroke: &#x27;#0f766e&#x27;,
+      strokeWidth: 3,
+      strokeDasharray: &#x27;6 3&#x27;,
+      active: { fill: &#x27;#ffffff&#x27;, stroke: &#x27;#0f766e&#x27;, strokeWidth: 3 },
+    },
+  ],
+  grid: {
+    stroke: &#x27;#c7d2fe&#x27;,
+    strokeDasharray: &#x27;1 4&#x27;,
+    fill: &#x27;none&#x27;,
+  },
+  axis: {
+    stroke: &#x27;#4338ca&#x27;,
+    strokeWidth: 1,
+  },
+  reference: {
+    stroke: &#x27;#be123c&#x27;,
+    strokeWidth: 2,
+    strokeDasharray: &#x27;4 4&#x27;,
+  },
+  cursor: {
+    stroke: &#x27;#4338ca&#x27;,
+    strokeWidth: 1,
+    strokeDasharray: &#x27;3 3&#x27;,
+    fill: &#x27;#4338ca&#x27;,
+    fillOpacity: 0.08,
+  },
+  tooltip: {
+    contentStyle: {
+      margin: 0,
+      padding: 12,
+      backgroundColor: &#x27;#eef2ff&#x27;,
+      border: &#x27;2px solid #4338ca&#x27;,
+      borderRadius: 8,
+    },
+    labelStyle: { margin: 0, fontWeight: &#x27;bold&#x27;, color: &#x27;#1e1b4b&#x27; },
+    itemStyle: { display: &#x27;block&#x27;, paddingTop: 2, paddingBottom: 2 },
+  },
+  legend: {
+    wrapperStyle: { paddingTop: 8 },
+    labelStyle: { letterSpacing: &#x27;0.05em&#x27;, textTransform: &#x27;uppercase&#x27; },
+  },
+};
+
+export default function CustomThemeExample() {
+  return (
+    &lt;div style={{ padding: 12, borderRadius: 8, backgroundColor: &#x27;#ffffff&#x27; }}&gt;
+      &lt;RechartsThemeProvider value={brandTheme}&gt;
+        &lt;LineChart
+          style={{ width: &#x27;100%&#x27;, maxWidth: 600, maxHeight: &#x27;70vh&#x27;, aspectRatio: 1.618 }}
+          responsive
+          data={data}
+          margin={{ top: 10, right: 20, left: 10, bottom: 10 }}
+        &gt;
+          &lt;CartesianGrid /&gt;
+          &lt;XAxis dataKey=&quot;month&quot; /&gt;
+          &lt;YAxis /&gt;
+          &lt;ReferenceLine y={6000} /&gt;
+          &lt;Tooltip defaultIndex={2} /&gt;
+          &lt;Legend /&gt;
+          &lt;Line dataKey=&quot;revenue&quot; isAnimationActive={false} /&gt;
+          &lt;Line dataKey=&quot;profit&quot; isAnimationActive={false} /&gt;
+          &lt;RechartsDevtools /&gt;
+        &lt;/LineChart&gt;
+      &lt;/RechartsThemeProvider&gt;
+    &lt;/div&gt;
+  );
+}</pre><div></div></div></div><div style="height:100%;display:none;overflow:hidden"><div id="recharts-devtools-portal-Rja9" style="height:100%;background:var(--color-bg);color:var(--color-text);overflow:auto;padding:10px;display:block" class=""></div></div><div style="height:100%;display:none;overflow:hidden"><div id="recharts-devtools-portal-Rja9-annotations" style="height:100%;background:var(--color-surface-base);color:var(--color-text-1);overflow:auto;padding:10px;display:block" class=""></div></div><div style="height:100%;display:none;overflow:hidden"><div style="padding:10px;height:100%;overflow:auto"><div style="display:flex;gap:12px;margin:1ex"><label style="display:flex;align-items:center;gap:8px;cursor:pointer"><input style="margin:0;width:16px;height:16px;cursor:pointer" type="radio" name=":Rklja9:" checked=""/>Autoplay Animations (default)</label><label style="display:flex;align-items:center;gap:8px;cursor:pointer"><input style="margin:0;width:16px;height:16px;cursor:pointer" type="radio" name=":Rklja9:"/>Manual Animations</label></div></div></div></div></div><h2>Nested providers</h2><p>Providers nest, and the nearest one wins. This is how you give one chart or one section its own look without touching the rest of the page.</p><p>One thing to watch: a nested provider <strong>replaces</strong> the outer theme, it does not merge with it. Recharts reads the nearest theme object and nothing else. If you only want to change the palette, spread the outer theme into the new one - otherwise everything you did not repeat becomes unstyled.</p><div style="display:flex;flex-wrap:wrap;gap:16px;padding:12px;background-color:#ffffff"><figure style="margin:0;width:240px"><div width="100%" class="recharts-wrapper" style="position:relative;cursor:default;width:100%;max-height:70vh;aspect-ratio:1.2"></div><figcaption style="color:#18181b">outer lightTheme</figcaption></figure><figure style="margin:0;width:240px"><div width="100%" class="recharts-wrapper" style="position:relative;cursor:default;width:100%;max-height:70vh;aspect-ratio:1.2"></div><figcaption style="color:#18181b">nested campaignTheme</figcaption></figure><figure style="margin:0;width:240px"><div width="100%" class="recharts-wrapper" style="position:relative;cursor:default;width:100%;max-height:70vh;aspect-ratio:1.2"></div><figcaption style="color:#18181b">nested theme + explicit fill</figcaption></figure></div><div class="codemirror-wrapper "><div id="codemirror-container"><div class="codemirror-toolbar"><select class="codemirror-toolbar-item" style="padding-right:12px"><option value="source" selected="">Source code</option><option value="devtools">Hook inspector</option><option value="annotations">Annotations</option><option value="controls">Controls</option></select><button class="codemirror-toolbar-item" type="button"><svg class="recharts-surface" width="16" height="16" viewBox="0 0 16 16"><title></title><desc></desc><path fill="none" stroke="var(--color-text-1)" stroke-width="1" width="10" height="10" x="1" y="1" radius="2" class="recharts-rectangle" d="M 1,3
+            A 2,2,0,0,1,3,1
+            L 9,1
+            A 2,2,0,0,1,11,3
+            L 11,9
+            A 2,2,0,0,1,9,11
+            L 3,11
+            A 2,2,0,0,1,1,9 Z" style="stroke-dasharray:0px 1px"></path><path fill="none" stroke="var(--color-text-1)" stroke-width="1" width="10" height="10" x="5" y="5" radius="2" class="recharts-rectangle" d="M 5,7
+            A 2,2,0,0,1,7,5
+            L 13,5
+            A 2,2,0,0,1,15,7
+            L 15,13
+            A 2,2,0,0,1,13,15
+            L 7,15
+            A 2,2,0,0,1,5,13 Z" style="stroke-dasharray:0px 1px"></path></svg>Copy to clipboard</button><button type="button" class="codemirror-toolbar-item"><svg stroke="currentColor" fill="none" stroke-width="2" viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round" height="1em" width="1em" xmlns="http://www.w3.org/2000/svg"><path d="M21.174 6.812a1 1 0 0 0-3.986-3.987L3.842 16.174a2 2 0 0 0-.5.83l-1.321 4.352a.5.5 0 0 0 .623.622l4.353-1.32a2 2 0 0 0 .83-.497z"></path><path d="m15 5 4 4"></path></svg><span>Edit</span></button><button type="button" class="codemirror-toolbar-item"><svg stroke="currentColor" fill="none" stroke-width="2" viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round" height="1em" width="1em" xmlns="http://www.w3.org/2000/svg"><circle cx="18" cy="5" r="3"></circle><circle cx="6" cy="12" r="3"></circle><circle cx="18" cy="19" r="3"></circle><line x1="8.59" x2="15.42" y1="13.51" y2="17.49"></line><line x1="15.41" x2="8.59" y1="6.51" y2="10.49"></line></svg><span>Open in StackBlitz</span></button></div><div style="height:100%;display:block;overflow:hidden"><div class="codemirror-example-editor tsx" style="height:100%;overflow:auto"><pre>import { Bar, BarChart, CartesianGrid, lightTheme, RechartsTheme, RechartsThemeProvider, XAxis, YAxis } from &#x27;recharts&#x27;;
+import { RechartsDevtools } from &#x27;@recharts/devtools&#x27;;
+
+const data = [
+  { month: &#x27;Jan&#x27;, desktop: 320, mobile: 180 },
+  { month: &#x27;Feb&#x27;, desktop: 410, mobile: 260 },
+  { month: &#x27;Mar&#x27;, desktop: 380, mobile: 300 },
+  { month: &#x27;Apr&#x27;, desktop: 500, mobile: 220 },
+];
+
+/*
+ * A nested provider REPLACES the outer theme, it does not merge with it.
+ * Spread the theme you want to build on so that the sections you do not
+ * override keep working.
+ */
+const campaignTheme: RechartsTheme = {
+  ...lightTheme,
+  graphicalItems: [
+    { fill: &#x27;#7c3aed&#x27;, fillOpacity: 0.9 },
+    { fill: &#x27;#db2777&#x27;, fillOpacity: 0.9 },
+  ],
+};
+
+function TrafficChart({ mobileFill }: { mobileFill?: string }) {
+  return (
+    &lt;BarChart
+      style={{ width: &#x27;100%&#x27;, maxHeight: &#x27;70vh&#x27;, aspectRatio: 1.2 }}
+      responsive
+      data={data}
+      margin={{ top: 10, right: 10, left: 0, bottom: 10 }}
+    &gt;
+      &lt;CartesianGrid /&gt;
+      &lt;XAxis dataKey=&quot;month&quot; /&gt;
+      &lt;YAxis /&gt;
+      &lt;Bar dataKey=&quot;desktop&quot; isAnimationActive={false} /&gt;
+      &lt;Bar dataKey=&quot;mobile&quot; fill={mobileFill} isAnimationActive={false} /&gt;
+      &lt;RechartsDevtools /&gt;
+    &lt;/BarChart&gt;
+  );
+}
+
+export default function NestedThemeExample() {
+  return (
+    &lt;RechartsThemeProvider value={lightTheme}&gt;
+      &lt;div style={{ display: &#x27;flex&#x27;, flexWrap: &#x27;wrap&#x27;, gap: 16, padding: 12, backgroundColor: &#x27;#ffffff&#x27; }}&gt;
+        &lt;figure style={{ margin: 0, width: 240 }}&gt;
+          &lt;TrafficChart /&gt;
+          &lt;figcaption style={{ color: &#x27;#18181b&#x27; }}&gt;outer lightTheme&lt;/figcaption&gt;
+        &lt;/figure&gt;
+
+        &lt;RechartsThemeProvider value={campaignTheme}&gt;
+          &lt;figure style={{ margin: 0, width: 240 }}&gt;
+            &lt;TrafficChart /&gt;
+            &lt;figcaption style={{ color: &#x27;#18181b&#x27; }}&gt;nested campaignTheme&lt;/figcaption&gt;
+          &lt;/figure&gt;
+
+          &lt;figure style={{ margin: 0, width: 240 }}&gt;
+            &lt;TrafficChart mobileFill=&quot;#f59e0b&quot; /&gt;
+            &lt;figcaption style={{ color: &#x27;#18181b&#x27; }}&gt;nested theme + explicit fill&lt;/figcaption&gt;
+          &lt;/figure&gt;
+        &lt;/RechartsThemeProvider&gt;
+      &lt;/div&gt;
+    &lt;/RechartsThemeProvider&gt;
+  );
+}</pre><div></div></div></div><div style="height:100%;display:none;overflow:hidden"><div id="recharts-devtools-portal-Rla9" style="height:100%;background:var(--color-bg);color:var(--color-text);overflow:auto;padding:10px;display:block" class=""></div></div><div style="height:100%;display:none;overflow:hidden"><div id="recharts-devtools-portal-Rla9-annotations" style="height:100%;background:var(--color-surface-base);color:var(--color-text-1);overflow:auto;padding:10px;display:block" class=""></div></div><div style="height:100%;display:none;overflow:hidden"><div style="padding:10px;height:100%;overflow:auto"><div style="display:flex;gap:12px;margin:1ex"><label style="display:flex;align-items:center;gap:8px;cursor:pointer"><input style="margin:0;width:16px;height:16px;cursor:pointer" type="radio" name=":Rklla9:" checked=""/>Autoplay Animations (default)</label><label style="display:flex;align-items:center;gap:8px;cursor:pointer"><input style="margin:0;width:16px;height:16px;cursor:pointer" type="radio" name=":Rklla9:"/>Manual Animations</label></div></div></div></div></div><h2>Switching themes at runtime</h2><p>Dark mode is an ordinary React state update: swap the object you pass to <code>value</code> and leave the chart markup alone. No chart re-declares anything, no component takes a new prop.</p><div class="codemirror-example-editor " style="height:100%;overflow:auto"><pre>import { useState } from &#x27;react&#x27;;
+import { RechartsThemeProvider, darkTheme, lightTheme } from &#x27;recharts&#x27;;
+
+export function Dashboard() {
+  const [mode, setMode] = useState&lt;&#x27;light&#x27; | &#x27;dark&#x27;&gt;(&#x27;light&#x27;);
+
+  return (
+    &lt;&gt;
+      &lt;ThemeToggle value={mode} onChange={setMode} /&gt;
+      &lt;RechartsThemeProvider value={mode === &#x27;dark&#x27; ? darkTheme : lightTheme}&gt;
+        &lt;RevenueChart /&gt;
+        &lt;TrafficChart /&gt;
+      &lt;/RechartsThemeProvider&gt;
+    &lt;/&gt;
+  );
+}</pre><div></div></div><p>This is not a hypothetical - it is how this website works, and you have been using it all along. The button in the navigation bar cycles light, dark and system; the site layout reads that color mode and renders one<!-- --> <code>RechartsThemeProvider</code> around the entire page with either <code>lightTheme</code> or<!-- --> <code>darkTheme</code>. Every chart in these docs, in every guide and every example, is themed by that single provider. Press it and watch the charts on this page change. See the source code of this page here:<!-- --> <a href="https://github.com/recharts/recharts/blob/d56d6660f7db52d37cb2113b39a2be010d32fe37/www/src/layouts/Frame.tsx#L37" target="_blank" rel="noopener noreferrer" style="white-space:nowrap;display:inline-flex;align-items:center;gap:0.25rem">on github<svg stroke="currentColor" fill="none" stroke-width="2" viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round" height="1em" width="1em" xmlns="http://www.w3.org/2000/svg"><path d="M15 3h6v6"></path><path d="M10 14 21 3"></path><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path></svg></a>.</p><p>Remember that <code>darkTheme</code> only styles what Recharts draws. The background behind the chart belongs to your page - the site pairs the theme switch with its own CSS color scheme.</p><h3>Switching with CSS variables instead</h3><p>Because theme values are handed to the DOM unchanged, any valid CSS value works - including<!-- --> <code>var(--token)</code>. That lets a single theme object serve both color schemes and moves the actual switch into CSS, with no React re-render and no flash on server-rendered pages.</p><div class="codemirror-example-editor " style="height:100%;overflow:auto"><pre>/* app.css */
+:root {
+  --chart-text: #18181b;
+  --chart-grid: #d6d3d1;
+  --chart-axis: #52525b;
+  --chart-1: #4338ca;
+  --chart-2: #0f766e;
+  --chart-3: #b45309;
+}
+
+.dark {
+  --chart-text: #f5f5f4;
+  --chart-grid: #3f3f46;
+  --chart-axis: #d6d3d1;
+  --chart-1: #a5b4fc;
+  --chart-2: #5eead4;
+  --chart-3: #fcd34d;
+}</pre><div></div></div><div class="codemirror-example-editor " style="height:100%;overflow:auto"><pre>import { type RechartsTheme } from &#x27;recharts&#x27;;
+
+/*
+ * Theme values are passed to the DOM as-is, so any valid CSS value works,
+ * including var() references. One theme object then covers both color schemes
+ * and switching is done in CSS, without a React re-render.
+ */
+export const cssVariableTheme: RechartsTheme = {
+  typography: { color: &#x27;var(--chart-text)&#x27; },
+  graphicalItems: [
+    { fill: &#x27;var(--chart-1)&#x27;, stroke: &#x27;var(--chart-1)&#x27; },
+    { fill: &#x27;var(--chart-2)&#x27;, stroke: &#x27;var(--chart-2)&#x27; },
+    { fill: &#x27;var(--chart-3)&#x27;, stroke: &#x27;var(--chart-3)&#x27; },
+  ],
+  grid: { stroke: &#x27;var(--chart-grid)&#x27;, fill: &#x27;none&#x27; },
+  axis: { stroke: &#x27;var(--chart-axis)&#x27; },
+};</pre><div></div></div><p>The same trick works with any token layer: Tailwind and shadcn/ui semantic variables, Chakra&#x27;s<!-- --> <code>--chakra-*</code> variables, or your own design tokens.</p><h2>Matching an existing design system</h2><p>Recharts does not ship adapters for Material UI, Mantine, Chakra, Ant Design or anything else, and it does not need to: a theme is a plain object, so mapping your design system&#x27;s tokens onto it is a<!-- --> <code>useMemo</code> away.</p><div class="codemirror-example-editor " style="height:100%;overflow:auto"><pre>import { useMemo } from &#x27;react&#x27;;
+import { useTheme } from &#x27;@mui/material/styles&#x27;;
+import { RechartsThemeProvider, type RechartsTheme } from &#x27;recharts&#x27;;
+
+/*
+ * Recharts ships no adapters for design systems. Because RechartsTheme is a plain
+ * object, a small mapper in your own code is all you need - and it works the same
+ * way for Material UI, Mantine, Chakra, Ant Design, or your in-house tokens.
+ */
+function Charts({ children }) {
+  const muiTheme = useTheme();
+
+  const rechartsTheme = useMemo&lt;RechartsTheme&gt;(
+    () =&gt; ({
+      typography: {
+        color: muiTheme.palette.text.primary,
+        fontFamily: muiTheme.typography.fontFamily,
+        fontSize: muiTheme.typography.body2.fontSize,
+      },
+      graphicalItems: [
+        { fill: muiTheme.palette.primary.main, stroke: muiTheme.palette.primary.main },
+        { fill: muiTheme.palette.secondary.main, stroke: muiTheme.palette.secondary.main },
+        { fill: muiTheme.palette.warning.main, stroke: muiTheme.palette.warning.main },
+      ],
+      grid: { stroke: muiTheme.palette.divider, fill: &#x27;none&#x27; },
+      axis: { stroke: muiTheme.palette.text.secondary },
+      tooltip: {
+        contentStyle: {
+          backgroundColor: muiTheme.palette.background.paper,
+          border: `1px solid ${muiTheme.palette.divider}`,
+          borderRadius: muiTheme.shape.borderRadius,
+        },
+      },
+    }),
+    [muiTheme],
+  );
+
+  return &lt;RechartsThemeProvider value={rechartsTheme}&gt;{children}&lt;/RechartsThemeProvider&gt;;
+}</pre><div></div></div><h2>Reading the theme yourself</h2><p>Custom shapes, custom tooltip content and custom legends are your components, so Recharts does not style them - see the <a href="/zh-CN/guide/customize" data-discover="true">Customize guide</a> for how those render props work. If you want them to follow the theme, read it with <code>useRechartsTheme</code>. It returns the nearest theme as-is, with no defaults applied, and <code>undefined</code> when there is no provider.</p><div class="codemirror-example-editor " style="height:100%;overflow:auto"><pre>import { useRechartsTheme } from &#x27;recharts&#x27;;
+
+/*
+ * Read the active theme from your own components, for example to paint
+ * the page background or a custom Tooltip content that matches the chart.
+ */
+function CustomTooltipContent({ payload }) {
+  const theme = useRechartsTheme();
+
+  return &lt;div style={theme?.tooltip?.contentStyle}&gt;{payload[0]?.value}&lt;/div&gt;;
+}</pre><div></div></div><h2>Current limitations</h2><ul><li>The API is marked experimental. <code>RechartsTheme</code> can change shape in a minor or patch release.</li><li>Not every component is themed yet. <a href="/zh-CN/api/Sankey" data-discover="true">Sankey</a> and <a href="/zh-CN/api/SunburstChart" data-discover="true">SunburstChart</a> <!-- -->still use their own defaults regardless of the theme.</li><li>Themes are not deep-merged. Nested providers replace, and there is no <code>createTheme</code> helper to merge for you.</li><li>Series colors are assigned by a hash, which is stable but not collision-free. Use explicit props when a specific color matters.</li></ul></article></div></div></main><footer><p><span>Released under the </span><a href="https://opensource.org/licenses/MIT" target="_blank" rel="noreferrer">MIT License</a></p><p>Copyright (c) 2016-<!-- -->2026<!-- --> Recharts Group</p><p>Commit: <code title="14365e660587a4a9a147afa6372a672384e078ae">14365e66</code></p></footer></div></div>
+  </body>
+</html>
