@@ -222,6 +222,30 @@ export const ${varName}: StorybookArgs = ${JSON.stringify(args, null, 2)};
 }
 
 /**
+ * Strips <Link>, <a> and <LinkToApi> tags from a string, preserving their text content.
+ * LinkToApi must be handled too - a leftover tag breaks the generated MDX at render time,
+ * since it's never imported there.
+ */
+export function stripLinks(html: string): string {
+  return html
+    .replace(/<Link\s+[^>]*>(.*?)<\/Link>/g, '$1')
+    .replace(/<a\s+[^>]*>(.*?)<\/a>/g, '$1')
+    .replace(/<LinkToApi(?:\s+[^>]*)?>([\s\S]*?)<\/LinkToApi>/g, '$1');
+}
+
+/**
+ * Picks which exported story to bind the generated MDX's <Canvas>/<Controls> to.
+ * Prefers a story named `API`, otherwise falls back to the first exported story.
+ */
+export function getPrimaryStoryName(storiesFileContent: string): string | undefined {
+  const exportedNames = [...storiesFileContent.matchAll(/^\s*export const (\w+)/gm)].map(match => match[1]);
+  if (exportedNames.length === 0) {
+    return undefined;
+  }
+  return exportedNames.includes('API') ? 'API' : exportedNames[0];
+}
+
+/**
  * Generates MDX documentation for a component
  */
 function generateMdx(
@@ -229,6 +253,7 @@ function generateMdx(
   description: ReactNode,
   parentComponents: ReadonlyArray<string> | undefined,
   childrenComponents: ReadonlyArray<string> | undefined,
+  storyName: string,
 ): string {
   const importPath = `./${componentName}.stories`;
 
@@ -239,7 +264,7 @@ import * as ComponentStories from '${importPath}';
 
 <Meta of={ComponentStories} />
 
-<Canvas of={ComponentStories.API} layout='padded'/>
+<Canvas of={ComponentStories.${storyName}} layout='padded'/>
 `;
 
   if (description) {
@@ -271,7 +296,7 @@ ${childrenComponents.map(c => `- \`<${c}/>\``).join('\n')}
   mdx += `
 ## Props
 
-<Controls of={ComponentStories.API} />
+<Controls of={ComponentStories.${storyName}} />
 `;
 
   return mdx;
@@ -302,13 +327,6 @@ async function main() {
 
   console.log('Generating Storybook ArgTypes and MDX for:', componentsToGenerate);
 
-  /**
-   * Strips <Link> and <a> tags from a string, preserving the text content.
-   */
-  function stripLinks(html: string): string {
-    return html.replace(/<Link\s+[^>]*>(.*?)<\/Link>/g, '$1').replace(/<a\s+[^>]*>(.*?)<\/a>/g, '$1');
-  }
-
   for (const componentName of componentsToGenerate) {
     try {
       // Generate Args
@@ -326,7 +344,27 @@ async function main() {
 
       if (storiesFile) {
         const absoluteStoriesPath = path.resolve(storiesFile);
-        const mdxContent = generateMdx(componentName, description, apiDoc.parentComponents, apiDoc.childrenComponents);
+        const storiesFileContent = await fs.promises.readFile(absoluteStoriesPath, 'utf-8');
+        const storyName = getPrimaryStoryName(storiesFileContent);
+
+        if (storyName == null) {
+          console.warn(`⚠ No exported stories found in ${storiesFile}, skipping MDX generation.`);
+          // Remove any stale MDX from a previous run, since it may reference a story that no longer exists.
+          const staleMdxPath = absoluteStoriesPath.replace(/\.stories\.tsx$/, '.mdx');
+          if (fs.existsSync(staleMdxPath)) {
+            await fs.promises.unlink(staleMdxPath);
+            console.warn(`⚠ Removed stale ${staleMdxPath}.`);
+          }
+          continue;
+        }
+
+        const mdxContent = generateMdx(
+          componentName,
+          description,
+          apiDoc.parentComponents,
+          apiDoc.childrenComponents,
+          storyName,
+        );
         // Overwrite MDX in-place (next to the stories file)
         const mdxOutputPath = absoluteStoriesPath.replace(/\.stories\.tsx$/, '.mdx');
         await writeFormattedFile(mdxOutputPath, mdxContent, prettierConfig, 'mdx');
