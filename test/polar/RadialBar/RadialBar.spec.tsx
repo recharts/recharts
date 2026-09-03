@@ -1,6 +1,7 @@
 import React from 'react';
 import { act, fireEvent, render } from '@testing-library/react';
 import { describe, expect, it, Mock, test, vi } from 'vitest';
+import { createSelector } from 'reselect';
 import {
   DefaultZIndexes,
   PolarAngleAxis,
@@ -11,6 +12,7 @@ import {
   RadialBarProps,
 } from '../../../src';
 import { useAppSelector } from '../../../src/state/hooks';
+import { RechartsRootState } from '../../../src/state/store';
 import { selectPolarItemsSettings } from '../../../src/state/selectors/polarSelectors';
 import { PageData, ringsData } from '../../_data';
 import { expectRadialBars } from '../../helper/expectRadialBars';
@@ -502,6 +504,95 @@ describe('<RadialBar />', () => {
         // 0 stays at 0°, minAngle must never manufacture a visible sliver for an empty bar
         { startAngle: 0, endAngle: 0 },
       ]);
+    });
+
+    it('treats a negative minAngle the same as its positive counterpart, matching how Pie normalizes minAngle', () => {
+      const negativeSettings: RadialBarSettings = { ...radialBarSettings, minAngle: -30 };
+      const negativeRenderTestCase = createSelectorTestCase(({ children }) => (
+        <RadialBarChart width={500} height={500} data={data}>
+          <RadialBar isAnimationActive={false} dataKey="pv" minAngle={-30} />
+          {children}
+        </RadialBarChart>
+      ));
+      const { spy } = negativeRenderTestCase(state => selectRadialBarSectors(state, 0, 0, negativeSettings, undefined));
+      const lastResult: ReadonlyArray<RadialBarDataItem> | undefined = spy.mock.calls.at(-1)?.[0];
+      assertNotNull(lastResult);
+      const angles = lastResult.map(({ startAngle, endAngle }) => ({ startAngle, endAngle }));
+      // Same expansion as minAngle={30}: the small bar is still extended up to 30°.
+      expect(angles).toEqual([
+        { startAngle: 0, endAngle: 360 },
+        { startAngle: 0, endAngle: 30 },
+        { startAngle: 0, endAngle: 0 },
+      ]);
+    });
+
+    it('can overlap stacked bars, same as the pre-existing minPointSize behavior', () => {
+      // minAngle expands each bar's angle independently, without knowledge of its stacked
+      // neighbor. minPointSize has always had this same limitation in `radial` layout - this
+      // test pins the current, known-imperfect behavior rather than asserting it is correct.
+      const stackedData = [{ name: 'A', a: 1, b: 99 }];
+
+      const stackedRenderTestCase = createSelectorTestCase(({ children }) => (
+        <RadialBarChart width={500} height={500} data={stackedData}>
+          <RadialBar isAnimationActive={false} dataKey="a" stackId="s" minAngle={30} />
+          <RadialBar isAnimationActive={false} dataKey="b" stackId="s" minAngle={30} />
+          {children}
+        </RadialBarChart>
+      ));
+
+      // Settings must come from the real registered items (with their real, auto-generated
+      // ids) rather than a hand-rolled object, otherwise the stacked-data lookup silently
+      // fails to find a match and each bar falls back to its raw, non-cumulative value.
+      //
+      // This is wrapped in createSelector (rather than a plain function) because the test
+      // harness asserts that calling the selector twice on the same state returns a
+      // referentially stable result, the same guarantee every real selector in this codebase
+      // provides.
+      const selectStackedAAndB = createSelector(
+        [
+          (state: RechartsRootState) =>
+            selectPolarItemsSettings(state, 'angleAxis', 0) as ReadonlyArray<RadialBarSettings>,
+        ],
+        allSettings => {
+          // Both bars register asynchronously; ignore intermediate renders where only one has.
+          if (allSettings.length < 2) {
+            return undefined;
+          }
+          const settingsA = allSettings.find(s => s.dataKey === 'a');
+          const settingsB = allSettings.find(s => s.dataKey === 'b');
+          assertNotNull(settingsA);
+          assertNotNull(settingsB);
+          return { settingsA, settingsB };
+        },
+      );
+      const selectStackedSectors = createSelector(
+        [selectStackedAAndB, (state: RechartsRootState) => state],
+        (found, state) => {
+          if (found == null) {
+            return undefined;
+          }
+          return {
+            a: selectRadialBarSectors(state, 0, 0, found.settingsA, undefined),
+            b: selectRadialBarSectors(state, 0, 0, found.settingsB, undefined),
+          };
+        },
+      );
+
+      const { spy } = stackedRenderTestCase(selectStackedSectors);
+      const lastResult = spy.mock.calls.at(-1)?.[0];
+      assertNotNull(lastResult);
+      const { a: resultA, b: resultB } = lastResult;
+
+      // The angle axis domain here is [0, 99] (the larger of the two raw values), not [0, 100].
+      // Bar 'a' (cumulative range [0, 1]) naturally spans [0, 3.64], expanded to [0, 30] by minAngle.
+      expect(resultA[0].startAngle).toBe(0);
+      expect(resultA[0].endAngle).toBe(30);
+
+      // Bar 'b' (cumulative range [1, 100], stacked on top of 'a') naturally spans [3.64, 360],
+      // well above the threshold so it is untouched - but that overlaps bar 'a's expanded range
+      // by roughly 26.4°.
+      expect(resultB[0].startAngle).toBeCloseTo(360 / 99, 5);
+      expect(resultB[0].endAngle).toBe(360);
     });
   });
 

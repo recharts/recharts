@@ -798,8 +798,12 @@ export function computeRadialBarDataItems({
         }
 
         // Zero-value bars are excluded so a truly empty bar never gets an artificial sliver.
-        if (minAngle > 0 && deltaAngle !== 0 && Math.abs(deltaAngle) < minAngle) {
-          const delta = mathSign(deltaAngle) * (minAngle - Math.abs(deltaAngle));
+        // Negative minAngle is normalized the same way Pie normalizes pieSettings.minAngle.
+        // Note: like minPointSize above, this expands each bar independently, so a stacked
+        // bar's expansion can overlap into its neighbor's range. That is an existing
+        // limitation shared with minPointSize, not something new to minAngle.
+        if (Math.abs(minAngle) > 0 && deltaAngle !== 0 && Math.abs(deltaAngle) < Math.abs(minAngle)) {
+          const delta = mathSign(deltaAngle) * (Math.abs(minAngle) - Math.abs(deltaAngle));
           endAngle += delta;
         }
         backgroundSector = {
