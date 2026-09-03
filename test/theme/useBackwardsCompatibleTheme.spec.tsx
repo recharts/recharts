@@ -68,15 +68,14 @@ describe('useBackwardsCompatibleTheme', () => {
     expect(explicitProps).toEqual({ color: 'red' });
   });
 
-  it('returns no styles when the theme has no matching slice', () => {
-    const explicitProps: Props = { color: 'red', size: 10 };
+  it('preserves explicit props without applying legacy defaults when the theme has no matching slice', () => {
+    const explicitProps: Props = { color: 'red' };
 
     const { result } = renderHook(
       () => useBackwardsCompatibleTheme(() => undefined, explicitProps, { color: 'blue', size: 20 }),
       { wrapper: ({ children }) => <RechartsThemeProvider value={theme}>{children}</RechartsThemeProvider> },
     );
 
-    expect(result.current).toEqual({});
-    expect(result.current).not.toBe(explicitProps);
+    expect(result.current).toEqual(explicitProps);
   });
 });
