@@ -1,0 +1,1 @@
+import{i as s,a as u}from"./iteratee-Bncw5-E9.js";function c(r){return Array.isArray(r)?r:Array.from(r)}function y(r,f=s){if(r==null)return;const t=c(r);if(t.length===0)return;const m=u(f);let i,n;for(let e=0;e<t.length;e++){const o=t[e],a=m(o,e,t);Number.isNaN(a)||(n===void 0||a>n)&&(n=a,i=o)}return i}export{y as m,c as t};

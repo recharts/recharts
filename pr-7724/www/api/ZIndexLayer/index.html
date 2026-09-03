@@ -1,0 +1,489 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <title>Recharts</title>
+    <meta charset="utf-8" />
+    <meta name="description" content="Recharts - Re-designed charting library built with React and D3." />
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5" />
+    <script>
+      /**
+       * @note this is duplicated in defineColorModeStore.ts, to avoid FOUC on initial load. Please keep in sync.
+       */
+      (function () {
+        try {
+          var storedMode = localStorage.getItem('recharts-color-mode');
+          var mode =
+            storedMode === 'light' || storedMode === 'dark'
+              ? storedMode
+              : window.matchMedia('(prefers-color-scheme: dark)').matches
+                ? 'dark'
+                : 'light';
+          document.documentElement.setAttribute('data-mode', mode);
+        } catch (e) {
+          // Do nothing
+        }
+      })();
+    </script>
+    <link
+      href="//fonts.googleapis.com/css?family=Source+Sans+Pro:400,600|Roboto Mono|Oswald:300"
+      rel="stylesheet"
+      type="text/css"
+    />
+    <script type="module" crossorigin src="/recharts/pr-7724/www/assets/index-ByHpEt5G.js"></script>
+    <link rel="stylesheet" crossorigin href="/recharts/pr-7724/www/assets/index-Dngh0Ezp.css">
+    <link rel="sitemap" type="application/xml" title="Sitemap" href="/sitemap.xml">
+  </head>
+  <body>
+    <div id="app"><div class="container"><header><a class="logo" href="/en-US/" data-discover="true"><div width="200" height="60" class="recharts-wrapper" style="position:relative;cursor:default;width:200px;height:60px"></div></a><nav class="desktop-only"><ul class="navigation-items"><li><a class="" href="/en-US/guide/" data-discover="true">Guide</a></li><li><a class="" href="/en-US/api/" data-discover="true">API</a></li><li><a class="" href="/en-US/examples/" data-discover="true">Examples</a></li><li><a class="" href="/en-US/storybook/" data-discover="true">Storybook</a></li><li><a href="https://github.com/recharts/recharts/wiki" target="_blank" rel="noopener noreferrer" style="white-space:nowrap;display:inline-flex;align-items:center;gap:0.25rem">Wiki<svg stroke="currentColor" fill="none" stroke-width="2" viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round" height="1em" width="1em" xmlns="http://www.w3.org/2000/svg"><path d="M15 3h6v6"></path><path d="M10 14 21 3"></path><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path></svg></a></li><li><a href="https://github.com/recharts/recharts" target="_blank" rel="noopener noreferrer" style="white-space:nowrap;display:inline-flex;align-items:center;gap:0.25rem">GitHub<svg stroke="currentColor" fill="none" stroke-width="2" viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round" height="1em" width="1em" xmlns="http://www.w3.org/2000/svg"><path d="M15 3h6v6"></path><path d="M10 14 21 3"></path><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path></svg></a></li><li><a href="https://www.npmjs.com/package/recharts" target="_blank" rel="noopener noreferrer" style="white-space:nowrap;display:inline-flex;align-items:center;gap:0.25rem">npm<svg stroke="currentColor" fill="none" stroke-width="2" viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round" height="1em" width="1em" xmlns="http://www.w3.org/2000/svg"><path d="M15 3h6v6"></path><path d="M10 14 21 3"></path><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path></svg></a></li><li><a href="https://github.com/recharts/recharts/wiki/3.0-migration-guide" target="_blank" rel="noopener noreferrer" style="white-space:nowrap;display:inline-flex;align-items:center;gap:0.25rem">3.0 migration guide<svg stroke="currentColor" fill="none" stroke-width="2" viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round" height="1em" width="1em" xmlns="http://www.w3.org/2000/svg"><path d="M15 3h6v6"></path><path d="M10 14 21 3"></path><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path></svg></a></li></ul><div class="nav-actions"><span class="no-wrap"><span><span class="switch-item active">En</span></span><span><span>  |  </span><a class="switch-item" href="/zh-CN/" data-discover="true">中文</a></span></span><button class="_ColorModePicker_1b4l5_1" type="button" aria-label="system"><svg stroke="currentColor" fill="none" stroke-width="2" viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round" height="1em" width="1em" xmlns="http://www.w3.org/2000/svg"><rect width="20" height="14" x="2" y="3" rx="2"></rect><line x1="8" x2="16" y1="21" y2="21"></line><line x1="12" x2="12" y1="17" y2="21"></line></svg></button></div></nav><nav class="mobile-only"><button type="button" class="mobile-nav-toggle mobile-only" aria-label="Toggle navigation"><span>Menu</span><div width="3rem" height="3rem" class="recharts-wrapper" style="position:relative;cursor:pointer;width:3rem;height:3rem"></div></button><div class="mobile-nav-backdrop " aria-hidden="true"></div><div class="slide-right-mobile-nav "><ul class="navigation-items"><li class="collapsible "><button type="button" class="collapsible-trigger"><span>Guide</span><div width="3rem" height="3rem" class="recharts-wrapper" style="position:relative;cursor:default;width:3rem;height:3rem"></div></button></li><li class="collapsible "><button type="button" class="collapsible-trigger"><span>API</span><div width="3rem" height="3rem" class="recharts-wrapper" style="position:relative;cursor:default;width:3rem;height:3rem"></div></button></li><li class="collapsible "><button type="button" class="collapsible-trigger"><span>Examples</span><div width="3rem" height="3rem" class="recharts-wrapper" style="position:relative;cursor:default;width:3rem;height:3rem"></div></button></li><li><a class="" href="/en-US/storybook/" data-discover="true">Storybook</a></li><li><a href="https://github.com/recharts/recharts/wiki" target="_blank" rel="noopener noreferrer" style="white-space:nowrap;display:inline-flex;align-items:center;gap:0.25rem">Wiki<svg stroke="currentColor" fill="none" stroke-width="2" viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round" height="1em" width="1em" xmlns="http://www.w3.org/2000/svg"><path d="M15 3h6v6"></path><path d="M10 14 21 3"></path><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path></svg></a></li><li><a href="https://github.com/recharts/recharts" target="_blank" rel="noopener noreferrer" style="white-space:nowrap;display:inline-flex;align-items:center;gap:0.25rem">GitHub<svg stroke="currentColor" fill="none" stroke-width="2" viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round" height="1em" width="1em" xmlns="http://www.w3.org/2000/svg"><path d="M15 3h6v6"></path><path d="M10 14 21 3"></path><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path></svg></a></li><li><a href="https://www.npmjs.com/package/recharts" target="_blank" rel="noopener noreferrer" style="white-space:nowrap;display:inline-flex;align-items:center;gap:0.25rem">npm<svg stroke="currentColor" fill="none" stroke-width="2" viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round" height="1em" width="1em" xmlns="http://www.w3.org/2000/svg"><path d="M15 3h6v6"></path><path d="M10 14 21 3"></path><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path></svg></a></li><li><a href="https://github.com/recharts/recharts/wiki/3.0-migration-guide" target="_blank" rel="noopener noreferrer" style="white-space:nowrap;display:inline-flex;align-items:center;gap:0.25rem">3.0 migration guide<svg stroke="currentColor" fill="none" stroke-width="2" viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round" height="1em" width="1em" xmlns="http://www.w3.org/2000/svg"><path d="M15 3h6v6"></path><path d="M10 14 21 3"></path><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path></svg></a></li></ul><div class="nav-actions"><span class="no-wrap"><span><span class="switch-item active">En</span></span><span><span>  |  </span><a class="switch-item" href="/zh-CN/" data-discover="true">中文</a></span></span><button class="_ColorModePicker_1b4l5_1" type="button" aria-label="system"><svg stroke="currentColor" fill="none" stroke-width="2" viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round" height="1em" width="1em" xmlns="http://www.w3.org/2000/svg"><rect width="20" height="14" x="2" y="3" rx="2"></rect><line x1="8" x2="16" y1="21" y2="21"></line><line x1="12" x2="12" y1="17" y2="21"></line></svg></button></div></div></nav></header><div class="sidebar desktop-only"><h2>API</h2><div class="sidebar-cate"><a href="/en-US/api/AreaChart/" data-discover="true"><h4>Charts</h4></a><ul class="menu"><li><a class="" href="/en-US/api/AreaChart/" data-discover="true">AreaChart</a></li><li><a class="" href="/en-US/api/BarChart/" data-discover="true">BarChart</a></li><li><a class="" href="/en-US/api/LineChart/" data-discover="true">LineChart</a></li><li><a class="" href="/en-US/api/ComposedChart/" data-discover="true">ComposedChart</a></li><li><a class="" href="/en-US/api/PieChart/" data-discover="true">PieChart</a></li><li><a class="" href="/en-US/api/RadarChart/" data-discover="true">RadarChart</a></li><li><a class="" href="/en-US/api/RadialBarChart/" data-discover="true">RadialBarChart</a></li><li><a class="" href="/en-US/api/ScatterChart/" data-discover="true">ScatterChart</a></li><li><a class="" href="/en-US/api/FunnelChart/" data-discover="true">FunnelChart</a></li><li><a class="" href="/en-US/api/Treemap/" data-discover="true">Treemap</a></li><li><a class="" href="/en-US/api/Sankey/" data-discover="true">Sankey</a></li><li><a class="" href="/en-US/api/SunburstChart/" data-discover="true">SunburstChart</a></li></ul></div><div class="sidebar-cate"><a href="/en-US/api/ResponsiveContainer/" data-discover="true"><h4>General Components</h4></a><ul class="menu"><li><a class="" href="/en-US/api/ResponsiveContainer/" data-discover="true">ResponsiveContainer</a></li><li><a class="" href="/en-US/api/Legend/" data-discover="true">Legend</a></li><li><a class="" href="/en-US/api/DefaultLegendContent/" data-discover="true">DefaultLegendContent</a></li><li><a class="" href="/en-US/api/Tooltip/" data-discover="true">Tooltip</a></li><li><a class="" href="/en-US/api/DefaultTooltipContent/" data-discover="true">DefaultTooltipContent</a></li><li><a class="" href="/en-US/api/useIsTooltipActive/" data-discover="true">useIsTooltipActive</a></li><li><a class="" href="/en-US/api/useActiveTooltipCoordinate/" data-discover="true">useActiveTooltipCoordinate</a></li><li><a class="" href="/en-US/api/useActiveTooltipDataPoints/" data-discover="true">useActiveTooltipDataPoints</a></li><li><a class="" href="/en-US/api/useActiveTooltipLabel/" data-discover="true">useActiveTooltipLabel</a></li><li><a class="" href="/en-US/api/Cell/" data-discover="true">Cell</a></li><li><a class="" href="/en-US/api/Text/" data-discover="true">Text</a></li><li><a class="" href="/en-US/api/Label/" data-discover="true">Label</a></li><li><a class="" href="/en-US/api/LabelList/" data-discover="true">LabelList</a></li><li><a class="" href="/en-US/api/Layer/" data-discover="true">Layer</a></li><li><a class="" href="/en-US/api/Customized/" data-discover="true">Customized</a></li><li><a class="" href="/en-US/api/ZIndexLayer/" data-discover="true">ZIndexLayer</a></li><li><a class="" href="/en-US/api/DefaultZIndexes/" data-discover="true">DefaultZIndexes</a></li><li><a class="" href="/en-US/api/Surface/" data-discover="true">Surface</a></li><li><a class="" href="/en-US/api/useMargin/" data-discover="true">useMargin</a></li><li><a class="" href="/en-US/api/useOffset/" data-discover="true">useOffset</a></li><li><a class="" href="/en-US/api/usePlotArea/" data-discover="true">usePlotArea</a></li><li><a class="" href="/en-US/api/useChartWidth/" data-discover="true">useChartWidth</a></li><li><a class="" href="/en-US/api/useChartHeight/" data-discover="true">useChartHeight</a></li><li><a class="" href="/en-US/api/useChartLayout/" data-discover="true">useChartLayout</a></li><li><a class="" href="/en-US/api/getNiceTickValues/" data-discover="true">getNiceTickValues</a></li><li><a class="" href="/en-US/api/Global/" data-discover="true">Global</a></li><li><a class="" href="/en-US/api/getRelativeCoordinate/" data-discover="true">getRelativeCoordinate</a></li></ul></div><div class="sidebar-cate"><a href="/en-US/api/Area/" data-discover="true"><h4>Cartesian Components</h4></a><ul class="menu"><li><a class="" href="/en-US/api/Area/" data-discover="true">Area</a></li><li><a class="" href="/en-US/api/Bar/" data-discover="true">Bar</a></li><li><a class="" href="/en-US/api/BarStack/" data-discover="true">BarStack</a></li><li><a class="" href="/en-US/api/Line/" data-discover="true">Line</a></li><li><a class="" href="/en-US/api/Scatter/" data-discover="true">Scatter</a></li><li><a class="" href="/en-US/api/XAxis/" data-discover="true">XAxis</a></li><li><a class="" href="/en-US/api/useXAxisDomain/" data-discover="true">useXAxisDomain</a></li><li><a class="" href="/en-US/api/useXAxisTicks/" data-discover="true">useXAxisTicks</a></li><li><a class="" href="/en-US/api/YAxis/" data-discover="true">YAxis</a></li><li><a class="" href="/en-US/api/useYAxisDomain/" data-discover="true">useYAxisDomain</a></li><li><a class="" href="/en-US/api/useYAxisTicks/" data-discover="true">useYAxisTicks</a></li><li><a class="" href="/en-US/api/ZAxis/" data-discover="true">ZAxis</a></li><li><a class="" href="/en-US/api/Brush/" data-discover="true">Brush</a></li><li><a class="" href="/en-US/api/CartesianAxis/" data-discover="true">CartesianAxis</a></li><li><a class="" href="/en-US/api/CartesianGrid/" data-discover="true">CartesianGrid</a></li><li><a class="" href="/en-US/api/ReferenceLine/" data-discover="true">ReferenceLine</a></li><li><a class="" href="/en-US/api/ReferenceDot/" data-discover="true">ReferenceDot</a></li><li><a class="" href="/en-US/api/ReferenceArea/" data-discover="true">ReferenceArea</a></li><li><a class="" href="/en-US/api/ErrorBar/" data-discover="true">ErrorBar</a></li><li><a class="" href="/en-US/api/Funnel/" data-discover="true">Funnel</a></li><li><a class="" href="/en-US/api/useCartesianScale/" data-discover="true">useCartesianScale</a></li><li><a class="" href="/en-US/api/useCartesianChartLayout/" data-discover="true">useCartesianChartLayout</a></li><li><a class="" href="/en-US/api/useXAxisScale/" data-discover="true">useXAxisScale</a></li><li><a class="" href="/en-US/api/useYAxisScale/" data-discover="true">useYAxisScale</a></li><li><a class="" href="/en-US/api/useXAxisInverseScale/" data-discover="true">useXAxisInverseScale</a></li><li><a class="" href="/en-US/api/useYAxisInverseScale/" data-discover="true">useYAxisInverseScale</a></li><li><a class="" href="/en-US/api/useXAxisInverseDataSnapScale/" data-discover="true">useXAxisInverseDataSnapScale</a></li><li><a class="" href="/en-US/api/useYAxisInverseDataSnapScale/" data-discover="true">useYAxisInverseDataSnapScale</a></li><li><a class="" href="/en-US/api/useXAxisInverseTickSnapScale/" data-discover="true">useXAxisInverseTickSnapScale</a></li><li><a class="" href="/en-US/api/useYAxisInverseTickSnapScale/" data-discover="true">useYAxisInverseTickSnapScale</a></li><li><a class="" href="/en-US/api/createHorizontalChart/" data-discover="true">createHorizontalChart</a></li><li><a class="" href="/en-US/api/createVerticalChart/" data-discover="true">createVerticalChart</a></li></ul></div><div class="sidebar-cate"><a href="/en-US/api/Pie/" data-discover="true"><h4>Polar Components</h4></a><ul class="menu"><li><a class="" href="/en-US/api/Pie/" data-discover="true">Pie</a></li><li><a class="" href="/en-US/api/Radar/" data-discover="true">Radar</a></li><li><a class="" href="/en-US/api/RadialBar/" data-discover="true">RadialBar</a></li><li><a class="" href="/en-US/api/PolarAngleAxis/" data-discover="true">PolarAngleAxis</a></li><li><a class="" href="/en-US/api/PolarGrid/" data-discover="true">PolarGrid</a></li><li><a class="" href="/en-US/api/PolarRadiusAxis/" data-discover="true">PolarRadiusAxis</a></li><li><a class="" href="/en-US/api/createRadialChart/" data-discover="true">createRadialChart</a></li><li><a class="" href="/en-US/api/createCentricChart/" data-discover="true">createCentricChart</a></li><li><a class="" href="/en-US/api/usePolarChartLayout/" data-discover="true">usePolarChartLayout</a></li></ul></div><div class="sidebar-cate"><a href="/en-US/api/Cross/" data-discover="true"><h4>Shapes</h4></a><ul class="menu"><li><a class="" href="/en-US/api/Cross/" data-discover="true">Cross</a></li><li><a class="" href="/en-US/api/Curve/" data-discover="true">Curve</a></li><li><a class="" href="/en-US/api/Dot/" data-discover="true">Dot</a></li><li><a class="" href="/en-US/api/Polygon/" data-discover="true">Polygon</a></li><li><a class="" href="/en-US/api/Rectangle/" data-discover="true">Rectangle</a></li><li><a class="" href="/en-US/api/Sector/" data-discover="true">Sector</a></li><li><a class="" href="/en-US/api/Trapezoid/" data-discover="true">Trapezoid</a></li><li><a class="" href="/en-US/api/Symbols/" data-discover="true">Symbols</a></li></ul></div><div class="sidebar-cate"><a href="/en-US/api/matchByIndex/" data-discover="true"><h4>Animation</h4></a><ul class="menu"><li><a class="" href="/en-US/api/matchByIndex/" data-discover="true">matchByIndex</a></li><li><a class="" href="/en-US/api/matchByDataKey/" data-discover="true">matchByDataKey</a></li><li><a class="" href="/en-US/api/matchAppend/" data-discover="true">matchAppend</a></li><li><a class="" href="/en-US/api/interpolate/" data-discover="true">interpolate</a></li><li><a class="" href="/en-US/api/AreaRevealShape/" data-discover="true">AreaRevealShape</a></li><li><a class="" href="/en-US/api/LineDrawShape/" data-discover="true">LineDrawShape</a></li><li><a class="" href="/en-US/api/AnimationControllerProvider/" data-discover="true">AnimationControllerProvider</a></li></ul></div></div><main><div class="page page-api"><div class="content"><h3 class="page-title">ZIndexLayer</h3><p class="survey"><section><p>A layer that renders its children into a portal corresponding to the given zIndex. We can&#x27;t use regular CSS <code>z-index</code> because SVG does not support it. So instead, we create separate DOM nodes for each zIndex layer and render the children into the corresponding DOM node using React portals.</p><p>This component must be used inside a Chart component.</p><p>Available since Recharts 3.4</p></section></p><div class="examples"><div class="example-list"><div class="example-item"><div class="example-wrapper"><div class="example-inner-wrapper"><div width="900" height="480" class="recharts-wrapper" style="position:relative;cursor:default;width:900px;height:480px"></div><div class="codemirror-wrapper "><div id="codemirror-container"><div class="codemirror-toolbar"><select class="codemirror-toolbar-item" style="padding-right:12px"><option value="source" selected="">Source code</option><option value="devtools">Hook inspector</option><option value="annotations">Annotations</option><option value="controls">Controls</option></select><button class="codemirror-toolbar-item" type="button"><svg class="recharts-surface" width="16" height="16" viewBox="0 0 16 16"><title></title><desc></desc><path fill="none" stroke="var(--color-text-1)" stroke-width="1" width="10" height="10" x="1" y="1" radius="2" class="recharts-rectangle" d="M 1,3
+            A 2,2,0,0,1,3,1
+            L 9,1
+            A 2,2,0,0,1,11,3
+            L 11,9
+            A 2,2,0,0,1,9,11
+            L 3,11
+            A 2,2,0,0,1,1,9 Z" style="stroke-dasharray:0px 1px"></path><path fill="none" stroke="var(--color-text-1)" stroke-width="1" width="10" height="10" x="5" y="5" radius="2" class="recharts-rectangle" d="M 5,7
+            A 2,2,0,0,1,7,5
+            L 13,5
+            A 2,2,0,0,1,15,7
+            L 15,13
+            A 2,2,0,0,1,13,15
+            L 7,15
+            A 2,2,0,0,1,5,13 Z" style="stroke-dasharray:0px 1px"></path></svg>Copy to clipboard</button><button type="button" class="codemirror-toolbar-item"><svg stroke="currentColor" fill="none" stroke-width="2" viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round" height="1em" width="1em" xmlns="http://www.w3.org/2000/svg"><path d="M21.174 6.812a1 1 0 0 0-3.986-3.987L3.842 16.174a2 2 0 0 0-.5.83l-1.321 4.352a.5.5 0 0 0 .623.622l4.353-1.32a2 2 0 0 0 .83-.497z"></path><path d="m15 5 4 4"></path></svg><span>Edit</span></button><button type="button" class="codemirror-toolbar-item"><svg stroke="currentColor" fill="none" stroke-width="2" viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round" height="1em" width="1em" xmlns="http://www.w3.org/2000/svg"><circle cx="18" cy="5" r="3"></circle><circle cx="6" cy="12" r="3"></circle><circle cx="18" cy="19" r="3"></circle><line x1="8.59" x2="15.42" y1="13.51" y2="17.49"></line><line x1="15.41" x2="8.59" y1="6.51" y2="10.49"></line></svg><span>Open in StackBlitz</span></button></div><div style="height:100%;display:block;overflow:hidden"><div class="codemirror-example-editor tsx" style="height:100%;overflow:auto"><pre>// #region Imports, data, and helper functions
+import {
+  LabelList,
+  Line,
+  LineChart,
+  LineProps,
+  ReferenceDot,
+  XAxis,
+  YAxis,
+  DefaultZIndexes,
+  ZIndexLayer,
+  LabelListEntry,
+} from &#x27;recharts&#x27;;
+import { RechartsDevtools } from &#x27;@recharts/devtools&#x27;;
+
+const AirplaneIcon = () =&gt; (
+  // https://upload.wikimedia.org/wikipedia/commons/7/7d/Plane_icon.svg
+  &lt;svg xmlns=&quot;http://www.w3.org/2000/svg&quot; width=&quot;238.45445&quot; height=&quot;228.24998&quot; version=&quot;1.0&quot;&gt;
+    &lt;path
+      transform=&quot;scale(0.1)&quot;
+      fillRule=&quot;evenodd&quot;
+      d=&quot;M194.67321 0 70.641958 53.625c-10.38227-6.92107-34.20058-21.27539-38.90545-23.44898-39.4400301-18.22079-36.9454001 14.73107-20.34925 24.6052 4.53917 2.70065 27.72352 17.17823 43.47345 26.37502l17.90625 133.9375 22.21875 13.15625 11.531252-120.9375 71.53125 36.6875 3.84375 39.21875 14.53125 8.625 11.09375-42.40625.125.0625 30.8125-31.53125-14.875-8-35.625 16.90625-68.28125-42.4375L217.36071 12.25 194.67321 0z&quot;
+    /&gt;
+  &lt;/svg&gt;
+);
+
+function between(a: number, b: number) {
+  return Math.min(a, b) + Math.abs(a - b) / 2;
+}
+
+const topRow = 4;
+const midRow = 2;
+const bottomRow = 0;
+const startA = 0;
+const gapA = 11;
+const mustek = { name: &#x27;Můstek&#x27;, yPos: between(topRow, midRow), xPos: 94 };
+const florenc = { name: &#x27;Florenc&#x27;, yPos: mustek.yPos, xPos: 127 };
+const muzeum = { name: &#x27;Muzeum&#x27;, yPos: between(midRow, bottomRow), xPos: between(mustek.xPos, florenc.xPos) };
+const hlavak = {
+  name: &#x27;Hlavní nádraží&#x27;,
+  yPos: muzeum.yPos + (florenc.yPos - muzeum.yPos) / 2,
+  xPos: muzeum.xPos + (florenc.xPos - muzeum.xPos) / 2,
+};
+
+const motol = { name: &#x27;Nemocnice Motol&#x27;, yPos: topRow, xPos: startA };
+const petriny = { name: &#x27;Petřiny&#x27;, yPos: topRow, xPos: motol.xPos + gapA };
+const veleslavin = { name: &#x27;Nádraží Veleslavín&#x27;, yPos: topRow, xPos: petriny.xPos + gapA };
+const borislavka = { name: &#x27;Bořislavka&#x27;, yPos: topRow, xPos: veleslavin.xPos + gapA };
+const dejvicka = { name: &#x27;Dejvická&#x27;, yPos: topRow, xPos: borislavka.xPos + gapA };
+const hradcanska = { name: &#x27;Hradčanská&#x27;, yPos: topRow, xPos: dejvicka.xPos + gapA };
+const malostranska = { name: &#x27;Malostranská&#x27;, yPos: topRow, xPos: hradcanska.xPos + gapA };
+const staromestska = { name: &#x27;Staroměstská&#x27;, yPos: topRow, xPos: malostranska.xPos + gapA };
+// mustek
+// muzeum
+const mirak = { name: &#x27;Náměstí Míru&#x27;, yPos: bottomRow, xPos: muzeum.xPos + 13 };
+const jzp = { name: &#x27;Jiřího z Poděbrad&#x27;, yPos: bottomRow, xPos: mirak.xPos + gapA };
+const flora = { name: &#x27;Flora&#x27;, yPos: bottomRow, xPos: jzp.xPos + gapA };
+const zelivarna = { name: &#x27;Želivského&#x27;, yPos: bottomRow, xPos: flora.xPos + gapA };
+const strasnicka = { name: &#x27;Strašnická&#x27;, yPos: bottomRow, xPos: zelivarna.xPos + gapA };
+const skalka = { name: &#x27;Skalka&#x27;, yPos: bottomRow, xPos: strasnicka.xPos + gapA };
+const depohostivar = { name: &#x27;Depo Hostivař&#x27;, yPos: bottomRow, xPos: skalka.xPos + gapA };
+const lineA = {
+  name: &#x27;A&#x27;,
+  color: &#x27;#1aa300&#x27;,
+  stations: [
+    motol,
+    petriny,
+    veleslavin,
+    borislavka,
+    dejvicka,
+    hradcanska,
+    malostranska,
+    staromestska,
+    mustek,
+    muzeum,
+    mirak,
+    jzp,
+    flora,
+    zelivarna,
+    strasnicka,
+    skalka,
+    depohostivar,
+  ],
+};
+
+const gapB = 8;
+const narodka = { name: &#x27;Národní třída&#x27;, yPos: midRow, xPos: mustek.xPos - 20 };
+const karlak = { name: &#x27;Karlovo náměstí&#x27;, yPos: midRow, xPos: narodka.xPos - gapB };
+const andel = { name: &#x27;Anděl&#x27;, yPos: midRow, xPos: karlak.xPos - gapB };
+const smichac = { name: &#x27;Smíchovské nádraží&#x27;, yPos: midRow, xPos: andel.xPos - gapB };
+const radlicka = { name: &#x27;Radlická&#x27;, yPos: midRow, xPos: smichac.xPos - gapB };
+const jinonice = { name: &#x27;Jinonice&#x27;, yPos: midRow, xPos: radlicka.xPos - gapB };
+const novebutovice = { name: &#x27;Nové Butovice&#x27;, yPos: midRow, xPos: jinonice.xPos - gapB };
+const hurka = { name: &#x27;Hůrka&#x27;, yPos: midRow, xPos: novebutovice.xPos - gapB };
+const luziny = { name: &#x27;Lužiny&#x27;, yPos: midRow, xPos: hurka.xPos - gapB };
+const luka = { name: &#x27;Luka&#x27;, yPos: midRow, xPos: luziny.xPos - gapB };
+const stodulky = { name: &#x27;Stodůlky&#x27;, yPos: midRow, xPos: luka.xPos - gapB };
+const zlicin = { name: &#x27;Zličín&#x27;, yPos: midRow, xPos: stodulky.xPos - gapB };
+// mustek
+const namestirepubliky = {
+  name: &#x27;Náměstí Republiky&#x27;,
+  yPos: mustek.yPos,
+  xPos: muzeum.xPos,
+};
+// florenc
+const krizikova = { name: &#x27;Křižíkova&#x27;, yPos: midRow, xPos: florenc.xPos + 20 };
+const invalidovna = { name: &#x27;Invalidovna&#x27;, yPos: midRow, xPos: krizikova.xPos + gapB };
+const ceskomoravska = { name: &#x27;Českomoravská&#x27;, yPos: midRow, xPos: invalidovna.xPos + gapB };
+const palmovka = { name: &#x27;Palmovka&#x27;, yPos: midRow, xPos: ceskomoravska.xPos + gapB };
+const vysocanska = { name: &#x27;Vysočanská&#x27;, yPos: midRow, xPos: palmovka.xPos + gapB };
+const kolbenova = { name: &#x27;Kolbenova&#x27;, yPos: midRow, xPos: vysocanska.xPos + gapB };
+const hloubetin = { name: &#x27;Hloubětín&#x27;, yPos: midRow, xPos: kolbenova.xPos + gapB };
+const rajskazahrada = { name: &#x27;Rajská zahrada&#x27;, yPos: midRow, xPos: hloubetin.xPos + gapB };
+const cernak = { name: &#x27;Černý Most&#x27;, yPos: midRow, xPos: rajskazahrada.xPos + gapB };
+const lineB = {
+  name: &#x27;B&#x27;,
+  color: &#x27;#fed330&#x27;,
+  stations: [
+    zlicin,
+    stodulky,
+    luka,
+    luziny,
+    hurka,
+    novebutovice,
+    jinonice,
+    radlicka,
+    smichac,
+    andel,
+    karlak,
+    narodka,
+    mustek,
+    namestirepubliky,
+    florenc,
+    krizikova,
+    invalidovna,
+    ceskomoravska,
+    palmovka,
+    vysocanska,
+    kolbenova,
+    hloubetin,
+    rajskazahrada,
+    cernak,
+  ],
+};
+
+const gapC = 9;
+const ipak = { name: &#x27;I. P. Pavlova&#x27;, yPos: bottomRow, xPos: muzeum.xPos - 18 };
+const vysehrad = { name: &#x27;Vyšehrad&#x27;, yPos: bottomRow, xPos: ipak.xPos - gapC };
+const povstani = { name: &#x27;Pražského povstání&#x27;, yPos: bottomRow, xPos: vysehrad.xPos - gapC };
+const pankrac = { name: &#x27;Pankrác&#x27;, yPos: bottomRow, xPos: povstani.xPos - gapC };
+const budejarna = { name: &#x27;Budějovická&#x27;, yPos: bottomRow, xPos: pankrac.xPos - gapC };
+const kacerov = { name: &#x27;Kačerov&#x27;, yPos: bottomRow, xPos: budejarna.xPos - gapC };
+const roztyly = { name: &#x27;Roztyly&#x27;, yPos: bottomRow, xPos: kacerov.xPos - gapC };
+const chodov = { name: &#x27;Chodov&#x27;, yPos: bottomRow, xPos: roztyly.xPos - gapC };
+const opatov = { name: &#x27;Opatov&#x27;, yPos: bottomRow, xPos: chodov.xPos - gapC };
+const haje = { name: &#x27;Háje&#x27;, yPos: bottomRow, xPos: opatov.xPos - gapC };
+
+const vltavska = { name: &#x27;Vltavská&#x27;, yPos: topRow, xPos: florenc.xPos + 13 };
+const holesky = { name: &#x27;Nádraží Holešovice&#x27;, yPos: topRow, xPos: vltavska.xPos + gapC };
+const kobylisy = { name: &#x27;Kobylisy&#x27;, yPos: topRow, xPos: holesky.xPos + gapC };
+const ladvi = { name: &#x27;Ládví&#x27;, yPos: topRow, xPos: kobylisy.xPos + gapC };
+const letnany = { name: &#x27;Letňany&#x27;, yPos: topRow, xPos: ladvi.xPos + gapC };
+const strizkov = { name: &#x27;Střížkov&#x27;, yPos: topRow, xPos: letnany.xPos + gapC };
+const prosek = { name: &#x27;Prosek&#x27;, yPos: topRow, xPos: strizkov.xPos + gapC };
+const lineC = {
+  name: &#x27;C&#x27;,
+  color: &#x27;#ff242e&#x27;,
+  stations: [
+    haje,
+    opatov,
+    chodov,
+    roztyly,
+    kacerov,
+    budejarna,
+    pankrac,
+    povstani,
+    vysehrad,
+    ipak,
+    muzeum,
+    hlavak,
+    florenc,
+    vltavska,
+    holesky,
+    kobylisy,
+    ladvi,
+    letnany,
+    strizkov,
+    prosek,
+  ],
+};
+
+// Some labels are rendering overlapped so we need to show them in custom positions
+const customLabels = [mustek, muzeum, florenc, hlavak, veleslavin].map(s =&gt; s.name);
+
+function MetroLine(props: LineProps) {
+  return (
+    &lt;Line
+      type=&quot;monotone&quot;
+      dataKey=&quot;yPos&quot;
+      strokeWidth={15}
+      dot={{ strokeWidth: 3, stroke: &#x27;#fff&#x27;, r: 10, fill: props.stroke, fillOpacity: 1 }}
+      isAnimationActive={false}
+      activeDot={false}
+      {...props}
+    &gt;
+      &lt;LabelList
+        angle={-65}
+        fill={props.stroke}
+        fontWeight=&quot;bold&quot;
+        textAnchor=&quot;start&quot;
+        // dataKey=&quot;name&quot;
+        position=&quot;top&quot;
+        dy={-15}
+        dx={5}
+        valueAccessor={(entry: LabelListEntry) =&gt; {
+          const label: string | undefined = entry.payload?.name;
+          if (label != null &amp;&amp; customLabels.includes(label)) {
+            return undefined;
+          }
+          return label;
+        }}
+      /&gt;
+    &lt;/Line&gt;
+  );
+}
+// #endregion
+
+export default function PrahaMetro() {
+  return (
+    &lt;LineChart
+      width={900}
+      height={480}
+      margin={{
+        left: 30,
+        bottom: 30,
+        right: 60,
+        top: 150,
+      }}
+    &gt;
+      &lt;MetroLine id=&quot;C&quot; data={lineC.stations} stroke={lineC.color} /&gt;
+      &lt;MetroLine id=&quot;A&quot; data={lineA.stations} stroke={lineA.color} /&gt;
+      &lt;MetroLine id=&quot;B&quot; data={lineB.stations} stroke={lineB.color} /&gt;
+      &lt;XAxis type=&quot;number&quot; dataKey=&quot;xPos&quot; domain={[&#x27;dataMin&#x27;, &#x27;dataMax&#x27;]} hide /&gt;
+      &lt;YAxis domain={[0, &#x27;dataMax&#x27;]} hide /&gt;
+      &lt;ReferenceDot
+        x={mustek.xPos}
+        y={mustek.yPos}
+        label={{
+          value: mustek.name,
+          fill: &#x27;#000&#x27;,
+          angle: -65,
+          textAnchor: &#x27;start&#x27;,
+          fontWeight: &#x27;bold&#x27;,
+          dy: -18,
+          dx: 10,
+        }}
+        r={18}
+        fill={lineA.color}
+        fillOpacity={1}
+        // one lower zIndex so that these dots render as a background behind the line dots
+        zIndex={DefaultZIndexes.scatter - 1}
+      /&gt;
+      &lt;ReferenceDot
+        x={muzeum.xPos}
+        y={muzeum.yPos}
+        label={{
+          value: muzeum.name,
+          fill: &#x27;#000&#x27;,
+          angle: -65,
+          textAnchor: &#x27;end&#x27;,
+          fontWeight: &#x27;bold&#x27;,
+          dy: 45,
+        }}
+        r={18}
+        fill={lineC.color}
+        fillOpacity={1}
+        // one lower zIndex so that these dots render as a background behind the line dots
+        zIndex={DefaultZIndexes.scatter - 1}
+      /&gt;
+      &lt;ReferenceDot
+        x={florenc.xPos}
+        y={florenc.yPos}
+        label={{
+          value: florenc.name,
+          fill: &#x27;#000&#x27;,
+          angle: -65,
+          textAnchor: &#x27;start&#x27;,
+          fontWeight: &#x27;bold&#x27;,
+          dy: -18,
+          dx: -15,
+        }}
+        r={18}
+        fill={lineC.color}
+        fillOpacity={1}
+        // one lower zIndex so that these dots render as a background behind the line dots
+        zIndex={DefaultZIndexes.scatter - 1}
+      /&gt;
+      &lt;ReferenceDot
+        x={hlavak.xPos}
+        y={hlavak.yPos}
+        label={{
+          value: hlavak.name,
+          fill: &#x27;#000&#x27;,
+          angle: -73,
+          textAnchor: &#x27;start&#x27;,
+          fontWeight: &#x27;bold&#x27;,
+          dy: 45,
+          dx: 15,
+        }}
+        r={20}
+        // one higher zIndex so that this dot renders over the line dot - we want to highlight this station
+        zIndex={DefaultZIndexes.scatter + 1}
+        fill={lineC.color}
+        fillOpacity={1}
+        stroke=&quot;#fff&quot;
+        strokeWidth={3}
+      /&gt;
+      &lt;ReferenceDot
+        x={veleslavin.xPos}
+        y={veleslavin.yPos}
+        label={{
+          value: veleslavin.name,
+          fill: lineA.color,
+          angle: -65,
+          textAnchor: &#x27;start&#x27;,
+          fontWeight: &#x27;bold&#x27;,
+          dy: -25,
+          dx: 0,
+        }}
+        r={20}
+        // one higher zIndex so that this dot renders over the line dot - we want to highlight this station
+        zIndex={DefaultZIndexes.scatter + 1}
+        fill={lineA.color}
+        fillOpacity={1}
+        stroke=&quot;#fff&quot;
+        strokeWidth={3}
+      /&gt;
+      {/* Position the Airplane icon on top of the dot */}
+      &lt;ZIndexLayer zIndex={DefaultZIndexes.scatter + 2}&gt;
+        &lt;svg xmlns=&quot;http://www.w3.org/2000/svg&quot; x={495} y={290}&gt;
+          &lt;AirplaneIcon /&gt;
+        &lt;/svg&gt;
+        &lt;svg xmlns=&quot;http://www.w3.org/2000/svg&quot; x={147} y={140}&gt;
+          &lt;AirplaneIcon /&gt;
+        &lt;/svg&gt;
+      &lt;/ZIndexLayer&gt;
+      &lt;RechartsDevtools /&gt;
+    &lt;/LineChart&gt;
+  );
+}</pre><div></div></div></div><div style="height:100%;display:none;overflow:hidden"><div id="recharts-devtools-portal-Raq9" style="height:100%;background:var(--color-bg);color:var(--color-text);overflow:auto;padding:10px;display:block" class=""></div></div><div style="height:100%;display:none;overflow:hidden"><div id="recharts-devtools-portal-Raq9-annotations" style="height:100%;background:var(--color-surface-base);color:var(--color-text-1);overflow:auto;padding:10px;display:block" class=""></div></div><div style="height:100%;display:none;overflow:hidden"><div style="padding:10px;height:100%;overflow:auto"><div style="display:flex;gap:12px;margin:1ex"><label style="display:flex;align-items:center;gap:8px;cursor:pointer"><input style="margin:0;width:16px;height:16px;cursor:pointer" type="radio" name=":Rklaq9:" checked=""/>Autoplay Animations (default)</label><label style="display:flex;align-items:center;gap:8px;cursor:pointer"><input style="margin:0;width:16px;height:16px;cursor:pointer" type="radio" name=":Rklaq9:"/>Manual Animations</label></div></div></div></div></div></div></div></div><div class="example-item"><div class="example-wrapper"><div class="example-inner-wrapper"><div class="shadow-host"></div><div class="codemirror-wrapper "><div id="codemirror-container"><div class="codemirror-toolbar"><select class="codemirror-toolbar-item" style="padding-right:12px"><option value="source" selected="">Source code</option><option value="devtools">Hook inspector</option><option value="annotations">Annotations</option><option value="controls">Controls</option></select><button class="codemirror-toolbar-item" type="button"><svg class="recharts-surface" width="16" height="16" viewBox="0 0 16 16"><title></title><desc></desc><path fill="none" stroke="var(--color-text-1)" stroke-width="1" width="10" height="10" x="1" y="1" radius="2" class="recharts-rectangle" d="M 1,3
+            A 2,2,0,0,1,3,1
+            L 9,1
+            A 2,2,0,0,1,11,3
+            L 11,9
+            A 2,2,0,0,1,9,11
+            L 3,11
+            A 2,2,0,0,1,1,9 Z" style="stroke-dasharray:0px 1px"></path><path fill="none" stroke="var(--color-text-1)" stroke-width="1" width="10" height="10" x="5" y="5" radius="2" class="recharts-rectangle" d="M 5,7
+            A 2,2,0,0,1,7,5
+            L 13,5
+            A 2,2,0,0,1,15,7
+            L 15,13
+            A 2,2,0,0,1,13,15
+            L 7,15
+            A 2,2,0,0,1,5,13 Z" style="stroke-dasharray:0px 1px"></path></svg>Copy to clipboard</button><button type="button" class="codemirror-toolbar-item"><svg stroke="currentColor" fill="none" stroke-width="2" viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round" height="1em" width="1em" xmlns="http://www.w3.org/2000/svg"><path d="M21.174 6.812a1 1 0 0 0-3.986-3.987L3.842 16.174a2 2 0 0 0-.5.83l-1.321 4.352a.5.5 0 0 0 .623.622l4.353-1.32a2 2 0 0 0 .83-.497z"></path><path d="m15 5 4 4"></path></svg><span>Edit</span></button><button type="button" class="codemirror-toolbar-item"><svg stroke="currentColor" fill="none" stroke-width="2" viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round" height="1em" width="1em" xmlns="http://www.w3.org/2000/svg"><circle cx="18" cy="5" r="3"></circle><circle cx="6" cy="12" r="3"></circle><circle cx="18" cy="19" r="3"></circle><line x1="8.59" x2="15.42" y1="13.51" y2="17.49"></line><line x1="15.41" x2="8.59" y1="6.51" y2="10.49"></line></svg><span>Open in StackBlitz</span></button></div><div style="height:100%;display:block;overflow:hidden"><div class="codemirror-example-editor tsx" style="height:100%;overflow:auto"><pre>import React, { useRef, useEffect, useState } from &#x27;react&#x27;;
+import ReactDOM from &#x27;react-dom/client&#x27;;
+import { Legend, Pie, PieChart, Tooltip } from &#x27;recharts&#x27;;
+import { RechartsDevtools } from &#x27;@recharts/devtools&#x27;;
+
+// #region shadow DOM wrapper component, and data
+interface ShadowDomWrapperProps {
+  children: React.ReactNode;
+}
+
+const ShadowDomWrapper: React.FC&lt;ShadowDomWrapperProps&gt; = ({ children }) =&gt; {
+  const hostRef = useRef&lt;HTMLDivElement&gt;(null);
+  const [shadowRoot, setShadowRoot] = useState&lt;ShadowRoot | null&gt;(null);
+
+  useEffect(() =&gt; {
+    if (hostRef.current &amp;&amp; !hostRef.current.shadowRoot) {
+      const shadow = hostRef.current.attachShadow({ mode: &#x27;closed&#x27; });
+      setShadowRoot(shadow);
+    }
+  }, []);
+
+  useEffect(() =&gt; {
+    if (shadowRoot) {
+      // Clear existing content
+      shadowRoot.innerHTML = &#x27;&#x27;;
+
+      // Create a container for React to render into
+      const container = document.createElement(&#x27;div&#x27;);
+      container.id = &#x27;shadow-container&#x27;;
+      shadowRoot.appendChild(container);
+
+      // Render children into the shadow DOM
+      const root = ReactDOM.createRoot(container);
+      root.render(children);
+
+      return () =&gt; {
+        root.unmount();
+      };
+    }
+    return () =&gt; {};
+  }, [shadowRoot, children]);
+
+  return &lt;div ref={hostRef} className=&quot;shadow-host&quot; /&gt;;
+};
+
+const pieData = [
+  { name: &#x27;Desktop&#x27;, value: 400, fill: &#x27;#0088FE&#x27; },
+  { name: &#x27;Mobile&#x27;, value: 300, fill: &#x27;#00C49F&#x27; },
+  { name: &#x27;Tablet&#x27;, value: 200, fill: &#x27;#FFBB28&#x27; },
+  { name: &#x27;Other&#x27;, value: 100, fill: &#x27;#FF8042&#x27; },
+];
+// #endregion
+
+export default function ShadowDomExample({ isAnimationActive = true }: { isAnimationActive?: boolean }) {
+  return (
+    &lt;ShadowDomWrapper&gt;
+      &lt;PieChart width={380} height={300}&gt;
+        &lt;Pie
+          data={pieData}
+          cx=&quot;50%&quot;
+          cy=&quot;50%&quot;
+          labelLine={false}
+          label={({ name, percent }) =&gt; `${name} ${((percent ?? 0) * 100).toFixed(0)}%`}
+          outerRadius={100}
+          dataKey=&quot;value&quot;
+          isAnimationActive={isAnimationActive}
+        /&gt;
+        &lt;Tooltip /&gt;
+        &lt;Legend /&gt;
+        &lt;RechartsDevtools /&gt;
+      &lt;/PieChart&gt;
+    &lt;/ShadowDomWrapper&gt;
+  );
+}</pre><div></div></div></div><div style="height:100%;display:none;overflow:hidden"><div id="recharts-devtools-portal-Riq9" style="height:100%;background:var(--color-bg);color:var(--color-text);overflow:auto;padding:10px;display:block" class=""></div></div><div style="height:100%;display:none;overflow:hidden"><div id="recharts-devtools-portal-Riq9-annotations" style="height:100%;background:var(--color-surface-base);color:var(--color-text-1);overflow:auto;padding:10px;display:block" class=""></div></div><div style="height:100%;display:none;overflow:hidden"><div style="padding:10px;height:100%;overflow:auto"><div style="display:flex;gap:12px;margin:1ex"><label style="display:flex;align-items:center;gap:8px;cursor:pointer"><input style="margin:0;width:16px;height:16px;cursor:pointer" type="radio" name=":Rkliq9:" checked=""/>Autoplay Animations (default)</label><label style="display:flex;align-items:center;gap:8px;cursor:pointer"><input style="margin:0;width:16px;height:16px;cursor:pointer" type="radio" name=":Rkliq9:"/>Manual Animations</label></div></div></div></div></div></div></div></div></div></div><section class="props-section"><h4 class="sub-title"><button type="button" aria-expanded="true" aria-controls="props-current">Props<!-- --> <i class="expander">Click to collapse</i></button></h4><ul class="props-list" id="props-current"><li class="props-item" id="zIndex"><p class="header "><span class="title"><a href="#zIndex">zIndex</a></span><span class="type">number</span></p><p class="desc"><section><p>Z-Index of this component and its children.</p><p>The higher the value, the more on top it will be rendered. Components with higher zIndex will appear in front of components with lower zIndex.</p><p>If <code>undefined</code> or <code>0</code>, the content is rendered in the default layer without portals.</p></section></p></li><li class="props-item" id="children"><p class="header "><span class="title"><a href="#children">children</a></span><span class="type">ReactNode</span><em class="optional">optional</em></p><p class="desc"><section><p>The content to render inside this zIndex layer. Undefined children are allowed and will render nothing and will still report the zIndex to the portal system.</p></section></p></li></ul></section></div></div></main><footer><p><span>Released under the </span><a href="https://opensource.org/licenses/MIT" target="_blank" rel="noreferrer">MIT License</a></p><p>Copyright (c) 2016-<!-- -->2026<!-- --> Recharts Group</p><p>Commit: <code title="e73bd596eea04269f4ab31360f51a9526b964032">e73bd596</code></p></footer></div></div>
+  </body>
+</html>
