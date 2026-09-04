@@ -1,45 +1,45 @@
 {
   "treemap": {
     "examplePath": "www/src/views/IndexView/IndexLineChart.tsx",
-    "totalSize": 926085,
-    "totalSizeLabel": "904.38 KB",
+    "totalSize": 926109,
+    "totalSizeLabel": "904.40 KB",
     "moduleCount": 372,
-    "generatedAt": "2026-09-03T13:46:55.335Z",
+    "generatedAt": "2026-09-04T08:49:10.884Z",
     "stages": [
       {
         "stage": "es6-folder",
-        "bytes": 1410142,
-        "humanReadableSize": "1.34 MB",
+        "bytes": 1410696,
+        "humanReadableSize": "1.35 MB",
         "reductionFromBaselinePercent": 0
       },
       {
         "stage": "tree-shaken",
-        "bytes": 928976,
-        "humanReadableSize": "907.20 KB",
+        "bytes": 929000,
+        "humanReadableSize": "907.23 KB",
         "reductionFromBaselinePercent": 0
       },
       {
         "stage": "minified",
-        "bytes": 307492,
-        "humanReadableSize": "300.29 KB",
+        "bytes": 307485,
+        "humanReadableSize": "300.28 KB",
         "reductionFromBaselinePercent": 66.9
       },
       {
         "stage": "minified+gzip",
-        "bytes": 100863,
-        "humanReadableSize": "98.50 KB",
+        "bytes": 100851,
+        "humanReadableSize": "98.49 KB",
         "reductionFromBaselinePercent": 89.14
       }
     ],
     "tree": {
       "name": "bundle",
       "fullPath": "bundle",
-      "value": 926085,
+      "value": 926109,
       "children": [
         {
           "name": "src",
           "fullPath": "src",
-          "value": 522509,
+          "value": 522533,
           "children": [
             {
               "name": "state",
@@ -1040,7 +1040,7 @@
             {
               "name": "theme",
               "fullPath": "src/theme",
-              "value": 5276,
+              "value": 5300,
               "children": [
                 {
                   "name": "graphicalItemIdentity.ts",
@@ -1050,7 +1050,7 @@
                 {
                   "name": "useBackwardsCompatibleTheme.ts",
                   "fullPath": "src/theme/useBackwardsCompatibleTheme.ts",
-                  "value": 1863
+                  "value": 1887
                 },
                 {
                   "name": "RechartsThemeContext.ts",
@@ -2587,45 +2587,45 @@
   },
   "sunburst": {
     "examplePath": "www/src/views/IndexView/IndexLineChart.tsx",
-    "totalSize": 926085,
-    "totalSizeLabel": "904.38 KB",
+    "totalSize": 926109,
+    "totalSizeLabel": "904.40 KB",
     "moduleCount": 372,
-    "generatedAt": "2026-09-03T13:46:57.551Z",
+    "generatedAt": "2026-09-04T08:49:12.465Z",
     "stages": [
       {
         "stage": "es6-folder",
-        "bytes": 1410142,
-        "humanReadableSize": "1.34 MB",
+        "bytes": 1410696,
+        "humanReadableSize": "1.35 MB",
         "reductionFromBaselinePercent": 0
       },
       {
         "stage": "tree-shaken",
-        "bytes": 928976,
-        "humanReadableSize": "907.20 KB",
+        "bytes": 929000,
+        "humanReadableSize": "907.23 KB",
         "reductionFromBaselinePercent": 0
       },
       {
         "stage": "minified",
-        "bytes": 307492,
-        "humanReadableSize": "300.29 KB",
+        "bytes": 307485,
+        "humanReadableSize": "300.28 KB",
         "reductionFromBaselinePercent": 66.9
       },
       {
         "stage": "minified+gzip",
-        "bytes": 100863,
-        "humanReadableSize": "98.50 KB",
+        "bytes": 100851,
+        "humanReadableSize": "98.49 KB",
         "reductionFromBaselinePercent": 89.14
       }
     ],
     "tree": {
       "name": "bundle",
       "fullPath": "bundle",
-      "value": 926085,
+      "value": 926109,
       "children": [
         {
           "name": "src",
           "fullPath": "src",
-          "value": 522509,
+          "value": 522533,
           "children": [
             {
               "name": "state",
@@ -3626,7 +3626,7 @@
             {
               "name": "theme",
               "fullPath": "src/theme",
-              "value": 5276,
+              "value": 5300,
               "children": [
                 {
                   "name": "graphicalItemIdentity.ts",
@@ -3636,7 +3636,7 @@
                 {
                   "name": "useBackwardsCompatibleTheme.ts",
                   "fullPath": "src/theme/useBackwardsCompatibleTheme.ts",
-                  "value": 1863
+                  "value": 1887
                 },
                 {
                   "name": "RechartsThemeContext.ts",
