@@ -58,6 +58,25 @@ describe('XAxis theme', () => {
         expect(firstTick).toHaveAttribute('stroke', 'gold');
         expect(firstTick).toHaveAttribute('stroke-width', '2');
       });
+
+      it('should follow the prop when the theme does not define axis styles', () => {
+        const { container } = rechartsTestRender(
+          <RechartsThemeProvider value={{ graphicalItems: [] }}>
+            <MyChart>
+              <XAxis dataKey="label" stroke="gold" strokeWidth={2} strokeOpacity={0.5} strokeDasharray="1 3" />
+            </MyChart>
+          </RechartsThemeProvider>,
+        );
+        const firstTick = getFirstTick(container);
+        const axisLine = container.querySelector('.recharts-cartesian-axis-line');
+        assertNotNull(axisLine);
+        [firstTick, axisLine].forEach(line => {
+          expect(line).toHaveAttribute('stroke', 'gold');
+          expect(line).toHaveAttribute('stroke-width', '2');
+          expect(line).toHaveAttribute('stroke-opacity', '0.5');
+          expect(line).toHaveAttribute('stroke-dasharray', '1 3');
+        });
+      });
     });
 
     describe('when defined as a theme', () => {
