@@ -1,9 +1,7 @@
-import * as React from 'react';
-import { expect, test } from '@playwright/experimental-ct-react';
-import { PolarGridThemeComparison } from './PolarGridThemeComponents.tsx';
+import { expect, test } from '../fixtures';
 
-test('PolarGrid theme', async ({ mount }) => {
-  const component = await mount(<PolarGridThemeComparison />);
+test('PolarGrid theme', async ({ mountStory }) => {
+  const component = await mountStory('theme/PolarGridTheme/PolarGridThemeComparison');
 
   await expect(component).toHaveScreenshot();
 });

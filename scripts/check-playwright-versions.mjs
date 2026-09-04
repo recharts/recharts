@@ -1,7 +1,7 @@
 /**
  * @fileoverview This script checks that the version of Playwright is consistent across multiple project files.
  * It compares the versions specified in:
- * - package.json (for 'playwright' and '@playwright/experimental-ct-react')
+ * - package.json (for 'playwright' and '@playwright/test')
  * - test-vr/playwright-ct.Dockerfile
  * - .github/workflows/ci.yml
  *
@@ -56,7 +56,7 @@ function getCiYmlVersion() {
 export function checkPlaywrightVersions() {
   const versions = {
     'package.json (playwright)': getPackageJsonVersion('playwright'),
-    'package.json (@playwright/experimental-ct-react)': getPackageJsonVersion('@playwright/experimental-ct-react'),
+    'package.json (@playwright/test)': getPackageJsonVersion('@playwright/test'),
     'test-vr/playwright-ct.Dockerfile': getDockerfileVersion(),
     '.github/workflows/ci.yml': getCiYmlVersion(),
   };

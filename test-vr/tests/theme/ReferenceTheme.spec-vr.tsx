@@ -1,9 +1,7 @@
-import * as React from 'react';
-import { expect, test } from '@playwright/experimental-ct-react';
-import { ReferenceThemeComparison } from './ReferenceThemeComponents.tsx';
+import { expect, test } from '../fixtures';
 
-test('Reference elements theme', async ({ mount }) => {
-  const component = await mount(<ReferenceThemeComparison />);
+test('Reference elements theme', async ({ mountStory }) => {
+  const component = await mountStory('theme/ReferenceTheme/ReferenceThemeComparison');
 
   await expect(component).toHaveScreenshot();
 });

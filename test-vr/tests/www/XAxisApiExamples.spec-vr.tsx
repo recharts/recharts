@@ -1,8 +1,6 @@
-import * as React from 'react';
-import { test, expect } from '@playwright/experimental-ct-react';
-import MultiXAxisExample from '../../../www/src/docs/exampleComponents/XAxis/MultiXAxisExample';
+import { expect, test } from '../fixtures';
 
-test('MultiXAxisExample', async ({ mount }) => {
-  const component = await mount(<MultiXAxisExample />);
+test('MultiXAxisExample', async ({ mountStory }) => {
+  const component = await mountStory('www/XAxisApiExamples/MultiXAxisExample');
   await expect(component).toHaveScreenshot();
 });

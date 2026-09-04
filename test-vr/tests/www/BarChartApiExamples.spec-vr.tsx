@@ -1,143 +1,168 @@
-import * as React from 'react';
-import { expect } from '@playwright/experimental-ct-react';
-import BarChartRangeExample from '../../../www/src/docs/exampleComponents/BarChart/BarChartRangeExample';
-import TinyBarChart from '../../../www/src/docs/exampleComponents/BarChart/TinyBarChart';
-import SimpleBarChart from '../../../www/src/docs/exampleComponents/BarChart/SimpleBarChart';
-import StackedBarChart from '../../../www/src/docs/exampleComponents/BarChart/StackedBarChart';
-import MixBarChart from '../../../www/src/docs/exampleComponents/BarChart/MixBarChart';
-import CustomShapeBarChart from '../../../www/src/docs/exampleComponents/BarChart/CustomShapeBarChart';
-import PositiveAndNegativeBarChart from '../../../www/src/docs/exampleComponents/BarChart/PositiveAndNegativeBarChart';
-import BrushBarChart from '../../../www/src/docs/exampleComponents/BarChart/BrushBarChart';
-import BarChartWithCustomizedEvent from '../../../www/src/docs/exampleComponents/BarChart/BarChartWithCustomizedEvent';
-import BarChartWithMinHeight from '../../../www/src/docs/exampleComponents/BarChart/BarChartWithMinHeight';
-import BarChartStackedBySign from '../../../www/src/docs/exampleComponents/BarChart/BarChartStackedBySign';
-import BiaxialBarChart from '../../../www/src/docs/exampleComponents/BarChart/BiaxialBarChart';
-import BarChartHasBackground from '../../../www/src/docs/exampleComponents/BarChart/BarChartHasBackground';
-import BarChartWithMultiXAxis from '../../../www/src/docs/exampleComponents/BarChart/BarChartWithMultiXAxis';
-import BarChartNavExample from '../../../www/src/docs/exampleComponents/BarChart/BarChartNavExample';
-import RangedStackedBarChart from '../../../www/src/docs/exampleComponents/BarChart/RangedStackedBarChart';
-import PopulationPyramidExample from '../../../www/src/docs/exampleComponents/BarChart/PopulationPyramidExample';
-import TimelineExample from '../../../www/src/docs/exampleComponents/BarChart/TimelineExample';
-import CandlestickExample from '../../../www/src/docs/exampleComponents/BarChart/CandlestickExample';
-import BoxPlotExample from '../../../www/src/docs/exampleComponents/BarChart/BoxPlotExample';
-import AnimatedBarWidthExample from '../../../www/src/docs/exampleComponents/BarChart/AnimatedBarWidthExample';
-import { testWithDarkTheme, testWithLightTheme } from './fixtures.tsx';
+import type {
+  AnimatedBarWidthExample,
+  BarChartHasBackground,
+  BarChartRangeExample,
+  BoxPlotExample,
+  CandlestickExample,
+  PopulationPyramidExample,
+  RangedStackedBarChart,
+  TimelineExample,
+} from './BarChartApiExamples.story';
+import { expect, test } from '../fixtures';
 
-testWithLightTheme('CandlestickExample', async ({ mount }) => {
-  const component = await mount(<CandlestickExample defaultIndex="50" />);
+test('CandlestickExample', async ({ mountStory }) => {
+  const component = await mountStory<typeof CandlestickExample>('www/BarChartApiExamples/CandlestickExample', {
+    testTheme: 'light',
+    defaultIndex: '50',
+  });
   await expect(component).toHaveScreenshot();
 });
 
-testWithLightTheme('BoxPlotExample', async ({ mount }) => {
-  const component = await mount(<BoxPlotExample defaultIndex="2" />);
+test('BoxPlotExample', async ({ mountStory }) => {
+  const component = await mountStory<typeof BoxPlotExample>('www/BarChartApiExamples/BoxPlotExample', {
+    testTheme: 'light',
+    defaultIndex: '2',
+  });
   await expect(component).toHaveScreenshot();
 });
 
-testWithDarkTheme('BoxPlotExample dark', async ({ mount }) => {
-  const component = await mount(<BoxPlotExample defaultIndex="2" />);
+test('BoxPlotExample dark', async ({ mountStory }) => {
+  const component = await mountStory<typeof BoxPlotExample>('www/BarChartApiExamples/BoxPlotExample', {
+    testTheme: 'dark',
+    defaultIndex: '2',
+  });
   await expect(component).toHaveScreenshot();
 });
 
-testWithLightTheme('TimelineExample', async ({ mount }) => {
+test('TimelineExample', async ({ mountStory }) => {
   /*
    * This shows a bug where defaultIndex highlights all items in the row
    * but mouse hover only highlights one item in the stack.
    */
-  const component = await mount(<TimelineExample defaultIndex={3} />);
+  const component = await mountStory<typeof TimelineExample>('www/BarChartApiExamples/TimelineExample', {
+    testTheme: 'light',
+    defaultIndex: 3,
+  });
   await expect(component).toHaveScreenshot();
 });
 
-testWithLightTheme('PopulationPyramidExample', async ({ mount }) => {
-  const component = await mount(<PopulationPyramidExample defaultIndex={4} />);
+test('PopulationPyramidExample', async ({ mountStory }) => {
+  const component = await mountStory<typeof PopulationPyramidExample>(
+    'www/BarChartApiExamples/PopulationPyramidExample',
+    {
+      testTheme: 'light',
+      defaultIndex: 4,
+    },
+  );
   await expect(component).toHaveScreenshot();
 });
 
-testWithLightTheme('BarChartNavExample', async ({ mount }) => {
-  const component = await mount(<BarChartNavExample />);
+test('BarChartNavExample', async ({ mountStory }) => {
+  const component = await mountStory('www/BarChartApiExamples/BarChartNavExample', { testTheme: 'light' });
   await expect(component).toHaveScreenshot();
 });
 
-testWithLightTheme('BarChartWithMultiXAxis', async ({ mount }) => {
-  const component = await mount(<BarChartWithMultiXAxis />);
+test('BarChartWithMultiXAxis', async ({ mountStory }) => {
+  const component = await mountStory('www/BarChartApiExamples/BarChartWithMultiXAxis', { testTheme: 'light' });
   await expect(component).toHaveScreenshot();
 });
 
-testWithLightTheme('BarChartHasBackground', async ({ mount }) => {
-  const component = await mount(<BarChartHasBackground defaultIndex={1} />);
+test('BarChartHasBackground', async ({ mountStory }) => {
+  const component = await mountStory<typeof BarChartHasBackground>('www/BarChartApiExamples/BarChartHasBackground', {
+    testTheme: 'light',
+    defaultIndex: 1,
+  });
   await expect(component).toHaveScreenshot();
 });
 
-testWithDarkTheme('BarChartHasBackground dark theme', async ({ mount }) => {
-  const component = await mount(<BarChartHasBackground defaultIndex={1} />);
+test('BarChartHasBackground dark theme', async ({ mountStory }) => {
+  const component = await mountStory<typeof BarChartHasBackground>('www/BarChartApiExamples/BarChartHasBackground', {
+    testTheme: 'dark',
+    defaultIndex: 1,
+  });
   await expect(component).toHaveScreenshot();
 });
 
-testWithLightTheme('BiaxialBarChart', async ({ mount }) => {
-  const component = await mount(<BiaxialBarChart />);
+test('BiaxialBarChart', async ({ mountStory }) => {
+  const component = await mountStory('www/BarChartApiExamples/BiaxialBarChart', { testTheme: 'light' });
   await expect(component).toHaveScreenshot();
 });
 
-testWithLightTheme('BarChartStackedBySign', async ({ mount }) => {
-  const component = await mount(<BarChartStackedBySign />);
+test('BarChartStackedBySign', async ({ mountStory }) => {
+  const component = await mountStory('www/BarChartApiExamples/BarChartStackedBySign', { testTheme: 'light' });
   await expect(component).toHaveScreenshot();
 });
 
-testWithLightTheme('BarChartWithMinHeight', async ({ mount }) => {
-  const component = await mount(<BarChartWithMinHeight />);
+test('BarChartWithMinHeight', async ({ mountStory }) => {
+  const component = await mountStory('www/BarChartApiExamples/BarChartWithMinHeight', { testTheme: 'light' });
   await expect(component).toHaveScreenshot();
 });
 
-testWithLightTheme('BarChartWithCustomizedEvent', async ({ mount }) => {
-  const component = await mount(<BarChartWithCustomizedEvent />);
+test('BarChartWithCustomizedEvent', async ({ mountStory }) => {
+  const component = await mountStory('www/BarChartApiExamples/BarChartWithCustomizedEvent', { testTheme: 'light' });
   await expect(component).toHaveScreenshot();
 });
 
-testWithLightTheme('BrushBarChart', async ({ mount }) => {
-  const component = await mount(<BrushBarChart />);
+test('BrushBarChart', async ({ mountStory }) => {
+  const component = await mountStory('www/BarChartApiExamples/BrushBarChart', { testTheme: 'light' });
   await expect(component).toHaveScreenshot();
 });
 
-testWithLightTheme('PositiveAndNegativeBarChart', async ({ mount }) => {
-  const component = await mount(<PositiveAndNegativeBarChart />);
+test('PositiveAndNegativeBarChart', async ({ mountStory }) => {
+  const component = await mountStory('www/BarChartApiExamples/PositiveAndNegativeBarChart', { testTheme: 'light' });
   await expect(component).toHaveScreenshot();
 });
 
-testWithLightTheme('CustomShapeBarChart', async ({ mount }) => {
-  const component = await mount(<CustomShapeBarChart />);
+test('CustomShapeBarChart', async ({ mountStory }) => {
+  const component = await mountStory('www/BarChartApiExamples/CustomShapeBarChart', { testTheme: 'light' });
   await expect(component).toHaveScreenshot();
 });
 
-testWithLightTheme('MixBarChart', async ({ mount }) => {
-  const component = await mount(<MixBarChart />);
+test('MixBarChart', async ({ mountStory }) => {
+  const component = await mountStory('www/BarChartApiExamples/MixBarChart', { testTheme: 'light' });
   await expect(component).toHaveScreenshot();
 });
 
-testWithLightTheme('StackedBarChart', async ({ mount }) => {
-  const component = await mount(<StackedBarChart />);
+test('StackedBarChart', async ({ mountStory }) => {
+  const component = await mountStory('www/BarChartApiExamples/StackedBarChart', { testTheme: 'light' });
   await expect(component).toHaveScreenshot();
 });
 
-testWithLightTheme('SimpleBarChart', async ({ mount }) => {
-  const component = await mount(<SimpleBarChart />);
+test('SimpleBarChart', async ({ mountStory }) => {
+  const component = await mountStory('www/BarChartApiExamples/SimpleBarChart', { testTheme: 'light' });
   await expect(component).toHaveScreenshot();
 });
 
-testWithLightTheme('TinyBarChart', async ({ mount }) => {
-  const component = await mount(<TinyBarChart />);
+test('TinyBarChart', async ({ mountStory }) => {
+  const component = await mountStory('www/BarChartApiExamples/TinyBarChart', { testTheme: 'light' });
   await expect(component).toHaveScreenshot();
 });
 
-testWithLightTheme('BarChartRangeExample', async ({ mount }) => {
-  const component = await mount(<BarChartRangeExample isAnimationActive={false} />);
+test('BarChartRangeExample', async ({ mountStory }) => {
+  const component = await mountStory<typeof BarChartRangeExample>('www/BarChartApiExamples/BarChartRangeExample', {
+    testTheme: 'light',
+    isAnimationActive: false,
+  });
   await expect(component).toHaveScreenshot();
 });
 
-testWithLightTheme('RangedStackedBarChart', async ({ mount }) => {
-  const component = await mount(<RangedStackedBarChart isAnimationActive={false} defaultIndex="1" />);
+test('RangedStackedBarChart', async ({ mountStory }) => {
+  const component = await mountStory<typeof RangedStackedBarChart>('www/BarChartApiExamples/RangedStackedBarChart', {
+    testTheme: 'light',
+    isAnimationActive: false,
+    defaultIndex: '1',
+  });
   await expect(component).toHaveScreenshot();
 });
 
-testWithLightTheme('AnimatedBarWidthExample', async ({ mount }) => {
-  const component = await mount(<AnimatedBarWidthExample isAnimationActive={false} defaultIndex="2" />);
+test('AnimatedBarWidthExample', async ({ mountStory }) => {
+  const component = await mountStory<typeof AnimatedBarWidthExample>(
+    'www/BarChartApiExamples/AnimatedBarWidthExample',
+    {
+      testTheme: 'light',
+      isAnimationActive: false,
+      defaultIndex: '2',
+    },
+  );
   await expect(component).toHaveScreenshot();
 });

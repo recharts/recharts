@@ -1,9 +1,7 @@
-import * as React from 'react';
-import { expect, test } from '@playwright/experimental-ct-react';
-import { RadarThemeComparison } from './RadarThemeComponents.tsx';
+import { expect, test } from '../fixtures';
 
-test('Radar theme', async ({ mount }) => {
-  const component = await mount(<RadarThemeComparison />);
+test('Radar theme', async ({ mountStory }) => {
+  const component = await mountStory('theme/RadarTheme/RadarThemeComparison');
 
   await expect(component).toHaveScreenshot();
 });

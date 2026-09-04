@@ -1,0 +1,26 @@
+import SimpleAreaChartComponent from '../../../www/src/docs/exampleComponents/AreaChart/SimpleAreaChart';
+import StackedAreaChartComponent from '../../../www/src/docs/exampleComponents/AreaChart/StackedAreaChart';
+import AreaChartConnectNullsComponent from '../../../www/src/docs/exampleComponents/AreaChart/AreaChartConnectNulls';
+import CardinalAreaChartComponent from '../../../www/src/docs/exampleComponents/AreaChart/CardinalAreaChart';
+import PercentAreaChartComponent from '../../../www/src/docs/exampleComponents/AreaChart/PercentAreaChart';
+import SynchronizedAreaChartComponent from '../../../www/src/docs/exampleComponents/AreaChart/SynchronizedAreaChart';
+import TinyAreaChartComponent from '../../../www/src/docs/exampleComponents/AreaChart/TinyAreaChart';
+import AreaChartFillByValueComponent from '../../../www/src/docs/exampleComponents/AreaChart/AreaChartFillByValue';
+import AreaChartNavExampleComponent from '../../../www/src/docs/exampleComponents/AreaChart/AreaChartNavExample';
+import AreaChartExampleComponent from '../../../www/src/docs/exampleComponents/AreaChart/AreaChartExample';
+import AreaChartRangeExampleComponent from '../../../www/src/docs/exampleComponents/AreaChart/AreaChartRangeExample';
+import CrosshairExampleComponent from '../../../www/src/docs/exampleComponents/getRelativeCoordinate/CrosshairExample';
+import { themedStory } from './StoryTheme';
+
+export const AreaChartNavExample = themedStory(AreaChartNavExampleComponent);
+export const AreaChartFillByValue = themedStory(AreaChartFillByValueComponent);
+export const TinyAreaChart = themedStory(TinyAreaChartComponent);
+export const SynchronizedAreaChart = themedStory(SynchronizedAreaChartComponent);
+export const PercentAreaChart = themedStory(PercentAreaChartComponent);
+export const CardinalAreaChart = themedStory(CardinalAreaChartComponent);
+export const AreaChartConnectNulls = themedStory(AreaChartConnectNullsComponent);
+export const StackedAreaChart = themedStory(StackedAreaChartComponent);
+export const SimpleAreaChart = themedStory(SimpleAreaChartComponent);
+export const AreaChartExample = themedStory(AreaChartExampleComponent);
+export const AreaChartRangeExample = themedStory(AreaChartRangeExampleComponent);
+export const CrosshairExample = themedStory(CrosshairExampleComponent);

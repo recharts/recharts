@@ -1,10 +1,10 @@
-import * as React from 'react';
-import { expect } from '@playwright/experimental-ct-react';
+import type { ReferenceAreaExample } from './ReferenceAreaApiExamples.story';
+import { expect, test } from '../fixtures';
 
-import ReferenceAreaExample from '../../../www/src/docs/exampleComponents/ReferenceArea/ReferenceAreaExample';
-import { testWithLightTheme } from './fixtures.tsx';
-
-testWithLightTheme('ReferenceAreaExample', async ({ mount }) => {
-  const component = await mount(<ReferenceAreaExample isAnimationActive={false} />);
+test('ReferenceAreaExample', async ({ mountStory }) => {
+  const component = await mountStory<typeof ReferenceAreaExample>('www/ReferenceAreaApiExamples/ReferenceAreaExample', {
+    testTheme: 'light',
+    isAnimationActive: false,
+  });
   await expect(component).toHaveScreenshot();
 });

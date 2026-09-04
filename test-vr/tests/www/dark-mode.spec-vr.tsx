@@ -1,10 +1,4 @@
-import * as React from 'react';
-import { BrowserRouter, Navigate, Route, Routes } from 'react-router';
-
-import { expect, test } from './fixtures';
-import { ExamplesIndexView } from '../../../www/src/views/ExamplesIndexView.tsx';
-import { Frame } from '../../../www/src/layouts/Frame.tsx';
-import { DarkModeSimpleLineChart } from './DarkModeSimpleLineChartComponent.tsx';
+import { expect, test } from '../fixtures';
 
 test.use({
   colorScheme: 'dark',
@@ -14,35 +8,13 @@ test.beforeEach(async ({ page }) => {
   await page.emulateMedia({ reducedMotion: 'reduce' });
 });
 
-test('dark mode: examples list', async ({ mount }) => {
-  const component = await mount(
-    <BrowserRouter>
-      <Routes>
-        <Route path="/" element={<Navigate to="examples" />} />
-        <Route
-          path="/examples"
-          element={
-            <Frame>
-              <ExamplesIndexView />
-            </Frame>
-          }
-        />
-      </Routes>
-    </BrowserRouter>,
-  );
+test('dark mode: examples list', async ({ mountStory }) => {
+  const component = await mountStory('www/dark-mode/ExamplesIndexViewStory');
 
   await expect(component).toHaveScreenshot({ timeout: 20_000 });
 });
 
-test('dark mode: Simple Line Chart', async ({ mount }) => {
-  const component = await mount(
-    <div
-      style={{
-        backgroundColor: 'var(--color-surface-base)',
-      }}
-    >
-      <DarkModeSimpleLineChart />
-    </div>,
-  );
+test('dark mode: Simple Line Chart', async ({ mountStory }) => {
+  const component = await mountStory('www/dark-mode/SimpleLineChartStory');
   await expect(component).toHaveScreenshot();
 });

@@ -1,9 +1,7 @@
-import * as React from 'react';
-import { expect, test } from '@playwright/experimental-ct-react';
-import { PieThemeComparison } from './PieThemeComponents.tsx';
+import { expect, test } from '../fixtures';
 
-test('Pie theme', async ({ mount }) => {
-  const component = await mount(<PieThemeComparison />);
+test('Pie theme', async ({ mountStory }) => {
+  const component = await mountStory('theme/PieTheme/PieThemeComparison');
 
   await expect(component).toHaveScreenshot();
 });

@@ -1,6 +1,4 @@
-import * as React from 'react';
-import { expect, test } from '@playwright/experimental-ct-react';
-import { ThemedCursor, UnthemedCursor } from './CursorThemeComponents.tsx';
+import { expect, test } from '../fixtures';
 
 /*
  * RadialBar does not derive a polar coordinate for Tooltip defaultIndex, so its
@@ -8,8 +6,8 @@ import { ThemedCursor, UnthemedCursor } from './CursorThemeComponents.tsx';
  * hidden PolarAngleAxis and hover below are a VR workaround for #7672.
  * https://github.com/recharts/recharts/issues/7672
  */
-test('Unthemed Cursor', async ({ mount }) => {
-  const component = await mount(<UnthemedCursor />);
+test('Unthemed Cursor', async ({ mountStory }) => {
+  const component = await mountStory('theme/CursorTheme/UnthemedCursor');
 
   await expect(component.locator('.recharts-polar-angle-axis')).toHaveCount(1);
   await component
@@ -20,8 +18,8 @@ test('Unthemed Cursor', async ({ mount }) => {
   await expect(component).toHaveScreenshot();
 });
 
-test('Themed Cursor', async ({ mount }) => {
-  const component = await mount(<ThemedCursor />);
+test('Themed Cursor', async ({ mountStory }) => {
+  const component = await mountStory('theme/CursorTheme/ThemedCursor');
 
   await expect(component.locator('.recharts-polar-angle-axis')).toHaveCount(1);
   await component

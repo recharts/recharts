@@ -1,8 +1,6 @@
-import * as React from 'react';
-import { expect, test } from '@playwright/experimental-ct-react';
-import { LegendThemeExamples } from './LegendThemeComponents';
+import { expect, test } from '../fixtures';
 
-test('Legend theme', async ({ mount }) => {
-  const component = await mount(<LegendThemeExamples />);
+test('Legend theme', async ({ mountStory }) => {
+  const component = await mountStory('theme/LegendTheme/LegendThemeExamples');
   await expect(component).toHaveScreenshot();
 });

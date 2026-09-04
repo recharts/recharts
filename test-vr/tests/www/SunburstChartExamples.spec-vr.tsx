@@ -1,14 +1,14 @@
-import * as React from 'react';
-import { test, expect } from '@playwright/experimental-ct-react';
-import SunburstChartExample from '../../../www/src/docs/exampleComponents/SunburstChart/SunburstChartExample';
-import BundleSizeSunburst from '../../../www/src/docs/exampleComponents/SunburstChart/BundleSizeSunburst';
+import type { BundleSizeSunburst } from './SunburstChartExamples.story';
+import { expect, test } from '../fixtures';
 
-test('SunburstChartExample', async ({ mount }) => {
-  const component = await mount(<SunburstChartExample />);
+test('SunburstChartExample', async ({ mountStory }) => {
+  const component = await mountStory('www/SunburstChartExamples/SunburstChartExample');
   await expect(component).toHaveScreenshot();
 });
 
-test('BundleSizeSunburst', async ({ mount }) => {
-  const component = await mount(<BundleSizeSunburst forceFallbackData />);
+test('BundleSizeSunburst', async ({ mountStory }) => {
+  const component = await mountStory<typeof BundleSizeSunburst>('www/SunburstChartExamples/BundleSizeSunburst', {
+    forceFallbackData: true,
+  });
   await expect(component).toHaveScreenshot();
 });

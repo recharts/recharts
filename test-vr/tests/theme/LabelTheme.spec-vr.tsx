@@ -1,8 +1,6 @@
-import * as React from 'react';
-import { expect, test } from '@playwright/experimental-ct-react';
-import { LabelThemeExamples } from './LabelThemeComponents';
+import { expect, test } from '../fixtures';
 
-test('Label theme', async ({ mount }) => {
-  const component = await mount(<LabelThemeExamples />);
+test('Label theme', async ({ mountStory }) => {
+  const component = await mountStory('theme/LabelTheme/LabelThemeExamples');
   await expect(component).toHaveScreenshot();
 });

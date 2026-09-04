@@ -473,7 +473,7 @@ jobs:
       - name: Run Visual Regression Tests (${{ matrix.browser }})
         id: vr_test_step
         # VR tests resolve recharts via a Vite source alias, so no build step is needed.
-        run: npx playwright test --config=test-vr/playwright-ct.config.ts --project=${{ matrix.browser }}
+        run: npx playwright test --config=test-vr/playwright.config.ts --project=${{ matrix.browser }}
         # Continue even if tests fail so the blob report can still be uploaded.
         continue-on-error: true
 
