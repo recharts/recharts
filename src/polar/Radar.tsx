@@ -3,7 +3,7 @@ import { MouseEvent, MutableRefObject, ReactElement, ReactNode, SVGProps, useRef
 import last from 'es-toolkit/compat/last';
 
 import { clsx } from 'clsx';
-import { interpolate, isNullish, noop } from '../util/DataUtils';
+import { interpolate, isNullish, mathSign, noop } from '../util/DataUtils';
 import { polarToCartesian } from '../util/PolarUtils';
 import { getTooltipNameProp, getValueByDataKey } from '../util/ChartUtils';
 import { Polygon } from '../shape/Polygon';
@@ -32,6 +32,7 @@ import { ActivePoints } from '../component/ActivePoints';
 import { TooltipPayloadConfiguration } from '../state/tooltipSlice';
 import { SetTooltipEntrySettings } from '../state/SetTooltipEntrySettings';
 import { selectRadarPoints } from '../state/selectors/radarSelectors';
+import type { AxisRange } from '../state/selectors/axisSelectors';
 import { useAppSelector } from '../state/hooks';
 import { useIsPanorama } from '../context/PanoramaContext';
 import { SetPolarLegendPayload } from '../state/SetLegendPayload';
@@ -201,6 +202,7 @@ export type AngleAxisForRadar = {
   dataKey: DataKey<any> | undefined;
   cx: number;
   cy: number;
+  range: AxisRange;
 };
 
 export type Props<DataPointType = any, DataValueType = any> = Omit<
@@ -308,7 +310,10 @@ export function computeRadarPoints({
   const { cx, cy } = angleAxis;
   let isRange = false;
   const points: RadarPoint[] = [];
-  const angleBandSize = angleAxis.type !== 'number' ? (bandSize ?? 0) : 0;
+  // scaleBand reverses the values it emits for a descending range, so the band offset that lands
+  // the first category on startAngle flips sign with the range direction, same as angle axis ticks.
+  const bandDirection = mathSign(angleAxis.range[0] - angleAxis.range[1]);
+  const angleBandSize = angleAxis.type !== 'number' ? bandDirection * (bandSize ?? 0) : 0;
 
   displayedData.forEach((entry, i) => {
     const name = getValueByDataKey(entry, angleAxis.dataKey, i);
