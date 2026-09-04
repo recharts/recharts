@@ -1,0 +1,970 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <title>Recharts</title>
+    <meta charset="utf-8" />
+    <meta name="description" content="Recharts - Re-designed charting library built with React and D3." />
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5" />
+    <script>
+      /**
+       * @note this is duplicated in defineColorModeStore.ts, to avoid FOUC on initial load. Please keep in sync.
+       */
+      (function () {
+        try {
+          var storedMode = localStorage.getItem('recharts-color-mode');
+          var mode =
+            storedMode === 'light' || storedMode === 'dark'
+              ? storedMode
+              : window.matchMedia('(prefers-color-scheme: dark)').matches
+                ? 'dark'
+                : 'light';
+          document.documentElement.setAttribute('data-mode', mode);
+        } catch (e) {
+          // Do nothing
+        }
+      })();
+    </script>
+    <link
+      href="//fonts.googleapis.com/css?family=Source+Sans+Pro:400,600|Roboto Mono|Oswald:300"
+      rel="stylesheet"
+      type="text/css"
+    />
+    <script type="module" crossorigin src="/recharts/pr-7725/www/assets/index-Dcf3kPH3.js"></script>
+    <link rel="stylesheet" crossorigin href="/recharts/pr-7725/www/assets/index-Dngh0Ezp.css">
+    <link rel="sitemap" type="application/xml" title="Sitemap" href="/sitemap.xml">
+  </head>
+  <body>
+    <div id="app"><div class="container"><header><a class="logo" href="/en-US/" data-discover="true"><div width="200" height="60" class="recharts-wrapper" style="position:relative;cursor:default;width:200px;height:60px"></div></a><nav class="desktop-only"><ul class="navigation-items"><li><a class="" href="/en-US/guide/" data-discover="true">Guide</a></li><li><a class="" href="/en-US/api/" data-discover="true">API</a></li><li><a aria-current="page" class="active" href="/en-US/examples/" data-discover="true">Examples</a></li><li><a class="" href="/en-US/storybook/" data-discover="true">Storybook</a></li><li><a href="https://github.com/recharts/recharts/wiki" target="_blank" rel="noopener noreferrer" style="white-space:nowrap;display:inline-flex;align-items:center;gap:0.25rem">Wiki<svg stroke="currentColor" fill="none" stroke-width="2" viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round" height="1em" width="1em" xmlns="http://www.w3.org/2000/svg"><path d="M15 3h6v6"></path><path d="M10 14 21 3"></path><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path></svg></a></li><li><a href="https://github.com/recharts/recharts" target="_blank" rel="noopener noreferrer" style="white-space:nowrap;display:inline-flex;align-items:center;gap:0.25rem">GitHub<svg stroke="currentColor" fill="none" stroke-width="2" viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round" height="1em" width="1em" xmlns="http://www.w3.org/2000/svg"><path d="M15 3h6v6"></path><path d="M10 14 21 3"></path><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path></svg></a></li><li><a href="https://www.npmjs.com/package/recharts" target="_blank" rel="noopener noreferrer" style="white-space:nowrap;display:inline-flex;align-items:center;gap:0.25rem">npm<svg stroke="currentColor" fill="none" stroke-width="2" viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round" height="1em" width="1em" xmlns="http://www.w3.org/2000/svg"><path d="M15 3h6v6"></path><path d="M10 14 21 3"></path><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path></svg></a></li><li><a href="https://github.com/recharts/recharts/wiki/3.0-migration-guide" target="_blank" rel="noopener noreferrer" style="white-space:nowrap;display:inline-flex;align-items:center;gap:0.25rem">3.0 migration guide<svg stroke="currentColor" fill="none" stroke-width="2" viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round" height="1em" width="1em" xmlns="http://www.w3.org/2000/svg"><path d="M15 3h6v6"></path><path d="M10 14 21 3"></path><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path></svg></a></li></ul><div class="nav-actions"><span class="no-wrap"><span><span class="switch-item active">En</span></span><span><span>  |  </span><a class="switch-item" href="/zh-CN/examples/CompareTwoLines/" data-discover="true">中文</a></span></span><button class="_ColorModePicker_1b4l5_1" type="button" aria-label="system"><svg stroke="currentColor" fill="none" stroke-width="2" viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round" height="1em" width="1em" xmlns="http://www.w3.org/2000/svg"><rect width="20" height="14" x="2" y="3" rx="2"></rect><line x1="8" x2="16" y1="21" y2="21"></line><line x1="12" x2="12" y1="17" y2="21"></line></svg></button></div></nav><nav class="mobile-only"><button type="button" class="mobile-nav-toggle mobile-only" aria-label="Toggle navigation"><span>Menu</span><div width="3rem" height="3rem" class="recharts-wrapper" style="position:relative;cursor:pointer;width:3rem;height:3rem"></div></button><div class="mobile-nav-backdrop " aria-hidden="true"></div><div class="slide-right-mobile-nav "><ul class="navigation-items"><li class="collapsible "><button type="button" class="collapsible-trigger"><span>Guide</span><div width="3rem" height="3rem" class="recharts-wrapper" style="position:relative;cursor:default;width:3rem;height:3rem"></div></button></li><li class="collapsible "><button type="button" class="collapsible-trigger"><span>API</span><div width="3rem" height="3rem" class="recharts-wrapper" style="position:relative;cursor:default;width:3rem;height:3rem"></div></button></li><li class="collapsible "><button type="button" class="collapsible-trigger"><span>Examples</span><div width="3rem" height="3rem" class="recharts-wrapper" style="position:relative;cursor:default;width:3rem;height:3rem"></div></button></li><li><a class="" href="/en-US/storybook/" data-discover="true">Storybook</a></li><li><a href="https://github.com/recharts/recharts/wiki" target="_blank" rel="noopener noreferrer" style="white-space:nowrap;display:inline-flex;align-items:center;gap:0.25rem">Wiki<svg stroke="currentColor" fill="none" stroke-width="2" viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round" height="1em" width="1em" xmlns="http://www.w3.org/2000/svg"><path d="M15 3h6v6"></path><path d="M10 14 21 3"></path><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path></svg></a></li><li><a href="https://github.com/recharts/recharts" target="_blank" rel="noopener noreferrer" style="white-space:nowrap;display:inline-flex;align-items:center;gap:0.25rem">GitHub<svg stroke="currentColor" fill="none" stroke-width="2" viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round" height="1em" width="1em" xmlns="http://www.w3.org/2000/svg"><path d="M15 3h6v6"></path><path d="M10 14 21 3"></path><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path></svg></a></li><li><a href="https://www.npmjs.com/package/recharts" target="_blank" rel="noopener noreferrer" style="white-space:nowrap;display:inline-flex;align-items:center;gap:0.25rem">npm<svg stroke="currentColor" fill="none" stroke-width="2" viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round" height="1em" width="1em" xmlns="http://www.w3.org/2000/svg"><path d="M15 3h6v6"></path><path d="M10 14 21 3"></path><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path></svg></a></li><li><a href="https://github.com/recharts/recharts/wiki/3.0-migration-guide" target="_blank" rel="noopener noreferrer" style="white-space:nowrap;display:inline-flex;align-items:center;gap:0.25rem">3.0 migration guide<svg stroke="currentColor" fill="none" stroke-width="2" viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round" height="1em" width="1em" xmlns="http://www.w3.org/2000/svg"><path d="M15 3h6v6"></path><path d="M10 14 21 3"></path><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path></svg></a></li></ul><div class="nav-actions"><span class="no-wrap"><span><span class="switch-item active">En</span></span><span><span>  |  </span><a class="switch-item" href="/zh-CN/examples/CompareTwoLines/" data-discover="true">中文</a></span></span><button class="_ColorModePicker_1b4l5_1" type="button" aria-label="system"><svg stroke="currentColor" fill="none" stroke-width="2" viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round" height="1em" width="1em" xmlns="http://www.w3.org/2000/svg"><rect width="20" height="14" x="2" y="3" rx="2"></rect><line x1="8" x2="16" y1="21" y2="21"></line><line x1="12" x2="12" y1="17" y2="21"></line></svg></button></div></div></nav></header><div class="sidebar desktop-only"><h2>Examples</h2><div class="sidebar-cate"><a href="/en-US/examples/SimpleLineChart/" data-discover="true"><h4>LineChart</h4><div class="chart-preview"><div class="recharts-wrapper" style="position:relative;cursor:default;aspect-ratio:3.236"></div></div></a><ul class="menu"><li><a class="" href="/en-US/examples/SimpleLineChart/" data-discover="true">Simple Line Chart</a></li><li><a class="" href="/en-US/examples/DashedLineChart/" data-discover="true">Dashed Line Chart</a></li><li><a class="" href="/en-US/examples/VerticalLineChart/" data-discover="true">Vertical Line Chart</a></li><li><a class="" href="/en-US/examples/BiaxialLineChart/" data-discover="true">Biaxial Line Chart</a></li><li><a class="" href="/en-US/examples/VerticalLineChartWithSpecifiedDomain/" data-discover="true">Vertical Line Chart With Specified Domain</a></li><li><a class="" href="/en-US/examples/LineChartConnectNulls/" data-discover="true">Line Chart Connect Nulls</a></li><li><a class="" href="/en-US/examples/LineChartWithXAxisPadding/" data-discover="true">Line Chart With X Axis Padding</a></li><li><a class="" href="/en-US/examples/LineChartWithReferenceLines/" data-discover="true">Line Chart With Reference Lines</a></li><li><a class="" href="/en-US/examples/CustomizedDotLineChart/" data-discover="true">Customized Dot Line Chart</a></li><li><a class="" href="/en-US/examples/CustomizedLabelLineChart/" data-discover="true">Customized Label Line Chart</a></li><li><a class="" href="/en-US/examples/SynchronizedLineChart/" data-discover="true">Synchronized Line Chart</a></li><li><a class="" href="/en-US/examples/LineChartCustomShapeExample/" data-discover="true">Line that animates opacity</a></li><li><a class="" href="/en-US/examples/HighlightAndZoomLineChart/" data-discover="true">Highlight And Zoom Line Chart</a></li><li><a class="" href="/en-US/examples/LineChartHasMultiSeries/" data-discover="true">Line Chart Has Multi Series</a></li><li><a class="" href="/en-US/examples/LineChartAxisInterval/" data-discover="true">Line Chart Axis Interval</a></li><li><a class="" href="/en-US/examples/LineChartNegativeValuesWithReferenceLines/" data-discover="true">Line Chart Negative Values With Reference Lines</a></li><li><a aria-current="page" class="active" href="/en-US/examples/CompareTwoLines/" data-discover="true">Compare Two Lines</a></li><li><a class="" href="/en-US/examples/DynamicZIndexLineChart/" data-discover="true">Dynamic Z-Index Line Chart</a></li><li><a class="" href="/en-US/examples/TinyLineChart/" data-discover="true">Tiny Line Chart</a></li><li><a class="" href="/en-US/examples/AnimatedTimeSeriesExample/" data-discover="true">Animated Time Series</a></li></ul></div><div class="sidebar-cate"><a href="/en-US/examples/AreaChartExample/" data-discover="true"><h4>AreaChart</h4><div class="chart-preview"><div class="recharts-wrapper" style="position:relative;cursor:default;aspect-ratio:3.236"></div></div></a><ul class="menu"><li><a class="" href="/en-US/examples/AreaChartExample/" data-discover="true">Simple Area Chart</a></li><li><a class="" href="/en-US/examples/StackedAreaChart/" data-discover="true">Stacked Area Chart</a></li><li><a class="" href="/en-US/examples/AreaChartRangeExample/" data-discover="true">Ranged Area Chart</a></li><li><a class="" href="/en-US/examples/AreaChartConnectNulls/" data-discover="true">Area Chart Connect Nulls</a></li><li><a class="" href="/en-US/examples/CardinalAreaChart/" data-discover="true">Cardinal Area Chart</a></li><li><a class="" href="/en-US/examples/PercentAreaChart/" data-discover="true">Percent Area Chart</a></li><li><a class="" href="/en-US/examples/SynchronizedAreaChart/" data-discover="true">Synchronized Area Chart</a></li><li><a class="" href="/en-US/examples/TinyAreaChart/" data-discover="true">Tiny Area Chart</a></li><li><a class="" href="/en-US/examples/AreaChartFillByValue/" data-discover="true">Area Chart Fill By Value</a></li><li><a class="" href="/en-US/examples/AreaChartCustomAnimation/" data-discover="true">Custom Animation Example</a></li><li><a class="" href="/en-US/examples/RangeAreaChartCustomAnimation/" data-discover="true">Range Area Custom Animation</a></li><li><a class="" href="/en-US/examples/AreaChartWithCustomEvents/" data-discover="true">Area Chart With Custom Events</a></li><li><a class="" href="/en-US/examples/PreventRightClickExample/" data-discover="true">Prevent right click menu</a></li></ul></div><div class="sidebar-cate"><a href="/en-US/examples/SimpleBarChart/" data-discover="true"><h4>BarChart</h4><div class="chart-preview"><div class="recharts-wrapper" style="position:relative;cursor:default;aspect-ratio:3.236"></div></div></a><ul class="menu"><li><a class="" href="/en-US/examples/SimpleBarChart/" data-discover="true">Simple Bar Chart</a></li><li><a class="" href="/en-US/examples/StackedBarChart/" data-discover="true">Stacked Bar Chart</a></li><li><a class="" href="/en-US/examples/PopulationPyramid/" data-discover="true">Population Pyramid</a></li><li><a class="" href="/en-US/examples/TimelineExample/" data-discover="true">Timeline</a></li><li><a class="" href="/en-US/examples/Candlestick/" data-discover="true">Candlestick</a></li><li><a class="" href="/en-US/examples/BoxPlot/" data-discover="true">Box Plot</a></li><li><a class="" href="/en-US/examples/AnimatedBarWidthExample/" data-discover="true">Animated Bar Width</a></li><li><a class="" href="/en-US/examples/Waterfall/" data-discover="true">Waterfall</a></li><li><a class="" href="/en-US/examples/AnimatedBarTimeSeriesExample/" data-discover="true">Animated Bar series</a></li><li><a class="" href="/en-US/examples/MixBarChart/" data-discover="true">Mix Bar Chart</a></li><li><a class="" href="/en-US/examples/CustomShapeBarChart/" data-discover="true">Custom Shape Bar Chart</a></li><li><a class="" href="/en-US/examples/PositiveAndNegativeBarChart/" data-discover="true">Positive and Negative Bar Chart</a></li><li><a class="" href="/en-US/examples/BrushBarChart/" data-discover="true">Brush Bar Chart</a></li><li><a class="" href="/en-US/examples/BarChartWithCustomizedEvent/" data-discover="true">Bar Chart With Customized Event</a></li><li><a class="" href="/en-US/examples/BarChartWithMinHeight/" data-discover="true">Bar Chart With Min Height</a></li><li><a class="" href="/en-US/examples/BarChartStackedBySign/" data-discover="true">Bar Chart Stacked By Sign</a></li><li><a class="" href="/en-US/examples/BiaxialBarChart/" data-discover="true">Biaxial Bar Chart</a></li><li><a class="" href="/en-US/examples/BarChartHasBackground/" data-discover="true">Bar Chart with background</a></li><li><a class="" href="/en-US/examples/BarChartWithMultiXAxis/" data-discover="true">Bar Chart With Multi X Axis</a></li><li><a class="" href="/en-US/examples/RangedStackedBarChart/" data-discover="true">Ranged Stacked Bar Chart</a></li><li><a class="" href="/en-US/examples/BarChartRangeExample/" data-discover="true">Ranged Bar Chart</a></li><li><a class="" href="/en-US/examples/TinyBarChart/" data-discover="true">Tiny Bar Chart</a></li><li><a class="" href="/en-US/examples/ScrollAnimateBarChart/" data-discover="true">Animate by Scroll</a></li><li><a class="" href="/en-US/examples/StackedBarChartWithHorizontalLine/" data-discover="true">Stacked Bar Chart with Horizontal Line</a></li></ul></div><div class="sidebar-cate"><a href="/en-US/examples/LineBarAreaComposedChart/" data-discover="true"><h4>ComposedChart</h4><div class="chart-preview"><div class="recharts-wrapper" style="position:relative;cursor:default;aspect-ratio:3.236"></div></div></a><ul class="menu"><li><a class="" href="/en-US/examples/LineBarAreaComposedChart/" data-discover="true">Line Bar Area Composed Chart</a></li><li><a class="" href="/en-US/examples/SameDataComposedChart/" data-discover="true">Same Data Composed Chart</a></li><li><a class="" href="/en-US/examples/VerticalComposedChart/" data-discover="true">Vertical Composed Chart</a></li><li><a class="" href="/en-US/examples/ComposedChartWithAxisLabels/" data-discover="true">Composed Chart With Axis Labels</a></li><li><a class="" href="/en-US/examples/ScatterAndLineOfBestFit/" data-discover="true">Scatter And Line Of Best Fit</a></li><li><a class="" href="/en-US/examples/BandedChart/" data-discover="true">Banded Chart</a></li><li><a class="" href="/en-US/examples/TargetPriceChart/" data-discover="true">Target Price Chart with active Label</a></li></ul></div><div class="sidebar-cate"><a href="/en-US/examples/SimpleScatterChart/" data-discover="true"><h4>ScatterChart</h4><div class="chart-preview"><div class="recharts-wrapper" style="position:relative;cursor:default;aspect-ratio:3.236"></div></div></a><ul class="menu"><li><a class="" href="/en-US/examples/SimpleScatterChart/" data-discover="true">Simple Scatter Chart</a></li><li><a class="" href="/en-US/examples/ThreeDimScatterChart/" data-discover="true">Three Dim Scatter Chart</a></li><li><a class="" href="/en-US/examples/JointLineScatterChart/" data-discover="true">Joint Line Scatter Chart</a></li><li><a class="" href="/en-US/examples/BubbleChart/" data-discover="true">Bubble Chart</a></li><li><a class="" href="/en-US/examples/CustomAnimation/" data-discover="true">Custom Animation</a></li><li><a class="" href="/en-US/examples/ScatterChartWithLabels/" data-discover="true">Scatter Chart With Labels</a></li><li><a class="" href="/en-US/examples/MultipleYAxesScatterChart/" data-discover="true">Multiple Y Axes Scatter Chart</a></li><li><a class="" href="/en-US/examples/ScatterChartWithCells/" data-discover="true">Scatter Chart With Cells</a></li><li><a class="" href="/en-US/examples/ScatterChartPerformance/" data-discover="true">Scatter Chart with many points (performance test)</a></li></ul></div><div class="sidebar-cate"><a href="/en-US/examples/TwoLevelPieChart/" data-discover="true"><h4>PieChart</h4><div class="chart-preview"><div class="recharts-wrapper" style="position:relative;cursor:default;aspect-ratio:1"></div></div></a><ul class="menu"><li><a class="" href="/en-US/examples/TwoLevelPieChart/" data-discover="true">Two Level Pie Chart</a></li><li><a class="" href="/en-US/examples/StraightAnglePieChart/" data-discover="true">Straight Angle Pie Chart</a></li><li><a class="" href="/en-US/examples/CustomActiveShapePieChart/" data-discover="true">Custom Active Shape Pie Chart</a></li><li><a class="" href="/en-US/examples/PieChartWithCustomizedLabel/" data-discover="true">Pie Chart With Customized Label</a></li><li><a class="" href="/en-US/examples/PieChartWithPaddingAngle/" data-discover="true">Pie Chart with gap and rounded corners</a></li><li><a class="" href="/en-US/examples/PieChartWithNeedle/" data-discover="true">Pie Chart With Needle</a></li><li><a class="" href="/en-US/examples/PieChartInFlexbox/" data-discover="true">Pie Chart in Flexbox</a></li><li><a class="" href="/en-US/examples/PieChartInGrid/" data-discover="true">Pie Chart in Grid</a></li><li><a class="" href="/en-US/examples/PieWithGradient/" data-discover="true">Pie Chart with Gradient</a></li></ul></div><div class="sidebar-cate"><a href="/en-US/examples/SimpleRadarChart/" data-discover="true"><h4>RadarChart</h4><div class="chart-preview"><div class="recharts-wrapper" style="position:relative;cursor:default;aspect-ratio:1"></div></div></a><ul class="menu"><li><a class="" href="/en-US/examples/SimpleRadarChart/" data-discover="true">Simple Radar Chart</a></li><li><a class="" href="/en-US/examples/SpecifiedDomainRadarChart/" data-discover="true">Specified Domain Radar Chart</a></li><li><a class="" href="/en-US/examples/RangeRadarChartCustomAnimation/" data-discover="true">Range Radar Custom Animation</a></li></ul></div><div class="sidebar-cate"><a href="/en-US/examples/SimpleRadialBarChart/" data-discover="true"><h4>RadialBarChart</h4><div class="chart-preview"><div class="recharts-wrapper" style="position:relative;cursor:default;aspect-ratio:1"></div></div></a><ul class="menu"><li><a class="" href="/en-US/examples/SimpleRadialBarChart/" data-discover="true">Simple Radial Bar Chart</a></li><li><a class="" href="/en-US/examples/RadialBarChartClickToFocusLegendExample/" data-discover="true">Radial Bar Chart with Click to Focus Legend</a></li></ul></div><div class="sidebar-cate"><a href="/en-US/examples/BundleSizeTreemap/" data-discover="true"><h4>TreeMap</h4><div class="chart-preview"><div width="100%" height="3rem" class="recharts-wrapper" style="position:relative;cursor:default;width:100%;height:3rem;aspect-ratio:3.236"></div></div></a><ul class="menu"><li><a class="" href="/en-US/examples/BundleSizeTreemap/" data-discover="true">Bundle Size Treemap</a></li><li><a class="" href="/en-US/examples/SimpleTreemap/" data-discover="true">Simple Treemap</a></li><li><a class="" href="/en-US/examples/CustomContentTreemap/" data-discover="true">Custom Content Treemap</a></li><li><a class="" href="/en-US/examples/NestedTreemap/" data-discover="true">Nested Treemap</a></li><li><a class="" href="/en-US/examples/TreemapWithPaddingAndGaps/" data-discover="true">Treemap with Padding and Gaps</a></li></ul></div><div class="sidebar-cate"><a href="/en-US/examples/BundleSizeSunburst/" data-discover="true"><h4>SunburstChart</h4><div class="chart-preview"><div style="width:100%;height:3rem"><div class="recharts-responsive-container" style="width:100%;height:100%;min-width:0"><div style="width:0;height:0;overflow:visible"></div></div></div></div></a><ul class="menu"><li><a class="" href="/en-US/examples/BundleSizeSunburst/" data-discover="true">Bundle Size Sunburst</a></li><li><a class="" href="/en-US/examples/SunburstChartExample/" data-discover="true">Sunburst Chart Example</a></li></ul></div><div class="sidebar-cate"><a href="/en-US/examples/CustomContentOfTooltip/" data-discover="true"><h4>Tooltip</h4></a><ul class="menu"><li><a class="" href="/en-US/examples/CustomContentOfTooltip/" data-discover="true">Custom Content Of Tooltip</a></li><li><a class="" href="/en-US/examples/TooltipStylesDemo/" data-discover="true">Tooltip Style</a></li></ul></div><div class="sidebar-cate"><a href="/en-US/examples/LegendEffectOpacity/" data-discover="true"><h4>Legend</h4></a><ul class="menu"><li><a class="" href="/en-US/examples/LegendEffectOpacity/" data-discover="true">Legend with Opacity</a></li><li><a class="" href="/en-US/examples/LegendPosition/" data-discover="true">Legend Position</a></li><li><a class="" href="/en-US/examples/LegendStylesExample/" data-discover="true">Custom Legend Styles</a></li></ul></div><div class="sidebar-cate"><a href="/en-US/examples/AreaResponsiveContainer/" data-discover="true"><h4>ResponsiveContainer</h4></a><ul class="menu"><li><a class="" href="/en-US/examples/AreaResponsiveContainer/" data-discover="true">Area Responsive Container</a></li><li><a class="" href="/en-US/examples/ComposedResponsiveContainer/" data-discover="true">Composed Responsive Container</a></li><li><a class="" href="/en-US/examples/PieResponsiveContainer/" data-discover="true">Pie Responsive Container</a></li></ul></div><div class="sidebar-cate"><a href="/en-US/examples/MultiXAxisExample/" data-discover="true"><h4>XAxis</h4></a><ul class="menu"><li><a class="" href="/en-US/examples/MultiXAxisExample/" data-discover="true">Multiple X Axes</a></li></ul></div></div><main><div class="page page-examples"><div class="content"><h3 class="page-title">Compare Two Lines</h3><div class="example-wrapper"><div class="example-description">Interactive performance comparison of two investment lines over time, with reference ranges and mouse tracking.</div><div class="example-inner-wrapper"><div width="100%" height="300" class="recharts-wrapper" style="position:relative;cursor:default;width:100%;height:300px"></div><div class="codemirror-wrapper "><div id="codemirror-container"><div class="codemirror-toolbar"><select class="codemirror-toolbar-item" style="padding-right:12px"><option value="source" selected="">Source code</option><option value="devtools">Hook inspector</option><option value="annotations">Annotations</option><option value="controls">Controls</option></select><button class="codemirror-toolbar-item" type="button"><svg class="recharts-surface" width="16" height="16" viewBox="0 0 16 16"><title></title><desc></desc><path fill="none" stroke="var(--color-text-1)" stroke-width="1" width="10" height="10" x="1" y="1" radius="2" class="recharts-rectangle" d="M 1,3
+            A 2,2,0,0,1,3,1
+            L 9,1
+            A 2,2,0,0,1,11,3
+            L 11,9
+            A 2,2,0,0,1,9,11
+            L 3,11
+            A 2,2,0,0,1,1,9 Z" style="stroke-dasharray:0px 1px"></path><path fill="none" stroke="var(--color-text-1)" stroke-width="1" width="10" height="10" x="5" y="5" radius="2" class="recharts-rectangle" d="M 5,7
+            A 2,2,0,0,1,7,5
+            L 13,5
+            A 2,2,0,0,1,15,7
+            L 15,13
+            A 2,2,0,0,1,13,15
+            L 7,15
+            A 2,2,0,0,1,5,13 Z" style="stroke-dasharray:0px 1px"></path></svg>Copy to clipboard</button><button type="button" class="codemirror-toolbar-item"><svg stroke="currentColor" fill="none" stroke-width="2" viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round" height="1em" width="1em" xmlns="http://www.w3.org/2000/svg"><path d="M21.174 6.812a1 1 0 0 0-3.986-3.987L3.842 16.174a2 2 0 0 0-.5.83l-1.321 4.352a.5.5 0 0 0 .623.622l4.353-1.32a2 2 0 0 0 .83-.497z"></path><path d="m15 5 4 4"></path></svg><span>Edit</span></button><button type="button" class="codemirror-toolbar-item"><svg stroke="currentColor" fill="none" stroke-width="2" viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round" height="1em" width="1em" xmlns="http://www.w3.org/2000/svg"><circle cx="18" cy="5" r="3"></circle><circle cx="6" cy="12" r="3"></circle><circle cx="18" cy="19" r="3"></circle><line x1="8.59" x2="15.42" y1="13.51" y2="17.49"></line><line x1="15.41" x2="8.59" y1="6.51" y2="10.49"></line></svg><span>Open in StackBlitz</span></button></div><div style="height:100%;display:block;overflow:hidden"><div class="codemirror-example-editor tsx" style="height:100%;overflow:auto"><pre>import { FC, useMemo, useState } from &#x27;react&#x27;;
+import {
+  Line,
+  LineChart,
+  ReferenceLine,
+  Tooltip,
+  TooltipContentProps,
+  XAxis,
+  YAxis,
+  MouseHandlerDataParam,
+} from &#x27;recharts&#x27;;
+import { RechartsDevtools } from &#x27;@recharts/devtools&#x27;;
+
+// #region sample data and types
+const formatUsdCompressed = (n: number) =&gt; {
+  return new Intl.NumberFormat(&#x27;en-US&#x27;, {
+    style: &#x27;currency&#x27;,
+    currency: &#x27;USD&#x27;,
+    maximumSignificantDigits: 3,
+  })
+    .format(n)
+    .toUpperCase();
+};
+
+interface DataPoint {
+  date: number;
+  close: number;
+  maxClose?: number;
+  reinvestClose?: number;
+  netDeposits?: number;
+}
+
+const getDataKeyClose = (point: DataPoint) =&gt; point.close;
+const getDataKeyNetDeposits = (point: DataPoint) =&gt; point.netDeposits;
+const getDataKeyReinvestClose = (point: DataPoint) =&gt; point.reinvestClose;
+
+const CustomTooltip: FC&lt;TooltipContentProps&lt;any, any&gt;&gt; = ({ active, payload }) =&gt; {
+  const activePayload = payload?.[0]?.payload;
+  if (!active || !activePayload || !activePayload.date) {
+    return null;
+  }
+  return &lt;span className=&quot;text-frecDarkGray flex -translate-x-1/2 select-none&quot;&gt;{activePayload.date}&lt;/span&gt;;
+};
+
+const data: DataPoint[] = [
+  {
+    date: 1754265600000,
+    close: 200250.28586,
+    maxClose: 200329.40245,
+    reinvestClose: 200250.28586,
+    netDeposits: 200000,
+  },
+  {
+    date: 1754352000000,
+    close: 199272.96485,
+    maxClose: 199474.10888,
+    reinvestClose: 199272.96485,
+    netDeposits: 200000,
+  },
+  {
+    date: 1754438400000,
+    close: 200912.62441,
+    maxClose: 200912.62441,
+    reinvestClose: 200912.62441,
+    netDeposits: 200000,
+  },
+  {
+    date: 1754524800000,
+    close: 200841.07452,
+    maxClose: 200841.07452,
+    reinvestClose: 200841.07452,
+    netDeposits: 200000,
+  },
+  {
+    date: 1754611200000,
+    close: 202280.1764,
+    maxClose: 202819.09273,
+    reinvestClose: 202819.09273,
+    netDeposits: 200000,
+  },
+  {
+    date: 1754697600000,
+    close: 202280.1764,
+    maxClose: 202819.12355,
+    reinvestClose: 202819.12355,
+    netDeposits: 200000,
+  },
+  {
+    date: 1754784000000,
+    close: 202280.1764,
+    maxClose: 202819.12355,
+    reinvestClose: 202819.12355,
+    netDeposits: 200000,
+  },
+  {
+    date: 1754870400000,
+    close: 201695.79315,
+    maxClose: 202233.53819000002,
+    reinvestClose: 202233.53819000002,
+    netDeposits: 200000,
+  },
+  {
+    date: 1754956800000,
+    close: 204165.11346,
+    maxClose: 204708.99235,
+    reinvestClose: 204708.99235,
+    netDeposits: 200000,
+  },
+  {
+    date: 1755043200000,
+    close: 204683.86015,
+    maxClose: 205229.85045,
+    reinvestClose: 205229.85045,
+    netDeposits: 200000,
+  },
+  {
+    date: 1755129600000,
+    close: 204386.16203,
+    maxClose: 204931.76703000002,
+    reinvestClose: 204931.76703000002,
+    netDeposits: 200000,
+  },
+  {
+    date: 1755216000000,
+    close: 203872.79671,
+    maxClose: 204417.21500999999,
+    reinvestClose: 204417.21500999999,
+    netDeposits: 200000,
+  },
+  {
+    date: 1755302400000,
+    close: 203875.56671,
+    maxClose: 204419.98501,
+    reinvestClose: 204419.98501,
+    netDeposits: 200000,
+  },
+  {
+    date: 1755388800000,
+    close: 203875.56671,
+    maxClose: 204419.98501,
+    reinvestClose: 204419.98501,
+    netDeposits: 200000,
+  },
+  {
+    date: 1755475200000,
+    close: 203990.21558,
+    maxClose: 204534.66470999998,
+    reinvestClose: 204534.66470999998,
+    netDeposits: 200000,
+  },
+  {
+    date: 1755561600000,
+    close: 202693.85337,
+    maxClose: 203235.18933,
+    reinvestClose: 203235.18933,
+    netDeposits: 200000,
+  },
+  {
+    date: 1755648000000,
+    close: 202185.45487,
+    maxClose: 202725.1726,
+    reinvestClose: 202725.1726,
+    netDeposits: 200000,
+  },
+  {
+    date: 1755734400000,
+    close: 201559.8993,
+    maxClose: 202097.73681,
+    reinvestClose: 202097.73681,
+    netDeposits: 200000,
+  },
+  {
+    date: 1755820800000,
+    close: 204676.42605,
+    maxClose: 205222.81705,
+    reinvestClose: 205222.81705,
+    netDeposits: 200000,
+  },
+  {
+    date: 1755907200000,
+    close: 204680.26605,
+    maxClose: 205226.65705,
+    reinvestClose: 205226.65705,
+    netDeposits: 200000,
+  },
+  {
+    date: 1755993600000,
+    close: 204680.26605,
+    maxClose: 205226.65705,
+    reinvestClose: 205226.65705,
+    netDeposits: 200000,
+  },
+  {
+    date: 1756080000000,
+    close: 203829.67195,
+    maxClose: 204373.79742999998,
+    reinvestClose: 204373.79742999998,
+    netDeposits: 200000,
+  },
+  {
+    date: 1756166400000,
+    close: 204599.65998,
+    maxClose: 205145.98933,
+    reinvestClose: 205145.98933,
+    netDeposits: 200000,
+  },
+  {
+    date: 1756252800000,
+    close: 205156.94904,
+    maxClose: 205704.15302,
+    reinvestClose: 205704.15302,
+    netDeposits: 200000,
+  },
+  {
+    date: 1756339200000,
+    close: 205982.92992,
+    maxClose: 206531.6413,
+    reinvestClose: 206531.6413,
+    netDeposits: 200000,
+  },
+  {
+    date: 1756425600000,
+    close: 204750.72779,
+    maxClose: 205296.33207,
+    reinvestClose: 205296.33207,
+    netDeposits: 200000,
+  },
+  {
+    date: 1756512000000,
+    close: 204771.30779,
+    maxClose: 205316.91207,
+    reinvestClose: 205316.91207,
+    netDeposits: 200000,
+  },
+  {
+    date: 1756598400000,
+    close: 204771.30779,
+    maxClose: 205316.91207,
+    reinvestClose: 205316.91207,
+    netDeposits: 200000,
+  },
+  {
+    date: 1756684800000,
+    close: 204771.30779,
+    maxClose: 205316.91207,
+    reinvestClose: 205316.91207,
+    netDeposits: 200000,
+  },
+  {
+    date: 1756771200000,
+    close: 203336.77508,
+    maxClose: 203878.38012,
+    reinvestClose: 203878.38012,
+    netDeposits: 200000,
+  },
+  {
+    date: 1756857600000,
+    close: 204313.32762,
+    maxClose: 204857.62446,
+    reinvestClose: 204857.62446,
+    netDeposits: 200000,
+  },
+  {
+    date: 1756944000000,
+    close: 206164.82454,
+    maxClose: 206713.68974,
+    reinvestClose: 206713.68974,
+    netDeposits: 200000,
+  },
+  {
+    date: 1757030400000,
+    close: 205688.30079,
+    maxClose: 206235.95084,
+    reinvestClose: 206235.95084,
+    netDeposits: 200000,
+  },
+  {
+    date: 1757116800000,
+    close: 205694.24079,
+    maxClose: 206241.89084,
+    reinvestClose: 206241.89084,
+    netDeposits: 200000,
+  },
+  {
+    date: 1757203200000,
+    close: 205694.24079,
+    maxClose: 206241.89084,
+    reinvestClose: 206241.89084,
+    netDeposits: 200000,
+  },
+  {
+    date: 1757289600000,
+    close: 206248.11961,
+    maxClose: 206797.50779,
+    reinvestClose: 206797.50779,
+    netDeposits: 200000,
+  },
+  {
+    date: 1757376000000,
+    close: 206361.60467,
+    maxClose: 206911.90037,
+    reinvestClose: 206911.90037,
+    netDeposits: 200000,
+  },
+  {
+    date: 1757462400000,
+    close: 206931.57487,
+    maxClose: 207483.45488,
+    reinvestClose: 207483.45488,
+    netDeposits: 200000,
+  },
+  {
+    date: 1757548800000,
+    close: 208777.49902,
+    maxClose: 209334.08583,
+    reinvestClose: 209334.08583,
+    netDeposits: 200000,
+  },
+  {
+    date: 1757635200000,
+    close: 208367.30969,
+    maxClose: 209021.15418,
+    reinvestClose: 208923.34276,
+    netDeposits: 200000,
+  },
+  {
+    date: 1757721600000,
+    close: 208370.03969,
+    maxClose: 209021.15418,
+    reinvestClose: 208926.07276,
+    netDeposits: 200000,
+  },
+  {
+    date: 1757808000000,
+    close: 208370.03969,
+    maxClose: 209021.15418,
+    reinvestClose: 208926.07276,
+    netDeposits: 200000,
+  },
+  {
+    date: 1757894400000,
+    close: 209371.73869,
+    maxClose: 210020.92301,
+    reinvestClose: 209930.4328,
+    netDeposits: 200000,
+  },
+  {
+    date: 1757980800000,
+    close: 208934.04827,
+    maxClose: 209490.66585,
+    reinvestClose: 209490.66585,
+    netDeposits: 200000,
+  },
+  {
+    date: 1758067200000,
+    close: 208731.12737,
+    maxClose: 209287.02201000002,
+    reinvestClose: 209287.02201000002,
+    netDeposits: 200000,
+  },
+  {
+    date: 1758153600000,
+    close: 210068.19722,
+    maxClose: 210627.04514,
+    reinvestClose: 210627.04514,
+    netDeposits: 200000,
+  },
+  {
+    date: 1758240000000,
+    close: 210862.44012,
+    maxClose: 211513.10408,
+    reinvestClose: 211423.62606,
+    netDeposits: 200000,
+  },
+  {
+    date: 1758326400000,
+    close: 210859.46012,
+    maxClose: 211513.10408,
+    reinvestClose: 211420.64606,
+    netDeposits: 200000,
+  },
+  {
+    date: 1758412800000,
+    close: 210859.46012,
+    maxClose: 211513.10408,
+    reinvestClose: 211420.64606,
+    netDeposits: 200000,
+  },
+  {
+    date: 1758499200000,
+    close: 291534.89436,
+    maxClose: 292736.93416,
+    reinvestClose: 292736.93416,
+    netDeposits: 280000,
+  },
+  {
+    date: 1758585600000,
+    close: 289886.60569,
+    maxClose: 291084.14519,
+    reinvestClose: 291084.14519,
+    netDeposits: 280000,
+  },
+  {
+    date: 1758672000000,
+    close: 288803.00042,
+    maxClose: 289996.03962,
+    reinvestClose: 289996.03962,
+    netDeposits: 280000,
+  },
+  {
+    date: 1758758400000,
+    close: 287237.53875,
+    maxClose: 288424.69800000003,
+    reinvestClose: 288424.69800000003,
+    netDeposits: 280000,
+  },
+  {
+    date: 1758844800000,
+    close: 289098.40234,
+    maxClose: 290292.75549999997,
+    reinvestClose: 290292.75549999997,
+    netDeposits: 280000,
+  },
+  {
+    date: 1758931200000,
+    close: 289100.27234,
+    maxClose: 290294.6255,
+    reinvestClose: 290294.6255,
+    netDeposits: 280000,
+  },
+  {
+    date: 1759017600000,
+    close: 289100.27234,
+    maxClose: 290294.6255,
+    reinvestClose: 290294.6255,
+    netDeposits: 280000,
+  },
+  {
+    date: 1759104000000,
+    close: 289917.68812,
+    maxClose: 291114.99768000003,
+    reinvestClose: 291114.99768000003,
+    netDeposits: 280000,
+  },
+  {
+    date: 1759190400000,
+    close: 290927.67041,
+    maxClose: 292128.23201000004,
+    reinvestClose: 292128.23201000004,
+    netDeposits: 280000,
+  },
+  {
+    date: 1759276800000,
+    close: 291725.80907,
+    maxClose: 292930.93666,
+    reinvestClose: 292930.93666,
+    netDeposits: 280000,
+  },
+  {
+    date: 1759363200000,
+    close: 291954.38666,
+    maxClose: 293161.35379,
+    reinvestClose: 293161.35379,
+    netDeposits: 280000,
+  },
+  {
+    date: 1759449600000,
+    close: 291896.55473,
+    maxClose: 293103.65326,
+    reinvestClose: 293103.65326,
+    netDeposits: 280000,
+  },
+  {
+    date: 1759536000000,
+    close: 291896.97473,
+    maxClose: 293104.07326000003,
+    reinvestClose: 293104.07326000003,
+    netDeposits: 280000,
+  },
+  {
+    date: 1759622400000,
+    close: 291896.97473,
+    maxClose: 293104.07326000003,
+    reinvestClose: 293104.07326000003,
+    netDeposits: 280000,
+  },
+  {
+    date: 1759708800000,
+    close: 293116.53883,
+    maxClose: 294328.13765999995,
+    reinvestClose: 294328.13765999995,
+    netDeposits: 280000,
+  },
+  {
+    date: 1759795200000,
+    close: 292039.96981,
+    maxClose: 293246.27995999996,
+    reinvestClose: 293246.27995999996,
+    netDeposits: 280000,
+  },
+  {
+    date: 1759881600000,
+    close: 293856.81708,
+    maxClose: 295070.45254,
+    reinvestClose: 295070.45254,
+    netDeposits: 280000,
+  },
+  {
+    date: 1759968000000,
+    close: 293065.79468,
+    maxClose: 294275.58681999997,
+    reinvestClose: 294275.58681999997,
+    netDeposits: 280000,
+  },
+  {
+    date: 1760054400000,
+    close: 284898.1604,
+    maxClose: 286075.43213,
+    reinvestClose: 286075.43213,
+    netDeposits: 280000,
+  },
+  {
+    date: 1760140800000,
+    close: 284915.9704,
+    maxClose: 286093.24212999997,
+    reinvestClose: 286093.24212999997,
+    netDeposits: 280000,
+  },
+  {
+    date: 1760227200000,
+    close: 284915.9704,
+    maxClose: 286093.24212999997,
+    reinvestClose: 286093.24212999997,
+    netDeposits: 280000,
+  },
+  {
+    date: 1760313600000,
+    close: 289631.91477,
+    maxClose: 290827.74613,
+    reinvestClose: 290827.74613,
+    netDeposits: 280000,
+  },
+  {
+    date: 1760400000000,
+    close: 289375.17,
+    maxClose: 290569.7531,
+    reinvestClose: 290569.7531,
+    netDeposits: 280000,
+  },
+  {
+    date: 1760486400000,
+    close: 290518.57728,
+    maxClose: 291718.21911,
+    reinvestClose: 291718.21911,
+    netDeposits: 280000,
+  },
+  {
+    date: 1760572800000,
+    close: 288250.37569,
+    maxClose: 289441.6739,
+    reinvestClose: 289441.6739,
+    netDeposits: 280000,
+  },
+  {
+    date: 1760659200000,
+    close: 289546.09897,
+    maxClose: 290945.19578,
+    reinvestClose: 290945.19578,
+    netDeposits: 280000,
+  },
+  {
+    date: 1760745600000,
+    close: 289565.87897,
+    maxClose: 290968.16831000004,
+    reinvestClose: 290968.16831000004,
+    netDeposits: 280000,
+  },
+  {
+    date: 1760832000000,
+    close: 289565.87897,
+    maxClose: 290968.16831000004,
+    reinvestClose: 290968.16831000004,
+    netDeposits: 280000,
+  },
+  {
+    date: 1760918400000,
+    close: 292661.84624,
+    maxClose: 294226.94687,
+    reinvestClose: 294226.94687,
+    netDeposits: 280000,
+  },
+  {
+    date: 1761004800000,
+    close: 292596.13311,
+    maxClose: 294278.6664,
+    reinvestClose: 294278.6664,
+    netDeposits: 280000,
+  },
+  {
+    date: 1761091200000,
+    close: 291286.23879,
+    maxClose: 293053.57587999996,
+    reinvestClose: 293053.57587999996,
+    netDeposits: 280000,
+  },
+  {
+    date: 1761177600000,
+    close: 292980.34027,
+    maxClose: 294761.25367999997,
+    reinvestClose: 294761.25367999997,
+    netDeposits: 280000,
+  },
+  {
+    date: 1761264000000,
+    close: 295334.07645,
+    maxClose: 297264.83434,
+    reinvestClose: 297264.83434,
+    netDeposits: 280000,
+  },
+  {
+    date: 1761350400000,
+    close: 295339.16645,
+    maxClose: 297287.49003000004,
+    reinvestClose: 297287.49003000004,
+    netDeposits: 280000,
+  },
+  {
+    date: 1761436800000,
+    close: 295339.16645,
+    maxClose: 297287.49003000004,
+    reinvestClose: 297287.49003000004,
+    netDeposits: 280000,
+  },
+  {
+    date: 1761523200000,
+    close: 298898.51849,
+    maxClose: 301027.20428,
+    reinvestClose: 301027.20428,
+    netDeposits: 280000,
+  },
+  {
+    date: 1761609600000,
+    close: 299458.39529,
+    maxClose: 301698.80308000004,
+    reinvestClose: 301698.80308000004,
+    netDeposits: 280000,
+  },
+  {
+    date: 1761696000000,
+    close: 300155.03367,
+    maxClose: 302519.21663,
+    reinvestClose: 302519.21663,
+    netDeposits: 280000,
+  },
+  {
+    date: 1761782400000,
+    close: 296838.93323,
+    maxClose: 299172.16269,
+    reinvestClose: 299172.16269,
+    netDeposits: 280000,
+  },
+  {
+    date: 1761868800000,
+    close: 297645.82883,
+    maxClose: 299987.45458,
+    reinvestClose: 299987.45458,
+    netDeposits: 280000,
+  },
+  {
+    date: 1761955200000,
+    close: 297436.88883,
+    maxClose: 299778.51458,
+    reinvestClose: 299778.51458,
+    netDeposits: 280000,
+  },
+  {
+    date: 1762041600000,
+    close: 297436.88883,
+    maxClose: 299778.51458,
+    reinvestClose: 299778.51458,
+    netDeposits: 280000,
+  },
+  {
+    date: 1762128000000,
+    close: 297896.80552,
+    maxClose: 300467.03155,
+    reinvestClose: 300467.03155,
+    netDeposits: 280000,
+  },
+  {
+    date: 1762214400000,
+    close: 294259.78159,
+    maxClose: 296810.06841,
+    reinvestClose: 296810.06841,
+    netDeposits: 280000,
+  },
+  {
+    date: 1762300800000,
+    close: 295344.54123,
+    maxClose: 298175.78807999997,
+    reinvestClose: 298175.78807999997,
+    netDeposits: 280000,
+  },
+  {
+    date: 1762387200000,
+    close: 292176.91517,
+    maxClose: 294964.41625999997,
+    reinvestClose: 294964.41625999997,
+    netDeposits: 280000,
+  },
+  {
+    date: 1762473600000,
+    close: 293150.13876,
+    maxClose: 295951.40437,
+    reinvestClose: 295951.40437,
+    netDeposits: 280000,
+  },
+  {
+    date: 1762560000000,
+    close: 293164.76876,
+    maxClose: 296001.37622000003,
+    reinvestClose: 296001.37622000003,
+    netDeposits: 280000,
+  },
+  {
+    date: 1762646400000,
+    close: 293164.76876,
+    maxClose: 296001.37622000003,
+    reinvestClose: 296001.37622000003,
+    netDeposits: 280000,
+  },
+  {
+    date: 1762992000000,
+    close: 367372.436370742,
+    maxClose: 367372.436370742,
+    netDeposits: 355000,
+  },
+];
+// #endregion
+
+const color = &#x27;var(--color-chart-3)&#x27;;
+const compareColor = &#x27;var(--color-chart-8)&#x27;;
+
+const { yAxisMin, yAxisMax } = data.reduce(
+  (acc, val) =&gt; {
+    const mc = val.maxClose ?? 0;
+    const nd = val.netDeposits ?? 0;
+
+    return {
+      yAxisMin: Math.min(acc.yAxisMin, mc, nd),
+      yAxisMax: Math.max(acc.yAxisMax, mc, nd),
+    };
+  },
+  { yAxisMin: Infinity, yAxisMax: 0 },
+);
+
+const yAxisDomain = [Math.max(0, 0.75 * yAxisMin), 1.25 * yAxisMax];
+
+const compareHoverDenominator = data.filter(d =&gt; !!d.reinvestClose).length;
+
+const App: FC = () =&gt; {
+  const [hoverIndex, setHoverIndex] = useState(-1);
+
+  const isHovering = hoverIndex !== -1;
+
+  const invalidCompareValueLength = data.slice(0, hoverIndex).filter(d =&gt; !d.reinvestClose).length;
+  const compareHoverNumerator = hoverIndex - invalidCompareValueLength;
+  const compareHoverPercentage =
+    // eslint-disable-next-line no-nested-ternary
+    compareHoverDenominator &gt; 0
+      ? hoverIndex &gt;= 0
+        ? (compareHoverNumerator / compareHoverDenominator) * 100
+        : 100
+      : // handle the case of no valid data points. This only happens when the
+        // chart has only 2 data points.
+        compareHoverNumerator === 0
+        ? 0
+        : 100;
+  const invalidNetDepositsLength = data.slice(0, hoverIndex).filter(d =&gt; !d.netDeposits).length;
+  const netDepositHoverPercentage =
+    hoverIndex &gt;= 0
+      ? ((hoverIndex - invalidNetDepositsLength) / (data.filter(d =&gt; !!d.netDeposits).length - 1)) * 100
+      : 100;
+  const hoverPercentage = hoverIndex &gt;= 0 ? (hoverIndex / (data.filter(d =&gt; !!d.date).length - 1)) * 100 : 100;
+  const compareValue = data[hoverIndex]?.reinvestClose;
+
+  const handleMouseLeave = useMemo(() =&gt; () =&gt; setHoverIndex(-1), []);
+  const handleMouseMove = useMemo(
+    () =&gt;
+      ({ activeIndex }: MouseHandlerDataParam) =&gt;
+        setHoverIndex(Number(activeIndex ?? -1)),
+    [],
+  );
+
+  const referenceLineSegment = useMemo(
+    () =&gt;
+      [
+        {
+          x: data[hoverIndex]?.date ?? &#x27;&#x27;,
+          y: compareValue ?? data[hoverIndex]?.close ?? 0,
+        },
+        {
+          x: data[hoverIndex]?.date ?? &#x27;&#x27;,
+          y: data[hoverIndex]?.close ?? compareValue ?? 0,
+        },
+      ] as const,
+    [hoverIndex, compareValue],
+  );
+
+  return (
+    &lt;LineChart
+      style={{ width: &#x27;100%&#x27;, height: 300 }}
+      responsive
+      data={data}
+      // Leave enough space to render the active dot
+      margin={{ left: 6, right: 6 }}
+      onMouseLeave={handleMouseLeave}
+      onMouseMove={handleMouseMove}
+    &gt;
+      &lt;defs&gt;
+        &lt;linearGradient id=&quot;portfolioColor&quot; x1=&quot;0%&quot; y1=&quot;0&quot; x2=&quot;100%&quot; y2=&quot;0&quot;&gt;
+          &lt;stop offset=&quot;0%&quot; stopColor={color} stopOpacity={1} /&gt;
+          &lt;stop offset={`${hoverPercentage}%`} stopColor={color} stopOpacity={1} /&gt;
+          &lt;stop offset={`${hoverPercentage}%`} stopColor={color} stopOpacity={0.3} /&gt;
+          &lt;stop offset=&quot;100%&quot; stopColor={color} stopOpacity={0.3} /&gt;
+        &lt;/linearGradient&gt;
+        &lt;linearGradient id=&quot;netDepositsColor&quot; x1=&quot;0%&quot; y1=&quot;0&quot; x2=&quot;100%&quot; y2=&quot;0&quot;&gt;
+          &lt;stop offset=&quot;0%&quot; stopColor=&quot;#8c9699&quot; stopOpacity={1} /&gt;
+          &lt;stop offset={`${netDepositHoverPercentage}%`} stopColor=&quot;#8c9699&quot; stopOpacity={1} /&gt;
+          &lt;stop offset={`${netDepositHoverPercentage}%`} stopColor=&quot;#8c9699&quot; stopOpacity={0.3} /&gt;
+          &lt;stop offset=&quot;100%&quot; stopColor=&quot;#8c9699&quot; stopOpacity={0.3} /&gt;
+        &lt;/linearGradient&gt;
+        &lt;linearGradient id=&quot;compareValueColor&quot; x1=&quot;0%&quot; y1=&quot;0&quot; x2=&quot;100%&quot; y2=&quot;0&quot;&gt;
+          &lt;stop offset=&quot;0%&quot; stopColor={compareColor} stopOpacity={1} /&gt;
+          &lt;stop offset={`${compareHoverPercentage}%`} stopColor={compareColor} stopOpacity={1} /&gt;
+          &lt;stop offset={`${compareHoverPercentage}%`} stopColor={compareColor} stopOpacity={0.3} /&gt;
+          &lt;stop offset=&quot;100%&quot; stopColor={compareColor} stopOpacity={0.3} /&gt;
+        &lt;/linearGradient&gt;
+      &lt;/defs&gt;
+      &lt;YAxis
+        style={{
+          userSelect: &#x27;none&#x27;,
+        }}
+        dataKey={getDataKeyClose}
+        tickCount={3} // 3 ticks only: 0, half of max, max = portfolio value rounded to nearest 50k
+        orientation=&quot;right&quot;
+        mirror
+        type=&quot;number&quot;
+        name=&quot;Portfolio value&quot;
+        tickFormatter={formatUsdCompressed}
+        domain={yAxisDomain}
+      /&gt;
+      {/** XAxis is required to show the lowest tick on the y-axis */}
+      &lt;XAxis dataKey=&quot;date&quot; axisLine={false} tickLine={false} tick={false} tickSize={0} tickMargin={0} /&gt;
+      &lt;Tooltip
+        offset={10}
+        cursor={isHovering ? { stroke: &#x27;var(--color-border-2)&#x27;, strokeWidth: 1 } : false}
+        allowEscapeViewBox={{ x: true, y: true }}
+        wrapperStyle={{
+          top: &#x27;-24px&#x27;,
+          outline: &#x27;none&#x27;,
+          fontSize: &#x27;12px&#x27;,
+          zIndex: 1,
+        }}
+        content={CustomTooltip}
+        position={{
+          y: 30,
+        }}
+        animationDuration={0}
+      /&gt;
+      {/* tracking error line */}
+      &lt;ReferenceLine
+        stroke=&quot;#000AFF&quot;
+        strokeOpacity={0.4}
+        strokeWidth={12}
+        strokeLinecap=&quot;round&quot;
+        opacity={isHovering ? 1 : 0}
+        segment={referenceLineSegment}
+      /&gt;
+      &lt;Line
+        type=&quot;linear&quot;
+        dataKey={getDataKeyNetDeposits}
+        name=&quot;Net deposits&quot;
+        dot={false}
+        activeDot={false}
+        stroke=&quot;url(#netDepositsColor)&quot;
+        strokeWidth={2}
+        opacity={isHovering ? 1 : 0}
+        animationDuration={700}
+      /&gt;
+      &lt;Line
+        type=&quot;linear&quot;
+        dataKey={getDataKeyReinvestClose}
+        name=&quot;Compare value&quot;
+        dot={false}
+        activeDot={{ fill: compareColor, stroke: &#x27;var(--color-surface-base)&#x27; }}
+        stroke=&quot;url(#compareValueColor)&quot;
+        strokeDasharray=&quot;0.1 4&quot;
+        strokeLinecap=&quot;round&quot;
+        strokeWidth={2}
+        strokeOpacity={isHovering ? 1 : 0}
+        animationDuration={900}
+      /&gt;
+      &lt;Line
+        type=&quot;linear&quot;
+        dataKey={getDataKeyClose}
+        name=&quot;Portfolio value&quot;
+        stroke=&quot;var(--color-chart-1)&quot;
+        activeDot={{ fill: color, stroke: &#x27;var(--color-surface-base)&#x27; }}
+        dot={false}
+        animationDuration={500}
+      /&gt;
+      &lt;RechartsDevtools /&gt;
+    &lt;/LineChart&gt;
+  );
+};
+
+export default App;</pre><div></div></div></div><div style="height:100%;display:none;overflow:hidden"><div id="recharts-devtools-portal-R5a9" style="height:100%;background:var(--color-bg);color:var(--color-text);overflow:auto;padding:10px;display:block" class=""></div></div><div style="height:100%;display:none;overflow:hidden"><div id="recharts-devtools-portal-R5a9-annotations" style="height:100%;background:var(--color-surface-base);color:var(--color-text-1);overflow:auto;padding:10px;display:block" class=""></div></div><div style="height:100%;display:none;overflow:hidden"><div style="padding:10px;height:100%;overflow:auto"><div style="display:flex;gap:12px;margin:1ex"><label style="display:flex;align-items:center;gap:8px;cursor:pointer"><input style="margin:0;width:16px;height:16px;cursor:pointer" type="radio" name=":R55da9:" checked=""/>Autoplay Animations (default)</label><label style="display:flex;align-items:center;gap:8px;cursor:pointer"><input style="margin:0;width:16px;height:16px;cursor:pointer" type="radio" name=":R55da9:"/>Manual Animations</label></div></div></div></div></div></div></div></div></div></main><footer><p><span>Released under the </span><a href="https://opensource.org/licenses/MIT" target="_blank" rel="noreferrer">MIT License</a></p><p>Copyright (c) 2016-<!-- -->2026<!-- --> Recharts Group</p><p>Commit: <code title="ba895ca6e44cb07193e8432135dd98cce13d8e31">ba895ca6</code></p></footer></div></div>
+  </body>
+</html>
