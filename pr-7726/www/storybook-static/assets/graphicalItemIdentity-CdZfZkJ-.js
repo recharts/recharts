@@ -1,0 +1,1 @@
+function i(t){let r=5381;for(let n=0;n<t.length;n++)r=(r<<5)+r+t.charCodeAt(n);return r^=r>>>16,r*=2246822507,r^=r>>>16,r&2147483647}function l(t,r){if(r!=null&&r<=0)return 0;const n=String(t.dataKey),a=i(n);return r!=null&&r>0?a%r:a}export{l as g};
