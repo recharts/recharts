@@ -7,6 +7,7 @@ export const apiCates = [
       'LineChart',
       'ComposedChart',
       'PieChart',
+      'PolarScatterChart',
       'RadarChart',
       'RadialBarChart',
       'ScatterChart',
@@ -89,6 +90,7 @@ export const apiCates = [
     name: 'polar-components',
     items: [
       'Pie',
+      'PolarScatter',
       'Radar',
       'RadialBar',
       'PolarAngleAxis',
