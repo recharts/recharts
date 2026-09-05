@@ -61,7 +61,7 @@ interface PolarGridProps extends ZIndexable {
    */
   gridType?: 'polygon' | 'circle';
   /**
-   * Whether to render the radial lines extending from the center to the outer edge at each angle.
+   * Whether to render the radial lines extending from the inner radius to the outer edge at each angle.
    * When false, only the circular or polygonal grid lines are rendered.
    * @defaultValue true
    */
