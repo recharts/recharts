@@ -1,3 +1,62 @@
 #!/bin/bash
 
-npx playwright test --config=/recharts/test-vr/playwright.config.ts "$@"
+# Docker entry wrapper for the test-vr container (ENV PATH points at
+# test-vr/.bin, see playwright-ct.Dockerfile). CI calls playwright directly.
+
+set -u
+
+GALLERY_URL="http://localhost:3100/gallery/index.html"
+TEST_VR_DIR="/recharts/test-vr"
+ROOT_DIR="/recharts"
+
+# docker compose run reuses any existing image; one built before the #7714
+# dependency change (@playwright/test, vite) fails with a cryptic module
+# error. Point at the rebuild instead.
+for module in @playwright/test vite; do
+  if [ ! -f "$ROOT_DIR/node_modules/$module/package.json" ]; then
+    echo "error: '$module' is not installed in the Docker image." >&2
+    echo "The image was probably built before the dependencies in package.json changed." >&2
+    echo "Please rebuild it once with:" >&2
+    echo "  npm run test-vr:prepare" >&2
+    exit 1
+  fi
+done
+
+# UI mode: start Vite outside Playwright's lifecycle. UI-mode global setup
+# reruns on every page connect and restarts whatever webServer Playwright
+# spawned, killing in-flight runs. A server started here is adopted
+# (reuseExistingServer is on outside CI) and never torn down.
+if [[ " $* " == *" --ui "* ]]; then
+  VITE_PID=""
+  start_vite() {
+    echo "Starting the Vite story gallery dev server on port 3100..."
+    # --host 0.0.0.0 so the port published by test-vr:ui is reachable.
+    (cd "$TEST_VR_DIR" && exec npx vite --config vite.config.ts --port 3100 --strictPort --host 0.0.0.0) &
+    VITE_PID=$!
+  }
+  stop_vite() {
+    [ -n "$VITE_PID" ] && kill "$VITE_PID" 2>/dev/null || true
+  }
+  trap 'stop_vite; exit 1' INT TERM
+
+  if curl -fsS -o /dev/null --max-time 2 "$GALLERY_URL" 2>/dev/null; then
+    echo "Reusing an already running Vite dev server on port 3100."
+  else
+    start_vite
+    deadline=$((SECONDS + 90))
+    until curl -fsS -o /dev/null --max-time 2 "$GALLERY_URL" 2>/dev/null; do
+      if [ $SECONDS -ge $deadline ]; then
+        echo "error: Vite did not become ready on port 3100 within 90s." >&2
+        stop_vite
+        exit 1
+      fi
+      sleep 1
+    done
+    echo "Vite dev server is ready."
+  fi
+
+  # exec: Vite stays a child of this container and dies with it.
+  exec npx playwright test --config="$TEST_VR_DIR/playwright.config.ts" "$@"
+fi
+
+npx playwright test --config="$TEST_VR_DIR/playwright.config.ts" "$@"

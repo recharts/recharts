@@ -152,6 +152,32 @@ Docker is the recommended environment for running visual regression tests and up
 so that screenshots remain consistent across different development machines and operating systems
 (avoiding font, subpixel rendering, and OS differences).
 
+## Running tests in UI mode
+
+`npm run test-vr:ui` opens the Playwright UI at http://localhost:8080 and also exposes the
+story gallery at http://localhost:3100/gallery/index.html.
+
+The gallery dev server is started once per container session (`test-vr/.bin/playwright-test`
+pre-starts it), so reloading the UI or opening a second tab is safe. Prefer running a single
+spec file or test, or the `chromium` project: running all projects is long and CPU heavy.
+
+## Error: Cannot find module '@playwright/test' (or 'vite')
+
+```
+Error: Cannot find module '@playwright/test'
+Require stack:
+- /recharts/test-vr/playwright.config.ts
+...
+```
+
+This means the Docker image was built before the dependencies in `package.json` changed
+(for example after checking out a branch that migrated the test setup). `docker compose run`
+does not rebuild the image automatically. Run once:
+
+```sh
+npm run test-vr:prepare
+```
+
 ## Error: browserType.launch: Executable doesn't exist
 
 Sometimes you may find an error that the `playwright` package no longer matches the `playwright` version in the Docker image:

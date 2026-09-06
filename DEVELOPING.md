@@ -103,6 +103,8 @@ You only need to do this once.
 
 This takes two or three minutes to complete.
 You will need to re-build every time you make a change to dependencies in `package.json`.
+If you forget and get a `Cannot find module '@playwright/test'` (or `vite`) error,
+run `npm run test-vr:prepare` to rebuild the image.
 
 ```sh
 npm run test-vr:prepare

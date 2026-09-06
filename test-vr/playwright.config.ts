@@ -71,6 +71,10 @@ export default defineConfig({
   /*
    * The gallery dev server that renders the stories. Playwright starts it
    * before the tests and mounts stories through window.mount() on this page.
+   *
+   * In UI mode the docker entry wrapper (test-vr/.bin/playwright-test)
+   * pre-starts Vite, so Playwright adopts it and UI page reloads cannot
+   * restart it mid-run (UI-mode global setup reruns on every connect).
    */
   webServer: {
     command: 'npx vite --config vite.config.ts --port 3100 --strictPort',
