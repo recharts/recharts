@@ -472,7 +472,7 @@ var require_scroll = __commonJS({
     };
     function make(prop) {
       return function(el, to, opts, cb) {
-        opts = opts || {}, typeof opts == "function" && (cb = opts, opts = {}), typeof cb != "function" && (cb = noop5);
+        opts = opts || {}, typeof opts == "function" && (cb = opts, opts = {}), typeof cb != "function" && (cb = noop6);
         var start = ms(), from = el[prop], ease = opts.ease || inOutSine, duration = isNaN(opts.duration) ? 350 : +opts.duration, cancelled = !1;
         return from === to ? cb(E_NOSCROLL, el[prop]) : requestAnimationFrame(animate), cancel;
         function cancel() {
@@ -490,7 +490,7 @@ var require_scroll = __commonJS({
     function inOutSine(n3) {
       return 0.5 * (1 - Math.cos(Math.PI * n3));
     }
-    function noop5() {
+    function noop6() {
     }
   }
 });
@@ -1258,7 +1258,7 @@ var require_store2 = __commonJS({
 init_react();
 
 // global-externals:storybook/internal/channels
-var channels_default = __STORYBOOK_CHANNELS__, { Channel, HEARTBEAT_INTERVAL, HEARTBEAT_MAX_LATENCY, PostMessageTransport, WebsocketTransport, clearChannel, createBrowserChannel, ensureChannel, getChannel, installNoopChannel, requireChannel, setChannel } = __STORYBOOK_CHANNELS__;
+var channels_default = __STORYBOOK_CHANNELS__, { Channel, HEARTBEAT_INTERVAL, HEARTBEAT_MAX_LATENCY, PostMessageTransport, SERVER_CHANNEL_PATH, WebsocketTransport, clearChannel, createBrowserChannel, ensureChannel, getChannel, installNoopChannel, requireChannel, setChannel } = __STORYBOOK_CHANNELS__;
 
 // global-externals:storybook/internal/core-events
 var core_events_default = __STORYBOOK_CORE_EVENTS__, { AI_PROMPT_NUDGE, AI_SETUP_ANALYTICS_REQUEST, AI_SETUP_ANALYTICS_RESPONSE, ARGTYPES_INFO_REQUEST, ARGTYPES_INFO_RESPONSE, CHANNEL_CREATED, CHANNEL_WS_DISCONNECT, CONFIG_ERROR, CREATE_NEW_STORYFILE_REQUEST, CREATE_NEW_STORYFILE_RESPONSE, CURRENT_STORY_WAS_SET, DOCS_PREPARED, DOCS_RENDERED, FILE_COMPONENT_SEARCH_REQUEST, FILE_COMPONENT_SEARCH_RESPONSE, FORCE_REMOUNT, FORCE_RE_RENDER, GHOST_STORIES_REQUEST, GHOST_STORIES_RESPONSE, GLOBALS_UPDATED, MANAGER_INERT_ATTRIBUTE_CHANGED, NAVIGATE_URL, OPEN_IN_EDITOR_REQUEST, OPEN_IN_EDITOR_RESPONSE, PLAY_FUNCTION_THREW_EXCEPTION, PRELOAD_ENTRIES, PREVIEW_BUILDER_PROGRESS, PREVIEW_INITIALIZED, PREVIEW_KEYDOWN, REGISTER_SUBSCRIPTION, REQUEST_WHATS_NEW_DATA, RESET_STORY_ARGS, RESULT_WHATS_NEW_DATA, SAVE_STORY_REQUEST, SAVE_STORY_RESPONSE, SELECT_STORY, SET_CONFIG, SET_CURRENT_STORY, SET_FILTER, SET_GLOBALS, SET_INDEX, SET_STORIES, SET_WHATS_NEW_CACHE, SHARED_STATE_CHANGED, SHARED_STATE_SET, SHARE_ISOLATE_MODE, SIDEBAR_FILTER_CHANGED, STORIES_COLLAPSE_ALL, STORIES_EXPAND_ALL, STORY_ARGS_UPDATED, STORY_CHANGED, STORY_ERRORED, STORY_FINISHED, STORY_HOT_UPDATED, STORY_INDEX_INVALIDATED, STORY_MISSING, STORY_PREPARED, STORY_RENDERED, STORY_RENDER_PHASE_CHANGED, STORY_SPECIFIED, STORY_THREW_EXCEPTION, STORY_UNCHANGED, TELEMETRY_ERROR, TOGGLE_WHATS_NEW_NOTIFICATIONS, UNHANDLED_ERRORS_WHILE_PLAYING, UPDATE_GLOBALS, UPDATE_QUERY_PARAMS, UPDATE_STORY_ARGS } = __STORYBOOK_CORE_EVENTS__;
@@ -1619,6 +1619,7 @@ var NEW_ICON_MAP = icons_exports, Svg = styled.svg`
   facesad: "FaceSadIcon",
   accessibility: "AccessibilityIcon",
   accessibilityalt: "AccessibilityAltIcon",
+  accessibilityignored: "AccessibilityIgnoredIcon",
   arrowup: "ChevronUpIcon",
   arrowdown: "ChevronDownIcon",
   arrowleft: "ChevronLeftIcon",
@@ -1627,22 +1628,38 @@ var NEW_ICON_MAP = icons_exports, Svg = styled.svg`
   arrowdownalt: "ArrowDownIcon",
   arrowleftalt: "ArrowLeftIcon",
   arrowrightalt: "ArrowRightIcon",
+  arrowtopleft: "ArrowTopLeftIcon",
+  arrowtopright: "ArrowTopRightIcon",
+  arrowbottomleft: "ArrowBottomLeftIcon",
+  arrowbottomright: "ArrowBottomRightIcon",
+  arrowsolidup: "ArrowSolidUpIcon",
+  arrowsoliddown: "ArrowSolidDownIcon",
+  arrowsolidleft: "ArrowSolidLeftIcon",
+  arrowsolidright: "ArrowSolidRightIcon",
+  chevronsmallup: "ChevronSmallUpIcon",
+  chevronsmalldown: "ChevronSmallDownIcon",
+  chevronsmallleft: "ChevronSmallLeftIcon",
+  chevronsmallright: "ChevronSmallRightIcon",
   expandalt: "ExpandAltIcon",
   collapse: "CollapseIcon",
   expand: "ExpandIcon",
   unfold: "UnfoldIcon",
   transfer: "TransferIcon",
   redirect: "RedirectIcon",
+  jumpto: "JumpToIcon",
+  popout: "PopOutIcon",
   undo: "UndoIcon",
   reply: "ReplyIcon",
   sync: "SyncIcon",
   upload: "UploadIcon",
   download: "DownloadIcon",
+  save: "SaveIcon",
   back: "BackIcon",
   proceed: "ProceedIcon",
   refresh: "RefreshIcon",
   globe: "GlobeIcon",
   compass: "CompassIcon",
+  direction: "DirectionIcon",
   location: "LocationIcon",
   pin: "PinIcon",
   time: "TimeIcon",
@@ -1653,7 +1670,9 @@ var NEW_ICON_MAP = icons_exports, Svg = styled.svg`
   info: "InfoIcon",
   question: "QuestionIcon",
   support: "SupportIcon",
+  bug: "BugIcon",
   alert: "AlertIcon",
+  alertalt: "AlertAltIcon",
   email: "EmailIcon",
   phone: "PhoneIcon",
   link: "LinkIcon",
@@ -1664,6 +1683,7 @@ var NEW_ICON_MAP = icons_exports, Svg = styled.svg`
   share: "ShareIcon",
   circle: "CircleIcon",
   circlehollow: "CircleHollowIcon",
+  diamond: "DiamondIcon",
   bookmarkhollow: "BookmarkHollowIcon",
   bookmark: "BookmarkIcon",
   hearthollow: "HeartHollowIcon",
@@ -1678,13 +1698,19 @@ var NEW_ICON_MAP = icons_exports, Svg = styled.svg`
   beaker: "BeakerIcon",
   hourglass: "HourglassIcon",
   flag: "FlagIcon",
+  gift: "GiftIcon",
+  sticker: "StickerIcon",
   cloudhollow: "CloudHollowIcon",
+  cloud: "CloudIcon",
   edit: "EditIcon",
+  editor: "EditorIcon",
   cog: "CogIcon",
   nut: "NutIcon",
   wrench: "WrenchIcon",
+  wand: "WandIcon",
   ellipsis: "EllipsisIcon",
   check: "CheckIcon",
+  checklist: "ChecklistIcon",
   form: "FormIcon",
   batchdeny: "BatchDenyIcon",
   batchaccept: "BatchAcceptIcon",
@@ -1702,14 +1728,22 @@ var NEW_ICON_MAP = icons_exports, Svg = styled.svg`
   passed: "PassedIcon",
   changed: "ChangedIcon",
   failed: "FailedIcon",
+  status: "StatusIcon",
+  statuspass: "StatusPassIcon",
+  statusfail: "StatusFailIcon",
+  statuswarn: "StatusWarnIcon",
+  statusnew: "StatusNewIcon",
   clear: "ClearIcon",
+  sweep: "SweepIcon",
   comment: "CommentIcon",
   commentadd: "CommentAddIcon",
   requestchange: "RequestChangeIcon",
   comments: "CommentsIcon",
+  chat: "ChatIcon",
   lock: "LockIcon",
   unlock: "UnlockIcon",
   key: "KeyIcon",
+  command: "CommandIcon",
   outbox: "OutboxIcon",
   credit: "CreditIcon",
   button: "ButtonIcon",
@@ -1735,8 +1769,11 @@ var NEW_ICON_MAP = icons_exports, Svg = styled.svg`
   photo: "PhotoIcon",
   component: "ComponentIcon",
   grid: "GridIcon",
+  gridalt: "GridAltIcon",
   outline: "OutlineIcon",
   photodrag: "PhotoDragIcon",
+  photostabilize: "PhotoStabilizeIcon",
+  drag: "DragIcon",
   search: "SearchIcon",
   zoom: "ZoomIcon",
   zoomout: "ZoomOutIcon",
@@ -1746,21 +1783,27 @@ var NEW_ICON_MAP = icons_exports, Svg = styled.svg`
   lightning: "LightningIcon",
   lightningoff: "LightningOffIcon",
   contrast: "ContrastIcon",
+  contrastignored: "ContrastIgnoredIcon",
   switchalt: "SwitchAltIcon",
   mirror: "MirrorIcon",
   grow: "GrowIcon",
   paintbrush: "PaintBrushIcon",
+  paintbrushalt: "PaintBrushAltIcon",
   ruler: "RulerIcon",
   stop: "StopIcon",
   camera: "CameraIcon",
+  camerastabilize: "CameraStabilizeIcon",
   video: "VideoIcon",
   speaker: "SpeakerIcon",
   play: "PlayIcon",
   playback: "PlayBackIcon",
   playnext: "PlayNextIcon",
+  playhollow: "PlayHollowIcon",
+  playallhollow: "PlayAllHollowIcon",
   rewind: "RewindIcon",
   fastforward: "FastForwardIcon",
   stopalt: "StopAltIcon",
+  stopalthollow: "StopAltHollowIcon",
   sidebyside: "SideBySideIcon",
   stacked: "StackedIcon",
   sun: "SunIcon",
@@ -1770,6 +1813,7 @@ var NEW_ICON_MAP = icons_exports, Svg = styled.svg`
   copy: "CopyIcon",
   category: "CategoryIcon",
   folder: "FolderIcon",
+  files: "FilesIcon",
   print: "PrintIcon",
   graphline: "GraphLineIcon",
   calendar: "CalendarIcon",
@@ -1777,10 +1821,15 @@ var NEW_ICON_MAP = icons_exports, Svg = styled.svg`
   menu: "MenuIcon",
   menualt: "MenuIcon",
   filter: "FilterIcon",
+  sortup: "SortUpIcon",
+  sortdown: "SortDownIcon",
   docchart: "DocChartIcon",
   doclist: "DocListIcon",
   markup: "MarkupIcon",
   bold: "BoldIcon",
+  italic: "ItalicIcon",
+  alignleft: "AlignLeftIcon",
+  alignright: "AlignRightIcon",
   paperclip: "PaperClipIcon",
   listordered: "ListOrderedIcon",
   listunordered: "ListUnorderedIcon",
@@ -1809,9 +1858,11 @@ var NEW_ICON_MAP = icons_exports, Svg = styled.svg`
   gitlab: "GitlabIcon",
   google: "GoogleIcon",
   graphql: "GraphqlIcon",
+  linkedin: "LinkedinIcon",
   medium: "MediumIcon",
   redux: "ReduxIcon",
   twitter: "TwitterIcon",
+  x: "XIcon",
   youtube: "YoutubeIcon",
   vscode: "VSCodeIcon"
 };
@@ -3069,9 +3120,6 @@ function useMediaQuery(query) {
 
 // src/manager/components/layout/LayoutProvider.tsx
 var LayoutContext = createContext({
-  isMobileMenuOpen: !1,
-  setMobileMenuOpen: () => {
-  },
   isMobileAboutOpen: !1,
   setMobileAboutOpen: () => {
   },
@@ -3081,10 +3129,8 @@ var LayoutContext = createContext({
   isDesktop: !1,
   isMobile: !1
 }), LayoutProvider = ({ children, forceDesktop }) => {
-  let [isMobileMenuOpen, setMobileMenuOpen] = useState(!1), [isMobileAboutOpen, setMobileAboutOpen] = useState(!1), [isMobilePanelOpen, setMobilePanelOpen] = useState(!1), isDesktop = forceDesktop ?? useMediaQuery(`(min-width: ${600}px)`), isMobile2 = !isDesktop, contextValue = useMemo(
+  let [isMobileAboutOpen, setMobileAboutOpen] = useState(!1), [isMobilePanelOpen, setMobilePanelOpen] = useState(!1), isDesktop = forceDesktop ?? useMediaQuery(`(min-width: ${600}px)`), isMobile2 = !isDesktop, contextValue = useMemo(
     () => ({
-      isMobileMenuOpen,
-      setMobileMenuOpen,
       isMobileAboutOpen,
       setMobileAboutOpen,
       isMobilePanelOpen,
@@ -3092,16 +3138,7 @@ var LayoutContext = createContext({
       isDesktop,
       isMobile: isMobile2
     }),
-    [
-      isMobileMenuOpen,
-      setMobileMenuOpen,
-      isMobileAboutOpen,
-      setMobileAboutOpen,
-      isMobilePanelOpen,
-      setMobilePanelOpen,
-      isDesktop,
-      isMobile2
-    ]
+    [isMobileAboutOpen, isMobilePanelOpen, isDesktop, isMobile2]
   );
   return react_default.createElement(LayoutContext.Provider, { value: contextValue }, children);
 }, useLayout = () => useContext(LayoutContext);
@@ -4287,7 +4324,7 @@ var MobileAddonsDrawer = ({
     ariaLabel: "Addon panel",
     transitionDuration: 300,
     variant: "bottom-drawer",
-    height: "42vh",
+    height: "42dvh",
     id,
     open: isOpen,
     onOpenChange
@@ -4598,7 +4635,7 @@ var MobileMenuDrawer = ({
     ariaLabel: "Menu",
     transitionDuration: 300,
     variant: "bottom-drawer",
-    height: "80vh",
+    height: "80dvh",
     id,
     open: isOpen,
     onOpenChange
@@ -4632,7 +4669,8 @@ var useFullStoryName = () => {
   isMobilePanelOpen,
   setMobilePanelOpen,
   showMenu,
-  showPanel
+  showPanel,
+  navShortcut
 }) => {
   let headingId = $bdb11010cef70236$export$f680877a34711e37(), sectionRef = useRef(null), { landmarkProps } = useLandmark(
     { "aria-labelledby": headingId, role: "banner" },
@@ -4646,7 +4684,8 @@ var useFullStoryName = () => {
       onClick: () => setMobileMenuOpen(!isMobileMenuOpen),
       ariaLabel: "Open navigation menu",
       "aria-expanded": isMobileMenuOpen,
-      "aria-controls": "storybook-mobile-menu"
+      "aria-controls": isMobileMenuOpen ? "storybook-mobile-menu" : void 0,
+      shortcut: navShortcut
     },
     react_default.createElement(MenuIcon, null),
     react_default.createElement(Text, null, fullStoryName)
@@ -4658,7 +4697,7 @@ var useFullStoryName = () => {
       onClick: () => setMobilePanelOpen(!0),
       ariaLabel: "Open addon panel",
       "aria-expanded": isMobilePanelOpen,
-      "aria-controls": "storybook-mobile-addon-panel"
+      "aria-controls": isMobilePanelOpen ? "storybook-mobile-addon-panel" : void 0
     },
     react_default.createElement(BottomBarToggleIcon, null)
   ));
@@ -4669,7 +4708,9 @@ var useFullStoryName = () => {
   showPanel,
   ...props
 }) => {
-  let { isMobileMenuOpen, isMobilePanelOpen, setMobileMenuOpen, setMobilePanelOpen } = useLayout(), fullStoryName = useFullStoryName();
+  let { isMobilePanelOpen, setMobilePanelOpen } = useLayout(), fullStoryName = useFullStoryName(), api = useStorybookApi(), { layout, ui } = useStorybookState(), isMobileMenuOpen = layout.showMobileNavigation, setMobileMenuOpen = useCallback((open) => api.setMobileNavigation(open), [api]), apiRef = useRef(api);
+  apiRef.current = api, useEffect(() => () => apiRef.current.setMobileNavigation(!1), []);
+  let navShortcut = ui.enableShortcuts ?? !0 ? api.getShortcutKeys().toggleNav : void 0;
   return useLayoutEffect(() => {
     showMenu || setMobileMenuOpen(!1);
   }, [showMenu, setMobileMenuOpen]), react_default.createElement(Container4, { ...props }, showMenu && react_default.createElement(
@@ -4697,7 +4738,8 @@ var useFullStoryName = () => {
       isMobilePanelOpen,
       setMobilePanelOpen,
       showMenu,
-      showPanel
+      showPanel,
+      navShortcut
     }
   ));
 }, Container4 = styled.section(({ theme }) => ({
@@ -4783,20 +4825,22 @@ init_react();
 
 // src/components/components/tooltip/TooltipNote.tsx
 init_react();
-var Note = styled.div(({ theme }) => ({
-  fontFamily: theme.typography.fonts.base,
-  padding: "2px 6px",
-  lineHeight: "16px",
-  fontSize: 10,
-  fontWeight: theme.typography.weight.bold,
-  color: theme.color.lightest,
-  boxShadow: "0 0 5px 0 rgba(0, 0, 0, 0.3)",
-  borderRadius: 4,
-  whiteSpace: "nowrap",
-  pointerEvents: "none",
-  zIndex: -1,
-  background: theme.base === "light" ? "rgba(60, 60, 60, 0.9)" : "rgba(0, 0, 0, 0.95)"
-})), TooltipNote2 = ({ note, ...props }) => react_default.createElement(Note, { ...props }, note);
+var DEFAULT_MAX_WIDTH = 260, Note = styled.div(
+  ({ theme }) => ({
+    fontFamily: theme.typography.fonts.base,
+    padding: "2px 6px",
+    lineHeight: "16px",
+    fontSize: 10,
+    fontWeight: theme.typography.weight.bold,
+    color: theme.color.lightest,
+    boxShadow: "0 0 5px 0 rgba(0, 0, 0, 0.3)",
+    borderRadius: 4,
+    pointerEvents: "none",
+    zIndex: -1,
+    background: theme.base === "light" ? "rgba(60, 60, 60, 0.9)" : "rgba(0, 0, 0, 0.95)"
+  }),
+  ({ maxWidth }) => ({ maxWidth })
+), TooltipNote2 = ({ note, maxWidth = DEFAULT_MAX_WIDTH, ...props }) => react_default.createElement(Note, { maxWidth, ...props }, note);
 
 // src/components/components/tooltip/TooltipProvider.tsx
 init_react();
@@ -10240,50 +10284,32 @@ init_react();
 
 // src/shared/review/events.ts
 var REVIEW_NAMESPACE = "storybook/review", REVIEW_EVENTS = {
-  // `@storybook/addon-mcp` display-review tool → core-server: the raw agent payload.
-  PUSH_REVIEW: `${REVIEW_NAMESPACE}/push-review`,
-  // core-server → tabs: display the (createdAt-stamped) review.
-  DISPLAY_REVIEW: `${REVIEW_NAMESPACE}/display-review`,
-  // tab → core-server: replay the cached review on mount.
-  REQUEST_REVIEW: `${REVIEW_NAMESPACE}/request-review`,
-  // core-server → tabs: a watched source file changed after the review was cached.
-  REVIEW_STALE: `${REVIEW_NAMESPACE}/review-stale`,
-  // tab → core-server: dismiss the cached review.
-  DISMISS_REVIEW: `${REVIEW_NAMESPACE}/dismiss-review`,
-  // core-server → tabs: the review was dismissed.
-  REVIEW_DISMISSED: `${REVIEW_NAMESPACE}/review-dismissed`,
   // tab → core-server: a review page (summary or detail) was viewed; forwarded to telemetry.
   PAGEVIEW: `${REVIEW_NAMESPACE}/pageview`
 };
 
 // src/manager/components/review/constants.ts
-var PAGE_ID = `${REVIEW_NAMESPACE}/page`, REVIEW_CHANGES_URL = "/review/", PRE_REVIEW_RETURN_KEY = `${REVIEW_NAMESPACE}/pre-review-return`, AUTO_ENTERED_SESSION_KEY = `${REVIEW_NAMESPACE}/auto-entered`, VISITED_REVIEW_CREATED_AT_KEY = `${REVIEW_NAMESPACE}/visited-created-at`, NOTIFIED_REVIEW_CREATED_AT_KEY = `${REVIEW_NAMESPACE}/notified-created-at`, REVIEW_AVAILABLE_NOTIFICATION_ID = `${REVIEW_NAMESPACE}/review-available`, reviewAvailableNotificationId = (createdAt) => `${REVIEW_AVAILABLE_NOTIFICATION_ID}/${createdAt}`;
+var PAGE_ID = `${REVIEW_NAMESPACE}/page`, REVIEW_CHANGES_URL = "/review/", REVIEW_MODE_SESSION_KEY = `${REVIEW_NAMESPACE}/review-mode`, PRE_REVIEW_RETURN_KEY = `${REVIEW_NAMESPACE}/pre-review-return`, AUTO_ENTERED_SESSION_KEY = `${REVIEW_NAMESPACE}/auto-entered`, autoEnteredLatchValue = (createdAt) => String(createdAt ?? "unknown"), VISITED_REVIEW_CREATED_AT_KEY = `${REVIEW_NAMESPACE}/visited-created-at`, NOTIFIED_REVIEW_CREATED_AT_KEY = `${REVIEW_NAMESPACE}/notified-created-at`, REVIEW_AVAILABLE_NOTIFICATION_ID = `${REVIEW_NAMESPACE}/review-available`, reviewAvailableNotificationId = (createdAt) => `${REVIEW_AVAILABLE_NOTIFICATION_ID}/${createdAt}`;
 
-// global-externals:storybook/internal/types
-var types_default = __STORYBOOK_TYPES__, { Addon_TypesEnum, CHANGE_DETECTION_STATUS_TYPE_ID, CoreWebpackCompiler, Feature, NON_AGGREGATED_STATUS_TYPE_IDS, REVIEW_EVENTS: REVIEW_EVENTS2, REVIEW_NAMESPACE: REVIEW_NAMESPACE2, REVIEW_STATUS_TYPE_ID, SupportedBuilder, SupportedFramework, SupportedLanguage, SupportedRenderer } = __STORYBOOK_TYPES__;
-
-// src/manager/components/review/review-status.ts
-var REVIEWING_STATUS_VALUE = "status-value:reviewing", collectReviewStoryIds = (review) => {
-  let storyIds = /* @__PURE__ */ new Set();
-  for (let collection of review.collections)
-    for (let storyId of collection.storyIds)
-      storyIds.add(storyId);
-  return storyIds;
-}, createReviewStatus = (storyId) => ({
-  storyId,
-  typeId: REVIEW_STATUS_TYPE_ID,
-  value: REVIEWING_STATUS_VALUE,
-  title: "",
-  description: "",
-  sidebarContextMenu: !1
-}), applyReviewStatuses = (statusStore, storyIds) => {
-  statusStore.unset(), storyIds.size > 0 && statusStore.set([...storyIds].map(createReviewStatus));
-}, clearReviewStatuses = (statusStore) => {
-  statusStore.unset();
-};
-
-// src/manager/components/review/review-store.ts
+// src/manager/components/review/review-context.ts
 init_react();
+var noop2 = () => {
+}, emptyReviewContextValue = {
+  review: null,
+  pendingReview: null,
+  storyInfo: {},
+  flattenedEntries: [],
+  newlyAddedStoryIds: /* @__PURE__ */ new Set(),
+  activeEntry: null,
+  activeIndex: -1,
+  isSummaryVisible: !1,
+  banner: null,
+  isInReviewMode: !1,
+  openSummary: noop2,
+  openEntry: noop2,
+  leaveReview: noop2,
+  dismiss: noop2
+}, ReviewContext = createContext(emptyReviewContextValue), useReviewContext = () => useContext(ReviewContext);
 
 // src/manager/components/review/session-store.ts
 var sessionStore = {
@@ -10306,204 +10332,6 @@ var sessionStore = {
     } catch {
     }
   }
-};
-
-// src/manager/components/review/review-store.ts
-var REVIEW_MODE_SESSION_KEY = `${REVIEW_NAMESPACE}/review-mode`, emptyCore = {
-  state: null,
-  pendingReview: null,
-  isStale: !1,
-  isInReviewMode: !1,
-  isExiting: !1
-}, emptyDerived = {
-  storyInfo: {},
-  flattenedEntries: [],
-  newlyAddedStoryIds: /* @__PURE__ */ new Set(),
-  activeEntry: null,
-  activeIndex: -1,
-  isSummaryVisible: !1,
-  banner: null
-}, core = {
-  ...emptyCore,
-  isInReviewMode: sessionStore.read(REVIEW_MODE_SESSION_KEY) === "1"
-}, derived = emptyDerived, buildSnapshot = () => ({
-  ...derived,
-  state: core.state,
-  pendingReview: core.pendingReview,
-  isStale: core.isStale,
-  isInReviewMode: core.isInReviewMode,
-  isExiting: core.isExiting
-}), snapshot = buildSnapshot(), listeners = /* @__PURE__ */ new Set(), notify = () => {
-  snapshot = buildSnapshot(), listeners.forEach((listener) => listener());
-}, commit = (patch) => {
-  core = { ...core, ...patch }, notify();
-}, reviewStore = {
-  getState: () => snapshot,
-  subscribe: (listener) => (listeners.add(listener), () => listeners.delete(listener)),
-  /** Show a review, replacing any displayed or deferred one. */
-  displayReview: (next) => {
-    commit({ state: next, pendingReview: null, isStale: !!next.stale });
-  },
-  /** Hold an updated payload until the user accepts it. */
-  deferReview: (next) => {
-    commit({ pendingReview: next });
-  },
-  setStale: (isStale) => {
-    commit({ isStale });
-  },
-  /** Drop all review state (dismissal), including the persisted review-mode flag. */
-  clearReview: () => {
-    sessionStore.remove(REVIEW_MODE_SESSION_KEY), commit({ state: null, pendingReview: null, isStale: !1, isInReviewMode: !1 });
-  },
-  /** Toggle review mode, persisted so it survives reloads. */
-  setReviewMode: (active) => {
-    active ? sessionStore.write(REVIEW_MODE_SESSION_KEY, "1") : sessionStore.remove(REVIEW_MODE_SESSION_KEY), commit({ isInReviewMode: active });
-  },
-  setExiting: (isExiting) => {
-    commit({ isExiting });
-  },
-  /** Push values derived by ReviewProvider from index/status/route inputs. */
-  setDerived: (next) => {
-    derived = next, notify();
-  },
-  reset: () => {
-    core = { ...emptyCore }, derived = emptyDerived, notify();
-  }
-}, useReview = () => useSyncExternalStore(reviewStore.subscribe, reviewStore.getState, reviewStore.getState);
-
-// src/manager/components/review/review-mode.ts
-var FILTERS_SNAPSHOT_SESSION_KEY = `${REVIEW_NAMESPACE}/filters-snapshot`, stripReviewingStatusFilter = (filters) => ({
-  ...filters,
-  includedStatusFilters: filters.includedStatusFilters.filter(
-    (value) => value !== REVIEWING_STATUS_VALUE
-  ),
-  excludedStatusFilters: filters.excludedStatusFilters.filter(
-    (value) => value !== REVIEWING_STATUS_VALUE
-  )
-}), isReviewModeActive = () => reviewStore.getState().isInReviewMode, readJson = (key) => {
-  let raw = sessionStore.read(key);
-  if (raw === null)
-    return null;
-  try {
-    return JSON.parse(raw);
-  } catch {
-    return null;
-  }
-}, enterReviewMode = async (api, filters) => {
-  if (!isReviewModeActive()) {
-    sessionStore.write(
-      FILTERS_SNAPSHOT_SESSION_KEY,
-      JSON.stringify(stripReviewingStatusFilter(filters))
-    ), reviewStore.setReviewMode(!0);
-    try {
-      await api.setAllTagFilters([], []), await api.setAllStatusFilters([REVIEWING_STATUS_VALUE], []);
-    } catch (error) {
-      throw reviewStore.setReviewMode(!1), sessionStore.remove(FILTERS_SNAPSHOT_SESSION_KEY), error;
-    }
-  }
-}, exitReviewMode = async (api) => {
-  let filters = readJson(FILTERS_SNAPSHOT_SESSION_KEY);
-  if (filters) {
-    let restored = stripReviewingStatusFilter(filters);
-    await api.setAllTagFilters(restored.includedTagFilters, restored.excludedTagFilters), await api.setAllStatusFilters(restored.includedStatusFilters, restored.excludedStatusFilters);
-  } else
-    await api.removeStatusFilters([REVIEWING_STATUS_VALUE]);
-  sessionStore.remove(FILTERS_SNAPSHOT_SESSION_KEY), reviewStore.setReviewMode(!1);
-};
-
-// src/manager/components/review/review-navigation.ts
-var prettifyComponentId = (componentId) => componentId.split(/[-/]/).filter(Boolean).map((part) => part.charAt(0).toUpperCase() + part.slice(1)).join(" "), buildReviewChangesSummaryHref = () => `?path=${REVIEW_CHANGES_URL}`, STORYBOOK_ROOT_HREF = "/", buildSummaryBackHref = (returnSearch) => returnSearch || STORYBOOK_ROOT_HREF, REVIEW_SUMMARY_BACK_ATTR = "data-review-summary-back", buildReviewStoryTarget = (entry) => `/story/${entry.storyId}&${REVIEW_COLLECTION_QUERY_PARAM}=${entry.collectionIndex}`, buildReviewStoryHref = (entry) => `?path=${buildReviewStoryTarget(entry)}`, parseReviewStoryHref = (href) => {
-  if (!href.startsWith("?path=/story/"))
-    return null;
-  let query = href.startsWith("?") ? href.slice(1) : href, params = new URLSearchParams(query), path = params.get("path");
-  if (!path?.startsWith("/story/"))
-    return null;
-  let storyId = path.slice(7), collectionIndex = parseCollectionIndex(
-    params.get(REVIEW_COLLECTION_QUERY_PARAM) ?? void 0
-  );
-  return !storyId || collectionIndex === void 0 ? null : { storyId, collectionIndex };
-}, buildFlattenedNavEntries = (state) => {
-  let entries = [];
-  return state.collections.forEach((collection, collectionIndex) => {
-    for (let storyId of collection.storyIds)
-      entries.push({ storyId, collectionIndex });
-  }), entries;
-}, isReviewReturnSearch = (search) => {
-  let normalized = search.startsWith("?") ? search.slice(1) : search, params = new URLSearchParams(normalized), path = params.get("path") ?? "";
-  return isReviewSummaryPath(path) || path.startsWith(REVIEW_CHANGES_URL) ? !0 : path.startsWith("/story/") && params.has(REVIEW_COLLECTION_QUERY_PARAM);
-}, parseStoryIdFromPath = (path) => path.startsWith("/story/") && path.slice(7) || null, parseCollectionIndex = (value) => {
-  if (value === void 0 || !/^\d+$/.test(value))
-    return;
-  let parsed = Number(value);
-  return Number.isInteger(parsed) ? parsed : void 0;
-}, resolveActiveNavEntry = (entries, storyId, collectionIndex) => {
-  if (entries.length === 0)
-    return null;
-  if (collectionIndex !== void 0) {
-    let exact = entries.find(
-      (entry) => entry.storyId === storyId && entry.collectionIndex === collectionIndex
-    );
-    if (exact)
-      return exact;
-  }
-  return entries.find((entry) => entry.storyId === storyId) ?? null;
-}, resolveNavIndex = (entries, active) => entries.findIndex(
-  (entry) => entry.storyId === active.storyId && entry.collectionIndex === active.collectionIndex
-);
-
-// src/manager/components/review/review-notification.ts
-var isUnseen = (createdAt) => createdAt !== void 0 && sessionStore.read(VISITED_REVIEW_CREATED_AT_KEY) !== String(createdAt), readVisitedCreatedAt = () => {
-  let raw = sessionStore.read(VISITED_REVIEW_CREATED_AT_KEY);
-  if (raw === null)
-    return;
-  let visited = Number(raw);
-  return Number.isFinite(visited) ? visited : void 0;
-}, isSupersededByVisit = (createdAt) => {
-  let visited = readVisitedCreatedAt();
-  return createdAt !== void 0 && visited !== void 0 && visited > createdAt;
-}, readNotifiedCreatedAt = () => {
-  let raw = sessionStore.read(NOTIFIED_REVIEW_CREATED_AT_KEY);
-  if (raw === null)
-    return;
-  let notified = Number(raw);
-  return Number.isFinite(notified) ? notified : void 0;
-}, isOnReviewRoute = (path, collectionIndex) => isReviewSummaryPath(path) || path.startsWith("/story/") && collectionIndex !== void 0, shouldSkipArrivalNotification = (path, collectionIndex, review, displayed, deferred) => isOnReviewRoute(path, collectionIndex) ? deferred?.createdAt !== void 0 && deferred.createdAt === review.createdAt ? !0 : displayed?.createdAt !== void 0 && displayed.createdAt === review.createdAt : !1, pickReviewToNotify = (displayed, deferred) => deferred?.createdAt !== void 0 && isUnseen(deferred.createdAt) ? deferred : displayed?.createdAt !== void 0 && isUnseen(displayed.createdAt) && !isSupersededByVisit(displayed.createdAt) ? displayed : null, shouldAutoAcceptOnRoute = (path, collectionIndex, candidate, displayed, deferred) => {
-  let createdAt = candidate.createdAt;
-  return !(createdAt === void 0 || !isUnseen(createdAt) || displayed?.createdAt !== createdAt || !isOnReviewRoute(path, collectionIndex) || deferred?.createdAt !== void 0 && deferred.createdAt !== displayed.createdAt);
-}, clearReviewNotifications = (api, ...createdAts) => {
-  for (let createdAt of new Set(
-    createdAts.filter((value) => value != null)
-  ))
-    api.clearNotification(reviewAvailableNotificationId(createdAt));
-  api.clearNotification(REVIEW_AVAILABLE_NOTIFICATION_ID);
-}, acceptReviewNotification = (api, createdAt) => {
-  createdAt !== void 0 && (clearReviewNotifications(api, createdAt), sessionStore.write(VISITED_REVIEW_CREATED_AT_KEY, String(createdAt)), sessionStore.write(NOTIFIED_REVIEW_CREATED_AT_KEY, String(createdAt)));
-}, clearReviewNotificationsOnDismiss = (api, displayed, deferred) => {
-  clearReviewNotifications(api, displayed?.createdAt, deferred?.createdAt, readNotifiedCreatedAt()), sessionStore.remove(VISITED_REVIEW_CREATED_AT_KEY), sessionStore.remove(NOTIFIED_REVIEW_CREATED_AT_KEY);
-}, claimNotificationSlot = (api, createdAt, ...extraCreatedAts) => !isUnseen(createdAt) || readNotifiedCreatedAt() === createdAt ? !1 : (clearReviewNotifications(api, readNotifiedCreatedAt(), ...extraCreatedAts), sessionStore.write(NOTIFIED_REVIEW_CREATED_AT_KEY, String(createdAt)), !0), readCollectionIndex = (queryParams) => parseCollectionIndex(queryParams?.[REVIEW_COLLECTION_QUERY_PARAM]);
-
-// src/manager/components/review/review-actions.ts
-var navigateToReviewEntry = (api, navigate, entry, filters) => {
-  enterReviewMode(api, filters), api.setQueryParams({ [REVIEW_COLLECTION_QUERY_PARAM]: String(entry.collectionIndex) }), navigate(buildReviewStoryTarget(entry));
-}, navigateToReviewSummary = (api, navigate, filters) => {
-  enterReviewMode(api, filters), api.setQueryParams({ [REVIEW_COLLECTION_QUERY_PARAM]: null }), navigate(REVIEW_CHANGES_URL);
-}, navigateOutOfReview = async (api, navigate, returnSearch, { recordVisit = !0 } = {}) => {
-  let visitCreatedAt = recordVisit ? reviewStore.getState().state?.createdAt : void 0;
-  api.setQueryParams({ [REVIEW_COLLECTION_QUERY_PARAM]: null }), reviewStore.setExiting(!0);
-  try {
-    if (await exitReviewMode(api), visitCreatedAt !== void 0 && acceptReviewNotification(api, visitCreatedAt), returnSearch && !isReviewReturnSearch(returnSearch)) {
-      navigate(returnSearch.startsWith("?") ? returnSearch : `?${returnSearch}`, { plain: !0 });
-      return;
-    }
-    api.selectFirstStory();
-  } finally {
-    reviewStore.setExiting(!1);
-  }
-}, dismissReview = (api) => {
-  api.emit(REVIEW_EVENTS.DISMISS_REVIEW, sessionStore.read(PRE_REVIEW_RETURN_KEY));
-}, acceptPendingReview = (api, navigate, filters) => {
-  let accepted = reviewStore.getState().pendingReview;
-  accepted && (acceptReviewNotification(api, accepted.createdAt), sessionStore.remove(AUTO_ENTERED_SESSION_KEY), reviewStore.displayReview(accepted), enterReviewMode(api, filters), navigate(buildReviewChangesSummaryHref(), { plain: !0 }));
 };
 
 // src/manager/components/review/screens/SummaryScreen.tsx
@@ -10537,7 +10365,7 @@ function CopyButton({
 }
 
 // src/manager/components/review/components/AttentionBanner.tsx
-var STALE_REFRESH_PROMPT = "Generate a fresh review including my latest changes using the display-review tool.", Region = styled.div({
+var STALE_REFRESH_PROMPT = "Generate a fresh review including my latest changes using the review-create tool.", Region = styled.div({
   flexShrink: 0
 }), Bar2 = styled.div(({ theme }) => ({
   display: "flex",
@@ -11133,6 +10961,40 @@ var Root = styled.header(({ theme, $variant }) => ({
   return react_default.createElement(Root, { $variant: variant, ref: regionRef, ...landmarkProps }, react_default.createElement(TopRow, { $variant: variant }, react_default.createElement(Main, null, leading ? react_default.createElement(Leading, null, leading) : null, react_default.createElement(TextBlock, null, react_default.createElement(Title2, { id: titleId }, title2), subtitle ? react_default.createElement(Subtitle, null, subtitle) : null)), actions ? react_default.createElement(Actions, null, actions) : null), secondRow ? react_default.createElement(SecondRow, null, secondRow) : null);
 };
 
+// src/manager/components/review/review-navigation.ts
+var prettifyComponentId = (componentId) => componentId.split(/[-/]/).filter(Boolean).map((part) => part.charAt(0).toUpperCase() + part.slice(1)).join(" "), buildReviewChangesSummaryHref = () => `?path=${REVIEW_CHANGES_URL}`, STORYBOOK_ROOT_HREF = "/", buildSummaryBackHref = (returnSearch) => returnSearch || STORYBOOK_ROOT_HREF, REVIEW_SUMMARY_BACK_ATTR = "data-review-summary-back", buildReviewStoryTarget = (entry) => `/story/${entry.storyId}&${REVIEW_COLLECTION_QUERY_PARAM}=${entry.collectionIndex}`, buildReviewStoryHref = (entry) => `?path=${buildReviewStoryTarget(entry)}`, parseReviewStoryHref = (href) => {
+  if (!href.startsWith("?path=/story/"))
+    return null;
+  let query = href.startsWith("?") ? href.slice(1) : href, params = new URLSearchParams(query), path = params.get("path");
+  if (!path?.startsWith("/story/"))
+    return null;
+  let storyId = path.slice(7), collectionIndex = parseCollectionIndex(
+    params.get(REVIEW_COLLECTION_QUERY_PARAM) ?? void 0
+  );
+  return !storyId || collectionIndex === void 0 ? null : { storyId, collectionIndex };
+}, isReviewReturnSearch = (search) => {
+  let normalized = search.startsWith("?") ? search.slice(1) : search, params = new URLSearchParams(normalized), path = params.get("path") ?? "";
+  return isReviewSummaryPath(path) || path.startsWith(REVIEW_CHANGES_URL) ? !0 : path.startsWith("/story/") && params.has(REVIEW_COLLECTION_QUERY_PARAM);
+}, parseStoryIdFromPath = (path) => path.startsWith("/story/") && path.slice(7) || null, parseCollectionIndex = (value) => {
+  if (value === void 0 || !/^\d+$/.test(value))
+    return;
+  let parsed = Number(value);
+  return Number.isInteger(parsed) ? parsed : void 0;
+}, resolveActiveNavEntry = (entries, storyId, collectionIndex) => {
+  if (entries.length === 0)
+    return null;
+  if (collectionIndex !== void 0) {
+    let exact = entries.find(
+      (entry) => entry.storyId === storyId && entry.collectionIndex === collectionIndex
+    );
+    if (exact)
+      return exact;
+  }
+  return entries.find((entry) => entry.storyId === storyId) ?? null;
+}, resolveNavIndex = (entries, active) => entries.findIndex(
+  (entry) => entry.storyId === active.storyId && entry.collectionIndex === active.collectionIndex
+);
+
 // src/manager/components/review/screens/SummaryScreen.tsx
 var MarkdownWrapper = styled(DocumentWrapper)(({ theme }) => ({
   color: theme.color.defaultText,
@@ -11277,10 +11139,10 @@ var MarkdownWrapper = styled(DocumentWrapper)(({ theme }) => ({
   return react_default.createElement("section", { ref: regionRef, ...landmarkProps }, children);
 }, FooterLandmark = ({ children }) => {
   let regionRef = useRef(null), { landmarkProps } = useLandmark(
-    { role: "region", "aria-label": "About this review" },
+    { role: "contentinfo", "aria-label": "About this review" },
     regionRef
   );
-  return react_default.createElement(Footer, { as: "footer", ref: regionRef, ...landmarkProps }, children);
+  return react_default.createElement(Footer, { as: "section", ref: regionRef, ...landmarkProps }, children);
 }, pluralize = (count, singular, plural = `${singular}s`) => `${count} ${count === 1 ? singular : plural}`, formatCreatedAgo = (createdAt, nowMs) => {
   let elapsedMs = Math.max(0, nowMs - createdAt);
   if (elapsedMs < 6e4)
@@ -11329,7 +11191,7 @@ var MarkdownWrapper = styled(DocumentWrapper)(({ theme }) => ({
         padding: "small",
         ariaLabel: "Copy prompt to refresh this review",
         ariaLabelOnCopy: "Prompt copied to clipboard",
-        content: "Generate a Storybook review including my latest changes using the display-review tool.",
+        content: "Generate a Storybook review including my latest changes using the review-create tool.",
         childrenOnCopy: react_default.createElement(react_default.Fragment, null, react_default.createElement(CheckIcon, null), " Copy prompt")
       },
       react_default.createElement(CopyIcon, null),
@@ -11425,10 +11287,10 @@ var SummaryHost = styled.div(({ $visible }) => ({
   visibility: $visible ? "visible" : "hidden",
   pointerEvents: $visible ? "auto" : "none"
 })), ReviewSummaryHost = () => {
-  let api = useStorybookApi(), { state, storyInfo, banner, isInReviewMode, isSummaryVisible } = useReview(), getStoryPreviewHref = useCallback(
+  let api = useStorybookApi(), { review, storyInfo, banner, isInReviewMode, isSummaryVisible, dismiss } = useReviewContext(), getStoryPreviewHref = useCallback(
     (storyId) => api.getStoryHrefs(storyId, { embed: !0, freeze: !0 }).previewHref,
     [api]
-  ), onDismiss = useCallback(() => dismissReview(api), [api]);
+  );
   return !isSummaryVisible && !isInReviewMode ? null : react_default.createElement(
     SummaryHost,
     {
@@ -11442,12 +11304,12 @@ var SummaryHost = styled.div(({ $visible }) => ({
     react_default.createElement(
       SummaryScreen,
       {
-        state,
+        state: review,
         storyInfo,
         getStoryPreviewHref,
         banner,
         summaryHidden: !isSummaryVisible,
-        onDismiss,
+        onDismiss: dismiss,
         returnSearch: sessionStore.read(PRE_REVIEW_RETURN_KEY)
       }
     )
@@ -11456,27 +11318,8 @@ var SummaryHost = styled.div(({ $visible }) => ({
 
 // src/manager/components/review/useReviewNavigationInterceptor.ts
 init_react();
-
-// src/manager/components/review/useReviewFiltersRef.ts
-init_react();
-var useReviewFiltersRef = () => {
-  let { includedStatusFilters, excludedStatusFilters, includedTagFilters, excludedTagFilters } = useStorybookState(), filtersRef = useRef({
-    includedStatusFilters: [],
-    excludedStatusFilters: [],
-    includedTagFilters: [],
-    excludedTagFilters: []
-  });
-  return filtersRef.current = {
-    includedStatusFilters: includedStatusFilters ?? [],
-    excludedStatusFilters: excludedStatusFilters ?? [],
-    includedTagFilters: includedTagFilters ?? [],
-    excludedTagFilters: excludedTagFilters ?? []
-  }, filtersRef;
-};
-
-// src/manager/components/review/useReviewNavigationInterceptor.ts
 var isReviewStoryHref = (href) => href.startsWith("?path=/story/") && href.includes(`${REVIEW_COLLECTION_QUERY_PARAM}=`), isReviewSummaryHref = (href) => href === buildReviewChangesSummaryHref(), useReviewNavigationInterceptor = () => {
-  let navigate = useNavigate(), api = useStorybookApi(), filtersRef = useReviewFiltersRef();
+  let { openSummary, openEntry, leaveReview } = useReviewContext();
   useEffect(() => {
     let onClick = (event) => {
       if (event.defaultPrevented || event.button !== 0 || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey)
@@ -11485,37 +11328,72 @@ var isReviewStoryHref = (href) => href.startsWith("?path=/story/") && href.inclu
       if (!href)
         return;
       if (anchor?.hasAttribute(REVIEW_SUMMARY_BACK_ATTR)) {
-        event.preventDefault(), navigateOutOfReview(api, navigate, sessionStore.read(PRE_REVIEW_RETURN_KEY));
+        event.preventDefault(), leaveReview();
         return;
       }
       if (!isReviewStoryHref(href) && !isReviewSummaryHref(href))
         return;
       if (event.preventDefault(), isReviewSummaryHref(href)) {
-        navigateToReviewSummary(api, navigate, filtersRef.current);
+        openSummary();
         return;
       }
       let entry = parseReviewStoryHref(href);
-      entry && navigateToReviewEntry(api, navigate, entry, filtersRef.current);
+      entry && openEntry(entry);
     };
     return document.addEventListener("click", onClick), () => document.removeEventListener("click", onClick);
-  }, [api, navigate, filtersRef]);
+  }, [openSummary, openEntry, leaveReview]);
 };
 
 // src/manager/components/review/components/ReviewNotification.tsx
 init_react();
+
+// src/manager/components/review/review-notification.ts
+var isUnseen = (createdAt) => createdAt !== void 0 && sessionStore.read(VISITED_REVIEW_CREATED_AT_KEY) !== String(createdAt), readVisitedCreatedAt = () => {
+  let raw = sessionStore.read(VISITED_REVIEW_CREATED_AT_KEY);
+  if (raw === null)
+    return;
+  let visited = Number(raw);
+  return Number.isFinite(visited) ? visited : void 0;
+}, isSupersededByVisit = (createdAt) => {
+  let visited = readVisitedCreatedAt();
+  return createdAt !== void 0 && visited !== void 0 && visited > createdAt;
+}, readNotifiedCreatedAt = () => {
+  let raw = sessionStore.read(NOTIFIED_REVIEW_CREATED_AT_KEY);
+  if (raw === null)
+    return;
+  let notified = Number(raw);
+  return Number.isFinite(notified) ? notified : void 0;
+}, isOnReviewRoute = (path, collectionIndex) => isReviewSummaryPath(path) || path.startsWith("/story/") && collectionIndex !== void 0, shouldSkipArrivalNotification = (path, collectionIndex, review, displayed, deferred) => isOnReviewRoute(path, collectionIndex) ? deferred?.createdAt !== void 0 && deferred.createdAt === review.createdAt ? !0 : displayed?.createdAt !== void 0 && displayed.createdAt === review.createdAt : !1, pickReviewToNotify = (displayed, deferred) => deferred?.createdAt !== void 0 && isUnseen(deferred.createdAt) ? deferred : displayed?.createdAt !== void 0 && isUnseen(displayed.createdAt) && !isSupersededByVisit(displayed.createdAt) ? displayed : null, shouldAutoAcceptOnRoute = (path, collectionIndex, candidate, displayed, deferred) => {
+  let createdAt = candidate.createdAt;
+  return !(createdAt === void 0 || !isUnseen(createdAt) || displayed?.createdAt !== createdAt || !isOnReviewRoute(path, collectionIndex) || deferred?.createdAt !== void 0 && deferred.createdAt !== displayed.createdAt);
+}, clearReviewNotifications = (api, ...createdAts) => {
+  for (let createdAt of new Set(
+    createdAts.filter((value) => value != null)
+  ))
+    api.clearNotification(reviewAvailableNotificationId(createdAt));
+  api.clearNotification(REVIEW_AVAILABLE_NOTIFICATION_ID);
+}, acceptReviewNotification = (api, createdAt) => {
+  createdAt !== void 0 && (clearReviewNotifications(api, createdAt), sessionStore.write(VISITED_REVIEW_CREATED_AT_KEY, String(createdAt)), sessionStore.write(NOTIFIED_REVIEW_CREATED_AT_KEY, String(createdAt)));
+}, clearReviewNotificationsOnDismiss = (api, displayed, deferred) => {
+  clearReviewNotifications(api, displayed?.createdAt, deferred?.createdAt, readNotifiedCreatedAt()), sessionStore.remove(VISITED_REVIEW_CREATED_AT_KEY), sessionStore.remove(NOTIFIED_REVIEW_CREATED_AT_KEY);
+}, claimNotificationSlot = (api, createdAt, ...extraCreatedAts) => !isUnseen(createdAt) || readNotifiedCreatedAt() === createdAt ? !1 : (clearReviewNotifications(api, readNotifiedCreatedAt(), ...extraCreatedAts), sessionStore.write(NOTIFIED_REVIEW_CREATED_AT_KEY, String(createdAt)), !0), readCollectionIndex = (queryParams) => parseCollectionIndex(queryParams?.[REVIEW_COLLECTION_QUERY_PARAM]);
+
+// src/manager/components/review/components/ReviewNotification.tsx
 var ReviewNotification = () => {
-  let api = useStorybookApi(), navigate = useNavigate(), { path, customQueryParams } = useStorybookState(), { state: displayed, pendingReview: deferred } = useReview(), filtersRef = useReviewFiltersRef(), collectionIndex = readCollectionIndex(customQueryParams), openReview = useCallback(() => {
-    navigateToReviewSummary(api, navigate, filtersRef.current);
-  }, [api, navigate, filtersRef]), handleNotificationClick = useCallback(
+  let api = useStorybookApi(), { path, customQueryParams } = useStorybookState(), { review: displayed, pendingReview: deferred, banner, openSummary } = useReviewContext(), collectionIndex = readCollectionIndex(customQueryParams), deferredRef = useRef(deferred);
+  deferredRef.current = deferred;
+  let bannerRef = useRef(banner);
+  bannerRef.current = banner;
+  let handleNotificationClick = useCallback(
     (createdAt) => {
-      let { pendingReview, banner } = reviewStore.getState();
-      if (pendingReview?.createdAt === createdAt && banner?.kind === "pending-update") {
-        banner.onAccept();
+      let pendingReview = deferredRef.current, currentBanner = bannerRef.current;
+      if (pendingReview?.createdAt === createdAt && currentBanner?.kind === "pending-update") {
+        currentBanner.onAccept();
         return;
       }
-      acceptReviewNotification(api, createdAt), openReview();
+      acceptReviewNotification(api, createdAt), openSummary();
     },
-    [api, openReview]
+    [api, openSummary]
   );
   return useLayoutEffect(() => {
     let review = pickReviewToNotify(displayed, deferred);
@@ -11542,8 +11420,108 @@ var ReviewNotification = () => {
   }, [api, collectionIndex, handleNotificationClick, displayed, deferred, path]), null;
 };
 
+// src/manager/components/review/components/ReviewPersistentLayer.tsx
+var ReviewPersistentLayer = () => (useReviewNavigationInterceptor(), react_default.createElement(react_default.Fragment, null, react_default.createElement(ReviewNotification, null), react_default.createElement(ReviewSummaryHost, null)));
+
 // src/manager/components/review/components/ReviewProvider.tsx
 init_react();
+
+// global-externals:storybook/internal/types
+var types_default = __STORYBOOK_TYPES__, { Addon_TypesEnum, CHANGE_DETECTION_STATUS_TYPE_ID, CoreWebpackCompiler, Feature, NON_AGGREGATED_STATUS_TYPE_IDS, REVIEW_EVENTS: REVIEW_EVENTS2, REVIEW_NAMESPACE: REVIEW_NAMESPACE2, REVIEW_STATUS_TYPE_ID, SupportedBuilder, SupportedFramework, SupportedLanguage, SupportedRenderer } = __STORYBOOK_TYPES__;
+
+// src/manager/components/review/review-status.ts
+var REVIEWING_STATUS_VALUE = "status-value:reviewing", collectReviewStoryIds = (review) => {
+  let storyIds = /* @__PURE__ */ new Set();
+  for (let collection of review.collections)
+    for (let storyId of collection.storyIds)
+      storyIds.add(storyId);
+  return storyIds;
+}, createReviewStatus = (storyId) => ({
+  storyId,
+  typeId: REVIEW_STATUS_TYPE_ID,
+  value: REVIEWING_STATUS_VALUE,
+  title: "",
+  description: "",
+  sidebarContextMenu: !1
+}), applyReviewStatuses = (statusStore, storyIds) => {
+  statusStore.unset(), storyIds.size > 0 && statusStore.set([...storyIds].map(createReviewStatus));
+}, clearReviewStatuses = (statusStore) => {
+  statusStore.unset();
+};
+
+// src/manager/components/review/review-mode.ts
+var FILTERS_SNAPSHOT_SESSION_KEY = `${REVIEW_NAMESPACE}/filters-snapshot`, stripReviewingStatusFilter = (filters) => ({
+  ...filters,
+  includedStatusFilters: filters.includedStatusFilters.filter(
+    (value) => value !== REVIEWING_STATUS_VALUE
+  ),
+  excludedStatusFilters: filters.excludedStatusFilters.filter(
+    (value) => value !== REVIEWING_STATUS_VALUE
+  )
+}), readJson = (key) => {
+  let raw = sessionStore.read(key);
+  if (raw === null)
+    return null;
+  try {
+    return JSON.parse(raw);
+  } catch {
+    return null;
+  }
+}, enterReviewMode = async (api, filters, mode) => {
+  if (!mode.isActive()) {
+    sessionStore.write(
+      FILTERS_SNAPSHOT_SESSION_KEY,
+      JSON.stringify(stripReviewingStatusFilter(filters))
+    ), mode.setActive(!0);
+    try {
+      await api.setAllTagFilters([], []), await api.setAllStatusFilters([REVIEWING_STATUS_VALUE], []);
+    } catch (error) {
+      throw mode.setActive(!1), sessionStore.remove(FILTERS_SNAPSHOT_SESSION_KEY), error;
+    }
+  }
+}, exitReviewMode = async (api, mode) => {
+  let filters = readJson(FILTERS_SNAPSHOT_SESSION_KEY);
+  if (filters) {
+    let restored = stripReviewingStatusFilter(filters);
+    await api.setAllTagFilters(restored.includedTagFilters, restored.excludedTagFilters), await api.setAllStatusFilters(restored.includedStatusFilters, restored.excludedStatusFilters);
+  } else
+    await api.removeStatusFilters([REVIEWING_STATUS_VALUE]);
+  sessionStore.remove(FILTERS_SNAPSHOT_SESSION_KEY), mode.setActive(!1);
+};
+
+// src/manager/components/review/review-actions.ts
+var navigateToReviewEntry = (api, navigate, entry, filters, mode) => {
+  enterReviewMode(api, filters, mode), api.setQueryParams({ [REVIEW_COLLECTION_QUERY_PARAM]: String(entry.collectionIndex) }), navigate(buildReviewStoryTarget(entry));
+}, navigateToReviewSummary = (api, navigate, filters, mode) => {
+  enterReviewMode(api, filters, mode), api.setQueryParams({ [REVIEW_COLLECTION_QUERY_PARAM]: null }), navigate(REVIEW_CHANGES_URL);
+}, navigateOutOfReview = async (api, navigate, returnSearch, mode, { visitCreatedAt, onExitingChange } = {}) => {
+  api.setQueryParams({ [REVIEW_COLLECTION_QUERY_PARAM]: null }), onExitingChange?.(!0);
+  try {
+    if (await exitReviewMode(api, mode), visitCreatedAt !== void 0 && acceptReviewNotification(api, visitCreatedAt), returnSearch && !isReviewReturnSearch(returnSearch)) {
+      navigate(returnSearch.startsWith("?") ? returnSearch : `?${returnSearch}`, { plain: !0 });
+      return;
+    }
+    api.selectFirstStory();
+  } finally {
+    onExitingChange?.(!1);
+  }
+}, dismissReview = async () => {
+  try {
+    await getService("core/review", { internal: !0 }).commands.dismissReview(void 0);
+  } catch (error) {
+    logger.error("Failed to dismiss review", error);
+  }
+}, acceptPendingReview = async (api, navigate, filters, mode, pending) => {
+  if (pending) {
+    try {
+      await getService("core/review", { internal: !0 }).commands.acceptPending(void 0);
+    } catch (error) {
+      logger.error("Failed to accept pending review", error);
+      return;
+    }
+    acceptReviewNotification(api, pending.createdAt), sessionStore.write(AUTO_ENTERED_SESSION_KEY, autoEnteredLatchValue(pending.createdAt)), enterReviewMode(api, filters, mode), navigate(buildReviewChangesSummaryHref(), { plain: !0 });
+  }
+};
 
 // src/manager/components/review/review-story-info.ts
 var getStoryChangeStatus = (allStatuses, storyId) => {
@@ -11578,91 +11556,139 @@ var getStoryChangeStatus = (allStatuses, storyId) => {
   return info;
 };
 
-// src/manager/components/review/components/ReviewProvider.tsx
-var reviewStatusStore = experimental_getStatusStore(REVIEW_STATUS_TYPE_ID), isDeferredReviewUpdate = (current, next) => current !== null && current.createdAt !== void 0 && next.createdAt !== void 0 && current.createdAt !== next.createdAt, isSameReviewPayload = (current, next) => current?.createdAt !== void 0 && current.createdAt === next.createdAt, ReviewProvider = ({ children }) => {
-  let api = useStorybookApi(), navigate = useNavigate(), { index, internal_index, path, viewMode, customQueryParams, location: location2 } = useStorybookState(), { state, pendingReview, isStale, isInReviewMode } = useReview(), lastPageviewKeyRef = useRef(null), collectionParam = customQueryParams?.[REVIEW_COLLECTION_QUERY_PARAM], filtersRef = useReviewFiltersRef(), syncActiveReviewStatuses = useCallback((review) => {
-    applyReviewStatuses(reviewStatusStore, collectReviewStoryIds(review));
-  }, []), emit = useChannel({
-    [REVIEW_EVENTS.DISPLAY_REVIEW]: (next) => {
-      let current = reviewStore.getState().state;
-      if (isDeferredReviewUpdate(current, next)) {
-        reviewStore.deferReview(next);
-        return;
-      }
-      if (isSameReviewPayload(current, next)) {
-        reviewStore.setStale(!!next.stale), syncActiveReviewStatuses(next);
-        return;
-      }
-      sessionStore.remove(AUTO_ENTERED_SESSION_KEY), reviewStore.displayReview(next);
-    },
-    [REVIEW_EVENTS.REVIEW_STALE]: () => {
-      reviewStore.setStale(!0);
-    },
-    [REVIEW_EVENTS.REVIEW_DISMISSED]: (returnSearch) => {
-      clearReviewStatuses(reviewStatusStore), sessionStore.remove(AUTO_ENTERED_SESSION_KEY);
-      let { state: displayed, pendingReview: deferred } = reviewStore.getState();
-      clearReviewNotificationsOnDismiss(api, displayed, deferred), reviewStore.clearReview(), navigateOutOfReview(api, navigate, returnSearch, { recordVisit: !1 });
-    }
+// src/manager/components/review/useReviewFiltersRef.ts
+init_react();
+var useReviewFiltersRef = () => {
+  let { includedStatusFilters, excludedStatusFilters, includedTagFilters, excludedTagFilters } = useStorybookState(), filtersRef = useRef({
+    includedStatusFilters: [],
+    excludedStatusFilters: [],
+    includedTagFilters: [],
+    excludedTagFilters: []
   });
-  useEffect(() => {
-    emit(REVIEW_EVENTS.REQUEST_REVIEW);
-  }, [emit]), useEffect(() => {
-    state && syncActiveReviewStatuses(state);
-  }, [state, syncActiveReviewStatuses]);
-  let flattenedEntries = useMemo(() => state ? buildFlattenedNavEntries(state) : [], [state]), allStatuses = experimental_useStatusStore(), newlyAddedStoryIds = useMemo(
-    () => state ? buildNewlyAddedStoryIds(state, allStatuses) : /* @__PURE__ */ new Set(),
-    [allStatuses, state]
+  return filtersRef.current = {
+    includedStatusFilters: includedStatusFilters ?? [],
+    excludedStatusFilters: excludedStatusFilters ?? [],
+    includedTagFilters: includedTagFilters ?? [],
+    excludedTagFilters: excludedTagFilters ?? []
+  }, filtersRef;
+};
+
+// src/manager/components/review/components/ReviewProvider.tsx
+var reviewStatusStore = experimental_getStatusStore(REVIEW_STATUS_TYPE_ID), EMPTY_ENTRIES = [], ReviewProvider = ({ children }) => {
+  let api = useStorybookApi(), navigate = useNavigate(), { index, internal_index, path, viewMode, customQueryParams, location: location2 } = useStorybookState(), reviewService = getService("core/review", { internal: !0 }), { data: currentData } = useServiceQuery(reviewService.queries.current), { data: pendingData } = useServiceQuery(reviewService.queries.pending), { data: entriesData } = useServiceQuery(reviewService.queries.flattenedEntries), { data: bannerKind } = useServiceQuery(reviewService.queries.bannerKind), review = currentData ?? null, pendingReview = pendingData ?? null, flattenedEntries = entriesData ?? EMPTY_ENTRIES, [isInReviewMode, setIsInReviewMode] = useState(
+    () => sessionStore.read(REVIEW_MODE_SESSION_KEY) === "1"
+  ), isInReviewModeRef = useRef(isInReviewMode), mode = useMemo(
+    () => ({
+      isActive: () => isInReviewModeRef.current,
+      setActive: (active) => {
+        isInReviewModeRef.current = active, active ? sessionStore.write(REVIEW_MODE_SESSION_KEY, "1") : sessionStore.remove(REVIEW_MODE_SESSION_KEY), setIsInReviewMode(active);
+      }
+    }),
+    []
+  ), isExitingRef = useRef(!1), setExiting = useCallback((exiting) => {
+    isExitingRef.current = exiting;
+  }, []), lastPageviewKeyRef = useRef(null), lastProjectedRef = useRef({ current: null, pending: null }), collectionParam = customQueryParams?.[REVIEW_COLLECTION_QUERY_PARAM], filtersRef = useReviewFiltersRef(), isSummaryVisible = isReviewSummaryPath(path), isSummaryVisibleRef = useRef(isSummaryVisible);
+  isSummaryVisibleRef.current = isSummaryVisible, useEffect(() => {
+    if (currentData === void 0)
+      return;
+    let previous = lastProjectedRef.current;
+    if (lastProjectedRef.current = { current: currentData, pending: pendingData ?? null }, currentData === null) {
+      if (previous.current === null && previous.pending === null)
+        return;
+      clearReviewStatuses(reviewStatusStore), sessionStore.remove(AUTO_ENTERED_SESSION_KEY), clearReviewNotificationsOnDismiss(api, previous.current, previous.pending), (isInReviewModeRef.current || isSummaryVisibleRef.current) && navigateOutOfReview(api, navigate, sessionStore.read(PRE_REVIEW_RETURN_KEY), mode, {
+        onExitingChange: setExiting
+      });
+      return;
+    }
+  }, [api, navigate, mode, setExiting, currentData, pendingData]), useEffect(() => {
+    review && applyReviewStatuses(reviewStatusStore, collectReviewStoryIds(review));
+  }, [review]);
+  let allStatuses = experimental_useStatusStore(), newlyAddedStoryIds = useMemo(
+    () => review ? buildNewlyAddedStoryIds(review, allStatuses) : /* @__PURE__ */ new Set(),
+    [allStatuses, review]
   ), storyInfo = useMemo(
-    () => state ? buildStoryInfo(state, index, internal_index, api, allStatuses, newlyAddedStoryIds) : {},
-    [allStatuses, api, index, internal_index, newlyAddedStoryIds, state]
-  ), collectionIndex = parseCollectionIndex(collectionParam), storyIdFromPath = parseStoryIdFromPath(path), activeEntry = state && storyIdFromPath ? resolveActiveNavEntry(flattenedEntries, storyIdFromPath, collectionIndex) : null, activeIndex = activeEntry ? resolveNavIndex(flattenedEntries, activeEntry) : -1, isSummaryVisible = isReviewSummaryPath(path), onAcceptPendingUpdate = useCallback(() => {
-    acceptPendingReview(api, navigate, filtersRef.current);
-  }, [api, navigate, filtersRef]), banner = useMemo(
-    () => pendingReview !== null ? { kind: "pending-update", onAccept: onAcceptPendingUpdate } : isStale ? { kind: "stale" } : null,
-    [pendingReview, isStale, onAcceptPendingUpdate]
+    () => review ? buildStoryInfo(review, index, internal_index, api, allStatuses, newlyAddedStoryIds) : {},
+    [allStatuses, api, index, internal_index, newlyAddedStoryIds, review]
+  ), collectionIndex = parseCollectionIndex(collectionParam), storyIdFromPath = parseStoryIdFromPath(path), activeEntry = review && storyIdFromPath ? resolveActiveNavEntry(flattenedEntries, storyIdFromPath, collectionIndex) : null, activeIndex = activeEntry ? resolveNavIndex(flattenedEntries, activeEntry) : -1, openSummary = useCallback(() => {
+    navigateToReviewSummary(api, navigate, filtersRef.current, mode);
+  }, [api, navigate, filtersRef, mode]), openEntry = useCallback(
+    (entry) => {
+      navigateToReviewEntry(api, navigate, entry, filtersRef.current, mode);
+    },
+    [api, navigate, filtersRef, mode]
+  ), reviewCreatedAt = review?.createdAt, leaveReview = useCallback(() => {
+    navigateOutOfReview(api, navigate, sessionStore.read(PRE_REVIEW_RETURN_KEY), mode, {
+      visitCreatedAt: reviewCreatedAt,
+      onExitingChange: setExiting
+    });
+  }, [api, navigate, mode, reviewCreatedAt, setExiting]), hasReview = review !== null, dismiss = useCallback(() => {
+    if (!hasReview) {
+      navigateOutOfReview(api, navigate, sessionStore.read(PRE_REVIEW_RETURN_KEY), mode, {
+        onExitingChange: setExiting
+      });
+      return;
+    }
+    dismissReview();
+  }, [api, navigate, mode, hasReview, setExiting]), onAcceptPendingUpdate = useCallback(() => {
+    acceptPendingReview(api, navigate, filtersRef.current, mode, pendingReview);
+  }, [api, navigate, filtersRef, mode, pendingReview]), banner = useMemo(
+    () => bannerKind === "pending-update" ? { kind: "pending-update", onAccept: onAcceptPendingUpdate } : bannerKind === "stale" ? { kind: "stale" } : null,
+    [bannerKind, onAcceptPendingUpdate]
   );
   useEffect(() => {
-    if (!state) {
+    if (!review) {
       lastPageviewKeyRef.current = null;
       return;
     }
     let page = null, key = null;
-    isSummaryVisible ? (page = "summary", key = "summary") : isInReviewMode && activeEntry && (page = "detail", key = `detail:${activeEntry.storyId}`), !(!page || key === lastPageviewKeyRef.current) && (lastPageviewKeyRef.current = key, emit(REVIEW_EVENTS.PAGEVIEW, { page, reviewCreatedAt: state.createdAt }));
-  }, [state, isSummaryVisible, isInReviewMode, activeEntry, emit]), useEffect(() => {
-    !state || !isSummaryVisible || isReviewModeActive() || reviewStore.getState().isExiting || sessionStore.read(AUTO_ENTERED_SESSION_KEY) !== "1" && (sessionStore.write(AUTO_ENTERED_SESSION_KEY, "1"), enterReviewMode(api, filtersRef.current));
-  }, [state, isSummaryVisible, api, filtersRef]), useEffect(() => {
+    isSummaryVisible ? (page = "summary", key = "summary") : isInReviewMode && activeEntry && (page = "detail", key = `detail:${activeEntry.storyId}`), !(!page || key === lastPageviewKeyRef.current) && (lastPageviewKeyRef.current = key, api.emit(REVIEW_EVENTS.PAGEVIEW, { page, reviewCreatedAt: review.createdAt }));
+  }, [review, isSummaryVisible, isInReviewMode, activeEntry, api]), useEffect(() => {
+    if (!review || !isSummaryVisible || mode.isActive() || isExitingRef.current)
+      return;
+    let latch = autoEnteredLatchValue(review.createdAt);
+    sessionStore.read(AUTO_ENTERED_SESSION_KEY) !== latch && (sessionStore.write(AUTO_ENTERED_SESSION_KEY, latch), enterReviewMode(api, filtersRef.current, mode));
+  }, [review, isSummaryVisible, api, filtersRef, mode]), useEffect(() => {
     if (isInReviewMode || viewMode !== "story" && viewMode !== "docs")
       return;
     let search = location2?.search;
     search && !isReviewReturnSearch(search) && sessionStore.write(PRE_REVIEW_RETURN_KEY, search);
   }, [isInReviewMode, viewMode, location2?.search]);
-  let derived2 = useMemo(
+  let value = useMemo(
     () => ({
+      review,
+      pendingReview,
       storyInfo,
       flattenedEntries,
       newlyAddedStoryIds,
       activeEntry,
       activeIndex,
       isSummaryVisible,
-      banner
+      banner,
+      isInReviewMode,
+      openSummary,
+      openEntry,
+      leaveReview,
+      dismiss
     }),
     [
+      review,
+      pendingReview,
       storyInfo,
       flattenedEntries,
       newlyAddedStoryIds,
       activeEntry,
       activeIndex,
       isSummaryVisible,
-      banner
+      banner,
+      isInReviewMode,
+      openSummary,
+      openEntry,
+      leaveReview,
+      dismiss
     ]
   );
-  return useLayoutEffect(() => {
-    reviewStore.setDerived(derived2);
-  }, [derived2]), children;
+  return react_default.createElement(ReviewContext.Provider, { value }, children);
 };
-
-// src/manager/components/review/components/ReviewPersistentLayer.tsx
-var ReviewNavigationLayer = () => (useReviewNavigationInterceptor(), react_default.createElement(react_default.Fragment, null, react_default.createElement(ReviewNotification, null), react_default.createElement(ReviewSummaryHost, null))), ReviewPersistentLayer = () => react_default.createElement(ReviewProvider, null, react_default.createElement(ReviewNavigationLayer, null));
 
 // src/manager/container/Panel.tsx
 init_react();
@@ -11911,13 +11937,13 @@ var derivePickerLabel = (storyId, info) => {
   storyInfo,
   children
 }) => {
-  let api = useStorybookApi(), navigate = useNavigate(), filtersRef = useReviewFiltersRef(), options2 = entries.map((entry, index) => {
+  let { openEntry } = useReviewContext(), options2 = entries.map((entry, index) => {
     let { component, story } = derivePickerLabel(entry.storyId, storyInfo[entry.storyId]);
     return { value: index, title: component, description: story };
   }), activeValue = resolveNavIndex(entries, activeEntry), [nextStory, setNextStory] = react_default.useState(void 0);
   return useEffect(() => {
-    nextStory && navigateToReviewEntry(api, navigate, nextStory, filtersRef.current);
-  }, [nextStory, api, navigate, filtersRef]), react_default.createElement(
+    nextStory && openEntry(nextStory);
+  }, [nextStory, openEntry]), react_default.createElement(
     Select,
     {
       ariaLabel: "Select story",
@@ -11978,17 +12004,17 @@ var Root2 = styled.div(({ theme }) => ({
   icon
 }) => entry ? react_default.createElement(Button, { variant: "ghost", size: "small", padding: "small", ariaLabel, asChild: !0 }, react_default.createElement("a", { href: buildReviewStoryHref(entry) }, icon)) : react_default.createElement(Button, { variant: "ghost", size: "small", padding: "small", ariaLabel, disabled: !0 }, icon), componentName = (componentTitle) => componentTitle.split("/").map((part) => part.trim()).filter(Boolean).pop() ?? componentTitle, ReviewToolbarHeader = () => {
   let {
-    state,
+    review,
     banner,
     storyInfo,
     flattenedEntries,
     newlyAddedStoryIds,
     activeEntry,
     activeIndex
-  } = useReview();
-  if (!state || !activeEntry || activeIndex < 0)
+  } = useReviewContext();
+  if (!review || !activeEntry || activeIndex < 0)
     return null;
-  let collectionTitle = state.collections[activeEntry.collectionIndex]?.title ?? "Review", totalStories = flattenedEntries.length, hasPrevious = activeIndex > 0, hasNext = activeIndex < totalStories - 1, previousEntry = hasPrevious ? flattenedEntries[activeIndex - 1] : null, nextEntry = hasNext ? flattenedEntries[activeIndex + 1] : null, progress = totalStories > 1 ? activeIndex / (totalStories - 1) : 0, currentStoryInfo = storyInfo[activeEntry.storyId], isNewlyAdded = newlyAddedStoryIds.has(activeEntry.storyId), metadataSubtitle = currentStoryInfo?.title && currentStoryInfo.name ? react_default.createElement(react_default.Fragment, null, react_default.createElement(SubtitleStrong, null, componentName(currentStoryInfo.title)), react_default.createElement(SubtitleSeparator, null, "/"), react_default.createElement(SubtitleText, null, currentStoryInfo.name)) : null, subtitle = metadataSubtitle || isNewlyAdded ? react_default.createElement(react_default.Fragment, null, metadataSubtitle, isNewlyAdded ? react_default.createElement(Badge, { status: "positive" }, "New") : null) : void 0;
+  let collectionTitle = review.collections[activeEntry.collectionIndex]?.title ?? "Review", totalStories = flattenedEntries.length, hasPrevious = activeIndex > 0, hasNext = activeIndex < totalStories - 1, previousEntry = hasPrevious ? flattenedEntries[activeIndex - 1] : null, nextEntry = hasNext ? flattenedEntries[activeIndex + 1] : null, progress = totalStories > 1 ? activeIndex / (totalStories - 1) : 0, currentStoryInfo = storyInfo[activeEntry.storyId], isNewlyAdded = newlyAddedStoryIds.has(activeEntry.storyId), metadataSubtitle = currentStoryInfo?.title && currentStoryInfo.name ? react_default.createElement(react_default.Fragment, null, react_default.createElement(SubtitleStrong, null, componentName(currentStoryInfo.title)), react_default.createElement(SubtitleSeparator, null, "/"), react_default.createElement(SubtitleText, null, currentStoryInfo.name)) : null, subtitle = metadataSubtitle || isNewlyAdded ? react_default.createElement(react_default.Fragment, null, metadataSubtitle, isNewlyAdded ? react_default.createElement(Badge, { status: "positive" }, "New") : null) : void 0;
   return react_default.createElement(Root2, { "data-testid": "review-toolbar-header" }, banner && react_default.createElement(AttentionBanner, { ...banner }), react_default.createElement(HeaderWrap, null, react_default.createElement(
     ProgressBar,
     {
@@ -13764,8 +13790,8 @@ var qrcodegen;
     finderPenaltyCountPatterns(runHistory) {
       let n3 = runHistory[1];
       assert(n3 <= this.size * 3);
-      let core2 = n3 > 0 && runHistory[2] == n3 && runHistory[3] == n3 * 3 && runHistory[4] == n3 && runHistory[5] == n3;
-      return (core2 && runHistory[0] >= n3 * 4 && runHistory[6] >= n3 ? 1 : 0) + (core2 && runHistory[6] >= n3 * 4 && runHistory[0] >= n3 ? 1 : 0);
+      let core = n3 > 0 && runHistory[2] == n3 && runHistory[3] == n3 * 3 && runHistory[4] == n3 && runHistory[5] == n3;
+      return (core && runHistory[0] >= n3 * 4 && runHistory[6] >= n3 ? 1 : 0) + (core && runHistory[6] >= n3 * 4 && runHistory[0] >= n3 ? 1 : 0);
     }
     // Must be called at the end of a line (row or column) of modules. A helper function for getPenaltyScore().
     finderPenaltyTerminateAndCount(currentRunColor, currentRunLength, runHistory) {
@@ -16889,7 +16915,7 @@ function once3(element, event, cb) {
     cb(e2), off(element, event, _nextCB);
   }, on(element, event, _nextCB, capture);
 }
-function noop2() {
+function noop3() {
 }
 var ReactFloaterPortal = (function(_React$Component) {
   _inherits(ReactFloaterPortal2, _React$Component);
@@ -17125,7 +17151,7 @@ _defineProperty(ReactFloater, "propTypes", { autoOpen: import_prop_types2.defaul
 }), content: isRequiredIf(import_prop_types2.default.node, function(props) {
   return !props.component;
 }), debug: import_prop_types2.default.bool, disableAnimation: import_prop_types2.default.bool, disableFlip: import_prop_types2.default.bool, disableHoverToClick: import_prop_types2.default.bool, event: import_prop_types2.default.oneOf(["hover", "click"]), eventDelay: import_prop_types2.default.number, footer: import_prop_types2.default.node, getPopper: import_prop_types2.default.func, hideArrow: import_prop_types2.default.bool, id: import_prop_types2.default.oneOfType([import_prop_types2.default.string, import_prop_types2.default.number]), offset: import_prop_types2.default.number, open: import_prop_types2.default.bool, options: import_prop_types2.default.object, placement: import_prop_types2.default.oneOf(["top", "top-start", "top-end", "bottom", "bottom-start", "bottom-end", "left", "left-start", "left-end", "right", "right-start", "right-end", "auto", "center"]), showCloseButton: import_prop_types2.default.bool, style: import_prop_types2.default.object, styles: import_prop_types2.default.object, target: import_prop_types2.default.oneOfType([import_prop_types2.default.object, import_prop_types2.default.string]), title: import_prop_types2.default.node, wrapperOptions: import_prop_types2.default.shape({ offset: import_prop_types2.default.number, placement: import_prop_types2.default.oneOf(["top", "top-start", "top-end", "bottom", "bottom-start", "bottom-end", "left", "left-start", "left-end", "right", "right-start", "right-end", "auto"]), position: import_prop_types2.default.bool }) });
-_defineProperty(ReactFloater, "defaultProps", { autoOpen: !1, callback: noop2, debug: !1, disableAnimation: !1, disableFlip: !1, disableHoverToClick: !1, event: "click", eventDelay: 0.4, getPopper: noop2, hideArrow: !1, offset: 15, placement: "bottom", showCloseButton: !1, styles: {}, target: null, wrapperOptions: { position: !1 } });
+_defineProperty(ReactFloater, "defaultProps", { autoOpen: !1, callback: noop3, debug: !1, disableAnimation: !1, disableFlip: !1, disableHoverToClick: !1, event: "click", eventDelay: 0.4, getPopper: noop3, hideArrow: !1, offset: 15, placement: "bottom", showCloseButton: !1, styles: {}, target: null, wrapperOptions: { position: !1 } });
 
 // ../../node_modules/react-joyride/dist/index.mjs
 init_react();
@@ -18838,9 +18864,9 @@ var LocationMonitor = {
   stop() {
     this._intervalId !== null && (clearInterval(this._intervalId), this._intervalId = null);
   },
-  subscribe(...listeners2) {
-    return listeners2.forEach((listener) => this._listeners.add(listener)), this.start(), () => {
-      listeners2.forEach((listener) => this._listeners.delete(listener)), this._listeners.size === 0 && this.stop();
+  subscribe(...listeners) {
+    return listeners.forEach((listener) => this._listeners.add(listener)), this.start(), () => {
+      listeners.forEach((listener) => this._listeners.delete(listener)), this._listeners.size === 0 && this.stop();
     };
   }
 }, useLocationHash = () => {
@@ -22205,14 +22231,12 @@ var CollapseIconWrapper = styled.div(({ theme, isExpanded }) => ({
 )));
 
 // src/manager/components/sidebar/TreeNode.tsx
-var TypeIcon2 = styled.svg(
-  ({ theme, type }) => ({
-    width: 14,
-    height: 14,
-    flex: "0 0 auto",
-    color: type === "group" ? theme.base === "dark" ? theme.color.primary : theme.color.ultraviolet : type === "component" ? theme.color.secondary : type === "document" ? theme.base === "dark" ? theme.color.gold : "#ff8300" : type === "story" ? theme.color.seafoam : type === "test" ? theme.color.green : "currentColor"
-  })
-), commonNodeStyles = ({
+var TypeIcon2 = styled.svg(({ theme, type }) => ({
+  width: 14,
+  height: 14,
+  flex: "0 0 auto",
+  color: type === "group" ? theme.base === "dark" ? theme.color.primary : theme.color.ultraviolet : type === "component" ? theme.color.secondary : type === "document" ? theme.base === "dark" ? theme.color.gold : "#ff8300" : type === "story" ? theme.color.seafoam : type === "heading" ? theme.color.secondary : type === "test" ? theme.color.green : "currentColor"
+})), commonNodeStyles = ({
   theme,
   depth = 0,
   isExpandable = !1
@@ -22332,7 +22356,7 @@ var { document: document5 } = scope, initializeExpanded = ({
     (acc, id) => Object.assign(acc, { [id]: id in initialExpanded ? initialExpanded[id] : !0 }),
     {}
   );
-}, noop3 = () => {
+}, noop4 = () => {
 }, useExpanded = ({
   containerRef,
   isBrowsing,
@@ -22380,7 +22404,7 @@ var { document: document5 } = scope, initializeExpanded = ({
   }, [data]);
   return useEffect(() => api ? (api.on(STORIES_COLLAPSE_ALL, collapseAll), api.on(STORIES_EXPAND_ALL, expandAll), () => {
     api.off(STORIES_COLLAPSE_ALL, collapseAll), api.off(STORIES_EXPAND_ALL, expandAll);
-  }) : noop3, [api, collapseAll, expandAll]), useEffect(() => {
+  }) : noop4, [api, collapseAll, expandAll]), useEffect(() => {
     let menuElement = document5.getElementById("storybook-explorer-menu"), navigateTree = throttle((event) => {
       let highlightedItemId = highlightedRef.current?.refId === refId && highlightedRef.current?.itemId;
       if (!isBrowsing || !containerRef.current || !highlightedItemId || event.repeat || !matchesModifiers(!1, event))
@@ -22518,7 +22542,7 @@ var getStatusLabel = (status) => status.split(":")[1].replace(/^./, (char) => ch
     onSelectStoryId,
     api,
     isModifiedFilterActive
-  } = props, theme = useTheme(), { isDesktop, isMobile: isMobile2, setMobileMenuOpen } = useLayout(), statusLinks = useMemo(() => item.type === "story" || item.type === "docs" ? Object.entries(statuses).filter(([, status]) => status.sidebarContextMenu !== !1).filter(([, status]) => status.typeId !== REVIEW_STATUS_TYPE_ID).sort((a2, b2) => statusPriority.indexOf(a2[1].value) - statusPriority.indexOf(b2[1].value)).map(([typeId, status]) => ({
+  } = props, theme = useTheme(), { isDesktop, isMobile: isMobile2 } = useLayout(), statusLinks = useMemo(() => item.type === "story" || item.type === "docs" ? Object.entries(statuses).filter(([, status]) => status.sidebarContextMenu !== !1).filter(([, status]) => status.typeId !== REVIEW_STATUS_TYPE_ID).sort((a2, b2) => statusPriority.indexOf(a2[1].value) - statusPriority.indexOf(b2[1].value)).map(([typeId, status]) => ({
     id: typeId,
     title: status.title,
     description: status.description,
@@ -22563,7 +22587,7 @@ var getStatusLabel = (status) => status.split(":")[1].replace(/^./, (char) => ch
           id,
           depth: isOrphan ? item.depth : item.depth - 1,
           onClick: (event) => {
-            event.preventDefault(), onSelectStoryId(item.id), isMobile2 && setMobileMenuOpen(!1);
+            event.preventDefault(), onSelectStoryId(item.id), isMobile2 && api.setMobileNavigation(!1);
           },
           ...item.type === "docs" && { docsMode }
         },
@@ -22779,7 +22803,7 @@ var getStatusLabel = (status) => status.split(":")[1].replace(/^./, (char) => ch
         id,
         depth: isOrphan ? item.depth : item.depth - 1,
         onClick: (event) => {
-          event.preventDefault(), onSelectStoryId(item.id), isMobile2 && setMobileMenuOpen(!1);
+          event.preventDefault(), onSelectStoryId(item.id), isMobile2 && api.setMobileNavigation(!1);
         }
       },
       item.renderLabel?.(item, api) || item.name
@@ -23633,7 +23657,7 @@ var buttonStyleAdditions = ({
     ) : linkContent
   ));
 })))), SidebarMenu = ({ menu, isHighlighted, onClick }) => {
-  let [isTooltipVisible, setIsTooltipVisible] = useState(!1), { isMobile: isMobile2, setMobileMenuOpen } = useLayout();
+  let [isTooltipVisible, setIsTooltipVisible] = useState(!1), { isMobile: isMobile2 } = useLayout(), api = useStorybookApi();
   return isMobile2 ? react_default.createElement(MenuButtonGroup, null, react_default.createElement(
     SidebarButton,
     {
@@ -23655,7 +23679,7 @@ var buttonStyleAdditions = ({
       variant: "ghost",
       ariaLabel: "Close menu",
       highlighted: !1,
-      onClick: () => setMobileMenuOpen(!1),
+      onClick: () => api.setMobileNavigation(!1),
       isMobile: !0
     },
     react_default.createElement(CloseIcon, null)
@@ -23776,32 +23800,22 @@ var HEADING_ID = "storybook-review-widget-heading", Region2 = styled.section({
 }), DismissIcon = styled(CloseAltIcon)({
   padding: 1
 }), useActiveReviewStoryCount = () => {
-  let { state } = useReview();
-  return useMemo(() => state ? collectReviewStoryIds(state).size : 0, [state]);
+  let { review } = useReviewContext();
+  return useMemo(() => review ? collectReviewStoryIds(review).size : 0, [review]);
 }, useActiveReviewTitle = () => {
-  let { state } = useReview();
-  return state?.title ?? null;
+  let { review } = useReviewContext();
+  return review?.title ?? null;
 }, ReviewWidget = () => {
-  let api = useStorybookApi(), navigate = useNavigate(), storyCount = useActiveReviewStoryCount(), reviewTitle = useActiveReviewTitle(), {
-    includedStatusFilters = [],
-    excludedStatusFilters = [],
-    includedTagFilters = [],
-    excludedTagFilters = []
-  } = useStorybookState(), emit = useChannel({}), regionRef = useRef(null), { landmarkProps } = useLandmark(
+  let api = useStorybookApi(), { openSummary, dismiss } = useReviewContext(), storyCount = useActiveReviewStoryCount(), reviewTitle = useActiveReviewTitle(), regionRef = useRef(null), { landmarkProps } = useLandmark(
     { role: "region", "aria-labelledby": HEADING_ID },
     regionRef
   );
   if (!api.getIsNavShown() || storyCount === 0)
     return null;
   let onOpen = () => {
-    navigateToReviewSummary(api, navigate, {
-      includedStatusFilters,
-      excludedStatusFilters,
-      includedTagFilters,
-      excludedTagFilters
-    });
+    openSummary();
   }, onDismiss = (event) => {
-    event.stopPropagation(), emit(REVIEW_EVENTS.DISMISS_REVIEW);
+    event.stopPropagation(), dismiss();
   }, storyLabel = storyCount === 1 ? "story" : "stories";
   return react_default.createElement(Region2, { ref: regionRef, ...landmarkProps }, react_default.createElement(Card, { color: "agentic", outlineAnimation: "spin", id: "storybook-review-widget" }, react_default.createElement(ActionList, { as: "div" }, react_default.createElement(ActionList.Item, { as: "div" }, react_default.createElement(HeaderContent, null, react_default.createElement(AgenticIcon, { "aria-hidden": !0 }), react_default.createElement(HeaderTitle, { id: HEADING_ID }, "Quick review")))), react_default.createElement(ActionList, { as: "div" }, react_default.createElement(ActionList.Item, { as: "div" }, react_default.createElement(
     ActionList.Action,
@@ -23889,9 +23903,9 @@ var t = (t2) => typeof t2 == "object" && t2 != null && t2.nodeType === 1, e = (t
 // ../../node_modules/downshift/dist/downshift.esm.js
 var idCounter = 0;
 function cbToCb(cb) {
-  return typeof cb == "function" ? cb : noop4;
+  return typeof cb == "function" ? cb : noop5;
 }
-function noop4() {
+function noop5() {
 }
 function scrollIntoView2(node, menuNode) {
   if (node) {
@@ -24511,7 +24525,7 @@ var unknown = 0, mouseUp = 1, itemMouseEnter = 2, keyDownArrowUp = 3, keyDownArr
     }, _proto.componentWillUnmount = function() {
       this.cleanup();
     }, _proto.render = function() {
-      var children = unwrapArray(this.props.children, noop4);
+      var children = unwrapArray(this.props.children, noop5);
       this.clearItems(), this.getRootProps.called = !1, this.getRootProps.refKey = void 0, this.getRootProps.suppressRefError = void 0, this.getMenuProps.called = !1, this.getMenuProps.refKey = void 0, this.getMenuProps.suppressRefError = void 0, this.getLabelProps.called = !1, this.getInputProps.called = !1;
       var element = unwrapArray(children(this.getStateAndHelpers()));
       if (!element)
@@ -24529,12 +24543,12 @@ var unknown = 0, mouseUp = 1, itemMouseEnter = 2, keyDownArrowUp = 3, keyDownArr
     itemToString: function(i2) {
       return i2 == null ? "" : String(i2);
     },
-    onStateChange: noop4,
-    onInputValueChange: noop4,
-    onUserAction: noop4,
-    onChange: noop4,
-    onSelect: noop4,
-    onOuterClick: noop4,
+    onStateChange: noop5,
+    onInputValueChange: noop5,
+    onUserAction: noop5,
+    onChange: noop5,
+    onSelect: noop5,
+    onOuterClick: noop5,
     selectedItemChanged: function(prevItem, item) {
       return prevItem !== item;
     },
@@ -24692,7 +24706,7 @@ function useMouseAndTouchTracker(environment, handleBlur, downshiftElementsRefs)
   });
   return useEffect(function() {
     if (!environment)
-      return noop4;
+      return noop5;
     var downshiftElements = downshiftElementsRefs.map(function(ref) {
       return ref.current;
     });
@@ -24717,7 +24731,7 @@ function useMouseAndTouchTracker(environment, handleBlur, downshiftElementsRefs)
   }, [downshiftElementsRefs, environment, handleBlur]), mouseAndTouchTrackersRef.current;
 }
 var useGetterPropsCalledChecker = function() {
-  return noop4;
+  return noop5;
 };
 function useA11yMessageStatus(getA11yStatusMessage2, options2, dependencyArray, environment) {
   environment === void 0 && (environment = {});
@@ -24739,7 +24753,7 @@ function useScrollIntoView(_ref3) {
     highlightedIndex < 0 || !isOpen || !Object.keys(itemRefs.current).length || (shouldScrollRef.current === !1 ? shouldScrollRef.current = !0 : scrollIntoViewProp(getItemNodeFromIndex(highlightedIndex), menuElement));
   }, [highlightedIndex]), shouldScrollRef;
 }
-var useControlPropsValidator = noop4;
+var useControlPropsValidator = noop5;
 function getChangesOnSelection(props, highlightedIndex, inputValue) {
   var _props$items;
   inputValue === void 0 && (inputValue = !0);
@@ -24875,7 +24889,7 @@ function getItemIndexByCharacterKey(_a2) {
 }
 var propTypes$2 = __assign(__assign({}, commonDropdownPropTypes), { items: import_prop_types3.default.array.isRequired, isItemDisabled: import_prop_types3.default.func }), defaultProps$2 = __assign(__assign({}, defaultProps$3), { isItemDisabled: function() {
   return !1;
-} }), validatePropTypes$2 = noop4, ToggleButtonClick$1 = 0, ToggleButtonKeyDownArrowDown = 1, ToggleButtonKeyDownArrowUp = 2, ToggleButtonKeyDownCharacter = 3, ToggleButtonKeyDownEscape = 4, ToggleButtonKeyDownHome = 5, ToggleButtonKeyDownEnd = 6, ToggleButtonKeyDownEnter = 7, ToggleButtonKeyDownSpaceButton = 8, ToggleButtonKeyDownPageUp = 9, ToggleButtonKeyDownPageDown = 10, ToggleButtonBlur = 11, MenuMouseLeave$1 = 12, ItemMouseMove$1 = 13, ItemClick$1 = 14, FunctionToggleMenu$1 = 15, FunctionOpenMenu$1 = 16, FunctionCloseMenu$1 = 17, FunctionSetHighlightedIndex$1 = 18, FunctionSelectItem$1 = 19, FunctionSetInputValue$1 = 20, FunctionReset$2 = 21, stateChangeTypes$2 = Object.freeze({
+} }), validatePropTypes$2 = noop5, ToggleButtonClick$1 = 0, ToggleButtonKeyDownArrowDown = 1, ToggleButtonKeyDownArrowUp = 2, ToggleButtonKeyDownCharacter = 3, ToggleButtonKeyDownEscape = 4, ToggleButtonKeyDownHome = 5, ToggleButtonKeyDownEnd = 6, ToggleButtonKeyDownEnter = 7, ToggleButtonKeyDownSpaceButton = 8, ToggleButtonKeyDownPageUp = 9, ToggleButtonKeyDownPageDown = 10, ToggleButtonBlur = 11, MenuMouseLeave$1 = 12, ItemMouseMove$1 = 13, ItemClick$1 = 14, FunctionToggleMenu$1 = 15, FunctionOpenMenu$1 = 16, FunctionCloseMenu$1 = 17, FunctionSetHighlightedIndex$1 = 18, FunctionSelectItem$1 = 19, FunctionSetInputValue$1 = 20, FunctionReset$2 = 21, stateChangeTypes$2 = Object.freeze({
   __proto__: null,
   FunctionCloseMenu: FunctionCloseMenu$1,
   FunctionOpenMenu: FunctionOpenMenu$1,
@@ -25278,7 +25292,7 @@ function useControlledReducer(reducer, props, createInitialState, isStateEqual2)
     }
   }, [state.selectedItem, props.selectedItem]), [getState2(state, props), dispatch];
 }
-var validatePropTypes$1 = noop4, defaultProps$1 = _extends({}, defaultProps$3, {
+var validatePropTypes$1 = noop5, defaultProps$1 = _extends({}, defaultProps$3, {
   isItemDisabled: function() {
     return !1;
   }
@@ -25658,7 +25672,7 @@ var propTypes = {
   environment: defaultProps$3.environment,
   keyNavigationNext: "ArrowRight",
   keyNavigationPrevious: "ArrowLeft"
-}, validatePropTypes = noop4, SelectedItemClick = 0, SelectedItemKeyDownDelete = 1, SelectedItemKeyDownBackspace = 2, SelectedItemKeyDownNavigationNext = 3, SelectedItemKeyDownNavigationPrevious = 4, DropdownKeyDownNavigationPrevious = 5, DropdownKeyDownBackspace = 6, DropdownClick = 7, FunctionAddSelectedItem = 8, FunctionRemoveSelectedItem = 9, FunctionSetSelectedItems = 10, FunctionSetActiveIndex = 11, FunctionReset = 12, stateChangeTypes = Object.freeze({
+}, validatePropTypes = noop5, SelectedItemClick = 0, SelectedItemKeyDownDelete = 1, SelectedItemKeyDownBackspace = 2, SelectedItemKeyDownNavigationNext = 3, SelectedItemKeyDownNavigationPrevious = 4, DropdownKeyDownNavigationPrevious = 5, DropdownKeyDownBackspace = 6, DropdownClick = 7, FunctionAddSelectedItem = 8, FunctionRemoveSelectedItem = 9, FunctionSetSelectedItems = 10, FunctionSetActiveIndex = 11, FunctionReset = 12, stateChangeTypes = Object.freeze({
   __proto__: null,
   DropdownClick,
   DropdownKeyDownBackspace,
@@ -25899,8 +25913,9 @@ var { document: document7 } = scope, DEFAULT_MAX_SEARCH_RESULTS = 50, options = 
   maxPatternLength: 32,
   minMatchCharLength: 1,
   keys: [
-    { name: "name", weight: 0.7 },
-    { name: "path", weight: 0.3 }
+    { name: "name", weight: 0.6 },
+    { name: "path", weight: 0.3 },
+    { name: "anchors.title", weight: 0.1 }
   ]
 }, SearchBar = styled.div({
   display: "flex",
@@ -25999,28 +26014,50 @@ var { document: document7 } = scope, DEFAULT_MAX_SEARCH_RESULTS = 50, options = 
   searchFieldContent
 }) {
   let api = useStorybookApi(), inputRef = useRef(null), [inputPlaceholder, setPlaceholder] = useState("Find components"), [allComponents, showAllComponents] = useState(!1), searchShortcut = api ? shortcutToHumanString(api.getShortcutKeys().search) : "/", makeFuse = useCallback(() => {
-    let list = dataset.entries.reduce((acc, [refId, { index, allStatuses }]) => {
-      let groupStatus = getGroupStatus(index || {}, allStatuses ?? {});
-      return index && acc.push(
-        ...Object.values(index).map((item) => {
-          let storyStatuses = allStatuses?.[item.id], mostCriticalStatusValue = storyStatuses ? getMostCriticalStatusValue(
-            Object.values(storyStatuses).filter((status) => status.typeId !== REVIEW_STATUS_TYPE_ID).map((status) => status.value)
-          ) : null;
-          return {
-            ...searchItem(item, dataset.hash[refId]),
-            status: mostCriticalStatusValue ?? groupStatus[item.id] ?? null
-          };
-        })
-      ), acc;
-    }, []);
+    let list = [];
+    for (let [refId, { index, allStatuses }] of dataset.entries) {
+      if (!index)
+        continue;
+      let groupStatus = getGroupStatus(index || {}, allStatuses ?? {}), datasetValues = Object.values(index);
+      for (let datasetValue of datasetValues) {
+        let storyStatuses = allStatuses?.[datasetValue.id], status = (storyStatuses ? getMostCriticalStatusValue(
+          Object.values(storyStatuses).filter((status2) => status2.typeId !== REVIEW_STATUS_TYPE_ID).map((status2) => status2.value)
+        ) : null) ?? groupStatus[datasetValue.id] ?? null;
+        if (datasetValue.type !== "docs" || !globalThis?.FEATURES?.experimentalSearchDocsHeadings) {
+          list.push({
+            ...searchItem(datasetValue, dataset.hash[refId]),
+            status
+          });
+          continue;
+        }
+        let { anchors, ...baseSearchItem } = searchItem(datasetValue, dataset.hash[refId]);
+        list.push({
+          ...baseSearchItem,
+          status
+        }), anchors?.forEach((anchor) => {
+          let namePostfix = baseSearchItem.path?.[0] === anchor.title ? "" : ` / ${anchor.title}`;
+          list.push({
+            ...baseSearchItem,
+            anchors: [anchor],
+            // Fuse requires unique ids, so suffix the entry id with the anchor's DOM id
+            id: `${datasetValue.id}#${anchor.id}`,
+            name: `${datasetValue.name}${namePostfix}`,
+            status
+          });
+        });
+      }
+    }
     return new import_fuse.default(list, options);
   }, [dataset]), getResults = useCallback(
     (input) => {
       let fuse = makeFuse();
       if (!input)
         return [];
-      let results = [], resultIds = /* @__PURE__ */ new Set(), distinctResults = fuse.search(input).filter(({ item }) => !(item.type === "component" || item.type === "docs" || item.type === "story") || // @ts-expect-error (non strict)
-      resultIds.has(item.parent) ? !1 : (resultIds.add(item.id), !0));
+      let results = [], resultIds = /* @__PURE__ */ new Set(), allMatches = fuse.search(input).filter(({ item }) => item.type === "component" || item.type === "docs" || item.type === "story"), docsParentIds = /* @__PURE__ */ new Set();
+      allMatches.forEach(({ item }) => {
+        item.type === "docs" && item.parent && docsParentIds.add(item.parent);
+      });
+      let pendingDocsReplacements = /* @__PURE__ */ new Set(), distinctResults = allMatches.filter(({ item }) => item.type === "component" && docsParentIds.has(item.id) ? (resultIds.has(item.id) || (resultIds.add(item.id), pendingDocsReplacements.add(item.id)), !1) : item.type === "docs" && item.parent && pendingDocsReplacements.has(item.parent) ? (pendingDocsReplacements.delete(item.parent), resultIds.add(item.id), !0) : resultIds.has(item.parent) ? !1 : (resultIds.add(item.id), item.type === "docs" && item.parent && resultIds.add(item.parent), !0));
       return distinctResults.length && (results = distinctResults.slice(0, allComponents ? 1e3 : DEFAULT_MAX_SEARCH_RESULTS), distinctResults.length > DEFAULT_MAX_SEARCH_RESULTS && !allComponents && results.push({
         showAll: () => showAllComponents(!0),
         totalCount: distinctResults.length,
@@ -26032,8 +26069,12 @@ var { document: document7 } = scope, DEFAULT_MAX_SEARCH_RESULTS = 50, options = 
     (selectedItem) => {
       if (selectedItem) {
         if (isSearchResult(selectedItem)) {
-          let { id, refId } = selectedItem.item;
-          api?.selectStory(id, void 0, { ref: refId !== DEFAULT_REF_ID && refId }), inputRef.current.blur(), showAllComponents(!1);
+          let { id: rawId, refId } = selectedItem.item, [storyId, anchor] = rawId.split("#");
+          api?.selectStory(storyId, void 0, {
+            // @ts-expect-error (non strict)
+            ref: refId !== DEFAULT_REF_ID && refId,
+            scrollTo: anchor
+          }), inputRef.current.blur(), showAllComponents(!1);
           return;
         }
         isExpandType(selectedItem) && selectedItem.showAll();
@@ -26090,11 +26131,25 @@ var { document: document7 } = scope, DEFAULT_MAX_SEARCH_RESULTS = 50, options = 
       reset
     }) => {
       let input = inputValue ? inputValue.trim() : "", results = input ? getResults(input) : [], lastViewed = !input && getLastViewed();
-      lastViewed && lastViewed.length && (results = lastViewed.reduce((acc, { storyId, refId }) => {
+      lastViewed && lastViewed.length && (results = lastViewed.reduce((acc, { storyId, refId, anchor }) => {
         let data = dataset.hash[refId];
         if (data && data.index && data.index[storyId]) {
-          let story = data.index[storyId], item = story.type === "story" ? data.index[story.parent] : story;
-          acc.some((res) => res.item.refId === refId && res.item.id === item.id) || acc.push({ item: searchItem(item, dataset.hash[refId]), matches: [], score: 0 });
+          let story = data.index[storyId], item = story.type === "story" ? data.index[story.parent] : story, entryId = anchor ? `${item.id}#${anchor}` : item.id;
+          if (!acc.some((res) => res.item.refId === refId && res.item.id === entryId)) {
+            let baseItem = searchItem(item, dataset.hash[refId]), resultItem = baseItem;
+            if (anchor && item.type === "docs") {
+              let matchingAnchor = item.anchors?.find((a2) => a2.id === anchor);
+              if (matchingAnchor) {
+                let namePostfix = baseItem.path?.[0] === matchingAnchor.title ? "" : ` / ${matchingAnchor.title}`;
+                resultItem = {
+                  ...baseItem,
+                  id: entryId,
+                  name: `${item.name}${namePostfix}`
+                };
+              }
+            }
+            acc.push({ item: resultItem, matches: [], score: 0 });
+          }
         }
         return acc;
       }, []));
@@ -26249,7 +26304,8 @@ var { document: document8 } = scope, ResultsList = styled.ol({
   },
   "& > span + span": {
     "&:before": {
-      content: "' / '"
+      content: "' / '",
+      whiteSpace: "pre"
     }
   }
 })), Result = react_default.memo(function({ item, matches, onClick, ...props }) {
@@ -26646,7 +26702,7 @@ var SIDEBAR_BOTTOM_SPACER_ID = "sidebar-bottom-spacer", SIDEBAR_BOTTOM_WRAPPER_I
     }
   }, []), useEffect(() => {
     let filter = getFilter(warningCount > 0 && warningsActive, errorCount > 0 && errorsActive);
-    api.experimental_setFilter("sidebar-bottom-filter", filter);
+    api.experimental_setFilters({ "sidebar-bottom-filter": filter });
   }, [api, warningCount, errorCount, warningsActive, errorsActive]), !warningCount && !errorCount && Object.values(registeredTestProviders).length === 0 && notifications.length === 0 ? null : react_default.createElement(Fragment, null, react_default.createElement(Spacer, { id: SIDEBAR_BOTTOM_SPACER_ID, ref: spacerRef }), react_default.createElement(Content4, { id: SIDEBAR_BOTTOM_WRAPPER_ID, ref: wrapperRef }, react_default.createElement(NotificationList, { notifications, clearNotification: api.clearNotification }), isDevelopment && react_default.createElement(
     TestingWidget,
     {
@@ -26700,10 +26756,10 @@ var import_store2 = __toESM(require_store2(), 1), save = debounce((value) => imp
   let initialLastViewedStoryIds = useMemo(() => {
     let items = import_store2.default.get("lastViewedStoryIds");
     return !items || !Array.isArray(items) ? [] : items.some((item) => typeof item == "object" && item.storyId && item.refId) ? items : [];
-  }, [import_store2.default]), lastViewedRef = useRef(initialLastViewedStoryIds), updateLastViewed = useCallback(
+  }, []), lastViewedRef = useRef(initialLastViewedStoryIds), updateLastViewed = useCallback(
     (story) => {
       let items = lastViewedRef.current, index = items.findIndex(
-        ({ storyId, refId }) => storyId === story.storyId && refId === story.refId
+        ({ storyId, refId, anchor }) => storyId === story.storyId && refId === story.refId && anchor === story.anchor
       );
       index !== 0 && (index === -1 ? lastViewedRef.current = [story, ...items] : lastViewedRef.current = [story, ...items.slice(0, index), ...items.slice(index + 1)], save(lastViewedRef.current));
     },
@@ -26767,6 +26823,7 @@ var DEFAULT_REF_ID = "storybook_internal", Container11 = styled.header(({ theme 
   // @ts-expect-error (non strict)
   storyId = null,
   refId = DEFAULT_REF_ID,
+  anchor,
   index,
   indexJson,
   indexError,
@@ -26780,7 +26837,10 @@ var DEFAULT_REF_ID = "storybook_internal", Container11 = styled.header(({ theme 
   onMenuClick,
   showCreateStoryButton = isDevelopment && isRendererReact2
 }) {
-  let [isFileSearchModalOpen, setIsFileSearchModalOpen] = useState(!1), selected = useMemo(() => storyId && { storyId, refId }, [storyId, refId]), dataset = useCombination(index, indexError, previewInitialized, allStatuses, refs), isLoading = !index && !indexError, hasEntries = Object.keys(indexJson?.entries ?? {}).length > 0, lastViewedProps = useLastViewed(selected), { isMobile: isMobile2 } = useLayout(), api = useStorybookApi(), { viewMode } = api.getUrlState(), headerRef = useRef(null), { landmarkProps } = useLandmark(
+  let [isFileSearchModalOpen, setIsFileSearchModalOpen] = useState(!1), selected = useMemo(
+    () => storyId ? { storyId, refId, anchor } : null,
+    [storyId, refId, anchor]
+  ), dataset = useCombination(index, indexError, previewInitialized, allStatuses, refs), isLoading = !index && !indexError, hasEntries = Object.keys(indexJson?.entries ?? {}).length > 0, lastViewedProps = useLastViewed(selected), { isMobile: isMobile2 } = useLayout(), api = useStorybookApi(), { viewMode } = api.getUrlState(), headerRef = useRef(null), { landmarkProps } = useLandmark(
     { "aria-labelledby": "global-site-h1", role: "banner" },
     headerRef
   ), skipLinkHref = isPagesViewMode(viewMode) ? "#main-content-wrapper" : "#storybook-preview-wrapper", showReviewWidget = useActiveReviewStoryCount() > 0, showOnboardingChecklist = !isLoading && scope.CONFIG_TYPE === "DEVELOPMENT" && scope.FEATURES?.sidebarOnboardingChecklist !== !1 && !showReviewWidget;
@@ -27045,6 +27105,7 @@ var Sidebar3 = react_default.memo(function({ onMenuClick }) {
       viewMode,
       storyId,
       refId,
+      location: location2,
       layout: { showToolbar },
       // FIXME: This is the actual `index.json` index where the `index` below
       // is actually the stories hash. We should fix this up and make it consistent.
@@ -27065,6 +27126,7 @@ var Sidebar3 = react_default.memo(function({ onMenuClick }) {
       refs,
       storyId,
       refId,
+      anchor: location2?.hash ? location2.hash.slice(1) : void 0,
       viewMode,
       showToolbar,
       isPanelShown: api.getIsPanelShown(),
@@ -27089,11 +27151,11 @@ var Sidebar3 = react_default.memo(function({ onMenuClick }) {
 
 // src/manager/App.tsx
 var MainPreview = () => {
-  let { isSummaryVisible } = useReview();
+  let { isSummaryVisible } = useReviewContext();
   return isSummaryVisible ? null : react_default.createElement(Preview_default, { id: "main", withLoader: !0 });
 }, App = ({ managerLayoutState, setManagerLayoutState, pages, hasTab }) => {
   let { setMobileAboutOpen } = useLayout(), { enableShortcuts = !0 } = addons.getConfig();
-  return useEffect(() => {
+  useEffect(() => {
     document.body.setAttribute("data-shortcuts-enabled", enableShortcuts ? "true" : "false");
   }, [enableShortcuts]), useEffect(() => {
     let rootElement = document.getElementById("root");
@@ -27107,19 +27169,21 @@ var MainPreview = () => {
       attributes: !0,
       attributeFilter: ["inert"]
     }), () => observer.disconnect();
-  }, []), react_default.createElement(react_default.Fragment, null, react_default.createElement(Global, { styles: createGlobal }), react_default.createElement(ManagerErrorBoundary, null, react_default.createElement(
+  }, []);
+  let isReviewEnabled = isReviewFeatureEnabled(scope.FEATURES), layout = react_default.createElement(
     Layout,
     {
       hasTab,
       managerLayoutState,
       setManagerLayoutState,
-      slotOverlay: isReviewFeatureEnabled(scope.FEATURES) ? react_default.createElement(ReviewPersistentLayer, null) : void 0,
+      slotOverlay: isReviewEnabled ? react_default.createElement(ReviewPersistentLayer, null) : void 0,
       slotMain: react_default.createElement(MainPreview, null),
       slotSidebar: react_default.createElement(Sidebar_default, { onMenuClick: () => setMobileAboutOpen((state) => !state) }),
       slotPanel: react_default.createElement(Panel_default, null),
       slotPages: pages.map(({ id, render: Content6 }) => react_default.createElement(Content6, { key: id }))
     }
-  )));
+  );
+  return react_default.createElement(react_default.Fragment, null, react_default.createElement(Global, { styles: createGlobal }), react_default.createElement(ManagerErrorBoundary, null, isReviewEnabled ? react_default.createElement(ReviewProvider, null, layout) : layout));
 };
 
 // src/manager/provider.ts
