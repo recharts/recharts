@@ -439,6 +439,23 @@ describe('<PolarGrid />', () => {
 
       expectPolarGridCircles(container, []);
     });
+
+    test('Does not repeat the angle where a full circle numerical axis wraps around', () => {
+      const { container } = render(
+        <RadarChart width={300} height={300} data={pageData}>
+          <Radar dataKey="uv" />
+          <PolarAngleAxis type="number" />
+          <PolarGrid />
+        </RadarChart>,
+      );
+
+      const endpoints = Array.from(container.querySelectorAll<SVGLineElement>('.recharts-polar-grid-angle line')).map(
+        line => `${Math.round(Number(line.getAttribute('x2')))},${Math.round(Number(line.getAttribute('y2')))}`,
+      );
+
+      expect(new Set(endpoints).size).toBe(endpoints.length);
+      expect(endpoints).toHaveLength(container.querySelectorAll('.recharts-polar-angle-axis-tick').length);
+    });
   });
 
   describe('as a child of RadialBarChart with explicit axes', () => {
@@ -788,7 +805,7 @@ describe('<PolarGrid />', () => {
 
     it('should select grid angles', () => {
       const { spy } = renderTestCase(state => selectPolarGridAngles(state, 0));
-      expectLastCalledWith(spy, [0, 40, 80, 120, 160, 200, 240, 280, 320, 360]);
+      expectLastCalledWith(spy, [0, 40, 80, 120, 160, 200, 240, 280, 320]);
     });
 
     it('should render lines', () => {
@@ -848,12 +865,6 @@ describe('<PolarGrid />', () => {
           x2: '238.86115540180143',
           y1: '150',
           y2: '224.5633627236386',
-        },
-        {
-          x1: '150',
-          x2: '266',
-          y1: '150',
-          y2: '150.00000000000003',
         },
       ]);
     });
@@ -924,12 +935,6 @@ describe('<PolarGrid />', () => {
             y1: '150',
             y2: '150',
           },
-          {
-            x1: '150',
-            x2: '266',
-            y1: '150',
-            y2: '150.00000000000003',
-          },
         ]);
       });
 
@@ -960,7 +965,7 @@ describe('<PolarGrid />', () => {
 
       it('should select angles', () => {
         const { spy } = renderTestCase(state => selectPolarGridAngles(state, 'axis-pv'));
-        expectLastCalledWith(spy, [0, 180, 360]);
+        expectLastCalledWith(spy, [0, 180]);
       });
     });
 
@@ -1155,37 +1160,37 @@ describe('<PolarGrid />', () => {
           {
             cx: 150,
             cy: 150,
-            d: 'M 158.28571428571428,150L 141.71428571428572,150L 158.28571428571428,150Z',
+            d: 'M 158.28571428571428,150L 141.71428571428572,150Z',
           },
           {
             cx: 150,
             cy: 150,
-            d: 'M 174.85714285714286,150L 125.14285714285714,150L 174.85714285714286,150Z',
+            d: 'M 174.85714285714286,150L 125.14285714285714,150Z',
           },
           {
             cx: 150,
             cy: 150,
-            d: 'M 191.42857142857142,150L 108.57142857142858,150L 191.42857142857142,150Z',
+            d: 'M 191.42857142857142,150L 108.57142857142858,150Z',
           },
           {
             cx: 150,
             cy: 150,
-            d: 'M 208,150L 92,150L 208,150Z',
+            d: 'M 208,150L 92,150Z',
           },
           {
             cx: 150,
             cy: 150,
-            d: 'M 224.57142857142856,150L 75.42857142857143,150L 224.57142857142856,150.00000000000003Z',
+            d: 'M 224.57142857142856,150L 75.42857142857143,150Z',
           },
           {
             cx: 150,
             cy: 150,
-            d: 'M 241.14285714285717,150L 58.85714285714285,150L 241.14285714285717,150.00000000000003Z',
+            d: 'M 241.14285714285717,150L 58.85714285714285,150Z',
           },
           {
             cx: 150,
             cy: 150,
-            d: 'M 257.7142857142857,150L 42.28571428571426,150L 257.7142857142857,150.00000000000003Z',
+            d: 'M 257.7142857142857,150L 42.28571428571426,150Z',
           },
         ]);
         expectPolarGridCircles(container, []);
