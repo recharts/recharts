@@ -13,13 +13,13 @@ const repoRoot = path.join(__dirname, '..');
 
 export default defineConfig({
   /*
-   * The gallery index.html lives at test-vr/gallery/index.html, served at
-   * http://localhost:3100/gallery/index.html.
+   * The Playwright mount page lives at test-vr/gallery/index.html. The
+   * human-facing preview is available at test-vr/gallery/preview.html.
    */
   root: __dirname,
   cacheDir: path.join(repoRoot, 'node_modules/.vite-test-vr'),
   optimizeDeps: {
-    entries: ['gallery/index.html', 'tests/**/*.story.tsx'],
+    entries: ['gallery/index.html', 'gallery/preview.html', 'tests/**/*.story.tsx'],
   },
   resolve: {
     alias: {
@@ -39,6 +39,7 @@ export default defineConfig({
     },
   },
   server: {
+    host: true,
     port: 3100,
     strictPort: true,
   },

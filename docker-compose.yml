@@ -5,6 +5,7 @@ services:
       dockerfile: ./test-vr/playwright-ct.Dockerfile
     ports:
       - '9323:9323'
+      - '3100:3100'
     command: >
       sh -c "npx playwright show-report /recharts/test-vr/playwright-report --host 0.0.0.0 --port 9323"
     volumes:
