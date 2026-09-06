@@ -1,16 +1,21 @@
-import * as React from 'react';
-import { expect } from '@playwright/experimental-ct-react';
-import { testWithLightTheme } from './fixtures.tsx';
+import type { ReferenceLineExample, ReferenceLinePositionExample } from './ReferenceLineApiExamples.story';
+import { expect, test } from '../fixtures';
 
-import ReferenceLinePositionExample from '../../../www/src/docs/exampleComponents/ReferenceLine/ReferenceLinePositionExample';
-import ReferenceLineExample from '../../../www/src/docs/exampleComponents/ReferenceLine/ReferenceLineExample';
-
-testWithLightTheme('ReferenceLineExample', async ({ mount }) => {
-  const component = await mount(<ReferenceLineExample isAnimationActive={false} />);
+test('ReferenceLineExample', async ({ mountStory }) => {
+  const component = await mountStory<typeof ReferenceLineExample>('www/ReferenceLineApiExamples/ReferenceLineExample', {
+    testTheme: 'light',
+    isAnimationActive: false,
+  });
   await expect(component).toHaveScreenshot();
 });
 
-testWithLightTheme('ReferenceLinePositionExample', async ({ mount }) => {
-  const component = await mount(<ReferenceLinePositionExample isAnimationActive={false} />);
+test('ReferenceLinePositionExample', async ({ mountStory }) => {
+  const component = await mountStory<typeof ReferenceLinePositionExample>(
+    'www/ReferenceLineApiExamples/ReferenceLinePositionExample',
+    {
+      testTheme: 'light',
+      isAnimationActive: false,
+    },
+  );
   await expect(component).toHaveScreenshot();
 });

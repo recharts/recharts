@@ -1,9 +1,12 @@
-import * as React from 'react';
-import { test, expect } from '@playwright/experimental-ct-react';
+import type { ResponsiveContainerExample } from './ResponsiveContainerApiExamples.story';
+import { expect, test } from '../fixtures';
 
-import ResponsiveContainerExample from '../../../www/src/docs/exampleComponents/ResponsiveContainer/ResponsiveContainerExample';
-
-test('ResponsiveContainerExample', async ({ mount }) => {
-  const component = await mount(<ResponsiveContainerExample isAnimationActive={false} />);
+test('ResponsiveContainerExample', async ({ mountStory }) => {
+  const component = await mountStory<typeof ResponsiveContainerExample>(
+    'www/ResponsiveContainerApiExamples/ResponsiveContainerExample',
+    {
+      isAnimationActive: false,
+    },
+  );
   await expect(component).toHaveScreenshot();
 });

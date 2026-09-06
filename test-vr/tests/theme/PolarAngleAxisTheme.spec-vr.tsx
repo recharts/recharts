@@ -1,9 +1,7 @@
-import * as React from 'react';
-import { expect, test } from '@playwright/experimental-ct-react';
-import { PolarAngleAxisThemeComparison } from './PolarAngleAxisThemeComponents.tsx';
+import { expect, test } from '../fixtures';
 
-test('PolarAngleAxis theme', async ({ mount }) => {
-  const component = await mount(<PolarAngleAxisThemeComparison />);
+test('PolarAngleAxis theme', async ({ mountStory }) => {
+  const component = await mountStory('theme/PolarAngleAxisTheme/PolarAngleAxisThemeComparison');
 
   await expect(component).toHaveScreenshot();
 });

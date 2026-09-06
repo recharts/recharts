@@ -22,5 +22,5 @@ COPY . .
 
 ENV PATH=/recharts/test-vr/.bin:$PATH
 
-EXPOSE 3000
+EXPOSE 3100
 EXPOSE 9323

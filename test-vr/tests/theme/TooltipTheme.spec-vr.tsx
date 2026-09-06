@@ -1,9 +1,7 @@
-import * as React from 'react';
-import { expect, test } from '@playwright/experimental-ct-react';
-import { TooltipThemeComparison } from './TooltipThemeComponents.tsx';
+import { expect, test } from '../fixtures';
 
-test('Tooltip theme', async ({ mount }) => {
-  const component = await mount(<TooltipThemeComparison />);
+test('Tooltip theme', async ({ mountStory }) => {
+  const component = await mountStory('theme/TooltipTheme/TooltipThemeComparison');
 
   await expect(component).toHaveScreenshot();
 });

@@ -1,22 +1,16 @@
-import * as React from 'react';
-import { expect } from '@playwright/experimental-ct-react';
+import { expect, test } from '../fixtures';
 
-import SimpleRadarChart from '../../../www/src/docs/exampleComponents/RadarChart/SimpleRadarChart';
-import SpecifiedDomainRadarChart from '../../../www/src/docs/exampleComponents/RadarChart/SpecifiedDomainRadarChart';
-import RadarChartNavExample from '../../../www/src/docs/exampleComponents/RadarChart/RadarChartNavExample';
-import { testWithLightTheme } from './fixtures.tsx';
-
-testWithLightTheme('RadarChartNavExample', async ({ mount }) => {
-  const component = await mount(<RadarChartNavExample />);
+test('RadarChartNavExample', async ({ mountStory }) => {
+  const component = await mountStory('www/RadarChartApiExamples/RadarChartNavExample', { testTheme: 'light' });
   await expect(component).toHaveScreenshot();
 });
 
-testWithLightTheme('SpecifiedDomainRadarChart', async ({ mount }) => {
-  const component = await mount(<SpecifiedDomainRadarChart />);
+test('SpecifiedDomainRadarChart', async ({ mountStory }) => {
+  const component = await mountStory('www/RadarChartApiExamples/SpecifiedDomainRadarChart', { testTheme: 'light' });
   await expect(component).toHaveScreenshot();
 });
 
-testWithLightTheme('SimpleRadarChart', async ({ mount }) => {
-  const component = await mount(<SimpleRadarChart />);
+test('SimpleRadarChart', async ({ mountStory }) => {
+  const component = await mountStory('www/RadarChartApiExamples/SimpleRadarChart', { testTheme: 'light' });
   await expect(component).toHaveScreenshot();
 });

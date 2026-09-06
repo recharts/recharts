@@ -1,9 +1,7 @@
-import * as React from 'react';
-import { expect, test } from '@playwright/experimental-ct-react';
-import { FunnelThemeComparison } from './FunnelThemeComponents.tsx';
+import { expect, test } from '../fixtures';
 
-test('Funnel theme', async ({ mount }) => {
-  const component = await mount(<FunnelThemeComparison />);
+test('Funnel theme', async ({ mountStory }) => {
+  const component = await mountStory('theme/FunnelTheme/FunnelThemeComparison');
 
   await expect(component).toHaveScreenshot();
 });

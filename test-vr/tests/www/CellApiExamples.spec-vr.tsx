@@ -1,15 +1,16 @@
-import * as React from 'react';
-import { test, expect } from '@playwright/experimental-ct-react';
+import type { CellBarExample, CellPieExample } from './CellApiExamples.story';
+import { expect, test } from '../fixtures';
 
-import CellBarExample from '../../../www/src/docs/exampleComponents/Cell/CellBarExample';
-import CellPieExample from '../../../www/src/docs/exampleComponents/Cell/CellPieExample';
-
-test('CellPieExample', async ({ mount }) => {
-  const component = await mount(<CellPieExample isAnimationActive={false} />);
+test('CellPieExample', async ({ mountStory }) => {
+  const component = await mountStory<typeof CellPieExample>('www/CellApiExamples/CellPieExample', {
+    isAnimationActive: false,
+  });
   await expect(component).toHaveScreenshot();
 });
 
-test('CellBarExample', async ({ mount }) => {
-  const component = await mount(<CellBarExample isAnimationActive={false} />);
+test('CellBarExample', async ({ mountStory }) => {
+  const component = await mountStory<typeof CellBarExample>('www/CellApiExamples/CellBarExample', {
+    isAnimationActive: false,
+  });
   await expect(component).toHaveScreenshot();
 });

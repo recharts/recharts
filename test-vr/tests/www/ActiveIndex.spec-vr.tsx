@@ -1,14 +1,14 @@
-import * as React from 'react';
-import { test, expect } from '@playwright/experimental-ct-react';
-import PieChartDefaultIndex from '../../../www/src/components/GuideView/ActiveIndex/PieChartDefaultIndex';
-import BarChartClickable from '../../../www/src/components/GuideView/ActiveIndex/BarChartClickable';
+import type { PieChartDefaultIndex } from './ActiveIndex.story';
+import { expect, test } from '../fixtures';
 
-test('PieChartDefaultIndex', async ({ mount }) => {
-  const component = await mount(<PieChartDefaultIndex isAnimationActive={false} />);
+test('PieChartDefaultIndex', async ({ mountStory }) => {
+  const component = await mountStory<typeof PieChartDefaultIndex>('www/ActiveIndex/PieChartDefaultIndex', {
+    isAnimationActive: false,
+  });
   await expect(component).toHaveScreenshot();
 });
 
-test('BarChartClickable', async ({ mount }) => {
-  const component = await mount(<BarChartClickable />);
+test('BarChartClickable', async ({ mountStory }) => {
+  const component = await mountStory('www/ActiveIndex/BarChartClickable');
   await expect(component).toHaveScreenshot();
 });

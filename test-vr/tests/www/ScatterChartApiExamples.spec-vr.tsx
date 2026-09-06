@@ -1,52 +1,69 @@
-import * as React from 'react';
-import { expect } from '@playwright/experimental-ct-react';
+import type {
+  BubbleChart,
+  JointLineScatterChart,
+  ScatterChartExample,
+  ScatterChartWithLabels,
+  ThreeDimScatterChart,
+} from './ScatterChartApiExamples.story';
+import { expect, test } from '../fixtures';
 
-import ScatterChartExample from '../../../www/src/docs/exampleComponents/ScatterChart/ScatterChartExample';
-import ThreeDimScatterChart from '../../../www/src/docs/exampleComponents/ScatterChart/ThreeDimScatterChart';
-import JointLineScatterChart from '../../../www/src/docs/exampleComponents/ScatterChart/JointLineScatterChart';
-import BubbleChart from '../../../www/src/docs/exampleComponents/ScatterChart/BubbleChart';
-import ScatterChartWithLabels from '../../../www/src/docs/exampleComponents/ScatterChart/ScatterChartWithLabels';
-import MultipleYAxesScatterChart from '../../../www/src/docs/exampleComponents/ScatterChart/MultipleYAxesScatterChart';
-import ScatterChartWithCells from '../../../www/src/docs/exampleComponents/ScatterChart/ScatterChartWithCells';
-import ScatterChartNavExample from '../../../www/src/docs/exampleComponents/ScatterChart/ScatterChartNavExample';
-import { testWithLightTheme } from './fixtures.tsx';
-
-testWithLightTheme('ScatterChartNavExample', async ({ mount }) => {
-  const component = await mount(<ScatterChartNavExample />);
+test('ScatterChartNavExample', async ({ mountStory }) => {
+  const component = await mountStory('www/ScatterChartApiExamples/ScatterChartNavExample', { testTheme: 'light' });
   await expect(component).toHaveScreenshot();
 });
 
-testWithLightTheme('ScatterChartWithCells', async ({ mount }) => {
-  const component = await mount(<ScatterChartWithCells />);
+test('ScatterChartWithCells', async ({ mountStory }) => {
+  const component = await mountStory('www/ScatterChartApiExamples/ScatterChartWithCells', { testTheme: 'light' });
   await expect(component).toHaveScreenshot();
 });
 
-testWithLightTheme('MultipleYAxesScatterChart', async ({ mount }) => {
-  const component = await mount(<MultipleYAxesScatterChart />);
+test('MultipleYAxesScatterChart', async ({ mountStory }) => {
+  const component = await mountStory('www/ScatterChartApiExamples/MultipleYAxesScatterChart', { testTheme: 'light' });
   await expect(component).toHaveScreenshot();
 });
 
-testWithLightTheme('ScatterChartWithLabels', async ({ mount }) => {
-  const component = await mount(<ScatterChartWithLabels defaultIndex="2" />);
+test('ScatterChartWithLabels', async ({ mountStory }) => {
+  const component = await mountStory<typeof ScatterChartWithLabels>(
+    'www/ScatterChartApiExamples/ScatterChartWithLabels',
+    {
+      testTheme: 'light',
+      defaultIndex: '2',
+    },
+  );
   await expect(component).toHaveScreenshot();
 });
 
-testWithLightTheme('BubbleChart', async ({ mount }) => {
-  const component = await mount(<BubbleChart defaultIndex="7" />);
+test('BubbleChart', async ({ mountStory }) => {
+  const component = await mountStory<typeof BubbleChart>('www/ScatterChartApiExamples/BubbleChart', {
+    testTheme: 'light',
+    defaultIndex: '7',
+  });
   await expect(component).toHaveScreenshot();
 });
 
-testWithLightTheme('JointLineScatterChart', async ({ mount }) => {
-  const component = await mount(<JointLineScatterChart defaultIndex="2" />);
+test('JointLineScatterChart', async ({ mountStory }) => {
+  const component = await mountStory<typeof JointLineScatterChart>(
+    'www/ScatterChartApiExamples/JointLineScatterChart',
+    {
+      testTheme: 'light',
+      defaultIndex: '2',
+    },
+  );
   await expect(component).toHaveScreenshot();
 });
 
-testWithLightTheme('ThreeDimScatterChart', async ({ mount }) => {
-  const component = await mount(<ThreeDimScatterChart defaultIndex="3" />);
+test('ThreeDimScatterChart', async ({ mountStory }) => {
+  const component = await mountStory<typeof ThreeDimScatterChart>('www/ScatterChartApiExamples/ThreeDimScatterChart', {
+    testTheme: 'light',
+    defaultIndex: '3',
+  });
   await expect(component).toHaveScreenshot();
 });
 
-testWithLightTheme('ScatterChartExample', async ({ mount }) => {
-  const component = await mount(<ScatterChartExample isAnimationActive={false} />);
+test('ScatterChartExample', async ({ mountStory }) => {
+  const component = await mountStory<typeof ScatterChartExample>('www/ScatterChartApiExamples/ScatterChartExample', {
+    testTheme: 'light',
+    isAnimationActive: false,
+  });
   await expect(component).toHaveScreenshot();
 });

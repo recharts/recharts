@@ -1,7 +1,4 @@
-import * as React from 'react';
-import { test, expect } from '@playwright/experimental-ct-react';
-import { pageData } from '../../storybook/stories/data';
-import { ComposedChart, ErrorBar, Scatter, ScatterChart, XAxis, YAxis } from '../../src';
+import { expect, test } from './fixtures';
 
 /**
  * These filenames name equivalence claims, not test titles. Several tests below
@@ -61,433 +58,172 @@ const COMPOSED_AND_SCATTER_NUMERIC_XAXIS_EXPLICIT_DIRECTION_EQUIVALENT =
 const COMPOSED_AND_SCATTER_NUMERIC_XAXIS_IMPLICIT_DIRECTION_EQUIVALENT =
   'ComposedChart-and-ScatterChart-numericXAxis-implicitDirection-equivalent.png';
 
-test('ComposedChart + implicit direction + root data', async ({ mount }) => {
-  const component = await mount(
-    <ComposedChart width={200} height={200} data={pageData}>
-      <Scatter dataKey="uv">
-        <ErrorBar dataKey="pv" />
-      </Scatter>
-    </ComposedChart>,
-  );
+test('ComposedChart + implicit direction + root data', async ({ mountStory }) => {
+  const component = await mountStory('ErrorBar.Scatter/ComposedChartImplicitDirectionRootData');
   await expect(component).toHaveScreenshot(COMPOSED_DIRECTION_AND_DATA_SOURCE_EQUIVALENT);
 });
 
-test('ComposedChart + explicit direction + root data', async ({ mount }) => {
-  const component = await mount(
-    <ComposedChart width={200} height={200} data={pageData}>
-      <Scatter dataKey="uv">
-        <ErrorBar dataKey="pv" direction="y" />
-      </Scatter>
-    </ComposedChart>,
-  );
+test('ComposedChart + explicit direction + root data', async ({ mountStory }) => {
+  const component = await mountStory('ErrorBar.Scatter/ComposedChartExplicitDirectionRootData');
   await expect(component).toHaveScreenshot(COMPOSED_DIRECTION_AND_DATA_SOURCE_EQUIVALENT);
 });
 
-test('ComposedChart + implicit direction + item data', async ({ mount }) => {
-  const component = await mount(
-    <ComposedChart width={200} height={200}>
-      <Scatter dataKey="uv" data={pageData}>
-        <ErrorBar dataKey="pv" />
-      </Scatter>
-    </ComposedChart>,
-  );
+test('ComposedChart + implicit direction + item data', async ({ mountStory }) => {
+  const component = await mountStory('ErrorBar.Scatter/ComposedChartImplicitDirectionItemData');
   await expect(component).toHaveScreenshot(COMPOSED_DIRECTION_AND_DATA_SOURCE_EQUIVALENT);
 });
 
-test('ComposedChart + explicit direction + item data', async ({ mount }) => {
-  const component = await mount(
-    <ComposedChart width={200} height={200}>
-      <Scatter dataKey="uv" data={pageData}>
-        <ErrorBar dataKey="pv" direction="y" />
-      </Scatter>
-    </ComposedChart>,
-  );
+test('ComposedChart + explicit direction + item data', async ({ mountStory }) => {
+  const component = await mountStory('ErrorBar.Scatter/ComposedChartExplicitDirectionItemData');
   await expect(component).toHaveScreenshot(COMPOSED_DIRECTION_AND_DATA_SOURCE_EQUIVALENT);
 });
 
-test('ComposedChart + numeric XAxis + implicit direction + root data', async ({ mount }) => {
-  const component = await mount(
-    <ComposedChart width={200} height={200} data={pageData}>
-      <XAxis type="number" dataKey="amt" />
-      <Scatter dataKey="uv">
-        <ErrorBar dataKey="pv" />
-      </Scatter>
-    </ComposedChart>,
-  );
+test('ComposedChart + numeric XAxis + implicit direction + root data', async ({ mountStory }) => {
+  const component = await mountStory('ErrorBar.Scatter/ComposedChartNumericXAxisImplicitDirectionRootData');
   await expect(component).toHaveScreenshot(COMPOSED_AND_SCATTER_NUMERIC_XAXIS_IMPLICIT_DIRECTION_EQUIVALENT);
 });
 
-test('ComposedChart + numeric XAxis + explicit direction + root data', async ({ mount }) => {
-  const component = await mount(
-    <ComposedChart width={200} height={200} data={pageData}>
-      <XAxis type="number" dataKey="amt" />
-      <Scatter dataKey="uv">
-        <ErrorBar dataKey="pv" direction="x" />
-        <ErrorBar dataKey="pv" direction="y" />
-      </Scatter>
-    </ComposedChart>,
-  );
+test('ComposedChart + numeric XAxis + explicit direction + root data', async ({ mountStory }) => {
+  const component = await mountStory('ErrorBar.Scatter/ComposedChartNumericXAxisExplicitDirectionRootData');
   await expect(component).toHaveScreenshot(COMPOSED_AND_SCATTER_NUMERIC_XAXIS_EXPLICIT_DIRECTION_EQUIVALENT);
 });
 
-test('ScatterChart + implicit direction + root data', async ({ mount }) => {
-  const component = await mount(
-    <ScatterChart width={200} height={200} data={pageData}>
-      <Scatter dataKey="uv">
-        <ErrorBar dataKey="pv" />
-      </Scatter>
-    </ScatterChart>,
-  );
+test('ScatterChart + implicit direction + root data', async ({ mountStory }) => {
+  const component = await mountStory('ErrorBar.Scatter/ScatterChartImplicitDirectionRootData');
   await expect(component).toHaveScreenshot(SCATTER_DIRECTION_AND_DATA_SOURCE_EQUIVALENT);
 });
 
-test('ScatterChart + explicit direction + root data', async ({ mount }) => {
-  const component = await mount(
-    <ScatterChart width={200} height={200} data={pageData}>
-      <Scatter dataKey="uv">
-        <ErrorBar dataKey="pv" direction="y" />
-      </Scatter>
-    </ScatterChart>,
-  );
+test('ScatterChart + explicit direction + root data', async ({ mountStory }) => {
+  const component = await mountStory('ErrorBar.Scatter/ScatterChartExplicitDirectionRootData');
   await expect(component).toHaveScreenshot(SCATTER_DIRECTION_AND_DATA_SOURCE_EQUIVALENT);
 });
 
-test('ScatterChart + implicit direction + item data', async ({ mount }) => {
-  const component = await mount(
-    <ScatterChart width={200} height={200}>
-      <Scatter dataKey="uv" data={pageData}>
-        <ErrorBar dataKey="pv" />
-      </Scatter>
-    </ScatterChart>,
-  );
+test('ScatterChart + implicit direction + item data', async ({ mountStory }) => {
+  const component = await mountStory('ErrorBar.Scatter/ScatterChartImplicitDirectionItemData');
   await expect(component).toHaveScreenshot(SCATTER_DIRECTION_AND_DATA_SOURCE_EQUIVALENT);
 });
 
-test('ScatterChart + explicit direction + item data', async ({ mount }) => {
-  const component = await mount(
-    <ScatterChart width={200} height={200}>
-      <Scatter dataKey="uv" data={pageData}>
-        <ErrorBar dataKey="pv" direction="y" />
-      </Scatter>
-    </ScatterChart>,
-  );
+test('ScatterChart + explicit direction + item data', async ({ mountStory }) => {
+  const component = await mountStory('ErrorBar.Scatter/ScatterChartExplicitDirectionItemData');
   await expect(component).toHaveScreenshot(SCATTER_DIRECTION_AND_DATA_SOURCE_EQUIVALENT);
 });
 
-test('ScatterChart + numeric XAxis + implicit direction + root data', async ({ mount }) => {
-  const component = await mount(
-    <ScatterChart width={200} height={200} data={pageData}>
-      <XAxis type="number" dataKey="amt" />
-      <Scatter dataKey="uv">
-        <ErrorBar dataKey="pv" />
-      </Scatter>
-    </ScatterChart>,
-  );
+test('ScatterChart + numeric XAxis + implicit direction + root data', async ({ mountStory }) => {
+  const component = await mountStory('ErrorBar.Scatter/ScatterChartNumericXAxisImplicitDirectionRootData');
   await expect(component).toHaveScreenshot(COMPOSED_AND_SCATTER_NUMERIC_XAXIS_IMPLICIT_DIRECTION_EQUIVALENT);
 });
 
-test('ScatterChart + numeric XAxis + explicit direction + root data', async ({ mount }) => {
-  const component = await mount(
-    <ScatterChart width={200} height={200} data={pageData}>
-      <XAxis type="number" dataKey="amt" />
-      <Scatter dataKey="uv">
-        <ErrorBar dataKey="pv" direction="x" />
-        <ErrorBar dataKey="pv" direction="y" />
-      </Scatter>
-    </ScatterChart>,
-  );
+test('ScatterChart + numeric XAxis + explicit direction + root data', async ({ mountStory }) => {
+  const component = await mountStory('ErrorBar.Scatter/ScatterChartNumericXAxisExplicitDirectionRootData');
   await expect(component).toHaveScreenshot(COMPOSED_AND_SCATTER_NUMERIC_XAXIS_EXPLICIT_DIRECTION_EQUIVALENT);
 });
 
-test('ScatterChart + numeric XAxis + explicit direction + item data', async ({ mount }) => {
-  const component = await mount(
-    <ScatterChart width={200} height={200}>
-      <XAxis type="number" dataKey="amt" />
-      <Scatter dataKey="uv" data={pageData}>
-        <ErrorBar dataKey="pv" direction="x" />
-        <ErrorBar dataKey="pv" direction="y" />
-      </Scatter>
-    </ScatterChart>,
-  );
+test('ScatterChart + numeric XAxis + explicit direction + item data', async ({ mountStory }) => {
+  const component = await mountStory('ErrorBar.Scatter/ScatterChartNumericXAxisExplicitDirectionItemData');
   await expect(component).toHaveScreenshot(COMPOSED_AND_SCATTER_NUMERIC_XAXIS_EXPLICIT_DIRECTION_EQUIVALENT);
 });
 
-test('ScatterChart + numeric XAxis + implicit direction + item data', async ({ mount }) => {
-  const component = await mount(
-    <ScatterChart width={200} height={200}>
-      <XAxis type="number" dataKey="amt" />
-      <Scatter dataKey="uv" data={pageData}>
-        <ErrorBar dataKey="pv" />
-      </Scatter>
-    </ScatterChart>,
-  );
+test('ScatterChart + numeric XAxis + implicit direction + item data', async ({ mountStory }) => {
+  const component = await mountStory('ErrorBar.Scatter/ScatterChartNumericXAxisImplicitDirectionItemData');
   await expect(component).toHaveScreenshot(COMPOSED_AND_SCATTER_NUMERIC_XAXIS_IMPLICIT_DIRECTION_EQUIVALENT);
 });
 
-test('ComposedChart vertical + implicit direction + root data', async ({ mount }) => {
-  const component = await mount(
-    <ComposedChart width={200} height={200} data={pageData} layout="vertical">
-      <XAxis type="number" dataKey="uv" />
-      <YAxis type="category" dataKey="name" />
-      <Scatter dataKey="uv">
-        <ErrorBar dataKey="pv" />
-      </Scatter>
-    </ComposedChart>,
-  );
+test('ComposedChart vertical + implicit direction + root data', async ({ mountStory }) => {
+  const component = await mountStory('ErrorBar.Scatter/ComposedChartVerticalImplicitDirectionRootData');
   await expect(component).toHaveScreenshot(COMPOSED_VERTICAL_DIRECTION_AND_DATA_SOURCE_EQUIVALENT);
 });
 
-test('ComposedChart vertical + explicit direction + root data', async ({ mount }) => {
-  const component = await mount(
-    <ComposedChart width={200} height={200} data={pageData} layout="vertical">
-      <XAxis type="number" dataKey="uv" />
-      <YAxis type="category" dataKey="name" />
-      <Scatter dataKey="uv">
-        <ErrorBar dataKey="pv" direction="x" />
-      </Scatter>
-    </ComposedChart>,
-  );
+test('ComposedChart vertical + explicit direction + root data', async ({ mountStory }) => {
+  const component = await mountStory('ErrorBar.Scatter/ComposedChartVerticalExplicitDirectionRootData');
   await expect(component).toHaveScreenshot(COMPOSED_VERTICAL_DIRECTION_AND_DATA_SOURCE_EQUIVALENT);
 });
 
-test('ComposedChart vertical + implicit direction + item data', async ({ mount }) => {
-  const component = await mount(
-    <ComposedChart width={200} height={200} layout="vertical">
-      <XAxis type="number" dataKey="uv" />
-      <YAxis type="category" dataKey="name" />
-      <Scatter dataKey="uv" data={pageData}>
-        <ErrorBar dataKey="pv" />
-      </Scatter>
-    </ComposedChart>,
-  );
+test('ComposedChart vertical + implicit direction + item data', async ({ mountStory }) => {
+  const component = await mountStory('ErrorBar.Scatter/ComposedChartVerticalImplicitDirectionItemData');
   await expect(component).toHaveScreenshot(COMPOSED_VERTICAL_DIRECTION_AND_DATA_SOURCE_EQUIVALENT);
 });
 
-test('ComposedChart vertical + explicit direction + item data', async ({ mount }) => {
-  const component = await mount(
-    <ComposedChart width={200} height={200} layout="vertical">
-      <XAxis type="number" dataKey="uv" />
-      <YAxis type="category" dataKey="name" />
-      <Scatter dataKey="uv" data={pageData}>
-        <ErrorBar dataKey="pv" direction="x" />
-      </Scatter>
-    </ComposedChart>,
-  );
+test('ComposedChart vertical + explicit direction + item data', async ({ mountStory }) => {
+  const component = await mountStory('ErrorBar.Scatter/ComposedChartVerticalExplicitDirectionItemData');
   await expect(component).toHaveScreenshot(COMPOSED_VERTICAL_DIRECTION_AND_DATA_SOURCE_EQUIVALENT);
 });
 
-test('ComposedChart vertical + both directions + root data', async ({ mount }) => {
-  const component = await mount(
-    <ComposedChart width={200} height={200} data={pageData} layout="vertical">
-      <XAxis type="number" dataKey="uv" />
-      <YAxis type="category" dataKey="name" />
-      <Scatter dataKey="uv">
-        <ErrorBar dataKey="pv" direction="x" />
-        <ErrorBar dataKey="pv" direction="y" />
-      </Scatter>
-    </ComposedChart>,
-  );
+test('ComposedChart vertical + both directions + root data', async ({ mountStory }) => {
+  const component = await mountStory('ErrorBar.Scatter/ComposedChartVerticalBothDirectionsRootData');
   await expect(component).toHaveScreenshot(COMPOSED_VERTICAL_BOTH_DIRECTIONS_DATA_SOURCE_EQUIVALENT);
 });
 
-test('ComposedChart vertical + both directions + item data', async ({ mount }) => {
-  const component = await mount(
-    <ComposedChart width={200} height={200} layout="vertical">
-      <XAxis type="number" dataKey="uv" />
-      <YAxis type="category" dataKey="name" />
-      <Scatter dataKey="uv" data={pageData}>
-        <ErrorBar dataKey="pv" direction="x" />
-        <ErrorBar dataKey="pv" direction="y" />
-      </Scatter>
-    </ComposedChart>,
-  );
+test('ComposedChart vertical + both directions + item data', async ({ mountStory }) => {
+  const component = await mountStory('ErrorBar.Scatter/ComposedChartVerticalBothDirectionsItemData');
   await expect(component).toHaveScreenshot(COMPOSED_VERTICAL_BOTH_DIRECTIONS_DATA_SOURCE_EQUIVALENT);
 });
 
-test('ScatterChart vertical + implicit direction + root data', async ({ mount }) => {
-  const component = await mount(
-    <ScatterChart width={200} height={200} data={pageData} layout="vertical">
-      <XAxis type="number" dataKey="uv" />
-      <YAxis type="category" dataKey="name" />
-      <Scatter dataKey="uv">
-        <ErrorBar dataKey="pv" />
-      </Scatter>
-    </ScatterChart>,
-  );
+test('ScatterChart vertical + implicit direction + root data', async ({ mountStory }) => {
+  const component = await mountStory('ErrorBar.Scatter/ScatterChartVerticalImplicitDirectionRootData');
   await expect(component).toHaveScreenshot(SCATTER_VERTICAL_DIRECTION_AND_DATA_SOURCE_EQUIVALENT);
 });
 
-test('ScatterChart vertical + explicit direction + root data', async ({ mount }) => {
-  const component = await mount(
-    <ScatterChart width={200} height={200} data={pageData} layout="vertical">
-      <XAxis type="number" dataKey="uv" />
-      <YAxis type="category" dataKey="name" />
-      <Scatter dataKey="uv">
-        <ErrorBar dataKey="pv" direction="x" />
-      </Scatter>
-    </ScatterChart>,
-  );
+test('ScatterChart vertical + explicit direction + root data', async ({ mountStory }) => {
+  const component = await mountStory('ErrorBar.Scatter/ScatterChartVerticalExplicitDirectionRootData');
   await expect(component).toHaveScreenshot(SCATTER_VERTICAL_DIRECTION_AND_DATA_SOURCE_EQUIVALENT);
 });
 
-test('ScatterChart vertical + implicit direction + item data', async ({ mount }) => {
-  const component = await mount(
-    <ScatterChart width={200} height={200} layout="vertical">
-      <XAxis type="number" dataKey="uv" />
-      <YAxis type="category" dataKey="name" />
-      <Scatter dataKey="uv" data={pageData}>
-        <ErrorBar dataKey="pv" />
-      </Scatter>
-    </ScatterChart>,
-  );
+test('ScatterChart vertical + implicit direction + item data', async ({ mountStory }) => {
+  const component = await mountStory('ErrorBar.Scatter/ScatterChartVerticalImplicitDirectionItemData');
   await expect(component).toHaveScreenshot(SCATTER_VERTICAL_DIRECTION_AND_DATA_SOURCE_EQUIVALENT);
 });
 
-test('ScatterChart vertical + explicit direction + item data', async ({ mount }) => {
-  const component = await mount(
-    <ScatterChart width={200} height={200} layout="vertical">
-      <XAxis type="number" dataKey="uv" />
-      <YAxis type="category" dataKey="name" />
-      <Scatter dataKey="uv" data={pageData}>
-        <ErrorBar dataKey="pv" direction="x" />
-      </Scatter>
-    </ScatterChart>,
-  );
+test('ScatterChart vertical + explicit direction + item data', async ({ mountStory }) => {
+  const component = await mountStory('ErrorBar.Scatter/ScatterChartVerticalExplicitDirectionItemData');
   await expect(component).toHaveScreenshot(SCATTER_VERTICAL_DIRECTION_AND_DATA_SOURCE_EQUIVALENT);
 });
 
-test('ScatterChart vertical + both directions + root data', async ({ mount }) => {
-  const component = await mount(
-    <ScatterChart width={200} height={200} data={pageData} layout="vertical">
-      <XAxis type="number" dataKey="uv" />
-      <YAxis type="category" dataKey="name" />
-      <Scatter dataKey="uv">
-        <ErrorBar dataKey="pv" direction="x" />
-        <ErrorBar dataKey="pv" direction="y" />
-      </Scatter>
-    </ScatterChart>,
-  );
+test('ScatterChart vertical + both directions + root data', async ({ mountStory }) => {
+  const component = await mountStory('ErrorBar.Scatter/ScatterChartVerticalBothDirectionsRootData');
   await expect(component).toHaveScreenshot(SCATTER_VERTICAL_DIRECTION_AND_DATA_SOURCE_EQUIVALENT);
 });
 
-test('ScatterChart vertical + both directions + item data', async ({ mount }) => {
-  const component = await mount(
-    <ScatterChart width={200} height={200} layout="vertical">
-      <XAxis type="number" dataKey="uv" />
-      <YAxis type="category" dataKey="name" />
-      <Scatter dataKey="uv" data={pageData}>
-        <ErrorBar dataKey="pv" direction="x" />
-        <ErrorBar dataKey="pv" direction="y" />
-      </Scatter>
-    </ScatterChart>,
-  );
+test('ScatterChart vertical + both directions + item data', async ({ mountStory }) => {
+  const component = await mountStory('ErrorBar.Scatter/ScatterChartVerticalBothDirectionsItemData');
   await expect(component).toHaveScreenshot(SCATTER_VERTICAL_DIRECTION_AND_DATA_SOURCE_EQUIVALENT);
 });
 
-test('ComposedChart vertical + numeric YAxis + both directions + root data', async ({ mount }) => {
-  const component = await mount(
-    <ComposedChart width={200} height={200} data={pageData} layout="vertical">
-      <XAxis type="number" dataKey="uv" />
-      <YAxis type="number" dataKey="amt" />
-      <Scatter dataKey="uv">
-        <ErrorBar dataKey="pv" direction="x" />
-        <ErrorBar dataKey="pv" direction="y" />
-      </Scatter>
-    </ComposedChart>,
-  );
+test('ComposedChart vertical + numeric YAxis + both directions + root data', async ({ mountStory }) => {
+  const component = await mountStory('ErrorBar.Scatter/ComposedChartVerticalNumericYAxisBothDirectionsRootData');
   await expect(component).toHaveScreenshot(COMPOSED_AND_SCATTER_VERTICAL_NUMERIC_YAXIS_BOTH_DIRECTIONS_EQUIVALENT);
 });
 
-test('ComposedChart vertical + numeric YAxis + both directions + item data', async ({ mount }) => {
-  const component = await mount(
-    <ComposedChart width={200} height={200} layout="vertical">
-      <XAxis type="number" dataKey="uv" />
-      <YAxis type="number" dataKey="amt" />
-      <Scatter dataKey="uv" data={pageData}>
-        <ErrorBar dataKey="pv" direction="x" />
-        <ErrorBar dataKey="pv" direction="y" />
-      </Scatter>
-    </ComposedChart>,
-  );
+test('ComposedChart vertical + numeric YAxis + both directions + item data', async ({ mountStory }) => {
+  const component = await mountStory('ErrorBar.Scatter/ComposedChartVerticalNumericYAxisBothDirectionsItemData');
   await expect(component).toHaveScreenshot(COMPOSED_AND_SCATTER_VERTICAL_NUMERIC_YAXIS_BOTH_DIRECTIONS_EQUIVALENT);
 });
 
-test('ScatterChart vertical + numeric YAxis + both directions + root data', async ({ mount }) => {
-  const component = await mount(
-    <ScatterChart width={200} height={200} data={pageData} layout="vertical">
-      <XAxis type="number" dataKey="uv" />
-      <YAxis type="number" dataKey="amt" />
-      <Scatter dataKey="uv">
-        <ErrorBar dataKey="pv" direction="x" />
-        <ErrorBar dataKey="pv" direction="y" />
-      </Scatter>
-    </ScatterChart>,
-  );
+test('ScatterChart vertical + numeric YAxis + both directions + root data', async ({ mountStory }) => {
+  const component = await mountStory('ErrorBar.Scatter/ScatterChartVerticalNumericYAxisBothDirectionsRootData');
   await expect(component).toHaveScreenshot(COMPOSED_AND_SCATTER_VERTICAL_NUMERIC_YAXIS_BOTH_DIRECTIONS_EQUIVALENT);
 });
 
-test('ScatterChart vertical + numeric YAxis + both directions + item data', async ({ mount }) => {
-  const component = await mount(
-    <ScatterChart width={200} height={200} layout="vertical">
-      <XAxis type="number" dataKey="uv" />
-      <YAxis type="number" dataKey="amt" />
-      <Scatter dataKey="uv" data={pageData}>
-        <ErrorBar dataKey="pv" direction="x" />
-        <ErrorBar dataKey="pv" direction="y" />
-      </Scatter>
-    </ScatterChart>,
-  );
+test('ScatterChart vertical + numeric YAxis + both directions + item data', async ({ mountStory }) => {
+  const component = await mountStory('ErrorBar.Scatter/ScatterChartVerticalNumericYAxisBothDirectionsItemData');
   await expect(component).toHaveScreenshot(COMPOSED_AND_SCATTER_VERTICAL_NUMERIC_YAXIS_BOTH_DIRECTIONS_EQUIVALENT);
 });
 
-test('ComposedChart vertical + numeric YAxis + implicit direction + root data', async ({ mount }) => {
-  const component = await mount(
-    <ComposedChart width={200} height={200} data={pageData} layout="vertical">
-      <XAxis type="number" dataKey="uv" />
-      <YAxis type="number" dataKey="amt" />
-      <Scatter dataKey="uv">
-        <ErrorBar dataKey="pv" />
-      </Scatter>
-    </ComposedChart>,
-  );
+test('ComposedChart vertical + numeric YAxis + implicit direction + root data', async ({ mountStory }) => {
+  const component = await mountStory('ErrorBar.Scatter/ComposedChartVerticalNumericYAxisImplicitDirectionRootData');
   await expect(component).toHaveScreenshot(COMPOSED_AND_SCATTER_VERTICAL_NUMERIC_YAXIS_IMPLICIT_DIRECTION_EQUIVALENT);
 });
 
-test('ComposedChart vertical + numeric YAxis + implicit direction + item data', async ({ mount }) => {
-  const component = await mount(
-    <ComposedChart width={200} height={200} layout="vertical">
-      <XAxis type="number" dataKey="uv" />
-      <YAxis type="number" dataKey="amt" />
-      <Scatter dataKey="uv" data={pageData}>
-        <ErrorBar dataKey="pv" />
-      </Scatter>
-    </ComposedChart>,
-  );
+test('ComposedChart vertical + numeric YAxis + implicit direction + item data', async ({ mountStory }) => {
+  const component = await mountStory('ErrorBar.Scatter/ComposedChartVerticalNumericYAxisImplicitDirectionItemData');
   await expect(component).toHaveScreenshot(COMPOSED_AND_SCATTER_VERTICAL_NUMERIC_YAXIS_IMPLICIT_DIRECTION_EQUIVALENT);
 });
 
-test('ScatterChart vertical + numeric YAxis + implicit direction + root data', async ({ mount }) => {
-  const component = await mount(
-    <ScatterChart width={200} height={200} data={pageData} layout="vertical">
-      <XAxis type="number" dataKey="uv" />
-      <YAxis type="number" dataKey="amt" />
-      <Scatter dataKey="uv">
-        <ErrorBar dataKey="pv" />
-      </Scatter>
-    </ScatterChart>,
-  );
+test('ScatterChart vertical + numeric YAxis + implicit direction + root data', async ({ mountStory }) => {
+  const component = await mountStory('ErrorBar.Scatter/ScatterChartVerticalNumericYAxisImplicitDirectionRootData');
   await expect(component).toHaveScreenshot(COMPOSED_AND_SCATTER_VERTICAL_NUMERIC_YAXIS_IMPLICIT_DIRECTION_EQUIVALENT);
 });
 
-test('ScatterChart vertical + numeric YAxis + implicit direction + item data', async ({ mount }) => {
-  const component = await mount(
-    <ScatterChart width={200} height={200} layout="vertical">
-      <XAxis type="number" dataKey="uv" />
-      <YAxis type="number" dataKey="amt" />
-      <Scatter dataKey="uv" data={pageData}>
-        <ErrorBar dataKey="pv" />
-      </Scatter>
-    </ScatterChart>,
-  );
+test('ScatterChart vertical + numeric YAxis + implicit direction + item data', async ({ mountStory }) => {
+  const component = await mountStory('ErrorBar.Scatter/ScatterChartVerticalNumericYAxisImplicitDirectionItemData');
   await expect(component).toHaveScreenshot(COMPOSED_AND_SCATTER_VERTICAL_NUMERIC_YAXIS_IMPLICIT_DIRECTION_EQUIVALENT);
 });

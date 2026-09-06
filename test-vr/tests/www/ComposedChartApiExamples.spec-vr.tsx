@@ -1,52 +1,48 @@
-import * as React from 'react';
-import { expect } from '@playwright/experimental-ct-react';
+import type { TargetPriceChart } from './ComposedChartApiExamples.story';
+import { expect, test } from '../fixtures';
 
-import LineBarAreaComposedChart from '../../../www/src/docs/exampleComponents/ComposedChart/LineBarAreaComposedChart';
-import SameDataComposedChart from '../../../www/src/docs/exampleComponents/ComposedChart/SameDataComposedChart';
-import VerticalComposedChart from '../../../www/src/docs/exampleComponents/ComposedChart/VerticalComposedChart';
-import ComposedChartWithAxisLabels from '../../../www/src/docs/exampleComponents/ComposedChart/ComposedChartWithAxisLabels';
-import ScatterAndLineOfBestFit from '../../../www/src/docs/exampleComponents/ComposedChart/ScatterAndLineOfBestFit';
-import BandedChart from '../../../www/src/docs/exampleComponents/ComposedChart/BandedChart';
-import ComposedChartNavExample from '../../../www/src/docs/exampleComponents/ComposedChart/ComposedChartNavExample';
-import TargetPriceChart from '../../../www/src/docs/exampleComponents/ComposedChart/TargetPriceChart';
-import { testWithLightTheme } from './fixtures.tsx';
-
-testWithLightTheme('TargetPriceChart', async ({ mount }) => {
-  const component = await mount(<TargetPriceChart isAnimationActive={false} defaultIndex={50} />);
+test('TargetPriceChart', async ({ mountStory }) => {
+  const component = await mountStory<typeof TargetPriceChart>('www/ComposedChartApiExamples/TargetPriceChart', {
+    testTheme: 'light',
+    isAnimationActive: false,
+    defaultIndex: 50,
+  });
   await expect(component).toHaveScreenshot();
 });
 
-testWithLightTheme('ComposedChartNavExample', async ({ mount }) => {
-  const component = await mount(<ComposedChartNavExample />);
+test('ComposedChartNavExample', async ({ mountStory }) => {
+  const component = await mountStory('www/ComposedChartApiExamples/ComposedChartNavExample', { testTheme: 'light' });
   await expect(component).toHaveScreenshot();
 });
 
-testWithLightTheme('BandedChart', async ({ mount }) => {
-  const component = await mount(<BandedChart />);
+test('BandedChart', async ({ mountStory }) => {
+  const component = await mountStory('www/ComposedChartApiExamples/BandedChart', { testTheme: 'light' });
   await expect(component).toHaveScreenshot();
 });
 
-testWithLightTheme('ScatterAndLineOfBestFit', async ({ mount }) => {
-  const component = await mount(<ScatterAndLineOfBestFit />);
+test('ScatterAndLineOfBestFit', async ({ mountStory }) => {
+  const component = await mountStory('www/ComposedChartApiExamples/ScatterAndLineOfBestFit', { testTheme: 'light' });
   await expect(component).toHaveScreenshot();
 });
 
-testWithLightTheme('ComposedChartWithAxisLabels', async ({ mount }) => {
-  const component = await mount(<ComposedChartWithAxisLabels />);
+test('ComposedChartWithAxisLabels', async ({ mountStory }) => {
+  const component = await mountStory('www/ComposedChartApiExamples/ComposedChartWithAxisLabels', {
+    testTheme: 'light',
+  });
   await expect(component).toHaveScreenshot();
 });
 
-testWithLightTheme('VerticalComposedChart', async ({ mount }) => {
-  const component = await mount(<VerticalComposedChart />);
+test('VerticalComposedChart', async ({ mountStory }) => {
+  const component = await mountStory('www/ComposedChartApiExamples/VerticalComposedChart', { testTheme: 'light' });
   await expect(component).toHaveScreenshot();
 });
 
-testWithLightTheme('SameDataComposedChart', async ({ mount }) => {
-  const component = await mount(<SameDataComposedChart />);
+test('SameDataComposedChart', async ({ mountStory }) => {
+  const component = await mountStory('www/ComposedChartApiExamples/SameDataComposedChart', { testTheme: 'light' });
   await expect(component).toHaveScreenshot();
 });
 
-testWithLightTheme('LineBarAreaComposedChart', async ({ mount }) => {
-  const component = await mount(<LineBarAreaComposedChart />);
+test('LineBarAreaComposedChart', async ({ mountStory }) => {
+  const component = await mountStory('www/ComposedChartApiExamples/LineBarAreaComposedChart', { testTheme: 'light' });
   await expect(component).toHaveScreenshot();
 });

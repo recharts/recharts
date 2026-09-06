@@ -1,33 +1,42 @@
-import React from 'react';
-import { expect, test } from '@playwright/experimental-ct-react';
-import { LegendAlignVRTest, LegendPositionVRTest, VeryLongLegendText } from './LegendPositionComponents';
+import type {
+  LegendAlign,
+  LegendPosition as LegendPositionStory,
+  VeryLongLegendTextStory,
+} from './LegendPosition.story';
+import { expect, test } from './fixtures';
 
-test('Legend.position with default offset', async ({ mount }) => {
-  const component = await mount(<LegendPositionVRTest />);
+test('Legend.position with default offset', async ({ mountStory }) => {
+  const component = await mountStory<typeof LegendPositionStory>('LegendPosition/LegendPosition');
   await expect(component).toHaveScreenshot();
 });
 
-test('Legend.position with custom offset', async ({ mount }) => {
-  const component = await mount(<LegendPositionVRTest offset={30} />);
+test('Legend.position with custom offset', async ({ mountStory }) => {
+  const component = await mountStory<typeof LegendPositionStory>('LegendPosition/LegendPosition', { offset: 30 });
   await expect(component).toHaveScreenshot();
 });
 
-test('Legend.align without offset', async ({ mount }) => {
-  const component = await mount(<LegendAlignVRTest />);
+test('Legend.align without offset', async ({ mountStory }) => {
+  const component = await mountStory<typeof LegendAlign>('LegendPosition/LegendAlign');
   await expect(component).toHaveScreenshot();
 });
 
-test('VeryLongLegendText with position "bottom"', async ({ mount }) => {
-  const component = await mount(<VeryLongLegendText position="bottom" />);
+test('VeryLongLegendText with position "bottom"', async ({ mountStory }) => {
+  const component = await mountStory<typeof VeryLongLegendTextStory>('LegendPosition/VeryLongLegendTextStory', {
+    position: 'bottom',
+  });
   await expect(component).toHaveScreenshot();
 });
 
-test('VeryLongLegendText with position "left"', async ({ mount }) => {
-  const component = await mount(<VeryLongLegendText position="left" />);
+test('VeryLongLegendText with position "left"', async ({ mountStory }) => {
+  const component = await mountStory<typeof VeryLongLegendTextStory>('LegendPosition/VeryLongLegendTextStory', {
+    position: 'left',
+  });
   await expect(component).toHaveScreenshot();
 });
 
-test('VeryLongLegendText with position "insideRight"', async ({ mount }) => {
-  const component = await mount(<VeryLongLegendText position="insideRight" />);
+test('VeryLongLegendText with position "insideRight"', async ({ mountStory }) => {
+  const component = await mountStory<typeof VeryLongLegendTextStory>('LegendPosition/VeryLongLegendTextStory', {
+    position: 'insideRight',
+  });
   await expect(component).toHaveScreenshot();
 });

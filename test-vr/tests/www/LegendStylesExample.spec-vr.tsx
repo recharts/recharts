@@ -1,9 +1,6 @@
-import * as React from 'react';
-import { expect } from '@playwright/experimental-ct-react';
-import LegendStylesExample from '../../../www/src/docs/exampleComponents/Legend/LegendStylesExample';
-import { testWithLightTheme } from './fixtures.tsx';
+import { expect, test } from '../fixtures';
 
-testWithLightTheme('LegendStylesExample', async ({ mount }) => {
-  const component = await mount(<LegendStylesExample />);
+test('LegendStylesExample', async ({ mountStory }) => {
+  const component = await mountStory('www/LegendStylesExample/LegendStylesExample', { testTheme: 'light' });
   await expect(component).toHaveScreenshot();
 });

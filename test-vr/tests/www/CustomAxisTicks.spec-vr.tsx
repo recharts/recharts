@@ -1,19 +1,27 @@
-import * as React from 'react';
-import { test, expect } from '@playwright/experimental-ct-react';
-import AxisTicksPlayground from '../../../www/src/components/GuideView/AxisTicks/NiceTicksPlayground';
-import CustomAxisTicks from '../../../www/src/components/GuideView/AxisTicks/CustomAxisTicks';
+import type { AxisTicksPlayground, CustomAxisTicks } from './CustomAxisTicks.story';
+import { expect, test } from '../fixtures';
 
-test('AxisTicksPlayground with linear scale', async ({ mount }) => {
-  const component = await mount(<AxisTicksPlayground niceTicks="snap125" scale="linear" tickCount={6} />);
+test('AxisTicksPlayground with linear scale', async ({ mountStory }) => {
+  const component = await mountStory<typeof AxisTicksPlayground>('www/CustomAxisTicks/AxisTicksPlayground', {
+    niceTicks: 'snap125',
+    scale: 'linear',
+    tickCount: 6,
+  });
   await expect(component).toHaveScreenshot();
 });
 
-test('AxisTicksPlayground with symlog scale', async ({ mount }) => {
-  const component = await mount(<AxisTicksPlayground niceTicks="adaptive" scale="symlog" tickCount={4} />);
+test('AxisTicksPlayground with symlog scale', async ({ mountStory }) => {
+  const component = await mountStory<typeof AxisTicksPlayground>('www/CustomAxisTicks/AxisTicksPlayground', {
+    niceTicks: 'adaptive',
+    scale: 'symlog',
+    tickCount: 4,
+  });
   await expect(component).toHaveScreenshot();
 });
 
-test('CustomAxisTicks', async ({ mount }) => {
-  const component = await mount(<CustomAxisTicks scale="linear" />);
+test('CustomAxisTicks', async ({ mountStory }) => {
+  const component = await mountStory<typeof CustomAxisTicks>('www/CustomAxisTicks/CustomAxisTicks', {
+    scale: 'linear',
+  });
   await expect(component).toHaveScreenshot();
 });

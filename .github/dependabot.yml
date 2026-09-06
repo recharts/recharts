@@ -21,7 +21,7 @@ updates:
       playwright:
         patterns:
           - 'playwright'
-          - '@playwright/experimental-ct-react'
+          - '@playwright/test'
       react:
         patterns:
           - 'react'
