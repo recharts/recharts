@@ -252,6 +252,39 @@ describe('Area theme', () => {
     });
   });
 
+  describe('dot', () => {
+    it('should merge explicit dot props with the graphical item theme', () => {
+      const { container } = rechartsTestRender(
+        <RechartsThemeProvider
+          value={{
+            graphicalItems: [
+              {
+                fill: 'purple',
+                fillOpacity: 0.7,
+                stroke: 'teal',
+                strokeWidth: 4,
+                strokeOpacity: 0.3,
+                strokeDasharray: '5 10',
+              },
+            ],
+          }}
+        >
+          <MyChart>
+            <Area dataKey="x" dot={{ fill: 'green' }} isAnimationActive={false} />
+          </MyChart>
+        </RechartsThemeProvider>,
+      );
+      const dot = container.querySelector('.recharts-area-dot');
+      assertNotNull(dot);
+      expect(dot).toHaveAttribute('fill', 'green');
+      expect(dot).toHaveAttribute('fill-opacity', '0.7');
+      expect(dot).toHaveAttribute('stroke', 'teal');
+      expect(dot).toHaveAttribute('stroke-width', '4');
+      expect(dot).toHaveAttribute('stroke-opacity', '0.3');
+      expect(dot).toHaveAttribute('stroke-dasharray', '5 10');
+    });
+  });
+
   describe('activeDot', () => {
     beforeEach(() => {
       mockGetBoundingClientRect({ width: 100, height: 100 });
