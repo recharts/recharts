@@ -27,3 +27,21 @@ and try to improve the code style where possible and where relevant to the curre
 Do not attempt to fix too much at once, or when it is not related to the current changes.
 
 Do not focus too much on fitting the existing style, if it is not ideal.
+
+## Visual regression tests
+
+Read `test-vr/README.md` and `.agents/skills/vr-test/SKILL.md` before adding or
+changing Playwright visual-regression tests. New specs use `testWithThemes`
+from `test-vr/tests/fixtures`, which automatically renders legacy, light, and
+dark Recharts theme variants. Do not expose theme selection through story
+props, theme-specific test titles, or custom screenshot names.
+
+Existing specs may continue to use the legacy `test` fixture while they are
+migrated one spec at a time. When asked to migrate one, follow
+`.agents/skills/vr-test-migration/SKILL.md`; do not create a central exclusion
+list. Keep `prefers-color-scheme` (`colorScheme`) separate from Recharts theme
+selection, and use the documented fixture options or `@recharts-theme-*` tags
+for intentional exceptions.
+
+Run visual-regression tests and update screenshots through Docker only. Do not
+commit generated `test-results` or `playwright-report` output.
