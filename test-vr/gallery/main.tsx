@@ -11,10 +11,9 @@
 import * as React from 'react';
 import { flushSync } from 'react-dom';
 import { createRoot, type Root } from 'react-dom/client';
-import { darkTheme, lightTheme, RechartsThemeProvider } from 'recharts';
+import { getRechartsTheme, renderWithRechartsTheme, setCanvasBackground } from './theme';
 
 type StoryComponent = React.ComponentType<Record<string, unknown>>;
-type RechartsThemeVariant = 'legacy' | 'light' | 'dark';
 
 const rootElement = document.getElementById('root');
 if (rootElement === null) {
@@ -38,36 +37,6 @@ function isRecord(value: unknown): value is Record<string, unknown> {
 
 function isComponent(value: unknown): value is StoryComponent {
   return typeof value === 'function';
-}
-
-function isRechartsThemeVariant(value: unknown): value is RechartsThemeVariant {
-  return value === 'legacy' || value === 'light' || value === 'dark';
-}
-
-function getRechartsTheme(): RechartsThemeVariant {
-  const value = new URLSearchParams(window.location.search).get('rechartsTheme');
-  return isRechartsThemeVariant(value) ? value : 'legacy';
-}
-
-function setCanvasBackground(theme: RechartsThemeVariant) {
-  if (theme === 'dark') {
-    galleryElement.style.backgroundColor = 'black';
-  } else if (theme === 'light') {
-    galleryElement.style.backgroundColor = 'white';
-  } else {
-    galleryElement.style.backgroundColor = '';
-  }
-}
-
-function renderWithRechartsTheme(theme: RechartsThemeVariant, story: React.ReactNode): React.ReactNode {
-  switch (theme) {
-    case 'light':
-      return <RechartsThemeProvider value={lightTheme}>{story}</RechartsThemeProvider>;
-    case 'dark':
-      return <RechartsThemeProvider value={darkTheme}>{story}</RechartsThemeProvider>;
-    default:
-      return story;
-  }
 }
 
 async function resolveStory(storyId: string): Promise<StoryComponent> {
@@ -111,7 +80,7 @@ window.mount = async ({ story, props }) => {
   const Story = await resolveStory(story);
   const storyProps: Record<string, unknown> = props ?? {};
   const theme = getRechartsTheme();
-  setCanvasBackground(theme);
+  setCanvasBackground(galleryElement, theme);
   const galleryRoot = root ?? createRoot(galleryElement);
   root = galleryRoot;
   /*
@@ -126,5 +95,14 @@ window.mount = async ({ story, props }) => {
 window.unmount = async () => {
   root?.unmount();
   root = undefined;
-  setCanvasBackground('legacy');
+  setCanvasBackground(galleryElement, 'legacy');
 };
+
+setCanvasBackground(galleryElement, getRechartsTheme());
+
+const storyFromUrl = new URLSearchParams(window.location.search).get('story');
+if (storyFromUrl !== null) {
+  window.mount({ story: storyFromUrl }).catch(() => {
+    // Unknown story ids from the URL are ignored.
+  });
+}

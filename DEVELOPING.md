@@ -92,7 +92,7 @@ https://playwright.dev/docs/test-components.
 The JSX for each scenario lives in a `*.story.tsx` file next to the spec, and the spec mounts it
 by story id with the `mountStory` fixture. See `test-vr/README.md` for details.
 The Playwright mount page at `/gallery/index.html` is intentionally blank until a test calls
-`window.mount`; it is not a human-facing story index.
+`window.mount` or the URL includes `?story=`; it is not a human-facing story index.
 
 New VR specs should import `testWithThemes` from `test-vr/tests/fixtures`. Each
 test runs in legacy, light, and dark projects for Chromium, Firefox, and
@@ -144,8 +144,9 @@ npm run test-vr:ui
 
 This starts Playwright UI on http://localhost:8080 and keeps the Vite gallery server available on
 port 3100. While the command is running, use http://localhost:3100/gallery/preview.html to browse
-and click through the stories manually. The preview page mounts each selected story with its
-default props. Do not expect `/gallery/index.html` to display a navigation page.
+and click through the stories manually. The preview page shows each selected story in three stacked
+legacy, light, and dark panels that reuse the Playwright mount page, with open-in-new-tab links for
+each variant. Do not expect `/gallery/index.html` to display a navigation page.
 
 If you want to record new snapshots or update the old ones, you can run:
 
@@ -227,11 +228,11 @@ npm run test-vr:ui
 ```
 
 The same command serves the human-facing story preview at
-http://localhost:3100/gallery/preview.html. The Playwright-only mount target at
-http://localhost:3100/gallery/index.html remains blank when opened directly.
-Theme projects select their variant through the Playwright project
-configuration; opening the mount target directly does not preview the project
-matrix.
+http://localhost:3100/gallery/preview.html. Each selected story renders in three stacked legacy,
+light, and dark panels that reuse the Playwright mount page (`index.html?story=…&rechartsTheme=…`).
+The Playwright-only mount target at http://localhost:3100/gallery/index.html remains blank when
+opened directly without `?story=`. Theme projects select their variant through the Playwright project
+configuration; opening the mount target directly does not preview the project matrix.
 
 # Releasing new versions
 

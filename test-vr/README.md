@@ -180,9 +180,12 @@ The story gallery pages used by the component tests: https://playwright.dev/docs
 They are served by the Vite dev server configured in `./vite.config.ts` on port 3100,
 which Playwright starts automatically through the `webServer` option in `./playwright.config.ts`.
 
-`gallery/index.html` is the blank mount target used by Playwright. To browse stories manually,
-open `http://localhost:3100/gallery/preview.html` while the gallery server is running.
-The preview page provides navigation and mounts the selected story with its default props.
+`gallery/index.html` is the blank mount target used by Playwright. It auto-mounts a story only when
+`?story=` is present in the URL. To browse stories manually, open
+`http://localhost:3100/gallery/preview.html` while the gallery server is running.
+The preview page provides navigation and shows each selected story in three stacked panels — legacy,
+light, and dark — that reuse the Playwright mount page (`index.html?story=…&rechartsTheme=…`), with
+open-in-new-tab links for each variant.
 
 ### `playwright-report`
 

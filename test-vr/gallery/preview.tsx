@@ -1,15 +1,20 @@
 import * as React from 'react';
 import { createRoot } from 'react-dom/client';
+import {
+  buildMountUrl,
+  getIframeSeamFillBackground,
+  RECHARTS_THEME_PANEL_LABELS,
+  RECHARTS_THEME_VARIANTS,
+  type RechartsThemeVariant,
+} from './theme';
 import './preview.css';
 
-type StoryComponent = React.ComponentType<Record<string, unknown>>;
 type StoryModule = Record<string, unknown>;
 
 type Story = {
   id: string;
   file: string;
   name: string;
-  component: StoryComponent;
 };
 
 const storyModules = import.meta.glob<StoryModule>('../tests/**/*.story.{tsx,jsx}', { eager: true });
@@ -18,7 +23,7 @@ function storyFileFromPath(file: string): string {
   return file.replace(/^\.\.\/tests\//, '').replace(/\.story\.\w+$/, '');
 }
 
-function isComponent(value: unknown): value is StoryComponent {
+function isComponent(value: unknown): value is React.ComponentType<Record<string, unknown>> {
   return typeof value === 'function';
 }
 
@@ -36,7 +41,6 @@ const stories: Story[] = Object.entries(storyModules)
           id: `${storyFile}/${name}`,
           file: storyFile,
           name,
-          component: value,
         },
       ];
     });
@@ -62,13 +66,153 @@ function getStoryIdFromUrl(): string | undefined {
   return storyId !== null && stories.some(story => story.id === storyId) ? storyId : stories[0]?.id;
 }
 
-function StoryPreview({ story }: { story: Story }) {
-  const Story = story.component;
-  const props: Record<string, unknown> = {};
+const AUTOSIZE_DEADBAND_PX = 2;
+const IFRAME_MIN_HEIGHT_PX = 200;
+
+/*
+ * Size each iframe to its document scroll box. Width uses max(panel width,
+ * document scroll width) so wide charts scroll the panel, not the iframe.
+ * Writes are deferred out of ResizeObserver callbacks and guarded by a 2px
+ * deadband to avoid layout feedback loops.
+ */
+function autosizeIframe(
+  iframe: HTMLIFrameElement,
+  panel: HTMLElement,
+  onSizeChange: (width: number, height: number) => void,
+): () => void {
+  let currentWidth = 0,
+    currentHeight = 0,
+    contentObserver: ResizeObserver | undefined,
+    rafId: number | undefined;
+
+  const measureAndUpdate = () => {
+    const doc = iframe.contentWindow?.document;
+    if (doc === undefined) {
+      return;
+    }
+
+    const { scrollWidth, scrollHeight } = doc.documentElement;
+    const panelWidth = panel.clientWidth;
+    const nextWidth = Math.max(panelWidth, scrollWidth);
+    const nextHeight = scrollHeight;
+
+    if (
+      Math.abs(nextWidth - currentWidth) < AUTOSIZE_DEADBAND_PX &&
+      Math.abs(nextHeight - currentHeight) < AUTOSIZE_DEADBAND_PX
+    ) {
+      return;
+    }
+
+    currentWidth = nextWidth;
+    currentHeight = nextHeight;
+
+    if (rafId !== undefined) {
+      cancelAnimationFrame(rafId);
+    }
+    rafId = requestAnimationFrame(() => {
+      onSizeChange(currentWidth, currentHeight);
+      rafId = undefined;
+    });
+  };
+
+  const setupContentObserver = () => {
+    const { contentWindow } = iframe;
+    if (contentWindow === null) {
+      return;
+    }
+
+    const { document: doc } = contentWindow;
+    const ResizeObserverCtor = (contentWindow as Window & typeof globalThis).ResizeObserver;
+    if (ResizeObserverCtor === undefined) {
+      return;
+    }
+
+    contentObserver?.disconnect();
+    const observer = new ResizeObserverCtor(() => {
+      measureAndUpdate();
+    });
+    contentObserver = observer;
+    observer.observe(doc.documentElement);
+    measureAndUpdate();
+  };
+
+  const handleLoad = () => {
+    setupContentObserver();
+  };
+
+  iframe.addEventListener('load', handleLoad);
+  if (iframe.contentDocument?.readyState === 'complete') {
+    handleLoad();
+  }
+
+  const panelObserver = new ResizeObserver(() => {
+    measureAndUpdate();
+    if (iframe.contentDocument?.readyState === 'complete') {
+      setupContentObserver();
+    }
+  });
+  panelObserver.observe(panel);
+
+  return () => {
+    iframe.removeEventListener('load', handleLoad);
+    contentObserver?.disconnect();
+    panelObserver.disconnect();
+    if (rafId !== undefined) {
+      cancelAnimationFrame(rafId);
+    }
+  };
+}
+
+function StoryVariantPanel({ storyId, variant }: { storyId: string; variant: RechartsThemeVariant }) {
+  const panelRef = React.useRef<HTMLDivElement>(null);
+  const iframeRef = React.useRef<HTMLIFrameElement>(null);
+  const [size, setSize] = React.useState({ width: 0, height: IFRAME_MIN_HEIGHT_PX });
+  const mountUrl = buildMountUrl(storyId, variant);
+
+  React.useEffect(() => {
+    const panel = panelRef.current;
+    const iframe = iframeRef.current;
+    if (panel === null || iframe === null) {
+      return undefined;
+    }
+
+    return autosizeIframe(iframe, panel, (width, height) => {
+      setSize({ width, height });
+    });
+  }, [storyId, variant]);
 
   return (
-    <div className="story-canvas">
-      <Story {...props} />
+    <section className="story-panel">
+      <header className="story-panel-header">
+        <h3>{RECHARTS_THEME_PANEL_LABELS[variant]}</h3>
+        <a className="story-panel-link" href={mountUrl} target="_blank" rel="noreferrer">
+          Open in new tab
+        </a>
+      </header>
+      <div className="story-panel-frame" ref={panelRef}>
+        <iframe
+          ref={iframeRef}
+          key={`${storyId}-${variant}`}
+          title={`${storyId} (${variant})`}
+          src={mountUrl}
+          className="story-panel-iframe"
+          style={{
+            width: size.width > 0 ? `${size.width}px` : '100%',
+            height: `${size.height}px`,
+            background: getIframeSeamFillBackground(variant),
+          }}
+        />
+      </div>
+    </section>
+  );
+}
+
+function StoryVariants({ storyId }: { storyId: string }) {
+  return (
+    <div className="story-variants">
+      {RECHARTS_THEME_VARIANTS.map(variant => (
+        <StoryVariantPanel key={variant} storyId={storyId} variant={variant} />
+      ))}
     </div>
   );
 }
@@ -131,7 +275,7 @@ function PreviewApp() {
             {selectedStory.name} <code>{selectedStory.id}</code>
           </h2>
         </header>
-        <StoryPreview key={selectedStory.id} story={selectedStory} />
+        <StoryVariants key={selectedStory.id} storyId={selectedStory.id} />
       </main>
     </div>
   );
