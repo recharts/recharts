@@ -367,7 +367,7 @@ export interface PieProps<DataPointType = any, DataValueType = any>
   /** the max radius of pie */
   maxRadius?: number;
   /**
-   * The minimum angle of each unzero data.
+   * The minimum angle of each non-zero segment.
    * @defaultValue 0
    */
   minAngle?: number;
