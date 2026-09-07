@@ -3,6 +3,36 @@ import path from 'path';
 
 const galleryUrl = 'http://localhost:3100/gallery/index.html';
 
+const browserProjects = [
+  {
+    name: 'chromium',
+    use: { ...devices['Desktop Chrome'] },
+    metadata: { rechartsTheme: 'legacy' },
+  },
+  {
+    name: 'firefox',
+    use: { ...devices['Desktop Firefox'] },
+    metadata: { rechartsTheme: 'legacy' },
+  },
+  {
+    name: 'webkit',
+    use: { ...devices['Desktop Safari'] },
+    metadata: { rechartsTheme: 'legacy' },
+  },
+];
+
+const themedProjects = browserProjects.flatMap(project =>
+  (['light', 'dark'] as const).map(rechartsTheme => ({
+    ...project,
+    name: `${project.name}-${rechartsTheme}`,
+    use: {
+      ...project.use,
+      baseURL: `${galleryUrl}?rechartsTheme=${rechartsTheme}`,
+    },
+    metadata: { rechartsTheme },
+  })),
+);
+
 /**
  * See https://playwright.dev/docs/test-configuration.
  */
@@ -109,18 +139,5 @@ export default defineConfig({
   },
 
   /* Configure projects for major browsers */
-  projects: [
-    {
-      name: 'chromium',
-      use: { ...devices['Desktop Chrome'] },
-    },
-    {
-      name: 'firefox',
-      use: { ...devices['Desktop Firefox'] },
-    },
-    {
-      name: 'webkit',
-      use: { ...devices['Desktop Safari'] },
-    },
-  ],
+  projects: [...browserProjects, ...themedProjects],
 });

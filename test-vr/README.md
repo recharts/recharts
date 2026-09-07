@@ -35,7 +35,9 @@ export function LineChart() {
 
 ```tsx
 // test-vr/tests/App.spec-vr.tsx
-test('LineChart', async ({ mountStory }) => {
+import { expect, testWithThemes } from './fixtures';
+
+testWithThemes('LineChart', async ({ mountStory }) => {
   const component = await mountStory('App/LineChart');
   await expect(component).toHaveScreenshot();
 });
@@ -67,9 +69,64 @@ import type { LegendPosition } from './LegendPosition.story';
 const component = await mountStory<typeof LegendPosition>('LegendPosition/LegendPosition', { offset: 30 });
 ```
 
-The `www` tests have a shared story helper `test-vr/tests/www/StoryTheme.tsx` with a `themedStory()` factory and a
-`testTheme` prop (`'default' | 'light' | 'dark'`) that picks the theme wrapper the test needs, mirroring the old
-`testWithLightTheme` / `testWithDarkTheme` fixtures.
+## Recharts theme variants
+
+New visual-regression specs should import `testWithThemes` from
+`test-vr/tests/fixtures`:
+
+```tsx
+import { expect, testWithThemes } from './fixtures';
+
+testWithThemes('LineChart', async ({ mountStory }) => {
+  const component = await mountStory('App/LineChart');
+  await expect(component).toHaveScreenshot();
+});
+```
+
+Each `testWithThemes` test runs in three Playwright projects for each browser:
+
+| Project suffix                              | Gallery rendering                         | Canvas |
+| ------------------------------------------- | ----------------------------------------- | ------ |
+| no suffix (`chromium`, `firefox`, `webkit`) | No `RechartsThemeProvider` (`legacy`)     | White  |
+| `-light`                                    | `RechartsThemeProvider` with `lightTheme` | White  |
+| `-dark`                                     | `RechartsThemeProvider` with `darkTheme`  | Black  |
+
+The selected theme is supplied by the Playwright project and resolved inside
+the gallery boundary. It is not a story prop. Do not add a `testTheme` prop,
+put a theme name in a test title, or pass a custom screenshot name. Project
+names make the snapshots separate and deterministic, for example
+`LineChart-1-chromium-light-linux.png`.
+
+The `test` export is the staged, legacy-only fixture used by existing specs;
+`legacyTest` is its explicit name for new specs that intentionally need
+compatibility behavior. Existing specs may keep using it until their
+individual migration adds light and dark baselines. Use
+[the VR migration skill](../.agents/skills/vr-test-migration/SKILL.md) for that
+work. The old `test-vr/tests/www/StoryTheme.tsx` helper and its `testTheme`
+prop are also compatibility code for unmigrated website specs; do not use them
+in new stories.
+
+Intentional exceptions can suppress variants with structured fixture options at
+file, `test.describe`, or individual test scope:
+
+```tsx
+testWithThemes.describe('website color mode', { tag: '@recharts-theme-legacy' }, () => {
+  testWithThemes.use({ colorScheme: 'dark' });
+
+  testWithThemes('dark website', async ({ mountStory }) => {
+    const component = await mountStory('www/dark-mode/SimpleLineChartStory');
+    await expect(component).toHaveScreenshot();
+  });
+});
+```
+
+The tag selects the Recharts rendering variant; `colorScheme` still controls
+the browser's `prefers-color-scheme` media query. To select multiple variants
+without tags, use `testWithThemes.use({ rechartsThemes: ['legacy', 'light'] })`.
+Tags such as `@recharts-theme-legacy`, `@recharts-theme-light`, and
+`@recharts-theme-dark` are inherited by nested tests and take precedence over
+the fixture option. This is useful for website color-mode tests: the browser
+color scheme and the Recharts theme are independent dimensions.
 
 ## How to run tests
 
@@ -78,7 +135,8 @@ See [DEVELOPING.md](../DEVELOPING.md) for basic instructions on how to run the t
 Now that you know, let's go into more detail here.
 
 This whole setup runs in Docker and only in Docker so that we can have a consistent environment
-which will allow us to avoid test flakes due to different fonts and box shadows and whatnot.
+which will allow us to avoid test flakes due to different fonts and box shadows and whatnot. The
+full suite runs the three legacy browser projects plus the six browser/theme projects.
 
 The basic commands are prepared in `package.json` but you can go beyond that too
 and use whatever dockers allows you to do.

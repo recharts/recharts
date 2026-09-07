@@ -41,9 +41,9 @@ export const LineChartStory = () => (
 
 ```tsx
 // test-vr/tests/App.spec-vr.tsx
-import { expect, test } from './fixtures';
+import { expect, testWithThemes } from './fixtures';
 
-test('LineChart', async ({ mountStory }) => {
+testWithThemes('LineChart', async ({ mountStory }) => {
   const component = await mountStory('App/LineChartStory');
   await expect(component).toHaveScreenshot();
 });
@@ -58,13 +58,12 @@ Stories can accept serializable props. Pass them as the second argument to `moun
 
 ```tsx
 import type { LineChartHasMultiSeries } from './LineChartApiExamples.story';
-import { expect, test } from '../fixtures';
+import { expect, testWithThemes } from '../fixtures';
 
-test('LineChartHasMultiSeries', async ({ mountStory }) => {
+testWithThemes('LineChartHasMultiSeries', async ({ mountStory }) => {
   const component = await mountStory<typeof LineChartHasMultiSeries>(
     'www/LineChartApiExamples/LineChartHasMultiSeries',
     {
-      testTheme: 'light',
       defaultIndex: 2,
     },
   );
@@ -74,6 +73,51 @@ test('LineChartHasMultiSeries', async ({ mountStory }) => {
 
 Keep the JSX in the story file rather than declaring a component inside the spec. This lets the
 gallery resolve the story by id and keeps the same rendering path for tests and manual review.
+
+## Fixture and project structure
+
+New specs use `testWithThemes` from `test-vr/tests/fixtures`. The fixture runs
+each test in the following nine projects:
+
+| Projects                                          | Recharts rendering                                      |
+| ------------------------------------------------- | ------------------------------------------------------- |
+| `chromium`, `firefox`, `webkit`                   | `legacy`: no `RechartsThemeProvider`, white canvas      |
+| `chromium-light`, `firefox-light`, `webkit-light` | `RechartsThemeProvider` with `lightTheme`, white canvas |
+| `chromium-dark`, `firefox-dark`, `webkit-dark`    | `RechartsThemeProvider` with `darkTheme`, black canvas  |
+
+The Playwright project selects the variant through the gallery URL and metadata.
+The story does not receive a theme prop. Never add `testTheme` to a new story,
+put a theme name in the test title, or pass a custom screenshot name.
+
+The exported `test` fixture is the legacy-only compatibility entry point used
+by existing specs, and `legacyTest` is its explicit name. Keep those fixtures
+local to specs that are not ready for light and dark baselines. The old
+`test-vr/tests/www/StoryTheme.tsx` helper is also compatibility code for
+unmigrated website stories. For migration work, use
+`.agents/skills/vr-test-migration/SKILL.md`.
+
+## Intentional variant exceptions
+
+Suppress variants with structured fixture configuration rather than test-title
+wording:
+
+```tsx
+testWithThemes.describe('website color mode', { tag: '@recharts-theme-legacy' }, () => {
+  testWithThemes.use({ colorScheme: 'dark' });
+
+  testWithThemes('dark website', async ({ mountStory }) => {
+    const component = await mountStory('www/dark-mode/SimpleLineChartStory');
+    await expect(component).toHaveScreenshot();
+  });
+});
+```
+
+The `@recharts-theme-legacy`, `@recharts-theme-light`, and
+`@recharts-theme-dark` tags select Recharts variants and are inherited by
+nested tests. Multiple tags can select multiple variants. Alternatively, set
+`testWithThemes.use({ rechartsThemes: ['legacy', 'light'] })` at file,
+`describe`, or test scope. Tags take precedence over the fixture option.
+`colorScheme` remains the browser's independent `prefers-color-scheme` setting.
 
 ## Running tests
 
@@ -89,7 +133,8 @@ Run the full suite with:
 npm run test-vr
 ```
 
-The full suite may take 20+ minutes. Prefer a targeted file or grep while developing:
+The full suite runs all nine projects and may take 20+ minutes. Prefer a
+targeted file, project, or grep while developing:
 
 ```sh
 npm run test-vr -- test-vr/tests/Legend.spec-vr.tsx
@@ -99,8 +144,14 @@ npm run test-vr -- test-vr/tests/Legend.spec-vr.tsx
 npm run test-vr -- --grep=Legend
 ```
 
-The default configuration runs Chromium, Firefox, and WebKit. If a screenshot is missing, the test
-generates a baseline for each browser; commit those files in `test-vr/__snapshots__`.
+```sh
+npm run test-vr -- --project=chromium-dark --grep=Legend
+```
+
+If a screenshot is missing, a `testWithThemes` spec generates a baseline for
+each selected browser/theme project. A legacy spec generates only the existing
+browser baselines. Review and commit intentional files in
+`test-vr/__snapshots__`.
 
 ## Updating screenshots
 
@@ -120,6 +171,9 @@ npm run test-vr:update -- --grep=Legend
 npm run test-vr:update -- test-vr/tests/Legend.spec-vr.tsx
 ```
 
+Use `--project` or `--grep` for a smaller update. Do not update all projects
+while migrating one spec unless you intend to review every generated baseline.
+
 ## Playwright UI and the story preview
 
 Run UI mode with:
@@ -134,12 +188,14 @@ click through all stories using their default props.
 
 The URL http://localhost:3100/gallery/index.html is intentionally a blank Playwright mount target.
 Playwright navigates there before calling `window.mount`; it does not contain a story list and does
-not require a story query parameter. If either host port is already in use, free it before starting
-UI mode or change the host-side port mapping in the command.
+not require a story query parameter. Theme projects add the `rechartsTheme`
+query parameter automatically; opening the mount page directly shows the
+legacy/no-provider path. If either host port is already in use, free it before
+starting UI mode or change the host-side port mapping in the command.
 
 The HTML report is served at http://localhost:9323 after `npm run test-vr:prepare`.
 
 Tests and screenshot generation require Docker. If Docker is unavailable, do not attempt to run the
 visual-regression suite locally.
 
-For additional details, see `test-vr/README.md`.
+For additional details, see `test-vr/README.md` and `DEVELOPING.md`.

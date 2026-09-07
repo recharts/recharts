@@ -450,7 +450,7 @@ jobs:
         run: ./run-test.sh "${{ matrix.test_dir }}" "file:${{ runner.temp }}/${{ env.PACKED_ARTIFACT_NAME }}"
 
   vr_tests:
-    name: VR Tests (${{ matrix.browser }})
+    name: VR Tests (${{ matrix.project }})
     permissions:
       contents: read
       id-token: write
@@ -465,7 +465,16 @@ jobs:
       # Run all browsers even if one fails so we get a full picture.
       fail-fast: false
       matrix:
-        browser: [chromium, firefox, webkit]
+        project:
+          - chromium
+          - firefox
+          - webkit
+          - chromium-light
+          - chromium-dark
+          - firefox-light
+          - firefox-dark
+          - webkit-light
+          - webkit-dark
     steps:
       - name: Checkout Recharts Repository
         uses: actions/checkout@v4
@@ -480,10 +489,10 @@ jobs:
       - name: Install Dependencies
         run: npm ci
 
-      - name: Run Visual Regression Tests (${{ matrix.browser }})
+      - name: Run Visual Regression Tests (${{ matrix.project }})
         id: vr_test_step
         # VR tests resolve recharts via a Vite source alias, so no build step is needed.
-        run: npx playwright test --config=test-vr/playwright.config.ts --project=${{ matrix.browser }}
+        run: npx playwright test --config=test-vr/playwright.config.ts --project=${{ matrix.project }}
         # Continue even if tests fail so the blob report can still be uploaded.
         continue-on-error: true
 
@@ -499,7 +508,7 @@ jobs:
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: vr-blob-report-${{ matrix.browser }}
+          name: vr-blob-report-${{ matrix.project }}
           path: test-vr/blob-report
           retention-days: 1
 

@@ -94,6 +94,17 @@ by story id with the `mountStory` fixture. See `test-vr/README.md` for details.
 The Playwright mount page at `/gallery/index.html` is intentionally blank until a test calls
 `window.mount`; it is not a human-facing story index.
 
+New VR specs should import `testWithThemes` from `test-vr/tests/fixtures`. Each
+test runs in legacy, light, and dark projects for Chromium, Firefox, and
+WebKit. The legacy `test` export remains available for existing specs during
+incremental migration and preserves the current browser-only snapshot names.
+Do not pass a Recharts theme through story props or test titles. Use
+`testWithThemes.use({ rechartsThemes: [...] })` or
+`@recharts-theme-legacy`, `@recharts-theme-light`, and
+`@recharts-theme-dark` tags for intentional exceptions. These selectors control
+the Recharts theme only; Playwright's `colorScheme` remains the independent
+`prefers-color-scheme` setting.
+
 ### Prerequisites
 
 Playwright tests are running inside Docker. You will need to have Docker installed and running.
@@ -118,6 +129,13 @@ Now, the usual loop. Write a new test, run it, fix it, repeat.
 npm run test-vr
 ```
 
+To run one spec or one project while developing:
+
+```sh
+npm run test-vr -- test-vr/tests/ThemeVariants.spec-vr.tsx
+npm run test-vr -- --project=chromium-dark --grep="LineChart"
+```
+
 Alternatively, the UI playwright mode is available as well:
 
 ```sh
@@ -135,13 +153,27 @@ If you want to record new snapshots or update the old ones, you can run:
 npm run test-vr:update
 ```
 
-You will see new files created in the `test-vr/__snapshots__` directory, please commit them to the repository!
+For a targeted migration, update only the affected spec and project set:
+
+```sh
+npm run test-vr:update -- test-vr/tests/ThemeVariants.spec-vr.tsx
+npm run test-vr:update -- --project=chromium-light --grep="LineChart"
+```
+
+New `testWithThemes` specs add light and dark snapshots while retaining the
+legacy browser snapshots. Existing `test` specs must not receive new theme
+baselines until they are explicitly migrated. Commit intentional files created
+in `test-vr/__snapshots__`; do not commit `test-results` or
+`playwright-report`.
 
 ### See VR test results
 
 Open http://localhost:9323 in your browser to see the results of the tests.
 The CLI will tell you to run a "show-report" which is not necessary because there is already a Docker container running
 in the background and serving the report. Just open the URL in your browser.
+
+CI runs all nine configured projects: `chromium`, `firefox`, `webkit`, and the
+`-light` and `-dark` project for each browser.
 
 # Manual testing
 
@@ -197,6 +229,9 @@ npm run test-vr:ui
 The same command serves the human-facing story preview at
 http://localhost:3100/gallery/preview.html. The Playwright-only mount target at
 http://localhost:3100/gallery/index.html remains blank when opened directly.
+Theme projects select their variant through the Playwright project
+configuration; opening the mount target directly does not preview the project
+matrix.
 
 # Releasing new versions
 
