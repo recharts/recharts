@@ -72,6 +72,59 @@ describe('Area theme', () => {
         expect(path.getAttribute('fill')).toBe('purple');
         expect(path.getAttribute('fill-opacity')).toBe('0.7');
       });
+
+      it('should not apply the theme fillOpacity to dots', () => {
+        const { container } = rechartsTestRender(
+          <RechartsThemeProvider
+            value={{
+              graphicalItems: [
+                {
+                  fill: 'purple',
+                  fillOpacity: 0.7,
+                },
+              ],
+            }}
+          >
+            <MyChart>
+              <Area dataKey="x" dot />
+            </MyChart>
+          </RechartsThemeProvider>,
+        );
+        const path = container.querySelector('.recharts-area-area');
+        assertNotNull(path);
+        const dots = container.querySelectorAll('.recharts-area-dot');
+        expect(dots).not.toHaveLength(0);
+        expect(path.getAttribute('fill-opacity')).toBe('0.7');
+        dots.forEach(dot => {
+          expect(dot.getAttribute('fill')).toBe('purple');
+          expect(dot.getAttribute('fill-opacity')).toBe('1');
+        });
+      });
+
+      it('should allow an explicit dot fillOpacity override', () => {
+        const { container } = rechartsTestRender(
+          <RechartsThemeProvider
+            value={{
+              graphicalItems: [
+                {
+                  fill: 'purple',
+                  fillOpacity: 0.7,
+                },
+              ],
+            }}
+          >
+            <MyChart>
+              <Area dataKey="x" dot={{ fillOpacity: 0.4 }} />
+            </MyChart>
+          </RechartsThemeProvider>,
+        );
+        const dots = container.querySelectorAll('.recharts-area-dot');
+        expect(dots).not.toHaveLength(0);
+        dots.forEach(dot => {
+          expect(dot.getAttribute('fill')).toBe('purple');
+          expect(dot.getAttribute('fill-opacity')).toBe('0.4');
+        });
+      });
     });
 
     describe('when defined as both a prop and a theme', () => {
