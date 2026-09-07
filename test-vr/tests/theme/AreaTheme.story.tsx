@@ -8,6 +8,24 @@ const data = [
   { name: 'D', uv: 200, pv: 9800, amt: 2400 },
 ];
 
+const areaTheme = {
+  graphicalItems: [
+    {
+      fill: '#facc15',
+      fillOpacity: 0.8,
+      stroke: '#7c3aed',
+      strokeDasharray: '10 5',
+      strokeOpacity: 0.7,
+      strokeWidth: 5,
+      active: {
+        fill: '#facc15',
+        stroke: '#7c3aed',
+        strokeWidth: 3,
+      },
+    },
+  ],
+};
+
 function AreaThemeChart() {
   return (
     <AreaChart style={{ width: '400px', height: '260px' }} data={data}>
@@ -19,33 +37,38 @@ function AreaThemeChart() {
   );
 }
 
+function AreaWithCustomDotChart() {
+  return (
+    <AreaChart style={{ width: '400px', height: '260px' }} data={data}>
+      <XAxis dataKey="name" />
+      <YAxis />
+      <Tooltip defaultIndex={1} />
+      <Area type="monotone" dataKey="uv" dot isAnimationActive={false} />
+    </AreaChart>
+  );
+}
+
 export function AreaThemeComparison() {
   return (
     <>
       <h1>Unthemed Area</h1>
       <AreaThemeChart />
       <h1>Themed Area</h1>
-      <RechartsThemeProvider
-        value={{
-          graphicalItems: [
-            {
-              fill: '#facc15',
-              fillOpacity: 0.8,
-              stroke: '#7c3aed',
-              strokeDasharray: '10 5',
-              strokeOpacity: 0.7,
-              strokeWidth: 5,
-              active: {
-                fill: '#facc15',
-                stroke: '#7c3aed',
-                strokeWidth: 3,
-              },
-            },
-          ],
-        }}
-      >
+      <RechartsThemeProvider value={areaTheme}>
         <AreaThemeChart />
       </RechartsThemeProvider>
     </>
+  );
+}
+
+export function UnthemedAreaWithCustomDot() {
+  return <AreaWithCustomDotChart />;
+}
+
+export function ThemedAreaWithCustomDot() {
+  return (
+    <RechartsThemeProvider value={areaTheme}>
+      <AreaWithCustomDotChart />
+    </RechartsThemeProvider>
   );
 }
