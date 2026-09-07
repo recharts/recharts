@@ -286,7 +286,7 @@ describe('<Line />', () => {
       expect(spy).toHaveBeenCalledWith(expectedProps);
     });
 
-    it('uses fill color from theme in simple chart', () => {
+    it('uses stroke color from theme for the default dot fill in simple chart', () => {
       const { container } = render(
         <RechartsThemeProvider value={{ graphicalItems: [{ stroke: 'red', fill: 'green', active: { fill: 'blue' } }] }}>
           <LineChart width={400} height={400} data={PageData}>
@@ -301,13 +301,13 @@ describe('<Line />', () => {
       expect(line).toHaveAttribute('stroke', 'red');
       const dot = container.querySelector('.recharts-dot');
       assertNotNull(dot);
-      expect(dot).toHaveAttribute('fill', 'green');
+      expect(dot).toHaveAttribute('fill', 'red');
       const activeDot = container.querySelector('.recharts-active-dot circle');
       assertNotNull(activeDot);
       expect(activeDot).toHaveAttribute('fill', 'blue');
     });
 
-    it('uses correct fill color from theme in chart with two lines', () => {
+    it('uses correct stroke color from theme for dot fills in chart with two lines', () => {
       const { container } = render(
         <RechartsThemeProvider
           value={{
@@ -333,7 +333,7 @@ describe('<Line />', () => {
       expect(line2).toHaveAttribute('stroke', 'bronze');
       const dot = container.querySelector('.recharts-dot');
       assertNotNull(dot);
-      expect(dot).toHaveAttribute('fill', 'green');
+      expect(dot).toHaveAttribute('fill', 'red');
       const activeDot = container.querySelector('.recharts-active-dot circle');
       assertNotNull(activeDot);
       expect(activeDot).toHaveAttribute('fill', 'blue');

@@ -64,6 +64,7 @@ import { GraphicalItemId } from '../state/graphicalItemsSlice';
 import { ChartData } from '../state/chartDataSlice';
 import { graphicalItemIdentity } from '../theme/graphicalItemIdentity';
 import { GraphicalItemStyle, RechartsTheme } from '../theme/RechartsTheme';
+import { useRechartsTheme } from '../theme/RechartsThemeContext';
 import { useBackwardsCompatibleTheme } from '../theme/useBackwardsCompatibleTheme';
 
 export interface LinePointItem {
@@ -94,6 +95,7 @@ interface InternalLineProps extends ZIndexable {
   data?: any;
   dataKey?: DataKey<any>;
   dot: DotType;
+  dotFill?: string;
   height: number;
   hide: boolean;
   id: GraphicalItemId;
@@ -539,7 +541,7 @@ function LineDotsWrapper({
   clipPathId: string;
   props: InternalProps;
 }) {
-  const { dot, dataKey, needClip } = props;
+  const { dot, dataKey, dotFill, needClip } = props;
 
   /*
    * Exclude ID from the props passed to the Dots component
@@ -556,7 +558,7 @@ function LineDotsWrapper({
       className="recharts-line-dots"
       dotClassName="recharts-line-dot"
       dataKey={dataKey}
-      baseProps={lineProps}
+      baseProps={{ ...lineProps, fill: dotFill ?? lineProps.fill }}
       needClip={needClip}
       clipPathId={clipPathId}
     />
@@ -810,7 +812,7 @@ class LineWithState extends Component<InternalProps> {
   }
 }
 
-function LineImpl(props: WithIdRequired<Props>) {
+function LineImpl(props: WithIdRequired<Props> & Pick<InternalLineProps, 'dotFill'>) {
   const {
     activeDot,
     animateNewValues,
@@ -921,6 +923,7 @@ export function computeLinePoints({
 }
 
 function LineFn(outsideProps: Props) {
+  const rechartsTheme = useRechartsTheme();
   const graphicalItemTheme = useBackwardsCompatibleTheme<GraphicalItemStyle>(
     (theme: RechartsTheme) =>
       outsideProps.dataKey == null
@@ -955,6 +958,8 @@ function LineFn(outsideProps: Props) {
     },
     defaultLineProps,
   );
+  const dotFill =
+    outsideProps.fill ?? (rechartsTheme == null ? props.fill : (props.stroke ?? graphicalItemTheme?.fill));
   const isPanorama = useIsPanorama();
   return (
     <RegisterGraphicalItemId id={props.id} type="line">
@@ -985,7 +990,7 @@ function LineFn(outsideProps: Props) {
             hide={props.hide}
             isPanorama={isPanorama}
           />
-          <LineImpl {...props} id={id} />
+          <LineImpl {...props} id={id} dotFill={dotFill} />
         </>
       )}
     </RegisterGraphicalItemId>

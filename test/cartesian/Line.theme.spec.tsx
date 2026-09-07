@@ -104,12 +104,37 @@ describe('Line theme', () => {
     expect(curve).toHaveAttribute('stroke-dasharray', theme.strokeDasharray);
 
     getDots(container).forEach(dot => {
-      expect(dot).toHaveAttribute('fill', theme.fill);
+      expect(dot).toHaveAttribute('fill', theme.stroke);
       expect(dot).toHaveAttribute('fill-opacity', '1');
       expect(dot).toHaveAttribute('stroke', theme.stroke);
       expect(dot).toHaveAttribute('stroke-width', String(theme.strokeWidth));
       expect(dot).toHaveAttribute('stroke-opacity', String(theme.strokeOpacity));
       expect(dot).toHaveAttribute('stroke-dasharray', theme.strokeDasharray);
+    });
+  });
+
+  it('uses an explicit line stroke as the dot fill when it overrides the theme', () => {
+    const { container } = rechartsTestRender(
+      <RechartsThemeProvider
+        value={{
+          graphicalItems: [
+            {
+              fill: 'purple',
+              stroke: 'red',
+            },
+          ],
+        }}
+      >
+        <MyChart>
+          <Line dataKey="profit" isAnimationActive={false} stroke="blue" />
+        </MyChart>
+      </RechartsThemeProvider>,
+    );
+
+    const curve = getCurve(container);
+    expect(curve).toHaveAttribute('stroke', 'blue');
+    getDots(container).forEach(dot => {
+      expect(dot).toHaveAttribute('fill', 'blue');
     });
   });
 
@@ -206,6 +231,29 @@ describe('Line theme', () => {
     getDots(container).forEach(dot => {
       expect(dot).toHaveAttribute('fill', 'purple');
       expect(dot).toHaveAttribute('fill-opacity', '0.4');
+    });
+  });
+
+  it('lets explicit dot fill override the line stroke', () => {
+    const { container } = rechartsTestRender(
+      <RechartsThemeProvider
+        value={{
+          graphicalItems: [
+            {
+              fill: 'purple',
+              stroke: 'teal',
+            },
+          ],
+        }}
+      >
+        <MyChart>
+          <Line dataKey="profit" dot={{ fill: 'green' }} isAnimationActive={false} />
+        </MyChart>
+      </RechartsThemeProvider>,
+    );
+
+    getDots(container).forEach(dot => {
+      expect(dot).toHaveAttribute('fill', 'green');
     });
   });
 
