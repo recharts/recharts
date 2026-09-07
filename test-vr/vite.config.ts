@@ -10,13 +10,22 @@ import path from 'node:path';
 import { defineConfig } from 'vite';
 
 const repoRoot = path.join(__dirname, '..');
+const galleryRoot = path.join(__dirname, 'gallery');
 
-export default defineConfig({
+export default defineConfig(({ command }) => ({
+  base: './',
   /*
    * The Playwright mount page lives at test-vr/gallery/index.html. The
    * human-facing preview is available at test-vr/gallery/preview.html.
    */
-  root: __dirname,
+  root: command === 'build' ? galleryRoot : __dirname,
+  build: {
+    emptyOutDir: true,
+    outDir: path.join(__dirname, 'dist'),
+    rollupOptions: {
+      input: path.join(galleryRoot, 'preview.html'),
+    },
+  },
   cacheDir: path.join(repoRoot, 'node_modules/.vite-test-vr'),
   optimizeDeps: {
     entries: ['gallery/index.html', 'gallery/preview.html', 'tests/**/*.story.tsx'],
@@ -43,4 +52,4 @@ export default defineConfig({
     port: 3100,
     strictPort: true,
   },
-});
+}));
