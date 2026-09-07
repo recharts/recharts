@@ -212,7 +212,7 @@ var require_react_production_min = __commonJS({
     function O(a5) {
       return typeof a5 == "object" && a5 !== null && a5.$$typeof === l3;
     }
-    function escape4(a5) {
+    function escape5(a5) {
       var b3 = { "=": "=0", ":": "=2" };
       return "$" + a5.replace(/[=:]/g, function(a6) {
         return b3[a6];
@@ -220,7 +220,7 @@ var require_react_production_min = __commonJS({
     }
     var P3 = /\/+/g;
     function Q(a5, b3) {
-      return typeof a5 == "object" && a5 !== null && a5.key != null ? escape4("" + a5.key) : b3.toString(36);
+      return typeof a5 == "object" && a5 !== null && a5.key != null ? escape5("" + a5.key) : b3.toString(36);
     }
     function R2(a5, b3, e2, d3, c3) {
       var k = typeof a5;
@@ -402,9 +402,9 @@ var require_react = __commonJS({
   }
 });
 
-// ../../node_modules/scheduler/cjs/scheduler.production.min.js
+// ../../node_modules/react-dom/node_modules/scheduler/cjs/scheduler.production.min.js
 var require_scheduler_production_min = __commonJS({
-  "../../node_modules/scheduler/cjs/scheduler.production.min.js"(exports) {
+  "../../node_modules/react-dom/node_modules/scheduler/cjs/scheduler.production.min.js"(exports) {
     "use strict";
     function f6(a5, b3) {
       var c3 = a5.length;
@@ -612,9 +612,9 @@ var require_scheduler_production_min = __commonJS({
   }
 });
 
-// ../../node_modules/scheduler/index.js
+// ../../node_modules/react-dom/node_modules/scheduler/index.js
 var require_scheduler = __commonJS({
-  "../../node_modules/scheduler/index.js"(exports, module2) {
+  "../../node_modules/react-dom/node_modules/scheduler/index.js"(exports, module2) {
     "use strict";
     module2.exports = require_scheduler_production_min();
   }
@@ -10013,10 +10013,10 @@ var import_json, json_default, init_json = __esm({
 var require_jsx = __commonJS({
   "../../node_modules/refractor/lang/jsx.js"(exports, module2) {
     "use strict";
-    module2.exports = jsx10;
-    jsx10.displayName = "jsx";
-    jsx10.aliases = [];
-    function jsx10(Prism) {
+    module2.exports = jsx9;
+    jsx9.displayName = "jsx";
+    jsx9.aliases = [];
+    function jsx9(Prism) {
       (function(Prism2) {
         var javascript = Prism2.util.clone(Prism2.languages.javascript), space = /(?:\s|\/\/.*(?!.)|\/\*(?:[^*]|\*(?!\/))\*\/)/.source, braces = /(?:\{(?:\{(?:\{[^{}]*\}|[^{}])*\}|[^{}])*\})/.source, spread = /(?:\{<S>*\.{3}(?:[^{}]|<BRACES>)*\})/.source;
         function re2(source, flags) {
@@ -14727,38 +14727,38 @@ var require_tiny_isequal = __commonJS({
   }
 });
 
-// ../../node_modules/entities/lib/maps/entities.json
+// ../../node_modules/ansi-to-html/node_modules/entities/lib/maps/entities.json
 var require_entities = __commonJS({
-  "../../node_modules/entities/lib/maps/entities.json"(exports, module2) {
+  "../../node_modules/ansi-to-html/node_modules/entities/lib/maps/entities.json"(exports, module2) {
     module2.exports = { Aacute: "\xC1", aacute: "\xE1", Abreve: "\u0102", abreve: "\u0103", ac: "\u223E", acd: "\u223F", acE: "\u223E\u0333", Acirc: "\xC2", acirc: "\xE2", acute: "\xB4", Acy: "\u0410", acy: "\u0430", AElig: "\xC6", aelig: "\xE6", af: "\u2061", Afr: "\u{1D504}", afr: "\u{1D51E}", Agrave: "\xC0", agrave: "\xE0", alefsym: "\u2135", aleph: "\u2135", Alpha: "\u0391", alpha: "\u03B1", Amacr: "\u0100", amacr: "\u0101", amalg: "\u2A3F", amp: "&", AMP: "&", andand: "\u2A55", And: "\u2A53", and: "\u2227", andd: "\u2A5C", andslope: "\u2A58", andv: "\u2A5A", ang: "\u2220", ange: "\u29A4", angle: "\u2220", angmsdaa: "\u29A8", angmsdab: "\u29A9", angmsdac: "\u29AA", angmsdad: "\u29AB", angmsdae: "\u29AC", angmsdaf: "\u29AD", angmsdag: "\u29AE", angmsdah: "\u29AF", angmsd: "\u2221", angrt: "\u221F", angrtvb: "\u22BE", angrtvbd: "\u299D", angsph: "\u2222", angst: "\xC5", angzarr: "\u237C", Aogon: "\u0104", aogon: "\u0105", Aopf: "\u{1D538}", aopf: "\u{1D552}", apacir: "\u2A6F", ap: "\u2248", apE: "\u2A70", ape: "\u224A", apid: "\u224B", apos: "'", ApplyFunction: "\u2061", approx: "\u2248", approxeq: "\u224A", Aring: "\xC5", aring: "\xE5", Ascr: "\u{1D49C}", ascr: "\u{1D4B6}", Assign: "\u2254", ast: "*", asymp: "\u2248", asympeq: "\u224D", Atilde: "\xC3", atilde: "\xE3", Auml: "\xC4", auml: "\xE4", awconint: "\u2233", awint: "\u2A11", backcong: "\u224C", backepsilon: "\u03F6", backprime: "\u2035", backsim: "\u223D", backsimeq: "\u22CD", Backslash: "\u2216", Barv: "\u2AE7", barvee: "\u22BD", barwed: "\u2305", Barwed: "\u2306", barwedge: "\u2305", bbrk: "\u23B5", bbrktbrk: "\u23B6", bcong: "\u224C", Bcy: "\u0411", bcy: "\u0431", bdquo: "\u201E", becaus: "\u2235", because: "\u2235", Because: "\u2235", bemptyv: "\u29B0", bepsi: "\u03F6", bernou: "\u212C", Bernoullis: "\u212C", Beta: "\u0392", beta: "\u03B2", beth: "\u2136", between: "\u226C", Bfr: "\u{1D505}", bfr: "\u{1D51F}", bigcap: "\u22C2", bigcirc: "\u25EF", bigcup: "\u22C3", bigodot: "\u2A00", bigoplus: "\u2A01", bigotimes: "\u2A02", bigsqcup: "\u2A06", bigstar: "\u2605", bigtriangledown: "\u25BD", bigtriangleup: "\u25B3", biguplus: "\u2A04", bigvee: "\u22C1", bigwedge: "\u22C0", bkarow: "\u290D", blacklozenge: "\u29EB", blacksquare: "\u25AA", blacktriangle: "\u25B4", blacktriangledown: "\u25BE", blacktriangleleft: "\u25C2", blacktriangleright: "\u25B8", blank: "\u2423", blk12: "\u2592", blk14: "\u2591", blk34: "\u2593", block: "\u2588", bne: "=\u20E5", bnequiv: "\u2261\u20E5", bNot: "\u2AED", bnot: "\u2310", Bopf: "\u{1D539}", bopf: "\u{1D553}", bot: "\u22A5", bottom: "\u22A5", bowtie: "\u22C8", boxbox: "\u29C9", boxdl: "\u2510", boxdL: "\u2555", boxDl: "\u2556", boxDL: "\u2557", boxdr: "\u250C", boxdR: "\u2552", boxDr: "\u2553", boxDR: "\u2554", boxh: "\u2500", boxH: "\u2550", boxhd: "\u252C", boxHd: "\u2564", boxhD: "\u2565", boxHD: "\u2566", boxhu: "\u2534", boxHu: "\u2567", boxhU: "\u2568", boxHU: "\u2569", boxminus: "\u229F", boxplus: "\u229E", boxtimes: "\u22A0", boxul: "\u2518", boxuL: "\u255B", boxUl: "\u255C", boxUL: "\u255D", boxur: "\u2514", boxuR: "\u2558", boxUr: "\u2559", boxUR: "\u255A", boxv: "\u2502", boxV: "\u2551", boxvh: "\u253C", boxvH: "\u256A", boxVh: "\u256B", boxVH: "\u256C", boxvl: "\u2524", boxvL: "\u2561", boxVl: "\u2562", boxVL: "\u2563", boxvr: "\u251C", boxvR: "\u255E", boxVr: "\u255F", boxVR: "\u2560", bprime: "\u2035", breve: "\u02D8", Breve: "\u02D8", brvbar: "\xA6", bscr: "\u{1D4B7}", Bscr: "\u212C", bsemi: "\u204F", bsim: "\u223D", bsime: "\u22CD", bsolb: "\u29C5", bsol: "\\", bsolhsub: "\u27C8", bull: "\u2022", bullet: "\u2022", bump: "\u224E", bumpE: "\u2AAE", bumpe: "\u224F", Bumpeq: "\u224E", bumpeq: "\u224F", Cacute: "\u0106", cacute: "\u0107", capand: "\u2A44", capbrcup: "\u2A49", capcap: "\u2A4B", cap: "\u2229", Cap: "\u22D2", capcup: "\u2A47", capdot: "\u2A40", CapitalDifferentialD: "\u2145", caps: "\u2229\uFE00", caret: "\u2041", caron: "\u02C7", Cayleys: "\u212D", ccaps: "\u2A4D", Ccaron: "\u010C", ccaron: "\u010D", Ccedil: "\xC7", ccedil: "\xE7", Ccirc: "\u0108", ccirc: "\u0109", Cconint: "\u2230", ccups: "\u2A4C", ccupssm: "\u2A50", Cdot: "\u010A", cdot: "\u010B", cedil: "\xB8", Cedilla: "\xB8", cemptyv: "\u29B2", cent: "\xA2", centerdot: "\xB7", CenterDot: "\xB7", cfr: "\u{1D520}", Cfr: "\u212D", CHcy: "\u0427", chcy: "\u0447", check: "\u2713", checkmark: "\u2713", Chi: "\u03A7", chi: "\u03C7", circ: "\u02C6", circeq: "\u2257", circlearrowleft: "\u21BA", circlearrowright: "\u21BB", circledast: "\u229B", circledcirc: "\u229A", circleddash: "\u229D", CircleDot: "\u2299", circledR: "\xAE", circledS: "\u24C8", CircleMinus: "\u2296", CirclePlus: "\u2295", CircleTimes: "\u2297", cir: "\u25CB", cirE: "\u29C3", cire: "\u2257", cirfnint: "\u2A10", cirmid: "\u2AEF", cirscir: "\u29C2", ClockwiseContourIntegral: "\u2232", CloseCurlyDoubleQuote: "\u201D", CloseCurlyQuote: "\u2019", clubs: "\u2663", clubsuit: "\u2663", colon: ":", Colon: "\u2237", Colone: "\u2A74", colone: "\u2254", coloneq: "\u2254", comma: ",", commat: "@", comp: "\u2201", compfn: "\u2218", complement: "\u2201", complexes: "\u2102", cong: "\u2245", congdot: "\u2A6D", Congruent: "\u2261", conint: "\u222E", Conint: "\u222F", ContourIntegral: "\u222E", copf: "\u{1D554}", Copf: "\u2102", coprod: "\u2210", Coproduct: "\u2210", copy: "\xA9", COPY: "\xA9", copysr: "\u2117", CounterClockwiseContourIntegral: "\u2233", crarr: "\u21B5", cross: "\u2717", Cross: "\u2A2F", Cscr: "\u{1D49E}", cscr: "\u{1D4B8}", csub: "\u2ACF", csube: "\u2AD1", csup: "\u2AD0", csupe: "\u2AD2", ctdot: "\u22EF", cudarrl: "\u2938", cudarrr: "\u2935", cuepr: "\u22DE", cuesc: "\u22DF", cularr: "\u21B6", cularrp: "\u293D", cupbrcap: "\u2A48", cupcap: "\u2A46", CupCap: "\u224D", cup: "\u222A", Cup: "\u22D3", cupcup: "\u2A4A", cupdot: "\u228D", cupor: "\u2A45", cups: "\u222A\uFE00", curarr: "\u21B7", curarrm: "\u293C", curlyeqprec: "\u22DE", curlyeqsucc: "\u22DF", curlyvee: "\u22CE", curlywedge: "\u22CF", curren: "\xA4", curvearrowleft: "\u21B6", curvearrowright: "\u21B7", cuvee: "\u22CE", cuwed: "\u22CF", cwconint: "\u2232", cwint: "\u2231", cylcty: "\u232D", dagger: "\u2020", Dagger: "\u2021", daleth: "\u2138", darr: "\u2193", Darr: "\u21A1", dArr: "\u21D3", dash: "\u2010", Dashv: "\u2AE4", dashv: "\u22A3", dbkarow: "\u290F", dblac: "\u02DD", Dcaron: "\u010E", dcaron: "\u010F", Dcy: "\u0414", dcy: "\u0434", ddagger: "\u2021", ddarr: "\u21CA", DD: "\u2145", dd: "\u2146", DDotrahd: "\u2911", ddotseq: "\u2A77", deg: "\xB0", Del: "\u2207", Delta: "\u0394", delta: "\u03B4", demptyv: "\u29B1", dfisht: "\u297F", Dfr: "\u{1D507}", dfr: "\u{1D521}", dHar: "\u2965", dharl: "\u21C3", dharr: "\u21C2", DiacriticalAcute: "\xB4", DiacriticalDot: "\u02D9", DiacriticalDoubleAcute: "\u02DD", DiacriticalGrave: "`", DiacriticalTilde: "\u02DC", diam: "\u22C4", diamond: "\u22C4", Diamond: "\u22C4", diamondsuit: "\u2666", diams: "\u2666", die: "\xA8", DifferentialD: "\u2146", digamma: "\u03DD", disin: "\u22F2", div: "\xF7", divide: "\xF7", divideontimes: "\u22C7", divonx: "\u22C7", DJcy: "\u0402", djcy: "\u0452", dlcorn: "\u231E", dlcrop: "\u230D", dollar: "$", Dopf: "\u{1D53B}", dopf: "\u{1D555}", Dot: "\xA8", dot: "\u02D9", DotDot: "\u20DC", doteq: "\u2250", doteqdot: "\u2251", DotEqual: "\u2250", dotminus: "\u2238", dotplus: "\u2214", dotsquare: "\u22A1", doublebarwedge: "\u2306", DoubleContourIntegral: "\u222F", DoubleDot: "\xA8", DoubleDownArrow: "\u21D3", DoubleLeftArrow: "\u21D0", DoubleLeftRightArrow: "\u21D4", DoubleLeftTee: "\u2AE4", DoubleLongLeftArrow: "\u27F8", DoubleLongLeftRightArrow: "\u27FA", DoubleLongRightArrow: "\u27F9", DoubleRightArrow: "\u21D2", DoubleRightTee: "\u22A8", DoubleUpArrow: "\u21D1", DoubleUpDownArrow: "\u21D5", DoubleVerticalBar: "\u2225", DownArrowBar: "\u2913", downarrow: "\u2193", DownArrow: "\u2193", Downarrow: "\u21D3", DownArrowUpArrow: "\u21F5", DownBreve: "\u0311", downdownarrows: "\u21CA", downharpoonleft: "\u21C3", downharpoonright: "\u21C2", DownLeftRightVector: "\u2950", DownLeftTeeVector: "\u295E", DownLeftVectorBar: "\u2956", DownLeftVector: "\u21BD", DownRightTeeVector: "\u295F", DownRightVectorBar: "\u2957", DownRightVector: "\u21C1", DownTeeArrow: "\u21A7", DownTee: "\u22A4", drbkarow: "\u2910", drcorn: "\u231F", drcrop: "\u230C", Dscr: "\u{1D49F}", dscr: "\u{1D4B9}", DScy: "\u0405", dscy: "\u0455", dsol: "\u29F6", Dstrok: "\u0110", dstrok: "\u0111", dtdot: "\u22F1", dtri: "\u25BF", dtrif: "\u25BE", duarr: "\u21F5", duhar: "\u296F", dwangle: "\u29A6", DZcy: "\u040F", dzcy: "\u045F", dzigrarr: "\u27FF", Eacute: "\xC9", eacute: "\xE9", easter: "\u2A6E", Ecaron: "\u011A", ecaron: "\u011B", Ecirc: "\xCA", ecirc: "\xEA", ecir: "\u2256", ecolon: "\u2255", Ecy: "\u042D", ecy: "\u044D", eDDot: "\u2A77", Edot: "\u0116", edot: "\u0117", eDot: "\u2251", ee: "\u2147", efDot: "\u2252", Efr: "\u{1D508}", efr: "\u{1D522}", eg: "\u2A9A", Egrave: "\xC8", egrave: "\xE8", egs: "\u2A96", egsdot: "\u2A98", el: "\u2A99", Element: "\u2208", elinters: "\u23E7", ell: "\u2113", els: "\u2A95", elsdot: "\u2A97", Emacr: "\u0112", emacr: "\u0113", empty: "\u2205", emptyset: "\u2205", EmptySmallSquare: "\u25FB", emptyv: "\u2205", EmptyVerySmallSquare: "\u25AB", emsp13: "\u2004", emsp14: "\u2005", emsp: "\u2003", ENG: "\u014A", eng: "\u014B", ensp: "\u2002", Eogon: "\u0118", eogon: "\u0119", Eopf: "\u{1D53C}", eopf: "\u{1D556}", epar: "\u22D5", eparsl: "\u29E3", eplus: "\u2A71", epsi: "\u03B5", Epsilon: "\u0395", epsilon: "\u03B5", epsiv: "\u03F5", eqcirc: "\u2256", eqcolon: "\u2255", eqsim: "\u2242", eqslantgtr: "\u2A96", eqslantless: "\u2A95", Equal: "\u2A75", equals: "=", EqualTilde: "\u2242", equest: "\u225F", Equilibrium: "\u21CC", equiv: "\u2261", equivDD: "\u2A78", eqvparsl: "\u29E5", erarr: "\u2971", erDot: "\u2253", escr: "\u212F", Escr: "\u2130", esdot: "\u2250", Esim: "\u2A73", esim: "\u2242", Eta: "\u0397", eta: "\u03B7", ETH: "\xD0", eth: "\xF0", Euml: "\xCB", euml: "\xEB", euro: "\u20AC", excl: "!", exist: "\u2203", Exists: "\u2203", expectation: "\u2130", exponentiale: "\u2147", ExponentialE: "\u2147", fallingdotseq: "\u2252", Fcy: "\u0424", fcy: "\u0444", female: "\u2640", ffilig: "\uFB03", fflig: "\uFB00", ffllig: "\uFB04", Ffr: "\u{1D509}", ffr: "\u{1D523}", filig: "\uFB01", FilledSmallSquare: "\u25FC", FilledVerySmallSquare: "\u25AA", fjlig: "fj", flat: "\u266D", fllig: "\uFB02", fltns: "\u25B1", fnof: "\u0192", Fopf: "\u{1D53D}", fopf: "\u{1D557}", forall: "\u2200", ForAll: "\u2200", fork: "\u22D4", forkv: "\u2AD9", Fouriertrf: "\u2131", fpartint: "\u2A0D", frac12: "\xBD", frac13: "\u2153", frac14: "\xBC", frac15: "\u2155", frac16: "\u2159", frac18: "\u215B", frac23: "\u2154", frac25: "\u2156", frac34: "\xBE", frac35: "\u2157", frac38: "\u215C", frac45: "\u2158", frac56: "\u215A", frac58: "\u215D", frac78: "\u215E", frasl: "\u2044", frown: "\u2322", fscr: "\u{1D4BB}", Fscr: "\u2131", gacute: "\u01F5", Gamma: "\u0393", gamma: "\u03B3", Gammad: "\u03DC", gammad: "\u03DD", gap: "\u2A86", Gbreve: "\u011E", gbreve: "\u011F", Gcedil: "\u0122", Gcirc: "\u011C", gcirc: "\u011D", Gcy: "\u0413", gcy: "\u0433", Gdot: "\u0120", gdot: "\u0121", ge: "\u2265", gE: "\u2267", gEl: "\u2A8C", gel: "\u22DB", geq: "\u2265", geqq: "\u2267", geqslant: "\u2A7E", gescc: "\u2AA9", ges: "\u2A7E", gesdot: "\u2A80", gesdoto: "\u2A82", gesdotol: "\u2A84", gesl: "\u22DB\uFE00", gesles: "\u2A94", Gfr: "\u{1D50A}", gfr: "\u{1D524}", gg: "\u226B", Gg: "\u22D9", ggg: "\u22D9", gimel: "\u2137", GJcy: "\u0403", gjcy: "\u0453", gla: "\u2AA5", gl: "\u2277", glE: "\u2A92", glj: "\u2AA4", gnap: "\u2A8A", gnapprox: "\u2A8A", gne: "\u2A88", gnE: "\u2269", gneq: "\u2A88", gneqq: "\u2269", gnsim: "\u22E7", Gopf: "\u{1D53E}", gopf: "\u{1D558}", grave: "`", GreaterEqual: "\u2265", GreaterEqualLess: "\u22DB", GreaterFullEqual: "\u2267", GreaterGreater: "\u2AA2", GreaterLess: "\u2277", GreaterSlantEqual: "\u2A7E", GreaterTilde: "\u2273", Gscr: "\u{1D4A2}", gscr: "\u210A", gsim: "\u2273", gsime: "\u2A8E", gsiml: "\u2A90", gtcc: "\u2AA7", gtcir: "\u2A7A", gt: ">", GT: ">", Gt: "\u226B", gtdot: "\u22D7", gtlPar: "\u2995", gtquest: "\u2A7C", gtrapprox: "\u2A86", gtrarr: "\u2978", gtrdot: "\u22D7", gtreqless: "\u22DB", gtreqqless: "\u2A8C", gtrless: "\u2277", gtrsim: "\u2273", gvertneqq: "\u2269\uFE00", gvnE: "\u2269\uFE00", Hacek: "\u02C7", hairsp: "\u200A", half: "\xBD", hamilt: "\u210B", HARDcy: "\u042A", hardcy: "\u044A", harrcir: "\u2948", harr: "\u2194", hArr: "\u21D4", harrw: "\u21AD", Hat: "^", hbar: "\u210F", Hcirc: "\u0124", hcirc: "\u0125", hearts: "\u2665", heartsuit: "\u2665", hellip: "\u2026", hercon: "\u22B9", hfr: "\u{1D525}", Hfr: "\u210C", HilbertSpace: "\u210B", hksearow: "\u2925", hkswarow: "\u2926", hoarr: "\u21FF", homtht: "\u223B", hookleftarrow: "\u21A9", hookrightarrow: "\u21AA", hopf: "\u{1D559}", Hopf: "\u210D", horbar: "\u2015", HorizontalLine: "\u2500", hscr: "\u{1D4BD}", Hscr: "\u210B", hslash: "\u210F", Hstrok: "\u0126", hstrok: "\u0127", HumpDownHump: "\u224E", HumpEqual: "\u224F", hybull: "\u2043", hyphen: "\u2010", Iacute: "\xCD", iacute: "\xED", ic: "\u2063", Icirc: "\xCE", icirc: "\xEE", Icy: "\u0418", icy: "\u0438", Idot: "\u0130", IEcy: "\u0415", iecy: "\u0435", iexcl: "\xA1", iff: "\u21D4", ifr: "\u{1D526}", Ifr: "\u2111", Igrave: "\xCC", igrave: "\xEC", ii: "\u2148", iiiint: "\u2A0C", iiint: "\u222D", iinfin: "\u29DC", iiota: "\u2129", IJlig: "\u0132", ijlig: "\u0133", Imacr: "\u012A", imacr: "\u012B", image: "\u2111", ImaginaryI: "\u2148", imagline: "\u2110", imagpart: "\u2111", imath: "\u0131", Im: "\u2111", imof: "\u22B7", imped: "\u01B5", Implies: "\u21D2", incare: "\u2105", in: "\u2208", infin: "\u221E", infintie: "\u29DD", inodot: "\u0131", intcal: "\u22BA", int: "\u222B", Int: "\u222C", integers: "\u2124", Integral: "\u222B", intercal: "\u22BA", Intersection: "\u22C2", intlarhk: "\u2A17", intprod: "\u2A3C", InvisibleComma: "\u2063", InvisibleTimes: "\u2062", IOcy: "\u0401", iocy: "\u0451", Iogon: "\u012E", iogon: "\u012F", Iopf: "\u{1D540}", iopf: "\u{1D55A}", Iota: "\u0399", iota: "\u03B9", iprod: "\u2A3C", iquest: "\xBF", iscr: "\u{1D4BE}", Iscr: "\u2110", isin: "\u2208", isindot: "\u22F5", isinE: "\u22F9", isins: "\u22F4", isinsv: "\u22F3", isinv: "\u2208", it: "\u2062", Itilde: "\u0128", itilde: "\u0129", Iukcy: "\u0406", iukcy: "\u0456", Iuml: "\xCF", iuml: "\xEF", Jcirc: "\u0134", jcirc: "\u0135", Jcy: "\u0419", jcy: "\u0439", Jfr: "\u{1D50D}", jfr: "\u{1D527}", jmath: "\u0237", Jopf: "\u{1D541}", jopf: "\u{1D55B}", Jscr: "\u{1D4A5}", jscr: "\u{1D4BF}", Jsercy: "\u0408", jsercy: "\u0458", Jukcy: "\u0404", jukcy: "\u0454", Kappa: "\u039A", kappa: "\u03BA", kappav: "\u03F0", Kcedil: "\u0136", kcedil: "\u0137", Kcy: "\u041A", kcy: "\u043A", Kfr: "\u{1D50E}", kfr: "\u{1D528}", kgreen: "\u0138", KHcy: "\u0425", khcy: "\u0445", KJcy: "\u040C", kjcy: "\u045C", Kopf: "\u{1D542}", kopf: "\u{1D55C}", Kscr: "\u{1D4A6}", kscr: "\u{1D4C0}", lAarr: "\u21DA", Lacute: "\u0139", lacute: "\u013A", laemptyv: "\u29B4", lagran: "\u2112", Lambda: "\u039B", lambda: "\u03BB", lang: "\u27E8", Lang: "\u27EA", langd: "\u2991", langle: "\u27E8", lap: "\u2A85", Laplacetrf: "\u2112", laquo: "\xAB", larrb: "\u21E4", larrbfs: "\u291F", larr: "\u2190", Larr: "\u219E", lArr: "\u21D0", larrfs: "\u291D", larrhk: "\u21A9", larrlp: "\u21AB", larrpl: "\u2939", larrsim: "\u2973", larrtl: "\u21A2", latail: "\u2919", lAtail: "\u291B", lat: "\u2AAB", late: "\u2AAD", lates: "\u2AAD\uFE00", lbarr: "\u290C", lBarr: "\u290E", lbbrk: "\u2772", lbrace: "{", lbrack: "[", lbrke: "\u298B", lbrksld: "\u298F", lbrkslu: "\u298D", Lcaron: "\u013D", lcaron: "\u013E", Lcedil: "\u013B", lcedil: "\u013C", lceil: "\u2308", lcub: "{", Lcy: "\u041B", lcy: "\u043B", ldca: "\u2936", ldquo: "\u201C", ldquor: "\u201E", ldrdhar: "\u2967", ldrushar: "\u294B", ldsh: "\u21B2", le: "\u2264", lE: "\u2266", LeftAngleBracket: "\u27E8", LeftArrowBar: "\u21E4", leftarrow: "\u2190", LeftArrow: "\u2190", Leftarrow: "\u21D0", LeftArrowRightArrow: "\u21C6", leftarrowtail: "\u21A2", LeftCeiling: "\u2308", LeftDoubleBracket: "\u27E6", LeftDownTeeVector: "\u2961", LeftDownVectorBar: "\u2959", LeftDownVector: "\u21C3", LeftFloor: "\u230A", leftharpoondown: "\u21BD", leftharpoonup: "\u21BC", leftleftarrows: "\u21C7", leftrightarrow: "\u2194", LeftRightArrow: "\u2194", Leftrightarrow: "\u21D4", leftrightarrows: "\u21C6", leftrightharpoons: "\u21CB", leftrightsquigarrow: "\u21AD", LeftRightVector: "\u294E", LeftTeeArrow: "\u21A4", LeftTee: "\u22A3", LeftTeeVector: "\u295A", leftthreetimes: "\u22CB", LeftTriangleBar: "\u29CF", LeftTriangle: "\u22B2", LeftTriangleEqual: "\u22B4", LeftUpDownVector: "\u2951", LeftUpTeeVector: "\u2960", LeftUpVectorBar: "\u2958", LeftUpVector: "\u21BF", LeftVectorBar: "\u2952", LeftVector: "\u21BC", lEg: "\u2A8B", leg: "\u22DA", leq: "\u2264", leqq: "\u2266", leqslant: "\u2A7D", lescc: "\u2AA8", les: "\u2A7D", lesdot: "\u2A7F", lesdoto: "\u2A81", lesdotor: "\u2A83", lesg: "\u22DA\uFE00", lesges: "\u2A93", lessapprox: "\u2A85", lessdot: "\u22D6", lesseqgtr: "\u22DA", lesseqqgtr: "\u2A8B", LessEqualGreater: "\u22DA", LessFullEqual: "\u2266", LessGreater: "\u2276", lessgtr: "\u2276", LessLess: "\u2AA1", lesssim: "\u2272", LessSlantEqual: "\u2A7D", LessTilde: "\u2272", lfisht: "\u297C", lfloor: "\u230A", Lfr: "\u{1D50F}", lfr: "\u{1D529}", lg: "\u2276", lgE: "\u2A91", lHar: "\u2962", lhard: "\u21BD", lharu: "\u21BC", lharul: "\u296A", lhblk: "\u2584", LJcy: "\u0409", ljcy: "\u0459", llarr: "\u21C7", ll: "\u226A", Ll: "\u22D8", llcorner: "\u231E", Lleftarrow: "\u21DA", llhard: "\u296B", lltri: "\u25FA", Lmidot: "\u013F", lmidot: "\u0140", lmoustache: "\u23B0", lmoust: "\u23B0", lnap: "\u2A89", lnapprox: "\u2A89", lne: "\u2A87", lnE: "\u2268", lneq: "\u2A87", lneqq: "\u2268", lnsim: "\u22E6", loang: "\u27EC", loarr: "\u21FD", lobrk: "\u27E6", longleftarrow: "\u27F5", LongLeftArrow: "\u27F5", Longleftarrow: "\u27F8", longleftrightarrow: "\u27F7", LongLeftRightArrow: "\u27F7", Longleftrightarrow: "\u27FA", longmapsto: "\u27FC", longrightarrow: "\u27F6", LongRightArrow: "\u27F6", Longrightarrow: "\u27F9", looparrowleft: "\u21AB", looparrowright: "\u21AC", lopar: "\u2985", Lopf: "\u{1D543}", lopf: "\u{1D55D}", loplus: "\u2A2D", lotimes: "\u2A34", lowast: "\u2217", lowbar: "_", LowerLeftArrow: "\u2199", LowerRightArrow: "\u2198", loz: "\u25CA", lozenge: "\u25CA", lozf: "\u29EB", lpar: "(", lparlt: "\u2993", lrarr: "\u21C6", lrcorner: "\u231F", lrhar: "\u21CB", lrhard: "\u296D", lrm: "\u200E", lrtri: "\u22BF", lsaquo: "\u2039", lscr: "\u{1D4C1}", Lscr: "\u2112", lsh: "\u21B0", Lsh: "\u21B0", lsim: "\u2272", lsime: "\u2A8D", lsimg: "\u2A8F", lsqb: "[", lsquo: "\u2018", lsquor: "\u201A", Lstrok: "\u0141", lstrok: "\u0142", ltcc: "\u2AA6", ltcir: "\u2A79", lt: "<", LT: "<", Lt: "\u226A", ltdot: "\u22D6", lthree: "\u22CB", ltimes: "\u22C9", ltlarr: "\u2976", ltquest: "\u2A7B", ltri: "\u25C3", ltrie: "\u22B4", ltrif: "\u25C2", ltrPar: "\u2996", lurdshar: "\u294A", luruhar: "\u2966", lvertneqq: "\u2268\uFE00", lvnE: "\u2268\uFE00", macr: "\xAF", male: "\u2642", malt: "\u2720", maltese: "\u2720", Map: "\u2905", map: "\u21A6", mapsto: "\u21A6", mapstodown: "\u21A7", mapstoleft: "\u21A4", mapstoup: "\u21A5", marker: "\u25AE", mcomma: "\u2A29", Mcy: "\u041C", mcy: "\u043C", mdash: "\u2014", mDDot: "\u223A", measuredangle: "\u2221", MediumSpace: "\u205F", Mellintrf: "\u2133", Mfr: "\u{1D510}", mfr: "\u{1D52A}", mho: "\u2127", micro: "\xB5", midast: "*", midcir: "\u2AF0", mid: "\u2223", middot: "\xB7", minusb: "\u229F", minus: "\u2212", minusd: "\u2238", minusdu: "\u2A2A", MinusPlus: "\u2213", mlcp: "\u2ADB", mldr: "\u2026", mnplus: "\u2213", models: "\u22A7", Mopf: "\u{1D544}", mopf: "\u{1D55E}", mp: "\u2213", mscr: "\u{1D4C2}", Mscr: "\u2133", mstpos: "\u223E", Mu: "\u039C", mu: "\u03BC", multimap: "\u22B8", mumap: "\u22B8", nabla: "\u2207", Nacute: "\u0143", nacute: "\u0144", nang: "\u2220\u20D2", nap: "\u2249", napE: "\u2A70\u0338", napid: "\u224B\u0338", napos: "\u0149", napprox: "\u2249", natural: "\u266E", naturals: "\u2115", natur: "\u266E", nbsp: "\xA0", nbump: "\u224E\u0338", nbumpe: "\u224F\u0338", ncap: "\u2A43", Ncaron: "\u0147", ncaron: "\u0148", Ncedil: "\u0145", ncedil: "\u0146", ncong: "\u2247", ncongdot: "\u2A6D\u0338", ncup: "\u2A42", Ncy: "\u041D", ncy: "\u043D", ndash: "\u2013", nearhk: "\u2924", nearr: "\u2197", neArr: "\u21D7", nearrow: "\u2197", ne: "\u2260", nedot: "\u2250\u0338", NegativeMediumSpace: "\u200B", NegativeThickSpace: "\u200B", NegativeThinSpace: "\u200B", NegativeVeryThinSpace: "\u200B", nequiv: "\u2262", nesear: "\u2928", nesim: "\u2242\u0338", NestedGreaterGreater: "\u226B", NestedLessLess: "\u226A", NewLine: `
 `, nexist: "\u2204", nexists: "\u2204", Nfr: "\u{1D511}", nfr: "\u{1D52B}", ngE: "\u2267\u0338", nge: "\u2271", ngeq: "\u2271", ngeqq: "\u2267\u0338", ngeqslant: "\u2A7E\u0338", nges: "\u2A7E\u0338", nGg: "\u22D9\u0338", ngsim: "\u2275", nGt: "\u226B\u20D2", ngt: "\u226F", ngtr: "\u226F", nGtv: "\u226B\u0338", nharr: "\u21AE", nhArr: "\u21CE", nhpar: "\u2AF2", ni: "\u220B", nis: "\u22FC", nisd: "\u22FA", niv: "\u220B", NJcy: "\u040A", njcy: "\u045A", nlarr: "\u219A", nlArr: "\u21CD", nldr: "\u2025", nlE: "\u2266\u0338", nle: "\u2270", nleftarrow: "\u219A", nLeftarrow: "\u21CD", nleftrightarrow: "\u21AE", nLeftrightarrow: "\u21CE", nleq: "\u2270", nleqq: "\u2266\u0338", nleqslant: "\u2A7D\u0338", nles: "\u2A7D\u0338", nless: "\u226E", nLl: "\u22D8\u0338", nlsim: "\u2274", nLt: "\u226A\u20D2", nlt: "\u226E", nltri: "\u22EA", nltrie: "\u22EC", nLtv: "\u226A\u0338", nmid: "\u2224", NoBreak: "\u2060", NonBreakingSpace: "\xA0", nopf: "\u{1D55F}", Nopf: "\u2115", Not: "\u2AEC", not: "\xAC", NotCongruent: "\u2262", NotCupCap: "\u226D", NotDoubleVerticalBar: "\u2226", NotElement: "\u2209", NotEqual: "\u2260", NotEqualTilde: "\u2242\u0338", NotExists: "\u2204", NotGreater: "\u226F", NotGreaterEqual: "\u2271", NotGreaterFullEqual: "\u2267\u0338", NotGreaterGreater: "\u226B\u0338", NotGreaterLess: "\u2279", NotGreaterSlantEqual: "\u2A7E\u0338", NotGreaterTilde: "\u2275", NotHumpDownHump: "\u224E\u0338", NotHumpEqual: "\u224F\u0338", notin: "\u2209", notindot: "\u22F5\u0338", notinE: "\u22F9\u0338", notinva: "\u2209", notinvb: "\u22F7", notinvc: "\u22F6", NotLeftTriangleBar: "\u29CF\u0338", NotLeftTriangle: "\u22EA", NotLeftTriangleEqual: "\u22EC", NotLess: "\u226E", NotLessEqual: "\u2270", NotLessGreater: "\u2278", NotLessLess: "\u226A\u0338", NotLessSlantEqual: "\u2A7D\u0338", NotLessTilde: "\u2274", NotNestedGreaterGreater: "\u2AA2\u0338", NotNestedLessLess: "\u2AA1\u0338", notni: "\u220C", notniva: "\u220C", notnivb: "\u22FE", notnivc: "\u22FD", NotPrecedes: "\u2280", NotPrecedesEqual: "\u2AAF\u0338", NotPrecedesSlantEqual: "\u22E0", NotReverseElement: "\u220C", NotRightTriangleBar: "\u29D0\u0338", NotRightTriangle: "\u22EB", NotRightTriangleEqual: "\u22ED", NotSquareSubset: "\u228F\u0338", NotSquareSubsetEqual: "\u22E2", NotSquareSuperset: "\u2290\u0338", NotSquareSupersetEqual: "\u22E3", NotSubset: "\u2282\u20D2", NotSubsetEqual: "\u2288", NotSucceeds: "\u2281", NotSucceedsEqual: "\u2AB0\u0338", NotSucceedsSlantEqual: "\u22E1", NotSucceedsTilde: "\u227F\u0338", NotSuperset: "\u2283\u20D2", NotSupersetEqual: "\u2289", NotTilde: "\u2241", NotTildeEqual: "\u2244", NotTildeFullEqual: "\u2247", NotTildeTilde: "\u2249", NotVerticalBar: "\u2224", nparallel: "\u2226", npar: "\u2226", nparsl: "\u2AFD\u20E5", npart: "\u2202\u0338", npolint: "\u2A14", npr: "\u2280", nprcue: "\u22E0", nprec: "\u2280", npreceq: "\u2AAF\u0338", npre: "\u2AAF\u0338", nrarrc: "\u2933\u0338", nrarr: "\u219B", nrArr: "\u21CF", nrarrw: "\u219D\u0338", nrightarrow: "\u219B", nRightarrow: "\u21CF", nrtri: "\u22EB", nrtrie: "\u22ED", nsc: "\u2281", nsccue: "\u22E1", nsce: "\u2AB0\u0338", Nscr: "\u{1D4A9}", nscr: "\u{1D4C3}", nshortmid: "\u2224", nshortparallel: "\u2226", nsim: "\u2241", nsime: "\u2244", nsimeq: "\u2244", nsmid: "\u2224", nspar: "\u2226", nsqsube: "\u22E2", nsqsupe: "\u22E3", nsub: "\u2284", nsubE: "\u2AC5\u0338", nsube: "\u2288", nsubset: "\u2282\u20D2", nsubseteq: "\u2288", nsubseteqq: "\u2AC5\u0338", nsucc: "\u2281", nsucceq: "\u2AB0\u0338", nsup: "\u2285", nsupE: "\u2AC6\u0338", nsupe: "\u2289", nsupset: "\u2283\u20D2", nsupseteq: "\u2289", nsupseteqq: "\u2AC6\u0338", ntgl: "\u2279", Ntilde: "\xD1", ntilde: "\xF1", ntlg: "\u2278", ntriangleleft: "\u22EA", ntrianglelefteq: "\u22EC", ntriangleright: "\u22EB", ntrianglerighteq: "\u22ED", Nu: "\u039D", nu: "\u03BD", num: "#", numero: "\u2116", numsp: "\u2007", nvap: "\u224D\u20D2", nvdash: "\u22AC", nvDash: "\u22AD", nVdash: "\u22AE", nVDash: "\u22AF", nvge: "\u2265\u20D2", nvgt: ">\u20D2", nvHarr: "\u2904", nvinfin: "\u29DE", nvlArr: "\u2902", nvle: "\u2264\u20D2", nvlt: "<\u20D2", nvltrie: "\u22B4\u20D2", nvrArr: "\u2903", nvrtrie: "\u22B5\u20D2", nvsim: "\u223C\u20D2", nwarhk: "\u2923", nwarr: "\u2196", nwArr: "\u21D6", nwarrow: "\u2196", nwnear: "\u2927", Oacute: "\xD3", oacute: "\xF3", oast: "\u229B", Ocirc: "\xD4", ocirc: "\xF4", ocir: "\u229A", Ocy: "\u041E", ocy: "\u043E", odash: "\u229D", Odblac: "\u0150", odblac: "\u0151", odiv: "\u2A38", odot: "\u2299", odsold: "\u29BC", OElig: "\u0152", oelig: "\u0153", ofcir: "\u29BF", Ofr: "\u{1D512}", ofr: "\u{1D52C}", ogon: "\u02DB", Ograve: "\xD2", ograve: "\xF2", ogt: "\u29C1", ohbar: "\u29B5", ohm: "\u03A9", oint: "\u222E", olarr: "\u21BA", olcir: "\u29BE", olcross: "\u29BB", oline: "\u203E", olt: "\u29C0", Omacr: "\u014C", omacr: "\u014D", Omega: "\u03A9", omega: "\u03C9", Omicron: "\u039F", omicron: "\u03BF", omid: "\u29B6", ominus: "\u2296", Oopf: "\u{1D546}", oopf: "\u{1D560}", opar: "\u29B7", OpenCurlyDoubleQuote: "\u201C", OpenCurlyQuote: "\u2018", operp: "\u29B9", oplus: "\u2295", orarr: "\u21BB", Or: "\u2A54", or: "\u2228", ord: "\u2A5D", order: "\u2134", orderof: "\u2134", ordf: "\xAA", ordm: "\xBA", origof: "\u22B6", oror: "\u2A56", orslope: "\u2A57", orv: "\u2A5B", oS: "\u24C8", Oscr: "\u{1D4AA}", oscr: "\u2134", Oslash: "\xD8", oslash: "\xF8", osol: "\u2298", Otilde: "\xD5", otilde: "\xF5", otimesas: "\u2A36", Otimes: "\u2A37", otimes: "\u2297", Ouml: "\xD6", ouml: "\xF6", ovbar: "\u233D", OverBar: "\u203E", OverBrace: "\u23DE", OverBracket: "\u23B4", OverParenthesis: "\u23DC", para: "\xB6", parallel: "\u2225", par: "\u2225", parsim: "\u2AF3", parsl: "\u2AFD", part: "\u2202", PartialD: "\u2202", Pcy: "\u041F", pcy: "\u043F", percnt: "%", period: ".", permil: "\u2030", perp: "\u22A5", pertenk: "\u2031", Pfr: "\u{1D513}", pfr: "\u{1D52D}", Phi: "\u03A6", phi: "\u03C6", phiv: "\u03D5", phmmat: "\u2133", phone: "\u260E", Pi: "\u03A0", pi: "\u03C0", pitchfork: "\u22D4", piv: "\u03D6", planck: "\u210F", planckh: "\u210E", plankv: "\u210F", plusacir: "\u2A23", plusb: "\u229E", pluscir: "\u2A22", plus: "+", plusdo: "\u2214", plusdu: "\u2A25", pluse: "\u2A72", PlusMinus: "\xB1", plusmn: "\xB1", plussim: "\u2A26", plustwo: "\u2A27", pm: "\xB1", Poincareplane: "\u210C", pointint: "\u2A15", popf: "\u{1D561}", Popf: "\u2119", pound: "\xA3", prap: "\u2AB7", Pr: "\u2ABB", pr: "\u227A", prcue: "\u227C", precapprox: "\u2AB7", prec: "\u227A", preccurlyeq: "\u227C", Precedes: "\u227A", PrecedesEqual: "\u2AAF", PrecedesSlantEqual: "\u227C", PrecedesTilde: "\u227E", preceq: "\u2AAF", precnapprox: "\u2AB9", precneqq: "\u2AB5", precnsim: "\u22E8", pre: "\u2AAF", prE: "\u2AB3", precsim: "\u227E", prime: "\u2032", Prime: "\u2033", primes: "\u2119", prnap: "\u2AB9", prnE: "\u2AB5", prnsim: "\u22E8", prod: "\u220F", Product: "\u220F", profalar: "\u232E", profline: "\u2312", profsurf: "\u2313", prop: "\u221D", Proportional: "\u221D", Proportion: "\u2237", propto: "\u221D", prsim: "\u227E", prurel: "\u22B0", Pscr: "\u{1D4AB}", pscr: "\u{1D4C5}", Psi: "\u03A8", psi: "\u03C8", puncsp: "\u2008", Qfr: "\u{1D514}", qfr: "\u{1D52E}", qint: "\u2A0C", qopf: "\u{1D562}", Qopf: "\u211A", qprime: "\u2057", Qscr: "\u{1D4AC}", qscr: "\u{1D4C6}", quaternions: "\u210D", quatint: "\u2A16", quest: "?", questeq: "\u225F", quot: '"', QUOT: '"', rAarr: "\u21DB", race: "\u223D\u0331", Racute: "\u0154", racute: "\u0155", radic: "\u221A", raemptyv: "\u29B3", rang: "\u27E9", Rang: "\u27EB", rangd: "\u2992", range: "\u29A5", rangle: "\u27E9", raquo: "\xBB", rarrap: "\u2975", rarrb: "\u21E5", rarrbfs: "\u2920", rarrc: "\u2933", rarr: "\u2192", Rarr: "\u21A0", rArr: "\u21D2", rarrfs: "\u291E", rarrhk: "\u21AA", rarrlp: "\u21AC", rarrpl: "\u2945", rarrsim: "\u2974", Rarrtl: "\u2916", rarrtl: "\u21A3", rarrw: "\u219D", ratail: "\u291A", rAtail: "\u291C", ratio: "\u2236", rationals: "\u211A", rbarr: "\u290D", rBarr: "\u290F", RBarr: "\u2910", rbbrk: "\u2773", rbrace: "}", rbrack: "]", rbrke: "\u298C", rbrksld: "\u298E", rbrkslu: "\u2990", Rcaron: "\u0158", rcaron: "\u0159", Rcedil: "\u0156", rcedil: "\u0157", rceil: "\u2309", rcub: "}", Rcy: "\u0420", rcy: "\u0440", rdca: "\u2937", rdldhar: "\u2969", rdquo: "\u201D", rdquor: "\u201D", rdsh: "\u21B3", real: "\u211C", realine: "\u211B", realpart: "\u211C", reals: "\u211D", Re: "\u211C", rect: "\u25AD", reg: "\xAE", REG: "\xAE", ReverseElement: "\u220B", ReverseEquilibrium: "\u21CB", ReverseUpEquilibrium: "\u296F", rfisht: "\u297D", rfloor: "\u230B", rfr: "\u{1D52F}", Rfr: "\u211C", rHar: "\u2964", rhard: "\u21C1", rharu: "\u21C0", rharul: "\u296C", Rho: "\u03A1", rho: "\u03C1", rhov: "\u03F1", RightAngleBracket: "\u27E9", RightArrowBar: "\u21E5", rightarrow: "\u2192", RightArrow: "\u2192", Rightarrow: "\u21D2", RightArrowLeftArrow: "\u21C4", rightarrowtail: "\u21A3", RightCeiling: "\u2309", RightDoubleBracket: "\u27E7", RightDownTeeVector: "\u295D", RightDownVectorBar: "\u2955", RightDownVector: "\u21C2", RightFloor: "\u230B", rightharpoondown: "\u21C1", rightharpoonup: "\u21C0", rightleftarrows: "\u21C4", rightleftharpoons: "\u21CC", rightrightarrows: "\u21C9", rightsquigarrow: "\u219D", RightTeeArrow: "\u21A6", RightTee: "\u22A2", RightTeeVector: "\u295B", rightthreetimes: "\u22CC", RightTriangleBar: "\u29D0", RightTriangle: "\u22B3", RightTriangleEqual: "\u22B5", RightUpDownVector: "\u294F", RightUpTeeVector: "\u295C", RightUpVectorBar: "\u2954", RightUpVector: "\u21BE", RightVectorBar: "\u2953", RightVector: "\u21C0", ring: "\u02DA", risingdotseq: "\u2253", rlarr: "\u21C4", rlhar: "\u21CC", rlm: "\u200F", rmoustache: "\u23B1", rmoust: "\u23B1", rnmid: "\u2AEE", roang: "\u27ED", roarr: "\u21FE", robrk: "\u27E7", ropar: "\u2986", ropf: "\u{1D563}", Ropf: "\u211D", roplus: "\u2A2E", rotimes: "\u2A35", RoundImplies: "\u2970", rpar: ")", rpargt: "\u2994", rppolint: "\u2A12", rrarr: "\u21C9", Rrightarrow: "\u21DB", rsaquo: "\u203A", rscr: "\u{1D4C7}", Rscr: "\u211B", rsh: "\u21B1", Rsh: "\u21B1", rsqb: "]", rsquo: "\u2019", rsquor: "\u2019", rthree: "\u22CC", rtimes: "\u22CA", rtri: "\u25B9", rtrie: "\u22B5", rtrif: "\u25B8", rtriltri: "\u29CE", RuleDelayed: "\u29F4", ruluhar: "\u2968", rx: "\u211E", Sacute: "\u015A", sacute: "\u015B", sbquo: "\u201A", scap: "\u2AB8", Scaron: "\u0160", scaron: "\u0161", Sc: "\u2ABC", sc: "\u227B", sccue: "\u227D", sce: "\u2AB0", scE: "\u2AB4", Scedil: "\u015E", scedil: "\u015F", Scirc: "\u015C", scirc: "\u015D", scnap: "\u2ABA", scnE: "\u2AB6", scnsim: "\u22E9", scpolint: "\u2A13", scsim: "\u227F", Scy: "\u0421", scy: "\u0441", sdotb: "\u22A1", sdot: "\u22C5", sdote: "\u2A66", searhk: "\u2925", searr: "\u2198", seArr: "\u21D8", searrow: "\u2198", sect: "\xA7", semi: ";", seswar: "\u2929", setminus: "\u2216", setmn: "\u2216", sext: "\u2736", Sfr: "\u{1D516}", sfr: "\u{1D530}", sfrown: "\u2322", sharp: "\u266F", SHCHcy: "\u0429", shchcy: "\u0449", SHcy: "\u0428", shcy: "\u0448", ShortDownArrow: "\u2193", ShortLeftArrow: "\u2190", shortmid: "\u2223", shortparallel: "\u2225", ShortRightArrow: "\u2192", ShortUpArrow: "\u2191", shy: "\xAD", Sigma: "\u03A3", sigma: "\u03C3", sigmaf: "\u03C2", sigmav: "\u03C2", sim: "\u223C", simdot: "\u2A6A", sime: "\u2243", simeq: "\u2243", simg: "\u2A9E", simgE: "\u2AA0", siml: "\u2A9D", simlE: "\u2A9F", simne: "\u2246", simplus: "\u2A24", simrarr: "\u2972", slarr: "\u2190", SmallCircle: "\u2218", smallsetminus: "\u2216", smashp: "\u2A33", smeparsl: "\u29E4", smid: "\u2223", smile: "\u2323", smt: "\u2AAA", smte: "\u2AAC", smtes: "\u2AAC\uFE00", SOFTcy: "\u042C", softcy: "\u044C", solbar: "\u233F", solb: "\u29C4", sol: "/", Sopf: "\u{1D54A}", sopf: "\u{1D564}", spades: "\u2660", spadesuit: "\u2660", spar: "\u2225", sqcap: "\u2293", sqcaps: "\u2293\uFE00", sqcup: "\u2294", sqcups: "\u2294\uFE00", Sqrt: "\u221A", sqsub: "\u228F", sqsube: "\u2291", sqsubset: "\u228F", sqsubseteq: "\u2291", sqsup: "\u2290", sqsupe: "\u2292", sqsupset: "\u2290", sqsupseteq: "\u2292", square: "\u25A1", Square: "\u25A1", SquareIntersection: "\u2293", SquareSubset: "\u228F", SquareSubsetEqual: "\u2291", SquareSuperset: "\u2290", SquareSupersetEqual: "\u2292", SquareUnion: "\u2294", squarf: "\u25AA", squ: "\u25A1", squf: "\u25AA", srarr: "\u2192", Sscr: "\u{1D4AE}", sscr: "\u{1D4C8}", ssetmn: "\u2216", ssmile: "\u2323", sstarf: "\u22C6", Star: "\u22C6", star: "\u2606", starf: "\u2605", straightepsilon: "\u03F5", straightphi: "\u03D5", strns: "\xAF", sub: "\u2282", Sub: "\u22D0", subdot: "\u2ABD", subE: "\u2AC5", sube: "\u2286", subedot: "\u2AC3", submult: "\u2AC1", subnE: "\u2ACB", subne: "\u228A", subplus: "\u2ABF", subrarr: "\u2979", subset: "\u2282", Subset: "\u22D0", subseteq: "\u2286", subseteqq: "\u2AC5", SubsetEqual: "\u2286", subsetneq: "\u228A", subsetneqq: "\u2ACB", subsim: "\u2AC7", subsub: "\u2AD5", subsup: "\u2AD3", succapprox: "\u2AB8", succ: "\u227B", succcurlyeq: "\u227D", Succeeds: "\u227B", SucceedsEqual: "\u2AB0", SucceedsSlantEqual: "\u227D", SucceedsTilde: "\u227F", succeq: "\u2AB0", succnapprox: "\u2ABA", succneqq: "\u2AB6", succnsim: "\u22E9", succsim: "\u227F", SuchThat: "\u220B", sum: "\u2211", Sum: "\u2211", sung: "\u266A", sup1: "\xB9", sup2: "\xB2", sup3: "\xB3", sup: "\u2283", Sup: "\u22D1", supdot: "\u2ABE", supdsub: "\u2AD8", supE: "\u2AC6", supe: "\u2287", supedot: "\u2AC4", Superset: "\u2283", SupersetEqual: "\u2287", suphsol: "\u27C9", suphsub: "\u2AD7", suplarr: "\u297B", supmult: "\u2AC2", supnE: "\u2ACC", supne: "\u228B", supplus: "\u2AC0", supset: "\u2283", Supset: "\u22D1", supseteq: "\u2287", supseteqq: "\u2AC6", supsetneq: "\u228B", supsetneqq: "\u2ACC", supsim: "\u2AC8", supsub: "\u2AD4", supsup: "\u2AD6", swarhk: "\u2926", swarr: "\u2199", swArr: "\u21D9", swarrow: "\u2199", swnwar: "\u292A", szlig: "\xDF", Tab: "	", target: "\u2316", Tau: "\u03A4", tau: "\u03C4", tbrk: "\u23B4", Tcaron: "\u0164", tcaron: "\u0165", Tcedil: "\u0162", tcedil: "\u0163", Tcy: "\u0422", tcy: "\u0442", tdot: "\u20DB", telrec: "\u2315", Tfr: "\u{1D517}", tfr: "\u{1D531}", there4: "\u2234", therefore: "\u2234", Therefore: "\u2234", Theta: "\u0398", theta: "\u03B8", thetasym: "\u03D1", thetav: "\u03D1", thickapprox: "\u2248", thicksim: "\u223C", ThickSpace: "\u205F\u200A", ThinSpace: "\u2009", thinsp: "\u2009", thkap: "\u2248", thksim: "\u223C", THORN: "\xDE", thorn: "\xFE", tilde: "\u02DC", Tilde: "\u223C", TildeEqual: "\u2243", TildeFullEqual: "\u2245", TildeTilde: "\u2248", timesbar: "\u2A31", timesb: "\u22A0", times: "\xD7", timesd: "\u2A30", tint: "\u222D", toea: "\u2928", topbot: "\u2336", topcir: "\u2AF1", top: "\u22A4", Topf: "\u{1D54B}", topf: "\u{1D565}", topfork: "\u2ADA", tosa: "\u2929", tprime: "\u2034", trade: "\u2122", TRADE: "\u2122", triangle: "\u25B5", triangledown: "\u25BF", triangleleft: "\u25C3", trianglelefteq: "\u22B4", triangleq: "\u225C", triangleright: "\u25B9", trianglerighteq: "\u22B5", tridot: "\u25EC", trie: "\u225C", triminus: "\u2A3A", TripleDot: "\u20DB", triplus: "\u2A39", trisb: "\u29CD", tritime: "\u2A3B", trpezium: "\u23E2", Tscr: "\u{1D4AF}", tscr: "\u{1D4C9}", TScy: "\u0426", tscy: "\u0446", TSHcy: "\u040B", tshcy: "\u045B", Tstrok: "\u0166", tstrok: "\u0167", twixt: "\u226C", twoheadleftarrow: "\u219E", twoheadrightarrow: "\u21A0", Uacute: "\xDA", uacute: "\xFA", uarr: "\u2191", Uarr: "\u219F", uArr: "\u21D1", Uarrocir: "\u2949", Ubrcy: "\u040E", ubrcy: "\u045E", Ubreve: "\u016C", ubreve: "\u016D", Ucirc: "\xDB", ucirc: "\xFB", Ucy: "\u0423", ucy: "\u0443", udarr: "\u21C5", Udblac: "\u0170", udblac: "\u0171", udhar: "\u296E", ufisht: "\u297E", Ufr: "\u{1D518}", ufr: "\u{1D532}", Ugrave: "\xD9", ugrave: "\xF9", uHar: "\u2963", uharl: "\u21BF", uharr: "\u21BE", uhblk: "\u2580", ulcorn: "\u231C", ulcorner: "\u231C", ulcrop: "\u230F", ultri: "\u25F8", Umacr: "\u016A", umacr: "\u016B", uml: "\xA8", UnderBar: "_", UnderBrace: "\u23DF", UnderBracket: "\u23B5", UnderParenthesis: "\u23DD", Union: "\u22C3", UnionPlus: "\u228E", Uogon: "\u0172", uogon: "\u0173", Uopf: "\u{1D54C}", uopf: "\u{1D566}", UpArrowBar: "\u2912", uparrow: "\u2191", UpArrow: "\u2191", Uparrow: "\u21D1", UpArrowDownArrow: "\u21C5", updownarrow: "\u2195", UpDownArrow: "\u2195", Updownarrow: "\u21D5", UpEquilibrium: "\u296E", upharpoonleft: "\u21BF", upharpoonright: "\u21BE", uplus: "\u228E", UpperLeftArrow: "\u2196", UpperRightArrow: "\u2197", upsi: "\u03C5", Upsi: "\u03D2", upsih: "\u03D2", Upsilon: "\u03A5", upsilon: "\u03C5", UpTeeArrow: "\u21A5", UpTee: "\u22A5", upuparrows: "\u21C8", urcorn: "\u231D", urcorner: "\u231D", urcrop: "\u230E", Uring: "\u016E", uring: "\u016F", urtri: "\u25F9", Uscr: "\u{1D4B0}", uscr: "\u{1D4CA}", utdot: "\u22F0", Utilde: "\u0168", utilde: "\u0169", utri: "\u25B5", utrif: "\u25B4", uuarr: "\u21C8", Uuml: "\xDC", uuml: "\xFC", uwangle: "\u29A7", vangrt: "\u299C", varepsilon: "\u03F5", varkappa: "\u03F0", varnothing: "\u2205", varphi: "\u03D5", varpi: "\u03D6", varpropto: "\u221D", varr: "\u2195", vArr: "\u21D5", varrho: "\u03F1", varsigma: "\u03C2", varsubsetneq: "\u228A\uFE00", varsubsetneqq: "\u2ACB\uFE00", varsupsetneq: "\u228B\uFE00", varsupsetneqq: "\u2ACC\uFE00", vartheta: "\u03D1", vartriangleleft: "\u22B2", vartriangleright: "\u22B3", vBar: "\u2AE8", Vbar: "\u2AEB", vBarv: "\u2AE9", Vcy: "\u0412", vcy: "\u0432", vdash: "\u22A2", vDash: "\u22A8", Vdash: "\u22A9", VDash: "\u22AB", Vdashl: "\u2AE6", veebar: "\u22BB", vee: "\u2228", Vee: "\u22C1", veeeq: "\u225A", vellip: "\u22EE", verbar: "|", Verbar: "\u2016", vert: "|", Vert: "\u2016", VerticalBar: "\u2223", VerticalLine: "|", VerticalSeparator: "\u2758", VerticalTilde: "\u2240", VeryThinSpace: "\u200A", Vfr: "\u{1D519}", vfr: "\u{1D533}", vltri: "\u22B2", vnsub: "\u2282\u20D2", vnsup: "\u2283\u20D2", Vopf: "\u{1D54D}", vopf: "\u{1D567}", vprop: "\u221D", vrtri: "\u22B3", Vscr: "\u{1D4B1}", vscr: "\u{1D4CB}", vsubnE: "\u2ACB\uFE00", vsubne: "\u228A\uFE00", vsupnE: "\u2ACC\uFE00", vsupne: "\u228B\uFE00", Vvdash: "\u22AA", vzigzag: "\u299A", Wcirc: "\u0174", wcirc: "\u0175", wedbar: "\u2A5F", wedge: "\u2227", Wedge: "\u22C0", wedgeq: "\u2259", weierp: "\u2118", Wfr: "\u{1D51A}", wfr: "\u{1D534}", Wopf: "\u{1D54E}", wopf: "\u{1D568}", wp: "\u2118", wr: "\u2240", wreath: "\u2240", Wscr: "\u{1D4B2}", wscr: "\u{1D4CC}", xcap: "\u22C2", xcirc: "\u25EF", xcup: "\u22C3", xdtri: "\u25BD", Xfr: "\u{1D51B}", xfr: "\u{1D535}", xharr: "\u27F7", xhArr: "\u27FA", Xi: "\u039E", xi: "\u03BE", xlarr: "\u27F5", xlArr: "\u27F8", xmap: "\u27FC", xnis: "\u22FB", xodot: "\u2A00", Xopf: "\u{1D54F}", xopf: "\u{1D569}", xoplus: "\u2A01", xotime: "\u2A02", xrarr: "\u27F6", xrArr: "\u27F9", Xscr: "\u{1D4B3}", xscr: "\u{1D4CD}", xsqcup: "\u2A06", xuplus: "\u2A04", xutri: "\u25B3", xvee: "\u22C1", xwedge: "\u22C0", Yacute: "\xDD", yacute: "\xFD", YAcy: "\u042F", yacy: "\u044F", Ycirc: "\u0176", ycirc: "\u0177", Ycy: "\u042B", ycy: "\u044B", yen: "\xA5", Yfr: "\u{1D51C}", yfr: "\u{1D536}", YIcy: "\u0407", yicy: "\u0457", Yopf: "\u{1D550}", yopf: "\u{1D56A}", Yscr: "\u{1D4B4}", yscr: "\u{1D4CE}", YUcy: "\u042E", yucy: "\u044E", yuml: "\xFF", Yuml: "\u0178", Zacute: "\u0179", zacute: "\u017A", Zcaron: "\u017D", zcaron: "\u017E", Zcy: "\u0417", zcy: "\u0437", Zdot: "\u017B", zdot: "\u017C", zeetrf: "\u2128", ZeroWidthSpace: "\u200B", Zeta: "\u0396", zeta: "\u03B6", zfr: "\u{1D537}", Zfr: "\u2128", ZHcy: "\u0416", zhcy: "\u0436", zigrarr: "\u21DD", zopf: "\u{1D56B}", Zopf: "\u2124", Zscr: "\u{1D4B5}", zscr: "\u{1D4CF}", zwj: "\u200D", zwnj: "\u200C" };
   }
 });
 
-// ../../node_modules/entities/lib/maps/legacy.json
+// ../../node_modules/ansi-to-html/node_modules/entities/lib/maps/legacy.json
 var require_legacy = __commonJS({
-  "../../node_modules/entities/lib/maps/legacy.json"(exports, module2) {
+  "../../node_modules/ansi-to-html/node_modules/entities/lib/maps/legacy.json"(exports, module2) {
     module2.exports = { Aacute: "\xC1", aacute: "\xE1", Acirc: "\xC2", acirc: "\xE2", acute: "\xB4", AElig: "\xC6", aelig: "\xE6", Agrave: "\xC0", agrave: "\xE0", amp: "&", AMP: "&", Aring: "\xC5", aring: "\xE5", Atilde: "\xC3", atilde: "\xE3", Auml: "\xC4", auml: "\xE4", brvbar: "\xA6", Ccedil: "\xC7", ccedil: "\xE7", cedil: "\xB8", cent: "\xA2", copy: "\xA9", COPY: "\xA9", curren: "\xA4", deg: "\xB0", divide: "\xF7", Eacute: "\xC9", eacute: "\xE9", Ecirc: "\xCA", ecirc: "\xEA", Egrave: "\xC8", egrave: "\xE8", ETH: "\xD0", eth: "\xF0", Euml: "\xCB", euml: "\xEB", frac12: "\xBD", frac14: "\xBC", frac34: "\xBE", gt: ">", GT: ">", Iacute: "\xCD", iacute: "\xED", Icirc: "\xCE", icirc: "\xEE", iexcl: "\xA1", Igrave: "\xCC", igrave: "\xEC", iquest: "\xBF", Iuml: "\xCF", iuml: "\xEF", laquo: "\xAB", lt: "<", LT: "<", macr: "\xAF", micro: "\xB5", middot: "\xB7", nbsp: "\xA0", not: "\xAC", Ntilde: "\xD1", ntilde: "\xF1", Oacute: "\xD3", oacute: "\xF3", Ocirc: "\xD4", ocirc: "\xF4", Ograve: "\xD2", ograve: "\xF2", ordf: "\xAA", ordm: "\xBA", Oslash: "\xD8", oslash: "\xF8", Otilde: "\xD5", otilde: "\xF5", Ouml: "\xD6", ouml: "\xF6", para: "\xB6", plusmn: "\xB1", pound: "\xA3", quot: '"', QUOT: '"', raquo: "\xBB", reg: "\xAE", REG: "\xAE", sect: "\xA7", shy: "\xAD", sup1: "\xB9", sup2: "\xB2", sup3: "\xB3", szlig: "\xDF", THORN: "\xDE", thorn: "\xFE", times: "\xD7", Uacute: "\xDA", uacute: "\xFA", Ucirc: "\xDB", ucirc: "\xFB", Ugrave: "\xD9", ugrave: "\xF9", uml: "\xA8", Uuml: "\xDC", uuml: "\xFC", Yacute: "\xDD", yacute: "\xFD", yen: "\xA5", yuml: "\xFF" };
   }
 });
 
-// ../../node_modules/entities/lib/maps/xml.json
+// ../../node_modules/ansi-to-html/node_modules/entities/lib/maps/xml.json
 var require_xml2 = __commonJS({
-  "../../node_modules/entities/lib/maps/xml.json"(exports, module2) {
+  "../../node_modules/ansi-to-html/node_modules/entities/lib/maps/xml.json"(exports, module2) {
     module2.exports = { amp: "&", apos: "'", gt: ">", lt: "<", quot: '"' };
   }
 });
 
-// ../../node_modules/entities/lib/maps/decode.json
+// ../../node_modules/ansi-to-html/node_modules/entities/lib/maps/decode.json
 var require_decode = __commonJS({
-  "../../node_modules/entities/lib/maps/decode.json"(exports, module2) {
+  "../../node_modules/ansi-to-html/node_modules/entities/lib/maps/decode.json"(exports, module2) {
     module2.exports = { "0": 65533, "128": 8364, "130": 8218, "131": 402, "132": 8222, "133": 8230, "134": 8224, "135": 8225, "136": 710, "137": 8240, "138": 352, "139": 8249, "140": 338, "142": 381, "145": 8216, "146": 8217, "147": 8220, "148": 8221, "149": 8226, "150": 8211, "151": 8212, "152": 732, "153": 8482, "154": 353, "155": 8250, "156": 339, "158": 382, "159": 376 };
   }
 });
 
-// ../../node_modules/entities/lib/decode_codepoint.js
+// ../../node_modules/ansi-to-html/node_modules/entities/lib/decode_codepoint.js
 var require_decode_codepoint = __commonJS({
-  "../../node_modules/entities/lib/decode_codepoint.js"(exports) {
+  "../../node_modules/ansi-to-html/node_modules/entities/lib/decode_codepoint.js"(exports) {
     "use strict";
     var __importDefault = exports && exports.__importDefault || function(mod) {
       return mod && mod.__esModule ? mod : { default: mod };
@@ -14778,9 +14778,9 @@ var require_decode_codepoint = __commonJS({
   }
 });
 
-// ../../node_modules/entities/lib/decode.js
+// ../../node_modules/ansi-to-html/node_modules/entities/lib/decode.js
 var require_decode2 = __commonJS({
-  "../../node_modules/entities/lib/decode.js"(exports) {
+  "../../node_modules/ansi-to-html/node_modules/entities/lib/decode.js"(exports) {
     "use strict";
     var __importDefault = exports && exports.__importDefault || function(mod) {
       return mod && mod.__esModule ? mod : { default: mod };
@@ -14822,9 +14822,9 @@ var require_decode2 = __commonJS({
   }
 });
 
-// ../../node_modules/entities/lib/encode.js
+// ../../node_modules/ansi-to-html/node_modules/entities/lib/encode.js
 var require_encode = __commonJS({
-  "../../node_modules/entities/lib/encode.js"(exports) {
+  "../../node_modules/ansi-to-html/node_modules/entities/lib/encode.js"(exports) {
     "use strict";
     var __importDefault = exports && exports.__importDefault || function(mod) {
       return mod && mod.__esModule ? mod : { default: mod };
@@ -14880,10 +14880,10 @@ var require_encode = __commonJS({
       };
     }
     var reEscapeChars = new RegExp(xmlReplacer.source + "|" + reNonASCII.source, "g");
-    function escape4(data) {
+    function escape5(data) {
       return data.replace(reEscapeChars, singleCharReplacer);
     }
-    exports.escape = escape4;
+    exports.escape = escape5;
     function escapeUTF8(data) {
       return data.replace(xmlReplacer, singleCharReplacer);
     }
@@ -14898,9 +14898,9 @@ var require_encode = __commonJS({
   }
 });
 
-// ../../node_modules/entities/lib/index.js
+// ../../node_modules/ansi-to-html/node_modules/entities/lib/index.js
 var require_lib = __commonJS({
-  "../../node_modules/entities/lib/index.js"(exports) {
+  "../../node_modules/ansi-to-html/node_modules/entities/lib/index.js"(exports) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: !0 });
     exports.decodeXMLStrict = exports.decodeHTML5Strict = exports.decodeHTML4Strict = exports.decodeHTML5 = exports.decodeHTML4 = exports.decodeHTMLStrict = exports.decodeHTML = exports.decodeXML = exports.encodeHTML5 = exports.encodeHTML4 = exports.escapeUTF8 = exports.escape = exports.encodeNonAsciiHTML = exports.encodeHTML = exports.encodeXML = exports.encode = exports.decodeStrict = exports.decode = void 0;
@@ -25366,7 +25366,15 @@ var require_identifiers = __commonJS({
 var require_semver = __commonJS({
   "../../node_modules/semver/classes/semver.js"(exports, module2) {
     "use strict";
-    var debug2 = require_debug(), { MAX_LENGTH, MAX_SAFE_INTEGER } = require_constants(), { safeRe: re2, t: t2 } = require_re(), parseOptions = require_parse_options(), { compareIdentifiers } = require_identifiers(), SemVer = class _SemVer {
+    var debug2 = require_debug(), { MAX_LENGTH, MAX_SAFE_INTEGER } = require_constants(), { safeRe: re2, t: t2 } = require_re(), parseOptions = require_parse_options(), { compareIdentifiers } = require_identifiers(), isPrereleaseIdentifier = (prerelease, identifier2) => {
+      let identifiers = identifier2.split(".");
+      if (identifiers.length > prerelease.length)
+        return !1;
+      for (let i3 = 0; i3 < identifiers.length; i3++)
+        if (compareIdentifiers(prerelease[i3], identifiers[i3]) !== 0)
+          return !1;
+      return !0;
+    }, SemVer = class _SemVer {
       constructor(version2, options) {
         if (options = parseOptions(options), version2 instanceof _SemVer) {
           if (version2.loose === !!options.loose && version2.includePrerelease === !!options.includePrerelease)
@@ -25510,7 +25518,11 @@ var require_semver = __commonJS({
             }
             if (identifier2) {
               let prerelease = [identifier2, base];
-              identifierBase === !1 && (prerelease = [identifier2]), compareIdentifiers(this.prerelease[0], identifier2) === 0 ? isNaN(this.prerelease[1]) && (this.prerelease = prerelease) : this.prerelease = prerelease;
+              if (identifierBase === !1 && (prerelease = [identifier2]), isPrereleaseIdentifier(this.prerelease, identifier2)) {
+                let prereleaseBase = this.prerelease[identifier2.split(".").length];
+                isNaN(prereleaseBase) && (this.prerelease = prerelease);
+              } else
+                this.prerelease = prerelease;
             }
             break;
           }
@@ -25818,6 +25830,35 @@ var require_coerce = __commonJS({
   }
 });
 
+// ../../node_modules/semver/functions/truncate.js
+var require_truncate = __commonJS({
+  "../../node_modules/semver/functions/truncate.js"(exports, module2) {
+    "use strict";
+    var parse6 = require_parse(), constants = require_constants(), SemVer = require_semver(), truncate3 = (version2, truncation, options) => {
+      if (!constants.RELEASE_TYPES.includes(truncation))
+        return null;
+      let clonedVersion = cloneInputVersion(version2, options);
+      return clonedVersion && doTruncation(clonedVersion, truncation);
+    }, cloneInputVersion = (version2, options) => {
+      let versionStringToParse = version2 instanceof SemVer ? version2.version : version2;
+      return parse6(versionStringToParse, options);
+    }, doTruncation = (version2, truncation) => {
+      if (isPrerelease(truncation))
+        return version2.version;
+      switch (version2.prerelease = [], truncation) {
+        case "major":
+          version2.minor = 0, version2.patch = 0;
+          break;
+        case "minor":
+          version2.patch = 0;
+          break;
+      }
+      return version2.format();
+    }, isPrerelease = (type5) => type5.startsWith("pre");
+    module2.exports = truncate3;
+  }
+});
+
 // ../../node_modules/semver/internal/lrucache.js
 var require_lrucache = __commonJS({
   "../../node_modules/semver/internal/lrucache.js"(exports, module2) {
@@ -25894,6 +25935,7 @@ var require_range2 = __commonJS({
         return this.range;
       }
       parseRange(range) {
+        range = range.replace(BUILDSTRIPRE, "");
         let memoKey = ((this.options.includePrerelease && FLAG_INCLUDE_PRERELEASE) | (this.options.loose && FLAG_LOOSE)) + ":" + range, cached = cache.get(memoKey);
         if (cached)
           return cached;
@@ -25935,21 +25977,22 @@ var require_range2 = __commonJS({
     module2.exports = Range;
     var LRU = require_lrucache(), cache = new LRU(), parseOptions = require_parse_options(), Comparator = require_comparator(), debug2 = require_debug(), SemVer = require_semver(), {
       safeRe: re2,
+      src,
       t: t2,
       comparatorTrimReplace,
       tildeTrimReplace,
       caretTrimReplace
-    } = require_re(), { FLAG_INCLUDE_PRERELEASE, FLAG_LOOSE } = require_constants(), isNullSet = (c3) => c3.value === "<0.0.0-0", isAny = (c3) => c3.value === "", isSatisfiable = (comparators, options) => {
+    } = require_re(), { FLAG_INCLUDE_PRERELEASE, FLAG_LOOSE } = require_constants(), BUILDSTRIPRE = new RegExp(src[t2.BUILD], "g"), isNullSet = (c3) => c3.value === "<0.0.0-0", isAny = (c3) => c3.value === "", isSatisfiable = (comparators, options) => {
       let result = !0, remainingComparators = comparators.slice(), testComparator = remainingComparators.pop();
       for (; result && remainingComparators.length; )
         result = remainingComparators.every((otherComparator) => testComparator.intersects(otherComparator, options)), testComparator = remainingComparators.pop();
       return result;
-    }, parseComparator = (comp, options) => (comp = comp.replace(re2[t2.BUILD], ""), debug2("comp", comp, options), comp = replaceCarets(comp, options), debug2("caret", comp), comp = replaceTildes(comp, options), debug2("tildes", comp), comp = replaceXRanges(comp, options), debug2("xrange", comp), comp = replaceStars(comp, options), debug2("stars", comp), comp), isX = (id) => !id || id.toLowerCase() === "x" || id === "*", replaceTildes = (comp, options) => comp.trim().split(/\s+/).map((c3) => replaceTilde(c3, options)).join(" "), replaceTilde = (comp, options) => {
-      let r3 = options.loose ? re2[t2.TILDELOOSE] : re2[t2.TILDE];
+    }, parseComparator = (comp, options) => (comp = comp.replace(re2[t2.BUILD], ""), debug2("comp", comp, options), comp = replaceCarets(comp, options), debug2("caret", comp), comp = replaceTildes(comp, options), debug2("tildes", comp), comp = replaceXRanges(comp, options), debug2("xrange", comp), comp = replaceStars(comp, options), debug2("stars", comp), comp), isX = (id) => !id || id.toLowerCase() === "x" || id === "*", invalidXRangeOrder = (M, m5, p5) => isX(M) && !isX(m5) || isX(m5) && p5 && !isX(p5), replaceTildes = (comp, options) => comp.trim().split(/\s+/).map((c3) => replaceTilde(c3, options)).join(" "), replaceTilde = (comp, options) => {
+      let r3 = options.loose ? re2[t2.TILDELOOSE] : re2[t2.TILDE], z = options.includePrerelease ? "-0" : "";
       return comp.replace(r3, (_2, M, m5, p5, pr) => {
         debug2("tilde", comp, _2, M, m5, p5, pr);
         let ret;
-        return isX(M) ? ret = "" : isX(m5) ? ret = `>=${M}.0.0 <${+M + 1}.0.0-0` : isX(p5) ? ret = `>=${M}.${m5}.0 <${M}.${+m5 + 1}.0-0` : pr ? (debug2("replaceTilde pr", pr), ret = `>=${M}.${m5}.${p5}-${pr} <${M}.${+m5 + 1}.0-0`) : ret = `>=${M}.${m5}.${p5} <${M}.${+m5 + 1}.0-0`, debug2("tilde return", ret), ret;
+        return isX(M) ? ret = "" : isX(m5) ? ret = `>=${M}.0.0${z} <${+M + 1}.0.0-0` : isX(p5) ? ret = `>=${M}.${m5}.0${z} <${M}.${+m5 + 1}.0-0` : pr ? (debug2("replaceTilde pr", pr), ret = `>=${M}.${m5}.${p5}-${pr} <${M}.${+m5 + 1}.0-0`) : ret = `>=${M}.${m5}.${p5} <${M}.${+m5 + 1}.0-0`, debug2("tilde return", ret), ret;
       });
     }, replaceCarets = (comp, options) => comp.trim().split(/\s+/).map((c3) => replaceCaret(c3, options)).join(" "), replaceCaret = (comp, options) => {
       debug2("caret", comp, options);
@@ -25957,13 +26000,14 @@ var require_range2 = __commonJS({
       return comp.replace(r3, (_2, M, m5, p5, pr) => {
         debug2("caret", comp, _2, M, m5, p5, pr);
         let ret;
-        return isX(M) ? ret = "" : isX(m5) ? ret = `>=${M}.0.0${z} <${+M + 1}.0.0-0` : isX(p5) ? M === "0" ? ret = `>=${M}.${m5}.0${z} <${M}.${+m5 + 1}.0-0` : ret = `>=${M}.${m5}.0${z} <${+M + 1}.0.0-0` : pr ? (debug2("replaceCaret pr", pr), M === "0" ? m5 === "0" ? ret = `>=${M}.${m5}.${p5}-${pr} <${M}.${m5}.${+p5 + 1}-0` : ret = `>=${M}.${m5}.${p5}-${pr} <${M}.${+m5 + 1}.0-0` : ret = `>=${M}.${m5}.${p5}-${pr} <${+M + 1}.0.0-0`) : (debug2("no pr"), M === "0" ? m5 === "0" ? ret = `>=${M}.${m5}.${p5}${z} <${M}.${m5}.${+p5 + 1}-0` : ret = `>=${M}.${m5}.${p5}${z} <${M}.${+m5 + 1}.0-0` : ret = `>=${M}.${m5}.${p5} <${+M + 1}.0.0-0`), debug2("caret return", ret), ret;
+        return isX(M) ? ret = "" : isX(m5) ? ret = `>=${M}.0.0${z} <${+M + 1}.0.0-0` : isX(p5) ? M === "0" ? ret = `>=${M}.${m5}.0${z} <${M}.${+m5 + 1}.0-0` : ret = `>=${M}.${m5}.0${z} <${+M + 1}.0.0-0` : pr ? (debug2("replaceCaret pr", pr), M === "0" ? m5 === "0" ? ret = `>=${M}.${m5}.${p5}-${pr} <${M}.${m5}.${+p5 + 1}-0` : ret = `>=${M}.${m5}.${p5}-${pr} <${M}.${+m5 + 1}.0-0` : ret = `>=${M}.${m5}.${p5}-${pr} <${+M + 1}.0.0-0`) : (debug2("no pr"), M === "0" ? m5 === "0" ? ret = `>=${M}.${m5}.${p5} <${M}.${m5}.${+p5 + 1}-0` : ret = `>=${M}.${m5}.${p5} <${M}.${+m5 + 1}.0-0` : ret = `>=${M}.${m5}.${p5} <${+M + 1}.0.0-0`), debug2("caret return", ret), ret;
       });
     }, replaceXRanges = (comp, options) => (debug2("replaceXRanges", comp, options), comp.split(/\s+/).map((c3) => replaceXRange(c3, options)).join(" ")), replaceXRange = (comp, options) => {
       comp = comp.trim();
       let r3 = options.loose ? re2[t2.XRANGELOOSE] : re2[t2.XRANGE];
       return comp.replace(r3, (ret, gtlt, M, m5, p5, pr) => {
-        debug2("xRange", comp, ret, gtlt, M, m5, p5, pr);
+        if (debug2("xRange", comp, ret, gtlt, M, m5, p5, pr), invalidXRangeOrder(M, m5, p5))
+          return comp;
         let xM = isX(M), xm = xM || isX(m5), xp = xm || isX(p5), anyX = xp;
         return gtlt === "=" && anyX && (gtlt = ""), pr = options.includePrerelease ? "-0" : "", xM ? gtlt === ">" || gtlt === "<" ? ret = "<0.0.0-0" : ret = "*" : gtlt && anyX ? (xm && (m5 = 0), p5 = 0, gtlt === ">" ? (gtlt = ">=", xm ? (M = +M + 1, m5 = 0, p5 = 0) : (m5 = +m5 + 1, p5 = 0)) : gtlt === "<=" && (gtlt = "<", xm ? M = +M + 1 : m5 = +m5 + 1), gtlt === "<" && (pr = "-0"), ret = `${gtlt + M}.${m5}.${p5}${pr}`) : xm ? ret = `>=${M}.0.0${pr} <${+M + 1}.0.0-0` : xp && (ret = `>=${M}.${m5}.0${pr} <${M}.${+m5 + 1}.0-0`), debug2("xRange return", ret), ret;
       });
@@ -26286,14 +26330,14 @@ var require_subset = __commonJS({
           if (needDomGTPre && c3.semver.prerelease && c3.semver.prerelease.length && c3.semver.major === needDomGTPre.major && c3.semver.minor === needDomGTPre.minor && c3.semver.patch === needDomGTPre.patch && (needDomGTPre = !1), c3.operator === ">" || c3.operator === ">=") {
             if (higher = higherGT(gt, c3, options), higher === c3 && higher !== gt)
               return !1;
-          } else if (gt.operator === ">=" && !satisfies(gt.semver, String(c3), options))
+          } else if (gt.operator === ">=" && !c3.test(gt.semver))
             return !1;
         }
         if (lt) {
           if (needDomLTPre && c3.semver.prerelease && c3.semver.prerelease.length && c3.semver.major === needDomLTPre.major && c3.semver.minor === needDomLTPre.minor && c3.semver.patch === needDomLTPre.patch && (needDomLTPre = !1), c3.operator === "<" || c3.operator === "<=") {
             if (lower = lowerLT(lt, c3, options), lower === c3 && lower !== lt)
               return !1;
-          } else if (lt.operator === "<=" && !satisfies(lt.semver, String(c3), options))
+          } else if (lt.operator === "<=" && !c3.test(lt.semver))
             return !1;
         }
         if (!c3.operator && (lt || gt) && gtltComp !== 0)
@@ -26319,7 +26363,7 @@ var require_subset = __commonJS({
 var require_semver2 = __commonJS({
   "../../node_modules/semver/index.js"(exports, module2) {
     "use strict";
-    var internalRe = require_re(), constants = require_constants(), SemVer = require_semver(), identifiers = require_identifiers(), parse6 = require_parse(), valid = require_valid(), clean = require_clean(), inc = require_inc(), diff2 = require_diff(), major = require_major(), minor = require_minor(), patch = require_patch(), prerelease = require_prerelease(), compare = require_compare(), rcompare = require_rcompare(), compareLoose = require_compare_loose(), compareBuild = require_compare_build(), sort = require_sort(), rsort = require_rsort(), gt = require_gt(), lt = require_lt(), eq4 = require_eq(), neq = require_neq(), gte = require_gte(), lte = require_lte(), cmp = require_cmp(), coerce = require_coerce(), Comparator = require_comparator(), Range = require_range2(), satisfies = require_satisfies(), toComparators = require_to_comparators(), maxSatisfying = require_max_satisfying(), minSatisfying = require_min_satisfying(), minVersion = require_min_version(), validRange = require_valid2(), outside = require_outside(), gtr = require_gtr(), ltr = require_ltr(), intersects = require_intersects(), simplifyRange = require_simplify(), subset = require_subset();
+    var internalRe = require_re(), constants = require_constants(), SemVer = require_semver(), identifiers = require_identifiers(), parse6 = require_parse(), valid = require_valid(), clean = require_clean(), inc = require_inc(), diff2 = require_diff(), major = require_major(), minor = require_minor(), patch = require_patch(), prerelease = require_prerelease(), compare = require_compare(), rcompare = require_rcompare(), compareLoose = require_compare_loose(), compareBuild = require_compare_build(), sort = require_sort(), rsort = require_rsort(), gt = require_gt(), lt = require_lt(), eq4 = require_eq(), neq = require_neq(), gte = require_gte(), lte = require_lte(), cmp = require_cmp(), coerce = require_coerce(), truncate3 = require_truncate(), Comparator = require_comparator(), Range = require_range2(), satisfies = require_satisfies(), toComparators = require_to_comparators(), maxSatisfying = require_max_satisfying(), minSatisfying = require_min_satisfying(), minVersion = require_min_version(), validRange = require_valid2(), outside = require_outside(), gtr = require_gtr(), ltr = require_ltr(), intersects = require_intersects(), simplifyRange = require_simplify(), subset = require_subset();
     module2.exports = {
       parse: parse6,
       valid,
@@ -26344,6 +26388,7 @@ var require_semver2 = __commonJS({
       lte,
       cmp,
       coerce,
+      truncate: truncate3,
       Comparator,
       Range,
       satisfies,
@@ -28785,6 +28830,7 @@ __export(channels_exports, {
   HEARTBEAT_INTERVAL: () => HEARTBEAT_INTERVAL,
   HEARTBEAT_MAX_LATENCY: () => HEARTBEAT_MAX_LATENCY,
   PostMessageTransport: () => PostMessageTransport,
+  SERVER_CHANNEL_PATH: () => SERVER_CHANNEL_PATH,
   WebsocketTransport: () => WebsocketTransport,
   clearChannel: () => clearChannel,
   createBrowserChannel: () => createBrowserChannel,
@@ -28866,7 +28912,7 @@ var StorybookError = class _StorybookError extends Error {
      * ```
      */
     this.subErrors = [];
-    this.category = props.category, this.documentation = props.documentation ?? !1, this.code = props.code, this.isHandledError = props.isHandledError ?? !1, this.name = props.name, this.subErrors = props.subErrors ?? [];
+    this.category = props.category, this.documentation = props.documentation ?? !1, this.code = props.code, this.isHandledError = props.isHandledError ?? !1, this.agentFacing = props.agentFacing ?? !1, this.name = props.name, this.subErrors = props.subErrors ?? [];
   }
   get fullErrorCode() {
     return parseErrorCode({ code: this.code, category: this.category });
@@ -29045,6 +29091,10 @@ var CHANNEL_EVENT_PREFIX = "UNIVERSAL_STORE:", ProgressState = {
       channel: this.channel,
       environment: this.environment
     }), this.prepareThis({ channel: this.channel, environment: this.environment })) : _UniversalStore.preparation.promise.then(this.prepareThis);
+  }
+  /** The environment this realm was prepared as, or `undefined` before `__prepare`. */
+  static get preparedEnvironment() {
+    return _UniversalStore.preparation.environment;
   }
   static setupPreparationPromise() {
     let resolveRef, rejectRef, promise = new Promise(
@@ -30813,13 +30863,21 @@ var { document: document2, location: location2 } = globalThis, KEY = "storybook-
 };
 
 // src/channels/websocket/index.ts
-var HEARTBEAT_INTERVAL = 15e3, HEARTBEAT_MAX_LATENCY = 5e3, CHANNEL_OPTIONS2 = globalThis.CHANNEL_OPTIONS || {}, WebsocketTransport = class {
-  constructor({ url, onError, page }) {
+var HEARTBEAT_INTERVAL = 15e3, HEARTBEAT_MAX_LATENCY = 5e3, SERVER_CHANNEL_PATH = "/storybook-server-channel", CHANNEL_OPTIONS2 = globalThis.CHANNEL_OPTIONS || {}, WebsocketTransport = class {
+  constructor({
+    url,
+    onError,
+    page,
+    createSocket,
+    enableHeartbeat = !0
+  }) {
     this.buffer = [];
     this.isReady = !1;
     this.isClosed = !1;
     this.pingTimeout = 0;
-    this.socket = new WebSocket(url), this.socket.onopen = () => {
+    this.heartbeatPaused = !1;
+    this.enableHeartbeat = !0;
+    this.enableHeartbeat = enableHeartbeat, this.socket = createSocket ? createSocket(url) : new WebSocket(url), this.socket.onopen = () => {
       this.isReady = !0, this.heartbeat(), this.flush();
     }, this.socket.onmessage = ({ data }) => {
       let event = typeof data == "string" && isJSON(data) ? parse(data) : data;
@@ -30839,9 +30897,15 @@ var HEARTBEAT_INTERVAL = 15e3, HEARTBEAT_MAX_LATENCY = 5e3, CHANNEL_OPTIONS2 = g
     };
   }
   heartbeat() {
-    clearTimeout(this.pingTimeout), this.pingTimeout = setTimeout(() => {
+    clearTimeout(this.pingTimeout), !(!this.enableHeartbeat || this.heartbeatPaused || this.isClosed) && (this.pingTimeout = setTimeout(() => {
       this.socket.close(3008, "timeout");
-    }, HEARTBEAT_INTERVAL + HEARTBEAT_MAX_LATENCY);
+    }, HEARTBEAT_INTERVAL + HEARTBEAT_MAX_LATENCY));
+  }
+  pauseHeartbeat() {
+    this.heartbeatPaused = !0, clearTimeout(this.pingTimeout);
+  }
+  resumeHeartbeat() {
+    this.heartbeatPaused = !1, this.isReady && this.heartbeat();
   }
   setHandler(handler) {
     this.handler = handler;
@@ -30901,7 +30965,7 @@ var channels_default = Channel;
 function createBrowserChannel({ page, extraTransports = [] }) {
   let transports = [new PostMessageTransport({ page }), ...extraTransports];
   if (globalThis.CONFIG_TYPE === "DEVELOPMENT") {
-    let protocol = window.location.protocol === "http:" ? "ws" : "wss", { hostname, port } = window.location, { wsToken } = globalThis.CHANNEL_OPTIONS || {}, channelUrl = `${protocol}://${hostname}:${port}/storybook-server-channel?token=${wsToken}`;
+    let protocol = window.location.protocol === "http:" ? "ws" : "wss", { hostname, port } = window.location, { wsToken } = globalThis.CHANNEL_OPTIONS || {}, channelUrl = `${protocol}://${hostname}:${port}${SERVER_CHANNEL_PATH}?token=${wsToken}`;
     transports.push(new WebsocketTransport({ url: channelUrl, onError: () => {
     }, page }));
   }
@@ -38206,7 +38270,7 @@ init_client_logger();
 // ../../node_modules/@radix-ui/react-slot/dist/index.mjs
 var React28 = __toESM(require_react(), 1);
 
-// ../../node_modules/@radix-ui/react-slot/node_modules/@radix-ui/react-compose-refs/dist/index.mjs
+// ../../node_modules/@radix-ui/react-compose-refs/dist/index.mjs
 var React27 = __toESM(require_react(), 1);
 function setRef2(ref, value) {
   if (typeof ref == "function")
@@ -38228,49 +38292,53 @@ function composeRefs2(...refs) {
       };
   };
 }
+function useComposedRefs2(...refs) {
+  return React27.useCallback(composeRefs2(...refs), refs);
+}
 
 // ../../node_modules/@radix-ui/react-slot/dist/index.mjs
-var import_jsx_runtime6 = __toESM(require_jsx_runtime(), 1), REACT_LAZY_TYPE = /* @__PURE__ */ Symbol.for("react.lazy"), use = React28[" use ".trim().toString()];
-function isPromiseLike(value) {
-  return typeof value == "object" && value !== null && "then" in value;
-}
-function isLazyComponent(element) {
-  return element != null && typeof element == "object" && "$$typeof" in element && element.$$typeof === REACT_LAZY_TYPE && "_payload" in element && isPromiseLike(element._payload);
-}
 function createSlot(ownerName) {
-  let SlotClone2 = createSlotClone(ownerName), Slot22 = React28.forwardRef((props, forwardedRef) => {
-    let { children, ...slotProps } = props;
-    isLazyComponent(children) && typeof use == "function" && (children = use(children._payload));
-    let childrenArray = React28.Children.toArray(children), slottable = childrenArray.find(isSlottable2);
-    if (slottable) {
-      let newElement = slottable.props.children, newChildren = childrenArray.map((child) => child === slottable ? React28.Children.count(newElement) > 1 ? React28.Children.only(null) : React28.isValidElement(newElement) ? newElement.props.children : null : child);
-      return (0, import_jsx_runtime6.jsx)(SlotClone2, { ...slotProps, ref: forwardedRef, children: React28.isValidElement(newElement) ? React28.cloneElement(newElement, void 0, newChildren) : null });
+  let Slot22 = React28.forwardRef((props, forwardedRef) => {
+    let { children, ...slotProps } = props, slottableElement = null, hasSlottable = !1, newChildren = [];
+    isLazyComponent(children) && typeof use == "function" && (children = use(children._payload)), React28.Children.forEach(children, (maybeSlottable) => {
+      if (isSlottable2(maybeSlottable)) {
+        hasSlottable = !0;
+        let slottable = maybeSlottable, child = "child" in slottable.props ? slottable.props.child : slottable.props.children;
+        isLazyComponent(child) && typeof use == "function" && (child = use(child._payload)), slottableElement = getSlottableElementFromSlottable(slottable, child), newChildren.push(slottableElement?.props?.children);
+      } else
+        newChildren.push(maybeSlottable);
+    }), slottableElement ? slottableElement = React28.cloneElement(slottableElement, void 0, newChildren) : (
+      // A `Slottable` was found but it didn't resolve to a single element (e.g.
+      // it wrapped multiple elements, text, or a render-prop `child` that
+      // wasn't an element). Don't fall back to treating the `Slottable` wrapper
+      // itself as the slot target — throw a descriptive error below instead.
+      !hasSlottable && React28.Children.count(children) === 1 && React28.isValidElement(children) && (slottableElement = children)
+    );
+    let slottableElementRef = slottableElement ? getElementRef3(slottableElement) : void 0, composedRef = useComposedRefs2(forwardedRef, slottableElementRef);
+    if (!slottableElement) {
+      if (children || children === 0)
+        throw new Error(
+          hasSlottable ? createSlottableError(ownerName) : createSlotError(ownerName)
+        );
+      return children;
     }
-    return (0, import_jsx_runtime6.jsx)(SlotClone2, { ...slotProps, ref: forwardedRef, children });
+    let mergedProps = mergeProps2(slotProps, slottableElement.props ?? {});
+    return slottableElement.type !== React28.Fragment && (mergedProps.ref = forwardedRef ? composedRef : slottableElementRef), React28.cloneElement(slottableElement, mergedProps);
   });
   return Slot22.displayName = `${ownerName}.Slot`, Slot22;
 }
-var Slot2 = createSlot("Slot");
-function createSlotClone(ownerName) {
-  let SlotClone2 = React28.forwardRef((props, forwardedRef) => {
-    let { children, ...slotProps } = props;
-    if (isLazyComponent(children) && typeof use == "function" && (children = use(children._payload)), React28.isValidElement(children)) {
-      let childrenRef = getElementRef3(children), props2 = mergeProps2(slotProps, children.props);
-      return children.type !== React28.Fragment && (props2.ref = forwardedRef ? composeRefs2(forwardedRef, childrenRef) : childrenRef), React28.cloneElement(children, props2);
-    }
-    return React28.Children.count(children) > 1 ? React28.Children.only(null) : null;
-  });
-  return SlotClone2.displayName = `${ownerName}.SlotClone`, SlotClone2;
-}
-var SLOTTABLE_IDENTIFIER = /* @__PURE__ */ Symbol("radix.slottable");
+var Slot2 = createSlot("Slot"), SLOTTABLE_IDENTIFIER = /* @__PURE__ */ Symbol.for("radix.slottable");
 function createSlottable(ownerName) {
-  let Slottable22 = ({ children }) => (0, import_jsx_runtime6.jsx)(import_jsx_runtime6.Fragment, { children });
+  let Slottable22 = (props) => "child" in props ? props.children(props.child) : props.children;
   return Slottable22.displayName = `${ownerName}.Slottable`, Slottable22.__radixId = SLOTTABLE_IDENTIFIER, Slottable22;
 }
-var Slottable2 = createSlottable("Slottable");
-function isSlottable2(child) {
-  return React28.isValidElement(child) && typeof child.type == "function" && "__radixId" in child.type && child.type.__radixId === SLOTTABLE_IDENTIFIER;
-}
+var Slottable2 = createSlottable("Slottable"), getSlottableElementFromSlottable = (slottable, child) => {
+  if ("child" in slottable.props) {
+    let child2 = slottable.props.child;
+    return React28.isValidElement(child2) ? React28.cloneElement(child2, void 0, slottable.props.children(child2.props.children)) : null;
+  }
+  return React28.isValidElement(child) ? child : null;
+};
 function mergeProps2(slotProps, childProps) {
   let overrideProps = { ...childProps };
   for (let propName in childProps) {
@@ -38286,6 +38354,17 @@ function getElementRef3(element) {
   let getter = Object.getOwnPropertyDescriptor(element.props, "ref")?.get, mayWarn = getter && "isReactWarning" in getter && getter.isReactWarning;
   return mayWarn ? element.ref : (getter = Object.getOwnPropertyDescriptor(element, "ref")?.get, mayWarn = getter && "isReactWarning" in getter && getter.isReactWarning, mayWarn ? element.props.ref : element.props.ref || element.ref);
 }
+function isSlottable2(child) {
+  return React28.isValidElement(child) && typeof child.type == "function" && "__radixId" in child.type && child.type.__radixId === SLOTTABLE_IDENTIFIER;
+}
+var REACT_LAZY_TYPE = /* @__PURE__ */ Symbol.for("react.lazy");
+function isLazyComponent(element) {
+  return element != null && typeof element == "object" && "$$typeof" in element && element.$$typeof === REACT_LAZY_TYPE && "_payload" in element && isPromiseLike(element._payload);
+}
+function isPromiseLike(value) {
+  return typeof value == "object" && value !== null && "then" in value;
+}
+var createSlotError = (ownerName) => `${ownerName} failed to slot onto its children. Expected a single React element child or \`Slottable\`.`, createSlottableError = (ownerName) => `${ownerName} failed to slot onto its \`Slottable\`. Expected \`Slottable\` to receive a single React element child.`, use = React28[" use ".trim().toString()];
 
 // src/components/components/Button/Button.tsx
 init_polished_esm();
@@ -38759,6 +38838,16 @@ var OpenServiceMissingServiceError = class extends StorybookError {
     });
     this.data = data;
   }
+}, OpenServiceInternalServiceError = class extends StorybookError {
+  constructor(data) {
+    super({
+      name: "OpenServiceInternalServiceError",
+      category: "CORE-COMMON" /* CORE_COMMON */,
+      code: 19,
+      message: `Service "${data.serviceId}" is internal. Pass { internal: true } to getService() only if you intentionally depend on an unstable OSA surface. Internal services may change without notice.`
+    });
+    this.data = data;
+  }
 }, OpenServiceUnimplementedOperationError = class extends StorybookError {
   constructor(data) {
     super({
@@ -38826,7 +38915,27 @@ var OpenServiceMissingChannelError = class extends StorybookError {
       name: "OpenServiceRemoteCommandUnhandledError",
       category: "CORE-COMMON" /* CORE_COMMON */,
       code: 15,
-      message: `No runtime acknowledged remote command "${data.serviceId}.${data.commandName}"; its handler is not implemented in any connected runtime.`
+      message: data.delegated ? `The Storybook this runtime is attached to did not acknowledge remote command "${data.serviceId}.${data.commandName}" in time \u2014 it may be busy or unreachable. Retry; note the command may still have executed on that instance.` : `No runtime acknowledged remote command "${data.serviceId}.${data.commandName}"; its handler is not implemented in any connected runtime.`
+    });
+    this.data = data;
+  }
+}, OpenServiceRemoteCommandConfigDriftError = class extends StorybookError {
+  constructor(data) {
+    super({
+      name: "OpenServiceRemoteCommandConfigDriftError",
+      category: "CORE-COMMON" /* CORE_COMMON */,
+      code: 30,
+      message: `The Storybook this runtime is attached to reported it has no handler for remote command "${data.serviceId}.${data.commandName}". The two processes are running different configurations (for example a feature flag enabled in one but not the other). Restart the attached Storybook with a configuration matching this process.`
+    });
+    this.data = data;
+  }
+}, OpenServiceOperationNameCollisionError = class extends StorybookError {
+  constructor(data) {
+    super({
+      name: "OpenServiceOperationNameCollisionError",
+      category: "CORE-COMMON" /* CORE_COMMON */,
+      code: 16,
+      message: `Service "${data.serviceId}" cannot register "${data.operationName}" as both a query and a command.`
     });
     this.data = data;
   }
@@ -38984,18 +39093,6 @@ function createStatusStore({
 
 // src/shared/review/events.ts
 var REVIEW_NAMESPACE = "storybook/review", REVIEW_EVENTS = {
-  // `@storybook/addon-mcp` display-review tool → core-server: the raw agent payload.
-  PUSH_REVIEW: `${REVIEW_NAMESPACE}/push-review`,
-  // core-server → tabs: display the (createdAt-stamped) review.
-  DISPLAY_REVIEW: `${REVIEW_NAMESPACE}/display-review`,
-  // tab → core-server: replay the cached review on mount.
-  REQUEST_REVIEW: `${REVIEW_NAMESPACE}/request-review`,
-  // core-server → tabs: a watched source file changed after the review was cached.
-  REVIEW_STALE: `${REVIEW_NAMESPACE}/review-stale`,
-  // tab → core-server: dismiss the cached review.
-  DISMISS_REVIEW: `${REVIEW_NAMESPACE}/dismiss-review`,
-  // core-server → tabs: the review was dismissed.
-  REVIEW_DISMISSED: `${REVIEW_NAMESPACE}/review-dismissed`,
   // tab → core-server: a review page (summary or detail) was viewed; forwarded to telemetry.
   PAGEVIEW: `${REVIEW_NAMESPACE}/pageview`
 };
@@ -39228,6 +39325,14 @@ __export(refs_exports, {
 init_dist();
 init_esm();
 
+// src/csf/csf-utils.ts
+var sanitize = (string2) => string2.toLowerCase().replace(/[ ’–—―′¿'`~!@#$%^&*()_|+\-=?;:'",.<>\{\}\[\]\\\/]/gi, "-").replace(/-+/g, "-").replace(/^-+/, "").replace(/-+$/, ""), sanitizeSafe = (string2, part) => {
+  let sanitized = sanitize(string2);
+  if (sanitized === "")
+    throw new Error(`Invalid ${part} '${string2}', must include alphanumeric characters`);
+  return sanitized;
+}, toId = (kind, name) => `${sanitizeSafe(kind, "kind")}${name ? `--${sanitizeSafe(name, "name")}` : ""}`;
+
 // src/csf/includeConditionalArg.ts
 var import_tiny_isequal = __toESM(require_tiny_isequal(), 1);
 
@@ -39316,9 +39421,73 @@ function useEffect6(create4, deps) {
 // src/preview-api/modules/store/StoryStore.ts
 var import_memoizerific5 = __toESM(require_memoizerific(), 1);
 
+// src/preview-api/modules/store/ArgsStore.ts
+init_dist();
+
 // src/preview-api/modules/store/args.ts
 init_client_logger();
 init_esm();
+
+// src/preview-api/modules/store/inferArgTypes.ts
+init_client_logger();
+init_esm();
+
+// src/preview-api/modules/store/parameters.ts
+var combineParameters = (...parameterSets) => {
+  let mergeKeys = {}, definedParametersSets = parameterSets.filter(Boolean), combined = definedParametersSets.reduce((acc, parameters2) => (Object.entries(parameters2).forEach(([key, value]) => {
+    let existing = acc[key];
+    Array.isArray(value) || typeof existing > "u" ? acc[key] = value : isPlainObject(value) && isPlainObject(existing) ? mergeKeys[key] = !0 : typeof value < "u" && (acc[key] = value);
+  }), acc), {});
+  return Object.keys(mergeKeys).forEach((key) => {
+    let mergeValues = definedParametersSets.filter(Boolean).map((p5) => p5[key]).filter((value) => typeof value < "u");
+    mergeValues.every((value) => isPlainObject(value)) ? combined[key] = combineParameters(...mergeValues) : combined[key] = mergeValues[mergeValues.length - 1];
+  }), combined;
+};
+
+// src/preview-api/modules/store/inferArgTypes.ts
+var inferType = (value, name, visited, cache) => {
+  let type5 = typeof value;
+  switch (type5) {
+    case "boolean":
+    case "string":
+    case "number":
+    case "function":
+    case "symbol":
+      return { name: type5 };
+    default:
+      break;
+  }
+  if (value) {
+    if (cache.has(value))
+      return cache.get(value);
+    if (visited.has(value))
+      return logger.warn(dedent`
+        We've detected a cycle in arg '${name}'. Args should be JSON-serializable.
+
+        Consider using the mapping feature or fully custom args:
+        - Mapping: https://storybook.js.org/docs/writing-stories/args#mapping-to-complex-arg-values
+        - Custom args: https://storybook.js.org/docs/essentials/controls#fully-custom-args
+      `), { name: "other", value: "cyclic object" };
+    visited.add(value);
+    let result;
+    return Array.isArray(value) ? result = { name: "array", value: value.length > 0 ? inferType(value[0], name, visited, cache) : { name: "other", value: "unknown" } } : result = { name: "object", value: mapValues(value, (field) => inferType(field, name, visited, cache)) }, visited.delete(value), cache.set(value, result), result;
+  }
+  return { name: "object", value: {} };
+}, inferArgTypes = (context) => {
+  let { id, argTypes: userArgTypes = {}, initialArgs = {} } = context, cache = /* @__PURE__ */ new Map(), argTypes = Object.fromEntries(
+    Object.entries(initialArgs).filter(([key]) => !userArgTypes[key]?.type).map(([key, arg]) => [
+      key,
+      {
+        name: key,
+        type: inferType(arg, `${id}.${key}`, /* @__PURE__ */ new Set(), cache)
+      }
+    ])
+  ), userArgTypesNames = mapValues(userArgTypes, (argType, key) => ({
+    name: key
+  }));
+  return combineParameters(argTypes, userArgTypesNames, userArgTypes);
+};
+inferArgTypes.secondPass = !0;
 
 // src/preview-api/modules/store/GlobalsStore.ts
 init_client_logger();
@@ -39371,65 +39540,6 @@ var Tag = {
   _play: (entry, excluded) => excluded ? entry.type !== "story" || !entry.tags?.includes(Tag.PLAY_FN) : entry.type === "story" && !!entry.tags?.includes(Tag.PLAY_FN),
   _test: (entry, excluded) => excluded ? entry.type !== "story" || entry.subtype !== "test" : entry.type === "story" && entry.subtype === "test"
 }, USER_TAG_FILTER = (tag) => (entry, excluded) => excluded ? !entry.tags?.includes(tag) : !!entry.tags?.includes(tag);
-
-// src/preview-api/modules/store/parameters.ts
-var combineParameters = (...parameterSets) => {
-  let mergeKeys = {}, definedParametersSets = parameterSets.filter(Boolean), combined = definedParametersSets.reduce((acc, parameters2) => (Object.entries(parameters2).forEach(([key, value]) => {
-    let existing = acc[key];
-    Array.isArray(value) || typeof existing > "u" ? acc[key] = value : isPlainObject(value) && isPlainObject(existing) ? mergeKeys[key] = !0 : typeof value < "u" && (acc[key] = value);
-  }), acc), {});
-  return Object.keys(mergeKeys).forEach((key) => {
-    let mergeValues = definedParametersSets.filter(Boolean).map((p5) => p5[key]).filter((value) => typeof value < "u");
-    mergeValues.every((value) => isPlainObject(value)) ? combined[key] = combineParameters(...mergeValues) : combined[key] = mergeValues[mergeValues.length - 1];
-  }), combined;
-};
-
-// src/preview-api/modules/store/inferArgTypes.ts
-init_client_logger();
-init_esm();
-var inferType = (value, name, visited, cache) => {
-  let type5 = typeof value;
-  switch (type5) {
-    case "boolean":
-    case "string":
-    case "number":
-    case "function":
-    case "symbol":
-      return { name: type5 };
-    default:
-      break;
-  }
-  if (value) {
-    if (cache.has(value))
-      return cache.get(value);
-    if (visited.has(value))
-      return logger.warn(dedent`
-        We've detected a cycle in arg '${name}'. Args should be JSON-serializable.
-
-        Consider using the mapping feature or fully custom args:
-        - Mapping: https://storybook.js.org/docs/writing-stories/args#mapping-to-complex-arg-values
-        - Custom args: https://storybook.js.org/docs/essentials/controls#fully-custom-args
-      `), { name: "other", value: "cyclic object" };
-    visited.add(value);
-    let result;
-    return Array.isArray(value) ? result = { name: "array", value: value.length > 0 ? inferType(value[0], name, visited, cache) : { name: "other", value: "unknown" } } : result = { name: "object", value: mapValues(value, (field) => inferType(field, name, visited, cache)) }, visited.delete(value), cache.set(value, result), result;
-  }
-  return { name: "object", value: {} };
-}, inferArgTypes = (context) => {
-  let { id, argTypes: userArgTypes = {}, initialArgs = {} } = context, cache = /* @__PURE__ */ new Map(), argTypes = Object.fromEntries(
-    Object.entries(initialArgs).filter(([key]) => !userArgTypes[key]?.type).map(([key, arg]) => [
-      key,
-      {
-        name: key,
-        type: inferType(arg, `${id}.${key}`, /* @__PURE__ */ new Set(), cache)
-      }
-    ])
-  ), userArgTypesNames = mapValues(userArgTypes, (argType, key) => ({
-    name: key
-  }));
-  return combineParameters(argTypes, userArgTypesNames, userArgTypes);
-};
-inferArgTypes.secondPass = !0;
 
 // src/preview-api/modules/store/inferControls.ts
 init_client_logger();
@@ -39489,9 +39599,6 @@ inferControls.secondPass = !0;
 // src/preview-api/modules/store/csf/composeConfigs.ts
 init_dist();
 
-// src/preview-api/modules/store/csf/portable-stories.ts
-init_esm();
-
 // src/preview-api/modules/preview-web/render/animation-utils.ts
 function isTestEnvironment() {
   try {
@@ -39504,11 +39611,11 @@ function isTestEnvironment() {
   }
 }
 
-// src/preview-api/modules/store/autoTitle.ts
+// src/shared/story-index/autoTitle.ts
 init_client_logger();
 init_esm();
 
-// src/preview-api/modules/store/sortStories.ts
+// src/shared/story-index/sortStories.ts
 init_esm();
 
 // src/preview-api/modules/preview-web/Preview.tsx
@@ -40768,7 +40875,7 @@ function safeParse(schema, input2, config$1) {
 }
 
 // src/shared/open-service/service-channel.ts
-var SERVICE_SYNC_START = "services:sync-start", SERVICE_SYNC_START_REPLY = "services:sync-start-reply", SERVICE_PATCHES = "services:patches", SERVICE_COMMAND_INVOKE = "services:command-invoke", SERVICE_COMMAND_ACK = "services:command-ack", SERVICE_COMMAND_RESULT = "services:command-result", SERVICE_COMMAND_ERROR = "services:command-error", stateSnapshotSchema = custom(
+var SERVICE_SYNC_START = "services:sync-start", SERVICE_SYNC_START_REPLY = "services:sync-start-reply", SERVICE_PATCHES = "services:patches", SERVICE_COMMAND_INVOKE = "services:command-invoke", SERVICE_COMMAND_ACK = "services:command-ack", SERVICE_COMMAND_RESULT = "services:command-result", SERVICE_COMMAND_ERROR = "services:command-error", SERVICE_COMMAND_UNHANDLED = "services:command-unhandled", stateSnapshotSchema = custom(
   (value) => typeof value == "object" && value !== null && !Array.isArray(value)
 ), syncStartSchema = object({
   serviceId: string(),
@@ -40785,6 +40892,10 @@ var SERVICE_SYNC_START = "services:sync-start", SERVICE_SYNC_START_REPLY = "serv
   callId: string(),
   clientId: string()
 }), commandAckSchema = object({
+  serviceId: string(),
+  callId: string(),
+  clientId: string()
+}), commandUnhandledSchema = object({
   serviceId: string(),
   callId: string(),
   clientId: string()
@@ -41181,7 +41292,7 @@ function validateSchemaSync(schema, value, meta) {
 }
 
 // src/shared/open-service/query-runtime.ts
-var MAX_DRAIN_ITERATIONS = 32, inFlightLoads = /* @__PURE__ */ new Map(), activeHandlerLoadSession, EMPTY_SET = /* @__PURE__ */ new Set();
+var MAX_DRAIN_ITERATIONS = 32, inFlightLoads = /* @__PURE__ */ new Map(), nextRuntimeSequence = 0, nextRuntimeId = () => String(nextRuntimeSequence += 1), activeHandlerLoadSession, EMPTY_SET = /* @__PURE__ */ new Set();
 function stableHash(value) {
   let encode2 = (raw) => {
     if (raw === void 0)
@@ -41196,6 +41307,9 @@ function stableHash(value) {
     return { __t: "object", value: sorted };
   };
   return JSON.stringify(encode2(value));
+}
+function makeInFlightKey(runtimeId, loadKey) {
+  return `${runtimeId}::${loadKey}`;
 }
 function makeLoadKey(serviceId, queryName, validatedInput) {
   return `${serviceId}::${queryName}::${stableHash(validatedInput)}`;
@@ -41288,15 +41402,15 @@ function createQueryGet(refs, queryName, queryDef, selfQueries, fireLoad) {
   };
 }
 function triggerLoad(refs, queryName, queryDef, validatedInput, loadKey, parentAncestorChain) {
-  let existing = inFlightLoads.get(loadKey);
+  let inFlightKey = makeInFlightKey(refs.runtimeId, loadKey), existing = inFlightLoads.get(inFlightKey);
   if (existing)
     return existing;
   let extendedChain = new Set(parentAncestorChain);
   extendedChain.add(loadKey);
   let promise = Promise.resolve().then(() => runLoadBody(refs, queryName, queryDef, validatedInput, extendedChain)).finally(() => {
-    inFlightLoads.get(loadKey) === promise && inFlightLoads.delete(loadKey);
+    inFlightLoads.get(inFlightKey) === promise && inFlightLoads.delete(inFlightKey);
   });
-  return inFlightLoads.set(loadKey, promise), promise;
+  return inFlightLoads.set(inFlightKey, promise), promise;
 }
 async function runLoadBody(refs, queryName, queryDef, validatedInput, ancestorChain) {
   if (!queryDef.load)
@@ -41708,8 +41822,9 @@ function createServiceRuntime(def, runtimeOptions, initialState2 = def.initialSt
         remoteCommandNames.has(name) ? loadCommands[name] : gated[name]
       ])
     );
-  }, refs = {
+  }, runtimeId = nextRuntimeId(), refs = {
     serviceId: def.id,
+    runtimeId,
     commandSelf,
     state: state3,
     registryApi,
@@ -41750,10 +41865,10 @@ function createServiceRuntime(def, runtimeOptions, initialState2 = def.initialSt
       let queryDef = queryDefinitions.get(queryName);
       if (!queryDef || !queryDef.load)
         return;
-      let loadKey = makeLoadKey(def.id, queryName, validatedInput), ancestorChain = /* @__PURE__ */ new Set([loadKey]), previous = inFlightLoads.get(loadKey), promise = Promise.resolve().then(() => runLoadBody(refs, queryName, queryDef, validatedInput, ancestorChain)).finally(() => {
-        inFlightLoads.get(loadKey) === promise && (previous ? inFlightLoads.set(loadKey, previous) : inFlightLoads.delete(loadKey));
+      let loadKey = makeLoadKey(def.id, queryName, validatedInput), ancestorChain = /* @__PURE__ */ new Set([loadKey]), inFlightKey = makeInFlightKey(runtimeId, loadKey), promise = Promise.resolve().then(() => runLoadBody(refs, queryName, queryDef, validatedInput, ancestorChain)).finally(() => {
+        inFlightLoads.get(inFlightKey) === promise && inFlightLoads.delete(inFlightKey);
       });
-      inFlightLoads.set(loadKey, promise), await promise;
+      inFlightLoads.set(inFlightKey, promise), await promise;
     },
     attachChannelCommands: (channelCommands, implementedCommandNames) => {
       loadCommands = channelCommands, remoteCommandNames.clear();
@@ -41884,36 +41999,54 @@ function connectRuntimeToChannel(context) {
   };
 }
 function connectCommandTransport(context) {
-  let { serviceId, ownClientId, channel: channel2, localCommands, implementedCommandNames, commandNames } = context, pending = /* @__PURE__ */ new Map(), settle = (callId, apply2) => {
+  let {
+    serviceId,
+    ownClientId,
+    channel: channel2,
+    localCommands,
+    implementedCommandNames,
+    commandNames,
+    delegated
+  } = context, dispatchesLocally = (commandName) => !delegated && implementedCommandNames.has(commandName), pending = /* @__PURE__ */ new Map(), settle = (callId, apply2) => {
     let entry = pending.get(callId);
     entry && (pending.delete(callId), clearTimeout(entry.noAckTimer), apply2(entry));
   }, onInvoke = (payload) => {
     let parsed = safeParse(commandInvokeSchema, payload);
-    if (!parsed.success || parsed.output.serviceId !== serviceId || !implementedCommandNames.has(parsed.output.commandName))
+    if (!parsed.success || parsed.output.serviceId !== serviceId)
       return;
     let invoke = parsed.output;
+    if (!dispatchesLocally(invoke.commandName)) {
+      !delegated && invoke.clientId !== ownClientId && channel2.emit(SERVICE_COMMAND_UNHANDLED, {
+        serviceId,
+        callId: invoke.callId,
+        clientId: ownClientId
+      });
+      return;
+    }
     channel2.emit(SERVICE_COMMAND_ACK, {
       serviceId,
       callId: invoke.callId,
       clientId: ownClientId
-    }), Promise.resolve().then(() => localCommands[invoke.commandName](invoke.input)).then(
-      (result) => {
-        channel2.emit(SERVICE_COMMAND_RESULT, {
-          serviceId,
-          callId: invoke.callId,
-          result,
-          clientId: ownClientId
-        });
-      },
-      (error) => {
-        channel2.emit(SERVICE_COMMAND_ERROR, {
-          serviceId,
-          callId: invoke.callId,
-          error: serializeError(error),
-          clientId: ownClientId
-        });
-      }
-    );
+    }), setTimeout(() => {
+      Promise.resolve().then(() => localCommands[invoke.commandName](invoke.input)).then(
+        (result) => {
+          channel2.emit(SERVICE_COMMAND_RESULT, {
+            serviceId,
+            callId: invoke.callId,
+            result,
+            clientId: ownClientId
+          });
+        },
+        (error) => {
+          channel2.emit(SERVICE_COMMAND_ERROR, {
+            serviceId,
+            callId: invoke.callId,
+            error: serializeError(error),
+            clientId: ownClientId
+          });
+        }
+      );
+    }, 0);
   }, onResult = (payload) => {
     let result = safeParse(commandResultSchema, payload);
     !result.success || result.output.serviceId !== serviceId || settle(result.output.callId, (entry) => entry.resolve(result.output.result));
@@ -41926,8 +42059,19 @@ function connectCommandTransport(context) {
       return;
     let entry = pending.get(ack.output.callId);
     entry && clearTimeout(entry.noAckTimer);
+  }, onUnhandled = (payload) => {
+    let report = safeParse(commandUnhandledSchema, payload);
+    !report.success || report.output.serviceId !== serviceId || !delegated || settle(
+      report.output.callId,
+      (entry) => entry.reject(
+        new OpenServiceRemoteCommandConfigDriftError({
+          serviceId,
+          commandName: entry.commandName
+        })
+      )
+    );
   };
-  channel2.on(SERVICE_COMMAND_INVOKE, onInvoke), channel2.on(SERVICE_COMMAND_RESULT, onResult), channel2.on(SERVICE_COMMAND_ERROR, onError), channel2.on(SERVICE_COMMAND_ACK, onAck);
+  channel2.on(SERVICE_COMMAND_INVOKE, onInvoke), channel2.on(SERVICE_COMMAND_RESULT, onResult), channel2.on(SERVICE_COMMAND_ERROR, onError), channel2.on(SERVICE_COMMAND_ACK, onAck), channel2.on(SERVICE_COMMAND_UNHANDLED, onUnhandled);
   let requestRemote = (commandName, input2) => {
     let callId = generateClientId();
     return new Promise((resolve, reject) => {
@@ -41937,7 +42081,8 @@ function connectCommandTransport(context) {
           (entry) => entry.reject(
             new OpenServiceRemoteCommandUnhandledError({
               serviceId,
-              commandName: entry.commandName
+              commandName: entry.commandName,
+              delegated
             })
           )
         );
@@ -41952,15 +42097,28 @@ function connectCommandTransport(context) {
     });
   }, commands = {};
   for (let name of commandNames)
-    commands[name] = implementedCommandNames.has(name) ? localCommands[name] : (input2) => requestRemote(name, input2);
+    commands[name] = dispatchesLocally(name) ? localCommands[name] : (input2) => requestRemote(name, input2);
   return {
     commands,
     disconnect: () => {
-      channel2.off(SERVICE_COMMAND_INVOKE, onInvoke), channel2.off(SERVICE_COMMAND_RESULT, onResult), channel2.off(SERVICE_COMMAND_ERROR, onError), channel2.off(SERVICE_COMMAND_ACK, onAck);
+      channel2.off(SERVICE_COMMAND_INVOKE, onInvoke), channel2.off(SERVICE_COMMAND_RESULT, onResult), channel2.off(SERVICE_COMMAND_ERROR, onError), channel2.off(SERVICE_COMMAND_ACK, onAck), channel2.off(SERVICE_COMMAND_UNHANDLED, onUnhandled);
       for (let [, entry] of pending)
         clearTimeout(entry.noAckTimer), entry.reject(new OpenServiceRemoteCommandDisconnectedError({ serviceId }));
       pending.clear();
     }
+  };
+}
+function connectUnknownServiceReporter(context) {
+  let { channel: channel2, isServiceRegistered, isDelegated } = context, ownClientId = generateClientId(), onInvoke = (payload) => {
+    let parsed = safeParse(commandInvokeSchema, payload);
+    !parsed.success || isDelegated() || isServiceRegistered(parsed.output.serviceId) || channel2.emit(SERVICE_COMMAND_UNHANDLED, {
+      serviceId: parsed.output.serviceId,
+      callId: parsed.output.callId,
+      clientId: ownClientId
+    });
+  };
+  return channel2.on(SERVICE_COMMAND_INVOKE, onInvoke), () => {
+    channel2.off(SERVICE_COMMAND_INVOKE, onInvoke);
   };
 }
 function connectServiceToChannel(context) {
@@ -41974,6 +42132,7 @@ function connectServiceToChannel(context) {
     commands,
     implementedCommandNames,
     commandNames,
+    delegated,
     runtime
   } = context, broadcastCommands = wrapCommandsForBroadcast(commands, {
     serviceId,
@@ -41987,7 +42146,8 @@ function connectServiceToChannel(context) {
     channel: channel2,
     localCommands: broadcastCommands,
     implementedCommandNames,
-    commandNames
+    commandNames,
+    delegated
   }), disconnectSync = connectRuntimeToChannel({
     serviceId,
     ownClientId,
@@ -41996,7 +42156,10 @@ function connectServiceToChannel(context) {
     channel: channel2,
     relay
   });
-  return runtime.attachChannelCommands(commandTransport.commands, implementedCommandNames), {
+  return runtime.attachChannelCommands(
+    commandTransport.commands,
+    delegated ? /* @__PURE__ */ new Set() : implementedCommandNames
+  ), {
     commands: commandTransport.commands,
     disconnect: () => {
       disconnectSync(), commandTransport.disconnect();
@@ -42006,9 +42169,40 @@ function connectServiceToChannel(context) {
 
 // src/shared/open-service/service-registry.ts
 var REGISTRY_SYMBOL = /* @__PURE__ */ Symbol.for("storybook.open-service.registry");
-function getRegistry() {
+function getInventory() {
   let registryGlobal = globalThis;
-  return registryGlobal[REGISTRY_SYMBOL] ??= /* @__PURE__ */ new Map(), registryGlobal[REGISTRY_SYMBOL];
+  return registryGlobal[REGISTRY_SYMBOL] ??= {
+    entries: /* @__PURE__ */ new Map(),
+    delegatedMode: !1,
+    everRegisteredIds: /* @__PURE__ */ new Set()
+  }, registryGlobal[REGISTRY_SYMBOL];
+}
+function getRegistry() {
+  return getInventory().entries;
+}
+function isDelegatedMode() {
+  return getInventory().delegatedMode;
+}
+function ensureUnknownServiceReporter(channel2) {
+  let inventory = getInventory();
+  inventory.unknownServiceReporter?.channel !== channel2 && (inventory.unknownServiceReporter?.disconnect(), inventory.unknownServiceReporter = {
+    channel: channel2,
+    disconnect: connectUnknownServiceReporter({
+      channel: channel2,
+      isServiceRegistered: (serviceId) => inventory.everRegisteredIds.has(serviceId),
+      isDelegated: () => inventory.delegatedMode
+    })
+  });
+}
+function assertUniqueOperationNames(definition) {
+  let duplicateName = Object.keys(definition.queries).find(
+    (name) => Object.hasOwn(definition.commands, name)
+  );
+  if (duplicateName)
+    throw new OpenServiceOperationNameCollisionError({
+      serviceId: definition.id,
+      operationName: duplicateName
+    });
 }
 function describeDefinition(definition) {
   return {
@@ -42076,6 +42270,7 @@ var serviceRegistryApi = {
   getService
 };
 function registerService(definition, registration, { relay = !1, staticLoader } = {}) {
+  assertUniqueOperationNames(definition);
   let registry = getRegistry(), existingEntry = registry.get(definition.id);
   if (existingEntry)
     return existingEntry.instance;
@@ -42089,6 +42284,7 @@ function registerService(definition, registration, { relay = !1, staticLoader } 
   }), getSnapshot = () => runtime.getStateSnapshot(), descriptor = describeDefinition(resolvedDefinition), channel2 = getChannel();
   if (!channel2)
     throw new OpenServiceMissingChannelError({ serviceId: definition.id });
+  getInventory().everRegisteredIds.add(definition.id), ensureUnknownServiceReporter(channel2);
   let implementedCommandNames = new Set(
     Object.entries(resolvedDefinition.commands).filter(([, command]) => typeof command.handler == "function").map(([name]) => name)
   ), { commands, disconnect } = connectServiceToChannel({
@@ -42097,10 +42293,11 @@ function registerService(definition, registration, { relay = !1, staticLoader } 
     reconciler,
     getSnapshot,
     channel: channel2,
-    relay,
+    relay: isDelegatedMode() ? !1 : relay,
     commands: runtime.commands,
     implementedCommandNames,
     commandNames: Object.keys(resolvedDefinition.commands),
+    delegated: isDelegatedMode(),
     runtime
   }), instance = {
     queries: runtime.queries,
@@ -42124,10 +42321,12 @@ async function describeService(serviceId) {
     throw new OpenServiceMissingServiceError({ serviceId });
   return entry.descriptor;
 }
-function getService(serviceId) {
+function getService(serviceId, options) {
   let entry = getRegistry().get(serviceId);
   if (!entry)
     throw new OpenServiceMissingServiceError({ serviceId });
+  if (entry.definition.internal && !options?.internal)
+    throw new OpenServiceInternalServiceError({ serviceId });
   return entry.instance;
 }
 
@@ -50452,7 +50651,7 @@ function requireJsTokens() {
   if (hasRequiredJsTokens) return jsTokens_1;
   hasRequiredJsTokens = 1;
   var Identifier, JSXIdentifier, JSXPunctuator, JSXString, JSXText, KeywordsWithExpressionAfter, KeywordsWithNoLineTerminatorAfter, LineTerminatorSequence, MultiLineComment, Newline, NumericLiteral, Punctuator, RegularExpressionLiteral, SingleLineComment, StringLiteral, Template, TokensNotPrecedingObjectLiteral, TokensPrecedingExpression, WhiteSpace;
-  return RegularExpressionLiteral = /\/(?![*\/])(?:\[(?:(?![\]\\]).|\\.)*\]|(?![\/\\]).|\\.)*(\/[$_\u200C\u200D\p{ID_Continue}]*|\\)?/yu, Punctuator = /--|\+\+|=>|\.{3}|\??\.(?!\d)|(?:&&|\|\||\?\?|[+\-%&|^]|\*{1,2}|<{1,2}|>{1,3}|!=?|={1,2}|\/(?![\/*]))=?|[?~,:;[\](){}]/y, Identifier = /(\x23?)(?=[$_\p{ID_Start}\\])(?:[$_\u200C\u200D\p{ID_Continue}]|\\u[\da-fA-F]{4}|\\u\{[\da-fA-F]+\})+/yu, StringLiteral = /(['"])(?:(?!\1)[^\\\n\r]|\\(?:\r\n|[^]))*(\1)?/y, NumericLiteral = /(?:0[xX][\da-fA-F](?:_?[\da-fA-F])*|0[oO][0-7](?:_?[0-7])*|0[bB][01](?:_?[01])*)n?|0n|[1-9](?:_?\d)*n|(?:(?:0(?!\d)|0\d*[89]\d*|[1-9](?:_?\d)*)(?:\.(?:\d(?:_?\d)*)?)?|\.\d(?:_?\d)*)(?:[eE][+-]?\d(?:_?\d)*)?|0[0-7]+/y, Template = /[`}](?:[^`\\$]|\\[^]|\$(?!\{))*(`|\$\{)?/y, WhiteSpace = /[\t\v\f\ufeff\p{Zs}]+/yu, LineTerminatorSequence = /\r?\n|[\r\u2028\u2029]/y, MultiLineComment = /\/\*(?:[^*]|\*(?!\/))*(\*\/)?/y, SingleLineComment = /\/\/.*/y, JSXPunctuator = /[<>.:={}]|\/(?![\/*])/y, JSXIdentifier = /[$_\p{ID_Start}][$_\u200C\u200D\p{ID_Continue}-]*/yu, JSXString = /(['"])(?:(?!\1)[^])*(\1)?/y, JSXText = /[^<>{}]+/y, TokensPrecedingExpression = /^(?:[\/+-]|\.{3}|\?(?:InterpolationIn(?:JSX|Template)|NoLineTerminatorHere|NonExpressionParenEnd|UnaryIncDec))?$|[{}([,;<>=*%&|^!~?:]$/, TokensNotPrecedingObjectLiteral = /^(?:=>|[;\]){}]|else|\?(?:NoLineTerminatorHere|NonExpressionParenEnd))?$/, KeywordsWithExpressionAfter = /^(?:await|case|default|delete|do|else|instanceof|new|return|throw|typeof|void|yield)$/, KeywordsWithNoLineTerminatorAfter = /^(?:return|throw|yield)$/, Newline = RegExp(LineTerminatorSequence.source), jsTokens_1 = function* (input2, { jsx: jsx10 = !1 } = {}) {
+  return RegularExpressionLiteral = /\/(?![*\/])(?:\[(?:(?![\]\\]).|\\.)*\]|(?![\/\\]).|\\.)*(\/[$_\u200C\u200D\p{ID_Continue}]*|\\)?/yu, Punctuator = /--|\+\+|=>|\.{3}|\??\.(?!\d)|(?:&&|\|\||\?\?|[+\-%&|^]|\*{1,2}|<{1,2}|>{1,3}|!=?|={1,2}|\/(?![\/*]))=?|[?~,:;[\](){}]/y, Identifier = /(\x23?)(?=[$_\p{ID_Start}\\])(?:[$_\u200C\u200D\p{ID_Continue}]|\\u[\da-fA-F]{4}|\\u\{[\da-fA-F]+\})+/yu, StringLiteral = /(['"])(?:(?!\1)[^\\\n\r]|\\(?:\r\n|[^]))*(\1)?/y, NumericLiteral = /(?:0[xX][\da-fA-F](?:_?[\da-fA-F])*|0[oO][0-7](?:_?[0-7])*|0[bB][01](?:_?[01])*)n?|0n|[1-9](?:_?\d)*n|(?:(?:0(?!\d)|0\d*[89]\d*|[1-9](?:_?\d)*)(?:\.(?:\d(?:_?\d)*)?)?|\.\d(?:_?\d)*)(?:[eE][+-]?\d(?:_?\d)*)?|0[0-7]+/y, Template = /[`}](?:[^`\\$]|\\[^]|\$(?!\{))*(`|\$\{)?/y, WhiteSpace = /[\t\v\f\ufeff\p{Zs}]+/yu, LineTerminatorSequence = /\r?\n|[\r\u2028\u2029]/y, MultiLineComment = /\/\*(?:[^*]|\*(?!\/))*(\*\/)?/y, SingleLineComment = /\/\/.*/y, JSXPunctuator = /[<>.:={}]|\/(?![\/*])/y, JSXIdentifier = /[$_\p{ID_Start}][$_\u200C\u200D\p{ID_Continue}-]*/yu, JSXString = /(['"])(?:(?!\1)[^])*(\1)?/y, JSXText = /[^<>{}]+/y, TokensPrecedingExpression = /^(?:[\/+-]|\.{3}|\?(?:InterpolationIn(?:JSX|Template)|NoLineTerminatorHere|NonExpressionParenEnd|UnaryIncDec))?$|[{}([,;<>=*%&|^!~?:]$/, TokensNotPrecedingObjectLiteral = /^(?:=>|[;\]){}]|else|\?(?:NoLineTerminatorHere|NonExpressionParenEnd))?$/, KeywordsWithExpressionAfter = /^(?:await|case|default|delete|do|else|instanceof|new|return|throw|typeof|void|yield)$/, KeywordsWithNoLineTerminatorAfter = /^(?:return|throw|yield)$/, Newline = RegExp(LineTerminatorSequence.source), jsTokens_1 = function* (input2, { jsx: jsx9 = !1 } = {}) {
     var braces, firstCodePoint, isExpression, lastIndex, lastSignificantToken, length2, match3, mode, nextLastIndex, nextLastSignificantToken, parenNesting, postfixIncDec, punctuator, stack;
     for ({ length: length2 } = input2, lastIndex = 0, lastSignificantToken = "", stack = [
       { tag: "JS" }
@@ -50518,7 +50717,7 @@ function requireJsTokens() {
                 nextLastSignificantToken = postfixIncDec ? "?PostfixIncDec" : "?UnaryIncDec";
                 break;
               case "<":
-                if (jsx10 && (TokensPrecedingExpression.test(lastSignificantToken) || KeywordsWithExpressionAfter.test(lastSignificantToken))) {
+                if (jsx9 && (TokensPrecedingExpression.test(lastSignificantToken) || KeywordsWithExpressionAfter.test(lastSignificantToken))) {
                   stack.push({ tag: "JSXTag" }), lastIndex += 1, lastSignificantToken = "<", yield {
                     type: "JSXPunctuator",
                     value: punctuator
@@ -53349,26 +53548,26 @@ function matches3(textToMatch, node2, matcher, normalizer) {
 }
 function getDefaultNormalizer(_temp) {
   let {
-    trim: trim2 = !0,
+    trim: trim3 = !0,
     collapseWhitespace = !0
   } = _temp === void 0 ? {} : _temp;
   return (text) => {
     let normalizedText = text;
-    return normalizedText = trim2 ? normalizedText.trim() : normalizedText, normalizedText = collapseWhitespace ? normalizedText.replace(/\s+/g, " ") : normalizedText, normalizedText;
+    return normalizedText = trim3 ? normalizedText.trim() : normalizedText, normalizedText = collapseWhitespace ? normalizedText.replace(/\s+/g, " ") : normalizedText, normalizedText;
   };
 }
 function makeNormalizer(_ref) {
   let {
-    trim: trim2,
+    trim: trim3,
     collapseWhitespace,
     normalizer
   } = _ref;
   if (!normalizer)
     return getDefaultNormalizer({
-      trim: trim2,
+      trim: trim3,
       collapseWhitespace
     });
-  if (typeof trim2 < "u" || typeof collapseWhitespace < "u")
+  if (typeof trim3 < "u" || typeof collapseWhitespace < "u")
     throw new Error('trim and collapseWhitespace are not supported with a normalizer. If you want to use the default trim and collapseWhitespace logic in your normalizer, use "getDefaultNormalizer({trim, collapseWhitespace})" and compose that into your normalizer');
   return normalizer;
 }
@@ -53752,11 +53951,11 @@ function queryAllByAttribute(attribute, container, text, _temp) {
   let {
     exact = !0,
     collapseWhitespace,
-    trim: trim2,
+    trim: trim3,
     normalizer
   } = _temp === void 0 ? {} : _temp, matcher = exact ? matches3 : fuzzyMatches, matchNormalizer = makeNormalizer({
     collapseWhitespace,
-    trim: trim2,
+    trim: trim3,
     normalizer
   });
   return Array.from(container.querySelectorAll("[" + attribute + "]")).filter((node2) => matcher(node2.getAttribute(attribute), node2, text, matchNormalizer));
@@ -53871,12 +54070,12 @@ function queryAllLabels(container) {
 var queryAllLabelsByText = function(container, text, _temp) {
   let {
     exact = !0,
-    trim: trim2,
+    trim: trim3,
     collapseWhitespace,
     normalizer
   } = _temp === void 0 ? {} : _temp, matcher = exact ? matches3 : fuzzyMatches, matchNormalizer = makeNormalizer({
     collapseWhitespace,
-    trim: trim2,
+    trim: trim3,
     normalizer
   });
   return queryAllLabels(container).filter((_ref2) => {
@@ -53896,13 +54095,13 @@ var queryAllLabelsByText = function(container, text, _temp) {
     selector = "*",
     exact = !0,
     collapseWhitespace,
-    trim: trim2,
+    trim: trim3,
     normalizer
   } = _temp2 === void 0 ? {} : _temp2;
   checkContainerType(container);
   let matcher = exact ? matches3 : fuzzyMatches, matchNormalizer = makeNormalizer({
     collapseWhitespace,
-    trim: trim2,
+    trim: trim3,
     normalizer
   }), matchingLabelledElements = Array.from(container.querySelectorAll("*")).filter((element) => getRealLabels(element).length || element.hasAttribute("aria-labelledby")).reduce((labelledElements, labelledElement) => {
     let labelList = getLabels3(container, labelledElement, {
@@ -53954,14 +54153,14 @@ var getMultipleError$7 = (c3, text) => "Found multiple elements with the text of
     selector = "*",
     exact = !0,
     collapseWhitespace,
-    trim: trim2,
+    trim: trim3,
     ignore = getConfig2().defaultIgnore,
     normalizer
   } = _temp === void 0 ? {} : _temp;
   checkContainerType(container);
   let matcher = exact ? matches3 : fuzzyMatches, matchNormalizer = makeNormalizer({
     collapseWhitespace,
-    trim: trim2,
+    trim: trim3,
     normalizer
   }), baseArray = [];
   return typeof container.matches == "function" && container.matches(selector) && (baseArray = [container]), [...baseArray, ...Array.from(container.querySelectorAll(selector))].filter((node2) => !ignore || !node2.matches(ignore)).filter((node2) => matcher(getNodeText(node2), node2, text, matchNormalizer));
@@ -53969,12 +54168,12 @@ var getMultipleError$7 = (c3, text) => "Found multiple elements with the text of
   options === void 0 && (options = {});
   let {
     collapseWhitespace,
-    trim: trim2,
+    trim: trim3,
     normalizer,
     selector
   } = options, normalizedText = makeNormalizer({
     collapseWhitespace,
-    trim: trim2,
+    trim: trim3,
     normalizer
   })(text.toString()), isNormalizedDifferent = normalizedText !== text.toString(), isCustomSelector = (selector ?? "*") !== "*";
   return "Unable to find an element with the text: " + (isNormalizedDifferent ? normalizedText + " (normalized from '" + text + "')" : text) + (isCustomSelector ? ", which matches selector '" + selector + "'" : "") + ". This could be because the text is broken up by multiple elements. In this case, you can provide a function for your text matcher to make your matcher more flexible.";
@@ -53982,13 +54181,13 @@ var getMultipleError$7 = (c3, text) => "Found multiple elements with the text of
   let {
     exact = !0,
     collapseWhitespace,
-    trim: trim2,
+    trim: trim3,
     normalizer
   } = _temp === void 0 ? {} : _temp;
   checkContainerType(container);
   let matcher = exact ? matches3 : fuzzyMatches, matchNormalizer = makeNormalizer({
     collapseWhitespace,
-    trim: trim2,
+    trim: trim3,
     normalizer
   });
   return Array.from(container.querySelectorAll("input,textarea,select")).filter((node2) => node2.tagName === "SELECT" ? Array.from(node2.options).filter((option) => option.selected).some((optionNode) => matcher(getNodeText(optionNode), optionNode, value, matchNormalizer)) : matcher(node2.value, node2, value, matchNormalizer));
@@ -54001,13 +54200,13 @@ var getMultipleError$7 = (c3, text) => "Found multiple elements with the text of
   let {
     exact = !0,
     collapseWhitespace,
-    trim: trim2,
+    trim: trim3,
     normalizer
   } = _temp === void 0 ? {} : _temp;
   checkContainerType(container);
   let matcher = exact ? matches3 : fuzzyMatches, matchNormalizer = makeNormalizer({
     collapseWhitespace,
-    trim: trim2,
+    trim: trim3,
     normalizer
   });
   return Array.from(container.querySelectorAll("[title], svg > title")).filter((node2) => matcher(node2.getAttribute("title"), node2, text, matchNormalizer) || isSvgTitle(node2) && matcher(getNodeText(node2), node2, text, matchNormalizer));
@@ -55358,7 +55557,8 @@ var FOCUSABLE_SELECTOR = [
   '[contenteditable=""]',
   '[contenteditable="true"]',
   "a[href]",
-  "[tabindex]:not([disabled])"
+  "[tabindex]:not([disabled])",
+  "details > summary"
 ].join(", ");
 
 // ../../node_modules/@testing-library/user-event/dist/esm/utils/focus/isFocusable.js
@@ -55396,7 +55596,12 @@ function isDisabled2(element) {
 // ../../node_modules/@testing-library/user-event/dist/esm/utils/focus/getActiveElement.js
 function getActiveElement(document13) {
   let activeElement = document13.activeElement;
-  return activeElement?.shadowRoot ? getActiveElement(activeElement.shadowRoot) : isDisabled2(activeElement) ? document13.ownerDocument ? (
+  if (activeElement?.shadowRoot) {
+    let activeElementInShadowTree = getActiveElement(activeElement.shadowRoot);
+    if (activeElementInShadowTree)
+      return activeElementInShadowTree;
+  }
+  return isDisabled2(activeElement) ? document13.ownerDocument ? (
     /* istanbul ignore next */
     document13.ownerDocument.body
   ) : document13.body : activeElement;
@@ -55553,7 +55758,7 @@ function setUISelection(element, { focusOffset: focusOffsetParam, anchorOffset: 
   }
 }
 function getUISelection(element) {
-  var _element_selectionStart, _element_selectionEnd, _element_UISelection;
+  var _element_UISelection, _element_selectionStart, _element_selectionEnd;
   let sel = (_element_UISelection = element[UISelection]) !== null && _element_UISelection !== void 0 ? _element_UISelection : {
     anchorOffset: (_element_selectionStart = element.selectionStart) !== null && _element_selectionStart !== void 0 ? _element_selectionStart : 0,
     focusOffset: (_element_selectionEnd = element.selectionEnd) !== null && _element_selectionEnd !== void 0 ? _element_selectionEnd : 0
@@ -55805,7 +56010,7 @@ function editInputElement(instance, element, inputRange, data, inputType) {
   if (supportsMaxLength(element)) {
     let maxLength = getMaxLength(element);
     if (maxLength !== void 0 && data.length > 0) {
-      let spaceUntilMaxLength = maxLength - element.value.length;
+      let selectionLength = inputRange.endOffset - inputRange.startOffset, spaceUntilMaxLength = maxLength - element.value.length + selectionLength;
       if (spaceUntilMaxLength > 0)
         dataToInsert = data.substring(0, spaceUntilMaxLength);
       else
@@ -55932,13 +56137,13 @@ function moveSelection(node2, direction) {
 
 // ../../node_modules/@testing-library/user-event/dist/esm/event/selection/selectAll.js
 function selectAll(target) {
+  var _getContentEditable;
   if (hasOwnSelection(target))
     return setSelection({
       focusNode: target,
       anchorOffset: 0,
       focusOffset: getUIValue(target).length
     });
-  var _getContentEditable;
   let focusNode = (_getContentEditable = getContentEditable(target)) !== null && _getContentEditable !== void 0 ? _getContentEditable : target.ownerDocument.body;
   setSelection({
     focusNode,
@@ -55947,9 +56152,9 @@ function selectAll(target) {
   });
 }
 function isAllSelected(target) {
+  var _getContentEditable;
   if (hasOwnSelection(target))
     return getUISelection(target).startOffset === 0 && getUISelection(target).endOffset === getUIValue(target).length;
-  var _getContentEditable;
   let focusNode = (_getContentEditable = getContentEditable(target)) !== null && _getContentEditable !== void 0 ? _getContentEditable : target.ownerDocument.body, selection = target.ownerDocument.getSelection();
   return selection?.anchorNode === focusNode && selection.focusNode === focusNode && selection.anchorOffset === 0 && selection.focusOffset === focusNode.childNodes.length;
 }
@@ -55987,8 +56192,8 @@ function walkRadio(instance, el, direction) {
 
 // ../../node_modules/@testing-library/user-event/dist/esm/event/behavior/keydown.js
 behavior.keydown = (event, target, instance) => {
-  var _keydownBehavior_event_key, _keydownBehavior_event_key1;
-  return (_keydownBehavior_event_key1 = (_keydownBehavior_event_key = keydownBehavior[event.key]) === null || _keydownBehavior_event_key === void 0 ? void 0 : _keydownBehavior_event_key.call(keydownBehavior, event, target, instance)) !== null && _keydownBehavior_event_key1 !== void 0 ? _keydownBehavior_event_key1 : combinationBehavior(event, target, instance);
+  var _ref, _keydownBehavior_event_key;
+  return (_ref = (_keydownBehavior_event_key = keydownBehavior[event.key]) === null || _keydownBehavior_event_key === void 0 ? void 0 : _keydownBehavior_event_key.call(keydownBehavior, event, target, instance)) !== null && _ref !== void 0 ? _ref : combinationBehavior(event, target, instance);
 };
 var keydownBehavior = {
   ArrowDown: (event, target, instance) => {
@@ -56027,8 +56232,8 @@ var keydownBehavior = {
       "textarea"
     ]) || isContentEditable(target))
       return () => {
-        var _getValueOrTextContent, _getValueOrTextContent_length;
-        let newPos = (_getValueOrTextContent_length = (_getValueOrTextContent = getValueOrTextContent(target)) === null || _getValueOrTextContent === void 0 ? void 0 : _getValueOrTextContent.length) !== null && _getValueOrTextContent_length !== void 0 ? _getValueOrTextContent_length : (
+        var _ref, _getValueOrTextContent;
+        let newPos = (_ref = (_getValueOrTextContent = getValueOrTextContent(target)) === null || _getValueOrTextContent === void 0 ? void 0 : _getValueOrTextContent.length) !== null && _ref !== void 0 ? _ref : (
           /* istanbul ignore next */
           0
         );
@@ -56449,50 +56654,22 @@ function createEvent2(type5, target, init16) {
   }), event;
 }
 function getEventConstructors(window2) {
-  var _window_Event;
+  var _window_Event, _window_AnimationEvent, _window_ClipboardEvent, _window_PopStateEvent, _window_ProgressEvent, _window_TransitionEvent, _window_UIEvent, _window_CompositionEvent, _window_FocusEvent, _window_InputEvent, _window_KeyboardEvent, _window_MouseEvent, _window_DragEvent, _window_PointerEvent, _window_TouchEvent;
   let Event2 = (_window_Event = window2.Event) !== null && _window_Event !== void 0 ? _window_Event : class {
-  };
-  var _window_AnimationEvent;
-  let AnimationEvent = (_window_AnimationEvent = window2.AnimationEvent) !== null && _window_AnimationEvent !== void 0 ? _window_AnimationEvent : class extends Event2 {
-  };
-  var _window_ClipboardEvent;
-  let ClipboardEvent = (_window_ClipboardEvent = window2.ClipboardEvent) !== null && _window_ClipboardEvent !== void 0 ? _window_ClipboardEvent : class extends Event2 {
-  };
-  var _window_PopStateEvent;
-  let PopStateEvent = (_window_PopStateEvent = window2.PopStateEvent) !== null && _window_PopStateEvent !== void 0 ? _window_PopStateEvent : class extends Event2 {
-  };
-  var _window_ProgressEvent;
-  let ProgressEvent = (_window_ProgressEvent = window2.ProgressEvent) !== null && _window_ProgressEvent !== void 0 ? _window_ProgressEvent : class extends Event2 {
-  };
-  var _window_TransitionEvent;
-  let TransitionEvent = (_window_TransitionEvent = window2.TransitionEvent) !== null && _window_TransitionEvent !== void 0 ? _window_TransitionEvent : class extends Event2 {
-  };
-  var _window_UIEvent;
-  let UIEvent = (_window_UIEvent = window2.UIEvent) !== null && _window_UIEvent !== void 0 ? _window_UIEvent : class extends Event2 {
-  };
-  var _window_CompositionEvent;
-  let CompositionEvent = (_window_CompositionEvent = window2.CompositionEvent) !== null && _window_CompositionEvent !== void 0 ? _window_CompositionEvent : class extends UIEvent {
-  };
-  var _window_FocusEvent;
-  let FocusEvent2 = (_window_FocusEvent = window2.FocusEvent) !== null && _window_FocusEvent !== void 0 ? _window_FocusEvent : class extends UIEvent {
-  };
-  var _window_InputEvent;
-  let InputEvent = (_window_InputEvent = window2.InputEvent) !== null && _window_InputEvent !== void 0 ? _window_InputEvent : class extends UIEvent {
-  };
-  var _window_KeyboardEvent;
-  let KeyboardEvent2 = (_window_KeyboardEvent = window2.KeyboardEvent) !== null && _window_KeyboardEvent !== void 0 ? _window_KeyboardEvent : class extends UIEvent {
-  };
-  var _window_MouseEvent;
-  let MouseEvent2 = (_window_MouseEvent = window2.MouseEvent) !== null && _window_MouseEvent !== void 0 ? _window_MouseEvent : class extends UIEvent {
-  };
-  var _window_DragEvent;
-  let DragEvent = (_window_DragEvent = window2.DragEvent) !== null && _window_DragEvent !== void 0 ? _window_DragEvent : class extends MouseEvent2 {
-  };
-  var _window_PointerEvent;
-  let PointerEvent2 = (_window_PointerEvent = window2.PointerEvent) !== null && _window_PointerEvent !== void 0 ? _window_PointerEvent : class extends MouseEvent2 {
-  };
-  var _window_TouchEvent;
-  let TouchEvent = (_window_TouchEvent = window2.TouchEvent) !== null && _window_TouchEvent !== void 0 ? _window_TouchEvent : class extends UIEvent {
+  }, AnimationEvent = (_window_AnimationEvent = window2.AnimationEvent) !== null && _window_AnimationEvent !== void 0 ? _window_AnimationEvent : class extends Event2 {
+  }, ClipboardEvent = (_window_ClipboardEvent = window2.ClipboardEvent) !== null && _window_ClipboardEvent !== void 0 ? _window_ClipboardEvent : class extends Event2 {
+  }, PopStateEvent = (_window_PopStateEvent = window2.PopStateEvent) !== null && _window_PopStateEvent !== void 0 ? _window_PopStateEvent : class extends Event2 {
+  }, ProgressEvent = (_window_ProgressEvent = window2.ProgressEvent) !== null && _window_ProgressEvent !== void 0 ? _window_ProgressEvent : class extends Event2 {
+  }, TransitionEvent = (_window_TransitionEvent = window2.TransitionEvent) !== null && _window_TransitionEvent !== void 0 ? _window_TransitionEvent : class extends Event2 {
+  }, UIEvent = (_window_UIEvent = window2.UIEvent) !== null && _window_UIEvent !== void 0 ? _window_UIEvent : class extends Event2 {
+  }, CompositionEvent = (_window_CompositionEvent = window2.CompositionEvent) !== null && _window_CompositionEvent !== void 0 ? _window_CompositionEvent : class extends UIEvent {
+  }, FocusEvent2 = (_window_FocusEvent = window2.FocusEvent) !== null && _window_FocusEvent !== void 0 ? _window_FocusEvent : class extends UIEvent {
+  }, InputEvent = (_window_InputEvent = window2.InputEvent) !== null && _window_InputEvent !== void 0 ? _window_InputEvent : class extends UIEvent {
+  }, KeyboardEvent2 = (_window_KeyboardEvent = window2.KeyboardEvent) !== null && _window_KeyboardEvent !== void 0 ? _window_KeyboardEvent : class extends UIEvent {
+  }, MouseEvent2 = (_window_MouseEvent = window2.MouseEvent) !== null && _window_MouseEvent !== void 0 ? _window_MouseEvent : class extends UIEvent {
+  }, DragEvent = (_window_DragEvent = window2.DragEvent) !== null && _window_DragEvent !== void 0 ? _window_DragEvent : class extends MouseEvent2 {
+  }, PointerEvent2 = (_window_PointerEvent = window2.PointerEvent) !== null && _window_PointerEvent !== void 0 ? _window_PointerEvent : class extends MouseEvent2 {
+  }, TouchEvent = (_window_TouchEvent = window2.TouchEvent) !== null && _window_TouchEvent !== void 0 ? _window_TouchEvent : class extends UIEvent {
   };
   return {
     Event: Event2,
@@ -56595,12 +56772,12 @@ function initMouseEvent(event, { x: x2, y: y3, screenX, screenY, clientX = x2, c
     pageY: sanitizeNumber(pageY)
   });
 }
-function initPointerEvent(event, { pointerId, width, height, pressure, tangentialPressure, tiltX, tiltY, twist, pointerType, isPrimary }) {
+function initPointerEvent(event, { pointerId, width, height, pressure, tangentialPressure, tiltX, tiltY, twist, pointerType, isPrimary, buttons }) {
   assignProps(event, {
     pointerId: sanitizeNumber(pointerId),
     width: sanitizeNumber(width ?? 1),
     height: sanitizeNumber(height ?? 1),
-    pressure: sanitizeNumber(pressure),
+    pressure: sanitizeNumber(pressure ?? (buttons ? 0.5 : 0)),
     tangentialPressure: sanitizeNumber(tangentialPressure),
     tiltX: sanitizeNumber(tiltX),
     tiltY: sanitizeNumber(tiltY),
@@ -56650,11 +56827,13 @@ function patchFocus(HTMLElement2) {
   Object.defineProperties(HTMLElement2.prototype, {
     focus: {
       configurable: !0,
-      get: () => patchedFocus
+      value: patchedFocus,
+      writable: !0
     },
     blur: {
       configurable: !0,
-      get: () => patchedBlur
+      value: patchedBlur,
+      writable: !0
     },
     [patched]: {
       configurable: !0,
@@ -57286,14 +57465,10 @@ function findNodeAtTextOffset(node2, offset3, isRoot = !0) {
 function setSelectionPerMouseDown({ document: document13, target, clickCount, node: node2, offset: offset3 }) {
   if (hasNoSelection(target))
     return;
-  let targetHasOwnSelection = hasOwnSelection(target), text = String(targetHasOwnSelection ? getUIValue(target) : target.textContent), [start2, end2] = node2 ? (
-    // which elements might be considered in the same line of text.
-    // TODO: support expanding initial range on multiple clicks if node is given
-    [
-      offset3,
-      offset3
-    ]
-  ) : getTextRange(text, offset3, clickCount);
+  let targetHasOwnSelection = hasOwnSelection(target), text = String(targetHasOwnSelection ? getUIValue(target) : target.textContent), [start2, end2] = node2 ? [
+    offset3,
+    offset3
+  ] : getTextRange(text, offset3, clickCount);
   if (targetHasOwnSelection)
     return setUISelection(target, {
       anchorOffset: start2 ?? text.length,
@@ -57467,12 +57642,10 @@ var Mouse = class {
         }, current;
       }
       getOnDown(button) {
-        var _this_count_button;
-        this.down = {
+        var _this_count_button, _this_count_button1;
+        return this.down = {
           [button]: (_this_count_button = this.count[button]) !== null && _this_count_button !== void 0 ? _this_count_button : 0
-        };
-        var _this_count_button1;
-        return this.count = {
+        }, this.count = {
           [button]: (_this_count_button1 = this.count[button]) !== null && _this_count_button1 !== void 0 ? _this_count_button1 : 0
         }, Number(this.count[button]) + 1;
       }
@@ -57802,9 +57975,10 @@ async function tab({ shift } = {}) {
 }
 
 // ../../node_modules/@testing-library/user-event/dist/esm/utils/keyDef/readNextDescriptor.js
-var bracketDict = (function(bracketDict2) {
-  return bracketDict2["{"] = "}", bracketDict2["["] = "]", bracketDict2;
-})(bracketDict || {});
+var bracketDict = {
+  "{": "}",
+  "[": "]"
+};
 function readNextDescriptor(text, context) {
   let pos = 0, startBracket = text[pos] in bracketDict ? text[pos] : "";
   pos += startBracket.length;
@@ -57825,15 +57999,14 @@ function readPrintableChar(text, pos, context) {
   };
 }
 function readTag(text, pos, startBracket, context) {
-  var _text_slice_match, _text_slice_match1;
+  var _ref, _text_slice_match, _text_slice_match1;
   let releasePreviousModifier = text[pos] === "/" ? "/" : "";
   pos += releasePreviousModifier.length;
   let escapedDescriptor = startBracket === "{" && text[pos] === "\\";
   pos += Number(escapedDescriptor);
   let descriptor = escapedDescriptor ? text[pos] : (_text_slice_match = text.slice(pos).match(startBracket === "{" ? /^\w+|^[^}>/]/ : /^\w+/)) === null || _text_slice_match === void 0 ? void 0 : _text_slice_match[0];
   assertDescriptor(descriptor, text, pos, context), pos += descriptor.length;
-  var _text_slice_match_;
-  let repeatModifier = (_text_slice_match_ = (_text_slice_match1 = text.slice(pos).match(/^>\d+/)) === null || _text_slice_match1 === void 0 ? void 0 : _text_slice_match1[0]) !== null && _text_slice_match_ !== void 0 ? _text_slice_match_ : "";
+  let repeatModifier = (_ref = (_text_slice_match1 = text.slice(pos).match(/^>\d+/)) === null || _text_slice_match1 === void 0 ? void 0 : _text_slice_match1[0]) !== null && _ref !== void 0 ? _ref : "";
   pos += repeatModifier.length;
   let releaseSelfModifier = text[pos] === "/" || !repeatModifier && text[pos] === ">" ? text[pos] : "";
   pos += releaseSelfModifier.length;
@@ -57872,9 +58045,8 @@ function getErrorMessage(expected, found, text, context) {
 function parseKeyDef(keyboardMap, text) {
   let defs = [];
   do {
-    let { type: type5, descriptor, consumedLength, releasePrevious, releaseSelf = !0, repeat } = readNextDescriptor(text, "keyboard");
     var _keyboardMap_find;
-    let keyDef = (_keyboardMap_find = keyboardMap.find((def) => {
+    let { type: type5, descriptor, consumedLength, releasePrevious, releaseSelf = !0, repeat } = readNextDescriptor(text, "keyboard"), keyDef = (_keyboardMap_find = keyboardMap.find((def) => {
       if (type5 === "[") {
         var _def_code;
         return ((_def_code = def.code) === null || _def_code === void 0 ? void 0 : _def_code.toLowerCase()) === descriptor.toLowerCase();
@@ -57935,9 +58107,8 @@ function readSelectedValueFromInput(target) {
 
 // ../../node_modules/@testing-library/user-event/dist/esm/clipboard/copy.js
 async function copy2() {
-  let doc = this.config.document;
   var _doc_activeElement;
-  let target = (_doc_activeElement = doc.activeElement) !== null && _doc_activeElement !== void 0 ? _doc_activeElement : (
+  let doc = this.config.document, target = (_doc_activeElement = doc.activeElement) !== null && _doc_activeElement !== void 0 ? _doc_activeElement : (
     /* istanbul ignore next */
     doc.body
   ), clipboardData = copySelection(target);
@@ -57949,9 +58120,8 @@ async function copy2() {
 
 // ../../node_modules/@testing-library/user-event/dist/esm/clipboard/cut.js
 async function cut() {
-  let doc = this.config.document;
   var _doc_activeElement;
-  let target = (_doc_activeElement = doc.activeElement) !== null && _doc_activeElement !== void 0 ? _doc_activeElement : (
+  let doc = this.config.document, target = (_doc_activeElement = doc.activeElement) !== null && _doc_activeElement !== void 0 ? _doc_activeElement : (
     /* istanbul ignore next */
     doc.body
   ), clipboardData = copySelection(target);
@@ -57963,14 +58133,11 @@ async function cut() {
 
 // ../../node_modules/@testing-library/user-event/dist/esm/clipboard/paste.js
 async function paste(clipboardData) {
-  let doc = this.config.document;
-  var _doc_activeElement;
-  let target = (_doc_activeElement = doc.activeElement) !== null && _doc_activeElement !== void 0 ? _doc_activeElement : (
+  var _doc_activeElement, _ref;
+  let doc = this.config.document, target = (_doc_activeElement = doc.activeElement) !== null && _doc_activeElement !== void 0 ? _doc_activeElement : (
     /* istanbul ignore next */
     doc.body
-  );
-  var _ref;
-  let dataTransfer = (_ref = typeof clipboardData == "string" ? getClipboardDataFromString(doc, clipboardData) : clipboardData) !== null && _ref !== void 0 ? _ref : await readDataTransferFromClipboard(doc).catch(() => {
+  ), dataTransfer = (_ref = typeof clipboardData == "string" ? getClipboardDataFromString(doc, clipboardData) : clipboardData) !== null && _ref !== void 0 ? _ref : await readDataTransferFromClipboard(doc).catch(() => {
     throw new Error("`userEvent.paste()` without `clipboardData` requires the `ClipboardAPI` to be available.");
   });
   this.dispatchUIEvent(target, "paste", {
@@ -58012,10 +58179,8 @@ async function pointer(input2) {
   this.system.pointer.resetClickCount();
 }
 async function pointerAction(instance, action2) {
-  var _previousPosition_caret, _previousPosition_caret1;
-  let pointerName = "pointerName" in action2 && action2.pointerName ? action2.pointerName : "keyDef" in action2 ? instance.system.pointer.getPointerName(action2.keyDef) : "mouse", previousPosition = instance.system.pointer.getPreviousPosition(pointerName);
-  var _action_target, _action_coords, _action_node, _action_offset;
-  let position2 = {
+  var _action_target, _action_coords, _action_node, _action_offset, _previousPosition_caret, _previousPosition_caret1;
+  let pointerName = "pointerName" in action2 && action2.pointerName ? action2.pointerName : "keyDef" in action2 ? instance.system.pointer.getPointerName(action2.keyDef) : "mouse", previousPosition = instance.system.pointer.getPreviousPosition(pointerName), position2 = {
     target: (_action_target = action2.target) !== null && _action_target !== void 0 ? _action_target : getPrevTarget(instance, previousPosition),
     coords: (_action_coords = action2.coords) !== null && _action_coords !== void 0 ? _action_coords : previousPosition?.coords,
     caret: {
@@ -58026,13 +58191,13 @@ async function pointerAction(instance, action2) {
   "keyDef" in action2 ? (instance.system.pointer.isKeyPressed(action2.keyDef) && (setLevelRef(instance, ApiLevel.Trigger), await instance.system.pointer.release(instance, action2.keyDef, position2)), action2.releasePrevious || (setLevelRef(instance, ApiLevel.Trigger), await instance.system.pointer.press(instance, action2.keyDef, position2), action2.releaseSelf && (setLevelRef(instance, ApiLevel.Trigger), await instance.system.pointer.release(instance, action2.keyDef, position2)))) : (setLevelRef(instance, ApiLevel.Trigger), await instance.system.pointer.move(instance, pointerName, position2));
 }
 function hasCaretPosition(action2) {
-  var _action_target, _ref;
+  var _ref, _action_target;
   return !!((_ref = (_action_target = action2.target) !== null && _action_target !== void 0 ? _action_target : action2.node) !== null && _ref !== void 0 ? _ref : action2.offset !== void 0);
 }
 function getPrevTarget(instance, position2) {
+  var _position_target;
   if (!position2)
     throw new Error("This pointer has no previous position. Provide a target property!");
-  var _position_target;
   return (_position_target = position2.target) !== null && _position_target !== void 0 ? _position_target : instance.config.document.body;
 }
 
@@ -58226,9 +58391,9 @@ function createConfig(options = {}, defaults = defaultOptionsSetup, node2) {
   };
 }
 function setupMain(options = {}) {
+  var _config_document_defaultView;
   let config4 = createConfig(options);
   prepareDocument(config4.document), patchFocus(getWindow(config4.document).HTMLElement);
-  var _config_document_defaultView;
   let view = (_config_document_defaultView = config4.document.defaultView) !== null && _config_document_defaultView !== void 0 ? _config_document_defaultView : (
     /* istanbul ignore next */
     globalThis.window
@@ -58236,9 +58401,9 @@ function setupMain(options = {}) {
   return attachClipboardStubToView(view), createInstance(config4).api;
 }
 function setupDirect({ keyboardState, pointerState, ...options } = {}, node2) {
+  var _ref;
   let config4 = createConfig(options, defaultOptionsDirect, node2);
   prepareDocument(config4.document), patchFocus(getWindow(config4.document).HTMLElement);
-  var _ref;
   let system = (_ref = pointerState ?? keyboardState) !== null && _ref !== void 0 ? _ref : new System();
   return {
     api: createInstance(config4, system).api,
@@ -58280,7 +58445,7 @@ function createInstance(config4, system = new System()) {
   };
 }
 function getDocument2(options, node2, defaults) {
-  var _options_document, _ref;
+  var _ref, _options_document;
   return (_ref = (_options_document = options.document) !== null && _options_document !== void 0 ? _options_document : node2 && getDocumentFromNode(node2)) !== null && _ref !== void 0 ? _ref : defaults.document;
 }
 
@@ -59995,6 +60160,7 @@ var docgenInputSchema = object({ id: string() }), argTypesSchema = custom(
   subcomponents: optional(record(string(), docgenSubcomponentSchema))
 }), docgenOutputSchema = optional(docgenPayloadSchema), docgenServiceDef = defineService({
   id: "core/docgen",
+  internal: !0,
   description: "Component documentation (name, description, props, JSDoc tags) keyed by component id.",
   initialState: { components: {} },
   queries: {
@@ -60050,6 +60216,7 @@ var storyDocsInputSchema = object({ id: string() }), storyDocsErrorSchema = obje
   snippet: optional(string()),
   description: optional(string()),
   summary: optional(string()),
+  warning: optional(string()),
   error: optional(storyDocsErrorSchema)
 }), storyDocsPayloadSchema = object({
   id: string(),
@@ -60060,6 +60227,7 @@ var storyDocsInputSchema = object({ id: string() }), storyDocsErrorSchema = obje
   error: optional(storyDocsErrorSchema)
 }), storyDocsOutputSchema = optional(storyDocsPayloadSchema), storyDocsServiceDef = defineService({
   id: "core/story-docs",
+  internal: !0,
   description: "Story documentation (snippets, descriptions, imports) keyed by component id.",
   initialState: { components: {} },
   queries: {
@@ -60101,14 +60269,6 @@ var storyDocsInputSchema = object({ id: string() }), storyDocsErrorSchema = obje
 var initialGlobals4 = {
   [PARAM_KEY]: { value: void 0, isRotated: !1 }
 };
-
-// src/csf/index.ts
-var sanitize = (string2) => string2.toLowerCase().replace(/[ ’–—―′¿'`~!@#$%^&*()_|+\-=?;:'",.<>\{\}\[\]\\\/]/gi, "-").replace(/-+/g, "-").replace(/^-+/, "").replace(/-+$/, ""), sanitizeSafe = (string2, part) => {
-  let sanitized = sanitize(string2);
-  if (sanitized === "")
-    throw new Error(`Invalid ${part} '${string2}', must include alphanumeric characters`);
-  return sanitized;
-}, toId = (kind, name) => `${sanitizeSafe(kind, "kind")}${name ? `--${sanitizeSafe(name, "name")}` : ""}`;
 
 // ../../node_modules/es-toolkit/dist/array/countBy.mjs
 function countBy(arr, mapper) {
@@ -60576,6 +60736,7 @@ __export(layout_exports, {
   focusableUIElements: () => focusableUIElements,
   getDefaultLayoutState: () => getDefaultLayoutState,
   init: () => init6,
+  isDesktopViewport: () => isDesktopViewport,
   isPagesViewMode: () => isPagesViewMode
 });
 init_dist();
@@ -60608,7 +60769,8 @@ var { document: document8 } = scope, isFunction4 = (val) => typeof val == "funct
     showNav: !0,
     showPanel: !0,
     showTabs: !0,
-    showToolbar: !0
+    showToolbar: !0,
+    showMobileNavigation: !1
   },
   layoutCustomisations: {
     showPanel: void 0,
@@ -60648,7 +60810,7 @@ var { document: document8 } = scope, isFunction4 = (val) => typeof val == "funct
     );
   let typedUiKeys = uiKeys;
   return toMerged(uiState, pick(toMerged(uiAtTopLevel, options.ui || {}), typedUiKeys));
-}, init6 = ({ store: store2, provider, singleStory }) => {
+}, isDesktopViewport = () => scope.matchMedia?.("(min-width: 600px)")?.matches ?? !0, init6 = ({ store: store2, provider, singleStory }) => {
   let api = {
     toggleFullscreen(nextState) {
       return store2.setState(
@@ -60713,7 +60875,7 @@ var { document: document8 } = scope, isFunction4 = (val) => typeof val == "funct
       );
     },
     toggleNav(nextState) {
-      return store2.setState(
+      return isDesktopViewport() ? store2.setState(
         (state3) => {
           if (state3.singleStory)
             return { layout: state3.layout };
@@ -60732,7 +60894,17 @@ var { document: document8 } = scope, isFunction4 = (val) => typeof val == "funct
           };
         },
         { persistence: "session" }
-      );
+      ) : store2.setState((state3) => ({
+        layout: {
+          ...state3.layout,
+          showMobileNavigation: typeof nextState == "boolean" ? nextState : !state3.layout.showMobileNavigation
+        }
+      }));
+    },
+    setMobileNavigation(show) {
+      return store2.setState((state3) => ({
+        layout: { ...state3.layout, showMobileNavigation: show }
+      }));
     },
     toggleToolbar(toggled) {
       return store2.setState(
@@ -60863,7 +61035,7 @@ var { document: document8 } = scope, isFunction4 = (val) => typeof val == "funct
       isEqual(ui, updatedUi) || (modification.ui = updatedUi), isEqual(layout, updatedLayout) || (modification.layout = updatedLayout), options.selectedPanel && !isEqual(selectedPanel, options.selectedPanel) && (modification.selectedPanel = options.selectedPanel), Object.keys(modification).length && store2.setState(modification, { persistence: "permanent" }), isEqual(theme3, updatedTheme) || store2.setState({ theme: updatedTheme });
     }
   }, persisted = pick(store2.getState(), ["layout", "selectedPanel"]);
-  return provider.channel?.on(SET_CONFIG, () => {
+  return persisted.layout && (persisted.layout = { ...persisted.layout, showMobileNavigation: !1 }), provider.channel?.on(SET_CONFIG, () => {
     api.setOptions(merge_default(api.getInitialOptions(), persisted));
   }), {
     api,
@@ -61135,7 +61307,7 @@ var init11 = ({ store: store2, fullAPI, provider }) => {
       if (!(isSidebarShortcutBlocked && isSidebarShortcutFeature))
         switch (event?.preventDefault && event.preventDefault(), feature) {
           case "escape": {
-            fullAPI.getIsFullscreen() ? fullAPI.toggleFullscreen(!1) : fullAPI.getIsNavShown() && fullAPI.toggleNav(!0);
+            fullAPI.getIsFullscreen() ? fullAPI.toggleFullscreen(!1) : isDesktopViewport() && fullAPI.getIsNavShown() && fullAPI.toggleNav(!0);
             break;
           }
           // Handled by @react-aria/interactions and useLandmarkIndicator
@@ -61198,15 +61370,15 @@ var init11 = ({ store: store2, fullAPI, provider }) => {
             break;
           }
           case "toggleNav": {
-            let wasNavShown = fullAPI.getIsNavShown(), sidebarElement = document9.getElementById(focusableUIElements.sidebarRegion);
-            fullAPI.toggleNav(), wasNavShown && wasFocusInElement(sidebarElement) && fullAPI.focusOnUIElement(focusableUIElements.showSidebar, {
+            let isDesktop = isDesktopViewport(), wasNavShown = fullAPI.getIsNavShown(), sidebarElement = document9.getElementById(focusableUIElements.sidebarRegion);
+            fullAPI.toggleNav(), isDesktop && (wasNavShown && wasFocusInElement(sidebarElement) && fullAPI.focusOnUIElement(focusableUIElements.showSidebar, {
               poll: !0
             }).then((success) => {
               success === !1 && document9.body.focus();
             }), wasNavShown || fullAPI.focusOnUIElement(focusableUIElements.sidebarRegion, {
               forceFocus: !0,
               poll: !0
-            });
+            }));
             break;
           }
           case "toolbar": {
@@ -62271,12 +62443,14 @@ function useFormAction(action2, _temp2) {
 var { document: document10 } = scope, getBase = () => `${document10.location.pathname}?`, useNavigate2 = () => {
   let navigate = useNavigate();
   return (0, import_react21.useCallback)((to, { plain, ...options } = {}) => {
-    if (typeof to == "string" && to.startsWith("#")) {
-      to === "#" ? navigate(document10.location.search) : document10.location.hash = to;
-      return;
-    }
+    if (typeof to == "string" && to.startsWith("#"))
+      return navigate(`${document10.location.search}${to === "#" ? "" : to}`, options);
     if (typeof to == "string") {
-      let target = plain ? to : `?path=${to}`;
+      let target = plain ? to : `?path=${to}`, [search, hash4] = target.split("#");
+      if (search === document10.location.search && hash4) {
+        addons.getChannel().emit(NAVIGATE_URL, `#${hash4}`);
+        return;
+      }
       return navigate(target, options);
     }
     if (typeof to == "number")
@@ -62571,8 +62745,8 @@ var FILTER_KEYS = {
       navigateWithQueryParams("/");
     },
     selectStory: (titleOrId = void 0, name = void 0, options = {}) => {
-      let { ref } = options, { storyId, index: index4, filteredIndex, refs, settings } = store2.getState(), gotoStory = (entry) => entry?.type === "docs" || entry?.type === "story" ? (store2.setState({ settings: { ...settings, lastTrackedStoryId: entry.id } }), navigateWithQueryParams(
-        `/${entry.type}/${entry.refId ? `${entry.refId}_${entry.id}` : entry.id}`
+      let { ref, scrollTo } = options, { storyId, index: index4, filteredIndex, refs, settings } = store2.getState(), gotoStory = (entry) => entry?.type === "docs" || entry?.type === "story" ? (store2.setState({ settings: { ...settings, lastTrackedStoryId: entry.id } }), navigateWithQueryParams(
+        `/${entry.type}/${entry.refId ? `${entry.refId}_${entry.id}` : entry.id}${scrollTo ? `#${scrollTo}` : ""}`
       ), !0) : !1, kindSlug = storyId?.split("--", 2)[0], hash4 = ref ? refs[ref].index : index4, filteredHash = ref ? refs[ref].filteredIndex : filteredIndex;
       if (!(!hash4 || !filteredHash))
         if (name)
@@ -62735,7 +62909,10 @@ var FILTER_KEYS = {
       ref ? fullAPI.updateRef(ref.id, { previewInitialized: !0 }) : store2.setState({ previewInitialized: !0 });
     },
     experimental_setFilter: async (id, filterFunction) => {
-      await store2.setState((state3) => ({ filters: { ...state3.filters, [id]: filterFunction } }));
+      await api.experimental_setFilters({ [id]: filterFunction });
+    },
+    experimental_setFilters: async (filters) => {
+      await store2.setState((state3) => ({ filters: { ...state3.filters, ...filters } }));
       let { internal_index: index4 } = store2.getState();
       if (!index4)
         return;
@@ -62743,7 +62920,8 @@ var FILTER_KEYS = {
       let refs = await fullAPI.getRefs();
       for (let [refId, { internal_index, ...ref }] of Object.entries(refs))
         await fullAPI.setRef(refId, { ...ref, storyIndex: internal_index }, !0);
-      provider.channel?.emit(SET_FILTER, { id });
+      for (let id of Object.keys(filters))
+        provider.channel?.emit(SET_FILTER, { id });
     },
     resetTagFilters: async () => {
       await persistFilters((s5) => ({
@@ -62808,16 +62986,17 @@ var FILTER_KEYS = {
     }
   }, recomputeTagsFilter = () => {
     let { includedTagFilters, excludedTagFilters } = store2.getState();
-    return api.experimental_setFilter(
-      TAGS_FILTER,
-      computeTagsFilterFn(includedTagFilters, excludedTagFilters)
-    );
+    return api.experimental_setFilters({
+      [TAGS_FILTER]: computeTagsFilterFn(includedTagFilters, excludedTagFilters)
+    });
   }, recomputeStatusFilter = () => {
     let { includedStatusFilters, excludedStatusFilters } = store2.getState();
-    return api.experimental_setFilter(
-      STATUS_FILTER,
-      computeStatusFilterFn(includedStatusFilters ?? [], excludedStatusFilters ?? [])
-    );
+    return api.experimental_setFilters({
+      [STATUS_FILTER]: computeStatusFilterFn(
+        includedStatusFilters ?? [],
+        excludedStatusFilters ?? []
+      )
+    });
   };
   provider.channel?.on(
     STORY_SPECIFIED,
@@ -62924,7 +63103,7 @@ var FILTER_KEYS = {
   }), provider.channel?.on(STORY_MISSING, function(err) {
     let { ref } = getEventMetadata(this, fullAPI);
     api.setPreviewInitialized(ref);
-  }), provider.channel?.on(SET_CONFIG, () => {
+  }), provider.channel?.on(SET_CONFIG, async () => {
     let configFilters2 = provider.getConfig()?.sidebar?.filters || {}, {
       includedTagFilters,
       excludedTagFilters,
@@ -62932,25 +63111,14 @@ var FILTER_KEYS = {
       excludedStatusFilters,
       tagPresets: tagPresets2
     } = store2.getState();
-    store2.setState(({ filters }) => ({
-      filters: {
-        ...filters,
-        ...configFilters2,
-        [STATIC_FILTER]: computeStaticFilterFn(tagPresets2),
-        [TAGS_FILTER]: computeTagsFilterFn(includedTagFilters, excludedTagFilters),
-        [STATUS_FILTER]: computeStatusFilterFn(includedStatusFilters, excludedStatusFilters)
-      }
-    }));
-  }), fullStatusStore.onAllStatusChange(async () => {
-    recomputeStatusFilter();
-    let { internal_index: index4 } = store2.getState();
-    if (!index4)
-      return;
-    await api.setIndex(index4);
-    let refs = await fullAPI.getRefs();
-    Object.entries(refs).forEach(([refId, { internal_index, ...ref }]) => {
-      fullAPI.setRef(refId, { ...ref, storyIndex: internal_index }, !0);
+    await api.experimental_setFilters({
+      ...configFilters2,
+      [STATIC_FILTER]: computeStaticFilterFn(tagPresets2),
+      [TAGS_FILTER]: computeTagsFilterFn(includedTagFilters, excludedTagFilters),
+      [STATUS_FILTER]: computeStatusFilterFn(includedStatusFilters, excludedStatusFilters)
     });
+  }), fullStatusStore.onAllStatusChange(async () => {
+    await recomputeStatusFilter();
   });
   let configFilters = provider.getConfig()?.sidebar?.filters || {}, tagPresets = scope.TAGS_OPTIONS || {}, defaultTags = getDefaultTagsFromPreset(tagPresets), { tags: tags2, statuses } = queryFromLocation(location4 ?? { search: "" }), parsedTags = parseTagsParam(tags2), hasTagsParam = tags2 !== void 0, initialIncluded = hasTagsParam ? parsedTags.included : defaultTags.included, initialExcluded = hasTagsParam ? parsedTags.excluded : defaultTags.excluded, parsedStatuses = parseStatusesParam(statuses), initialIncludedStatuses = parsedStatuses.included, initialExcludedStatuses = parsedStatuses.excluded, initialFilters = {
     ...configFilters,
@@ -63120,7 +63288,7 @@ init_dist();
 var import_memoizerific9 = __toESM(require_memoizerific(), 1), import_semver = __toESM(require_semver2(), 1);
 
 // src/manager-api/version.ts
-var version = "10.5.10";
+var version = "10.6.0";
 
 // src/manager-api/modules/versions.ts
 var { VERSIONCHECK } = scope, getVersionCheckData = (0, import_memoizerific9.default)(1)(() => {
@@ -63433,8 +63601,8 @@ var ManagerContext = createContext4({ api: void 0, state: initial_state_default(
     this.mounted = !0;
   }
   static getDerivedStateFromProps(props, state3) {
-    let locationSearchChanged = state3.location?.search !== props.location?.search;
-    return state3.path !== props.path || locationSearchChanged ? {
+    let locationSearchChanged = state3.location?.search !== props.location?.search, locationHashChanged = state3.location?.hash !== props.location?.hash;
+    return state3.path !== props.path || locationSearchChanged || locationHashChanged ? {
       ...state3,
       location: props.location,
       path: props.path,
@@ -63820,20 +63988,22 @@ var import_react92 = __toESM(require_react(), 1);
 // src/components/components/tooltip/TooltipNote.tsx
 var import_react24 = __toESM(require_react(), 1);
 init_theming();
-var Note = styled.div(({ theme: theme3 }) => ({
-  fontFamily: theme3.typography.fonts.base,
-  padding: "2px 6px",
-  lineHeight: "16px",
-  fontSize: 10,
-  fontWeight: theme3.typography.weight.bold,
-  color: theme3.color.lightest,
-  boxShadow: "0 0 5px 0 rgba(0, 0, 0, 0.3)",
-  borderRadius: 4,
-  whiteSpace: "nowrap",
-  pointerEvents: "none",
-  zIndex: -1,
-  background: theme3.base === "light" ? "rgba(60, 60, 60, 0.9)" : "rgba(0, 0, 0, 0.95)"
-})), TooltipNote = ({ note, ...props }) => import_react24.default.createElement(Note, { ...props }, note);
+var DEFAULT_MAX_WIDTH = 260, Note = styled.div(
+  ({ theme: theme3 }) => ({
+    fontFamily: theme3.typography.fonts.base,
+    padding: "2px 6px",
+    lineHeight: "16px",
+    fontSize: 10,
+    fontWeight: theme3.typography.weight.bold,
+    color: theme3.color.lightest,
+    boxShadow: "0 0 5px 0 rgba(0, 0, 0, 0.3)",
+    borderRadius: 4,
+    pointerEvents: "none",
+    zIndex: -1,
+    background: theme3.base === "light" ? "rgba(60, 60, 60, 0.9)" : "rgba(0, 0, 0, 0.95)"
+  }),
+  ({ maxWidth }) => ({ maxWidth })
+), TooltipNote = ({ note, maxWidth = DEFAULT_MAX_WIDTH, ...props }) => import_react24.default.createElement(Note, { maxWidth, ...props }, note);
 
 // src/components/components/tooltip/TooltipProvider.tsx
 var import_react91 = __toESM(require_react(), 1);
@@ -68292,7 +68462,7 @@ var re, startsWith = hasNativeStartsWith ? (
       return first < 55296 || first > 56319 || index4 + 1 === size || (second = s5.charCodeAt(index4 + 1)) < 56320 || second > 57343 ? first : (first - 55296 << 10) + (second - 56320) + 65536;
     }
   }
-), trimStart = hasTrimStart ? (
+), trimStart2 = hasTrimStart ? (
   // Native
   function(s5) {
     return s5.trimStart();
@@ -68302,7 +68472,7 @@ var re, startsWith = hasNativeStartsWith ? (
   function(s5) {
     return s5.replace(SPACE_SEPARATOR_START_REGEX, "");
   }
-), trimEnd = hasTrimEnd ? (
+), trimEnd2 = hasTrimEnd ? (
   // Native
   function(s5) {
     return s5.trimEnd();
@@ -68532,7 +68702,7 @@ var IDENTIFIER_PREFIX_RE_1, Parser = (
             var styleStartPosition = this.clonePosition(), result = this.parseSimpleArgStyleIfPossible();
             if (result.err)
               return result;
-            var style = trimEnd(result.val);
+            var style = trimEnd2(result.val);
             if (style.length === 0)
               return this.error(ErrorKind.EXPECT_ARGUMENT_STYLE, createLocation2(this.clonePosition(), this.clonePosition()));
             var styleLocation = createLocation2(styleStartPosition, this.clonePosition());
@@ -68543,7 +68713,7 @@ var IDENTIFIER_PREFIX_RE_1, Parser = (
             return argCloseResult;
           var location_1 = createLocation2(openingBracePosition, this.clonePosition());
           if (styleAndLocation && startsWith(styleAndLocation?.style, "::", 0)) {
-            var skeleton = trimStart(styleAndLocation.style.slice(2));
+            var skeleton = trimStart2(styleAndLocation.style.slice(2));
             if (argType === "number") {
               var result = this.parseNumberSkeletonFromString(skeleton, styleAndLocation.styleLocation);
               return result.err ? result : {
@@ -71820,12 +71990,12 @@ var fadeIn = keyframes({
   },
   to: {
     opacity: 1,
-    maxHeight: "80vh"
+    maxHeight: "80dvh"
   }
 }), slideToBottom = keyframes({
   from: {
     opacity: 1,
-    maxHeight: "80vh"
+    maxHeight: "80dvh"
   },
   to: {
     opacity: 0,
@@ -71872,6 +72042,7 @@ var fadeIn = keyframes({
       transform: "translate(-50%, -50%) scale(1)"
     }
   } : {
+    position: "fixed",
     bottom: "0",
     left: "0",
     right: "0",
@@ -77435,56 +77606,56 @@ var TabErrorBoundary = class extends import_react169.Component {
       }
     ) : this.props.children;
   }
-}, Tabs = (0, import_react169.memo)(
-  ({
-    children,
-    selected = null,
-    actions,
-    absolute = !1,
-    bordered = !1,
-    tools = null,
-    backgroundColor,
-    id: htmlId = null,
-    menuName = "Tabs",
-    emptyState,
-    showToolsWhenEmpty
-  }) => {
-    deprecate("The `Tabs` component is deprecated. Use `TabsView` instead.");
-    let list = (0, import_react169.useMemo)(
-      () => childrenToList(children).map((i3, index4) => ({
-        ...i3,
-        active: selected ? i3.id === selected : index4 === 0
-      })),
-      [children, selected]
-    ), { visibleList, tabBarRef, tabRefs, AddonTab } = useList(list), EmptyContent = emptyState ?? import_react169.default.createElement(EmptyTabContent, { title: "Nothing found" });
-    return !showToolsWhenEmpty && list.length === 0 ? EmptyContent : (
-      // @ts-expect-error (non strict)
-      import_react169.default.createElement(Wrapper7, { "data-deprecated": "Tabs", absolute, bordered, id: htmlId }, import_react169.default.createElement(FlexBar, { scrollable: !1, border: !0, backgroundColor }, import_react169.default.createElement(TabBar, { style: { whiteSpace: "normal" }, ref: tabBarRef, role: "tablist" }, visibleList.map(({ title, id, active, color: color2 }, index4) => {
-        let indexId = `index-${index4}`;
-        return import_react169.default.createElement(
-          TabButton,
-          {
-            id: `tabbutton-${sanitize(id) ?? indexId}`,
-            ref: (ref) => {
-              tabRefs.current.set(id, ref);
-            },
-            className: `tabbutton ${active ? "tabbutton-active" : ""}`,
-            type: "button",
-            key: id,
-            active,
-            textColor: color2,
-            onClick: (e2) => {
-              e2.preventDefault(), actions.onSelect(id);
-            },
-            role: "tab",
-            "aria-selected": active
+};
+function TabsImpl({
+  children,
+  selected,
+  actions,
+  absolute = !1,
+  bordered = !1,
+  tools = null,
+  backgroundColor,
+  id: htmlId,
+  menuName = "Tabs",
+  emptyState,
+  showToolsWhenEmpty
+}) {
+  deprecate("The `Tabs` component is deprecated. Use `TabsView` instead.");
+  let list = (0, import_react169.useMemo)(
+    () => childrenToList(children).map((i3, index4) => ({
+      ...i3,
+      active: selected ? i3.id === selected : index4 === 0
+    })),
+    [children, selected]
+  ), { visibleList, tabBarRef, tabRefs, AddonTab } = useList(list), EmptyContent = emptyState ?? import_react169.default.createElement(EmptyTabContent, { title: "Nothing found" });
+  return !showToolsWhenEmpty && list.length === 0 ? EmptyContent : import_react169.default.createElement(Wrapper7, { "data-deprecated": "Tabs", absolute, bordered, id: htmlId }, import_react169.default.createElement(FlexBar, { scrollable: !1, border: !0, backgroundColor }, import_react169.default.createElement(TabBar, { style: { whiteSpace: "normal" }, ref: tabBarRef, role: "tablist" }, visibleList.map(({ title, id, active, color: color2 }, index4) => {
+    let indexId = `index-${index4}`;
+    return (
+      // oxlint-disable-next-line jsx-a11y/interactive-supports-focus -- deprecated code, no need to maintain it
+      import_react169.default.createElement(
+        TabButton,
+        {
+          id: `tabbutton-${sanitize(id) ?? indexId}`,
+          ref: (ref) => {
+            tabRefs.current.set(id, ref);
           },
-          typeof title == "function" ? import_react169.default.createElement("title", null) : title
-        );
-      }), import_react169.default.createElement(AddonTab, { menuName, actions })), tools), import_react169.default.createElement(Content3, { id: "panel-tab-content", bordered, absolute }, list.length ? list.map(({ id, active, render }) => import_react169.default.createElement(TabErrorBoundary, { key: id, active }, import_react169.default.createElement(render, { active }, null))) : EmptyContent))
+          className: `tabbutton ${active ? "tabbutton-active" : ""}`,
+          type: "button",
+          key: id,
+          active,
+          textColor: color2,
+          onClick: (e2) => {
+            e2.preventDefault(), actions.onSelect(id);
+          },
+          role: "tab",
+          "aria-selected": active
+        },
+        typeof title == "function" ? import_react169.default.createElement("title", null) : title
+      )
     );
-  }
-);
+  }), import_react169.default.createElement(AddonTab, { menuName, actions })), tools), import_react169.default.createElement(Content3, { id: "panel-tab-content", bordered, absolute }, list.length ? list.map(({ id, active, render }) => import_react169.default.createElement(TabErrorBoundary, { key: id, active }, import_react169.default.createElement(render, { active }, null))) : EmptyContent));
+}
+var Tabs = (0, import_react169.memo)(TabsImpl);
 Tabs.displayName = "Tabs";
 var TabsState = class extends import_react169.Component {
   constructor(props) {
