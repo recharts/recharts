@@ -105,7 +105,7 @@ describe('Line theme', () => {
 
     getDots(container).forEach(dot => {
       expect(dot).toHaveAttribute('fill', theme.fill);
-      expect(dot).toHaveAttribute('fill-opacity', String(theme.fillOpacity));
+      expect(dot).toHaveAttribute('fill-opacity', '1');
       expect(dot).toHaveAttribute('stroke', theme.stroke);
       expect(dot).toHaveAttribute('stroke-width', String(theme.strokeWidth));
       expect(dot).toHaveAttribute('stroke-opacity', String(theme.strokeOpacity));
@@ -152,7 +152,7 @@ describe('Line theme', () => {
 
     getDots(container).forEach(dot => {
       expect(dot).toHaveAttribute('fill', 'gold');
-      expect(dot).toHaveAttribute('fill-opacity', '0.8');
+      expect(dot).toHaveAttribute('fill-opacity', '1');
       expect(dot).toHaveAttribute('stroke', 'blue');
       expect(dot).toHaveAttribute('stroke-width', '3');
       expect(dot).toHaveAttribute('stroke-opacity', '0.7');
@@ -177,11 +177,35 @@ describe('Line theme', () => {
 
     getDots(container).forEach(dot => {
       expect(dot).toHaveAttribute('fill', theme.fill);
-      expect(dot).toHaveAttribute('fill-opacity', String(theme.fillOpacity));
+      expect(dot).toHaveAttribute('fill-opacity', '1');
       expect(dot).toHaveAttribute('stroke', theme.stroke);
       expect(dot).toHaveAttribute('stroke-width', theme.strokeWidth);
       expect(dot).not.toHaveAttribute('stroke-opacity');
       expect(dot).not.toHaveAttribute('stroke-dasharray');
+    });
+  });
+
+  it('lets explicit dot fill opacity override the default', () => {
+    const { container } = rechartsTestRender(
+      <RechartsThemeProvider
+        value={{
+          graphicalItems: [
+            {
+              fill: 'purple',
+              fillOpacity: 0.1,
+            },
+          ],
+        }}
+      >
+        <MyChart>
+          <Line dataKey="profit" dot={{ fillOpacity: 0.4 }} isAnimationActive={false} />
+        </MyChart>
+      </RechartsThemeProvider>,
+    );
+
+    getDots(container).forEach(dot => {
+      expect(dot).toHaveAttribute('fill', 'purple');
+      expect(dot).toHaveAttribute('fill-opacity', '0.4');
     });
   });
 

@@ -79,6 +79,58 @@ describe('Radar theme', () => {
     expect(polygon.getAttribute('stroke-width')).toBe(String(theme.strokeWidth));
   });
 
+  it('does not apply the theme fillOpacity to dots', () => {
+    const graphicalItems = [
+      {
+        fill: 'rgb(1, 2, 3)',
+        fillOpacity: 0.2,
+      },
+    ];
+
+    const { container } = rechartsTestRender(
+      <RechartsThemeProvider value={{ graphicalItems }}>
+        <MyChart>
+          <Radar dataKey="profit" dot isAnimationActive={false} />
+        </MyChart>
+      </RechartsThemeProvider>,
+    );
+
+    const polygon = getPolygon(container);
+    const dots = container.querySelectorAll('.recharts-radar-dot');
+    expect(dots).not.toHaveLength(0);
+    expect(polygon.getAttribute('fill-opacity')).toBe('0.2');
+    dots.forEach(dot => {
+      expect(dot.getAttribute('fill')).toBe('rgb(1, 2, 3)');
+      expect(dot.getAttribute('fill-opacity')).toBe('1');
+    });
+  });
+
+  it('allows an explicit dot fillOpacity override', () => {
+    const { container } = rechartsTestRender(
+      <RechartsThemeProvider
+        value={{
+          graphicalItems: [
+            {
+              fill: 'purple',
+              fillOpacity: 0.2,
+            },
+          ],
+        }}
+      >
+        <MyChart>
+          <Radar dataKey="profit" dot={{ fillOpacity: 0.4 }} isAnimationActive={false} />
+        </MyChart>
+      </RechartsThemeProvider>,
+    );
+
+    const dots = container.querySelectorAll('.recharts-radar-dot');
+    expect(dots).not.toHaveLength(0);
+    dots.forEach(dot => {
+      expect(dot.getAttribute('fill')).toBe('purple');
+      expect(dot.getAttribute('fill-opacity')).toBe('0.4');
+    });
+  });
+
   it('lets explicit visual props override the selected graphical-item theme', () => {
     const { container } = rechartsTestRender(
       <RechartsThemeProvider
