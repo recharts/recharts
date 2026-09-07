@@ -330,11 +330,40 @@ describe('Area theme', () => {
       const dot = container.querySelector('.recharts-area-dot');
       assertNotNull(dot);
       expect(dot).toHaveAttribute('fill', 'green');
-      expect(dot).toHaveAttribute('fill-opacity', '0.7');
+      // the dot applies its own fill-opacity, does not inherit from the theme
+      expect(dot).toHaveAttribute('fill-opacity', '1');
       expect(dot).toHaveAttribute('stroke', 'teal');
       expect(dot).toHaveAttribute('stroke-width', '4');
       expect(dot).toHaveAttribute('stroke-opacity', '0.3');
       expect(dot).toHaveAttribute('stroke-dasharray', '5 10');
+    });
+
+    it('should use fill-opacity from its own props but not the one from theme', () => {
+      const { container } = rechartsTestRender(
+        <RechartsThemeProvider
+          value={{
+            graphicalItems: [
+              {
+                fill: 'purple',
+                fillOpacity: 0.7,
+                stroke: 'teal',
+                strokeWidth: 4,
+                strokeOpacity: 0.3,
+                strokeDasharray: '5 10',
+              },
+            ],
+          }}
+        >
+          <MyChart>
+            <Area dataKey="x" dot={{ fill: 'green', fillOpacity: 0.5 }} isAnimationActive={false} />
+          </MyChart>
+        </RechartsThemeProvider>,
+      );
+      const dot = container.querySelector('.recharts-area-dot');
+      assertNotNull(dot);
+      expect(dot).toHaveAttribute('fill', 'green');
+      // the dot does apply fill-opacity when defined explicitly
+      expect(dot).toHaveAttribute('fill-opacity', '0.5');
     });
   });
 
