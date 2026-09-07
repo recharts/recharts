@@ -87,10 +87,12 @@ npm run test-storybook
 
 ## Run visual regression tests (using playwright)
 
-The VR tests use the Playwright component testing model with stories and a gallery:
+The VR tests use Playwright's component testing model with stories and a Vite gallery:
 https://playwright.dev/docs/test-components.
 The JSX for each scenario lives in a `*.story.tsx` file next to the spec, and the spec mounts it
 by story id with the `mountStory` fixture. See `test-vr/README.md` for details.
+The Playwright mount page at `/gallery/index.html` is intentionally blank until a test calls
+`window.mount`; it is not a human-facing story index.
 
 ### Prerequisites
 
@@ -121,6 +123,11 @@ Alternatively, the UI playwright mode is available as well:
 ```sh
 npm run test-vr:ui
 ```
+
+This starts Playwright UI on http://localhost:8080 and keeps the Vite gallery server available on
+port 3100. While the command is running, use http://localhost:3100/gallery/preview.html to browse
+and click through the stories manually. The preview page mounts each selected story with its
+default props. Do not expect `/gallery/index.html` to display a navigation page.
 
 If you want to record new snapshots or update the old ones, you can run:
 
@@ -180,12 +187,16 @@ and in storybook UI. For low fidelity tests, use unit tests or VR tests instead.
 
 ## Playwright UI mode
 
-You can also use Playwright in UI mode for manual testing. This opens a browser window where you can see the tests running,
-and you can see before & after.
+You can also use Playwright in UI mode for manual testing. This opens the Playwright UI where you
+can see the tests running and inspect before-and-after snapshots:
 
 ```sh
 npm run test-vr:ui
 ```
+
+The same command serves the human-facing story preview at
+http://localhost:3100/gallery/preview.html. The Playwright-only mount target at
+http://localhost:3100/gallery/index.html remains blank when opened directly.
 
 # Releasing new versions
 
