@@ -51,6 +51,7 @@ import { RechartsScale } from '../util/scale/RechartsScale';
 import { usePolarChartLayout } from '../context/chartLayoutContext';
 import { graphicalItemIdentity } from '../theme/graphicalItemIdentity';
 import { GraphicalItemStyle, RechartsTheme } from '../theme/RechartsTheme';
+import { useRechartsTheme } from '../theme/RechartsThemeContext';
 import { useBackwardsCompatibleTheme } from '../theme/useBackwardsCompatibleTheme';
 
 export interface RadarPoint {
@@ -276,9 +277,13 @@ const SetRadarTooltipEntrySettings = React.memo(
   },
 );
 
-function RadarDotsWrapper({ points, props }: { points: ReadonlyArray<RadarPoint>; props: PropsWithDefaults }) {
+type RadarPropsWithDotFill = WithIdRequired<PropsWithDefaults> & {
+  dotFill?: string;
+};
+
+function RadarDotsWrapper({ points, props }: { points: ReadonlyArray<RadarPoint>; props: RadarPropsWithDotFill }) {
   const { dot, dataKey } = props;
-  const { id, ...propsWithoutId } = props;
+  const { id, dotFill, ...propsWithoutId } = props;
 
   const baseProps = svgPropertiesNoEvents(propsWithoutId);
 
@@ -289,7 +294,7 @@ function RadarDotsWrapper({ points, props }: { points: ReadonlyArray<RadarPoint>
       className="recharts-radar-dots"
       dotClassName="recharts-radar-dot"
       dataKey={dataKey}
-      baseProps={baseProps}
+      baseProps={{ ...baseProps, fill: dotFill ?? baseProps.fill }}
     />
   );
 }
@@ -600,7 +605,7 @@ export const defaultRadarProps = {
 
 type PropsWithDefaults = RequiresDefaultProps<Props, typeof defaultRadarProps>;
 
-export type InternalRadarProps = WithIdRequired<PropsWithDefaults> & RadarComposedData;
+export type InternalRadarProps = RadarPropsWithDotFill & RadarComposedData;
 
 function RadarWithState(props: InternalRadarProps) {
   const { hide, className, points } = props;
@@ -626,7 +631,7 @@ function RadarWithState(props: InternalRadarProps) {
   );
 }
 
-function RadarImpl(props: WithIdRequired<PropsWithDefaults>) {
+function RadarImpl(props: RadarPropsWithDotFill) {
   const isPanorama = useIsPanorama();
   const radarPoints = useAppSelector(state =>
     selectRadarPoints(state, props.radiusAxisId, props.angleAxisId, isPanorama, props.id),
@@ -651,6 +656,7 @@ function RadarImpl(props: WithIdRequired<PropsWithDefaults>) {
  * @provides LabelListContext
  */
 export function Radar<DataPointType = any, DataValueType = any>(outsideProps: Props<DataPointType, DataValueType>) {
+  const rechartsTheme = useRechartsTheme();
   const graphicalItemTheme = useBackwardsCompatibleTheme<GraphicalItemStyle>(
     (theme: RechartsTheme) =>
       outsideProps.dataKey == null
@@ -683,6 +689,8 @@ export function Radar<DataPointType = any, DataValueType = any>(outsideProps: Pr
       (Array.isArray(themeStrokeDasharray) ? themeStrokeDasharray.join(',') : themeStrokeDasharray),
   };
   const props: PropsWithDefaults = resolveDefaultProps(propsWithTheme, defaultRadarProps);
+  const dotFill =
+    outsideProps.fill ?? (rechartsTheme == null ? props.fill : (props.stroke ?? graphicalItemTheme?.fill));
   return (
     <RegisterGraphicalItemId id={props.id} type="radar">
       {id => (
@@ -707,7 +715,7 @@ export function Radar<DataPointType = any, DataValueType = any>(outsideProps: Pr
             tooltipType={props.tooltipType}
             id={id}
           />
-          <RadarImpl {...props} id={id} />
+          <RadarImpl {...props} id={id} dotFill={dotFill} />
         </>
       )}
     </RegisterGraphicalItemId>

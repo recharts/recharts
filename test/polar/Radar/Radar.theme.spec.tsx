@@ -79,6 +79,60 @@ describe('Radar theme', () => {
     expect(polygon.getAttribute('stroke-width')).toBe(String(theme.strokeWidth));
   });
 
+  it('uses the graphical item stroke as the default dot fill', () => {
+    const { container } = rechartsTestRender(
+      <RechartsThemeProvider
+        value={{
+          graphicalItems: [
+            {
+              fill: 'purple',
+              stroke: 'teal',
+            },
+          ],
+        }}
+      >
+        <MyChart>
+          <Radar dataKey="profit" dot isAnimationActive={false} />
+        </MyChart>
+      </RechartsThemeProvider>,
+    );
+
+    const polygon = getPolygon(container);
+    expect(polygon).toHaveAttribute('stroke', 'teal');
+    const dots = container.querySelectorAll('.recharts-radar-dot');
+    expect(dots).not.toHaveLength(0);
+    dots.forEach(dot => {
+      expect(dot).toHaveAttribute('fill', 'teal');
+    });
+  });
+
+  it('uses an explicit radar stroke as the default dot fill', () => {
+    const { container } = rechartsTestRender(
+      <RechartsThemeProvider
+        value={{
+          graphicalItems: [
+            {
+              fill: 'purple',
+              stroke: 'red',
+            },
+          ],
+        }}
+      >
+        <MyChart>
+          <Radar dataKey="profit" dot isAnimationActive={false} stroke="blue" />
+        </MyChart>
+      </RechartsThemeProvider>,
+    );
+
+    const polygon = getPolygon(container);
+    expect(polygon).toHaveAttribute('stroke', 'blue');
+    const dots = container.querySelectorAll('.recharts-radar-dot');
+    expect(dots).not.toHaveLength(0);
+    dots.forEach(dot => {
+      expect(dot).toHaveAttribute('fill', 'blue');
+    });
+  });
+
   it('does not apply the theme fillOpacity to dots', () => {
     const graphicalItems = [
       {
@@ -128,6 +182,31 @@ describe('Radar theme', () => {
     dots.forEach(dot => {
       expect(dot.getAttribute('fill')).toBe('purple');
       expect(dot.getAttribute('fill-opacity')).toBe('0.4');
+    });
+  });
+
+  it('lets explicit dot fill override the radar stroke', () => {
+    const { container } = rechartsTestRender(
+      <RechartsThemeProvider
+        value={{
+          graphicalItems: [
+            {
+              fill: 'purple',
+              stroke: 'teal',
+            },
+          ],
+        }}
+      >
+        <MyChart>
+          <Radar dataKey="profit" dot={{ fill: 'green' }} isAnimationActive={false} />
+        </MyChart>
+      </RechartsThemeProvider>,
+    );
+
+    const dots = container.querySelectorAll('.recharts-radar-dot');
+    expect(dots).not.toHaveLength(0);
+    dots.forEach(dot => {
+      expect(dot).toHaveAttribute('fill', 'green');
     });
   });
 
