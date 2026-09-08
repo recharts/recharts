@@ -104,7 +104,7 @@ const selectAngleAxisDuplicateDomain = (
   state: RechartsRootState,
   _radiusAxisId: AxisId,
   angleAxisId: AxisId,
-): ReadonlyArray<unknown> | undefined => selectDuplicateDomain(state, 'angleAxis', angleAxisId, false);
+): ReadonlyArray<unknown> | undefined => selectDuplicateDomain(state, 'angleAxis', angleAxisId, true);
 
 export const selectAngleAxisWithScaleAndViewport: (
   state: RechartsRootState,

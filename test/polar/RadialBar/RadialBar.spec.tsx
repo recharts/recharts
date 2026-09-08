@@ -2,6 +2,7 @@ import React from 'react';
 import { act, fireEvent, render } from '@testing-library/react';
 import { describe, expect, it, Mock, test, vi } from 'vitest';
 import {
+  Brush,
   DefaultZIndexes,
   PolarAngleAxis,
   PolarGrid,
@@ -9,6 +10,8 @@ import {
   RadialBar,
   RadialBarChart,
   RadialBarProps,
+  Radar,
+  RadarChart,
 } from '../../../src';
 import { useAppSelector } from '../../../src/state/hooks';
 import { selectPolarItemsSettings } from '../../../src/state/selectors/polarSelectors';
@@ -47,6 +50,56 @@ import { assertZIndexLayerOrder } from '../../helper/assertZIndexLayerOrder';
 import { RadialBarDataItem } from '../../../src/polar/RadialBar';
 
 describe('<RadialBar />', () => {
+  describe.each([RadarChart, RadialBarChart])('with Brush in %s', Chart => {
+    describe.each(['centric', 'radial'] as const)('with layout=%s', layout => {
+      describe.each([undefined, true, false])('with shared Radar hide=%s', hide => {
+        it.each([
+          ['A', 'B', 'A', 'C', 'B'],
+          [2, 0, 2, 1, 0],
+        ])('should retain sliced sector labels for %s', (...names) => {
+          const data = names.map((name, index) => ({ name, value: 100 + index }));
+          const settings: RadialBarSettings = {
+            id: 'bar',
+            dataKey: 'value',
+            minPointSize: 0,
+            stackId: undefined,
+            maxBarSize: undefined,
+            barSize: undefined,
+            type: 'radialBar',
+            angleAxisId: 0,
+            radiusAxisId: 0,
+            data: undefined,
+            hide: false,
+          };
+          const category = { dataKey: 'name', type: 'category' as const };
+          const numerical = { type: 'number' as const, domain: [0, 120] };
+          const renderTestCase = createSelectorTestCase(({ children }) => (
+            <Chart data={data} width={500} height={500} layout={layout} startAngle={90} endAngle={-150}>
+              <PolarAngleAxis {...(layout === 'centric' ? category : numerical)} />
+              <PolarRadiusAxis {...(layout === 'radial' ? category : numerical)} />
+              <RadialBar id="bar" dataKey="value" isAnimationActive={false} />
+              {hide != null && <Radar dataKey="value" hide={hide} isAnimationActive={false} />}
+              <Brush startIndex={1} endIndex={4} />
+              {children}
+            </Chart>
+          ));
+          const sectors = renderTestCase(state => selectRadialBarSectors(state, 0, 0, settings, undefined));
+          const geometry = sectors.spy.mock.lastCall?.[0];
+          expect(geometry?.map(sector => [sector.payload.name, sector.value])).toEqual(
+            data.slice(1).map(entry => [entry.name, entry.value]),
+          );
+          const axisType = layout === 'centric' ? 'angleAxis' : 'radiusAxis';
+          for (const selector of [selectPolarAxisTicks, selectPolarGraphicalItemAxisTicks]) {
+            const { spy } = renderTestCase(state => selector(state, axisType, 0, false));
+            expect(spy.mock.lastCall?.[0]?.slice(0, 4).map(tick => tick.value)).toEqual(
+              geometry?.map(sector => sector.payload.name),
+            );
+          }
+        });
+      });
+    });
+  });
+
   describe('with implicit axes', () => {
     const radialBarSettings: RadialBarSettings = {
       id: 'radial-bar-uv',
