@@ -115,15 +115,21 @@ summary {
   position: sticky;
   top: 0;
   z-index: 1;
+  display: block;
+  width: auto;
+  height: auto;
   padding: 20px 32px;
   border-bottom: 1px solid #e5e7eb;
   background: rgb(255 255 255 / 95%);
   backdrop-filter: blur(8px);
+  box-shadow: none;
+  line-height: normal;
 }
 
 .gallery-header h2 {
   margin: 0;
   font-size: 18px;
+  line-height: 1.2;
 }
 
 .gallery-header code {
@@ -157,9 +163,17 @@ summary {
 }
 
 .story-panel-header {
+  position: static;
+  top: auto;
+  z-index: auto;
+  display: block;
+  width: auto;
+  height: auto;
   padding: 12px 16px;
   border-bottom: 1px solid #e5e7eb;
   background: #fff;
+  box-shadow: none;
+  line-height: normal;
 }
 
 .story-panel--dark .story-panel-header {
@@ -170,12 +184,14 @@ summary {
 .story-panel-header h3 {
   margin: 0;
   font-size: 15px;
+  line-height: 1.2;
 }
 
 .story-panel-header p {
   margin: 4px 0 0;
   color: #6b7280;
   font-size: 12px;
+  line-height: 1.4;
 }
 
 .story-panel--dark .story-panel-header p {
