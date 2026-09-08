@@ -133,16 +133,17 @@ summary {
 }
 
 .story-variants {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  display: flex;
+  flex-direction: column;
   gap: 24px;
   padding: 32px;
   align-items: start;
 }
 
 .story-panel {
+  width: 1280px;
   min-width: 0;
-  overflow: hidden;
+  overflow: visible;
   border: 1px solid #d1d5db;
   border-radius: 8px;
   background: #fff;
@@ -183,8 +184,6 @@ summary {
 
 .story-panel-frame {
   display: block;
-  width: 100%;
-  min-height: 240px;
   border: 0;
   background: #fff;
 }

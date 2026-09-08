@@ -80,6 +80,9 @@ const themeVariants: readonly {
   },
 ];
 
+const STORY_FRAME_WIDTH = 1280;
+const STORY_FRAME_HEIGHT = 720;
+
 function getStoryIdFromUrl(): string | undefined {
   const storyId = new URLSearchParams(window.location.search).get('story');
   return storyId !== null && stories.some(story => story.id === storyId) ? storyId : stories[0]?.id;
@@ -95,24 +98,6 @@ function getStoryFrameUrl(storyId: string, theme: RechartsThemeVariant): string 
 
 function isRecord(value: unknown): value is Record<string, unknown> {
   return typeof value === 'object' && value !== null;
-}
-
-function getFrameHeight(value: unknown): number | undefined {
-  if (!isRecord(value)) {
-    return undefined;
-  }
-
-  const message = value;
-  if (
-    message.source !== 'recharts-vr-gallery' ||
-    message.type !== 'resize' ||
-    typeof message.height !== 'number' ||
-    !Number.isFinite(message.height)
-  ) {
-    return undefined;
-  }
-
-  return Math.max(240, Math.ceil(message.height));
 }
 
 function getFrameStatus(value: unknown): { status: 'ready' } | { status: 'error'; message: string } | undefined {
@@ -147,7 +132,6 @@ function StoryPanel({
   onSettled: () => void;
 }) {
   const frameRef = React.useRef<HTMLIFrameElement>(null);
-  const [frameHeight, setFrameHeight] = React.useState(240);
   const [frameStatus, setFrameStatus] = React.useState<
     { status: 'waiting' } | { status: 'loading' } | { status: 'ready' } | { status: 'error'; message: string }
   >({ status: enabled ? 'loading' : 'waiting' });
@@ -157,11 +141,6 @@ function StoryPanel({
     function handleMessage(event: MessageEvent<unknown>) {
       if (event.origin !== window.location.origin || event.source !== frameRef.current?.contentWindow) {
         return;
-      }
-
-      const nextHeight = getFrameHeight(event.data);
-      if (nextHeight !== undefined) {
-        setFrameHeight(nextHeight);
       }
 
       const nextStatus = getFrameStatus(event.data);
@@ -192,13 +171,6 @@ function StoryPanel({
     }
   }, [enabled, frameStatus.status, onSettled]);
 
-  function requestFrameSize() {
-    frameRef.current?.contentWindow?.postMessage(
-      { source: 'recharts-vr-gallery', type: 'request-size' },
-      window.location.origin,
-    );
-  }
-
   return (
     <section
       className={`story-panel story-panel--${theme}`}
@@ -217,8 +189,8 @@ function StoryPanel({
             className="story-panel-frame"
             title={`${story.name} ${label} theme`}
             src={getStoryFrameUrl(story.id, theme)}
-            style={{ height: `${frameHeight}px` }}
-            onLoad={requestFrameSize}
+            width={STORY_FRAME_WIDTH}
+            height={STORY_FRAME_HEIGHT}
             onError={() => setFrameStatus({ message: 'Failed to load story frame.', status: 'error' })}
           />
         ) : null}

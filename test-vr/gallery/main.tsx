@@ -104,54 +104,19 @@ function postPreviewMessage(message: Record<string, unknown>): void {
   window.parent.postMessage({ ...message, source: previewMessageSource }, window.location.origin);
 }
 
-function reportPreviewSize(): void {
-  const height = Math.ceil(
-    Math.max(
-      galleryElement.getBoundingClientRect().height,
-      document.documentElement.scrollHeight,
-      document.body.scrollHeight,
-    ),
-  );
-  postPreviewMessage({ height, type: 'resize' });
-}
-
-function handlePreviewMessage(event: MessageEvent<unknown>): void {
-  if (
-    !isPreviewFrame ||
-    event.origin !== window.location.origin ||
-    event.source !== window.parent ||
-    !isRecord(event.data)
-  ) {
-    return;
-  }
-
-  const message = event.data;
-  if (message.source === previewMessageSource && message.type === 'request-size') {
-    reportPreviewSize();
-  }
-}
-
 if (isPreviewFrame && window.parent !== window) {
-  const resizeObserver = new ResizeObserver(reportPreviewSize);
-  resizeObserver.observe(galleryElement);
-  const mutationObserver = new MutationObserver(reportPreviewSize);
-  mutationObserver.observe(document.body, { childList: true, subtree: true });
-  window.addEventListener('message', handlePreviewMessage);
-
   const storyId = urlParameters.get('story');
   if (storyId !== null) {
     window
       .mount({ story: storyId })
       .then(() => {
         requestAnimationFrame(() => {
-          reportPreviewSize();
           postPreviewMessage({ type: 'ready' });
         });
       })
       .catch(error => {
         const message = error instanceof Error ? error.message : String(error);
         galleryElement.textContent = message;
-        reportPreviewSize();
         postPreviewMessage({ message, type: 'error' });
       });
   }
