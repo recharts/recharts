@@ -31,10 +31,6 @@ const brandTheme: RechartsTheme = {
     fontFamily: 'Georgia, serif',
     fontSize: 13,
   },
-  /*
-   * `revenue` picks index 0 and `profit` picks index 1 of this array.
-   * The index comes from a hash of the dataKey, not from the render order.
-   */
   graphicalItems: [
     {
       stroke: '#4338ca',

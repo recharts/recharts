@@ -49,11 +49,7 @@ import {
 } from '../../util/types';
 import { AppliedChartData, ChartData } from '../chartDataSlice';
 import { selectChartDataWithIndexes, selectChartDataSliceWithIndexes } from './dataSelectors';
-import {
-  CartesianGraphicalItemSettings,
-  GraphicalItemSettings,
-  PolarGraphicalItemSettings,
-} from '../graphicalItemsSlice';
+import { GraphicalItemSettings } from '../graphicalItemsSlice';
 import { ReferenceAreaSettings, ReferenceDotSettings, ReferenceLineSettings } from '../referenceElementsSlice';
 import { selectChartName, selectReverseStackOrder, selectStackOffsetType } from './rootPropsSelectors';
 import { isNotNil, mathSign } from '../../util/DataUtils';
@@ -97,19 +93,12 @@ import { combineRealScaleType } from './combiners/combineRealScaleType';
 import { combineConfiguredScale } from './combiners/combineConfiguredScale';
 import { CustomScaleDefinition } from '../../util/scale/CustomScaleDefinition';
 import { transformCoordinateByCameraZoom } from '../../util/zoom/transform';
+import { selectAllUnfilteredGraphicalItems } from './graphicalItemSelectors';
+
+export { selectAllUnfilteredGraphicalItems } from './graphicalItemSelectors';
 
 export const selectTooltipAxisRealScaleType: (state: RechartsRootState) => RechartsScaleType | undefined =
   createSelector([selectTooltipAxis, selectHasBar, selectChartName], combineRealScaleType);
-
-export const selectAllUnfilteredGraphicalItems: (
-  state: RechartsRootState,
-) => ReadonlyArray<CartesianGraphicalItemSettings | PolarGraphicalItemSettings> = createSelector(
-  [
-    (state: RechartsRootState) => state.graphicalItems.cartesianItems,
-    (state: RechartsRootState) => state.graphicalItems.polarItems,
-  ],
-  (cartesianItems, polarItems) => [...cartesianItems, ...polarItems],
-);
 
 const selectTooltipAxisPredicate = createSelector([selectTooltipAxisType, selectTooltipAxisId], itemAxisPredicate);
 

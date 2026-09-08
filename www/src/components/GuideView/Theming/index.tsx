@@ -476,39 +476,12 @@ export function ThemingGuide() {
 
       <h2>Colors for multiple series</h2>
       <p>
-        <code>graphicalItems</code> is an array, and each graphical item in a chart picks one entry from it. The
-        interesting question is <em>which</em> entry.
+        The theme uses each graphical item&apos;s <code>dataKey</code> to decide which entry from{' '}
+        <code>graphicalItems</code> to use for its color.
       </p>
       <p>
-        Recharts does not use render order. Render order is not stable: series get toggled, conditionally rendered, or
-        reordered, and React does not guarantee the traversal order you might expect. Coloring by position means colors
-        jump around when any of that happens.
-      </p>
-      <p>
-        Instead, most graphical items derive their index from a{' '}
-        <strong>
-          hash of their <code>dataKey</code>
-        </strong>
-        . The same <code>dataKey</code> therefore always gets the same color, in every chart, across renders and
-        reloads.
-      </p>
-      <ul>
-        <li>
-          <LinkToApi>Line</LinkToApi>, <LinkToApi>Area</LinkToApi>, <LinkToApi>Bar</LinkToApi>,{' '}
-          <LinkToApi>Scatter</LinkToApi>, <LinkToApi>Radar</LinkToApi> and <LinkToApi>RadialBar</LinkToApi> hash their{' '}
-          <code>dataKey</code> into the array. An item with no <code>dataKey</code> gets no themed color.
-        </li>
-        <li>
-          <LinkToApi>Pie</LinkToApi>, <LinkToApi>Funnel</LinkToApi> and <LinkToApi>Treemap</LinkToApi> draw many shapes
-          from a single series, so they walk the array by position instead: sector <code>i</code> gets entry{' '}
-          <code>i % graphicalItems.length</code>.
-        </li>
-      </ul>
-      <p>
-        Hashing is best-effort, not a guarantee. Two dataKeys can land on the same entry, especially with a short array
-        - <code>&quot;x&quot;</code> and <code>&quot;y&quot;</code> collide in a two-color theme, for instance. A longer
-        palette makes collisions less likely; an explicit <code>fill</code> or <code>stroke</code> prop removes the
-        question entirely.
+        This is a convenient default. If you need different colors or want to control the assignment yourself, provide
+        an explicit <code>fill</code> or <code>stroke</code> prop on the graphical item.
       </p>
       <p>
         Each entry can also carry an <code>active</code> block, which styles the highlighted representation of that
@@ -609,10 +582,6 @@ export function ThemingGuide() {
         <li>
           Themes are not deep-merged. Nested providers replace, and there is no <code>createTheme</code> helper to merge
           for you.
-        </li>
-        <li>
-          Series colors are assigned by a hash, which is stable but not collision-free. Use explicit props when a
-          specific color matters.
         </li>
       </ul>
     </article>

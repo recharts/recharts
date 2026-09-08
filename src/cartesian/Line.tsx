@@ -62,10 +62,10 @@ import { DefaultZIndexes } from '../zIndex/DefaultZIndexes';
 import { propsAreEqual } from '../util/propsAreEqual';
 import { GraphicalItemId } from '../state/graphicalItemsSlice';
 import { ChartData } from '../state/chartDataSlice';
-import { graphicalItemIdentity } from '../theme/graphicalItemIdentity';
-import { GraphicalItemStyle, RechartsTheme } from '../theme/RechartsTheme';
+import { GraphicalItemStyle } from '../theme/RechartsTheme';
 import { useRechartsTheme } from '../theme/RechartsThemeContext';
 import { useBackwardsCompatibleTheme } from '../theme/useBackwardsCompatibleTheme';
+import { useGraphicalItemIdentity } from '../theme/useGraphicalItemIdentity';
 
 export interface LinePointItem {
   readonly value: number;
@@ -924,11 +924,9 @@ export function computeLinePoints({
 
 function LineFn(outsideProps: Props) {
   const rechartsTheme = useRechartsTheme();
+  const graphicalItemThemeSelector = useGraphicalItemIdentity(outsideProps.dataKey);
   const graphicalItemTheme = useBackwardsCompatibleTheme<GraphicalItemStyle>(
-    (theme: RechartsTheme) =>
-      outsideProps.dataKey == null
-        ? undefined
-        : theme.graphicalItems[graphicalItemIdentity({ dataKey: outsideProps.dataKey }, theme.graphicalItems.length)],
+    graphicalItemThemeSelector,
     outsideProps,
     defaultLegacyThemeProps,
   );
