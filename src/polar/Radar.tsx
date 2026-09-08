@@ -49,10 +49,10 @@ import { ZIndexable, ZIndexLayer } from '../zIndex/ZIndexLayer';
 import { DefaultZIndexes } from '../zIndex/DefaultZIndexes';
 import { RechartsScale } from '../util/scale/RechartsScale';
 import { usePolarChartLayout } from '../context/chartLayoutContext';
-import { graphicalItemIdentity } from '../theme/graphicalItemIdentity';
-import { GraphicalItemStyle, RechartsTheme } from '../theme/RechartsTheme';
+import { GraphicalItemStyle } from '../theme/RechartsTheme';
 import { useRechartsTheme } from '../theme/RechartsThemeContext';
 import { useBackwardsCompatibleTheme } from '../theme/useBackwardsCompatibleTheme';
+import { useGraphicalItemIdentity } from '../theme/useGraphicalItemIdentity';
 
 export interface RadarPoint {
   x: number;
@@ -657,11 +657,9 @@ function RadarImpl(props: RadarPropsWithDotFill) {
  */
 export function Radar<DataPointType = any, DataValueType = any>(outsideProps: Props<DataPointType, DataValueType>) {
   const rechartsTheme = useRechartsTheme();
+  const graphicalItemThemeSelector = useGraphicalItemIdentity(outsideProps.dataKey);
   const graphicalItemTheme = useBackwardsCompatibleTheme<GraphicalItemStyle>(
-    (theme: RechartsTheme) =>
-      outsideProps.dataKey == null
-        ? undefined
-        : theme.graphicalItems[graphicalItemIdentity({ dataKey: outsideProps.dataKey }, theme.graphicalItems.length)],
+    graphicalItemThemeSelector,
     outsideProps,
     undefined,
   );

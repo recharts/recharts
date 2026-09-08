@@ -54,7 +54,16 @@ export interface RechartsTheme {
   typography?: TextStyles;
   /**
    * Colors of main graphical elements (Area, Bar, Line, Treemap, etc.).
-   * If there are multiple elements in the chart, they will receive different values from this array.
+   * Line, Area, Bar, Scatter, Radar, and RadialBar select an entry by sorting the
+   * unique string representations of the `dataKey` values currently present in
+   * the chart. The first entry is assigned to the first key in that sorted
+   * list, and the palette repeats when there are more keys than entries.
+   *
+   * Graphical items with the same `dataKey` share a style. The assignment is
+   * independent of render order, but adding or removing a graphical item can
+   * change the assignment of the remaining items. The same `dataKey` can also
+   * receive different entries in charts with different sets of graphical items.
+   *
    * If this array has only one item in it then all graphical items will have the same color.
    *
    * Legend and Tooltip items inherit the same color.

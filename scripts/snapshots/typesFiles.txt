@@ -225,6 +225,7 @@
   "types/theme/graphicalItemIdentity.d.ts",
   "types/theme/lightTheme.d.ts",
   "types/theme/useBackwardsCompatibleTheme.d.ts",
+  "types/theme/useGraphicalItemIdentity.d.ts",
   "types/types.d.ts",
   "types/util",
   "types/util/ActiveShapeUtils.d.ts",
