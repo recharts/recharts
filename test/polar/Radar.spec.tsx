@@ -10,6 +10,7 @@ import {
   RadarChart,
   RadarPoint,
   RadarProps,
+  RechartsThemeProvider,
 } from '../../src';
 import { useAppSelector } from '../../src/state/hooks';
 import { selectPolarItemsSettings } from '../../src/state/selectors/polarSelectors';
@@ -170,6 +171,55 @@ describe('<Radar />', () => {
     );
 
     expect(screen.getAllByTestId('customized-shape')).toHaveLength(1);
+  });
+
+  it('does not pass dotFill to a custom shape function', () => {
+    const receivedProps: Array<{ dotFill?: string }> = [];
+    const CustomShape = (props: { dotFill?: string }) => {
+      receivedProps.push(props);
+      return <path data-testid="customized-shape" data-dot-fill={props.dotFill} />;
+    };
+
+    const { container } = render(
+      <RechartsThemeProvider value={{ graphicalItems: [{ fill: 'purple', stroke: 'teal' }] }}>
+        <RadarChart width={500} height={500} data={exampleRadarData}>
+          <Radar dataKey="value" dot isAnimationActive={false} shape={CustomShape} />
+        </RadarChart>
+      </RechartsThemeProvider>,
+    );
+
+    expect(receivedProps).not.toHaveLength(0);
+    receivedProps.forEach(props => {
+      expect(props).not.toHaveProperty('dotFill');
+    });
+    expect(screen.getByTestId('customized-shape')).not.toHaveAttribute('data-dot-fill');
+    const dots = container.querySelectorAll('.recharts-radar-dot');
+    expect(dots).not.toHaveLength(0);
+    dots.forEach(dot => {
+      expect(dot).toHaveAttribute('fill', 'teal');
+    });
+  });
+
+  it('does not pass dotFill to a custom shape element', () => {
+    const receivedProps: Array<{ dotFill?: string }> = [];
+    const CustomShape = (props: { dotFill?: string }) => {
+      receivedProps.push(props);
+      return <path data-testid="customized-shape" data-dot-fill={props.dotFill} />;
+    };
+
+    render(
+      <RechartsThemeProvider value={{ graphicalItems: [{ fill: 'purple', stroke: 'teal' }] }}>
+        <RadarChart width={500} height={500} data={exampleRadarData}>
+          <Radar dataKey="value" dot isAnimationActive={false} shape={<CustomShape />} />
+        </RadarChart>
+      </RechartsThemeProvider>,
+    );
+
+    expect(receivedProps).not.toHaveLength(0);
+    receivedProps.forEach(props => {
+      expect(props).not.toHaveProperty('dotFill');
+    });
+    expect(screen.getByTestId('customized-shape')).not.toHaveAttribute('data-dot-fill');
   });
 
   it('Render customized label when label is set to be a function', () => {

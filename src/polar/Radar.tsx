@@ -436,7 +436,7 @@ function StaticPolygon({
     return null;
   }
 
-  const { shape, isRange, connectNulls } = props;
+  const { shape, isRange, connectNulls, dotFill: _, ...propsWithoutDotFill } = props;
 
   const handleMouseEnter = (e: MouseEvent<SVGPolygonElement>) => {
     const { onMouseEnter } = props;
@@ -456,9 +456,9 @@ function StaticPolygon({
 
   let radar;
   if (React.isValidElement(shape)) {
-    radar = React.cloneElement(shape, { ...props, points } as any);
+    radar = React.cloneElement(shape, { ...propsWithoutDotFill, points } as any);
   } else if (typeof shape === 'function') {
-    radar = shape({ ...props, points });
+    radar = shape({ ...propsWithoutDotFill, points });
   } else {
     radar = (
       <Polygon
@@ -690,7 +690,8 @@ export function Radar<DataPointType = any, DataValueType = any>(outsideProps: Pr
   };
   const props: PropsWithDefaults = resolveDefaultProps(propsWithTheme, defaultRadarProps);
   const dotFill =
-    outsideProps.fill ?? (rechartsTheme == null ? props.fill : (props.stroke ?? graphicalItemTheme?.fill));
+    outsideProps.fill ??
+    (rechartsTheme == null ? props.fill : getLegendItemColor(props.stroke, graphicalItemTheme?.fill));
   return (
     <RegisterGraphicalItemId id={props.id} type="radar">
       {id => (

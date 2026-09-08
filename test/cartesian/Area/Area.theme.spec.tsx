@@ -360,6 +360,30 @@ describe('Area theme', () => {
       });
     });
 
+    it('uses the themed fill as the default dot fill when the area stroke is none', () => {
+      const { container } = rechartsTestRender(
+        <RechartsThemeProvider
+          value={{
+            graphicalItems: [
+              {
+                fill: 'purple',
+                stroke: 'teal',
+              },
+            ],
+          }}
+        >
+          <MyChart>
+            <Area dataKey="x" dot isAnimationActive={false} stroke="none" />
+          </MyChart>
+        </RechartsThemeProvider>,
+      );
+      const dots = container.querySelectorAll('.recharts-area-dot');
+      expect(dots).not.toHaveLength(0);
+      dots.forEach(dot => {
+        expect(dot).toHaveAttribute('fill', 'purple');
+      });
+    });
+
     it('should merge explicit dot props with the graphical item theme', () => {
       const { container } = rechartsTestRender(
         <RechartsThemeProvider

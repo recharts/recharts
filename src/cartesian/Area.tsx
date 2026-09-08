@@ -1105,7 +1105,8 @@ function AreaFn(outsideProps: Props<any, any>) {
     propsWithTheme,
     defaultAreaProps,
   );
-  const dotFill = outsideProps.fill ?? (rechartsTheme == null ? props.fill : (props.stroke ?? theme?.fill));
+  const dotFill =
+    outsideProps.fill ?? (rechartsTheme == null ? props.fill : getLegendItemColor(props.stroke, theme?.fill));
   const isPanorama = useIsPanorama();
   // Report all props to Redux store first, before calling hooks, to avoid circular dependencies.
   return (

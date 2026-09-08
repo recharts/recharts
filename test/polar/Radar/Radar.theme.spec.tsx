@@ -133,6 +133,31 @@ describe('Radar theme', () => {
     });
   });
 
+  it('uses the themed fill as the default dot fill when the radar stroke is none', () => {
+    const { container } = rechartsTestRender(
+      <RechartsThemeProvider
+        value={{
+          graphicalItems: [
+            {
+              fill: 'purple',
+              stroke: 'teal',
+            },
+          ],
+        }}
+      >
+        <MyChart>
+          <Radar dataKey="profit" dot isAnimationActive={false} stroke="none" />
+        </MyChart>
+      </RechartsThemeProvider>,
+    );
+
+    const dots = container.querySelectorAll('.recharts-radar-dot');
+    expect(dots).not.toHaveLength(0);
+    dots.forEach(dot => {
+      expect(dot).toHaveAttribute('fill', 'purple');
+    });
+  });
+
   it('does not apply the theme fillOpacity to dots', () => {
     const graphicalItems = [
       {
