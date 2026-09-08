@@ -30,15 +30,22 @@ const SPAN_STYLE = {
 const MEASUREMENT_SPAN_ID = 'recharts_measurement_span';
 
 function createCacheKey(text: string | number, style: CSSProperties): string {
-  // Simple string concatenation for better performance than JSON.stringify
-  const fontSize = style.fontSize || '';
-  const fontFamily = style.fontFamily || '';
-  const fontWeight = style.fontWeight || '';
-  const fontStyle = style.fontStyle || '';
-  const letterSpacing = style.letterSpacing || '';
-  const textTransform = style.textTransform || '';
+  // Simple string concatenation for better performance than JSON.stringify.
+  // Every property has to take part in the key because measureTextWithDOM applies the whole style
+  // object to the measurement span - listing only a few of them makes two different styles share
+  // one cache entry.
+  let key = `${text}`;
 
-  return `${text}|${fontSize}|${fontFamily}|${fontWeight}|${fontStyle}|${letterSpacing}|${textTransform}`;
+  for (const name in style) {
+    if (Object.prototype.hasOwnProperty.call(style, name)) {
+      const value = style[name as keyof CSSProperties];
+      if (value != null && value !== '') {
+        key += `|${name}:${value}`;
+      }
+    }
+  }
+
+  return key;
 }
 
 /**
@@ -57,7 +64,10 @@ const measureTextWithDOM = (text: string | number, style: CSSProperties): Size =
       document.body.appendChild(measurementSpan);
     }
 
-    // Apply styles directly without unnecessary object creation
+    // The span is reused between calls, and Object.assign only adds properties - it never removes
+    // the ones a previous style set. Without the reset, a measurement inherits leftovers from
+    // whatever was measured before it.
+    measurementSpan.style.cssText = '';
     Object.assign(measurementSpan.style, SPAN_STYLE, style);
     measurementSpan.textContent = `${text}`;
 
