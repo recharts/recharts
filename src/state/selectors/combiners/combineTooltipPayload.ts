@@ -94,6 +94,7 @@ export const combineTooltipPayload = (
   activeLabel: ActiveLabel,
   tooltipPayloadSearcher: TooltipPayloadSearcher | undefined,
   tooltipEventType: TooltipEventType | undefined,
+  allowDuplicatedCategory?: boolean,
 ): TooltipPayload | undefined => {
   if (activeIndex == null || tooltipPayloadSearcher == null) {
     return undefined;
@@ -113,7 +114,7 @@ export const combineTooltipPayload = (
     const finalNameKey: DataKey<any> | undefined = settings?.nameKey; // ?? tooltipAxis?.nameKey;
     let tooltipPayload: unknown;
     if (
-      tooltipAxisDataKey &&
+      tooltipAxisDataKey != null &&
       Array.isArray(sliced) &&
       /*
        * findEntryInArray won't work for Scatter because Scatter provides an array of arrays
@@ -139,7 +140,15 @@ export const combineTooltipPayload = (
        */
       tooltipEventType === 'axis'
     ) {
-      tooltipPayload = findEntryInArray(sliced, tooltipAxisDataKey, activeLabel);
+      // An index distinguishes repeated labels; differently ordered item data still needs the label lookup.
+      const indexedPayload = allowDuplicatedCategory
+        ? findEntryInArray(
+            [tooltipPayloadSearcher(sliced, activeIndex, computedData, finalNameKey)],
+            tooltipAxisDataKey,
+            activeLabel,
+          )
+        : undefined;
+      tooltipPayload = indexedPayload ?? findEntryInArray(sliced, tooltipAxisDataKey, activeLabel);
       /*
        * When allowDuplicatedCategory is false and there are duplicate category values
        * in the data, findEntryInArray returns only the first matching entry.

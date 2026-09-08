@@ -1023,7 +1023,7 @@ describe('Tooltip visibility', () => {
       expectLastCalledWith(spy, {
         allowDataOverflow: false,
         allowDecimals: false,
-        allowDuplicatedCategory: false,
+        allowDuplicatedCategory: true,
         dataKey: 'name',
         domain: undefined,
         id: 0,

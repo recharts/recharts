@@ -25,7 +25,12 @@ import {
 } from '../../util/types';
 import { TooltipTrigger } from '../../chart/types';
 import { selectChartDataWithIndexes } from './dataSelectors';
-import { selectTooltipAxisDomain, selectTooltipAxisTicks, selectTooltipDisplayedData } from './tooltipSelectors';
+import {
+  selectTooltipAllowDuplicatedCategory,
+  selectTooltipAxisDomain,
+  selectTooltipAxisTicks,
+  selectTooltipDisplayedData,
+} from './tooltipSelectors';
 import { AxisRange, selectTooltipAxisDataKey } from './axisSelectors';
 import { selectChartName } from './rootPropsSelectors';
 import { selectChartLayout } from '../../context/chartLayoutContext';
@@ -179,6 +184,7 @@ export const selectTooltipPayload: (
     selectActiveLabel,
     selectTooltipPayloadSearcher,
     pickTooltipEventType,
+    selectTooltipAllowDuplicatedCategory,
   ],
   combineTooltipPayload,
 );

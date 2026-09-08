@@ -268,7 +268,7 @@ export const getTicksOfAxis = (
   if (isCategorical && categoricalDomain) {
     return categoricalDomain
       .map((entry: unknown, index: number): TickItem | null => {
-        const scaled = scale.map(entry);
+        const scaled = scale.map(duplicateDomain ? index : entry);
         if (!isWellBehavedNumber(scaled)) {
           return null;
         }

@@ -395,7 +395,7 @@ const combineTicksOfTooltipAxis = (
   if (isCategorical && categoricalDomain) {
     return categoricalDomain
       .map((entry: unknown, index: number): TickItem | null => {
-        const scaled = scale.map(entry);
+        const scaled = scale.map(duplicateDomain ? index : entry);
         if (!isWellBehavedNumber(scaled)) {
           return null;
         }
@@ -601,6 +601,11 @@ export const selectIsTooltipActive: (state: RechartsRootState) => boolean = crea
   (tooltipInteractionState: TooltipInteractionState | undefined): boolean => tooltipInteractionState?.active ?? false,
 );
 
+export const selectTooltipAllowDuplicatedCategory = (state: RechartsRootState): boolean => {
+  const axis = selectTooltipAxis(state);
+  return axis.type === 'category' && axis.allowDuplicatedCategory;
+};
+
 export const selectActiveTooltipPayload: (state: RechartsRootState) => TooltipPayload | undefined = createSelector(
   [
     selectTooltipPayloadConfigurations,
@@ -610,6 +615,7 @@ export const selectActiveTooltipPayload: (state: RechartsRootState) => TooltipPa
     selectActiveLabel,
     selectTooltipPayloadSearcher,
     selectTooltipEventType,
+    selectTooltipAllowDuplicatedCategory,
   ],
   combineTooltipPayload,
 );

@@ -517,7 +517,7 @@ export function PolarAngleAxis<DataPointType = any, DataValueType = any>(
       dataKey={props.dataKey}
       unit={undefined}
       name={props.name}
-      allowDuplicatedCategory={false} // Ignoring the prop on purpose because axis calculation behaves as if it was false and Tooltip requires it to be true.
+      allowDuplicatedCategory={props.allowDuplicatedCategory}
       allowDataOverflow={false}
       reversed={props.reversed}
       includeHidden={false}

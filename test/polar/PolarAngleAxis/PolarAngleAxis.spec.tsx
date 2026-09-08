@@ -130,7 +130,7 @@ describe('<PolarAngleAxis />', () => {
         expectLastCalledWith(spy, {
           allowDataOverflow: false,
           allowDecimals: false,
-          allowDuplicatedCategory: false,
+          allowDuplicatedCategory: true,
           dataKey: 'value',
           domain: undefined,
           id: 0,
@@ -379,7 +379,7 @@ describe('<PolarAngleAxis />', () => {
         expectLastCalledWith(spy, {
           allowDataOverflow: false,
           allowDecimals: false,
-          allowDuplicatedCategory: false,
+          allowDuplicatedCategory: true,
           dataKey: undefined,
           domain: undefined,
           id: 0,
@@ -668,7 +668,7 @@ describe('<PolarAngleAxis />', () => {
         expectLastCalledWith(spy, {
           allowDataOverflow: false,
           allowDecimals: false,
-          allowDuplicatedCategory: false,
+          allowDuplicatedCategory: true,
           dataKey: 'angle',
           domain: [0, 360],
           id: 0,
@@ -858,7 +858,7 @@ describe('<PolarAngleAxis />', () => {
       expect(angleAxisSettingsSpy).toHaveBeenLastCalledWith({
         allowDataOverflow: false,
         allowDecimals: false,
-        allowDuplicatedCategory: false,
+        allowDuplicatedCategory: true,
         dataKey: 'angle',
         domain: [0, 360],
         id: 0,
@@ -1695,7 +1695,7 @@ describe('<PolarAngleAxis />', () => {
         expectLastCalledWith(spy, {
           allowDataOverflow: false,
           allowDecimals: false,
-          allowDuplicatedCategory: false,
+          allowDuplicatedCategory: true,
           dataKey: undefined,
           domain: undefined,
           id: 0,
@@ -1867,7 +1867,7 @@ describe('<PolarAngleAxis />', () => {
         expectLastCalledWith(spy, {
           allowDataOverflow: false,
           allowDecimals: false,
-          allowDuplicatedCategory: false,
+          allowDuplicatedCategory: true,
           dataKey: undefined,
           domain: undefined,
           id: 0,
@@ -1900,7 +1900,7 @@ describe('<PolarAngleAxis />', () => {
       it('should select domain', () => {
         const { spy } = renderTestCase(state => selectPolarAxisDomain(state, 'angleAxis', 0));
         // this looks like a correct, categorical domain derived from the data
-        expectLastCalledWith(spy, [400, 300, 200, 278, 189]);
+        expectLastCalledWith(spy, [400, 300, 300, 200, 278, 189]);
         expect(spy).toHaveBeenCalledTimes(2);
       });
 
@@ -2081,7 +2081,7 @@ describe('<PolarAngleAxis />', () => {
         expectLastCalledWith(spy, {
           allowDataOverflow: false,
           allowDecimals: false,
-          allowDuplicatedCategory: false,
+          allowDuplicatedCategory: true,
           dataKey: undefined,
           domain: undefined,
           id: 0,
@@ -2232,7 +2232,7 @@ describe('<PolarAngleAxis />', () => {
         expectLastCalledWith(spy, {
           allowDataOverflow: false,
           allowDecimals: false,
-          allowDuplicatedCategory: false,
+          allowDuplicatedCategory: true,
           dataKey: undefined,
           domain: undefined,
           id: 0,
@@ -2626,7 +2626,7 @@ describe('<PolarAngleAxis />', () => {
       const expectedAxis: AngleAxisSettings = {
         allowDataOverflow: false,
         allowDecimals: false,
-        allowDuplicatedCategory: false,
+        allowDuplicatedCategory: true,
         dataKey: undefined,
         domain: undefined,
         id: 0,

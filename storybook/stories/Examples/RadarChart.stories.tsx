@@ -13,6 +13,27 @@ export default {
   },
 };
 
+export const RepeatedCategories: StoryObj = {
+  render: (args: Args) => (
+    <RadarChart {...args}>
+      <PolarGrid />
+      <PolarAngleAxis dataKey="name" />
+      <PolarRadiusAxis />
+      <Radar dataKey="value" fill="orange" fillOpacity={0.5} stroke="blue" />
+      <Tooltip defaultIndex={2} />
+    </RadarChart>
+  ),
+  args: {
+    data: [
+      { name: 'A', value: 12 },
+      { name: 'B', value: 3 },
+      { name: 'A', value: 10 },
+    ],
+    width: 360,
+    height: 360,
+  },
+};
+
 export const RangedRadarChart: StoryObj = {
   render: (args: Args) => {
     return (

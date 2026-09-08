@@ -484,7 +484,7 @@ describe('<RadialBar />', () => {
       expectLastCalledWith(spy, {
         allowDataOverflow: false,
         allowDecimals: false,
-        allowDuplicatedCategory: false,
+        allowDuplicatedCategory: true,
         dataKey: 'pv',
         domain: undefined,
         id: 0,
@@ -871,7 +871,7 @@ describe('<RadialBar />', () => {
       expectLastCalledWith(spy, {
         allowDataOverflow: false,
         allowDecimals: false,
-        allowDuplicatedCategory: false,
+        allowDuplicatedCategory: true,
         dataKey: undefined,
         domain: undefined,
         id: 0,
