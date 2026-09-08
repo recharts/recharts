@@ -1,7 +1,7 @@
 import { createSelector } from 'reselect';
 import { RechartsRootState } from '../store';
 import { AngleAxisForRadar, computeRadarPoints, RadarComposedData, RadiusAxisForRadar } from '../../polar/Radar';
-import { AxisRange, BaseAxisWithScale } from './axisSelectors';
+import { AxisRange, BaseAxisWithScale, selectDuplicateDomain } from './axisSelectors';
 import { selectPolarAxisScale, selectPolarAxisTicks } from './polarScaleSelectors';
 import {
   selectAngleAxis,
@@ -100,17 +100,30 @@ const selectAngleAxisRangeForRadar = (
   angleAxisId: AxisId,
 ): AxisRange | undefined => selectAngleAxisRangeWithReversed(state, angleAxisId);
 
+const selectAngleAxisDuplicateDomain = (
+  state: RechartsRootState,
+  _radiusAxisId: AxisId,
+  angleAxisId: AxisId,
+): ReadonlyArray<unknown> | undefined => selectDuplicateDomain(state, 'angleAxis', angleAxisId, true);
+
 export const selectAngleAxisWithScaleAndViewport: (
   state: RechartsRootState,
   _radiusAxisId: AxisId,
   angleAxisId: AxisId,
 ) => AngleAxisForRadar | undefined = createSelector(
-  [selectAngleAxisForRadar, selectPolarAxisScaleForRadar, selectPolarViewBox, selectAngleAxisRangeForRadar],
+  [
+    selectAngleAxisForRadar,
+    selectPolarAxisScaleForRadar,
+    selectPolarViewBox,
+    selectAngleAxisRangeForRadar,
+    selectAngleAxisDuplicateDomain,
+  ],
   (
     axisOptions: AngleAxisSettings,
     scale: RechartsScale | undefined,
     polarViewBox: PolarViewBoxRequired | undefined,
     range: AxisRange | undefined,
+    duplicateDomain: ReadonlyArray<unknown> | undefined,
   ): AngleAxisForRadar | undefined => {
     if (polarViewBox == null || scale == null || range == null) {
       return undefined;
@@ -119,6 +132,7 @@ export const selectAngleAxisWithScaleAndViewport: (
       scale,
       type: axisOptions.type,
       dataKey: axisOptions.dataKey,
+      duplicateDomain,
       cx: polarViewBox.cx,
       cy: polarViewBox.cy,
       range,

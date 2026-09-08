@@ -206,7 +206,7 @@ describe('<RadarChart />', () => {
     expect(angleAxisSettingsSpy).toHaveBeenLastCalledWith({
       allowDataOverflow: false,
       allowDecimals: false,
-      allowDuplicatedCategory: false,
+      allowDuplicatedCategory: true,
       dataKey: undefined,
       domain: undefined,
       id: 0,

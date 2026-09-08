@@ -2,14 +2,19 @@ import React from 'react';
 import { fireEvent, render, screen } from '@testing-library/react';
 
 import { expect, it, vi } from 'vitest';
+import { scaleBand } from 'victory-vendor/d3-scale';
 import {
   DefaultZIndexes,
+  Brush,
   InternalRadarProps,
   PolarAngleAxis,
+  PolarRadiusAxis,
   Radar,
   RadarChart,
   RadarPoint,
   RadarProps,
+  RadialBar,
+  Tooltip,
 } from '../../src';
 import { useAppSelector } from '../../src/state/hooks';
 import { selectPolarItemsSettings } from '../../src/state/selectors/polarSelectors';
@@ -21,9 +26,10 @@ import { assertNotNull } from '../helper/assertNotNull';
 import { expectLastCalledWith } from '../helper/expectLastCalledWith';
 import { createSelectorTestCase } from '../helper/createSelectorTestCase';
 import { selectRadiusAxis } from '../../src/state/selectors/polarAxisSelectors';
-import { selectPolarAngleAxisTicks } from '../../src/state/selectors/polarScaleSelectors';
+import { selectPolarAngleAxisTicks, selectPolarAxisTicks } from '../../src/state/selectors/polarScaleSelectors';
 import { selectRadarPoints } from '../../src/state/selectors/radarSelectors';
 import { defaultAxisId } from '../../src/state/cartesianAxisSlice';
+import { selectActiveTooltipPayload, selectTooltipAxisTicks } from '../../src/state/selectors/tooltipSelectors';
 
 type Point = { x?: number | string; y?: number | string };
 const CustomizedShape = ({ points }: { points: Point[] }) => {
@@ -42,6 +48,278 @@ const CustomizedLabel = () => {
 const CustomizedDot = ({ x, y }: Point) => <circle cx={x} cy={y} r={10} data-testid="customized-dot" />;
 
 describe('<Radar />', () => {
+  it.each([
+    [2, 0, 2, 1, 0],
+    [0, 1, 0, 2, 1],
+    [1, 0, 1, 2, 0],
+  ])('should retain category radius tick coordinates with Brush for %s', (...values) => {
+    const data = values.map((value, index) => ({ value, index }));
+    const renderTestCase = createSelectorTestCase(({ children }) => (
+      <RadarChart data={data} width={500} height={500} layout="radial" startAngle={90} endAngle={-150}>
+        <PolarAngleAxis type="number" dataKey="index" domain={[0, 4]} />
+        <PolarRadiusAxis type="category" dataKey="value" scale="point" tick={false} />
+        <Radar id="radar" dataKey="value" isAnimationActive={false} />
+        <Brush startIndex={1} endIndex={2} />
+        {children}
+      </RadarChart>
+    ));
+    const points = renderTestCase(state => selectRadarPoints(state, 0, 0, false, 'radar'));
+    const ticks = renderTestCase(state => selectPolarAxisTicks(state, 'radiusAxis', 0, false));
+    expect(points.spy.mock.lastCall?.[0]?.points).toHaveLength(data.length);
+    for (const point of points.spy.mock.lastCall?.[0]?.points ?? []) {
+      expect(ticks.spy.mock.lastCall?.[0]).toContainEqual(
+        expect.objectContaining({ value: point.value, coordinate: point.radius }),
+      );
+    }
+  });
+
+  describe.each([false, true])('with a RadialBar hide=%s', hide => {
+    describe.each([0, 1])('using angleAxisId=%s', angleAxisId => {
+      it.each([false, true])('should preserve each axis data range with panorama=%s', isPanorama => {
+        const names = ['A', 'B', 'A', 'C', 'B'];
+        const data = names.map((name, value) => ({ name, value }));
+        const renderTestCase = createSelectorTestCase(({ children }) => (
+          <RadarChart width={500} height={500} data={data} startAngle={90} endAngle={-150}>
+            <PolarAngleAxis dataKey="name" />
+            {angleAxisId !== 0 && <PolarAngleAxis angleAxisId={angleAxisId} dataKey="name" />}
+            <Radar dataKey="value" isAnimationActive={false} />
+            <RadialBar dataKey="value" angleAxisId={angleAxisId} hide={hide} isAnimationActive={false} />
+            <Brush startIndex={1} endIndex={4} />
+            {children}
+          </RadarChart>
+        ));
+        const { spy } = renderTestCase(state => selectPolarAngleAxisTicks(state, 'angleAxis', 0, isPanorama));
+        const categories = angleAxisId === 0 && !isPanorama ? [...names.slice(1), undefined] : names;
+        expect(spy.mock.lastCall?.[0]?.map(tick => [tick.value, tick.coordinate])).toEqual(
+          categories.map((name, index) => [name, 90 - 48 * index]),
+        );
+      });
+    });
+  });
+
+  describe.each([undefined, true, false])('with Radar hide=%s', hide => {
+    it.each([false, true])('should keep full category ticks with panorama=%s', isPanorama => {
+      const names = ['A', 'B', 'A', 'C', 'B'];
+      const data = names.map((name, value) => ({ name, value }));
+      const renderTestCase = createSelectorTestCase(({ children }) => (
+        <RadarChart width={500} height={500} data={data} startAngle={90} endAngle={-150}>
+          <PolarAngleAxis dataKey="name" />
+          {hide != null && <Radar dataKey="value" hide={hide} isAnimationActive={false} />}
+          <Brush startIndex={1} endIndex={2} />
+          {children}
+        </RadarChart>
+      ));
+      const { spy } = renderTestCase(state => selectPolarAngleAxisTicks(state, 'angleAxis', 0, isPanorama));
+      expect(spy.mock.lastCall?.[0]?.map(tick => [tick.value, tick.coordinate])).toEqual(
+        names.map((name, index) => [name, 90 - 48 * index]),
+      );
+    });
+  });
+
+  describe.each(
+    [undefined, true, false].flatMap(allowDuplicatedCategory =>
+      (['auto', 'band', 'point', scaleBand()] as const).flatMap(scale =>
+        [
+          ['A', 'B', 'A', 'C', 'B'],
+          [2, 0, 2, 1, 0],
+        ].flatMap(names => [2, 4].map(endIndex => ({ allowDuplicatedCategory, scale, names, endIndex }))),
+      ),
+    ),
+  )(
+    'with Brush 1-$endIndex, names=$names, scale=$scale and allowDuplicatedCategory=$allowDuplicatedCategory',
+    ({ allowDuplicatedCategory, scale, names, endIndex }) => {
+      it('should keep the full polar domain aligned while retaining the tooltip slice', () => {
+        const data = names.map((name, index) => ({ name, value: 100 + index, extra: 200 + index }));
+        const renderTestCase = createSelectorTestCase(({ children }) => (
+          <RadarChart width={500} height={500} data={data} startAngle={90} endAngle={-150}>
+            <PolarAngleAxis dataKey="name" scale={scale} allowDuplicatedCategory={allowDuplicatedCategory} />
+            <Radar dataKey="value" id="radar-value" isAnimationActive={false} />
+            <Radar dataKey="extra" id="radar-extra" isAnimationActive={false} />
+            <Brush startIndex={1} endIndex={endIndex} />
+            <Tooltip defaultIndex={1} />
+            {children}
+          </RadarChart>
+        ));
+        const categories: (string | number)[] =
+          allowDuplicatedCategory === false ? [...new Set<string | number>(names)] : names;
+        const step = 240 / (scale === 'point' ? categories.length - 1 : categories.length);
+        const pointAngle = (name: string | number, index: number) =>
+          90 - step * (allowDuplicatedCategory === false ? categories.indexOf(name) : index);
+        for (const [id, dataKey] of [
+          ['radar-value', 'value'],
+          ['radar-extra', 'extra'],
+        ] as const) {
+          const { spy } = renderTestCase(state => selectRadarPoints(state, 0, 0, false, id));
+          expect(spy.mock.lastCall?.[0]?.points.map(point => [point.name, point.value, point.angle])).toEqual(
+            data.map((entry, index) => [entry.name, entry[dataKey], pointAngle(entry.name, index)]),
+          );
+        }
+        const axes = renderTestCase(state => selectPolarAngleAxisTicks(state, 'angleAxis', 0, false));
+        expect(axes.spy.mock.lastCall?.[0]?.map(tick => [tick.value, tick.coordinate])).toEqual(
+          categories.map((name, index) => [name, 90 - step * index]),
+        );
+        expect(
+          Array.from(
+            axes.container.querySelectorAll('.recharts-polar-angle-axis-tick-value'),
+            tick => tick.textContent,
+          ),
+        ).toEqual(categories.map(String));
+
+        const tooltip = renderTestCase(selectActiveTooltipPayload);
+        expect(tooltip.spy.mock.lastCall?.[0]?.map(entry => [entry.value, entry.payload])).toEqual([
+          [102, data[2]],
+          [202, data[2]],
+        ]);
+        expect(
+          Array.from(
+            tooltip.container.querySelectorAll('.recharts-tooltip-item-value'),
+            item => item.textContent,
+          ).sort(),
+        ).toEqual(['102', '202']);
+      });
+    },
+  );
+
+  describe.each(
+    [undefined, true, false].flatMap(allowDuplicatedCategory =>
+      ['name', 0, ''].map(dataKey => ({ allowDuplicatedCategory, dataKey })),
+    ),
+  )(
+    'with allowDuplicatedCategory=$allowDuplicatedCategory and dataKey=$dataKey',
+    ({ allowDuplicatedCategory, dataKey }) => {
+      const data = [
+        { name: 'A', 0: 'A', '': 'A', value: 12 },
+        { name: 'B', 0: 'B', '': 'B', value: 3 },
+        { name: 'A', 0: 'A', '': 'A', value: 10 },
+      ];
+      const renderTestCase = createSelectorTestCase(({ children }) => (
+        <RadarChart width={500} height={500} data={data}>
+          <PolarAngleAxis dataKey={dataKey} allowDuplicatedCategory={allowDuplicatedCategory} />
+          <Radar dataKey="value" id="radar-value" isAnimationActive={false} />
+          {children}
+        </RadarChart>
+      ));
+
+      it('should preserve the category and value of each point at its corresponding angle', () => {
+        const { spy } = renderTestCase(state =>
+          selectRadarPoints(state, defaultAxisId, defaultAxisId, false, 'radar-value'),
+        );
+        const result = spy.mock.lastCall?.[0];
+        assertNotNull(result);
+        const angles = allowDuplicatedCategory === false ? [90, -90, 90] : [90, -30, -150];
+        expect(result.points.map(point => [point.name, point.value, point.angle])).toEqual(
+          data.map((entry, index) => [entry.name, entry.value, angles[index]]),
+        );
+      });
+    },
+  );
+
+  describe.each(
+    [undefined, true, false].flatMap(allowDuplicatedCategory =>
+      (['band', 'point', scaleBand()] as const).map(scale => ({ allowDuplicatedCategory, scale })),
+    ),
+  )('with scale=$scale and allowDuplicatedCategory=$allowDuplicatedCategory', ({ allowDuplicatedCategory, scale }) => {
+    const data = [
+      { name: 'A', value: 12 },
+      { name: 'B', value: 3 },
+      { name: 'A', value: 10 },
+    ];
+    const renderTestCase = createSelectorTestCase(({ children }) => (
+      <RadarChart width={500} height={500} data={data} startAngle={90} endAngle={-150}>
+        <PolarAngleAxis dataKey="name" scale={scale} allowDuplicatedCategory={allowDuplicatedCategory} />
+        <Radar dataKey="value" id="radar-value" isAnimationActive={false} />
+        <Tooltip />
+        {children}
+      </RadarChart>
+    ));
+    const distinctAngles = scale === 'point' ? [90, -30, -150] : [90, 10, -70];
+    const mergedAngles = scale === 'point' ? [90, -150, 90] : [90, -30, 90];
+    const angles = allowDuplicatedCategory === false ? mergedAngles : distinctAngles;
+
+    it('should keep axis labels aligned with the radar points', () => {
+      const { spy, container } = renderTestCase(state => selectPolarAngleAxisTicks(state, 'angleAxis', 0, false));
+      const visibleData = allowDuplicatedCategory === false ? data.slice(0, 2) : data;
+      expect(spy.mock.lastCall?.[0]?.map(tick => [tick.value, tick.coordinate])).toEqual(
+        visibleData.map((entry, index) => [entry.name, angles[index]]),
+      );
+      expect(
+        Array.from(container.querySelectorAll('.recharts-polar-angle-axis-tick-value'), tick => tick.textContent),
+      ).toEqual(visibleData.map(entry => entry.name));
+
+      const points = renderTestCase(state => selectRadarPoints(state, 0, 0, false, 'radar-value'));
+      expect(points.spy.mock.lastCall?.[0]?.points.map(point => [point.name, point.value, point.angle])).toEqual(
+        data.map((entry, index) => [entry.name, entry.value, angles[index]]),
+      );
+    });
+
+    it('should provide a tooltip tick for each category occurrence', () => {
+      const { spy } = renderTestCase(selectTooltipAxisTicks);
+      expect(spy.mock.lastCall?.[0]?.map(tick => [tick.value, tick.coordinate, tick.index])).toEqual(
+        data.map((entry, index) => [entry.name, angles[index], index]),
+      );
+    });
+  });
+
+  it('should show the value of the selected duplicate category in the tooltip', () => {
+    const data = [
+      { name: 'A', value: 12 },
+      { name: 'B', value: 3 },
+      { name: 'A', value: 10 },
+    ];
+    const renderTestCase = createSelectorTestCase(({ children }) => (
+      <RadarChart width={500} height={500} data={data}>
+        <PolarAngleAxis dataKey="name" />
+        <Radar dataKey="value" isAnimationActive={false} />
+        <Tooltip defaultIndex={2} />
+        {children}
+      </RadarChart>
+    ));
+    const { spy, container } = renderTestCase(selectActiveTooltipPayload);
+    expect(spy.mock.lastCall?.[0]?.map(entry => [entry.value, entry.payload])).toEqual([[10, data[2]]]);
+    expect(container.querySelector('.recharts-tooltip-item-value')).toHaveTextContent('10');
+  });
+
+  it('should keep numeric categories distinct from their array indexes', () => {
+    const data = [
+      { name: 2, value: 12 },
+      { name: 0, value: 3 },
+      { name: 2, value: 10 },
+    ];
+    const renderTestCase = createSelectorTestCase(({ children }) => (
+      <RadarChart width={500} height={500} data={data}>
+        <PolarAngleAxis dataKey="name" />
+        <Radar dataKey="value" id="radar-value" isAnimationActive={false} />
+        {children}
+      </RadarChart>
+    ));
+    const { spy } = renderTestCase(state => selectRadarPoints(state, 0, 0, false, 'radar-value'));
+    const result = spy.mock.lastCall?.[0];
+    assertNotNull(result);
+    expect(result.points.map(point => [point.name, point.angle])).toEqual([
+      [2, 90],
+      [0, -30],
+      [2, -150],
+    ]);
+  });
+
+  it('should resolve tooltip values by category when duplicate categories are disabled', () => {
+    const data = [
+      { name: 'A', value: 12 },
+      { name: 'A', value: 3 },
+      { name: 'B', value: 10 },
+    ];
+    const renderTestCase = createSelectorTestCase(({ children }) => (
+      <RadarChart width={500} height={500} data={data}>
+        <PolarAngleAxis dataKey="name" allowDuplicatedCategory={false} />
+        <Radar dataKey="value" isAnimationActive={false} />
+        <Tooltip defaultIndex={1} />
+        {children}
+      </RadarChart>
+    ));
+    const { spy } = renderTestCase(selectActiveTooltipPayload);
+    expect(spy.mock.lastCall?.[0]?.map(entry => [entry.value, entry.payload])).toEqual([[10, data[2]]]);
+  });
+
   describe('in simple chart with implicit axes', () => {
     const renderTestCase = createSelectorTestCase(({ children }) => (
       <RadarChart width={500} height={500} data={exampleRadarData}>

@@ -17,11 +17,34 @@ import {
 } from './polarAxisSelectors';
 import { CartesianTickItem } from '../../util/types';
 import { selectChartLayout } from '../../context/chartLayoutContext';
-import { selectPolarAppliedValues, selectPolarAxisCheckedDomain, selectPolarNiceTicks } from './polarSelectors';
+import {
+  selectPolarAppliedValues,
+  selectPolarAxisCheckedDomain,
+  selectPolarNiceTicks,
+  selectUnfilteredPolarItems,
+} from './polarSelectors';
 import { pickAxisType } from './pickAxisType';
 import { RechartsScale, rechartsScaleFactory } from '../../util/scale/RechartsScale';
 import { CustomScaleDefinition } from '../../util/scale/CustomScaleDefinition';
 import { combineConfiguredScale } from './combiners/combineConfiguredScale';
+import { selectChartName } from './rootPropsSelectors';
+
+const selectPolarDuplicateDomain = (
+  state: RechartsRootState,
+  axisType: 'angleAxis' | 'radiusAxis',
+  axisId: AxisId,
+  isPanorama: boolean,
+): ReadonlyArray<unknown> | undefined => {
+  // Radar angles use the full data range even with a Brush. A RadialBar sharing
+  // the angle axis still uses the Brush slice, so retain its existing tick domain.
+  const axisIdKey = axisType === 'angleAxis' ? 'angleAxisId' : 'radiusAxisId';
+  const hasRadialBar = selectUnfilteredPolarItems(state).some(
+    item => item.type === 'radialBar' && item[axisIdKey] === axisId,
+  );
+  const ignoreIndexes =
+    isPanorama || (axisType === 'angleAxis' && selectChartName(state) === 'RadarChart' && !hasRadialBar);
+  return selectDuplicateDomain(state, axisType, axisId, ignoreIndexes);
+};
 
 export const selectPolarAxis = (state: RechartsRootState, axisType: 'angleAxis' | 'radiusAxis', axisId: AxisId) => {
   switch (axisType) {
@@ -92,7 +115,7 @@ export const selectPolarAxisTicks: (
     selectPolarAxisScale,
     selectPolarNiceTicks,
     selectPolarAxisRangeWithReversed,
-    selectDuplicateDomain,
+    selectPolarDuplicateDomain,
     selectPolarCategoricalDomain,
     pickAxisType,
   ],
@@ -135,7 +158,7 @@ export const selectPolarGraphicalItemAxisTicks: (
     selectPolarAxis,
     selectPolarAxisScale,
     selectPolarAxisRangeWithReversed,
-    selectDuplicateDomain,
+    selectPolarDuplicateDomain,
     selectPolarCategoricalDomain,
     pickAxisType,
   ],

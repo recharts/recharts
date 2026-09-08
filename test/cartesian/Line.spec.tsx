@@ -1,8 +1,10 @@
 import React from 'react';
 import { fireEvent, render } from '@testing-library/react';
 import { beforeEach, describe, expect, it, test, vi } from 'vitest';
+import { scaleBand } from 'victory-vendor/d3-scale';
 import {
   ActiveDotProps,
+  CartesianGrid,
   Customized,
   ErrorBar,
   Line,
@@ -11,9 +13,11 @@ import {
   RechartsThemeProvider,
   Tooltip,
   XAxis,
+  YAxis,
 } from '../../src';
 import { useAppSelector } from '../../src/state/hooks';
-import { selectErrorBarsSettings } from '../../src/state/selectors/axisSelectors';
+import { selectErrorBarsSettings, selectTicksOfAxis } from '../../src/state/selectors/axisSelectors';
+import { selectLinePoints } from '../../src/state/selectors/lineSelectors';
 import { createSelectorTestCase } from '../helper/createSelectorTestCase';
 import { selectTooltipPayload } from '../../src/state/selectors/selectors';
 import { expectLines } from '../helper/expectLine';
@@ -37,6 +41,42 @@ describe('<Line />', () => {
     { x: 130, y: 50, value: 100 },
     { x: 170, y: 50, value: 100 },
   ];
+
+  it.each(
+    (['band', 'point', scaleBand()] as const).flatMap(scale =>
+      ['name', 0, ''].flatMap(dataKey => [2, 'A'].map(repeatedName => ({ scale, dataKey, repeatedName }))),
+    ),
+  )(
+    'keeps repeated categories aligned with scale=$scale, dataKey=$dataKey, and repeatedName=$repeatedName',
+    ({ scale, dataKey, repeatedName }) => {
+      const names = [repeatedName, typeof repeatedName === 'number' ? 0 : 'B', repeatedName];
+      const chartData = names.map((name, index) => ({ name, 0: name, '': name, value: index + 1 }));
+      const renderTestCase = createSelectorTestCase(({ children }) => (
+        <LineChart width={500} height={500} data={chartData}>
+          <XAxis dataKey={dataKey} scale={scale} interval={0} />
+          <YAxis />
+          <CartesianGrid syncWithTicks />
+          <Line id="line-value" dataKey="value" isAnimationActive={false} />
+          {children}
+        </LineChart>
+      ));
+      const coordinates = scale === 'point' ? [65, 280, 495] : [65 + 430 / 6, 280, 495 - 430 / 6];
+      const { spy, container } = renderTestCase(state => selectTicksOfAxis(state, 'xAxis', 0, false));
+      const ticks = spy.mock.lastCall?.[0];
+      expect(ticks?.map(tick => tick.value)).toEqual(names);
+      ticks?.forEach((tick, index) => expect(tick.coordinate).toBeCloseTo(coordinates[index]));
+      const gridLines = container.querySelectorAll('.recharts-cartesian-grid-vertical line');
+      expect(gridLines).toHaveLength(names.length);
+      gridLines.forEach((line, index) => expect(Number(line.getAttribute('x1'))).toBeCloseTo(coordinates[index]));
+
+      const points = renderTestCase(state => selectLinePoints(state, 0, 0, false, 'line-value')).spy.mock.lastCall?.[0];
+      expect(points).toHaveLength(names.length);
+      points?.forEach((point, index) => {
+        expect(point.x).toBeCloseTo(coordinates[index]);
+        expect(point.payload).toBe(chartData[index]);
+      });
+    },
+  );
 
   it('Renders a path in a simple Line', () => {
     const { container } = render(

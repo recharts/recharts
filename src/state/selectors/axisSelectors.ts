@@ -1949,7 +1949,7 @@ export const combineDuplicateDomain = (
   const isCategorical = isCategoricalAxis(chartLayout, axisType);
   const allData = appliedValues.map(av => av.value);
   const validData = allData.filter(v => v != null);
-  if (dataKey && isCategorical && type === 'category' && allowDuplicatedCategory && hasDuplicate(validData)) {
+  if (dataKey != null && isCategorical && type === 'category' && allowDuplicatedCategory && hasDuplicate(validData)) {
     return allData;
   }
   return undefined;
@@ -2085,7 +2085,7 @@ export const combineAxisTicks = (
   if (isCategorical && categoricalDomain) {
     return categoricalDomain
       .map((entry: unknown, index: number): TickItem | null => {
-        const scaled = scale.map(entry);
+        const scaled = scale.map(duplicateDomain ? index : entry);
         if (!isWellBehavedNumber(scaled)) {
           return null;
         }
@@ -2205,7 +2205,7 @@ export const combineGraphicalItemTicks = (
   if (isCategorical && categoricalDomain) {
     return categoricalDomain
       .map((entry: unknown, index: number): TickItem | null => {
-        const scaled = scale.map(entry);
+        const scaled = scale.map(duplicateDomain ? index : entry);
         if (!isWellBehavedNumber(scaled)) {
           return null;
         }

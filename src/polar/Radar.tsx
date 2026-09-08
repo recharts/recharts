@@ -200,6 +200,7 @@ export type AngleAxisForRadar = {
   scale: RechartsScale;
   type: 'number' | 'category';
   dataKey: DataKey<any> | undefined;
+  duplicateDomain: ReadonlyArray<unknown> | undefined;
   cx: number;
   cy: number;
   range: AxisRange;
@@ -318,7 +319,7 @@ export function computeRadarPoints({
   displayedData.forEach((entry, i) => {
     const name = getValueByDataKey(entry, angleAxis.dataKey, i);
     const value = getValueByDataKey(entry, dataKey);
-    const angle: number = (angleAxis.scale.map(name) ?? 0) + angleBandSize;
+    const angle: number = (angleAxis.scale.map(angleAxis.duplicateDomain ? i : name) ?? 0) + angleBandSize;
     const pointValue = Array.isArray(value) ? last(value) : value;
     const radius: number = isNullish(pointValue) ? 0 : (radiusAxis.scale.map(pointValue) ?? 0);
 

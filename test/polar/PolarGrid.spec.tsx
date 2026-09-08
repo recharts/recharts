@@ -982,7 +982,7 @@ describe('<PolarGrid />', () => {
         expectLastCalledWith(spy, {
           allowDataOverflow: false,
           allowDecimals: false,
-          allowDuplicatedCategory: false,
+          allowDuplicatedCategory: true,
           dataKey: 'uv',
           domain: undefined,
           id: 'axis-uv',
