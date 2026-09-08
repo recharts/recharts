@@ -184,7 +184,8 @@ npm run test-vr:ui
 
 This publishes the Playwright UI at http://localhost:8080 and the Vite gallery at port 3100.
 Open http://localhost:3100/gallery/preview.html for a human-facing navigation page that lets you
-click through all stories using their default props.
+click through all stories using their default props. Each selected story is rendered in three
+isolated legacy, light, and dark panels.
 
 The URL http://localhost:3100/gallery/index.html is intentionally a blank Playwright mount target.
 Playwright navigates there before calling `window.mount`; it does not contain a story list and does

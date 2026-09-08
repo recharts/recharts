@@ -23,7 +23,10 @@ export default defineConfig(({ command }) => ({
     emptyOutDir: true,
     outDir: path.join(__dirname, 'dist'),
     rollupOptions: {
-      input: path.join(galleryRoot, 'preview.html'),
+      input: {
+        index: path.join(galleryRoot, 'index.html'),
+        preview: path.join(galleryRoot, 'preview.html'),
+      },
     },
   },
   cacheDir: path.join(repoRoot, 'node_modules/.vite-test-vr'),
