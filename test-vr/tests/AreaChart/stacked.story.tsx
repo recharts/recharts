@@ -10,8 +10,8 @@ export const DataOnChartRoot = () => {
       <YAxis interval="preserveEnd" />
       <Legend />
       <Tooltip defaultIndex={3} />
-      <Area dataKey="pv" stackId="a" stroke="#8884d8" fill="#8884d8" />
-      <Area dataKey="uv" stackId="a" stroke="#82ca9d" fill="#82ca9d" />
+      <Area dataKey="pv" stackId="a" />
+      <Area dataKey="uv" stackId="a" />
     </AreaChart>
   );
 };
@@ -37,9 +37,9 @@ export const SingleDataArray = () => {
       <XAxis dataKey="name" allowDuplicatedCategory={false} />
       <YAxis dataKey="sum" />
       <Legend />
-      <Area dataKey="value1" stackId="1" stroke="red" fill="red" />
-      <Area dataKey="value2" stackId="1" stroke="green" fill="green" />
-      <Area dataKey="value3" stackId="1" stroke="blue" fill="blue" />
+      <Area dataKey="value1" stackId="1" />
+      <Area dataKey="value2" stackId="1" />
+      <Area dataKey="value3" stackId="1" />
       <Tooltip defaultIndex={1} />
     </AreaChart>
   );
@@ -51,9 +51,9 @@ export const SingleDataArrayWithoutXAxisDataKey = () => {
       <XAxis allowDuplicatedCategory={false} />
       <YAxis dataKey="sum" />
       <Legend />
-      <Area dataKey="value1" stackId="1" stroke="red" fill="red" />
-      <Area dataKey="value2" stackId="1" stroke="green" fill="green" />
-      <Area dataKey="value3" stackId="1" stroke="blue" fill="blue" />
+      <Area dataKey="value1" stackId="1" />
+      <Area dataKey="value2" stackId="1" />
+      <Area dataKey="value3" stackId="1" />
       <Tooltip defaultIndex={1} />
     </AreaChart>
   );
@@ -78,9 +78,9 @@ export const MultipleDataArraysExclusiveDataKey = () => {
       <XAxis dataKey="name" allowDuplicatedCategory={false} />
       <YAxis dataKey="sum" />
       <Legend />
-      <Area data={data1Value1} dataKey="value1" stackId="1" stroke="red" fill="red" />
-      <Area data={data2Value2} dataKey="value2" stackId="1" stroke="green" fill="green" />
-      <Area data={data3Value3} dataKey="value3" stackId="1" stroke="blue" fill="blue" />
+      <Area data={data1Value1} dataKey="value1" stackId="1" />
+      <Area data={data2Value2} dataKey="value2" stackId="1" />
+      <Area data={data3Value3} dataKey="value3" stackId="1" />
       <Tooltip defaultIndex={1} />
     </AreaChart>
   );
@@ -106,9 +106,9 @@ export const MultipleDataArraysRepeatedDataKey = () => {
       <XAxis dataKey="name" allowDuplicatedCategory={false} />
       <YAxis dataKey="value" />
       <Legend />
-      <Area data={data1} dataKey="value" stackId="1" stroke="red" fill="rgba(255,0,0,0.5)" name="Area 1" id="area1" />
-      <Area data={data2} dataKey="value" stackId="1" stroke="green" fill="rgba(0,128,0,0.5)" name="Area 2" />
-      <Area data={data3} dataKey="value" stackId="1" stroke="blue" fill="rgba(0,0,255,0.5)" name="Area 3" />
+      <Area data={data1} dataKey="value" stackId="1" name="Area 1" id="area1" />
+      <Area data={data2} dataKey="value" stackId="1" name="Area 2" />
+      <Area data={data3} dataKey="value" stackId="1" name="Area 3" />
       <Tooltip defaultIndex={1} />
     </AreaChart>
   );
@@ -120,9 +120,9 @@ export const MultipleDataArraysRepeatedDataKeyWithoutXAxisDataKey = () => {
       <XAxis allowDuplicatedCategory={false} />
       <YAxis dataKey="value" />
       <Legend />
-      <Area data={data1} dataKey="value" stackId="1" stroke="red" fill="rgba(255,0,0,0.5)" name="Area 1" />
-      <Area data={data2} dataKey="value" stackId="1" stroke="green" fill="rgba(0,128,0,0.5)" name="Area 2" />
-      <Area data={data3} dataKey="value" stackId="1" stroke="blue" fill="rgba(0,0,255,0.5)" name="Area 3" />
+      <Area data={data1} dataKey="value" stackId="1" name="Area 1" />
+      <Area data={data2} dataKey="value" stackId="1" name="Area 2" />
+      <Area data={data3} dataKey="value" stackId="1" name="Area 3" />
       <Tooltip defaultIndex={1} />
     </AreaChart>
   );
@@ -135,11 +135,11 @@ export const DataKeyOnYAxisMultipleDataArrays = () => {
       <YAxis dataKey="value" />
       <Legend />
       {/* @ts-expect-error looks like typescript is correct here, the chart does not render */}
-      <Area data={data1} stackId="1" stroke="red" fill="red" />
+      <Area data={data1} stackId="1" />
       {/* @ts-expect-error looks like typescript is correct here, the chart does not render */}
-      <Area data={data2} stackId="1" stroke="green" fill="green" />
+      <Area data={data2} stackId="1" />
       {/* @ts-expect-error looks like typescript is correct here, the chart does not render */}
-      <Area data={data3} stackId="1" stroke="blue" fill="blue" />
+      <Area data={data3} stackId="1" />
       <Tooltip defaultIndex={1} />
     </AreaChart>
   );
