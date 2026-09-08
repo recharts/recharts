@@ -217,6 +217,12 @@ missing variants. A test using `@recharts-theme-legacy` should not produce
 light or dark snapshots, while another ordinary migrated test in the same
 spec should still produce all selected variants.
 
+### 7. Commit
+
+- Make sure you are on a feature branch; never commit to `main` directly.
+- Commit your changes with appropriate commit message.
+- In the commit body mention that this work relates to issue "https://github.com/recharts/recharts/issues/7737".
+
 ## Validation checklist
 
 - The target spec imports and uses `testWithThemes`.
