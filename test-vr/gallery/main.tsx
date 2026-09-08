@@ -8,13 +8,8 @@
  * See https://playwright.dev/docs/test-components for the stories and
  * galleries model.
  */
-import * as React from 'react';
-import { flushSync } from 'react-dom';
 import { createRoot, type Root } from 'react-dom/client';
-import { darkTheme, lightTheme, RechartsThemeProvider } from 'recharts';
-
-type StoryComponent = React.ComponentType<Record<string, unknown>>;
-type RechartsThemeVariant = 'legacy' | 'light' | 'dark';
+import { getRechartsTheme, renderStory, setCanvasBackground, type StoryComponent } from './renderer';
 
 const rootElement = document.getElementById('root');
 if (rootElement === null) {
@@ -38,36 +33,6 @@ function isRecord(value: unknown): value is Record<string, unknown> {
 
 function isComponent(value: unknown): value is StoryComponent {
   return typeof value === 'function';
-}
-
-function isRechartsThemeVariant(value: unknown): value is RechartsThemeVariant {
-  return value === 'legacy' || value === 'light' || value === 'dark';
-}
-
-function getRechartsTheme(): RechartsThemeVariant {
-  const value = new URLSearchParams(window.location.search).get('rechartsTheme');
-  return isRechartsThemeVariant(value) ? value : 'legacy';
-}
-
-function setCanvasBackground(theme: RechartsThemeVariant) {
-  if (theme === 'dark') {
-    galleryElement.style.backgroundColor = 'black';
-  } else if (theme === 'light') {
-    galleryElement.style.backgroundColor = 'white';
-  } else {
-    galleryElement.style.backgroundColor = '';
-  }
-}
-
-function renderWithRechartsTheme(theme: RechartsThemeVariant, story: React.ReactNode): React.ReactNode {
-  switch (theme) {
-    case 'light':
-      return <RechartsThemeProvider value={lightTheme}>{story}</RechartsThemeProvider>;
-    case 'dark':
-      return <RechartsThemeProvider value={darkTheme}>{story}</RechartsThemeProvider>;
-    default:
-      return story;
-  }
 }
 
 async function resolveStory(storyId: string): Promise<StoryComponent> {
@@ -99,6 +64,15 @@ async function resolveStory(storyId: string): Promise<StoryComponent> {
  * component state when a test calls component.update(props).
  */
 let root: Root | undefined;
+const urlParameters = new URLSearchParams(window.location.search);
+const isPreviewFrame = urlParameters.get('preview') === 'true';
+const previewMessageSource = 'recharts-vr-gallery';
+
+if (isPreviewFrame) {
+  document.documentElement.style.margin = '0';
+  document.body.style.margin = '0';
+  document.body.style.minWidth = '0';
+}
 
 declare global {
   interface Window {
@@ -111,20 +85,39 @@ window.mount = async ({ story, props }) => {
   const Story = await resolveStory(story);
   const storyProps: Record<string, unknown> = props ?? {};
   const theme = getRechartsTheme();
-  setCanvasBackground(theme);
   const galleryRoot = root ?? createRoot(galleryElement);
   root = galleryRoot;
-  /*
-   * flushSync makes a render error reject the promise returned by mount()
-   * instead of being swallowed by React.
-   */
-  flushSync(() => {
-    galleryRoot.render(renderWithRechartsTheme(theme, <Story {...storyProps} />));
-  });
+  renderStory(galleryRoot, galleryElement, Story, storyProps, theme);
 };
 
 window.unmount = async () => {
   root?.unmount();
   root = undefined;
-  setCanvasBackground('legacy');
+  setCanvasBackground(galleryElement, 'legacy');
 };
+
+function postPreviewMessage(message: Record<string, unknown>): void {
+  if (!isPreviewFrame || window.parent === window) {
+    return;
+  }
+
+  window.parent.postMessage({ ...message, source: previewMessageSource }, window.location.origin);
+}
+
+if (isPreviewFrame && window.parent !== window) {
+  const storyId = urlParameters.get('story');
+  if (storyId !== null) {
+    window
+      .mount({ story: storyId })
+      .then(() => {
+        requestAnimationFrame(() => {
+          postPreviewMessage({ type: 'ready' });
+        });
+      })
+      .catch(error => {
+        const message = error instanceof Error ? error.message : String(error);
+        galleryElement.textContent = message;
+        postPreviewMessage({ message, type: 'error' });
+      });
+  }
+}

@@ -182,7 +182,10 @@ which Playwright starts automatically through the `webServer` option in `./playw
 
 `gallery/index.html` is the blank mount target used by Playwright. To browse stories manually,
 open `http://localhost:3100/gallery/preview.html` while the gallery server is running.
-The preview page provides navigation and mounts the selected story with its default props.
+The preview page provides navigation and mounts the selected story with its default props in
+isolated legacy, light, and dark panels. Each panel uses the same theme renderer as the Playwright
+mount page, so state, DOM mutations, document-level styles, and SVG identifiers stay scoped to
+that variant.
 
 ### `playwright-report`
 

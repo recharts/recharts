@@ -115,15 +115,21 @@ summary {
   position: sticky;
   top: 0;
   z-index: 1;
+  display: block;
+  width: auto;
+  height: auto;
   padding: 20px 32px;
   border-bottom: 1px solid #e5e7eb;
   background: rgb(255 255 255 / 95%);
   backdrop-filter: blur(8px);
+  box-shadow: none;
+  line-height: normal;
 }
 
 .gallery-header h2 {
   margin: 0;
   font-size: 18px;
+  line-height: 1.2;
 }
 
 .gallery-header code {
@@ -132,15 +138,107 @@ summary {
   font-weight: 400;
 }
 
-.story-canvas {
-  min-height: calc(100vh - 74px);
+.story-variants {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
   padding: 32px;
-  overflow: auto;
+  align-items: start;
+}
+
+.story-panel {
+  width: 1280px;
+  min-width: 0;
+  overflow: visible;
+  border: 1px solid #d1d5db;
+  border-radius: 8px;
+  background: #fff;
+  box-shadow: 0 1px 2px rgb(17 24 39 / 8%);
+}
+
+.story-panel--dark {
+  border-color: #374151;
+  color: #f9fafb;
+  background: #000;
+}
+
+.story-panel-header {
+  position: static;
+  top: auto;
+  z-index: auto;
+  display: block;
+  width: auto;
+  height: auto;
+  padding: 12px 16px;
+  border-bottom: 1px solid #e5e7eb;
+  background: #fff;
+  box-shadow: none;
+  line-height: normal;
+}
+
+.story-panel--dark .story-panel-header {
+  border-bottom-color: #374151;
+  background: #111827;
+}
+
+.story-panel-header h3 {
+  margin: 0;
+  font-size: 15px;
+  line-height: 1.2;
+}
+
+.story-panel-header p {
+  margin: 4px 0 0;
+  color: #6b7280;
+  font-size: 12px;
+  line-height: 1.4;
+}
+
+.story-panel--dark .story-panel-header p {
+  color: #9ca3af;
+}
+
+.story-panel-frame {
+  display: block;
+  border: 0;
   background: #fff;
 }
 
-.story-canvas > * {
-  margin: 0 auto;
+.story-panel-content {
+  position: relative;
+  min-height: 240px;
+}
+
+.story-panel[data-status='waiting'] .story-panel-frame,
+.story-panel[data-status='loading'] .story-panel-frame {
+  visibility: hidden;
+}
+
+.story-panel-status {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  padding: 24px;
+  color: #6b7280;
+  font-size: 14px;
+  text-align: center;
+}
+
+.story-panel-status--error {
+  color: #b91c1c;
+}
+
+.story-panel--dark .story-panel-frame {
+  background: #000;
+}
+
+.story-panel--dark .story-panel-status {
+  color: #d1d5db;
+}
+
+.story-panel--dark .story-panel-status--error {
+  color: #fca5a5;
 }
 
 .gallery-empty {
