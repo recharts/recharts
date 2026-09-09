@@ -10,8 +10,8 @@ export const StackedBarChartWithReverseStackOrderFalse = () => {
       <YAxis />
       <Tooltip />
       <Legend />
-      <Bar dataKey="uv" stackId="a" fill="#8884d8" />
-      <Bar dataKey="pv" stackId="a" fill="#82ca9d" />
+      <Bar dataKey="uv" stackId="a" />
+      <Bar dataKey="pv" stackId="a" />
     </BarChart>
   );
 };
@@ -24,8 +24,8 @@ export const StackedBarChartWithReverseStackOrderTrue = () => {
       <YAxis />
       <Tooltip />
       <Legend />
-      <Bar dataKey="uv" stackId="a" fill="#8884d8" />
-      <Bar dataKey="pv" stackId="a" fill="#82ca9d" />
+      <Bar dataKey="uv" stackId="a" />
+      <Bar dataKey="pv" stackId="a" />
     </BarChart>
   );
 };
