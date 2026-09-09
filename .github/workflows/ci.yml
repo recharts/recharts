@@ -71,7 +71,7 @@ jobs:
         run: npm run build
 
       - name: Upload build artifact
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: build-output
           path: |
@@ -175,7 +175,7 @@ jobs:
         run: npm run build-storybook
 
       - name: Upload storybook artifact
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: storybook-build
           path: storybook/public
@@ -334,14 +334,14 @@ jobs:
         run: npx vite build --config test-vr/vite.config.ts
 
       - name: Upload website artifact
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: website-build
           path: www/docs
           retention-days: 14
 
       - name: Upload VR gallery artifact
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: vr-gallery
           path: test-vr/dist
@@ -387,7 +387,7 @@ jobs:
           echo "tgz_name=${{ env.PACKED_ARTIFACT_NAME }}" >> $GITHUB_OUTPUT
 
       - name: Upload Packed Library Artifact
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           # This is the "artifact name", it's not a file name. The file name remains original.
           name: ${{ env.PACKED_ARTIFACT_NAME }}
@@ -498,7 +498,7 @@ jobs:
 
       - name: Upload Flakiness report artifact (fork PRs only)
         if: always() && github.event_name == 'pull_request' && github.event.pull_request.head.repo.fork
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: flakiness-report-${{ github.job }}-${{ strategy.job-index }}
           path: flakiness-report/
@@ -506,7 +506,7 @@ jobs:
 
       - name: Upload blob report artifact
         if: always()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: vr-blob-report-${{ matrix.project }}
           path: test-vr/blob-report
@@ -549,7 +549,7 @@ jobs:
         run: npx playwright merge-reports --reporter html all-blob-reports
 
       - name: Upload merged VR report artifact
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: vr-report
           path: playwright-report
