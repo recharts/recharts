@@ -54,3 +54,16 @@ updates:
         patterns:
           - 'vitest'
           - '@vitest/*'
+
+  # Enable version updates for GitHub Actions
+  - package-ecosystem: 'github-actions'
+    # Look for workflow files in the `.github/workflows` directory
+    directory: '/'
+    # Check for GitHub Actions updates every day
+    schedule:
+      interval: 'daily'
+    # add the 'dependencies' label to PRs
+    labels:
+      - 'dependencies'
+    # max of 10 PRs at a time from dependabot
+    open-pull-requests-limit: 10
