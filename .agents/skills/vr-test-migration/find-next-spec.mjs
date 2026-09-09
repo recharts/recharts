@@ -4,6 +4,14 @@ import { readdirSync, readFileSync, statSync } from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 
+/*
+ * Selects the next visual-regression spec to migrate from the legacy browser-only
+ * fixture to the automatic legacy/light/dark fixture. Prints one repository-relative
+ * path: the first legacy spec that imports the old `test` fixture and does not import
+ * `testWithThemes`. Specs using `legacyTest` are intentional compatibility exceptions.
+ * Exit codes: 0 = printed a path; 1 = no legacy spec remains; 2 = the selected spec has
+ * no companion `.story.tsx` file (a blocker, not a signal to pick another spec).
+ */
 const scriptDirectory = path.dirname(fileURLToPath(import.meta.url));
 const repositoryRoot = path.resolve(scriptDirectory, '../../..');
 const testsDirectory = path.join(repositoryRoot, 'test-vr', 'tests');

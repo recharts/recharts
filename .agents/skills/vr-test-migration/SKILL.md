@@ -82,6 +82,8 @@ Do not assume that a website color-mode provider and a Recharts theme are the
 same thing. `colorScheme` controls the browser's `prefers-color-scheme` media
 query; the Recharts theme is selected by the Playwright project.
 
+If the spec has no `testTheme` props, no `themedStory`/`applyTestTheme`/`WithLightTheme`/`WithDarkTheme`/`TestColorModeProvider` usage, no explicit `RechartsThemeProvider` nesting, and no intentional exceptions, the migration is only the fixture swap in step 2; skip steps 3–5.
+
 ### 2. Switch the spec fixture
 
 Change the fixture import to `testWithThemes` and update all references in the
@@ -200,17 +202,21 @@ npm run test-vr -- test-vr/tests/path/to/Target.spec-vr.tsx
 ```
 
 The first migrated run should keep the existing legacy snapshots and add
-light/dark snapshots for each assertion. If new snapshots are expected, update
-only the target:
+light/dark snapshots for each assertion. The first `run` reports missing new
+snapshots as failures because they do not exist yet; that is expected—create
+them with the update below, then `run` again until every test passes. If new
+snapshots are expected, update only the target:
 
 ```sh
 npm run test-vr:update -- test-vr/tests/path/to/Target.spec-vr.tsx
 ```
 
 Use `--project=chromium-light` or `--grep=ScenarioName` when narrowing an
-update. Review the complete diff. Do not delete legacy snapshots because a
-new project has a different suffix, and do not commit `test-results` or
-`playwright-report`.
+update. Snapshots are binary PNGs, so `git diff` shows nothing meaningful;
+verify that the expected new variants exist in `__snapshots__` and that each
+renders as intended (legacy: white canvas, light: white canvas, dark: black
+canvas). Do not delete legacy snapshots because a new project has a different
+suffix, and do not commit `test-results` or `playwright-report`.
 
 For intentional exceptions, verify that the skipped projects are the only
 missing variants. A test using `@recharts-theme-legacy` should not produce
