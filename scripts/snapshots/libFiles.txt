@@ -225,6 +225,7 @@
   "lib/theme/graphicalItemIdentity.js",
   "lib/theme/lightTheme.js",
   "lib/theme/useBackwardsCompatibleTheme.js",
+  "lib/theme/useGraphicalItemIdentity.js",
   "lib/types.js",
   "lib/util",
   "lib/util/ActiveShapeUtils.js",

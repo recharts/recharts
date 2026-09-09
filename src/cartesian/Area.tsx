@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { MutableRefObject, PureComponent, ReactElement, ReactNode, useCallback, useMemo, useRef } from 'react';
+import { MutableRefObject, PureComponent, ReactElement, ReactNode, useMemo, useRef } from 'react';
 import { clsx } from 'clsx';
 import { BaseLineType, CurveType, Props as CurveProps } from '../shape/Curve';
 import { Layer } from '../container/Layer';
@@ -68,10 +68,10 @@ import { propsAreEqual } from '../util/propsAreEqual';
 import { AxisId } from '../state/cartesianAxisSlice';
 import { StackDataPoint } from '../util/stacks/stackTypes';
 import { AreaRevealShape, AreaRevealShapeProps } from './AreaRevealShape';
-import { graphicalItemIdentity } from '../theme/graphicalItemIdentity';
-import { GraphicalItemStyle, RechartsTheme, Styles2D } from '../theme/RechartsTheme';
+import { GraphicalItemStyle, Styles2D } from '../theme/RechartsTheme';
 import { useRechartsTheme } from '../theme/RechartsThemeContext';
 import { useBackwardsCompatibleTheme } from '../theme/useBackwardsCompatibleTheme';
+import { useGraphicalItemIdentity } from '../theme/useGraphicalItemIdentity';
 
 /**
  * @inline
@@ -1074,18 +1074,12 @@ export function computeArea({
 
 function AreaFn(outsideProps: Props<any, any>) {
   const rechartsTheme = useRechartsTheme();
-  const themeSelector = useCallback(
-    (theme: RechartsTheme): Styles2D | undefined => {
-      if (outsideProps.dataKey == null) {
-        return undefined;
-      }
-      return theme.graphicalItems[
-        graphicalItemIdentity({ dataKey: outsideProps.dataKey }, theme.graphicalItems.length)
-      ];
-    },
-    [outsideProps.dataKey],
+  const graphicalItemThemeSelector = useGraphicalItemIdentity(outsideProps.dataKey);
+  const theme = useBackwardsCompatibleTheme<GraphicalItemStyle>(
+    graphicalItemThemeSelector,
+    outsideProps,
+    defaultLegacyThemeProps,
   );
-  const theme = useBackwardsCompatibleTheme<GraphicalItemStyle>(themeSelector, outsideProps, defaultLegacyThemeProps);
   const activeDot =
     theme?.active == null ||
     outsideProps.activeDot === false ||

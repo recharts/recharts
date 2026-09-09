@@ -84,8 +84,8 @@ describe('Line theme', () => {
         strokeWidth: 4,
       },
     ];
-    const themeIndex = graphicalItemIdentity({ dataKey: 'profit' }, graphicalItems.length);
-    expect(themeIndex).toBe(1);
+    const themeIndex = graphicalItemIdentity({ dataKey: 'profit' }, ['profit'], graphicalItems.length);
+    expect(themeIndex).toBe(0);
     const theme = graphicalItems[themeIndex];
     assertNotNull(theme);
 
@@ -111,6 +111,26 @@ describe('Line theme', () => {
       expect(dot).toHaveAttribute('stroke-opacity', String(theme.strokeOpacity));
       expect(dot).toHaveAttribute('stroke-dasharray', theme.strokeDasharray);
     });
+  });
+
+  it('assigns graphical-item themes by sorted dataKeys instead of render order', () => {
+    const { container } = rechartsTestRender(
+      <RechartsThemeProvider
+        value={{
+          graphicalItems: [{ stroke: 'red' }, { stroke: 'blue' }],
+        }}
+      >
+        <MyChart>
+          <Line dataKey="revenue" isAnimationActive={false} />
+          <Line dataKey="profit" isAnimationActive={false} />
+        </MyChart>
+      </RechartsThemeProvider>,
+    );
+
+    const curves = container.querySelectorAll('.recharts-line-curve');
+    expect(curves).toHaveLength(2);
+    expect(curves[0]).toHaveAttribute('stroke', 'blue');
+    expect(curves[1]).toHaveAttribute('stroke', 'red');
   });
 
   it('uses an explicit line stroke as the dot fill when it overrides the theme', () => {

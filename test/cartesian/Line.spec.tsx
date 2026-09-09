@@ -327,16 +327,16 @@ describe('<Line />', () => {
       showTooltip(container, lineChartMouseHoverTooltipSelector);
       const line1 = container.querySelector('.recharts-line-curve#line1');
       assertNotNull(line1);
-      expect(line1).toHaveAttribute('stroke', 'red');
+      expect(line1).toHaveAttribute('stroke', 'bronze');
       const line2 = container.querySelector('.recharts-line-curve#line2');
       assertNotNull(line2);
-      expect(line2).toHaveAttribute('stroke', 'bronze');
+      expect(line2).toHaveAttribute('stroke', 'red');
       const dot = container.querySelector('.recharts-dot');
       assertNotNull(dot);
-      expect(dot).toHaveAttribute('fill', 'red');
+      expect(dot).toHaveAttribute('fill', 'bronze');
       const activeDot = container.querySelector('.recharts-active-dot circle');
       assertNotNull(activeDot);
-      expect(activeDot).toHaveAttribute('fill', 'blue');
+      expect(activeDot).toHaveAttribute('fill', 'gold');
     });
   });
 

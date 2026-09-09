@@ -74,10 +74,9 @@ import { GraphicalItemId } from '../state/graphicalItemsSlice';
 import { ZIndexable, ZIndexLayer } from '../zIndex/ZIndexLayer';
 import { DefaultZIndexes } from '../zIndex/DefaultZIndexes';
 import { propsAreEqual } from '../util/propsAreEqual';
-import { graphicalItemIdentity } from '../theme/graphicalItemIdentity';
-import { RechartsTheme } from '../theme/RechartsTheme';
 import { useBackwardsCompatibleTheme } from '../theme/useBackwardsCompatibleTheme';
 import { ChartData } from '../state/chartDataSlice';
+import { useGraphicalItemIdentity } from '../theme/useGraphicalItemIdentity';
 
 export interface ScatterPointNode {
   x?: number | string;
@@ -1026,14 +1025,8 @@ function ScatterImpl(props: WithIdRequired<Props>) {
 }
 
 function ScatterFn(outsideProps: Props) {
-  const graphicalItemTheme = useBackwardsCompatibleTheme<Props>(
-    (theme: RechartsTheme) =>
-      outsideProps.dataKey == null
-        ? undefined
-        : theme.graphicalItems[graphicalItemIdentity({ dataKey: outsideProps.dataKey }, theme.graphicalItems.length)],
-    outsideProps,
-    undefined,
-  );
+  const graphicalItemThemeSelector = useGraphicalItemIdentity(outsideProps.dataKey);
+  const graphicalItemTheme = useBackwardsCompatibleTheme<Props>(graphicalItemThemeSelector, outsideProps, undefined);
   const props = resolveDefaultProps(
     {
       ...outsideProps,

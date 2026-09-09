@@ -90,9 +90,9 @@ import { AxisId } from '../state/cartesianAxisSlice';
 import { BarStackClipLayer, useStackId } from './BarStack';
 import { GraphicalItemId } from '../state/graphicalItemsSlice';
 import { ChartData } from '../state/chartDataSlice';
-import { graphicalItemIdentity } from '../theme/graphicalItemIdentity';
-import { RechartsTheme, Styles2D } from '../theme/RechartsTheme';
+import { Styles2D } from '../theme/RechartsTheme';
 import { useBackwardsCompatibleTheme } from '../theme/useBackwardsCompatibleTheme';
+import { useGraphicalItemIdentity } from '../theme/useGraphicalItemIdentity';
 
 type BarRectangleType = {
   x: number | null;
@@ -1280,14 +1280,8 @@ export function computeBarRectangles({
 }
 
 function BarFn(outsideProps: Props) {
-  const graphicalItemStyle = useBackwardsCompatibleTheme<Props>(
-    (theme: RechartsTheme) =>
-      outsideProps.dataKey == null
-        ? undefined
-        : theme.graphicalItems[graphicalItemIdentity({ dataKey: outsideProps.dataKey }, theme.graphicalItems.length)],
-    outsideProps,
-    undefined,
-  );
+  const graphicalItemThemeSelector = useGraphicalItemIdentity(outsideProps.dataKey);
+  const graphicalItemStyle = useBackwardsCompatibleTheme<Props>(graphicalItemThemeSelector, outsideProps, undefined);
   const props = resolveDefaultProps(outsideProps, defaultBarProps);
   // stackId may arrive from props or from BarStack context
   const stackId = useStackId(props.stackId);
