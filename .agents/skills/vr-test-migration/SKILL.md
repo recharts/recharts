@@ -223,11 +223,21 @@ missing variants. A test using `@recharts-theme-legacy` should not produce
 light or dark snapshots, while another ordinary migrated test in the same
 spec should still produce all selected variants.
 
-### 7. Commit
+### 7. Commit, push, and open a PR
 
 - Make sure you are on a feature branch; never commit to `main` directly.
 - Commit your changes with appropriate commit message.
 - In the commit body mention that this work relates to issue "https://github.com/recharts/recharts/issues/7737".
+- Push the branch. This repository has a long pre-push hook (build, test,
+  check-types, lint) that can take around 5 minutes, so allow a timeout of up to
+  10 minutes and set the tracking branch to the repository's main branch:
+
+  ```sh
+  git branch -u origin/main <branch>
+  git push -u origin <branch>
+  ```
+
+- Open a pull request from the feature branch to `main`.
 
 ## Validation checklist
 
