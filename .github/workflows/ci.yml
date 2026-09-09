@@ -37,7 +37,7 @@ jobs:
           node-version: ${{ env.NODE_VERSION }}
 
       - name: Checkout Integration Tests Repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
         with:
           repository: recharts/recharts-integ
 
@@ -55,7 +55,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout Recharts Repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
 
       - name: Use Node.js ${{ env.NODE_VERSION }}
         uses: actions/setup-node@v7
@@ -89,7 +89,7 @@ jobs:
     needs: [build]
     steps:
       - name: Checkout Recharts Repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
 
       - name: Use Node.js ${{ env.NODE_VERSION }}
         uses: actions/setup-node@v7
@@ -134,7 +134,7 @@ jobs:
       HOME: /root
     steps:
       - name: Checkout Recharts Repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
         with:
           # Chromatic needs access to full git history
           # see https://www.chromatic.com/docs/github-actions/
@@ -200,7 +200,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout Recharts Repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
 
       - name: Use Node.js ${{ env.NODE_VERSION }}
         uses: actions/setup-node@v7
@@ -232,7 +232,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout Recharts Repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
 
       - name: Use Node.js ${{ env.NODE_VERSION }}
         uses: actions/setup-node@v7
@@ -258,7 +258,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout Recharts Repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
 
       - name: Use Node.js ${{ env.NODE_VERSION }}
         uses: actions/setup-node@v7
@@ -284,7 +284,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout Recharts Repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
 
       - name: Use Node.js ${{ env.NODE_VERSION }}
         uses: actions/setup-node@v7
@@ -357,7 +357,7 @@ jobs:
       tgz_name: ${{ steps.pack_library.outputs.tgz_name }}
     steps:
       - name: Checkout Recharts Repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
 
       - name: Use Node.js ${{ env.NODE_VERSION }}
         uses: actions/setup-node@v7
@@ -422,7 +422,7 @@ jobs:
         test_dir: ${{ fromJson(needs.list_integration_tests.outputs.directories) }}
     steps:
       - name: Checkout Integration Tests Repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
         with:
           repository: recharts/recharts-integ # Checkout the test repo again but this time all directories and files
 
@@ -477,7 +477,7 @@ jobs:
           - webkit-dark
     steps:
       - name: Checkout Recharts Repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
 
       - name: Use Node.js ${{ env.NODE_VERSION }}
         uses: actions/setup-node@v7
@@ -526,7 +526,7 @@ jobs:
     if: always() && needs.vr_tests.result != 'cancelled'
     steps:
       - name: Checkout Recharts Repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
 
       - name: Use Node.js ${{ env.NODE_VERSION }}
         uses: actions/setup-node@v7
@@ -569,7 +569,7 @@ jobs:
       pull-requests: write
     steps:
       - name: Checkout gh-pages branch
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
         with:
           ref: gh-pages
           path: gh-pages

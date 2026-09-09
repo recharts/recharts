@@ -21,7 +21,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout Recharts Repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
         with:
           repository: recharts/recharts
 
@@ -63,7 +63,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout recharts.github.io Repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
         with:
           repository: recharts/recharts.github.io
           ref: gh-pages
