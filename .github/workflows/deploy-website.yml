@@ -53,7 +53,7 @@ jobs:
 
       - name: Publish artifact
         id: publish-gh-pages
-        uses: actions/upload-pages-artifact@v3
+        uses: actions/upload-pages-artifact@v5
         with:
           path: 'www/docs'
           name: 'github-pages-artifact'
