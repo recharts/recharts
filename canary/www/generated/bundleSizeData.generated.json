@@ -1,32 +1,32 @@
 {
   "treemap": {
     "examplePath": "www/src/views/IndexView/IndexLineChart.tsx",
-    "totalSize": 926478,
-    "totalSizeLabel": "904.76 KB",
-    "moduleCount": 372,
-    "generatedAt": "2026-09-09T09:11:18.930Z",
+    "totalSize": 926162,
+    "totalSizeLabel": "904.46 KB",
+    "moduleCount": 374,
+    "generatedAt": "2026-09-09T09:57:01.339Z",
     "stages": [
       {
         "stage": "es6-folder",
-        "bytes": 1413100,
+        "bytes": 1413056,
         "humanReadableSize": "1.35 MB",
         "reductionFromBaselinePercent": 0
       },
       {
         "stage": "tree-shaken",
-        "bytes": 929369,
-        "humanReadableSize": "907.59 KB",
+        "bytes": 929057,
+        "humanReadableSize": "907.28 KB",
         "reductionFromBaselinePercent": 0
       },
       {
         "stage": "minified",
-        "bytes": 307603,
-        "humanReadableSize": "300.39 KB",
-        "reductionFromBaselinePercent": 66.9
+        "bytes": 307655,
+        "humanReadableSize": "300.44 KB",
+        "reductionFromBaselinePercent": 66.89
       },
       {
         "stage": "minified+gzip",
-        "bytes": 100907,
+        "bytes": 100906,
         "humanReadableSize": "98.54 KB",
         "reductionFromBaselinePercent": 89.14
       }
@@ -34,22 +34,22 @@
     "tree": {
       "name": "bundle",
       "fullPath": "bundle",
-      "value": 926478,
+      "value": 926162,
       "children": [
         {
           "name": "src",
           "fullPath": "src",
-          "value": 522902,
+          "value": 522586,
           "children": [
             {
               "name": "state",
               "fullPath": "src/state",
-              "value": 181596,
+              "value": 181774,
               "children": [
                 {
                   "name": "selectors",
                   "fullPath": "src/state/selectors",
-                  "value": 113431,
+                  "value": 113609,
                   "children": [
                     {
                       "name": "axisSelectors.ts",
@@ -126,7 +126,7 @@
                     {
                       "name": "tooltipSelectors.ts",
                       "fullPath": "src/state/selectors/tooltipSelectors.ts",
-                      "value": 14245
+                      "value": 14029
                     },
                     {
                       "name": "polarAxisSelectors.ts",
@@ -192,6 +192,11 @@
                       "name": "legendSelectors.ts",
                       "fullPath": "src/state/selectors/legendSelectors.ts",
                       "value": 408
+                    },
+                    {
+                      "name": "graphicalItemSelectors.ts",
+                      "fullPath": "src/state/selectors/graphicalItemSelectors.ts",
+                      "value": 394
                     },
                     {
                       "name": "selectLegendArea.ts",
@@ -724,12 +729,12 @@
             {
               "name": "cartesian",
               "fullPath": "src/cartesian",
-              "value": 86608,
+              "value": 86554,
               "children": [
                 {
                   "name": "Line.tsx",
                   "fullPath": "src/cartesian/Line.tsx",
-                  "value": 16345
+                  "value": 16291
                 },
                 {
                   "name": "CartesianAxis.tsx",
@@ -1038,33 +1043,6 @@
               ]
             },
             {
-              "name": "theme",
-              "fullPath": "src/theme",
-              "value": 5300,
-              "children": [
-                {
-                  "name": "graphicalItemIdentity.ts",
-                  "fullPath": "src/theme/graphicalItemIdentity.ts",
-                  "value": 2534
-                },
-                {
-                  "name": "useBackwardsCompatibleTheme.ts",
-                  "fullPath": "src/theme/useBackwardsCompatibleTheme.ts",
-                  "value": 1887
-                },
-                {
-                  "name": "RechartsThemeContext.ts",
-                  "fullPath": "src/theme/RechartsThemeContext.ts",
-                  "value": 505
-                },
-                {
-                  "name": "cssStylesToSvgStyles.ts",
-                  "fullPath": "src/theme/cssStylesToSvgStyles.ts",
-                  "value": 374
-                }
-              ]
-            },
-            {
               "name": "container",
               "fullPath": "src/container",
               "value": 5175,
@@ -1088,6 +1066,38 @@
                   "name": "Layer.tsx",
                   "fullPath": "src/container/Layer.tsx",
                   "value": 608
+                }
+              ]
+            },
+            {
+              "name": "theme",
+              "fullPath": "src/theme",
+              "value": 4860,
+              "children": [
+                {
+                  "name": "useBackwardsCompatibleTheme.ts",
+                  "fullPath": "src/theme/useBackwardsCompatibleTheme.ts",
+                  "value": 1887
+                },
+                {
+                  "name": "graphicalItemIdentity.ts",
+                  "fullPath": "src/theme/graphicalItemIdentity.ts",
+                  "value": 1312
+                },
+                {
+                  "name": "useGraphicalItemIdentity.ts",
+                  "fullPath": "src/theme/useGraphicalItemIdentity.ts",
+                  "value": 782
+                },
+                {
+                  "name": "RechartsThemeContext.ts",
+                  "fullPath": "src/theme/RechartsThemeContext.ts",
+                  "value": 505
+                },
+                {
+                  "name": "cssStylesToSvgStyles.ts",
+                  "fullPath": "src/theme/cssStylesToSvgStyles.ts",
+                  "value": 374
                 }
               ]
             },
@@ -2587,32 +2597,32 @@
   },
   "sunburst": {
     "examplePath": "www/src/views/IndexView/IndexLineChart.tsx",
-    "totalSize": 926478,
-    "totalSizeLabel": "904.76 KB",
-    "moduleCount": 372,
-    "generatedAt": "2026-09-09T09:11:16.765Z",
+    "totalSize": 926162,
+    "totalSizeLabel": "904.46 KB",
+    "moduleCount": 374,
+    "generatedAt": "2026-09-09T09:57:03.502Z",
     "stages": [
       {
         "stage": "es6-folder",
-        "bytes": 1413100,
+        "bytes": 1413056,
         "humanReadableSize": "1.35 MB",
         "reductionFromBaselinePercent": 0
       },
       {
         "stage": "tree-shaken",
-        "bytes": 929369,
-        "humanReadableSize": "907.59 KB",
+        "bytes": 929057,
+        "humanReadableSize": "907.28 KB",
         "reductionFromBaselinePercent": 0
       },
       {
         "stage": "minified",
-        "bytes": 307603,
-        "humanReadableSize": "300.39 KB",
-        "reductionFromBaselinePercent": 66.9
+        "bytes": 307655,
+        "humanReadableSize": "300.44 KB",
+        "reductionFromBaselinePercent": 66.89
       },
       {
         "stage": "minified+gzip",
-        "bytes": 100907,
+        "bytes": 100906,
         "humanReadableSize": "98.54 KB",
         "reductionFromBaselinePercent": 89.14
       }
@@ -2620,22 +2630,22 @@
     "tree": {
       "name": "bundle",
       "fullPath": "bundle",
-      "value": 926478,
+      "value": 926162,
       "children": [
         {
           "name": "src",
           "fullPath": "src",
-          "value": 522902,
+          "value": 522586,
           "children": [
             {
               "name": "state",
               "fullPath": "src/state",
-              "value": 181596,
+              "value": 181774,
               "children": [
                 {
                   "name": "selectors",
                   "fullPath": "src/state/selectors",
-                  "value": 113431,
+                  "value": 113609,
                   "children": [
                     {
                       "name": "axisSelectors.ts",
@@ -2712,7 +2722,7 @@
                     {
                       "name": "tooltipSelectors.ts",
                       "fullPath": "src/state/selectors/tooltipSelectors.ts",
-                      "value": 14245
+                      "value": 14029
                     },
                     {
                       "name": "polarAxisSelectors.ts",
@@ -2778,6 +2788,11 @@
                       "name": "legendSelectors.ts",
                       "fullPath": "src/state/selectors/legendSelectors.ts",
                       "value": 408
+                    },
+                    {
+                      "name": "graphicalItemSelectors.ts",
+                      "fullPath": "src/state/selectors/graphicalItemSelectors.ts",
+                      "value": 394
                     },
                     {
                       "name": "selectLegendArea.ts",
@@ -3310,12 +3325,12 @@
             {
               "name": "cartesian",
               "fullPath": "src/cartesian",
-              "value": 86608,
+              "value": 86554,
               "children": [
                 {
                   "name": "Line.tsx",
                   "fullPath": "src/cartesian/Line.tsx",
-                  "value": 16345
+                  "value": 16291
                 },
                 {
                   "name": "CartesianAxis.tsx",
@@ -3624,33 +3639,6 @@
               ]
             },
             {
-              "name": "theme",
-              "fullPath": "src/theme",
-              "value": 5300,
-              "children": [
-                {
-                  "name": "graphicalItemIdentity.ts",
-                  "fullPath": "src/theme/graphicalItemIdentity.ts",
-                  "value": 2534
-                },
-                {
-                  "name": "useBackwardsCompatibleTheme.ts",
-                  "fullPath": "src/theme/useBackwardsCompatibleTheme.ts",
-                  "value": 1887
-                },
-                {
-                  "name": "RechartsThemeContext.ts",
-                  "fullPath": "src/theme/RechartsThemeContext.ts",
-                  "value": 505
-                },
-                {
-                  "name": "cssStylesToSvgStyles.ts",
-                  "fullPath": "src/theme/cssStylesToSvgStyles.ts",
-                  "value": 374
-                }
-              ]
-            },
-            {
               "name": "container",
               "fullPath": "src/container",
               "value": 5175,
@@ -3674,6 +3662,38 @@
                   "name": "Layer.tsx",
                   "fullPath": "src/container/Layer.tsx",
                   "value": 608
+                }
+              ]
+            },
+            {
+              "name": "theme",
+              "fullPath": "src/theme",
+              "value": 4860,
+              "children": [
+                {
+                  "name": "useBackwardsCompatibleTheme.ts",
+                  "fullPath": "src/theme/useBackwardsCompatibleTheme.ts",
+                  "value": 1887
+                },
+                {
+                  "name": "graphicalItemIdentity.ts",
+                  "fullPath": "src/theme/graphicalItemIdentity.ts",
+                  "value": 1312
+                },
+                {
+                  "name": "useGraphicalItemIdentity.ts",
+                  "fullPath": "src/theme/useGraphicalItemIdentity.ts",
+                  "value": 782
+                },
+                {
+                  "name": "RechartsThemeContext.ts",
+                  "fullPath": "src/theme/RechartsThemeContext.ts",
+                  "value": 505
+                },
+                {
+                  "name": "cssStylesToSvgStyles.ts",
+                  "fullPath": "src/theme/cssStylesToSvgStyles.ts",
+                  "value": 374
                 }
               ]
             },
