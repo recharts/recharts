@@ -22,7 +22,7 @@ jobs:
     if: github.actor == 'dependabot[bot]' && github.event.pull_request.head.repo.full_name == 'recharts/recharts'
     steps:
       - name: Checkout code
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
         with:
           # Checkout the head of the PR to be able to push changes back.
           ref: ${{ github.head_ref }}
