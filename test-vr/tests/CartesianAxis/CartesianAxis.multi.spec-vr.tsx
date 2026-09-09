@@ -1,6 +1,6 @@
-import { expect, test } from '../fixtures';
+import { expect, testWithThemes } from '../fixtures';
 
-test('CartesianAxis Multiple Axes', async ({ mountStory }) => {
+testWithThemes('CartesianAxis Multiple Axes', async ({ mountStory }) => {
   const component = await mountStory('CartesianAxis/CartesianAxis.multi/CartesianAxisMultipleAxes');
   await expect(component).toHaveScreenshot();
 });
