@@ -18,9 +18,9 @@ export const BarChartWithStackOffset = (props: {
   <BarChart data={rangedStackedBarData} width={200} height={200} stackOffset={props.stackOffset}>
     <YAxis />
     <XAxis dataKey="name" />
-    <Bar dataKey="value1" stackId="a" isAnimationActive={false} fill="red" />
-    <Bar dataKey="value2" stackId="a" isAnimationActive={false} fill="green" />
-    <Bar dataKey="value3" stackId="a" isAnimationActive={false} fill="blue" />
+    <Bar dataKey="value1" stackId="a" isAnimationActive={false} />
+    <Bar dataKey="value2" stackId="a" isAnimationActive={false} />
+    <Bar dataKey="value3" stackId="a" isAnimationActive={false} />
   </BarChart>
 );
 
@@ -31,9 +31,9 @@ export const BarStackWithStackOffset = (props: {
     <YAxis />
     <XAxis dataKey="name" />
     <BarStack radius={[10, 20, 30, 40]}>
-      <Bar dataKey="value1" isAnimationActive={false} fill="red" />
-      <Bar dataKey="value2" isAnimationActive={false} fill="green" />
-      <Bar dataKey="value3" isAnimationActive={false} fill="blue" />
+      <Bar dataKey="value1" isAnimationActive={false} />
+      <Bar dataKey="value2" isAnimationActive={false} />
+      <Bar dataKey="value3" isAnimationActive={false} />
     </BarStack>
   </BarChart>
 );

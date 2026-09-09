@@ -1,19 +1,19 @@
 import type { BarChartWithStackOffset, BarStackWithStackOffset } from './BarChart.stackOffset.story';
-import { expect, test } from '../fixtures';
+import { expect, testWithThemes } from '../fixtures';
 
 // stackOffset="none" is the documented default, for both BarChart and BarStack —
 // each pair below asserts that leaving the prop unset renders identically to
 // setting it explicitly.
 const BAR_CHART_STACK_OFFSET_DEFAULT_EQUALS_NONE = 'BarChart-stackOffset-default-equals-none.png';
 const BAR_STACK_STACK_OFFSET_DEFAULT_EQUALS_NONE = 'BarStack-stackOffset-default-equals-none.png';
-test('BarChart with default stackOffset', async ({ mountStory }) => {
+testWithThemes('BarChart with default stackOffset', async ({ mountStory }) => {
   const component = await mountStory<typeof BarChartWithStackOffset>(
     'BarChart/BarChart.stackOffset/BarChartWithStackOffset',
   );
   await expect(component).toHaveScreenshot(BAR_CHART_STACK_OFFSET_DEFAULT_EQUALS_NONE);
 });
 
-test('BarChart with stackOffset=expand', async ({ mountStory }) => {
+testWithThemes('BarChart with stackOffset=expand', async ({ mountStory }) => {
   const component = await mountStory<typeof BarChartWithStackOffset>(
     'BarChart/BarChart.stackOffset/BarChartWithStackOffset',
     {
@@ -23,7 +23,7 @@ test('BarChart with stackOffset=expand', async ({ mountStory }) => {
   await expect(component).toHaveScreenshot();
 });
 
-test('BarChart with stackOffset=sign', async ({ mountStory }) => {
+testWithThemes('BarChart with stackOffset=sign', async ({ mountStory }) => {
   const component = await mountStory<typeof BarChartWithStackOffset>(
     'BarChart/BarChart.stackOffset/BarChartWithStackOffset',
     {
@@ -33,7 +33,7 @@ test('BarChart with stackOffset=sign', async ({ mountStory }) => {
   await expect(component).toHaveScreenshot();
 });
 
-test('BarChart with stackOffset=none', async ({ mountStory }) => {
+testWithThemes('BarChart with stackOffset=none', async ({ mountStory }) => {
   const component = await mountStory<typeof BarChartWithStackOffset>(
     'BarChart/BarChart.stackOffset/BarChartWithStackOffset',
     {
@@ -43,7 +43,7 @@ test('BarChart with stackOffset=none', async ({ mountStory }) => {
   await expect(component).toHaveScreenshot(BAR_CHART_STACK_OFFSET_DEFAULT_EQUALS_NONE);
 });
 
-test('BarChart with stackOffset=wiggle', async ({ mountStory }) => {
+testWithThemes('BarChart with stackOffset=wiggle', async ({ mountStory }) => {
   const component = await mountStory<typeof BarChartWithStackOffset>(
     'BarChart/BarChart.stackOffset/BarChartWithStackOffset',
     {
@@ -53,7 +53,7 @@ test('BarChart with stackOffset=wiggle', async ({ mountStory }) => {
   await expect(component).toHaveScreenshot();
 });
 
-test('BarChart with stackOffset=silhouette', async ({ mountStory }) => {
+testWithThemes('BarChart with stackOffset=silhouette', async ({ mountStory }) => {
   const component = await mountStory<typeof BarChartWithStackOffset>(
     'BarChart/BarChart.stackOffset/BarChartWithStackOffset',
     {
@@ -63,7 +63,7 @@ test('BarChart with stackOffset=silhouette', async ({ mountStory }) => {
   await expect(component).toHaveScreenshot();
 });
 
-test('BarChart with stackOffset=positive', async ({ mountStory }) => {
+testWithThemes('BarChart with stackOffset=positive', async ({ mountStory }) => {
   const component = await mountStory<typeof BarChartWithStackOffset>(
     'BarChart/BarChart.stackOffset/BarChartWithStackOffset',
     {
@@ -73,14 +73,14 @@ test('BarChart with stackOffset=positive', async ({ mountStory }) => {
   await expect(component).toHaveScreenshot();
 });
 
-test('BarStack with default stackOffset', async ({ mountStory }) => {
+testWithThemes('BarStack with default stackOffset', async ({ mountStory }) => {
   const component = await mountStory<typeof BarStackWithStackOffset>(
     'BarChart/BarChart.stackOffset/BarStackWithStackOffset',
   );
   await expect(component).toHaveScreenshot(BAR_STACK_STACK_OFFSET_DEFAULT_EQUALS_NONE);
 });
 
-test('BarStack with stackOffset=expand', async ({ mountStory }) => {
+testWithThemes('BarStack with stackOffset=expand', async ({ mountStory }) => {
   const component = await mountStory<typeof BarStackWithStackOffset>(
     'BarChart/BarChart.stackOffset/BarStackWithStackOffset',
     {
@@ -90,7 +90,7 @@ test('BarStack with stackOffset=expand', async ({ mountStory }) => {
   await expect(component).toHaveScreenshot();
 });
 
-test('BarStack with stackOffset=sign', async ({ mountStory }) => {
+testWithThemes('BarStack with stackOffset=sign', async ({ mountStory }) => {
   const component = await mountStory<typeof BarStackWithStackOffset>(
     'BarChart/BarChart.stackOffset/BarStackWithStackOffset',
     {
@@ -100,7 +100,7 @@ test('BarStack with stackOffset=sign', async ({ mountStory }) => {
   await expect(component).toHaveScreenshot();
 });
 
-test('BarStack with stackOffset=none', async ({ mountStory }) => {
+testWithThemes('BarStack with stackOffset=none', async ({ mountStory }) => {
   const component = await mountStory<typeof BarStackWithStackOffset>(
     'BarChart/BarChart.stackOffset/BarStackWithStackOffset',
     {
@@ -110,7 +110,7 @@ test('BarStack with stackOffset=none', async ({ mountStory }) => {
   await expect(component).toHaveScreenshot(BAR_STACK_STACK_OFFSET_DEFAULT_EQUALS_NONE);
 });
 
-test('BarStack with stackOffset=wiggle', async ({ mountStory }) => {
+testWithThemes('BarStack with stackOffset=wiggle', async ({ mountStory }) => {
   const component = await mountStory<typeof BarStackWithStackOffset>(
     'BarChart/BarChart.stackOffset/BarStackWithStackOffset',
     {
@@ -120,7 +120,7 @@ test('BarStack with stackOffset=wiggle', async ({ mountStory }) => {
   await expect(component).toHaveScreenshot();
 });
 
-test('BarStack with stackOffset=silhouette', async ({ mountStory }) => {
+testWithThemes('BarStack with stackOffset=silhouette', async ({ mountStory }) => {
   const component = await mountStory<typeof BarStackWithStackOffset>(
     'BarChart/BarChart.stackOffset/BarStackWithStackOffset',
     {
@@ -130,7 +130,7 @@ test('BarStack with stackOffset=silhouette', async ({ mountStory }) => {
   await expect(component).toHaveScreenshot();
 });
 
-test('BarStack with stackOffset=positive', async ({ mountStory }) => {
+testWithThemes('BarStack with stackOffset=positive', async ({ mountStory }) => {
   const component = await mountStory<typeof BarStackWithStackOffset>(
     'BarChart/BarChart.stackOffset/BarStackWithStackOffset',
     {
