@@ -63,7 +63,7 @@ jobs:
           package-manager-cache: false # never use caching in release builds
 
       - name: Download build artifact
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v8
         with:
           name: build-output
 

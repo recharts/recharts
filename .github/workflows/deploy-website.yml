@@ -75,7 +75,7 @@ jobs:
           git clean -fdx
 
       - name: Download artifact
-        uses: actions/download-artifact@v5
+        uses: actions/download-artifact@v8
         with:
           name: 'github-pages-artifact'
 

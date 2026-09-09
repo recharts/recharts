@@ -102,7 +102,7 @@ jobs:
         run: npm ci
 
       - name: Download build artifact
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v8
         with:
           name: build-output
 
@@ -154,7 +154,7 @@ jobs:
         run: npm ci
 
       - name: Download build artifact
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v8
         with:
           name: build-output
 
@@ -213,7 +213,7 @@ jobs:
         run: npm ci
 
       - name: Download build artifact
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v8
         with:
           name: build-output
 
@@ -245,7 +245,7 @@ jobs:
         run: npm ci
 
       - name: Download build artifact
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v8
         with:
           name: build-output
 
@@ -271,7 +271,7 @@ jobs:
         run: npm ci
 
       - name: Download build artifact
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v8
         with:
           name: build-output
 
@@ -305,12 +305,12 @@ jobs:
           fi
 
       - name: Download build artifact
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v8
         with:
           name: build-output
 
       - name: Download storybook artifact
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v8
         with:
           name: storybook-build
           path: storybook/public
@@ -370,7 +370,7 @@ jobs:
         run: npm ci
 
       - name: Download build artifact
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v8
         with:
           name: build-output
 
@@ -437,7 +437,7 @@ jobs:
           version: 10
 
       - name: Download Packed Library Artifact
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v8
         with:
           # name is not the filename, it's the "artifact name". The actual filename is the original of what was uploaded.
           name: ${{ env.PACKED_ARTIFACT_NAME }}
@@ -539,7 +539,7 @@ jobs:
         run: npm ci
 
       - name: Download all blob reports
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v8
         with:
           pattern: vr-blob-report-*
           path: all-blob-reports
@@ -578,19 +578,19 @@ jobs:
           fetch-depth: 0
 
       - name: Download website artifact
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v8
         with:
           name: website-build
           path: website-build
 
       - name: Download VR report artifact
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v8
         with:
           name: vr-report
           path: vr-report
 
       - name: Download VR gallery artifact
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v8
         with:
           name: vr-gallery
           path: vr-gallery
