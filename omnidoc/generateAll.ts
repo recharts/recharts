@@ -11,7 +11,7 @@ import { ExampleReader } from './readExamples';
 import { main as generateApiDocs } from './generateApiDoc';
 import { main as generateStorybookArgs } from './generateStorybookArgs';
 
-async function main() {
+async function main(): Promise<void> {
   const projectReader = new ProjectDocReader();
   const exampleReader = new ExampleReader();
 
@@ -19,4 +19,6 @@ async function main() {
   await generateStorybookArgs(projectReader, exampleReader);
 }
 
-main();
+if (require.main === module) {
+  main();
+}

@@ -696,7 +696,7 @@ ${exports}
 async function main(
   projectReader: ProjectDocReader = new ProjectDocReader(),
   exampleReader: ExampleReader = new ExampleReader(),
-) {
+): Promise<void> {
   const componentsToGenerate = projectReader.getAllRuntimeExportedNames();
 
   // Build context map from all public components, not just the ones we're generating

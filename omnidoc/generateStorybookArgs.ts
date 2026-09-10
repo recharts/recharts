@@ -308,7 +308,7 @@ ${childrenComponents.map(c => `- \`<${c}/>\``).join('\n')}
 async function main(
   projectReader: ProjectDocReader = new ProjectDocReader(),
   exampleReader: ExampleReader = new ExampleReader(),
-) {
+): Promise<void> {
   const componentsToGenerate = projectReader.getAllRuntimeExportedNames();
 
   // Ensure output directory exists
