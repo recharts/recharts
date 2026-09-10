@@ -1,0 +1,1 @@
+import{j as o}from"./lightTheme-lBxNBN17.js";import{A as t,C as i}from"./CustomAxisTicks-C14RSPO8.js";const e=s=>o.jsx(t,{...s}),r=s=>o.jsx(i,{...s}),n=Object.freeze(Object.defineProperty({__proto__:null,AxisTicksPlayground:e,CustomAxisTicks:r},Symbol.toStringTag,{value:"Module"}));export{n as _};

@@ -1,1 +1,0 @@
-import{i as u,a as f}from"./iteratee-BnWDH8GV.js";import{t as s}from"./toArray-BM6n5NCo.js";function y(a,l=u){if(a==null)return;const t=s(a);if(t.length===0)return;const m=f(l);let i,r;for(let e=0;e<t.length;e++){const o=t[e],n=m(o,e,t);Number.isNaN(n)||(r===void 0||n>r)&&(r=n,i=o)}return i}export{y as m};
