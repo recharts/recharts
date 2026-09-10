@@ -6,6 +6,7 @@
     "module": "esnext",
     "moduleResolution": "bundler",
     "noEmit": true,
+    "tsBuildInfoFile": "../node_modules/.cache/tsbuildinfo/storybook.tsbuildinfo",
     "target": "es2023",
     "types": ["node"],
     /* Disable noUncheckedIndexedAccess in storybook - fixing all array access would be a large undertaking */

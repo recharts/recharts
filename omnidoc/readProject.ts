@@ -93,10 +93,23 @@ export class ProjectDocReader implements DocReader {
 
   private stabilityCache: Map<string, boolean> = new Map();
 
+  /**
+   * `getExportedDeclarations` re-resolves every export of `src/index.ts` on each call, and it is
+   * called once per component and once per prop lookup. Resolve it once.
+   */
+  private exportedDeclarationsCache: ReadonlyMap<string, ReadonlyArray<ExportedDeclarations>> | null = null;
+
   constructor() {
     this.project = new Project({
       tsConfigFilePath: 'tsconfig.json',
     });
+  }
+
+  private getExportedDeclarations(): ReadonlyMap<string, ReadonlyArray<ExportedDeclarations>> {
+    if (this.exportedDeclarationsCache == null) {
+      this.exportedDeclarationsCache = this.project.getSourceFileOrThrow('src/index.ts').getExportedDeclarations();
+    }
+    return this.exportedDeclarationsCache;
   }
 
   getPublicSymbolNames(kind?: SymbolFlags): ReadonlyArray<string> {
@@ -104,8 +117,7 @@ export class ProjectDocReader implements DocReader {
       return this.symbolNamesCache;
     }
 
-    const sourceFile = this.project.getSourceFileOrThrow('src/index.ts');
-    const exportedDeclarations = sourceFile.getExportedDeclarations();
+    const exportedDeclarations = this.getExportedDeclarations();
 
     const names: string[] = [];
 
@@ -180,8 +192,7 @@ export class ProjectDocReader implements DocReader {
   }
 
   private getComponentDeclaration(component: string): ExportedDeclarations {
-    const sourceFile = this.project.getSourceFileOrThrow('src/index.ts');
-    const exportedDeclarations = sourceFile.getExportedDeclarations();
+    const exportedDeclarations = this.getExportedDeclarations();
 
     const declarations = exportedDeclarations.get(component);
     if (!declarations || declarations.length === 0) {

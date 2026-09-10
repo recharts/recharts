@@ -3,6 +3,7 @@
   "compilerOptions": {
     "esModuleInterop": true,
     "noEmit": true,
+    "tsBuildInfoFile": "../node_modules/.cache/tsbuildinfo/test.tsbuildinfo",
     "target": "es2023",
     "types": ["node", "vitest/globals"],
     /* Disable noUncheckedIndexedAccess in tests - fixing all array access would be a large undertaking */

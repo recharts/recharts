@@ -17,26 +17,56 @@ the run, execute the selector script:
 node .agents/skills/vr-test-migration/find-next-spec.mjs
 ```
 
-The script prints one repository-relative path: that is the only spec file to
-migrate. It selects the first legacy spec that imports the old `test` fixture
-and does not import `testWithThemes`; specs that explicitly use `legacyTest`
-remain intentional compatibility exceptions. Do not select a different file,
-run the script in a loop, or migrate multiple specs in one change. If the
-script exits with status 1, no legacy spec remains and the run must stop with
-that report. The script also verifies that the selected spec has a companion
-`.story.tsx` file; any other nonzero exit is a blocker, not a reason to choose
-another spec.
+The script prints a JSON object describing the one spec to migrate. It selects
+the first legacy spec that imports the old `test` fixture and does not import
+`testWithThemes`; specs that explicitly use `legacyTest` remain intentional
+compatibility exceptions. Do not select a different file, run the script in a
+loop, or migrate multiple specs in one change. If the script exits with status
+1, no legacy spec remains and the run must stop with that report. If it exits
+with status 2 the selected spec has no companion `.story.tsx` file; that is a
+blocker to report, not a reason to choose another spec.
 
-Inspect the selected spec's companion story and imported helpers as needed.
+The JSON gives you `spec`, its companion `story` (always the sibling
+`*.story.tsx` next to the spec), the `snapshotDir`, and a `classification`:
+
+- `trivial-fixture-swap` — the spec and its story contain no `testTheme`, no
+  `themedStory`/`applyTestTheme`/`WithLightTheme`/`WithDarkTheme`/`TestColorModeProvider`,
+  no `RechartsThemeProvider`, and no `colorScheme`/`emulateMedia`. Take the
+  **Quick path** below. You do not need to read the supporting docs.
+- `needs-review` — at least one of those signals is present. Read
+  `DEVELOPING.md`, `AGENTS.md`, `test-vr/README.md`, and
+  `.agents/skills/vr-test/SKILL.md`, then follow the full workflow (steps 1-7).
+
 Supporting edits are allowed only when required to complete that one spec's
 migration; do not migrate another spec, rewrite shared compatibility helpers,
 or create a central exclusion list. If the selected spec is blocked, report
 the blocker instead of moving on to the next file.
 
-Read `DEVELOPING.md`, `AGENTS.md`, `test-vr/README.md`, and
-`.agents/skills/vr-test/SKILL.md` before editing. Inspect the target spec, its
-companion story file, any imported story helpers, and the snapshots for the
-target spec.
+## Quick path (classification `trivial-fixture-swap`)
+
+1. In the spec, change the fixture import to `testWithThemes` and replace every
+   `test(`, `test.describe`, `test.use`, and hook reference (`test.beforeEach`,
+   etc.) with `testWithThemes`. Change nothing else — preserve `colorScheme`,
+   viewport, reduced motion, and timeouts.
+2. Generate snapshots (one Docker run, no expected-to-fail run first):
+
+   ```sh
+   npm run test-vr:update -- <spec> 2>&1 | tail -n 40
+   ```
+
+3. Verify it is green (one more Docker run):
+
+   ```sh
+   npm run test-vr -- <spec> 2>&1 | tail -n 40
+   ```
+
+4. Confirm the snapshot file set with `ls "<snapshotDir>"`: every legacy
+   `*-{chromium,firefox,webkit}-linux.png` still present, plus a new
+   `*-{light,dark}-linux.png` for each browser and assertion. Do not open the
+   PNGs and do not `Read` anything under `test-vr/test-results/` or
+   `test-vr/playwright-report/` (large binary/HTML output).
+5. Run `npm run check-types-test-vr` and ESLint/Prettier on the changed file.
+6. Follow step 7 (commit, push, PR).
 
 ## Fixture model
 
@@ -189,34 +219,39 @@ the `rechartsThemes` option. Keep `colorScheme` separate from both.
 
 ### 6. Generate and review snapshots
 
-First list the targeted projects and tests:
+Always pipe Docker test output through `tail` (or `grep -E`). A failing
+`toHaveScreenshot()` attaches actual/expected/diff PNGs and a full HTML report
+path to stdout; reading that raw floods the context with binary noise.
+
+List the targeted projects and tests:
 
 ```sh
-npm run test-vr -- test-vr/tests/path/to/Target.spec-vr.tsx --list
+npm run test-vr -- test-vr/tests/path/to/Target.spec-vr.tsx --list 2>&1 | tail -n 60
 ```
 
-Run the target in Docker:
+Create the new snapshots directly — do not do an expected-to-fail `run` first:
 
 ```sh
-npm run test-vr -- test-vr/tests/path/to/Target.spec-vr.tsx
+npm run test-vr:update -- test-vr/tests/path/to/Target.spec-vr.tsx 2>&1 | tail -n 40
 ```
 
-The first migrated run should keep the existing legacy snapshots and add
-light/dark snapshots for each assertion. The first `run` reports missing new
-snapshots as failures because they do not exist yet; that is expected—create
-them with the update below, then `run` again until every test passes. If new
-snapshots are expected, update only the target:
+`test-vr:update` keeps the existing legacy snapshots and adds the light/dark
+snapshots for each assertion. Use `--project=chromium-light` or
+`--grep=ScenarioName` when narrowing an update. Then confirm every test passes
+with one plain run:
 
 ```sh
-npm run test-vr:update -- test-vr/tests/path/to/Target.spec-vr.tsx
+npm run test-vr -- test-vr/tests/path/to/Target.spec-vr.tsx 2>&1 | tail -n 40
 ```
 
-Use `--project=chromium-light` or `--grep=ScenarioName` when narrowing an
-update. Snapshots are binary PNGs, so `git diff` shows nothing meaningful;
-verify that the expected new variants exist in `__snapshots__` and that each
-renders as intended (legacy: white canvas, light: white canvas, dark: black
-canvas). Do not delete legacy snapshots because a new project has a different
-suffix, and do not commit `test-results` or `playwright-report`.
+Snapshots are binary PNGs, so `git diff` shows nothing meaningful. Verify by
+**file set**, not by opening images: `ls` the `snapshotDir` and check that
+every legacy `*-{chromium,firefox,webkit}-linux.png` is still there and that a
+new `*-{light,dark}-linux.png` exists for each browser and assertion (minus any
+projects intentionally excluded — see below). Do not open the PNGs, do not
+`Read` anything under `test-vr/test-results/` or `test-vr/playwright-report/`,
+do not delete legacy snapshots because a new project has a different suffix,
+and do not commit `test-results` or `playwright-report`.
 
 For intentional exceptions, verify that the skipped projects are the only
 missing variants. A test using `@recharts-theme-legacy` should not produce

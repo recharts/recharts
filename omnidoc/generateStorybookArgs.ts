@@ -305,10 +305,10 @@ ${childrenComponents.map(c => `- \`<${c}/>\``).join('\n')}
 /**
  * Main function
  */
-async function main() {
-  const projectReader = new ProjectDocReader();
-  const exampleReader = new ExampleReader();
-
+async function main(
+  projectReader: ProjectDocReader = new ProjectDocReader(),
+  exampleReader: ExampleReader = new ExampleReader(),
+): Promise<void> {
   const componentsToGenerate = projectReader.getAllRuntimeExportedNames();
 
   // Ensure output directory exists
@@ -383,4 +383,4 @@ if (require.main === module) {
   main();
 }
 
-export { generateStorybookArgs, writeStorybookArgsFile };
+export { generateStorybookArgs, writeStorybookArgsFile, main };
