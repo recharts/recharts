@@ -13,6 +13,7 @@ export function mockHTMLElementProperty(name: keyof HTMLElement, value: number) 
 }
 
 export function restoreHTMLElementProperties() {
-  mocks.forEach(cleanup => cleanup());
-  mocks.length = 0;
+  while (mocks.length > 0) {
+    mocks.pop()?.();
+  }
 }

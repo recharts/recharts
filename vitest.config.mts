@@ -42,6 +42,7 @@ export default defineConfig({
         extends: true,
         test: {
           name: 'unit:lib',
+          isolate: false,
           setupFiles: [
             'test/vitest.setup.ts',
             'test/helper/toBeRechartsScale.ts',
