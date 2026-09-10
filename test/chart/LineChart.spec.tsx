@@ -1,6 +1,6 @@
 import React, { FC, useState } from 'react';
 import { act, fireEvent, render, screen } from '@testing-library/react';
-import { beforeEach, describe, expect, it, test, vi } from 'vitest';
+import { afterAll, beforeEach, describe, expect, it, test, vi } from 'vitest';
 import { generateMockData } from '@recharts/devtools';
 import {
   Brush,
@@ -1474,6 +1474,9 @@ describe('<LineChart /> - Rendering two line charts with syncId', () => {
 
   afterAll(() => {
     vi.useRealTimers();
+    vi.useFakeTimers({
+      toFake: ['requestAnimationFrame', 'cancelAnimationFrame'],
+    });
   });
 
   function hoverOverFirstLineItem(container: Element) {

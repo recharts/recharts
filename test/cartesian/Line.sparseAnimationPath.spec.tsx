@@ -1,8 +1,8 @@
 import React from 'react';
-import { beforeAll, beforeEach, describe, expect, it } from 'vitest';
+import { afterAll, beforeAll, beforeEach, describe, expect, it } from 'vitest';
 import { ComposedChart, Line, XAxis } from '../../src';
 import { createSelectorTestCase } from '../helper/createSelectorTestCase';
-import { mockGetTotalLength } from '../helper/mockGetTotalLength';
+import { mockGetTotalLength, restoreMockGetTotalLength } from '../helper/mockGetTotalLength';
 import { mockSequenceOfGetBoundingClientRect } from '../helper/mockGetBoundingClientRect';
 
 const data = [
@@ -38,6 +38,10 @@ describe('Line sparse animation path commands', () => {
 
   beforeAll(() => {
     mockGetTotalLength(100);
+  });
+
+  afterAll(() => {
+    restoreMockGetTotalLength();
   });
 
   const renderTestCase = createSelectorTestCase(({ children }) => (

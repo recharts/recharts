@@ -1,9 +1,13 @@
 import '@testing-library/jest-dom';
+import { cleanup } from '@testing-library/react';
 import { vi } from 'vitest';
 import { restoreHTMLElementProperties } from './helper/mockHTMLElementProperty';
 import { setupConsoleWarningToError } from './helper/consoleWarningToError';
+import { clearStringCache, configureTextMeasurement } from '../src/util/DOMUtils';
 
 process.env.TZ = 'UTC';
+
+const originalSvgGetTotalLength = Object.getOwnPropertyDescriptor(SVGElement.prototype, 'getTotalLength');
 
 // Setup console warning/error interception
 setupConsoleWarningToError();
@@ -39,10 +43,35 @@ globalThis.jest = {
 };
 
 afterEach(() => {
-  // All other mocks are restored using the `restoreMocks` config in `./vitest.config.ts`,
-  // all except this one. This one cannot be set using vi.spyOn() and therefore vitest will not reset it automatically!
-  // So it must be restored manually.
+  cleanup();
+  // Restore descriptor-based and prototype mocks explicitly because they can outlive a test file when isolation is disabled.
   restoreHTMLElementProperties();
+  vi.restoreAllMocks();
+  vi.unstubAllGlobals();
   vi.clearAllMocks();
   vi.clearAllTimers();
+  document.getElementById('recharts_measurement_span')?.remove();
+  if (!vi.isFakeTimers()) {
+    vi.useFakeTimers({
+      toFake: ['requestAnimationFrame', 'cancelAnimationFrame'],
+    });
+  }
+});
+
+afterAll(() => {
+  configureTextMeasurement({
+    cacheSize: 2000,
+    enableCache: true,
+  });
+  clearStringCache();
+  document.getElementById('recharts_measurement_span')?.remove();
+  vi.useRealTimers();
+  vi.useFakeTimers({
+    toFake: ['requestAnimationFrame', 'cancelAnimationFrame'],
+  });
+  if (originalSvgGetTotalLength) {
+    Object.defineProperty(SVGElement.prototype, 'getTotalLength', originalSvgGetTotalLength);
+  } else {
+    Reflect.deleteProperty(SVGElement.prototype, 'getTotalLength');
+  }
 });

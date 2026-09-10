@@ -1,10 +1,10 @@
 import React from 'react';
-import { beforeAll, describe, expect, it } from 'vitest';
+import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 import { act } from '@testing-library/react';
 import { Rectangle, Surface } from '../../src';
 import { createSelectorTestCase } from '../helper/createSelectorTestCase';
 import { trim } from '../helper/trim';
-import { mockGetTotalLength } from '../helper/mockGetTotalLength';
+import { mockGetTotalLength, restoreMockGetTotalLength } from '../helper/mockGetTotalLength';
 import { assertNotNull } from '../helper/assertNotNull';
 import { MockAnimationManager } from '../animation/MockProgressAnimationManager';
 
@@ -152,6 +152,10 @@ async function prime(container: HTMLElement) {
 describe('Rectangle animation', () => {
   beforeAll(() => {
     mockGetTotalLength(1234);
+  });
+
+  afterAll(() => {
+    restoreMockGetTotalLength();
   });
 
   describe.each([{ isAnimationActive: false, isUpdateAnimationActive: false }])(

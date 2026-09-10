@@ -8,6 +8,9 @@ describe('RequestAnimationFrameTimeoutController', () => {
 
   afterAll(() => {
     vi.useRealTimers();
+    vi.useFakeTimers({
+      toFake: ['requestAnimationFrame', 'cancelAnimationFrame'],
+    });
   });
 
   it('should call requestAnimationFrame with a callback', () => {

@@ -112,4 +112,12 @@ describe('DOMUtils', () => {
 
     expect(getStringCacheStats().size).toBe(0);
   });
+
+  afterAll(() => {
+    configureTextMeasurement({
+      cacheSize: 2000,
+      enableCache: true,
+    });
+    clearStringCache();
+  });
 });
