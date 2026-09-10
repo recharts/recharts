@@ -5,6 +5,13 @@
     "module": "commonjs",
     "skipLibCheck": true,
 
+    /*
+     * Cache type information between runs so repeated `check-types` runs (notably in the pre-push
+     * hook) only re-check what actually changed. Each project sets its own `tsBuildInfoFile`,
+     * because a shared one would thrash between the emitting and --noEmit invocations.
+     */
+    "incremental": true,
+
     /* Strict Type-Checking Options */
     "strict": true,
     "noImplicitAny": true,

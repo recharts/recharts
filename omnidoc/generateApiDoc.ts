@@ -693,10 +693,10 @@ ${exports}
 /**
  * Main function
  */
-async function main() {
-  const projectReader = new ProjectDocReader();
-  const exampleReader = new ExampleReader();
-
+async function main(
+  projectReader: ProjectDocReader = new ProjectDocReader(),
+  exampleReader: ExampleReader = new ExampleReader(),
+) {
   const componentsToGenerate = projectReader.getAllRuntimeExportedNames();
 
   // Build context map from all public components, not just the ones we're generating
@@ -733,4 +733,4 @@ if (require.main === module) {
   main();
 }
 
-export { generateApiDoc, writeApiDocFile };
+export { generateApiDoc, writeApiDocFile, main };
