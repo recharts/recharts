@@ -61,6 +61,7 @@ const AreaImplicitLabelListTest = () => (
         dataKey="uv"
         stroke="#8884d8"
         fill="none"
+        isAnimationActive={false}
         label={{ position, offset: 50, angle: -30, valueAccessor: () => position }}
       />
     ))}
@@ -70,7 +71,7 @@ const AreaImplicitLabelListTest = () => (
 
 const AreaExplicitLabelListTest = () => (
   <AreaChart width={900} height={500} data={shortData} margin={margin}>
-    <Area type="monotone" dataKey="uv" stroke="#8884d8" fill="none">
+    <Area type="monotone" dataKey="uv" stroke="#8884d8" fill="none" isAnimationActive={false}>
       {availablePositions.map(position => (
         <LabelList
           key={position}
@@ -125,6 +126,7 @@ const LineImplicitLabelListTest = () => (
         type="monotone"
         dataKey="uv"
         stroke="#8884d8"
+        isAnimationActive={false}
         label={{ position, offset: 50, angle: -30, valueAccessor: () => position }}
       />
     ))}
@@ -134,7 +136,7 @@ const LineImplicitLabelListTest = () => (
 
 const LineExplicitLabelListTest = () => (
   <LineChart width={900} height={500} data={shortData} margin={margin}>
-    <Line type="monotone" dataKey="uv" stroke="#8884d8">
+    <Line type="monotone" dataKey="uv" stroke="#8884d8" isAnimationActive={false}>
       {availablePositions.map(position => (
         <LabelList
           key={position}
