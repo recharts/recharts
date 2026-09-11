@@ -5,6 +5,7 @@ import { RouteComponentProps, withRouter } from '../routes/withRouter';
 import { ChartExample } from '../docs/exampleComponents/types.ts';
 import { CodeEditorWithPreview } from '../components/CodeEditorWithPreview';
 import { NotFoundView } from './NotFoundView.tsx';
+import { getLocaleType, localeGet } from '../utils/LocaleUtils.ts';
 
 const allExamplesFlattened: ReadonlyArray<[string, ChartExample]> = Object.values(allExamples)
   .map(e => e.examples)
@@ -17,6 +18,7 @@ const parseExampleComponent = (exampleName: string): ChartExample | undefined =>
 type ExamplesViewImplProps = RouteComponentProps;
 
 function ExamplesViewImpl({ params }: ExamplesViewImplProps) {
+  const locale = getLocaleType({ params });
   const page = params?.name;
   const exampleResult = parseExampleComponent(page);
 
@@ -24,7 +26,7 @@ function ExamplesViewImpl({ params }: ExamplesViewImplProps) {
     return <NotFoundView />;
   }
 
-  const title = exampleResult?.name ?? page;
+  const title = (localeGet(locale, 'examples', page) as string | undefined) ?? exampleResult?.name ?? page;
 
   return (
     <div className="page page-examples">
