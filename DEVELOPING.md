@@ -13,8 +13,11 @@ npm install # the right Node version can be found in .nvmrc file
 
 ## Node.js version
 
-Development and CI run on the Node.js version pinned in [`.nvmrc`](.nvmrc), currently **Node.js 26**.
+Development uses the Node.js version pinned in [`.nvmrc`](.nvmrc), currently **Node.js 26**.
 If you use `nvm`, running `nvm install` in the repository root picks it up automatically.
+The CI, publish, and website-deploy workflows pin the same major version through a `NODE_VERSION`
+variable; the remaining one-off workflows read `.nvmrc` directly. When bumping, update `.nvmrc` and
+every `NODE_VERSION` in `.github/workflows/` together.
 
 Node.js 24, the previous baseline, still works with the current toolchain, but it is not exercised in CI
 and may stop working without notice. Older versions are not supported for development.
