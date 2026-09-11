@@ -1,0 +1,1 @@
+const i=({x:t,y:a},{x:n,y:e})=>({x:Math.min(t,n),y:Math.min(a,e),width:Math.abs(n-t),height:Math.abs(e-a)}),c=({x1:t,y1:a,x2:n,y2:e})=>i({x:t,y:a},{x:n,y:e});function r(t){return(t%180+180)%180}const l=({width:t,height:a},n=0)=>{const s=r(n)*Math.PI/180,o=Math.atan(a/t),h=s>o&&s<Math.PI-o?a/Math.sin(s):t/Math.cos(s);return Math.abs(h)};export{c as a,l as g,i as r};
