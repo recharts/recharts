@@ -8,6 +8,7 @@
  * This keeps toHaveScreenshot() capturing the same bounding box as before.
  */
 import { test as base, expect, type Locator, type PlaywrightTestArgs, type TestInfo } from '@playwright/test';
+import { contrastBackgroundClassNames } from '../gallery/canvas';
 
 export type RechartsThemeVariant = 'legacy' | 'light' | 'dark';
 
@@ -59,7 +60,7 @@ function getAllowedRechartsThemes(
   return taggedThemes.length > 0 ? taggedThemes : rechartsThemes;
 }
 
-function createTest(defaultThemes: readonly RechartsThemeVariant[]) {
+function createTest(defaultThemes: readonly RechartsThemeVariant[], useContrastBackground = false) {
   return base.extend<TestOptions & TestFixtures>({
     rechartsThemes: [defaultThemes, { option: true }],
 
@@ -74,8 +75,20 @@ function createTest(defaultThemes: readonly RechartsThemeVariant[]) {
         testInfo.skip(true, `Recharts theme "${rechartsTheme}" is not enabled for this test`);
       }
 
+      let removeContrastBackground: (() => Promise<void>) | undefined;
       const mountStory: MountStory = async (storyId, props) => {
         const root = await mount(storyId, props);
+        if (useContrastBackground && removeContrastBackground === undefined) {
+          const backgroundClassName =
+            rechartsTheme === 'dark' ? contrastBackgroundClassNames.dark : contrastBackgroundClassNames.light;
+          await root.evaluate((element, className: string) => element.classList.add(className), backgroundClassName);
+          removeContrastBackground = async () => {
+            await root.evaluate(
+              (element, className: string) => element.classList.remove(className),
+              backgroundClassName,
+            );
+          };
+        }
         const children = root.locator(':scope > *');
         const component: Locator = (await children.count()) === 1 ? children.first() : root;
 
@@ -85,8 +98,12 @@ function createTest(defaultThemes: readonly RechartsThemeVariant[]) {
         });
       };
 
-      // eslint-disable-next-line react-hooks/rules-of-hooks -- we are in a test fixture not a React hook
-      await use(mountStory);
+      try {
+        // eslint-disable-next-line react-hooks/rules-of-hooks -- we are in a test fixture not a React hook
+        await use(mountStory);
+      } finally {
+        await removeContrastBackground?.();
+      }
     },
   });
 }
@@ -104,6 +121,6 @@ export const test = legacyTest;
  * browser/theme project and automatically supplies the selected theme to the
  * gallery boundary.
  */
-export const testWithThemes = createTest(allRechartsThemes);
+export const testWithThemes = createTest(allRechartsThemes, true);
 
 export { expect };

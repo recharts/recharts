@@ -59,6 +59,13 @@ export default defineConfig({
   expect: {
     /* https://playwright.dev/docs/test-timeouts */
     timeout: 10_000,
+    toHaveScreenshot: {
+      /*
+       * https://playwright.dev/docs/api/class-pageassertions#page-assertions-to-have-screenshot-2-option-threshold
+       * Charts are from the nature of things thin lines and we need lower threshold than the default 0.2
+       */
+      threshold: 0.05,
+    },
   },
   /* Run tests in files in parallel */
   fullyParallel: true,
