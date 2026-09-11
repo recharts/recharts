@@ -85,11 +85,11 @@ testWithThemes('LineChart', async ({ mountStory }) => {
 
 Each `testWithThemes` test runs in three Playwright projects for each browser:
 
-| Project suffix                              | Gallery rendering                         | Canvas |
-| ------------------------------------------- | ----------------------------------------- | ------ |
-| no suffix (`chromium`, `firefox`, `webkit`) | No `RechartsThemeProvider` (`legacy`)     | White  |
-| `-light`                                    | `RechartsThemeProvider` with `lightTheme` | White  |
-| `-dark`                                     | `RechartsThemeProvider` with `darkTheme`  | Black  |
+| Project suffix                              | Gallery rendering                         | Canvas             |
+| ------------------------------------------- | ----------------------------------------- | ------------------ |
+| no suffix (`chromium`, `firefox`, `webkit`) | No `RechartsThemeProvider` (`legacy`)     | Light checkerboard |
+| `-light`                                    | `RechartsThemeProvider` with `lightTheme` | Light checkerboard |
+| `-dark`                                     | `RechartsThemeProvider` with `darkTheme`  | Dark checkerboard  |
 
 The selected theme is supplied by the Playwright project and resolved inside
 the gallery boundary. It is not a story prop. Do not add a `testTheme` prop,
@@ -99,7 +99,7 @@ names make the snapshots separate and deterministic, for example
 
 The `test` export is the staged, legacy-only fixture used by existing specs;
 `legacyTest` is its explicit name for new specs that intentionally need
-compatibility behavior. Existing specs may keep using it until their
+compatibility behavior with a plain white canvas. Existing specs may keep using it until their
 individual migration adds light and dark baselines. Use
 [the VR migration skill](../.agents/skills/vr-test-migration/SKILL.md) for that
 work. The old `test-vr/tests/www/StoryTheme.tsx` helper and its `testTheme`
@@ -185,7 +185,8 @@ open `http://localhost:3100/gallery/preview.html` while the gallery server is ru
 The preview page provides navigation and mounts the selected story with its default props in
 isolated legacy, light, and dark panels. Each panel uses the same theme renderer as the Playwright
 mount page, so state, DOM mutations, document-level styles, and SVG identifiers stay scoped to
-that variant.
+that variant. Both HTML pages use the shared `gallery/entry.tsx`; preview iframes load
+`gallery/index.html` so they exercise the same mount path as Playwright.
 
 ### `playwright-report`
 

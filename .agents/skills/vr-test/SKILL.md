@@ -79,11 +79,11 @@ gallery resolve the story by id and keeps the same rendering path for tests and 
 New specs use `testWithThemes` from `test-vr/tests/fixtures`. The fixture runs
 each test in the following nine projects:
 
-| Projects                                          | Recharts rendering                                      |
-| ------------------------------------------------- | ------------------------------------------------------- |
-| `chromium`, `firefox`, `webkit`                   | `legacy`: no `RechartsThemeProvider`, white canvas      |
-| `chromium-light`, `firefox-light`, `webkit-light` | `RechartsThemeProvider` with `lightTheme`, white canvas |
-| `chromium-dark`, `firefox-dark`, `webkit-dark`    | `RechartsThemeProvider` with `darkTheme`, black canvas  |
+| Projects                                          | Recharts rendering                                                   |
+| ------------------------------------------------- | -------------------------------------------------------------------- |
+| `chromium`, `firefox`, `webkit`                   | `legacy`: no `RechartsThemeProvider`, light checkerboard canvas      |
+| `chromium-light`, `firefox-light`, `webkit-light` | `RechartsThemeProvider` with `lightTheme`, light checkerboard canvas |
+| `chromium-dark`, `firefox-dark`, `webkit-dark`    | `RechartsThemeProvider` with `darkTheme`, dark checkerboard canvas   |
 
 The Playwright project selects the variant through the gallery URL and metadata.
 The story does not receive a theme prop. Never add `testTheme` to a new story,
@@ -193,6 +193,8 @@ not require a story query parameter. Theme projects add the `rechartsTheme`
 query parameter automatically; opening the mount page directly shows the
 legacy/no-provider path. If either host port is already in use, free it before
 starting UI mode or change the host-side port mapping in the command.
+Both gallery HTML pages load the shared `gallery/entry.tsx`, and preview iframes load
+`gallery/index.html` so manual previews use the same mount path as Playwright.
 
 The HTML report is served at http://localhost:9323 after `npm run test-vr:prepare`.
 

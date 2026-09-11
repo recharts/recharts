@@ -1,5 +1,4 @@
 import * as React from 'react';
-import { createRoot } from 'react-dom/client';
 import type { RechartsThemeVariant } from './renderer';
 import './preview.css';
 
@@ -81,7 +80,7 @@ const themeVariants: readonly {
 ];
 
 const STORY_FRAME_WIDTH = 1280;
-const STORY_FRAME_HEIGHT = 720;
+const STORY_FRAME_HEIGHT = 500;
 
 function getStoryIdFromUrl(): string | undefined {
   const storyId = new URLSearchParams(window.location.search).get('story');
@@ -89,6 +88,7 @@ function getStoryIdFromUrl(): string | undefined {
 }
 
 function getStoryFrameUrl(storyId: string, theme: RechartsThemeVariant): string {
+  // Preview the same mount page that Playwright uses so story rendering cannot diverge.
   const url = new URL('./index.html', window.location.href);
   url.searchParams.set('preview', 'true');
   url.searchParams.set('rechartsTheme', theme);
@@ -241,7 +241,7 @@ function StoryPreview({ story }: { story: Story }) {
   );
 }
 
-function PreviewApp() {
+export function PreviewApp() {
   const [selectedStoryId, setSelectedStoryId] = React.useState<string | undefined>(getStoryIdFromUrl);
   const selectedStory = stories.find(story => story.id === selectedStoryId);
 
@@ -304,10 +304,3 @@ function PreviewApp() {
     </div>
   );
 }
-
-const rootElement = document.getElementById('root');
-if (rootElement === null) {
-  throw new Error('The gallery preview page must contain an element with id "root".');
-}
-
-createRoot(rootElement).render(<PreviewApp />);

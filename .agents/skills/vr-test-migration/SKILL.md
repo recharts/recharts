@@ -85,9 +85,9 @@ existing snapshots remain stable. The new projects are
 
 The gallery selects the Recharts variant at the rendering boundary:
 
-- `legacy`: no `RechartsThemeProvider` and a white canvas;
-- `light`: `RechartsThemeProvider` with `lightTheme` and a white canvas;
-- `dark`: `RechartsThemeProvider` with `darkTheme` and a black canvas.
+- `legacy`: no `RechartsThemeProvider` and a light checkerboard canvas;
+- `light`: `RechartsThemeProvider` with `lightTheme` and a light checkerboard canvas;
+- `dark`: `RechartsThemeProvider` with `darkTheme` and a dark checkerboard canvas.
 
 The selected variant is not a story prop. A migrated story must not receive
 `testTheme`, and a migrated spec must not put a theme name in its test title or

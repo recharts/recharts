@@ -1,0 +1,24 @@
+.recharts-vr-canvas--contrast-light,
+.recharts-vr-canvas--contrast-dark {
+  background-image:
+    linear-gradient(45deg, var(--recharts-vr-checker-color) 25%, transparent 25%),
+    linear-gradient(-45deg, var(--recharts-vr-checker-color) 25%, transparent 25%),
+    linear-gradient(45deg, transparent 75%, var(--recharts-vr-checker-color) 75%),
+    linear-gradient(-45deg, transparent 75%, var(--recharts-vr-checker-color) 75%);
+  background-position:
+    0 0,
+    0 12px,
+    12px -12px,
+    -12px 0;
+  background-size: 24px 24px;
+}
+
+.recharts-vr-canvas--contrast-light {
+  --recharts-vr-checker-color: #ccc;
+  background-color: #eee;
+}
+
+.recharts-vr-canvas--contrast-dark {
+  --recharts-vr-checker-color: #333;
+  background-color: #111;
+}

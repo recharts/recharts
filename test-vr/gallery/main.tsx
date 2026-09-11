@@ -10,12 +10,7 @@
  */
 import { createRoot, type Root } from 'react-dom/client';
 import { getRechartsTheme, renderStory, setCanvasBackground, type StoryComponent } from './renderer';
-
-const rootElement = document.getElementById('root');
-if (rootElement === null) {
-  throw new Error('The gallery page must contain an element with id "root".');
-}
-const galleryElement = rootElement;
+import './canvas.css';
 
 /*
  * Vite analyzes import.meta.glob statically, relative to this file, so the
@@ -58,22 +53,6 @@ async function resolveStory(storyId: string): Promise<StoryComponent> {
   return story;
 }
 
-/*
- * The root is created once and reused across window.mount calls. Re-rendering
- * into the same root lets React reconcile in place, which is what preserves
- * component state when a test calls component.update(props).
- */
-let root: Root | undefined;
-const urlParameters = new URLSearchParams(window.location.search);
-const isPreviewFrame = urlParameters.get('preview') === 'true';
-const previewMessageSource = 'recharts-vr-gallery';
-
-if (isPreviewFrame) {
-  document.documentElement.style.margin = '0';
-  document.body.style.margin = '0';
-  document.body.style.minWidth = '0';
-}
-
 declare global {
   interface Window {
     mount: (params: { story: string; props?: Record<string, unknown> }) => Promise<void>;
@@ -81,43 +60,63 @@ declare global {
   }
 }
 
-window.mount = async ({ story, props }) => {
-  const Story = await resolveStory(story);
-  const storyProps: Record<string, unknown> = props ?? {};
-  const theme = getRechartsTheme();
-  const galleryRoot = root ?? createRoot(galleryElement);
-  root = galleryRoot;
-  renderStory(galleryRoot, galleryElement, Story, storyProps, theme);
-};
+export function initializeMountGallery(galleryElement: HTMLElement): void {
+  const canvasElement = galleryElement;
 
-window.unmount = async () => {
-  root?.unmount();
-  root = undefined;
-  setCanvasBackground(galleryElement, 'legacy');
-};
+  /*
+   * The root is created once and reused across window.mount calls. Re-rendering
+   * into the same root lets React reconcile in place, which is what preserves
+   * component state when a test calls component.update(props).
+   */
+  let root: Root | undefined;
+  const urlParameters = new URLSearchParams(window.location.search);
+  const isPreviewFrame = urlParameters.get('preview') === 'true';
+  const previewMessageSource = 'recharts-vr-gallery';
 
-function postPreviewMessage(message: Record<string, unknown>): void {
-  if (!isPreviewFrame || window.parent === window) {
-    return;
+  if (isPreviewFrame) {
+    document.documentElement.style.margin = '0';
+    document.body.style.margin = '0';
+    document.body.style.minWidth = '0';
   }
 
-  window.parent.postMessage({ ...message, source: previewMessageSource }, window.location.origin);
-}
+  window.mount = async ({ story, props }) => {
+    const Story = await resolveStory(story);
+    const storyProps: Record<string, unknown> = props ?? {};
+    const theme = getRechartsTheme();
+    const galleryRoot = root ?? createRoot(galleryElement);
+    root = galleryRoot;
+    renderStory(galleryRoot, galleryElement, Story, storyProps, theme);
+  };
 
-if (isPreviewFrame && window.parent !== window) {
-  const storyId = urlParameters.get('story');
-  if (storyId !== null) {
-    window
-      .mount({ story: storyId })
-      .then(() => {
-        requestAnimationFrame(() => {
-          postPreviewMessage({ type: 'ready' });
+  window.unmount = async () => {
+    root?.unmount();
+    root = undefined;
+    setCanvasBackground(galleryElement, 'legacy');
+  };
+
+  function postPreviewMessage(message: Record<string, unknown>): void {
+    if (!isPreviewFrame || window.parent === window) {
+      return;
+    }
+
+    window.parent.postMessage({ ...message, source: previewMessageSource }, window.location.origin);
+  }
+
+  if (isPreviewFrame && window.parent !== window) {
+    const storyId = urlParameters.get('story');
+    if (storyId !== null) {
+      window
+        .mount({ story: storyId })
+        .then(() => {
+          requestAnimationFrame(() => {
+            postPreviewMessage({ type: 'ready' });
+          });
+        })
+        .catch(error => {
+          const message = error instanceof Error ? error.message : String(error);
+          canvasElement.textContent = message;
+          postPreviewMessage({ message, type: 'error' });
         });
-      })
-      .catch(error => {
-        const message = error instanceof Error ? error.message : String(error);
-        galleryElement.textContent = message;
-        postPreviewMessage({ message, type: 'error' });
-      });
+    }
   }
 }

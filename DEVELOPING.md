@@ -145,8 +145,9 @@ npm run test-vr:ui
 This starts Playwright UI on http://localhost:8080 and keeps the Vite gallery server available on
 port 3100. While the command is running, use http://localhost:3100/gallery/preview.html to browse
 and click through the stories manually. The preview page mounts each selected story with its
-default props in isolated legacy, light, and dark panels. Do not expect `/gallery/index.html` to
-display a navigation page.
+default props in isolated legacy, light, and dark panels. Both gallery HTML pages use the shared
+`gallery/entry.tsx`, and preview iframes load `/gallery/index.html` so they exercise the same mount
+path as Playwright. Do not expect `/gallery/index.html` to display a navigation page.
 
 If you want to record new snapshots or update the old ones, you can run:
 
