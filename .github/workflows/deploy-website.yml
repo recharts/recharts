@@ -10,7 +10,7 @@ on:
       - completed
 
 env:
-  NODE_VERSION: 24.x
+  NODE_VERSION: 26.x
 
 permissions:
   contents: read

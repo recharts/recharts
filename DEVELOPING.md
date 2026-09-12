@@ -11,6 +11,20 @@ npm install # the right Node version can be found in .nvmrc file
 
 **Note for Windows users:** `npm install` may fail because `@codecov/bundle-analyzer` is only supported on Linux/Darwin. If that happens, run `npm install --force` to continue the setup.
 
+## Node.js version
+
+Development uses the Node.js version pinned in [`.nvmrc`](.nvmrc), currently **Node.js 26**.
+If you use `nvm`, running `nvm install` in the repository root picks it up automatically.
+The CI, publish, and website-deploy workflows pin the same major version through a `NODE_VERSION`
+variable; the remaining one-off workflows read `.nvmrc` directly. When bumping, update `.nvmrc` and
+every `NODE_VERSION` in `.github/workflows/` together.
+
+Node.js 24, the previous baseline, still works with the current toolchain, but it is not exercised in CI
+and may stop working without notice. Older versions are not supported for development.
+
+This applies to contributors only. The published `recharts` package keeps its own `engines` range and
+does not require Node.js 26 to install or use.
+
 # Linting and types
 
 You may also want to enable ESLint and Prettier configuration in your favourite IDE.
