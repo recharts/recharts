@@ -36,8 +36,10 @@ describe('AllZIndexPortals', () => {
     const newZIndexDefinitelyNotOneOfTheDefaults =
       Object.values(DefaultZIndexes).reduce((acc, val) => Math.max(acc, val), Number.NEGATIVE_INFINITY) + 1;
 
-    // all z-index portals should be rendered (they are <g> elements with tabIndex={-1})
-    expect(container.querySelectorAll('g[tabindex="-1"]')).toHaveLength(allZIndexes.length);
+    // all z-index portals should be rendered (they are <g> elements with a recharts-zIndex-layer_ class)
+    expect(container.querySelectorAll('g[class*="recharts-zIndex-layer_"]')).toHaveLength(allZIndexes.length);
+    // and none of them should be made focusable in any way
+    expect(container.querySelectorAll('g[tabindex]')).toHaveLength(0);
 
     act(() => {
       store.dispatch(registerZIndexPortal({ zIndex: newZIndexDefinitelyNotOneOfTheDefaults }));
@@ -45,7 +47,7 @@ describe('AllZIndexPortals', () => {
     });
 
     // After registering, should have one more z-index portal
-    const zIndexPortals = container.querySelectorAll('g[tabindex="-1"]');
+    const zIndexPortals = container.querySelectorAll('g[class*="recharts-zIndex-layer_"]');
     expect(zIndexPortals).toHaveLength(allZIndexes.length + 1);
   });
 
@@ -62,7 +64,7 @@ describe('AllZIndexPortals', () => {
 
     const state = store.getState();
 
-    const renderedElements = Array.from(container.querySelectorAll('g[tabindex="-1"]'));
+    const renderedElements = Array.from(container.querySelectorAll('g[class*="recharts-zIndex-layer_"]'));
     const storedElementIds = Object.values(state.zIndex.zIndexMap)
       .map(entry => entry.element?.id)
       .filter(isNotNil);
