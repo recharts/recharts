@@ -1,1 +1,0 @@
-import{m as d}from"./useId-DWoTL0RD.js";function m(i){const e=d(i),o=3,s=2;if(e!=null){const{r:n,strokeWidth:u}=e;let t=Number(n),r=Number(u);return(Number.isNaN(t)||t<0)&&(t=o),(Number.isNaN(r)||r<0)&&(r=s),{r:t,strokeWidth:r}}return{r:o,strokeWidth:s}}export{m as g};

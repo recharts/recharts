@@ -1,0 +1,1 @@
+import{j as o}from"./entry-D-TX1LR6.js";import{R as t}from"./ResponsiveContainerExample-u1gwQnKg.js";const r=e=>o.jsx(t,{...e}),i=Object.freeze(Object.defineProperty({__proto__:null,ResponsiveContainerExample:r},Symbol.toStringTag,{value:"Module"}));export{i as _};
