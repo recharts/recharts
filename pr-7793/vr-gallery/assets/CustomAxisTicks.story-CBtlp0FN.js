@@ -1,1 +1,0 @@
-import{j as o}from"./entry-C5tW4Zaj.js";import{A as t,C as i}from"./CustomAxisTicks-DeuSKJdY.js";const e=s=>o.jsx(t,{...s}),r=s=>o.jsx(i,{...s}),n=Object.freeze(Object.defineProperty({__proto__:null,AxisTicksPlayground:e,CustomAxisTicks:r},Symbol.toStringTag,{value:"Module"}));export{n as _};
