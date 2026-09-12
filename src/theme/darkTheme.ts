@@ -1,5 +1,10 @@
 import { RechartsTheme } from './RechartsTheme';
 
+const backgroundColor = '#18181b';
+const border = '1px solid #52525b';
+const borderRadius = 4;
+const padding = '0.5ex';
+
 /**
  * Dark mode theme
  *
@@ -80,19 +85,26 @@ export const darkTheme: RechartsTheme = {
     fill: '#333',
     fillOpacity: 0.7,
   },
+  legend: {
+    wrapperStyle: {
+      backgroundColor,
+      borderRadius,
+      padding,
+    },
+  },
   tooltip: {
     contentStyle: {
       margin: 0,
-      padding: 10,
-      backgroundColor: '#18181b',
-      border: '1px solid #52525b',
+      padding,
+      backgroundColor,
+      border,
+      borderRadius,
       whiteSpace: 'nowrap',
     },
     itemStyle: {
       display: 'block',
       paddingTop: 4,
       paddingBottom: 4,
-      color: '#f5f5f4',
     },
     labelStyle: {
       margin: 0,

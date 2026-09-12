@@ -1,5 +1,10 @@
 import { RechartsTheme } from './RechartsTheme';
 
+const backgroundColor = '#fff';
+const border = '1px solid #a8a29e';
+const borderRadius = 4;
+const padding = '0.5ex';
+
 /**
  * Light mode theme
  *
@@ -80,19 +85,26 @@ export const lightTheme: RechartsTheme = {
     fill: '#ddd',
     fillOpacity: 0.7,
   },
+  legend: {
+    wrapperStyle: {
+      backgroundColor,
+      borderRadius,
+      padding,
+    },
+  },
   tooltip: {
     contentStyle: {
       margin: 0,
-      padding: 10,
-      backgroundColor: 'white',
-      border: '1px solid #a8a29e',
+      padding,
+      backgroundColor,
+      border,
+      borderRadius,
       whiteSpace: 'nowrap',
     },
     itemStyle: {
       display: 'block',
       paddingTop: 4,
       paddingBottom: 4,
-      color: '#18181b',
     },
     labelStyle: {
       margin: 0,
