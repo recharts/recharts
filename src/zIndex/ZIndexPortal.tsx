@@ -15,8 +15,8 @@ function ZIndexSvgPortal({ zIndex, isPanorama }: { zIndex: number; isPanorama: b
       dispatch(unregisterZIndexPortalElement({ zIndex, isPanorama }));
     };
   }, [dispatch, zIndex, isPanorama]);
-  // these g elements should not be tabbable
-  return <g tabIndex={-1} ref={ref} className={`recharts-zIndex-layer_${zIndex}`} />;
+  // a bare <g> is not tabbable or pointer-focusable; do not add tabIndex
+  return <g ref={ref} className={`recharts-zIndex-layer_${zIndex}`} />;
 }
 
 export function AllZIndexPortals({ children, isPanorama }: { children?: React.ReactNode; isPanorama: boolean }) {
