@@ -52,8 +52,8 @@ const LegendPositionVRTest = ({ offset }: { offset?: number }) => (
         data={data}
         style={{ border: '1px solid red' }}
       >
-        <Line type="monotone" dataKey="uv" stroke="purple" />
-        <Line type="monotone" dataKey="pv" stroke="gold" />
+        <Line type="monotone" dataKey="uv" stroke="purple" isAnimationActive={false} />
+        <Line type="monotone" dataKey="pv" stroke="gold" isAnimationActive={false} />
         <CartesianGrid />
         <Legend
           position={position}
@@ -72,8 +72,8 @@ const veryLongText2 = 'Sed do eiusmod tempor incididunt ut labore et dolore magn
 const VeryLongLegendText = ({ position }: { position: CartesianPosition }) => {
   return (
     <LineChart key={JSON.stringify(position)} width={500} height={300} data={data} style={{ border: '1px solid red' }}>
-      <Line type="monotone" dataKey="uv" stroke="purple" name={veryLongText1} />
-      <Line type="monotone" dataKey="pv" stroke="gold" name={veryLongText2} />
+      <Line type="monotone" dataKey="uv" stroke="purple" name={veryLongText1} isAnimationActive={false} />
+      <Line type="monotone" dataKey="pv" stroke="gold" name={veryLongText2} isAnimationActive={false} />
       <CartesianGrid />
       <Legend position={position} />
     </LineChart>
@@ -101,8 +101,20 @@ const LegendAlignVRTest = () => (
         <LineChart width={600} height={200} data={data} style={{ border: '1px solid red' }}>
           <XAxis dataKey="name" />
           <YAxis />
-          <Line type="monotone" dataKey="uv" name={`Horizontal align: ${horizontalAlign}`} stroke="purple" />
-          <Line type="monotone" dataKey="pv" name={`Vertical align: ${verticalAlign}`} stroke="gold" />
+          <Line
+            type="monotone"
+            dataKey="uv"
+            name={`Horizontal align: ${horizontalAlign}`}
+            stroke="purple"
+            isAnimationActive={false}
+          />
+          <Line
+            type="monotone"
+            dataKey="pv"
+            name={`Vertical align: ${verticalAlign}`}
+            stroke="gold"
+            isAnimationActive={false}
+          />
           <CartesianGrid />
           <Legend align={horizontalAlign} verticalAlign={verticalAlign} wrapperStyle={{ border: '1px dashed black' }} />
         </LineChart>
