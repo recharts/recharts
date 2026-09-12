@@ -1,1 +1,0 @@
-import{u as r,j as a,d as i,l as s}from"./entry-DaPgwJmX.js";function o(){const t=r();let e="legacy";return t===i?e="dark":t===s?e="light":t!==void 0&&(e="unexpected"),a.jsx("div",{"data-recharts-theme":e,children:e})}const n=Object.freeze(Object.defineProperty({__proto__:null,ThemeVariants:o},Symbol.toStringTag,{value:"Module"}));export{n as _};

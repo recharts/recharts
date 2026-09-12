@@ -1,1 +1,0 @@
-import{j as e}from"./entry-DaPgwJmX.js";import{A as t,D as o}from"./AxisTicksSnapExample-DLRG1b2h.js";const p=a=>e.jsx(o,{...a}),s=a=>e.jsx(t,{...a}),x=Object.freeze(Object.defineProperty({__proto__:null,AxisTickSnapExample:s,DataSnapExample:p},Symbol.toStringTag,{value:"Module"}));export{x as _};
