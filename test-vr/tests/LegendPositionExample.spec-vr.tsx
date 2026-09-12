@@ -1,5 +1,5 @@
 import type { LegendPositionExample as LegendPositionExampleStory } from './LegendPositionExample.story';
-import { expect, test } from './fixtures';
+import { expect, testWithThemes } from './fixtures';
 
 const positions = [
   'top',
@@ -18,7 +18,7 @@ const positions = [
 ] as const;
 
 for (const position of positions) {
-  test(`LegendPositionExample - ${position}`, async ({ mountStory }) => {
+  testWithThemes(`LegendPositionExample - ${position}`, async ({ mountStory }) => {
     const component = await mountStory<typeof LegendPositionExampleStory>(
       'LegendPositionExample/LegendPositionExample',
       {
