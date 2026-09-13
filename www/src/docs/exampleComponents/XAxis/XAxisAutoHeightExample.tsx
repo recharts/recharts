@@ -43,7 +43,6 @@ export default function XAxisAutoHeightExample() {
         <YAxis width="auto" />
         <Tooltip />
         <Bar dataKey="visitors" />
-        <RechartsDevtools />
       </BarChart>
 
       <BarChart
