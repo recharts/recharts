@@ -1,0 +1,1 @@
+import{j as o}from"./entry-BpFZvmg_.js";import{R as t}from"./ResponsiveContainerExample-Bbp1y-Ml.js";const r=e=>o.jsx(t,{...e}),i=Object.freeze(Object.defineProperty({__proto__:null,ResponsiveContainerExample:r},Symbol.toStringTag,{value:"Module"}));export{i as _};
