@@ -1,1 +1,0 @@
-import{j as t}from"./entry-4LYFMWb7.js";import{B as r,S as o}from"./BundleSizeSunburst-DTe5J8JC.js";const s=()=>t.jsx(o,{}),u=e=>t.jsx(r,{...e}),l=Object.freeze(Object.defineProperty({__proto__:null,BundleSizeSunburst:u,SunburstChartExample:s},Symbol.toStringTag,{value:"Module"}));export{l as _};

@@ -1,1 +1,0 @@
-import{j as t}from"./entry-4LYFMWb7.js";import{X as e}from"./XAxisAutoHeightExample-Bpv9LA1g.js";const o=()=>t.jsx(e,{}),s=Object.freeze(Object.defineProperty({__proto__:null,XAxisAutoHeightExample:o},Symbol.toStringTag,{value:"Module"}));export{s as _};
