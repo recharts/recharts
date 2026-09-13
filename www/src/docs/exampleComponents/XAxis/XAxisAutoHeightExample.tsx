@@ -1,4 +1,5 @@
 import { Bar, BarChart, CartesianGrid, Tooltip, XAxis, YAxis } from 'recharts';
+import { RechartsDevtools } from '@recharts/devtools';
 
 // #region Sample data
 const data = [
@@ -42,6 +43,7 @@ export default function XAxisAutoHeightExample() {
         <YAxis width="auto" />
         <Tooltip />
         <Bar dataKey="visitors" />
+        <RechartsDevtools />
       </BarChart>
 
       <BarChart
@@ -54,6 +56,7 @@ export default function XAxisAutoHeightExample() {
         <YAxis width="auto" />
         <Tooltip />
         <Bar dataKey="visitors" />
+        <RechartsDevtools />
       </BarChart>
     </div>
   );
@@ -67,9 +70,10 @@ export const xAxisAutoHeightDescription = (
     </p>
     <p>
       The second chart sets <code>{`height="auto"`}</code>. The axis measures its rendered tick labels, and its axis
-      label if one is present, then grows to fit them. This mirrors <code>{`YAxis width="auto"`}</code>, and is most
-      useful when tick labels are rotated, long, or span multiple lines, because those are the cases where a single
-      fixed height cannot be known ahead of time.
+      label if one is present, then grows to fit them. An axis label passed as a function or a React element is not
+      measured, so the axis does not grow for it. This mirrors <code>{`YAxis width="auto"`}</code>, and is most useful
+      when tick labels are rotated, long, or span multiple lines, because those are the cases where a single fixed
+      height cannot be known ahead of time.
     </p>
     <p>
       Leave <code>height</code> as a number when the axis should keep a fixed size regardless of its content, for
