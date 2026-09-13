@@ -1,45 +1,45 @@
 {
   "treemap": {
     "examplePath": "www/src/views/IndexView/IndexLineChart.tsx",
-    "totalSize": 926457,
-    "totalSizeLabel": "904.74 KB",
+    "totalSize": 926468,
+    "totalSizeLabel": "904.75 KB",
     "moduleCount": 374,
-    "generatedAt": "2026-09-13T08:38:28.237Z",
+    "generatedAt": "2026-09-13T16:03:26.851Z",
     "stages": [
       {
         "stage": "es6-folder",
-        "bytes": 1413696,
+        "bytes": 1413707,
         "humanReadableSize": "1.35 MB",
         "reductionFromBaselinePercent": 0
       },
       {
         "stage": "tree-shaken",
-        "bytes": 929352,
-        "humanReadableSize": "907.57 KB",
+        "bytes": 929363,
+        "humanReadableSize": "907.58 KB",
         "reductionFromBaselinePercent": 0
       },
       {
         "stage": "minified",
-        "bytes": 307808,
-        "humanReadableSize": "300.59 KB",
+        "bytes": 307796,
+        "humanReadableSize": "300.58 KB",
         "reductionFromBaselinePercent": 66.88
       },
       {
         "stage": "minified+gzip",
-        "bytes": 100945,
-        "humanReadableSize": "98.58 KB",
+        "bytes": 100939,
+        "humanReadableSize": "98.57 KB",
         "reductionFromBaselinePercent": 89.14
       }
     ],
     "tree": {
       "name": "bundle",
       "fullPath": "bundle",
-      "value": 926457,
+      "value": 926468,
       "children": [
         {
           "name": "src",
           "fullPath": "src",
-          "value": 522881,
+          "value": 522892,
           "children": [
             {
               "name": "state",
@@ -932,7 +932,7 @@
             {
               "name": "zIndex",
               "fullPath": "src/zIndex",
-              "value": 9452,
+              "value": 9463,
               "children": [
                 {
                   "name": "ZIndexLayer.tsx",
@@ -947,7 +947,7 @@
                 {
                   "name": "ZIndexPortal.tsx",
                   "fullPath": "src/zIndex/ZIndexPortal.tsx",
-                  "value": 1452
+                  "value": 1463
                 },
                 {
                   "name": "zIndexSelectors.ts",
@@ -2597,45 +2597,45 @@
   },
   "sunburst": {
     "examplePath": "www/src/views/IndexView/IndexLineChart.tsx",
-    "totalSize": 926457,
-    "totalSizeLabel": "904.74 KB",
+    "totalSize": 926468,
+    "totalSizeLabel": "904.75 KB",
     "moduleCount": 374,
-    "generatedAt": "2026-09-13T08:38:26.887Z",
+    "generatedAt": "2026-09-13T16:03:29.208Z",
     "stages": [
       {
         "stage": "es6-folder",
-        "bytes": 1413696,
+        "bytes": 1413707,
         "humanReadableSize": "1.35 MB",
         "reductionFromBaselinePercent": 0
       },
       {
         "stage": "tree-shaken",
-        "bytes": 929352,
-        "humanReadableSize": "907.57 KB",
+        "bytes": 929363,
+        "humanReadableSize": "907.58 KB",
         "reductionFromBaselinePercent": 0
       },
       {
         "stage": "minified",
-        "bytes": 307808,
-        "humanReadableSize": "300.59 KB",
+        "bytes": 307796,
+        "humanReadableSize": "300.58 KB",
         "reductionFromBaselinePercent": 66.88
       },
       {
         "stage": "minified+gzip",
-        "bytes": 100945,
-        "humanReadableSize": "98.58 KB",
+        "bytes": 100939,
+        "humanReadableSize": "98.57 KB",
         "reductionFromBaselinePercent": 89.14
       }
     ],
     "tree": {
       "name": "bundle",
       "fullPath": "bundle",
-      "value": 926457,
+      "value": 926468,
       "children": [
         {
           "name": "src",
           "fullPath": "src",
-          "value": 522881,
+          "value": 522892,
           "children": [
             {
               "name": "state",
@@ -3528,7 +3528,7 @@
             {
               "name": "zIndex",
               "fullPath": "src/zIndex",
-              "value": 9452,
+              "value": 9463,
               "children": [
                 {
                   "name": "ZIndexLayer.tsx",
@@ -3543,7 +3543,7 @@
                 {
                   "name": "ZIndexPortal.tsx",
                   "fullPath": "src/zIndex/ZIndexPortal.tsx",
-                  "value": 1452
+                  "value": 1463
                 },
                 {
                   "name": "zIndexSelectors.ts",

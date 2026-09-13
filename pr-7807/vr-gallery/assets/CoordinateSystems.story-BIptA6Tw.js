@@ -1,1 +1,0 @@
-import{j as e}from"./entry-icsLf-pp.js";import{A as t,D as o}from"./AxisTicksSnapExample-CZvDtYkz.js";const p=a=>e.jsx(o,{...a}),s=a=>e.jsx(t,{...a}),x=Object.freeze(Object.defineProperty({__proto__:null,AxisTickSnapExample:s,DataSnapExample:p},Symbol.toStringTag,{value:"Module"}));export{x as _};

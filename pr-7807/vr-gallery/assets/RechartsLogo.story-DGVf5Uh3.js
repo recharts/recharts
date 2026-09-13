@@ -1,0 +1,1 @@
+import{j as o}from"./entry-CGwNVkWH.js";import{R as t}from"./RechartsLogo-CzqzZhPe.js";const e=()=>o.jsx(t,{}),_=Object.freeze(Object.defineProperty({__proto__:null,RechartsLogo:e},Symbol.toStringTag,{value:"Module"}));export{_};
