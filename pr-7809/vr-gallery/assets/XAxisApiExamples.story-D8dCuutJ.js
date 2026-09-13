@@ -1,0 +1,1 @@
+import{j as t}from"./entry-B2FykV7F.js";import{M as e}from"./MultiXAxisExample-A0EIhm6W.js";const o=()=>t.jsx(e,{}),l=Object.freeze(Object.defineProperty({__proto__:null,MultiXAxisExample:o},Symbol.toStringTag,{value:"Module"}));export{l as _};
