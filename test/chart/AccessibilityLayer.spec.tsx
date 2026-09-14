@@ -5,6 +5,7 @@ import {
   Area,
   AreaChart,
   CartesianGrid,
+  DefaultTooltipContent,
   Funnel,
   FunnelChart,
   Legend,
@@ -12,6 +13,9 @@ import {
   LineChart,
   Pie,
   PieChart,
+  PolarAngleAxis,
+  Radar,
+  RadarChart,
   Tooltip,
   XAxis,
   YAxis,
@@ -73,6 +77,13 @@ function assertNoKeyboardInteractions(container: HTMLElement) {
   arrowLeft(svg);
   expectTooltipNotVisible(container);
 }
+
+const radarKeyboardData = [
+  { name: 'North', uv: 400 },
+  { name: 'East', uv: 300 },
+  { name: 'South', uv: 200 },
+  { name: 'West', uv: 100 },
+];
 
 describe.each([true, undefined])('AccessibilityLayer with accessibilityLayer=%s', accessibilityLayer => {
   describe('AreaChart horizontal', () => {
@@ -732,6 +743,53 @@ describe.each([true, undefined])('AccessibilityLayer with accessibilityLayer=%s'
 
       act(() => svg.blur());
       expect(getTooltip(container).textContent).toBe('');
+    });
+  });
+
+  describe('RadarChart', () => {
+    test('When chart receives focus, arrow keys navigate its tooltip around the polar axis', () => {
+      const coordinateSpy = vi.fn();
+      const { container } = render(
+        <RadarChart
+          width={400}
+          height={400}
+          cx={200}
+          cy={200}
+          outerRadius={100}
+          data={radarKeyboardData}
+          accessibilityLayer={accessibilityLayer}
+        >
+          <PolarAngleAxis dataKey="name" />
+          <Radar isAnimationActive={false} dataKey="uv" />
+          <Tooltip
+            content={props => {
+              coordinateSpy(props.coordinate);
+              return <DefaultTooltipContent {...props} />;
+            }}
+          />
+        </RadarChart>,
+      );
+
+      const svg = getMainSurface(container);
+      act(() => svg.focus());
+      expectTooltipPayload(container, 'North', ['uv : 400']);
+      const cursor = container.querySelector('.recharts-tooltip-cursor');
+      assertNotNull(cursor);
+      expect(cursor).toHaveAttribute('d', 'M200,200L200,100');
+      expect(coordinateSpy).toHaveBeenLastCalledWith(expect.objectContaining({ x: 200, y: 100 }));
+
+      arrowRight(svg);
+      expectTooltipPayload(container, 'East', ['uv : 300']);
+      expect(cursor).toHaveAttribute('d', 'M200,200L300,200');
+      expect(coordinateSpy).toHaveBeenLastCalledWith(expect.objectContaining({ x: 300, y: 200 }));
+
+      arrowLeft(svg);
+      expectTooltipPayload(container, 'North', ['uv : 400']);
+      expect(cursor).toHaveAttribute('d', 'M200,200L200,100');
+
+      act(() => svg.blur());
+      expectTooltipNotVisible(container);
+      expect(container.querySelector('.recharts-tooltip-cursor')).not.toBeInTheDocument();
     });
   });
 

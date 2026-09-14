@@ -69,6 +69,7 @@ import { selectTooltipSettings } from './selectTooltipSettings';
 
 import { combineTooltipInteractionState } from './combiners/combineTooltipInteractionState';
 import { combineActiveTooltipIndex } from './combiners/combineActiveTooltipIndex';
+import { selectPolarViewBox } from './polarAxisSelectors';
 import { combineCoordinateForDefaultIndex } from './combiners/combineCoordinateForDefaultIndex';
 import { selectIsZoomed } from './zoomSelectors';
 import { selectChartHeight, selectChartWidth } from './containerSelectors';
@@ -501,6 +502,7 @@ const selectTooltipCoordinateForDefaultIndex: (state: RechartsRootState) => Coor
     selectTooltipAxisTicks,
     selectDefaultIndex,
     selectTooltipPayloadConfigurations,
+    selectPolarViewBox,
   ],
   combineCoordinateForDefaultIndex,
 );
@@ -518,9 +520,19 @@ const selectActiveTooltipCoordinateFromIndex: (state: RechartsRootState) => Coor
     selectTooltipAxisTicks,
     selectActiveTooltipIndex,
     selectTooltipPayloadConfigurations,
+    selectPolarViewBox,
   ],
-  (width, height, layout, offset, ticks, activeIndex, configurations) =>
-    combineCoordinateForDefaultIndex(width, height, layout, offset, ticks, activeIndex ?? undefined, configurations),
+  (width, height, layout, offset, ticks, activeIndex, configurations, polarViewBox) =>
+    combineCoordinateForDefaultIndex(
+      width,
+      height,
+      layout,
+      offset,
+      ticks,
+      activeIndex ?? undefined,
+      configurations,
+      polarViewBox,
+    ),
 );
 
 /**
