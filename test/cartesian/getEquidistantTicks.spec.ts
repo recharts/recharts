@@ -29,7 +29,30 @@ describe('getEquidistantTicks', () => {
       ticks.push({ value: ticksThatFit.includes(index) ? 10 : 1000, coordinate: index * 50, index, offset: 0 });
     }
     const result = getEquidistantTicks(1, { start: 0, end: 10 * 50 }, getTickSize, ticks, 0);
-    expect(result).toEqual(resultingTicks.map(index => ticks[index]));
+    const expectedTicks: Array<CartesianTickItem> = resultingTicks.map(index => ticks[index]);
+    // The first tick sits on the axis start, so half of its label hangs outside and its
+    // tickCoord moves inwards.
+    expectedTicks[0] = { ...expectedTicks[0], tickCoord: getTickSize(ticks[0]) / 2 };
+    expect(result).toEqual(expectedTicks);
+  });
+
+  it('should move the first tick label inwards when it overflows the start boundary', () => {
+    // 10 ticks, 50px apart, the first one centered on the start of the axis so that
+    // half of its 100px wide label overflows the boundary.
+    const ticks: ReadonlyArray<CartesianTickItem> = Array.from({ length: 10 }, (_, index) => ({
+      value: index,
+      coordinate: index * 50,
+      index,
+      offset: 0,
+    }));
+
+    const result = getEquidistantTicks(1, { start: 0, end: 500 }, () => 100, ticks, 20);
+
+    // The first tick keeps its coordinate, only its label moves inside the boundary.
+    expect(result[0].coordinate).toBe(0);
+    expect(result[0].tickCoord).toBe(50);
+    // The moved label takes up the space between 0 and 100, so every fourth tick fits.
+    expect(result.map(t => t.value)).toEqual([0, 4, 8]);
   });
 });
 
