@@ -3,7 +3,7 @@
  */
 import type { Issue7362Chart as Issue7362ChartStory } from './YAxis.7362.story';
 import type { Datum } from './Issue7362Chart.tsx';
-import { expect, test } from './fixtures';
+import { expect, testWithThemes } from './fixtures';
 
 const explicitTicks = [0, 25, 50, 75, 100] as const;
 
@@ -21,7 +21,7 @@ const partlyNumericData: ReadonlyArray<Datum> = [
   { name: 'Page D', value: 75 },
 ];
 
-test('YAxis issue 7362 - explicit ticks with all-null series data', async ({ mountStory }) => {
+testWithThemes('YAxis issue 7362 - explicit ticks with all-null series data', async ({ mountStory }) => {
   // Current main still renders the requested Y-axis ladder in this fixed-size setup.
   const component = await mountStory<typeof Issue7362ChartStory>('YAxis.7362/Issue7362Chart', {
     data: allNullData,
@@ -31,7 +31,7 @@ test('YAxis issue 7362 - explicit ticks with all-null series data', async ({ mou
   await expect(component).toHaveScreenshot();
 });
 
-test('YAxis issue 7362 - tickCount with all-null series data', async ({ mountStory }) => {
+testWithThemes('YAxis issue 7362 - tickCount with all-null series data', async ({ mountStory }) => {
   const component = await mountStory<typeof Issue7362ChartStory>('YAxis.7362/Issue7362Chart', {
     data: allNullData,
     tickCount: 5,
@@ -40,7 +40,7 @@ test('YAxis issue 7362 - tickCount with all-null series data', async ({ mountSto
   await expect(component).toHaveScreenshot();
 });
 
-test('YAxis issue 7362 - explicit ticks with empty data', async ({ mountStory }) => {
+testWithThemes('YAxis issue 7362 - explicit ticks with empty data', async ({ mountStory }) => {
   const component = await mountStory<typeof Issue7362ChartStory>('YAxis.7362/Issue7362Chart', {
     data: [],
     ticks: explicitTicks,
@@ -49,7 +49,7 @@ test('YAxis issue 7362 - explicit ticks with empty data', async ({ mountStory })
   await expect(component).toHaveScreenshot();
 });
 
-test('YAxis issue 7362 - explicit ticks with some numeric values', async ({ mountStory }) => {
+testWithThemes('YAxis issue 7362 - explicit ticks with some numeric values', async ({ mountStory }) => {
   const component = await mountStory<typeof Issue7362ChartStory>('YAxis.7362/Issue7362Chart', {
     data: partlyNumericData,
     ticks: explicitTicks,
