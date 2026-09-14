@@ -1,0 +1,1 @@
+import{T as o}from"./TooltipStylesExample-DNxj1m3B.js";import{t}from"./StoryTheme-GJAOH3gf.js";const e=t(o),_=Object.freeze(Object.defineProperty({__proto__:null,TooltipStylesExample:e},Symbol.toStringTag,{value:"Module"}));export{_};
