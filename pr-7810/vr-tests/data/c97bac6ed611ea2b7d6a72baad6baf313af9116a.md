@@ -6,32 +6,32 @@
 
 # Test info
 
-- Name: tests/ResponsiveContainer.spec-vr.tsx >> should render at 100% width and height of a fixed-size parent
-- Location: test-vr/tests/ResponsiveContainer.spec-vr.tsx:8:15
+- Name: tests/ResponsiveContainer.spec-vr.tsx >> ResponsiveContainer with hardcoded width and height
+- Location: test-vr/tests/ResponsiveContainer.spec-vr.tsx:3:15
 
 # Error details
 
 ```
 Error: expect(locator).toHaveScreenshot(expected) failed
 
-Locator: locator('#root').locator(':scope > *').first()
-  20 pixels (ratio 0.01 of all image pixels) are different.
+Locator: locator('#root')
+  5 pixels (ratio 0.01 of all image pixels) are different.
 
 Call log:
   - Expect "toHaveScreenshot" with timeout 10000ms
     - verifying given screenshot expectation
-  - waiting for locator('#root').locator(':scope > *').first()
-    - locator resolved to <div>…</div>
+  - waiting for locator('#root')
+    - locator resolved to <div id="root" class="recharts-vr-canvas--contrast-dark">…</div>
   - taking element screenshot
     - disabled all CSS animations
   - waiting for fonts to load...
   - fonts loaded
   - attempting scroll into view action
     - waiting for element to be stable
-  - 20 pixels (ratio 0.01 of all image pixels) are different.
+  - 5 pixels (ratio 0.01 of all image pixels) are different.
   - waiting 100ms before taking screenshot
-  - waiting for locator('#root').locator(':scope > *').first()
-    - locator resolved to <div>…</div>
+  - waiting for locator('#root')
+    - locator resolved to <div id="root" class="recharts-vr-canvas--contrast-dark">…</div>
   - taking element screenshot
     - disabled all CSS animations
   - waiting for fonts to load...
@@ -39,37 +39,32 @@ Call log:
   - attempting scroll into view action
     - waiting for element to be stable
   - captured a stable screenshot
-  - 20 pixels (ratio 0.01 of all image pixels) are different.
+  - 5 pixels (ratio 0.01 of all image pixels) are different.
 
 ```
 
 # Page snapshot
 
 ```yaml
-- generic [active] [ref=f150e1]:
-  - generic [ref=f150e3]:
-    - paragraph [ref=f150e4]: "Parent component has width: 500, height: 300. Responsive container has 100% width and height"
-    - application [ref=f150e7]:
+- generic [active] [ref=f138e1]:
+  - generic [ref=f138e2]:
+    - paragraph [ref=f138e3]: Hardcoded width and height
+    - application [ref=f138e5]:
       - img:
         - img:
           - generic: CHART
-        - text: "useChartWidth: 500pxuseChartHeight: 300px"
-      - generic [ref=f150e52]:
-        - generic [ref=f150e53]:
-          - generic [ref=f150e54]: Page A
-          - generic [ref=f150e56]: Page B
-          - generic [ref=f150e58]: Page C
-          - generic [ref=f150e60]: Page D
-          - generic [ref=f150e62]: Page E
-          - generic [ref=f150e64]: Page G
-        - generic [ref=f150e66]:
-          - generic [ref=f150e67]: "0"
-          - generic [ref=f150e69]: "400"
-          - generic [ref=f150e71]: "800"
-          - generic [ref=f150e73]: "1200"
-          - generic [ref=f150e75]: "1600"
-    - paragraph [ref=f150e77]: Should fill the parent container exactly.
-  - generic [ref=f150e78]: "0"
+        - text: "useChartWidth: 300pxuseChartHeight: 100px"
+      - generic [ref=f138e40]:
+        - generic [ref=f138e41]:
+          - generic [ref=f138e42]: Page A
+          - generic [ref=f138e44]: Page C
+          - generic [ref=f138e46]: Page E
+          - generic [ref=f138e48]: Page G
+        - generic [ref=f138e50]:
+          - generic [ref=f138e51]: "400"
+          - generic [ref=f138e53]: "1600"
+    - paragraph [ref=f138e55]: Should set specific dimensions without responsive calculations.
+  - generic [ref=f138e56]: "400"
 ```
 
 # Test source
@@ -79,13 +74,13 @@ Call log:
   2  | 
   3  | testWithThemes('ResponsiveContainer with hardcoded width and height', async ({ mountStory }) => {
   4  |   const component = await mountStory('ResponsiveContainer/ResponsiveContainerWithHardcodedWidthAndHeight');
-  5  |   await expect(component).toHaveScreenshot();
+> 5  |   await expect(component).toHaveScreenshot();
+     |                           ^ Error: expect(locator).toHaveScreenshot(expected) failed
   6  | });
   7  | 
   8  | testWithThemes('should render at 100% width and height of a fixed-size parent', async ({ mountStory }) => {
   9  |   const component = await mountStory('ResponsiveContainer/RenderAt100PercentWidthAndHeightOfFixedSizeParent');
-> 10 |   await expect(component).toHaveScreenshot();
-     |                           ^ Error: expect(locator).toHaveScreenshot(expected) failed
+  10 |   await expect(component).toHaveScreenshot();
   11 | });
   12 | 
   13 | testWithThemes('should render at 50% width and height of a fixed-size parent', async ({ mountStory }) => {
