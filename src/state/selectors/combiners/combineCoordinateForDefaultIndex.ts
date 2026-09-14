@@ -1,4 +1,12 @@
-import { ChartOffsetInternal, Coordinate, LayoutType, TickItem } from '../../../util/types';
+import {
+  ChartOffsetInternal,
+  Coordinate,
+  LayoutType,
+  PolarCoordinate,
+  PolarViewBoxRequired,
+  TickItem,
+} from '../../../util/types';
+import { polarToCartesian } from '../../../util/PolarUtils';
 import { TooltipIndex, TooltipPayloadConfiguration } from '../../tooltipSlice';
 
 export const combineCoordinateForDefaultIndex = (
@@ -9,7 +17,8 @@ export const combineCoordinateForDefaultIndex = (
   tooltipTicks: ReadonlyArray<TickItem> | undefined,
   defaultIndex: TooltipIndex | undefined,
   tooltipConfigurations: ReadonlyArray<TooltipPayloadConfiguration>,
-): Coordinate | undefined => {
+  polarViewBox: PolarViewBoxRequired | undefined,
+): Coordinate | PolarCoordinate | undefined => {
   if (defaultIndex == null) {
     return undefined;
   }
@@ -34,8 +43,21 @@ export const combineCoordinateForDefaultIndex = (
         y: (offset.top + height) / 2,
       };
     }
+    case 'centric': {
+      if (polarViewBox == null) {
+        return undefined;
+      }
+      const { cx, cy, outerRadius } = polarViewBox;
+      const angle = tick.coordinate;
+      return {
+        ...polarViewBox,
+        ...polarToCartesian(cx, cy, outerRadius, angle),
+        angle,
+        radius: outerRadius,
+      };
+    }
     default: {
-      // This logic is not super sound - it conflates vertical, radial, centric layouts into just one. TODO improve!
+      // TODO radial layouts need polar coordinates instead of the vertical fallback.
       return {
         x: (offset.left + width) / 2,
         y: tick.coordinate,
