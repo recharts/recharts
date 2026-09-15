@@ -1,4 +1,4 @@
-import { render } from '@testing-library/react';
+import { act, render } from '@testing-library/react';
 import { describe, expect, it, vi } from 'vitest';
 import React from 'react';
 import { Provider } from 'react-redux';
@@ -172,5 +172,124 @@ describe('useAppDispatch', () => {
       </Provider>,
     );
     expect(spy).toHaveBeenCalledTimes(1);
+  });
+});
+
+describe('useAppStateReader', () => {
+  it('should return a function returning undefined when used outside of Redux context', () => {
+    expect.assertions(1);
+    const Spy = (): null => {
+      const readState = useAppStateReader();
+      expect(readState()).toBe(undefined);
+      return null;
+    };
+    render(<Spy />);
+  });
+
+  it('should not throw when used outside of Redux context', () => {
+    const Spy = (): null => {
+      useAppStateReader()();
+      return null;
+    };
+    expect(() => render(<Spy />)).not.toThrow();
+  });
+
+  it('should read the state on demand when inside a Redux context', () => {
+    expect.assertions(1);
+    const Spy = (): null => {
+      const readState = useAppStateReader();
+      expect(readState()).not.toBe(undefined);
+      return null;
+    };
+    render(
+      <RechartsStoreProvider>
+        <Spy />
+      </RechartsStoreProvider>,
+    );
+  });
+
+  it('should read the latest state, not the state at render time', () => {
+    let readState: () => unknown = () => undefined;
+    const Spy = (): null => {
+      readState = useAppStateReader();
+      return null;
+    };
+    const store = createRechartsStore();
+    render(
+      // @ts-expect-error React-Redux types demand that the context internal value is not null, but we have that as default.
+      <Provider context={RechartsReduxContext} store={store}>
+        <Spy />
+      </Provider>,
+    );
+
+    expect(store.getState().chartData.chartData).toBe(undefined);
+    act(() => {
+      store.dispatch(setChartData([{ x: 1 }]));
+    });
+
+    expect(readState()).toBe(store.getState());
+  });
+
+  /*
+   * The whole point of this hook over useAppSelector: event handlers can resolve state lazily
+   * without the component re-rendering on every store update.
+   */
+  it('should not re-render the component when the store changes', () => {
+    const readerRenders = vi.fn();
+    const selectorRenders = vi.fn();
+    const Reader = (): null => {
+      useAppStateReader();
+      readerRenders();
+      return null;
+    };
+    const Selector = (): null => {
+      useAppSelector(s => s.chartData.chartData);
+      selectorRenders();
+      return null;
+    };
+    const store = createRechartsStore();
+    render(
+      // @ts-expect-error React-Redux types demand that the context internal value is not null, but we have that as default.
+      <Provider context={RechartsReduxContext} store={store}>
+        <Reader />
+        <Selector />
+      </Provider>,
+    );
+    readerRenders.mockClear();
+    selectorRenders.mockClear();
+
+    act(() => {
+      store.dispatch(setChartData([{ x: 1 }]));
+      vi.advanceTimersByTime(100);
+    });
+
+    // The subscribing sibling proves the update really was delivered.
+    expect(selectorRenders).toHaveBeenCalled();
+    expect(readerRenders).not.toHaveBeenCalled();
+  });
+
+  it('should return a stable reader across re-renders', () => {
+    const readers: Array<() => unknown> = [];
+    // The prop only exists to force a genuine re-render with new props.
+    const Spy = (_props: { renderCount: number }): null => {
+      readers.push(useAppStateReader());
+      return null;
+    };
+    const store = createRechartsStore();
+    const { rerender } = render(
+      // @ts-expect-error React-Redux types demand that the context internal value is not null, but we have that as default.
+      <Provider context={RechartsReduxContext} store={store}>
+        <Spy renderCount={1} />
+      </Provider>,
+    );
+    rerender(
+      // @ts-expect-error React-Redux types demand that the context internal value is not null, but we have that as default.
+      <Provider context={RechartsReduxContext} store={store}>
+        <Spy renderCount={2} />
+      </Provider>,
+    );
+
+    expect(readers.length).toBeGreaterThan(1);
+    expect(new Set(readers).size).toBe(1);
   });
 });
