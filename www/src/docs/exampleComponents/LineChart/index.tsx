@@ -8,6 +8,7 @@ import LineChartWithReferenceLines from './LineChartWithReferenceLines';
 import LineChartWithXAxisPadding from './LineChartWithXAxisPadding';
 import SimpleLineChart from './SimpleLineChart';
 import SynchronizedLineChart from './SynchronizedLineChart';
+import SynchronizedDifferentData from './SynchronizedDifferentData';
 import TinyLineChart from './TinyLineChart';
 import VerticalLineChart from './VerticalLineChart';
 import VerticalLineChartWithSpecifiedDomain from './VerticalLineChartWithSpecifiedDomain';
@@ -24,6 +25,7 @@ import lineChartWithReferenceLinesSource from './LineChartWithReferenceLines?raw
 import lineChartWithXAxisPaddingSource from './LineChartWithXAxisPadding?raw';
 import simpleLineChartSource from './SimpleLineChart?raw';
 import synchronizedLineChartSource from './SynchronizedLineChart?raw';
+import synchronizedDifferentDataSource from './SynchronizedDifferentData?raw';
 import tinyLineChartSource from './TinyLineChart?raw';
 import verticalLineChartSource from './VerticalLineChart?raw';
 import verticalLineChartWithSpecifiedDomainSource from './VerticalLineChartWithSpecifiedDomain?raw';
@@ -115,6 +117,13 @@ export const lineChartExamples = {
     sourceCode: synchronizedLineChartSource,
     name: 'Synchronized Line Chart',
     description: 'Multiple line and area charts synchronized via syncId, with a Brush component for range selection.',
+  },
+  SynchronizedDifferentData: {
+    Component: SynchronizedDifferentData,
+    sourceCode: synchronizedDifferentDataSource,
+    name: 'Synchronized Charts With Different Data',
+    description:
+      'Two synchronized charts whose data arrays do not line up, using a custom syncMethod function to snap the tooltip to the nearest date.',
   },
   LineChartCustomShapeExample: {
     Component: LineChartCustomShapeExample,

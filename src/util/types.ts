@@ -1520,10 +1520,17 @@ interface BaseChartProps<DataPointType> extends DataProvider<DataPointType>, Ext
   syncId?: number | string;
   /**
    * Customize how the charts will synchronize tooltips and brushes.
-   * `index`: synchronize using the data index in the data array. Index expects that all data has the same length.
-   * `value`: synchronize using the data value on categorical axis (categorical: XAxis in horizontal layout, YAxis in vertical layout).
-   * function: a custom sync method which receives tick and data as argument and returns an index.
    *
+   * - `index`: synchronize using the data index in the data array. Index expects that all data has the same length.
+   * - `value`: synchronize using the data value on the categorical axis (XAxis in horizontal layout, YAxis in vertical layout).
+   *   The receiving chart only shows a tooltip when one of its own ticks exactly matches the hovered value.
+   * - function: a custom sync method `(ticks, data) => number`. It is called in the receiving chart with that chart's
+   *   tooltip ticks and the interaction from the source chart, where `data.activeLabel` is the hovered value.
+   *   Return the index of the tick to activate. Return an index outside the ticks array (for example `-1`)
+   *   to hide the tooltip in the receiving chart. Use this when synchronized charts have different data,
+   *   for example to snap to the nearest date.
+   *
+   * @see {@link https://recharts.github.io/en-US/examples/SynchronizedDifferentData/ Synchronized Charts With Different Data}
    * @defaultValue index
    */
   syncMethod?: SyncMethod;
