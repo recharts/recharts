@@ -1,0 +1,1 @@
+import{j as o}from"./entry-BhG1PKU4.js";import{R as t}from"./ResponsiveContainerExample-B32Axetu.js";const r=e=>o.jsx(t,{...e}),i=Object.freeze(Object.defineProperty({__proto__:null,ResponsiveContainerExample:r},Symbol.toStringTag,{value:"Module"}));export{i as _};

@@ -1,0 +1,32 @@
+import{R as e}from"./iframe-GoDWXF60.js";import{u as m,a as h,d,G as u}from"./zIndexSlice-rcyByprz.js";import{C as g}from"./ChartSizeDimensions-eOTyMilg.js";import{C as p}from"./ComposedChart-BNv_QKcO.js";import"./preload-helper-Dp1pzeXC.js";import"./throttle-BC2iKf2c.js";import"./index-BMGI6I6X.js";import"./index-B1wbuLB1.js";import"./get-C2VjdU0L.js";import"./resolveDefaultProps-DtF3WVtu.js";import"./isWellBehavedNumber-DVk2TMuq.js";import"./PolarUtils-CTnnDHZv.js";import"./RechartsWrapper-C5ODBaUh.js";import"./axisSelectors-BMoJ3285.js";import"./d3-scale-Dm23_hA9.js";import"./index-B5osc4Bz.js";import"./index-4L7QbpcF.js";import"./renderedTicksSlice-Cio8NKuI.js";import"./index-b9Wor0gC.js";import"./CartesianChart-Ev1lyziP.js";import"./chartDataContext-B5KQQNXg.js";import"./CategoricalChart-Cojbw-YR.js";function f(){const s=m(),r=h(),c=d(u);return s==null||r==null?null:e.createElement("svg",{width:"100%",height:"100%",style:{position:"absolute",top:0,left:0}},e.createElement("text",{x:s*.9,y:r*.9,textAnchor:"end",dominantBaseline:"hanging",stroke:"black"},`scale: ${c}`))}const H={component:p,docs:{autodocs:!1},parameters:{docs:{source:{type:"code"}}}},t={render:s=>e.createElement("div",{style:{display:"flex",height:"100vh"}},e.createElement("div",{style:{flex:1,display:"flex",alignItems:"center",justifyContent:"center",position:"relative"},className:"spacer-top"},e.createElement("div",{style:{position:"absolute",height:"100%",width:"100%",top:"100px"},className:"spacer-left"},e.createElement(p,{...s},e.createElement(g,null),e.createElement(f,null))))),args:{width:500,height:500}},L=["WithAbsolutePositionAndFlexboxParents"];var o,n,i,a,l;t.parameters={...t.parameters,docs:{...(o=t.parameters)==null?void 0:o.docs,source:{originalSource:`{
+  render: (args: Args) => {
+    return <div style={{
+      display: 'flex',
+      height: '100vh'
+    }}>
+        <div style={{
+        flex: 1,
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        position: 'relative'
+      }} className="spacer-top">
+          <div style={{
+          position: 'absolute',
+          height: '100%',
+          width: '100%',
+          top: '100px'
+        }} className="spacer-left">
+            <ComposedChart {...args}>
+              <ChartSizeDimensions />
+              <ShowScale />
+            </ComposedChart>
+          </div>
+        </div>
+      </div>;
+  },
+  args: {
+    width: 500,
+    height: 500
+  }
+}`,...(i=(n=t.parameters)==null?void 0:n.docs)==null?void 0:i.source},description:{story:"https://github.com/recharts/recharts/issues/5477",...(l=(a=t.parameters)==null?void 0:a.docs)==null?void 0:l.description}}};export{t as WithAbsolutePositionAndFlexboxParents,L as __namedExportsOrder,H as default};
