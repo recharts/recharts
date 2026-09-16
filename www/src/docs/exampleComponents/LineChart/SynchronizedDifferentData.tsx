@@ -35,7 +35,7 @@ const MAX_DISTANCE_MS = 2 * ONE_DAY_MS;
  * Returning an index outside the ticks array hides the tooltip in the receiving chart,
  * which is what we want when there is no nearby data point.
  */
-const closestDate: SyncMethod = (ticks, data) => {
+export const closestDate: SyncMethod = (ticks, data) => {
   const hovered = Date.parse(String(data.activeLabel));
   if (Number.isNaN(hovered)) {
     return -1;
