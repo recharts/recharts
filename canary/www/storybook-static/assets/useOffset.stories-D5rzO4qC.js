@@ -1,0 +1,23 @@
+import{R as t}from"./iframe-14XWblZL.js";import{A as p}from"./RechartsWrapper-DCy9svnE.js";import{R as a}from"./zIndexSlice-bTipO816.js";import{C as n}from"./ComposedChart-BWmJnIiB.js";import{p as s}from"./Page-Cj8EiXz7.js";import{L as f}from"./Line-CWtoKG_V.js";import{X as d}from"./XAxis-C7X69uLj.js";import{Y as h}from"./YAxis-B3LGD4EX.js";import{L as g}from"./Legend-BErzQH-F.js";import"./preload-helper-Dp1pzeXC.js";import"./resolveDefaultProps-CeALBfEq.js";import"./get-C2VjdU0L.js";import"./axisSelectors-CIwAjqs7.js";import"./throttle-BdJ0G1gd.js";import"./index-BoYHIswN.js";import"./index-CyB2tElA.js";import"./isWellBehavedNumber-MwCzfGE9.js";import"./d3-scale-Do0_JEbV.js";import"./index-kqeHVlrV.js";import"./index-CT88W_qc.js";import"./renderedTicksSlice-MhpbyeSe.js";import"./index-0t1fABOK.js";import"./PolarUtils-CTnnDHZv.js";import"./CartesianChart-CccXTSFB.js";import"./chartDataContext-TCJzUoES.js";import"./CategoricalChart-BYZHR-yl.js";import"./Layer-DfNVM8Fr.js";import"./Curve-CiXwsAAl.js";import"./types-DUuownuR.js";import"./step-JufzNNlH.js";import"./path-DyVhHtw_.js";import"./AnimatedItems-Dweh6qvQ.js";import"./Label-CvRLouIN.js";import"./Text-DR2swdHV.js";import"./DOMUtils-BDBx2TYe.js";import"./useId-B0oD1V4p.js";import"./useBackwardsCompatibleTheme-CUWKt_Td.js";import"./ZIndexLayer-BpIepiPk.js";import"./useAnimationId-BF3NsOWV.js";import"./ActivePoints-CmDJ2stf.js";import"./Dot-CVbI_zwl.js";import"./RegisterGraphicalItemId-Bdmh3jKn.js";import"./ErrorBarContext-B0Gjb9Ej.js";import"./GraphicalItemClipPath-7jxlsFlx.js";import"./SetGraphicalItem-DlBXFH4y.js";import"./getRadiusAndStrokeWidthFromDot-CkcS_CHs.js";import"./ActiveShapeUtils-qHfZYwQx.js";import"./useGraphicalItemIdentity-QKGsdlin.js";import"./CartesianAxis-CBKTwxf2.js";import"./getClassNameFromUnknown-Jg1grEQN.js";import"./isBuffer-BG75eWKN.js";import"./Symbols-VjYZPiRG.js";import"./symbol-BSOWQiAM.js";import"./useElementOffset-cDBpeZWA.js";import"./uniqBy-BGqFg_4C.js";import"./iteratee-CcTmIxFv.js";const ut={title:"API/hooks/useOffset",component:p,parameters:{docs:{description:{component:"This story demonstrates the use of the `useOffset` hook to read chart offset in a responsive container."}}}},r={name:"useOffset",render:e=>t.createElement(a,{width:e.width,height:e.height},t.createElement(n,{data:s,margin:e.margin},t.createElement(f,{dataKey:"pv"}),t.createElement(d,{dataKey:"name"}),t.createElement(h,null),t.createElement(g,null))),args:{width:"100%",height:400,margin:{top:30,right:170,bottom:30,left:120}}},Ct=["UseOffset"];var o,i,m;r.parameters={...r.parameters,docs:{...(o=r.parameters)==null?void 0:o.docs,source:{originalSource:`{
+  name: 'useOffset',
+  render: (args: Args) => {
+    return <ResponsiveContainer width={args.width} height={args.height}>
+        <ComposedChart data={pageData} margin={args.margin}>
+          <Line dataKey="pv" />
+          <XAxis dataKey="name" />
+          <YAxis />
+          <Legend />
+        </ComposedChart>
+      </ResponsiveContainer>;
+  },
+  args: {
+    width: '100%',
+    height: 400,
+    margin: {
+      top: 30,
+      right: 170,
+      bottom: 30,
+      left: 120
+    }
+  }
+}`,...(m=(i=r.parameters)==null?void 0:i.docs)==null?void 0:m.source}}};export{r as UseOffset,Ct as __namedExportsOrder,ut as default};
