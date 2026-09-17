@@ -34,6 +34,7 @@ import { selectChartHeight, selectChartWidth } from './containerSelectors';
 import { combineActiveLabel } from './combiners/combineActiveLabel';
 import { combineTooltipInteractionState } from './combiners/combineTooltipInteractionState';
 import { combineActiveTooltipIndex } from './combiners/combineActiveTooltipIndex';
+import { selectPolarViewBox } from './polarAxisSelectors';
 import { combineCoordinateForDefaultIndex } from './combiners/combineCoordinateForDefaultIndex';
 import { combineTooltipPayloadConfigurations } from './combiners/combineTooltipPayloadConfigurations';
 import { selectTooltipPayloadSearcher } from './selectTooltipPayloadSearcher';
@@ -139,6 +140,7 @@ export const selectCoordinateForDefaultIndex: (
     selectTooltipAxisTicks,
     pickDefaultIndex,
     selectTooltipPayloadConfigurations,
+    selectPolarViewBox,
   ],
   combineCoordinateForDefaultIndex,
 );
