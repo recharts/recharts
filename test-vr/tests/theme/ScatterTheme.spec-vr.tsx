@@ -1,6 +1,6 @@
-import { expect, test } from '../fixtures';
+import { expect, testWithThemes } from '../fixtures';
 
-test('Scatter theme', async ({ mountStory }) => {
+testWithThemes('Scatter theme', async ({ mountStory }) => {
   const component = await mountStory('theme/ScatterTheme/ScatterThemeComparison');
 
   await expect(component).toHaveScreenshot();
