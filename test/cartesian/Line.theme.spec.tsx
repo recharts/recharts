@@ -158,6 +158,29 @@ describe('Line theme', () => {
     });
   });
 
+  it('uses the themed fill as the default dot fill when the line stroke is none', () => {
+    const { container } = rechartsTestRender(
+      <RechartsThemeProvider
+        value={{
+          graphicalItems: [
+            {
+              fill: 'purple',
+              stroke: 'red',
+            },
+          ],
+        }}
+      >
+        <MyChart>
+          <Line dataKey="profit" isAnimationActive={false} stroke="none" />
+        </MyChart>
+      </RechartsThemeProvider>,
+    );
+
+    getDots(container).forEach(dot => {
+      expect(dot).toHaveAttribute('fill', 'purple');
+    });
+  });
+
   it('lets explicit visual props override the selected graphical-item theme', () => {
     const { container } = rechartsTestRender(
       <RechartsThemeProvider

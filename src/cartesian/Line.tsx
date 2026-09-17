@@ -469,6 +469,14 @@ type InternalProps = LineSvgProps & InternalLineProps;
 
 export type Props<DataPointType = any, ValueAxisType = any> = LineSvgProps & LineProps<DataPointType, ValueAxisType>;
 
+/**
+ * The default dot fill follows the resolved line stroke so that dots read against the curve.
+ * A stroke of `none` carries no color, so fall back to the themed fill instead.
+ */
+function getDotFillFromTheme(stroke: string | undefined, fill: string | undefined): string | undefined {
+  return stroke && stroke !== 'none' ? stroke : fill;
+}
+
 const computeLegendPayloadFromAreaData = (props: Props): ReadonlyArray<LegendPayload> => {
   const { dataKey, name, stroke, legendType, hide } = props;
   return [
@@ -957,7 +965,8 @@ function LineFn(outsideProps: Props) {
     defaultLineProps,
   );
   const dotFill =
-    outsideProps.fill ?? (rechartsTheme == null ? props.fill : (props.stroke ?? graphicalItemTheme?.fill));
+    outsideProps.fill ??
+    (rechartsTheme == null ? props.fill : getDotFillFromTheme(props.stroke, graphicalItemTheme?.fill));
   const isPanorama = useIsPanorama();
   return (
     <RegisterGraphicalItemId id={props.id} type="line">
