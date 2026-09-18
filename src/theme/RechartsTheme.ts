@@ -1,5 +1,31 @@
-import { CSSProperties } from 'react';
+import type { CSSProperties, SVGProps } from 'react';
 import { LegendProps } from '../index';
+
+/*
+ * Typography is used as CSS and can also be spread onto native SVG text and Recharts Text.
+ * Rather than maintaining a list of every CSS/SVG type difference, TextStyles maps every CSS
+ * property and intersects it with the corresponding SVG property when one exists. CSS-only
+ * properties intersect with unknown, which preserves their original CSS type; shared properties
+ * keep only values accepted by both CSS and SVG.
+ *
+ * Recharts Text has two additional CSS-name collisions that need explicit restrictions:
+ * textAnchor is narrower than React's SVG string type, and maxLines is a number while CSS also
+ * permits string values such as 'none'.
+ */
+type SVGTextAnchor = 'start' | 'middle' | 'end' | 'inherit';
+type TextPropsCompatibleStyles = {
+  maxLines?: number;
+  textAnchor?: SVGTextAnchor;
+};
+type SVGTextProperty<Key extends keyof CSSProperties> = Key extends keyof SVGProps<SVGTextElement>
+  ? SVGProps<SVGTextElement>[Key]
+  : unknown;
+type RechartsTextProperty<Key extends keyof CSSProperties> = Key extends keyof TextPropsCompatibleStyles
+  ? TextPropsCompatibleStyles[Key]
+  : unknown;
+type CSSPropertyCompatibleWithText<Key extends keyof CSSProperties> = CSSProperties[Key] &
+  SVGTextProperty<Key> &
+  RechartsTextProperty<Key>;
 
 /**
  * Styles shared for rectangular or variable shape components that have an area (Area, Bar, Rectangle)
@@ -38,8 +64,11 @@ export type Styles1D = {
  * Styles shared with text components (various Labels, Tooltip, Legend, labels, text).
  *
  * These styles are applied to both SVG elements (Label, Text) and HTML elements (Legend, Tooltip).
+ * Shared properties accept only values that are valid in both CSS and SVG contexts.
  */
-export type TextStyles = CSSProperties;
+export type TextStyles = {
+  [Key in keyof CSSProperties]?: CSSPropertyCompatibleWithText<Key>;
+};
 
 /**
  * Styling presets for Recharts components.

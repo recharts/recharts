@@ -11,7 +11,7 @@ import { isWellBehavedNumber } from '../util/isWellBehavedNumber';
 import { useId } from '../util/useId';
 
 import { useBackwardsCompatibleTheme } from '../theme/useBackwardsCompatibleTheme';
-import { TextStyles } from '../theme/RechartsTheme';
+import type { TextStyles } from '../theme/RechartsTheme';
 import { resolveDefaultProps } from '../util/resolveDefaultProps';
 import { cssStylesToSvgStyles } from '../theme/cssStylesToSvgStyles';
 
@@ -63,7 +63,7 @@ const calculateWordWidths = ({ children, breakAll, style }: CalculateWordWidthsP
 /**
  * @inline
  */
-export type TextAnchor = 'start' | 'middle' | 'end' | 'inherit';
+export type TextAnchor = NonNullable<TextStyles['textAnchor']>;
 
 export function isValidTextAnchor(value: string | undefined): value is TextAnchor {
   return value === 'start' || value === 'middle' || value === 'end' || value === 'inherit';
