@@ -80,7 +80,7 @@ export default function PopulationPyramidExample({ defaultIndex }: { defaultInde
         type="number"
         domain={[-10, 10]}
         tickFormatter={formatPercent}
-        height={50}
+        height="auto"
         label={{
           value: '% of total population',
           position: 'insideBottom',
@@ -117,7 +117,7 @@ export default function PopulationPyramidExample({ defaultIndex }: { defaultInde
         label={{ position: 'right', formatter: formatPercent }}
       />
       <Tooltip formatter={formatPercent} defaultIndex={defaultIndex} />
-      <Legend itemSorter={itemSorter} verticalAlign="top" align="right" />
+      <Legend itemSorter={itemSorter} position="insideTopRight" />
       <RechartsDevtools />
     </BarChart>
   );
