@@ -4,10 +4,11 @@ import {
   BarProps,
   BarShapeProps,
   CartesianGrid,
-  emptyTheme,
-  RechartsThemeProvider,
+  DefaultTooltipContent,
   Rectangle,
   Tooltip,
+  TooltipContentProps,
+  useRechartsTheme,
   XAxis,
   YAxis,
 } from 'recharts';
@@ -105,35 +106,38 @@ const MyBar = (props: BarProps) => {
   return <Bar {...props} stackId="a" radius={25} activeBar shape={CustomFillRectangle} />;
 };
 
+const ThemedTooltipContent = (props: TooltipContentProps) => {
+  const theme = useRechartsTheme();
+  return <DefaultTooltipContent {...props} itemStyle={theme?.typography} />;
+};
+
 // #endregion
 export default function TimelineExample({ defaultIndex }: { defaultIndex?: number }) {
   return (
-    <RechartsThemeProvider value={emptyTheme}>
-      <BarChart
-        layout="vertical"
-        style={{ width: '100%', maxWidth: '700px', maxHeight: '70vh', aspectRatio: 1.618 }}
-        responsive
-        data={data}
-        margin={{ bottom: 20 }}
-      >
-        <CartesianGrid strokeDasharray="2 2" />
-        <Tooltip shared={false} defaultIndex={defaultIndex} />
-        <XAxis type="number" height={50} label={{ value: 'Time (s)', position: 'insideBottomRight' }} />
-        <YAxis
-          type="category"
-          dataKey="name"
-          width="auto"
-          label={{
-            value: 'Test run',
-            angle: -90,
-            position: 'insideTopLeft',
-            textAnchor: 'end',
-          }}
-        />
-        <MyBar dataKey="firstCycle" />
-        <MyBar dataKey="secondCycle" />
-        <RechartsDevtools />
-      </BarChart>
-    </RechartsThemeProvider>
+    <BarChart
+      layout="vertical"
+      style={{ width: '100%', maxWidth: '700px', maxHeight: '70vh', aspectRatio: 1.618 }}
+      responsive
+      data={data}
+      margin={{ bottom: 20 }}
+    >
+      <CartesianGrid strokeDasharray="2 2" />
+      <Tooltip shared={false} defaultIndex={defaultIndex} content={ThemedTooltipContent} />
+      <XAxis type="number" height={50} label={{ value: 'Time (s)', position: 'insideBottomRight' }} />
+      <YAxis
+        type="category"
+        dataKey="name"
+        width="auto"
+        label={{
+          value: 'Test run',
+          angle: -90,
+          position: 'insideTopLeft',
+          textAnchor: 'end',
+        }}
+      />
+      <MyBar dataKey="firstCycle" />
+      <MyBar dataKey="secondCycle" />
+      <RechartsDevtools />
+    </BarChart>
   );
 }
