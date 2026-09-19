@@ -63,6 +63,17 @@ describe('TooltipBoundingBox', () => {
     expect(screen.getByText('Hello world!')).not.toHaveStyle('will-change: transform');
   });
 
+  it('should not request a compositing layer when automatic animation respects reduced motion', () => {
+    vi.stubGlobal('matchMedia', () => ({
+      matches: true,
+      addEventListener: vi.fn(),
+      removeEventListener: vi.fn(),
+    }));
+
+    render(<TooltipBoundingBox {...defaultProps} isAnimationActive="auto" />);
+    expect(screen.getByText('Hello world!')).not.toHaveStyle('will-change: transform');
+  });
+
   it('should hide children when dismissed using Escape key', async () => {
     render(<TooltipBoundingBox {...defaultProps} />);
     const user = userEvent.setup({
