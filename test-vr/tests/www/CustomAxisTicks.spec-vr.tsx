@@ -1,7 +1,7 @@
 import type { AxisTicksPlayground, CustomAxisTicks } from './CustomAxisTicks.story';
-import { expect, test } from '../fixtures';
+import { expect, testWithThemes } from '../fixtures';
 
-test('AxisTicksPlayground with linear scale', async ({ mountStory }) => {
+testWithThemes('AxisTicksPlayground with linear scale', async ({ mountStory }) => {
   const component = await mountStory<typeof AxisTicksPlayground>('www/CustomAxisTicks/AxisTicksPlayground', {
     niceTicks: 'snap125',
     scale: 'linear',
@@ -10,7 +10,7 @@ test('AxisTicksPlayground with linear scale', async ({ mountStory }) => {
   await expect(component).toHaveScreenshot();
 });
 
-test('AxisTicksPlayground with symlog scale', async ({ mountStory }) => {
+testWithThemes('AxisTicksPlayground with symlog scale', async ({ mountStory }) => {
   const component = await mountStory<typeof AxisTicksPlayground>('www/CustomAxisTicks/AxisTicksPlayground', {
     niceTicks: 'adaptive',
     scale: 'symlog',
@@ -19,7 +19,7 @@ test('AxisTicksPlayground with symlog scale', async ({ mountStory }) => {
   await expect(component).toHaveScreenshot();
 });
 
-test('CustomAxisTicks', async ({ mountStory }) => {
+testWithThemes('CustomAxisTicks', async ({ mountStory }) => {
   const component = await mountStory<typeof CustomAxisTicks>('www/CustomAxisTicks/CustomAxisTicks', {
     scale: 'linear',
   });
