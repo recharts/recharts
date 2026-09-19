@@ -31,7 +31,7 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v7
         with:
-          node-version: '24.x'
+          node-version-file: '.nvmrc'
           cache: 'npm'
 
       - name: Install dependencies
