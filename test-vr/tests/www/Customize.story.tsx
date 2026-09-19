@@ -4,11 +4,10 @@ import CustomizeTooltipContentComponent from '../../../www/src/components/GuideV
 import CustomizeSizeAndStrokeComponent from '../../../www/src/components/GuideView/Customize/CustomizeSizeAndStroke';
 import CustomizeLegendAndTooltipStyleComponent from '../../../www/src/components/GuideView/Customize/CustomizeLegendAndTooltipStyle';
 import CustomizeCustomElementComponent from '../../../www/src/components/GuideView/Customize/CustomizeCustomElement';
-import { themedStory } from './StoryTheme';
 
-export const CustomizeLabels = themedStory(CustomizeLabelsComponent);
-export const CustomizeBarShape = themedStory(CustomizeBarShapeComponent);
-export const CustomizeTooltipContent = themedStory(CustomizeTooltipContentComponent);
-export const CustomizeSizeAndStroke = themedStory(CustomizeSizeAndStrokeComponent);
-export const CustomizeLegendAndTooltipStyle = themedStory(CustomizeLegendAndTooltipStyleComponent);
-export const CustomizeCustomElement = themedStory(CustomizeCustomElementComponent);
+export const CustomizeLabels = CustomizeLabelsComponent;
+export const CustomizeBarShape = CustomizeBarShapeComponent;
+export const CustomizeTooltipContent = CustomizeTooltipContentComponent;
+export const CustomizeSizeAndStroke = CustomizeSizeAndStrokeComponent;
+export const CustomizeLegendAndTooltipStyle = CustomizeLegendAndTooltipStyleComponent;
+export const CustomizeCustomElement = CustomizeCustomElementComponent;
