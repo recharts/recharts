@@ -53,6 +53,16 @@ describe('TooltipBoundingBox', () => {
     expect(screen.getByText('Hello world!')).not.toBeVisible();
   });
 
+  it('should keep the tooltip on a stable compositing layer when animation is enabled', () => {
+    render(<TooltipBoundingBox {...defaultProps} isAnimationActive />);
+    expect(screen.getByText('Hello world!')).toHaveStyle('will-change: transform');
+  });
+
+  it('should not request a compositing layer when animation is disabled', () => {
+    render(<TooltipBoundingBox {...defaultProps} isAnimationActive={false} />);
+    expect(screen.getByText('Hello world!')).not.toHaveStyle('will-change: transform');
+  });
+
   it('should hide children when dismissed using Escape key', async () => {
     render(<TooltipBoundingBox {...defaultProps} />);
     const user = userEvent.setup({
