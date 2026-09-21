@@ -1,10 +1,12 @@
 import { describe, expect, it } from 'vitest';
 import { generateMockData } from '@recharts/devtools';
 import React from 'react';
-import { rechartsTestRender } from '../../helper/createSelectorTestCase';
-import { Bar, BarChart, RechartsThemeProvider } from '../../../src';
+import { createSelectorTestCase, rechartsTestRender } from '../../helper/createSelectorTestCase';
+import { Bar, BarChart, RechartsThemeProvider, Tooltip } from '../../../src';
 import { getAllBarPaths } from '../../helper/expectBars';
 import { assertNotNull } from '../../helper/assertNotNull';
+import { selectTooltipPayload } from '../../../src/state/selectors/selectors';
+import { expectLastCalledWith } from '../../helper/expectLastCalledWith';
 
 const mockData = generateMockData(5, 2);
 
@@ -20,6 +22,60 @@ const MyChart = ({
     {children}
   </BarChart>
 );
+
+describe('Bar with per-datum colors', () => {
+  const data = [
+    { name: 'Sun', massKg: 1, fill: 'gold', stroke: 'red' },
+    { name: 'Mercury', massKg: 2, fill: 'silver' },
+  ];
+
+  const renderTestCase = createSelectorTestCase(({ children }) => (
+    <RechartsThemeProvider
+      value={{
+        graphicalItems: [{ fill: 'purple', stroke: 'indigo' }],
+      }}
+    >
+      <BarChart width={400} height={400} data={data}>
+        <Bar dataKey="massKg" id="mass" isAnimationActive={false} />
+        <Tooltip defaultIndex={0} />
+        {children}
+      </BarChart>
+    </RechartsThemeProvider>
+  ));
+
+  it('should render the active datum fill in the tooltip', () => {
+    const { container } = renderTestCase();
+    const tooltipItem = container.querySelector<HTMLElement>('.recharts-tooltip-item');
+    assertNotNull(tooltipItem);
+
+    expect(getAllBarPaths(container)[0]).toHaveAttribute('fill', 'gold');
+    expect(getAllBarPaths(container)[0]).toHaveAttribute('stroke', 'red');
+    expect(tooltipItem).toHaveStyle({ color: 'rgb(255, 215, 0)' });
+  });
+
+  it('should select active datum colors for the tooltip payload', () => {
+    const { spy } = renderTestCase(state => selectTooltipPayload(state, 'axis', 'hover', '0'));
+
+    expectLastCalledWith(spy, [
+      {
+        color: 'gold',
+        dataKey: 'massKg',
+        fill: 'gold',
+        formatter: undefined,
+        graphicalItemId: 'mass',
+        hide: false,
+        name: 'massKg',
+        nameKey: undefined,
+        payload: data[0],
+        stroke: 'red',
+        strokeWidth: undefined,
+        type: undefined,
+        unit: undefined,
+        value: 1,
+      },
+    ]);
+  });
+});
 
 describe('Bar theme', () => {
   function getBarFill(container: ReturnType<typeof rechartsTestRender>['container']): string | null {

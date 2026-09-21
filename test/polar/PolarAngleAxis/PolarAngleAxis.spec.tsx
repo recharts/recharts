@@ -96,21 +96,25 @@ const ringsData = [
     name: 'Elves',
     rings: 3,
     fill: 'green',
+    stroke: 'green',
   },
   {
     name: 'Dwarves',
     rings: 7,
     fill: 'blue',
+    stroke: 'blue',
   },
   {
     name: 'Humans',
     rings: 9,
     fill: 'red',
+    stroke: 'red',
   },
   {
     name: 'Sauron',
     rings: 1,
     fill: 'black',
+    stroke: 'black',
   },
 ];
 

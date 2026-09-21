@@ -1,26 +1,36 @@
-import { expect, test } from '../fixtures';
+import { expect, testWithThemes } from '../fixtures';
 
-test('MassBarChart', async ({ mountStory }) => {
-  const component = await mountStory('www/DomainAndTicks/MassBarChart');
+testWithThemes('MassBarChart', async ({ mountStory }) => {
+  const component = await mountStory('www/DomainAndTicks/MassBarChart', {
+    defaultIndex: 0,
+  });
   await expect(component).toHaveScreenshot();
 });
 
-test('MassBarChartCategoricalY', async ({ mountStory }) => {
-  const component = await mountStory('www/DomainAndTicks/MassBarChartCategoricalY');
+testWithThemes('MassBarChartCategoricalY', async ({ mountStory }) => {
+  const component = await mountStory('www/DomainAndTicks/MassBarChartCategoricalY', {
+    defaultIndex: 0,
+  });
   await expect(component).toHaveScreenshot();
 });
 
-test('MassBarChartCustomYDomain', async ({ mountStory }) => {
-  const component = await mountStory('www/DomainAndTicks/MassBarChartCustomYDomain');
+testWithThemes('MassBarChartCustomYDomain', async ({ mountStory }) => {
+  const component = await mountStory('www/DomainAndTicks/MassBarChartCustomYDomain', {
+    defaultIndex: 0,
+  });
   await expect(component).toHaveScreenshot();
 });
 
-test('MassBarChartLogScale', async ({ mountStory }) => {
-  const component = await mountStory('www/DomainAndTicks/MassBarChartLogScale');
+testWithThemes('MassBarChartLogScale', async ({ mountStory }) => {
+  const component = await mountStory('www/DomainAndTicks/MassBarChartLogScale', {
+    defaultIndex: 0,
+  });
   await expect(component).toHaveScreenshot();
 });
 
-test('MassBarChartCustomTicks', async ({ mountStory }) => {
-  const component = await mountStory('www/DomainAndTicks/MassBarChartCustomTicks');
+testWithThemes('MassBarChartCustomTicks', async ({ mountStory }) => {
+  const component = await mountStory('www/DomainAndTicks/MassBarChartCustomTicks', {
+    defaultIndex: 0,
+  });
   await expect(component).toHaveScreenshot();
 });
