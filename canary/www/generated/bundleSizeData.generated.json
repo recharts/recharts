@@ -1,55 +1,55 @@
 {
   "treemap": {
     "examplePath": "www/src/views/IndexView/IndexLineChart.tsx",
-    "totalSize": 927244,
-    "totalSizeLabel": "905.51 KB",
+    "totalSize": 927895,
+    "totalSizeLabel": "906.15 KB",
     "moduleCount": 374,
-    "generatedAt": "2026-09-20T18:44:07.137Z",
+    "generatedAt": "2026-09-21T17:29:18.179Z",
     "stages": [
       {
         "stage": "es6-folder",
-        "bytes": 1415924,
+        "bytes": 1417350,
         "humanReadableSize": "1.35 MB",
         "reductionFromBaselinePercent": 0
       },
       {
         "stage": "tree-shaken",
-        "bytes": 930139,
-        "humanReadableSize": "908.34 KB",
+        "bytes": 930790,
+        "humanReadableSize": "908.97 KB",
         "reductionFromBaselinePercent": 0
       },
       {
         "stage": "minified",
-        "bytes": 308000,
-        "humanReadableSize": "300.78 KB",
+        "bytes": 308193,
+        "humanReadableSize": "300.97 KB",
         "reductionFromBaselinePercent": 66.89
       },
       {
         "stage": "minified+gzip",
-        "bytes": 101011,
-        "humanReadableSize": "98.64 KB",
+        "bytes": 101071,
+        "humanReadableSize": "98.70 KB",
         "reductionFromBaselinePercent": 89.14
       }
     ],
     "tree": {
       "name": "bundle",
       "fullPath": "bundle",
-      "value": 927244,
+      "value": 927895,
       "children": [
         {
           "name": "src",
           "fullPath": "src",
-          "value": 523668,
+          "value": 524319,
           "children": [
             {
               "name": "state",
               "fullPath": "src/state",
-              "value": 182542,
+              "value": 183193,
               "children": [
                 {
                   "name": "selectors",
                   "fullPath": "src/state/selectors",
-                  "value": 114082,
+                  "value": 114733,
                   "children": [
                     {
                       "name": "axisSelectors.ts",
@@ -59,12 +59,12 @@
                     {
                       "name": "combiners",
                       "fullPath": "src/state/selectors/combiners",
-                      "value": 20143,
+                      "value": 20794,
                       "children": [
                         {
                           "name": "combineTooltipPayload.ts",
                           "fullPath": "src/state/selectors/combiners/combineTooltipPayload.ts",
-                          "value": 6654
+                          "value": 7305
                         },
                         {
                           "name": "combineActiveTooltipIndex.ts",
@@ -2597,55 +2597,55 @@
   },
   "sunburst": {
     "examplePath": "www/src/views/IndexView/IndexLineChart.tsx",
-    "totalSize": 927244,
-    "totalSizeLabel": "905.51 KB",
+    "totalSize": 927895,
+    "totalSizeLabel": "906.15 KB",
     "moduleCount": 374,
-    "generatedAt": "2026-09-20T18:44:04.939Z",
+    "generatedAt": "2026-09-21T17:29:19.969Z",
     "stages": [
       {
         "stage": "es6-folder",
-        "bytes": 1415924,
+        "bytes": 1417350,
         "humanReadableSize": "1.35 MB",
         "reductionFromBaselinePercent": 0
       },
       {
         "stage": "tree-shaken",
-        "bytes": 930139,
-        "humanReadableSize": "908.34 KB",
+        "bytes": 930790,
+        "humanReadableSize": "908.97 KB",
         "reductionFromBaselinePercent": 0
       },
       {
         "stage": "minified",
-        "bytes": 308000,
-        "humanReadableSize": "300.78 KB",
+        "bytes": 308193,
+        "humanReadableSize": "300.97 KB",
         "reductionFromBaselinePercent": 66.89
       },
       {
         "stage": "minified+gzip",
-        "bytes": 101011,
-        "humanReadableSize": "98.64 KB",
+        "bytes": 101071,
+        "humanReadableSize": "98.70 KB",
         "reductionFromBaselinePercent": 89.14
       }
     ],
     "tree": {
       "name": "bundle",
       "fullPath": "bundle",
-      "value": 927244,
+      "value": 927895,
       "children": [
         {
           "name": "src",
           "fullPath": "src",
-          "value": 523668,
+          "value": 524319,
           "children": [
             {
               "name": "state",
               "fullPath": "src/state",
-              "value": 182542,
+              "value": 183193,
               "children": [
                 {
                   "name": "selectors",
                   "fullPath": "src/state/selectors",
-                  "value": 114082,
+                  "value": 114733,
                   "children": [
                     {
                       "name": "axisSelectors.ts",
@@ -2655,12 +2655,12 @@
                     {
                       "name": "combiners",
                       "fullPath": "src/state/selectors/combiners",
-                      "value": 20143,
+                      "value": 20794,
                       "children": [
                         {
                           "name": "combineTooltipPayload.ts",
                           "fullPath": "src/state/selectors/combiners/combineTooltipPayload.ts",
-                          "value": 6654
+                          "value": 7305
                         },
                         {
                           "name": "combineActiveTooltipIndex.ts",
