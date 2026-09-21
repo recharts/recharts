@@ -27,21 +27,26 @@ describe('Bar with per-datum colors', () => {
   const data = [
     { name: 'Sun', massKg: 1, fill: 'gold', stroke: 'red' },
     { name: 'Mercury', massKg: 2, fill: 'silver' },
+    { name: 'Venus', massKg: 3, stroke: 'blue' },
   ];
 
-  const renderTestCase = createSelectorTestCase(({ children }) => (
-    <RechartsThemeProvider
-      value={{
-        graphicalItems: [{ fill: 'purple', stroke: 'indigo' }],
-      }}
-    >
-      <BarChart width={400} height={400} data={data}>
-        <Bar dataKey="massKg" id="mass" isAnimationActive={false} />
-        <Tooltip defaultIndex={0} />
-        {children}
-      </BarChart>
-    </RechartsThemeProvider>
-  ));
+  const createRenderTestCase = (defaultIndex: number) =>
+    createSelectorTestCase(({ children }) => (
+      <RechartsThemeProvider
+        value={{
+          graphicalItems: [{ fill: 'purple', stroke: 'indigo' }],
+        }}
+      >
+        <BarChart width={400} height={400} data={data}>
+          <Bar dataKey="massKg" id="mass" isAnimationActive={false} />
+          <Tooltip defaultIndex={defaultIndex} />
+          {children}
+        </BarChart>
+      </RechartsThemeProvider>
+    ));
+
+  const renderTestCase = createRenderTestCase(0);
+  const renderStrokeOnlyDatumTestCase = createRenderTestCase(2);
 
   it('should render the active datum fill in the tooltip', () => {
     const { container } = renderTestCase();
@@ -74,6 +79,34 @@ describe('Bar with per-datum colors', () => {
         value: 1,
       },
     ]);
+  });
+
+  it('should use the active datum stroke for the tooltip when fill is absent', () => {
+    const { container, spy } = renderStrokeOnlyDatumTestCase(state =>
+      selectTooltipPayload(state, 'axis', 'hover', '2'),
+    );
+    const tooltipItem = container.querySelector<HTMLElement>('.recharts-tooltip-item');
+    assertNotNull(tooltipItem);
+
+    expectLastCalledWith(spy, [
+      {
+        color: 'blue',
+        dataKey: 'massKg',
+        fill: 'purple',
+        formatter: undefined,
+        graphicalItemId: 'mass',
+        hide: false,
+        name: 'massKg',
+        nameKey: undefined,
+        payload: data[2],
+        stroke: 'blue',
+        strokeWidth: undefined,
+        type: undefined,
+        unit: undefined,
+        value: 3,
+      },
+    ]);
+    expect(tooltipItem).toHaveStyle({ color: 'rgb(0, 0, 255)' });
   });
 });
 
