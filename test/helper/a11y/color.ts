@@ -42,7 +42,7 @@ export type ColorVisionDeficiency = 'protanopia' | 'deuteranopia' | 'tritanopia'
 
 const HEX_SHORT = /^#([\da-f])([\da-f])([\da-f])$/i;
 const HEX_LONG = /^#([\da-f]{2})([\da-f]{2})([\da-f]{2})$/i;
-const RGB_FUNCTION = /^rgba?\(\s*([\d.]+)[\s,]+([\d.]+)[\s,]+([\d.]+)/i;
+const RGB_FUNCTION = /^rgb\(\s*([\d.]+)[\s,]+([\d.]+)[\s,]+([\d.]+)\s*\)$/i;
 
 /**
  * Parse the subset of CSS colour syntax that the Recharts themes actually use:
