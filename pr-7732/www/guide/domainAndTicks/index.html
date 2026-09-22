@@ -29,7 +29,7 @@
       rel="stylesheet"
       type="text/css"
     />
-    <script type="module" crossorigin src="/recharts/pr-7732/www/assets/index-BCZN2q11.js"></script>
+    <script type="module" crossorigin src="/recharts/pr-7732/www/assets/index-D0Nn4xol.js"></script>
     <link rel="stylesheet" crossorigin href="/recharts/pr-7732/www/assets/index-Dngh0Ezp.css">
     <link rel="sitemap" type="application/xml" title="Sitemap" href="/sitemap.xml">
   </head>
@@ -65,6 +65,7 @@ const solarSystem = [
     radiusKm: 696340,
     massKg: 1.989e30,
     fill: &#x27;#ffa700&#x27;,
+    stroke: &#x27;#ffa700&#x27;,
   },
   {
     name: &#x27;Mercury&#x27;,
@@ -72,6 +73,7 @@ const solarSystem = [
     radiusKm: 2439.7,
     massKg: 3.3e23,
     fill: &#x27;#1a1a1a&#x27;,
+    stroke: &#x27;#1a1a1a&#x27;,
   },
   {
     name: &#x27;Venus&#x27;,
@@ -79,6 +81,7 @@ const solarSystem = [
     radiusKm: 6051.8,
     massKg: 4.87e24,
     fill: &#x27;#e3bb76&#x27;,
+    stroke: &#x27;#e3bb76&#x27;,
   },
   {
     name: &#x27;Earth&#x27;,
@@ -86,6 +89,7 @@ const solarSystem = [
     radiusKm: 6371,
     massKg: 5.97e24,
     fill: &#x27;#6b93d6&#x27;,
+    stroke: &#x27;#6b93d6&#x27;,
   },
   {
     name: &#x27;Mars&#x27;,
@@ -93,6 +97,7 @@ const solarSystem = [
     radiusKm: 3389.5,
     massKg: 6.42e23,
     fill: &#x27;#993d00&#x27;,
+    stroke: &#x27;#993d00&#x27;,
   },
   {
     name: &#x27;Jupiter&#x27;,
@@ -100,6 +105,7 @@ const solarSystem = [
     radiusKm: 69911,
     massKg: 1.9e27,
     fill: &#x27;#b07f35&#x27;,
+    stroke: &#x27;#b07f35&#x27;,
   },
   {
     name: &#x27;Saturn&#x27;,
@@ -107,6 +113,7 @@ const solarSystem = [
     radiusKm: 58232,
     massKg: 5.68e26,
     fill: &#x27;#b08f36&#x27;,
+    stroke: &#x27;#b08f36&#x27;,
   },
   {
     name: &#x27;Uranus&#x27;,
@@ -114,6 +121,7 @@ const solarSystem = [
     radiusKm: 25362,
     massKg: 8.68e25,
     fill: &#x27;#5580aa&#x27;,
+    stroke: &#x27;#5580aa&#x27;,
   },
   {
     name: &#x27;Neptune&#x27;,
@@ -121,6 +129,7 @@ const solarSystem = [
     radiusKm: 24622,
     massKg: 1.02e26,
     fill: &#x27;#366896&#x27;,
+    stroke: &#x27;#366896&#x27;,
   },
   {
     name: &#x27;Pluto&#x27;,
@@ -128,11 +137,12 @@ const solarSystem = [
     radiusKm: 1188.3,
     massKg: 1.3e22,
     fill: &#x27;#968570&#x27;,
+    stroke: &#x27;#968570&#x27;,
   },
 ];
 // #endregion
 
-export default function MassBarChart() {
+export default function MassBarChart({ defaultIndex }: { defaultIndex?: number }) {
   return (
     &lt;BarChart
       style={{
@@ -147,7 +157,7 @@ export default function MassBarChart() {
       &lt;XAxis dataKey=&quot;name&quot; /&gt;
       &lt;YAxis width=&quot;auto&quot; label={{ value: &#x27;Mass [kg]&#x27;, position: &#x27;insideLeft&#x27;, dx: 0, dy: 20, angle: -90 }} /&gt;
       &lt;Bar dataKey=&quot;massKg&quot; unit=&quot;kg&quot; /&gt;
-      &lt;Tooltip /&gt;
+      &lt;Tooltip defaultIndex={defaultIndex} /&gt;
       &lt;RechartsDevtools /&gt;
     &lt;/BarChart&gt;
   );
@@ -182,6 +192,7 @@ const solarSystem = [
     radiusKm: 696340,
     massKg: 1.989e30,
     fill: &#x27;#ffa700&#x27;,
+    stroke: &#x27;#ffa700&#x27;,
   },
   {
     name: &#x27;Mercury&#x27;,
@@ -189,6 +200,7 @@ const solarSystem = [
     radiusKm: 2439.7,
     massKg: 3.3e23,
     fill: &#x27;#1a1a1a&#x27;,
+    stroke: &#x27;#1a1a1a&#x27;,
   },
   {
     name: &#x27;Venus&#x27;,
@@ -196,6 +208,7 @@ const solarSystem = [
     radiusKm: 6051.8,
     massKg: 4.87e24,
     fill: &#x27;#e3bb76&#x27;,
+    stroke: &#x27;#e3bb76&#x27;,
   },
   {
     name: &#x27;Earth&#x27;,
@@ -203,6 +216,7 @@ const solarSystem = [
     radiusKm: 6371,
     massKg: 5.97e24,
     fill: &#x27;#6b93d6&#x27;,
+    stroke: &#x27;#6b93d6&#x27;,
   },
   {
     name: &#x27;Mars&#x27;,
@@ -210,6 +224,7 @@ const solarSystem = [
     radiusKm: 3389.5,
     massKg: 6.42e23,
     fill: &#x27;#993d00&#x27;,
+    stroke: &#x27;#993d00&#x27;,
   },
   {
     name: &#x27;Jupiter&#x27;,
@@ -217,6 +232,7 @@ const solarSystem = [
     radiusKm: 69911,
     massKg: 1.9e27,
     fill: &#x27;#b07f35&#x27;,
+    stroke: &#x27;#b07f35&#x27;,
   },
   {
     name: &#x27;Saturn&#x27;,
@@ -224,6 +240,7 @@ const solarSystem = [
     radiusKm: 58232,
     massKg: 5.68e26,
     fill: &#x27;#b08f36&#x27;,
+    stroke: &#x27;#b08f36&#x27;,
   },
   {
     name: &#x27;Uranus&#x27;,
@@ -231,6 +248,7 @@ const solarSystem = [
     radiusKm: 25362,
     massKg: 8.68e25,
     fill: &#x27;#5580aa&#x27;,
+    stroke: &#x27;#5580aa&#x27;,
   },
   {
     name: &#x27;Neptune&#x27;,
@@ -238,6 +256,7 @@ const solarSystem = [
     radiusKm: 24622,
     massKg: 1.02e26,
     fill: &#x27;#366896&#x27;,
+    stroke: &#x27;#366896&#x27;,
   },
   {
     name: &#x27;Pluto&#x27;,
@@ -245,11 +264,12 @@ const solarSystem = [
     radiusKm: 1188.3,
     massKg: 1.3e22,
     fill: &#x27;#968570&#x27;,
+    stroke: &#x27;#968570&#x27;,
   },
 ];
 // #endregion
 
-export default function MassBarChartCategoricalY() {
+export default function MassBarChartCategoricalY({ defaultIndex }: { defaultIndex?: number }) {
   return (
     &lt;BarChart
       style={{
@@ -268,7 +288,7 @@ export default function MassBarChartCategoricalY() {
         label={{ value: &#x27;Mass [kg]&#x27;, position: &#x27;insideLeft&#x27;, dx: 0, dy: 20, angle: -90 }}
       /&gt;
       &lt;Bar dataKey=&quot;massKg&quot; unit=&quot;kg&quot; /&gt;
-      &lt;Tooltip /&gt;
+      &lt;Tooltip defaultIndex={defaultIndex} /&gt;
       &lt;RechartsDevtools /&gt;
     &lt;/BarChart&gt;
   );
@@ -303,6 +323,7 @@ const solarSystem = [
     radiusKm: 696340,
     massKg: 1.989e30,
     fill: &#x27;#ffa700&#x27;,
+    stroke: &#x27;#ffa700&#x27;,
   },
   {
     name: &#x27;Mercury&#x27;,
@@ -310,6 +331,7 @@ const solarSystem = [
     radiusKm: 2439.7,
     massKg: 3.3e23,
     fill: &#x27;#1a1a1a&#x27;,
+    stroke: &#x27;#1a1a1a&#x27;,
   },
   {
     name: &#x27;Venus&#x27;,
@@ -317,6 +339,7 @@ const solarSystem = [
     radiusKm: 6051.8,
     massKg: 4.87e24,
     fill: &#x27;#e3bb76&#x27;,
+    stroke: &#x27;#e3bb76&#x27;,
   },
   {
     name: &#x27;Earth&#x27;,
@@ -324,6 +347,7 @@ const solarSystem = [
     radiusKm: 6371,
     massKg: 5.97e24,
     fill: &#x27;#6b93d6&#x27;,
+    stroke: &#x27;#6b93d6&#x27;,
   },
   {
     name: &#x27;Mars&#x27;,
@@ -331,6 +355,7 @@ const solarSystem = [
     radiusKm: 3389.5,
     massKg: 6.42e23,
     fill: &#x27;#993d00&#x27;,
+    stroke: &#x27;#993d00&#x27;,
   },
   {
     name: &#x27;Jupiter&#x27;,
@@ -338,6 +363,7 @@ const solarSystem = [
     radiusKm: 69911,
     massKg: 1.9e27,
     fill: &#x27;#b07f35&#x27;,
+    stroke: &#x27;#b07f35&#x27;,
   },
   {
     name: &#x27;Saturn&#x27;,
@@ -345,6 +371,7 @@ const solarSystem = [
     radiusKm: 58232,
     massKg: 5.68e26,
     fill: &#x27;#b08f36&#x27;,
+    stroke: &#x27;#b08f36&#x27;,
   },
   {
     name: &#x27;Uranus&#x27;,
@@ -352,6 +379,7 @@ const solarSystem = [
     radiusKm: 25362,
     massKg: 8.68e25,
     fill: &#x27;#5580aa&#x27;,
+    stroke: &#x27;#5580aa&#x27;,
   },
   {
     name: &#x27;Neptune&#x27;,
@@ -359,6 +387,7 @@ const solarSystem = [
     radiusKm: 24622,
     massKg: 1.02e26,
     fill: &#x27;#366896&#x27;,
+    stroke: &#x27;#366896&#x27;,
   },
   {
     name: &#x27;Pluto&#x27;,
@@ -366,11 +395,12 @@ const solarSystem = [
     radiusKm: 1188.3,
     massKg: 1.3e22,
     fill: &#x27;#968570&#x27;,
+    stroke: &#x27;#968570&#x27;,
   },
 ];
 // #endregion
 
-export default function MassBarChartCustomYDomain() {
+export default function MassBarChartCustomYDomain({ defaultIndex }: { defaultIndex?: number }) {
   return (
     &lt;BarChart
       style={{
@@ -390,7 +420,7 @@ export default function MassBarChartCustomYDomain() {
         label={{ value: &#x27;Mass [kg]&#x27;, position: &#x27;insideLeft&#x27;, dx: 0, dy: 20, angle: -90 }}
       /&gt;
       &lt;Bar dataKey=&quot;massKg&quot; unit=&quot;kg&quot; /&gt;
-      &lt;Tooltip /&gt;
+      &lt;Tooltip defaultIndex={defaultIndex} /&gt;
       &lt;RechartsDevtools /&gt;
     &lt;/BarChart&gt;
   );
@@ -425,6 +455,7 @@ const solarSystem = [
     radiusKm: 696340,
     massKg: 1.989e30,
     fill: &#x27;#ffa700&#x27;,
+    stroke: &#x27;#ffa700&#x27;,
   },
   {
     name: &#x27;Mercury&#x27;,
@@ -432,6 +463,7 @@ const solarSystem = [
     radiusKm: 2439.7,
     massKg: 3.3e23,
     fill: &#x27;#1a1a1a&#x27;,
+    stroke: &#x27;#1a1a1a&#x27;,
   },
   {
     name: &#x27;Venus&#x27;,
@@ -439,6 +471,7 @@ const solarSystem = [
     radiusKm: 6051.8,
     massKg: 4.87e24,
     fill: &#x27;#e3bb76&#x27;,
+    stroke: &#x27;#e3bb76&#x27;,
   },
   {
     name: &#x27;Earth&#x27;,
@@ -446,6 +479,7 @@ const solarSystem = [
     radiusKm: 6371,
     massKg: 5.97e24,
     fill: &#x27;#6b93d6&#x27;,
+    stroke: &#x27;#6b93d6&#x27;,
   },
   {
     name: &#x27;Mars&#x27;,
@@ -453,6 +487,7 @@ const solarSystem = [
     radiusKm: 3389.5,
     massKg: 6.42e23,
     fill: &#x27;#993d00&#x27;,
+    stroke: &#x27;#993d00&#x27;,
   },
   {
     name: &#x27;Jupiter&#x27;,
@@ -460,6 +495,7 @@ const solarSystem = [
     radiusKm: 69911,
     massKg: 1.9e27,
     fill: &#x27;#b07f35&#x27;,
+    stroke: &#x27;#b07f35&#x27;,
   },
   {
     name: &#x27;Saturn&#x27;,
@@ -467,6 +503,7 @@ const solarSystem = [
     radiusKm: 58232,
     massKg: 5.68e26,
     fill: &#x27;#b08f36&#x27;,
+    stroke: &#x27;#b08f36&#x27;,
   },
   {
     name: &#x27;Uranus&#x27;,
@@ -474,6 +511,7 @@ const solarSystem = [
     radiusKm: 25362,
     massKg: 8.68e25,
     fill: &#x27;#5580aa&#x27;,
+    stroke: &#x27;#5580aa&#x27;,
   },
   {
     name: &#x27;Neptune&#x27;,
@@ -481,6 +519,7 @@ const solarSystem = [
     radiusKm: 24622,
     massKg: 1.02e26,
     fill: &#x27;#366896&#x27;,
+    stroke: &#x27;#366896&#x27;,
   },
   {
     name: &#x27;Pluto&#x27;,
@@ -488,11 +527,12 @@ const solarSystem = [
     radiusKm: 1188.3,
     massKg: 1.3e22,
     fill: &#x27;#968570&#x27;,
+    stroke: &#x27;#968570&#x27;,
   },
 ];
 // #endregion
 
-export default function MassBarChartLogScale() {
+export default function MassBarChartLogScale({ defaultIndex }: { defaultIndex?: number }) {
   return (
     &lt;BarChart
       style={{
@@ -512,7 +552,7 @@ export default function MassBarChartLogScale() {
         label={{ value: &#x27;Mass log10[kg]&#x27;, position: &#x27;insideLeft&#x27;, dx: 0, dy: 20, angle: -90 }}
       /&gt;
       &lt;Bar dataKey=&quot;massKg&quot; unit=&quot;kg&quot; /&gt;
-      &lt;Tooltip /&gt;
+      &lt;Tooltip defaultIndex={defaultIndex} /&gt;
       &lt;RechartsDevtools /&gt;
     &lt;/BarChart&gt;
   );
@@ -547,6 +587,7 @@ const solarSystem = [
     radiusKm: 696340,
     massKg: 1.989e30,
     fill: &#x27;#ffa700&#x27;,
+    stroke: &#x27;#ffa700&#x27;,
   },
   {
     name: &#x27;Mercury&#x27;,
@@ -554,6 +595,7 @@ const solarSystem = [
     radiusKm: 2439.7,
     massKg: 3.3e23,
     fill: &#x27;#1a1a1a&#x27;,
+    stroke: &#x27;#1a1a1a&#x27;,
   },
   {
     name: &#x27;Venus&#x27;,
@@ -561,6 +603,7 @@ const solarSystem = [
     radiusKm: 6051.8,
     massKg: 4.87e24,
     fill: &#x27;#e3bb76&#x27;,
+    stroke: &#x27;#e3bb76&#x27;,
   },
   {
     name: &#x27;Earth&#x27;,
@@ -568,6 +611,7 @@ const solarSystem = [
     radiusKm: 6371,
     massKg: 5.97e24,
     fill: &#x27;#6b93d6&#x27;,
+    stroke: &#x27;#6b93d6&#x27;,
   },
   {
     name: &#x27;Mars&#x27;,
@@ -575,6 +619,7 @@ const solarSystem = [
     radiusKm: 3389.5,
     massKg: 6.42e23,
     fill: &#x27;#993d00&#x27;,
+    stroke: &#x27;#993d00&#x27;,
   },
   {
     name: &#x27;Jupiter&#x27;,
@@ -582,6 +627,7 @@ const solarSystem = [
     radiusKm: 69911,
     massKg: 1.9e27,
     fill: &#x27;#b07f35&#x27;,
+    stroke: &#x27;#b07f35&#x27;,
   },
   {
     name: &#x27;Saturn&#x27;,
@@ -589,6 +635,7 @@ const solarSystem = [
     radiusKm: 58232,
     massKg: 5.68e26,
     fill: &#x27;#b08f36&#x27;,
+    stroke: &#x27;#b08f36&#x27;,
   },
   {
     name: &#x27;Uranus&#x27;,
@@ -596,6 +643,7 @@ const solarSystem = [
     radiusKm: 25362,
     massKg: 8.68e25,
     fill: &#x27;#5580aa&#x27;,
+    stroke: &#x27;#5580aa&#x27;,
   },
   {
     name: &#x27;Neptune&#x27;,
@@ -603,6 +651,7 @@ const solarSystem = [
     radiusKm: 24622,
     massKg: 1.02e26,
     fill: &#x27;#366896&#x27;,
+    stroke: &#x27;#366896&#x27;,
   },
   {
     name: &#x27;Pluto&#x27;,
@@ -610,6 +659,7 @@ const solarSystem = [
     radiusKm: 1188.3,
     massKg: 1.3e22,
     fill: &#x27;#968570&#x27;,
+    stroke: &#x27;#968570&#x27;,
   },
 ];
 // #endregion
@@ -623,7 +673,7 @@ function kgToYottagram(value: TooltipValueType | undefined): string {
   return `${yottagram.toFixed(2)}`;
 }
 
-export default function MassBarChartCustomTicks() {
+export default function MassBarChartCustomTicks({ defaultIndex }: { defaultIndex?: number }) {
   return (
     &lt;BarChart
       style={{
@@ -644,10 +694,10 @@ export default function MassBarChartCustomTicks() {
         label={{ value: &#x27;Mass log10[yottagram]&#x27;, position: &#x27;insideLeft&#x27;, dx: 0, dy: 60, angle: -90 }}
       /&gt;
       &lt;Bar dataKey=&quot;massKg&quot; name=&quot;mass&quot; unit=&quot; yottagram&quot; /&gt;
-      &lt;Tooltip formatter={kgToYottagram} /&gt;
+      &lt;Tooltip formatter={kgToYottagram} defaultIndex={defaultIndex} /&gt;
       &lt;RechartsDevtools /&gt;
     &lt;/BarChart&gt;
   );
-}</pre><div></div></div></div><div style="height:100%;display:none;overflow:hidden"><div id="recharts-devtools-portal-Rhq9" style="height:100%;background:var(--color-bg);color:var(--color-text);overflow:auto;padding:10px;display:block" class=""></div></div><div style="height:100%;display:none;overflow:hidden"><div id="recharts-devtools-portal-Rhq9-annotations" style="height:100%;background:var(--color-surface-base);color:var(--color-text-1);overflow:auto;padding:10px;display:block" class=""></div></div><div style="height:100%;display:none;overflow:hidden"><div style="padding:10px;height:100%;overflow:auto"><div style="display:flex;gap:12px;margin:1ex"><label style="display:flex;align-items:center;gap:8px;cursor:pointer"><input style="margin:0;width:16px;height:16px;cursor:pointer" type="radio" name=":Rklhq9:" checked=""/>Autoplay Animations (default)</label><label style="display:flex;align-items:center;gap:8px;cursor:pointer"><input style="margin:0;width:16px;height:16px;cursor:pointer" type="radio" name=":Rklhq9:"/>Manual Animations</label></div></div></div></div></div></article></div></div></main><footer><p><span>Released under the </span><a href="https://opensource.org/licenses/MIT" target="_blank" rel="noreferrer">MIT License</a></p><p>Copyright (c) 2016-<!-- -->2026<!-- --> Recharts Group</p><p>Commit: <code title="a4d40556c4b823572adb7a11452295fe5270f9ed">a4d40556</code></p></footer></div></div>
+}</pre><div></div></div></div><div style="height:100%;display:none;overflow:hidden"><div id="recharts-devtools-portal-Rhq9" style="height:100%;background:var(--color-bg);color:var(--color-text);overflow:auto;padding:10px;display:block" class=""></div></div><div style="height:100%;display:none;overflow:hidden"><div id="recharts-devtools-portal-Rhq9-annotations" style="height:100%;background:var(--color-surface-base);color:var(--color-text-1);overflow:auto;padding:10px;display:block" class=""></div></div><div style="height:100%;display:none;overflow:hidden"><div style="padding:10px;height:100%;overflow:auto"><div style="display:flex;gap:12px;margin:1ex"><label style="display:flex;align-items:center;gap:8px;cursor:pointer"><input style="margin:0;width:16px;height:16px;cursor:pointer" type="radio" name=":Rklhq9:" checked=""/>Autoplay Animations (default)</label><label style="display:flex;align-items:center;gap:8px;cursor:pointer"><input style="margin:0;width:16px;height:16px;cursor:pointer" type="radio" name=":Rklhq9:"/>Manual Animations</label></div></div></div></div></div></article></div></div></main><footer><p><span>Released under the </span><a href="https://opensource.org/licenses/MIT" target="_blank" rel="noreferrer">MIT License</a></p><p>Copyright (c) 2016-<!-- -->2026<!-- --> Recharts Group</p><p>Commit: <code title="2bb6eab503ed3fef3cb415a2cc3a06256a26d916">2bb6eab5</code></p></footer></div></div>
   </body>
 </html>
