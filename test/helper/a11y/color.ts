@@ -42,13 +42,13 @@ export type ColorVisionDeficiency = 'protanopia' | 'deuteranopia' | 'tritanopia'
 
 const HEX_SHORT = /^#([\da-f])([\da-f])([\da-f])$/i;
 const HEX_LONG = /^#([\da-f]{2})([\da-f]{2})([\da-f]{2})$/i;
-const RGB_FUNCTION = /^rgb\(\s*([\d.]+)[\s,]+([\d.]+)[\s,]+([\d.]+)\s*\)$/i;
+const RGB_FUNCTION = /^rgba?\(\s*([\d.]+)[\s,]+([\d.]+)[\s,]+([\d.]+)(?:[\s,/]+[\d.]+)?\s*\)$/i;
 
 /**
  * Parse the subset of CSS colour syntax that the Recharts themes actually use:
  * `#rgb`, `#rrggbb` and `rgb()` / `rgba()`.
  *
- * Alpha is intentionally not parsed. Recharts expresses transparency through
+ * The alpha channel of `rgba()` is accepted but discarded. Recharts expresses transparency through
  * the separate `fillOpacity` and `strokeOpacity` properties, so mixing a second
  * source of alpha in here would hide which one a failing check came from.
  * Use {@link blendOver} with the opacity from the theme instead.
