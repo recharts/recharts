@@ -811,6 +811,21 @@ class BrushWithState extends PureComponent<BrushWithStateProps, State> {
       scaleValues,
     });
 
+    /*
+     * Sliding moves the whole selection, so it must keep its size.
+     * The travellers usually sit between two data points, and mapping each of them to an index
+     * on its own can gain or lose one item depending on where the slide happens to be.
+     */
+    const span = endIndex - startIndex;
+    if (newIndex.endIndex - newIndex.startIndex !== span) {
+      if (newIndex.endIndex === data.length - 1) {
+        const newStartIndex = newIndex.endIndex - span;
+        newIndex.startIndex = newStartIndex - (newStartIndex % gap);
+      } else {
+        newIndex.endIndex = newIndex.startIndex + span;
+      }
+    }
+
     if ((newIndex.startIndex !== startIndex || newIndex.endIndex !== endIndex) && onChange) {
       onChange(newIndex);
     }
