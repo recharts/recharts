@@ -279,6 +279,6 @@ export type { TooltipTrigger } from './chart/types';
 
 export type { RechartsTheme } from './theme/RechartsTheme';
 export { RechartsThemeProvider, useRechartsTheme } from './theme/RechartsThemeContext';
-export { darkTheme } from './theme/darkTheme';
-export { lightTheme } from './theme/lightTheme';
+export { darkPalette, darkTheme } from './theme/darkTheme';
+export { lightPalette, lightTheme } from './theme/lightTheme';
 export { emptyTheme } from './theme/emptyTheme';
