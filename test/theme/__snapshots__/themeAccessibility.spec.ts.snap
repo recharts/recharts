@@ -1,0 +1,67 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`the numbers behind these checks > dark theme report 1`] = `
+"dark theme on #18181b
+
+text                  16.24
+
+strokes and fills
+  axis.stroke            11.89
+  errorBar.stroke        11.89
+  brush.stroke           11.89
+  brush.fill              1.70
+  grid.stroke             1.70
+  reference.stroke        2.29
+  reference.fill          1.14
+  cursor.stroke           1.82
+  cursor.fill             1.25
+  barBackground.fill      1.70
+
+series colours
+  #8884d8     fill   3.88   stroke   5.35
+  #82ca9d     fill   6.29   stroke   9.18
+  #ffc658     fill   7.65   stroke  11.36
+  #8dd1e1     fill   7.06   stroke  10.41
+  #a4de6c     fill   7.53   stroke  11.17
+  #ff7300     fill   4.56   stroke   6.50
+  #ed7485     fill   4.45   stroke   6.27
+
+closest pair of series colours
+  normal         13.6   #82ca9d / #a4de6c
+  protanopia      2.7   #ffc658 / #a4de6c
+  deuteranopia    4.6   #ffc658 / #a4de6c
+  tritanopia      4.8   #82ca9d / #8dd1e1"
+`;
+
+exports[`the numbers behind these checks > light theme report 1`] = `
+"light theme on #fff
+
+text                  17.72
+
+strokes and fills
+  axis.stroke             7.73
+  errorBar.stroke         7.73
+  brush.stroke            7.73
+  brush.fill              1.16
+  grid.stroke             1.49
+  reference.stroke        2.52
+  reference.fill          1.10
+  cursor.stroke           1.61
+  cursor.fill             1.23
+  barBackground.fill      1.16
+
+series colours
+  #8884d8     fill   2.51   stroke   3.31
+  #82ca9d     fill   1.68   stroke   1.93
+  #ffc658     fill   1.43   stroke   1.56
+  #8dd1e1     fill   1.52   stroke   1.70
+  #a4de6c     fill   1.45   stroke   1.59
+  #ff7300     fill   2.28   stroke   2.73
+  #ed7485     fill   2.28   stroke   2.82
+
+closest pair of series colours
+  normal         13.1   #82ca9d / #a4de6c
+  protanopia      2.4   #ffc658 / #a4de6c
+  deuteranopia    4.5   #ffc658 / #a4de6c
+  tritanopia      4.4   #82ca9d / #8dd1e1"
+`;
