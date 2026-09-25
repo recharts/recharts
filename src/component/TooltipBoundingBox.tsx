@@ -50,6 +50,16 @@ function resolveTransitionProperty(args: {
   return undefined;
 }
 
+function resolveWillChangeProperty(args: {
+  prefersReducedMotion: boolean;
+  isAnimationActive: boolean | 'auto';
+}): 'transform' | undefined {
+  if (args.isAnimationActive === false || (args.isAnimationActive === 'auto' && args.prefersReducedMotion)) {
+    return undefined;
+  }
+  return 'transform';
+}
+
 function TooltipBoundingBoxImpl(props: TooltipBoundingBoxProps) {
   const prefersReducedMotion = usePrefersReducedMotion();
   const [state, setState] = React.useState(() => ({
@@ -103,6 +113,11 @@ function TooltipBoundingBoxImpl(props: TooltipBoundingBoxProps) {
           active: props.active,
           animationDuration: props.animationDuration,
           animationEasing: props.animationEasing,
+        }),
+        // Keep the animated tooltip on a stable compositing layer to avoid stale pixels after rapid pointer movement.
+        willChange: resolveWillChangeProperty({
+          prefersReducedMotion,
+          isAnimationActive: props.isAnimationActive,
         }),
         ...cssProperties,
         pointerEvents: 'none',
