@@ -9,6 +9,14 @@ export type ViewportWindowArea = {
   height: number;
 };
 
+/**
+ * Per-axis orientation flags, one per screen dimension - see {@link isRangeFlipped} for what "flipped"
+ * means. Used throughout this module to keep screen direction and domain direction in sync:
+ * - {@link axisViewportToPixelWindow} / {@link pixelWindowToAxisViewport} swap which ratio (`startRatio`
+ *   vs `endRatio`) maps to the low-pixel edge.
+ * - Pan deltas get their sign flipped so dragging still moves the view the same screen way.
+ * - A zoom focus point's pixel ratio gets mirrored (`1 - ratio`) into a domain ratio.
+ */
 export type ViewportWindowFlipped = {
   x: boolean;
   y: boolean;
