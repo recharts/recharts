@@ -19,6 +19,7 @@ export function getEquidistantTicks(
   // For now, start from every tick
   let stepsize = 1;
   let start = initialStart;
+  let headCoord: number | undefined;
 
   while (stepsize <= result.length) {
     // Given stepsize, evaluate whether every stepsize-th tick can be shown.
@@ -28,7 +29,12 @@ export function getEquidistantTicks(
 
     // Break condition - If we have evaluated all the ticks, then we are done.
     if (entry === undefined) {
-      return getEveryNth(ticks, stepsize);
+      const shownTicks = getEveryNth(ticks, stepsize);
+      const head = shownTicks[0];
+      if (headCoord == null || head == null) {
+        return shownTicks;
+      }
+      return [{ ...head, tickCoord: headCoord }, ...shownTicks.slice(1)];
     }
 
     // Check if the element collides with the next element
@@ -42,7 +48,18 @@ export function getEquidistantTicks(
       return size;
     };
 
-    const tickCoord = entry.coordinate;
+    let tickCoord = entry.coordinate;
+
+    if (index === 0) {
+      // The first tick sits in the middle of the first band, so its label can hang over the start
+      // boundary; move it inwards, the same way getTicksStart does for `preserveStart`.
+      const headGap = sign * (tickCoord - (sign * getSize()) / 2 - start);
+      if (headGap < 0) {
+        tickCoord -= headGap * sign;
+        headCoord = tickCoord;
+      }
+    }
+
     // We will always show the first tick.
     const isShow = index === 0 || isVisible(sign, tickCoord, getSize, start, end);
 
