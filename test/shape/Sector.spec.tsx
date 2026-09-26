@@ -31,6 +31,9 @@ describe('<Sector />', () => {
   });
 
   describe('when the sector is too narrow for the full cornerRadius', () => {
+    /**
+     * Renders a Sector centered at (200, 200) and returns its SVG path.
+     */
     function renderSectorPath(props: React.ComponentProps<typeof Sector>): string {
       const { container } = render(
         <Surface width={500} height={500}>
@@ -40,6 +43,9 @@ describe('<Sector />', () => {
       return container.querySelector('.recharts-sector')?.getAttribute('d') ?? '';
     }
 
+    /**
+     * Returns the radius of every absolute arc command (`A`) in an SVG path, in order.
+     */
     function getArcRadii(path: string): number[] {
       return Array.from(path.matchAll(/A\s*([\d.]+),/g), match => Number(match[1]));
     }

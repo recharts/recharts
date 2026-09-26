@@ -76,6 +76,10 @@ const getSectorPath = ({ cx, cy, innerRadius, outerRadius, startAngle, endAngle 
   return path;
 };
 
+/**
+ * Returns the SVG path of a sector with rounded corners.
+ * If the sector is too narrow for the full cornerRadius, the corners shrink to fit, unless forceCornerRadius is set.
+ */
 const getSectorWithCorner = ({
   cx,
   cy,

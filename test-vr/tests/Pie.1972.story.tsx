@@ -12,7 +12,7 @@ const data = [
   { name: 'Group E', value: 3, fill: '#8884d8' },
 ];
 
-/*
+/**
  * The three small slices are too narrow for two corners with the full cornerRadius.
  * Their corners must shrink to fit instead of disappearing, so every slice keeps its rounded corners,
  * both in the pie on the left and in the donut on the right.
