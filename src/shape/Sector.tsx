@@ -88,6 +88,22 @@ const getSectorWithCorner = ({
   endAngle,
 }: GeometrySectorWithCornerRadius) => {
   const sign = mathSign(endAngle - startAngle);
+  const deltaAngle = Math.abs(startAngle - endAngle);
+  /*
+   * In a narrow sector, the two corners of the same arc would overlap.
+   * Instead of dropping the rounded corners, shrink them to the largest radius that still fits, like d3-shape does.
+   * With α being half of the sector angle, a circle that touches both radial edges and the outer arc
+   * has radius outerRadius * sin(α) / (1 + sin(α)),
+   * and a circle that touches both radial edges and the inner arc has radius innerRadius * sin(α) / (1 - sin(α)).
+   */
+  const shouldFitCorners = !forceCornerRadius && !cornerIsExternal && deltaAngle < 180;
+  const sinHalfAngle = Math.sin((deltaAngle / 2) * RADIAN);
+  const outerCornerRadius = shouldFitCorners
+    ? Math.min(cornerRadius, (outerRadius * sinHalfAngle) / (1 + sinHalfAngle))
+    : cornerRadius;
+  const innerCornerRadius = shouldFitCorners
+    ? Math.min(cornerRadius, (innerRadius * sinHalfAngle) / (1 - sinHalfAngle))
+    : cornerRadius;
   const {
     circleTangency: soct,
     lineTangency: solt,
@@ -98,7 +114,7 @@ const getSectorWithCorner = ({
     radius: outerRadius,
     angle: startAngle,
     sign,
-    cornerRadius,
+    cornerRadius: outerCornerRadius,
     cornerIsExternal,
   });
   const {
@@ -111,34 +127,29 @@ const getSectorWithCorner = ({
     radius: outerRadius,
     angle: endAngle,
     sign: -sign,
-    cornerRadius,
+    cornerRadius: outerCornerRadius,
     cornerIsExternal,
   });
   const outerArcAngle = cornerIsExternal
     ? Math.abs(startAngle - endAngle)
     : Math.abs(startAngle - endAngle) - sot - eot;
 
-  if (outerArcAngle < 0) {
-    if (forceCornerRadius) {
-      return roundTemplateLiteral`M ${solt.x},${solt.y}
-        a${cornerRadius},${cornerRadius},0,0,1,${cornerRadius * 2},0
-        a${cornerRadius},${cornerRadius},0,0,1,${-cornerRadius * 2},0
-      `;
-    }
-    return getSectorPath({
-      cx,
-      cy,
-      innerRadius,
-      outerRadius,
-      startAngle,
-      endAngle,
-    });
+  /*
+   * The corners only overlap here when forceCornerRadius is set, otherwise they have been shrunk to fit.
+   * Floating point rounding can make outerArcAngle slightly negative when the corners fit exactly,
+   * so a negative outerArcAngle alone must not drop the rounded corners.
+   */
+  if (outerArcAngle < 0 && forceCornerRadius) {
+    return roundTemplateLiteral`M ${solt.x},${solt.y}
+      a${cornerRadius},${cornerRadius},0,0,1,${cornerRadius * 2},0
+      a${cornerRadius},${cornerRadius},0,0,1,${-cornerRadius * 2},0
+    `;
   }
 
   let path = roundTemplateLiteral`M ${solt.x},${solt.y}
-    A${cornerRadius},${cornerRadius},0,0,${+(sign < 0)},${soct.x},${soct.y}
+    A${outerCornerRadius},${outerCornerRadius},0,0,${+(sign < 0)},${soct.x},${soct.y}
     A${outerRadius},${outerRadius},0,${+(outerArcAngle > 180)},${+(sign < 0)},${eoct.x},${eoct.y}
-    A${cornerRadius},${cornerRadius},0,0,${+(sign < 0)},${eolt.x},${eolt.y}
+    A${outerCornerRadius},${outerCornerRadius},0,0,${+(sign < 0)},${eolt.x},${eolt.y}
   `;
 
   if (innerRadius > 0) {
@@ -153,7 +164,7 @@ const getSectorWithCorner = ({
       angle: startAngle,
       sign,
       isExternal: true,
-      cornerRadius,
+      cornerRadius: innerCornerRadius,
       cornerIsExternal,
     });
     const {
@@ -167,7 +178,7 @@ const getSectorWithCorner = ({
       angle: endAngle,
       sign: -sign,
       isExternal: true,
-      cornerRadius,
+      cornerRadius: innerCornerRadius,
       cornerIsExternal,
     });
     const innerArcAngle = cornerIsExternal
@@ -179,9 +190,9 @@ const getSectorWithCorner = ({
     }
 
     path += roundTemplateLiteral`L${eilt.x},${eilt.y}
-      A${cornerRadius},${cornerRadius},0,0,${+(sign < 0)},${eict.x},${eict.y}
+      A${innerCornerRadius},${innerCornerRadius},0,0,${+(sign < 0)},${eict.x},${eict.y}
       A${innerRadius},${innerRadius},0,${+(innerArcAngle > 180)},${+(sign > 0)},${sict.x},${sict.y}
-      A${cornerRadius},${cornerRadius},0,0,${+(sign < 0)},${silt.x},${silt.y}Z`;
+      A${innerCornerRadius},${innerCornerRadius},0,0,${+(sign < 0)},${silt.x},${silt.y}Z`;
   } else {
     path += roundTemplateLiteral`L${cx},${cy}Z`;
   }
@@ -226,11 +237,14 @@ interface SectorProps {
   endAngle?: number;
   /**
    * The radius of corners.
+   * If the sector is too narrow to fit the corners, they shrink to the largest radius that fits,
+   * unless `forceCornerRadius` is set.
    * @default 0
    */
   cornerRadius?: number;
   /**
-   * Whether force to render round corner when the angle of sector is very small
+   * When true, a sector that is too narrow to fit its corners renders as a circle with the full cornerRadius,
+   * instead of shrinking the corners to fit.
    * @default false
    */
   forceCornerRadius?: boolean;
