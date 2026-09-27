@@ -56,6 +56,7 @@ import { WithIdRequired } from '../util/useUniqueId';
 import { useCartesianChartLayout } from '../context/chartLayoutContext';
 import { RechartsTheme } from '../theme/RechartsTheme';
 import { useBackwardsCompatibleTheme } from '../theme/useBackwardsCompatibleTheme';
+import { UnthemedStyles, useUnthemedStyles } from '../theme/dataEntryStyles';
 
 export type FunnelTrapezoidItem = TrapezoidProps &
   TrapezoidViewBox & {
@@ -524,6 +525,7 @@ export const defaultFunnelProps = {
 function FunnelImpl(
   props: WithIdRequired<RequiresDefaultProps<Props, typeof defaultFunnelProps>> & {
     indexedStyles: ReadonlyArray<Record<string, unknown>>;
+    unthemedStyles: UnthemedStyles | undefined;
   },
 ) {
   const plotArea = usePlotArea();
@@ -541,6 +543,7 @@ function FunnelImpl(
     lastShapeType,
     id,
     indexedStyles,
+    unthemedStyles,
     ...everythingElse
   } = props;
 
@@ -559,6 +562,7 @@ function FunnelImpl(
       cells,
       presentationProps,
       indexedStyles,
+      unthemedStyles,
       id,
     }),
     [
@@ -572,6 +576,7 @@ function FunnelImpl(
       cells,
       presentationProps,
       indexedStyles,
+      unthemedStyles,
       id,
     ],
   );
@@ -797,11 +802,19 @@ function FunnelFn(outsideProps: Props) {
       return themed;
     });
   }, [outsideProps, theme]);
+  const unthemedStyles = useUnthemedStyles(outsideProps);
 
   const { id: externalId, ...resolvedProps } = resolveDefaultProps(outsideProps, defaultFunnelProps);
   return (
     <RegisterGraphicalItemId id={externalId} type="funnel">
-      {id => <FunnelImpl {...resolvedProps} id={id} indexedStyles={indexedStyles} />}
+      {id => (
+        <FunnelImpl
+          {...resolvedProps}
+          id={id}
+          indexedStyles={indexedStyles}
+          unthemedStyles={indexedStyles.length > 0 ? unthemedStyles : undefined}
+        />
+      )}
     </RegisterGraphicalItemId>
   );
 }

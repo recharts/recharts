@@ -75,6 +75,7 @@ import { usePolarChartLayout } from '../context/chartLayoutContext';
 import { Styles2D } from '../theme/RechartsTheme';
 import { useBackwardsCompatibleTheme } from '../theme/useBackwardsCompatibleTheme';
 import { useGraphicalItemIdentity } from '../theme/useGraphicalItemIdentity';
+import { getEntryStyleOverrides, UnthemedStyles, useUnthemedStyles } from '../theme/dataEntryStyles';
 
 const STABLE_EMPTY_ARRAY: readonly RadialBarDataItem[] = [];
 
@@ -137,7 +138,7 @@ function RadialBarSectors({
   isAnimating,
   isEntrance,
 }: RadialBarSectorsProps) {
-  const { shape, activeShape, cornerRadius, id, ...others } = allOtherRadialBarProps;
+  const { shape, activeShape, cornerRadius, id, unthemedStyles, ...others } = allOtherRadialBarProps;
   const baseProps = svgPropertiesNoEvents(others);
 
   const activeIndex = useAppSelector(selectActiveTooltipIndex);
@@ -167,6 +168,7 @@ function RadialBarSectors({
         const radialBarSectorProps: React.ComponentProps<typeof RadialBarSector> = {
           ...baseProps,
           cornerRadius: parseCornerRadius(cornerRadius),
+          ...getEntryStyleOverrides(entry, unthemedStyles),
           ...entry,
           ...adaptEventsOfChild(restOfAllOtherProps, entry, i),
           onMouseEnter,
@@ -499,7 +501,16 @@ export type RadialBarProps<DataPointType = any, DataValueType = any> = Omit<
 > &
   Omit<InternalRadialBarProps<DataPointType, DataValueType>, 'sectors'>;
 
-type InternalProps = WithIdRequired<PropsWithDefaults> & Pick<InternalRadialBarProps, 'sectors'>;
+type ThemeInternalProps = {
+  /**
+   * Explicit style props without theme contributions.
+   * Applied to data entries that define their own styles, so that they ignore the theme.
+   * Undefined when there is no active theme.
+   */
+  unthemedStyles?: UnthemedStyles;
+};
+
+type InternalProps = WithIdRequired<PropsWithDefaults> & Pick<InternalRadialBarProps, 'sectors'> & ThemeInternalProps;
 
 function SetRadialBarPayloadLegend(props: RadialBarProps) {
   const legendPayload = useAppSelector(state => selectRadialBarLegendPayload(state, props.legendType));
@@ -632,7 +643,7 @@ class RadialBarWithState extends PureComponent<InternalProps> {
   }
 }
 
-function RadialBarImpl(props: WithIdRequired<PropsWithDefaults>) {
+function RadialBarImpl(props: WithIdRequired<PropsWithDefaults> & ThemeInternalProps) {
   const cells = React.useMemo(() => findAllByType(props.children, Cell), [props.children]);
 
   const radialBarSettings: RadialBarSettings = React.useMemo(
@@ -852,6 +863,7 @@ export function RadialBar<DataPointType = any, DataValueType = any>(
   outsideProps: RadialBarProps<DataPointType, DataValueType>,
 ) {
   const graphicalItemThemeSelector = useGraphicalItemIdentity(outsideProps.dataKey);
+  const unthemedStyles = useUnthemedStyles(outsideProps);
   const graphicalItemStyle = useBackwardsCompatibleTheme<RadialBarProps<DataPointType, DataValueType>>(
     graphicalItemThemeSelector,
     outsideProps,
@@ -895,7 +907,7 @@ export function RadialBar<DataPointType = any, DataValueType = any>(
             maxBarSize={props.maxBarSize}
           />
           <SetRadialBarPayloadLegend {...props} {...themedProps} />
-          <RadialBarImpl {...props} {...themedProps} id={id} />
+          <RadialBarImpl {...props} {...themedProps} id={id} unthemedStyles={unthemedStyles} />
         </>
       )}
     </RegisterGraphicalItemId>
