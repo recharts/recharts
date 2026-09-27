@@ -1,65 +1,68 @@
-import { RechartsTheme } from './RechartsTheme';
+import { GraphicalItemStyle, RechartsTheme } from './RechartsTheme';
 
 const backgroundColor = '#fff';
-const border = '1px solid #a8a29e';
+const border = '1px solid #a1a1aa';
 const borderRadius = 4;
 const padding = '0.5ex';
 
 /**
+ * Categorical series colors for a #fff background.
+ *
+ * Order matters. Graphical items take colors from the front of this list (by
+ * sorted dataKey), so a chart with N series always gets the first N entries.
+ * The order is tuned so that every prefix stays distinguishable in typical
+ * vision and under protanopia, deuteranopia and tritanopia, with the widest
+ * separation in the first 4-8 entries where most charts live.
+ *
+ * Entries 1-8 share one band of lightness and chroma, so no series looks
+ * heavier or more important than another. Entries 9-12 step outside that band
+ * on purpose, because twelve hues at one lightness cannot all stay apart under
+ * color vision deficiency.
+ *
+ * Every entry keeps at least 3:1 contrast against the background (WCAG 1.4.11),
+ * both as a stroke and as a fill painted at `fillOpacity` 0.85.
+ *
+ * Entry N is the same hue family in the light and dark palettes, so a series
+ * keeps its identity when the theme changes. Comments show stroke contrast.
+ *
+ * @experimental
+ */
+export const lightPalette: ReadonlyArray<string> = [
+  '#2775e8', //  1 Blue       4.38:1
+  '#b65900', //  2 Orange     4.75:1
+  '#007c59', //  3 Aqua       5.21:1
+  '#ae3b73', //  4 Rose       5.72:1
+  '#6f56b3', //  5 Violet     5.74:1
+  '#0582a1', //  6 Sky        4.45:1
+  '#b2392b', //  7 Red        5.98:1
+  '#568b28', //  8 Green      4.10:1
+  '#723984', //  9 Purple     7.97:1
+  '#00928e', // 10 Teal       3.82:1
+  '#ae7500', // 11 Amber      3.93:1
+  '#b862a7', // 12 Plum       3.93:1
+];
+
+function toGraphicalItem(color: string): GraphicalItemStyle {
+  return {
+    fill: color,
+    stroke: color,
+    fillOpacity: 0.85,
+    active: { fill: backgroundColor, stroke: color, strokeWidth: 2 },
+  };
+}
+
+/**
  * Light mode theme
  *
- * @experimental - this is still in active development, assume that the API will change in a minor/patch version
+ * @experimental
  */
 export const lightTheme: RechartsTheme = {
-  graphicalItems: [
-    {
-      fill: '#8884d8',
-      stroke: '#8884d8',
-      fillOpacity: 0.8,
-      active: { fill: '#fff', stroke: '#8884d8', strokeWidth: 2 },
-    },
-    {
-      fill: '#82ca9d',
-      stroke: '#82ca9d',
-      fillOpacity: 0.8,
-      active: { fill: '#fff', stroke: '#82ca9d', strokeWidth: 2 },
-    },
-    {
-      fill: '#ffc658',
-      stroke: '#ffc658',
-      fillOpacity: 0.8,
-      active: { fill: '#fff', stroke: '#ffc658', strokeWidth: 2 },
-    },
-    {
-      fill: '#8dd1e1',
-      stroke: '#8dd1e1',
-      fillOpacity: 0.8,
-      active: { fill: '#fff', stroke: '#8dd1e1', strokeWidth: 2 },
-    },
-    {
-      fill: '#a4de6c',
-      stroke: '#a4de6c',
-      fillOpacity: 0.8,
-      active: { fill: '#fff', stroke: '#a4de6c', strokeWidth: 2 },
-    },
-    {
-      fill: '#ff7300',
-      stroke: '#ff7300',
-      fillOpacity: 0.8,
-      active: { fill: '#fff', stroke: '#ff7300', strokeWidth: 2 },
-    },
-    {
-      fill: '#ed7485',
-      stroke: '#ed7485',
-      fillOpacity: 0.8,
-      active: { fill: '#fff', stroke: '#ed7485', strokeWidth: 2 },
-    },
-  ],
+  graphicalItems: lightPalette.map(toGraphicalItem),
   barBackground: {
-    fill: '#eee',
+    fill: '#f4f4f5',
   },
   brush: {
-    fill: '#eee',
+    fill: '#f4f4f5',
     stroke: '#52525b',
   },
   axis: {
@@ -70,19 +73,19 @@ export const lightTheme: RechartsTheme = {
     strokeWidth: 1.5,
   },
   grid: {
-    stroke: '#d6d3d1',
+    stroke: '#d4d4d8',
     strokeDasharray: '3 3',
     fill: 'none',
   },
   reference: {
-    stroke: '#a8a29e',
+    stroke: '#71717a',
     strokeWidth: 1,
-    fill: '#d6d3d1',
+    fill: '#d4d4d8',
     fillOpacity: 0.25,
   },
   cursor: {
-    stroke: '#ccc',
-    fill: '#ddd',
+    stroke: '#d4d4d8',
+    fill: '#e4e4e7',
     fillOpacity: 0.7,
   },
   legend: {

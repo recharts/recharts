@@ -3,34 +3,39 @@
 exports[`the numbers behind these checks > dark theme report 1`] = `
 "dark theme on #18181b
 
-text                  16.24
+text                  16.12
 
 strokes and fills
-  axis.stroke            11.89
-  errorBar.stroke        11.89
-  brush.stroke           11.89
+  axis.stroke            11.99
+  errorBar.stroke        11.99
+  brush.stroke           11.99
   brush.fill              1.70
   grid.stroke             1.70
-  reference.stroke        2.29
+  reference.stroke        6.91
   reference.fill          1.14
-  cursor.stroke           1.82
-  cursor.fill             1.25
-  barBackground.fill      1.70
+  cursor.stroke           1.70
+  cursor.fill             1.42
+  barBackground.fill      1.19
 
 series colours
-  #8884d8     fill   3.88   stroke   5.35
-  #82ca9d     fill   6.29   stroke   9.18
-  #ffc658     fill   7.65   stroke  11.36
-  #8dd1e1     fill   7.06   stroke  10.41
-  #a4de6c     fill   7.53   stroke  11.17
-  #ff7300     fill   4.56   stroke   6.50
-  #ed7485     fill   4.45   stroke   6.27
+  #5396ff     fill   4.71   stroke   6.05
+  #e97e2b     fill   4.89   stroke   6.31
+  #46d09f     fill   6.87   stroke   9.10
+  #e683ad     fill   5.34   stroke   6.93
+  #b8a4fe     fill   6.29   stroke   8.25
+  #0bb1da     fill   5.38   stroke   7.02
+  #ff9180     fill   6.18   stroke   8.11
+  #79b14e     fill   5.34   stroke   6.93
+  #ac71c0     fill   3.93   stroke   4.96
+  #01a19c     fill   4.34   stroke   5.55
+  #ffc470     fill   8.44   stroke  11.29
+  #ffaaec     fill   7.74   stroke  10.30
 
 closest pair of series colours
-  normal         13.6   #82ca9d / #a4de6c
-  protanopia      2.7   #ffc658 / #a4de6c
-  deuteranopia    4.6   #ffc658 / #a4de6c
-  tritanopia      4.8   #82ca9d / #8dd1e1"
+  normal         11.8   #e683ad / #ffaaec
+  protanopia      4.6   #0bb1da / #ffaaec
+  deuteranopia    6.0   #0bb1da / #ac71c0
+  tritanopia      6.0   #e683ad / #ff9180"
 `;
 
 exports[`the numbers behind these checks > light theme report 1`] = `
@@ -42,26 +47,31 @@ strokes and fills
   axis.stroke             7.73
   errorBar.stroke         7.73
   brush.stroke            7.73
-  brush.fill              1.16
-  grid.stroke             1.49
-  reference.stroke        2.52
+  brush.fill              1.10
+  grid.stroke             1.48
+  reference.stroke        4.83
   reference.fill          1.10
-  cursor.stroke           1.61
-  cursor.fill             1.23
-  barBackground.fill      1.16
+  cursor.stroke           1.48
+  cursor.fill             1.18
+  barBackground.fill      1.10
 
 series colours
-  #8884d8     fill   2.51   stroke   3.31
-  #82ca9d     fill   1.68   stroke   1.93
-  #ffc658     fill   1.43   stroke   1.56
-  #8dd1e1     fill   1.52   stroke   1.70
-  #a4de6c     fill   1.45   stroke   1.59
-  #ff7300     fill   2.28   stroke   2.73
-  #ed7485     fill   2.28   stroke   2.82
+  #2775e8     fill   3.45   stroke   4.38
+  #b65900     fill   3.69   stroke   4.75
+  #007c59     fill   3.97   stroke   5.21
+  #ae3b73     fill   4.32   stroke   5.72
+  #6f56b3     fill   4.18   stroke   5.74
+  #0582a1     fill   3.50   stroke   4.45
+  #b2392b     fill   4.53   stroke   5.98
+  #568b28     fill   3.20   stroke   4.10
+  #723984     fill   5.48   stroke   7.97
+  #00928e     fill   3.10   stroke   3.82
+  #ae7500     fill   3.12   stroke   3.93
+  #b862a7     fill   3.12   stroke   3.93
 
 closest pair of series colours
-  normal         13.1   #82ca9d / #a4de6c
-  protanopia      2.4   #ffc658 / #a4de6c
-  deuteranopia    4.5   #ffc658 / #a4de6c
-  tritanopia      4.4   #82ca9d / #8dd1e1"
+  normal         11.2   #6f56b3 / #723984
+  protanopia      3.7   #0582a1 / #b862a7
+  deuteranopia    3.6   #b65900 / #ae7500
+  tritanopia      3.6   #0582a1 / #00928e"
 `;

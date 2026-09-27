@@ -60,7 +60,7 @@ const THEMES: Record<ThemeName, RechartsTheme> = {
 const THEME_NAMES = Object.keys(THEMES) as ReadonlyArray<ThemeName>;
 
 /**
- * The contrast WCAG 2.2 asks for between normal sized text and its background.
+ * The contrast WCAG 2.2 asks for between normal-sized text and its background.
  * @see {@link https://www.w3.org/TR/WCAG22/#contrast-minimum}
  */
 const WCAG_TEXT_CONTRAST = 4.5;
@@ -214,26 +214,19 @@ describe.each(THEME_NAMES)('%s theme', themeName => {
 });
 
 /*
- * Series colours are the one place where the two themes are not held to the
- * same bar.
- *
- * The dark theme clears WCAG 1.4.11 on every entry. The light theme does not:
- * its palette is the original Recharts pastel set, chosen long before the theme
- * system existed, and at `fillOpacity` 0.8 on white those colours land between
- * 1.4 and 2.6 against the background. Replacing them would change the look of
- * every default chart, so this test holds the line where the palette stands
- * today instead of failing the build over a deliberate, documented gap. The
- * exact numbers are in the snapshot at the bottom of this file, so any change
- * to them shows up as a reviewable diff.
+ * Both themes hold every series colour to the full WCAG 1.4.11 requirement,
+ * as a stroke and as a fill composited at the theme's `fillOpacity`. The floor
+ * is kept per theme so that a future theme can document a deliberate gap here,
+ * with the exact numbers in the snapshot at the bottom of this file.
  */
 const SERIES_CONTRAST_FLOOR: Record<ThemeName, number> = {
-  light: 1.4,
+  light: WCAG_NON_TEXT_CONTRAST,
   dark: WCAG_NON_TEXT_CONTRAST,
 };
 
 describe('series colour contrast against the chart background', () => {
-  test('the dark theme is held to the full WCAG 1.4.11 requirement', () => {
-    expect(SERIES_CONTRAST_FLOOR.dark).toBeGreaterThanOrEqual(WCAG_NON_TEXT_CONTRAST);
+  test.each(THEME_NAMES)('the %s theme is held to the full WCAG 1.4.11 requirement', themeName => {
+    expect(SERIES_CONTRAST_FLOOR[themeName]).toBeGreaterThanOrEqual(WCAG_NON_TEXT_CONTRAST);
   });
 
   describe.each(THEME_NAMES)('%s theme', themeName => {
