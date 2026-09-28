@@ -29,7 +29,7 @@
       rel="stylesheet"
       type="text/css"
     />
-    <script type="module" crossorigin src="/recharts/canary/www/assets/index-Da64thrl.js"></script>
+    <script type="module" crossorigin src="/recharts/canary/www/assets/index-CjXDW2vL.js"></script>
     <link rel="stylesheet" crossorigin href="/recharts/canary/www/assets/index-Dngh0Ezp.css">
     <link rel="sitemap" type="application/xml" title="Sitemap" href="/sitemap.xml">
   </head>
@@ -100,7 +100,7 @@ export default function CustomizeSizeAndStroke() {
             L 15,13
             A 2,2,0,0,1,13,15
             L 7,15
-            A 2,2,0,0,1,5,13 Z" style="stroke-dasharray:0px 1px"></path></svg>Copy to clipboard</button><button type="button" class="codemirror-toolbar-item"><svg stroke="currentColor" fill="none" stroke-width="2" viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round" height="1em" width="1em" xmlns="http://www.w3.org/2000/svg"><path d="M21.174 6.812a1 1 0 0 0-3.986-3.987L3.842 16.174a2 2 0 0 0-.5.83l-1.321 4.352a.5.5 0 0 0 .623.622l4.353-1.32a2 2 0 0 0 .83-.497z"></path><path d="m15 5 4 4"></path></svg><span>Edit</span></button><button type="button" class="codemirror-toolbar-item"><svg stroke="currentColor" fill="none" stroke-width="2" viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round" height="1em" width="1em" xmlns="http://www.w3.org/2000/svg"><circle cx="18" cy="5" r="3"></circle><circle cx="6" cy="12" r="3"></circle><circle cx="18" cy="19" r="3"></circle><line x1="8.59" x2="15.42" y1="13.51" y2="17.49"></line><line x1="15.41" x2="8.59" y1="6.51" y2="10.49"></line></svg><span>Open in StackBlitz</span></button></div><div style="height:100%;display:block;overflow:hidden"><div class="codemirror-example-editor tsx" style="height:100%;overflow:auto"><pre>import { Bar, BarChart, LabelList, LabelProps, XAxis, YAxis } from &#x27;recharts&#x27;;
+            A 2,2,0,0,1,5,13 Z" style="stroke-dasharray:0px 1px"></path></svg>Copy to clipboard</button><button type="button" class="codemirror-toolbar-item"><svg stroke="currentColor" fill="none" stroke-width="2" viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round" height="1em" width="1em" xmlns="http://www.w3.org/2000/svg"><path d="M21.174 6.812a1 1 0 0 0-3.986-3.987L3.842 16.174a2 2 0 0 0-.5.83l-1.321 4.352a.5.5 0 0 0 .623.622l4.353-1.32a2 2 0 0 0 .83-.497z"></path><path d="m15 5 4 4"></path></svg><span>Edit</span></button><button type="button" class="codemirror-toolbar-item"><svg stroke="currentColor" fill="none" stroke-width="2" viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round" height="1em" width="1em" xmlns="http://www.w3.org/2000/svg"><circle cx="18" cy="5" r="3"></circle><circle cx="6" cy="12" r="3"></circle><circle cx="18" cy="19" r="3"></circle><line x1="8.59" x2="15.42" y1="13.51" y2="17.49"></line><line x1="15.41" x2="8.59" y1="6.51" y2="10.49"></line></svg><span>Open in StackBlitz</span></button></div><div style="height:100%;display:block;overflow:hidden"><div class="codemirror-example-editor tsx" style="height:100%;overflow:auto"><pre>import { Bar, BarChart, LabelList, LabelProps, XAxis, YAxis, Text } from &#x27;recharts&#x27;;
 import { RechartsDevtools } from &#x27;@recharts/devtools&#x27;;
 
 const data = [
@@ -126,9 +126,9 @@ function ProfitLabel({ x, y, width, value }: LabelProps) {
   }
 
   return (
-    &lt;text x={Number(x) + Number(width) / 2} y={Number(y)} dy={-6} textAnchor=&quot;middle&quot; fontSize={11}&gt;
-      ▲ {value}
-    &lt;/text&gt;
+    &lt;Text x={Number(x) + Number(width) / 2} y={Number(y)} dy={-6} textAnchor=&quot;middle&quot; fontSize={11}&gt;
+      {`▲ ${value}`}
+    &lt;/Text&gt;
   );
 }
 
@@ -280,8 +280,8 @@ function RevenueTooltip({ active, payload, label }: TooltipContentProps) {
     &lt;div
       style={{
         border: &#x27;1px solid #d88488&#x27;,
-        backgroundColor: &#x27;#fff&#x27;,
-        color: &#x27;#18181b&#x27;,
+        backgroundColor: &#x27;Canvas&#x27;,
+        color: &#x27;CanvasText&#x27;,
         padding: 10,
         borderRadius: 5,
         boxShadow: &#x27;1px 1px 2px #d88488&#x27;,
@@ -356,8 +356,8 @@ export default function CustomizeLegendAndTooltipStyle() {
        */}
       &lt;Tooltip
         defaultIndex={3}
-        contentStyle={{ backgroundColor: &#x27;#f8fafc&#x27;, border: &#x27;2px solid #64748b&#x27;, borderRadius: 8, padding: 10 }}
-        labelStyle={{ margin: 0, fontWeight: 700, color: &#x27;#0f172a&#x27; }}
+        contentStyle={{ backgroundColor: &#x27;Canvas&#x27;, border: &#x27;2px solid CanvasText&#x27;, borderRadius: 8, padding: 10 }}
+        labelStyle={{ margin: 0, fontWeight: 700, color: &#x27;CanvasText&#x27; }}
         itemStyle={{ display: &#x27;block&#x27;, paddingTop: 2, paddingBottom: 2 }}
       /&gt;
       {/*
@@ -367,13 +367,13 @@ export default function CustomizeLegendAndTooltipStyle() {
        */}
       &lt;Legend
         wrapperStyle={{
-          backgroundColor: &#x27;#f1f5f9&#x27;,
-          border: &#x27;1px solid #cbd5e1&#x27;,
+          backgroundColor: &#x27;Canvas&#x27;,
+          border: &#x27;1px solid CanvasText&#x27;,
           borderRadius: 4,
           paddingTop: 4,
           paddingBottom: 4,
         }}
-        labelStyle={{ color: &#x27;#0f172a&#x27;, textTransform: &#x27;uppercase&#x27;, letterSpacing: &#x27;0.05em&#x27; }}
+        labelStyle={{ color: &#x27;CanvasText&#x27;, textTransform: &#x27;uppercase&#x27;, letterSpacing: &#x27;0.05em&#x27; }}
         iconType=&quot;circle&quot;
       /&gt;
       &lt;Bar dataKey=&quot;revenue&quot; barSize={20} /&gt;
@@ -395,7 +395,18 @@ export default function CustomizeLegendAndTooltipStyle() {
             L 15,13
             A 2,2,0,0,1,13,15
             L 7,15
-            A 2,2,0,0,1,5,13 Z" style="stroke-dasharray:0px 1px"></path></svg>Copy to clipboard</button><button type="button" class="codemirror-toolbar-item"><svg stroke="currentColor" fill="none" stroke-width="2" viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round" height="1em" width="1em" xmlns="http://www.w3.org/2000/svg"><path d="M21.174 6.812a1 1 0 0 0-3.986-3.987L3.842 16.174a2 2 0 0 0-.5.83l-1.321 4.352a.5.5 0 0 0 .623.622l4.353-1.32a2 2 0 0 0 .83-.497z"></path><path d="m15 5 4 4"></path></svg><span>Edit</span></button><button type="button" class="codemirror-toolbar-item"><svg stroke="currentColor" fill="none" stroke-width="2" viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round" height="1em" width="1em" xmlns="http://www.w3.org/2000/svg"><circle cx="18" cy="5" r="3"></circle><circle cx="6" cy="12" r="3"></circle><circle cx="18" cy="19" r="3"></circle><line x1="8.59" x2="15.42" y1="13.51" y2="17.49"></line><line x1="15.41" x2="8.59" y1="6.51" y2="10.49"></line></svg><span>Open in StackBlitz</span></button></div><div style="height:100%;display:block;overflow:hidden"><div class="codemirror-example-editor tsx" style="height:100%;overflow:auto"><pre>import { Bar, BarChart, CartesianGrid, Tooltip, useActiveTooltipDataPoints, usePlotArea, XAxis, YAxis } from &#x27;recharts&#x27;;
+            A 2,2,0,0,1,5,13 Z" style="stroke-dasharray:0px 1px"></path></svg>Copy to clipboard</button><button type="button" class="codemirror-toolbar-item"><svg stroke="currentColor" fill="none" stroke-width="2" viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round" height="1em" width="1em" xmlns="http://www.w3.org/2000/svg"><path d="M21.174 6.812a1 1 0 0 0-3.986-3.987L3.842 16.174a2 2 0 0 0-.5.83l-1.321 4.352a.5.5 0 0 0 .623.622l4.353-1.32a2 2 0 0 0 .83-.497z"></path><path d="m15 5 4 4"></path></svg><span>Edit</span></button><button type="button" class="codemirror-toolbar-item"><svg stroke="currentColor" fill="none" stroke-width="2" viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round" height="1em" width="1em" xmlns="http://www.w3.org/2000/svg"><circle cx="18" cy="5" r="3"></circle><circle cx="6" cy="12" r="3"></circle><circle cx="18" cy="19" r="3"></circle><line x1="8.59" x2="15.42" y1="13.51" y2="17.49"></line><line x1="15.41" x2="8.59" y1="6.51" y2="10.49"></line></svg><span>Open in StackBlitz</span></button></div><div style="height:100%;display:block;overflow:hidden"><div class="codemirror-example-editor tsx" style="height:100%;overflow:auto"><pre>import {
+  Bar,
+  BarChart,
+  CartesianGrid,
+  DefaultZIndexes,
+  Tooltip,
+  useActiveTooltipDataPoints,
+  usePlotArea,
+  XAxis,
+  YAxis,
+  ZIndexLayer,
+} from &#x27;recharts&#x27;;
 import { RechartsDevtools } from &#x27;@recharts/devtools&#x27;;
 
 type DataPoint = { month: string; revenue: number };
@@ -437,9 +448,12 @@ function ActiveReadout() {
   }
 
   return (
-    &lt;text x={plotArea.x + 10} y={plotArea.y + 22} fill=&quot;#0ea5e9&quot; fontSize={16} fontWeight={700}&gt;
-      {point.month}: {point.revenue}
-    &lt;/text&gt;
+    // Position the element above Tooltip cursor so that it&#x27;s not covered behind it
+    &lt;ZIndexLayer zIndex={DefaultZIndexes.cursorRectangle + 1}&gt;
+      &lt;text x={plotArea.x + 10} y={plotArea.y + 22} fill=&quot;#0ea5e9&quot; fontSize={16} fontWeight={700}&gt;
+        {point.month}: {point.revenue}
+      &lt;/text&gt;
+    &lt;/ZIndexLayer&gt;
   );
 }
 
@@ -455,13 +469,13 @@ export default function CustomizeCustomElement() {
       &lt;XAxis dataKey=&quot;month&quot; /&gt;
       &lt;YAxis /&gt;
       &lt;Tooltip defaultIndex={4} /&gt;
-      &lt;Bar dataKey=&quot;revenue&quot; /&gt;
+      &lt;Bar dataKey=&quot;revenue&quot; stroke=&quot;none&quot; fill=&quot;#0ea5e9&quot; /&gt;
       {/* Your own components are ordinary chart children - no wrapper component needed. */}
       &lt;PlotAreaFrame /&gt;
       &lt;ActiveReadout /&gt;
       &lt;RechartsDevtools /&gt;
     &lt;/BarChart&gt;
   );
-}</pre><div></div></div></div><div style="height:100%;display:none;overflow:hidden"><div id="recharts-devtools-portal-Rgq9" style="height:100%;background:var(--color-bg);color:var(--color-text);overflow:auto;padding:10px;display:block" class=""></div></div><div style="height:100%;display:none;overflow:hidden"><div id="recharts-devtools-portal-Rgq9-annotations" style="height:100%;background:var(--color-surface-base);color:var(--color-text-1);overflow:auto;padding:10px;display:block" class=""></div></div><div style="height:100%;display:none;overflow:hidden"><div style="padding:10px;height:100%;overflow:auto"><div style="display:flex;gap:12px;margin:1ex"><label style="display:flex;align-items:center;gap:8px;cursor:pointer"><input style="margin:0;width:16px;height:16px;cursor:pointer" type="radio" name=":Rklgq9:" checked=""/>Autoplay Animations (default)</label><label style="display:flex;align-items:center;gap:8px;cursor:pointer"><input style="margin:0;width:16px;height:16px;cursor:pointer" type="radio" name=":Rklgq9:"/>Manual Animations</label></div></div></div></div></div><p>Custom elements are yours, which means the theme does not style them. If you want them to follow the active theme, read it with <code>useRechartsTheme</code> - see the<!-- --> <a href="/en-US/guide/theming" data-discover="true">theming guide</a>. To control what draws on top of what, see the<!-- --> <a href="/en-US/guide/zIndex" data-discover="true">z-index guide</a>.</p><h2>Where to go next</h2><ul><li><a href="/en-US/guide/theming" data-discover="true">Theming</a> - set defaults for every chart at once instead of repeating props.</li><li><a href="/en-US/guide/axisTicks" data-discover="true">Axis ticks</a> - custom tick components, rotation and spacing.</li><li><a href="/en-US/guide/domainAndTicks" data-discover="true">Domain and ticks</a> - control which values an axis covers.</li><li><a href="/en-US/guide/animations" data-discover="true">Animation</a> - easing, matching strategies and fully custom interpolation.</li><li><a href="/en-US/guide/zIndex" data-discover="true">Z-index and layers</a> - decide what renders in front.</li><li><a href="/en-US/guide/roundedBars" data-discover="true">Rounded bar corners</a> and<!-- --> <a href="/en-US/guide/barAlignment" data-discover="true">bar alignment</a> - bar-specific geometry.</li><li><a href="/en-US/guide/cell" data-discover="true">Migrating from Cell</a> - per-data-point styling now goes through<!-- --> <code>shape</code>.</li><li><a href="/en-US/guide/sizes" data-discover="true">Chart size</a> - responsive sizing, which the theme deliberately does not control.</li></ul></article></div></div></main><footer><p><span>Released under the </span><a href="https://opensource.org/licenses/MIT" target="_blank" rel="noreferrer">MIT License</a></p><p>Copyright (c) 2016-<!-- -->2026<!-- --> Recharts Group</p><p>Commit: <code title="8f523b7b4ea1a3c706070207433eec5013202cca">8f523b7b</code></p></footer></div></div>
+}</pre><div></div></div></div><div style="height:100%;display:none;overflow:hidden"><div id="recharts-devtools-portal-Rgq9" style="height:100%;background:var(--color-bg);color:var(--color-text);overflow:auto;padding:10px;display:block" class=""></div></div><div style="height:100%;display:none;overflow:hidden"><div id="recharts-devtools-portal-Rgq9-annotations" style="height:100%;background:var(--color-surface-base);color:var(--color-text-1);overflow:auto;padding:10px;display:block" class=""></div></div><div style="height:100%;display:none;overflow:hidden"><div style="padding:10px;height:100%;overflow:auto"><div style="display:flex;gap:12px;margin:1ex"><label style="display:flex;align-items:center;gap:8px;cursor:pointer"><input style="margin:0;width:16px;height:16px;cursor:pointer" type="radio" name=":Rklgq9:" checked=""/>Autoplay Animations (default)</label><label style="display:flex;align-items:center;gap:8px;cursor:pointer"><input style="margin:0;width:16px;height:16px;cursor:pointer" type="radio" name=":Rklgq9:"/>Manual Animations</label></div></div></div></div></div><p>Custom elements are yours, which means the theme does not style them. If you want them to follow the active theme, read it with <code>useRechartsTheme</code> - see the<!-- --> <a href="/en-US/guide/theming" data-discover="true">theming guide</a>. To control what draws on top of what, see the<!-- --> <a href="/en-US/guide/zIndex" data-discover="true">z-index guide</a>.</p><h2>Where to go next</h2><ul><li><a href="/en-US/guide/theming" data-discover="true">Theming</a> - set defaults for every chart at once instead of repeating props.</li><li><a href="/en-US/guide/axisTicks" data-discover="true">Axis ticks</a> - custom tick components, rotation and spacing.</li><li><a href="/en-US/guide/domainAndTicks" data-discover="true">Domain and ticks</a> - control which values an axis covers.</li><li><a href="/en-US/guide/animations" data-discover="true">Animation</a> - easing, matching strategies and fully custom interpolation.</li><li><a href="/en-US/guide/zIndex" data-discover="true">Z-index and layers</a> - decide what renders in front.</li><li><a href="/en-US/guide/roundedBars" data-discover="true">Rounded bar corners</a> and<!-- --> <a href="/en-US/guide/barAlignment" data-discover="true">bar alignment</a> - bar-specific geometry.</li><li><a href="/en-US/guide/cell" data-discover="true">Migrating from Cell</a> - per-data-point styling now goes through<!-- --> <code>shape</code>.</li><li><a href="/en-US/guide/sizes" data-discover="true">Chart size</a> - responsive sizing, which the theme deliberately does not control.</li></ul></article></div></div></main><footer><p><span>Released under the </span><a href="https://opensource.org/licenses/MIT" target="_blank" rel="noreferrer">MIT License</a></p><p>Copyright (c) 2016-<!-- -->2026<!-- --> Recharts Group</p><p>Commit: <code title="bddd0082c25dccb8233a6600e3856ef7d302689e">bddd0082</code></p></footer></div></div>
   </body>
 </html>
