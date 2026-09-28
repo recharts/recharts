@@ -44,8 +44,8 @@ const ScatterAndLineOfBestFit = () => {
         width="auto"
         niceTicks="snap125"
       />
-      <Scatter name="red" dataKey="red" fill="red" />
-      <Scatter name="blue" dataKey="blue" fill="blue" />
+      <Scatter name="red" dataKey="red" fill="red" stroke="none" />
+      <Scatter name="blue" dataKey="blue" fill="blue" stroke="none" />
       <Line dataKey="blueLine" stroke="blue" dot={false} activeDot={false} legendType="none" />
       <Line dataKey="redLine" stroke="red" dot={false} activeDot={false} legendType="none" />
       <RechartsDevtools />
