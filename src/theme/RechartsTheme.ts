@@ -66,6 +66,12 @@ export interface RechartsTheme {
    *
    * If this array has only one item in it then all graphical items will have the same color.
    *
+   * Individual shapes of Bar, RadialBar, Scatter, Pie, Funnel, and Treemap can be styled
+   * from the data array or with `Cell`. If a data entry defines any of `fill`, `fillOpacity`,
+   * `stroke`, `strokeOpacity`, `strokeWidth`, or `strokeDasharray`, then that shape ignores
+   * the theme completely, and renders with only its own styles and the explicit props of its
+   * graphical item. This way the theme colors never mix with colors from data.
+   *
    * Legend and Tooltip items inherit the same color.
    */
   graphicalItems: ReadonlyArray<GraphicalItemStyle>;

@@ -47,6 +47,7 @@ import { GraphicalItemId } from '../state/graphicalItemsSlice';
 import { initialEventSettingsState } from '../state/eventSettingsSlice';
 import { RechartsTheme } from '../theme/RechartsTheme';
 import { useBackwardsCompatibleTheme } from '../theme/useBackwardsCompatibleTheme';
+import { hasOwnStyles } from '../theme/dataEntryStyles';
 
 const NODE_VALUE_KEY = 'value';
 
@@ -622,6 +623,11 @@ type ContentItemProps = {
   id: GraphicalItemId;
   content: TreemapContentType;
   nodeProps: TreemapNode;
+  /**
+   * True if the data node defines its own styles. Such nodes ignore the theme completely.
+   * This is computed from the data node alone because nodeProps also include the Treemap props.
+   */
+  nodeHasOwnStyles: boolean;
   type: string;
   colorPanel: ReadonlyArray<string> | undefined;
   themeGraphicalItems: RechartsTheme['graphicalItems'];
@@ -635,6 +641,7 @@ type ContentItemProps = {
 function ContentItem({
   content,
   nodeProps,
+  nodeHasOwnStyles,
   type,
   colorPanel,
   themeGraphicalItems,
@@ -691,11 +698,17 @@ function ContentItem({
   const themeGraphicalItem =
     themeGraphicalItems.length === 0 ? undefined : themeGraphicalItems[nodeProps.depth % themeGraphicalItems.length];
   const defaultFill = nodeProps.depth < 2 ? colors[index % colors.length] : 'rgba(255,255,255,0)';
+  /*
+   * A node that brings its own styles in data ignores the theme completely,
+   * so that its colors are not mixed with the theme colors.
+   */
+  const ignoresTheme = themeGraphicalItem != null && nodeHasOwnStyles;
+  const fill = colorPanel == null ? (themeGraphicalItem?.fill ?? defaultFill) : defaultFill;
   return (
     <g>
       <Rectangle
-        fill={colorPanel == null ? (themeGraphicalItem?.fill ?? defaultFill) : defaultFill}
-        stroke={themeGraphicalItem?.stroke ?? '#fff'}
+        fill={ignoresTheme && colorPanel == null ? undefined : fill}
+        stroke={ignoresTheme ? undefined : (themeGraphicalItem?.stroke ?? '#fff')}
         {...omit(nodeProps, ['children'])}
         onMouseEnter={onMouseEnter}
         onMouseLeave={onMouseLeave}
@@ -785,12 +798,14 @@ const defaultTreemapMargin: Margin = {
 function TreemapItem({
   content,
   nodeProps,
+  nodeHasOwnStyles,
   isLeaf,
   treemapProps,
   onNestClick,
 }: {
   content: TreemapContentType;
   nodeProps: TreemapNode;
+  nodeHasOwnStyles: boolean;
   isLeaf: boolean;
   treemapProps: InternalTreemapProps;
   onNestClick: (node: TreemapNode) => void;
@@ -883,6 +898,7 @@ function TreemapItem({
               x,
               y,
             }}
+            nodeHasOwnStyles={nodeHasOwnStyles}
             type={type}
             colorPanel={colorPanel}
             themeGraphicalItems={themeGraphicalItems}
@@ -1032,6 +1048,7 @@ class TreemapWithState extends PureComponent<InternalTreemapProps, State> {
           isLeaf={isLeaf}
           content={content}
           nodeProps={nodeProps}
+          nodeHasOwnStyles={hasOwnStyles(node)}
           treemapProps={this.props}
           onNestClick={this.handleClick}
         />
