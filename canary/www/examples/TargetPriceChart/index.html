@@ -29,7 +29,7 @@
       rel="stylesheet"
       type="text/css"
     />
-    <script type="module" crossorigin src="/recharts/canary/www/assets/index-DA1mswVO.js"></script>
+    <script type="module" crossorigin src="/recharts/canary/www/assets/index-Da64thrl.js"></script>
     <link rel="stylesheet" crossorigin href="/recharts/canary/www/assets/index-Dngh0Ezp.css">
     <link rel="sitemap" type="application/xml" title="Sitemap" href="/sitemap.xml">
   </head>
@@ -236,6 +236,7 @@ export default function TargetPriceChart({
         dataKey=&quot;lowHigh&quot;
         fill=&quot;orange&quot;
         stroke=&quot;orange&quot;
+        activeDot={{ stroke: &#x27;orange&#x27; }}
         fillOpacity={0.12}
         isAnimationActive={isAnimationActive}
       &gt;
@@ -245,21 +246,39 @@ export default function TargetPriceChart({
           content={labelProps =&gt; activeIndex === labelProps.index &amp;&amp; &lt;ActiveLabel {...labelProps} /&gt;}
         /&gt;
       &lt;/Area&gt;
-      &lt;Line dataKey=&quot;low&quot; stroke=&quot;none&quot; dot={false} isAnimationActive={isAnimationActive}&gt;
+      &lt;Line
+        dataKey=&quot;low&quot;
+        stroke=&quot;none&quot;
+        dot={false}
+        activeDot={{ stroke: &#x27;orange&#x27; }}
+        isAnimationActive={isAnimationActive}
+      &gt;
         &lt;LabelList
           position=&quot;center&quot;
           // eslint-disable-next-line react/no-unstable-nested-components
           content={labelProps =&gt; activeIndex === labelProps.index &amp;&amp; &lt;ActiveLabel {...labelProps} /&gt;}
         /&gt;
       &lt;/Line&gt;
-      &lt;Line dataKey=&quot;price&quot; stroke=&quot;darkslateblue&quot; dot={false} isAnimationActive={isAnimationActive}&gt;
+      &lt;Line
+        dataKey=&quot;price&quot;
+        stroke=&quot;darkslateblue&quot;
+        dot={false}
+        activeDot={{ stroke: &#x27;darkslateblue&#x27; }}
+        isAnimationActive={isAnimationActive}
+      &gt;
         &lt;LabelList
           position=&quot;center&quot;
           // eslint-disable-next-line react/no-unstable-nested-components
           content={labelProps =&gt; activeIndex === labelProps.index &amp;&amp; &lt;ActiveLabel {...labelProps} /&gt;}
         /&gt;
       &lt;/Line&gt;
-      &lt;Line dataKey=&quot;targetPrice&quot; stroke=&quot;darkorange&quot; dot={false} isAnimationActive={isAnimationActive}&gt;
+      &lt;Line
+        dataKey=&quot;targetPrice&quot;
+        stroke=&quot;darkorange&quot;
+        dot={false}
+        activeDot={{ stroke: &#x27;darkorange&#x27; }}
+        isAnimationActive={isAnimationActive}
+      &gt;
         &lt;LabelList
           position=&quot;center&quot;
           // eslint-disable-next-line react/no-unstable-nested-components
@@ -270,6 +289,6 @@ export default function TargetPriceChart({
       &lt;RechartsDevtools /&gt;
     &lt;/ComposedChart&gt;
   );
-}</pre><div></div></div></div><div style="height:100%;display:none;overflow:hidden"><div id="recharts-devtools-portal-R5a9" style="height:100%;background:var(--color-bg);color:var(--color-text);overflow:auto;padding:10px;display:block" class=""></div></div><div style="height:100%;display:none;overflow:hidden"><div id="recharts-devtools-portal-R5a9-annotations" style="height:100%;background:var(--color-surface-base);color:var(--color-text-1);overflow:auto;padding:10px;display:block" class=""></div></div><div style="height:100%;display:none;overflow:hidden"><div style="padding:10px;height:100%;overflow:auto"><div style="display:flex;gap:12px;margin:1ex"><label style="display:flex;align-items:center;gap:8px;cursor:pointer"><input style="margin:0;width:16px;height:16px;cursor:pointer" type="radio" name=":R55da9:" checked=""/>Autoplay Animations (default)</label><label style="display:flex;align-items:center;gap:8px;cursor:pointer"><input style="margin:0;width:16px;height:16px;cursor:pointer" type="radio" name=":R55da9:"/>Manual Animations</label></div></div></div></div></div></div></div></div></div></main><footer><p><span>Released under the </span><a href="https://opensource.org/licenses/MIT" target="_blank" rel="noreferrer">MIT License</a></p><p>Copyright (c) 2016-<!-- -->2026<!-- --> Recharts Group</p><p>Commit: <code title="02a6fa52f48cfc988fb58cd2f0137e1ee65a9bab">02a6fa52</code></p></footer></div></div>
+}</pre><div></div></div></div><div style="height:100%;display:none;overflow:hidden"><div id="recharts-devtools-portal-R5a9" style="height:100%;background:var(--color-bg);color:var(--color-text);overflow:auto;padding:10px;display:block" class=""></div></div><div style="height:100%;display:none;overflow:hidden"><div id="recharts-devtools-portal-R5a9-annotations" style="height:100%;background:var(--color-surface-base);color:var(--color-text-1);overflow:auto;padding:10px;display:block" class=""></div></div><div style="height:100%;display:none;overflow:hidden"><div style="padding:10px;height:100%;overflow:auto"><div style="display:flex;gap:12px;margin:1ex"><label style="display:flex;align-items:center;gap:8px;cursor:pointer"><input style="margin:0;width:16px;height:16px;cursor:pointer" type="radio" name=":R55da9:" checked=""/>Autoplay Animations (default)</label><label style="display:flex;align-items:center;gap:8px;cursor:pointer"><input style="margin:0;width:16px;height:16px;cursor:pointer" type="radio" name=":R55da9:"/>Manual Animations</label></div></div></div></div></div></div></div></div></div></main><footer><p><span>Released under the </span><a href="https://opensource.org/licenses/MIT" target="_blank" rel="noreferrer">MIT License</a></p><p>Copyright (c) 2016-<!-- -->2026<!-- --> Recharts Group</p><p>Commit: <code title="8f523b7b4ea1a3c706070207433eec5013202cca">8f523b7b</code></p></footer></div></div>
   </body>
 </html>
