@@ -59,6 +59,79 @@ const CURVE_FACTORIES: CurveFactories = {
 };
 
 /**
+ * d3-shape has no vertical versions of its step curves. This is d3's step curve with x and y swapped,
+ * so that in vertical layout the steps happen along the y (category) axis, as they do along the x axis
+ * in horizontal layout.
+ *
+ * @param t where between two points the step happens: 0 at the first point (stepBefore),
+ * 0.5 halfway (step), 1 at the second point (stepAfter)
+ * @returns curve factory
+ */
+function verticalStepCurve(t: number): CurveFactory {
+  return context => {
+    let stepT = t;
+    let line = NaN;
+    let pointIndex = 0;
+    let prevX = NaN;
+    let prevY = NaN;
+    return {
+      areaStart() {
+        line = 0;
+      },
+      areaEnd() {
+        line = NaN;
+      },
+      lineStart() {
+        prevX = NaN;
+        prevY = NaN;
+        pointIndex = 0;
+      },
+      lineEnd() {
+        if (stepT > 0 && stepT < 1 && pointIndex === 2) {
+          context.lineTo(prevX, prevY);
+        }
+        if (line || (line !== 0 && pointIndex === 1)) {
+          context.closePath();
+        }
+        if (line >= 0) {
+          // an area's baseline is drawn in reverse, so it steps from the other side
+          stepT = 1 - stepT;
+          line = 1 - line;
+        }
+      },
+      point(x: number, y: number) {
+        if (pointIndex === 0) {
+          pointIndex = 1;
+          if (line) {
+            context.lineTo(x, y);
+          } else {
+            context.moveTo(x, y);
+          }
+        } else {
+          pointIndex = 2;
+          if (stepT <= 0) {
+            context.lineTo(x, prevY);
+            context.lineTo(x, y);
+          } else {
+            const stepY = prevY * (1 - stepT) + y * stepT;
+            context.lineTo(prevX, stepY);
+            context.lineTo(x, stepY);
+          }
+        }
+        prevX = x;
+        prevY = y;
+      },
+    };
+  };
+}
+
+const VERTICAL_STEP_CURVE_FACTORIES: CurveFactories = {
+  curveStep: verticalStepCurve(0.5),
+  curveStepBefore: verticalStepCurve(0),
+  curveStepAfter: verticalStepCurve(1),
+};
+
+/**
  * @inline
  */
 export type CurveType =
@@ -102,6 +175,12 @@ const getCurveFactory = (type: CurveType, layout: LayoutType | undefined): Curve
 
   if ((name === 'curveMonotone' || name === 'curveBump') && layout) {
     const factory = CURVE_FACTORIES[`${name}${layout === 'vertical' ? 'Y' : 'X'}`];
+    if (factory) {
+      return factory;
+    }
+  }
+  if (layout === 'vertical') {
+    const factory = VERTICAL_STEP_CURVE_FACTORIES[name];
     if (factory) {
       return factory;
     }

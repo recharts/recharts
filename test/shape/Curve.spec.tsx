@@ -351,6 +351,61 @@ describe('getPath', () => {
     expect(actual).toBe('M5,5Z');
   });
 
+  it('should step along the y axis for step curves in vertical layout', () => {
+    const actual = getPath({
+      type: 'step',
+      layout: 'vertical',
+      points: [
+        { x: 10, y: 0 },
+        { x: 20, y: 10 },
+      ],
+    });
+    expect(actual).toBe('M10,0L10,5L20,5L20,10');
+  });
+
+  describe.each(['step', 'stepBefore', 'stepAfter'] as const)(
+    '%s curve in vertical layout is the horizontal one with x and y swapped',
+    type => {
+      const swap = ({ x, y }: { x: number; y: number }) => ({ x: y, y: x });
+      const swapPath = (path: string | null) => path?.replace(/(-?[\d.]+),(-?[\d.]+)/g, '$2,$1');
+      const points = [
+        { x: 10, y: 0 },
+        { x: 40, y: 10 },
+        { x: 25, y: 30 },
+        { x: 30, y: 45 },
+      ];
+      const baseLine = [
+        { x: 0, y: 0 },
+        { x: 5, y: 10 },
+        { x: 0, y: 30 },
+        { x: 5, y: 45 },
+      ];
+
+      it('line', () => {
+        const vertical = getPath({ type, layout: 'vertical', points });
+        const horizontal = getPath({ type, layout: 'horizontal', points: points.map(swap) });
+        expect(vertical).toBe(swapPath(horizontal));
+      });
+
+      it('area with a number baseLine', () => {
+        const vertical = getPath({ type, layout: 'vertical', points, baseLine: 0 });
+        const horizontal = getPath({ type, layout: 'horizontal', points: points.map(swap), baseLine: 0 });
+        expect(vertical).toBe(swapPath(horizontal));
+      });
+
+      it('area with an array baseLine', () => {
+        const vertical = getPath({ type, layout: 'vertical', points, baseLine });
+        const horizontal = getPath({
+          type,
+          layout: 'horizontal',
+          points: points.map(swap),
+          baseLine: baseLine.map(swap),
+        });
+        expect(vertical).toBe(swapPath(horizontal));
+      });
+    },
+  );
+
   it('should return null when point.y is null', () => {
     const actual = getPath({
       type: 'linear',
