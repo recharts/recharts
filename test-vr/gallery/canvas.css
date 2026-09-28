@@ -1,3 +1,7 @@
+:root {
+  color-scheme: light dark;
+}
+
 .recharts-vr-canvas--contrast-light,
 .recharts-vr-canvas--contrast-dark {
   background-image:
