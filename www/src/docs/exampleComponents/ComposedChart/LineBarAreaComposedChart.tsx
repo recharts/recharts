@@ -66,10 +66,10 @@ const LineBarAreaComposedChart = () => {
       <YAxis width="auto" niceTicks="snap125" />
       <Tooltip />
       <Legend />
-      <Area type="monotone" dataKey="amt" fill="#8884d8" stroke="#8884d8" />
-      <Bar dataKey="pv" barSize={20} fill="#413ea0" />
-      <Line type="monotone" dataKey="uv" stroke="#ff7300" />
-      <Scatter dataKey="cnt" fill="red" />
+      <Area type="monotone" dataKey="amt" />
+      <Bar dataKey="pv" barSize={20} />
+      <Line type="monotone" dataKey="uv" />
+      <Scatter dataKey="cnt" />
       <RechartsDevtools />
     </ComposedChart>
   );
