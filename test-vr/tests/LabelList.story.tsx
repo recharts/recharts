@@ -4,27 +4,25 @@ import {
   AreaChart,
   Bar,
   BarChart,
+  Funnel,
+  FunnelChart,
+  LabelList,
   Line,
   LineChart,
-  Scatter,
-  ScatterChart,
   Pie,
   PieChart,
   Radar,
   RadarChart,
   RadialBar,
   RadialBarChart,
-  LabelList,
+  Scatter,
+  ScatterChart,
   XAxis,
   YAxis,
-  FunnelChart,
-  Funnel,
 } from '../../src';
-import { pageData, pageDataWithFillColor } from '../../storybook/stories/data';
+import { pageData } from '../../storybook/stories/data';
 
 const shortData = pageData.slice(2, 4);
-
-const shortFillColorData = pageDataWithFillColor.slice(2, 4);
 
 const margin = { top: 155, right: 180, left: 180, bottom: 0 };
 
@@ -191,7 +189,7 @@ const PieImplicitLabelListTest = () => (
     {availablePositions.map(position => (
       <Pie
         key={position}
-        data={shortFillColorData}
+        data={shortData}
         dataKey="uv"
         cx={450}
         cy={250}
@@ -205,7 +203,7 @@ const PieImplicitLabelListTest = () => (
 
 const PieExplicitLabelListTest = () => (
   <PieChart width={900} height={500}>
-    <Pie data={shortFillColorData} dataKey="uv" isAnimationActive={false}>
+    <Pie data={shortData} dataKey="uv" isAnimationActive={false}>
       {availablePositions.map(position => (
         <LabelList
           key={position}
