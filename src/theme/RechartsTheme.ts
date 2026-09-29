@@ -101,6 +101,12 @@ export interface RechartsTheme {
    * ErrorBar lines.
    */
   errorBar?: Styles1D;
+  /**
+   * Styles of the chart itself.
+   *
+   * `backgroundColor` is the color that the chart is designed to be painted on.
+   * Treemap outlines its tiles in this color.
+   */
   chart?: CSSProperties;
 
   /**
