@@ -22,6 +22,7 @@ import {
 import { RechartsTheme } from '../../src/theme/RechartsTheme';
 import {
   getEntryStyleOverrides,
+  getOwnStyles,
   getOwnStylesWithFallback,
   getUnthemedStyles,
   hasOwnStyles,
@@ -114,6 +115,30 @@ describe('hasOwnStyles', () => {
       expect(hasOwnStyles({ [key]: 0 })).toBe(true);
     },
   );
+});
+
+describe('getOwnStyles', () => {
+  it('should return an empty object for a missing entry', () => {
+    expect(getOwnStyles(undefined)).toEqual({});
+    expect(getOwnStyles(null)).toEqual({});
+  });
+
+  it('should pick only the defined style keys', () => {
+    expect(getOwnStyles({ fill: 'red', stroke: undefined })).toEqual({ fill: 'red' });
+  });
+
+  it('should pick all style keys', () => {
+    const styles = {
+      fill: 'red',
+      fillOpacity: 0.5,
+      stroke: 'blue',
+      strokeOpacity: 0.4,
+      strokeWidth: 2,
+      strokeDasharray: '3 3',
+    };
+    const entry = { ...styles, name: 'a' };
+    expect(getOwnStyles(entry)).toEqual(styles);
+  });
 });
 
 describe('getUnthemedStyles', () => {

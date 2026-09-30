@@ -66,8 +66,11 @@ export interface RechartsTheme {
    *
    * If this array has only one item in it then all graphical items will have the same color.
    *
-   * Individual shapes of Bar, RadialBar, Scatter, Pie, Funnel, and Treemap can be styled
-   * from the data array or with `Cell`. If a data entry defines any of `fill`, `fillOpacity`,
+   * Sankey selects an entry for each node by the node's index in `data.nodes`,
+   * and draws each link in the color of its source node, at reduced opacity.
+   *
+   * Individual shapes of Bar, RadialBar, Scatter, Pie, Funnel, Treemap, and Sankey can be styled
+   * from the data array. If a data entry defines any of `fill`, `fillOpacity`,
    * `stroke`, `strokeOpacity`, `strokeWidth`, or `strokeDasharray`, then that shape ignores
    * the theme completely, and renders with only its own styles and the explicit props of its
    * graphical item. This way the theme colors never mix with colors from data.
