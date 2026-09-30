@@ -26,6 +26,7 @@ import { LegendPortalContext } from '../context/legendPortalContext';
 import { ReportChartSize } from '../context/chartLayoutContext';
 import { useResponsiveContainerContext } from '../component/ResponsiveContainer';
 import { Percent } from '../util/types';
+import { useRechartsTheme } from '../theme/RechartsThemeContext';
 
 export type RechartsWrapperProps = ExternalMouseEvents & {
   children: ReactNode;
@@ -258,6 +259,7 @@ export const RechartsWrapper = forwardRef<HTMLDivElement | null, RechartsWrapper
     const [legendPortal, setLegendPortal] = useState<HTMLElement | null>(null);
 
     const setScaleRef = useReportScale();
+    const theme = useRechartsTheme();
 
     const responsiveContainerCalculations = useResponsiveContainerContext();
     const width = responsiveContainerCalculations?.width > 0 ? responsiveContainerCalculations.width : widthFromProps;
@@ -397,6 +399,11 @@ export const RechartsWrapper = forwardRef<HTMLDivElement | null, RechartsWrapper
             height={height ?? style?.height}
             className={clsx('recharts-wrapper', className)}
             style={{
+              /*
+               * Theme styles come first so that they cannot override the position and size of the wrapper,
+               * and so that the explicit `style` prop wins over them.
+               */
+              ...theme?.chart,
               position: 'relative',
               cursor: 'default',
               width,

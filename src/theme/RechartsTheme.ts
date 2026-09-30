@@ -42,6 +42,27 @@ export type Styles1D = {
 export type TextStyles = CSSProperties;
 
 /**
+ * Styles painted on the chart wrapper element.
+ *
+ * Limited to properties that do not change the size of the wrapper.
+ * Recharts measures the wrapper to lay out the chart, so padding, border, and margin are not allowed.
+ */
+export type ChartStyles = Pick<
+  CSSProperties,
+  | 'background'
+  | 'backgroundColor'
+  | 'backgroundImage'
+  | 'borderRadius'
+  | 'boxShadow'
+  | 'outline'
+  | 'outlineColor'
+  | 'outlineOffset'
+  | 'outlineStyle'
+  | 'outlineWidth'
+  | 'overflow'
+>;
+
+/**
  * Styling presets for Recharts components.
  * The theme can be used to customize the appearance of charts, including colors, fonts, and other visual properties.
  *
@@ -108,13 +129,29 @@ export interface RechartsTheme {
    */
   errorBar?: Styles1D;
   /**
-   * Styles of the chart itself.
+   * Styles painted on the element that wraps the chart.
+   * The Legend renders inside this element too, so a background here covers the Legend as well.
    *
-   * `backgroundColor` is the color that the chart is designed to be painted on.
-   * Treemap outlines its tiles in this color, and SunburstChart paints its separators
-   * and the halo around its labels in this color.
+   * The built-in themes leave this empty, so charts are transparent and the page shows through.
+   * The explicit `style` prop of the chart takes precedence over these styles.
+   *
+   * If you paint a background here, set `pageBackground` to the same color.
    */
-  chart?: CSSProperties;
+  chart?: ChartStyles;
+  /**
+   * The color directly behind the chart: the page, or `chart.backgroundColor` if you paint one.
+   *
+   * Recharts never paints this as a background.
+   * It uses this color to draw gaps and halos that look like cut-outs:
+   * Treemap tile outlines, SunburstChart separators and the halo around its labels.
+   *
+   * Any CSS color works, including `var()` references.
+   * Features that compare colors, such as contrast checks, need a literal color.
+   *
+   * Each built-in theme is designed for one page background, and sets it here.
+   * For example, `darkTheme` expects a dark page and is not legible on a light one.
+   */
+  pageBackground?: string;
 
   /**
    * Styles applied to the cursor highlight shown with an active Tooltip.
