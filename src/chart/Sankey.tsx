@@ -930,7 +930,22 @@ export type Props = Omit<SVGProps<SVGSVGElement>, keyof SankeyProps> & SankeyPro
 
 export type SankeyElementType = 'node' | 'link';
 
-function renderLinkItem(option: SankeyLinkOptions | undefined, props: LinkProps) {
+/**
+ * Link styles used when there is no theme. A themed Sankey does not use these at all.
+ */
+const legacyLinkStyles = { stroke: '#333', strokeOpacity: '0.2' } as const;
+
+/**
+ * Node styles used when there is no theme. A themed Sankey does not use these at all.
+ */
+const legacyNodeStyles = { fill: '#0088fe', fillOpacity: '0.8' } as const;
+
+/**
+ * @param option the `link` prop
+ * @param props resolved props of the link
+ * @param hasTheme true if a theme is active, in which case the legacy styles are not applied
+ */
+function renderLinkItem(option: SankeyLinkOptions | undefined, props: LinkProps, hasTheme: boolean) {
   if (React.isValidElement(option)) {
     return React.cloneElement(option, props);
   }
@@ -948,9 +963,8 @@ function renderLinkItem(option: SankeyLinkOptions | undefined, props: LinkProps)
           C${sourceControlX},${sourceY} ${targetControlX},${targetY} ${targetX},${targetY}
         `}
       fill="none"
-      stroke="#333"
+      {...(hasTheme ? undefined : legacyLinkStyles)}
       strokeWidth={linkWidth}
-      strokeOpacity="0.2"
       {...svgPropertiesNoEvents(others)}
     />
   );
@@ -1040,6 +1054,7 @@ function SankeyLinkElement({
 }) {
   const activeCoordinate = getLinkCoordinateOfTooltip(props);
   const activeIndex = `link-${i}`;
+  const hasTheme = useRechartsTheme() != null;
 
   const dispatch = useAppDispatch();
 
@@ -1072,7 +1087,7 @@ function SankeyLinkElement({
     },
   };
 
-  return <Layer {...events}>{renderLinkItem(linkContent, props)}</Layer>;
+  return <Layer {...events}>{renderLinkItem(linkContent, props, hasTheme)}</Layer>;
 }
 
 function AllSankeyLinkElements({
@@ -1119,7 +1134,12 @@ function AllSankeyLinkElements({
   );
 }
 
-function renderNodeItem(option: SankeyNodeOptions | undefined, props: NodeProps) {
+/**
+ * @param option the `node` prop
+ * @param props resolved props of the node
+ * @param hasTheme true if a theme is active, in which case the legacy styles are not applied
+ */
+function renderNodeItem(option: SankeyNodeOptions | undefined, props: NodeProps, hasTheme: boolean) {
   if (React.isValidElement(option)) {
     return React.cloneElement(option, props);
   }
@@ -1129,7 +1149,11 @@ function renderNodeItem(option: SankeyNodeOptions | undefined, props: NodeProps)
 
   return (
     // @ts-expect-error recharts radius is not compatible with SVG radius
-    <Rectangle className="recharts-sankey-node" fill="#0088fe" fillOpacity="0.8" {...svgPropertiesNoEvents(props)} />
+    <Rectangle
+      className="recharts-sankey-node"
+      {...(hasTheme ? undefined : legacyNodeStyles)}
+      {...svgPropertiesNoEvents(props)}
+    />
   );
 }
 
@@ -1195,6 +1219,7 @@ function NodeElement({
 
   const activeCoordinate = getNodeCoordinateOfTooltip(props);
   const activeIndex = `node-${i}`;
+  const hasTheme = useRechartsTheme() != null;
 
   const events = {
     onMouseEnter: (e: MouseEvent<SVGGraphicsElement>) => {
@@ -1225,7 +1250,7 @@ function NodeElement({
     },
   };
 
-  return <Layer {...events}>{renderNodeItem(nodeContent, props)}</Layer>;
+  return <Layer {...events}>{renderNodeItem(nodeContent, props, hasTheme)}</Layer>;
 }
 
 function AllNodeElements({

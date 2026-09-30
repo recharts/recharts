@@ -61,6 +61,11 @@ function renderSankey(
 
 const legacyNode = { fill: '#0088fe', fillOpacity: '0.8', stroke: null, strokeOpacity: null };
 const legacyLink = { fill: 'none', fillOpacity: null, stroke: '#333', strokeOpacity: '0.2' };
+/**
+ * With a theme, none of the legacy styles apply. Links keep `fill="none"` because they are drawn as a stroke.
+ */
+const unstyledNode = { fill: null, fillOpacity: null, stroke: null, strokeOpacity: null };
+const unstyledLink = { fill: 'none', fillOpacity: null, stroke: null, strokeOpacity: null };
 const redNode = { fill: 'red', fillOpacity: '0.5', stroke: 'darkred', strokeOpacity: null };
 const greenNode = { fill: 'green', fillOpacity: '0.5', stroke: 'darkgreen', strokeOpacity: null };
 const themedLinkOpacity = String(THEMED_LINK_STROKE_OPACITY);
@@ -108,10 +113,10 @@ describe('<Sankey /> theme', () => {
     expect(new Set(nodes.map(node => node.fill)).size).toBe(3);
   });
 
-  it('keeps the legacy colors with the empty theme, which has no colors', () => {
+  it('applies no styles at all with the empty theme, which has no colors', () => {
     const { container } = renderSankey(emptyTheme);
-    expect(getNodes(container)).toEqual([legacyNode, legacyNode, legacyNode]);
-    expect(getLinks(container)).toEqual([legacyLink, legacyLink, legacyLink]);
+    expect(getNodes(container)).toEqual([unstyledNode, unstyledNode, unstyledNode]);
+    expect(getLinks(container)).toEqual([unstyledLink, unstyledLink, unstyledLink]);
   });
 
   it('lets explicit node and link props override the theme', () => {
@@ -125,9 +130,9 @@ describe('<Sankey /> theme', () => {
       { ...redNode, fill: 'blue', fillOpacity: '1' },
     ]);
     expect(getLinks(container)).toEqual([
-      { ...legacyLink, stroke: 'orange', strokeOpacity: '0.7' },
-      { ...legacyLink, stroke: 'orange', strokeOpacity: '0.7' },
-      { ...legacyLink, stroke: 'orange', strokeOpacity: '0.7' },
+      { ...unstyledLink, stroke: 'orange', strokeOpacity: '0.7' },
+      { ...unstyledLink, stroke: 'orange', strokeOpacity: '0.7' },
+      { ...unstyledLink, stroke: 'orange', strokeOpacity: '0.7' },
     ]);
   });
 
@@ -143,13 +148,17 @@ describe('<Sankey /> theme', () => {
         links: [{ source: 0, target: 1, value: 10, stroke: 'orange' }, ...data.links.slice(1)],
       },
     });
-    expect(getNodes(container)).toEqual([{ ...legacyNode, fill: 'blue' }, { ...legacyNode, stroke: 'black' }, redNode]);
+    expect(getNodes(container)).toEqual([
+      { ...unstyledNode, fill: 'blue' },
+      { ...unstyledNode, stroke: 'black' },
+      redNode,
+    ]);
     expect(getLinks(container)).toEqual([
-      { ...legacyLink, stroke: 'orange' },
+      { ...unstyledLink, stroke: 'orange' },
       // the link does not define its own styles, so it follows its source node, including the color from data
-      { ...legacyLink, stroke: 'blue', strokeOpacity: themedLinkOpacity },
+      { ...unstyledLink, stroke: 'blue', strokeOpacity: themedLinkOpacity },
       // the source node has no fill, so the link falls back to its stroke
-      { ...legacyLink, stroke: 'black', strokeOpacity: themedLinkOpacity },
+      { ...unstyledLink, stroke: 'black', strokeOpacity: themedLinkOpacity },
     ]);
   });
 
