@@ -186,6 +186,7 @@ export default function TargetPriceChart({
         dataKey="lowHigh"
         fill="orange"
         stroke="orange"
+        activeDot={{ stroke: 'orange' }}
         fillOpacity={0.12}
         isAnimationActive={isAnimationActive}
       >
@@ -195,21 +196,39 @@ export default function TargetPriceChart({
           content={labelProps => activeIndex === labelProps.index && <ActiveLabel {...labelProps} />}
         />
       </Area>
-      <Line dataKey="low" stroke="none" dot={false} isAnimationActive={isAnimationActive}>
+      <Line
+        dataKey="low"
+        stroke="none"
+        dot={false}
+        activeDot={{ stroke: 'orange' }}
+        isAnimationActive={isAnimationActive}
+      >
         <LabelList
           position="center"
           // eslint-disable-next-line react/no-unstable-nested-components
           content={labelProps => activeIndex === labelProps.index && <ActiveLabel {...labelProps} />}
         />
       </Line>
-      <Line dataKey="price" stroke="darkslateblue" dot={false} isAnimationActive={isAnimationActive}>
+      <Line
+        dataKey="price"
+        stroke="darkslateblue"
+        dot={false}
+        activeDot={{ stroke: 'darkslateblue' }}
+        isAnimationActive={isAnimationActive}
+      >
         <LabelList
           position="center"
           // eslint-disable-next-line react/no-unstable-nested-components
           content={labelProps => activeIndex === labelProps.index && <ActiveLabel {...labelProps} />}
         />
       </Line>
-      <Line dataKey="targetPrice" stroke="darkorange" dot={false} isAnimationActive={isAnimationActive}>
+      <Line
+        dataKey="targetPrice"
+        stroke="darkorange"
+        dot={false}
+        activeDot={{ stroke: 'darkorange' }}
+        isAnimationActive={isAnimationActive}
+      >
         <LabelList
           position="center"
           // eslint-disable-next-line react/no-unstable-nested-components

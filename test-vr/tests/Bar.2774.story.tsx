@@ -14,9 +14,9 @@ const data = [
 
 const bars = (
   <>
-    <Bar dataKey="x" fill="#12978f" isAnimationActive={false} />
-    <Bar dataKey="y" fill="#804351" isAnimationActive={false} />
-    <Bar dataKey="z" fill="#a16712" isAnimationActive={false} />
+    <Bar dataKey="x" isAnimationActive={false} />
+    <Bar dataKey="y" isAnimationActive={false} />
+    <Bar dataKey="z" isAnimationActive={false} />
   </>
 );
 
@@ -64,9 +64,9 @@ export const BarChartWithBarGapAndPerBarClampingMaxBarSize = () => {
       <XAxis dataKey="label" />
       <YAxis />
       <Legend />
-      <Bar dataKey="x" fill="#12978f" maxBarSize={12} isAnimationActive={false} />
-      <Bar dataKey="y" fill="#804351" maxBarSize={12} isAnimationActive={false} />
-      <Bar dataKey="z" fill="#a16712" maxBarSize={12} isAnimationActive={false} />
+      <Bar dataKey="x" maxBarSize={12} isAnimationActive={false} />
+      <Bar dataKey="y" maxBarSize={12} isAnimationActive={false} />
+      <Bar dataKey="z" maxBarSize={12} isAnimationActive={false} />
     </BarChart>
   );
 };

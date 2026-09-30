@@ -1,3 +1,4 @@
+import { THEMED_LINK_STROKE_OPACITY } from '../../src/chart/Sankey';
 import { darkTheme } from '../../src/theme/darkTheme';
 import { emptyTheme } from '../../src/theme/emptyTheme';
 import { lightTheme } from '../../src/theme/lightTheme';
@@ -43,9 +44,9 @@ type ColorTokens = {
  *
  * Recharts does not paint a chart background itself, so strictly speaking this
  * is a property of the host page rather than of the theme. Each theme is
- * nonetheless designed for one, and states it indirectly through the background
- * it gives the Tooltip and Legend surfaces. The test below keeps these two in
- * step so this assumption cannot quietly go stale.
+ * nonetheless designed for one, and states it in `chart.backgroundColor`.
+ * The Tooltip and Legend surfaces use the same background. The test below keeps
+ * these in step so this assumption cannot quietly go stale.
  */
 const CHART_BACKGROUND: Record<ThemeName, string> = {
   light: '#fff',
@@ -60,7 +61,7 @@ const THEMES: Record<ThemeName, RechartsTheme> = {
 const THEME_NAMES = Object.keys(THEMES) as ReadonlyArray<ThemeName>;
 
 /**
- * The contrast WCAG 2.2 asks for between normal sized text and its background.
+ * The contrast WCAG 2.2 asks for between normal-sized text and its background.
  * @see {@link https://www.w3.org/TR/WCAG22/#contrast-minimum}
  */
 const WCAG_TEXT_CONTRAST = 4.5;
@@ -179,7 +180,8 @@ describe.each(THEME_NAMES)('%s theme', themeName => {
   const theme = THEMES[themeName];
   const background = parseColor(CHART_BACKGROUND[themeName]);
 
-  test('the background this test assumes is the one the theme gives its own surfaces', () => {
+  test('the background this test assumes is the one the theme is designed for, and gives its own surfaces', () => {
+    expect(requireColor(theme.chart?.backgroundColor, 'chart.backgroundColor')).toEqual(background);
     expect(requireColor(theme.tooltip?.contentStyle?.backgroundColor, 'tooltip.contentStyle')).toEqual(background);
     expect(requireColor(theme.legend?.wrapperStyle?.backgroundColor, 'legend.wrapperStyle')).toEqual(background);
   });
@@ -214,26 +216,19 @@ describe.each(THEME_NAMES)('%s theme', themeName => {
 });
 
 /*
- * Series colours are the one place where the two themes are not held to the
- * same bar.
- *
- * The dark theme clears WCAG 1.4.11 on every entry. The light theme does not:
- * its palette is the original Recharts pastel set, chosen long before the theme
- * system existed, and at `fillOpacity` 0.8 on white those colours land between
- * 1.4 and 2.6 against the background. Replacing them would change the look of
- * every default chart, so this test holds the line where the palette stands
- * today instead of failing the build over a deliberate, documented gap. The
- * exact numbers are in the snapshot at the bottom of this file, so any change
- * to them shows up as a reviewable diff.
+ * Both themes hold every series colour to the full WCAG 1.4.11 requirement,
+ * as a stroke and as a fill composited at the theme's `fillOpacity`. The floor
+ * is kept per theme so that a future theme can document a deliberate gap here,
+ * with the exact numbers in the snapshot at the bottom of this file.
  */
 const SERIES_CONTRAST_FLOOR: Record<ThemeName, number> = {
-  light: 1.4,
+  light: WCAG_NON_TEXT_CONTRAST,
   dark: WCAG_NON_TEXT_CONTRAST,
 };
 
 describe('series colour contrast against the chart background', () => {
-  test('the dark theme is held to the full WCAG 1.4.11 requirement', () => {
-    expect(SERIES_CONTRAST_FLOOR.dark).toBeGreaterThanOrEqual(WCAG_NON_TEXT_CONTRAST);
+  test.each(THEME_NAMES)('the %s theme is held to the full WCAG 1.4.11 requirement', themeName => {
+    expect(SERIES_CONTRAST_FLOOR[themeName]).toBeGreaterThanOrEqual(WCAG_NON_TEXT_CONTRAST);
   });
 
   describe.each(THEME_NAMES)('%s theme', themeName => {
@@ -254,6 +249,30 @@ describe('series colour contrast against the chart background', () => {
       const stroke = requireColor(item.stroke, `${description}.stroke`);
       expect(contrastRatio(stroke, background)).toBeGreaterThanOrEqual(floor);
     });
+  });
+});
+
+/**
+ * Sankey links are painted in their source node colour at reduced opacity.
+ *
+ * They are decoration next to the nodes, which carry the full series colour,
+ * so they are not held to WCAG 1.4.11. They still have to be clearly visible,
+ * which the legacy `#333` at 20% opacity was not on a dark background (about 1.06:1).
+ */
+const SANKEY_LINK_CONTRAST_FLOOR = 1.5;
+
+describe('Sankey links', () => {
+  describe.each(THEME_NAMES)('%s theme', themeName => {
+    const theme = THEMES[themeName];
+    const background = parseColor(CHART_BACKGROUND[themeName]);
+
+    test.each(theme.graphicalItems.map((item, index) => [`graphicalItems[${index}] ${item.fill}`, item] as const))(
+      'a link from a %s node stays visible against the background',
+      (description, item) => {
+        const link = blendOver(requireColor(item.fill, `${description}.fill`), THEMED_LINK_STROKE_OPACITY, background);
+        expect(contrastRatio(link, background)).toBeGreaterThanOrEqual(SANKEY_LINK_CONTRAST_FLOOR);
+      },
+    );
   });
 });
 
@@ -305,7 +324,10 @@ function accessibilityReport(themeName: ThemeName): string {
   theme.graphicalItems.forEach((item, index) => {
     const fill = ratio(contrastRatio(paintedFill(item, background, `graphicalItems[${index}]`), background));
     const stroke = ratio(contrastRatio(requireColor(item.stroke, 'stroke'), background));
-    lines.push(`${`  ${item.fill}`.padEnd(14)}fill ${fill}   stroke ${stroke}`);
+    const link = ratio(
+      contrastRatio(blendOver(requireColor(item.fill, 'fill'), THEMED_LINK_STROKE_OPACITY, background), background),
+    );
+    lines.push(`${`  ${item.fill}`.padEnd(14)}fill ${fill}   stroke ${stroke}   sankey link ${link}`);
   });
 
   lines.push('', 'closest pair of series colours');

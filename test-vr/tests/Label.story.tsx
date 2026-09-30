@@ -17,7 +17,7 @@ import {
   XAxis,
   YAxis,
 } from '../../src';
-import { pageData, pageDataWithFillColor } from '../../storybook/stories/data';
+import { pageData } from '../../storybook/stories/data';
 
 const availablePositions = [
   'top',
@@ -161,7 +161,7 @@ export const PolarAngleAxisLabel = () => {
 export const PieChartLabel = () => {
   return (
     <PieChart width={900} height={500}>
-      <Pie data={pageDataWithFillColor} dataKey="uv" nameKey="name" isAnimationActive={false} />
+      <Pie data={pageData} dataKey="uv" nameKey="name" isAnimationActive={false} />
       {availablePositions.map(position => (
         <Label key={position} value={`Position: ${position}`} position={position} className={position} />
       ))}
@@ -173,7 +173,7 @@ export const PieChartLabel = () => {
 export const PieLabel = () => {
   return (
     <PieChart width={900} height={500}>
-      <Pie data={pageDataWithFillColor} dataKey="uv" nameKey="name" isAnimationActive={false}>
+      <Pie data={pageData} dataKey="uv" nameKey="name" isAnimationActive={false}>
         {availablePositions.map(position => (
           <Label key={position} value={`Position: ${position}`} position={position} className={position} />
         ))}

@@ -1,4 +1,4 @@
-import { Bar, BarChart, LabelList, LabelProps, XAxis, YAxis } from 'recharts';
+import { Bar, BarChart, LabelList, LabelProps, XAxis, YAxis, Text } from 'recharts';
 import { RechartsDevtools } from '@recharts/devtools';
 
 const data = [
@@ -24,9 +24,9 @@ function ProfitLabel({ x, y, width, value }: LabelProps) {
   }
 
   return (
-    <text x={Number(x) + Number(width) / 2} y={Number(y)} dy={-6} textAnchor="middle" fontSize={11}>
-      ▲ {value}
-    </text>
+    <Text x={Number(x) + Number(width) / 2} y={Number(y)} dy={-6} textAnchor="middle" fontSize={11}>
+      {`▲ ${value}`}
+    </Text>
   );
 }
 

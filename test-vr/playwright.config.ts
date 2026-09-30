@@ -27,6 +27,7 @@ const themedProjects = browserProjects.flatMap(project =>
     name: `${project.name}-${rechartsTheme}`,
     use: {
       ...project.use,
+      colorScheme: rechartsTheme,
       baseURL: `${galleryUrl}?rechartsTheme=${rechartsTheme}`,
     },
     metadata: { rechartsTheme },

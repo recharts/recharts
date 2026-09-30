@@ -85,16 +85,22 @@ testWithThemes('LineChart', async ({ mountStory }) => {
 
 Each `testWithThemes` test runs in three Playwright projects for each browser:
 
-| Project suffix                              | Gallery rendering                         | Canvas             |
-| ------------------------------------------- | ----------------------------------------- | ------------------ |
-| no suffix (`chromium`, `firefox`, `webkit`) | No `RechartsThemeProvider` (`legacy`)     | Light checkerboard |
-| `-light`                                    | `RechartsThemeProvider` with `lightTheme` | Light checkerboard |
-| `-dark`                                     | `RechartsThemeProvider` with `darkTheme`  | Dark checkerboard  |
+| Project suffix                              | Gallery rendering                         | Browser color scheme             | Canvas             |
+| ------------------------------------------- | ----------------------------------------- | -------------------------------- | ------------------ |
+| no suffix (`chromium`, `firefox`, `webkit`) | No `RechartsThemeProvider` (`legacy`)     | Playwright default (`light`)     | Light checkerboard |
+| `-light`                                    | `RechartsThemeProvider` with `lightTheme` | `light`                          | Light checkerboard |
+| `-dark`                                     | `RechartsThemeProvider` with `darkTheme`  | `dark`                           | Dark checkerboard  |
 
-The selected theme is supplied by the Playwright project and resolved inside
-the gallery boundary. It is not a story prop. Do not add a `testTheme` prop,
-put a theme name in a test title, or pass a custom screenshot name. Project
-names make the snapshots separate and deterministic, for example
+The selected Recharts theme is supplied by the Playwright project and resolved
+inside the gallery boundary. It is not a story prop. The light and dark projects
+also set Playwright's browser `colorScheme` to match; this controls
+`prefers-color-scheme` and CSS system colors such as `Canvas` and `CanvasText`.
+The gallery declares support for both color schemes so the browser resolves
+system colors according to the selected `colorScheme`. These are separate
+settings, so explicitly override `colorScheme` when a test needs a browser color
+scheme that differs from its Recharts theme. Do not add a `testTheme` prop, put
+a theme name in a test title, or pass a custom screenshot name. Project names
+make the snapshots separate and deterministic, for example
 `LineChart-1-chromium-light-linux.png`.
 
 The `test` export is the staged, legacy-only fixture used by existing specs;

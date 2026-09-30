@@ -8,6 +8,7 @@ import { selectChartDataAndAlwaysIgnoreIndexes } from './dataSelectors';
 import { ChartOffsetInternal, DataKey, TooltipType } from '../../util/types';
 import { CellProps } from '../..';
 import { GraphicalItemId } from '../graphicalItemsSlice';
+import { hasOwnStyles, UnthemedStyles } from '../../theme/dataEntryStyles';
 
 export type ResolvedFunnelSettings = {
   dataKey: DataKey<any>;
@@ -25,6 +26,12 @@ export type ResolvedFunnelSettings = {
    * so an explicit prop still wins over the theme.
    */
   indexedStyles: ReadonlyArray<Record<string, any>>;
+  /**
+   * Explicit style props without theme contributions. Items that define their own styles
+   * (in data or in Cell) get these instead of `indexedStyles`, so they ignore the theme completely.
+   * Undefined when there is no active theme.
+   */
+  unthemedStyles?: UnthemedStyles;
   id: GraphicalItemId;
 };
 
@@ -51,6 +58,7 @@ export const selectFunnelTrapezoids: (
       cells,
       presentationProps,
       indexedStyles,
+      unthemedStyles,
       id: graphicalItemId,
     },
     { chartData },
@@ -62,21 +70,25 @@ export const selectFunnelTrapezoids: (
       displayedData = chartData;
     }
 
-    const styleForIndex = (index: number) =>
-      indexedStyles != null && indexedStyles.length > 0 ? indexedStyles[index % indexedStyles.length] : {};
+    const styleForEntry = (entry: unknown, cellProps: unknown, index: number) => {
+      if (unthemedStyles != null && (hasOwnStyles(entry) || hasOwnStyles(cellProps))) {
+        return unthemedStyles;
+      }
+      return indexedStyles != null && indexedStyles.length > 0 ? indexedStyles[index % indexedStyles.length] : {};
+    };
 
     if (displayedData && displayedData.length) {
       displayedData = displayedData.map((entry: any, index: number) => ({
         payload: entry,
         ...presentationProps,
-        ...styleForIndex(index),
+        ...styleForEntry(entry, cells?.[index]?.props, index),
         ...entry,
         ...(cells && cells[index] && cells[index].props),
       }));
     } else if (cells && cells.length) {
       displayedData = cells.map((cell: ReactElement<CellProps>, index: number) => ({
         ...presentationProps,
-        ...styleForIndex(index),
+        ...styleForEntry(undefined, cell.props, index),
         ...cell.props,
       }));
     } else {

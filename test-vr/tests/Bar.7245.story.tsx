@@ -63,8 +63,8 @@ export const BarStackWithRoundedCornersAndNoStroke = () => {
       <YAxis />
       <Legend />
       <BarStack radius={8}>
-        <Bar dataKey="pv" fill="#8884d8" isAnimationActive={false} />
-        <Bar dataKey="uv" fill="#82ca9d" isAnimationActive={false} />
+        <Bar dataKey="pv" fill="#8884d8" stroke="none" isAnimationActive={false} />
+        <Bar dataKey="uv" fill="#82ca9d" stroke="none" isAnimationActive={false} />
       </BarStack>
     </BarChart>
   );
