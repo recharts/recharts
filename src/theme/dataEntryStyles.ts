@@ -2,7 +2,7 @@
  * @fileOverview
  * Graphical items that render one shape per data point (Bar, Pie, Scatter, ...)
  * let users style individual shapes by putting presentation properties
- * directly in the data array, or by using `<Cell>`.
+ * directly in the data array.
  *
  * The theme styles are designed as a coherent set: fill, stroke, opacity and
  * so on are chosen to look good together. If we mixed a user-provided `fill`
@@ -35,8 +35,8 @@ const themeableStyleKeys: ReadonlyArray<ThemeableStyleKey> = [
 export type UnthemedStyles = { [K in ThemeableStyleKey]: Styles2D[K] | undefined };
 
 /**
- * Returns true if the data entry (or Cell props) defines at least one themeable style property.
- * @param entry data entry, Cell props, or anything else
+ * Returns true if the data entry defines at least one themeable style property.
+ * @param entry data entry, or anything else
  */
 export function hasOwnStyles(entry: unknown): boolean {
   if (entry == null || typeof entry !== 'object') {
@@ -47,7 +47,7 @@ export function hasOwnStyles(entry: unknown): boolean {
 
 /**
  * Picks the themeable style properties that the data entry defines, and leaves out the undefined ones.
- * @param entry data entry, or Cell props
+ * @param entry data entry
  */
 export function getOwnStyles(entry: Styles2D | null | undefined): Styles2D {
   const result: Styles2D = {};
@@ -93,7 +93,7 @@ export function getUnthemedStyles(explicitProps: Styles2D): UnthemedStyles {
 /**
  * Resolves styles of a data entry that ignores the theme:
  * the entry's own styles win, and the explicit props of the graphical item fill in the rest.
- * @param entry data entry, or Cell props
+ * @param entry data entry
  * @param unthemedStyles result of {@link getUnthemedStyles}
  */
 export function getOwnStylesWithFallback(entry: Styles2D, unthemedStyles: UnthemedStyles): UnthemedStyles {
@@ -129,7 +129,7 @@ export function useUnthemedStyles(explicitProps: Styles2D): UnthemedStyles | und
  * If the entry has its own styles, returns the unthemed styles which remove the theme from this entry.
  * Otherwise returns undefined, and the entry keeps the theme styles.
  *
- * @param entry data entry, or Cell props
+ * @param entry data entry
  * @param unthemedStyles result of {@link getUnthemedStyles}, or undefined if there is no active theme
  */
 export function getEntryStyleOverrides(

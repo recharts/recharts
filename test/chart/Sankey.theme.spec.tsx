@@ -190,6 +190,16 @@ describe('<Sankey /> theme', () => {
     expect(linkStrokes).toEqual(['red', 'red', 'green']);
   });
 
+  it('colors links with the inline style fill of the source node, which wins over the fill attribute', () => {
+    const { container } = renderSankey(theme, { node: { style: { fill: 'blue' } } });
+    expect(getLinks(container).map(link => link.stroke)).toEqual(['blue', 'blue', 'blue']);
+  });
+
+  it('does not color links when the source node is painted with none', () => {
+    const { container } = renderSankey(theme, { node: { style: { fill: 'none', stroke: 'none' } } });
+    expect(getLinks(container)).toEqual([unstyledLink, unstyledLink, unstyledLink]);
+  });
+
   describe('Tooltip', () => {
     function getTooltipItemColor(container: Element): string | undefined {
       const item = container.querySelector<HTMLElement>('.recharts-tooltip-item');
@@ -207,6 +217,18 @@ describe('<Sankey /> theme', () => {
       const { container } = renderSankey(theme, { node: { fill: 'blue' } }, <Tooltip />);
       showTooltip(container, sankeyLinkMouseHoverTooltipSelector);
       expect(getTooltipItemColor(container)).toBe('blue');
+    });
+
+    it('uses the inline style fill of the hovered node', () => {
+      const { container } = renderSankey(theme, { node: { style: { fill: 'blue' } } }, <Tooltip />);
+      showTooltip(container, sankeyNodeMouseHoverTooltipSelector);
+      expect(getTooltipItemColor(container)).toBe('blue');
+    });
+
+    it('uses the inline style stroke of the hovered link', () => {
+      const { container } = renderSankey(theme, { link: { style: { stroke: 'orange' } } }, <Tooltip />);
+      showTooltip(container, sankeyLinkMouseHoverTooltipSelector);
+      expect(getTooltipItemColor(container)).toBe('orange');
     });
 
     it('keeps the legacy color without a theme', () => {

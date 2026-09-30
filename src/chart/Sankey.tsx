@@ -642,8 +642,30 @@ function isPaint(value: unknown): value is string {
   return typeof value === 'string' && value !== 'none';
 }
 
+type PaintedProps = { fill?: unknown; stroke?: unknown; style?: unknown };
+
+/**
+ * Returns the color that a node or link is actually painted with.
+ * Inline `style` wins over the presentation attribute, same as in the browser.
+ * @param props resolved props of a node or link
+ * @param key which paint to read
+ * @returns the color, or undefined if the shape is not painted with a color
+ */
+function getRenderedPaint(props: PaintedProps | undefined, key: 'fill' | 'stroke'): string | undefined {
+  if (props == null) {
+    return undefined;
+  }
+  const { style } = props;
+  const fromStyle: unknown = style != null && typeof style === 'object' ? Reflect.get(style, key) : undefined;
+  if (fromStyle != null) {
+    return isPaint(fromStyle) ? fromStyle : undefined;
+  }
+  const fromAttribute = props[key];
+  return isPaint(fromAttribute) ? fromAttribute : undefined;
+}
+
 const getPayloadOfTooltip = (
-  item: { payload: SankeyNode | SankeyLink; fill?: unknown; stroke?: unknown },
+  item: { payload: SankeyNode | SankeyLink } & PaintedProps,
   type: SankeyElementType,
   nameKey: DataKey<SankeyLink | SankeyNode, string> | undefined,
 ): SankeyTooltipPayload | undefined => {
@@ -653,7 +675,7 @@ const getPayloadOfTooltip = (
       payload,
       name: getValueByDataKey(payload, nameKey, ''),
       value: getValueByDataKey(payload, 'value'),
-      color: isPaint(item.fill) ? item.fill : undefined,
+      color: getRenderedPaint(item, 'fill'),
     };
   }
   if ('source' in payload && payload.source && payload.target) {
@@ -666,7 +688,7 @@ const getPayloadOfTooltip = (
       payload,
       name: `${sourceName} - ${targetName}`,
       value: getValueByDataKey(payload, 'value'),
-      color: isPaint(item.stroke) ? item.stroke : undefined,
+      color: getRenderedPaint(item, 'stroke'),
     };
   }
 
@@ -1364,7 +1386,7 @@ function resolveLinkStyles(
   if (hasOwnStyles(dataLink)) {
     return { themeStyles: {}, ownStyles: getOwnStyles(dataLink) };
   }
-  const sourceColor = [sourceNodeProps?.fill, sourceNodeProps?.stroke].find(isPaint);
+  const sourceColor = getRenderedPaint(sourceNodeProps, 'fill') ?? getRenderedPaint(sourceNodeProps, 'stroke');
   if (sourceColor == null) {
     return noStyles;
   }
