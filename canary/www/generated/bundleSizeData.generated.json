@@ -1,50 +1,50 @@
 {
   "treemap": {
     "examplePath": "www/src/views/IndexView/IndexLineChart.tsx",
-    "totalSize": 927895,
-    "totalSizeLabel": "906.15 KB",
+    "totalSize": 928728,
+    "totalSizeLabel": "906.96 KB",
     "moduleCount": 374,
-    "generatedAt": "2026-09-29T08:26:59.224Z",
+    "generatedAt": "2026-09-30T09:14:16.268Z",
     "stages": [
       {
         "stage": "es6-folder",
-        "bytes": 1426763,
+        "bytes": 1430477,
         "humanReadableSize": "1.36 MB",
         "reductionFromBaselinePercent": 0
       },
       {
         "stage": "tree-shaken",
-        "bytes": 930790,
-        "humanReadableSize": "908.97 KB",
+        "bytes": 931623,
+        "humanReadableSize": "909.79 KB",
         "reductionFromBaselinePercent": 0
       },
       {
         "stage": "minified",
-        "bytes": 308193,
-        "humanReadableSize": "300.97 KB",
-        "reductionFromBaselinePercent": 66.89
+        "bytes": 308364,
+        "humanReadableSize": "301.14 KB",
+        "reductionFromBaselinePercent": 66.9
       },
       {
         "stage": "minified+gzip",
-        "bytes": 101071,
-        "humanReadableSize": "98.70 KB",
-        "reductionFromBaselinePercent": 89.14
+        "bytes": 101107,
+        "humanReadableSize": "98.74 KB",
+        "reductionFromBaselinePercent": 89.15
       }
     ],
     "tree": {
       "name": "bundle",
       "fullPath": "bundle",
-      "value": 927895,
+      "value": 928728,
       "children": [
         {
           "name": "src",
           "fullPath": "src",
-          "value": 524319,
+          "value": 525152,
           "children": [
             {
               "name": "state",
               "fullPath": "src/state",
-              "value": 183193,
+              "value": 183718,
               "children": [
                 {
                   "name": "selectors",
@@ -281,14 +281,14 @@
                   "value": 6357
                 },
                 {
+                  "name": "mouseEventsMiddleware.ts",
+                  "fullPath": "src/state/mouseEventsMiddleware.ts",
+                  "value": 4600
+                },
+                {
                   "name": "externalEventsMiddleware.ts",
                   "fullPath": "src/state/externalEventsMiddleware.ts",
                   "value": 4477
-                },
-                {
-                  "name": "mouseEventsMiddleware.ts",
-                  "fullPath": "src/state/mouseEventsMiddleware.ts",
-                  "value": 4075
                 },
                 {
                   "name": "touchEventsMiddleware.ts",
@@ -447,7 +447,7 @@
             {
               "name": "util",
               "fullPath": "src/util",
-              "value": 119349,
+              "value": 119657,
               "children": [
                 {
                   "name": "scale",
@@ -486,7 +486,7 @@
                 {
                   "name": "ChartUtils.ts",
                   "fullPath": "src/util/ChartUtils.ts",
-                  "value": 14790
+                  "value": 15098
                 },
                 {
                   "name": "zoom",
@@ -2597,50 +2597,50 @@
   },
   "sunburst": {
     "examplePath": "www/src/views/IndexView/IndexLineChart.tsx",
-    "totalSize": 927895,
-    "totalSizeLabel": "906.15 KB",
+    "totalSize": 928728,
+    "totalSizeLabel": "906.96 KB",
     "moduleCount": 374,
-    "generatedAt": "2026-09-29T08:27:01.360Z",
+    "generatedAt": "2026-09-30T09:14:18.386Z",
     "stages": [
       {
         "stage": "es6-folder",
-        "bytes": 1426763,
+        "bytes": 1430477,
         "humanReadableSize": "1.36 MB",
         "reductionFromBaselinePercent": 0
       },
       {
         "stage": "tree-shaken",
-        "bytes": 930790,
-        "humanReadableSize": "908.97 KB",
+        "bytes": 931623,
+        "humanReadableSize": "909.79 KB",
         "reductionFromBaselinePercent": 0
       },
       {
         "stage": "minified",
-        "bytes": 308193,
-        "humanReadableSize": "300.97 KB",
-        "reductionFromBaselinePercent": 66.89
+        "bytes": 308364,
+        "humanReadableSize": "301.14 KB",
+        "reductionFromBaselinePercent": 66.9
       },
       {
         "stage": "minified+gzip",
-        "bytes": 101071,
-        "humanReadableSize": "98.70 KB",
-        "reductionFromBaselinePercent": 89.14
+        "bytes": 101107,
+        "humanReadableSize": "98.74 KB",
+        "reductionFromBaselinePercent": 89.15
       }
     ],
     "tree": {
       "name": "bundle",
       "fullPath": "bundle",
-      "value": 927895,
+      "value": 928728,
       "children": [
         {
           "name": "src",
           "fullPath": "src",
-          "value": 524319,
+          "value": 525152,
           "children": [
             {
               "name": "state",
               "fullPath": "src/state",
-              "value": 183193,
+              "value": 183718,
               "children": [
                 {
                   "name": "selectors",
@@ -2877,14 +2877,14 @@
                   "value": 6357
                 },
                 {
+                  "name": "mouseEventsMiddleware.ts",
+                  "fullPath": "src/state/mouseEventsMiddleware.ts",
+                  "value": 4600
+                },
+                {
                   "name": "externalEventsMiddleware.ts",
                   "fullPath": "src/state/externalEventsMiddleware.ts",
                   "value": 4477
-                },
-                {
-                  "name": "mouseEventsMiddleware.ts",
-                  "fullPath": "src/state/mouseEventsMiddleware.ts",
-                  "value": 4075
                 },
                 {
                   "name": "touchEventsMiddleware.ts",
@@ -3043,7 +3043,7 @@
             {
               "name": "util",
               "fullPath": "src/util",
-              "value": 119349,
+              "value": 119657,
               "children": [
                 {
                   "name": "scale",
@@ -3082,7 +3082,7 @@
                 {
                   "name": "ChartUtils.ts",
                   "fullPath": "src/util/ChartUtils.ts",
-                  "value": 14790
+                  "value": 15098
                 },
                 {
                   "name": "zoom",
