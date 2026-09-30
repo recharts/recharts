@@ -69,7 +69,10 @@ export interface RechartsTheme {
    * Sankey selects an entry for each node by the node's index in `data.nodes`,
    * and draws each link in the color of its source node, at reduced opacity.
    *
-   * Individual shapes of Bar, RadialBar, Scatter, Pie, Funnel, Treemap, and Sankey can be styled
+   * Treemap and SunburstChart give each top-level tile or first-ring sector the next entry by index,
+   * and all their descendants inherit that color.
+   *
+   * Individual shapes of Bar, RadialBar, Scatter, Pie, Funnel, Treemap, Sankey, and SunburstChart can be styled
    * from the data array. If a data entry defines any of `fill`, `fillOpacity`,
    * `stroke`, `strokeOpacity`, `strokeWidth`, or `strokeDasharray`, then that shape ignores
    * the theme completely, and renders with only its own styles and the explicit props of its
@@ -108,7 +111,8 @@ export interface RechartsTheme {
    * Styles of the chart itself.
    *
    * `backgroundColor` is the color that the chart is designed to be painted on.
-   * Treemap outlines its tiles in this color.
+   * Treemap outlines its tiles in this color, and SunburstChart paints its separators
+   * and the halo around its labels in this color.
    */
   chart?: CSSProperties;
 
