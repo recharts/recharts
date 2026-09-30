@@ -43,9 +43,9 @@ type ColorTokens = {
  *
  * Recharts does not paint a chart background itself, so strictly speaking this
  * is a property of the host page rather than of the theme. Each theme is
- * nonetheless designed for one, and states it indirectly through the background
- * it gives the Tooltip and Legend surfaces. The test below keeps these two in
- * step so this assumption cannot quietly go stale.
+ * nonetheless designed for one, and states it in `chart.backgroundColor`.
+ * The Tooltip and Legend surfaces use the same background. The test below keeps
+ * these in step so this assumption cannot quietly go stale.
  */
 const CHART_BACKGROUND: Record<ThemeName, string> = {
   light: '#fff',
@@ -179,7 +179,8 @@ describe.each(THEME_NAMES)('%s theme', themeName => {
   const theme = THEMES[themeName];
   const background = parseColor(CHART_BACKGROUND[themeName]);
 
-  test('the background this test assumes is the one the theme gives its own surfaces', () => {
+  test('the background this test assumes is the one the theme is designed for, and gives its own surfaces', () => {
+    expect(requireColor(theme.chart?.backgroundColor, 'chart.backgroundColor')).toEqual(background);
     expect(requireColor(theme.tooltip?.contentStyle?.backgroundColor, 'tooltip.contentStyle')).toEqual(background);
     expect(requireColor(theme.legend?.wrapperStyle?.backgroundColor, 'legend.wrapperStyle')).toEqual(background);
   });
