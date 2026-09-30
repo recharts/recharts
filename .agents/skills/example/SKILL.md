@@ -119,26 +119,57 @@ Keep control state **serializable**. Store simple keys such as `'index' | 'appen
 
 Levers are optional, and not every example needs to have them.
 
+# Theming
+
+The docs website wraps every example in a `RechartsThemeProvider`, so examples render in the site's light and dark themes.
+Leave out hardcoded colors (`stroke`, `fill`, and similar) unless the example is specifically about custom colors,
+so that the chart picks up the theme colors.
+
 # Visual Regression Testing
 
 We strongly recommend creating a VR test for every new example.
-All website example VR tests live in the `test-vr/tests/www/` folder. Place your test file there, naming it `<YourExampleName>.spec-vr.tsx`.
+Read `.agents/skills/vr-test/SKILL.md` for the full VR setup; this section only covers what is specific to website examples.
 
-Here is an example of what a complete VR test file should look like:
+Website example VR tests live in `test-vr/tests/www/`. Each test has two parts:
+
+1. A story in `test-vr/tests/www/<Component>Examples.story.tsx` that renders the example. Add to the existing story file for the component if there is one.
+2. A spec in the matching `test-vr/tests/www/<Component>Examples.spec-vr.tsx` that mounts the story by its id.
 
 ```tsx
-import * as React from 'react';
-import { test, expect } from '@playwright/experimental-ct-react';
-import TooltipStylesExample from '../../../www/src/docs/exampleComponents/Tooltip/TooltipStylesExample';
+// test-vr/tests/www/<Component>Examples.story.tsx
+import MyExampleComponent from '../../../www/src/docs/exampleComponents/<Component>/MyExample';
 
-test('TooltipStylesExample', async ({ mount }) => {
-  const component = await mount(<TooltipStylesExample />);
+export const MyExample = () => <MyExampleComponent />;
+```
+
+```tsx
+// test-vr/tests/www/<Component>Examples.spec-vr.tsx
+import { expect, testWithThemes } from '../fixtures';
+
+testWithThemes('MyExample', async ({ mountStory }) => {
+  const component = await mountStory('www/<Component>Examples/MyExample');
   await expect(component).toHaveScreenshot();
 });
 ```
 
 ### Key notes for creating VR tests:
-- **Path mapping**: Test files import the example using a relative path pointing back into `www/src/...`.
-- **Structure**: Playwright CT requires components to be imported from separate files; they cannot be declared inline inside the test file.
-- **Props**: If your example doesn't accept any props, mount it directly: `<ExampleComponent />`. If it accepts props (like levers or controls), pass them in exactly as `CodeEditorWithPreview` would.
-- **Generating screenshots**: Requires docker which you may assume is not configured in your environment. Mention to the user that they must generate screenshots locally and commit them to the repo.
+
+- **Story id**: the story file path under `test-vr/tests/` without `.story.tsx`, followed by the export name, e.g. `www/SunburstChartExamples/SunburstChartExample`.
+- **Keep JSX in the story file**: the spec mounts by story id; do not render JSX or declare components in the spec.
+- **Themes**: new specs use `testWithThemes`, which renders the legacy, light, and dark variants automatically. Do not add theme props to stories, theme names to test titles, or custom screenshot names.
+- **Props**: if your example accepts props (like levers or controls state), forward them from the story and pass them as the second argument of `mountStory`, exactly as `CodeEditorWithPreview` would:
+
+```tsx
+// story
+export const MyExample = (props: React.ComponentProps<typeof MyExampleComponent>) => <MyExampleComponent {...props} />;
+
+// spec
+import type { MyExample } from './<Component>Examples.story';
+
+testWithThemes('MyExample with index', async ({ mountStory }) => {
+  const component = await mountStory<typeof MyExample>('www/<Component>Examples/MyExample', { defaultIndex: 2 });
+  await expect(component).toHaveScreenshot();
+});
+```
+
+- **Generating screenshots**: run and update VR tests through Docker only, for example `npm run test-vr:update -- test-vr/tests/www/<Component>Examples.spec-vr.tsx`. See the vr-test skill for details. Commit the new baselines in `test-vr/__snapshots__`, but not `test-results` or `playwright-report` output.

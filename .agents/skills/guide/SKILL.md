@@ -13,7 +13,7 @@ Guides are JSX components defined in `www/src/components/GuideView` folder.
 Each guide is a folder. Inside the folder there is `index.tsx` file which is the main component of the guide.
 A guide will usually contain one or more example charts which will be in their own files in the same folder. These charts are imported and used in the main `index.tsx` file.
 
-Look at the `website-example` skill for instructions on how to create example charts.
+Look at the `example` skill (`.agents/skills/example/SKILL.md`) for instructions on how to create example charts.
 
 # Creating a new guide
 
