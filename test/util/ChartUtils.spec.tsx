@@ -393,6 +393,16 @@ describe('getDomainOfStackGroups', () => {
 
     expect(getDomainOfStackGroups(stackData, 0, 1)).toEqual([0, 0]);
   });
+
+  it('does not overflow the call stack for a series with many points', () => {
+    const pointCount = 200_000;
+    const series = Array.from({ length: pointCount }, (_, i) => [i, i + 1]);
+    stackData = {
+      a: { stackedData: [series] },
+    };
+
+    expect(getDomainOfStackGroups(stackData, 0, pointCount - 1)).toEqual([0, pointCount]);
+  });
 });
 
 describe('MIN_VALUE_REG ', () => {
