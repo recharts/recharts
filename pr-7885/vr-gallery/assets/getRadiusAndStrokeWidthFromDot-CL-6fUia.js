@@ -1,0 +1,1 @@
+import{o as d}from"./useId-C5w8g7lr.js";function N(i){const e=d(i),o=3,s=2;if(e!=null){const{r:n,strokeWidth:u}=e;let t=Number(n),r=Number(u);return(Number.isNaN(t)||t<0)&&(t=o),(Number.isNaN(r)||r<0)&&(r=s),{r:t,strokeWidth:r}}return{r:o,strokeWidth:s}}export{N as g};
