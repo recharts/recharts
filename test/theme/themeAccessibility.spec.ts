@@ -1,3 +1,4 @@
+import { THEMED_LINK_STROKE_OPACITY } from '../../src/chart/Sankey';
 import { darkTheme } from '../../src/theme/darkTheme';
 import { emptyTheme } from '../../src/theme/emptyTheme';
 import { lightTheme } from '../../src/theme/lightTheme';
@@ -251,6 +252,30 @@ describe('series colour contrast against the chart background', () => {
   });
 });
 
+/**
+ * Sankey links are painted in their source node colour at reduced opacity.
+ *
+ * They are decoration next to the nodes, which carry the full series colour,
+ * so they are not held to WCAG 1.4.11. They still have to be clearly visible,
+ * which the legacy `#333` at 20% opacity was not on a dark background (about 1.06:1).
+ */
+const SANKEY_LINK_CONTRAST_FLOOR = 1.5;
+
+describe('Sankey links', () => {
+  describe.each(THEME_NAMES)('%s theme', themeName => {
+    const theme = THEMES[themeName];
+    const background = parseColor(CHART_BACKGROUND[themeName]);
+
+    test.each(theme.graphicalItems.map((item, index) => [`graphicalItems[${index}] ${item.fill}`, item] as const))(
+      'a link from a %s node stays visible against the background',
+      (description, item) => {
+        const link = blendOver(requireColor(item.fill, `${description}.fill`), THEMED_LINK_STROKE_OPACITY, background);
+        expect(contrastRatio(link, background)).toBeGreaterThanOrEqual(SANKEY_LINK_CONTRAST_FLOOR);
+      },
+    );
+  });
+});
+
 describe('emptyTheme', () => {
   /*
    * emptyTheme exists to hand every decision back to the browser, so it has no
@@ -299,7 +324,10 @@ function accessibilityReport(themeName: ThemeName): string {
   theme.graphicalItems.forEach((item, index) => {
     const fill = ratio(contrastRatio(paintedFill(item, background, `graphicalItems[${index}]`), background));
     const stroke = ratio(contrastRatio(requireColor(item.stroke, 'stroke'), background));
-    lines.push(`${`  ${item.fill}`.padEnd(14)}fill ${fill}   stroke ${stroke}`);
+    const link = ratio(
+      contrastRatio(blendOver(requireColor(item.fill, 'fill'), THEMED_LINK_STROKE_OPACITY, background), background),
+    );
+    lines.push(`${`  ${item.fill}`.padEnd(14)}fill ${fill}   stroke ${stroke}   sankey link ${link}`);
   });
 
   lines.push('', 'closest pair of series colours');

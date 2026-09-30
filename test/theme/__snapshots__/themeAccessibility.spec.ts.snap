@@ -18,18 +18,18 @@ strokes and fills
   barBackground.fill      1.19
 
 series colours
-  #5396ff     fill   4.71   stroke   6.05
-  #e97e2b     fill   4.89   stroke   6.31
-  #46d09f     fill   6.87   stroke   9.10
-  #e683ad     fill   5.34   stroke   6.93
-  #b8a4fe     fill   6.29   stroke   8.25
-  #0bb1da     fill   5.38   stroke   7.02
-  #ff9180     fill   6.18   stroke   8.11
-  #79b14e     fill   5.34   stroke   6.93
-  #ac71c0     fill   3.93   stroke   4.96
-  #01a19c     fill   4.34   stroke   5.55
-  #ffc470     fill   8.44   stroke  11.29
-  #ffaaec     fill   7.74   stroke  10.30
+  #5396ff     fill   4.71   stroke   6.05   sankey link   2.00
+  #e97e2b     fill   4.89   stroke   6.31   sankey link   2.03
+  #46d09f     fill   6.87   stroke   9.10   sankey link   2.49
+  #e683ad     fill   5.34   stroke   6.93   sankey link   2.15
+  #b8a4fe     fill   6.29   stroke   8.25   sankey link   2.38
+  #0bb1da     fill   5.38   stroke   7.02   sankey link   2.13
+  #ff9180     fill   6.18   stroke   8.11   sankey link   2.33
+  #79b14e     fill   5.34   stroke   6.93   sankey link   2.16
+  #ac71c0     fill   3.93   stroke   4.96   sankey link   1.83
+  #01a19c     fill   4.34   stroke   5.55   sankey link   1.89
+  #ffc470     fill   8.44   stroke  11.29   sankey link   2.85
+  #ffaaec     fill   7.74   stroke  10.30   sankey link   2.70
 
 closest pair of series colours
   normal         11.8   #e683ad / #ffaaec
@@ -56,18 +56,18 @@ strokes and fills
   barBackground.fill      1.10
 
 series colours
-  #2775e8     fill   3.45   stroke   4.38
-  #b65900     fill   3.69   stroke   4.75
-  #007c59     fill   3.97   stroke   5.21
-  #ae3b73     fill   4.32   stroke   5.72
-  #6f56b3     fill   4.18   stroke   5.74
-  #0582a1     fill   3.50   stroke   4.45
-  #b2392b     fill   4.53   stroke   5.98
-  #568b28     fill   3.20   stroke   4.10
-  #723984     fill   5.48   stroke   7.97
-  #00928e     fill   3.10   stroke   3.82
-  #ae7500     fill   3.12   stroke   3.93
-  #b862a7     fill   3.12   stroke   3.93
+  #2775e8     fill   3.45   stroke   4.38   sankey link   1.71
+  #b65900     fill   3.69   stroke   4.75   sankey link   1.76
+  #007c59     fill   3.97   stroke   5.21   sankey link   1.81
+  #ae3b73     fill   4.32   stroke   5.72   sankey link   1.87
+  #6f56b3     fill   4.18   stroke   5.74   sankey link   1.81
+  #0582a1     fill   3.50   stroke   4.45   sankey link   1.73
+  #b2392b     fill   4.53   stroke   5.98   sankey link   1.92
+  #568b28     fill   3.20   stroke   4.10   sankey link   1.64
+  #723984     fill   5.48   stroke   7.97   sankey link   2.00
+  #00928e     fill   3.10   stroke   3.82   sankey link   1.66
+  #ae7500     fill   3.12   stroke   3.93   sankey link   1.64
+  #b862a7     fill   3.12   stroke   3.93   sankey link   1.64
 
 closest pair of series colours
   normal         11.2   #6f56b3 / #723984

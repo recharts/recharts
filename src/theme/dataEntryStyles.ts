@@ -46,6 +46,36 @@ export function hasOwnStyles(entry: unknown): boolean {
 }
 
 /**
+ * Picks the themeable style properties that the data entry defines, and leaves out the undefined ones.
+ * @param entry data entry, or Cell props
+ */
+export function getOwnStyles(entry: Styles2D | null | undefined): Styles2D {
+  const result: Styles2D = {};
+  if (entry == null) {
+    return result;
+  }
+  if (entry.fill != null) {
+    result.fill = entry.fill;
+  }
+  if (entry.fillOpacity != null) {
+    result.fillOpacity = entry.fillOpacity;
+  }
+  if (entry.stroke != null) {
+    result.stroke = entry.stroke;
+  }
+  if (entry.strokeOpacity != null) {
+    result.strokeOpacity = entry.strokeOpacity;
+  }
+  if (entry.strokeWidth != null) {
+    result.strokeWidth = entry.strokeWidth;
+  }
+  if (entry.strokeDasharray != null) {
+    result.strokeDasharray = entry.strokeDasharray;
+  }
+  return result;
+}
+
+/**
  * Picks all themeable style keys from explicit props, including the undefined ones.
  * @param explicitProps props as provided by the user, before merging with theme or defaults
  */

@@ -33,6 +33,9 @@ import { WithIdRequired } from '../util/useUniqueId';
 import { RegisterGraphicalItemId } from '../context/RegisterGraphicalItemId';
 import { GraphicalItemId } from '../state/graphicalItemsSlice';
 import { initialEventSettingsState } from '../state/eventSettingsSlice';
+import { RechartsTheme, Styles2D } from '../theme/RechartsTheme';
+import { useRechartsTheme } from '../theme/RechartsThemeContext';
+import { getOwnStyles, hasOwnStyles } from '../theme/dataEntryStyles';
 
 const interpolationGenerator = (a: number, b: number) => {
   const ka = +a;
@@ -629,10 +632,18 @@ const getLinkCoordinateOfTooltip = (item: LinkProps): Coordinate | undefined => 
     : undefined;
 };
 
-type SankeyTooltipPayload = { payload: SankeyNode | SankeyLink; name: unknown; value: unknown };
+type SankeyTooltipPayload = { payload: SankeyNode | SankeyLink; name: unknown; value: unknown; color?: string };
+
+/**
+ * Returns true if the value is a color that paints something, as opposed to a missing color or `none`.
+ * @param value fill or stroke
+ */
+function isPaint(value: unknown): value is string {
+  return typeof value === 'string' && value !== 'none';
+}
 
 const getPayloadOfTooltip = (
-  item: { payload: SankeyNode | SankeyLink },
+  item: { payload: SankeyNode | SankeyLink; fill?: unknown; stroke?: unknown },
   type: SankeyElementType,
   nameKey: DataKey<SankeyLink | SankeyNode, string> | undefined,
 ): SankeyTooltipPayload | undefined => {
@@ -642,6 +653,7 @@ const getPayloadOfTooltip = (
       payload,
       name: getValueByDataKey(payload, nameKey, ''),
       value: getValueByDataKey(payload, 'value'),
+      color: isPaint(item.fill) ? item.fill : undefined,
     };
   }
   if ('source' in payload && payload.source && payload.target) {
@@ -654,6 +666,7 @@ const getPayloadOfTooltip = (
       payload,
       name: `${sourceName} - ${targetName}`,
       value: getValueByDataKey(payload, 'value'),
+      color: isPaint(item.stroke) ? item.stroke : undefined,
     };
   }
 
@@ -723,7 +736,13 @@ const SetSankeyTooltipEntrySettings = React.memo(
   },
 );
 
-interface LinkDataItem {
+/**
+ * A link in the Sankey data.
+ *
+ * Style properties such as `stroke` are read only when a theme is active.
+ * A link that defines any of them ignores the theme.
+ */
+interface LinkDataItem extends Styles2D {
   source: number;
   target: number;
   value: number;
@@ -945,6 +964,8 @@ const buildLinkProps = ({
   i,
   linkContent,
   linkCurvature,
+  themeStyles,
+  ownStyles,
 }: {
   link: SankeyLink;
   nodes: ReadonlyArray<SankeyNode>;
@@ -953,6 +974,14 @@ const buildLinkProps = ({
   linkContent: SankeyLinkOptions | undefined;
   i: number;
   linkCurvature: number;
+  /**
+   * Styles from the theme. Explicit props from `linkContent` override these.
+   */
+  themeStyles: Styles2D;
+  /**
+   * Styles defined in the link data entry. These override everything else.
+   */
+  ownStyles: Styles2D;
 }): LinkProps | undefined => {
   const { sy: sourceRelativeY, ty: targetRelativeY, dy: linkWidth } = link;
   const sourceNode = nodes[link.source];
@@ -982,7 +1011,9 @@ const buildLinkProps = ({
     linkWidth,
     index: i,
     payload: { ...link, source: sourceNode, target: targetNode },
+    ...themeStyles,
     ...svgPropertiesNoEventsFromUnknown(linkContent),
+    ...ownStyles,
   };
 
   return linkProps;
@@ -1108,17 +1139,29 @@ const buildNodeProps = ({
   top,
   left,
   i,
+  themeStyles,
+  ownStyles,
 }: {
   node: SankeyNode;
   nodeContent: SankeyNodeOptions | undefined;
   top: number;
   left: number;
   i: number;
+  /**
+   * Styles from the theme. Explicit props from `nodeContent` override these.
+   */
+  themeStyles: Styles2D;
+  /**
+   * Styles defined in the node data entry. These override everything else.
+   */
+  ownStyles: Styles2D;
 }) => {
   const { x, y, dx, dy } = node;
   // @ts-expect-error nodeContent is passing in unknown props
   const nodeProps: NodeProps = {
+    ...themeStyles,
     ...svgPropertiesNoEventsFromUnknown(nodeContent),
+    ...ownStyles,
     x: x + left,
     y: y + top,
     width: dx,
@@ -1223,6 +1266,86 @@ function AllNodeElements({
   );
 }
 
+/**
+ * Stroke opacity of links that take their color from the theme.
+ *
+ * Links are painted in the color of their source node, so that a flow keeps its color
+ * from one end to the other. They are drawn with reduced opacity so that the nodes stand out,
+ * and so that overlapping links stay see-through.
+ */
+export const THEMED_LINK_STROKE_OPACITY = 0.4;
+
+type ResolvedStyles = {
+  /**
+   * Styles from the theme. Explicit props override these.
+   */
+  themeStyles: Styles2D;
+  /**
+   * Styles from the data entry. These override the explicit props.
+   */
+  ownStyles: Styles2D;
+};
+
+const noStyles: ResolvedStyles = { themeStyles: {}, ownStyles: {} };
+
+/**
+ * Resolves the theme and data styles of a single node.
+ *
+ * Nodes take the theme colors by their index in `data.nodes`,
+ * so that a node keeps its color when the layout or sorting changes.
+ * A node that defines its own styles in data ignores the theme completely.
+ *
+ * Without a theme, Sankey keeps its legacy behaviour and does not read styles from data.
+ * @param themeGraphicalItems graphicalItems of the active theme, or undefined if there is no theme
+ * @param dataNode entry from `data.nodes`
+ * @param index index of the node in `data.nodes`
+ */
+function resolveNodeStyles(
+  themeGraphicalItems: RechartsTheme['graphicalItems'] | undefined,
+  dataNode: Styles2D | undefined,
+  index: number,
+): ResolvedStyles {
+  if (themeGraphicalItems == null) {
+    return noStyles;
+  }
+  if (hasOwnStyles(dataNode)) {
+    return { themeStyles: {}, ownStyles: getOwnStyles(dataNode) };
+  }
+  const themeItem =
+    themeGraphicalItems.length === 0 ? undefined : themeGraphicalItems[index % themeGraphicalItems.length];
+  return { themeStyles: getOwnStyles(themeItem), ownStyles: {} };
+}
+
+/**
+ * Resolves the theme and data styles of a single link.
+ *
+ * Links take the color of their source node, including colors from explicit props and from data,
+ * and draw it with {@link THEMED_LINK_STROKE_OPACITY}.
+ * A link that defines its own styles in data ignores the theme completely.
+ *
+ * Without a theme, Sankey keeps its legacy behaviour and does not read styles from data.
+ * @param themeGraphicalItems graphicalItems of the active theme, or undefined if there is no theme
+ * @param dataLink entry from `data.links`
+ * @param sourceNodeProps resolved props of the source node
+ */
+function resolveLinkStyles(
+  themeGraphicalItems: RechartsTheme['graphicalItems'] | undefined,
+  dataLink: Styles2D | undefined,
+  sourceNodeProps: NodeProps | undefined,
+): ResolvedStyles {
+  if (themeGraphicalItems == null) {
+    return noStyles;
+  }
+  if (hasOwnStyles(dataLink)) {
+    return { themeStyles: {}, ownStyles: getOwnStyles(dataLink) };
+  }
+  const sourceColor = [sourceNodeProps?.fill, sourceNodeProps?.stroke].find(isPaint);
+  if (sourceColor == null) {
+    return noStyles;
+  }
+  return { themeStyles: { stroke: sourceColor, strokeOpacity: THEMED_LINK_STROKE_OPACITY }, ownStyles: {} };
+}
+
 export const sankeyDefaultProps = {
   accessibilityLayer: true,
   align: 'justify',
@@ -1283,6 +1406,7 @@ function SankeyImpl(props: InternalSankeyProps) {
 
   const width = useChartWidth();
   const height = useChartHeight();
+  const themeGraphicalItems = useRechartsTheme()?.graphicalItems;
 
   const { links, modifiedLinks, modifiedNodes } = useMemo(() => {
     if (!data || !width || !height || width <= 0 || height <= 0) {
@@ -1304,21 +1428,39 @@ function SankeyImpl(props: InternalSankeyProps) {
 
     const top = margin.top || 0;
     const left = margin.left || 0;
-    const newModifiedLinks = computed.links
-      .map((l, i) => {
-        return buildLinkProps({ link: l, nodes: computed.nodes, i, top, left, linkContent: link, linkCurvature });
-      })
-      .filter(isNotNil);
-
     const newModifiedNodes = computed.nodes.map((n, i) => {
+      const { themeStyles, ownStyles } = resolveNodeStyles(themeGraphicalItems, data.nodes[i], i);
       return buildNodeProps({
         node: n,
         nodeContent: node,
         i,
         top,
         left,
+        themeStyles,
+        ownStyles,
       });
     });
+
+    const newModifiedLinks = computed.links
+      .map((l, i) => {
+        const { themeStyles, ownStyles } = resolveLinkStyles(
+          themeGraphicalItems,
+          data.links[i],
+          newModifiedNodes[l.source],
+        );
+        return buildLinkProps({
+          link: l,
+          nodes: computed.nodes,
+          i,
+          top,
+          left,
+          linkContent: link,
+          linkCurvature,
+          themeStyles,
+          ownStyles,
+        });
+      })
+      .filter(isNotNil);
 
     return {
       nodes: computed.nodes,
@@ -1340,6 +1482,7 @@ function SankeyImpl(props: InternalSankeyProps) {
     linkCurvature,
     align,
     verticalAlign,
+    themeGraphicalItems,
   ]);
 
   const handleMouseEnter = useCallback(
