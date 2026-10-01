@@ -49,3 +49,8 @@ testWithThemes('Pie > Label', async ({ mountStory }) => {
   const component = await mountStory('Label/PieLabel');
   await expect(component).toHaveScreenshot();
 });
+
+testWithThemes('ReferenceLine > Label with background', async ({ mountStory }) => {
+  const component = await mountStory('Label/ReferenceLineLabelWithBackground');
+  await expect(component).toHaveScreenshot();
+});

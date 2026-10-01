@@ -351,3 +351,29 @@ export const RadialBarImplicitLabelList = () => <RadialBarImplicitLabelListTest 
 export const RadialBarExplicitLabelList = () => <RadialBarExplicitLabelListTest />;
 export const FunnelImplicitLabelList = () => <FunnelImplicitLabelListTest />;
 export const FunnelExplicitLabelList = () => <FunnelExplicitLabelListTest />;
+
+export const BarLabelListWithBackground = () => (
+  <BarChart width={600} height={300} data={pageData}>
+    <XAxis dataKey="name" />
+    <Bar dataKey="uv" stackId="a" isAnimationActive={false}>
+      <LabelList dataKey="uv" position="inside" background />
+    </Bar>
+    <Bar dataKey="pv" stackId="a" isAnimationActive={false}>
+      <LabelList
+        dataKey="name"
+        position="insideTop"
+        angle={-30}
+        fill="black"
+        background={{ fill: 'gold', rx: 8, padding: { x: 6, y: 2 } }}
+      />
+    </Bar>
+  </BarChart>
+);
+
+export const PieLabelListWithBackground = () => (
+  <PieChart width={400} height={400}>
+    <Pie data={pageData} dataKey="uv" nameKey="name" isAnimationActive={false}>
+      <LabelList dataKey="name" position="inside" background />
+    </Pie>
+  </PieChart>
+);
