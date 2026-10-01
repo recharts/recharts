@@ -1,7 +1,7 @@
 import React, { ReactNode } from 'react';
-import { describe, it, expect } from 'vitest';
+import { describe, it, expect, vi } from 'vitest';
 import { render } from '@testing-library/react';
-import { BarChart, Bar, Sankey, SunburstChart, Treemap } from '../../src';
+import { BarChart, Bar, ResponsiveContainer, Sankey, SunburstChart, Treemap } from '../../src';
 import { RechartsThemeProvider } from '../../src/theme/RechartsThemeContext';
 import { RechartsTheme } from '../../src/theme/RechartsTheme';
 import { lightTheme } from '../../src/theme/lightTheme';
@@ -9,6 +9,7 @@ import { darkTheme } from '../../src/theme/darkTheme';
 import { emptyTheme } from '../../src/theme/emptyTheme';
 import { exampleSankeyData, exampleSunburstData, exampleTreemapData, PageData } from '../_data';
 import { assertNotNull } from '../helper/assertNotNull';
+import { mockGetBoundingClientRect } from '../helper/mockGetBoundingClientRect';
 
 function getWrapper(container: Element): HTMLElement {
   const wrapper = container.querySelector<HTMLElement>('.recharts-wrapper');
@@ -23,6 +24,14 @@ function getWrapperStyle(wrapper: HTMLElement, keys: ReadonlyArray<keyof CSSStyl
 function renderWithTheme(theme: RechartsTheme | undefined, chart: ReactNode): HTMLElement {
   const { container } = render(<RechartsThemeProvider value={theme}>{chart}</RechartsThemeProvider>);
   return getWrapper(container);
+}
+
+function getSurfaceSize(wrapper: HTMLElement) {
+  const surface = wrapper.querySelector('svg.recharts-surface');
+  if (surface == null) {
+    return null;
+  }
+  return { width: surface.getAttribute('width'), height: surface.getAttribute('height') };
 }
 
 const barChart = (
@@ -86,18 +95,125 @@ describe('RechartsWrapper with a theme', () => {
     });
   });
 
-  it('does not let the theme change the position or size of the wrapper', () => {
-    const theme: RechartsTheme = {
-      graphicalItems: [{}],
-      // @ts-expect-error the type does not allow layout properties, but JavaScript users can still pass them
-      chart: { position: 'absolute', width: 10, height: 10, cursor: 'pointer' },
-    };
-    const wrapper = renderWithTheme(theme, barChart);
-    expect(getWrapperStyle(wrapper, ['position', 'width', 'height', 'cursor'])).toEqual({
-      position: 'relative',
-      width: '400px',
-      height: '300px',
-      cursor: 'default',
+  it('lets the theme override the default position and cursor', () => {
+    const wrapper = renderWithTheme(
+      { graphicalItems: [{}], chart: { position: 'static', cursor: 'crosshair' } },
+      barChart,
+    );
+    expect(getWrapperStyle(wrapper, ['position', 'cursor'])).toEqual({ position: 'static', cursor: 'crosshair' });
+  });
+
+  it('allows any CSS, including properties that change the box of the wrapper', () => {
+    const wrapper = renderWithTheme(
+      { graphicalItems: [{}], chart: { padding: 8, border: '1px solid red', margin: 4, display: 'inline-block' } },
+      barChart,
+    );
+    expect(getWrapperStyle(wrapper, ['padding', 'border', 'margin', 'display'])).toEqual({
+      padding: '8px',
+      border: '1px solid red',
+      margin: '4px',
+      display: 'inline-block',
+    });
+  });
+
+  describe('size', () => {
+    const sizedTheme: RechartsTheme = { graphicalItems: [{}], chart: { width: 500, height: 200 } };
+
+    const unsizedBarChart = (
+      <BarChart data={PageData}>
+        <Bar dataKey="uv" isAnimationActive={false} />
+      </BarChart>
+    );
+
+    it('renders nothing without a size, as before', () => {
+      const wrapper = renderWithTheme(lightTheme, unsizedBarChart);
+      expect(getSurfaceSize(wrapper)).toBeNull();
+    });
+
+    it('renders a chart that has no size of its own in the size from the theme', () => {
+      const wrapper = renderWithTheme(sizedTheme, unsizedBarChart);
+      expect(getWrapperStyle(wrapper, ['width', 'height'])).toEqual({ width: '500px', height: '200px' });
+      expect(getSurfaceSize(wrapper)).toEqual({ width: '500', height: '200' });
+    });
+
+    it('measures a size from the theme that is not a number', () => {
+      mockGetBoundingClientRect({ width: 640, height: 320 });
+      const wrapper = renderWithTheme(
+        { graphicalItems: [{}], chart: { width: '100%', aspectRatio: 2 } },
+        unsizedBarChart,
+      );
+      expect(getWrapperStyle(wrapper, ['width', 'aspectRatio'])).toEqual({ width: '100%', aspectRatio: '2 / 1' });
+      expect(getSurfaceSize(wrapper)).toEqual({ width: '640', height: '320' });
+    });
+
+    it('measures a size from the theme in a responsive chart', () => {
+      mockGetBoundingClientRect({ width: 640, height: 320 });
+      vi.stubGlobal(
+        'ResizeObserver',
+        vi.fn(function ResizeObserverMock() {
+          return { observe: vi.fn(), unobserve: vi.fn(), disconnect: vi.fn() };
+        }),
+      );
+      const wrapper = renderWithTheme(
+        { graphicalItems: [{}], chart: { width: '100%', aspectRatio: 2 } },
+        <BarChart data={PageData} responsive>
+          <Bar dataKey="uv" isAnimationActive={false} />
+        </BarChart>,
+      );
+      expect(getSurfaceSize(wrapper)).toEqual({ width: '640', height: '320' });
+    });
+
+    it('excludes padding and border of the wrapper from the measured size', () => {
+      mockGetBoundingClientRect({ width: 640, height: 320 });
+      const wrapper = renderWithTheme(
+        {
+          graphicalItems: [{}],
+          chart: { width: '100%', height: '100%', padding: 10, border: '2px solid black' },
+        },
+        unsizedBarChart,
+      );
+      expect(getSurfaceSize(wrapper)).toEqual({ width: '616', height: '296' });
+    });
+
+    it('lets the width and height props override the theme', () => {
+      const wrapper = renderWithTheme(sizedTheme, barChart);
+      expect(getWrapperStyle(wrapper, ['width', 'height'])).toEqual({ width: '400px', height: '300px' });
+      expect(getSurfaceSize(wrapper)).toEqual({ width: '400', height: '300' });
+    });
+
+    it('lets the style prop override the theme', () => {
+      const wrapper = renderWithTheme(
+        sizedTheme,
+        <BarChart data={PageData} style={{ width: 300, height: 100 }}>
+          <Bar dataKey="uv" isAnimationActive={false} />
+        </BarChart>,
+      );
+      expect(getWrapperStyle(wrapper, ['width', 'height'])).toEqual({ width: '300px', height: '100px' });
+      expect(getSurfaceSize(wrapper)).toEqual({ width: '300', height: '100' });
+    });
+
+    it('lets ResponsiveContainer override the theme', () => {
+      mockGetBoundingClientRect({ width: 640, height: 320 });
+      const wrapper = renderWithTheme(
+        sizedTheme,
+        <ResponsiveContainer width={640} height={320}>
+          {unsizedBarChart}
+        </ResponsiveContainer>,
+      );
+      expect(getWrapperStyle(wrapper, ['width', 'height'])).toEqual({ width: '640px', height: '320px' });
+      expect(getSurfaceSize(wrapper)).toEqual({ width: '640', height: '320' });
+    });
+
+    it.each([
+      {
+        name: 'Treemap',
+        renderChart: () => <Treemap data={exampleTreemapData} dataKey="value" isAnimationActive={false} />,
+      },
+      { name: 'Sankey', renderChart: () => <Sankey data={exampleSankeyData} /> },
+      { name: 'SunburstChart', renderChart: () => <SunburstChart data={exampleSunburstData} /> },
+    ])('renders $name in the size from the theme', ({ renderChart }) => {
+      const wrapper = renderWithTheme(sizedTheme, renderChart());
+      expect(getSurfaceSize(wrapper)).toEqual({ width: '500', height: '200' });
     });
   });
 

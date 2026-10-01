@@ -42,27 +42,6 @@ export type Styles1D = {
 export type TextStyles = CSSProperties;
 
 /**
- * Styles painted on the chart wrapper element.
- *
- * Limited to properties that do not change the size of the wrapper.
- * Recharts measures the wrapper to lay out the chart, so padding, border, and margin are not allowed.
- */
-export type ChartStyles = Pick<
-  CSSProperties,
-  | 'background'
-  | 'backgroundColor'
-  | 'backgroundImage'
-  | 'borderRadius'
-  | 'boxShadow'
-  | 'outline'
-  | 'outlineColor'
-  | 'outlineOffset'
-  | 'outlineStyle'
-  | 'outlineWidth'
-  | 'overflow'
->;
-
-/**
  * Styling presets for Recharts components.
  * The theme can be used to customize the appearance of charts, including colors, fonts, and other visual properties.
  *
@@ -129,15 +108,23 @@ export interface RechartsTheme {
    */
   errorBar?: Styles1D;
   /**
-   * Styles painted on the element that wraps the chart.
+   * Styles applied to the element that wraps the chart, the same element that the `style` prop of the chart styles.
    * The Legend renders inside this element too, so a background here covers the Legend as well.
    *
-   * The built-in themes leave this empty, so charts are transparent and the page shows through.
-   * The explicit `style` prop of the chart takes precedence over these styles.
+   * The explicit `width`, `height`, and `style` props of the chart take precedence over these styles.
+   *
+   * `width` and `height` set a default size for every chart that does not set its own.
+   * Set both, or set one as a string (such as `'100%'`) together with `aspectRatio`,
+   * otherwise the chart has no size and renders nothing.
+   *
+   * These are inline styles, so they also take precedence over CSS classes on the chart.
+   *
+   * The built-in themes leave this empty: charts are transparent and the page shows through,
+   * and they have no default size.
    *
    * If you paint a background here, set `pageBackground` to the same color.
    */
-  chart?: ChartStyles;
+  chart?: CSSProperties;
   /**
    * The color directly behind the chart: the page, or `chart.backgroundColor` if you paint one.
    *
