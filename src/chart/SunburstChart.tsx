@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { CSSProperties, useState } from 'react';
+import { CSSProperties, SVGProps, useMemo, useState } from 'react';
 import { scaleLinear } from 'victory-vendor/d3-scale';
 import { clsx } from 'clsx';
 import get from 'es-toolkit/compat/get';
@@ -29,6 +29,9 @@ import { RegisterGraphicalItemId } from '../context/RegisterGraphicalItemId';
 import { WithIdRequired } from '../util/useUniqueId';
 import { RequiresDefaultProps, resolveDefaultProps } from '../util/resolveDefaultProps';
 import { initialEventSettingsState } from '../state/eventSettingsSlice';
+import { GraphicalItemStyle, RechartsTheme } from '../theme/RechartsTheme';
+import { useRechartsTheme } from '../theme/RechartsThemeContext';
+import { getOwnStyles, hasOwnStyles } from '../theme/dataEntryStyles';
 
 export interface SunburstData {
   [key: string]: any;
@@ -156,6 +159,11 @@ interface DrawArcOptions {
   innerR: number;
   initialAngle: number;
   childColor?: string;
+  /**
+   * Theme style of the first-ring sector that this branch starts from.
+   * Undefined for the first ring, and without a theme.
+   */
+  branchStyle?: GraphicalItemStyle;
   nestedActiveTooltipIndex?: TooltipIndex | undefined;
 }
 
@@ -245,6 +253,40 @@ const preloadedState: Partial<RechartsRootState> = {
 
 type SunburstPositionMap = Map<string, ChartCoordinate>;
 
+/**
+ * Styles that the chart takes from the theme.
+ * Undefined if there is no theme, in which case the chart renders with its legacy styles.
+ */
+type SunburstThemeStyles = {
+  graphicalItems: RechartsTheme['graphicalItems'];
+  /**
+   * The background color that the theme is designed for.
+   * Separators and the label halo are painted in this color, so that they read as gaps.
+   */
+  backgroundColor: string | undefined;
+};
+
+function getBackgroundColor(theme: RechartsTheme): string | undefined {
+  const backgroundColor = theme.chart?.backgroundColor;
+  return typeof backgroundColor === 'string' ? backgroundColor : undefined;
+}
+
+/**
+ * Label props from the theme. Explicit `textOptions` are applied on top of these.
+ *
+ * The label text takes the `typography` styles, which the Text component reads from the theme itself.
+ * The label sits on top of the sector, so it gets a halo in the background color,
+ * which keeps it readable on any sector color.
+ * @param themeStyles styles from the theme
+ */
+function getThemedTextProps(themeStyles: SunburstThemeStyles): TextProps {
+  const { backgroundColor } = themeStyles;
+  return {
+    pointerEvents: 'none',
+    ...(backgroundColor == null ? {} : { stroke: backgroundColor, paintOrder: 'stroke fill' }),
+  };
+}
+
 export const defaultSunburstChartProps = {
   padding: 2,
   dataKey: 'value',
@@ -260,9 +302,22 @@ export const defaultSunburstChartProps = {
   ...initialEventSettingsState,
 } as const satisfies Partial<SunburstChartProps>;
 
+/**
+ * Default props when a theme is active.
+ * The legacy colors and label styles do not apply, the theme provides these instead.
+ */
+const {
+  fill: _fill,
+  stroke: _stroke,
+  textOptions: _textOptions,
+  ...themedSunburstChartProps
+} = defaultSunburstChartProps;
+
 type InternalSunburstChartProps = WithIdRequired<
-  RequiresDefaultProps<SunburstChartProps, typeof defaultSunburstChartProps>
->;
+  RequiresDefaultProps<SunburstChartProps, typeof themedSunburstChartProps>
+> & {
+  themeStyles: SunburstThemeStyles | undefined;
+};
 
 const SunburstChartImpl = ({
   className,
@@ -285,6 +340,7 @@ const SunburstChartImpl = ({
   onMouseEnter,
   onMouseLeave,
   id,
+  themeStyles,
 }: InternalSunburstChartProps) => {
   const dispatch = useAppDispatch();
 
@@ -339,22 +395,62 @@ const SunburstChartImpl = ({
     );
   }
 
+  const labelProps: TextProps | undefined =
+    themeStyles == null ? textOptions : { ...getThemedTextProps(themeStyles), ...textOptions };
+
+  /**
+   * Resolves the styles of a single sector.
+   *
+   * Without a theme, a sector uses its own `fill` from data, or else its parent's color, or else the `fill` prop.
+   *
+   * With a theme, each first-ring sector takes the next theme color, and all its descendants inherit it.
+   * Separators are painted in the chart background color, so that they read as gaps.
+   * A sector that defines its own styles in data ignores the theme,
+   * and renders with only its own styles, the inherited color, and the explicit props.
+   */
+  function getSectorStyles(
+    d: SunburstData,
+    childColor: string | undefined,
+    branchStyle: GraphicalItemStyle | undefined,
+  ): SVGProps<SVGPathElement> {
+    if (themeStyles == null) {
+      return { fill: d?.fill ?? childColor ?? fill, stroke, strokeWidth: padding };
+    }
+    if (hasOwnStyles(d)) {
+      return { fill: childColor ?? fill, stroke, strokeWidth: padding, ...getOwnStyles(d) };
+    }
+    return {
+      fill: childColor ?? fill ?? branchStyle?.fill,
+      stroke: stroke ?? themeStyles.backgroundColor ?? branchStyle?.stroke,
+      strokeWidth: padding,
+    };
+  }
+
   // recursively add nodes for each data point and its children
-  function drawArcs(childNodes: SunburstData[] | undefined, options: DrawArcOptions, depth: number = 1): void {
+  function drawArcs(
+    childNodes: SunburstData[] | undefined,
+    options: DrawArcOptions,
+    depth: number = 1,
+  ): SunburstData[] | undefined {
     const { radius, innerR, initialAngle, childColor, nestedActiveTooltipIndex } = options;
 
     let currentAngle = initialAngle;
 
-    if (!childNodes) return; // base case: no children of this node
+    if (!childNodes) return undefined; // base case: no children of this node
 
-    childNodes.forEach((d, i) => {
+    return childNodes.map((d, i) => {
       const currentTooltipIndex = depth === 1 ? `[${i}]` : addToSunburstNodeIndex(i, nestedActiveTooltipIndex);
       const nodeWithIndex: SunburstNode = { ...d, tooltipIndex: currentTooltipIndex };
 
       const arcLength = rScale(d[dataKey]);
       const start = currentAngle;
-      // color priority - if there's a color on the individual point use that, otherwise use parent color or default
-      const fillColor = d?.fill ?? childColor ?? fill;
+      const branchStyle =
+        options.branchStyle ??
+        (themeStyles == null || themeStyles.graphicalItems.length === 0
+          ? undefined
+          : themeStyles.graphicalItems[i % themeStyles.graphicalItems.length]);
+      const sectorStyles = getSectorStyles(d, childColor, branchStyle);
+      const fillColor = sectorStyles.fill;
       const { x: textX, y: textY } = polarToCartesian(0, 0, innerR + radius / 2, -(start + arcLength - arcLength / 2));
       currentAngle += arcLength;
       sectors.push(
@@ -363,9 +459,7 @@ const SunburstChartImpl = ({
             onClick={() => handleClick(nodeWithIndex)}
             onMouseEnter={e => handleMouseEnter(nodeWithIndex, e)}
             onMouseLeave={e => handleMouseLeave(nodeWithIndex, e)}
-            fill={fillColor}
-            stroke={stroke}
-            strokeWidth={padding}
+            {...sectorStyles}
             startAngle={start}
             endAngle={start + arcLength}
             innerRadius={innerR}
@@ -373,7 +467,7 @@ const SunburstChartImpl = ({
             cx={cx}
             cy={cy}
           />
-          <Text {...textOptions} alignmentBaseline="middle" textAnchor="middle" x={textX + cx} y={cy - textY}>
+          <Text {...labelProps} alignmentBaseline="middle" textAnchor="middle" x={textX + cx} y={cy - textY}>
             {d[dataKey]}
           </Text>
         </g>,
@@ -382,21 +476,32 @@ const SunburstChartImpl = ({
       const { x: tooltipX, y: tooltipY } = polarToCartesian(cx, cy, innerR + radius / 2, start);
       positions.set(d.name, { x: tooltipX, y: tooltipY });
 
-      return drawArcs(
+      const renderedChildren = drawArcs(
         d.children,
         {
           radius,
           innerR: innerR + radius + ringPadding,
           initialAngle: start,
           childColor: fillColor,
+          branchStyle,
           nestedActiveTooltipIndex: currentTooltipIndex,
         },
         depth + 1,
       );
+      /*
+       * Tooltip reads the color of the entry from the data node.
+       * Themed sectors take their color from the theme or from their parent, which the data node does not know,
+       * so the tooltip gets a copy of the node with the rendered color.
+       */
+      return themeStyles == null ? d : { ...d, fill: fillColor, children: renderedChildren };
     });
   }
 
-  drawArcs(data.children, { radius: thickness, innerR: innerRadius, initialAngle: startAngle });
+  const tooltipDataChildren = drawArcs(data.children, {
+    radius: thickness,
+    innerR: innerRadius,
+    initialAngle: startAngle,
+  });
 
   const layerClass = clsx('recharts-sunburst', className);
   return (
@@ -405,7 +510,7 @@ const SunburstChartImpl = ({
       <SetSunburstTooltipEntrySettings
         dataKey={dataKey}
         nameKey={nameKey}
-        data={data}
+        data={themeStyles == null ? data : { ...data, children: tooltipDataChildren }}
         stroke={stroke}
         fill={fill}
         positions={positions}
@@ -426,7 +531,21 @@ const SunburstChartImpl = ({
  * @provides TooltipEntrySettings
  */
 export const SunburstChart = (outsideProps: SunburstChartProps) => {
-  const props = resolveDefaultProps(outsideProps, defaultSunburstChartProps);
+  const theme = useRechartsTheme();
+  const props: RequiresDefaultProps<SunburstChartProps, typeof themedSunburstChartProps> =
+    theme == null
+      ? resolveDefaultProps(outsideProps, defaultSunburstChartProps)
+      : resolveDefaultProps(outsideProps, themedSunburstChartProps);
+  const themeStyles: SunburstThemeStyles | undefined = useMemo(
+    () =>
+      theme == null
+        ? undefined
+        : {
+            graphicalItems: theme.graphicalItems,
+            backgroundColor: getBackgroundColor(theme),
+          },
+    [theme],
+  );
   const { className, width, height, responsive, style, id: externalId, throttleDelay, throttledEvents } = props;
   const [tooltipPortal, setTooltipPortal] = useState<HTMLElement | null>(null);
   return (
@@ -459,7 +578,7 @@ export const SunburstChart = (outsideProps: SunburstChartProps) => {
           onTouchEnd={undefined}
         >
           <RegisterGraphicalItemId id={externalId} type="sunburst">
-            {id => <SunburstChartImpl {...props} id={id} />}
+            {id => <SunburstChartImpl {...props} id={id} themeStyles={themeStyles} />}
           </RegisterGraphicalItemId>
         </RechartsWrapper>
       </TooltipPortalContext.Provider>

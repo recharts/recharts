@@ -358,8 +358,11 @@ export function ThemingGuide() {
             <td>
               <LinkToApi>Area</LinkToApi>, <LinkToApi>Bar</LinkToApi>, <LinkToApi>Line</LinkToApi>,{' '}
               <LinkToApi>Scatter</LinkToApi>, <LinkToApi>Radar</LinkToApi>, <LinkToApi>RadialBar</LinkToApi>,{' '}
-              <LinkToApi>Pie</LinkToApi>, <LinkToApi>Funnel</LinkToApi>, <LinkToApi>Treemap</LinkToApi>. Legend and
-              Tooltip entries inherit the same colors.
+              <LinkToApi>Pie</LinkToApi>, <LinkToApi>Funnel</LinkToApi>, <LinkToApi>Treemap</LinkToApi>,{' '}
+              <LinkToApi>Sankey</LinkToApi>, <LinkToApi>SunburstChart</LinkToApi>. Legend and Tooltip entries inherit
+              the same colors. Treemap and SunburstChart color each top-level branch, and its descendants inherit the
+              color. Sankey colors each node by its index in <code>data.nodes</code>, and draws each link in the color
+              of its source node at reduced opacity.
             </td>
           </tr>
           <tr>
@@ -574,10 +577,6 @@ export function ThemingGuide() {
       <ul>
         <li>
           The API is marked experimental. <code>RechartsTheme</code> can change shape in a minor or patch release.
-        </li>
-        <li>
-          Not every component is themed yet. <LinkToApi>Sankey</LinkToApi> and <LinkToApi>SunburstChart</LinkToApi>{' '}
-          still use their own defaults regardless of the theme.
         </li>
         <li>
           Themes are not deep-merged. Nested providers replace, and there is no <code>createTheme</code> helper to merge

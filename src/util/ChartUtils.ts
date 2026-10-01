@@ -613,8 +613,17 @@ export const getBaseValueOfBar = ({ numericAxis }: { numericAxis: BaseAxisWithSc
 };
 
 const getDomainOfSingle = (data: ReadonlyArray<ReadonlyArray<unknown>>): number[] => {
-  const flat = data.flat(2).filter(isNumber);
-  return [Math.min(...flat), Math.max(...flat)];
+  // A loop instead of Math.min(...values): spreading a large array into function arguments
+  // throws "Maximum call stack size exceeded" once a stacked series has tens of thousands of points.
+  let min = Infinity;
+  let max = -Infinity;
+  for (const value of data.flat(2)) {
+    if (isNumber(value)) {
+      min = Math.min(min, value);
+      max = Math.max(max, value);
+    }
+  }
+  return [min, max];
 };
 
 const makeDomainFinite = (domain: NumberDomain): NumberDomain => {
