@@ -69,6 +69,10 @@ function hasSignificantSizeChange(a: ElementOffset, b: ElementOffset): boolean {
  * `getBoundingClientRect()` reports the painted box, so a CSS transform anywhere up the tree makes the element look
  * smaller or larger than it is; the observed border box describes the layout box and ignores transforms.
  *
+ * The border box is reported along the inline and block axes, which follow the element's writing mode: in a vertical
+ * writing mode the inline axis is vertical, so the inline size is the physical height and the block size the physical
+ * width. Both sizes are returned in physical axes.
+ *
  * @param node - the DOM element to measure
  * @param entry - the ResizeObserver entry that triggered this measurement, when there is one
  * @returns an ElementOffset with the element's current dimensions and viewport-relative position
@@ -76,11 +80,16 @@ function hasSignificantSizeChange(a: ElementOffset, b: ElementOffset): boolean {
 function readElementOffset(node: HTMLElement, entry?: ResizeObserverEntry): ElementOffset {
   const rect = node.getBoundingClientRect();
   const borderBoxSize = entry?.borderBoxSize[0];
+  const inlineSize = borderBoxSize?.inlineSize;
+  const blockSize = borderBoxSize?.blockSize;
+  const writingMode =
+    borderBoxSize == null ? '' : (node.ownerDocument.defaultView?.getComputedStyle(node).writingMode ?? '');
+  const isVerticalWritingMode = writingMode.startsWith('vertical');
   return {
-    height: borderBoxSize?.blockSize ?? rect.height,
+    height: (isVerticalWritingMode ? inlineSize : blockSize) ?? rect.height,
     left: rect.left,
     top: rect.top,
-    width: borderBoxSize?.inlineSize ?? rect.width,
+    width: (isVerticalWritingMode ? blockSize : inlineSize) ?? rect.width,
   };
 }
 

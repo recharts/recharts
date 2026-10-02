@@ -174,6 +174,35 @@ describe('useElementOffset', () => {
     expect(result.current[0]).toEqual({ width: 100, height: 50, left: 5, top: 10 });
   });
 
+  it('should measure the physical width and height when a vertical writing mode rotates the inline axis', () => {
+    const node = document.createElement('div');
+    node.style.writingMode = 'vertical-rl';
+    document.body.appendChild(node);
+    // The ancestor transform scales the painted box down; the observer reports the untransformed border box, whose
+    // inline size is the physical height in a vertical writing mode.
+    vi.spyOn(node, 'getBoundingClientRect').mockReturnValue(
+      getMockDomRect({ width: 20, height: 40, left: 5, top: 10 }),
+    );
+
+    const resizeObserverEntry: ResizeObserverEntry = {
+      target: node,
+      contentRect: getMockDomRect({ width: 20, height: 40, left: 5, top: 10 }),
+      borderBoxSize: [{ inlineSize: 50, blockSize: 100 }],
+      contentBoxSize: [{ inlineSize: 50, blockSize: 100 }],
+      devicePixelContentBoxSize: [{ inlineSize: 50, blockSize: 100 }],
+    };
+
+    const { result } = renderHook(() => useElementOffset());
+    act(() => {
+      result.current[1](node);
+    });
+    act(() => {
+      triggerResizeObserver([resizeObserverEntry]);
+    });
+
+    expect(result.current[0]).toEqual({ width: 100, height: 50, left: 5, top: 10 });
+  });
+
   it('should keep observing size changes after Strict Mode replays effects', () => {
     let currentRect = getMockDomRect({ width: 100, height: 50 });
     vi.spyOn(HTMLElement.prototype, 'getBoundingClientRect').mockImplementation(() => currentRect);
