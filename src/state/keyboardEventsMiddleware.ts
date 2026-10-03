@@ -52,7 +52,13 @@ keyboardEventsMiddleware.startListening({
         }
         const { keyboardInteraction } = currentState.tooltip;
         const key = latestKeyboardActionPayload;
-        if (key !== 'ArrowRight' && key !== 'ArrowLeft' && key !== 'Enter') {
+        if (
+          key !== 'ArrowRight' &&
+          key !== 'ArrowLeft' &&
+          key !== 'ArrowDown' &&
+          key !== 'ArrowUp' &&
+          key !== 'Enter'
+        ) {
           return;
         }
 
@@ -89,8 +95,8 @@ keyboardEventsMiddleware.startListening({
         }
 
         const direction = selectChartDirection(currentState);
-        const directionMultiplier = direction === 'left-to-right' ? 1 : -1;
-        const movement = key === 'ArrowRight' ? 1 : -1;
+        const directionMultiplier = direction === 'left-to-right' || direction === 'top-to-bottom' ? 1 : -1;
+        const movement = key === 'ArrowRight' || key === 'ArrowDown' ? 1 : -1;
         let nextIndex: number;
         if (isOutsideDomain) {
           const axisDataKey = selectTooltipAxisDataKey(currentState);
