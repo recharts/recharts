@@ -1,45 +1,45 @@
 {
   "treemap": {
     "examplePath": "www/src/views/IndexView/IndexLineChart.tsx",
-    "totalSize": 934716,
-    "totalSizeLabel": "912.81 KB",
+    "totalSize": 934653,
+    "totalSizeLabel": "912.75 KB",
     "moduleCount": 375,
-    "generatedAt": "2026-10-03T12:00:13.558Z",
+    "generatedAt": "2026-10-03T12:40:23.209Z",
     "stages": [
       {
         "stage": "es6-folder",
-        "bytes": 1448731,
+        "bytes": 1448892,
         "humanReadableSize": "1.38 MB",
         "reductionFromBaselinePercent": 0
       },
       {
         "stage": "tree-shaken",
-        "bytes": 937613,
-        "humanReadableSize": "915.64 KB",
+        "bytes": 937550,
+        "humanReadableSize": "915.58 KB",
         "reductionFromBaselinePercent": 0
       },
       {
         "stage": "minified",
-        "bytes": 309827,
-        "humanReadableSize": "302.57 KB",
+        "bytes": 309737,
+        "humanReadableSize": "302.48 KB",
         "reductionFromBaselinePercent": 66.96
       },
       {
         "stage": "minified+gzip",
-        "bytes": 101625,
-        "humanReadableSize": "99.24 KB",
+        "bytes": 101601,
+        "humanReadableSize": "99.22 KB",
         "reductionFromBaselinePercent": 89.16
       }
     ],
     "tree": {
       "name": "bundle",
       "fullPath": "bundle",
-      "value": 934716,
+      "value": 934653,
       "children": [
         {
           "name": "src",
           "fullPath": "src",
-          "value": 531140,
+          "value": 531077,
           "children": [
             {
               "name": "state",
@@ -447,7 +447,7 @@
             {
               "name": "util",
               "fullPath": "src/util",
-              "value": 120961,
+              "value": 120898,
               "children": [
                 {
                   "name": "scale",
@@ -598,7 +598,7 @@
                 {
                   "name": "getContentBoxSize.ts",
                   "fullPath": "src/util/getContentBoxSize.ts",
-                  "value": 1304
+                  "value": 1241
                 },
                 {
                   "name": "LRUCache.ts",
@@ -2602,45 +2602,45 @@
   },
   "sunburst": {
     "examplePath": "www/src/views/IndexView/IndexLineChart.tsx",
-    "totalSize": 934716,
-    "totalSizeLabel": "912.81 KB",
+    "totalSize": 934653,
+    "totalSizeLabel": "912.75 KB",
     "moduleCount": 375,
-    "generatedAt": "2026-10-03T12:00:11.327Z",
+    "generatedAt": "2026-10-03T12:40:21.409Z",
     "stages": [
       {
         "stage": "es6-folder",
-        "bytes": 1448731,
+        "bytes": 1448892,
         "humanReadableSize": "1.38 MB",
         "reductionFromBaselinePercent": 0
       },
       {
         "stage": "tree-shaken",
-        "bytes": 937613,
-        "humanReadableSize": "915.64 KB",
+        "bytes": 937550,
+        "humanReadableSize": "915.58 KB",
         "reductionFromBaselinePercent": 0
       },
       {
         "stage": "minified",
-        "bytes": 309827,
-        "humanReadableSize": "302.57 KB",
+        "bytes": 309737,
+        "humanReadableSize": "302.48 KB",
         "reductionFromBaselinePercent": 66.96
       },
       {
         "stage": "minified+gzip",
-        "bytes": 101625,
-        "humanReadableSize": "99.24 KB",
+        "bytes": 101601,
+        "humanReadableSize": "99.22 KB",
         "reductionFromBaselinePercent": 89.16
       }
     ],
     "tree": {
       "name": "bundle",
       "fullPath": "bundle",
-      "value": 934716,
+      "value": 934653,
       "children": [
         {
           "name": "src",
           "fullPath": "src",
-          "value": 531140,
+          "value": 531077,
           "children": [
             {
               "name": "state",
@@ -3048,7 +3048,7 @@
             {
               "name": "util",
               "fullPath": "src/util",
-              "value": 120961,
+              "value": 120898,
               "children": [
                 {
                   "name": "scale",
@@ -3199,7 +3199,7 @@
                 {
                   "name": "getContentBoxSize.ts",
                   "fullPath": "src/util/getContentBoxSize.ts",
-                  "value": 1304
+                  "value": 1241
                 },
                 {
                   "name": "LRUCache.ts",
