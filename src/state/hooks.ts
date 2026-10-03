@@ -45,6 +45,7 @@ export function useAppStateReader(): () => RechartsRootState | undefined {
  * and we read them from Redux state instead.
  *
  * @param selector for pulling things out of Redux store; will not be called if the store is not accessible
+ * @param equalityFn
  * @return whatever the selector returned; or undefined when outside of Redux store
  */
 export function useAppSelector<T>(
