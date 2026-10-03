@@ -13,7 +13,7 @@ function ElementOffsetTest({ dependency }: { dependency: string }) {
 }
 
 describe('useElementOffset', () => {
-  let resizeObserverCallback: (() => void) | undefined,
+  let resizeObserverCallback: ((entries: ResizeObserverEntry[]) => void) | undefined,
     observeSpy: ReturnType<typeof vi.fn>,
     disconnectSpy: ReturnType<typeof vi.fn>,
     resizeObserverIsActive: boolean;
@@ -29,16 +29,16 @@ describe('useElementOffset', () => {
     });
     vi.stubGlobal(
       'ResizeObserver',
-      vi.fn(function ResizeObserverMock(cb: () => void) {
+      vi.fn(function ResizeObserverMock(cb: (entries: ResizeObserverEntry[]) => void) {
         resizeObserverCallback = cb;
         return { observe: observeSpy, unobserve: vi.fn(), disconnect: disconnectSpy };
       }),
     );
   });
 
-  const triggerResizeObserver = () => {
+  const triggerResizeObserver = (entries: ResizeObserverEntry[] = []) => {
     if (resizeObserverIsActive) {
-      resizeObserverCallback?.();
+      resizeObserverCallback?.(entries);
     }
   };
 
@@ -146,6 +146,61 @@ describe('useElementOffset', () => {
     expect(screen.getByTestId('measured-element')).toHaveAttribute('data-height', '80');
     expect(observeSpy).toHaveBeenCalledTimes(1);
     expect(disconnectSpy).not.toHaveBeenCalled();
+  });
+
+  it('should measure the border box reported by the observer instead of the transformed bounding client rect', () => {
+    const node = document.createElement('div');
+    // Inside a scaled parent, getBoundingClientRect reports the painted, scaled box: 50x25 instead of 100x50.
+    vi.spyOn(node, 'getBoundingClientRect').mockReturnValue(
+      getMockDomRect({ width: 50, height: 25, left: 5, top: 10 }),
+    );
+
+    const resizeObserverEntry: ResizeObserverEntry = {
+      target: node,
+      contentRect: getMockDomRect({ width: 100, height: 50, left: 5, top: 10 }),
+      borderBoxSize: [{ inlineSize: 100, blockSize: 50 }],
+      contentBoxSize: [{ inlineSize: 100, blockSize: 50 }],
+      devicePixelContentBoxSize: [{ inlineSize: 100, blockSize: 50 }],
+    };
+
+    const { result } = renderHook(() => useElementOffset());
+    act(() => {
+      result.current[1](node);
+    });
+    act(() => {
+      triggerResizeObserver([resizeObserverEntry]);
+    });
+
+    expect(result.current[0]).toEqual({ width: 100, height: 50, left: 5, top: 10 });
+  });
+
+  it('should measure the physical width and height when a vertical writing mode rotates the inline axis', () => {
+    const node = document.createElement('div');
+    node.style.writingMode = 'vertical-rl';
+    document.body.appendChild(node);
+    // The ancestor transform scales the painted box down; the observer reports the untransformed border box, whose
+    // inline size is the physical height in a vertical writing mode.
+    vi.spyOn(node, 'getBoundingClientRect').mockReturnValue(
+      getMockDomRect({ width: 20, height: 40, left: 5, top: 10 }),
+    );
+
+    const resizeObserverEntry: ResizeObserverEntry = {
+      target: node,
+      contentRect: getMockDomRect({ width: 20, height: 40, left: 5, top: 10 }),
+      borderBoxSize: [{ inlineSize: 50, blockSize: 100 }],
+      contentBoxSize: [{ inlineSize: 50, blockSize: 100 }],
+      devicePixelContentBoxSize: [{ inlineSize: 50, blockSize: 100 }],
+    };
+
+    const { result } = renderHook(() => useElementOffset());
+    act(() => {
+      result.current[1](node);
+    });
+    act(() => {
+      triggerResizeObserver([resizeObserverEntry]);
+    });
+
+    expect(result.current[0]).toEqual({ width: 100, height: 50, left: 5, top: 10 });
   });
 
   it('should keep observing size changes after Strict Mode replays effects', () => {
