@@ -3,6 +3,7 @@ import { afterEach, Mock, MockInstance, vi } from 'vitest';
 import { act, render, screen } from '@testing-library/react';
 import { ResponsiveContainer } from '../../src';
 import { mockGetBoundingClientRect } from '../helper/mockGetBoundingClientRect';
+import { mockHTMLElementProperty } from '../helper/mockHTMLElementProperty';
 import { assertNotNull } from '../helper/assertNotNull';
 import { useResponsiveContainerContext } from '../../src/component/ResponsiveContainer';
 
@@ -405,6 +406,9 @@ describe('<ResponsiveContainer />', () => {
   it('should exclude padding and border from the first measurement', () => {
     // The border box: a 400x200 content box with 15px of padding and 5px of border on every side
     mockGetBoundingClientRect({ width: 440, height: 240 });
+    // The client size excludes the border
+    mockHTMLElementProperty('clientWidth', 430);
+    mockHTMLElementProperty('clientHeight', 230);
 
     render(
       <ResponsiveContainer width="100%" height="100%" style={{ padding: 15, border: '5px solid black' }}>

@@ -124,6 +124,9 @@ describe('RechartsWrapper', () => {
     });
 
     it('excludes border as well as padding', () => {
+      // The client size excludes the 5px border on each side
+      mockHTMLElementProperty('clientWidth', 430);
+      mockHTMLElementProperty('clientHeight', 230);
       const { container } = render(
         <BarChart width="100%" height="100%" data={data} style={{ padding: 15, border: '5px solid black' }}>
           <Bar dataKey="uv" isAnimationActive={false} />
@@ -135,8 +138,8 @@ describe('RechartsWrapper', () => {
     it('ignores a CSS transform that scales the painted box', () => {
       // Inside a parent with `transform: scale(0.5)`, the painted box is half the layout box
       vi.spyOn(Element.prototype, 'getBoundingClientRect').mockReturnValue(getMockDomRect({ width: 220, height: 120 }));
-      mockHTMLElementProperty('offsetWidth', 440);
-      mockHTMLElementProperty('offsetHeight', 240);
+      mockHTMLElementProperty('clientWidth', 440);
+      mockHTMLElementProperty('clientHeight', 240);
       const { container } = render(
         <BarChart width="100%" height="100%" data={data} style={{ padding: 20 }}>
           <Bar dataKey="uv" isAnimationActive={false} />
