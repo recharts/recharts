@@ -210,6 +210,13 @@
   "engines": {
     "node": ">=18"
   },
+  "devEngines": {
+    "runtime": {
+      "name": "node",
+      "version": ">=24",
+      "onFail": "warn"
+    }
+  },
   "license": "MIT",
   "overrides": {
     "axios": "0.30.3"
