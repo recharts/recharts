@@ -6,7 +6,7 @@ function parsePixels(value: string): number {
 }
 
 /**
- * Measures the layout size of the content box of an element: its size without padding and border.
+ * Measures the layout size of the content box of an element: its size without padding, border, and scrollbar.
  *
  * This is the same box that ResizeObserver reports in `contentRect`,
  * so use this for a first measurement before ResizeObserver reports anything.
@@ -18,19 +18,12 @@ function parsePixels(value: string): number {
  * @returns the width and height of the content box, in whole pixels
  */
 export function getContentBoxSize(element: HTMLElement): Size {
+  // clientWidth and clientHeight include padding, but not border or scrollbar
   const computedStyle = window.getComputedStyle(element);
-  const horizontal =
-    parsePixels(computedStyle.paddingLeft) +
-    parsePixels(computedStyle.paddingRight) +
-    parsePixels(computedStyle.borderLeftWidth) +
-    parsePixels(computedStyle.borderRightWidth);
-  const vertical =
-    parsePixels(computedStyle.paddingTop) +
-    parsePixels(computedStyle.paddingBottom) +
-    parsePixels(computedStyle.borderTopWidth) +
-    parsePixels(computedStyle.borderBottomWidth);
+  const horizontalPadding = parsePixels(computedStyle.paddingLeft) + parsePixels(computedStyle.paddingRight);
+  const verticalPadding = parsePixels(computedStyle.paddingTop) + parsePixels(computedStyle.paddingBottom);
   return {
-    width: Math.max(0, element.offsetWidth - horizontal),
-    height: Math.max(0, element.offsetHeight - vertical),
+    width: Math.max(0, element.clientWidth - horizontalPadding),
+    height: Math.max(0, element.clientHeight - verticalPadding),
   };
 }
