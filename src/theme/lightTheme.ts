@@ -58,9 +58,7 @@ function toGraphicalItem(color: string): GraphicalItemStyle {
  */
 export const lightTheme: RechartsTheme = {
   graphicalItems: lightPalette.map(toGraphicalItem),
-  chart: {
-    backgroundColor,
-  },
+  pageBackground: backgroundColor,
   barBackground: {
     fill: '#f4f4f5',
   },

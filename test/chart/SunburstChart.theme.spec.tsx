@@ -32,7 +32,7 @@ const theme: RechartsTheme = {
     { fill: 'red', stroke: 'darkred' },
     { fill: 'green', stroke: 'darkgreen' },
   ],
-  chart: { backgroundColor: 'ivory' },
+  pageBackground: 'ivory',
   typography: { color: 'navy' },
 };
 
@@ -92,7 +92,7 @@ describe('<SunburstChart /> theme', () => {
     ]);
   });
 
-  it('paints separators in the chart background color, with padding as the width', () => {
+  it('paints separators in the page background color, with padding as the width', () => {
     const { container } = renderSunburst(theme, { padding: 3 });
     expect(getSectors(container).map(sector => [sector.stroke, sector.strokeWidth])).toEqual([
       ['ivory', '3'],
@@ -102,12 +102,12 @@ describe('<SunburstChart /> theme', () => {
     ]);
   });
 
-  it('falls back to the branch stroke for separators if the theme has no background color', () => {
-    const { container } = renderSunburst({ ...theme, chart: undefined });
+  it('falls back to the branch stroke for separators if the theme has no page background', () => {
+    const { container } = renderSunburst({ ...theme, pageBackground: undefined });
     expect(getSectors(container).map(sector => sector.stroke)).toEqual(['darkred', 'darkred', 'darkred', 'darkgreen']);
   });
 
-  it('styles labels with typography and a halo in the background color, without the legacy label styles', () => {
+  it('styles labels with typography and a halo in the page background color, without the legacy label styles', () => {
     const { container } = renderSunburst(theme);
     const label = getFirstLabel(container);
     expect(label.style.fill).toBe('navy');
