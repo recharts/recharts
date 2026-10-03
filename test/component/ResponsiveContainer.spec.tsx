@@ -402,6 +402,19 @@ describe('<ResponsiveContainer />', () => {
     expect(screen.getByTestId('inside')).toHaveStyle({ width: '100px', height: '100px' });
   });
 
+  it('should exclude padding and border from the first measurement', () => {
+    // The border box: a 400x200 content box with 15px of padding and 5px of border on every side
+    mockGetBoundingClientRect({ width: 440, height: 240 });
+
+    render(
+      <ResponsiveContainer width="100%" height="100%" style={{ padding: 15, border: '5px solid black' }}>
+        <DimensionSpy />
+      </ResponsiveContainer>,
+    );
+
+    expect(screen.getByTestId('inside')).toHaveStyle({ width: '400px', height: '200px' });
+  });
+
   it('should not warn on initial render before dimensions are measured', () => {
     mockGetBoundingClientRect({ width: 400, height: 200 });
 
