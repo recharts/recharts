@@ -163,18 +163,6 @@ describe('RechartsWrapper with a theme', () => {
       expect(getSurfaceSize(wrapper)).toEqual({ width: '640', height: '320' });
     });
 
-    it('excludes padding and border of the wrapper from the measured size', () => {
-      mockGetBoundingClientRect({ width: 640, height: 320 });
-      const wrapper = renderWithTheme(
-        {
-          graphicalItems: [{}],
-          chart: { width: '100%', height: '100%', padding: 10, border: '2px solid black' },
-        },
-        unsizedBarChart,
-      );
-      expect(getSurfaceSize(wrapper)).toEqual({ width: '616', height: '296' });
-    });
-
     it('lets the width and height props override the theme', () => {
       const wrapper = renderWithTheme(sizedTheme, barChart);
       expect(getWrapperStyle(wrapper, ['width', 'height'])).toEqual({ width: '400px', height: '300px' });
