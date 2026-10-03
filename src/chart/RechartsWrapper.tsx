@@ -50,6 +50,33 @@ export type RechartsWrapperProps = ExternalMouseEvents & {
   dispatchTouchEvents?: boolean;
 };
 
+function parsePixels(value: string): number {
+  const parsed = parseFloat(value);
+  return Number.isNaN(parsed) ? 0 : parsed;
+}
+
+/**
+ * Measures the content box of the element, without its padding and border.
+ * The chart renders inside the content box, and this matches what ResizeObserver reports in `contentRect`.
+ * @param node the element to measure
+ * @returns the width and height of the content box
+ */
+function getContentBoxSize(node: HTMLElement): { width: number; height: number } {
+  const { width, height } = node.getBoundingClientRect();
+  const computedStyle = window.getComputedStyle(node);
+  const horizontal =
+    parsePixels(computedStyle.paddingLeft) +
+    parsePixels(computedStyle.paddingRight) +
+    parsePixels(computedStyle.borderLeftWidth) +
+    parsePixels(computedStyle.borderRightWidth);
+  const vertical =
+    parsePixels(computedStyle.paddingTop) +
+    parsePixels(computedStyle.paddingBottom) +
+    parsePixels(computedStyle.borderTopWidth) +
+    parsePixels(computedStyle.borderBottomWidth);
+  return { width: Math.max(0, width - horizontal), height: Math.max(0, height - vertical) };
+}
+
 const EventSynchronizer = (): ReactNode => {
   useSynchronisedEventsFromOtherCharts();
   return null;
@@ -111,7 +138,7 @@ const ResponsiveDiv = forwardRef<HTMLDivElement, WrapperDivProps>((props: Wrappe
 
       // 3. Initiate a new ResizeObserver on the valid DOM node
       if (node != null && typeof ResizeObserver !== 'undefined') {
-        const { width: containerWidth, height: containerHeight } = node.getBoundingClientRect();
+        const { width: containerWidth, height: containerHeight } = getContentBoxSize(node);
         setContainerSize(containerWidth, containerHeight);
 
         const callback = (entries: ResizeObserverEntry[]) => {
@@ -176,7 +203,7 @@ const ReadSizeOnceDiv = forwardRef<HTMLDivElement, WrapperDivProps>((props: Wrap
         ref(node);
       }
       if (node != null) {
-        const { width: containerWidth, height: containerHeight } = node.getBoundingClientRect();
+        const { width: containerWidth, height: containerHeight } = getContentBoxSize(node);
         setContainerSize(containerWidth, containerHeight);
       }
     },
