@@ -26,6 +26,7 @@ import { LegendPortalContext } from '../context/legendPortalContext';
 import { ReportChartSize } from '../context/chartLayoutContext';
 import { useResponsiveContainerContext } from '../component/ResponsiveContainer';
 import { Percent } from '../util/types';
+import { getContentBoxSize } from '../util/getContentBoxSize';
 
 export type RechartsWrapperProps = ExternalMouseEvents & {
   children: ReactNode;
@@ -49,33 +50,6 @@ export type RechartsWrapperProps = ExternalMouseEvents & {
    */
   dispatchTouchEvents?: boolean;
 };
-
-function parsePixels(value: string): number {
-  const parsed = parseFloat(value);
-  return Number.isNaN(parsed) ? 0 : parsed;
-}
-
-/**
- * Measures the content box of the element, without its padding and border.
- * The chart renders inside the content box, and this matches what ResizeObserver reports in `contentRect`.
- * @param node the element to measure
- * @returns the width and height of the content box
- */
-function getContentBoxSize(node: HTMLElement): { width: number; height: number } {
-  const { width, height } = node.getBoundingClientRect();
-  const computedStyle = window.getComputedStyle(node);
-  const horizontal =
-    parsePixels(computedStyle.paddingLeft) +
-    parsePixels(computedStyle.paddingRight) +
-    parsePixels(computedStyle.borderLeftWidth) +
-    parsePixels(computedStyle.borderRightWidth);
-  const vertical =
-    parsePixels(computedStyle.paddingTop) +
-    parsePixels(computedStyle.paddingBottom) +
-    parsePixels(computedStyle.borderTopWidth) +
-    parsePixels(computedStyle.borderBottomWidth);
-  return { width: Math.max(0, width - horizontal), height: Math.max(0, height - vertical) };
-}
 
 const EventSynchronizer = (): ReactNode => {
   useSynchronisedEventsFromOtherCharts();

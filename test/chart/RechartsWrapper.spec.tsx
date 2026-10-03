@@ -4,7 +4,8 @@ import { act, fireEvent, render } from '@testing-library/react';
 import { Bar, BarChart } from '../../src';
 import { RechartsWrapper } from '../../src/chart/RechartsWrapper';
 import { assertNotNull } from '../helper/assertNotNull';
-import { mockGetBoundingClientRect } from '../helper/mockGetBoundingClientRect';
+import { getMockDomRect, mockGetBoundingClientRect } from '../helper/mockGetBoundingClientRect';
+import { mockHTMLElementProperty } from '../helper/mockHTMLElementProperty';
 
 describe('RechartsWrapper', () => {
   it('should call onMouseEnter, and onMouseLeave handlers', async () => {
@@ -125,6 +126,19 @@ describe('RechartsWrapper', () => {
     it('excludes border as well as padding', () => {
       const { container } = render(
         <BarChart width="100%" height="100%" data={data} style={{ padding: 15, border: '5px solid black' }}>
+          <Bar dataKey="uv" isAnimationActive={false} />
+        </BarChart>,
+      );
+      expect(getSurfaceSize(container)).toEqual({ width: '400', height: '200' });
+    });
+
+    it('ignores a CSS transform that scales the painted box', () => {
+      // Inside a parent with `transform: scale(0.5)`, the painted box is half the layout box
+      vi.spyOn(Element.prototype, 'getBoundingClientRect').mockReturnValue(getMockDomRect({ width: 220, height: 120 }));
+      mockHTMLElementProperty('offsetWidth', 440);
+      mockHTMLElementProperty('offsetHeight', 240);
+      const { container } = render(
+        <BarChart width="100%" height="100%" data={data} style={{ padding: 20 }}>
           <Bar dataKey="uv" isAnimationActive={false} />
         </BarChart>,
       );
