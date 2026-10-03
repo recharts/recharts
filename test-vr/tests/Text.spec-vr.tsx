@@ -95,3 +95,8 @@ testWithThemes('Text with width + verticalAnchor + scaleToFit combination', asyn
   const component = await mountStory('Text/TextWithWidthVerticalAnchorAndScaleToFitCombination');
   await expect(component).toHaveScreenshot();
 });
+
+testWithThemes('Text with background', async ({ mountStory }) => {
+  const component = await mountStory('Text/TextWithBackground');
+  await expect(component).toHaveScreenshot();
+});
