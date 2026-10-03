@@ -1,0 +1,156 @@
+# Instructions
+
+- Following Playwright test failed.
+- Explain why, be concise, respect Playwright best practices.
+- Provide a snippet of code with the fix, if possible.
+
+# Test info
+
+- Name: tests/LabelList.spec-vr.tsx >> Pie > LabelList with background
+- Location: test-vr/tests/LabelList.spec-vr.tsx:88:15
+
+# Error details
+
+```
+Error: expect(locator).toHaveScreenshot(expected) failed
+
+Locator: locator('#root').locator(':scope > *').first()
+  6102 pixels (ratio 0.04 of all image pixels) are different.
+
+Call log:
+  - Expect "toHaveScreenshot" with timeout 10000ms
+    - verifying given screenshot expectation
+  - waiting for locator('#root').locator(':scope > *').first()
+    - locator resolved to <div width="400" height="400" class="recharts-wrapper">…</div>
+  - taking element screenshot
+    - disabled all CSS animations
+  - waiting for fonts to load...
+  - fonts loaded
+  - attempting scroll into view action
+    - waiting for element to be stable
+  - 6102 pixels (ratio 0.04 of all image pixels) are different.
+  - waiting 100ms before taking screenshot
+  - waiting for locator('#root').locator(':scope > *').first()
+    - locator resolved to <div width="400" height="400" class="recharts-wrapper">…</div>
+  - taking element screenshot
+    - disabled all CSS animations
+  - waiting for fonts to load...
+  - fonts loaded
+  - attempting scroll into view action
+    - waiting for element to be stable
+  - captured a stable screenshot
+  - 6102 pixels (ratio 0.04 of all image pixels) are different.
+
+```
+
+# Page snapshot
+
+```yaml
+- application [ref=f6e4]:
+  - generic [ref=f6e30]:
+    - generic [ref=f6e31]: Page A
+    - generic [ref=f6e34]: Page B
+    - generic [ref=f6e37]: Page C
+    - generic [ref=f6e40]: Page D
+    - generic [ref=f6e43]: Page E
+    - generic [ref=f6e46]: Page F
+    - generic [ref=f6e49]: Page G
+```
+
+# Test source
+
+```ts
+  1  | import { expect, testWithThemes } from './fixtures';
+  2  | 
+  3  | testWithThemes('Area > implicit LabelList', async ({ mountStory }) => {
+  4  |   const component = await mountStory('LabelList/AreaImplicitLabelList');
+  5  |   await expect(component).toHaveScreenshot();
+  6  | });
+  7  | 
+  8  | testWithThemes('Area > explicit LabelList', async ({ mountStory }) => {
+  9  |   const component = await mountStory('LabelList/AreaExplicitLabelList');
+  10 |   await expect(component).toHaveScreenshot();
+  11 | });
+  12 | 
+  13 | testWithThemes('Bar > implicit LabelList', async ({ mountStory }) => {
+  14 |   const component = await mountStory('LabelList/BarImplicitLabelList');
+  15 |   await expect(component).toHaveScreenshot();
+  16 | });
+  17 | 
+  18 | testWithThemes('Bar > explicit LabelList', async ({ mountStory }) => {
+  19 |   const component = await mountStory('LabelList/BarExplicitLabelList');
+  20 |   await expect(component).toHaveScreenshot();
+  21 | });
+  22 | 
+  23 | testWithThemes('Line > implicit LabelList', async ({ mountStory }) => {
+  24 |   const component = await mountStory('LabelList/LineImplicitLabelList');
+  25 |   await expect(component).toHaveScreenshot();
+  26 | });
+  27 | 
+  28 | testWithThemes('Line > explicit LabelList', async ({ mountStory }) => {
+  29 |   const component = await mountStory('LabelList/LineExplicitLabelList');
+  30 |   await expect(component).toHaveScreenshot();
+  31 | });
+  32 | 
+  33 | testWithThemes('Scatter > implicit LabelList', async ({ mountStory }) => {
+  34 |   const component = await mountStory('LabelList/ScatterImplicitLabelList');
+  35 |   await expect(component).toHaveScreenshot();
+  36 | });
+  37 | 
+  38 | testWithThemes('Scatter > explicit LabelList', async ({ mountStory }) => {
+  39 |   const component = await mountStory('LabelList/ScatterExplicitLabelList');
+  40 |   await expect(component).toHaveScreenshot();
+  41 | });
+  42 | 
+  43 | testWithThemes('Pie > implicit LabelList', async ({ mountStory }) => {
+  44 |   const component = await mountStory('LabelList/PieImplicitLabelList');
+  45 |   await expect(component).toHaveScreenshot();
+  46 | });
+  47 | 
+  48 | testWithThemes('Pie > explicit LabelList', async ({ mountStory }) => {
+  49 |   const component = await mountStory('LabelList/PieExplicitLabelList');
+  50 |   await expect(component).toHaveScreenshot();
+  51 | });
+  52 | 
+  53 | testWithThemes('Radar > implicit LabelList', async ({ mountStory }) => {
+  54 |   const component = await mountStory('LabelList/RadarImplicitLabelList');
+  55 |   await expect(component).toHaveScreenshot();
+  56 | });
+  57 | 
+  58 | testWithThemes('Radar > explicit LabelList', async ({ mountStory }) => {
+  59 |   const component = await mountStory('LabelList/RadarExplicitLabelList');
+  60 |   await expect(component).toHaveScreenshot();
+  61 | });
+  62 | 
+  63 | testWithThemes('RadialBar > implicit LabelList', async ({ mountStory }) => {
+  64 |   const component = await mountStory('LabelList/RadialBarImplicitLabelList');
+  65 |   await expect(component).toHaveScreenshot();
+  66 | });
+  67 | 
+  68 | testWithThemes('RadialBar > explicit LabelList', async ({ mountStory }) => {
+  69 |   const component = await mountStory('LabelList/RadialBarExplicitLabelList');
+  70 |   await expect(component).toHaveScreenshot();
+  71 | });
+  72 | 
+  73 | testWithThemes('Funnel > implicit LabelList', async ({ mountStory }) => {
+  74 |   const component = await mountStory('LabelList/FunnelImplicitLabelList');
+  75 |   await expect(component).toHaveScreenshot();
+  76 | });
+  77 | 
+  78 | testWithThemes('Funnel > explicit LabelList', async ({ mountStory }) => {
+  79 |   const component = await mountStory('LabelList/FunnelExplicitLabelList');
+  80 |   await expect(component).toHaveScreenshot();
+  81 | });
+  82 | 
+  83 | testWithThemes('Bar > LabelList with background', async ({ mountStory }) => {
+  84 |   const component = await mountStory('LabelList/BarLabelListWithBackground');
+  85 |   await expect(component).toHaveScreenshot();
+  86 | });
+  87 | 
+  88 | testWithThemes('Pie > LabelList with background', async ({ mountStory }) => {
+  89 |   const component = await mountStory('LabelList/PieLabelListWithBackground');
+> 90 |   await expect(component).toHaveScreenshot();
+     |                           ^ Error: expect(locator).toHaveScreenshot(expected) failed
+  91 | });
+  92 | 
+```
