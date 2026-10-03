@@ -10,6 +10,7 @@ describe('selectRadialBarSectors', () => {
   const radialBarSettings: RadialBarSettings = {
     id: 'radial-bar-uv',
     dataKey: 'pv',
+    minAngle: 0,
     minPointSize: 0,
     stackId: undefined,
     maxBarSize: undefined,
