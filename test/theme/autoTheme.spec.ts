@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { autoTheme, darkPalette, darkTheme, lightPalette, lightTheme } from '../../src';
-import { combineLightDark } from '../../src/theme/combineLightDark';
+import { combineLightDark } from '../helper/combineLightDark';
 
 /**
  * Collects every leaf value of a nested structure, keyed by its path.
@@ -73,6 +73,10 @@ describe('combineLightDark', () => {
 });
 
 describe('autoTheme', () => {
+  it('should equal lightTheme and darkTheme combined with light-dark()', () => {
+    expect(autoTheme).toEqual(combineLightDark(lightTheme, darkTheme));
+  });
+
   it('should have the same structure as lightTheme and darkTheme', () => {
     const autoLeaves = leaves(autoTheme);
     expect([...autoLeaves.keys()]).toEqual([...leaves(lightTheme).keys()]);
