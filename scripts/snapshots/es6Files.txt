@@ -219,6 +219,8 @@
   "es6/theme",
   "es6/theme/RechartsTheme.js",
   "es6/theme/RechartsThemeContext.js",
+  "es6/theme/autoTheme.js",
+  "es6/theme/combineLightDark.js",
   "es6/theme/cssStylesToSvgStyles.js",
   "es6/theme/darkTheme.js",
   "es6/theme/dataEntryStyles.js",

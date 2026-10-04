@@ -219,6 +219,8 @@
   "lib/theme",
   "lib/theme/RechartsTheme.js",
   "lib/theme/RechartsThemeContext.js",
+  "lib/theme/autoTheme.js",
+  "lib/theme/combineLightDark.js",
   "lib/theme/cssStylesToSvgStyles.js",
   "lib/theme/darkTheme.js",
   "lib/theme/dataEntryStyles.js",
