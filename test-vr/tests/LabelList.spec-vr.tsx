@@ -79,3 +79,13 @@ testWithThemes('Funnel > explicit LabelList', async ({ mountStory }) => {
   const component = await mountStory('LabelList/FunnelExplicitLabelList');
   await expect(component).toHaveScreenshot();
 });
+
+testWithThemes('Bar > LabelList with background', async ({ mountStory }) => {
+  const component = await mountStory('LabelList/BarLabelListWithBackground');
+  await expect(component).toHaveScreenshot();
+});
+
+testWithThemes('Pie > LabelList with background', async ({ mountStory }) => {
+  const component = await mountStory('LabelList/PieLabelListWithBackground');
+  await expect(component).toHaveScreenshot();
+});

@@ -11,7 +11,7 @@ import {
   useMemo,
 } from 'react';
 import { clsx } from 'clsx';
-import { isValidTextAnchor, RenderableText, Text, TextAnchor, TextVerticalAnchor } from './Text';
+import { isValidTextAnchor, RenderableText, Text, TextAnchor, TextBackgroundProps, TextVerticalAnchor } from './Text';
 import { isNullish, isNumber, isNumOrStr, mathSign } from '../util/DataUtils';
 import { polarToCartesian } from '../util/PolarUtils';
 import { CartesianViewBoxRequired, DataKey, PolarViewBoxRequired, TrapezoidViewBox, ViewBox } from '../util/types';
@@ -124,6 +124,23 @@ interface LabelProps extends ZIndexable {
    * Used as an HTML attribute `id`.
    */
   id?: string;
+  /**
+   * Draws a rectangle behind the label, for example to keep it readable on top of a filled shape.
+   *
+   * - `true` draws the background with default styles.
+   *   The fill is `chart.backgroundColor` from the theme, or white when no theme is set.
+   * - An object accepts SVG `<rect>` attributes such as `fill`, `stroke` and `rx`, and a `padding`.
+   * - `false` or `undefined` draws no background.
+   *
+   * The background is sized from the rendered text.
+   * It is not drawn for labels that follow a curved path (`insideStart`, `insideEnd` and `end` in polar charts),
+   * nor for custom `content`.
+   *
+   * @since 3.11
+   * @example <Label position="inside" background />
+   * @example <Label position="inside" background={{ fill: '#fff', rx: 2, padding: 4 }} />
+   */
+  background?: boolean | TextBackgroundProps;
 }
 
 export type Props = Omit<SVGProps<SVGTextElement>, 'viewBox'> & LabelProps;
@@ -472,8 +489,12 @@ export function Label(outerProps: Props) {
   };
 
   if (isValidElement(content)) {
-    const { labelRef: _, ...propsWithoutLabelRef } = propsWithViewBox;
-    return cloneElement(content, propsWithoutLabelRef);
+    /*
+     * The element is often a plain SVG element such as `<text>`,
+     * where `background` would end up as an invalid DOM attribute.
+     */
+    const { labelRef: _, background: _background, ...propsForElement } = propsWithViewBox;
+    return cloneElement(content, propsForElement);
   }
 
   if (typeof content === 'function') {
@@ -511,6 +532,7 @@ export function Label(outerProps: Props) {
          */
         textAnchor={isValidTextAnchor(attrs.textAnchor) ? attrs.textAnchor : positionAttrs.textAnchor}
         breakAll={textBreakAll}
+        background={props.background}
       >
         {label}
       </Text>

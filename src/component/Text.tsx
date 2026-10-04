@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { CSSProperties, SVGProps, useMemo, forwardRef } from 'react';
+import { CSSProperties, SVGProps, useMemo, forwardRef, useCallback, useLayoutEffect, useRef, useState } from 'react';
 
 import { clsx } from 'clsx';
 import { isNullish, isNumber, isNumOrStr } from '../util/DataUtils';
@@ -11,7 +11,7 @@ import { isWellBehavedNumber } from '../util/isWellBehavedNumber';
 import { useId } from '../util/useId';
 
 import { useBackwardsCompatibleTheme } from '../theme/useBackwardsCompatibleTheme';
-import { TextStyles } from '../theme/RechartsTheme';
+import { RechartsTheme, TextStyles } from '../theme/RechartsTheme';
 import { resolveDefaultProps } from '../util/resolveDefaultProps';
 import { cssStylesToSvgStyles } from '../theme/cssStylesToSvgStyles';
 
@@ -82,6 +82,26 @@ export type RenderableText = string | number | boolean | null | undefined;
 export function isRenderableText(val: unknown): val is RenderableText {
   return isNullish(val) || typeof val === 'string' || typeof val === 'number' || typeof val === 'boolean';
 }
+
+/**
+ * Props of the rectangle that is drawn behind the text.
+ * Accepts the usual SVG `<rect>` attributes, such as `fill`, `fillOpacity`, `stroke`, `rx` and `className`.
+ * The position and size are measured from the rendered text.
+ *
+ * @since 3.11
+ */
+export type TextBackgroundProps = Omit<
+  SVGProps<SVGRectElement>,
+  'x' | 'y' | 'width' | 'height' | 'ref' | 'children' | 'transform'
+> & {
+  /**
+   * Space between the text and the edge of the background, in pixels.
+   * A number applies the same padding on all sides, an object sets horizontal and vertical padding separately.
+   *
+   * @defaultValue { x: 4, y: 2 }
+   */
+  padding?: number | { x?: number; y?: number };
+};
 
 interface TextProps {
   /**
@@ -202,6 +222,23 @@ interface TextProps {
    * @since 3.11
    */
   textPath?: string;
+  /**
+   * Draws a rectangle behind the text, for example to keep a label readable on top of a filled shape.
+   *
+   * - `true` draws the background with default styles.
+   *   The fill is `chart.backgroundColor` from the theme, or white when no theme is set.
+   * - An object accepts SVG `<rect>` attributes such as `fill`, `stroke` and `rx`, and a `padding`.
+   * - `false` or `undefined` draws no background.
+   *
+   * The rectangle is sized after the text renders, from the bounding box of the text element,
+   * so it follows the content, font, line breaks and rotation of the text.
+   * It is not rendered during server-side rendering, and it is ignored when `textPath` is set.
+   *
+   * @since 3.11
+   * @example <Text background>Label</Text>
+   * @example <Text background={{ fill: '#fff', stroke: '#000', rx: 2, padding: { x: 6, y: 3 } }}>Label</Text>
+   */
+  background?: boolean | TextBackgroundProps;
 }
 
 export type Props = Omit<SVGProps<SVGTextElement>, 'textAnchor' | 'verticalAnchor'> & TextProps;
@@ -391,6 +428,79 @@ const defaultLegacyThemeProps: TextStyles = {
   fill: DEFAULT_FILL,
 };
 
+type BackgroundFill = {
+  fill?: string;
+};
+
+/**
+ * Without a theme, charts are designed for a white background.
+ */
+const defaultLegacyBackgroundProps: BackgroundFill = {
+  fill: '#fff',
+};
+
+const defaultBackgroundPadding = { x: 4, y: 2 } as const;
+
+const defaultBackgroundRadius = 4;
+
+function selectBackgroundFill(theme: RechartsTheme): BackgroundFill | undefined {
+  const backgroundColor = theme.chart?.backgroundColor;
+  return typeof backgroundColor === 'string' ? { fill: backgroundColor } : undefined;
+}
+
+/**
+ * The geometry of the text bounding box, in the text's own coordinate system.
+ */
+export type TextBox = {
+  x: number;
+  y: number;
+  width: number;
+  height: number;
+};
+
+export function resolveBackgroundPadding(padding: TextBackgroundProps['padding']): { x: number; y: number } {
+  if (isNumber(padding)) {
+    return { x: padding, y: padding };
+  }
+  return {
+    x: padding?.x ?? defaultBackgroundPadding.x,
+    y: padding?.y ?? defaultBackgroundPadding.y,
+  };
+}
+
+/**
+ * Returns the rectangle of the text background, or null if there is no text to put a background behind.
+ * @param textBox bounding box of the text element
+ * @param padding padding around the text
+ * @returns background rectangle
+ */
+export function getTextBackgroundRect(textBox: TextBox, padding: TextBackgroundProps['padding']): TextBox | null {
+  if (textBox.width <= 0 || textBox.height <= 0) {
+    return null;
+  }
+  const { x: paddingX, y: paddingY } = resolveBackgroundPadding(padding);
+  return {
+    x: textBox.x - paddingX,
+    y: textBox.y - paddingY,
+    width: textBox.width + 2 * paddingX,
+    height: textBox.height + 2 * paddingY,
+  };
+}
+
+function isSameTextBox(a: TextBox | null, b: TextBox): boolean {
+  return a != null && a.x === b.x && a.y === b.y && a.width === b.width && a.height === b.height;
+}
+
+function resolveBackgroundSettings(background: Props['background']): TextBackgroundProps | undefined {
+  if (background === true) {
+    return {};
+  }
+  if (background == null || background === false) {
+    return undefined;
+  }
+  return background;
+}
+
 export const textDefaultProps = {
   angle: 0,
   breakAll: false,
@@ -425,6 +535,7 @@ export const Text = forwardRef<SVGTextElement, Props>((outsideProps, ref) => {
     verticalAnchor,
     style: propsStyle,
     textPath,
+    background,
     ...props
   } = propsWithDefaults;
   // Here it is important to actually remove these three props, and not put them to DOM
@@ -490,6 +601,47 @@ export const Text = forwardRef<SVGTextElement, Props>((outsideProps, ref) => {
     };
   }, [styleTemp, angle, textPath]);
 
+  const backgroundSettings = textPath == null ? resolveBackgroundSettings(background) : undefined;
+  const backgroundFill = useBackwardsCompatibleTheme<BackgroundFill>(
+    selectBackgroundFill,
+    { fill: backgroundSettings?.fill },
+    defaultLegacyBackgroundProps,
+  );
+  const textRef = useRef<SVGTextElement | null>(null);
+  const setTextRef = useCallback(
+    (node: SVGTextElement | null) => {
+      textRef.current = node;
+      if (typeof ref === 'function') {
+        ref(node);
+      } else if (ref != null) {
+        // forwarding the element to a ref object is the purpose of this callback
+        // eslint-disable-next-line no-param-reassign
+        ref.current = node;
+      }
+    },
+    [ref],
+  );
+  const [textBox, setTextBox] = useState<TextBox | null>(null);
+  const hasBackground = backgroundSettings != null;
+
+  /*
+   * The background is sized from the rendered text, so that it follows the actual font, line breaks and anchors.
+   * This runs after every render because any prop or style can change the size of the text.
+   * The state update is skipped when the box stays the same, so this does not loop.
+   */
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  useLayoutEffect(() => {
+    const node = textRef.current;
+    if (!hasBackground || node == null || typeof node.getBBox !== 'function') {
+      return;
+    }
+    const { x: boxX, y: boxY, width: boxWidth, height: boxHeight } = node.getBBox();
+    const nextBox: TextBox = { x: boxX, y: boxY, width: boxWidth, height: boxHeight };
+    if (!isSameTextBox(textBox, nextBox)) {
+      setTextBox(nextBox);
+    }
+  });
+
   if (!isNumOrStr(propsX) || !isNumOrStr(propsY) || wordsByLines.length === 0) {
     return null;
   }
@@ -511,12 +663,14 @@ export const Text = forwardRef<SVGTextElement, Props>((outsideProps, ref) => {
       break;
   }
 
-  return (
+  const transform = svgTransforms.length > 0 ? svgTransforms.join(' ') : undefined;
+
+  const textElement = (
     <text
-      transform={svgTransforms.length > 0 ? svgTransforms.join(' ') : undefined}
+      transform={transform}
       {...svgPropertiesAndEvents(textProps)}
       style={styleFinal}
-      ref={ref}
+      ref={setTextRef}
       x={x}
       y={y}
       className={clsx('recharts-text', className)}
@@ -541,6 +695,36 @@ export const Text = forwardRef<SVGTextElement, Props>((outsideProps, ref) => {
         </>
       )}
     </text>
+  );
+
+  if (backgroundSettings == null) {
+    return textElement;
+  }
+
+  const { padding, className: backgroundClassName, ...backgroundRectProps } = backgroundSettings;
+  const backgroundRect = textBox == null ? null : getTextBackgroundRect(textBox, padding);
+
+  /*
+   * The group is rendered even before the text is measured,
+   * so that the text element keeps its place in the tree and React does not re-mount it.
+   */
+  return (
+    <g className="recharts-text-with-background">
+      {backgroundRect != null && (
+        <rect
+          rx={defaultBackgroundRadius}
+          {...svgPropertiesAndEvents(backgroundRectProps)}
+          fill={backgroundFill.fill}
+          className={clsx('recharts-text-background', backgroundClassName)}
+          transform={transform}
+          x={backgroundRect.x}
+          y={backgroundRect.y}
+          width={backgroundRect.width}
+          height={backgroundRect.height}
+        />
+      )}
+      {textElement}
+    </g>
   );
 });
 
