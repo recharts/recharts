@@ -39,24 +39,28 @@ type ColorTokens = {
   readonly fillOpacity?: number | string;
 };
 
-/**
- * The colour a chart is painted on top of.
- *
- * Recharts does not paint a chart background itself, so strictly speaking this
- * is a property of the host page rather than of the theme. Each theme is
- * nonetheless designed for one, and states it in `chart.backgroundColor`.
- * The Tooltip and Legend surfaces use the same background. The test below keeps
- * these in step so this assumption cannot quietly go stale.
- */
-const CHART_BACKGROUND: Record<ThemeName, string> = {
-  light: '#fff',
-  dark: '#18181b',
-};
-
 const THEMES: Record<ThemeName, RechartsTheme> = {
   light: lightTheme,
   dark: darkTheme,
 };
+
+/**
+ * The colour a chart is painted on top of.
+ *
+ * Recharts does not paint a chart background by default, so this is a property
+ * of the host page rather than of the chart. Each built-in theme is
+ * nonetheless designed for one page background, and states it in `pageBackground`.
+ * All the contrast checks below measure against it.
+ * @param themeName Which theme to read.
+ * @returns The page background as the theme states it.
+ */
+function pageBackgroundOf(themeName: ThemeName): string {
+  const { pageBackground } = THEMES[themeName];
+  if (pageBackground == null) {
+    throw new Error(`The ${themeName} theme must state the page background it is designed for in \`pageBackground\``);
+  }
+  return pageBackground;
+}
 
 const THEME_NAMES = Object.keys(THEMES) as ReadonlyArray<ThemeName>;
 
@@ -178,10 +182,13 @@ const MEANINGFUL_STROKES = ['axis', 'errorBar', 'brush'] as const;
 
 describe.each(THEME_NAMES)('%s theme', themeName => {
   const theme = THEMES[themeName];
-  const background = parseColor(CHART_BACKGROUND[themeName]);
+  const background = parseColor(pageBackgroundOf(themeName));
 
-  test('the background this test assumes is the one the theme is designed for, and gives its own surfaces', () => {
-    expect(requireColor(theme.chart?.backgroundColor, 'chart.backgroundColor')).toEqual(background);
+  test('the theme does not paint the chart, so that the page shows through', () => {
+    expect(theme.chart).toBeUndefined();
+  });
+
+  test('the Tooltip and Legend surfaces use the page background, so the text checks cover them too', () => {
     expect(requireColor(theme.tooltip?.contentStyle?.backgroundColor, 'tooltip.contentStyle')).toEqual(background);
     expect(requireColor(theme.legend?.wrapperStyle?.backgroundColor, 'legend.wrapperStyle')).toEqual(background);
   });
@@ -233,7 +240,7 @@ describe('series colour contrast against the chart background', () => {
 
   describe.each(THEME_NAMES)('%s theme', themeName => {
     const theme = THEMES[themeName];
-    const background = parseColor(CHART_BACKGROUND[themeName]);
+    const background = parseColor(pageBackgroundOf(themeName));
     const floor = SERIES_CONTRAST_FLOOR[themeName];
 
     const entries: ReadonlyArray<[string, GraphicalItemStyle]> = theme.graphicalItems.map((item, index) => [
@@ -264,7 +271,7 @@ const SANKEY_LINK_CONTRAST_FLOOR = 1.5;
 describe('Sankey links', () => {
   describe.each(THEME_NAMES)('%s theme', themeName => {
     const theme = THEMES[themeName];
-    const background = parseColor(CHART_BACKGROUND[themeName]);
+    const background = parseColor(pageBackgroundOf(themeName));
 
     test.each(theme.graphicalItems.map((item, index) => [`graphicalItems[${index}] ${item.fill}`, item] as const))(
       'a link from a %s node stays visible against the background',
@@ -300,8 +307,8 @@ describe('emptyTheme', () => {
  */
 function accessibilityReport(themeName: ThemeName): string {
   const theme = THEMES[themeName];
-  const background = parseColor(CHART_BACKGROUND[themeName]);
-  const lines: string[] = [`${themeName} theme on ${CHART_BACKGROUND[themeName]}`, ''];
+  const background = parseColor(pageBackgroundOf(themeName));
+  const lines: string[] = [`${themeName} theme on ${pageBackgroundOf(themeName)}`, ''];
 
   const ratio = (value: number) => value.toFixed(2).padStart(6);
 

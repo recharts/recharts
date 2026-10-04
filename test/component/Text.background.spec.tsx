@@ -317,7 +317,7 @@ describe('<Text background />', () => {
     it.each([
       { name: 'light', theme: lightTheme, expected: '#fff' },
       { name: 'dark', theme: darkTheme, expected: '#18181b' },
-    ])('fills the background with chart.backgroundColor of the $name theme', ({ theme, expected }) => {
+    ])('fills the background with pageBackground of the $name theme', ({ theme, expected }) => {
       const { container } = render(
         <RechartsThemeProvider value={theme}>
           <Surface width={300} height={300}>
@@ -361,9 +361,9 @@ describe('<Text background />', () => {
       expect(rect).not.toHaveAttribute('fill');
     });
 
-    it('does not apply the legacy fill when the theme background is not a string', () => {
+    it('does not apply the legacy fill when the theme pageBackground is not set', () => {
       const { container } = render(
-        <RechartsThemeProvider value={{ ...lightTheme, chart: { ...lightTheme.chart, backgroundColor: undefined } }}>
+        <RechartsThemeProvider value={{ ...lightTheme, pageBackground: undefined }}>
           <Surface width={300} height={300}>
             <Text x={10} y={20} background>
               text

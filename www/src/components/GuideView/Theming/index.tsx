@@ -81,6 +81,7 @@ const cssVariablesExample = `/* app.css */
   --chart-1: #4338ca;
   --chart-2: #0f766e;
   --chart-3: #b45309;
+  --chart-page: #ffffff;
 }
 
 .dark {
@@ -90,6 +91,7 @@ const cssVariablesExample = `/* app.css */
   --chart-1: #a5b4fc;
   --chart-2: #5eead4;
   --chart-3: #fcd34d;
+  --chart-page: #18181b;
 }
 `;
 
@@ -109,6 +111,15 @@ export const cssVariableTheme: RechartsTheme = {
   ],
   grid: { stroke: 'var(--chart-grid)', fill: 'none' },
   axis: { stroke: 'var(--chart-axis)' },
+  pageBackground: 'var(--chart-page)',
+};
+`;
+
+const defaultSizeThemeExample = `import { type RechartsTheme, lightTheme } from 'recharts';
+
+export const sizedTheme: RechartsTheme = {
+  ...lightTheme,
+  chart: { width: '100%', maxHeight: '70vh', aspectRatio: 1.618 },
 };
 `;
 
@@ -138,6 +149,7 @@ function Charts({ children }) {
       ],
       grid: { stroke: muiTheme.palette.divider, fill: 'none' },
       axis: { stroke: muiTheme.palette.text.secondary },
+      pageBackground: muiTheme.palette.background.paper,
       tooltip: {
         contentStyle: {
           backgroundColor: muiTheme.palette.background.paper,
@@ -218,7 +230,8 @@ export function ThemingGuide() {
               <code>darkTheme</code>
             </td>
             <td>
-              The dark-mode counterpart. It does not paint a background behind the chart - that is your page&apos;s job.
+              The dark-mode counterpart. It expects a dark page, and it does not paint one - that is your page&apos;s
+              job. On a light page its light text and axes are not legible.
             </td>
           </tr>
           <tr>
@@ -470,11 +483,80 @@ export function ThemingGuide() {
               of what the same name means in <code>tooltip</code>. Sorry about that.
             </td>
           </tr>
+          <tr>
+            <td>
+              <code>chart</code>
+            </td>
+            <td>
+              <code>CSSProperties</code>
+            </td>
+            <td>
+              The element that wraps the chart, including the <LinkToApi>Legend</LinkToApi> - the same element that the{' '}
+              <code>style</code> prop styles. Empty in the built-in themes. See the Background and Default chart size
+              sections below.
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <code>pageBackground</code>
+            </td>
+            <td>a CSS color</td>
+            <td>
+              Never painted. The color that <LinkToApi>Treemap</LinkToApi> outlines its tiles with, and that{' '}
+              <LinkToApi>SunburstChart</LinkToApi> draws its separators and label halos with. See the Background section
+              below.
+            </td>
+          </tr>
         </tbody>
       </table>
       <p>
-        The theme does not set the chart size. Set the chart size with the <code>style</code> prop instead - see the{' '}
-        <RechartsLink to="guide/sizes">chart size guide</RechartsLink>.
+        The built-in themes do not set the chart size. Set the chart size with the <code>style</code> prop - see the{' '}
+        <RechartsLink to="guide/sizes">chart size guide</RechartsLink> - or give your own theme a default size, as
+        described in the Default chart size section below.
+      </p>
+
+      <h2>Background</h2>
+      <p>
+        Recharts does not paint a background behind the chart. The chart is part of your page, and the page shows
+        through it. Each built-in theme is designed for one page background: <code>lightTheme</code> for white, and{' '}
+        <code>darkTheme</code> for a dark page. Pair the theme with a matching page, as this website does.
+      </p>
+      <p>A theme has two background settings, and they do different things:</p>
+      <ul>
+        <li>
+          <code>pageBackground</code> is the color behind the chart. Recharts never paints it. It draws gaps and halos
+          in this color, so that they look like holes cut into the chart: the outlines between{' '}
+          <LinkToApi>Treemap</LinkToApi> tiles, and the separators and label halos of{' '}
+          <LinkToApi>SunburstChart</LinkToApi>. Set it to the background of your page. The built-in themes set it to the
+          background they are designed for.
+        </li>
+        <li>
+          <code>chart</code> is painted on the element that wraps the chart. The <LinkToApi>Legend</LinkToApi> renders
+          inside that element, so a background here covers the Legend too. The built-in themes leave it empty. The{' '}
+          <code>style</code> prop of the chart takes precedence over it.
+        </li>
+      </ul>
+      <p>
+        If you paint a background with <code>chart</code>, set <code>pageBackground</code> to the same color. The
+        separators then match the color that is actually behind them.
+      </p>
+
+      <h2>Default chart size</h2>
+      <p>
+        A chart without a size renders nothing. A theme can give every chart in its tree a default size with{' '}
+        <code>chart.width</code> and <code>chart.height</code>. A chart uses the size from the theme only when it has no
+        size of its own: the <code>width</code> and <code>height</code> props, the <code>style</code> prop and{' '}
+        <LinkToApi>ResponsiveContainer</LinkToApi> all take precedence.
+      </p>
+      <SourceCodeEditor value={defaultSizeThemeExample} />
+      <p>
+        Set both <code>width</code> and <code>height</code>, or set one of them as a string together with{' '}
+        <code>aspectRatio</code>. Recharts measures sizes that are not numbers once, when the chart mounts, or
+        continuously in a chart with the <code>responsive</code> prop.
+      </p>
+      <p>
+        Theme styles are inline styles, so they take precedence over CSS classes on the chart. If you size your charts
+        with CSS classes, leave the size out of the theme.
       </p>
 
       <h2>Colors for multiple series</h2>
@@ -540,7 +622,7 @@ export function ThemingGuide() {
       </p>
       <p>
         Remember that <code>darkTheme</code> only styles what Recharts draws. The background behind the chart belongs to
-        your page - the site pairs the theme switch with its own CSS color scheme.
+        your page - the site pairs the theme switch with its own CSS color scheme. See the Background section above.
       </p>
 
       <h3>Switching with CSS variables instead</h3>
