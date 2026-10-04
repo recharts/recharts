@@ -124,11 +124,9 @@ describe('<Treemap /> theme', () => {
     ]);
   });
 
-  it('outlines tiles with the chart background color', () => {
+  it('outlines tiles with the page background color', () => {
     const { container } = render(
-      <RechartsThemeProvider
-        value={{ graphicalItems: [{ fill: 'red', stroke: 'red' }], chart: { backgroundColor: 'white' } }}
-      >
+      <RechartsThemeProvider value={{ graphicalItems: [{ fill: 'red', stroke: 'red' }], pageBackground: 'white' }}>
         <Treemap width={400} height={250} data={nestedData} isAnimationActive={false} nameKey="name" dataKey="value" />
       </RechartsThemeProvider>,
     );
@@ -144,7 +142,7 @@ describe('<Treemap /> theme', () => {
       <RechartsThemeProvider
         value={{
           graphicalItems: [{ fill: '#ffff00' }, { fill: '#000080' }],
-          chart: { backgroundColor: '#eee' },
+          pageBackground: '#eee',
         }}
       >
         <Treemap

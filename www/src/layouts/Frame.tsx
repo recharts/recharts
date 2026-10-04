@@ -1,7 +1,7 @@
 import { ReactNode } from 'react';
 import Helmet from 'react-helmet';
 import { Link } from 'react-router';
-import { darkTheme, lightTheme, RechartsThemeProvider } from 'recharts';
+import { autoTheme, RechartsThemeProvider } from 'recharts';
 
 import '../styles/app.css';
 import './frame.css';
@@ -11,7 +11,6 @@ import { Navigation } from '../components/Navigation.tsx';
 import { SidebarNav } from '../components/Shared/SidebarNav';
 import { RechartsLogo } from './RechartsLogo.tsx';
 import { useIsIsolatedView } from '../routes/useIsIsolatedView.ts';
-import { useColorMode } from '../components/color-mode';
 
 type FrameProps = {
   children: ReactNode;
@@ -33,19 +32,21 @@ export function Frame(props: FrameProps) {
   const locale = useLocale();
   const fullCommitHash = import.meta.env.VITE_RECHARTS_COMMIT_HASH;
   const shortCommitHash = getShortCommitHash(fullCommitHash);
-  const colorMode = useColorMode();
-  const theme = colorMode.mode === 'light' ? lightTheme : darkTheme;
 
+  /*
+   * The color mode picker sets `color-scheme` on <html> (see _variables.css),
+   * and autoTheme follows it in CSS, without a re-render.
+   */
   if (isIsolated) {
     return (
-      <RechartsThemeProvider value={theme}>
+      <RechartsThemeProvider value={autoTheme}>
         <main>{children}</main>
       </RechartsThemeProvider>
     );
   }
 
   return (
-    <RechartsThemeProvider value={theme}>
+    <RechartsThemeProvider value={autoTheme}>
       <div className="container">
         <Helmet titleTemplate="%s | Recharts" />
         <header>

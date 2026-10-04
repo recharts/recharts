@@ -637,9 +637,9 @@ type ContentItemProps = {
   colorPanel: ReadonlyArray<string> | undefined;
   themeGraphicalItems: RechartsTheme['graphicalItems'];
   /**
-   * The background color that the theme is designed for.
+   * The color behind the chart, used for the tile outlines.
    */
-  themeChartBackgroundColor: string | undefined;
+  themePageBackground: string | undefined;
   typography: React.CSSProperties | undefined;
   dataKey: DataKey<any>;
   onClick?: (e: React.MouseEvent<SVGPathElement, MouseEvent>) => void;
@@ -663,10 +663,10 @@ function getTileStyles({
   branchIndex,
   colorPanel,
   themeGraphicalItems,
-  themeChartBackgroundColor,
+  themePageBackground,
 }: Pick<
   ContentItemProps,
-  'nodeProps' | 'nodeHasOwnStyles' | 'branchIndex' | 'colorPanel' | 'themeGraphicalItems' | 'themeChartBackgroundColor'
+  'nodeProps' | 'nodeHasOwnStyles' | 'branchIndex' | 'colorPanel' | 'themeGraphicalItems' | 'themePageBackground'
 >): TileStyles {
   const colors = colorPanel || COLOR_PANEL;
   const legacyFill = nodeProps.depth < 2 ? colors[nodeProps.index % colors.length] : 'rgba(255,255,255,0)';
@@ -697,7 +697,7 @@ function getTileStyles({
   const branchStyle = themeGraphicalItems[branchIndex % themeGraphicalItems.length];
   return {
     fill: fillFromColorPanel ?? branchStyle?.fill ?? legacyFill,
-    stroke: themeChartBackgroundColor ?? branchStyle?.stroke ?? '#fff',
+    stroke: themePageBackground ?? branchStyle?.stroke ?? '#fff',
     strokeWidth: undefined,
   };
 }
@@ -710,7 +710,7 @@ function ContentItem({
   type,
   colorPanel,
   themeGraphicalItems,
-  themeChartBackgroundColor,
+  themePageBackground,
   typography,
   onMouseEnter,
   onMouseLeave,
@@ -738,7 +738,7 @@ function ContentItem({
     branchIndex,
     colorPanel,
     themeGraphicalItems,
-    themeChartBackgroundColor,
+    themePageBackground,
   });
 
   let arrow = null;
@@ -894,7 +894,7 @@ function TreemapItem({
     onClick: onItemClickFromProps,
     onMouseLeave: onMouseLeaveFromProps,
     themeGraphicalItems,
-    themeChartBackgroundColor,
+    themePageBackground,
     typography,
   } = treemapProps;
   const { width, height, x, y } = nodeProps;
@@ -972,7 +972,7 @@ function TreemapItem({
             type={type}
             colorPanel={colorPanel}
             themeGraphicalItems={themeGraphicalItems}
-            themeChartBackgroundColor={themeChartBackgroundColor}
+            themePageBackground={themePageBackground}
             typography={typography}
           />
         </Layer>
@@ -987,7 +987,7 @@ type InternalTreemapProps = RequiresDefaultProps<Props, typeof defaultTreeMapPro
   dispatch: AppDispatch;
   id: GraphicalItemId;
   themeGraphicalItems: RechartsTheme['graphicalItems'];
-  themeChartBackgroundColor: string | undefined;
+  themePageBackground: string | undefined;
   typography?: React.CSSProperties;
 };
 
@@ -1259,7 +1259,7 @@ class TreemapWithState extends PureComponent<InternalTreemapProps, State> {
 
 function TreemapDispatchInject(
   props: RequiresDefaultProps<Props, typeof defaultTreeMapProps> &
-    Pick<InternalTreemapProps, 'themeGraphicalItems' | 'themeChartBackgroundColor' | 'typography'>,
+    Pick<InternalTreemapProps, 'themeGraphicalItems' | 'themePageBackground' | 'typography'>,
 ) {
   const dispatch = useAppDispatch();
   const width = useChartWidth();
@@ -1275,14 +1275,7 @@ function TreemapDispatchInject(
   );
 }
 
-type TreemapThemeSlice = Partial<Pick<RechartsTheme, 'graphicalItems' | 'typography'>> & {
-  chartBackgroundColor?: string;
-};
-
-function getChartBackgroundColor(theme: RechartsTheme): string | undefined {
-  const color = theme.chart?.backgroundColor;
-  return typeof color === 'string' ? color : undefined;
-}
+type TreemapThemeSlice = Partial<Pick<RechartsTheme, 'graphicalItems' | 'typography' | 'pageBackground'>>;
 
 /**
  * The Treemap chart is used to visualize hierarchical data using nested rectangles.
@@ -1295,7 +1288,7 @@ export function Treemap(outsideProps: Props) {
   const theme = useBackwardsCompatibleTheme<TreemapThemeSlice>(
     (rechartsTheme: RechartsTheme) => ({
       graphicalItems: rechartsTheme.graphicalItems,
-      chartBackgroundColor: getChartBackgroundColor(rechartsTheme),
+      pageBackground: rechartsTheme.pageBackground,
       typography: rechartsTheme.typography,
     }),
     {},
@@ -1343,7 +1336,7 @@ export function Treemap(outsideProps: Props) {
           <TreemapDispatchInject
             {...props}
             themeGraphicalItems={theme?.graphicalItems ?? []}
-            themeChartBackgroundColor={theme?.chartBackgroundColor}
+            themePageBackground={theme?.pageBackground}
             typography={theme?.typography}
           />
         </TooltipPortalContext.Provider>

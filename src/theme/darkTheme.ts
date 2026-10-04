@@ -58,9 +58,7 @@ function toGraphicalItem(color: string): GraphicalItemStyle {
  */
 export const darkTheme: RechartsTheme = {
   graphicalItems: darkPalette.map(toGraphicalItem),
-  chart: {
-    backgroundColor,
-  },
+  pageBackground: backgroundColor,
   barBackground: {
     fill: '#27272a',
   },
@@ -84,7 +82,7 @@ export const darkTheme: RechartsTheme = {
     stroke: '#a1a1aa',
     strokeWidth: 1,
     fill: '#3f3f46',
-    fillOpacity: 0.3,
+    fillOpacity: 0.25,
   },
   cursor: {
     stroke: '#3f3f46',

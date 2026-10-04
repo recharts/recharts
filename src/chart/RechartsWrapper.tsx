@@ -27,6 +27,7 @@ import { ReportChartSize } from '../context/chartLayoutContext';
 import { useResponsiveContainerContext } from '../component/ResponsiveContainer';
 import { Percent } from '../util/types';
 import { getContentBoxSize } from '../util/getContentBoxSize';
+import { useRechartsTheme } from '../theme/RechartsThemeContext';
 
 export type RechartsWrapperProps = ExternalMouseEvents & {
   children: ReactNode;
@@ -259,6 +260,7 @@ export const RechartsWrapper = forwardRef<HTMLDivElement | null, RechartsWrapper
     const [legendPortal, setLegendPortal] = useState<HTMLElement | null>(null);
 
     const setScaleRef = useReportScale();
+    const theme = useRechartsTheme();
 
     const responsiveContainerCalculations = useResponsiveContainerContext();
     const width = responsiveContainerCalculations?.width > 0 ? responsiveContainerCalculations.width : widthFromProps;
@@ -394,14 +396,19 @@ export const RechartsWrapper = forwardRef<HTMLDivElement | null, RechartsWrapper
       <TooltipPortalContext.Provider value={tooltipPortal}>
         <LegendPortalContext.Provider value={legendPortal}>
           <WrapperDiv
-            width={width ?? style?.width}
-            height={height ?? style?.height}
+            width={width ?? style?.width ?? theme?.chart?.width}
+            height={height ?? style?.height ?? theme?.chart?.height}
             className={clsx('recharts-wrapper', className)}
             style={{
               position: 'relative',
               cursor: 'default',
-              width,
-              height,
+              /*
+               * The theme overrides the defaults above, but not an explicit size or style.
+               * The size is only included if it is set, so that `undefined` does not erase a size from the theme.
+               */
+              ...theme?.chart,
+              ...(width == null ? {} : { width }),
+              ...(height == null ? {} : { height }),
               ...style,
             }}
             onClick={myOnClick}

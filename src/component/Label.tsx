@@ -128,7 +128,7 @@ interface LabelProps extends ZIndexable {
    * Draws a rectangle behind the label, for example to keep it readable on top of a filled shape.
    *
    * - `true` draws the background with default styles.
-   *   The fill is `chart.backgroundColor` from the theme, or white when no theme is set.
+   *   The fill is the `pageBackground` color from the theme, or white when no theme is set.
    * - An object accepts SVG `<rect>` attributes such as `fill`, `stroke` and `rx`, and a `padding`.
    * - `false` or `undefined` draws no background.
    *
