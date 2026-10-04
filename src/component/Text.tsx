@@ -226,7 +226,7 @@ interface TextProps {
    * Draws a rectangle behind the text, for example to keep a label readable on top of a filled shape.
    *
    * - `true` draws the background with default styles.
-   *   The fill is `chart.backgroundColor` from the theme, or white when no theme is set.
+   *   The fill is the `pageBackground` color from the theme, or white when no theme is set.
    * - An object accepts SVG `<rect>` attributes such as `fill`, `stroke` and `rx`, and a `padding`.
    * - `false` or `undefined` draws no background.
    *
@@ -444,8 +444,8 @@ const defaultBackgroundPadding = { x: 4, y: 2 } as const;
 const defaultBackgroundRadius = 4;
 
 function selectBackgroundFill(theme: RechartsTheme): BackgroundFill | undefined {
-  const backgroundColor = theme.chart?.backgroundColor;
-  return typeof backgroundColor === 'string' ? { fill: backgroundColor } : undefined;
+  const { pageBackground } = theme;
+  return typeof pageBackground === 'string' ? { fill: pageBackground } : undefined;
 }
 
 /**
