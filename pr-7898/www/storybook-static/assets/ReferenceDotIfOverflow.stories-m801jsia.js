@@ -1,0 +1,32 @@
+import{R as e}from"./iframe-Ek26OKJE.js";import{R as m}from"./zIndexSlice-Cb7AOhUN.js";import{C as p}from"./ComposedChart-Bemin9MV.js";import{p as s}from"./Page-Cj8EiXz7.js";import{C as c}from"./CartesianGrid-BHY1kSwY.js";import{X as f}from"./XAxis-BnPYeIW7.js";import{Y as l}from"./YAxis-DEoqYThk.js";import{R as d}from"./ReferenceDot-7rMFzhC-.js";import"./preload-helper-Dp1pzeXC.js";import"./throttle-nAaWLAvW.js";import"./index-Bhq43Y8T.js";import"./index-CH5hGN9X.js";import"./get-C2VjdU0L.js";import"./resolveDefaultProps-DikHbtvd.js";import"./isWellBehavedNumber-C3YqTazs.js";import"./PolarUtils-CTnnDHZv.js";import"./RechartsWrapper-B_5MzBNC.js";import"./axisSelectors-BZyUnxor.js";import"./d3-scale-Di7qtVT_.js";import"./index-CVfvjw4V.js";import"./index-CddS4NP_.js";import"./renderedTicksSlice-Bw9pF84S.js";import"./index-tmDn5Ue5.js";import"./CartesianChart-BUYt3N23.js";import"./chartDataContext-q8RiqEic.js";import"./CategoricalChart-Co9RgHLu.js";import"./CartesianAxis-D3cjFJua.js";import"./Layer-DRl71Sg_.js";import"./Text-DbwWqm58.js";import"./DOMUtils-BY_uPlRS.js";import"./useId-rsWHAn-D.js";import"./useBackwardsCompatibleTheme-Drt73puE.js";import"./Label-Bl-xJBza.js";import"./ZIndexLayer-CR_MqsJe.js";import"./types-USIGaiIt.js";import"./getClassNameFromUnknown-Jg1grEQN.js";import"./isBuffer-BG75eWKN.js";import"./Dot-CSgA8HWq.js";import"./CartesianScaleHelper-C9Oze4oB.js";const{expect:h,within:w}=__STORYBOOK_MODULE_TEST__,te={title:"Examples/cartesian/Reference Dot/If Overflow"},t={render:()=>e.createElement(m,{width:"100%",height:500},e.createElement(p,{data:s,margin:{top:5,right:30,left:20,bottom:5}},e.createElement(c,{strokeDasharray:"3 3"}),e.createElement(f,{dataKey:"name"}),e.createElement(l,{type:"number"}),e.createElement(d,{ifOverflow:"extendDomain",x:"Page E",y:1700,r:100}))),play:async({canvasElement:a})=>{const{findByText:i}=w(a);h(await i("1800")).toBeInTheDocument()}},re=["IfOverflow"];var r,o,n;t.parameters={...t.parameters,docs:{...(r=t.parameters)==null?void 0:r.docs,source:{originalSource:`{
+  render: () => {
+    return <ResponsiveContainer width="100%" height={500}>
+        <ComposedChart data={pageData} margin={{
+        top: 5,
+        right: 30,
+        left: 20,
+        bottom: 5
+      }}>
+          <CartesianGrid strokeDasharray="3 3" />
+          <XAxis dataKey="name" />
+          <YAxis type="number" />
+          <ReferenceDot ifOverflow="extendDomain" x="Page E" y={1700} r={100} />
+        </ComposedChart>
+      </ResponsiveContainer>;
+  },
+  play: async ({
+    canvasElement
+  }: {
+    canvasElement: HTMLElement;
+  }) => {
+    const {
+      findByText
+    } = within(canvasElement);
+    /**
+     * assert that when ifOverflow="extendDomain" 1900 becomes the new domain y-max.
+     * this test will fail when the user changes the ifOverflow arg, but it will give us confidence
+     * that 'extendDomain' behavior remains the same.
+     */
+    expect(await findByText('1800')).toBeInTheDocument();
+  }
+}`,...(n=(o=t.parameters)==null?void 0:o.docs)==null?void 0:n.source}}};export{t as IfOverflow,re as __namedExportsOrder,te as default};
