@@ -55,6 +55,39 @@ export function App() {
 }
 `;
 
+const autoThemeCssExample = `/* app.css */
+
+/* Follow the operating system: */
+:root {
+  color-scheme: light dark;
+}
+
+/* Or follow your own toggle. Many toggles already set color-scheme on <html>. */
+:root[data-theme='light'] {
+  color-scheme: light;
+}
+:root[data-theme='dark'] {
+  color-scheme: dark;
+}
+
+/* A toggle that only sets a class needs one extra rule: */
+.dark {
+  color-scheme: dark;
+}
+`;
+
+const autoThemeExample = `import { RechartsThemeProvider, autoTheme } from 'recharts';
+
+export function Dashboard() {
+  return (
+    <RechartsThemeProvider value={autoTheme}>
+      <RevenueChart />
+      <TrafficChart />
+    </RechartsThemeProvider>
+  );
+}
+`;
+
 const runtimeSwitchExample = `import { useState } from 'react';
 import { RechartsThemeProvider, darkTheme, lightTheme } from 'recharts';
 
@@ -210,7 +243,7 @@ export function ThemingGuide() {
       </p>
 
       <h2>Built-in themes</h2>
-      <p>Recharts ships three themes:</p>
+      <p>Recharts ships four themes:</p>
       <table className={styles.table}>
         <thead>
           <tr>
@@ -236,6 +269,16 @@ export function ThemingGuide() {
           </tr>
           <tr>
             <td>
+              <code>autoTheme</code>
+            </td>
+            <td>
+              Light or dark, following the CSS <code>color-scheme</code> of the page. It has the colors of{' '}
+              <code>lightTheme</code> and <code>darkTheme</code>, and the browser picks between them. See Switching
+              themes at runtime below.
+            </td>
+          </tr>
+          <tr>
+            <td>
               <code>emptyTheme</code>
             </td>
             <td>
@@ -246,11 +289,11 @@ export function ThemingGuide() {
         </tbody>
       </table>
       <p>
-        You can try <code>lightTheme</code> and <code>darkTheme</code> right here: the sun / moon button in the
-        navigation bar at the top of this page switches this whole website between the two, and every chart on the page
-        - including the one below - follows along. That button is not a documentation gimmick, it is the real thing:{' '}
-        <code>ColorModePicker</code> flips a color mode and the site&apos;s layout hands the matching Recharts theme to
-        a single <code>RechartsThemeProvider</code>.
+        You can try the light and dark colors right here: the sun / moon button in the navigation bar at the top of this
+        page switches this whole website between the two, and every chart on the page - including the one below -
+        follows along. That button is not a documentation gimmick, it is the real thing: <code>ColorModePicker</code>{' '}
+        sets the CSS <code>color-scheme</code> of the page, and a single <code>RechartsThemeProvider</code> with{' '}
+        <code>autoTheme</code> follows it.
       </p>
       <p>
         The chart below has no theme provider of its own, so it inherits whatever the page is using. The control lets
@@ -518,8 +561,9 @@ export function ThemingGuide() {
       <h2>Background</h2>
       <p>
         Recharts does not paint a background behind the chart. The chart is part of your page, and the page shows
-        through it. Each built-in theme is designed for one page background: <code>lightTheme</code> for white, and{' '}
-        <code>darkTheme</code> for a dark page. Pair the theme with a matching page, as this website does.
+        through it. Each built-in theme is designed for one page background: <code>lightTheme</code> for white,{' '}
+        <code>darkTheme</code> for a dark page, and <code>autoTheme</code> for a page whose background follows its{' '}
+        <code>color-scheme</code>. Pair the theme with a matching page, as this website does.
       </p>
       <p>A theme has two background settings, and they do different things:</p>
       <ul>
@@ -605,24 +649,73 @@ export function ThemingGuide() {
 
       <h2>Switching themes at runtime</h2>
       <p>
-        Dark mode is an ordinary React state update: swap the object you pass to <code>value</code> and leave the chart
-        markup alone. No chart re-declares anything, no component takes a new prop.
+        There are two ways to switch between light and dark: let CSS do it with <code>autoTheme</code>, or swap the
+        theme object in React state.
       </p>
-      <SourceCodeEditor value={runtimeSwitchExample} />
+
+      <h3>Following the color scheme with autoTheme</h3>
       <p>
-        This is not a hypothetical - it is how this website works, and you have been using it all along. The button in
-        the navigation bar cycles light, dark and system; the site layout reads that color mode and renders one{' '}
-        <code>RechartsThemeProvider</code> around the entire page with either <code>lightTheme</code> or{' '}
-        <code>darkTheme</code>. Every chart in these docs, in every guide and every example, is themed by that single
-        provider. Press it and watch the charts on this page change. See the source code of this page here:{' '}
-        <TargetBlankLink href="https://github.com/recharts/recharts/blob/d56d6660f7db52d37cb2113b39a2be010d32fe37/www/src/layouts/Frame.tsx#L37">
+        Every color in <code>autoTheme</code> is a CSS{' '}
+        <TargetBlankLink href="https://developer.mozilla.org/en-US/docs/Web/CSS/color_value/light-dark">
+          <code>light-dark()</code>
+        </TargetBlankLink>{' '}
+        value, for example <code>light-dark(#2775e8, #5396ff)</code>. The browser picks the light or the dark color from
+        the{' '}
+        <TargetBlankLink href="https://developer.mozilla.org/en-US/docs/Web/CSS/color-scheme">
+          <code>color-scheme</code>
+        </TargetBlankLink>{' '}
+        of the element. Switching needs no React state and no re-render, and server-rendered pages show the right colors
+        from the first paint.
+      </p>
+      <SourceCodeEditor value={autoThemeExample} />
+      <p>
+        <code>autoTheme</code> does nothing on its own: it follows the <code>color-scheme</code> that your page sets.
+        Without any <code>color-scheme</code>, browsers use the light colors.
+      </p>
+      <SourceCodeEditor value={autoThemeCssExample} />
+      <p>
+        The color comes from the nearest element with a <code>color-scheme</code>, so you can also set it on a single
+        wrapper, for example to show a dark card on a light page.
+      </p>
+      <p>
+        This is how this website works, and you have been using it all along. The button in the navigation bar cycles
+        light, dark and system, and sets the <code>color-scheme</code> of the page. The site layout renders one{' '}
+        <code>RechartsThemeProvider</code> with <code>autoTheme</code> around the entire page. Every chart in these
+        docs, in every guide and every example, is themed by that single provider. Press it and watch the charts on this
+        page change. See the source code of this page here:{' '}
+        <TargetBlankLink href="https://github.com/recharts/recharts/blob/main/www/src/layouts/Frame.tsx">
           on github
         </TargetBlankLink>
         .
       </p>
+      <p>Some things to keep in mind:</p>
+      <ul>
+        <li>
+          Like <code>darkTheme</code>, <code>autoTheme</code> only styles what Recharts draws. The background behind the
+          chart belongs to your page, so let the page background follow the same <code>color-scheme</code>. See the
+          Background section above.
+        </li>
+        <li>
+          The values are <code>light-dark()</code> strings, not plain colors. Code that reads a color from the theme and
+          parses it in JavaScript, for example to compute contrast, cannot read them. Use <code>lightTheme</code> or{' '}
+          <code>darkTheme</code> there, or read the resolved color with <code>getComputedStyle</code>.
+        </li>
+        <li>
+          An SVG or PNG exported from the page keeps the colors of the color scheme that was active when it was taken.
+          An SVG rendered outside of the page uses the light colors.
+        </li>
+      </ul>
+
+      <h3>Switching in React state</h3>
       <p>
-        Remember that <code>darkTheme</code> only styles what Recharts draws. The background behind the chart belongs to
-        your page - the site pairs the theme switch with its own CSS color scheme. See the Background section above.
+        You can also switch with an ordinary React state update: swap the object you pass to <code>value</code> and
+        leave the chart markup alone. No chart re-declares anything, no component takes a new prop. This works with any
+        pair of themes, including your own, and your code always reads plain colors from the theme.
+      </p>
+      <SourceCodeEditor value={runtimeSwitchExample} />
+      <p>
+        Remember that <code>darkTheme</code> only styles what Recharts draws. Switch the background of your page
+        together with the theme. See the Background section above.
       </p>
 
       <h3>Switching with CSS variables instead</h3>

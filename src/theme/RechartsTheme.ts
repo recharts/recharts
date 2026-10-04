@@ -137,6 +137,7 @@ export interface RechartsTheme {
    *
    * Each built-in theme is designed for one page background, and sets it here.
    * For example, `darkTheme` expects a dark page and is not legible on a light one.
+   * `autoTheme` expects a page background that follows the CSS `color-scheme`.
    */
   pageBackground?: string;
 
