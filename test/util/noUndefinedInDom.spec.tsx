@@ -68,6 +68,9 @@ describe('no "undefined" text in rendered attributes', () => {
       </LineChart>,
     );
 
+    const travellers = container.querySelectorAll('.recharts-brush-traveller');
+    expect(travellers.length).toBeGreaterThan(0);
+    travellers.forEach(el => expect(el.getAttribute('aria-label')).toBeNull());
     expect(attributesContainingUndefined(container)).toEqual([]);
   });
 });
