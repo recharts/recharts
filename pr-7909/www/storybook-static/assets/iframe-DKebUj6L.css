@@ -1,0 +1,1 @@
+#storybook-root:not([hidden=true]){width:100vw;height:100vh;display:flex;flex-direction:column}#storybook-root:not([hidden=true])>*{flex-shrink:0}
