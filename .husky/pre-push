@@ -1,10 +1,1 @@
-# Ordered so that cheap checks fail fast, while still respecting the build dependency:
-# `check-types-website` type-checks www/ against the generated `types/` folder, so the build
-# has to run before it. `lint` depends on nothing, so it goes first as the quick gate.
-npm run lint
-
-npm run build
-
-npm run check-types
-
-npm test
+npm run lgtm
