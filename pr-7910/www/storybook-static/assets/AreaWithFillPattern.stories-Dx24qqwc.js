@@ -1,0 +1,23 @@
+import{R as t}from"./iframe-C6yJYV4z.js";import{R as p}from"./zIndexSlice-mBP7ycwT.js";import{C as m}from"./ComposedChart-6mo15iiQ.js";import{c as l}from"./Coordinate-geWwP0Ct.js";import{A as r}from"./Area-DCM5zchE.js";import"./preload-helper-Dp1pzeXC.js";import"./throttle-BxZZQXD3.js";import"./index-yxNm8k9x.js";import"./index-DRfGxCUi.js";import"./get-C2VjdU0L.js";import"./resolveDefaultProps-DmIaNxK6.js";import"./isWellBehavedNumber-ovfPMeKD.js";import"./PolarUtils-CTnnDHZv.js";import"./RechartsWrapper-_g--7_B0.js";import"./axisSelectors-D_pqJ7Ai.js";import"./d3-scale-U4E3X2xZ.js";import"./index-DqnMLpa_.js";import"./index-nciU1bgU.js";import"./renderedTicksSlice-Ju5mjaas.js";import"./index-DhjcBG7u.js";import"./CartesianChart-CP9Fvg-3.js";import"./chartDataContext-E_YlGMud.js";import"./CategoricalChart-e6KCKA8N.js";import"./Layer-C3EX9flk.js";import"./AnimatedItems-5jNEDjqz.js";import"./Label-xmY0FOhv.js";import"./Text-DjSFzWjg.js";import"./DOMUtils-DIjRf9zs.js";import"./useId-BXkBt9SK.js";import"./useBackwardsCompatibleTheme-BmZuK7R_.js";import"./ZIndexLayer-bw7pXUay.js";import"./useAnimationId-C3itl5g8.js";import"./ActivePoints-Dm2yavg5.js";import"./Dot-kJhNeSCF.js";import"./types--kLCfUVs.js";import"./RegisterGraphicalItemId-CCRb1xbW.js";import"./GraphicalItemClipPath-S_9K0RuN.js";import"./SetGraphicalItem-Be6goNI2.js";import"./getRadiusAndStrokeWidthFromDot-C5C4oMko.js";import"./ActiveShapeUtils-B6ISajHR.js";import"./Curve-BUAb8EfH.js";import"./step-C-IligCD.js";import"./path-DyVhHtw_.js";import"./useGraphicalItemIdentity-CR7heWJW.js";const et={title:"Examples/cartesian/Area/With Fill Pattern"},[s,i]=[600,300],e={render:()=>t.createElement(p,{width:"100%",height:i},t.createElement(m,{width:s,height:i,margin:{top:20,right:20,bottom:20,left:20},data:l},t.createElement("defs",null,t.createElement("pattern",{id:"left",width:"12",height:"4",patternUnits:"userSpaceOnUse"},t.createElement("rect",{width:"4",height:"4",fill:"#8884d8"})),t.createElement("pattern",{id:"right",width:"8",height:"4",patternUnits:"userSpaceOnUse",patternTransform:"rotate(45)"},t.createElement("rect",{width:"4",height:"4",fill:"#82ca9d"}))),t.createElement(r,{type:"monotone",dataKey:"x",stroke:"#8884d8",fillOpacity:1,fill:"url(#left)"}),t.createElement(r,{type:"monotone",dataKey:"y",stroke:"#82ca9d",fillOpacity:1,fill:"url(#right)"})))},rt=["FillPattern"];var o,a,n;e.parameters={...e.parameters,docs:{...(o=e.parameters)==null?void 0:o.docs,source:{originalSource:`{
+  render: () => {
+    return <ResponsiveContainer width="100%" height={surfaceHeight}>
+        <ComposedChart width={surfaceWidth} height={surfaceHeight} margin={{
+        top: 20,
+        right: 20,
+        bottom: 20,
+        left: 20
+      }} data={coordinateWithValueData}>
+          <defs>
+            <pattern id="left" width="12" height="4" patternUnits="userSpaceOnUse">
+              <rect width="4" height="4" fill="#8884d8" />
+            </pattern>
+            <pattern id="right" width="8" height="4" patternUnits="userSpaceOnUse" patternTransform="rotate(45)">
+              <rect width="4" height="4" fill="#82ca9d" />
+            </pattern>
+          </defs>
+          <Area type="monotone" dataKey="x" stroke="#8884d8" fillOpacity={1} fill="url(#left)" />
+          <Area type="monotone" dataKey="y" stroke="#82ca9d" fillOpacity={1} fill="url(#right)" />
+        </ComposedChart>
+      </ResponsiveContainer>;
+  }
+}`,...(n=(a=e.parameters)==null?void 0:a.docs)==null?void 0:n.source}}};export{e as FillPattern,rt as __namedExportsOrder,et as default};
