@@ -680,6 +680,13 @@ jobs:
           mv ../vr-report $TARGET_DIR/vr-tests
           mv ../vr-gallery $TARGET_DIR/vr-gallery
 
+          # GitHub Pages runs Jekyll by default, which silently drops any file or
+          # directory whose name starts with an underscore (e.g. Vite's
+          # "_data-<hash>.js" chunks), causing 404s for otherwise-valid assets.
+          # Ensure this marker file is always present so Jekyll processing stays
+          # disabled, even if gh-pages is ever recreated from scratch.
+          touch .nojekyll
+
           # Add and commit
           git add .
           git commit  --allow-empty --no-verify -m "Deploy to $TARGET_DIR"

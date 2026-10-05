@@ -3,7 +3,7 @@ import stackblitzSdk, { ProjectDependencies } from '@stackblitz/sdk';
 
 import cssVars from '../../styles/_variables.css?raw';
 import { sendEvent } from '../analytics.ts';
-import { ColorMode } from '../color-mode';
+import { ColorMode, useColorMode } from '../color-mode';
 
 type StackBlitzLinkProps = Readonly<{
   /**
@@ -135,6 +135,8 @@ export default defineConfig({
  * This uses TypeScript with full type checking enabled.
  */
 export function StackBlitzLink({ code, title, children }: StackBlitzLinkProps) {
+  const { mode } = useColorMode();
+
   return (
     <button
       type="button"
@@ -157,7 +159,7 @@ export function StackBlitzLink({ code, title, children }: StackBlitzLinkProps) {
             template: 'node',
             title,
             files: {
-              'index.html': indexHtmlCode({ title, mode: 'light' }),
+              'index.html': indexHtmlCode({ title, mode }),
               'src/index.css': cssVars,
               /*
                * This file has tsx in it, and create-react-app supports TypeScript out of the box.
@@ -178,7 +180,7 @@ export function StackBlitzLink({ code, title, children }: StackBlitzLinkProps) {
              * People interested in browsing package.json or other files can always open the sidebar with a click.
              */
             showSidebar: false,
-            theme: 'light',
+            theme: mode,
             /*
              * The only interesting message in the terminal is "Vite dev server running at..."
              * so it doesn't need to be very tall.

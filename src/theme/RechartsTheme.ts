@@ -108,13 +108,38 @@ export interface RechartsTheme {
    */
   errorBar?: Styles1D;
   /**
-   * Styles of the chart itself.
+   * Styles applied to the element that wraps the chart, the same element that the `style` prop of the chart styles.
+   * The Legend renders inside this element too, so a background here covers the Legend as well.
    *
-   * `backgroundColor` is the color that the chart is designed to be painted on.
-   * Treemap outlines its tiles in this color, and SunburstChart paints its separators
-   * and the halo around its labels in this color.
+   * The explicit `width`, `height`, and `style` props of the chart take precedence over these styles.
+   *
+   * `width` and `height` set a default size for every chart that does not set its own.
+   * Set both, or set one as a string (such as `'100%'`) together with `aspectRatio`,
+   * otherwise the chart has no size and renders nothing.
+   *
+   * These are inline styles, so they also take precedence over CSS classes on the chart.
+   *
+   * The built-in themes leave this empty: charts are transparent and the page shows through,
+   * and they have no default size.
+   *
+   * If you paint a background here, set `pageBackground` to the same color.
    */
   chart?: CSSProperties;
+  /**
+   * The color directly behind the chart: the page, or `chart.backgroundColor` if you paint one.
+   *
+   * Recharts never paints this as a background.
+   * It uses this color to draw gaps and halos that look like cut-outs:
+   * Treemap tile outlines, SunburstChart separators and the halo around its labels.
+   *
+   * Any CSS color works, including `var()` references.
+   * Features that compare colors, such as contrast checks, need a literal color.
+   *
+   * Each built-in theme is designed for one page background, and sets it here.
+   * For example, `darkTheme` expects a dark page and is not legible on a light one.
+   * `autoTheme` expects a page background that follows the CSS `color-scheme`.
+   */
+  pageBackground?: string;
 
   /**
    * Styles applied to the cursor highlight shown with an active Tooltip.

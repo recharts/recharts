@@ -260,30 +260,25 @@ type SunburstPositionMap = Map<string, ChartCoordinate>;
 type SunburstThemeStyles = {
   graphicalItems: RechartsTheme['graphicalItems'];
   /**
-   * The background color that the theme is designed for.
+   * The color behind the chart.
    * Separators and the label halo are painted in this color, so that they read as gaps.
    */
-  backgroundColor: string | undefined;
+  pageBackground: string | undefined;
 };
-
-function getBackgroundColor(theme: RechartsTheme): string | undefined {
-  const backgroundColor = theme.chart?.backgroundColor;
-  return typeof backgroundColor === 'string' ? backgroundColor : undefined;
-}
 
 /**
  * Label props from the theme. Explicit `textOptions` are applied on top of these.
  *
  * The label text takes the `typography` styles, which the Text component reads from the theme itself.
- * The label sits on top of the sector, so it gets a halo in the background color,
+ * The label sits on top of the sector, so it gets a halo in the `pageBackground` color,
  * which keeps it readable on any sector color.
  * @param themeStyles styles from the theme
  */
 function getThemedTextProps(themeStyles: SunburstThemeStyles): TextProps {
-  const { backgroundColor } = themeStyles;
+  const { pageBackground } = themeStyles;
   return {
     pointerEvents: 'none',
-    ...(backgroundColor == null ? {} : { stroke: backgroundColor, paintOrder: 'stroke fill' }),
+    ...(pageBackground == null ? {} : { stroke: pageBackground, paintOrder: 'stroke fill' }),
   };
 }
 
@@ -421,7 +416,7 @@ const SunburstChartImpl = ({
     }
     return {
       fill: childColor ?? fill ?? branchStyle?.fill,
-      stroke: stroke ?? themeStyles.backgroundColor ?? branchStyle?.stroke,
+      stroke: stroke ?? themeStyles.pageBackground ?? branchStyle?.stroke,
       strokeWidth: padding,
     };
   }
@@ -542,7 +537,7 @@ export const SunburstChart = (outsideProps: SunburstChartProps) => {
         ? undefined
         : {
             graphicalItems: theme.graphicalItems,
-            backgroundColor: getBackgroundColor(theme),
+            pageBackground: theme.pageBackground,
           },
     [theme],
   );
