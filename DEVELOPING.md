@@ -320,6 +320,6 @@ The `npm run omnidoc` command is also run automatically as part of `npm run buil
 
 Recharts publishes the website and VR test results automatically on every merge in staging environment:
 
-- recharts.github.io/recharts/canary/www/ : website preview of what it will look like once published
+- https://recharts.github.io/recharts/canary/www/ : website preview of what it will look like once published
 - https://recharts.github.io/recharts/canary/vr-gallery/preview.html : Playwright gallery, source for visual regression tests
 - https://recharts.github.io/recharts/canary/vr-tests/ : Playwright test report
