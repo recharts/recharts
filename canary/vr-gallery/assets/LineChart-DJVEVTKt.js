@@ -1,1 +1,0 @@
-import{r as a}from"./entry-DbsFpyRo.js";import{C as e}from"./RechartsWrapper-CzokIkS0.js";import{C as o}from"./CartesianChart-CdKAIK_v.js";const i=["axis"],c=a.forwardRef((r,t)=>a.createElement(o,{chartName:"LineChart",defaultTooltipEventType:"axis",validateTooltipEventTypes:i,tooltipPayloadSearcher:e,categoricalChartProps:r,ref:t}));export{c as L};
