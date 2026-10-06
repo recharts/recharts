@@ -118,12 +118,14 @@ interface ReferenceLineProps<
    *
    * - `false`: no labels are rendered
    * - `string` | `number`: the content of the label
-   * - `object`: the props of LabelList component
+   * - `object`: the props of a single Label component, such as `value` and `position`
    * - `ReactElement`: a custom SVG label element, such as `<text>` or `<g>`.
    *   HTML elements such as `<div>` are not valid inside the chart SVG and may trigger React DOM warnings.
    * - `function`: a render function of custom label
    *
    * @defaultValue false
+   *
+   * @example <ReferenceLine y={20} label={{ value: 'Target', position: 'insideTop' }} />
    *
    * @see {@link https://recharts.github.io/en-US/examples/LineChartWithReferenceLines/ Reference elements with a label}
    */
