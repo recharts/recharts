@@ -536,13 +536,14 @@ export function getCateCoordinateOfLine<T extends Record<string, unknown>>({
 }): number | null {
   if (axis.type === 'category') {
     // find coordinate of category axis by the value of category
-    // @ts-expect-error why does this use direct object access instead of getValueByDataKey?
-    if (!axis.allowDuplicatedCategory && axis.dataKey && !isNullish(entry[axis.dataKey])) {
-      // @ts-expect-error why does this use direct object access instead of getValueByDataKey?
-      const matchedTick = findEntryInArray(ticks, 'value', entry[axis.dataKey]);
+    if (!axis.allowDuplicatedCategory && !isNullish(axis.dataKey)) {
+      const categoryValue = getValueByDataKey(entry, axis.dataKey);
+      if (!isNullish(categoryValue)) {
+        const matchedTick = ticks && findEntryInArray(ticks, 'value', categoryValue);
 
-      if (matchedTick) {
-        return matchedTick.coordinate + bandSize / 2;
+        if (matchedTick) {
+          return matchedTick.coordinate + bandSize / 2;
+        }
       }
     }
 
