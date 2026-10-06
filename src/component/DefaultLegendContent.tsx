@@ -157,6 +157,16 @@ function getStrokeDasharray(input: unknown): string | undefined {
   return undefined;
 }
 
+function getStrokeLinecap(input: unknown): 'butt' | 'round' | 'square' | undefined {
+  if (typeof input === 'object' && input !== null && 'strokeLinecap' in input) {
+    const { strokeLinecap } = input;
+    if (strokeLinecap === 'butt' || strokeLinecap === 'round' || strokeLinecap === 'square') {
+      return strokeLinecap;
+    }
+  }
+  return undefined;
+}
+
 function Icon({
   data,
   iconType,
@@ -182,6 +192,7 @@ function Icon({
         fill="none"
         stroke={color}
         strokeDasharray={getStrokeDasharray(data.payload)}
+        strokeLinecap={getStrokeLinecap(data.payload)}
         x1={0}
         y1={halfSize}
         x2={SIZE}
