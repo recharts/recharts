@@ -86,17 +86,29 @@ const chartDataSlice = createSlice({
       if (action.payload.length > 0 && state.dataEndIndex !== action.payload.length - 1) {
         state.dataEndIndex = action.payload.length - 1;
       }
+      // A start index from the previous data can point outside the new data.
+      if (action.payload.length > 0) {
+        state.dataStartIndex = Math.min(Math.max(state.dataStartIndex, 0), action.payload.length - 1);
+      }
     },
     setComputedData(state, action: PayloadAction<unknown | undefined>) {
       state.computedData = action.payload;
     },
     setDataStartEndIndexes(state, action: PayloadAction<BrushStartEndIndexActionPayload>) {
       const { startIndex, endIndex } = action.payload;
+      // Keep both indexes inside the data, so a brush range that is out of bounds cannot produce NaN positions.
+      const lastIndex = state.chartData != null && state.chartData.length > 0 ? state.chartData.length - 1 : undefined;
+      const clamp = (index: number): number => {
+        if (lastIndex == null) {
+          return index;
+        }
+        return Math.min(Math.max(index, 0), lastIndex);
+      };
       if (startIndex != null) {
-        state.dataStartIndex = startIndex;
+        state.dataStartIndex = clamp(startIndex);
       }
       if (endIndex != null) {
-        state.dataEndIndex = endIndex;
+        state.dataEndIndex = clamp(endIndex);
       }
     },
   },
