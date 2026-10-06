@@ -738,7 +738,7 @@ function BarRectangleWithActiveState(
   const content = (
     <BarRectangle
       {...baseProps}
-      name={String(baseProps.name)}
+      name={baseProps.name == null ? undefined : String(baseProps.name)}
       {...entryStyleOverrides}
       {...entry}
       isActive={isVisuallyActive}
@@ -776,7 +776,7 @@ function BarRectangleNeverActive(
   return (
     <BarRectangle
       {...baseProps}
-      name={String(baseProps.name)}
+      name={baseProps.name == null ? undefined : String(baseProps.name)}
       {...entryStyleOverrides}
       {...entry}
       isActive={false}

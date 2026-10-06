@@ -174,7 +174,7 @@ function RadialBarSectors({
           onMouseEnter,
           onMouseLeave,
           onClick,
-          className: `recharts-radial-bar-sector ${entry.className}`,
+          className: clsx('recharts-radial-bar-sector', entry.className),
           forceCornerRadius: others.forceCornerRadius,
           cornerIsExternal: others.cornerIsExternal,
           animationElapsedTime,
@@ -600,7 +600,10 @@ function RadialBarBackgroundSectors({
           ...backgroundProps,
           ...adaptEventsOfChild(allOtherRadialBarProps, entry, i),
           index: i,
-          className: clsx('recharts-radial-bar-background-sector', String(backgroundProps?.className)),
+          className: clsx(
+            'recharts-radial-bar-background-sector',
+            backgroundProps?.className == null ? undefined : String(backgroundProps.className),
+          ),
           option: background,
           isActive: false,
         };
