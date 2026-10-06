@@ -1,50 +1,50 @@
 {
   "treemap": {
     "examplePath": "www/src/views/IndexView/IndexLineChart.tsx",
-    "totalSize": 933847,
-    "totalSizeLabel": "911.96 KB",
+    "totalSize": 934485,
+    "totalSizeLabel": "912.58 KB",
     "moduleCount": 374,
-    "generatedAt": "2026-10-05T06:31:27.595Z",
+    "generatedAt": "2026-10-06T09:48:10.467Z",
     "stages": [
       {
         "stage": "es6-folder",
-        "bytes": 1451040,
+        "bytes": 1451674,
         "humanReadableSize": "1.38 MB",
         "reductionFromBaselinePercent": 0
       },
       {
         "stage": "tree-shaken",
-        "bytes": 936742,
-        "humanReadableSize": "914.79 KB",
+        "bytes": 937380,
+        "humanReadableSize": "915.41 KB",
         "reductionFromBaselinePercent": 0
       },
       {
         "stage": "minified",
-        "bytes": 309580,
-        "humanReadableSize": "302.32 KB",
+        "bytes": 309794,
+        "humanReadableSize": "302.53 KB",
         "reductionFromBaselinePercent": 66.95
       },
       {
         "stage": "minified+gzip",
-        "bytes": 101561,
-        "humanReadableSize": "99.18 KB",
+        "bytes": 101606,
+        "humanReadableSize": "99.22 KB",
         "reductionFromBaselinePercent": 89.16
       }
     ],
     "tree": {
       "name": "bundle",
       "fullPath": "bundle",
-      "value": 933847,
+      "value": 934485,
       "children": [
         {
           "name": "src",
           "fullPath": "src",
-          "value": 530271,
+          "value": 530909,
           "children": [
             {
               "name": "state",
               "fullPath": "src/state",
-              "value": 183718,
+              "value": 184356,
               "children": [
                 {
                   "name": "selectors",
@@ -301,14 +301,14 @@
                   "value": 3301
                 },
                 {
+                  "name": "chartDataSlice.ts",
+                  "fullPath": "src/state/chartDataSlice.ts",
+                  "value": 3195
+                },
+                {
                   "name": "store.ts",
                   "fullPath": "src/state/store.ts",
                   "value": 3038
-                },
-                {
-                  "name": "chartDataSlice.ts",
-                  "fullPath": "src/state/chartDataSlice.ts",
-                  "value": 2557
                 },
                 {
                   "name": "graphicalItemsSlice.ts",
@@ -2597,50 +2597,50 @@
   },
   "sunburst": {
     "examplePath": "www/src/views/IndexView/IndexLineChart.tsx",
-    "totalSize": 933847,
-    "totalSizeLabel": "911.96 KB",
+    "totalSize": 934485,
+    "totalSizeLabel": "912.58 KB",
     "moduleCount": 374,
-    "generatedAt": "2026-10-05T06:31:29.894Z",
+    "generatedAt": "2026-10-06T09:48:12.704Z",
     "stages": [
       {
         "stage": "es6-folder",
-        "bytes": 1451040,
+        "bytes": 1451674,
         "humanReadableSize": "1.38 MB",
         "reductionFromBaselinePercent": 0
       },
       {
         "stage": "tree-shaken",
-        "bytes": 936742,
-        "humanReadableSize": "914.79 KB",
+        "bytes": 937380,
+        "humanReadableSize": "915.41 KB",
         "reductionFromBaselinePercent": 0
       },
       {
         "stage": "minified",
-        "bytes": 309580,
-        "humanReadableSize": "302.32 KB",
+        "bytes": 309794,
+        "humanReadableSize": "302.53 KB",
         "reductionFromBaselinePercent": 66.95
       },
       {
         "stage": "minified+gzip",
-        "bytes": 101561,
-        "humanReadableSize": "99.18 KB",
+        "bytes": 101606,
+        "humanReadableSize": "99.22 KB",
         "reductionFromBaselinePercent": 89.16
       }
     ],
     "tree": {
       "name": "bundle",
       "fullPath": "bundle",
-      "value": 933847,
+      "value": 934485,
       "children": [
         {
           "name": "src",
           "fullPath": "src",
-          "value": 530271,
+          "value": 530909,
           "children": [
             {
               "name": "state",
               "fullPath": "src/state",
-              "value": 183718,
+              "value": 184356,
               "children": [
                 {
                   "name": "selectors",
@@ -2897,14 +2897,14 @@
                   "value": 3301
                 },
                 {
+                  "name": "chartDataSlice.ts",
+                  "fullPath": "src/state/chartDataSlice.ts",
+                  "value": 3195
+                },
+                {
                   "name": "store.ts",
                   "fullPath": "src/state/store.ts",
                   "value": 3038
-                },
-                {
-                  "name": "chartDataSlice.ts",
-                  "fullPath": "src/state/chartDataSlice.ts",
-                  "value": 2557
                 },
                 {
                   "name": "graphicalItemsSlice.ts",
