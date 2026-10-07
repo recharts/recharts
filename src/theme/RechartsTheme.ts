@@ -28,9 +28,9 @@ export type GraphicalItemStyle = Styles2D & {
  * Styles shared with components that have a line (Line, ReferenceLine, ErrorBar) but no area
  */
 export type Styles1D = {
-  stroke: string;
-  strokeWidth?: number;
-  strokeOpacity?: number;
+  stroke?: string;
+  strokeWidth?: number | string;
+  strokeOpacity?: number | string;
   strokeDasharray?: string | number;
 };
 
@@ -133,7 +133,6 @@ export interface RechartsTheme {
    * Treemap tile outlines, SunburstChart separators and the halo around its labels.
    *
    * Any CSS color works, including `var()` references.
-   * Features that compare colors, such as contrast checks, need a literal color.
    *
    * Each built-in theme is designed for one page background, and sets it here.
    * For example, `darkTheme` expects a dark page and is not legible on a light one.

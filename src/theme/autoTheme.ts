@@ -49,7 +49,6 @@ function toGraphicalItem(color: string): GraphicalItemStyle {
  * Like the other built-in themes, it does not paint the page background. Pair it with a page whose background follows
  * the same `color-scheme`.
  *
- * Features that read colors in JavaScript cannot parse `light-dark()`.
  * Exported SVG and PNG images keep the colors of the color scheme that was active when they were taken.
  *
  * @experimental
