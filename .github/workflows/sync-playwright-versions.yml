@@ -28,20 +28,18 @@ jobs:
           ref: ${{ github.head_ref }}
           token: ${{ secrets.PLAYWRIGHT_VERSION_SYNC_TOKEN }}
 
+      # No npm ci: the scripts below only use Node built-ins. Installing dependencies
+      # would run their install scripts while this job holds a token with write access.
       - name: Setup Node.js
         uses: actions/setup-node@v7
         with:
           node-version: '24.x'
-          cache: 'npm'
-
-      - name: Install dependencies
-        run: npm ci
 
       # This script exits with an error if versions are out of sync.
       # We use continue-on-error so we can act on the failure in the next step.
       - name: Check for version mismatch
         id: check_versions_before
-        run: npm run check-playwright-versions
+        run: node scripts/check-playwright-versions.mjs
         continue-on-error: true
 
       # This step runs only if the check_versions step failed.
@@ -52,7 +50,7 @@ jobs:
 
       - name: Check again for version mismatch
         id: check_versions_after
-        run: npm run check-playwright-versions
+        run: node scripts/check-playwright-versions.mjs
         # by now, everything should be fixed. if it's not then something went wrong, and we should fail the job.
         continue-on-error: false
 
