@@ -19,18 +19,13 @@ export function getRechartsTheme(): RechartsThemeVariant {
 export function setCanvasBackground(canvas: HTMLElement, theme: RechartsThemeVariant): void {
   const canvasStyle = canvas.style;
   const isPreviewFrame = new URLSearchParams(window.location.search).get('preview') === 'true';
-  const isDarkTheme = theme === 'dark';
   canvas.classList.remove(...Object.values(contrastBackgroundClassNames));
 
-  if (isPreviewFrame) {
-    canvas.classList.add(isDarkTheme ? contrastBackgroundClassNames.dark : contrastBackgroundClassNames.light);
-    canvasStyle.backgroundColor = '';
-    canvasStyle.backgroundImage = '';
-    canvasStyle.backgroundPosition = '';
-    canvasStyle.backgroundSize = '';
-    return;
-  }
-
+  /*
+   * The inline color sits on top of the checkerboard class, which the mountStory fixture adds for
+   * testWithThemes specs. Preview frames add the same class here and keep the same inline color,
+   * so the preview shows exactly the background that the screenshots contain.
+   */
   if (theme === 'dark') {
     canvasStyle.backgroundColor = 'black';
   } else if (theme === 'light') {
@@ -38,9 +33,10 @@ export function setCanvasBackground(canvas: HTMLElement, theme: RechartsThemeVar
   } else {
     canvasStyle.backgroundColor = '';
   }
-  canvasStyle.backgroundImage = '';
-  canvasStyle.backgroundPosition = '';
-  canvasStyle.backgroundSize = '';
+
+  if (isPreviewFrame) {
+    canvas.classList.add(theme === 'dark' ? contrastBackgroundClassNames.dark : contrastBackgroundClassNames.light);
+  }
 }
 
 function renderWithRechartsTheme(theme: RechartsThemeVariant, story: React.ReactNode): React.ReactNode {

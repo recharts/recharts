@@ -75,19 +75,16 @@ function createTest(defaultThemes: readonly RechartsThemeVariant[], useContrastB
         testInfo.skip(true, `Recharts theme "${rechartsTheme}" is not enabled for this test`);
       }
 
-      let removeContrastBackground: (() => Promise<void>) | undefined;
       const mountStory: MountStory = async (storyId, props) => {
         const root = await mount(storyId, props);
-        if (useContrastBackground && removeContrastBackground === undefined) {
+        /*
+         * Every mount resets the canvas classes (see setCanvasBackground in the gallery renderer),
+         * so add the class after each mount. No cleanup is needed: the next mount resets it again.
+         */
+        if (useContrastBackground) {
           const backgroundClassName =
             rechartsTheme === 'dark' ? contrastBackgroundClassNames.dark : contrastBackgroundClassNames.light;
           await root.evaluate((element, className: string) => element.classList.add(className), backgroundClassName);
-          removeContrastBackground = async () => {
-            await root.evaluate(
-              (element, className: string) => element.classList.remove(className),
-              backgroundClassName,
-            );
-          };
         }
         const children = root.locator(':scope > *');
         const component: Locator = (await children.count()) === 1 ? children.first() : root;
@@ -98,12 +95,8 @@ function createTest(defaultThemes: readonly RechartsThemeVariant[], useContrastB
         });
       };
 
-      try {
-        // eslint-disable-next-line react-hooks/rules-of-hooks -- we are in a test fixture not a React hook
-        await use(mountStory);
-      } finally {
-        await removeContrastBackground?.();
-      }
+      // eslint-disable-next-line react-hooks/rules-of-hooks -- we are in a test fixture not a React hook
+      await use(mountStory);
     },
   });
 }

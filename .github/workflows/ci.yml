@@ -217,6 +217,9 @@ jobs:
         with:
           name: build-output
 
+      - name: Check for orphaned VR baselines
+        run: npm run check-orphan-snapshots
+
       - name: Typecheck
         run: npm run check-types-lib
 
@@ -710,7 +713,10 @@ jobs:
           REPORT_URL="https://$REPO_OWNER.github.io/$REPO_NAME/pr-$PR_NUMBER/vr-tests/"
           GALLERY_URL="https://$REPO_OWNER.github.io/$REPO_NAME/pr-$PR_NUMBER/vr-gallery/preview.html"
 
+          # The hidden marker identifies this comment, so later pushes update it instead of adding a new one.
+          MARKER="<!-- staging-deployment-details -->"
           COMMENT_BODY=$(cat <<EOF
+          $MARKER
           **Staging Deployment Details**
 
           - **Website:** $WEBSITE_URL
@@ -721,4 +727,12 @@ jobs:
           EOF
           )
 
-          gh pr comment $PR_NUMBER --repo ${{ github.repository }} --body "$COMMENT_BODY"
+          COMMENT_IDS=$(gh api --paginate "repos/${{ github.repository }}/issues/$PR_NUMBER/comments" \
+            --jq ".[] | select(.user.login == \"github-actions[bot]\" and (.body | contains(\"$MARKER\"))) | .id")
+          COMMENT_ID="${COMMENT_IDS%%$'\n'*}"
+
+          if [ -n "$COMMENT_ID" ]; then
+            gh api --method PATCH "repos/${{ github.repository }}/issues/comments/$COMMENT_ID" -f body="$COMMENT_BODY" > /dev/null
+          else
+            gh pr comment $PR_NUMBER --repo ${{ github.repository }} --body "$COMMENT_BODY"
+          fi
