@@ -6,8 +6,11 @@
  *   <snapshotDir>/<spec path>-snapshots/sanitize(trim("<describe...> <title> <n>"))-<project>-<platform>.png
  * It cannot know how many screenshots a test takes, so n = 1..MAX_SCREENSHOTS_PER_TEST is accepted.
  * Explicitly named screenshots (toHaveScreenshot('name.png')) cannot be derived from --list, so every
- * '<name>.png' string literal in that spec file counts as expected. Names built at runtime
+ * '<name>.png' string literal in that spec file counts as expected. An array name such as
+ * toHaveScreenshot(['group', 'shot.png']) puts the baseline in a nested directory; it counts as expected
+ * when every path segment appears as a string literal in the spec. Names built at runtime
  * (template strings, concatenation) go into `extraNamedScreenshots`.
+ * Only PNG files are checked; other baselines (toMatchSnapshot, aria snapshots) are ignored.
  *
  * The sanitize/trim rules mirror playwright-core's sanitizeForFilePath and trimLongString.
  * Re-check them when upgrading Playwright if this script starts reporting live baselines.
@@ -51,21 +54,26 @@ const report = JSON.parse(
 const projects = report.config.projects.map(p => sanitizeForFilePath(p.name));
 const projectPattern = projects.map(escapeRegExp).join('|');
 
-/** snapshot dir (absolute) -> Set of expected base names (without -<project>-<platform>.png) */
+/**
+ * snapshot dir (absolute) -> expected base names (without -<project>-<platform>.png),
+ * plus every string literal in the spec, for array-form names in nested directories.
+ */
 const expected = new Map();
 
-function namedScreenshotsIn(specFile) {
+function readSpec(specFile) {
   const source = fs.readFileSync(path.join(testDir, specFile), 'utf8');
-  return [...source.matchAll(/['"`]([^'"`\s]+)\.png['"`]/g)].map(m => sanitizeForFilePath(m[1]));
+  const literals = new Set(Array.from(source.matchAll(/(['"`])([^'"`\n]+)\1/g), m => m[2]));
+  const named = [...literals].filter(literal => literal.endsWith('.png')).map(n => sanitizeForFilePath(n.slice(0, -4)));
+  return { names: new Set([...named, ...extraNamedScreenshots]), literals };
 }
 
 function walk(suite, file, titles) {
   for (const spec of suite.specs ?? []) {
     const dir = path.join(snapshotRoot, `${file}-snapshots`);
-    if (!expected.has(dir)) expected.set(dir, new Set([...namedScreenshotsIn(file), ...extraNamedScreenshots]));
+    if (!expected.has(dir)) expected.set(dir, readSpec(file));
     const title = [...titles, spec.title].join(' ');
     for (let n = 1; n <= MAX_SCREENSHOTS_PER_TEST; n++) {
-      expected.get(dir).add(sanitizeForFilePath(trimLongString(`${title} ${n}`)));
+      expected.get(dir).names.add(sanitizeForFilePath(trimLongString(`${title} ${n}`)));
     }
   }
   for (const child of suite.suites ?? []) {
@@ -77,26 +85,37 @@ for (const fileSuite of report.suites) {
   walk(fileSuite, fileSuite.file, []);
 }
 
+const screenshotFileRegex = new RegExp(`^(.*)-(${projectPattern})-[a-z0-9]+\\.png$`);
+
+function isExpected(ownerDir, file) {
+  const spec = expected.get(ownerDir);
+  const segments = path.relative(ownerDir, file).split(path.sep);
+  const match = screenshotFileRegex.exec(segments.pop());
+  if (match === null) return false;
+  if (segments.length === 0) return spec.names.has(match[1]);
+  // Array-form name: Playwright joins the segments without sanitizing them.
+  return [...segments, `${match[1]}.png`].every(segment => spec.literals.has(segment));
+}
+
 const orphans = [];
-function scan(dir) {
+/** ownerDir is the spec's <spec>-snapshots directory once the scan is inside one. */
+function scan(dir, ownerDir) {
   for (const entry of fs.readdirSync(dir, { withFileTypes: true })) {
     const full = path.join(dir, entry.name);
     if (entry.isDirectory()) {
-      if (entry.name.endsWith('-snapshots') && !expected.has(full)) {
-        orphans.push(`${full}${path.sep} (no spec file with tests)`);
+      if (ownerDir === undefined && entry.name.endsWith('-snapshots')) {
+        if (expected.has(full)) scan(full, full);
+        else orphans.push(`${full}${path.sep} (no spec file with tests)`);
       } else {
-        scan(full);
+        scan(full, ownerDir);
       }
       continue;
     }
-    const names = expected.get(dir);
-    if (names === undefined) continue;
-    const match = new RegExp(`^(.*)-(${projectPattern})-[a-z0-9]+\\.png$`).exec(entry.name);
-    const known = match !== null && names.has(match[1]);
-    if (!known) orphans.push(full);
+    if (ownerDir === undefined || !entry.name.endsWith('.png')) continue;
+    if (!isExpected(ownerDir, full)) orphans.push(full);
   }
 }
-if (fs.existsSync(snapshotRoot)) scan(snapshotRoot);
+if (fs.existsSync(snapshotRoot)) scan(snapshotRoot, undefined);
 
 if (orphans.length > 0) {
   console.error(`${orphans.length} orphaned baseline(s). Delete them, or fix the test that should produce them:`);
