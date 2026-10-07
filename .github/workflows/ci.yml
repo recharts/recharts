@@ -217,6 +217,9 @@ jobs:
         with:
           name: build-output
 
+      - name: Check for orphaned VR baselines
+        run: npm run check-orphan-snapshots
+
       - name: Typecheck
         run: npm run check-types-lib
 

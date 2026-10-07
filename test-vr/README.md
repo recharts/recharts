@@ -85,11 +85,11 @@ testWithThemes('LineChart', async ({ mountStory }) => {
 
 Each `testWithThemes` test runs in three Playwright projects for each browser:
 
-| Project suffix                              | Gallery rendering                         | Browser color scheme             | Canvas             |
-| ------------------------------------------- | ----------------------------------------- | -------------------------------- | ------------------ |
-| no suffix (`chromium`, `firefox`, `webkit`) | No `RechartsThemeProvider` (`legacy`)     | Playwright default (`light`)     | Light checkerboard |
-| `-light`                                    | `RechartsThemeProvider` with `lightTheme` | `light`                          | Light checkerboard |
-| `-dark`                                     | `RechartsThemeProvider` with `darkTheme`  | `dark`                           | Dark checkerboard  |
+| Project suffix                              | Gallery rendering                         | Browser color scheme         | Canvas             |
+| ------------------------------------------- | ----------------------------------------- | ---------------------------- | ------------------ |
+| no suffix (`chromium`, `firefox`, `webkit`) | No `RechartsThemeProvider` (`legacy`)     | Playwright default (`light`) | Light checkerboard |
+| `-light`                                    | `RechartsThemeProvider` with `lightTheme` | `light`                      | Light checkerboard |
+| `-dark`                                     | `RechartsThemeProvider` with `darkTheme`  | `dark`                       | Dark checkerboard  |
 
 The selected Recharts theme is supplied by the Playwright project and resolved
 inside the gallery boundary. It is not a story prop. The light and dark projects
@@ -179,6 +179,10 @@ Convenience scripts so that the `package.json` scripts are shorter and easier to
 
 This is where all the snapshots (which would usually be screenshots) are stored.
 Please commit this folder to the repository - this is the baseline.
+
+Playwright never deletes a baseline when a test is renamed or removed. CI runs
+`npm run check-orphan-snapshots`, which fails on baselines that no current test
+produces. Delete those files, or fix the test that should produce them.
 
 ### `gallery`
 
