@@ -256,7 +256,7 @@ export function ThemingGuide() {
             <td>
               <code>lightTheme</code>
             </td>
-            <td>A complete light-mode style: dark text, light grid, the familiar Recharts palette.</td>
+            <td>A complete light-mode style: dark text, light grid.</td>
           </tr>
           <tr>
             <td>
