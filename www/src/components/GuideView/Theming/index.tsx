@@ -606,8 +606,34 @@ export function ThemingGuide() {
       <h2>Colors for multiple series</h2>
       <p>
         The theme uses each graphical item&apos;s <code>dataKey</code> to decide which entry from{' '}
-        <code>graphicalItems</code> to use for its color.
+        <code>graphicalItems</code> to use for its color. Recharts collects the unique <code>dataKey</code> values of
+        all graphical items in the chart, sorts them as strings, and gives the first key the first entry, the second key
+        the second entry, and so on. The palette repeats when there are more keys than entries.
       </p>
+      <p>
+        Colors have no inherent order - blue is not &quot;first&quot; and green is not &quot;second&quot; - so the
+        assignment does not follow the order in which you write the graphical items in JSX. Some consequences:
+      </p>
+      <ul>
+        <li>
+          Reordering graphical items in JSX does not change their colors. Renaming a <code>dataKey</code> can.
+        </li>
+        <li>
+          Adding or removing a series can change the colors of the other series in the same chart, because their
+          position in the sorted list changes.
+        </li>
+        <li>
+          Graphical items with the same <code>dataKey</code> share a color, for example a <LinkToApi>Bar</LinkToApi> and
+          a <LinkToApi>Line</LinkToApi> that show the same values.
+        </li>
+        <li>
+          The same <code>dataKey</code> can get different colors in two charts that show different sets of series.
+        </li>
+        <li>
+          Hiding a series, for example by clicking its <LinkToApi>Legend</LinkToApi> entry, does not change the colors
+          of the others.
+        </li>
+      </ul>
       <p>
         This is a convenient default. If you need different colors or want to control the assignment yourself, provide
         an explicit <code>fill</code> or <code>stroke</code> prop on the graphical item.
@@ -620,8 +646,12 @@ export function ThemingGuide() {
 
       <h2>Writing your own theme</h2>
       <p>
-        A <code>RechartsTheme</code> is a plain object: build it inline, import it from a shared module, or fetch it as
-        JSON. Only <code>graphicalItems</code> is required.
+        A <code>RechartsTheme</code> is a plain object: define it in your own module, import it from a shared package,
+        or fetch it as JSON. Only <code>graphicalItems</code> is required.
+      </p>
+      <p>
+        Define the theme object outside of your components, or wrap it in <code>useMemo</code> when it depends on props
+        or state. A new theme object on every render makes every chart below the provider re-render too.
       </p>
       <SourceCodeEditor value={customThemeSnippet} />
       <p>The example below defines a complete theme from scratch and applies it to a line chart:</p>
