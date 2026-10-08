@@ -1406,43 +1406,43 @@ describe('<PolarAngleAxis />', () => {
       expectAngleAxisTickLabels(container, [
         {
           textContext: '420',
-          x: '394.24978336205567',
-          y: '105.75021663794428',
-        },
-        {
-          textContext: '460',
           x: '249.99999999999997',
           y: '46',
         },
         {
-          textContext: '999',
+          textContext: '460',
           x: '105.75021663794428',
           y: '105.7502166379443',
         },
         {
-          textContext: '500',
+          textContext: '999',
           x: '46',
           y: '250.00000000000003',
         },
         {
-          textContext: '864',
+          textContext: '500',
           x: '105.7502166379443',
           y: '394.2497833620557',
         },
         {
-          textContext: '650',
+          textContext: '864',
           x: '250',
           y: '454',
         },
         {
-          textContext: '765',
+          textContext: '650',
           x: '394.2497833620557',
           y: '394.2497833620557',
         },
         {
-          textContext: '365',
+          textContext: '765',
           x: '454',
           y: '250',
+        },
+        {
+          textContext: '365',
+          x: '394.2497833620557',
+          y: '105.7502166379443',
         },
       ]);
     });
@@ -1774,15 +1774,15 @@ describe('<PolarAngleAxis />', () => {
       it('should select ticks', () => {
         const { spy } = renderTestCase(state => selectPolarAxisTicks(state, 'angleAxis', 0, false));
         expectLastCalledWith(spy, [
-          { coordinate: 0, index: 0, offset: -0, value: 0 },
-          { coordinate: 45, index: 1, offset: -0, value: 50 },
-          { coordinate: 90, index: 2, offset: -0, value: 100 },
-          { coordinate: 135, index: 3, offset: -0, value: 150 },
-          { coordinate: 180, index: 4, offset: -0, value: 200 },
-          { coordinate: 225, index: 5, offset: -0, value: 250 },
-          { coordinate: 270, index: 6, offset: -0, value: 300 },
-          { coordinate: 315, index: 7, offset: -0, value: 350 },
-          { coordinate: 360, index: 8, offset: -0, value: 400 },
+          { coordinate: 0, index: 0, offset: 0, value: 0 },
+          { coordinate: 45, index: 1, offset: 0, value: 50 },
+          { coordinate: 90, index: 2, offset: 0, value: 100 },
+          { coordinate: 135, index: 3, offset: 0, value: 150 },
+          { coordinate: 180, index: 4, offset: 0, value: 200 },
+          { coordinate: 225, index: 5, offset: 0, value: 250 },
+          { coordinate: 270, index: 6, offset: 0, value: 300 },
+          { coordinate: 315, index: 7, offset: 0, value: 350 },
+          { coordinate: 360, index: 8, offset: 0, value: 400 },
         ]);
         expect(spy).toHaveBeenCalledTimes(2);
       });
@@ -1801,12 +1801,6 @@ describe('<PolarAngleAxis />', () => {
       it('should render ticks', () => {
         const { container } = renderTestCase();
         expectAngleAxisTicks(container, [
-          {
-            x1: '310.5673308974897',
-            x2: '313.0394668524893',
-            y1: '436.4070771938501',
-            y2: '444.01552932421134',
-          },
           {
             x1: '446',
             x2: '454',
@@ -1831,6 +1825,12 @@ describe('<PolarAngleAxis />', () => {
             y1: '365.20590944932474',
             y2: '369.9081914676645',
           },
+          {
+            x1: '310.5673308974897',
+            x2: '313.0394668524892',
+            y1: '436.4070771938501',
+            y2: '444.01552932421134',
+          },
         ]);
       });
 
@@ -1840,28 +1840,28 @@ describe('<PolarAngleAxis />', () => {
         expectAngleAxisTickLabels(container, [
           {
             textContext: '400',
-            x: '313.0394668524893',
-            y: '444.01552932421134',
-          },
-          {
-            textContext: '300',
             x: '454',
             y: '250',
           },
           {
-            textContext: '200',
+            textContext: '300',
             x: '313.0394668524893',
             y: '55.984470675788685',
           },
           {
-            textContext: '278',
+            textContext: '200',
             x: '84.96053314751074',
             y: '130.09180853233545',
           },
           {
-            textContext: '189',
+            textContext: '278',
             x: '84.96053314751072',
             y: '369.9081914676645',
+          },
+          {
+            textContext: '189',
+            x: '313.0394668524892',
+            y: '444.01552932421134',
           },
         ]);
       });
@@ -1947,11 +1947,11 @@ describe('<PolarAngleAxis />', () => {
       it('should select ticks', () => {
         const { spy } = renderTestCase(state => selectPolarAxisTicks(state, 'angleAxis', 0, false));
         expectLastCalledWith(spy, [
-          { coordinate: -72, index: 0, offset: -72, value: 400 },
-          { coordinate: 0, index: 1, offset: -72, value: 300 },
-          { coordinate: 72, index: 2, offset: -72, value: 200 },
-          { coordinate: 144, index: 3, offset: -72, value: 278 },
-          { coordinate: 216, index: 4, offset: -72, value: 189 },
+          { coordinate: 0, index: 0, offset: 0, value: 400 },
+          { coordinate: 72, index: 1, offset: 0, value: 300 },
+          { coordinate: 144, index: 2, offset: 0, value: 200 },
+          { coordinate: 216, index: 3, offset: 0, value: 278 },
+          { coordinate: 288, index: 4, offset: 0, value: 189 },
         ]);
         expect(spy).toHaveBeenCalledTimes(2);
       });
@@ -2056,15 +2056,15 @@ describe('<PolarAngleAxis />', () => {
       it('should select ticks', () => {
         const { spy } = renderTestCase(state => selectPolarAxisTicks(state, 'angleAxis', 0, false));
         expectLastCalledWith(spy, [
-          { index: 0, coordinate: 0, offset: -0, value: 0 },
-          { index: 1, coordinate: 45, offset: -0, value: 50 },
-          { index: 2, coordinate: 90, offset: -0, value: 100 },
-          { index: 3, coordinate: 135, offset: -0, value: 150 },
-          { index: 4, coordinate: 180, offset: -0, value: 200 },
-          { index: 5, coordinate: 225, offset: -0, value: 250 },
-          { index: 6, coordinate: 270, offset: -0, value: 300 },
-          { index: 7, coordinate: 315, offset: -0, value: 350 },
-          { index: 8, coordinate: 360, offset: -0, value: 400 },
+          { index: 0, coordinate: 0, offset: 0, value: 0 },
+          { index: 1, coordinate: 45, offset: 0, value: 50 },
+          { index: 2, coordinate: 90, offset: 0, value: 100 },
+          { index: 3, coordinate: 135, offset: 0, value: 150 },
+          { index: 4, coordinate: 180, offset: 0, value: 200 },
+          { index: 5, coordinate: 225, offset: 0, value: 250 },
+          { index: 6, coordinate: 270, offset: 0, value: 300 },
+          { index: 7, coordinate: 315, offset: 0, value: 350 },
+          { index: 8, coordinate: 360, offset: 0, value: 400 },
         ]);
         expect(spy).toHaveBeenCalledTimes(2);
       });
@@ -2743,61 +2743,61 @@ describe('<PolarAngleAxis />', () => {
         {
           coordinate: -24172.926148617094,
           index: 0,
-          offset: -0,
+          offset: 0,
           value: 1,
         },
         {
           coordinate: -21429.954757673444,
           index: 1,
-          offset: -0,
+          offset: 0,
           value: 2,
         },
         {
           coordinate: -19825.41935342046,
           index: 2,
-          offset: -0,
+          offset: 0,
           value: 3,
         },
         {
           coordinate: -18686.983366729797,
           index: 3,
-          offset: -0,
+          offset: 0,
           value: 4,
         },
         {
           coordinate: -17803.943812512767,
           index: 4,
-          offset: -0,
+          offset: 0,
           value: 5,
         },
         {
           coordinate: -17082.44796247681,
           index: 5,
-          offset: -0,
+          offset: 0,
           value: 6,
         },
         {
           coordinate: -16472.431913188248,
           index: 6,
-          offset: -0,
+          offset: 0,
           value: 7,
         },
         {
           coordinate: -15944.011975786148,
           index: 7,
-          offset: -0,
+          offset: 0,
           value: 8,
         },
         {
           coordinate: -15477.912558223828,
           index: 8,
-          offset: -0,
+          offset: 0,
           value: 9,
         },
         {
           coordinate: -15060.972421569122,
           index: 9,
-          offset: -0,
+          offset: 0,
           value: 10,
         },
       ]);

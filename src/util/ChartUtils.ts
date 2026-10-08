@@ -12,7 +12,7 @@ import {
   stackOrderNone,
 } from 'victory-vendor/d3-shape';
 
-import { findEntryInArray, isNan, isNotNil, isNullish, isNumber, isNumOrStr, mathSign } from './DataUtils';
+import { findEntryInArray, isNan, isNotNil, isNullish, isNumber, isNumOrStr } from './DataUtils';
 
 import { TooltipEntrySettings, TooltipPayloadEntry } from '../state/tooltipSlice';
 import {
@@ -237,7 +237,9 @@ export const getTicksOfAxis = (
   const offsetForBand = realScaleType === 'scaleBand' && scale.bandwidth ? scale.bandwidth() / 2 : 2;
   let offset = (isGrid || isAll) && type === 'category' && scale.bandwidth ? scale.bandwidth() / offsetForBand : 0;
 
-  offset = axisType === 'angleAxis' && range && range.length >= 2 ? mathSign(range[0] - range[1]) * 2 * offset : offset;
+  if (axisType === 'angleAxis' && range && range.length >= 2) {
+    offset = range[0] > range[1] ? 2 * offset : 0;
+  }
 
   // The ticks set by user should only affect the ticks adjacent to axis line
   if (isGrid && (ticks || niceTicks)) {

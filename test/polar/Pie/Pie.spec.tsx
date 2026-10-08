@@ -1432,34 +1432,34 @@ describe('<Pie />', () => {
         const { spy } = renderTestCase(selectTooltipAxisTicks);
         expectLastCalledWith(spy, [
           {
-            coordinate: -72,
+            coordinate: 0,
             value: 0,
             index: 0,
-            offset: -72,
-          },
-          {
-            coordinate: 0,
-            value: 1,
-            index: 1,
-            offset: -72,
+            offset: 0,
           },
           {
             coordinate: 72,
-            value: 2,
-            index: 2,
-            offset: -72,
+            value: 1,
+            index: 1,
+            offset: 0,
           },
           {
             coordinate: 144,
-            value: 3,
-            index: 3,
-            offset: -72,
+            value: 2,
+            index: 2,
+            offset: 0,
           },
           {
             coordinate: 216,
+            value: 3,
+            index: 3,
+            offset: 0,
+          },
+          {
+            coordinate: 288,
             value: 4,
             index: 4,
-            offset: -72,
+            offset: 0,
           },
         ]);
         expect(spy).toHaveBeenCalledTimes(2);
