@@ -99,9 +99,9 @@ describe('<Radar />', () => {
       direction: 'counter-clockwise',
       startAngle: -270,
       endAngle: 90,
-      expectedAngles: [-315, -270, -225, -180, -135, -90, -45, 0],
+      expectedAngles: [-270, -225, -180, -135, -90, -45, 0, 45],
       expectedPolygon:
-        'M308.209,191.791L250,159.84L111.5457,111.5457L152,250L130.2557,369.7443L250,377.4L356.0236,356.0236L321.54,250L308.209,191.791Z',
+        'M250,167.68L186.2473,186.2473L54.196,250L180.7035,319.2965L250,419.344L340.0854,340.0854L399.94,250L300.5864,199.4136L250,167.68Z',
     },
   ])('in a chart rotating $direction', ({ startAngle, endAngle, expectedAngles, expectedPolygon }) => {
     const renderTestCase = createSelectorTestCase(({ children }) => (
@@ -124,6 +124,14 @@ describe('<Radar />', () => {
       const expected = exampleRadarData.map((entry, index) => [entry.name, expectedAngles[index]]);
       expect(ticks.map(tick => [tick.value, tick.coordinate])).toEqual(expected);
       expect(radarPoints.points.map(point => [point.name, point.angle])).toEqual(expected);
+    });
+
+    it('should put the first category on startAngle', () => {
+      const ticks = renderTestCase(state => selectPolarAngleAxisTicks(state, 'angleAxis', defaultAxisId, false)).spy
+        .mock.lastCall?.[0];
+      assertNotNull(ticks);
+
+      expect(ticks[0]?.coordinate).toBe(startAngle);
     });
 
     it('should render a polygon', () => {
