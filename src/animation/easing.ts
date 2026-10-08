@@ -52,9 +52,9 @@ const getBezierCoordinates = (...args: BezierInput): [number, number, number, nu
       case 'ease-in':
         return [0.42, 0.0, 1.0, 1.0];
       case 'ease-out':
-        return [0.42, 0.0, 0.58, 1.0];
-      case 'ease-in-out':
         return [0.0, 0.0, 0.58, 1.0];
+      case 'ease-in-out':
+        return [0.42, 0.0, 0.58, 1.0];
       default: {
         const easing = parseCubicBezier(args[0]);
         if (easing) {
