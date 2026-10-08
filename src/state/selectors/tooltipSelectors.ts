@@ -431,7 +431,7 @@ export const selectTooltipAxisTicks: (state: RechartsRootState) => ReadonlyArray
     selectTooltipAxis,
     selectTooltipAxisRealScaleType,
     selectTooltipAxisScale,
-    selectTooltipAxisRange,
+    selectTooltipAxisRangeWithReverse,
     selectTooltipDuplicateDomain,
     selectTooltipCategoricalDomain,
     selectTooltipAxisType,
