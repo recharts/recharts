@@ -24,6 +24,7 @@ import { createSelectorTestCase } from '../helper/createSelectorTestCase';
 import { selectRadiusAxis } from '../../src/state/selectors/polarAxisSelectors';
 import { selectPolarAngleAxisTicks } from '../../src/state/selectors/polarScaleSelectors';
 import { selectRadarPoints } from '../../src/state/selectors/radarSelectors';
+import { selectTooltipAxisTicks } from '../../src/state/selectors/tooltipSelectors';
 import { defaultAxisId } from '../../src/state/cartesianAxisSlice';
 
 type Point = { x?: number | string; y?: number | string };
@@ -138,6 +139,31 @@ describe('<Radar />', () => {
       const { container } = renderTestCase();
 
       expectRadarPolygons(container, [{ d: expectedPolygon, fill: null, fillOpacity: null }]);
+    });
+  });
+
+  describe('with a reversed angle axis', () => {
+    const renderTestCase = createSelectorTestCase(({ children }) => (
+      <RadarChart width={500} height={500} data={exampleRadarData}>
+        <PolarAngleAxis dataKey="name" reversed />
+        <Radar dataKey="value" isAnimationActive={false} />
+        {children}
+      </RadarChart>
+    ));
+
+    it('should give the tooltip the same ticks as the angle axis', () => {
+      const axisTicks = renderTestCase(state => selectPolarAngleAxisTicks(state, 'angleAxis', defaultAxisId, false)).spy
+        .mock.lastCall?.[0];
+      const tooltipTicks = renderTestCase(selectTooltipAxisTicks).spy.mock.lastCall?.[0];
+      assertNotNull(axisTicks);
+      assertNotNull(tooltipTicks);
+
+      const expected = exampleRadarData.map((entry, index) => [
+        entry.name,
+        [-270, -225, -180, -135, -90, -45, 0, 45][index],
+      ]);
+      expect(axisTicks.map(tick => [tick.value, tick.coordinate])).toEqual(expected);
+      expect(tooltipTicks.map(tick => [tick.value, tick.coordinate])).toEqual(expected);
     });
   });
 
