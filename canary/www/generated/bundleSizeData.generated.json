@@ -1,45 +1,45 @@
 {
   "treemap": {
     "examplePath": "www/src/views/IndexView/IndexLineChart.tsx",
-    "totalSize": 934485,
-    "totalSizeLabel": "912.58 KB",
-    "moduleCount": 374,
-    "generatedAt": "2026-10-08T06:03:47.381Z",
+    "totalSize": 935313,
+    "totalSizeLabel": "913.39 KB",
+    "moduleCount": 375,
+    "generatedAt": "2026-10-09T11:14:04.904Z",
     "stages": [
       {
         "stage": "es6-folder",
-        "bytes": 1452155,
-        "humanReadableSize": "1.38 MB",
+        "bytes": 1453315,
+        "humanReadableSize": "1.39 MB",
         "reductionFromBaselinePercent": 0
       },
       {
         "stage": "tree-shaken",
-        "bytes": 937380,
-        "humanReadableSize": "915.41 KB",
+        "bytes": 938210,
+        "humanReadableSize": "916.22 KB",
         "reductionFromBaselinePercent": 0
       },
       {
         "stage": "minified",
-        "bytes": 309794,
-        "humanReadableSize": "302.53 KB",
-        "reductionFromBaselinePercent": 66.95
+        "bytes": 309927,
+        "humanReadableSize": "302.66 KB",
+        "reductionFromBaselinePercent": 66.97
       },
       {
         "stage": "minified+gzip",
-        "bytes": 101607,
-        "humanReadableSize": "99.23 KB",
-        "reductionFromBaselinePercent": 89.16
+        "bytes": 101639,
+        "humanReadableSize": "99.26 KB",
+        "reductionFromBaselinePercent": 89.17
       }
     ],
     "tree": {
       "name": "bundle",
       "fullPath": "bundle",
-      "value": 934485,
+      "value": 935313,
       "children": [
         {
           "name": "src",
           "fullPath": "src",
-          "value": 530909,
+          "value": 531737,
           "children": [
             {
               "name": "state",
@@ -801,12 +801,12 @@
             {
               "name": "component",
               "fullPath": "src/component",
-              "value": 45066,
+              "value": 45084,
               "children": [
                 {
                   "name": "Text.tsx",
                   "fullPath": "src/component/Text.tsx",
-                  "value": 13693
+                  "value": 13711
                 },
                 {
                   "name": "Label.tsx",
@@ -1043,6 +1043,43 @@
               ]
             },
             {
+              "name": "theme",
+              "fullPath": "src/theme",
+              "value": 5670,
+              "children": [
+                {
+                  "name": "useBackwardsCompatibleTheme.ts",
+                  "fullPath": "src/theme/useBackwardsCompatibleTheme.ts",
+                  "value": 1887
+                },
+                {
+                  "name": "graphicalItemIdentity.ts",
+                  "fullPath": "src/theme/graphicalItemIdentity.ts",
+                  "value": 1312
+                },
+                {
+                  "name": "pageBackground.ts",
+                  "fullPath": "src/theme/pageBackground.ts",
+                  "value": 810
+                },
+                {
+                  "name": "useGraphicalItemIdentity.ts",
+                  "fullPath": "src/theme/useGraphicalItemIdentity.ts",
+                  "value": 782
+                },
+                {
+                  "name": "RechartsThemeContext.ts",
+                  "fullPath": "src/theme/RechartsThemeContext.ts",
+                  "value": 505
+                },
+                {
+                  "name": "cssStylesToSvgStyles.ts",
+                  "fullPath": "src/theme/cssStylesToSvgStyles.ts",
+                  "value": 374
+                }
+              ]
+            },
+            {
               "name": "container",
               "fullPath": "src/container",
               "value": 5175,
@@ -1066,38 +1103,6 @@
                   "name": "Layer.tsx",
                   "fullPath": "src/container/Layer.tsx",
                   "value": 608
-                }
-              ]
-            },
-            {
-              "name": "theme",
-              "fullPath": "src/theme",
-              "value": 4860,
-              "children": [
-                {
-                  "name": "useBackwardsCompatibleTheme.ts",
-                  "fullPath": "src/theme/useBackwardsCompatibleTheme.ts",
-                  "value": 1887
-                },
-                {
-                  "name": "graphicalItemIdentity.ts",
-                  "fullPath": "src/theme/graphicalItemIdentity.ts",
-                  "value": 1312
-                },
-                {
-                  "name": "useGraphicalItemIdentity.ts",
-                  "fullPath": "src/theme/useGraphicalItemIdentity.ts",
-                  "value": 782
-                },
-                {
-                  "name": "RechartsThemeContext.ts",
-                  "fullPath": "src/theme/RechartsThemeContext.ts",
-                  "value": 505
-                },
-                {
-                  "name": "cssStylesToSvgStyles.ts",
-                  "fullPath": "src/theme/cssStylesToSvgStyles.ts",
-                  "value": 374
                 }
               ]
             },
@@ -2597,45 +2602,45 @@
   },
   "sunburst": {
     "examplePath": "www/src/views/IndexView/IndexLineChart.tsx",
-    "totalSize": 934485,
-    "totalSizeLabel": "912.58 KB",
-    "moduleCount": 374,
-    "generatedAt": "2026-10-08T06:03:49.576Z",
+    "totalSize": 935313,
+    "totalSizeLabel": "913.39 KB",
+    "moduleCount": 375,
+    "generatedAt": "2026-10-09T11:14:07.193Z",
     "stages": [
       {
         "stage": "es6-folder",
-        "bytes": 1452155,
-        "humanReadableSize": "1.38 MB",
+        "bytes": 1453315,
+        "humanReadableSize": "1.39 MB",
         "reductionFromBaselinePercent": 0
       },
       {
         "stage": "tree-shaken",
-        "bytes": 937380,
-        "humanReadableSize": "915.41 KB",
+        "bytes": 938210,
+        "humanReadableSize": "916.22 KB",
         "reductionFromBaselinePercent": 0
       },
       {
         "stage": "minified",
-        "bytes": 309794,
-        "humanReadableSize": "302.53 KB",
-        "reductionFromBaselinePercent": 66.95
+        "bytes": 309927,
+        "humanReadableSize": "302.66 KB",
+        "reductionFromBaselinePercent": 66.97
       },
       {
         "stage": "minified+gzip",
-        "bytes": 101607,
-        "humanReadableSize": "99.23 KB",
-        "reductionFromBaselinePercent": 89.16
+        "bytes": 101639,
+        "humanReadableSize": "99.26 KB",
+        "reductionFromBaselinePercent": 89.17
       }
     ],
     "tree": {
       "name": "bundle",
       "fullPath": "bundle",
-      "value": 934485,
+      "value": 935313,
       "children": [
         {
           "name": "src",
           "fullPath": "src",
-          "value": 530909,
+          "value": 531737,
           "children": [
             {
               "name": "state",
@@ -3397,12 +3402,12 @@
             {
               "name": "component",
               "fullPath": "src/component",
-              "value": 45066,
+              "value": 45084,
               "children": [
                 {
                   "name": "Text.tsx",
                   "fullPath": "src/component/Text.tsx",
-                  "value": 13693
+                  "value": 13711
                 },
                 {
                   "name": "Label.tsx",
@@ -3639,6 +3644,43 @@
               ]
             },
             {
+              "name": "theme",
+              "fullPath": "src/theme",
+              "value": 5670,
+              "children": [
+                {
+                  "name": "useBackwardsCompatibleTheme.ts",
+                  "fullPath": "src/theme/useBackwardsCompatibleTheme.ts",
+                  "value": 1887
+                },
+                {
+                  "name": "graphicalItemIdentity.ts",
+                  "fullPath": "src/theme/graphicalItemIdentity.ts",
+                  "value": 1312
+                },
+                {
+                  "name": "pageBackground.ts",
+                  "fullPath": "src/theme/pageBackground.ts",
+                  "value": 810
+                },
+                {
+                  "name": "useGraphicalItemIdentity.ts",
+                  "fullPath": "src/theme/useGraphicalItemIdentity.ts",
+                  "value": 782
+                },
+                {
+                  "name": "RechartsThemeContext.ts",
+                  "fullPath": "src/theme/RechartsThemeContext.ts",
+                  "value": 505
+                },
+                {
+                  "name": "cssStylesToSvgStyles.ts",
+                  "fullPath": "src/theme/cssStylesToSvgStyles.ts",
+                  "value": 374
+                }
+              ]
+            },
+            {
               "name": "container",
               "fullPath": "src/container",
               "value": 5175,
@@ -3662,38 +3704,6 @@
                   "name": "Layer.tsx",
                   "fullPath": "src/container/Layer.tsx",
                   "value": 608
-                }
-              ]
-            },
-            {
-              "name": "theme",
-              "fullPath": "src/theme",
-              "value": 4860,
-              "children": [
-                {
-                  "name": "useBackwardsCompatibleTheme.ts",
-                  "fullPath": "src/theme/useBackwardsCompatibleTheme.ts",
-                  "value": 1887
-                },
-                {
-                  "name": "graphicalItemIdentity.ts",
-                  "fullPath": "src/theme/graphicalItemIdentity.ts",
-                  "value": 1312
-                },
-                {
-                  "name": "useGraphicalItemIdentity.ts",
-                  "fullPath": "src/theme/useGraphicalItemIdentity.ts",
-                  "value": 782
-                },
-                {
-                  "name": "RechartsThemeContext.ts",
-                  "fullPath": "src/theme/RechartsThemeContext.ts",
-                  "value": 505
-                },
-                {
-                  "name": "cssStylesToSvgStyles.ts",
-                  "fullPath": "src/theme/cssStylesToSvgStyles.ts",
-                  "value": 374
                 }
               ]
             },
