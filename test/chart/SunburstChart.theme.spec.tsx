@@ -107,6 +107,22 @@ describe('<SunburstChart /> theme', () => {
     expect(getSectors(container).map(sector => sector.stroke)).toEqual(['darkred', 'darkred', 'darkred', 'darkgreen']);
   });
 
+  it('paints separators and the label halo in chart.backgroundColor if the theme has no page background', () => {
+    const { container } = renderSunburst({
+      ...theme,
+      pageBackground: undefined,
+      chart: { backgroundColor: '#f8fafc' },
+    });
+    expect(getSectors(container).map(sector => sector.stroke)).toEqual(['#f8fafc', '#f8fafc', '#f8fafc', '#f8fafc']);
+    expect(getFirstLabel(container)).toHaveAttribute('stroke', '#f8fafc');
+  });
+
+  it('prefers the page background over chart.backgroundColor', () => {
+    const { container } = renderSunburst({ ...theme, chart: { backgroundColor: '#f8fafc' } });
+    expect(getSectors(container).map(sector => sector.stroke)).toEqual(['ivory', 'ivory', 'ivory', 'ivory']);
+    expect(getFirstLabel(container)).toHaveAttribute('stroke', 'ivory');
+  });
+
   it('styles labels with typography and a halo in the page background color, without the legacy label styles', () => {
     const { container } = renderSunburst(theme);
     const label = getFirstLabel(container);
