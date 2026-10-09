@@ -35,7 +35,7 @@ import { GraphicalItemId } from '../state/graphicalItemsSlice';
 import { initialEventSettingsState } from '../state/eventSettingsSlice';
 import { RechartsTheme, Styles2D } from '../theme/RechartsTheme';
 import { useRechartsTheme } from '../theme/RechartsThemeContext';
-import { getOwnStyles, hasOwnStyles } from '../theme/dataEntryStyles';
+import { getOwnStyles, hasOwnColors } from '../theme/dataEntryStyles';
 
 const interpolationGenerator = (a: number, b: number) => {
   const ka = +a;
@@ -1340,7 +1340,7 @@ const noStyles: ResolvedStyles = { themeStyles: {}, ownStyles: {} };
  *
  * Nodes take the theme colors by their index in `data.nodes`,
  * so that a node keeps its color when the layout or sorting changes.
- * A node that defines its own styles in data ignores the theme completely.
+ * A node that defines its own colors in data ignores the theme completely.
  *
  * Without a theme, Sankey keeps its legacy behaviour and does not read styles from data.
  * @param themeGraphicalItems graphicalItems of the active theme, or undefined if there is no theme
@@ -1355,12 +1355,13 @@ function resolveNodeStyles(
   if (themeGraphicalItems == null) {
     return noStyles;
   }
-  if (hasOwnStyles(dataNode)) {
+  if (hasOwnColors(dataNode)) {
     return { themeStyles: {}, ownStyles: getOwnStyles(dataNode) };
   }
   const themeItem =
     themeGraphicalItems.length === 0 ? undefined : themeGraphicalItems[index % themeGraphicalItems.length];
-  return { themeStyles: getOwnStyles(themeItem), ownStyles: {} };
+  // Styles without a color of their own merge with the theme.
+  return { themeStyles: getOwnStyles(themeItem), ownStyles: getOwnStyles(dataNode) };
 }
 
 /**
@@ -1368,7 +1369,7 @@ function resolveNodeStyles(
  *
  * Links take the color of their source node, including colors from explicit props and from data,
  * and draw it with {@link THEMED_LINK_STROKE_OPACITY}.
- * A link that defines its own styles in data ignores the theme completely.
+ * A link that defines its own colors in data ignores the theme completely.
  *
  * Without a theme, Sankey keeps its legacy behaviour and does not read styles from data.
  * @param themeGraphicalItems graphicalItems of the active theme, or undefined if there is no theme
@@ -1383,14 +1384,17 @@ function resolveLinkStyles(
   if (themeGraphicalItems == null) {
     return noStyles;
   }
-  if (hasOwnStyles(dataLink)) {
+  if (hasOwnColors(dataLink)) {
     return { themeStyles: {}, ownStyles: getOwnStyles(dataLink) };
   }
   const sourceColor = getRenderedPaint(sourceNodeProps, 'fill') ?? getRenderedPaint(sourceNodeProps, 'stroke');
   if (sourceColor == null) {
     return noStyles;
   }
-  return { themeStyles: { stroke: sourceColor, strokeOpacity: THEMED_LINK_STROKE_OPACITY }, ownStyles: {} };
+  return {
+    themeStyles: { stroke: sourceColor, strokeOpacity: THEMED_LINK_STROKE_OPACITY },
+    ownStyles: getOwnStyles(dataLink),
+  };
 }
 
 export const sankeyDefaultProps = {

@@ -75,7 +75,7 @@ import { WithIdRequired } from '../util/useUniqueId';
 import { usePolarChartLayout } from '../context/chartLayoutContext';
 import { RechartsTheme } from '../theme/RechartsTheme';
 import { useBackwardsCompatibleTheme } from '../theme/useBackwardsCompatibleTheme';
-import { getOwnStylesWithFallback, getUnthemedStyles, hasOwnStyles } from '../theme/dataEntryStyles';
+import { getOwnStyles, getOwnStylesWithFallback, getUnthemedStyles, hasOwnColors } from '../theme/dataEntryStyles';
 
 interface PieDef {
   /**
@@ -458,22 +458,24 @@ function getThemedPieSector(
     return sector;
   }
 
-  if (hasOwnStyles(sector.payload)) {
+  if (hasOwnColors(sector.payload) || hasOwnColors(explicitStyleProps)) {
     /*
-     * The data entry (or its Cell) brings its own styles, so it ignores the theme completely.
+     * The data entry (or its Cell), or the Pie itself, brings its own colors, so the sector ignores the theme completely.
      * This also drops the legacy default fill and stroke, which never apply together with a theme.
      */
     return { ...sector, ...getOwnStylesWithFallback(sector.payload, getUnthemedStyles(explicitStyleProps)) };
   }
 
+  // Styles without a color of their own merge with the theme field by field.
+  const ownStyles = { ...getOwnStyles(explicitStyleProps), ...getOwnStyles(sector.payload) };
   return {
     ...sector,
-    fill: explicitStyleProps.fill ?? graphicalItemStyle.fill ?? sector.fill,
-    fillOpacity: explicitStyleProps.fillOpacity ?? graphicalItemStyle.fillOpacity ?? sector.fillOpacity,
-    stroke: explicitStyleProps.stroke ?? graphicalItemStyle.stroke ?? sector.stroke,
-    strokeOpacity: explicitStyleProps.strokeOpacity ?? graphicalItemStyle.strokeOpacity ?? sector.strokeOpacity,
-    strokeWidth: explicitStyleProps.strokeWidth ?? graphicalItemStyle.strokeWidth ?? sector.strokeWidth,
-    strokeDasharray: explicitStyleProps.strokeDasharray ?? graphicalItemStyle.strokeDasharray ?? sector.strokeDasharray,
+    fill: graphicalItemStyle.fill ?? sector.fill,
+    fillOpacity: ownStyles.fillOpacity ?? graphicalItemStyle.fillOpacity ?? sector.fillOpacity,
+    stroke: graphicalItemStyle.stroke ?? sector.stroke,
+    strokeOpacity: ownStyles.strokeOpacity ?? graphicalItemStyle.strokeOpacity ?? sector.strokeOpacity,
+    strokeWidth: ownStyles.strokeWidth ?? graphicalItemStyle.strokeWidth ?? sector.strokeWidth,
+    strokeDasharray: ownStyles.strokeDasharray ?? graphicalItemStyle.strokeDasharray ?? sector.strokeDasharray,
   };
 }
 
@@ -492,10 +494,14 @@ function SetPiePayloadLegend(props: {
 
   const themedLegendPayload = legendPayload.map((entry, index) => {
     const graphicalItemStyle = props.graphicalItems[index % props.graphicalItems.length];
-    const fill =
-      hasOwnStyles(cells?.[index]?.props) || hasOwnStyles(entry.payload)
-        ? entry.color
-        : (props.explicitStyleProps.fill ?? graphicalItemStyle?.fill ?? entry.color);
+    let fill: string | undefined;
+    if (hasOwnColors(cells?.[index]?.props) || hasOwnColors(entry.payload)) {
+      fill = entry.color;
+    } else if (hasOwnColors(props.explicitStyleProps)) {
+      fill = props.explicitStyleProps.fill ?? entry.color;
+    } else {
+      fill = graphicalItemStyle?.fill ?? entry.color;
+    }
     return { ...entry, color: fill };
   });
 
@@ -824,22 +830,25 @@ function PieSectors(props: PieSectorsProps) {
           [DATA_ITEM_GRAPHICAL_ITEM_ID_ATTRIBUTE_NAME]: id,
         };
         const activeGraphicalItemStyle = graphicalItems[i % graphicalItems.length]?.active;
+        const activeOwnStyles = { ...getOwnStyles(explicitStyleProps), ...getOwnStyles(entry.payload) };
         const activeSectorProps: PieSectorShapeProps =
-          isActive && sectorOptions == null && activeGraphicalItemStyle != null && !hasOwnStyles(entry.payload)
+          isActive &&
+          sectorOptions == null &&
+          activeGraphicalItemStyle != null &&
+          !hasOwnColors(entry.payload) &&
+          !hasOwnColors(explicitStyleProps)
             ? {
                 ...sectorProps,
-                fill: explicitStyleProps.fill ?? activeGraphicalItemStyle.fill ?? sectorProps.fill,
+                fill: activeGraphicalItemStyle.fill ?? sectorProps.fill,
                 fillOpacity:
-                  explicitStyleProps.fillOpacity ?? activeGraphicalItemStyle.fillOpacity ?? sectorProps.fillOpacity,
-                stroke: explicitStyleProps.stroke ?? activeGraphicalItemStyle.stroke ?? sectorProps.stroke,
+                  activeOwnStyles.fillOpacity ?? activeGraphicalItemStyle.fillOpacity ?? sectorProps.fillOpacity,
+                stroke: activeGraphicalItemStyle.stroke ?? sectorProps.stroke,
                 strokeOpacity:
-                  explicitStyleProps.strokeOpacity ??
-                  activeGraphicalItemStyle.strokeOpacity ??
-                  sectorProps.strokeOpacity,
+                  activeOwnStyles.strokeOpacity ?? activeGraphicalItemStyle.strokeOpacity ?? sectorProps.strokeOpacity,
                 strokeWidth:
-                  explicitStyleProps.strokeWidth ?? activeGraphicalItemStyle.strokeWidth ?? sectorProps.strokeWidth,
+                  activeOwnStyles.strokeWidth ?? activeGraphicalItemStyle.strokeWidth ?? sectorProps.strokeWidth,
                 strokeDasharray:
-                  explicitStyleProps.strokeDasharray ??
+                  activeOwnStyles.strokeDasharray ??
                   activeGraphicalItemStyle.strokeDasharray ??
                   sectorProps.strokeDasharray,
               }

@@ -47,7 +47,7 @@ import { GraphicalItemId } from '../state/graphicalItemsSlice';
 import { initialEventSettingsState } from '../state/eventSettingsSlice';
 import { RechartsTheme } from '../theme/RechartsTheme';
 import { useBackwardsCompatibleTheme } from '../theme/useBackwardsCompatibleTheme';
-import { hasOwnStyles } from '../theme/dataEntryStyles';
+import { hasOwnColors } from '../theme/dataEntryStyles';
 
 const NODE_VALUE_KEY = 'value';
 
@@ -624,10 +624,10 @@ type ContentItemProps = {
   content: TreemapContentType;
   nodeProps: TreemapNode;
   /**
-   * True if the data node defines its own styles. Such nodes ignore the theme completely.
+   * True if the data node defines its own colors. Such nodes ignore the theme completely.
    * This is computed from the data node alone because nodeProps also include the Treemap props.
    */
-  nodeHasOwnStyles: boolean;
+  nodeHasOwnColors: boolean;
   /**
    * Index of the top-level tile that this node belongs to.
    * Undefined for the root node.
@@ -659,14 +659,14 @@ type TileStyles = {
  */
 function getTileStyles({
   nodeProps,
-  nodeHasOwnStyles,
+  nodeHasOwnColors,
   branchIndex,
   colorPanel,
   themeGraphicalItems,
   themePageBackground,
 }: Pick<
   ContentItemProps,
-  'nodeProps' | 'nodeHasOwnStyles' | 'branchIndex' | 'colorPanel' | 'themeGraphicalItems' | 'themePageBackground'
+  'nodeProps' | 'nodeHasOwnColors' | 'branchIndex' | 'colorPanel' | 'themeGraphicalItems' | 'themePageBackground'
 >): TileStyles {
   const colors = colorPanel || COLOR_PANEL;
   const legacyFill = nodeProps.depth < 2 ? colors[nodeProps.index % colors.length] : 'rgba(255,255,255,0)';
@@ -674,9 +674,9 @@ function getTileStyles({
     return { fill: legacyFill, stroke: '#fff', strokeWidth: undefined };
   }
   const fillFromColorPanel = colorPanel == null ? undefined : legacyFill;
-  if (nodeHasOwnStyles) {
+  if (nodeHasOwnColors) {
     /*
-     * A node that brings its own styles in data ignores the theme completely,
+     * A node that brings its own colors in data ignores the theme completely,
      * so that its colors are not mixed with the theme colors.
      */
     return { fill: fillFromColorPanel, stroke: undefined, strokeWidth: undefined };
@@ -705,7 +705,7 @@ function getTileStyles({
 function ContentItem({
   content,
   nodeProps,
-  nodeHasOwnStyles,
+  nodeHasOwnColors,
   branchIndex,
   type,
   colorPanel,
@@ -734,7 +734,7 @@ function ContentItem({
   const { x, y, width, height } = nodeProps;
   const { fill, stroke, strokeWidth } = getTileStyles({
     nodeProps,
-    nodeHasOwnStyles,
+    nodeHasOwnColors,
     branchIndex,
     colorPanel,
     themeGraphicalItems,
@@ -864,7 +864,7 @@ const defaultTreemapMargin: Margin = {
 function TreemapItem({
   content,
   nodeProps,
-  nodeHasOwnStyles,
+  nodeHasOwnColors,
   branchIndex,
   isLeaf,
   treemapProps,
@@ -872,7 +872,7 @@ function TreemapItem({
 }: {
   content: TreemapContentType;
   nodeProps: TreemapNode;
-  nodeHasOwnStyles: boolean;
+  nodeHasOwnColors: boolean;
   branchIndex: number | undefined;
   isLeaf: boolean;
   treemapProps: InternalTreemapProps;
@@ -967,7 +967,7 @@ function TreemapItem({
               x,
               y,
             }}
-            nodeHasOwnStyles={nodeHasOwnStyles}
+            nodeHasOwnColors={nodeHasOwnColors}
             branchIndex={branchIndex}
             type={type}
             colorPanel={colorPanel}
@@ -1126,7 +1126,7 @@ class TreemapWithState extends PureComponent<InternalTreemapProps, State> {
           isLeaf={isLeaf}
           content={content}
           nodeProps={nodeProps}
-          nodeHasOwnStyles={hasOwnStyles(node)}
+          nodeHasOwnColors={hasOwnColors(node)}
           branchIndex={branchIndex}
           treemapProps={this.props}
           onNestClick={this.handleClick}

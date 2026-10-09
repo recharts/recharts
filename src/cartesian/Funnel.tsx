@@ -56,7 +56,13 @@ import { WithIdRequired } from '../util/useUniqueId';
 import { useCartesianChartLayout } from '../context/chartLayoutContext';
 import { RechartsTheme } from '../theme/RechartsTheme';
 import { useBackwardsCompatibleTheme } from '../theme/useBackwardsCompatibleTheme';
-import { UnthemedStyles, useUnthemedStyles } from '../theme/dataEntryStyles';
+import {
+  getOwnStyles,
+  getUnthemedStyles,
+  hasOwnColors,
+  UnthemedStyles,
+  useUnthemedStyles,
+} from '../theme/dataEntryStyles';
 
 export type FunnelTrapezoidItem = TrapezoidProps &
   TrapezoidViewBox & {
@@ -775,32 +781,21 @@ function FunnelFn(outsideProps: Props) {
 
   /*
    * Funnel is per-index: each trapezoid at index `i` picks its styles from
-   * graphical[i % graphicalItems.length]. The user's explicit presentation
-   * props still win, so the theme only supplies the values that were omitted.
+   * graphicalItems[i % graphicalItems.length].
+   * If the Funnel sets its own fill or stroke, it ignores the theme completely
+   * so that its colors are not mixed with the theme colors.
+   * Other explicit style props merge with the theme field by field.
    */
   const indexedStyles: ReadonlyArray<Record<string, unknown>> = useMemo(() => {
     const graphicalItems = theme?.graphicalItems;
     if (graphicalItems == null || graphicalItems.length === 0) {
       return [];
     }
-    return graphicalItems.map((style): Record<string, unknown> => {
-      const themed: Record<string, unknown> = {};
-      if (outsideProps.fill === undefined && style.fill !== undefined) themed.fill = style.fill;
-      if (outsideProps.stroke === undefined && style.stroke !== undefined) themed.stroke = style.stroke;
-      if (outsideProps.strokeWidth === undefined && style.strokeWidth !== undefined) {
-        themed.strokeWidth = style.strokeWidth;
-      }
-      if (outsideProps.strokeOpacity === undefined && style.strokeOpacity !== undefined) {
-        themed.strokeOpacity = style.strokeOpacity;
-      }
-      if (outsideProps.fillOpacity === undefined && style.fillOpacity !== undefined) {
-        themed.fillOpacity = style.fillOpacity;
-      }
-      if (outsideProps.strokeDasharray === undefined && style.strokeDasharray !== undefined) {
-        themed.strokeDasharray = style.strokeDasharray;
-      }
-      return themed;
-    });
+    if (hasOwnColors(outsideProps)) {
+      // Unthemed styles also remove the legacy defaults, which never apply together with a theme.
+      return [getUnthemedStyles(outsideProps)];
+    }
+    return graphicalItems.map(style => ({ ...getOwnStyles(style), ...getOwnStyles(outsideProps) }));
   }, [outsideProps, theme]);
   const unthemedStyles = useUnthemedStyles(outsideProps);
 
