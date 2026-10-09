@@ -100,6 +100,64 @@ function renderComposed(children: React.ReactNode) {
 }
 
 describe('graphical items with their own style props', () => {
+  describe('partial theme entries do not restore legacy colors', () => {
+    const partialTheme: RechartsTheme = { graphicalItems: [{ fill: 'purple' }] };
+
+    it('Funnel with a non-color style prop', () => {
+      const { container } = rechartsTestRender(
+        <RechartsThemeProvider value={partialTheme}>
+          <FunnelChart width={400} height={400}>
+            <Funnel data={data} dataKey="value" strokeWidth={7} isAnimationActive={false} />
+          </FunnelChart>
+        </RechartsThemeProvider>,
+      );
+      const trapezoids = container.querySelectorAll('.recharts-trapezoid');
+      expect(trapezoids).toHaveLength(3);
+      trapezoids.forEach(trapezoid =>
+        expect(getStyleAttributes(trapezoid)).toEqual({
+          fill: 'purple',
+          'fill-opacity': null,
+          stroke: null,
+          'stroke-width': '7',
+        }),
+      );
+    });
+
+    it('Funnel without style props', () => {
+      const { container } = rechartsTestRender(
+        <RechartsThemeProvider value={partialTheme}>
+          <FunnelChart width={400} height={400}>
+            <Funnel data={data} dataKey="value" isAnimationActive={false} />
+          </FunnelChart>
+        </RechartsThemeProvider>,
+      );
+      container.querySelectorAll('.recharts-trapezoid').forEach(trapezoid => {
+        expect(trapezoid.getAttribute('fill')).toBe('purple');
+        expect(trapezoid.getAttribute('stroke')).toBeNull();
+      });
+    });
+
+    it('Pie with a non-color style prop', () => {
+      const { container } = rechartsTestRender(
+        <RechartsThemeProvider value={partialTheme}>
+          <PieChart width={400} height={400}>
+            <Pie data={data} dataKey="value" strokeWidth={7} isAnimationActive={false} />
+          </PieChart>
+        </RechartsThemeProvider>,
+      );
+      const sectors = container.querySelectorAll('.recharts-pie-sector path');
+      expect(sectors).toHaveLength(3);
+      sectors.forEach(sector =>
+        expect(getStyleAttributes(sector)).toEqual({
+          fill: 'purple',
+          'fill-opacity': null,
+          stroke: null,
+          'stroke-width': '7',
+        }),
+      );
+    });
+  });
+
   describe('Bar', () => {
     it('should keep the theme without own styles', () => {
       const { container } = renderComposed(<Bar dataKey="value" isAnimationActive={false} />);

@@ -795,7 +795,12 @@ function FunnelFn(outsideProps: Props) {
       // Unthemed styles also remove the legacy defaults, which never apply together with a theme.
       return [getUnthemedStyles(outsideProps)];
     }
-    return graphicalItems.map(style => ({ ...getOwnStyles(style), ...getOwnStyles(outsideProps) }));
+    return graphicalItems.map(style => ({
+      // Start without any styles, so that legacy defaults never fill in what the theme leaves out.
+      ...getUnthemedStyles({}),
+      ...getOwnStyles(style),
+      ...getOwnStyles(outsideProps),
+    }));
   }, [outsideProps, theme]);
   const unthemedStyles = useUnthemedStyles(outsideProps);
 

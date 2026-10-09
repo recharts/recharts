@@ -466,16 +466,20 @@ function getThemedPieSector(
     return { ...sector, ...getOwnStylesWithFallback(sector.payload, getUnthemedStyles(explicitStyleProps)) };
   }
 
-  // Styles without a color of their own merge with the theme field by field.
+  /*
+   * Styles without a color of their own merge with the theme field by field.
+   * The sector itself is not a fallback, because it contains the legacy default fill and stroke,
+   * which never apply together with a theme.
+   */
   const ownStyles = { ...getOwnStyles(explicitStyleProps), ...getOwnStyles(sector.payload) };
   return {
     ...sector,
-    fill: graphicalItemStyle.fill ?? sector.fill,
-    fillOpacity: ownStyles.fillOpacity ?? graphicalItemStyle.fillOpacity ?? sector.fillOpacity,
-    stroke: graphicalItemStyle.stroke ?? sector.stroke,
-    strokeOpacity: ownStyles.strokeOpacity ?? graphicalItemStyle.strokeOpacity ?? sector.strokeOpacity,
-    strokeWidth: ownStyles.strokeWidth ?? graphicalItemStyle.strokeWidth ?? sector.strokeWidth,
-    strokeDasharray: ownStyles.strokeDasharray ?? graphicalItemStyle.strokeDasharray ?? sector.strokeDasharray,
+    fill: graphicalItemStyle.fill,
+    fillOpacity: ownStyles.fillOpacity ?? graphicalItemStyle.fillOpacity,
+    stroke: graphicalItemStyle.stroke,
+    strokeOpacity: ownStyles.strokeOpacity ?? graphicalItemStyle.strokeOpacity,
+    strokeWidth: ownStyles.strokeWidth ?? graphicalItemStyle.strokeWidth,
+    strokeDasharray: ownStyles.strokeDasharray ?? graphicalItemStyle.strokeDasharray,
   };
 }
 
