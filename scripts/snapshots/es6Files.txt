@@ -226,6 +226,7 @@
   "es6/theme/emptyTheme.js",
   "es6/theme/graphicalItemIdentity.js",
   "es6/theme/lightTheme.js",
+  "es6/theme/pageBackground.js",
   "es6/theme/useBackwardsCompatibleTheme.js",
   "es6/theme/useGraphicalItemIdentity.js",
   "es6/types.js",

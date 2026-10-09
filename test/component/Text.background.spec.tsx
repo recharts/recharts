@@ -376,5 +376,21 @@ describe('<Text background />', () => {
       assertNotNull(rect);
       expect(rect).not.toHaveAttribute('fill');
     });
+
+    it('fills the background with chart.backgroundColor when the theme pageBackground is not set', () => {
+      const { container } = render(
+        <RechartsThemeProvider
+          value={{ ...lightTheme, pageBackground: undefined, chart: { backgroundColor: '#f8fafc' } }}
+        >
+          <Surface width={300} height={300}>
+            <Text x={10} y={20} background>
+              text
+            </Text>
+          </Surface>
+        </RechartsThemeProvider>,
+      );
+
+      expect(getBackground(container)).toHaveAttribute('fill', '#f8fafc');
+    });
   });
 });

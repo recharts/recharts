@@ -137,6 +137,40 @@ describe('<Treemap /> theme', () => {
     });
   });
 
+  it('outlines tiles with chart.backgroundColor when the theme has no page background', () => {
+    const { container } = render(
+      <RechartsThemeProvider
+        value={{ graphicalItems: [{ fill: 'red', stroke: 'red' }], chart: { backgroundColor: '#f8fafc' } }}
+      >
+        <Treemap width={400} height={250} data={nestedData} isAnimationActive={false} nameKey="name" dataKey="value" />
+      </RechartsThemeProvider>,
+    );
+    const tiles = queryTiles(container, 2);
+    expect(tiles).toHaveLength(4);
+    tiles.forEach(tile => {
+      expect(tile.getAttribute('stroke')).toBe('#f8fafc');
+    });
+  });
+
+  it('prefers the page background over chart.backgroundColor for tile outlines', () => {
+    const { container } = render(
+      <RechartsThemeProvider
+        value={{
+          graphicalItems: [{ fill: 'red', stroke: 'red' }],
+          chart: { backgroundColor: '#f8fafc' },
+          pageBackground: 'white',
+        }}
+      >
+        <Treemap width={400} height={250} data={nestedData} isAnimationActive={false} nameKey="name" dataKey="value" />
+      </RechartsThemeProvider>,
+    );
+    const tiles = queryTiles(container, 2);
+    expect(tiles).toHaveLength(4);
+    tiles.forEach(tile => {
+      expect(tile.getAttribute('stroke')).toBe('white');
+    });
+  });
+
   it('restarts the colors after nesting into a tile', () => {
     const { container } = render(
       <RechartsThemeProvider

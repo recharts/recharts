@@ -32,6 +32,7 @@ import { initialEventSettingsState } from '../state/eventSettingsSlice';
 import { GraphicalItemStyle, RechartsTheme } from '../theme/RechartsTheme';
 import { useRechartsTheme } from '../theme/RechartsThemeContext';
 import { getOwnStyles, hasOwnStyles } from '../theme/dataEntryStyles';
+import { getEffectivePageBackground } from '../theme/pageBackground';
 
 export interface SunburstData {
   [key: string]: any;
@@ -537,7 +538,7 @@ export const SunburstChart = (outsideProps: SunburstChartProps) => {
         ? undefined
         : {
             graphicalItems: theme.graphicalItems,
-            pageBackground: theme.pageBackground,
+            pageBackground: getEffectivePageBackground(theme),
           },
     [theme],
   );
