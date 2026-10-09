@@ -591,8 +591,12 @@ export function ThemingGuide() {
         </li>
       </ul>
       <p>
-        If you paint a background with <code>chart</code>, set <code>pageBackground</code> to the same color. The
-        separators then match the color that is actually behind them.
+        If you paint <code>chart.backgroundColor</code> and leave <code>pageBackground</code> unset, Recharts uses{' '}
+        <code>chart.backgroundColor</code> as the <code>pageBackground</code>, so the separators match the color that is
+        actually behind them. An explicit <code>pageBackground</code> always wins. The built-in themes set{' '}
+        <code>pageBackground</code>, so when you spread a built-in theme and paint <code>chart.backgroundColor</code>,
+        also set <code>pageBackground</code> to the same color. Do the same when you paint the <code>background</code>{' '}
+        shorthand or an image.
       </p>
 
       <h2>Default chart size</h2>

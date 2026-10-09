@@ -14,6 +14,7 @@ import { useBackwardsCompatibleTheme } from '../theme/useBackwardsCompatibleThem
 import { RechartsTheme, TextStyles } from '../theme/RechartsTheme';
 import { resolveDefaultProps } from '../util/resolveDefaultProps';
 import { cssStylesToSvgStyles } from '../theme/cssStylesToSvgStyles';
+import { getEffectivePageBackground } from '../theme/pageBackground';
 
 const BREAKING_SPACES = /[ \f\n\r\t\v\u2028\u2029]+/;
 
@@ -444,7 +445,7 @@ const defaultBackgroundPadding = { x: 4, y: 2 } as const;
 const defaultBackgroundRadius = 4;
 
 function selectBackgroundFill(theme: RechartsTheme): BackgroundFill | undefined {
-  const { pageBackground } = theme;
+  const pageBackground = getEffectivePageBackground(theme);
   return typeof pageBackground === 'string' ? { fill: pageBackground } : undefined;
 }
 

@@ -48,6 +48,7 @@ import { initialEventSettingsState } from '../state/eventSettingsSlice';
 import { RechartsTheme } from '../theme/RechartsTheme';
 import { useBackwardsCompatibleTheme } from '../theme/useBackwardsCompatibleTheme';
 import { hasOwnColors } from '../theme/dataEntryStyles';
+import { getEffectivePageBackground } from '../theme/pageBackground';
 
 const NODE_VALUE_KEY = 'value';
 
@@ -1288,7 +1289,7 @@ export function Treemap(outsideProps: Props) {
   const theme = useBackwardsCompatibleTheme<TreemapThemeSlice>(
     (rechartsTheme: RechartsTheme) => ({
       graphicalItems: rechartsTheme.graphicalItems,
-      pageBackground: rechartsTheme.pageBackground,
+      pageBackground: getEffectivePageBackground(rechartsTheme),
       typography: rechartsTheme.typography,
     }),
     {},

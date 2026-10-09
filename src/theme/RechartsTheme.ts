@@ -127,7 +127,9 @@ export interface RechartsTheme {
    * The built-in themes leave this empty: charts are transparent and the page shows through,
    * and they have no default size.
    *
-   * If you paint a background here, set `pageBackground` to the same color.
+   * If you paint `backgroundColor` here and leave `pageBackground` unset,
+   * Recharts uses `backgroundColor` as the `pageBackground`.
+   * If you paint a `background` shorthand or an image, set `pageBackground` yourself.
    */
   chart?: CSSProperties;
   /**
@@ -138,6 +140,9 @@ export interface RechartsTheme {
    * Treemap tile outlines, SunburstChart separators and the halo around its labels.
    *
    * Any CSS color works, including `var()` references.
+   *
+   * If this is not set, Recharts uses `chart.backgroundColor` instead.
+   * An explicit `pageBackground` always wins.
    *
    * Each built-in theme is designed for one page background, and sets it here.
    * For example, `darkTheme` expects a dark page and is not legible on a light one.
