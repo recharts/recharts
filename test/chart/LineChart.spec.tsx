@@ -31,6 +31,7 @@ import { useChartHeight, useChartWidth, useViewBox } from '../../src/context/cha
 import { expectLines } from '../helper/expectLine';
 import { expectLastCalledWith } from '../helper/expectLastCalledWith';
 import { useClipPathId } from '../../src/container/ClipPathProvider';
+import { DataKey } from '../../src/util/types';
 
 describe('<LineChart />', () => {
   beforeEach(() => {
@@ -1855,5 +1856,28 @@ describe('<LineChart /> with dataKey as a function', () => {
     expect(dataKey2Spy).toHaveBeenCalledTimes(data2.length * 7);
     expect(dataKey2Spy).toHaveBeenNthCalledWith(1, data2[0]);
     expect(dataKey2Spy).toHaveBeenLastCalledWith(data2[2]);
+  });
+});
+
+describe('<LineChart /> with repeated categories and allowDuplicatedCategory=false', () => {
+  const data = ['A', 'B', 'A'].map((name, index) => ({ name, category: { name }, 0: name, value: index + 1 }));
+
+  const accessors: ReadonlyArray<[string, DataKey<any>]> = [
+    ['a flat key', 'name'],
+    ['a nested key', 'category.name'],
+    ['a function', (entry: (typeof data)[number]) => entry.category.name],
+    ['the numeric key 0', 0],
+  ];
+
+  test.each(accessors)('places every point on its category tick when XAxis dataKey is %s', (_, dataKey) => {
+    const { container } = render(
+      <LineChart width={500} height={300} data={data}>
+        <XAxis dataKey={dataKey} allowDuplicatedCategory={false} />
+        <Line dataKey="value" isAnimationActive={false} />
+      </LineChart>,
+    );
+
+    const dots = Array.from(container.querySelectorAll('.recharts-line-dot'));
+    expect(dots.map(dot => dot.getAttribute('cx'))).toEqual(['5', '495', '5']);
   });
 });
