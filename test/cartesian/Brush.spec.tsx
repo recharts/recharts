@@ -619,6 +619,37 @@ describe('<Brush />', () => {
     });
   });
 
+  describe('dragging the slide', () => {
+    test('should keep the number of selected items when the travellers are between data points', () => {
+      const onChange = vi.fn();
+      const { container } = render(
+        <BarChart width={400} height={100} data={data}>
+          <Brush dataKey="value" x={100} y={50} width={400} height={40} onChange={onChange} />
+        </BarChart>,
+      );
+
+      // Drag the end traveller a little to the left, so that it stops between two data points
+      const endTraveller = container.querySelectorAll('.recharts-brush-traveller')[1];
+      fireEvent.mouseDown(endTraveller, { clientX: 495 });
+      fireEvent.mouseMove(window, { clientX: 485 });
+      fireEvent.mouseUp(window);
+      expectLastCalledWith(onChange, { startIndex: 0, endIndex: 12 });
+
+      // Slide the whole selection to the right edge; it should still select 13 items
+      const slide = container.querySelector('.recharts-brush-slide') as SVGRectElement;
+      fireEvent.mouseDown(slide, { clientX: 300 });
+      fireEvent.mouseMove(window, { clientX: 400 });
+      fireEvent.mouseUp(window);
+      expectLastCalledWith(onChange, { startIndex: 1, endIndex: 13 });
+
+      // And back to the left edge
+      fireEvent.mouseDown(slide, { clientX: 300 });
+      fireEvent.mouseMove(window, { clientX: 100 });
+      fireEvent.mouseUp(window);
+      expectLastCalledWith(onChange, { startIndex: 0, endIndex: 12 });
+    });
+  });
+
   describe('panorama and state integration', () => {
     it('should select data from the parent chart', () => {
       const rootDataSpy = vi.fn();
