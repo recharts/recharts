@@ -28,7 +28,7 @@ export function getMockDomRect(partial: Partial<DOMRect> = {}): DOMRect {
  * https://vitest.dev/config/#restoremocks
  *
  * @param rect overrides getBoundingClientRect return value in the mock. jsdom by design returns all zeroes
- * @param mockClientHeightWidth overrides offsetWidth/offsetHeight with the same values as rect
+ * @param mockClientHeightWidth overrides offsetWidth/offsetHeight and clientWidth/clientHeight with the same values as rect
  * @returns void
  */
 export function mockGetBoundingClientRect(rect: Partial<DOMRect>, mockClientHeightWidth = true): void {
@@ -38,6 +38,8 @@ export function mockGetBoundingClientRect(rect: Partial<DOMRect>, mockClientHeig
   if (mockClientHeightWidth) {
     mockHTMLElementProperty('offsetHeight', mockDomRect.height);
     mockHTMLElementProperty('offsetWidth', mockDomRect.width);
+    mockHTMLElementProperty('clientHeight', mockDomRect.height);
+    mockHTMLElementProperty('clientWidth', mockDomRect.width);
   }
 }
 

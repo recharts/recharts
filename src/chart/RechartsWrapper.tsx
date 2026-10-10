@@ -26,6 +26,7 @@ import { LegendPortalContext } from '../context/legendPortalContext';
 import { ReportChartSize } from '../context/chartLayoutContext';
 import { useResponsiveContainerContext } from '../component/ResponsiveContainer';
 import { Percent } from '../util/types';
+import { getContentBoxSize } from '../util/getContentBoxSize';
 import { useRechartsTheme } from '../theme/RechartsThemeContext';
 
 export type RechartsWrapperProps = ExternalMouseEvents & {
@@ -112,7 +113,7 @@ const ResponsiveDiv = forwardRef<HTMLDivElement, WrapperDivProps>((props: Wrappe
 
       // 3. Initiate a new ResizeObserver on the valid DOM node
       if (node != null && typeof ResizeObserver !== 'undefined') {
-        const { width: containerWidth, height: containerHeight } = node.getBoundingClientRect();
+        const { width: containerWidth, height: containerHeight } = getContentBoxSize(node);
         setContainerSize(containerWidth, containerHeight);
 
         const callback = (entries: ResizeObserverEntry[]) => {
@@ -177,7 +178,7 @@ const ReadSizeOnceDiv = forwardRef<HTMLDivElement, WrapperDivProps>((props: Wrap
         ref(node);
       }
       if (node != null) {
-        const { width: containerWidth, height: containerHeight } = node.getBoundingClientRect();
+        const { width: containerWidth, height: containerHeight } = getContentBoxSize(node);
         setContainerSize(containerWidth, containerHeight);
       }
     },

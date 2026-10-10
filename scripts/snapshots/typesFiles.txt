@@ -265,6 +265,7 @@
   "types/util/getActiveCoordinate.d.ts",
   "types/util/getAxisTypeBasedOnLayout.d.ts",
   "types/util/getClassNameFromUnknown.d.ts",
+  "types/util/getContentBoxSize.d.ts",
   "types/util/getEveryNth.d.ts",
   "types/util/getRadiusAndStrokeWidthFromDot.d.ts",
   "types/util/getRelativeCoordinate.d.ts",
