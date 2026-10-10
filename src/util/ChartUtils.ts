@@ -718,6 +718,12 @@ export const getBandSizeOfAxis = (
     return bandSize === Infinity ? 0 : bandSize;
   }
 
+  if (isBar && axis?.scale != null) {
+    // A single tick gives no gap to measure, so a lone bar takes the whole axis span.
+    const [rangeStart = 0, rangeEnd = 0] = axis.scale.range();
+    return Math.abs(rangeEnd - rangeStart);
+  }
+
   return isBar ? undefined : 0;
 };
 

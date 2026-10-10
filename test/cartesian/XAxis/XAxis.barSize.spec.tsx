@@ -185,7 +185,7 @@ describe('XAxis barSize', () => {
     ]);
     expect(yAxisTicksSpy).toHaveBeenCalledTimes(3);
 
-    expect(barBandSizeSpy).toHaveBeenLastCalledWith(0);
+    expect(barBandSizeSpy).toHaveBeenLastCalledWith(230);
     expect(barBandSizeSpy).toHaveBeenCalledTimes(3);
 
     expect(barPositionsSpy).toHaveBeenLastCalledWith([
