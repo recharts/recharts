@@ -158,7 +158,7 @@ interface ScatterInternalProps extends ZIndexable {
   label?: ImplicitLabelListType;
   /**
    * Explicit style props without theme contributions.
-   * Applied to data entries that define their own styles, so that they ignore the theme.
+   * Applied to data entries that define their own colors, so that they ignore the theme.
    * Undefined when there is no active theme.
    */
   unthemedStyles?: UnthemedStyles;
@@ -581,7 +581,7 @@ function ScatterLabelListProvider({
  * @param shape The default shape to render for inactive points
  * @param activeShape The shape to render when this point is active, or undefined if no active shape
  * @param baseProps SVG presentation attributes (fill, stroke, etc.) shared across all points
- * @param entryStyleOverrides Removes theme styles from points that define their own styles in data, or undefined
+ * @param entryStyleOverrides Removes theme styles from points that define their own colors in data, or undefined
  * @param id The graphical item ID of the parent Scatter component
  * @param restOfAllOtherProps Remaining Scatter props for user-provided event handlers via adaptEventsOfChild
  * @param onMouseEnterFromContext Curried mouse enter handler that dispatches tooltip activation
@@ -1037,7 +1037,7 @@ function ScatterImpl(props: WithIdRequired<Props> & Pick<InternalProps, 'untheme
 }
 
 function ScatterFn(outsideProps: Props) {
-  const graphicalItemThemeSelector = useGraphicalItemIdentity(outsideProps.dataKey);
+  const graphicalItemThemeSelector = useGraphicalItemIdentity(outsideProps.dataKey, outsideProps);
   const unthemedStyles = useUnthemedStyles(outsideProps);
   const graphicalItemTheme = useBackwardsCompatibleTheme<Props>(graphicalItemThemeSelector, outsideProps, undefined);
   const props = resolveDefaultProps(

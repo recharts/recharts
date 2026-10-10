@@ -8,7 +8,7 @@ import { selectChartDataAndAlwaysIgnoreIndexes } from './dataSelectors';
 import { ChartOffsetInternal, DataKey, TooltipType } from '../../util/types';
 import { CellProps } from '../..';
 import { GraphicalItemId } from '../graphicalItemsSlice';
-import { hasOwnStyles, UnthemedStyles } from '../../theme/dataEntryStyles';
+import { hasOwnColors, UnthemedStyles } from '../../theme/dataEntryStyles';
 
 export type ResolvedFunnelSettings = {
   dataKey: DataKey<any>;
@@ -27,7 +27,7 @@ export type ResolvedFunnelSettings = {
    */
   indexedStyles: ReadonlyArray<Record<string, any>>;
   /**
-   * Explicit style props without theme contributions. Items that define their own styles
+   * Explicit style props without theme contributions. Items that define their own colors
    * (in data or in Cell) get these instead of `indexedStyles`, so they ignore the theme completely.
    * Undefined when there is no active theme.
    */
@@ -71,7 +71,7 @@ export const selectFunnelTrapezoids: (
     }
 
     const styleForEntry = (entry: unknown, cellProps: unknown, index: number) => {
-      if (unthemedStyles != null && (hasOwnStyles(entry) || hasOwnStyles(cellProps))) {
+      if (unthemedStyles != null && (hasOwnColors(entry) || hasOwnColors(cellProps))) {
         return unthemedStyles;
       }
       return indexedStyles != null && indexedStyles.length > 0 ? indexedStyles[index % indexedStyles.length] : {};

@@ -932,7 +932,7 @@ export function computeLinePoints({
 
 function LineFn(outsideProps: Props) {
   const rechartsTheme = useRechartsTheme();
-  const graphicalItemThemeSelector = useGraphicalItemIdentity(outsideProps.dataKey);
+  const graphicalItemThemeSelector = useGraphicalItemIdentity(outsideProps.dataKey, outsideProps);
   const graphicalItemTheme = useBackwardsCompatibleTheme<GraphicalItemStyle>(
     graphicalItemThemeSelector,
     outsideProps,

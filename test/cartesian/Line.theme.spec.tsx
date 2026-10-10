@@ -158,7 +158,7 @@ describe('Line theme', () => {
     });
   });
 
-  it('uses the themed fill as the default dot fill when the line stroke is none', () => {
+  it('does not use the themed fill for dots when the line stroke is none, because explicit stroke ignores the theme', () => {
     const { container } = rechartsTestRender(
       <RechartsThemeProvider
         value={{
@@ -177,7 +177,7 @@ describe('Line theme', () => {
     );
 
     getDots(container).forEach(dot => {
-      expect(dot).toHaveAttribute('fill', 'purple');
+      expect(dot).not.toHaveAttribute('fill', 'purple');
     });
   });
 

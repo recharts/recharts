@@ -384,9 +384,19 @@ export function ThemingGuide() {
         </tbody>
       </table>
       <p>
-        Merging happens field by field, not object by object. If a theme sets <code>stroke</code> and{' '}
-        <code>strokeWidth</code> and you only pass <code>stroke</code>, you keep the theme&apos;s{' '}
-        <code>strokeWidth</code>.
+        For most sections, merging happens field by field, not object by object. If the <code>grid</code> theme sets{' '}
+        <code>stroke</code> and <code>strokeWidth</code> and you only pass <code>stroke</code> to{' '}
+        <LinkToApi>CartesianGrid</LinkToApi>, you keep the theme&apos;s <code>strokeWidth</code>.
+      </p>
+      <p>
+        Graphical items are the exception for colors. Theme styles are designed as a coherent set, and they never mix
+        with your colors. If a graphical item sets its own <code>fill</code> or <code>stroke</code>, it ignores its{' '}
+        <code>graphicalItems</code> entry completely, including the <code>active</code> styles. For example,{' '}
+        <code>{'<Bar fill="red" />'}</code> renders red bars without the theme stroke, and{' '}
+        <code>{'<Line stroke="purple" />'}</code> renders a purple active dot instead of the theme one. The same rule
+        applies to colors defined in the data array or in <code>Cell</code>. Other style props, such as{' '}
+        <code>strokeWidth</code> or <code>strokeDasharray</code>, do not bring a color, so they merge with the theme
+        field by field: <code>{'<Line strokeDasharray="5 5" />'}</code> is a dashed line in the theme colors.
       </p>
 
       <h2>What a theme contains</h2>

@@ -1,15 +1,19 @@
 /**
  * @fileOverview
- * Graphical items that render one shape per data point (Bar, Pie, Scatter, ...)
- * let users style individual shapes by putting presentation properties
+ * Users can style graphical items with explicit props (`<Bar fill="red" />`),
+ * and graphical items that render one shape per data point (Bar, Pie, Scatter, ...)
+ * also let users style individual shapes by putting presentation properties
  * directly in the data array.
  *
  * The theme styles are designed as a coherent set: fill, stroke, opacity and
  * so on are chosen to look good together. If we mixed a user-provided `fill`
  * with a theme-provided `stroke`, the result would be a shape with two
- * unrelated colors. So as soon as a data entry defines any of the themeable
- * style properties, that entry ignores the theme styles completely and renders
+ * unrelated colors. So as soon as a graphical item or a data entry defines its own
+ * `fill` or `stroke`, it ignores the theme styles completely and renders
  * with only the explicit props of the graphical item and its own styles.
+ *
+ * Other style properties (opacities, `strokeWidth`, `strokeDasharray`) do not
+ * bring a color of their own, so they merge with the theme field by field.
  */
 
 import { useMemo } from 'react';
@@ -17,15 +21,6 @@ import { Styles2D } from './RechartsTheme';
 import { useRechartsTheme } from './RechartsThemeContext';
 
 type ThemeableStyleKey = keyof Styles2D;
-
-const themeableStyleKeys: ReadonlyArray<ThemeableStyleKey> = [
-  'fill',
-  'fillOpacity',
-  'stroke',
-  'strokeOpacity',
-  'strokeWidth',
-  'strokeDasharray',
-];
 
 /**
  * Explicit style props of a graphical item, with every themeable key present
@@ -35,14 +30,16 @@ const themeableStyleKeys: ReadonlyArray<ThemeableStyleKey> = [
 export type UnthemedStyles = { [K in ThemeableStyleKey]: Styles2D[K] | undefined };
 
 /**
- * Returns true if the data entry defines at least one themeable style property.
- * @param entry data entry, or anything else
+ * Returns true if the graphical item props or the data entry define their own `fill` or `stroke`.
+ * Such items and entries ignore the theme completely.
+ * @param entry props of graphical item, data entry, or anything else
  */
-export function hasOwnStyles(entry: unknown): boolean {
+export function hasOwnColors(entry: unknown): boolean {
   if (entry == null || typeof entry !== 'object') {
     return false;
   }
-  return themeableStyleKeys.some(key => (entry as Partial<Record<ThemeableStyleKey, unknown>>)[key] != null);
+  const { fill, stroke } = entry as Partial<Record<ThemeableStyleKey, unknown>>;
+  return fill != null || stroke != null;
 }
 
 /**
@@ -126,7 +123,7 @@ export function useUnthemedStyles(explicitProps: Styles2D): UnthemedStyles | und
 
 /**
  * Returns the style overrides for a single data entry.
- * If the entry has its own styles, returns the unthemed styles which remove the theme from this entry.
+ * If the entry has its own colors, returns the unthemed styles which remove the theme from this entry.
  * Otherwise returns undefined, and the entry keeps the theme styles.
  *
  * @param entry data entry
@@ -136,7 +133,7 @@ export function getEntryStyleOverrides(
   entry: unknown,
   unthemedStyles: UnthemedStyles | undefined,
 ): UnthemedStyles | undefined {
-  if (unthemedStyles == null || !hasOwnStyles(entry)) {
+  if (unthemedStyles == null || !hasOwnColors(entry)) {
     return undefined;
   }
   return unthemedStyles;

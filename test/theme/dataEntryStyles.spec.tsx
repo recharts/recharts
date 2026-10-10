@@ -25,7 +25,7 @@ import {
   getOwnStyles,
   getOwnStylesWithFallback,
   getUnthemedStyles,
-  hasOwnStyles,
+  hasOwnColors,
 } from '../../src/theme/dataEntryStyles';
 import { rechartsTestRender } from '../helper/createSelectorTestCase';
 import { getAllBarPaths } from '../helper/expectBars';
@@ -96,23 +96,27 @@ function queryAll(container: Element, selector: string): ReadonlyArray<StyleAttr
   return Array.from(container.querySelectorAll(selector)).map(getStyleAttributes);
 }
 
-describe('hasOwnStyles', () => {
+describe('hasOwnColors', () => {
   it('should return false for values that are not objects', () => {
-    expect(hasOwnStyles(undefined)).toBe(false);
-    expect(hasOwnStyles(null)).toBe(false);
-    expect(hasOwnStyles(7)).toBe(false);
-    expect(hasOwnStyles('fill')).toBe(false);
+    expect(hasOwnColors(undefined)).toBe(false);
+    expect(hasOwnColors(null)).toBe(false);
+    expect(hasOwnColors(7)).toBe(false);
+    expect(hasOwnColors('fill')).toBe(false);
   });
 
   it('should return false for objects without style properties', () => {
-    expect(hasOwnStyles({ name: 'a', value: 1 })).toBe(false);
-    expect(hasOwnStyles({ fill: undefined, stroke: null })).toBe(false);
+    expect(hasOwnColors({ name: 'a', value: 1 })).toBe(false);
+    expect(hasOwnColors({ fill: undefined, stroke: null })).toBe(false);
   });
 
-  it.each(['fill', 'fillOpacity', 'stroke', 'strokeOpacity', 'strokeWidth', 'strokeDasharray'])(
-    'should return true when %s is defined',
+  it.each(['fill', 'stroke'])('should return true when %s is defined', key => {
+    expect(hasOwnColors({ [key]: 'red' })).toBe(true);
+  });
+
+  it.each(['fillOpacity', 'strokeOpacity', 'strokeWidth', 'strokeDasharray'])(
+    'should return false when only %s is defined, because it does not bring a color',
     key => {
-      expect(hasOwnStyles({ [key]: 0 })).toBe(true);
+      expect(hasOwnColors({ [key]: 1 })).toBe(false);
     },
   );
 });
@@ -293,7 +297,8 @@ describe('graphical items with styles defined in data', () => {
       const { container } = renderPie({ stroke: 'white', fill: 'blue' });
       expect(queryAll(container, '.recharts-pie-sector path')).toEqual([
         { ...ownFillAttributes, stroke: 'white' },
-        { ...themedAttributes, fill: 'blue', stroke: 'white' },
+        // the Pie sets its own styles, so even entries without own styles ignore the theme
+        { fill: 'blue', 'fill-opacity': null, stroke: 'white', 'stroke-width': null },
         { ...ownStrokeAttributes, fill: 'blue' },
       ]);
     });

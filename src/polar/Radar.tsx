@@ -664,7 +664,7 @@ function RadarImpl(props: RadarPropsWithDotFill) {
  */
 export function Radar<DataPointType = any, DataValueType = any>(outsideProps: Props<DataPointType, DataValueType>) {
   const rechartsTheme = useRechartsTheme();
-  const graphicalItemThemeSelector = useGraphicalItemIdentity(outsideProps.dataKey);
+  const graphicalItemThemeSelector = useGraphicalItemIdentity(outsideProps.dataKey, outsideProps);
   const graphicalItemTheme = useBackwardsCompatibleTheme<GraphicalItemStyle>(
     graphicalItemThemeSelector,
     outsideProps,

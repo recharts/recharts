@@ -31,7 +31,7 @@ import { RequiresDefaultProps, resolveDefaultProps } from '../util/resolveDefaul
 import { initialEventSettingsState } from '../state/eventSettingsSlice';
 import { GraphicalItemStyle, RechartsTheme } from '../theme/RechartsTheme';
 import { useRechartsTheme } from '../theme/RechartsThemeContext';
-import { getOwnStyles, hasOwnStyles } from '../theme/dataEntryStyles';
+import { getOwnStyles, hasOwnColors } from '../theme/dataEntryStyles';
 import { getEffectivePageBackground } from '../theme/pageBackground';
 
 export interface SunburstData {
@@ -401,7 +401,7 @@ const SunburstChartImpl = ({
    *
    * With a theme, each first-ring sector takes the next theme color, and all its descendants inherit it.
    * Separators are painted in the chart background color, so that they read as gaps.
-   * A sector that defines its own styles in data ignores the theme,
+   * A sector that defines its own colors in data ignores the theme,
    * and renders with only its own styles, the inherited color, and the explicit props.
    */
   function getSectorStyles(
@@ -412,13 +412,15 @@ const SunburstChartImpl = ({
     if (themeStyles == null) {
       return { fill: d?.fill ?? childColor ?? fill, stroke, strokeWidth: padding };
     }
-    if (hasOwnStyles(d)) {
+    if (hasOwnColors(d)) {
       return { fill: childColor ?? fill, stroke, strokeWidth: padding, ...getOwnStyles(d) };
     }
     return {
       fill: childColor ?? fill ?? branchStyle?.fill,
       stroke: stroke ?? themeStyles.pageBackground ?? branchStyle?.stroke,
       strokeWidth: padding,
+      // Styles without a color of their own merge with the theme.
+      ...getOwnStyles(d),
     };
   }
 

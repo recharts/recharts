@@ -133,7 +133,7 @@ describe('Radar theme', () => {
     });
   });
 
-  it('uses the themed fill as the default dot fill when the radar stroke is none', () => {
+  it('does not use the themed fill for dots when the radar stroke is none, because explicit stroke ignores the theme', () => {
     const { container } = rechartsTestRender(
       <RechartsThemeProvider
         value={{
@@ -154,7 +154,7 @@ describe('Radar theme', () => {
     const dots = container.querySelectorAll('.recharts-radar-dot');
     expect(dots).not.toHaveLength(0);
     dots.forEach(dot => {
-      expect(dot).toHaveAttribute('fill', 'purple');
+      expect(dot).not.toHaveAttribute('fill', 'purple');
     });
   });
 
@@ -275,7 +275,7 @@ describe('Radar theme', () => {
     expect(polygon.getAttribute('stroke-width')).toBe('3');
   });
 
-  it('fills the gap with the theme when only some props are provided', () => {
+  it('ignores the theme completely when only some props are provided', () => {
     const { container } = rechartsTestRender(
       <RechartsThemeProvider
         value={{
@@ -299,11 +299,11 @@ describe('Radar theme', () => {
 
     const polygon = getPolygon(container);
     expect(polygon.getAttribute('stroke')).toBe('blue');
-    expect(polygon.getAttribute('fill')).toBe('purple');
-    expect(polygon.getAttribute('fill-opacity')).toBe('0.1');
-    expect(polygon.getAttribute('stroke-dasharray')).toBe('9 9');
-    expect(polygon.getAttribute('stroke-opacity')).toBe('0.2');
-    expect(polygon.getAttribute('stroke-width')).toBe('9');
+    expect(polygon.getAttribute('fill')).not.toBe('purple');
+    expect(polygon.getAttribute('fill-opacity')).not.toBe('0.1');
+    expect(polygon.getAttribute('stroke-dasharray')).toBe(null);
+    expect(polygon.getAttribute('stroke-opacity')).toBe(null);
+    expect(polygon.getAttribute('stroke-width')).not.toBe('9');
   });
 
   describe('activeDot', () => {

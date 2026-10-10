@@ -131,7 +131,7 @@ describe('Pie theme', () => {
     }
   });
 
-  it('merges explicit Pie fields with omitted fields from the indexed theme', () => {
+  it('ignores the indexed theme completely when explicit Pie style props are present', () => {
     const { container } = rechartsTestRender(
       <RechartsThemeProvider
         value={{
@@ -157,16 +157,11 @@ describe('Pie theme', () => {
       </RechartsThemeProvider>,
     );
 
-    const firstSector = getSector(container, 0);
-    expect(firstSector).toHaveAttribute('fill', 'gold');
-    expect(firstSector).toHaveAttribute('fill-opacity', '0.4');
-    expect(firstSector).toHaveAttribute('stroke', 'navy');
-    expect(firstSector).toHaveAttribute('stroke-width', '5');
-
-    const secondSector = getSector(container, 1);
-    expect(secondSector).toHaveAttribute('fill', 'gold');
-    expect(secondSector).toHaveAttribute('fill-opacity', '0.6');
-    expect(secondSector).toHaveAttribute('stroke', 'purple');
-    expect(secondSector).toHaveAttribute('stroke-width', '5');
+    [getSector(container, 0), getSector(container, 1)].forEach(sector => {
+      expect(sector).toHaveAttribute('fill', 'gold');
+      expect(sector).not.toHaveAttribute('fill-opacity');
+      expect(sector).not.toHaveAttribute('stroke');
+      expect(sector).toHaveAttribute('stroke-width', '5');
+    });
   });
 });

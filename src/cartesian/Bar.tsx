@@ -466,7 +466,7 @@ type InternalBarProps = {
   label?: ImplicitLabelListType;
   /**
    * Explicit style props without theme contributions.
-   * Applied to data entries that define their own styles, so that they ignore the theme.
+   * Applied to data entries that define their own colors, so that they ignore the theme.
    * Undefined when there is no active theme.
    */
   unthemedStyles?: UnthemedStyles;
@@ -1293,7 +1293,7 @@ export function computeBarRectangles({
 }
 
 function BarFn(outsideProps: Props) {
-  const graphicalItemThemeSelector = useGraphicalItemIdentity(outsideProps.dataKey);
+  const graphicalItemThemeSelector = useGraphicalItemIdentity(outsideProps.dataKey, outsideProps);
   const unthemedStyles = useUnthemedStyles(outsideProps);
   const graphicalItemStyle = useBackwardsCompatibleTheme<Props>(graphicalItemThemeSelector, outsideProps, undefined);
   const props = resolveDefaultProps(outsideProps, defaultBarProps);
