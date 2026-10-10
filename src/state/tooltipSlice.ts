@@ -455,6 +455,18 @@ const tooltipSlice = createSlice({
       state.keyboardInteraction.index = action.payload.activeIndex;
       state.keyboardInteraction.coordinate = action.payload.activeCoordinate;
     },
+    setKeyPressInteraction(state, action: PayloadAction<KeyboardTooltipActionPayload>) {
+      /*
+       * The most recent input wins. Mouse actions turn off the keyboard interaction,
+       * so a key press turns off the hover left by a pointer that rests over the chart.
+       * Focus does not, because a mouse click focuses the chart too.
+       */
+      state.axisInteraction.hover.active = false;
+      state.itemInteraction.hover.active = false;
+      state.keyboardInteraction.active = action.payload.active;
+      state.keyboardInteraction.index = action.payload.activeIndex;
+      state.keyboardInteraction.coordinate = action.payload.activeCoordinate;
+    },
   },
 });
 
@@ -471,6 +483,7 @@ export const {
   setMouseClickAxisIndex,
   setSyncInteraction,
   setKeyboardInteraction,
+  setKeyPressInteraction,
 } = tooltipSlice.actions;
 
 export const tooltipReducer = tooltipSlice.reducer;

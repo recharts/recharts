@@ -4,6 +4,8 @@ import { describe, expect, test, vi } from 'vitest';
 import {
   Area,
   AreaChart,
+  Bar,
+  BarChart,
   CartesianGrid,
   DefaultTooltipContent,
   Funnel,
@@ -21,7 +23,13 @@ import {
   YAxis,
 } from '../../src';
 import { assertNotNull } from '../helper/assertNotNull';
-import { expectTooltipNotVisible, expectTooltipPayload, getTooltip } from '../component/Tooltip/tooltipTestHelpers';
+import {
+  expectTooltipNotVisible,
+  expectTooltipPayload,
+  getTooltip,
+  showTooltip,
+} from '../component/Tooltip/tooltipTestHelpers';
+import { barChartMouseHoverTooltipSelector } from '../component/Tooltip/tooltipMouseHoverSelectors';
 import { PageData } from '../_data';
 import { createSelectorTestCase } from '../helper/createSelectorTestCase';
 import { clickOn } from '../helper/clickOn';
@@ -1076,6 +1084,60 @@ describe('AreaChart vertical', () => {
     act(() => getMainSurface(container).focus());
 
     expectTooltipPayload(container, 'Page A', ['uv : 400']);
+  });
+});
+
+describe('keyboard navigation while the mouse rests over the chart', () => {
+  const renderTestCase = createSelectorTestCase(({ children }) => (
+    <BarChart width={400} height={400} data={PageData}>
+      <XAxis dataKey="name" />
+      <Bar dataKey="uv" />
+      <Tooltip />
+      {children}
+    </BarChart>
+  ));
+
+  test('focus keeps the hovered point, and the first key press takes over', () => {
+    const { container } = renderTestCase();
+    showTooltip(container, barChartMouseHoverTooltipSelector);
+    expectTooltipPayload(container, 'Page C', ['uv : 300']);
+
+    const svg = getMainSurface(container);
+    act(() => svg.focus());
+    expectTooltipPayload(container, 'Page C', ['uv : 300']);
+
+    arrowRight(svg);
+    expectTooltipPayload(container, 'Page B', ['uv : 300']);
+  });
+
+  test('arrow keys move the tooltip and Enter toggles it', () => {
+    const { container } = renderTestCase();
+    showTooltip(container, barChartMouseHoverTooltipSelector);
+    const svg = getMainSurface(container);
+    act(() => svg.focus());
+
+    arrowRight(svg);
+    expectTooltipPayload(container, 'Page B', ['uv : 300']);
+
+    arrowLeft(svg);
+    expectTooltipPayload(container, 'Page A', ['uv : 400']);
+
+    fireEvent.keyDown(svg, { key: 'Enter' });
+    expectTooltipNotVisible(container);
+
+    fireEvent.keyDown(svg, { key: 'Enter' });
+    expectTooltipPayload(container, 'Page A', ['uv : 400']);
+  });
+
+  test('moving the mouse again takes over from the keyboard', () => {
+    const { container } = renderTestCase();
+    const svg = getMainSurface(container);
+    act(() => svg.focus());
+    arrowRight(svg);
+    expectTooltipPayload(container, 'Page B', ['uv : 300']);
+
+    showTooltip(container, barChartMouseHoverTooltipSelector);
+    expectTooltipPayload(container, 'Page C', ['uv : 300']);
   });
 });
 
