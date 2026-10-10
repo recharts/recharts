@@ -52,7 +52,7 @@ import { selectChartDataWithIndexes, selectChartDataSliceWithIndexes } from './d
 import { GraphicalItemSettings } from '../graphicalItemsSlice';
 import { ReferenceAreaSettings, ReferenceDotSettings, ReferenceLineSettings } from '../referenceElementsSlice';
 import { selectChartName, selectReverseStackOrder, selectStackOffsetType } from './rootPropsSelectors';
-import { isNotNil, mathSign } from '../../util/DataUtils';
+import { isNotNil } from '../../util/DataUtils';
 import { combineAxisRangeWithReverse } from './combiners/combineAxisRangeWithReverse';
 import { applyViewportToRange, FULL_VIEWPORT, isFullViewport } from '../../util/zoom/viewport';
 import { TooltipIndex, TooltipInteractionState, TooltipPayload, TooltipSettingsState } from '../tooltipSlice';
@@ -376,10 +376,9 @@ const combineTicksOfTooltipAxis = (
   const offsetForBand = realScaleType === 'scaleBand' && scale.bandwidth ? scale.bandwidth() / 2 : 2;
   let offset = type === 'category' && scale.bandwidth ? scale.bandwidth() / offsetForBand : 0;
 
-  offset =
-    axisType === 'angleAxis' && range != null && range?.length >= 2
-      ? mathSign(range[0] - range[1]) * 2 * offset
-      : offset;
+  if (axisType === 'angleAxis' && range != null && range?.length >= 2) {
+    offset = range[0] > range[1] ? 2 * offset : 0;
+  }
 
   // When axis is a categorical axis, but the type of axis is number or the scale of axis is not "auto"
   if (isCategorical && categoricalDomain) {
@@ -432,7 +431,7 @@ export const selectTooltipAxisTicks: (state: RechartsRootState) => ReadonlyArray
     selectTooltipAxis,
     selectTooltipAxisRealScaleType,
     selectTooltipAxisScale,
-    selectTooltipAxisRange,
+    selectTooltipAxisRangeWithReverse,
     selectTooltipDuplicateDomain,
     selectTooltipCategoricalDomain,
     selectTooltipAxisType,

@@ -3,7 +3,7 @@ import { MouseEvent, MutableRefObject, ReactElement, ReactNode, SVGProps, useRef
 import last from 'es-toolkit/compat/last';
 
 import { clsx } from 'clsx';
-import { interpolate, isNullish, mathSign, noop } from '../util/DataUtils';
+import { interpolate, isNullish, noop } from '../util/DataUtils';
 import { polarToCartesian } from '../util/PolarUtils';
 import { getTooltipNameProp, getValueByDataKey } from '../util/ChartUtils';
 import { Polygon } from '../shape/Polygon';
@@ -322,10 +322,10 @@ export function computeRadarPoints({
   const { cx, cy } = angleAxis;
   let isRange = false;
   const points: RadarPoint[] = [];
-  // scaleBand reverses the values it emits for a descending range, so the band offset that lands
-  // the first category on startAngle flips sign with the range direction, same as angle axis ticks.
-  const bandDirection = mathSign(angleAxis.range[0] - angleAxis.range[1]);
-  const angleBandSize = angleAxis.type !== 'number' ? bandDirection * (bandSize ?? 0) : 0;
+  // scaleBand reverses the values it emits for a descending range, so only a descending range needs
+  // the band offset that lands the first category on startAngle, same as angle axis ticks.
+  const isDescending = angleAxis.range[0] > angleAxis.range[1];
+  const angleBandSize = angleAxis.type !== 'number' && isDescending ? (bandSize ?? 0) : 0;
 
   displayedData.forEach((entry, i) => {
     const name = getValueByDataKey(entry, angleAxis.dataKey, i);
