@@ -66,7 +66,8 @@ export function getValueByDataKey<DataPointType, DataValueType>(
   }
 
   if (typeof dataKey === 'function') {
-    return dataKey(obj);
+    const value = dataKey(obj);
+    return value === undefined ? defaultValue : value;
   }
 
   return defaultValue;
