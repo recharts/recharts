@@ -54,7 +54,7 @@ import { GraphicalItemId } from '../state/graphicalItemsSlice';
 import { RegisterGraphicalItemId } from '../context/RegisterGraphicalItemId';
 import { WithIdRequired } from '../util/useUniqueId';
 import { useCartesianChartLayout } from '../context/chartLayoutContext';
-import { RechartsTheme } from '../theme/RechartsTheme';
+import { RechartsTheme, Styles2D } from '../theme/RechartsTheme';
 import { useBackwardsCompatibleTheme } from '../theme/useBackwardsCompatibleTheme';
 import {
   getOwnStyles,
@@ -63,6 +63,7 @@ import {
   UnthemedStyles,
   useUnthemedStyles,
 } from '../theme/dataEntryStyles';
+import { getActiveStyleOverrides, resolveThemedActiveStyles } from '../theme/activeStyles';
 
 export type FunnelTrapezoidItem = TrapezoidProps &
   TrapezoidViewBox & {
@@ -82,6 +83,11 @@ export type FunnelTrapezoidItem = TrapezoidProps &
 type InternalFunnelProps = RequiresDefaultProps<FunnelProps, typeof defaultFunnelProps> & {
   id: GraphicalItemId;
   trapezoids: ReadonlyArray<FunnelTrapezoidItem>;
+  /**
+   * Theme styles of the active shape for each index, without the ones that explicit props override.
+   * Empty when there is no active theme.
+   */
+  indexedActiveStyles?: ReadonlyArray<Styles2D | undefined>;
 };
 
 /**
@@ -355,8 +361,10 @@ function FunnelTrapezoids(props: FunnelTrapezoidsProps) {
     onMouseLeave: onMouseLeaveFromProps,
     shape,
     activeShape,
+    indexedActiveStyles,
     ...restOfAllOtherProps
   } = allOtherFunnelProps;
+  const cells = useMemo(() => findAllByType(allOtherFunnelProps.children, Cell), [allOtherFunnelProps.children]);
 
   const onMouseEnterFromContext = useMouseEnterItemDispatch(
     onMouseEnterFromProps,
@@ -375,11 +383,25 @@ function FunnelTrapezoids(props: FunnelTrapezoidsProps) {
       {trapezoids.map((entry: FunnelTrapezoidItem, i: number) => {
         const isActiveIndex = Boolean(activeShape) && activeItemIndex === String(i);
         const trapezoidOptions = isActiveIndex ? activeShape : shape;
+        const activeStyleOverrides =
+          isActiveIndex && indexedActiveStyles != null && indexedActiveStyles.length > 0
+            ? getActiveStyleOverrides(
+                activeShape,
+                indexedActiveStyles[i % indexedActiveStyles.length],
+                /*
+                 * `entry.payload` already has the theme styles merged in,
+                 * so we look at the original data entry and at the Cell instead.
+                 */
+                entry.payload?.payload,
+                cells[i]?.props,
+              )
+            : undefined;
         const { id, ...trapezoidProps }: FunnelTrapezoidProps = {
           ...entry,
+          ...activeStyleOverrides,
           option: trapezoidOptions,
           isActive: isActiveIndex,
-          stroke: entry.stroke,
+          stroke: activeStyleOverrides?.stroke ?? entry.stroke,
           animationElapsedTime,
           isAnimating,
           isEntrance,
@@ -532,6 +554,7 @@ function FunnelImpl(
   props: WithIdRequired<RequiresDefaultProps<Props, typeof defaultFunnelProps>> & {
     indexedStyles: ReadonlyArray<Record<string, unknown>>;
     unthemedStyles: UnthemedStyles | undefined;
+    indexedActiveStyles: ReadonlyArray<Styles2D | undefined>;
   },
 ) {
   const plotArea = usePlotArea();
@@ -803,6 +826,38 @@ function FunnelFn(outsideProps: Props) {
     }));
   }, [outsideProps, theme]);
   const unthemedStyles = useUnthemedStyles(outsideProps);
+  const explicitFill = outsideProps.fill;
+  const explicitFillOpacity = outsideProps.fillOpacity;
+  const explicitStroke = outsideProps.stroke;
+  const explicitStrokeOpacity = outsideProps.strokeOpacity;
+  const explicitStrokeWidth = outsideProps.strokeWidth;
+  const explicitStrokeDasharray = outsideProps.strokeDasharray;
+  /*
+   * The active styles are per-index too, same as `indexedStyles`.
+   */
+  const themeGraphicalItems = theme?.graphicalItems;
+  const indexedActiveStyles: ReadonlyArray<Styles2D | undefined> = useMemo(
+    () =>
+      (themeGraphicalItems ?? []).map(style =>
+        resolveThemedActiveStyles(style.active, {
+          fill: explicitFill,
+          fillOpacity: explicitFillOpacity,
+          stroke: explicitStroke,
+          strokeOpacity: explicitStrokeOpacity,
+          strokeWidth: explicitStrokeWidth,
+          strokeDasharray: explicitStrokeDasharray,
+        }),
+      ),
+    [
+      themeGraphicalItems,
+      explicitFill,
+      explicitFillOpacity,
+      explicitStroke,
+      explicitStrokeOpacity,
+      explicitStrokeWidth,
+      explicitStrokeDasharray,
+    ],
+  );
 
   const { id: externalId, ...resolvedProps } = resolveDefaultProps(outsideProps, defaultFunnelProps);
   return (
@@ -813,6 +868,7 @@ function FunnelFn(outsideProps: Props) {
           id={id}
           indexedStyles={indexedStyles}
           unthemedStyles={indexedStyles.length > 0 ? unthemedStyles : undefined}
+          indexedActiveStyles={indexedActiveStyles}
         />
       )}
     </RegisterGraphicalItemId>
