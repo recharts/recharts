@@ -71,6 +71,7 @@ import { AreaRevealShape, AreaRevealShapeProps } from './AreaRevealShape';
 import { GraphicalItemStyle, Styles2D } from '../theme/RechartsTheme';
 import { useRechartsTheme } from '../theme/RechartsThemeContext';
 import { useBackwardsCompatibleTheme } from '../theme/useBackwardsCompatibleTheme';
+import { getActiveStyleOverrides } from '../theme/activeStyles';
 import { useGraphicalItemIdentity } from '../theme/useGraphicalItemIdentity';
 
 /**
@@ -1080,16 +1081,11 @@ function AreaFn(outsideProps: Props<any, any>) {
     outsideProps,
     defaultLegacyThemeProps,
   );
+  const themedActiveDot = getActiveStyleOverrides(outsideProps.activeDot ?? true, theme?.active);
   const activeDot =
-    theme?.active == null ||
-    outsideProps.activeDot === false ||
-    typeof outsideProps.activeDot === 'function' ||
-    React.isValidElement(outsideProps.activeDot)
+    themedActiveDot == null
       ? outsideProps.activeDot
-      : {
-          ...theme.active,
-          ...(typeof outsideProps.activeDot === 'object' ? outsideProps.activeDot : {}),
-        };
+      : { ...themedActiveDot, ...(typeof outsideProps.activeDot === 'object' ? outsideProps.activeDot : {}) };
   const propsWithTheme: Props<any, any> = {
     ...outsideProps,
     ...theme,

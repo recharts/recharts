@@ -17,9 +17,24 @@ export type GraphicalItemStyle = Styles2D & {
   /**
    * Styles applied to the active representation of a graphical item.
    *
-   * The supported active representation differs by component. For example,
-   * Line uses this for its built-in active dot, while Bar and Pie will use it
-   * for their active shapes when they support graphical item themes.
+   * The active representation differs by component:
+   *
+   * - Line, Area, and Radar use these styles for their built-in active dot (`activeDot`).
+   * - Bar uses them for its active bar (`activeBar`).
+   * - Pie, Scatter, RadialBar, and Funnel use them for their active shape (`activeShape`).
+   *
+   * Bar, Scatter, RadialBar, and Funnel highlight the active shape only if you enable it,
+   * for example with `activeBar={true}` or `activeShape={true}`.
+   *
+   * All of these follow the same rules:
+   *
+   * - These styles apply only to what Recharts renders by default. A custom active representation
+   *   (a function or a React element) receives none of them. In Bar, a custom `shape` is used
+   *   for the active bar too, so it does not receive them either.
+   * - If the `activeDot`, `activeBar`, or `activeShape` object sets its own `fill` or `stroke`,
+   *   it ignores these styles completely. Its other style properties override the matching ones from here.
+   * - The same is true for graphical items and data entries that set their own `fill` or `stroke`,
+   *   see {@link RechartsTheme.graphicalItems}.
    */
   active?: Styles2D;
 };

@@ -336,7 +336,7 @@ describe('Line theme', () => {
     expect(activeDot).toHaveAttribute('stroke-width', '5');
   });
 
-  it('lets explicit active dot fields override the active graphical-item style', () => {
+  it('ignores the active graphical-item style when the active dot has its own color', () => {
     const { container } = rechartsTestRender(
       <RechartsThemeProvider
         value={{
@@ -364,10 +364,10 @@ describe('Line theme', () => {
     showTooltip(container, lineChartMouseHoverTooltipSelector);
     const activeDot = getActiveDot(container);
     expect(activeDot).toHaveAttribute('fill', 'blue');
-    expect(activeDot).toHaveAttribute('fill-opacity', '0.4');
-    expect(activeDot).toHaveAttribute('stroke', 'purple');
-    expect(activeDot).toHaveAttribute('stroke-dasharray', '3 2');
-    expect(activeDot).toHaveAttribute('stroke-opacity', '0.6');
+    expect(activeDot).not.toHaveAttribute('fill-opacity');
+    expect(activeDot).not.toHaveAttribute('stroke', 'purple');
+    expect(activeDot).not.toHaveAttribute('stroke-dasharray');
+    expect(activeDot).not.toHaveAttribute('stroke-opacity');
     expect(activeDot).toHaveAttribute('stroke-width', '3');
   });
 });

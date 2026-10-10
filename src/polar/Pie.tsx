@@ -76,6 +76,7 @@ import { usePolarChartLayout } from '../context/chartLayoutContext';
 import { RechartsTheme } from '../theme/RechartsTheme';
 import { useBackwardsCompatibleTheme } from '../theme/useBackwardsCompatibleTheme';
 import { getOwnStyles, getOwnStylesWithFallback, getUnthemedStyles, hasOwnColors } from '../theme/dataEntryStyles';
+import { getActiveStyleOverrides, resolveThemedActiveStyles } from '../theme/activeStyles';
 
 interface PieDef {
   /**
@@ -833,30 +834,18 @@ function PieSectors(props: PieSectorsProps) {
           [DATA_ITEM_INDEX_ATTRIBUTE_NAME]: i,
           [DATA_ITEM_GRAPHICAL_ITEM_ID_ATTRIBUTE_NAME]: id,
         };
-        const activeGraphicalItemStyle = graphicalItems[i % graphicalItems.length]?.active;
-        const activeOwnStyles = { ...getOwnStyles(explicitStyleProps), ...getOwnStyles(entry.payload) };
+        /*
+         * Without `activeShape` and `inactiveShape`, the active sector renders the default shape too.
+         */
+        const activeStyleOverrides = isActive
+          ? getActiveStyleOverrides(
+              activeShape || sectorOptions == null,
+              resolveThemedActiveStyles(graphicalItems[i % graphicalItems.length]?.active, explicitStyleProps),
+              entry.payload,
+            )
+          : undefined;
         const activeSectorProps: PieSectorShapeProps =
-          isActive &&
-          sectorOptions == null &&
-          activeGraphicalItemStyle != null &&
-          !hasOwnColors(entry.payload) &&
-          !hasOwnColors(explicitStyleProps)
-            ? {
-                ...sectorProps,
-                fill: activeGraphicalItemStyle.fill ?? sectorProps.fill,
-                fillOpacity:
-                  activeOwnStyles.fillOpacity ?? activeGraphicalItemStyle.fillOpacity ?? sectorProps.fillOpacity,
-                stroke: activeGraphicalItemStyle.stroke ?? sectorProps.stroke,
-                strokeOpacity:
-                  activeOwnStyles.strokeOpacity ?? activeGraphicalItemStyle.strokeOpacity ?? sectorProps.strokeOpacity,
-                strokeWidth:
-                  activeOwnStyles.strokeWidth ?? activeGraphicalItemStyle.strokeWidth ?? sectorProps.strokeWidth,
-                strokeDasharray:
-                  activeOwnStyles.strokeDasharray ??
-                  activeGraphicalItemStyle.strokeDasharray ??
-                  sectorProps.strokeDasharray,
-              }
-            : sectorProps;
+          activeStyleOverrides == null ? sectorProps : { ...sectorProps, ...activeStyleOverrides };
 
         return (
           <Layer

@@ -52,6 +52,7 @@ import { usePolarChartLayout } from '../context/chartLayoutContext';
 import { GraphicalItemStyle } from '../theme/RechartsTheme';
 import { useRechartsTheme } from '../theme/RechartsThemeContext';
 import { useBackwardsCompatibleTheme } from '../theme/useBackwardsCompatibleTheme';
+import { getActiveStyleOverrides } from '../theme/activeStyles';
 import { useGraphicalItemIdentity } from '../theme/useGraphicalItemIdentity';
 
 export interface RadarPoint {
@@ -671,16 +672,11 @@ export function Radar<DataPointType = any, DataValueType = any>(outsideProps: Pr
     undefined,
   );
   const themeStrokeDasharray = graphicalItemTheme?.strokeDasharray;
+  const themedActiveDot = getActiveStyleOverrides(outsideProps.activeDot ?? true, graphicalItemTheme?.active);
   const activeDot =
-    graphicalItemTheme?.active == null ||
-    outsideProps.activeDot === false ||
-    typeof outsideProps.activeDot === 'function' ||
-    React.isValidElement(outsideProps.activeDot)
+    themedActiveDot == null
       ? outsideProps.activeDot
-      : {
-          ...graphicalItemTheme.active,
-          ...(typeof outsideProps.activeDot === 'object' ? outsideProps.activeDot : {}),
-        };
+      : { ...themedActiveDot, ...(typeof outsideProps.activeDot === 'object' ? outsideProps.activeDot : {}) };
   const propsWithTheme: Props<DataPointType, DataValueType> = {
     ...outsideProps,
     activeDot,
