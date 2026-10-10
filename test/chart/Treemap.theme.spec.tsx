@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import React from 'react';
 import { fireEvent, render } from '@testing-library/react';
-import { RechartsThemeProvider, Treemap, TreemapNode } from '../../src';
+import { emptyTheme, RechartsTheme, RechartsThemeProvider, Treemap, TreemapNode } from '../../src';
 import { assertNotNull } from '../helper/assertNotNull';
 
 const data = [
@@ -111,17 +111,82 @@ describe('<Treemap /> theme', () => {
     );
 
     expect(getTileAttributes(container, 1)).toEqual([
-      { name: 'Hardware', fill: 'red', stroke: '#fff' },
-      { name: 'Software', fill: 'green', stroke: '#fff' },
-      { name: 'Services', fill: 'blue', stroke: '#fff' },
-      { name: 'Other', fill: 'red', stroke: '#fff' },
+      { name: 'Hardware', fill: 'red', stroke: null },
+      { name: 'Software', fill: 'green', stroke: null },
+      { name: 'Services', fill: 'blue', stroke: null },
+      { name: 'Other', fill: 'red', stroke: null },
     ]);
     expect(getTileAttributes(container, 2)).toEqual([
-      { name: 'Laptop', fill: 'red', stroke: '#fff' },
-      { name: 'Monitor', fill: 'red', stroke: '#fff' },
-      { name: 'Editor', fill: 'green', stroke: '#fff' },
-      { name: 'Browser', fill: 'green', stroke: '#fff' },
+      { name: 'Laptop', fill: 'red', stroke: null },
+      { name: 'Monitor', fill: 'red', stroke: null },
+      { name: 'Editor', fill: 'green', stroke: null },
+      { name: 'Browser', fill: 'green', stroke: null },
     ]);
+  });
+
+  it.each<{
+    name: string;
+    theme: RechartsTheme;
+    expected: ReadonlyArray<{ fill: string | null; stroke: string | null }>;
+  }>([
+    {
+      name: 'emptyTheme',
+      theme: emptyTheme,
+      expected: [
+        { fill: null, stroke: null },
+        { fill: null, stroke: null },
+      ],
+    },
+    {
+      name: 'a theme with fill only',
+      theme: { graphicalItems: [{ fill: 'purple' }] },
+      expected: [
+        { fill: 'purple', stroke: null },
+        { fill: 'purple', stroke: null },
+      ],
+    },
+    {
+      name: 'a theme with stroke only',
+      theme: { graphicalItems: [{ stroke: 'purple' }] },
+      expected: [
+        { fill: null, stroke: 'purple' },
+        { fill: null, stroke: 'purple' },
+      ],
+    },
+    {
+      name: 'a theme without graphical items',
+      theme: { graphicalItems: [] },
+      expected: [
+        { fill: null, stroke: null },
+        { fill: null, stroke: null },
+      ],
+    },
+  ])('does not apply legacy tile colors with $name', ({ theme, expected }) => {
+    const { container } = render(
+      <RechartsThemeProvider value={theme}>
+        <Treemap width={400} height={250} data={data} isAnimationActive={false} nameKey="name" dataKey="value" />
+      </RechartsThemeProvider>,
+    );
+
+    expect(getTileAttributes(container, 1).map(({ fill, stroke }) => ({ fill, stroke }))).toEqual(expected);
+  });
+
+  it('keeps using an explicit colorPanel under a theme', () => {
+    const { container } = render(
+      <RechartsThemeProvider value={emptyTheme}>
+        <Treemap
+          width={400}
+          height={250}
+          data={data}
+          isAnimationActive={false}
+          nameKey="name"
+          dataKey="value"
+          colorPanel={['red', 'green']}
+        />
+      </RechartsThemeProvider>,
+    );
+
+    expect(getTileAttributes(container, 1).map(({ fill }) => fill)).toEqual(['red', 'green']);
   });
 
   it('outlines tiles with the page background color', () => {
@@ -255,5 +320,45 @@ describe('<Treemap /> theme', () => {
     const customContent = container.querySelector('[data-testid="custom-content"]');
     assertNotNull(customContent);
     expect(customContent.getAttribute('fill')).toBe('pink');
+  });
+
+  it('does not apply legacy colors to nest breadcrumbs under a theme', () => {
+    const { container } = render(
+      <RechartsThemeProvider value={emptyTheme}>
+        <Treemap
+          width={400}
+          height={250}
+          data={[{ name: 'A', children: [{ name: 'B', value: 100 }] }]}
+          isAnimationActive={false}
+          nameKey="name"
+          dataKey="value"
+          type="nest"
+        />
+      </RechartsThemeProvider>,
+    );
+    const breadcrumb = container.querySelector<HTMLElement>('.recharts-treemap-nest-index-box');
+    assertNotNull(breadcrumb);
+
+    expect(breadcrumb.style.background).toBe('');
+    expect(breadcrumb.style.color).toBe('');
+  });
+
+  it('keeps the legacy nest breadcrumb colors without a provider', () => {
+    const { container } = render(
+      <Treemap
+        width={400}
+        height={250}
+        data={[{ name: 'A', children: [{ name: 'B', value: 100 }] }]}
+        isAnimationActive={false}
+        nameKey="name"
+        dataKey="value"
+        type="nest"
+      />,
+    );
+    const breadcrumb = container.querySelector<HTMLElement>('.recharts-treemap-nest-index-box');
+    assertNotNull(breadcrumb);
+
+    expect(breadcrumb.style.background).toBe('rgb(0, 0, 0)');
+    expect(breadcrumb.style.color).toBe('rgb(255, 255, 255)');
   });
 });
