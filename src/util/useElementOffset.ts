@@ -11,10 +11,11 @@ const EPS = 1;
  */
 export type ElementOffset = {
   /**
-   * Height of an element as returned by `getBoundingClientRect()`.
-   * This is the CSS height including padding and border, and may be a fractional value.
+   * Height of an element: its border box as reported by ResizeObserver, or `getBoundingClientRect()` when no
+   * ResizeObserver entry is available. This is the CSS height including padding and border, and may be a fractional
+   * value.
    *
-   * @see {@link https://developer.mozilla.org/en-US/docs/Web/API/DOMRect/height}
+   * @see {@link https://developer.mozilla.org/en-US/docs/Web/API/ResizeObserverEntry/borderBoxSize}
    */
   height: number;
   /**
@@ -32,10 +33,11 @@ export type ElementOffset = {
    */
   top: number;
   /**
-   * Width of an element as returned by `getBoundingClientRect()`.
-   * This is the CSS width including padding and border, and may be a fractional value.
+   * Width of an element: its border box as reported by ResizeObserver, or `getBoundingClientRect()` when no
+   * ResizeObserver entry is available. This is the CSS width including padding and border, and may be a fractional
+   * value.
    *
-   * @see {@link https://developer.mozilla.org/en-US/docs/Web/API/DOMRect/width}
+   * @see {@link https://developer.mozilla.org/en-US/docs/Web/API/ResizeObserverEntry/borderBoxSize}
    */
   width: number;
 };
@@ -61,18 +63,33 @@ function hasSignificantSizeChange(a: ElementOffset, b: ElementOffset): boolean {
 }
 
 /**
- * Reads the current bounding box of a DOM element using `getBoundingClientRect()`.
+ * Reads the size of a DOM element either from the border box reported by a ResizeObserver entry,
+ * or falls back to `getBoundingClientRect()` when no entry is available.
+ *
+ * `getBoundingClientRect()` reports the painted box, so a CSS transform anywhere up the tree makes the element look
+ * smaller or larger than it is; the observed border box describes the layout box and ignores transforms.
+ *
+ * The border box is reported along the inline and block axes, which follow the element's writing mode: in a vertical
+ * writing mode the inline axis is vertical, so the inline size is the physical height and the block size the physical
+ * width. Both sizes are returned in physical axes.
  *
  * @param node - the DOM element to measure
+ * @param entry - the ResizeObserver entry that triggered this measurement, when there is one
  * @returns an ElementOffset with the element's current dimensions and viewport-relative position
  */
-function readElementOffset(node: HTMLElement): ElementOffset {
+function readElementOffset(node: HTMLElement, entry?: ResizeObserverEntry): ElementOffset {
   const rect = node.getBoundingClientRect();
+  const borderBoxSize = entry?.borderBoxSize[0];
+  const inlineSize = borderBoxSize?.inlineSize;
+  const blockSize = borderBoxSize?.blockSize;
+  const writingMode =
+    borderBoxSize == null ? '' : (node.ownerDocument.defaultView?.getComputedStyle(node).writingMode ?? '');
+  const isVerticalWritingMode = writingMode.startsWith('vertical');
   return {
-    height: rect.height,
+    height: (isVerticalWritingMode ? inlineSize : blockSize) ?? rect.height,
     left: rect.left,
     top: rect.top,
-    width: rect.width,
+    width: (isVerticalWritingMode ? blockSize : inlineSize) ?? rect.width,
   };
 }
 
@@ -93,13 +110,13 @@ export function useElementOffset(extraDependencies: ReadonlyArray<unknown> = [])
   const elementRef = useRef<HTMLElement | null>(null);
   const lastBoundingBoxRef = useRef(lastBoundingBox);
 
-  const measureElement = useCallback(() => {
+  const measureElement = useCallback((entries?: ReadonlyArray<ResizeObserverEntry>) => {
     const node = elementRef.current;
     if (node == null) {
       return;
     }
 
-    const box = readElementOffset(node);
+    const box = readElementOffset(node, entries?.[0]);
     if (hasSignificantSizeChange(box, lastBoundingBoxRef.current)) {
       lastBoundingBoxRef.current = box;
       setLastBoundingBox(box);
