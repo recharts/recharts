@@ -1432,7 +1432,7 @@ describe('<BarChart />', () => {
       expect(container.querySelectorAll('[data-testid="custom-shape"]')).toHaveLength(2);
     });
 
-    test('renders nothing if barSize is not specified in a numerical XAxis', () => {
+    test('renders a bar that fills the axis if barSize is not specified in a numerical XAxis', () => {
       const { container } = render(
         <BarChart width={100} height={50} data={onePointData}>
           <XAxis dataKey="number" type="number" />
@@ -1440,7 +1440,16 @@ describe('<BarChart />', () => {
         </BarChart>,
       );
 
-      expectBars(container, []);
+      expectBars(container, [
+        {
+          d: 'M 59,5 h 72 v 10 h -72 Z',
+          height: '10',
+          radius: '0',
+          width: '72',
+          x: '59',
+          y: '5',
+        },
+      ]);
     });
 
     test('renders bars of default size if barSize is not set in categorical XAxis', () => {
@@ -1556,8 +1565,8 @@ describe('<BarChart />', () => {
       expect(barPositionsSpy).toHaveBeenLastCalledWith([
         {
           position: {
-            offset: -12,
-            size: 24,
+            offset: -15,
+            size: 30,
           },
           dataKeys: ['uv'],
           stackId: undefined,
@@ -1566,12 +1575,11 @@ describe('<BarChart />', () => {
 
       expectBars(container, [
         {
-          d: 'M 83,5 h 24 v 10 h -24 Z',
+          d: 'M 80,5 h 30 v 10 h -30 Z',
           height: '10',
           radius: '0',
-          // Why does maxBarSize 30 produce width 24 bar?
-          width: '24',
-          x: '83',
+          width: '30',
+          x: '80',
           y: '5',
         },
       ]);
