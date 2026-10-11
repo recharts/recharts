@@ -38,8 +38,8 @@ const ScatterChartExample = ({ isAnimationActive = true }: { isAnimationActive?:
     <ZAxis dataKey="z" type="number" range={[64, 144]} name="score" unit="km" />
     <Tooltip />
     <Legend />
-    <Scatter name="A school" data={data01} fill="#8884d8" isAnimationActive={isAnimationActive} />
-    <Scatter name="B school" data={data02} fill="#82ca9d" isAnimationActive={isAnimationActive} />
+    <Scatter name="A school" data={data01} isAnimationActive={isAnimationActive} />
+    <Scatter name="B school" data={data02} isAnimationActive={isAnimationActive} />
     <RechartsDevtools />
   </ScatterChart>
 );

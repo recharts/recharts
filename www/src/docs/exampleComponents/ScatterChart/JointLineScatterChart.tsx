@@ -37,8 +37,8 @@ const JointLineScatterChart = ({ defaultIndex }: { defaultIndex?: TooltipIndex }
       <ZAxis type="number" range={[100, 100]} />
       <Tooltip defaultIndex={defaultIndex} />
       <Legend />
-      <Scatter name="A school" data={data01} fill="#8884d8" line shape="cross" />
-      <Scatter name="B school" data={data02} fill="#82ca9d" line lineJointType="monotone" shape="diamond" />
+      <Scatter name="A school" data={data01} line shape="cross" />
+      <Scatter name="B school" data={data02} line lineJointType="monotone" shape="diamond" />
       <RechartsDevtools />
     </ScatterChart>
   );

@@ -38,8 +38,8 @@ const ThreeDimScatterChart = ({ defaultIndex }: { defaultIndex?: TooltipIndex })
       <ZAxis type="number" dataKey="z" range={[60, 400]} name="score" unit="km" />
       <Tooltip defaultIndex={defaultIndex} />
       <Legend />
-      <Scatter name="A school" data={data01} fill="#8884d8" shape="star" />
-      <Scatter name="B school" data={data02} fill="#82ca9d" shape="triangle" />
+      <Scatter name="A school" data={data01} shape="star" />
+      <Scatter name="B school" data={data02} shape="triangle" />
       <RechartsDevtools />
     </ScatterChart>
   );
