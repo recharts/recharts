@@ -14,6 +14,9 @@ const padding = '0.5ex';
  * Use it to give explicit colors to graphical items that would otherwise share one theme color,
  * for example `<Scatter fill={autoPalette[1]} />`.
  *
+ * `light-dark()` needs Chrome 123, Firefox 120, or Safari 17.5. Older browsers ignore these values,
+ * see {@link autoTheme}.
+ *
  * @experimental
  */
 export const autoPalette: ReadonlyArray<string> = [
@@ -58,6 +61,10 @@ function toGraphicalItem(color: string): GraphicalItemStyle {
  * the same `color-scheme`.
  *
  * Exported SVG and PNG images keep the colors of the color scheme that was active when they were taken.
+ *
+ * `light-dark()` needs Chrome 123, Firefox 120, or Safari 17.5. Older browsers do not understand the value and ignore it:
+ * shapes fall back to the SVG defaults, which are a black fill and no stroke, and Tooltip and Legend lose their theme colors.
+ * If you support older browsers, use {@link lightTheme} and {@link darkTheme} instead, or a theme with CSS `var()` values.
  *
  * @experimental
  */
