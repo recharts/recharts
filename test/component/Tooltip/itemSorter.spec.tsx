@@ -54,7 +54,7 @@ describe('itemSorter in ComposedChart', () => {
           <Bar dataKey="pv" name="bar" id="bar-pv" />
           <Line dataKey="amt" name="line" id="line-amt" />
           {/* name prop on Scatter doesn't do anything, not sure why */}
-          <Scatter dataKey="uv" name="scatter" id="scatter-uv" />
+          <Scatter dataKey="pv" name="scatter" id="scatter-uv" />
           <YAxis dataKey="pv" />
           <XAxis dataKey="name" />
           <Tooltip itemSorter={itemSorter} />
@@ -325,7 +325,7 @@ describe('itemSorter in ComposedChart', () => {
             ]),
             settings: {
               color: undefined,
-              dataKey: 'uv',
+              dataKey: 'pv',
               fill: undefined,
               hide: false,
               name: 'scatter',
@@ -623,7 +623,7 @@ describe('itemSorter in ComposedChart', () => {
           <Line dataKey="amt" name="Line" id="line-amt" />
           <Area dataKey="uv" name="Area" id="area-uv" />
           <Bar dataKey="pv" name="Bar" id="bar-pv" />
-          <Scatter dataKey="uv" name="Scatter" id="scatter-uv" />
+          <Scatter dataKey="pv" name="Scatter" id="scatter-uv" />
           <YAxis dataKey="pv" name="YAxis" />
           <XAxis dataKey="name" name="XAxis" />
           <Tooltip itemSorter={itemSorter} />
@@ -1352,7 +1352,7 @@ describe('itemSorter in RadialBarChart', () => {
               innerRadius: 3.9333333333333336,
               outerRadius: 11.933333333333334,
               startAngle: 0,
-              endAngle: 360,
+              endAngle: 14.693877551020407,
             },
             value: 400,
           },
@@ -1387,7 +1387,7 @@ describe('itemSorter in RadialBarChart', () => {
               innerRadius: 15.933333333333334,
               outerRadius: 23.933333333333334,
               startAngle: 0,
-              endAngle: 2160,
+              endAngle: 88.16326530612244,
             },
             value: 2400,
           },
@@ -1422,7 +1422,7 @@ describe('itemSorter in RadialBarChart', () => {
               innerRadius: 27.933333333333334,
               outerRadius: 35.93333333333334,
               startAngle: 0,
-              endAngle: 2160,
+              endAngle: 88.16326530612244,
             },
             value: 2400,
           },
@@ -1487,7 +1487,7 @@ describe('itemSorter in RadialBarChart', () => {
             },
             cx: 300,
             cy: 300,
-            endAngle: 180,
+            endAngle: 7.346938775510203,
             innerRadius: 121.93333333333334,
             name: 'Page D',
             outerRadius: 129.93333333333334,
@@ -1528,7 +1528,7 @@ describe('itemSorter in RadialBarChart', () => {
             },
             cx: 300,
             cy: 300,
-            endAngle: 8820,
+            endAngle: 360,
             innerRadius: 133.93333333333334,
             name: 'Page D',
             outerRadius: 141.93333333333334,
@@ -1569,7 +1569,7 @@ describe('itemSorter in RadialBarChart', () => {
             },
             cx: 300,
             cy: 300,
-            endAngle: 2160,
+            endAngle: 88.16326530612244,
             innerRadius: 145.93333333333334,
             name: 'Page D',
             outerRadius: 153.93333333333334,
@@ -1657,7 +1657,7 @@ describe('itemSorter in RadialBarChart', () => {
               innerRadius: 3.9333333333333336,
               outerRadius: 11.933333333333334,
               startAngle: 0,
-              endAngle: 360,
+              endAngle: 14.693877551020407,
             },
             value: 400,
           },
@@ -1692,7 +1692,7 @@ describe('itemSorter in RadialBarChart', () => {
               innerRadius: 15.933333333333334,
               outerRadius: 23.933333333333334,
               startAngle: 0,
-              endAngle: 2160,
+              endAngle: 88.16326530612244,
             },
             value: 2400,
           },
@@ -1727,7 +1727,7 @@ describe('itemSorter in RadialBarChart', () => {
               innerRadius: 27.933333333333334,
               outerRadius: 35.93333333333334,
               startAngle: 0,
-              endAngle: 2160,
+              endAngle: 88.16326530612244,
             },
             value: 2400,
           },
@@ -1808,7 +1808,7 @@ describe('itemSorter in RadialBarChart', () => {
             },
             cx: 300,
             cy: 300,
-            endAngle: 180,
+            endAngle: 7.346938775510203,
             innerRadius: 121.93333333333334,
             name: 'Page D',
             outerRadius: 129.93333333333334,
@@ -1849,7 +1849,7 @@ describe('itemSorter in RadialBarChart', () => {
             },
             cx: 300,
             cy: 300,
-            endAngle: 8820,
+            endAngle: 360,
             innerRadius: 133.93333333333334,
             name: 'Page D',
             outerRadius: 141.93333333333334,
@@ -1890,7 +1890,7 @@ describe('itemSorter in RadialBarChart', () => {
             },
             cx: 300,
             cy: 300,
-            endAngle: 2160,
+            endAngle: 88.16326530612244,
             innerRadius: 145.93333333333334,
             name: 'Page D',
             outerRadius: 153.93333333333334,

@@ -160,6 +160,8 @@ const selectAllTooltipAppliedValues: (state: RechartsRootState) => AppliedChartD
     selectChartDataWithIndexes,
     selectAnyTooltipItemUsesChartData,
     selectTooltipGraphicalItemsData,
+    selectChartLayout,
+    selectTooltipAxisType,
   ],
   combineAllAppliedValues,
 );
@@ -207,6 +209,7 @@ const selectDomainOfAllAppliedNumericalValuesIncludingErrorValues: (
     selectAllErrorBarSettings,
     selectTooltipAxisType,
     selectChartDataSliceWithIndexes,
+    selectChartLayout,
   ],
   combineDomainOfAllAppliedNumericalValuesIncludingErrorValues,
   {

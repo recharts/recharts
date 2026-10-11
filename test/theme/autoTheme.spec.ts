@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { autoTheme, darkPalette, darkTheme, lightPalette, lightTheme } from '../../src';
+import { autoPalette, autoTheme, darkPalette, darkTheme, lightPalette, lightTheme } from '../../src';
 import { combineLightDark } from '../helper/combineLightDark';
 
 /**
@@ -107,6 +107,13 @@ describe('autoTheme', () => {
       expect(item.stroke).toBe(color);
       expect(item.active?.stroke).toBe(color);
     });
+  });
+
+  it('should export autoPalette that pairs the light and dark palettes entry by entry', () => {
+    expect(autoPalette).toEqual(
+      lightPalette.map((lightColor, index) => `light-dark(${lightColor}, ${darkPalette[index]})`),
+    );
+    expect(autoTheme.graphicalItems.map(item => item.fill)).toEqual(autoPalette);
   });
 
   it('should use light-dark() for the page background and text color', () => {

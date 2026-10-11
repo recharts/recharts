@@ -28,25 +28,25 @@ describe('YAxis with type=category and dataKey, and Line with a different dataKe
 
   it('should select YAxis domain', () => {
     const { spy } = renderTestCase(state => selectAxisDomain(state, 'yAxis', 0, false));
-    expectLastCalledWith(spy, ['Page A', 'Page B', 'Page C', 'Page D', 'Page E', 'Page F']);
+    // YAxis is the value axis, and there the Line dataKey wins over the YAxis dataKey
+    expectLastCalledWith(spy, [400, 300, 300, 200, 278, 189]);
   });
 
   it('should render YAxis ticks', () => {
     const { container } = renderTestCase();
     expectYAxisTicks(container, [
-      { textContent: 'Page A', x: '72', y: '350' },
-      { textContent: 'Page B', x: '72', y: '284' },
-      { textContent: 'Page C', x: '72', y: '218' },
-      { textContent: 'Page D', x: '72', y: '152' },
-      { textContent: 'Page E', x: '72', y: '86' },
-      { textContent: 'Page F', x: '72', y: '20' },
+      { textContent: '400', x: '72', y: '350' },
+      { textContent: '300', x: '72', y: '267.5' },
+      { textContent: '200', x: '72', y: '185' },
+      { textContent: '278', x: '72', y: '102.5' },
+      { textContent: '189', x: '72', y: '20' },
     ]);
   });
 
   it('should render the Line', () => {
     const { container } = renderTestCase();
-    // the `uv` values are not in the YAxis domain, so the Line has no points to draw
-    expectLines(container, [{ d: null }]);
+    // the YAxis domain is made of the `uv` values, so each point sits on the category of its own value
+    expectLines(container, [{ d: 'M80,350L140,267.5L200,267.5L260,185L320,102.5L380,20' }]);
   });
 
   it('should render the Line value in Tooltip', () => {

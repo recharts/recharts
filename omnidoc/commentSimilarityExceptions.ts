@@ -40,6 +40,12 @@ export const commentSimilarityExceptions: ReadonlyArray<CommentSimilarityGroup> 
       'label in graphical elements describes multiple labels, unlike axes and reference elements which describe a single label.',
   },
   {
+    components: ['Area', 'Bar', 'Line', 'Scatter', 'Radar', 'RadialBar'],
+    props: ['dataKey'],
+    reason:
+      'dataKey in graphical elements that display their value on an axis describes how they inherit the dataKey from that axis.',
+  },
+  {
     components: ['Pie'],
     props: ['label'],
     reason: 'Pie has a custom label implementation independent from other graphical elements',

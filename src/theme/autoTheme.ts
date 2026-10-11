@@ -6,9 +6,17 @@ const borderRadius = 4;
 const padding = '0.5ex';
 
 /**
- * Each entry pairs the same entry of `lightPalette` and `darkPalette`.
+ * Categorical series colors that follow the CSS `color-scheme` of the page.
+ *
+ * Each entry pairs the same entry of {@link lightPalette} and {@link darkPalette} in a CSS `light-dark()` value,
+ * so the browser picks the light or the dark color. See {@link autoTheme} for how to set the `color-scheme`.
+ *
+ * Use it to give explicit colors to graphical items that would otherwise share one theme color,
+ * for example `<Scatter fill={autoPalette[1]} />`.
+ *
+ * @experimental
  */
-const autoPalette: ReadonlyArray<string> = [
+export const autoPalette: ReadonlyArray<string> = [
   'light-dark(#2775e8, #5396ff)', //  1 Blue
   'light-dark(#b65900, #e97e2b)', //  2 Orange
   'light-dark(#007c59, #46d09f)', //  3 Aqua

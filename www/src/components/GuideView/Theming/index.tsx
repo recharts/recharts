@@ -620,11 +620,29 @@ export function ThemingGuide() {
       <h2>Colors for multiple series</h2>
       <p>
         The theme uses each graphical item&apos;s <code>dataKey</code> to decide which entry from{' '}
-        <code>graphicalItems</code> to use for its color.
+        <code>graphicalItems</code> to use for its color. Graphical items with the same <code>dataKey</code> show the
+        same data, so they get the same color.
+      </p>
+      <p>
+        A graphical item without its own <code>dataKey</code> uses the <code>dataKey</code> of its value axis. The chart
+        layout decides which axis that is, regardless of the axis <code>type</code>: <LinkToApi>YAxis</LinkToApi> in the
+        horizontal layout, <LinkToApi>XAxis</LinkToApi> in the vertical layout, <LinkToApi>PolarRadiusAxis</LinkToApi>{' '}
+        for <LinkToApi>Radar</LinkToApi>, and <LinkToApi>PolarAngleAxis</LinkToApi> for <LinkToApi>RadialBar</LinkToApi>
+        . This is how a <LinkToApi>Scatter</LinkToApi> that reads both coordinates from its axes gets a theme color.
       </p>
       <p>
         This is a convenient default. If you need different colors or want to control the assignment yourself, provide
-        an explicit <code>fill</code> or <code>stroke</code> prop on the graphical item.
+        an explicit <code>fill</code> or <code>stroke</code> prop on the graphical item. You will need to do that when
+        several graphical items share one <code>dataKey</code> and each brings its own <code>data</code> array, for
+        example two <LinkToApi>Scatter</LinkToApi> series on the same axes. The <code>lightPalette</code>,{' '}
+        <code>darkPalette</code> and <code>autoPalette</code> exports hold the colors of the built-in themes, so you can
+        pick from them: <code>{'<Scatter fill={autoPalette[1]} />'}</code>.
+      </p>
+      <p>
+        The theme compares <code>dataKey</code> values as strings. A function <code>dataKey</code> is compared by its
+        source code: two functions with the same source share a color, and a minified build may order the colors
+        differently than a development build. Prefer explicit colors for graphical items that use a function{' '}
+        <code>dataKey</code>.
       </p>
       <p>
         Each entry can also carry an <code>active</code> block, which styles the highlighted representation of that

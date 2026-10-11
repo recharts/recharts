@@ -1599,7 +1599,7 @@ describe('Tooltip visibility', () => {
           '3 : 2400',
           '5 : 2400',
           'stature : 2400cm',
-          'weight : 2400kg',
+          'weight : 400kg',
         ]);
       });
     });

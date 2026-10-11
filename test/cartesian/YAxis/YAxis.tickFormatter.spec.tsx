@@ -11,7 +11,7 @@ describe('YAxis with custom tickFormatter', () => {
   const renderTestCase = createSelectorTestCase(({ children }) => (
     <LineChart width={400} height={400} data={PageData} margin={{ top: 20, right: 20, bottom: 20, left: 20 }}>
       <YAxis type="category" dataKey="name" tickFormatter={tickFormatterSpy} />
-      <Line type="monotone" dataKey="uv" stroke="#ff7300" />
+      <Line type="monotone" stroke="#ff7300" />
       {children}
     </LineChart>
   ));

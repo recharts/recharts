@@ -1469,6 +1469,33 @@ export interface DataConsumer<DataPointType, DataValueType> {
 }
 
 /**
+ * Same as {@link DataConsumer}, for graphical items that display their value on an axis
+ * and so can inherit the `dataKey` from that axis.
+ *
+ * DataPointType is the type of each data point object in the data array.
+ * DataValueType is the type of the value that this dataKey extracts from each data point.
+ */
+export interface ValueAxisDataConsumer<DataPointType, DataValueType> {
+  /**
+   * The data that you provide via the `data` prop is an array of objects.
+   * Each object can have multiple properties, each representing a different data dimension.
+   * Use the `dataKey` prop to specify which property (or dimension) to use for this component.
+   *
+   * Decides how to extract the value from the data:
+   * - `string`: the name of the field in the data object;
+   * - `number`: the index of the field in the data;
+   * - `function`: a function that receives the data object and returns the value.
+   *
+   * If undefined, this component uses the `dataKey` of its value axis.
+   * The chart layout decides which axis that is, regardless of the axis `type`:
+   * YAxis in horizontal layout, XAxis in vertical layout,
+   * PolarRadiusAxis in centric layout, and PolarAngleAxis in radial layout.
+   * If both this component and the axis define a `dataKey`, this component wins.
+   */
+  dataKey?: DataKey<DataPointType, DataValueType>;
+}
+
+/**
  * Props shared with all Cartesian and Polar charts.
  * There are three charts that do not use these base props, and define their own:
  * - Treemap

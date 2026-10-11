@@ -1,6 +1,6 @@
 import { useCallback } from 'react';
 import { useAppSelector } from '../state/hooks';
-import { selectAllUnfilteredGraphicalItemDataKeys } from '../state/selectors/graphicalItemSelectors';
+import { selectAllEffectiveGraphicalItemDataKeys } from '../state/selectors/effectiveDataKeySelectors';
 import { DataKey } from '../util/types';
 import { graphicalItemIdentity } from './graphicalItemIdentity';
 import { RechartsTheme } from './RechartsTheme';
@@ -18,7 +18,7 @@ const selectEmptyGraphicalItemDataKeys = (): ReadonlyArray<DataKey<any>> => STAB
  * If the graphical item sets its own fill or stroke, the selector returns undefined
  * and the item ignores its theme entry completely, including the `active` styles.
  *
- * @param dataKey dataKey of the graphical item
+ * @param dataKey effective dataKey of the graphical item, see {@link useEffectiveDataKey}
  * @param explicitProps props as provided by the user, before merging with theme or defaults
  */
 export function useGraphicalItemIdentity(
@@ -28,7 +28,7 @@ export function useGraphicalItemIdentity(
   const activeTheme = useRechartsTheme();
   const ignoresTheme = hasOwnColors(explicitProps);
   const graphicalItemDataKeys =
-    useAppSelector(activeTheme == null ? selectEmptyGraphicalItemDataKeys : selectAllUnfilteredGraphicalItemDataKeys) ??
+    useAppSelector(activeTheme == null ? selectEmptyGraphicalItemDataKeys : selectAllEffectiveGraphicalItemDataKeys) ??
     STABLE_EMPTY_GRAPHICAL_ITEM_DATA_KEYS;
 
   return useCallback(

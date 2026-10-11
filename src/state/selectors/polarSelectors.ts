@@ -23,7 +23,8 @@ import {
   selectRenderableAxisSettings,
 } from './axisSelectors';
 import { PolarGraphicalItemSettings } from '../graphicalItemsSlice';
-import { CategoricalDomain, NumberDomain } from '../../util/types';
+import { CategoricalDomain, LayoutType, NumberDomain } from '../../util/types';
+import { getDataKeyOnAxis } from './effectiveDataKeySelectors';
 import { selectChartLayout } from '../../context/chartLayoutContext';
 import { getValueByDataKey } from '../../util/ChartUtils';
 import { pickAxisType } from './pickAxisType';
@@ -70,7 +71,7 @@ export const selectPolarAppliedValues: (
   axisType: PolarAxisType,
   axisId: AxisId,
 ) => AppliedChartData = createSelector(
-  [selectPolarDisplayedData, selectBaseAxis, selectPolarItemsSettings],
+  [selectPolarDisplayedData, selectBaseAxis, selectPolarItemsSettings, selectChartLayout, pickAxisType],
   combineAppliedValues,
 );
 
@@ -79,17 +80,22 @@ export const selectAllPolarAppliedNumericalValues: (
   axisType: PolarAxisType,
   axisId: AxisId,
 ) => ReadonlyArray<AppliedChartDataWithErrorDomain> = createSelector(
-  [selectPolarDisplayedData, selectBaseAxis, selectPolarItemsSettings],
+  [selectPolarDisplayedData, selectBaseAxis, selectPolarItemsSettings, selectChartLayout, pickAxisType],
   (
     data: ChartData,
     axisSettings: BaseCartesianAxis,
     items: ReadonlyArray<PolarGraphicalItemSettings>,
+    layout: LayoutType,
+    axisType: PolarAxisType,
   ): ReadonlyArray<AppliedChartDataWithErrorDomain> => {
     if (items.length > 0) {
       return data
         .flatMap(entry => {
           return items.flatMap((item): AppliedChartDataWithErrorDomain | undefined => {
-            const valueByDataKey: unknown = getValueByDataKey(entry, axisSettings.dataKey ?? item.dataKey);
+            const valueByDataKey: unknown = getValueByDataKey(
+              entry,
+              getDataKeyOnAxis(item.dataKey, axisSettings.dataKey, layout, axisType),
+            );
             return {
               value: valueByDataKey,
               errorDomain: [], // polar charts do not have error bars
@@ -122,6 +128,7 @@ const selectDomainOfAllPolarAppliedNumericalValues: (
     selectAllErrorBarSettings,
     pickAxisType,
     selectChartDataSliceIgnoringIndexes,
+    selectChartLayout,
   ],
   combineDomainOfAllAppliedNumericalValuesIncludingErrorValues,
 );
