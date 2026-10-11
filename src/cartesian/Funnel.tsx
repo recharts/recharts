@@ -3,7 +3,7 @@ import { MutableRefObject, ReactElement, ReactNode, useMemo, useRef } from 'reac
 import omit from 'es-toolkit/compat/omit';
 
 import { clsx } from 'clsx';
-import { selectActiveIndex } from '../state/selectors/selectors';
+import { selectActiveTooltipIndex } from '../state/selectors/tooltipSelectors';
 import { useAppSelector } from '../state/hooks';
 import { Layer } from '../container/Layer';
 import { Props as TrapezoidProps } from '../shape/Trapezoid';
@@ -352,9 +352,7 @@ function FunnelLabelListProvider({
 
 function FunnelTrapezoids(props: FunnelTrapezoidsProps) {
   const { trapezoids, allOtherFunnelProps, animationElapsedTime, isAnimating, isEntrance } = props;
-  const activeItemIndex = useAppSelector(state =>
-    selectActiveIndex(state, 'item', state.tooltip.settings.trigger, undefined),
-  );
+  const activeItemIndex = useAppSelector(selectActiveTooltipIndex);
   const {
     onMouseEnter: onMouseEnterFromProps,
     onClick: onItemClickFromProps,
