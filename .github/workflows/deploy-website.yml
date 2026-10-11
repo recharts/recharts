@@ -21,12 +21,12 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout Recharts Repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
         with:
           repository: recharts/recharts
 
       - name: Use Node.js ${{ env.NODE_VERSION }}
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v7
         with:
           node-version: ${{ env.NODE_VERSION }}
           cache: 'npm'
@@ -53,7 +53,7 @@ jobs:
 
       - name: Publish artifact
         id: publish-gh-pages
-        uses: actions/upload-pages-artifact@v3
+        uses: actions/upload-pages-artifact@v5
         with:
           path: 'www/docs'
           name: 'github-pages-artifact'
@@ -63,7 +63,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout recharts.github.io Repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
         with:
           repository: recharts/recharts.github.io
           ref: gh-pages
@@ -75,7 +75,7 @@ jobs:
           git clean -fdx
 
       - name: Download artifact
-        uses: actions/download-artifact@v5
+        uses: actions/download-artifact@v8
         with:
           name: 'github-pages-artifact'
 

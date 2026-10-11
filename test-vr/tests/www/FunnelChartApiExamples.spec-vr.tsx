@@ -1,9 +1,9 @@
-import * as React from 'react';
-import { test, expect } from '@playwright/experimental-ct-react';
+import type { FunnelChartExample } from './FunnelChartApiExamples.story';
+import { expect, test } from '../fixtures';
 
-import FunnelChartExample from '../../../www/src/docs/exampleComponents/FunnelChart/FunnelChartExample';
-
-test('FunnelChartExample', async ({ mount }) => {
-  const component = await mount(<FunnelChartExample isAnimationActive={false} />);
+test('FunnelChartExample', async ({ mountStory }) => {
+  const component = await mountStory<typeof FunnelChartExample>('www/FunnelChartApiExamples/FunnelChartExample', {
+    isAnimationActive: false,
+  });
   await expect(component).toHaveScreenshot();
 });

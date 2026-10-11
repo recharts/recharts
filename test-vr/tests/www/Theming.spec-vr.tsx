@@ -1,40 +1,48 @@
-import * as React from 'react';
-import { expect } from '@playwright/experimental-ct-react';
-import ThemeSwitcherExample from '../../../www/src/components/GuideView/Theming/ThemeSwitcherExample';
-import CustomThemeExample from '../../../www/src/components/GuideView/Theming/CustomThemeExample';
-import NestedThemeExample from '../../../www/src/components/GuideView/Theming/NestedThemeExample';
-import { testWithDarkTheme, testWithLightTheme } from './fixtures.tsx';
+import type { ThemeSwitcherExample } from './Theming.story';
+import { expect, test } from '../fixtures';
 
 /*
  * The switcher example has no theme provider of its own when `themeName` is `inherit`,
  * so these two tests cover what the website's color mode toggle does to it.
  */
-testWithLightTheme('ThemeSwitcherExample - page theme, light', async ({ mount }) => {
-  const component = await mount(<ThemeSwitcherExample themeName="inherit" />);
+test('ThemeSwitcherExample - page theme, light', async ({ mountStory }) => {
+  const component = await mountStory<typeof ThemeSwitcherExample>('www/Theming/ThemeSwitcherExample', {
+    testTheme: 'light',
+    themeName: 'inherit',
+  });
   await expect(component).toHaveScreenshot();
 });
 
-testWithDarkTheme('ThemeSwitcherExample - page theme, dark', async ({ mount }) => {
-  const component = await mount(<ThemeSwitcherExample themeName="inherit" />);
+test('ThemeSwitcherExample - page theme, dark', async ({ mountStory }) => {
+  const component = await mountStory<typeof ThemeSwitcherExample>('www/Theming/ThemeSwitcherExample', {
+    testTheme: 'dark',
+    themeName: 'inherit',
+  });
   await expect(component).toHaveScreenshot();
 });
 
-testWithLightTheme('ThemeSwitcherExample - emptyTheme', async ({ mount }) => {
-  const component = await mount(<ThemeSwitcherExample themeName="empty" />);
+test('ThemeSwitcherExample - emptyTheme', async ({ mountStory }) => {
+  const component = await mountStory<typeof ThemeSwitcherExample>('www/Theming/ThemeSwitcherExample', {
+    testTheme: 'light',
+    themeName: 'empty',
+  });
   await expect(component).toHaveScreenshot();
 });
 
-testWithLightTheme('ThemeSwitcherExample - no provider', async ({ mount }) => {
-  const component = await mount(<ThemeSwitcherExample themeName="none" />);
+test('ThemeSwitcherExample - no provider', async ({ mountStory }) => {
+  const component = await mountStory<typeof ThemeSwitcherExample>('www/Theming/ThemeSwitcherExample', {
+    testTheme: 'light',
+    themeName: 'none',
+  });
   await expect(component).toHaveScreenshot();
 });
 
-testWithLightTheme('CustomThemeExample', async ({ mount }) => {
-  const component = await mount(<CustomThemeExample />);
+test('CustomThemeExample', async ({ mountStory }) => {
+  const component = await mountStory('www/Theming/CustomThemeExample', { testTheme: 'light' });
   await expect(component).toHaveScreenshot();
 });
 
-testWithLightTheme('NestedThemeExample', async ({ mount }) => {
-  const component = await mount(<NestedThemeExample />);
+test('NestedThemeExample', async ({ mountStory }) => {
+  const component = await mountStory('www/Theming/NestedThemeExample', { testTheme: 'light' });
   await expect(component).toHaveScreenshot();
 });

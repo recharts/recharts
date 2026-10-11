@@ -199,6 +199,16 @@ describe('getValueByDataKey', () => {
     expect(getValueByDataKey(data, fn, 9)).toBe(1);
   });
 
+  it('should return the default for an undefined function result', () => {
+    const getter = (entry: typeof data): unknown => entry.u;
+    expect(getValueByDataKey(data, getter, 9)).toBe(9);
+    expect(getValueByDataKey(data, getter)).toBeUndefined();
+  });
+
+  test.each([0, false, '', null, NaN])('should preserve a defined function result of %s', value => {
+    expect(getValueByDataKey(data, () => value, 9)).toBe(value);
+  });
+
   it('should return data from object root', () => {
     expect(getValueByDataKey(data, 'a')).toEqual(1);
     expect(getValueByDataKey(data, 'a', 9)).toEqual(1);
@@ -392,6 +402,16 @@ describe('getDomainOfStackGroups', () => {
     };
 
     expect(getDomainOfStackGroups(stackData, 0, 1)).toEqual([0, 0]);
+  });
+
+  it('does not overflow the call stack for a series with many points', () => {
+    const pointCount = 200_000;
+    const series = Array.from({ length: pointCount }, (_, i) => [i, i + 1]);
+    stackData = {
+      a: { stackedData: [series] },
+    };
+
+    expect(getDomainOfStackGroups(stackData, 0, pointCount - 1)).toEqual([0, pointCount]);
   });
 });
 

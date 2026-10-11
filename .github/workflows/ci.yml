@@ -32,12 +32,12 @@ jobs:
       directories: ${{ steps.set_matrix.outputs.directories }}
     steps:
       - name: Use Node.js ${{ env.NODE_VERSION }}
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v7
         with:
           node-version: ${{ env.NODE_VERSION }}
 
       - name: Checkout Integration Tests Repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
         with:
           repository: recharts/recharts-integ
 
@@ -55,10 +55,10 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout Recharts Repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
 
       - name: Use Node.js ${{ env.NODE_VERSION }}
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v7
         with:
           node-version: ${{ env.NODE_VERSION }}
           cache: 'npm'
@@ -71,7 +71,7 @@ jobs:
         run: npm run build
 
       - name: Upload build artifact
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: build-output
           path: |
@@ -89,10 +89,10 @@ jobs:
     needs: [build]
     steps:
       - name: Checkout Recharts Repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
 
       - name: Use Node.js ${{ env.NODE_VERSION }}
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v7
         with:
           node-version: ${{ env.NODE_VERSION }}
           cache: 'npm'
@@ -102,7 +102,7 @@ jobs:
         run: npm ci
 
       - name: Download build artifact
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v8
         with:
           name: build-output
 
@@ -113,7 +113,7 @@ jobs:
         run: npm run test-coverage
 
       - name: Upload coverage report to Codecov
-        uses: codecov/codecov-action@v5
+        uses: codecov/codecov-action@v7
         with:
           slug: recharts/recharts
           files: ./coverage/coverage-final.json
@@ -134,7 +134,7 @@ jobs:
       HOME: /root
     steps:
       - name: Checkout Recharts Repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
         with:
           # Chromatic needs access to full git history
           # see https://www.chromatic.com/docs/github-actions/
@@ -144,7 +144,7 @@ jobs:
         run: git config --global --add safe.directory $GITHUB_WORKSPACE
 
       - name: Use Node.js ${{ env.NODE_VERSION }}
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v7
         with:
           node-version: ${{ env.NODE_VERSION }}
           cache: 'npm'
@@ -154,7 +154,7 @@ jobs:
         run: npm ci
 
       - name: Download build artifact
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v8
         with:
           name: build-output
 
@@ -175,7 +175,7 @@ jobs:
         run: npm run build-storybook
 
       - name: Upload storybook artifact
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: storybook-build
           path: storybook/public
@@ -200,10 +200,10 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout Recharts Repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
 
       - name: Use Node.js ${{ env.NODE_VERSION }}
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v7
         with:
           node-version: ${{ env.NODE_VERSION }}
           cache: 'npm'
@@ -213,9 +213,12 @@ jobs:
         run: npm ci
 
       - name: Download build artifact
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v8
         with:
           name: build-output
+
+      - name: Check for orphaned VR baselines
+        run: npm run check-orphan-snapshots
 
       - name: Typecheck
         run: npm run check-types-lib
@@ -232,10 +235,10 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout Recharts Repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
 
       - name: Use Node.js ${{ env.NODE_VERSION }}
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v7
         with:
           node-version: ${{ env.NODE_VERSION }}
           cache: 'npm'
@@ -245,7 +248,7 @@ jobs:
         run: npm ci
 
       - name: Download build artifact
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v8
         with:
           name: build-output
 
@@ -258,10 +261,10 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout Recharts Repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
 
       - name: Use Node.js ${{ env.NODE_VERSION }}
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v7
         with:
           node-version: ${{ env.NODE_VERSION }}
           cache: 'npm'
@@ -271,7 +274,7 @@ jobs:
         run: npm ci
 
       - name: Download build artifact
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v8
         with:
           name: build-output
 
@@ -284,10 +287,10 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout Recharts Repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
 
       - name: Use Node.js ${{ env.NODE_VERSION }}
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v7
         with:
           node-version: ${{ env.NODE_VERSION }}
           cache: 'npm'
@@ -305,12 +308,12 @@ jobs:
           fi
 
       - name: Download build artifact
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v8
         with:
           name: build-output
 
       - name: Download storybook artifact
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v8
         with:
           name: storybook-build
           path: storybook/public
@@ -330,11 +333,21 @@ jobs:
           mkdir -p www/docs/storybook-static
           cp -r storybook/public/* www/docs/storybook-static/
 
+      - name: Build VR gallery
+        run: npx vite build --config test-vr/vite.config.ts
+
       - name: Upload website artifact
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: website-build
           path: www/docs
+          retention-days: 14
+
+      - name: Upload VR gallery artifact
+        uses: actions/upload-artifact@v7
+        with:
+          name: vr-gallery
+          path: test-vr/dist
           retention-days: 14
 
   pack:
@@ -347,10 +360,10 @@ jobs:
       tgz_name: ${{ steps.pack_library.outputs.tgz_name }}
     steps:
       - name: Checkout Recharts Repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
 
       - name: Use Node.js ${{ env.NODE_VERSION }}
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v7
         with:
           node-version: ${{ env.NODE_VERSION }}
           cache: 'npm'
@@ -360,7 +373,7 @@ jobs:
         run: npm ci
 
       - name: Download build artifact
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v8
         with:
           name: build-output
 
@@ -377,7 +390,7 @@ jobs:
           echo "tgz_name=${{ env.PACKED_ARTIFACT_NAME }}" >> $GITHUB_OUTPUT
 
       - name: Upload Packed Library Artifact
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           # This is the "artifact name", it's not a file name. The file name remains original.
           name: ${{ env.PACKED_ARTIFACT_NAME }}
@@ -412,22 +425,22 @@ jobs:
         test_dir: ${{ fromJson(needs.list_integration_tests.outputs.directories) }}
     steps:
       - name: Checkout Integration Tests Repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
         with:
           repository: recharts/recharts-integ # Checkout the test repo again but this time all directories and files
 
       - name: Use Node.js ${{ env.NODE_VERSION }}
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v7
         with:
           node-version: ${{ env.NODE_VERSION }}
 
-      - uses: pnpm/action-setup@v4
+      - uses: pnpm/action-setup@v6
         name: Install pnpm
         with:
           version: 10
 
       - name: Download Packed Library Artifact
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v8
         with:
           # name is not the filename, it's the "artifact name". The actual filename is the original of what was uploaded.
           name: ${{ env.PACKED_ARTIFACT_NAME }}
@@ -440,7 +453,7 @@ jobs:
         run: ./run-test.sh "${{ matrix.test_dir }}" "file:${{ runner.temp }}/${{ env.PACKED_ARTIFACT_NAME }}"
 
   vr_tests:
-    name: VR Tests (${{ matrix.browser }})
+    name: VR Tests (${{ matrix.project }})
     permissions:
       contents: read
       id-token: write
@@ -455,13 +468,22 @@ jobs:
       # Run all browsers even if one fails so we get a full picture.
       fail-fast: false
       matrix:
-        browser: [chromium, firefox, webkit]
+        project:
+          - chromium
+          - firefox
+          - webkit
+          - chromium-light
+          - chromium-dark
+          - firefox-light
+          - firefox-dark
+          - webkit-light
+          - webkit-dark
     steps:
       - name: Checkout Recharts Repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
 
       - name: Use Node.js ${{ env.NODE_VERSION }}
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v7
         with:
           node-version: ${{ env.NODE_VERSION }}
           cache: 'npm'
@@ -470,16 +492,16 @@ jobs:
       - name: Install Dependencies
         run: npm ci
 
-      - name: Run Visual Regression Tests (${{ matrix.browser }})
+      - name: Run Visual Regression Tests (${{ matrix.project }})
         id: vr_test_step
         # VR tests resolve recharts via a Vite source alias, so no build step is needed.
-        run: npx playwright test --config=test-vr/playwright-ct.config.ts --project=${{ matrix.browser }}
+        run: npx playwright test --config=test-vr/playwright.config.ts --project=${{ matrix.project }}
         # Continue even if tests fail so the blob report can still be uploaded.
         continue-on-error: true
 
       - name: Upload Flakiness report artifact (fork PRs only)
         if: always() && github.event_name == 'pull_request' && github.event.pull_request.head.repo.fork
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: flakiness-report-${{ github.job }}-${{ strategy.job-index }}
           path: flakiness-report/
@@ -487,9 +509,9 @@ jobs:
 
       - name: Upload blob report artifact
         if: always()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
-          name: vr-blob-report-${{ matrix.browser }}
+          name: vr-blob-report-${{ matrix.project }}
           path: test-vr/blob-report
           retention-days: 1
 
@@ -507,10 +529,10 @@ jobs:
     if: always() && needs.vr_tests.result != 'cancelled'
     steps:
       - name: Checkout Recharts Repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
 
       - name: Use Node.js ${{ env.NODE_VERSION }}
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v7
         with:
           node-version: ${{ env.NODE_VERSION }}
           cache: 'npm'
@@ -520,7 +542,7 @@ jobs:
         run: npm ci
 
       - name: Download all blob reports
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v8
         with:
           pattern: vr-blob-report-*
           path: all-blob-reports
@@ -530,7 +552,7 @@ jobs:
         run: npx playwright merge-reports --reporter html all-blob-reports
 
       - name: Upload merged VR report artifact
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: vr-report
           path: playwright-report
@@ -550,7 +572,7 @@ jobs:
       pull-requests: write
     steps:
       - name: Checkout gh-pages branch
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
         with:
           ref: gh-pages
           path: gh-pages
@@ -559,16 +581,22 @@ jobs:
           fetch-depth: 0
 
       - name: Download website artifact
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v8
         with:
           name: website-build
           path: website-build
 
       - name: Download VR report artifact
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v8
         with:
           name: vr-report
           path: vr-report
+
+      - name: Download VR gallery artifact
+        uses: actions/download-artifact@v8
+        with:
+          name: vr-gallery
+          path: vr-gallery
 
       - name: Cleanup old PR deployments
         working-directory: gh-pages
@@ -653,6 +681,14 @@ jobs:
           # Move artifacts to target directory
           mv ../website-build $TARGET_DIR/www
           mv ../vr-report $TARGET_DIR/vr-tests
+          mv ../vr-gallery $TARGET_DIR/vr-gallery
+
+          # GitHub Pages runs Jekyll by default, which silently drops any file or
+          # directory whose name starts with an underscore (e.g. Vite's
+          # "_data-<hash>.js" chunks), causing 404s for otherwise-valid assets.
+          # Ensure this marker file is always present so Jekyll processing stays
+          # disabled, even if gh-pages is ever recreated from scratch.
+          touch .nojekyll
 
           # Add and commit
           git add .
@@ -663,6 +699,7 @@ jobs:
 
           echo "Website deployed to URL: https://${{ github.repository_owner }}.github.io/${{ github.event.repository.name }}/$TARGET_DIR/www/"
           echo "VR report deployed to URL: https://${{ github.repository_owner }}.github.io/${{ github.event.repository.name }}/$TARGET_DIR/vr-tests/"
+          echo "VR gallery deployed to URL: https://${{ github.repository_owner }}.github.io/${{ github.event.repository.name }}/$TARGET_DIR/vr-gallery/preview.html"
 
       - name: Comment on PR
         if: github.event_name == 'pull_request' && steps.deploy.outcome == 'success'
@@ -674,15 +711,28 @@ jobs:
           REPO_NAME="${{ github.event.repository.name }}"
           WEBSITE_URL="https://$REPO_OWNER.github.io/$REPO_NAME/pr-$PR_NUMBER/www/"
           REPORT_URL="https://$REPO_OWNER.github.io/$REPO_NAME/pr-$PR_NUMBER/vr-tests/"
+          GALLERY_URL="https://$REPO_OWNER.github.io/$REPO_NAME/pr-$PR_NUMBER/vr-gallery/preview.html"
 
+          # The hidden marker identifies this comment, so later pushes update it instead of adding a new one.
+          MARKER="<!-- staging-deployment-details -->"
           COMMENT_BODY=$(cat <<EOF
+          $MARKER
           **Staging Deployment Details**
 
           - **Website:** $WEBSITE_URL
           - **Test Report:** $REPORT_URL
+          - **VR Gallery:** $GALLERY_URL
 
           *These deployments will remain available for 30 days.*
           EOF
           )
 
-          gh pr comment $PR_NUMBER --repo ${{ github.repository }} --body "$COMMENT_BODY"
+          COMMENT_IDS=$(gh api --paginate "repos/${{ github.repository }}/issues/$PR_NUMBER/comments" \
+            --jq ".[] | select(.user.login == \"github-actions[bot]\" and (.body | contains(\"$MARKER\"))) | .id")
+          COMMENT_ID="${COMMENT_IDS%%$'\n'*}"
+
+          if [ -n "$COMMENT_ID" ]; then
+            gh api --method PATCH "repos/${{ github.repository }}/issues/comments/$COMMENT_ID" -f body="$COMMENT_BODY" > /dev/null
+          else
+            gh pr comment $PR_NUMBER --repo ${{ github.repository }} --body "$COMMENT_BODY"
+          fi

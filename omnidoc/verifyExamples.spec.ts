@@ -121,7 +121,6 @@ describe('Documentation Examples Coverage', () => {
     'Surface',
     'SurfaceProps',
     'SymbolsProps',
-    'SyncMethod',
     'TextProps',
     'TickItem',
     'TickOrientation',

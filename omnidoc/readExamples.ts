@@ -38,6 +38,15 @@ export class ExampleReader {
 
   private initialized = false;
 
+  /**
+   * `getDescendantsOfKind` walks the whole AST of the file. These lookups happen once per
+   * (example file x component x prop), so without memoising we re-walk the same handful of
+   * example files many thousands of times.
+   */
+  private jsxElementsCache: Map<SourceFile, ReadonlyArray<JsxOpeningElement | JsxSelfClosingElement>> = new Map();
+
+  private chartFactoryVariableCache: Map<SourceFile, string | undefined> = new Map();
+
   constructor() {
     this.project = new Project({
       tsConfigFilePath: 'tsconfig.json',
@@ -288,6 +297,22 @@ export class ExampleReader {
     this.exportToExamples.set(exportName, [...existingExamples, example]);
   }
 
+  /**
+   * All JSX elements in the file, opening and self-closing, walked once and cached.
+   */
+  private getJsxElements(sourceFile: SourceFile): ReadonlyArray<JsxOpeningElement | JsxSelfClosingElement> {
+    const cached = this.jsxElementsCache.get(sourceFile);
+    if (cached) {
+      return cached;
+    }
+    const elements: ReadonlyArray<JsxOpeningElement | JsxSelfClosingElement> = [
+      ...sourceFile.getDescendantsOfKind(SyntaxKind.JsxOpeningElement),
+      ...sourceFile.getDescendantsOfKind(SyntaxKind.JsxSelfClosingElement),
+    ];
+    this.jsxElementsCache.set(sourceFile, elements);
+    return elements;
+  }
+
   private isComponentUsed(sourceFile: SourceFile, componentName: string): boolean {
     // Check imports
     const imports = sourceFile.getImportDeclarations();
@@ -308,6 +333,15 @@ export class ExampleReader {
    * Handles chained calls like: createHorizontalChart<...>()({ ... })
    */
   private getChartFactoryVariable(sourceFile: SourceFile): string | undefined {
+    if (this.chartFactoryVariableCache.has(sourceFile)) {
+      return this.chartFactoryVariableCache.get(sourceFile);
+    }
+    const result = this.computeChartFactoryVariable(sourceFile);
+    this.chartFactoryVariableCache.set(sourceFile, result);
+    return result;
+  }
+
+  private computeChartFactoryVariable(sourceFile: SourceFile): string | undefined {
     const variables = sourceFile.getVariableDeclarations();
     for (const variable of variables) {
       const initializer = variable.getInitializer();
@@ -327,9 +361,7 @@ export class ExampleReader {
       if (baseText === 'createHorizontalChart' || baseText === 'createVerticalChart') {
         const name = variable.getName();
         // Also verify the name is used in JSX to avoid false positives
-        const jsxOpeningElements = sourceFile.getDescendantsOfKind(SyntaxKind.JsxOpeningElement);
-        const jsxSelfClosingElements = sourceFile.getDescendantsOfKind(SyntaxKind.JsxSelfClosingElement);
-        const hasJsxMatch = [...jsxOpeningElements, ...jsxSelfClosingElements].some(el => {
+        const hasJsxMatch = this.getJsxElements(sourceFile).some(el => {
           const tagName = el.getTagNameNode();
           // In ts-morph, JSX member expressions like <Typed.X> are represented as PropertyAccessExpression
           if (tagName.getKind() !== SyntaxKind.PropertyAccessExpression) {
@@ -364,15 +396,7 @@ export class ExampleReader {
       }
     }
 
-    const jsxElements = sourceFile.getDescendantsOfKind(SyntaxKind.JsxOpeningElement);
-    const jsxSelfClosingElements = sourceFile.getDescendantsOfKind(SyntaxKind.JsxSelfClosingElement);
-
-    for (const el of jsxElements) {
-      if (this.isElementMatchingTag(el, localName, propName)) {
-        return true;
-      }
-    }
-    for (const el of jsxSelfClosingElements) {
+    for (const el of this.getJsxElements(sourceFile)) {
       if (this.isElementMatchingTag(el, localName, propName)) {
         return true;
       }
@@ -441,15 +465,7 @@ export class ExampleReader {
       return false;
     }
 
-    const jsxElements = sourceFile.getDescendantsOfKind(SyntaxKind.JsxOpeningElement);
-    const jsxSelfClosingElements = sourceFile.getDescendantsOfKind(SyntaxKind.JsxSelfClosingElement);
-
-    for (const el of jsxElements) {
-      if (this.isTypedElementMatchingTag(el, factoryVar, componentName, propName)) {
-        return true;
-      }
-    }
-    for (const el of jsxSelfClosingElements) {
+    for (const el of this.getJsxElements(sourceFile)) {
       if (this.isTypedElementMatchingTag(el, factoryVar, componentName, propName)) {
         return true;
       }

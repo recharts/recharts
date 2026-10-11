@@ -573,6 +573,7 @@ describe('selectAngleAxisWithScaleAndViewport', () => {
       cx: 250,
       cy: 250,
       dataKey: 'value',
+      range: [90, -270],
       scale: expect.toBeRechartsScale({ domain: [420, 460, 999, 500, 864, 650, 765, 365], range: [-270, 90] }),
       type: 'category',
     });

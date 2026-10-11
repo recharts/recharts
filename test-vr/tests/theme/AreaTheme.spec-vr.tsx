@@ -1,9 +1,19 @@
-import * as React from 'react';
-import { expect, test } from '@playwright/experimental-ct-react';
-import { AreaThemeComparison } from './AreaThemeComponents.tsx';
+import { expect, testWithThemes } from '../fixtures';
 
-test('Area theme', async ({ mount }) => {
-  const component = await mount(<AreaThemeComparison />);
+testWithThemes('Area theme', async ({ mountStory }) => {
+  const component = await mountStory('theme/AreaTheme/AreaThemeComparison');
+
+  await expect(component).toHaveScreenshot();
+});
+
+testWithThemes('Unthemed Area with custom dot', async ({ mountStory }) => {
+  const component = await mountStory('theme/AreaTheme/UnthemedAreaWithCustomDot');
+
+  await expect(component).toHaveScreenshot();
+});
+
+testWithThemes('Themed Area with custom dot', async ({ mountStory }) => {
+  const component = await mountStory('theme/AreaTheme/ThemedAreaWithCustomDot');
 
   await expect(component).toHaveScreenshot();
 });

@@ -13,8 +13,126 @@ but there is nothing stopping you from adding more complex tests that interact w
 Playwright will run all files in the `test-vr/tests` folder that end with `*.spec-vr.tsx`.
 (This is configured in the `./playwright.config.ts` file.)
 
-TypeScript in `test-vr/` resolves `recharts` from the local repository instead of the published npm package,
-so VR tests see source and declaration changes as soon as you make them.
+### Stories and the gallery
+
+The tests use the Playwright 1.62 component testing model: https://playwright.dev/docs/test-components.
+
+A test does not mount JSX directly. Instead, the JSX lives in a **story** — a named export of a `*.story.tsx` file
+next to the spec — and the test mounts it by its story id with the `mountStory` fixture:
+
+```tsx
+// test-vr/tests/App.story.tsx
+import { LineChart as RechartsLineChart } from 'recharts';
+
+export function LineChart() {
+  return (
+    <RechartsLineChart width={800} height={500} data={pageData}>
+      {/* ... */}
+    </RechartsLineChart>
+  );
+}
+```
+
+```tsx
+// test-vr/tests/App.spec-vr.tsx
+import { expect, testWithThemes } from './fixtures';
+
+testWithThemes('LineChart', async ({ mountStory }) => {
+  const component = await mountStory('App/LineChart');
+  await expect(component).toHaveScreenshot();
+});
+```
+
+The story id is the path of the story file under `test-vr/tests/` (without the `.story.tsx` suffix) plus the export name.
+The gallery page at `test-vr/gallery/` resolves the story and renders it into `#root`.
+
+The `mountStory` fixture (defined in `test-vr/tests/fixtures.ts`) wraps Playwright's built-in `mount()` and scopes the
+returned locator the same way the old component testing runtime did: when the gallery root has exactly one element
+child, the locator points at that child, otherwise it points at the root itself. This keeps `toHaveScreenshot()`
+capturing the same bounding box as before.
+
+Stories can take plain serializable props (data, booleans, strings) that the test passes as the second argument:
+
+```tsx
+function LegendPositionVRTest({ offset }: { offset?: number }) {
+  // ...
+}
+
+export const LegendPosition = (props: React.ComponentProps<typeof LegendPositionVRTest>) => (
+  <LegendPositionVRTest {...props} />
+);
+```
+
+```tsx
+import type { LegendPosition } from './LegendPosition.story';
+
+const component = await mountStory<typeof LegendPosition>('LegendPosition/LegendPosition', { offset: 30 });
+```
+
+## Recharts theme variants
+
+New visual-regression specs should import `testWithThemes` from
+`test-vr/tests/fixtures`:
+
+```tsx
+import { expect, testWithThemes } from './fixtures';
+
+testWithThemes('LineChart', async ({ mountStory }) => {
+  const component = await mountStory('App/LineChart');
+  await expect(component).toHaveScreenshot();
+});
+```
+
+Each `testWithThemes` test runs in three Playwright projects for each browser:
+
+| Project suffix                              | Gallery rendering                         | Browser color scheme         | Canvas             |
+| ------------------------------------------- | ----------------------------------------- | ---------------------------- | ------------------ |
+| no suffix (`chromium`, `firefox`, `webkit`) | No `RechartsThemeProvider` (`legacy`)     | Playwright default (`light`) | Light checkerboard |
+| `-light`                                    | `RechartsThemeProvider` with `lightTheme` | `light`                      | Light checkerboard |
+| `-dark`                                     | `RechartsThemeProvider` with `darkTheme`  | `dark`                       | Dark checkerboard  |
+
+The selected Recharts theme is supplied by the Playwright project and resolved
+inside the gallery boundary. It is not a story prop. The light and dark projects
+also set Playwright's browser `colorScheme` to match; this controls
+`prefers-color-scheme` and CSS system colors such as `Canvas` and `CanvasText`.
+The gallery declares support for both color schemes so the browser resolves
+system colors according to the selected `colorScheme`. These are separate
+settings, so explicitly override `colorScheme` when a test needs a browser color
+scheme that differs from its Recharts theme. Do not add a `testTheme` prop, put
+a theme name in a test title, or pass a custom screenshot name. Project names
+make the snapshots separate and deterministic, for example
+`LineChart-1-chromium-light-linux.png`.
+
+The `test` export is the staged, legacy-only fixture used by existing specs;
+`legacyTest` is its explicit name for new specs that intentionally need
+compatibility behavior with a plain white canvas. Existing specs may keep using it until their
+individual migration adds light and dark baselines. Use
+[the VR migration skill](../.agents/skills/vr-test-migration/SKILL.md) for that
+work. The old `test-vr/tests/www/StoryTheme.tsx` helper and its `testTheme`
+prop are also compatibility code for unmigrated website specs; do not use them
+in new stories.
+
+Intentional exceptions can suppress variants with structured fixture options at
+file, `test.describe`, or individual test scope:
+
+```tsx
+testWithThemes.describe('website color mode', { tag: '@recharts-theme-legacy' }, () => {
+  testWithThemes.use({ colorScheme: 'dark' });
+
+  testWithThemes('dark website', async ({ mountStory }) => {
+    const component = await mountStory('www/dark-mode/SimpleLineChartStory');
+    await expect(component).toHaveScreenshot();
+  });
+});
+```
+
+The tag selects the Recharts rendering variant; `colorScheme` still controls
+the browser's `prefers-color-scheme` media query. To select multiple variants
+without tags, use `testWithThemes.use({ rechartsThemes: ['legacy', 'light'] })`.
+Tags such as `@recharts-theme-legacy`, `@recharts-theme-light`, and
+`@recharts-theme-dark` are inherited by nested tests and take precedence over
+the fixture option. This is useful for website color-mode tests: the browser
+color scheme and the Recharts theme are independent dimensions.
 
 ## How to run tests
 
@@ -23,7 +141,8 @@ See [DEVELOPING.md](../DEVELOPING.md) for basic instructions on how to run the t
 Now that you know, let's go into more detail here.
 
 This whole setup runs in Docker and only in Docker so that we can have a consistent environment
-which will allow us to avoid test flakes due to different fonts and box shadows and whatnot.
+which will allow us to avoid test flakes due to different fonts and box shadows and whatnot. The
+full suite runs the three legacy browser projects plus the six browser/theme projects.
 
 The basic commands are prepared in `package.json` but you can go beyond that too
 and use whatever dockers allows you to do.
@@ -50,10 +169,7 @@ to avoid unexpected changes in the tests. But let's see how it goes.
 
 ## File structure
 
-This whole setup in its own directory mainly because the storybook/test-runner will break
-if a "playwright/index.tsx" file exists.
-So we need to move that somewhere else and while we're at it, we can
-also move everything else with it.
+All visual regression testing infrastructure, stories, specs, and baseline snapshots live in the `test-vr` directory.
 
 ### `.bin`
 
@@ -64,10 +180,23 @@ Convenience scripts so that the `package.json` scripts are shorter and easier to
 This is where all the snapshots (which would usually be screenshots) are stored.
 Please commit this folder to the repository - this is the baseline.
 
-### `playwright`
+Playwright never deletes a baseline when a test is renamed or removed. CI runs
+`npm run check-orphan-snapshots`, which fails on baselines that no current test
+produces. Delete those files, or fix the test that should produce them.
 
-This is boilerplate code required by Playwright component tests: https://playwright.dev/docs/test-components.
-Do not modify anything here.
+### `gallery`
+
+The story gallery pages used by the component tests: https://playwright.dev/docs/test-components.
+They are served by the Vite dev server configured in `./vite.config.ts` on port 3100,
+which Playwright starts automatically through the `webServer` option in `./playwright.config.ts`.
+
+`gallery/index.html` is the blank mount target used by Playwright. To browse stories manually,
+open `http://localhost:3100/gallery/preview.html` while the gallery server is running.
+The preview page provides navigation and mounts the selected story with its default props in
+isolated legacy, light, and dark panels. Each panel uses the same theme renderer as the Playwright
+mount page, so state, DOM mutations, document-level styles, and SVG identifiers stay scoped to
+that variant. Both HTML pages use the shared `gallery/entry.tsx`; preview iframes load
+`gallery/index.html` so they exercise the same mount path as Playwright.
 
 ### `playwright-report`
 
@@ -88,17 +217,16 @@ it's a source for the HTML reporter. Do not commit this folder to the repository
 
 The most interesting folder where you are probably going to spend most of your time is
 the `test-vr/tests` folder. This will have all the source code and tests.
+Each spec file has a matching `*.story.tsx` file with the story exports it mounts.
 
-### `playwright-ct.config.ts`
+### `playwright.config.ts`
 
-This has a unique name so that it does not conflict with the `storybook/test-runner` plugin
-which also uses Playwright under the hood but does not expose any configuration options so we're stuck with the defaults there.
+This config uses the plain `defineConfig` from `@playwright/test` with the `webServer` option
+that starts the Vite dev server serving the story gallery.
 
-Note that our `playwright-ct.config.ts` file contains all absolute paths. This is intentional
-because the tests are run inside a Docker container and the paths will be consistent.
-
-You will not be able to run the tests outside of Docker because of this.
-Please do not modify the paths because they are hardcoded all over the place.
+Docker is the recommended environment for running visual regression tests and updating snapshots
+so that screenshots remain consistent across different development machines and operating systems
+(avoiding font, subpixel rendering, and OS differences).
 
 ## Error: browserType.launch: Executable doesn't exist
 
@@ -111,8 +239,6 @@ Sometimes you may find an error that the `playwright` package no longer matches 
     ║ Please update docker image as well.                                  ║
     ║ -  current: mcr.microsoft.com/playwright:v1.44.0-jammy               ║
     ║ - required: mcr.microsoft.com/playwright:v1.54.1-jammy               ║
-    ║                                                                      ║
-    ║ <3 Playwright Team                                                   ║
     ╚══════════════════════════════════════════════════════════════════════╝
 ```
 

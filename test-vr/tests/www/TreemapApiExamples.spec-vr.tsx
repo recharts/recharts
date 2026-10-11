@@ -1,34 +1,30 @@
-import * as React from 'react';
-import { expect } from '@playwright/experimental-ct-react';
+import type { BundleSizeTreemap } from './TreemapApiExamples.story';
+import { expect, test } from '../fixtures';
 
-import SimpleTreemap from '../../../www/src/docs/exampleComponents/TreeMap/SimpleTreemap';
-import BundleSizeTreemap from '../../../www/src/docs/exampleComponents/TreeMap/BundleSizeTreemap';
-import CustomContentTreemap from '../../../www/src/docs/exampleComponents/TreeMap/CustomContentTreemap';
-import TreeMapNavExample from '../../../www/src/docs/exampleComponents/TreeMap/TreeMapNavExample';
-import TreemapWithPaddingAndGaps from '../../../www/src/docs/exampleComponents/TreeMap/TreemapWithPaddingAndGaps';
-import { testWithLightTheme } from './fixtures.tsx';
-
-testWithLightTheme('TreeMapNavExample', async ({ mount }) => {
-  const component = await mount(<TreeMapNavExample />);
+test('TreeMapNavExample', async ({ mountStory }) => {
+  const component = await mountStory('www/TreemapApiExamples/TreeMapNavExample', { testTheme: 'light' });
   await expect(component).toHaveScreenshot();
 });
 
-testWithLightTheme('CustomContentTreemap', async ({ mount }) => {
-  const component = await mount(<CustomContentTreemap />);
+test('CustomContentTreemap', async ({ mountStory }) => {
+  const component = await mountStory('www/TreemapApiExamples/CustomContentTreemap', { testTheme: 'light' });
   await expect(component).toHaveScreenshot();
 });
 
-testWithLightTheme('SimpleTreemap', async ({ mount }) => {
-  const component = await mount(<SimpleTreemap />);
+test('SimpleTreemap', async ({ mountStory }) => {
+  const component = await mountStory('www/TreemapApiExamples/SimpleTreemap', { testTheme: 'light' });
   await expect(component).toHaveScreenshot();
 });
 
-testWithLightTheme('TreemapWithPaddingAndGaps', async ({ mount }) => {
-  const component = await mount(<TreemapWithPaddingAndGaps />);
+test('TreemapWithPaddingAndGaps', async ({ mountStory }) => {
+  const component = await mountStory('www/TreemapApiExamples/TreemapWithPaddingAndGaps', { testTheme: 'light' });
   await expect(component).toHaveScreenshot();
 });
 
-testWithLightTheme('BundleSizeTreemap', async ({ mount }) => {
-  const component = await mount(<BundleSizeTreemap forceFallbackData />);
+test('BundleSizeTreemap', async ({ mountStory }) => {
+  const component = await mountStory<typeof BundleSizeTreemap>('www/TreemapApiExamples/BundleSizeTreemap', {
+    testTheme: 'light',
+    forceFallbackData: true,
+  });
   await expect(component).toHaveScreenshot();
 });

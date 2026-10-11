@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { MutableRefObject, PureComponent, ReactElement, ReactNode, useCallback, useMemo, useRef } from 'react';
+import { MutableRefObject, PureComponent, ReactElement, ReactNode, useMemo, useRef } from 'react';
 import { clsx } from 'clsx';
 import { BaseLineType, CurveType, Props as CurveProps } from '../shape/Curve';
 import { Layer } from '../container/Layer';
@@ -68,9 +68,11 @@ import { propsAreEqual } from '../util/propsAreEqual';
 import { AxisId } from '../state/cartesianAxisSlice';
 import { StackDataPoint } from '../util/stacks/stackTypes';
 import { AreaRevealShape, AreaRevealShapeProps } from './AreaRevealShape';
-import { graphicalItemIdentity } from '../theme/graphicalItemIdentity';
-import { GraphicalItemStyle, RechartsTheme, Styles2D } from '../theme/RechartsTheme';
+import { GraphicalItemStyle, Styles2D } from '../theme/RechartsTheme';
+import { useRechartsTheme } from '../theme/RechartsThemeContext';
 import { useBackwardsCompatibleTheme } from '../theme/useBackwardsCompatibleTheme';
+import { getActiveStyleOverrides } from '../theme/activeStyles';
+import { useGraphicalItemIdentity } from '../theme/useGraphicalItemIdentity';
 
 /**
  * @inline
@@ -100,6 +102,7 @@ interface InternalAreaProps extends ZIndexable {
   data?: ChartData;
   dataKey: DataKey<any>;
   dot: DotType;
+  dotFill?: string;
   height: number;
   hide: boolean;
 
@@ -541,8 +544,8 @@ function AreaDotsWrapper({
   points: ReadonlyArray<AreaPointItem>;
   props: WithoutId<InternalProps>;
 }) {
-  const { needClip, dot, dataKey } = props;
-  const areaProps: DotsDotProps = svgPropertiesNoEvents(props);
+  const { needClip, dot, dataKey, dotFill, ...propsWithoutDotFill } = props;
+  const areaProps: DotsDotProps = svgPropertiesNoEvents(propsWithoutDotFill);
 
   return (
     <Dots
@@ -551,7 +554,7 @@ function AreaDotsWrapper({
       className="recharts-area-dots"
       dotClassName="recharts-area-dot"
       dataKey={dataKey}
-      baseProps={areaProps}
+      baseProps={{ ...areaProps, fill: dotFill ?? areaProps.fill }}
       needClip={needClip}
       clipPathId={clipPathId}
     />
@@ -844,7 +847,9 @@ class AreaWithState extends PureComponent<InternalProps> {
   }
 }
 
-function AreaImpl<DataPointType, ValueAxisType>(props: PropsWithDefaults<DataPointType, ValueAxisType>) {
+function AreaImpl<DataPointType, ValueAxisType>(
+  props: PropsWithDefaults<DataPointType, ValueAxisType> & Pick<InternalProps, 'dotFill'>,
+) {
   const {
     activeDot,
     animationBegin,
@@ -1069,28 +1074,18 @@ export function computeArea({
 }
 
 function AreaFn(outsideProps: Props<any, any>) {
-  const themeSelector = useCallback(
-    (theme: RechartsTheme): Styles2D | undefined => {
-      if (outsideProps.dataKey == null) {
-        return undefined;
-      }
-      return theme.graphicalItems[
-        graphicalItemIdentity({ dataKey: outsideProps.dataKey }, theme.graphicalItems.length)
-      ];
-    },
-    [outsideProps.dataKey],
+  const rechartsTheme = useRechartsTheme();
+  const graphicalItemThemeSelector = useGraphicalItemIdentity(outsideProps.dataKey, outsideProps);
+  const theme = useBackwardsCompatibleTheme<GraphicalItemStyle>(
+    graphicalItemThemeSelector,
+    outsideProps,
+    defaultLegacyThemeProps,
   );
-  const theme = useBackwardsCompatibleTheme<GraphicalItemStyle>(themeSelector, outsideProps, defaultLegacyThemeProps);
+  const themedActiveDot = getActiveStyleOverrides(outsideProps.activeDot ?? true, theme?.active);
   const activeDot =
-    theme?.active == null ||
-    outsideProps.activeDot === false ||
-    typeof outsideProps.activeDot === 'function' ||
-    React.isValidElement(outsideProps.activeDot)
+    themedActiveDot == null
       ? outsideProps.activeDot
-      : {
-          ...theme.active,
-          ...(typeof outsideProps.activeDot === 'object' ? outsideProps.activeDot : {}),
-        };
+      : { ...themedActiveDot, ...(typeof outsideProps.activeDot === 'object' ? outsideProps.activeDot : {}) };
   const propsWithTheme: Props<any, any> = {
     ...outsideProps,
     ...theme,
@@ -1100,6 +1095,8 @@ function AreaFn(outsideProps: Props<any, any>) {
     propsWithTheme,
     defaultAreaProps,
   );
+  const dotFill =
+    outsideProps.fill ?? (rechartsTheme == null ? props.fill : getLegendItemColor(props.stroke, theme?.fill));
   const isPanorama = useIsPanorama();
   // Report all props to Redux store first, before calling hooks, to avoid circular dependencies.
   return (
@@ -1135,7 +1132,7 @@ function AreaFn(outsideProps: Props<any, any>) {
             isPanorama={isPanorama}
             connectNulls={props.connectNulls}
           />
-          <AreaImpl {...props} id={id} />
+          <AreaImpl {...props} id={id} dotFill={dotFill} />
         </>
       )}
     </RegisterGraphicalItemId>

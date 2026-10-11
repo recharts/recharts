@@ -1,80 +1,68 @@
-import * as React from 'react';
-import { expect } from '@playwright/experimental-ct-react';
-import SimpleAreaChart from '../../../www/src/docs/exampleComponents/AreaChart/SimpleAreaChart';
-import StackedAreaChart from '../../../www/src/docs/exampleComponents/AreaChart/StackedAreaChart';
-import AreaChartConnectNulls from '../../../www/src/docs/exampleComponents/AreaChart/AreaChartConnectNulls';
-import CardinalAreaChart from '../../../www/src/docs/exampleComponents/AreaChart/CardinalAreaChart';
-import PercentAreaChart from '../../../www/src/docs/exampleComponents/AreaChart/PercentAreaChart';
-import SynchronizedAreaChart from '../../../www/src/docs/exampleComponents/AreaChart/SynchronizedAreaChart';
-import TinyAreaChart from '../../../www/src/docs/exampleComponents/AreaChart/TinyAreaChart';
-import AreaChartFillByValue from '../../../www/src/docs/exampleComponents/AreaChart/AreaChartFillByValue';
-import AreaChartNavExample from '../../../www/src/docs/exampleComponents/AreaChart/AreaChartNavExample';
-import AreaChartExample from '../../../www/src/docs/exampleComponents/AreaChart/AreaChartExample';
-import AreaChartRangeExample from '../../../www/src/docs/exampleComponents/AreaChart/AreaChartRangeExample';
-import CrosshairExample from '../../../www/src/docs/exampleComponents/getRelativeCoordinate/CrosshairExample';
-import { testWithDarkTheme, testWithLightTheme } from './fixtures.tsx';
+import type { AreaChartExample, AreaChartRangeExample, CrosshairExample } from './AreaChartApiExamples.story';
+import { expect, testWithThemes } from '../fixtures';
 
-testWithLightTheme('AreaChartNavExample', async ({ mount }) => {
-  const component = await mount(<AreaChartNavExample />);
+testWithThemes('AreaChartNavExample', async ({ mountStory }) => {
+  const component = await mountStory('www/AreaChartApiExamples/AreaChartNavExample');
   await expect(component).toHaveScreenshot();
 });
 
-testWithLightTheme('AreaChartFillByValue', async ({ mount }) => {
-  const component = await mount(<AreaChartFillByValue />);
+testWithThemes('AreaChartFillByValue', async ({ mountStory }) => {
+  const component = await mountStory('www/AreaChartApiExamples/AreaChartFillByValue');
   await expect(component).toHaveScreenshot();
 });
 
-testWithLightTheme('TinyAreaChart', async ({ mount }) => {
-  const component = await mount(<TinyAreaChart />);
+testWithThemes('TinyAreaChart', async ({ mountStory }) => {
+  const component = await mountStory('www/AreaChartApiExamples/TinyAreaChart');
   await expect(component).toHaveScreenshot();
 });
 
-testWithLightTheme('SynchronizedAreaChart', async ({ mount }) => {
-  const component = await mount(<SynchronizedAreaChart />);
+testWithThemes('SynchronizedAreaChart', async ({ mountStory }) => {
+  const component = await mountStory('www/AreaChartApiExamples/SynchronizedAreaChart');
   await expect(component).toHaveScreenshot();
 });
 
-testWithLightTheme('PercentAreaChart', async ({ mount }) => {
-  const component = await mount(<PercentAreaChart />);
+testWithThemes('PercentAreaChart', async ({ mountStory }) => {
+  const component = await mountStory('www/AreaChartApiExamples/PercentAreaChart');
   await expect(component).toHaveScreenshot();
 });
 
-testWithLightTheme('CardinalAreaChart', async ({ mount }) => {
-  const component = await mount(<CardinalAreaChart />);
+testWithThemes('CardinalAreaChart', async ({ mountStory }) => {
+  const component = await mountStory('www/AreaChartApiExamples/CardinalAreaChart');
   await expect(component).toHaveScreenshot();
 });
 
-testWithLightTheme('AreaChartConnectNulls', async ({ mount }) => {
-  const component = await mount(<AreaChartConnectNulls />);
+testWithThemes('AreaChartConnectNulls', async ({ mountStory }) => {
+  const component = await mountStory('www/AreaChartApiExamples/AreaChartConnectNulls');
   await expect(component).toHaveScreenshot();
 });
 
-testWithDarkTheme('AreaChartConnectNulls dark mode', async ({ mount }) => {
-  const component = await mount(<AreaChartConnectNulls />);
+testWithThemes('StackedAreaChart', async ({ mountStory }) => {
+  const component = await mountStory('www/AreaChartApiExamples/StackedAreaChart');
   await expect(component).toHaveScreenshot();
 });
 
-testWithLightTheme('StackedAreaChart', async ({ mount }) => {
-  const component = await mount(<StackedAreaChart />);
+testWithThemes('SimpleAreaChart', async ({ mountStory }) => {
+  const component = await mountStory('www/AreaChartApiExamples/SimpleAreaChart');
   await expect(component).toHaveScreenshot();
 });
 
-testWithLightTheme('SimpleAreaChart', async ({ mount }) => {
-  const component = await mount(<SimpleAreaChart />);
+testWithThemes('AreaChartExample', async ({ mountStory }) => {
+  const component = await mountStory<typeof AreaChartExample>('www/AreaChartApiExamples/AreaChartExample', {
+    isAnimationActive: false,
+  });
   await expect(component).toHaveScreenshot();
 });
 
-testWithLightTheme('AreaChartExample', async ({ mount }) => {
-  const component = await mount(<AreaChartExample isAnimationActive={false} />);
+testWithThemes('AreaChartRangeExample', async ({ mountStory }) => {
+  const component = await mountStory<typeof AreaChartRangeExample>('www/AreaChartApiExamples/AreaChartRangeExample', {
+    isAnimationActive: false,
+  });
   await expect(component).toHaveScreenshot();
 });
 
-testWithLightTheme('AreaChartRangeExample', async ({ mount }) => {
-  const component = await mount(<AreaChartRangeExample isAnimationActive={false} />);
-  await expect(component).toHaveScreenshot();
-});
-
-testWithLightTheme('CrosshairExample', async ({ mount }) => {
-  const component = await mount(<CrosshairExample initialPointers={[{ relativeX: 100, relativeY: 100 }]} />);
+testWithThemes('CrosshairExample', async ({ mountStory }) => {
+  const component = await mountStory<typeof CrosshairExample>('www/AreaChartApiExamples/CrosshairExample', {
+    initialPointers: [{ relativeX: 100, relativeY: 100 }],
+  });
   await expect(component).toHaveScreenshot();
 });

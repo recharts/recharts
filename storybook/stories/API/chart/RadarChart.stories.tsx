@@ -31,3 +31,25 @@ export const API = {
     height: 300,
   },
 };
+
+export const CounterClockwise = {
+  name: 'Counter clockwise',
+  render: (args: Args) => {
+    return (
+      <RadarChart {...args}>
+        <PolarAngleAxis dataKey="name" />
+        <PolarRadiusAxis />
+        <PolarGrid />
+        <Radar dataKey="uv" stroke="green" strokeOpacity={0.7} fill="green" fillOpacity={0.5} strokeWidth={3} />
+      </RadarChart>
+    );
+  },
+  args: {
+    ...getStoryArgsFromArgsTypesObject(RadarChartArgs),
+    data: pageData,
+    width: 800,
+    height: 300,
+    startAngle: -270,
+    endAngle: 90,
+  },
+};

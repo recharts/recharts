@@ -1,99 +1,45 @@
-import * as React from 'react';
-import { test, expect } from '@playwright/experimental-ct-react';
-import { Area, Bar, BarChart, ComposedChart, XAxis, YAxis } from '../../../src';
+import { expect, testWithThemes } from '../fixtures';
 
-const data = [0, 2, 4, 6, 8, 10].map(value => {
-  return { x: value, name: `Item ${value}` };
-});
-
-test.describe('padding with Area', () => {
-  test('default', async ({ mount }) => {
-    const component = await mount(
-      <ComposedChart width={600} height={500} data={data}>
-        <Area dataKey="x" />
-        <YAxis />
-        <XAxis dataKey="name" />
-      </ComposedChart>,
-    );
+testWithThemes.describe('padding with Area', () => {
+  testWithThemes('default', async ({ mountStory }) => {
+    const component = await mountStory('CartesianAxis/CartesianAxis.padding/AreaDefault');
     await expect(component).toHaveScreenshot();
   });
 
-  test('no-gap', async ({ mount }) => {
-    const component = await mount(
-      <ComposedChart width={600} height={500} data={data}>
-        <Area dataKey="x" />
-        <YAxis padding="no-gap" />
-        <XAxis dataKey="name" padding="no-gap" />
-      </ComposedChart>,
-    );
+  testWithThemes('no-gap', async ({ mountStory }) => {
+    const component = await mountStory('CartesianAxis/CartesianAxis.padding/AreaNoGap');
     await expect(component).toHaveScreenshot();
   });
 
-  test('gap', async ({ mount }) => {
-    const component = await mount(
-      <ComposedChart width={600} height={500} data={data}>
-        <Area dataKey="x" />
-        <YAxis padding="gap" />
-        <XAxis dataKey="name" padding="gap" />
-      </ComposedChart>,
-    );
+  testWithThemes('gap', async ({ mountStory }) => {
+    const component = await mountStory('CartesianAxis/CartesianAxis.padding/AreaGap');
     await expect(component).toHaveScreenshot();
   });
 
-  test('custom padding', async ({ mount }) => {
-    const component = await mount(
-      <ComposedChart width={600} height={500} data={data}>
-        <Area dataKey="x" />
-        <YAxis padding={{ top: 30, bottom: 50 }} />
-        <XAxis dataKey="name" padding={{ left: 20, right: 40 }} />
-      </ComposedChart>,
-    );
+  testWithThemes('custom padding', async ({ mountStory }) => {
+    const component = await mountStory('CartesianAxis/CartesianAxis.padding/AreaCustomPadding');
     await expect(component).toHaveScreenshot();
   });
 });
 
-test.describe('padding with Bar', () => {
-  test('default', async ({ mount }) => {
-    const component = await mount(
-      <BarChart width={600} height={300} data={data}>
-        <Bar dataKey="x" />
-        <YAxis />
-        <XAxis dataKey="name" />
-      </BarChart>,
-    );
+testWithThemes.describe('padding with Bar', () => {
+  testWithThemes('default', async ({ mountStory }) => {
+    const component = await mountStory('CartesianAxis/CartesianAxis.padding/BarDefault');
     await expect(component).toHaveScreenshot();
   });
 
-  test('no-gap', async ({ mount }) => {
-    const component = await mount(
-      <BarChart width={600} height={300} data={data}>
-        <Bar dataKey="x" />
-        <YAxis padding="no-gap" />
-        <XAxis dataKey="name" padding="no-gap" />
-      </BarChart>,
-    );
+  testWithThemes('no-gap', async ({ mountStory }) => {
+    const component = await mountStory('CartesianAxis/CartesianAxis.padding/BarNoGap');
     await expect(component).toHaveScreenshot();
   });
 
-  test('gap', async ({ mount }) => {
-    const component = await mount(
-      <BarChart width={600} height={300} data={data}>
-        <Bar dataKey="x" />
-        <YAxis padding="gap" />
-        <XAxis dataKey="name" padding="gap" />
-      </BarChart>,
-    );
+  testWithThemes('gap', async ({ mountStory }) => {
+    const component = await mountStory('CartesianAxis/CartesianAxis.padding/BarGap');
     await expect(component).toHaveScreenshot();
   });
 
-  test('custom padding', async ({ mount }) => {
-    const component = await mount(
-      <BarChart width={600} height={300} data={data}>
-        <Bar dataKey="x" />
-        <YAxis padding={{ top: 30, bottom: 50 }} />
-        <XAxis dataKey="name" padding={{ left: 20, right: 40 }} />
-      </BarChart>,
-    );
+  testWithThemes('custom padding', async ({ mountStory }) => {
+    const component = await mountStory('CartesianAxis/CartesianAxis.padding/BarCustomPadding');
     await expect(component).toHaveScreenshot();
   });
 });

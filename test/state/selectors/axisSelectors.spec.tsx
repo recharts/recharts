@@ -1968,11 +1968,6 @@ describe('selectErrorBarsSettings', () => {
             direction: 'x',
           },
         ]);
-        /*
-         * 4 renders: (1) chart size set, (2) addErrorBar fires, (3) chart data slice selector
-         * recomputes due to selectDisplayedData reference change, (4) auto-batched axes+items registered.
-         * This is consistent with the horizontal LineChart baseline which also expects 4 renders.
-         */
         expect(spy).toHaveBeenCalledTimes(3);
       });
 
@@ -2062,11 +2057,6 @@ describe('selectErrorBarsSettings', () => {
             direction: 'x',
           },
         ]);
-        /*
-         * 4 renders: (1) chart size set, (2) addErrorBar fires, (3) chart data slice selector
-         * recomputes due to selectDisplayedData reference change, (4) auto-batched axes+items registered.
-         * This is consistent with the horizontal LineChart baseline which also expects 4 renders.
-         */
         expect(spy).toHaveBeenCalledTimes(3);
       });
 

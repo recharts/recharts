@@ -6,6 +6,7 @@ import {
   PolarViewBoxRequired,
   TickItem,
 } from '../../../util/types';
+import { polarToCartesian } from '../../../util/PolarUtils';
 import { TooltipIndex, TooltipPayloadConfiguration } from '../../tooltipSlice';
 
 export const combineCoordinateForDefaultIndex = (
@@ -64,6 +65,19 @@ export const combineCoordinateForDefaultIndex = (
       return {
         x: (offset.left + width) / 2,
         y: tick.coordinate,
+      };
+    }
+    case 'centric': {
+      if (polarViewBox == null) {
+        return undefined;
+      }
+      const { cx, cy, outerRadius } = polarViewBox;
+      const angle = tick.coordinate;
+      return {
+        ...polarViewBox,
+        ...polarToCartesian(cx, cy, outerRadius, angle),
+        angle,
+        radius: outerRadius,
       };
     }
     default: {

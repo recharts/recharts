@@ -54,8 +54,16 @@ import { GraphicalItemId } from '../state/graphicalItemsSlice';
 import { RegisterGraphicalItemId } from '../context/RegisterGraphicalItemId';
 import { WithIdRequired } from '../util/useUniqueId';
 import { useCartesianChartLayout } from '../context/chartLayoutContext';
-import { RechartsTheme } from '../theme/RechartsTheme';
+import { RechartsTheme, Styles2D } from '../theme/RechartsTheme';
 import { useBackwardsCompatibleTheme } from '../theme/useBackwardsCompatibleTheme';
+import {
+  getOwnStyles,
+  getUnthemedStyles,
+  hasOwnColors,
+  UnthemedStyles,
+  useUnthemedStyles,
+} from '../theme/dataEntryStyles';
+import { getActiveStyleOverrides, resolveThemedActiveStyles } from '../theme/activeStyles';
 
 export type FunnelTrapezoidItem = TrapezoidProps &
   TrapezoidViewBox & {
@@ -75,6 +83,11 @@ export type FunnelTrapezoidItem = TrapezoidProps &
 type InternalFunnelProps = RequiresDefaultProps<FunnelProps, typeof defaultFunnelProps> & {
   id: GraphicalItemId;
   trapezoids: ReadonlyArray<FunnelTrapezoidItem>;
+  /**
+   * Theme styles of the active shape for each index, without the ones that explicit props override.
+   * Empty when there is no active theme.
+   */
+  indexedActiveStyles?: ReadonlyArray<Styles2D | undefined>;
 };
 
 /**
@@ -348,6 +361,7 @@ function FunnelTrapezoids(props: FunnelTrapezoidsProps) {
     onMouseLeave: onMouseLeaveFromProps,
     shape,
     activeShape,
+    indexedActiveStyles,
     ...restOfAllOtherProps
   } = allOtherFunnelProps;
 
@@ -368,11 +382,24 @@ function FunnelTrapezoids(props: FunnelTrapezoidsProps) {
       {trapezoids.map((entry: FunnelTrapezoidItem, i: number) => {
         const isActiveIndex = Boolean(activeShape) && activeItemIndex === String(i);
         const trapezoidOptions = isActiveIndex ? activeShape : shape;
+        const activeStyleOverrides =
+          isActiveIndex && indexedActiveStyles != null && indexedActiveStyles.length > 0
+            ? getActiveStyleOverrides(
+                activeShape,
+                indexedActiveStyles[i % indexedActiveStyles.length],
+                /*
+                 * `entry.payload` already has the theme styles merged in,
+                 * so we look at the original data entry instead.
+                 */
+                entry.payload?.payload,
+              )
+            : undefined;
         const { id, ...trapezoidProps }: FunnelTrapezoidProps = {
           ...entry,
+          ...activeStyleOverrides,
           option: trapezoidOptions,
           isActive: isActiveIndex,
-          stroke: entry.stroke,
+          stroke: activeStyleOverrides?.stroke ?? entry.stroke,
           animationElapsedTime,
           isAnimating,
           isEntrance,
@@ -524,6 +551,8 @@ export const defaultFunnelProps = {
 function FunnelImpl(
   props: WithIdRequired<RequiresDefaultProps<Props, typeof defaultFunnelProps>> & {
     indexedStyles: ReadonlyArray<Record<string, unknown>>;
+    unthemedStyles: UnthemedStyles | undefined;
+    indexedActiveStyles: ReadonlyArray<Styles2D | undefined>;
   },
 ) {
   const plotArea = usePlotArea();
@@ -541,6 +570,7 @@ function FunnelImpl(
     lastShapeType,
     id,
     indexedStyles,
+    unthemedStyles,
     ...everythingElse
   } = props;
 
@@ -559,6 +589,7 @@ function FunnelImpl(
       cells,
       presentationProps,
       indexedStyles,
+      unthemedStyles,
       id,
     }),
     [
@@ -572,6 +603,7 @@ function FunnelImpl(
       cells,
       presentationProps,
       indexedStyles,
+      unthemedStyles,
       id,
     ],
   );
@@ -770,38 +802,73 @@ function FunnelFn(outsideProps: Props) {
 
   /*
    * Funnel is per-index: each trapezoid at index `i` picks its styles from
-   * graphical[i % graphicalItems.length]. The user's explicit presentation
-   * props still win, so the theme only supplies the values that were omitted.
+   * graphicalItems[i % graphicalItems.length].
+   * If the Funnel sets its own fill or stroke, it ignores the theme completely
+   * so that its colors are not mixed with the theme colors.
+   * Other explicit style props merge with the theme field by field.
    */
   const indexedStyles: ReadonlyArray<Record<string, unknown>> = useMemo(() => {
     const graphicalItems = theme?.graphicalItems;
     if (graphicalItems == null || graphicalItems.length === 0) {
       return [];
     }
-    return graphicalItems.map((style): Record<string, unknown> => {
-      const themed: Record<string, unknown> = {};
-      if (outsideProps.fill === undefined && style.fill !== undefined) themed.fill = style.fill;
-      if (outsideProps.stroke === undefined && style.stroke !== undefined) themed.stroke = style.stroke;
-      if (outsideProps.strokeWidth === undefined && style.strokeWidth !== undefined) {
-        themed.strokeWidth = style.strokeWidth;
-      }
-      if (outsideProps.strokeOpacity === undefined && style.strokeOpacity !== undefined) {
-        themed.strokeOpacity = style.strokeOpacity;
-      }
-      if (outsideProps.fillOpacity === undefined && style.fillOpacity !== undefined) {
-        themed.fillOpacity = style.fillOpacity;
-      }
-      if (outsideProps.strokeDasharray === undefined && style.strokeDasharray !== undefined) {
-        themed.strokeDasharray = style.strokeDasharray;
-      }
-      return themed;
-    });
+    if (hasOwnColors(outsideProps)) {
+      // Unthemed styles also remove the legacy defaults, which never apply together with a theme.
+      return [getUnthemedStyles(outsideProps)];
+    }
+    return graphicalItems.map(style => ({
+      // Start without any styles, so that legacy defaults never fill in what the theme leaves out.
+      ...getUnthemedStyles({}),
+      ...getOwnStyles(style),
+      ...getOwnStyles(outsideProps),
+    }));
   }, [outsideProps, theme]);
+  const unthemedStyles = useUnthemedStyles(outsideProps);
+  const explicitFill = outsideProps.fill;
+  const explicitFillOpacity = outsideProps.fillOpacity;
+  const explicitStroke = outsideProps.stroke;
+  const explicitStrokeOpacity = outsideProps.strokeOpacity;
+  const explicitStrokeWidth = outsideProps.strokeWidth;
+  const explicitStrokeDasharray = outsideProps.strokeDasharray;
+  /*
+   * The active styles are per-index too, same as `indexedStyles`.
+   */
+  const themeGraphicalItems = theme?.graphicalItems;
+  const indexedActiveStyles: ReadonlyArray<Styles2D | undefined> = useMemo(
+    () =>
+      (themeGraphicalItems ?? []).map(style =>
+        resolveThemedActiveStyles(style.active, {
+          fill: explicitFill,
+          fillOpacity: explicitFillOpacity,
+          stroke: explicitStroke,
+          strokeOpacity: explicitStrokeOpacity,
+          strokeWidth: explicitStrokeWidth,
+          strokeDasharray: explicitStrokeDasharray,
+        }),
+      ),
+    [
+      themeGraphicalItems,
+      explicitFill,
+      explicitFillOpacity,
+      explicitStroke,
+      explicitStrokeOpacity,
+      explicitStrokeWidth,
+      explicitStrokeDasharray,
+    ],
+  );
 
   const { id: externalId, ...resolvedProps } = resolveDefaultProps(outsideProps, defaultFunnelProps);
   return (
     <RegisterGraphicalItemId id={externalId} type="funnel">
-      {id => <FunnelImpl {...resolvedProps} id={id} indexedStyles={indexedStyles} />}
+      {id => (
+        <FunnelImpl
+          {...resolvedProps}
+          id={id}
+          indexedStyles={indexedStyles}
+          unthemedStyles={indexedStyles.length > 0 ? unthemedStyles : undefined}
+          indexedActiveStyles={indexedActiveStyles}
+        />
+      )}
     </RegisterGraphicalItemId>
   );
 }

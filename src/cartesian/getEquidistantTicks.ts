@@ -87,6 +87,7 @@ export function getEquidistantPreserveEndTicks(
     const offset = (len - 1) % stepsize;
     let start = initialStart; // `start` tracks the coordinate of the last successfully drawn tick + gap
     let ok = true;
+    let tailCoord: number | undefined;
 
     // 2. Iterate through the end-anchored sequence: offset, offset + stepsize, ..., len - 1
     for (let index = offset; index < len; index += stepsize) {
@@ -105,7 +106,20 @@ export function getEquidistantPreserveEndTicks(
         return size;
       };
 
-      const tickCoord = entry.coordinate;
+      let tickCoord = entry.coordinate;
+
+      // The last tick is centered on the last band, so its label usually overflows
+      // the end boundary and fails the visibility check. Move it inwards, the same
+      // way getTicksStart does for `preserveEnd`, instead of rejecting the stepsize
+      // because of it - otherwise every stepsize below `len` gets rejected and the
+      // axis ends up showing a single tick.
+      if (index === len - 1) {
+        const tailGap = sign * (tickCoord + (sign * getSize()) / 2 - end);
+        if (tailGap > 0) {
+          tickCoord -= tailGap * sign;
+        }
+        tailCoord = tickCoord;
+      }
 
       // 3. Apply visibility logic (including the first tick special case)
       // The reviewer says *not* to unconditionally bypass checks for the last tick.
@@ -131,7 +145,7 @@ export function getEquidistantPreserveEndTicks(
       for (let index = offset; index < len; index += stepsize) {
         const tick = ticks[index];
         if (tick != null) {
-          finalTicks.push(tick);
+          finalTicks.push(index === len - 1 && tailCoord != null ? { ...tick, tickCoord: tailCoord } : tick);
         }
       }
       return finalTicks;

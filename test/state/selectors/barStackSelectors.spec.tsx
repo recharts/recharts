@@ -620,6 +620,49 @@ describe('BarStack Selectors', () => {
     });
   });
 
+  describe('in chart with negative values where one index has a single bar', () => {
+    const data = [
+      { name: 'a', out: -60, outSimulated: 0 },
+      { name: 'b', out: -40, outSimulated: -10 },
+    ];
+    const renderTestCase = createSelectorTestCase(({ children }) => (
+      <BarChart width={300} height={300} data={data} stackOffset="sign">
+        <BarStack stackId="out">
+          <Bar dataKey="out" id="first" />
+          <Bar dataKey="outSimulated" id="second" />
+          {children}
+        </BarStack>
+      </BarChart>
+    ));
+
+    test('selectStackRects should return rectangles with a positive height for every index', () => {
+      const { spy } = renderTestCase(state => selectStackRects(state, 'out', false));
+      const stackRects = spy.mock.lastCall?.[0];
+      assertNotNull(stackRects);
+      expect(stackRects).toHaveLength(2);
+      stackRects.forEach(rect => {
+        assertNotNull(rect);
+        expect(rect.height).toBeGreaterThan(0);
+      });
+    });
+
+    test('the single bar rectangle should end where the bar ends, not at the zero line', () => {
+      const { spy } = renderTestCase(state => selectStackRects(state, 'out', false));
+      const { spy: barSpy } = renderTestCase(state => selectBarRectangles(state, 'first', false, undefined));
+      const stackRects = spy.mock.lastCall?.[0];
+      const bars = barSpy.mock.lastCall?.[0];
+      assertNotNull(stackRects);
+      assertNotNull(bars);
+      const [stackRect] = stackRects;
+      const [bar] = bars;
+      assertNotNull(stackRect);
+      assertNotNull(bar);
+      // the bar hangs below the zero line, so the stack rectangle starts at the zero line and ends at the bar end
+      expect(stackRect.y).toBeCloseTo(Math.min(bar.y, bar.y + bar.height));
+      expect(stackRect.y + stackRect.height).toBeCloseTo(Math.max(bar.y, bar.y + bar.height));
+    });
+  });
+
   describe('in chart with stroked bars', () => {
     const renderTestCase = createSelectorTestCase(({ children }) => (
       <BarChart width={200} height={200} data={PageData}>
@@ -748,6 +791,18 @@ describe('BarStack Selectors', () => {
       const rect2 = { x: 5, y: 5, width: 15, height: 15 };
       const result2 = expandRectangle(undefined, rect2);
       expect(result2).toEqual(rect2);
+    });
+
+    it('should normalize a single rectangle with a negative height', () => {
+      const rect = { x: 10, y: 50, width: 20, height: -30 };
+      expect(expandRectangle(rect, undefined)).toEqual({ x: 10, y: 20, width: 20, height: 30 });
+      expect(expandRectangle(undefined, rect)).toEqual({ x: 10, y: 20, width: 20, height: 30 });
+    });
+
+    it('should normalize a single rectangle with a negative width', () => {
+      const rect = { x: 50, y: 10, width: -30, height: 20 };
+      expect(expandRectangle(rect, undefined)).toEqual({ x: 20, y: 10, width: 30, height: 20 });
+      expect(expandRectangle(undefined, rect)).toEqual({ x: 20, y: 10, width: 30, height: 20 });
     });
 
     it('should expand two rectangles that are touching each other', () => {

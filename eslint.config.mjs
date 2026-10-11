@@ -31,7 +31,7 @@ const customIgnores = [
   },
   {
     name: 'playwright',
-    ignores: ['./test-vr/playwright-report', './test-vr/screenshots', './test-vr/playwright'],
+    ignores: ['./test-vr/playwright-report', './test-vr/screenshots'],
   },
   {
     name: 'webpack',
@@ -388,6 +388,18 @@ const overridesConfig = [
     files: ['test/helper/**'],
     rules: {
       'no-console': 'off',
+    },
+  },
+  {
+    name: 'playwright-gallery-stories-override',
+    /*
+     * Playwright gallery stories are not Storybook CSF files, so the
+     * storybook plugin's default-export rule does not apply to them.
+     * https://playwright.dev/docs/test-components
+     */
+    files: ['test-vr/**/*.story.tsx'],
+    rules: {
+      'storybook/default-exports': 'off',
     },
   },
 ];

@@ -1,18 +1,24 @@
-import * as React from 'react';
-import { expect } from '@playwright/experimental-ct-react';
-import CustomBandScaleExample from '../../../www/src/components/GuideView/BarAlign/CustomBandScaleExample';
-import { testWithLightTheme } from './fixtures.tsx';
+import type { CustomBandScaleExample } from './BarAlign.story';
+import { expect, testWithThemes } from '../fixtures';
 
-testWithLightTheme('CustomBandScaleExample', async ({ mount }) => {
-  const component = await mount(
-    <CustomBandScaleExample align={0.2} barGap={0.2} barCategoryGap={0.1} paddingInner={0.2} paddingOuter={0.2} />,
-  );
+testWithThemes('CustomBandScaleExample', async ({ mountStory }) => {
+  const component = await mountStory<typeof CustomBandScaleExample>('www/BarAlign/CustomBandScaleExample', {
+    align: 0.2,
+    barGap: 0.2,
+    barCategoryGap: 0.1,
+    paddingInner: 0.2,
+    paddingOuter: 0.2,
+  });
   await expect(component).toHaveScreenshot();
 });
 
-testWithLightTheme('CustomBandScaleExample - left aligned', async ({ mount }) => {
-  const component = await mount(
-    <CustomBandScaleExample align={0.1} barGap={0.01} barCategoryGap={0.01} paddingInner={0} paddingOuter={10} />,
-  );
+testWithThemes('CustomBandScaleExample - left aligned', async ({ mountStory }) => {
+  const component = await mountStory<typeof CustomBandScaleExample>('www/BarAlign/CustomBandScaleExample', {
+    align: 0.1,
+    barGap: 0.01,
+    barCategoryGap: 0.01,
+    paddingInner: 0,
+    paddingOuter: 10,
+  });
   await expect(component).toHaveScreenshot();
 });

@@ -204,7 +204,7 @@ describe('Scatter theme', () => {
       });
     });
 
-    it('should apply partial theme properties', () => {
+    it('should ignore the theme completely when only some props are provided', () => {
       const { container } = rechartsTestRender(
         <RechartsThemeProvider
           value={{
@@ -224,13 +224,13 @@ describe('Scatter theme', () => {
       const allPaths = getAllScatterPoints(container);
       expect(allPaths).toHaveLength(scatterData.length);
       allPaths.forEach(path => {
-        expect(path.getAttribute('fill')).toBe('#ff6600');
+        expect(path.getAttribute('fill')).toBe(null);
         expect(path.getAttribute('stroke')).toBe('red');
-        expect(path.getAttribute('stroke-dasharray')).toBe('4 4');
+        expect(path.getAttribute('stroke-dasharray')).toBe(null);
       });
     });
 
-    it('should prioritize prop over graphicalItems', () => {
+    it('should not mix props with graphicalItems', () => {
       const { container } = rechartsTestRender(
         <RechartsThemeProvider
           value={{
@@ -252,7 +252,7 @@ describe('Scatter theme', () => {
       expect(allPaths).toHaveLength(scatterData.length);
       allPaths.forEach(path => {
         expect(path.getAttribute('fill')).toBe('purple');
-        expect(path.getAttribute('stroke')).toBe('#00ff00');
+        expect(path.getAttribute('stroke')).toBe(null);
         expect(path.getAttribute('stroke-dasharray')).toBe('7 1');
       });
     });

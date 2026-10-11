@@ -34,10 +34,10 @@ import { selectChartHeight, selectChartWidth } from './containerSelectors';
 import { combineActiveLabel } from './combiners/combineActiveLabel';
 import { combineTooltipInteractionState } from './combiners/combineTooltipInteractionState';
 import { combineActiveTooltipIndex } from './combiners/combineActiveTooltipIndex';
+import { selectPolarViewBox } from './polarAxisSelectors';
 import { combineCoordinateForDefaultIndex } from './combiners/combineCoordinateForDefaultIndex';
 import { combineTooltipPayloadConfigurations } from './combiners/combineTooltipPayloadConfigurations';
 import { selectTooltipPayloadSearcher } from './selectTooltipPayloadSearcher';
-import { selectPolarViewBox } from './polarAxisSelectors';
 import { selectTooltipState } from './selectTooltipState';
 import { combineTooltipPayload } from './combiners/combineTooltipPayload';
 import {

@@ -172,6 +172,9 @@ describe('JavascriptAnimate timing', () => {
           {child}
         </JavascriptAnimate>,
       );
+      await act(async () => {
+        await Promise.resolve();
+      });
 
       expect(animationManager.isAnimating()).toBe(false);
 
@@ -194,6 +197,10 @@ describe('JavascriptAnimate timing', () => {
 
       expect(animationManager.isAnimating()).toBe(true);
       expect(child).toHaveBeenLastCalledWith(1);
+      await act(async () => {
+        await Promise.resolve();
+      });
+      const callsBeforeProgress = child.mock.calls.length;
 
       await animationManager.setAnimationProgress(0.1);
 
@@ -204,23 +211,23 @@ describe('JavascriptAnimate timing', () => {
        * and continue from there.
        */
       expect(child).toHaveBeenLastCalledWith(expect.closeTo(0.1, 1));
-      expect(child).toHaveBeenCalledTimes(4);
+      expect(child).toHaveBeenCalledTimes(callsBeforeProgress + 2);
 
       await animationManager.setAnimationProgress(0.2);
       expect(child).toHaveBeenLastCalledWith(expect.closeTo(0.29, 1));
-      expect(child).toHaveBeenCalledTimes(5);
+      expect(child).toHaveBeenCalledTimes(callsBeforeProgress + 3);
 
       await animationManager.setAnimationProgress(0.5);
       expect(child).toHaveBeenLastCalledWith(expect.closeTo(0.8, 1));
-      expect(child).toHaveBeenCalledTimes(6);
+      expect(child).toHaveBeenCalledTimes(callsBeforeProgress + 4);
 
       await animationManager.setAnimationProgress(0.9);
       expect(child).toHaveBeenLastCalledWith(expect.closeTo(0.99, 1));
-      expect(child).toHaveBeenCalledTimes(7);
+      expect(child).toHaveBeenCalledTimes(callsBeforeProgress + 5);
 
       await animationManager.setAnimationProgress(1);
       expect(child).toHaveBeenLastCalledWith(1);
-      expect(child).toHaveBeenCalledTimes(8);
+      expect(child).toHaveBeenCalledTimes(callsBeforeProgress + 6);
     });
 
     it('should restart animation when isActive changes to true via button click', async () => {

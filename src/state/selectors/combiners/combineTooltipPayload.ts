@@ -20,6 +20,7 @@ type TooltipPayloadItemLike = {
   payload: unknown;
   color: string | undefined;
   fill: string | undefined;
+  stroke: string | undefined;
 };
 
 function parseName(value: unknown): TooltipEntrySettings['name'] {
@@ -64,6 +65,7 @@ function parseTooltipPayloadItem(item: unknown): TooltipPayloadItemLike | undefi
   const payload = 'payload' in item ? item.payload : undefined;
   const color = 'color' in item ? parseColor(item.color) : undefined;
   const fill = 'fill' in item ? parseColor(item.fill) : undefined;
+  const stroke = 'stroke' in item ? parseColor(item.stroke) : undefined;
 
   return {
     name,
@@ -72,6 +74,7 @@ function parseTooltipPayloadItem(item: unknown): TooltipPayloadItemLike | undefi
     payload,
     color,
     fill,
+    stroke,
   };
 }
 
@@ -173,8 +176,9 @@ export const combineTooltipPayload = (
           name: itemName,
           unit: parsedItem?.unit,
           // Preserve item-level color/fill from graphical items.
-          color: parsedItem?.color ?? settings?.color,
-          fill: parsedItem?.fill ?? settings?.fill,
+          color: parsedItem?.color ?? settings.color,
+          fill: parsedItem?.fill ?? settings.fill,
+          stroke: parsedItem?.stroke ?? settings.stroke,
         };
         agg.push(
           getTooltipEntry({
@@ -187,10 +191,22 @@ export const combineTooltipPayload = (
         );
       });
     } else {
-      // I am not quite sure why these two branches (Array vs Array of Arrays) have to behave differently - I imagine we should unify these. 3.x breaking change?
+      /*
+       * Bar rectangles apply SVG colors from the active datum after their series and theme props.
+       * Preserve that precedence in the tooltip metadata without changing other chart types.
+       */
+      const parsedItem = parseTooltipPayloadItem(tooltipPayload);
+      const tooltipEntrySettings: TooltipEntrySettings = {
+        ...settings,
+        color: parsedItem?.color ?? parsedItem?.fill ?? parsedItem?.stroke ?? settings.color,
+        fill: parsedItem?.fill ?? settings.fill,
+        stroke: parsedItem?.stroke ?? settings.stroke,
+      };
+
+      // I am not quite sure why these two branches (Array vs Array of Arrays) have to behave differently - I imagine we should unify these
       agg.push(
         getTooltipEntry({
-          tooltipEntrySettings: settings,
+          tooltipEntrySettings,
           dataKey: finalDataKey,
           payload: tooltipPayload,
           // getValueByDataKey does not validate the output type

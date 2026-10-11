@@ -1,7 +1,1 @@
-npm run build
-
-npm test
-
-npm run check-types
-
-npm run lint
+npm run lgtm

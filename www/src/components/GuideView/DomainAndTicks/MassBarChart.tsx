@@ -15,6 +15,7 @@ const solarSystem = [
     radiusKm: 696340,
     massKg: 1.989e30,
     fill: '#ffa700',
+    stroke: '#ffa700',
   },
   {
     name: 'Mercury',
@@ -22,6 +23,7 @@ const solarSystem = [
     radiusKm: 2439.7,
     massKg: 3.3e23,
     fill: '#1a1a1a',
+    stroke: '#1a1a1a',
   },
   {
     name: 'Venus',
@@ -29,6 +31,7 @@ const solarSystem = [
     radiusKm: 6051.8,
     massKg: 4.87e24,
     fill: '#e3bb76',
+    stroke: '#e3bb76',
   },
   {
     name: 'Earth',
@@ -36,6 +39,7 @@ const solarSystem = [
     radiusKm: 6371,
     massKg: 5.97e24,
     fill: '#6b93d6',
+    stroke: '#6b93d6',
   },
   {
     name: 'Mars',
@@ -43,6 +47,7 @@ const solarSystem = [
     radiusKm: 3389.5,
     massKg: 6.42e23,
     fill: '#993d00',
+    stroke: '#993d00',
   },
   {
     name: 'Jupiter',
@@ -50,6 +55,7 @@ const solarSystem = [
     radiusKm: 69911,
     massKg: 1.9e27,
     fill: '#b07f35',
+    stroke: '#b07f35',
   },
   {
     name: 'Saturn',
@@ -57,6 +63,7 @@ const solarSystem = [
     radiusKm: 58232,
     massKg: 5.68e26,
     fill: '#b08f36',
+    stroke: '#b08f36',
   },
   {
     name: 'Uranus',
@@ -64,6 +71,7 @@ const solarSystem = [
     radiusKm: 25362,
     massKg: 8.68e25,
     fill: '#5580aa',
+    stroke: '#5580aa',
   },
   {
     name: 'Neptune',
@@ -71,6 +79,7 @@ const solarSystem = [
     radiusKm: 24622,
     massKg: 1.02e26,
     fill: '#366896',
+    stroke: '#366896',
   },
   {
     name: 'Pluto',
@@ -78,11 +87,12 @@ const solarSystem = [
     radiusKm: 1188.3,
     massKg: 1.3e22,
     fill: '#968570',
+    stroke: '#968570',
   },
 ];
 // #endregion
 
-export default function MassBarChart() {
+export default function MassBarChart({ defaultIndex }: { defaultIndex?: number }) {
   return (
     <BarChart
       style={{
@@ -97,7 +107,7 @@ export default function MassBarChart() {
       <XAxis dataKey="name" />
       <YAxis width="auto" label={{ value: 'Mass [kg]', position: 'insideLeft', dx: 0, dy: 20, angle: -90 }} />
       <Bar dataKey="massKg" unit="kg" />
-      <Tooltip />
+      <Tooltip defaultIndex={defaultIndex} />
       <RechartsDevtools />
     </BarChart>
   );

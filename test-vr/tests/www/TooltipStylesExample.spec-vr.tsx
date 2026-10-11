@@ -1,9 +1,6 @@
-import * as React from 'react';
-import { expect } from '@playwright/experimental-ct-react';
-import TooltipStylesExample from '../../../www/src/docs/exampleComponents/Tooltip/TooltipStylesExample';
-import { testWithLightTheme } from './fixtures.tsx';
+import { expect, test } from '../fixtures';
 
-testWithLightTheme('TooltipStylesExample', async ({ mount }) => {
-  const component = await mount(<TooltipStylesExample />);
+test('TooltipStylesExample', async ({ mountStory }) => {
+  const component = await mountStory('www/TooltipStylesExample/TooltipStylesExample', { testTheme: 'light' });
   await expect(component).toHaveScreenshot();
 });

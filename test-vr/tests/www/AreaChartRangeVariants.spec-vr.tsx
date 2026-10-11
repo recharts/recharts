@@ -1,34 +1,26 @@
-import * as React from 'react';
-import { expect, test } from '@playwright/experimental-ct-react';
-import {
-  AreaRangeViaBaseValueDataMax,
-  AreaRangeViaBaseValueDataMin,
-  AreaRangeViaBaseValueNumber,
-  AreaRangeViaChartBaseValueDataMax,
-  AreaRangeViaChartBaseValueNumber,
-} from './RangedAreaTemplate';
+import { expect, testWithThemes } from '../fixtures';
 
-test('Area range via baseValue number', async ({ mount }) => {
-  const component = await mount(<AreaRangeViaBaseValueNumber />);
+testWithThemes('Area range via baseValue number', async ({ mountStory }) => {
+  const component = await mountStory('www/AreaChartRangeVariants/AreaRangeViaBaseValueNumber');
   await expect(component).toHaveScreenshot();
 });
 
-test('Area range via baseValue dataMin', async ({ mount }) => {
-  const component = await mount(<AreaRangeViaBaseValueDataMin />);
+testWithThemes('Area range via baseValue dataMin', async ({ mountStory }) => {
+  const component = await mountStory('www/AreaChartRangeVariants/AreaRangeViaBaseValueDataMin');
   await expect(component).toHaveScreenshot();
 });
 
-test('Area range via baseValue dataMax', async ({ mount }) => {
-  const component = await mount(<AreaRangeViaBaseValueDataMax />);
+testWithThemes('Area range via baseValue dataMax', async ({ mountStory }) => {
+  const component = await mountStory('www/AreaChartRangeVariants/AreaRangeViaBaseValueDataMax');
   await expect(component).toHaveScreenshot();
 });
 
-test('Area range via chart baseValue number', async ({ mount }) => {
-  const component = await mount(<AreaRangeViaChartBaseValueNumber />);
+testWithThemes('Area range via chart baseValue number', async ({ mountStory }) => {
+  const component = await mountStory('www/AreaChartRangeVariants/AreaRangeViaChartBaseValueNumber');
   await expect(component).toHaveScreenshot();
 });
 
-test('Area range via chart baseValue dataMax', async ({ mount }) => {
-  const component = await mount(<AreaRangeViaChartBaseValueDataMax />);
+testWithThemes('Area range via chart baseValue dataMax', async ({ mountStory }) => {
+  const component = await mountStory('www/AreaChartRangeVariants/AreaRangeViaChartBaseValueDataMax');
   await expect(component).toHaveScreenshot();
 });

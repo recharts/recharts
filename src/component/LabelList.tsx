@@ -9,7 +9,7 @@ import { LabelProps } from '../index';
 import { svgPropertiesAndEvents } from '../util/svgPropertiesAndEvents';
 import { ZIndexable, ZIndexLayer } from '../zIndex/ZIndexLayer';
 import { DefaultZIndexes } from '../zIndex/DefaultZIndexes';
-import { isRenderableText, RenderableText } from './Text';
+import { isRenderableText, RenderableText, TextBackgroundProps } from './Text';
 
 export interface LabelListEntry<DataPointItem = any> {
   /**
@@ -124,6 +124,23 @@ interface LabelListProps extends ZIndexable {
    * @see {@link https://recharts.github.io/en-US/guide/zIndex/ Z-Index and layers guide}
    */
   zIndex?: number;
+  /**
+   * Draws a rectangle behind each label, for example to keep labels readable on top of filled shapes.
+   *
+   * - `true` draws the background with default styles.
+   *   The fill is the `pageBackground` color from the theme, or white when no theme is set.
+   * - An object accepts SVG `<rect>` attributes such as `fill`, `stroke` and `rx`, and a `padding`.
+   * - `false` or `undefined` draws no background.
+   *
+   * Each background is sized from its rendered label.
+   * It is not drawn for labels that follow a curved path (`insideStart`, `insideEnd` and `end` in polar charts),
+   * nor for custom `content`.
+   *
+   * @since 3.11
+   * @example <LabelList position="inside" background />
+   * @example <LabelList position="inside" background={{ fill: '#fff', rx: 2, padding: 4 }} />
+   */
+  background?: boolean | TextBackgroundProps;
 }
 
 /**

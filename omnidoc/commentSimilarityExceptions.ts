@@ -45,6 +45,12 @@ export const commentSimilarityExceptions: ReadonlyArray<CommentSimilarityGroup> 
     reason: 'Pie has a custom label implementation independent from other graphical elements',
   },
   {
+    components: ['Text', 'Label', 'LabelList'],
+    props: ['background'],
+    reason:
+      'background in Text, Label and LabelList is a rectangle drawn behind the text, unlike Bar and RadialBar where it is the background of the bar.',
+  },
+  {
     components: ['CartesianGrid'],
     props: ['width', 'height'],
     reason: 'CartesianGrid dimensions default to chart dimensions, unlike other components',

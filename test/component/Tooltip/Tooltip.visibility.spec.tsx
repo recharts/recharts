@@ -1798,3 +1798,32 @@ describe('Cursor visibility', () => {
     });
   });
 });
+
+describe('Tooltip visibility after mouseleave with a pending throttled mousemove', () => {
+  beforeEach(() => {
+    mockGetBoundingClientRect({ width: 100, height: 100 });
+  });
+
+  test('should stay hidden when mouseleave arrives before the throttled mousemove runs', () => {
+    const { container } = render(
+      <LineChart width={400} height={400} data={PageData}>
+        <XAxis dataKey="name" />
+        <YAxis />
+        <Tooltip isAnimationActive={false} />
+        <Line dataKey="uv" isAnimationActive={false} />
+      </LineChart>,
+    );
+    showTooltip(container, lineChartMouseHoverTooltipSelector);
+    expect(getTooltip(container)).toBeVisible();
+
+    const wrapper = container.querySelector(lineChartMouseHoverTooltipSelector);
+    assertNotNull(wrapper);
+    fireEvent.mouseMove(wrapper, { clientX: 150, clientY: 200 });
+    fireEvent.mouseLeave(wrapper);
+    act(() => {
+      vi.runOnlyPendingTimers();
+    });
+
+    expectTooltipNotVisible(container);
+  });
+});

@@ -17,9 +17,24 @@ export type GraphicalItemStyle = Styles2D & {
   /**
    * Styles applied to the active representation of a graphical item.
    *
-   * The supported active representation differs by component. For example,
-   * Line uses this for its built-in active dot, while Bar and Pie will use it
-   * for their active shapes when they support graphical item themes.
+   * The active representation differs by component:
+   *
+   * - Line, Area, and Radar use these styles for their built-in active dot (`activeDot`).
+   * - Bar uses them for its active bar (`activeBar`).
+   * - Pie, Scatter, RadialBar, and Funnel use them for their active shape (`activeShape`).
+   *
+   * Bar, Scatter, RadialBar, and Funnel highlight the active shape only if you enable it,
+   * for example with `activeBar={true}` or `activeShape={true}`.
+   *
+   * All of these follow the same rules:
+   *
+   * - These styles apply only to what Recharts renders by default. A custom active representation
+   *   (a function or a React element) receives none of them. In Bar, a custom `shape` is used
+   *   for the active bar too, so it does not receive them either.
+   * - If the `activeDot`, `activeBar`, or `activeShape` object sets its own `fill` or `stroke`,
+   *   it ignores these styles completely. Its other style properties override the matching ones from here.
+   * - The same is true for graphical items and data entries that set their own `fill` or `stroke`,
+   *   see {@link RechartsTheme.graphicalItems}.
    */
   active?: Styles2D;
 };
@@ -28,9 +43,9 @@ export type GraphicalItemStyle = Styles2D & {
  * Styles shared with components that have a line (Line, ReferenceLine, ErrorBar) but no area
  */
 export type Styles1D = {
-  stroke: string;
-  strokeWidth?: number;
-  strokeOpacity?: number;
+  stroke?: string;
+  strokeWidth?: number | string;
+  strokeOpacity?: number | string;
   strokeDasharray?: string | number;
 };
 
@@ -54,8 +69,34 @@ export interface RechartsTheme {
   typography?: TextStyles;
   /**
    * Colors of main graphical elements (Area, Bar, Line, Treemap, etc.).
-   * If there are multiple elements in the chart, they will receive different values from this array.
+   * Line, Area, Bar, Scatter, Radar, and RadialBar select an entry by sorting the
+   * unique string representations of the `dataKey` values currently present in
+   * the chart. The first entry is assigned to the first key in that sorted
+   * list, and the palette repeats when there are more keys than entries.
+   *
+   * Graphical items with the same `dataKey` share a style. The assignment is
+   * independent of render order, but adding or removing a graphical item can
+   * change the assignment of the remaining items. The same `dataKey` can also
+   * receive different entries in charts with different sets of graphical items.
+   *
    * If this array has only one item in it then all graphical items will have the same color.
+   *
+   * Sankey selects an entry for each node by the node's index in `data.nodes`,
+   * and draws each link in the color of its source node, at reduced opacity.
+   *
+   * Treemap and SunburstChart give each top-level tile or first-ring sector the next entry by index,
+   * and all their descendants inherit that color.
+   *
+   * The theme colors never mix with user colors. If Line, Area, Bar, Scatter, Radar, RadialBar, Pie, or Funnel
+   * sets its own `fill` or `stroke` prop, it ignores its theme entry completely, including the `active` styles.
+   *
+   * Individual shapes of Bar, RadialBar, Scatter, Pie, Funnel, Treemap, Sankey, and SunburstChart can be styled
+   * from the data array. If a data entry defines its own `fill` or `stroke`, then that shape ignores
+   * the theme completely, and renders with only its own styles and the explicit props of its
+   * graphical item.
+   *
+   * Other style props and data properties (`fillOpacity`, `strokeOpacity`, `strokeWidth`, `strokeDasharray`)
+   * do not opt out of the theme. They override the matching theme value and keep the rest of the theme.
    *
    * Legend and Tooltip items inherit the same color.
    */
@@ -86,7 +127,43 @@ export interface RechartsTheme {
    * ErrorBar lines.
    */
   errorBar?: Styles1D;
+  /**
+   * Styles applied to the element that wraps the chart, the same element that the `style` prop of the chart styles.
+   * The Legend renders inside this element too, so a background here covers the Legend as well.
+   *
+   * The explicit `width`, `height`, and `style` props of the chart take precedence over these styles.
+   *
+   * `width` and `height` set a default size for every chart that does not set its own.
+   * Set both, or set one as a string (such as `'100%'`) together with `aspectRatio`,
+   * otherwise the chart has no size and renders nothing.
+   *
+   * These are inline styles, so they also take precedence over CSS classes on the chart.
+   *
+   * The built-in themes leave this empty: charts are transparent and the page shows through,
+   * and they have no default size.
+   *
+   * If you paint `backgroundColor` here and leave `pageBackground` unset,
+   * Recharts uses `backgroundColor` as the `pageBackground`.
+   * If you paint a `background` shorthand or an image, set `pageBackground` yourself.
+   */
   chart?: CSSProperties;
+  /**
+   * The color directly behind the chart: the page, or `chart.backgroundColor` if you paint one.
+   *
+   * Recharts never paints this as a background.
+   * It uses this color to draw gaps and halos that look like cut-outs:
+   * Treemap tile outlines, SunburstChart separators and the halo around its labels.
+   *
+   * Any CSS color works, including `var()` references.
+   *
+   * If this is not set, Recharts uses `chart.backgroundColor` instead.
+   * An explicit `pageBackground` always wins.
+   *
+   * Each built-in theme is designed for one page background, and sets it here.
+   * For example, `darkTheme` expects a dark page and is not legible on a light one.
+   * `autoTheme` expects a page background that follows the CSS `color-scheme`.
+   */
+  pageBackground?: string;
 
   /**
    * Styles applied to the cursor highlight shown with an active Tooltip.

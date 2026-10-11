@@ -72,9 +72,11 @@ import { ZIndexable, ZIndexLayer } from '../zIndex/ZIndexLayer';
 import { DefaultZIndexes } from '../zIndex/DefaultZIndexes';
 import { getZIndexFromUnknown } from '../zIndex/getZIndexFromUnknown';
 import { usePolarChartLayout } from '../context/chartLayoutContext';
-import { graphicalItemIdentity } from '../theme/graphicalItemIdentity';
-import { RechartsTheme, Styles2D } from '../theme/RechartsTheme';
+import { Styles2D } from '../theme/RechartsTheme';
 import { useBackwardsCompatibleTheme } from '../theme/useBackwardsCompatibleTheme';
+import { useGraphicalItemIdentity } from '../theme/useGraphicalItemIdentity';
+import { getEntryStyleOverrides, UnthemedStyles, useUnthemedStyles } from '../theme/dataEntryStyles';
+import { getActiveStyleOverrides, useThemedActiveStyles } from '../theme/activeStyles';
 
 const STABLE_EMPTY_ARRAY: readonly RadialBarDataItem[] = [];
 
@@ -137,7 +139,8 @@ function RadialBarSectors({
   isAnimating,
   isEntrance,
 }: RadialBarSectorsProps) {
-  const { shape, activeShape, cornerRadius, id, ...others } = allOtherRadialBarProps;
+  const { shape, activeShape, cornerRadius, id, unthemedStyles, themedActiveStyles, ...others } =
+    allOtherRadialBarProps;
   const baseProps = svgPropertiesNoEvents(others);
 
   const activeIndex = useAppSelector(selectActiveTooltipIndex);
@@ -167,12 +170,14 @@ function RadialBarSectors({
         const radialBarSectorProps: React.ComponentProps<typeof RadialBarSector> = {
           ...baseProps,
           cornerRadius: parseCornerRadius(cornerRadius),
+          ...getEntryStyleOverrides(entry, unthemedStyles),
           ...entry,
+          ...(isActive ? getActiveStyleOverrides(activeShape, themedActiveStyles, entry) : undefined),
           ...adaptEventsOfChild(restOfAllOtherProps, entry, i),
           onMouseEnter,
           onMouseLeave,
           onClick,
-          className: `recharts-radial-bar-sector ${entry.className}`,
+          className: clsx('recharts-radial-bar-sector', entry.className),
           forceCornerRadius: others.forceCornerRadius,
           cornerIsExternal: others.cornerIsExternal,
           animationElapsedTime,
@@ -481,7 +486,14 @@ export interface InternalRadialBarProps<DataPointType = any, DataValueType = any
    */
   formatter?: Formatter;
   /**
+   * Z-Index of this component and its children. The higher the value,
+   * the more on top it will be rendered.
+   * Components with higher zIndex will appear in front of components with lower zIndex.
+   * If undefined or 0, the content is rendered in the default layer without portals.
+   *
+   * @since 3.4
    * @defaultValue 300
+   * @see {@link https://recharts.github.io/en-US/guide/zIndex/ Z-Index and layers guide}
    */
   zIndex?: number;
 }
@@ -492,7 +504,21 @@ export type RadialBarProps<DataPointType = any, DataValueType = any> = Omit<
 > &
   Omit<InternalRadialBarProps<DataPointType, DataValueType>, 'sectors'>;
 
-type InternalProps = WithIdRequired<PropsWithDefaults> & Pick<InternalRadialBarProps, 'sectors'>;
+type ThemeInternalProps = {
+  /**
+   * Explicit style props without theme contributions.
+   * Applied to data entries that define their own colors, so that they ignore the theme.
+   * Undefined when there is no active theme.
+   */
+  unthemedStyles?: UnthemedStyles;
+  /**
+   * Theme styles of the active shape, without the ones that explicit props override.
+   * Undefined when there is no active theme, or when the theme has no active styles.
+   */
+  themedActiveStyles?: Styles2D;
+};
+
+type InternalProps = WithIdRequired<PropsWithDefaults> & Pick<InternalRadialBarProps, 'sectors'> & ThemeInternalProps;
 
 function SetRadialBarPayloadLegend(props: RadialBarProps) {
   const legendPayload = useAppSelector(state => selectRadialBarLegendPayload(state, props.legendType));
@@ -582,7 +608,10 @@ function RadialBarBackgroundSectors({
           ...backgroundProps,
           ...adaptEventsOfChild(allOtherRadialBarProps, entry, i),
           index: i,
-          className: clsx('recharts-radial-bar-background-sector', String(backgroundProps?.className)),
+          className: clsx(
+            'recharts-radial-bar-background-sector',
+            backgroundProps?.className == null ? undefined : String(backgroundProps.className),
+          ),
           option: background,
           isActive: false,
         };
@@ -625,7 +654,7 @@ class RadialBarWithState extends PureComponent<InternalProps> {
   }
 }
 
-function RadialBarImpl(props: WithIdRequired<PropsWithDefaults>) {
+function RadialBarImpl(props: WithIdRequired<PropsWithDefaults> & ThemeInternalProps) {
   const cells = React.useMemo(() => findAllByType(props.children, Cell), [props.children]);
 
   const radialBarSettings: RadialBarSettings = React.useMemo(
@@ -844,13 +873,11 @@ export function computeRadialBarDataItems({
 export function RadialBar<DataPointType = any, DataValueType = any>(
   outsideProps: RadialBarProps<DataPointType, DataValueType>,
 ) {
+  const graphicalItemThemeSelector = useGraphicalItemIdentity(outsideProps.dataKey, outsideProps);
+  const unthemedStyles = useUnthemedStyles(outsideProps);
+  const themedActiveStyles = useThemedActiveStyles(graphicalItemThemeSelector, outsideProps);
   const graphicalItemStyle = useBackwardsCompatibleTheme<RadialBarProps<DataPointType, DataValueType>>(
-    (theme: RechartsTheme) =>
-      outsideProps.dataKey == null
-        ? undefined
-        : theme.graphicalItems[
-            graphicalItemIdentity({ dataKey: String(outsideProps.dataKey) }, theme.graphicalItems.length)
-          ],
+    graphicalItemThemeSelector,
     outsideProps,
     undefined,
   );
@@ -892,7 +919,13 @@ export function RadialBar<DataPointType = any, DataValueType = any>(
             maxBarSize={props.maxBarSize}
           />
           <SetRadialBarPayloadLegend {...props} {...themedProps} />
-          <RadialBarImpl {...props} {...themedProps} id={id} />
+          <RadialBarImpl
+            {...props}
+            {...themedProps}
+            id={id}
+            unthemedStyles={unthemedStyles}
+            themedActiveStyles={themedActiveStyles}
+          />
         </>
       )}
     </RegisterGraphicalItemId>

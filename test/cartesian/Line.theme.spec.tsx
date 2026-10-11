@@ -84,8 +84,8 @@ describe('Line theme', () => {
         strokeWidth: 4,
       },
     ];
-    const themeIndex = graphicalItemIdentity({ dataKey: 'profit' }, graphicalItems.length);
-    expect(themeIndex).toBe(1);
+    const themeIndex = graphicalItemIdentity({ dataKey: 'profit' }, ['profit'], graphicalItems.length);
+    expect(themeIndex).toBe(0);
     const theme = graphicalItems[themeIndex];
     assertNotNull(theme);
 
@@ -104,12 +104,80 @@ describe('Line theme', () => {
     expect(curve).toHaveAttribute('stroke-dasharray', theme.strokeDasharray);
 
     getDots(container).forEach(dot => {
-      expect(dot).toHaveAttribute('fill', theme.fill);
-      expect(dot).toHaveAttribute('fill-opacity', String(theme.fillOpacity));
+      expect(dot).toHaveAttribute('fill', theme.stroke);
+      expect(dot).toHaveAttribute('fill-opacity', '1');
       expect(dot).toHaveAttribute('stroke', theme.stroke);
       expect(dot).toHaveAttribute('stroke-width', String(theme.strokeWidth));
       expect(dot).toHaveAttribute('stroke-opacity', String(theme.strokeOpacity));
       expect(dot).toHaveAttribute('stroke-dasharray', theme.strokeDasharray);
+    });
+  });
+
+  it('assigns graphical-item themes by sorted dataKeys instead of render order', () => {
+    const { container } = rechartsTestRender(
+      <RechartsThemeProvider
+        value={{
+          graphicalItems: [{ stroke: 'red' }, { stroke: 'blue' }],
+        }}
+      >
+        <MyChart>
+          <Line dataKey="revenue" isAnimationActive={false} />
+          <Line dataKey="profit" isAnimationActive={false} />
+        </MyChart>
+      </RechartsThemeProvider>,
+    );
+
+    const curves = container.querySelectorAll('.recharts-line-curve');
+    expect(curves).toHaveLength(2);
+    expect(curves[0]).toHaveAttribute('stroke', 'blue');
+    expect(curves[1]).toHaveAttribute('stroke', 'red');
+  });
+
+  it('uses an explicit line stroke as the dot fill when it overrides the theme', () => {
+    const { container } = rechartsTestRender(
+      <RechartsThemeProvider
+        value={{
+          graphicalItems: [
+            {
+              fill: 'purple',
+              stroke: 'red',
+            },
+          ],
+        }}
+      >
+        <MyChart>
+          <Line dataKey="profit" isAnimationActive={false} stroke="blue" />
+        </MyChart>
+      </RechartsThemeProvider>,
+    );
+
+    const curve = getCurve(container);
+    expect(curve).toHaveAttribute('stroke', 'blue');
+    getDots(container).forEach(dot => {
+      expect(dot).toHaveAttribute('fill', 'blue');
+    });
+  });
+
+  it('does not use the themed fill for dots when the line stroke is none, because explicit stroke ignores the theme', () => {
+    const { container } = rechartsTestRender(
+      <RechartsThemeProvider
+        value={{
+          graphicalItems: [
+            {
+              fill: 'purple',
+              stroke: 'red',
+            },
+          ],
+        }}
+      >
+        <MyChart>
+          <Line dataKey="profit" isAnimationActive={false} stroke="none" />
+        </MyChart>
+      </RechartsThemeProvider>,
+    );
+
+    getDots(container).forEach(dot => {
+      expect(dot).not.toHaveAttribute('fill', 'purple');
     });
   });
 
@@ -152,7 +220,7 @@ describe('Line theme', () => {
 
     getDots(container).forEach(dot => {
       expect(dot).toHaveAttribute('fill', 'gold');
-      expect(dot).toHaveAttribute('fill-opacity', '0.8');
+      expect(dot).toHaveAttribute('fill-opacity', '1');
       expect(dot).toHaveAttribute('stroke', 'blue');
       expect(dot).toHaveAttribute('stroke-width', '3');
       expect(dot).toHaveAttribute('stroke-opacity', '0.7');
@@ -177,11 +245,58 @@ describe('Line theme', () => {
 
     getDots(container).forEach(dot => {
       expect(dot).toHaveAttribute('fill', theme.fill);
-      expect(dot).toHaveAttribute('fill-opacity', String(theme.fillOpacity));
+      expect(dot).toHaveAttribute('fill-opacity', '1');
       expect(dot).toHaveAttribute('stroke', theme.stroke);
       expect(dot).toHaveAttribute('stroke-width', theme.strokeWidth);
       expect(dot).not.toHaveAttribute('stroke-opacity');
       expect(dot).not.toHaveAttribute('stroke-dasharray');
+    });
+  });
+
+  it('lets explicit dot fill opacity override the default', () => {
+    const { container } = rechartsTestRender(
+      <RechartsThemeProvider
+        value={{
+          graphicalItems: [
+            {
+              fill: 'purple',
+              fillOpacity: 0.1,
+            },
+          ],
+        }}
+      >
+        <MyChart>
+          <Line dataKey="profit" dot={{ fillOpacity: 0.4 }} isAnimationActive={false} />
+        </MyChart>
+      </RechartsThemeProvider>,
+    );
+
+    getDots(container).forEach(dot => {
+      expect(dot).toHaveAttribute('fill', 'purple');
+      expect(dot).toHaveAttribute('fill-opacity', '0.4');
+    });
+  });
+
+  it('lets explicit dot fill override the line stroke', () => {
+    const { container } = rechartsTestRender(
+      <RechartsThemeProvider
+        value={{
+          graphicalItems: [
+            {
+              fill: 'purple',
+              stroke: 'teal',
+            },
+          ],
+        }}
+      >
+        <MyChart>
+          <Line dataKey="profit" dot={{ fill: 'green' }} isAnimationActive={false} />
+        </MyChart>
+      </RechartsThemeProvider>,
+    );
+
+    getDots(container).forEach(dot => {
+      expect(dot).toHaveAttribute('fill', 'green');
     });
   });
 
@@ -221,7 +336,7 @@ describe('Line theme', () => {
     expect(activeDot).toHaveAttribute('stroke-width', '5');
   });
 
-  it('lets explicit active dot fields override the active graphical-item style', () => {
+  it('ignores the active graphical-item style when the active dot has its own color', () => {
     const { container } = rechartsTestRender(
       <RechartsThemeProvider
         value={{
@@ -249,10 +364,10 @@ describe('Line theme', () => {
     showTooltip(container, lineChartMouseHoverTooltipSelector);
     const activeDot = getActiveDot(container);
     expect(activeDot).toHaveAttribute('fill', 'blue');
-    expect(activeDot).toHaveAttribute('fill-opacity', '0.4');
-    expect(activeDot).toHaveAttribute('stroke', 'purple');
-    expect(activeDot).toHaveAttribute('stroke-dasharray', '3 2');
-    expect(activeDot).toHaveAttribute('stroke-opacity', '0.6');
+    expect(activeDot).not.toHaveAttribute('fill-opacity');
+    expect(activeDot).not.toHaveAttribute('stroke', 'purple');
+    expect(activeDot).not.toHaveAttribute('stroke-dasharray');
+    expect(activeDot).not.toHaveAttribute('stroke-opacity');
     expect(activeDot).toHaveAttribute('stroke-width', '3');
   });
 });

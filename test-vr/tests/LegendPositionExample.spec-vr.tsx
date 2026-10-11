@@ -1,7 +1,5 @@
-import * as React from 'react';
-import { expect } from '@playwright/experimental-ct-react';
-import LegendPositionExample from '../../www/src/docs/exampleComponents/Legend/LegendPositionExample.tsx';
-import { testWithLightTheme } from './www/fixtures.tsx';
+import type { LegendPositionExample as LegendPositionExampleStory } from './LegendPositionExample.story';
+import { expect, testWithThemes } from './fixtures';
 
 const positions = [
   'top',
@@ -20,8 +18,19 @@ const positions = [
 ] as const;
 
 for (const position of positions) {
-  testWithLightTheme(`LegendPositionExample - ${position}`, async ({ mount }) => {
-    const component = await mount(<LegendPositionExample position={position} />);
+  testWithThemes(`LegendPositionExample - ${position}`, async ({ mountStory, rechartsTheme }) => {
+    const component = await mountStory<typeof LegendPositionExampleStory>(
+      'LegendPositionExample/LegendPositionExample',
+      {
+        position,
+      },
+    );
+    if (rechartsTheme === 'dark') {
+      await expect(component.locator('.recharts-legend-wrapper')).not.toHaveCSS(
+        'background-color',
+        'rgb(255, 255, 255)',
+      );
+    }
     await expect(component).toHaveScreenshot();
   });
 }

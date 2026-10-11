@@ -965,6 +965,7 @@ describe('<RadialBar />', () => {
           // @ts-expect-error extra properties not expected in the type
           rings: 3,
           fill: 'green',
+          stroke: 'green',
           background: {
             cx: 250,
             cy: 250,
@@ -973,7 +974,7 @@ describe('<RadialBar />', () => {
             startAngle: 0,
             endAngle: 360,
           },
-          payload: { name: 'Elves', rings: 3, fill: 'green' },
+          payload: { name: 'Elves', rings: 3, fill: 'green', stroke: 'green' },
           value: 3,
           cx: 250,
           cy: 250,
@@ -987,6 +988,7 @@ describe('<RadialBar />', () => {
           // @ts-expect-error extra properties not expected in the type
           rings: 7,
           fill: 'blue',
+          stroke: 'blue',
           background: {
             cx: 250,
             cy: 250,
@@ -995,7 +997,7 @@ describe('<RadialBar />', () => {
             startAngle: 0,
             endAngle: 360,
           },
-          payload: { name: 'Dwarves', rings: 7, fill: 'blue' },
+          payload: { name: 'Dwarves', rings: 7, fill: 'blue', stroke: 'blue' },
           value: 7,
           cx: 250,
           cy: 250,
@@ -1009,6 +1011,7 @@ describe('<RadialBar />', () => {
           // @ts-expect-error extra properties not expected in the type
           rings: 9,
           fill: 'red',
+          stroke: 'red',
           background: {
             cx: 250,
             cy: 250,
@@ -1017,7 +1020,7 @@ describe('<RadialBar />', () => {
             startAngle: 0,
             endAngle: 360,
           },
-          payload: { name: 'Humans', rings: 9, fill: 'red' },
+          payload: { name: 'Humans', rings: 9, fill: 'red', stroke: 'red' },
           value: 9,
           cx: 250,
           cy: 250,
@@ -1031,6 +1034,7 @@ describe('<RadialBar />', () => {
           // @ts-expect-error extra properties not expected in the type
           rings: 1,
           fill: 'black',
+          stroke: 'black',
           background: {
             cx: 250,
             cy: 250,
@@ -1039,7 +1043,7 @@ describe('<RadialBar />', () => {
             startAngle: 0,
             endAngle: 360,
           },
-          payload: { name: 'Sauron', rings: 1, fill: 'black' },
+          payload: { name: 'Sauron', rings: 1, fill: 'black', stroke: 'black' },
           value: 1,
           cx: 250,
           cy: 250,

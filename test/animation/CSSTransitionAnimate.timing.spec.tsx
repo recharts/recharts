@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { act, render } from '@testing-library/react';
-import { describe, expect, it, vi } from 'vitest';
+import { afterEach, describe, expect, it, vi } from 'vitest';
 import { CSSTransitionAnimate } from '../../src/animation/CSSTransitionAnimate';
 import { expectLastCalledWith } from '../helper/expectLastCalledWith';
 import { CompositeAnimationManager } from './CompositeAnimationManager';
@@ -15,6 +15,13 @@ describe('CSSTransitionAnimate timing', () => {
 
   beforeEach(() => {
     vi.clearAllMocks();
+  });
+
+  afterEach(() => {
+    vi.useRealTimers();
+    vi.useFakeTimers({
+      toFake: ['requestAnimationFrame', 'cancelAnimationFrame'],
+    });
   });
 
   describe('with animation steps as strings', () => {

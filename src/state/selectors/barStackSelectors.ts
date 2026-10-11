@@ -52,16 +52,16 @@ export const expandRectangle = (
   rect1: BarStackItem | undefined,
   rect2: BarStackItem | undefined,
 ): BarStackItem | undefined => {
-  if (!rect1) {
-    return rect2;
+  const first = rect1 ?? rect2;
+  if (!first) {
+    return undefined;
   }
-  if (!rect2) {
-    return rect1;
-  }
-  const x = Math.min(rect1.x, rect1.x + rect1.width, rect2.x, rect2.x + rect2.width);
-  const y = Math.min(rect1.y, rect1.y + rect1.height, rect2.y, rect2.y + rect2.height);
-  const maxX = Math.max(rect1.x, rect1.x + rect1.width, rect2.x, rect2.x + rect2.width);
-  const maxY = Math.max(rect1.y, rect1.y + rect1.height, rect2.y, rect2.y + rect2.height);
+  // A lone rectangle goes through the same normalization, so that negative values do not keep a negative height
+  const second = rect2 ?? first;
+  const x = Math.min(first.x, first.x + first.width, second.x, second.x + second.width);
+  const y = Math.min(first.y, first.y + first.height, second.y, second.y + second.height);
+  const maxX = Math.max(first.x, first.x + first.width, second.x, second.x + second.width);
+  const maxY = Math.max(first.y, first.y + first.height, second.y, second.y + second.height);
   const width = maxX - x;
   const height = maxY - y;
   return { x, y, width, height };

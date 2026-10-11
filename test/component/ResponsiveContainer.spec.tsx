@@ -1,5 +1,5 @@
 import React, { CSSProperties, ReactNode } from 'react';
-import { Mock, MockInstance, vi } from 'vitest';
+import { afterEach, Mock, MockInstance, vi } from 'vitest';
 import { act, render, screen } from '@testing-library/react';
 import { ResponsiveContainer } from '../../src';
 import { mockGetBoundingClientRect } from '../helper/mockGetBoundingClientRect';
@@ -13,6 +13,14 @@ declare global {
 }
 
 describe('<ResponsiveContainer />', () => {
+  afterEach(() => {
+    Reflect.deleteProperty(window, 'ResizeObserver');
+    vi.useRealTimers();
+    vi.useFakeTimers({
+      toFake: ['requestAnimationFrame', 'cancelAnimationFrame'],
+    });
+  });
+
   /**
    * Use this function to simulate a change fired by a window.ResizeObserver
    * You just need to pass a param with ResizeObserverEntry structure like:

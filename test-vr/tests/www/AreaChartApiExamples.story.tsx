@@ -1,0 +1,25 @@
+import SimpleAreaChartComponent from '../../../www/src/docs/exampleComponents/AreaChart/SimpleAreaChart';
+import StackedAreaChartComponent from '../../../www/src/docs/exampleComponents/AreaChart/StackedAreaChart';
+import AreaChartConnectNullsComponent from '../../../www/src/docs/exampleComponents/AreaChart/AreaChartConnectNulls';
+import CardinalAreaChartComponent from '../../../www/src/docs/exampleComponents/AreaChart/CardinalAreaChart';
+import PercentAreaChartComponent from '../../../www/src/docs/exampleComponents/AreaChart/PercentAreaChart';
+import SynchronizedAreaChartComponent from '../../../www/src/docs/exampleComponents/AreaChart/SynchronizedAreaChart';
+import TinyAreaChartComponent from '../../../www/src/docs/exampleComponents/AreaChart/TinyAreaChart';
+import AreaChartFillByValueComponent from '../../../www/src/docs/exampleComponents/AreaChart/AreaChartFillByValue';
+import AreaChartNavExampleComponent from '../../../www/src/docs/exampleComponents/AreaChart/AreaChartNavExample';
+import AreaChartExampleComponent from '../../../www/src/docs/exampleComponents/AreaChart/AreaChartExample';
+import AreaChartRangeExampleComponent from '../../../www/src/docs/exampleComponents/AreaChart/AreaChartRangeExample';
+import CrosshairExampleComponent from '../../../www/src/docs/exampleComponents/getRelativeCoordinate/CrosshairExample';
+
+export const AreaChartNavExample = AreaChartNavExampleComponent;
+export const AreaChartFillByValue = AreaChartFillByValueComponent;
+export const TinyAreaChart = TinyAreaChartComponent;
+export const SynchronizedAreaChart = SynchronizedAreaChartComponent;
+export const PercentAreaChart = PercentAreaChartComponent;
+export const CardinalAreaChart = CardinalAreaChartComponent;
+export const AreaChartConnectNulls = AreaChartConnectNullsComponent;
+export const StackedAreaChart = StackedAreaChartComponent;
+export const SimpleAreaChart = SimpleAreaChartComponent;
+export const AreaChartExample = AreaChartExampleComponent;
+export const AreaChartRangeExample = AreaChartRangeExampleComponent;
+export const CrosshairExample = CrosshairExampleComponent;

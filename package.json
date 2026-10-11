@@ -1,6 +1,6 @@
 {
   "name": "recharts",
-  "version": "3.11.0-canary.0",
+  "version": "3.11.0-canary.5",
   "description": "React charts",
   "main": "lib/index.js",
   "module": "es6/index.js",
@@ -32,12 +32,13 @@
     "build-umd": "rimraf umd && cross-env NODE_ENV=production webpack -o umd",
     "build-types": "rimraf types && npm run tsc",
     "check-types": "npm run check-types-lib && npm run check-types-test && npm run check-types-storybook && npm run check-types-test-vr && npm run check-types-website",
-    "check-types-lib": "tsc --noEmit",
+    "check-types-lib": "tsc --noEmit --incremental --tsBuildInfoFile ./node_modules/.cache/tsbuildinfo/lib-check.tsbuildinfo",
     "check-types-test": "tsc --project test/tsconfig.json",
     "check-types-storybook": "tsc --project storybook/tsconfig.json",
     "check-types-test-vr": "tsc --project test-vr/tsconfig.json",
     "check-types-website": "tsc --project www/tsconfig.json",
     "check-playwright-versions": "node scripts/check-playwright-versions.mjs",
+    "check-orphan-snapshots": "node scripts/check-orphan-snapshots.mjs",
     "test": "vitest run --config vitest.config.mts --project unit:*",
     "test-lib": "vitest run --config vitest.config.mts --project unit:lib",
     "test-website": "vitest run --config vitest.config.mts --project unit:website",
@@ -45,10 +46,11 @@
     "test-omnidoc": "vitest run --project unit:omnidoc --config vitest.config.mts",
     "test-exports": "vitest run scripts/verify-exports.test.ts",
     "test-treeshaking": "vitest run scripts/treeshaking.test.ts scripts/generate-bundle-data.test.ts",
-    "omnidoc": "npm exec --prefix ./www -- tsx ./omnidoc/generateApiDoc.ts && npm exec --prefix ./www -- tsx ./omnidoc/generateStorybookArgs.ts",
+    "omnidoc": "npm exec --prefix ./www -- tsx ./omnidoc/generateAll.ts",
     "test-mutation": "stryker run",
+    "test-mutation-file": "stryker run --checkers \"\" --incremental --mutate",
     "test-watch": "vitest --config vitest.config.mts --project unit:*",
-    "lint": "eslint .",
+    "lint": "eslint . --cache --cache-location node_modules/.cache/eslint/.eslintcache",
     "autofix": "eslint . --fix",
     "analyse": "cross-env NODE_ENV=analyse webpack -o umd/Recharts.js",
     "trace-bundle": "node scripts/trace-bundle.ts",
@@ -61,10 +63,10 @@
     "chromatic": "npx chromatic",
     "test-build-output": "vitest run --project build-output --config vitest.config.mts",
     "test-storybook": "vitest --config vitest.config.mts --project storybook",
-    "test-vr:prepare": "npm run build && docker compose up -d --build",
+    "test-vr:prepare": "docker compose up -d --build",
     "test-vr": "docker compose run --rm test-vr playwright-test",
     "test-vr:update": "docker compose run --rm test-vr playwright-test --update-snapshots changed",
-    "test-vr:ui": "docker compose run -p 8080:8080 --rm test-vr playwright-test --ui --ui-host=0.0.0.0 --ui-port=8080",
+    "test-vr:ui": "docker compose run -p 8080:8080 -p 3100:3100 --rm test-vr sh -c 'npx vite --config test-vr/vite.config.ts --host 0.0.0.0 --port 3100 --strictPort & exec playwright-test --ui --ui-host=0.0.0.0 --ui-port=8080'",
     "test-vr:report": "npx playwright show-report test-vr/playwright-report",
     "bundlewatch": "bundlewatch --config .bundlewatch.config.json",
     "lgtm": "npm run build && npm run lint && npm run test && npm run check-types"
@@ -89,7 +91,13 @@
   "peerDependencies": {
     "react": "^16.8.0 || ^17.0.0 || ^18.0.0 || ^19.0.0",
     "react-dom": "^16.0.0 || ^17.0.0 || ^18.0.0 || ^19.0.0",
-    "react-is": "^16.8.0 || ^17.0.0 || ^18.0.0 || ^19.0.0"
+    "react-is": "^16.8.0 || ^17.0.0 || ^18.0.0 || ^19.0.0",
+    "@types/react": "*"
+  },
+  "peerDependenciesMeta": {
+    "@types/react": {
+      "optional": true
+    }
   },
   "dependencies": {
     "@reduxjs/toolkit": "^1.9.0 || 2.x.x",
@@ -117,7 +125,7 @@
     "@eslint/compat": "^2.1.0",
     "@eslint/js": "^9.35.0",
     "@flakiness/playwright": "^2.0.0",
-    "@playwright/experimental-ct-react": "1.62.1",
+    "@playwright/test": "1.62.1",
     "@recharts/devtools": "^0.0.18",
     "@reduxjs/toolkit": "^1.9.7",
     "@rollup/plugin-babel": "^7.1.0",
@@ -193,6 +201,7 @@
     "typescript": "^6.0.3",
     "typescript-eslint": "^8.42.0",
     "update-browserslist-db": "^1.1.0",
+    "vite": "^6.4.0",
     "vitest": "^4.1.7",
     "vitest-axe": "^0.1.0",
     "webpack": "^5.93.0",

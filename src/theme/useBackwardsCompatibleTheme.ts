@@ -2,14 +2,12 @@ import { RechartsTheme } from './RechartsTheme';
 import { resolvePartialDefaultProps } from '../util/resolveDefaultProps';
 import { useRechartsTheme } from './RechartsThemeContext';
 
-const noStyles = {};
-
 /**
  * Backwards compatible hook for theming.
  *
  * - If the selector returns a theme slice, it is merged with `explicitProps` and acts as defaults.
- * - If no matching theme slice is present, no props are returned - this allows us to set an "empty theme" with completely unstyled chart
- *   This preserves the 2.x defaults for existing charts.
+ * - If no matching theme slice is present, the explicit props are returned without applying legacy defaults.
+ *   This allows an empty theme to leave unspecified styles unstyled while preserving user props.
  *
  * `themeSelector` selects the subset of theme which this component is interested in.
  * The selector is not called in case the theme is undefined.
@@ -43,9 +41,9 @@ export const useBackwardsCompatibleTheme = <Props extends object>(
      * In this case the theme exists but the particular slice does not.
      * This could be that a chunk of the theme is not defined,
      * or it could be the emptyTheme.
-     * Here we see the new theme so let's not mix it with old defaults.
+     * Here we see the new theme so let's not mix it with old defaults, but preserve explicit props.
      */
-    return noStyles;
+    return explicitProps;
   }
   /*
    * And finally a mix of the theme and explicit props.

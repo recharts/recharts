@@ -107,6 +107,8 @@ export function Dots({
     const dotProps: DotItemDotProps = {
       r: 3,
       ...baseProps,
+      // Dots are separate visual primitives; do not inherit the parent series opacity.
+      fillOpacity: 1,
       ...customDotProps,
       index: i,
       cx: entry.x ?? undefined,

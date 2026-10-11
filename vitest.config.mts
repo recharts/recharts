@@ -27,7 +27,9 @@ export default defineConfig({
       '**/.idea/**',
       '**/.cache/**',
       '**/build/**',
-      '**/scripts/**',
+      // Anchored to the root scripts/ folder: those tests need build output and run in the
+      // build-output and treeshaking projects. test/scripts/ holds regular unit tests.
+      'scripts/**',
       '**/.stryker-tmp/**',
       '**/www/docs/**',
     ],
@@ -42,6 +44,7 @@ export default defineConfig({
         extends: true,
         test: {
           name: 'unit:lib',
+          isolate: false,
           setupFiles: [
             'test/vitest.setup.ts',
             'test/helper/toBeRechartsScale.ts',

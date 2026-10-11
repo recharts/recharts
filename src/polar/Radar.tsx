@@ -3,7 +3,7 @@ import { MouseEvent, MutableRefObject, ReactElement, ReactNode, SVGProps, useRef
 import last from 'es-toolkit/compat/last';
 
 import { clsx } from 'clsx';
-import { interpolate, isNullish, noop } from '../util/DataUtils';
+import { interpolate, isNullish, mathSign, noop } from '../util/DataUtils';
 import { polarToCartesian } from '../util/PolarUtils';
 import { getTooltipNameProp, getValueByDataKey } from '../util/ChartUtils';
 import { Polygon } from '../shape/Polygon';
@@ -32,6 +32,7 @@ import { ActivePoints } from '../component/ActivePoints';
 import { TooltipPayloadConfiguration } from '../state/tooltipSlice';
 import { SetTooltipEntrySettings } from '../state/SetTooltipEntrySettings';
 import { selectRadarPoints } from '../state/selectors/radarSelectors';
+import type { AxisRange } from '../state/selectors/axisSelectors';
 import { useAppSelector } from '../state/hooks';
 import { useIsPanorama } from '../context/PanoramaContext';
 import { SetPolarLegendPayload } from '../state/SetLegendPayload';
@@ -48,9 +49,11 @@ import { ZIndexable, ZIndexLayer } from '../zIndex/ZIndexLayer';
 import { DefaultZIndexes } from '../zIndex/DefaultZIndexes';
 import { RechartsScale } from '../util/scale/RechartsScale';
 import { usePolarChartLayout } from '../context/chartLayoutContext';
-import { graphicalItemIdentity } from '../theme/graphicalItemIdentity';
-import { GraphicalItemStyle, RechartsTheme } from '../theme/RechartsTheme';
+import { GraphicalItemStyle } from '../theme/RechartsTheme';
+import { useRechartsTheme } from '../theme/RechartsThemeContext';
 import { useBackwardsCompatibleTheme } from '../theme/useBackwardsCompatibleTheme';
+import { getActiveStyleOverrides } from '../theme/activeStyles';
+import { useGraphicalItemIdentity } from '../theme/useGraphicalItemIdentity';
 
 export interface RadarPoint {
   x: number;
@@ -189,7 +192,14 @@ export interface RadarProps<DataPointType = any, DataValueType = any>
   shape?: ReactElement<SVGElement> | ((props: any) => ReactElement<SVGElement>);
   tooltipType?: TooltipType;
   /**
+   * Z-Index of this component and its children. The higher the value,
+   * the more on top it will be rendered.
+   * Components with higher zIndex will appear in front of components with lower zIndex.
+   * If undefined or 0, the content is rendered in the default layer without portals.
+   *
+   * @since 3.4
    * @defaultValue 100
+   * @see {@link https://recharts.github.io/en-US/guide/zIndex/ Z-Index and layers guide}
    */
   zIndex?: number;
 }
@@ -201,6 +211,7 @@ export type AngleAxisForRadar = {
   dataKey: DataKey<any> | undefined;
   cx: number;
   cy: number;
+  range: AxisRange;
 };
 
 export type Props<DataPointType = any, DataValueType = any> = Omit<
@@ -274,9 +285,13 @@ const SetRadarTooltipEntrySettings = React.memo(
   },
 );
 
-function RadarDotsWrapper({ points, props }: { points: ReadonlyArray<RadarPoint>; props: PropsWithDefaults }) {
+type RadarPropsWithDotFill = WithIdRequired<PropsWithDefaults> & {
+  dotFill?: string;
+};
+
+function RadarDotsWrapper({ points, props }: { points: ReadonlyArray<RadarPoint>; props: RadarPropsWithDotFill }) {
   const { dot, dataKey } = props;
-  const { id, ...propsWithoutId } = props;
+  const { id, dotFill, ...propsWithoutId } = props;
 
   const baseProps = svgPropertiesNoEvents(propsWithoutId);
 
@@ -287,7 +302,7 @@ function RadarDotsWrapper({ points, props }: { points: ReadonlyArray<RadarPoint>
       className="recharts-radar-dots"
       dotClassName="recharts-radar-dot"
       dataKey={dataKey}
-      baseProps={baseProps}
+      baseProps={{ ...baseProps, fill: dotFill ?? baseProps.fill }}
     />
   );
 }
@@ -308,7 +323,10 @@ export function computeRadarPoints({
   const { cx, cy } = angleAxis;
   let isRange = false;
   const points: RadarPoint[] = [];
-  const angleBandSize = angleAxis.type !== 'number' ? (bandSize ?? 0) : 0;
+  // scaleBand reverses the values it emits for a descending range, so the band offset that lands
+  // the first category on startAngle flips sign with the range direction, same as angle axis ticks.
+  const bandDirection = mathSign(angleAxis.range[0] - angleAxis.range[1]);
+  const angleBandSize = angleAxis.type !== 'number' ? bandDirection * (bandSize ?? 0) : 0;
 
   displayedData.forEach((entry, i) => {
     const name = getValueByDataKey(entry, angleAxis.dataKey, i);
@@ -426,7 +444,7 @@ function StaticPolygon({
     return null;
   }
 
-  const { shape, isRange, connectNulls } = props;
+  const { shape, isRange, connectNulls, dotFill: _, ...propsWithoutDotFill } = props;
 
   const handleMouseEnter = (e: MouseEvent<SVGPolygonElement>) => {
     const { onMouseEnter } = props;
@@ -446,9 +464,9 @@ function StaticPolygon({
 
   let radar;
   if (React.isValidElement(shape)) {
-    radar = React.cloneElement(shape, { ...props, points } as any);
+    radar = React.cloneElement(shape, { ...propsWithoutDotFill, points } as any);
   } else if (typeof shape === 'function') {
-    radar = shape({ ...props, points });
+    radar = shape({ ...propsWithoutDotFill, points });
   } else {
     radar = (
       <Polygon
@@ -595,7 +613,7 @@ export const defaultRadarProps = {
 
 type PropsWithDefaults = RequiresDefaultProps<Props, typeof defaultRadarProps>;
 
-export type InternalRadarProps = WithIdRequired<PropsWithDefaults> & RadarComposedData;
+export type InternalRadarProps = RadarPropsWithDotFill & RadarComposedData;
 
 function RadarWithState(props: InternalRadarProps) {
   const { hide, className, points } = props;
@@ -621,7 +639,7 @@ function RadarWithState(props: InternalRadarProps) {
   );
 }
 
-function RadarImpl(props: WithIdRequired<PropsWithDefaults>) {
+function RadarImpl(props: RadarPropsWithDotFill) {
   const isPanorama = useIsPanorama();
   const radarPoints = useAppSelector(state =>
     selectRadarPoints(state, props.radiusAxisId, props.angleAxisId, isPanorama, props.id),
@@ -646,25 +664,19 @@ function RadarImpl(props: WithIdRequired<PropsWithDefaults>) {
  * @provides LabelListContext
  */
 export function Radar<DataPointType = any, DataValueType = any>(outsideProps: Props<DataPointType, DataValueType>) {
+  const rechartsTheme = useRechartsTheme();
+  const graphicalItemThemeSelector = useGraphicalItemIdentity(outsideProps.dataKey, outsideProps);
   const graphicalItemTheme = useBackwardsCompatibleTheme<GraphicalItemStyle>(
-    (theme: RechartsTheme) =>
-      outsideProps.dataKey == null
-        ? undefined
-        : theme.graphicalItems[graphicalItemIdentity({ dataKey: outsideProps.dataKey }, theme.graphicalItems.length)],
+    graphicalItemThemeSelector,
     outsideProps,
     undefined,
   );
   const themeStrokeDasharray = graphicalItemTheme?.strokeDasharray;
+  const themedActiveDot = getActiveStyleOverrides(outsideProps.activeDot ?? true, graphicalItemTheme?.active);
   const activeDot =
-    graphicalItemTheme?.active == null ||
-    outsideProps.activeDot === false ||
-    typeof outsideProps.activeDot === 'function' ||
-    React.isValidElement(outsideProps.activeDot)
+    themedActiveDot == null
       ? outsideProps.activeDot
-      : {
-          ...graphicalItemTheme.active,
-          ...(typeof outsideProps.activeDot === 'object' ? outsideProps.activeDot : {}),
-        };
+      : { ...themedActiveDot, ...(typeof outsideProps.activeDot === 'object' ? outsideProps.activeDot : {}) };
   const propsWithTheme: Props<DataPointType, DataValueType> = {
     ...outsideProps,
     activeDot,
@@ -678,6 +690,9 @@ export function Radar<DataPointType = any, DataValueType = any>(outsideProps: Pr
       (Array.isArray(themeStrokeDasharray) ? themeStrokeDasharray.join(',') : themeStrokeDasharray),
   };
   const props: PropsWithDefaults = resolveDefaultProps(propsWithTheme, defaultRadarProps);
+  const dotFill =
+    outsideProps.fill ??
+    (rechartsTheme == null ? props.fill : getLegendItemColor(props.stroke, graphicalItemTheme?.fill));
   return (
     <RegisterGraphicalItemId id={props.id} type="radar">
       {id => (
@@ -702,7 +717,7 @@ export function Radar<DataPointType = any, DataValueType = any>(outsideProps: Pr
             tooltipType={props.tooltipType}
             id={id}
           />
-          <RadarImpl {...props} id={id} />
+          <RadarImpl {...props} id={id} dotFill={dotFill} />
         </>
       )}
     </RegisterGraphicalItemId>

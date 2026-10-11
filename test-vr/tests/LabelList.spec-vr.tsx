@@ -1,100 +1,91 @@
-import * as React from 'react';
-import { test, expect } from '@playwright/experimental-ct-react';
-import {
-  AreaExplicitLabelListTest,
-  AreaImplicitLabelListTest,
-  BarExplicitLabelListTest,
-  BarImplicitLabelListTest,
-  LineExplicitLabelListTest,
-  LineImplicitLabelListTest,
-  ScatterExplicitLabelListTest,
-  ScatterImplicitLabelListTest,
-  PieExplicitLabelListTest,
-  PieImplicitLabelListTest,
-  RadarExplicitLabelListTest,
-  RadarImplicitLabelListTest,
-  RadialBarExplicitLabelListTest,
-  RadialBarImplicitLabelListTest,
-  FunnelImplicitLabelListTest,
-  FunnelExplicitLabelListTest,
-} from './LabelListComponents';
+import { expect, testWithThemes } from './fixtures';
 
-test('Area > implicit LabelList', async ({ mount }) => {
-  const component = await mount(<AreaImplicitLabelListTest />);
+testWithThemes('Area > implicit LabelList', async ({ mountStory }) => {
+  const component = await mountStory('LabelList/AreaImplicitLabelList');
   await expect(component).toHaveScreenshot();
 });
 
-test('Area > explicit LabelList', async ({ mount }) => {
-  const component = await mount(<AreaExplicitLabelListTest />);
+testWithThemes('Area > explicit LabelList', async ({ mountStory }) => {
+  const component = await mountStory('LabelList/AreaExplicitLabelList');
   await expect(component).toHaveScreenshot();
 });
 
-test('Bar > implicit LabelList', async ({ mount }) => {
-  const component = await mount(<BarImplicitLabelListTest />);
+testWithThemes('Bar > implicit LabelList', async ({ mountStory }) => {
+  const component = await mountStory('LabelList/BarImplicitLabelList');
   await expect(component).toHaveScreenshot();
 });
 
-test('Bar > explicit LabelList', async ({ mount }) => {
-  const component = await mount(<BarExplicitLabelListTest />);
+testWithThemes('Bar > explicit LabelList', async ({ mountStory }) => {
+  const component = await mountStory('LabelList/BarExplicitLabelList');
   await expect(component).toHaveScreenshot();
 });
 
-test('Line > implicit LabelList', async ({ mount }) => {
-  const component = await mount(<LineImplicitLabelListTest />);
+testWithThemes('Line > implicit LabelList', async ({ mountStory }) => {
+  const component = await mountStory('LabelList/LineImplicitLabelList');
   await expect(component).toHaveScreenshot();
 });
 
-test('Line > explicit LabelList', async ({ mount }) => {
-  const component = await mount(<LineExplicitLabelListTest />);
+testWithThemes('Line > explicit LabelList', async ({ mountStory }) => {
+  const component = await mountStory('LabelList/LineExplicitLabelList');
   await expect(component).toHaveScreenshot();
 });
 
-test('Scatter > implicit LabelList', async ({ mount }) => {
-  const component = await mount(<ScatterImplicitLabelListTest />);
+testWithThemes('Scatter > implicit LabelList', async ({ mountStory }) => {
+  const component = await mountStory('LabelList/ScatterImplicitLabelList');
   await expect(component).toHaveScreenshot();
 });
 
-test('Scatter > explicit LabelList', async ({ mount }) => {
-  const component = await mount(<ScatterExplicitLabelListTest />);
+testWithThemes('Scatter > explicit LabelList', async ({ mountStory }) => {
+  const component = await mountStory('LabelList/ScatterExplicitLabelList');
   await expect(component).toHaveScreenshot();
 });
 
-test('Pie > implicit LabelList', async ({ mount }) => {
-  const component = await mount(<PieImplicitLabelListTest />);
+testWithThemes('Pie > implicit LabelList', async ({ mountStory }) => {
+  const component = await mountStory('LabelList/PieImplicitLabelList');
   await expect(component).toHaveScreenshot();
 });
 
-test('Pie > explicit LabelList', async ({ mount }) => {
-  const component = await mount(<PieExplicitLabelListTest />);
+testWithThemes('Pie > explicit LabelList', async ({ mountStory }) => {
+  const component = await mountStory('LabelList/PieExplicitLabelList');
   await expect(component).toHaveScreenshot();
 });
 
-test('Radar > implicit LabelList', async ({ mount }) => {
-  const component = await mount(<RadarImplicitLabelListTest />);
+testWithThemes('Radar > implicit LabelList', async ({ mountStory }) => {
+  const component = await mountStory('LabelList/RadarImplicitLabelList');
   await expect(component).toHaveScreenshot();
 });
 
-test('Radar > explicit LabelList', async ({ mount }) => {
-  const component = await mount(<RadarExplicitLabelListTest />);
+testWithThemes('Radar > explicit LabelList', async ({ mountStory }) => {
+  const component = await mountStory('LabelList/RadarExplicitLabelList');
   await expect(component).toHaveScreenshot();
 });
 
-test('RadialBar > implicit LabelList', async ({ mount }) => {
-  const component = await mount(<RadialBarImplicitLabelListTest />);
+testWithThemes('RadialBar > implicit LabelList', async ({ mountStory }) => {
+  const component = await mountStory('LabelList/RadialBarImplicitLabelList');
   await expect(component).toHaveScreenshot();
 });
 
-test('RadialBar > explicit LabelList', async ({ mount }) => {
-  const component = await mount(<RadialBarExplicitLabelListTest />);
+testWithThemes('RadialBar > explicit LabelList', async ({ mountStory }) => {
+  const component = await mountStory('LabelList/RadialBarExplicitLabelList');
   await expect(component).toHaveScreenshot();
 });
 
-test('Funnel > implicit LabelList', async ({ mount }) => {
-  const component = await mount(<FunnelImplicitLabelListTest />);
+testWithThemes('Funnel > implicit LabelList', async ({ mountStory }) => {
+  const component = await mountStory('LabelList/FunnelImplicitLabelList');
   await expect(component).toHaveScreenshot();
 });
 
-test('Funnel > explicit LabelList', async ({ mount }) => {
-  const component = await mount(<FunnelExplicitLabelListTest />);
+testWithThemes('Funnel > explicit LabelList', async ({ mountStory }) => {
+  const component = await mountStory('LabelList/FunnelExplicitLabelList');
+  await expect(component).toHaveScreenshot();
+});
+
+testWithThemes('Bar > LabelList with background', async ({ mountStory }) => {
+  const component = await mountStory('LabelList/BarLabelListWithBackground');
+  await expect(component).toHaveScreenshot();
+});
+
+testWithThemes('Pie > LabelList with background', async ({ mountStory }) => {
+  const component = await mountStory('LabelList/PieLabelListWithBackground');
   await expect(component).toHaveScreenshot();
 });

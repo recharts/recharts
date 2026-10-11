@@ -1,10 +1,10 @@
-import * as React from 'react';
-import { expect } from '@playwright/experimental-ct-react';
-import { testWithLightTheme } from './fixtures.tsx';
+import type { LabelListChartExample } from './LabelListApiExamples.story';
+import { expect, test } from '../fixtures';
 
-import LabelListChartExample from '../../../www/src/docs/exampleComponents/LabelList/LabelListChartExample';
-
-testWithLightTheme('LabelListChartExample', async ({ mount }) => {
-  const component = await mount(<LabelListChartExample isAnimationActive={false} />);
+test('LabelListChartExample', async ({ mountStory }) => {
+  const component = await mountStory<typeof LabelListChartExample>('www/LabelListApiExamples/LabelListChartExample', {
+    testTheme: 'light',
+    isAnimationActive: false,
+  });
   await expect(component).toHaveScreenshot();
 });

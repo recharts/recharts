@@ -45,6 +45,25 @@ let rafId: number | null = null;
 let timeoutId: ReturnType<typeof setTimeout> | null = null;
 let latestChartPointer: RelativePointer | null = null;
 
+/*
+ * A mousemove that is still waiting for its frame or timeout must not run after the mouse has left the chart,
+ * otherwise it would show the tooltip again right after mouseLeaveChart has hidden it.
+ */
+mouseMoveMiddleware.startListening({
+  actionCreator: mouseLeaveChart,
+  effect: () => {
+    if (rafId !== null) {
+      cancelAnimationFrame(rafId);
+      rafId = null;
+    }
+    if (timeoutId !== null) {
+      clearTimeout(timeoutId);
+      timeoutId = null;
+    }
+    latestChartPointer = null;
+  },
+});
+
 mouseMoveMiddleware.startListening({
   actionCreator: mouseMoveAction,
   effect: (action: PayloadAction<HTMLMousePointer>, listenerApi: ListenerEffectAPI<RechartsRootState, AppDispatch>) => {

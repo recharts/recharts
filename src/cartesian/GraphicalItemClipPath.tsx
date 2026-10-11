@@ -10,6 +10,7 @@ import {
   selectYAxisSettings,
 } from '../state/selectors/axisSelectors';
 import { usePlotArea } from '../hooks';
+import { isFullViewport } from '../util/zoom/viewport';
 
 type GraphicalItemClipPathProps = {
   xAxisId: AxisId;
@@ -21,8 +22,15 @@ export function useNeedsClip(xAxisId: AxisId, yAxisId: AxisId) {
   const xAxis = useAppSelector(state => selectXAxisSettings(state, xAxisId));
   const yAxis = useAppSelector(state => selectYAxisSettings(state, yAxisId));
 
-  const needClipX: boolean = xAxis?.allowDataOverflow ?? implicitXAxis.allowDataOverflow;
-  const needClipY: boolean = yAxis?.allowDataOverflow ?? implicitYAxis.allowDataOverflow;
+  /*
+   * When a dimension is zoomed, the data is drawn into a stretched range that extends past the
+   * plotting area, so it must always be clipped - regardless of the axis `allowDataOverflow` prop.
+   */
+  const zoomedX = useAppSelector(state => !isFullViewport(state.zoom.x)) ?? false;
+  const zoomedY = useAppSelector(state => !isFullViewport(state.zoom.y)) ?? false;
+
+  const needClipX: boolean = (xAxis?.allowDataOverflow ?? implicitXAxis.allowDataOverflow) || zoomedX;
+  const needClipY: boolean = (yAxis?.allowDataOverflow ?? implicitYAxis.allowDataOverflow) || zoomedY;
   const needClip = needClipX || needClipY;
 
   return { needClip, needClipX, needClipY };

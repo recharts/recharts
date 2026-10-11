@@ -4,6 +4,8 @@ import { createRechartsStore } from '../../src/state/store';
 import { mouseClickAction, mouseMoveAction } from '../../src/state/mouseEventsMiddleware';
 import { HTMLMousePointer } from '../../src';
 import { getMockDomRect } from '../helper/mockGetBoundingClientRect';
+import { mouseLeaveChart } from '../../src/state/tooltipSlice';
+import { setEventSettings } from '../../src/state/eventSettingsSlice';
 
 function createMockMousePointer(x: number, y: number): HTMLMousePointer {
   return {
@@ -77,5 +79,28 @@ describe('mouseMoveMiddleware', () => {
     });
 
     expect(vi.getTimerCount()).toBe(0);
+  });
+
+  it('should cancel the pending requestAnimationFrame when the mouse leaves the chart', () => {
+    store.dispatch(mouseMoveAction(createMockMousePointer(100, 100)));
+    expect(vi.getTimerCount()).toBe(1);
+
+    store.dispatch(mouseLeaveChart());
+
+    expect(vi.getTimerCount()).toBe(0);
+  });
+
+  it('should cancel the pending timeout when the mouse leaves the chart', () => {
+    store.dispatch(setEventSettings({ throttleDelay: 50, throttledEvents: 'all' }));
+    const setTimeoutSpy = vi.spyOn(globalThis, 'setTimeout');
+    const clearTimeoutSpy = vi.spyOn(globalThis, 'clearTimeout');
+
+    store.dispatch(mouseMoveAction(createMockMousePointer(100, 100)));
+    expect(setTimeoutSpy).toHaveBeenCalledTimes(1);
+    const timeoutId = setTimeoutSpy.mock.results[0]?.value;
+
+    store.dispatch(mouseLeaveChart());
+
+    expect(clearTimeoutSpy).toHaveBeenCalledWith(timeoutId);
   });
 });

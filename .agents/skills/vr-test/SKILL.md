@@ -5,93 +5,163 @@ description: Create visual regression tests
 
 # What is a visual regression test?
 
-VR test is a playwright test that renders a component and compares the rendered output to a baseline snapshot.
+VR tests are Playwright tests that render a story and compare the rendered output to a baseline
+snapshot. Recharts runs these tests in Docker using Playwright's component testing model and a Vite
+story gallery.
 
-# Writing a new test
+## Story and spec structure
 
-To write a new test, create a new file in the `test-vr/tests` directory. The file must end with `.spec-vr.tsx` to be picked up by the test runner.
+Each visual-regression spec has a matching story file in `test-vr/tests`:
 
-Here is an example of a simple test:
+```text
+test-vr/tests/App.story.tsx
+test-vr/tests/App.spec-vr.tsx
+```
+
+The story file exports one or more React components. The spec imports `test` and `expect` from the
+shared fixtures and mounts a story by its story id:
 
 ```tsx
+// test-vr/tests/App.story.tsx
 import * as React from 'react';
-import { test, expect } from '@playwright/experimental-ct-react';
-import PieChartDefaultIndex from '../../../www/src/components/GuideView/ActiveIndex/PieChartDefaultIndex';
+import { CartesianGrid, Legend, Line, LineChart, XAxis, YAxis } from '../../src';
+import { pageData } from '../../storybook/stories/data';
 
-test('PieChartDefaultIndex', async ({ mount }) => {
-  const component = await mount(<PieChartDefaultIndex isAnimationActive={false} />);
+export const LineChartStory = () => (
+  <LineChart width={800} height={500} data={pageData}>
+    <CartesianGrid strokeDasharray="3 3" />
+    <XAxis dataKey="name" />
+    <YAxis />
+    <Legend />
+    <Line dataKey="pv" stroke="#8884d8" />
+    <Line dataKey="uv" stroke="#82ca9d" />
+  </LineChart>
+);
+```
+
+```tsx
+// test-vr/tests/App.spec-vr.tsx
+import { expect, testWithThemes } from './fixtures';
+
+testWithThemes('LineChart', async ({ mountStory }) => {
+  const component = await mountStory('App/LineChartStory');
   await expect(component).toHaveScreenshot();
 });
 ```
 
-## Playwright CT specialty
+The story id is the path of the story file under `test-vr/tests/` without the `.story.tsx` suffix,
+followed by the exported component name. For example,
+`www/LineChartApiExamples/LineChartHasMultiSeries` refers to the
+`LineChartHasMultiSeries` export from `test-vr/tests/www/LineChartApiExamples.story.tsx`.
 
-Playwright component testing (CT) allows us to render React components in isolation and test them. The `mount` function is used to render the component, and the `expect(component).toHaveScreenshot()` assertion compares the rendered output to a baseline screenshot.
-
-There is one specialty that is different from other testing frameworks. Playwright CT does not support components declared inside the test file. Instead it requires us to define the component in a separate file and import it.
-
-Example:
+Stories can accept serializable props. Pass them as the second argument to `mountStory`:
 
 ```tsx
-// file: test-vr/tests/Legend.spec-vr.tsx
-import * as React from 'react';
-import { test, expect } from '@playwright/experimental-ct-react';
-import LegendTestComponent from './LegendTestComponent';
+import type { LineChartHasMultiSeries } from './LineChartApiExamples.story';
+import { expect, testWithThemes } from '../fixtures';
 
-test('correct test: this works', async ({ mount }) => {
-  const component = await mount(<LegendTestComponent />);
-  await expect(component).toHaveScreenshot();
-});
-
-function LegendTestComponent2() {
-  return (
-    <div>
-      <p>This will not work because the component is declared inside the test file</p>
-    </div>
+testWithThemes('LineChartHasMultiSeries', async ({ mountStory }) => {
+  const component = await mountStory<typeof LineChartHasMultiSeries>(
+    'www/LineChartApiExamples/LineChartHasMultiSeries',
+    {
+      defaultIndex: 2,
+    },
   );
-}
-
-test('incorrect test: this does not work and throws when running the test', async ({ mount }) => {
-  const component = await mount(<LegendTestComponent2 />);
   await expect(component).toHaveScreenshot();
 });
 ```
 
-This is described in https://playwright.dev/docs/test-components#test-stories in case you want to read details.
+Keep the JSX in the story file rather than declaring a component inside the spec. This lets the
+gallery resolve the story by id and keeps the same rendering path for tests and manual review.
 
-# Running the test
+## Fixture and project structure
 
-To run the full suite of VR tests, run:
+New specs use `testWithThemes` from `test-vr/tests/fixtures`. The fixture runs
+each test in the following nine projects:
+
+| Projects                                          | Recharts rendering                                                   |
+| ------------------------------------------------- | -------------------------------------------------------------------- |
+| `chromium`, `firefox`, `webkit`                   | `legacy`: no `RechartsThemeProvider`, light checkerboard canvas      |
+| `chromium-light`, `firefox-light`, `webkit-light` | `RechartsThemeProvider` with `lightTheme`, light checkerboard canvas |
+| `chromium-dark`, `firefox-dark`, `webkit-dark`    | `RechartsThemeProvider` with `darkTheme`, dark checkerboard canvas   |
+
+The Playwright project selects the variant through the gallery URL and metadata.
+The story does not receive a theme prop. Never add `testTheme` to a new story,
+put a theme name in the test title, or pass a custom screenshot name.
+
+The exported `test` fixture is the legacy-only compatibility entry point used
+by existing specs, and `legacyTest` is its explicit name. Keep those fixtures
+local to specs that are not ready for light and dark baselines. The old
+`test-vr/tests/www/StoryTheme.tsx` helper is also compatibility code for
+unmigrated website stories. For migration work, use
+`.agents/skills/vr-test-migration/SKILL.md`.
+
+## Intentional variant exceptions
+
+Suppress variants with structured fixture configuration rather than test-title
+wording:
+
+```tsx
+testWithThemes.describe('website color mode', { tag: '@recharts-theme-legacy' }, () => {
+  testWithThemes.use({ colorScheme: 'dark' });
+
+  testWithThemes('dark website', async ({ mountStory }) => {
+    const component = await mountStory('www/dark-mode/SimpleLineChartStory');
+    await expect(component).toHaveScreenshot();
+  });
+});
+```
+
+The `@recharts-theme-legacy`, `@recharts-theme-light`, and
+`@recharts-theme-dark` tags select Recharts variants and are inherited by
+nested tests. Multiple tags can select multiple variants. Alternatively, set
+`testWithThemes.use({ rechartsThemes: ['legacy', 'light'] })` at file,
+`describe`, or test scope. Tags take precedence over the fixture option.
+`colorScheme` remains the browser's independent `prefers-color-scheme` setting.
+
+## Running tests
+
+The tests run inside Docker. Build the image and start the report server once with:
+
+```sh
+npm run test-vr:prepare
+```
+
+Run the full suite with:
 
 ```sh
 npm run test-vr
 ```
 
-Note that this may take 20+ minutes to run (because Recharts has almost 1000 VR tests). This is good for final verification but usually you will want to run a single file instead:
-
-```sh
-npm run test-vr -- --grep=Legend
-```
-
-Which will run only tests with "Legend" in their name. You can also specify the path to a specific test file:
+The full suite runs all nine projects and may take 20+ minutes. Prefer a
+targeted file, project, or grep while developing:
 
 ```sh
 npm run test-vr -- test-vr/tests/Legend.spec-vr.tsx
 ```
 
-This will compare the screenshots. If there is no screenshot, it will generate three new screenshots. Why three? Because we run the same on three browsers.
+```sh
+npm run test-vr -- --grep=Legend
+```
 
-These screenshots must be committed to the repository together with the test. Our CI only verifies the tests, but does not generate or update snapshots. So if you are adding a new test, you must add the generated screenshots to the commit. If you are updating an existing test, you must replace the old screenshots with the new ones in the commit.
+```sh
+npm run test-vr -- --project=chromium-dark --grep=Legend
+```
 
-# Updating screenshots
+If a screenshot is missing, a `testWithThemes` spec generates a baseline for
+each selected browser/theme project. A legacy spec generates only the existing
+browser baselines. Review and commit intentional files in
+`test-vr/__snapshots__`.
 
-If you have made changes to the source code, or changes to the VR test itself that affect the rendered output, you will need to update the baseline screenshots. To do this, run:
+## Updating screenshots
+
+If source or story changes affect the rendered output, update the baselines:
 
 ```sh
 npm run test-vr:update
 ```
 
-This updates all screenshots for all tests. If you want to update screenshots for a specific test, you can use the same grep or file path options as when running the tests:
+Use the same file or grep selectors for a targeted update:
 
 ```sh
 npm run test-vr:update -- --grep=Legend
@@ -101,8 +171,34 @@ npm run test-vr:update -- --grep=Legend
 npm run test-vr:update -- test-vr/tests/Legend.spec-vr.tsx
 ```
 
-Screenshots generation depends on docker. If docker is not available in your environment, you will not be able to run the tests or update screenshots. If that happens, notify the user and move on.
+Use `--project` or `--grep` for a smaller update. Do not update all projects
+while migrating one spec unless you intend to review every generated baseline.
 
-# More instructions
+## Playwright UI and the story preview
 
-If you need more instructions please see `test-vr/README.md`
+Run UI mode with:
+
+```sh
+npm run test-vr:ui
+```
+
+This publishes the Playwright UI at http://localhost:8080 and the Vite gallery at port 3100.
+Open http://localhost:3100/gallery/preview.html for a human-facing navigation page that lets you
+click through all stories using their default props. Each selected story is rendered in three
+isolated legacy, light, and dark panels.
+
+The URL http://localhost:3100/gallery/index.html is intentionally a blank Playwright mount target.
+Playwright navigates there before calling `window.mount`; it does not contain a story list and does
+not require a story query parameter. Theme projects add the `rechartsTheme`
+query parameter automatically; opening the mount page directly shows the
+legacy/no-provider path. If either host port is already in use, free it before
+starting UI mode or change the host-side port mapping in the command.
+Both gallery HTML pages load the shared `gallery/entry.tsx`, and preview iframes load
+`gallery/index.html` so manual previews use the same mount path as Playwright.
+
+The HTML report is served at http://localhost:9323 after `npm run test-vr:prepare`.
+
+Tests and screenshot generation require Docker. If Docker is unavailable, do not attempt to run the
+visual-regression suite locally.
+
+For additional details, see `test-vr/README.md` and `DEVELOPING.md`.

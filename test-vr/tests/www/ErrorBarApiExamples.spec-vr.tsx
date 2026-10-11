@@ -1,15 +1,18 @@
-import * as React from 'react';
-import { expect } from '@playwright/experimental-ct-react';
+import type { ErrorBarExample } from './ErrorBarApiExamples.story';
+import { expect, test } from '../fixtures';
 
-import ErrorBarExample from '../../../www/src/docs/exampleComponents/ErrorBar/ErrorBarExample';
-import { testWithDarkTheme, testWithLightTheme } from './fixtures.tsx';
-
-testWithLightTheme('ErrorBarExample', async ({ mount }) => {
-  const component = await mount(<ErrorBarExample isAnimationActive={false} />);
+test('ErrorBarExample', async ({ mountStory }) => {
+  const component = await mountStory<typeof ErrorBarExample>('www/ErrorBarApiExamples/ErrorBarExample', {
+    testTheme: 'light',
+    isAnimationActive: false,
+  });
   await expect(component).toHaveScreenshot();
 });
 
-testWithDarkTheme('ErrorBarExample dark mode', async ({ mount }) => {
-  const component = await mount(<ErrorBarExample isAnimationActive={false} />);
+test('ErrorBarExample dark mode', async ({ mountStory }) => {
+  const component = await mountStory<typeof ErrorBarExample>('www/ErrorBarApiExamples/ErrorBarExample', {
+    testTheme: 'dark',
+    isAnimationActive: false,
+  });
   await expect(component).toHaveScreenshot();
 });

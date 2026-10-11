@@ -24,6 +24,8 @@ import barChartStackedBySignSource from './BarChartStackedBySign?raw';
 import biaxialBarChartSource from './BiaxialBarChart?raw';
 import barChartHasBackgroundSource from './BarChartHasBackground?raw';
 import barChartWithMultiXAxisSource from './BarChartWithMultiXAxis?raw';
+import BarChartWithLabelBackground from './BarChartWithLabelBackground';
+import barChartWithLabelBackgroundSource from './BarChartWithLabelBackground?raw';
 import { ChartExample } from '../types.ts';
 import BarChartNavExample from './BarChartNavExample';
 import RangedStackedBarChart from './RangedStackedBarChart';
@@ -195,6 +197,18 @@ export const barChartExamples = {
     Component: BarChartHasBackground,
     sourceCode: barChartHasBackgroundSource,
     name: 'Bar Chart with background',
+  },
+  BarChartWithLabelBackground: {
+    Component: BarChartWithLabelBackground,
+    sourceCode: barChartWithLabelBackgroundSource,
+    name: 'Bar Chart with label background',
+    description: (
+      <>
+        The <code>background</code> prop of <LinkToApi>LabelList</LinkToApi> draws a rounded rectangle behind each
+        label, which keeps labels readable on top of the bars. Set it to <code>true</code> for the default style, or
+        pass <code>TextBackgroundProps</code> to customize the rectangle.
+      </>
+    ),
   },
   BarChartWithMultiXAxis: {
     Component: BarChartWithMultiXAxis,

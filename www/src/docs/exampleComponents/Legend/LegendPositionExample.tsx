@@ -89,19 +89,10 @@ export default function LegendPositionExample(props: Partial<ControlsState>) {
   return (
     <LineChart style={{ width: '600px', height: '300px', outline: '2px solid gray' }} responsive={false} data={data}>
       <CartesianGrid />
-      <XAxis dataKey="label" />
-      <YAxis />
+      <XAxis dataKey="label" height="auto" />
+      <YAxis width="auto" />
       <Tooltip />
-      <Legend
-        layout={layout}
-        position={position}
-        offset={offset}
-        wrapperStyle={{
-          border: '2px solid black',
-          borderRadius: 4,
-          backgroundColor: 'white',
-        }}
-      />
+      <Legend layout={layout} position={position} offset={offset} />
       <Line name="Line 1" type="monotone" dataKey="x" />
       <Line name="Line 2" type="monotone" dataKey="y" />
       <RechartsDevtools />

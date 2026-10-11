@@ -62,9 +62,11 @@ import { DefaultZIndexes } from '../zIndex/DefaultZIndexes';
 import { propsAreEqual } from '../util/propsAreEqual';
 import { GraphicalItemId } from '../state/graphicalItemsSlice';
 import { ChartData } from '../state/chartDataSlice';
-import { graphicalItemIdentity } from '../theme/graphicalItemIdentity';
-import { GraphicalItemStyle, RechartsTheme } from '../theme/RechartsTheme';
+import { GraphicalItemStyle } from '../theme/RechartsTheme';
+import { useRechartsTheme } from '../theme/RechartsThemeContext';
 import { useBackwardsCompatibleTheme } from '../theme/useBackwardsCompatibleTheme';
+import { getActiveStyleOverrides } from '../theme/activeStyles';
+import { useGraphicalItemIdentity } from '../theme/useGraphicalItemIdentity';
 
 export interface LinePointItem {
   readonly value: number;
@@ -94,6 +96,7 @@ interface InternalLineProps extends ZIndexable {
   data?: any;
   dataKey?: DataKey<any>;
   dot: DotType;
+  dotFill?: string;
   height: number;
   hide: boolean;
   id: GraphicalItemId;
@@ -467,6 +470,14 @@ type InternalProps = LineSvgProps & InternalLineProps;
 
 export type Props<DataPointType = any, ValueAxisType = any> = LineSvgProps & LineProps<DataPointType, ValueAxisType>;
 
+/**
+ * The default dot fill follows the resolved line stroke so that dots read against the curve.
+ * A stroke of `none` carries no color, so fall back to the themed fill instead.
+ */
+function getDotFillFromTheme(stroke: string | undefined, fill: string | undefined): string | undefined {
+  return stroke && stroke !== 'none' ? stroke : fill;
+}
+
 const computeLegendPayloadFromAreaData = (props: Props): ReadonlyArray<LegendPayload> => {
   const { dataKey, name, stroke, legendType, hide } = props;
   return [
@@ -539,7 +550,7 @@ function LineDotsWrapper({
   clipPathId: string;
   props: InternalProps;
 }) {
-  const { dot, dataKey, needClip } = props;
+  const { dot, dataKey, dotFill, needClip } = props;
 
   /*
    * Exclude ID from the props passed to the Dots component
@@ -556,7 +567,7 @@ function LineDotsWrapper({
       className="recharts-line-dots"
       dotClassName="recharts-line-dot"
       dataKey={dataKey}
-      baseProps={lineProps}
+      baseProps={{ ...lineProps, fill: dotFill ?? lineProps.fill }}
       needClip={needClip}
       clipPathId={clipPathId}
     />
@@ -810,7 +821,7 @@ class LineWithState extends Component<InternalProps> {
   }
 }
 
-function LineImpl(props: WithIdRequired<Props>) {
+function LineImpl(props: WithIdRequired<Props> & Pick<InternalLineProps, 'dotFill'>) {
   const {
     activeDot,
     animateNewValues,
@@ -921,25 +932,19 @@ export function computeLinePoints({
 }
 
 function LineFn(outsideProps: Props) {
+  const rechartsTheme = useRechartsTheme();
+  const graphicalItemThemeSelector = useGraphicalItemIdentity(outsideProps.dataKey, outsideProps);
   const graphicalItemTheme = useBackwardsCompatibleTheme<GraphicalItemStyle>(
-    (theme: RechartsTheme) =>
-      outsideProps.dataKey == null
-        ? undefined
-        : theme.graphicalItems[graphicalItemIdentity({ dataKey: outsideProps.dataKey }, theme.graphicalItems.length)],
+    graphicalItemThemeSelector,
     outsideProps,
     defaultLegacyThemeProps,
   );
   const themeStrokeDasharray = graphicalItemTheme?.strokeDasharray;
+  const themedActiveDot = getActiveStyleOverrides(outsideProps.activeDot ?? true, graphicalItemTheme?.active);
   const activeDot =
-    graphicalItemTheme?.active == null ||
-    outsideProps.activeDot === false ||
-    typeof outsideProps.activeDot === 'function' ||
-    React.isValidElement(outsideProps.activeDot)
+    themedActiveDot == null
       ? outsideProps.activeDot
-      : {
-          ...graphicalItemTheme.active,
-          ...(typeof outsideProps.activeDot === 'object' ? outsideProps.activeDot : {}),
-        };
+      : { ...themedActiveDot, ...(typeof outsideProps.activeDot === 'object' ? outsideProps.activeDot : {}) };
   const props = resolveDefaultProps(
     {
       ...outsideProps,
@@ -955,6 +960,9 @@ function LineFn(outsideProps: Props) {
     },
     defaultLineProps,
   );
+  const dotFill =
+    outsideProps.fill ??
+    (rechartsTheme == null ? props.fill : getDotFillFromTheme(props.stroke, graphicalItemTheme?.fill));
   const isPanorama = useIsPanorama();
   return (
     <RegisterGraphicalItemId id={props.id} type="line">
@@ -985,7 +993,7 @@ function LineFn(outsideProps: Props) {
             hide={props.hide}
             isPanorama={isPanorama}
           />
-          <LineImpl {...props} id={id} />
+          <LineImpl {...props} id={id} dotFill={dotFill} />
         </>
       )}
     </RegisterGraphicalItemId>

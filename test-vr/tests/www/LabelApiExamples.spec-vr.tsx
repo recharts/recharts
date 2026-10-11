@@ -1,34 +1,44 @@
-import * as React from 'react';
-import { expect } from '@playwright/experimental-ct-react';
+import type {
+  LabelBarChartExample,
+  LabelFunnelPositions,
+  LabelPiePositions,
+  LabelRadialBarPositions,
+} from './LabelApiExamples.story';
+import { expect, test } from '../fixtures';
 
-import LabelBarChartExample from '../../../www/src/docs/exampleComponents/Label/LabelBarChartExample';
-import LabelFunnelPositions from '../../../www/src/docs/exampleComponents/Label/LabelFunnelPositions';
-import LabelRadialBarPositions from '../../../www/src/docs/exampleComponents/Label/LabelRadialBarPositions';
-import LabelPiePositions from '../../../www/src/docs/exampleComponents/Label/LabelPiePositions';
-import LabelCartesianPositions from '../../../www/src/docs/exampleComponents/Label/LabelCartesianPositions';
-import { testWithLightTheme } from './fixtures.tsx';
-
-testWithLightTheme('LabelCartesianPositions', async ({ mount }) => {
-  const component = await mount(<LabelCartesianPositions />);
+test('LabelCartesianPositions', async ({ mountStory }) => {
+  const component = await mountStory('www/LabelApiExamples/LabelCartesianPositions', { testTheme: 'light' });
   await expect(component).toHaveScreenshot();
 });
 
-testWithLightTheme('LabelPiePositions', async ({ mount }) => {
-  const component = await mount(<LabelPiePositions isAnimationActive={false} />);
+test('LabelPiePositions', async ({ mountStory }) => {
+  const component = await mountStory<typeof LabelPiePositions>('www/LabelApiExamples/LabelPiePositions', {
+    testTheme: 'light',
+    isAnimationActive: false,
+  });
   await expect(component).toHaveScreenshot();
 });
 
-testWithLightTheme('LabelRadialBarPositions', async ({ mount }) => {
-  const component = await mount(<LabelRadialBarPositions isAnimationActive={false} />);
+test('LabelRadialBarPositions', async ({ mountStory }) => {
+  const component = await mountStory<typeof LabelRadialBarPositions>('www/LabelApiExamples/LabelRadialBarPositions', {
+    testTheme: 'light',
+    isAnimationActive: false,
+  });
   await expect(component).toHaveScreenshot();
 });
 
-testWithLightTheme('LabelBarChartExample', async ({ mount }) => {
-  const component = await mount(<LabelBarChartExample isAnimationActive={false} />);
+test('LabelBarChartExample', async ({ mountStory }) => {
+  const component = await mountStory<typeof LabelBarChartExample>('www/LabelApiExamples/LabelBarChartExample', {
+    testTheme: 'light',
+    isAnimationActive: false,
+  });
   await expect(component).toHaveScreenshot();
 });
 
-testWithLightTheme('LabelFunnelPositions', async ({ mount }) => {
-  const component = await mount(<LabelFunnelPositions isAnimationActive={false} />);
+test('LabelFunnelPositions', async ({ mountStory }) => {
+  const component = await mountStory<typeof LabelFunnelPositions>('www/LabelApiExamples/LabelFunnelPositions', {
+    testTheme: 'light',
+    isAnimationActive: false,
+  });
   await expect(component).toHaveScreenshot();
 });

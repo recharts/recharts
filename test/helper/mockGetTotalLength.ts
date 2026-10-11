@@ -1,3 +1,5 @@
+const originalGetTotalLength = Object.getOwnPropertyDescriptor(SVGElement.prototype, 'getTotalLength');
+
 /**
  * jsdom does not implement getTotalLength on SVGPathElement: https://github.com/jsdom/jsdom/issues/1330
  * Also, when rendering SVGs, the ref that we get is not the actual SVGPathElement,
@@ -20,5 +22,13 @@ export function mockGetTotalLength(length: number): void {
   if (!SVGElement.prototype.getTotalLength) {
     // @ts-expect-error typescript is correct here, but we have no better choice
     SVGElement.prototype.getTotalLength = () => length;
+  }
+}
+
+export function restoreMockGetTotalLength(): void {
+  if (originalGetTotalLength) {
+    Object.defineProperty(SVGElement.prototype, 'getTotalLength', originalGetTotalLength);
+  } else {
+    Reflect.deleteProperty(SVGElement.prototype, 'getTotalLength');
   }
 }

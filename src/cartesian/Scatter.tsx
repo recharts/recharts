@@ -74,10 +74,12 @@ import { GraphicalItemId } from '../state/graphicalItemsSlice';
 import { ZIndexable, ZIndexLayer } from '../zIndex/ZIndexLayer';
 import { DefaultZIndexes } from '../zIndex/DefaultZIndexes';
 import { propsAreEqual } from '../util/propsAreEqual';
-import { graphicalItemIdentity } from '../theme/graphicalItemIdentity';
-import { RechartsTheme } from '../theme/RechartsTheme';
 import { useBackwardsCompatibleTheme } from '../theme/useBackwardsCompatibleTheme';
 import { ChartData } from '../state/chartDataSlice';
+import { useGraphicalItemIdentity } from '../theme/useGraphicalItemIdentity';
+import { getEntryStyleOverrides, UnthemedStyles, useUnthemedStyles } from '../theme/dataEntryStyles';
+import { getActiveStyleOverrides, useThemedActiveStyles } from '../theme/activeStyles';
+import { Styles2D } from '../theme/RechartsTheme';
 
 export interface ScatterPointNode {
   x?: number | string;
@@ -156,6 +158,17 @@ interface ScatterInternalProps extends ZIndexable {
   points: ReadonlyArray<ScatterPointItem>;
   hide: boolean;
   label?: ImplicitLabelListType;
+  /**
+   * Explicit style props without theme contributions.
+   * Applied to data entries that define their own colors, so that they ignore the theme.
+   * Undefined when there is no active theme.
+   */
+  unthemedStyles?: UnthemedStyles;
+  /**
+   * Theme styles of the active shape, without the ones that explicit props override.
+   * Undefined when there is no active theme, or when the theme has no active styles.
+   */
+  themedActiveStyles?: Styles2D;
 
   isAnimationActive: boolean | 'auto';
   animationBegin: number;
@@ -575,6 +588,8 @@ function ScatterLabelListProvider({
  * @param shape The default shape to render for inactive points
  * @param activeShape The shape to render when this point is active, or undefined if no active shape
  * @param baseProps SVG presentation attributes (fill, stroke, etc.) shared across all points
+ * @param entryStyleOverrides Removes theme styles from points that define their own colors in data, or undefined
+ * @param themedActiveStyles Theme styles of the active shape, or undefined
  * @param id The graphical item ID of the parent Scatter component
  * @param restOfAllOtherProps Remaining Scatter props for user-provided event handlers via adaptEventsOfChild
  * @param onMouseEnterFromContext Curried mouse enter handler that dispatches tooltip activation
@@ -587,6 +602,8 @@ function ScatterPoint({
   shape,
   activeShape,
   baseProps,
+  entryStyleOverrides,
+  themedActiveStyles,
   id,
   restOfAllOtherProps,
   animationElapsedTime,
@@ -601,6 +618,8 @@ function ScatterPoint({
   shape: ScatterCustomizedShape;
   activeShape: ScatterCustomizedShape | undefined;
   baseProps: WithoutId<SVGPropsNoEvents<InternalProps>>;
+  entryStyleOverrides: UnthemedStyles | undefined;
+  themedActiveStyles: Styles2D | undefined;
   id: GraphicalItemId;
   restOfAllOtherProps: InternalProps;
   onMouseEnterFromContext: (
@@ -633,7 +652,9 @@ function ScatterPoint({
   };
   const symbolProps: ScatterShapeProps = {
     ...filteredBaseProps,
+    ...entryStyleOverrides,
     ...entry,
+    ...(isActive ? getActiveStyleOverrides(activeShape, themedActiveStyles, entry) : undefined),
     isActive,
     index,
     animationElapsedTime,
@@ -666,7 +687,7 @@ function ScatterPoint({
 
 function ScatterSymbols(props: ScatterSymbolsProps) {
   const { points, allOtherScatterProps, animationElapsedTime, isAnimating, isEntrance } = props;
-  const { shape, activeShape, dataKey } = allOtherScatterProps;
+  const { shape, activeShape, dataKey, unthemedStyles, themedActiveStyles } = allOtherScatterProps;
   const { id, ...allOtherPropsWithoutId } = allOtherScatterProps;
 
   const {
@@ -696,6 +717,8 @@ function ScatterSymbols(props: ScatterSymbolsProps) {
           shape={shape}
           activeShape={activeShape}
           baseProps={baseProps}
+          entryStyleOverrides={getEntryStyleOverrides(entry, unthemedStyles)}
+          themedActiveStyles={themedActiveStyles}
           id={id}
           restOfAllOtherProps={restOfAllOtherProps}
           animationElapsedTime={animationElapsedTime}
@@ -960,7 +983,7 @@ export const defaultScatterProps = {
   zIndex: DefaultZIndexes.scatter,
 } as const satisfies Partial<Props>;
 
-function ScatterImpl(props: WithIdRequired<Props>) {
+function ScatterImpl(props: WithIdRequired<Props> & Pick<InternalProps, 'unthemedStyles' | 'themedActiveStyles'>) {
   const {
     animationBegin,
     animationDuration,
@@ -1026,14 +1049,10 @@ function ScatterImpl(props: WithIdRequired<Props>) {
 }
 
 function ScatterFn(outsideProps: Props) {
-  const graphicalItemTheme = useBackwardsCompatibleTheme<Props>(
-    (theme: RechartsTheme) =>
-      outsideProps.dataKey == null
-        ? undefined
-        : theme.graphicalItems[graphicalItemIdentity({ dataKey: outsideProps.dataKey }, theme.graphicalItems.length)],
-    outsideProps,
-    undefined,
-  );
+  const graphicalItemThemeSelector = useGraphicalItemIdentity(outsideProps.dataKey, outsideProps);
+  const unthemedStyles = useUnthemedStyles(outsideProps);
+  const themedActiveStyles = useThemedActiveStyles(graphicalItemThemeSelector, outsideProps);
+  const graphicalItemTheme = useBackwardsCompatibleTheme<Props>(graphicalItemThemeSelector, outsideProps, undefined);
   const props = resolveDefaultProps(
     {
       ...outsideProps,
@@ -1069,7 +1088,7 @@ function ScatterFn(outsideProps: Props) {
             tooltipType={props.tooltipType}
             isPanorama={isPanorama}
           />
-          <ScatterImpl {...props} id={id} />
+          <ScatterImpl {...props} id={id} unthemedStyles={unthemedStyles} themedActiveStyles={themedActiveStyles} />
         </>
       )}
     </RegisterGraphicalItemId>

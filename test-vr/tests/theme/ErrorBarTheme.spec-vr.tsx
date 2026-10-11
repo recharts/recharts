@@ -1,10 +1,7 @@
-import React from 'react';
-import { expect, test } from '@playwright/experimental-ct-react';
+import { expect, testWithThemes } from '../fixtures';
 
-import { ErrorBarThemeComponents } from './ErrorBarThemeComponents.tsx';
-
-test('ErrorBar theme', async ({ mount }) => {
-  const component = await mount(<ErrorBarThemeComponents />);
+testWithThemes('ErrorBar theme', async ({ mountStory }) => {
+  const component = await mountStory('theme/ErrorBarTheme/ErrorBarThemeComponents');
 
   await expect(component).toHaveScreenshot();
 });
