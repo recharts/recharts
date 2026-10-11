@@ -73,7 +73,7 @@ import { ChartData } from '../state/chartDataSlice';
 import { getClassNameFromUnknown } from '../util/getClassNameFromUnknown';
 import { WithIdRequired } from '../util/useUniqueId';
 import { usePolarChartLayout } from '../context/chartLayoutContext';
-import { RechartsTheme } from '../theme/RechartsTheme';
+import { RechartsTheme, Styles2D } from '../theme/RechartsTheme';
 import { useBackwardsCompatibleTheme } from '../theme/useBackwardsCompatibleTheme';
 import { getOwnStyles, getOwnStylesWithFallback, getUnthemedStyles, hasOwnColors } from '../theme/dataEntryStyles';
 import { getActiveStyleOverrides, resolveThemedActiveStyles } from '../theme/activeStyles';
@@ -448,39 +448,73 @@ type PieStyleProps = Pick<
 
 type PieGraphicalItems = RechartsTheme['graphicalItems'];
 
-function getThemedPieSector(
-  sector: PieSectorDataItem,
+/**
+ * Resolves the styles of a single sector when a theme is present.
+ * Returns undefined without a theme, in which case the legacy styles apply.
+ *
+ * The legacy default fill and stroke of the Pie are never part of the result,
+ * because they never apply together with a theme.
+ *
+ * @param payload the data entry, merged with the props of its Cell
+ * @param index index of the sector
+ * @param graphicalItems graphical item styles from the theme
+ * @param explicitStyleProps style props that the user set on the Pie, before applying defaults
+ */
+function getThemedPieStyles(
+  payload: unknown,
   index: number,
   graphicalItems: PieGraphicalItems,
   explicitStyleProps: PieStyleProps,
-): PieSectorDataItem {
+): Styles2D | undefined {
   const graphicalItemStyle = graphicalItems[index % graphicalItems.length];
   if (graphicalItemStyle == null) {
-    return sector;
+    return undefined;
+  }
+  const entryStyles: Styles2D = payload != null && typeof payload === 'object' ? payload : {};
+
+  if (hasOwnColors(entryStyles) || hasOwnColors(explicitStyleProps)) {
+    // The data entry (or its Cell), or the Pie itself, brings its own colors, so the sector ignores the theme completely.
+    return getOwnStylesWithFallback(entryStyles, getUnthemedStyles(explicitStyleProps));
   }
 
-  if (hasOwnColors(sector.payload) || hasOwnColors(explicitStyleProps)) {
-    /*
-     * The data entry (or its Cell), or the Pie itself, brings its own colors, so the sector ignores the theme completely.
-     * This also drops the legacy default fill and stroke, which never apply together with a theme.
-     */
-    return { ...sector, ...getOwnStylesWithFallback(sector.payload, getUnthemedStyles(explicitStyleProps)) };
-  }
-
-  /*
-   * Styles without a color of their own merge with the theme field by field.
-   * The sector itself is not a fallback, because it contains the legacy default fill and stroke,
-   * which never apply together with a theme.
-   */
-  const ownStyles = { ...getOwnStyles(explicitStyleProps), ...getOwnStyles(sector.payload) };
+  // Styles without a color of their own merge with the theme field by field.
+  const ownStyles = { ...getOwnStyles(explicitStyleProps), ...getOwnStyles(entryStyles) };
   return {
-    ...sector,
     fill: graphicalItemStyle.fill,
     fillOpacity: ownStyles.fillOpacity ?? graphicalItemStyle.fillOpacity,
     stroke: graphicalItemStyle.stroke,
     strokeOpacity: ownStyles.strokeOpacity ?? graphicalItemStyle.strokeOpacity,
     strokeWidth: ownStyles.strokeWidth ?? graphicalItemStyle.strokeWidth,
     strokeDasharray: ownStyles.strokeDasharray ?? graphicalItemStyle.strokeDasharray,
+  };
+}
+
+/**
+ * Legend and Tooltip show a single color for each sector.
+ * Pie sectors are primarily filled, so the fill wins. A sector that has no fill shows its stroke instead.
+ */
+function getPieEntryColor(styles: Styles2D): string | undefined {
+  return styles.fill && styles.fill !== 'none' ? styles.fill : styles.stroke;
+}
+
+function getThemedPieSector(
+  sector: PieSectorDataItem,
+  index: number,
+  graphicalItems: PieGraphicalItems,
+  explicitStyleProps: PieStyleProps,
+): PieSectorDataItem {
+  const styles = getThemedPieStyles(sector.payload, index, graphicalItems, explicitStyleProps);
+  if (styles == null) {
+    return sector;
+  }
+  return {
+    ...sector,
+    ...styles,
+    tooltipPayload: sector.tooltipPayload?.map(item => ({
+      ...item,
+      color: getPieEntryColor(styles),
+      fill: styles.fill,
+    })),
   };
 }
 
@@ -498,16 +532,16 @@ function SetPiePayloadLegend(props: {
   }
 
   const themedLegendPayload = legendPayload.map((entry, index) => {
-    const graphicalItemStyle = props.graphicalItems[index % props.graphicalItems.length];
-    let fill: string | undefined;
-    if (hasOwnColors(cells?.[index]?.props) || hasOwnColors(entry.payload)) {
-      fill = entry.color;
-    } else if (hasOwnColors(props.explicitStyleProps)) {
-      fill = props.explicitStyleProps.fill ?? entry.color;
-    } else {
-      fill = graphicalItemStyle?.fill ?? entry.color;
+    const styles = getThemedPieStyles(
+      { ...entry.payload, ...cells?.[index]?.props },
+      index,
+      props.graphicalItems,
+      props.explicitStyleProps,
+    );
+    if (styles == null) {
+      return entry;
     }
-    return { ...entry, color: fill };
+    return { ...entry, color: getPieEntryColor(styles) };
   });
 
   return <SetPolarLegendPayload legendPayload={themedLegendPayload} />;
@@ -565,16 +599,16 @@ const SetPieTooltipEntrySettings = React.memo(
     | 'dataKey'
     | 'nameKey'
     | 'sectors'
-    | 'stroke'
     | 'strokeWidth'
-    | 'fill'
     | 'name'
     | 'hide'
     | 'tooltipType'
     | 'formatter'
     | 'id'
     | 'activeShape'
-  >) => {
+  > &
+    // With a theme, the Pie has no legacy default colors, so these can be undefined.
+    Pick<PieStyleProps, 'fill' | 'stroke'>) => {
     const activeShapeFill = getActiveShapeFill(activeShape);
 
     const tooltipDataDefinedOnItem = sectors.map(sector => {
@@ -1192,6 +1226,8 @@ function PieImpl(props: PieImplProps) {
   const themedSectors = sectors.map((sector, index) =>
     getThemedPieSector(sector, index, graphicalItems, explicitStyleProps),
   );
+  // The legacy default fill and stroke never apply together with a theme, and that is true in the Tooltip too.
+  const isThemed = graphicalItems.length > 0;
 
   return (
     <ZIndexLayer zIndex={props.zIndex}>
@@ -1199,9 +1235,9 @@ function PieImpl(props: PieImplProps) {
         dataKey={props.dataKey}
         nameKey={props.nameKey}
         sectors={themedSectors}
-        stroke={props.stroke}
-        strokeWidth={props.strokeWidth}
-        fill={props.fill}
+        stroke={isThemed ? explicitStyleProps.stroke : props.stroke}
+        strokeWidth={isThemed ? explicitStyleProps.strokeWidth : props.strokeWidth}
+        fill={isThemed ? explicitStyleProps.fill : props.fill}
         name={props.name}
         hide={props.hide}
         tooltipType={props.tooltipType}
