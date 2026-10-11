@@ -1,45 +1,45 @@
 {
   "treemap": {
     "examplePath": "www/src/views/IndexView/IndexLineChart.tsx",
-    "totalSize": 937428,
-    "totalSizeLabel": "915.46 KB",
-    "moduleCount": 376,
-    "generatedAt": "2026-10-10T09:47:39.780Z",
+    "totalSize": 940899,
+    "totalSizeLabel": "918.85 KB",
+    "moduleCount": 377,
+    "generatedAt": "2026-10-11T04:57:30.556Z",
     "stages": [
       {
         "stage": "es6-folder",
-        "bytes": 1453771,
+        "bytes": 1461554,
         "humanReadableSize": "1.39 MB",
         "reductionFromBaselinePercent": 0
       },
       {
         "stage": "tree-shaken",
-        "bytes": 940327,
-        "humanReadableSize": "918.29 KB",
+        "bytes": 943800,
+        "humanReadableSize": "921.68 KB",
         "reductionFromBaselinePercent": 0
       },
       {
         "stage": "minified",
-        "bytes": 310048,
-        "humanReadableSize": "302.78 KB",
-        "reductionFromBaselinePercent": 67.03
+        "bytes": 310704,
+        "humanReadableSize": "303.42 KB",
+        "reductionFromBaselinePercent": 67.08
       },
       {
         "stage": "minified+gzip",
-        "bytes": 101669,
-        "humanReadableSize": "99.29 KB",
-        "reductionFromBaselinePercent": 89.19
+        "bytes": 101841,
+        "humanReadableSize": "99.45 KB",
+        "reductionFromBaselinePercent": 89.21
       }
     ],
     "tree": {
       "name": "bundle",
       "fullPath": "bundle",
-      "value": 937428,
+      "value": 940899,
       "children": [
         {
           "name": "src",
           "fullPath": "src",
-          "value": 533852,
+          "value": 537323,
           "children": [
             {
               "name": "state",
@@ -447,7 +447,7 @@
             {
               "name": "util",
               "fullPath": "src/util",
-              "value": 119657,
+              "value": 119719,
               "children": [
                 {
                   "name": "scale",
@@ -486,7 +486,7 @@
                 {
                   "name": "ChartUtils.ts",
                   "fullPath": "src/util/ChartUtils.ts",
-                  "value": 15098
+                  "value": 15160
                 },
                 {
                   "name": "zoom",
@@ -729,12 +729,12 @@
             {
               "name": "cartesian",
               "fullPath": "src/cartesian",
-              "value": 86871,
+              "value": 86816,
               "children": [
                 {
                   "name": "Line.tsx",
                   "fullPath": "src/cartesian/Line.tsx",
-                  "value": 16608
+                  "value": 16553
                 },
                 {
                   "name": "CartesianAxis.tsx",
@@ -930,6 +930,53 @@
               ]
             },
             {
+              "name": "theme",
+              "fullPath": "src/theme",
+              "value": 11235,
+              "children": [
+                {
+                  "name": "activeStyles.ts",
+                  "fullPath": "src/theme/activeStyles.ts",
+                  "value": 3464
+                },
+                {
+                  "name": "useBackwardsCompatibleTheme.ts",
+                  "fullPath": "src/theme/useBackwardsCompatibleTheme.ts",
+                  "value": 1887
+                },
+                {
+                  "name": "dataEntryStyles.ts",
+                  "fullPath": "src/theme/dataEntryStyles.ts",
+                  "value": 1596
+                },
+                {
+                  "name": "graphicalItemIdentity.ts",
+                  "fullPath": "src/theme/graphicalItemIdentity.ts",
+                  "value": 1312
+                },
+                {
+                  "name": "useGraphicalItemIdentity.ts",
+                  "fullPath": "src/theme/useGraphicalItemIdentity.ts",
+                  "value": 1287
+                },
+                {
+                  "name": "pageBackground.ts",
+                  "fullPath": "src/theme/pageBackground.ts",
+                  "value": 810
+                },
+                {
+                  "name": "RechartsThemeContext.ts",
+                  "fullPath": "src/theme/RechartsThemeContext.ts",
+                  "value": 505
+                },
+                {
+                  "name": "cssStylesToSvgStyles.ts",
+                  "fullPath": "src/theme/cssStylesToSvgStyles.ts",
+                  "value": 374
+                }
+              ]
+            },
+            {
               "name": "zIndex",
               "fullPath": "src/zIndex",
               "value": 9463,
@@ -1017,48 +1064,6 @@
                   "name": "useChartSynchronisation.tsx",
                   "fullPath": "src/synchronisation/useChartSynchronisation.tsx",
                   "value": 8354
-                }
-              ]
-            },
-            {
-              "name": "theme",
-              "fullPath": "src/theme",
-              "value": 7771,
-              "children": [
-                {
-                  "name": "useBackwardsCompatibleTheme.ts",
-                  "fullPath": "src/theme/useBackwardsCompatibleTheme.ts",
-                  "value": 1887
-                },
-                {
-                  "name": "dataEntryStyles.ts",
-                  "fullPath": "src/theme/dataEntryStyles.ts",
-                  "value": 1596
-                },
-                {
-                  "name": "graphicalItemIdentity.ts",
-                  "fullPath": "src/theme/graphicalItemIdentity.ts",
-                  "value": 1312
-                },
-                {
-                  "name": "useGraphicalItemIdentity.ts",
-                  "fullPath": "src/theme/useGraphicalItemIdentity.ts",
-                  "value": 1287
-                },
-                {
-                  "name": "pageBackground.ts",
-                  "fullPath": "src/theme/pageBackground.ts",
-                  "value": 810
-                },
-                {
-                  "name": "RechartsThemeContext.ts",
-                  "fullPath": "src/theme/RechartsThemeContext.ts",
-                  "value": 505
-                },
-                {
-                  "name": "cssStylesToSvgStyles.ts",
-                  "fullPath": "src/theme/cssStylesToSvgStyles.ts",
-                  "value": 374
                 }
               ]
             },
@@ -2607,45 +2612,45 @@
   },
   "sunburst": {
     "examplePath": "www/src/views/IndexView/IndexLineChart.tsx",
-    "totalSize": 937428,
-    "totalSizeLabel": "915.46 KB",
-    "moduleCount": 376,
-    "generatedAt": "2026-10-10T09:47:37.242Z",
+    "totalSize": 940899,
+    "totalSizeLabel": "918.85 KB",
+    "moduleCount": 377,
+    "generatedAt": "2026-10-11T04:57:28.435Z",
     "stages": [
       {
         "stage": "es6-folder",
-        "bytes": 1453771,
+        "bytes": 1461554,
         "humanReadableSize": "1.39 MB",
         "reductionFromBaselinePercent": 0
       },
       {
         "stage": "tree-shaken",
-        "bytes": 940327,
-        "humanReadableSize": "918.29 KB",
+        "bytes": 943800,
+        "humanReadableSize": "921.68 KB",
         "reductionFromBaselinePercent": 0
       },
       {
         "stage": "minified",
-        "bytes": 310048,
-        "humanReadableSize": "302.78 KB",
-        "reductionFromBaselinePercent": 67.03
+        "bytes": 310704,
+        "humanReadableSize": "303.42 KB",
+        "reductionFromBaselinePercent": 67.08
       },
       {
         "stage": "minified+gzip",
-        "bytes": 101669,
-        "humanReadableSize": "99.29 KB",
-        "reductionFromBaselinePercent": 89.19
+        "bytes": 101841,
+        "humanReadableSize": "99.45 KB",
+        "reductionFromBaselinePercent": 89.21
       }
     ],
     "tree": {
       "name": "bundle",
       "fullPath": "bundle",
-      "value": 937428,
+      "value": 940899,
       "children": [
         {
           "name": "src",
           "fullPath": "src",
-          "value": 533852,
+          "value": 537323,
           "children": [
             {
               "name": "state",
@@ -3053,7 +3058,7 @@
             {
               "name": "util",
               "fullPath": "src/util",
-              "value": 119657,
+              "value": 119719,
               "children": [
                 {
                   "name": "scale",
@@ -3092,7 +3097,7 @@
                 {
                   "name": "ChartUtils.ts",
                   "fullPath": "src/util/ChartUtils.ts",
-                  "value": 15098
+                  "value": 15160
                 },
                 {
                   "name": "zoom",
@@ -3335,12 +3340,12 @@
             {
               "name": "cartesian",
               "fullPath": "src/cartesian",
-              "value": 86871,
+              "value": 86816,
               "children": [
                 {
                   "name": "Line.tsx",
                   "fullPath": "src/cartesian/Line.tsx",
-                  "value": 16608
+                  "value": 16553
                 },
                 {
                   "name": "CartesianAxis.tsx",
@@ -3536,6 +3541,53 @@
               ]
             },
             {
+              "name": "theme",
+              "fullPath": "src/theme",
+              "value": 11235,
+              "children": [
+                {
+                  "name": "activeStyles.ts",
+                  "fullPath": "src/theme/activeStyles.ts",
+                  "value": 3464
+                },
+                {
+                  "name": "useBackwardsCompatibleTheme.ts",
+                  "fullPath": "src/theme/useBackwardsCompatibleTheme.ts",
+                  "value": 1887
+                },
+                {
+                  "name": "dataEntryStyles.ts",
+                  "fullPath": "src/theme/dataEntryStyles.ts",
+                  "value": 1596
+                },
+                {
+                  "name": "graphicalItemIdentity.ts",
+                  "fullPath": "src/theme/graphicalItemIdentity.ts",
+                  "value": 1312
+                },
+                {
+                  "name": "useGraphicalItemIdentity.ts",
+                  "fullPath": "src/theme/useGraphicalItemIdentity.ts",
+                  "value": 1287
+                },
+                {
+                  "name": "pageBackground.ts",
+                  "fullPath": "src/theme/pageBackground.ts",
+                  "value": 810
+                },
+                {
+                  "name": "RechartsThemeContext.ts",
+                  "fullPath": "src/theme/RechartsThemeContext.ts",
+                  "value": 505
+                },
+                {
+                  "name": "cssStylesToSvgStyles.ts",
+                  "fullPath": "src/theme/cssStylesToSvgStyles.ts",
+                  "value": 374
+                }
+              ]
+            },
+            {
               "name": "zIndex",
               "fullPath": "src/zIndex",
               "value": 9463,
@@ -3623,48 +3675,6 @@
                   "name": "useChartSynchronisation.tsx",
                   "fullPath": "src/synchronisation/useChartSynchronisation.tsx",
                   "value": 8354
-                }
-              ]
-            },
-            {
-              "name": "theme",
-              "fullPath": "src/theme",
-              "value": 7771,
-              "children": [
-                {
-                  "name": "useBackwardsCompatibleTheme.ts",
-                  "fullPath": "src/theme/useBackwardsCompatibleTheme.ts",
-                  "value": 1887
-                },
-                {
-                  "name": "dataEntryStyles.ts",
-                  "fullPath": "src/theme/dataEntryStyles.ts",
-                  "value": 1596
-                },
-                {
-                  "name": "graphicalItemIdentity.ts",
-                  "fullPath": "src/theme/graphicalItemIdentity.ts",
-                  "value": 1312
-                },
-                {
-                  "name": "useGraphicalItemIdentity.ts",
-                  "fullPath": "src/theme/useGraphicalItemIdentity.ts",
-                  "value": 1287
-                },
-                {
-                  "name": "pageBackground.ts",
-                  "fullPath": "src/theme/pageBackground.ts",
-                  "value": 810
-                },
-                {
-                  "name": "RechartsThemeContext.ts",
-                  "fullPath": "src/theme/RechartsThemeContext.ts",
-                  "value": 505
-                },
-                {
-                  "name": "cssStylesToSvgStyles.ts",
-                  "fullPath": "src/theme/cssStylesToSvgStyles.ts",
-                  "value": 374
                 }
               ]
             },
