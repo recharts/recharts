@@ -21,7 +21,7 @@ import {
   AnimationDuration,
   EasingInput,
   Coordinate,
-  DataConsumer,
+  ValueAxisDataConsumer,
   DataKey,
   DataProvider,
   isNonEmptyArray,
@@ -34,6 +34,7 @@ import {
   TickItem,
   TrapezoidViewBox,
   CartesianLayout,
+  LayoutType,
 } from '../util/types';
 import { Formatter, TooltipType } from '../component/DefaultTooltipContent';
 import { ScatterShapeProps, ScatterSymbol } from '../util/ScatterUtils';
@@ -77,6 +78,8 @@ import { propsAreEqual } from '../util/propsAreEqual';
 import { useBackwardsCompatibleTheme } from '../theme/useBackwardsCompatibleTheme';
 import { ChartData } from '../state/chartDataSlice';
 import { useGraphicalItemIdentity } from '../theme/useGraphicalItemIdentity';
+import { useEffectiveDataKey } from '../util/useEffectiveDataKey';
+import { getDataKeyOnAxis } from '../state/selectors/effectiveDataKeySelectors';
 import { getEntryStyleOverrides, UnthemedStyles, useUnthemedStyles } from '../theme/dataEntryStyles';
 import { getActiveStyleOverrides, useThemedActiveStyles } from '../theme/activeStyles';
 import { Styles2D } from '../theme/RechartsTheme';
@@ -192,7 +195,7 @@ interface ScatterInternalProps extends ZIndexable {
  * @internal
  */
 export interface ScatterProps<DataPointType = any, DataValueType = any>
-  extends DataProvider<DataPointType>, DataConsumer<DataPointType, DataValueType>, ZIndexable {
+  extends DataProvider<DataPointType>, ValueAxisDataConsumer<DataPointType, DataValueType>, ZIndexable {
   /**
    * Unique identifier of this component.
    * Used as an HTML attribute `id`, and also to identify this element internally.
@@ -818,6 +821,7 @@ export function computeScatterPoints({
   xAxisTicks,
   yAxisTicks,
   cells,
+  layout,
 }: {
   displayedData: ReadonlyArray<unknown>;
   xAxis: BaseAxisWithScale;
@@ -827,9 +831,15 @@ export function computeScatterPoints({
   xAxisTicks: ReadonlyArray<TickItem> | undefined;
   yAxisTicks: ReadonlyArray<TickItem> | undefined;
   cells: ReadonlyArray<ReactElement> | undefined;
+  layout: LayoutType | undefined;
 }): ReadonlyArray<ScatterPointItem> {
-  const xAxisDataKey = isNullish(xAxis.dataKey) ? scatterSettings.dataKey : xAxis.dataKey;
-  const yAxisDataKey = isNullish(yAxis.dataKey) ? scatterSettings.dataKey : yAxis.dataKey;
+  /*
+   * Scatter reads from two axes so it has two dataKeys.
+   * On the numerical value axis, the Scatter dataKey wins and the axis is the fallback - same as all other graphical items.
+   * On the other axis, the axis dataKey wins.
+   */
+  const xAxisDataKey = getDataKeyOnAxis(scatterSettings.dataKey, xAxis, layout, 'xAxis');
+  const yAxisDataKey = getDataKeyOnAxis(scatterSettings.dataKey, yAxis, layout, 'yAxis');
   const zAxisDataKey = zAxis && zAxis.dataKey;
   const defaultRangeZ = zAxis ? zAxis.range : implicitZAxis.range;
   const defaultZ = defaultRangeZ && defaultRangeZ[0];
@@ -842,7 +852,7 @@ export function computeScatterPoints({
 
     const tooltipPayload: Array<TooltipPayloadEntry> = [
       {
-        name: isNullish(xAxis.dataKey) ? scatterSettings.name : xAxis.name || String(xAxis.dataKey),
+        name: isNullish(xAxis.dataKey) ? scatterSettings.name : xAxis.name || String(xAxisDataKey),
         unit: xAxis.unit || '',
         // @ts-expect-error getValueByDataKey does not validate the output type
         value: x,
@@ -852,7 +862,7 @@ export function computeScatterPoints({
         graphicalItemId: scatterSettings.id,
       },
       {
-        name: isNullish(yAxis.dataKey) ? scatterSettings.name : yAxis.name || String(yAxis.dataKey),
+        name: isNullish(yAxis.dataKey) ? scatterSettings.name : yAxis.name || String(yAxisDataKey),
         unit: yAxis.unit || '',
         // @ts-expect-error getValueByDataKey does not validate the output type
         value: y,
@@ -1049,7 +1059,12 @@ function ScatterImpl(props: WithIdRequired<Props> & Pick<InternalProps, 'untheme
 }
 
 function ScatterFn(outsideProps: Props) {
-  const graphicalItemThemeSelector = useGraphicalItemIdentity(outsideProps.dataKey, outsideProps);
+  const effectiveDataKey = useEffectiveDataKey({
+    dataKey: outsideProps.dataKey,
+    xAxisId: outsideProps.xAxisId ?? defaultScatterProps.xAxisId,
+    yAxisId: outsideProps.yAxisId ?? defaultScatterProps.yAxisId,
+  });
+  const graphicalItemThemeSelector = useGraphicalItemIdentity(effectiveDataKey, outsideProps);
   const unthemedStyles = useUnthemedStyles(outsideProps);
   const themedActiveStyles = useThemedActiveStyles(graphicalItemThemeSelector, outsideProps);
   const graphicalItemTheme = useBackwardsCompatibleTheme<Props>(graphicalItemThemeSelector, outsideProps, undefined);

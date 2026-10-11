@@ -18,7 +18,7 @@ import { Dots } from '../component/Dots';
 import {
   ActiveDotType,
   AnimationDuration,
-  DataConsumer,
+  ValueAxisDataConsumer,
   DataKey,
   DotType,
   EasingInput,
@@ -54,6 +54,7 @@ import { useRechartsTheme } from '../theme/RechartsThemeContext';
 import { useBackwardsCompatibleTheme } from '../theme/useBackwardsCompatibleTheme';
 import { getActiveStyleOverrides } from '../theme/activeStyles';
 import { useGraphicalItemIdentity } from '../theme/useGraphicalItemIdentity';
+import { useEffectiveDataKey } from '../util/useEffectiveDataKey';
 
 export interface RadarPoint {
   x: number;
@@ -74,7 +75,7 @@ export interface RadarPoint {
  * @internal
  */
 export interface RadarProps<DataPointType = any, DataValueType = any>
-  extends ZIndexable, DataConsumer<DataPointType, DataValueType> {
+  extends ZIndexable, ValueAxisDataConsumer<DataPointType, DataValueType> {
   /**
    * @defaultValue true
    */
@@ -665,7 +666,12 @@ function RadarImpl(props: RadarPropsWithDotFill) {
  */
 export function Radar<DataPointType = any, DataValueType = any>(outsideProps: Props<DataPointType, DataValueType>) {
   const rechartsTheme = useRechartsTheme();
-  const graphicalItemThemeSelector = useGraphicalItemIdentity(outsideProps.dataKey, outsideProps);
+  const dataKey = useEffectiveDataKey({
+    dataKey: outsideProps.dataKey,
+    angleAxisId: outsideProps.angleAxisId ?? defaultRadarProps.angleAxisId,
+    radiusAxisId: outsideProps.radiusAxisId ?? defaultRadarProps.radiusAxisId,
+  });
+  const graphicalItemThemeSelector = useGraphicalItemIdentity(dataKey, outsideProps);
   const graphicalItemTheme = useBackwardsCompatibleTheme<GraphicalItemStyle>(
     graphicalItemThemeSelector,
     outsideProps,
@@ -677,8 +683,9 @@ export function Radar<DataPointType = any, DataValueType = any>(outsideProps: Pr
     themedActiveDot == null
       ? outsideProps.activeDot
       : { ...themedActiveDot, ...(typeof outsideProps.activeDot === 'object' ? outsideProps.activeDot : {}) };
-  const propsWithTheme: Props<DataPointType, DataValueType> = {
+  const propsWithTheme: Props = {
     ...outsideProps,
+    dataKey,
     activeDot,
     fill: outsideProps.fill ?? graphicalItemTheme?.fill,
     fillOpacity: outsideProps.fillOpacity ?? graphicalItemTheme?.fillOpacity,

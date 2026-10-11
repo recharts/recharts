@@ -22,7 +22,7 @@ import {
   ActiveShape,
   AnimationDuration,
   CartesianLayout,
-  DataConsumer,
+  ValueAxisDataConsumer,
   DataKey,
   DataProvider,
   DotType,
@@ -67,6 +67,7 @@ import { useRechartsTheme } from '../theme/RechartsThemeContext';
 import { useBackwardsCompatibleTheme } from '../theme/useBackwardsCompatibleTheme';
 import { getActiveStyleOverrides } from '../theme/activeStyles';
 import { useGraphicalItemIdentity } from '../theme/useGraphicalItemIdentity';
+import { useEffectiveDataKey } from '../util/useEffectiveDataKey';
 
 export interface LinePointItem {
   readonly value: number;
@@ -133,7 +134,7 @@ interface InternalLineProps extends ZIndexable {
  * @internal
  */
 export interface LineProps<DataPointType = any, DataValueType = any>
-  extends DataProvider<DataPointType>, DataConsumer<DataPointType, DataValueType>, ZIndexable {
+  extends DataProvider<DataPointType>, ValueAxisDataConsumer<DataPointType, DataValueType>, ZIndexable {
   /**
    * The active dot is rendered on the closest data point when user interacts with the chart. Options:
    *
@@ -933,7 +934,12 @@ export function computeLinePoints({
 
 function LineFn(outsideProps: Props) {
   const rechartsTheme = useRechartsTheme();
-  const graphicalItemThemeSelector = useGraphicalItemIdentity(outsideProps.dataKey, outsideProps);
+  const dataKey = useEffectiveDataKey({
+    dataKey: outsideProps.dataKey,
+    xAxisId: outsideProps.xAxisId ?? defaultLineProps.xAxisId,
+    yAxisId: outsideProps.yAxisId ?? defaultLineProps.yAxisId,
+  });
+  const graphicalItemThemeSelector = useGraphicalItemIdentity(dataKey, outsideProps);
   const graphicalItemTheme = useBackwardsCompatibleTheme<GraphicalItemStyle>(
     graphicalItemThemeSelector,
     outsideProps,
@@ -948,6 +954,7 @@ function LineFn(outsideProps: Props) {
   const props = resolveDefaultProps(
     {
       ...outsideProps,
+      dataKey,
       activeDot,
       fill: outsideProps.fill ?? graphicalItemTheme?.fill,
       fillOpacity: outsideProps.fillOpacity ?? graphicalItemTheme?.fillOpacity,

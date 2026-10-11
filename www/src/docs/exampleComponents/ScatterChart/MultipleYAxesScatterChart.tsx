@@ -43,8 +43,8 @@ const MultipleYAxesScatterChart = () => {
       <YAxis yAxisId="left" type="number" dataKey="y" name="weight" unit="kg" width="auto" />
       <YAxis yAxisId="right" type="number" dataKey="y" name="weight" unit="kg" orientation="right" width="auto" />
       <Tooltip />
-      <Scatter yAxisId="left" name="A school" data={data01} dataKey="x" />
-      <Scatter yAxisId="right" name="A school" data={data02} dataKey="y" />
+      <Scatter yAxisId="left" name="A school" data={data01} fill="#8884d8" />
+      <Scatter yAxisId="right" name="A school" data={data02} fill="#82ca9d" />
       <RechartsDevtools />
     </ScatterChart>
   );

@@ -1,13 +1,6 @@
 import { createSelector } from 'reselect';
-import { isNotNil } from '../../util/DataUtils';
-import { DataKey } from '../../util/types';
 import { RechartsRootState } from '../store';
-import {
-  CartesianGraphicalItemSettings,
-  GraphicalItemId,
-  GraphicalItemSettings,
-  PolarGraphicalItemSettings,
-} from '../graphicalItemsSlice';
+import { CartesianGraphicalItemSettings, GraphicalItemId, PolarGraphicalItemSettings } from '../graphicalItemsSlice';
 import { AxisId, defaultAxisId } from '../cartesianAxisSlice';
 
 export function selectXAxisIdFromGraphicalItemId(state: RechartsRootState, id: GraphicalItemId): AxisId {
@@ -27,10 +20,3 @@ export const selectAllUnfilteredGraphicalItems: (
   ],
   (cartesianItems, polarItems) => [...cartesianItems, ...polarItems],
 );
-
-export const selectAllUnfilteredGraphicalItemDataKeys: (state: RechartsRootState) => ReadonlyArray<DataKey<any>> =
-  createSelector(
-    [selectAllUnfilteredGraphicalItems],
-    (graphicalItems: ReadonlyArray<GraphicalItemSettings>): ReadonlyArray<DataKey<any>> =>
-      graphicalItems.map(item => item.dataKey).filter(isNotNil),
-  );

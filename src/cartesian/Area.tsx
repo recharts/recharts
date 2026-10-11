@@ -23,7 +23,7 @@ import {
   ActiveShape,
   AnimationDuration,
   CartesianLayout,
-  DataConsumer,
+  ValueAxisDataConsumer,
   DataKey,
   DataProvider,
   DotType,
@@ -73,6 +73,7 @@ import { useRechartsTheme } from '../theme/RechartsThemeContext';
 import { useBackwardsCompatibleTheme } from '../theme/useBackwardsCompatibleTheme';
 import { getActiveStyleOverrides } from '../theme/activeStyles';
 import { useGraphicalItemIdentity } from '../theme/useGraphicalItemIdentity';
+import { useEffectiveDataKey } from '../util/useEffectiveDataKey';
 
 /**
  * @inline
@@ -100,7 +101,7 @@ interface InternalAreaProps extends ZIndexable {
   className?: string;
   connectNulls: boolean;
   data?: ChartData;
-  dataKey: DataKey<any>;
+  dataKey?: DataKey<any>;
   dot: DotType;
   dotFill?: string;
   height: number;
@@ -145,7 +146,7 @@ interface InternalAreaProps extends ZIndexable {
  * @internal
  */
 export interface AreaProps<DataPointType = any, DataValueType = any>
-  extends Styles2D, DataProvider<DataPointType>, Required<DataConsumer<DataPointType, DataValueType>>, ZIndexable {
+  extends Styles2D, DataProvider<DataPointType>, ValueAxisDataConsumer<DataPointType, DataValueType>, ZIndexable {
   /**
    * The active dot is rendered on the closest data point when user interacts with the chart. Options:
    *
@@ -1075,7 +1076,12 @@ export function computeArea({
 
 function AreaFn(outsideProps: Props<any, any>) {
   const rechartsTheme = useRechartsTheme();
-  const graphicalItemThemeSelector = useGraphicalItemIdentity(outsideProps.dataKey, outsideProps);
+  const dataKey = useEffectiveDataKey({
+    dataKey: outsideProps.dataKey,
+    xAxisId: outsideProps.xAxisId ?? defaultAreaProps.xAxisId,
+    yAxisId: outsideProps.yAxisId ?? defaultAreaProps.yAxisId,
+  });
+  const graphicalItemThemeSelector = useGraphicalItemIdentity(dataKey, outsideProps);
   const theme = useBackwardsCompatibleTheme<GraphicalItemStyle>(
     graphicalItemThemeSelector,
     outsideProps,
@@ -1089,6 +1095,7 @@ function AreaFn(outsideProps: Props<any, any>) {
   const propsWithTheme: Props<any, any> = {
     ...outsideProps,
     ...theme,
+    dataKey,
     activeDot,
   };
   const props: RequiresDefaultProps<Props<any, any>, typeof defaultAreaProps> = resolveDefaultProps(

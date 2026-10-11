@@ -38,8 +38,8 @@ const ReferenceAreaExample = ({ isAnimationActive = true }) => (
     <ZAxis dataKey="z" type="number" range={[16, 100]} name="score" unit="km" />
     <Tooltip />
     <Legend />
-    <Scatter name="A school" data={data01} dataKey="x" isAnimationActive={isAnimationActive} />
-    <Scatter name="B school" data={data02} dataKey="y" isAnimationActive={isAnimationActive} />
+    <Scatter name="A school" data={data01} fill="#8884d8" isAnimationActive={isAnimationActive} />
+    <Scatter name="B school" data={data02} fill="#82ca9d" isAnimationActive={isAnimationActive} />
     <ReferenceArea x1={150} x2={180} y1={200} y2={300} stroke="red" strokeOpacity={0.3} />
     <RechartsDevtools />
   </ScatterChart>

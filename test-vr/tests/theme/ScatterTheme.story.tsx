@@ -15,7 +15,7 @@ function UnthemedScatter() {
       <XAxis dataKey="x" type="number" />
       <YAxis dataKey="y" type="number" />
       <ZAxis dataKey="z" type="number" range={[64, 400]} />
-      <Scatter data={scatterData} dataKey="x" isAnimationActive={false} />
+      <Scatter data={scatterData} isAnimationActive={false} />
     </ScatterChart>
   );
 }
@@ -39,7 +39,7 @@ function ThemedScatter() {
         <XAxis dataKey="x" type="number" />
         <YAxis dataKey="y" type="number" />
         <ZAxis dataKey="z" type="number" range={[64, 400]} />
-        <Scatter data={scatterData} dataKey="x" isAnimationActive={false} />
+        <Scatter data={scatterData} isAnimationActive={false} />
       </ScatterChart>
     </RechartsThemeProvider>
   );

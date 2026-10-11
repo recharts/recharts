@@ -39,7 +39,7 @@ import {
   CartesianViewBoxRequired,
   ChartOffsetInternal,
   Coordinate,
-  DataConsumer,
+  ValueAxisDataConsumer,
   DataKey,
   DataProvider,
   LegendType,
@@ -93,6 +93,7 @@ import { ChartData } from '../state/chartDataSlice';
 import { Styles2D } from '../theme/RechartsTheme';
 import { useBackwardsCompatibleTheme } from '../theme/useBackwardsCompatibleTheme';
 import { useGraphicalItemIdentity } from '../theme/useGraphicalItemIdentity';
+import { useEffectiveDataKey } from '../util/useEffectiveDataKey';
 import { getEntryStyleOverrides, UnthemedStyles, useUnthemedStyles } from '../theme/dataEntryStyles';
 import { getActiveStyleOverrides, useThemedActiveStyles } from '../theme/activeStyles';
 
@@ -139,7 +140,7 @@ export type BarShapeProps = BarRectangleItem &
  * @internal
  */
 export interface BarProps<DataPointType, ValueAxisType>
-  extends DataProvider<DataPointType>, DataConsumer<DataPointType, ValueAxisType>, ZIndexable {
+  extends DataProvider<DataPointType>, ValueAxisDataConsumer<DataPointType, ValueAxisType>, ZIndexable {
   className?: string;
   index?: Key;
   /**
@@ -1311,11 +1312,16 @@ export function computeBarRectangles({
 }
 
 function BarFn(outsideProps: Props) {
-  const graphicalItemThemeSelector = useGraphicalItemIdentity(outsideProps.dataKey, outsideProps);
+  const dataKey = useEffectiveDataKey({
+    dataKey: outsideProps.dataKey,
+    xAxisId: outsideProps.xAxisId ?? defaultBarProps.xAxisId,
+    yAxisId: outsideProps.yAxisId ?? defaultBarProps.yAxisId,
+  });
+  const graphicalItemThemeSelector = useGraphicalItemIdentity(dataKey, outsideProps);
   const unthemedStyles = useUnthemedStyles(outsideProps);
   const themedActiveStyles = useThemedActiveStyles(graphicalItemThemeSelector, outsideProps);
   const graphicalItemStyle = useBackwardsCompatibleTheme<Props>(graphicalItemThemeSelector, outsideProps, undefined);
-  const props = resolveDefaultProps(outsideProps, defaultBarProps);
+  const props = resolveDefaultProps({ ...outsideProps, dataKey }, defaultBarProps);
   // stackId may arrive from props or from BarStack context
   const stackId = useStackId(props.stackId);
   const isPanorama = useIsPanorama();

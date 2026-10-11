@@ -347,7 +347,7 @@ describe('YAxis tick', () => {
     const { container } = render(
       <ComposedChart width={600} height={50} data={dateWithValueData}>
         <YAxis dataKey="time" type="number" scale="time" domain={['auto', 'auto']} tickFormatter={tickFormatter} />
-        <Line dataKey="value" />
+        <Line dataKey="time" />
       </ComposedChart>,
     );
 
