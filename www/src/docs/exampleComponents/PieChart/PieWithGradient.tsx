@@ -1,8 +1,9 @@
 import { Pie, PieChart, PieSectorShapeProps, Sector, Tooltip, TooltipIndex } from 'recharts';
 import { generateMockData } from '@recharts/devtools';
 
-const data = generateMockData(4, 1000);
 const COLORS = ['#0088FE', '#00C49F', '#FFBB28', '#FF8042'];
+// The fill on each entry is what Tooltip reads; the custom shape below paints gradients of the same colors.
+const data = generateMockData(4, 1000).map((entry, index) => ({ ...entry, fill: COLORS[index % COLORS.length] }));
 
 const PieGradient = (props: PieSectorShapeProps) => {
   return (
