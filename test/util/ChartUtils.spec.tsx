@@ -199,6 +199,16 @@ describe('getValueByDataKey', () => {
     expect(getValueByDataKey(data, fn, 9)).toBe(1);
   });
 
+  it('should return the default for an undefined function result', () => {
+    const getter = (entry: typeof data): unknown => entry.u;
+    expect(getValueByDataKey(data, getter, 9)).toBe(9);
+    expect(getValueByDataKey(data, getter)).toBeUndefined();
+  });
+
+  test.each([0, false, '', null, NaN])('should preserve a defined function result of %s', value => {
+    expect(getValueByDataKey(data, () => value, 9)).toBe(value);
+  });
+
   it('should return data from object root', () => {
     expect(getValueByDataKey(data, 'a')).toEqual(1);
     expect(getValueByDataKey(data, 'a', 9)).toEqual(1);
