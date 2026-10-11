@@ -1,4 +1,4 @@
-import { ScatterChart, Scatter, XAxis, YAxis, CartesianGrid, Tooltip } from 'recharts';
+import { ScatterChart, Scatter, XAxis, YAxis, CartesianGrid, Tooltip, autoPalette } from 'recharts';
 import { RechartsDevtools } from '@recharts/devtools';
 
 // #region Sample data
@@ -43,8 +43,8 @@ const MultipleYAxesScatterChart = () => {
       <YAxis yAxisId="left" type="number" dataKey="y" name="weight" unit="kg" width="auto" />
       <YAxis yAxisId="right" type="number" dataKey="y" name="weight" unit="kg" orientation="right" width="auto" />
       <Tooltip />
-      <Scatter yAxisId="left" name="A school" data={data01} />
-      <Scatter yAxisId="right" name="A school" data={data02} />
+      <Scatter yAxisId="left" name="A school" data={data01} fill={autoPalette[0]} />
+      <Scatter yAxisId="right" name="A school" data={data02} fill={autoPalette[1]} />
       <RechartsDevtools />
     </ScatterChart>
   );

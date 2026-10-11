@@ -634,7 +634,9 @@ export function ThemingGuide() {
         This is a convenient default. If you need different colors or want to control the assignment yourself, provide
         an explicit <code>fill</code> or <code>stroke</code> prop on the graphical item. You will need to do that when
         several graphical items share one <code>dataKey</code> and each brings its own <code>data</code> array, for
-        example two <LinkToApi>Scatter</LinkToApi> series on the same axes.
+        example two <LinkToApi>Scatter</LinkToApi> series on the same axes. The <code>lightPalette</code>,{' '}
+        <code>darkPalette</code> and <code>autoPalette</code> exports hold the colors of the built-in themes, so you can
+        pick from them: <code>{'<Scatter fill={autoPalette[1]} />'}</code>.
       </p>
       <p>
         The theme compares <code>dataKey</code> values as strings. A function <code>dataKey</code> is compared by its

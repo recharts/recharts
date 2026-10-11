@@ -1,4 +1,4 @@
-import { ScatterChart, Scatter, XAxis, YAxis, ZAxis, CartesianGrid, Tooltip, Legend } from 'recharts';
+import { ScatterChart, Scatter, XAxis, YAxis, ZAxis, CartesianGrid, Tooltip, Legend, autoPalette } from 'recharts';
 import { RechartsDevtools } from '@recharts/devtools';
 
 // #region Sample data
@@ -38,8 +38,8 @@ const ScatterChartExample = ({ isAnimationActive = true }: { isAnimationActive?:
     <ZAxis dataKey="z" type="number" range={[64, 144]} name="score" unit="km" />
     <Tooltip />
     <Legend />
-    <Scatter name="A school" data={data01} isAnimationActive={isAnimationActive} />
-    <Scatter name="B school" data={data02} isAnimationActive={isAnimationActive} />
+    <Scatter name="A school" data={data01} fill={autoPalette[0]} isAnimationActive={isAnimationActive} />
+    <Scatter name="B school" data={data02} fill={autoPalette[1]} isAnimationActive={isAnimationActive} />
     <RechartsDevtools />
   </ScatterChart>
 );
