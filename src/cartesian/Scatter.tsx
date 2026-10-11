@@ -835,11 +835,11 @@ export function computeScatterPoints({
 }): ReadonlyArray<ScatterPointItem> {
   /*
    * Scatter reads from two axes so it has two dataKeys.
-   * On the numerical value axis, the Scatter dataKey wins and the axis is the fallback - same as all other graphical items.
+   * On the value axis, the Scatter dataKey wins and the axis is the fallback - same as all other graphical items.
    * On the other axis, the axis dataKey wins.
    */
-  const xAxisDataKey = getDataKeyOnAxis(scatterSettings.dataKey, xAxis, layout, 'xAxis');
-  const yAxisDataKey = getDataKeyOnAxis(scatterSettings.dataKey, yAxis, layout, 'yAxis');
+  const xAxisDataKey = getDataKeyOnAxis(scatterSettings.dataKey, xAxis.dataKey, layout, 'xAxis');
+  const yAxisDataKey = getDataKeyOnAxis(scatterSettings.dataKey, yAxis.dataKey, layout, 'yAxis');
   const zAxisDataKey = zAxis && zAxis.dataKey;
   const defaultRangeZ = zAxis ? zAxis.range : implicitZAxis.range;
   const defaultZ = defaultRangeZ && defaultRangeZ[0];

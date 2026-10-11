@@ -466,7 +466,7 @@ export const combineAppliedValues = (
   layout: LayoutType | undefined,
   axisType: AllAxisTypes,
 ): AppliedChartData => {
-  if (isValueAxis(layout, axisType, axisSettings) && items.some(item => item.dataKey != null)) {
+  if (isValueAxis(layout, axisType) && items.some(item => item.dataKey != null)) {
     // On the value axis, dataKey of the graphical item wins, and the axis dataKey is the fallback.
     const dataKeys = new Set(items.map(item => item.dataKey ?? axisSettings?.dataKey));
     return Array.from(dataKeys).flatMap(dataKey => data.map(entry => ({ value: getValueByDataKey(entry, dataKey) })));
@@ -873,7 +873,7 @@ export const combineDomainOfAllAppliedNumericalValuesIncludingErrorValues = (
      */
     items.forEach(item => {
       const itemData: ChartData = item.data != null ? [...item.data] : (chartDataSlice ?? []);
-      const dataKey = getDataKeyOnAxis(item.dataKey, axisSettings, layout, axisType);
+      const dataKey = getDataKeyOnAxis(item.dataKey, axisSettings.dataKey, layout, axisType);
       const relevantErrorBars = errorBars[item.id]?.filter(errorBar =>
         isErrorBarRelevantForAxisType(axisType, errorBar),
       );

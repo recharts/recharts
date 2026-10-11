@@ -59,8 +59,8 @@ describe('isValueAxis', () => {
     ['vertical', 'xAxis'],
     ['centric', 'radiusAxis'],
     ['radial', 'angleAxis'],
-  ] as const)('should return true in %s layout for numerical %s', (layout, axisType) => {
-    expect(isValueAxis(layout, axisType, { type: 'number' })).toBe(true);
+  ] as const)('should return true in %s layout for %s', (layout, axisType) => {
+    expect(isValueAxis(layout, axisType)).toBe(true);
   });
 
   it.each([
@@ -69,35 +69,30 @@ describe('isValueAxis', () => {
     ['vertical', 'yAxis'],
     ['centric', 'angleAxis'],
     ['radial', 'radiusAxis'],
-  ] as const)('should return false in %s layout for numerical %s', (layout, axisType) => {
-    expect(isValueAxis(layout, axisType, { type: 'number' })).toBe(false);
+  ] as const)('should return false in %s layout for %s', (layout, axisType) => {
+    expect(isValueAxis(layout, axisType)).toBe(false);
   });
 
-  it('should return false when the axis is not numerical', () => {
-    expect(isValueAxis('horizontal', 'yAxis', { type: 'category' })).toBe(false);
-    expect(isValueAxis('horizontal', 'yAxis', undefined)).toBe(false);
+  it('should return false without a layout', () => {
+    expect(isValueAxis(undefined, 'yAxis')).toBe(false);
   });
 });
 
 describe('getDataKeyOnAxis', () => {
   it('should prefer the graphical item dataKey on the value axis', () => {
-    expect(getDataKeyOnAxis('item', { dataKey: 'axis', type: 'number' }, 'horizontal', 'yAxis')).toBe('item');
+    expect(getDataKeyOnAxis('item', 'axis', 'horizontal', 'yAxis')).toBe('item');
   });
 
   it('should fall back to the axis dataKey on the value axis', () => {
-    expect(getDataKeyOnAxis(undefined, { dataKey: 'axis', type: 'number' }, 'horizontal', 'yAxis')).toBe('axis');
+    expect(getDataKeyOnAxis(undefined, 'axis', 'horizontal', 'yAxis')).toBe('axis');
   });
 
   it('should prefer the axis dataKey on the other axis', () => {
-    expect(getDataKeyOnAxis('item', { dataKey: 'axis', type: 'number' }, 'horizontal', 'xAxis')).toBe('axis');
+    expect(getDataKeyOnAxis('item', 'axis', 'horizontal', 'xAxis')).toBe('axis');
   });
 
   it('should fall back to the graphical item dataKey on the other axis', () => {
-    expect(getDataKeyOnAxis('item', { dataKey: undefined, type: 'category' }, 'horizontal', 'xAxis')).toBe('item');
-  });
-
-  it('should prefer the axis dataKey on a categorical axis in the value position', () => {
-    expect(getDataKeyOnAxis('item', { dataKey: 'axis', type: 'category' }, 'horizontal', 'yAxis')).toBe('axis');
+    expect(getDataKeyOnAxis('item', undefined, 'horizontal', 'xAxis')).toBe('item');
   });
 });
 
@@ -266,17 +261,45 @@ describe('implicit dataKey from the value axis', () => {
     expect(container.querySelectorAll('.recharts-line-curve')).toHaveLength(0);
   });
 
-  it('should not inherit dataKey from an axis with type=category in the value position', () => {
-    const renderTestCase = createSelectorTestCase(({ children }) => (
-      <LineChart width={400} height={300} data={PageData}>
-        <XAxis />
-        <YAxis type="category" dataKey="name" />
-        <Line isAnimationActive={false} />
-        {children}
-      </LineChart>
-    ));
-    const { spy } = renderTestCase(selectAllEffectiveGraphicalItemDataKeys);
-    expectLastCalledWith(spy, []);
+  describe('axis type has no say in which axis is the value axis', () => {
+    it('should inherit dataKey from the value axis with type=category', () => {
+      const renderTestCase = createSelectorTestCase(({ children }) => (
+        <LineChart width={400} height={300} data={PageData}>
+          <XAxis />
+          <YAxis type="category" dataKey="name" />
+          <Line isAnimationActive={false} />
+          {children}
+        </LineChart>
+      ));
+      const { spy } = renderTestCase(selectAllEffectiveGraphicalItemDataKeys);
+      expectLastCalledWith(spy, ['name']);
+    });
+
+    it('should prefer the graphical item dataKey on the value axis with type=category', () => {
+      const renderTestCase = createSelectorTestCase(({ children }) => (
+        <LineChart width={400} height={300} data={PageData}>
+          <XAxis />
+          <YAxis type="category" dataKey="name" />
+          <Line dataKey="uv" isAnimationActive={false} />
+          {children}
+        </LineChart>
+      ));
+      const { spy } = renderTestCase(state => selectAxisDomain(state, 'yAxis', 0, false));
+      expectLastCalledWith(spy, [400, 300, 300, 200, 278, 189]);
+    });
+
+    it('should not inherit dataKey from the other axis with type=number', () => {
+      const renderTestCase = createSelectorTestCase(({ children }) => (
+        <LineChart width={400} height={300} data={PageData}>
+          <XAxis type="number" dataKey="pv" />
+          <YAxis />
+          <Line isAnimationActive={false} />
+          {children}
+        </LineChart>
+      ));
+      const { spy } = renderTestCase(selectAllEffectiveGraphicalItemDataKeys);
+      expectLastCalledWith(spy, []);
+    });
   });
 });
 

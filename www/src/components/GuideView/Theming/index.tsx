@@ -624,11 +624,11 @@ export function ThemingGuide() {
         same data, so they get the same color.
       </p>
       <p>
-        A graphical item without its own <code>dataKey</code> uses the <code>dataKey</code> of its numerical axis:{' '}
-        <LinkToApi>YAxis</LinkToApi> in the horizontal layout, <LinkToApi>XAxis</LinkToApi> in the vertical layout,{' '}
-        <LinkToApi>PolarRadiusAxis</LinkToApi> for <LinkToApi>Radar</LinkToApi>, and{' '}
-        <LinkToApi>PolarAngleAxis</LinkToApi> for <LinkToApi>RadialBar</LinkToApi>. This is how a{' '}
-        <LinkToApi>Scatter</LinkToApi> that reads both coordinates from its axes gets a theme color.
+        A graphical item without its own <code>dataKey</code> uses the <code>dataKey</code> of its value axis. The chart
+        layout decides which axis that is, regardless of the axis <code>type</code>: <LinkToApi>YAxis</LinkToApi> in the
+        horizontal layout, <LinkToApi>XAxis</LinkToApi> in the vertical layout, <LinkToApi>PolarRadiusAxis</LinkToApi>{' '}
+        for <LinkToApi>Radar</LinkToApi>, and <LinkToApi>PolarAngleAxis</LinkToApi> for <LinkToApi>RadialBar</LinkToApi>
+        . This is how a <LinkToApi>Scatter</LinkToApi> that reads both coordinates from its axes gets a theme color.
       </p>
       <p>
         This is a convenient default. If you need different colors or want to control the assignment yourself, provide

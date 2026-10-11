@@ -4,13 +4,13 @@
  *
  * The dataKey defined directly on the graphical item always wins.
  * When the item does not define its own, it inherits the dataKey of its value axis.
- * The value axis is the numerical axis where the item shows its value,
- * and which one that is depends on the chart layout.
+ * The value axis is the axis where the item shows its value.
+ * Which one that is depends on the chart layout alone, and not on the axis `type`.
  *
  * This file is the single place where that rule is defined.
  */
 import { createSelector } from 'reselect';
-import { DataKey, EvaluatedAxisDomainType, LayoutType } from '../../util/types';
+import { DataKey, LayoutType } from '../../util/types';
 import { isNotNil } from '../../util/DataUtils';
 import { RechartsRootState } from '../store';
 import { AxisId } from '../cartesianAxisSlice';
@@ -31,33 +31,18 @@ export type GraphicalItemDataKeySource = {
 };
 
 /**
- * The parts of an axis that decide which dataKey is used on it.
- */
-export type AxisDataKeySource = {
-  dataKey?: DataKey<any> | undefined;
-  type?: EvaluatedAxisDomainType;
-};
-
-/**
- * Value axis is the numerical axis where graphical items display their value,
+ * Value axis is the axis where graphical items display their value,
  * as opposed to the categorical axis where they display the category (or name, or index).
  *
- * The chart layout decides which axis that is. The axis must also be numerical:
- * an axis with `type="category"` in the value position keeps showing its own categories.
+ * The chart layout alone decides which axis that is.
+ * The axis `type` prop has no say in this: an axis in the value position is the value axis
+ * even if it has `type="category"`, and the other axis is not, even if it has `type="number"`.
  *
  * @param layout chart layout
  * @param axisType kind of the axis
- * @param axis axis settings
  * @returns true if graphical items in this layout show their value on this axis
  */
-export function isValueAxis(
-  layout: LayoutType | undefined,
-  axisType: AllAxisTypes,
-  axis: AxisDataKeySource | undefined,
-): boolean {
-  if (axis?.type !== 'number') {
-    return false;
-  }
+export function isValueAxis(layout: LayoutType | undefined, axisType: AllAxisTypes): boolean {
   return (
     (layout === 'horizontal' && axisType === 'yAxis') ||
     (layout === 'vertical' && axisType === 'xAxis') ||
@@ -73,21 +58,21 @@ export function isValueAxis(
  * On all other axes the axis wins, and the graphical item is the fallback.
  *
  * @param itemDataKey dataKey of the graphical item
- * @param axis axis settings
+ * @param axisDataKey dataKey of the axis
  * @param layout chart layout
  * @param axisType kind of the axis
  * @returns dataKey to use when reading the item value on this axis
  */
 export function getDataKeyOnAxis(
   itemDataKey: DataKey<any> | undefined,
-  axis: AxisDataKeySource | undefined,
+  axisDataKey: DataKey<any> | undefined,
   layout: LayoutType | undefined,
   axisType: AllAxisTypes,
 ): DataKey<any> | undefined {
-  if (isValueAxis(layout, axisType, axis)) {
-    return itemDataKey ?? axis?.dataKey;
+  if (isValueAxis(layout, axisType)) {
+    return itemDataKey ?? axisDataKey;
   }
-  return axis?.dataKey ?? itemDataKey;
+  return axisDataKey ?? itemDataKey;
 }
 
 type AxisDataKeyState = Pick<RechartsRootState, 'cartesianAxis' | 'polarAxis'>;
@@ -97,28 +82,18 @@ function getValueAxisDataKey(
   layout: LayoutType | undefined,
   { cartesianAxis, polarAxis }: AxisDataKeyState,
 ): DataKey<any> | undefined {
-  let axisType: AllAxisTypes, axis: AxisDataKeySource | undefined;
   switch (layout) {
     case 'horizontal':
-      axisType = 'yAxis';
-      axis = item.yAxisId == null ? undefined : cartesianAxis.yAxis[item.yAxisId];
-      break;
+      return item.yAxisId == null ? undefined : cartesianAxis.yAxis[item.yAxisId]?.dataKey;
     case 'vertical':
-      axisType = 'xAxis';
-      axis = item.xAxisId == null ? undefined : cartesianAxis.xAxis[item.xAxisId];
-      break;
+      return item.xAxisId == null ? undefined : cartesianAxis.xAxis[item.xAxisId]?.dataKey;
     case 'centric':
-      axisType = 'radiusAxis';
-      axis = item.radiusAxisId == null ? undefined : polarAxis.radiusAxis[item.radiusAxisId];
-      break;
+      return item.radiusAxisId == null ? undefined : polarAxis.radiusAxis[item.radiusAxisId]?.dataKey;
     case 'radial':
-      axisType = 'angleAxis';
-      axis = item.angleAxisId == null ? undefined : polarAxis.angleAxis[item.angleAxisId];
-      break;
+      return item.angleAxisId == null ? undefined : polarAxis.angleAxis[item.angleAxisId]?.dataKey;
     default:
       return undefined;
   }
-  return isValueAxis(layout, axisType, axis) ? axis?.dataKey : undefined;
 }
 
 /**

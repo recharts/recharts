@@ -1486,7 +1486,8 @@ export interface ValueAxisDataConsumer<DataPointType, DataValueType> {
    * - `number`: the index of the field in the data;
    * - `function`: a function that receives the data object and returns the value.
    *
-   * If undefined, this component uses the `dataKey` of its numerical axis:
+   * If undefined, this component uses the `dataKey` of its value axis.
+   * The chart layout decides which axis that is, regardless of the axis `type`:
    * YAxis in horizontal layout, XAxis in vertical layout,
    * PolarRadiusAxis in centric layout, and PolarAngleAxis in radial layout.
    * If both this component and the axis define a `dataKey`, this component wins.
