@@ -726,6 +726,13 @@ export function ThemingGuide() {
       <p>Some things to keep in mind:</p>
       <ul>
         <li>
+          <code>light-dark()</code> needs Chrome 123, Firefox 120, or Safari 17.5. Older browsers do not understand the
+          value and ignore it: shapes fall back to the SVG defaults, which are a black fill and no stroke, and{' '}
+          <LinkToApi>Tooltip</LinkToApi> and <LinkToApi>Legend</LinkToApi> lose their theme colors. If you support older
+          browsers, switch between <code>lightTheme</code> and <code>darkTheme</code> in React state, or use CSS
+          variables. Both are described below.
+        </li>
+        <li>
           Like <code>darkTheme</code>, <code>autoTheme</code> only styles what Recharts draws. The background behind the
           chart belongs to your page, so let the page background follow the same <code>color-scheme</code>. See the
           Background section above.
