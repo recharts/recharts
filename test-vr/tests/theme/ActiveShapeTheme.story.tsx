@@ -79,7 +79,7 @@ export function FunnelActiveShape() {
   return (
     <FunnelChart style={chartStyle}>
       <Funnel data={funnelData} dataKey="value" activeShape isAnimationActive={false} />
-      <Tooltip content={renderNothing} />
+      <Tooltip defaultIndex={1} content={renderNothing} />
     </FunnelChart>
   );
 }

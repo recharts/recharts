@@ -1,6 +1,6 @@
 import React from 'react';
 import { render } from '@testing-library/react';
-import { Cell, Funnel, FunnelChart, FunnelProps, FunnelTrapezoidItem, LabelList } from '../../src';
+import { Cell, Funnel, FunnelChart, FunnelProps, FunnelTrapezoidItem, LabelList, Tooltip } from '../../src';
 import { showTooltip } from '../component/Tooltip/tooltipTestHelpers';
 import { funnelChartMouseHoverTooltipSelector } from '../component/Tooltip/tooltipMouseHoverSelectors';
 import { computeFunnelTrapezoids } from '../../src/cartesian/Funnel';
@@ -102,6 +102,33 @@ describe('<Funnel />', () => {
     expect(container.querySelectorAll('.custom-active-shape')).toHaveLength(1);
 
     expect(container.getElementsByClassName('recharts-funnel-trapezoid')).toHaveLength(data.length);
+  });
+
+  it('should render active shape for the Tooltip defaultIndex', () => {
+    const { container } = render(
+      <FunnelChart width={500} height={500}>
+        <Funnel dataKey="value" data={data} isAnimationActive={false} activeShape={{ fill: 'red' }} />
+        <Tooltip defaultIndex={1} />
+      </FunnelChart>,
+    );
+
+    const trapezoids = container.querySelectorAll('.recharts-funnel-trapezoid');
+    expect(trapezoids).toHaveLength(data.length);
+    const activeShapes = container.querySelectorAll('.recharts-active-shape');
+    expect(activeShapes).toHaveLength(1);
+    expect(trapezoids[1].contains(activeShapes[0])).toBe(true);
+    expect(activeShapes[0].querySelector('.recharts-trapezoid')).toHaveAttribute('fill', 'red');
+  });
+
+  it('should not render active shape for the Tooltip defaultIndex when activeShape is not set', () => {
+    const { container } = render(
+      <FunnelChart width={500} height={500}>
+        <Funnel dataKey="value" data={data} isAnimationActive={false} />
+        <Tooltip defaultIndex={1} />
+      </FunnelChart>,
+    );
+
+    expect(container.querySelectorAll('.recharts-active-shape')).toHaveLength(0);
   });
 
   it('Renders funnel custom cell in simple FunnelChart', () => {
