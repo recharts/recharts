@@ -23,7 +23,7 @@ import { hasOwnColors } from './dataEntryStyles';
  * Merges the `active` theme styles with user-provided styles.
  *
  * @param activeStyle `active` slice of the graphical item theme
- * @param ownStyles styles provided by the user: props of graphical item, active shape object, data entry, or Cell props
+ * @param ownStyles styles provided by the user: props of graphical item, active shape object, or data entry
  * @returns theme styles to apply to the active representation, without the ones that `ownStyles` override.
  * Undefined if `ownStyles` have their own colors, or if there is nothing to apply.
  */
@@ -97,12 +97,12 @@ export function useThemedActiveStyles(
  *
  * @param activeOption the `activeDot`, `activeShape`, or `activeBar` prop
  * @param themedActiveStyles `active` slice of the graphical item theme, or the result of {@link resolveThemedActiveStyles}
- * @param entries data entry and its Cell props, if this graphical item renders one shape per data entry
+ * @param entry data entry, if this graphical item renders one shape per data entry
  */
 export function getActiveStyleOverrides(
   activeOption: unknown,
   themedActiveStyles: Styles2D | undefined,
-  ...entries: ReadonlyArray<unknown>
+  entry?: unknown,
 ): Styles2D | undefined {
   let result: Styles2D | undefined;
   if (activeOption === true) {
@@ -110,5 +110,5 @@ export function getActiveStyleOverrides(
   } else if (activeOption != null && typeof activeOption === 'object' && !isValidElement(activeOption)) {
     result = resolveThemedActiveStyles(themedActiveStyles, activeOption);
   }
-  return entries.reduce<Styles2D | undefined>(resolveThemedActiveStyles, result);
+  return entry == null ? result : resolveThemedActiveStyles(result, entry);
 }

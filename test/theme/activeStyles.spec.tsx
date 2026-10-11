@@ -4,7 +4,6 @@ import { act, fireEvent } from '@testing-library/react';
 import {
   Bar,
   BarChart,
-  Cell,
   Funnel,
   FunnelChart,
   Pie,
@@ -64,13 +63,7 @@ type ChartOptions = {
   active: ActiveOption;
   itemProps?: { fill?: string; stroke?: string; strokeWidth?: number };
   chartData?: ReadonlyArray<object>;
-  cell?: boolean;
 };
-
-/**
- * Renders a child for each data entry, where only the active one (index 1) has a Cell with its own styles.
- */
-const cells = () => data.map((entry, index) => <Cell key={entry.name} {...(index === 1 ? { fill: 'gold' } : {})} />);
 
 const customShape = () => (
   <g className="custom-shape">
@@ -94,11 +87,9 @@ const testCases: ReadonlyArray<{
     name: 'Bar',
     expected: { fill: 'white', stroke: 'crimson', strokeWidth: '3' },
     inactive: { fill: 'purple', stroke: 'indigo' },
-    renderChart: ({ active, itemProps, chartData = data, cell }) => (
+    renderChart: ({ active, itemProps, chartData = data }) => (
       <BarChart width={400} height={400} data={chartData}>
-        <Bar dataKey="value" isAnimationActive={false} activeBar={active} {...itemProps}>
-          {cell && cells()}
-        </Bar>
+        <Bar dataKey="value" isAnimationActive={false} activeBar={active} {...itemProps} />
         <Tooltip defaultIndex={1} />
       </BarChart>
     ),
@@ -107,13 +98,11 @@ const testCases: ReadonlyArray<{
     name: 'Scatter',
     expected: { fill: 'white', stroke: 'crimson', strokeWidth: '3' },
     inactive: { fill: 'purple', stroke: 'indigo' },
-    renderChart: ({ active, itemProps, chartData = data, cell }) => (
+    renderChart: ({ active, itemProps, chartData = data }) => (
       <ScatterChart width={400} height={400}>
         <XAxis dataKey="x" type="number" />
         <YAxis dataKey="y" type="number" />
-        <Scatter data={chartData} dataKey="y" isAnimationActive={false} activeShape={active} {...itemProps}>
-          {cell && cells()}
-        </Scatter>
+        <Scatter data={chartData} dataKey="y" isAnimationActive={false} activeShape={active} {...itemProps} />
         <Tooltip defaultIndex={1} />
       </ScatterChart>
     ),
@@ -122,11 +111,9 @@ const testCases: ReadonlyArray<{
     name: 'RadialBar',
     expected: { fill: 'white', stroke: 'crimson', strokeWidth: '3' },
     inactive: { fill: 'purple', stroke: 'indigo' },
-    renderChart: ({ active, itemProps, chartData = data, cell }) => (
+    renderChart: ({ active, itemProps, chartData = data }) => (
       <RadialBarChart width={400} height={400} data={chartData}>
-        <RadialBar dataKey="value" isAnimationActive={false} activeShape={active} {...itemProps}>
-          {cell && cells()}
-        </RadialBar>
+        <RadialBar dataKey="value" isAnimationActive={false} activeShape={active} {...itemProps} />
         <Tooltip defaultIndex={1} />
       </RadialBarChart>
     ),
@@ -135,11 +122,9 @@ const testCases: ReadonlyArray<{
     name: 'Pie',
     expected: { fill: 'black', stroke: 'orange', strokeWidth: '5' },
     inactive: { fill: 'teal', stroke: 'navy' },
-    renderChart: ({ active, itemProps, chartData = data, cell }) => (
+    renderChart: ({ active, itemProps, chartData = data }) => (
       <PieChart width={400} height={400}>
-        <Pie data={chartData} dataKey="value" isAnimationActive={false} activeShape={active} {...itemProps}>
-          {cell && cells()}
-        </Pie>
+        <Pie data={chartData} dataKey="value" isAnimationActive={false} activeShape={active} {...itemProps} />
         <Tooltip defaultIndex={1} />
       </PieChart>
     ),
@@ -148,11 +133,9 @@ const testCases: ReadonlyArray<{
     name: 'Funnel',
     expected: { fill: 'black', stroke: 'orange', strokeWidth: '5' },
     inactive: { fill: 'teal', stroke: 'navy' },
-    renderChart: ({ active, itemProps, chartData = data, cell }) => (
+    renderChart: ({ active, itemProps, chartData = data }) => (
       <FunnelChart width={400} height={400}>
-        <Funnel data={chartData} dataKey="value" isAnimationActive={false} activeShape={active} {...itemProps}>
-          {cell && cells()}
-        </Funnel>
+        <Funnel data={chartData} dataKey="value" isAnimationActive={false} activeShape={active} {...itemProps} />
         <Tooltip />
       </FunnelChart>
     ),
@@ -210,13 +193,6 @@ describe.each(testCases)('theme active styles in $name', ({ expected, inactive, 
 
   it('ignores the theme active styles when the data entry has its own color', () => {
     const activeShape = renderActiveShape(renderChart({ active: true, chartData: dataWithOwnStyles }));
-    expect(activeShape).toHaveAttribute('fill', 'gold');
-    expect(activeShape).not.toHaveAttribute('stroke', expected.stroke);
-    expect(activeShape).not.toHaveAttribute('stroke-width', expected.strokeWidth);
-  });
-
-  it('ignores the theme active styles when the Cell has its own color', () => {
-    const activeShape = renderActiveShape(renderChart({ active: true, cell: true }));
     expect(activeShape).toHaveAttribute('fill', 'gold');
     expect(activeShape).not.toHaveAttribute('stroke', expected.stroke);
     expect(activeShape).not.toHaveAttribute('stroke-width', expected.strokeWidth);
@@ -301,13 +277,13 @@ describe('getActiveStyleOverrides', () => {
     expect(getActiveStyleOverrides({ strokeWidth: 5 }, styles)).toEqual({ fill: 'white' });
   });
 
-  it('returns undefined when the data entry or the Cell have their own color', () => {
+  it('returns undefined when the data entry has its own color', () => {
     expect(getActiveStyleOverrides(true, styles, { fill: 'red' })).toBeUndefined();
-    expect(getActiveStyleOverrides(true, styles, {}, { stroke: 'red' })).toBeUndefined();
+    expect(getActiveStyleOverrides(true, styles, { stroke: 'red' })).toBeUndefined();
   });
 
   it('leaves out the styles that the data entry overrides', () => {
-    expect(getActiveStyleOverrides(true, styles, { strokeWidth: 5 }, undefined)).toEqual({ fill: 'white' });
+    expect(getActiveStyleOverrides(true, styles, { strokeWidth: 5 })).toEqual({ fill: 'white' });
   });
 
   it('returns undefined without theme styles', () => {

@@ -364,7 +364,6 @@ function FunnelTrapezoids(props: FunnelTrapezoidsProps) {
     indexedActiveStyles,
     ...restOfAllOtherProps
   } = allOtherFunnelProps;
-  const cells = useMemo(() => findAllByType(allOtherFunnelProps.children, Cell), [allOtherFunnelProps.children]);
 
   const onMouseEnterFromContext = useMouseEnterItemDispatch(
     onMouseEnterFromProps,
@@ -390,10 +389,9 @@ function FunnelTrapezoids(props: FunnelTrapezoidsProps) {
                 indexedActiveStyles[i % indexedActiveStyles.length],
                 /*
                  * `entry.payload` already has the theme styles merged in,
-                 * so we look at the original data entry and at the Cell instead.
+                 * so we look at the original data entry instead.
                  */
                 entry.payload?.payload,
-                cells[i]?.props,
               )
             : undefined;
         const { id, ...trapezoidProps }: FunnelTrapezoidProps = {
