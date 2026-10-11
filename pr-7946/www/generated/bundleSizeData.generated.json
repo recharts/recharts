@@ -1,45 +1,45 @@
 {
   "treemap": {
     "examplePath": "www/src/views/IndexView/IndexLineChart.tsx",
-    "totalSize": 940917,
-    "totalSizeLabel": "918.86 KB",
+    "totalSize": 940837,
+    "totalSizeLabel": "918.79 KB",
     "moduleCount": 377,
-    "generatedAt": "2026-10-10T12:34:18.487Z",
+    "generatedAt": "2026-10-11T04:17:47.788Z",
     "stages": [
       {
         "stage": "es6-folder",
-        "bytes": 1461883,
+        "bytes": 1461494,
         "humanReadableSize": "1.39 MB",
         "reductionFromBaselinePercent": 0
       },
       {
         "stage": "tree-shaken",
-        "bytes": 943818,
-        "humanReadableSize": "921.70 KB",
+        "bytes": 943738,
+        "humanReadableSize": "921.62 KB",
         "reductionFromBaselinePercent": 0
       },
       {
         "stage": "minified",
-        "bytes": 310666,
-        "humanReadableSize": "303.38 KB",
+        "bytes": 310650,
+        "humanReadableSize": "303.37 KB",
         "reductionFromBaselinePercent": 67.08
       },
       {
         "stage": "minified+gzip",
-        "bytes": 101843,
-        "humanReadableSize": "99.46 KB",
+        "bytes": 101825,
+        "humanReadableSize": "99.44 KB",
         "reductionFromBaselinePercent": 89.21
       }
     ],
     "tree": {
       "name": "bundle",
       "fullPath": "bundle",
-      "value": 940917,
+      "value": 940837,
       "children": [
         {
           "name": "src",
           "fullPath": "src",
-          "value": 537341,
+          "value": 537261,
           "children": [
             {
               "name": "state",
@@ -932,12 +932,12 @@
             {
               "name": "theme",
               "fullPath": "src/theme",
-              "value": 11315,
+              "value": 11235,
               "children": [
                 {
                   "name": "activeStyles.ts",
                   "fullPath": "src/theme/activeStyles.ts",
-                  "value": 3544
+                  "value": 3464
                 },
                 {
                   "name": "useBackwardsCompatibleTheme.ts",
@@ -2612,45 +2612,45 @@
   },
   "sunburst": {
     "examplePath": "www/src/views/IndexView/IndexLineChart.tsx",
-    "totalSize": 940917,
-    "totalSizeLabel": "918.86 KB",
+    "totalSize": 940837,
+    "totalSizeLabel": "918.79 KB",
     "moduleCount": 377,
-    "generatedAt": "2026-10-10T12:34:19.796Z",
+    "generatedAt": "2026-10-11T04:17:50.206Z",
     "stages": [
       {
         "stage": "es6-folder",
-        "bytes": 1461883,
+        "bytes": 1461494,
         "humanReadableSize": "1.39 MB",
         "reductionFromBaselinePercent": 0
       },
       {
         "stage": "tree-shaken",
-        "bytes": 943818,
-        "humanReadableSize": "921.70 KB",
+        "bytes": 943738,
+        "humanReadableSize": "921.62 KB",
         "reductionFromBaselinePercent": 0
       },
       {
         "stage": "minified",
-        "bytes": 310666,
-        "humanReadableSize": "303.38 KB",
+        "bytes": 310650,
+        "humanReadableSize": "303.37 KB",
         "reductionFromBaselinePercent": 67.08
       },
       {
         "stage": "minified+gzip",
-        "bytes": 101843,
-        "humanReadableSize": "99.46 KB",
+        "bytes": 101825,
+        "humanReadableSize": "99.44 KB",
         "reductionFromBaselinePercent": 89.21
       }
     ],
     "tree": {
       "name": "bundle",
       "fullPath": "bundle",
-      "value": 940917,
+      "value": 940837,
       "children": [
         {
           "name": "src",
           "fullPath": "src",
-          "value": 537341,
+          "value": 537261,
           "children": [
             {
               "name": "state",
@@ -3543,12 +3543,12 @@
             {
               "name": "theme",
               "fullPath": "src/theme",
-              "value": 11315,
+              "value": 11235,
               "children": [
                 {
                   "name": "activeStyles.ts",
                   "fullPath": "src/theme/activeStyles.ts",
-                  "value": 3544
+                  "value": 3464
                 },
                 {
                   "name": "useBackwardsCompatibleTheme.ts",
