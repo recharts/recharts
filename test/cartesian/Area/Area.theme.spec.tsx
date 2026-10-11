@@ -483,8 +483,8 @@ describe('Area theme', () => {
       });
     });
 
-    describe('when activeDot prop conflicts with theme active', () => {
-      it('should use the explicit activeDot prop', () => {
+    describe('when activeDot prop has its own color', () => {
+      it('should ignore the theme active styles', () => {
         const { container } = rechartsTestRender(
           <RechartsThemeProvider
             value={{
@@ -508,8 +508,8 @@ describe('Area theme', () => {
         const activeDot = container.querySelector('.recharts-active-dot circle');
         assertNotNull(activeDot);
         expect(activeDot).toHaveAttribute('fill', 'gold');
-        expect(activeDot).toHaveAttribute('stroke', 'red');
-        expect(activeDot).toHaveAttribute('stroke-width', '5');
+        expect(activeDot).not.toHaveAttribute('stroke', 'red');
+        expect(activeDot).not.toHaveAttribute('stroke-width', '5');
         expect(activeDot).toHaveAttribute('r', '10');
       });
     });

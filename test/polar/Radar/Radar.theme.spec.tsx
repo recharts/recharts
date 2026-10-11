@@ -338,7 +338,7 @@ describe('Radar theme', () => {
       expect(activeDot).toHaveAttribute('stroke-width', '5');
     });
 
-    it('lets explicit active dot fields override the active graphical-item style', () => {
+    it('ignores the active graphical-item style when the active dot has its own color', () => {
       const { container } = rechartsTestRender(
         <RechartsThemeProvider
           value={{
@@ -359,8 +359,8 @@ describe('Radar theme', () => {
       showTooltip(container, radarChartMouseHoverTooltipSelector);
       const activeDot = getActiveDot(container);
       expect(activeDot).toHaveAttribute('fill', 'blue');
-      expect(activeDot).toHaveAttribute('stroke', 'purple');
-      expect(activeDot).toHaveAttribute('stroke-width', '5');
+      expect(activeDot).not.toHaveAttribute('stroke', 'purple');
+      expect(activeDot).not.toHaveAttribute('stroke-width', '5');
     });
   });
 });

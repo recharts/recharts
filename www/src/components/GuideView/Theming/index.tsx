@@ -629,7 +629,10 @@ export function ThemingGuide() {
       <p>
         Each entry can also carry an <code>active</code> block, which styles the highlighted representation of that
         item: the active dot of <LinkToApi>Line</LinkToApi>, <LinkToApi>Area</LinkToApi> and{' '}
-        <LinkToApi>Radar</LinkToApi>, and the active sector of <LinkToApi>Pie</LinkToApi>.
+        <LinkToApi>Radar</LinkToApi>, the active bar of <LinkToApi>Bar</LinkToApi>, and the active shape of{' '}
+        <LinkToApi>Pie</LinkToApi>, <LinkToApi>Scatter</LinkToApi>, <LinkToApi>RadialBar</LinkToApi> and{' '}
+        <LinkToApi>Funnel</LinkToApi>. It only styles what Recharts renders by default: a custom active dot, bar or
+        shape is in full control of its own styles and receives none of these.
       </p>
 
       <h2>Writing your own theme</h2>

@@ -76,6 +76,7 @@ import { Styles2D } from '../theme/RechartsTheme';
 import { useBackwardsCompatibleTheme } from '../theme/useBackwardsCompatibleTheme';
 import { useGraphicalItemIdentity } from '../theme/useGraphicalItemIdentity';
 import { getEntryStyleOverrides, UnthemedStyles, useUnthemedStyles } from '../theme/dataEntryStyles';
+import { getActiveStyleOverrides, useThemedActiveStyles } from '../theme/activeStyles';
 
 const STABLE_EMPTY_ARRAY: readonly RadialBarDataItem[] = [];
 
@@ -138,7 +139,8 @@ function RadialBarSectors({
   isAnimating,
   isEntrance,
 }: RadialBarSectorsProps) {
-  const { shape, activeShape, cornerRadius, id, unthemedStyles, ...others } = allOtherRadialBarProps;
+  const { shape, activeShape, cornerRadius, id, unthemedStyles, themedActiveStyles, ...others } =
+    allOtherRadialBarProps;
   const baseProps = svgPropertiesNoEvents(others);
 
   const activeIndex = useAppSelector(selectActiveTooltipIndex);
@@ -170,6 +172,7 @@ function RadialBarSectors({
           cornerRadius: parseCornerRadius(cornerRadius),
           ...getEntryStyleOverrides(entry, unthemedStyles),
           ...entry,
+          ...(isActive ? getActiveStyleOverrides(activeShape, themedActiveStyles, entry) : undefined),
           ...adaptEventsOfChild(restOfAllOtherProps, entry, i),
           onMouseEnter,
           onMouseLeave,
@@ -508,6 +511,11 @@ type ThemeInternalProps = {
    * Undefined when there is no active theme.
    */
   unthemedStyles?: UnthemedStyles;
+  /**
+   * Theme styles of the active shape, without the ones that explicit props override.
+   * Undefined when there is no active theme, or when the theme has no active styles.
+   */
+  themedActiveStyles?: Styles2D;
 };
 
 type InternalProps = WithIdRequired<PropsWithDefaults> & Pick<InternalRadialBarProps, 'sectors'> & ThemeInternalProps;
@@ -867,6 +875,7 @@ export function RadialBar<DataPointType = any, DataValueType = any>(
 ) {
   const graphicalItemThemeSelector = useGraphicalItemIdentity(outsideProps.dataKey, outsideProps);
   const unthemedStyles = useUnthemedStyles(outsideProps);
+  const themedActiveStyles = useThemedActiveStyles(graphicalItemThemeSelector, outsideProps);
   const graphicalItemStyle = useBackwardsCompatibleTheme<RadialBarProps<DataPointType, DataValueType>>(
     graphicalItemThemeSelector,
     outsideProps,
@@ -910,7 +919,13 @@ export function RadialBar<DataPointType = any, DataValueType = any>(
             maxBarSize={props.maxBarSize}
           />
           <SetRadialBarPayloadLegend {...props} {...themedProps} />
-          <RadialBarImpl {...props} {...themedProps} id={id} unthemedStyles={unthemedStyles} />
+          <RadialBarImpl
+            {...props}
+            {...themedProps}
+            id={id}
+            unthemedStyles={unthemedStyles}
+            themedActiveStyles={themedActiveStyles}
+          />
         </>
       )}
     </RegisterGraphicalItemId>

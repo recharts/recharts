@@ -94,6 +94,7 @@ import { Styles2D } from '../theme/RechartsTheme';
 import { useBackwardsCompatibleTheme } from '../theme/useBackwardsCompatibleTheme';
 import { useGraphicalItemIdentity } from '../theme/useGraphicalItemIdentity';
 import { getEntryStyleOverrides, UnthemedStyles, useUnthemedStyles } from '../theme/dataEntryStyles';
+import { getActiveStyleOverrides, useThemedActiveStyles } from '../theme/activeStyles';
 
 type BarRectangleType = {
   x: number | null;
@@ -470,6 +471,11 @@ type InternalBarProps = {
    * Undefined when there is no active theme.
    */
   unthemedStyles?: UnthemedStyles;
+  /**
+   * Theme styles of the active bar, without the ones that explicit props override.
+   * Undefined when there is no active theme, or when the theme has no active styles.
+   */
+  themedActiveStyles?: Styles2D;
 };
 
 type BarSvgProps = Omit<
@@ -654,12 +660,13 @@ function BarRectangleWithActiveState(
     activeBar: ActiveShape<BarShapeProps, SVGPathElement>;
     baseProps: WithoutId<SVGPropsNoEvents<BarRectanglesProps>>;
     entryStyleOverrides: UnthemedStyles | undefined;
+    themedActiveStyles: Styles2D | undefined;
     entry: BarRectangleItem;
     index: number;
     dataKey: DataKey<any> | undefined;
   },
 ) {
-  const { shape, activeBar, baseProps, entryStyleOverrides, entry, index, dataKey } = props;
+  const { shape, activeBar, baseProps, entryStyleOverrides, themedActiveStyles, entry, index, dataKey } = props;
   const activeIndex = useAppSelector(selectActiveTooltipIndex);
   const activeDataKey = useAppSelector(selectActiveTooltipDataKey);
   /*
@@ -734,6 +741,15 @@ function BarRectangleWithActiveState(
   } else {
     option = shape;
   }
+  /*
+   * Follows `isVisuallyActive` so that the theme styles change together with the `isActive` prop of the shape.
+   *
+   * `activeBar={true}` renders the `shape`, so a custom `shape` is a custom active bar too,
+   * and it decides on its own how the active state looks like.
+   */
+  const activeStyleOverrides = isVisuallyActive
+    ? getActiveStyleOverrides(option === defaultBarShape ? true : option, themedActiveStyles, entry)
+    : undefined;
 
   const content = (
     <BarRectangle
@@ -741,6 +757,7 @@ function BarRectangleWithActiveState(
       name={baseProps.name == null ? undefined : String(baseProps.name)}
       {...entryStyleOverrides}
       {...entry}
+      {...activeStyleOverrides}
       isActive={isVisuallyActive}
       option={option}
       index={index}
@@ -801,7 +818,7 @@ function BarRectangles({
   props: BarRectanglesProps;
 }) {
   const { id, ...baseProps } = svgPropertiesNoEvents(props) ?? {};
-  const { shape, dataKey, activeBar, unthemedStyles } = props;
+  const { shape, dataKey, activeBar, unthemedStyles, themedActiveStyles } = props;
 
   const {
     onMouseEnter: onMouseEnterFromProps,
@@ -838,6 +855,7 @@ function BarRectangles({
                 activeBar={activeBar}
                 baseProps={baseProps}
                 entryStyleOverrides={getEntryStyleOverrides(entry, unthemedStyles)}
+                themedActiveStyles={themedActiveStyles}
                 entry={entry}
                 index={i}
                 dataKey={dataKey}
@@ -1295,6 +1313,7 @@ export function computeBarRectangles({
 function BarFn(outsideProps: Props) {
   const graphicalItemThemeSelector = useGraphicalItemIdentity(outsideProps.dataKey, outsideProps);
   const unthemedStyles = useUnthemedStyles(outsideProps);
+  const themedActiveStyles = useThemedActiveStyles(graphicalItemThemeSelector, outsideProps);
   const graphicalItemStyle = useBackwardsCompatibleTheme<Props>(graphicalItemThemeSelector, outsideProps, undefined);
   const props = resolveDefaultProps(outsideProps, defaultBarProps);
   // stackId may arrive from props or from BarStack context
@@ -1352,7 +1371,13 @@ function BarFn(outsideProps: Props) {
             strokeWidth={themedProps.strokeWidth ?? props.strokeWidth}
           />
           <ZIndexLayer zIndex={props.zIndex}>
-            <BarImpl {...props} {...themedProps} id={id} unthemedStyles={unthemedStyles} />
+            <BarImpl
+              {...props}
+              {...themedProps}
+              id={id}
+              unthemedStyles={unthemedStyles}
+              themedActiveStyles={themedActiveStyles}
+            />
           </ZIndexLayer>
         </>
       )}

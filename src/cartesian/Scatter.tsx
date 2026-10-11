@@ -78,6 +78,8 @@ import { useBackwardsCompatibleTheme } from '../theme/useBackwardsCompatibleThem
 import { ChartData } from '../state/chartDataSlice';
 import { useGraphicalItemIdentity } from '../theme/useGraphicalItemIdentity';
 import { getEntryStyleOverrides, UnthemedStyles, useUnthemedStyles } from '../theme/dataEntryStyles';
+import { getActiveStyleOverrides, useThemedActiveStyles } from '../theme/activeStyles';
+import { Styles2D } from '../theme/RechartsTheme';
 
 export interface ScatterPointNode {
   x?: number | string;
@@ -162,6 +164,11 @@ interface ScatterInternalProps extends ZIndexable {
    * Undefined when there is no active theme.
    */
   unthemedStyles?: UnthemedStyles;
+  /**
+   * Theme styles of the active shape, without the ones that explicit props override.
+   * Undefined when there is no active theme, or when the theme has no active styles.
+   */
+  themedActiveStyles?: Styles2D;
 
   isAnimationActive: boolean | 'auto';
   animationBegin: number;
@@ -582,6 +589,7 @@ function ScatterLabelListProvider({
  * @param activeShape The shape to render when this point is active, or undefined if no active shape
  * @param baseProps SVG presentation attributes (fill, stroke, etc.) shared across all points
  * @param entryStyleOverrides Removes theme styles from points that define their own colors in data, or undefined
+ * @param themedActiveStyles Theme styles of the active shape, or undefined
  * @param id The graphical item ID of the parent Scatter component
  * @param restOfAllOtherProps Remaining Scatter props for user-provided event handlers via adaptEventsOfChild
  * @param onMouseEnterFromContext Curried mouse enter handler that dispatches tooltip activation
@@ -595,6 +603,7 @@ function ScatterPoint({
   activeShape,
   baseProps,
   entryStyleOverrides,
+  themedActiveStyles,
   id,
   restOfAllOtherProps,
   animationElapsedTime,
@@ -610,6 +619,7 @@ function ScatterPoint({
   activeShape: ScatterCustomizedShape | undefined;
   baseProps: WithoutId<SVGPropsNoEvents<InternalProps>>;
   entryStyleOverrides: UnthemedStyles | undefined;
+  themedActiveStyles: Styles2D | undefined;
   id: GraphicalItemId;
   restOfAllOtherProps: InternalProps;
   onMouseEnterFromContext: (
@@ -644,6 +654,7 @@ function ScatterPoint({
     ...filteredBaseProps,
     ...entryStyleOverrides,
     ...entry,
+    ...(isActive ? getActiveStyleOverrides(activeShape, themedActiveStyles, entry) : undefined),
     isActive,
     index,
     animationElapsedTime,
@@ -676,7 +687,7 @@ function ScatterPoint({
 
 function ScatterSymbols(props: ScatterSymbolsProps) {
   const { points, allOtherScatterProps, animationElapsedTime, isAnimating, isEntrance } = props;
-  const { shape, activeShape, dataKey, unthemedStyles } = allOtherScatterProps;
+  const { shape, activeShape, dataKey, unthemedStyles, themedActiveStyles } = allOtherScatterProps;
   const { id, ...allOtherPropsWithoutId } = allOtherScatterProps;
 
   const {
@@ -707,6 +718,7 @@ function ScatterSymbols(props: ScatterSymbolsProps) {
           activeShape={activeShape}
           baseProps={baseProps}
           entryStyleOverrides={getEntryStyleOverrides(entry, unthemedStyles)}
+          themedActiveStyles={themedActiveStyles}
           id={id}
           restOfAllOtherProps={restOfAllOtherProps}
           animationElapsedTime={animationElapsedTime}
@@ -971,7 +983,7 @@ export const defaultScatterProps = {
   zIndex: DefaultZIndexes.scatter,
 } as const satisfies Partial<Props>;
 
-function ScatterImpl(props: WithIdRequired<Props> & Pick<InternalProps, 'unthemedStyles'>) {
+function ScatterImpl(props: WithIdRequired<Props> & Pick<InternalProps, 'unthemedStyles' | 'themedActiveStyles'>) {
   const {
     animationBegin,
     animationDuration,
@@ -1039,6 +1051,7 @@ function ScatterImpl(props: WithIdRequired<Props> & Pick<InternalProps, 'untheme
 function ScatterFn(outsideProps: Props) {
   const graphicalItemThemeSelector = useGraphicalItemIdentity(outsideProps.dataKey, outsideProps);
   const unthemedStyles = useUnthemedStyles(outsideProps);
+  const themedActiveStyles = useThemedActiveStyles(graphicalItemThemeSelector, outsideProps);
   const graphicalItemTheme = useBackwardsCompatibleTheme<Props>(graphicalItemThemeSelector, outsideProps, undefined);
   const props = resolveDefaultProps(
     {
@@ -1075,7 +1088,7 @@ function ScatterFn(outsideProps: Props) {
             tooltipType={props.tooltipType}
             isPanorama={isPanorama}
           />
-          <ScatterImpl {...props} id={id} unthemedStyles={unthemedStyles} />
+          <ScatterImpl {...props} id={id} unthemedStyles={unthemedStyles} themedActiveStyles={themedActiveStyles} />
         </>
       )}
     </RegisterGraphicalItemId>
