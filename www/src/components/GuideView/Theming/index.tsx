@@ -3,6 +3,7 @@ import { SourceCodeEditor } from '../../Playground/SourceCodeEditor.tsx';
 import { LinkToApi } from '../../Shared/LinkToApi.tsx';
 import { RechartsLink } from '../../Shared/RechartsLink.tsx';
 import styles from '../guideTable.module.css';
+import ThemeHeroExample from './ThemeHeroExample.tsx';
 import ThemeSwitcherExample, { themeSwitcherDefaultState, themeSwitcherLevers } from './ThemeSwitcherExample.tsx';
 import ThemeSwitcherExampleSource from './ThemeSwitcherExample.tsx?raw';
 import CustomThemeExample from './CustomThemeExample.tsx';
@@ -216,6 +217,7 @@ export function ThemingGuide() {
   return (
     <article>
       <h1>Theming</h1>
+      <ThemeHeroExample />
       <p>
         A theme is a single object that sets the default visual style - colors, fonts, strokes, tooltip and legend
         styles - for every chart below it in the React tree. Instead of repeating <code>stroke</code>, <code>fill</code>{' '}
