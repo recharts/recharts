@@ -86,6 +86,21 @@ function useTooltipSyncEventsListener() {
             y: viewBox.y + (sourceHeight ? (y - sourceY) / sourceHeight : 0) * viewBox.height,
           };
 
+          /*
+           * Scaling alone assumes that both charts place the same index at the same relative position.
+           * That is not true when the axes have different scales - for example LineChart puts points
+           * on the edges of the plot area, while BarChart puts them in the middle of each band.
+           * So along the tooltip axis, snap to where this chart renders the synchronised index.
+           */
+          const activeTick = tooltipTicks?.find(tick => String(tick.index) === String(action.payload.index));
+          if (activeTick != null) {
+            if (layout === 'horizontal') {
+              scaledCoordinate.x = activeTick.coordinate;
+            } else if (layout === 'vertical') {
+              scaledCoordinate.y = activeTick.coordinate;
+            }
+          }
+
           dispatch({
             ...action,
             payload: {
