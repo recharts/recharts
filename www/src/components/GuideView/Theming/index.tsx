@@ -33,19 +33,15 @@ export function App() {
 const customThemeSnippet = `import { RechartsThemeProvider, lightTheme, type RechartsTheme } from 'recharts';
 
 /*
- * Option 1: start from scratch. Only \`graphicalItems\` is required.
- * Everything you leave out renders unstyled.
- */
-const minimalTheme: RechartsTheme = {
-  graphicalItems: [{ fill: '#4338ca' }, { fill: '#0f766e' }],
-};
-
-/*
- * Option 2: start from a built-in theme and override what you need.
- * These are plain objects, so a spread is all it takes.
+ * Start from a built-in theme to keep styles for components you do not override.
+ * Spread nested objects too when you want to preserve their other properties.
  */
 const brandTheme: RechartsTheme = {
   ...lightTheme,
+  graphicalItems: [
+    { fill: '#4338ca', stroke: '#4338ca' },
+    { fill: '#0f766e', stroke: '#0f766e' },
+  ],
   typography: { ...lightTheme.typography, fontFamily: 'Inter, sans-serif' },
   grid: { ...lightTheme.grid, stroke: '#e2e8f0', strokeDasharray: '1 4' },
 };
@@ -158,7 +154,7 @@ export const sizedTheme: RechartsTheme = {
 
 const designSystemExample = `import { useMemo } from 'react';
 import { useTheme } from '@mui/material/styles';
-import { RechartsThemeProvider, type RechartsTheme } from 'recharts';
+import { RechartsThemeProvider, darkTheme, lightTheme, type RechartsTheme } from 'recharts';
 
 /*
  * Recharts ships no adapters for design systems. Because RechartsTheme is a plain
@@ -167,10 +163,13 @@ import { RechartsThemeProvider, type RechartsTheme } from 'recharts';
  */
 function Charts({ children }) {
   const muiTheme = useTheme();
+  const baseTheme = muiTheme.palette.mode === 'dark' ? darkTheme : lightTheme;
 
   const rechartsTheme = useMemo<RechartsTheme>(
     () => ({
+      ...baseTheme,
       typography: {
+        ...baseTheme.typography,
         color: muiTheme.palette.text.primary,
         fontFamily: muiTheme.typography.fontFamily,
         fontSize: muiTheme.typography.body2.fontSize,
@@ -180,18 +179,20 @@ function Charts({ children }) {
         { fill: muiTheme.palette.secondary.main, stroke: muiTheme.palette.secondary.main },
         { fill: muiTheme.palette.warning.main, stroke: muiTheme.palette.warning.main },
       ],
-      grid: { stroke: muiTheme.palette.divider, fill: 'none' },
-      axis: { stroke: muiTheme.palette.text.secondary },
+      grid: { ...baseTheme.grid, stroke: muiTheme.palette.divider },
+      axis: { ...baseTheme.axis, stroke: muiTheme.palette.text.secondary },
       pageBackground: muiTheme.palette.background.paper,
       tooltip: {
+        ...baseTheme.tooltip,
         contentStyle: {
+          ...baseTheme.tooltip?.contentStyle,
           backgroundColor: muiTheme.palette.background.paper,
           border: \`1px solid \${muiTheme.palette.divider}\`,
           borderRadius: muiTheme.shape.borderRadius,
         },
       },
     }),
-    [muiTheme],
+    [muiTheme, baseTheme],
   );
 
   return <RechartsThemeProvider value={rechartsTheme}>{children}</RechartsThemeProvider>;
@@ -656,10 +657,15 @@ export function ThemingGuide() {
       <h2>Writing your own theme</h2>
       <p>
         A <code>RechartsTheme</code> is a plain object: build it inline, import it from a shared module, or fetch it as
-        JSON. Only <code>graphicalItems</code> is required.
+        JSON. Start from a built-in theme to preserve styles for components you do not override.
       </p>
       <SourceCodeEditor value={customThemeSnippet} />
-      <p>The example below defines a complete theme from scratch and applies it to a line chart:</p>
+      <p>
+        Only <code>graphicalItems</code> is required by the type, but omitted sections render unstyled. For example, a
+        palette with only <code>fill</code> colors leaves lines without a <code>stroke</code> and does not style axes,
+        grids or tooltips. Themes are not deep-merged: spread each nested object whose properties you want to keep. To
+        start from scratch instead, define styles for every component your chart uses, as in this example:
+      </p>
       <CodeEditorWithPreview
         Component={CustomThemeExample}
         sourceCode={CustomThemeExampleSource}
@@ -780,6 +786,10 @@ export function ThemingGuide() {
         <code>useMemo</code> away.
       </p>
       <SourceCodeEditor value={designSystemExample} />
+      <p>
+        This mapper starts from <code>lightTheme</code> or <code>darkTheme</code>, so components without a token mapping
+        keep the corresponding built-in styles. The tooltip also preserves its padding and label and item styles.
+      </p>
 
       <h2>Reading the theme yourself</h2>
       <p>
