@@ -903,6 +903,12 @@ function PieSectors(props: PieSectorsProps) {
   );
 }
 
+// getValueByDataKey returns null as-is (the default applies only to undefined), so treat it like 0.
+// See: https://github.com/recharts/recharts/issues/7965
+function isNonZeroNumber(value: unknown): value is number {
+  return isNumber(value) && value !== 0;
+}
+
 export function computePieSectors({
   pieSettings,
   displayedData,
@@ -920,7 +926,7 @@ export function computePieSectors({
   const absDeltaAngle = Math.abs(deltaAngle);
   const paddingAngle = displayedData.length <= 1 ? 0 : (pieSettings.paddingAngle ?? 0);
 
-  const notZeroItemCount = displayedData.filter(entry => getValueByDataKey(entry, dataKey, 0) !== 0).length;
+  const notZeroItemCount = displayedData.filter(entry => isNonZeroNumber(getValueByDataKey(entry, dataKey, 0))).length;
   const totalPaddingAngle = (absDeltaAngle >= 360 ? notZeroItemCount : notZeroItemCount - 1) * paddingAngle;
 
   const sum = displayedData.reduce((result: number, entry: any) => {
@@ -938,7 +944,7 @@ export function computePieSectors({
     displayedData.some(entry => {
       const val = getValueByDataKey(entry, dataKey, 0);
       const percent = (isNumber(val) ? val : 0) / sum;
-      return val !== 0 && percent * absDeltaAngle < minAngle;
+      return isNonZeroNumber(val) && percent * absDeltaAngle < minAngle;
     });
   const effectiveMinAngle = needsMinAngleAdjustment ? minAngle : 0;
 
@@ -962,13 +968,14 @@ export function computePieSectors({
           : pieSettings.fill;
 
       if (i) {
-        tempStartAngle = prev.endAngle + mathSign(deltaAngle) * paddingAngle * (val !== 0 ? 1 : 0);
+        tempStartAngle = prev.endAngle + mathSign(deltaAngle) * paddingAngle * (isNonZeroNumber(val) ? 1 : 0);
       } else {
         tempStartAngle = startAngle;
       }
 
       const tempEndAngle =
-        tempStartAngle + mathSign(deltaAngle) * ((val !== 0 ? effectiveMinAngle : 0) + percent * realTotalAngle);
+        tempStartAngle +
+        mathSign(deltaAngle) * ((isNonZeroNumber(val) ? effectiveMinAngle : 0) + percent * realTotalAngle);
       const midAngle = (tempStartAngle + tempEndAngle) / 2;
       const middleRadius = (coordinate.innerRadius + coordinate.outerRadius) / 2;
 
@@ -1002,7 +1009,7 @@ export function computePieSectors({
         startAngle: tempStartAngle,
         endAngle: tempEndAngle,
         payload: entryWithCellInfo,
-        paddingAngle: val !== 0 ? mathSign(deltaAngle) * paddingAngle : 0,
+        paddingAngle: isNonZeroNumber(val) ? mathSign(deltaAngle) * paddingAngle : 0,
       };
       return prev;
     });
