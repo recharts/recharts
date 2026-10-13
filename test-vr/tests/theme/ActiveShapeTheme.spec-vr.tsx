@@ -28,14 +28,9 @@ testWithThemes('RadialBar active shape', async ({ mountStory }) => {
   await expect(component).toHaveScreenshot();
 });
 
-/*
- * Funnel does not read the Tooltip defaultIndex, so it needs a real pointer interaction.
- * https://github.com/recharts/recharts/issues/7945
- */
 testWithThemes('Funnel active shape', async ({ mountStory }) => {
   const component = await mountStory('theme/ActiveShapeTheme/FunnelActiveShape');
 
-  await component.locator('.recharts-funnel-trapezoid').nth(1).hover();
   await expect(component.locator('.recharts-active-shape')).toHaveCount(1);
   await expect(component).toHaveScreenshot();
 });

@@ -6,9 +6,20 @@ const borderRadius = 4;
 const padding = '0.5ex';
 
 /**
- * Each entry pairs the same entry of `lightPalette` and `darkPalette`.
+ * Categorical series colors that follow the CSS `color-scheme` of the page.
+ *
+ * Each entry pairs the same entry of {@link lightPalette} and {@link darkPalette} in a CSS `light-dark()` value,
+ * so the browser picks the light or the dark color. See {@link autoTheme} for how to set the `color-scheme`.
+ *
+ * Use it to give explicit colors to graphical items that would otherwise share one theme color,
+ * for example `<Scatter fill={autoPalette[1]} />`.
+ *
+ * `light-dark()` needs Chrome 123, Firefox 120, or Safari 17.5. Older browsers ignore these values,
+ * see {@link autoTheme}.
+ *
+ * @experimental
  */
-const autoPalette: ReadonlyArray<string> = [
+export const autoPalette: ReadonlyArray<string> = [
   'light-dark(#2775e8, #5396ff)', //  1 Blue
   'light-dark(#b65900, #e97e2b)', //  2 Orange
   'light-dark(#007c59, #46d09f)', //  3 Aqua
@@ -50,6 +61,10 @@ function toGraphicalItem(color: string): GraphicalItemStyle {
  * the same `color-scheme`.
  *
  * Exported SVG and PNG images keep the colors of the color scheme that was active when they were taken.
+ *
+ * `light-dark()` needs Chrome 123, Firefox 120, or Safari 17.5. Older browsers do not understand the value and ignore it:
+ * shapes fall back to the SVG defaults, which are a black fill and no stroke, and Tooltip and Legend lose their theme colors.
+ * If you support older browsers, use {@link lightTheme} and {@link darkTheme} instead, or a theme with CSS `var()` values.
  *
  * @experimental
  */

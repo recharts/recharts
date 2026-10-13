@@ -288,4 +288,4 @@ export { RechartsThemeProvider, useRechartsTheme } from './theme/RechartsThemeCo
 export { darkPalette, darkTheme } from './theme/darkTheme';
 export { lightPalette, lightTheme } from './theme/lightTheme';
 export { emptyTheme } from './theme/emptyTheme';
-export { autoTheme } from './theme/autoTheme';
+export { autoPalette, autoTheme } from './theme/autoTheme';

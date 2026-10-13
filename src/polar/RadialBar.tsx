@@ -33,7 +33,7 @@ import {
   adaptEventsOfChild,
   AnimationDuration,
   EasingInput,
-  DataConsumer,
+  ValueAxisDataConsumer,
   DataKey,
   LayoutType,
   LegendType,
@@ -75,6 +75,7 @@ import { usePolarChartLayout } from '../context/chartLayoutContext';
 import { Styles2D } from '../theme/RechartsTheme';
 import { useBackwardsCompatibleTheme } from '../theme/useBackwardsCompatibleTheme';
 import { useGraphicalItemIdentity } from '../theme/useGraphicalItemIdentity';
+import { useEffectiveDataKey } from '../util/useEffectiveDataKey';
 import { getEntryStyleOverrides, UnthemedStyles, useUnthemedStyles } from '../theme/dataEntryStyles';
 import { getActiveStyleOverrides, useThemedActiveStyles } from '../theme/activeStyles';
 
@@ -310,7 +311,7 @@ function RenderSectors(props: InternalProps) {
  * @internal
  */
 export interface InternalRadialBarProps<DataPointType = any, DataValueType = any>
-  extends DataConsumer<DataPointType, DataValueType>, ZIndexable {
+  extends ValueAxisDataConsumer<DataPointType, DataValueType>, ZIndexable {
   activeShape?: ActiveShape<RadialBarSectorProps, SVGPathElement>;
   /**
    * @defaultValue 0
@@ -873,7 +874,12 @@ export function computeRadialBarDataItems({
 export function RadialBar<DataPointType = any, DataValueType = any>(
   outsideProps: RadialBarProps<DataPointType, DataValueType>,
 ) {
-  const graphicalItemThemeSelector = useGraphicalItemIdentity(outsideProps.dataKey, outsideProps);
+  const dataKey = useEffectiveDataKey({
+    dataKey: outsideProps.dataKey,
+    angleAxisId: outsideProps.angleAxisId ?? defaultRadialBarProps.angleAxisId,
+    radiusAxisId: outsideProps.radiusAxisId ?? defaultRadialBarProps.radiusAxisId,
+  });
+  const graphicalItemThemeSelector = useGraphicalItemIdentity(dataKey, outsideProps);
   const unthemedStyles = useUnthemedStyles(outsideProps);
   const themedActiveStyles = useThemedActiveStyles(graphicalItemThemeSelector, outsideProps);
   const graphicalItemStyle = useBackwardsCompatibleTheme<RadialBarProps<DataPointType, DataValueType>>(
@@ -881,10 +887,7 @@ export function RadialBar<DataPointType = any, DataValueType = any>(
     outsideProps,
     undefined,
   );
-  const props: PropsWithDefaults<DataPointType, DataValueType> = resolveDefaultProps(
-    outsideProps,
-    defaultRadialBarProps,
-  );
+  const props: PropsWithDefaults = resolveDefaultProps({ ...outsideProps, dataKey }, defaultRadialBarProps);
 
   const themeFill = outsideProps.fill ?? graphicalItemStyle?.fill;
   const themeStroke = outsideProps.stroke ?? graphicalItemStyle?.stroke;

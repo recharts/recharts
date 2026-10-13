@@ -16,6 +16,7 @@ import {
 import { ScatterSettings } from '../types/ScatterSettings';
 import { GraphicalItemId } from '../graphicalItemsSlice';
 import { TickItem } from '../../util/types';
+import { selectChartLayout } from '../../context/chartLayoutContext';
 
 const selectXAxisWithScale = (
   state: RechartsRootState,
@@ -122,6 +123,7 @@ export const selectScatterPoints: (
     selectZAxis,
     selectSynchronisedScatterSettings,
     pickCells,
+    selectChartLayout,
   ],
   (
     { chartData, dataStartIndex, dataEndIndex }: ChartDataState,
@@ -132,6 +134,7 @@ export const selectScatterPoints: (
     zAxis: ZAxisWithScale | undefined,
     scatterSettings: ScatterSettings | undefined,
     cells,
+    layout,
   ): ReadonlyArray<ScatterPointItem> | undefined => {
     if (scatterSettings == null) {
       return undefined;
@@ -162,6 +165,7 @@ export const selectScatterPoints: (
       xAxisTicks,
       yAxisTicks,
       cells,
+      layout,
     });
   },
 );

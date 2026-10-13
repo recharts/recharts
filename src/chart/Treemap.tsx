@@ -636,7 +636,10 @@ type ContentItemProps = {
   branchIndex: number | undefined;
   type: string;
   colorPanel: ReadonlyArray<string> | undefined;
-  themeGraphicalItems: RechartsTheme['graphicalItems'];
+  /**
+   * Undefined when there is no theme at all, which is when the legacy styles apply.
+   */
+  themeGraphicalItems: RechartsTheme['graphicalItems'] | undefined;
   /**
    * The color behind the chart, used for the tile outlines.
    */
@@ -671,7 +674,7 @@ function getTileStyles({
 >): TileStyles {
   const colors = colorPanel || COLOR_PANEL;
   const legacyFill = nodeProps.depth < 2 ? colors[nodeProps.index % colors.length] : 'rgba(255,255,255,0)';
-  if (themeGraphicalItems.length === 0) {
+  if (themeGraphicalItems == null) {
     return { fill: legacyFill, stroke: '#fff', strokeWidth: undefined };
   }
   const fillFromColorPanel = colorPanel == null ? undefined : legacyFill;
@@ -697,8 +700,8 @@ function getTileStyles({
    */
   const branchStyle = themeGraphicalItems[branchIndex % themeGraphicalItems.length];
   return {
-    fill: fillFromColorPanel ?? branchStyle?.fill ?? legacyFill,
-    stroke: themePageBackground ?? branchStyle?.stroke ?? '#fff',
+    fill: fillFromColorPanel ?? branchStyle?.fill,
+    stroke: themePageBackground ?? branchStyle?.stroke,
     strokeWidth: undefined,
   };
 }
@@ -987,7 +990,7 @@ type InternalTreemapProps = RequiresDefaultProps<Props, typeof defaultTreeMapPro
   height: number;
   dispatch: AppDispatch;
   id: GraphicalItemId;
-  themeGraphicalItems: RechartsTheme['graphicalItems'];
+  themeGraphicalItems: RechartsTheme['graphicalItems'] | undefined;
   themePageBackground: string | undefined;
   typography?: React.CSSProperties;
 };
@@ -1181,8 +1184,7 @@ class TreemapWithState extends PureComponent<InternalTreemapProps, State> {
                 cursor: 'pointer',
                 display: 'inline-block',
                 padding: '0 7px',
-                background: '#000',
-                color: '#fff',
+                ...(this.props.themeGraphicalItems == null && { background: '#000', color: '#fff' }),
                 marginRight: '3px',
                 ...this.props.typography,
               }}
@@ -1238,8 +1240,8 @@ class TreemapWithState extends PureComponent<InternalTreemapProps, State> {
         <SetTreemapTooltipEntrySettings
           dataKey={this.props.dataKey}
           nameKey={this.props.nameKey}
-          stroke={this.props.stroke ?? this.props.themeGraphicalItems[0]?.stroke}
-          fill={this.props.fill ?? this.props.themeGraphicalItems[0]?.fill}
+          stroke={this.props.stroke ?? this.props.themeGraphicalItems?.[0]?.stroke}
+          fill={this.props.fill ?? this.props.themeGraphicalItems?.[0]?.fill}
           currentRoot={this.state.currentRoot}
           id={this.props.id}
         />
@@ -1336,7 +1338,7 @@ export function Treemap(outsideProps: Props) {
         <TooltipPortalContext.Provider value={tooltipPortal}>
           <TreemapDispatchInject
             {...props}
-            themeGraphicalItems={theme?.graphicalItems ?? []}
+            themeGraphicalItems={theme?.graphicalItems}
             themePageBackground={theme?.pageBackground}
             typography={theme?.typography}
           />

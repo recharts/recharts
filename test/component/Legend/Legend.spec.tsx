@@ -2151,7 +2151,6 @@ describe('<Legend />', () => {
       const { container } = rechartsTestRender(
         <AreaChart width={500} height={500} data={numericalData}>
           <Legend />
-          {/* @ts-expect-error Indeed Typescript is correct, Area requires a dataKey */}
           <Area />
         </AreaChart>,
       );

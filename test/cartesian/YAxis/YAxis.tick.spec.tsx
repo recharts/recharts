@@ -42,7 +42,7 @@ describe('YAxis tick', () => {
       <LineChart width={600} height={300} data={lineData} margin={{ top: 5, right: 30, left: 20, bottom: 5 }}>
         <XAxis />
         <YAxis type="category" dataKey="name" interval={0} />
-        <Line type="monotone" dataKey="balance" stroke="#8884d8" activeDot={{ r: 8 }} />
+        <Line type="monotone" stroke="#8884d8" activeDot={{ r: 8 }} />
         <ExpectAxisDomain assert={spy} axisType="yAxis" />
       </LineChart>,
     );
@@ -347,7 +347,7 @@ describe('YAxis tick', () => {
     const { container } = render(
       <ComposedChart width={600} height={50} data={dateWithValueData}>
         <YAxis dataKey="time" type="number" scale="time" domain={['auto', 'auto']} tickFormatter={tickFormatter} />
-        <Line dataKey="value" />
+        <Line dataKey="time" />
       </ComposedChart>,
     );
 

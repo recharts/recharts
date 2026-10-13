@@ -3,6 +3,7 @@ import { SourceCodeEditor } from '../../Playground/SourceCodeEditor.tsx';
 import { LinkToApi } from '../../Shared/LinkToApi.tsx';
 import { RechartsLink } from '../../Shared/RechartsLink.tsx';
 import styles from '../guideTable.module.css';
+import ThemeHeroExample from './ThemeHeroExample.tsx';
 import ThemeSwitcherExample, { themeSwitcherDefaultState, themeSwitcherLevers } from './ThemeSwitcherExample.tsx';
 import ThemeSwitcherExampleSource from './ThemeSwitcherExample.tsx?raw';
 import CustomThemeExample from './CustomThemeExample.tsx';
@@ -33,19 +34,15 @@ export function App() {
 const customThemeSnippet = `import { RechartsThemeProvider, lightTheme, type RechartsTheme } from 'recharts';
 
 /*
- * Option 1: start from scratch. Only \`graphicalItems\` is required.
- * Everything you leave out renders unstyled.
- */
-const minimalTheme: RechartsTheme = {
-  graphicalItems: [{ fill: '#4338ca' }, { fill: '#0f766e' }],
-};
-
-/*
- * Option 2: start from a built-in theme and override what you need.
- * These are plain objects, so a spread is all it takes.
+ * Start from a built-in theme to keep styles for components you do not override.
+ * Spread nested objects too when you want to preserve their other properties.
  */
 const brandTheme: RechartsTheme = {
   ...lightTheme,
+  graphicalItems: [
+    { fill: '#4338ca', stroke: '#4338ca' },
+    { fill: '#0f766e', stroke: '#0f766e' },
+  ],
   typography: { ...lightTheme.typography, fontFamily: 'Inter, sans-serif' },
   grid: { ...lightTheme.grid, stroke: '#e2e8f0', strokeDasharray: '1 4' },
 };
@@ -158,7 +155,7 @@ export const sizedTheme: RechartsTheme = {
 
 const designSystemExample = `import { useMemo } from 'react';
 import { useTheme } from '@mui/material/styles';
-import { RechartsThemeProvider, type RechartsTheme } from 'recharts';
+import { RechartsThemeProvider, darkTheme, lightTheme, type RechartsTheme } from 'recharts';
 
 /*
  * Recharts ships no adapters for design systems. Because RechartsTheme is a plain
@@ -167,10 +164,13 @@ import { RechartsThemeProvider, type RechartsTheme } from 'recharts';
  */
 function Charts({ children }) {
   const muiTheme = useTheme();
+  const baseTheme = muiTheme.palette.mode === 'dark' ? darkTheme : lightTheme;
 
   const rechartsTheme = useMemo<RechartsTheme>(
     () => ({
+      ...baseTheme,
       typography: {
+        ...baseTheme.typography,
         color: muiTheme.palette.text.primary,
         fontFamily: muiTheme.typography.fontFamily,
         fontSize: muiTheme.typography.body2.fontSize,
@@ -180,18 +180,20 @@ function Charts({ children }) {
         { fill: muiTheme.palette.secondary.main, stroke: muiTheme.palette.secondary.main },
         { fill: muiTheme.palette.warning.main, stroke: muiTheme.palette.warning.main },
       ],
-      grid: { stroke: muiTheme.palette.divider, fill: 'none' },
-      axis: { stroke: muiTheme.palette.text.secondary },
+      grid: { ...baseTheme.grid, stroke: muiTheme.palette.divider },
+      axis: { ...baseTheme.axis, stroke: muiTheme.palette.text.secondary },
       pageBackground: muiTheme.palette.background.paper,
       tooltip: {
+        ...baseTheme.tooltip,
         contentStyle: {
+          ...baseTheme.tooltip?.contentStyle,
           backgroundColor: muiTheme.palette.background.paper,
           border: \`1px solid \${muiTheme.palette.divider}\`,
           borderRadius: muiTheme.shape.borderRadius,
         },
       },
     }),
-    [muiTheme],
+    [muiTheme, baseTheme],
   );
 
   return <RechartsThemeProvider value={rechartsTheme}>{children}</RechartsThemeProvider>;
@@ -215,6 +217,7 @@ export function ThemingGuide() {
   return (
     <article>
       <h1>Theming</h1>
+      <ThemeHeroExample />
       <p>
         A theme is a single object that sets the default visual style - colors, fonts, strokes, tooltip and legend
         styles - for every chart below it in the React tree. Instead of repeating <code>stroke</code>, <code>fill</code>{' '}
@@ -620,11 +623,29 @@ export function ThemingGuide() {
       <h2>Colors for multiple series</h2>
       <p>
         The theme uses each graphical item&apos;s <code>dataKey</code> to decide which entry from{' '}
-        <code>graphicalItems</code> to use for its color.
+        <code>graphicalItems</code> to use for its color. Graphical items with the same <code>dataKey</code> show the
+        same data, so they get the same color.
+      </p>
+      <p>
+        A graphical item without its own <code>dataKey</code> uses the <code>dataKey</code> of its value axis. The chart
+        layout decides which axis that is, regardless of the axis <code>type</code>: <LinkToApi>YAxis</LinkToApi> in the
+        horizontal layout, <LinkToApi>XAxis</LinkToApi> in the vertical layout, <LinkToApi>PolarRadiusAxis</LinkToApi>{' '}
+        for <LinkToApi>Radar</LinkToApi>, and <LinkToApi>PolarAngleAxis</LinkToApi> for <LinkToApi>RadialBar</LinkToApi>
+        . This is how a <LinkToApi>Scatter</LinkToApi> that reads both coordinates from its axes gets a theme color.
       </p>
       <p>
         This is a convenient default. If you need different colors or want to control the assignment yourself, provide
-        an explicit <code>fill</code> or <code>stroke</code> prop on the graphical item.
+        an explicit <code>fill</code> or <code>stroke</code> prop on the graphical item. You will need to do that when
+        several graphical items share one <code>dataKey</code> and each brings its own <code>data</code> array, for
+        example two <LinkToApi>Scatter</LinkToApi> series on the same axes. The <code>lightPalette</code>,{' '}
+        <code>darkPalette</code> and <code>autoPalette</code> exports hold the colors of the built-in themes, so you can
+        pick from them: <code>{'<Scatter fill={autoPalette[1]} />'}</code>.
+      </p>
+      <p>
+        The theme compares <code>dataKey</code> values as strings. A function <code>dataKey</code> is compared by its
+        source code: two functions with the same source share a color, and a minified build may order the colors
+        differently than a development build. Prefer explicit colors for graphical items that use a function{' '}
+        <code>dataKey</code>.
       </p>
       <p>
         Each entry can also carry an <code>active</code> block, which styles the highlighted representation of that
@@ -638,10 +659,15 @@ export function ThemingGuide() {
       <h2>Writing your own theme</h2>
       <p>
         A <code>RechartsTheme</code> is a plain object: build it inline, import it from a shared module, or fetch it as
-        JSON. Only <code>graphicalItems</code> is required.
+        JSON. Start from a built-in theme to preserve styles for components you do not override.
       </p>
       <SourceCodeEditor value={customThemeSnippet} />
-      <p>The example below defines a complete theme from scratch and applies it to a line chart:</p>
+      <p>
+        Only <code>graphicalItems</code> is required by the type, but omitted sections render unstyled. For example, a
+        palette with only <code>fill</code> colors leaves lines without a <code>stroke</code> and does not style axes,
+        grids or tooltips. Themes are not deep-merged: spread each nested object whose properties you want to keep. To
+        start from scratch instead, define styles for every component your chart uses, as in this example:
+      </p>
       <CodeEditorWithPreview
         Component={CustomThemeExample}
         sourceCode={CustomThemeExampleSource}
@@ -708,6 +734,13 @@ export function ThemingGuide() {
       <p>Some things to keep in mind:</p>
       <ul>
         <li>
+          <code>light-dark()</code> needs Chrome 123, Firefox 120, or Safari 17.5. Older browsers do not understand the
+          value and ignore it: shapes fall back to the SVG defaults, which are a black fill and no stroke, and{' '}
+          <LinkToApi>Tooltip</LinkToApi> and <LinkToApi>Legend</LinkToApi> lose their theme colors. If you support older
+          browsers, switch between <code>lightTheme</code> and <code>darkTheme</code> in React state, or use CSS
+          variables. Both are described below.
+        </li>
+        <li>
           Like <code>darkTheme</code>, <code>autoTheme</code> only styles what Recharts draws. The background behind the
           chart belongs to your page, so let the page background follow the same <code>color-scheme</code>. See the
           Background section above.
@@ -755,6 +788,10 @@ export function ThemingGuide() {
         <code>useMemo</code> away.
       </p>
       <SourceCodeEditor value={designSystemExample} />
+      <p>
+        This mapper starts from <code>lightTheme</code> or <code>darkTheme</code>, so components without a token mapping
+        keep the corresponding built-in styles. The tooltip also preserves its padding and label and item styles.
+      </p>
 
       <h2>Reading the theme yourself</h2>
       <p>
