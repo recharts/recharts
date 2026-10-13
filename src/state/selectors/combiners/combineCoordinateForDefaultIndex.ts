@@ -49,8 +49,7 @@ export const combineCoordinateForDefaultIndex = (
         const radius = tick.coordinate;
         const angle = (startAngle + endAngle) / 2;
         return {
-          x: cx,
-          y: cy,
+          ...polarToCartesian(cx, cy, outerRadius, angle),
           cx,
           cy,
           radius,

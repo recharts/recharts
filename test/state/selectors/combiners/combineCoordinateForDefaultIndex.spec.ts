@@ -47,7 +47,8 @@ describe('combineCoordinateForDefaultIndex', () => {
       polarViewBox,
     );
 
-    expect(result).toMatchObject({
+    expect(result).toEqual({
+      angle: 90,
       cx: 200,
       cy: 130,
       innerRadius: 10,
@@ -56,6 +57,8 @@ describe('combineCoordinateForDefaultIndex', () => {
       endAngle: 180,
       radius: 55,
       clockWise: false,
+      x: 200,
+      y: 30,
     });
   });
 
