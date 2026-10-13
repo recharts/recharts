@@ -9,6 +9,13 @@ Read ./DEVELOPING.md for instructions how to develop this project.
 
 Read ./CONTRIBUTING.md for guidelines on contributing to this project.
 
+Install dependencies with `npm ci` from the repository root only. Never run `npm ci` or `npm install`
+inside `www`: it is an npm workspace, and installing from there prunes the root `node_modules`.
+
+The website in `www` consumes the built library. On a fresh checkout or worktree, run `npm run build`
+once before running website tests or type checks (`npm run test-website`, `npm run check-types-website`),
+otherwise they fail with unrelated errors.
+
 When running unit tests, prefer to run a single test file:
 
 ```shell
