@@ -1,45 +1,45 @@
 {
   "treemap": {
     "examplePath": "www/src/views/IndexView/IndexLineChart.tsx",
-    "totalSize": 945940,
-    "totalSizeLabel": "923.77 KB",
+    "totalSize": 946747,
+    "totalSizeLabel": "924.56 KB",
     "moduleCount": 379,
-    "generatedAt": "2026-10-12T05:16:09.574Z",
+    "generatedAt": "2026-10-13T00:09:54.835Z",
     "stages": [
       {
         "stage": "es6-folder",
-        "bytes": 1473747,
+        "bytes": 1474615,
         "humanReadableSize": "1.41 MB",
         "reductionFromBaselinePercent": 0
       },
       {
         "stage": "tree-shaken",
-        "bytes": 948845,
-        "humanReadableSize": "926.61 KB",
+        "bytes": 949652,
+        "humanReadableSize": "927.39 KB",
         "reductionFromBaselinePercent": 0
       },
       {
         "stage": "minified",
-        "bytes": 311865,
-        "humanReadableSize": "304.56 KB",
-        "reductionFromBaselinePercent": 67.13
+        "bytes": 312001,
+        "humanReadableSize": "304.69 KB",
+        "reductionFromBaselinePercent": 67.15
       },
       {
         "stage": "minified+gzip",
-        "bytes": 102235,
-        "humanReadableSize": "99.84 KB",
+        "bytes": 102289,
+        "humanReadableSize": "99.89 KB",
         "reductionFromBaselinePercent": 89.23
       }
     ],
     "tree": {
       "name": "bundle",
       "fullPath": "bundle",
-      "value": 945940,
+      "value": 946747,
       "children": [
         {
           "name": "src",
           "fullPath": "src",
-          "value": 542364,
+          "value": 543171,
           "children": [
             {
               "name": "state",
@@ -1068,12 +1068,12 @@
             {
               "name": "synchronisation",
               "fullPath": "src/synchronisation",
-              "value": 8354,
+              "value": 9161,
               "children": [
                 {
                   "name": "useChartSynchronisation.tsx",
                   "fullPath": "src/synchronisation/useChartSynchronisation.tsx",
-                  "value": 8354
+                  "value": 9161
                 }
               ]
             },
@@ -2622,45 +2622,45 @@
   },
   "sunburst": {
     "examplePath": "www/src/views/IndexView/IndexLineChart.tsx",
-    "totalSize": 945940,
-    "totalSizeLabel": "923.77 KB",
+    "totalSize": 946747,
+    "totalSizeLabel": "924.56 KB",
     "moduleCount": 379,
-    "generatedAt": "2026-10-12T05:16:08.108Z",
+    "generatedAt": "2026-10-13T00:09:52.583Z",
     "stages": [
       {
         "stage": "es6-folder",
-        "bytes": 1473747,
+        "bytes": 1474615,
         "humanReadableSize": "1.41 MB",
         "reductionFromBaselinePercent": 0
       },
       {
         "stage": "tree-shaken",
-        "bytes": 948845,
-        "humanReadableSize": "926.61 KB",
+        "bytes": 949652,
+        "humanReadableSize": "927.39 KB",
         "reductionFromBaselinePercent": 0
       },
       {
         "stage": "minified",
-        "bytes": 311865,
-        "humanReadableSize": "304.56 KB",
-        "reductionFromBaselinePercent": 67.13
+        "bytes": 312001,
+        "humanReadableSize": "304.69 KB",
+        "reductionFromBaselinePercent": 67.15
       },
       {
         "stage": "minified+gzip",
-        "bytes": 102235,
-        "humanReadableSize": "99.84 KB",
+        "bytes": 102289,
+        "humanReadableSize": "99.89 KB",
         "reductionFromBaselinePercent": 89.23
       }
     ],
     "tree": {
       "name": "bundle",
       "fullPath": "bundle",
-      "value": 945940,
+      "value": 946747,
       "children": [
         {
           "name": "src",
           "fullPath": "src",
-          "value": 542364,
+          "value": 543171,
           "children": [
             {
               "name": "state",
@@ -3689,12 +3689,12 @@
             {
               "name": "synchronisation",
               "fullPath": "src/synchronisation",
-              "value": 8354,
+              "value": 9161,
               "children": [
                 {
                   "name": "useChartSynchronisation.tsx",
                   "fullPath": "src/synchronisation/useChartSynchronisation.tsx",
-                  "value": 8354
+                  "value": 9161
                 }
               ]
             },
