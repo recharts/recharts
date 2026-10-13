@@ -126,7 +126,7 @@ export const RingsWithCustomDomain = () => {
       <PolarGrid gridType="circle" />
       <PolarAngleAxis dataKey="rings" type="number" domain={[0, totalCountOfRings]} />
       <PolarRadiusAxis dataKey="name" type="category" />
-      <Tooltip defaultIndex={0} />
+      <Tooltip defaultIndex={2} />
     </RadialBarChart>
   );
 };
