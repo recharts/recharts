@@ -514,6 +514,15 @@ async function generateApiDoc(
 }
 
 /**
+ * Curly braces in HTML are plain text, but in JSX they open an expression.
+ * Without escaping, `<code>shared={true}</code>` renders as `shared=`,
+ * and `<code>.dark { color-scheme: dark; }</code>` is a syntax error.
+ */
+export function escapeJsxBraces(html: string): string {
+  return html.replace(/[{}]/g, brace => (brace === '{' ? '&#123;' : '&#125;'));
+}
+
+/**
  * Custom stringify that converts HTML strings to JSX.
  *
  * This function is intentionally not adding new lines or indentation
@@ -524,7 +533,7 @@ function stringifyLocalizedRichText(value: Partial<Record<string, string>>): str
   for (const [locale, html] of Object.entries(value)) {
     if (!html) continue;
     // Write HTML as JSX without quotes. Wrap in <section> to ensure valid JSX.
-    result += `"${locale}": (<section>${html}</section>),`;
+    result += `"${locale}": (<section>${escapeJsxBraces(html)}</section>),`;
   }
   result += `}`;
   return result;

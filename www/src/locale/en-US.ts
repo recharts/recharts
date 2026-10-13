@@ -94,6 +94,7 @@ export const map = {
     showData: 'Show data format',
     hideData: 'Hide data format',
     animation: 'Animation',
+    theming: 'Theming',
     current: 'Props',
     deprecated: 'Deprecated Props',
     events: 'Events',

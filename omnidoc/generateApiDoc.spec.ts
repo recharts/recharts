@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { generateApiDoc, simplifyOneType } from './generateApiDoc';
+import { escapeJsxBraces, generateApiDoc, simplifyOneType } from './generateApiDoc';
 import { ProjectDocReader } from './readProject';
 import { ExampleReader } from './readExamples';
 
@@ -61,6 +61,21 @@ describe('simplifyOneType', () => {
   it('should remove outer parentheses', () => {
     expect(simplifyOneType('(string)')).toBe('string');
     expect(simplifyOneType('(MousePointer)')).toBe('MousePointer');
+  });
+});
+
+describe('escapeJsxBraces', () => {
+  it('should replace curly braces with HTML entities so that JSX does not read them as expressions', () => {
+    expect(escapeJsxBraces('<code>shared={true}</code>')).toBe('<code>shared=&#123;true&#125;</code>');
+    expect(escapeJsxBraces('<code>.dark { color-scheme: dark; }</code>')).toBe(
+      '<code>.dark &#123; color-scheme: dark; &#125;</code>',
+    );
+  });
+
+  it('should leave text without curly braces unchanged', () => {
+    expect(escapeJsxBraces('<p>See <LinkToApi>autoTheme</LinkToApi></p>')).toBe(
+      '<p>See <LinkToApi>autoTheme</LinkToApi></p>',
+    );
   });
 });
 

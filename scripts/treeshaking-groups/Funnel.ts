@@ -16,4 +16,5 @@ export const expectedInBundle = [
   'usePlotArea',
   'useCartesianChartLayout',
   'useChartLayout',
+  'useRechartsTheme',
 ] as const;
