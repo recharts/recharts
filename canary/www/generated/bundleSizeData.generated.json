@@ -1,21 +1,21 @@
 {
   "treemap": {
     "examplePath": "www/src/views/IndexView/IndexLineChart.tsx",
-    "totalSize": 947386,
+    "totalSize": 947381,
     "totalSizeLabel": "925.18 KB",
     "moduleCount": 379,
-    "generatedAt": "2026-10-13T07:05:19.261Z",
+    "generatedAt": "2026-10-13T08:02:56.720Z",
     "stages": [
       {
         "stage": "es6-folder",
-        "bytes": 1475387,
+        "bytes": 1475272,
         "humanReadableSize": "1.41 MB",
         "reductionFromBaselinePercent": 0
       },
       {
         "stage": "tree-shaken",
-        "bytes": 950291,
-        "humanReadableSize": "928.02 KB",
+        "bytes": 950286,
+        "humanReadableSize": "928.01 KB",
         "reductionFromBaselinePercent": 0
       },
       {
@@ -34,12 +34,12 @@
     "tree": {
       "name": "bundle",
       "fullPath": "bundle",
-      "value": 947386,
+      "value": 947381,
       "children": [
         {
           "name": "src",
           "fullPath": "src",
-          "value": 543810,
+          "value": 543805,
           "children": [
             {
               "name": "state",
@@ -942,7 +942,7 @@
             {
               "name": "theme",
               "fullPath": "src/theme",
-              "value": 11277,
+              "value": 11272,
               "children": [
                 {
                   "name": "activeStyles.ts",
@@ -977,7 +977,7 @@
                 {
                   "name": "RechartsThemeContext.ts",
                   "fullPath": "src/theme/RechartsThemeContext.ts",
-                  "value": 505
+                  "value": 500
                 },
                 {
                   "name": "cssStylesToSvgStyles.ts",
@@ -2622,21 +2622,21 @@
   },
   "sunburst": {
     "examplePath": "www/src/views/IndexView/IndexLineChart.tsx",
-    "totalSize": 947386,
+    "totalSize": 947381,
     "totalSizeLabel": "925.18 KB",
     "moduleCount": 379,
-    "generatedAt": "2026-10-13T07:05:16.940Z",
+    "generatedAt": "2026-10-13T08:02:54.509Z",
     "stages": [
       {
         "stage": "es6-folder",
-        "bytes": 1475387,
+        "bytes": 1475272,
         "humanReadableSize": "1.41 MB",
         "reductionFromBaselinePercent": 0
       },
       {
         "stage": "tree-shaken",
-        "bytes": 950291,
-        "humanReadableSize": "928.02 KB",
+        "bytes": 950286,
+        "humanReadableSize": "928.01 KB",
         "reductionFromBaselinePercent": 0
       },
       {
@@ -2655,12 +2655,12 @@
     "tree": {
       "name": "bundle",
       "fullPath": "bundle",
-      "value": 947386,
+      "value": 947381,
       "children": [
         {
           "name": "src",
           "fullPath": "src",
-          "value": 543810,
+          "value": 543805,
           "children": [
             {
               "name": "state",
@@ -3563,7 +3563,7 @@
             {
               "name": "theme",
               "fullPath": "src/theme",
-              "value": 11277,
+              "value": 11272,
               "children": [
                 {
                   "name": "activeStyles.ts",
@@ -3598,7 +3598,7 @@
                 {
                   "name": "RechartsThemeContext.ts",
                   "fullPath": "src/theme/RechartsThemeContext.ts",
-                  "value": 505
+                  "value": 500
                 },
                 {
                   "name": "cssStylesToSvgStyles.ts",
