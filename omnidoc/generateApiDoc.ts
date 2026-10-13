@@ -143,20 +143,71 @@ export function buildContextMap(
   return contextMap;
 }
 
+const INLINE_LINK_REGEX = /\{@\s*link\s+([^\s}]+)(?:\s+([^}]*?))?\s*\}/g;
+
+/**
+ * A link target is a symbol reference when it is a bare name like `XAxis` or `NiceTicksAlgorithm`,
+ * as opposed to an absolute URL, a path, or an anchor.
+ */
+function isSymbolReference(target: string): boolean {
+  return !target.includes(':') && !target.includes('/') && !target.startsWith('#');
+}
+
+/**
+ * Sentences end with punctuation followed by whitespace, with a blank line, or where a new list item begins.
+ * The separators are captured so that the remaining text can be joined back together unchanged.
+ */
+const SENTENCE_SEPARATOR_REGEX = /(\n[ \t]*\n\s*|\n(?=[ \t]*(?:[-*+]|\d+\.)\s)|(?<=[.!?])\s+)/;
+
+/**
+ * Removes every sentence that contains an inline {@link} to a symbol that does not have its own API page.
+ * Typically these are links to types: they work great in the IDE but on the website they would lead to 404.
+ */
+function removeSentencesWithDeadLinks(text: string, linkableNames: ReadonlyArray<string>): string {
+  const hasDeadLink = (sentence: string): boolean =>
+    Array.from(sentence.matchAll(INLINE_LINK_REGEX)).some(
+      ([, target]) => target != null && isSymbolReference(target) && !linkableNames.includes(target),
+    );
+
+  if (!hasDeadLink(text)) {
+    return text;
+  }
+
+  // split with a capturing group returns [sentence, separator, sentence, separator, ..., sentence]
+  const parts = text.split(SENTENCE_SEPARATOR_REGEX);
+  let result = '';
+  for (let i = 0; i < parts.length; i += 2) {
+    const sentence = parts[i] ?? '';
+    const separator = parts[i + 1] ?? '';
+    if (!hasDeadLink(sentence)) {
+      result += sentence + separator;
+    } else if (/\n[ \t]*\n/.test(separator)) {
+      // the removed sentence was the last one in its paragraph, so keep the paragraph break
+      result = result.trimEnd() + separator;
+    }
+  }
+  return result.trim();
+}
+
 /**
  * Processes inline {@link} tags in JSDoc text and converts them to HTML anchor tags or React Router Link components.
  * Handles both {@link url} and {@link url text} formats.
- * If the link is a single word that matches a Recharts component name, it creates a React Router Link for SPA navigation.
+ * If the link is a single word that matches a name with its own API page, it creates a React Router Link for SPA navigation.
+ * If the link is a single word that does not have its own API page (for example a type),
+ * then the whole sentence that contains the link is removed.
+ *
+ * @param text JSDoc text
+ * @param linkableNames names of everything that has its own API page. If omitted, symbol references are left untouched.
  */
-export function processInlineLinks(text: string, componentNames?: ReadonlyArray<string>): string {
+export function processInlineLinks(text: string, linkableNames?: ReadonlyArray<string>): string {
+  const textWithoutDeadLinks = linkableNames ? removeSentencesWithDeadLinks(text, linkableNames) : text;
   // Match {@link url} or {@link url text} or {@ link url text} (with space after @)
   // The regex captures: url and optional text
-  return text.replace(/\{@\s*link\s+([^\s}]+)(?:\s+([^}]*?))?\s*\}/g, (match, url, t) => {
+  return textWithoutDeadLinks.replace(INLINE_LINK_REGEX, (match, url, t) => {
     const displayText = t?.trim() || url;
 
-    // Check if the URL is a single word (no protocol, no slashes) and matches a component name
-    if (componentNames && !url.includes('://') && !url.includes('/') && componentNames.includes(url)) {
-      // It's a Recharts component reference - create a React Router Link for SPA navigation
+    if (linkableNames && isSymbolReference(url)) {
+      // It's a reference to something with its own API page - create a React Router Link for SPA navigation
       return `<LinkToApi>${displayText}</LinkToApi>`;
     }
 
@@ -270,7 +321,14 @@ export function parseJSDocLinkTag(tag: string): PropExample {
   };
 }
 
-function getAllLinksFromJsDoc(jsDocMeta: JSDocMeta | undefined): ReadonlyArray<PropExample> {
+/**
+ * Reads `@see` and `@link` tags. Tags that reference a symbol without its own API page (for example a type)
+ * are skipped because on the website they would lead to 404.
+ */
+function getAllLinksFromJsDoc(
+  jsDocMeta: JSDocMeta | undefined,
+  linkableNames: ReadonlyArray<string>,
+): ReadonlyArray<PropExample> {
   if (!jsDocMeta) return [];
 
   const examples: PropExample[] = [];
@@ -278,7 +336,11 @@ function getAllLinksFromJsDoc(jsDocMeta: JSDocMeta | undefined): ReadonlyArray<P
   const linkTags = getAllTagTexts(jsDocMeta, 'link');
 
   [...seeTags, ...linkTags].forEach(tag => {
-    examples.push(parseJSDocLinkTag(tag));
+    const example = parseJSDocLinkTag(tag);
+    const apiPageName = example.url.match(/^\/api\/([^/]+)\/?$/)?.[1];
+    if (apiPageName == null || linkableNames.includes(apiPageName)) {
+      examples.push(example);
+    }
   });
 
   return examples;
@@ -298,16 +360,25 @@ function makePropExample(example: ExampleResult): PropExample {
   };
 }
 
+/**
+ * Only stable runtime exports get their own API page.
+ * Types, internal symbols, and experimental exports do not, so linking to them would lead to 404.
+ */
+export function getLinkableNames(projectReader: ProjectDocReader): ReadonlyArray<string> {
+  return projectReader.getAllRuntimeExportedNames().filter(name => projectReader.isStable(name));
+}
+
 export function getLinksFromProp(
   componentName: string,
   propName: string,
   projectReader: ProjectDocReader,
   exampleReader: ExampleReader,
+  linkableNames: ReadonlyArray<string> = getLinkableNames(projectReader),
 ): ReadonlyArray<PropExample> {
   const meta = projectReader.getPropMeta(componentName, propName);
   // getPropMeta returns an array, but standard props usually map to one definition.
   // In case of multiple (overloading), we merge tags.
-  const allExamples = meta.map(propMeta => propMeta.jsDoc).flatMap(getAllLinksFromJsDoc);
+  const allExamples = meta.flatMap(propMeta => getAllLinksFromJsDoc(propMeta.jsDoc, linkableNames));
 
   const scannedExamples = exampleReader
     .getExamples(componentName, propName)
@@ -327,9 +398,10 @@ function getLinksFromComponent(
   componentName: string,
   projectReader: ProjectDocReader,
   exampleReader: ExampleReader,
+  linkableNames: ReadonlyArray<string>,
 ): ReadonlyArray<PropExample> {
   const componentJsDoc = projectReader.getComponentJsDocMeta(componentName);
-  const jsDocExamples = componentJsDoc ? getAllLinksFromJsDoc(componentJsDoc) : [];
+  const jsDocExamples = getAllLinksFromJsDoc(componentJsDoc, linkableNames);
 
   const scannedExamples = exampleReader
     .getExamples(componentName)
@@ -355,7 +427,10 @@ async function generateApiDoc(
   const props: ApiProps[] = [];
   const rechartsPropNames = projectReader.getRechartsPropsOf(componentName);
   const componentNames = options?.componentNames ?? projectReader.getPublicComponentNames();
-  const allExports = options?.allExports ?? projectReader.getAllRuntimeExportedNames();
+  // only stable exports get their own API page, so only those can be linked to
+  const linkableNames = (options?.allExports ?? projectReader.getAllRuntimeExportedNames()).filter(name =>
+    projectReader.isStable(name),
+  );
 
   for (const propName of rechartsPropNames) {
     const comment = projectReader.getCommentOf(componentName, propName);
@@ -372,7 +447,7 @@ async function generateApiDoc(
     const deprecatedTag = getPropTag(propMetaList, 'deprecated');
     let deprecated: string | boolean | { [locale: string]: string } | undefined;
     if (deprecatedTag) {
-      deprecated = deprecatedTag.text ? await renderDeprecatedTagText(deprecatedTag.text, allExports) : true;
+      deprecated = deprecatedTag.text ? await renderDeprecatedTagText(deprecatedTag.text, linkableNames) : true;
     }
     const since = getPropTag(propMetaList, 'since')?.text;
 
@@ -386,7 +461,7 @@ async function generateApiDoc(
 
     // Add description if available
     if (comment) {
-      prop.desc = await renderJsDocRichText(comment, allExports);
+      prop.desc = await renderJsDocRichText(comment, linkableNames);
     }
 
     // Add default value if available
@@ -402,7 +477,7 @@ async function generateApiDoc(
     }
 
     // Add links/see tags as examples
-    const links = getLinksFromProp(componentName, propName, projectReader, exampleReader);
+    const links = getLinksFromProp(componentName, propName, projectReader, exampleReader, linkableNames);
     if (links.length > 0) {
       prop.examples = links;
     }
@@ -466,20 +541,20 @@ async function generateApiDoc(
   // Get component-level JSDoc metadata
   const componentJsDoc = projectReader.getComponentJsDocMeta(componentName);
   if (componentJsDoc) {
-    apiDoc.desc = await generateComponentDescription(componentName, projectReader, allExports);
+    apiDoc.desc = await generateComponentDescription(componentName, projectReader, linkableNames);
 
     const returnTag = getTagText(componentJsDoc, 'returns') || getTagText(componentJsDoc, 'return');
     if (returnTag?.text) {
-      apiDoc.returnDesc = await renderJsDocRichText(returnTag.text, allExports);
+      apiDoc.returnDesc = await renderJsDocRichText(returnTag.text, linkableNames);
     }
 
     const deprecatedTag = getTagText(componentJsDoc, 'deprecated');
     if (deprecatedTag) {
-      apiDoc.deprecated = deprecatedTag.text ? await renderDeprecatedTagText(deprecatedTag.text, allExports) : true;
+      apiDoc.deprecated = deprecatedTag.text ? await renderDeprecatedTagText(deprecatedTag.text, linkableNames) : true;
     }
 
     // Get links from component JSDoc
-    const links = getLinksFromComponent(componentName, projectReader, exampleReader);
+    const links = getLinksFromComponent(componentName, projectReader, exampleReader, linkableNames);
     if (links.length > 0) {
       apiDoc.links = links;
     }

@@ -106,10 +106,60 @@ describe('processInlineLinks', () => {
     expect(processInlineLinks(input, ['Rectangle', 'Line'])).toBe(expected);
   });
 
-  it('should not convert {@link ComponentName} if it is not a Recharts component', () => {
+  it('should leave unknown symbol references untouched when the list of API pages is not provided', () => {
     const input = 'See {@link SomeUnknownComponent}';
     const expected = 'See <a href="SomeUnknownComponent">SomeUnknownComponent</a>';
-    expect(processInlineLinks(input, [])).toBe(expected);
+    expect(processInlineLinks(input)).toBe(expected);
+  });
+
+  describe('links to symbols without their own API page', () => {
+    it('should remove the whole sentence that contains the link', () => {
+      const input = [
+        'Controls how Recharts calculates "nice" tick values for this axis.',
+        "Options: `'none'`, `'auto'`, `'adaptive'`, `'snap125'`.",
+        'See {@link NiceTicksAlgorithm} for a full description of each option.',
+      ].join('\n');
+      const expected = [
+        'Controls how Recharts calculates "nice" tick values for this axis.',
+        "Options: `'none'`, `'auto'`, `'adaptive'`, `'snap125'`.",
+      ].join('\n');
+      expect(processInlineLinks(input, ['XAxis'])).toBe(expected);
+    });
+
+    it('should remove a sentence from the middle and keep its neighbours', () => {
+      const input = 'First sentence. See {@link SomeType} for details. Use {@link XAxis} instead.';
+      const expected = 'First sentence. Use <LinkToApi>XAxis</LinkToApi> instead.';
+      expect(processInlineLinks(input, ['XAxis'])).toBe(expected);
+    });
+
+    it('should remove a sentence that spans multiple lines', () => {
+      const input = 'First sentence.\nSee {@link SomeType}\nfor details.\n\nSecond paragraph.';
+      const expected = 'First sentence.\n\nSecond paragraph.';
+      expect(processInlineLinks(input, [])).toBe(expected);
+    });
+
+    it('should not reach across paragraphs when the sentence has no punctuation', () => {
+      const input = 'First paragraph\n\nSee {@link SomeType}\n\nThird paragraph';
+      const expected = 'First paragraph\n\nThird paragraph';
+      expect(processInlineLinks(input, [])).toBe(expected);
+    });
+
+    it('should remove only the list item that contains the link', () => {
+      const input = 'Options:\n- one\n- two, see {@link SomeType}\n- three';
+      const expected = 'Options:\n- one\n- three';
+      expect(processInlineLinks(input, [])).toBe(expected);
+    });
+
+    it('should return empty string if nothing else is left', () => {
+      expect(processInlineLinks('See {@link SomeUnknownComponent}', [])).toBe('');
+    });
+
+    it('should keep sentences with external links and paths', () => {
+      const input = 'See {@link https://example.com/a.b docs}. Also {@link /guide/axisTicks/ the guide}.';
+      const expected =
+        'See <a href="https://example.com/a.b">docs</a>. Also <a href="/guide/axisTicks/">the guide</a>.';
+      expect(processInlineLinks(input, [])).toBe(expected);
+    });
   });
 });
 
