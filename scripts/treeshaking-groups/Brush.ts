@@ -1,1 +1,1 @@
-export const expectedInBundle = ['Brush', 'Global', 'Layer', 'Text'] as const;
+export const expectedInBundle = ['Brush', 'Global', 'Layer', 'Text', 'useRechartsTheme'] as const;
