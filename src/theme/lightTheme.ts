@@ -25,6 +25,8 @@ const padding = '0.5ex';
  * Entry N is the same hue family in the light and dark palettes, so a series
  * keeps its identity when the theme changes. Comments show stroke contrast.
  *
+ * @see {@link https://recharts.github.io/en-US/guide/theming/ Theming guide}
+ *
  * @since 3.11
  */
 export const lightPalette: ReadonlyArray<string> = [
@@ -53,6 +55,8 @@ function toGraphicalItem(color: string): GraphicalItemStyle {
 
 /**
  * Light mode theme
+ *
+ * @see {@link https://recharts.github.io/en-US/guide/theming/ Theming guide}
  *
  * @since 3.11
  */
