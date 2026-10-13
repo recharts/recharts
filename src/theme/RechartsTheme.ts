@@ -60,7 +60,7 @@ export type TextStyles = CSSProperties;
  * Styling presets for Recharts components.
  * The theme can be used to customize the appearance of charts, including colors, fonts, and other visual properties.
  *
- * @experimental
+ * @since 3.11
  */
 export interface RechartsTheme {
   /**

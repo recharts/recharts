@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { generateApiDoc, processInlineLinks, simplifyOneType } from './generateApiDoc';
+import { escapeJsxBraces, generateApiDoc, processInlineLinks, simplifyOneType } from './generateApiDoc';
 import { ProjectDocReader } from './readProject';
 import { ExampleReader } from './readExamples';
 
@@ -110,6 +110,21 @@ describe('processInlineLinks', () => {
     const input = 'See {@link SomeUnknownComponent}';
     const expected = 'See <a href="SomeUnknownComponent">SomeUnknownComponent</a>';
     expect(processInlineLinks(input, [])).toBe(expected);
+  });
+});
+
+describe('escapeJsxBraces', () => {
+  it('should replace curly braces with HTML entities so that JSX does not read them as expressions', () => {
+    expect(escapeJsxBraces('<code>shared={true}</code>')).toBe('<code>shared=&#123;true&#125;</code>');
+    expect(escapeJsxBraces('<code>.dark { color-scheme: dark; }</code>')).toBe(
+      '<code>.dark &#123; color-scheme: dark; &#125;</code>',
+    );
+  });
+
+  it('should leave text without curly braces unchanged', () => {
+    expect(escapeJsxBraces('<p>See <LinkToApi>autoTheme</LinkToApi></p>')).toBe(
+      '<p>See <LinkToApi>autoTheme</LinkToApi></p>',
+    );
   });
 });
 

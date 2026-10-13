@@ -115,4 +115,18 @@ export const apiCates = [
       'AnimationControllerProvider',
     ],
   },
+  {
+    name: 'theming',
+    items: [
+      'RechartsThemeProvider',
+      'useRechartsTheme',
+      'lightTheme',
+      'darkTheme',
+      'autoTheme',
+      'emptyTheme',
+      'lightPalette',
+      'darkPalette',
+      'autoPalette',
+    ],
+  },
 ];
