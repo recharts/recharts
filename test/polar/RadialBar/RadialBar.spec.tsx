@@ -13,7 +13,7 @@ import {
 import { useAppSelector } from '../../../src/state/hooks';
 import { selectPolarItemsSettings } from '../../../src/state/selectors/polarSelectors';
 import { PageData, ringsData } from '../../_data';
-import { expectRadialBars } from '../../helper/expectRadialBars';
+import { expectRadialBars, getRadialBarPaths } from '../../helper/expectRadialBars';
 import { createSelectorTestCase, rechartsTestRender } from '../../helper/createSelectorTestCase';
 import { expectLastCalledWithScale } from '../../helper/expectScale';
 import {
@@ -44,6 +44,7 @@ import { RadialBarSettings } from '../../../src/state/types/RadialBarSettings';
 import { expectLastCalledWith } from '../../helper/expectLastCalledWith';
 import { userEventSetup } from '../../helper/userEventSetup';
 import { assertZIndexLayerOrder } from '../../helper/assertZIndexLayerOrder';
+import { assertNotNull } from '../../helper/assertNotNull';
 import { RadialBarDataItem } from '../../../src/polar/RadialBar';
 
 describe('<RadialBar />', () => {
@@ -1282,6 +1283,55 @@ describe('<RadialBar />', () => {
       0,
       expect.any(Object),
     );
+  });
+
+  describe('with a null value', () => {
+    type Datum = { name: string; value: number | null };
+    const dataWithNull: Array<Datum> = [
+      { name: 'A', value: 50 },
+      { name: 'Missing', value: null },
+      { name: 'B', value: 25 },
+    ];
+
+    const nullValueSettings: RadialBarSettings = {
+      id: 'radial-bar-value',
+      dataKey: 'value',
+      minPointSize: 0,
+      stackId: undefined,
+      maxBarSize: undefined,
+      barSize: undefined,
+      type: 'radialBar',
+      angleAxisId: 0,
+      radiusAxisId: 0,
+      data: undefined,
+      hide: false,
+    };
+
+    const createTestCase = (minPointSize: number) =>
+      createSelectorTestCase(({ children }) => (
+        <RadialBarChart width={400} height={400} data={dataWithNull} innerRadius={20} outerRadius={180}>
+          <PolarAngleAxis type="number" domain={[0, 100]} />
+          <RadialBar isAnimationActive={false} dataKey="value" minPointSize={minPointSize} />
+          {children}
+        </RadialBarChart>
+      ));
+
+    it.each([0, 5])('should select an empty sector for a null value with minPointSize %s', minPointSize => {
+      const settings: RadialBarSettings = { ...nullValueSettings, minPointSize };
+      const { spy } = createTestCase(minPointSize)(state => selectRadialBarSectors(state, 0, 0, settings, undefined));
+      const sectors = spy.mock.lastCall?.[0];
+      assertNotNull(sectors);
+      expect(sectors.map(({ startAngle, endAngle }) => ({ startAngle, endAngle }))).toEqual([
+        { startAngle: 0, endAngle: 180 },
+        { startAngle: 0, endAngle: 0 },
+        { startAngle: 0, endAngle: 90 },
+      ]);
+    });
+
+    it('should not render a sector for a null value', () => {
+      const { container } = createTestCase(0)();
+      expect(getRadialBarPaths(container)).toHaveLength(2);
+    });
   });
 
   describe('state integration', () => {
