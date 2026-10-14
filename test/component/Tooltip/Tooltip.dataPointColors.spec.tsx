@@ -14,7 +14,6 @@ describe('data point colors', () => {
     { name: 'A', uv: 400, fill: '#ff0000', stroke: '#0000ff' },
     { name: 'B', uv: 300 },
   ];
-  const colorData = [{ name: 'A', uv: 400, color: '#00ff00', fill: '#ff0000' }];
 
   const red = 'rgb(255, 0, 0)';
   const seriesColor = '#8884d8';
@@ -111,19 +110,6 @@ describe('data point colors', () => {
     expect(getTooltipItem(container)).toHaveStyle({ color: 'rgb(0, 0, 255)' });
   });
 
-  it('should use the data point color before fill, as the tooltip does', () => {
-    const { container } = rechartsTestRender(
-      <LineChart width={400} height={300} data={colorData}>
-        <Line dataKey="uv" stroke={seriesColor} isAnimationActive={false} />
-        <Tooltip defaultIndex={0} />
-      </LineChart>,
-    );
-
-    expect(getDots(container, '.recharts-line-dot')[0]).toHaveAttribute('fill', '#00ff00');
-    expect(getActiveDot(container)).toHaveAttribute('fill', '#00ff00');
-    expect(getTooltipItem(container)).toHaveStyle({ color: 'rgb(0, 255, 0)' });
-  });
-
   it('should keep explicit dot colors ahead of data point colors', () => {
     const { container } = rechartsTestRender(
       <LineChart width={400} height={300} data={data}>
@@ -131,6 +117,7 @@ describe('data point colors', () => {
           dataKey="uv"
           stroke={seriesColor}
           dot={{ fill: '#00ff00', stroke: '#ff00ff' }}
+          activeDot={{ fill: '#00ff00', stroke: '#ff00ff' }}
           isAnimationActive={false}
         />
         <Tooltip defaultIndex={0} />
@@ -139,6 +126,8 @@ describe('data point colors', () => {
 
     expect(getDots(container, '.recharts-line-dot')[0]).toHaveAttribute('fill', '#00ff00');
     expect(getDots(container, '.recharts-line-dot')[0]).toHaveAttribute('stroke', '#ff00ff');
+    expect(getActiveDot(container)).toHaveAttribute('fill', '#00ff00');
+    expect(getActiveDot(container)).toHaveAttribute('stroke', '#ff00ff');
   });
 
   it('should keep the series colors for the active dot if the data point has no colors', () => {

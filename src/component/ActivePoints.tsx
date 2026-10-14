@@ -10,7 +10,9 @@ import { isNullish } from '../util/DataUtils';
 import { svgPropertiesNoEventsFromUnknown } from '../util/svgPropertiesNoEvents';
 import { ZIndexable, ZIndexLayer } from '../zIndex/ZIndexLayer';
 import { DefaultZIndexes } from '../zIndex/DefaultZIndexes';
-import { getDataPointColors } from '../util/getDataPointColors';
+import { getOwnStyles } from '../theme/dataEntryStyles';
+import { getActiveStyleOverrides } from '../theme/activeStyles';
+import { Styles2D } from '../theme/RechartsTheme';
 
 export interface PointType {
   readonly x: number | null;
@@ -24,11 +26,13 @@ const ActivePoint = ({
   childIndex,
   mainColor,
   activeDot,
+  themedActiveStyles,
   dataKey,
   clipPath,
 }: {
   point: PointType;
   activeDot: ActiveDotType;
+  themedActiveStyles: Styles2D | undefined;
   childIndex: number;
   dataKey: DataKey<any> | undefined;
   /**
@@ -41,17 +45,17 @@ const ActivePoint = ({
   if (activeDot === false || point.x == null || point.y == null) {
     return null;
   }
-  const dataPointColors = getDataPointColors(point.payload);
+  const dataPointStyles = getOwnStyles(point.payload);
   const dotPropsTyped: ActiveDotProps = {
     index: childIndex,
     dataKey,
     cx: point.x,
     cy: point.y,
     r: 4,
-    // Same precedence as the tooltip item color.
-    fill: dataPointColors.fill ?? dataPointColors.stroke ?? mainColor ?? 'none',
+    fill: dataPointStyles.fill ?? dataPointStyles.stroke ?? mainColor ?? 'none',
     strokeWidth: 2,
     stroke: '#fff',
+    ...getActiveStyleOverrides(activeDot, themedActiveStyles, point.payload),
     payload: point.payload,
     value: point.value,
   };
@@ -91,6 +95,7 @@ interface ActivePointsProps extends ZIndexable {
   mainColor: string | undefined;
   itemDataKey: DataKey<any> | undefined;
   activeDot: ActiveDotType;
+  themedActiveStyles?: Styles2D;
   clipPath?: string;
 }
 
@@ -98,6 +103,7 @@ export function ActivePoints({
   points,
   mainColor,
   activeDot,
+  themedActiveStyles,
   itemDataKey,
   clipPath,
   zIndex = DefaultZIndexes.activeDot,
@@ -122,6 +128,7 @@ export function ActivePoints({
         mainColor={mainColor}
         dataKey={itemDataKey}
         activeDot={activeDot}
+        themedActiveStyles={themedActiveStyles}
         clipPath={clipPath}
       />
     </ZIndexLayer>
