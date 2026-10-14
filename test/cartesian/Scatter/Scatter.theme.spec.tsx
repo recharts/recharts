@@ -1,8 +1,10 @@
 import { describe, expect, it } from 'vitest';
 import React from 'react';
 import { rechartsTestRender } from '../../helper/createSelectorTestCase';
-import { Scatter, ScatterChart, RechartsThemeProvider, XAxis, YAxis } from '../../../src';
+import { RechartsTheme, Scatter, ScatterChart, RechartsThemeProvider, Tooltip, XAxis, YAxis } from '../../../src';
 import { getAllScatterPoints } from '../../helper/expectScatterPoints';
+import { showTooltip } from '../../component/Tooltip/tooltipTestHelpers';
+import { scatterChartMouseHoverTooltipSelector } from '../../component/Tooltip/tooltipMouseHoverSelectors';
 
 const scatterData = [
   { x: 10, y: 20, z: 30 },
@@ -301,5 +303,91 @@ describe('Scatter theme', () => {
       );
       expect(getFills(container)).toEqual(['red', 'red', 'red', 'blue', 'blue', 'blue']);
     });
+  });
+});
+
+describe('Tooltip colors and symbol id (#7976)', () => {
+  const fillStrokeTheme = { graphicalItems: [{ fill: 'purple', stroke: 'indigo' }] };
+  const strokeOnlyTheme = { graphicalItems: [{ stroke: 'purple' }] };
+
+  function getTooltipItemColors(container: HTMLElement): Array<string> {
+    showTooltip(container, scatterChartMouseHoverTooltipSelector);
+    return Array.from(container.querySelectorAll<HTMLElement>('.recharts-tooltip-item')).map(item => item.style.color);
+  }
+
+  function renderWithTheme(theme: RechartsTheme, scatter: React.ReactNode) {
+    return rechartsTestRender(
+      <RechartsThemeProvider value={theme}>
+        <MyChart>
+          {scatter}
+          <Tooltip />
+        </MyChart>
+      </RechartsThemeProvider>,
+    );
+  }
+
+  it('uses the data entry fill for the tooltip item color instead of the theme color', () => {
+    const dataWithFill = [
+      { x: 10, y: 20, fill: 'red' },
+      { x: 20, y: 30 },
+      { x: 30, y: 40 },
+    ];
+    const { container } = renderWithTheme(fillStrokeTheme, <Scatter data={dataWithFill} isAnimationActive={false} />);
+    const colors = getTooltipItemColors(container);
+    expect(colors.length).toBeGreaterThan(0);
+    colors.forEach(color => expect(color).toBe('red'));
+  });
+
+  it('uses the Scatter fill for the tooltip item color when entries have no colors', () => {
+    const { container } = renderWithTheme(
+      fillStrokeTheme,
+      <Scatter data={scatterData} fill="#123456" isAnimationActive={false} />,
+    );
+    const colors = getTooltipItemColors(container);
+    expect(colors.length).toBeGreaterThan(0);
+    colors.forEach(color => expect(color).toBe('rgb(18, 52, 86)'));
+  });
+
+  it('falls back to the stroke for the tooltip item color when nothing has a fill', () => {
+    const { container } = renderWithTheme(
+      strokeOnlyTheme,
+      <Scatter data={scatterData} stroke="#654321" isAnimationActive={false} />,
+    );
+    const colors = getTooltipItemColors(container);
+    expect(colors.length).toBeGreaterThan(0);
+    colors.forEach(color => expect(color).toBe('rgb(101, 67, 33)'));
+  });
+
+  it('uses the entry stroke, not the themed series fill, when the entry sets only stroke', () => {
+    const dataWithStrokeOnly = [
+      { x: 10, y: 20, stroke: 'blue' },
+      { x: 20, y: 30 },
+      { x: 30, y: 40 },
+    ];
+    const { container } = renderWithTheme(
+      fillStrokeTheme,
+      <Scatter data={dataWithStrokeOnly} isAnimationActive={false} />,
+    );
+    const colors = getTooltipItemColors(container);
+    expect(colors.length).toBeGreaterThan(0);
+    colors.forEach(color => expect(color).toBe('blue'));
+  });
+
+  it('does not render the data entry id on the symbol', () => {
+    const dataWithId = [
+      { x: 10, y: 20, id: 'my-point' },
+      { x: 20, y: 30 },
+    ];
+    const { container } = rechartsTestRender(
+      <MyChart>
+        <Scatter data={dataWithId} isAnimationActive={false} />
+      </MyChart>,
+    );
+    const allPaths = getAllScatterPoints(container);
+    expect(allPaths).toHaveLength(dataWithId.length);
+    allPaths.forEach(path => {
+      expect(path.getAttribute('id')).toBe(null);
+    });
+    expect(container.querySelector('#my-point')).toBe(null);
   });
 });
