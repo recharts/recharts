@@ -267,7 +267,6 @@
   "lib/util/getActiveCoordinate.js",
   "lib/util/getAxisTypeBasedOnLayout.js",
   "lib/util/getClassNameFromUnknown.js",
-  "lib/util/getDataPointColors.js",
   "lib/util/getEveryNth.js",
   "lib/util/getRadiusAndStrokeWidthFromDot.js",
   "lib/util/getRelativeCoordinate.js",
