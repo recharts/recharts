@@ -108,11 +108,11 @@ export function Dots({
     const dotProps: DotItemDotProps = {
       r: 3,
       ...baseProps,
+      // Like Bar, a data point can set its own colors; explicit dot props win.
+      ...getDataPointColors(entry.payload),
       // Dots are separate visual primitives; do not inherit the parent series opacity.
       fillOpacity: 1,
       ...customDotProps,
-      // Like Bar, a data point can set its own colors.
-      ...getDataPointColors(entry.payload),
       index: i,
       cx: entry.x ?? undefined,
       cy: entry.y ?? undefined,
