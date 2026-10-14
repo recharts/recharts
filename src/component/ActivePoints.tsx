@@ -10,6 +10,7 @@ import { isNullish } from '../util/DataUtils';
 import { svgPropertiesNoEventsFromUnknown } from '../util/svgPropertiesNoEvents';
 import { ZIndexable, ZIndexLayer } from '../zIndex/ZIndexLayer';
 import { DefaultZIndexes } from '../zIndex/DefaultZIndexes';
+import { getDataPointColors } from '../util/getDataPointColors';
 
 export interface PointType {
   readonly x: number | null;
@@ -40,13 +41,15 @@ const ActivePoint = ({
   if (activeDot === false || point.x == null || point.y == null) {
     return null;
   }
+  const dataPointColors = getDataPointColors(point.payload);
   const dotPropsTyped: ActiveDotProps = {
     index: childIndex,
     dataKey,
     cx: point.x,
     cy: point.y,
     r: 4,
-    fill: mainColor ?? 'none',
+    // Same precedence as the tooltip item color.
+    fill: dataPointColors.fill ?? dataPointColors.stroke ?? mainColor ?? 'none',
     strokeWidth: 2,
     stroke: '#fff',
     payload: point.payload,

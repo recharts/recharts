@@ -8,6 +8,7 @@ import { isClipDot } from '../util/ReactUtils';
 import { svgPropertiesAndEventsFromUnknown } from '../util/svgPropertiesAndEvents';
 import { ZIndexable, ZIndexLayer } from '../zIndex/ZIndexLayer';
 import { DefaultZIndexes } from '../zIndex/DefaultZIndexes';
+import { getDataPointColors } from '../util/getDataPointColors';
 
 export interface DotPoint {
   readonly x: number | null;
@@ -110,6 +111,8 @@ export function Dots({
       // Dots are separate visual primitives; do not inherit the parent series opacity.
       fillOpacity: 1,
       ...customDotProps,
+      // Like Bar, a data point can set its own colors.
+      ...getDataPointColors(entry.payload),
       index: i,
       cx: entry.x ?? undefined,
       cy: entry.y ?? undefined,
