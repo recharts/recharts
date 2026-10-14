@@ -138,6 +138,47 @@ describe('<PieChart />', () => {
     });
   });
 
+  describe('null values', () => {
+    type Datum = { name: string; value: number | null };
+    const nullData: Array<Datum> = [
+      { name: 'A', value: 1 },
+      { name: 'Missing', value: null },
+      { name: 'B', value: 1 },
+    ];
+    const getValue = (entry: Datum): number | null => entry.value;
+
+    test.each(['value', getValue])(
+      'does not allocate a minimum-angle slice to a null value with dataKey %s',
+      dataKey => {
+        const renderTestCase = createSelectorTestCase(({ children }) => (
+          <PieChart width={400} height={400}>
+            <Pie data={nullData} dataKey={dataKey} minAngle={10} isAnimationActive={false} />
+            {children}
+          </PieChart>
+        ));
+        const { container } = renderTestCase();
+        expectPieSectorAngles(container, [
+          { startAngle: 0, endAngle: 180 },
+          { startAngle: 180, endAngle: 0 },
+        ]);
+      },
+    );
+
+    test.each(['value', getValue])('does not allocate padding to a null value with dataKey %s', dataKey => {
+      const renderTestCase = createSelectorTestCase(({ children }) => (
+        <PieChart width={400} height={400}>
+          <Pie data={nullData} dataKey={dataKey} paddingAngle={5} isAnimationActive={false} />
+          {children}
+        </PieChart>
+      ));
+      const { container } = renderTestCase();
+      expectPieSectorAngles(container, [
+        { startAngle: 0, endAngle: 175 },
+        { startAngle: 180, endAngle: 355 },
+      ]);
+    });
+  });
+
   test('Renders 6 sectors circles in simple PieChart', () => {
     const { container } = rechartsTestRender(
       <PieChart width={800} height={400}>
