@@ -58,11 +58,15 @@ function variantName({ fromData, fromProps, fromTheme }: FillStrokeVariant): str
   return sources.length === 0 ? 'no colors' : sources.join(' + ');
 }
 
+/**
+ * Colors for the data entry at the given index. Use this for nested data where the index is not the array index.
+ */
+export function dataColorsAt(index: number, enabled: boolean): { fill?: string; stroke?: string } {
+  return (enabled ? dataColors[index % dataColors.length] : undefined) ?? {};
+}
+
 export function withDataColors<T extends object>(data: ReadonlyArray<T>, enabled: boolean): T[] {
-  if (!enabled) {
-    return [...data];
-  }
-  return data.map((entry, index) => ({ ...entry, ...dataColors[index % dataColors.length] }));
+  return data.map((entry, index) => ({ ...entry, ...dataColorsAt(index, enabled) }));
 }
 
 export function itemColorProps(enabled: boolean): Partial<typeof propColors> {
