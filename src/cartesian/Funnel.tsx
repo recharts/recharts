@@ -275,12 +275,11 @@ type FunnelTrapezoidsProps = ShapeAnimationProps & {
  */
 export function getFunnelEntryColor(entry: unknown): string | undefined {
   if (entry != null && typeof entry === 'object') {
-    const { fill, stroke } = entry as { fill?: unknown; stroke?: unknown };
-    if (typeof fill === 'string') {
-      return fill;
+    if ('fill' in entry && typeof entry.fill === 'string') {
+      return entry.fill;
     }
-    if (typeof stroke === 'string') {
-      return stroke;
+    if ('stroke' in entry && typeof entry.stroke === 'string') {
+      return entry.stroke;
     }
   }
   return undefined;
