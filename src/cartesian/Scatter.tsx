@@ -80,7 +80,7 @@ import { ChartData } from '../state/chartDataSlice';
 import { useGraphicalItemIdentity } from '../theme/useGraphicalItemIdentity';
 import { useEffectiveDataKey } from '../util/useEffectiveDataKey';
 import { getDataKeyOnAxis } from '../state/selectors/effectiveDataKeySelectors';
-import { getEntryStyleOverrides, UnthemedStyles, useUnthemedStyles } from '../theme/dataEntryStyles';
+import { getEntryStyleOverrides, hasOwnColors, UnthemedStyles, useUnthemedStyles } from '../theme/dataEntryStyles';
 import { getActiveStyleOverrides, useThemedActiveStyles } from '../theme/activeStyles';
 import { Styles2D } from '../theme/RechartsTheme';
 
@@ -812,6 +812,37 @@ function SymbolsWithAnimation({
   );
 }
 
+/**
+ * Resolves the color a scatter point actually renders with, mirroring the render order in ScatterSymbols:
+ * data entry props win over the series props (theme already merged into those).
+ * Cell is deprecated and intentionally not part of this; its colors never reach the tooltip.
+ * Fill wins over stroke, same as Pie and Funnel entry colors.
+ * https://github.com/recharts/recharts/issues/7976
+ */
+export function getScatterEntryColor(
+  entry: unknown,
+  seriesFill: string | undefined,
+  seriesStroke: string | undefined,
+  unthemedStyles: UnthemedStyles | undefined,
+): string | undefined {
+  /*
+   * When the entry defines its own colors, the theme is suppressed for that entry at render time,
+   * and the explicit Scatter props fill in the rest (see getEntryStyleOverrides).
+   * Mirror that here so the tooltip color matches the rendered symbol.
+   */
+  const seriesFillFallback = hasOwnColors(entry) && unthemedStyles != null ? unthemedStyles.fill : seriesFill;
+  const seriesStrokeFallback = hasOwnColors(entry) && unthemedStyles != null ? unthemedStyles.stroke : seriesStroke;
+  const fill =
+    entry != null && typeof entry === 'object' && 'fill' in entry && typeof entry.fill === 'string'
+      ? entry.fill
+      : undefined;
+  const stroke =
+    entry != null && typeof entry === 'object' && 'stroke' in entry && typeof entry.stroke === 'string'
+      ? entry.stroke
+      : undefined;
+  return fill ?? seriesFillFallback ?? stroke ?? seriesStrokeFallback;
+}
+
 export function computeScatterPoints({
   displayedData,
   xAxis,
@@ -822,6 +853,9 @@ export function computeScatterPoints({
   yAxisTicks,
   cells,
   layout,
+  seriesFill,
+  seriesStroke,
+  unthemedStyles,
 }: {
   displayedData: ReadonlyArray<unknown>;
   xAxis: BaseAxisWithScale;
@@ -832,6 +866,9 @@ export function computeScatterPoints({
   yAxisTicks: ReadonlyArray<TickItem> | undefined;
   cells: ReadonlyArray<ReactElement> | undefined;
   layout: LayoutType | undefined;
+  seriesFill: string | undefined;
+  seriesStroke: string | undefined;
+  unthemedStyles: UnthemedStyles | undefined;
 }): ReadonlyArray<ScatterPointItem> {
   /*
    * Scatter reads from two axes so it has two dataKeys.
@@ -850,6 +887,7 @@ export function computeScatterPoints({
     const y: unknown = getValueByDataKey(entry, yAxisDataKey);
     const z: unknown = (!isNullish(zAxisDataKey) && getValueByDataKey(entry, zAxisDataKey)) || '-';
 
+    const pointColor = getScatterEntryColor(entry, seriesFill, seriesStroke, unthemedStyles);
     const tooltipPayload: Array<TooltipPayloadEntry> = [
       {
         name: isNullish(xAxis.dataKey) ? scatterSettings.name : xAxis.name || String(xAxisDataKey),
@@ -860,6 +898,8 @@ export function computeScatterPoints({
         dataKey: xAxisDataKey,
         type: scatterSettings.tooltipType,
         graphicalItemId: scatterSettings.id,
+        color: pointColor,
+        fill: pointColor,
       },
       {
         name: isNullish(yAxis.dataKey) ? scatterSettings.name : yAxis.name || String(yAxisDataKey),
@@ -870,6 +910,8 @@ export function computeScatterPoints({
         dataKey: yAxisDataKey,
         type: scatterSettings.tooltipType,
         graphicalItemId: scatterSettings.id,
+        color: pointColor,
+        fill: pointColor,
       },
     ];
 
@@ -884,6 +926,8 @@ export function computeScatterPoints({
         dataKey: zAxisDataKey,
         type: scatterSettings.tooltipType,
         graphicalItemId: scatterSettings.id,
+        color: pointColor,
+        fill: pointColor,
       });
     }
 
@@ -906,9 +950,14 @@ export function computeScatterPoints({
     const size = z !== '-' && zAxis != null ? zAxis.scale.map(z) : defaultZ;
     const radius = size == null ? 0 : Math.sqrt(Math.max(size, 0) / Math.PI);
 
+    /*
+     * `id` from a data entry is never spread on rendered elements to avoid duplicate DOM ids.
+     * The raw entry, id included, stays available through `payload`.
+     */
+    const entryWithoutId = { ...(entry as Record<string, unknown> | null) };
+    delete entryWithoutId.id;
     return {
-      // @ts-expect-error can't spread unknown
-      ...entry,
+      ...entryWithoutId,
       cx,
       cy,
       x: cx == null ? undefined : cx - radius,
@@ -1015,7 +1064,18 @@ function ScatterImpl(props: WithIdRequired<Props> & Pick<InternalProps, 'untheme
   const isPanorama = useIsPanorama();
 
   const points = useAppSelector(state => {
-    return selectScatterPoints(state, xAxisId, yAxisId, zAxisId, props.id, cells, isPanorama);
+    return selectScatterPoints(
+      state,
+      xAxisId,
+      yAxisId,
+      zAxisId,
+      props.id,
+      cells,
+      isPanorama,
+      props.fill,
+      props.stroke,
+      props.unthemedStyles,
+    );
   });
   if (needClip == null) {
     return null;
