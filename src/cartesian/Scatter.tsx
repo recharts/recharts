@@ -954,7 +954,7 @@ export function computeScatterPoints({
      * `id` from a data entry is never spread on rendered elements to avoid duplicate DOM ids.
      * The raw entry, id included, stays available through `payload`.
      */
-    const entryWithoutId = { ...(entry as Record<string, unknown> | null) };
+    const entryWithoutId: Record<string, unknown> = typeof entry === 'object' && entry !== null ? { ...entry } : {};
     delete entryWithoutId.id;
     return {
       ...entryWithoutId,

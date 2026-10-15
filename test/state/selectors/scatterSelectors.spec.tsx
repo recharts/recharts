@@ -451,7 +451,7 @@ describe('data entry id', () => {
       spy,
       expect.arrayContaining([expect.objectContaining({ payload: expect.objectContaining({ id: 'my-point' }) })]),
     );
-    const points = spy.mock.lastCall?.[0] as ReadonlyArray<Record<string, unknown>> | undefined;
+    const points = spy.mock.lastCall?.[0];
     expect(points?.[0]).not.toHaveProperty('id', 'my-point');
   });
 });
