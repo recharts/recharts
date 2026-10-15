@@ -814,18 +814,17 @@ function SymbolsWithAnimation({
 
 /**
  * Resolves the color a scatter point actually renders with, mirroring the render order in ScatterSymbols:
- * Cell props win over data entry props, which win over the series props (theme already merged into those).
+ * data entry props win over the series props (theme already merged into those).
+ * Cell is deprecated and intentionally not part of this; its colors never reach the tooltip.
  * Fill wins over stroke, same as Pie and Funnel entry colors.
  * https://github.com/recharts/recharts/issues/7976
  */
 export function getScatterEntryColor(
   entry: unknown,
-  cellProps: Record<string, unknown> | undefined,
   seriesFill: string | undefined,
   seriesStroke: string | undefined,
   unthemedStyles: UnthemedStyles | undefined,
 ): string | undefined {
-  const entryStyles = (entry ?? {}) as { fill?: string; stroke?: string };
   /*
    * When the entry defines its own colors, the theme is suppressed for that entry at render time,
    * and the explicit Scatter props fill in the rest (see getEntryStyleOverrides).
@@ -833,9 +832,15 @@ export function getScatterEntryColor(
    */
   const seriesFillFallback = hasOwnColors(entry) && unthemedStyles != null ? unthemedStyles.fill : seriesFill;
   const seriesStrokeFallback = hasOwnColors(entry) && unthemedStyles != null ? unthemedStyles.stroke : seriesStroke;
-  const fill = (cellProps?.fill as string | undefined) ?? entryStyles.fill ?? seriesFillFallback;
-  const stroke = (cellProps?.stroke as string | undefined) ?? entryStyles.stroke ?? seriesStrokeFallback;
-  return fill ?? stroke;
+  const fill =
+    entry != null && typeof entry === 'object' && 'fill' in entry && typeof entry.fill === 'string'
+      ? entry.fill
+      : undefined;
+  const stroke =
+    entry != null && typeof entry === 'object' && 'stroke' in entry && typeof entry.stroke === 'string'
+      ? entry.stroke
+      : undefined;
+  return fill ?? seriesFillFallback ?? stroke ?? seriesStrokeFallback;
 }
 
 export function computeScatterPoints({
@@ -882,8 +887,7 @@ export function computeScatterPoints({
     const y: unknown = getValueByDataKey(entry, yAxisDataKey);
     const z: unknown = (!isNullish(zAxisDataKey) && getValueByDataKey(entry, zAxisDataKey)) || '-';
 
-    const cellProps = cells?.[index]?.props as Record<string, unknown> | undefined;
-    const pointColor = getScatterEntryColor(entry, cellProps, seriesFill, seriesStroke, unthemedStyles);
+    const pointColor = getScatterEntryColor(entry, seriesFill, seriesStroke, unthemedStyles);
     const tooltipPayload: Array<TooltipPayloadEntry> = [
       {
         name: isNullish(xAxis.dataKey) ? scatterSettings.name : xAxis.name || String(xAxisDataKey),
