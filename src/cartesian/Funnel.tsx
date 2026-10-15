@@ -41,8 +41,9 @@ import {
 } from '../context/tooltipContext';
 import { TooltipPayload, TooltipPayloadConfiguration } from '../state/tooltipSlice';
 import { SetTooltipEntrySettings } from '../state/SetTooltipEntrySettings';
+import { SetLegendPayload } from '../state/SetLegendPayload';
 import { Formatter } from '../component/DefaultTooltipContent';
-import { ResolvedFunnelSettings, selectFunnelTrapezoids } from '../state/selectors/funnelSelectors';
+import { ResolvedFunnelSettings, selectFunnelLegend, selectFunnelTrapezoids } from '../state/selectors/funnelSelectors';
 import { findAllByType } from '../util/ReactUtils';
 import { Cell } from '../component/Cell';
 import { RequiresDefaultProps, resolveDefaultProps } from '../util/resolveDefaultProps';
@@ -268,6 +269,22 @@ type FunnelTrapezoidsProps = ShapeAnimationProps & {
   allOtherFunnelProps: InternalProps;
 };
 
+/**
+ * The color a trapezoid is rendered with: its fill, or its stroke when there is no fill.
+ * Tooltip and Legend both report this so they always match the chart.
+ */
+export function getFunnelEntryColor(entry: unknown): string | undefined {
+  if (entry != null && typeof entry === 'object') {
+    if ('fill' in entry && typeof entry.fill === 'string') {
+      return entry.fill;
+    }
+    if ('stroke' in entry && typeof entry.stroke === 'string') {
+      return entry.stroke;
+    }
+  }
+  return undefined;
+}
+
 const SetFunnelTooltipEntrySettings = React.memo(
   ({
     dataKey,
@@ -279,27 +296,31 @@ const SetFunnelTooltipEntrySettings = React.memo(
     hide,
     tooltipType,
     formatter,
-    data,
     trapezoids,
     id,
   }: Pick<
     InternalProps,
-    | 'dataKey'
-    | 'nameKey'
-    | 'stroke'
-    | 'strokeWidth'
-    | 'fill'
-    | 'name'
-    | 'hide'
-    | 'tooltipType'
-    | 'formatter'
-    | 'data'
-    | 'id'
+    'dataKey' | 'nameKey' | 'stroke' | 'strokeWidth' | 'fill' | 'name' | 'hide' | 'tooltipType' | 'formatter' | 'id'
   > & {
     trapezoids: ReadonlyArray<FunnelTrapezoidItem>;
   }) => {
     const tooltipEntrySettings: TooltipPayloadConfiguration = {
-      dataDefinedOnItem: data,
+      /*
+       * Per-item tooltip payloads, like Pie: each trapezoid carries its resolved color so
+       * the tooltip item matches the chart. An explicit `name` prop still overrides the
+       * per-entry names, as it did before.
+       */
+      dataDefinedOnItem: trapezoids.map(trapezoid =>
+        /*
+         * An explicit `name` prop overrides per-entry names, but only for entries whose
+         * datum does not provide a name through nameKey - datum names always win.
+         */
+        name == null
+          ? trapezoid.tooltipPayload
+          : trapezoid.tooltipPayload.map(item =>
+              getValueByDataKey(item.payload, nameKey) != null ? item : { ...item, name },
+            ),
+      ),
       getPosition: index => trapezoids[Number(index)]?.tooltipPosition,
       settings: {
         stroke,
@@ -319,6 +340,14 @@ const SetFunnelTooltipEntrySettings = React.memo(
     return <SetTooltipEntrySettings tooltipEntrySettings={tooltipEntrySettings} />;
   },
 );
+
+function SetFunnelPayloadLegend({ funnelSettings }: { funnelSettings: ResolvedFunnelSettings }) {
+  const legendPayload = useAppSelector(state => selectFunnelLegend(state, funnelSettings));
+  if (legendPayload == null) {
+    return null;
+  }
+  return <SetLegendPayload legendPayload={legendPayload} />;
+}
 
 function FunnelLabelListProvider({
   showLabels,
@@ -588,6 +617,7 @@ function FunnelImpl(
       presentationProps,
       indexedStyles,
       unthemedStyles,
+      legendType: props.legendType,
       id,
     }),
     [
@@ -602,6 +632,7 @@ function FunnelImpl(
       presentationProps,
       indexedStyles,
       unthemedStyles,
+      props.legendType,
       id,
     ],
   );
@@ -617,6 +648,7 @@ function FunnelImpl(
 
   return (
     <>
+      <SetFunnelPayloadLegend funnelSettings={funnelSettings} />
       <SetFunnelTooltipEntrySettings
         dataKey={props.dataKey}
         nameKey={props.nameKey}
@@ -627,7 +659,6 @@ function FunnelImpl(
         hide={props.hide}
         tooltipType={props.tooltipType}
         formatter={props.formatter}
-        data={props.data}
         trapezoids={trapezoids}
         id={id}
       />
@@ -728,8 +759,17 @@ export function computeFunnelTrapezoids({
       // @ts-expect-error nextVal could be an array
       const lowerWidth = maxValue === 0 ? 0 : (nextVal / maxValue) * realWidth;
 
+      const trapezoidColor = getFunnelEntryColor(entry);
       const tooltipPayload: TooltipPayload = [
-        { name, value: val, payload: entry, dataKey, type: tooltipType, graphicalItemId },
+        {
+          name,
+          value: val,
+          payload: entry,
+          dataKey,
+          type: tooltipType,
+          graphicalItemId,
+          ...(trapezoidColor != null ? { color: trapezoidColor, fill: trapezoidColor } : {}),
+        },
       ];
       const tooltipPosition: Coordinate = {
         x: x + upperWidth / 2,
