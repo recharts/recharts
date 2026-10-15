@@ -1,5 +1,6 @@
 import React from 'react';
-import { Line, LineChart, RechartsThemeProvider, Tooltip, XAxis, YAxis } from 'recharts';
+import { LabelList, Legend, Line, LineChart, RechartsThemeProvider, Tooltip, XAxis, YAxis } from 'recharts';
+import { FillStrokeVariantsGrid, itemColorProps, withDataColors } from './FillStrokeVariants';
 
 const data = [
   { name: 'A', revenue: 120 },
@@ -47,5 +48,28 @@ export function LineThemeComparison() {
         <LineThemeChart />
       </RechartsThemeProvider>
     </>
+  );
+}
+
+export function LineFillStrokeVariants() {
+  return (
+    <FillStrokeVariantsGrid
+      renderChart={({ fromData, fromProps }) => (
+        <LineChart
+          style={{ width: '380px', height: '260px' }}
+          data={withDataColors(data, fromData)}
+          margin={{ top: 20, right: 30 }}
+        >
+          <XAxis dataKey="name" />
+          <YAxis />
+          <Legend />
+          <Tooltip defaultIndex={0} />
+          <Line dataKey="revenue" isAnimationActive={false} {...itemColorProps(fromProps)}>
+            <LabelList position="center" />
+            <LabelList position="top" />
+          </Line>
+        </LineChart>
+      )}
+    />
   );
 }

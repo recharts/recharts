@@ -1,5 +1,16 @@
 import React from 'react';
-import { Scatter, ScatterChart, RechartsThemeProvider, XAxis, YAxis, ZAxis } from 'recharts';
+import {
+  LabelList,
+  Legend,
+  Scatter,
+  ScatterChart,
+  RechartsThemeProvider,
+  Tooltip,
+  XAxis,
+  YAxis,
+  ZAxis,
+} from 'recharts';
+import { FillStrokeVariantsGrid, itemColorProps, withDataColors } from './FillStrokeVariants';
 
 const scatterData = [
   { x: 10, y: 20, z: 100 },
@@ -53,5 +64,30 @@ export function ScatterThemeComparison() {
       <h1>Themed Scatter</h1>
       <ThemedScatter />
     </>
+  );
+}
+
+export function ScatterFillStrokeVariants() {
+  return (
+    <FillStrokeVariantsGrid
+      renderChart={({ fromData, fromProps }) => (
+        <ScatterChart style={{ width: '380px', height: '260px' }} margin={{ top: 20 }}>
+          <XAxis dataKey="x" type="number" />
+          <YAxis dataKey="y" type="number" />
+          <ZAxis dataKey="z" type="number" range={[64, 400]} />
+          <Legend />
+          <Tooltip defaultIndex={0} />
+          <Scatter
+            name="points"
+            data={withDataColors(scatterData, fromData)}
+            isAnimationActive={false}
+            {...itemColorProps(fromProps)}
+          >
+            <LabelList dataKey="y" position="center" />
+            <LabelList dataKey="y" position="top" />
+          </Scatter>
+        </ScatterChart>
+      )}
+    />
   );
 }

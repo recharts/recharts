@@ -1,5 +1,6 @@
 import React from 'react';
-import { RadialBar, RadialBarChart, RechartsThemeProvider, XAxis, YAxis } from 'recharts';
+import { LabelList, Legend, RadialBar, RadialBarChart, RechartsThemeProvider, Tooltip, XAxis, YAxis } from 'recharts';
+import { FillStrokeVariantsGrid, itemColorProps, withDataColors } from './FillStrokeVariants';
 
 const data = [
   { name: 'A', value: 400 },
@@ -49,5 +50,28 @@ export function RadialBarThemeComparison() {
         <RadialBarThemeChart />
       </RechartsThemeProvider>
     </>
+  );
+}
+
+export function RadialBarFillStrokeVariants() {
+  return (
+    <FillStrokeVariantsGrid
+      renderChart={({ fromData, fromProps }) => (
+        <RadialBarChart
+          style={{ width: '380px', height: '280px' }}
+          data={withDataColors(data, fromData)}
+          innerRadius={20}
+          outerRadius={110}
+          endAngle={270}
+        >
+          <RadialBar dataKey="value" isAnimationActive={false} {...itemColorProps(fromProps)}>
+            <LabelList position="insideEnd" />
+            <LabelList position="end" dataKey="name" />
+          </RadialBar>
+          <Legend />
+          <Tooltip defaultIndex={0} />
+        </RadialBarChart>
+      )}
+    />
   );
 }

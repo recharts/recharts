@@ -1,5 +1,6 @@
 import React from 'react';
-import { Bar, BarChart, RechartsThemeProvider, XAxis, YAxis } from 'recharts';
+import { Bar, BarChart, LabelList, Legend, RechartsThemeProvider, Tooltip, XAxis, YAxis } from 'recharts';
+import { FillStrokeVariantsGrid, itemColorProps, withDataColors } from './FillStrokeVariants';
 
 const data = [
   { name: 'A', value: 400 },
@@ -48,5 +49,24 @@ export function BarThemeComparison() {
         <BarThemeChart />
       </RechartsThemeProvider>
     </>
+  );
+}
+
+export function BarFillStrokeVariants() {
+  return (
+    <FillStrokeVariantsGrid
+      renderChart={({ fromData, fromProps }) => (
+        <BarChart style={{ width: '380px', height: '260px' }} data={withDataColors(data, fromData)}>
+          <XAxis dataKey="name" />
+          <YAxis />
+          <Legend />
+          <Tooltip defaultIndex={0} />
+          <Bar dataKey="value" isAnimationActive={false} {...itemColorProps(fromProps)}>
+            <LabelList position="inside" />
+            <LabelList position="top" />
+          </Bar>
+        </BarChart>
+      )}
+    />
   );
 }
