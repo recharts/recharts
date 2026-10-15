@@ -1462,6 +1462,7 @@ describe('<RadialBar />', () => {
       minPointSize: 0,
       stackId: undefined,
       maxBarSize: undefined,
+      minAngle: 0,
       barSize: undefined,
       type: 'radialBar',
       angleAxisId: 0,
