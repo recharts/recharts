@@ -39,6 +39,7 @@
     "check-types-website": "tsc --project www/tsconfig.json",
     "check-playwright-versions": "node scripts/check-playwright-versions.mjs",
     "check-orphan-snapshots": "node scripts/check-orphan-snapshots.mjs",
+    "check-eslint-suppressions": "node scripts/check-eslint-suppressions.mjs",
     "test": "vitest run --config vitest.config.mts --project unit:*",
     "test-lib": "vitest run --config vitest.config.mts --project unit:lib",
     "test-website": "vitest run --config vitest.config.mts --project unit:website",
@@ -73,7 +74,7 @@
   },
   "lint-staged": {
     "*.{ts,tsx,js,jsx}": [
-      "eslint --fix",
+      "eslint --fix --pass-on-unpruned-suppressions",
       "prettier --write"
     ]
   },

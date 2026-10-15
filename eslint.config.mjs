@@ -204,7 +204,6 @@ const typescriptConfig = [
     name: 'x/typescript-eslint',
     rules: {
       '@typescript-eslint/no-use-before-define': 'error',
-      '@typescript-eslint/no-explicit-any': 'off',
       '@typescript-eslint/explicit-module-boundary-types': 'off',
       '@typescript-eslint/ban-types': 'off',
       '@typescript-eslint/no-unused-vars': [
@@ -487,9 +486,19 @@ const jsdocConfig = [
   },
 ];
 
-const neverAny = {
-  name: 'no-any/config',
-  files: ['src/util/scale/**'],
+/*
+ * Type-safety escape hatches: `any`, `as` type assertions (except `as const`), and `!` non-null assertions.
+ * See .agents/skills/typescript/SKILL.md for alternatives.
+ *
+ * These rules apply everywhere, but existing violations are recorded in `eslint-suppressions.json`.
+ * The suppressions file is a ratchet:
+ * - adding a new violation fails lint,
+ * - fixing a violation also fails lint until you run `npm run lint -- --prune-suppressions`,
+ * - CI (`npm run check-eslint-suppressions`) fails if the total number of suppressions grows.
+ */
+const typeSafety = {
+  name: 'x/type-safety',
+  files: ['**/*.ts', '**/*.tsx', '**/*.mts', '**/*.cts'],
   rules: {
     '@typescript-eslint/no-explicit-any': 'error',
     '@typescript-eslint/ban-ts-comment': 'error',
@@ -499,6 +508,7 @@ const neverAny = {
         assertionStyle: 'never',
       },
     ],
+    '@typescript-eslint/no-non-null-assertion': 'error',
   },
 };
 
@@ -531,5 +541,5 @@ export default [
   ...jsdocConfig,
   generatedApiDocsOverrides,
   perfOptimization,
-  neverAny,
+  typeSafety,
 ];
