@@ -807,7 +807,8 @@ export function computeRadialBarDataItems({
 
     if (layout === 'radial') {
       startAngle = angleAxis.scale.map(value[0]) ?? rootStartAngle;
-      endAngle = angleAxis.scale.map(value[1]) ?? rootEndAngle;
+      const valueAngle = angleAxis.scale.map(value[1]);
+      endAngle = valueAngle ?? startAngle;
       innerRadius = getCateCoordinateOfBar({
         axis: radiusAxis,
         ticks: radiusAxisTicks,
@@ -820,7 +821,7 @@ export function computeRadialBarDataItems({
         outerRadius = innerRadius + pos.size;
         let deltaAngle = endAngle - startAngle;
 
-        if (Math.abs(minPointSize) > 0 && Math.abs(deltaAngle) < Math.abs(minPointSize)) {
+        if (valueAngle != null && Math.abs(minPointSize) > 0 && Math.abs(deltaAngle) < Math.abs(minPointSize)) {
           const delta = mathSign(deltaAngle || minPointSize) * (Math.abs(minPointSize) - Math.abs(deltaAngle));
 
           endAngle += delta;
