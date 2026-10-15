@@ -549,17 +549,18 @@ describe('<RadialBar />', () => {
       // referentially stable result, the same guarantee every real selector in this codebase
       // provides.
       const selectStackedAAndB = createSelector(
-        [
-          (state: RechartsRootState) =>
-            selectPolarItemsSettings(state, 'angleAxis', 0) as ReadonlyArray<RadialBarSettings>,
-        ],
+        [(state: RechartsRootState) => selectPolarItemsSettings(state, 'angleAxis', 0)],
         allSettings => {
           // Both bars register asynchronously; ignore intermediate renders where only one has.
           if (allSettings.length < 2) {
             return undefined;
           }
-          const settingsA = allSettings.find(s => s.dataKey === 'a');
-          const settingsB = allSettings.find(s => s.dataKey === 'b');
+          const settingsA = allSettings.find(
+            (s): s is RadialBarSettings => s.type === 'radialBar' && s.dataKey === 'a',
+          );
+          const settingsB = allSettings.find(
+            (s): s is RadialBarSettings => s.type === 'radialBar' && s.dataKey === 'b',
+          );
           assertNotNull(settingsA);
           assertNotNull(settingsB);
           return { settingsA, settingsB };
