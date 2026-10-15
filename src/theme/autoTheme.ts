@@ -17,6 +17,8 @@ const padding = '0.5ex';
  * `light-dark()` needs Chrome 123, Firefox 120, or Safari 17.5. Older browsers ignore these values,
  * see {@link autoTheme}.
  *
+ * @see {@link https://recharts.github.io/en-US/guide/theming/ Theming guide}
+ *
  * @since 3.11
  */
 export const autoPalette: ReadonlyArray<string> = [
@@ -65,6 +67,8 @@ function toGraphicalItem(color: string): GraphicalItemStyle {
  * `light-dark()` needs Chrome 123, Firefox 120, or Safari 17.5. Older browsers do not understand the value and ignore it:
  * shapes fall back to the SVG defaults, which are a black fill and no stroke, and Tooltip and Legend lose their theme colors.
  * If you support older browsers, use {@link lightTheme} and {@link darkTheme} instead, or a theme with CSS `var()` values.
+ *
+ * @see {@link https://recharts.github.io/en-US/guide/theming/ Theming guide}
  *
  * @since 3.11
  */
