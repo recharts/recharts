@@ -56,58 +56,59 @@ touchEventMiddleware.startListening({
     );
 
     const callback = () => {
-      if (latestTouchEvent == null) {
-        return;
-      }
-
-      const currentState = listenerApi.getState();
-      const tooltipEventType = selectTooltipEventType(currentState, currentState.tooltip.settings.shared);
-      if (tooltipEventType === 'axis') {
-        const latestTouchPointer = latestChartPointers?.[0];
-        if (latestTouchPointer == null) {
-          rafId = null;
-          timeoutId = null;
+      try {
+        if (latestTouchEvent == null) {
           return;
         }
-        const activeProps = selectActivePropsFromChartPointer(currentState, latestTouchPointer);
-        if (activeProps?.activeIndex != null) {
+
+        const currentState = listenerApi.getState();
+        const tooltipEventType = selectTooltipEventType(currentState, currentState.tooltip.settings.shared);
+        if (tooltipEventType === 'axis') {
+          const latestTouchPointer = latestChartPointers?.[0];
+          if (latestTouchPointer == null) {
+            return;
+          }
+          const activeProps = selectActivePropsFromChartPointer(currentState, latestTouchPointer);
+          if (activeProps?.activeIndex != null) {
+            listenerApi.dispatch(
+              setMouseOverAxisIndex({
+                activeIndex: activeProps.activeIndex,
+                activeDataKey: undefined,
+                activeCoordinate: activeProps.activeCoordinate,
+              }),
+            );
+          }
+        } else if (tooltipEventType === 'item') {
+          const touch = latestTouchEvent.touches[0];
+          if (document.elementFromPoint == null || touch == null) {
+            return;
+          }
+          const target = document.elementFromPoint(touch.clientX, touch.clientY);
+          if (!target || !target.getAttribute) {
+            return;
+          }
+          const itemIndex = target.getAttribute(DATA_ITEM_INDEX_ATTRIBUTE_NAME);
+          const graphicalItemId = target.getAttribute(DATA_ITEM_GRAPHICAL_ITEM_ID_ATTRIBUTE_NAME) ?? undefined;
+          const settings = selectAllGraphicalItemsSettings(currentState).find(item => item.id === graphicalItemId);
+          if (itemIndex == null || settings == null || graphicalItemId == null) {
+            return;
+          }
+          const { dataKey } = settings;
+          const coordinate = selectTooltipCoordinate(currentState, itemIndex, graphicalItemId);
+
           listenerApi.dispatch(
-            setMouseOverAxisIndex({
-              activeIndex: activeProps.activeIndex,
-              activeDataKey: undefined,
-              activeCoordinate: activeProps.activeCoordinate,
+            setActiveMouseOverItemIndex({
+              activeDataKey: dataKey,
+              activeIndex: itemIndex,
+              activeCoordinate: coordinate,
+              activeGraphicalItemId: graphicalItemId,
             }),
           );
         }
-      } else if (tooltipEventType === 'item') {
-        const touch = latestTouchEvent.touches[0];
-        if (document.elementFromPoint == null || touch == null) {
-          return;
-        }
-        const target = document.elementFromPoint(touch.clientX, touch.clientY);
-        if (!target || !target.getAttribute) {
-          return;
-        }
-        const itemIndex = target.getAttribute(DATA_ITEM_INDEX_ATTRIBUTE_NAME);
-        const graphicalItemId = target.getAttribute(DATA_ITEM_GRAPHICAL_ITEM_ID_ATTRIBUTE_NAME) ?? undefined;
-        const settings = selectAllGraphicalItemsSettings(currentState).find(item => item.id === graphicalItemId);
-        if (itemIndex == null || settings == null || graphicalItemId == null) {
-          return;
-        }
-        const { dataKey } = settings;
-        const coordinate = selectTooltipCoordinate(currentState, itemIndex, graphicalItemId);
-
-        listenerApi.dispatch(
-          setActiveMouseOverItemIndex({
-            activeDataKey: dataKey,
-            activeIndex: itemIndex,
-            activeCoordinate: coordinate,
-            activeGraphicalItemId: graphicalItemId,
-          }),
-        );
+      } finally {
+        rafId = null;
+        timeoutId = null;
       }
-      rafId = null;
-      timeoutId = null;
     };
 
     if (!isThrottled) {
