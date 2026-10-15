@@ -1,5 +1,16 @@
 import React from 'react';
-import { PolarAngleAxis, PolarGrid, PolarRadiusAxis, Radar, RadarChart, RechartsThemeProvider } from 'recharts';
+import {
+  LabelList,
+  Legend,
+  PolarAngleAxis,
+  PolarGrid,
+  PolarRadiusAxis,
+  Radar,
+  RadarChart,
+  RechartsThemeProvider,
+  Tooltip,
+} from 'recharts';
+import { FillStrokeVariantsGrid, itemColorProps, withDataColors } from './FillStrokeVariants';
 
 const data = [
   { subject: 'Math', A: 120 },
@@ -49,5 +60,24 @@ export function RadarThemeComparison() {
         <RadarThemeChart />
       </RechartsThemeProvider>
     </>
+  );
+}
+
+export function RadarFillStrokeVariants() {
+  return (
+    <FillStrokeVariantsGrid
+      renderChart={({ fromData, fromProps }) => (
+        <RadarChart width={380} height={300} data={withDataColors(data, fromData)} outerRadius={90}>
+          <PolarGrid />
+          <PolarAngleAxis dataKey="subject" />
+          <Legend />
+          <Tooltip defaultIndex={0} />
+          <Radar dataKey="A" dot isAnimationActive={false} {...itemColorProps(fromProps)}>
+            <LabelList position="center" />
+            <LabelList position="top" />
+          </Radar>
+        </RadarChart>
+      )}
+    />
   );
 }
