@@ -427,3 +427,31 @@ describe('selectScatterPoints', () => {
     });
   });
 });
+
+describe('data entry id', () => {
+  const renderTestCase = createSelectorTestCase(({ children }) => (
+    <ScatterChart width={400} height={400}>
+      <Scatter
+        id="scatter-id"
+        dataKey="y"
+        data={[
+          { x: 10, y: 20, id: 'my-point' },
+          { x: 20, y: 30 },
+        ]}
+        isAnimationActive={false}
+      />
+      {children}
+    </ScatterChart>
+  ));
+
+  it('keeps the entry id in the tooltip payload but off the point itself', () => {
+    const selector = (state: RechartsRootState) => selectScatterPoints(state, 0, 0, 0, 'scatter-id', undefined, false);
+    const { spy } = renderTestCase(selector);
+    expectLastCalledWith(
+      spy,
+      expect.arrayContaining([expect.objectContaining({ payload: expect.objectContaining({ id: 'my-point' }) })]),
+    );
+    const points = spy.mock.lastCall?.[0] as ReadonlyArray<Record<string, unknown>> | undefined;
+    expect(points?.[0]).not.toHaveProperty('id', 'my-point');
+  });
+});

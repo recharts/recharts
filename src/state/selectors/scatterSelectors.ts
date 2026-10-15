@@ -17,6 +17,7 @@ import { ScatterSettings } from '../types/ScatterSettings';
 import { GraphicalItemId } from '../graphicalItemsSlice';
 import { TickItem } from '../../util/types';
 import { selectChartLayout } from '../../context/chartLayoutContext';
+import { UnthemedStyles } from '../../theme/dataEntryStyles';
 
 const selectXAxisWithScale = (
   state: RechartsRootState,
@@ -82,6 +83,41 @@ const pickCells = (
   cells: ReadonlyArray<ReactElement> | undefined,
 ): ReadonlyArray<ReactElement> | undefined => cells;
 
+const pickSeriesFill = (
+  _state: RechartsRootState,
+  _x: AxisId,
+  _y: AxisId,
+  _z: AxisId,
+  _id: GraphicalItemId,
+  _cells: ReadonlyArray<ReactElement> | undefined,
+  _isPanorama: boolean,
+  seriesFill: string | undefined,
+): string | undefined => seriesFill;
+const pickSeriesStroke = (
+  _state: RechartsRootState,
+  _x: AxisId,
+  _y: AxisId,
+  _z: AxisId,
+  _id: GraphicalItemId,
+  _cells: ReadonlyArray<ReactElement> | undefined,
+  _isPanorama: boolean,
+  _seriesFill: string | undefined,
+  seriesStroke: string | undefined,
+): string | undefined => seriesStroke;
+
+const pickUnthemedStyles = (
+  _state: RechartsRootState,
+  _x: AxisId,
+  _y: AxisId,
+  _z: AxisId,
+  _id: GraphicalItemId,
+  _cells: ReadonlyArray<ReactElement> | undefined,
+  _isPanorama: boolean,
+  _seriesFill: string | undefined,
+  _seriesStroke: string | undefined,
+  unthemedStyles: UnthemedStyles | undefined,
+): UnthemedStyles | undefined => unthemedStyles;
+
 const scatterChartDataSelector = (
   state: RechartsRootState,
   _xAxisId: AxisId,
@@ -113,6 +149,9 @@ export const selectScatterPoints: (
   id: GraphicalItemId,
   cells: ReadonlyArray<ReactElement> | undefined,
   isPanorama: boolean,
+  seriesFill?: string,
+  seriesStroke?: string,
+  unthemedStyles?: UnthemedStyles,
 ) => ReadonlyArray<ScatterPointItem> | undefined = createSelector(
   [
     scatterChartDataSelector,
@@ -124,6 +163,9 @@ export const selectScatterPoints: (
     selectSynchronisedScatterSettings,
     pickCells,
     selectChartLayout,
+    pickSeriesFill,
+    pickSeriesStroke,
+    pickUnthemedStyles,
   ],
   (
     { chartData, dataStartIndex, dataEndIndex }: ChartDataState,
@@ -135,6 +177,9 @@ export const selectScatterPoints: (
     scatterSettings: ScatterSettings | undefined,
     cells,
     layout,
+    seriesFill: string | undefined,
+    seriesStroke: string | undefined,
+    unthemedStyles: UnthemedStyles | undefined,
   ): ReadonlyArray<ScatterPointItem> | undefined => {
     if (scatterSettings == null) {
       return undefined;
@@ -166,6 +211,9 @@ export const selectScatterPoints: (
       yAxisTicks,
       cells,
       layout,
+      seriesFill,
+      seriesStroke,
+      unthemedStyles,
     });
   },
 );
