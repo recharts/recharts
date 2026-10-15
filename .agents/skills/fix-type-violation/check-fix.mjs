@@ -21,7 +21,7 @@ import { findViolations, readSuppressions, repositoryRoot, suppressionsFile, toF
  * stdout: a JSON object { status, before, after, problems }, where status is one of
  *   "complete" - no violation of the rule is left in the file,
  *   "partial"  - some violations were fixed, some are left,
- *   "none"     - no violation was fixed,
+ *   "none"     - no violation was fixed, or the base revision had no violation to fix,
  *   "invalid"  - one of the checks above failed; see `problems`.
  *
  * Exit codes: 0 = complete or partial; 1 = none or invalid.
@@ -104,6 +104,9 @@ git(['ls-files', '--others', '--exclude-standard'])
 let status;
 if (problems.length > 0) {
   status = 'invalid';
+} else if (before === 0) {
+  // Nothing was suppressed on the base revision, so there was nothing to fix.
+  status = 'none';
 } else if (after === 0) {
   status = 'complete';
 } else if (after < before) {

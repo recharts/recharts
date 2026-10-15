@@ -62,6 +62,14 @@ If `git status --short` lists modified or staged files (any line that does not s
 ask the user what to do. Do not stash, reset, or delete them. Untracked files (lines starting with `??`)
 are fine; leave them alone and never commit them.
 
+Save the list of untracked files that exist before you start, so that the failure path in step 7 can tell
+your new files apart from the user's files. The list is stored inside the `.git` folder, so it does not show
+up as a change:
+
+```sh
+git ls-files --others --exclude-standard > "$(git rev-parse --git-dir)/fix-type-violation-untracked-before.txt"
+```
+
 If `node_modules` does not exist, run `npm ci` in the repository root. Never run `npm ci` or
 `npm install` inside `www`.
 
@@ -454,24 +462,39 @@ Go to step 8.
 
 You could not fix any violation, or `check-fix.mjs` says `none` or `invalid` and you cannot fix it.
 
-1. Revert all your code changes:
+1. Revert all changes to tracked files:
 
    ```sh
+   git reset --quiet
    git checkout origin/main -- .
-   git clean -fd -- src test storybook test-vr www
+   ```
+
+2. List the untracked files that you created in this run. The command prints every untracked file that is
+   not in the list you saved in step 1:
+
+   ```sh
+   git ls-files --others --exclude-standard | grep -vxFf "$(git rev-parse --git-dir)/fix-type-violation-untracked-before.txt"
+   ```
+
+   Delete each printed file with `rm <path>`, one by one. Never use `git clean`: it would also delete files
+   the user had before you started. If the command prints nothing, there is nothing to delete.
+
+3. Check the result:
+
+   ```sh
    git status --short
    ```
 
-   `git status --short` must show no modified files. Untracked files that existed before you started
-   (lines starting with `??`) are fine.
+   It must show no modified files. Untracked files that existed before you started (lines starting with
+   `??`) are fine.
 
-2. Record the skip:
+4. Record the skip:
 
    ```sh
    node .agents/skills/fix-type-violation/skip-target.mjs --file <file> --rule <shortRule> --reason "<reason>"
    ```
 
-3. Go to step 8. The PR only changes `.agents/skills/fix-type-violation/skipped.json`.
+5. Go to step 8. The PR only changes `.agents/skills/fix-type-violation/skipped.json`.
 
 ### Writing a good skip reason
 
