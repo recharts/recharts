@@ -1252,6 +1252,82 @@ describe('<Pie />', () => {
       });
     });
 
+    describe('with a numeric throttleDelay', () => {
+      beforeEach(() => {
+        vi.useFakeTimers();
+        mockGetBoundingClientRect({
+          width: 10,
+          height: 10,
+        });
+      });
+
+      afterEach(() => {
+        vi.useRealTimers();
+        vi.useFakeTimers({
+          toFake: ['requestAnimationFrame', 'cancelAnimationFrame'],
+        });
+      });
+
+      it('should keep showing touch tooltips after a throttled touchMove missed every sector', () => {
+        const { container } = render(
+          <PieChart width={400} height={400} throttleDelay={100}>
+            <Pie isAnimationActive={false} data={sectorsData} dataKey="cy" id="cy-pie" />
+            <Tooltip isAnimationActive={false} />
+          </PieChart>,
+        );
+        const sector = container.querySelector(pieChartMouseHoverTooltipSelector);
+        assertNotNull(sector);
+
+        mockTouchingElement('0', 'cy-pie');
+        fireEvent.touchMove(sector, { touches: [{ clientX: 10, clientY: 10 }] });
+        expectTooltipPayload(container, '', ['A : 250']);
+
+        // the trailing touchMove of this throttle window is not over any sector
+        mockTouchingUnrelatedElement();
+        showTooltipOnCoordinateTouch(container, pieChartMouseHoverTooltipSelector, { clientX: 10, clientY: 10 });
+
+        mockTouchingElement('2', 'cy-pie');
+        showTooltipOnCoordinateTouch(container, pieChartMouseHoverTooltipSelector, { clientX: 10, clientY: 10 });
+
+        expectTooltipPayload(container, '', ['C : 250']);
+      });
+
+      it('should keep showing touch tooltips in another chart after a throttled touchMove missed every sector', () => {
+        const { container } = render(
+          <>
+            <div id="first">
+              <PieChart width={400} height={400} throttleDelay={100}>
+                <Pie isAnimationActive={false} data={sectorsData} dataKey="cy" id="first-pie" />
+                <Tooltip isAnimationActive={false} />
+              </PieChart>
+            </div>
+            <div id="second">
+              <PieChart width={400} height={400} throttleDelay={100}>
+                <Pie isAnimationActive={false} data={sectorsData} dataKey="cy" id="second-pie" />
+                <Tooltip isAnimationActive={false} />
+              </PieChart>
+            </div>
+          </>,
+        );
+        const first = container.querySelector('#first');
+        const second = container.querySelector('#second');
+        assertNotNull(first);
+        assertNotNull(second);
+        const firstSector = first.querySelector(pieChartMouseHoverTooltipSelector);
+        assertNotNull(firstSector);
+
+        mockTouchingElement('0', 'first-pie');
+        fireEvent.touchMove(firstSector, { touches: [{ clientX: 10, clientY: 10 }] });
+        mockTouchingUnrelatedElement();
+        showTooltipOnCoordinateTouch(first, pieChartMouseHoverTooltipSelector, { clientX: 10, clientY: 10 });
+
+        mockTouchingElement('1', 'second-pie');
+        showTooltipOnCoordinateTouch(second, pieChartMouseHoverTooltipSelector, { clientX: 10, clientY: 10 });
+
+        expectTooltipPayload(second, '', ['B : 250']);
+      });
+    });
+
     describe('with defaultIndex=number', () => {
       const renderTestCase = createSelectorTestCase(({ children }) => (
         <PieChart width={400} height={400}>
