@@ -112,6 +112,7 @@ To help you with writing strong types, we have the following tools available:
   - Never add new violations to it, and never run `eslint --suppress-all` or `--suppress-rule`. CI (`npm run check-eslint-suppressions`) fails if any rule's total count grows.
   - If lint reports a violation in a file you touched, fix it. Once a file has more violations than its suppressed count, ESLint reports all of them, including the old ones, so the line it points at may not be the one you added.
   - When you fix a suppressed violation, lint fails with "There are suppressions left that do not occur anymore". Run `npm run lint -- --prune-suppressions` and commit the updated file.
+  - To work through the existing violations one target at a time, use the `fix-type-violation` skill.
 - You have already seen `isNotNil` helper available in `utils/DataUtils` that can be used to filter out null or undefined values from arrays, which can help with type inference. `isNullish` also exists in the same file, checking for the opposite.
 - `isWellBehavedNumber` and `isPositiveNumber` are two other popular helpers, available in `utils/isWellBehavedNumber.ts`
 - `assertNotNull` is super useful helper that throws an error if the value is null or undefined. Only available for tests in `test/helper/assertNotNull.ts`.
