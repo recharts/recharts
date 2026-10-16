@@ -1,34 +1,59 @@
-import { createContext, useContext } from 'react';
+import { ComponentType, createContext, ReactNode, useContext } from 'react';
+import { DefaultZIndexes } from './DefaultZIndexes';
+import type { TextBackgroundProps } from '../component/Text';
 
 /**
- * The zIndex layer where `Text` draws its `background` rectangle.
- * `Label` and `LabelList` provide it, so all label backgrounds render below all label texts
+ * The zIndex layer where `Text` draws its `background` rectangle, and the component that renders into it.
+ * `Label` and `LabelList` provide both, so all label backgrounds render below all label texts
  * and overlapping labels stay readable.
  *
- * `undefined` means there is no layer to use, so `Text` draws the background right before the text, as before.
+ * `Label` passes `ZIndexLayer` through this context, so `Text` alone doesn't bundle the zIndex portal code.
+ * Without a provider, `Text` draws the background right before the text.
  *
  * `Label` and `LabelList` also render an empty `ZIndexLayer` at this zIndex next to their own layer.
  * That registers a custom background layer in the same render as the label layer,
  * so the background doesn't appear a render later than its text.
  */
-const LabelBackgroundZIndexContext = createContext<number | undefined>(undefined);
+export type LabelBackgroundLayer = {
+  zIndex: number | undefined;
+  Layer: ComponentType<{ zIndex: number | undefined; children?: ReactNode }>;
+};
 
-export const LabelBackgroundZIndexProvider = LabelBackgroundZIndexContext.Provider;
+const LabelBackgroundLayerContext = createContext<LabelBackgroundLayer | undefined>(undefined);
 
-export function useLabelBackgroundZIndex(): number | undefined {
-  return useContext(LabelBackgroundZIndexContext);
+export const LabelBackgroundLayerProvider = LabelBackgroundLayerContext.Provider;
+
+export function useLabelBackgroundLayer(): LabelBackgroundLayer | undefined {
+  return useContext(LabelBackgroundLayerContext);
 }
 
 /**
- * Returns the zIndex for the backgrounds of labels rendered at `labelZIndex`: one layer below the labels.
- * Returns `undefined` for zIndex 0 or `undefined`, because those labels render in the default layer, without portals.
+ * Space between a label and its background, so you can put your own elements between them.
+ */
+const labelBackgroundGap = DefaultZIndexes.label - DefaultZIndexes.labelBackground;
+
+/**
+ * Returns the zIndex for the backgrounds of labels rendered at `labelZIndex`.
+ * An explicit `zIndex` in the background settings wins.
+ * Otherwise the backgrounds render `labelBackgroundGap` layers below the labels,
+ * which is `DefaultZIndexes.labelBackground` for labels in the default label layer.
+ * Returns `undefined` for labels in the default layer (zIndex 0 or `undefined`), because those render without portals.
  *
  * @param labelZIndex zIndex of the label or label list
+ * @param background `background` prop of the label or label list
  * @returns zIndex of the label backgrounds
  */
-export function getLabelBackgroundZIndex(labelZIndex: number | undefined): number | undefined {
+export function getLabelBackgroundZIndex(
+  labelZIndex: number | undefined,
+  background: boolean | TextBackgroundProps | undefined,
+): number | undefined {
+  if (typeof background === 'object' && background.zIndex != null) {
+    return background.zIndex;
+  }
   if (labelZIndex == null || labelZIndex === 0) {
     return undefined;
   }
-  return labelZIndex - 1;
+  const zIndex = labelZIndex - labelBackgroundGap;
+  // zIndex 0 renders without a portal, in the label's own layer, so go one layer lower
+  return zIndex === 0 ? -1 : zIndex;
 }

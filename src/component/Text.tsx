@@ -15,8 +15,7 @@ import { RechartsTheme, TextStyles } from '../theme/RechartsTheme';
 import { resolveDefaultProps } from '../util/resolveDefaultProps';
 import { cssStylesToSvgStyles } from '../theme/cssStylesToSvgStyles';
 import { getEffectivePageBackground } from '../theme/pageBackground';
-import { ZIndexLayer } from '../zIndex/ZIndexLayer';
-import { useLabelBackgroundZIndex } from '../zIndex/labelBackgroundZIndex';
+import { useLabelBackgroundLayer } from '../zIndex/labelBackgroundZIndex';
 
 const BREAKING_SPACES = /[ \f\n\r\t\v\u2028\u2029]+/;
 
@@ -104,6 +103,13 @@ export type TextBackgroundProps = Omit<
    * @defaultValue { x: 4, y: 2 }
    */
   padding?: number | { x?: number; y?: number };
+  /**
+   * zIndex layer of the background in a `Label` or `LabelList` inside a chart.
+   * `Text` used on its own ignores it and draws the background right before the text.
+   *
+   * @defaultValue 100 below the label zIndex, which is `DefaultZIndexes.labelBackground` for default labels
+   */
+  zIndex?: number;
 };
 
 interface TextProps {
@@ -230,14 +236,14 @@ interface TextProps {
    *
    * - `true` draws the background with default styles.
    *   The fill is the `pageBackground` color from the theme, or white when no theme is set.
-   * - An object accepts SVG `<rect>` attributes such as `fill`, `stroke` and `rx`, and a `padding`.
+   * - An object accepts SVG `<rect>` attributes such as `fill`, `stroke` and `rx`, a `padding` and a `zIndex`.
    * - `false` or `undefined` draws no background.
    *
    * The rectangle is sized after the text renders, from the bounding box of the text element,
    * so it follows the content, font, line breaks and rotation of the text.
    * It is not rendered during server-side rendering, and it is ignored when `textPath` is set.
    *
-   * Inside a `Label` or `LabelList` in a chart, the rectangle renders one zIndex layer below the label,
+   * Inside a `Label` or `LabelList` in a chart, the rectangle renders in a zIndex layer below the label,
    * so overlapping labels never cover each other's text.
    *
    * @since 3.11
@@ -613,7 +619,7 @@ export const Text = forwardRef<SVGTextElement, Props>((outsideProps, ref) => {
     { fill: backgroundSettings?.fill },
     defaultLegacyBackgroundProps,
   );
-  const backgroundZIndex = useLabelBackgroundZIndex();
+  const backgroundLayer = useLabelBackgroundLayer();
   const textRef = useRef<SVGTextElement | null>(null);
   const setTextRef = useCallback(
     (node: SVGTextElement | null) => {
@@ -710,29 +716,31 @@ export const Text = forwardRef<SVGTextElement, Props>((outsideProps, ref) => {
 
   const { padding, className: backgroundClassName, ...backgroundRectProps } = backgroundSettings;
   const backgroundRect = textBox == null ? null : getTextBackgroundRect(textBox, padding);
+  const backgroundElement = backgroundRect != null && (
+    <rect
+      rx={defaultBackgroundRadius}
+      {...svgPropertiesAndEvents(backgroundRectProps)}
+      fill={backgroundFill.fill}
+      className={clsx('recharts-text-background', backgroundClassName)}
+      transform={transform}
+      x={backgroundRect.x}
+      y={backgroundRect.y}
+      width={backgroundRect.width}
+      height={backgroundRect.height}
+    />
+  );
 
   /*
    * The group is rendered even before the text is measured,
    * so that the text element keeps its place in the tree and React does not re-mount it.
-   * Without a chart or a background zIndex, the layer renders the rectangle in place, right before the text.
    */
   return (
     <g className="recharts-text-with-background">
-      <ZIndexLayer zIndex={backgroundZIndex}>
-        {backgroundRect != null && (
-          <rect
-            rx={defaultBackgroundRadius}
-            {...svgPropertiesAndEvents(backgroundRectProps)}
-            fill={backgroundFill.fill}
-            className={clsx('recharts-text-background', backgroundClassName)}
-            transform={transform}
-            x={backgroundRect.x}
-            y={backgroundRect.y}
-            width={backgroundRect.width}
-            height={backgroundRect.height}
-          />
-        )}
-      </ZIndexLayer>
+      {backgroundLayer == null ? (
+        backgroundElement
+      ) : (
+        <backgroundLayer.Layer zIndex={backgroundLayer.zIndex}>{backgroundElement}</backgroundLayer.Layer>
+      )}
       {textElement}
     </g>
   );

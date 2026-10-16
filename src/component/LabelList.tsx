@@ -9,7 +9,7 @@ import { LabelProps } from '../index';
 import { svgPropertiesAndEvents } from '../util/svgPropertiesAndEvents';
 import { ZIndexable, ZIndexLayer } from '../zIndex/ZIndexLayer';
 import { DefaultZIndexes } from '../zIndex/DefaultZIndexes';
-import { getLabelBackgroundZIndex, LabelBackgroundZIndexProvider } from '../zIndex/labelBackgroundZIndex';
+import { getLabelBackgroundZIndex, LabelBackgroundLayerProvider } from '../zIndex/labelBackgroundZIndex';
 import { isRenderableText, RenderableText, TextBackgroundProps } from './Text';
 
 export interface LabelListEntry<DataPointItem = any> {
@@ -130,14 +130,14 @@ interface LabelListProps extends ZIndexable {
    *
    * - `true` draws the background with default styles.
    *   The fill is the `pageBackground` color from the theme, or white when no theme is set.
-   * - An object accepts SVG `<rect>` attributes such as `fill`, `stroke` and `rx`, and a `padding`.
+   * - An object accepts SVG `<rect>` attributes such as `fill`, `stroke` and `rx`, a `padding` and a `zIndex`.
    * - `false` or `undefined` draws no background.
    *
    * Each background is sized from its rendered label.
    * It is not drawn for labels that follow a curved path (`insideStart`, `insideEnd` and `end` in polar charts),
    * nor for custom `content`.
    *
-   * In a chart, the rectangles render one zIndex layer below the labels,
+   * In a chart, the rectangles render in a zIndex layer below the labels,
    * so overlapping labels never cover each other's text.
    *
    * @since 3.11
@@ -208,13 +208,13 @@ export function LabelList({ valueAccessor = defaultAccessor, ...restProps }: Pro
   }
 
   const labelZIndex = zIndex ?? DefaultZIndexes.label;
-  const backgroundZIndex = getLabelBackgroundZIndex(labelZIndex);
+  const backgroundZIndex = getLabelBackgroundZIndex(labelZIndex, others.background);
 
   return (
     <>
       {others.background && <ZIndexLayer zIndex={backgroundZIndex} />}
       <ZIndexLayer zIndex={labelZIndex}>
-        <LabelBackgroundZIndexProvider value={backgroundZIndex}>
+        <LabelBackgroundLayerProvider value={{ zIndex: backgroundZIndex, Layer: ZIndexLayer }}>
           <Layer className="recharts-label-list">
             {data.map((entry, index) => {
               const value = isNullish(dataKey)
@@ -251,7 +251,7 @@ export function LabelList({ valueAccessor = defaultAccessor, ...restProps }: Pro
               );
             })}
           </Layer>
-        </LabelBackgroundZIndexProvider>
+        </LabelBackgroundLayerProvider>
       </ZIndexLayer>
     </>
   );

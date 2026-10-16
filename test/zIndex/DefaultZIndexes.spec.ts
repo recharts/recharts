@@ -65,8 +65,8 @@ describe('DefaultZIndexes', () => {
       expect(DefaultZIndexes.barBackground).toBeGreaterThan(-100);
     });
 
-    it('should render label backgrounds one layer below labels', () => {
-      expect(getLabelBackgroundZIndex(DefaultZIndexes.label)).toBe(DefaultZIndexes.labelBackground);
+    it('should render default label backgrounds in the label background layer', () => {
+      expect(getLabelBackgroundZIndex(DefaultZIndexes.label, true)).toBe(DefaultZIndexes.labelBackground);
     });
 
     it('should ensure active elements appear on top', () => {

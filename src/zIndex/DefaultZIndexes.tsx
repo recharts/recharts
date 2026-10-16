@@ -83,11 +83,12 @@ export const DefaultZIndexes = {
 
   /**
    * Backgrounds of LabelList and Label, when they have `background` set.
-   * Every label background renders one layer below its label, so a label with a custom zIndex
-   * has its background at that zIndex minus 1. All backgrounds render below all label texts,
-   * so overlapping labels stay readable.
+   * All backgrounds render below all label texts, so overlapping labels stay readable.
+   * The gap to `label` leaves room for your own layers between backgrounds and texts.
+   * A label with a custom zIndex keeps the same gap: zIndex 500 puts its background at 400.
+   * Set `zIndex` in the `background` object to choose the layer yourself.
    */
-  labelBackground: 1999,
+  labelBackground: 1900,
 
   /**
    * LabelList and Label, including Axis labels
