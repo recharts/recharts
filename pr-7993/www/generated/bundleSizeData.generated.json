@@ -1,32 +1,32 @@
 {
   "treemap": {
     "examplePath": "www/src/views/IndexView/IndexLineChart.tsx",
-    "totalSize": 947543,
-    "totalSizeLabel": "925.33 KB",
+    "totalSize": 947621,
+    "totalSizeLabel": "925.41 KB",
     "moduleCount": 379,
-    "generatedAt": "2026-10-15T12:14:20.524Z",
+    "generatedAt": "2026-10-16T03:08:40.612Z",
     "stages": [
       {
         "stage": "es6-folder",
-        "bytes": 1482423,
+        "bytes": 1482501,
         "humanReadableSize": "1.41 MB",
         "reductionFromBaselinePercent": 0
       },
       {
         "stage": "tree-shaken",
-        "bytes": 950448,
-        "humanReadableSize": "928.17 KB",
+        "bytes": 950526,
+        "humanReadableSize": "928.25 KB",
         "reductionFromBaselinePercent": 0
       },
       {
         "stage": "minified",
-        "bytes": 312269,
-        "humanReadableSize": "304.95 KB",
+        "bytes": 312261,
+        "humanReadableSize": "304.94 KB",
         "reductionFromBaselinePercent": 67.15
       },
       {
         "stage": "minified+gzip",
-        "bytes": 102357,
+        "bytes": 102355,
         "humanReadableSize": "99.96 KB",
         "reductionFromBaselinePercent": 89.23
       }
@@ -34,17 +34,17 @@
     "tree": {
       "name": "bundle",
       "fullPath": "bundle",
-      "value": 947543,
+      "value": 947621,
       "children": [
         {
           "name": "src",
           "fullPath": "src",
-          "value": 543967,
+          "value": 544045,
           "children": [
             {
               "name": "state",
               "fullPath": "src/state",
-              "value": 189137,
+              "value": 189215,
               "children": [
                 {
                   "name": "selectors",
@@ -298,7 +298,7 @@
                 {
                   "name": "touchEventsMiddleware.ts",
                   "fullPath": "src/state/touchEventsMiddleware.ts",
-                  "value": 3722
+                  "value": 3800
                 },
                 {
                   "name": "zIndexSlice.ts",
@@ -2622,32 +2622,32 @@
   },
   "sunburst": {
     "examplePath": "www/src/views/IndexView/IndexLineChart.tsx",
-    "totalSize": 947543,
-    "totalSizeLabel": "925.33 KB",
+    "totalSize": 947621,
+    "totalSizeLabel": "925.41 KB",
     "moduleCount": 379,
-    "generatedAt": "2026-10-15T12:14:22.906Z",
+    "generatedAt": "2026-10-16T03:08:38.514Z",
     "stages": [
       {
         "stage": "es6-folder",
-        "bytes": 1482423,
+        "bytes": 1482501,
         "humanReadableSize": "1.41 MB",
         "reductionFromBaselinePercent": 0
       },
       {
         "stage": "tree-shaken",
-        "bytes": 950448,
-        "humanReadableSize": "928.17 KB",
+        "bytes": 950526,
+        "humanReadableSize": "928.25 KB",
         "reductionFromBaselinePercent": 0
       },
       {
         "stage": "minified",
-        "bytes": 312269,
-        "humanReadableSize": "304.95 KB",
+        "bytes": 312261,
+        "humanReadableSize": "304.94 KB",
         "reductionFromBaselinePercent": 67.15
       },
       {
         "stage": "minified+gzip",
-        "bytes": 102357,
+        "bytes": 102355,
         "humanReadableSize": "99.96 KB",
         "reductionFromBaselinePercent": 89.23
       }
@@ -2655,17 +2655,17 @@
     "tree": {
       "name": "bundle",
       "fullPath": "bundle",
-      "value": 947543,
+      "value": 947621,
       "children": [
         {
           "name": "src",
           "fullPath": "src",
-          "value": 543967,
+          "value": 544045,
           "children": [
             {
               "name": "state",
               "fullPath": "src/state",
-              "value": 189137,
+              "value": 189215,
               "children": [
                 {
                   "name": "selectors",
@@ -2919,7 +2919,7 @@
                 {
                   "name": "touchEventsMiddleware.ts",
                   "fullPath": "src/state/touchEventsMiddleware.ts",
-                  "value": 3722
+                  "value": 3800
                 },
                 {
                   "name": "zIndexSlice.ts",
