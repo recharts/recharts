@@ -52,7 +52,8 @@ const ActivePoint = ({
     cx: point.x,
     cy: point.y,
     r: 4,
-    fill: dataPointStyles.fill ?? dataPointStyles.stroke ?? mainColor ?? 'none',
+    // the active dot takes the fill of its data entry instead of the series color
+    fill: dataPointStyles.fill ?? mainColor ?? 'none',
     strokeWidth: 2,
     stroke: '#fff',
     ...getActiveStyleOverrides(activeDot, themedActiveStyles, point.payload),

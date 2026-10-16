@@ -539,6 +539,7 @@ const SetLineTooltipEntrySettings = React.memo(
         unit,
         formatter,
         graphicalItemId: id,
+        ignoreDataEntryColors: true,
       },
     };
     return <SetTooltipEntrySettings tooltipEntrySettings={tooltipEntrySettings} />;

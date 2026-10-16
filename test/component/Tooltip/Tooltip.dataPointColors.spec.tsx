@@ -2,21 +2,22 @@ import { describe, expect, it } from 'vitest';
 import React from 'react';
 import { rechartsTestRender } from '../../helper/createSelectorTestCase';
 import { Area, AreaChart, Line, LineChart, PolarAngleAxis, Radar, RadarChart, Tooltip } from '../../../src';
+import { DotItemDotProps } from '../../../src/util/types';
 
 /**
- * Like Bar, Line, Area and Radar paint each data point with the `fill` and `stroke` found in that data point,
- * so the dots, the active dot and the tooltip all show the same color.
+ * Line, Area and Radar paint each dot with the SVG properties of its data entry.
+ * They draw one shape per series, so the tooltip keeps showing the series color.
  *
  * @see {@link https://github.com/recharts/recharts/issues/7968}
  */
-describe('data point colors', () => {
+describe('data entry styles on dots', () => {
   const data = [
     { name: 'A', uv: 400, fill: '#ff0000', stroke: '#0000ff' },
     { name: 'B', uv: 300 },
   ];
 
-  const red = 'rgb(255, 0, 0)';
   const seriesColor = '#8884d8';
+  const seriesColorRgb = 'rgb(136, 132, 216)';
 
   function getDots(container: Element, selector: string): ReadonlyArray<Element> {
     return Array.from(container.querySelectorAll(selector));
@@ -38,7 +39,7 @@ describe('data point colors', () => {
     return dot;
   }
 
-  it('should paint Line dots, the active dot and the tooltip with the data point colors', () => {
+  it('should paint Line dots and the active dot with the data entry colors, and show the series color in the tooltip', () => {
     const { container } = rechartsTestRender(
       <LineChart width={400} height={300} data={data}>
         <Line dataKey="uv" stroke={seriesColor} isAnimationActive={false} />
@@ -50,14 +51,14 @@ describe('data point colors', () => {
     expect(dots).toHaveLength(2);
     expect(dots[0]).toHaveAttribute('fill', '#ff0000');
     expect(dots[0]).toHaveAttribute('stroke', '#0000ff');
-    // a data point without colors keeps the colors of the series
+    // a data entry without colors keeps the colors of the series
     expect(dots[1]).toHaveAttribute('stroke', seriesColor);
 
     expect(getActiveDot(container)).toHaveAttribute('fill', '#ff0000');
-    expect(getTooltipItem(container)).toHaveStyle({ color: red });
+    expect(getTooltipItem(container)).toHaveStyle({ color: seriesColorRgb });
   });
 
-  it('should paint Area dots, the active dot and the tooltip with the data point colors', () => {
+  it('should paint Area dots and the active dot with the data entry colors, and show the series color in the tooltip', () => {
     const { container } = rechartsTestRender(
       <AreaChart width={400} height={300} data={data}>
         <Area dataKey="uv" stroke={seriesColor} fill="#82ca9d" dot isAnimationActive={false} />
@@ -72,10 +73,10 @@ describe('data point colors', () => {
     expect(dots[1]).toHaveAttribute('stroke', seriesColor);
 
     expect(getActiveDot(container)).toHaveAttribute('fill', '#ff0000');
-    expect(getTooltipItem(container)).toHaveStyle({ color: red });
+    expect(getTooltipItem(container)).toHaveStyle({ color: seriesColorRgb });
   });
 
-  it('should paint Radar dots, the active dot and the tooltip with the data point colors', () => {
+  it('should paint Radar dots and the active dot with the data entry colors, and show the series color in the tooltip', () => {
     const { container } = rechartsTestRender(
       <RadarChart width={400} height={300} data={data}>
         <PolarAngleAxis dataKey="name" />
@@ -91,10 +92,10 @@ describe('data point colors', () => {
     expect(dots[1]).toHaveAttribute('stroke', seriesColor);
 
     expect(getActiveDot(container)).toHaveAttribute('fill', '#ff0000');
-    expect(getTooltipItem(container)).toHaveStyle({ color: red });
+    expect(getTooltipItem(container)).toHaveStyle({ color: seriesColorRgb });
   });
 
-  it('should fill the active dot with the data point stroke if the data point has no fill', () => {
+  it('should keep the series color for the active dot if the data entry has no fill', () => {
     const strokeOnly = [
       { name: 'A', uv: 400, stroke: '#0000ff' },
       { name: 'B', uv: 300 },
@@ -106,17 +107,18 @@ describe('data point colors', () => {
       </LineChart>,
     );
 
-    expect(getActiveDot(container)).toHaveAttribute('fill', '#0000ff');
-    expect(getTooltipItem(container)).toHaveStyle({ color: 'rgb(0, 0, 255)' });
+    expect(getDots(container, '.recharts-line-dot')[0]).toHaveAttribute('stroke', '#0000ff');
+    expect(getActiveDot(container)).toHaveAttribute('fill', seriesColor);
+    expect(getTooltipItem(container)).toHaveStyle({ color: seriesColorRgb });
   });
 
-  it('should keep explicit dot colors ahead of data point colors', () => {
+  it('should let the data entry win over the dot option, and the activeDot option win over the data entry', () => {
     const { container } = rechartsTestRender(
       <LineChart width={400} height={300} data={data}>
         <Line
           dataKey="uv"
           stroke={seriesColor}
-          dot={{ fill: '#00ff00', stroke: '#ff00ff' }}
+          dot={{ fill: '#00ff00', stroke: '#ff00ff', strokeWidth: 4 }}
           activeDot={{ fill: '#00ff00', stroke: '#ff00ff' }}
           isAnimationActive={false}
         />
@@ -124,13 +126,69 @@ describe('data point colors', () => {
       </LineChart>,
     );
 
-    expect(getDots(container, '.recharts-line-dot')[0]).toHaveAttribute('fill', '#00ff00');
-    expect(getDots(container, '.recharts-line-dot')[0]).toHaveAttribute('stroke', '#ff00ff');
+    const dots = getDots(container, '.recharts-line-dot');
+    expect(dots[0]).toHaveAttribute('fill', '#ff0000');
+    expect(dots[0]).toHaveAttribute('stroke', '#0000ff');
+    // what the data entry does not define still comes from the dot option
+    expect(dots[0]).toHaveAttribute('stroke-width', '4');
+    expect(dots[1]).toHaveAttribute('fill', '#00ff00');
+    expect(dots[1]).toHaveAttribute('stroke', '#ff00ff');
+
     expect(getActiveDot(container)).toHaveAttribute('fill', '#00ff00');
     expect(getActiveDot(container)).toHaveAttribute('stroke', '#ff00ff');
   });
 
-  it('should keep the series colors for the active dot if the data point has no colors', () => {
+  it('should spread the other SVG properties of the data entry on its dot, without the id', () => {
+    const styled = [
+      {
+        name: 'A',
+        uv: 400,
+        id: 'entry-a',
+        opacity: 0.5,
+        strokeWidth: 7,
+        className: 'class-from-data',
+        'data-test': 'entry-a',
+        notAnSvgProp: 'x',
+      },
+      { name: 'B', uv: 300 },
+    ];
+    const { container } = rechartsTestRender(
+      <LineChart width={400} height={300} data={styled}>
+        <Line dataKey="uv" stroke={seriesColor} isAnimationActive={false} />
+      </LineChart>,
+    );
+
+    const dots = getDots(container, '.recharts-line-dot');
+    expect(dots[0]).toHaveAttribute('opacity', '0.5');
+    expect(dots[0]).toHaveAttribute('stroke-width', '7');
+    expect(dots[0]).toHaveAttribute('data-test', 'entry-a');
+    expect(dots[0]).toHaveClass('recharts-line-dot', 'class-from-data');
+    expect(dots[0]).not.toHaveAttribute('id', 'entry-a');
+    expect(dots[0]).not.toHaveAttribute('notAnSvgProp');
+    expect(dots[1]).not.toHaveClass('class-from-data');
+  });
+
+  it('should pass the data entry styles to a custom dot', () => {
+    const received: DotItemDotProps[] = [];
+    rechartsTestRender(
+      <LineChart width={400} height={300} data={data}>
+        <Line
+          dataKey="uv"
+          stroke={seriesColor}
+          isAnimationActive={false}
+          dot={props => {
+            received.push(props);
+            return null;
+          }}
+        />
+      </LineChart>,
+    );
+
+    expect(received[0]).toMatchObject({ fill: '#ff0000', stroke: '#0000ff' });
+    expect(received[1]).toMatchObject({ stroke: seriesColor });
+  });
+
+  it('should keep the series colors for the active dot and the tooltip if the data entry has no colors', () => {
     const { container } = rechartsTestRender(
       <LineChart width={400} height={300} data={data}>
         <Line dataKey="uv" stroke={seriesColor} isAnimationActive={false} />
@@ -139,6 +197,6 @@ describe('data point colors', () => {
     );
 
     expect(getActiveDot(container)).toHaveAttribute('fill', seriesColor);
-    expect(getTooltipItem(container)).toHaveStyle({ color: 'rgb(136, 132, 216)' });
+    expect(getTooltipItem(container)).toHaveStyle({ color: seriesColorRgb });
   });
 });

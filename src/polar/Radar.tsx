@@ -281,6 +281,7 @@ const SetRadarTooltipEntrySettings = React.memo(
         color: getLegendItemColor(stroke, fill),
         unit: '', // why doesn't Radar support unit?
         graphicalItemId: id,
+        ignoreDataEntryColors: true,
       },
     };
     return <SetTooltipEntrySettings tooltipEntrySettings={tooltipEntrySettings} />;

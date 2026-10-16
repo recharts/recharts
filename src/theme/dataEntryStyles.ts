@@ -19,6 +19,7 @@
 import { useMemo } from 'react';
 import { Styles2D } from './RechartsTheme';
 import { useRechartsTheme } from './RechartsThemeContext';
+import { svgPropertiesNoEventsFromUnknown } from '../util/svgPropertiesNoEvents';
 
 type ThemeableStyleKey = keyof Styles2D;
 
@@ -137,4 +138,16 @@ export function getEntryStyleOverrides(
     return undefined;
   }
   return unthemedStyles;
+}
+
+/**
+ * Picks the valid SVG properties of a data entry, without `id` so that rendered elements do not get duplicate DOM ids.
+ * The raw entry, `id` included, stays available as `payload`.
+ * Graphical items spread these after their own props, so the data entry wins.
+ *
+ * @param entry data entry
+ */
+export function getEntrySvgProps(entry: unknown): Record<string, unknown> {
+  const { id, ...props } = svgPropertiesNoEventsFromUnknown(entry) ?? {};
+  return props;
 }

@@ -8,7 +8,7 @@ import { isClipDot } from '../util/ReactUtils';
 import { svgPropertiesAndEventsFromUnknown } from '../util/svgPropertiesAndEvents';
 import { ZIndexable, ZIndexLayer } from '../zIndex/ZIndexLayer';
 import { DefaultZIndexes } from '../zIndex/DefaultZIndexes';
-import { getEntryStyleOverrides, getOwnStyles, UnthemedStyles } from '../theme/dataEntryStyles';
+import { getEntryStyleOverrides, getEntrySvgProps, UnthemedStyles } from '../theme/dataEntryStyles';
 
 export interface DotPoint {
   readonly x: number | null;
@@ -107,14 +107,16 @@ export function Dots({
   const customDotProps = svgPropertiesAndEventsFromUnknown(dot);
 
   const dots = points.map((entry, i) => {
+    const entrySvgProps = getEntrySvgProps(entry.payload);
     const dotProps: DotItemDotProps = {
       r: 3,
       ...baseProps,
       ...getEntryStyleOverrides(entry.payload, unthemedStyles),
-      ...getOwnStyles(entry.payload),
       // Dots are separate visual primitives; do not inherit the parent series opacity.
       fillOpacity: 1,
       ...customDotProps,
+      // SVG properties from the data entry win over the graphical item props and the `dot` option.
+      ...entrySvgProps,
       index: i,
       cx: entry.x ?? undefined,
       cy: entry.y ?? undefined,
@@ -124,7 +126,9 @@ export function Dots({
       points,
     };
 
-    return <DotItem key={`dot-${i}`} option={dot} dotProps={dotProps} className={dotClassName} />;
+    const entryClassName = typeof entrySvgProps.className === 'string' ? entrySvgProps.className : undefined;
+
+    return <DotItem key={`dot-${i}`} option={dot} dotProps={dotProps} className={clsx(dotClassName, entryClassName)} />;
   });
 
   const layerProps: { clipPath?: string } = {};
