@@ -1,79 +1,60 @@
 # This workflow installs dependencies, builds the package, and publishes it to npm when a release is created
 # For more information see: https://docs.github.com/en/actions/publishing-packages/publishing-nodejs-packages
+#
+# The build job does everything that runs repository code: install, build, test, and `npm pack`.
+# It produces a single tarball, which is the exact file that was tested.
+# The publish job holds the npm OIDC credential, never checks out the repository,
+# and publishes that tarball with lifecycle scripts disabled.
+#
+# Actions are pinned to commit SHAs because this workflow holds a publish credential.
+# Dependabot keeps the pins up to date.
 
 name: npm publish
 
 on:
   release:
     types: [published]
+
+# Queue releases published close together instead of publishing them at the same time.
+concurrency:
+  group: npm-publish
+  cancel-in-progress: false
+
 env:
   NODE_VERSION: 26.x
+  DEFAULT_BRANCH: main
 
 jobs:
   build:
-    name: Build
+    name: Build and test package
     runs-on: ubuntu-latest
     permissions:
       contents: read
+    outputs:
+      npm_tag: ${{ steps.release-info.outputs.npm_tag }}
+      tarball: ${{ steps.pack.outputs.tarball }}
     steps:
       - name: Checkout Recharts Repository
-        uses: actions/checkout@v7
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           persist-credentials: false
+          # Full history so that we can verify the release commit is on the default branch
+          fetch-depth: 0
 
-      - name: Use Node.js ${{ env.NODE_VERSION }}
-        uses: actions/setup-node@v7
-        with:
-          node-version: ${{ env.NODE_VERSION }}
-          registry-url: https://registry.npmjs.org/
-          package-manager-cache: false # never use caching in release builds
-
-      - name: Install Dependencies
-        run: npm ci
-
-      - name: Build main lib
-        run: npm run build
-
-      - name: Upload build artifact
-        uses: actions/upload-artifact@v7
-        with:
-          name: build-output
-          path: |
-            es6/
-            lib/
-            umd/
-            types/
-          retention-days: 1
-
-  publish-npm:
-    needs: build
-    runs-on: ubuntu-latest
-    permissions:
-      contents: read
-      # https://docs.npmjs.com/trusted-publishers#step-2-configure-your-cicd-workflow
-      id-token: write # Required for OIDC
-    steps:
-      - uses: actions/checkout@v7
-        with:
-          persist-credentials: false
-      - uses: actions/setup-node@v7
-        with:
-          node-version: ${{ env.NODE_VERSION }}
-          registry-url: https://registry.npmjs.org/
-          package-manager-cache: false # never use caching in release builds
-
-      - name: Download build artifact
-        uses: actions/download-artifact@v8
-        with:
-          name: build-output
+      - name: Verify the release commit is on the default branch
+        run: |
+          if ! git merge-base --is-ancestor "$GITHUB_SHA" "origin/$DEFAULT_BRANCH"; then
+            echo "Release commit $GITHUB_SHA is not on $DEFAULT_BRANCH. Releases must be tagged from $DEFAULT_BRANCH." >&2
+            exit 1
+          fi
 
       - name: Determine release version and npm dist-tag
         id: release-info
         env:
           RELEASE_TAG: ${{ github.event.release.tag_name }}
+          RELEASE_IS_PRERELEASE: ${{ github.event.release.prerelease }}
         run: |
           PACKAGE_VERSION="$(node -p "require('./package.json').version")"
-          RELEASE_TAG="${RELEASE_TAG}"
           # GitHub release tags are expected to look like v3.8.2 or v3.8.2-canary.0.
           if [[ "$RELEASE_TAG" != v* ]]; then
             echo "Release tag must start with 'v' (got: $RELEASE_TAG)." >&2
@@ -88,14 +69,89 @@ jobs:
             exit 1
           fi
 
-          NPM_TAG=latest
           # Stable versions have no prerelease suffix and stay on npm's default
-          # dist-tag. For prereleases like 3.8.2-alpha.0 or 3.8.2-canary.7, this
-          # regex captures the first identifier after the hyphen ("alpha",
-          # "canary", "beta", ...) and ignores the numeric suffix.
-          if [[ "$PACKAGE_VERSION" =~ -([0-9A-Za-z]+)(\.[0-9A-Za-z.-]+)?$ ]]; then
-            NPM_TAG="${BASH_REMATCH[1]}"
+          # dist-tag. Prereleases like 3.8.2-alpha.0 or 3.8.2-canary.7 go to a dist-tag
+          # named after the first prerelease identifier ("alpha", "canary", "beta", ...).
+          # Build metadata (+...) is ignored for both decisions, so 3.8.2-beta.0+build gets "beta".
+          VERSION_WITHOUT_BUILD="${PACKAGE_VERSION%%+*}"
+          NPM_TAG=latest
+          VERSION_IS_PRERELEASE=false
+          if [[ "$VERSION_WITHOUT_BUILD" == *-* ]]; then
+            VERSION_IS_PRERELEASE=true
+            PRERELEASE="${VERSION_WITHOUT_BUILD#*-}"
+            NPM_TAG="${PRERELEASE%%.*}"
+          fi
+
+          # The GitHub "Set as a pre-release" checkbox must match the version, otherwise a
+          # prerelease could show up as the "Latest" GitHub release, or a stable release could be hidden.
+          if [ "$RELEASE_IS_PRERELEASE" != "$VERSION_IS_PRERELEASE" ]; then
+            echo "GitHub release prerelease flag is $RELEASE_IS_PRERELEASE, but version $PACKAGE_VERSION implies $VERSION_IS_PRERELEASE." >&2
+            exit 1
           fi
 
           echo "npm_tag=$NPM_TAG" >> "$GITHUB_OUTPUT"
-      - run: npm publish --tag "${{ steps.release-info.outputs.npm_tag }}"
+
+      - name: Use Node.js ${{ env.NODE_VERSION }}
+        uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          package-manager-cache: false # never use caching in release builds
+
+      - name: Install Dependencies
+        run: npm ci
+
+      # The build also runs the build output snapshot test
+      - name: Build main lib
+        run: npm run build
+
+      - name: Typecheck
+        run: npm run check-types-lib
+
+      - name: Pack
+        id: pack
+        run: |
+          TARBALL="$(npm pack --json | node -p "JSON.parse(require('fs').readFileSync(0, 'utf8'))[0].filename")"
+          echo "tarball=$TARBALL" >> "$GITHUB_OUTPUT"
+
+      # Report-only for now: publint flags es6/*.js as ESM interpreted as CJS,
+      # because package.json has neither "type" nor "exports". Make this blocking in 4.0, see https://github.com/recharts/recharts/discussions/6734
+      - name: Lint package with publint
+        continue-on-error: true
+        run: npx --no-install publint "${{ steps.pack.outputs.tarball }}"
+
+      - name: Check types with Are The Types Wrong
+        run: npx --no-install attw "${{ steps.pack.outputs.tarball }}"
+
+      - name: Upload tarball
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: npm-tarball
+          path: ${{ steps.pack.outputs.tarball }}
+          if-no-files-found: error
+          retention-days: 1
+
+  publish-npm:
+    name: Publish to npm
+    needs: build
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      # https://docs.npmjs.com/trusted-publishers#step-2-configure-your-cicd-workflow
+      id-token: write # Required for OIDC
+    steps:
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          registry-url: https://registry.npmjs.org/
+          package-manager-cache: false # never use caching in release builds
+
+      - name: Download tarball
+        uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8.0.2
+        with:
+          name: npm-tarball
+
+      - name: Publish
+        env:
+          NPM_TAG: ${{ needs.build.outputs.npm_tag }}
+          TARBALL: ${{ needs.build.outputs.tarball }}
+        run: npm publish "./$TARBALL" --tag "$NPM_TAG" --ignore-scripts
