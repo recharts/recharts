@@ -37,7 +37,9 @@ const labelBackgroundGap = DefaultZIndexes.label - DefaultZIndexes.labelBackgrou
  * An explicit `zIndex` in the background settings wins.
  * Otherwise the backgrounds render `labelBackgroundGap` layers below the labels,
  * which is `DefaultZIndexes.labelBackground` for labels in the default label layer.
- * Returns `undefined` for labels in the default layer (zIndex 0 or `undefined`), because those render without portals.
+ * A result of 0 becomes -1, because zIndex 0 renders inside the label's own layer.
+ * Labels in the default layer (zIndex 0 or `undefined`) render without portals,
+ * so they get only the explicit `zIndex`, or `undefined`.
  *
  * @param labelZIndex zIndex of the label or label list
  * @param background `background` prop of the label or label list
@@ -47,13 +49,11 @@ export function getLabelBackgroundZIndex(
   labelZIndex: number | undefined,
   background: boolean | TextBackgroundProps | undefined,
 ): number | undefined {
-  if (typeof background === 'object' && background.zIndex != null) {
-    return background.zIndex;
-  }
+  const explicitZIndex = typeof background === 'object' ? background.zIndex : undefined;
   if (labelZIndex == null || labelZIndex === 0) {
-    return undefined;
+    return explicitZIndex;
   }
-  const zIndex = labelZIndex - labelBackgroundGap;
+  const zIndex = explicitZIndex ?? labelZIndex - labelBackgroundGap;
   // zIndex 0 renders without a portal, in the label's own layer, so go one layer lower
   return zIndex === 0 ? -1 : zIndex;
 }

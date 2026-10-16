@@ -320,6 +320,24 @@ describe('label background', () => {
       });
     });
 
+    it('renders a background with an explicit zIndex 0 below the texts of overlapping labels', () => {
+      const { container } = render(
+        <BarChart width={300} height={200} data={data}>
+          <Label viewBox={cartesianViewBox} value="first label" position="center" background={{ zIndex: 0 }} />
+          <Label viewBox={cartesianViewBox} value="second label" position="center" background={{ zIndex: 0 }} />
+        </BarChart>,
+      );
+
+      act(() => {
+        vi.runAllTimers();
+      });
+
+      expectAllBackgroundsBelowAllTexts(container);
+      getBackgrounds(container).forEach(rect => {
+        expect(rect.closest('.recharts-zIndex-layer_-1')).not.toBeNull();
+      });
+    });
+
     it('renders the backgrounds of overlapping labels with zIndex 1 below both texts', () => {
       const { container } = render(
         <BarChart width={300} height={200} data={data}>
@@ -379,6 +397,10 @@ describe('label background', () => {
 
     it('uses the zIndex from the background object for labels in the default layer', () => {
       expect(getLabelBackgroundZIndex(0, { zIndex: 5 })).toBe(5);
+    });
+    it('keeps an explicit zIndex 0 out of the label layer', () => {
+      expect(getLabelBackgroundZIndex(2000, { zIndex: 0 })).toBe(-1);
+      expect(getLabelBackgroundZIndex(0, { zIndex: 0 })).toBe(0);
     });
   });
 });

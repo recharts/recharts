@@ -106,6 +106,7 @@ export type TextBackgroundProps = Omit<
   /**
    * zIndex layer of the background in a `Label` or `LabelList` inside a chart.
    * `Text` used on its own ignores it and draws the background right before the text.
+   * In a label with a nonzero zIndex, 0 becomes -1, because layer 0 renders inside the label's own layer.
    *
    * @defaultValue 100 below the label zIndex, which is `DefaultZIndexes.labelBackground` for default labels
    */
