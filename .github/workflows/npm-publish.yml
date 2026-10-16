@@ -16,9 +16,11 @@ on:
     types: [published]
 
 # Queue releases published close together instead of publishing them at the same time.
+# `queue: max` keeps every pending run; the default would cancel all but the newest pending one.
 concurrency:
   group: npm-publish
   cancel-in-progress: false
+  queue: max
 
 env:
   NODE_VERSION: 26.x
@@ -80,6 +82,11 @@ jobs:
             VERSION_IS_PRERELEASE=true
             PRERELEASE="${VERSION_WITHOUT_BUILD#*-}"
             NPM_TAG="${PRERELEASE%%.*}"
+            # A version like 3.12.0-latest.1 would otherwise become what a plain `npm install recharts` gets.
+            if [ "$NPM_TAG" = latest ]; then
+              echo "Prerelease version $PACKAGE_VERSION would be published to the 'latest' dist-tag." >&2
+              exit 1
+            fi
           fi
 
           # The GitHub "Set as a pre-release" checkbox must match the version, otherwise a
