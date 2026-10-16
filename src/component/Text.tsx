@@ -575,6 +575,14 @@ function resolveTextPathHeight(textPathNode: SVGTextPathElement, textNode: SVGTe
   return Number.isFinite(fontSize) && fontSize > 0 ? fontSize : textNode.getBBox().height;
 }
 
+function resolveBackgroundStrokeWidth(strokeWidth: TextBackgroundProps['strokeWidth']): number {
+  if (strokeWidth == null) {
+    return 1;
+  }
+  const parsedStrokeWidth = isNumber(strokeWidth) ? strokeWidth : Number.parseFloat(strokeWidth);
+  return Number.isFinite(parsedStrokeWidth) ? Math.max(0, parsedStrokeWidth) : 1;
+}
+
 function resolveBackgroundSettings(background: Props['background']): TextBackgroundProps | undefined {
   if (background === true) {
     return {};
@@ -824,24 +832,53 @@ export const Text = forwardRef<SVGTextElement, Props>((outsideProps, ref) => {
   const { padding, className: backgroundClassName, ...backgroundRectProps } = backgroundSettings;
 
   if (textPath != null) {
+    const {
+      fillOpacity,
+      stroke: outlineStroke,
+      strokeOpacity: outlineStrokeOpacity,
+      strokeWidth: configuredOutlineWidth,
+      ...backgroundPathProps
+    } = backgroundRectProps;
     const backgroundPath =
       textPathMetrics == null ? null : getTextPathBackgroundGeometry(textPathMetrics, padding, textAnchor);
+    const outlineWidth = resolveBackgroundStrokeWidth(configuredOutlineWidth);
+    const hasOutline = outlineStroke != null && outlineStroke !== 'none' && outlineWidth > 0;
 
     return (
       <g className="recharts-text-with-background">
         {backgroundPath != null && textPathMetrics != null && (
-          <path
-            {...svgPropertiesAndEvents(backgroundRectProps)}
-            d={textPath}
-            fill="none"
-            stroke={backgroundFill.fill}
-            strokeOpacity={backgroundRectProps.fillOpacity}
-            strokeWidth={backgroundPath.strokeWidth}
-            strokeLinecap="round"
-            strokeDasharray={`${backgroundPath.length}px ${textPathMetrics.pathLength}px`}
-            strokeDashoffset={`${-backgroundPath.start}px`}
-            className={clsx('recharts-text-background', 'recharts-text-path-background', backgroundClassName)}
-          />
+          <>
+            {hasOutline && (
+              <path
+                {...svgPropertiesAndEvents(backgroundPathProps)}
+                d={textPath}
+                fill="none"
+                stroke={outlineStroke}
+                strokeOpacity={outlineStrokeOpacity}
+                strokeWidth={backgroundPath.strokeWidth + 2 * outlineWidth}
+                strokeLinecap="round"
+                strokeDasharray={`${backgroundPath.length}px ${textPathMetrics.pathLength}px`}
+                strokeDashoffset={`${-backgroundPath.start}px`}
+                className={clsx(
+                  'recharts-text-background',
+                  'recharts-text-path-background-outline',
+                  backgroundClassName,
+                )}
+              />
+            )}
+            <path
+              {...svgPropertiesAndEvents(backgroundPathProps)}
+              d={textPath}
+              fill="none"
+              stroke={backgroundFill.fill}
+              strokeOpacity={fillOpacity}
+              strokeWidth={backgroundPath.strokeWidth}
+              strokeLinecap="round"
+              strokeDasharray={`${backgroundPath.length}px ${textPathMetrics.pathLength}px`}
+              strokeDashoffset={`${-backgroundPath.start}px`}
+              className={clsx('recharts-text-background', 'recharts-text-path-background', backgroundClassName)}
+            />
+          </>
         )}
         {textElement}
       </g>

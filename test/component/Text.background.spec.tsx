@@ -261,6 +261,40 @@ describe('<Text background />', () => {
     expect(container.querySelector('textPath')).toHaveAttribute('startOffset', '50');
   });
 
+  it('renders the configured stroke around a curved background', () => {
+    mockGetComputedTextLength(40);
+    mockGetTotalLength(200);
+    const { container } = render(
+      <Surface width={300} height={300}>
+        <Text
+          textPath="M0,0 L100,100"
+          startOffset={50}
+          background={{
+            fill: '#fff',
+            fillOpacity: 0.75,
+            stroke: '#000',
+            strokeOpacity: 0.5,
+            strokeWidth: 2,
+          }}
+        >
+          text
+        </Text>
+      </Surface>,
+    );
+
+    const outline = container.querySelector('path.recharts-text-path-background-outline');
+    assertNotNull(outline);
+    expect(outline).toHaveAttribute('stroke', '#000');
+    expect(outline).toHaveAttribute('stroke-opacity', '0.5');
+    expect(outline).toHaveAttribute('stroke-width', '22');
+
+    const background = container.querySelector('path.recharts-text-path-background');
+    assertNotNull(background);
+    expect(background).toHaveAttribute('stroke', '#fff');
+    expect(background).toHaveAttribute('stroke-opacity', '0.75');
+    expect(background).toHaveAttribute('stroke-width', '18');
+  });
+
   it('resizes the rectangle when the text changes', () => {
     mockGetBBox(element => ({ x: 0, y: 0, width: (element.textContent?.length ?? 0) * 10, height: 10 }));
     const { container, rerender } = render(
