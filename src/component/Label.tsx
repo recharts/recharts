@@ -11,7 +11,15 @@ import {
   useMemo,
 } from 'react';
 import { clsx } from 'clsx';
-import { isValidTextAnchor, RenderableText, Text, TextAnchor, TextBackgroundProps, TextVerticalAnchor } from './Text';
+import {
+  isValidTextAnchor,
+  RenderableText,
+  resolveBackgroundPadding,
+  Text,
+  TextAnchor,
+  TextBackgroundProps,
+  TextVerticalAnchor,
+} from './Text';
 import { isNullish, isNumber, isNumOrStr, mathSign } from '../util/DataUtils';
 import { polarToCartesian } from '../util/PolarUtils';
 import { CartesianViewBoxRequired, DataKey, PolarViewBoxRequired, TrapezoidViewBox, ViewBox } from '../util/types';
@@ -125,16 +133,15 @@ interface LabelProps extends ZIndexable {
    */
   id?: string;
   /**
-   * Draws a rectangle behind the label, for example to keep it readable on top of a filled shape.
+   * Draws a background behind the label, for example to keep it readable on top of a filled shape.
    *
    * - `true` draws the background with default styles.
    *   The fill is the `pageBackground` color from the theme, or white when no theme is set.
    * - An object accepts SVG `<rect>` attributes such as `fill`, `stroke` and `rx`, and a `padding`.
    * - `false` or `undefined` draws no background.
    *
-   * The background is sized from the rendered text.
-   * It is not drawn for labels that follow a curved path (`insideStart`, `insideEnd` and `end` in polar charts),
-   * nor for custom `content`.
+   * The background is sized from the rendered text and follows curved label paths.
+   * It is not drawn for custom `content`.
    *
    * @since 3.11
    * @example <Label position="inside" background />
@@ -255,7 +262,7 @@ const renderRadialLabel = (
   attrs: SVGProps<SVGTextElement>,
   viewBox: PolarViewBoxRequired,
 ) => {
-  const { offset, className } = labelProps;
+  const { offset, className, background } = labelProps;
   const { cx, cy, innerRadius, outerRadius, startAngle, endAngle, clockWise } = viewBox;
   const radius = (innerRadius + outerRadius) / 2;
   const deltaAngle = getDeltaAngle(startAngle, endAngle);
@@ -281,12 +288,23 @@ const renderRadialLabel = (
 
   direction = deltaAngle <= 0 ? direction : !direction;
 
-  const startPoint = polarToCartesian(cx, cy, radius, labelAngle);
-  const endPoint = polarToCartesian(cx, cy, radius, labelAngle + (direction ? 1 : -1) * 359);
+  const hasBackground = background != null && background !== false;
+  const backgroundPadding = hasBackground
+    ? resolveBackgroundPadding(typeof background === 'object' ? background.padding : undefined).x
+    : 0;
+  const directionSign = direction ? 1 : -1;
+  const { textAnchor, startOffset: requestedStartOffset, ...textAttrs } = attrs;
+  const pathPadding = requestedStartOffset == null || isNumber(requestedStartOffset) ? backgroundPadding : 0;
+  const backgroundPaddingAngle = radius > 0 ? (pathPadding / radius) * (180 / Math.PI) : 0;
+  const pathStartAngle = labelAngle - directionSign * backgroundPaddingAngle;
+  const startPoint = polarToCartesian(cx, cy, radius, pathStartAngle);
+  const endPoint = polarToCartesian(cx, cy, radius, pathStartAngle + directionSign * 359);
   const path = `M${startPoint.x},${startPoint.y}
     A${radius},${radius},0,1,${direction ? 0 : 1},
     ${endPoint.x},${endPoint.y}`;
-  const { textAnchor, ...textAttrs } = attrs;
+  const resolvedStartOffset = isNumber(requestedStartOffset)
+    ? requestedStartOffset + pathPadding
+    : (requestedStartOffset ?? (pathPadding || undefined));
   return (
     <Text
       {...textAttrs}
@@ -294,6 +312,8 @@ const renderRadialLabel = (
       className={clsx('recharts-radial-bar-label', className)}
       textAnchor={isValidTextAnchor(textAnchor) ? textAnchor : undefined}
       textPath={path}
+      startOffset={resolvedStartOffset}
+      background={background}
     >
       {label}
     </Text>
