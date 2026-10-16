@@ -15,6 +15,8 @@ import { RechartsTheme, TextStyles } from '../theme/RechartsTheme';
 import { resolveDefaultProps } from '../util/resolveDefaultProps';
 import { cssStylesToSvgStyles } from '../theme/cssStylesToSvgStyles';
 import { getEffectivePageBackground } from '../theme/pageBackground';
+import { ZIndexLayer } from '../zIndex/ZIndexLayer';
+import { useLabelBackgroundZIndex } from '../zIndex/labelBackgroundZIndex';
 
 const BREAKING_SPACES = /[ \f\n\r\t\v\u2028\u2029]+/;
 
@@ -234,6 +236,9 @@ interface TextProps {
    * The rectangle is sized after the text renders, from the bounding box of the text element,
    * so it follows the content, font, line breaks and rotation of the text.
    * It is not rendered during server-side rendering, and it is ignored when `textPath` is set.
+   *
+   * Inside a `Label` or `LabelList` in a chart, the rectangle renders one zIndex layer below the label,
+   * so overlapping labels never cover each other's text.
    *
    * @since 3.11
    * @example <Text background>Label</Text>
@@ -608,6 +613,7 @@ export const Text = forwardRef<SVGTextElement, Props>((outsideProps, ref) => {
     { fill: backgroundSettings?.fill },
     defaultLegacyBackgroundProps,
   );
+  const backgroundZIndex = useLabelBackgroundZIndex();
   const textRef = useRef<SVGTextElement | null>(null);
   const setTextRef = useCallback(
     (node: SVGTextElement | null) => {
@@ -708,22 +714,25 @@ export const Text = forwardRef<SVGTextElement, Props>((outsideProps, ref) => {
   /*
    * The group is rendered even before the text is measured,
    * so that the text element keeps its place in the tree and React does not re-mount it.
+   * Without a chart or a background zIndex, the layer renders the rectangle in place, right before the text.
    */
   return (
     <g className="recharts-text-with-background">
-      {backgroundRect != null && (
-        <rect
-          rx={defaultBackgroundRadius}
-          {...svgPropertiesAndEvents(backgroundRectProps)}
-          fill={backgroundFill.fill}
-          className={clsx('recharts-text-background', backgroundClassName)}
-          transform={transform}
-          x={backgroundRect.x}
-          y={backgroundRect.y}
-          width={backgroundRect.width}
-          height={backgroundRect.height}
-        />
-      )}
+      <ZIndexLayer zIndex={backgroundZIndex}>
+        {backgroundRect != null && (
+          <rect
+            rx={defaultBackgroundRadius}
+            {...svgPropertiesAndEvents(backgroundRectProps)}
+            fill={backgroundFill.fill}
+            className={clsx('recharts-text-background', backgroundClassName)}
+            transform={transform}
+            x={backgroundRect.x}
+            y={backgroundRect.y}
+            width={backgroundRect.width}
+            height={backgroundRect.height}
+          />
+        )}
+      </ZIndexLayer>
       {textElement}
     </g>
   );

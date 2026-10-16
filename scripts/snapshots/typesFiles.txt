@@ -315,5 +315,6 @@
   "types/zIndex/ZIndexLayer.d.ts",
   "types/zIndex/ZIndexPortal.d.ts",
   "types/zIndex/getZIndexFromUnknown.d.ts",
+  "types/zIndex/labelBackgroundZIndex.d.ts",
   "types/zIndex/zIndexSelectors.d.ts",
 ]

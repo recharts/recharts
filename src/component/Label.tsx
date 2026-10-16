@@ -22,6 +22,11 @@ import { resolveDefaultProps } from '../util/resolveDefaultProps';
 import { svgPropertiesAndEvents } from '../util/svgPropertiesAndEvents';
 import { ZIndexable, ZIndexLayer } from '../zIndex/ZIndexLayer';
 import { DefaultZIndexes } from '../zIndex/DefaultZIndexes';
+import {
+  getLabelBackgroundZIndex,
+  LabelBackgroundZIndexProvider,
+  useLabelBackgroundZIndex,
+} from '../zIndex/labelBackgroundZIndex';
 
 import { CartesianLabelPosition, getCartesianPosition } from '../cartesian/getCartesianPosition';
 import { cartesianViewBoxToTrapezoid } from '../cartesian/cartesianViewBoxToTrapezoid';
@@ -135,6 +140,9 @@ interface LabelProps extends ZIndexable {
    * The background is sized from the rendered text.
    * It is not drawn for labels that follow a curved path (`insideStart`, `insideEnd` and `end` in polar charts),
    * nor for custom `content`.
+   *
+   * In a chart, the rectangle renders one zIndex layer below the label,
+   * so overlapping labels never cover each other's text.
    *
    * @since 3.11
    * @example <Label position="inside" background />
@@ -417,6 +425,12 @@ export function Label(outerProps: Props) {
   } = props;
   const polarViewBox = usePolarLabelContext();
   const cartesianViewBox = useCartesianLabelContext();
+  /*
+   * Labels inside a LabelList render with zIndex 0, in the layer of the list,
+   * so they keep the background zIndex that the list provides.
+   */
+  const inheritedBackgroundZIndex = useLabelBackgroundZIndex();
+  const backgroundZIndex = getLabelBackgroundZIndex(props.zIndex) ?? inheritedBackgroundZIndex;
 
   /*
    * I am not proud about this solution, but it's a quick fix for https://github.com/recharts/recharts/issues/6030#issuecomment-3155352460.
@@ -520,23 +534,28 @@ export function Label(outerProps: Props) {
   }
 
   return (
-    <ZIndexLayer zIndex={props.zIndex}>
-      <Text
-        ref={labelRef}
-        className={clsx('recharts-label', className)}
-        {...attrs}
-        {...positionAttrs}
-        /*
-         * textAnchor is decided by default based on the `position`
-         * but we allow overriding via props for precise control.
-         */
-        textAnchor={isValidTextAnchor(attrs.textAnchor) ? attrs.textAnchor : positionAttrs.textAnchor}
-        breakAll={textBreakAll}
-        background={props.background}
-      >
-        {label}
-      </Text>
-    </ZIndexLayer>
+    <>
+      {props.background && <ZIndexLayer zIndex={getLabelBackgroundZIndex(props.zIndex)} />}
+      <ZIndexLayer zIndex={props.zIndex}>
+        <LabelBackgroundZIndexProvider value={backgroundZIndex}>
+          <Text
+            ref={labelRef}
+            className={clsx('recharts-label', className)}
+            {...attrs}
+            {...positionAttrs}
+            /*
+             * textAnchor is decided by default based on the `position`
+             * but we allow overriding via props for precise control.
+             */
+            textAnchor={isValidTextAnchor(attrs.textAnchor) ? attrs.textAnchor : positionAttrs.textAnchor}
+            breakAll={textBreakAll}
+            background={props.background}
+          >
+            {label}
+          </Text>
+        </LabelBackgroundZIndexProvider>
+      </ZIndexLayer>
+    </>
   );
 }
 

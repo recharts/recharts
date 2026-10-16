@@ -82,6 +82,14 @@ export const DefaultZIndexes = {
   activeDot: 1200,
 
   /**
+   * Backgrounds of LabelList and Label, when they have `background` set.
+   * Every label background renders one layer below its label, so a label with a custom zIndex
+   * has its background at that zIndex minus 1. All backgrounds render below all label texts,
+   * so overlapping labels stay readable.
+   */
+  labelBackground: 1999,
+
+  /**
    * LabelList and Label, including Axis labels
    */
   label: 2000,

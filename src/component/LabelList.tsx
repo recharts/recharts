@@ -9,6 +9,7 @@ import { LabelProps } from '../index';
 import { svgPropertiesAndEvents } from '../util/svgPropertiesAndEvents';
 import { ZIndexable, ZIndexLayer } from '../zIndex/ZIndexLayer';
 import { DefaultZIndexes } from '../zIndex/DefaultZIndexes';
+import { getLabelBackgroundZIndex, LabelBackgroundZIndexProvider } from '../zIndex/labelBackgroundZIndex';
 import { isRenderableText, RenderableText, TextBackgroundProps } from './Text';
 
 export interface LabelListEntry<DataPointItem = any> {
@@ -136,6 +137,9 @@ interface LabelListProps extends ZIndexable {
    * It is not drawn for labels that follow a curved path (`insideStart`, `insideEnd` and `end` in polar charts),
    * nor for custom `content`.
    *
+   * In a chart, the rectangles render one zIndex layer below the labels,
+   * so overlapping labels never cover each other's text.
+   *
    * @since 3.11
    * @example <LabelList position="inside" background />
    * @example <LabelList position="inside" background={{ fill: '#fff', rx: 2, padding: 4 }} />
@@ -203,45 +207,53 @@ export function LabelList({ valueAccessor = defaultAccessor, ...restProps }: Pro
     return null;
   }
 
+  const labelZIndex = zIndex ?? DefaultZIndexes.label;
+  const backgroundZIndex = getLabelBackgroundZIndex(labelZIndex);
+
   return (
-    <ZIndexLayer zIndex={zIndex ?? DefaultZIndexes.label}>
-      <Layer className="recharts-label-list">
-        {data.map((entry, index) => {
-          const value = isNullish(dataKey)
-            ? valueAccessor(entry, index)
-            : (getValueByDataKey(entry.payload, dataKey) as string | number);
+    <>
+      {others.background && <ZIndexLayer zIndex={backgroundZIndex} />}
+      <ZIndexLayer zIndex={labelZIndex}>
+        <LabelBackgroundZIndexProvider value={backgroundZIndex}>
+          <Layer className="recharts-label-list">
+            {data.map((entry, index) => {
+              const value = isNullish(dataKey)
+                ? valueAccessor(entry, index)
+                : (getValueByDataKey(entry.payload, dataKey) as string | number);
 
-          const idProps = isNullish(id) ? {} : { id: `${id}-${index}` };
+              const idProps = isNullish(id) ? {} : { id: `${id}-${index}` };
 
-          return (
-            <Label
-              key={`label-${index}`}
-              {...svgPropertiesAndEvents(entry)}
-              {...others}
-              {...idProps}
-              /*
-               * Prefer to use the explicit fill from LabelList props.
-               * Only in an absence of that, fall back to the fill of the entry.
-               * The entry fill can be quite difficult to see especially in Bar, Pie, RadialBar in inside positions.
-               * On the other hand it's quite convenient in Scatter, Line, or when the position is outside the Bar, Pie filled shapes.
-               */
-              fill={restProps.fill ?? entry.fill}
-              parentViewBox={entry.parentViewBox}
-              value={value}
-              textBreakAll={textBreakAll}
-              viewBox={entry.viewBox}
-              index={index}
-              /*
-               * Here we don't want to use the default Label zIndex,
-               * we want it to inherit the zIndex of the LabelList itself
-               * which means just rendering as a regular child, without portaling anywhere.
-               */
-              zIndex={0}
-            />
-          );
-        })}
-      </Layer>
-    </ZIndexLayer>
+              return (
+                <Label
+                  key={`label-${index}`}
+                  {...svgPropertiesAndEvents(entry)}
+                  {...others}
+                  {...idProps}
+                  /*
+                   * Prefer to use the explicit fill from LabelList props.
+                   * Only in an absence of that, fall back to the fill of the entry.
+                   * The entry fill can be quite difficult to see especially in Bar, Pie, RadialBar in inside positions.
+                   * On the other hand it's quite convenient in Scatter, Line, or when the position is outside the Bar, Pie filled shapes.
+                   */
+                  fill={restProps.fill ?? entry.fill}
+                  parentViewBox={entry.parentViewBox}
+                  value={value}
+                  textBreakAll={textBreakAll}
+                  viewBox={entry.viewBox}
+                  index={index}
+                  /*
+                   * Here we don't want to use the default Label zIndex,
+                   * we want it to inherit the zIndex of the LabelList itself
+                   * which means just rendering as a regular child, without portaling anywhere.
+                   */
+                  zIndex={0}
+                />
+              );
+            })}
+          </Layer>
+        </LabelBackgroundZIndexProvider>
+      </ZIndexLayer>
+    </>
   );
 }
 

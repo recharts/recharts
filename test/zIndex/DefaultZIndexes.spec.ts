@@ -1,5 +1,6 @@
 import { describe, it, expect } from 'vitest';
 import { DefaultZIndexes } from '../../src/zIndex/DefaultZIndexes';
+import { getLabelBackgroundZIndex } from '../../src/zIndex/labelBackgroundZIndex';
 
 describe('DefaultZIndexes', () => {
   describe('zIndex ordering', () => {
@@ -30,6 +31,8 @@ describe('DefaultZIndexes', () => {
       expect(DefaultZIndexes.scatter).toBeLessThan(DefaultZIndexes.label);
       expect(DefaultZIndexes.activeBar).toBeLessThan(DefaultZIndexes.label);
       expect(DefaultZIndexes.activeBar).toBeLessThan(DefaultZIndexes.activeDot);
+      expect(DefaultZIndexes.activeDot).toBeLessThan(DefaultZIndexes.labelBackground);
+      expect(DefaultZIndexes.labelBackground).toBeLessThan(DefaultZIndexes.label);
     });
   });
 
@@ -60,6 +63,10 @@ describe('DefaultZIndexes', () => {
       expect(DefaultZIndexes.barBackground).toBeLessThan(DefaultZIndexes.bar);
       // Background should be visible (not too far back)
       expect(DefaultZIndexes.barBackground).toBeGreaterThan(-100);
+    });
+
+    it('should render label backgrounds one layer below labels', () => {
+      expect(getLabelBackgroundZIndex(DefaultZIndexes.label)).toBe(DefaultZIndexes.labelBackground);
     });
 
     it('should ensure active elements appear on top', () => {
