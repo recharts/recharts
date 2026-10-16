@@ -354,20 +354,23 @@ To check whether a name is public, search for it:
 grep -n "<Name>" src/index.ts
 ```
 
-If it is not there directly, search for the file it comes from and the component or function that uses it.
-When in doubt, treat it as public and give up on that violation.
-
 ## Step 6: Verify
 
 Run all of the following. Every command must pass before you open a success PR.
 
-1. **Prune the suppressions file.** This removes the counts you fixed:
+1. **Build** This must be first because some of the commands test the generated sources.
+
+  ```sh
+  npm run build
+  ```
+
+2. **Prune the suppressions file.** This removes the counts you fixed:
 
    ```sh
    npm run lint -- --prune-suppressions
    ```
 
-2. **Check the fix:**
+3. **Check the fix:**
 
    ```sh
    node .agents/skills/fix-type-violation/check-fix.mjs --file <file> --rule <shortRule>
@@ -381,45 +384,29 @@ Run all of the following. Every command must pass before you open a success PR.
      different entry grew, your change created a new violation somewhere else: fix that properly or undo the
      change that caused it.
 
-3. **Lint the whole repository:**
+4. **Lint**
 
    ```sh
    npm run lint
    ```
 
-   It must report 0 errors. Warnings that also exist on `main` are fine.
+   It must report 0 errors. Warnings are fine.
 
-4. **Type check.** Run the checks for every folder you changed files in:
+5. **Type check.**
 
-   | You changed files in | Run                                                      |
-   | -------------------- | -------------------------------------------------------- |
-   | `src/`               | `npm run check-types-lib` and `npm run check-types-test` |
-   | `test/`              | `npm run check-types-test`                               |
-   | `storybook/`         | `npm run check-types-storybook`                          |
-   | `test-vr/`           | `npm run check-types-test-vr`                            |
-   | `www/`               | `npm run build`, then `npm run check-types-website`      |
+  ```sh
+  npm run check-types
+  ```
 
-   If you changed anything in `src/`, also run `npm run build` and then `npm run check-types-website` and
-   `npm run check-types-storybook`, because the website and storybook use the library's types.
-
-5. **Run the related unit tests.** Tests mirror the source folders: `src/chart/AreaChart.tsx` is tested in
-   `test/chart/AreaChart*.spec.tsx`. Run the spec files for every file you changed, and search `test/` for
-   other files that import the changed module:
+5. **Run unit tests.**
 
    ```sh
-   npm run test -- test/chart/AreaChart.spec.tsx
-   grep -rl "from '.*chart/AreaChart'" test | head -20
+   npm run test -- --reporter=minimal
    ```
 
-   If you changed a file in `test/`, run that file. If you changed a shared helper in `src/util/` or
-   `src/state/`, run `npm run test` (all tests; it takes a few minutes).
+Tests may take a minute or two to run; use longer timeout.
 
-6. **If you changed `src/`**, look at `git status --short` after `npm run build`. The build regenerates
-   documentation in `www/src/docs/api/` and `storybook/stories/API/arg-types/`. If those changed, that means
-   a public type or its documentation changed. Read the diff. If it changes a public type, revert your change
-   and give up on that violation (see "Public API").
-
-7. **Review your diff** with `git diff origin/main`. For each changed line, ask:
+6. **Review your diff** with `git diff origin/main`. For each changed line, ask:
    - Does it keep the same runtime behavior for all inputs that can happen?
    - Does it add any of the forbidden patterns from "Hard rules"?
    - Is it needed for this target?
