@@ -398,7 +398,7 @@ Run all of the following. Every command must pass before you open a success PR.
   npm run check-types
   ```
 
-5. **Run unit tests.**
+6. **Run unit tests.**
 
    ```sh
    npm run test -- --reporter=minimal
@@ -406,7 +406,7 @@ Run all of the following. Every command must pass before you open a success PR.
 
 Tests may take a minute or two to run; use longer timeout.
 
-6. **Review your diff** with `git diff origin/main`. For each changed line, ask:
+7. **Review your diff** with `git diff origin/main`. For each changed line, ask:
    - Does it keep the same runtime behavior for all inputs that can happen?
    - Does it add any of the forbidden patterns from "Hard rules"?
    - Is it needed for this target?
