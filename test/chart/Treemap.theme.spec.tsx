@@ -265,7 +265,7 @@ describe('<Treemap /> theme', () => {
     ]);
   });
 
-  it('gives explicit node props precedence while resolving themed fields independently', () => {
+  it('ignores the theme colors when Treemap has an explicit fill', () => {
     const { container } = render(
       <RechartsThemeProvider
         value={{
@@ -288,9 +288,110 @@ describe('<Treemap /> theme', () => {
     );
 
     expect(getTileAttributes(container, 1)).toEqual([
-      { name: 'A', fill: 'gold', stroke: 'blue' },
-      { name: 'B', fill: 'gold', stroke: 'orange' },
+      { name: 'A', fill: 'gold', stroke: null },
+      { name: 'B', fill: 'gold', stroke: null },
     ]);
+  });
+
+  it('ignores the theme colors when Treemap has an explicit stroke', () => {
+    const { container } = render(
+      <RechartsThemeProvider
+        value={{
+          graphicalItems: [
+            { fill: 'red', stroke: 'blue' },
+            { fill: 'green', stroke: 'orange' },
+          ],
+          pageBackground: 'white',
+        }}
+      >
+        <Treemap
+          width={400}
+          height={250}
+          data={data}
+          isAnimationActive={false}
+          nameKey="name"
+          dataKey="value"
+          stroke="#654321"
+        />
+      </RechartsThemeProvider>,
+    );
+
+    const tiles = getTileAttributes(container, 1);
+    expect(tiles.map(({ stroke }) => stroke)).toEqual(['#654321', '#654321']);
+    expect(tiles.map(({ fill }) => fill)).not.toContain('red');
+    expect(tiles.map(({ fill }) => fill)).not.toContain('green');
+  });
+
+  it('merges data entry colors with explicit Treemap props under a theme', () => {
+    const { container } = render(
+      <RechartsThemeProvider value={{ graphicalItems: [{ fill: 'red', stroke: 'blue' }] }}>
+        <Treemap
+          width={400}
+          height={250}
+          data={[
+            { name: 'A', value: 100, fill: 'lime' },
+            { name: 'B', value: 80 },
+          ]}
+          isAnimationActive={false}
+          nameKey="name"
+          dataKey="value"
+          stroke="#654321"
+        />
+      </RechartsThemeProvider>,
+    );
+
+    expect(getTileAttributes(container, 1)[0]).toEqual({ name: 'A', fill: 'lime', stroke: '#654321' });
+  });
+
+  const themes: ReadonlyArray<[string, RechartsTheme | undefined]> = [
+    ['without a theme', undefined],
+    ['with a theme', { graphicalItems: [{ fill: 'red', stroke: 'blue' }] }],
+  ];
+  it.each(themes)('does not render ids on the default node rectangles %s', (_, theme) => {
+    const { container } = render(
+      <RechartsThemeProvider value={theme}>
+        <Treemap
+          width={400}
+          height={250}
+          data={[
+            { name: 'A', value: 100, id: 'node-a' },
+            { name: 'B', value: 80 },
+          ]}
+          isAnimationActive={false}
+          nameKey="name"
+          dataKey="value"
+          id="my-treemap"
+        />
+      </RechartsThemeProvider>,
+    );
+
+    expect(container.querySelectorAll('.recharts-rectangle')).toHaveLength(3);
+    expect(container.querySelectorAll('.recharts-rectangle[id]')).toHaveLength(0);
+  });
+
+  it('still passes the data entry id to custom content', () => {
+    const ids: Array<unknown> = [];
+    render(
+      <Treemap
+        width={400}
+        height={250}
+        data={[
+          { name: 'A', value: 100, id: 'node-a' },
+          { name: 'B', value: 80 },
+        ]}
+        isAnimationActive={false}
+        nameKey="name"
+        dataKey="value"
+        content={(props: TreemapNode & { id?: unknown }) => {
+          if (props.depth === 1) {
+            ids.push(props.id);
+          }
+          return <rect />;
+        }}
+      />,
+    );
+
+    expect(ids).toContain('node-a');
   });
 
   it('applies typography to nest breadcrumbs without replacing custom content', () => {

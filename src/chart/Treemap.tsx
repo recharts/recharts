@@ -625,8 +625,9 @@ type ContentItemProps = {
   content: TreemapContentType;
   nodeProps: TreemapNode;
   /**
-   * True if the data node defines its own colors. Such nodes ignore the theme completely.
-   * This is computed from the data node alone because nodeProps also include the Treemap props.
+   * True if the data node or the Treemap props define their own colors. Such nodes ignore the theme completely.
+   * This is computed from the data node and the Treemap props separately
+   * because nodeProps merge both and also include layout fields.
    */
   nodeHasOwnColors: boolean;
   /**
@@ -680,7 +681,7 @@ function getTileStyles({
   const fillFromColorPanel = colorPanel == null ? undefined : legacyFill;
   if (nodeHasOwnColors) {
     /*
-     * A node that brings its own colors in data ignores the theme completely,
+     * A node that brings its own colors in data, or in the Treemap props, ignores the theme completely,
      * so that its colors are not mixed with the theme colors.
      */
     return { fill: fillFromColorPanel, stroke: undefined, strokeWidth: undefined };
@@ -779,7 +780,7 @@ function ContentItem({
         fill={fill}
         stroke={stroke}
         strokeWidth={strokeWidth}
-        {...omit(nodeProps, ['children'])}
+        {...omit(nodeProps, ['children', 'id'])}
         onMouseEnter={onMouseEnter}
         onMouseLeave={onMouseLeave}
         onClick={onClick}
@@ -1130,7 +1131,7 @@ class TreemapWithState extends PureComponent<InternalTreemapProps, State> {
           isLeaf={isLeaf}
           content={content}
           nodeProps={nodeProps}
-          nodeHasOwnColors={hasOwnColors(node)}
+          nodeHasOwnColors={hasOwnColors(node) || hasOwnColors(this.props)}
           branchIndex={branchIndex}
           treemapProps={this.props}
           onNestClick={this.handleClick}
