@@ -65,7 +65,7 @@ function createTmpEntry(componentsOrFile: string | string[]): { tmpFile: string;
     typeof firstArg === 'string' &&
     (firstArg.endsWith('.ts') || firstArg.endsWith('.tsx') || firstArg.endsWith('.js') || firstArg.endsWith('.jsx'));
 
-  let source = '';
+  let source: string;
   if (isFile) {
     const absolutePath = path.resolve(process.cwd(), firstArg);
     source = `import * as Bundle from ${JSON.stringify(pathToFileURL(absolutePath).href)};\nexport const used = Bundle;\n`;

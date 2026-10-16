@@ -574,7 +574,7 @@ const parseLabel = (
   }
 
   if (label && typeof label === 'object') {
-    return <Label {...label} key="label-implicit" {...commonProps} />;
+    return <Label key="label-implicit" {...label} {...commonProps} />;
   }
 
   return null;

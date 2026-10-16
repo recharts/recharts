@@ -134,7 +134,6 @@ describe('Funnel animation', () => {
 
     const renderShapeTestCase = createSelectorTestCase(({ children }: { children?: ReactNode }) => (
       <FunnelChart width={500} height={300}>
-        {/* eslint-disable-next-line react/jsx-no-bind */}
         <Funnel data={smallerData} dataKey="uv" isAnimationActive animationEasing="linear" shape={CustomShape} />
         {children}
       </FunnelChart>

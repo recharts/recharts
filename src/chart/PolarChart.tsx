@@ -65,6 +65,7 @@ export type PolarChartOptions = {
   categoricalChartProps: PolarChartPropsWithDefaults;
 };
 
+// eslint-disable-next-line no-shadow -- the named function gives the component its name in React DevTools
 export const PolarChart = forwardRef<SVGSVGElement, PolarChartOptions>(function PolarChart(
   props: PolarChartOptions,
   ref,

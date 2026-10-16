@@ -765,7 +765,6 @@ const errorBarDataPointFormatter: ErrorBarDataPointFormatter<LinePointItem> = (
   };
 };
 
-// eslint-disable-next-line react/prefer-stateless-function
 class LineWithState extends Component<InternalProps> {
   render() {
     const { hide, dot, points, className, xAxisId, yAxisId, top, left, width, height, id, needClip, zIndex } =

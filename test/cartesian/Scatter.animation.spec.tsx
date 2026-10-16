@@ -593,7 +593,6 @@ describe('Scatter Animation', () => {
 
     const renderShapeTestCase = createSelectorTestCase(({ children }: { children?: ReactNode }) => (
       <ScatterChart width={100} height={100}>
-        {/* eslint-disable-next-line react/jsx-no-bind */}
         <Scatter data={PageData} dataKey="uv" animationEasing="linear" shape={CustomShape} />
         {children}
       </ScatterChart>

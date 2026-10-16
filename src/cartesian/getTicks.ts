@@ -161,7 +161,7 @@ export function getTicks(
     return getNumberIntervalTicks(ticks, isNumber(interval) ? interval : 0) ?? [];
   }
 
-  let candidates: ReadonlyArray<CartesianTickItem> = [];
+  let candidates: ReadonlyArray<CartesianTickItem>;
 
   const sizeKey = orientation === 'top' || orientation === 'bottom' ? 'width' : 'height';
   const unitSize: Size =

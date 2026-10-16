@@ -63,6 +63,7 @@ export function renderStory(
    * flushSync makes a render error reject the promise returned by mount()
    * instead of being swallowed by React.
    */
+  // eslint-disable-next-line @eslint-react/dom-no-flush-sync -- see the comment above
   flushSync(() => {
     root.render(renderWithRechartsTheme(theme, <Story {...props} />));
   });

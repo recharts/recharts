@@ -58,7 +58,6 @@ const LegendPositionVRTest = ({ offset }: { offset?: number }) => (
         <Legend
           position={position}
           offset={offset}
-          // eslint-disable-next-line react/no-unstable-nested-components
           content={() => <div style={{ border: '1px dashed black' }}>Position: {JSON.stringify(position)}</div>}
         />
       </LineChart>

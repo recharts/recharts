@@ -1950,7 +1950,6 @@ describe('Line animation', () => {
 
     const renderShapeTestCase = createSelectorTestCase(({ children }: { children?: ReactNode }) => (
       <LineChart width={100} height={100} data={PageData}>
-        {/* eslint-disable-next-line react/jsx-no-bind */}
         <Line dataKey="uv" animationEasing="linear" shape={CustomLineShape} />
         {children}
       </LineChart>
