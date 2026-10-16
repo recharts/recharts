@@ -141,13 +141,14 @@ export function getEntryStyleOverrides(
 }
 
 /**
- * Picks the valid SVG properties of a data entry, without `id` so that rendered elements do not get duplicate DOM ids.
+ * Picks the valid SVG properties of a data entry, without `id` so that rendered elements do not get duplicate DOM ids,
+ * and without the React `ref` and `key`.
  * The raw entry, `id` included, stays available as `payload`.
  * Graphical items spread these after their own props, so the data entry wins.
  *
  * @param entry data entry
  */
 export function getEntrySvgProps(entry: unknown): Record<string, unknown> {
-  const { id, ...props } = svgPropertiesNoEventsFromUnknown(entry) ?? {};
+  const { id, ref, key, ...props } = svgPropertiesNoEventsFromUnknown(entry) ?? {};
   return props;
 }

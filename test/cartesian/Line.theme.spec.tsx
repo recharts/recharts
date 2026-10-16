@@ -253,6 +253,26 @@ describe('Line theme', () => {
     });
   });
 
+  it('keeps the active style of a graphical array item spread directly to Line props', () => {
+    const theme = lightTheme.graphicalItems[1];
+    assertNotNull(theme);
+    assertNotNull(theme.active);
+    const { container } = rechartsTestRender(
+      <RechartsThemeProvider value={lightTheme}>
+        <MyChart>
+          <Line dataKey="profit" isAnimationActive={false} {...theme} />
+          <Tooltip />
+        </MyChart>
+      </RechartsThemeProvider>,
+    );
+
+    showTooltip(container, lineChartMouseHoverTooltipSelector);
+    const activeDot = getActiveDot(container);
+    expect(activeDot).toHaveAttribute('fill', theme.active.fill);
+    expect(activeDot).toHaveAttribute('stroke', theme.active.stroke);
+    expect(activeDot).toHaveAttribute('stroke-width', String(theme.active.strokeWidth));
+  });
+
   it('lets explicit dot fill opacity override the default', () => {
     const { container } = rechartsTestRender(
       <RechartsThemeProvider
