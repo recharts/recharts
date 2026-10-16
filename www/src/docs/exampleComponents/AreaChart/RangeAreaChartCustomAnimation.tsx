@@ -126,8 +126,8 @@ export default function RangeAreaChartCustomAnimation(props: Partial<ControlsTyp
     ...rangeAreaChartCustomAnimationDefaultState,
     ...props,
   };
-  const gradientId1 = useId();
-  const gradientId2 = useId();
+  const firstGradientId = useId();
+  const secondGradientId = useId();
   return (
     <AreaChart<MyDataType>
       key={replayKey}
@@ -137,11 +137,11 @@ export default function RangeAreaChartCustomAnimation(props: Partial<ControlsTyp
       margin={{ top: 10, right: 16, left: 0, bottom: 0 }}
     >
       <defs>
-        <linearGradient id={gradientId1} x1="0" y1="0" x2="0" y2="1">
+        <linearGradient id={firstGradientId} x1="0" y1="0" x2="0" y2="1">
           <stop offset="5%" stopColor="#8884d8" stopOpacity={0.45} />
           <stop offset="95%" stopColor="#8884d8" stopOpacity={0.1} />
         </linearGradient>
-        <linearGradient id={gradientId2} x1="0" y1="0" x2="0" y2="1">
+        <linearGradient id={secondGradientId} x1="0" y1="0" x2="0" y2="1">
           <stop offset="5%" stopColor="#84d888" stopOpacity={0.45} />
           <stop offset="95%" stopColor="#84d888" stopOpacity={0.1} />
         </linearGradient>
@@ -155,7 +155,7 @@ export default function RangeAreaChartCustomAnimation(props: Partial<ControlsTyp
         dataKey="range"
         stroke="#8884d8"
         strokeWidth={2}
-        fill={`url(#${gradientId1})`}
+        fill={`url(#${firstGradientId})`}
         fillOpacity={1}
         isAnimationActive
         animationDuration={animationDuration}
@@ -167,7 +167,7 @@ export default function RangeAreaChartCustomAnimation(props: Partial<ControlsTyp
         baseValue="dataMax"
         stroke="#84d888"
         strokeWidth={2}
-        fill={`url(#${gradientId2})`}
+        fill={`url(#${secondGradientId})`}
         fillOpacity={1}
         isAnimationActive
         animationDuration={animationDuration}

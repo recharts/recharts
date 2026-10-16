@@ -157,6 +157,7 @@ const SizeDetectorContainer = forwardRef<HTMLDivElement | null, Props>(
     });
 
     const setContainerSize = useCallback((newWidth: number, newHeight: number) => {
+      // eslint-disable-next-line @eslint-react/set-state-in-effect -- the size can only be measured from the DOM after mount
       setSizes(prevState => {
         const roundedWidth = Math.round(newWidth);
         const roundedHeight = Math.round(newHeight);

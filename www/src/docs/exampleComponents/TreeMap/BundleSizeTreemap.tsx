@@ -281,9 +281,6 @@ function useBundleVisualizationEntry(forceFallbackData: boolean = false): Bundle
 
   useEffect(() => {
     if (forceFallbackData) {
-      setLoadState({
-        entry: fallbackEntry,
-      });
       return undefined;
     }
 
@@ -304,7 +301,7 @@ function useBundleVisualizationEntry(forceFallbackData: boolean = false): Bundle
     };
   }, [forceFallbackData]);
 
-  return loadState;
+  return forceFallbackData ? { entry: fallbackEntry } : loadState;
 }
 
 function collectLeafNodes(node: BundleVisualizationNode): Array<BundleVisualizationNode> {

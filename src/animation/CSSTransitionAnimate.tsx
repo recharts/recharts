@@ -72,7 +72,7 @@ export function CSSTransitionAnimate(outsideProps: CSSTransitionAnimateProps) {
     }
     return from;
   });
-  const initialized = useRef(false);
+  const initializedRef = useRef(false);
 
   const onAnimationStart = useCallback(() => {
     setStyle(from);
@@ -84,7 +84,7 @@ export function CSSTransitionAnimate(outsideProps: CSSTransitionAnimateProps) {
       return noop;
     }
 
-    initialized.current = true;
+    initializedRef.current = true;
 
     const timeoutController = new RequestAnimationFrameTimeoutController();
 
@@ -126,7 +126,7 @@ export function CSSTransitionAnimate(outsideProps: CSSTransitionAnimateProps) {
     });
   }
 
-  if (initialized.current) {
+  if (initializedRef.current) {
     const transition = getTransitionVal([attributeName], duration, easing);
     return children({
       transition,

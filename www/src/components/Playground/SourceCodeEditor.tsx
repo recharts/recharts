@@ -122,8 +122,8 @@ export function SourceCodeEditor({
 }: SourceCodeEditorProps) {
   const editorRef = useRef<HTMLDivElement>(null);
   const viewRef: React.MutableRefObject<EditorView | null> = useRef<EditorView | null>(null);
-  const editableCompartment = useRef(new Compartment());
-  const themeCompartment = useRef(new Compartment());
+  const editableCompartmentRef = useRef(new Compartment());
+  const themeCompartmentRef = useRef(new Compartment());
   const [editExtensions, setEditExtensions] = useState<Extension[]>([]);
   const [showFallback, setShowFallback] = useState(true);
   const colorMode = useColorMode();
@@ -157,8 +157,8 @@ export function SourceCodeEditor({
       foldGutter(),
       keymap.of(foldKeymap),
       EditorView.lineWrapping,
-      themeCompartment.current.of(createEditorTheme(colorMode.mode === 'dark')),
-      editableCompartment.current.of([]),
+      themeCompartmentRef.current.of(createEditorTheme(colorMode.mode === 'dark')),
+      editableCompartmentRef.current.of([]),
     ];
 
     const startState = EditorState.create({
@@ -214,7 +214,7 @@ export function SourceCodeEditor({
   useEffect(() => {
     if (!viewRef.current) return;
     viewRef.current.dispatch({
-      effects: themeCompartment.current.reconfigure(createEditorTheme(colorMode.mode === 'dark')),
+      effects: themeCompartmentRef.current.reconfigure(createEditorTheme(colorMode.mode === 'dark')),
     });
   }, [colorMode.mode]);
 
@@ -246,7 +246,7 @@ export function SourceCodeEditor({
       extensions.push(EditorState.readOnly.of(true));
     }
     viewRef.current.dispatch({
-      effects: editableCompartment.current.reconfigure(extensions),
+      effects: editableCompartmentRef.current.reconfigure(extensions),
     });
   }, [readOnly, editExtensions, onChange]);
 

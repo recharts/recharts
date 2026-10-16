@@ -135,7 +135,12 @@ function StoryPanel({
   const [frameStatus, setFrameStatus] = React.useState<
     { status: 'waiting' } | { status: 'loading' } | { status: 'ready' } | { status: 'error'; message: string }
   >({ status: enabled ? 'loading' : 'waiting' });
-  const hasSettled = React.useRef(false);
+  const hasSettledRef = React.useRef(false);
+  const [prevEnabled, setPrevEnabled] = React.useState(enabled);
+  if (enabled !== prevEnabled) {
+    setPrevEnabled(enabled);
+    setFrameStatus({ status: enabled ? 'loading' : 'waiting' });
+  }
 
   React.useEffect(() => {
     function handleMessage(event: MessageEvent<unknown>) {
@@ -155,18 +160,12 @@ function StoryPanel({
 
   React.useEffect(() => {
     if (!enabled) {
-      hasSettled.current = false;
-      setFrameStatus({ status: 'waiting' });
+      hasSettledRef.current = false;
       return;
     }
 
-    if (frameStatus.status === 'waiting') {
-      setFrameStatus({ status: 'loading' });
-      return;
-    }
-
-    if ((frameStatus.status === 'ready' || frameStatus.status === 'error') && !hasSettled.current) {
-      hasSettled.current = true;
+    if ((frameStatus.status === 'ready' || frameStatus.status === 'error') && !hasSettledRef.current) {
+      hasSettledRef.current = true;
       onSettled();
     }
   }, [enabled, frameStatus.status, onSettled]);

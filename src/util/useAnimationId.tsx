@@ -16,13 +16,13 @@ import { uniqueId } from './DataUtils';
  * @returns A unique animation id
  */
 export function useAnimationId(input: unknown, prefix: string = 'animation-'): string {
-  const animationId = useRef<string>(uniqueId(prefix));
-  const prevProps = useRef<unknown>(input);
+  const animationIdRef = useRef<string>(uniqueId(prefix));
+  const prevPropsRef = useRef<unknown>(input);
 
-  if (prevProps.current !== input) {
-    animationId.current = uniqueId(prefix);
-    prevProps.current = input;
+  if (prevPropsRef.current !== input) {
+    animationIdRef.current = uniqueId(prefix);
+    prevPropsRef.current = input;
   }
 
-  return animationId.current;
+  return animationIdRef.current;
 }

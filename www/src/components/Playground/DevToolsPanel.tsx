@@ -27,7 +27,7 @@ declare global {
  */
 export function DevToolsPanel({ className = '', onValueChange, initialTab }: DevToolsPanelProps) {
   // Create a ref to store the devtools value so that it persists across re-renders
-  const devToolsValue = useRef<unknown>(undefined);
+  const devToolsValueRef = useRef<unknown>(undefined);
   const DevToolsPortal = RechartsDevtoolsPortal;
 
   useEffect(() => {
@@ -35,7 +35,7 @@ export function DevToolsPanel({ className = '', onValueChange, initialTab }: Dev
     if (!container) return () => {};
 
     const handleDevToolsChange = (e: CustomEvent<unknown>) => {
-      devToolsValue.current = e.detail;
+      devToolsValueRef.current = e.detail;
       if (onValueChange) {
         onValueChange(e.detail);
       }

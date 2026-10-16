@@ -80,10 +80,10 @@ const ResponsiveDiv = forwardRef<HTMLDivElement, WrapperDivProps>((props: Wrappe
   const [sizes, setSizes] = useState<{
     containerWidth: number;
     containerHeight: number;
-  }>({
+  }>(() => ({
     containerWidth: getNumberOrZero(props.style?.width),
     containerHeight: getNumberOrZero(props.style?.height),
-  });
+  }));
 
   const setContainerSize = useCallback((newWidth: number, newHeight: number) => {
     setSizes(prevState => {
@@ -154,10 +154,10 @@ const ReadSizeOnceDiv = forwardRef<HTMLDivElement, WrapperDivProps>((props: Wrap
   const [sizes, setSizes] = useState<{
     containerWidth: number;
     containerHeight: number;
-  }>({
+  }>(() => ({
     containerWidth: getNumberOrZero(width),
     containerHeight: getNumberOrZero(height),
-  });
+  }));
 
   const setContainerSize = useCallback((newWidth: number, newHeight: number) => {
     setSizes(prevState => {

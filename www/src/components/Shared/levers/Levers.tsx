@@ -62,13 +62,13 @@ export function Levers<TState>({
   state: TState | null;
 }) {
   const effectiveState = state ?? defaultState;
-  const hasEmittedInitialState = useRef(false);
+  const hasEmittedInitialStateRef = useRef(false);
   const stateRef = useRef(effectiveState);
   stateRef.current = effectiveState;
 
   useEffect(() => {
-    if (state == null && !hasEmittedInitialState.current) {
-      hasEmittedInitialState.current = true;
+    if (state == null && !hasEmittedInitialStateRef.current) {
+      hasEmittedInitialStateRef.current = true;
       onChange(defaultState);
     }
   }, [defaultState, onChange, state]);

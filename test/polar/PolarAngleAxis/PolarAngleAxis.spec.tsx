@@ -661,7 +661,7 @@ describe('<PolarAngleAxis />', () => {
 
       const renderTestCase = createSelectorTestCase(({ children }) => (
         <RadarChart width={360} height={360} data={data}>
-          <PolarAngleAxis dataKey="angle" axisLineType="circle" type="number" domain={[0, 360]} />;
+          <PolarAngleAxis dataKey="angle" axisLineType="circle" type="number" domain={[0, 360]} />
           <Radar type="number" name="r" dataKey="r" fillOpacity={0} stroke="#000" />
           {children}
         </RadarChart>

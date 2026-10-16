@@ -6,6 +6,7 @@ import React, {
   useContext,
   useEffect,
   useId,
+  useMemo,
   useRef,
   useState,
 } from 'react';
@@ -34,17 +35,17 @@ type MockClock = [currentTime: number, setCurrentTime: (currentTime: number) => 
 
 export const ManualAnimationManager = ({ children }: { children: ReactNode }) => {
   const [animations, setAnimations] = useState<ReadonlyArray<AnimationHandle>>([]);
-  const mockClock = useState<number>(0);
+  const [currentTime, setCurrentTime] = useState<number>(0);
+  const mockClock: MockClock = useMemo(() => [currentTime, setCurrentTime], [currentTime]);
   const [timeListeners, setTimeListeners] = useState<ReadonlyArray<(now: number) => void>>([]);
-  const currentTime = useRef<number>(0);
-  // eslint-disable-next-line prefer-destructuring
-  currentTime.current = mockClock[0];
+  const currentTimeRef = useRef<number>(0);
+  currentTimeRef.current = currentTime;
 
   const manualAnimationController: AnimationController = useCallback<AnimationController>(
     (_timeoutController, animationHandle, listener) => {
       setAnimations(prev => [...prev, animationHandle]);
       // tick once to lock the animation in
-      animationHandle.tick(currentTime.current);
+      animationHandle.tick(currentTimeRef.current);
       const timeListener = (now: number) => {
         animationHandle.tick(now);
         if (animationHandle.getState() === 'active') {
@@ -61,8 +62,8 @@ export const ManualAnimationManager = ({ children }: { children: ReactNode }) =>
   );
 
   useEffect(() => {
-    timeListeners.forEach(listener => listener(mockClock[0]));
-  }, [timeListeners, mockClock]);
+    timeListeners.forEach(listener => listener(currentTime));
+  }, [timeListeners, currentTime]);
 
   return (
     <MockTimeContext.Provider value={mockClock}>
