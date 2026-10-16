@@ -450,17 +450,21 @@ const tooltipSlice = createSlice({
     setSyncInteraction(state, action: PayloadAction<TooltipSyncState>) {
       state.syncInteraction = action.payload;
     },
+    /**
+     * Use for focus and blur. Updates the keyboard interaction and leaves mouse hover alone.
+     * A mouse click focuses the chart too, and the tooltip must stay on the point under the pointer.
+     */
     setKeyboardInteraction(state, action: PayloadAction<KeyboardTooltipActionPayload>) {
       state.keyboardInteraction.active = action.payload.active;
       state.keyboardInteraction.index = action.payload.activeIndex;
       state.keyboardInteraction.coordinate = action.payload.activeCoordinate;
     },
+    /**
+     * Use for a key press (arrow keys, Enter). The most recent input wins:
+     * mouse actions turn off the keyboard interaction, so a key press turns off mouse hover.
+     * Without this, a pointer resting over the chart keeps the tooltip and the arrow keys do nothing visible.
+     */
     setKeyPressInteraction(state, action: PayloadAction<KeyboardTooltipActionPayload>) {
-      /*
-       * The most recent input wins. Mouse actions turn off the keyboard interaction,
-       * so a key press turns off the hover left by a pointer that rests over the chart.
-       * Focus does not, because a mouse click focuses the chart too.
-       */
       state.axisInteraction.hover.active = false;
       state.itemInteraction.hover.active = false;
       state.keyboardInteraction.active = action.payload.active;
