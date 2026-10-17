@@ -3,13 +3,18 @@ import globals from 'globals';
 import { includeIgnoreFile } from '@eslint/compat';
 import js from '@eslint/js';
 import tseslint from 'typescript-eslint';
-import { configs } from 'eslint-config-airbnb-extended/legacy';
 import { rules as prettierConfigRules } from 'eslint-config-prettier';
 import prettierPlugin from 'eslint-plugin-prettier';
 import storybook from 'eslint-plugin-storybook';
 import comments from '@eslint-community/eslint-plugin-eslint-comments/configs';
-import reactPerf from 'eslint-plugin-react-perf';
 import jsdoc from 'eslint-plugin-jsdoc';
+import importX from 'eslint-plugin-import-x';
+import { createTypeScriptImportResolver } from 'eslint-import-resolver-typescript';
+import jsxA11y from 'eslint-plugin-jsx-a11y-x';
+import reactHooks from 'eslint-plugin-react-hooks';
+import eslintReact from '@eslint-react/eslint-plugin';
+import stylistic from '@stylistic/eslint-plugin';
+import { airbnbCoreRules, airbnbImportRules, airbnbJsxA11yRules } from './eslint/airbnb-rules.mjs';
 
 const gitignorePath = path.resolve('.', '.gitignore');
 const allFiles = [
@@ -67,14 +72,46 @@ const jsConfig = [
     name: 'js/config',
     ...js.configs.recommended,
   },
-  // NOTE: DO NOT ADD ANYTHING AFTER THIS LINE BECAUSE IT WILL BE OVERWRITTEN BY AIRBNB CONFIG
+  {
+    name: 'x/airbnb-core',
+    files: allFiles,
+    rules: airbnbCoreRules,
+  },
 ];
 
 const reactConfig = [
-  // Airbnb React Recommended Config
-  ...configs.react.recommended,
-  // Airbnb React Hooks Config
-  ...configs.react.hooks,
+  {
+    name: 'x/import-x',
+    files: allFiles,
+    /*
+     * eslint-plugin-import-x is registered under the `import` name
+     * so that rule names and eslint-disable comments stay the same as with eslint-plugin-import.
+     */
+    plugins: { import: importX },
+    rules: airbnbImportRules,
+  },
+  {
+    name: 'x/jsx-a11y-x',
+    files: allFiles,
+    // Registered under the `jsx-a11y` name, same reason as import-x above.
+    plugins: { 'jsx-a11y': jsxA11y },
+    languageOptions: { parserOptions: { ecmaFeatures: { jsx: true } } },
+    rules: airbnbJsxA11yRules,
+  },
+  {
+    name: 'x/react-hooks',
+    files: allFiles,
+    plugins: { 'react-hooks': reactHooks },
+    rules: {
+      'react-hooks/rules-of-hooks': 'error',
+      'react-hooks/exhaustive-deps': 'error',
+    },
+  },
+  {
+    ...eslintReact.configs['recommended-typescript'],
+    name: 'x/eslint-react',
+    files: allFiles,
+  },
   {
     name: 'x/general',
     rules: {
@@ -145,48 +182,39 @@ const reactConfig = [
   },
   {
     name: 'x/react',
+    plugins: { '@stylistic': stylistic },
     rules: {
-      'react/jsx-key': [
-        'error',
-        {
-          checkFragmentShorthand: true,
-          checkKeyMustBeforeSpread: true,
-          warnOnDuplicates: true,
-        },
-      ],
-      'react/no-did-update-set-state': 'warn',
-      'react/jsx-no-constructed-context-values': 'warn',
-      'react/no-unused-class-component-methods': 'off',
-      'react/sort-comp': 'off',
-      'react/jsx-uses-react': 'error',
-      'react/jsx-uses-vars': 'error',
-      'react/react-in-jsx-scope': 'error',
-      'react/jsx-filename-extension': [
-        'error',
-        {
-          extensions: ['.ts', '.tsx', '.js', '.jsx'],
-        },
-      ],
-      'react/jsx-no-bind': 'error',
-      'react/prop-types': 'off',
-      'react/no-unused-prop-types': 'off',
-      'react/require-default-props': 'off',
-      'react/default-props-match-prop-types': 'off',
-      'react/function-component-definition': 'off',
+      // Hooks are checked by eslint-plugin-react-hooks
+      '@eslint-react/rules-of-hooks': 'off',
+      '@eslint-react/exhaustive-deps': 'off',
+      '@eslint-react/no-duplicate-key': 'error',
+      '@eslint-react/no-unused-state': 'error',
+      '@eslint-react/no-unstable-context-value': 'warn',
+      '@eslint-react/jsx-no-useless-fragment': 'error',
+      '@eslint-react/dom-no-missing-button-type': 'error',
+      '@eslint-react/dom-no-unsafe-target-blank': 'error',
+      '@eslint-react/dom-no-string-style-prop': 'error',
+      '@eslint-react/dom-no-unknown-property': 'error',
+      '@eslint-react/no-access-state-in-setstate': 'off',
+      /*
+       * Recharts accepts React elements in its public API (custom labels, shapes, ticks, ...)
+       * and clones them with extra props, so these legacy APIs are used on purpose.
+       */
+      '@eslint-react/no-clone-element': 'off',
+      '@eslint-react/no-children-count': 'off',
+      '@eslint-react/no-children-for-each': 'off',
+      '@eslint-react/no-children-map': 'off',
+      '@eslint-react/no-children-only': 'off',
+      '@eslint-react/no-children-to-array': 'off',
       /**
        * In a chart, using the index as key is acceptable because the order of items
        * has meaning. Reordering, or removing elements creates a whole new chart.
        * For Recharts, array index is a good identifier.
        */
-      'react/no-array-index-key': 'off',
-      'react/no-access-state-in-setstate': 'off',
-      'react/destructuring-assignment': 'off',
-      'react/jsx-closing-tag-location': 'error',
-      'react/no-unused-state': 'error',
-      'react/prefer-stateless-function': 'error',
-      'react/jsx-props-no-spreading': 'off',
-      'react/state-in-constructor': 'off',
-      'react/static-property-placement': 'off',
+      '@eslint-react/no-array-index-key': 'off',
+      '@stylistic/jsx-self-closing-comp': 'error',
+      '@stylistic/jsx-curly-brace-presence': ['error', { props: 'never', children: 'never' }],
+      '@stylistic/jsx-pascal-case': ['error', { allowAllCaps: true }],
     },
   },
   {
@@ -259,7 +287,10 @@ const overridesConfig = [
     name: 'x/override-1',
     files: ['./test/**/*.tsx'],
     rules: {
-      'react/jsx-no-useless-fragment': 'off',
+      '@eslint-react/jsx-no-useless-fragment': 'off',
+      // Tests define small spy components inline so that they can close over test variables
+      '@eslint-react/no-nested-component-definitions': 'off',
+      '@eslint-react/static-components': 'off',
     },
   },
   {
@@ -338,10 +369,6 @@ const overridesConfig = [
     name: 'website-overrides',
     files: ['www/**/*'],
     rules: {
-      /*
-       * There is something in React 17+ that no longer requires React to be in scope? I think.
-       */
-      'react/react-in-jsx-scope': 'off',
       /*
        * We use this vite feature to import both the code, and the source code as a string.
        */
@@ -430,28 +457,12 @@ const settings = [
     name: 'x/settings',
     files: allFiles,
     settings: {
-      'import/resolver': {
-        typescript: {},
-        node: {
-          extensions: ['.js', '.jsx', '.ts', '.tsx'],
-        },
-      },
+      'import-x/resolver-next': [createTypeScriptImportResolver()],
+      'import-x/extensions': ['.js', '.cjs', '.mjs', '.jsx'],
+      'import-x/ignore': ['node_modules', '\\.(coffee|scss|css|less|hbs|svg|json)$'],
     },
   },
 ];
-
-const perfOptimization = {
-  name: 'perf-optimization-examples',
-  files: ['./www/src/docs/exampleComponents/LineChart/CompareTwoLines.tsx'],
-  plugins: { 'react-perf': reactPerf },
-  rules: {
-    // new object as prop creates a new reference on each render - but we can memo this one
-    // 'react-perf/jsx-no-new-object-as-prop': 'error',
-    'react-perf/jsx-no-new-array-as-prop': 'error',
-    'react-perf/jsx-no-new-function-as-prop': 'error',
-    'react-perf/jsx-no-jsx-as-prop': 'error',
-  },
-};
 
 const generatedApiDocsOverrides = {
   name: 'generated-api-docs-overrides',
@@ -547,6 +558,5 @@ export default [
   // JSDoc Config
   ...jsdocConfig,
   generatedApiDocsOverrides,
-  perfOptimization,
   typeSafety,
 ];

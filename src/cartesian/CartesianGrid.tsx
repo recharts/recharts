@@ -273,6 +273,7 @@ function LineItem({ option, lineItemProps }: { option: GridLineType; lineItemPro
       : restOfFilteredProps.strokeDasharray;
     lineItem = (
       <line
+        key={key}
         {...restOfFilteredProps}
         strokeDasharray={strokeDasharray}
         x1={x1}
@@ -280,7 +281,6 @@ function LineItem({ option, lineItemProps }: { option: GridLineType; lineItemPro
         x2={x2}
         y2={y2}
         fill="none"
-        key={key}
       />
     );
   }

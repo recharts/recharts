@@ -227,10 +227,6 @@ const NonResponsiveDiv = forwardRef<HTMLDivElement, WrapperDivProps>((props: Wra
   );
 });
 
-function getWrapperDivComponent(responsive: boolean) {
-  return responsive ? ResponsiveDiv : NonResponsiveDiv;
-}
-
 export const RechartsWrapper = forwardRef<HTMLDivElement | null, RechartsWrapperProps>(
   (props: RechartsWrapperProps, ref: Ref<HTMLDivElement | null>) => {
     const {
@@ -389,7 +385,7 @@ export const RechartsWrapper = forwardRef<HTMLDivElement | null, RechartsWrapper
       [dispatch, onTouchEnd],
     );
 
-    const WrapperDiv = getWrapperDivComponent(responsive);
+    const WrapperDiv = responsive ? ResponsiveDiv : NonResponsiveDiv;
 
     return (
       <TooltipPortalContext.Provider value={tooltipPortal}>

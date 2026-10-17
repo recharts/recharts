@@ -190,12 +190,10 @@ export const getLinearRegression = (data: NonEmptyArray<{ cx?: number; cy?: numb
   let xxsum = 0;
   let xmin = Infinity;
   let xmax = -Infinity;
-  let xcurrent = 0;
-  let ycurrent = 0;
 
   for (let i = 0; i < len; i++) {
-    xcurrent = data[i]?.cx || 0;
-    ycurrent = data[i]?.cy || 0;
+    const xcurrent = data[i]?.cx || 0;
+    const ycurrent = data[i]?.cy || 0;
 
     xsum += xcurrent;
     ysum += ycurrent;

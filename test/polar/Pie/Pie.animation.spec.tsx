@@ -186,7 +186,6 @@ describe('Pie animation', () => {
 
     const renderShapeTestCase = createSelectorTestCase(({ children }: { children?: ReactNode }) => (
       <PieChart width={100} height={100}>
-        {/* eslint-disable-next-line react/jsx-no-bind */}
         <Pie data={smallerData} dataKey="amt" isAnimationActive animationEasing="linear" shape={CustomShape} />
         {children}
       </PieChart>

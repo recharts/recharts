@@ -635,7 +635,6 @@ describe('Area animation', () => {
 
     const renderShapeTestCase = createSelectorTestCase(({ children }: { children?: ReactNode }) => (
       <AreaChart width={100} height={100} data={PageData}>
-        {/* eslint-disable-next-line react/jsx-no-bind */}
         <Area dataKey="uv" animationEasing="linear" shape={CustomShape} />
         {children}
       </AreaChart>

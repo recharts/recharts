@@ -44,7 +44,7 @@ describe('RechartsWrapper', () => {
     const disconnectSpy = vi.fn();
 
     // Mock global ResizeObserver
-    const ResizeObserverMock = vi.fn(function ResizeObserverMock() {
+    const ResizeObserverMock = vi.fn(function MockResizeObserver() {
       return {
         observe: observeSpy,
         unobserve: vi.fn(),

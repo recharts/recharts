@@ -192,7 +192,6 @@ export default function TargetPriceChart({
       >
         <LabelList
           position="center"
-          // eslint-disable-next-line react/no-unstable-nested-components
           content={labelProps => activeIndex === labelProps.index && <ActiveLabel {...labelProps} />}
         />
       </Area>
@@ -205,7 +204,6 @@ export default function TargetPriceChart({
       >
         <LabelList
           position="center"
-          // eslint-disable-next-line react/no-unstable-nested-components
           content={labelProps => activeIndex === labelProps.index && <ActiveLabel {...labelProps} />}
         />
       </Line>
@@ -218,7 +216,6 @@ export default function TargetPriceChart({
       >
         <LabelList
           position="center"
-          // eslint-disable-next-line react/no-unstable-nested-components
           content={labelProps => activeIndex === labelProps.index && <ActiveLabel {...labelProps} />}
         />
       </Line>
@@ -231,7 +228,6 @@ export default function TargetPriceChart({
       >
         <LabelList
           position="center"
-          // eslint-disable-next-line react/no-unstable-nested-components
           content={labelProps => activeIndex === labelProps.index && <ActiveLabel {...labelProps} />}
         />
       </Line>

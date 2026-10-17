@@ -40,6 +40,7 @@ export type CartesianChartOptions = {
   categoricalChartProps: CartesianChartProps;
 };
 
+// eslint-disable-next-line no-shadow -- the named function gives the component its name in React DevTools
 export const CartesianChart = forwardRef<SVGSVGElement, CartesianChartOptions>(function CartesianChart(
   props: CartesianChartOptions,
   ref,

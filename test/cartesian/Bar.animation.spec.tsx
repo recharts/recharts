@@ -245,7 +245,6 @@ describe('Bar animation', () => {
 
     const renderShapeTestCase = createSelectorTestCase(({ children }: { children?: ReactNode }) => (
       <BarChart width={100} height={100} data={smallerData}>
-        {/* eslint-disable-next-line react/jsx-no-bind */}
         <Bar dataKey="pv" isAnimationActive animationEasing="linear" shape={CustomShape} />
         {children}
       </BarChart>

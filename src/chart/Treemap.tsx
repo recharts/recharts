@@ -405,7 +405,7 @@ const squarify = (node: TreemapNode, aspectRatio: number, nodeInset: number, nod
     }
 
     if (row.length) {
-      rect = position(row, size, rect, true);
+      position(row, size, rect, true);
       row.length = row.area = 0;
     }
 
@@ -1164,16 +1164,7 @@ class TreemapWithState extends PureComponent<InternalTreemapProps, State> {
           // TODO need to verify nameKey type
           const rawName = get(item, nameKey as string, 'root');
           const name: string = typeof rawName === 'string' ? rawName : 'root';
-          let content: ReactNode;
-          if (React.isValidElement(nestIndexContent)) {
-            // the cloned content is ignored at all times - let's remove it?
-            content = React.cloneElement(nestIndexContent, item, i);
-          }
-          if (typeof nestIndexContent === 'function') {
-            content = nestIndexContent(item, i);
-          } else {
-            content = name;
-          }
+          const content: ReactNode = typeof nestIndexContent === 'function' ? nestIndexContent(item, i) : name;
 
           return (
             // eslint-disable-next-line jsx-a11y/click-events-have-key-events, jsx-a11y/no-static-element-interactions

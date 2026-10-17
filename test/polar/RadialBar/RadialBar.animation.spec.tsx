@@ -127,7 +127,6 @@ describe('RadialBar animation', () => {
 
     const renderShapeTestCase = createSelectorTestCase(({ children }: { children?: ReactNode }) => (
       <RadialBarChart width={400} height={400} data={smallerData}>
-        {/* eslint-disable-next-line react/jsx-no-bind */}
         <RadialBar dataKey="uv" isAnimationActive animationEasing="linear" shape={CustomShape} />
         {children}
       </RadialBarChart>
