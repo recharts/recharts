@@ -172,6 +172,17 @@ export interface RadarProps<DataPointType = any, DataValueType = any>
    */
   legendType?: LegendType;
   /**
+   * Name represents each data entry in the tooltip.
+   * This allows you to extract the name from the data:
+   *
+   * - `string`: the name of the field in the data object;
+   * - `number`: the index of the field in the data;
+   * - `function`: a function that receives the data object and returns the name.
+   *
+   * @since 3.11
+   */
+  nameKey?: DataKey<DataPointType>;
+  /**
    * The customized event handler of animation end
    */
   onAnimationEnd?: () => void;
@@ -252,12 +263,13 @@ const SetRadarTooltipEntrySettings = React.memo(
     strokeWidth,
     fill,
     name,
+    nameKey,
     hide,
     tooltipType,
     id,
   }: Pick<
     WithIdRequired<PropsWithDefaults>,
-    'dataKey' | 'stroke' | 'strokeWidth' | 'fill' | 'name' | 'hide' | 'tooltipType' | 'id'
+    'dataKey' | 'stroke' | 'strokeWidth' | 'fill' | 'name' | 'nameKey' | 'hide' | 'tooltipType' | 'id'
   >) => {
     const tooltipEntrySettings: TooltipPayloadConfiguration = {
       /*
@@ -272,7 +284,7 @@ const SetRadarTooltipEntrySettings = React.memo(
         stroke,
         strokeWidth,
         fill,
-        nameKey: undefined, // RadarChart does not have nameKey unfortunately
+        nameKey,
         dataKey,
         name: getTooltipNameProp(name, dataKey),
         hide,
@@ -721,6 +733,7 @@ export function Radar<DataPointType = any, DataValueType = any>(outsideProps: Pr
             strokeWidth={props.strokeWidth}
             fill={props.fill}
             name={props.name}
+            nameKey={props.nameKey}
             hide={props.hide}
             tooltipType={props.tooltipType}
             id={id}
