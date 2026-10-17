@@ -73,6 +73,14 @@
     },
     "@typescript-eslint/no-explicit-any": {
       "count": 12
+    },
+    "react-perf/jsx-no-new-object-as-prop": {
+      "count": 3
+    }
+  },
+  "src/cartesian/AreaRevealShape.tsx": {
+    "react-perf/jsx-no-new-array-as-prop": {
+      "count": 1
     }
   },
   "src/cartesian/Bar.tsx": {
@@ -81,6 +89,9 @@
     },
     "@typescript-eslint/no-explicit-any": {
       "count": 10
+    },
+    "react-perf/jsx-no-new-object-as-prop": {
+      "count": 1
     }
   },
   "src/cartesian/Brush.tsx": {
@@ -89,6 +100,12 @@
     },
     "@typescript-eslint/no-explicit-any": {
       "count": 7
+    },
+    "react-perf/jsx-no-new-function-as-prop": {
+      "count": 5
+    },
+    "react-perf/jsx-no-new-object-as-prop": {
+      "count": 5
     }
   },
   "src/cartesian/CartesianAxis.tsx": {
@@ -97,6 +114,14 @@
     },
     "@typescript-eslint/no-explicit-any": {
       "count": 3
+    },
+    "react-perf/jsx-no-new-object-as-prop": {
+      "count": 3
+    }
+  },
+  "src/cartesian/CartesianGrid.tsx": {
+    "react-perf/jsx-no-new-object-as-prop": {
+      "count": 2
     }
   },
   "src/cartesian/ErrorBar.tsx": {
@@ -110,6 +135,9 @@
     },
     "@typescript-eslint/no-explicit-any": {
       "count": 9
+    },
+    "react-perf/jsx-no-new-object-as-prop": {
+      "count": 1
     }
   },
   "src/cartesian/Line.tsx": {
@@ -118,6 +146,9 @@
     },
     "@typescript-eslint/no-explicit-any": {
       "count": 11
+    },
+    "react-perf/jsx-no-new-object-as-prop": {
+      "count": 3
     }
   },
   "src/cartesian/ReferenceArea.tsx": {
@@ -141,6 +172,9 @@
     },
     "@typescript-eslint/no-explicit-any": {
       "count": 14
+    },
+    "react-perf/jsx-no-new-object-as-prop": {
+      "count": 1
     }
   },
   "src/cartesian/XAxis.tsx": {
@@ -157,6 +191,9 @@
     },
     "@typescript-eslint/no-explicit-any": {
       "count": 8
+    },
+    "react-perf/jsx-no-new-object-as-prop": {
+      "count": 2
     }
   },
   "src/cartesian/ZAxis.tsx": {
@@ -177,6 +214,11 @@
       "count": 1
     },
     "@typescript-eslint/no-explicit-any": {
+      "count": 1
+    }
+  },
+  "src/chart/CartesianChart.tsx": {
+    "react-perf/jsx-no-new-object-as-prop": {
       "count": 1
     }
   },
@@ -212,6 +254,11 @@
       "count": 1
     }
   },
+  "src/chart/PolarChart.tsx": {
+    "react-perf/jsx-no-new-object-as-prop": {
+      "count": 1
+    }
+  },
   "src/chart/RadarChart.tsx": {
     "@typescript-eslint/consistent-type-assertions": {
       "count": 1
@@ -228,12 +275,23 @@
       "count": 1
     }
   },
+  "src/chart/RechartsWrapper.tsx": {
+    "react-perf/jsx-no-new-object-as-prop": {
+      "count": 1
+    }
+  },
   "src/chart/Sankey.tsx": {
     "@typescript-eslint/consistent-type-assertions": {
       "count": 1
     },
     "@typescript-eslint/no-explicit-any": {
       "count": 7
+    },
+    "react-perf/jsx-no-new-function-as-prop": {
+      "count": 7
+    },
+    "react-perf/jsx-no-new-object-as-prop": {
+      "count": 3
     }
   },
   "src/chart/ScatterChart.tsx": {
@@ -247,6 +305,12 @@
   "src/chart/SunburstChart.tsx": {
     "@typescript-eslint/no-explicit-any": {
       "count": 2
+    },
+    "react-perf/jsx-no-new-function-as-prop": {
+      "count": 4
+    },
+    "react-perf/jsx-no-new-object-as-prop": {
+      "count": 2
     }
   },
   "src/chart/Treemap.tsx": {
@@ -255,6 +319,15 @@
     },
     "@typescript-eslint/no-explicit-any": {
       "count": 3
+    },
+    "react-perf/jsx-no-new-array-as-prop": {
+      "count": 1
+    },
+    "react-perf/jsx-no-new-function-as-prop": {
+      "count": 4
+    },
+    "react-perf/jsx-no-new-object-as-prop": {
+      "count": 5
     }
   },
   "src/component/ActivePoints.tsx": {
@@ -265,6 +338,9 @@
   "src/component/Cursor.tsx": {
     "@typescript-eslint/no-explicit-any": {
       "count": 3
+    },
+    "react-perf/jsx-no-new-object-as-prop": {
+      "count": 1
     }
   },
   "src/component/Customized.tsx": {
@@ -278,6 +354,9 @@
   "src/component/DefaultLegendContent.tsx": {
     "@typescript-eslint/no-explicit-any": {
       "count": 3
+    },
+    "react-perf/jsx-no-new-object-as-prop": {
+      "count": 1
     }
   },
   "src/component/DefaultTooltipContent.tsx": {
@@ -291,6 +370,9 @@
   "src/component/Dots.tsx": {
     "@typescript-eslint/no-explicit-any": {
       "count": 3
+    },
+    "react-perf/jsx-no-new-object-as-prop": {
+      "count": 1
     }
   },
   "src/component/Label.tsx": {
@@ -343,11 +425,20 @@
     },
     "@typescript-eslint/no-explicit-any": {
       "count": 17
+    },
+    "react-perf/jsx-no-new-array-as-prop": {
+      "count": 2
+    },
+    "react-perf/jsx-no-new-object-as-prop": {
+      "count": 2
     }
   },
   "src/polar/PolarAngleAxis.tsx": {
     "@typescript-eslint/no-explicit-any": {
       "count": 9
+    },
+    "react-perf/jsx-no-new-object-as-prop": {
+      "count": 1
     }
   },
   "src/polar/PolarRadiusAxis.tsx": {
@@ -361,11 +452,20 @@
     },
     "@typescript-eslint/no-explicit-any": {
       "count": 11
+    },
+    "react-perf/jsx-no-new-object-as-prop": {
+      "count": 2
     }
   },
   "src/polar/RadialBar.tsx": {
     "@typescript-eslint/no-explicit-any": {
       "count": 12
+    },
+    "react-perf/jsx-no-new-array-as-prop": {
+      "count": 1
+    },
+    "react-perf/jsx-no-new-object-as-prop": {
+      "count": 1
     }
   },
   "src/state/cartesianAxisSlice.ts": {
@@ -549,6 +649,11 @@
       "count": 1
     }
   },
+  "src/util/ScatterUtils.tsx": {
+    "react-perf/jsx-no-jsx-as-prop": {
+      "count": 1
+    }
+  },
   "src/util/createCartesianCharts.tsx": {
     "@typescript-eslint/consistent-type-assertions": {
       "count": 4
@@ -617,28 +722,181 @@
       "count": 1
     }
   },
+  "storybook/ChartSizeDimensions.tsx": {
+    "react-perf/jsx-no-new-object-as-prop": {
+      "count": 1
+    }
+  },
+  "storybook/stories/API/ResponsiveContainer.stories.tsx": {
+    "react-perf/jsx-no-new-object-as-prop": {
+      "count": 1
+    }
+  },
+  "storybook/stories/API/cartesian/Area.stories.tsx": {
+    "react-perf/jsx-no-new-object-as-prop": {
+      "count": 1
+    }
+  },
   "storybook/stories/API/cartesian/Bar.stories.tsx": {
     "@typescript-eslint/no-explicit-any": {
       "count": 1
+    },
+    "react-perf/jsx-no-new-function-as-prop": {
+      "count": 1
+    },
+    "react-perf/jsx-no-new-object-as-prop": {
+      "count": 2
     }
   },
   "storybook/stories/API/cartesian/CartesianAxis.stories.tsx": {
     "@typescript-eslint/no-explicit-any": {
+      "count": 1
+    },
+    "react-perf/jsx-no-new-object-as-prop": {
+      "count": 2
+    }
+  },
+  "storybook/stories/API/cartesian/CartesianGrid.stories.tsx": {
+    "react-perf/jsx-no-new-array-as-prop": {
+      "count": 1
+    }
+  },
+  "storybook/stories/API/cartesian/ErrorBar.stories.tsx": {
+    "react-perf/jsx-no-new-object-as-prop": {
+      "count": 1
+    }
+  },
+  "storybook/stories/API/cartesian/Line.stories.tsx": {
+    "react-perf/jsx-no-new-object-as-prop": {
+      "count": 1
+    }
+  },
+  "storybook/stories/API/cartesian/ReferenceArea.stories.tsx": {
+    "react-perf/jsx-no-new-object-as-prop": {
+      "count": 1
+    }
+  },
+  "storybook/stories/API/cartesian/ReferenceDot.stories.tsx": {
+    "react-perf/jsx-no-new-object-as-prop": {
+      "count": 1
+    }
+  },
+  "storybook/stories/API/cartesian/ReferenceLine.stories.tsx": {
+    "react-perf/jsx-no-new-object-as-prop": {
+      "count": 1
+    }
+  },
+  "storybook/stories/API/cartesian/Scatter.stories.tsx": {
+    "react-perf/jsx-no-new-object-as-prop": {
       "count": 1
     }
   },
   "storybook/stories/API/cartesian/XAxis.stories.tsx": {
     "@typescript-eslint/no-explicit-any": {
       "count": 2
+    },
+    "react-perf/jsx-no-jsx-as-prop": {
+      "count": 1
+    },
+    "react-perf/jsx-no-new-array-as-prop": {
+      "count": 2
+    },
+    "react-perf/jsx-no-new-function-as-prop": {
+      "count": 1
     }
   },
   "storybook/stories/API/cartesian/YAxis.stories.tsx": {
     "@typescript-eslint/no-explicit-any": {
       "count": 1
+    },
+    "react-perf/jsx-no-jsx-as-prop": {
+      "count": 1
+    },
+    "react-perf/jsx-no-new-array-as-prop": {
+      "count": 1
+    }
+  },
+  "storybook/stories/API/cartesian/ZAxis.stories.tsx": {
+    "react-perf/jsx-no-new-object-as-prop": {
+      "count": 1
+    }
+  },
+  "storybook/stories/API/chart/AreaChart.stories.tsx": {
+    "react-perf/jsx-no-new-object-as-prop": {
+      "count": 1
+    }
+  },
+  "storybook/stories/API/chart/BarChart.stories.tsx": {
+    "react-perf/jsx-no-new-object-as-prop": {
+      "count": 2
+    }
+  },
+  "storybook/stories/API/chart/ComposedChart.stories.tsx": {
+    "react-perf/jsx-no-new-array-as-prop": {
+      "count": 1
+    },
+    "react-perf/jsx-no-new-function-as-prop": {
+      "count": 1
+    },
+    "react-perf/jsx-no-new-object-as-prop": {
+      "count": 3
+    }
+  },
+  "storybook/stories/API/chart/FunnelChart.stories.tsx": {
+    "react-perf/jsx-no-new-object-as-prop": {
+      "count": 1
     }
   },
   "storybook/stories/API/chart/PieChart.stories.tsx": {
     "@typescript-eslint/no-explicit-any": {
+      "count": 3
+    },
+    "react-perf/jsx-no-new-array-as-prop": {
+      "count": 4
+    },
+    "react-perf/jsx-no-new-function-as-prop": {
+      "count": 3
+    },
+    "react-perf/jsx-no-new-object-as-prop": {
+      "count": 1
+    }
+  },
+  "storybook/stories/API/chart/RadialBarChart.stories.tsx": {
+    "react-perf/jsx-no-new-object-as-prop": {
+      "count": 2
+    }
+  },
+  "storybook/stories/API/chart/Sankey.stories.tsx": {
+    "react-perf/jsx-no-new-function-as-prop": {
+      "count": 2
+    }
+  },
+  "storybook/stories/API/chart/Treemap.stories.tsx": {
+    "react-perf/jsx-no-new-function-as-prop": {
+      "count": 1
+    }
+  },
+  "storybook/stories/API/component/Label.stories.tsx": {
+    "react-perf/jsx-no-new-object-as-prop": {
+      "count": 2
+    }
+  },
+  "storybook/stories/API/component/LabelList.stories.tsx": {
+    "react-perf/jsx-no-new-function-as-prop": {
+      "count": 2
+    },
+    "react-perf/jsx-no-new-object-as-prop": {
+      "count": 4
+    }
+  },
+  "storybook/stories/API/component/Legend.stories.tsx": {
+    "react-perf/jsx-no-new-array-as-prop": {
+      "count": 1
+    },
+    "react-perf/jsx-no-new-function-as-prop": {
+      "count": 5
+    },
+    "react-perf/jsx-no-new-object-as-prop": {
       "count": 3
     }
   },
@@ -647,9 +905,42 @@
       "count": 1
     }
   },
+  "storybook/stories/API/component/Tooltip.stories.tsx": {
+    "react-perf/jsx-no-new-object-as-prop": {
+      "count": 1
+    }
+  },
   "storybook/stories/API/polar/PolarGrid.stories.tsx": {
     "@typescript-eslint/no-explicit-any": {
       "count": 1
+    },
+    "react-perf/jsx-no-new-object-as-prop": {
+      "count": 1
+    }
+  },
+  "storybook/stories/API/polar/Radar.stories.tsx": {
+    "react-perf/jsx-no-new-object-as-prop": {
+      "count": 1
+    }
+  },
+  "storybook/stories/API/shapes/Cross.stories.tsx": {
+    "react-perf/jsx-no-new-object-as-prop": {
+      "count": 1
+    }
+  },
+  "storybook/stories/API/shapes/Curve.stories.tsx": {
+    "react-perf/jsx-no-new-object-as-prop": {
+      "count": 1
+    }
+  },
+  "storybook/stories/API/shapes/Dot.stories.tsx": {
+    "react-perf/jsx-no-new-object-as-prop": {
+      "count": 1
+    }
+  },
+  "storybook/stories/API/shapes/Polygon.stories.tsx": {
+    "react-perf/jsx-no-new-object-as-prop": {
+      "count": 3
     }
   },
   "storybook/stories/API/shapes/Rectangle.stories.tsx": {
@@ -662,24 +953,99 @@
       "count": 1
     }
   },
+  "storybook/stories/Examples/AreaChart.stories.tsx": {
+    "react-perf/jsx-no-new-array-as-prop": {
+      "count": 5
+    },
+    "react-perf/jsx-no-new-function-as-prop": {
+      "count": 1
+    },
+    "react-perf/jsx-no-new-object-as-prop": {
+      "count": 2
+    }
+  },
   "storybook/stories/Examples/BarChart/BarChart.stories.tsx": {
     "@typescript-eslint/no-explicit-any": {
       "count": 1
+    },
+    "react-perf/jsx-no-jsx-as-prop": {
+      "count": 1
+    },
+    "react-perf/jsx-no-new-array-as-prop": {
+      "count": 4
+    },
+    "react-perf/jsx-no-new-function-as-prop": {
+      "count": 12
+    },
+    "react-perf/jsx-no-new-object-as-prop": {
+      "count": 15
+    }
+  },
+  "storybook/stories/Examples/ComposedChart/AccessibilityLayer.stories.tsx": {
+    "react-perf/jsx-no-new-object-as-prop": {
+      "count": 2
+    }
+  },
+  "storybook/stories/Examples/EquidistantPreserveEnd.stories.tsx": {
+    "react-perf/jsx-no-new-object-as-prop": {
+      "count": 2
     }
   },
   "storybook/stories/Examples/LineChart/CustomLineShapeChart.stories.tsx": {
     "@typescript-eslint/no-non-null-assertion": {
+      "count": 2
+    },
+    "react-perf/jsx-no-jsx-as-prop": {
+      "count": 2
+    },
+    "react-perf/jsx-no-new-function-as-prop": {
+      "count": 2
+    },
+    "react-perf/jsx-no-new-object-as-prop": {
       "count": 2
     }
   },
   "storybook/stories/Examples/LineChart/DualLineChart.stories.tsx": {
     "@typescript-eslint/no-non-null-assertion": {
       "count": 2
+    },
+    "react-perf/jsx-no-new-object-as-prop": {
+      "count": 1
     }
   },
   "storybook/stories/Examples/LineChart/LineChart.stories.tsx": {
     "@typescript-eslint/no-explicit-any": {
       "count": 4
+    },
+    "react-perf/jsx-no-jsx-as-prop": {
+      "count": 3
+    },
+    "react-perf/jsx-no-new-array-as-prop": {
+      "count": 15
+    },
+    "react-perf/jsx-no-new-function-as-prop": {
+      "count": 6
+    },
+    "react-perf/jsx-no-new-object-as-prop": {
+      "count": 29
+    }
+  },
+  "storybook/stories/Examples/LineChart/ToggleBetweenDataKeys.stories.tsx": {
+    "react-perf/jsx-no-new-object-as-prop": {
+      "count": 1
+    }
+  },
+  "storybook/stories/Examples/Pie/CustomActiveShapePieChart.stories.tsx": {
+    "react-perf/jsx-no-new-function-as-prop": {
+      "count": 1
+    }
+  },
+  "storybook/stories/Examples/Pie/DraggablePie.stories.tsx": {
+    "react-perf/jsx-no-new-function-as-prop": {
+      "count": 3
+    },
+    "react-perf/jsx-no-new-object-as-prop": {
+      "count": 1
     }
   },
   "storybook/stories/Examples/Pie/PieWithStep.stories.tsx": {
@@ -687,33 +1053,457 @@
       "count": 1
     }
   },
+  "storybook/stories/Examples/RadarChart.stories.tsx": {
+    "react-perf/jsx-no-new-array-as-prop": {
+      "count": 1
+    },
+    "react-perf/jsx-no-new-object-as-prop": {
+      "count": 1
+    }
+  },
+  "storybook/stories/Examples/RadialBarChart/RadialBarChart.stories.tsx": {
+    "react-perf/jsx-no-new-array-as-prop": {
+      "count": 1
+    },
+    "react-perf/jsx-no-new-object-as-prop": {
+      "count": 1
+    }
+  },
+  "storybook/stories/Examples/RadialBarChart/RadialBarChartWithMultipleAxes.stories.tsx": {
+    "react-perf/jsx-no-new-function-as-prop": {
+      "count": 2
+    }
+  },
+  "storybook/stories/Examples/ResponsiveContainer/MultiChartFlexbox.stories.tsx": {
+    "react-perf/jsx-no-new-array-as-prop": {
+      "count": 2
+    },
+    "react-perf/jsx-no-new-object-as-prop": {
+      "count": 4
+    }
+  },
   "storybook/stories/Examples/ScatterChart.stories.tsx": {
     "@typescript-eslint/consistent-type-assertions": {
       "count": 1
+    },
+    "react-perf/jsx-no-new-array-as-prop": {
+      "count": 10
+    },
+    "react-perf/jsx-no-new-function-as-prop": {
+      "count": 5
+    },
+    "react-perf/jsx-no-new-object-as-prop": {
+      "count": 9
+    }
+  },
+  "storybook/stories/Examples/ScatterChartWithTwoErrorBars.stories.tsx": {
+    "react-perf/jsx-no-new-array-as-prop": {
+      "count": 1
+    },
+    "react-perf/jsx-no-new-object-as-prop": {
+      "count": 2
     }
   },
   "storybook/stories/Examples/Synchronised.stories.tsx": {
     "@typescript-eslint/no-explicit-any": {
+      "count": 2
+    },
+    "react-perf/jsx-no-new-array-as-prop": {
+      "count": 2
+    },
+    "react-perf/jsx-no-new-object-as-prop": {
+      "count": 8
+    }
+  },
+  "storybook/stories/Examples/TimeSeries.stories.tsx": {
+    "react-perf/jsx-no-new-array-as-prop": {
+      "count": 1
+    },
+    "react-perf/jsx-no-new-object-as-prop": {
       "count": 2
     }
   },
   "storybook/stories/Examples/Tooltip.stories.tsx": {
     "@typescript-eslint/no-explicit-any": {
       "count": 1
+    },
+    "react-perf/jsx-no-jsx-as-prop": {
+      "count": 1
+    },
+    "react-perf/jsx-no-new-function-as-prop": {
+      "count": 1
+    },
+    "react-perf/jsx-no-new-object-as-prop": {
+      "count": 6
+    }
+  },
+  "storybook/stories/Examples/cartesian/Area/AreaWithCustomDot.stories.tsx": {
+    "react-perf/jsx-no-new-object-as-prop": {
+      "count": 1
+    }
+  },
+  "storybook/stories/Examples/cartesian/Area/AreaWithCustomLabel.stories.tsx": {
+    "react-perf/jsx-no-new-object-as-prop": {
+      "count": 1
+    }
+  },
+  "storybook/stories/Examples/cartesian/Area/AreaWithFillPattern.stories.tsx": {
+    "react-perf/jsx-no-new-object-as-prop": {
+      "count": 1
+    }
+  },
+  "storybook/stories/Examples/cartesian/Bar/FillPatternOrGradient.stories.tsx": {
+    "react-perf/jsx-no-new-object-as-prop": {
+      "count": 1
     }
   },
   "storybook/stories/Examples/cartesian/Bar/WithBrushAndOnDragEnd.stories.tsx": {
     "@typescript-eslint/consistent-type-assertions": {
+      "count": 1
+    },
+    "react-perf/jsx-no-new-function-as-prop": {
+      "count": 1
+    }
+  },
+  "storybook/stories/Examples/cartesian/Brush/Brush.stories.tsx": {
+    "react-perf/jsx-no-new-array-as-prop": {
+      "count": 4
+    },
+    "react-perf/jsx-no-new-function-as-prop": {
+      "count": 1
+    },
+    "react-perf/jsx-no-new-object-as-prop": {
+      "count": 4
+    }
+  },
+  "storybook/stories/Examples/cartesian/Brush/BrushInSurface.stories.tsx": {
+    "react-perf/jsx-no-new-function-as-prop": {
+      "count": 3
+    }
+  },
+  "storybook/stories/Examples/cartesian/CartesianAxis/TickPositioning.stories.tsx": {
+    "react-perf/jsx-no-new-object-as-prop": {
+      "count": 1
+    }
+  },
+  "storybook/stories/Examples/cartesian/ErrorBarDataPointFormatter.stories.tsx": {
+    "react-perf/jsx-no-new-object-as-prop": {
+      "count": 4
+    }
+  },
+  "storybook/stories/Examples/cartesian/ReferenceArea/ReferenceAreaIfOverflow.stories.tsx": {
+    "react-perf/jsx-no-new-object-as-prop": {
+      "count": 1
+    }
+  },
+  "storybook/stories/Examples/cartesian/ReferenceDot/ReferenceDotIfOverflow.stories.tsx": {
+    "react-perf/jsx-no-new-object-as-prop": {
+      "count": 1
+    }
+  },
+  "storybook/stories/Examples/cartesian/ReferenceLine/ReferenceLineIfOverflow.stories.tsx": {
+    "react-perf/jsx-no-new-object-as-prop": {
+      "count": 1
+    }
+  },
+  "storybook/stories/Examples/cartesian/ReferenceLine/ReferenceLineSegment.stories.tsx": {
+    "react-perf/jsx-no-new-array-as-prop": {
+      "count": 1
+    },
+    "react-perf/jsx-no-new-object-as-prop": {
       "count": 1
     }
   },
   "storybook/stories/Examples/cartesian/YAxis/YAxisIncludeHidden.stories.tsx": {
     "@typescript-eslint/no-explicit-any": {
       "count": 1
+    },
+    "react-perf/jsx-no-new-function-as-prop": {
+      "count": 1
+    }
+  },
+  "storybook/stories/Examples/cartesian/YAxis/YAxisMultipleAxes.stories.tsx": {
+    "react-perf/jsx-no-new-array-as-prop": {
+      "count": 2
+    },
+    "react-perf/jsx-no-new-object-as-prop": {
+      "count": 1
+    }
+  },
+  "test-vr/gallery/preview.tsx": {
+    "react-perf/jsx-no-new-function-as-prop": {
+      "count": 1
+    }
+  },
+  "test-vr/tests/App.story.tsx": {
+    "react-perf/jsx-no-new-object-as-prop": {
+      "count": 1
+    }
+  },
+  "test-vr/tests/Bar.6192.story.tsx": {
+    "react-perf/jsx-no-new-object-as-prop": {
+      "count": 4
+    }
+  },
+  "test-vr/tests/Bar.7245.story.tsx": {
+    "react-perf/jsx-no-new-object-as-prop": {
+      "count": 3
+    }
+  },
+  "test-vr/tests/BarChart/BarChart.stackOffset.story.tsx": {
+    "react-perf/jsx-no-new-array-as-prop": {
+      "count": 1
+    }
+  },
+  "test-vr/tests/CartesianAxis/CartesianAxis.multi.story.tsx": {
+    "react-perf/jsx-no-new-object-as-prop": {
+      "count": 5
+    }
+  },
+  "test-vr/tests/CartesianAxis/CartesianAxis.padding.story.tsx": {
+    "react-perf/jsx-no-new-object-as-prop": {
+      "count": 4
+    }
+  },
+  "test-vr/tests/ChartSizeMeasurement.story.tsx": {
+    "react-perf/jsx-no-new-object-as-prop": {
+      "count": 2
+    }
+  },
+  "test-vr/tests/Label.story.tsx": {
+    "react-perf/jsx-no-new-object-as-prop": {
+      "count": 7
+    }
+  },
+  "test-vr/tests/LabelList.story.tsx": {
+    "react-perf/jsx-no-new-function-as-prop": {
+      "count": 8
+    },
+    "react-perf/jsx-no-new-object-as-prop": {
+      "count": 9
+    }
+  },
+  "test-vr/tests/LegendPosition.story.tsx": {
+    "react-perf/jsx-no-new-function-as-prop": {
+      "count": 1
+    },
+    "react-perf/jsx-no-new-object-as-prop": {
+      "count": 4
+    }
+  },
+  "test-vr/tests/RadarChart/RadarChart.datatypes.story.tsx": {
+    "react-perf/jsx-no-new-array-as-prop": {
+      "count": 6
+    }
+  },
+  "test-vr/tests/RadialBarChart.story.tsx": {
+    "react-perf/jsx-no-new-array-as-prop": {
+      "count": 2
+    },
+    "react-perf/jsx-no-new-object-as-prop": {
+      "count": 1
+    }
+  },
+  "test-vr/tests/ReferenceLine/ifOverflow.story.tsx": {
+    "react-perf/jsx-no-new-array-as-prop": {
+      "count": 1
+    }
+  },
+  "test-vr/tests/Scatter.story.tsx": {
+    "react-perf/jsx-no-new-array-as-prop": {
+      "count": 3
+    }
+  },
+  "test-vr/tests/Text.story.tsx": {
+    "react-perf/jsx-no-new-object-as-prop": {
+      "count": 6
     }
   },
   "test-vr/tests/Treemap.story.tsx": {
     "@typescript-eslint/no-explicit-any": {
+      "count": 1
+    },
+    "react-perf/jsx-no-jsx-as-prop": {
+      "count": 1
+    }
+  },
+  "test-vr/tests/YAxis.story.tsx": {
+    "react-perf/jsx-no-new-function-as-prop": {
+      "count": 5
+    },
+    "react-perf/jsx-no-new-object-as-prop": {
+      "count": 8
+    }
+  },
+  "test-vr/tests/theme/AreaTheme.story.tsx": {
+    "react-perf/jsx-no-new-function-as-prop": {
+      "count": 1
+    },
+    "react-perf/jsx-no-new-object-as-prop": {
+      "count": 4
+    }
+  },
+  "test-vr/tests/theme/AutoTheme.story.tsx": {
+    "react-perf/jsx-no-new-object-as-prop": {
+      "count": 1
+    }
+  },
+  "test-vr/tests/theme/BarTheme.story.tsx": {
+    "react-perf/jsx-no-new-function-as-prop": {
+      "count": 1
+    },
+    "react-perf/jsx-no-new-object-as-prop": {
+      "count": 3
+    }
+  },
+  "test-vr/tests/theme/BrushTheme.story.tsx": {
+    "react-perf/jsx-no-new-object-as-prop": {
+      "count": 1
+    }
+  },
+  "test-vr/tests/theme/CursorTheme.story.tsx": {
+    "react-perf/jsx-no-new-object-as-prop": {
+      "count": 1
+    }
+  },
+  "test-vr/tests/theme/ErrorBarTheme.story.tsx": {
+    "react-perf/jsx-no-new-object-as-prop": {
+      "count": 1
+    }
+  },
+  "test-vr/tests/theme/FillStrokeVariants.tsx": {
+    "react-perf/jsx-no-new-object-as-prop": {
+      "count": 1
+    }
+  },
+  "test-vr/tests/theme/FunnelTheme.story.tsx": {
+    "react-perf/jsx-no-new-function-as-prop": {
+      "count": 1
+    },
+    "react-perf/jsx-no-new-object-as-prop": {
+      "count": 4
+    }
+  },
+  "test-vr/tests/theme/LabelTheme.story.tsx": {
+    "react-perf/jsx-no-new-object-as-prop": {
+      "count": 2
+    }
+  },
+  "test-vr/tests/theme/LegendTheme.story.tsx": {
+    "react-perf/jsx-no-new-object-as-prop": {
+      "count": 1
+    }
+  },
+  "test-vr/tests/theme/LineTheme.story.tsx": {
+    "react-perf/jsx-no-new-function-as-prop": {
+      "count": 1
+    },
+    "react-perf/jsx-no-new-object-as-prop": {
+      "count": 4
+    }
+  },
+  "test-vr/tests/theme/PieTheme.story.tsx": {
+    "react-perf/jsx-no-new-function-as-prop": {
+      "count": 1
+    },
+    "react-perf/jsx-no-new-object-as-prop": {
+      "count": 3
+    }
+  },
+  "test-vr/tests/theme/PolarAngleAxisTheme.story.tsx": {
+    "react-perf/jsx-no-new-object-as-prop": {
+      "count": 1
+    }
+  },
+  "test-vr/tests/theme/PolarGridTheme.story.tsx": {
+    "react-perf/jsx-no-new-object-as-prop": {
+      "count": 1
+    }
+  },
+  "test-vr/tests/theme/PolarRadiusAxisTheme.story.tsx": {
+    "react-perf/jsx-no-new-object-as-prop": {
+      "count": 1
+    }
+  },
+  "test-vr/tests/theme/RadarTheme.story.tsx": {
+    "react-perf/jsx-no-new-function-as-prop": {
+      "count": 1
+    },
+    "react-perf/jsx-no-new-object-as-prop": {
+      "count": 1
+    }
+  },
+  "test-vr/tests/theme/RadialBarTheme.story.tsx": {
+    "react-perf/jsx-no-new-function-as-prop": {
+      "count": 1
+    },
+    "react-perf/jsx-no-new-object-as-prop": {
+      "count": 3
+    }
+  },
+  "test-vr/tests/theme/ReferenceTheme.story.tsx": {
+    "react-perf/jsx-no-new-array-as-prop": {
+      "count": 1
+    },
+    "react-perf/jsx-no-new-object-as-prop": {
+      "count": 2
+    }
+  },
+  "test-vr/tests/theme/SankeyTheme.story.tsx": {
+    "react-perf/jsx-no-jsx-as-prop": {
+      "count": 1
+    },
+    "react-perf/jsx-no-new-function-as-prop": {
+      "count": 1
+    },
+    "react-perf/jsx-no-new-object-as-prop": {
+      "count": 3
+    }
+  },
+  "test-vr/tests/theme/ScatterTheme.story.tsx": {
+    "react-perf/jsx-no-new-array-as-prop": {
+      "count": 3
+    },
+    "react-perf/jsx-no-new-function-as-prop": {
+      "count": 1
+    },
+    "react-perf/jsx-no-new-object-as-prop": {
+      "count": 5
+    }
+  },
+  "test-vr/tests/theme/SunburstTheme.story.tsx": {
+    "react-perf/jsx-no-new-function-as-prop": {
+      "count": 1
+    }
+  },
+  "test-vr/tests/theme/TextTheme.story.tsx": {
+    "react-perf/jsx-no-new-object-as-prop": {
+      "count": 2
+    }
+  },
+  "test-vr/tests/theme/TooltipTheme.story.tsx": {
+    "react-perf/jsx-no-new-object-as-prop": {
+      "count": 2
+    }
+  },
+  "test-vr/tests/theme/TreemapTheme.story.tsx": {
+    "react-perf/jsx-no-new-function-as-prop": {
+      "count": 1
+    },
+    "react-perf/jsx-no-new-object-as-prop": {
+      "count": 1
+    }
+  },
+  "test-vr/tests/zIndex.story.tsx": {
+    "react-perf/jsx-no-new-array-as-prop": {
+      "count": 1
+    },
+    "react-perf/jsx-no-new-object-as-prop": {
+      "count": 3
+    }
+  },
+  "test/animation/legacyAnimationLengthChange.spec.tsx": {
+    "react-perf/jsx-no-jsx-as-prop": {
       "count": 1
     }
   },
@@ -728,11 +1518,108 @@
   "test/cartesian/Area.animation.spec.tsx": {
     "@typescript-eslint/consistent-type-assertions": {
       "count": 24
+    },
+    "react-perf/jsx-no-new-array-as-prop": {
+      "count": 2
+    },
+    "react-perf/jsx-no-new-function-as-prop": {
+      "count": 2
+    }
+  },
+  "test/cartesian/Area.spec.tsx": {
+    "react-perf/jsx-no-new-array-as-prop": {
+      "count": 9
+    },
+    "react-perf/jsx-no-new-function-as-prop": {
+      "count": 5
+    },
+    "react-perf/jsx-no-new-object-as-prop": {
+      "count": 2
+    }
+  },
+  "test/cartesian/Area.typed.spec.tsx": {
+    "react-perf/jsx-no-new-function-as-prop": {
+      "count": 19
+    }
+  },
+  "test/cartesian/Area/Area.theme.spec.tsx": {
+    "react-perf/jsx-no-new-object-as-prop": {
+      "count": 19
+    }
+  },
+  "test/cartesian/Bar.truncateByDomain.spec.tsx": {
+    "react-perf/jsx-no-new-object-as-prop": {
+      "count": 4
+    }
+  },
+  "test/cartesian/Bar.zeroDimensionFiltering.spec.tsx": {
+    "react-perf/jsx-no-jsx-as-prop": {
+      "count": 1
+    },
+    "react-perf/jsx-no-new-array-as-prop": {
+      "count": 2
+    }
+  },
+  "test/cartesian/Bar/Bar.rerenderStability.spec.tsx": {
+    "react-perf/jsx-no-new-array-as-prop": {
+      "count": 1
+    },
+    "react-perf/jsx-no-new-object-as-prop": {
+      "count": 1
+    }
+  },
+  "test/cartesian/Bar/Bar.spec.tsx": {
+    "react-perf/jsx-no-jsx-as-prop": {
+      "count": 1
+    },
+    "react-perf/jsx-no-new-array-as-prop": {
+      "count": 9
+    },
+    "react-perf/jsx-no-new-function-as-prop": {
+      "count": 5
+    },
+    "react-perf/jsx-no-new-object-as-prop": {
+      "count": 8
+    }
+  },
+  "test/cartesian/Bar/Bar.theme.spec.tsx": {
+    "react-perf/jsx-no-new-object-as-prop": {
+      "count": 23
+    }
+  },
+  "test/cartesian/Bar/Bar.typed.spec.tsx": {
+    "react-perf/jsx-no-new-function-as-prop": {
+      "count": 17
+    }
+  },
+  "test/cartesian/BarStack.spec.tsx": {
+    "react-perf/jsx-no-new-object-as-prop": {
+      "count": 1
     }
   },
   "test/cartesian/Brush.spec.tsx": {
     "@typescript-eslint/consistent-type-assertions": {
       "count": 12
+    },
+    "react-perf/jsx-no-jsx-as-prop": {
+      "count": 5
+    },
+    "react-perf/jsx-no-new-array-as-prop": {
+      "count": 2
+    },
+    "react-perf/jsx-no-new-function-as-prop": {
+      "count": 2
+    },
+    "react-perf/jsx-no-new-object-as-prop": {
+      "count": 5
+    }
+  },
+  "test/cartesian/Brush.theme.spec.tsx": {
+    "react-perf/jsx-no-jsx-as-prop": {
+      "count": 1
+    },
+    "react-perf/jsx-no-new-object-as-prop": {
+      "count": 4
     }
   },
   "test/cartesian/CartesianAxis.spec.tsx": {
@@ -741,11 +1628,71 @@
     },
     "@typescript-eslint/no-explicit-any": {
       "count": 2
+    },
+    "react-perf/jsx-no-jsx-as-prop": {
+      "count": 3
+    },
+    "react-perf/jsx-no-new-array-as-prop": {
+      "count": 1
+    },
+    "react-perf/jsx-no-new-object-as-prop": {
+      "count": 19
+    }
+  },
+  "test/cartesian/CartesianGrid/CartesianGrid.spec.tsx": {
+    "react-perf/jsx-no-jsx-as-prop": {
+      "count": 2
+    },
+    "react-perf/jsx-no-new-array-as-prop": {
+      "count": 28
+    },
+    "react-perf/jsx-no-new-object-as-prop": {
+      "count": 2
     }
   },
   "test/cartesian/CartesianGrid/CartesianGrid.theme.spec.tsx": {
     "@typescript-eslint/consistent-type-assertions": {
       "count": 1
+    },
+    "react-perf/jsx-no-new-array-as-prop": {
+      "count": 2
+    },
+    "react-perf/jsx-no-new-object-as-prop": {
+      "count": 7
+    }
+  },
+  "test/cartesian/ErrorBar.spec.tsx": {
+    "react-perf/jsx-no-new-object-as-prop": {
+      "count": 1
+    }
+  },
+  "test/cartesian/ErrorBar.theme.spec.tsx": {
+    "react-perf/jsx-no-new-object-as-prop": {
+      "count": 2
+    }
+  },
+  "test/cartesian/Funnel.spec.tsx": {
+    "react-perf/jsx-no-new-array-as-prop": {
+      "count": 1
+    },
+    "react-perf/jsx-no-new-function-as-prop": {
+      "count": 1
+    },
+    "react-perf/jsx-no-new-object-as-prop": {
+      "count": 1
+    }
+  },
+  "test/cartesian/Funnel.typed.spec.tsx": {
+    "react-perf/jsx-no-new-function-as-prop": {
+      "count": 19
+    }
+  },
+  "test/cartesian/Funnel/Funnel.theme.spec.tsx": {
+    "react-perf/jsx-no-new-array-as-prop": {
+      "count": 2
+    },
+    "react-perf/jsx-no-new-object-as-prop": {
+      "count": 8
     }
   },
   "test/cartesian/GraphicalItemClipPath.scale-behavior.spec.tsx": {
@@ -754,11 +1701,17 @@
     },
     "@typescript-eslint/no-non-null-assertion": {
       "count": 68
+    },
+    "react-perf/jsx-no-new-array-as-prop": {
+      "count": 5
     }
   },
   "test/cartesian/GraphicalItemClipPath.spec.tsx": {
     "@typescript-eslint/no-non-null-assertion": {
       "count": 1
+    },
+    "react-perf/jsx-no-new-array-as-prop": {
+      "count": 6
     }
   },
   "test/cartesian/Line.animation.spec.tsx": {
@@ -766,29 +1719,341 @@
       "count": 2
     }
   },
+  "test/cartesian/Line.spec.tsx": {
+    "react-perf/jsx-no-jsx-as-prop": {
+      "count": 2
+    },
+    "react-perf/jsx-no-new-array-as-prop": {
+      "count": 2
+    },
+    "react-perf/jsx-no-new-object-as-prop": {
+      "count": 4
+    }
+  },
+  "test/cartesian/Line.theme.spec.tsx": {
+    "react-perf/jsx-no-new-object-as-prop": {
+      "count": 12
+    }
+  },
+  "test/cartesian/Line.typed.spec.tsx": {
+    "react-perf/jsx-no-new-function-as-prop": {
+      "count": 19
+    }
+  },
+  "test/cartesian/Reference.theme.spec.tsx": {
+    "react-perf/jsx-no-new-array-as-prop": {
+      "count": 1
+    },
+    "react-perf/jsx-no-new-object-as-prop": {
+      "count": 3
+    }
+  },
+  "test/cartesian/ReferenceArea.spec.tsx": {
+    "react-perf/jsx-no-jsx-as-prop": {
+      "count": 3
+    },
+    "react-perf/jsx-no-new-array-as-prop": {
+      "count": 1
+    },
+    "react-perf/jsx-no-new-function-as-prop": {
+      "count": 2
+    },
+    "react-perf/jsx-no-new-object-as-prop": {
+      "count": 15
+    }
+  },
+  "test/cartesian/ReferenceArea.typed.spec.tsx": {
+    "react-perf/jsx-no-new-function-as-prop": {
+      "count": 11
+    }
+  },
+  "test/cartesian/ReferenceDot.spec.tsx": {
+    "react-perf/jsx-no-jsx-as-prop": {
+      "count": 2
+    },
+    "react-perf/jsx-no-new-array-as-prop": {
+      "count": 1
+    },
+    "react-perf/jsx-no-new-function-as-prop": {
+      "count": 2
+    },
+    "react-perf/jsx-no-new-object-as-prop": {
+      "count": 13
+    }
+  },
+  "test/cartesian/ReferenceDot.typed.spec.tsx": {
+    "react-perf/jsx-no-new-function-as-prop": {
+      "count": 11
+    }
+  },
   "test/cartesian/ReferenceLine/ReferenceLine.spec.tsx": {
     "@typescript-eslint/no-explicit-any": {
       "count": 3
+    },
+    "react-perf/jsx-no-jsx-as-prop": {
+      "count": 1
+    },
+    "react-perf/jsx-no-new-array-as-prop": {
+      "count": 3
+    },
+    "react-perf/jsx-no-new-function-as-prop": {
+      "count": 1
+    },
+    "react-perf/jsx-no-new-object-as-prop": {
+      "count": 13
+    }
+  },
+  "test/cartesian/ReferenceLine/ReferenceLine.typed.spec.tsx": {
+    "react-perf/jsx-no-new-function-as-prop": {
+      "count": 11
     }
   },
   "test/cartesian/Scatter.animation.spec.tsx": {
     "@typescript-eslint/consistent-type-assertions": {
       "count": 1
+    },
+    "react-perf/jsx-no-new-array-as-prop": {
+      "count": 1
+    }
+  },
+  "test/cartesian/Scatter.spec.tsx": {
+    "react-perf/jsx-no-jsx-as-prop": {
+      "count": 4
+    },
+    "react-perf/jsx-no-new-array-as-prop": {
+      "count": 3
+    },
+    "react-perf/jsx-no-new-function-as-prop": {
+      "count": 2
+    },
+    "react-perf/jsx-no-new-object-as-prop": {
+      "count": 1
+    }
+  },
+  "test/cartesian/Scatter.typed.spec.tsx": {
+    "react-perf/jsx-no-new-function-as-prop": {
+      "count": 19
+    }
+  },
+  "test/cartesian/Scatter/Scatter.theme.spec.tsx": {
+    "react-perf/jsx-no-new-array-as-prop": {
+      "count": 3
+    },
+    "react-perf/jsx-no-new-object-as-prop": {
+      "count": 7
+    }
+  },
+  "test/cartesian/XAxis.tickFormatter.spec.tsx": {
+    "react-perf/jsx-no-new-object-as-prop": {
+      "count": 1
+    }
+  },
+  "test/cartesian/XAxis/XAxis.barSize.spec.tsx": {
+    "react-perf/jsx-no-jsx-as-prop": {
+      "count": 2
+    },
+    "react-perf/jsx-no-new-array-as-prop": {
+      "count": 3
+    }
+  },
+  "test/cartesian/XAxis/XAxis.categorydomain.spec.tsx": {
+    "react-perf/jsx-no-jsx-as-prop": {
+      "count": 20
+    }
+  },
+  "test/cartesian/XAxis/XAxis.dataKey.spec.tsx": {
+    "react-perf/jsx-no-jsx-as-prop": {
+      "count": 3
+    },
+    "react-perf/jsx-no-new-object-as-prop": {
+      "count": 1
+    }
+  },
+  "test/cartesian/XAxis/XAxis.datatypes.spec.tsx": {
+    "react-perf/jsx-no-new-array-as-prop": {
+      "count": 2
+    }
+  },
+  "test/cartesian/XAxis/XAxis.hide.spec.tsx": {
+    "react-perf/jsx-no-jsx-as-prop": {
+      "count": 1
+    },
+    "react-perf/jsx-no-new-object-as-prop": {
+      "count": 1
+    }
+  },
+  "test/cartesian/XAxis/XAxis.numberdomain.spec.tsx": {
+    "react-perf/jsx-no-jsx-as-prop": {
+      "count": 33
+    },
+    "react-perf/jsx-no-new-array-as-prop": {
+      "count": 18
+    }
+  },
+  "test/cartesian/XAxis/XAxis.padding.spec.tsx": {
+    "react-perf/jsx-no-jsx-as-prop": {
+      "count": 6
+    },
+    "react-perf/jsx-no-new-array-as-prop": {
+      "count": 7
+    },
+    "react-perf/jsx-no-new-object-as-prop": {
+      "count": 3
+    }
+  },
+  "test/cartesian/XAxis/XAxis.padding_clip.spec.tsx": {
+    "react-perf/jsx-no-new-array-as-prop": {
+      "count": 4
+    },
+    "react-perf/jsx-no-new-object-as-prop": {
+      "count": 2
+    }
+  },
+  "test/cartesian/XAxis/XAxis.state.spec.tsx": {
+    "react-perf/jsx-no-new-array-as-prop": {
+      "count": 3
+    },
+    "react-perf/jsx-no-new-function-as-prop": {
+      "count": 6
+    }
+  },
+  "test/cartesian/XAxis/XAxis.theme.spec.tsx": {
+    "react-perf/jsx-no-new-object-as-prop": {
+      "count": 14
     }
   },
   "test/cartesian/XAxis/XAxis.tick.spec.tsx": {
     "@typescript-eslint/no-explicit-any": {
       "count": 3
+    },
+    "react-perf/jsx-no-jsx-as-prop": {
+      "count": 3
+    },
+    "react-perf/jsx-no-new-array-as-prop": {
+      "count": 6
+    },
+    "react-perf/jsx-no-new-function-as-prop": {
+      "count": 2
+    },
+    "react-perf/jsx-no-new-object-as-prop": {
+      "count": 5
+    }
+  },
+  "test/cartesian/XAxis/XAxis.timescale.spec.tsx": {
+    "react-perf/jsx-no-jsx-as-prop": {
+      "count": 2
+    },
+    "react-perf/jsx-no-new-array-as-prop": {
+      "count": 1
+    },
+    "react-perf/jsx-no-new-function-as-prop": {
+      "count": 1
+    },
+    "react-perf/jsx-no-new-object-as-prop": {
+      "count": 4
+    }
+  },
+  "test/cartesian/XAxis/XAxis.type.spec.tsx": {
+    "react-perf/jsx-no-new-array-as-prop": {
+      "count": 2
+    }
+  },
+  "test/cartesian/XAxis/XAxis.typed.spec.tsx": {
+    "react-perf/jsx-no-new-function-as-prop": {
+      "count": 12
+    }
+  },
+  "test/cartesian/XAxis/XAxis.vertical.spec.tsx": {
+    "react-perf/jsx-no-jsx-as-prop": {
+      "count": 4
+    },
+    "react-perf/jsx-no-new-array-as-prop": {
+      "count": 1
+    },
+    "react-perf/jsx-no-new-object-as-prop": {
+      "count": 1
     }
   },
   "test/cartesian/YAxis/YAxis.7362.derivedDomain.spec.tsx": {
     "@typescript-eslint/consistent-type-assertions": {
       "count": 1
+    },
+    "react-perf/jsx-no-new-array-as-prop": {
+      "count": 1
+    }
+  },
+  "test/cartesian/YAxis/YAxis.categoryWithItemDataKey.spec.tsx": {
+    "react-perf/jsx-no-new-object-as-prop": {
+      "count": 1
+    }
+  },
+  "test/cartesian/YAxis/YAxis.interval-zero.spec.tsx": {
+    "react-perf/jsx-no-new-array-as-prop": {
+      "count": 4
+    }
+  },
+  "test/cartesian/YAxis/YAxis.label.spec.tsx": {
+    "react-perf/jsx-no-jsx-as-prop": {
+      "count": 1
+    },
+    "react-perf/jsx-no-new-function-as-prop": {
+      "count": 2
+    },
+    "react-perf/jsx-no-new-object-as-prop": {
+      "count": 1
+    }
+  },
+  "test/cartesian/YAxis/YAxis.spec.tsx": {
+    "react-perf/jsx-no-new-array-as-prop": {
+      "count": 20
+    },
+    "react-perf/jsx-no-new-function-as-prop": {
+      "count": 1
+    },
+    "react-perf/jsx-no-new-object-as-prop": {
+      "count": 4
     }
   },
   "test/cartesian/YAxis/YAxis.tick.spec.tsx": {
     "@typescript-eslint/no-explicit-any": {
       "count": 3
+    },
+    "react-perf/jsx-no-jsx-as-prop": {
+      "count": 4
+    },
+    "react-perf/jsx-no-new-array-as-prop": {
+      "count": 6
+    },
+    "react-perf/jsx-no-new-function-as-prop": {
+      "count": 2
+    },
+    "react-perf/jsx-no-new-object-as-prop": {
+      "count": 5
+    }
+  },
+  "test/cartesian/YAxis/YAxis.tickFormatter.spec.tsx": {
+    "react-perf/jsx-no-new-object-as-prop": {
+      "count": 1
+    }
+  },
+  "test/cartesian/YAxis/YAxis.ticks.spec.tsx": {
+    "react-perf/jsx-no-new-array-as-prop": {
+      "count": 4
+    }
+  },
+  "test/cartesian/YAxis/YAxis.type.spec.tsx": {
+    "react-perf/jsx-no-new-array-as-prop": {
+      "count": 2
+    }
+  },
+  "test/cartesian/YAxis/YAxis.typed.spec.tsx": {
+    "react-perf/jsx-no-new-function-as-prop": {
+      "count": 12
+    }
+  },
+  "test/cartesian/ZAxis.spec.tsx": {
+    "react-perf/jsx-no-new-array-as-prop": {
+      "count": 14
     }
   },
   "test/cartesian/getTicks.spec.ts": {
@@ -799,6 +2064,42 @@
   "test/chart/AccessibilityLayer.spec.tsx": {
     "@typescript-eslint/consistent-type-assertions": {
       "count": 6
+    },
+    "react-perf/jsx-no-new-array-as-prop": {
+      "count": 4
+    },
+    "react-perf/jsx-no-new-function-as-prop": {
+      "count": 1
+    },
+    "react-perf/jsx-no-new-object-as-prop": {
+      "count": 1
+    }
+  },
+  "test/chart/AccessibilityScans.spec.tsx": {
+    "react-perf/jsx-no-new-array-as-prop": {
+      "count": 1
+    },
+    "react-perf/jsx-no-new-object-as-prop": {
+      "count": 2
+    }
+  },
+  "test/chart/AreaChart.spec.tsx": {
+    "react-perf/jsx-no-jsx-as-prop": {
+      "count": 2
+    },
+    "react-perf/jsx-no-new-array-as-prop": {
+      "count": 6
+    },
+    "react-perf/jsx-no-new-function-as-prop": {
+      "count": 3
+    },
+    "react-perf/jsx-no-new-object-as-prop": {
+      "count": 2
+    }
+  },
+  "test/chart/AreaChart.typed.spec.tsx": {
+    "react-perf/jsx-no-new-object-as-prop": {
+      "count": 1
     }
   },
   "test/chart/BarChart.spec.tsx": {
@@ -810,10 +2111,77 @@
     },
     "@typescript-eslint/no-non-null-assertion": {
       "count": 2
+    },
+    "react-perf/jsx-no-jsx-as-prop": {
+      "count": 6
+    },
+    "react-perf/jsx-no-new-array-as-prop": {
+      "count": 10
+    },
+    "react-perf/jsx-no-new-function-as-prop": {
+      "count": 2
+    },
+    "react-perf/jsx-no-new-object-as-prop": {
+      "count": 4
+    }
+  },
+  "test/chart/BarChart.typed.spec.tsx": {
+    "react-perf/jsx-no-new-object-as-prop": {
+      "count": 1
+    }
+  },
+  "test/chart/CategoricalChart.spec.tsx": {
+    "react-perf/jsx-no-new-object-as-prop": {
+      "count": 2
+    }
+  },
+  "test/chart/ComposedChart.spec.tsx": {
+    "react-perf/jsx-no-new-array-as-prop": {
+      "count": 1
+    },
+    "react-perf/jsx-no-new-object-as-prop": {
+      "count": 3
+    }
+  },
+  "test/chart/ComposedChart.typed.spec.tsx": {
+    "react-perf/jsx-no-new-object-as-prop": {
+      "count": 1
+    }
+  },
+  "test/chart/FunnelChart.spec.tsx": {
+    "react-perf/jsx-no-new-object-as-prop": {
+      "count": 2
+    }
+  },
+  "test/chart/FunnelChart.typed.spec.tsx": {
+    "react-perf/jsx-no-new-object-as-prop": {
+      "count": 1
+    }
+  },
+  "test/chart/LineChart.multiseries.spec.tsx": {
+    "react-perf/jsx-no-new-object-as-prop": {
+      "count": 2
     }
   },
   "test/chart/LineChart.spec.tsx": {
     "@typescript-eslint/no-explicit-any": {
+      "count": 1
+    },
+    "react-perf/jsx-no-jsx-as-prop": {
+      "count": 3
+    },
+    "react-perf/jsx-no-new-array-as-prop": {
+      "count": 6
+    },
+    "react-perf/jsx-no-new-function-as-prop": {
+      "count": 3
+    },
+    "react-perf/jsx-no-new-object-as-prop": {
+      "count": 23
+    }
+  },
+  "test/chart/LineChart.typed.spec.tsx": {
+    "react-perf/jsx-no-new-object-as-prop": {
       "count": 1
     }
   },
@@ -823,6 +2191,41 @@
     },
     "@typescript-eslint/no-non-null-assertion": {
       "count": 2
+    },
+    "react-perf/jsx-no-jsx-as-prop": {
+      "count": 1
+    },
+    "react-perf/jsx-no-new-array-as-prop": {
+      "count": 12
+    },
+    "react-perf/jsx-no-new-function-as-prop": {
+      "count": 2
+    },
+    "react-perf/jsx-no-new-object-as-prop": {
+      "count": 3
+    }
+  },
+  "test/chart/PieChart.typed.spec.tsx": {
+    "react-perf/jsx-no-new-object-as-prop": {
+      "count": 1
+    }
+  },
+  "test/chart/RadarChart.spec.tsx": {
+    "react-perf/jsx-no-jsx-as-prop": {
+      "count": 1
+    }
+  },
+  "test/chart/RadarChart.typed.spec.tsx": {
+    "react-perf/jsx-no-new-object-as-prop": {
+      "count": 1
+    }
+  },
+  "test/chart/RadialBarChart.5966.spec.tsx": {
+    "react-perf/jsx-no-new-array-as-prop": {
+      "count": 1
+    },
+    "react-perf/jsx-no-new-object-as-prop": {
+      "count": 2
     }
   },
   "test/chart/RadialBarChart.spec.tsx": {
@@ -831,11 +2234,134 @@
     },
     "@typescript-eslint/no-non-null-assertion": {
       "count": 2
+    },
+    "react-perf/jsx-no-jsx-as-prop": {
+      "count": 4
+    },
+    "react-perf/jsx-no-new-array-as-prop": {
+      "count": 1
+    },
+    "react-perf/jsx-no-new-function-as-prop": {
+      "count": 2
+    },
+    "react-perf/jsx-no-new-object-as-prop": {
+      "count": 12
+    }
+  },
+  "test/chart/RadialBarChart.typed.spec.tsx": {
+    "react-perf/jsx-no-new-object-as-prop": {
+      "count": 1
+    }
+  },
+  "test/chart/RechartsWrapper.spec.tsx": {
+    "react-perf/jsx-no-new-function-as-prop": {
+      "count": 2
+    }
+  },
+  "test/chart/RechartsWrapper.theme.spec.tsx": {
+    "react-perf/jsx-no-new-object-as-prop": {
+      "count": 2
+    }
+  },
+  "test/chart/Sankey.spec.tsx": {
+    "react-perf/jsx-no-new-object-as-prop": {
+      "count": 6
+    }
+  },
+  "test/chart/Sankey.typed.spec.tsx": {
+    "react-perf/jsx-no-new-function-as-prop": {
+      "count": 3
+    },
+    "react-perf/jsx-no-new-object-as-prop": {
+      "count": 1
+    }
+  },
+  "test/chart/ScatterChart.spec.tsx": {
+    "react-perf/jsx-no-jsx-as-prop": {
+      "count": 1
+    },
+    "react-perf/jsx-no-new-array-as-prop": {
+      "count": 15
+    },
+    "react-perf/jsx-no-new-function-as-prop": {
+      "count": 1
+    },
+    "react-perf/jsx-no-new-object-as-prop": {
+      "count": 23
+    }
+  },
+  "test/chart/ScatterChart.typed.spec.tsx": {
+    "react-perf/jsx-no-new-object-as-prop": {
+      "count": 1
+    }
+  },
+  "test/chart/SunburstChart.spec.tsx": {
+    "react-perf/jsx-no-jsx-as-prop": {
+      "count": 3
+    }
+  },
+  "test/chart/Treemap.spec.tsx": {
+    "react-perf/jsx-no-jsx-as-prop": {
+      "count": 1
+    },
+    "react-perf/jsx-no-new-function-as-prop": {
+      "count": 1
+    }
+  },
+  "test/chart/Treemap.theme.spec.tsx": {
+    "react-perf/jsx-no-new-array-as-prop": {
+      "count": 7
+    },
+    "react-perf/jsx-no-new-function-as-prop": {
+      "count": 2
+    },
+    "react-perf/jsx-no-new-object-as-prop": {
+      "count": 10
+    }
+  },
+  "test/chart/Treemap.typed.spec.tsx": {
+    "react-perf/jsx-no-new-array-as-prop": {
+      "count": 1
+    },
+    "react-perf/jsx-no-new-function-as-prop": {
+      "count": 3
+    }
+  },
+  "test/chart/chartEvents.spec.tsx": {
+    "react-perf/jsx-no-new-array-as-prop": {
+      "count": 1
     }
   },
   "test/chart/responsive.spec.tsx": {
     "@typescript-eslint/consistent-type-assertions": {
       "count": 2
+    },
+    "react-perf/jsx-no-new-object-as-prop": {
+      "count": 7
+    }
+  },
+  "test/component/Cursor.spec.tsx": {
+    "react-perf/jsx-no-new-array-as-prop": {
+      "count": 1
+    },
+    "react-perf/jsx-no-new-object-as-prop": {
+      "count": 2
+    }
+  },
+  "test/component/Cursor.theme.spec.tsx": {
+    "react-perf/jsx-no-jsx-as-prop": {
+      "count": 1
+    },
+    "react-perf/jsx-no-new-object-as-prop": {
+      "count": 5
+    }
+  },
+  "test/component/Customized.spec.tsx": {
+    "react-perf/jsx-no-jsx-as-prop": {
+      "count": 1
+    },
+    "react-perf/jsx-no-new-function-as-prop": {
+      "count": 1
     }
   },
   "test/component/DefaultTooltipContent.spec.tsx": {
@@ -846,19 +2372,160 @@
       "count": 1
     }
   },
+  "test/component/Label.background.spec.tsx": {
+    "react-perf/jsx-no-jsx-as-prop": {
+      "count": 1
+    },
+    "react-perf/jsx-no-new-object-as-prop": {
+      "count": 4
+    }
+  },
+  "test/component/Label.spec.tsx": {
+    "react-perf/jsx-no-jsx-as-prop": {
+      "count": 2
+    },
+    "react-perf/jsx-no-new-object-as-prop": {
+      "count": 5
+    }
+  },
+  "test/component/Label.theme.spec.tsx": {
+    "react-perf/jsx-no-new-object-as-prop": {
+      "count": 7
+    }
+  },
+  "test/component/Label.typed.spec.tsx": {
+    "react-perf/jsx-no-new-function-as-prop": {
+      "count": 11
+    }
+  },
+  "test/component/LabelList.spec.tsx": {
+    "react-perf/jsx-no-new-array-as-prop": {
+      "count": 3
+    },
+    "react-perf/jsx-no-new-function-as-prop": {
+      "count": 1
+    },
+    "react-perf/jsx-no-new-object-as-prop": {
+      "count": 2
+    }
+  },
+  "test/component/Legend/Legend.spec.tsx": {
+    "react-perf/jsx-no-jsx-as-prop": {
+      "count": 2
+    },
+    "react-perf/jsx-no-new-array-as-prop": {
+      "count": 2
+    },
+    "react-perf/jsx-no-new-function-as-prop": {
+      "count": 10
+    },
+    "react-perf/jsx-no-new-object-as-prop": {
+      "count": 33
+    }
+  },
+  "test/component/Legend/Legend.theme.spec.tsx": {
+    "react-perf/jsx-no-new-object-as-prop": {
+      "count": 5
+    }
+  },
+  "test/component/Legend/Legend.typed.spec.tsx": {
+    "react-perf/jsx-no-new-function-as-prop": {
+      "count": 3
+    }
+  },
   "test/component/ResponsiveContainer.spec.tsx": {
     "@typescript-eslint/no-explicit-any": {
       "count": 3
+    },
+    "react-perf/jsx-no-new-object-as-prop": {
+      "count": 3
+    }
+  },
+  "test/component/ResponsiveContainerDataTest.spec.tsx": {
+    "react-perf/jsx-no-new-array-as-prop": {
+      "count": 1
+    },
+    "react-perf/jsx-no-new-object-as-prop": {
+      "count": 1
+    }
+  },
+  "test/component/Text.background.spec.tsx": {
+    "react-perf/jsx-no-new-object-as-prop": {
+      "count": 6
     }
   },
   "test/component/Text.spec.tsx": {
     "@typescript-eslint/consistent-type-assertions": {
+      "count": 2
+    },
+    "react-perf/jsx-no-new-object-as-prop": {
+      "count": 10
+    }
+  },
+  "test/component/Text.theme.spec.tsx": {
+    "react-perf/jsx-no-new-array-as-prop": {
+      "count": 1
+    },
+    "react-perf/jsx-no-new-object-as-prop": {
+      "count": 6
+    }
+  },
+  "test/component/Text.typed.spec.tsx": {
+    "react-perf/jsx-no-new-function-as-prop": {
+      "count": 11
+    }
+  },
+  "test/component/Tooltip/ActiveDot.spec.tsx": {
+    "react-perf/jsx-no-jsx-as-prop": {
+      "count": 4
+    },
+    "react-perf/jsx-no-new-array-as-prop": {
+      "count": 2
+    },
+    "react-perf/jsx-no-new-function-as-prop": {
+      "count": 4
+    }
+  },
+  "test/component/Tooltip/Tooltip.animation.spec.tsx": {
+    "react-perf/jsx-no-new-array-as-prop": {
       "count": 2
     }
   },
   "test/component/Tooltip/Tooltip.formatter.spec.tsx": {
     "@typescript-eslint/no-explicit-any": {
       "count": 1
+    },
+    "react-perf/jsx-no-new-function-as-prop": {
+      "count": 2
+    },
+    "react-perf/jsx-no-new-object-as-prop": {
+      "count": 2
+    }
+  },
+  "test/component/Tooltip/Tooltip.offset.spec.tsx": {
+    "react-perf/jsx-no-new-array-as-prop": {
+      "count": 1
+    },
+    "react-perf/jsx-no-new-object-as-prop": {
+      "count": 1
+    }
+  },
+  "test/component/Tooltip/Tooltip.payload.spec.tsx": {
+    "react-perf/jsx-no-new-array-as-prop": {
+      "count": 4
+    },
+    "react-perf/jsx-no-new-object-as-prop": {
+      "count": 3
+    }
+  },
+  "test/component/Tooltip/Tooltip.sync.spec.tsx": {
+    "react-perf/jsx-no-new-object-as-prop": {
+      "count": 3
+    }
+  },
+  "test/component/Tooltip/Tooltip.theme.spec.tsx": {
+    "react-perf/jsx-no-new-object-as-prop": {
+      "count": 6
     }
   },
   "test/component/Tooltip/Tooltip.visibility.spec.tsx": {
@@ -867,6 +2534,43 @@
     },
     "@typescript-eslint/no-non-null-assertion": {
       "count": 2
+    },
+    "react-perf/jsx-no-jsx-as-prop": {
+      "count": 1
+    },
+    "react-perf/jsx-no-new-array-as-prop": {
+      "count": 7
+    },
+    "react-perf/jsx-no-new-object-as-prop": {
+      "count": 5
+    }
+  },
+  "test/component/Tooltip/tooltipEventType.spec.tsx": {
+    "react-perf/jsx-no-new-object-as-prop": {
+      "count": 1
+    }
+  },
+  "test/component/TooltipBoundingBox.spec.tsx": {
+    "react-perf/jsx-no-new-object-as-prop": {
+      "count": 2
+    }
+  },
+  "test/container/ClipPath.spec.tsx": {
+    "react-perf/jsx-no-new-object-as-prop": {
+      "count": 30
+    }
+  },
+  "test/container/chartDimensions.spec.tsx": {
+    "react-perf/jsx-no-new-object-as-prop": {
+      "count": 3
+    }
+  },
+  "test/context/chartLayoutContext.spec.tsx": {
+    "react-perf/jsx-no-new-function-as-prop": {
+      "count": 10
+    },
+    "react-perf/jsx-no-new-object-as-prop": {
+      "count": 10
     }
   },
   "test/helper/consoleWarningToError.ts": {
@@ -907,6 +2611,16 @@
       "count": 1
     }
   },
+  "test/hooks/useActiveTooltipDataPoints.spec.tsx": {
+    "react-perf/jsx-no-new-object-as-prop": {
+      "count": 1
+    }
+  },
+  "test/hooks/useAxisDomain.spec.tsx": {
+    "react-perf/jsx-no-new-array-as-prop": {
+      "count": 2
+    }
+  },
   "test/hooks/useAxisScale.spec.tsx": {
     "@typescript-eslint/no-non-null-assertion": {
       "count": 1
@@ -917,22 +2631,170 @@
       "count": 4
     }
   },
+  "test/hooks/useOffset.spec.tsx": {
+    "react-perf/jsx-no-new-function-as-prop": {
+      "count": 9
+    },
+    "react-perf/jsx-no-new-object-as-prop": {
+      "count": 10
+    }
+  },
+  "test/polar/Pie/Pie-TwoLevelPieChart.spec.tsx": {
+    "react-perf/jsx-no-new-array-as-prop": {
+      "count": 2
+    },
+    "react-perf/jsx-no-new-function-as-prop": {
+      "count": 4
+    }
+  },
   "test/polar/Pie/Pie.spec.tsx": {
     "@typescript-eslint/consistent-type-assertions": {
       "count": 2
     },
     "@typescript-eslint/no-explicit-any": {
       "count": 2
+    },
+    "react-perf/jsx-no-jsx-as-prop": {
+      "count": 5
+    },
+    "react-perf/jsx-no-new-array-as-prop": {
+      "count": 6
+    },
+    "react-perf/jsx-no-new-function-as-prop": {
+      "count": 11
+    },
+    "react-perf/jsx-no-new-object-as-prop": {
+      "count": 7
+    }
+  },
+  "test/polar/Pie/Pie.theme.spec.tsx": {
+    "react-perf/jsx-no-new-array-as-prop": {
+      "count": 1
+    },
+    "react-perf/jsx-no-new-object-as-prop": {
+      "count": 3
+    }
+  },
+  "test/polar/Pie/Pie.typed.spec.tsx": {
+    "react-perf/jsx-no-new-function-as-prop": {
+      "count": 13
     }
   },
   "test/polar/PolarAngleAxis/PolarAngleAxis.spec.tsx": {
     "@typescript-eslint/no-explicit-any": {
       "count": 1
+    },
+    "react-perf/jsx-no-jsx-as-prop": {
+      "count": 1
+    },
+    "react-perf/jsx-no-new-array-as-prop": {
+      "count": 8
+    },
+    "react-perf/jsx-no-new-function-as-prop": {
+      "count": 1
+    }
+  },
+  "test/polar/PolarAngleAxis/PolarAngleAxis.theme.spec.tsx": {
+    "react-perf/jsx-no-new-object-as-prop": {
+      "count": 8
+    }
+  },
+  "test/polar/PolarAngleAxis/PolarAngleAxis.typed.spec.tsx": {
+    "react-perf/jsx-no-new-function-as-prop": {
+      "count": 11
+    }
+  },
+  "test/polar/PolarGrid.spec.tsx": {
+    "react-perf/jsx-no-new-function-as-prop": {
+      "count": 2
+    }
+  },
+  "test/polar/PolarGrid.theme.spec.tsx": {
+    "react-perf/jsx-no-new-object-as-prop": {
+      "count": 2
     }
   },
   "test/polar/PolarRadiusAxis.spec.tsx": {
     "@typescript-eslint/no-explicit-any": {
       "count": 4
+    },
+    "react-perf/jsx-no-jsx-as-prop": {
+      "count": 2
+    },
+    "react-perf/jsx-no-new-array-as-prop": {
+      "count": 3
+    },
+    "react-perf/jsx-no-new-function-as-prop": {
+      "count": 2
+    }
+  },
+  "test/polar/PolarRadiusAxis.theme.spec.tsx": {
+    "react-perf/jsx-no-new-object-as-prop": {
+      "count": 4
+    }
+  },
+  "test/polar/PolarRadiusAxis.typed.spec.tsx": {
+    "react-perf/jsx-no-new-function-as-prop": {
+      "count": 11
+    }
+  },
+  "test/polar/Radar.spec.tsx": {
+    "react-perf/jsx-no-jsx-as-prop": {
+      "count": 2
+    },
+    "react-perf/jsx-no-new-array-as-prop": {
+      "count": 1
+    },
+    "react-perf/jsx-no-new-function-as-prop": {
+      "count": 3
+    },
+    "react-perf/jsx-no-new-object-as-prop": {
+      "count": 2
+    }
+  },
+  "test/polar/Radar.typed.spec.tsx": {
+    "react-perf/jsx-no-new-function-as-prop": {
+      "count": 13
+    }
+  },
+  "test/polar/Radar/Radar.theme.spec.tsx": {
+    "react-perf/jsx-no-new-object-as-prop": {
+      "count": 14
+    }
+  },
+  "test/polar/RadialBar/RadialBar.spec.tsx": {
+    "react-perf/jsx-no-new-array-as-prop": {
+      "count": 5
+    },
+    "react-perf/jsx-no-new-object-as-prop": {
+      "count": 5
+    }
+  },
+  "test/polar/RadialBar/RadialBar.theme.spec.tsx": {
+    "react-perf/jsx-no-new-array-as-prop": {
+      "count": 2
+    },
+    "react-perf/jsx-no-new-object-as-prop": {
+      "count": 12
+    }
+  },
+  "test/polar/RadialBar/RadialBar.typed.spec.tsx": {
+    "react-perf/jsx-no-new-function-as-prop": {
+      "count": 13
+    }
+  },
+  "test/shape/ActiveShape.spec.tsx": {
+    "react-perf/jsx-no-jsx-as-prop": {
+      "count": 2
+    },
+    "react-perf/jsx-no-new-array-as-prop": {
+      "count": 9
+    },
+    "react-perf/jsx-no-new-function-as-prop": {
+      "count": 2
+    },
+    "react-perf/jsx-no-new-object-as-prop": {
+      "count": 2
     }
   },
   "test/shape/Cross.spec.tsx": {
@@ -943,6 +2805,44 @@
       "count": 1
     }
   },
+  "test/shape/Cross.typed.spec.tsx": {
+    "react-perf/jsx-no-new-function-as-prop": {
+      "count": 11
+    }
+  },
+  "test/shape/Curve.spec.tsx": {
+    "react-perf/jsx-no-new-array-as-prop": {
+      "count": 3
+    }
+  },
+  "test/shape/Curve.typed.spec.tsx": {
+    "react-perf/jsx-no-new-function-as-prop": {
+      "count": 11
+    }
+  },
+  "test/shape/Dot.spec.tsx": {
+    "react-perf/jsx-no-new-function-as-prop": {
+      "count": 1
+    }
+  },
+  "test/shape/Dot.typed.spec.tsx": {
+    "react-perf/jsx-no-new-function-as-prop": {
+      "count": 11
+    }
+  },
+  "test/shape/Polygon.spec.tsx": {
+    "react-perf/jsx-no-new-array-as-prop": {
+      "count": 18
+    }
+  },
+  "test/shape/Polygon.typed.spec.tsx": {
+    "react-perf/jsx-no-new-array-as-prop": {
+      "count": 1
+    },
+    "react-perf/jsx-no-new-function-as-prop": {
+      "count": 11
+    }
+  },
   "test/shape/Rectangle.spec.tsx": {
     "@typescript-eslint/consistent-type-assertions": {
       "count": 4
@@ -951,9 +2851,37 @@
       "count": 4
     }
   },
+  "test/shape/Rectangle.typed.spec.tsx": {
+    "react-perf/jsx-no-new-function-as-prop": {
+      "count": 11
+    }
+  },
   "test/shape/Sector.spec.tsx": {
     "@typescript-eslint/consistent-type-assertions": {
       "count": 1
+    }
+  },
+  "test/shape/Sector.typed.spec.tsx": {
+    "react-perf/jsx-no-new-function-as-prop": {
+      "count": 11
+    }
+  },
+  "test/shape/Symbols.spec.tsx": {
+    "react-perf/jsx-no-new-array-as-prop": {
+      "count": 1
+    },
+    "react-perf/jsx-no-new-object-as-prop": {
+      "count": 1
+    }
+  },
+  "test/shape/Symbols.typed.spec.tsx": {
+    "react-perf/jsx-no-new-function-as-prop": {
+      "count": 11
+    }
+  },
+  "test/shape/Trapezoid.typed.spec.tsx": {
+    "react-perf/jsx-no-new-function-as-prop": {
+      "count": 11
     }
   },
   "test/state/externalEventsMiddleware.spec.ts": {
@@ -966,9 +2894,28 @@
       "count": 4
     }
   },
+  "test/state/selectors/axisSelectors.spec.tsx": {
+    "react-perf/jsx-no-new-array-as-prop": {
+      "count": 48
+    },
+    "react-perf/jsx-no-new-object-as-prop": {
+      "count": 4
+    }
+  },
   "test/state/selectors/barStackSelectors.spec.tsx": {
     "@typescript-eslint/consistent-type-assertions": {
       "count": 4
+    },
+    "react-perf/jsx-no-new-array-as-prop": {
+      "count": 2
+    },
+    "react-perf/jsx-no-new-object-as-prop": {
+      "count": 1
+    }
+  },
+  "test/state/selectors/brushSelectors.spec.tsx": {
+    "react-perf/jsx-no-jsx-as-prop": {
+      "count": 1
     }
   },
   "test/state/selectors/combiners/combineAllBarPositions.spec.ts": {
@@ -981,9 +2928,53 @@
       "count": 4
     }
   },
+  "test/state/selectors/containerSelectors.spec.tsx": {
+    "react-perf/jsx-no-jsx-as-prop": {
+      "count": 6
+    },
+    "react-perf/jsx-no-new-object-as-prop": {
+      "count": 2
+    }
+  },
+  "test/state/selectors/dataSelectors.spec.tsx": {
+    "react-perf/jsx-no-new-array-as-prop": {
+      "count": 6
+    }
+  },
+  "test/state/selectors/pieSelectors.spec.tsx": {
+    "react-perf/jsx-no-new-array-as-prop": {
+      "count": 3
+    }
+  },
+  "test/state/selectors/rootPropsSelectors.spec.tsx": {
+    "react-perf/jsx-no-new-function-as-prop": {
+      "count": 14
+    }
+  },
   "test/state/selectors/scatterSelectors.spec.tsx": {
     "@typescript-eslint/no-explicit-any": {
       "count": 1
+    },
+    "react-perf/jsx-no-new-array-as-prop": {
+      "count": 1
+    }
+  },
+  "test/state/selectors/selectStackGroups.spec.tsx": {
+    "react-perf/jsx-no-new-function-as-prop": {
+      "count": 1
+    }
+  },
+  "test/state/selectors/selectors.spec.tsx": {
+    "react-perf/jsx-no-new-array-as-prop": {
+      "count": 8
+    },
+    "react-perf/jsx-no-new-object-as-prop": {
+      "count": 1
+    }
+  },
+  "test/state/selectors/tooltipSelectors.zoom.spec.tsx": {
+    "react-perf/jsx-no-new-object-as-prop": {
+      "count": 2
     }
   },
   "test/state/throttling.spec.ts": {
@@ -999,9 +2990,17 @@
       "count": 2
     }
   },
+  "test/theme/activeStyles.spec.tsx": {
+    "react-perf/jsx-no-new-function-as-prop": {
+      "count": 1
+    }
+  },
   "test/theme/graphicalItemOwnStyles.spec.tsx": {
     "@typescript-eslint/no-non-null-assertion": {
       "count": 5
+    },
+    "react-perf/jsx-no-new-array-as-prop": {
+      "count": 1
     }
   },
   "test/theme/themeAccessibility.spec.ts": {
@@ -1035,12 +3034,25 @@
       "count": 2
     }
   },
+  "test/util/FunnelUtils.spec.tsx": {
+    "react-perf/jsx-no-new-object-as-prop": {
+      "count": 1
+    }
+  },
   "test/util/ReactUtils.spec.tsx": {
     "@typescript-eslint/consistent-type-assertions": {
       "count": 5
     },
     "@typescript-eslint/no-explicit-any": {
       "count": 4
+    }
+  },
+  "test/util/createChartHelpers.spec.tsx": {
+    "react-perf/jsx-no-new-array-as-prop": {
+      "count": 1
+    },
+    "react-perf/jsx-no-new-function-as-prop": {
+      "count": 2
     }
   },
   "test/util/getSliced.spec.ts": {
@@ -1051,6 +3063,11 @@
   "test/util/svgPropertiesNoEvents.spec.tsx": {
     "@typescript-eslint/no-explicit-any": {
       "count": 1
+    }
+  },
+  "test/util/useCells.spec.tsx": {
+    "react-perf/jsx-no-new-object-as-prop": {
+      "count": 2
     }
   },
   "test/util/zoom/ZoomOptions.spec.ts": {
@@ -1066,10 +3083,275 @@
   "www/src/components/CodeEditorWithPreview.tsx": {
     "@typescript-eslint/no-explicit-any": {
       "count": 4
+    },
+    "react-perf/jsx-no-new-array-as-prop": {
+      "count": 1
+    },
+    "react-perf/jsx-no-new-function-as-prop": {
+      "count": 2
+    },
+    "react-perf/jsx-no-new-object-as-prop": {
+      "count": 1
+    }
+  },
+  "www/src/components/GuideView/ActiveIndex/BarChartClickable.tsx": {
+    "react-perf/jsx-no-new-array-as-prop": {
+      "count": 1
+    },
+    "react-perf/jsx-no-new-function-as-prop": {
+      "count": 1
+    },
+    "react-perf/jsx-no-new-object-as-prop": {
+      "count": 1
+    }
+  },
+  "www/src/components/GuideView/ActiveIndex/PieChartDefaultIndex.tsx": {
+    "react-perf/jsx-no-new-array-as-prop": {
+      "count": 1
+    },
+    "react-perf/jsx-no-new-object-as-prop": {
+      "count": 1
+    }
+  },
+  "www/src/components/GuideView/Animations/AnimationsExample.tsx": {
+    "react-perf/jsx-no-new-object-as-prop": {
+      "count": 2
+    }
+  },
+  "www/src/components/GuideView/Animations/MatchingStrategiesExample.tsx": {
+    "react-perf/jsx-no-new-function-as-prop": {
+      "count": 1
+    },
+    "react-perf/jsx-no-new-object-as-prop": {
+      "count": 2
+    }
+  },
+  "www/src/components/GuideView/AxisTicks/CustomAxisTicks.tsx": {
+    "react-perf/jsx-no-new-object-as-prop": {
+      "count": 1
+    }
+  },
+  "www/src/components/GuideView/AxisTicks/NiceTicksPlayground.tsx": {
+    "react-perf/jsx-no-new-object-as-prop": {
+      "count": 1
+    }
+  },
+  "www/src/components/GuideView/BarAlign/CustomBandScaleExample.tsx": {
+    "react-perf/jsx-no-new-object-as-prop": {
+      "count": 1
+    }
+  },
+  "www/src/components/GuideView/ChartSizing/ChartWithoutSize.tsx": {
+    "react-perf/jsx-no-new-array-as-prop": {
+      "count": 1
+    }
+  },
+  "www/src/components/GuideView/ChartSizing/ResponsiveChart.tsx": {
+    "react-perf/jsx-no-new-array-as-prop": {
+      "count": 1
+    },
+    "react-perf/jsx-no-new-object-as-prop": {
+      "count": 1
+    }
+  },
+  "www/src/components/GuideView/ChartSizing/ResponsiveContainerResponsiveChart.tsx": {
+    "react-perf/jsx-no-new-array-as-prop": {
+      "count": 1
+    }
+  },
+  "www/src/components/GuideView/ChartSizing/SizeInPercentChart.tsx": {
+    "react-perf/jsx-no-new-array-as-prop": {
+      "count": 1
+    }
+  },
+  "www/src/components/GuideView/ChartSizing/SizeInStyleChart.tsx": {
+    "react-perf/jsx-no-new-array-as-prop": {
+      "count": 1
+    },
+    "react-perf/jsx-no-new-object-as-prop": {
+      "count": 1
+    }
+  },
+  "www/src/components/GuideView/ChartSizing/StaticDimensionChart.tsx": {
+    "react-perf/jsx-no-new-array-as-prop": {
+      "count": 1
+    }
+  },
+  "www/src/components/GuideView/CoordinateSystems/DataCoordinatesExample.tsx": {
+    "react-perf/jsx-no-new-array-as-prop": {
+      "count": 1
+    },
+    "react-perf/jsx-no-new-object-as-prop": {
+      "count": 1
+    }
+  },
+  "www/src/components/GuideView/CoordinateSystems/PixelCoordinatesExample.tsx": {
+    "react-perf/jsx-no-new-object-as-prop": {
+      "count": 1
+    }
+  },
+  "www/src/components/GuideView/Customize/CustomizeBarShape.tsx": {
+    "react-perf/jsx-no-new-object-as-prop": {
+      "count": 2
+    }
+  },
+  "www/src/components/GuideView/Customize/CustomizeCustomElement.tsx": {
+    "react-perf/jsx-no-new-object-as-prop": {
+      "count": 2
+    }
+  },
+  "www/src/components/GuideView/Customize/CustomizeLabels.tsx": {
+    "react-perf/jsx-no-new-function-as-prop": {
+      "count": 1
+    },
+    "react-perf/jsx-no-new-object-as-prop": {
+      "count": 4
+    }
+  },
+  "www/src/components/GuideView/Customize/CustomizeLegendAndTooltipStyle.tsx": {
+    "react-perf/jsx-no-new-object-as-prop": {
+      "count": 7
+    }
+  },
+  "www/src/components/GuideView/Customize/CustomizeSizeAndStroke.tsx": {
+    "react-perf/jsx-no-new-object-as-prop": {
+      "count": 2
+    }
+  },
+  "www/src/components/GuideView/Customize/CustomizeTooltipContent.tsx": {
+    "react-perf/jsx-no-new-object-as-prop": {
+      "count": 2
+    }
+  },
+  "www/src/components/GuideView/DomainAndTicks/MassBarChart.tsx": {
+    "react-perf/jsx-no-new-object-as-prop": {
+      "count": 2
+    }
+  },
+  "www/src/components/GuideView/DomainAndTicks/MassBarChartCategoricalY.tsx": {
+    "react-perf/jsx-no-new-object-as-prop": {
+      "count": 2
+    }
+  },
+  "www/src/components/GuideView/DomainAndTicks/MassBarChartCustomTicks.tsx": {
+    "react-perf/jsx-no-new-array-as-prop": {
+      "count": 1
+    },
+    "react-perf/jsx-no-new-object-as-prop": {
+      "count": 2
+    }
+  },
+  "www/src/components/GuideView/DomainAndTicks/MassBarChartCustomYDomain.tsx": {
+    "react-perf/jsx-no-new-array-as-prop": {
+      "count": 1
+    },
+    "react-perf/jsx-no-new-object-as-prop": {
+      "count": 2
+    }
+  },
+  "www/src/components/GuideView/DomainAndTicks/MassBarChartLogScale.tsx": {
+    "react-perf/jsx-no-new-array-as-prop": {
+      "count": 1
+    },
+    "react-perf/jsx-no-new-object-as-prop": {
+      "count": 2
+    }
+  },
+  "www/src/components/GuideView/GettingStarted/Step1.tsx": {
+    "react-perf/jsx-no-new-object-as-prop": {
+      "count": 1
+    }
+  },
+  "www/src/components/GuideView/GettingStarted/Step2.tsx": {
+    "react-perf/jsx-no-new-object-as-prop": {
+      "count": 1
+    }
+  },
+  "www/src/components/GuideView/GettingStarted/Step3.tsx": {
+    "react-perf/jsx-no-new-object-as-prop": {
+      "count": 3
+    }
+  },
+  "www/src/components/GuideView/GettingStarted/Step4.tsx": {
+    "react-perf/jsx-no-new-object-as-prop": {
+      "count": 3
     }
   },
   "www/src/components/GuideView/GettingStarted/Step5.tsx": {
     "@typescript-eslint/no-explicit-any": {
+      "count": 1
+    },
+    "react-perf/jsx-no-new-object-as-prop": {
+      "count": 3
+    }
+  },
+  "www/src/components/GuideView/Theming/CustomThemeExample.tsx": {
+    "react-perf/jsx-no-new-object-as-prop": {
+      "count": 2
+    }
+  },
+  "www/src/components/GuideView/Theming/NestedThemeExample.tsx": {
+    "react-perf/jsx-no-new-object-as-prop": {
+      "count": 2
+    }
+  },
+  "www/src/components/GuideView/Theming/ThemeSwitcherExample.tsx": {
+    "react-perf/jsx-no-new-object-as-prop": {
+      "count": 2
+    }
+  },
+  "www/src/components/GuideView/TypeScript/Step1.tsx": {
+    "react-perf/jsx-no-new-object-as-prop": {
+      "count": 1
+    }
+  },
+  "www/src/components/GuideView/TypeScript/Step2.tsx": {
+    "react-perf/jsx-no-new-object-as-prop": {
+      "count": 1
+    }
+  },
+  "www/src/components/GuideView/TypeScript/Step3.tsx": {
+    "react-perf/jsx-no-new-object-as-prop": {
+      "count": 1
+    }
+  },
+  "www/src/components/GuideView/ZIndex/PrahaMetro.tsx": {
+    "react-perf/jsx-no-new-array-as-prop": {
+      "count": 2
+    },
+    "react-perf/jsx-no-new-function-as-prop": {
+      "count": 1
+    },
+    "react-perf/jsx-no-new-object-as-prop": {
+      "count": 7
+    }
+  },
+  "www/src/components/ManualAnimationContext.tsx": {
+    "react-perf/jsx-no-new-function-as-prop": {
+      "count": 7
+    },
+    "react-perf/jsx-no-new-object-as-prop": {
+      "count": 3
+    }
+  },
+  "www/src/components/Navigation.tsx": {
+    "react-perf/jsx-no-new-array-as-prop": {
+      "count": 6
+    },
+    "react-perf/jsx-no-new-function-as-prop": {
+      "count": 2
+    },
+    "react-perf/jsx-no-new-object-as-prop": {
+      "count": 2
+    }
+  },
+  "www/src/components/Playground/AnnotationsPanel.tsx": {
+    "react-perf/jsx-no-new-object-as-prop": {
+      "count": 1
+    }
+  },
+  "www/src/components/Playground/DevToolsPanel.tsx": {
+    "react-perf/jsx-no-new-object-as-prop": {
       "count": 1
     }
   },
@@ -1078,48 +3360,840 @@
       "count": 1
     }
   },
+  "www/src/docs/exampleComponents/AreaChart/AreaChartConnectNulls.tsx": {
+    "react-perf/jsx-no-new-object-as-prop": {
+      "count": 12
+    }
+  },
+  "www/src/docs/exampleComponents/AreaChart/AreaChartCustomAnimationExample/index.tsx": {
+    "react-perf/jsx-no-new-object-as-prop": {
+      "count": 2
+    }
+  },
+  "www/src/docs/exampleComponents/AreaChart/AreaChartExample.tsx": {
+    "react-perf/jsx-no-new-object-as-prop": {
+      "count": 4
+    }
+  },
+  "www/src/docs/exampleComponents/AreaChart/AreaChartFillByValue.tsx": {
+    "react-perf/jsx-no-new-object-as-prop": {
+      "count": 2
+    }
+  },
+  "www/src/docs/exampleComponents/AreaChart/AreaChartNavExample.tsx": {
+    "react-perf/jsx-no-new-array-as-prop": {
+      "count": 1
+    },
+    "react-perf/jsx-no-new-object-as-prop": {
+      "count": 1
+    }
+  },
+  "www/src/docs/exampleComponents/AreaChart/AreaChartRangeExample.tsx": {
+    "react-perf/jsx-no-new-object-as-prop": {
+      "count": 2
+    }
+  },
+  "www/src/docs/exampleComponents/AreaChart/AreaChartWithCustomEvents.tsx": {
+    "react-perf/jsx-no-new-function-as-prop": {
+      "count": 11
+    },
+    "react-perf/jsx-no-new-object-as-prop": {
+      "count": 2
+    }
+  },
+  "www/src/docs/exampleComponents/AreaChart/CardinalAreaChart.tsx": {
+    "react-perf/jsx-no-new-object-as-prop": {
+      "count": 2
+    }
+  },
+  "www/src/docs/exampleComponents/AreaChart/PercentAreaChart.tsx": {
+    "react-perf/jsx-no-new-object-as-prop": {
+      "count": 2
+    }
+  },
   "www/src/docs/exampleComponents/AreaChart/RangeAreaChartCustomAnimation.tsx": {
     "@typescript-eslint/consistent-type-assertions": {
       "count": 1
+    },
+    "react-perf/jsx-no-new-array-as-prop": {
+      "count": 1
+    },
+    "react-perf/jsx-no-new-function-as-prop": {
+      "count": 1
+    },
+    "react-perf/jsx-no-new-object-as-prop": {
+      "count": 2
+    }
+  },
+  "www/src/docs/exampleComponents/AreaChart/SimpleAreaChart.tsx": {
+    "react-perf/jsx-no-new-function-as-prop": {
+      "count": 1
+    },
+    "react-perf/jsx-no-new-object-as-prop": {
+      "count": 2
+    }
+  },
+  "www/src/docs/exampleComponents/AreaChart/StackedAreaChart.tsx": {
+    "react-perf/jsx-no-new-object-as-prop": {
+      "count": 2
+    }
+  },
+  "www/src/docs/exampleComponents/AreaChart/SynchronizedAreaChart.tsx": {
+    "react-perf/jsx-no-new-object-as-prop": {
+      "count": 4
+    }
+  },
+  "www/src/docs/exampleComponents/AreaChart/TinyAreaChart.tsx": {
+    "react-perf/jsx-no-new-object-as-prop": {
+      "count": 2
     }
   },
   "www/src/docs/exampleComponents/BarChart/AnimatedBarTimeSeriesExample.tsx": {
     "@typescript-eslint/no-non-null-assertion": {
       "count": 1
+    },
+    "react-perf/jsx-no-new-object-as-prop": {
+      "count": 2
+    }
+  },
+  "www/src/docs/exampleComponents/BarChart/AnimatedBarWidthExample.tsx": {
+    "react-perf/jsx-no-new-object-as-prop": {
+      "count": 7
+    }
+  },
+  "www/src/docs/exampleComponents/BarChart/BarChartHasBackground.tsx": {
+    "react-perf/jsx-no-new-object-as-prop": {
+      "count": 2
+    }
+  },
+  "www/src/docs/exampleComponents/BarChart/BarChartNavExample.tsx": {
+    "react-perf/jsx-no-new-array-as-prop": {
+      "count": 1
+    },
+    "react-perf/jsx-no-new-object-as-prop": {
+      "count": 1
+    }
+  },
+  "www/src/docs/exampleComponents/BarChart/BarChartRangeExample.tsx": {
+    "react-perf/jsx-no-new-object-as-prop": {
+      "count": 2
+    }
+  },
+  "www/src/docs/exampleComponents/BarChart/BarChartStackedBySign.tsx": {
+    "react-perf/jsx-no-new-object-as-prop": {
+      "count": 2
+    }
+  },
+  "www/src/docs/exampleComponents/BarChart/BarChartWithCustomizedEvent.tsx": {
+    "react-perf/jsx-no-new-function-as-prop": {
+      "count": 2
+    },
+    "react-perf/jsx-no-new-object-as-prop": {
+      "count": 1
+    }
+  },
+  "www/src/docs/exampleComponents/BarChart/BarChartWithLabelBackground.tsx": {
+    "react-perf/jsx-no-new-object-as-prop": {
+      "count": 2
+    }
+  },
+  "www/src/docs/exampleComponents/BarChart/BarChartWithMinHeight.tsx": {
+    "react-perf/jsx-no-new-object-as-prop": {
+      "count": 2
+    }
+  },
+  "www/src/docs/exampleComponents/BarChart/BarChartWithMultiXAxis.tsx": {
+    "react-perf/jsx-no-new-object-as-prop": {
+      "count": 3
+    }
+  },
+  "www/src/docs/exampleComponents/BarChart/BiaxialBarChart.tsx": {
+    "react-perf/jsx-no-new-object-as-prop": {
+      "count": 2
+    }
+  },
+  "www/src/docs/exampleComponents/BarChart/BoxPlotExample.tsx": {
+    "react-perf/jsx-no-new-object-as-prop": {
+      "count": 1
+    }
+  },
+  "www/src/docs/exampleComponents/BarChart/BrushBarChart.tsx": {
+    "react-perf/jsx-no-new-object-as-prop": {
+      "count": 3
+    }
+  },
+  "www/src/docs/exampleComponents/BarChart/CandlestickExample.tsx": {
+    "react-perf/jsx-no-new-array-as-prop": {
+      "count": 1
+    },
+    "react-perf/jsx-no-new-object-as-prop": {
+      "count": 1
+    }
+  },
+  "www/src/docs/exampleComponents/BarChart/CustomShapeBarChart.tsx": {
+    "react-perf/jsx-no-new-object-as-prop": {
+      "count": 3
+    }
+  },
+  "www/src/docs/exampleComponents/BarChart/MixBarChart.tsx": {
+    "react-perf/jsx-no-new-function-as-prop": {
+      "count": 3
+    },
+    "react-perf/jsx-no-new-object-as-prop": {
+      "count": 2
+    }
+  },
+  "www/src/docs/exampleComponents/BarChart/PopulationPyramidExample.tsx": {
+    "react-perf/jsx-no-new-array-as-prop": {
+      "count": 3
+    },
+    "react-perf/jsx-no-new-object-as-prop": {
+      "count": 5
+    }
+  },
+  "www/src/docs/exampleComponents/BarChart/PositiveAndNegativeBarChart.tsx": {
+    "react-perf/jsx-no-new-object-as-prop": {
+      "count": 2
+    }
+  },
+  "www/src/docs/exampleComponents/BarChart/RangedStackedBarChart.tsx": {
+    "react-perf/jsx-no-new-object-as-prop": {
+      "count": 5
+    }
+  },
+  "www/src/docs/exampleComponents/BarChart/ScrollAnimateBarChart.tsx": {
+    "react-perf/jsx-no-new-array-as-prop": {
+      "count": 2
+    },
+    "react-perf/jsx-no-new-object-as-prop": {
+      "count": 2
+    }
+  },
+  "www/src/docs/exampleComponents/BarChart/SimpleBarChart.tsx": {
+    "react-perf/jsx-no-new-array-as-prop": {
+      "count": 2
+    },
+    "react-perf/jsx-no-new-object-as-prop": {
+      "count": 2
+    }
+  },
+  "www/src/docs/exampleComponents/BarChart/StackedBarChart.tsx": {
+    "react-perf/jsx-no-new-object-as-prop": {
+      "count": 2
     }
   },
   "www/src/docs/exampleComponents/BarChart/StackedBarChartWithHorizontalLine.tsx": {
     "@typescript-eslint/consistent-type-assertions": {
       "count": 1
+    },
+    "react-perf/jsx-no-new-function-as-prop": {
+      "count": 1
+    },
+    "react-perf/jsx-no-new-object-as-prop": {
+      "count": 3
+    }
+  },
+  "www/src/docs/exampleComponents/BarChart/TimelineExample.tsx": {
+    "react-perf/jsx-no-new-object-as-prop": {
+      "count": 4
+    }
+  },
+  "www/src/docs/exampleComponents/BarChart/TinyBarChart.tsx": {
+    "react-perf/jsx-no-new-object-as-prop": {
+      "count": 1
+    }
+  },
+  "www/src/docs/exampleComponents/BarChart/WaterfallExample.tsx": {
+    "react-perf/jsx-no-new-object-as-prop": {
+      "count": 2
+    }
+  },
+  "www/src/docs/exampleComponents/Cell/CellBarExample.tsx": {
+    "react-perf/jsx-no-new-object-as-prop": {
+      "count": 1
+    }
+  },
+  "www/src/docs/exampleComponents/Cell/CellPieExample.tsx": {
+    "react-perf/jsx-no-new-object-as-prop": {
+      "count": 1
+    }
+  },
+  "www/src/docs/exampleComponents/ComposedChart/BandedChart.tsx": {
+    "react-perf/jsx-no-new-object-as-prop": {
+      "count": 2
+    }
+  },
+  "www/src/docs/exampleComponents/ComposedChart/ComposedChartNavExample.tsx": {
+    "react-perf/jsx-no-new-array-as-prop": {
+      "count": 1
+    },
+    "react-perf/jsx-no-new-object-as-prop": {
+      "count": 1
+    }
+  },
+  "www/src/docs/exampleComponents/ComposedChart/ComposedChartWithAxisLabels.tsx": {
+    "react-perf/jsx-no-new-object-as-prop": {
+      "count": 4
+    }
+  },
+  "www/src/docs/exampleComponents/ComposedChart/LineBarAreaComposedChart.tsx": {
+    "react-perf/jsx-no-new-object-as-prop": {
+      "count": 2
+    }
+  },
+  "www/src/docs/exampleComponents/ComposedChart/SameDataComposedChart.tsx": {
+    "react-perf/jsx-no-new-object-as-prop": {
+      "count": 2
+    }
+  },
+  "www/src/docs/exampleComponents/ComposedChart/ScatterAndLineOfBestFit.tsx": {
+    "react-perf/jsx-no-new-object-as-prop": {
+      "count": 4
+    }
+  },
+  "www/src/docs/exampleComponents/ComposedChart/TargetPriceChart.tsx": {
+    "react-perf/jsx-no-new-array-as-prop": {
+      "count": 1
+    },
+    "react-perf/jsx-no-new-function-as-prop": {
+      "count": 4
+    },
+    "react-perf/jsx-no-new-object-as-prop": {
+      "count": 6
+    }
+  },
+  "www/src/docs/exampleComponents/ComposedChart/VerticalComposedChart.tsx": {
+    "react-perf/jsx-no-new-object-as-prop": {
+      "count": 2
+    }
+  },
+  "www/src/docs/exampleComponents/ErrorBar/ErrorBarExample.tsx": {
+    "react-perf/jsx-no-new-object-as-prop": {
+      "count": 2
+    }
+  },
+  "www/src/docs/exampleComponents/Funnel/FunnelExample.tsx": {
+    "react-perf/jsx-no-new-object-as-prop": {
+      "count": 2
+    }
+  },
+  "www/src/docs/exampleComponents/FunnelChart/FunnelChartExample.tsx": {
+    "react-perf/jsx-no-new-object-as-prop": {
+      "count": 2
+    }
+  },
+  "www/src/docs/exampleComponents/Label/LabelBarChartExample.tsx": {
+    "react-perf/jsx-no-new-object-as-prop": {
+      "count": 3
+    }
+  },
+  "www/src/docs/exampleComponents/Label/LabelCartesianPositions.tsx": {
+    "react-perf/jsx-no-new-object-as-prop": {
+      "count": 2
+    }
+  },
+  "www/src/docs/exampleComponents/Label/LabelFunnelPositions.tsx": {
+    "react-perf/jsx-no-new-array-as-prop": {
+      "count": 1
+    },
+    "react-perf/jsx-no-new-function-as-prop": {
+      "count": 14
+    },
+    "react-perf/jsx-no-new-object-as-prop": {
+      "count": 3
+    }
+  },
+  "www/src/docs/exampleComponents/Label/LabelPiePositions.tsx": {
+    "react-perf/jsx-no-new-array-as-prop": {
+      "count": 1
+    },
+    "react-perf/jsx-no-new-function-as-prop": {
+      "count": 3
+    },
+    "react-perf/jsx-no-new-object-as-prop": {
+      "count": 1
+    }
+  },
+  "www/src/docs/exampleComponents/Label/LabelRadialBarPositions.tsx": {
+    "react-perf/jsx-no-new-array-as-prop": {
+      "count": 2
+    },
+    "react-perf/jsx-no-new-function-as-prop": {
+      "count": 3
+    },
+    "react-perf/jsx-no-new-object-as-prop": {
+      "count": 1
+    }
+  },
+  "www/src/docs/exampleComponents/LabelList/LabelListChartExample.tsx": {
+    "react-perf/jsx-no-new-object-as-prop": {
+      "count": 3
     }
   },
   "www/src/docs/exampleComponents/Legend/LegendEffectOpacity.tsx": {
     "@typescript-eslint/no-explicit-any": {
       "count": 1
+    },
+    "react-perf/jsx-no-new-function-as-prop": {
+      "count": 2
+    },
+    "react-perf/jsx-no-new-object-as-prop": {
+      "count": 3
+    }
+  },
+  "www/src/docs/exampleComponents/Legend/LegendExample.tsx": {
+    "react-perf/jsx-no-new-object-as-prop": {
+      "count": 2
+    }
+  },
+  "www/src/docs/exampleComponents/Legend/LegendPositionExample.tsx": {
+    "react-perf/jsx-no-new-object-as-prop": {
+      "count": 1
+    }
+  },
+  "www/src/docs/exampleComponents/Legend/LegendStylesExample.tsx": {
+    "react-perf/jsx-no-new-array-as-prop": {
+      "count": 1
+    },
+    "react-perf/jsx-no-new-object-as-prop": {
+      "count": 2
     }
   },
   "www/src/docs/exampleComponents/LineChart/AnimatedTimeSeriesExample.tsx": {
     "@typescript-eslint/no-non-null-assertion": {
       "count": 1
+    },
+    "react-perf/jsx-no-new-object-as-prop": {
+      "count": 2
+    }
+  },
+  "www/src/docs/exampleComponents/LineChart/BiaxialLineChart.tsx": {
+    "react-perf/jsx-no-new-object-as-prop": {
+      "count": 3
     }
   },
   "www/src/docs/exampleComponents/LineChart/CompareTwoLines.tsx": {
     "@typescript-eslint/no-explicit-any": {
       "count": 2
+    },
+    "react-perf/jsx-no-new-object-as-prop": {
+      "count": 9
+    }
+  },
+  "www/src/docs/exampleComponents/LineChart/CustomizedDotLineChart.tsx": {
+    "react-perf/jsx-no-new-object-as-prop": {
+      "count": 2
+    }
+  },
+  "www/src/docs/exampleComponents/LineChart/CustomizedLabelLineChart.tsx": {
+    "react-perf/jsx-no-new-object-as-prop": {
+      "count": 2
+    }
+  },
+  "www/src/docs/exampleComponents/LineChart/DashedLineChart.tsx": {
+    "react-perf/jsx-no-new-object-as-prop": {
+      "count": 2
+    }
+  },
+  "www/src/docs/exampleComponents/LineChart/DynamicZIndexLineChart.tsx": {
+    "react-perf/jsx-no-new-object-as-prop": {
+      "count": 2
+    }
+  },
+  "www/src/docs/exampleComponents/LineChart/HighlightAndZoomLineChart.tsx": {
+    "react-perf/jsx-no-new-array-as-prop": {
+      "count": 3
+    },
+    "react-perf/jsx-no-new-object-as-prop": {
+      "count": 1
+    }
+  },
+  "www/src/docs/exampleComponents/LineChart/LineChartAxisInterval.tsx": {
+    "react-perf/jsx-no-new-object-as-prop": {
+      "count": 3
+    }
+  },
+  "www/src/docs/exampleComponents/LineChart/LineChartConnectNulls.tsx": {
+    "react-perf/jsx-no-new-object-as-prop": {
+      "count": 2
+    }
+  },
+  "www/src/docs/exampleComponents/LineChart/LineChartCustomShapeExample/index.tsx": {
+    "react-perf/jsx-no-new-object-as-prop": {
+      "count": 2
+    }
+  },
+  "www/src/docs/exampleComponents/LineChart/LineChartHasMultiSeries.tsx": {
+    "react-perf/jsx-no-new-object-as-prop": {
+      "count": 1
+    }
+  },
+  "www/src/docs/exampleComponents/LineChart/LineChartNavExample.tsx": {
+    "react-perf/jsx-no-new-array-as-prop": {
+      "count": 1
+    },
+    "react-perf/jsx-no-new-object-as-prop": {
+      "count": 1
+    }
+  },
+  "www/src/docs/exampleComponents/LineChart/LineChartNegativeValuesWithReferenceLines.tsx": {
+    "react-perf/jsx-no-new-array-as-prop": {
+      "count": 2
+    },
+    "react-perf/jsx-no-new-object-as-prop": {
+      "count": 4
+    }
+  },
+  "www/src/docs/exampleComponents/LineChart/LineChartWithReferenceLines.tsx": {
+    "react-perf/jsx-no-new-object-as-prop": {
+      "count": 4
+    }
+  },
+  "www/src/docs/exampleComponents/LineChart/LineChartWithXAxisPadding.tsx": {
+    "react-perf/jsx-no-new-object-as-prop": {
+      "count": 3
+    }
+  },
+  "www/src/docs/exampleComponents/LineChart/SimpleLineChart.tsx": {
+    "react-perf/jsx-no-new-object-as-prop": {
+      "count": 2
+    }
+  },
+  "www/src/docs/exampleComponents/LineChart/SynchronizedLineChart.tsx": {
+    "react-perf/jsx-no-new-object-as-prop": {
+      "count": 6
+    }
+  },
+  "www/src/docs/exampleComponents/LineChart/TinyLineChart.tsx": {
+    "react-perf/jsx-no-new-object-as-prop": {
+      "count": 1
+    }
+  },
+  "www/src/docs/exampleComponents/LineChart/VerticalLineChart.tsx": {
+    "react-perf/jsx-no-new-object-as-prop": {
+      "count": 2
+    }
+  },
+  "www/src/docs/exampleComponents/LineChart/VerticalLineChartWithSpecifiedDomain.tsx": {
+    "react-perf/jsx-no-new-array-as-prop": {
+      "count": 1
+    },
+    "react-perf/jsx-no-new-object-as-prop": {
+      "count": 2
+    }
+  },
+  "www/src/docs/exampleComponents/PieChart/CustomActiveShapePieChart.tsx": {
+    "react-perf/jsx-no-new-function-as-prop": {
+      "count": 1
+    },
+    "react-perf/jsx-no-new-object-as-prop": {
+      "count": 2
+    }
+  },
+  "www/src/docs/exampleComponents/PieChart/PieChartInFlexbox.tsx": {
+    "react-perf/jsx-no-new-object-as-prop": {
+      "count": 3
+    }
+  },
+  "www/src/docs/exampleComponents/PieChart/PieChartInGrid.tsx": {
+    "react-perf/jsx-no-new-object-as-prop": {
+      "count": 4
+    }
+  },
+  "www/src/docs/exampleComponents/PieChart/PieChartNavExample.tsx": {
+    "react-perf/jsx-no-new-object-as-prop": {
+      "count": 1
+    }
+  },
+  "www/src/docs/exampleComponents/PieChart/PieChartWithCustomizedLabel.tsx": {
+    "react-perf/jsx-no-new-object-as-prop": {
+      "count": 2
+    }
+  },
+  "www/src/docs/exampleComponents/PieChart/PieChartWithNeedle.tsx": {
+    "react-perf/jsx-no-new-function-as-prop": {
+      "count": 1
+    },
+    "react-perf/jsx-no-new-object-as-prop": {
+      "count": 1
+    }
+  },
+  "www/src/docs/exampleComponents/PieChart/PieChartWithPaddingAngle.tsx": {
+    "react-perf/jsx-no-new-object-as-prop": {
+      "count": 1
+    }
+  },
+  "www/src/docs/exampleComponents/PieChart/PieWithGradient.tsx": {
+    "react-perf/jsx-no-new-object-as-prop": {
+      "count": 1
+    }
+  },
+  "www/src/docs/exampleComponents/PieChart/StraightAnglePieChart.tsx": {
+    "react-perf/jsx-no-new-object-as-prop": {
+      "count": 1
+    }
+  },
+  "www/src/docs/exampleComponents/PieChart/TwoLevelPieChart.tsx": {
+    "react-perf/jsx-no-new-object-as-prop": {
+      "count": 1
+    }
+  },
+  "www/src/docs/exampleComponents/RadarChart/RadarChartNavExample.tsx": {
+    "react-perf/jsx-no-new-object-as-prop": {
+      "count": 1
     }
   },
   "www/src/docs/exampleComponents/RadarChart/RangeRadarChartCustomAnimation.tsx": {
     "@typescript-eslint/consistent-type-assertions": {
       "count": 1
+    },
+    "react-perf/jsx-no-new-array-as-prop": {
+      "count": 1
+    },
+    "react-perf/jsx-no-new-object-as-prop": {
+      "count": 1
+    }
+  },
+  "www/src/docs/exampleComponents/RadarChart/SimpleRadarChart.tsx": {
+    "react-perf/jsx-no-new-object-as-prop": {
+      "count": 1
+    }
+  },
+  "www/src/docs/exampleComponents/RadarChart/SpecifiedDomainRadarChart.tsx": {
+    "react-perf/jsx-no-new-array-as-prop": {
+      "count": 1
+    },
+    "react-perf/jsx-no-new-object-as-prop": {
+      "count": 1
+    }
+  },
+  "www/src/docs/exampleComponents/RadialBarChart/RadialBarChartClickToFocusLegendExample.tsx": {
+    "react-perf/jsx-no-new-function-as-prop": {
+      "count": 1
+    },
+    "react-perf/jsx-no-new-object-as-prop": {
+      "count": 2
+    }
+  },
+  "www/src/docs/exampleComponents/RadialBarChart/RadialBarChartNavExample.tsx": {
+    "react-perf/jsx-no-new-array-as-prop": {
+      "count": 1
+    },
+    "react-perf/jsx-no-new-object-as-prop": {
+      "count": 1
+    }
+  },
+  "www/src/docs/exampleComponents/RadialBarChart/SimpleRadialBarChart.tsx": {
+    "react-perf/jsx-no-new-object-as-prop": {
+      "count": 2
+    }
+  },
+  "www/src/docs/exampleComponents/ReferenceArea/ReferenceAreaExample.tsx": {
+    "react-perf/jsx-no-new-array-as-prop": {
+      "count": 1
+    },
+    "react-perf/jsx-no-new-object-as-prop": {
+      "count": 2
+    }
+  },
+  "www/src/docs/exampleComponents/ReferenceDot/ReferenceDotExample.tsx": {
+    "react-perf/jsx-no-new-object-as-prop": {
+      "count": 2
+    }
+  },
+  "www/src/docs/exampleComponents/ReferenceLine/ReferenceLineExample.tsx": {
+    "react-perf/jsx-no-new-array-as-prop": {
+      "count": 1
+    },
+    "react-perf/jsx-no-new-object-as-prop": {
+      "count": 5
+    }
+  },
+  "www/src/docs/exampleComponents/ReferenceLine/ReferenceLinePositionExample.tsx": {
+    "react-perf/jsx-no-new-object-as-prop": {
+      "count": 4
+    }
+  },
+  "www/src/docs/exampleComponents/ResponsiveContainer/ComposedResponsiveContainer.tsx": {
+    "react-perf/jsx-no-new-object-as-prop": {
+      "count": 1
+    }
+  },
+  "www/src/docs/exampleComponents/ResponsiveContainer/ResponsiveContainerExample.tsx": {
+    "react-perf/jsx-no-new-object-as-prop": {
+      "count": 1
+    }
+  },
+  "www/src/docs/exampleComponents/Sankey/SankeyCustomNodeExample.tsx": {
+    "react-perf/jsx-no-new-object-as-prop": {
+      "count": 2
+    }
+  },
+  "www/src/docs/exampleComponents/ScatterChart/BubbleChart.tsx": {
+    "react-perf/jsx-no-new-object-as-prop": {
+      "count": 5
     }
   },
   "www/src/docs/exampleComponents/ScatterChart/CustomAnimationExample.tsx": {
     "@typescript-eslint/consistent-type-assertions": {
       "count": 1
+    },
+    "react-perf/jsx-no-new-array-as-prop": {
+      "count": 2
+    },
+    "react-perf/jsx-no-new-object-as-prop": {
+      "count": 2
+    }
+  },
+  "www/src/docs/exampleComponents/ScatterChart/JointLineScatterChart.tsx": {
+    "react-perf/jsx-no-new-array-as-prop": {
+      "count": 1
+    },
+    "react-perf/jsx-no-new-object-as-prop": {
+      "count": 2
+    }
+  },
+  "www/src/docs/exampleComponents/ScatterChart/MultipleYAxesScatterChart.tsx": {
+    "react-perf/jsx-no-new-object-as-prop": {
+      "count": 2
+    }
+  },
+  "www/src/docs/exampleComponents/ScatterChart/ScatterChartExample.tsx": {
+    "react-perf/jsx-no-new-array-as-prop": {
+      "count": 1
+    },
+    "react-perf/jsx-no-new-object-as-prop": {
+      "count": 2
+    }
+  },
+  "www/src/docs/exampleComponents/ScatterChart/ScatterChartNavExample.tsx": {
+    "react-perf/jsx-no-new-array-as-prop": {
+      "count": 2
+    },
+    "react-perf/jsx-no-new-object-as-prop": {
+      "count": 1
+    }
+  },
+  "www/src/docs/exampleComponents/ScatterChart/ScatterChartPerformance.tsx": {
+    "react-perf/jsx-no-new-array-as-prop": {
+      "count": 3
+    },
+    "react-perf/jsx-no-new-object-as-prop": {
+      "count": 2
+    }
+  },
+  "www/src/docs/exampleComponents/ScatterChart/ScatterChartWithCells.tsx": {
+    "react-perf/jsx-no-new-object-as-prop": {
+      "count": 2
+    }
+  },
+  "www/src/docs/exampleComponents/ScatterChart/ScatterChartWithLabels.tsx": {
+    "react-perf/jsx-no-new-array-as-prop": {
+      "count": 1
+    },
+    "react-perf/jsx-no-new-object-as-prop": {
+      "count": 3
+    }
+  },
+  "www/src/docs/exampleComponents/ScatterChart/ThreeDimScatterChart.tsx": {
+    "react-perf/jsx-no-new-array-as-prop": {
+      "count": 1
+    },
+    "react-perf/jsx-no-new-object-as-prop": {
+      "count": 2
+    }
+  },
+  "www/src/docs/exampleComponents/SunburstChart/BundleSizeSunburst.tsx": {
+    "react-perf/jsx-no-new-object-as-prop": {
+      "count": 2
+    }
+  },
+  "www/src/docs/exampleComponents/Tooltip/CustomContentOfTooltip.tsx": {
+    "react-perf/jsx-no-new-object-as-prop": {
+      "count": 2
+    }
+  },
+  "www/src/docs/exampleComponents/Tooltip/TooltipStylesExample.tsx": {
+    "react-perf/jsx-no-new-array-as-prop": {
+      "count": 1
+    },
+    "react-perf/jsx-no-new-function-as-prop": {
+      "count": 1
+    },
+    "react-perf/jsx-no-new-object-as-prop": {
+      "count": 2
+    }
+  },
+  "www/src/docs/exampleComponents/TreeMap/BundleSizeTreemap.tsx": {
+    "react-perf/jsx-no-new-object-as-prop": {
+      "count": 1
+    }
+  },
+  "www/src/docs/exampleComponents/TreeMap/CustomContentTreemap.tsx": {
+    "react-perf/jsx-no-new-object-as-prop": {
+      "count": 1
+    }
+  },
+  "www/src/docs/exampleComponents/TreeMap/NestedTreemap.tsx": {
+    "react-perf/jsx-no-new-object-as-prop": {
+      "count": 1
+    }
+  },
+  "www/src/docs/exampleComponents/TreeMap/SimpleTreemap.tsx": {
+    "react-perf/jsx-no-new-object-as-prop": {
+      "count": 1
+    }
+  },
+  "www/src/docs/exampleComponents/TreeMap/TreeMapNavExample.tsx": {
+    "react-perf/jsx-no-new-object-as-prop": {
+      "count": 1
+    }
+  },
+  "www/src/docs/exampleComponents/TreeMap/TreemapWithPaddingAndGaps.tsx": {
+    "react-perf/jsx-no-new-object-as-prop": {
+      "count": 1
+    }
+  },
+  "www/src/docs/exampleComponents/XAxis/MultiXAxisExample.tsx": {
+    "react-perf/jsx-no-new-object-as-prop": {
+      "count": 1
+    }
+  },
+  "www/src/docs/exampleComponents/XAxis/XAxisAutoHeightExample.tsx": {
+    "react-perf/jsx-no-new-object-as-prop": {
+      "count": 2
+    }
+  },
+  "www/src/docs/exampleComponents/ZIndexLayer/ShadowDomExample.tsx": {
+    "react-perf/jsx-no-new-function-as-prop": {
+      "count": 1
+    }
+  },
+  "www/src/docs/exampleComponents/getRelativeCoordinate/CrosshairExample.tsx": {
+    "react-perf/jsx-no-new-object-as-prop": {
+      "count": 2
     }
   },
   "www/src/docs/exampleComponents/types.ts": {
     "@typescript-eslint/no-explicit-any": {
+      "count": 1
+    }
+  },
+  "www/src/docs/exampleComponents/useXAxisInverseDataSnapScale/DataSnapExample.tsx": {
+    "react-perf/jsx-no-new-object-as-prop": {
+      "count": 6
+    }
+  },
+  "www/src/docs/exampleComponents/useXAxisInverseTickSnapScale/AxisTicksSnapExample.tsx": {
+    "react-perf/jsx-no-new-object-as-prop": {
+      "count": 6
+    }
+  },
+  "www/src/layouts/RechartsLogo.tsx": {
+    "react-perf/jsx-no-new-array-as-prop": {
+      "count": 1
+    },
+    "react-perf/jsx-no-new-object-as-prop": {
       "count": 1
     }
   },
@@ -1130,6 +4204,31 @@
   },
   "www/src/utils/LocaleUtils.ts": {
     "@typescript-eslint/consistent-type-assertions": {
+      "count": 1
+    }
+  },
+  "www/src/utils/SuccessIcon.tsx": {
+    "react-perf/jsx-no-new-object-as-prop": {
+      "count": 1
+    }
+  },
+  "www/src/views/APIViewNew.tsx": {
+    "react-perf/jsx-no-new-function-as-prop": {
+      "count": 3
+    }
+  },
+  "www/src/views/IndexView/IndexLineChart.tsx": {
+    "react-perf/jsx-no-new-object-as-prop": {
+      "count": 1
+    }
+  },
+  "www/src/views/IndexView/index.tsx": {
+    "react-perf/jsx-no-new-function-as-prop": {
+      "count": 1
+    }
+  },
+  "www/test/color-mode.client.spec.tsx": {
+    "react-perf/jsx-no-new-function-as-prop": {
       "count": 1
     }
   },
