@@ -22,6 +22,7 @@ export function ColorModeProvider({ children }: { children: React.ReactNode }) {
 
   useEffect(() => {
     const updateState = (nextState: ColorModeState) => {
+      // eslint-disable-next-line @eslint-react/set-state-in-effect -- the stored and system preferences are only readable on the client, so they sync after hydration
       setState(nextState);
       updateColorModeInDOM(nextState.mode);
     };

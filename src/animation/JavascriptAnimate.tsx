@@ -59,6 +59,7 @@ export function JavascriptAnimate(outsideProps: JavascriptAnimateProps) {
 
   useEffect(() => {
     if (!isActive) {
+      // eslint-disable-next-line @eslint-react/set-state-in-effect -- children get an extra render with the final value, which existing behaviour relies on
       setStyle(to);
     }
   }, [isActive]);

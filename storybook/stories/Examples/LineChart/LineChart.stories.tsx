@@ -821,7 +821,7 @@ export const ToggleChildrenComponentsExceptCartesianGrid: StoryObj = {
       { yAxisId: 'two', dataKey: 'uv', orientation: 'left' },
     ] as const;
 
-    const [isBtnClicked, setBtnClicked] = useState(false);
+    const [isBtnClicked, setIsBtnClicked] = useState(false);
 
     const yAxisComponents = yAxes.map(({ yAxisId, dataKey, orientation }) => (
       <YAxis
@@ -841,7 +841,7 @@ export const ToggleChildrenComponentsExceptCartesianGrid: StoryObj = {
 
     return (
       <div>
-        <button data-testid="toggle" type="button" onClick={() => setBtnClicked(clicked => !clicked)}>
+        <button data-testid="toggle" type="button" onClick={() => setIsBtnClicked(clicked => !clicked)}>
           Click Me to Simulate Legend
         </button>
         <LineChart {...args} data={data}>

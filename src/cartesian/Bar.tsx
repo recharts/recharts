@@ -694,6 +694,11 @@ function BarRectangleWithActiveState(
   const [stayInLayer, setStayInLayer] = useState(false);
   const [hasMountedActive, setHasMountedActive] = useState(false);
 
+  /*
+   * The state changes below run in an effect on purpose: each step needs its own commit,
+   * so that the browser renders the in-between state that the CSS transition starts from.
+   */
+  /* eslint-disable @eslint-react/set-state-in-effect */
   useEffect(() => {
     let rafId: number;
     if (isActive) {
@@ -716,6 +721,7 @@ function BarRectangleWithActiveState(
       cancelAnimationFrame(rafId);
     };
   }, [isActive, isAnotherBarActive]);
+  /* eslint-enable @eslint-react/set-state-in-effect */
 
   const handleTransitionEnd = useCallback(() => {
     // 4. Leave the layer only when the exit transition finishes

@@ -16,7 +16,7 @@ const ClipPathIdContext = createContext<string | undefined>(undefined);
  * @returns React Context Provider
  */
 export const ClipPathProvider = ({ children }: { children: ReactNode }) => {
-  const [clipPathId] = useState<string>(`${uniqueId('recharts')}-clip`);
+  const [clipPathId] = useState<string>(() => `${uniqueId('recharts')}-clip`);
 
   const plotArea = usePlotArea();
 

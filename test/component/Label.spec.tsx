@@ -334,6 +334,7 @@ describe('<Label />', () => {
         const MyComp = () => {
           const [state, setState] = React.useState(0);
           React.useEffect(() => {
+            // eslint-disable-next-line @eslint-react/set-state-in-effect -- the test checks that hooks, including effects, run inside `content`
             setState(1);
           }, []);
           return <>label from component {state}</>;

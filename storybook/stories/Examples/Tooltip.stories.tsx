@@ -1,4 +1,4 @@
-import React, { useCallback, useState } from 'react';
+import React, { useCallback, useReducer, useState } from 'react';
 import { Args } from '@storybook/react-vite';
 import { generateMockData } from '@recharts/devtools';
 import { pageData } from '../data';
@@ -448,7 +448,7 @@ const d1 = [
 
 export const RechartsAlphaTooltipBug5516Repro = {
   render: (args: Args) => {
-    const [, setRandomUnusedState] = useState(true);
+    const [, forceRerender] = useReducer((v: boolean) => !v, true);
 
     return (
       <div>
@@ -456,7 +456,7 @@ export const RechartsAlphaTooltipBug5516Repro = {
           <p>There is a chart here; scroll down</p>
         </div>
         <div style={{ height: 250, width: 300 }}>
-          <button type="button" onClick={() => setRandomUnusedState(v => !v)}>
+          <button type="button" onClick={forceRerender}>
             set random unused state
           </button>
           <ResponsiveContainer>
@@ -476,7 +476,7 @@ export const RechartsAlphaTooltipBug5516Repro = {
 
 export const RechartsAlphaTooltipBug5516ReproButWithItemBasedTooltip = {
   render: (args: Args) => {
-    const [, setRandomUnusedState] = useState(true);
+    const [, forceRerender] = useReducer((v: boolean) => !v, true);
 
     return (
       <div>
@@ -484,7 +484,7 @@ export const RechartsAlphaTooltipBug5516ReproButWithItemBasedTooltip = {
           <p>There is a chart here; scroll down</p>
         </div>
         <div style={{ height: 250, width: 300 }}>
-          <button type="button" onClick={() => setRandomUnusedState(v => !v)}>
+          <button type="button" onClick={forceRerender}>
             set random unused state
           </button>
           <ResponsiveContainer>

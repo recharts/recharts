@@ -296,12 +296,12 @@ function YAxisImpl(props: PropsWithDefaults) {
     [dispatch, yAxisId],
   );
 
-  const stableResetYAxisWidth = useRef<typeof resetYAxisWidth>(resetYAxisWidth);
-  stableResetYAxisWidth.current = resetYAxisWidth;
+  const stableResetYAxisWidthRef = useRef<typeof resetYAxisWidth>(resetYAxisWidth);
+  stableResetYAxisWidthRef.current = resetYAxisWidth;
 
   useLayoutEffect(() => {
     if (chartDataLengthEmpty === false && width === 'auto') {
-      stableResetYAxisWidth.current();
+      stableResetYAxisWidthRef.current();
     }
   }, [chartDataLengthEmpty, width, resetYAxisWidth]);
 

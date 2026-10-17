@@ -26,6 +26,8 @@ export function getShortCommitHash(commitHash: string | undefined): string | und
   return cleanedHash.slice(0, 8);
 }
 
+const currentYear = new Date().getFullYear();
+
 export function Frame(props: FrameProps) {
   const isIsolated = useIsIsolatedView();
   const { children } = props;
@@ -64,7 +66,7 @@ export function Frame(props: FrameProps) {
               MIT License
             </a>
           </p>
-          <p>Copyright (c) 2016-{new Date().getFullYear()} Recharts Group</p>
+          <p>Copyright (c) 2016-{currentYear} Recharts Group</p>
           {shortCommitHash ? (
             <p>
               Commit: <code title={fullCommitHash}>{shortCommitHash}</code>

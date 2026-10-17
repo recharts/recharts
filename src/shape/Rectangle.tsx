@@ -2,7 +2,7 @@
  * @fileOverview Rectangle
  */
 import * as React from 'react';
-import { SVGProps, useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { SVGProps, useEffect, useMemo, useReducer, useRef, useState } from 'react';
 import { clsx } from 'clsx';
 import { AnimationDuration } from '../util/types';
 import { resolveDefaultProps } from '../util/resolveDefaultProps';
@@ -225,10 +225,7 @@ export const Rectangle: React.FC<Props> = rectangleProps => {
    * too, so the zero-dimension check below unmounts the rectangle instead of leaving an invisible
    * zero-size path behind.
    */
-  const [, setAnimationEndTick] = useState(0);
-  const handleAnimationEnd = useCallback(() => {
-    setAnimationEndTick(tick => tick + 1);
-  }, []);
+  const [, handleAnimationEnd] = useReducer((tick: number) => tick + 1, 0);
 
   if (x !== +x || y !== +y || width !== +width || height !== +height) {
     return null;
