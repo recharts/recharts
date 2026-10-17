@@ -12,9 +12,10 @@ which is one ESLint rule in one file, and ends with exactly one pull request.
 `fix-perf-violation`. Read it first. This file only adds what is specific to react-perf rules: what the
 rules forbid, steps 4 and 5, the give-up criteria, and the PR titles.
 
-The four rules come from `eslint-plugin-react-perf-x`. Each one reports a prop value that gets a new
-reference on every render, when it is passed to a React component (native elements like `<div>` and
-`<path>` are exempt, see `nativeAllowList` in `eslint.config.mjs`):
+The four rules come from `eslint-plugin-react-perf-x`. They run on the library (`src/**/*.tsx`) and the
+website (`www/**/*.tsx`). Each one reports a prop value that gets a new reference on every render, when it
+is passed to a React component (native elements like `<div>` and `<path>` are exempt, see
+`nativeAllowList` in `eslint.config.mjs`):
 
 | Rule                                     | Forbids, as a prop value                            |
 | ---------------------------------------- | --------------------------------------------------- |
@@ -33,8 +34,8 @@ on every render, and makes Redux selectors recompute. Many Recharts components d
 Redux store in an effect (for example `SetTooltipEntrySettings`, `SetLegendPayload`), so a new object can
 mean a store update, and another render of every chart part, on every render.
 
-Fixes in `src/` improve the library. Fixes in tests, stories and website examples matter less for speed,
-but website examples are copied by users, so there they also teach the right pattern.
+Fixes in `src/` improve the library. Fixes in the website matter less for speed, but website examples
+are copied by users, so there they also teach the right pattern.
 
 ## Extra hard rules
 
@@ -64,9 +65,6 @@ For each entry in `violations`:
 3. Find what receives the value. Open that component and check what it does with the prop: does it pass it
    to `React.memo`, `useMemo`, `useEffect`, a selector, or dispatch it to the store? This tells you whether
    the fix also changes how often something runs (it should only ever run less often, never more).
-4. If the file is a test or a story, read the test name and assertions. Some tests create new references
-   on purpose (for example `*.rerenderStability.spec.tsx`, or tests that check that Recharts copes with
-   new props on rerender). Hoisting those values would make the test pass for the wrong reason.
 
 ## Step 5: Fix the violations
 
@@ -75,7 +73,7 @@ Pick the first recipe that fits. Prefer the simplest one.
 ### The value is a constant: hoist it to module scope
 
 If the value does not depend on anything from render, move it out of the component. This is the best fix,
-and the usual one in tests, stories and website examples.
+and the usual one in website examples.
 
 ```tsx
 // Before
@@ -199,11 +197,9 @@ Class components cannot use hooks.
 - Do not convert the whole class to a function component in this skill. That is a larger refactor; give up
   on the violation instead and say so in the skip reason.
 
-### Tests, stories and website examples
+### Website
 
-- Hoist constant values to module scope (or to the `describe` block if the value is only used there).
-- In tests, never change what the test checks. If the test needs a new value on each render (see step 4),
-  give up on that violation.
+- Hoist constant values to module scope.
 - In website examples (`www/src/docs/exampleComponents`), keep the example easy to read: hoisting a
   constant is fine; adding `useMemo` or `useCallback` to an example is fine only when the value really
   depends on state. Do not add explicit colors.
@@ -216,7 +212,6 @@ Give up on a violation (not necessarily the whole target) when any of these is t
   for example `{ ...props, y }` where `props` is the whole props object.
 - The fix needs hooks in a class component, or converting a class component to a function component.
 - The fix needs changes to more than 3 files other than the target file.
-- The test creates a new value on purpose (see step 4).
 - The fix would change the rendered output, the props passed to a user's custom component, or the
   arguments of an event callback.
 - You tried three different approaches and type checks or tests still fail.
@@ -226,7 +221,7 @@ Give up on a violation (not necessarily the whole target) when any of these is t
 Examples of good skip reasons:
 
 - Good: `Line 1048: otherProps spreads this.props of the Brush class; needs Brush converted to a function component.`
-- Good: `Line 123: rerenderStability test passes a new fills array on purpose to check that Bar keeps its cells.`
+- Good: `Line 1572: computedData depends on modifiedLinks, which Sankey rebuilds on every render; needs a memoized layout first.`
 
 ## Step 8: Commit message and PR title
 
@@ -236,6 +231,6 @@ Examples of good skip reasons:
 | Partial success | `perf: stabilize some <what> props in <file>` |
 | Failure         | `chore(perf): skip <shortRule> in <file>`     |
 
-`<what>` is `object`, `array`, `function`, or `JSX`. For files outside `src/`, use `refactor` instead of
-`perf` in the success titles (for example `refactor: stabilize array props in <file>`), because the change
+`<what>` is `object`, `array`, `function`, or `JSX`. For files in `www/`, use `docs` instead of
+`perf` in the success titles (for example `docs: stabilize array props in <file>`), because the change
 does not affect the library.

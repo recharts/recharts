@@ -443,7 +443,7 @@ const settings = [
  */
 const perfOptimization = {
   name: 'x/react-perf',
-  files: ['**/*.jsx', '**/*.tsx'],
+  files: ['src/**/*.tsx', 'www/**/*.tsx'],
   plugins: { 'react-perf': reactPerf },
   rules: {
     'react-perf/jsx-no-new-object-as-prop': ['error', { nativeAllowList: 'all' }],
