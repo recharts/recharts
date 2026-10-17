@@ -72,3 +72,8 @@ testWithThemes('Chart Reversed By Both Angles And Reverse Axis', async ({ mountS
   const component = await mountStory('RadialBarChart/ChartReversedByBothAnglesAndReverseAxis');
   await expect(component).toHaveScreenshot();
 });
+
+testWithThemes('Curved label backgrounds', async ({ mountStory }) => {
+  const component = await mountStory('RadialBarChart/CurvedLabelBackgrounds');
+  await expect(component).toHaveScreenshot();
+});
