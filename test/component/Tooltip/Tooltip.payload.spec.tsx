@@ -149,6 +149,33 @@ const BarChartTestCase: TooltipPayloadTestCase = {
   expectedTooltipContent: ['My custom name : 1398$$$', 'amt : 2400', 'uv : 300kg'],
 };
 
+const AreaChartWithNameKeyTestCase: TooltipPayloadTestCase = {
+  name: 'AreaChart with nameKey',
+  Wrapper: ({ children }) => (
+    <AreaChart {...commonChartProps} data={PageData}>
+      <Area dataKey="uv" nameKey="name" name="This is ignored because the nameKey pulls the name out of the data" />
+      {children}
+    </AreaChart>
+  ),
+  mouseHoverSelector: areaChartMouseHoverTooltipSelector,
+  expectedTooltipTitle: '2',
+  expectedTooltipContent: ['Page C : 300'],
+};
+
+const BarChartWithNameKeyTestCase: TooltipPayloadTestCase = {
+  name: 'BarChart with nameKey',
+  Wrapper: ({ children }) => (
+    <BarChart {...commonChartProps} data={PageData}>
+      <Bar dataKey="uv" nameKey="name" unit="kg" />
+      <Bar dataKey="pv" nameKey="does not exist in the data" name="My custom name" />
+      {children}
+    </BarChart>
+  ),
+  mouseHoverSelector: barChartMouseHoverTooltipSelector,
+  expectedTooltipTitle: '2',
+  expectedTooltipContent: ['My custom name : 1398', 'Page C : 300kg'],
+};
+
 const LineChartTestCase: TooltipPayloadTestCase = {
   name: 'LineChart',
   Wrapper: ({ children }) => (
@@ -162,6 +189,19 @@ const LineChartTestCase: TooltipPayloadTestCase = {
   mouseHoverSelector: lineChartMouseHoverTooltipSelector,
   expectedTooltipTitle: '2',
   expectedTooltipContent: ['My custom name : 1398$$$', 'amt : 2400', 'uv : 300kg'],
+};
+
+const LineChartWithNameKeyTestCase: TooltipPayloadTestCase = {
+  name: 'LineChart with nameKey',
+  Wrapper: ({ children }) => (
+    <LineChart {...commonChartProps} data={PageData}>
+      <Line dataKey="uv" nameKey={(entry: (typeof PageData)[number]) => `${entry.name} (uv)`} />
+      {children}
+    </LineChart>
+  ),
+  mouseHoverSelector: lineChartMouseHoverTooltipSelector,
+  expectedTooltipTitle: '2',
+  expectedTooltipContent: ['Page C (uv) : 300'],
 };
 
 const LineChartDataOnGraphicalItemTestCase: TooltipPayloadTestCase = {
@@ -331,6 +371,19 @@ const RadarChartWithAxisTestCase: TooltipPayloadTestCase = {
   expectedTooltipContent: ['My custom name : 4800', 'amt : 2400', 'uv : 189'],
 };
 
+const RadarChartWithNameKeyTestCase: TooltipPayloadTestCase = {
+  name: 'RadarChart with nameKey',
+  Wrapper: ({ children }) => (
+    <RadarChart height={600} width={600} data={PageData}>
+      <Radar dataKey="uv" nameKey="name" />
+      {children}
+    </RadarChart>
+  ),
+  mouseHoverSelector: radarChartMouseHoverTooltipSelector,
+  expectedTooltipTitle: '5',
+  expectedTooltipContent: ['Page F : 189'],
+};
+
 const RadialBarChartTestCase: TooltipPayloadTestCase = {
   name: 'RadialBarChart',
   Wrapper: ({ children }) => (
@@ -345,6 +398,19 @@ const RadialBarChartTestCase: TooltipPayloadTestCase = {
   // I cannot figure out how to make RadialBar display anything else other than the index
   expectedTooltipTitle: '3',
   expectedTooltipContent: ['My custom name : 9800', 'amt : 2400', 'uv : 200'],
+};
+
+const RadialBarChartWithNameKeyTestCase: TooltipPayloadTestCase = {
+  name: 'RadialBarChart with nameKey',
+  Wrapper: ({ children }) => (
+    <RadialBarChart height={600} width={600} data={PageData}>
+      <RadialBar dataKey="uv" nameKey="name" />
+      {children}
+    </RadialBarChart>
+  ),
+  mouseHoverSelector: radialBarChartMouseHoverTooltipSelector,
+  expectedTooltipTitle: '3',
+  expectedTooltipContent: ['Page D : 200'],
 };
 
 const SankeyNodeHoverTestCase: TooltipPayloadTestCase = {
@@ -421,8 +487,11 @@ const TreemapTestCase: TooltipPayloadTestCase = {
 const testCases: ReadonlyArray<TooltipPayloadTestCase> = [
   AreaChartTestCase,
   AreaChartWithXAxisTestCase,
+  AreaChartWithNameKeyTestCase,
   BarChartTestCase,
+  BarChartWithNameKeyTestCase,
   LineChartTestCase,
+  LineChartWithNameKeyTestCase,
   LineChartDataOnGraphicalItemTestCase,
   LineChartVerticalTestCase,
   ComposedChartTestCase,
@@ -433,7 +502,9 @@ const testCases: ReadonlyArray<TooltipPayloadTestCase> = [
   PieChartWithCustomNameKeyTestCase,
   RadarChartTestCase,
   RadarChartWithAxisTestCase,
+  RadarChartWithNameKeyTestCase,
   RadialBarChartTestCase,
+  RadialBarChartWithNameKeyTestCase,
   SankeyNodeHoverTestCase,
   SankeyLinkHoverTestCase,
   ScatterChartTestCase,

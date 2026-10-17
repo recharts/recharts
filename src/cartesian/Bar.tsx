@@ -190,6 +190,17 @@ export interface BarProps<DataPointType, ValueAxisType>
    */
   legendType?: LegendType;
   /**
+   * Name represents each data entry in the tooltip.
+   * This allows you to extract the name from the data:
+   *
+   * - `string`: the name of the field in the data object;
+   * - `number`: the index of the field in the data;
+   * - `function`: a function that receives the data object and returns the name.
+   *
+   * @since 3.11
+   */
+  nameKey?: DataKey<DataPointType>;
+  /**
    * The minimal height of a bar in a horizontal chart, or the minimal width of a bar in a vertical chart.
    *
    * By default, 0 values are not shown.
@@ -448,6 +459,7 @@ type InternalBarProps = {
   barSize?: string | number;
   unit?: string | number;
   name?: string | number;
+  nameKey?: DataKey<unknown>;
   dataKey?: DataKey<any>;
   tooltipType?: TooltipType;
   formatter?: Formatter;
@@ -511,6 +523,7 @@ const SetBarTooltipEntrySettings = React.memo(
     strokeWidth,
     fill,
     name,
+    nameKey,
     hide,
     unit,
     formatter,
@@ -518,7 +531,17 @@ const SetBarTooltipEntrySettings = React.memo(
     id,
   }: Pick<
     InternalProps,
-    'dataKey' | 'stroke' | 'strokeWidth' | 'fill' | 'name' | 'hide' | 'unit' | 'formatter' | 'tooltipType' | 'id'
+    | 'dataKey'
+    | 'stroke'
+    | 'strokeWidth'
+    | 'fill'
+    | 'name'
+    | 'nameKey'
+    | 'hide'
+    | 'unit'
+    | 'formatter'
+    | 'tooltipType'
+    | 'id'
   >) => {
     const tooltipEntrySettings: TooltipPayloadConfiguration = {
       dataDefinedOnItem: undefined,
@@ -528,7 +551,7 @@ const SetBarTooltipEntrySettings = React.memo(
         strokeWidth,
         fill,
         dataKey,
-        nameKey: undefined,
+        nameKey,
         name: getTooltipNameProp(name, dataKey),
         hide,
         type: tooltipType,
@@ -1353,6 +1376,7 @@ function BarFn(outsideProps: Props) {
             strokeWidth={themedProps.strokeWidth ?? props.strokeWidth}
             fill={themedProps.fill ?? props.fill}
             name={props.name}
+            nameKey={props.nameKey}
             hide={props.hide}
             unit={props.unit}
             formatter={props.formatter}
