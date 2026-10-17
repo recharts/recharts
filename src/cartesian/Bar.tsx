@@ -599,7 +599,7 @@ function BarBackground(props: BarBackgroundProps) {
           ...backgroundThemeProps,
           ...backgroundFromDataEntry,
           ...backgroundProps,
-          ...adaptEventsOfChild(restOfAllOtherProps, entry, i),
+          ...adaptEventsOfChild(restOfAllOtherProps, entry, entry.originalDataIndex),
           onMouseEnter,
           onMouseLeave,
           onClick,
@@ -845,7 +845,7 @@ function BarRectangles({
             // https://github.com/recharts/recharts/issues/5415
             key={`rectangle-${entry?.x}-${entry?.y}-${entry?.value}-${i}`}
             className="recharts-bar-rectangle"
-            {...adaptEventsOfChild(restOfAllOtherProps, entry, i)}
+            {...adaptEventsOfChild(restOfAllOtherProps, entry, entry.originalDataIndex)}
             onMouseEnter={onMouseEnterFromContext(entry, entry.originalDataIndex)}
             onMouseLeave={onMouseLeaveFromContext(entry, entry.originalDataIndex)}
             onClick={onClickFromContext(entry, entry.originalDataIndex)}
