@@ -8,6 +8,7 @@ import {
   FunnelChart,
   Legend,
   Line,
+  LineChart,
   Pie,
   PieChart,
   PolarAngleAxis,
@@ -213,6 +214,25 @@ describe('graphical items with their own style props', () => {
   });
 
   describe('Line', () => {
+    it('should apply data point styles to dots and keep them out of the theme', () => {
+      const { container } = rechartsTestRender(
+        <RechartsThemeProvider value={theme}>
+          <LineChart width={400} height={400} data={[{ name: 'a', value: 100, fill: 'red' }]}>
+            <Line dataKey="value" isAnimationActive={false} />
+            <Tooltip defaultIndex={0} />
+          </LineChart>
+        </RechartsThemeProvider>,
+      );
+
+      const dot = container.querySelector('.recharts-line-dot');
+      expect(dot).toHaveAttribute('fill', 'red');
+      expect(dot).not.toHaveAttribute('stroke', 'indigo');
+      expect(dot).not.toHaveAttribute('stroke-width', '3');
+      const activeDot = getStyleAttributes(container.querySelector('.recharts-active-dot circle'));
+      expect(activeDot.fill).toBe('red');
+      expect(activeDot.stroke).not.toBe('black');
+    });
+
     it('should use the theme for the active dot without own styles', () => {
       const { container } = renderComposed(<Line dataKey="value" isAnimationActive={false} />);
       expect(getStyleAttributes(container.querySelector('.recharts-line-curve')).stroke).toBe('indigo');

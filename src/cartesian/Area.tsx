@@ -71,7 +71,7 @@ import { AreaRevealShape, AreaRevealShapeProps } from './AreaRevealShape';
 import { GraphicalItemStyle, Styles2D } from '../theme/RechartsTheme';
 import { useRechartsTheme } from '../theme/RechartsThemeContext';
 import { useBackwardsCompatibleTheme } from '../theme/useBackwardsCompatibleTheme';
-import { getActiveStyleOverrides } from '../theme/activeStyles';
+import { UnthemedStyles, useUnthemedStyles } from '../theme/dataEntryStyles';
 import { useGraphicalItemIdentity } from '../theme/useGraphicalItemIdentity';
 import { useEffectiveDataKey } from '../util/useEffectiveDataKey';
 
@@ -89,6 +89,8 @@ type BaseValueCoordinate<DataPointType = any> = NullableCoordinate & { payload: 
  * Internal props, combination of external props + defaultProps + private Recharts state
  */
 interface InternalAreaProps extends ZIndexable {
+  unthemedStyles?: UnthemedStyles;
+  themedActiveStyles?: Styles2D;
   activeDot: ActiveDotType;
   animationBegin: number;
   animationDuration: AnimationDuration;
@@ -515,6 +517,7 @@ const SetAreaTooltipEntrySettings = React.memo(
         unit,
         formatter,
         graphicalItemId: id,
+        ignoreDataEntryColors: true,
       },
     };
     return <SetTooltipEntrySettings tooltipEntrySettings={tooltipEntrySettings} />;
@@ -545,7 +548,7 @@ function AreaDotsWrapper({
   points: ReadonlyArray<AreaPointItem>;
   props: WithoutId<InternalProps>;
 }) {
-  const { needClip, dot, dataKey, dotFill, ...propsWithoutDotFill } = props;
+  const { needClip, dot, dataKey, dotFill, unthemedStyles, ...propsWithoutDotFill } = props;
   const areaProps: DotsDotProps = svgPropertiesNoEvents(propsWithoutDotFill);
 
   return (
@@ -556,6 +559,7 @@ function AreaDotsWrapper({
       dotClassName="recharts-area-dot"
       dataKey={dataKey}
       baseProps={{ ...areaProps, fill: dotFill ?? areaProps.fill }}
+      unthemedStyles={unthemedStyles}
       needClip={needClip}
       clipPathId={clipPathId}
     />
@@ -833,6 +837,7 @@ class AreaWithState extends PureComponent<InternalProps> {
           itemDataKey={this.props.dataKey}
           activeDot={this.props.activeDot}
           clipPath={activePointsClipPath}
+          themedActiveStyles={this.props.themedActiveStyles}
         />
         {this.props.isRange && Array.isArray(baseLine) && (
           <ActivePoints
@@ -841,6 +846,7 @@ class AreaWithState extends PureComponent<InternalProps> {
             itemDataKey={this.props.dataKey}
             activeDot={this.props.activeDot}
             clipPath={activePointsClipPath}
+            themedActiveStyles={this.props.themedActiveStyles}
           />
         )}
       </ZIndexLayer>
@@ -849,7 +855,8 @@ class AreaWithState extends PureComponent<InternalProps> {
 }
 
 function AreaImpl<DataPointType, ValueAxisType>(
-  props: PropsWithDefaults<DataPointType, ValueAxisType> & Pick<InternalProps, 'dotFill'>,
+  props: PropsWithDefaults<DataPointType, ValueAxisType> &
+    Pick<InternalProps, 'dotFill' | 'unthemedStyles' | 'themedActiveStyles'>,
 ) {
   const {
     activeDot,
@@ -1087,16 +1094,13 @@ function AreaFn(outsideProps: Props<any, any>) {
     outsideProps,
     defaultLegacyThemeProps,
   );
-  const themedActiveDot = getActiveStyleOverrides(outsideProps.activeDot ?? true, theme?.active);
-  const activeDot =
-    themedActiveDot == null
-      ? outsideProps.activeDot
-      : { ...themedActiveDot, ...(typeof outsideProps.activeDot === 'object' ? outsideProps.activeDot : {}) };
+  const unthemedStyles = useUnthemedStyles(outsideProps);
+  const themedActiveStyles = theme?.active;
   const propsWithTheme: Props<any, any> = {
     ...outsideProps,
     ...theme,
     dataKey,
-    activeDot,
+    activeDot: outsideProps.activeDot,
   };
   const props: RequiresDefaultProps<Props<any, any>, typeof defaultAreaProps> = resolveDefaultProps(
     propsWithTheme,
@@ -1139,7 +1143,13 @@ function AreaFn(outsideProps: Props<any, any>) {
             isPanorama={isPanorama}
             connectNulls={props.connectNulls}
           />
-          <AreaImpl {...props} id={id} dotFill={dotFill} />
+          <AreaImpl
+            {...props}
+            id={id}
+            dotFill={dotFill}
+            unthemedStyles={unthemedStyles}
+            themedActiveStyles={themedActiveStyles}
+          />
         </>
       )}
     </RegisterGraphicalItemId>

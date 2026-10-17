@@ -194,8 +194,9 @@ export const combineTooltipPayload = (
       /*
        * Bar rectangles apply SVG colors from the active datum after their series and theme props.
        * Preserve that precedence in the tooltip metadata without changing other chart types.
+       * Line, Area and Radar draw one shape per series, so they keep the series color.
        */
-      const parsedItem = parseTooltipPayloadItem(tooltipPayload);
+      const parsedItem = settings.ignoreDataEntryColors ? undefined : parseTooltipPayloadItem(tooltipPayload);
       const tooltipEntrySettings: TooltipEntrySettings = {
         ...settings,
         color: parsedItem?.color ?? parsedItem?.fill ?? parsedItem?.stroke ?? settings.color,

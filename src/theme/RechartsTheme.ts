@@ -92,8 +92,9 @@ export interface RechartsTheme {
    * The theme colors never mix with user colors. If Line, Area, Bar, Scatter, Radar, RadialBar, Pie, or Funnel
    * sets its own `fill` or `stroke` prop, it ignores its theme entry completely, including the `active` styles.
    *
-   * Individual shapes of Bar, RadialBar, Scatter, Pie, Funnel, Treemap, Sankey, and SunburstChart can be styled
-   * from the data array. If a data entry defines its own `fill` or `stroke`, then that shape ignores
+   * Individual shapes of Bar, RadialBar, Scatter, Pie, Funnel, Treemap, Sankey, and SunburstChart, and
+   * individual point markers of Line, Area, and Radar can be styled from the data array. If a data entry defines its own
+   * `fill` or `stroke`, then that shape ignores
    * the theme completely, and renders with only its own styles and the explicit props of its
    * graphical item.
    *

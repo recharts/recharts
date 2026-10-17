@@ -735,8 +735,10 @@ export function getTooltipEntry({
   value: ValueType;
   name: string | undefined;
 }): TooltipPayloadEntry {
+  // `ignoreDataEntryColors` only steers the color selection, so it does not belong in the payload
+  const { ignoreDataEntryColors, ...settings } = tooltipEntrySettings;
   return {
-    ...tooltipEntrySettings,
+    ...settings,
     dataKey,
     payload,
     value,
