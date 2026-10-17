@@ -31,7 +31,7 @@ import { RequiresDefaultProps, resolveDefaultProps } from '../util/resolveDefaul
 import { initialEventSettingsState } from '../state/eventSettingsSlice';
 import { GraphicalItemStyle, RechartsTheme } from '../theme/RechartsTheme';
 import { useRechartsTheme } from '../theme/RechartsThemeContext';
-import { hasOwnColors } from '../theme/dataEntryStyles';
+import { getOwnStyles, hasOwnColors } from '../theme/dataEntryStyles';
 import { getEffectivePageBackground } from '../theme/pageBackground';
 import { SVGElementPropKeysType, svgPropertiesNoEventsFromUnknown } from '../util/svgPropertiesNoEvents';
 
@@ -391,6 +391,12 @@ function resolveSectorProps({
   Object.assign(props, entrySvgProps(entry));
 
   if (themeStyles != null && !chartHasColors && !hasOwnColors(entry)) {
+    /*
+     * Keep non-color theme fields such as fillOpacity and strokeDasharray.
+     * getOwnStyles leaves out `active`, which is not a sector prop.
+     * Entry props win over the theme, then the resolved colors and separator width.
+     */
+    Object.assign(props, getOwnStyles(branchStyle), entrySvgProps(entry));
     props.fill = inheritedFill ?? branchStyle?.fill;
     props.stroke = themeStyles.pageBackground ?? branchStyle?.stroke;
     props.strokeWidth = strokeWidth;

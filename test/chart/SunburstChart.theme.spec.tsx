@@ -432,4 +432,74 @@ describe('SunburstChart data entry styles', () => {
       { fill: 'blue', stroke: 'navy', strokeWidth: '2' },
     ]);
   });
+
+  it('keeps non-color theme styles, and lets the entry override them', () => {
+    const { container } = renderSunburst(
+      {
+        graphicalItems: [
+          {
+            fill: 'red',
+            stroke: 'darkred',
+            fillOpacity: 0.85,
+            strokeOpacity: 0.4,
+            strokeDasharray: '6 2',
+            active: { fill: 'white', stroke: 'red', strokeWidth: 8 },
+          },
+          { fill: 'green', stroke: 'darkgreen', fillOpacity: 0.5, strokeDasharray: '1 1' },
+        ],
+        pageBackground: 'ivory',
+      },
+      {
+        data: {
+          name: 'root',
+          value: 100,
+          children: [
+            {
+              name: 'A',
+              value: 50,
+              children: [
+                { name: 'A1', value: 25 },
+                { name: 'A2', value: 25, fillOpacity: 0.2, strokeDasharray: '4 4' },
+              ],
+            },
+            { name: 'B', value: 30 },
+            { name: 'C', value: 20, fill: 'blue', fillOpacity: 0.3 },
+          ],
+        },
+      },
+    );
+
+    const plain = getSector(container, 0);
+    expect(plain).toHaveAttribute('fill', 'red');
+    expect(plain).toHaveAttribute('stroke', 'ivory');
+    expect(plain).toHaveAttribute('stroke-width', '2');
+    expect(plain).toHaveAttribute('fill-opacity', '0.85');
+    expect(plain).toHaveAttribute('stroke-opacity', '0.4');
+    expect(plain).toHaveAttribute('stroke-dasharray', '6 2');
+    expect(plain).not.toHaveAttribute('active');
+
+    const inherited = getSector(container, 1);
+    expect(inherited).toHaveAttribute('fill', 'red');
+    expect(inherited).toHaveAttribute('fill-opacity', '0.85');
+    expect(inherited).toHaveAttribute('stroke-dasharray', '6 2');
+
+    const overridden = getSector(container, 2);
+    expect(overridden).toHaveAttribute('fill', 'red');
+    expect(overridden).toHaveAttribute('stroke', 'ivory');
+    expect(overridden).toHaveAttribute('fill-opacity', '0.2');
+    expect(overridden).toHaveAttribute('stroke-opacity', '0.4');
+    expect(overridden).toHaveAttribute('stroke-dasharray', '4 4');
+
+    const secondBranch = getSector(container, 3);
+    expect(secondBranch).toHaveAttribute('fill', 'green');
+    expect(secondBranch).toHaveAttribute('fill-opacity', '0.5');
+    expect(secondBranch).toHaveAttribute('stroke-dasharray', '1 1');
+    expect(secondBranch).not.toHaveAttribute('stroke-opacity');
+
+    const ownColor = getSector(container, 4);
+    expect(ownColor).toHaveAttribute('fill', 'blue');
+    expect(ownColor).toHaveAttribute('fill-opacity', '0.3');
+    expect(ownColor).not.toHaveAttribute('stroke');
+    expect(ownColor).not.toHaveAttribute('stroke-dasharray');
+  });
 });
