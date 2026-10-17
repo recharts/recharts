@@ -16,11 +16,15 @@ const padding = '0.5ex';
  *
  * Entries 1-8 share one band of lightness and chroma, so no series looks
  * heavier or more important than another. Entries 9-12 step outside that band
- * on purpose, because twelve hues at one lightness cannot all stay apart under
- * color vision deficiency.
+ * where they can, because twelve hues at one lightness cannot all stay apart
+ * under color vision deficiency: Purple is darker and Teal is less saturated.
+ * At 4.5:1 the band already sits close to the lightest a color can be, so they
+ * cannot step outside it upward.
  *
- * Every entry keeps at least 3:1 contrast against the background (WCAG 1.4.11),
- * both as a stroke and as a fill painted at `fillOpacity` 0.85.
+ * Every entry has at least 4.5:1 contrast against the background as a stroke,
+ * the WCAG contrast for text, so a label in the series color stays readable.
+ * Painted as a fill at `fillOpacity` 0.85, every entry keeps at least 3:1
+ * (WCAG 1.4.11).
  *
  * Entry N is the same hue family in the light and dark palettes, so a series
  * keeps its identity when the theme changes. Comments show stroke contrast.
@@ -30,18 +34,18 @@ const padding = '0.5ex';
  * @since 3.11
  */
 export const lightPalette: ReadonlyArray<string> = [
-  '#2775e8', //  1 Blue       4.38:1
-  '#b65900', //  2 Orange     4.75:1
-  '#007c59', //  3 Aqua       5.21:1
-  '#ae3b73', //  4 Rose       5.72:1
-  '#6f56b3', //  5 Violet     5.74:1
-  '#0582a1', //  6 Sky        4.45:1
-  '#b2392b', //  7 Red        5.98:1
-  '#568b28', //  8 Green      4.10:1
-  '#723984', //  9 Purple     7.97:1
-  '#00928e', // 10 Teal       3.82:1
-  '#ae7500', // 11 Amber      3.93:1
-  '#b862a7', // 12 Plum       3.93:1
+  '#2373e6', //  1 Blue       4.50:1
+  '#b65700', //  2 Orange     4.83:1
+  '#017a58', //  3 Aqua       5.35:1
+  '#a5386e', //  4 Rose       6.19:1
+  '#6b53b0', //  5 Violet     6.02:1
+  '#0681a0', //  6 Sky        4.51:1
+  '#b13629', //  7 Red        6.12:1
+  '#628039', //  8 Green      4.50:1
+  '#723683', //  9 Purple     8.17:1
+  '#39807c', // 10 Teal       4.61:1
+  '#9b6e27', // 11 Amber      4.51:1
+  '#aa5a9e', // 12 Plum       4.50:1
 ];
 
 function toGraphicalItem(color: string): GraphicalItemStyle {

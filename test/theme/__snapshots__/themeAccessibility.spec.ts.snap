@@ -56,22 +56,22 @@ strokes and fills
   barBackground.fill      1.10
 
 series colours
-  #2775e8     fill   3.45   stroke   4.38   sankey link   1.71
-  #b65900     fill   3.69   stroke   4.75   sankey link   1.76
-  #007c59     fill   3.97   stroke   5.21   sankey link   1.81
-  #ae3b73     fill   4.32   stroke   5.72   sankey link   1.87
-  #6f56b3     fill   4.18   stroke   5.74   sankey link   1.81
-  #0582a1     fill   3.50   stroke   4.45   sankey link   1.73
-  #b2392b     fill   4.53   stroke   5.98   sankey link   1.92
-  #568b28     fill   3.20   stroke   4.10   sankey link   1.64
-  #723984     fill   5.48   stroke   7.97   sankey link   2.00
-  #00928e     fill   3.10   stroke   3.82   sankey link   1.66
-  #ae7500     fill   3.12   stroke   3.93   sankey link   1.64
-  #b862a7     fill   3.12   stroke   3.93   sankey link   1.64
+  #2373e6     fill   3.53   stroke   4.50   sankey link   1.73
+  #b65700     fill   3.74   stroke   4.83   sankey link   1.77
+  #017a58     fill   4.05   stroke   5.35   sankey link   1.82
+  #a5386e     fill   4.60   stroke   6.19   sankey link   1.91
+  #6b53b0     fill   4.34   stroke   6.02   sankey link   1.83
+  #0681a0     fill   3.53   stroke   4.51   sankey link   1.74
+  #b13629     fill   4.64   stroke   6.12   sankey link   1.94
+  #628039     fill   3.42   stroke   4.50   sankey link   1.68
+  #723683     fill   5.61   stroke   8.17   sankey link   2.02
+  #39807c     fill   3.51   stroke   4.61   sankey link   1.70
+  #9b6e27     fill   3.45   stroke   4.51   sankey link   1.69
+  #aa5a9e     fill   3.47   stroke   4.50   sankey link   1.70
 
 closest pair of series colours
-  normal         11.2   #6f56b3 / #723984
-  protanopia      3.7   #0582a1 / #b862a7
-  deuteranopia    3.6   #b65900 / #ae7500
-  tritanopia      3.6   #0582a1 / #00928e"
+  normal         10.6   #a5386e / #aa5a9e
+  protanopia      3.2   #628039 / #9b6e27
+  deuteranopia    4.4   #a5386e / #39807c
+  tritanopia      3.6   #0681a0 / #39807c"
 `;

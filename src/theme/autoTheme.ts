@@ -22,18 +22,18 @@ const padding = '0.5ex';
  * @since 3.11
  */
 export const autoPalette: ReadonlyArray<string> = [
-  'light-dark(#2775e8, #5396ff)', //  1 Blue
-  'light-dark(#b65900, #e97e2b)', //  2 Orange
-  'light-dark(#007c59, #46d09f)', //  3 Aqua
-  'light-dark(#ae3b73, #e683ad)', //  4 Rose
-  'light-dark(#6f56b3, #b8a4fe)', //  5 Violet
-  'light-dark(#0582a1, #0bb1da)', //  6 Sky
-  'light-dark(#b2392b, #ff9180)', //  7 Red
-  'light-dark(#568b28, #79b14e)', //  8 Green
-  'light-dark(#723984, #ac71c0)', //  9 Purple
-  'light-dark(#00928e, #01a19c)', // 10 Teal
-  'light-dark(#ae7500, #ffc470)', // 11 Amber
-  'light-dark(#b862a7, #ffaaec)', // 12 Plum
+  'light-dark(#2373e6, #5396ff)', //  1 Blue
+  'light-dark(#b65700, #e97e2b)', //  2 Orange
+  'light-dark(#017a58, #46d09f)', //  3 Aqua
+  'light-dark(#a5386e, #e683ad)', //  4 Rose
+  'light-dark(#6b53b0, #b8a4fe)', //  5 Violet
+  'light-dark(#0681a0, #0bb1da)', //  6 Sky
+  'light-dark(#b13629, #ff9180)', //  7 Red
+  'light-dark(#628039, #79b14e)', //  8 Green
+  'light-dark(#723683, #ac71c0)', //  9 Purple
+  'light-dark(#39807c, #01a19c)', // 10 Teal
+  'light-dark(#9b6e27, #ffc470)', // 11 Amber
+  'light-dark(#aa5a9e, #ffaaec)', // 12 Plum
 ];
 
 function toGraphicalItem(color: string): GraphicalItemStyle {
@@ -49,7 +49,7 @@ function toGraphicalItem(color: string): GraphicalItemStyle {
  * Theme that follows the CSS `color-scheme` of the page.
  *
  * It has the colors of {@link lightTheme} and {@link darkTheme}: every color that differs between the two
- * is a CSS `light-dark()` value, such as `light-dark(#2775e8, #5396ff)`.
+ * is a CSS `light-dark()` value, such as `light-dark(#2373e6, #5396ff)`.
  * The browser picks the light or dark color from the `color-scheme` of the element it is applied to.
  * Switching between light and dark needs no React state and no re-render,
  * and server-rendered pages show the right colors from the first paint.
