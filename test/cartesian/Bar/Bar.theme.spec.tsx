@@ -1,8 +1,9 @@
-import { describe, expect, it } from 'vitest';
+import { describe, expect, it, vi } from 'vitest';
 import { generateMockData } from '@recharts/devtools';
 import React from 'react';
+import { fireEvent } from '@testing-library/react';
 import { createSelectorTestCase, rechartsTestRender } from '../../helper/createSelectorTestCase';
-import { Bar, BarChart, RechartsThemeProvider, Tooltip } from '../../../src';
+import { Bar, BarChart, BarShapeProps, RechartsThemeProvider, Tooltip } from '../../../src';
 import { getAllBarPaths } from '../../helper/expectBars';
 import { assertNotNull } from '../../helper/assertNotNull';
 import { selectTooltipPayload } from '../../../src/state/selectors/selectors';
@@ -107,6 +108,126 @@ describe('Bar with per-datum colors', () => {
       },
     ]);
     expect(tooltipItem).toHaveStyle({ color: 'rgb(0, 0, 255)' });
+  });
+});
+
+describe('Bar data entry styles', () => {
+  function getTooltipItem(container: Element): HTMLElement {
+    const tooltipItem = container.querySelector<HTMLElement>('.recharts-tooltip-item');
+    assertNotNull(tooltipItem);
+    return tooltipItem;
+  }
+
+  it('shows the Bar fill in the tooltip when the entry only has a stroke', () => {
+    const { container } = rechartsTestRender(
+      <BarChart width={400} height={400} data={[{ uv: 1, stroke: 'lime' }]}>
+        <Bar dataKey="uv" fill="#123456" isAnimationActive={false} />
+        <Tooltip defaultIndex={0} />
+      </BarChart>,
+    );
+
+    const bar = getAllBarPaths(container)[0];
+    expect(bar).toHaveAttribute('fill', '#123456');
+    expect(bar).toHaveAttribute('stroke', 'lime');
+    expect(getTooltipItem(container)).toHaveStyle({ color: 'rgb(18, 52, 86)' });
+  });
+
+  it('shows the Bar fill in the tooltip when the entry only has a stroke, with a theme', () => {
+    const { container } = rechartsTestRender(
+      <RechartsThemeProvider value={{ graphicalItems: [{ fill: 'purple', stroke: 'indigo' }] }}>
+        <BarChart width={400} height={400} data={[{ uv: 1, stroke: 'lime' }]}>
+          <Bar dataKey="uv" fill="#123456" isAnimationActive={false} />
+          <Tooltip defaultIndex={0} />
+        </BarChart>
+      </RechartsThemeProvider>,
+    );
+
+    const bar = getAllBarPaths(container)[0];
+    expect(bar).toHaveAttribute('fill', '#123456');
+    expect(bar).toHaveAttribute('stroke', 'lime');
+    expect(getTooltipItem(container)).toHaveStyle({ color: 'rgb(18, 52, 86)' });
+  });
+
+  it('ignores the entry color key in the tooltip, because it does not paint the bar', () => {
+    const { container } = rechartsTestRender(
+      <RechartsThemeProvider value={{ graphicalItems: [{ fill: 'purple', stroke: 'indigo' }] }}>
+        <BarChart width={400} height={400} data={[{ uv: 1, color: 'blue' }]}>
+          <Bar dataKey="uv" isAnimationActive={false} />
+          <Tooltip defaultIndex={0} />
+        </BarChart>
+      </RechartsThemeProvider>,
+    );
+
+    expect(getAllBarPaths(container)[0]).toHaveAttribute('fill', 'purple');
+    expect(getTooltipItem(container)).toHaveStyle({ color: 'rgb(128, 0, 128)' });
+  });
+
+  it('does not render the entry id on the bar or its background', () => {
+    const data = [
+      { uv: 1, id: 'entry-a' },
+      { uv: 2, id: 'entry-b' },
+    ];
+    const onClick = vi.fn();
+    const { container } = rechartsTestRender(
+      <BarChart width={400} height={400} data={data}>
+        <Bar dataKey="uv" background isAnimationActive={false} onClick={onClick} />
+      </BarChart>,
+    );
+
+    expect(getAllBarPaths(container)).toHaveLength(2);
+    expect(container.querySelectorAll('[id="entry-a"], [id="entry-b"]')).toHaveLength(0);
+
+    fireEvent.click(getAllBarPaths(container)[0]);
+    expect(onClick).toHaveBeenCalledTimes(1);
+    expect(onClick.mock.calls[0][0].payload).toBe(data[0]);
+  });
+
+  it('spreads entry styles on the bar, but not on its background', () => {
+    const data = [
+      {
+        uv: 1,
+        stroke: 'lime',
+        strokeWidth: 7,
+        opacity: 0.5,
+        style: { cursor: 'help' },
+        'data-test': 'entry-a',
+      },
+    ];
+    const { container } = rechartsTestRender(
+      <BarChart width={400} height={400} data={data}>
+        <Bar dataKey="uv" background isAnimationActive={false} />
+      </BarChart>,
+    );
+
+    const bar = getAllBarPaths(container)[0];
+    expect(bar).toHaveAttribute('stroke', 'lime');
+    expect(bar).toHaveAttribute('stroke-width', '7');
+    expect(bar).toHaveAttribute('opacity', '0.5');
+    expect(bar).toHaveAttribute('data-test', 'entry-a');
+    expect(bar).toHaveStyle({ cursor: 'help' });
+
+    const background = container.querySelector('.recharts-bar-background-rectangle');
+    assertNotNull(background);
+    expect(background).toHaveAttribute('fill', '#eee');
+    expect(background).not.toHaveAttribute('stroke');
+    expect(background).not.toHaveAttribute('stroke-width');
+    expect(background).not.toHaveAttribute('opacity');
+    expect(background).not.toHaveAttribute('data-test');
+    expect(background).not.toHaveAttribute('style');
+  });
+
+  it('still gives the entry and its payload to a custom background', () => {
+    const data = [{ uv: 1, stroke: 'lime', label: 'first' }];
+    const background = vi.fn((_props: BarShapeProps) => <rect />);
+    rechartsTestRender(
+      <BarChart width={400} height={400} data={data}>
+        <Bar dataKey="uv" background={background} isAnimationActive={false} />
+      </BarChart>,
+    );
+
+    expect(background).toHaveBeenCalled();
+    expect(background.mock.lastCall?.[0]).toMatchObject({ label: 'first', payload: data[0], index: 0 });
+    expect(background.mock.lastCall?.[0]).not.toHaveProperty('stroke');
   });
 });
 

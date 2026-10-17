@@ -101,6 +101,7 @@ describe('itemSorter in ComposedChart', () => {
           {
             dataDefinedOnItem: undefined,
             getPosition: noop,
+            getEntryColor: expect.any(Function),
             settings: {
               color: undefined,
               dataKey: 'pv',

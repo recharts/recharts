@@ -6,6 +6,8 @@ import { PolarViewBoxRequired } from '../../src/util/types';
 import { rechartsTestRender } from '../helper/createSelectorTestCase';
 import { assertNotNull } from '../helper/assertNotNull';
 import { mockGetBBox, restoreMockGetBBox } from '../helper/mockGetBBox';
+import { mockGetComputedTextLength, restoreMockGetComputedTextLength } from '../helper/mockGetComputedTextLength';
+import { mockGetTotalLength, restoreMockGetTotalLength } from '../helper/mockGetTotalLength';
 
 const data = [
   { name: 'A', value: 40 },
@@ -32,10 +34,14 @@ function getBackgrounds(container: Element): NodeListOf<SVGRectElement> {
 describe('label background', () => {
   beforeEach(() => {
     mockGetBBox(() => ({ x: 10, y: 20, width: 30, height: 12 }));
+    mockGetComputedTextLength(30);
+    mockGetTotalLength(500);
   });
 
   afterEach(() => {
     restoreMockGetBBox();
+    restoreMockGetComputedTextLength();
+    restoreMockGetTotalLength();
   });
 
   describe('<Label />', () => {
@@ -94,7 +100,7 @@ describe('label background', () => {
     });
 
     it.each(['insideStart', 'insideEnd', 'end'] as const)(
-      'does not render a background for curved radial labels with position=%s',
+      'renders a curved background for radial labels with position=%s',
       position => {
         const { container } = rechartsTestRender(
           <Surface height={300} width={300}>
@@ -103,9 +109,33 @@ describe('label background', () => {
         );
 
         expect(container.querySelector('.recharts-radial-bar-label')).not.toBeNull();
-        expect(getBackgrounds(container)).toHaveLength(0);
+        const background = container.querySelector('path.recharts-text-path-background');
+        assertNotNull(background);
+        expect(background).toHaveAttribute('stroke', '#fff');
+        expect(background).toHaveAttribute('stroke-width', '16');
+        expect(background).toHaveAttribute('stroke-dasharray', '38px 500px');
       },
     );
+
+    it('preserves a numeric startOffset when adding curved-background padding', () => {
+      const { container } = rechartsTestRender(
+        <Surface height={300} width={300}>
+          <Label
+            viewBox={polarViewBox}
+            value="text"
+            position="insideStart"
+            startOffset={20}
+            background={{ padding: { x: 6 } }}
+          />
+        </Surface>,
+      );
+
+      expect(container.querySelector('textPath')).toHaveAttribute('startOffset', '26');
+      expect(container.querySelector('path.recharts-text-path-background')).toHaveAttribute(
+        'stroke-dashoffset',
+        '-20px',
+      );
+    });
 
     it('does not render a background for custom content', () => {
       const { container } = rechartsTestRender(

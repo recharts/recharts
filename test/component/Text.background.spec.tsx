@@ -2,9 +2,15 @@ import { render } from '@testing-library/react';
 import React, { createRef } from 'react';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { darkTheme, emptyTheme, lightTheme, RechartsThemeProvider, Surface, Text } from '../../src';
-import { getTextBackgroundRect, resolveBackgroundPadding } from '../../src/component/Text';
+import {
+  getTextBackgroundRect,
+  getTextPathBackgroundGeometry,
+  resolveBackgroundPadding,
+} from '../../src/component/Text';
 import { assertNotNull } from '../helper/assertNotNull';
 import { mockGetBBox, restoreMockGetBBox } from '../helper/mockGetBBox';
+import { mockGetComputedTextLength, restoreMockGetComputedTextLength } from '../helper/mockGetComputedTextLength';
+import { mockGetTotalLength, restoreMockGetTotalLength } from '../helper/mockGetTotalLength';
 
 const textBox = { x: 10, y: 20, width: 50, height: 14 };
 
@@ -48,6 +54,39 @@ describe('getTextBackgroundRect', () => {
   });
 });
 
+describe('getTextPathBackgroundGeometry', () => {
+  const metrics = { pathLength: 200, textLength: 40, textHeight: 14, startOffset: 50 };
+
+  it('adds padding around text anchored at the start', () => {
+    expect(getTextPathBackgroundGeometry(metrics, { x: 4, y: 2 }, 'start')).toEqual({
+      start: 46,
+      length: 48,
+      strokeWidth: 18,
+    });
+  });
+
+  it('positions middle- and end-anchored backgrounds around the text', () => {
+    expect(getTextPathBackgroundGeometry(metrics, 0, 'middle')).toEqual({
+      start: 30,
+      length: 40,
+      strokeWidth: 14,
+    });
+    expect(getTextPathBackgroundGeometry(metrics, 0, 'end')).toEqual({
+      start: 10,
+      length: 40,
+      strokeWidth: 14,
+    });
+  });
+
+  it('clips the background to the available path', () => {
+    expect(getTextPathBackgroundGeometry({ ...metrics, startOffset: 0 }, { x: 4, y: 2 }, 'start')).toEqual({
+      start: 0,
+      length: 44,
+      strokeWidth: 18,
+    });
+  });
+});
+
 describe('<Text background />', () => {
   beforeEach(() => {
     mockGetBBox(() => textBox);
@@ -55,6 +94,8 @@ describe('<Text background />', () => {
 
   afterEach(() => {
     restoreMockGetBBox();
+    restoreMockGetComputedTextLength();
+    restoreMockGetTotalLength();
   });
 
   it('renders only the text element when background is not set', () => {
@@ -197,18 +238,61 @@ describe('<Text background />', () => {
     expect(rect).toHaveAttribute('transform', 'rotate(-30, 10, 20)');
   });
 
-  it('ignores the background when textPath is set', () => {
+  it('renders a curved background when textPath is set', () => {
+    mockGetComputedTextLength(40);
+    mockGetTotalLength(200);
     const { container } = render(
       <Surface width={300} height={300}>
-        <Text textPath="M0,0 L100,100" background>
+        <Text textPath="M0,0 L100,100" startOffset={50} background>
           text
         </Text>
       </Surface>,
     );
 
-    expect(container.querySelector('.recharts-text-with-background')).toBeNull();
-    expect(getBackground(container)).toBeNull();
-    expect(container.querySelector('textPath')).not.toBeNull();
+    const path = container.querySelector('path.recharts-text-path-background');
+    assertNotNull(path);
+    expect(path).toHaveAttribute('d', 'M0,0 L100,100');
+    expect(path).toHaveAttribute('fill', 'none');
+    expect(path).toHaveAttribute('stroke', '#fff');
+    expect(path).toHaveAttribute('stroke-width', '18');
+    expect(path).toHaveAttribute('stroke-linecap', 'round');
+    expect(path).toHaveAttribute('stroke-dasharray', '48px 200px');
+    expect(path).toHaveAttribute('stroke-dashoffset', '-46px');
+    expect(container.querySelector('textPath')).toHaveAttribute('startOffset', '50');
+  });
+
+  it('renders the configured stroke around a curved background', () => {
+    mockGetComputedTextLength(40);
+    mockGetTotalLength(200);
+    const { container } = render(
+      <Surface width={300} height={300}>
+        <Text
+          textPath="M0,0 L100,100"
+          startOffset={50}
+          background={{
+            fill: '#fff',
+            fillOpacity: 0.75,
+            stroke: '#000',
+            strokeOpacity: 0.5,
+            strokeWidth: 2,
+          }}
+        >
+          text
+        </Text>
+      </Surface>,
+    );
+
+    const outline = container.querySelector('path.recharts-text-path-background-outline');
+    assertNotNull(outline);
+    expect(outline).toHaveAttribute('stroke', '#000');
+    expect(outline).toHaveAttribute('stroke-opacity', '0.5');
+    expect(outline).toHaveAttribute('stroke-width', '22');
+
+    const background = container.querySelector('path.recharts-text-path-background');
+    assertNotNull(background);
+    expect(background).toHaveAttribute('stroke', '#fff');
+    expect(background).toHaveAttribute('stroke-opacity', '0.75');
+    expect(background).toHaveAttribute('stroke-width', '18');
   });
 
   it('resizes the rectangle when the text changes', () => {
