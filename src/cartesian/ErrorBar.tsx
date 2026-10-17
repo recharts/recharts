@@ -163,11 +163,13 @@ function ErrorBarImpl(props: ErrorBarInternalProps) {
       if (low == null || high == null) {
         return null;
       }
-      lowBound = low;
-      highBound = high;
+      lowBound = Number(low);
+      highBound = Number(high);
     } else {
-      lowBound = highBound = errorVal;
+      lowBound = highBound = Number(errorVal);
     }
+    // numeric strings from the data would be concatenated by `value + highBound`
+    const numericValue = Number(value);
 
     if (direction === 'x') {
       // error bar for horizontal charts, the y is fixed, x is a range value
@@ -177,8 +179,8 @@ function ErrorBarImpl(props: ErrorBarInternalProps) {
       const yMin = yMid + width;
       const yMax = yMid - width;
 
-      const xMin = scale.map(value - lowBound);
-      const xMax = scale.map(value + highBound);
+      const xMin = scale.map(numericValue - lowBound);
+      const xMax = scale.map(numericValue + highBound);
 
       if (xMin != null && xMax != null) {
         // the right line of |--|
@@ -196,8 +198,8 @@ function ErrorBarImpl(props: ErrorBarInternalProps) {
       const xMin = xMid - width;
       const xMax = xMid + width;
 
-      const yMin = scale.map(value - lowBound);
-      const yMax = scale.map(value + highBound);
+      const yMin = scale.map(numericValue - lowBound);
+      const yMax = scale.map(numericValue + highBound);
 
       if (yMin != null && yMax != null) {
         // the top line
