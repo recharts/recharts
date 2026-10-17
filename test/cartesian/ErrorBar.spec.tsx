@@ -2393,5 +2393,32 @@ describe('<ErrorBar />', () => {
       // 10 - 50 and 10 + 50
       expectLastCalledWith(spy, [-40, 60]);
     });
+
+    it.each([
+      ['a number', 0],
+      ['a numeric string', '0'],
+    ])('should draw no whisker for a zero error given as %s', (_name, zero) => {
+      const data: ReadonlyArray<Row> = [
+        { name: 'a', uv: 10, err: zero },
+        { name: 'b', uv: 20, err: 2 },
+      ];
+      const renderTestCase = createSelectorTestCase(({ children }) => (
+        <LineChart width={400} height={300} data={data}>
+          <XAxis dataKey="name" />
+          <YAxis domain={[0, 30]} />
+          <Line dataKey="uv" isAnimationActive={false}>
+            <ErrorBar dataKey="err" isAnimationActive={false} />
+          </Line>
+          {children}
+        </LineChart>
+      ));
+      const { container } = renderTestCase();
+      // only b: 20 - 2 to 20 + 2
+      expectErrorBars(container, [
+        { x1: '390', x2: '400', y1: '74.33333333333336', y2: '74.33333333333336' },
+        { x1: '395', x2: '395', y1: '109', y2: '74.33333333333336' },
+        { x1: '390', x2: '400', y1: '109', y2: '109' },
+      ]);
+    });
   });
 });

@@ -10,6 +10,7 @@ import { LinePointItem } from './Line';
 import { ScatterPointItem } from './Scatter';
 import { ReportErrorBarSettings, useErrorBarContext } from '../context/ErrorBarContext';
 import { useXAxis, useYAxis } from '../hooks';
+import { makeNumber } from '../state/selectors/axisSelectors';
 import { resolveDefaultProps } from '../util/resolveDefaultProps';
 import { svgPropertiesNoEvents } from '../util/svgPropertiesNoEvents';
 import { useChartLayout } from '../context/chartLayoutContext';
@@ -156,20 +157,24 @@ function ErrorBarImpl(props: ErrorBarInternalProps) {
     }
 
     const lineCoordinates: Array<RectangleCoordinate> = [];
-    let lowBound: number, highBound: number;
+    let lowBound: number | undefined, highBound: number | undefined;
 
+    // numeric strings from the data would be concatenated by `value + highBound`
     if (Array.isArray(errorVal)) {
       const [low, high] = errorVal;
-      if (low == null || high == null) {
+      lowBound = makeNumber(low);
+      highBound = makeNumber(high);
+    } else {
+      lowBound = highBound = makeNumber(errorVal);
+      if (lowBound === 0) {
+        // a string '0' draws nothing, like a numeric 0
         return null;
       }
-      lowBound = Number(low);
-      highBound = Number(high);
-    } else {
-      lowBound = highBound = Number(errorVal);
     }
-    // numeric strings from the data would be concatenated by `value + highBound`
-    const numericValue = Number(value);
+    const numericValue = makeNumber(value);
+    if (lowBound == null || highBound == null || numericValue == null) {
+      return null;
+    }
 
     if (direction === 'x') {
       // error bar for horizontal charts, the y is fixed, x is a range value

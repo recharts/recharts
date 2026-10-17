@@ -538,7 +538,7 @@ export const selectAllAppliedValues: (
   combineAllAppliedValues,
 );
 
-function makeNumber(val: unknown): number | undefined {
+export function makeNumber(val: unknown): number | undefined {
   if (isNumOrStr(val) || val instanceof Date) {
     const n = Number(val);
     if (isWellBehavedNumber(n)) {
