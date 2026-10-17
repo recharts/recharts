@@ -15,6 +15,7 @@ import { RechartsTheme, TextStyles } from '../theme/RechartsTheme';
 import { resolveDefaultProps } from '../util/resolveDefaultProps';
 import { cssStylesToSvgStyles } from '../theme/cssStylesToSvgStyles';
 import { getEffectivePageBackground } from '../theme/pageBackground';
+import { useLabelBackgroundLayer } from '../zIndex/labelBackgroundZIndex';
 
 const BREAKING_SPACES = /[ \f\n\r\t\v\u2028\u2029]+/;
 
@@ -103,6 +104,14 @@ export type TextBackgroundProps = Omit<
    * @defaultValue { x: 4, y: 2 }
    */
   padding?: number | { x?: number; y?: number };
+  /**
+   * zIndex layer of the background in a `Label` or `LabelList` inside a chart.
+   * `Text` used on its own ignores it and draws the background right before the text.
+   * In a label with a nonzero zIndex, 0 becomes -1, because layer 0 renders inside the label's own layer.
+   *
+   * @defaultValue 100 below the label zIndex, which is `DefaultZIndexes.labelBackground` for default labels
+   */
+  zIndex?: number;
 };
 
 interface TextProps {
@@ -229,12 +238,15 @@ interface TextProps {
    *
    * - `true` draws the background with default styles.
    *   The fill is the `pageBackground` color from the theme, or white when no theme is set.
-   * - An object accepts SVG `<rect>` attributes such as `fill`, `stroke` and `rx`, and a `padding`.
+   * - An object accepts SVG `<rect>` attributes such as `fill`, `stroke` and `rx`, a `padding` and a `zIndex`.
    * - `false` or `undefined` draws no background.
    *
    * The background is sized after the text renders, so it follows the content, font, line breaks and rotation.
    * For `textPath`, the background follows the same path as the text.
    * It is not rendered during server-side rendering.
+   *
+   * Inside a `Label` or `LabelList` in a chart, the rectangle renders in a zIndex layer below the label,
+   * so overlapping labels never cover each other's text.
    *
    * @since 3.11
    * @example <Text background>Label</Text>
@@ -700,6 +712,7 @@ export const Text = forwardRef<SVGTextElement, Props>((outsideProps, ref) => {
     { fill: backgroundSettings?.fill },
     defaultLegacyBackgroundProps,
   );
+  const backgroundLayer = useLabelBackgroundLayer();
   const textRef = useRef<SVGTextElement | null>(null);
   const textPathRef = useRef<SVGTextPathElement | null>(null);
   const textPathDefinitionRef = useRef<SVGPathElement | null>(null);
@@ -886,6 +899,19 @@ export const Text = forwardRef<SVGTextElement, Props>((outsideProps, ref) => {
   }
 
   const backgroundRect = textBox == null ? null : getTextBackgroundRect(textBox, padding);
+  const backgroundElement = backgroundRect != null && (
+    <rect
+      rx={defaultBackgroundRadius}
+      {...svgPropertiesAndEvents(backgroundRectProps)}
+      fill={backgroundFill.fill}
+      className={clsx('recharts-text-background', backgroundClassName)}
+      transform={transform}
+      x={backgroundRect.x}
+      y={backgroundRect.y}
+      width={backgroundRect.width}
+      height={backgroundRect.height}
+    />
+  );
 
   /*
    * The group is rendered even before the text is measured,
@@ -893,18 +919,10 @@ export const Text = forwardRef<SVGTextElement, Props>((outsideProps, ref) => {
    */
   return (
     <g className="recharts-text-with-background">
-      {backgroundRect != null && (
-        <rect
-          rx={defaultBackgroundRadius}
-          {...svgPropertiesAndEvents(backgroundRectProps)}
-          fill={backgroundFill.fill}
-          className={clsx('recharts-text-background', backgroundClassName)}
-          transform={transform}
-          x={backgroundRect.x}
-          y={backgroundRect.y}
-          width={backgroundRect.width}
-          height={backgroundRect.height}
-        />
+      {backgroundLayer == null ? (
+        backgroundElement
+      ) : (
+        <backgroundLayer.Layer zIndex={backgroundLayer.zIndex}>{backgroundElement}</backgroundLayer.Layer>
       )}
       {textElement}
     </g>

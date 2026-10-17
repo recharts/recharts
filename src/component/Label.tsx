@@ -30,6 +30,11 @@ import { resolveDefaultProps } from '../util/resolveDefaultProps';
 import { svgPropertiesAndEvents } from '../util/svgPropertiesAndEvents';
 import { ZIndexable, ZIndexLayer } from '../zIndex/ZIndexLayer';
 import { DefaultZIndexes } from '../zIndex/DefaultZIndexes';
+import {
+  getLabelBackgroundZIndex,
+  LabelBackgroundLayerProvider,
+  useLabelBackgroundLayer,
+} from '../zIndex/labelBackgroundZIndex';
 
 import { CartesianLabelPosition, getCartesianPosition } from '../cartesian/getCartesianPosition';
 import { cartesianViewBoxToTrapezoid } from '../cartesian/cartesianViewBoxToTrapezoid';
@@ -137,11 +142,14 @@ interface LabelProps extends ZIndexable {
    *
    * - `true` draws the background with default styles.
    *   The fill is the `pageBackground` color from the theme, or white when no theme is set.
-   * - An object accepts SVG `<rect>` attributes such as `fill`, `stroke` and `rx`, and a `padding`.
+   * - An object accepts SVG `<rect>` attributes such as `fill`, `stroke` and `rx`, a `padding` and a `zIndex`.
    * - `false` or `undefined` draws no background.
    *
    * The background is sized from the rendered text and follows curved label paths.
    * It is not drawn for custom `content`.
+   *
+   * In a chart, the rectangle renders in a zIndex layer below the label,
+   * so overlapping labels never cover each other's text.
    *
    * @since 3.11
    * @example <Label position="inside" background />
@@ -437,6 +445,14 @@ export function Label(outerProps: Props) {
   } = props;
   const polarViewBox = usePolarLabelContext();
   const cartesianViewBox = useCartesianLabelContext();
+  /*
+   * Labels inside a LabelList render with zIndex 0, in the layer of the list,
+   * so they keep the background zIndex that the list provides.
+   */
+  const inheritedBackgroundLayer = useLabelBackgroundLayer();
+  const ownBackgroundZIndex = getLabelBackgroundZIndex(props.zIndex, props.background);
+  const backgroundZIndex = ownBackgroundZIndex ?? inheritedBackgroundLayer?.zIndex;
+  const backgroundLayer = useMemo(() => ({ zIndex: backgroundZIndex, Layer: ZIndexLayer }), [backgroundZIndex]);
 
   /*
    * I am not proud about this solution, but it's a quick fix for https://github.com/recharts/recharts/issues/6030#issuecomment-3155352460.
@@ -540,23 +556,28 @@ export function Label(outerProps: Props) {
   }
 
   return (
-    <ZIndexLayer zIndex={props.zIndex}>
-      <Text
-        ref={labelRef}
-        className={clsx('recharts-label', className)}
-        {...attrs}
-        {...positionAttrs}
-        /*
-         * textAnchor is decided by default based on the `position`
-         * but we allow overriding via props for precise control.
-         */
-        textAnchor={isValidTextAnchor(attrs.textAnchor) ? attrs.textAnchor : positionAttrs.textAnchor}
-        breakAll={textBreakAll}
-        background={props.background}
-      >
-        {label}
-      </Text>
-    </ZIndexLayer>
+    <>
+      {props.background && <ZIndexLayer zIndex={ownBackgroundZIndex} />}
+      <ZIndexLayer zIndex={props.zIndex}>
+        <LabelBackgroundLayerProvider value={backgroundLayer}>
+          <Text
+            ref={labelRef}
+            className={clsx('recharts-label', className)}
+            {...attrs}
+            {...positionAttrs}
+            /*
+             * textAnchor is decided by default based on the `position`
+             * but we allow overriding via props for precise control.
+             */
+            textAnchor={isValidTextAnchor(attrs.textAnchor) ? attrs.textAnchor : positionAttrs.textAnchor}
+            breakAll={textBreakAll}
+            background={props.background}
+          >
+            {label}
+          </Text>
+        </LabelBackgroundLayerProvider>
+      </ZIndexLayer>
+    </>
   );
 }
 
