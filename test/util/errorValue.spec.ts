@@ -52,6 +52,28 @@ describe('getErrorDomainByDataKey', () => {
     expect(getErrorDomainByDataKey(entry, 2, errorBars)).toEqual([-1, 9, -9, 15]);
   });
 
+  it('should read numeric strings as numbers, the same as the data value', () => {
+    const entry = {
+      val: '2',
+      errX: '3',
+      errY: ['11', '13'],
+    };
+    const errorBars: ReadonlyArray<ErrorBarsSettings> = [
+      { dataKey: 'errX', direction: 'x' },
+      { dataKey: 'errY', direction: 'y' },
+    ];
+    expect(getErrorDomainByDataKey(entry, '2', errorBars)).toEqual([-1, 5, -9, 15]);
+  });
+
+  it('should read a ranged value of numeric strings by its larger end', () => {
+    const entry = {
+      val: ['1', '5'],
+      errY: '3',
+    };
+    const errorBars: ReadonlyArray<ErrorBarsSettings> = [{ dataKey: 'errY', direction: 'y' }];
+    expect(getErrorDomainByDataKey(entry, ['1', '5'], errorBars)).toEqual([2, 8]);
+  });
+
   it('should return empty array if errorBars are undefined', () => {
     const entry = {
       val: 2,

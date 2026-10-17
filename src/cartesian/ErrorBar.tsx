@@ -10,6 +10,7 @@ import { LinePointItem } from './Line';
 import { ScatterPointItem } from './Scatter';
 import { ReportErrorBarSettings, useErrorBarContext } from '../context/ErrorBarContext';
 import { useXAxis, useYAxis } from '../hooks';
+import { makeNumber } from '../state/selectors/axisSelectors';
 import { resolveDefaultProps } from '../util/resolveDefaultProps';
 import { svgPropertiesNoEvents } from '../util/svgPropertiesNoEvents';
 import { useChartLayout } from '../context/chartLayoutContext';
@@ -156,17 +157,23 @@ function ErrorBarImpl(props: ErrorBarInternalProps) {
     }
 
     const lineCoordinates: Array<RectangleCoordinate> = [];
-    let lowBound: number, highBound: number;
+    let lowBound: number | undefined, highBound: number | undefined;
 
+    // numeric strings from the data would be concatenated by `value + highBound`
     if (Array.isArray(errorVal)) {
       const [low, high] = errorVal;
-      if (low == null || high == null) {
+      lowBound = makeNumber(low);
+      highBound = makeNumber(high);
+    } else {
+      lowBound = highBound = makeNumber(errorVal);
+      if (lowBound === 0) {
+        // a string '0' draws nothing, like a numeric 0
         return null;
       }
-      lowBound = low;
-      highBound = high;
-    } else {
-      lowBound = highBound = errorVal;
+    }
+    const numericValue = makeNumber(value);
+    if (lowBound == null || highBound == null || numericValue == null) {
+      return null;
     }
 
     if (direction === 'x') {
@@ -177,8 +184,8 @@ function ErrorBarImpl(props: ErrorBarInternalProps) {
       const yMin = yMid + width;
       const yMax = yMid - width;
 
-      const xMin = scale.map(value - lowBound);
-      const xMax = scale.map(value + highBound);
+      const xMin = scale.map(numericValue - lowBound);
+      const xMax = scale.map(numericValue + highBound);
 
       if (xMin != null && xMax != null) {
         // the right line of |--|
@@ -196,8 +203,8 @@ function ErrorBarImpl(props: ErrorBarInternalProps) {
       const xMin = xMid - width;
       const xMax = xMid + width;
 
-      const yMin = scale.map(value - lowBound);
-      const yMax = scale.map(value + highBound);
+      const yMin = scale.map(numericValue - lowBound);
+      const yMax = scale.map(numericValue + highBound);
 
       if (yMin != null && yMax != null) {
         // the top line
