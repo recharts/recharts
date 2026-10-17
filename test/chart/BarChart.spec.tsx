@@ -1432,24 +1432,39 @@ describe('<BarChart />', () => {
       expect(container.querySelectorAll('[data-testid="custom-shape"]')).toHaveLength(2);
     });
 
-    test('renders a bar that fills the axis if barSize is not specified in a numerical XAxis', () => {
+    test('renders a bar inside the plot area if barSize is not specified in a numerical XAxis', () => {
       const { container } = render(
         <BarChart width={100} height={50} data={onePointData}>
-          <XAxis dataKey="number" type="number" />
+          <XAxis dataKey="number" type="number" domain={[0, 2]} />
           <Bar dataKey="uv" name="uv" isAnimationActive={false} />
         </BarChart>,
       );
 
+      // plot area spans x=5..95, the tick sits in the middle, so the bar takes the full band minus the category gap
       expectBars(container, [
         {
-          d: 'M 59,5 h 72 v 10 h -72 Z',
+          d: 'M 14,5 h 72 v 10 h -72 Z',
           height: '10',
           radius: '0',
           width: '72',
-          x: '59',
+          x: '14',
           y: '5',
         },
       ]);
+    });
+
+    test.each([
+      { edge: 'left', domain: [1, 2] },
+      { edge: 'right', domain: [0, 1] },
+    ])('renders nothing instead of an overflowing bar if the only tick is on the $edge edge', ({ domain }) => {
+      const { container } = render(
+        <BarChart width={100} height={50} data={onePointData}>
+          <XAxis dataKey="number" type="number" domain={domain} />
+          <Bar dataKey="uv" name="uv" isAnimationActive={false} />
+        </BarChart>,
+      );
+
+      expectBars(container, []);
     });
 
     test('renders bars of default size if barSize is not set in categorical XAxis', () => {
@@ -1565,8 +1580,8 @@ describe('<BarChart />', () => {
       expect(barPositionsSpy).toHaveBeenLastCalledWith([
         {
           position: {
-            offset: -15,
-            size: 30,
+            offset: -12,
+            size: 24,
           },
           dataKeys: ['uv'],
           stackId: undefined,
@@ -1575,11 +1590,12 @@ describe('<BarChart />', () => {
 
       expectBars(container, [
         {
-          d: 'M 80,5 h 30 v 10 h -30 Z',
+          d: 'M 83,5 h 24 v 10 h -24 Z',
           height: '10',
           radius: '0',
-          width: '30',
-          x: '80',
+          // Why does maxBarSize 30 produce width 24 bar?
+          width: '24',
+          x: '83',
           y: '5',
         },
       ]);
