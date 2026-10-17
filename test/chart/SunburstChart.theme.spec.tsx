@@ -208,5 +208,228 @@ describe('<SunburstChart /> theme', () => {
       hoverSector(container, 1);
       expect(getTooltipItemColor(container)).toBe('rgb(51, 51, 51)');
     });
+
+    it('uses the chart fill when that fill turns the theme off', () => {
+      const { container } = renderSunburst(
+        { graphicalItems: [{ fill: 'purple', stroke: 'indigo' }] },
+        { fill: '#123456' },
+        <Tooltip />,
+      );
+      hoverSector(container, 0);
+      expect(getTooltipItemColor(container)).toBe('rgb(18, 52, 86)');
+    });
+  });
+});
+
+const colorProbeTheme: RechartsTheme = { graphicalItems: [{ fill: 'purple', stroke: 'indigo' }] };
+
+/**
+ * Depth-first sector order: A, A1, A2, B.
+ * A carries every probed SVG prop. A1 has no color of its own. A2 has only a stroke.
+ * B has non-color props, so a theme still decides its colors.
+ */
+const entryStyledData: SunburstData = {
+  name: 'root',
+  value: 100,
+  children: [
+    {
+      name: 'A',
+      value: 60,
+      fill: '#ff0000',
+      stroke: '#00ff00',
+      strokeWidth: 7,
+      strokeDasharray: '3 3',
+      opacity: 0.5,
+      className: 'class-from-data',
+      'data-test': 'entry-a',
+      style: { cursor: 'help' },
+      id: 'entry-a',
+      notAnSvgProp: 'nope',
+      children: [
+        { name: 'A1', value: 30 },
+        { name: 'A2', value: 30, stroke: '#0000ff', id: 'entry-a2' },
+      ],
+    },
+    { name: 'B', value: 40, id: 'entry-b', opacity: 0.25, strokeWidth: 9, strokeDasharray: '4 2' },
+  ],
+};
+
+function getSector(container: Element, index: number): Element {
+  const sector = container.querySelectorAll('.recharts-sector')[index];
+  assertNotNull(sector);
+  return sector;
+}
+
+describe('SunburstChart data entry styles', () => {
+  const themes: ReadonlyArray<[string, RechartsTheme | undefined]> = [
+    ['without a theme', undefined],
+    ['with a theme', theme],
+  ];
+
+  it.each(themes)('spreads valid SVG props from the entry onto its sector %s', (_label, activeTheme) => {
+    const { container } = renderSunburst(activeTheme, { data: entryStyledData, id: 'sunburst-chart' });
+    const sector = getSector(container, 0);
+
+    expect(sector).toHaveAttribute('fill', '#ff0000');
+    expect(sector).toHaveAttribute('stroke', '#00ff00');
+    expect(sector).toHaveAttribute('stroke-width', '7');
+    expect(sector).toHaveAttribute('stroke-dasharray', '3 3');
+    expect(sector).toHaveAttribute('opacity', '0.5');
+    expect(sector).toHaveAttribute('data-test', 'entry-a');
+    expect(sector).toHaveAttribute('name', 'A');
+    expect(sector).toHaveClass('recharts-sector', 'class-from-data');
+    expect(sector).toHaveStyle({ cursor: 'help' });
+    expect(sector).not.toHaveAttribute('id');
+    expect(sector.getAttributeNames()).not.toContain('notAnSvgProp');
+
+    expect(getFirstLabel(container)).not.toHaveAttribute('data-test');
+    expect(container.querySelectorAll('.recharts-sector[id]')).toHaveLength(0);
+    expect(container.querySelector('#entry-a, #entry-a2, #entry-b')).toBeNull();
+  });
+
+  it('merges entry props over the chart props without a theme', () => {
+    const { container } = renderSunburst(undefined, {
+      fill: '#123456',
+      stroke: '#654321',
+      data: {
+        name: 'root',
+        value: 100,
+        children: [
+          {
+            name: 'A',
+            value: 60,
+            fill: 'lime',
+            children: [{ name: 'A1', value: 60, stroke: 'navy' }],
+          },
+          { name: 'B', value: 40, stroke: 'orange' },
+        ],
+      },
+    });
+
+    expect(getSectors(container)).toEqual([
+      { fill: 'lime', stroke: '#654321', strokeWidth: '2' },
+      { fill: 'lime', stroke: 'navy', strokeWidth: '2' },
+      { fill: '#123456', stroke: 'orange', strokeWidth: '2' },
+    ]);
+  });
+
+  it('keeps the legacy chart stroke when an entry sets only a fill', () => {
+    const { container } = renderSunburst(undefined, { fill: '#123456' });
+
+    expect(getSectors(container)).toEqual([
+      { fill: '#123456', stroke: '#FFF', strokeWidth: '2' },
+      { fill: '#123456', stroke: '#FFF', strokeWidth: '2' },
+      { fill: '#123456', stroke: '#FFF', strokeWidth: '2' },
+      { fill: '#123456', stroke: '#FFF', strokeWidth: '2' },
+    ]);
+  });
+
+  it('inherits a parent fill without copying the parent stroke, and still applies non-color entry props', () => {
+    const { container } = renderSunburst(undefined, { data: entryStyledData });
+    const sectors = getSectors(container);
+
+    expect(sectors[1]).toEqual({ fill: '#ff0000', stroke: '#FFF', strokeWidth: '2' });
+    expect(sectors[2]).toEqual({ fill: '#ff0000', stroke: '#0000ff', strokeWidth: '2' });
+    expect(sectors[3]).toEqual({ fill: '#333', stroke: '#FFF', strokeWidth: '9' });
+    expect(getSector(container, 3)).toHaveAttribute('opacity', '0.25');
+    expect(getSector(container, 3)).toHaveAttribute('stroke-dasharray', '4 2');
+  });
+
+  it('does not treat an inherited fill as the child color, so the child keeps the theme separator', () => {
+    const { container } = renderSunburst(theme, { data: entryStyledData });
+    const sectors = getSectors(container);
+
+    expect(sectors[0]).toEqual({ fill: '#ff0000', stroke: '#00ff00', strokeWidth: '7' });
+    expect(sectors[1]).toEqual({ fill: '#ff0000', stroke: 'ivory', strokeWidth: '2' });
+    expect(sectors[2]).toEqual({ fill: '#ff0000', stroke: '#0000ff', strokeWidth: '2' });
+    expect(sectors[3]).toEqual({ fill: 'green', stroke: 'ivory', strokeWidth: '9' });
+    expect(getSector(container, 1)).not.toHaveAttribute('stroke-dasharray');
+    expect(getSector(container, 3)).toHaveAttribute('opacity', '0.25');
+    expect(getSector(container, 3)).toHaveAttribute('stroke-dasharray', '4 2');
+  });
+
+  it('ignores theme colors when the chart sets a fill', () => {
+    const { container } = renderSunburst(colorProbeTheme, { fill: '#123456' });
+
+    expect(getSectors(container)).toEqual([
+      { fill: '#123456', stroke: null, strokeWidth: '2' },
+      { fill: '#123456', stroke: null, strokeWidth: '2' },
+      { fill: '#123456', stroke: null, strokeWidth: '2' },
+      { fill: '#123456', stroke: null, strokeWidth: '2' },
+    ]);
+  });
+
+  it('ignores theme colors when the chart sets a stroke', () => {
+    const { container } = renderSunburst({ ...colorProbeTheme, pageBackground: 'ivory' }, { stroke: '#654321' });
+
+    expect(getSectors(container)).toEqual([
+      { fill: null, stroke: '#654321', strokeWidth: '2' },
+      { fill: null, stroke: '#654321', strokeWidth: '2' },
+      { fill: null, stroke: '#654321', strokeWidth: '2' },
+      { fill: null, stroke: '#654321', strokeWidth: '2' },
+    ]);
+  });
+
+  it('merges data entry colors with chart props under a theme', () => {
+    const { container } = renderSunburst(colorProbeTheme, {
+      stroke: '#654321',
+      data: {
+        name: 'root',
+        value: 100,
+        children: [
+          {
+            name: 'A',
+            value: 60,
+            fill: 'lime',
+            children: [
+              { name: 'A1', value: 30 },
+              { name: 'A2', value: 30 },
+            ],
+          },
+          { name: 'B', value: 40 },
+        ],
+      },
+    });
+
+    expect(getSectors(container)).toEqual([
+      { fill: 'lime', stroke: '#654321', strokeWidth: '2' },
+      { fill: 'lime', stroke: '#654321', strokeWidth: '2' },
+      { fill: 'lime', stroke: '#654321', strokeWidth: '2' },
+      { fill: null, stroke: '#654321', strokeWidth: '2' },
+    ]);
+  });
+
+  it('leaves a stroke-only sector unfilled when a theme is active and the chart sets no colors', () => {
+    const { container } = renderSunburst(colorProbeTheme, {
+      data: {
+        name: 'root',
+        value: 100,
+        children: [
+          {
+            name: 'A',
+            value: 50,
+            stroke: '#00ff00',
+            children: [
+              { name: 'A1', value: 25 },
+              { name: 'A2', value: 25, stroke: 'lime' },
+            ],
+          },
+          {
+            name: 'B',
+            value: 50,
+            fill: 'blue',
+            children: [{ name: 'B1', value: 50, stroke: 'navy' }],
+          },
+        ],
+      },
+    });
+
+    expect(getSectors(container)).toEqual([
+      { fill: null, stroke: '#00ff00', strokeWidth: '2' },
+      { fill: 'purple', stroke: 'indigo', strokeWidth: '2' },
+      { fill: null, stroke: 'lime', strokeWidth: '2' },
+      { fill: 'blue', stroke: null, strokeWidth: '2' },
+      { fill: 'blue', stroke: 'navy', strokeWidth: '2' },
+    ]);
   });
 });
