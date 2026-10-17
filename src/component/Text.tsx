@@ -253,19 +253,15 @@ interface TextProps {
   background?: boolean | TextBackgroundProps;
 
   /**
-   * Draws an outline around the letters, as a lighter alternative to `background`.
+   * Draws an outline around the letters of the text, as a lighter alternative to `background`.
    *
    * - `true` draws the halo with default styles.
    *   The stroke is the `pageBackground` color from the theme, or white when no theme is set.
    * - An object accepts `stroke`, `strokeWidth`, `strokeOpacity` and `strokeLinejoin` to set them explicitly.
    * - `false` or `undefined` draws no halo.
    *
-   * A halo hides only the outline of the letters, so content underneath - dots, lines, other labels -
-   * mostly stays visible, unlike a `background` rectangle. It is plain SVG attributes on the text element,
-   * so unlike `background` it needs no measurement, works during server-side rendering, and works with `textPath`.
-   *
-   * When `halo` is set, it takes over the `stroke` of the text; an explicit `stroke` prop is overridden.
-   * Overlapping labels are not specially handled: where two labels overlap, a halo can cover its neighbor's text.
+   * Unlike `background`, a halo needs no measurement, so it is drawn during server-side rendering,
+   * and it is drawn even when `textPath` is set.
    *
    * @since 3.11
    * @example <Text halo>Label</Text>
@@ -748,6 +744,10 @@ export const Text = forwardRef<SVGTextElement, Props>((outsideProps, ref) => {
     <text
       transform={transform}
       {...svgPropertiesAndEvents(textProps)}
+      /*
+       * haloProps comes after textProps so it takes over an explicit stroke prop.
+       * Overlapping labels are not specially handled: where two labels overlap, a halo can cover its neighbor's text.
+       */
       {...haloProps}
       style={styleFinal}
       ref={setTextRef}

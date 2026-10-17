@@ -150,7 +150,7 @@ interface LabelProps extends ZIndexable {
    */
   background?: boolean | TextBackgroundProps;
   /**
-   * Draws an outline around the letters, as a lighter alternative to `background`.
+   * Draws an outline around the letters of the label, as a lighter alternative to `background`.
    *
    * - `true` draws the halo with default styles.
    *   The stroke is the `pageBackground` color from the theme, or white when no theme is set.
