@@ -14,7 +14,7 @@ import { selectAxisScale } from '../state/selectors/axisSelectors';
 import { useIsPanorama } from '../context/PanoramaContext';
 
 import { useClipPathId } from '../container/ClipPathProvider';
-import { NullableCoordinate, RectanglePosition } from '../util/types';
+import { Coordinate, RectanglePosition } from '../util/types';
 import { svgPropertiesAndEvents, SVGPropsAndEvents } from '../util/svgPropertiesAndEvents';
 import { RequiresDefaultProps, resolveDefaultProps } from '../util/resolveDefaultProps';
 import { ZIndexable, ZIndexLayer } from '../zIndex/ZIndexLayer';
@@ -138,6 +138,9 @@ export type Props<
 > = Omit<SVGPropsAndEvents<RectangleProps>, 'width' | 'height' | 'x' | 'y'> &
   ReferenceAreaProps<XValueType, YValueType>;
 
+const toCoordinate = (x: number | undefined, y: number | undefined): Coordinate | null =>
+  x == null || y == null ? null : { x, y };
+
 const getRect = (
   hasX1: boolean,
   hasX2: boolean,
@@ -155,21 +158,25 @@ const getRect = (
 
   const scales = new CartesianScaleHelperImpl({ x: xAxisScale, y: yAxisScale });
 
-  const p1: NullableCoordinate = {
-    x: hasX1 ? (xAxisScale.map(xValue1, { position: 'start' }) ?? null) : xAxisScale.rangeMin(),
-    y: hasY1 ? (yAxisScale.map(yValue1, { position: 'start' }) ?? null) : yAxisScale.rangeMin(),
-  };
+  const p1 = toCoordinate(
+    hasX1 ? xAxisScale.map(xValue1, { position: 'start' }) : xAxisScale.rangeMin(),
+    hasY1 ? yAxisScale.map(yValue1, { position: 'start' }) : yAxisScale.rangeMin(),
+  );
 
-  const p2: NullableCoordinate = {
-    x: hasX2 ? (xAxisScale.map(xValue2, { position: 'end' }) ?? null) : xAxisScale.rangeMax(),
-    y: hasY2 ? (yAxisScale.map(yValue2, { position: 'end' }) ?? null) : yAxisScale.rangeMax(),
-  };
+  const p2 = toCoordinate(
+    hasX2 ? xAxisScale.map(xValue2, { position: 'end' }) : xAxisScale.rangeMax(),
+    hasY2 ? yAxisScale.map(yValue2, { position: 'end' }) : yAxisScale.rangeMax(),
+  );
+
+  // don't render the area if the scale can't compute a result that makes sense
+  if (p1 == null || p2 == null) {
+    return null;
+  }
 
   if (props.ifOverflow === 'discard' && (!scales.isInRange(p1) || !scales.isInRange(p2))) {
     return null;
   }
 
-  // @ts-expect-error we're sending nullable coordinates but rectWithPoints expects non-nullable Coordinate
   return rectWithPoints(p1, p2);
 };
 
