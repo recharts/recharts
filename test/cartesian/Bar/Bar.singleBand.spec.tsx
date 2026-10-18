@@ -91,13 +91,15 @@ describe('Bar with a single tick on a numeric axis', () => {
       );
     }
 
-    it.each([
-      { name: 'in the middle', x: 5, domain: [0, 10] as [number, number] },
-      { name: 'on a degenerate domain [x, x]', x: 5, domain: [5, 5] as [number, number] },
+    const loneBarCases: ReadonlyArray<{ name: string; x: number; domain: [number, number] | undefined }> = [
+      { name: 'in the middle', x: 5, domain: [0, 10] },
+      { name: 'on a degenerate domain [x, x]', x: 5, domain: [5, 5] },
       { name: 'on an automatic domain', x: 5, domain: undefined },
-      { name: 'near the left edge', x: 1, domain: [0, 10] as [number, number] },
-      { name: 'near the right edge', x: 9, domain: [0, 10] as [number, number] },
-    ])('for a tick $name', ({ x, domain }) => {
+      { name: 'near the left edge', x: 1, domain: [0, 10] },
+      { name: 'near the right edge', x: 9, domain: [0, 10] },
+    ];
+
+    it.each(loneBarCases)('for a tick $name', ({ x, domain }) => {
       const { container } = renderLoneBar(x, domain);
       const spans = getBarSpans(container);
       expect(spans).toHaveLength(1);
