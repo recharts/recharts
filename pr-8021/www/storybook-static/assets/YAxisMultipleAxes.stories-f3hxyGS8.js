@@ -1,0 +1,38 @@
+import{R as t}from"./iframe-wnwgjoCj.js";import{g as d}from"./utils-ePvtT4un.js";import{Y as p}from"./YAxisArgs-CwatvU9z.js";import{Y as r}from"./YAxis-DhrqAxya.js";import{R as l}from"./zIndexSlice-BfQZJe7w.js";import{C as x}from"./ComposedChart-ByvlJzyD.js";import{p as A}from"./Page-Cj8EiXz7.js";import{B as o}from"./Bar-DqyOK2Ts.js";import{L as a}from"./Line-C_qaKzYo.js";import{X as c}from"./XAxis-OfYaBnId.js";import{T as g}from"./Tooltip-Dk8i1M-5.js";import"./preload-helper-Dp1pzeXC.js";import"./get-cF5BDHN6.js";import"./Label-BPPVHUQ9.js";import"./Text-ObnDDpE8.js";import"./resolveDefaultProps-CdGDq9Vj.js";import"./pageBackground-BTX1FgdM.js";import"./isWellBehavedNumber-DvYM1ftp.js";import"./useId-Bld63G6d.js";import"./useBackwardsCompatibleTheme-CSSDROrC.js";import"./PolarUtils-CTnnDHZv.js";import"./ZIndexLayer-BcVUzqGJ.js";import"./index--oPyKjHy.js";import"./index-B1dVEDKi.js";import"./axisSelectors-Dv0Cy_aQ.js";import"./throttle-Bu0PLbpB.js";import"./d3-scale-n5yhpKoa.js";import"./CartesianAxis-CUGdPJVD.js";import"./Layer-BgNSosTV.js";import"./types-D9qqzEWR.js";import"./getClassNameFromUnknown-Jg1grEQN.js";import"./renderedTicksSlice-Cn46HOnO.js";import"./index-C6zbwdmq.js";import"./index-2cwaP_WN.js";import"./isBuffer-AZzsDYE7.js";import"./RechartsWrapper-DrgosUQO.js";import"./index-Cq1ZqvVj.js";import"./CartesianChart-9oQUjO4z.js";import"./chartDataContext-CoZTTCWp.js";import"./CategoricalChart-CFXgb39d.js";import"./activeStyles-eWYsa4HP.js";import"./useAnimationId-B2QPH2im.js";import"./dataEntryStyles-_WoJg0hd.js";import"./tiny-invariant-CopsF_GD.js";import"./Rectangle-P3uT3dWy.js";import"./util-Dxo8gN5i.js";import"./ActiveShapeUtils-YpG0tVZY.js";import"./tooltipContext-BVMH7WYj.js";import"./ErrorBarContext-cvkea_Ls.js";import"./GraphicalItemClipPath-B95PfJCu.js";import"./SetGraphicalItem-CAbcIlZe.js";import"./getZIndexFromUnknown-CHQ6R3a2.js";import"./useEffectiveDataKey-D9X2vego.js";import"./omit-QSyfoj1W.js";import"./isArguments-yB-y1yaH.js";import"./Curve-Cxo9gi5h.js";import"./step-DmpFhtYe.js";import"./path-DyVhHtw_.js";import"./ActivePoints-uC3uusPe.js";import"./Dot-BkQ3hL0p.js";import"./getRadiusAndStrokeWidthFromDot-Bze8938_.js";import"./useElementOffset-yolstnoz.js";import"./uniqBy-CW7TvLNO.js";import"./iteratee-CpII3xDe.js";import"./Cross-Cim55ibn.js";import"./Sector-N_gwCLB7.js";const Lt={component:r,argTypes:p,title:"Examples/cartesian/YAxis/WithLeftAndRightAxes"},e={render:i=>t.createElement("article",{style:{display:"flex",flexDirection:"column"}},t.createElement("div",{style:{width:"100%"}},t.createElement(l,{width:"100%",height:500},t.createElement(x,{data:A},t.createElement(o,{dataKey:"pv",fill:"red",yAxisId:"right"}),t.createElement(o,{dataKey:"uv",fill:"red",yAxisId:"right-mirror"}),t.createElement(a,{dataKey:"amt",fill:"green",yAxisId:"left"}),t.createElement(a,{dataKey:"amt",fill:"green",yAxisId:"left-mirror"}),t.createElement(c,{padding:{left:50,right:50},dataKey:"name",scale:"band"}),t.createElement(r,{...i,yAxisId:"left",orientation:"left",domain:["dataMin-20","dataMax"]}),t.createElement(r,{...i,yAxisId:"left-mirror",orientation:"left",mirror:!0,tickCount:8}),t.createElement(r,{...i,yAxisId:"right",orientation:"right",domain:["dataMin-20","dataMax"]}),t.createElement(r,{...i,yAxisId:"right-mirror",orientation:"right",mirror:!0,tickCount:20}),t.createElement(g,null)))),t.createElement("h4",null,`When an AxisId is specified on all provided axes of one type (XAxis, YAxis, ZAxis), recharts requires a
+      {x,y,z}AxisId on the corresponding graphical element`)),args:d(p)},Tt=["WithLeftAndRightAxes"];var n,m,s;e.parameters={...e.parameters,docs:{...(n=e.parameters)==null?void 0:n.docs,source:{originalSource:`{
+  render: (args: Args) => {
+    return <article style={{
+      display: 'flex',
+      flexDirection: 'column'
+    }}>
+        <div style={{
+        width: '100%'
+      }}>
+          <ResponsiveContainer width="100%" height={500}>
+            <ComposedChart data={pageData}>
+              <Bar dataKey="pv" fill="red" yAxisId="right" />
+              <Bar dataKey="uv" fill="red" yAxisId="right-mirror" />
+              <Line dataKey="amt" fill="green" yAxisId="left" />
+              <Line dataKey="amt" fill="green" yAxisId="left-mirror" />
+
+              <XAxis padding={{
+              left: 50,
+              right: 50
+            }} dataKey="name" scale="band" />
+              <YAxis {...args} yAxisId="left" orientation="left" domain={['dataMin-20', 'dataMax']} />
+              <YAxis {...args} yAxisId="left-mirror" orientation="left" mirror tickCount={8} />
+              <YAxis {...args} yAxisId="right" orientation="right" domain={['dataMin-20', 'dataMax']} />
+              <YAxis {...args} yAxisId="right-mirror" orientation="right" mirror tickCount={20} />
+
+              <Tooltip />
+            </ComposedChart>
+          </ResponsiveContainer>
+        </div>
+        <h4>
+          {\`When an AxisId is specified on all provided axes of one type (XAxis, YAxis, ZAxis), recharts requires a
+      {x,y,z}AxisId on the corresponding graphical element\`}
+        </h4>
+      </article>;
+  },
+  args: getStoryArgsFromArgsTypesObject(YAxisArgs)
+}`,...(s=(m=e.parameters)==null?void 0:m.docs)==null?void 0:s.source}}};export{e as WithLeftAndRightAxes,Tt as __namedExportsOrder,Lt as default};
