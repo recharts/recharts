@@ -745,6 +745,22 @@ describe('<Legend />', () => {
       expect(container.querySelectorAll('.recharts-default-legend .recharts-legend-item line')).toHaveLength(2);
     });
 
+    test('Renders `strokeLinecap` (if present) in Legend when iconType is set to `plainline`', () => {
+      const { container } = rechartsTestRender(
+        <LineChart width={600} height={300} data={categoricalData}>
+          <Legend iconType="plainline" />
+          <Line dataKey="pv" stroke="#8884d8" strokeDasharray="0 8" strokeLinecap="round" />
+          <Line dataKey="uv" stroke="#82ca9d" />
+        </LineChart>,
+      );
+
+      const icons = container.querySelectorAll('.recharts-default-legend .recharts-legend-item line');
+      expect(icons).toHaveLength(2);
+      expect(icons[0]).toHaveAttribute('stroke-dasharray', '0 8');
+      expect(icons[0]).toHaveAttribute('stroke-linecap', 'round');
+      expect(icons[1]).not.toHaveAttribute('stroke-linecap');
+    });
+
     test('Does not render `strokeDasharray` (if not present) when iconType is not set to `plainline`', () => {
       const { container } = rechartsTestRender(
         <LineChart width={600} height={300} data={categoricalData}>
