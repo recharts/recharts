@@ -1789,6 +1789,25 @@ describe('<PolarAngleAxis />', () => {
       });
     });
 
+    describe('with stackOffset="expand"', () => {
+      it.each([
+        { stackId: '1', expected: [0, 1] },
+        { stackId: undefined, expected: [0, 9800] },
+      ])('should select the domain $expected when stackId is $stackId', ({ stackId, expected }) => {
+        const renderTestCase = createSelectorTestCase(({ children }) => (
+          <RadialBarChart width={500} height={500} data={PageData} stackOffset="expand">
+            <RadialBar dataKey="uv" stackId={stackId} isAnimationActive={false} />
+            <RadialBar dataKey="pv" stackId={stackId} isAnimationActive={false} />
+            <PolarAngleAxis />
+            <PolarRadiusAxis />
+            {children}
+          </RadialBarChart>
+        ));
+        const { spy } = renderTestCase(state => selectPolarAxisDomain(state, 'angleAxis', 0));
+        expectLastCalledWith(spy, expected);
+      });
+    });
+
     describe('with category axis', () => {
       const renderTestCase = createSelectorTestCase(({ children }) => (
         <RadialBarChart width={500} height={500} data={PageData}>
