@@ -885,7 +885,7 @@ export function computeScatterPoints({
   return displayedData.map((entry: unknown, index): ScatterPointItem => {
     const x: unknown = getValueByDataKey(entry, xAxisDataKey);
     const y: unknown = getValueByDataKey(entry, yAxisDataKey);
-    const z: unknown = (!isNullish(zAxisDataKey) && getValueByDataKey(entry, zAxisDataKey)) || '-';
+    const z: unknown = getValueByDataKey(entry, zAxisDataKey) ?? '-';
 
     const pointColor = getScatterEntryColor(entry, seriesFill, seriesStroke, unthemedStyles);
     const tooltipPayload: Array<TooltipPayloadEntry> = [
