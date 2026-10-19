@@ -1,5 +1,5 @@
 import React from 'react';
-import { describe, expect, it, Mock, vi } from 'vitest';
+import { afterEach, describe, expect, it, Mock, vi } from 'vitest';
 import { fireEvent, render } from '@testing-library/react';
 import { Sankey, SankeyLinkProps, SankeyNodeProps, Tooltip, XAxis, YAxis } from '../../src';
 import { computeData } from '../../src/chart/Sankey';
@@ -844,6 +844,12 @@ describe('<Sankey />', () => {
   });
 
   describe('with Tooltip on touch', () => {
+    const originalElementFromPoint = document.elementFromPoint;
+
+    afterEach(() => {
+      document.elementFromPoint = originalElementFromPoint;
+    });
+
     it('should display Tooltip when touching a Link', () => {
       const { container } = render(
         <Sankey
@@ -897,6 +903,21 @@ describe('<Sankey />', () => {
 
       expect(tooltip).toBeVisible();
     });
+  });
+
+  it('should not crash when custom node and link render functions return null', () => {
+    const { container } = render(
+      <Sankey
+        className="sankey-null-content"
+        width={400}
+        height={400}
+        data={exampleSankeyData}
+        node={() => null}
+        link={() => null}
+      />,
+    );
+
+    expect(container.querySelector('.sankey-null-content')).toBeTruthy();
   });
 
   it('should not produce NaN node positions or link widths when all link values are 0', () => {
