@@ -15,7 +15,6 @@ import { getTooltip, showTooltip } from '../component/Tooltip/tooltipTestHelpers
 
 import { useClipPathId } from '../../src/container/ClipPathProvider';
 import { expectLastCalledWith } from '../helper/expectLastCalledWith';
-import { mockTouchingElement } from '../helper/mockTouchingElement';
 import { TooltipInteractionState } from '../../src/state/tooltipSlice';
 
 const readSvgNumber = (element: Element, attribute: string): number => Number(element.getAttribute(attribute));
@@ -783,42 +782,120 @@ describe('<Sankey />', () => {
       expect(onMouseMove).toHaveBeenCalledTimes(0);
     });
 
-    it('should do nothing onTouchMove on links', () => {
-      // looks like a bug or missed feature
-      mockTouchingElement('1', 'a');
+    it('should call onTouchStart, onTouchMove and onTouchEnd on links', () => {
+      const onTouchStart = vi.fn();
       const onTouchMove = vi.fn();
       const onTouchEnd = vi.fn();
       const { container } = render(
-        <Sankey width={1000} height={500} data={exampleSankeyData} onTouchMove={onTouchMove} onTouchEnd={onTouchEnd} />,
+        <Sankey
+          className="sankey-touch-handlers-links"
+          width={1000}
+          height={500}
+          data={exampleSankeyData}
+          throttledEvents={[]}
+          onTouchStart={onTouchStart}
+          onTouchMove={onTouchMove}
+          onTouchEnd={onTouchEnd}
+        />,
       );
 
       const link = container.querySelector(sankeyLinkMouseHoverTooltipSelector);
       assertNotNull(link);
 
+      fireEvent.touchStart(link, { touches: [{ clientX: 200, clientY: 200 }] });
+      expect(onTouchStart).toHaveBeenCalledTimes(1);
+
       fireEvent.touchMove(link, { touches: [{ clientX: 200, clientY: 200 }] });
-      expect(onTouchMove).toHaveBeenCalledTimes(0);
+      expect(onTouchMove).toHaveBeenCalledTimes(1);
 
       fireEvent.touchEnd(link, { changedTouches: [{ clientX: 200, clientY: 200 }] });
-      expect(onTouchEnd).toHaveBeenCalledTimes(0);
+      expect(onTouchEnd).toHaveBeenCalledTimes(1);
     });
 
-    it('should do nothing onTouchMove and onTouchEnd on nodes', () => {
-      // looks like a bug or missed feature
-      mockTouchingElement('1', 'a');
+    it('should call onTouchStart, onTouchMove and onTouchEnd on nodes', () => {
+      const onTouchStart = vi.fn();
       const onTouchMove = vi.fn();
       const onTouchEnd = vi.fn();
       const { container } = render(
-        <Sankey width={1000} height={500} data={exampleSankeyData} onTouchMove={onTouchMove} onTouchEnd={onTouchEnd} />,
+        <Sankey
+          className="sankey-touch-handlers-nodes"
+          width={1000}
+          height={500}
+          data={exampleSankeyData}
+          throttledEvents={[]}
+          onTouchStart={onTouchStart}
+          onTouchMove={onTouchMove}
+          onTouchEnd={onTouchEnd}
+        />,
       );
 
       const node = container.querySelector(sankeyNodeMouseHoverTooltipSelector);
       assertNotNull(node);
 
+      fireEvent.touchStart(node, { touches: [{ clientX: 200, clientY: 200 }] });
+      expect(onTouchStart).toHaveBeenCalledTimes(1);
+
       fireEvent.touchMove(node, { touches: [{ clientX: 200, clientY: 200 }] });
-      expect(onTouchMove).toHaveBeenCalledTimes(0);
+      expect(onTouchMove).toHaveBeenCalledTimes(1);
 
       fireEvent.touchEnd(node, { changedTouches: [{ clientX: 200, clientY: 200 }] });
-      expect(onTouchEnd).toHaveBeenCalledTimes(0);
+      expect(onTouchEnd).toHaveBeenCalledTimes(1);
+    });
+  });
+
+  describe('with Tooltip on touch', () => {
+    it('should display Tooltip when touching a Link', () => {
+      const { container } = render(
+        <Sankey
+          className="sankey-touch-tooltip-link"
+          width={1000}
+          height={500}
+          data={exampleSankeyData}
+          throttledEvents={[]}
+        >
+          <Tooltip />
+        </Sankey>,
+      );
+
+      const tooltip = getTooltip(container);
+      expect(tooltip).not.toBeVisible();
+
+      const link = container.querySelector(sankeyLinkMouseHoverTooltipSelector);
+      assertNotNull(link);
+
+      // jsdom has no layout, so pretend the finger lands on the rendered link element,
+      // which carries the data attributes the touch middleware reads.
+      document.elementFromPoint = () => link;
+
+      fireEvent.touchMove(link, { touches: [{ clientX: 200, clientY: 200 }] });
+
+      expect(tooltip).toBeVisible();
+    });
+
+    it('should display Tooltip when touching a Node', () => {
+      const { container } = render(
+        <Sankey
+          className="sankey-touch-tooltip-node"
+          width={1000}
+          height={500}
+          data={exampleSankeyData}
+          throttledEvents={[]}
+        >
+          <Tooltip />
+        </Sankey>,
+      );
+
+      const tooltip = getTooltip(container);
+      expect(tooltip).not.toBeVisible();
+
+      const node = container.querySelector(sankeyNodeMouseHoverTooltipSelector);
+      assertNotNull(node);
+
+      document.elementFromPoint = () => node;
+
+      fireEvent.touchMove(node, { touches: [{ clientX: 200, clientY: 200 }] });
+
+      expect(tooltip).toBeVisible();
     });
   });
 
