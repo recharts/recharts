@@ -12,7 +12,7 @@ import { ReportChartMargin, ReportChartSize, useChartHeight, useChartWidth } fro
 import { TooltipPortalContext } from '../context/tooltipPortalContext';
 import { RechartsWrapper } from './RechartsWrapper';
 import { RechartsStoreProvider } from '../state/RechartsStoreProvider';
-import { useAppDispatch } from '../state/hooks';
+import { useAppDispatch, useAppSelector } from '../state/hooks';
 import {
   mouseLeaveItem,
   setActiveClickItemIndex,
@@ -28,7 +28,7 @@ import { SetComputedData } from '../context/chartDataContext';
 import { svgPropertiesNoEvents, svgPropertiesNoEventsFromUnknown } from '../util/svgPropertiesNoEvents';
 import { RequiresDefaultProps, resolveDefaultProps } from '../util/resolveDefaultProps';
 import { isPositiveNumber } from '../util/isWellBehavedNumber';
-import { isNotNil, noop } from '../util/DataUtils';
+import { isNotNil } from '../util/DataUtils';
 import { WithIdRequired } from '../util/useUniqueId';
 import { RegisterGraphicalItemId } from '../context/RegisterGraphicalItemId';
 import { GraphicalItemId } from '../state/graphicalItemsSlice';
@@ -632,6 +632,12 @@ const getLinkCoordinateOfTooltip = (item: LinkProps): Coordinate | undefined => 
     : undefined;
 };
 
+type SankeyGraphicalItem = NodeProps | LinkProps;
+
+function isSankeyLinkItem(item: SankeyGraphicalItem): item is LinkProps {
+  return 'sourceX' in item;
+}
+
 type SankeyTooltipPayload = { payload: SankeyNode | SankeyLink; name: unknown; value: unknown; color?: string };
 
 /**
@@ -695,22 +701,36 @@ const getPayloadOfTooltip = (
   return undefined;
 };
 
+/**
+ * A Sankey tooltip index names the rendered graph it belongs to: `node-N` or `link-N`, where N is the
+ * position inside the arrays that Sankey renders - `computedData`, not the raw props.data. Nodes and links
+ * are laid out into those arrays, and links are filtered and re-indexed on the way, so resolving against
+ * the rendered graph keeps index, payload, and position in agreement.
+ */
+const searchSankeyGraphicalItem = (
+  computedData: unknown,
+  activeIndex: TooltipIndex,
+): SankeyGraphicalItem | undefined => {
+  if (activeIndex == null || typeof activeIndex !== 'string') {
+    return undefined;
+  }
+  const [targetType, index] = activeIndex.split('-');
+  const item: SankeyGraphicalItem | undefined = get(computedData, `${targetType}s[${index}]`);
+  return item != null ? item : undefined;
+};
+
+const targetTypeOf = (activeIndex: TooltipIndex): string | undefined =>
+  activeIndex == null || typeof activeIndex !== 'string' ? undefined : activeIndex.split('-')[0];
+
 export const sankeyPayloadSearcher: TooltipPayloadSearcher = (
   _: unknown,
   activeIndex: TooltipIndex,
   computedData?: unknown,
   nameKey?,
 ): SankeyTooltipPayload | undefined => {
-  if (activeIndex == null || typeof activeIndex !== 'string') {
-    return undefined;
-  }
-  if (computedData == null || typeof computedData !== 'object') {
-    return undefined;
-  }
-  const splitIndex = activeIndex.split('-');
-  const [targetType, index] = splitIndex;
-  const item = get(computedData, `${targetType}s[${index}]`);
+  const item = searchSankeyGraphicalItem(computedData, activeIndex);
   if (item) {
+    const targetType: string | undefined = targetTypeOf(activeIndex);
     // @ts-expect-error nameKey type does not match SankeyElementType
     const payload = getPayloadOfTooltip(item, targetType as SankeyElementType, nameKey);
     return payload;
@@ -737,9 +757,25 @@ const SetSankeyTooltipEntrySettings = React.memo(
     data,
     id,
   }: Pick<InternalSankeyProps, 'dataKey' | 'nameKey' | 'stroke' | 'strokeWidth' | 'fill' | 'name' | 'data' | 'id'>) => {
+    /*
+     * Read the store from inside the provider: Sankey registers its computed graph there, and every chart
+     * owns a separate store. A Sankey has no Brush, so the data indexes are not something it cares about.
+     */
+    const { computedData } = useAppSelector(state => state.chartData) ?? { computedData: undefined };
     const tooltipEntrySettings: TooltipPayloadConfiguration = {
       dataDefinedOnItem: data,
-      getPosition: noop,
+      /*
+       * The hover and touch paths already report a coordinate for every node and link they dispatch: the
+       * centre of the node rectangle, the midpoint of the link. Reading the same rendered graph as the
+       * payload searcher, the defaultIndex path reports the same coordinate for the same index.
+       */
+      getPosition: index => {
+        const item = searchSankeyGraphicalItem(computedData, index);
+        if (item == null) {
+          return undefined;
+        }
+        return isSankeyLinkItem(item) ? getLinkCoordinateOfTooltip(item) : getNodeCoordinateOfTooltip(item);
+      },
       settings: {
         stroke,
         strokeWidth,
