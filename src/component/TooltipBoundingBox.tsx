@@ -94,16 +94,27 @@ function TooltipBoundingBoxImpl(props: TooltipBoundingBoxProps) {
     useTranslate3d: props.useTranslate3d,
     viewBox: props.viewBox,
   });
+  const transition = resolveTransitionProperty({
+    prefersReducedMotion,
+    isAnimationActive: props.isAnimationActive,
+    active: props.active,
+    animationDuration: props.animationDuration,
+    animationEasing: props.animationEasing,
+  });
   const positionStyle: CSSProperties = props.hasPortalFromProps
     ? {}
     : {
-        transition: resolveTransitionProperty({
-          prefersReducedMotion,
-          isAnimationActive: props.isAnimationActive,
-          active: props.active,
-          animationDuration: props.animationDuration,
-          animationEasing: props.animationEasing,
-        }),
+        transition,
+        /*
+         * While the position transition is running, the wrapper moves with every animation frame.
+         * On a non-composited element Chromium-based browsers can fail to invalidate the area the
+         * tooltip just vacated, leaving stale fragments of the previous label painted on screen
+         * during fast pointer moves (see issue #7754). `will-change: transform` promotes the
+         * wrapper to its own compositor layer so these moves are composited instead of repainted.
+         * Only applied while the transition is enabled, so we never pay the layer memory cost
+         * when animations are off.
+         */
+        willChange: transition == null ? undefined : 'transform',
         ...cssProperties,
         pointerEvents: 'none',
         position: 'absolute',
