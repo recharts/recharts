@@ -1121,10 +1121,13 @@ function SankeyLinkElement({
   };
 
   const item = renderLinkItem(linkContent, props, hasTheme);
-  const itemWithDataAttributes = React.cloneElement(item, {
-    'data-recharts-item-index': `link-${i}`,
-    'data-recharts-item-id': graphicalItemId,
-  });
+  // A custom render function can return any ReactNode; only elements can carry data attributes
+  const itemWithDataAttributes = React.isValidElement<Record<string, unknown>>(item)
+    ? React.cloneElement(item, {
+        'data-recharts-item-index': `link-${i}`,
+        'data-recharts-item-id': graphicalItemId,
+      })
+    : item;
 
   return <Layer {...events}>{itemWithDataAttributes}</Layer>;
 }
@@ -1290,11 +1293,13 @@ function NodeElement({
   };
 
   const item = renderNodeItem(nodeContent, props, hasTheme);
-  // @ts-expect-error data attributes are not part of the element props type
-  const itemWithDataAttributes = React.cloneElement(item, {
-    'data-recharts-item-index': `node-${i}`,
-    'data-recharts-item-id': graphicalItemId,
-  });
+  // A custom render function can return any ReactNode; only elements can carry data attributes
+  const itemWithDataAttributes = React.isValidElement<Record<string, unknown>>(item)
+    ? React.cloneElement(item, {
+        'data-recharts-item-index': `node-${i}`,
+        'data-recharts-item-id': graphicalItemId,
+      })
+    : item;
 
   return <Layer {...events}>{itemWithDataAttributes}</Layer>;
 }
