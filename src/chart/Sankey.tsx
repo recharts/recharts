@@ -955,6 +955,18 @@ interface SankeyProps extends EventThrottlingProps {
    * @default 'justify'
    */
   align?: 'left' | 'justify';
+  /**
+   * The customized event handler of touchstart on the chart wrapper.
+   */
+  onTouchStart?: TouchEventHandler<HTMLDivElement>;
+  /**
+   * The customized event handler of touchmove on the chart wrapper.
+   */
+  onTouchMove?: TouchEventHandler<HTMLDivElement>;
+  /**
+   * The customized event handler of touchend on the chart wrapper.
+   */
+  onTouchEnd?: TouchEventHandler<HTMLDivElement>;
 }
 
 export type Props = Omit<SVGProps<SVGSVGElement>, keyof SankeyProps> & SankeyProps;
@@ -1647,18 +1659,18 @@ function SankeyImpl(props: InternalSankeyProps) {
  * @provides TooltipEntrySettings
  */
 /**
- * Sankey's public props type touch handlers as plain React touch handlers (via SVGProps),
- * while RechartsWrapper dispatches them with (nextState, event).
+ * Sankey's public props type touch handlers as plain React touch handlers on the chart
+ * wrapper div, while RechartsWrapper dispatches them with (nextState, event).
  * Adapt so user handlers receive just the event, matching the documented props type.
  */
 function adaptTouchHandler(
-  handler: TouchEventHandler<SVGSVGElement> | undefined,
+  handler: TouchEventHandler<HTMLDivElement> | undefined,
 ): CategoricalChartFunc<TouchEvent<SVGGraphicsElement>> | undefined {
   if (handler == null) {
     return undefined;
   }
   return (_nextState, event) => {
-    // @ts-expect-error React types the event target as SVGSVGElement in the public props, while RechartsWrapper dispatches a TouchEvent<SVGGraphicsElement>
+    // @ts-expect-error RechartsWrapper dispatches a TouchEvent typed as SVGGraphicsElement, though it attaches these handlers to the chart's root HTMLDivElement (pre-existing inconsistency)
     handler(event);
   };
 }
