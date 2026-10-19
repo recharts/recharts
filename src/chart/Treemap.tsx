@@ -9,7 +9,7 @@ import { Polygon } from '../shape/Polygon';
 import { Rectangle } from '../shape/Rectangle';
 import { getValueByDataKey } from '../util/ChartUtils';
 import { COLOR_PANEL } from '../util/Constants';
-import { isNan, noop } from '../util/DataUtils';
+import { isNan } from '../util/DataUtils';
 import { getStringSize } from '../util/DOMUtils';
 import {
   AnimationDuration,
@@ -833,13 +833,29 @@ const SetTreemapTooltipEntrySettings = React.memo(
     stroke,
     fill,
     currentRoot,
+    formatRoot,
     id,
   }: Pick<InternalTreemapProps, 'dataKey' | 'nameKey' | 'stroke' | 'fill' | 'id'> & {
     currentRoot: TreemapNode | undefined;
+    formatRoot: TreemapNode | null;
   }) => {
     const tooltipEntrySettings: TooltipPayloadConfiguration = {
       dataDefinedOnItem: currentRoot,
-      getPosition: noop, // TODO I think Treemap has the capability of computing positions and supporting defaultIndex? Except it doesn't yet
+      /*
+       * A Treemap tooltip index is a path into the squarified tree, so the position of a tile is found the
+       * same way the payload searcher and the touch handler find the tile itself, and its centre is the
+       * coordinate that hovering and touching a tile already report.
+       *
+       * Read `formatRoot`, the tree that is rendered, rather than `currentRoot`: `nodeGap` and `nodeInset`
+       * are applied while squarifying, so only the rendered tree holds the geometry the user sees.
+       */
+      getPosition: index => {
+        const node: unknown = treemapPayloadSearcher(formatRoot, index);
+        if (!isTreemapNode(node)) {
+          return undefined;
+        }
+        return { x: node.x + node.width / 2, y: node.y + node.height / 2 };
+      },
       settings: {
         stroke,
         strokeWidth: undefined,
@@ -1244,6 +1260,7 @@ class TreemapWithState extends PureComponent<InternalTreemapProps, State> {
           stroke={this.props.stroke ?? this.props.themeGraphicalItems?.[0]?.stroke}
           fill={this.props.fill ?? this.props.themeGraphicalItems?.[0]?.fill}
           currentRoot={this.state.currentRoot}
+          formatRoot={this.state.formatRoot}
           id={this.props.id}
         />
         <Surface

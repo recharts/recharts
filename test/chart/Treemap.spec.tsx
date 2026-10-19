@@ -1,13 +1,20 @@
 import React from 'react';
-import { describe, test, expect, it, vi } from 'vitest';
+import { describe, test, expect, it, vi, beforeEach } from 'vitest';
 import { render, fireEvent } from '@testing-library/react';
 import { Tooltip, Treemap, XAxis, YAxis } from '../../src';
 import { exampleTreemapData } from '../_data';
-import { TreemapNode, addToTreemapNodeIndex, computeNode, treemapPayloadSearcher } from '../../src/chart/Treemap';
+import {
+  TreemapDataType,
+  TreemapNode,
+  addToTreemapNodeIndex,
+  computeNode,
+  treemapPayloadSearcher,
+} from '../../src/chart/Treemap';
 import { useChartHeight, useChartWidth, useMargin, useViewBox } from '../../src/context/chartLayoutContext';
-import { getTooltip, showTooltip } from '../component/Tooltip/tooltipTestHelpers';
+import { expectTooltipPayload, getTooltip, showTooltip } from '../component/Tooltip/tooltipTestHelpers';
 import { treemapNodeChartMouseHoverTooltipSelector } from '../component/Tooltip/tooltipMouseHoverSelectors';
 import { assertNotNull } from '../helper/assertNotNull';
+import { mockGetBoundingClientRect } from '../helper/mockGetBoundingClientRect';
 import { mockTouchingElement } from '../helper/mockTouchingElement';
 
 const multiLevelInsetData = [
@@ -575,6 +582,107 @@ describe('<Treemap />', () => {
 
       const tooltip = getTooltip(container);
       showTooltip(container, treemapNodeChartMouseHoverTooltipSelector);
+      expect(tooltip).not.toBeVisible();
+    });
+  });
+
+  describe('with Tooltip and defaultIndex', () => {
+    const twoTiles: ReadonlyArray<TreemapDataType> = [
+      { name: 'A', value: 60 },
+      { name: 'B', value: 40 },
+    ];
+    const twoLevels: ReadonlyArray<TreemapDataType> = [
+      {
+        name: 'A',
+        children: [
+          { name: 'U', value: 10 },
+          { name: 'V', value: 20 },
+        ],
+      },
+      { name: 'B', value: 40 },
+    ];
+
+    /*
+     * Tooltip refuses to position itself over a zero sized box, which is all jsdom ever reports,
+     * so the tooltip wrapper only gets a transform once the measurement is mocked.
+     */
+    beforeEach(() => {
+      mockGetBoundingClientRect({ width: 10, height: 10 });
+    });
+
+    function queryTile(container: Element, tooltipIndex: string): Element {
+      const tile = container.querySelector(`.recharts-rectangle[data-recharts-item-index="${tooltipIndex}"]`);
+      assertNotNull(tile);
+      return tile;
+    }
+
+    /*
+     * The transform of the tooltip wrapper is the position the user sees. Reading it from a run where the tile
+     * was hovered gives the expectation without hard-coding the squarify geometry into the test: hovering
+     * reports the tile coordinate directly, so the two paths have to agree.
+     */
+    function transformOfHoveredTile(
+      data: ReadonlyArray<TreemapDataType>,
+      tooltipIndex: string,
+      extraProps: Record<string, unknown>,
+    ): string {
+      const { container } = render(
+        <Treemap width={400} height={400} data={data} isAnimationActive={false} {...extraProps}>
+          <Tooltip />
+        </Treemap>,
+      );
+      fireEvent.mouseEnter(queryTile(container, tooltipIndex));
+
+      const { transform } = getTooltip(container).style;
+      assertNotNull(transform);
+      expect(transform).not.toBe('');
+      return transform;
+    }
+
+    function renderWithDefaultIndex(
+      data: ReadonlyArray<TreemapDataType>,
+      tooltipIndex: string,
+      extraProps: Record<string, unknown> = {},
+    ) {
+      return render(
+        <Treemap width={400} height={400} data={data} isAnimationActive={false} {...extraProps}>
+          <Tooltip defaultIndex={tooltipIndex} />
+        </Treemap>,
+      );
+    }
+
+    it('should position the tooltip over the tile that the index resolves to', () => {
+      const expected = transformOfHoveredTile(twoTiles, 'children[1]', {});
+      const { container } = renderWithDefaultIndex(twoTiles, 'children[1]');
+
+      expectTooltipPayload(container, '', ['B : 40']);
+      expect(getTooltip(container).style.transform).toBe(expected);
+    });
+
+    it('should position the tooltip over the tile of a nested index', () => {
+      const expected = transformOfHoveredTile(twoLevels, 'children[0]children[1]', {});
+      const { container } = renderWithDefaultIndex(twoLevels, 'children[0]children[1]');
+
+      expectTooltipPayload(container, '', ['V : 20']);
+      expect(getTooltip(container).style.transform).toBe(expected);
+    });
+
+    it('should position the tooltip with the geometry it renders with, when nodeGap moves the tiles', () => {
+      /*
+       * nodeGap is applied while squarifying, so the drawn tile is no longer where the unformatted tree
+       * says it is. The tooltip has to follow the drawn tile.
+       */
+      const expected = transformOfHoveredTile(twoTiles, 'children[0]', { nodeGap: 20 });
+      const { container } = renderWithDefaultIndex(twoTiles, 'children[0]', { nodeGap: 20 });
+
+      expectTooltipPayload(container, '', ['A : 60']);
+      expect(getTooltip(container).style.transform).toBe(expected);
+    });
+
+    it('should not show the tooltip when the index resolves to no tile', () => {
+      const { container } = renderWithDefaultIndex(twoTiles, 'children[9]');
+
+      const tooltip = getTooltip(container);
       expect(tooltip).not.toBeVisible();
     });
   });
