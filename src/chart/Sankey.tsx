@@ -36,6 +36,7 @@ import { initialEventSettingsState } from '../state/eventSettingsSlice';
 import { RechartsTheme, Styles2D } from '../theme/RechartsTheme';
 import { useRechartsTheme } from '../theme/RechartsThemeContext';
 import { getOwnStyles, hasOwnColors } from '../theme/dataEntryStyles';
+import { DATA_ITEM_GRAPHICAL_ITEM_ID_ATTRIBUTE_NAME, DATA_ITEM_INDEX_ATTRIBUTE_NAME } from '../util/Constants';
 
 const interpolationGenerator = (a: number, b: number) => {
   const ka = +a;
@@ -1109,7 +1110,11 @@ function SankeyLinkElement({
     },
   };
 
-  return <Layer {...events}>{renderLinkItem(linkContent, props, hasTheme)}</Layer>;
+  return (
+    <Layer {...events} data-recharts-item-index={activeIndex} data-recharts-item-id={graphicalItemId}>
+      {renderLinkItem(linkContent, props, hasTheme)}
+    </Layer>
+  );
 }
 
 function AllSankeyLinkElements({
@@ -1272,7 +1277,11 @@ function NodeElement({
     },
   };
 
-  return <Layer {...events}>{renderNodeItem(nodeContent, props, hasTheme)}</Layer>;
+  return (
+    <Layer {...events} data-recharts-item-index={activeIndex} data-recharts-item-id={graphicalItemId}>
+      {renderNodeItem(nodeContent, props, hasTheme)}
+    </Layer>
+  );
 }
 
 function AllNodeElements({
@@ -1425,6 +1434,9 @@ function SankeyImpl(props: InternalSankeyProps) {
     onMouseEnter,
     onMouseLeave,
     onClick,
+    onTouchStart,
+    onTouchMove,
+    onTouchEnd,
     data,
     iterations,
     nodeWidth,
@@ -1563,6 +1575,64 @@ function SankeyImpl(props: InternalSankeyProps) {
     [onClick],
   );
 
+  const dispatch = useAppDispatch();
+
+  /*
+   * Touch events do not have the mouse enter + leave pair, so we work out the touched
+   * element ourselves with document.elementFromPoint, same pattern as Treemap.handleTouchMove.
+   * The item is resolved against the arrays that are actually rendered, and the coordinates
+   * come from the same helpers that hover uses, so touch and hover cannot drift apart.
+   */
+  const handleTouchMove = useCallback(
+    (e: React.TouchEvent<SVGSVGElement>) => {
+      onTouchMove?.(e);
+      const touch = e.touches[0];
+      if (touch == null || typeof document.elementFromPoint !== 'function') {
+        return;
+      }
+      const target = document.elementFromPoint(touch.clientX, touch.clientY);
+      const markedTarget = target?.closest(`[${DATA_ITEM_INDEX_ATTRIBUTE_NAME}]`);
+      if (markedTarget == null) {
+        return;
+      }
+      const itemIndex = markedTarget.getAttribute(DATA_ITEM_INDEX_ATTRIBUTE_NAME);
+      if (itemIndex == null) {
+        return;
+      }
+      const itemId = markedTarget.getAttribute(DATA_ITEM_GRAPHICAL_ITEM_ID_ATTRIBUTE_NAME);
+      if (itemId != null && itemId !== id) {
+        // the element under the finger belongs to a different chart
+        return;
+      }
+      const [elementType, elementIndex] = itemIndex.split('-');
+      let activeCoordinate: Coordinate | undefined;
+      if (elementType === 'node') {
+        const touchedNode = modifiedNodes[Number(elementIndex)];
+        if (touchedNode == null) {
+          return;
+        }
+        activeCoordinate = getNodeCoordinateOfTooltip(touchedNode);
+      } else if (elementType === 'link') {
+        const touchedLink = modifiedLinks[Number(elementIndex)];
+        if (touchedLink == null) {
+          return;
+        }
+        activeCoordinate = getLinkCoordinateOfTooltip(touchedLink);
+      } else {
+        return;
+      }
+      dispatch(
+        setActiveMouseOverItemIndex({
+          activeIndex: itemIndex,
+          activeDataKey: dataKey,
+          activeCoordinate,
+          activeGraphicalItemId: id,
+        }),
+      );
+    },
+    [onTouchMove, modifiedNodes, modifiedLinks, dataKey, id, dispatch],
+  );
+
   if (!isPositiveNumber(width) || !isPositiveNumber(height) || !data || !data.links || !data.nodes) {
     return null;
   }
@@ -1570,7 +1640,18 @@ function SankeyImpl(props: InternalSankeyProps) {
   return (
     <>
       <SetComputedData computedData={{ links: modifiedLinks, nodes: modifiedNodes }} />
-      <Surface {...attrs} title={title} desc={desc} role={role} tabIndex={tabIndex} width={width} height={height}>
+      <Surface
+        {...attrs}
+        title={title}
+        desc={desc}
+        role={role}
+        tabIndex={tabIndex}
+        width={width}
+        height={height}
+        onTouchStart={onTouchStart}
+        onTouchMove={handleTouchMove}
+        onTouchEnd={onTouchEnd}
+      >
         {children}
         <AllSankeyLinkElements
           graphicalItemId={id}
@@ -1645,6 +1726,10 @@ export function Sankey(outsideProps: Props) {
         onMouseUp={undefined}
         onContextMenu={undefined}
         onDoubleClick={undefined}
+        /*
+         * Sankey calls the touch event handlers from its own Surface, like Treemap does,
+         * so the wrapper must not dispatch the external ones a second time.
+         */
         onTouchStart={undefined}
         onTouchMove={undefined}
         onTouchEnd={undefined}
