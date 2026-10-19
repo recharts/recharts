@@ -815,9 +815,7 @@ export type SankeyNodeOptions =
   ReactElement<SVGProps<SVGRectElement>> | ((props: NodeProps) => ReactNode) | RectangleProps;
 
 export type SankeyLinkOptions =
-  | ReactElement<SVGProps<SVGPathElement>>
-  | ((props: LinkProps) => ReactElement<SVGProps<SVGPathElement>>)
-  | SVGProps<SVGPathElement>;
+  ReactElement<SVGProps<SVGPathElement>> | ((props: LinkProps) => ReactNode) | SVGProps<SVGPathElement>;
 
 interface SankeyProps extends EventThrottlingProps {
   /**
@@ -1129,7 +1127,11 @@ function SankeyLinkElement({
       })
     : item;
 
-  return <Layer {...events}>{itemWithDataAttributes}</Layer>;
+  return (
+    <Layer {...events} data-recharts-item-index={`link-${i}`} data-recharts-item-id={graphicalItemId}>
+      {itemWithDataAttributes}
+    </Layer>
+  );
 }
 
 function AllSankeyLinkElements({
@@ -1301,7 +1303,11 @@ function NodeElement({
       })
     : item;
 
-  return <Layer {...events}>{itemWithDataAttributes}</Layer>;
+  return (
+    <Layer {...events} data-recharts-item-index={`node-${i}`} data-recharts-item-id={graphicalItemId}>
+      {itemWithDataAttributes}
+    </Layer>
+  );
 }
 
 function AllNodeElements({
