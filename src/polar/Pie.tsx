@@ -8,7 +8,7 @@ import { useAppSelector } from '../state/hooks';
 import { Layer } from '../container/Layer';
 import { Curve, Props as CurveProps } from '../shape/Curve';
 import { Sector } from '../shape/Sector';
-import { Text } from '../component/Text';
+import { Text, TextBackgroundProps } from '../component/Text';
 import { Cell } from '../component/Cell';
 import { findAllByType } from '../util/ReactUtils';
 import { getMaxRadius, polarToCartesian } from '../util/PolarUtils';
@@ -73,6 +73,13 @@ import { ChartData } from '../state/chartDataSlice';
 import { getClassNameFromUnknown } from '../util/getClassNameFromUnknown';
 import { WithIdRequired } from '../util/useUniqueId';
 import { usePolarChartLayout } from '../context/chartLayoutContext';
+import {
+  applyLabelTheme,
+  DataLabelThemeContextProvider,
+  LabelBackground,
+  useDataLabelThemeResolver,
+  useIndexedLabelThemeResolver,
+} from '../theme/labelTheme';
 import { RechartsTheme, Styles2D } from '../theme/RechartsTheme';
 import { useBackwardsCompatibleTheme } from '../theme/useBackwardsCompatibleTheme';
 import { getOwnStyles, getOwnStylesWithFallback, getUnthemedStyles, hasOwnColors } from '../theme/dataEntryStyles';
@@ -133,6 +140,18 @@ export type PieLabelRenderProps = Omit<SVGPropsNoEvents<PieSvgAttributes>, 'offs
 export type LabelListPropsWithPosition = LabelListProps & { position: LabelListProps['position'] };
 
 /**
+ * Props of the default Pie label.
+ *
+ * @inline
+ */
+type PieLabelObject = Partial<PieLabelRenderProps> & {
+  /**
+   * Draws a background behind each label, same as the `background` prop of {@link Label}.
+   */
+  background?: boolean | TextBackgroundProps;
+};
+
+/**
  * The `label` prop in Pie accepts a variety of alternatives.
  */
 export type PieLabel =
@@ -151,7 +170,7 @@ export type PieLabel =
    * this renders a special Pie label that is similar to <Label position="outside"> and supports an optional labelLine.
    * labelLine is a small line connecting the sector to the label.
    */
-  | Partial<PieLabelRenderProps>
+  | PieLabelObject
   /*
    * If label prop is a function, or a React component, it will be called once for each label.
    * The result of each call will be rendered.
@@ -704,7 +723,7 @@ const renderLabelLineItem = (option: PieLabelLine, props: CurveProps) => {
   return <Curve {...otherProps} type="linear" className={className} />;
 };
 
-const renderLabelItem = (option: PieLabel, props: PieLabelRenderProps, value: unknown) => {
+const renderLabelItem = (option: PieLabel, props: PieLabelRenderProps, value: unknown, background: LabelBackground) => {
   if (React.isValidElement(option)) {
     // @ts-expect-error element cloning is not typed
     return React.cloneElement(option, props);
@@ -719,12 +738,22 @@ const renderLabelItem = (option: PieLabel, props: PieLabelRenderProps, value: un
 
   const className = clsx('recharts-pie-label-text', getClassNameFromUnknown(option));
   return (
-    <Text {...props} alignmentBaseline="middle" className={className}>
+    <Text {...props} alignmentBaseline="middle" className={className} background={background}>
       {/* @ts-expect-error we pass unknown but Text expects string | number */}
       {label}
     </Text>
   );
 };
+
+/**
+ * Returns the props of the default Pie label, if the `label` prop sets them as an object.
+ */
+function getPieLabelObject(label: PieLabel): PieLabelObject | undefined {
+  if (label == null || typeof label !== 'object' || React.isValidElement(label) || 'position' in label) {
+    return undefined;
+  }
+  return label;
+}
 
 function PieLabels({
   sectors,
@@ -735,12 +764,14 @@ function PieLabels({
   props: WithoutId<InternalProps>;
   showLabels: boolean;
 }) {
+  const resolveLabelTheme = useDataLabelThemeResolver();
   const { label, labelLine, dataKey } = props;
   if (!showLabels || !label || !sectors) {
     return null;
   }
   const pieProps = svgPropertiesNoEvents(props);
   const customLabelProps = svgPropertiesNoEventsFromUnknown(label);
+  const labelObject = getPieLabelObject(label);
   const customLabelLineProps = svgPropertiesNoEventsFromUnknown(labelLine);
   const offsetRadius =
     (typeof label === 'object' &&
@@ -762,6 +793,17 @@ function PieLabels({
       textAnchor: getTextAnchor(endPoint.x, entry.cx),
       ...endPoint,
     };
+    const themedLabelProps = applyLabelTheme(
+      resolveLabelTheme?.(i),
+      {
+        fill: labelObject?.fill,
+        style: labelObject?.style,
+        background: labelObject?.background,
+      },
+      labelProps.fill,
+    );
+    labelProps.fill = themedLabelProps.fill;
+    labelProps.style = themedLabelProps.style;
     const lineProps: CurveProps = {
       ...pieProps,
       ...entry,
@@ -783,7 +825,7 @@ function PieLabels({
         <Layer>
           {labelLine && renderLabelLineItem(labelLine, lineProps)}
           {/* @ts-expect-error we send the full PieSectorDataItem */}
-          {renderLabelItem(label, labelProps, getValueByDataKey(entry, dataKey))}
+          {renderLabelItem(label, labelProps, getValueByDataKey(entry, dataKey), themedLabelProps.background)}
         </Layer>
       </ZIndexLayer>
     );
@@ -1122,6 +1164,7 @@ function SectorsWithAnimation({
   explicitStyleProps: PieStyleProps;
 }) {
   const { sectors, activeShape, inactiveShape, animationInterpolateFn } = props;
+  const resolveLabelTheme = useIndexedLabelThemeResolver(graphicalItems, explicitStyleProps);
 
   const { isAnimating, handleAnimationStart, handleAnimationEnd } = useAnimationCallbacks(
     props.onAnimationStart,
@@ -1135,53 +1178,55 @@ function SectorsWithAnimation({
   const firstSector = sectors[0];
 
   return (
-    <PieLabelListProvider showLabels={!isAnimating} sectors={sectors}>
-      <AnimatedItems
-        animationInput={props}
-        animationIdPrefix="recharts-pie-"
-        items={sectors}
-        previousItemsRef={previousSectorsRef}
-        isAnimationActive={props.isAnimationActive}
-        animationBegin={props.animationBegin}
-        animationDuration={props.animationDuration}
-        animationEasing={props.animationEasing}
-        onAnimationStart={handleAnimationStart}
-        onAnimationEnd={handleAnimationEnd}
-        animationInterpolateFn={animationInterpolateFn}
-        animationMatchBy={props.animationMatchBy}
-        layout={layout}
-      >
-        {(stepData, animationElapsedTime, isEntrance) => (
-          <Layer>
-            <PieSectors
-              sectors={stepData}
-              activeShape={activeShape}
-              inactiveShape={inactiveShape}
-              allOtherPieProps={props}
-              shape={props.shape}
-              id={id}
-              graphicalItems={graphicalItems}
-              explicitStyleProps={explicitStyleProps}
-              animationElapsedTime={animationElapsedTime}
-              isAnimating={isAnimating || animationElapsedTime < 1}
-              isEntrance={isEntrance}
-            />
-          </Layer>
-        )}
-      </AnimatedItems>
-      <PieLabelList showLabels={!isAnimating} sectors={sectors} props={props} />
-      <PolarLabelContextProvider
-        cx={firstSector?.cx ?? 0}
-        cy={firstSector?.cy ?? 0}
-        innerRadius={firstSector?.innerRadius ?? 0}
-        outerRadius={firstSector?.outerRadius ?? 0}
-        startAngle={props.startAngle}
-        endAngle={props.endAngle}
-        clockWise={false}
-      >
-        {props.children}
-      </PolarLabelContextProvider>
-    </PieLabelListProvider>
+    <DataLabelThemeContextProvider value={resolveLabelTheme}>
+      <PieLabelListProvider showLabels={!isAnimating} sectors={sectors}>
+        <AnimatedItems
+          animationInput={props}
+          animationIdPrefix="recharts-pie-"
+          items={sectors}
+          previousItemsRef={previousSectorsRef}
+          isAnimationActive={props.isAnimationActive}
+          animationBegin={props.animationBegin}
+          animationDuration={props.animationDuration}
+          animationEasing={props.animationEasing}
+          onAnimationStart={handleAnimationStart}
+          onAnimationEnd={handleAnimationEnd}
+          animationInterpolateFn={animationInterpolateFn}
+          animationMatchBy={props.animationMatchBy}
+          layout={layout}
+        >
+          {(stepData, animationElapsedTime, isEntrance) => (
+            <Layer>
+              <PieSectors
+                sectors={stepData}
+                activeShape={activeShape}
+                inactiveShape={inactiveShape}
+                allOtherPieProps={props}
+                shape={props.shape}
+                id={id}
+                graphicalItems={graphicalItems}
+                explicitStyleProps={explicitStyleProps}
+                animationElapsedTime={animationElapsedTime}
+                isAnimating={isAnimating || animationElapsedTime < 1}
+                isEntrance={isEntrance}
+              />
+            </Layer>
+          )}
+        </AnimatedItems>
+        <PieLabelList showLabels={!isAnimating} sectors={sectors} props={props} />
+        <PolarLabelContextProvider
+          cx={firstSector?.cx ?? 0}
+          cy={firstSector?.cy ?? 0}
+          innerRadius={firstSector?.innerRadius ?? 0}
+          outerRadius={firstSector?.outerRadius ?? 0}
+          startAngle={props.startAngle}
+          endAngle={props.endAngle}
+          clockWise={false}
+        >
+          {props.children}
+        </PolarLabelContextProvider>
+      </PieLabelListProvider>
+    </DataLabelThemeContextProvider>
   );
 }
 

@@ -99,6 +99,7 @@ import { useGraphicalItemIdentity } from '../theme/useGraphicalItemIdentity';
 import { useEffectiveDataKey } from '../util/useEffectiveDataKey';
 import { getEntryStyleOverrides, UnthemedStyles, useUnthemedStyles } from '../theme/dataEntryStyles';
 import { getActiveStyleOverrides, useThemedActiveStyles } from '../theme/activeStyles';
+import { DataLabelThemeContextProvider, useSeriesLabelThemeResolver } from '../theme/labelTheme';
 
 type BarRectangleType = {
   x: number | null;
@@ -1370,6 +1371,7 @@ function BarFn(outsideProps: Props) {
     yAxisId: outsideProps.yAxisId ?? defaultBarProps.yAxisId,
   });
   const graphicalItemThemeSelector = useGraphicalItemIdentity(dataKey, outsideProps);
+  const resolveLabelTheme = useSeriesLabelThemeResolver(graphicalItemThemeSelector);
   const unthemedStyles = useUnthemedStyles(outsideProps);
   const themedActiveStyles = useThemedActiveStyles(graphicalItemThemeSelector, outsideProps);
   const graphicalItemStyle = useBackwardsCompatibleTheme<Props>(graphicalItemThemeSelector, outsideProps, undefined);
@@ -1430,13 +1432,15 @@ function BarFn(outsideProps: Props) {
             strokeWidth={themedProps.strokeWidth ?? props.strokeWidth}
           />
           <ZIndexLayer zIndex={props.zIndex}>
-            <BarImpl
-              {...props}
-              {...themedProps}
-              id={id}
-              unthemedStyles={unthemedStyles}
-              themedActiveStyles={themedActiveStyles}
-            />
+            <DataLabelThemeContextProvider value={resolveLabelTheme}>
+              <BarImpl
+                {...props}
+                {...themedProps}
+                id={id}
+                unthemedStyles={unthemedStyles}
+                themedActiveStyles={themedActiveStyles}
+              />
+            </DataLabelThemeContextProvider>
           </ZIndexLayer>
         </>
       )}
