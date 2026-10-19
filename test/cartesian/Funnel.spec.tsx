@@ -1,9 +1,22 @@
 import React from 'react';
 import { render } from '@testing-library/react';
 import { Cell, Funnel, FunnelChart, FunnelProps, FunnelTrapezoidItem, LabelList, Tooltip } from '../../src';
-import { showTooltip } from '../component/Tooltip/tooltipTestHelpers';
+import {
+  expectTooltipNotVisible,
+  expectTooltipPayload,
+  showTooltip,
+  showTooltipOnCoordinateTouch,
+} from '../component/Tooltip/tooltipTestHelpers';
 import { funnelChartMouseHoverTooltipSelector } from '../component/Tooltip/tooltipMouseHoverSelectors';
 import { computeFunnelTrapezoids } from '../../src/cartesian/Funnel';
+import { assertNotNull } from '../helper/assertNotNull';
+import { mockGetBoundingClientRect } from '../helper/mockGetBoundingClientRect';
+import {
+  mockTouchingNestedElement,
+  mockTouchingRenderedElement,
+  mockTouchingUnrelatedElement,
+} from '../helper/mockTouchingElement';
+import { DATA_ITEM_GRAPHICAL_ITEM_ID_ATTRIBUTE_NAME, DATA_ITEM_INDEX_ATTRIBUTE_NAME } from '../../src/util/Constants';
 
 const data = [
   { value: 100, name: '展现' },
@@ -214,6 +227,64 @@ describe('<Funnel />', () => {
       expect(Number.isFinite(trapezoid.upperWidth)).toBe(true);
       expect(Number.isFinite(trapezoid.lowerWidth)).toBe(true);
       expect(Number.isFinite(trapezoid.height)).toBe(true);
+    });
+  });
+
+  describe('touch interaction', () => {
+    beforeEach(() => {
+      mockGetBoundingClientRect({ width: 100, height: 100 });
+    });
+
+    function renderFunnelWithTooltip() {
+      return render(
+        <FunnelChart width={500} height={500} throttledEvents={[]}>
+          <Funnel isAnimationActive={false} dataKey="value" nameKey="name" data={data} id="my-funnel" />
+          <Tooltip isAnimationActive={false} />
+        </FunnelChart>,
+      );
+    }
+
+    it('should mark every trapezoid with the attributes the touch middleware reads back', () => {
+      const { container } = renderFunnelWithTooltip();
+
+      const trapezoids = container.querySelectorAll('.recharts-trapezoid');
+      expect(trapezoids).toHaveLength(data.length);
+      trapezoids.forEach((trapezoid, expectedIndex) => {
+        expect(trapezoid).toHaveAttribute(DATA_ITEM_INDEX_ATTRIBUTE_NAME, String(expectedIndex));
+        expect(trapezoid).toHaveAttribute(DATA_ITEM_GRAPHICAL_ITEM_ID_ATTRIBUTE_NAME, 'my-funnel');
+      });
+    });
+
+    it('should move the tooltip to the trapezoid under the finger', () => {
+      const { container } = renderFunnelWithTooltip();
+
+      const thirdTrapezoid = container.querySelectorAll('.recharts-trapezoid')[2];
+      assertNotNull(thirdTrapezoid);
+      mockTouchingRenderedElement(thirdTrapezoid);
+
+      showTooltipOnCoordinateTouch(container, funnelChartMouseHoverTooltipSelector, { clientX: 200, clientY: 200 });
+
+      expectTooltipPayload(container, '', ['访问 : 50']);
+    });
+
+    it('should resolve the trapezoid from an annotated ancestor of the touched element', () => {
+      const { container } = renderFunnelWithTooltip();
+
+      mockTouchingNestedElement('1', 'my-funnel');
+
+      showTooltipOnCoordinateTouch(container, funnelChartMouseHoverTooltipSelector, { clientX: 200, clientY: 200 });
+
+      expectTooltipPayload(container, '', ['点击 : 80']);
+    });
+
+    it('should not show a tooltip when touching an element that is not a funnel item', () => {
+      const { container } = renderFunnelWithTooltip();
+
+      mockTouchingUnrelatedElement();
+
+      showTooltipOnCoordinateTouch(container, funnelChartMouseHoverTooltipSelector, { clientX: 200, clientY: 200 });
+
+      expectTooltipNotVisible(container);
     });
   });
 });

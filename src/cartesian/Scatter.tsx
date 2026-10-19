@@ -57,7 +57,7 @@ import { BaseAxisWithScale, implicitZAxis, ZAxisWithScale } from '../state/selec
 import { useIsPanorama } from '../context/PanoramaContext';
 import { selectActiveTooltipIndex } from '../state/selectors/tooltipSelectors';
 import { SetLegendPayload } from '../state/SetLegendPayload';
-import { DATA_ITEM_GRAPHICAL_ITEM_ID_ATTRIBUTE_NAME } from '../util/Constants';
+import { DATA_ITEM_GRAPHICAL_ITEM_ID_ATTRIBUTE_NAME, DATA_ITEM_INDEX_ATTRIBUTE_NAME } from '../util/Constants';
 import { resolveDefaultProps } from '../util/resolveDefaultProps';
 import { RegisterGraphicalItemId } from '../context/RegisterGraphicalItemId';
 import { ScatterSettings } from '../state/types/ScatterSettings';
@@ -663,6 +663,7 @@ function ScatterPoint({
     animationElapsedTime,
     isAnimating,
     isEntrance,
+    [DATA_ITEM_INDEX_ATTRIBUTE_NAME]: index,
     [DATA_ITEM_GRAPHICAL_ITEM_ID_ATTRIBUTE_NAME]: String(id),
   };
 
