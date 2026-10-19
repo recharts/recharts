@@ -140,19 +140,6 @@ export type PieLabelRenderProps = Omit<SVGPropsNoEvents<PieSvgAttributes>, 'offs
 export type LabelListPropsWithPosition = LabelListProps & { position: LabelListProps['position'] };
 
 /**
- * Props of the default Pie label.
- *
- * @inline
- * @since 3.11
- */
-export type PieLabelProps = Partial<PieLabelRenderProps> & {
-  /**
-   * Draws a background behind each label, same as the `background` prop of {@link Label}.
-   */
-  background?: boolean | TextBackgroundProps;
-};
-
-/**
  * The `label` prop in Pie accepts a variety of alternatives.
  */
 export type PieLabel =
@@ -171,7 +158,12 @@ export type PieLabel =
    * this renders a special Pie label that is similar to <Label position="outside"> and supports an optional labelLine.
    * labelLine is a small line connecting the sector to the label.
    */
-  | PieLabelProps
+  | (Partial<PieLabelRenderProps> & {
+      /**
+       * Draws a background behind each label, same as the `background` prop of {@link Label}.
+       */
+      background?: boolean | TextBackgroundProps;
+    })
   /*
    * If label prop is a function, or a React component, it will be called once for each label.
    * The result of each call will be rendered.
@@ -749,7 +741,9 @@ const renderLabelItem = (option: PieLabel, props: PieLabelRenderProps, value: un
 /**
  * Returns the props of the default Pie label, if the `label` prop sets them as an object.
  */
-function getPieLabelProps(label: PieLabel): PieLabelProps | undefined {
+function getPieLabelObject(
+  label: PieLabel,
+): (Partial<PieLabelRenderProps> & { background?: boolean | TextBackgroundProps }) | undefined {
   if (label == null || typeof label !== 'object' || React.isValidElement(label) || 'position' in label) {
     return undefined;
   }
@@ -772,7 +766,7 @@ function PieLabels({
   }
   const pieProps = svgPropertiesNoEvents(props);
   const customLabelProps = svgPropertiesNoEventsFromUnknown(label);
-  const labelObject = getPieLabelProps(label);
+  const labelObject = getPieLabelObject(label);
   const customLabelLineProps = svgPropertiesNoEventsFromUnknown(labelLine);
   const offsetRadius =
     (typeof label === 'object' &&

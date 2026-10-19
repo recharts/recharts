@@ -75,7 +75,6 @@ export { Pie } from './polar/Pie';
 export type {
   Props as PieProps,
   PieLabel,
-  PieLabelProps,
   PieLabelRenderProps,
   PieSectorDataItem,
   PieSectorShapeProps,
