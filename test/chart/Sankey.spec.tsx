@@ -878,6 +878,40 @@ describe('<Sankey />', () => {
       expect(tooltip).toBeVisible();
     });
 
+    it('should display Tooltip when the finger lands on a nested descendant of a custom Link renderer', () => {
+      // A custom renderer can drop the cloned props (or return a fragment), so the
+      // element under the finger carries no item attributes; the item's Layer does.
+      const { container } = render(
+        <Sankey
+          className="sankey-touch-tooltip-custom-link"
+          width={1000}
+          height={500}
+          data={exampleSankeyData}
+          throttledEvents={[]}
+          link={() => (
+            <g className="custom-link-no-props">
+              <path className="custom-link-inner" d="M0,0 L10,10" />
+            </g>
+          )}
+        >
+          <Tooltip />
+        </Sankey>,
+      );
+
+      const tooltip = getTooltip(container);
+      expect(tooltip).not.toBeVisible();
+
+      const inner = container.querySelector('.custom-link-inner');
+      assertNotNull(inner);
+      expect(inner.getAttribute('data-recharts-item-index')).toBeNull();
+
+      document.elementFromPoint = () => inner;
+
+      fireEvent.touchMove(inner, { touches: [{ clientX: 200, clientY: 200 }] });
+
+      expect(tooltip).toBeVisible();
+    });
+
     it('should display Tooltip when touching a Node', () => {
       const { container } = render(
         <Sankey
