@@ -143,8 +143,9 @@ export type LabelListPropsWithPosition = LabelListProps & { position: LabelListP
  * Props of the default Pie label.
  *
  * @inline
+ * @since 3.11
  */
-type PieLabelObject = Partial<PieLabelRenderProps> & {
+export type PieLabelProps = Partial<PieLabelRenderProps> & {
   /**
    * Draws a background behind each label, same as the `background` prop of {@link Label}.
    */
@@ -170,7 +171,7 @@ export type PieLabel =
    * this renders a special Pie label that is similar to <Label position="outside"> and supports an optional labelLine.
    * labelLine is a small line connecting the sector to the label.
    */
-  | PieLabelObject
+  | PieLabelProps
   /*
    * If label prop is a function, or a React component, it will be called once for each label.
    * The result of each call will be rendered.
@@ -748,7 +749,7 @@ const renderLabelItem = (option: PieLabel, props: PieLabelRenderProps, value: un
 /**
  * Returns the props of the default Pie label, if the `label` prop sets them as an object.
  */
-function getPieLabelObject(label: PieLabel): PieLabelObject | undefined {
+function getPieLabelProps(label: PieLabel): PieLabelProps | undefined {
   if (label == null || typeof label !== 'object' || React.isValidElement(label) || 'position' in label) {
     return undefined;
   }
@@ -771,7 +772,7 @@ function PieLabels({
   }
   const pieProps = svgPropertiesNoEvents(props);
   const customLabelProps = svgPropertiesNoEventsFromUnknown(label);
-  const labelObject = getPieLabelObject(label);
+  const labelObject = getPieLabelProps(label);
   const customLabelLineProps = svgPropertiesNoEventsFromUnknown(labelLine);
   const offsetRadius =
     (typeof label === 'object' &&
