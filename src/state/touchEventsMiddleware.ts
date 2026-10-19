@@ -84,11 +84,19 @@ touchEventMiddleware.startListening({
             return;
           }
           const target = document.elementFromPoint(touch.clientX, touch.clientY);
-          if (!target || !target.getAttribute) {
+          /*
+           * Custom renderers can return fragments or components that drop the cloned props,
+           * so the element under the finger may be a bare descendant; the item attributes
+           * live on the nearest ancestor (the item's Layer carries them too).
+           */
+          const itemTarget = target?.closest(
+            `[${DATA_ITEM_INDEX_ATTRIBUTE_NAME}][${DATA_ITEM_GRAPHICAL_ITEM_ID_ATTRIBUTE_NAME}]`,
+          );
+          if (!itemTarget) {
             return;
           }
-          const itemIndex = target.getAttribute(DATA_ITEM_INDEX_ATTRIBUTE_NAME);
-          const graphicalItemId = target.getAttribute(DATA_ITEM_GRAPHICAL_ITEM_ID_ATTRIBUTE_NAME) ?? undefined;
+          const itemIndex = itemTarget.getAttribute(DATA_ITEM_INDEX_ATTRIBUTE_NAME);
+          const graphicalItemId = itemTarget.getAttribute(DATA_ITEM_GRAPHICAL_ITEM_ID_ATTRIBUTE_NAME) ?? undefined;
           const settings = selectAllGraphicalItemsSettings(currentState).find(item => item.id === graphicalItemId);
           if (itemIndex == null || graphicalItemId == null) {
             return;
