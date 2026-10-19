@@ -9,8 +9,6 @@ import { myTheme } from './myTheme';
 
 test('my theme is readable', () => {
   const report = analyzeTheme(myTheme, {
-    // Only the first six series: our charts never show more.
-    seriesCount: 6,
     // No standard defines these two. Pick numbers that fit your marks, see "Telling series apart".
     thresholds: { seriesDifference: 10, seriesDifferenceCvd: 2 },
     // Our labels sit outside the bars, never on top of a series fill.
