@@ -936,6 +936,10 @@ describe('<Sankey />', () => {
       fireEvent.touchMove(node, { touches: [{ clientX: 200, clientY: 200 }] });
 
       expect(tooltip).toBeVisible();
+      // The first node in the example data is 'Agricultural waste'; a node tooltip
+      // carries the node name and value, not the link source/target pair.
+      expect(tooltip).toHaveTextContent('Agricultural waste');
+      expect(tooltip).not.toHaveTextContent('Bio-conversion');
     });
   });
 
