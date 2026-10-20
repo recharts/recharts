@@ -1012,6 +1012,27 @@ describe('Keyboard preventDefault while the accessibility layer consumes the key
     expect(defaultConsumed(container, 'ArrowRight')).toBe(false);
     expect(defaultConsumed(container, 'Enter')).toBe(false);
   });
+
+  test('should not consume the browser default of a button rendered inside the chart', () => {
+    // The wrapper hosts custom children too, so a key event that bubbles up from a button in a
+    // custom legend must keep its default, otherwise the button can no longer be activated.
+    function CustomLegend() {
+      return <button type="button">Legend action</button>;
+    }
+    const { container } = render(
+      <AreaChart width={100} height={50} data={PageData}>
+        <Area type="monotone" dataKey="uv" stroke="#ff7300" fill="#ff7300" />
+        <Tooltip />
+        <XAxis dataKey="name" />
+        <YAxis />
+        <Legend content={<CustomLegend />} />
+      </AreaChart>,
+    );
+    const button = container.querySelector('button');
+    assertNotNull(button);
+    expect(fireEvent.keyDown(button, { key: 'Enter' })).toBe(true);
+    expect(fireEvent.keyDown(button, { key: 'ArrowRight' })).toBe(true);
+  });
 });
 
 describe('AreaChart horizontal', () => {

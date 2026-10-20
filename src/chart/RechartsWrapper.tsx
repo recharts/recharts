@@ -196,6 +196,20 @@ type StaticDivProps = HTMLAttributes<HTMLDivElement> & {
   height: number;
 };
 
+/**
+ * Is the given event target the chart's own surface?
+ *
+ * The main chart surface is the element that the keyboard accessibility layer makes focusable, and
+ * Sankey renders its own surface the same way. The default legend also renders a surface of its
+ * own, but that one is not focusable and never receives a key event.
+ *
+ * @param target the `target` of a keyboard event
+ * @returns true when the event was aimed at the chart surface
+ */
+function isChartSurface(target: EventTarget | null): boolean {
+  return target instanceof Element && target.matches('svg.recharts-surface');
+}
+
 const StaticDiv = forwardRef<HTMLDivElement, StaticDivProps>((props: StaticDivProps, ref): ReactNode => {
   const { width, height } = props;
 
@@ -327,7 +341,16 @@ export const RechartsWrapper = forwardRef<HTMLDivElement | null, RechartsWrapper
         // The keyboard accessibility layer moves the tooltip on these keys, so consume their browser
         // default (page scroll on Safari) instead of letting both happen. When the layer is off the
         // middleware ignores the key, so leave the default untouched.
-        if (accessibilityLayerIsEnabled && (e.key === 'ArrowLeft' || e.key === 'ArrowRight' || e.key === 'Enter')) {
+        //
+        // Only consume the default when the key was aimed at the chart's own surface, because that is
+        // the element the accessibility layer makes focusable. The wrapper also hosts custom children
+        // (a custom legend, a custom tooltip, <Customized>) whose buttons, links and inputs live
+        // inside this same div; swallowing Enter there would stop a focused button from activating.
+        if (
+          accessibilityLayerIsEnabled &&
+          isChartSurface(e.target) &&
+          (e.key === 'ArrowLeft' || e.key === 'ArrowRight' || e.key === 'Enter')
+        ) {
           e.preventDefault();
         }
         dispatch(keyDownAction(e.key));
