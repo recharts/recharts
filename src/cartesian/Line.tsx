@@ -11,6 +11,7 @@ import {
   CartesianLabelListEntry,
   ImplicitLabelListType,
   LabelListFromLabelProp,
+  SetLabelListClipArea,
 } from '../component/LabelList';
 import { Dots } from '../component/Dots';
 import { ErrorBarDataItem, ErrorBarDataPointFormatter } from './ErrorBar';
@@ -807,7 +808,9 @@ class LineWithState extends Component<InternalProps> {
             dataPointFormatter={errorBarDataPointFormatter}
             errorBarOffset={0}
           >
-            <RenderCurve props={this.props} clipPathId={clipPathId} />
+            <SetLabelListClipArea xAxisId={xAxisId} yAxisId={yAxisId}>
+              <RenderCurve props={this.props} clipPathId={clipPathId} />
+            </SetLabelListClipArea>
           </SetErrorBarContext>
         </Layer>
         <ActivePoints
