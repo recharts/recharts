@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { PureComponent, ReactNode, useCallback, useState } from 'react';
+import { PureComponent, ReactNode, useCallback, useMemo, useState } from 'react';
 import omit from 'es-toolkit/compat/omit';
 import get from 'es-toolkit/compat/get';
 
@@ -23,6 +23,7 @@ import {
   RectanglePosition,
 } from '../util/types';
 import { ReportChartMargin, useChartHeight, useChartWidth } from '../context/chartLayoutContext';
+import { SetComputedData } from '../context/chartDataContext';
 import { TooltipPortalContext } from '../context/tooltipPortalContext';
 import { RechartsWrapper } from './RechartsWrapper';
 import {
@@ -96,14 +97,83 @@ function isTreemapNode(value: unknown): value is TreemapNode {
   );
 }
 
+/**
+ * The data the Treemap computes for itself, and publishes to the store.
+ *
+ * The tooltip payload searcher needs it to know which tiles the chart actually draws: in the `nest`
+ * type most of the tree is hidden until the user navigates into it, and a tile that is not on screen
+ * must not have a tooltip either.
+ */
+type TreemapComputedData = {
+  currentRoot: TreemapNode | undefined;
+  type: InternalTreemapProps['type'];
+};
+
+function isTreemapComputedData(value: unknown): value is TreemapComputedData {
+  return value != null && typeof value === 'object' && 'currentRoot' in value && 'type' in value;
+}
+
+/**
+ * The parts of a node that decide whether it is drawn.
+ *
+ * The tree the tooltip payload is resolved against is not squarified, so its nodes do not have the
+ * geometry that a drawn tile has. The depth and the name are enough to tell the tiles apart.
+ */
+type TreemapNodeIdentity = {
+  depth: number;
+  name: string;
+};
+
+/**
+ * Is the node on screen?
+ *
+ * In the `flat` type every tile of the tree is drawn. In the `nest` type only the tree root, its
+ * direct children, and the children of the node the user has opened are drawn; everything deeper
+ * stays hidden until the user navigates into it.
+ *
+ * @param node the node to check
+ * @param currentRoot the node the user has opened, undefined before anything is opened
+ * @param type the type of the treemap
+ * @returns true when the node is drawn
+ */
+function isNodeVisible(
+  node: TreemapNodeIdentity,
+  currentRoot: TreemapNode | undefined,
+  type: InternalTreemapProps['type'],
+): boolean {
+  if (type !== 'nest') {
+    return true;
+  }
+  // The tree root and its direct children are always drawn.
+  if (node.depth <= 1) {
+    return true;
+  }
+  return (currentRoot?.children || []).some(
+    (item: TreemapNode) => item.depth === node.depth && item.name === node.name,
+  );
+}
+
 export const treemapPayloadSearcher: TooltipPayloadSearcher = (
   data: unknown,
   activeIndex: TooltipIndex,
+  computedData?: unknown,
 ): TreemapNode | undefined => {
   if (!data || !activeIndex) {
     return undefined;
   }
-  return get(data, activeIndex);
+  const node = get(data, activeIndex);
+  if (node == null) {
+    return undefined;
+  }
+  /*
+   * A tile that the chart does not draw has no tooltip either. The touch handler resolves the tile in
+   * the same way, but it only ever touches a tile that is on screen, and it does not publish the
+   * computed data, so the check does not apply there.
+   */
+  if (isTreemapComputedData(computedData) && !isNodeVisible(node, computedData.currentRoot, computedData.type)) {
+    return undefined;
+  }
+  return node;
 };
 
 export const addToTreemapNodeIndex = (
@@ -826,6 +896,17 @@ function ContentItemWithEvents(props: ContentItemProps) {
   return <ContentItem {...props} onMouseEnter={onMouseEnter} onMouseLeave={onMouseLeave} onClick={onClick} />;
 }
 
+/**
+ * Publishes the data the Treemap computes for itself, so that the tooltip payload searcher can tell
+ * which tiles the chart draws.
+ */
+const SetTreemapComputedData = React.memo(
+  ({ currentRoot, type }: { currentRoot: TreemapNode | undefined; type: InternalTreemapProps['type'] }) => {
+    const computedData = useMemo<TreemapComputedData>(() => ({ currentRoot, type }), [currentRoot, type]);
+    return <SetComputedData computedData={computedData} />;
+  },
+);
+
 const SetTreemapTooltipEntrySettings = React.memo(
   ({
     dataKey,
@@ -834,10 +915,12 @@ const SetTreemapTooltipEntrySettings = React.memo(
     fill,
     currentRoot,
     formatRoot,
+    type,
     id,
   }: Pick<InternalTreemapProps, 'dataKey' | 'nameKey' | 'stroke' | 'fill' | 'id'> & {
     currentRoot: TreemapNode | undefined;
     formatRoot: TreemapNode | null;
+    type: InternalTreemapProps['type'];
   }) => {
     const tooltipEntrySettings: TooltipPayloadConfiguration = {
       dataDefinedOnItem: currentRoot,
@@ -852,6 +935,13 @@ const SetTreemapTooltipEntrySettings = React.memo(
       getPosition: index => {
         const node: unknown = treemapPayloadSearcher(formatRoot, index);
         if (!isTreemapNode(node)) {
+          return undefined;
+        }
+        /*
+         * A tile that is not on screen has no position, and the tooltip must not point at it. In the
+         * `nest` type the deeper tiles stay hidden until the user navigates into them.
+         */
+        if (!isNodeVisible(node, currentRoot, type)) {
           return undefined;
         }
         return { x: node.x + node.width / 2, y: node.y + node.height / 2 };
@@ -1130,11 +1220,8 @@ class TreemapWithState extends PureComponent<InternalTreemapProps, State> {
     const branchIndex = node.depth === 0 ? undefined : (parentBranchIndex ?? node.index);
 
     const { currentRoot } = this.state;
-    const isCurrentRootChild = (currentRoot?.children || []).filter(
-      (item: TreemapNode) => item.depth === node.depth && item.name === node.name,
-    );
 
-    if (!isCurrentRootChild.length && root.depth && type === 'nest') {
+    if (!isNodeVisible(node, currentRoot, type)) {
       return null;
     }
 
@@ -1254,6 +1341,7 @@ class TreemapWithState extends PureComponent<InternalTreemapProps, State> {
 
     return (
       <>
+        <SetTreemapComputedData currentRoot={this.state.currentRoot} type={this.props.type} />
         <SetTreemapTooltipEntrySettings
           dataKey={this.props.dataKey}
           nameKey={this.props.nameKey}
@@ -1261,6 +1349,7 @@ class TreemapWithState extends PureComponent<InternalTreemapProps, State> {
           fill={this.props.fill ?? this.props.themeGraphicalItems?.[0]?.fill}
           currentRoot={this.state.currentRoot}
           formatRoot={this.state.formatRoot}
+          type={this.props.type}
           id={this.props.id}
         />
         <Surface

@@ -11,7 +11,7 @@ import {
   treemapPayloadSearcher,
 } from '../../src/chart/Treemap';
 import { useChartHeight, useChartWidth, useMargin, useViewBox } from '../../src/context/chartLayoutContext';
-import { expectTooltipPayload, getTooltip, showTooltip } from '../component/Tooltip/tooltipTestHelpers';
+import { expectTooltipNotVisible, expectTooltipPayload, getTooltip, showTooltip } from '../component/Tooltip/tooltipTestHelpers';
 import { treemapNodeChartMouseHoverTooltipSelector } from '../component/Tooltip/tooltipMouseHoverSelectors';
 import { assertNotNull } from '../helper/assertNotNull';
 import { mockGetBoundingClientRect } from '../helper/mockGetBoundingClientRect';
@@ -684,6 +684,48 @@ describe('<Treemap />', () => {
 
       const tooltip = getTooltip(container);
       expect(tooltip).not.toBeVisible();
+    });
+
+    it('should not show the tooltip for a tile that the nest type hides', () => {
+      /*
+       * In the `nest` type only the tree root, its direct children, and the children of the node the
+       * user has opened are drawn. A deeper tile is not on screen, so the tooltip has no position to
+       * point at and must not be shown.
+       */
+      const { container } = renderWithDefaultIndex(twoLevels, 'children[0]children[1]', { type: 'nest' });
+
+      // the tile itself is not drawn, so there is nothing to point at
+      expect(container.querySelector('[data-recharts-item-index="children[0]children[1]"]')).toBeNull();
+
+      const tooltip = getTooltip(container);
+      expect(tooltip).not.toBeVisible();
+      expect(tooltip.style.transform).toBe('');
+    });
+
+    it('should show the tooltip for a tile that the nest type hides, once the user navigates into it', () => {
+      /*
+       * The children of the node the user opens become visible, and then they have a position again.
+       * Opening a node also makes it the root of the tree, so the tiles are indexed from there.
+       */
+      const { container, rerender } = render(
+        <Treemap width={400} height={400} data={twoLevels} isAnimationActive={false} type="nest">
+          <Tooltip defaultIndex="children[0]children[1]" />
+        </Treemap>,
+      );
+      expectTooltipNotVisible(container);
+
+      const tile = container.querySelector('[data-recharts-item-index="children[0]"]');
+      assertNotNull(tile);
+      fireEvent.click(tile);
+
+      rerender(
+        <Treemap width={400} height={400} data={twoLevels} isAnimationActive={false} type="nest">
+          <Tooltip defaultIndex="children[1]" />
+        </Treemap>,
+      );
+
+      expectTooltipPayload(container, '', ['V : 20']);
+      expect(getTooltip(container).style.transform).not.toBe('');
     });
   });
 
