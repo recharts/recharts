@@ -105,6 +105,17 @@ export type TextBackgroundProps = Omit<
   padding?: number | { x?: number; y?: number };
 };
 
+/**
+ * Props of the halo (text outline) drawn around the letters, as a lighter alternative to `background`.
+ * Accepts a subset of the SVG `<text>` stroke attributes.
+ *
+ * @since 3.11
+ */
+export type TextHaloProps = Pick<
+  SVGProps<SVGTextElement>,
+  'stroke' | 'strokeWidth' | 'strokeOpacity' | 'strokeLinejoin'
+>;
+
 interface TextProps {
   /**
    * When true, scales the text to fit within the specified width.
@@ -241,6 +252,23 @@ interface TextProps {
    * @example <Text background={{ fill: '#fff', stroke: '#000', rx: 2, padding: { x: 6, y: 3 } }}>Label</Text>
    */
   background?: boolean | TextBackgroundProps;
+
+  /**
+   * Draws an outline around the letters of the text, as a lighter alternative to `background`.
+   *
+   * - `true` draws the halo with default styles.
+   *   The stroke is the `pageBackground` color from the theme, or white when no theme is set.
+   * - An object accepts `stroke`, `strokeWidth`, `strokeOpacity` and `strokeLinejoin` to set them explicitly.
+   * - `false` or `undefined` draws no halo.
+   *
+   * Unlike `background`, a halo needs no measurement, so it is drawn during server-side rendering,
+   * and it is drawn even when `textPath` is set.
+   *
+   * @since 3.11
+   * @example <Text halo>Label</Text>
+   * @example <Text halo={{ stroke: '#fff', strokeWidth: 4 }}>Label</Text>
+   */
+  halo?: boolean | TextHaloProps;
 }
 
 export type Props = Omit<SVGProps<SVGTextElement>, 'textAnchor' | 'verticalAnchor'> & TextProps;
@@ -450,6 +478,24 @@ function selectBackgroundFill(theme: RechartsTheme): BackgroundFill | undefined 
   return typeof pageBackground === 'string' ? { fill: pageBackground } : undefined;
 }
 
+type HaloStroke = {
+  stroke?: string;
+};
+
+/**
+ * Without a theme, charts are designed for a white background.
+ */
+const defaultLegacyHaloStroke: HaloStroke = { stroke: '#fff' };
+
+const defaultHaloStrokeWidth = 3;
+
+const defaultHaloStrokeLinejoin = 'round' as const;
+
+function selectHaloStroke(theme: RechartsTheme): HaloStroke | undefined {
+  const pageBackground = getEffectivePageBackground(theme);
+  return typeof pageBackground === 'string' ? { stroke: pageBackground } : undefined;
+}
+
 /**
  * The geometry of the text bounding box, in the text's own coordinate system.
  */
@@ -593,6 +639,16 @@ function resolveBackgroundSettings(background: Props['background']): TextBackgro
   return background;
 }
 
+function resolveHaloSettings(halo: Props['halo']): TextHaloProps | undefined {
+  if (halo === true) {
+    return {};
+  }
+  if (halo == null || halo === false) {
+    return undefined;
+  }
+  return halo;
+}
+
 export const textDefaultProps = {
   angle: 0,
   breakAll: false,
@@ -628,6 +684,7 @@ export const Text = forwardRef<SVGTextElement, Props>((outsideProps, ref) => {
     style: propsStyle,
     textPath,
     background,
+    halo,
     ...props
   } = propsWithDefaults;
   // Here it is important to actually remove these three props, and not put them to DOM
@@ -693,6 +750,23 @@ export const Text = forwardRef<SVGTextElement, Props>((outsideProps, ref) => {
       ...styleTemp,
     };
   }, [styleTemp, angle, textPath]);
+
+  const haloSettings = resolveHaloSettings(halo);
+  const haloStroke = useBackwardsCompatibleTheme<HaloStroke>(
+    selectHaloStroke,
+    { stroke: haloSettings?.stroke },
+    defaultLegacyHaloStroke,
+  );
+  const haloProps: (SVGProps<SVGTextElement> & { paintOrder?: string }) | undefined =
+    haloSettings == null
+      ? undefined
+      : {
+          stroke: haloStroke.stroke,
+          strokeWidth: haloSettings.strokeWidth ?? defaultHaloStrokeWidth,
+          strokeLinejoin: haloSettings.strokeLinejoin ?? defaultHaloStrokeLinejoin,
+          strokeOpacity: haloSettings.strokeOpacity,
+          paintOrder: 'stroke fill',
+        };
 
   const backgroundSettings = resolveBackgroundSettings(background);
   const backgroundFill = useBackwardsCompatibleTheme<BackgroundFill>(
@@ -795,6 +869,11 @@ export const Text = forwardRef<SVGTextElement, Props>((outsideProps, ref) => {
     <text
       transform={transform}
       {...svgPropertiesAndEvents(textElementProps)}
+      /*
+       * haloProps comes after textElementProps so it takes over an explicit stroke prop.
+       * Overlapping labels are not specially handled: where two labels overlap, a halo can cover its neighbor's text.
+       */
+      {...haloProps}
       style={styleFinal}
       ref={setTextRef}
       x={x}
