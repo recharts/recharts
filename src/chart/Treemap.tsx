@@ -1203,7 +1203,12 @@ class TreemapWithState extends PureComponent<InternalTreemapProps, State> {
     nestIndex = nestIndex.slice(0, i + 1);
     this.setState({
       formatRoot,
-      currentRoot: node,
+      /*
+       * The tree is rebuilt, so the depths of the nodes are the ones of the rebuilt tree. The node from
+       * the breadcrumb still has the depths of the tree it came from, and comparing the two would
+       * match a node of one tree with a node of the other.
+       */
+      currentRoot: root,
       nestIndex,
     });
   }

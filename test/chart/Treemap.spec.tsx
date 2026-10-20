@@ -11,7 +11,12 @@ import {
   treemapPayloadSearcher,
 } from '../../src/chart/Treemap';
 import { useChartHeight, useChartWidth, useMargin, useViewBox } from '../../src/context/chartLayoutContext';
-import { expectTooltipNotVisible, expectTooltipPayload, getTooltip, showTooltip } from '../component/Tooltip/tooltipTestHelpers';
+import {
+  expectTooltipNotVisible,
+  expectTooltipPayload,
+  getTooltip,
+  showTooltip,
+} from '../component/Tooltip/tooltipTestHelpers';
 import { treemapNodeChartMouseHoverTooltipSelector } from '../component/Tooltip/tooltipMouseHoverSelectors';
 import { assertNotNull } from '../helper/assertNotNull';
 import { mockGetBoundingClientRect } from '../helper/mockGetBoundingClientRect';
@@ -273,6 +278,52 @@ describe('<Treemap />', () => {
 
     // Should be back at root level with original node count
     expect(container.querySelectorAll('.recharts-rectangle').length).toBe(initialNodeCount);
+  });
+
+  test('does not show a tile of another branch after going back with the breadcrumb', () => {
+    /*
+     * The tree is rebuilt every time the user navigates, so the depths of the nodes change with it. A
+     * tile that has the same depth and the same name as a tile of the tree we came from is a tile of
+     * that tree, not of the one we are in.
+     */
+    const data: ReadonlyArray<TreemapDataType> = [
+      {
+        name: 'A',
+        children: [
+          { name: 'B', children: [{ name: 'B', value: 10 }] },
+          { name: 'C', value: 20 },
+        ],
+      },
+      { name: 'D', value: 30 },
+    ];
+
+    const { container, getByText } = render(
+      <Treemap
+        width={500}
+        height={250}
+        data={data}
+        isAnimationActive={false}
+        nameKey="name"
+        dataKey="value"
+        type="nest"
+      />,
+    );
+
+    // go into A, and then into B
+    fireEvent.click(getByText('A'));
+    fireEvent.click(getByText('B'));
+
+    // and back to A with the breadcrumb
+    const breadcrumbWrapper = container.querySelector('.recharts-treemap-nest-index-wrapper');
+    assertNotNull(breadcrumbWrapper);
+    const breadcrumbs = breadcrumbWrapper.querySelectorAll('.recharts-treemap-nest-index-box');
+    fireEvent.click(breadcrumbs[1]);
+
+    /*
+     * The tile that is called B in the branch of A is one level deeper now, and it is not shown until
+     * the user goes into B again.
+     */
+    expect(container.querySelector('[data-recharts-item-index="children[0]children[0]"]')).toBeNull();
   });
 
   test('keeps the same breadcrumb elements across re-renders', () => {
