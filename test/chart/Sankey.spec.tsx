@@ -21,6 +21,22 @@ import { TooltipInteractionState } from '../../src/state/tooltipSlice';
 
 const readSvgNumber = (element: Element, attribute: string): number => Number(element.getAttribute(attribute));
 
+/**
+ * jsdom has no layout, so `elementFromPoint` has to be mocked for the touch handling to find the
+ * element the finger is on.
+ */
+function mockElementFromPoint(element: Element): void {
+  document.elementFromPoint = () => element;
+}
+
+/**
+ * The mock is an own property of the document, so it is removed again and cannot leak into the
+ * tests that run after it.
+ */
+function restoreElementFromPoint(): void {
+  Reflect.deleteProperty(document, 'elementFromPoint');
+}
+
 const getCubicPoint = (start: number, control1: number, control2: number, end: number, t: number): number => {
   const inverseT = 1 - t;
   return inverseT ** 3 * start + 3 * inverseT ** 2 * t * control1 + 3 * inverseT * t ** 2 * control2 + t ** 3 * end;
@@ -554,6 +570,10 @@ describe('<Sankey />', () => {
   });
 
   describe('events', () => {
+    afterEach(() => {
+      restoreElementFromPoint();
+    });
+
     it('should call onClick handler on links', () => {
       const onClick = vi.fn();
       const { container } = render(<Sankey width={1000} height={500} data={exampleSankeyData} onClick={onClick} />);
@@ -793,6 +813,7 @@ describe('<Sankey />', () => {
 
       const link = container.querySelector(sankeyLinkMouseHoverTooltipSelector);
       assertNotNull(link);
+      mockElementFromPoint(link);
 
       fireEvent.touchMove(link, { touches: [{ clientX: 200, clientY: 200 }] });
       expect(onTouchMove).toHaveBeenCalledTimes(1);
@@ -812,6 +833,7 @@ describe('<Sankey />', () => {
 
       const node = container.querySelector(sankeyNodeMouseHoverTooltipSelector);
       assertNotNull(node);
+      mockElementFromPoint(node);
 
       fireEvent.touchMove(node, { touches: [{ clientX: 200, clientY: 200 }] });
       expect(onTouchMove).toHaveBeenCalledTimes(1);
@@ -821,16 +843,44 @@ describe('<Sankey />', () => {
       expect(onTouchEnd).toHaveBeenCalledTimes(1);
       expectLastCalledWith(onTouchEnd, expect.objectContaining({ type: 'touchend' }));
     });
+
+    it('should not call the touch handlers when the user touches the chart area', () => {
+      const onTouchStart = vi.fn();
+      const onTouchMove = vi.fn();
+      const onTouchEnd = vi.fn();
+      const { container } = render(
+        <Sankey
+          width={1000}
+          height={500}
+          data={exampleSankeyData}
+          onTouchStart={onTouchStart}
+          onTouchMove={onTouchMove}
+          onTouchEnd={onTouchEnd}
+        />,
+      );
+
+      /*
+       * The chart handles the touch itself, and the chart area alone is not something the user
+       * interacted with, so the user handlers are only called for a node or a link.
+       */
+      mockElementFromPoint(container.querySelector('svg') ?? document.createElement('g'));
+
+      const surface = container.querySelector('.recharts-surface');
+      assertNotNull(surface);
+
+      fireEvent.touchStart(surface, { touches: [{ clientX: 200, clientY: 200 }] });
+      fireEvent.touchMove(surface, { touches: [{ clientX: 200, clientY: 200 }] });
+      fireEvent.touchEnd(surface, { changedTouches: [{ clientX: 200, clientY: 200 }] });
+
+      expect(onTouchStart).not.toHaveBeenCalled();
+      expect(onTouchMove).not.toHaveBeenCalled();
+      expect(onTouchEnd).not.toHaveBeenCalled();
+    });
   });
 
   describe('with Tooltip and touch events', () => {
-    /*
-     * jsdom has no layout, so `elementFromPoint` has to be mocked for the touch handling to find the
-     * element the finger is on. The mock is an own property of the document, so it is removed again
-     * after every test and cannot leak into the tests that run after this block.
-     */
     afterEach(() => {
-      Reflect.deleteProperty(document, 'elementFromPoint');
+      restoreElementFromPoint();
     });
 
     beforeEach(() => {
@@ -860,7 +910,7 @@ describe('<Sankey />', () => {
 
     function touchElement(element: Element | null) {
       assertNotNull(element);
-      document.elementFromPoint = () => element;
+      mockElementFromPoint(element);
       fireEvent.touchMove(element, { touches: [{ clientX: 200, clientY: 200 }] });
     }
 

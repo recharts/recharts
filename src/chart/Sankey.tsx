@@ -636,6 +636,20 @@ const getLinkCoordinateOfTooltip = (item: LinkProps): Coordinate | undefined => 
 type SankeyTooltipPayload = { payload: SankeyNode | SankeyLink; name: unknown; value: unknown; color?: string };
 
 /**
+ * A node or a link that the user is touching.
+ */
+type TouchedSankeyItem = {
+  /**
+   * The tooltip index of the item, the same one the hover path reports.
+   */
+  itemIndex: string;
+  /**
+   * The centre of the item, the same coordinate the hover path reports.
+   */
+  activeCoordinate: Coordinate | undefined;
+};
+
+/**
  * Returns true if the value is a color that paints something, as opposed to a missing color or `none`.
  * @param value fill or stroke
  */
@@ -1582,55 +1596,86 @@ function SankeyImpl(props: InternalSankeyProps) {
    * element ourselves with document.elementFromPoint, same pattern as Treemap.handleTouchMove.
    * The item is resolved against the arrays that are actually rendered, and the coordinates
    * come from the same helpers that hover uses, so touch and hover cannot drift apart.
+   *
+   * A touch that is not on a node or a link is not reported to the user either: the chart handles
+   * the touch itself, and the chart area alone is not something the user interacted with.
    */
-  const handleTouchMove = useCallback(
-    (e: React.TouchEvent<SVGSVGElement>) => {
-      onTouchMove?.(e);
-      const touch = e.touches[0];
-      if (touch == null || typeof document.elementFromPoint !== 'function') {
-        return;
+  const resolveTouchedItem = useCallback(
+    (point: { clientX: number; clientY: number } | undefined): TouchedSankeyItem | undefined => {
+      if (point == null || typeof document.elementFromPoint !== 'function') {
+        return undefined;
       }
-      const target = document.elementFromPoint(touch.clientX, touch.clientY);
+      const target = document.elementFromPoint(point.clientX, point.clientY);
       const markedTarget = target?.closest(`[${DATA_ITEM_INDEX_ATTRIBUTE_NAME}]`);
       if (markedTarget == null) {
-        return;
+        return undefined;
       }
       const itemIndex = markedTarget.getAttribute(DATA_ITEM_INDEX_ATTRIBUTE_NAME);
       if (itemIndex == null) {
-        return;
+        return undefined;
       }
       const itemId = markedTarget.getAttribute(DATA_ITEM_GRAPHICAL_ITEM_ID_ATTRIBUTE_NAME);
       if (itemId != null && itemId !== id) {
         // the element under the finger belongs to a different chart
-        return;
+        return undefined;
       }
       const [elementType, elementIndex] = itemIndex.split('-');
-      let activeCoordinate: Coordinate | undefined;
       if (elementType === 'node') {
         const touchedNode = modifiedNodes[Number(elementIndex)];
         if (touchedNode == null) {
-          return;
+          return undefined;
         }
-        activeCoordinate = getNodeCoordinateOfTooltip(touchedNode);
-      } else if (elementType === 'link') {
+        return { itemIndex, activeCoordinate: getNodeCoordinateOfTooltip(touchedNode) };
+      }
+      if (elementType === 'link') {
         const touchedLink = modifiedLinks[Number(elementIndex)];
         if (touchedLink == null) {
-          return;
+          return undefined;
         }
-        activeCoordinate = getLinkCoordinateOfTooltip(touchedLink);
-      } else {
+        return { itemIndex, activeCoordinate: getLinkCoordinateOfTooltip(touchedLink) };
+      }
+      return undefined;
+    },
+    [modifiedNodes, modifiedLinks, id],
+  );
+
+  const handleTouchMove = useCallback(
+    (e: React.TouchEvent<SVGSVGElement>) => {
+      const touchedItem = resolveTouchedItem(e.touches[0]);
+      if (touchedItem == null) {
         return;
       }
+      onTouchMove?.(e);
       dispatch(
         setActiveMouseOverItemIndex({
-          activeIndex: itemIndex,
+          activeIndex: touchedItem.itemIndex,
           activeDataKey: dataKey,
-          activeCoordinate,
+          activeCoordinate: touchedItem.activeCoordinate,
           activeGraphicalItemId: id,
         }),
       );
     },
-    [onTouchMove, modifiedNodes, modifiedLinks, dataKey, id, dispatch],
+    [resolveTouchedItem, onTouchMove, dataKey, id, dispatch],
+  );
+
+  const handleTouchStart = useCallback(
+    (e: React.TouchEvent<SVGSVGElement>) => {
+      if (resolveTouchedItem(e.touches[0]) == null) {
+        return;
+      }
+      onTouchStart?.(e);
+    },
+    [resolveTouchedItem, onTouchStart],
+  );
+
+  const handleTouchEnd = useCallback(
+    (e: React.TouchEvent<SVGSVGElement>) => {
+      if (resolveTouchedItem(e.changedTouches[0]) == null) {
+        return;
+      }
+      onTouchEnd?.(e);
+    },
+    [resolveTouchedItem, onTouchEnd],
   );
 
   if (!isPositiveNumber(width) || !isPositiveNumber(height) || !data || !data.links || !data.nodes) {
@@ -1648,9 +1693,9 @@ function SankeyImpl(props: InternalSankeyProps) {
         tabIndex={tabIndex}
         width={width}
         height={height}
-        onTouchStart={onTouchStart}
+        onTouchStart={handleTouchStart}
         onTouchMove={handleTouchMove}
-        onTouchEnd={onTouchEnd}
+        onTouchEnd={handleTouchEnd}
       >
         {children}
         <AllSankeyLinkElements
