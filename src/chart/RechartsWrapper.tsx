@@ -272,9 +272,9 @@ export const RechartsWrapper = forwardRef<HTMLDivElement | null, RechartsWrapper
         if (typeof ref === 'function') {
           ref(node);
         }
-        setTooltipPortal(node);
-        setLegendPortal(node);
         if (node != null) {
+          setTooltipPortal(node);
+          setLegendPortal(node);
           containerRef.current = node;
         }
       },
