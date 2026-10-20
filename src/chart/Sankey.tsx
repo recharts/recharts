@@ -1213,6 +1213,31 @@ function renderNodeItem(option: SankeyNodeOptions | undefined, props: NodeProps,
   );
 }
 
+/**
+ * The fill the node is actually rendered with.
+ *
+ * `renderNodeItem` puts the legacy default fill on the rectangle first and spreads the node props over
+ * it, so an explicit `fill` wins over the default. An inline `style.fill` wins over the `fill`
+ * attribute in the CSS cascade, so it wins over both.
+ *
+ * @param nodeProps resolved props of the node
+ * @param hasTheme true if a theme is active, in which case the legacy styles are not applied
+ * @returns the fill of the rendered node, undefined when the node has no fill of its own
+ */
+function getRenderedNodeFill(nodeProps: NodeProps, hasTheme: boolean): string | undefined {
+  const styleFill: unknown = nodeProps.style?.fill;
+  if (typeof styleFill === 'string') {
+    return styleFill;
+  }
+  if (typeof nodeProps.fill === 'string') {
+    return nodeProps.fill;
+  }
+  if (!hasTheme) {
+    return legacyNodeStyles.fill;
+  }
+  return undefined;
+}
+
 const buildNodeProps = ({
   node,
   nodeContent,
@@ -1326,6 +1351,7 @@ function SankeyLabelListProvider({
   nameKey: Props['nameKey'];
   children: ReactNode;
 }) {
+  const hasTheme = useRechartsTheme() != null;
   const labelListEntries: ReadonlyArray<CartesianLabelListEntry> = useMemo(
     () =>
       nodes.map((nodeProps): CartesianLabelListEntry => {
@@ -1344,10 +1370,10 @@ function SankeyLabelListProvider({
           payload: nodeProps.payload,
           parentViewBox: undefined,
           viewBox,
-          fill: nodeProps.fill,
+          fill: getRenderedNodeFill(nodeProps, hasTheme),
         };
       }),
-    [nodes, nameKey],
+    [nodes, nameKey, hasTheme],
   );
 
   return <CartesianLabelListContextProvider value={labelListEntries}>{children}</CartesianLabelListContextProvider>;
@@ -1681,7 +1707,7 @@ function SankeyImpl(props: InternalSankeyProps) {
               }
               onClick={(nodeProps: NodeProps, e: MouseEvent<SVGGraphicsElement>) => handleClick(nodeProps, 'node', e)}
             />
-            <LabelListFromLabelProp label={label} />
+            <LabelListFromLabelProp label={label} pointerEvents="none" />
           </SankeyLabelListProvider>
         </AllZIndexPortals>
       </Surface>

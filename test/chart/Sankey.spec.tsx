@@ -1221,5 +1221,73 @@ describe('<Sankey />', () => {
         expect(label).toHaveAttribute('fill', 'green');
       }
     });
+
+    it('inherits the fill the node is drawn with, when the node sets no fill of its own', () => {
+      /*
+       * A node without a fill of its own is drawn with the default fill, and the label has to be drawn
+       * with the same color, otherwise it does not read on the node.
+       */
+      const { container } = render(<Sankey width={500} height={300} data={labelData} label />);
+
+      const nodes = container.querySelectorAll('.recharts-sankey-node');
+      const labels = container.querySelectorAll('.recharts-label');
+      expect(nodes).toHaveLength(3);
+      expect(labels).toHaveLength(3);
+      for (let i = 0; i < 3; i++) {
+        const nodeFill = nodes[i].getAttribute('fill');
+        expect(nodeFill).not.toBeNull();
+        expect(labels[i]).toHaveAttribute('fill', nodeFill);
+      }
+    });
+
+    it('inherits the fill from the style of the node, because the style wins over the fill attribute', () => {
+      const { container } = render(
+        <Sankey width={500} height={300} data={labelData} node={{ style: { fill: 'red' } }} label />,
+      );
+
+      const labels = container.querySelectorAll('.recharts-label');
+      expect(labels).toHaveLength(3);
+      for (const label of labels) {
+        expect(label).toHaveAttribute('fill', 'red');
+      }
+    });
+
+    it('does not let the labels intercept the pointer events of the node underneath', () => {
+      /*
+       * A node label sits on the node rectangle, and the labels are drawn in a layer on top of the
+       * nodes. Without this the label would swallow the hover and the click of the node it belongs to.
+       */
+      const { container } = render(<Sankey width={500} height={300} data={labelData} label />);
+
+      const labels = container.querySelectorAll('.recharts-label');
+      expect(labels).toHaveLength(3);
+      for (const label of labels) {
+        expect(label).toHaveAttribute('pointer-events', 'none');
+      }
+    });
+
+    it('passes the pointer events of the label to a custom label content', () => {
+      /*
+       * A custom content decides for itself what it renders, so it has to be told that the label must
+       * not intercept the pointer events of the node underneath.
+       */
+      const contents: Array<{ pointerEvents?: string | number }> = [];
+      render(
+        <Sankey
+          width={500}
+          height={300}
+          data={labelData}
+          label={props => {
+            contents.push(props);
+            return <text className="custom-sankey-label">{String(props.value)}</text>;
+          }}
+        />,
+      );
+
+      expect(contents).toHaveLength(3);
+      for (const content of contents) {
+        expect(content.pointerEvents).toBe('none');
+      }
+    });
   });
 });
