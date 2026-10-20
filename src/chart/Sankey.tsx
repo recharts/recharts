@@ -25,7 +25,9 @@ import {
   CartesianLabelListContextProvider,
   CartesianLabelListEntry,
   ImplicitLabelListType,
+  LabelList,
   LabelListFromLabelProp,
+  Props as LabelListProps,
 } from '../component/LabelList';
 import { RechartsStoreProvider } from '../state/RechartsStoreProvider';
 import { useAppDispatch } from '../state/hooks';
@@ -1352,6 +1354,17 @@ function SankeyLabelListProvider({
   children: ReactNode;
 }) {
   const hasTheme = useRechartsTheme() != null;
+  /*
+   * A label that is drawn on top of a node swallows the hover and the click of that node, so the labels
+   * of a Sankey do not take pointer events. A user that sets `pointerEvents` on a `LabelList` keeps
+   * their own value.
+   */
+  const childrenWithPointerEvents = React.Children.map(children, child => {
+    if (!React.isValidElement<LabelListProps>(child) || child.type !== LabelList) {
+      return child;
+    }
+    return React.cloneElement(child, { pointerEvents: child.props.pointerEvents ?? 'none' });
+  });
   const labelListEntries: ReadonlyArray<CartesianLabelListEntry> = useMemo(
     () =>
       nodes.map((nodeProps): CartesianLabelListEntry => {
@@ -1376,7 +1389,11 @@ function SankeyLabelListProvider({
     [nodes, nameKey, hasTheme],
   );
 
-  return <CartesianLabelListContextProvider value={labelListEntries}>{children}</CartesianLabelListContextProvider>;
+  return (
+    <CartesianLabelListContextProvider value={labelListEntries}>
+      {childrenWithPointerEvents}
+    </CartesianLabelListContextProvider>
+  );
 }
 
 function AllNodeElements({

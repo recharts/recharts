@@ -1266,6 +1266,34 @@ describe('<Sankey />', () => {
       }
     });
 
+    it('does not let the labels of a LabelList child intercept the pointer events of the node underneath', () => {
+      const { container } = render(
+        <Sankey width={500} height={300} data={labelData}>
+          <LabelList className="sankey-node-label" />
+        </Sankey>,
+      );
+
+      const labels = container.querySelectorAll('.sankey-node-label');
+      expect(labels).toHaveLength(3);
+      for (const label of labels) {
+        expect(label).toHaveAttribute('pointer-events', 'none');
+      }
+    });
+
+    it('keeps an explicit pointer events of a LabelList child', () => {
+      const { container } = render(
+        <Sankey width={500} height={300} data={labelData}>
+          <LabelList className="sankey-node-label" pointerEvents="auto" />
+        </Sankey>,
+      );
+
+      const labels = container.querySelectorAll('.sankey-node-label');
+      expect(labels).toHaveLength(3);
+      for (const label of labels) {
+        expect(label).toHaveAttribute('pointer-events', 'auto');
+      }
+    });
+
     it('passes the pointer events of the label to a custom label content', () => {
       /*
        * A custom content decides for itself what it renders, so it has to be told that the label must
