@@ -2,7 +2,7 @@ import React from 'react';
 import { describe, expect, it, Mock, vi, beforeEach } from 'vitest';
 import { fireEvent, render } from '@testing-library/react';
 import { Sankey, SankeyLinkProps, SankeyNodeProps, Tooltip, XAxis, YAxis } from '../../src';
-import { computeData } from '../../src/chart/Sankey';
+import { computeData, sankeyPayloadSearcher } from '../../src/chart/Sankey';
 import { exampleSankeyData } from '../_data';
 import { useChartHeight, useChartWidth, useViewBox } from '../../src/context/chartLayoutContext';
 import { useAppSelector } from '../../src/state/hooks';
@@ -361,6 +361,27 @@ describe('<Sankey />', () => {
 
     it('should not show the tooltip when the index is not in the node-link format', () => {
       const { container } = renderWithDefaultIndex('bananas');
+
+      expectTooltipNotVisible(container);
+    });
+
+    /*
+     * The index reaches the chart from the outside - from a `defaultIndex` prop, or from the
+     * `data-recharts-item-index` attribute of a DOM node - so it only ever names an item as
+     * `node-N` or `link-N`. Anything else must resolve to nothing instead of being read as a
+     * property path into the rendered graph.
+     */
+    it.each([
+      ['a prefix that is neither node nor link', 'bananas-0'],
+      ['a prefix that only starts with the right word', 'node-extra-0'],
+      ['a non numeric index', 'node-abc'],
+      ['a fractional index', 'node-1.5'],
+      ['a path into the rendered graph', 'node-0].payload'],
+      ['a path into another array', 'node-0][0]'],
+      ['a path to a number', 'node-0].x'],
+      ['an index that is not a number at all', 'node-'],
+    ])('should not show the tooltip when the index has %s', (_label, tooltipIndex) => {
+      const { container } = renderWithDefaultIndex(tooltipIndex);
 
       expectTooltipNotVisible(container);
     });
@@ -1188,6 +1209,68 @@ describe('<Sankey />', () => {
       };
 
       expect(computeData({ data, ...computeOptions }).nodes.map(node => node.depth)).toEqual([0, 1, 2]);
+    });
+  });
+
+  describe('sankeyPayloadSearcher', () => {
+    const data = {
+      nodes: [{ name: 'A' }, { name: 'B' }, { name: 'C' }],
+      links: [
+        { source: 0, target: 1, value: 100 },
+        { source: 0, target: 2, value: 30 },
+        { source: 1, target: 2, value: 20 },
+      ],
+    };
+
+    /*
+     * The graph the chart renders is what the index points into, so read it from the store of a
+     * rendered chart instead of rebuilding it here.
+     */
+    function renderedGraph(): unknown {
+      const spy = vi.fn();
+      const Comp = (): null => {
+        spy(useAppSelector(state => state.chartData.computedData));
+        return null;
+      };
+      render(
+        <Sankey width={1000} height={500} data={data}>
+          <Comp />
+        </Sankey>,
+      );
+      return spy.mock.calls[spy.mock.calls.length - 1][0];
+    }
+
+    it('should resolve a node index to the node of the rendered graph', () => {
+      const payload = sankeyPayloadSearcher(undefined, 'node-1', renderedGraph(), 'name');
+
+      expect(payload).toEqual(expect.objectContaining({ name: 'B' }));
+    });
+
+    it('should resolve a link index to the link of the rendered graph', () => {
+      const payload = sankeyPayloadSearcher(undefined, 'link-0', renderedGraph(), 'name');
+
+      expect(payload).toEqual(expect.objectContaining({ name: 'A - B' }));
+    });
+
+    /*
+     * The index is read from the outside - from a `defaultIndex` prop, or from the
+     * `data-recharts-item-index` attribute of a DOM node - so it only ever names an item as
+     * `node-N` or `link-N`. Anything else has to resolve to nothing, instead of being read as a
+     * property path into the rendered graph.
+     */
+    it.each([
+      ['a prefix that is neither node nor link', 'bananas-0'],
+      ['a prefix that only starts with the right word', 'node-extra-0'],
+      ['a non numeric index', 'node-abc'],
+      ['a fractional index', 'node-1.5'],
+      ['a trailing suffix', 'node-1-2'],
+      ['a path into the rendered graph', 'node-0].payload'],
+      ['a path into another array', 'node-0][0]'],
+      ['a path to a number', 'node-0].x'],
+      ['an index that is not a number at all', 'node-'],
+      ['an index that points past the end of the array', 'node-99'],
+    ])('should resolve %s to no item', (_label, activeIndex) => {
+      expect(sankeyPayloadSearcher(undefined, activeIndex, renderedGraph(), 'name')).toBeUndefined();
     });
   });
 });
