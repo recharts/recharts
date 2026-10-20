@@ -1,20 +1,20 @@
 {
   "treemap": {
     "examplePath": "www/src/views/IndexView/IndexLineChart.tsx",
-    "totalSize": 954592,
+    "totalSize": 954596,
     "totalSizeLabel": "932.22 KB",
     "moduleCount": 379,
-    "generatedAt": "2026-10-20T09:46:26.978Z",
+    "generatedAt": "2026-10-20T14:06:58.209Z",
     "stages": [
       {
         "stage": "es6-folder",
-        "bytes": 1494823,
+        "bytes": 1494827,
         "humanReadableSize": "1.43 MB",
         "reductionFromBaselinePercent": 0
       },
       {
         "stage": "tree-shaken",
-        "bytes": 957497,
+        "bytes": 957501,
         "humanReadableSize": "935.06 KB",
         "reductionFromBaselinePercent": 0
       },
@@ -34,12 +34,12 @@
     "tree": {
       "name": "bundle",
       "fullPath": "bundle",
-      "value": 954592,
+      "value": 954596,
       "children": [
         {
           "name": "src",
           "fullPath": "src",
-          "value": 551016,
+          "value": 551020,
           "children": [
             {
               "name": "state",
@@ -915,12 +915,12 @@
             {
               "name": "chart",
               "fullPath": "src/chart",
-              "value": 15306,
+              "value": 15310,
               "children": [
                 {
                   "name": "RechartsWrapper.tsx",
                   "fullPath": "src/chart/RechartsWrapper.tsx",
-                  "value": 10945
+                  "value": 10949
                 },
                 {
                   "name": "CartesianChart.tsx",
@@ -2622,20 +2622,20 @@
   },
   "sunburst": {
     "examplePath": "www/src/views/IndexView/IndexLineChart.tsx",
-    "totalSize": 954592,
+    "totalSize": 954596,
     "totalSizeLabel": "932.22 KB",
     "moduleCount": 379,
-    "generatedAt": "2026-10-20T09:46:24.695Z",
+    "generatedAt": "2026-10-20T14:07:00.423Z",
     "stages": [
       {
         "stage": "es6-folder",
-        "bytes": 1494823,
+        "bytes": 1494827,
         "humanReadableSize": "1.43 MB",
         "reductionFromBaselinePercent": 0
       },
       {
         "stage": "tree-shaken",
-        "bytes": 957497,
+        "bytes": 957501,
         "humanReadableSize": "935.06 KB",
         "reductionFromBaselinePercent": 0
       },
@@ -2655,12 +2655,12 @@
     "tree": {
       "name": "bundle",
       "fullPath": "bundle",
-      "value": 954592,
+      "value": 954596,
       "children": [
         {
           "name": "src",
           "fullPath": "src",
-          "value": 551016,
+          "value": 551020,
           "children": [
             {
               "name": "state",
@@ -3536,12 +3536,12 @@
             {
               "name": "chart",
               "fullPath": "src/chart",
-              "value": 15306,
+              "value": 15310,
               "children": [
                 {
                   "name": "RechartsWrapper.tsx",
                   "fullPath": "src/chart/RechartsWrapper.tsx",
-                  "value": 10945
+                  "value": 10949
                 },
                 {
                   "name": "CartesianChart.tsx",

@@ -1,0 +1,21 @@
+import{R as e}from"./iframe-CZEQ_wjd.js";import{P as n,a as m}from"./PieChart-C0SxEKNz.js";import{R as a}from"./zIndexSlice-CGZbBTjh.js";import{L as s}from"./Legend-CBZkI5K2.js";import"./preload-helper-Dp1pzeXC.js";import"./get-cF5BDHN6.js";import"./throttle-DA2J31XT.js";import"./index-BbxbGDW7.js";import"./index-CRdNX2-K.js";import"./Layer-D6WM8pRX.js";import"./resolveDefaultProps-CHpCBz4P.js";import"./Curve-XL3ybND_.js";import"./types-CKK75Clx.js";import"./isWellBehavedNumber-B8rPL1qd.js";import"./step-BKPm417p.js";import"./path-DyVhHtw_.js";import"./Sector-D5lUlDQq.js";import"./PolarUtils-CTnnDHZv.js";import"./Text-Dsq3-wjY.js";import"./pageBackground-CKNOMxYJ.js";import"./useId-rjEqgZ2X.js";import"./useBackwardsCompatibleTheme-Bh5QeLej.js";import"./tooltipContext-CM3PKbsO.js";import"./RechartsWrapper-CLkKKSWb.js";import"./axisSelectors-BfF4ImUe.js";import"./d3-scale-er3AEJAE.js";import"./index-B-hyiig3.js";import"./index-JtUUyrZR.js";import"./renderedTicksSlice-BMpJvFdR.js";import"./index-C8Xv27VY.js";import"./activeStyles-BfHlsJSZ.js";import"./Label-COoLstIf.js";import"./ZIndexLayer-Dn2bo3WS.js";import"./useAnimationId-Eb1qMFFs.js";import"./dataEntryStyles-y-eKYJRz.js";import"./ActiveShapeUtils-Dfohsprr.js";import"./SetGraphicalItem-DS-LfVWp.js";import"./getClassNameFromUnknown-Jg1grEQN.js";import"./polarSelectors-COQhKNZs.js";import"./PolarChart-Dk-istMf.js";import"./chartDataContext-BAAQoJGX.js";import"./CategoricalChart-DuqmwY6B.js";import"./Symbols-ptZJXXcr.js";import"./symbol-m8ordAaR.js";import"./useElementOffset-Cbe50vsH.js";import"./uniqBy-CMc1aoPt.js";import"./iteratee-mBcul4dm.js";import"./isArguments-yB-y1yaH.js";import"./isBuffer-AZzsDYE7.js";const c=[{value:"Luck",percent:10},{value:"Skill",percent:20},{value:"Concentrated power of will",percent:15},{value:"Pleasure",percent:50},{value:"Pain",percent:50},{value:"Reason to remember the name",percent:100}],pe={component:n},r={render:p=>e.createElement(a,{width:"100%",height:500},e.createElement(m,{width:400,height:400},e.createElement(n,{dataKey:"percent",...p}),e.createElement(s,null))),args:{cx:"50%",cy:"50%",data:c,dataKey:"percent",nameKey:"value",fill:"#8884d8",innerRadius:60,outerRadius:80,label:!0}},me=["PieWithLegend"];var t,i,o;r.parameters={...r.parameters,docs:{...(t=r.parameters)==null?void 0:t.docs,source:{originalSource:`{
+  render: (args: Args) => {
+    return <ResponsiveContainer width="100%" height={500}>
+        <PieChart width={400} height={400}>
+          <Pie dataKey="percent" {...args} />
+          <Legend />
+        </PieChart>
+      </ResponsiveContainer>;
+  },
+  args: {
+    cx: '50%',
+    cy: '50%',
+    data,
+    dataKey: 'percent',
+    nameKey: 'value',
+    fill: '#8884d8',
+    innerRadius: 60,
+    outerRadius: 80,
+    label: true
+  }
+}`,...(o=(i=r.parameters)==null?void 0:i.docs)==null?void 0:o.source}}};export{r as PieWithLegend,me as __namedExportsOrder,pe as default};
