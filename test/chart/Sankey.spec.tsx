@@ -1,5 +1,5 @@
 import React from 'react';
-import { describe, expect, it, Mock, vi, beforeEach } from 'vitest';
+import { describe, expect, it, Mock, vi, beforeEach, afterEach } from 'vitest';
 import { fireEvent, render } from '@testing-library/react';
 import { Sankey, SankeyLinkProps, SankeyNodeProps, Tooltip, XAxis, YAxis } from '../../src';
 import { computeData } from '../../src/chart/Sankey';
@@ -824,6 +824,15 @@ describe('<Sankey />', () => {
   });
 
   describe('with Tooltip and touch events', () => {
+    /*
+     * jsdom has no layout, so `elementFromPoint` has to be mocked for the touch handling to find the
+     * element the finger is on. The mock is an own property of the document, so it is removed again
+     * after every test and cannot leak into the tests that run after this block.
+     */
+    afterEach(() => {
+      Reflect.deleteProperty(document, 'elementFromPoint');
+    });
+
     beforeEach(() => {
       mockGetBoundingClientRect({ width: 10, height: 10 });
     });
@@ -941,6 +950,10 @@ describe('<Sankey />', () => {
       fireEvent.touchMove(node, { touches: [{ clientX: 200, clientY: 200 }] });
 
       expect(tooltip).not.toBeVisible();
+    });
+
+    it('should not leave the elementFromPoint mock behind for the tests that run after this block', () => {
+      expect(Object.prototype.hasOwnProperty.call(document, 'elementFromPoint')).toBe(false);
     });
   });
 
