@@ -974,6 +974,46 @@ describe('AccessibilityLayer with accessibilityLayer=false', () => {
   });
 });
 
+describe('Keyboard preventDefault while the accessibility layer consumes the key', () => {
+  function renderArea(accessibilityLayer?: boolean) {
+    return render(
+      <AreaChart width={100} height={50} data={PageData} accessibilityLayer={accessibilityLayer}>
+        <Area type="monotone" dataKey="uv" stroke="#ff7300" fill="#ff7300" />
+        <Tooltip />
+        <XAxis dataKey="name" />
+        <YAxis />
+      </AreaChart>,
+    );
+  }
+
+  // fireEvent returns false only when a handler called preventDefault, so invert it to read "was the default consumed".
+  function defaultConsumed(container: HTMLElement, key: string): boolean {
+    const svg = getMainSurface(container);
+    act(() => svg.focus());
+    return !fireEvent.keyDown(svg, { key });
+  }
+
+  test.each(['ArrowLeft', 'ArrowRight', 'Enter'])(
+    'should consume the browser default for %s so the page does not scroll',
+    key => {
+      const { container } = renderArea();
+      expect(defaultConsumed(container, key)).toBe(true);
+    },
+  );
+
+  test('should leave the browser default of other keys untouched', () => {
+    const { container } = renderArea();
+    expect(defaultConsumed(container, 'a')).toBe(false);
+    expect(defaultConsumed(container, 'Tab')).toBe(false);
+  });
+
+  test('should not consume anything when the accessibility layer is off', () => {
+    const { container } = renderArea(false);
+    expect(defaultConsumed(container, 'ArrowRight')).toBe(false);
+    expect(defaultConsumed(container, 'Enter')).toBe(false);
+  });
+});
+
 describe('AreaChart horizontal', () => {
   const renderTestCase = createSelectorTestCase(({ children }) => (
     <AreaChart width={100} height={50} data={PageData}>

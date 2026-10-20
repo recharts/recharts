@@ -13,7 +13,7 @@ import {
 } from 'react';
 import { clsx } from 'clsx';
 import { mouseLeaveChart } from '../state/tooltipSlice';
-import { useAppDispatch } from '../state/hooks';
+import { useAppDispatch, useAppSelector } from '../state/hooks';
 import { mouseClickAction, mouseMoveAction } from '../state/mouseEventsMiddleware';
 import { useSynchronisedEventsFromOtherCharts } from '../synchronisation/useChartSynchronisation';
 import { focusAction, keyDownAction, blurAction } from '../state/keyboardEventsMiddleware';
@@ -255,6 +255,7 @@ export const RechartsWrapper = forwardRef<HTMLDivElement | null, RechartsWrapper
     } = props;
     const containerRef: MutableRefObject<HTMLDivElement | null> = useRef<HTMLDivElement>(null);
     const dispatch = useAppDispatch();
+    const accessibilityLayerIsEnabled = useAppSelector(state => state.rootProps.accessibilityLayer !== false);
     const [tooltipPortal, setTooltipPortal] = useState<HTMLElement | null>(null);
     const [legendPortal, setLegendPortal] = useState<HTMLElement | null>(null);
 
@@ -323,9 +324,15 @@ export const RechartsWrapper = forwardRef<HTMLDivElement | null, RechartsWrapper
 
     const onKeyDown = useCallback(
       (e: React.KeyboardEvent<HTMLDivElement>) => {
+        // The keyboard accessibility layer moves the tooltip on these keys, so consume their browser
+        // default (page scroll on Safari) instead of letting both happen. When the layer is off the
+        // middleware ignores the key, so leave the default untouched.
+        if (accessibilityLayerIsEnabled && (e.key === 'ArrowLeft' || e.key === 'ArrowRight' || e.key === 'Enter')) {
+          e.preventDefault();
+        }
         dispatch(keyDownAction(e.key));
       },
-      [dispatch],
+      [dispatch, accessibilityLayerIsEnabled],
     );
 
     const myOnContextMenu = useCallback(
