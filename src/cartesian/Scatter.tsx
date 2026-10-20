@@ -13,7 +13,7 @@ import { findAllByType } from '../util/ReactUtils';
 import { Curve, CurveType, Props as CurveProps } from '../shape/Curve';
 import { ErrorBarDataItem, ErrorBarDataPointFormatter, ErrorBarDirection } from './ErrorBar';
 import { Cell } from '../component/Cell';
-import { getLinearRegression, interpolate, isNullish } from '../util/DataUtils';
+import { getLinearRegression, interpolate, isNan, isNullish } from '../util/DataUtils';
 import { getCateCoordinateOfLine, getTooltipNameProp, getValueByDataKey } from '../util/ChartUtils';
 import {
   ActiveShape,
@@ -885,7 +885,8 @@ export function computeScatterPoints({
   return displayedData.map((entry: unknown, index): ScatterPointItem => {
     const x: unknown = getValueByDataKey(entry, xAxisDataKey);
     const y: unknown = getValueByDataKey(entry, yAxisDataKey);
-    const z: unknown = getValueByDataKey(entry, zAxisDataKey) ?? '-';
+    const rawZ: unknown = getValueByDataKey(entry, zAxisDataKey);
+    const z: unknown = isNullish(rawZ) || isNan(rawZ) ? '-' : rawZ;
 
     const pointColor = getScatterEntryColor(entry, seriesFill, seriesStroke, unthemedStyles);
     const tooltipPayload: Array<TooltipPayloadEntry> = [

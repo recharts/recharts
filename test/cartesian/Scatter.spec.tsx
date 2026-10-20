@@ -814,7 +814,7 @@ describe('<Scatter />', () => {
       expectTooltipPayload(container, '', ['x : 2', 'y : 2', 'z : 0']);
     });
 
-    it.each([undefined, null])('should keep the smallest size and no z in the tooltip when z is %s', missing => {
+    it.each([undefined, null, NaN])('should keep the smallest size and no z in the tooltip when z is %s', missing => {
       const points = renderPoints([
         { x: 1, y: 1, z: -10 },
         { x: 2, y: 2, z: missing },
