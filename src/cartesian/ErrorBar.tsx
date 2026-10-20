@@ -135,7 +135,7 @@ function ErrorBarImpl(props: ErrorBarInternalProps) {
   } = props;
   const svgProps = svgPropertiesNoEvents(others);
 
-  const { data, dataPointFormatter, xAxisId, yAxisId, errorBarOffset: offset } = useErrorBarContext();
+  const { data, dataPointFormatter, xAxisId, yAxisId, errorBarOffset: offset, clipPath } = useErrorBarContext();
 
   const xAxis = useXAxis(xAxisId);
   const yAxis = useYAxis(yAxisId);
@@ -244,7 +244,11 @@ function ErrorBarImpl(props: ErrorBarInternalProps) {
     );
   });
 
-  return <Layer className="recharts-errorBars">{errorBars}</Layer>;
+  return (
+    <Layer className="recharts-errorBars" clipPath={clipPath}>
+      {errorBars}
+    </Layer>
+  );
 }
 
 function useErrorBarDirection(directionFromProps: ErrorBarDirection | undefined): ErrorBarDirection {

@@ -996,10 +996,11 @@ function ScatterWithId(props: InternalProps) {
   }
   const layerClass = clsx('recharts-scatter', className);
   const clipPathId = id;
+  const clipPath = needClip ? `url(#clipPath-${clipPathId})` : undefined;
 
   return (
     <ZIndexLayer zIndex={props.zIndex}>
-      <Layer className={layerClass} clipPath={needClip ? `url(#clipPath-${clipPathId})` : undefined} id={id}>
+      <Layer className={layerClass} clipPath={clipPath} id={id}>
         {needClip && (
           <defs>
             <GraphicalItemClipPath clipPathId={clipPathId} xAxisId={xAxisId} yAxisId={yAxisId} />
@@ -1011,6 +1012,7 @@ function ScatterWithId(props: InternalProps) {
           data={points}
           dataPointFormatter={errorBarDataPointFormatter}
           errorBarOffset={0}
+          clipPath={clipPath}
         >
           <Layer key="recharts-scatter-symbols">
             <SymbolsWithAnimation props={props} previousPointsRef={previousPointsRef} />
