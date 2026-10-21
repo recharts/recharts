@@ -4,13 +4,31 @@ import maxBy from 'es-toolkit/compat/maxBy';
 import sumBy from 'es-toolkit/compat/sumBy';
 import get from 'es-toolkit/compat/get';
 import { Surface } from '../container/Surface';
+import { AllZIndexPortals } from '../zIndex/ZIndexPortal';
 import { Layer } from '../container/Layer';
 import { Props as RectangleProps, Rectangle } from '../shape/Rectangle';
 import { getValueByDataKey } from '../util/ChartUtils';
-import { Coordinate, DataKey, EventThrottlingProps, Margin, Percent, SankeyLink, SankeyNode } from '../util/types';
+import {
+  Coordinate,
+  DataKey,
+  EventThrottlingProps,
+  Margin,
+  Percent,
+  SankeyLink,
+  SankeyNode,
+  TrapezoidViewBox,
+} from '../util/types';
 import { ReportChartMargin, ReportChartSize, useChartHeight, useChartWidth } from '../context/chartLayoutContext';
 import { TooltipPortalContext } from '../context/tooltipPortalContext';
 import { RechartsWrapper } from './RechartsWrapper';
+import {
+  CartesianLabelListContextProvider,
+  CartesianLabelListEntry,
+  ImplicitLabelListType,
+  LabelList,
+  LabelListFromLabelProp,
+  Props as LabelListProps,
+} from '../component/LabelList';
 import { RechartsStoreProvider } from '../state/RechartsStoreProvider';
 import { useAppDispatch } from '../state/hooks';
 import {
@@ -895,6 +913,24 @@ interface SankeyProps extends EventThrottlingProps {
    */
   node?: SankeyNodeOptions;
   /**
+   * Labels of the nodes, the same way other charts label their shapes.
+   *
+   * - `true` shows the node name at the center of the node rectangle.
+   * - An object is passed as the props of an implicit `<LabelList>`.
+   * - A function or a React element is used as the `content` of an implicit `<LabelList>`.
+   * - `LabelList` as a child of `Sankey` renders the same entries with full control over the props.
+   *
+   * Each label receives the node name as its value, and the node rectangle as its view box,
+   * so positions such as `inside`, `top`, or `right` attach to the node.
+   *
+   * @example <Sankey label />
+   * @example <Sankey label={{ position: 'right', fill: '#333' }} />
+   * @example <Sankey><LabelList position="inside" /></Sankey>
+   *
+   * @default false
+   */
+  label?: ImplicitLabelListType;
+  /**
    * If set an object, the option is the configuration of links.
    * If set a React element, the option is the custom react element of drawing the links.
    *
@@ -1179,6 +1215,31 @@ function renderNodeItem(option: SankeyNodeOptions | undefined, props: NodeProps,
   );
 }
 
+/**
+ * The fill the node is actually rendered with.
+ *
+ * `renderNodeItem` puts the legacy default fill on the rectangle first and spreads the node props over
+ * it, so an explicit `fill` wins over the default. An inline `style.fill` wins over the `fill`
+ * attribute in the CSS cascade, so it wins over both.
+ *
+ * @param nodeProps resolved props of the node
+ * @param hasTheme true if a theme is active, in which case the legacy styles are not applied
+ * @returns the fill of the rendered node, undefined when the node has no fill of its own
+ */
+function getRenderedNodeFill(nodeProps: NodeProps, hasTheme: boolean): string | undefined {
+  const styleFill: unknown = nodeProps.style?.fill;
+  if (typeof styleFill === 'string') {
+    return styleFill;
+  }
+  if (typeof nodeProps.fill === 'string') {
+    return nodeProps.fill;
+  }
+  if (!hasTheme) {
+    return legacyNodeStyles.fill;
+  }
+  return undefined;
+}
+
 const buildNodeProps = ({
   node,
   nodeContent,
@@ -1273,6 +1334,66 @@ function NodeElement({
   };
 
   return <Layer {...events}>{renderNodeItem(nodeContent, props, hasTheme)}</Layer>;
+}
+
+/**
+ * Publishes one cartesian label-list entry per node so that `LabelList`,
+ * and the implicit `label` prop, can draw node labels like in other charts.
+ *
+ * The entry value is the node name read through `nameKey`, so labels honor the
+ * same accessor as the tooltip. The entry fill is the fill the node renders with,
+ * so a label without an explicit fill inherits the color of its node.
+ */
+function SankeyLabelListProvider({
+  nodes,
+  nameKey,
+  children,
+}: {
+  nodes: ReadonlyArray<NodeProps>;
+  nameKey: Props['nameKey'];
+  children: ReactNode;
+}) {
+  const hasTheme = useRechartsTheme() != null;
+  /*
+   * A label that is drawn on top of a node swallows the hover and the click of that node, so the labels
+   * of a Sankey do not take pointer events. A user that sets `pointerEvents` on a `LabelList` keeps
+   * their own value.
+   */
+  const childrenWithPointerEvents = React.Children.map(children, child => {
+    if (!React.isValidElement<LabelListProps>(child) || child.type !== LabelList) {
+      return child;
+    }
+    return React.cloneElement(child, { pointerEvents: child.props.pointerEvents ?? 'none' });
+  });
+  const labelListEntries: ReadonlyArray<CartesianLabelListEntry> = useMemo(
+    () =>
+      nodes.map((nodeProps): CartesianLabelListEntry => {
+        const viewBox: TrapezoidViewBox = {
+          x: nodeProps.x,
+          y: nodeProps.y,
+          width: nodeProps.width,
+          lowerWidth: nodeProps.width,
+          upperWidth: nodeProps.width,
+          height: nodeProps.height,
+        };
+        return {
+          ...viewBox,
+          // @ts-expect-error the same accessor the tooltip reads, but the node union does not accept a plain string dataKey
+          value: getValueByDataKey(nodeProps.payload, nameKey, ''),
+          payload: nodeProps.payload,
+          parentViewBox: undefined,
+          viewBox,
+          fill: getRenderedNodeFill(nodeProps, hasTheme),
+        };
+      }),
+    [nodes, nameKey, hasTheme],
+  );
+
+  return (
+    <CartesianLabelListContextProvider value={labelListEntries}>
+      {childrenWithPointerEvents}
+    </CartesianLabelListContextProvider>
+  );
 }
 
 function AllNodeElements({
@@ -1422,6 +1543,8 @@ function SankeyImpl(props: InternalSankeyProps) {
     link,
     dataKey,
     node,
+    label,
+    nameKey,
     onMouseEnter,
     onMouseLeave,
     onClick,
@@ -1571,34 +1694,39 @@ function SankeyImpl(props: InternalSankeyProps) {
     <>
       <SetComputedData computedData={{ links: modifiedLinks, nodes: modifiedNodes }} />
       <Surface {...attrs} title={title} desc={desc} role={role} tabIndex={tabIndex} width={width} height={height}>
-        {children}
-        <AllSankeyLinkElements
-          graphicalItemId={id}
-          links={links}
-          modifiedLinks={modifiedLinks}
-          linkContent={link}
-          dataKey={dataKey}
-          onMouseEnter={(linkProps: LinkProps, e: MouseEvent<SVGGraphicsElement>) =>
-            handleMouseEnter(linkProps, 'link', e)
-          }
-          onMouseLeave={(linkProps: LinkProps, e: MouseEvent<SVGGraphicsElement>) =>
-            handleMouseLeave(linkProps, 'link', e)
-          }
-          onClick={(linkProps: LinkProps, e: MouseEvent<SVGGraphicsElement>) => handleClick(linkProps, 'link', e)}
-        />
-        <AllNodeElements
-          graphicalItemId={id}
-          modifiedNodes={modifiedNodes}
-          nodeContent={node}
-          dataKey={dataKey}
-          onMouseEnter={(nodeProps: NodeProps, e: MouseEvent<SVGGraphicsElement>) =>
-            handleMouseEnter(nodeProps, 'node', e)
-          }
-          onMouseLeave={(nodeProps: NodeProps, e: MouseEvent<SVGGraphicsElement>) =>
-            handleMouseLeave(nodeProps, 'node', e)
-          }
-          onClick={(nodeProps: NodeProps, e: MouseEvent<SVGGraphicsElement>) => handleClick(nodeProps, 'node', e)}
-        />
+        <AllZIndexPortals isPanorama={false}>
+          <SankeyLabelListProvider nodes={modifiedNodes} nameKey={nameKey}>
+            {children}
+            <AllSankeyLinkElements
+              graphicalItemId={id}
+              links={links}
+              modifiedLinks={modifiedLinks}
+              linkContent={link}
+              dataKey={dataKey}
+              onMouseEnter={(linkProps: LinkProps, e: MouseEvent<SVGGraphicsElement>) =>
+                handleMouseEnter(linkProps, 'link', e)
+              }
+              onMouseLeave={(linkProps: LinkProps, e: MouseEvent<SVGGraphicsElement>) =>
+                handleMouseLeave(linkProps, 'link', e)
+              }
+              onClick={(linkProps: LinkProps, e: MouseEvent<SVGGraphicsElement>) => handleClick(linkProps, 'link', e)}
+            />
+            <AllNodeElements
+              graphicalItemId={id}
+              modifiedNodes={modifiedNodes}
+              nodeContent={node}
+              dataKey={dataKey}
+              onMouseEnter={(nodeProps: NodeProps, e: MouseEvent<SVGGraphicsElement>) =>
+                handleMouseEnter(nodeProps, 'node', e)
+              }
+              onMouseLeave={(nodeProps: NodeProps, e: MouseEvent<SVGGraphicsElement>) =>
+                handleMouseLeave(nodeProps, 'node', e)
+              }
+              onClick={(nodeProps: NodeProps, e: MouseEvent<SVGGraphicsElement>) => handleClick(nodeProps, 'node', e)}
+            />
+            <LabelListFromLabelProp label={label} pointerEvents="none" />
+          </SankeyLabelListProvider>
+        </AllZIndexPortals>
       </Surface>
     </>
   );
