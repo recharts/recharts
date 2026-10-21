@@ -83,6 +83,14 @@ export type TooltipPayloadConfiguration = {
    * They however should reuse the same tooltip index format as the chart data.
    */
   getPosition: (tooltipIndex: NonNullable<TooltipIndex>) => Coordinate | undefined;
+  /**
+   * Opportunity for the graphical item to report the color it renders the active data entry with,
+   * for graphical items that read styles from the data entries and resolve them in their own way.
+   *
+   * If undefined, the Tooltip uses the `color`, `fill` or `stroke` of the active data entry,
+   * and then the color from `settings`.
+   */
+  getEntryColor?: (entry: unknown) => string | undefined;
 };
 
 export type ActiveTooltipProps = {

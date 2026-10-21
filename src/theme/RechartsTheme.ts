@@ -89,8 +89,9 @@ export interface RechartsTheme {
    * Treemap and SunburstChart give each top-level tile or first-ring sector the next entry by index,
    * and all their descendants inherit that color.
    *
-   * The theme colors never mix with user colors. If Line, Area, Bar, Scatter, Radar, RadialBar, Pie, or Funnel
-   * sets its own `fill` or `stroke` prop, it ignores its theme entry completely, including the `active` styles.
+   * The theme colors never mix with user colors. If Line, Area, Bar, Scatter, Radar, RadialBar, Pie, Funnel,
+   * or SunburstChart sets its own `fill` or `stroke` prop, it ignores its theme entry completely,
+   * including the `active` styles.
    *
    * Individual shapes of Bar, RadialBar, Scatter, Pie, Funnel, Treemap, Sankey, and SunburstChart, and
    * individual point markers of Line, Area, and Radar can be styled from the data array. If a data entry defines its own

@@ -132,9 +132,8 @@ interface LabelListProps extends ZIndexable {
    * - An object accepts SVG `<rect>` attributes such as `fill`, `stroke` and `rx`, and a `padding`.
    * - `false` or `undefined` draws no background.
    *
-   * Each background is sized from its rendered label.
-   * It is not drawn for labels that follow a curved path (`insideStart`, `insideEnd` and `end` in polar charts),
-   * nor for custom `content`.
+   * Each background is sized from its rendered label and follows curved label paths.
+   * It is not drawn for custom `content`.
    *
    * @since 3.11
    * @example <LabelList position="inside" background />

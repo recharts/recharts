@@ -927,11 +927,8 @@ export function computeLinePoints({
 
       const x = isNullish(value) ? null : xAxis.scale.map(value);
       const y = getCateCoordinateOfLine({ axis: yAxis, ticks: yAxisTicks, bandSize, entry, index });
-      if (x == null || y == null) {
-        return null;
-      }
       return {
-        x,
+        x: x ?? null,
         y,
         value,
         payload: entry,

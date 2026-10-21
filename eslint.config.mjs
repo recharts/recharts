@@ -8,7 +8,7 @@ import { rules as prettierConfigRules } from 'eslint-config-prettier';
 import prettierPlugin from 'eslint-plugin-prettier';
 import storybook from 'eslint-plugin-storybook';
 import comments from '@eslint-community/eslint-plugin-eslint-comments/configs';
-import reactPerf from 'eslint-plugin-react-perf';
+import reactPerf from 'eslint-plugin-react-perf-x';
 import jsdoc from 'eslint-plugin-jsdoc';
 
 const gitignorePath = path.resolve('.', '.gitignore');
@@ -313,7 +313,7 @@ const overridesConfig = [
   },
   {
     name: 'scripts override',
-    files: ['scripts/*.js', 'scripts/*.mjs', 'scripts/*.ts', 'scripts/*.mts', 'www/scripts/*.tsx'],
+    files: ['scripts/*.js', 'scripts/*.mjs', 'scripts/*.ts', 'scripts/*.mts', 'www/scripts/*.tsx', '.agents/**/*.mjs'],
     rules: {
       '@typescript-eslint/no-require-imports': 'off',
       'no-console': 'off',
@@ -433,16 +433,23 @@ const settings = [
   },
 ];
 
+/*
+ * New objects, arrays, functions and JSX elements passed as props to React components create a new reference
+ * on every render, which defeats `React.memo`, `useMemo` dependencies and Redux selector caching.
+ * Native elements (`<div>`, `<path>`, ...) are exempt because React compares their props anyway.
+ *
+ * Existing violations are recorded in `eslint-suppressions.json`, see the `typeSafety` comment below.
+ * See .agents/skills/fix-perf-violation/SKILL.md for how to fix them.
+ */
 const perfOptimization = {
-  name: 'perf-optimization-examples',
-  files: ['./www/src/docs/exampleComponents/LineChart/CompareTwoLines.tsx'],
+  name: 'x/react-perf',
+  files: ['src/**/*.tsx', 'www/**/*.tsx'],
   plugins: { 'react-perf': reactPerf },
   rules: {
-    // new object as prop creates a new reference on each render - but we can memo this one
-    // 'react-perf/jsx-no-new-object-as-prop': 'error',
-    'react-perf/jsx-no-new-array-as-prop': 'error',
-    'react-perf/jsx-no-new-function-as-prop': 'error',
-    'react-perf/jsx-no-jsx-as-prop': 'error',
+    'react-perf/jsx-no-new-object-as-prop': ['error', { nativeAllowList: 'all' }],
+    'react-perf/jsx-no-new-array-as-prop': ['error', { nativeAllowList: 'all' }],
+    'react-perf/jsx-no-new-function-as-prop': ['error', { nativeAllowList: 'all' }],
+    'react-perf/jsx-no-jsx-as-prop': ['error', { nativeAllowList: 'all' }],
   },
 };
 

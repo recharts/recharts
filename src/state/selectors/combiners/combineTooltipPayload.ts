@@ -106,7 +106,8 @@ export const combineTooltipPayload = (
 
   const init: Array<TooltipPayloadEntry> = [];
 
-  return tooltipPayloadConfigurations.reduce((agg, { dataDefinedOnItem, settings }): Array<TooltipPayloadEntry> => {
+  return tooltipPayloadConfigurations.reduce((agg, configuration): Array<TooltipPayloadEntry> => {
+    const { dataDefinedOnItem, settings, getEntryColor } = configuration;
     const finalData = selectFinalData(dataDefinedOnItem, chartData);
 
     const sliced = Array.isArray(finalData) ? getSliced(finalData, sliceStartIndex, sliceEndIndex) : finalData;
@@ -192,14 +193,18 @@ export const combineTooltipPayload = (
       });
     } else {
       /*
-       * Bar rectangles apply SVG colors from the active datum after their series and theme props.
-       * Preserve that precedence in the tooltip metadata without changing other chart types.
+       * Graphical items that resolve the styles of each data entry on their own (Bar) report the color
+       * they render the active entry with. The others take the colors of the active datum before their series colors.
        * Line, Area and Radar draw one shape per series, so they keep the series color.
        */
       const parsedItem = settings.ignoreDataEntryColors ? undefined : parseTooltipPayloadItem(tooltipPayload);
+      const entryColor =
+        getEntryColor == null
+          ? (parsedItem?.color ?? parsedItem?.fill ?? parsedItem?.stroke)
+          : getEntryColor(tooltipPayload);
       const tooltipEntrySettings: TooltipEntrySettings = {
         ...settings,
-        color: parsedItem?.color ?? parsedItem?.fill ?? parsedItem?.stroke ?? settings.color,
+        color: entryColor ?? settings.color,
         fill: parsedItem?.fill ?? settings.fill,
         stroke: parsedItem?.stroke ?? settings.stroke,
       };

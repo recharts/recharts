@@ -1780,6 +1780,7 @@ describe('mouse interactions in stacked bar: https://github.com/recharts/rechart
           {
             dataDefinedOnItem: undefined,
             getPosition: noop,
+            getEntryColor: expect.any(Function),
             settings: {
               color: undefined,
               dataKey: 'x',
@@ -1797,6 +1798,7 @@ describe('mouse interactions in stacked bar: https://github.com/recharts/rechart
           {
             dataDefinedOnItem: undefined,
             getPosition: noop,
+            getEntryColor: expect.any(Function),
             settings: {
               color: undefined,
               dataKey: 'y',
@@ -1853,6 +1855,7 @@ describe('mouse interactions in stacked bar: https://github.com/recharts/rechart
           {
             dataDefinedOnItem: undefined,
             getPosition: noop,
+            getEntryColor: expect.any(Function),
             settings: {
               color: undefined,
               dataKey: 'x',
@@ -1870,6 +1873,7 @@ describe('mouse interactions in stacked bar: https://github.com/recharts/rechart
           {
             dataDefinedOnItem: undefined,
             getPosition: noop,
+            getEntryColor: expect.any(Function),
             settings: {
               color: undefined,
               dataKey: 'y',
