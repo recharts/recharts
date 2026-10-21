@@ -26,7 +26,11 @@ import { SetTooltipEntrySettings } from '../state/SetTooltipEntrySettings';
 import { ChartOptions } from '../state/optionsSlice';
 import { ReportEventSettings } from '../state/ReportEventSettings';
 import { SetComputedData } from '../context/chartDataContext';
-import { svgPropertiesNoEvents, svgPropertiesNoEventsFromUnknown } from '../util/svgPropertiesNoEvents';
+import {
+  SVGPropsNoEvents,
+  svgPropertiesNoEvents,
+  svgPropertiesNoEventsFromUnknown,
+} from '../util/svgPropertiesNoEvents';
 import { RequiresDefaultProps, resolveDefaultProps } from '../util/resolveDefaultProps';
 import { isPositiveNumber } from '../util/isWellBehavedNumber';
 import { isNotNil, noop } from '../util/DataUtils';
@@ -762,10 +766,12 @@ const SetSankeyTooltipEntrySettings = React.memo(
 /**
  * A link in the Sankey data.
  *
- * Valid SVG properties such as `stroke` or `strokeDasharray` are spread on the link path, except `id`.
+ * Valid SVG properties such as `stroke`, `strokeDasharray`, `opacity` or `className` are spread on the link path.
+ * `id` and `d` are not, because ids must be unique and Sankey computes the path itself.
  * With a theme, a link that defines its own `fill` or `stroke` ignores the theme colors.
  */
-interface LinkDataItem extends Styles2D {
+interface LinkDataItem
+  extends Styles2D, Omit<SVGPropsNoEvents<SVGProps<SVGPathElement>>, keyof Styles2D | 'id' | 'target' | 'd'> {
   source: number;
   target: number;
   value: number;
@@ -1034,12 +1040,15 @@ const buildLinkProps = ({
   const sourceY = sourceNode.y + sourceRelativeY + linkWidth / 2 + top;
   const targetY = targetNode.y + targetRelativeY + linkWidth / 2 + top;
 
+  // The geometry comes last, so that `targetX` and `targetY`, which are also valid SVG attributes, can't move the link.
+  // @ts-expect-error linkContent is passing in unknown props
   const linkProps: LinkProps = {
+    ...themeStyles,
+    ...svgPropertiesNoEventsFromUnknown(linkContent),
+    ...ownStyles,
     sourceX,
-    // @ts-expect-error the linkContent from below is contributing unknown props
     targetX,
     sourceY,
-    // @ts-expect-error the linkContent from below is contributing unknown props
     targetY,
     sourceControlX,
     targetControlX,
@@ -1048,9 +1057,6 @@ const buildLinkProps = ({
     linkWidth,
     index: i,
     payload: { ...link, source: sourceNode, target: targetNode },
-    ...themeStyles,
-    ...svgPropertiesNoEventsFromUnknown(linkContent),
-    ...ownStyles,
   };
 
   return linkProps;
@@ -1349,7 +1355,17 @@ type ResolvedStyles = {
  */
 function getEntrySvgProps(entry: unknown): EntrySvgProps {
   const { id, target, d, ...svgProps } = svgPropertiesNoEventsFromUnknown(entry) ?? {};
-  return svgProps;
+  const result: EntrySvgProps = {};
+  // Skip null and undefined, so that `{ stroke: undefined }` keeps the stroke from props, the theme or the defaults.
+  for (const key in svgProps) {
+    if (Object.prototype.hasOwnProperty.call(svgProps, key)) {
+      const value: unknown = Reflect.get(svgProps, key);
+      if (value != null) {
+        result[key] = value;
+      }
+    }
+  }
+  return result;
 }
 
 /**

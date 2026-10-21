@@ -96,6 +96,51 @@ describe('<Sankey /> theme', () => {
     expect(getLinks(container)).toEqual([{ ...legacyLink, stroke: 'blue' }, legacyLink, legacyLink]);
   });
 
+  describe.each([
+    ['without a theme', undefined, legacyNode, legacyLink],
+    ['with a theme', theme, redNode, { ...unstyledLink, stroke: 'red', strokeOpacity: themedLinkOpacity }],
+  ])('nullish styles in data %s', (_, activeTheme, expectedNode, expectedLink) => {
+    it('keeps the fallback styles', () => {
+      const { container } = renderSankey(activeTheme, {
+        data: {
+          nodes: [{ name: 'A', fill: undefined, stroke: null }, { name: 'B' }, { name: 'C' }],
+          links: [{ source: 0, target: 1, value: 10, stroke: undefined }, ...data.links.slice(1)],
+        },
+      });
+      expect(getNodes(container)[0]).toEqual(expectedNode);
+      expect(getLinks(container)[0]).toEqual(expectedLink);
+    });
+  });
+
+  it('accepts SVG props in typed link entries', () => {
+    const typedData: SankeyData = {
+      nodes: data.nodes,
+      links: [
+        { source: 0, target: 1, value: 10, className: 'typed', opacity: 0.5, style: { cursor: 'help' } },
+        ...data.links.slice(1),
+      ],
+    };
+    const { container } = renderSankey(undefined, { data: typedData });
+    const link = container.querySelector('.recharts-sankey-link');
+    assertNotNull(link);
+    expect(link.classList).toContain('typed');
+    expect(link.getAttribute('opacity')).toBe('0.5');
+  });
+
+  it('does not let targetX and targetY from link data move the link', () => {
+    const { container: expected } = renderSankey(undefined);
+    const linkEntryProps: Record<string, unknown> = { targetX: 0, targetY: 0 };
+    const { container } = renderSankey(undefined, {
+      data: {
+        nodes: data.nodes,
+        links: [{ source: 0, target: 1, value: 10, ...linkEntryProps }, ...data.links.slice(1)],
+      },
+    });
+    const getPath = (element: Element) => element.querySelector('.recharts-sankey-link')?.getAttribute('d');
+    expect(getPath(container)).toBe(getPath(expected));
+    expect(container.querySelector('.recharts-sankey-link')?.hasAttribute('targetX')).toBe(false);
+  });
+
   it('merges styles from data with explicit node and link props without a theme', () => {
     const { container } = renderSankey(undefined, {
       node: { stroke: 'black', fill: 'purple' },
