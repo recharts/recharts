@@ -452,9 +452,10 @@ describe('Tooltip visibility', () => {
       });
 
       it(`should move tooltip onTouchMove with active tooltip index ${tooltipIndex}`, async context => {
-        // TODO: these charts currently do not work onTouchMove. Did they before?
-        // This is because these are set via item rather than axis. The middleware currently only sets axis coordinates.
-        if (name === 'SunburstChart' || name === 'FunnelChart' || name === 'Sankey' || name === 'ScatterChart') {
+        // TODO: Sunburst and Sankey still do not follow the finger: neither renders the
+        // data-recharts-item-* markers, and both register `getPosition` as a noop, so there is
+        // neither a way to find the touched item nor a coordinate to move the tooltip to.
+        if (name === 'SunburstChart' || name === 'Sankey') {
           context.skip();
         }
 

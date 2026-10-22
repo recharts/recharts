@@ -53,6 +53,7 @@ import { AnimatedItems, AnimationInterpolateFn, useAnimationCallbacks } from '..
 import { AnimationMatchByProp, matchAppend } from '../animation/matchBy';
 import { GraphicalItemId } from '../state/graphicalItemsSlice';
 import { RegisterGraphicalItemId } from '../context/RegisterGraphicalItemId';
+import { DATA_ITEM_GRAPHICAL_ITEM_ID_ATTRIBUTE_NAME, DATA_ITEM_INDEX_ATTRIBUTE_NAME } from '../util/Constants';
 import { WithIdRequired } from '../util/useUniqueId';
 import { useCartesianChartLayout } from '../context/chartLayoutContext';
 import { RechartsTheme, Styles2D } from '../theme/RechartsTheme';
@@ -430,6 +431,8 @@ function FunnelTrapezoids(props: FunnelTrapezoidsProps) {
           animationElapsedTime,
           isAnimating,
           isEntrance,
+          [DATA_ITEM_INDEX_ATTRIBUTE_NAME]: i,
+          [DATA_ITEM_GRAPHICAL_ITEM_ID_ATTRIBUTE_NAME]: allOtherFunnelProps.id,
         };
 
         return (

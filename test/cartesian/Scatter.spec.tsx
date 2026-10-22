@@ -22,8 +22,17 @@ import { dataWithSpecialNameAndFillProperties, PageData } from '../_data';
 import { ScatterSettings } from '../../src/state/types/ScatterSettings';
 import { expectLastCalledWith } from '../helper/expectLastCalledWith';
 import { userEventSetup } from '../helper/userEventSetup';
-import { mockTouchingElement } from '../helper/mockTouchingElement';
+import {
+  mockTouchingElement,
+  mockTouchingNestedElement,
+  mockTouchingRenderedElement,
+  mockTouchingUnrelatedElement,
+} from '../helper/mockTouchingElement';
 import { selectActiveTooltipPayload } from '../../src/state/selectors/tooltipSelectors';
+import { mockGetBoundingClientRect } from '../helper/mockGetBoundingClientRect';
+import { expectTooltipNotVisible, showTooltipOnCoordinateTouch } from '../component/Tooltip/tooltipTestHelpers';
+import { scatterChartMouseHoverTooltipSelector } from '../component/Tooltip/tooltipMouseHoverSelectors';
+import { DATA_ITEM_GRAPHICAL_ITEM_ID_ATTRIBUTE_NAME, DATA_ITEM_INDEX_ATTRIBUTE_NAME } from '../../src/util/Constants';
 
 describe('<Scatter />', () => {
   const data = [
@@ -584,6 +593,91 @@ describe('<Scatter />', () => {
         0,
         expect.any(Object),
       );
+    });
+  });
+
+  describe('touch interaction', () => {
+    const touchData = [
+      { x: 10, y: 20, z: 30 },
+      { x: 20, y: 30, z: 40 },
+      { x: 30, y: 40, z: 50 },
+    ];
+
+    const renderTestCase = createSelectorTestCase(({ children }) => (
+      <ScatterChart width={400} height={400} throttledEvents={[]}>
+        <XAxis dataKey="x" type="number" allowDecimals={false} />
+        <YAxis dataKey="y" type="number" allowDecimals={false} />
+        <Scatter
+          isAnimationActive={false}
+          name="A school"
+          data={touchData}
+          dataKey="x"
+          fill="#8884d8"
+          id="my-scatter"
+        />
+        <Tooltip isAnimationActive={false} />
+        {children}
+      </ScatterChart>
+    ));
+
+    /*
+     * The touch middleware can only follow the finger if the rendered shape carries the attributes
+     * it reads back off `document.elementFromPoint`. These assert the attributes are really in the
+     * DOM, which a mocked element cannot cover.
+     */
+    it('should mark every symbol with the attributes the touch middleware reads back', () => {
+      mockGetBoundingClientRect({ width: 100, height: 100 });
+      const { container } = renderTestCase(selectActiveTooltipPayload);
+
+      const symbols = container.querySelectorAll('.recharts-symbols');
+      expect(symbols).toHaveLength(touchData.length);
+      symbols.forEach((symbol, expectedIndex) => {
+        expect(symbol).toHaveAttribute(DATA_ITEM_INDEX_ATTRIBUTE_NAME, String(expectedIndex));
+        expect(symbol).toHaveAttribute(DATA_ITEM_GRAPHICAL_ITEM_ID_ATTRIBUTE_NAME, 'my-scatter');
+      });
+    });
+
+    it('should activate the symbol under the finger', () => {
+      mockGetBoundingClientRect({ width: 100, height: 100 });
+      const { container, spy } = renderTestCase(selectActiveTooltipPayload);
+
+      const thirdSymbol = container.querySelectorAll('.recharts-symbols')[2];
+      assertNotNull(thirdSymbol);
+      mockTouchingRenderedElement(thirdSymbol);
+
+      showTooltipOnCoordinateTouch(container, scatterChartMouseHoverTooltipSelector, { clientX: 200, clientY: 200 });
+
+      const payload = spy.mock.calls.at(-1)?.[0];
+      assertNotNull(payload);
+      expect(payload).toEqual(
+        expect.arrayContaining([expect.objectContaining({ payload: expect.objectContaining(touchData[2]) })]),
+      );
+    });
+
+    it('should resolve the symbol from an annotated ancestor of the touched element', () => {
+      mockGetBoundingClientRect({ width: 100, height: 100 });
+      const { container, spy } = renderTestCase(selectActiveTooltipPayload);
+
+      mockTouchingNestedElement('1', 'my-scatter');
+
+      showTooltipOnCoordinateTouch(container, scatterChartMouseHoverTooltipSelector, { clientX: 200, clientY: 200 });
+
+      const payload = spy.mock.calls.at(-1)?.[0];
+      assertNotNull(payload);
+      expect(payload).toEqual(
+        expect.arrayContaining([expect.objectContaining({ payload: expect.objectContaining(touchData[1]) })]),
+      );
+    });
+
+    it('should not activate a symbol when touching an element that is not a scatter point', () => {
+      mockGetBoundingClientRect({ width: 100, height: 100 });
+      const { container } = renderTestCase(selectActiveTooltipPayload);
+
+      mockTouchingUnrelatedElement();
+
+      showTooltipOnCoordinateTouch(container, scatterChartMouseHoverTooltipSelector, { clientX: 200, clientY: 200 });
+
+      expectTooltipNotVisible(container);
     });
   });
 

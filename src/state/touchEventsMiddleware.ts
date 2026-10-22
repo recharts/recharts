@@ -7,8 +7,7 @@ import { selectActivePropsFromChartPointer } from './selectors/selectActiveProps
 import { getRelativeCoordinate } from '../util/getRelativeCoordinate';
 import { selectTooltipEventType } from './selectors/selectTooltipEventType';
 import { DATA_ITEM_GRAPHICAL_ITEM_ID_ATTRIBUTE_NAME, DATA_ITEM_INDEX_ATTRIBUTE_NAME } from '../util/Constants';
-import { selectTooltipCoordinate } from './selectors/touchSelectors';
-import { selectAllGraphicalItemsSettings } from './selectors/tooltipSelectors';
+import { selectTooltipItemDetails } from './selectors/touchSelectors';
 import { RelativePointer } from '../util/types';
 import { createEventProxy } from '../util/createEventProxy';
 
@@ -84,17 +83,30 @@ touchEventMiddleware.startListening({
             return;
           }
           const target = document.elementFromPoint(touch.clientX, touch.clientY);
-          if (!target || !target.getAttribute) {
+          if (target == null || target.closest == null) {
             return;
           }
-          const itemIndex = target.getAttribute(DATA_ITEM_INDEX_ATTRIBUTE_NAME);
-          const graphicalItemId = target.getAttribute(DATA_ITEM_GRAPHICAL_ITEM_ID_ATTRIBUTE_NAME) ?? undefined;
-          const settings = selectAllGraphicalItemsSettings(currentState).find(item => item.id === graphicalItemId);
-          if (itemIndex == null || settings == null || graphicalItemId == null) {
+          /*
+           * `elementFromPoint` returns the innermost element under the finger. Items that render as a
+           * group - a custom `shape` that draws a `<g>` around its own paths, or a label painted on top
+           * of the sector it belongs to - carry the markers on an ancestor, never on that deepest
+           * element. Walking up to the nearest annotated element keeps those items resolvable, the same
+           * way the bubbling mouse handlers already do.
+           */
+          const itemTarget = target.closest(`[${DATA_ITEM_INDEX_ATTRIBUTE_NAME}]`);
+          if (itemTarget == null) {
             return;
           }
-          const { dataKey } = settings;
-          const coordinate = selectTooltipCoordinate(currentState, itemIndex, graphicalItemId);
+          const itemIndex = itemTarget.getAttribute(DATA_ITEM_INDEX_ATTRIBUTE_NAME);
+          const graphicalItemId = itemTarget.getAttribute(DATA_ITEM_GRAPHICAL_ITEM_ID_ATTRIBUTE_NAME) ?? undefined;
+          if (itemIndex == null || graphicalItemId == null) {
+            return;
+          }
+          const itemDetails = selectTooltipItemDetails(currentState, itemIndex, graphicalItemId);
+          if (itemDetails == null) {
+            return;
+          }
+          const { dataKey, coordinate } = itemDetails;
 
           listenerApi.dispatch(
             setActiveMouseOverItemIndex({
