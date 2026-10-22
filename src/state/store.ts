@@ -3,7 +3,7 @@ import { optionsReducer } from './optionsSlice';
 import { tooltipReducer } from './tooltipSlice';
 import { chartDataReducer } from './chartDataSlice';
 import { chartLayoutReducer } from './layoutSlice';
-import { mouseClickMiddleware, mouseMoveMiddleware } from './mouseEventsMiddleware';
+import { createMouseMoveMiddleware, mouseClickMiddleware } from './mouseEventsMiddleware';
 import { reduxDevtoolsJsonStringifyReplacer } from './reduxDevtoolsJsonStringifyReplacer';
 import { cartesianAxisReducer } from './cartesianAxisSlice';
 import { graphicalItemsReducer } from './graphicalItemsSlice';
@@ -14,8 +14,8 @@ import { rootPropsReducer } from './rootPropsSlice';
 import { polarAxisReducer } from './polarAxisSlice';
 import { polarOptionsReducer } from './polarOptionsSlice';
 import { keyboardEventsMiddleware } from './keyboardEventsMiddleware';
-import { externalEventsMiddleware } from './externalEventsMiddleware';
-import { touchEventMiddleware } from './touchEventsMiddleware';
+import { createExternalEventsMiddleware } from './externalEventsMiddleware';
+import { createTouchEventMiddleware } from './touchEventsMiddleware';
 import { errorBarReducer } from './errorBarSlice';
 import { Global } from '../util/Global';
 import { zIndexReducer } from './zIndexSlice';
@@ -89,10 +89,15 @@ export const createRechartsStore = (
         immutableCheck: !['commonjs', 'es6', 'production'].includes(process.env.NODE_ENV ?? ''),
       }).concat([
         mouseClickMiddleware.middleware,
-        mouseMoveMiddleware.middleware,
+        /*
+         * The mouse move, external events, and touch middlewares keep their throttling state (pending frame,
+         * timeout, latest event) in a closure, so every store needs its own instance.
+         * Otherwise charts on the same page would cancel or overwrite each other's pending events.
+         */
+        createMouseMoveMiddleware().middleware,
         keyboardEventsMiddleware.middleware,
-        externalEventsMiddleware.middleware,
-        touchEventMiddleware.middleware,
+        createExternalEventsMiddleware().middleware,
+        createTouchEventMiddleware().middleware,
       ]),
     /*
      * I can't find out how to satisfy typescript here.
