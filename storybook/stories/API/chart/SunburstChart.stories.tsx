@@ -102,6 +102,6 @@ export const API = {
     data: hierarchy,
     innerRadius: 40,
     startAngle: 90,
-    endAngle: 270,
+    endAngle: 360,
   },
 };
