@@ -108,6 +108,71 @@ describe('Tooltip animation', () => {
     });
   });
 
+  describe('with animation disabled', () => {
+    const renderTestCase = createSelectorTestCase(({ children }) => (
+      <LineChart
+        width={100}
+        height={100}
+        data={[
+          { name: 'A', value: 1 },
+          { name: 'B', value: 2 },
+        ]}
+      >
+        <Line dataKey="value" />
+        {children}
+        <Tooltip isAnimationActive={false} />
+      </LineChart>
+    ));
+
+    it('should not set will-change when the position transition is disabled', () => {
+      const { container } = renderTestCase();
+      showTooltipOnCoordinate(container, lineChartMouseHoverTooltipSelector, {
+        clientX: 20,
+        clientY: 20,
+      });
+
+      const tooltip = getTooltip(container);
+      expect(tooltip.style.transition).not.toContain('transform 400ms ease');
+      expect(tooltip.style.willChange).not.toBe('transform');
+    });
+  });
+
+  describe('with default animation settings', () => {
+    const renderTestCase = createSelectorTestCase(({ children }) => (
+      <LineChart
+        width={100}
+        height={100}
+        data={[
+          { name: 'A', value: 1 },
+          { name: 'B', value: 2 },
+        ]}
+      >
+        <Line dataKey="value" />
+        {children}
+        <Tooltip />
+      </LineChart>
+    ));
+
+    it('should promote the wrapper to a compositor layer while the transition is enabled', () => {
+      /*
+       * Without will-change: transform, Chromium-based browsers can leave stale fragments
+       * of the previous tooltip position on screen during fast pointer moves.
+       * https://github.com/recharts/recharts/issues/7754
+       */
+      const { container } = renderTestCase();
+      showTooltipOnCoordinate(container, lineChartMouseHoverTooltipSelector, {
+        clientX: 20,
+        clientY: 20,
+      });
+
+      const tooltip = getTooltip(container);
+      expect(tooltip).toHaveStyle({
+        transition: 'transform 400ms ease',
+        willChange: 'transform',
+      });
+    });
+  });
+
   describe('with custom content', () => {
     const MyCustomContent = () => <p>My Custom Content</p>;
     const renderTestCase = createSelectorTestCase(({ children }) => (
