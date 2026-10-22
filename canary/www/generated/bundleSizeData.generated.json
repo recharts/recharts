@@ -1,45 +1,45 @@
 {
   "treemap": {
     "examplePath": "www/src/views/IndexView/IndexLineChart.tsx",
-    "totalSize": 954596,
-    "totalSizeLabel": "932.22 KB",
+    "totalSize": 956127,
+    "totalSizeLabel": "933.72 KB",
     "moduleCount": 379,
-    "generatedAt": "2026-10-21T09:36:44.810Z",
+    "generatedAt": "2026-10-22T02:05:33.566Z",
     "stages": [
       {
         "stage": "es6-folder",
-        "bytes": 1494827,
+        "bytes": 1496372,
         "humanReadableSize": "1.43 MB",
         "reductionFromBaselinePercent": 0
       },
       {
         "stage": "tree-shaken",
-        "bytes": 957501,
-        "humanReadableSize": "935.06 KB",
+        "bytes": 959032,
+        "humanReadableSize": "936.55 KB",
         "reductionFromBaselinePercent": 0
       },
       {
         "stage": "minified",
-        "bytes": 314697,
-        "humanReadableSize": "307.32 KB",
-        "reductionFromBaselinePercent": 67.13
+        "bytes": 314911,
+        "humanReadableSize": "307.53 KB",
+        "reductionFromBaselinePercent": 67.16
       },
       {
         "stage": "minified+gzip",
-        "bytes": 103094,
-        "humanReadableSize": "100.68 KB",
-        "reductionFromBaselinePercent": 89.23
+        "bytes": 103181,
+        "humanReadableSize": "100.76 KB",
+        "reductionFromBaselinePercent": 89.24
       }
     ],
     "tree": {
       "name": "bundle",
       "fullPath": "bundle",
-      "value": 954596,
+      "value": 956127,
       "children": [
         {
           "name": "src",
           "fullPath": "src",
-          "value": 551020,
+          "value": 552551,
           "children": [
             {
               "name": "state",
@@ -915,12 +915,12 @@
             {
               "name": "chart",
               "fullPath": "src/chart",
-              "value": 15310,
+              "value": 16841,
               "children": [
                 {
                   "name": "RechartsWrapper.tsx",
                   "fullPath": "src/chart/RechartsWrapper.tsx",
-                  "value": 10949
+                  "value": 12480
                 },
                 {
                   "name": "CartesianChart.tsx",
@@ -2622,45 +2622,45 @@
   },
   "sunburst": {
     "examplePath": "www/src/views/IndexView/IndexLineChart.tsx",
-    "totalSize": 954596,
-    "totalSizeLabel": "932.22 KB",
+    "totalSize": 956127,
+    "totalSizeLabel": "933.72 KB",
     "moduleCount": 379,
-    "generatedAt": "2026-10-21T09:36:42.622Z",
+    "generatedAt": "2026-10-22T02:05:31.653Z",
     "stages": [
       {
         "stage": "es6-folder",
-        "bytes": 1494827,
+        "bytes": 1496372,
         "humanReadableSize": "1.43 MB",
         "reductionFromBaselinePercent": 0
       },
       {
         "stage": "tree-shaken",
-        "bytes": 957501,
-        "humanReadableSize": "935.06 KB",
+        "bytes": 959032,
+        "humanReadableSize": "936.55 KB",
         "reductionFromBaselinePercent": 0
       },
       {
         "stage": "minified",
-        "bytes": 314697,
-        "humanReadableSize": "307.32 KB",
-        "reductionFromBaselinePercent": 67.13
+        "bytes": 314911,
+        "humanReadableSize": "307.53 KB",
+        "reductionFromBaselinePercent": 67.16
       },
       {
         "stage": "minified+gzip",
-        "bytes": 103094,
-        "humanReadableSize": "100.68 KB",
-        "reductionFromBaselinePercent": 89.23
+        "bytes": 103181,
+        "humanReadableSize": "100.76 KB",
+        "reductionFromBaselinePercent": 89.24
       }
     ],
     "tree": {
       "name": "bundle",
       "fullPath": "bundle",
-      "value": 954596,
+      "value": 956127,
       "children": [
         {
           "name": "src",
           "fullPath": "src",
-          "value": 551020,
+          "value": 552551,
           "children": [
             {
               "name": "state",
@@ -3536,12 +3536,12 @@
             {
               "name": "chart",
               "fullPath": "src/chart",
-              "value": 15310,
+              "value": 16841,
               "children": [
                 {
                   "name": "RechartsWrapper.tsx",
                   "fullPath": "src/chart/RechartsWrapper.tsx",
-                  "value": 10949
+                  "value": 12480
                 },
                 {
                   "name": "CartesianChart.tsx",
