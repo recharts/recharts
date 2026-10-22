@@ -1,7 +1,7 @@
 import React from 'react';
 import { fireEvent } from '@testing-library/react';
 import { describe, expect, it, Mock, vi } from 'vitest';
-import { Customized, SunburstChart } from '../../src';
+import { Customized, Sector, SunburstChart } from '../../src';
 import { exampleSunburstData } from '../_data';
 import { useChartHeight, useChartWidth, useViewBox } from '../../src/context/chartLayoutContext';
 import { useAppSelector } from '../../src/state/hooks';
@@ -25,6 +25,47 @@ describe('<Sunburst />', () => {
     expect(sectors[2]).toHaveAttribute('fill', '#2a9d8f');
     expect(sectors[3]).toHaveAttribute('fill', '#2a9d8f');
     expect(sectors[4]).toHaveAttribute('fill', '#e9c46a');
+  });
+
+  describe('startAngle and endAngle', () => {
+    const twoHalves = {
+      name: 'Root',
+      value: 100,
+      children: [
+        { name: 'A', value: 50, fill: '#264653' },
+        { name: 'B', value: 50, fill: '#e76f51' },
+      ],
+    };
+
+    function sectorPath(container: Element, name: string): string | null {
+      const sector = container.querySelector(`.recharts-sector[name="${name}"]`);
+      return sector == null ? null : sector.getAttribute('d');
+    }
+
+    function referencePath(startAngle: number, endAngle: number): string | null {
+      const { container } = rechartsTestRender(
+        <svg>
+          <Sector cx={250} cy={250} innerRadius={50} outerRadius={150} startAngle={startAngle} endAngle={endAngle} />
+        </svg>,
+      );
+      return container.querySelector('.recharts-sector')?.getAttribute('d') ?? null;
+    }
+
+    it('ends the chart at endAngle instead of treating it as the sweep size', () => {
+      const { container } = rechartsTestRender(
+        <SunburstChart width={500} height={500} data={twoHalves} startAngle={90} endAngle={270} />,
+      );
+
+      expect(sectorPath(container, 'B')).toBe(referencePath(180, 270));
+    });
+
+    it('draws a half circle for startAngle 180 and endAngle 360', () => {
+      const { container } = rechartsTestRender(
+        <SunburstChart width={500} height={500} data={twoHalves} startAngle={180} endAngle={360} />,
+      );
+
+      expect(sectorPath(container, 'B')).toBe(referencePath(270, 360));
+    });
   });
 
   it('fires callbacks upon hover and click events', async () => {
