@@ -642,6 +642,12 @@ export function ThemingGuide() {
         pick from them: <code>{'<Scatter fill={autoPalette[1]} />'}</code>.
       </p>
       <p>
+        When you design your own theme, check that readers can tell the series apart from the page and from each other,
+        also with a color vision deficiency. The{' '}
+        <RechartsLink to="guide/theme-color-testing">Theme color testing guide</RechartsLink> does that for any theme,
+        and shows how to keep checking it in unit tests.
+      </p>
+      <p>
         The theme compares <code>dataKey</code> values as strings. A function <code>dataKey</code> is compared by its
         source code: two functions with the same source share a color, and a minified build may order the colors
         differently than a development build. Prefer explicit colors for graphical items that use a function{' '}
