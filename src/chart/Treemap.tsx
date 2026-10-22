@@ -935,11 +935,14 @@ const SetTreemapTooltipEntrySettings = React.memo(
     fill,
     colorPanel,
     themeGraphicalItems,
-    currentRoot,
+    formatRoot,
     id,
   }: Pick<InternalTreemapProps, 'dataKey' | 'nameKey' | 'stroke' | 'fill' | 'colorPanel' | 'id'> & {
     themeGraphicalItems: RechartsTheme['graphicalItems'] | undefined;
-    currentRoot: TreemapNode | undefined;
+    /**
+     * The tree that is rendered. Its `tooltipIndex` and `depth` match the hovered tile, also after zooming in.
+     */
+    formatRoot: TreemapNode | null;
   }) => {
     /*
      * `fill` and `stroke` here are the explicit Treemap props. The first theme color stays the series
@@ -954,7 +957,7 @@ const SetTreemapTooltipEntrySettings = React.memo(
       themeGraphicalItems,
     };
     const tooltipEntrySettings: TooltipPayloadConfiguration = {
-      dataDefinedOnItem: currentRoot,
+      dataDefinedOnItem: formatRoot,
       getPosition: noop, // TODO I think Treemap has the capability of computing positions and supporting defaultIndex? Except it doesn't yet
       getEntryColor: entry => getTreemapTooltipColor(entry, colorSource),
       settings: {
@@ -1362,7 +1365,7 @@ class TreemapWithState extends PureComponent<InternalTreemapProps, State> {
           fill={this.props.fill}
           colorPanel={this.props.colorPanel}
           themeGraphicalItems={this.props.themeGraphicalItems}
-          currentRoot={this.state.currentRoot}
+          formatRoot={this.state.formatRoot}
           id={this.props.id}
         />
         <Surface

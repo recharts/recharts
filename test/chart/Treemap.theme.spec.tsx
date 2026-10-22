@@ -649,6 +649,34 @@ describe('Treemap tooltip color', () => {
     expect(getTooltipItemColor(container)).toBe('rgb(18, 52, 86)');
   });
 
+  it('shows the rendered color in nest mode after zooming in through the breadcrumb', () => {
+    const { container } = render(
+      <RechartsThemeProvider value={{ graphicalItems: [{ fill: 'red' }, { fill: 'green' }] }}>
+        <Treemap
+          width={400}
+          height={250}
+          data={nestedData}
+          isAnimationActive={false}
+          nameKey="name"
+          dataKey="value"
+          type="nest"
+        >
+          <Tooltip />
+        </Treemap>
+      </RechartsThemeProvider>,
+    );
+    const software = queryTiles(container, 1)[1];
+    assertNotNull(software);
+    fireEvent.click(software);
+    const breadcrumb = container.querySelectorAll<HTMLElement>('.recharts-treemap-nest-index-box')[1];
+    assertNotNull(breadcrumb);
+    fireEvent.click(breadcrumb);
+
+    const editor = hoverTile(container, 1, 0);
+    expect(editor.getAttribute('fill')).toBe('red');
+    expect(getTooltipItemColor(container)).toBe('red');
+  });
+
   it('ignores a data color key that does not paint the node', () => {
     const { container } = renderTooltipTreemap({
       theme: { graphicalItems: [{ fill: 'purple' }, { fill: 'teal' }] },
