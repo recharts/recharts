@@ -789,7 +789,7 @@ function PieLabels({
       resolveLabelTheme?.(i),
       {
         fill: labelObject?.fill,
-        style: labelObject?.style,
+        style: labelObject?.style ?? labelProps.style,
         background: labelObject?.background,
       },
       labelProps.fill,
