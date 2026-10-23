@@ -963,6 +963,7 @@ export function computePieSectors({
   const paddingAngle = displayedData.length <= 1 ? 0 : (pieSettings.paddingAngle ?? 0);
 
   const notZeroItemCount = displayedData.filter(entry => isNonZeroNumber(getValueByDataKey(entry, dataKey, 0))).length;
+  const firstNonZeroIndex = displayedData.findIndex(entry => isNonZeroNumber(getValueByDataKey(entry, dataKey, 0)));
   const totalPaddingAngle = (absDeltaAngle >= 360 ? notZeroItemCount : notZeroItemCount - 1) * paddingAngle;
 
   const sum = displayedData.reduce((result: number, entry: any) => {
@@ -1003,8 +1004,12 @@ export function computePieSectors({
           ? entryWithCellInfo.fill
           : pieSettings.fill;
 
+      // Leading zero values take no space, so the first visible sector gets no padding in front of it.
+      const isFirstAfterLeadingZeros = i > 0 && i === firstNonZeroIndex;
+      const hasPadding = isNonZeroNumber(val) && !isFirstAfterLeadingZeros;
+
       if (i) {
-        tempStartAngle = prev.endAngle + mathSign(deltaAngle) * paddingAngle * (isNonZeroNumber(val) ? 1 : 0);
+        tempStartAngle = prev.endAngle + mathSign(deltaAngle) * paddingAngle * (hasPadding ? 1 : 0);
       } else {
         tempStartAngle = startAngle;
       }
@@ -1045,7 +1050,7 @@ export function computePieSectors({
         startAngle: tempStartAngle,
         endAngle: tempEndAngle,
         payload: entryWithCellInfo,
-        paddingAngle: isNonZeroNumber(val) ? mathSign(deltaAngle) * paddingAngle : 0,
+        paddingAngle: hasPadding ? mathSign(deltaAngle) * paddingAngle : 0,
       };
       return prev;
     });
