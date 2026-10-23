@@ -15,6 +15,7 @@ import ThemeEditor from './ThemeEditor.tsx';
 import ThemeResults from './ThemeResults.tsx';
 import SimulatedCharts from './SimulatedCharts.tsx';
 import styles from './themeChecker.module.css';
+import { useColorMode } from '../../color-mode';
 
 function problemWith(state: CheckerState): string | null {
   if (state.series.length === 0) {
@@ -24,8 +25,19 @@ function problemWith(state: CheckerState): string | null {
   return invalid == null ? null : `"${invalid}" is not a color.`;
 }
 
+/**
+ * Until the user changes anything, the checker shows the preset that matches the site color mode.
+ * The color mode is only known after hydration, so it can't be read once on mount.
+ */
+function useCheckerState(): [CheckerState, (next: CheckerState) => void] {
+  const { mode } = useColorMode();
+  const [edited, setEdited] = useState<CheckerState | null>(null);
+  const state = useMemo(() => edited ?? stateFromPreset(mode === 'dark' ? 'darkTheme' : 'lightTheme'), [edited, mode]);
+  return [state, setEdited];
+}
+
 export default function ThemeChecker() {
-  const [state, setState] = useState<CheckerState>(() => stateFromPreset('lightTheme'));
+  const [state, setState] = useCheckerState();
   const [vision, setVision] = useState<Vision>('normal');
   // The colors before the last Apply, and what the last Apply did. Editing by hand clears both.
   const [undo, setUndo] = useState<{ before: CheckerState; message: string } | null>(null);
@@ -39,16 +51,19 @@ export default function ThemeChecker() {
     [theme, deferredState, problem],
   );
 
-  const edit = useCallback((next: CheckerState) => {
-    setState(next);
-    setUndo(null);
-  }, []);
+  const edit = useCallback(
+    (next: CheckerState) => {
+      setState(next);
+      setUndo(null);
+    },
+    [setState],
+  );
   const handleApplyFix = useCallback(
     (fix: Fix) => {
       setUndo({ before: state, message: `Applied ${fix.to}.` });
       setState(applyFix(state, fix));
     },
-    [state],
+    [state, setState],
   );
   const handleApplyAll = useCallback(() => {
     const failing = (s: CheckerState) =>
@@ -60,13 +75,13 @@ export default function ThemeChecker() {
         : `Changed ${changedColors} ${changedColors === 1 ? 'color' : 'colors'}. Failing checks went from ${failing(state)} to ${failing(next)}.`;
     setUndo({ before: state, message });
     setState(next);
-  }, [state]);
+  }, [state, setState]);
   const handleUndo = useCallback(() => {
     if (undo != null) {
       setState(undo.before);
       setUndo(null);
     }
-  }, [undo]);
+  }, [undo, setState]);
 
   return (
     <div className={styles.checker}>
