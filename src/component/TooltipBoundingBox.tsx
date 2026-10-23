@@ -50,6 +50,17 @@ function resolveTransitionProperty(args: {
   return undefined;
 }
 
+/**
+ * The wrapper can measure 0x0 while its content renders nothing,
+ * for example a custom `content` that returns `null` while the Tooltip is inactive.
+ *
+ * @param box the last measured bounding box of the wrapper
+ * @returns true if the box has both width and height
+ */
+function hasSize(box: ElementOffset | null): box is ElementOffset {
+  return box != null && box.width > 0 && box.height > 0;
+}
+
 function TooltipBoundingBoxImpl(props: TooltipBoundingBoxProps) {
   const prefersReducedMotion = usePrefersReducedMotion();
   const [state, setState] = React.useState(() => ({
@@ -83,6 +94,17 @@ function TooltipBoundingBoxImpl(props: TooltipBoundingBoxProps) {
     setState({ ...state, dismissed: false });
   }
 
+  /*
+   * Without a size, the tooltip cannot be positioned and the wrapper would lose its transform,
+   * so the next time the tooltip shows it would animate in from the top left corner.
+   * Keep positioning with the last size that had content instead.
+   */
+  const [lastBoxWithSize, setLastBoxWithSize] = React.useState<ElementOffset | null>(null);
+  if (hasSize(props.lastBoundingBox) && props.lastBoundingBox !== lastBoxWithSize) {
+    setLastBoxWithSize(props.lastBoundingBox);
+  }
+  const tooltipBox: ElementOffset | null = hasSize(props.lastBoundingBox) ? props.lastBoundingBox : lastBoxWithSize;
+
   const { cssClasses, cssProperties } = getTooltipTranslate({
     allowEscapeViewBox: props.allowEscapeViewBox,
     coordinate: props.coordinate,
@@ -90,7 +112,7 @@ function TooltipBoundingBoxImpl(props: TooltipBoundingBoxProps) {
     offsetTop: typeof props.offset === 'number' ? props.offset : props.offset.y,
     position: props.position,
     reverseDirection: props.reverseDirection,
-    tooltipBox: props.lastBoundingBox,
+    tooltipBox,
     useTranslate3d: props.useTranslate3d,
     viewBox: props.viewBox,
   });
