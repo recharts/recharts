@@ -740,9 +740,7 @@ const renderLabelItem = (option: PieLabel, props: PieLabelRenderProps, value: un
 /**
  * Returns the props of the default Pie label, if the `label` prop sets them as an object.
  */
-function getPieLabelObject(
-  label: PieLabel,
-): (Partial<PieLabelRenderProps> & { background?: boolean | TextBackgroundProps }) | undefined {
+function getPieLabelObject(label: PieLabel): Partial<PieLabelRenderProps> | undefined {
   if (label == null || typeof label !== 'object' || React.isValidElement(label) || 'position' in label) {
     return undefined;
   }
