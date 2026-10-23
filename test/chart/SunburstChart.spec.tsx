@@ -3,6 +3,7 @@ import { fireEvent } from '@testing-library/react';
 import { describe, expect, it, Mock, vi } from 'vitest';
 import { Customized, SunburstChart } from '../../src';
 import { exampleSunburstData } from '../_data';
+import { getPieSectorAngles } from '../helper/expectPieSectors';
 import { useChartHeight, useChartWidth, useViewBox } from '../../src/context/chartLayoutContext';
 import { useAppSelector } from '../../src/state/hooks';
 import { sunburstChartMouseHoverTooltipSelector } from '../component/Tooltip/tooltipMouseHoverSelectors';
@@ -98,6 +99,63 @@ describe('<Sunburst />', () => {
       ],
       tooltipIndex: '[0]',
     });
+  });
+
+  describe('startAngle and endAngle', () => {
+    const halvesData = {
+      name: 'Root',
+      value: 100,
+      children: [
+        { name: 'A', value: 50 },
+        { name: 'B', value: 50 },
+      ],
+    };
+
+    it.each([
+      {
+        startAngle: 0,
+        endAngle: 360,
+        expected: [
+          { startAngle: 0, endAngle: 180 },
+          { startAngle: 180, endAngle: 0 },
+        ],
+      },
+      {
+        startAngle: 90,
+        endAngle: 270,
+        expected: [
+          { startAngle: 90, endAngle: 180 },
+          { startAngle: 180, endAngle: 270 },
+        ],
+      },
+      {
+        startAngle: 180,
+        endAngle: 360,
+        expected: [
+          { startAngle: 180, endAngle: 270 },
+          { startAngle: 270, endAngle: 0 },
+        ],
+      },
+      {
+        startAngle: 90,
+        endAngle: -270,
+        expected: [
+          { startAngle: 90, endAngle: 270 },
+          { startAngle: 270, endAngle: 90 },
+        ],
+      },
+    ])(
+      'should fit the sectors between startAngle=$startAngle and endAngle=$endAngle',
+      ({ startAngle, endAngle, expected }) => {
+        const { container } = rechartsTestRender(
+          <SunburstChart width={500} height={500} data={halvesData} startAngle={startAngle} endAngle={endAngle} />,
+        );
+
+        const sectors = Array.from(container.querySelectorAll('.recharts-sector'));
+
+        expect(getPieSectorAngles(sectors)).toEqual(expected);
+      },
+    );
   });
 
   it('does not call touch event callbacks', async () => {
