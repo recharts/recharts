@@ -794,8 +794,10 @@ function PieLabels({
       },
       labelProps.fill,
     );
-    labelProps.fill = themedLabelProps.fill;
-    labelProps.style = themedLabelProps.style;
+    const finalLabelProps: PieLabelRenderProps = {
+      ...labelProps,
+      ...themedLabelProps,
+    };
     const lineProps: CurveProps = {
       ...pieProps,
       ...entry,
@@ -817,7 +819,7 @@ function PieLabels({
         <Layer>
           {labelLine && renderLabelLineItem(labelLine, lineProps)}
           {/* @ts-expect-error we send the full PieSectorDataItem */}
-          {renderLabelItem(label, labelProps, getValueByDataKey(entry, dataKey), themedLabelProps.background)}
+          {renderLabelItem(label, finalLabelProps, getValueByDataKey(entry, dataKey), themedLabelProps.background)}
         </Layer>
       </ZIndexLayer>
     );
