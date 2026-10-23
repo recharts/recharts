@@ -83,6 +83,7 @@ import { getDataKeyOnAxis } from '../state/selectors/effectiveDataKeySelectors';
 import { getEntryStyleOverrides, hasOwnColors, UnthemedStyles, useUnthemedStyles } from '../theme/dataEntryStyles';
 import { getActiveStyleOverrides, useThemedActiveStyles } from '../theme/activeStyles';
 import { Styles2D } from '../theme/RechartsTheme';
+import { DataLabelThemeContextProvider, useSeriesLabelThemeResolver } from '../theme/labelTheme';
 
 export interface ScatterPointNode {
   x?: number | string;
@@ -1125,6 +1126,7 @@ function ScatterFn(outsideProps: Props) {
     yAxisId: outsideProps.yAxisId ?? defaultScatterProps.yAxisId,
   });
   const graphicalItemThemeSelector = useGraphicalItemIdentity(effectiveDataKey, outsideProps);
+  const resolveLabelTheme = useSeriesLabelThemeResolver(graphicalItemThemeSelector);
   const unthemedStyles = useUnthemedStyles(outsideProps);
   const themedActiveStyles = useThemedActiveStyles(graphicalItemThemeSelector, outsideProps);
   const graphicalItemTheme = useBackwardsCompatibleTheme<Props>(graphicalItemThemeSelector, outsideProps, undefined);
@@ -1163,7 +1165,9 @@ function ScatterFn(outsideProps: Props) {
             tooltipType={props.tooltipType}
             isPanorama={isPanorama}
           />
-          <ScatterImpl {...props} id={id} unthemedStyles={unthemedStyles} themedActiveStyles={themedActiveStyles} />
+          <DataLabelThemeContextProvider value={resolveLabelTheme}>
+            <ScatterImpl {...props} id={id} unthemedStyles={unthemedStyles} themedActiveStyles={themedActiveStyles} />
+          </DataLabelThemeContextProvider>
         </>
       )}
     </RegisterGraphicalItemId>

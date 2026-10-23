@@ -200,6 +200,20 @@ function Charts({ children }) {
 }
 `;
 
+const labelThemeExample = `import { type RechartsTheme, lightTheme } from 'recharts';
+
+const theme: RechartsTheme = {
+  ...lightTheme,
+  // Data labels: LabelList, the \`label\` prop of graphical items, and the default Pie label
+  graphicalItems: lightTheme.graphicalItems.map(item => ({
+    ...item,
+    label: { background: { rx: 4 } },
+  })),
+  // All other labels: axis labels, reference labels, standalone <Label>
+  label: { style: { fontWeight: 'bold' } },
+};
+`;
+
 const readThemeExample = `import { useRechartsTheme } from 'recharts';
 
 /*
@@ -422,7 +436,7 @@ export function ThemingGuide() {
             </td>
             <td>
               array of{' '}
-              <code>{'{ fill, fillOpacity, stroke, strokeWidth, strokeOpacity, strokeDasharray, active }'}</code>
+              <code>{'{ fill, fillOpacity, stroke, strokeWidth, strokeOpacity, strokeDasharray, active, label }'}</code>
             </td>
             <td>
               <LinkToApi>Area</LinkToApi>, <LinkToApi>Bar</LinkToApi>, <LinkToApi>Line</LinkToApi>,{' '}
@@ -446,6 +460,18 @@ export function ThemingGuide() {
               <LinkToApi>LabelList</LinkToApi>, <LinkToApi>Text</LinkToApi>, and the HTML in{' '}
               <LinkToApi>Tooltip</LinkToApi> and <LinkToApi>Legend</LinkToApi>. Because it covers both SVG and HTML,{' '}
               <code>color</code> is translated to <code>fill</code> for SVG text automatically.
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <code>label</code>
+            </td>
+            <td>
+              <code>{'{ style, background }'}</code>
+            </td>
+            <td>
+              Labels that are not data labels: axis labels, labels of reference lines, areas and dots, and standalone{' '}
+              <LinkToApi>Label</LinkToApi> components. See the Labels section below.
             </td>
           </tr>
           <tr>
@@ -600,6 +626,27 @@ export function ThemingGuide() {
         <code>pageBackground</code>, so when you spread a built-in theme and paint <code>chart.backgroundColor</code>,
         also set <code>pageBackground</code> to the same color. Do the same when you paint the <code>background</code>{' '}
         shorthand or an image.
+      </p>
+
+      <h2>Labels</h2>
+      <p>
+        A theme styles labels in two places. Data labels, the ones that <LinkToApi>LabelList</LinkToApi>, the{' '}
+        <code>label</code> prop of graphical items, and the default <LinkToApi>Pie</LinkToApi> label draw, take their
+        styles from the <code>label</code> of their <code>graphicalItems</code> entry. Each series can have its own
+        label styles, and <LinkToApi>Pie</LinkToApi> and <LinkToApi>Funnel</LinkToApi> take one entry per sector or
+        trapezoid, the same entry that colors the shape. All other labels take the top-level <code>label</code>.
+      </p>
+      <p>
+        Both take <code>style</code>, which is merged over <code>typography</code>, and <code>background</code>, which
+        is the default for the <code>background</code> prop of the label. A background keeps a label readable when it
+        sits on top of a filled shape. It is filled with <code>pageBackground</code> unless you set a <code>fill</code>.
+      </p>
+      <SourceCodeEditor value={labelThemeExample} />
+      <p>
+        Explicit props of the label win: <code>fill</code> and <code>style</code> override the theme style,{' '}
+        <code>{'background={false}'}</code> turns the background off, and a <code>background</code> object is merged
+        over the theme background key by key. A graphical item that sets its own <code>fill</code> or{' '}
+        <code>stroke</code> ignores its theme entry, and so do its labels.
       </p>
 
       <h2>Default chart size</h2>
