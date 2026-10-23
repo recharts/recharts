@@ -1,0 +1,1 @@
+import{r as a}from"./entry-D_GyIL9Q.js";import{a as e}from"./RechartsWrapper-9MYsjCDj.js";import{C as o}from"./CartesianChart-ClqjA5OQ.js";const i=["axis"],c=a.forwardRef((r,t)=>a.createElement(o,{chartName:"LineChart",defaultTooltipEventType:"axis",validateTooltipEventTypes:i,tooltipPayloadSearcher:e,categoricalChartProps:r,ref:t}));export{c as L};
