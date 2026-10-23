@@ -130,6 +130,10 @@ interface PieLabelExtraProps {
   stroke: string;
   index: number;
   textAnchor: string;
+  /**
+   * Draws a background behind each label, same as the `background` prop of {@link Label}.
+   */
+  background?: boolean | TextBackgroundProps;
 }
 
 export type PieLabelRenderProps = Omit<SVGPropsNoEvents<PieSvgAttributes>, 'offset'> &
@@ -156,14 +160,9 @@ export type PieLabel =
   /*
    * If label prop is an object, and it does not have a `position` prop,
    * this renders a special Pie label that is similar to <Label position="outside"> and supports an optional labelLine.
-   * labelLine is a small line connecting the sector to the label.
+   * labelLine is a small line connecting the sector 3to the label.
    */
-  | (Partial<PieLabelRenderProps> & {
-      /**
-       * Draws a background behind each label, same as the `background` prop of {@link Label}.
-       */
-      background?: boolean | TextBackgroundProps;
-    })
+  | Partial<PieLabelRenderProps>
   /*
    * If label prop is a function, or a React component, it will be called once for each label.
    * The result of each call will be rendered.
