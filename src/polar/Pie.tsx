@@ -160,7 +160,7 @@ export type PieLabel =
   /*
    * If label prop is an object, and it does not have a `position` prop,
    * this renders a special Pie label that is similar to <Label position="outside"> and supports an optional labelLine.
-   * labelLine is a small line connecting the sector 3to the label.
+   * labelLine is a small line connecting the sector to the label.
    */
   | Partial<PieLabelRenderProps>
   /*
