@@ -124,6 +124,6 @@ export const lightTheme: RechartsTheme = {
     },
   },
   typography: {
-    color: '#18181b',
+    color: '#010101',
   },
 };

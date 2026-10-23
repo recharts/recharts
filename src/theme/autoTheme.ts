@@ -132,6 +132,6 @@ export const autoTheme: RechartsTheme = {
     },
   },
   typography: {
-    color: 'light-dark(#18181b, #f4f4f5)',
+    color: 'light-dark(#010101, #f4f4f5)',
   },
 };
