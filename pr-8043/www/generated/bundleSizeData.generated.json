@@ -1,45 +1,45 @@
 {
   "treemap": {
     "examplePath": "www/src/views/IndexView/IndexLineChart.tsx",
-    "totalSize": 959756,
-    "totalSizeLabel": "937.26 KB",
+    "totalSize": 961291,
+    "totalSizeLabel": "938.76 KB",
     "moduleCount": 380,
-    "generatedAt": "2026-10-19T13:54:06.380Z",
+    "generatedAt": "2026-10-23T06:04:55.268Z",
     "stages": [
       {
         "stage": "es6-folder",
-        "bytes": 1505023,
+        "bytes": 1508546,
         "humanReadableSize": "1.44 MB",
         "reductionFromBaselinePercent": 0
       },
       {
         "stage": "tree-shaken",
-        "bytes": 962663,
-        "humanReadableSize": "940.10 KB",
+        "bytes": 964198,
+        "humanReadableSize": "941.60 KB",
         "reductionFromBaselinePercent": 0
       },
       {
         "stage": "minified",
-        "bytes": 315486,
-        "humanReadableSize": "308.09 KB",
-        "reductionFromBaselinePercent": 67.23
+        "bytes": 315700,
+        "humanReadableSize": "308.30 KB",
+        "reductionFromBaselinePercent": 67.26
       },
       {
         "stage": "minified+gzip",
-        "bytes": 103384,
-        "humanReadableSize": "100.96 KB",
-        "reductionFromBaselinePercent": 89.26
+        "bytes": 103472,
+        "humanReadableSize": "101.05 KB",
+        "reductionFromBaselinePercent": 89.27
       }
     ],
     "tree": {
       "name": "bundle",
       "fullPath": "bundle",
-      "value": 959756,
+      "value": 961291,
       "children": [
         {
           "name": "src",
           "fullPath": "src",
-          "value": 556180,
+          "value": 557715,
           "children": [
             {
               "name": "state",
@@ -913,6 +913,33 @@
               ]
             },
             {
+              "name": "chart",
+              "fullPath": "src/chart",
+              "value": 16841,
+              "children": [
+                {
+                  "name": "RechartsWrapper.tsx",
+                  "fullPath": "src/chart/RechartsWrapper.tsx",
+                  "value": 12480
+                },
+                {
+                  "name": "CartesianChart.tsx",
+                  "fullPath": "src/chart/CartesianChart.tsx",
+                  "value": 2318
+                },
+                {
+                  "name": "CategoricalChart.tsx",
+                  "fullPath": "src/chart/CategoricalChart.tsx",
+                  "value": 1557
+                },
+                {
+                  "name": "LineChart.tsx",
+                  "fullPath": "src/chart/LineChart.tsx",
+                  "value": 486
+                }
+              ]
+            },
+            {
               "name": "theme",
               "fullPath": "src/theme",
               "value": 15742,
@@ -961,33 +988,6 @@
                   "name": "cssStylesToSvgStyles.ts",
                   "fullPath": "src/theme/cssStylesToSvgStyles.ts",
                   "value": 374
-                }
-              ]
-            },
-            {
-              "name": "chart",
-              "fullPath": "src/chart",
-              "value": 15306,
-              "children": [
-                {
-                  "name": "RechartsWrapper.tsx",
-                  "fullPath": "src/chart/RechartsWrapper.tsx",
-                  "value": 10945
-                },
-                {
-                  "name": "CartesianChart.tsx",
-                  "fullPath": "src/chart/CartesianChart.tsx",
-                  "value": 2318
-                },
-                {
-                  "name": "CategoricalChart.tsx",
-                  "fullPath": "src/chart/CategoricalChart.tsx",
-                  "value": 1557
-                },
-                {
-                  "name": "LineChart.tsx",
-                  "fullPath": "src/chart/LineChart.tsx",
-                  "value": 486
                 }
               ]
             },
@@ -2627,45 +2627,45 @@
   },
   "sunburst": {
     "examplePath": "www/src/views/IndexView/IndexLineChart.tsx",
-    "totalSize": 959756,
-    "totalSizeLabel": "937.26 KB",
+    "totalSize": 961291,
+    "totalSizeLabel": "938.76 KB",
     "moduleCount": 380,
-    "generatedAt": "2026-10-19T13:54:08.240Z",
+    "generatedAt": "2026-10-23T06:04:56.823Z",
     "stages": [
       {
         "stage": "es6-folder",
-        "bytes": 1505023,
+        "bytes": 1508546,
         "humanReadableSize": "1.44 MB",
         "reductionFromBaselinePercent": 0
       },
       {
         "stage": "tree-shaken",
-        "bytes": 962663,
-        "humanReadableSize": "940.10 KB",
+        "bytes": 964198,
+        "humanReadableSize": "941.60 KB",
         "reductionFromBaselinePercent": 0
       },
       {
         "stage": "minified",
-        "bytes": 315486,
-        "humanReadableSize": "308.09 KB",
-        "reductionFromBaselinePercent": 67.23
+        "bytes": 315700,
+        "humanReadableSize": "308.30 KB",
+        "reductionFromBaselinePercent": 67.26
       },
       {
         "stage": "minified+gzip",
-        "bytes": 103384,
-        "humanReadableSize": "100.96 KB",
-        "reductionFromBaselinePercent": 89.26
+        "bytes": 103472,
+        "humanReadableSize": "101.05 KB",
+        "reductionFromBaselinePercent": 89.27
       }
     ],
     "tree": {
       "name": "bundle",
       "fullPath": "bundle",
-      "value": 959756,
+      "value": 961291,
       "children": [
         {
           "name": "src",
           "fullPath": "src",
-          "value": 556180,
+          "value": 557715,
           "children": [
             {
               "name": "state",
@@ -3539,6 +3539,33 @@
               ]
             },
             {
+              "name": "chart",
+              "fullPath": "src/chart",
+              "value": 16841,
+              "children": [
+                {
+                  "name": "RechartsWrapper.tsx",
+                  "fullPath": "src/chart/RechartsWrapper.tsx",
+                  "value": 12480
+                },
+                {
+                  "name": "CartesianChart.tsx",
+                  "fullPath": "src/chart/CartesianChart.tsx",
+                  "value": 2318
+                },
+                {
+                  "name": "CategoricalChart.tsx",
+                  "fullPath": "src/chart/CategoricalChart.tsx",
+                  "value": 1557
+                },
+                {
+                  "name": "LineChart.tsx",
+                  "fullPath": "src/chart/LineChart.tsx",
+                  "value": 486
+                }
+              ]
+            },
+            {
               "name": "theme",
               "fullPath": "src/theme",
               "value": 15742,
@@ -3587,33 +3614,6 @@
                   "name": "cssStylesToSvgStyles.ts",
                   "fullPath": "src/theme/cssStylesToSvgStyles.ts",
                   "value": 374
-                }
-              ]
-            },
-            {
-              "name": "chart",
-              "fullPath": "src/chart",
-              "value": 15306,
-              "children": [
-                {
-                  "name": "RechartsWrapper.tsx",
-                  "fullPath": "src/chart/RechartsWrapper.tsx",
-                  "value": 10945
-                },
-                {
-                  "name": "CartesianChart.tsx",
-                  "fullPath": "src/chart/CartesianChart.tsx",
-                  "value": 2318
-                },
-                {
-                  "name": "CategoricalChart.tsx",
-                  "fullPath": "src/chart/CategoricalChart.tsx",
-                  "value": 1557
-                },
-                {
-                  "name": "LineChart.tsx",
-                  "fullPath": "src/chart/LineChart.tsx",
-                  "value": 486
                 }
               ]
             },
