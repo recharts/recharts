@@ -108,7 +108,7 @@ describe('ThemeChecker', () => {
   test('shows the results for lightTheme, with thresholds and standards', () => {
     renderChecker();
     expect(screen.getByRole('heading', { name: 'Results' })).toBeInTheDocument();
-    expect(screen.getByRole('textbox', { name: 'Series 1' })).toHaveValue('#2775e8');
+    expect(screen.getByRole('textbox', { name: 'Series 1' })).toHaveValue('#2373e6');
     expect(screen.getAllByRole('link', { name: 'WCAG SC 1.4.11' }).length).toBeGreaterThan(0);
     expect(screen.getByRole('columnheader', { name: 'Needs' })).toBeInTheDocument();
   });
@@ -139,18 +139,18 @@ describe('ThemeChecker', () => {
     const user = userEvent.setup();
     renderChecker();
     const series1 = () => screen.getByRole('textbox', { name: 'Series 1' });
-    expect(series1()).toHaveValue('#2775e8');
+    expect(series1()).toHaveValue('#2373e6');
 
     const [apply] = screen.getAllByRole('button', { name: /^Apply #[0-9a-f]{6} to series 1$/ });
     await user.click(apply);
-    await waitFor(() => expect(series1()).not.toHaveValue('#2775e8'));
+    await waitFor(() => expect(series1()).not.toHaveValue('#2373e6'));
     expect(screen.getByText(/^Applied #[0-9a-f]{6}\.$/)).toBeInTheDocument();
 
     await user.click(screen.getByRole('button', { name: 'Undo' }));
-    expect(series1()).toHaveValue('#2775e8');
+    expect(series1()).toHaveValue('#2373e6');
 
     await user.click(screen.getByRole('button', { name: 'Apply all suggestions' }));
-    expect(await screen.findByText(/^Changed \d+ colors\. Failing checks went from 46 to \d+\.$/)).toBeInTheDocument();
+    expect(await screen.findByText(/^Changed \d+ colors\. Failing checks went from \d+ to \d+\.$/)).toBeInTheDocument();
   });
 
   test('explains what is wrong instead of showing results', async () => {

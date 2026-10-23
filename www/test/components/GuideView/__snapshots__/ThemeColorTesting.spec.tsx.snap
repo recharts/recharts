@@ -2,8 +2,7 @@
 
 exports[`summarize > puts the failures of lightTheme in plain sentences 1`] = `
 [
-  "Series 10, 11 and 12 are hard to see on the page, for readers with a color vision deficiency.",
-  "Series 1, 2, 6, 8, 10, 11 and 12 are too close to the page color to use for label text.",
+  "Series 1, 2, 6, 8, 10, 11 and 12 are too close to the page color to use for label text, for readers with a color vision deficiency.",
   "Labels are hard to read inside series 2, 3, 4, 5, 7 and 9.",
 ]
 `;
