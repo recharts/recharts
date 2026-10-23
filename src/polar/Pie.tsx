@@ -960,9 +960,9 @@ export function computePieSectors({
   const minAngle = Math.abs(pieSettings.minAngle);
   const deltaAngle = parseDeltaAngle(startAngle, endAngle);
   const absDeltaAngle = Math.abs(deltaAngle);
-  const paddingAngle = displayedData.length <= 1 ? 0 : (pieSettings.paddingAngle ?? 0);
-
   const notZeroItemCount = displayedData.filter(entry => isNonZeroNumber(getValueByDataKey(entry, dataKey, 0))).length;
+  const paddingAngle = notZeroItemCount <= 1 ? 0 : (pieSettings.paddingAngle ?? 0);
+
   const firstNonZeroIndex = displayedData.findIndex(entry => isNonZeroNumber(getValueByDataKey(entry, dataKey, 0)));
   const totalPaddingAngle = (absDeltaAngle >= 360 ? notZeroItemCount : notZeroItemCount - 1) * paddingAngle;
 

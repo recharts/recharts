@@ -1003,6 +1003,38 @@ describe('PieSectorData and PieSectorDataItem type should include data propertie
     });
   });
 
+  describe('when the only non-zero value comes after a zero value and paddingAngle is set', () => {
+    const renderSingleNonZeroTestCase = createSelectorTestCase(({ children }) => (
+      <PieChart width={400} height={400}>
+        <Pie
+          dataKey="value"
+          data={[
+            { name: 'Zero', value: 0 },
+            { name: 'A', value: 1 },
+          ]}
+          cx={200}
+          cy={200}
+          outerRadius={80}
+          paddingAngle={10}
+          id="pie-id"
+        />
+        {children}
+      </PieChart>
+    ));
+
+    it('should close the full circle like a pie with only that value', () => {
+      const { spy } = renderSingleNonZeroTestCase(state => selectPieSectors(state, 'pie-id', []));
+      const sectors = spy.mock.lastCall?.[0];
+      assertNotNull(sectors);
+      expect(sectors.map(({ startAngle, endAngle, paddingAngle }) => ({ startAngle, endAngle, paddingAngle }))).toEqual(
+        [
+          { startAngle: 0, endAngle: 0, paddingAngle: 0 },
+          { startAngle: 0, endAngle: 360, paddingAngle: 0 },
+        ],
+      );
+    });
+  });
+
   describe('when maxRadius is set', () => {
     // https://github.com/recharts/recharts/issues/4885
     // maxRadius should cap the radius that percentage-based innerRadius/outerRadius resolve against,
