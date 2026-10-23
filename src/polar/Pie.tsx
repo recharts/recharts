@@ -55,10 +55,13 @@ import { RegisterGraphicalItemId } from '../context/RegisterGraphicalItemId';
 import { SetPolarGraphicalItem } from '../state/SetGraphicalItem';
 import { PiePresentationProps, PieSettings } from '../state/types/PieSettings';
 import {
+  isDataAttribute,
+  isSvgElementPropKey,
   svgPropertiesNoEvents,
   svgPropertiesNoEventsFromUnknown,
   SVGPropsNoEvents,
 } from '../util/svgPropertiesNoEvents';
+
 import {
   LabelListFromLabelProp,
   PolarLabelListContextProvider,
@@ -84,6 +87,31 @@ import { RechartsTheme, Styles2D } from '../theme/RechartsTheme';
 import { useBackwardsCompatibleTheme } from '../theme/useBackwardsCompatibleTheme';
 import { getOwnStyles, getOwnStylesWithFallback, getUnthemedStyles, hasOwnColors } from '../theme/dataEntryStyles';
 import { getActiveStyleOverrides, resolveThemedActiveStyles } from '../theme/activeStyles';
+
+/**
+ * Properties needed by custom label renderers that happen to share their names with SVG
+ * attributes. Everything else that is a valid SVG property must not leak from a data entry
+ * onto the label line or the label text: labels keep the entry color only.
+ * https://github.com/recharts/recharts/issues/7974
+ */
+const LABEL_GEOMETRY_PROP_KEYS = new Set(['cx', 'cy', 'r', 'name']);
+
+function filterEntryPropsForLabels<T extends Record<PropertyKey, any>>(obj: T): T {
+  const result: Record<PropertyKey, any> = {};
+  for (const key in obj) {
+    if (!Object.prototype.hasOwnProperty.call(obj, key)) {
+      continue;
+    }
+    if (key === 'id' || isDataAttribute(key)) {
+      continue;
+    }
+    if (isSvgElementPropKey(key) && !LABEL_GEOMETRY_PROP_KEYS.has(key)) {
+      continue;
+    }
+    result[key] = obj[key];
+  }
+  return result as T;
+}
 
 interface PieDef {
   /**
@@ -775,9 +803,12 @@ function PieLabels({
   const labels = sectors.map((entry, i) => {
     const midAngle = (entry.startAngle + entry.endAngle) / 2;
     const endPoint = polarToCartesian(entry.cx, entry.cy, entry.outerRadius + offsetRadius, midAngle);
+    const entryLabelProps = filterEntryPropsForLabels(entry);
     const labelProps: PieLabelRenderProps = {
       ...pieProps,
-      ...entry,
+      ...entryLabelProps,
+      // @ts-expect-error entry fill is a valid label color
+      fill: entry.fill,
       // @ts-expect-error customLabelProps is contributing unknown props
       stroke: 'none',
       ...customLabelProps,
@@ -800,7 +831,7 @@ function PieLabels({
     };
     const lineProps: CurveProps = {
       ...pieProps,
-      ...entry,
+      ...entryLabelProps,
       // @ts-expect-error customLabelLineProps is contributing unknown props
       fill: 'none',
       // @ts-expect-error customLabelLineProps is contributing unknown props
@@ -998,6 +1029,10 @@ export function computePieSectors({
 
       // @ts-expect-error can't spread unknown
       const entryWithCellInfo: RealPieData = { ...entry, ...(cells && cells[i] && cells[i].props) };
+      // `id` from a data entry is never spread on rendered elements to avoid duplicate DOM ids.
+      // The raw entry, id included, stays available through `payload`.
+      const entryWithoutId = { ...entryWithCellInfo };
+      delete entryWithoutId.id;
       const sectorColor =
         entryWithCellInfo != null && 'fill' in entryWithCellInfo && typeof entryWithCellInfo.fill === 'string'
           ? entryWithCellInfo.fill
@@ -1038,7 +1073,7 @@ export function computePieSectors({
         midAngle,
         middleRadius,
         tooltipPosition,
-        ...entryWithCellInfo,
+        ...entryWithoutId,
         ...coordinate,
         value: val,
         dataKey,
