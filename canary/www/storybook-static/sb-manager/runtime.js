@@ -2426,19 +2426,19 @@ function _wrapNativeSuper(t2) {
     if (typeof t3 != "function") throw new TypeError("Super expression must either be null or a function");
     if (r4 !== void 0) {
       if (r4.has(t3)) return r4.get(t3);
-      r4.set(t3, Wrapper8);
+      r4.set(t3, Wrapper9);
     }
-    function Wrapper8() {
+    function Wrapper9() {
       return _construct(t3, arguments, _getPrototypeOf(this).constructor);
     }
-    return Wrapper8.prototype = Object.create(t3.prototype, {
+    return Wrapper9.prototype = Object.create(t3.prototype, {
       constructor: {
-        value: Wrapper8,
+        value: Wrapper9,
         enumerable: !1,
         writable: !0,
         configurable: !0
       }
-    }), _setPrototypeOf(Wrapper8, t3);
+    }), _setPrototypeOf(Wrapper9, t3);
   }, _wrapNativeSuper(t2);
 }
 
@@ -3069,8 +3069,166 @@ Component Stack:${errorInfo.componentStack}`)
 // src/manager/components/layout/Layout.tsx
 init_react();
 
+// ../../node_modules/es-toolkit/dist/compat/_internal/getSymbols.mjs
+function getSymbols(object) {
+  return Object.getOwnPropertySymbols(object).filter((symbol) => Object.prototype.propertyIsEnumerable.call(object, symbol));
+}
+
+// ../../node_modules/es-toolkit/dist/compat/_internal/getTag.mjs
+function getTag(value) {
+  return value == null ? value === void 0 ? "[object Undefined]" : "[object Null]" : Object.prototype.toString.call(value);
+}
+
+// ../../node_modules/es-toolkit/dist/compat/_internal/tags.mjs
+var regexpTag = "[object RegExp]", stringTag = "[object String]", numberTag = "[object Number]", booleanTag = "[object Boolean]", argumentsTag = "[object Arguments]", symbolTag = "[object Symbol]", dateTag = "[object Date]", mapTag = "[object Map]", setTag = "[object Set]", arrayTag = "[object Array]", functionTag = "[object Function]", arrayBufferTag = "[object ArrayBuffer]", objectTag = "[object Object]", errorTag = "[object Error]", dataViewTag = "[object DataView]", uint8ArrayTag = "[object Uint8Array]", uint8ClampedArrayTag = "[object Uint8ClampedArray]", uint16ArrayTag = "[object Uint16Array]", uint32ArrayTag = "[object Uint32Array]", bigUint64ArrayTag = "[object BigUint64Array]", int8ArrayTag = "[object Int8Array]", int16ArrayTag = "[object Int16Array]", int32ArrayTag = "[object Int32Array]", bigInt64ArrayTag = "[object BigInt64Array]", float32ArrayTag = "[object Float32Array]", float64ArrayTag = "[object Float64Array]";
+
+// ../../node_modules/es-toolkit/dist/predicate/isPlainObject.mjs
+function isPlainObject(value) {
+  if (!value || typeof value != "object")
+    return !1;
+  let proto = Object.getPrototypeOf(value);
+  return proto === null || proto === Object.prototype || Object.getPrototypeOf(proto) === null ? Object.prototype.toString.call(value) === "[object Object]" : !1;
+}
+
 // ../../node_modules/es-toolkit/dist/string/words.mjs
 var CASE_SPLIT_PATTERN = new RegExp("\\p{Lu}?\\p{Ll}+|[0-9]+|\\p{Lu}+(?!\\p{Ll})|\\p{Emoji_Presentation}|\\p{Extended_Pictographic}|\\p{L}+", "gu");
+
+// ../../node_modules/es-toolkit/dist/compat/util/eq.mjs
+function eq(value, other) {
+  return value === other || Number.isNaN(value) && Number.isNaN(other);
+}
+
+// ../../node_modules/es-toolkit/dist/predicate/isEqualWith.mjs
+function isEqualWith(a2, b2, areValuesEqual) {
+  return isEqualWithImpl(a2, b2, void 0, void 0, void 0, void 0, areValuesEqual);
+}
+function isEqualWithImpl(a2, b2, property, aParent, bParent, stack, areValuesEqual) {
+  let result = areValuesEqual(a2, b2, property, aParent, bParent, stack);
+  if (result !== void 0)
+    return result;
+  if (typeof a2 == typeof b2)
+    switch (typeof a2) {
+      case "bigint":
+      case "string":
+      case "boolean":
+      case "symbol":
+      case "undefined":
+        return a2 === b2;
+      case "number":
+        return a2 === b2 || Object.is(a2, b2);
+      case "function":
+        return a2 === b2;
+      case "object":
+        return areObjectsEqual(a2, b2, stack, areValuesEqual);
+    }
+  return areObjectsEqual(a2, b2, stack, areValuesEqual);
+}
+function areObjectsEqual(a2, b2, stack, areValuesEqual) {
+  if (Object.is(a2, b2))
+    return !0;
+  let aTag = getTag(a2), bTag = getTag(b2);
+  if (aTag === argumentsTag && (aTag = objectTag), bTag === argumentsTag && (bTag = objectTag), aTag !== bTag)
+    return !1;
+  switch (aTag) {
+    case stringTag:
+      return a2.toString() === b2.toString();
+    case numberTag: {
+      let x2 = a2.valueOf(), y2 = b2.valueOf();
+      return eq(x2, y2);
+    }
+    case booleanTag:
+    case dateTag:
+    case symbolTag:
+      return Object.is(a2.valueOf(), b2.valueOf());
+    case regexpTag:
+      return a2.source === b2.source && a2.flags === b2.flags;
+    case functionTag:
+      return a2 === b2;
+  }
+  stack = stack ?? /* @__PURE__ */ new Map();
+  let aStack = stack.get(a2), bStack = stack.get(b2);
+  if (aStack != null && bStack != null)
+    return aStack === b2;
+  stack.set(a2, b2), stack.set(b2, a2);
+  try {
+    switch (aTag) {
+      case mapTag: {
+        if (a2.size !== b2.size)
+          return !1;
+        for (let [key, value] of a2.entries())
+          if (!b2.has(key) || !isEqualWithImpl(value, b2.get(key), key, a2, b2, stack, areValuesEqual))
+            return !1;
+        return !0;
+      }
+      case setTag: {
+        if (a2.size !== b2.size)
+          return !1;
+        let aValues = Array.from(a2.values()), bValues = Array.from(b2.values());
+        for (let i2 = 0; i2 < aValues.length; i2++) {
+          let aValue = aValues[i2], index = bValues.findIndex((bValue) => isEqualWithImpl(aValue, bValue, void 0, a2, b2, stack, areValuesEqual));
+          if (index === -1)
+            return !1;
+          bValues.splice(index, 1);
+        }
+        return !0;
+      }
+      case arrayTag:
+      case uint8ArrayTag:
+      case uint8ClampedArrayTag:
+      case uint16ArrayTag:
+      case uint32ArrayTag:
+      case bigUint64ArrayTag:
+      case int8ArrayTag:
+      case int16ArrayTag:
+      case int32ArrayTag:
+      case bigInt64ArrayTag:
+      case float32ArrayTag:
+      case float64ArrayTag: {
+        if (typeof Buffer < "u" && Buffer.isBuffer(a2) !== Buffer.isBuffer(b2) || a2.length !== b2.length)
+          return !1;
+        for (let i2 = 0; i2 < a2.length; i2++)
+          if (!isEqualWithImpl(a2[i2], b2[i2], i2, a2, b2, stack, areValuesEqual))
+            return !1;
+        return !0;
+      }
+      case arrayBufferTag:
+        return a2.byteLength !== b2.byteLength ? !1 : areObjectsEqual(new Uint8Array(a2), new Uint8Array(b2), stack, areValuesEqual);
+      case dataViewTag:
+        return a2.byteLength !== b2.byteLength || a2.byteOffset !== b2.byteOffset ? !1 : areObjectsEqual(new Uint8Array(a2), new Uint8Array(b2), stack, areValuesEqual);
+      case errorTag:
+        return a2.name === b2.name && a2.message === b2.message;
+      case objectTag: {
+        if (!(areObjectsEqual(a2.constructor, b2.constructor, stack, areValuesEqual) || isPlainObject(a2) && isPlainObject(b2)))
+          return !1;
+        let aKeys = [...Object.keys(a2), ...getSymbols(a2)], bKeys = [...Object.keys(b2), ...getSymbols(b2)];
+        if (aKeys.length !== bKeys.length)
+          return !1;
+        for (let i2 = 0; i2 < aKeys.length; i2++) {
+          let propKey = aKeys[i2], aProp = a2[propKey];
+          if (!Object.hasOwn(b2, propKey))
+            return !1;
+          let bProp = b2[propKey];
+          if (!isEqualWithImpl(aProp, bProp, propKey, a2, b2, stack, areValuesEqual))
+            return !1;
+        }
+        return !0;
+      }
+      default:
+        return !1;
+    }
+  } finally {
+    stack.delete(a2), stack.delete(b2);
+  }
+}
+
+// ../../node_modules/es-toolkit/dist/function/noop.mjs
+function noop() {
+}
+
+// ../../node_modules/es-toolkit/dist/predicate/isEqual.mjs
+function isEqual(a2, b2) {
+  return isEqualWith(a2, b2, noop);
+}
 
 // global-externals:storybook/theming/create
 var create_default = __STORYBOOK_THEMING_CREATE__, { create: create2, themes: themes2 } = __STORYBOOK_THEMING_CREATE__;
@@ -10818,6 +10976,7 @@ var band = (cols) => {
     Preview,
     {
       ref: iframeRef,
+      "data-is-storybook-thumbnail": !0,
       title: readableTitle,
       src,
       "data-content-width": rememberedDimensions?.width,
@@ -11443,10 +11602,10 @@ var REVIEWING_STATUS_VALUE = "status-value:reviewing", collectReviewStoryIds = (
   title: "",
   description: "",
   sidebarContextMenu: !1
-}), applyReviewStatuses = (statusStore, storyIds) => {
-  statusStore.unset(), storyIds.size > 0 && statusStore.set([...storyIds].map(createReviewStatus));
-}, clearReviewStatuses = (statusStore) => {
-  statusStore.unset();
+}), applyReviewStatuses = (statusStore2, storyIds) => {
+  statusStore2.unset(), storyIds.size > 0 && statusStore2.set([...storyIds].map(createReviewStatus));
+}, clearReviewStatuses = (statusStore2) => {
+  statusStore2.unset();
 };
 
 // src/manager/components/review/review-mode.ts
@@ -14640,7 +14799,7 @@ init_react();
 
 // ../addons/a11y/src/constants.ts
 var ADDON_ID2 = "storybook/a11y", PANEL_ID2 = `${ADDON_ID2}/panel`;
-var UI_STATE_ID = `${ADDON_ID2}/ui`, RESULT = `${ADDON_ID2}/result`, REQUEST = `${ADDON_ID2}/request`, RUNNING = `${ADDON_ID2}/running`, ERROR = `${ADDON_ID2}/error`, MANUAL = `${ADDON_ID2}/manual`, SELECT = `${ADDON_ID2}/select`, DOCUMENTATION_LINK = "writing-tests/accessibility-testing", DOCUMENTATION_DISCREPANCY_LINK = `${DOCUMENTATION_LINK}#why-are-my-tests-failing-in-different-environments`;
+var UI_STATE_ID = `${ADDON_ID2}/ui`, RESULT = `${ADDON_ID2}/result`, REQUEST = `${ADDON_ID2}/request`, RUNNING = `${ADDON_ID2}/running`, ERROR = `${ADDON_ID2}/error`, MANUAL = `${ADDON_ID2}/manual`, DOCUMENTATION_LINK = "writing-tests/accessibility-testing", DOCUMENTATION_DISCREPANCY_LINK = `${DOCUMENTATION_LINK}#why-are-my-tests-failing-in-different-environments`;
 
 // ../addons/onboarding/src/constants.ts
 var ADDON_ID3 = "storybook/onboarding", ADDON_ONBOARDING_CHANNEL = `${ADDON_ID3}/channel`;
@@ -14695,8 +14854,185 @@ var storeOptions = {
 var STORE_CHANNEL_EVENT_NAME = `UNIVERSAL_STORE:${storeOptions.id}`;
 var TRIGGER_TEST_RUN_REQUEST = `${ADDON_ID5}/trigger-test-run-request`, TRIGGER_TEST_RUN_RESPONSE = `${ADDON_ID5}/trigger-test-run-response`;
 
+// src/storybook-error.ts
+function parseErrorCode({
+  code,
+  category
+}) {
+  let paddedCode = String(code).padStart(4, "0");
+  return `SB_${category}_${paddedCode}`;
+}
+function appendErrorRef(url) {
+  if (/^(?!.*storybook\.js\.org)|[?&]ref=error\b/.test(url))
+    return url;
+  try {
+    let urlObj = new URL(url);
+    return urlObj.searchParams.set("ref", "error"), urlObj.toString();
+  } catch {
+    return url;
+  }
+}
+var StorybookError = class _StorybookError extends Error {
+  constructor(props) {
+    super(
+      _StorybookError.getFullMessage(props),
+      props.cause === void 0 ? void 0 : { cause: props.cause }
+    );
+    /**
+     * Data associated with the error. Used to provide additional information in the error message or
+     * to be passed to telemetry.
+     */
+    this.data = {};
+    /** Flag used to easily determine if the error originates from Storybook. */
+    this.fromStorybook = !0;
+    /**
+     * Flag used to determine if the error is handled by us and should therefore not be shown to the
+     * user.
+     */
+    this.isHandledError = !1;
+    /**
+     * A collection of sub errors which relate to a parent error.
+     *
+     * Sub-errors are used to represent multiple related errors that occurred together. When a
+     * StorybookError with sub-errors is sent to telemetry, both the parent error and each sub-error
+     * are sent as separate telemetry events. This allows for better error tracking and debugging.
+     *
+     * @example
+     *
+     * ```ts
+     * const error1 = new SomeError();
+     * const error2 = new AnotherError();
+     * const parentError = new ParentError({
+     *   // ... other props
+     *   subErrors: [error1, error2],
+     * });
+     * ```
+     */
+    this.subErrors = [];
+    this.category = props.category, this.documentation = props.documentation ?? !1, this.code = props.code, this.isHandledError = props.isHandledError ?? !1, this.agentFacing = props.agentFacing ?? !1, this.name = props.name, this.subErrors = props.subErrors ?? [];
+  }
+  get fullErrorCode() {
+    return parseErrorCode({ code: this.code, category: this.category });
+  }
+  /** Overrides the default `Error.name` property in the format: SB_<CATEGORY>_<CODE>. */
+  get name() {
+    let errorName = this._name || this.constructor.name;
+    return `${this.fullErrorCode} (${errorName})`;
+  }
+  set name(name) {
+    this._name = name;
+  }
+  /** Generates the error message along with additional documentation link (if applicable). */
+  static getFullMessage({
+    documentation,
+    code,
+    category,
+    message
+  }) {
+    let page;
+    return documentation === !0 ? page = `https://storybook.js.org/error/${parseErrorCode({ code, category })}?ref=error` : typeof documentation == "string" ? page = appendErrorRef(documentation) : Array.isArray(documentation) && (page = `
+${documentation.map((doc) => `	- ${appendErrorRef(doc)}`).join(`
+`)}`), `${message}${page != null ? `
+
+More info: ${page}
+` : ""}`;
+  }
+};
+
+// src/manager-errors.ts
+var StatusTypeIdMismatchError2 = class extends StorybookError {
+  constructor(data) {
+    super({
+      name: "StatusTypeIdMismatchError",
+      category: "MANAGER_API" /* MANAGER_API */,
+      code: 1,
+      message: `Status has typeId "${data.status.typeId}" but was added to store with typeId "${data.typeId}". Full status: ${JSON.stringify(
+        data.status,
+        null,
+        2
+      )}`
+    });
+    this.data = data;
+  }
+}, UniversalStoreFollowerTimeoutError2 = class extends StorybookError {
+  constructor(followerId) {
+    super({
+      name: "UniversalStoreFollowerTimeoutError",
+      category: "MANAGER_UNIVERSAL-STORE" /* MANAGER_UNIVERSAL_STORE */,
+      code: 1,
+      message: `Timed out waiting for leader state for UniversalStore follower with id: '${followerId}'. Ensure a leader with the same id exists and is reachable before creating a follower.`
+    });
+  }
+};
+
+// ../../node_modules/ts-dedent/esm/index.js
+function dedent(templ) {
+  for (var values = [], _i = 1; _i < arguments.length; _i++)
+    values[_i - 1] = arguments[_i];
+  var strings = Array.from(typeof templ == "string" ? [templ] : templ);
+  strings[strings.length - 1] = strings[strings.length - 1].replace(/\r?\n([\t ]*)$/, "");
+  var indentLengths = strings.reduce(function(arr, str) {
+    var matches = str.match(/\n([\t ]+|(?!\s).)/g);
+    return matches ? arr.concat(matches.map(function(match) {
+      var _a2, _b;
+      return (_b = (_a2 = match.match(/[\t ]/g)) === null || _a2 === void 0 ? void 0 : _a2.length) !== null && _b !== void 0 ? _b : 0;
+    })) : arr;
+  }, []);
+  if (indentLengths.length) {
+    var pattern_1 = new RegExp(`
+[	 ]{` + Math.min.apply(Math, indentLengths) + "}", "g");
+    strings = strings.map(function(str) {
+      return str.replace(pattern_1, `
+`);
+    });
+  }
+  strings[0] = strings[0].replace(/^\r?\n/, "");
+  var string = strings[0];
+  return values.forEach(function(value, i2) {
+    var endentations = string.match(/(?:^|\n)( *)$/), endentation = endentations ? endentations[1] : "", indentedValue = value;
+    typeof value == "string" && value.includes(`
+`) && (indentedValue = String(value).split(`
+`).map(function(str, i3) {
+      return i3 === 0 ? str : "" + endentation + str;
+    }).join(`
+`)), string += indentedValue + strings[i2 + 1];
+  }), string;
+}
+
+// src/preview-errors.ts
+var StatusTypeIdMismatchError3 = class extends StorybookError {
+  constructor(data) {
+    super({
+      name: "StatusTypeIdMismatchError",
+      category: "PREVIEW_API" /* PREVIEW_API */,
+      code: 16,
+      message: `Status has typeId "${data.status.typeId}" but was added to store with typeId "${data.typeId}". Full status: ${JSON.stringify(
+        data.status,
+        null,
+        2
+      )}`
+    });
+    this.data = data;
+  }
+};
+
 // src/server-errors.ts
 var import_picocolors = __toESM(require_picocolors_browser(), 1);
+var StatusTypeIdMismatchError4 = class extends StorybookError {
+  constructor(data) {
+    super({
+      name: "StatusTypeIdMismatchError",
+      category: "CORE-SERVER" /* CORE_SERVER */,
+      code: 16,
+      message: `Status has typeId "${data.status.typeId}" but was added to store with typeId "${data.typeId}". Full status: ${JSON.stringify(
+        data.status,
+        null,
+        2
+      )}`
+    });
+    this.data = data;
+  }
+};
 
 // src/shared/status-store/index.ts
 var STATUS_VALUE_PREFIX = "status-value:";
@@ -14711,12 +15047,120 @@ var statusValueShortName = (value) => value === "status-value:affected" ? "relat
   "status-value:error": "Stories with failing tests",
   "status-value:unknown": "Stories with unknown status"
 })[value];
+var UNIVERSAL_STATUS_STORE_OPTIONS = {
+  id: "storybook/status",
+  leader: !0,
+  initialState: {}
+}, StatusStoreEventType = {
+  SELECT: "select"
+};
 function countStatusesByValue(allStatuses) {
   let counts = {};
   for (let statusByTypeId of Object.values(allStatuses))
     for (let status of Object.values(statusByTypeId))
       counts[status.value] = (counts[status.value] ?? 0) + 1;
   return counts;
+}
+function createStatusStore({
+  universalStatusStore: universalStatusStore2,
+  useUniversalStore: useUniversalStore2,
+  environment
+}) {
+  let fullStatusStore2 = {
+    getAll() {
+      return universalStatusStore2.getState();
+    },
+    set(statuses) {
+      universalStatusStore2.setState((state) => {
+        let newState = { ...state };
+        for (let status of statuses) {
+          let { storyId, typeId } = status;
+          newState[storyId] = { ...newState[storyId] ?? {}, [typeId]: status };
+        }
+        return newState;
+      });
+    },
+    onAllStatusChange(listener) {
+      return universalStatusStore2.onStateChange((state, prevState) => {
+        listener(state, prevState);
+      });
+    },
+    onSelect(listener) {
+      return universalStatusStore2.subscribe(StatusStoreEventType.SELECT, (event) => {
+        listener(event.payload);
+      });
+    },
+    selectStatuses: (statuses) => {
+      universalStatusStore2.send({ type: StatusStoreEventType.SELECT, payload: statuses });
+    },
+    unset(storyIds) {
+      if (!storyIds) {
+        universalStatusStore2.setState({});
+        return;
+      }
+      universalStatusStore2.setState((state) => {
+        let newState = { ...state };
+        for (let storyId of storyIds)
+          delete newState[storyId];
+        return newState;
+      });
+    },
+    typeId: void 0
+  }, getStatusStoreByTypeId2 = (typeId) => ({
+    getAll: fullStatusStore2.getAll,
+    set(statuses) {
+      universalStatusStore2.setState((state) => {
+        let newState = { ...state };
+        for (let status of statuses) {
+          let { storyId } = status;
+          if (status.typeId !== typeId)
+            switch (environment) {
+              case "server":
+                throw new StatusTypeIdMismatchError4({
+                  status,
+                  typeId
+                });
+              case "manager":
+                throw new StatusTypeIdMismatchError2({
+                  status,
+                  typeId
+                });
+              default:
+                throw new StatusTypeIdMismatchError3({
+                  status,
+                  typeId
+                });
+            }
+          newState[storyId] = { ...newState[storyId] ?? {}, [typeId]: status };
+        }
+        return newState;
+      });
+    },
+    onAllStatusChange: fullStatusStore2.onAllStatusChange,
+    onSelect(listener) {
+      return universalStatusStore2.subscribe(StatusStoreEventType.SELECT, (event) => {
+        event.payload.some((status) => status.typeId === typeId) && listener(event.payload);
+      });
+    },
+    unset(storyIds) {
+      universalStatusStore2.setState((state) => {
+        let newState = { ...state };
+        for (let storyId in newState)
+          if (newState[storyId]?.[typeId] && (!storyIds || storyIds?.includes(storyId))) {
+            let { [typeId]: omittedStatus, ...storyStatusesWithoutTypeId } = newState[storyId];
+            newState[storyId] = storyStatusesWithoutTypeId;
+          }
+        return newState;
+      });
+    },
+    typeId
+  });
+  return useUniversalStore2 ? {
+    getStatusStoreByTypeId: getStatusStoreByTypeId2,
+    fullStatusStore: fullStatusStore2,
+    universalStatusStore: universalStatusStore2,
+    useStatusStore: (selector) => useUniversalStore2(universalStatusStore2, selector)[0]
+  } : { getStatusStoreByTypeId: getStatusStoreByTypeId2, fullStatusStore: fullStatusStore2, universalStatusStore: universalStatusStore2 };
 }
 
 // src/cli/AddonVitestService.constants.ts
@@ -26011,7 +26455,8 @@ var { document: document7 } = scope, DEFAULT_MAX_SEARCH_RESULTS = 50, options = 
   getLastViewed,
   initialQuery = "",
   searchBarContent,
-  searchFieldContent
+  searchFieldContent,
+  belowSearchContent
 }) {
   let api = useStorybookApi(), inputRef = useRef(null), [inputPlaceholder, setPlaceholder] = useState("Find components"), [allComponents, showAllComponents] = useState(!1), searchShortcut = api ? shortcutToHumanString(api.getShortcutKeys().search) : "/", makeFuse = useCallback(() => {
     let list = [];
@@ -26191,7 +26636,7 @@ var { document: document7 } = scope, DEFAULT_MAX_SEARCH_RESULTS = 50, options = 
           },
           react_default.createElement(CloseIcon, null)
         ), searchFieldContent)
-      ), searchBarContent), react_default.createElement(FocusContainer, { tabIndex: 0, id: "storybook-explorer-menu" }, children({
+      ), searchBarContent), !isOpen && belowSearchContent, react_default.createElement(FocusContainer, { tabIndex: 0, id: "storybook-explorer-menu" }, children({
         query: input,
         results,
         isNavVisible: !isOpen && document7.activeElement !== inputRef.current,
@@ -26385,6 +26830,519 @@ var { document: document8 } = scope, ResultsList = styled.ol({
     );
   }));
 });
+
+// src/manager/components/sidebar/ShowChangesButton.tsx
+init_react();
+
+// src/shared/universal-store/instances.ts
+var instances = /* @__PURE__ */ new Map();
+
+// src/shared/universal-store/index.ts
+var CHANNEL_EVENT_PREFIX = "UNIVERSAL_STORE:", ProgressState = {
+  PENDING: "PENDING",
+  RESOLVED: "RESOLVED",
+  REJECTED: "REJECTED"
+}, _UniversalStore = class _UniversalStore {
+  constructor(options2, environmentOverrides) {
+    /** Enable debug logs for this store */
+    this.debugging = !1;
+    // TODO: narrow type of listeners based on event type
+    this.listeners = /* @__PURE__ */ new Map([["*", /* @__PURE__ */ new Set()]]);
+    /** Gets the current state */
+    this.getState = () => (this.debug("getState", { state: this.state }), this.state);
+    /**
+     * Subscribes to store events
+     *
+     * @returns A function to unsubscribe
+     */
+    this.subscribe = (eventTypeOrListener, maybeListener) => {
+      let subscribesToAllEvents = typeof eventTypeOrListener == "function", eventType = subscribesToAllEvents ? "*" : eventTypeOrListener, listener = subscribesToAllEvents ? eventTypeOrListener : maybeListener;
+      if (this.debug("subscribe", { eventType, listener }), !listener)
+        throw new TypeError(
+          `Missing first subscribe argument, or second if first is the event type, when subscribing to a UniversalStore with id '${this.id}'`
+        );
+      return this.listeners.has(eventType) || this.listeners.set(eventType, /* @__PURE__ */ new Set()), this.listeners.get(eventType).add(listener), () => {
+        this.debug("unsubscribe", { eventType, listener }), this.listeners.has(eventType) && (this.listeners.get(eventType).delete(listener), this.listeners.get(eventType)?.size === 0 && this.listeners.delete(eventType));
+      };
+    };
+    /** Sends a custom event to the other stores */
+    this.send = (event) => {
+      if (this.debug("send", { event }), this.status !== _UniversalStore.Status.READY)
+        throw new TypeError(
+          dedent`Cannot send event before store is ready. You can get the current status with store.status,
+        or await store.readyPromise to wait for the store to be ready before sending events.
+        ${JSON.stringify(
+            {
+              event,
+              id: this.id,
+              actor: this.actor,
+              environment: this.environment
+            },
+            null,
+            2
+          )}`
+        );
+      this.emitToListeners(event, { actor: this.actor }), this.emitToChannel(event, { actor: this.actor });
+    };
+    if (this.debugging = options2.debug ?? !1, !_UniversalStore.isInternalConstructing)
+      throw new TypeError(
+        "UniversalStore is not constructable - use UniversalStore.create() instead"
+      );
+    if (_UniversalStore.isInternalConstructing = !1, this.id = options2.id, this.actorId = Date.now().toString(36) + Math.random().toString(36).substring(2), this.actorType = options2.leader ? _UniversalStore.ActorType.LEADER : _UniversalStore.ActorType.FOLLOWER, this.state = options2.initialState, this.channelEventName = `${CHANNEL_EVENT_PREFIX}${this.id}`, this.debug("constructor", {
+      options: options2,
+      environmentOverrides,
+      channelEventName: this.channelEventName
+    }), this.actor.type === _UniversalStore.ActorType.LEADER)
+      this.syncing = {
+        state: ProgressState.RESOLVED,
+        promise: Promise.resolve()
+      };
+    else {
+      let syncingResolve, syncingReject, syncingPromise = new Promise((resolve, reject) => {
+        syncingResolve = () => {
+          this.syncing.state === ProgressState.PENDING && (this.syncing.state = ProgressState.RESOLVED, resolve());
+        }, syncingReject = (reason) => {
+          this.syncing.state === ProgressState.PENDING && (this.syncing.state = ProgressState.REJECTED, reject(reason));
+        };
+      });
+      this.syncing = {
+        state: ProgressState.PENDING,
+        promise: syncingPromise,
+        resolve: syncingResolve,
+        reject: syncingReject
+      };
+    }
+    this.getState = this.getState.bind(this), this.setState = this.setState.bind(this), this.subscribe = this.subscribe.bind(this), this.onStateChange = this.onStateChange.bind(this), this.send = this.send.bind(this), this.emitToChannel = this.emitToChannel.bind(this), this.prepareThis = this.prepareThis.bind(this), this.emitToListeners = this.emitToListeners.bind(this), this.handleChannelEvents = this.handleChannelEvents.bind(this), this.debug = this.debug.bind(this), this.channel = environmentOverrides?.channel ?? _UniversalStore.preparation.channel, this.environment = environmentOverrides?.environment ?? _UniversalStore.preparation.environment, this.channel && this.environment ? (environmentOverrides || _UniversalStore.preparation.resolve({
+      channel: this.channel,
+      environment: this.environment
+    }), this.prepareThis({ channel: this.channel, environment: this.environment })) : _UniversalStore.preparation.promise.then(this.prepareThis);
+  }
+  /** The environment this realm was prepared as, or `undefined` before `__prepare`. */
+  static get preparedEnvironment() {
+    return _UniversalStore.preparation.environment;
+  }
+  static setupPreparationPromise() {
+    let resolveRef, rejectRef, promise = new Promise(
+      (resolve, reject) => {
+        resolveRef = (args) => {
+          resolve(args);
+        }, rejectRef = (...args) => {
+          reject(args);
+        };
+      }
+    );
+    _UniversalStore.preparation = {
+      resolve: resolveRef,
+      reject: rejectRef,
+      promise
+    };
+  }
+  /** The actor object representing the store instance with a unique ID and a type */
+  get actor() {
+    return Object.freeze({
+      id: this.actorId,
+      type: this.actorType,
+      environment: this.environment ?? _UniversalStore.Environment.UNKNOWN
+    });
+  }
+  /**
+   * The current state of the store, that signals both if the store is prepared by Storybook and
+   * also - in the case of a follower - if the state has been synced with the leader's state.
+   */
+  get status() {
+    if (!this.channel || !this.environment)
+      return _UniversalStore.Status.UNPREPARED;
+    switch (this.syncing?.state) {
+      case ProgressState.PENDING:
+      case void 0:
+        return _UniversalStore.Status.SYNCING;
+      case ProgressState.REJECTED:
+        return _UniversalStore.Status.ERROR;
+      case ProgressState.RESOLVED:
+      default:
+        return _UniversalStore.Status.READY;
+    }
+  }
+  /**
+   * A promise that resolves when the store is fully ready. A leader will be ready when the store
+   * has been prepared by Storybook, which is almost instantly.
+   *
+   * A follower will be ready when the state has been synced with the leader's state, within a few
+   * hundred milliseconds.
+   */
+  untilReady() {
+    let preparation = this.channel && this.environment ? Promise.resolve() : _UniversalStore.preparation.promise;
+    return Promise.all([preparation, this.syncing?.promise]);
+  }
+  /** Creates a new instance of UniversalStore */
+  static create(options2) {
+    if (!options2 || typeof options2?.id != "string")
+      throw new TypeError("id is required and must be a string, when creating a UniversalStore");
+    options2.debug && console.debug(
+      dedent`[UniversalStore]
+        create`,
+      { options: options2 }
+    );
+    let existing = instances.get(options2.id);
+    if (existing)
+      return console.warn(dedent`UniversalStore with id "${options2.id}" already exists in this environment, re-using existing.
+        You should reuse the existing instance instead of trying to create a new one.`), existing;
+    _UniversalStore.isInternalConstructing = !0;
+    let store2 = new _UniversalStore(options2);
+    return instances.set(options2.id, store2), store2;
+  }
+  /**
+   * Used by Storybook to set the channel for all instances of UniversalStore in the given
+   * environment.
+   *
+   * @internal
+   */
+  static __prepare(channel2, environment) {
+    _UniversalStore.preparation.channel = channel2, _UniversalStore.preparation.environment = environment, _UniversalStore.preparation.resolve({ channel: channel2, environment });
+  }
+  /**
+   * Updates the store's state
+   *
+   * Either a new state or a state updater function can be passed to the method.
+   */
+  setState(updater) {
+    let previousState = this.state, newState = typeof updater == "function" ? updater(previousState) : updater;
+    if (this.debug("setState", { newState, previousState, updater }), this.status !== _UniversalStore.Status.READY)
+      throw new TypeError(
+        dedent`Cannot set state before store is ready. You can get the current status with store.status,
+        or await store.readyPromise to wait for the store to be ready before sending events.
+        ${JSON.stringify(
+          {
+            newState,
+            id: this.id,
+            actor: this.actor,
+            environment: this.environment
+          },
+          null,
+          2
+        )}`
+      );
+    this.state = newState;
+    let event = {
+      type: _UniversalStore.InternalEventType.SET_STATE,
+      payload: {
+        state: newState,
+        previousState
+      }
+    };
+    this.emitToChannel(event, { actor: this.actor }), this.emitToListeners(event, { actor: this.actor });
+  }
+  /**
+   * Subscribes to state changes
+   *
+   * @returns Unsubscribe function
+   */
+  onStateChange(listener) {
+    return this.debug("onStateChange", { listener }), this.subscribe(
+      _UniversalStore.InternalEventType.SET_STATE,
+      ({ payload }, eventInfo) => {
+        listener(payload.state, payload.previousState, eventInfo);
+      }
+    );
+  }
+  emitToChannel(event, eventInfo) {
+    this.debug("emitToChannel", { event, eventInfo, channel: !!this.channel }), this.channel?.emit(this.channelEventName, {
+      event,
+      eventInfo
+    });
+  }
+  prepareThis({
+    channel: channel2,
+    environment
+  }) {
+    this.channel = channel2, this.environment = environment, this.debug("prepared", { channel: !!channel2, environment }), this.channel.on(this.channelEventName, this.handleChannelEvents), this.actor.type === _UniversalStore.ActorType.LEADER ? this.emitToChannel(
+      { type: _UniversalStore.InternalEventType.LEADER_CREATED },
+      { actor: this.actor }
+    ) : (this.emitToChannel(
+      { type: _UniversalStore.InternalEventType.FOLLOWER_CREATED },
+      { actor: this.actor }
+    ), this.emitToChannel(
+      { type: _UniversalStore.InternalEventType.EXISTING_STATE_REQUEST },
+      { actor: this.actor }
+    ), setTimeout(() => {
+      this.syncing.reject(new UniversalStoreFollowerTimeoutError2(this.id));
+    }, 1e3));
+  }
+  emitToListeners(event, eventInfo) {
+    let eventTypeListeners = this.listeners.get(event.type), everythingListeners = this.listeners.get("*");
+    this.debug("emitToListeners", {
+      event,
+      eventInfo,
+      eventTypeListeners,
+      everythingListeners
+    }), [...eventTypeListeners ?? [], ...everythingListeners ?? []].forEach(
+      (listener) => listener(event, eventInfo)
+    );
+  }
+  handleChannelEvents(channelEvent) {
+    let { event, eventInfo } = channelEvent;
+    if ([eventInfo.actor.id, eventInfo.forwardingActor?.id].includes(this.actor.id)) {
+      this.debug("handleChannelEvents: Ignoring event from self", { channelEvent });
+      return;
+    } else if (this.syncing?.state === ProgressState.PENDING && event.type !== _UniversalStore.InternalEventType.EXISTING_STATE_RESPONSE) {
+      this.debug("handleChannelEvents: Ignoring event while syncing", { channelEvent });
+      return;
+    }
+    if (this.debug("handleChannelEvents", { channelEvent }), this.actor.type === _UniversalStore.ActorType.LEADER) {
+      let shouldForwardEvent = !0;
+      switch (event.type) {
+        case _UniversalStore.InternalEventType.EXISTING_STATE_REQUEST:
+          shouldForwardEvent = !1;
+          let responseEvent = {
+            type: _UniversalStore.InternalEventType.EXISTING_STATE_RESPONSE,
+            payload: this.state
+          };
+          this.debug("handleChannelEvents: responding to existing state request", {
+            responseEvent
+          }), this.emitToChannel(responseEvent, { actor: this.actor }), this.emitToListeners(responseEvent, { actor: this.actor });
+          break;
+        case _UniversalStore.InternalEventType.LEADER_CREATED:
+          shouldForwardEvent = !1, this.syncing.state = ProgressState.REJECTED, this.debug("handleChannelEvents: erroring due to second leader being created", {
+            event
+          }), console.error(
+            dedent`Detected multiple UniversalStore leaders created with the same id "${this.id}".
+            Only one leader can exists at a time, your stores are now in an invalid state.
+            Leaders detected:
+            this: ${JSON.stringify(this.actor, null, 2)}
+            other: ${JSON.stringify(eventInfo.actor, null, 2)}`
+          );
+          break;
+      }
+      shouldForwardEvent && (this.debug("handleChannelEvents: forwarding event", { channelEvent }), this.emitToChannel(event, { actor: eventInfo.actor, forwardingActor: this.actor }));
+    }
+    if (this.actor.type === _UniversalStore.ActorType.FOLLOWER)
+      switch (event.type) {
+        case _UniversalStore.InternalEventType.EXISTING_STATE_RESPONSE:
+          if (this.debug("handleChannelEvents: Setting state from leader's existing state response", {
+            event
+          }), this.syncing?.state !== ProgressState.PENDING)
+            break;
+          this.syncing.resolve?.();
+          let setStateEvent = {
+            type: _UniversalStore.InternalEventType.SET_STATE,
+            payload: {
+              state: event.payload,
+              previousState: this.state
+            }
+          };
+          this.state = event.payload, this.emitToListeners(setStateEvent, eventInfo);
+          break;
+      }
+    event.type === _UniversalStore.InternalEventType.SET_STATE && (this.debug("handleChannelEvents: Setting state", { event }), this.state = event.payload.state), this.emitToListeners(event, { actor: eventInfo.actor });
+  }
+  debug(message, data) {
+    this.debugging && console.debug(
+      dedent`[UniversalStore::${this.id}::${this.environment ?? _UniversalStore.Environment.UNKNOWN}]
+        ${message}`,
+      JSON.stringify(
+        {
+          data,
+          actor: this.actor,
+          state: this.state,
+          status: this.status
+        },
+        null,
+        2
+      )
+    );
+  }
+  /**
+   * Used to reset the static fields of the UniversalStore class when cleaning up tests
+   *
+   * @internal
+   */
+  static __reset() {
+    _UniversalStore.preparation.reject(new Error("reset")), _UniversalStore.setupPreparationPromise(), _UniversalStore.isInternalConstructing = !1;
+  }
+};
+/**
+ * Defines the possible actor types in the store system
+ *
+ * @readonly
+ */
+_UniversalStore.ActorType = {
+  LEADER: "LEADER",
+  FOLLOWER: "FOLLOWER"
+}, /**
+ * Defines the possible environments the store can run in
+ *
+ * @readonly
+ */
+_UniversalStore.Environment = {
+  SERVER: "SERVER",
+  MANAGER: "MANAGER",
+  PREVIEW: "PREVIEW",
+  UNKNOWN: "UNKNOWN",
+  MOCK: "MOCK"
+}, /**
+ * Internal event types used for store synchronization
+ *
+ * @readonly
+ */
+_UniversalStore.InternalEventType = {
+  EXISTING_STATE_REQUEST: "__EXISTING_STATE_REQUEST",
+  EXISTING_STATE_RESPONSE: "__EXISTING_STATE_RESPONSE",
+  SET_STATE: "__SET_STATE",
+  LEADER_CREATED: "__LEADER_CREATED",
+  FOLLOWER_CREATED: "__FOLLOWER_CREATED"
+}, _UniversalStore.Status = {
+  UNPREPARED: "UNPREPARED",
+  SYNCING: "SYNCING",
+  READY: "READY",
+  ERROR: "ERROR"
+}, // This is used to check if constructor was called from the static factory create()
+_UniversalStore.isInternalConstructing = !1, _UniversalStore.setupPreparationPromise();
+var UniversalStore = _UniversalStore;
+
+// src/shared/universal-store/use-universal-store-manager.ts
+init_react();
+var useUniversalStore = (universalStore, selector) => {
+  let snapshotRef = useRef(
+    selector ? selector(universalStore.getState()) : universalStore.getState()
+  ), subscribe = useCallback(
+    (listener) => universalStore.onStateChange((state2, previousState) => {
+      if (!selector) {
+        snapshotRef.current = state2, listener();
+        return;
+      }
+      let selectedState = selector(state2), selectedPreviousState = selector(previousState);
+      !isEqual(selectedState, selectedPreviousState) && (snapshotRef.current = selectedState, listener());
+    }),
+    [universalStore, selector]
+  ), getSnapshot = useCallback(() => {
+    let currentState = universalStore.getState(), selectedState = selector ? selector(currentState) : currentState;
+    return isEqual(selectedState, snapshotRef.current) || (snapshotRef.current = selectedState), snapshotRef.current;
+  }, [universalStore, selector]);
+  return [useSyncExternalStore(subscribe, getSnapshot), universalStore.setState];
+};
+
+// src/manager-api/stores/status.ts
+var statusStore = createStatusStore({
+  universalStatusStore: UniversalStore.create({
+    ...UNIVERSAL_STATUS_STORE_OPTIONS,
+    leader: globalThis.CONFIG_TYPE === "PRODUCTION"
+  }),
+  useUniversalStore,
+  environment: "manager"
+}), { fullStatusStore, getStatusStoreByTypeId, useStatusStore, universalStatusStore } = statusStore;
+
+// src/manager-api/modules/statuses.ts
+var computeStatusFilterFn = (includedStatusFilters, excludedStatusFilters) => (entry) => {
+  if (!includedStatusFilters.length && !excludedStatusFilters.length)
+    return !0;
+  let storyStatuses = (fullStatusStore.getAll() ?? {})[entry.id], storyStatusValues = storyStatuses ? Object.values(storyStatuses).map((s2) => s2.value) : [], passesInclude = !includedStatusFilters.length || includedStatusFilters.some((v2) => storyStatusValues.includes(v2)), passesExclude = !excludedStatusFilters.length || excludedStatusFilters.every((v2) => !storyStatusValues.includes(v2));
+  return passesInclude && passesExclude;
+};
+
+// src/manager-api/modules/tags.ts
+var import_memoizerific5 = __toESM(require_memoizerific(), 1);
+var getDefaultTagsFromPreset = (0, import_memoizerific5.default)(1)((presets) => {
+  let presetEntries = Object.entries(presets);
+  return {
+    included: presetEntries.filter(([, option]) => option.defaultFilterSelection === "include").map(([tag]) => tag),
+    excluded: presetEntries.filter(([, option]) => option.defaultFilterSelection === "exclude").map(([tag]) => tag)
+  };
+});
+var computeTagsFilterFn = (includedTagFilters, excludedTagFilters) => {
+  let computeFilterFunctions = (set) => Object.values(
+    set.reduce(
+      (acc, tag) => (Object.hasOwn(BUILT_IN_FILTERS, tag) ? acc["built-in"].push(BUILT_IN_FILTERS[tag]) : acc.user.push(USER_TAG_FILTER(tag)), acc),
+      { "built-in": [], user: [] }
+    )
+  ).filter((group) => group.length > 0);
+  return (item) => {
+    let included = computeFilterFunctions(includedTagFilters), excluded = computeFilterFunctions(excludedTagFilters);
+    return (!included.length || included.every((group) => group.some((filterFn) => filterFn(item, !1)))) && (!excluded.length || excluded.every((group) => group.every((filterFn) => filterFn(item, !0))));
+  };
+};
+
+// src/manager/components/sidebar/ShowChangesButton.tsx
+var Wrapper8 = styled.div({
+  display: "flex",
+  alignItems: "center",
+  gap: 4,
+  marginTop: -8
+}), StyledCTA = styled(ToggleButton)({
+  flex: 1,
+  justifyContent: "flex-start"
+}), StyledIcon = styled.svg(({ theme }) => ({
+  color: theme.fgColor.accent
+})), NEW = "status-value:new", MOD = "status-value:modified", ShowChangesButton = () => {
+  let api = useStorybookApi(), {
+    internal_index: index,
+    includedStatusFilters: rawIncludedStatusFilters,
+    excludedStatusFilters: rawExcludedStatusFilters,
+    includedTagFilters: rawIncludedTagFilters,
+    excludedTagFilters: rawExcludedTagFilters
+  } = useStorybookState(), allStatuses = experimental_useStatusStore(), activeReviewStoryCount = useActiveReviewStoryCount(), { newCount, modifiedCount } = useMemo(() => {
+    if (!index)
+      return { newCount: 0, modifiedCount: 0 };
+    let includedStatusFilters2 = rawIncludedStatusFilters ?? [], excludedStatusFilters2 = rawExcludedStatusFilters ?? [], includedTagFilters = rawIncludedTagFilters ?? [], excludedTagFilters = rawExcludedTagFilters ?? [], contextualIncludedStatuses = includedStatusFilters2.filter((s2) => s2 !== NEW && s2 !== MOD), contextualExcludedStatuses = excludedStatusFilters2.filter((s2) => s2 !== NEW && s2 !== MOD), tagFilterFn = computeTagsFilterFn(includedTagFilters, excludedTagFilters), statusFilterFn = computeStatusFilterFn(
+      contextualIncludedStatuses,
+      contextualExcludedStatuses
+    ), next = 0, modified = 0, entries = index.entries ?? {};
+    for (let [storyId, statusesByType] of Object.entries(allStatuses)) {
+      let entry = entries[storyId];
+      if (!entry)
+        continue;
+      let entryWithStatuses = { ...entry, statuses: statusesByType };
+      if (!tagFilterFn(entryWithStatuses) || !statusFilterFn(entryWithStatuses))
+        continue;
+      let statuses = Object.values(statusesByType);
+      statuses.some(({ value }) => value === NEW) && (next += 1), statuses.some(({ value }) => value === MOD) && (modified += 1);
+    }
+    return { newCount: next, modifiedCount: modified };
+  }, [
+    index,
+    allStatuses,
+    rawIncludedStatusFilters,
+    rawExcludedStatusFilters,
+    rawIncludedTagFilters,
+    rawExcludedTagFilters
+  ]), includedStatusFilters = rawIncludedStatusFilters ?? [], excludedStatusFilters = rawExcludedStatusFilters ?? [], isActive = includedStatusFilters.includes(NEW) && includedStatusFilters.includes(MOD);
+  if (!globalThis.FEATURES?.changeDetection || activeReviewStoryCount > 0 || newCount === 0 && modifiedCount === 0)
+    return null;
+  let clearFilters = () => {
+    let nextIncluded = includedStatusFilters.filter((s2) => s2 !== NEW && s2 !== MOD), nextExcluded = excludedStatusFilters.filter((s2) => s2 !== NEW && s2 !== MOD);
+    api.setAllStatusFilters(nextIncluded, nextExcluded);
+  }, onClick = () => {
+    if (isActive)
+      clearFilters();
+    else {
+      let nextIncluded = Array.from(/* @__PURE__ */ new Set([...includedStatusFilters, NEW, MOD])), nextExcluded = excludedStatusFilters.filter((s2) => s2 !== NEW && s2 !== MOD);
+      api.setAllStatusFilters(nextIncluded, nextExcluded);
+    }
+  }, onClearClick = (e2) => {
+    e2.stopPropagation(), clearFilters();
+  }, changeKinds = newCount > 0 && modifiedCount > 0 ? "new and modified" : newCount > 0 ? "new" : "modified", label = `${isActive ? "Showing" : "Show"} ${changeKinds} stories`, ariaLabel = `${label} since last commit`;
+  return react_default.createElement(Wrapper8, null, react_default.createElement(
+    StyledCTA,
+    {
+      variant: "ghost",
+      padding: "small",
+      pressed: isActive,
+      ariaLabel,
+      onClick
+    },
+    react_default.createElement(StyledIcon, { viewBox: "0 0 14 14", width: "14", height: "14", "aria-hidden": !0 }, react_default.createElement(UseSymbol, { type: "modified" })),
+    label
+  ), isActive && react_default.createElement(
+    Button,
+    {
+      variant: "ghost",
+      padding: "small",
+      size: "small",
+      onClick: onClearClick,
+      ariaLabel: "Clear"
+    },
+    react_default.createElement(UndoIcon, null)
+  ));
+};
 
 // src/manager/components/sidebar/SidebarBottom.tsx
 init_react();
@@ -26889,6 +27847,7 @@ var DEFAULT_REF_ID = "storybook_internal", Container11 = styled.header(({ theme 
           }
         )),
         searchFieldContent: react_default.createElement(Filter, null),
+        belowSearchContent: react_default.createElement(ShowChangesButton, null),
         ...lastViewedProps
       },
       ({

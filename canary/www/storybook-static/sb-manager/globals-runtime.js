@@ -30708,6 +30708,40 @@ function invariant(condition, message) {
   }
 }
 
+// src/preview-errors.ts
+init_esm();
+var InvalidChannelPageError = class extends StorybookError {
+  constructor(data) {
+    super({
+      name: "InvalidChannelPageError",
+      category: "PREVIEW_CHANNELS" /* PREVIEW_CHANNELS */,
+      code: 1,
+      message: `The postMessage channel transport needs "config.page" to be "manager" or "preview", but received "${data.page}".`
+    });
+    this.data = data;
+  }
+};
+var StatusTypeIdMismatchError2 = class extends StorybookError {
+  constructor(data) {
+    super({
+      name: "StatusTypeIdMismatchError",
+      category: "PREVIEW_API" /* PREVIEW_API */,
+      code: 16,
+      message: `Status has typeId "${data.status.typeId}" but was added to store with typeId "${data.typeId}". Full status: ${JSON.stringify(
+        data.status,
+        null,
+        2
+      )}`
+    });
+    this.data = data;
+  }
+};
+
+// src/shared/utils/local-hosts.ts
+var LOOPBACK_HOSTNAMES = ["localhost", "*.localhost", "127.0.0.1"], matchesHostname = (hostname, patterns) => patterns.some(
+  (pattern) => pattern.startsWith("*.") ? hostname.endsWith(pattern.slice(1)) : hostname === pattern
+);
+
 // src/channels/postmessage/getEventSourceUrl.ts
 init_client_logger();
 var pickFrameByRefId = (candidates, refId) => {
@@ -30747,12 +30781,37 @@ var pickFrameByRefId = (candidates, refId) => {
 };
 
 // src/channels/postmessage/index.ts
-var { document: document2, location: location2 } = globalThis, KEY = "storybook-channel", CHANNEL_OPTIONS = globalThis.CHANNEL_OPTIONS || {}, defaultEventOptions = { maxDepth: 25 }, PostMessageTransport = class {
+var { document: document2, location: location2 } = globalThis, KEY = "storybook-channel", CHANNEL_OPTIONS = globalThis.CHANNEL_OPTIONS || {}, defaultEventOptions = { maxDepth: 25 }, getReferrerOrigin = () => {
+  try {
+    let origin = document2?.referrer && new URL(document2.referrer).origin;
+    return origin && origin !== "null" ? origin : null;
+  } catch {
+    return null;
+  }
+}, isOnInitialBlankDocument = (frame) => {
+  try {
+    return frame.location.href === "about:blank";
+  } catch {
+    return !1;
+  }
+}, getOriginValidator = () => {
+  let own = location2?.origin;
+  return globalThis.CONFIG_TYPE !== "DEVELOPMENT" || !own || own === "null" ? null : (origin) => {
+    if (origin === own)
+      return !0;
+    try {
+      return matchesHostname(new URL(origin).hostname, LOOPBACK_HOSTNAMES);
+    } catch {
+      return !1;
+    }
+  };
+}, PostMessageTransport = class {
   constructor(config4) {
     this.config = config4;
     this.connected = !1;
-    if (this.buffer = [], typeof globalThis.addEventListener == "function" && globalThis.addEventListener("message", this.handleEvent.bind(this), !1), config4.page !== "manager" && config4.page !== "preview")
-      throw new Error(`postmsg-channel: "config.page" cannot be "${config4.page}"`);
+    this.rejectedOrigins = /* @__PURE__ */ new Set();
+    if (this.buffer = [], this.originValidator = getOriginValidator(), this.insecureIframeMessaging = globalThis.INSECURE_IFRAME_MESSAGING === !0, this.pinsTargetOrigin = globalThis.CONFIG_TYPE === "DEVELOPMENT" && !this.insecureIframeMessaging, typeof globalThis.addEventListener == "function" && globalThis.addEventListener("message", this.handleEvent.bind(this), !1), config4.page !== "manager" && config4.page !== "preview")
+      throw new InvalidChannelPageError({ page: config4.page });
   }
   setHandler(handler) {
     this.handler = (...args) => {
@@ -30798,12 +30857,13 @@ var { document: document2, location: location2 } = globalThis, KEY = "storybook-
       },
       stringifyOptions
     );
-    return frames.length ? (this.buffer.length && this.flush(), frames.forEach((f6) => {
-      try {
-        f6.postMessage(data, "*");
-      } catch {
-        logger.error("sending over postmessage fail");
-      }
+    return frames.length ? (this.buffer.length && this.flush(), frames.forEach(({ contentWindow, targetOrigin }) => {
+      if (!(this.config.page === "manager" && isOnInitialBlankDocument(contentWindow)))
+        try {
+          contentWindow.postMessage(data, this.pinsTargetOrigin ? targetOrigin : "*");
+        } catch {
+          logger.error("sending over postmessage fail");
+        }
     }), Promise.resolve(null)) : new Promise((resolve, reject) => {
       this.buffer.push({ event, resolve, reject });
     });
@@ -30820,27 +30880,85 @@ var { document: document2, location: location2 } = globalThis, KEY = "storybook-
         document2.querySelectorAll("iframe[data-is-storybook][data-is-loaded]")
       ).flatMap((e2) => {
         try {
-          return e2.contentWindow && e2.dataset.isStorybook !== void 0 && e2.id === target ? [e2.contentWindow] : [];
+          return e2.contentWindow && e2.dataset.isStorybook !== void 0 && e2.id === target ? [
+            { contentWindow: e2.contentWindow, targetOrigin: this.getIframeTargetOrigin(e2) }
+          ] : [];
         } catch {
           return [];
         }
       });
       return list?.length ? list : this.getCurrentFrames();
     }
-    return globalThis.parent && globalThis.parent !== globalThis.self ? [globalThis.parent] : [];
+    return globalThis.parent && globalThis.parent !== globalThis.self ? [{ contentWindow: globalThis.parent, targetOrigin: this.getManagerTargetOrigin() }] : [];
   }
   getCurrentFrames() {
     return this.config.page === "manager" ? Array.from(
       document2.querySelectorAll('[data-is-storybook="true"]')
-    ).flatMap((e2) => e2.contentWindow ? [e2.contentWindow] : []) : globalThis.parent ? [globalThis.parent] : [];
+    ).flatMap(
+      (e2) => e2.contentWindow ? [{ contentWindow: e2.contentWindow, targetOrigin: this.getIframeTargetOrigin(e2) }] : []
+    ) : globalThis.parent ? [{ contentWindow: globalThis.parent, targetOrigin: this.getManagerTargetOrigin() }] : [];
+  }
+  getIframeTargetOrigin(element) {
+    let src = element.getAttribute("src");
+    if (src)
+      try {
+        let { origin } = new URL(src, document2.location.toString());
+        if (origin !== "null")
+          return origin;
+      } catch {
+      }
+    return location2?.origin && location2.origin !== "null" ? location2.origin : "*";
+  }
+  // In composition the manager lives on a different origin than this preview; the referrer
+  // identifies which host embedded it.
+  getManagerTargetOrigin() {
+    let referrerOrigin = getReferrerOrigin();
+    return this.originValidator ? referrerOrigin !== null && this.originValidator(referrerOrigin) ? referrerOrigin : location2.origin : referrerOrigin ?? "*";
   }
   getLocalFrame() {
     return this.config.page === "manager" ? Array.from(
       document2.querySelectorAll("#storybook-preview-iframe")
     ).flatMap((e2) => e2.contentWindow ? [e2.contentWindow] : []) : globalThis.parent ? [globalThis.parent] : [];
   }
+  isAllowedSender(rawEvent) {
+    return this.insecureIframeMessaging ? !0 : this.config.page === "manager" ? this.isAllowedToContactManager(rawEvent) : this.config.page === "preview" ? this.isAllowedToContactPreview(rawEvent) : !1;
+  }
+  // A dev-mode preview only accepts messages from its own origin and from local hosts. A built
+  // preview, or one served from an opaque origin, has no validator and accepts any message.
+  isAllowedToContactPreview(rawEvent) {
+    return !this.originValidator || this.originValidator(rawEvent.origin) ? !0 : (this.warnOnceAboutRejectedSender(
+      rawEvent,
+      `Ignored Storybook channel message from unexpected origin "${rawEvent.origin}". While it runs in dev mode, this preview only accepts messages from local hosts and its own origin. To accept messages from any origin, set "security.insecureIframeMessaging" to true in the main config of the Storybook serving this preview.`
+    ), !1);
+  }
+  // A channel message reaches the manager only from a preview iframe it rendered itself: the local
+  // preview or a composed ref. `event.source` is set by the browser and cannot be forged, but it
+  // survives navigation, so in dev mode the message must also come from the origin the iframe was given.
+  isAllowedToContactManager(rawEvent) {
+    let senderFrame = rawEvent.source ? Array.from(document2.querySelectorAll("iframe")).find(
+      (frame) => frame.contentWindow === rawEvent.source
+    ) : void 0;
+    if (senderFrame?.hasAttribute("data-is-storybook")) {
+      if (!this.pinsTargetOrigin)
+        return !0;
+      let expectedOrigin = this.getIframeTargetOrigin(senderFrame);
+      return expectedOrigin === "*" || expectedOrigin === rawEvent.origin ? !0 : (this.warnOnceAboutRejectedSender(
+        rawEvent,
+        `Ignored Storybook channel message from a registered preview iframe that is on origin "${rawEvent.origin}" instead of "${expectedOrigin}". While it runs in dev mode, the manager only accepts channel messages from the origin each preview iframe was given, so a page the iframe navigated to cannot send them. To accept messages from any origin, set "security.insecureIframeMessaging" to true.`
+      ), !1);
+    }
+    return senderFrame?.hasAttribute("data-is-storybook-thumbnail") || this.warnOnceAboutRejectedSender(
+      rawEvent,
+      `Ignored Storybook channel message from a window that is not a registered preview iframe (origin "${rawEvent.origin}"). The manager only accepts channel messages from its own preview and composed Storybook iframes, never from a page that embeds it. To accept messages from any window, set "security.insecureIframeMessaging" to true.`
+    ), !1;
+  }
+  warnOnceAboutRejectedSender(rawEvent, message) {
+    (typeof rawEvent.data == "string" ? rawEvent.data.includes(KEY) : rawEvent.data?.key === KEY) && !this.rejectedOrigins.has(rawEvent.origin) && (this.rejectedOrigins.add(rawEvent.origin), logger.warn(message));
+  }
   handleEvent(rawEvent) {
     try {
+      if (!this.isAllowedSender(rawEvent))
+        return;
       let { data } = rawEvent, { key, event, refId } = typeof data == "string" && isJSON(data) ? parse(data, CHANNEL_OPTIONS) : data;
       if (key === KEY) {
         let pageString = this.config.page === "manager" ? '<span style="color: #37D5D3; background: black"> manager </span>' : '<span style="color: #1EA7FD; background: black"> preview </span>', eventString = Object.values(core_events_exports).includes(event.type) ? `<span style="color: #FF4785">${event.type}</span>` : `<span style="color: #FFAE00">${event.type}</span>`;
@@ -30965,7 +31083,7 @@ var channels_default = Channel;
 function createBrowserChannel({ page, extraTransports = [] }) {
   let transports = [new PostMessageTransport({ page }), ...extraTransports];
   if (globalThis.CONFIG_TYPE === "DEVELOPMENT") {
-    let protocol = window.location.protocol === "http:" ? "ws" : "wss", { hostname, port } = window.location, { wsToken } = globalThis.CHANNEL_OPTIONS || {}, channelUrl = `${protocol}://${hostname}:${port}${SERVER_CHANNEL_PATH}?token=${wsToken}`;
+    let protocol = window.location.protocol === "http:" ? "ws" : "wss", { hostname, port } = window.location, { wsToken } = globalThis.CHANNEL_OPTIONS || {}, channelUrl = `${protocol}://${hostname}:${port}${SERVER_CHANNEL_PATH}?token=${wsToken}&page=${page}`;
     transports.push(new WebsocketTransport({ url: channelUrl, onError: () => {
     }, page }));
   }
@@ -38775,24 +38893,6 @@ var SupportedFramework = /* @__PURE__ */ ((SupportedFramework2) => (SupportedFra
 
 // src/types/modules/renderers.ts
 var SupportedRenderer = /* @__PURE__ */ ((SupportedRenderer2) => (SupportedRenderer2.REACT = "react", SupportedRenderer2.REACT_NATIVE = "react-native", SupportedRenderer2.VUE3 = "vue3", SupportedRenderer2.ANGULAR = "angular", SupportedRenderer2.EMBER = "ember", SupportedRenderer2.PREACT = "preact", SupportedRenderer2.SVELTE = "svelte", SupportedRenderer2.QWIK = "qwik", SupportedRenderer2.HTML = "html", SupportedRenderer2.WEB_COMPONENTS = "web-components", SupportedRenderer2.SERVER = "server", SupportedRenderer2.SOLID = "solid", SupportedRenderer2.NUXT = "nuxt", SupportedRenderer2))(SupportedRenderer || {});
-
-// src/preview-errors.ts
-init_esm();
-var StatusTypeIdMismatchError2 = class extends StorybookError {
-  constructor(data) {
-    super({
-      name: "StatusTypeIdMismatchError",
-      category: "PREVIEW_API" /* PREVIEW_API */,
-      code: 16,
-      message: `Status has typeId "${data.status.typeId}" but was added to store with typeId "${data.typeId}". Full status: ${JSON.stringify(
-        data.status,
-        null,
-        2
-      )}`
-    });
-    this.data = data;
-  }
-};
 
 // src/server-errors.ts
 var import_picocolors = __toESM(require_picocolors_browser(), 1);
@@ -58767,8 +58867,11 @@ var { step } = instrument(
   { intercept: !0 }
 );
 
+// src/highlight/useHighlights.ts
+init_client_logger();
+
 // src/highlight/constants.ts
-var ADDON_ID5 = "storybook/highlight", HIGHLIGHT = `${ADDON_ID5}/add`, REMOVE_HIGHLIGHT = `${ADDON_ID5}/remove`, RESET_HIGHLIGHT = `${ADDON_ID5}/reset`, SCROLL_INTO_VIEW = `${ADDON_ID5}/scroll-into-view`, MAX_Z_INDEX = 2147483647, MIN_TOUCH_AREA_SIZE = 28;
+var ADDON_ID5 = "storybook/highlight", HIGHLIGHT = `${ADDON_ID5}/add`, REMOVE_HIGHLIGHT = `${ADDON_ID5}/remove`, RESET_HIGHLIGHT = `${ADDON_ID5}/reset`, SCROLL_INTO_VIEW = `${ADDON_ID5}/scroll-into-view`, HIGHLIGHT_MENU_CLICK = `${ADDON_ID5}/menu-click`, MAX_Z_INDEX = 2147483647, MIN_TOUCH_AREA_SIZE = 28;
 
 // src/highlight/icons.ts
 var iconPaths = {
@@ -58818,7 +58921,7 @@ var svgElements = "svg,path,rect,circle,line,polyline,polygon,ellipse,text".spli
   if ("elements" in options) {
     let { elements, color: color2, style } = options;
     return {
-      id: void 0,
+      id: `legacy-${Math.random().toString(36).substring(2, 15)}`,
       priority: 0,
       selectors: elements,
       styles: {
@@ -58831,7 +58934,6 @@ var svgElements = "svg,path,rect,circle,line,polyline,polygon,ellipse,text".spli
   }
   let { menu, ...rest } = options;
   return {
-    id: void 0,
     priority: 0,
     styles: {
       outline: "2px dashed #029cfd"
@@ -58882,10 +58984,11 @@ var svgElements = "svg,path,rect,circle,line,polyline,polygon,ellipse,text".spli
     }
   }
   return map2;
-}, mapBoxes = (elements) => Array.from(elements.entries()).map(([element, { selectors, styles: styles4, hoverStyles, focusStyles, menu }]) => {
+}, mapBoxes = (elements) => Array.from(elements.entries()).map(([element, { id, selectors, styles: styles4, hoverStyles, focusStyles, menu }]) => {
   let { top: top2, left: left2, width, height } = element.getBoundingClientRect(), { position: position2 } = getComputedStyle(element);
   return {
     element,
+    id,
     selectors,
     styles: styles4,
     hoverStyles,
@@ -58929,12 +59032,8 @@ var svgElements = "svg,path,rect,circle,line,polyline,polygon,ellipse,text".spli
   height: target.height,
   selectors: target.selectors,
   element: {
-    attributes: Object.fromEntries(
-      Array.from(target.element.attributes).map((attr) => [attr.name, attr.value])
-    ),
     localName: target.element.localName,
-    tagName: target.element.tagName,
-    outerHTML: target.element.outerHTML
+    tagName: target.element.tagName
   }
 });
 
@@ -58947,11 +59046,11 @@ var menuId = "storybook-highlights-menu", rootId = "storybook-highlights-root", 
   highlights.subscribe(() => {
     root2 || (root2 = createElement6("div", { id: rootId }), document13.body.appendChild(root2));
   }), highlights.subscribe((value) => {
-    let storybookRoot = document13.getElementById(storybookRootId);
-    if (!storybookRoot)
-      return;
+    let storybookRoot = document13.getElementById(storybookRootId) ?? document13.body;
     elements.set(mapElements(value));
-    let observer = new MutationObserver(() => elements.set(mapElements(value)));
+    let observer = new MutationObserver((records) => {
+      records.some((record2) => !root2?.contains(record2.target)) && elements.set(mapElements(value));
+    });
     return observer.observe(storybookRoot, { subtree: !0, childList: !0 }), () => {
       observer.disconnect();
     };
@@ -59231,25 +59330,23 @@ var menuId = "storybook-highlights-menu", rootId = "storybook-highlights-root", 
               createElement6(
                 "ul",
                 { class: "menu-items" },
-                menuItems.map(
-                  ({ id, title, description, iconLeft, iconRight, clickEvent: event }) => {
-                    let onClick = event && (() => channel2.emit(event, id, getEventDetails(target)));
-                    return createElement6("li", {}, [
-                      createElement6(
-                        onClick ? "button" : "div",
-                        onClick ? { class: "menu-item", type: "button", onClick } : { class: "menu-item" },
-                        [
-                          iconLeft ? createIcon(iconLeft) : null,
-                          createElement6("div", { class: "menu-item-content" }, [
-                            createElement6(description ? "strong" : "span", {}, [title]),
-                            description && createElement6("span", {}, [description])
-                          ]),
-                          iconRight ? createIcon(iconRight) : null
-                        ]
-                      )
-                    ]);
-                  }
-                )
+                menuItems.map(({ id, title, description, iconLeft, iconRight, clickable }) => {
+                  let onClick = clickable && (() => channel2.emit(HIGHLIGHT_MENU_CLICK, target.id, id, getEventDetails(target)));
+                  return createElement6("li", {}, [
+                    createElement6(
+                      onClick ? "button" : "div",
+                      onClick ? { class: "menu-item", type: "button", onClick } : { class: "menu-item" },
+                      [
+                        iconLeft ? createIcon(iconLeft) : null,
+                        createElement6("div", { class: "menu-item-content" }, [
+                          createElement6(description ? "strong" : "span", {}, [title]),
+                          description && createElement6("span", {}, [description])
+                        ]),
+                        iconRight ? createIcon(iconRight) : null
+                      ]
+                    )
+                  ]);
+                })
               )
             ])
           )
@@ -59265,9 +59362,13 @@ var menuId = "storybook-highlights-menu", rootId = "storybook-highlights-root", 
   };
   targets.subscribe(renderMenu), selected.subscribe(renderMenu);
   let addHighlight = (highlight) => {
-    let info = normalizeOptions(highlight);
+    let info = highlight && normalizeOptions(highlight);
+    if (typeof info?.id != "string" || !info.id) {
+      logger.warn("Ignoring highlight without an id", highlight);
+      return;
+    }
     highlights.set((value) => {
-      let others = info.id ? value.filter((h4) => h4.id !== info.id) : value;
+      let others = value.filter((h4) => h4.id !== info.id);
       return info.selectors?.length ? [...others, info] : others;
     });
   }, removeHighlight = (id) => {
@@ -59279,7 +59380,7 @@ var menuId = "storybook-highlights-menu", rootId = "storybook-highlights-root", 
     clearTimeout(removeTimeout), removeHighlight(id);
     let element = document13.querySelector(target);
     if (!element) {
-      console.warn(`Cannot scroll into view: ${target} not found`);
+      logger.warn(`Cannot scroll into view: ${target} not found`);
       return;
     }
     element.scrollIntoView({ behavior: "smooth", block: "center", ...options });
@@ -60522,6 +60623,11 @@ var parseUrl = (url) => {
     url: cleanUrl,
     authorization
   };
+}, getRedirectedRefUrl = (refUrl, indexResponseUrl) => {
+  if (!indexResponseUrl)
+    return refUrl;
+  let served = new URL(indexResponseUrl);
+  return served.origin === new URL(refUrl, location3.href).origin || !served.pathname.endsWith("/index.json") ? refUrl : served.origin + served.pathname.slice(0, -11);
 }, map = (input2, ref, options) => {
   let { storyMapper } = options;
   return storyMapper ? Object.entries(input2).reduce((acc, [id, item]) => ({ ...acc, [id]: storyMapper(ref, item) }), {}) : input2;
@@ -60556,16 +60662,15 @@ var parseUrl = (url) => {
       urlParseResult.authorization && Object.assign(headers, {
         Authorization: `Basic ${urlParseResult.authorization}`
       });
-      let [indexResult, storiesResult] = await Promise.all(
-        ["index.json", "stories.json"].map(
-          async (file) => handleRequest(
-            fetch3(`${urlParseResult.url}/${file}${query}`, {
-              headers,
-              credentials
-            })
-          )
-        )
-      );
+      let [indexRequest, storiesRequest] = ["index.json", "stories.json"].map(
+        (file) => fetch3(`${urlParseResult.url}/${file}${query}`, {
+          headers,
+          credentials
+        })
+      ), [indexResult, storiesResult] = await Promise.all([
+        handleRequest(indexRequest),
+        handleRequest(storiesRequest)
+      ]), refUrl = scope.CONFIG_TYPE === "DEVELOPMENT" && indexResult.storyIndex ? getRedirectedRefUrl(urlParseResult.url, (await indexRequest).url) : urlParseResult.url;
       if (!indexResult.indexError || !storiesResult.indexError) {
         let metadata = await handleRequest(
           fetch3(`${urlParseResult.url}/metadata.json${query}`, {
@@ -60594,7 +60699,7 @@ var parseUrl = (url) => {
       let versions = ref.versions && Object.keys(ref.versions).length ? ref.versions : loadedData.versions;
       await api.setRef(id, {
         id,
-        url: urlParseResult.url,
+        url: refUrl,
         ...loadedData,
         ...versions ? { versions } : {},
         type: loadedData.storyIndex ? "lazy" : "auto-inject"
@@ -63288,7 +63393,7 @@ init_dist();
 var import_memoizerific9 = __toESM(require_memoizerific(), 1), import_semver = __toESM(require_semver2(), 1);
 
 // src/manager-api/version.ts
-var version = "10.6.0";
+var version = "10.6.3";
 
 // src/manager-api/modules/versions.ts
 var { VERSIONCHECK } = scope, getVersionCheckData = (0, import_memoizerific9.default)(1)(() => {
