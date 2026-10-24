@@ -63,10 +63,10 @@ import { DefaultZIndexes } from '../zIndex/DefaultZIndexes';
 import { propsAreEqual } from '../util/propsAreEqual';
 import { GraphicalItemId } from '../state/graphicalItemsSlice';
 import { ChartData } from '../state/chartDataSlice';
-import { GraphicalItemStyle } from '../theme/RechartsTheme';
+import { GraphicalItemStyle, Styles2D } from '../theme/RechartsTheme';
 import { useRechartsTheme } from '../theme/RechartsThemeContext';
 import { useBackwardsCompatibleTheme } from '../theme/useBackwardsCompatibleTheme';
-import { getActiveStyleOverrides } from '../theme/activeStyles';
+import { UnthemedStyles, useUnthemedStyles } from '../theme/dataEntryStyles';
 import { useGraphicalItemIdentity } from '../theme/useGraphicalItemIdentity';
 import { useEffectiveDataKey } from '../util/useEffectiveDataKey';
 import { DataLabelThemeContextProvider, useSeriesLabelThemeResolver } from '../theme/labelTheme';
@@ -86,6 +86,8 @@ export interface LinePointItem {
  * Internal props, combination of external props + defaultProps + private Recharts state
  */
 interface InternalLineProps extends ZIndexable {
+  unthemedStyles?: UnthemedStyles;
+  themedActiveStyles?: Styles2D;
   activeDot: ActiveDotType;
   animateNewValues: boolean;
   animationBegin: number;
@@ -538,6 +540,7 @@ const SetLineTooltipEntrySettings = React.memo(
         unit,
         formatter,
         graphicalItemId: id,
+        ignoreDataEntryColors: true,
       },
     };
     return <SetTooltipEntrySettings tooltipEntrySettings={tooltipEntrySettings} />;
@@ -554,6 +557,7 @@ function LineDotsWrapper({
   props: InternalProps;
 }) {
   const { dot, dataKey, dotFill, needClip } = props;
+  const { unthemedStyles } = props;
 
   /*
    * Exclude ID from the props passed to the Dots component
@@ -571,6 +575,7 @@ function LineDotsWrapper({
       dotClassName="recharts-line-dot"
       dataKey={dataKey}
       baseProps={{ ...lineProps, fill: dotFill ?? lineProps.fill }}
+      unthemedStyles={unthemedStyles}
       needClip={needClip}
       clipPathId={clipPathId}
     />
@@ -820,13 +825,16 @@ class LineWithState extends Component<InternalProps> {
           mainColor={this.props.stroke}
           itemDataKey={this.props.dataKey}
           clipPath={activePointsClipPath}
+          themedActiveStyles={this.props.themedActiveStyles}
         />
       </ZIndexLayer>
     );
   }
 }
 
-function LineImpl(props: WithIdRequired<Props> & Pick<InternalLineProps, 'dotFill'>) {
+function LineImpl(
+  props: WithIdRequired<Props> & Pick<InternalLineProps, 'dotFill' | 'unthemedStyles' | 'themedActiveStyles'>,
+) {
   const {
     activeDot,
     animateNewValues,
@@ -948,16 +956,13 @@ function LineFn(outsideProps: Props) {
     defaultLegacyThemeProps,
   );
   const themeStrokeDasharray = graphicalItemTheme?.strokeDasharray;
-  const themedActiveDot = getActiveStyleOverrides(outsideProps.activeDot ?? true, graphicalItemTheme?.active);
-  const activeDot =
-    themedActiveDot == null
-      ? outsideProps.activeDot
-      : { ...themedActiveDot, ...(typeof outsideProps.activeDot === 'object' ? outsideProps.activeDot : {}) };
+  const unthemedStyles = useUnthemedStyles(outsideProps);
+  const themedActiveStyles = graphicalItemTheme?.active;
   const props = resolveDefaultProps(
     {
       ...outsideProps,
       dataKey,
-      activeDot,
+      activeDot: outsideProps.activeDot,
       fill: outsideProps.fill ?? graphicalItemTheme?.fill,
       fillOpacity: outsideProps.fillOpacity ?? graphicalItemTheme?.fillOpacity,
       stroke: outsideProps.stroke ?? graphicalItemTheme?.stroke,
@@ -1003,7 +1008,13 @@ function LineFn(outsideProps: Props) {
             isPanorama={isPanorama}
           />
           <DataLabelThemeContextProvider value={resolveLabelTheme}>
-            <LineImpl {...props} id={id} dotFill={dotFill} />
+            <LineImpl
+              {...props}
+              id={id}
+              dotFill={dotFill}
+              unthemedStyles={unthemedStyles}
+              themedActiveStyles={themedActiveStyles}
+            />
           </DataLabelThemeContextProvider>
         </>
       )}

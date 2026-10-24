@@ -183,8 +183,9 @@ export const combineTooltipPayload = (
       /*
        * Graphical items that resolve the styles of each data entry on their own (Bar) report the color
        * they render the active entry with. The others take the colors of the active datum before their series colors.
+       * Line, Area and Radar draw one shape per series, so they keep the series color.
        */
-      const parsedItem = parseTooltipPayloadItem(tooltipPayload);
+      const parsedItem = settings.ignoreDataEntryColors ? undefined : parseTooltipPayloadItem(tooltipPayload);
       const entryColor =
         getEntryColor == null
           ? (parsedItem?.color ?? parsedItem?.fill ?? parsedItem?.stroke)

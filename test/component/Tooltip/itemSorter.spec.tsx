@@ -96,6 +96,7 @@ describe('itemSorter in ComposedChart', () => {
               type: undefined,
               unit: undefined,
               graphicalItemId: 'area-uv',
+              ignoreDataEntryColors: true,
             },
           },
           {
@@ -131,6 +132,7 @@ describe('itemSorter in ComposedChart', () => {
               type: undefined,
               unit: undefined,
               graphicalItemId: 'line-amt',
+              ignoreDataEntryColors: true,
             },
           },
           {
