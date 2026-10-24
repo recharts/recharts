@@ -41,6 +41,7 @@ import { initialEventSettingsState } from '../state/eventSettingsSlice';
 import { RechartsTheme, Styles2D } from '../theme/RechartsTheme';
 import { useRechartsTheme } from '../theme/RechartsThemeContext';
 import { getOwnStyles, hasOwnColors } from '../theme/dataEntryStyles';
+import { DATA_ITEM_GRAPHICAL_ITEM_ID_ATTRIBUTE_NAME, DATA_ITEM_INDEX_ATTRIBUTE_NAME } from '../util/Constants';
 
 const interpolationGenerator = (a: number, b: number) => {
   const ka = +a;
@@ -640,6 +641,20 @@ const getLinkCoordinateOfTooltip = (item: LinkProps): Coordinate | undefined => 
 type SankeyTooltipPayload = { payload: SankeyNode | SankeyLink; name: unknown; value: unknown; color?: string };
 
 /**
+ * A node or a link that the user is touching.
+ */
+type TouchedSankeyItem = {
+  /**
+   * The tooltip index of the item, the same one the hover path reports.
+   */
+  itemIndex: string;
+  /**
+   * The centre of the item, the same coordinate the hover path reports.
+   */
+  activeCoordinate: Coordinate | undefined;
+};
+
+/**
  * Returns true if the value is a color that paints something, as opposed to a missing color or `none`.
  * @param value fill or stroke
  */
@@ -1116,7 +1131,11 @@ function SankeyLinkElement({
     },
   };
 
-  return <Layer {...events}>{renderLinkItem(linkContent, props, hasTheme)}</Layer>;
+  return (
+    <Layer {...events} data-recharts-item-index={activeIndex} data-recharts-item-id={graphicalItemId}>
+      {renderLinkItem(linkContent, props, hasTheme)}
+    </Layer>
+  );
 }
 
 function AllSankeyLinkElements({
@@ -1279,7 +1298,11 @@ function NodeElement({
     },
   };
 
-  return <Layer {...events}>{renderNodeItem(nodeContent, props, hasTheme)}</Layer>;
+  return (
+    <Layer {...events} data-recharts-item-index={activeIndex} data-recharts-item-id={graphicalItemId}>
+      {renderNodeItem(nodeContent, props, hasTheme)}
+    </Layer>
+  );
 }
 
 function AllNodeElements({
@@ -1461,6 +1484,9 @@ function SankeyImpl(props: InternalSankeyProps) {
     onMouseEnter,
     onMouseLeave,
     onClick,
+    onTouchStart,
+    onTouchMove,
+    onTouchEnd,
     data,
     iterations,
     nodeWidth,
@@ -1599,6 +1625,95 @@ function SankeyImpl(props: InternalSankeyProps) {
     [onClick],
   );
 
+  const dispatch = useAppDispatch();
+
+  /*
+   * Touch events do not have the mouse enter + leave pair, so we work out the touched
+   * element ourselves with document.elementFromPoint, same pattern as Treemap.handleTouchMove.
+   * The item is resolved against the arrays that are actually rendered, and the coordinates
+   * come from the same helpers that hover uses, so touch and hover cannot drift apart.
+   *
+   * A touch that is not on a node or a link is not reported to the user either: the chart handles
+   * the touch itself, and the chart area alone is not something the user interacted with.
+   */
+  const resolveTouchedItem = useCallback(
+    (point: { clientX: number; clientY: number } | undefined): TouchedSankeyItem | undefined => {
+      if (point == null || typeof document.elementFromPoint !== 'function') {
+        return undefined;
+      }
+      const target = document.elementFromPoint(point.clientX, point.clientY);
+      const markedTarget = target?.closest(`[${DATA_ITEM_INDEX_ATTRIBUTE_NAME}]`);
+      if (markedTarget == null) {
+        return undefined;
+      }
+      const itemIndex = markedTarget.getAttribute(DATA_ITEM_INDEX_ATTRIBUTE_NAME);
+      if (itemIndex == null) {
+        return undefined;
+      }
+      const itemId = markedTarget.getAttribute(DATA_ITEM_GRAPHICAL_ITEM_ID_ATTRIBUTE_NAME);
+      if (itemId != null && itemId !== id) {
+        // the element under the finger belongs to a different chart
+        return undefined;
+      }
+      const [elementType, elementIndex] = itemIndex.split('-');
+      if (elementType === 'node') {
+        const touchedNode = modifiedNodes[Number(elementIndex)];
+        if (touchedNode == null) {
+          return undefined;
+        }
+        return { itemIndex, activeCoordinate: getNodeCoordinateOfTooltip(touchedNode) };
+      }
+      if (elementType === 'link') {
+        const touchedLink = modifiedLinks[Number(elementIndex)];
+        if (touchedLink == null) {
+          return undefined;
+        }
+        return { itemIndex, activeCoordinate: getLinkCoordinateOfTooltip(touchedLink) };
+      }
+      return undefined;
+    },
+    [modifiedNodes, modifiedLinks, id],
+  );
+
+  const handleTouchMove = useCallback(
+    (e: React.TouchEvent<SVGSVGElement>) => {
+      const touchedItem = resolveTouchedItem(e.touches[0]);
+      if (touchedItem == null) {
+        return;
+      }
+      onTouchMove?.(e);
+      dispatch(
+        setActiveMouseOverItemIndex({
+          activeIndex: touchedItem.itemIndex,
+          activeDataKey: dataKey,
+          activeCoordinate: touchedItem.activeCoordinate,
+          activeGraphicalItemId: id,
+        }),
+      );
+    },
+    [resolveTouchedItem, onTouchMove, dataKey, id, dispatch],
+  );
+
+  const handleTouchStart = useCallback(
+    (e: React.TouchEvent<SVGSVGElement>) => {
+      if (resolveTouchedItem(e.touches[0]) == null) {
+        return;
+      }
+      onTouchStart?.(e);
+    },
+    [resolveTouchedItem, onTouchStart],
+  );
+
+  const handleTouchEnd = useCallback(
+    (e: React.TouchEvent<SVGSVGElement>) => {
+      if (resolveTouchedItem(e.changedTouches[0]) == null) {
+        return;
+      }
+      onTouchEnd?.(e);
+    },
+    [resolveTouchedItem, onTouchEnd],
+  );
+
   if (!isPositiveNumber(width) || !isPositiveNumber(height) || !data || !data.links || !data.nodes) {
     return null;
   }
@@ -1606,7 +1721,18 @@ function SankeyImpl(props: InternalSankeyProps) {
   return (
     <>
       <SetComputedData computedData={{ links: modifiedLinks, nodes: modifiedNodes }} />
-      <Surface {...attrs} title={title} desc={desc} role={role} tabIndex={tabIndex} width={width} height={height}>
+      <Surface
+        {...attrs}
+        title={title}
+        desc={desc}
+        role={role}
+        tabIndex={tabIndex}
+        width={width}
+        height={height}
+        onTouchStart={handleTouchStart}
+        onTouchMove={handleTouchMove}
+        onTouchEnd={handleTouchEnd}
+      >
         {children}
         <AllSankeyLinkElements
           graphicalItemId={id}
@@ -1681,6 +1807,10 @@ export function Sankey(outsideProps: Props) {
         onMouseUp={undefined}
         onContextMenu={undefined}
         onDoubleClick={undefined}
+        /*
+         * Sankey calls the touch event handlers from its own Surface, like Treemap does,
+         * so the wrapper must not dispatch the external ones a second time.
+         */
         onTouchStart={undefined}
         onTouchMove={undefined}
         onTouchEnd={undefined}

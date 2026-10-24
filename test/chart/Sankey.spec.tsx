@@ -1,5 +1,5 @@
 import React from 'react';
-import { describe, expect, it, Mock, vi } from 'vitest';
+import { describe, expect, it, Mock, vi, beforeEach, afterEach } from 'vitest';
 import { fireEvent, render } from '@testing-library/react';
 import { Sankey, SankeyLinkProps, SankeyNodeProps, Tooltip, XAxis, YAxis } from '../../src';
 import { computeData } from '../../src/chart/Sankey';
@@ -15,10 +15,27 @@ import { getTooltip, showTooltip } from '../component/Tooltip/tooltipTestHelpers
 
 import { useClipPathId } from '../../src/container/ClipPathProvider';
 import { expectLastCalledWith } from '../helper/expectLastCalledWith';
-import { mockTouchingElement } from '../helper/mockTouchingElement';
+import { mockTouchingElement, mockTouchingUnrelatedElement } from '../helper/mockTouchingElement';
+import { mockGetBoundingClientRect } from '../helper/mockGetBoundingClientRect';
 import { TooltipInteractionState } from '../../src/state/tooltipSlice';
 
 const readSvgNumber = (element: Element, attribute: string): number => Number(element.getAttribute(attribute));
+
+/**
+ * jsdom has no layout, so `elementFromPoint` has to be mocked for the touch handling to find the
+ * element the finger is on.
+ */
+function mockElementFromPoint(element: Element): void {
+  document.elementFromPoint = () => element;
+}
+
+/**
+ * The mock is an own property of the document, so it is removed again and cannot leak into the
+ * tests that run after it.
+ */
+function restoreElementFromPoint(): void {
+  Reflect.deleteProperty(document, 'elementFromPoint');
+}
 
 const getCubicPoint = (start: number, control1: number, control2: number, end: number, t: number): number => {
   const inverseT = 1 - t;
@@ -553,6 +570,10 @@ describe('<Sankey />', () => {
   });
 
   describe('events', () => {
+    afterEach(() => {
+      restoreElementFromPoint();
+    });
+
     it('should call onClick handler on links', () => {
       const onClick = vi.fn();
       const { container } = render(<Sankey width={1000} height={500} data={exampleSankeyData} onClick={onClick} />);
@@ -787,9 +808,7 @@ describe('<Sankey />', () => {
       expect(onMouseMove).toHaveBeenCalledTimes(0);
     });
 
-    it('should do nothing onTouchMove on links', () => {
-      // looks like a bug or missed feature
-      mockTouchingElement('1', 'a');
+    it('should call onTouchMove and onTouchEnd handlers on links', () => {
       const onTouchMove = vi.fn();
       const onTouchEnd = vi.fn();
       const { container } = render(
@@ -798,17 +817,18 @@ describe('<Sankey />', () => {
 
       const link = container.querySelector(sankeyLinkMouseHoverTooltipSelector);
       assertNotNull(link);
+      mockElementFromPoint(link);
 
       fireEvent.touchMove(link, { touches: [{ clientX: 200, clientY: 200 }] });
-      expect(onTouchMove).toHaveBeenCalledTimes(0);
+      expect(onTouchMove).toHaveBeenCalledTimes(1);
+      expectLastCalledWith(onTouchMove, expect.objectContaining({ type: 'touchmove' }));
 
       fireEvent.touchEnd(link, { changedTouches: [{ clientX: 200, clientY: 200 }] });
-      expect(onTouchEnd).toHaveBeenCalledTimes(0);
+      expect(onTouchEnd).toHaveBeenCalledTimes(1);
+      expectLastCalledWith(onTouchEnd, expect.objectContaining({ type: 'touchend' }));
     });
 
-    it('should do nothing onTouchMove and onTouchEnd on nodes', () => {
-      // looks like a bug or missed feature
-      mockTouchingElement('1', 'a');
+    it('should call onTouchMove and onTouchEnd handlers on nodes', () => {
       const onTouchMove = vi.fn();
       const onTouchEnd = vi.fn();
       const { container } = render(
@@ -817,12 +837,177 @@ describe('<Sankey />', () => {
 
       const node = container.querySelector(sankeyNodeMouseHoverTooltipSelector);
       assertNotNull(node);
+      mockElementFromPoint(node);
 
       fireEvent.touchMove(node, { touches: [{ clientX: 200, clientY: 200 }] });
-      expect(onTouchMove).toHaveBeenCalledTimes(0);
+      expect(onTouchMove).toHaveBeenCalledTimes(1);
+      expectLastCalledWith(onTouchMove, expect.objectContaining({ type: 'touchmove' }));
 
       fireEvent.touchEnd(node, { changedTouches: [{ clientX: 200, clientY: 200 }] });
-      expect(onTouchEnd).toHaveBeenCalledTimes(0);
+      expect(onTouchEnd).toHaveBeenCalledTimes(1);
+      expectLastCalledWith(onTouchEnd, expect.objectContaining({ type: 'touchend' }));
+    });
+
+    it('should not call the touch handlers when the user touches the chart area', () => {
+      const onTouchStart = vi.fn();
+      const onTouchMove = vi.fn();
+      const onTouchEnd = vi.fn();
+      const { container } = render(
+        <Sankey
+          width={1000}
+          height={500}
+          data={exampleSankeyData}
+          onTouchStart={onTouchStart}
+          onTouchMove={onTouchMove}
+          onTouchEnd={onTouchEnd}
+        />,
+      );
+
+      /*
+       * The chart handles the touch itself, and the chart area alone is not something the user
+       * interacted with, so the user handlers are only called for a node or a link.
+       */
+      mockElementFromPoint(container.querySelector('svg') ?? document.createElement('g'));
+
+      const surface = container.querySelector('.recharts-surface');
+      assertNotNull(surface);
+
+      fireEvent.touchStart(surface, { touches: [{ clientX: 200, clientY: 200 }] });
+      fireEvent.touchMove(surface, { touches: [{ clientX: 200, clientY: 200 }] });
+      fireEvent.touchEnd(surface, { changedTouches: [{ clientX: 200, clientY: 200 }] });
+
+      expect(onTouchStart).not.toHaveBeenCalled();
+      expect(onTouchMove).not.toHaveBeenCalled();
+      expect(onTouchEnd).not.toHaveBeenCalled();
+    });
+  });
+
+  describe('with Tooltip and touch events', () => {
+    afterEach(() => {
+      restoreElementFromPoint();
+    });
+
+    beforeEach(() => {
+      mockGetBoundingClientRect({ width: 10, height: 10 });
+    });
+
+    function renderWithTooltip() {
+      const result = render(
+        <Sankey width={1000} height={500} data={exampleSankeyData}>
+          <Tooltip />
+        </Sankey>,
+      );
+      const { container } = result;
+      const tooltip = getTooltip(container);
+      assertNotNull(tooltip);
+      return { ...result, tooltip };
+    }
+
+    function hoverTransformOf(selector: string): string {
+      const { container, tooltip } = renderWithTooltip();
+      const element = container.querySelector(selector);
+      assertNotNull(element);
+      fireEvent.mouseEnter(element);
+      expect(tooltip).toBeVisible();
+      return tooltip.style.transform;
+    }
+
+    function touchElement(element: Element | null) {
+      assertNotNull(element);
+      mockElementFromPoint(element);
+      fireEvent.touchMove(element, { touches: [{ clientX: 200, clientY: 200 }] });
+    }
+
+    it('should render item markers on the node and link layers', () => {
+      const { container } = render(<Sankey width={1000} height={500} data={exampleSankeyData} />);
+
+      const node = container.querySelector(sankeyNodeMouseHoverTooltipSelector);
+      assertNotNull(node);
+      const nodeLayer = node.closest('[data-recharts-item-index]');
+      assertNotNull(nodeLayer);
+      expect(nodeLayer.getAttribute('data-recharts-item-index')).toBe('node-0');
+      expect(nodeLayer.getAttribute('data-recharts-item-id')).toBeTruthy();
+
+      const link = container.querySelector(sankeyLinkMouseHoverTooltipSelector);
+      assertNotNull(link);
+      const linkLayer = link.closest('[data-recharts-item-index]');
+      assertNotNull(linkLayer);
+      expect(linkLayer.getAttribute('data-recharts-item-index')).toBe('link-0');
+      expect(linkLayer.getAttribute('data-recharts-item-id')).toBe(nodeLayer.getAttribute('data-recharts-item-id'));
+    });
+
+    it('should show the tooltip over a touched node, at the same position as hover', () => {
+      const { container, tooltip } = renderWithTooltip();
+      expect(tooltip).not.toBeVisible();
+
+      touchElement(container.querySelector(sankeyNodeMouseHoverTooltipSelector));
+
+      expect(tooltip).toBeVisible();
+      expect(tooltip.textContent).toContain('Agricultural waste');
+      expect(tooltip.style.transform).toBe(hoverTransformOf(sankeyNodeMouseHoverTooltipSelector));
+    });
+
+    it('should show the tooltip over a touched link, at the same position as hover', () => {
+      const { container, tooltip } = renderWithTooltip();
+      expect(tooltip).not.toBeVisible();
+
+      touchElement(container.querySelector(sankeyLinkMouseHoverTooltipSelector));
+
+      expect(tooltip).toBeVisible();
+      expect(tooltip.style.transform).toBe(hoverTransformOf(sankeyLinkMouseHoverTooltipSelector));
+    });
+
+    it('should move the tooltip with the finger from a node to a link', () => {
+      const { container, tooltip } = renderWithTooltip();
+
+      touchElement(container.querySelector(sankeyNodeMouseHoverTooltipSelector));
+      expect(tooltip).toBeVisible();
+      const nodeTransform = tooltip.style.transform;
+      const nodeText = tooltip.textContent;
+
+      touchElement(container.querySelector(sankeyLinkMouseHoverTooltipSelector));
+      expect(tooltip).toBeVisible();
+      expect(tooltip.style.transform).not.toBe(nodeTransform);
+      expect(tooltip.textContent).not.toBe(nodeText);
+    });
+
+    it('should not show the tooltip when touching an unrelated element', () => {
+      const { container, tooltip } = renderWithTooltip();
+      mockTouchingUnrelatedElement();
+
+      const node = container.querySelector(sankeyNodeMouseHoverTooltipSelector);
+      assertNotNull(node);
+      fireEvent.touchMove(node, { touches: [{ clientX: 200, clientY: 200 }] });
+
+      expect(tooltip).not.toBeVisible();
+    });
+
+    it('should ignore a marker that belongs to a different chart', () => {
+      const { container, tooltip } = renderWithTooltip();
+      mockTouchingElement('node-0', 'some-other-chart-id');
+
+      const node = container.querySelector(sankeyNodeMouseHoverTooltipSelector);
+      assertNotNull(node);
+      fireEvent.touchMove(node, { touches: [{ clientX: 200, clientY: 200 }] });
+
+      expect(tooltip).not.toBeVisible();
+    });
+
+    it('should not show the tooltip when the touched index is out of range', () => {
+      const { container, tooltip } = renderWithTooltip();
+      const node = container.querySelector(sankeyNodeMouseHoverTooltipSelector);
+      assertNotNull(node);
+      const ownId = node.closest('[data-recharts-item-id]')?.getAttribute('data-recharts-item-id');
+      assertNotNull(ownId);
+      mockTouchingElement('node-999', ownId);
+
+      fireEvent.touchMove(node, { touches: [{ clientX: 200, clientY: 200 }] });
+
+      expect(tooltip).not.toBeVisible();
+    });
+
+    it('should not leave the elementFromPoint mock behind for the tests that run after this block', () => {
+      expect(Object.prototype.hasOwnProperty.call(document, 'elementFromPoint')).toBe(false);
     });
   });
 
