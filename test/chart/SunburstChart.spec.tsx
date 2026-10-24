@@ -1,7 +1,7 @@
 import React from 'react';
 import { fireEvent } from '@testing-library/react';
-import { describe, expect, it, Mock, vi } from 'vitest';
-import { Customized, SunburstChart } from '../../src';
+import { beforeEach, describe, expect, it, Mock, vi } from 'vitest';
+import { Customized, SunburstChart, SunburstData, Tooltip } from '../../src';
 import { exampleSunburstData } from '../_data';
 import { getPieSectorAngles } from '../helper/expectPieSectors';
 import { useChartHeight, useChartWidth, useViewBox } from '../../src/context/chartLayoutContext';
@@ -14,6 +14,12 @@ import { rechartsTestRender } from '../helper/createSelectorTestCase';
 import { userEventSetup } from '../helper/userEventSetup';
 import { expectLastCalledWith } from '../helper/expectLastCalledWith';
 import { TooltipInteractionState } from '../../src/state/tooltipSlice';
+import { mockGetBoundingClientRect } from '../helper/mockGetBoundingClientRect';
+import {
+  expectTooltipCoordinate,
+  expectTooltipNotVisible,
+  expectTooltipPayload,
+} from '../component/Tooltip/tooltipTestHelpers';
 
 describe('<Sunburst />', () => {
   it('renders each sector in order under the correct category', () => {
@@ -325,6 +331,111 @@ describe('<Sunburst />', () => {
         },
       });
       expect(tooltipStateSpy).toHaveBeenCalledTimes(4);
+    });
+  });
+
+  describe('tooltip coordinate resolved from defaultIndex', () => {
+    /*
+     * jsdom reports a zero-sized tooltip which Tooltip reads as "do not show me",
+     * so the bounding rect has to be mocked before the tooltip is expected to be visible.
+     */
+    beforeEach(() => {
+      mockGetBoundingClientRect({ width: 10, height: 10 });
+    });
+
+    it('should show the tooltip at the sector position when defaultIndex is the tooltip index of a first ring node', () => {
+      const { container } = rechartsTestRender(
+        <SunburstChart width={400} height={400} data={exampleSunburstData}>
+          <Tooltip defaultIndex="[0]" />
+        </SunburstChart>,
+      );
+
+      expectTooltipPayload(container, '', ['Child1 : 30']);
+      /*
+       * The chart is 400x400 so cx, cy are 200, 200. The first ring node starts at angle 0 and its
+       * label sits half way through the ring thickness, which is (200 - 50) / 3 = 50,
+       * so the coordinate is 200 + (50 + 50 / 2) = 275 on the x axis.
+       */
+      expectTooltipCoordinate(container, { x: 285, y: 210 });
+    });
+
+    it('should show the tooltip at the sector position when defaultIndex is the tooltip index of a nested node', () => {
+      const { container } = rechartsTestRender(
+        <SunburstChart width={400} height={400} data={exampleSunburstData}>
+          <Tooltip defaultIndex="[0]children[0]" />
+        </SunburstChart>,
+      );
+
+      expectTooltipPayload(container, '', ['third child : 10']);
+      // The second ring starts at 50 + 50 + 2 and its label is half way through it, so 200 + 127 on the x axis.
+      expectTooltipCoordinate(container, { x: 337, y: 210 });
+    });
+
+    it('should not show the tooltip when defaultIndex does not match any node', () => {
+      const { container } = rechartsTestRender(
+        <SunburstChart width={400} height={400} data={exampleSunburstData}>
+          <Tooltip defaultIndex="[9]" />
+        </SunburstChart>,
+      );
+
+      expectTooltipNotVisible(container);
+    });
+  });
+
+  describe('with repeated node names', () => {
+    const duplicateNameData: SunburstData = {
+      name: 'Root',
+      value: 100,
+      children: [
+        {
+          name: 'A',
+          value: 50,
+          children: [{ name: 'shared', value: 25 }],
+        },
+        {
+          name: 'B',
+          value: 50,
+          children: [{ name: 'shared', value: 25 }],
+        },
+      ],
+    };
+
+    /*
+     * Sectors are rendered depth first, so these are: A, A/shared, B, B/shared.
+     * Two of them are named `shared` which used to collide both in the React key and in
+     * the map of tooltip positions.
+     */
+    it('should render each sector with its own key and give each of them its own coordinate', () => {
+      const coordinateSpy: Mock<(coordinate: TooltipInteractionState['coordinate']) => void> = vi.fn();
+      const Comp = (): null => {
+        coordinateSpy(useAppSelector(state => state.tooltip.itemInteraction.hover.coordinate));
+        return null;
+      };
+      const { container } = rechartsTestRender(
+        <SunburstChart width={400} height={400} data={duplicateNameData}>
+          <Customized component={<Comp />} />
+        </SunburstChart>,
+      );
+
+      const sectors = container.querySelectorAll('.recharts-sector');
+      expect(sectors).toHaveLength(4);
+
+      const hoverCoordinates: TooltipInteractionState['coordinate'][] = [];
+      sectors.forEach(sector => {
+        fireEvent.mouseEnter(sector);
+        expectLastCalledWith(coordinateSpy, expect.anything());
+        hoverCoordinates.push(coordinateSpy.mock.lastCall?.[0]);
+      });
+
+      // A is at the start of the first ring, A/shared at the start of the second ring
+      expect(hoverCoordinates[0]).toEqual({ x: 275, y: 200 });
+      expect(hoverCoordinates[1]).toEqual({ x: 327, y: 200 });
+      /*
+       * B and B/shared are half a circle away which is where the two `shared` sectors used to
+       * collapse onto the same position.
+       */
+      expect(hoverCoordinates[3]).not.toEqual(hoverCoordinates[1]);
+      expect(new Set(hoverCoordinates.map(coordinate => `${coordinate?.x},${coordinate?.y}`)).size).toBe(4);
     });
   });
 });
