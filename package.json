@@ -217,5 +217,10 @@
   "license": "MIT",
   "overrides": {
     "axios": "0.30.3"
+  },
+  "allowScripts": {
+    "esbuild": false,
+    "unrs-resolver": false,
+    "fsevents": false
   }
 }
