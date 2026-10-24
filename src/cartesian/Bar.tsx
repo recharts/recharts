@@ -1178,6 +1178,7 @@ function BarImpl(props: BarImplProps) {
       data={rects}
       dataPointFormatter={errorBarDataPointFormatter}
       errorBarOffset={errorBarOffset}
+      clipPath={needClip ? `url(#clipPath-${props.id})` : undefined}
     >
       <BarWithState
         {...props}
