@@ -1,5 +1,5 @@
 import { createAction, createListenerMiddleware, ListenerEffectAPI } from '@reduxjs/toolkit';
-import { setKeyboardInteraction, TooltipInteractionState } from './tooltipSlice';
+import { setKeyboardInteraction, setKeyPressInteraction, TooltipInteractionState } from './tooltipSlice';
 import { AppDispatch, RechartsRootState } from './store';
 import {
   selectTooltipAxisDomain,
@@ -79,7 +79,7 @@ keyboardEventsMiddleware.startListening({
             String(keyboardInteraction.index),
           );
           listenerApi.dispatch(
-            setKeyboardInteraction({
+            setKeyPressInteraction({
               active: !keyboardInteraction.active,
               activeIndex: keyboardInteraction.index,
               activeCoordinate: coordinate,
@@ -135,7 +135,7 @@ keyboardEventsMiddleware.startListening({
         }
         const coordinate = selectCoordinateForDefaultIndex(currentState, tooltipEventType, 'hover', String(nextIndex));
         listenerApi.dispatch(
-          setKeyboardInteraction({
+          setKeyPressInteraction({
             active: true,
             activeIndex: nextIndex.toString(),
             activeCoordinate: coordinate,
