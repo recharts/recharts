@@ -12,6 +12,7 @@ import { DefaultZIndexes } from '../zIndex/DefaultZIndexes';
 import { isRenderableText, RenderableText, TextBackgroundProps } from './Text';
 import { GraphicalItemClipArea, useGraphicalItemClipArea } from '../cartesian/GraphicalItemClipPath';
 import { AxisId } from '../state/cartesianAxisSlice';
+import { applyLabelTheme, DataLabelContextProvider, useDataLabelThemeResolver } from '../theme/labelTheme';
 
 export interface LabelListEntry<DataPointItem = any> {
   /**
@@ -129,10 +130,12 @@ interface LabelListProps extends ZIndexable {
   /**
    * Draws a rectangle behind each label, for example to keep labels readable on top of filled shapes.
    *
-   * - `true` draws the background with default styles.
-   *   The fill is the `pageBackground` color from the theme, or white when no theme is set.
+   * - `true` draws the background with the styles from the theme's `graphicalItems[n].label.background`.
+   *   If neither sets a `fill`, the fill is the `pageBackground` color from the theme, or white when no theme is set.
    * - An object accepts SVG `<rect>` attributes such as `fill`, `stroke` and `rx`, and a `padding`.
-   * - `false` or `undefined` draws no background.
+   *   It is merged over the theme styles key by key.
+   * - `false` draws no background, even if the theme turns backgrounds on.
+   * - `undefined` uses the theme's `graphicalItems[n].label.background`, and draws no background without a theme.
    *
    * Each background is sized from its rendered label and follows curved label paths.
    * It is not drawn for custom `content`.
@@ -247,6 +250,7 @@ export function LabelList({ valueAccessor = defaultAccessor, ...restProps }: Pro
   const cartesianData = useCartesianLabelListContext();
   const polarData = usePolarLabelListContext();
   const clipArea = useContext(LabelListClipAreaContext);
+  const resolveLabelTheme = useDataLabelThemeResolver();
   const data = cartesianData || polarData;
   if (!data || !data.length) {
     return null;
@@ -254,45 +258,51 @@ export function LabelList({ valueAccessor = defaultAccessor, ...restProps }: Pro
 
   return (
     <ZIndexLayer zIndex={zIndex ?? DefaultZIndexes.label}>
-      <Layer className="recharts-label-list">
-        {data.map((entry, index) => {
-          if (isClippedAway(cartesianData?.[index], clipArea)) {
-            return null;
-          }
-          const value = isNullish(dataKey)
-            ? valueAccessor(entry, index)
-            : (getValueByDataKey(entry.payload, dataKey) as string | number);
+      <DataLabelContextProvider value>
+        <Layer className="recharts-label-list">
+          {data.map((entry, index) => {
+            if (isClippedAway(cartesianData?.[index], clipArea)) {
+              return null;
+            }
+            const value = isNullish(dataKey)
+              ? valueAccessor(entry, index)
+              : (getValueByDataKey(entry.payload, dataKey) as string | number);
 
-          const idProps = isNullish(id) ? {} : { id: `${id}-${index}` };
+            const idProps = isNullish(id) ? {} : { id: `${id}-${index}` };
+            /*
+             * Prefer to use the explicit fill from LabelList props, then the fill from the theme.
+             * Only in an absence of these, fall back to the fill of the entry.
+             * The entry fill can be quite difficult to see especially in Bar, Pie, RadialBar in inside positions,
+             * which is why the theme can also draw a background behind the label.
+             * On the other hand it's quite convenient in Scatter, Line, or when the position is outside the Bar, Pie filled shapes.
+             */
+            const themedProps = applyLabelTheme(resolveLabelTheme?.(index), restProps, entry.fill);
 
-          return (
-            <Label
-              key={`label-${index}`}
-              {...svgPropertiesAndEvents(entry)}
-              {...others}
-              {...idProps}
-              /*
-               * Prefer to use the explicit fill from LabelList props.
-               * Only in an absence of that, fall back to the fill of the entry.
-               * The entry fill can be quite difficult to see especially in Bar, Pie, RadialBar in inside positions.
-               * On the other hand it's quite convenient in Scatter, Line, or when the position is outside the Bar, Pie filled shapes.
-               */
-              fill={restProps.fill ?? entry.fill}
-              parentViewBox={entry.parentViewBox}
-              value={value}
-              textBreakAll={textBreakAll}
-              viewBox={entry.viewBox}
-              index={index}
-              /*
-               * Here we don't want to use the default Label zIndex,
-               * we want it to inherit the zIndex of the LabelList itself
-               * which means just rendering as a regular child, without portaling anywhere.
-               */
-              zIndex={0}
-            />
-          );
-        })}
-      </Layer>
+            return (
+              <Label
+                key={`label-${index}`}
+                {...svgPropertiesAndEvents(entry)}
+                {...others}
+                {...idProps}
+                fill={themedProps.fill}
+                style={themedProps.style}
+                background={themedProps.background}
+                parentViewBox={entry.parentViewBox}
+                value={value}
+                textBreakAll={textBreakAll}
+                viewBox={entry.viewBox}
+                index={index}
+                /*
+                 * Here we don't want to use the default Label zIndex,
+                 * we want it to inherit the zIndex of the LabelList itself
+                 * which means just rendering as a regular child, without portaling anywhere.
+                 */
+                zIndex={0}
+              />
+            );
+          })}
+        </Layer>
+      </DataLabelContextProvider>
     </ZIndexLayer>
   );
 }

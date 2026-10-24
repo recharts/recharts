@@ -33,6 +33,7 @@ import { DefaultZIndexes } from '../zIndex/DefaultZIndexes';
 
 import { CartesianLabelPosition, getCartesianPosition } from '../cartesian/getCartesianPosition';
 import { cartesianViewBoxToTrapezoid } from '../cartesian/cartesianViewBoxToTrapezoid';
+import { applyLabelTheme, useGlobalLabelTheme } from '../theme/labelTheme';
 
 /**
  * @inline
@@ -135,10 +136,12 @@ interface LabelProps extends ZIndexable {
   /**
    * Draws a background behind the label, for example to keep it readable on top of a filled shape.
    *
-   * - `true` draws the background with default styles.
-   *   The fill is the `pageBackground` color from the theme, or white when no theme is set.
+   * - `true` draws the background with the styles from the theme's `label.background`.
+   *   If neither sets a `fill`, the fill is the `pageBackground` color from the theme, or white when no theme is set.
    * - An object accepts SVG `<rect>` attributes such as `fill`, `stroke` and `rx`, and a `padding`.
-   * - `false` or `undefined` draws no background.
+   *   It is merged over the theme styles key by key.
+   * - `false` draws no background, even if the theme turns backgrounds on.
+   * - `undefined` uses the theme's `label.background`, and draws no background without a theme.
    *
    * The background is sized from the rendered text and follows curved label paths.
    * It is not drawn for custom `content`.
@@ -423,7 +426,10 @@ function polarViewBoxToTrapezoid(
  * @consumes PolarLabelContext
  */
 export function Label(outerProps: Props) {
-  const props: PropsWithDefaults = resolveDefaultProps(outerProps, defaultLabelProps);
+  const labelTheme = useGlobalLabelTheme();
+  const themedProps: Props =
+    labelTheme == null ? outerProps : { ...outerProps, ...applyLabelTheme(labelTheme, outerProps) };
+  const props: PropsWithDefaults = resolveDefaultProps(themedProps, defaultLabelProps);
   const {
     viewBox: viewBoxFromProps,
     parentViewBox,
