@@ -1,1 +1,0 @@
-import{a as n}from"./resolveDefaultProps-38f2qAXo.js";import{u as s}from"./isWellBehavedNumber-DqADXXOT.js";const l=(a,r,e)=>{const t=s();if(t==null)return e==null?r:n(r,e);const u=a(t);return u==null?r:n(r,u)};export{l as u};
