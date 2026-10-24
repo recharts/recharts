@@ -790,16 +790,16 @@ describe('<PolarGrid />', () => {
     it('should select angle ticks', () => {
       const { spy } = renderTestCase(state => selectPolarAxisTicks(state, 'angleAxis', 0, false));
       expectLastCalledWith(spy, [
-        { index: 0, coordinate: 0, value: 0, offset: -0 },
-        { index: 1, coordinate: 40, value: 1, offset: -0 },
-        { index: 2, coordinate: 80, value: 2, offset: -0 },
-        { index: 3, coordinate: 120, value: 3, offset: -0 },
-        { index: 4, coordinate: 160, value: 4, offset: -0 },
-        { index: 5, coordinate: 200, value: 5, offset: -0 },
-        { index: 6, coordinate: 240, value: 6, offset: -0 },
-        { index: 7, coordinate: 280, value: 7, offset: -0 },
-        { index: 8, coordinate: 320, value: 8, offset: -0 },
-        { index: 9, coordinate: 360, value: 9, offset: -0 },
+        { index: 0, coordinate: 0, value: 0, offset: 0 },
+        { index: 1, coordinate: 40, value: 1, offset: 0 },
+        { index: 2, coordinate: 80, value: 2, offset: 0 },
+        { index: 3, coordinate: 120, value: 3, offset: 0 },
+        { index: 4, coordinate: 160, value: 4, offset: 0 },
+        { index: 5, coordinate: 200, value: 5, offset: 0 },
+        { index: 6, coordinate: 240, value: 6, offset: 0 },
+        { index: 7, coordinate: 280, value: 7, offset: 0 },
+        { index: 8, coordinate: 320, value: 8, offset: 0 },
+        { index: 9, coordinate: 360, value: 9, offset: 0 },
       ]);
     });
 
@@ -943,19 +943,19 @@ describe('<PolarGrid />', () => {
         const expected: ReadonlyArray<TickItem> = [
           {
             coordinate: 0,
-            offset: -0,
+            offset: 0,
             value: 0,
             index: 0,
           },
           {
             coordinate: 180,
-            offset: -0,
+            offset: 0,
             value: 600,
             index: 1,
           },
           {
             coordinate: 360,
-            offset: -0,
+            offset: 0,
             value: 1200,
             index: 2,
           },
@@ -1015,14 +1015,14 @@ describe('<PolarGrid />', () => {
       it('should select ticks', () => {
         const { spy } = renderTestCase(state => selectPolarAxisTicks(state, 'angleAxis', 'axis-uv', false));
         expectLastCalledWith(spy, [
-          { index: 0, coordinate: 0, offset: -0, value: 0 },
-          { index: 1, coordinate: 47.368421052631575, offset: -0, value: 200 },
-          { index: 2, coordinate: 94.73684210526315, offset: -0, value: 400 },
-          { index: 3, coordinate: 142.10526315789474, offset: -0, value: 600 },
-          { index: 4, coordinate: 189.4736842105263, offset: -0, value: 800 },
-          { index: 5, coordinate: 236.84210526315792, offset: -0, value: 1000 },
-          { index: 6, coordinate: 284.2105263157895, offset: -0, value: 1200 },
-          { index: 7, coordinate: 331.57894736842104, offset: -0, value: 1400 },
+          { index: 0, coordinate: 0, offset: 0, value: 0 },
+          { index: 1, coordinate: 47.368421052631575, offset: 0, value: 200 },
+          { index: 2, coordinate: 94.73684210526315, offset: 0, value: 400 },
+          { index: 3, coordinate: 142.10526315789474, offset: 0, value: 600 },
+          { index: 4, coordinate: 189.4736842105263, offset: 0, value: 800 },
+          { index: 5, coordinate: 236.84210526315792, offset: 0, value: 1000 },
+          { index: 6, coordinate: 284.2105263157895, offset: 0, value: 1200 },
+          { index: 7, coordinate: 331.57894736842104, offset: 0, value: 1400 },
         ]);
       });
 
