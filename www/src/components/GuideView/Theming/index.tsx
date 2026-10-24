@@ -755,7 +755,7 @@ export function ThemingGuide() {
         <TargetBlankLink href="https://developer.mozilla.org/en-US/docs/Web/CSS/color_value/light-dark">
           <code>light-dark()</code>
         </TargetBlankLink>{' '}
-        value, for example <code>light-dark(#2775e8, #5396ff)</code>. The browser picks the light or the dark color from
+        value, for example <code>light-dark(#2373e6, #5396ff)</code>. The browser picks the light or the dark color from
         the{' '}
         <TargetBlankLink href="https://developer.mozilla.org/en-US/docs/Web/CSS/color-scheme">
           <code>color-scheme</code>
