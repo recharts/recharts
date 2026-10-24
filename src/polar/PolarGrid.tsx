@@ -6,7 +6,8 @@ import { AxisId } from '../state/cartesianAxisSlice';
 import { useAppSelector } from '../state/hooks';
 import { selectPolarGridAngles, selectPolarGridRadii } from '../state/selectors/polarGridSelectors';
 import { selectPolarViewBox } from '../state/selectors/polarAxisSelectors';
-import { PolarViewBoxRequired } from '../util/types';
+import { Percent, PolarViewBoxRequired } from '../util/types';
+import { getPercentValue } from '../util/DataUtils';
 import { svgPropertiesNoEvents } from '../util/svgPropertiesNoEvents';
 import { ZIndexable, ZIndexLayer } from '../zIndex/ZIndexLayer';
 import { DefaultZIndexes } from '../zIndex/DefaultZIndexes';
@@ -53,8 +54,14 @@ interface PolarGridProps extends ZIndexable {
   polarAngles?: ReadonlyArray<number>;
   /**
    * The array of every circle grid's radius.
+   *
+   * A number is the radius in pixels.
+   * A percentage string such as `'50%'` is relative to the outer radius of the grid,
+   * so `'100%'` draws the outermost circle and the grid keeps its proportions when the chart is resized.
+   * For example, `polarRadius={['25%', '50%', '75%', '100%']}` draws four evenly spaced circles.
+   * Numbers and percentages can be mixed.
    */
-  polarRadius?: ReadonlyArray<number>;
+  polarRadius?: ReadonlyArray<number | Percent>;
   /**
    * The type of polar grids.
    * @defaultValue polygon
@@ -110,7 +117,7 @@ interface PolarGridProps extends ZIndexable {
 
 export type Props = SVGProps<SVGLineElement> & PolarGridProps;
 
-type PropsWithDefaults = Props & {
+type PropsWithDefaults = Omit<Props, 'polarRadius'> & {
   cx: number;
   cy: number;
   innerRadius: number;
@@ -281,22 +288,24 @@ export const PolarGrid = (outsideProps: Props) => {
     return null;
   }
 
-  const props: PropsWithDefaults = {
-    cx: polarViewBox?.cx ?? cxFromOutside ?? 0,
-    cy: polarViewBox?.cy ?? cyFromOutside ?? 0,
-    innerRadius: polarViewBox?.innerRadius ?? innerRadiusFromOutside ?? 0,
-    outerRadius: polarViewBox?.outerRadius ?? outerRadiusFromOutside ?? 0,
-    polarAngles,
-    polarRadius,
-    zIndex,
-    ...inputs,
-  };
-
-  const { outerRadius } = props;
+  const outerRadius = polarViewBox?.outerRadius ?? outerRadiusFromOutside ?? 0;
 
   if (outerRadius <= 0) {
     return null;
   }
+
+  const resolvedPolarRadius = polarRadius.map(radius => getPercentValue(radius, outerRadius));
+
+  const props: PropsWithDefaults = {
+    cx: polarViewBox?.cx ?? cxFromOutside ?? 0,
+    cy: polarViewBox?.cy ?? cyFromOutside ?? 0,
+    innerRadius: polarViewBox?.innerRadius ?? innerRadiusFromOutside ?? 0,
+    outerRadius,
+    polarAngles,
+    polarRadius: resolvedPolarRadius,
+    zIndex,
+    ...inputs,
+  };
 
   return (
     <ZIndexLayer zIndex={props.zIndex}>
@@ -306,14 +315,14 @@ export const PolarGrid = (outsideProps: Props) => {
           radialLines={radialLines}
           {...props}
           polarAngles={polarAngles}
-          polarRadius={polarRadius}
+          polarRadius={resolvedPolarRadius}
         />
         <PolarAngles
           gridType={gridType}
           radialLines={radialLines}
           {...props}
           polarAngles={polarAngles}
-          polarRadius={polarRadius}
+          polarRadius={resolvedPolarRadius}
         />
       </g>
     </ZIndexLayer>

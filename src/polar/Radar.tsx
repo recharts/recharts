@@ -55,6 +55,7 @@ import { useBackwardsCompatibleTheme } from '../theme/useBackwardsCompatibleThem
 import { UnthemedStyles, useUnthemedStyles } from '../theme/dataEntryStyles';
 import { useGraphicalItemIdentity } from '../theme/useGraphicalItemIdentity';
 import { useEffectiveDataKey } from '../util/useEffectiveDataKey';
+import { DataLabelThemeContextProvider, useSeriesLabelThemeResolver } from '../theme/labelTheme';
 
 export interface RadarPoint {
   x: number;
@@ -678,7 +679,8 @@ export function Radar<DataPointType = any, DataValueType = any>(outsideProps: Pr
     radiusAxisId: outsideProps.radiusAxisId ?? defaultRadarProps.radiusAxisId,
   });
   const graphicalItemThemeSelector = useGraphicalItemIdentity(dataKey, outsideProps);
-  const graphicalItemTheme = useBackwardsCompatibleTheme<GraphicalItemStyle>(
+  const resolveLabelTheme = useSeriesLabelThemeResolver(graphicalItemThemeSelector);
+  const graphicalItemTheme = useBackwardsCompatibleTheme<Omit<GraphicalItemStyle, 'label'>>(
     graphicalItemThemeSelector,
     outsideProps,
     undefined,
@@ -727,13 +729,15 @@ export function Radar<DataPointType = any, DataValueType = any>(outsideProps: Pr
             tooltipType={props.tooltipType}
             id={id}
           />
-          <RadarImpl
-            {...props}
-            id={id}
-            dotFill={dotFill}
-            unthemedStyles={unthemedStyles}
-            themedActiveStyles={themedActiveStyles}
-          />
+          <DataLabelThemeContextProvider value={resolveLabelTheme}>
+            <RadarImpl
+              {...props}
+              id={id}
+              dotFill={dotFill}
+              unthemedStyles={unthemedStyles}
+              themedActiveStyles={themedActiveStyles}
+            />
+          </DataLabelThemeContextProvider>
         </>
       )}
     </RegisterGraphicalItemId>

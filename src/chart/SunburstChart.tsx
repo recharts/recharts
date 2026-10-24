@@ -445,7 +445,7 @@ const SunburstChartImpl = ({
   const cx = cxFromProps ?? width / 2;
   const cy = cyFromProps ?? height / 2;
 
-  const rScale = scaleLinear([0, data[dataKey]], [0, endAngle]);
+  const rScale = scaleLinear([0, data[dataKey]], [0, endAngle - startAngle]);
   const treeDepth = getMaxDepthOf(data);
   const thickness = (outerRadius - innerRadius) / treeDepth;
 
