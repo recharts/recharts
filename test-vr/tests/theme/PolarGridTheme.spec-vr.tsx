@@ -1,6 +1,6 @@
-import { expect, test } from '../fixtures';
+import { expect, testWithThemes } from '../fixtures';
 
-test('PolarGrid theme', async ({ mountStory }) => {
+testWithThemes('PolarGrid theme', async ({ mountStory }) => {
   const component = await mountStory('theme/PolarGridTheme/PolarGridThemeComparison');
 
   await expect(component).toHaveScreenshot();

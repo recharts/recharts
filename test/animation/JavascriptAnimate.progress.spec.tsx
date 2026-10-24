@@ -69,7 +69,7 @@ describe('JavascriptAnimate progress', () => {
 
       await animationManager.setAnimationProgress(0.7);
 
-      expect(child).toHaveBeenLastCalledWith(expect.closeTo(0.81, 2));
+      expect(child).toHaveBeenLastCalledWith(expect.closeTo(0.87, 2));
       expect(child).toHaveBeenCalledTimes(5);
 
       await animationManager.setAnimationProgress(1);

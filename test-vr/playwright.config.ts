@@ -27,6 +27,7 @@ const themedProjects = browserProjects.flatMap(project =>
     name: `${project.name}-${rechartsTheme}`,
     use: {
       ...project.use,
+      colorScheme: rechartsTheme,
       baseURL: `${galleryUrl}?rechartsTheme=${rechartsTheme}`,
     },
     metadata: { rechartsTheme },
@@ -59,13 +60,24 @@ export default defineConfig({
   expect: {
     /* https://playwright.dev/docs/test-timeouts */
     timeout: 10_000,
+    toHaveScreenshot: {
+      /*
+       * https://playwright.dev/docs/api/class-pageassertions#page-assertions-to-have-screenshot-2-option-threshold
+       * Charts are from the nature of things thin lines and we need lower threshold than the default 0.2
+       */
+      threshold: 0.05,
+    },
   },
   /* Run tests in files in parallel */
   fullyParallel: true,
   /* Fail the build on CI if you accidentally left test.only in the source code. */
   forbidOnly: !!process.env.CI,
-  /* Retry on CI only */
+  /*
+   * Retry on CI only. Retries record a trace and report flaky tests to flakiness.io,
+   * but a screenshot that only matches on retry is still a bug, so it fails the run.
+   */
   retries: process.env.CI ? 2 : 0,
+  failOnFlakyTests: !!process.env.CI,
   /*
    * In CI each browser project runs as its own parallel job, so 2 workers per job
    * makes good use of the 2-core GitHub runner without overloading it.

@@ -11,6 +11,7 @@ import {
   CartesianLabelListEntry,
   ImplicitLabelListType,
   LabelListFromLabelProp,
+  SetLabelListClipArea,
 } from '../component/LabelList';
 import { Dots } from '../component/Dots';
 import { ErrorBarDataItem, ErrorBarDataPointFormatter } from './ErrorBar';
@@ -22,7 +23,7 @@ import {
   ActiveShape,
   AnimationDuration,
   CartesianLayout,
-  DataConsumer,
+  ValueAxisDataConsumer,
   DataKey,
   DataProvider,
   DotType,
@@ -62,10 +63,13 @@ import { DefaultZIndexes } from '../zIndex/DefaultZIndexes';
 import { propsAreEqual } from '../util/propsAreEqual';
 import { GraphicalItemId } from '../state/graphicalItemsSlice';
 import { ChartData } from '../state/chartDataSlice';
-import { GraphicalItemStyle } from '../theme/RechartsTheme';
+import { GraphicalItemStyle, Styles2D } from '../theme/RechartsTheme';
 import { useRechartsTheme } from '../theme/RechartsThemeContext';
 import { useBackwardsCompatibleTheme } from '../theme/useBackwardsCompatibleTheme';
+import { UnthemedStyles, useUnthemedStyles } from '../theme/dataEntryStyles';
 import { useGraphicalItemIdentity } from '../theme/useGraphicalItemIdentity';
+import { useEffectiveDataKey } from '../util/useEffectiveDataKey';
+import { DataLabelThemeContextProvider, useSeriesLabelThemeResolver } from '../theme/labelTheme';
 
 export interface LinePointItem {
   readonly value: number;
@@ -82,6 +86,8 @@ export interface LinePointItem {
  * Internal props, combination of external props + defaultProps + private Recharts state
  */
 interface InternalLineProps extends ZIndexable {
+  unthemedStyles?: UnthemedStyles;
+  themedActiveStyles?: Styles2D;
   activeDot: ActiveDotType;
   animateNewValues: boolean;
   animationBegin: number;
@@ -132,7 +138,7 @@ interface InternalLineProps extends ZIndexable {
  * @internal
  */
 export interface LineProps<DataPointType = any, DataValueType = any>
-  extends DataProvider<DataPointType>, DataConsumer<DataPointType, DataValueType>, ZIndexable {
+  extends DataProvider<DataPointType>, ValueAxisDataConsumer<DataPointType, DataValueType>, ZIndexable {
   /**
    * The active dot is rendered on the closest data point when user interacts with the chart. Options:
    *
@@ -469,6 +475,14 @@ type InternalProps = LineSvgProps & InternalLineProps;
 
 export type Props<DataPointType = any, ValueAxisType = any> = LineSvgProps & LineProps<DataPointType, ValueAxisType>;
 
+/**
+ * The default dot fill follows the resolved line stroke so that dots read against the curve.
+ * A stroke of `none` carries no color, so fall back to the themed fill instead.
+ */
+function getDotFillFromTheme(stroke: string | undefined, fill: string | undefined): string | undefined {
+  return stroke && stroke !== 'none' ? stroke : fill;
+}
+
 const computeLegendPayloadFromAreaData = (props: Props): ReadonlyArray<LegendPayload> => {
   const { dataKey, name, stroke, legendType, hide } = props;
   return [
@@ -526,6 +540,7 @@ const SetLineTooltipEntrySettings = React.memo(
         unit,
         formatter,
         graphicalItemId: id,
+        ignoreDataEntryColors: true,
       },
     };
     return <SetTooltipEntrySettings tooltipEntrySettings={tooltipEntrySettings} />;
@@ -542,6 +557,7 @@ function LineDotsWrapper({
   props: InternalProps;
 }) {
   const { dot, dataKey, dotFill, needClip } = props;
+  const { unthemedStyles } = props;
 
   /*
    * Exclude ID from the props passed to the Dots component
@@ -559,6 +575,7 @@ function LineDotsWrapper({
       dotClassName="recharts-line-dot"
       dataKey={dataKey}
       baseProps={{ ...lineProps, fill: dotFill ?? lineProps.fill }}
+      unthemedStyles={unthemedStyles}
       needClip={needClip}
       clipPathId={clipPathId}
     />
@@ -797,7 +814,9 @@ class LineWithState extends Component<InternalProps> {
             dataPointFormatter={errorBarDataPointFormatter}
             errorBarOffset={0}
           >
-            <RenderCurve props={this.props} clipPathId={clipPathId} />
+            <SetLabelListClipArea xAxisId={xAxisId} yAxisId={yAxisId}>
+              <RenderCurve props={this.props} clipPathId={clipPathId} />
+            </SetLabelListClipArea>
           </SetErrorBarContext>
         </Layer>
         <ActivePoints
@@ -806,13 +825,16 @@ class LineWithState extends Component<InternalProps> {
           mainColor={this.props.stroke}
           itemDataKey={this.props.dataKey}
           clipPath={activePointsClipPath}
+          themedActiveStyles={this.props.themedActiveStyles}
         />
       </ZIndexLayer>
     );
   }
 }
 
-function LineImpl(props: WithIdRequired<Props> & Pick<InternalLineProps, 'dotFill'>) {
+function LineImpl(
+  props: WithIdRequired<Props> & Pick<InternalLineProps, 'dotFill' | 'unthemedStyles' | 'themedActiveStyles'>,
+) {
   const {
     activeDot,
     animateNewValues,
@@ -909,11 +931,8 @@ export function computeLinePoints({
 
       const x = isNullish(value) ? null : xAxis.scale.map(value);
       const y = getCateCoordinateOfLine({ axis: yAxis, ticks: yAxisTicks, bandSize, entry, index });
-      if (x == null || y == null) {
-        return null;
-      }
       return {
-        x,
+        x: x ?? null,
         y,
         value,
         payload: entry,
@@ -924,27 +943,26 @@ export function computeLinePoints({
 
 function LineFn(outsideProps: Props) {
   const rechartsTheme = useRechartsTheme();
-  const graphicalItemThemeSelector = useGraphicalItemIdentity(outsideProps.dataKey);
-  const graphicalItemTheme = useBackwardsCompatibleTheme<GraphicalItemStyle>(
+  const dataKey = useEffectiveDataKey({
+    dataKey: outsideProps.dataKey,
+    xAxisId: outsideProps.xAxisId ?? defaultLineProps.xAxisId,
+    yAxisId: outsideProps.yAxisId ?? defaultLineProps.yAxisId,
+  });
+  const graphicalItemThemeSelector = useGraphicalItemIdentity(dataKey, outsideProps);
+  const resolveLabelTheme = useSeriesLabelThemeResolver(graphicalItemThemeSelector);
+  const graphicalItemTheme = useBackwardsCompatibleTheme<Omit<GraphicalItemStyle, 'label'>>(
     graphicalItemThemeSelector,
     outsideProps,
     defaultLegacyThemeProps,
   );
   const themeStrokeDasharray = graphicalItemTheme?.strokeDasharray;
-  const activeDot =
-    graphicalItemTheme?.active == null ||
-    outsideProps.activeDot === false ||
-    typeof outsideProps.activeDot === 'function' ||
-    React.isValidElement(outsideProps.activeDot)
-      ? outsideProps.activeDot
-      : {
-          ...graphicalItemTheme.active,
-          ...(typeof outsideProps.activeDot === 'object' ? outsideProps.activeDot : {}),
-        };
+  const unthemedStyles = useUnthemedStyles(outsideProps);
+  const themedActiveStyles = graphicalItemTheme?.active;
   const props = resolveDefaultProps(
     {
       ...outsideProps,
-      activeDot,
+      dataKey,
+      activeDot: outsideProps.activeDot,
       fill: outsideProps.fill ?? graphicalItemTheme?.fill,
       fillOpacity: outsideProps.fillOpacity ?? graphicalItemTheme?.fillOpacity,
       stroke: outsideProps.stroke ?? graphicalItemTheme?.stroke,
@@ -957,7 +975,8 @@ function LineFn(outsideProps: Props) {
     defaultLineProps,
   );
   const dotFill =
-    outsideProps.fill ?? (rechartsTheme == null ? props.fill : (props.stroke ?? graphicalItemTheme?.fill));
+    outsideProps.fill ??
+    (rechartsTheme == null ? props.fill : getDotFillFromTheme(props.stroke, graphicalItemTheme?.fill));
   const isPanorama = useIsPanorama();
   return (
     <RegisterGraphicalItemId id={props.id} type="line">
@@ -988,7 +1007,15 @@ function LineFn(outsideProps: Props) {
             hide={props.hide}
             isPanorama={isPanorama}
           />
-          <LineImpl {...props} id={id} dotFill={dotFill} />
+          <DataLabelThemeContextProvider value={resolveLabelTheme}>
+            <LineImpl
+              {...props}
+              id={id}
+              dotFill={dotFill}
+              unthemedStyles={unthemedStyles}
+              themedActiveStyles={themedActiveStyles}
+            />
+          </DataLabelThemeContextProvider>
         </>
       )}
     </RegisterGraphicalItemId>

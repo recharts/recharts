@@ -9,6 +9,7 @@
     "resolveJsonModule": true,
     "isolatedModules": true,
     "noEmit": true,
+    "tsBuildInfoFile": "../node_modules/.cache/tsbuildinfo/test-vr.tsbuildinfo",
     "jsx": "react-jsx",
     "skipLibCheck": true,
     "types": ["node", "vite/client"],

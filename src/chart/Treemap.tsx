@@ -47,6 +47,8 @@ import { GraphicalItemId } from '../state/graphicalItemsSlice';
 import { initialEventSettingsState } from '../state/eventSettingsSlice';
 import { RechartsTheme } from '../theme/RechartsTheme';
 import { useBackwardsCompatibleTheme } from '../theme/useBackwardsCompatibleTheme';
+import { hasOwnColors } from '../theme/dataEntryStyles';
+import { getEffectivePageBackground } from '../theme/pageBackground';
 
 const NODE_VALUE_KEY = 'value';
 
@@ -622,9 +624,27 @@ type ContentItemProps = {
   id: GraphicalItemId;
   content: TreemapContentType;
   nodeProps: TreemapNode;
+  /**
+   * True if the data node or the Treemap props define their own colors. Such nodes ignore the theme completely.
+   * This is computed from the data node and the Treemap props separately
+   * because nodeProps merge both and also include layout fields.
+   */
+  nodeHasOwnColors: boolean;
+  /**
+   * Index of the top-level tile that this node belongs to.
+   * Undefined for the root node.
+   */
+  branchIndex: number | undefined;
   type: string;
   colorPanel: ReadonlyArray<string> | undefined;
-  themeGraphicalItems: RechartsTheme['graphicalItems'];
+  /**
+   * Undefined when there is no theme at all, which is when the legacy styles apply.
+   */
+  themeGraphicalItems: RechartsTheme['graphicalItems'] | undefined;
+  /**
+   * The color behind the chart, used for the tile outlines.
+   */
+  themePageBackground: string | undefined;
   typography: React.CSSProperties | undefined;
   dataKey: DataKey<any>;
   onClick?: (e: React.MouseEvent<SVGPathElement, MouseEvent>) => void;
@@ -632,12 +652,70 @@ type ContentItemProps = {
   onMouseLeave?: (e: React.MouseEvent<SVGPathElement, MouseEvent>) => void;
 };
 
+type TileStyles = {
+  fill: string | undefined;
+  stroke: string | undefined;
+  strokeWidth: number | string | undefined;
+};
+
+/**
+ * Resolves the default styles of a single tile.
+ * Explicit props and styles defined in data are applied later, on top of these.
+ */
+function getTileStyles({
+  nodeProps,
+  nodeHasOwnColors,
+  branchIndex,
+  colorPanel,
+  themeGraphicalItems,
+  themePageBackground,
+}: Pick<
+  ContentItemProps,
+  'nodeProps' | 'nodeHasOwnColors' | 'branchIndex' | 'colorPanel' | 'themeGraphicalItems' | 'themePageBackground'
+>): TileStyles {
+  const colors = colorPanel || COLOR_PANEL;
+  const legacyFill = nodeProps.depth < 2 ? colors[nodeProps.index % colors.length] : 'rgba(255,255,255,0)';
+  if (themeGraphicalItems == null) {
+    return { fill: legacyFill, stroke: '#fff', strokeWidth: undefined };
+  }
+  const fillFromColorPanel = colorPanel == null ? undefined : legacyFill;
+  if (nodeHasOwnColors) {
+    /*
+     * A node that brings its own colors in data, or in the Treemap props, ignores the theme completely,
+     * so that its colors are not mixed with the theme colors.
+     */
+    return { fill: fillFromColorPanel, stroke: undefined, strokeWidth: undefined };
+  }
+  if (branchIndex == null) {
+    /*
+     * The root node spans the whole chart, below all the other tiles.
+     * Leaving it unpainted lets nodeGap and nodeInset show the chart background.
+     */
+    return { fill: fillFromColorPanel ?? 'none', stroke: 'none', strokeWidth: undefined };
+  }
+  /*
+   * Top-level siblings get different colors, and nested tiles inherit the color of their branch.
+   * Tiles of the same color are then told apart by their outline.
+   * The outline has the color of the background, so that the tiles appear separated by gaps,
+   * and every tile edge has the same contrast as the tile fill against the background.
+   */
+  const branchStyle = themeGraphicalItems[branchIndex % themeGraphicalItems.length];
+  return {
+    fill: fillFromColorPanel ?? branchStyle?.fill,
+    stroke: themePageBackground ?? branchStyle?.stroke,
+    strokeWidth: undefined,
+  };
+}
+
 function ContentItem({
   content,
   nodeProps,
+  nodeHasOwnColors,
+  branchIndex,
   type,
   colorPanel,
   themeGraphicalItems,
+  themePageBackground,
   typography,
   onMouseEnter,
   onMouseLeave,
@@ -658,7 +736,16 @@ function ContentItem({
     );
   }
   // optimize default shape
-  const { x, y, width, height, index } = nodeProps;
+  const { x, y, width, height } = nodeProps;
+  const { fill, stroke, strokeWidth } = getTileStyles({
+    nodeProps,
+    nodeHasOwnColors,
+    branchIndex,
+    colorPanel,
+    themeGraphicalItems,
+    themePageBackground,
+  });
+
   let arrow = null;
   if (width > 10 && height > 10 && nodeProps.children && type === 'nest' && nodeProps.depth > 0) {
     arrow = (
@@ -687,16 +774,13 @@ function ContentItem({
     );
   }
 
-  const colors = colorPanel || COLOR_PANEL;
-  const themeGraphicalItem =
-    themeGraphicalItems.length === 0 ? undefined : themeGraphicalItems[nodeProps.depth % themeGraphicalItems.length];
-  const defaultFill = nodeProps.depth < 2 ? colors[index % colors.length] : 'rgba(255,255,255,0)';
   return (
     <g>
       <Rectangle
-        fill={colorPanel == null ? (themeGraphicalItem?.fill ?? defaultFill) : defaultFill}
-        stroke={themeGraphicalItem?.stroke ?? '#fff'}
-        {...omit(nodeProps, ['children'])}
+        fill={fill}
+        stroke={stroke}
+        strokeWidth={strokeWidth}
+        {...omit(nodeProps, ['children', 'id'])}
         onMouseEnter={onMouseEnter}
         onMouseLeave={onMouseLeave}
         onClick={onClick}
@@ -785,12 +869,16 @@ const defaultTreemapMargin: Margin = {
 function TreemapItem({
   content,
   nodeProps,
+  nodeHasOwnColors,
+  branchIndex,
   isLeaf,
   treemapProps,
   onNestClick,
 }: {
   content: TreemapContentType;
   nodeProps: TreemapNode;
+  nodeHasOwnColors: boolean;
+  branchIndex: number | undefined;
   isLeaf: boolean;
   treemapProps: InternalTreemapProps;
   onNestClick: (node: TreemapNode) => void;
@@ -811,6 +899,7 @@ function TreemapItem({
     onClick: onItemClickFromProps,
     onMouseLeave: onMouseLeaveFromProps,
     themeGraphicalItems,
+    themePageBackground,
     typography,
   } = treemapProps;
   const { width, height, x, y } = nodeProps;
@@ -883,9 +972,12 @@ function TreemapItem({
               x,
               y,
             }}
+            nodeHasOwnColors={nodeHasOwnColors}
+            branchIndex={branchIndex}
             type={type}
             colorPanel={colorPanel}
             themeGraphicalItems={themeGraphicalItems}
+            themePageBackground={themePageBackground}
             typography={typography}
           />
         </Layer>
@@ -899,7 +991,8 @@ type InternalTreemapProps = RequiresDefaultProps<Props, typeof defaultTreeMapPro
   height: number;
   dispatch: AppDispatch;
   id: GraphicalItemId;
-  themeGraphicalItems: RechartsTheme['graphicalItems'];
+  themeGraphicalItems: RechartsTheme['graphicalItems'] | undefined;
+  themePageBackground: string | undefined;
   typography?: React.CSSProperties;
 };
 
@@ -1009,10 +1102,16 @@ class TreemapWithState extends PureComponent<InternalTreemapProps, State> {
     });
   }
 
-  renderNode(root: TreemapNode, node: TreemapNode): ReactNode {
+  /**
+   * @param root parent of the node
+   * @param node the node to render
+   * @param parentBranchIndex index of the top-level tile that the parent belongs to, undefined if the parent is the root
+   */
+  renderNode(root: TreemapNode, node: TreemapNode, parentBranchIndex: number | undefined): ReactNode {
     const { content, type } = this.props;
     const nodeProps = { ...svgPropertiesNoEvents(this.props), ...node, root };
     const isLeaf = !node.children || !node.children.length;
+    const branchIndex = node.depth === 0 ? undefined : (parentBranchIndex ?? node.index);
 
     const { currentRoot } = this.state;
     const isCurrentRootChild = (currentRoot?.children || []).filter(
@@ -1032,11 +1131,13 @@ class TreemapWithState extends PureComponent<InternalTreemapProps, State> {
           isLeaf={isLeaf}
           content={content}
           nodeProps={nodeProps}
+          nodeHasOwnColors={hasOwnColors(node) || hasOwnColors(this.props)}
+          branchIndex={branchIndex}
           treemapProps={this.props}
           onNestClick={this.handleClick}
         />
         {node.children && node.children.length
-          ? node.children.map((child: TreemapNode) => this.renderNode(node, child))
+          ? node.children.map((child: TreemapNode) => this.renderNode(node, child, branchIndex))
           : null}
       </Layer>
     );
@@ -1049,7 +1150,7 @@ class TreemapWithState extends PureComponent<InternalTreemapProps, State> {
       return null;
     }
 
-    return this.renderNode(formatRoot, formatRoot);
+    return this.renderNode(formatRoot, formatRoot, undefined);
   }
 
   // render nest treemap
@@ -1084,8 +1185,7 @@ class TreemapWithState extends PureComponent<InternalTreemapProps, State> {
                 cursor: 'pointer',
                 display: 'inline-block',
                 padding: '0 7px',
-                background: '#000',
-                color: '#fff',
+                ...(this.props.themeGraphicalItems == null && { background: '#000', color: '#fff' }),
                 marginRight: '3px',
                 ...this.props.typography,
               }}
@@ -1141,8 +1241,8 @@ class TreemapWithState extends PureComponent<InternalTreemapProps, State> {
         <SetTreemapTooltipEntrySettings
           dataKey={this.props.dataKey}
           nameKey={this.props.nameKey}
-          stroke={this.props.stroke ?? this.props.themeGraphicalItems[0]?.stroke}
-          fill={this.props.fill ?? this.props.themeGraphicalItems[0]?.fill}
+          stroke={this.props.stroke ?? this.props.themeGraphicalItems?.[0]?.stroke}
+          fill={this.props.fill ?? this.props.themeGraphicalItems?.[0]?.fill}
           currentRoot={this.state.currentRoot}
           id={this.props.id}
         />
@@ -1163,7 +1263,7 @@ class TreemapWithState extends PureComponent<InternalTreemapProps, State> {
 
 function TreemapDispatchInject(
   props: RequiresDefaultProps<Props, typeof defaultTreeMapProps> &
-    Pick<InternalTreemapProps, 'themeGraphicalItems' | 'typography'>,
+    Pick<InternalTreemapProps, 'themeGraphicalItems' | 'themePageBackground' | 'typography'>,
 ) {
   const dispatch = useAppDispatch();
   const width = useChartWidth();
@@ -1179,6 +1279,8 @@ function TreemapDispatchInject(
   );
 }
 
+type TreemapThemeSlice = Partial<Pick<RechartsTheme, 'graphicalItems' | 'typography' | 'pageBackground'>>;
+
 /**
  * The Treemap chart is used to visualize hierarchical data using nested rectangles.
  *
@@ -1187,9 +1289,10 @@ function TreemapDispatchInject(
  * @provides TooltipEntrySettings
  */
 export function Treemap(outsideProps: Props) {
-  const theme = useBackwardsCompatibleTheme<Partial<Pick<RechartsTheme, 'graphicalItems' | 'typography'>>>(
+  const theme = useBackwardsCompatibleTheme<TreemapThemeSlice>(
     (rechartsTheme: RechartsTheme) => ({
       graphicalItems: rechartsTheme.graphicalItems,
+      pageBackground: getEffectivePageBackground(rechartsTheme),
       typography: rechartsTheme.typography,
     }),
     {},
@@ -1236,7 +1339,8 @@ export function Treemap(outsideProps: Props) {
         <TooltipPortalContext.Provider value={tooltipPortal}>
           <TreemapDispatchInject
             {...props}
-            themeGraphicalItems={theme?.graphicalItems ?? []}
+            themeGraphicalItems={theme?.graphicalItems}
+            themePageBackground={theme?.pageBackground}
             typography={theme?.typography}
           />
         </TooltipPortalContext.Provider>

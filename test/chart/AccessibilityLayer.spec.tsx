@@ -5,6 +5,7 @@ import {
   Area,
   AreaChart,
   CartesianGrid,
+  DefaultTooltipContent,
   Funnel,
   FunnelChart,
   Legend,
@@ -12,6 +13,9 @@ import {
   LineChart,
   Pie,
   PieChart,
+  PolarAngleAxis,
+  Radar,
+  RadarChart,
   Tooltip,
   XAxis,
   YAxis,
@@ -73,6 +77,13 @@ function assertNoKeyboardInteractions(container: HTMLElement) {
   arrowLeft(svg);
   expectTooltipNotVisible(container);
 }
+
+const radarKeyboardData = [
+  { name: 'North', uv: 400 },
+  { name: 'East', uv: 300 },
+  { name: 'South', uv: 200 },
+  { name: 'West', uv: 100 },
+];
 
 describe.each([true, undefined])('AccessibilityLayer with accessibilityLayer=%s', accessibilityLayer => {
   describe('AreaChart horizontal', () => {
@@ -735,6 +746,53 @@ describe.each([true, undefined])('AccessibilityLayer with accessibilityLayer=%s'
     });
   });
 
+  describe('RadarChart', () => {
+    test('When chart receives focus, arrow keys navigate its tooltip around the polar axis', () => {
+      const coordinateSpy = vi.fn();
+      const { container } = render(
+        <RadarChart
+          width={400}
+          height={400}
+          cx={200}
+          cy={200}
+          outerRadius={100}
+          data={radarKeyboardData}
+          accessibilityLayer={accessibilityLayer}
+        >
+          <PolarAngleAxis dataKey="name" />
+          <Radar isAnimationActive={false} dataKey="uv" />
+          <Tooltip
+            content={props => {
+              coordinateSpy(props.coordinate);
+              return <DefaultTooltipContent {...props} />;
+            }}
+          />
+        </RadarChart>,
+      );
+
+      const svg = getMainSurface(container);
+      act(() => svg.focus());
+      expectTooltipPayload(container, 'North', ['uv : 400']);
+      const cursor = container.querySelector('.recharts-tooltip-cursor');
+      assertNotNull(cursor);
+      expect(cursor).toHaveAttribute('d', 'M200,200L200,100');
+      expect(coordinateSpy).toHaveBeenLastCalledWith(expect.objectContaining({ x: 200, y: 100 }));
+
+      arrowRight(svg);
+      expectTooltipPayload(container, 'East', ['uv : 300']);
+      expect(cursor).toHaveAttribute('d', 'M200,200L300,200');
+      expect(coordinateSpy).toHaveBeenLastCalledWith(expect.objectContaining({ x: 300, y: 200 }));
+
+      arrowLeft(svg);
+      expectTooltipPayload(container, 'North', ['uv : 400']);
+      expect(cursor).toHaveAttribute('d', 'M200,200L200,100');
+
+      act(() => svg.blur());
+      expectTooltipNotVisible(container);
+      expect(container.querySelector('.recharts-tooltip-cursor')).not.toBeInTheDocument();
+    });
+  });
+
   describe('FunnelChart', () => {
     test('Add tabindex and role to the svg element', () => {
       const { container } = render(
@@ -913,6 +971,67 @@ describe('AccessibilityLayer with accessibilityLayer=false', () => {
 
       assertNoKeyboardInteractions(container);
     });
+  });
+});
+
+describe('Keyboard preventDefault while the accessibility layer consumes the key', () => {
+  function renderArea(accessibilityLayer?: boolean) {
+    return render(
+      <AreaChart width={100} height={50} data={PageData} accessibilityLayer={accessibilityLayer}>
+        <Area type="monotone" dataKey="uv" stroke="#ff7300" fill="#ff7300" />
+        <Tooltip />
+        <XAxis dataKey="name" />
+        <YAxis />
+      </AreaChart>,
+    );
+  }
+
+  // fireEvent returns false only when a handler called preventDefault, so invert it to read "was the default consumed".
+  function defaultConsumed(container: HTMLElement, key: string): boolean {
+    const svg = getMainSurface(container);
+    act(() => svg.focus());
+    return !fireEvent.keyDown(svg, { key });
+  }
+
+  test.each(['ArrowLeft', 'ArrowRight', 'Enter'])(
+    'should consume the browser default for %s so the page does not scroll',
+    key => {
+      const { container } = renderArea();
+      expect(defaultConsumed(container, key)).toBe(true);
+    },
+  );
+
+  test('should leave the browser default of other keys untouched', () => {
+    const { container } = renderArea();
+    expect(defaultConsumed(container, 'a')).toBe(false);
+    expect(defaultConsumed(container, 'Tab')).toBe(false);
+  });
+
+  test('should not consume anything when the accessibility layer is off', () => {
+    const { container } = renderArea(false);
+    expect(defaultConsumed(container, 'ArrowRight')).toBe(false);
+    expect(defaultConsumed(container, 'Enter')).toBe(false);
+  });
+
+  test('should not consume the browser default of a button rendered inside the chart', () => {
+    // The wrapper hosts custom children too, so a key event that bubbles up from a button in a
+    // custom legend must keep its default, otherwise the button can no longer be activated.
+    function CustomLegend() {
+      return <button type="button">Legend action</button>;
+    }
+    const { container } = render(
+      <AreaChart width={100} height={50} data={PageData}>
+        <Area type="monotone" dataKey="uv" stroke="#ff7300" fill="#ff7300" />
+        <Tooltip />
+        <XAxis dataKey="name" />
+        <YAxis />
+        <Legend content={<CustomLegend />} />
+      </AreaChart>,
+    );
+    const button = container.querySelector('button');
+    assertNotNull(button);
+    expect(fireEvent.keyDown(button, { key: 'Enter' })).toBe(true);
+    expect(fireEvent.keyDown(button, { key: 'ArrowRight' })).toBe(true);
   });
 });
 

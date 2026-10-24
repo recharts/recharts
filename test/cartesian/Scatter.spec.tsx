@@ -750,6 +750,9 @@ describe('<Scatter />', () => {
         expect(afterSecondHover).toBeLessThanOrEqual(2);
       } finally {
         vi.useRealTimers();
+        vi.useFakeTimers({
+          toFake: ['requestAnimationFrame', 'cancelAnimationFrame'],
+        });
       }
     });
   });

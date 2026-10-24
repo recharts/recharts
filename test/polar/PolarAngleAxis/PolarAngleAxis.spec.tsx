@@ -96,21 +96,25 @@ const ringsData = [
     name: 'Elves',
     rings: 3,
     fill: 'green',
+    stroke: 'green',
   },
   {
     name: 'Dwarves',
     rings: 7,
     fill: 'blue',
+    stroke: 'blue',
   },
   {
     name: 'Humans',
     rings: 9,
     fill: 'red',
+    stroke: 'red',
   },
   {
     name: 'Sauron',
     rings: 1,
     fill: 'black',
+    stroke: 'black',
   },
 ];
 
@@ -1754,6 +1758,7 @@ describe('<PolarAngleAxis />', () => {
           {
             id: expect.stringMatching('radialBar-'),
             maxBarSize: undefined,
+            minAngle: 0,
             minPointSize: 0,
             barSize: undefined,
             stackId: undefined,
@@ -1927,6 +1932,7 @@ describe('<PolarAngleAxis />', () => {
           {
             id: expect.stringMatching('radialBar-'),
             maxBarSize: undefined,
+            minAngle: 0,
             minPointSize: 0,
             barSize: undefined,
             stackId: undefined,
@@ -2036,6 +2042,7 @@ describe('<PolarAngleAxis />', () => {
           {
             id: expect.stringMatching('radialBar-'),
             maxBarSize: undefined,
+            minAngle: 0,
             minPointSize: 0,
             barSize: undefined,
             stackId: undefined,

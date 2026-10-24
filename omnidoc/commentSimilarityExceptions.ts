@@ -24,6 +24,12 @@ export type CommentSimilarityGroup = {
  */
 export const commentSimilarityExceptions: ReadonlyArray<CommentSimilarityGroup> = [
   {
+    components: ['Label', 'LabelList'],
+    props: ['background'],
+    reason:
+      'Label and LabelList take the default background from the label theme, Text is the primitive that does not read the label theme.',
+  },
+  {
     components: ['*'],
     props: ['children'],
     reason: 'Children comments vary widely based on component purpose',
@@ -40,9 +46,21 @@ export const commentSimilarityExceptions: ReadonlyArray<CommentSimilarityGroup> 
       'label in graphical elements describes multiple labels, unlike axes and reference elements which describe a single label.',
   },
   {
+    components: ['Area', 'Bar', 'Line', 'Scatter', 'Radar', 'RadialBar'],
+    props: ['dataKey'],
+    reason:
+      'dataKey in graphical elements that display their value on an axis describes how they inherit the dataKey from that axis.',
+  },
+  {
     components: ['Pie'],
     props: ['label'],
     reason: 'Pie has a custom label implementation independent from other graphical elements',
+  },
+  {
+    components: ['Text', 'Label', 'LabelList'],
+    props: ['background'],
+    reason:
+      'background in Text, Label and LabelList is a rectangle drawn behind the text, unlike Bar and RadialBar where it is the background of the bar.',
   },
   {
     components: ['CartesianGrid'],

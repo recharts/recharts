@@ -1,6 +1,6 @@
-import { expect, test } from '../fixtures';
+import { expect, testWithThemes } from '../fixtures';
 
-test('Reference elements theme', async ({ mountStory }) => {
+testWithThemes('Reference elements theme', async ({ mountStory }) => {
   const component = await mountStory('theme/ReferenceTheme/ReferenceThemeComparison');
 
   await expect(component).toHaveScreenshot();

@@ -4,27 +4,25 @@ import {
   AreaChart,
   Bar,
   BarChart,
+  Funnel,
+  FunnelChart,
+  LabelList,
   Line,
   LineChart,
-  Scatter,
-  ScatterChart,
   Pie,
   PieChart,
   Radar,
   RadarChart,
   RadialBar,
   RadialBarChart,
-  LabelList,
+  Scatter,
+  ScatterChart,
   XAxis,
   YAxis,
-  FunnelChart,
-  Funnel,
 } from '../../src';
-import { pageData, pageDataWithFillColor } from '../../storybook/stories/data';
+import { pageData } from '../../storybook/stories/data';
 
 const shortData = pageData.slice(2, 4);
-
-const shortFillColorData = pageDataWithFillColor.slice(2, 4);
 
 const margin = { top: 155, right: 180, left: 180, bottom: 0 };
 
@@ -61,6 +59,7 @@ const AreaImplicitLabelListTest = () => (
         dataKey="uv"
         stroke="#8884d8"
         fill="none"
+        isAnimationActive={false}
         label={{ position, offset: 50, angle: -30, valueAccessor: () => position }}
       />
     ))}
@@ -70,7 +69,7 @@ const AreaImplicitLabelListTest = () => (
 
 const AreaExplicitLabelListTest = () => (
   <AreaChart width={900} height={500} data={shortData} margin={margin}>
-    <Area type="monotone" dataKey="uv" stroke="#8884d8" fill="none">
+    <Area type="monotone" dataKey="uv" stroke="#8884d8" fill="none" isAnimationActive={false}>
       {availablePositions.map(position => (
         <LabelList
           key={position}
@@ -125,6 +124,7 @@ const LineImplicitLabelListTest = () => (
         type="monotone"
         dataKey="uv"
         stroke="#8884d8"
+        isAnimationActive={false}
         label={{ position, offset: 50, angle: -30, valueAccessor: () => position }}
       />
     ))}
@@ -134,7 +134,7 @@ const LineImplicitLabelListTest = () => (
 
 const LineExplicitLabelListTest = () => (
   <LineChart width={900} height={500} data={shortData} margin={margin}>
-    <Line type="monotone" dataKey="uv" stroke="#8884d8">
+    <Line type="monotone" dataKey="uv" stroke="#8884d8" isAnimationActive={false}>
       {availablePositions.map(position => (
         <LabelList
           key={position}
@@ -189,7 +189,7 @@ const PieImplicitLabelListTest = () => (
     {availablePositions.map(position => (
       <Pie
         key={position}
-        data={shortFillColorData}
+        data={shortData}
         dataKey="uv"
         cx={450}
         cy={250}
@@ -203,7 +203,7 @@ const PieImplicitLabelListTest = () => (
 
 const PieExplicitLabelListTest = () => (
   <PieChart width={900} height={500}>
-    <Pie data={shortFillColorData} dataKey="uv" isAnimationActive={false}>
+    <Pie data={shortData} dataKey="uv" isAnimationActive={false}>
       {availablePositions.map(position => (
         <LabelList
           key={position}
@@ -351,3 +351,29 @@ export const RadialBarImplicitLabelList = () => <RadialBarImplicitLabelListTest 
 export const RadialBarExplicitLabelList = () => <RadialBarExplicitLabelListTest />;
 export const FunnelImplicitLabelList = () => <FunnelImplicitLabelListTest />;
 export const FunnelExplicitLabelList = () => <FunnelExplicitLabelListTest />;
+
+export const BarLabelListWithBackground = () => (
+  <BarChart width={600} height={300} data={pageData}>
+    <XAxis dataKey="name" />
+    <Bar dataKey="uv" stackId="a" isAnimationActive={false}>
+      <LabelList dataKey="uv" position="inside" background />
+    </Bar>
+    <Bar dataKey="pv" stackId="a" isAnimationActive={false}>
+      <LabelList
+        dataKey="name"
+        position="insideTop"
+        angle={-30}
+        fill="black"
+        background={{ fill: 'gold', rx: 8, padding: { x: 6, y: 2 } }}
+      />
+    </Bar>
+  </BarChart>
+);
+
+export const PieLabelListWithBackground = () => (
+  <PieChart width={400} height={400}>
+    <Pie data={pageData} dataKey="uv" nameKey="name" isAnimationActive={false}>
+      <LabelList dataKey="name" position="inside" background />
+    </Pie>
+  </PieChart>
+);

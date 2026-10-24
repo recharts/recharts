@@ -98,11 +98,16 @@ describe('is functions', () => {
 
 describe('uniqueId', () => {
   test('should return unique ID independent of prefix', () => {
-    expect(uniqueId()).toEqual('1');
-    expect(uniqueId(undefined)).toEqual('2');
-    expect(uniqueId('')).toEqual('3');
-    expect(uniqueId('myprefix')).toEqual('myprefix4');
-    expect(uniqueId()).toEqual('5');
+    const first = Number(uniqueId());
+    const second = Number(uniqueId(undefined));
+    const third = Number(uniqueId(''));
+    const prefixed = uniqueId('myprefix');
+    const fifth = Number(uniqueId());
+
+    expect(second).toBe(first + 1);
+    expect(third).toBe(second + 1);
+    expect(prefixed).toBe(`myprefix${third + 1}`);
+    expect(fifth).toBe(third + 2);
   });
 });
 

@@ -17,6 +17,11 @@ describe('Documentation Examples Coverage', () => {
    */
   const exportsThatNeedExamples: ReadonlyArray<string> = [
     'ActiveDotType',
+    'autoTheme',
+    'darkPalette',
+    'darkTheme',
+    'emptyTheme',
+    'lightPalette',
     'ActiveDotProps',
     'ActiveLabel',
     'ActiveShape',
@@ -121,7 +126,6 @@ describe('Documentation Examples Coverage', () => {
     'Surface',
     'SurfaceProps',
     'SymbolsProps',
-    'SyncMethod',
     'TextProps',
     'TickItem',
     'TickOrientation',

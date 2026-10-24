@@ -30,6 +30,9 @@ describe('Throttling Middleware', () => {
 
   afterEach(() => {
     vi.useRealTimers();
+    vi.useFakeTimers({
+      toFake: ['requestAnimationFrame', 'cancelAnimationFrame'],
+    });
   });
 
   describe('mouseMoveMiddleware', () => {

@@ -1,4 +1,12 @@
-import { ChartOffsetInternal, Coordinate, LayoutType, TickItem } from '../../../util/types';
+import {
+  ChartOffsetInternal,
+  Coordinate,
+  LayoutType,
+  PolarCoordinate,
+  PolarViewBoxRequired,
+  TickItem,
+} from '../../../util/types';
+import { polarToCartesian } from '../../../util/PolarUtils';
 import { TooltipIndex, TooltipPayloadConfiguration } from '../../tooltipSlice';
 
 export const combineCoordinateForDefaultIndex = (
@@ -9,7 +17,8 @@ export const combineCoordinateForDefaultIndex = (
   tooltipTicks: ReadonlyArray<TickItem> | undefined,
   defaultIndex: TooltipIndex | undefined,
   tooltipConfigurations: ReadonlyArray<TooltipPayloadConfiguration>,
-): Coordinate | undefined => {
+  polarViewBox: PolarViewBoxRequired | undefined,
+): Coordinate | PolarCoordinate | undefined => {
   if (defaultIndex == null) {
     return undefined;
   }
@@ -19,7 +28,7 @@ export const combineCoordinateForDefaultIndex = (
    * Until then, we choose the first one.
    */
   const firstConfiguration = tooltipConfigurations[0];
-  const maybePosition: Coordinate | undefined = firstConfiguration?.getPosition(defaultIndex);
+  const maybePosition = firstConfiguration?.getPosition(defaultIndex);
   if (maybePosition != null) {
     return maybePosition;
   }
@@ -34,8 +43,43 @@ export const combineCoordinateForDefaultIndex = (
         y: (offset.top + height) / 2,
       };
     }
+    case 'radial': {
+      if (polarViewBox) {
+        const { cx, cy, innerRadius, outerRadius, startAngle, endAngle } = polarViewBox;
+        const radius = tick.coordinate;
+        const angle = (startAngle + endAngle) / 2;
+        return {
+          ...polarToCartesian(cx, cy, outerRadius, angle),
+          cx,
+          cy,
+          radius,
+          angle,
+          startAngle,
+          endAngle,
+          innerRadius,
+          outerRadius,
+          clockWise: false,
+        };
+      }
+      return {
+        x: (offset.left + width) / 2,
+        y: tick.coordinate,
+      };
+    }
+    case 'centric': {
+      if (polarViewBox == null) {
+        return undefined;
+      }
+      const { cx, cy, outerRadius } = polarViewBox;
+      const angle = tick.coordinate;
+      return {
+        ...polarViewBox,
+        ...polarToCartesian(cx, cy, outerRadius, angle),
+        angle,
+        radius: outerRadius,
+      };
+    }
     default: {
-      // This logic is not super sound - it conflates vertical, radial, centric layouts into just one. TODO improve!
       return {
         x: (offset.left + width) / 2,
         y: tick.coordinate,

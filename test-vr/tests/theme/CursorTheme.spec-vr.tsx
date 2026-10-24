@@ -1,4 +1,4 @@
-import { expect, test } from '../fixtures';
+import { expect, testWithThemes } from '../fixtures';
 
 /*
  * RadialBar does not derive a polar coordinate for Tooltip defaultIndex, so its
@@ -6,7 +6,7 @@ import { expect, test } from '../fixtures';
  * hidden PolarAngleAxis and hover below are a VR workaround for #7672.
  * https://github.com/recharts/recharts/issues/7672
  */
-test('Unthemed Cursor', async ({ mountStory }) => {
+testWithThemes('Unthemed Cursor', async ({ mountStory }) => {
   const component = await mountStory('theme/CursorTheme/UnthemedCursor');
 
   await expect(component.locator('.recharts-polar-angle-axis')).toHaveCount(1);
@@ -18,7 +18,7 @@ test('Unthemed Cursor', async ({ mountStory }) => {
   await expect(component).toHaveScreenshot();
 });
 
-test('Themed Cursor', async ({ mountStory }) => {
+testWithThemes('Themed Cursor', async ({ mountStory }) => {
   const component = await mountStory('theme/CursorTheme/ThemedCursor');
 
   await expect(component.locator('.recharts-polar-angle-axis')).toHaveCount(1);

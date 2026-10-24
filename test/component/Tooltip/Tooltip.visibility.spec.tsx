@@ -1163,6 +1163,7 @@ describe('Tooltip visibility', () => {
               dataKey: 'uv',
               fill: '#8884d8',
               graphicalItemId: 'my-item-id',
+              ignoreDataEntryColors: true,
               hide: false,
               name: 'Mike',
               nameKey: undefined,
@@ -1255,6 +1256,7 @@ describe('Tooltip visibility', () => {
               dataKey: 'uv',
               fill: '#8884d8',
               graphicalItemId: 'my-item-id',
+              ignoreDataEntryColors: true,
               hide: false,
               name: 'Mike',
               nameKey: undefined,
@@ -1599,7 +1601,7 @@ describe('Tooltip visibility', () => {
           '3 : 2400',
           '5 : 2400',
           'stature : 2400cm',
-          'weight : 2400kg',
+          'weight : 400kg',
         ]);
       });
     });
@@ -1796,5 +1798,34 @@ describe('Cursor visibility', () => {
 
       expect(container.querySelector('.recharts-tooltip-cursor')).not.toBeInTheDocument();
     });
+  });
+});
+
+describe('Tooltip visibility after mouseleave with a pending throttled mousemove', () => {
+  beforeEach(() => {
+    mockGetBoundingClientRect({ width: 100, height: 100 });
+  });
+
+  test('should stay hidden when mouseleave arrives before the throttled mousemove runs', () => {
+    const { container } = render(
+      <LineChart width={400} height={400} data={PageData}>
+        <XAxis dataKey="name" />
+        <YAxis />
+        <Tooltip isAnimationActive={false} />
+        <Line dataKey="uv" isAnimationActive={false} />
+      </LineChart>,
+    );
+    showTooltip(container, lineChartMouseHoverTooltipSelector);
+    expect(getTooltip(container)).toBeVisible();
+
+    const wrapper = container.querySelector(lineChartMouseHoverTooltipSelector);
+    assertNotNull(wrapper);
+    fireEvent.mouseMove(wrapper, { clientX: 150, clientY: 200 });
+    fireEvent.mouseLeave(wrapper);
+    act(() => {
+      vi.runOnlyPendingTimers();
+    });
+
+    expectTooltipNotVisible(container);
   });
 });

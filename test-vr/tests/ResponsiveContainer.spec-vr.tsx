@@ -1,56 +1,56 @@
-import { expect, test } from './fixtures';
+import { expect, testWithThemes } from './fixtures';
 
-test('ResponsiveContainer with hardcoded width and height', async ({ mountStory }) => {
+testWithThemes('ResponsiveContainer with hardcoded width and height', async ({ mountStory }) => {
   const component = await mountStory('ResponsiveContainer/ResponsiveContainerWithHardcodedWidthAndHeight');
   await expect(component).toHaveScreenshot();
 });
 
-test('should render at 100% width and height of a fixed-size parent', async ({ mountStory }) => {
+testWithThemes('should render at 100% width and height of a fixed-size parent', async ({ mountStory }) => {
   const component = await mountStory('ResponsiveContainer/RenderAt100PercentWidthAndHeightOfFixedSizeParent');
   await expect(component).toHaveScreenshot();
 });
 
-test('should render at 50% width and height of a fixed-size parent', async ({ mountStory }) => {
+testWithThemes('should render at 50% width and height of a fixed-size parent', async ({ mountStory }) => {
   const component = await mountStory('ResponsiveContainer/RenderAt50PercentWidthAndHeightOfFixedSizeParent');
   await expect(component).toHaveScreenshot();
 });
 
-test('should respect dimensions of a flexbox parent', async ({ mountStory }) => {
+testWithThemes('should respect dimensions of a flexbox parent', async ({ mountStory }) => {
   const component = await mountStory('ResponsiveContainer/RespectDimensionsOfFlexboxParent');
   await expect(component).toHaveScreenshot();
 });
 
-test('should respect dimensions of a grid parent', async ({ mountStory }) => {
+testWithThemes('should respect dimensions of a grid parent', async ({ mountStory }) => {
   const component = await mountStory('ResponsiveContainer/RespectDimensionsOfGridParent');
   await expect(component).toHaveScreenshot();
 });
 
-test('should handle mixed fixed and percentage sizing', async ({ mountStory }) => {
+testWithThemes('should handle mixed fixed and percentage sizing', async ({ mountStory }) => {
   const component = await mountStory('ResponsiveContainer/HandleMixedFixedAndPercentageSizing');
   await expect(component).toHaveScreenshot();
 });
 
-test('should calculate height based on aspect ratio', async ({ mountStory }) => {
+testWithThemes('should calculate height based on aspect ratio', async ({ mountStory }) => {
   const component = await mountStory('ResponsiveContainer/CalculateHeightBasedOnAspectRatio');
   await expect(component).toHaveScreenshot();
 });
 
-test('should respect width in a tall container when aspect is set', async ({ mountStory }) => {
+testWithThemes('should respect width in a tall container when aspect is set', async ({ mountStory }) => {
   const component = await mountStory('ResponsiveContainer/RespectWidthInTallContainerWhenAspectIsSet');
   await expect(component).toHaveScreenshot();
 });
 
-test('aspect ratio should be overridden by maxHeight', async ({ mountStory }) => {
+testWithThemes('aspect ratio should be overridden by maxHeight', async ({ mountStory }) => {
   const component = await mountStory('ResponsiveContainer/AspectRatioOverriddenByMaxHeight');
   await expect(component).toHaveScreenshot();
 });
 
-test('should respect minWidth with aspect ratio', async ({ mountStory }) => {
+testWithThemes('should respect minWidth with aspect ratio', async ({ mountStory }) => {
   const component = await mountStory('ResponsiveContainer/RespectMinWidthWithAspectRatio');
   await expect(component).toHaveScreenshot();
 });
 
-test('should create a square chart that overflows a wide screen', async ({ mountStory, page }) => {
+testWithThemes('should create a square chart that overflows a wide screen', async ({ mountStory, page }) => {
   // Set a wide viewport to test the landscape scenario
   await page.setViewportSize({ width: 800, height: 400 });
 
@@ -58,7 +58,7 @@ test('should create a square chart that overflows a wide screen', async ({ mount
   await expect(component).toHaveScreenshot();
 });
 
-test('should create a square chart without width or height specified', async ({ mountStory, page }) => {
+testWithThemes('should create a square chart without width or height specified', async ({ mountStory, page }) => {
   // Set a tall viewport to test the no-dimensions scenario
   await page.setViewportSize({ width: 200, height: 500 });
 

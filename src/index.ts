@@ -33,7 +33,13 @@ export type { Props as ResponsiveContainerProps } from './component/ResponsiveCo
 export { Cell } from './component/Cell';
 export type { Props as CellProps } from './component/Cell';
 export { Text } from './component/Text';
-export type { Props as TextProps, RenderableText, TextAnchor, TextVerticalAnchor } from './component/Text';
+export type {
+  Props as TextProps,
+  RenderableText,
+  TextAnchor,
+  TextBackgroundProps,
+  TextVerticalAnchor,
+} from './component/Text';
 export { Label } from './component/Label';
 export type { Props as LabelProps, LabelContentType, LabelPosition, ImplicitLabelType } from './component/Label';
 export { LabelList } from './component/LabelList';
@@ -279,6 +285,7 @@ export type { TooltipTrigger } from './chart/types';
 
 export type { RechartsTheme } from './theme/RechartsTheme';
 export { RechartsThemeProvider, useRechartsTheme } from './theme/RechartsThemeContext';
-export { darkTheme } from './theme/darkTheme';
-export { lightTheme } from './theme/lightTheme';
+export { darkPalette, darkTheme } from './theme/darkTheme';
+export { lightPalette, lightTheme } from './theme/lightTheme';
 export { emptyTheme } from './theme/emptyTheme';
+export { autoPalette, autoTheme } from './theme/autoTheme';

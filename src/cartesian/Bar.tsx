@@ -1,4 +1,5 @@
 import * as React from 'react';
+import omit from 'es-toolkit/compat/omit';
 import {
   Key,
   MutableRefObject,
@@ -20,6 +21,7 @@ import {
   CartesianLabelListEntry,
   ImplicitLabelListType,
   LabelListFromLabelProp,
+  SetLabelListClipArea,
 } from '../component/LabelList';
 import { interpolate, isNan, mathSign, noop } from '../util/DataUtils';
 import {
@@ -39,7 +41,7 @@ import {
   CartesianViewBoxRequired,
   ChartOffsetInternal,
   Coordinate,
-  DataConsumer,
+  ValueAxisDataConsumer,
   DataKey,
   DataProvider,
   LegendType,
@@ -73,6 +75,8 @@ import { RegisterGraphicalItemId } from '../context/RegisterGraphicalItemId';
 import { BarSettings } from '../state/types/BarSettings';
 import { SetCartesianGraphicalItem } from '../state/SetGraphicalItem';
 import {
+  isDataAttribute,
+  isSvgElementPropKey,
   svgPropertiesNoEvents,
   svgPropertiesNoEventsFromUnknown,
   SVGPropsNoEvents,
@@ -93,6 +97,10 @@ import { ChartData } from '../state/chartDataSlice';
 import { Styles2D } from '../theme/RechartsTheme';
 import { useBackwardsCompatibleTheme } from '../theme/useBackwardsCompatibleTheme';
 import { useGraphicalItemIdentity } from '../theme/useGraphicalItemIdentity';
+import { useEffectiveDataKey } from '../util/useEffectiveDataKey';
+import { getEntryStyleOverrides, UnthemedStyles, useUnthemedStyles } from '../theme/dataEntryStyles';
+import { getActiveStyleOverrides, useThemedActiveStyles } from '../theme/activeStyles';
+import { DataLabelThemeContextProvider, useSeriesLabelThemeResolver } from '../theme/labelTheme';
 
 type BarRectangleType = {
   x: number | null;
@@ -137,7 +145,7 @@ export type BarShapeProps = BarRectangleItem &
  * @internal
  */
 export interface BarProps<DataPointType, ValueAxisType>
-  extends DataProvider<DataPointType>, DataConsumer<DataPointType, ValueAxisType>, ZIndexable {
+  extends DataProvider<DataPointType>, ValueAxisDataConsumer<DataPointType, ValueAxisType>, ZIndexable {
   className?: string;
   index?: Key;
   /**
@@ -463,6 +471,17 @@ type InternalBarProps = {
    */
   id: GraphicalItemId;
   label?: ImplicitLabelListType;
+  /**
+   * Explicit style props without theme contributions.
+   * Applied to data entries that define their own colors, so that they ignore the theme.
+   * Undefined when there is no active theme.
+   */
+  unthemedStyles?: UnthemedStyles;
+  /**
+   * Theme styles of the active bar, without the ones that explicit props override.
+   * Undefined when there is no active theme, or when the theme has no active styles.
+   */
+  themedActiveStyles?: Styles2D;
 };
 
 type BarSvgProps = Omit<
@@ -490,6 +509,37 @@ const computeLegendPayloadFromBarData = (props: Props): ReadonlyArray<LegendPayl
   ];
 };
 
+/**
+ * The color a bar rectangle renders a data entry with: its fill, or its stroke when it has no fill.
+ * Follows the order of props in `BarRectangles`: the entry colors win over the Bar colors,
+ * and with a theme, an entry with its own colors ignores the theme colors.
+ *
+ * @param entry data entry
+ * @param fill fill of the Bar, theme included
+ * @param stroke stroke of the Bar, theme included
+ * @param unthemedStyles explicit styles of the Bar, or undefined without a theme
+ */
+function getBarEntryColor(
+  entry: unknown,
+  fill: string | undefined,
+  stroke: string | undefined,
+  unthemedStyles: UnthemedStyles | undefined,
+): string | undefined {
+  const barStyles = getEntryStyleOverrides(entry, unthemedStyles) ?? { fill, stroke };
+  const entryFill = entry != null && typeof entry === 'object' && 'fill' in entry ? entry.fill : undefined;
+  const entryStroke = entry != null && typeof entry === 'object' && 'stroke' in entry ? entry.stroke : undefined;
+  if (typeof entryFill === 'string') {
+    return entryFill;
+  }
+  if (barStyles.fill != null) {
+    return barStyles.fill;
+  }
+  if (typeof entryStroke === 'string') {
+    return entryStroke;
+  }
+  return barStyles.stroke;
+}
+
 const SetBarTooltipEntrySettings = React.memo(
   ({
     dataKey,
@@ -502,13 +552,15 @@ const SetBarTooltipEntrySettings = React.memo(
     formatter,
     tooltipType,
     id,
+    unthemedStyles,
   }: Pick<
     InternalProps,
     'dataKey' | 'stroke' | 'strokeWidth' | 'fill' | 'name' | 'hide' | 'unit' | 'formatter' | 'tooltipType' | 'id'
-  >) => {
+  > & { unthemedStyles: UnthemedStyles | undefined }) => {
     const tooltipEntrySettings: TooltipPayloadConfiguration = {
       dataDefinedOnItem: undefined,
       getPosition: noop,
+      getEntryColor: entry => getBarEntryColor(entry, fill, stroke, unthemedStyles),
       settings: {
         stroke,
         strokeWidth,
@@ -538,6 +590,17 @@ type BarBackgroundProps = {
 const defaultLegacyBarBackgroundProps: Styles2D = {
   fill: '#eee',
 };
+
+/**
+ * The background is not the graphical item, so it does not take the SVG properties of the data entry
+ * (`stroke`, `opacity`, `style`, `data-*`, `id`, ...).
+ * Custom background shapes still receive the other keys of the entry, and the entry itself as `payload`.
+ */
+function omitEntrySvgProps(entry: object): Record<string, unknown> {
+  return Object.fromEntries(
+    Object.entries(entry).filter(([key]) => key === 'name' || (!isSvgElementPropKey(key) && !isDataAttribute(key))),
+  );
+}
 
 function BarBackground(props: BarBackgroundProps) {
   const activeIndex = useAppSelector(selectActiveTooltipIndex);
@@ -581,11 +644,11 @@ function BarBackground(props: BarBackgroundProps) {
         const barRectangleProps: BarRectangleProps = {
           option: backgroundFromProps,
           isActive: String(entry.originalDataIndex) === activeIndex,
-          ...rest,
+          ...omitEntrySvgProps(rest),
           ...backgroundThemeProps,
           ...backgroundFromDataEntry,
           ...backgroundProps,
-          ...adaptEventsOfChild(restOfAllOtherProps, entry, i),
+          ...adaptEventsOfChild(restOfAllOtherProps, entry, entry.originalDataIndex),
           onMouseEnter,
           onMouseLeave,
           onClick,
@@ -646,12 +709,14 @@ function BarRectangleWithActiveState(
     shape: ActiveShape<BarShapeProps, SVGPathElement>;
     activeBar: ActiveShape<BarShapeProps, SVGPathElement>;
     baseProps: WithoutId<SVGPropsNoEvents<BarRectanglesProps>>;
+    entryStyleOverrides: UnthemedStyles | undefined;
+    themedActiveStyles: Styles2D | undefined;
     entry: BarRectangleItem;
     index: number;
     dataKey: DataKey<any> | undefined;
   },
 ) {
-  const { shape, activeBar, baseProps, entry, index, dataKey } = props;
+  const { shape, activeBar, baseProps, entryStyleOverrides, themedActiveStyles, entry, index, dataKey } = props;
   const activeIndex = useAppSelector(selectActiveTooltipIndex);
   const activeDataKey = useAppSelector(selectActiveTooltipDataKey);
   /*
@@ -726,12 +791,23 @@ function BarRectangleWithActiveState(
   } else {
     option = shape;
   }
+  /*
+   * Follows `isVisuallyActive` so that the theme styles change together with the `isActive` prop of the shape.
+   *
+   * `activeBar={true}` renders the `shape`, so a custom `shape` is a custom active bar too,
+   * and it decides on its own how the active state looks like.
+   */
+  const activeStyleOverrides = isVisuallyActive
+    ? getActiveStyleOverrides(option === defaultBarShape ? true : option, themedActiveStyles, entry)
+    : undefined;
 
   const content = (
     <BarRectangle
       {...baseProps}
-      name={String(baseProps.name)}
+      name={baseProps.name == null ? undefined : String(baseProps.name)}
+      {...entryStyleOverrides}
       {...entry}
+      {...activeStyleOverrides}
       isActive={isVisuallyActive}
       option={option}
       index={index}
@@ -757,16 +833,18 @@ function BarRectangleNeverActive(
   props: ShapeAnimationProps & {
     shape: ActiveShape<BarShapeProps, SVGPathElement>;
     baseProps: WithoutId<SVGPropsNoEvents<BarRectanglesProps>>;
+    entryStyleOverrides: UnthemedStyles | undefined;
     entry: BarRectangleItem;
     index: number;
     dataKey: DataKey<any> | undefined;
   },
 ) {
-  const { shape, baseProps, entry, index, dataKey } = props;
+  const { shape, baseProps, entryStyleOverrides, entry, index, dataKey } = props;
   return (
     <BarRectangle
       {...baseProps}
-      name={String(baseProps.name)}
+      name={baseProps.name == null ? undefined : String(baseProps.name)}
+      {...entryStyleOverrides}
       {...entry}
       isActive={false}
       option={shape}
@@ -790,7 +868,7 @@ function BarRectangles({
   props: BarRectanglesProps;
 }) {
   const { id, ...baseProps } = svgPropertiesNoEvents(props) ?? {};
-  const { shape, dataKey, activeBar } = props;
+  const { shape, dataKey, activeBar, unthemedStyles, themedActiveStyles } = props;
 
   const {
     onMouseEnter: onMouseEnterFromProps,
@@ -816,7 +894,7 @@ function BarRectangles({
             // https://github.com/recharts/recharts/issues/5415
             key={`rectangle-${entry?.x}-${entry?.y}-${entry?.value}-${i}`}
             className="recharts-bar-rectangle"
-            {...adaptEventsOfChild(restOfAllOtherProps, entry, i)}
+            {...adaptEventsOfChild(restOfAllOtherProps, entry, entry.originalDataIndex)}
             onMouseEnter={onMouseEnterFromContext(entry, entry.originalDataIndex)}
             onMouseLeave={onMouseLeaveFromContext(entry, entry.originalDataIndex)}
             onClick={onClickFromContext(entry, entry.originalDataIndex)}
@@ -826,6 +904,8 @@ function BarRectangles({
                 shape={shape}
                 activeBar={activeBar}
                 baseProps={baseProps}
+                entryStyleOverrides={getEntryStyleOverrides(entry, unthemedStyles)}
+                themedActiveStyles={themedActiveStyles}
                 entry={entry}
                 index={i}
                 dataKey={dataKey}
@@ -846,6 +926,7 @@ function BarRectangles({
               <BarRectangleNeverActive
                 shape={shape}
                 baseProps={baseProps}
+                entryStyleOverrides={getEntryStyleOverrides(entry, unthemedStyles)}
                 entry={entry}
                 index={i}
                 dataKey={dataKey}
@@ -1018,7 +1099,9 @@ class BarWithState extends PureComponent<InternalProps> {
         )}
         <Layer className="recharts-bar-rectangles" clipPath={needClip ? `url(#clipPath-${clipPathId})` : undefined}>
           <BarBackground data={data} dataKey={dataKey} background={background} allOtherBarProps={this.props} />
-          <RenderRectangles {...this.props} />
+          <SetLabelListClipArea xAxisId={xAxisId} yAxisId={yAxisId}>
+            <RenderRectangles {...this.props} />
+          </SetLabelListClipArea>
         </Layer>
       </Layer>
     );
@@ -1257,9 +1340,14 @@ export function computeBarRectangles({
         return null;
       }
 
+      /*
+       * `id` from a data entry is never spread on rendered elements to avoid duplicate DOM ids.
+       * The raw entry, id included, stays available through `payload`.
+       */
+      const entryWithoutId = entry != null && typeof entry === 'object' ? omit(entry, ['id']) : entry;
       const barRectangleItem: BarRectangleItem = {
         // @ts-expect-error spread of unknown type
-        ...entry,
+        ...entryWithoutId,
         stackedBarStart,
         x,
         y,
@@ -1280,9 +1368,17 @@ export function computeBarRectangles({
 }
 
 function BarFn(outsideProps: Props) {
-  const graphicalItemThemeSelector = useGraphicalItemIdentity(outsideProps.dataKey);
+  const dataKey = useEffectiveDataKey({
+    dataKey: outsideProps.dataKey,
+    xAxisId: outsideProps.xAxisId ?? defaultBarProps.xAxisId,
+    yAxisId: outsideProps.yAxisId ?? defaultBarProps.yAxisId,
+  });
+  const graphicalItemThemeSelector = useGraphicalItemIdentity(dataKey, outsideProps);
+  const resolveLabelTheme = useSeriesLabelThemeResolver(graphicalItemThemeSelector);
+  const unthemedStyles = useUnthemedStyles(outsideProps);
+  const themedActiveStyles = useThemedActiveStyles(graphicalItemThemeSelector, outsideProps);
   const graphicalItemStyle = useBackwardsCompatibleTheme<Props>(graphicalItemThemeSelector, outsideProps, undefined);
-  const props = resolveDefaultProps(outsideProps, defaultBarProps);
+  const props = resolveDefaultProps({ ...outsideProps, dataKey }, defaultBarProps);
   // stackId may arrive from props or from BarStack context
   const stackId = useStackId(props.stackId);
   const isPanorama = useIsPanorama();
@@ -1319,6 +1415,7 @@ function BarFn(outsideProps: Props) {
             formatter={props.formatter}
             tooltipType={props.tooltipType}
             id={id}
+            unthemedStyles={unthemedStyles}
           />
           <SetCartesianGraphicalItem
             type="bar"
@@ -1338,7 +1435,15 @@ function BarFn(outsideProps: Props) {
             strokeWidth={themedProps.strokeWidth ?? props.strokeWidth}
           />
           <ZIndexLayer zIndex={props.zIndex}>
-            <BarImpl {...props} {...themedProps} id={id} />
+            <DataLabelThemeContextProvider value={resolveLabelTheme}>
+              <BarImpl
+                {...props}
+                {...themedProps}
+                id={id}
+                unthemedStyles={unthemedStyles}
+                themedActiveStyles={themedActiveStyles}
+              />
+            </DataLabelThemeContextProvider>
           </ZIndexLayer>
         </>
       )}

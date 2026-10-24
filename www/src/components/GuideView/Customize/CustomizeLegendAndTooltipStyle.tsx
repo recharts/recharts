@@ -28,8 +28,8 @@ export default function CustomizeLegendAndTooltipStyle() {
        */}
       <Tooltip
         defaultIndex={3}
-        contentStyle={{ backgroundColor: '#f8fafc', border: '2px solid #64748b', borderRadius: 8, padding: 10 }}
-        labelStyle={{ margin: 0, fontWeight: 700, color: '#0f172a' }}
+        contentStyle={{ backgroundColor: 'Canvas', border: '2px solid CanvasText', borderRadius: 8, padding: 10 }}
+        labelStyle={{ margin: 0, fontWeight: 700, color: 'CanvasText' }}
         itemStyle={{ display: 'block', paddingTop: 2, paddingBottom: 2 }}
       />
       {/*
@@ -39,13 +39,13 @@ export default function CustomizeLegendAndTooltipStyle() {
        */}
       <Legend
         wrapperStyle={{
-          backgroundColor: '#f1f5f9',
-          border: '1px solid #cbd5e1',
+          backgroundColor: 'Canvas',
+          border: '1px solid CanvasText',
           borderRadius: 4,
           paddingTop: 4,
           paddingBottom: 4,
         }}
-        labelStyle={{ color: '#0f172a', textTransform: 'uppercase', letterSpacing: '0.05em' }}
+        labelStyle={{ color: 'CanvasText', textTransform: 'uppercase', letterSpacing: '0.05em' }}
         iconType="circle"
       />
       <Bar dataKey="revenue" barSize={20} />

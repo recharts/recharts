@@ -6,7 +6,9 @@ const RechartsThemeContext = createContext<RechartsTheme | undefined>(undefined)
 /**
  * Applies the provided theme to all charts in the children tree.
  *
- * @experimental
+ * @see {@link https://recharts.github.io/en-US/guide/theming/ Theming guide}
+ *
+ * @since 3.11
  */
 export const RechartsThemeProvider = RechartsThemeContext.Provider;
 
@@ -16,6 +18,8 @@ export const RechartsThemeProvider = RechartsThemeContext.Provider;
  *
  * Can return undefined if used outside of Recharts context, or if no theme is set.
  *
- *  @experimental
+ * @see {@link https://recharts.github.io/en-US/guide/theming/ Theming guide}
+ *
+ * @since 3.11
  */
 export const useRechartsTheme = (): RechartsTheme | undefined => useContext(RechartsThemeContext);

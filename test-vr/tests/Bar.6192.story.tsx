@@ -304,8 +304,8 @@ export const ComposedChartWithStackedAreaAndBar = () => {
           connectNulls
           pointerEvents="none"
         />
-        <Bar name="Wi" dataKey="wins" fill="#ffffff" opacity={0.8} stackId="date" cursor="pointer" />
-        <Bar name="Lo" dataKey="losses" fill="red" opacity={0.8} stackId="date" cursor="pointer" />
+        <Bar name="Wi" dataKey="wins" fill="#ffffff" stroke="none" opacity={0.8} stackId="date" cursor="pointer" />
+        <Bar name="Lo" dataKey="losses" fill="red" stroke="none" opacity={0.8} stackId="date" cursor="pointer" />
         <Legend verticalAlign="bottom" wrapperStyle={{ left: 0, width: '100%' }} />
       </ComposedChart>
     </div>

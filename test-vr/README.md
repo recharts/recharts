@@ -85,21 +85,27 @@ testWithThemes('LineChart', async ({ mountStory }) => {
 
 Each `testWithThemes` test runs in three Playwright projects for each browser:
 
-| Project suffix                              | Gallery rendering                         | Canvas |
-| ------------------------------------------- | ----------------------------------------- | ------ |
-| no suffix (`chromium`, `firefox`, `webkit`) | No `RechartsThemeProvider` (`legacy`)     | White  |
-| `-light`                                    | `RechartsThemeProvider` with `lightTheme` | White  |
-| `-dark`                                     | `RechartsThemeProvider` with `darkTheme`  | Black  |
+| Project suffix                              | Gallery rendering                         | Browser color scheme         | Canvas             |
+| ------------------------------------------- | ----------------------------------------- | ---------------------------- | ------------------ |
+| no suffix (`chromium`, `firefox`, `webkit`) | No `RechartsThemeProvider` (`legacy`)     | Playwright default (`light`) | Light checkerboard |
+| `-light`                                    | `RechartsThemeProvider` with `lightTheme` | `light`                      | Light checkerboard |
+| `-dark`                                     | `RechartsThemeProvider` with `darkTheme`  | `dark`                       | Dark checkerboard  |
 
-The selected theme is supplied by the Playwright project and resolved inside
-the gallery boundary. It is not a story prop. Do not add a `testTheme` prop,
-put a theme name in a test title, or pass a custom screenshot name. Project
-names make the snapshots separate and deterministic, for example
+The selected Recharts theme is supplied by the Playwright project and resolved
+inside the gallery boundary. It is not a story prop. The light and dark projects
+also set Playwright's browser `colorScheme` to match; this controls
+`prefers-color-scheme` and CSS system colors such as `Canvas` and `CanvasText`.
+The gallery declares support for both color schemes so the browser resolves
+system colors according to the selected `colorScheme`. These are separate
+settings, so explicitly override `colorScheme` when a test needs a browser color
+scheme that differs from its Recharts theme. Do not add a `testTheme` prop, put
+a theme name in a test title, or pass a custom screenshot name. Project names
+make the snapshots separate and deterministic, for example
 `LineChart-1-chromium-light-linux.png`.
 
 The `test` export is the staged, legacy-only fixture used by existing specs;
 `legacyTest` is its explicit name for new specs that intentionally need
-compatibility behavior. Existing specs may keep using it until their
+compatibility behavior with a plain white canvas. Existing specs may keep using it until their
 individual migration adds light and dark baselines. Use
 [the VR migration skill](../.agents/skills/vr-test-migration/SKILL.md) for that
 work. The old `test-vr/tests/www/StoryTheme.tsx` helper and its `testTheme`
@@ -174,6 +180,10 @@ Convenience scripts so that the `package.json` scripts are shorter and easier to
 This is where all the snapshots (which would usually be screenshots) are stored.
 Please commit this folder to the repository - this is the baseline.
 
+Playwright never deletes a baseline when a test is renamed or removed. CI runs
+`npm run check-orphan-snapshots`, which fails on baselines that no current test
+produces. Delete those files, or fix the test that should produce them.
+
 ### `gallery`
 
 The story gallery pages used by the component tests: https://playwright.dev/docs/test-components.
@@ -185,7 +195,8 @@ open `http://localhost:3100/gallery/preview.html` while the gallery server is ru
 The preview page provides navigation and mounts the selected story with its default props in
 isolated legacy, light, and dark panels. Each panel uses the same theme renderer as the Playwright
 mount page, so state, DOM mutations, document-level styles, and SVG identifiers stay scoped to
-that variant.
+that variant. Both HTML pages use the shared `gallery/entry.tsx`; preview iframes load
+`gallery/index.html` so they exercise the same mount path as Playwright.
 
 ### `playwright-report`
 

@@ -33,7 +33,7 @@ import {
   adaptEventsOfChild,
   AnimationDuration,
   EasingInput,
-  DataConsumer,
+  ValueAxisDataConsumer,
   DataKey,
   LayoutType,
   LegendType,
@@ -75,6 +75,10 @@ import { usePolarChartLayout } from '../context/chartLayoutContext';
 import { Styles2D } from '../theme/RechartsTheme';
 import { useBackwardsCompatibleTheme } from '../theme/useBackwardsCompatibleTheme';
 import { useGraphicalItemIdentity } from '../theme/useGraphicalItemIdentity';
+import { useEffectiveDataKey } from '../util/useEffectiveDataKey';
+import { getEntryStyleOverrides, UnthemedStyles, useUnthemedStyles } from '../theme/dataEntryStyles';
+import { getActiveStyleOverrides, useThemedActiveStyles } from '../theme/activeStyles';
+import { DataLabelThemeContextProvider, useSeriesLabelThemeResolver } from '../theme/labelTheme';
 
 const STABLE_EMPTY_ARRAY: readonly RadialBarDataItem[] = [];
 
@@ -137,7 +141,8 @@ function RadialBarSectors({
   isAnimating,
   isEntrance,
 }: RadialBarSectorsProps) {
-  const { shape, activeShape, cornerRadius, id, ...others } = allOtherRadialBarProps;
+  const { shape, activeShape, cornerRadius, id, unthemedStyles, themedActiveStyles, ...others } =
+    allOtherRadialBarProps;
   const baseProps = svgPropertiesNoEvents(others);
 
   const activeIndex = useAppSelector(selectActiveTooltipIndex);
@@ -167,12 +172,14 @@ function RadialBarSectors({
         const radialBarSectorProps: React.ComponentProps<typeof RadialBarSector> = {
           ...baseProps,
           cornerRadius: parseCornerRadius(cornerRadius),
+          ...getEntryStyleOverrides(entry, unthemedStyles),
           ...entry,
+          ...(isActive ? getActiveStyleOverrides(activeShape, themedActiveStyles, entry) : undefined),
           ...adaptEventsOfChild(restOfAllOtherProps, entry, i),
           onMouseEnter,
           onMouseLeave,
           onClick,
-          className: `recharts-radial-bar-sector ${entry.className}`,
+          className: clsx('recharts-radial-bar-sector', entry.className),
           forceCornerRadius: others.forceCornerRadius,
           cornerIsExternal: others.cornerIsExternal,
           animationElapsedTime,
@@ -305,7 +312,7 @@ function RenderSectors(props: InternalProps) {
  * @internal
  */
 export interface InternalRadialBarProps<DataPointType = any, DataValueType = any>
-  extends DataConsumer<DataPointType, DataValueType>, ZIndexable {
+  extends ValueAxisDataConsumer<DataPointType, DataValueType>, ZIndexable {
   activeShape?: ActiveShape<RadialBarSectorProps, SVGPathElement>;
   /**
    * @defaultValue 0
@@ -416,6 +423,11 @@ export interface InternalRadialBarProps<DataPointType = any, DataValueType = any
   legendType?: LegendType;
   maxBarSize?: number;
   /**
+   * The minimum angle of each non-zero bar.
+   * @defaultValue 0
+   */
+  minAngle?: number;
+  /**
    * @defaultValue 0
    */
   minPointSize?: number;
@@ -481,7 +493,14 @@ export interface InternalRadialBarProps<DataPointType = any, DataValueType = any
    */
   formatter?: Formatter;
   /**
+   * Z-Index of this component and its children. The higher the value,
+   * the more on top it will be rendered.
+   * Components with higher zIndex will appear in front of components with lower zIndex.
+   * If undefined or 0, the content is rendered in the default layer without portals.
+   *
+   * @since 3.4
    * @defaultValue 300
+   * @see {@link https://recharts.github.io/en-US/guide/zIndex/ Z-Index and layers guide}
    */
   zIndex?: number;
 }
@@ -492,7 +511,21 @@ export type RadialBarProps<DataPointType = any, DataValueType = any> = Omit<
 > &
   Omit<InternalRadialBarProps<DataPointType, DataValueType>, 'sectors'>;
 
-type InternalProps = WithIdRequired<PropsWithDefaults> & Pick<InternalRadialBarProps, 'sectors'>;
+type ThemeInternalProps = {
+  /**
+   * Explicit style props without theme contributions.
+   * Applied to data entries that define their own colors, so that they ignore the theme.
+   * Undefined when there is no active theme.
+   */
+  unthemedStyles?: UnthemedStyles;
+  /**
+   * Theme styles of the active shape, without the ones that explicit props override.
+   * Undefined when there is no active theme, or when the theme has no active styles.
+   */
+  themedActiveStyles?: Styles2D;
+};
+
+type InternalProps = WithIdRequired<PropsWithDefaults> & Pick<InternalRadialBarProps, 'sectors'> & ThemeInternalProps;
 
 function SetRadialBarPayloadLegend(props: RadialBarProps) {
   const legendPayload = useAppSelector(state => selectRadialBarLegendPayload(state, props.legendType));
@@ -582,7 +615,10 @@ function RadialBarBackgroundSectors({
           ...backgroundProps,
           ...adaptEventsOfChild(allOtherRadialBarProps, entry, i),
           index: i,
-          className: clsx('recharts-radial-bar-background-sector', String(backgroundProps?.className)),
+          className: clsx(
+            'recharts-radial-bar-background-sector',
+            backgroundProps?.className == null ? undefined : String(backgroundProps.className),
+          ),
           option: background,
           isActive: false,
         };
@@ -625,7 +661,7 @@ class RadialBarWithState extends PureComponent<InternalProps> {
   }
 }
 
-function RadialBarImpl(props: WithIdRequired<PropsWithDefaults>) {
+function RadialBarImpl(props: WithIdRequired<PropsWithDefaults> & ThemeInternalProps) {
   const cells = React.useMemo(() => findAllByType(props.children, Cell), [props.children]);
 
   const radialBarSettings: RadialBarSettings = React.useMemo(
@@ -634,6 +670,7 @@ function RadialBarImpl(props: WithIdRequired<PropsWithDefaults>) {
       hide: false,
       id: props.id,
       dataKey: props.dataKey,
+      minAngle: props.minAngle,
       minPointSize: props.minPointSize,
       stackId: getNormalizedStackId(props.stackId),
       maxBarSize: props.maxBarSize,
@@ -645,6 +682,7 @@ function RadialBarImpl(props: WithIdRequired<PropsWithDefaults>) {
     [
       props.id,
       props.dataKey,
+      props.minAngle,
       props.minPointSize,
       props.stackId,
       props.maxBarSize,
@@ -691,6 +729,7 @@ export const defaultRadialBarProps = {
   isAnimationActive: 'auto',
   label: false,
   legendType: 'rect',
+  minAngle: 0,
   minPointSize: 0,
   radiusAxisId: 0,
   shape: defaultRadialBarShape,
@@ -715,6 +754,7 @@ export function computeRadialBarDataItems({
   bandSize,
   pos,
   angleAxis,
+  minAngle,
   minPointSize,
   cx,
   cy,
@@ -735,6 +775,7 @@ export function computeRadialBarDataItems({
   bandSize: number;
   pos: BarPositionPosition;
   angleAxis: BaseAxisWithScale;
+  minAngle: number;
   minPointSize: number;
   cx: number;
   cy: number;
@@ -767,7 +808,8 @@ export function computeRadialBarDataItems({
 
     if (layout === 'radial') {
       startAngle = angleAxis.scale.map(value[0]) ?? rootStartAngle;
-      endAngle = angleAxis.scale.map(value[1]) ?? rootEndAngle;
+      const valueAngle = angleAxis.scale.map(value[1]);
+      endAngle = valueAngle ?? startAngle;
       innerRadius = getCateCoordinateOfBar({
         axis: radiusAxis,
         ticks: radiusAxisTicks,
@@ -778,11 +820,22 @@ export function computeRadialBarDataItems({
       });
       if (innerRadius != null && endAngle != null && startAngle != null) {
         outerRadius = innerRadius + pos.size;
-        const deltaAngle = endAngle - startAngle;
+        let deltaAngle = endAngle - startAngle;
 
-        if (Math.abs(minPointSize) > 0 && Math.abs(deltaAngle) < Math.abs(minPointSize)) {
+        if (valueAngle != null && Math.abs(minPointSize) > 0 && Math.abs(deltaAngle) < Math.abs(minPointSize)) {
           const delta = mathSign(deltaAngle || minPointSize) * (Math.abs(minPointSize) - Math.abs(deltaAngle));
 
+          endAngle += delta;
+          deltaAngle = endAngle - startAngle;
+        }
+
+        // Zero-value bars are excluded so a truly empty bar never gets an artificial sliver.
+        // Negative minAngle is normalized the same way Pie normalizes pieSettings.minAngle.
+        // Note: like minPointSize above, this expands each bar independently, so a stacked
+        // bar's expansion can overlap into its neighbor's range. That is an existing
+        // limitation shared with minPointSize, not something new to minAngle.
+        if (Math.abs(minAngle) > 0 && deltaAngle !== 0 && Math.abs(deltaAngle) < Math.abs(minAngle)) {
+          const delta = mathSign(deltaAngle) * (Math.abs(minAngle) - Math.abs(deltaAngle));
           endAngle += delta;
         }
         backgroundSector = {
@@ -844,16 +897,21 @@ export function computeRadialBarDataItems({
 export function RadialBar<DataPointType = any, DataValueType = any>(
   outsideProps: RadialBarProps<DataPointType, DataValueType>,
 ) {
-  const graphicalItemThemeSelector = useGraphicalItemIdentity(outsideProps.dataKey);
+  const dataKey = useEffectiveDataKey({
+    dataKey: outsideProps.dataKey,
+    angleAxisId: outsideProps.angleAxisId ?? defaultRadialBarProps.angleAxisId,
+    radiusAxisId: outsideProps.radiusAxisId ?? defaultRadialBarProps.radiusAxisId,
+  });
+  const graphicalItemThemeSelector = useGraphicalItemIdentity(dataKey, outsideProps);
+  const resolveLabelTheme = useSeriesLabelThemeResolver(graphicalItemThemeSelector);
+  const unthemedStyles = useUnthemedStyles(outsideProps);
+  const themedActiveStyles = useThemedActiveStyles(graphicalItemThemeSelector, outsideProps);
   const graphicalItemStyle = useBackwardsCompatibleTheme<RadialBarProps<DataPointType, DataValueType>>(
     graphicalItemThemeSelector,
     outsideProps,
     undefined,
   );
-  const props: PropsWithDefaults<DataPointType, DataValueType> = resolveDefaultProps(
-    outsideProps,
-    defaultRadialBarProps,
-  );
+  const props: PropsWithDefaults = resolveDefaultProps({ ...outsideProps, dataKey }, defaultRadialBarProps);
 
   const themeFill = outsideProps.fill ?? graphicalItemStyle?.fill;
   const themeStroke = outsideProps.stroke ?? graphicalItemStyle?.stroke;
@@ -884,11 +942,20 @@ export function RadialBar<DataPointType = any, DataValueType = any>(
             radiusAxisId={props.radiusAxisId ?? defaultRadialBarProps.radiusAxisId}
             stackId={getNormalizedStackId(props.stackId)}
             barSize={props.barSize}
+            minAngle={props.minAngle}
             minPointSize={props.minPointSize}
             maxBarSize={props.maxBarSize}
           />
           <SetRadialBarPayloadLegend {...props} {...themedProps} />
-          <RadialBarImpl {...props} {...themedProps} id={id} />
+          <DataLabelThemeContextProvider value={resolveLabelTheme}>
+            <RadialBarImpl
+              {...props}
+              {...themedProps}
+              id={id}
+              unthemedStyles={unthemedStyles}
+              themedActiveStyles={themedActiveStyles}
+            />
+          </DataLabelThemeContextProvider>
         </>
       )}
     </RegisterGraphicalItemId>

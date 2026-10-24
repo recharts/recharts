@@ -11,7 +11,15 @@ import {
   useMemo,
 } from 'react';
 import { clsx } from 'clsx';
-import { isValidTextAnchor, RenderableText, Text, TextAnchor, TextVerticalAnchor } from './Text';
+import {
+  isValidTextAnchor,
+  RenderableText,
+  resolveBackgroundPadding,
+  Text,
+  TextAnchor,
+  TextBackgroundProps,
+  TextVerticalAnchor,
+} from './Text';
 import { isNullish, isNumber, isNumOrStr, mathSign } from '../util/DataUtils';
 import { polarToCartesian } from '../util/PolarUtils';
 import { CartesianViewBoxRequired, DataKey, PolarViewBoxRequired, TrapezoidViewBox, ViewBox } from '../util/types';
@@ -25,6 +33,7 @@ import { DefaultZIndexes } from '../zIndex/DefaultZIndexes';
 
 import { CartesianLabelPosition, getCartesianPosition } from '../cartesian/getCartesianPosition';
 import { cartesianViewBoxToTrapezoid } from '../cartesian/cartesianViewBoxToTrapezoid';
+import { applyLabelTheme, useGlobalLabelTheme } from '../theme/labelTheme';
 
 /**
  * @inline
@@ -124,6 +133,24 @@ interface LabelProps extends ZIndexable {
    * Used as an HTML attribute `id`.
    */
   id?: string;
+  /**
+   * Draws a background behind the label, for example to keep it readable on top of a filled shape.
+   *
+   * - `true` draws the background with the styles from the theme's `label.background`.
+   *   If neither sets a `fill`, the fill is the `pageBackground` color from the theme, or white when no theme is set.
+   * - An object accepts SVG `<rect>` attributes such as `fill`, `stroke` and `rx`, and a `padding`.
+   *   It is merged over the theme styles key by key.
+   * - `false` draws no background, even if the theme turns backgrounds on.
+   * - `undefined` uses the theme's `label.background`, and draws no background without a theme.
+   *
+   * The background is sized from the rendered text and follows curved label paths.
+   * It is not drawn for custom `content`.
+   *
+   * @since 3.11
+   * @example <Label position="inside" background />
+   * @example <Label position="inside" background={{ fill: '#fff', rx: 2, padding: 4 }} />
+   */
+  background?: boolean | TextBackgroundProps;
 }
 
 export type Props = Omit<SVGProps<SVGTextElement>, 'viewBox'> & LabelProps;
@@ -238,7 +265,7 @@ const renderRadialLabel = (
   attrs: SVGProps<SVGTextElement>,
   viewBox: PolarViewBoxRequired,
 ) => {
-  const { offset, className } = labelProps;
+  const { offset, className, background } = labelProps;
   const { cx, cy, innerRadius, outerRadius, startAngle, endAngle, clockWise } = viewBox;
   const radius = (innerRadius + outerRadius) / 2;
   const deltaAngle = getDeltaAngle(startAngle, endAngle);
@@ -264,12 +291,23 @@ const renderRadialLabel = (
 
   direction = deltaAngle <= 0 ? direction : !direction;
 
-  const startPoint = polarToCartesian(cx, cy, radius, labelAngle);
-  const endPoint = polarToCartesian(cx, cy, radius, labelAngle + (direction ? 1 : -1) * 359);
+  const hasBackground = background != null && background !== false;
+  const backgroundPadding = hasBackground
+    ? resolveBackgroundPadding(typeof background === 'object' ? background.padding : undefined).x
+    : 0;
+  const directionSign = direction ? 1 : -1;
+  const { textAnchor, startOffset: requestedStartOffset, ...textAttrs } = attrs;
+  const pathPadding = requestedStartOffset == null || isNumber(requestedStartOffset) ? backgroundPadding : 0;
+  const backgroundPaddingAngle = radius > 0 ? (pathPadding / radius) * (180 / Math.PI) : 0;
+  const pathStartAngle = labelAngle - directionSign * backgroundPaddingAngle;
+  const startPoint = polarToCartesian(cx, cy, radius, pathStartAngle);
+  const endPoint = polarToCartesian(cx, cy, radius, pathStartAngle + directionSign * 359);
   const path = `M${startPoint.x},${startPoint.y}
     A${radius},${radius},0,1,${direction ? 0 : 1},
     ${endPoint.x},${endPoint.y}`;
-  const { textAnchor, ...textAttrs } = attrs;
+  const resolvedStartOffset = isNumber(requestedStartOffset)
+    ? requestedStartOffset + pathPadding
+    : (requestedStartOffset ?? (pathPadding || undefined));
   return (
     <Text
       {...textAttrs}
@@ -277,6 +315,8 @@ const renderRadialLabel = (
       className={clsx('recharts-radial-bar-label', className)}
       textAnchor={isValidTextAnchor(textAnchor) ? textAnchor : undefined}
       textPath={path}
+      startOffset={resolvedStartOffset}
+      background={background}
     >
       {label}
     </Text>
@@ -386,7 +426,10 @@ function polarViewBoxToTrapezoid(
  * @consumes PolarLabelContext
  */
 export function Label(outerProps: Props) {
-  const props: PropsWithDefaults = resolveDefaultProps(outerProps, defaultLabelProps);
+  const labelTheme = useGlobalLabelTheme();
+  const themedProps: Props =
+    labelTheme == null ? outerProps : { ...outerProps, ...applyLabelTheme(labelTheme, outerProps) };
+  const props: PropsWithDefaults = resolveDefaultProps(themedProps, defaultLabelProps);
   const {
     viewBox: viewBoxFromProps,
     parentViewBox,
@@ -472,8 +515,12 @@ export function Label(outerProps: Props) {
   };
 
   if (isValidElement(content)) {
-    const { labelRef: _, ...propsWithoutLabelRef } = propsWithViewBox;
-    return cloneElement(content, propsWithoutLabelRef);
+    /*
+     * The element is often a plain SVG element such as `<text>`,
+     * where `background` would end up as an invalid DOM attribute.
+     */
+    const { labelRef: _, background: _background, ...propsForElement } = propsWithViewBox;
+    return cloneElement(content, propsForElement);
   }
 
   if (typeof content === 'function') {
@@ -511,6 +558,7 @@ export function Label(outerProps: Props) {
          */
         textAnchor={isValidTextAnchor(attrs.textAnchor) ? attrs.textAnchor : positionAttrs.textAnchor}
         breakAll={textBreakAll}
+        background={props.background}
       >
         {label}
       </Text>

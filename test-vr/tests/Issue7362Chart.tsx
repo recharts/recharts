@@ -1,4 +1,4 @@
-import { CartesianGrid, Line, LineChart, XAxis, YAxis } from 'recharts';
+import { CartesianGrid, Line, LineChart, useRechartsTheme, XAxis, YAxis } from 'recharts';
 import * as React from 'react';
 
 export type Datum = {
@@ -19,9 +19,10 @@ export function Issue7362Chart({
   ticks?: ReadonlyArray<number>;
   tickCount?: number;
 }) {
+  const theme = useRechartsTheme();
   return (
-    <div style={{ width: 340, padding: 16, backgroundColor: '#fff' }}>
-      <div style={{ marginBottom: 8, fontFamily: 'sans-serif', fontSize: 14 }}>{title}</div>
+    <div style={{ width: 340, padding: 16 }}>
+      <div style={{ marginBottom: 8, ...theme?.typography }}>{title}</div>
       <LineChart width={308} height={220} data={data}>
         <CartesianGrid strokeDasharray="3 3" />
         <XAxis dataKey="name" />
@@ -32,7 +33,7 @@ export function Issue7362Chart({
           {...(ticks != null ? { ticks } : {})}
           {...(tickCount != null ? { tickCount } : {})}
         />
-        <Line type="monotone" dataKey="value" stroke="#8884d8" isAnimationActive={false} connectNulls dot={false} />
+        <Line dataKey="value" isAnimationActive={false} connectNulls dot={false} />
       </LineChart>
     </div>
   );

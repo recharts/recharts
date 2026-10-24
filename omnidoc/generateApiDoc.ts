@@ -12,11 +12,17 @@
  */
 import * as path from 'path';
 import * as prettier from 'prettier';
-import { marked } from 'marked';
 import { getAllTagTexts, getTagText, JSDocMeta, ProjectDocReader } from './readProject';
 import { ExampleReader, ExampleResult } from './readExamples';
 import { ApiDoc, ApiProps, PropExample } from '../www/src/docs/api/types';
 import { writeFormattedFile } from './writerUtils';
+import {
+  isDeadLink,
+  JsDocLinkReference,
+  parseInlineJsDocLink,
+  parseJsDocLinkBody,
+  renderJsDocMarkdown,
+} from './jsDocMarkdown';
 
 const OUTPUT_DIR = path.join(__dirname, '../www/src/docs/api');
 const PRETTIER_CONFIG_PATH = path.join(__dirname, '../.prettierrc');
@@ -143,45 +149,21 @@ export function buildContextMap(
   return contextMap;
 }
 
-/**
- * Processes inline {@link} tags in JSDoc text and converts them to HTML anchor tags or React Router Link components.
- * Handles both {@link url} and {@link url text} formats.
- * If the link is a single word that matches a Recharts component name, it creates a React Router Link for SPA navigation.
- */
-export function processInlineLinks(text: string, componentNames?: ReadonlyArray<string>): string {
-  // Match {@link url} or {@link url text} or {@ link url text} (with space after @)
-  // The regex captures: url and optional text
-  return text.replace(/\{@\s*link\s+([^\s}]+)(?:\s+([^}]*?))?\s*\}/g, (match, url, t) => {
-    const displayText = t?.trim() || url;
-
-    // Check if the URL is a single word (no protocol, no slashes) and matches a component name
-    if (componentNames && !url.includes('://') && !url.includes('/') && componentNames.includes(url)) {
-      // It's a Recharts component reference - create a React Router Link for SPA navigation
-      return `<LinkToApi>${displayText}</LinkToApi>`;
-    }
-
-    // Otherwise, use the URL as-is for external links
-    return `<a href="${url}">${displayText}</a>`;
-  });
-}
-
 async function renderJsDocRichText(
   text: string,
-  componentNames?: ReadonlyArray<string>,
+  linkableNames?: ReadonlyArray<string>,
 ): Promise<{ [locale: string]: string }> {
-  const textWithLinks = processInlineLinks(text, componentNames);
   return {
-    'en-US': await marked.parse(textWithLinks),
+    'en-US': renderJsDocMarkdown(text, linkableNames),
   };
 }
 
 async function renderDeprecatedTagText(
   text: string,
-  componentNames?: ReadonlyArray<string>,
+  linkableNames?: ReadonlyArray<string>,
 ): Promise<{ [locale: string]: string }> {
-  const textWithLinks = processInlineLinks(text, componentNames);
   return {
-    'en-US': await marked.parse(textWithLinks),
+    'en-US': renderJsDocMarkdown(text, linkableNames),
   };
 }
 
@@ -218,37 +200,19 @@ async function generateComponentDescription(
   return undefined;
 }
 
-/**
- * Parses JSDoc tag text (from @see or @link) and extracts URL and display name.
- * Handles formats like:
- * - `{@link url}`
- * - `{@link url text}`
- * - `url text`
- * - `url|text`
- * - @see url
- */
-export function parseJSDocLinkTag(tag: string): PropExample {
-  let url: string, name: string;
+function parseJSDocLinkTagReference(tag: string): JsDocLinkReference {
+  const cleanTag = tag.trim();
 
-  let cleanTag = tag.trim();
+  // The tag is either a whole {@link ...}, or the same thing without the wrapper
+  const inlineLink = parseInlineJsDocLink(cleanTag);
+  const reference = inlineLink?.raw === cleanTag ? inlineLink : parseJsDocLinkBody(cleanTag);
 
-  // Check for {@link ...} wrapper and strip it
-  const linkWrapperMatch = cleanTag.match(/^{@link\s+(.+)}$/);
-  if (linkWrapperMatch) {
-    cleanTag = linkWrapperMatch[1]?.trim() ?? '';
-  }
+  // Fallback for weird cases
+  return reference ?? { target: cleanTag, label: cleanTag };
+}
 
-  // Parse "url|text" or "url text"
-  // Match first sequence of non-whitespace/non-pipe characters as URL
-  const parts = cleanTag.match(/^([^\s|]+)(?:[\s|]+(.+))?$/);
-  if (parts) {
-    url = parts[1]?.trim() ?? '';
-    name = parts[2]?.trim() ?? url;
-  } else {
-    // Fallback for weird cases
-    url = cleanTag;
-    name = cleanTag;
-  }
+function makePropExampleFromReference(reference: JsDocLinkReference): PropExample {
+  let url = reference.target;
 
   // Strip specific prefix
   const prefix = 'https://recharts.github.io/en-US';
@@ -264,24 +228,42 @@ export function parseJSDocLinkTag(tag: string): PropExample {
   }
 
   return {
-    name,
+    name: reference.label,
     url,
     isExternal,
   };
 }
 
-function getAllLinksFromJsDoc(jsDocMeta: JSDocMeta | undefined): ReadonlyArray<PropExample> {
+/**
+ * Parses JSDoc tag text (from @see or @link) and extracts URL and display name.
+ * Handles formats like:
+ * - `{@link url}`
+ * - `{@link url text}`
+ * - `url text`
+ * - `url|text`
+ * - @see url
+ */
+export function parseJSDocLinkTag(tag: string): PropExample {
+  return makePropExampleFromReference(parseJSDocLinkTagReference(tag));
+}
+
+/**
+ * Reads `@see` and `@link` tags. Tags that reference a symbol without its own API page (for example a type)
+ * are skipped because on the website they would lead to 404.
+ */
+function getAllLinksFromJsDoc(
+  jsDocMeta: JSDocMeta | undefined,
+  linkableNames: ReadonlyArray<string>,
+): ReadonlyArray<PropExample> {
   if (!jsDocMeta) return [];
 
-  const examples: PropExample[] = [];
   const seeTags = getAllTagTexts(jsDocMeta, 'see');
   const linkTags = getAllTagTexts(jsDocMeta, 'link');
 
-  [...seeTags, ...linkTags].forEach(tag => {
-    examples.push(parseJSDocLinkTag(tag));
-  });
-
-  return examples;
+  return [...seeTags, ...linkTags]
+    .map(parseJSDocLinkTagReference)
+    .filter(reference => !isDeadLink(reference.target, linkableNames))
+    .map(makePropExampleFromReference);
 }
 
 function deduplicatePropExamples(examples: ReadonlyArray<PropExample>): ReadonlyArray<PropExample> {
@@ -298,16 +280,25 @@ function makePropExample(example: ExampleResult): PropExample {
   };
 }
 
+/**
+ * Only stable runtime exports get their own API page.
+ * Types, internal symbols, and experimental exports do not, so linking to them would lead to 404.
+ */
+export function getLinkableNames(projectReader: ProjectDocReader): ReadonlyArray<string> {
+  return projectReader.getAllRuntimeExportedNames().filter(name => projectReader.isStable(name));
+}
+
 export function getLinksFromProp(
   componentName: string,
   propName: string,
   projectReader: ProjectDocReader,
   exampleReader: ExampleReader,
+  linkableNames: ReadonlyArray<string> = getLinkableNames(projectReader),
 ): ReadonlyArray<PropExample> {
   const meta = projectReader.getPropMeta(componentName, propName);
   // getPropMeta returns an array, but standard props usually map to one definition.
   // In case of multiple (overloading), we merge tags.
-  const allExamples = meta.map(propMeta => propMeta.jsDoc).flatMap(getAllLinksFromJsDoc);
+  const allExamples = meta.flatMap(propMeta => getAllLinksFromJsDoc(propMeta.jsDoc, linkableNames));
 
   const scannedExamples = exampleReader
     .getExamples(componentName, propName)
@@ -327,9 +318,10 @@ function getLinksFromComponent(
   componentName: string,
   projectReader: ProjectDocReader,
   exampleReader: ExampleReader,
+  linkableNames: ReadonlyArray<string>,
 ): ReadonlyArray<PropExample> {
   const componentJsDoc = projectReader.getComponentJsDocMeta(componentName);
-  const jsDocExamples = componentJsDoc ? getAllLinksFromJsDoc(componentJsDoc) : [];
+  const jsDocExamples = getAllLinksFromJsDoc(componentJsDoc, linkableNames);
 
   const scannedExamples = exampleReader
     .getExamples(componentName)
@@ -355,7 +347,10 @@ async function generateApiDoc(
   const props: ApiProps[] = [];
   const rechartsPropNames = projectReader.getRechartsPropsOf(componentName);
   const componentNames = options?.componentNames ?? projectReader.getPublicComponentNames();
-  const allExports = options?.allExports ?? projectReader.getAllRuntimeExportedNames();
+  // only stable exports get their own API page, so only those can be linked to
+  const linkableNames = (options?.allExports ?? projectReader.getAllRuntimeExportedNames()).filter(name =>
+    projectReader.isStable(name),
+  );
 
   for (const propName of rechartsPropNames) {
     const comment = projectReader.getCommentOf(componentName, propName);
@@ -372,7 +367,7 @@ async function generateApiDoc(
     const deprecatedTag = getPropTag(propMetaList, 'deprecated');
     let deprecated: string | boolean | { [locale: string]: string } | undefined;
     if (deprecatedTag) {
-      deprecated = deprecatedTag.text ? await renderDeprecatedTagText(deprecatedTag.text, allExports) : true;
+      deprecated = deprecatedTag.text ? await renderDeprecatedTagText(deprecatedTag.text, linkableNames) : true;
     }
     const since = getPropTag(propMetaList, 'since')?.text;
 
@@ -386,7 +381,7 @@ async function generateApiDoc(
 
     // Add description if available
     if (comment) {
-      prop.desc = await renderJsDocRichText(comment, allExports);
+      prop.desc = await renderJsDocRichText(comment, linkableNames);
     }
 
     // Add default value if available
@@ -402,7 +397,7 @@ async function generateApiDoc(
     }
 
     // Add links/see tags as examples
-    const links = getLinksFromProp(componentName, propName, projectReader, exampleReader);
+    const links = getLinksFromProp(componentName, propName, projectReader, exampleReader, linkableNames);
     if (links.length > 0) {
       prop.examples = links;
     }
@@ -466,20 +461,20 @@ async function generateApiDoc(
   // Get component-level JSDoc metadata
   const componentJsDoc = projectReader.getComponentJsDocMeta(componentName);
   if (componentJsDoc) {
-    apiDoc.desc = await generateComponentDescription(componentName, projectReader, allExports);
+    apiDoc.desc = await generateComponentDescription(componentName, projectReader, linkableNames);
 
     const returnTag = getTagText(componentJsDoc, 'returns') || getTagText(componentJsDoc, 'return');
     if (returnTag?.text) {
-      apiDoc.returnDesc = await renderJsDocRichText(returnTag.text, allExports);
+      apiDoc.returnDesc = await renderJsDocRichText(returnTag.text, linkableNames);
     }
 
     const deprecatedTag = getTagText(componentJsDoc, 'deprecated');
     if (deprecatedTag) {
-      apiDoc.deprecated = deprecatedTag.text ? await renderDeprecatedTagText(deprecatedTag.text, allExports) : true;
+      apiDoc.deprecated = deprecatedTag.text ? await renderDeprecatedTagText(deprecatedTag.text, linkableNames) : true;
     }
 
     // Get links from component JSDoc
-    const links = getLinksFromComponent(componentName, projectReader, exampleReader);
+    const links = getLinksFromComponent(componentName, projectReader, exampleReader, linkableNames);
     if (links.length > 0) {
       apiDoc.links = links;
     }
@@ -519,6 +514,15 @@ async function generateApiDoc(
 }
 
 /**
+ * Curly braces in HTML are plain text, but in JSX they open an expression.
+ * Without escaping, `<code>shared={true}</code>` renders as `shared=`,
+ * and `<code>.dark { color-scheme: dark; }</code>` is a syntax error.
+ */
+export function escapeJsxBraces(html: string): string {
+  return html.replace(/[{}]/g, brace => (brace === '{' ? '&#123;' : '&#125;'));
+}
+
+/**
  * Custom stringify that converts HTML strings to JSX.
  *
  * This function is intentionally not adding new lines or indentation
@@ -529,7 +533,7 @@ function stringifyLocalizedRichText(value: Partial<Record<string, string>>): str
   for (const [locale, html] of Object.entries(value)) {
     if (!html) continue;
     // Write HTML as JSX without quotes. Wrap in <section> to ensure valid JSX.
-    result += `"${locale}": (<section>${html}</section>),`;
+    result += `"${locale}": (<section>${escapeJsxBraces(html)}</section>),`;
   }
   result += `}`;
   return result;
@@ -693,10 +697,10 @@ ${exports}
 /**
  * Main function
  */
-async function main() {
-  const projectReader = new ProjectDocReader();
-  const exampleReader = new ExampleReader();
-
+async function main(
+  projectReader: ProjectDocReader = new ProjectDocReader(),
+  exampleReader: ExampleReader = new ExampleReader(),
+): Promise<void> {
   const componentsToGenerate = projectReader.getAllRuntimeExportedNames();
 
   // Build context map from all public components, not just the ones we're generating
@@ -733,4 +737,4 @@ if (require.main === module) {
   main();
 }
 
-export { generateApiDoc, writeApiDocFile };
+export { generateApiDoc, writeApiDocFile, main };

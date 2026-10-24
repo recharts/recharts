@@ -39,7 +39,7 @@ describe('RadialBar theme', () => {
     expect(sector.getAttribute('stroke')).toBe(null);
   });
 
-  it('applies graphical item theme styles and preserves explicit props', () => {
+  it('ignores the graphical item theme completely when explicit style props are present', () => {
     const { container } = rechartsTestRender(
       <RechartsThemeProvider
         value={{
@@ -60,11 +60,11 @@ describe('RadialBar theme', () => {
     );
     const sector = getSector(container);
     expect(sector.getAttribute('fill')).toBe('gold');
-    expect(sector.getAttribute('stroke')).toBe('teal');
+    expect(sector.getAttribute('stroke')).toBe(null);
     expect(sector.getAttribute('stroke-width')).toBe('2');
-    expect(sector.getAttribute('stroke-opacity')).toBe('0.3');
-    expect(sector.getAttribute('stroke-dasharray')).toBe('5 10');
-    expect(sector.getAttribute('fill-opacity')).toBe('0.7');
+    expect(sector.getAttribute('stroke-opacity')).toBe(null);
+    expect(sector.getAttribute('stroke-dasharray')).toBe(null);
+    expect(sector.getAttribute('fill-opacity')).toBe(null);
   });
 
   it('applies all themed graphical item styles when props are omitted', () => {

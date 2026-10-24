@@ -11,6 +11,7 @@ import {
 } from '../state/selectors/axisSelectors';
 import { usePlotArea } from '../hooks';
 import { isFullViewport } from '../util/zoom/viewport';
+import { CartesianViewBoxRequired } from '../util/types';
 
 type GraphicalItemClipPathProps = {
   xAxisId: AxisId;
@@ -36,7 +37,20 @@ export function useNeedsClip(xAxisId: AxisId, yAxisId: AxisId) {
   return { needClip, needClipX, needClipY };
 }
 
-export function GraphicalItemClipPath({ xAxisId, yAxisId, clipPathId }: GraphicalItemClipPathProps) {
+/**
+ * The area that a graphical item is clipped to.
+ * In a dimension that is not clipped (`isXClipped` or `isYClipped` is false),
+ * the area reaches past the plot area on both sides.
+ */
+export type GraphicalItemClipArea = CartesianViewBoxRequired & {
+  isXClipped: boolean;
+  isYClipped: boolean;
+};
+
+/**
+ * @returns the area that the graphical item is clipped to, or undefined if it is not clipped
+ */
+export function useGraphicalItemClipArea(xAxisId: AxisId, yAxisId: AxisId): GraphicalItemClipArea | undefined {
   const plotArea = usePlotArea();
 
   const { needClipX, needClipY, needClip } = useNeedsClip(xAxisId, yAxisId);
@@ -44,7 +58,7 @@ export function GraphicalItemClipPath({ xAxisId, yAxisId, clipPathId }: Graphica
   const yAxisRange = useAppSelector(state => selectYAxisRange(state, yAxisId, false));
 
   if (!needClip || !plotArea) {
-    return null;
+    return undefined;
   }
 
   const { x, y, width, height } = plotArea;
@@ -54,9 +68,26 @@ export function GraphicalItemClipPath({ xAxisId, yAxisId, clipPathId }: Graphica
   const clipWidth = needClipX && xAxisRange ? Math.abs(xAxisRange[1] - xAxisRange[0]) : width * 2;
   const clipHeight = needClipY && yAxisRange ? Math.abs(yAxisRange[1] - yAxisRange[0]) : height * 2;
 
+  return {
+    x: clipX,
+    y: clipY,
+    width: clipWidth,
+    height: clipHeight,
+    isXClipped: needClipX && xAxisRange != null,
+    isYClipped: needClipY && yAxisRange != null,
+  };
+}
+
+export function GraphicalItemClipPath({ xAxisId, yAxisId, clipPathId }: GraphicalItemClipPathProps) {
+  const clipArea = useGraphicalItemClipArea(xAxisId, yAxisId);
+
+  if (clipArea == null) {
+    return null;
+  }
+
   return (
     <clipPath id={`clipPath-${clipPathId}`}>
-      <rect x={clipX} y={clipY} width={clipWidth} height={clipHeight} />
+      <rect x={clipArea.x} y={clipArea.y} width={clipArea.width} height={clipArea.height} />
     </clipPath>
   );
 }

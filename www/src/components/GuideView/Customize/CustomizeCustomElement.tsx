@@ -1,4 +1,15 @@
-import { Bar, BarChart, CartesianGrid, Tooltip, useActiveTooltipDataPoints, usePlotArea, XAxis, YAxis } from 'recharts';
+import {
+  Bar,
+  BarChart,
+  CartesianGrid,
+  DefaultZIndexes,
+  Tooltip,
+  useActiveTooltipDataPoints,
+  usePlotArea,
+  XAxis,
+  YAxis,
+  ZIndexLayer,
+} from 'recharts';
 import { RechartsDevtools } from '@recharts/devtools';
 
 type DataPoint = { month: string; revenue: number };
@@ -40,9 +51,12 @@ function ActiveReadout() {
   }
 
   return (
-    <text x={plotArea.x + 10} y={plotArea.y + 22} fill="#0ea5e9" fontSize={16} fontWeight={700}>
-      {point.month}: {point.revenue}
-    </text>
+    // Position the element above Tooltip cursor so that it's not covered behind it
+    <ZIndexLayer zIndex={DefaultZIndexes.cursorRectangle + 1}>
+      <text x={plotArea.x + 10} y={plotArea.y + 22} fill="#0ea5e9" fontSize={16} fontWeight={700}>
+        {point.month}: {point.revenue}
+      </text>
+    </ZIndexLayer>
   );
 }
 
@@ -58,7 +72,7 @@ export default function CustomizeCustomElement() {
       <XAxis dataKey="month" />
       <YAxis />
       <Tooltip defaultIndex={4} />
-      <Bar dataKey="revenue" />
+      <Bar dataKey="revenue" stroke="none" fill="#0ea5e9" />
       {/* Your own components are ordinary chart children - no wrapper component needed. */}
       <PlotAreaFrame />
       <ActiveReadout />

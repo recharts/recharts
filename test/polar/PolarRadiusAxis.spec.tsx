@@ -1313,7 +1313,7 @@ describe('<PolarRadiusAxis />', () => {
     const renderTestCase = createSelectorTestCase(({ children }) => (
       <RadarChart width={500} height={500} data={exampleRadarData}>
         <PolarRadiusAxis dataKey="name" type="category" tickFormatter={formatter} />
-        <Radar dataKey="value" />
+        <Radar dataKey="name" />
         {children}
       </RadarChart>
     ));

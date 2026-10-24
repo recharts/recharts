@@ -6,7 +6,9 @@ import { RechartsTheme } from './RechartsTheme';
  *
  * Same idea as `clear.css` and others.
  *
- * @experimental - this is still in active development, assume that the API will change in a minor/patch version
+ * @see {@link https://recharts.github.io/en-US/guide/theming/ Theming guide}
+ *
+ * @since 3.11
  */
 export const emptyTheme: RechartsTheme = {
   graphicalItems: [{}],

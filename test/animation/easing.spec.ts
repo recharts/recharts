@@ -67,8 +67,8 @@ describe('configBezier', () => {
     const bezier = configBezier('ease-out');
     expect(typeof bezier).toBe('function');
     expect(bezier(0)).toBeCloseTo(0, 4);
-    expect(bezier(0.25)).toBeCloseTo(0.13, 1);
-    expect(bezier(0.5)).toBeCloseTo(0.5, 1);
+    expect(bezier(0.25)).toBeCloseTo(0.37, 1);
+    expect(bezier(0.5)).toBeCloseTo(0.68, 1);
     expect(bezier(0.75)).toBeCloseTo(0.91, 1);
     expect(bezier(1)).toBe(1);
   });
@@ -77,9 +77,9 @@ describe('configBezier', () => {
     const bezier = configBezier('ease-in-out');
     expect(typeof bezier).toBe('function');
     expect(bezier(0)).toBeCloseTo(0, 4);
-    expect(bezier(0.25)).toBeCloseTo(0.37, 1);
-    expect(bezier(0.5)).toBeCloseTo(0.68, 1);
-    expect(bezier(0.75)).toBeCloseTo(0.9, 1);
+    expect(bezier(0.25)).toBeCloseTo(0.13, 1);
+    expect(bezier(0.5)).toBeCloseTo(0.5, 1);
+    expect(bezier(0.75)).toBeCloseTo(0.87, 1);
     expect(bezier(1)).toBe(1);
   });
 

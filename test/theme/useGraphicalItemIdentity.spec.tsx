@@ -43,7 +43,7 @@ function createWrapper(dataKeys: ReadonlyArray<string>) {
 
 describe('useGraphicalItemIdentity', () => {
   it('selects the theme entry using all graphical item dataKeys from Redux', () => {
-    const { result } = renderHook(() => useGraphicalItemIdentity('revenue'), {
+    const { result } = renderHook(() => useGraphicalItemIdentity('revenue', {}), {
       wrapper: createWrapper(['revenue', 'profit']),
     });
 
@@ -51,7 +51,7 @@ describe('useGraphicalItemIdentity', () => {
   });
 
   it('includes the current dataKey when it is not registered in Redux yet', () => {
-    const { result } = renderHook(() => useGraphicalItemIdentity('revenue'), {
+    const { result } = renderHook(() => useGraphicalItemIdentity('revenue', {}), {
       wrapper: createWrapper(['profit']),
     });
 
@@ -59,21 +59,46 @@ describe('useGraphicalItemIdentity', () => {
   });
 
   it('returns undefined when the graphical item has no dataKey', () => {
-    const { result } = renderHook(() => useGraphicalItemIdentity(undefined), {
+    const { result } = renderHook(() => useGraphicalItemIdentity(undefined, {}), {
       wrapper: createWrapper(['profit']),
     });
 
     expect(result.current(theme)).toBeUndefined();
   });
 
+  it.each([{ fill: 'red' }, { stroke: 'red' }, { fill: 'red', strokeWidth: 3 }])(
+    'returns undefined when the graphical item sets its own color %s',
+    explicitProps => {
+      const { result } = renderHook(() => useGraphicalItemIdentity('revenue', explicitProps), {
+        wrapper: createWrapper(['revenue', 'profit']),
+      });
+
+      expect(result.current(theme)).toBeUndefined();
+    },
+  );
+
+  it.each([
+    { name: 'Revenue', fill: undefined },
+    { fillOpacity: 0.5 },
+    { strokeOpacity: 0.5 },
+    { strokeWidth: 3 },
+    { strokeDasharray: '3 3' },
+  ])('keeps the theme entry when the graphical item sets no color of its own %s', explicitProps => {
+    const { result } = renderHook(() => useGraphicalItemIdentity('revenue', explicitProps), {
+      wrapper: createWrapper(['revenue', 'profit']),
+    });
+
+    expect(result.current(theme)).toBe(theme.graphicalItems[1]);
+  });
+
   it('uses an empty dataKey list outside a theme provider', () => {
-    const { result } = renderHook(() => useGraphicalItemIdentity('profit'));
+    const { result } = renderHook(() => useGraphicalItemIdentity('profit', {}));
 
     expect(result.current(theme)).toBe(theme.graphicalItems[0]);
   });
 
   it('updates the selector when the dataKey changes', () => {
-    const { result, rerender } = renderHook(({ dataKey }) => useGraphicalItemIdentity(dataKey), {
+    const { result, rerender } = renderHook(({ dataKey }) => useGraphicalItemIdentity(dataKey, {}), {
       initialProps: { dataKey: 'profit' },
       wrapper: createWrapper(['profit', 'revenue']),
     });

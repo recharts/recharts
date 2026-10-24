@@ -27,8 +27,8 @@ function RevenueTooltip({ active, payload, label }: TooltipContentProps) {
     <div
       style={{
         border: '1px solid #d88488',
-        backgroundColor: '#fff',
-        color: '#18181b',
+        backgroundColor: 'Canvas',
+        color: 'CanvasText',
         padding: 10,
         borderRadius: 5,
         boxShadow: '1px 1px 2px #d88488',

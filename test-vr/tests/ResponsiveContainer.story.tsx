@@ -1,7 +1,6 @@
 import * as React from 'react';
 import { Line, LineChart, XAxis, YAxis, ResponsiveContainer } from '../../src';
 import { pageData } from '../../storybook/stories/data';
-import { ChartSizeDimensions } from '../../storybook/ChartSizeDimensions';
 
 export const ResponsiveContainerWithHardcodedWidthAndHeight = () => {
   return (
@@ -12,7 +11,6 @@ export const ResponsiveContainerWithHardcodedWidthAndHeight = () => {
           <XAxis dataKey="name" />
           <YAxis />
           <Line type="monotone" dataKey="uv" stroke="#8884d8" isAnimationActive={false} />
-          <ChartSizeDimensions />
         </LineChart>
       </ResponsiveContainer>
       <p>Should set specific dimensions without responsive calculations.</p>
@@ -29,7 +27,6 @@ export const RenderAt100PercentWidthAndHeightOfFixedSizeParent = () => {
           <XAxis dataKey="name" />
           <YAxis />
           <Line dataKey="uv" isAnimationActive={false} />
-          <ChartSizeDimensions />
         </LineChart>
       </ResponsiveContainer>
       <p>Should fill the parent container exactly.</p>
@@ -46,7 +43,6 @@ export const RenderAt50PercentWidthAndHeightOfFixedSizeParent = () => {
           <XAxis dataKey="name" />
           <YAxis />
           <Line dataKey="uv" isAnimationActive={false} />
-          <ChartSizeDimensions />
         </LineChart>
       </ResponsiveContainer>
       <p>Should fill half of the parent container&apos;s dimensions.</p>
@@ -66,7 +62,6 @@ export const RespectDimensionsOfFlexboxParent = () => {
             <XAxis dataKey="name" />
             <YAxis />
             <Line dataKey="uv" isAnimationActive={false} />
-            <ChartSizeDimensions />
           </LineChart>
         </ResponsiveContainer>
         <p>Should correctly size to its flex-item parent.</p>
@@ -87,7 +82,6 @@ export const RespectDimensionsOfGridParent = () => {
             <XAxis dataKey="name" />
             <YAxis />
             <Line dataKey="uv" isAnimationActive={false} />
-            <ChartSizeDimensions />
           </LineChart>
         </ResponsiveContainer>
         <p>Should correctly size to its grid-cell parent.</p>
@@ -105,7 +99,6 @@ export const HandleMixedFixedAndPercentageSizing = () => {
           <XAxis dataKey="name" />
           <YAxis />
           <Line dataKey="uv" isAnimationActive={false} />
-          <ChartSizeDimensions />
         </LineChart>
       </ResponsiveContainer>
       <p>Width should be responsive, height should be fixed.</p>
@@ -122,7 +115,6 @@ export const CalculateHeightBasedOnAspectRatio = () => {
           <XAxis dataKey="name" />
           <YAxis />
           <Line dataKey="uv" isAnimationActive={false} />
-          <ChartSizeDimensions />
         </LineChart>
       </ResponsiveContainer>
       <p>Height should be calculated from width to maintain the aspect ratio.</p>
@@ -139,7 +131,6 @@ export const RespectWidthInTallContainerWhenAspectIsSet = () => {
           <XAxis dataKey="name" />
           <YAxis />
           <Line dataKey="uv" isAnimationActive={false} />
-          <ChartSizeDimensions />
         </LineChart>
       </ResponsiveContainer>
       <p>Height is based on width, ignoring parent&apos;s extra height.</p>
@@ -156,7 +147,6 @@ export const AspectRatioOverriddenByMaxHeight = () => {
           <XAxis dataKey="name" />
           <YAxis />
           <Line dataKey="uv" isAnimationActive={false} />
-          <ChartSizeDimensions />
         </LineChart>
       </ResponsiveContainer>
       <p>Height is capped by maxHeight, overriding the aspect ratio.</p>
@@ -173,7 +163,6 @@ export const RespectMinWidthWithAspectRatio = () => {
           <XAxis dataKey="name" />
           <YAxis />
           <Line dataKey="uv" isAnimationActive={false} />
-          <ChartSizeDimensions />
         </LineChart>
       </ResponsiveContainer>
       <p>Width is forced to minWidth, overflowing the parent.</p>
@@ -190,7 +179,6 @@ export const CreateSquareChartThatOverflowsWideScreen = () => {
           <XAxis dataKey="name" />
           <YAxis />
           <Line dataKey="uv" isAnimationActive={false} />
-          <ChartSizeDimensions />
         </LineChart>
       </ResponsiveContainer>
       <p>Should overflow vertically.</p>
@@ -207,7 +195,6 @@ export const CreateSquareChartWithoutWidthOrHeight = () => {
           <XAxis dataKey="name" />
           <YAxis />
           <Line dataKey="uv" isAnimationActive={false} />
-          <ChartSizeDimensions />
         </LineChart>
       </ResponsiveContainer>
       <p>Should fill the smaller dimension of the parent (width in this case).</p>

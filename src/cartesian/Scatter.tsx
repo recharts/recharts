@@ -8,6 +8,7 @@ import {
   CartesianLabelListEntry,
   ImplicitLabelListType,
   LabelListFromLabelProp,
+  SetLabelListClipArea,
 } from '../component/LabelList';
 import { findAllByType } from '../util/ReactUtils';
 import { Curve, CurveType, Props as CurveProps } from '../shape/Curve';
@@ -21,7 +22,7 @@ import {
   AnimationDuration,
   EasingInput,
   Coordinate,
-  DataConsumer,
+  ValueAxisDataConsumer,
   DataKey,
   DataProvider,
   isNonEmptyArray,
@@ -34,6 +35,7 @@ import {
   TickItem,
   TrapezoidViewBox,
   CartesianLayout,
+  LayoutType,
 } from '../util/types';
 import { Formatter, TooltipType } from '../component/DefaultTooltipContent';
 import { ScatterShapeProps, ScatterSymbol } from '../util/ScatterUtils';
@@ -77,6 +79,12 @@ import { propsAreEqual } from '../util/propsAreEqual';
 import { useBackwardsCompatibleTheme } from '../theme/useBackwardsCompatibleTheme';
 import { ChartData } from '../state/chartDataSlice';
 import { useGraphicalItemIdentity } from '../theme/useGraphicalItemIdentity';
+import { useEffectiveDataKey } from '../util/useEffectiveDataKey';
+import { getDataKeyOnAxis } from '../state/selectors/effectiveDataKeySelectors';
+import { getEntryStyleOverrides, hasOwnColors, UnthemedStyles, useUnthemedStyles } from '../theme/dataEntryStyles';
+import { getActiveStyleOverrides, useThemedActiveStyles } from '../theme/activeStyles';
+import { Styles2D } from '../theme/RechartsTheme';
+import { DataLabelThemeContextProvider, useSeriesLabelThemeResolver } from '../theme/labelTheme';
 
 export interface ScatterPointNode {
   x?: number | string;
@@ -155,6 +163,17 @@ interface ScatterInternalProps extends ZIndexable {
   points: ReadonlyArray<ScatterPointItem>;
   hide: boolean;
   label?: ImplicitLabelListType;
+  /**
+   * Explicit style props without theme contributions.
+   * Applied to data entries that define their own colors, so that they ignore the theme.
+   * Undefined when there is no active theme.
+   */
+  unthemedStyles?: UnthemedStyles;
+  /**
+   * Theme styles of the active shape, without the ones that explicit props override.
+   * Undefined when there is no active theme, or when the theme has no active styles.
+   */
+  themedActiveStyles?: Styles2D;
 
   isAnimationActive: boolean | 'auto';
   animationBegin: number;
@@ -178,7 +197,7 @@ interface ScatterInternalProps extends ZIndexable {
  * @internal
  */
 export interface ScatterProps<DataPointType = any, DataValueType = any>
-  extends DataProvider<DataPointType>, DataConsumer<DataPointType, DataValueType>, ZIndexable {
+  extends DataProvider<DataPointType>, ValueAxisDataConsumer<DataPointType, DataValueType>, ZIndexable {
   /**
    * Unique identifier of this component.
    * Used as an HTML attribute `id`, and also to identify this element internally.
@@ -574,6 +593,8 @@ function ScatterLabelListProvider({
  * @param shape The default shape to render for inactive points
  * @param activeShape The shape to render when this point is active, or undefined if no active shape
  * @param baseProps SVG presentation attributes (fill, stroke, etc.) shared across all points
+ * @param entryStyleOverrides Removes theme styles from points that define their own colors in data, or undefined
+ * @param themedActiveStyles Theme styles of the active shape, or undefined
  * @param id The graphical item ID of the parent Scatter component
  * @param restOfAllOtherProps Remaining Scatter props for user-provided event handlers via adaptEventsOfChild
  * @param onMouseEnterFromContext Curried mouse enter handler that dispatches tooltip activation
@@ -586,6 +607,8 @@ function ScatterPoint({
   shape,
   activeShape,
   baseProps,
+  entryStyleOverrides,
+  themedActiveStyles,
   id,
   restOfAllOtherProps,
   animationElapsedTime,
@@ -600,6 +623,8 @@ function ScatterPoint({
   shape: ScatterCustomizedShape;
   activeShape: ScatterCustomizedShape | undefined;
   baseProps: WithoutId<SVGPropsNoEvents<InternalProps>>;
+  entryStyleOverrides: UnthemedStyles | undefined;
+  themedActiveStyles: Styles2D | undefined;
   id: GraphicalItemId;
   restOfAllOtherProps: InternalProps;
   onMouseEnterFromContext: (
@@ -632,7 +657,9 @@ function ScatterPoint({
   };
   const symbolProps: ScatterShapeProps = {
     ...filteredBaseProps,
+    ...entryStyleOverrides,
     ...entry,
+    ...(isActive ? getActiveStyleOverrides(activeShape, themedActiveStyles, entry) : undefined),
     isActive,
     index,
     animationElapsedTime,
@@ -665,7 +692,7 @@ function ScatterPoint({
 
 function ScatterSymbols(props: ScatterSymbolsProps) {
   const { points, allOtherScatterProps, animationElapsedTime, isAnimating, isEntrance } = props;
-  const { shape, activeShape, dataKey } = allOtherScatterProps;
+  const { shape, activeShape, dataKey, unthemedStyles, themedActiveStyles } = allOtherScatterProps;
   const { id, ...allOtherPropsWithoutId } = allOtherScatterProps;
 
   const {
@@ -695,6 +722,8 @@ function ScatterSymbols(props: ScatterSymbolsProps) {
           shape={shape}
           activeShape={activeShape}
           baseProps={baseProps}
+          entryStyleOverrides={getEntryStyleOverrides(entry, unthemedStyles)}
+          themedActiveStyles={themedActiveStyles}
           id={id}
           restOfAllOtherProps={restOfAllOtherProps}
           animationElapsedTime={animationElapsedTime}
@@ -785,6 +814,37 @@ function SymbolsWithAnimation({
   );
 }
 
+/**
+ * Resolves the color a scatter point actually renders with, mirroring the render order in ScatterSymbols:
+ * data entry props win over the series props (theme already merged into those).
+ * Cell is deprecated and intentionally not part of this; its colors never reach the tooltip.
+ * Fill wins over stroke, same as Pie and Funnel entry colors.
+ * https://github.com/recharts/recharts/issues/7976
+ */
+export function getScatterEntryColor(
+  entry: unknown,
+  seriesFill: string | undefined,
+  seriesStroke: string | undefined,
+  unthemedStyles: UnthemedStyles | undefined,
+): string | undefined {
+  /*
+   * When the entry defines its own colors, the theme is suppressed for that entry at render time,
+   * and the explicit Scatter props fill in the rest (see getEntryStyleOverrides).
+   * Mirror that here so the tooltip color matches the rendered symbol.
+   */
+  const seriesFillFallback = hasOwnColors(entry) && unthemedStyles != null ? unthemedStyles.fill : seriesFill;
+  const seriesStrokeFallback = hasOwnColors(entry) && unthemedStyles != null ? unthemedStyles.stroke : seriesStroke;
+  const fill =
+    entry != null && typeof entry === 'object' && 'fill' in entry && typeof entry.fill === 'string'
+      ? entry.fill
+      : undefined;
+  const stroke =
+    entry != null && typeof entry === 'object' && 'stroke' in entry && typeof entry.stroke === 'string'
+      ? entry.stroke
+      : undefined;
+  return fill ?? seriesFillFallback ?? stroke ?? seriesStrokeFallback;
+}
+
 export function computeScatterPoints({
   displayedData,
   xAxis,
@@ -794,6 +854,10 @@ export function computeScatterPoints({
   xAxisTicks,
   yAxisTicks,
   cells,
+  layout,
+  seriesFill,
+  seriesStroke,
+  unthemedStyles,
 }: {
   displayedData: ReadonlyArray<unknown>;
   xAxis: BaseAxisWithScale;
@@ -803,9 +867,18 @@ export function computeScatterPoints({
   xAxisTicks: ReadonlyArray<TickItem> | undefined;
   yAxisTicks: ReadonlyArray<TickItem> | undefined;
   cells: ReadonlyArray<ReactElement> | undefined;
+  layout: LayoutType | undefined;
+  seriesFill: string | undefined;
+  seriesStroke: string | undefined;
+  unthemedStyles: UnthemedStyles | undefined;
 }): ReadonlyArray<ScatterPointItem> {
-  const xAxisDataKey = isNullish(xAxis.dataKey) ? scatterSettings.dataKey : xAxis.dataKey;
-  const yAxisDataKey = isNullish(yAxis.dataKey) ? scatterSettings.dataKey : yAxis.dataKey;
+  /*
+   * Scatter reads from two axes so it has two dataKeys.
+   * On the value axis, the Scatter dataKey wins and the axis is the fallback - same as all other graphical items.
+   * On the other axis, the axis dataKey wins.
+   */
+  const xAxisDataKey = getDataKeyOnAxis(scatterSettings.dataKey, xAxis.dataKey, layout, 'xAxis');
+  const yAxisDataKey = getDataKeyOnAxis(scatterSettings.dataKey, yAxis.dataKey, layout, 'yAxis');
   const zAxisDataKey = zAxis && zAxis.dataKey;
   const defaultRangeZ = zAxis ? zAxis.range : implicitZAxis.range;
   const defaultZ = defaultRangeZ && defaultRangeZ[0];
@@ -816,9 +889,10 @@ export function computeScatterPoints({
     const y: unknown = getValueByDataKey(entry, yAxisDataKey);
     const z: unknown = (!isNullish(zAxisDataKey) && getValueByDataKey(entry, zAxisDataKey)) || '-';
 
+    const pointColor = getScatterEntryColor(entry, seriesFill, seriesStroke, unthemedStyles);
     const tooltipPayload: Array<TooltipPayloadEntry> = [
       {
-        name: isNullish(xAxis.dataKey) ? scatterSettings.name : xAxis.name || String(xAxis.dataKey),
+        name: isNullish(xAxis.dataKey) ? scatterSettings.name : xAxis.name || String(xAxisDataKey),
         unit: xAxis.unit || '',
         // @ts-expect-error getValueByDataKey does not validate the output type
         value: x,
@@ -826,9 +900,11 @@ export function computeScatterPoints({
         dataKey: xAxisDataKey,
         type: scatterSettings.tooltipType,
         graphicalItemId: scatterSettings.id,
+        color: pointColor,
+        fill: pointColor,
       },
       {
-        name: isNullish(yAxis.dataKey) ? scatterSettings.name : yAxis.name || String(yAxis.dataKey),
+        name: isNullish(yAxis.dataKey) ? scatterSettings.name : yAxis.name || String(yAxisDataKey),
         unit: yAxis.unit || '',
         // @ts-expect-error getValueByDataKey does not validate the output type
         value: y,
@@ -836,6 +912,8 @@ export function computeScatterPoints({
         dataKey: yAxisDataKey,
         type: scatterSettings.tooltipType,
         graphicalItemId: scatterSettings.id,
+        color: pointColor,
+        fill: pointColor,
       },
     ];
 
@@ -850,6 +928,8 @@ export function computeScatterPoints({
         dataKey: zAxisDataKey,
         type: scatterSettings.tooltipType,
         graphicalItemId: scatterSettings.id,
+        color: pointColor,
+        fill: pointColor,
       });
     }
 
@@ -872,9 +952,14 @@ export function computeScatterPoints({
     const size = z !== '-' && zAxis != null ? zAxis.scale.map(z) : defaultZ;
     const radius = size == null ? 0 : Math.sqrt(Math.max(size, 0) / Math.PI);
 
+    /*
+     * `id` from a data entry is never spread on rendered elements to avoid duplicate DOM ids.
+     * The raw entry, id included, stays available through `payload`.
+     */
+    const entryWithoutId: Record<string, unknown> = typeof entry === 'object' && entry !== null ? { ...entry } : {};
+    delete entryWithoutId.id;
     return {
-      // @ts-expect-error can't spread unknown
-      ...entry,
+      ...entryWithoutId,
       cx,
       cy,
       x: cx == null ? undefined : cx - radius,
@@ -930,7 +1015,9 @@ function ScatterWithId(props: InternalProps) {
           errorBarOffset={0}
         >
           <Layer key="recharts-scatter-symbols">
-            <SymbolsWithAnimation props={props} previousPointsRef={previousPointsRef} />
+            <SetLabelListClipArea xAxisId={xAxisId} yAxisId={yAxisId}>
+              <SymbolsWithAnimation props={props} previousPointsRef={previousPointsRef} />
+            </SetLabelListClipArea>
           </Layer>
         </SetErrorBarContext>
       </Layer>
@@ -959,7 +1046,7 @@ export const defaultScatterProps = {
   zIndex: DefaultZIndexes.scatter,
 } as const satisfies Partial<Props>;
 
-function ScatterImpl(props: WithIdRequired<Props>) {
+function ScatterImpl(props: WithIdRequired<Props> & Pick<InternalProps, 'unthemedStyles' | 'themedActiveStyles'>) {
   const {
     animationBegin,
     animationDuration,
@@ -981,7 +1068,18 @@ function ScatterImpl(props: WithIdRequired<Props>) {
   const isPanorama = useIsPanorama();
 
   const points = useAppSelector(state => {
-    return selectScatterPoints(state, xAxisId, yAxisId, zAxisId, props.id, cells, isPanorama);
+    return selectScatterPoints(
+      state,
+      xAxisId,
+      yAxisId,
+      zAxisId,
+      props.id,
+      cells,
+      isPanorama,
+      props.fill,
+      props.stroke,
+      props.unthemedStyles,
+    );
   });
   if (needClip == null) {
     return null;
@@ -1025,7 +1123,15 @@ function ScatterImpl(props: WithIdRequired<Props>) {
 }
 
 function ScatterFn(outsideProps: Props) {
-  const graphicalItemThemeSelector = useGraphicalItemIdentity(outsideProps.dataKey);
+  const effectiveDataKey = useEffectiveDataKey({
+    dataKey: outsideProps.dataKey,
+    xAxisId: outsideProps.xAxisId ?? defaultScatterProps.xAxisId,
+    yAxisId: outsideProps.yAxisId ?? defaultScatterProps.yAxisId,
+  });
+  const graphicalItemThemeSelector = useGraphicalItemIdentity(effectiveDataKey, outsideProps);
+  const resolveLabelTheme = useSeriesLabelThemeResolver(graphicalItemThemeSelector);
+  const unthemedStyles = useUnthemedStyles(outsideProps);
+  const themedActiveStyles = useThemedActiveStyles(graphicalItemThemeSelector, outsideProps);
   const graphicalItemTheme = useBackwardsCompatibleTheme<Props>(graphicalItemThemeSelector, outsideProps, undefined);
   const props = resolveDefaultProps(
     {
@@ -1062,7 +1168,9 @@ function ScatterFn(outsideProps: Props) {
             tooltipType={props.tooltipType}
             isPanorama={isPanorama}
           />
-          <ScatterImpl {...props} id={id} />
+          <DataLabelThemeContextProvider value={resolveLabelTheme}>
+            <ScatterImpl {...props} id={id} unthemedStyles={unthemedStyles} themedActiveStyles={themedActiveStyles} />
+          </DataLabelThemeContextProvider>
         </>
       )}
     </RegisterGraphicalItemId>

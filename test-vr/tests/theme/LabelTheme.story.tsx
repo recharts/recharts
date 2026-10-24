@@ -11,8 +11,8 @@ function LabelThemeChart() {
   return (
     <>
       <BarChart width={360} height={240} data={data} margin={{ top: 30, right: 20, bottom: 30, left: 20 }}>
-        <XAxis dataKey="name" label="Category" />
-        <YAxis />
+        <XAxis dataKey="name" label="Category" height="auto" />
+        <YAxis width="auto" />
         <Bar dataKey="value" fill="#60a5fa" isAnimationActive={false}>
           <LabelList dataKey="value" position="top" />
         </Bar>

@@ -8,6 +8,7 @@
  * This keeps toHaveScreenshot() capturing the same bounding box as before.
  */
 import { test as base, expect, type Locator, type PlaywrightTestArgs, type TestInfo } from '@playwright/test';
+import { contrastBackgroundClassNames } from '../gallery/canvas';
 
 export type RechartsThemeVariant = 'legacy' | 'light' | 'dark';
 
@@ -59,7 +60,7 @@ function getAllowedRechartsThemes(
   return taggedThemes.length > 0 ? taggedThemes : rechartsThemes;
 }
 
-function createTest(defaultThemes: readonly RechartsThemeVariant[]) {
+function createTest(defaultThemes: readonly RechartsThemeVariant[], useContrastBackground = false) {
   return base.extend<TestOptions & TestFixtures>({
     rechartsThemes: [defaultThemes, { option: true }],
 
@@ -76,6 +77,15 @@ function createTest(defaultThemes: readonly RechartsThemeVariant[]) {
 
       const mountStory: MountStory = async (storyId, props) => {
         const root = await mount(storyId, props);
+        /*
+         * Every mount resets the canvas classes (see setCanvasBackground in the gallery renderer),
+         * so add the class after each mount. No cleanup is needed: the next mount resets it again.
+         */
+        if (useContrastBackground) {
+          const backgroundClassName =
+            rechartsTheme === 'dark' ? contrastBackgroundClassNames.dark : contrastBackgroundClassNames.light;
+          await root.evaluate((element, className: string) => element.classList.add(className), backgroundClassName);
+        }
         const children = root.locator(':scope > *');
         const component: Locator = (await children.count()) === 1 ? children.first() : root;
 
@@ -104,6 +114,6 @@ export const test = legacyTest;
  * browser/theme project and automatically supplies the selected theme to the
  * gallery boundary.
  */
-export const testWithThemes = createTest(allRechartsThemes);
+export const testWithThemes = createTest(allRechartsThemes, true);
 
 export { expect };

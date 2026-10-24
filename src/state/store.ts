@@ -66,6 +66,14 @@ const rootReducer: Reducer<RechartsRootState> = combineReducers({
   zoomSettings: zoomSettingsReducer,
 });
 
+function queueNotificationWithRequestAnimationFrame(notify: () => void): void {
+  if (typeof window !== 'undefined' && window.requestAnimationFrame) {
+    window.requestAnimationFrame(notify);
+    return;
+  }
+  setTimeout(notify, 10);
+}
+
 export const createRechartsStore = (
   preloadedState?: Partial<RechartsRootState>,
   chartName: string = 'Chart',
@@ -107,9 +115,7 @@ export const createRechartsStore = (
         enhancers = getDefaultEnhancers();
       }
       return enhancers.concat(
-        autoBatchEnhancer({
-          type: 'raf',
-        }),
+        autoBatchEnhancer({ type: 'callback', queueNotification: queueNotificationWithRequestAnimationFrame }),
       );
     },
     devTools: Global.devToolsEnabled && {

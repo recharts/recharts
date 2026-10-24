@@ -8,6 +8,7 @@ import {
   CartesianLabelListEntry,
   ImplicitLabelListType,
   LabelListFromLabelProp,
+  SetLabelListClipArea,
 } from '../component/LabelList';
 import { Dots, DotsDotProps } from '../component/Dots';
 import { interpolate, isNan, isNullish, isNumber, noop } from '../util/DataUtils';
@@ -23,7 +24,7 @@ import {
   ActiveShape,
   AnimationDuration,
   CartesianLayout,
-  DataConsumer,
+  ValueAxisDataConsumer,
   DataKey,
   DataProvider,
   DotType,
@@ -71,7 +72,10 @@ import { AreaRevealShape, AreaRevealShapeProps } from './AreaRevealShape';
 import { GraphicalItemStyle, Styles2D } from '../theme/RechartsTheme';
 import { useRechartsTheme } from '../theme/RechartsThemeContext';
 import { useBackwardsCompatibleTheme } from '../theme/useBackwardsCompatibleTheme';
+import { UnthemedStyles, useUnthemedStyles } from '../theme/dataEntryStyles';
 import { useGraphicalItemIdentity } from '../theme/useGraphicalItemIdentity';
+import { useEffectiveDataKey } from '../util/useEffectiveDataKey';
+import { DataLabelThemeContextProvider, useSeriesLabelThemeResolver } from '../theme/labelTheme';
 
 /**
  * @inline
@@ -87,6 +91,8 @@ type BaseValueCoordinate<DataPointType = any> = NullableCoordinate & { payload: 
  * Internal props, combination of external props + defaultProps + private Recharts state
  */
 interface InternalAreaProps extends ZIndexable {
+  unthemedStyles?: UnthemedStyles;
+  themedActiveStyles?: Styles2D;
   activeDot: ActiveDotType;
   animationBegin: number;
   animationDuration: AnimationDuration;
@@ -99,7 +105,7 @@ interface InternalAreaProps extends ZIndexable {
   className?: string;
   connectNulls: boolean;
   data?: ChartData;
-  dataKey: DataKey<any>;
+  dataKey?: DataKey<any>;
   dot: DotType;
   dotFill?: string;
   height: number;
@@ -144,7 +150,7 @@ interface InternalAreaProps extends ZIndexable {
  * @internal
  */
 export interface AreaProps<DataPointType = any, DataValueType = any>
-  extends Styles2D, DataProvider<DataPointType>, Required<DataConsumer<DataPointType, DataValueType>>, ZIndexable {
+  extends Styles2D, DataProvider<DataPointType>, ValueAxisDataConsumer<DataPointType, DataValueType>, ZIndexable {
   /**
    * The active dot is rendered on the closest data point when user interacts with the chart. Options:
    *
@@ -513,6 +519,7 @@ const SetAreaTooltipEntrySettings = React.memo(
         unit,
         formatter,
         graphicalItemId: id,
+        ignoreDataEntryColors: true,
       },
     };
     return <SetTooltipEntrySettings tooltipEntrySettings={tooltipEntrySettings} />;
@@ -543,7 +550,7 @@ function AreaDotsWrapper({
   points: ReadonlyArray<AreaPointItem>;
   props: WithoutId<InternalProps>;
 }) {
-  const { needClip, dot, dataKey, dotFill, ...propsWithoutDotFill } = props;
+  const { needClip, dot, dataKey, dotFill, unthemedStyles, ...propsWithoutDotFill } = props;
   const areaProps: DotsDotProps = svgPropertiesNoEvents(propsWithoutDotFill);
 
   return (
@@ -554,6 +561,7 @@ function AreaDotsWrapper({
       dotClassName="recharts-area-dot"
       dataKey={dataKey}
       baseProps={{ ...areaProps, fill: dotFill ?? areaProps.fill }}
+      unthemedStyles={unthemedStyles}
       needClip={needClip}
       clipPathId={clipPathId}
     />
@@ -823,7 +831,9 @@ class AreaWithState extends PureComponent<InternalProps> {
               )}
             </defs>
           )}
-          <RenderArea needClip={needClip} clipPathId={clipPathId} props={this.props} />
+          <SetLabelListClipArea xAxisId={xAxisId} yAxisId={yAxisId}>
+            <RenderArea needClip={needClip} clipPathId={clipPathId} props={this.props} />
+          </SetLabelListClipArea>
         </Layer>
         <ActivePoints
           points={points}
@@ -831,6 +841,7 @@ class AreaWithState extends PureComponent<InternalProps> {
           itemDataKey={this.props.dataKey}
           activeDot={this.props.activeDot}
           clipPath={activePointsClipPath}
+          themedActiveStyles={this.props.themedActiveStyles}
         />
         {this.props.isRange && Array.isArray(baseLine) && (
           <ActivePoints
@@ -839,6 +850,7 @@ class AreaWithState extends PureComponent<InternalProps> {
             itemDataKey={this.props.dataKey}
             activeDot={this.props.activeDot}
             clipPath={activePointsClipPath}
+            themedActiveStyles={this.props.themedActiveStyles}
           />
         )}
       </ZIndexLayer>
@@ -847,7 +859,8 @@ class AreaWithState extends PureComponent<InternalProps> {
 }
 
 function AreaImpl<DataPointType, ValueAxisType>(
-  props: PropsWithDefaults<DataPointType, ValueAxisType> & Pick<InternalProps, 'dotFill'>,
+  props: PropsWithDefaults<DataPointType, ValueAxisType> &
+    Pick<InternalProps, 'dotFill' | 'unthemedStyles' | 'themedActiveStyles'>,
 ) {
   const {
     activeDot,
@@ -1074,26 +1087,25 @@ export function computeArea({
 
 function AreaFn(outsideProps: Props<any, any>) {
   const rechartsTheme = useRechartsTheme();
-  const graphicalItemThemeSelector = useGraphicalItemIdentity(outsideProps.dataKey);
-  const theme = useBackwardsCompatibleTheme<GraphicalItemStyle>(
+  const dataKey = useEffectiveDataKey({
+    dataKey: outsideProps.dataKey,
+    xAxisId: outsideProps.xAxisId ?? defaultAreaProps.xAxisId,
+    yAxisId: outsideProps.yAxisId ?? defaultAreaProps.yAxisId,
+  });
+  const graphicalItemThemeSelector = useGraphicalItemIdentity(dataKey, outsideProps);
+  const resolveLabelTheme = useSeriesLabelThemeResolver(graphicalItemThemeSelector);
+  const theme = useBackwardsCompatibleTheme<Omit<GraphicalItemStyle, 'label'>>(
     graphicalItemThemeSelector,
     outsideProps,
     defaultLegacyThemeProps,
   );
-  const activeDot =
-    theme?.active == null ||
-    outsideProps.activeDot === false ||
-    typeof outsideProps.activeDot === 'function' ||
-    React.isValidElement(outsideProps.activeDot)
-      ? outsideProps.activeDot
-      : {
-          ...theme.active,
-          ...(typeof outsideProps.activeDot === 'object' ? outsideProps.activeDot : {}),
-        };
+  const unthemedStyles = useUnthemedStyles(outsideProps);
+  const themedActiveStyles = theme?.active;
   const propsWithTheme: Props<any, any> = {
     ...outsideProps,
     ...theme,
-    activeDot,
+    dataKey,
+    activeDot: outsideProps.activeDot,
   };
   const props: RequiresDefaultProps<Props<any, any>, typeof defaultAreaProps> = resolveDefaultProps(
     propsWithTheme,
@@ -1136,7 +1148,15 @@ function AreaFn(outsideProps: Props<any, any>) {
             isPanorama={isPanorama}
             connectNulls={props.connectNulls}
           />
-          <AreaImpl {...props} id={id} dotFill={dotFill} />
+          <DataLabelThemeContextProvider value={resolveLabelTheme}>
+            <AreaImpl
+              {...props}
+              id={id}
+              dotFill={dotFill}
+              unthemedStyles={unthemedStyles}
+              themedActiveStyles={themedActiveStyles}
+            />
+          </DataLabelThemeContextProvider>
         </>
       )}
     </RegisterGraphicalItemId>

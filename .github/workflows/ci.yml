@@ -217,11 +217,21 @@ jobs:
         with:
           name: build-output
 
+      - name: Check for orphaned VR baselines
+        run: npm run check-orphan-snapshots
+
       - name: Typecheck
         run: npm run check-types-lib
 
       - name: Lint
         run: npm run lint
+
+      - name: Check that ESLint suppressions did not grow
+        env:
+          BASE_REF: ${{ github.base_ref || 'main' }}
+        run: |
+          git fetch --depth=1 origin "$BASE_REF"
+          npm run check-eslint-suppressions -- FETCH_HEAD
 
       - name: Verify Public Exports
         run: npm run test-exports
@@ -680,6 +690,13 @@ jobs:
           mv ../vr-report $TARGET_DIR/vr-tests
           mv ../vr-gallery $TARGET_DIR/vr-gallery
 
+          # GitHub Pages runs Jekyll by default, which silently drops any file or
+          # directory whose name starts with an underscore (e.g. Vite's
+          # "_data-<hash>.js" chunks), causing 404s for otherwise-valid assets.
+          # Ensure this marker file is always present so Jekyll processing stays
+          # disabled, even if gh-pages is ever recreated from scratch.
+          touch .nojekyll
+
           # Add and commit
           git add .
           git commit  --allow-empty --no-verify -m "Deploy to $TARGET_DIR"
@@ -703,7 +720,10 @@ jobs:
           REPORT_URL="https://$REPO_OWNER.github.io/$REPO_NAME/pr-$PR_NUMBER/vr-tests/"
           GALLERY_URL="https://$REPO_OWNER.github.io/$REPO_NAME/pr-$PR_NUMBER/vr-gallery/preview.html"
 
+          # The hidden marker identifies this comment, so later pushes update it instead of adding a new one.
+          MARKER="<!-- staging-deployment-details -->"
           COMMENT_BODY=$(cat <<EOF
+          $MARKER
           **Staging Deployment Details**
 
           - **Website:** $WEBSITE_URL
@@ -714,4 +734,12 @@ jobs:
           EOF
           )
 
-          gh pr comment $PR_NUMBER --repo ${{ github.repository }} --body "$COMMENT_BODY"
+          COMMENT_IDS=$(gh api --paginate "repos/${{ github.repository }}/issues/$PR_NUMBER/comments" \
+            --jq ".[] | select(.user.login == \"github-actions[bot]\" and (.body | contains(\"$MARKER\"))) | .id")
+          COMMENT_ID="${COMMENT_IDS%%$'\n'*}"
+
+          if [ -n "$COMMENT_ID" ]; then
+            gh api --method PATCH "repos/${{ github.repository }}/issues/comments/$COMMENT_ID" -f body="$COMMENT_BODY" > /dev/null
+          else
+            gh pr comment $PR_NUMBER --repo ${{ github.repository }} --body "$COMMENT_BODY"
+          fi

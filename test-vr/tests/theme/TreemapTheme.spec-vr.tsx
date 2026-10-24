@@ -1,7 +1,13 @@
-import { expect, test } from '../fixtures';
+import { expect, testWithThemes } from '../fixtures';
 
-test('Treemap theme', async ({ mountStory }) => {
+testWithThemes('Treemap theme', async ({ mountStory }) => {
   const component = await mountStory('theme/TreemapTheme/TreemapThemeComparison');
+
+  await expect(component).toHaveScreenshot();
+});
+
+testWithThemes('Treemap fill and stroke variants', async ({ mountStory }) => {
+  const component = await mountStory('theme/TreemapTheme/TreemapFillStrokeVariants');
 
   await expect(component).toHaveScreenshot();
 });

@@ -47,7 +47,7 @@ import {
   parseNumericalUserDomain,
 } from '../../util/isDomainSpecifiedByUser';
 import { AppliedChartData, ChartData, ChartDataState, getBrushSliceIndexes } from '../chartDataSlice';
-import { getPercentValue, hasDuplicate, isNan, isNotNil, isNumOrStr, mathSign } from '../../util/DataUtils';
+import { getPercentValue, hasDuplicate, isNotNil, isNumOrStr, mathSign } from '../../util/DataUtils';
 import {
   BaseCartesianGraphicalItemSettings,
   BasePolarGraphicalItemSettings,
@@ -87,6 +87,7 @@ import { ErrorBarsSettings, ErrorBarsState } from '../errorBarSlice';
 import { numberDomainEqualityCheck } from './numberDomainEqualityCheck';
 import { emptyArraysAreEqualCheck } from './arrayEqualityCheck';
 import { AllAxisTypes, RenderableAxisType, selectTooltipAxisType } from './selectTooltipAxisType';
+import { getDataKeyOnAxis, isValueAxis } from './effectiveDataKeySelectors';
 import { selectTooltipAxisId } from './selectTooltipAxisId';
 import { RechartsScale, rechartsScaleFactory } from '../../util/scale/RechartsScale';
 import { applyViewportToRange, AxisViewport, FULL_VIEWPORT, isFullViewport } from '../../util/zoom/viewport';
@@ -462,7 +463,14 @@ export const combineAppliedValues = (
   data: ChartData,
   axisSettings: BaseCartesianAxis,
   items: ReadonlyArray<GraphicalItemSettings>,
+  layout: LayoutType | undefined,
+  axisType: AllAxisTypes,
 ): AppliedChartData => {
+  if (isValueAxis(layout, axisType) && items.some(item => item.dataKey != null)) {
+    // On the value axis, dataKey of the graphical item wins, and the axis dataKey is the fallback.
+    const dataKeys = new Set(items.map(item => item.dataKey ?? axisSettings?.dataKey));
+    return Array.from(dataKeys).flatMap(dataKey => data.map(entry => ({ value: getValueByDataKey(entry, dataKey) })));
+  }
   if (axisSettings?.dataKey != null) {
     return data.map(item => ({ value: getValueByDataKey(item, axisSettings.dataKey) }));
   }
@@ -491,8 +499,10 @@ export const combineAllAppliedValues = (
   { chartData = [], dataStartIndex, dataEndIndex }: ChartDataState,
   anyItemUsesChartData: boolean,
   graphicalItemsData: ChartData,
+  layout: LayoutType | undefined,
+  axisType: AllAxisTypes,
 ): AppliedChartData => {
-  const appliedValues = combineAppliedValues(displayedData, axisSettings, items);
+  const appliedValues = combineAppliedValues(displayedData, axisSettings, items, layout, axisType);
   if (anyItemUsesChartData && axisSettings?.dataKey != null && graphicalItemsData.length > 0) {
     const chartDataSlice = chartData.slice(dataStartIndex, dataEndIndex + 1);
     const chartAppliedValues: AppliedChartData = chartDataSlice
@@ -522,11 +532,13 @@ export const selectAllAppliedValues: (
     selectChartDataWithIndexesIfNotInPanoramaPosition4,
     selectAnyCartesianItemsUsesChartData,
     selectCartesianGraphicalItemsData,
+    selectChartLayout,
+    pickAxisType,
   ],
   combineAllAppliedValues,
 );
 
-function makeNumber(val: unknown): number | undefined {
+export function makeNumber(val: unknown): number | undefined {
   if (isNumOrStr(val) || val instanceof Date) {
     const n = Number(val);
     if (isWellBehavedNumber(n)) {
@@ -623,10 +635,8 @@ export function getErrorDomainByDataKey(
     return [];
   }
 
-  let appliedNumericValue: number | undefined;
-  if (typeof appliedValue === 'number' && !isNan(appliedValue)) {
-    appliedNumericValue = appliedValue;
-  } else if (Array.isArray(appliedValue)) {
+  let appliedNumericValue = makeNumber(appliedValue);
+  if (appliedNumericValue == null && Array.isArray(appliedValue)) {
     const numericRangeValues = onlyAllowNumbers(appliedValue);
     if (numericRangeValues.length > 0) {
       appliedNumericValue = Math.max(...numericRangeValues);
@@ -647,10 +657,12 @@ export function getErrorDomainByDataKey(
       } else {
         lowBound = highBound = errorValue;
       }
-      if (!isWellBehavedNumber(lowBound) || !isWellBehavedNumber(highBound)) {
+      const low = makeNumber(lowBound);
+      const high = makeNumber(highBound);
+      if (low == null || high == null) {
         return undefined;
       }
-      return [appliedNumericValue - lowBound, appliedNumericValue + highBound];
+      return [appliedNumericValue - low, appliedNumericValue + high];
     }),
   );
 }
@@ -847,7 +859,8 @@ export const combineDomainOfAllAppliedNumericalValuesIncludingErrorValues = (
   items: ReadonlyArray<GraphicalItemSettings>,
   errorBars: ErrorBarsState,
   axisType: AllAxisTypes,
-  chartDataSlice: ChartData = [],
+  chartDataSlice: ChartData | undefined,
+  layout: LayoutType | undefined,
 ): NumberDomain | undefined => {
   let lowerEnd: number | undefined, upperEnd: number | undefined;
   if (items.length > 0) {
@@ -859,12 +872,13 @@ export const combineDomainOfAllAppliedNumericalValuesIncludingErrorValues = (
      * domain that covers all values from all sources.
      */
     items.forEach(item => {
-      const itemData: ChartData = item.data != null ? [...item.data] : chartDataSlice;
+      const itemData: ChartData = item.data != null ? [...item.data] : (chartDataSlice ?? []);
+      const dataKey = getDataKeyOnAxis(item.dataKey, axisSettings.dataKey, layout, axisType);
       const relevantErrorBars = errorBars[item.id]?.filter(errorBar =>
         isErrorBarRelevantForAxisType(axisType, errorBar),
       );
       itemData.forEach(entry => {
-        const valueByDataKey = getValueByDataKey(entry, axisSettings.dataKey ?? item.dataKey);
+        const valueByDataKey = getValueByDataKey(entry, dataKey);
         const errorDomain = getErrorDomainByDataKey(entry, valueByDataKey, relevantErrorBars);
         if (errorDomain.length >= 2) {
           const localLower = Math.min(...errorDomain);
@@ -914,6 +928,7 @@ const selectDomainOfAllAppliedNumericalValuesIncludingErrorValues: (
     selectAllErrorBarSettings,
     pickAxisType,
     selectChartDataSliceIfNotInPanorama,
+    selectChartLayout,
   ],
   combineDomainOfAllAppliedNumericalValuesIncludingErrorValues,
   {

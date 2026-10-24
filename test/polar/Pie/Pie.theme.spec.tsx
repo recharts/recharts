@@ -1,8 +1,10 @@
 import { describe, expect, it } from 'vitest';
 import React from 'react';
-import { Pie, PieChart, RechartsThemeProvider } from '../../../src';
+import { Cell, emptyTheme, Legend, Pie, PieChart, RechartsTheme, RechartsThemeProvider, Tooltip } from '../../../src';
 import { rechartsTestRender } from '../../helper/createSelectorTestCase';
 import { assertNotNull } from '../../helper/assertNotNull';
+import { showTooltip } from '../../component/Tooltip/tooltipTestHelpers';
+import { pieChartMouseHoverTooltipSelector } from '../../component/Tooltip/tooltipMouseHoverSelectors';
 
 const data = [
   { name: 'A', value: 100 },
@@ -131,7 +133,7 @@ describe('Pie theme', () => {
     }
   });
 
-  it('merges explicit Pie fields with omitted fields from the indexed theme', () => {
+  it('ignores the indexed theme completely when explicit Pie style props are present', () => {
     const { container } = rechartsTestRender(
       <RechartsThemeProvider
         value={{
@@ -157,16 +159,132 @@ describe('Pie theme', () => {
       </RechartsThemeProvider>,
     );
 
-    const firstSector = getSector(container, 0);
-    expect(firstSector).toHaveAttribute('fill', 'gold');
-    expect(firstSector).toHaveAttribute('fill-opacity', '0.4');
-    expect(firstSector).toHaveAttribute('stroke', 'navy');
-    expect(firstSector).toHaveAttribute('stroke-width', '5');
+    [getSector(container, 0), getSector(container, 1)].forEach(sector => {
+      expect(sector).toHaveAttribute('fill', 'gold');
+      expect(sector).not.toHaveAttribute('fill-opacity');
+      expect(sector).not.toHaveAttribute('stroke');
+      expect(sector).toHaveAttribute('stroke-width', '5');
+    });
+  });
 
-    const secondSector = getSector(container, 1);
-    expect(secondSector).toHaveAttribute('fill', 'gold');
-    expect(secondSector).toHaveAttribute('fill-opacity', '0.6');
-    expect(secondSector).toHaveAttribute('stroke', 'purple');
-    expect(secondSector).toHaveAttribute('stroke-width', '5');
+  describe('Legend and Tooltip colors', () => {
+    const strokeOnlyTheme: RechartsTheme = { graphicalItems: [{ stroke: 'purple' }] };
+
+    function getLegendIconColors(container: HTMLElement): ReadonlyArray<string | null> {
+      return Array.from(container.querySelectorAll('.recharts-legend-item .recharts-legend-icon')).map(icon =>
+        icon.getAttribute('fill'),
+      );
+    }
+
+    function getTooltipItemColor(container: HTMLElement): string {
+      showTooltip(container, pieChartMouseHoverTooltipSelector);
+      const item = container.querySelector<HTMLElement>('.recharts-tooltip-item');
+      assertNotNull(item);
+      return item.style.color;
+    }
+
+    function renderThemed(theme: RechartsTheme, pie: React.ReactNode) {
+      return rechartsTestRender(
+        <RechartsThemeProvider value={theme}>
+          <MyChart>
+            {pie}
+            <Legend />
+            <Tooltip />
+          </MyChart>
+        </RechartsThemeProvider>,
+      );
+    }
+
+    it('keeps the legacy gray without a provider', () => {
+      const { container } = rechartsTestRender(
+        <MyChart>
+          <Pie data={data} dataKey="value" isAnimationActive={false} />
+          <Legend />
+          <Tooltip />
+        </MyChart>,
+      );
+
+      expect(getLegendIconColors(container)).toEqual(['#808080', '#808080', '#808080']);
+      expect(getTooltipItemColor(container)).toBe('rgb(128, 128, 128)');
+    });
+
+    it('has no color with the empty theme', () => {
+      const { container } = renderThemed(emptyTheme, <Pie data={data} dataKey="value" isAnimationActive={false} />);
+
+      expect(getSector(container, 0)).not.toHaveAttribute('fill');
+      expect(getLegendIconColors(container)).toEqual([null, null, null]);
+      expect(getTooltipItemColor(container)).toBe('');
+    });
+
+    it('uses the explicit Pie stroke with the empty theme', () => {
+      const { container } = renderThemed(
+        emptyTheme,
+        <Pie data={data} dataKey="value" stroke="red" isAnimationActive={false} />,
+      );
+
+      expect(getLegendIconColors(container)).toEqual(['red', 'red', 'red']);
+      expect(getTooltipItemColor(container)).toBe('red');
+    });
+
+    it('uses the theme stroke when the theme has no fill', () => {
+      const { container } = renderThemed(
+        strokeOnlyTheme,
+        <Pie data={data} dataKey="value" isAnimationActive={false} />,
+      );
+
+      expect(getLegendIconColors(container)).toEqual(['purple', 'purple', 'purple']);
+      expect(getTooltipItemColor(container)).toBe('purple');
+    });
+
+    it('uses the explicit Pie stroke instead of the theme stroke', () => {
+      const { container } = renderThemed(
+        strokeOnlyTheme,
+        <Pie data={data} dataKey="value" stroke="red" isAnimationActive={false} />,
+      );
+
+      expect(getLegendIconColors(container)).toEqual(['red', 'red', 'red']);
+      expect(getTooltipItemColor(container)).toBe('red');
+    });
+
+    it('prefers the fill over the stroke', () => {
+      const { container } = renderThemed(
+        { graphicalItems: [{ fill: 'red', stroke: 'navy' }, { fill: 'green' }] },
+        <Pie data={data} dataKey="value" isAnimationActive={false} />,
+      );
+
+      expect(getLegendIconColors(container)).toEqual(['red', 'green', 'red']);
+      expect(getTooltipItemColor(container)).toBe('red');
+    });
+
+    it('uses the stroke when the fill is none', () => {
+      const { container } = renderThemed(
+        { graphicalItems: [{ fill: 'none', stroke: 'navy' }] },
+        <Pie data={data} dataKey="value" isAnimationActive={false} />,
+      );
+
+      expect(getLegendIconColors(container)).toEqual(['navy', 'navy', 'navy']);
+      expect(getTooltipItemColor(container)).toBe('navy');
+    });
+
+    it('follows the colors of Cells and data entries, without the legacy gray', () => {
+      const { container } = renderThemed(
+        { graphicalItems: [{ fill: 'red' }] },
+        <Pie
+          data={[
+            { name: 'A', value: 100 },
+            { name: 'B', value: 200, stroke: 'orange' },
+            { name: 'C', value: 300 },
+          ]}
+          dataKey="value"
+          isAnimationActive={false}
+        >
+          <Cell stroke="blue" />
+        </Pie>,
+      );
+
+      expect(getSector(container, 0)).not.toHaveAttribute('fill');
+      expect(getLegendIconColors(container)).toEqual(['blue', 'orange', 'red']);
+      expect(getTooltipItemColor(container)).toBe('blue');
+    });
   });
 });

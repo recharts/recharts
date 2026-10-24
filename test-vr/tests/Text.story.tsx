@@ -387,3 +387,45 @@ export const TextWithWidthVerticalAnchorAndScaleToFitCombination = () => {
     </Surface>
   );
 };
+
+export const TextWithBackground = () => {
+  return (
+    <Surface width={500} height={260}>
+      <Text x={20} y={40} background>
+        Default background
+      </Text>
+      <Text
+        x={20}
+        y={100}
+        background={{ fill: 'gold', stroke: 'black', strokeWidth: 1, rx: 0, padding: { x: 10, y: 6 } }}
+        fill="black"
+      >
+        Custom rectangle
+      </Text>
+      <Text
+        x={350}
+        y={60}
+        angle={-20}
+        textAnchor="middle"
+        verticalAnchor="middle"
+        background={{ fill: 'lightblue', rx: 8 }}
+        fill="black"
+      >
+        Rotated text
+      </Text>
+      <Text x={20} y={150} width={120} verticalAnchor="start" background={{ fill: 'pink' }} fill="black">
+        Text that wraps to multiple lines
+      </Text>
+      <Text
+        x={480}
+        y={200}
+        textAnchor="end"
+        verticalAnchor="middle"
+        background={{ fill: 'lightgreen', padding: 0 }}
+        fill="black"
+      >
+        No padding
+      </Text>
+    </Surface>
+  );
+};

@@ -6,13 +6,12 @@ import ScatterAndLineOfBestFitComponent from '../../../www/src/docs/exampleCompo
 import BandedChartComponent from '../../../www/src/docs/exampleComponents/ComposedChart/BandedChart';
 import ComposedChartNavExampleComponent from '../../../www/src/docs/exampleComponents/ComposedChart/ComposedChartNavExample';
 import TargetPriceChartComponent from '../../../www/src/docs/exampleComponents/ComposedChart/TargetPriceChart';
-import { themedStory } from './StoryTheme';
 
-export const TargetPriceChart = themedStory(TargetPriceChartComponent);
-export const ComposedChartNavExample = themedStory(ComposedChartNavExampleComponent);
-export const BandedChart = themedStory(BandedChartComponent);
-export const ScatterAndLineOfBestFit = themedStory(ScatterAndLineOfBestFitComponent);
-export const ComposedChartWithAxisLabels = themedStory(ComposedChartWithAxisLabelsComponent);
-export const VerticalComposedChart = themedStory(VerticalComposedChartComponent);
-export const SameDataComposedChart = themedStory(SameDataComposedChartComponent);
-export const LineBarAreaComposedChart = themedStory(LineBarAreaComposedChartComponent);
+export const TargetPriceChart = TargetPriceChartComponent;
+export const ComposedChartNavExample = ComposedChartNavExampleComponent;
+export const BandedChart = BandedChartComponent;
+export const ScatterAndLineOfBestFit = ScatterAndLineOfBestFitComponent;
+export const ComposedChartWithAxisLabels = ComposedChartWithAxisLabelsComponent;
+export const VerticalComposedChart = VerticalComposedChartComponent;
+export const SameDataComposedChart = SameDataComposedChartComponent;
+export const LineBarAreaComposedChart = LineBarAreaComposedChartComponent;

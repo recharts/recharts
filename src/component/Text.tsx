@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { CSSProperties, SVGProps, useMemo, forwardRef } from 'react';
+import { CSSProperties, SVGProps, useMemo, forwardRef, useCallback, useLayoutEffect, useRef, useState } from 'react';
 
 import { clsx } from 'clsx';
 import { isNullish, isNumber, isNumOrStr } from '../util/DataUtils';
@@ -11,9 +11,10 @@ import { isWellBehavedNumber } from '../util/isWellBehavedNumber';
 import { useId } from '../util/useId';
 
 import { useBackwardsCompatibleTheme } from '../theme/useBackwardsCompatibleTheme';
-import { TextStyles } from '../theme/RechartsTheme';
+import { RechartsTheme, TextStyles } from '../theme/RechartsTheme';
 import { resolveDefaultProps } from '../util/resolveDefaultProps';
 import { cssStylesToSvgStyles } from '../theme/cssStylesToSvgStyles';
+import { getEffectivePageBackground } from '../theme/pageBackground';
 
 const BREAKING_SPACES = /[ \f\n\r\t\v\u2028\u2029]+/;
 
@@ -82,6 +83,27 @@ export type RenderableText = string | number | boolean | null | undefined;
 export function isRenderableText(val: unknown): val is RenderableText {
   return isNullish(val) || typeof val === 'string' || typeof val === 'number' || typeof val === 'boolean';
 }
+
+/**
+ * Props of the shape that is drawn behind the text.
+ * Accepts the usual SVG `<rect>` attributes, such as `fill`, `fillOpacity`, `stroke`, `rx` and `className`.
+ * Straight text uses a rectangle; text on a path uses a stroked copy of that path.
+ * The position and size are measured from the rendered text.
+ *
+ * @since 3.11
+ */
+export type TextBackgroundProps = Omit<
+  SVGProps<SVGRectElement>,
+  'x' | 'y' | 'width' | 'height' | 'ref' | 'children' | 'transform'
+> & {
+  /**
+   * Space between the text and the edge of the background, in pixels.
+   * A number applies the same padding on all sides, an object sets horizontal and vertical padding separately.
+   *
+   * @defaultValue { x: 4, y: 2 }
+   */
+  padding?: number | { x?: number; y?: number };
+};
 
 interface TextProps {
   /**
@@ -202,6 +224,23 @@ interface TextProps {
    * @since 3.11
    */
   textPath?: string;
+  /**
+   * Draws a background behind the text, for example to keep a label readable on top of a filled shape.
+   *
+   * - `true` draws the background with default styles.
+   *   The fill is the `pageBackground` color from the theme, or white when no theme is set.
+   * - An object accepts SVG `<rect>` attributes such as `fill`, `stroke` and `rx`, and a `padding`.
+   * - `false` or `undefined` draws no background.
+   *
+   * The background is sized after the text renders, so it follows the content, font, line breaks and rotation.
+   * For `textPath`, the background follows the same path as the text.
+   * It is not rendered during server-side rendering.
+   *
+   * @since 3.11
+   * @example <Text background>Label</Text>
+   * @example <Text background={{ fill: '#fff', stroke: '#000', rx: 2, padding: { x: 6, y: 3 } }}>Label</Text>
+   */
+  background?: boolean | TextBackgroundProps;
 }
 
 export type Props = Omit<SVGProps<SVGTextElement>, 'textAnchor' | 'verticalAnchor'> & TextProps;
@@ -391,6 +430,169 @@ const defaultLegacyThemeProps: TextStyles = {
   fill: DEFAULT_FILL,
 };
 
+type BackgroundFill = {
+  fill?: string;
+};
+
+/**
+ * Without a theme, charts are designed for a white background.
+ */
+const defaultLegacyBackgroundProps: BackgroundFill = {
+  fill: '#fff',
+};
+
+const defaultBackgroundPadding = { x: 4, y: 2 } as const;
+
+const defaultBackgroundRadius = 4;
+
+function selectBackgroundFill(theme: RechartsTheme): BackgroundFill | undefined {
+  const pageBackground = getEffectivePageBackground(theme);
+  return typeof pageBackground === 'string' ? { fill: pageBackground } : undefined;
+}
+
+/**
+ * The geometry of the text bounding box, in the text's own coordinate system.
+ */
+export type TextBox = {
+  x: number;
+  y: number;
+  width: number;
+  height: number;
+};
+
+export type TextPathMetrics = {
+  pathLength: number;
+  textLength: number;
+  textHeight: number;
+  startOffset: number;
+};
+
+export type TextPathBackgroundGeometry = {
+  start: number;
+  length: number;
+  strokeWidth: number;
+};
+
+export function resolveBackgroundPadding(padding: TextBackgroundProps['padding']): { x: number; y: number } {
+  if (isNumber(padding)) {
+    return { x: padding, y: padding };
+  }
+  return {
+    x: padding?.x ?? defaultBackgroundPadding.x,
+    y: padding?.y ?? defaultBackgroundPadding.y,
+  };
+}
+
+/**
+ * Returns the rectangle of the text background, or null if there is no text to put a background behind.
+ * @param textBox bounding box of the text element
+ * @param padding padding around the text
+ * @returns background rectangle
+ */
+export function getTextBackgroundRect(textBox: TextBox, padding: TextBackgroundProps['padding']): TextBox | null {
+  if (textBox.width <= 0 || textBox.height <= 0) {
+    return null;
+  }
+  const { x: paddingX, y: paddingY } = resolveBackgroundPadding(padding);
+  return {
+    x: textBox.x - paddingX,
+    y: textBox.y - paddingY,
+    width: textBox.width + 2 * paddingX,
+    height: textBox.height + 2 * paddingY,
+  };
+}
+
+export function getTextPathBackgroundGeometry(
+  metrics: TextPathMetrics,
+  padding: TextBackgroundProps['padding'],
+  textAnchor: TextAnchor,
+): TextPathBackgroundGeometry | null {
+  const { pathLength, textLength, textHeight, startOffset } = metrics;
+  if (pathLength <= 0 || textLength <= 0 || textHeight <= 0) {
+    return null;
+  }
+
+  const { x: paddingX, y: paddingY } = resolveBackgroundPadding(padding);
+  let anchorOffset = 0;
+  if (textAnchor === 'middle') {
+    anchorOffset = textLength / 2;
+  } else if (textAnchor === 'end') {
+    anchorOffset = textLength;
+  }
+  const unclampedStart = startOffset - anchorOffset - paddingX;
+  const unclampedEnd = startOffset - anchorOffset + textLength + paddingX;
+  const start = Math.max(0, Math.min(pathLength, unclampedStart));
+  const end = Math.max(0, Math.min(pathLength, unclampedEnd));
+
+  if (end <= start) {
+    return null;
+  }
+
+  return {
+    start,
+    length: end - start,
+    strokeWidth: textHeight + 2 * paddingY,
+  };
+}
+
+function isSameTextBox(a: TextBox | null, b: TextBox): boolean {
+  return a != null && a.x === b.x && a.y === b.y && a.width === b.width && a.height === b.height;
+}
+
+function isSameTextPathMetrics(a: TextPathMetrics | null, b: TextPathMetrics): boolean {
+  return (
+    a != null &&
+    a.pathLength === b.pathLength &&
+    a.textLength === b.textLength &&
+    a.textHeight === b.textHeight &&
+    a.startOffset === b.startOffset
+  );
+}
+
+function resolveTextPathStartOffset(
+  textPathNode: SVGTextPathElement,
+  startOffset: Props['startOffset'],
+  pathLength: number,
+): number {
+  const resolvedOffset = textPathNode.startOffset?.baseVal.value;
+  if (isWellBehavedNumber(resolvedOffset)) {
+    return resolvedOffset;
+  }
+  if (isNumber(startOffset)) {
+    return startOffset;
+  }
+  if (typeof startOffset === 'string') {
+    const parsedOffset = Number.parseFloat(startOffset);
+    if (Number.isFinite(parsedOffset)) {
+      return startOffset.trim().endsWith('%') ? (parsedOffset / 100) * pathLength : parsedOffset;
+    }
+  }
+  return 0;
+}
+
+function resolveTextPathHeight(textPathNode: SVGTextPathElement, textNode: SVGTextElement): number {
+  const fontSize = Number.parseFloat(window.getComputedStyle(textPathNode).fontSize);
+  return Number.isFinite(fontSize) && fontSize > 0 ? fontSize : textNode.getBBox().height;
+}
+
+function resolveBackgroundStrokeWidth(strokeWidth: TextBackgroundProps['strokeWidth']): number {
+  if (strokeWidth == null) {
+    return 1;
+  }
+  const parsedStrokeWidth = isNumber(strokeWidth) ? strokeWidth : Number.parseFloat(strokeWidth);
+  return Number.isFinite(parsedStrokeWidth) ? Math.max(0, parsedStrokeWidth) : 1;
+}
+
+function resolveBackgroundSettings(background: Props['background']): TextBackgroundProps | undefined {
+  if (background === true) {
+    return {};
+  }
+  if (background == null || background === false) {
+    return undefined;
+  }
+  return background;
+}
+
 export const textDefaultProps = {
   angle: 0,
   breakAll: false,
@@ -425,10 +627,12 @@ export const Text = forwardRef<SVGTextElement, Props>((outsideProps, ref) => {
     verticalAnchor,
     style: propsStyle,
     textPath,
+    background,
     ...props
   } = propsWithDefaults;
   // Here it is important to actually remove these three props, and not put them to DOM
   const { angle, dx, dy, className, breakAll, ...textProps } = props;
+  const { startOffset, ...textElementProps } = textProps;
   const { width } = textProps;
 
   const x = Number(propsX) + (isNumber(dx) ? dx : 0);
@@ -490,6 +694,80 @@ export const Text = forwardRef<SVGTextElement, Props>((outsideProps, ref) => {
     };
   }, [styleTemp, angle, textPath]);
 
+  const backgroundSettings = resolveBackgroundSettings(background);
+  const backgroundFill = useBackwardsCompatibleTheme<BackgroundFill>(
+    selectBackgroundFill,
+    { fill: backgroundSettings?.fill },
+    defaultLegacyBackgroundProps,
+  );
+  const textRef = useRef<SVGTextElement | null>(null);
+  const textPathRef = useRef<SVGTextPathElement | null>(null);
+  const textPathDefinitionRef = useRef<SVGPathElement | null>(null);
+  const setTextRef = useCallback(
+    (node: SVGTextElement | null) => {
+      textRef.current = node;
+      if (typeof ref === 'function') {
+        ref(node);
+      } else if (ref != null) {
+        // forwarding the element to a ref object is the purpose of this callback
+        // eslint-disable-next-line no-param-reassign
+        ref.current = node;
+      }
+    },
+    [ref],
+  );
+  const [textBox, setTextBox] = useState<TextBox | null>(null);
+  const [textPathMetrics, setTextPathMetrics] = useState<TextPathMetrics | null>(null);
+  const hasBackground = backgroundSettings != null;
+
+  /*
+   * The background is sized from the rendered text, so that it follows the actual font, line breaks and anchors.
+   * This runs after every render because any prop or style can change the size of the text.
+   * The state update is skipped when the box stays the same, so this does not loop.
+   */
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  useLayoutEffect(() => {
+    const node = textRef.current;
+    if (!hasBackground || node == null || typeof node.getBBox !== 'function') {
+      return;
+    }
+
+    try {
+      if (textPath != null) {
+        const textPathNode = textPathRef.current;
+        const pathNode = textPathDefinitionRef.current;
+        if (
+          textPathNode == null ||
+          pathNode == null ||
+          typeof textPathNode.getComputedTextLength !== 'function' ||
+          typeof pathNode.getTotalLength !== 'function'
+        ) {
+          return;
+        }
+
+        const pathLength = pathNode.getTotalLength();
+        const nextMetrics: TextPathMetrics = {
+          pathLength,
+          textLength: textPathNode.getComputedTextLength(),
+          textHeight: resolveTextPathHeight(textPathNode, node),
+          startOffset: resolveTextPathStartOffset(textPathNode, startOffset, pathLength),
+        };
+        if (!isSameTextPathMetrics(textPathMetrics, nextMetrics)) {
+          setTextPathMetrics(nextMetrics);
+        }
+        return;
+      }
+
+      const { x: boxX, y: boxY, width: boxWidth, height: boxHeight } = node.getBBox();
+      const nextBox: TextBox = { x: boxX, y: boxY, width: boxWidth, height: boxHeight };
+      if (!isSameTextBox(textBox, nextBox)) {
+        setTextBox(nextBox);
+      }
+    } catch {
+      // SVG measurement can fail when the element is detached or unsupported by the renderer.
+    }
+  });
+
   if (!isNumOrStr(propsX) || !isNumOrStr(propsY) || wordsByLines.length === 0) {
     return null;
   }
@@ -511,12 +789,14 @@ export const Text = forwardRef<SVGTextElement, Props>((outsideProps, ref) => {
       break;
   }
 
-  return (
+  const transform = svgTransforms.length > 0 ? svgTransforms.join(' ') : undefined;
+
+  const textElement = (
     <text
-      transform={svgTransforms.length > 0 ? svgTransforms.join(' ') : undefined}
-      {...svgPropertiesAndEvents(textProps)}
+      transform={transform}
+      {...svgPropertiesAndEvents(textElementProps)}
       style={styleFinal}
-      ref={ref}
+      ref={setTextRef}
       x={x}
       y={y}
       className={clsx('recharts-text', className)}
@@ -535,12 +815,99 @@ export const Text = forwardRef<SVGTextElement, Props>((outsideProps, ref) => {
       ) : (
         <>
           <defs>
-            <path id={textPathId} d={textPath} />
+            <path ref={textPathDefinitionRef} id={textPathId} d={textPath} />
           </defs>
-          <textPath xlinkHref={`#${textPathId}`}>{props.children}</textPath>
+          <textPath ref={textPathRef} xlinkHref={`#${textPathId}`} startOffset={startOffset}>
+            {props.children}
+          </textPath>
         </>
       )}
     </text>
+  );
+
+  if (backgroundSettings == null) {
+    return textElement;
+  }
+
+  const { padding, className: backgroundClassName, ...backgroundRectProps } = backgroundSettings;
+
+  if (textPath != null) {
+    const {
+      fillOpacity,
+      stroke: outlineStroke,
+      strokeOpacity: outlineStrokeOpacity,
+      strokeWidth: configuredOutlineWidth,
+      ...backgroundPathProps
+    } = backgroundRectProps;
+    const backgroundPath =
+      textPathMetrics == null ? null : getTextPathBackgroundGeometry(textPathMetrics, padding, textAnchor);
+    const outlineWidth = resolveBackgroundStrokeWidth(configuredOutlineWidth);
+    const hasOutline = outlineStroke != null && outlineStroke !== 'none' && outlineWidth > 0;
+
+    return (
+      <g className="recharts-text-with-background">
+        {backgroundPath != null && textPathMetrics != null && (
+          <>
+            {hasOutline && (
+              <path
+                {...svgPropertiesAndEvents(backgroundPathProps)}
+                d={textPath}
+                fill="none"
+                stroke={outlineStroke}
+                strokeOpacity={outlineStrokeOpacity}
+                strokeWidth={backgroundPath.strokeWidth + 2 * outlineWidth}
+                strokeLinecap="round"
+                strokeDasharray={`${backgroundPath.length}px ${textPathMetrics.pathLength}px`}
+                strokeDashoffset={`${-backgroundPath.start}px`}
+                className={clsx(
+                  'recharts-text-background',
+                  'recharts-text-path-background-outline',
+                  backgroundClassName,
+                )}
+              />
+            )}
+            <path
+              {...svgPropertiesAndEvents(backgroundPathProps)}
+              d={textPath}
+              fill="none"
+              stroke={backgroundFill.fill}
+              strokeOpacity={fillOpacity}
+              strokeWidth={backgroundPath.strokeWidth}
+              strokeLinecap="round"
+              strokeDasharray={`${backgroundPath.length}px ${textPathMetrics.pathLength}px`}
+              strokeDashoffset={`${-backgroundPath.start}px`}
+              className={clsx('recharts-text-background', 'recharts-text-path-background', backgroundClassName)}
+            />
+          </>
+        )}
+        {textElement}
+      </g>
+    );
+  }
+
+  const backgroundRect = textBox == null ? null : getTextBackgroundRect(textBox, padding);
+
+  /*
+   * The group is rendered even before the text is measured,
+   * so that the text element keeps its place in the tree and React does not re-mount it.
+   */
+  return (
+    <g className="recharts-text-with-background">
+      {backgroundRect != null && (
+        <rect
+          rx={defaultBackgroundRadius}
+          {...svgPropertiesAndEvents(backgroundRectProps)}
+          fill={backgroundFill.fill}
+          className={clsx('recharts-text-background', backgroundClassName)}
+          transform={transform}
+          x={backgroundRect.x}
+          y={backgroundRect.y}
+          width={backgroundRect.width}
+          height={backgroundRect.height}
+        />
+      )}
+      {textElement}
+    </g>
   );
 });
 

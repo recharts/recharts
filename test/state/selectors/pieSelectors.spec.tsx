@@ -932,6 +932,41 @@ describe('PieSectorData and PieSectorDataItem type should include data propertie
     });
   });
 
+  describe('when data contains null-value items and paddingAngle is set', () => {
+    // https://github.com/recharts/recharts/issues/7965
+    const renderNullValueTestCase = createSelectorTestCase(({ children }) => (
+      <PieChart width={400} height={400}>
+        <Pie
+          dataKey="value"
+          data={[
+            { name: 'A', value: 1 },
+            { name: 'Missing', value: null },
+            { name: 'B', value: 1 },
+          ]}
+          cx={200}
+          cy={200}
+          outerRadius={80}
+          paddingAngle={5}
+          id="pie-id"
+        />
+        {children}
+      </PieChart>
+    ));
+
+    it('should treat null-value sectors like zero-value sectors', () => {
+      const { spy } = renderNullValueTestCase(state => selectPieSectors(state, 'pie-id', []));
+      const sectors = spy.mock.lastCall?.[0];
+      assertNotNull(sectors);
+      expect(sectors.map(({ startAngle, endAngle, paddingAngle }) => ({ startAngle, endAngle, paddingAngle }))).toEqual(
+        [
+          { startAngle: 0, endAngle: 175, paddingAngle: 5 },
+          { startAngle: 175, endAngle: 175, paddingAngle: 0 },
+          { startAngle: 180, endAngle: 355, paddingAngle: 5 },
+        ],
+      );
+    });
+  });
+
   describe('when maxRadius is set', () => {
     // https://github.com/recharts/recharts/issues/4885
     // maxRadius should cap the radius that percentage-based innerRadius/outerRadius resolve against,

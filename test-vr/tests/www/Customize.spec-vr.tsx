@@ -1,31 +1,31 @@
-import { expect, test } from '../fixtures';
+import { expect, testWithThemes } from '../fixtures';
 
-test('CustomizeLabels', async ({ mountStory }) => {
-  const component = await mountStory('www/Customize/CustomizeLabels', { testTheme: 'light' });
+testWithThemes('CustomizeLabels', async ({ mountStory }) => {
+  const component = await mountStory('www/Customize/CustomizeLabels');
   await expect(component).toHaveScreenshot();
 });
 
-test('CustomizeBarShape', async ({ mountStory }) => {
-  const component = await mountStory('www/Customize/CustomizeBarShape', { testTheme: 'light' });
+testWithThemes('CustomizeBarShape', async ({ mountStory }) => {
+  const component = await mountStory('www/Customize/CustomizeBarShape');
   await expect(component).toHaveScreenshot();
 });
 
-test('CustomizeTooltipContent', async ({ mountStory }) => {
-  const component = await mountStory('www/Customize/CustomizeTooltipContent', { testTheme: 'light' });
+testWithThemes('CustomizeTooltipContent', async ({ mountStory }) => {
+  const component = await mountStory('www/Customize/CustomizeTooltipContent');
   await expect(component).toHaveScreenshot();
 });
 
-test('CustomizeSizeAndStroke', async ({ mountStory }) => {
-  const component = await mountStory('www/Customize/CustomizeSizeAndStroke', { testTheme: 'light' });
+testWithThemes('CustomizeSizeAndStroke', async ({ mountStory }) => {
+  const component = await mountStory('www/Customize/CustomizeSizeAndStroke');
   await expect(component).toHaveScreenshot();
 });
 
-test('CustomizeLegendAndTooltipStyle', async ({ mountStory }) => {
-  const component = await mountStory('www/Customize/CustomizeLegendAndTooltipStyle', { testTheme: 'light' });
+testWithThemes('CustomizeLegendAndTooltipStyle', async ({ mountStory }) => {
+  const component = await mountStory('www/Customize/CustomizeLegendAndTooltipStyle');
   await expect(component).toHaveScreenshot();
 });
 
-test('CustomizeCustomElement', async ({ mountStory }) => {
-  const component = await mountStory('www/Customize/CustomizeCustomElement', { testTheme: 'light' });
+testWithThemes('CustomizeCustomElement', async ({ mountStory }) => {
+  const component = await mountStory('www/Customize/CustomizeCustomElement');
   await expect(component).toHaveScreenshot();
 });

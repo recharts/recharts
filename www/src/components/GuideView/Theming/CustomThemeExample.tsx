@@ -80,6 +80,7 @@ const brandTheme: RechartsTheme = {
     wrapperStyle: { paddingTop: 8 },
     labelStyle: { letterSpacing: '0.05em', textTransform: 'uppercase' },
   },
+  pageBackground: '#ffffff',
 };
 
 export default function CustomThemeExample() {

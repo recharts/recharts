@@ -1,7 +1,13 @@
-import { expect, test } from '../fixtures';
+import { expect, testWithThemes } from '../fixtures';
 
-test('Funnel theme', async ({ mountStory }) => {
+testWithThemes('Funnel theme', async ({ mountStory }) => {
   const component = await mountStory('theme/FunnelTheme/FunnelThemeComparison');
+
+  await expect(component).toHaveScreenshot();
+});
+
+testWithThemes('Funnel fill and stroke variants', async ({ mountStory }) => {
+  const component = await mountStory('theme/FunnelTheme/FunnelFillStrokeVariants');
 
   await expect(component).toHaveScreenshot();
 });

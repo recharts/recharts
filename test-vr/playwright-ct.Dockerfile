@@ -9,11 +9,10 @@ COPY package.json package-lock.json* ./
 RUN mkdir -p /recharts/www
 COPY www/package.json www/package-lock.json* /recharts/www/
 
-# Install project dependencies
-RUN npm install
-
-# Install Playwright's browser binaries inside the container. Playwright itself says this should be after npm install.
-RUN npx playwright install --with-deps
+# Install exactly the versions in package-lock.json, the same as CI does.
+# The base image already contains the browsers for this Playwright version
+# (check-playwright-versions keeps the two in sync), so there is no `playwright install` step.
+RUN npm ci
 
 # Copy the rest of your project source code, except node_modules and other unnecessary files defined in .dockerignore
 # The dockerfile is in test-vr folder but the docker-compose file is in the root folder

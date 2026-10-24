@@ -58,7 +58,7 @@ function ScatterCursorChart() {
     <ScatterChart style={chartStyle}>
       <XAxis dataKey="x" type="number" />
       <YAxis dataKey="y" type="number" />
-      <Scatter data={scatterData} isAnimationActive={false} />
+      <Scatter dataKey="y" data={scatterData} isAnimationActive={false} />
       <Tooltip defaultIndex={1} isAnimationActive={false} />
     </ScatterChart>
   );

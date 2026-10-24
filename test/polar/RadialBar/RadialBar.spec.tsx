@@ -1,6 +1,7 @@
 import React from 'react';
 import { act, fireEvent, render } from '@testing-library/react';
 import { describe, expect, it, Mock, test, vi } from 'vitest';
+import { createSelector } from 'reselect';
 import {
   DefaultZIndexes,
   PolarAngleAxis,
@@ -11,9 +12,10 @@ import {
   RadialBarProps,
 } from '../../../src';
 import { useAppSelector } from '../../../src/state/hooks';
+import { RechartsRootState } from '../../../src/state/store';
 import { selectPolarItemsSettings } from '../../../src/state/selectors/polarSelectors';
 import { PageData, ringsData } from '../../_data';
-import { expectRadialBars } from '../../helper/expectRadialBars';
+import { expectRadialBars, getRadialBarPaths } from '../../helper/expectRadialBars';
 import { createSelectorTestCase, rechartsTestRender } from '../../helper/createSelectorTestCase';
 import { expectLastCalledWithScale } from '../../helper/expectScale';
 import {
@@ -44,6 +46,7 @@ import { RadialBarSettings } from '../../../src/state/types/RadialBarSettings';
 import { expectLastCalledWith } from '../../helper/expectLastCalledWith';
 import { userEventSetup } from '../../helper/userEventSetup';
 import { assertZIndexLayerOrder } from '../../helper/assertZIndexLayerOrder';
+import { assertNotNull } from '../../helper/assertNotNull';
 import { RadialBarDataItem } from '../../../src/polar/RadialBar';
 
 describe('<RadialBar />', () => {
@@ -51,6 +54,7 @@ describe('<RadialBar />', () => {
     const radialBarSettings: RadialBarSettings = {
       id: 'radial-bar-uv',
       dataKey: 'pv',
+      minAngle: 0,
       minPointSize: 0,
       stackId: undefined,
       maxBarSize: undefined,
@@ -75,6 +79,7 @@ describe('<RadialBar />', () => {
         {
           id: expect.stringMatching('radialBar-'),
           maxBarSize: undefined,
+          minAngle: 0,
           minPointSize: 0,
           angleAxisId: 0,
           barSize: undefined,
@@ -436,10 +441,167 @@ describe('<RadialBar />', () => {
     });
   });
 
+  describe('minAngle', () => {
+    // https://github.com/recharts/recharts/issues/2986
+    const data = [
+      { name: 'A', pv: 100 },
+      { name: 'B', pv: 5 },
+      { name: 'C', pv: 0 },
+    ];
+
+    const radialBarSettings: RadialBarSettings = {
+      id: 'radial-bar-min-angle',
+      dataKey: 'pv',
+      minAngle: 30,
+      minPointSize: 0,
+      stackId: undefined,
+      maxBarSize: undefined,
+      barSize: undefined,
+      type: 'radialBar',
+      angleAxisId: 0,
+      radiusAxisId: 0,
+      data: undefined,
+      hide: false,
+    };
+
+    const renderTestCase = createSelectorTestCase(({ children }) => (
+      <RadialBarChart width={500} height={500} data={data}>
+        <RadialBar isAnimationActive={false} dataKey="pv" minAngle={30} />
+        {children}
+      </RadialBarChart>
+    ));
+
+    it('forwards the minAngle prop from RadialBar into its Redux settings', () => {
+      const { spy } = renderTestCase(state => selectPolarItemsSettings(state, 'angleAxis', 0));
+      expectLastCalledWith(spy, [
+        {
+          id: expect.stringMatching('radialBar-'),
+          maxBarSize: undefined,
+          minAngle: 30,
+          minPointSize: 0,
+          angleAxisId: 0,
+          barSize: undefined,
+          data: undefined,
+          dataKey: 'pv',
+          hide: false,
+          radiusAxisId: 0,
+          stackId: undefined,
+          type: 'radialBar',
+        },
+      ]);
+    });
+
+    it('extends a bar below the threshold, leaves a zero-value bar at zero degrees, and leaves an already-large bar untouched', () => {
+      const { spy } = renderTestCase(state => selectRadialBarSectors(state, 0, 0, radialBarSettings, undefined));
+      const lastResult: ReadonlyArray<RadialBarDataItem> | undefined = spy.mock.calls.at(-1)?.[0];
+      assertNotNull(lastResult);
+      const angles = lastResult.map(({ startAngle, endAngle }) => ({ startAngle, endAngle }));
+      expect(angles).toEqual([
+        // 100 out of a domain of [0, 100] naturally reaches the full 360°, well above minAngle
+        { startAngle: 0, endAngle: 360 },
+        // 5 out of 100 naturally is only 18°, extended up to the 30° minAngle
+        { startAngle: 0, endAngle: 30 },
+        // 0 stays at 0°, minAngle must never manufacture a visible sliver for an empty bar
+        { startAngle: 0, endAngle: 0 },
+      ]);
+    });
+
+    it('treats a negative minAngle the same as its positive counterpart, matching how Pie normalizes minAngle', () => {
+      const negativeSettings: RadialBarSettings = { ...radialBarSettings, minAngle: -30 };
+      const negativeRenderTestCase = createSelectorTestCase(({ children }) => (
+        <RadialBarChart width={500} height={500} data={data}>
+          <RadialBar isAnimationActive={false} dataKey="pv" minAngle={-30} />
+          {children}
+        </RadialBarChart>
+      ));
+      const { spy } = negativeRenderTestCase(state => selectRadialBarSectors(state, 0, 0, negativeSettings, undefined));
+      const lastResult: ReadonlyArray<RadialBarDataItem> | undefined = spy.mock.calls.at(-1)?.[0];
+      assertNotNull(lastResult);
+      const angles = lastResult.map(({ startAngle, endAngle }) => ({ startAngle, endAngle }));
+      // Same expansion as minAngle={30}: the small bar is still extended up to 30°.
+      expect(angles).toEqual([
+        { startAngle: 0, endAngle: 360 },
+        { startAngle: 0, endAngle: 30 },
+        { startAngle: 0, endAngle: 0 },
+      ]);
+    });
+
+    it('can overlap stacked bars, same as the pre-existing minPointSize behavior', () => {
+      // minAngle expands each bar's angle independently, without knowledge of its stacked
+      // neighbor. minPointSize has always had this same limitation in `radial` layout - this
+      // test pins the current, known-imperfect behavior rather than asserting it is correct.
+      const stackedData = [{ name: 'A', a: 1, b: 99 }];
+
+      const stackedRenderTestCase = createSelectorTestCase(({ children }) => (
+        <RadialBarChart width={500} height={500} data={stackedData}>
+          <RadialBar isAnimationActive={false} dataKey="a" stackId="s" minAngle={30} />
+          <RadialBar isAnimationActive={false} dataKey="b" stackId="s" minAngle={30} />
+          {children}
+        </RadialBarChart>
+      ));
+
+      // Settings must come from the real registered items (with their real, auto-generated
+      // ids) rather than a hand-rolled object, otherwise the stacked-data lookup silently
+      // fails to find a match and each bar falls back to its raw, non-cumulative value.
+      //
+      // This is wrapped in createSelector (rather than a plain function) because the test
+      // harness asserts that calling the selector twice on the same state returns a
+      // referentially stable result, the same guarantee every real selector in this codebase
+      // provides.
+      const selectStackedAAndB = createSelector(
+        [(state: RechartsRootState) => selectPolarItemsSettings(state, 'angleAxis', 0)],
+        allSettings => {
+          // Both bars register asynchronously; ignore intermediate renders where only one has.
+          if (allSettings.length < 2) {
+            return undefined;
+          }
+          const settingsA = allSettings.find(
+            (s): s is RadialBarSettings => s.type === 'radialBar' && s.dataKey === 'a',
+          );
+          const settingsB = allSettings.find(
+            (s): s is RadialBarSettings => s.type === 'radialBar' && s.dataKey === 'b',
+          );
+          assertNotNull(settingsA);
+          assertNotNull(settingsB);
+          return { settingsA, settingsB };
+        },
+      );
+      const selectStackedSectors = createSelector(
+        [selectStackedAAndB, (state: RechartsRootState) => state],
+        (found, state) => {
+          if (found == null) {
+            return undefined;
+          }
+          return {
+            a: selectRadialBarSectors(state, 0, 0, found.settingsA, undefined),
+            b: selectRadialBarSectors(state, 0, 0, found.settingsB, undefined),
+          };
+        },
+      );
+
+      const { spy } = stackedRenderTestCase(selectStackedSectors);
+      const lastResult = spy.mock.calls.at(-1)?.[0];
+      assertNotNull(lastResult);
+      const { a: resultA, b: resultB } = lastResult;
+
+      // The angle axis domain here is [0, 99] (the larger of the two raw values), not [0, 100].
+      // Bar 'a' (cumulative range [0, 1]) naturally spans [0, 3.64], expanded to [0, 30] by minAngle.
+      expect(resultA[0].startAngle).toBe(0);
+      expect(resultA[0].endAngle).toBe(30);
+
+      // Bar 'b' (cumulative range [1, 100], stacked on top of 'a') naturally spans [3.64, 360],
+      // well above the threshold so it is untouched - but that overlaps bar 'a's expanded range
+      // by roughly 26.4°.
+      expect(resultB[0].startAngle).toBeCloseTo(360 / 99, 5);
+      expect(resultB[0].endAngle).toBe(360);
+    });
+  });
+
   describe('with configured axes', () => {
     const radialBarSettings: RadialBarSettings = {
       id: 'my-radial-bar',
       dataKey: 'pv',
+      minAngle: 0,
       minPointSize: 0,
       stackId: undefined,
       maxBarSize: undefined,
@@ -474,6 +636,7 @@ describe('<RadialBar />', () => {
           stackId: undefined,
           type: 'radialBar',
           maxBarSize: undefined,
+          minAngle: 0,
           minPointSize: 0,
         },
       ]);
@@ -826,6 +989,7 @@ describe('<RadialBar />', () => {
     const radialBarSettings: RadialBarSettings = {
       id: 'my-radial-bar',
       dataKey: 'rings',
+      minAngle: 0,
       minPointSize: 0,
       stackId: undefined,
       maxBarSize: undefined,
@@ -861,6 +1025,7 @@ describe('<RadialBar />', () => {
           stackId: undefined,
           type: 'radialBar',
           maxBarSize: undefined,
+          minAngle: 0,
           minPointSize: 0,
         },
       ]);
@@ -965,6 +1130,7 @@ describe('<RadialBar />', () => {
           // @ts-expect-error extra properties not expected in the type
           rings: 3,
           fill: 'green',
+          stroke: 'green',
           background: {
             cx: 250,
             cy: 250,
@@ -973,7 +1139,7 @@ describe('<RadialBar />', () => {
             startAngle: 0,
             endAngle: 360,
           },
-          payload: { name: 'Elves', rings: 3, fill: 'green' },
+          payload: { name: 'Elves', rings: 3, fill: 'green', stroke: 'green' },
           value: 3,
           cx: 250,
           cy: 250,
@@ -987,6 +1153,7 @@ describe('<RadialBar />', () => {
           // @ts-expect-error extra properties not expected in the type
           rings: 7,
           fill: 'blue',
+          stroke: 'blue',
           background: {
             cx: 250,
             cy: 250,
@@ -995,7 +1162,7 @@ describe('<RadialBar />', () => {
             startAngle: 0,
             endAngle: 360,
           },
-          payload: { name: 'Dwarves', rings: 7, fill: 'blue' },
+          payload: { name: 'Dwarves', rings: 7, fill: 'blue', stroke: 'blue' },
           value: 7,
           cx: 250,
           cy: 250,
@@ -1009,6 +1176,7 @@ describe('<RadialBar />', () => {
           // @ts-expect-error extra properties not expected in the type
           rings: 9,
           fill: 'red',
+          stroke: 'red',
           background: {
             cx: 250,
             cy: 250,
@@ -1017,7 +1185,7 @@ describe('<RadialBar />', () => {
             startAngle: 0,
             endAngle: 360,
           },
-          payload: { name: 'Humans', rings: 9, fill: 'red' },
+          payload: { name: 'Humans', rings: 9, fill: 'red', stroke: 'red' },
           value: 9,
           cx: 250,
           cy: 250,
@@ -1031,6 +1199,7 @@ describe('<RadialBar />', () => {
           // @ts-expect-error extra properties not expected in the type
           rings: 1,
           fill: 'black',
+          stroke: 'black',
           background: {
             cx: 250,
             cy: 250,
@@ -1039,7 +1208,7 @@ describe('<RadialBar />', () => {
             startAngle: 0,
             endAngle: 360,
           },
-          payload: { name: 'Sauron', rings: 1, fill: 'black' },
+          payload: { name: 'Sauron', rings: 1, fill: 'black', stroke: 'black' },
           value: 1,
           cx: 250,
           cy: 250,
@@ -1280,6 +1449,56 @@ describe('<RadialBar />', () => {
     );
   });
 
+  describe('with a null value', () => {
+    type Datum = { name: string; value: number | null };
+    const dataWithNull: Array<Datum> = [
+      { name: 'A', value: 50 },
+      { name: 'Missing', value: null },
+      { name: 'B', value: 25 },
+    ];
+
+    const nullValueSettings: RadialBarSettings = {
+      id: 'radial-bar-value',
+      dataKey: 'value',
+      minPointSize: 0,
+      stackId: undefined,
+      maxBarSize: undefined,
+      minAngle: 0,
+      barSize: undefined,
+      type: 'radialBar',
+      angleAxisId: 0,
+      radiusAxisId: 0,
+      data: undefined,
+      hide: false,
+    };
+
+    const createTestCase = (minPointSize: number) =>
+      createSelectorTestCase(({ children }) => (
+        <RadialBarChart width={400} height={400} data={dataWithNull} innerRadius={20} outerRadius={180}>
+          <PolarAngleAxis type="number" domain={[0, 100]} />
+          <RadialBar isAnimationActive={false} dataKey="value" minPointSize={minPointSize} />
+          {children}
+        </RadialBarChart>
+      ));
+
+    it.each([0, 5])('should select an empty sector for a null value with minPointSize %s', minPointSize => {
+      const settings: RadialBarSettings = { ...nullValueSettings, minPointSize };
+      const { spy } = createTestCase(minPointSize)(state => selectRadialBarSectors(state, 0, 0, settings, undefined));
+      const sectors = spy.mock.lastCall?.[0];
+      assertNotNull(sectors);
+      expect(sectors.map(({ startAngle, endAngle }) => ({ startAngle, endAngle }))).toEqual([
+        { startAngle: 0, endAngle: 180 },
+        { startAngle: 0, endAngle: 0 },
+        { startAngle: 0, endAngle: 90 },
+      ]);
+    });
+
+    it('should not render a sector for a null value', () => {
+      const { container } = createTestCase(0)();
+      expect(getRadialBarPaths(container)).toHaveLength(2);
+    });
+  });
+
   describe('state integration', () => {
     it('should report its settings to Redux state, and remove it when removed from DOM', () => {
       const polarItemsSpy = vi.fn();
@@ -1304,6 +1523,7 @@ describe('<RadialBar />', () => {
         dataKey: 'value',
         hide: false,
         radiusAxisId: 0,
+        minAngle: 0,
         minPointSize: 0,
         maxBarSize: undefined,
       };

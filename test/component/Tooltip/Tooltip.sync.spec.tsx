@@ -1118,6 +1118,87 @@ describe('Cursor synchronization', () => {
   });
 });
 
+describe('Cursor alignment between charts with different scales', () => {
+  beforeEach(() => {
+    mockGetBoundingClientRect({ width: 100, height: 100 });
+  });
+
+  function getBarCursor(barChartWrapper: Element): { x: number; width: number; y: number; height: number } {
+    const cursor = barChartWrapper.querySelector('.recharts-tooltip-cursor');
+    assertNotNull(cursor);
+    return {
+      x: Number(cursor.getAttribute('x')),
+      y: Number(cursor.getAttribute('y')),
+      width: Number(cursor.getAttribute('width')),
+      height: Number(cursor.getAttribute('height')),
+    };
+  }
+
+  it('should render the BarChart cursor in the same place when hovering directly and when synchronised from a LineChart', () => {
+    const { container } = render(
+      <>
+        <LineChart width={400} height={300} data={PageData} syncId="alignment">
+          <XAxis dataKey="name" />
+          <Line dataKey="uv" />
+          <Tooltip />
+        </LineChart>
+        <BarChart width={400} height={300} data={PageData} syncId="alignment">
+          <XAxis dataKey="name" />
+          <Bar dataKey="uv" />
+          <Tooltip />
+        </BarChart>
+      </>,
+    );
+    const [lineChartWrapper, barChartWrapper] = Array.from(container.querySelectorAll('.recharts-wrapper'));
+    assertNotNull(lineChartWrapper);
+    assertNotNull(barChartWrapper);
+
+    showTooltipOnCoordinate(barChartWrapper, undefined, { clientX: 230, clientY: 100 });
+    const directCursor = getBarCursor(barChartWrapper);
+    expect(barChartWrapper.querySelector('.recharts-tooltip-label')?.textContent).toBe('Page D');
+    fireEvent.mouseLeave(barChartWrapper);
+
+    showTooltipOnCoordinate(lineChartWrapper, undefined, { clientX: 230, clientY: 100 });
+    expect(barChartWrapper.querySelector('.recharts-tooltip-label')?.textContent).toBe('Page D');
+    const synchronisedCursor = getBarCursor(barChartWrapper);
+
+    expect(synchronisedCursor).toEqual(directCursor);
+  });
+
+  it('should render the vertical BarChart cursor in the same place when hovering directly and when synchronised from a LineChart', () => {
+    const { container } = render(
+      <>
+        <LineChart layout="vertical" width={400} height={300} data={PageData} syncId="alignment">
+          <XAxis type="number" />
+          <YAxis dataKey="name" type="category" />
+          <Line dataKey="uv" />
+          <Tooltip />
+        </LineChart>
+        <BarChart layout="vertical" width={400} height={300} data={PageData} syncId="alignment">
+          <XAxis type="number" />
+          <YAxis dataKey="name" type="category" />
+          <Bar dataKey="uv" />
+          <Tooltip />
+        </BarChart>
+      </>,
+    );
+    const [lineChartWrapper, barChartWrapper] = Array.from(container.querySelectorAll('.recharts-wrapper'));
+    assertNotNull(lineChartWrapper);
+    assertNotNull(barChartWrapper);
+
+    showTooltipOnCoordinate(barChartWrapper, undefined, { clientX: 200, clientY: 150 });
+    const directCursor = getBarCursor(barChartWrapper);
+    expect(barChartWrapper.querySelector('.recharts-tooltip-label')?.textContent).toBe('Page D');
+    fireEvent.mouseLeave(barChartWrapper);
+
+    showTooltipOnCoordinate(lineChartWrapper, undefined, { clientX: 200, clientY: 150 });
+    expect(barChartWrapper.querySelector('.recharts-tooltip-label')?.textContent).toBe('Page D');
+    const synchronisedCursor = getBarCursor(barChartWrapper);
+
+    expect(synchronisedCursor).toEqual(directCursor);
+  });
+});
+
 describe('Tooltip coordinate bounding in synchronization', () => {
   beforeEach(() => {
     mockGetBoundingClientRect({ width: 100, height: 100 });

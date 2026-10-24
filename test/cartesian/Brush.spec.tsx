@@ -758,6 +758,23 @@ describe('<Brush />', () => {
     });
   });
 
+  describe('startIndex and endIndex that are outside of the data', () => {
+    test('should render finite positions instead of NaN', () => {
+      const { container } = render(
+        <LineChart width={400} height={100} data={data}>
+          <Line dataKey="value" isAnimationActive={false} />
+          <Brush dataKey="value" startIndex={-3} endIndex={100} />
+        </LineChart>,
+      );
+
+      const brushAttributes = Array.from(container.querySelectorAll('.recharts-brush *')).flatMap(element =>
+        Array.from(element.attributes).map(attribute => attribute.value),
+      );
+      expect(brushAttributes.filter(value => value.includes('NaN'))).toEqual([]);
+      expect(container.querySelectorAll('.recharts-line-dot')).toHaveLength(data.length);
+    });
+  });
+
   describe('dy props', () => {
     it('should added its given y value', () => {
       const { container } = render(

@@ -1,7 +1,13 @@
-import { expect, test } from '../fixtures';
+import { expect, testWithThemes } from '../fixtures';
 
-test('Scatter theme', async ({ mountStory }) => {
+testWithThemes('Scatter theme', async ({ mountStory }) => {
   const component = await mountStory('theme/ScatterTheme/ScatterThemeComparison');
+
+  await expect(component).toHaveScreenshot();
+});
+
+testWithThemes('Scatter fill and stroke variants', async ({ mountStory }) => {
+  const component = await mountStory('theme/ScatterTheme/ScatterFillStrokeVariants');
 
   await expect(component).toHaveScreenshot();
 });

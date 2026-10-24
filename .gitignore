@@ -41,3 +41,5 @@ bundle-visualization.html
 
 # Website-generated bundle size data
 www/public/generated/bundleSizeData.generated.json
+
+.claude

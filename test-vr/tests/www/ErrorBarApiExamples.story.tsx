@@ -1,4 +1,4 @@
 import ErrorBarExampleComponent from '../../../www/src/docs/exampleComponents/ErrorBar/ErrorBarExample';
-import { themedStory } from './StoryTheme';
+import '../../../www/src/styles/app.css';
 
-export const ErrorBarExample = themedStory(ErrorBarExampleComponent);
+export const ErrorBarExample = ErrorBarExampleComponent;

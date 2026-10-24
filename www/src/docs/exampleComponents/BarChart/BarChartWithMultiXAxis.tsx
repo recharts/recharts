@@ -1,4 +1,4 @@
-import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, XAxisTickContentProps } from 'recharts';
+import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, XAxisTickContentProps, Text } from 'recharts';
 import { ReactNode } from 'react';
 import { RechartsDevtools } from '@recharts/devtools';
 
@@ -96,7 +96,7 @@ const renderQuarterTick = (tickProps: XAxisTickContentProps): ReactNode => {
   const quarterNo = Math.floor(month / 3) + 1;
 
   if (month % 3 === 1) {
-    return <text x={x + width / visibleTicksCount / 2 - offset} y={y - 4} textAnchor="middle">{`Q${quarterNo}`}</text>;
+    return <Text x={x + width / visibleTicksCount / 2 - offset} y={y - 4} textAnchor="middle">{`Q${quarterNo}`}</Text>;
   }
 
   const isLast = month === 11;
@@ -136,7 +136,7 @@ const BarChartWithMultiXAxis = () => {
       />
       <YAxis width="auto" />
       <Tooltip />
-      <Legend wrapperStyle={{ paddingTop: '1em' }} />
+      <Legend wrapperStyle={{ paddingTop: '1em', backgroundColor: 'transparent' }} />
       <Bar dataKey="pv" />
       <Bar dataKey="uv" />
       <RechartsDevtools />

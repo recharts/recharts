@@ -216,9 +216,33 @@ function getNameFromUnknown(value: unknown): string | undefined {
   return undefined;
 }
 
-function getAriaLabel(data: ReadonlyArray<unknown>, startIndex: number, endIndex: number) {
-  const start = getNameFromUnknown(data[startIndex]);
-  const end = getNameFromUnknown(data[endIndex]);
+function getAriaLabelText(
+  data: ReadonlyArray<unknown>,
+  index: number,
+  dataKey: DataKey<any, string | number> | undefined,
+): string | undefined {
+  const name = getNameFromUnknown(data[index]);
+  if (name != null) {
+    return name;
+  }
+  if (dataKey == null) {
+    return undefined;
+  }
+  const value = getValueByDataKey(data[index], dataKey);
+  return isNotNil(value) ? String(value) : undefined;
+}
+
+function getAriaLabel(
+  data: ReadonlyArray<unknown>,
+  startIndex: number,
+  endIndex: number,
+  dataKey: DataKey<any, string | number> | undefined,
+): string | undefined {
+  const start = getAriaLabelText(data, startIndex, dataKey);
+  const end = getAriaLabelText(data, endIndex, dataKey);
+  if (start == null || end == null) {
+    return undefined;
+  }
   return `Min value: ${start}, Max value: ${end}`;
 }
 
@@ -245,7 +269,18 @@ function TravellerLayer({
   onFocus: () => void;
   onBlur: () => void;
 }) {
-  const { y, x: xFromProps, travellerWidth, height, traveller, ariaLabel, data, startIndex, endIndex } = otherProps;
+  const {
+    y,
+    x: xFromProps,
+    travellerWidth,
+    height,
+    traveller,
+    ariaLabel,
+    data,
+    startIndex,
+    endIndex,
+    dataKey,
+  } = otherProps;
   const { travellerStyleProps } = otherProps;
   const x = Math.max(travellerX, xFromProps);
   const travellerProps: TravellerProps = {
@@ -267,7 +302,7 @@ function TravellerLayer({
     customTravellerProps.stroke = travellerStyleProps.stroke;
   }
 
-  const ariaLabelBrush = ariaLabel || getAriaLabel(data, startIndex, endIndex);
+  const ariaLabelBrush = ariaLabel || getAriaLabel(data, startIndex, endIndex, dataKey);
 
   return (
     <Layer

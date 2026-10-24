@@ -1,14 +1,18 @@
-import { vi } from 'vitest';
+import { afterAll, beforeEach, vi } from 'vitest';
 
 import { RADIAN } from '../../../src/util/PolarUtils';
 import { getCursorPoints } from '../../../src/util/cursor/getCursorPoints';
 import { ChartOffsetInternal, Coordinate, PolarCoordinate } from '../../../src/util/types';
-import { getRadialCursorPoints } from '../../../src/util/cursor/getRadialCursorPoints';
+import * as radialCursorPoints from '../../../src/util/cursor/getRadialCursorPoints';
 import { emptyOffset, makeChartOffset } from '../../helper/offsetHelpers';
 
-vi.mock('../../../src/util/cursor/getRadialCursorPoints');
+beforeEach(() => {
+  vi.spyOn(radialCursorPoints, 'getRadialCursorPoints');
+});
 
-const spy = vi.mocked(getRadialCursorPoints);
+afterAll(() => {
+  vi.restoreAllMocks();
+});
 
 const polarCoordinate: PolarCoordinate = {
   clockWise: false,
@@ -129,8 +133,8 @@ describe('getCursorPoints', () => {
         width: 60,
       });
       getCursorPoints('radial', polarCoordinate, offset);
-      expect(spy).toHaveBeenCalledTimes(1);
-      expect(spy).toHaveBeenCalledWith(polarCoordinate);
+      expect(radialCursorPoints.getRadialCursorPoints).toHaveBeenCalledTimes(1);
+      expect(radialCursorPoints.getRadialCursorPoints).toHaveBeenCalledWith(polarCoordinate);
     });
   });
 });

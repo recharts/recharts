@@ -17,7 +17,7 @@ import {
   XAxis,
   YAxis,
 } from '../../src';
-import { pageData, pageDataWithFillColor } from '../../storybook/stories/data';
+import { pageData } from '../../storybook/stories/data';
 
 const availablePositions = [
   'top',
@@ -161,7 +161,7 @@ export const PolarAngleAxisLabel = () => {
 export const PieChartLabel = () => {
   return (
     <PieChart width={900} height={500}>
-      <Pie data={pageDataWithFillColor} dataKey="uv" nameKey="name" isAnimationActive={false} />
+      <Pie data={pageData} dataKey="uv" nameKey="name" isAnimationActive={false} />
       {availablePositions.map(position => (
         <Label key={position} value={`Position: ${position}`} position={position} className={position} />
       ))}
@@ -173,12 +173,26 @@ export const PieChartLabel = () => {
 export const PieLabel = () => {
   return (
     <PieChart width={900} height={500}>
-      <Pie data={pageDataWithFillColor} dataKey="uv" nameKey="name" isAnimationActive={false}>
+      <Pie data={pageData} dataKey="uv" nameKey="name" isAnimationActive={false}>
         {availablePositions.map(position => (
           <Label key={position} value={`Position: ${position}`} position={position} className={position} />
         ))}
       </Pie>
       <Legend />
     </PieChart>
+  );
+};
+
+export const ReferenceLineLabelWithBackground = () => {
+  return (
+    <AreaChart width={600} height={300} data={pageData} margin={{ top: 30, bottom: 30 }}>
+      <XAxis dataKey="name" />
+      <YAxis />
+      <Line type="monotone" dataKey="uv" stroke="#8884d8" />
+      <ReferenceLine y={300} stroke="#ff7300">
+        <Label value="Target" position="center" background />
+        <Label value="Custom" position="insideRight" background={{ stroke: '#ff7300', rx: 10, padding: 6 }} />
+      </ReferenceLine>
+    </AreaChart>
   );
 };

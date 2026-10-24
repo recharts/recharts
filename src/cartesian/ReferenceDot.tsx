@@ -5,6 +5,7 @@ import { Layer } from '../container/Layer';
 import { Dot, Props as DotProps } from '../shape/Dot';
 import { CartesianLabelContextProvider, CartesianLabelFromLabelProp, ImplicitLabelType } from '../component/Label';
 import { isNumOrStr } from '../util/DataUtils';
+import { isWellBehavedNumber } from '../util/isWellBehavedNumber';
 import { IfOverflow, Overflowable } from '../util/IfOverflow';
 import { addDot, ReferenceDotSettings, removeDot } from '../state/referenceElementsSlice';
 import { useAppDispatch, useAppSelector } from '../state/hooks';
@@ -79,12 +80,14 @@ interface ReferenceDotProps<
    *
    * - `false`: no labels are rendered
    * - `string` | `number`: the content of the label
-   * - `object`: the props of LabelList component
+   * - `object`: the props of a single Label component, such as `value` and `position`
    * - `ReactElement`: a custom SVG label element, such as `<text>` or `<g>`.
    *   HTML elements such as `<div>` are not valid inside the chart SVG and may trigger React DOM warnings.
    * - `function`: a render function of custom label
    *
    * @defaultValue false
+   *
+   * @example <ReferenceDot x={10} y={20} label={{ value: 'Target', position: 'top' }} />
    */
   label?: ImplicitLabelType;
 
@@ -158,7 +161,14 @@ const useCoordinate = (
 
   const scales = new CartesianScaleHelperImpl({ x: xAxisScale, y: yAxisScale });
 
-  const result = scales.map({ x, y }, { position: 'middle' });
+  const cx = xAxisScale.map(x, { position: 'middle' });
+  const cy = yAxisScale.map(y, { position: 'middle' });
+  // don't render the dot if the scale can't compute a result that makes sense
+  if (!isWellBehavedNumber(cx) || !isWellBehavedNumber(cy)) {
+    return null;
+  }
+
+  const result: Coordinate = { x: cx, y: cy };
 
   if (ifOverflow === 'discard' && !scales.isInRange(result)) {
     return null;

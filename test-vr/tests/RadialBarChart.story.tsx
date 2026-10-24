@@ -1,5 +1,14 @@
 import * as React from 'react';
-import { Legend, PolarAngleAxis, PolarGrid, PolarRadiusAxis, RadialBar, RadialBarChart, Tooltip } from '../../src';
+import {
+  LabelList,
+  Legend,
+  PolarAngleAxis,
+  PolarGrid,
+  PolarRadiusAxis,
+  RadialBar,
+  RadialBarChart,
+  Tooltip,
+} from '../../src';
 import { pageData } from '../../storybook/stories/data';
 
 export const StackedRadialBarChart = () => {
@@ -10,7 +19,7 @@ export const StackedRadialBarChart = () => {
       <Legend />
       <PolarGrid gridType="circle" />
       <PolarAngleAxis dataKey="pv" type="number" axisLineType="circle" />
-      <Tooltip defaultIndex={3} cursor={{ strokeWidth: 3, stroke: 'black', strokeDasharray: '4 4' }} />
+      <Tooltip defaultIndex={3} cursor={{ strokeWidth: 3, strokeDasharray: '4 4' }} />
     </RadialBarChart>
   );
 };
@@ -32,21 +41,25 @@ const ringsData = [
     name: 'Elves',
     rings: 3,
     fill: 'green',
+    stroke: 'green',
   },
   {
     name: 'Dwarves',
     rings: 7,
     fill: 'blue',
+    stroke: 'blue',
   },
   {
     name: 'Humans',
     rings: 9,
     fill: 'red',
+    stroke: 'red',
   },
   {
     name: 'Sauron',
     rings: 1,
     fill: 'black',
+    stroke: 'black',
   },
 ];
 
@@ -81,7 +94,7 @@ export const RingsWithDataKeys = () => {
       <Legend />
       <PolarGrid gridType="circle" />
       <PolarAngleAxis dataKey="rings" />
-      <PolarRadiusAxis dataKey="name" stroke="black" />
+      <PolarRadiusAxis dataKey="name" />
       <Tooltip defaultIndex={0} />
     </RadialBarChart>
   );
@@ -94,7 +107,7 @@ export const RingsWithTypes = () => {
       <Legend />
       <PolarGrid gridType="circle" />
       <PolarAngleAxis type="number" />
-      <PolarRadiusAxis type="category" stroke="black" />
+      <PolarRadiusAxis type="category" />
       <Tooltip defaultIndex={0} />
     </RadialBarChart>
   );
@@ -107,7 +120,7 @@ export const RingsWithDataKeysAndTypes = () => {
       <Legend />
       <PolarGrid gridType="circle" />
       <PolarAngleAxis dataKey="rings" type="number" />
-      <PolarRadiusAxis dataKey="name" type="category" stroke="black" />
+      <PolarRadiusAxis dataKey="name" type="category" />
       <Tooltip defaultIndex={0} />
     </RadialBarChart>
   );
@@ -121,8 +134,8 @@ export const RingsWithCustomDomain = () => {
       <Legend />
       <PolarGrid gridType="circle" />
       <PolarAngleAxis dataKey="rings" type="number" domain={[0, totalCountOfRings]} />
-      <PolarRadiusAxis dataKey="name" type="category" stroke="black" />
-      <Tooltip defaultIndex={0} />
+      <PolarRadiusAxis dataKey="name" type="category" />
+      <Tooltip defaultIndex={2} />
     </RadialBarChart>
   );
 };
@@ -135,7 +148,7 @@ export const RingsWithRadiusAxisVertically = () => {
       <Legend />
       <PolarGrid gridType="circle" />
       <PolarAngleAxis dataKey="rings" type="number" domain={[0, totalCountOfRings]} />
-      <PolarRadiusAxis dataKey="name" type="category" orientation="left" angle={90} stroke="black" />
+      <PolarRadiusAxis dataKey="name" type="category" orientation="left" angle={90} />
       <Tooltip defaultIndex={0} />
     </RadialBarChart>
   );
@@ -148,7 +161,7 @@ export const ReversedAngleAxis = () => {
       <Legend />
       <PolarGrid gridType="circle" />
       <PolarAngleAxis type="number" reversed />
-      <PolarRadiusAxis type="category" stroke="black" />
+      <PolarRadiusAxis type="category" />
       <Tooltip />
     </RadialBarChart>
   );
@@ -161,7 +174,7 @@ export const ReversedRadiusAxis = () => {
       <Legend />
       <PolarGrid gridType="circle" />
       <PolarAngleAxis type="number" />
-      <PolarRadiusAxis type="category" stroke="black" reversed />
+      <PolarRadiusAxis type="category" reversed />
       <Tooltip />
     </RadialBarChart>
   );
@@ -174,7 +187,7 @@ export const ReversedBothAxes = () => {
       <Legend />
       <PolarGrid gridType="circle" />
       <PolarAngleAxis type="number" reversed />
-      <PolarRadiusAxis type="category" stroke="black" reversed />
+      <PolarRadiusAxis type="category" reversed />
       <Tooltip />
     </RadialBarChart>
   );
@@ -187,7 +200,7 @@ export const Angled = () => {
       <Legend />
       <PolarGrid gridType="circle" />
       <PolarAngleAxis type="number" />
-      <PolarRadiusAxis type="category" stroke="black" />
+      <PolarRadiusAxis type="category" />
       <Tooltip />
     </RadialBarChart>
   );
@@ -200,7 +213,7 @@ export const ChartReversedByAngles = () => {
       <Legend />
       <PolarGrid gridType="circle" />
       <PolarAngleAxis type="number" />
-      <PolarRadiusAxis type="category" stroke="black" />
+      <PolarRadiusAxis type="category" />
       <Tooltip />
     </RadialBarChart>
   );
@@ -213,8 +226,39 @@ export const ChartReversedByBothAnglesAndReverseAxis = () => {
       <Legend />
       <PolarGrid gridType="circle" />
       <PolarAngleAxis type="number" reversed />
-      <PolarRadiusAxis type="category" stroke="black" reversed />
+      <PolarRadiusAxis type="category" reversed />
       <Tooltip />
     </RadialBarChart>
+  );
+};
+
+const labelBackgroundData = [{ name: 'Curved label', value: 75 }];
+
+export const CurvedLabelBackgrounds = () => {
+  return (
+    <div style={{ display: 'flex', gap: 16 }}>
+      {(['insideStart', 'insideEnd', 'end'] as const).map(position => (
+        <RadialBarChart
+          key={position}
+          width={260}
+          height={240}
+          data={labelBackgroundData}
+          innerRadius={70}
+          outerRadius={105}
+          startAngle={20}
+          endAngle={300}
+        >
+          <PolarAngleAxis type="number" domain={[0, 100]} tick={false} axisLine={false} />
+          <RadialBar dataKey="value" fill="#2563eb" isAnimationActive={false}>
+            <LabelList
+              dataKey="name"
+              position={position}
+              fill="#111827"
+              background={{ fill: '#fff', padding: { x: 6, y: 3 } }}
+            />
+          </RadialBar>
+        </RadialBarChart>
+      ))}
+    </div>
   );
 };

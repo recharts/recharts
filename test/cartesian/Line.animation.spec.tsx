@@ -1,10 +1,10 @@
 import React, { ReactNode, useState } from 'react';
-import { describe, it, expect, beforeAll, beforeEach, vi } from 'vitest';
+import { afterAll, describe, it, expect, beforeAll, beforeEach, vi } from 'vitest';
 import { act } from '@testing-library/react';
 import { createSelectorTestCase } from '../helper/createSelectorTestCase';
 import { ComposedChart, Legend, Line, LineChart, Scatter, XAxis, YAxis } from '../../src';
 import { PageData } from '../_data';
-import { mockGetTotalLength } from '../helper/mockGetTotalLength';
+import { mockGetTotalLength, restoreMockGetTotalLength } from '../helper/mockGetTotalLength';
 import { ExpectedLabel, expectLabels } from '../helper/expectLabel';
 import { mockGetBoundingClientRect, mockSequenceOfGetBoundingClientRect } from '../helper/mockGetBoundingClientRect';
 import { expectDots } from '../helper/expectDots';
@@ -28,6 +28,10 @@ describe('Line animation', () => {
 
   beforeAll(() => {
     mockGetTotalLength(100);
+  });
+
+  afterAll(() => {
+    restoreMockGetTotalLength();
   });
 
   const expectedUvLabels: ReadonlyArray<ExpectedLabel> = [

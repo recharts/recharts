@@ -1469,6 +1469,33 @@ export interface DataConsumer<DataPointType, DataValueType> {
 }
 
 /**
+ * Same as {@link DataConsumer}, for graphical items that display their value on an axis
+ * and so can inherit the `dataKey` from that axis.
+ *
+ * DataPointType is the type of each data point object in the data array.
+ * DataValueType is the type of the value that this dataKey extracts from each data point.
+ */
+export interface ValueAxisDataConsumer<DataPointType, DataValueType> {
+  /**
+   * The data that you provide via the `data` prop is an array of objects.
+   * Each object can have multiple properties, each representing a different data dimension.
+   * Use the `dataKey` prop to specify which property (or dimension) to use for this component.
+   *
+   * Decides how to extract the value from the data:
+   * - `string`: the name of the field in the data object;
+   * - `number`: the index of the field in the data;
+   * - `function`: a function that receives the data object and returns the value.
+   *
+   * If undefined, this component uses the `dataKey` of its value axis.
+   * The chart layout decides which axis that is, regardless of the axis `type`:
+   * YAxis in horizontal layout, XAxis in vertical layout,
+   * PolarRadiusAxis in centric layout, and PolarAngleAxis in radial layout.
+   * If both this component and the axis define a `dataKey`, this component wins.
+   */
+  dataKey?: DataKey<DataPointType, DataValueType>;
+}
+
+/**
  * Props shared with all Cartesian and Polar charts.
  * There are three charts that do not use these base props, and define their own:
  * - Treemap
@@ -1520,10 +1547,17 @@ interface BaseChartProps<DataPointType> extends DataProvider<DataPointType>, Ext
   syncId?: number | string;
   /**
    * Customize how the charts will synchronize tooltips and brushes.
-   * `index`: synchronize using the data index in the data array. Index expects that all data has the same length.
-   * `value`: synchronize using the data value on categorical axis (categorical: XAxis in horizontal layout, YAxis in vertical layout).
-   * function: a custom sync method which receives tick and data as argument and returns an index.
    *
+   * - `index`: synchronize using the data index in the data array. Index expects that all data has the same length.
+   * - `value`: synchronize using the data value on the categorical axis (XAxis in horizontal layout, YAxis in vertical layout).
+   *   The receiving chart only shows a tooltip when one of its own ticks exactly matches the hovered value.
+   * - function: a custom sync method `(ticks, data) => number`. It is called in the receiving chart with that chart's
+   *   tooltip ticks and the interaction from the source chart, where `data.activeLabel` is the hovered value.
+   *   Return the index of the tick to activate. Return an index outside the ticks array (for example `-1`)
+   *   to hide the tooltip in the receiving chart. Use this when synchronized charts have different data,
+   *   for example to snap to the nearest date.
+   *
+   * @see {@link https://recharts.github.io/en-US/examples/SynchronizedDifferentData/ Synchronized Charts With Different Data}
    * @defaultValue index
    */
   syncMethod?: SyncMethod;

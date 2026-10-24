@@ -51,6 +51,7 @@ export const map = {
     coordinateSystems: 'Coordinate and dimension systems',
     animations: 'Animation',
     theming: 'Theming',
+    'theme-color-testing': 'Theme color testing',
   },
   installation: {
     installation: 'Installation',
@@ -94,6 +95,7 @@ export const map = {
     showData: 'Show data format',
     hideData: 'Hide data format',
     animation: 'Animation',
+    theming: 'Theming',
     current: 'Props',
     deprecated: 'Deprecated Props',
     events: 'Events',

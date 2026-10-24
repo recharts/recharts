@@ -1,4 +1,3 @@
-import { vi } from 'vitest';
 import { appendOffsetOfLegend } from '../../../src/util/ChartUtils';
 import { OffsetHorizontal, OffsetVertical, Size } from '../../../src/util/types';
 import { LegendSettings } from '../../../src/state/legendSlice';
@@ -10,7 +9,6 @@ const emptyOffset: OffsetVertical & OffsetHorizontal = {
   left: 5,
 };
 
-vi.mock('../../../src/util/ReactUtils');
 describe('appendOffsetOfLegend', () => {
   it('should add extra space for a vertical legend', () => {
     const settings: LegendSettings = {

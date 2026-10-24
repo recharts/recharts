@@ -1,5 +1,6 @@
 import { CSSProperties } from 'react';
 import { LegendProps } from '../index';
+import type { TextBackgroundProps } from '../component/Text';
 
 /**
  * Styles shared for rectangular or variable shape components that have an area (Area, Bar, Rectangle)
@@ -17,20 +18,52 @@ export type GraphicalItemStyle = Styles2D & {
   /**
    * Styles applied to the active representation of a graphical item.
    *
-   * The supported active representation differs by component. For example,
-   * Line uses this for its built-in active dot, while Bar and Pie will use it
-   * for their active shapes when they support graphical item themes.
+   * The active representation differs by component:
+   *
+   * - Line, Area, and Radar use these styles for their built-in active dot (`activeDot`).
+   * - Bar uses them for its active bar (`activeBar`).
+   * - Pie, Scatter, RadialBar, and Funnel use them for their active shape (`activeShape`).
+   *
+   * Bar, Scatter, RadialBar, and Funnel highlight the active shape only if you enable it,
+   * for example with `activeBar={true}` or `activeShape={true}`.
+   *
+   * All of these follow the same rules:
+   *
+   * - These styles apply only to what Recharts renders by default. A custom active representation
+   *   (a function or a React element) receives none of them. In Bar, a custom `shape` is used
+   *   for the active bar too, so it does not receive them either.
+   * - If the `activeDot`, `activeBar`, or `activeShape` object sets its own `fill` or `stroke`,
+   *   it ignores these styles completely. Its other style properties override the matching ones from here.
+   * - The same is true for graphical items and data entries that set their own `fill` or `stroke`,
+   *   see {@link RechartsTheme.graphicalItems}.
    */
   active?: Styles2D;
+  /**
+   * Styles of the data labels of this graphical item: `LabelList`, the `label` prop of graphical items,
+   * and the default Pie label.
+   *
+   * Data labels never use the global {@link RechartsTheme.label}.
+   *
+   * The labels take the same entry as their graphical item: Pie and Funnel take one entry per sector or trapezoid,
+   * the other graphical items take one entry per series.
+   * If the graphical item sets its own `fill` or `stroke`, it ignores its theme entry completely,
+   * and so do its labels. A data entry with its own `fill` or `stroke` only changes its shape, not its label.
+   *
+   * If `style` sets no color, data labels keep their default color. In Pie and Funnel, that is the color of the shape.
+   *
+   * Explicit props of `LabelList`, of the `label` prop of graphical items, and of the default Pie label
+   * win over these styles.
+   */
+  label?: LabelTheme;
 };
 
 /**
  * Styles shared with components that have a line (Line, ReferenceLine, ErrorBar) but no area
  */
 export type Styles1D = {
-  stroke: string;
-  strokeWidth?: number;
-  strokeOpacity?: number;
+  stroke?: string;
+  strokeWidth?: number | string;
+  strokeOpacity?: number | string;
   strokeDasharray?: string | number;
 };
 
@@ -42,10 +75,38 @@ export type Styles1D = {
 export type TextStyles = CSSProperties;
 
 /**
+ * Styles of labels.
+ *
+ * Explicit props of the label win over these styles.
+ */
+export type LabelTheme = {
+  /**
+   * Text styles. They are merged over `typography`, and the explicit `style` prop of the label is merged over them.
+   *
+   * A `fill` or `color` here sets the text color, unless the label sets its own `fill`.
+   */
+  style?: TextStyles;
+  /**
+   * The default for the `background` prop of the label, in the same format.
+   *
+   * - `true` or an object draws a background behind every label that does not set `background={false}`.
+   * - An object also sets the styles of the background. If the label sets `background` to an object,
+   *   that object is merged over these styles key by key.
+   * - `false` or `undefined` draws no background, unless the label asks for one.
+   *   If it does, it gets the default styles.
+   *
+   * If neither the label nor the theme sets the background `fill`, the background uses `pageBackground`.
+   */
+  background?: boolean | TextBackgroundProps;
+};
+
+/**
  * Styling presets for Recharts components.
  * The theme can be used to customize the appearance of charts, including colors, fonts, and other visual properties.
  *
- * @experimental
+ * @see {@link https://recharts.github.io/en-US/guide/theming/ Theming guide}
+ *
+ * @since 3.11
  */
 export interface RechartsTheme {
   /**
@@ -66,9 +127,35 @@ export interface RechartsTheme {
    *
    * If this array has only one item in it then all graphical items will have the same color.
    *
+   * Sankey selects an entry for each node by the node's index in `data.nodes`,
+   * and draws each link in the color of its source node, at reduced opacity.
+   *
+   * Treemap and SunburstChart give each top-level tile or first-ring sector the next entry by index,
+   * and all their descendants inherit that color.
+   *
+   * The theme colors never mix with user colors. If Line, Area, Bar, Scatter, Radar, RadialBar, Pie, Funnel,
+   * or SunburstChart sets its own `fill` or `stroke` prop, it ignores its theme entry completely,
+   * including the `active` styles.
+   *
+   * Individual shapes of Bar, RadialBar, Scatter, Pie, Funnel, Treemap, Sankey, and SunburstChart, and
+   * individual point markers of Line, Area, and Radar can be styled from the data array. If a data entry defines its own
+   * `fill` or `stroke`, then that shape ignores
+   * the theme completely, and renders with only its own styles and the explicit props of its
+   * graphical item.
+   *
+   * Other style props and data properties (`fillOpacity`, `strokeOpacity`, `strokeWidth`, `strokeDasharray`)
+   * do not opt out of the theme. They override the matching theme value and keep the rest of the theme.
+   *
    * Legend and Tooltip items inherit the same color.
    */
   graphicalItems: ReadonlyArray<GraphicalItemStyle>;
+  /**
+   * Styles of labels other than data labels: axis labels, labels of reference lines, areas and dots,
+   * and standalone `Label` components.
+   *
+   * Data labels take their styles from {@link GraphicalItemStyle.label} instead.
+   */
+  label?: LabelTheme;
   /**
    * Styles applied to Bar and RadialBar backgrounds.
    */
@@ -95,7 +182,43 @@ export interface RechartsTheme {
    * ErrorBar lines.
    */
   errorBar?: Styles1D;
+  /**
+   * Styles applied to the element that wraps the chart, the same element that the `style` prop of the chart styles.
+   * The Legend renders inside this element too, so a background here covers the Legend as well.
+   *
+   * The explicit `width`, `height`, and `style` props of the chart take precedence over these styles.
+   *
+   * `width` and `height` set a default size for every chart that does not set its own.
+   * Set both, or set one as a string (such as `'100%'`) together with `aspectRatio`,
+   * otherwise the chart has no size and renders nothing.
+   *
+   * These are inline styles, so they also take precedence over CSS classes on the chart.
+   *
+   * The built-in themes leave this empty: charts are transparent and the page shows through,
+   * and they have no default size.
+   *
+   * If you paint `backgroundColor` here and leave `pageBackground` unset,
+   * Recharts uses `backgroundColor` as the `pageBackground`.
+   * If you paint a `background` shorthand or an image, set `pageBackground` yourself.
+   */
   chart?: CSSProperties;
+  /**
+   * The color directly behind the chart: the page, or `chart.backgroundColor` if you paint one.
+   *
+   * Recharts never paints this as a background.
+   * It uses this color to draw gaps and halos that look like cut-outs:
+   * Treemap tile outlines, SunburstChart separators and the halo around its labels.
+   *
+   * Any CSS color works, including `var()` references.
+   *
+   * If this is not set, Recharts uses `chart.backgroundColor` instead.
+   * An explicit `pageBackground` always wins.
+   *
+   * Each built-in theme is designed for one page background, and sets it here.
+   * For example, `darkTheme` expects a dark page and is not legible on a light one.
+   * `autoTheme` expects a page background that follows the CSS `color-scheme`.
+   */
+  pageBackground?: string;
 
   /**
    * Styles applied to the cursor highlight shown with an active Tooltip.

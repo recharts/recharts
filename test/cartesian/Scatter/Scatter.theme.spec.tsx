@@ -1,8 +1,10 @@
 import { describe, expect, it } from 'vitest';
 import React from 'react';
 import { rechartsTestRender } from '../../helper/createSelectorTestCase';
-import { Scatter, ScatterChart, RechartsThemeProvider, XAxis, YAxis } from '../../../src';
+import { RechartsTheme, Scatter, ScatterChart, RechartsThemeProvider, Tooltip, XAxis, YAxis } from '../../../src';
 import { getAllScatterPoints } from '../../helper/expectScatterPoints';
+import { showTooltip } from '../../component/Tooltip/tooltipTestHelpers';
+import { scatterChartMouseHoverTooltipSelector } from '../../component/Tooltip/tooltipMouseHoverSelectors';
 
 const scatterData = [
   { x: 10, y: 20, z: 30 },
@@ -24,7 +26,7 @@ describe('Scatter theme', () => {
       it('should use defaults (no fill or stroke from theme)', () => {
         const { container } = rechartsTestRender(
           <MyChart>
-            <Scatter data={scatterData} dataKey="x" isAnimationActive={false} />
+            <Scatter data={scatterData} isAnimationActive={false} />
           </MyChart>,
         );
         const allPaths = getAllScatterPoints(container);
@@ -42,14 +44,7 @@ describe('Scatter theme', () => {
       it('should follow the prop for fill and stroke', () => {
         const { container } = rechartsTestRender(
           <MyChart>
-            <Scatter
-              data={scatterData}
-              dataKey="x"
-              fill="gold"
-              stroke="red"
-              strokeDasharray="5 5"
-              isAnimationActive={false}
-            />
+            <Scatter data={scatterData} fill="gold" stroke="red" strokeDasharray="5 5" isAnimationActive={false} />
           </MyChart>,
         );
         const allPaths = getAllScatterPoints(container);
@@ -77,7 +72,7 @@ describe('Scatter theme', () => {
             }}
           >
             <MyChart>
-              <Scatter data={scatterData} dataKey="x" isAnimationActive={false} />
+              <Scatter data={scatterData} isAnimationActive={false} />
             </MyChart>
           </RechartsThemeProvider>,
         );
@@ -106,14 +101,7 @@ describe('Scatter theme', () => {
             }}
           >
             <MyChart>
-              <Scatter
-                data={scatterData}
-                dataKey="x"
-                fill="green"
-                stroke="blue"
-                strokeDasharray="6 2"
-                isAnimationActive={false}
-              />
+              <Scatter data={scatterData} fill="green" stroke="blue" strokeDasharray="6 2" isAnimationActive={false} />
             </MyChart>
           </RechartsThemeProvider>,
         );
@@ -142,7 +130,7 @@ describe('Scatter theme', () => {
           }}
         >
           <MyChart>
-            <Scatter data={scatterData} dataKey="x" isAnimationActive={false} />
+            <Scatter data={scatterData} isAnimationActive={false} />
           </MyChart>
         </RechartsThemeProvider>,
       );
@@ -167,7 +155,7 @@ describe('Scatter theme', () => {
           }}
         >
           <MyChart>
-            <Scatter data={scatterData} dataKey="x" isAnimationActive={false} />
+            <Scatter data={scatterData} isAnimationActive={false} />
           </MyChart>
         </RechartsThemeProvider>,
       );
@@ -192,7 +180,7 @@ describe('Scatter theme', () => {
           }}
         >
           <MyChart>
-            <Scatter data={scatterData} dataKey="x" isAnimationActive={false} />
+            <Scatter data={scatterData} isAnimationActive={false} />
           </MyChart>
         </RechartsThemeProvider>,
       );
@@ -204,7 +192,7 @@ describe('Scatter theme', () => {
       });
     });
 
-    it('should apply partial theme properties', () => {
+    it('should ignore the theme completely when only some props are provided', () => {
       const { container } = rechartsTestRender(
         <RechartsThemeProvider
           value={{
@@ -217,20 +205,20 @@ describe('Scatter theme', () => {
           }}
         >
           <MyChart>
-            <Scatter data={scatterData} dataKey="x" stroke="red" isAnimationActive={false} />
+            <Scatter data={scatterData} stroke="red" isAnimationActive={false} />
           </MyChart>
         </RechartsThemeProvider>,
       );
       const allPaths = getAllScatterPoints(container);
       expect(allPaths).toHaveLength(scatterData.length);
       allPaths.forEach(path => {
-        expect(path.getAttribute('fill')).toBe('#ff6600');
+        expect(path.getAttribute('fill')).toBe(null);
         expect(path.getAttribute('stroke')).toBe('red');
-        expect(path.getAttribute('stroke-dasharray')).toBe('4 4');
+        expect(path.getAttribute('stroke-dasharray')).toBe(null);
       });
     });
 
-    it('should prioritize prop over graphicalItems', () => {
+    it('should not mix props with graphicalItems', () => {
       const { container } = rechartsTestRender(
         <RechartsThemeProvider
           value={{
@@ -244,7 +232,7 @@ describe('Scatter theme', () => {
           }}
         >
           <MyChart>
-            <Scatter data={scatterData} dataKey="x" fill="purple" strokeDasharray="7 1" isAnimationActive={false} />
+            <Scatter data={scatterData} fill="purple" strokeDasharray="7 1" isAnimationActive={false} />
           </MyChart>
         </RechartsThemeProvider>,
       );
@@ -252,9 +240,154 @@ describe('Scatter theme', () => {
       expect(allPaths).toHaveLength(scatterData.length);
       allPaths.forEach(path => {
         expect(path.getAttribute('fill')).toBe('purple');
-        expect(path.getAttribute('stroke')).toBe('#00ff00');
+        expect(path.getAttribute('stroke')).toBe(null);
         expect(path.getAttribute('stroke-dasharray')).toBe('7 1');
       });
     });
+  });
+
+  describe('theme identity from the effective dataKey', () => {
+    const twoColors = { graphicalItems: [{ fill: 'red' }, { fill: 'blue' }] };
+
+    function getFills(container: Element): ReadonlyArray<string | null> {
+      return getAllScatterPoints(container).map(path => path.getAttribute('fill'));
+    }
+
+    it('should select the theme entry using the dataKey of the value axis', () => {
+      const { container } = rechartsTestRender(
+        <RechartsThemeProvider value={twoColors}>
+          <MyChart>
+            <Scatter data={scatterData} isAnimationActive={false} />
+          </MyChart>
+        </RechartsThemeProvider>,
+      );
+      expect(getFills(container)).toEqual(['red', 'red', 'red']);
+    });
+
+    it('should give the same theme entry to Scatters that share the value axis', () => {
+      const { container } = rechartsTestRender(
+        <RechartsThemeProvider value={twoColors}>
+          <MyChart>
+            <Scatter data={scatterData} isAnimationActive={false} />
+            <Scatter data={scatterData} isAnimationActive={false} />
+          </MyChart>
+        </RechartsThemeProvider>,
+      );
+      expect(getFills(container)).toEqual(['red', 'red', 'red', 'red', 'red', 'red']);
+    });
+
+    it('should give different theme entries to Scatters with different effective dataKeys', () => {
+      const { container } = rechartsTestRender(
+        <RechartsThemeProvider value={twoColors}>
+          <MyChart>
+            <Scatter data={scatterData} isAnimationActive={false} />
+            <Scatter data={scatterData} dataKey="z" isAnimationActive={false} />
+          </MyChart>
+        </RechartsThemeProvider>,
+      );
+      // dataKeys are sorted so `y` from the YAxis is first, and `z` from the Scatter is second
+      expect(getFills(container)).toEqual(['red', 'red', 'red', 'blue', 'blue', 'blue']);
+    });
+
+    it('should give different theme entries to Scatters on different value axes', () => {
+      const { container } = rechartsTestRender(
+        <RechartsThemeProvider value={twoColors}>
+          <ScatterChart width={400} height={400}>
+            <XAxis dataKey="x" type="number" />
+            <YAxis dataKey="y" type="number" yAxisId="left" />
+            <YAxis dataKey="z" type="number" yAxisId="right" orientation="right" />
+            <Scatter data={scatterData} yAxisId="left" isAnimationActive={false} />
+            <Scatter data={scatterData} yAxisId="right" isAnimationActive={false} />
+          </ScatterChart>
+        </RechartsThemeProvider>,
+      );
+      expect(getFills(container)).toEqual(['red', 'red', 'red', 'blue', 'blue', 'blue']);
+    });
+  });
+});
+
+describe('Tooltip colors and symbol id (#7976)', () => {
+  const fillStrokeTheme = { graphicalItems: [{ fill: 'purple', stroke: 'indigo' }] };
+  const strokeOnlyTheme = { graphicalItems: [{ stroke: 'purple' }] };
+
+  function getTooltipItemColors(container: HTMLElement): Array<string> {
+    showTooltip(container, scatterChartMouseHoverTooltipSelector);
+    return Array.from(container.querySelectorAll<HTMLElement>('.recharts-tooltip-item')).map(item => item.style.color);
+  }
+
+  function renderWithTheme(theme: RechartsTheme, scatter: React.ReactNode) {
+    return rechartsTestRender(
+      <RechartsThemeProvider value={theme}>
+        <MyChart>
+          {scatter}
+          <Tooltip />
+        </MyChart>
+      </RechartsThemeProvider>,
+    );
+  }
+
+  it('uses the data entry fill for the tooltip item color instead of the theme color', () => {
+    const dataWithFill = [
+      { x: 10, y: 20, fill: 'red' },
+      { x: 20, y: 30 },
+      { x: 30, y: 40 },
+    ];
+    const { container } = renderWithTheme(fillStrokeTheme, <Scatter data={dataWithFill} isAnimationActive={false} />);
+    const colors = getTooltipItemColors(container);
+    expect(colors.length).toBeGreaterThan(0);
+    colors.forEach(color => expect(color).toBe('red'));
+  });
+
+  it('uses the Scatter fill for the tooltip item color when entries have no colors', () => {
+    const { container } = renderWithTheme(
+      fillStrokeTheme,
+      <Scatter data={scatterData} fill="#123456" isAnimationActive={false} />,
+    );
+    const colors = getTooltipItemColors(container);
+    expect(colors.length).toBeGreaterThan(0);
+    colors.forEach(color => expect(color).toBe('rgb(18, 52, 86)'));
+  });
+
+  it('falls back to the stroke for the tooltip item color when nothing has a fill', () => {
+    const { container } = renderWithTheme(
+      strokeOnlyTheme,
+      <Scatter data={scatterData} stroke="#654321" isAnimationActive={false} />,
+    );
+    const colors = getTooltipItemColors(container);
+    expect(colors.length).toBeGreaterThan(0);
+    colors.forEach(color => expect(color).toBe('rgb(101, 67, 33)'));
+  });
+
+  it('uses the entry stroke, not the themed series fill, when the entry sets only stroke', () => {
+    const dataWithStrokeOnly = [
+      { x: 10, y: 20, stroke: 'blue' },
+      { x: 20, y: 30 },
+      { x: 30, y: 40 },
+    ];
+    const { container } = renderWithTheme(
+      fillStrokeTheme,
+      <Scatter data={dataWithStrokeOnly} isAnimationActive={false} />,
+    );
+    const colors = getTooltipItemColors(container);
+    expect(colors.length).toBeGreaterThan(0);
+    colors.forEach(color => expect(color).toBe('blue'));
+  });
+
+  it('does not render the data entry id on the symbol', () => {
+    const dataWithId = [
+      { x: 10, y: 20, id: 'my-point' },
+      { x: 20, y: 30 },
+    ];
+    const { container } = rechartsTestRender(
+      <MyChart>
+        <Scatter data={dataWithId} isAnimationActive={false} />
+      </MyChart>,
+    );
+    const allPaths = getAllScatterPoints(container);
+    expect(allPaths).toHaveLength(dataWithId.length);
+    allPaths.forEach(path => {
+      expect(path.getAttribute('id')).toBe(null);
+    });
+    expect(container.querySelector('#my-point')).toBe(null);
   });
 });
