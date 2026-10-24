@@ -1,7 +1,7 @@
-import { describe, expect, it } from 'vitest';
+import { describe, expect, it, vi } from 'vitest';
 import React from 'react';
-import { fireEvent, render } from '@testing-library/react';
-import { emptyTheme, RechartsTheme, RechartsThemeProvider, Treemap, TreemapNode } from '../../src';
+import { act, fireEvent, render } from '@testing-library/react';
+import { emptyTheme, RechartsTheme, RechartsThemeProvider, Tooltip, Treemap, TreemapNode } from '../../src';
 import { assertNotNull } from '../helper/assertNotNull';
 
 const data = [
@@ -461,5 +461,233 @@ describe('<Treemap /> theme', () => {
 
     expect(breadcrumb.style.background).toBe('rgb(0, 0, 0)');
     expect(breadcrumb.style.color).toBe('rgb(255, 255, 255)');
+  });
+});
+
+describe('Treemap tooltip color', () => {
+  function hoverTile(container: Element, depth: number, index: number): SVGPathElement {
+    const tile = queryTiles(container, depth)[index];
+    assertNotNull(tile);
+    fireEvent.mouseOver(tile, { clientX: 200, clientY: 200 });
+    act(() => {
+      vi.runOnlyPendingTimers();
+    });
+    return tile;
+  }
+
+  function getTooltipItemColor(container: Element): string {
+    const item = container.querySelector<HTMLElement>('.recharts-tooltip-item');
+    assertNotNull(item);
+    return item.style.color;
+  }
+
+  function renderTooltipTreemap({
+    theme,
+    treemapData = data,
+    colorPanel,
+    fill,
+    stroke,
+  }: {
+    theme?: RechartsTheme;
+    treemapData?: React.ComponentProps<typeof Treemap>['data'];
+    colorPanel?: ReadonlyArray<string>;
+    fill?: string;
+    stroke?: string;
+  }) {
+    const chart = (
+      <Treemap
+        width={400}
+        height={250}
+        data={treemapData}
+        isAnimationActive={false}
+        nameKey="name"
+        dataKey="value"
+        {...(colorPanel != null ? { colorPanel } : {})}
+        {...(fill != null ? { fill } : {})}
+        {...(stroke != null ? { stroke } : {})}
+      >
+        <Tooltip />
+      </Treemap>
+    );
+    if (theme == null) {
+      return render(chart);
+    }
+    return render(<RechartsThemeProvider value={theme}>{chart}</RechartsThemeProvider>);
+  }
+
+  it('shows the data entry fill of the hovered node', () => {
+    const { container } = renderTooltipTreemap({
+      theme: {
+        graphicalItems: [
+          { fill: 'purple', stroke: 'indigo' },
+          { fill: 'teal', stroke: 'navy' },
+        ],
+      },
+      treemapData: [
+        { name: 'A', value: 100, fill: 'lime' },
+        { name: 'B', value: 80, fill: 'orange' },
+      ],
+    });
+
+    const tile = hoverTile(container, 1, 1);
+    expect(tile.getAttribute('fill')).toBe('orange');
+    expect(getTooltipItemColor(container)).toBe('orange');
+  });
+
+  it('shows a nested data entry fill instead of the branch theme color', () => {
+    const { container } = renderTooltipTreemap({
+      theme: {
+        graphicalItems: [{ fill: 'red' }, { fill: 'green' }],
+      },
+      treemapData: [
+        { name: 'Hardware', children: [{ name: 'Laptop', value: 120 }] },
+        {
+          name: 'Software',
+          children: [
+            { name: 'Editor', value: 100, fill: 'lime' },
+            { name: 'Browser', value: 60 },
+          ],
+        },
+      ],
+    });
+
+    const editor = hoverTile(container, 2, 1);
+    expect(editor.getAttribute('fill')).toBe('lime');
+    expect(getTooltipItemColor(container)).toBe('lime');
+
+    const browser = hoverTile(container, 2, 2);
+    expect(browser.getAttribute('fill')).toBe('green');
+    expect(getTooltipItemColor(container)).toBe('green');
+  });
+
+  it('shows the legacy color panel color of the hovered node', () => {
+    const { container } = renderTooltipTreemap({});
+
+    const tile = hoverTile(container, 1, 1);
+    expect(tile.getAttribute('fill')).toBe('#66B5FF');
+    expect(getTooltipItemColor(container)).toBe('rgb(102, 181, 255)');
+  });
+
+  it('shows the explicit colorPanel color of the hovered node', () => {
+    const { container } = renderTooltipTreemap({
+      colorPanel: ['crimson', 'darkorange'],
+    });
+
+    const tile = hoverTile(container, 1, 1);
+    expect(tile.getAttribute('fill')).toBe('darkorange');
+    expect(getTooltipItemColor(container)).toBe('darkorange');
+  });
+
+  it('shows the colorPanel color instead of the theme color', () => {
+    const { container } = renderTooltipTreemap({
+      theme: { graphicalItems: [{ fill: 'purple' }, { fill: 'teal' }] },
+      colorPanel: ['crimson', 'darkorange'],
+    });
+
+    const tile = hoverTile(container, 1, 1);
+    expect(tile.getAttribute('fill')).toBe('darkorange');
+    expect(getTooltipItemColor(container)).toBe('darkorange');
+  });
+
+  it('shows the transparent nested color panel fill', () => {
+    const { container } = renderTooltipTreemap({
+      treemapData: nestedData,
+      colorPanel: ['crimson', 'darkorange', 'navy', 'teal'],
+    });
+
+    const laptop = hoverTile(container, 2, 0);
+    expect(laptop.getAttribute('fill')).toBe('rgba(255,255,255,0)');
+    expect(getTooltipItemColor(container)).toBe('rgba(255, 255, 255, 0)');
+  });
+
+  it('shows the theme color of the hovered branch, including a nested node', () => {
+    const { container } = renderTooltipTreemap({
+      theme: { graphicalItems: [{ fill: 'red' }, { fill: 'green' }, { fill: 'blue' }] },
+      treemapData: nestedData,
+    });
+
+    const software = hoverTile(container, 1, 1);
+    expect(software.getAttribute('fill')).toBe('green');
+    expect(getTooltipItemColor(container)).toBe('green');
+
+    const editor = hoverTile(container, 2, 2);
+    expect(editor.getAttribute('fill')).toBe('green');
+    expect(getTooltipItemColor(container)).toBe('green');
+  });
+
+  it('shows the Treemap fill when the node has no color of its own', () => {
+    const { container } = renderTooltipTreemap({
+      theme: {
+        graphicalItems: [
+          { fill: 'purple', stroke: 'indigo' },
+          { fill: 'teal', stroke: 'navy' },
+        ],
+      },
+      fill: '#123456',
+    });
+
+    const tile = hoverTile(container, 1, 1);
+    expect(tile.getAttribute('fill')).toBe('#123456');
+    expect(getTooltipItemColor(container)).toBe('rgb(18, 52, 86)');
+  });
+
+  it('shows the data entry fill when the Treemap also sets a fill', () => {
+    const { container } = renderTooltipTreemap({
+      fill: '#123456',
+      treemapData: [
+        { name: 'A', value: 100, fill: 'lime' },
+        { name: 'B', value: 80 },
+      ],
+    });
+
+    const colored = hoverTile(container, 1, 0);
+    expect(colored.getAttribute('fill')).toBe('lime');
+    expect(getTooltipItemColor(container)).toBe('lime');
+
+    const plain = hoverTile(container, 1, 1);
+    expect(plain.getAttribute('fill')).toBe('#123456');
+    expect(getTooltipItemColor(container)).toBe('rgb(18, 52, 86)');
+  });
+
+  it('shows the rendered color in nest mode after zooming in through the breadcrumb', () => {
+    const { container } = render(
+      <RechartsThemeProvider value={{ graphicalItems: [{ fill: 'red' }, { fill: 'green' }] }}>
+        <Treemap
+          width={400}
+          height={250}
+          data={nestedData}
+          isAnimationActive={false}
+          nameKey="name"
+          dataKey="value"
+          type="nest"
+        >
+          <Tooltip />
+        </Treemap>
+      </RechartsThemeProvider>,
+    );
+    const software = queryTiles(container, 1)[1];
+    assertNotNull(software);
+    fireEvent.click(software);
+    const breadcrumb = container.querySelectorAll<HTMLElement>('.recharts-treemap-nest-index-box')[1];
+    assertNotNull(breadcrumb);
+    fireEvent.click(breadcrumb);
+
+    const editor = hoverTile(container, 1, 0);
+    expect(editor.getAttribute('fill')).toBe('red');
+    expect(getTooltipItemColor(container)).toBe('red');
+  });
+
+  it('ignores a data color key that does not paint the node', () => {
+    const { container } = renderTooltipTreemap({
+      theme: { graphicalItems: [{ fill: 'purple' }, { fill: 'teal' }] },
+      treemapData: [
+        { name: 'A', value: 100, color: 'blue' },
+        { name: 'B', value: 80 },
+      ],
+    });
+
+    const tile = hoverTile(container, 1, 0);
+    expect(tile.getAttribute('fill')).toBe('purple');
+    expect(getTooltipItemColor(container)).toBe('purple');
   });
 });
