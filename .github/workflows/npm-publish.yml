@@ -43,12 +43,71 @@ jobs:
           # Full history so that we can verify the release commit is on the default branch
           fetch-depth: 0
 
+      # Releases are tagged on a version bump commit (`npm version`) on a release branch.
+      # The release PR is then squash-merged, so the tagged commit itself never lands on the default branch.
+      # We accept the tagged commit if it is on the default branch, or if it is a single commit
+      # on top of the default branch that changes nothing except the package version.
       - name: Verify the release commit is on the default branch
         run: |
-          if ! git merge-base --is-ancestor "$GITHUB_SHA" "origin/$DEFAULT_BRANCH"; then
-            echo "Release commit $GITHUB_SHA is not on $DEFAULT_BRANCH. Releases must be tagged from $DEFAULT_BRANCH." >&2
-            exit 1
+          if git merge-base --is-ancestor "$GITHUB_SHA" "origin/$DEFAULT_BRANCH"; then
+            echo "Release commit $GITHUB_SHA is on $DEFAULT_BRANCH."
+            exit 0
           fi
+
+          fail() {
+            echo "Release commit $GITHUB_SHA is not on $DEFAULT_BRANCH, and it is not a version bump on top of $DEFAULT_BRANCH: $1" >&2
+            echo "Tag the release on $DEFAULT_BRANCH, or on a commit that only bumps the version on top of $DEFAULT_BRANCH." >&2
+            exit 1
+          }
+
+          read -r -a PARENTS <<< "$(git rev-list --parents -n 1 "$GITHUB_SHA")"
+          if [ "${#PARENTS[@]}" -ne 2 ]; then
+            fail "it must have exactly one parent."
+          fi
+          PARENT="${PARENTS[1]}"
+
+          if ! git merge-base --is-ancestor "$PARENT" "origin/$DEFAULT_BRANCH"; then
+            fail "its parent $PARENT is not on $DEFAULT_BRANCH."
+          fi
+
+          CHANGED_FILES="$(git diff --no-renames --name-only "$PARENT" "$GITHUB_SHA")"
+          while IFS= read -r FILE; do
+            if [ -n "$FILE" ] && [ "$FILE" != package.json ] && [ "$FILE" != package-lock.json ]; then
+              fail "it changes $FILE, but only package.json and package-lock.json may change."
+            fi
+          done <<< "$CHANGED_FILES"
+
+          # Compare the parsed files with the package version removed, so that nothing else
+          # (dependencies, scripts, other entries in package-lock.json) can change.
+          PARENT="$PARENT" node <<'EOF' || fail "package.json or package-lock.json changes more than the package version."
+          const { execFileSync } = require('node:child_process');
+          const { isDeepStrictEqual } = require('node:util');
+
+          const read = (commit, file) => JSON.parse(execFileSync('git', ['show', `${commit}:${file}`], { encoding: 'utf8' }));
+
+          const withoutVersion = {
+            'package.json': pkg => {
+              delete pkg.version;
+              return pkg;
+            },
+            'package-lock.json': lock => {
+              delete lock.version;
+              delete lock.packages?.['']?.version;
+              return lock;
+            },
+          };
+
+          for (const [file, strip] of Object.entries(withoutVersion)) {
+            const before = strip(read(process.env.PARENT, file));
+            const after = strip(read(process.env.GITHUB_SHA, file));
+            if (!isDeepStrictEqual(before, after)) {
+              console.error(`${file} changes more than the package version.`);
+              process.exit(1);
+            }
+          }
+          EOF
+
+          echo "Release commit $GITHUB_SHA only bumps the version on top of $PARENT, which is on $DEFAULT_BRANCH."
 
       - name: Determine release version and npm dist-tag
         id: release-info
