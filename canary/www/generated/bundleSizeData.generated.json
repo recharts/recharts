@@ -1,55 +1,55 @@
 {
   "treemap": {
     "examplePath": "www/src/views/IndexView/IndexLineChart.tsx",
-    "totalSize": 963146,
-    "totalSizeLabel": "940.57 KB",
+    "totalSize": 967440,
+    "totalSizeLabel": "944.77 KB",
     "moduleCount": 380,
-    "generatedAt": "2026-10-24T10:26:12.396Z",
+    "generatedAt": "2026-10-24T12:18:17.859Z",
     "stages": [
       {
         "stage": "es6-folder",
-        "bytes": 1514886,
-        "humanReadableSize": "1.44 MB",
+        "bytes": 1520744,
+        "humanReadableSize": "1.45 MB",
         "reductionFromBaselinePercent": 0
       },
       {
         "stage": "tree-shaken",
-        "bytes": 966053,
-        "humanReadableSize": "943.41 KB",
+        "bytes": 970347,
+        "humanReadableSize": "947.60 KB",
         "reductionFromBaselinePercent": 0
       },
       {
         "stage": "minified",
-        "bytes": 316210,
-        "humanReadableSize": "308.80 KB",
-        "reductionFromBaselinePercent": 67.27
+        "bytes": 317438,
+        "humanReadableSize": "310.00 KB",
+        "reductionFromBaselinePercent": 67.29
       },
       {
         "stage": "minified+gzip",
-        "bytes": 103606,
-        "humanReadableSize": "101.18 KB",
-        "reductionFromBaselinePercent": 89.28
+        "bytes": 103942,
+        "humanReadableSize": "101.51 KB",
+        "reductionFromBaselinePercent": 89.29
       }
     ],
     "tree": {
       "name": "bundle",
       "fullPath": "bundle",
-      "value": 963146,
+      "value": 967440,
       "children": [
         {
           "name": "src",
           "fullPath": "src",
-          "value": 559570,
+          "value": 563864,
           "children": [
             {
               "name": "state",
               "fullPath": "src/state",
-              "value": 188652,
+              "value": 188785,
               "children": [
                 {
                   "name": "selectors",
                   "fullPath": "src/state/selectors",
-                  "value": 118951,
+                  "value": 119084,
                   "children": [
                     {
                       "name": "axisSelectors.ts",
@@ -59,12 +59,12 @@
                     {
                       "name": "combiners",
                       "fullPath": "src/state/selectors/combiners",
-                      "value": 20895,
+                      "value": 21028,
                       "children": [
                         {
                           "name": "combineTooltipPayload.ts",
                           "fullPath": "src/state/selectors/combiners/combineTooltipPayload.ts",
-                          "value": 6767
+                          "value": 6900
                         },
                         {
                           "name": "combineActiveTooltipIndex.ts",
@@ -452,7 +452,7 @@
             {
               "name": "util",
               "fullPath": "src/util",
-              "value": 120370,
+              "value": 120584,
               "children": [
                 {
                   "name": "scale",
@@ -491,7 +491,7 @@
                 {
                   "name": "ChartUtils.ts",
                   "fullPath": "src/util/ChartUtils.ts",
-                  "value": 15160
+                  "value": 15374
                 },
                 {
                   "name": "zoom",
@@ -739,12 +739,12 @@
             {
               "name": "cartesian",
               "fullPath": "src/cartesian",
-              "value": 88623,
+              "value": 88731,
               "children": [
                 {
                   "name": "Line.tsx",
                   "fullPath": "src/cartesian/Line.tsx",
-                  "value": 17057
+                  "value": 17165
                 },
                 {
                   "name": "CartesianAxis.tsx",
@@ -811,7 +811,7 @@
             {
               "name": "component",
               "fullPath": "src/component",
-              "value": 53728,
+              "value": 54455,
               "children": [
                 {
                   "name": "Text.tsx",
@@ -841,12 +841,12 @@
                 {
                   "name": "Dots.tsx",
                   "fullPath": "src/component/Dots.tsx",
-                  "value": 1885
+                  "value": 2282
                 },
                 {
                   "name": "ActivePoints.tsx",
                   "fullPath": "src/component/ActivePoints.tsx",
-                  "value": 1870
+                  "value": 2200
                 },
                 {
                   "name": "ResponsiveContainer.tsx",
@@ -913,37 +913,15 @@
               ]
             },
             {
-              "name": "chart",
-              "fullPath": "src/chart",
-              "value": 16841,
-              "children": [
-                {
-                  "name": "RechartsWrapper.tsx",
-                  "fullPath": "src/chart/RechartsWrapper.tsx",
-                  "value": 12480
-                },
-                {
-                  "name": "CartesianChart.tsx",
-                  "fullPath": "src/chart/CartesianChart.tsx",
-                  "value": 2318
-                },
-                {
-                  "name": "CategoricalChart.tsx",
-                  "fullPath": "src/chart/CategoricalChart.tsx",
-                  "value": 1557
-                },
-                {
-                  "name": "LineChart.tsx",
-                  "fullPath": "src/chart/LineChart.tsx",
-                  "value": 486
-                }
-              ]
-            },
-            {
               "name": "theme",
               "fullPath": "src/theme",
-              "value": 15742,
+              "value": 18854,
               "children": [
+                {
+                  "name": "dataEntryStyles.ts",
+                  "fullPath": "src/theme/dataEntryStyles.ts",
+                  "value": 4650
+                },
                 {
                   "name": "labelTheme.ts",
                   "fullPath": "src/theme/labelTheme.ts",
@@ -952,17 +930,12 @@
                 {
                   "name": "activeStyles.ts",
                   "fullPath": "src/theme/activeStyles.ts",
-                  "value": 3464
+                  "value": 3522
                 },
                 {
                   "name": "useBackwardsCompatibleTheme.ts",
                   "fullPath": "src/theme/useBackwardsCompatibleTheme.ts",
                   "value": 1887
-                },
-                {
-                  "name": "dataEntryStyles.ts",
-                  "fullPath": "src/theme/dataEntryStyles.ts",
-                  "value": 1596
                 },
                 {
                   "name": "useGraphicalItemIdentity.ts",
@@ -988,6 +961,33 @@
                   "name": "cssStylesToSvgStyles.ts",
                   "fullPath": "src/theme/cssStylesToSvgStyles.ts",
                   "value": 374
+                }
+              ]
+            },
+            {
+              "name": "chart",
+              "fullPath": "src/chart",
+              "value": 16841,
+              "children": [
+                {
+                  "name": "RechartsWrapper.tsx",
+                  "fullPath": "src/chart/RechartsWrapper.tsx",
+                  "value": 12480
+                },
+                {
+                  "name": "CartesianChart.tsx",
+                  "fullPath": "src/chart/CartesianChart.tsx",
+                  "value": 2318
+                },
+                {
+                  "name": "CategoricalChart.tsx",
+                  "fullPath": "src/chart/CategoricalChart.tsx",
+                  "value": 1557
+                },
+                {
+                  "name": "LineChart.tsx",
+                  "fullPath": "src/chart/LineChart.tsx",
+                  "value": 486
                 }
               ]
             },
@@ -2627,55 +2627,55 @@
   },
   "sunburst": {
     "examplePath": "www/src/views/IndexView/IndexLineChart.tsx",
-    "totalSize": 963146,
-    "totalSizeLabel": "940.57 KB",
+    "totalSize": 967440,
+    "totalSizeLabel": "944.77 KB",
     "moduleCount": 380,
-    "generatedAt": "2026-10-24T10:26:10.183Z",
+    "generatedAt": "2026-10-24T12:18:16.425Z",
     "stages": [
       {
         "stage": "es6-folder",
-        "bytes": 1514886,
-        "humanReadableSize": "1.44 MB",
+        "bytes": 1520744,
+        "humanReadableSize": "1.45 MB",
         "reductionFromBaselinePercent": 0
       },
       {
         "stage": "tree-shaken",
-        "bytes": 966053,
-        "humanReadableSize": "943.41 KB",
+        "bytes": 970347,
+        "humanReadableSize": "947.60 KB",
         "reductionFromBaselinePercent": 0
       },
       {
         "stage": "minified",
-        "bytes": 316210,
-        "humanReadableSize": "308.80 KB",
-        "reductionFromBaselinePercent": 67.27
+        "bytes": 317438,
+        "humanReadableSize": "310.00 KB",
+        "reductionFromBaselinePercent": 67.29
       },
       {
         "stage": "minified+gzip",
-        "bytes": 103606,
-        "humanReadableSize": "101.18 KB",
-        "reductionFromBaselinePercent": 89.28
+        "bytes": 103942,
+        "humanReadableSize": "101.51 KB",
+        "reductionFromBaselinePercent": 89.29
       }
     ],
     "tree": {
       "name": "bundle",
       "fullPath": "bundle",
-      "value": 963146,
+      "value": 967440,
       "children": [
         {
           "name": "src",
           "fullPath": "src",
-          "value": 559570,
+          "value": 563864,
           "children": [
             {
               "name": "state",
               "fullPath": "src/state",
-              "value": 188652,
+              "value": 188785,
               "children": [
                 {
                   "name": "selectors",
                   "fullPath": "src/state/selectors",
-                  "value": 118951,
+                  "value": 119084,
                   "children": [
                     {
                       "name": "axisSelectors.ts",
@@ -2685,12 +2685,12 @@
                     {
                       "name": "combiners",
                       "fullPath": "src/state/selectors/combiners",
-                      "value": 20895,
+                      "value": 21028,
                       "children": [
                         {
                           "name": "combineTooltipPayload.ts",
                           "fullPath": "src/state/selectors/combiners/combineTooltipPayload.ts",
-                          "value": 6767
+                          "value": 6900
                         },
                         {
                           "name": "combineActiveTooltipIndex.ts",
@@ -3078,7 +3078,7 @@
             {
               "name": "util",
               "fullPath": "src/util",
-              "value": 120370,
+              "value": 120584,
               "children": [
                 {
                   "name": "scale",
@@ -3117,7 +3117,7 @@
                 {
                   "name": "ChartUtils.ts",
                   "fullPath": "src/util/ChartUtils.ts",
-                  "value": 15160
+                  "value": 15374
                 },
                 {
                   "name": "zoom",
@@ -3365,12 +3365,12 @@
             {
               "name": "cartesian",
               "fullPath": "src/cartesian",
-              "value": 88623,
+              "value": 88731,
               "children": [
                 {
                   "name": "Line.tsx",
                   "fullPath": "src/cartesian/Line.tsx",
-                  "value": 17057
+                  "value": 17165
                 },
                 {
                   "name": "CartesianAxis.tsx",
@@ -3437,7 +3437,7 @@
             {
               "name": "component",
               "fullPath": "src/component",
-              "value": 53728,
+              "value": 54455,
               "children": [
                 {
                   "name": "Text.tsx",
@@ -3467,12 +3467,12 @@
                 {
                   "name": "Dots.tsx",
                   "fullPath": "src/component/Dots.tsx",
-                  "value": 1885
+                  "value": 2282
                 },
                 {
                   "name": "ActivePoints.tsx",
                   "fullPath": "src/component/ActivePoints.tsx",
-                  "value": 1870
+                  "value": 2200
                 },
                 {
                   "name": "ResponsiveContainer.tsx",
@@ -3539,37 +3539,15 @@
               ]
             },
             {
-              "name": "chart",
-              "fullPath": "src/chart",
-              "value": 16841,
-              "children": [
-                {
-                  "name": "RechartsWrapper.tsx",
-                  "fullPath": "src/chart/RechartsWrapper.tsx",
-                  "value": 12480
-                },
-                {
-                  "name": "CartesianChart.tsx",
-                  "fullPath": "src/chart/CartesianChart.tsx",
-                  "value": 2318
-                },
-                {
-                  "name": "CategoricalChart.tsx",
-                  "fullPath": "src/chart/CategoricalChart.tsx",
-                  "value": 1557
-                },
-                {
-                  "name": "LineChart.tsx",
-                  "fullPath": "src/chart/LineChart.tsx",
-                  "value": 486
-                }
-              ]
-            },
-            {
               "name": "theme",
               "fullPath": "src/theme",
-              "value": 15742,
+              "value": 18854,
               "children": [
+                {
+                  "name": "dataEntryStyles.ts",
+                  "fullPath": "src/theme/dataEntryStyles.ts",
+                  "value": 4650
+                },
                 {
                   "name": "labelTheme.ts",
                   "fullPath": "src/theme/labelTheme.ts",
@@ -3578,17 +3556,12 @@
                 {
                   "name": "activeStyles.ts",
                   "fullPath": "src/theme/activeStyles.ts",
-                  "value": 3464
+                  "value": 3522
                 },
                 {
                   "name": "useBackwardsCompatibleTheme.ts",
                   "fullPath": "src/theme/useBackwardsCompatibleTheme.ts",
                   "value": 1887
-                },
-                {
-                  "name": "dataEntryStyles.ts",
-                  "fullPath": "src/theme/dataEntryStyles.ts",
-                  "value": 1596
                 },
                 {
                   "name": "useGraphicalItemIdentity.ts",
@@ -3614,6 +3587,33 @@
                   "name": "cssStylesToSvgStyles.ts",
                   "fullPath": "src/theme/cssStylesToSvgStyles.ts",
                   "value": 374
+                }
+              ]
+            },
+            {
+              "name": "chart",
+              "fullPath": "src/chart",
+              "value": 16841,
+              "children": [
+                {
+                  "name": "RechartsWrapper.tsx",
+                  "fullPath": "src/chart/RechartsWrapper.tsx",
+                  "value": 12480
+                },
+                {
+                  "name": "CartesianChart.tsx",
+                  "fullPath": "src/chart/CartesianChart.tsx",
+                  "value": 2318
+                },
+                {
+                  "name": "CategoricalChart.tsx",
+                  "fullPath": "src/chart/CategoricalChart.tsx",
+                  "value": 1557
+                },
+                {
+                  "name": "LineChart.tsx",
+                  "fullPath": "src/chart/LineChart.tsx",
+                  "value": 486
                 }
               ]
             },
