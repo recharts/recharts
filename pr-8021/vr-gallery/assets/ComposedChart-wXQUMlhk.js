@@ -1,0 +1,1 @@
+import{r as a}from"./entry-B2vrU5Nw.js";import{a as t}from"./RechartsWrapper-BGcDfoNJ.js";import{C as e}from"./CartesianChart-DhgTf5if.js";const p=["axis"],m=a.forwardRef((o,r)=>a.createElement(e,{chartName:"ComposedChart",defaultTooltipEventType:"axis",validateTooltipEventTypes:p,tooltipPayloadSearcher:t,categoricalChartProps:o,ref:r}));export{m as C};
