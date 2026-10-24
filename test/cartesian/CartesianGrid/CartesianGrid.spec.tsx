@@ -301,6 +301,38 @@ describe('CartesianGrid', () => {
       },
     ]);
   });
+  it('should align vertical grid lines with the actual rendered tick label position, even when a custom fontSize pushes the last tick inward', () => {
+    const data = [
+      { name: 'Jan', value: 400 },
+      { name: 'Feb', value: 300 },
+      { name: 'Mar', value: 200 },
+      { name: 'Apr', value: 278 },
+      { name: 'May', value: 189 },
+      { name: 'Jun', value: 239 },
+    ];
+
+    const { container } = render(
+      <LineChart width={600} height={400} data={data}>
+        <CartesianGrid />
+        <XAxis dataKey="name" tick={{ fontSize: 30 }} />
+        <YAxis />
+        <Line type="monotone" dataKey="value" />
+      </LineChart>,
+    );
+
+    const gridLines = container.querySelectorAll('.recharts-cartesian-grid-vertical line');
+    const xAxisTickTexts = Array.from(
+      container.querySelectorAll('.recharts-xAxis-tick-labels .recharts-cartesian-axis-tick-value'),
+    );
+
+    expect(gridLines.length).toBe(xAxisTickTexts.length);
+
+    gridLines.forEach((line, i) => {
+      const gridX = Number(line.getAttribute('x1'));
+      const tickX = Number(xAxisTickTexts[i]?.getAttribute('x'));
+      expect(gridX).toBeCloseTo(tickX, 1);
+    });
+  });
 });
 
 describe.each(allChartsThatSupportCartesianGrid)('<CartesianGrid /> when child of $testName', ({ ChartElement }) => {
