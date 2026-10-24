@@ -316,5 +316,6 @@
   "lib/zIndex/ZIndexLayer.js",
   "lib/zIndex/ZIndexPortal.js",
   "lib/zIndex/getZIndexFromUnknown.js",
+  "lib/zIndex/labelBackgroundZIndex.js",
   "lib/zIndex/zIndexSelectors.js",
 ]

@@ -9,6 +9,7 @@ import { LabelProps } from '../index';
 import { svgPropertiesAndEvents } from '../util/svgPropertiesAndEvents';
 import { ZIndexable, ZIndexLayer } from '../zIndex/ZIndexLayer';
 import { DefaultZIndexes } from '../zIndex/DefaultZIndexes';
+import { getLabelBackgroundZIndex, LabelBackgroundLayerProvider } from '../zIndex/labelBackgroundZIndex';
 import { isRenderableText, RenderableText, TextBackgroundProps } from './Text';
 import { GraphicalItemClipArea, useGraphicalItemClipArea } from '../cartesian/GraphicalItemClipPath';
 import { AxisId } from '../state/cartesianAxisSlice';
@@ -140,6 +141,9 @@ interface LabelListProps extends ZIndexable {
    * Each background is sized from its rendered label and follows curved label paths.
    * It is not drawn for custom `content`.
    *
+   * In a chart, the rectangles render in a zIndex layer below the labels,
+   * so overlapping labels never cover each other's text.
+   *
    * @since 3.11
    * @example <LabelList position="inside" background />
    * @example <LabelList position="inside" background={{ fill: '#fff', rx: 2, padding: 4 }} />
@@ -252,58 +256,67 @@ export function LabelList({ valueAccessor = defaultAccessor, ...restProps }: Pro
   const clipArea = useContext(LabelListClipAreaContext);
   const resolveLabelTheme = useDataLabelThemeResolver();
   const data = cartesianData || polarData;
+  const labelZIndex = zIndex ?? DefaultZIndexes.label;
+  const backgroundZIndex = getLabelBackgroundZIndex(labelZIndex, others.background);
+
   if (!data || !data.length) {
     return null;
   }
 
   return (
-    <ZIndexLayer zIndex={zIndex ?? DefaultZIndexes.label}>
-      <DataLabelContextProvider value>
-        <Layer className="recharts-label-list">
-          {data.map((entry, index) => {
-            if (isClippedAway(cartesianData?.[index], clipArea)) {
-              return null;
-            }
-            const value = isNullish(dataKey)
-              ? valueAccessor(entry, index)
-              : (getValueByDataKey(entry.payload, dataKey) as string | number);
+    <>
+      {others.background && <ZIndexLayer zIndex={backgroundZIndex} />}
+      <ZIndexLayer zIndex={labelZIndex}>
+        <DataLabelContextProvider value>
+          <LabelBackgroundLayerProvider value={backgroundZIndex}>
+            <Layer className="recharts-label-list">
+              {data.map((entry, index) => {
+                if (isClippedAway(cartesianData?.[index], clipArea)) {
+                  return null;
+                }
+                const value = isNullish(dataKey)
+                  ? valueAccessor(entry, index)
+                  : (getValueByDataKey(entry.payload, dataKey) as string | number);
 
-            const idProps = isNullish(id) ? {} : { id: `${id}-${index}` };
-            /*
-             * Prefer to use the explicit fill from LabelList props, then the fill from the theme.
-             * Only in an absence of these, fall back to the fill of the entry.
-             * The entry fill can be quite difficult to see especially in Bar, Pie, RadialBar in inside positions,
-             * which is why the theme can also draw a background behind the label.
-             * On the other hand it's quite convenient in Scatter, Line, or when the position is outside the Bar, Pie filled shapes.
-             */
-            const themedProps = applyLabelTheme(resolveLabelTheme?.(index), restProps, entry.fill);
+                const idProps = isNullish(id) ? {} : { id: `${id}-${index}` };
 
-            return (
-              <Label
-                key={`label-${index}`}
-                {...svgPropertiesAndEvents(entry)}
-                {...others}
-                {...idProps}
-                fill={themedProps.fill}
-                style={themedProps.style}
-                background={themedProps.background}
-                parentViewBox={entry.parentViewBox}
-                value={value}
-                textBreakAll={textBreakAll}
-                viewBox={entry.viewBox}
-                index={index}
                 /*
-                 * Here we don't want to use the default Label zIndex,
-                 * we want it to inherit the zIndex of the LabelList itself
-                 * which means just rendering as a regular child, without portaling anywhere.
+                 * Prefer to use the explicit fill from LabelList props, then the fill from the theme.
+                 * Only in an absence of these, fall back to the fill of the entry.
+                 * The entry fill can be quite difficult to see especially in Bar, Pie, RadialBar in inside positions,
+                 * which is why the theme can also draw a background behind the label.
+                 * On the other hand it's quite convenient in Scatter, Line, or when the position is outside the Bar, Pie filled shapes.
                  */
-                zIndex={0}
-              />
-            );
-          })}
-        </Layer>
-      </DataLabelContextProvider>
-    </ZIndexLayer>
+                const themedProps = applyLabelTheme(resolveLabelTheme?.(index), restProps, entry.fill);
+
+                return (
+                  <Label
+                    key={`label-${index}`}
+                    {...svgPropertiesAndEvents(entry)}
+                    {...others}
+                    {...idProps}
+                    fill={themedProps.fill}
+                    style={themedProps.style}
+                    background={themedProps.background}
+                    parentViewBox={entry.parentViewBox}
+                    value={value}
+                    textBreakAll={textBreakAll}
+                    viewBox={entry.viewBox}
+                    index={index}
+                    /*
+                     * Here we don't want to use the default Label zIndex,
+                     * we want it to inherit the zIndex of the LabelList itself
+                     * which means just rendering as a regular child, without portaling anywhere.
+                     */
+                    zIndex={0}
+                  />
+                );
+              })}
+            </Layer>
+          </LabelBackgroundLayerProvider>
+        </DataLabelContextProvider>
+      </ZIndexLayer>
+    </>
   );
 }
 
