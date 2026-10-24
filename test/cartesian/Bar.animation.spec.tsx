@@ -249,7 +249,9 @@ describe('Bar animation', () => {
       }
 
       await animationManager.completeAnimation();
-      Array.from(getAllBarPaths(container)).forEach((bar, index) => {
+      const finalBarPaths = Array.from(getAllBarPaths(container));
+      expect(finalBarPaths).toHaveLength(initialBarPaths.length);
+      finalBarPaths.forEach((bar, index) => {
         expect(bar).toBe(initialBarPaths[index]);
       });
     });
