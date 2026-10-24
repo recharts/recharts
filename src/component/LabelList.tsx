@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { createContext, PropsWithoutRef, SVGProps, useContext } from 'react';
+import { createContext, PropsWithoutRef, ReactNode, SVGProps, useContext } from 'react';
 import { LabelContentType, isLabelContentAFunction, Label, LabelPosition, LabelFormatter } from './Label';
 import { Layer } from '../container/Layer';
 import { getValueByDataKey } from '../util/ChartUtils';
@@ -10,6 +10,8 @@ import { svgPropertiesAndEvents } from '../util/svgPropertiesAndEvents';
 import { ZIndexable, ZIndexLayer } from '../zIndex/ZIndexLayer';
 import { DefaultZIndexes } from '../zIndex/DefaultZIndexes';
 import { isRenderableText, RenderableText, TextBackgroundProps } from './Text';
+import { GraphicalItemClipArea, useGraphicalItemClipArea } from '../cartesian/GraphicalItemClipPath';
+import { AxisId } from '../state/cartesianAxisSlice';
 import { applyLabelTheme, DataLabelContextProvider, useDataLabelThemeResolver } from '../theme/labelTheme';
 
 export interface LabelListEntry<DataPointItem = any> {
@@ -185,6 +187,53 @@ const PolarLabelListContext = createContext<ReadonlyArray<PolarLabelListEntry> |
 
 export const PolarLabelListContextProvider = PolarLabelListContext.Provider;
 
+const LabelListClipAreaContext = createContext<GraphicalItemClipArea | undefined>(undefined);
+
+/**
+ * Graphical items that can be clipped (for example when an axis has `allowDataOverflow`) render this around their labels.
+ * The labels are not clipped, because the label of a point on the edge of the domain is often drawn outside of the clip area.
+ * Instead, LabelList skips the labels of elements that are completely outside of the clip area.
+ */
+export function SetLabelListClipArea({
+  xAxisId,
+  yAxisId,
+  children,
+}: {
+  xAxisId: AxisId;
+  yAxisId: AxisId;
+  children: ReactNode;
+}) {
+  const clipArea = useGraphicalItemClipArea(xAxisId, yAxisId);
+  return <LabelListClipAreaContext.Provider value={clipArea}>{children}</LabelListClipAreaContext.Provider>;
+}
+
+function isInRange(start: number, size: number, areaStart: number, areaSize: number): boolean {
+  const areaEnd = areaStart + areaSize;
+  if (size === 0) {
+    // A point exactly on the edge of the domain is inside, so that it keeps its label.
+    return start >= areaStart && start <= areaEnd;
+  }
+  // A bar that only touches the edge from outside is not visible at all.
+  return Math.max(start, start + size) > areaStart && Math.min(start, start + size) < areaEnd;
+}
+
+/**
+ * The element of a label is a point (Line, Area), a rectangle (Bar), or the box of a symbol (Scatter).
+ * The label is skipped if its element is outside of the clip area in one of the clipped dimensions.
+ */
+function isClippedAway(
+  entry: CartesianLabelListEntry | undefined,
+  clipArea: GraphicalItemClipArea | undefined,
+): boolean {
+  if (entry == null || clipArea == null) {
+    return false;
+  }
+  return (
+    (clipArea.isXClipped && !isInRange(entry.x, entry.width, clipArea.x, clipArea.width)) ||
+    (clipArea.isYClipped && !isInRange(entry.y, entry.height, clipArea.y, clipArea.height))
+  );
+}
+
 function useCartesianLabelListContext(): ReadonlyArray<CartesianLabelListEntry> | undefined {
   return useContext(CartesianLabelListContext);
 }
@@ -200,6 +249,7 @@ export function LabelList({ valueAccessor = defaultAccessor, ...restProps }: Pro
   const { dataKey, clockWise, id, textBreakAll, zIndex, ...others } = restProps;
   const cartesianData = useCartesianLabelListContext();
   const polarData = usePolarLabelListContext();
+  const clipArea = useContext(LabelListClipAreaContext);
   const resolveLabelTheme = useDataLabelThemeResolver();
   const data = cartesianData || polarData;
   if (!data || !data.length) {
@@ -211,6 +261,9 @@ export function LabelList({ valueAccessor = defaultAccessor, ...restProps }: Pro
       <DataLabelContextProvider value>
         <Layer className="recharts-label-list">
           {data.map((entry, index) => {
+            if (isClippedAway(cartesianData?.[index], clipArea)) {
+              return null;
+            }
             const value = isNullish(dataKey)
               ? valueAccessor(entry, index)
               : (getValueByDataKey(entry.payload, dataKey) as string | number);

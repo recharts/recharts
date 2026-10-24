@@ -8,6 +8,7 @@ import {
   CartesianLabelListEntry,
   ImplicitLabelListType,
   LabelListFromLabelProp,
+  SetLabelListClipArea,
 } from '../component/LabelList';
 import { findAllByType } from '../util/ReactUtils';
 import { Curve, CurveType, Props as CurveProps } from '../shape/Curve';
@@ -1014,7 +1015,9 @@ function ScatterWithId(props: InternalProps) {
           errorBarOffset={0}
         >
           <Layer key="recharts-scatter-symbols">
-            <SymbolsWithAnimation props={props} previousPointsRef={previousPointsRef} />
+            <SetLabelListClipArea xAxisId={xAxisId} yAxisId={yAxisId}>
+              <SymbolsWithAnimation props={props} previousPointsRef={previousPointsRef} />
+            </SetLabelListClipArea>
           </Layer>
         </SetErrorBarContext>
       </Layer>

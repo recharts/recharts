@@ -8,6 +8,7 @@ import {
   CartesianLabelListEntry,
   ImplicitLabelListType,
   LabelListFromLabelProp,
+  SetLabelListClipArea,
 } from '../component/LabelList';
 import { Dots, DotsDotProps } from '../component/Dots';
 import { interpolate, isNan, isNullish, isNumber, noop } from '../util/DataUtils';
@@ -826,7 +827,9 @@ class AreaWithState extends PureComponent<InternalProps> {
               )}
             </defs>
           )}
-          <RenderArea needClip={needClip} clipPathId={clipPathId} props={this.props} />
+          <SetLabelListClipArea xAxisId={xAxisId} yAxisId={yAxisId}>
+            <RenderArea needClip={needClip} clipPathId={clipPathId} props={this.props} />
+          </SetLabelListClipArea>
         </Layer>
         <ActivePoints
           points={points}

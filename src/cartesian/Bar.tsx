@@ -21,6 +21,7 @@ import {
   CartesianLabelListEntry,
   ImplicitLabelListType,
   LabelListFromLabelProp,
+  SetLabelListClipArea,
 } from '../component/LabelList';
 import { interpolate, isNan, mathSign, noop } from '../util/DataUtils';
 import {
@@ -1098,7 +1099,9 @@ class BarWithState extends PureComponent<InternalProps> {
         )}
         <Layer className="recharts-bar-rectangles" clipPath={needClip ? `url(#clipPath-${clipPathId})` : undefined}>
           <BarBackground data={data} dataKey={dataKey} background={background} allOtherBarProps={this.props} />
-          <RenderRectangles {...this.props} />
+          <SetLabelListClipArea xAxisId={xAxisId} yAxisId={yAxisId}>
+            <RenderRectangles {...this.props} />
+          </SetLabelListClipArea>
         </Layer>
       </Layer>
     );
