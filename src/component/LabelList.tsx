@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { createContext, PropsWithoutRef, ReactNode, SVGProps, useContext } from 'react';
+import { createContext, PropsWithoutRef, ReactNode, SVGProps, useContext, useMemo } from 'react';
 import { LabelContentType, isLabelContentAFunction, Label, LabelPosition, LabelFormatter } from './Label';
 import { Layer } from '../container/Layer';
 import { getValueByDataKey } from '../util/ChartUtils';
@@ -256,26 +256,43 @@ export function LabelList({ valueAccessor = defaultAccessor, ...restProps }: Pro
   const clipArea = useContext(LabelListClipAreaContext);
   const resolveLabelTheme = useDataLabelThemeResolver();
   const data = cartesianData || polarData;
+  const labelZIndex = zIndex ?? DefaultZIndexes.label;
+  const backgroundZIndex = getLabelBackgroundZIndex(labelZIndex, others.background);
+
+  const labelBackgroundLayerValue = useMemo(
+    () => ({ zIndex: backgroundZIndex, Layer: ZIndexLayer }),
+    [backgroundZIndex],
+  );
+
   if (!data || !data.length) {
     return null;
   }
-
-  const labelZIndex = zIndex ?? DefaultZIndexes.label;
-  const backgroundZIndex = getLabelBackgroundZIndex(labelZIndex, others.background);
 
   return (
     <>
       {others.background && <ZIndexLayer zIndex={backgroundZIndex} />}
       <ZIndexLayer zIndex={labelZIndex}>
         <DataLabelContextProvider value>
-          <LabelBackgroundLayerProvider value={{ zIndex: backgroundZIndex, Layer: ZIndexLayer }}>
+          <LabelBackgroundLayerProvider value={labelBackgroundLayerValue}>
             <Layer className="recharts-label-list">
               {data.map((entry, index) => {
+                if (isClippedAway(cartesianData?.[index], clipArea)) {
+                  return null;
+                }
                 const value = isNullish(dataKey)
                   ? valueAccessor(entry, index)
                   : (getValueByDataKey(entry.payload, dataKey) as string | number);
 
                 const idProps = isNullish(id) ? {} : { id: `${id}-${index}` };
+
+                /*
+                 * Prefer to use the explicit fill from LabelList props, then the fill from the theme.
+                 * Only in an absence of these, fall back to the fill of the entry.
+                 * The entry fill can be quite difficult to see especially in Bar, Pie, RadialBar in inside positions,
+                 * which is why the theme can also draw a background behind the label.
+                 * On the other hand it's quite convenient in Scatter, Line, or when the position is outside the Bar, Pie filled shapes.
+                 */
+                const themedProps = applyLabelTheme(resolveLabelTheme?.(index), restProps, entry.fill);
 
                 return (
                   <Label
@@ -283,13 +300,9 @@ export function LabelList({ valueAccessor = defaultAccessor, ...restProps }: Pro
                     {...svgPropertiesAndEvents(entry)}
                     {...others}
                     {...idProps}
-                    /*
-                     * Prefer to use the explicit fill from LabelList props.
-                     * Only in an absence of that, fall back to the fill of the entry.
-                     * The entry fill can be quite difficult to see especially in Bar, Pie, RadialBar in inside positions.
-                     * On the other hand it's quite convenient in Scatter, Line, or when the position is outside the Bar, Pie filled shapes.
-                     */
-                    fill={restProps.fill ?? entry.fill}
+                    fill={themedProps.fill}
+                    style={themedProps.style}
+                    background={themedProps.background}
                     parentViewBox={entry.parentViewBox}
                     value={value}
                     textBreakAll={textBreakAll}
