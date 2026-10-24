@@ -83,7 +83,10 @@ jobs:
           const { execFileSync } = require('node:child_process');
           const { isDeepStrictEqual } = require('node:util');
 
-          const read = (commit, file) => JSON.parse(execFileSync('git', ['show', `${commit}:${file}`], { encoding: 'utf8' }));
+          // package-lock.json can grow past execFileSync's default 1 MiB output limit.
+          const maxBuffer = 64 * 1024 * 1024;
+          const read = (commit, file) =>
+            JSON.parse(execFileSync('git', ['show', `${commit}:${file}`], { encoding: 'utf8', maxBuffer }));
 
           const withoutVersion = {
             'package.json': pkg => {
