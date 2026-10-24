@@ -11,6 +11,7 @@ import {
   CartesianLabelListEntry,
   ImplicitLabelListType,
   LabelListFromLabelProp,
+  SetLabelListClipArea,
 } from '../component/LabelList';
 import { Dots } from '../component/Dots';
 import { ErrorBarDataItem, ErrorBarDataPointFormatter } from './ErrorBar';
@@ -68,6 +69,7 @@ import { useBackwardsCompatibleTheme } from '../theme/useBackwardsCompatibleThem
 import { getActiveStyleOverrides } from '../theme/activeStyles';
 import { useGraphicalItemIdentity } from '../theme/useGraphicalItemIdentity';
 import { useEffectiveDataKey } from '../util/useEffectiveDataKey';
+import { DataLabelThemeContextProvider, useSeriesLabelThemeResolver } from '../theme/labelTheme';
 
 export interface LinePointItem {
   readonly value: number;
@@ -807,7 +809,9 @@ class LineWithState extends Component<InternalProps> {
             dataPointFormatter={errorBarDataPointFormatter}
             errorBarOffset={0}
           >
-            <RenderCurve props={this.props} clipPathId={clipPathId} />
+            <SetLabelListClipArea xAxisId={xAxisId} yAxisId={yAxisId}>
+              <RenderCurve props={this.props} clipPathId={clipPathId} />
+            </SetLabelListClipArea>
           </SetErrorBarContext>
         </Layer>
         <ActivePoints
@@ -937,7 +941,8 @@ function LineFn(outsideProps: Props) {
     yAxisId: outsideProps.yAxisId ?? defaultLineProps.yAxisId,
   });
   const graphicalItemThemeSelector = useGraphicalItemIdentity(dataKey, outsideProps);
-  const graphicalItemTheme = useBackwardsCompatibleTheme<GraphicalItemStyle>(
+  const resolveLabelTheme = useSeriesLabelThemeResolver(graphicalItemThemeSelector);
+  const graphicalItemTheme = useBackwardsCompatibleTheme<Omit<GraphicalItemStyle, 'label'>>(
     graphicalItemThemeSelector,
     outsideProps,
     defaultLegacyThemeProps,
@@ -997,7 +1002,9 @@ function LineFn(outsideProps: Props) {
             hide={props.hide}
             isPanorama={isPanorama}
           />
-          <LineImpl {...props} id={id} dotFill={dotFill} />
+          <DataLabelThemeContextProvider value={resolveLabelTheme}>
+            <LineImpl {...props} id={id} dotFill={dotFill} />
+          </DataLabelThemeContextProvider>
         </>
       )}
     </RegisterGraphicalItemId>

@@ -72,7 +72,8 @@ if (failed) {
   console.error(
     `\n${suppressionsFile} suppresses more violations than ${baseRevision}.` +
       '\nPlease fix the new lint errors instead of suppressing them.' +
-      ' See .agents/skills/typescript/SKILL.md for alternatives to `any`, `as`, and `!`.',
+      ' See .agents/skills/typescript/SKILL.md for alternatives to `any`, `as`, and `!`,' +
+      ' and .agents/skills/fix-perf-violation/SKILL.md for react-perf violations.',
   );
   process.exit(1);
 }

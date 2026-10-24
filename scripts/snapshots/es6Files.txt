@@ -227,6 +227,7 @@
   "es6/theme/dataEntryStyles.js",
   "es6/theme/emptyTheme.js",
   "es6/theme/graphicalItemIdentity.js",
+  "es6/theme/labelTheme.js",
   "es6/theme/lightTheme.js",
   "es6/theme/pageBackground.js",
   "es6/theme/useBackwardsCompatibleTheme.js",

@@ -19,8 +19,10 @@ const padding = '0.5ex';
  * on purpose, because twelve hues at one lightness cannot all stay apart under
  * color vision deficiency.
  *
- * Every entry keeps at least 3:1 contrast against the background (WCAG 1.4.11),
- * both as a stroke and as a fill painted at `fillOpacity` 0.85.
+ * Every entry has at least 4.5:1 contrast against the background as a stroke,
+ * the WCAG contrast for text, so a label in the series color stays readable.
+ * Painted as a fill at `fillOpacity` 0.85, every entry keeps at least 3:1
+ * (WCAG 1.4.11).
  *
  * Entry N is the same hue family in the light and dark palettes, so a series
  * keeps its identity when the theme changes. Comments show stroke contrast.

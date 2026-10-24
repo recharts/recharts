@@ -8,6 +8,7 @@ import {
   CartesianLabelListEntry,
   ImplicitLabelListType,
   LabelListFromLabelProp,
+  SetLabelListClipArea,
 } from '../component/LabelList';
 import { Dots, DotsDotProps } from '../component/Dots';
 import { interpolate, isNan, isNullish, isNumber, noop } from '../util/DataUtils';
@@ -74,6 +75,7 @@ import { useBackwardsCompatibleTheme } from '../theme/useBackwardsCompatibleThem
 import { getActiveStyleOverrides } from '../theme/activeStyles';
 import { useGraphicalItemIdentity } from '../theme/useGraphicalItemIdentity';
 import { useEffectiveDataKey } from '../util/useEffectiveDataKey';
+import { DataLabelThemeContextProvider, useSeriesLabelThemeResolver } from '../theme/labelTheme';
 
 /**
  * @inline
@@ -825,7 +827,9 @@ class AreaWithState extends PureComponent<InternalProps> {
               )}
             </defs>
           )}
-          <RenderArea needClip={needClip} clipPathId={clipPathId} props={this.props} />
+          <SetLabelListClipArea xAxisId={xAxisId} yAxisId={yAxisId}>
+            <RenderArea needClip={needClip} clipPathId={clipPathId} props={this.props} />
+          </SetLabelListClipArea>
         </Layer>
         <ActivePoints
           points={points}
@@ -1082,7 +1086,8 @@ function AreaFn(outsideProps: Props<any, any>) {
     yAxisId: outsideProps.yAxisId ?? defaultAreaProps.yAxisId,
   });
   const graphicalItemThemeSelector = useGraphicalItemIdentity(dataKey, outsideProps);
-  const theme = useBackwardsCompatibleTheme<GraphicalItemStyle>(
+  const resolveLabelTheme = useSeriesLabelThemeResolver(graphicalItemThemeSelector);
+  const theme = useBackwardsCompatibleTheme<Omit<GraphicalItemStyle, 'label'>>(
     graphicalItemThemeSelector,
     outsideProps,
     defaultLegacyThemeProps,
@@ -1139,7 +1144,9 @@ function AreaFn(outsideProps: Props<any, any>) {
             isPanorama={isPanorama}
             connectNulls={props.connectNulls}
           />
-          <AreaImpl {...props} id={id} dotFill={dotFill} />
+          <DataLabelThemeContextProvider value={resolveLabelTheme}>
+            <AreaImpl {...props} id={id} dotFill={dotFill} />
+          </DataLabelThemeContextProvider>
         </>
       )}
     </RegisterGraphicalItemId>

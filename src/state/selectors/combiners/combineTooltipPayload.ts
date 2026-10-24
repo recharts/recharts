@@ -106,7 +106,8 @@ export const combineTooltipPayload = (
 
   const init: Array<TooltipPayloadEntry> = [];
 
-  return tooltipPayloadConfigurations.reduce((agg, { dataDefinedOnItem, settings }): Array<TooltipPayloadEntry> => {
+  return tooltipPayloadConfigurations.reduce((agg, configuration): Array<TooltipPayloadEntry> => {
+    const { dataDefinedOnItem, settings, getEntryColor } = configuration;
     const finalData = selectFinalData(dataDefinedOnItem, chartData);
 
     const sliced = Array.isArray(finalData) ? getSliced(finalData, sliceStartIndex, sliceEndIndex) : finalData;
@@ -143,18 +144,6 @@ export const combineTooltipPayload = (
       tooltipEventType === 'axis'
     ) {
       tooltipPayload = findEntryInArray(sliced, tooltipAxisDataKey, activeLabel);
-      /*
-       * When allowDuplicatedCategory is false and there are duplicate category values
-       * in the data, findEntryInArray returns only the first matching entry.
-       * If the user hovers over a bar that corresponds to a later duplicate,
-       * the activeIndex provides the correct position. We fall back to the index-based
-       * search when the label-based search returns undefined, which can happen
-       * when the activeLabel does not precisely match any data entry (e.g., due to
-       * type coercion differences between tick values and data values).
-       */
-      if (tooltipPayload == null) {
-        tooltipPayload = tooltipPayloadSearcher(sliced, activeIndex, computedData, finalNameKey);
-      }
     } else {
       /*
        * This is a problem because it assumes that the index is pointing to the displayed data
@@ -192,13 +181,17 @@ export const combineTooltipPayload = (
       });
     } else {
       /*
-       * Bar rectangles apply SVG colors from the active datum after their series and theme props.
-       * Preserve that precedence in the tooltip metadata without changing other chart types.
+       * Graphical items that resolve the styles of each data entry on their own (Bar) report the color
+       * they render the active entry with. The others take the colors of the active datum before their series colors.
        */
       const parsedItem = parseTooltipPayloadItem(tooltipPayload);
+      const entryColor =
+        getEntryColor == null
+          ? (parsedItem?.color ?? parsedItem?.fill ?? parsedItem?.stroke)
+          : getEntryColor(tooltipPayload);
       const tooltipEntrySettings: TooltipEntrySettings = {
         ...settings,
-        color: parsedItem?.color ?? parsedItem?.fill ?? parsedItem?.stroke ?? settings.color,
+        color: entryColor ?? settings.color,
         fill: parsedItem?.fill ?? settings.fill,
         stroke: parsedItem?.stroke ?? settings.stroke,
       };

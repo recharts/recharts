@@ -12,6 +12,7 @@ import {
   PieLabelRenderProps,
   PieProps,
   PieSectorDataItem,
+  RechartsThemeProvider,
   Sector,
   Tooltip,
 } from '../../../src';
@@ -26,7 +27,7 @@ import {
 } from '../../component/Tooltip/tooltipTestHelpers';
 import { pieChartMouseHoverTooltipSelector } from '../../component/Tooltip/tooltipMouseHoverSelectors';
 import { PageData } from '../../_data';
-import { createSelectorTestCase } from '../../helper/createSelectorTestCase';
+import { createSelectorTestCase, rechartsTestRender } from '../../helper/createSelectorTestCase';
 import { mockGetBoundingClientRect } from '../../helper/mockGetBoundingClientRect';
 import {
   selectAllGraphicalItemsSettings,
@@ -657,6 +658,111 @@ describe('<Pie />', () => {
       };
       expect(spy).toHaveBeenCalledTimes(sectorsData.length);
       expect(spy).toHaveBeenNthCalledWith(1, expectedProps);
+    });
+
+    it('should pass props combined with theme', () => {
+      const spy = vi.fn();
+      render(
+        <RechartsThemeProvider
+          value={{ graphicalItems: [{ fill: 'blue', label: { background: { fill: 'red', rx: '10' } } }] }}
+        >
+          <PieChart width={500} height={500}>
+            <Pie
+              isAnimationActive={false}
+              cx={250}
+              cy={250}
+              label={spy}
+              innerRadius={0}
+              outerRadius={200}
+              data={sectorsData}
+              dataKey="value"
+              id="pie-value"
+            />
+          </PieChart>
+        </RechartsThemeProvider>,
+      );
+      const expectedProps: PieLabelRenderProps = {
+        background: { fill: 'red', rx: '10' },
+        cornerRadius: undefined,
+        cx: 255,
+        cy: 255,
+        dataKey: 'value',
+        endAngle: 360,
+        fill: 'blue',
+        index: 0,
+        innerRadius: 0,
+        maxRadius: 346.4823227814083,
+        midAngle: 180,
+        middleRadius: 100,
+        name: 'A',
+        outerRadius: 200,
+        paddingAngle: 0,
+        payload: {
+          cx: 250,
+          cy: 250,
+          endAngle: 72,
+          innerRadius: 50,
+          name: 'A',
+          outerRadius: 100,
+          startAngle: 0,
+          value: 40,
+        },
+        percent: 1,
+        startAngle: 0,
+        stroke: 'none',
+        textAnchor: 'end',
+        tooltipPayload: [
+          {
+            color: 'blue',
+            dataKey: 'value',
+            fill: 'blue',
+            name: 'A',
+            payload: {
+              cx: 250,
+              cy: 250,
+              endAngle: 72,
+              innerRadius: 50,
+              name: 'A',
+              outerRadius: 100,
+              startAngle: 0,
+              value: 40,
+            },
+            type: undefined,
+            value: 40,
+            graphicalItemId: 'pie-value',
+          },
+        ],
+        tooltipPosition: {
+          x: 155,
+          y: 255,
+        },
+        value: 40,
+        x: 35,
+        y: 254.99999999999997,
+      };
+      expect(spy).toHaveBeenCalledTimes(sectorsData.length);
+      expect(spy).toHaveBeenNthCalledWith(1, expectedProps);
+    });
+
+    it('preserves inherited Pie label styles without a theme', () => {
+      const { container } = rechartsTestRender(
+        <PieChart width={300} height={300}>
+          <Pie
+            data={sectorsData}
+            dataKey="value"
+            isAnimationActive={false}
+            style={{ fontStyle: 'italic', fontWeight: 'bold' }}
+            label
+          />
+        </PieChart>,
+      );
+
+      const texts = container.querySelectorAll<SVGTextElement>('text.recharts-pie-label-text');
+      expect(texts).toHaveLength(sectorsData.length);
+      texts.forEach(text => {
+        expect(text.style.fontStyle).toBe('italic');
+        expect(text.style.fontWeight).toBe('bold');
+      });
     });
 
     test('Render customized label when label is a function', () => {

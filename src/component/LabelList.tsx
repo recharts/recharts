@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { createContext, PropsWithoutRef, SVGProps, useContext } from 'react';
+import { createContext, PropsWithoutRef, ReactNode, SVGProps, useContext } from 'react';
 import { LabelContentType, isLabelContentAFunction, Label, LabelPosition, LabelFormatter } from './Label';
 import { Layer } from '../container/Layer';
 import { getValueByDataKey } from '../util/ChartUtils';
@@ -11,6 +11,9 @@ import { ZIndexable, ZIndexLayer } from '../zIndex/ZIndexLayer';
 import { DefaultZIndexes } from '../zIndex/DefaultZIndexes';
 import { getLabelBackgroundZIndex, LabelBackgroundLayerProvider } from '../zIndex/labelBackgroundZIndex';
 import { isRenderableText, RenderableText, TextBackgroundProps } from './Text';
+import { GraphicalItemClipArea, useGraphicalItemClipArea } from '../cartesian/GraphicalItemClipPath';
+import { AxisId } from '../state/cartesianAxisSlice';
+import { applyLabelTheme, DataLabelContextProvider, useDataLabelThemeResolver } from '../theme/labelTheme';
 
 export interface LabelListEntry<DataPointItem = any> {
   /**
@@ -128,14 +131,15 @@ interface LabelListProps extends ZIndexable {
   /**
    * Draws a rectangle behind each label, for example to keep labels readable on top of filled shapes.
    *
-   * - `true` draws the background with default styles.
-   *   The fill is the `pageBackground` color from the theme, or white when no theme is set.
-   * - An object accepts SVG `<rect>` attributes such as `fill`, `stroke` and `rx`, a `padding` and a `zIndex`.
-   * - `false` or `undefined` draws no background.
+   * - `true` draws the background with the styles from the theme's `graphicalItems[n].label.background`.
+   *   If neither sets a `fill`, the fill is the `pageBackground` color from the theme, or white when no theme is set.
+   * - An object accepts SVG `<rect>` attributes such as `fill`, `stroke` and `rx`, and a `padding`.
+   *   It is merged over the theme styles key by key.
+   * - `false` draws no background, even if the theme turns backgrounds on.
+   * - `undefined` uses the theme's `graphicalItems[n].label.background`, and draws no background without a theme.
    *
-   * Each background is sized from its rendered label.
-   * It is not drawn for labels that follow a curved path (`insideStart`, `insideEnd` and `end` in polar charts),
-   * nor for custom `content`.
+   * Each background is sized from its rendered label and follows curved label paths.
+   * It is not drawn for custom `content`.
    *
    * In a chart, the rectangles render in a zIndex layer below the labels,
    * so overlapping labels never cover each other's text.
@@ -187,6 +191,53 @@ const PolarLabelListContext = createContext<ReadonlyArray<PolarLabelListEntry> |
 
 export const PolarLabelListContextProvider = PolarLabelListContext.Provider;
 
+const LabelListClipAreaContext = createContext<GraphicalItemClipArea | undefined>(undefined);
+
+/**
+ * Graphical items that can be clipped (for example when an axis has `allowDataOverflow`) render this around their labels.
+ * The labels are not clipped, because the label of a point on the edge of the domain is often drawn outside of the clip area.
+ * Instead, LabelList skips the labels of elements that are completely outside of the clip area.
+ */
+export function SetLabelListClipArea({
+  xAxisId,
+  yAxisId,
+  children,
+}: {
+  xAxisId: AxisId;
+  yAxisId: AxisId;
+  children: ReactNode;
+}) {
+  const clipArea = useGraphicalItemClipArea(xAxisId, yAxisId);
+  return <LabelListClipAreaContext.Provider value={clipArea}>{children}</LabelListClipAreaContext.Provider>;
+}
+
+function isInRange(start: number, size: number, areaStart: number, areaSize: number): boolean {
+  const areaEnd = areaStart + areaSize;
+  if (size === 0) {
+    // A point exactly on the edge of the domain is inside, so that it keeps its label.
+    return start >= areaStart && start <= areaEnd;
+  }
+  // A bar that only touches the edge from outside is not visible at all.
+  return Math.max(start, start + size) > areaStart && Math.min(start, start + size) < areaEnd;
+}
+
+/**
+ * The element of a label is a point (Line, Area), a rectangle (Bar), or the box of a symbol (Scatter).
+ * The label is skipped if its element is outside of the clip area in one of the clipped dimensions.
+ */
+function isClippedAway(
+  entry: CartesianLabelListEntry | undefined,
+  clipArea: GraphicalItemClipArea | undefined,
+): boolean {
+  if (entry == null || clipArea == null) {
+    return false;
+  }
+  return (
+    (clipArea.isXClipped && !isInRange(entry.x, entry.width, clipArea.x, clipArea.width)) ||
+    (clipArea.isYClipped && !isInRange(entry.y, entry.height, clipArea.y, clipArea.height))
+  );
+}
+
 function useCartesianLabelListContext(): ReadonlyArray<CartesianLabelListEntry> | undefined {
   return useContext(CartesianLabelListContext);
 }
@@ -202,6 +253,8 @@ export function LabelList({ valueAccessor = defaultAccessor, ...restProps }: Pro
   const { dataKey, clockWise, id, textBreakAll, zIndex, ...others } = restProps;
   const cartesianData = useCartesianLabelListContext();
   const polarData = usePolarLabelListContext();
+  const clipArea = useContext(LabelListClipAreaContext);
+  const resolveLabelTheme = useDataLabelThemeResolver();
   const data = cartesianData || polarData;
   if (!data || !data.length) {
     return null;
@@ -214,44 +267,46 @@ export function LabelList({ valueAccessor = defaultAccessor, ...restProps }: Pro
     <>
       {others.background && <ZIndexLayer zIndex={backgroundZIndex} />}
       <ZIndexLayer zIndex={labelZIndex}>
-        <LabelBackgroundLayerProvider value={{ zIndex: backgroundZIndex, Layer: ZIndexLayer }}>
-          <Layer className="recharts-label-list">
-            {data.map((entry, index) => {
-              const value = isNullish(dataKey)
-                ? valueAccessor(entry, index)
-                : (getValueByDataKey(entry.payload, dataKey) as string | number);
+        <DataLabelContextProvider value>
+          <LabelBackgroundLayerProvider value={{ zIndex: backgroundZIndex, Layer: ZIndexLayer }}>
+            <Layer className="recharts-label-list">
+              {data.map((entry, index) => {
+                const value = isNullish(dataKey)
+                  ? valueAccessor(entry, index)
+                  : (getValueByDataKey(entry.payload, dataKey) as string | number);
 
-              const idProps = isNullish(id) ? {} : { id: `${id}-${index}` };
+                const idProps = isNullish(id) ? {} : { id: `${id}-${index}` };
 
-              return (
-                <Label
-                  key={`label-${index}`}
-                  {...svgPropertiesAndEvents(entry)}
-                  {...others}
-                  {...idProps}
-                  /*
-                   * Prefer to use the explicit fill from LabelList props.
-                   * Only in an absence of that, fall back to the fill of the entry.
-                   * The entry fill can be quite difficult to see especially in Bar, Pie, RadialBar in inside positions.
-                   * On the other hand it's quite convenient in Scatter, Line, or when the position is outside the Bar, Pie filled shapes.
-                   */
-                  fill={restProps.fill ?? entry.fill}
-                  parentViewBox={entry.parentViewBox}
-                  value={value}
-                  textBreakAll={textBreakAll}
-                  viewBox={entry.viewBox}
-                  index={index}
-                  /*
-                   * Here we don't want to use the default Label zIndex,
-                   * we want it to inherit the zIndex of the LabelList itself
-                   * which means just rendering as a regular child, without portaling anywhere.
-                   */
-                  zIndex={0}
-                />
-              );
-            })}
-          </Layer>
-        </LabelBackgroundLayerProvider>
+                return (
+                  <Label
+                    key={`label-${index}`}
+                    {...svgPropertiesAndEvents(entry)}
+                    {...others}
+                    {...idProps}
+                    /*
+                     * Prefer to use the explicit fill from LabelList props.
+                     * Only in an absence of that, fall back to the fill of the entry.
+                     * The entry fill can be quite difficult to see especially in Bar, Pie, RadialBar in inside positions.
+                     * On the other hand it's quite convenient in Scatter, Line, or when the position is outside the Bar, Pie filled shapes.
+                     */
+                    fill={restProps.fill ?? entry.fill}
+                    parentViewBox={entry.parentViewBox}
+                    value={value}
+                    textBreakAll={textBreakAll}
+                    viewBox={entry.viewBox}
+                    index={index}
+                    /*
+                     * Here we don't want to use the default Label zIndex,
+                     * we want it to inherit the zIndex of the LabelList itself
+                     * which means just rendering as a regular child, without portaling anywhere.
+                     */
+                    zIndex={0}
+                  />
+                );
+              })}
+            </Layer>
+          </LabelBackgroundLayerProvider>
+        </DataLabelContextProvider>
       </ZIndexLayer>
     </>
   );
