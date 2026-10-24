@@ -305,6 +305,17 @@ export interface AreaProps<DataPointType = any, DataValueType = any>
    */
   name?: string | number;
   /**
+   * Name represents each data entry in the tooltip.
+   * This allows you to extract the name from the data:
+   *
+   * - `string`: the name of the field in the data object;
+   * - `number`: the index of the field in the data;
+   * - `function`: a function that receives the data object and returns the name.
+   *
+   * @since 3.11
+   */
+  nameKey?: DataKey<DataPointType>;
+  /**
    * The customized event handler of animation end
    */
   onAnimationEnd?: () => void;
@@ -481,6 +492,7 @@ const SetAreaTooltipEntrySettings = React.memo(
     strokeWidth,
     fill,
     name,
+    nameKey,
     hide,
     unit,
     formatter,
@@ -494,6 +506,7 @@ const SetAreaTooltipEntrySettings = React.memo(
     | 'strokeWidth'
     | 'fill'
     | 'name'
+    | 'nameKey'
     | 'hide'
     | 'unit'
     | 'formatter'
@@ -508,7 +521,7 @@ const SetAreaTooltipEntrySettings = React.memo(
         strokeWidth,
         fill,
         dataKey,
-        nameKey: undefined,
+        nameKey,
         name: getTooltipNameProp(name, dataKey),
         hide,
         type: tooltipType,
@@ -529,6 +542,7 @@ const SetAreaTooltipEntrySettings = React.memo(
     | 'strokeWidth'
     | 'fill'
     | 'name'
+    | 'nameKey'
     | 'hide'
     | 'unit'
     | 'formatter'
@@ -1120,6 +1134,7 @@ function AreaFn(outsideProps: Props<any, any>) {
             strokeWidth={props.strokeWidth}
             fill={props.fill}
             name={props.name}
+            nameKey={props.nameKey}
             hide={props.hide}
             unit={props.unit}
             formatter={props.formatter}

@@ -432,6 +432,17 @@ export interface InternalRadialBarProps<DataPointType = any, DataValueType = any
    */
   minPointSize?: number;
   /**
+   * Name represents each data entry in the tooltip, and legend.
+   * This allows you to extract the name from the data:
+   *
+   * - `string`: the name of the field in the data object;
+   * - `number`: the index of the field in the data;
+   * - `function`: a function that receives the data object and returns the name.
+   *
+   * @since 3.11
+   */
+  nameKey?: DataKey<DataPointType, DataValueType>;
+  /**
    * The customized event handler of animation end
    */
   onAnimationEnd?: () => void;
@@ -528,7 +539,7 @@ type ThemeInternalProps = {
 type InternalProps = WithIdRequired<PropsWithDefaults> & Pick<InternalRadialBarProps, 'sectors'> & ThemeInternalProps;
 
 function SetRadialBarPayloadLegend(props: RadialBarProps) {
-  const legendPayload = useAppSelector(state => selectRadialBarLegendPayload(state, props.legendType));
+  const legendPayload = useAppSelector(state => selectRadialBarLegendPayload(state, props.legendType, props.nameKey));
   const themedLegendPayload = legendPayload?.map(entry => ({
     ...entry,
     color: entry.color ?? props.fill,
@@ -543,6 +554,7 @@ const SetRadialBarTooltipEntrySettings = React.memo(
     stroke,
     strokeWidth,
     name,
+    nameKey,
     hide,
     fill,
     tooltipType,
@@ -550,7 +562,17 @@ const SetRadialBarTooltipEntrySettings = React.memo(
     id,
   }: Pick<
     InternalProps,
-    'dataKey' | 'sectors' | 'stroke' | 'strokeWidth' | 'name' | 'hide' | 'fill' | 'tooltipType' | 'formatter' | 'id'
+    | 'dataKey'
+    | 'sectors'
+    | 'stroke'
+    | 'strokeWidth'
+    | 'name'
+    | 'nameKey'
+    | 'hide'
+    | 'fill'
+    | 'tooltipType'
+    | 'formatter'
+    | 'id'
   >) => {
     const tooltipEntrySettings: TooltipPayloadConfiguration = {
       dataDefinedOnItem: sectors,
@@ -560,7 +582,7 @@ const SetRadialBarTooltipEntrySettings = React.memo(
         stroke,
         strokeWidth,
         fill,
-        nameKey: undefined, // RadialBar does not have nameKey, why?
+        nameKey,
         dataKey,
         name: getTooltipNameProp(name, dataKey),
         hide,
@@ -703,6 +725,7 @@ function RadialBarImpl(props: WithIdRequired<PropsWithDefaults> & ThemeInternalP
         stroke={props.stroke}
         strokeWidth={props.strokeWidth}
         name={props.name}
+        nameKey={props.nameKey}
         hide={props.hide}
         fill={props.fill}
         tooltipType={props.tooltipType}
