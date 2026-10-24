@@ -457,8 +457,7 @@ export function Label(outerProps: Props) {
    */
   const inheritedBackgroundLayer = useLabelBackgroundLayer();
   const ownBackgroundZIndex = getLabelBackgroundZIndex(props.zIndex, props.background);
-  const backgroundZIndex = ownBackgroundZIndex ?? inheritedBackgroundLayer?.zIndex;
-  const backgroundLayer = useMemo(() => ({ zIndex: backgroundZIndex, Layer: ZIndexLayer }), [backgroundZIndex]);
+  const backgroundZIndex = ownBackgroundZIndex ?? inheritedBackgroundLayer;
 
   /*
    * I am not proud about this solution, but it's a quick fix for https://github.com/recharts/recharts/issues/6030#issuecomment-3155352460.
@@ -565,7 +564,7 @@ export function Label(outerProps: Props) {
     <>
       {props.background && <ZIndexLayer zIndex={ownBackgroundZIndex} />}
       <ZIndexLayer zIndex={props.zIndex}>
-        <LabelBackgroundLayerProvider value={backgroundLayer}>
+        <LabelBackgroundLayerProvider value={backgroundZIndex}>
           <Text
             ref={labelRef}
             className={clsx('recharts-label', className)}

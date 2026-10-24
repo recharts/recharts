@@ -1,4 +1,4 @@
-import { ComponentType, createContext, ReactNode, useContext } from 'react';
+import { createContext, useContext } from 'react';
 import { DefaultZIndexes } from './DefaultZIndexes';
 import type { TextBackgroundProps } from '../component/Text';
 
@@ -7,23 +7,15 @@ import type { TextBackgroundProps } from '../component/Text';
  * `Label` and `LabelList` provide both, so all label backgrounds render below all label texts
  * and overlapping labels stay readable.
  *
- * `Label` passes `ZIndexLayer` through this context, so `Text` alone doesn't bundle the zIndex portal code.
- * Without a provider, `Text` draws the background right before the text.
- *
  * `Label` and `LabelList` also render an empty `ZIndexLayer` at this zIndex next to their own layer.
  * That registers a custom background layer in the same render as the label layer,
  * so the background doesn't appear a render later than its text.
  */
-export type LabelBackgroundLayer = {
-  zIndex: number | undefined;
-  Layer: ComponentType<{ zIndex: number | undefined; children?: ReactNode }>;
-};
-
-const LabelBackgroundLayerContext = createContext<LabelBackgroundLayer | undefined>(undefined);
+const LabelBackgroundLayerContext = createContext<number | undefined>(undefined);
 
 export const LabelBackgroundLayerProvider = LabelBackgroundLayerContext.Provider;
 
-export function useLabelBackgroundLayer(): LabelBackgroundLayer | undefined {
+export function useLabelBackgroundLayer(): number | undefined {
   return useContext(LabelBackgroundLayerContext);
 }
 
@@ -35,7 +27,7 @@ const labelBackgroundGap = DefaultZIndexes.label - DefaultZIndexes.labelBackgrou
 /**
  * Returns the zIndex for the backgrounds of labels rendered at `labelZIndex`.
  * An explicit `zIndex` in the background settings wins.
- * Otherwise the backgrounds render `labelBackgroundGap` layers below the labels,
+ * Otherwise, the backgrounds render `labelBackgroundGap` layers below the labels,
  * which is `DefaultZIndexes.labelBackground` for labels in the default label layer.
  * A result of 0 becomes -1, because zIndex 0 renders inside the label's own layer.
  * Labels in the default layer (zIndex 0 or `undefined`) render without portals,

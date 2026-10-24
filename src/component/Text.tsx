@@ -16,6 +16,7 @@ import { resolveDefaultProps } from '../util/resolveDefaultProps';
 import { cssStylesToSvgStyles } from '../theme/cssStylesToSvgStyles';
 import { getEffectivePageBackground } from '../theme/pageBackground';
 import { useLabelBackgroundLayer } from '../zIndex/labelBackgroundZIndex';
+import { ZIndexLayer } from '../zIndex/ZIndexLayer';
 
 const BREAKING_SPACES = /[ \f\n\r\t\v\u2028\u2029]+/;
 
@@ -922,7 +923,7 @@ export const Text = forwardRef<SVGTextElement, Props>((outsideProps, ref) => {
       {backgroundLayer == null ? (
         backgroundElement
       ) : (
-        <backgroundLayer.Layer zIndex={backgroundLayer.zIndex}>{backgroundElement}</backgroundLayer.Layer>
+        <ZIndexLayer zIndex={backgroundLayer}>{backgroundElement}</ZIndexLayer>
       )}
       {textElement}
     </g>

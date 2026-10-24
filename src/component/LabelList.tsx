@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { createContext, PropsWithoutRef, ReactNode, SVGProps, useContext, useMemo } from 'react';
+import { createContext, PropsWithoutRef, ReactNode, SVGProps, useContext } from 'react';
 import { LabelContentType, isLabelContentAFunction, Label, LabelPosition, LabelFormatter } from './Label';
 import { Layer } from '../container/Layer';
 import { getValueByDataKey } from '../util/ChartUtils';
@@ -259,11 +259,6 @@ export function LabelList({ valueAccessor = defaultAccessor, ...restProps }: Pro
   const labelZIndex = zIndex ?? DefaultZIndexes.label;
   const backgroundZIndex = getLabelBackgroundZIndex(labelZIndex, others.background);
 
-  const labelBackgroundLayerValue = useMemo(
-    () => ({ zIndex: backgroundZIndex, Layer: ZIndexLayer }),
-    [backgroundZIndex],
-  );
-
   if (!data || !data.length) {
     return null;
   }
@@ -273,7 +268,7 @@ export function LabelList({ valueAccessor = defaultAccessor, ...restProps }: Pro
       {others.background && <ZIndexLayer zIndex={backgroundZIndex} />}
       <ZIndexLayer zIndex={labelZIndex}>
         <DataLabelContextProvider value>
-          <LabelBackgroundLayerProvider value={labelBackgroundLayerValue}>
+          <LabelBackgroundLayerProvider value={backgroundZIndex}>
             <Layer className="recharts-label-list">
               {data.map((entry, index) => {
                 if (isClippedAway(cartesianData?.[index], clipArea)) {
