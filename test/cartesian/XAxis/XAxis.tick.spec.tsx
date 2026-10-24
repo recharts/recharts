@@ -83,10 +83,9 @@ describe('XAxis tick', () => {
       </BarChart>,
     );
 
-    // For a single data point, unless barSize is given, the bar will have no width and thus not be rendered.
-    // This test merely confirms this known limitation.
+    // For a single data point without barSize, the bar fills the axis span.
     const bar = container.querySelector('.recharts-rectangle');
-    expect(bar).not.toBeInTheDocument();
+    expect(bar).toBeInTheDocument();
 
     expectXAxisTicks(container, [
       {
