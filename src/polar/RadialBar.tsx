@@ -78,6 +78,7 @@ import { useGraphicalItemIdentity } from '../theme/useGraphicalItemIdentity';
 import { useEffectiveDataKey } from '../util/useEffectiveDataKey';
 import { getEntryStyleOverrides, UnthemedStyles, useUnthemedStyles } from '../theme/dataEntryStyles';
 import { getActiveStyleOverrides, useThemedActiveStyles } from '../theme/activeStyles';
+import { DataLabelThemeContextProvider, useSeriesLabelThemeResolver } from '../theme/labelTheme';
 
 const STABLE_EMPTY_ARRAY: readonly RadialBarDataItem[] = [];
 
@@ -902,6 +903,7 @@ export function RadialBar<DataPointType = any, DataValueType = any>(
     radiusAxisId: outsideProps.radiusAxisId ?? defaultRadialBarProps.radiusAxisId,
   });
   const graphicalItemThemeSelector = useGraphicalItemIdentity(dataKey, outsideProps);
+  const resolveLabelTheme = useSeriesLabelThemeResolver(graphicalItemThemeSelector);
   const unthemedStyles = useUnthemedStyles(outsideProps);
   const themedActiveStyles = useThemedActiveStyles(graphicalItemThemeSelector, outsideProps);
   const graphicalItemStyle = useBackwardsCompatibleTheme<RadialBarProps<DataPointType, DataValueType>>(
@@ -945,13 +947,15 @@ export function RadialBar<DataPointType = any, DataValueType = any>(
             maxBarSize={props.maxBarSize}
           />
           <SetRadialBarPayloadLegend {...props} {...themedProps} />
-          <RadialBarImpl
-            {...props}
-            {...themedProps}
-            id={id}
-            unthemedStyles={unthemedStyles}
-            themedActiveStyles={themedActiveStyles}
-          />
+          <DataLabelThemeContextProvider value={resolveLabelTheme}>
+            <RadialBarImpl
+              {...props}
+              {...themedProps}
+              id={id}
+              unthemedStyles={unthemedStyles}
+              themedActiveStyles={themedActiveStyles}
+            />
+          </DataLabelThemeContextProvider>
         </>
       )}
     </RegisterGraphicalItemId>
