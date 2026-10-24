@@ -1,3 +1,4 @@
+import { clsx } from 'clsx';
 import * as React from 'react';
 import { MouseEvent, ReactElement, ReactNode, SVGProps, useCallback, useMemo, useState } from 'react';
 import maxBy from 'es-toolkit/compat/maxBy';
@@ -25,7 +26,11 @@ import { SetTooltipEntrySettings } from '../state/SetTooltipEntrySettings';
 import { ChartOptions } from '../state/optionsSlice';
 import { ReportEventSettings } from '../state/ReportEventSettings';
 import { SetComputedData } from '../context/chartDataContext';
-import { svgPropertiesNoEvents, svgPropertiesNoEventsFromUnknown } from '../util/svgPropertiesNoEvents';
+import {
+  SVGPropsNoEvents,
+  svgPropertiesNoEvents,
+  svgPropertiesNoEventsFromUnknown,
+} from '../util/svgPropertiesNoEvents';
 import { RequiresDefaultProps, resolveDefaultProps } from '../util/resolveDefaultProps';
 import { isPositiveNumber } from '../util/isWellBehavedNumber';
 import { isNotNil, noop } from '../util/DataUtils';
@@ -761,10 +766,12 @@ const SetSankeyTooltipEntrySettings = React.memo(
 /**
  * A link in the Sankey data.
  *
- * Style properties such as `stroke` are read only when a theme is active.
- * A link that defines any of them ignores the theme.
+ * Valid SVG properties such as `stroke`, `strokeDasharray`, `opacity` or `className` are spread on the link path.
+ * `id` and `d` are not, because ids must be unique and Sankey computes the path itself.
+ * With a theme, a link that defines its own `fill` or `stroke` ignores the theme colors.
  */
-interface LinkDataItem extends Styles2D {
+interface LinkDataItem
+  extends Styles2D, Omit<SVGPropsNoEvents<SVGProps<SVGPathElement>>, keyof Styles2D | 'id' | 'target' | 'd'> {
   source: number;
   target: number;
   value: number;
@@ -975,11 +982,10 @@ function renderLinkItem(option: SankeyLinkOptions | undefined, props: LinkProps,
     return option(props);
   }
 
-  const { sourceX, sourceY, sourceControlX, targetX, targetY, targetControlX, linkWidth, ...others } = props;
+  const { sourceX, sourceY, sourceControlX, targetX, targetY, targetControlX, linkWidth, className, ...others } = props;
 
   return (
     <path
-      className="recharts-sankey-link"
       d={`
           M${sourceX},${sourceY}
           C${sourceControlX},${sourceY} ${targetControlX},${targetY} ${targetX},${targetY}
@@ -988,6 +994,7 @@ function renderLinkItem(option: SankeyLinkOptions | undefined, props: LinkProps,
       {...(hasTheme ? undefined : legacyLinkStyles)}
       strokeWidth={linkWidth}
       {...svgPropertiesNoEvents(others)}
+      className={clsx('recharts-sankey-link', className)}
     />
   );
 }
@@ -1015,9 +1022,9 @@ const buildLinkProps = ({
    */
   themeStyles: Styles2D;
   /**
-   * Styles defined in the link data entry. These override everything else.
+   * SVG props defined in the link data entry. These override everything else.
    */
-  ownStyles: Styles2D;
+  ownStyles: EntrySvgProps;
 }): LinkProps | undefined => {
   const { sy: sourceRelativeY, ty: targetRelativeY, dy: linkWidth } = link;
   const sourceNode = nodes[link.source];
@@ -1033,12 +1040,15 @@ const buildLinkProps = ({
   const sourceY = sourceNode.y + sourceRelativeY + linkWidth / 2 + top;
   const targetY = targetNode.y + targetRelativeY + linkWidth / 2 + top;
 
+  // The geometry comes last, so that `targetX` and `targetY`, which are also valid SVG attributes, can't move the link.
+  // @ts-expect-error linkContent is passing in unknown props
   const linkProps: LinkProps = {
+    ...themeStyles,
+    ...svgPropertiesNoEventsFromUnknown(linkContent),
+    ...ownStyles,
     sourceX,
-    // @ts-expect-error the linkContent from below is contributing unknown props
     targetX,
     sourceY,
-    // @ts-expect-error the linkContent from below is contributing unknown props
     targetY,
     sourceControlX,
     targetControlX,
@@ -1047,9 +1057,6 @@ const buildLinkProps = ({
     linkWidth,
     index: i,
     payload: { ...link, source: sourceNode, target: targetNode },
-    ...themeStyles,
-    ...svgPropertiesNoEventsFromUnknown(linkContent),
-    ...ownStyles,
   };
 
   return linkProps;
@@ -1172,9 +1179,9 @@ function renderNodeItem(option: SankeyNodeOptions | undefined, props: NodeProps,
   return (
     // @ts-expect-error recharts radius is not compatible with SVG radius
     <Rectangle
-      className="recharts-sankey-node"
       {...(hasTheme ? undefined : legacyNodeStyles)}
       {...svgPropertiesNoEvents(props)}
+      className={clsx('recharts-sankey-node', props.className)}
     />
   );
 }
@@ -1198,9 +1205,9 @@ const buildNodeProps = ({
    */
   themeStyles: Styles2D;
   /**
-   * Styles defined in the node data entry. These override everything else.
+   * SVG props defined in the node data entry. These override everything else, except the position and size.
    */
-  ownStyles: Styles2D;
+  ownStyles: EntrySvgProps;
 }) => {
   const { x, y, dx, dy } = node;
   // @ts-expect-error nodeContent is passing in unknown props
@@ -1322,78 +1329,107 @@ function AllNodeElements({
  */
 export const THEMED_LINK_STROKE_OPACITY = 0.4;
 
+/**
+ * SVG props read from a node or link data entry.
+ */
+type EntrySvgProps = Partial<Record<string, unknown>>;
+
 type ResolvedStyles = {
   /**
    * Styles from the theme. Explicit props override these.
    */
   themeStyles: Styles2D;
   /**
-   * Styles from the data entry. These override the explicit props.
+   * SVG props from the data entry. These override the explicit props.
    */
-  ownStyles: Styles2D;
+  ownStyles: EntrySvgProps;
 };
 
-const noStyles: ResolvedStyles = { themeStyles: {}, ownStyles: {} };
+/**
+ * Reads the SVG props that a node or link data entry applies to its shape.
+ *
+ * - `id` is removed, because ids must be unique on the page and the data entry is not the only place they could come from.
+ * - `target` is removed, because in a link it is the index of the target node, not the SVG `target` attribute.
+ * - `d` is removed, because Sankey computes the link path. Node position and size are set after these props for the same reason.
+ * @param entry entry from `data.nodes` or `data.links`
+ */
+function getEntrySvgProps(entry: unknown): EntrySvgProps {
+  const { id, target, d, ...svgProps } = svgPropertiesNoEventsFromUnknown(entry) ?? {};
+  const result: EntrySvgProps = {};
+  // Skip null and undefined, so that `{ stroke: undefined }` keeps the stroke from props, the theme or the defaults.
+  for (const key in svgProps) {
+    if (Object.prototype.hasOwnProperty.call(svgProps, key)) {
+      const value: unknown = Reflect.get(svgProps, key);
+      if (value != null) {
+        result[key] = value;
+      }
+    }
+  }
+  return result;
+}
 
 /**
  * Resolves the theme and data styles of a single node.
  *
- * Nodes take the theme colors by their index in `data.nodes`,
- * so that a node keeps its color when the layout or sorting changes.
- * A node that defines its own colors in data ignores the theme completely.
+ * Valid SVG props from the data entry are always spread on the node, with or without a theme.
  *
- * Without a theme, Sankey keeps its legacy behaviour and does not read styles from data.
+ * With a theme, nodes take the theme colors by their index in `data.nodes`,
+ * so that a node keeps its color when the layout or sorting changes.
+ * A node whose data entry or `node` prop defines its own `fill` or `stroke` ignores the theme colors completely.
  * @param themeGraphicalItems graphicalItems of the active theme, or undefined if there is no theme
  * @param dataNode entry from `data.nodes`
  * @param index index of the node in `data.nodes`
+ * @param nodeContent the `node` prop
  */
 function resolveNodeStyles(
   themeGraphicalItems: RechartsTheme['graphicalItems'] | undefined,
-  dataNode: Styles2D | undefined,
+  dataNode: unknown,
   index: number,
+  nodeContent: SankeyNodeOptions | undefined,
 ): ResolvedStyles {
-  if (themeGraphicalItems == null) {
-    return noStyles;
-  }
-  if (hasOwnColors(dataNode)) {
-    return { themeStyles: {}, ownStyles: getOwnStyles(dataNode) };
+  const ownStyles = getEntrySvgProps(dataNode);
+  if (
+    themeGraphicalItems == null ||
+    hasOwnColors(ownStyles) ||
+    hasOwnColors(svgPropertiesNoEventsFromUnknown(nodeContent))
+  ) {
+    return { themeStyles: {}, ownStyles };
   }
   const themeItem =
     themeGraphicalItems.length === 0 ? undefined : themeGraphicalItems[index % themeGraphicalItems.length];
   // Styles without a color of their own merge with the theme.
-  return { themeStyles: getOwnStyles(themeItem), ownStyles: getOwnStyles(dataNode) };
+  return { themeStyles: getOwnStyles(themeItem), ownStyles };
 }
 
 /**
  * Resolves the theme and data styles of a single link.
  *
- * Links take the color of their source node, including colors from explicit props and from data,
- * and draw it with {@link THEMED_LINK_STROKE_OPACITY}.
- * A link that defines its own colors in data ignores the theme completely.
+ * Valid SVG props from the data entry are always spread on the link, with or without a theme.
  *
- * Without a theme, Sankey keeps its legacy behaviour and does not read styles from data.
+ * With a theme, links take the color of their source node, including colors from explicit props and from data,
+ * and draw it with {@link THEMED_LINK_STROKE_OPACITY}. Explicit `link` props override these field by field,
+ * so `link={{ stroke: 'red' }}` keeps the see-through links.
+ * A link whose data entry defines its own `fill` or `stroke` ignores the theme completely.
  * @param themeGraphicalItems graphicalItems of the active theme, or undefined if there is no theme
  * @param dataLink entry from `data.links`
  * @param sourceNodeProps resolved props of the source node
  */
 function resolveLinkStyles(
   themeGraphicalItems: RechartsTheme['graphicalItems'] | undefined,
-  dataLink: Styles2D | undefined,
+  dataLink: unknown,
   sourceNodeProps: NodeProps | undefined,
 ): ResolvedStyles {
-  if (themeGraphicalItems == null) {
-    return noStyles;
-  }
-  if (hasOwnColors(dataLink)) {
-    return { themeStyles: {}, ownStyles: getOwnStyles(dataLink) };
+  const ownStyles = getEntrySvgProps(dataLink);
+  if (themeGraphicalItems == null || hasOwnColors(ownStyles)) {
+    return { themeStyles: {}, ownStyles };
   }
   const sourceColor = getRenderedPaint(sourceNodeProps, 'fill') ?? getRenderedPaint(sourceNodeProps, 'stroke');
   if (sourceColor == null) {
-    return noStyles;
+    return { themeStyles: {}, ownStyles };
   }
   return {
     themeStyles: { stroke: sourceColor, strokeOpacity: THEMED_LINK_STROKE_OPACITY },
-    ownStyles: getOwnStyles(dataLink),
+    ownStyles,
   };
 }
 
@@ -1480,7 +1516,7 @@ function SankeyImpl(props: InternalSankeyProps) {
     const top = margin.top || 0;
     const left = margin.left || 0;
     const newModifiedNodes = computed.nodes.map((n, i) => {
-      const { themeStyles, ownStyles } = resolveNodeStyles(themeGraphicalItems, data.nodes[i], i);
+      const { themeStyles, ownStyles } = resolveNodeStyles(themeGraphicalItems, data.nodes[i], i, node);
       return buildNodeProps({
         node: n,
         nodeContent: node,
