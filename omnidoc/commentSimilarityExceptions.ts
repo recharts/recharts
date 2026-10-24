@@ -24,6 +24,12 @@ export type CommentSimilarityGroup = {
  */
 export const commentSimilarityExceptions: ReadonlyArray<CommentSimilarityGroup> = [
   {
+    components: ['Label', 'LabelList'],
+    props: ['background'],
+    reason:
+      'Label and LabelList take the default background from the label theme, Text is the primitive that does not read the label theme.',
+  },
+  {
     components: ['*'],
     props: ['children'],
     reason: 'Children comments vary widely based on component purpose',

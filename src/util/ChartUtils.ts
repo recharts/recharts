@@ -719,6 +719,19 @@ export const getBandSizeOfAxis = (
     return bandSize === Infinity ? 0 : bandSize;
   }
 
+  const onlyTick = ticks?.length === 1 ? ticks[0] : undefined;
+  if (isBar && axis?.scale != null && onlyTick != null) {
+    // A single tick gives no gap to measure. Bars are centered on their tick, so the widest band
+    // that stays inside the axis is twice the distance from the tick to the nearer axis edge.
+    const [rangeStart = 0, rangeEnd = 0] = axis.scale.range();
+    const tick = onlyTick.coordinate;
+    const band = 2 * Math.min(Math.abs(tick - rangeStart), Math.abs(rangeEnd - tick));
+    // A tick sitting on the axis edge leaves no room, so fall through to the default below.
+    if (band > 0) {
+      return band;
+    }
+  }
+
   return isBar ? undefined : 0;
 };
 
@@ -735,8 +748,10 @@ export function getTooltipEntry({
   value: ValueType;
   name: string | undefined;
 }): TooltipPayloadEntry {
+  // `ignoreDataEntryColors` only steers the color selection, so it does not belong in the payload
+  const { ignoreDataEntryColors, ...settings } = tooltipEntrySettings;
   return {
-    ...tooltipEntrySettings,
+    ...settings,
     dataKey,
     payload,
     value,
