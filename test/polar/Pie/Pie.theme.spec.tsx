@@ -1,6 +1,16 @@
 import { describe, expect, it } from 'vitest';
 import React from 'react';
-import { Cell, emptyTheme, Legend, Pie, PieChart, RechartsTheme, RechartsThemeProvider, Tooltip } from '../../../src';
+import {
+  Cell,
+  emptyTheme,
+  Legend,
+  Pie,
+  PieChart,
+  PieLabelRenderProps,
+  RechartsTheme,
+  RechartsThemeProvider,
+  Tooltip,
+} from '../../../src';
 import { rechartsTestRender } from '../../helper/createSelectorTestCase';
 import { assertNotNull } from '../../helper/assertNotNull';
 import { showTooltip } from '../../component/Tooltip/tooltipTestHelpers';
@@ -358,13 +368,13 @@ describe('Pie data entry styles on labels (issue #7974)', () => {
   });
 
   it('still passes geometry, name and payload to a custom label renderer', () => {
-    const captured: any[] = [];
+    const captured: PieLabelRenderProps[] = [];
     rechartsTestRender(
       <MyChart>
         <Pie
           data={styledData}
           dataKey="value"
-          label={(props: any) => {
+          label={(props: PieLabelRenderProps) => {
             captured.push(props);
             return <text>{props.name}</text>;
           }}

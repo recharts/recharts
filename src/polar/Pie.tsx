@@ -96,8 +96,8 @@ import { getActiveStyleOverrides, resolveThemedActiveStyles } from '../theme/act
  */
 const LABEL_GEOMETRY_PROP_KEYS = new Set(['cx', 'cy', 'r', 'name']);
 
-function filterEntryPropsForLabels<T extends Record<PropertyKey, any>>(obj: T): T {
-  const result: Record<PropertyKey, any> = {};
+function filterEntryPropsForLabels<T extends object>(obj: T): Partial<T> {
+  const result: Partial<T> = {};
   for (const key in obj) {
     if (!Object.prototype.hasOwnProperty.call(obj, key)) {
       continue;
@@ -110,7 +110,7 @@ function filterEntryPropsForLabels<T extends Record<PropertyKey, any>>(obj: T): 
     }
     result[key] = obj[key];
   }
-  return result as T;
+  return result;
 }
 
 interface PieDef {
