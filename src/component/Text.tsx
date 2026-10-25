@@ -117,7 +117,9 @@ export type TextBackgroundProps = Omit<
   padding?: number | { x?: number; y?: number };
   /**
    * zIndex layer of the background in a `Label` or `LabelList` inside a chart.
-   * `Text` used on its own ignores it and draws the background right before the text.
+   * `Text` used on its own ignores it and draws the background right before the text,
+   * because `Text` has no zIndex either. Without knowing which layer the text renders in,
+   * a background in any other layer could end up above its own text, so right before the text is the only safe place.
    * In a label with a nonzero zIndex, 0 becomes -1, because layer 0 renders inside the label's own layer.
    *
    * @defaultValue 100 below the label zIndex, which is `DefaultZIndexes.labelBackground` for default labels

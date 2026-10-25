@@ -7,7 +7,9 @@ import type { TextBackgroundProps } from '../component/Text';
  * `Label` and `LabelList` provide it, and `Text` draws its `background` in the layer
  * that {@link getLabelBackgroundZIndex} returns for this zIndex and the background it draws.
  * So all label backgrounds render below all label texts and overlapping labels stay readable.
- * `Text` used on its own has no enclosing label and draws the background right before the text.
+ * `Text` used on its own has no enclosing label and draws the background right before the text,
+ * because `Text` has no zIndex either. Without knowing which layer the text renders in,
+ * a background in any other layer could end up above its own text, so right before the text is the only safe place.
  *
  * Labels inside a `LabelList` render with zIndex 0, in the layer of the list, so they keep the zIndex of the list.
  *
