@@ -849,8 +849,13 @@ function PieLabels({
       >
         <Layer>
           {labelLine && renderLabelLineItem(labelLine, lineProps)}
-          {/* @ts-expect-error we send the full PieSectorDataItem */}
-          {renderLabelItem(label, finalLabelProps, getValueByDataKey(entry, dataKey), themedLabelProps.background)}
+          {renderLabelItem(
+            label,
+            finalLabelProps,
+            // @ts-expect-error we send the full PieSectorDataItem
+            getValueByDataKey(entry, dataKey, entry.value),
+            themedLabelProps.background,
+          )}
         </Layer>
       </ZIndexLayer>
     );
