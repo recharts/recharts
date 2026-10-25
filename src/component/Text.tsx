@@ -15,7 +15,7 @@ import { RechartsTheme, TextStyles } from '../theme/RechartsTheme';
 import { resolveDefaultProps } from '../util/resolveDefaultProps';
 import { cssStylesToSvgStyles } from '../theme/cssStylesToSvgStyles';
 import { getEffectivePageBackground } from '../theme/pageBackground';
-import { useLabelBackgroundLayer } from '../zIndex/labelBackgroundZIndex';
+import { getLabelBackgroundZIndex, useLabelZIndex } from '../zIndex/labelBackgroundZIndex';
 import { ZIndexLayer } from '../zIndex/ZIndexLayer';
 
 const BREAKING_SPACES = /[ \f\n\r\t\v\u2028\u2029]+/;
@@ -786,7 +786,8 @@ export const Text = forwardRef<SVGTextElement, Props>((outsideProps, ref) => {
     { fill: backgroundSettings?.fill },
     defaultLegacyBackgroundProps,
   );
-  const backgroundLayer = useLabelBackgroundLayer();
+  const labelZIndex = useLabelZIndex();
+  const backgroundLayer = labelZIndex == null ? undefined : getLabelBackgroundZIndex(labelZIndex, background);
   const textRef = useRef<SVGTextElement | null>(null);
   const textPathRef = useRef<SVGTextPathElement | null>(null);
   const textPathDefinitionRef = useRef<SVGPathElement | null>(null);

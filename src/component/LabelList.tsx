@@ -9,7 +9,7 @@ import { LabelProps } from '../index';
 import { svgPropertiesAndEvents } from '../util/svgPropertiesAndEvents';
 import { ZIndexable, ZIndexLayer } from '../zIndex/ZIndexLayer';
 import { DefaultZIndexes } from '../zIndex/DefaultZIndexes';
-import { getLabelBackgroundZIndex, LabelBackgroundLayerProvider } from '../zIndex/labelBackgroundZIndex';
+import { getLabelBackgroundZIndex, LabelZIndexProvider } from '../zIndex/labelBackgroundZIndex';
 import { isRenderableText, RenderableText, TextBackgroundProps, TextHaloProps } from './Text';
 import { GraphicalItemClipArea, useGraphicalItemClipArea } from '../cartesian/GraphicalItemClipPath';
 import { AxisId } from '../state/cartesianAxisSlice';
@@ -284,7 +284,7 @@ export function LabelList({ valueAccessor = defaultAccessor, ...restProps }: Pro
       {others.background && <ZIndexLayer zIndex={backgroundZIndex} />}
       <ZIndexLayer zIndex={labelZIndex}>
         <DataLabelContextProvider value>
-          <LabelBackgroundLayerProvider value={backgroundZIndex}>
+          <LabelZIndexProvider value={labelZIndex}>
             <Layer className="recharts-label-list">
               {data.map((entry, index) => {
                 if (isClippedAway(cartesianData?.[index], clipArea)) {
@@ -329,7 +329,7 @@ export function LabelList({ valueAccessor = defaultAccessor, ...restProps }: Pro
                 );
               })}
             </Layer>
-          </LabelBackgroundLayerProvider>
+          </LabelZIndexProvider>
         </DataLabelContextProvider>
       </ZIndexLayer>
     </>

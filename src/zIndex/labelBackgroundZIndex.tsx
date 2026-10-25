@@ -3,20 +3,24 @@ import { DefaultZIndexes } from './DefaultZIndexes';
 import type { TextBackgroundProps } from '../component/Text';
 
 /**
- * The zIndex layer where `Text` draws its `background` rectangle, and the component that renders into it.
- * `Label` and `LabelList` provide both, so all label backgrounds render below all label texts
- * and overlapping labels stay readable.
+ * The zIndex of the label that encloses a `Text`.
+ * `Label` and `LabelList` provide it, and `Text` draws its `background` in the layer
+ * that {@link getLabelBackgroundZIndex} returns for this zIndex and the background it draws.
+ * So all label backgrounds render below all label texts and overlapping labels stay readable.
+ * `Text` used on its own has no enclosing label and draws the background right before the text.
  *
- * `Label` and `LabelList` also render an empty `ZIndexLayer` at this zIndex next to their own layer.
+ * Labels inside a `LabelList` render with zIndex 0, in the layer of the list, so they keep the zIndex of the list.
+ *
+ * `Label` and `LabelList` also render an empty `ZIndexLayer` at the background zIndex next to their own layer.
  * That registers a custom background layer in the same render as the label layer,
  * so the background doesn't appear a render later than its text.
  */
-const LabelBackgroundLayerContext = createContext<number | undefined>(undefined);
+const LabelZIndexContext = createContext<number | undefined>(undefined);
 
-export const LabelBackgroundLayerProvider = LabelBackgroundLayerContext.Provider;
+export const LabelZIndexProvider = LabelZIndexContext.Provider;
 
-export function useLabelBackgroundLayer(): number | undefined {
-  return useContext(LabelBackgroundLayerContext);
+export function useLabelZIndex(): number | undefined {
+  return useContext(LabelZIndexContext);
 }
 
 /**

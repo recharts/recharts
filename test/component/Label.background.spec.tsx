@@ -1,7 +1,19 @@
 import { act, fireEvent, render } from '@testing-library/react';
 import React from 'react';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
-import { Bar, BarChart, DefaultZIndexes, Label, LabelList, Pie, PieChart, Surface, XAxis } from '../../src';
+import {
+  Bar,
+  BarChart,
+  DefaultZIndexes,
+  Label,
+  LabelList,
+  Pie,
+  PieChart,
+  RechartsThemeProvider,
+  Surface,
+  XAxis,
+} from '../../src';
+import { RechartsTheme } from '../../src/theme/RechartsTheme';
 import { PolarViewBoxRequired } from '../../src/util/types';
 import { rechartsTestRender } from '../helper/createSelectorTestCase';
 import { assertNotNull } from '../helper/assertNotNull';
@@ -365,6 +377,56 @@ describe('label background', () => {
       expectAllBackgroundsBelowAllTexts(container);
       getBackgrounds(container).forEach(rect => {
         expect(rect.closest('.recharts-zIndex-layer_-1')).not.toBeNull();
+      });
+    });
+
+    it('renders LabelList backgrounds with an explicit zIndex 0 below every label text', () => {
+      const { container } = render(
+        <BarChart width={300} height={200} data={data}>
+          <Bar dataKey="value" isAnimationActive={false}>
+            <LabelList dataKey="name" position="inside" background={{ zIndex: 0 }} />
+          </Bar>
+        </BarChart>,
+      );
+
+      act(() => {
+        vi.runAllTimers();
+      });
+      act(() => {
+        vi.runAllTimers();
+      });
+
+      expectAllBackgroundsBelowAllTexts(container);
+      getBackgrounds(container).forEach(rect => {
+        expect(rect.closest('.recharts-zIndex-layer_-1')).not.toBeNull();
+      });
+    });
+
+    it('renders LabelList backgrounds in the zIndex set by the theme', () => {
+      const theme: RechartsTheme = {
+        graphicalItems: [{ label: { background: { zIndex: 1500 } } }],
+      };
+      const { container } = render(
+        <RechartsThemeProvider value={theme}>
+          <BarChart width={300} height={200} data={data}>
+            <Bar dataKey="value" isAnimationActive={false}>
+              <LabelList dataKey="name" position="inside" />
+            </Bar>
+          </BarChart>
+        </RechartsThemeProvider>,
+      );
+
+      act(() => {
+        vi.runAllTimers();
+      });
+      act(() => {
+        vi.runAllTimers();
+      });
+
+      const backgrounds = getBackgrounds(container);
+      expect(backgrounds).toHaveLength(data.length);
+      backgrounds.forEach(rect => {
+        expect(rect.closest('.recharts-zIndex-layer_1500')).not.toBeNull();
       });
     });
 

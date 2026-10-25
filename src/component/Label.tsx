@@ -31,11 +31,7 @@ import { resolveDefaultProps } from '../util/resolveDefaultProps';
 import { svgPropertiesAndEvents } from '../util/svgPropertiesAndEvents';
 import { ZIndexable, ZIndexLayer } from '../zIndex/ZIndexLayer';
 import { DefaultZIndexes } from '../zIndex/DefaultZIndexes';
-import {
-  getLabelBackgroundZIndex,
-  LabelBackgroundLayerProvider,
-  useLabelBackgroundLayer,
-} from '../zIndex/labelBackgroundZIndex';
+import { getLabelBackgroundZIndex, LabelZIndexProvider, useLabelZIndex } from '../zIndex/labelBackgroundZIndex';
 
 import { CartesianLabelPosition, getCartesianPosition } from '../cartesian/getCartesianPosition';
 import { cartesianViewBoxToTrapezoid } from '../cartesian/cartesianViewBoxToTrapezoid';
@@ -472,11 +468,11 @@ export function Label(outerProps: Props) {
   const cartesianViewBox = useCartesianLabelContext();
   /*
    * Labels inside a LabelList render with zIndex 0, in the layer of the list,
-   * so they keep the background zIndex that the list provides.
+   * so their backgrounds go below the zIndex of the list.
    */
-  const inheritedBackgroundLayer = useLabelBackgroundLayer();
-  const ownBackgroundZIndex = getLabelBackgroundZIndex(props.zIndex, props.background);
-  const backgroundZIndex = ownBackgroundZIndex ?? inheritedBackgroundLayer;
+  const enclosingLabelZIndex = useLabelZIndex();
+  const labelZIndex = props.zIndex === 0 ? (enclosingLabelZIndex ?? props.zIndex) : props.zIndex;
+  const backgroundZIndex = getLabelBackgroundZIndex(labelZIndex, props.background);
 
   /*
    * I am not proud about this solution, but it's a quick fix for https://github.com/recharts/recharts/issues/6030#issuecomment-3155352460.
@@ -581,9 +577,9 @@ export function Label(outerProps: Props) {
 
   return (
     <>
-      {props.background && <ZIndexLayer zIndex={ownBackgroundZIndex} />}
+      {props.background && <ZIndexLayer zIndex={backgroundZIndex} />}
       <ZIndexLayer zIndex={props.zIndex}>
-        <LabelBackgroundLayerProvider value={backgroundZIndex}>
+        <LabelZIndexProvider value={labelZIndex}>
           <Text
             ref={labelRef}
             className={clsx('recharts-label', className)}
@@ -600,7 +596,7 @@ export function Label(outerProps: Props) {
           >
             {label}
           </Text>
-        </LabelBackgroundLayerProvider>
+        </LabelZIndexProvider>
       </ZIndexLayer>
     </>
   );
