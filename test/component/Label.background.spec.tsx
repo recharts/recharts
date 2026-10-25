@@ -9,6 +9,8 @@ import {
   LabelList,
   Pie,
   PieChart,
+  RadialBar,
+  RadialBarChart,
   RechartsThemeProvider,
   Surface,
   XAxis,
@@ -427,6 +429,25 @@ describe('label background', () => {
       expect(backgrounds).toHaveLength(data.length);
       backgrounds.forEach(rect => {
         expect(rect.closest('.recharts-zIndex-layer_1500')).not.toBeNull();
+      });
+    });
+
+    it('renders the curved backgrounds of a RadialBar LabelList below every label text', () => {
+      const { container } = render(
+        <RadialBarChart width={300} height={300} data={data}>
+          <RadialBar dataKey="value" isAnimationActive={false}>
+            <LabelList dataKey="name" position="insideStart" background />
+          </RadialBar>
+        </RadialBarChart>,
+      );
+
+      const backgrounds = container.querySelectorAll('path.recharts-text-path-background');
+      const texts = container.querySelectorAll('text.recharts-text');
+      expect(backgrounds).toHaveLength(data.length);
+      expect(texts).toHaveLength(data.length);
+      backgrounds.forEach(back => {
+        expect(back.closest(`.recharts-zIndex-layer_${DefaultZIndexes.labelBackground}`)).not.toBeNull();
+        texts.forEach(front => assertZIndexLayerOrder({ front, back }));
       });
     });
 

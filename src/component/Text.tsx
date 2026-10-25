@@ -1,5 +1,15 @@
 import * as React from 'react';
-import { CSSProperties, SVGProps, useMemo, forwardRef, useCallback, useLayoutEffect, useRef, useState } from 'react';
+import {
+  CSSProperties,
+  ReactNode,
+  SVGProps,
+  useMemo,
+  forwardRef,
+  useCallback,
+  useLayoutEffect,
+  useRef,
+  useState,
+} from 'react';
 
 import { clsx } from 'clsx';
 import { isNullish, isNumber, isNumOrStr } from '../util/DataUtils';
@@ -923,6 +933,12 @@ export const Text = forwardRef<SVGTextElement, Props>((outsideProps, ref) => {
   }
 
   const { padding, className: backgroundClassName, ...backgroundRectProps } = backgroundSettings;
+  const renderInBackgroundLayer = (backgroundElement: ReactNode) =>
+    backgroundLayer == null ? (
+      backgroundElement
+    ) : (
+      <ZIndexLayer zIndex={backgroundLayer}>{backgroundElement}</ZIndexLayer>
+    );
 
   if (textPath != null) {
     const {
@@ -937,42 +953,40 @@ export const Text = forwardRef<SVGTextElement, Props>((outsideProps, ref) => {
     const outlineWidth = resolveBackgroundStrokeWidth(configuredOutlineWidth);
     const hasOutline = outlineStroke != null && outlineStroke !== 'none' && outlineWidth > 0;
 
+    const backgroundElement = backgroundPath != null && textPathMetrics != null && (
+      <>
+        {hasOutline && (
+          <path
+            {...svgPropertiesAndEvents(backgroundPathProps)}
+            d={textPath}
+            fill="none"
+            stroke={outlineStroke}
+            strokeOpacity={outlineStrokeOpacity}
+            strokeWidth={backgroundPath.strokeWidth + 2 * outlineWidth}
+            strokeLinecap="round"
+            strokeDasharray={`${backgroundPath.length}px ${textPathMetrics.pathLength}px`}
+            strokeDashoffset={`${-backgroundPath.start}px`}
+            className={clsx('recharts-text-background', 'recharts-text-path-background-outline', backgroundClassName)}
+          />
+        )}
+        <path
+          {...svgPropertiesAndEvents(backgroundPathProps)}
+          d={textPath}
+          fill="none"
+          stroke={backgroundFill.fill}
+          strokeOpacity={fillOpacity}
+          strokeWidth={backgroundPath.strokeWidth}
+          strokeLinecap="round"
+          strokeDasharray={`${backgroundPath.length}px ${textPathMetrics.pathLength}px`}
+          strokeDashoffset={`${-backgroundPath.start}px`}
+          className={clsx('recharts-text-background', 'recharts-text-path-background', backgroundClassName)}
+        />
+      </>
+    );
+
     return (
       <g className="recharts-text-with-background">
-        {backgroundPath != null && textPathMetrics != null && (
-          <>
-            {hasOutline && (
-              <path
-                {...svgPropertiesAndEvents(backgroundPathProps)}
-                d={textPath}
-                fill="none"
-                stroke={outlineStroke}
-                strokeOpacity={outlineStrokeOpacity}
-                strokeWidth={backgroundPath.strokeWidth + 2 * outlineWidth}
-                strokeLinecap="round"
-                strokeDasharray={`${backgroundPath.length}px ${textPathMetrics.pathLength}px`}
-                strokeDashoffset={`${-backgroundPath.start}px`}
-                className={clsx(
-                  'recharts-text-background',
-                  'recharts-text-path-background-outline',
-                  backgroundClassName,
-                )}
-              />
-            )}
-            <path
-              {...svgPropertiesAndEvents(backgroundPathProps)}
-              d={textPath}
-              fill="none"
-              stroke={backgroundFill.fill}
-              strokeOpacity={fillOpacity}
-              strokeWidth={backgroundPath.strokeWidth}
-              strokeLinecap="round"
-              strokeDasharray={`${backgroundPath.length}px ${textPathMetrics.pathLength}px`}
-              strokeDashoffset={`${-backgroundPath.start}px`}
-              className={clsx('recharts-text-background', 'recharts-text-path-background', backgroundClassName)}
-            />
-          </>
-        )}
+        {renderInBackgroundLayer(backgroundElement)}
         {textElement}
       </g>
     );
@@ -999,11 +1013,7 @@ export const Text = forwardRef<SVGTextElement, Props>((outsideProps, ref) => {
    */
   return (
     <g className="recharts-text-with-background">
-      {backgroundLayer == null ? (
-        backgroundElement
-      ) : (
-        <ZIndexLayer zIndex={backgroundLayer}>{backgroundElement}</ZIndexLayer>
-      )}
+      {renderInBackgroundLayer(backgroundElement)}
       {textElement}
     </g>
   );
