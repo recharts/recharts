@@ -177,3 +177,15 @@ test('returns no ticks when a negative domain contains no integers', () => {
 test('preserves integer ticks on the domain boundaries', () => {
   expect(getTickValuesFixedDomain([1, 3], 5, false)).toEqual([1, 2, 3]);
 });
+
+test.each([
+  { min: 0.4, max: 2.6, expected: [1, 2] },
+  { min: 2.6, max: 0.4, expected: [2, 1] },
+  { min: -2.6, max: -0.4, expected: [-2, -1] },
+  { min: -0.4, max: -2.6, expected: [-1, -2] },
+  { min: 0.4, max: 1.6, expected: [1] },
+  { min: 0.2, max: 0.7, expected: [] },
+  { min: -0.7, max: -0.2, expected: [] },
+])('returns in-domain integers for [$min, $max] with two requested ticks', ({ min, max, expected }) => {
+  expect(getTickValuesFixedDomain([min, max], 2, false)).toEqual(expected);
+});

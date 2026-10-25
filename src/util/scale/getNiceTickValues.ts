@@ -305,6 +305,17 @@ export const getTickValuesFixedDomain = (
      * with a duplicate trailing tick. Remove it.
      */
     values = values.map(value => Math.round(value)).filter(value => value >= cormin && value <= cormax);
+
+    // Keep valid integer ticks when rounding moves every candidate outside the domain.
+    if (values.length === 0) {
+      const firstInteger = Math.ceil(cormin);
+      const lastInteger = Math.floor(cormax);
+
+      if (firstInteger <= lastInteger) {
+        values = firstInteger === lastInteger ? [firstInteger] : [firstInteger, lastInteger];
+      }
+    }
+
     const last = values.length - 1;
     if (last > 0 && values[last] === values[last - 1]) {
       values = values.slice(0, last);
