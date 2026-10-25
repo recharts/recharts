@@ -304,7 +304,7 @@ export const getTickValuesFixedDomain = (
      * cormax rounds down to the same integer as the last rangeStep value, we end up
      * with a duplicate trailing tick. Remove it.
      */
-    values = values.map(value => Math.round(value));
+    values = values.map(value => Math.round(value)).filter(value => value >= cormin && value <= cormax);
     const last = values.length - 1;
     if (last > 0 && values[last] === values[last - 1]) {
       values = values.slice(0, last);

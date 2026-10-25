@@ -61,16 +61,16 @@ test('when allowDecimals is false of unequal values of float [-0.10389, 0.59414,
   const [min, max, count] = [-0.10389, 0.59414, 7];
   const scales = getTickValuesFixedDomain([min, max], count, false);
 
-  expect(scales).toEqual([-0, 1]);
-  expect(scales.length).toBe(2); // one less than count because can't fit 7 ticks in the domain
+  expect(scales).toEqual([-0]);
+  expect(scales.length).toBe(1); // Only zero lies within the domain.
 });
 
 test('of unequal values of float [-4.10389, 0.59414, 7] not allow decimals', () => {
   const [min, max, count] = [-4.10389, 0.59414, 7];
   const scales = getTickValuesFixedDomain([min, max], count, false);
 
-  expect(scales).toEqual([-4, -3, -2, -1, -0, 1]);
-  expect(scales.length).toBe(6); // one less than count because can't fit 7 ticks in the domain
+  expect(scales).toEqual([-4, -3, -2, -1, -0]);
+  expect(scales.length).toBe(5); // Five integers lie within the domain.
 });
 
 test('of unequal values of integers [0, 14, 5]', () => {
@@ -148,4 +148,32 @@ test('allowDecimals=false does not produce duplicate ticks with step=1 boundary 
 
   expect(scales).toEqual([0, 1, 2, 3]);
   expect(scales.length).toBeLessThan(5);
+});
+
+test('keeps integer ticks within a fixed decimal domain', () => {
+  expect(getTickValuesFixedDomain([0.4, 2.6], 5, false)).toEqual([1, 2]);
+});
+
+test('excludes a rounded tick above the fixed maximum', () => {
+  expect(getTickValuesFixedDomain([1.5, 4.5], 5, false)).toEqual([2, 3, 4]);
+});
+
+test('returns no ticks when the fixed domain contains no integers', () => {
+  expect(getTickValuesFixedDomain([0.2, 0.7], 5, false)).toEqual([]);
+});
+
+test('keeps integer ticks within a negative decimal domain', () => {
+  expect(getTickValuesFixedDomain([-2.6, -0.4], 5, false)).toEqual([-2, -1]);
+});
+
+test('preserves descending order for a reversed decimal domain', () => {
+  expect(getTickValuesFixedDomain([2.6, 0.4], 5, false)).toEqual([2, 1]);
+});
+
+test('returns no ticks when a negative domain contains no integers', () => {
+  expect(getTickValuesFixedDomain([-0.7, -0.2], 5, false)).toEqual([]);
+});
+
+test('preserves integer ticks on the domain boundaries', () => {
+  expect(getTickValuesFixedDomain([1, 3], 5, false)).toEqual([1, 2, 3]);
 });
