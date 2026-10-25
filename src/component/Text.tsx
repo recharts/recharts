@@ -261,8 +261,7 @@ interface TextProps {
    * - An object accepts `stroke`, `strokeWidth`, `strokeOpacity` and `strokeLinejoin` to set them explicitly.
    * - `false` or `undefined` draws no halo.
    *
-   * Unlike `background`, a halo needs no measurement, so it is drawn during server-side rendering,
-   * and it is drawn even when `textPath` is set.
+   * Unlike `background`, a halo needs no measurement, so it is drawn during server-side rendering.
    *
    * @since 3.11
    * @example <Text halo>Label</Text>
