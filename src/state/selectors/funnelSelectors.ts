@@ -1,11 +1,13 @@
 import { createSelector } from 'reselect';
 import { ReactElement } from 'react';
-import { computeFunnelTrapezoids, FunnelTrapezoidItem } from '../../cartesian/Funnel';
+import { computeFunnelTrapezoids, FunnelTrapezoidItem, getFunnelEntryColor } from '../../cartesian/Funnel';
+import { LegendPayload } from '../../component/DefaultLegendContent';
+import { getTooltipNameProp } from '../../util/ChartUtils';
+import { LegendType, ChartOffsetInternal, DataKey, TooltipType } from '../../util/types';
 import { ChartData } from '../chartDataSlice';
 import { RechartsRootState } from '../store';
 import { selectChartOffsetInternal } from './selectChartOffsetInternal';
 import { selectChartDataAndAlwaysIgnoreIndexes } from './dataSelectors';
-import { ChartOffsetInternal, DataKey, TooltipType } from '../../util/types';
 import { CellProps } from '../..';
 import { GraphicalItemId } from '../graphicalItemsSlice';
 import { hasOwnColors, UnthemedStyles } from '../../theme/dataEntryStyles';
@@ -32,6 +34,7 @@ export type ResolvedFunnelSettings = {
    * Undefined when there is no active theme.
    */
   unthemedStyles?: UnthemedStyles;
+  legendType?: LegendType;
   id: GraphicalItemId;
 };
 
@@ -105,6 +108,34 @@ export const selectFunnelTrapezoids: (
       offset,
       customWidth,
       graphicalItemId,
+    });
+  },
+);
+
+export const selectFunnelLegend: (
+  state: RechartsRootState,
+  funnelSettings: ResolvedFunnelSettings,
+) => ReadonlyArray<LegendPayload> | undefined = createSelector(
+  [selectFunnelTrapezoids, pickFunnelSettings],
+  (
+    trapezoids: ReadonlyArray<FunnelTrapezoidItem>,
+    { dataKey, legendType }: ResolvedFunnelSettings,
+  ): ReadonlyArray<LegendPayload> | undefined => {
+    if (trapezoids == null || trapezoids.length === 0) {
+      return undefined;
+    }
+    return trapezoids.map((item): LegendPayload => {
+      const rawPayload =
+        item.payload != null && typeof item.payload === 'object' && 'payload' in item.payload
+          ? item.payload.payload
+          : item.payload;
+      return {
+        value: getTooltipNameProp(item.name, dataKey),
+        dataKey,
+        color: getFunnelEntryColor(item),
+        payload: rawPayload,
+        type: legendType,
+      };
     });
   },
 );

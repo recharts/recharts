@@ -1,5 +1,6 @@
 import React from 'react';
-import { RechartsThemeProvider, Treemap } from 'recharts';
+import { Legend, RechartsThemeProvider, Tooltip, Treemap } from 'recharts';
+import { dataColorsAt, FillStrokeVariantsGrid, itemColorProps } from './FillStrokeVariants';
 
 const data = [
   {
@@ -41,5 +42,37 @@ export function TreemapThemeComparison() {
         <TreemapThemeChart />
       </RechartsThemeProvider>
     </>
+  );
+}
+
+/**
+ * Data colors go on the leaves, numbered across the groups, so that all four data color entries are used.
+ */
+function treemapDataWithColors(enabled: boolean) {
+  let leafIndex = 0;
+  return data.map(group => ({
+    ...group,
+    children: group.children.map(leaf => ({ ...leaf, ...dataColorsAt(leafIndex++, enabled) })),
+  }));
+}
+
+export function TreemapFillStrokeVariants() {
+  return (
+    <FillStrokeVariantsGrid
+      renderChart={({ fromData, fromProps }) => (
+        <Treemap
+          width={380}
+          height={240}
+          data={treemapDataWithColors(fromData)}
+          isAnimationActive={false}
+          nameKey="name"
+          dataKey="value"
+          {...itemColorProps(fromProps)}
+        >
+          <Legend />
+          <Tooltip defaultIndex="children[0]children[0]" />
+        </Treemap>
+      )}
+    />
   );
 }

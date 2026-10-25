@@ -1,5 +1,14 @@
 import * as React from 'react';
-import { Legend, PolarAngleAxis, PolarGrid, PolarRadiusAxis, RadialBar, RadialBarChart, Tooltip } from '../../src';
+import {
+  LabelList,
+  Legend,
+  PolarAngleAxis,
+  PolarGrid,
+  PolarRadiusAxis,
+  RadialBar,
+  RadialBarChart,
+  Tooltip,
+} from '../../src';
 import { pageData } from '../../storybook/stories/data';
 
 export const StackedRadialBarChart = () => {
@@ -220,5 +229,36 @@ export const ChartReversedByBothAnglesAndReverseAxis = () => {
       <PolarRadiusAxis type="category" reversed />
       <Tooltip />
     </RadialBarChart>
+  );
+};
+
+const labelBackgroundData = [{ name: 'Curved label', value: 75 }];
+
+export const CurvedLabelBackgrounds = () => {
+  return (
+    <div style={{ display: 'flex', gap: 16 }}>
+      {(['insideStart', 'insideEnd', 'end'] as const).map(position => (
+        <RadialBarChart
+          key={position}
+          width={260}
+          height={240}
+          data={labelBackgroundData}
+          innerRadius={70}
+          outerRadius={105}
+          startAngle={20}
+          endAngle={300}
+        >
+          <PolarAngleAxis type="number" domain={[0, 100]} tick={false} axisLine={false} />
+          <RadialBar dataKey="value" fill="#2563eb" isAnimationActive={false}>
+            <LabelList
+              dataKey="name"
+              position={position}
+              fill="#111827"
+              background={{ fill: '#fff', padding: { x: 6, y: 3 } }}
+            />
+          </RadialBar>
+        </RadialBarChart>
+      ))}
+    </div>
   );
 };

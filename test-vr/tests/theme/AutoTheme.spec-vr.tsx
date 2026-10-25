@@ -7,7 +7,7 @@ function readComputedColors(container: Locator): Promise<string[][]> {
   return container.evaluate((element, properties: readonly string[]) => {
     return [element, ...Array.from(element.querySelectorAll('*'))].map(node => {
       const style = window.getComputedStyle(node);
-      return [node.tagName, ...properties.map(property => style.getPropertyValue(property))];
+      return [node.tagName, ...properties.map(property => `${property}: ${style.getPropertyValue(property)}`)];
     });
   }, colorProperties);
 }

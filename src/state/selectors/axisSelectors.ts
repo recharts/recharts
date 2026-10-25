@@ -47,7 +47,7 @@ import {
   parseNumericalUserDomain,
 } from '../../util/isDomainSpecifiedByUser';
 import { AppliedChartData, ChartData, ChartDataState, getBrushSliceIndexes } from '../chartDataSlice';
-import { getPercentValue, hasDuplicate, isNan, isNotNil, isNumOrStr, mathSign } from '../../util/DataUtils';
+import { getPercentValue, hasDuplicate, isNotNil, isNumOrStr, mathSign } from '../../util/DataUtils';
 import {
   BaseCartesianGraphicalItemSettings,
   BasePolarGraphicalItemSettings,
@@ -538,7 +538,7 @@ export const selectAllAppliedValues: (
   combineAllAppliedValues,
 );
 
-function makeNumber(val: unknown): number | undefined {
+export function makeNumber(val: unknown): number | undefined {
   if (isNumOrStr(val) || val instanceof Date) {
     const n = Number(val);
     if (isWellBehavedNumber(n)) {
@@ -635,10 +635,8 @@ export function getErrorDomainByDataKey(
     return [];
   }
 
-  let appliedNumericValue: number | undefined;
-  if (typeof appliedValue === 'number' && !isNan(appliedValue)) {
-    appliedNumericValue = appliedValue;
-  } else if (Array.isArray(appliedValue)) {
+  let appliedNumericValue = makeNumber(appliedValue);
+  if (appliedNumericValue == null && Array.isArray(appliedValue)) {
     const numericRangeValues = onlyAllowNumbers(appliedValue);
     if (numericRangeValues.length > 0) {
       appliedNumericValue = Math.max(...numericRangeValues);
@@ -659,10 +657,12 @@ export function getErrorDomainByDataKey(
       } else {
         lowBound = highBound = errorValue;
       }
-      if (!isWellBehavedNumber(lowBound) || !isWellBehavedNumber(highBound)) {
+      const low = makeNumber(lowBound);
+      const high = makeNumber(highBound);
+      if (low == null || high == null) {
         return undefined;
       }
-      return [appliedNumericValue - lowBound, appliedNumericValue + highBound];
+      return [appliedNumericValue - low, appliedNumericValue + high];
     }),
   );
 }

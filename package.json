@@ -1,6 +1,6 @@
 {
   "name": "recharts",
-  "version": "3.11.0-canary.6",
+  "version": "3.11.0-canary.7",
   "description": "React charts",
   "main": "lib/index.js",
   "module": "es6/index.js",
@@ -39,6 +39,7 @@
     "check-types-website": "tsc --project www/tsconfig.json",
     "check-playwright-versions": "node scripts/check-playwright-versions.mjs",
     "check-orphan-snapshots": "node scripts/check-orphan-snapshots.mjs",
+    "check-eslint-suppressions": "node scripts/check-eslint-suppressions.mjs",
     "test": "vitest run --config vitest.config.mts --project unit:*",
     "test-lib": "vitest run --config vitest.config.mts --project unit:lib",
     "test-website": "vitest run --config vitest.config.mts --project unit:website",
@@ -73,7 +74,7 @@
   },
   "lint-staged": {
     "*.{ts,tsx,js,jsx}": [
-      "eslint --fix",
+      "eslint --fix --pass-on-unpruned-suppressions",
       "prettier --write"
     ]
   },
@@ -113,6 +114,7 @@
     "victory-vendor": "^37.0.2"
   },
   "devDependencies": {
+    "@arethetypeswrong/cli": "^0.18.5",
     "@babel/cli": "^7.24.8",
     "@babel/core": "^7.24.9",
     "@babel/preset-env": "^7.29.0",
@@ -126,7 +128,7 @@
     "@eslint/js": "^9.35.0",
     "@flakiness/playwright": "^2.0.0",
     "@playwright/test": "1.62.1",
-    "@recharts/devtools": "^0.0.18",
+    "@recharts/devtools": "^0.0.19",
     "@reduxjs/toolkit": "^1.9.7",
     "@rollup/plugin-babel": "^7.1.0",
     "@rollup/plugin-commonjs": "^29.0.2",
@@ -176,7 +178,7 @@
     "eslint-plugin-prettier": "^5.5.4",
     "eslint-plugin-react": "^7.37.5",
     "eslint-plugin-react-hooks": "^7.1.1",
-    "eslint-plugin-react-perf": "^3.3.3",
+    "eslint-plugin-react-perf-x": "^4.0.1",
     "eslint-plugin-storybook": "^10.4.1",
     "glob": "^13.0.6",
     "globals": "^16.3.0",
@@ -186,6 +188,7 @@
     "marked": "^18.0.5",
     "playwright": "1.62.1",
     "prettier": "^3.6.2",
+    "publint": "^0.3.25",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
     "react-is": "^18.3.1",
@@ -214,5 +217,10 @@
   "license": "MIT",
   "overrides": {
     "axios": "0.30.3"
+  },
+  "allowScripts": {
+    "esbuild": false,
+    "unrs-resolver": false,
+    "fsevents": false
   }
 }

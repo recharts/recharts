@@ -179,6 +179,45 @@ describe('<PieChart />', () => {
     });
   });
 
+  describe('zero values at the start with paddingAngle', () => {
+    const dataStartingWithZero = [
+      { name: 'Zero', value: 0 },
+      { name: 'A', value: 1 },
+      { name: 'B', value: 1 },
+    ];
+
+    test('keeps a half pie between startAngle and endAngle', () => {
+      const { container } = rechartsTestRender(
+        <PieChart width={400} height={400}>
+          <Pie
+            data={dataStartingWithZero}
+            dataKey="value"
+            startAngle={180}
+            endAngle={0}
+            paddingAngle={10}
+            isAnimationActive={false}
+          />
+        </PieChart>,
+      );
+      expectPieSectorAngles(container, [
+        { startAngle: 180, endAngle: 95 },
+        { startAngle: 85, endAngle: 0 },
+      ]);
+    });
+
+    test('starts a full pie at startAngle', () => {
+      const { container } = rechartsTestRender(
+        <PieChart width={400} height={400}>
+          <Pie data={dataStartingWithZero} dataKey="value" paddingAngle={10} isAnimationActive={false} />
+        </PieChart>,
+      );
+      expectPieSectorAngles(container, [
+        { startAngle: 0, endAngle: 170 },
+        { startAngle: 180, endAngle: 350 },
+      ]);
+    });
+  });
+
   test('Renders 6 sectors circles in simple PieChart', () => {
     const { container } = rechartsTestRender(
       <PieChart width={800} height={400}>

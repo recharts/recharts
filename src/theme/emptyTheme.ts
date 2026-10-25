@@ -6,6 +6,8 @@ import { RechartsTheme } from './RechartsTheme';
  *
  * Same idea as `clear.css` and others.
  *
+ * @see {@link https://recharts.github.io/en-US/guide/theming/ Theming guide}
+ *
  * @since 3.11
  */
 export const emptyTheme: RechartsTheme = {

@@ -2309,4 +2309,116 @@ describe('<ErrorBar />', () => {
       });
     });
   });
+
+  describe('with numeric strings in the data', () => {
+    type Row = { name: string; uv: number | string; err: number | string | ReadonlyArray<number | string> };
+    const numbers: ReadonlyArray<Row> = [
+      { name: 'a', uv: 10, err: 2 },
+      { name: 'b', uv: 20, err: [4, 1] },
+    ];
+    const numericStrings: ReadonlyArray<Row> = [
+      { name: 'a', uv: '10', err: '2' },
+      { name: 'b', uv: '20', err: ['4', '1'] },
+    ];
+
+    it.each([
+      ['numbers', numbers],
+      ['numeric strings', numericStrings],
+    ])('should draw the same whiskers on a Line for %s', (_name, data) => {
+      const renderTestCase = createSelectorTestCase(({ children }) => (
+        <LineChart width={400} height={300} data={data}>
+          <XAxis dataKey="name" />
+          <YAxis domain={[0, 30]} />
+          <Line dataKey="uv" isAnimationActive={false}>
+            <ErrorBar dataKey="err" isAnimationActive={false} />
+          </Line>
+          {children}
+        </LineChart>
+      ));
+      const { container } = renderTestCase();
+      // a: 10 - 2 to 10 + 2, b: 20 - 4 to 20 + 1
+      expectErrorBars(container, [
+        { x1: '60', x2: '70', y1: '161', y2: '161' },
+        { x1: '65', x2: '65', y1: '195.66666666666669', y2: '161' },
+        { x1: '60', x2: '70', y1: '195.66666666666669', y2: '195.66666666666669' },
+        { x1: '390', x2: '400', y1: '83.00000000000001', y2: '83.00000000000001' },
+        { x1: '395', x2: '395', y1: '126.33333333333334', y2: '83.00000000000001' },
+        { x1: '390', x2: '400', y1: '126.33333333333334', y2: '126.33333333333334' },
+      ]);
+    });
+
+    it.each([
+      ['numbers', numbers],
+      ['numeric strings', numericStrings],
+    ])('should draw the same whiskers on a vertical Bar for %s', (_name, data) => {
+      const renderTestCase = createSelectorTestCase(({ children }) => (
+        <BarChart width={400} height={300} data={data} layout="vertical">
+          <XAxis type="number" domain={[0, 30]} />
+          <YAxis type="category" dataKey="name" />
+          <Bar dataKey="uv" isAnimationActive={false}>
+            <ErrorBar dataKey="err" isAnimationActive={false} />
+          </Bar>
+          {children}
+        </BarChart>
+      ));
+      const { container } = renderTestCase();
+      expectErrorBars(container, [
+        { x1: '197', x2: '197', y1: '75', y2: '65' },
+        { x1: '153', x2: '197', y1: '70', y2: '70' },
+        { x1: '153', x2: '153', y1: '75', y2: '65' },
+        { x1: '296', x2: '296', y1: '205', y2: '195' },
+        { x1: '241', x2: '296', y1: '200', y2: '200' },
+        { x1: '241', x2: '241', y1: '205', y2: '195' },
+      ]);
+    });
+
+    const oneNumber: ReadonlyArray<Row> = [{ name: 'a', uv: 10, err: 50 }];
+    const oneNumericString: ReadonlyArray<Row> = [{ name: 'a', uv: '10', err: '50' }];
+
+    it.each([
+      ['numbers', oneNumber],
+      ['numeric strings', oneNumericString],
+    ])('should extend the YAxis domain by the error values for %s', (_name, data) => {
+      const renderTestCase = createSelectorTestCase(({ children }) => (
+        <LineChart width={400} height={300} data={data}>
+          <XAxis dataKey="name" />
+          <YAxis />
+          <Line dataKey="uv" isAnimationActive={false}>
+            <ErrorBar dataKey="err" isAnimationActive={false} />
+          </Line>
+          {children}
+        </LineChart>
+      ));
+      const { spy } = renderTestCase(state => selectNumericalDomain(state, 'yAxis', 0, false));
+      // 10 - 50 and 10 + 50
+      expectLastCalledWith(spy, [-40, 60]);
+    });
+
+    it.each([
+      ['a number', 0],
+      ['a numeric string', '0'],
+    ])('should draw no whisker for a zero error given as %s', (_name, zero) => {
+      const data: ReadonlyArray<Row> = [
+        { name: 'a', uv: 10, err: zero },
+        { name: 'b', uv: 20, err: 2 },
+      ];
+      const renderTestCase = createSelectorTestCase(({ children }) => (
+        <LineChart width={400} height={300} data={data}>
+          <XAxis dataKey="name" />
+          <YAxis domain={[0, 30]} />
+          <Line dataKey="uv" isAnimationActive={false}>
+            <ErrorBar dataKey="err" isAnimationActive={false} />
+          </Line>
+          {children}
+        </LineChart>
+      ));
+      const { container } = renderTestCase();
+      // only b: 20 - 2 to 20 + 2
+      expectErrorBars(container, [
+        { x1: '390', x2: '400', y1: '74.33333333333336', y2: '74.33333333333336' },
+        { x1: '395', x2: '395', y1: '109', y2: '74.33333333333336' },
+        { x1: '390', x2: '400', y1: '109', y2: '109' },
+      ]);
+    });
+  });
 });

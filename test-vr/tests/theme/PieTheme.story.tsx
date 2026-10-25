@@ -1,5 +1,6 @@
 import React from 'react';
-import { Legend, Pie, PieChart, RechartsThemeProvider } from 'recharts';
+import { LabelList, Legend, Pie, PieChart, RechartsThemeProvider, Tooltip } from 'recharts';
+import { FillStrokeVariantsGrid, itemColorProps, withDataColors } from './FillStrokeVariants';
 
 const data = [
   { name: 'A', value: 100 },
@@ -56,5 +57,28 @@ export function PieThemeComparison() {
         <PieThemeChart />
       </RechartsThemeProvider>
     </>
+  );
+}
+
+export function PieFillStrokeVariants() {
+  return (
+    <FillStrokeVariantsGrid
+      renderChart={({ fromData, fromProps }) => (
+        <PieChart style={{ width: '380px', height: '280px' }}>
+          <Pie
+            data={withDataColors(data, fromData)}
+            dataKey="value"
+            outerRadius={80}
+            isAnimationActive={false}
+            {...itemColorProps(fromProps)}
+          >
+            <LabelList position="inside" />
+            <LabelList position="outside" dataKey="name" />
+          </Pie>
+          <Legend />
+          <Tooltip defaultIndex={0} />
+        </PieChart>
+      )}
+    />
   );
 }

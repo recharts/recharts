@@ -96,11 +96,13 @@ describe('itemSorter in ComposedChart', () => {
               type: undefined,
               unit: undefined,
               graphicalItemId: 'area-uv',
+              ignoreDataEntryColors: true,
             },
           },
           {
             dataDefinedOnItem: undefined,
             getPosition: noop,
+            getEntryColor: expect.any(Function),
             settings: {
               color: undefined,
               dataKey: 'pv',
@@ -130,6 +132,7 @@ describe('itemSorter in ComposedChart', () => {
               type: undefined,
               unit: undefined,
               graphicalItemId: 'line-amt',
+              ignoreDataEntryColors: true,
             },
           },
           {

@@ -226,6 +226,13 @@ jobs:
       - name: Lint
         run: npm run lint
 
+      - name: Check that ESLint suppressions did not grow
+        env:
+          BASE_REF: ${{ github.base_ref || 'main' }}
+        run: |
+          git fetch --depth=1 origin "$BASE_REF"
+          npm run check-eslint-suppressions -- FETCH_HEAD
+
       - name: Verify Public Exports
         run: npm run test-exports
 
