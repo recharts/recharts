@@ -852,8 +852,7 @@ function PieLabels({
           {renderLabelItem(
             label,
             finalLabelProps,
-            // @ts-expect-error we send the full PieSectorDataItem
-            getValueByDataKey(entry, dataKey, entry.value),
+            getValueByDataKey(entry.payload, dataKey, entry.value),
             themedLabelProps.background,
           )}
         </Layer>
