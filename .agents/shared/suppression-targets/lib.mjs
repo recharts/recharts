@@ -5,48 +5,61 @@ import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 /*
- * Shared helpers for the fix-type-violation skill scripts.
+ * Shared helpers for skills that burn down `eslint-suppressions.json` one target at a time,
+ * where a target is one ESLint rule in one file. See `.agents/skills/fix-type-violation`
+ * and `.agents/skills/fix-perf-violation`.
+ *
+ * Each skill describes itself with a config object:
+ *
+ * @typedef {object} SkillConfig
+ * @property {string} name skill name, for example `fix-type-violation`; also the branch prefix
+ * @property {string} description what the rules forbid, used in messages, for example `type-safety`
+ * @property {string[]} rules full rule names, in the order of preference when two targets have the same count
+ * @property {string} skipListFile absolute path of the skill's skipped.json
+ * @property {string[]} uncheckedFolders folders no tsconfig type checks; a fix there cannot be verified
  */
 
 const scriptDirectory = path.dirname(fileURLToPath(import.meta.url));
 export const repositoryRoot = path.resolve(scriptDirectory, '../../..');
 export const suppressionsFile = 'eslint-suppressions.json';
-export const skipListFile = path.join(scriptDirectory, 'skipped.json');
-export const branchPrefix = 'fix-type-violation/';
 
 /**
- * The rules this skill fixes, in the order of preference when two targets have the same violation count.
- * Non-null assertions are usually the easiest to remove, `any` the hardest.
+ * @param {SkillConfig} config
+ * @returns {string} prefix of every branch this skill creates
  */
-export const rules = [
-  '@typescript-eslint/no-non-null-assertion',
-  '@typescript-eslint/consistent-type-assertions',
-  '@typescript-eslint/no-explicit-any',
-];
+export function branchPrefix(config) {
+  return `${config.name}/`;
+}
 
 /**
+ * @param {string} rule full rule name, for example `@typescript-eslint/no-explicit-any`
+ * @returns {string} short rule name, for example `no-explicit-any`
+ */
+export function toShortRuleName(rule) {
+  return rule.slice(rule.lastIndexOf('/') + 1);
+}
+
+/**
+ * @param {SkillConfig} config
  * @param {string} rule full or short rule name, for example `no-explicit-any`
  * @returns {string} full rule name, for example `@typescript-eslint/no-explicit-any`
  */
-export function toFullRuleName(rule) {
-  const full = rule.startsWith('@typescript-eslint/') ? rule : `@typescript-eslint/${rule}`;
-  if (!rules.includes(full)) {
-    throw new Error(`Unknown rule "${rule}". Expected one of: ${rules.join(', ')}`);
+export function toFullRuleName(config, rule) {
+  const full = config.rules.find(candidate => candidate === rule || toShortRuleName(candidate) === rule);
+  if (full == null) {
+    throw new Error(`Unknown rule "${rule}". Expected one of: ${config.rules.join(', ')}`);
   }
   return full;
 }
 
-export function toShortRuleName(rule) {
-  return rule.replace('@typescript-eslint/', '');
-}
-
 /**
+ * @param {SkillConfig} config
  * @param {string} rule
  * @param {string} file path relative to the repository root
  * @returns {string} the branch name used for a pull request that fixes this rule in this file
  */
-export function branchName(rule, file) {
-  return `${branchPrefix}${toShortRuleName(rule)}/${file.replace(/[^A-Za-z0-9]+/g, '-')}`;
+export function branchName(config, rule, file) {
+  return `${branchPrefix(config)}${toShortRuleName(rule)}/${file.replace(/[^A-Za-z0-9]+/g, '-')}`;
 }
 
 /**
@@ -63,15 +76,20 @@ export function readSuppressions(revision) {
 }
 
 /**
+ * @param {SkillConfig} config
  * @returns {Array<{ file: string, rule: string, remaining: number, reason: string }>}
  */
-export function readSkipList() {
-  return JSON.parse(readFileSync(skipListFile, 'utf8'));
+export function readSkipList(config) {
+  return JSON.parse(readFileSync(config.skipListFile, 'utf8'));
 }
 
-export function writeSkipList(entries) {
+/**
+ * @param {SkillConfig} config
+ * @param {Array<{ file: string, rule: string, remaining: number, reason: string }>} entries
+ */
+export function writeSkipList(config, entries) {
   const sorted = [...entries].sort((a, b) => a.file.localeCompare(b.file) || a.rule.localeCompare(b.rule));
-  writeFileSync(skipListFile, `${JSON.stringify(sorted, null, 2)}\n`);
+  writeFileSync(config.skipListFile, `${JSON.stringify(sorted, null, 2)}\n`);
 }
 
 /**
@@ -82,7 +100,7 @@ export function writeSkipList(entries) {
  * @returns {Array<{ line: number, column: number, message: string, source: string }>}
  */
 export function findViolations(file, rule) {
-  const temporaryDirectory = mkdtempSync(path.join(os.tmpdir(), 'fix-type-violation-'));
+  const temporaryDirectory = mkdtempSync(path.join(os.tmpdir(), 'suppression-targets-'));
   const emptySuppressions = path.join(temporaryDirectory, 'suppressions.json');
   writeFileSync(emptySuppressions, '{}');
   let output;

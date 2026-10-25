@@ -72,7 +72,13 @@ export default defineConfig(() => ({
        * This also gives us hot module reload for free!
        */
       recharts: resolve(__dirname, '../src'),
-      ...(useLocalDevtools ? { '@recharts/devtools': resolve(__dirname, '../../devtools/src/index.ts') } : {}),
+      ...(useLocalDevtools
+        ? {
+            // The subpath has to come first: the bare package alias would also match it.
+            '@recharts/devtools/theme': resolve(__dirname, '../../devtools/src/theme/index.ts'),
+            '@recharts/devtools': resolve(__dirname, '../../devtools/src/index.ts'),
+          }
+        : {}),
     },
   },
 }));

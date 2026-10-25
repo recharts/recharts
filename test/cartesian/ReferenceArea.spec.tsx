@@ -1,7 +1,7 @@
 import React from 'react';
 import { describe, expect, it, Mock, test, vi } from 'vitest';
 import { fireEvent, render } from '@testing-library/react';
-import { Bar, BarChart, IfOverflow, LabelProps, LineChart, ReferenceArea, XAxis, YAxis } from '../../src';
+import { Bar, BarChart, Brush, IfOverflow, LabelProps, LineChart, ReferenceArea, XAxis, YAxis } from '../../src';
 import { useAppSelector } from '../../src/state/hooks';
 import { selectReferenceAreasByAxis } from '../../src/state/selectors/axisSelectors';
 import { userEventSetup } from '../helper/userEventSetup';
@@ -678,6 +678,65 @@ describe('<ReferenceArea />', () => {
 
       expect(areaSpy).toHaveBeenLastCalledWith([]);
       expect(areaSpy).toHaveBeenCalledTimes(5);
+    });
+  });
+
+  describe('with an edge that is not a category on the axis', () => {
+    test.each(['discard', 'hidden', 'visible'] satisfies ReadonlyArray<IfOverflow>)(
+      'should not render a rect when x1 is before the brushed range and ifOverflow=%s',
+      ifOverflow => {
+        const { container } = render(
+          <BarChart width={400} height={300} data={data}>
+            <XAxis dataKey="name" />
+            <YAxis />
+            <Bar dataKey="uv" isAnimationActive={false} />
+            <ReferenceArea x1="201102" x2="201107" ifOverflow={ifOverflow} />
+            <Brush dataKey="name" startIndex={4} endIndex={8} />
+          </BarChart>,
+        );
+        expect(container.querySelectorAll('.recharts-reference-area-rect')).toHaveLength(0);
+      },
+    );
+
+    test.each(['discard', 'hidden', 'visible'] satisfies ReadonlyArray<IfOverflow>)(
+      'should not render a rect when x2 is after the brushed range and ifOverflow=%s',
+      ifOverflow => {
+        const { container } = render(
+          <BarChart width={400} height={300} data={data}>
+            <XAxis dataKey="name" />
+            <YAxis />
+            <Bar dataKey="uv" isAnimationActive={false} />
+            <ReferenceArea x1="201104" x2="201110" ifOverflow={ifOverflow} />
+            <Brush dataKey="name" startIndex={0} endIndex={4} />
+          </BarChart>,
+        );
+        expect(container.querySelectorAll('.recharts-reference-area-rect')).toHaveLength(0);
+      },
+    );
+
+    it('should not render a rect when y1 is not a category on the YAxis', () => {
+      const { container } = render(
+        <BarChart width={400} height={300} data={data} layout="vertical">
+          <XAxis type="number" />
+          <YAxis type="category" dataKey="name" />
+          <Bar dataKey="uv" isAnimationActive={false} />
+          <ReferenceArea y1="201201" y2="201104" />
+        </BarChart>,
+      );
+      expect(container.querySelectorAll('.recharts-reference-area-rect')).toHaveLength(0);
+    });
+
+    it('should still render a rect when both edges are in the brushed range', () => {
+      const { container } = render(
+        <BarChart width={400} height={300} data={data}>
+          <XAxis dataKey="name" />
+          <YAxis />
+          <Bar dataKey="uv" isAnimationActive={false} />
+          <ReferenceArea x1="201107" x2="201108" />
+          <Brush dataKey="name" startIndex={4} endIndex={8} />
+        </BarChart>,
+      );
+      expect(container.querySelectorAll('.recharts-reference-area-rect')).toHaveLength(1);
     });
   });
 });

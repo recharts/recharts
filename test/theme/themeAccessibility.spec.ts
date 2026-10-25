@@ -256,6 +256,15 @@ describe('series colour contrast against the chart background', () => {
       const stroke = requireColor(item.stroke, `${description}.stroke`);
       expect(contrastRatio(stroke, background)).toBeGreaterThanOrEqual(floor);
     });
+
+    /*
+     * Labels drawn next to a shape take its series colour, so every series
+     * colour also has to work as text on the page background.
+     */
+    test.each(entries)('%s is legible as text on the background', (description, item) => {
+      const stroke = requireColor(item.stroke, `${description}.stroke`);
+      expect(contrastRatio(stroke, background)).toBeGreaterThanOrEqual(WCAG_TEXT_CONTRAST);
+    });
   });
 });
 

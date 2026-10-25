@@ -8,6 +8,7 @@ import {
   CartesianLabelListEntry,
   ImplicitLabelListType,
   LabelListFromLabelProp,
+  SetLabelListClipArea,
 } from '../component/LabelList';
 import { findAllByType } from '../util/ReactUtils';
 import { Curve, CurveType, Props as CurveProps } from '../shape/Curve';
@@ -83,6 +84,7 @@ import { getDataKeyOnAxis } from '../state/selectors/effectiveDataKeySelectors';
 import { getEntryStyleOverrides, hasOwnColors, UnthemedStyles, useUnthemedStyles } from '../theme/dataEntryStyles';
 import { getActiveStyleOverrides, useThemedActiveStyles } from '../theme/activeStyles';
 import { Styles2D } from '../theme/RechartsTheme';
+import { DataLabelThemeContextProvider, useSeriesLabelThemeResolver } from '../theme/labelTheme';
 
 export interface ScatterPointNode {
   x?: number | string;
@@ -1013,7 +1015,9 @@ function ScatterWithId(props: InternalProps) {
           errorBarOffset={0}
         >
           <Layer key="recharts-scatter-symbols">
-            <SymbolsWithAnimation props={props} previousPointsRef={previousPointsRef} />
+            <SetLabelListClipArea xAxisId={xAxisId} yAxisId={yAxisId}>
+              <SymbolsWithAnimation props={props} previousPointsRef={previousPointsRef} />
+            </SetLabelListClipArea>
           </Layer>
         </SetErrorBarContext>
       </Layer>
@@ -1125,6 +1129,7 @@ function ScatterFn(outsideProps: Props) {
     yAxisId: outsideProps.yAxisId ?? defaultScatterProps.yAxisId,
   });
   const graphicalItemThemeSelector = useGraphicalItemIdentity(effectiveDataKey, outsideProps);
+  const resolveLabelTheme = useSeriesLabelThemeResolver(graphicalItemThemeSelector);
   const unthemedStyles = useUnthemedStyles(outsideProps);
   const themedActiveStyles = useThemedActiveStyles(graphicalItemThemeSelector, outsideProps);
   const graphicalItemTheme = useBackwardsCompatibleTheme<Props>(graphicalItemThemeSelector, outsideProps, undefined);
@@ -1163,7 +1168,9 @@ function ScatterFn(outsideProps: Props) {
             tooltipType={props.tooltipType}
             isPanorama={isPanorama}
           />
-          <ScatterImpl {...props} id={id} unthemedStyles={unthemedStyles} themedActiveStyles={themedActiveStyles} />
+          <DataLabelThemeContextProvider value={resolveLabelTheme}>
+            <ScatterImpl {...props} id={id} unthemedStyles={unthemedStyles} themedActiveStyles={themedActiveStyles} />
+          </DataLabelThemeContextProvider>
         </>
       )}
     </RegisterGraphicalItemId>
