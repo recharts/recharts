@@ -10,7 +10,7 @@ import { svgPropertiesAndEvents } from '../util/svgPropertiesAndEvents';
 import { ZIndexable, ZIndexLayer } from '../zIndex/ZIndexLayer';
 import { DefaultZIndexes } from '../zIndex/DefaultZIndexes';
 import { getLabelBackgroundZIndex, LabelBackgroundLayerProvider } from '../zIndex/labelBackgroundZIndex';
-import { isRenderableText, RenderableText, TextBackgroundProps } from './Text';
+import { isRenderableText, RenderableText, TextBackgroundProps, TextHaloProps } from './Text';
 import { GraphicalItemClipArea, useGraphicalItemClipArea } from '../cartesian/GraphicalItemClipPath';
 import { AxisId } from '../state/cartesianAxisSlice';
 import { applyLabelTheme, DataLabelContextProvider, useDataLabelThemeResolver } from '../theme/labelTheme';
@@ -149,6 +149,22 @@ interface LabelListProps extends ZIndexable {
    * @example <LabelList position="inside" background={{ fill: '#fff', rx: 2, padding: 4 }} />
    */
   background?: boolean | TextBackgroundProps;
+  /**
+   * Draws an outline around the letters of each label, as a lighter alternative to `background`.
+   *
+   * - `true` draws the halo with default styles.
+   *   The stroke is the `pageBackground` color from the theme, or white when no theme is set.
+   * - An object accepts `stroke`, `strokeWidth`, `strokeOpacity` and `strokeLinejoin` to set them explicitly.
+   * - `false` or `undefined` draws no halo.
+   *
+   * Unlike `background`, a halo needs no measurement, works during server-side rendering, and works for
+   * labels that follow a curved path (`insideStart`, `insideEnd` and `end` in polar charts).
+   *
+   * @since 3.11
+   * @example <LabelList position="inside" halo />
+   * @example <LabelList position="inside" halo={{ stroke: '#fff', strokeWidth: 4 }} />
+   */
+  halo?: boolean | TextHaloProps;
 }
 
 /**

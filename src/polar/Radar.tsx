@@ -49,10 +49,10 @@ import { ZIndexable, ZIndexLayer } from '../zIndex/ZIndexLayer';
 import { DefaultZIndexes } from '../zIndex/DefaultZIndexes';
 import { RechartsScale } from '../util/scale/RechartsScale';
 import { usePolarChartLayout } from '../context/chartLayoutContext';
-import { GraphicalItemStyle } from '../theme/RechartsTheme';
+import { GraphicalItemStyle, Styles2D } from '../theme/RechartsTheme';
 import { useRechartsTheme } from '../theme/RechartsThemeContext';
 import { useBackwardsCompatibleTheme } from '../theme/useBackwardsCompatibleTheme';
-import { getActiveStyleOverrides } from '../theme/activeStyles';
+import { UnthemedStyles, useUnthemedStyles } from '../theme/dataEntryStyles';
 import { useGraphicalItemIdentity } from '../theme/useGraphicalItemIdentity';
 import { useEffectiveDataKey } from '../util/useEffectiveDataKey';
 import { DataLabelThemeContextProvider, useSeriesLabelThemeResolver } from '../theme/labelTheme';
@@ -281,6 +281,7 @@ const SetRadarTooltipEntrySettings = React.memo(
         color: getLegendItemColor(stroke, fill),
         unit: '', // why doesn't Radar support unit?
         graphicalItemId: id,
+        ignoreDataEntryColors: true,
       },
     };
     return <SetTooltipEntrySettings tooltipEntrySettings={tooltipEntrySettings} />;
@@ -289,11 +290,13 @@ const SetRadarTooltipEntrySettings = React.memo(
 
 type RadarPropsWithDotFill = WithIdRequired<PropsWithDefaults> & {
   dotFill?: string;
+  unthemedStyles?: UnthemedStyles;
+  themedActiveStyles?: Styles2D;
 };
 
 function RadarDotsWrapper({ points, props }: { points: ReadonlyArray<RadarPoint>; props: RadarPropsWithDotFill }) {
   const { dot, dataKey } = props;
-  const { id, dotFill, ...propsWithoutId } = props;
+  const { id, dotFill, unthemedStyles, ...propsWithoutId } = props;
 
   const baseProps = svgPropertiesNoEvents(propsWithoutId);
 
@@ -305,6 +308,7 @@ function RadarDotsWrapper({ points, props }: { points: ReadonlyArray<RadarPoint>
       dotClassName="recharts-radar-dot"
       dataKey={dataKey}
       baseProps={{ ...baseProps, fill: dotFill ?? baseProps.fill }}
+      unthemedStyles={unthemedStyles}
     />
   );
 }
@@ -637,6 +641,7 @@ function RadarWithState(props: InternalRadarProps) {
         mainColor={getLegendItemColor(props.stroke, props.fill)}
         itemDataKey={props.dataKey}
         activeDot={props.activeDot}
+        themedActiveStyles={props.themedActiveStyles}
       />
     </ZIndexLayer>
   );
@@ -681,15 +686,12 @@ export function Radar<DataPointType = any, DataValueType = any>(outsideProps: Pr
     undefined,
   );
   const themeStrokeDasharray = graphicalItemTheme?.strokeDasharray;
-  const themedActiveDot = getActiveStyleOverrides(outsideProps.activeDot ?? true, graphicalItemTheme?.active);
-  const activeDot =
-    themedActiveDot == null
-      ? outsideProps.activeDot
-      : { ...themedActiveDot, ...(typeof outsideProps.activeDot === 'object' ? outsideProps.activeDot : {}) };
+  const unthemedStyles = useUnthemedStyles(outsideProps);
+  const themedActiveStyles = graphicalItemTheme?.active;
   const propsWithTheme: Props = {
     ...outsideProps,
     dataKey,
-    activeDot,
+    activeDot: outsideProps.activeDot,
     fill: outsideProps.fill ?? graphicalItemTheme?.fill,
     fillOpacity: outsideProps.fillOpacity ?? graphicalItemTheme?.fillOpacity,
     stroke: outsideProps.stroke ?? graphicalItemTheme?.stroke,
@@ -728,7 +730,13 @@ export function Radar<DataPointType = any, DataValueType = any>(outsideProps: Pr
             id={id}
           />
           <DataLabelThemeContextProvider value={resolveLabelTheme}>
-            <RadarImpl {...props} id={id} dotFill={dotFill} />
+            <RadarImpl
+              {...props}
+              id={id}
+              dotFill={dotFill}
+              unthemedStyles={unthemedStyles}
+              themedActiveStyles={themedActiveStyles}
+            />
           </DataLabelThemeContextProvider>
         </>
       )}

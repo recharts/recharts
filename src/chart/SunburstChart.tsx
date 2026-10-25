@@ -253,7 +253,11 @@ const preloadedState: Partial<RechartsRootState> = {
   },
 };
 
-type SunburstPositionMap = Map<string, ChartCoordinate>;
+/**
+ * Sector coordinates keyed by their tooltip index (`[0]`, `[0]children[1]`, ...) which is the identity
+ * that the tooltip store and the keyboard navigation use when asking for a position.
+ */
+type SunburstPositionMap = Map<TooltipIndex, ChartCoordinate>;
 
 /**
  * Styles that the chart takes from the theme.
@@ -450,7 +454,7 @@ const SunburstChartImpl = ({
   const thickness = (outerRadius - innerRadius) / treeDepth;
 
   const sectors: React.ReactNode[] = [];
-  const positions: SunburstPositionMap = new Map<string, ChartCoordinate>([]);
+  const positions: SunburstPositionMap = new Map<TooltipIndex, ChartCoordinate>([]);
 
   // event handlers
   function handleMouseEnter(node: SunburstNode, e: React.MouseEvent) {
@@ -460,7 +464,7 @@ const SunburstChartImpl = ({
       setActiveMouseOverItemIndex({
         activeIndex: node.tooltipIndex,
         activeDataKey: dataKey,
-        activeCoordinate: positions.get(node.name),
+        activeCoordinate: positions.get(node.tooltipIndex),
         activeGraphicalItemId: id,
       }),
     );
@@ -479,7 +483,7 @@ const SunburstChartImpl = ({
       setActiveClickItemIndex({
         activeIndex: node.tooltipIndex,
         activeDataKey: dataKey,
-        activeCoordinate: positions.get(node.name),
+        activeCoordinate: positions.get(node.tooltipIndex),
         activeGraphicalItemId: id,
       }),
     );
@@ -524,7 +528,7 @@ const SunburstChartImpl = ({
       const { x: textX, y: textY } = polarToCartesian(0, 0, innerR + radius / 2, -(start + arcLength - arcLength / 2));
       currentAngle += arcLength;
       sectors.push(
-        <g key={`sunburst-sector-${d.name}-${i}`}>
+        <g key={`sunburst-sector-${currentTooltipIndex}`}>
           <Sector
             onClick={() => handleClick(nodeWithIndex)}
             onMouseEnter={e => handleMouseEnter(nodeWithIndex, e)}
@@ -544,7 +548,7 @@ const SunburstChartImpl = ({
       );
 
       const { x: tooltipX, y: tooltipY } = polarToCartesian(cx, cy, innerR + radius / 2, start);
-      positions.set(d.name, { x: tooltipX, y: tooltipY });
+      positions.set(currentTooltipIndex, { x: tooltipX, y: tooltipY });
 
       const renderedChildren = drawArcs(
         d.children,
