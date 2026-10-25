@@ -18,6 +18,7 @@ import {
   Text,
   TextAnchor,
   TextBackgroundProps,
+  TextHaloProps,
   TextVerticalAnchor,
 } from './Text';
 import { isNullish, isNumber, isNumOrStr, mathSign } from '../util/DataUtils';
@@ -151,6 +152,22 @@ interface LabelProps extends ZIndexable {
    * @example <Label position="inside" background={{ fill: '#fff', rx: 2, padding: 4 }} />
    */
   background?: boolean | TextBackgroundProps;
+  /**
+   * Draws an outline around the letters of the label, as a lighter alternative to `background`.
+   *
+   * - `true` draws the halo with default styles.
+   *   The stroke is the `pageBackground` color from the theme, or white when no theme is set.
+   * - An object accepts `stroke`, `strokeWidth`, `strokeOpacity` and `strokeLinejoin` to set them explicitly.
+   * - `false` or `undefined` draws no halo.
+   *
+   * Unlike `background`, a halo needs no measurement, works during server-side rendering, and works for
+   * labels that follow a curved path (`insideStart`, `insideEnd` and `end` in polar charts).
+   *
+   * @since 3.11
+   * @example <Label position="inside" halo />
+   * @example <Label position="inside" halo={{ stroke: '#fff', strokeWidth: 4 }} />
+   */
+  halo?: boolean | TextHaloProps;
 }
 
 export type Props = Omit<SVGProps<SVGTextElement>, 'viewBox'> & LabelProps;
@@ -264,6 +281,7 @@ const renderRadialLabel = (
   label: RenderableText,
   attrs: SVGProps<SVGTextElement>,
   viewBox: PolarViewBoxRequired,
+  halo: Props['halo'],
 ) => {
   const { offset, className, background } = labelProps;
   const { cx, cy, innerRadius, outerRadius, startAngle, endAngle, clockWise } = viewBox;
@@ -317,6 +335,7 @@ const renderRadialLabel = (
       textPath={path}
       startOffset={resolvedStartOffset}
       background={background}
+      halo={halo}
     >
       {label}
     </Text>
@@ -519,7 +538,7 @@ export function Label(outerProps: Props) {
      * The element is often a plain SVG element such as `<text>`,
      * where `background` would end up as an invalid DOM attribute.
      */
-    const { labelRef: _, background: _background, ...propsForElement } = propsWithViewBox;
+    const { labelRef: _, background: _background, halo: _halo, ...propsForElement } = propsWithViewBox;
     return cloneElement(content, propsForElement);
   }
 
@@ -538,7 +557,7 @@ export function Label(outerProps: Props) {
   const attrs = svgPropertiesAndEvents(props);
 
   if (isRadialPolarLabel && isPolar(viewBox)) {
-    return renderRadialLabel(props, position, label, attrs, viewBox);
+    return renderRadialLabel(props, position, label, attrs, viewBox, props.halo);
   }
 
   if (positionAttrs == null) {
@@ -559,6 +578,7 @@ export function Label(outerProps: Props) {
         textAnchor={isValidTextAnchor(attrs.textAnchor) ? attrs.textAnchor : positionAttrs.textAnchor}
         breakAll={textBreakAll}
         background={props.background}
+        halo={props.halo}
       >
         {label}
       </Text>
