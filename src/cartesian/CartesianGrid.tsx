@@ -427,17 +427,16 @@ function VerticalStripes(props: CartesianGridInternalProps) {
 type TickFontStyle = { fontSize?: string; letterSpacing?: string };
 
 /**
- * Extracts fontSize/letterSpacing from an axis's `tick` prop, when it's a
- * plain style object (e.g. `tick={{ fontSize: 30 }}`). CartesianGrid can't
- * read the DOM like CartesianAxis does (via getComputedStyle), so this is
- * the best it can do — function/ReactElement ticks with external CSS are
- * not covered, same limitation applies to unit tests that mock ticks.
+ * Reads fontSize/letterSpacing from an axis's `tick` prop when it is a plain
+ * style object (e.g. `tick={{ fontSize: 30 }}`). Unlike CartesianAxis, the grid
+ * has no DOM to measure, so function/element ticks are not covered.
  */
 function getTickFontStyle(tick: unknown): TickFontStyle {
   if (tick == null || typeof tick !== 'object' || React.isValidElement(tick)) {
     return {};
   }
-  const fontSize = 'fontSize' in tick && tick.fontSize != null ? String(tick.fontSize) : undefined;
+  const fontSize =
+    'fontSize' in tick && tick.fontSize != null ? `${tick.fontSize}`.replace(/^(\d+(\.\d+)?)$/, '$1px') : undefined;
   const letterSpacing = 'letterSpacing' in tick && tick.letterSpacing != null ? String(tick.letterSpacing) : undefined;
   return { fontSize, letterSpacing };
 }
@@ -613,6 +612,7 @@ export function CartesianGrid(props: Props) {
    */
   const verticalCoordinatesGenerator =
     propsIncludingDefaults.verticalCoordinatesGenerator || defaultVerticalCoordinatesGenerator;
+
   const horizontalCoordinatesGenerator =
     propsIncludingDefaults.horizontalCoordinatesGenerator || defaultHorizontalCoordinatesGenerator;
 

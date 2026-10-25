@@ -157,14 +157,8 @@ export const getCoordinatesOfGrid = (
   maxValue: number,
   syncWithTicks: boolean,
 ) => {
-  const getTickCoord = (entry: TickItem): number => {
-    if ('tickCoord' in entry && typeof entry.tickCoord === 'number') {
-      return entry.tickCoord;
-    }
-    return entry.coordinate;
-  };
   if (syncWithTicks) {
-    return ticks.map(getTickCoord);
+    return ticks.map(entry => entry.coordinate);
   }
 
   let hasMin, hasMax;
@@ -177,7 +171,7 @@ export const getCoordinatesOfGrid = (
       hasMax = true;
     }
 
-    return getTickCoord(entry);
+    return entry.coordinate;
   });
 
   if (!hasMin) {
