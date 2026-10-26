@@ -813,6 +813,7 @@ class LineWithState extends Component<InternalProps> {
             data={points}
             dataPointFormatter={errorBarDataPointFormatter}
             errorBarOffset={0}
+            clipPath={needClip ? `url(#clipPath-${clipPathId})` : undefined}
           >
             <SetLabelListClipArea xAxisId={xAxisId} yAxisId={yAxisId}>
               <RenderCurve props={this.props} clipPathId={clipPathId} />
