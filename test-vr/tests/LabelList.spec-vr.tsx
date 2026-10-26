@@ -89,3 +89,8 @@ testWithThemes('Pie > LabelList with background', async ({ mountStory }) => {
   const component = await mountStory('LabelList/PieLabelListWithBackground');
   await expect(component).toHaveScreenshot();
 });
+
+testWithThemes('Line > overlapping LabelList backgrounds stay below all label texts', async ({ mountStory }) => {
+  const component = await mountStory('LabelList/LineLabelListWithOverlappingBackgrounds');
+  await expect(component).toHaveScreenshot();
+});

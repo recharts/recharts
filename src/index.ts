@@ -14,6 +14,7 @@ export { DefaultLegendContent } from './component/DefaultLegendContent';
 export type {
   Props as DefaultLegendContentProps,
   LegendPayload,
+  LegendPayloadDot,
   ContentType as LegendContentType,
   HorizontalAlignmentType,
   VerticalAlignmentType,

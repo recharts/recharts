@@ -21,6 +21,7 @@ import {
   CartesianLabelListEntry,
   ImplicitLabelListType,
   LabelListFromLabelProp,
+  SetLabelListClipArea,
 } from '../component/LabelList';
 import { interpolate, isNan, mathSign, noop } from '../util/DataUtils';
 import {
@@ -74,8 +75,6 @@ import { RegisterGraphicalItemId } from '../context/RegisterGraphicalItemId';
 import { BarSettings } from '../state/types/BarSettings';
 import { SetCartesianGraphicalItem } from '../state/SetGraphicalItem';
 import {
-  isDataAttribute,
-  isSvgElementPropKey,
   svgPropertiesNoEvents,
   svgPropertiesNoEventsFromUnknown,
   SVGPropsNoEvents,
@@ -97,8 +96,21 @@ import { Styles2D } from '../theme/RechartsTheme';
 import { useBackwardsCompatibleTheme } from '../theme/useBackwardsCompatibleTheme';
 import { useGraphicalItemIdentity } from '../theme/useGraphicalItemIdentity';
 import { useEffectiveDataKey } from '../util/useEffectiveDataKey';
-import { getEntryStyleOverrides, UnthemedStyles, useUnthemedStyles } from '../theme/dataEntryStyles';
+import {
+  getEntryColor,
+  getEntryShapeColors,
+  getEntryStyleOverrides,
+  omitEntrySvgProps,
+  UnthemedStyles,
+  useUnthemedStyles,
+} from '../theme/dataEntryStyles';
 import { getActiveStyleOverrides, useThemedActiveStyles } from '../theme/activeStyles';
+import {
+  DataLabelColors,
+  DataLabelColorsContextProvider,
+  DataLabelThemeContextProvider,
+  useSeriesLabelThemeResolver,
+} from '../theme/labelTheme';
 
 type BarRectangleType = {
   x: number | null;
@@ -507,37 +519,6 @@ const computeLegendPayloadFromBarData = (props: Props): ReadonlyArray<LegendPayl
   ];
 };
 
-/**
- * The color a bar rectangle renders a data entry with: its fill, or its stroke when it has no fill.
- * Follows the order of props in `BarRectangles`: the entry colors win over the Bar colors,
- * and with a theme, an entry with its own colors ignores the theme colors.
- *
- * @param entry data entry
- * @param fill fill of the Bar, theme included
- * @param stroke stroke of the Bar, theme included
- * @param unthemedStyles explicit styles of the Bar, or undefined without a theme
- */
-function getBarEntryColor(
-  entry: unknown,
-  fill: string | undefined,
-  stroke: string | undefined,
-  unthemedStyles: UnthemedStyles | undefined,
-): string | undefined {
-  const barStyles = getEntryStyleOverrides(entry, unthemedStyles) ?? { fill, stroke };
-  const entryFill = entry != null && typeof entry === 'object' && 'fill' in entry ? entry.fill : undefined;
-  const entryStroke = entry != null && typeof entry === 'object' && 'stroke' in entry ? entry.stroke : undefined;
-  if (typeof entryFill === 'string') {
-    return entryFill;
-  }
-  if (barStyles.fill != null) {
-    return barStyles.fill;
-  }
-  if (typeof entryStroke === 'string') {
-    return entryStroke;
-  }
-  return barStyles.stroke;
-}
-
 const SetBarTooltipEntrySettings = React.memo(
   ({
     dataKey,
@@ -558,7 +539,7 @@ const SetBarTooltipEntrySettings = React.memo(
     const tooltipEntrySettings: TooltipPayloadConfiguration = {
       dataDefinedOnItem: undefined,
       getPosition: noop,
-      getEntryColor: entry => getBarEntryColor(entry, fill, stroke, unthemedStyles),
+      getEntryColor: entry => getEntryColor(entry, fill, stroke, unthemedStyles),
       settings: {
         stroke,
         strokeWidth,
@@ -588,17 +569,6 @@ type BarBackgroundProps = {
 const defaultLegacyBarBackgroundProps: Styles2D = {
   fill: '#eee',
 };
-
-/**
- * The background is not the graphical item, so it does not take the SVG properties of the data entry
- * (`stroke`, `opacity`, `style`, `data-*`, `id`, ...).
- * Custom background shapes still receive the other keys of the entry, and the entry itself as `payload`.
- */
-function omitEntrySvgProps(entry: object): Record<string, unknown> {
-  return Object.fromEntries(
-    Object.entries(entry).filter(([key]) => key === 'name' || (!isSvgElementPropKey(key) && !isDataAttribute(key))),
-  );
-}
 
 function BarBackground(props: BarBackgroundProps) {
   const activeIndex = useAppSelector(selectActiveTooltipIndex);
@@ -669,11 +639,25 @@ function BarLabelListProvider({
   showLabels,
   children,
   rects,
+  fill,
+  stroke,
+  unthemedStyles,
 }: {
   showLabels: boolean;
   children: ReactNode;
   rects: ReadonlyArray<BarRectangleItem> | undefined;
+  fill: string | undefined;
+  stroke: string | undefined;
+  unthemedStyles: UnthemedStyles | undefined;
 }) {
+  // The same color as in Tooltip and Legend.
+  const labelColors: DataLabelColors = React.useMemo(
+    () => ({
+      hasFilledShapes: true,
+      getShapeColors: (index: number) => getEntryShapeColors(rects?.[index]?.payload, fill, stroke, unthemedStyles),
+    }),
+    [rects, fill, stroke, unthemedStyles],
+  );
   const labelListEntries: ReadonlyArray<CartesianLabelListEntry> | undefined = rects?.map(
     (entry: BarRectangleItem): CartesianLabelListEntry => {
       const viewBox: TrapezoidViewBox = {
@@ -697,7 +681,7 @@ function BarLabelListProvider({
 
   return (
     <CartesianLabelListContextProvider value={showLabels ? labelListEntries : undefined}>
-      {children}
+      <DataLabelColorsContextProvider value={labelColors}>{children}</DataLabelColorsContextProvider>
     </CartesianLabelListContextProvider>
   );
 }
@@ -889,8 +873,11 @@ function BarRectangles({
         return (
           <BarStackClipLayer
             index={entry.originalDataIndex}
-            // https://github.com/recharts/recharts/issues/5415
-            key={`rectangle-${entry?.x}-${entry?.y}-${entry?.value}-${i}`}
+            /*
+             * Key by position only. x and y change on every animation frame, so a key built from
+             * them remounts every rectangle on every frame (#8064). The index alone is unique (#5415).
+             */
+            key={`rectangle-${i}`}
             className="recharts-bar-rectangle"
             {...adaptEventsOfChild(restOfAllOtherProps, entry, entry.originalDataIndex)}
             onMouseEnter={onMouseEnterFromContext(entry, entry.originalDataIndex)}
@@ -1018,7 +1005,13 @@ function RectanglesWithAnimation({
   );
 
   return (
-    <BarLabelListProvider showLabels={!isAnimating} rects={data}>
+    <BarLabelListProvider
+      showLabels={!isAnimating}
+      rects={data}
+      fill={props.fill}
+      stroke={props.stroke}
+      unthemedStyles={props.unthemedStyles}
+    >
       <AnimatedItems
         animationInput={data}
         animationIdPrefix="recharts-bar-"
@@ -1097,7 +1090,9 @@ class BarWithState extends PureComponent<InternalProps> {
         )}
         <Layer className="recharts-bar-rectangles" clipPath={needClip ? `url(#clipPath-${clipPathId})` : undefined}>
           <BarBackground data={data} dataKey={dataKey} background={background} allOtherBarProps={this.props} />
-          <RenderRectangles {...this.props} />
+          <SetLabelListClipArea xAxisId={xAxisId} yAxisId={yAxisId}>
+            <RenderRectangles {...this.props} />
+          </SetLabelListClipArea>
         </Layer>
       </Layer>
     );
@@ -1174,6 +1169,7 @@ function BarImpl(props: BarImplProps) {
       data={rects}
       dataPointFormatter={errorBarDataPointFormatter}
       errorBarOffset={errorBarOffset}
+      clipPath={needClip ? `url(#clipPath-${props.id})` : undefined}
     >
       <BarWithState
         {...props}
@@ -1370,6 +1366,7 @@ function BarFn(outsideProps: Props) {
     yAxisId: outsideProps.yAxisId ?? defaultBarProps.yAxisId,
   });
   const graphicalItemThemeSelector = useGraphicalItemIdentity(dataKey, outsideProps);
+  const resolveLabelTheme = useSeriesLabelThemeResolver(graphicalItemThemeSelector);
   const unthemedStyles = useUnthemedStyles(outsideProps);
   const themedActiveStyles = useThemedActiveStyles(graphicalItemThemeSelector, outsideProps);
   const graphicalItemStyle = useBackwardsCompatibleTheme<Props>(graphicalItemThemeSelector, outsideProps, undefined);
@@ -1430,13 +1427,15 @@ function BarFn(outsideProps: Props) {
             strokeWidth={themedProps.strokeWidth ?? props.strokeWidth}
           />
           <ZIndexLayer zIndex={props.zIndex}>
-            <BarImpl
-              {...props}
-              {...themedProps}
-              id={id}
-              unthemedStyles={unthemedStyles}
-              themedActiveStyles={themedActiveStyles}
-            />
+            <DataLabelThemeContextProvider value={resolveLabelTheme}>
+              <BarImpl
+                {...props}
+                {...themedProps}
+                id={id}
+                unthemedStyles={unthemedStyles}
+                themedActiveStyles={themedActiveStyles}
+              />
+            </DataLabelThemeContextProvider>
           </ZIndexLayer>
         </>
       )}
