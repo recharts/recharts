@@ -39,7 +39,9 @@ const theme: RechartsTheme = {
 };
 `;
 
-const customContentExample = `function CustomLabel({ x, y, value, fill }) {
+const customContentExample = `import { LabelList, type LabelProps } from 'recharts';
+
+function CustomLabel({ x, y, value, fill }: LabelProps) {
   // fill is the automatic color, unless the LabelList sets its own
   return (
     <text x={x} y={y} fill={fill}>
@@ -160,9 +162,15 @@ export function LabelColors() {
         colors the contrast there is a little lower, but still above 3:1.
       </p>
       <p>
-        Colors that come from your data or your own theme can be anything. A label in the page background color is hard
-        to read on a pale fill. In that case, draw a <code>background</code> or a <code>halo</code>: the label then sits
-        on the page color and takes the color of its shape.
+        To bring labels on top of palette colors to 4.5:1, draw a <code>background</code> or a <code>halo</code>. The
+        label then sits on the page color and takes the color of its shape, which is the pair the palette is designed
+        for.
+      </p>
+      <p>
+        Colors that come from your data or your own theme can be anything, and a background does not help with them. A
+        pale fill has little contrast with the page, so a label in the page color is hard to read on top of it, and a
+        label in the pale color is hard to read on a page-colored background. Set the <code>fill</code> of the label to
+        a color that contrasts with your data colors instead.
       </p>
       <CodeEditorWithPreview
         Component={LabelBackgroundExample}
