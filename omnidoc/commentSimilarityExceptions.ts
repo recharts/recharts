@@ -378,6 +378,12 @@ export const commentSimilarityExceptions: ReadonlyArray<CommentSimilarityGroup> 
   },
   {
     components: ['Treemap'],
+    props: ['label'],
+    reason:
+      'Treemap label defaults to size-filtered node names and documents how implicit labels interact with explicit LabelList children, unlike other components.',
+  },
+  {
+    components: ['Treemap'],
     props: ['data'],
     reason: 'Treemap data structure allows `children` properties for nested nodes',
   },
