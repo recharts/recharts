@@ -3,6 +3,7 @@ import stackblitzSdk, { ProjectDependencies } from '@stackblitz/sdk';
 import { version as rechartsVersion } from '../../../../package.json';
 
 import cssVars from '../../styles/_variables.css?raw';
+import followStackBlitzThemeCode from './stackblitz/followStackBlitzTheme.ts?raw';
 import { sendEvent } from '../analytics.ts';
 import { ColorMode, useColorMode } from '../color-mode';
 
@@ -32,6 +33,7 @@ import { RechartsThemeProvider, autoTheme } from 'recharts';
 import { RechartsDevtoolsContext, RechartsDevtoolsPortal } from '@recharts/devtools';
 
 import './index.css';
+import './followStackBlitzTheme';
 import Example from './Example';
 
 const container = document.getElementById('root');
@@ -42,7 +44,7 @@ const root = createRoot(container);
 
 /*
  * autoTheme follows the CSS color-scheme of the page, set by data-mode in index.html.
- * Change data-mode to "light" or "dark" to switch the theme.
+ * followStackBlitzTheme updates data-mode when you switch the StackBlitz editor theme.
  */
 const AppWithDevtools = () => {
   return <RechartsThemeProvider value={autoTheme}>
@@ -72,6 +74,19 @@ const indexHtmlCode = (args: { title: string; mode: ColorMode }) => `
   <script type="module" src="./src/index.tsx"></script>
   </body>
   </html>
+`;
+
+/*
+ * The website variables only define colors, so the page would be transparent
+ * and show the background that StackBlitz sets on the preview iframe.
+ */
+// language=CSS
+const indexCssCode = `${cssVars}
+
+html {
+  background-color: var(--color-surface-base);
+  color: var(--color-text-1);
+}
 `;
 
 // tsconfig.json
@@ -171,7 +186,8 @@ export function StackBlitzLink({ code, title, children }: StackBlitzLinkProps) {
             title,
             files: {
               'index.html': indexHtmlCode({ title, mode }),
-              'src/index.css': cssVars,
+              'src/index.css': indexCssCode,
+              'src/followStackBlitzTheme.ts': followStackBlitzThemeCode,
               /*
                * This file has tsx in it, and create-react-app supports TypeScript out of the box.
                */
