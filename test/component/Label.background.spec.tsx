@@ -1,10 +1,26 @@
-import { render } from '@testing-library/react';
+import { act, fireEvent, render } from '@testing-library/react';
 import React from 'react';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
-import { Bar, BarChart, Label, LabelList, Pie, PieChart, Surface, XAxis } from '../../src';
+import {
+  Bar,
+  BarChart,
+  DefaultZIndexes,
+  Label,
+  LabelList,
+  Pie,
+  PieChart,
+  RadialBar,
+  RadialBarChart,
+  RechartsThemeProvider,
+  Surface,
+  XAxis,
+} from '../../src';
+import { RechartsTheme } from '../../src/theme/RechartsTheme';
 import { PolarViewBoxRequired } from '../../src/util/types';
 import { rechartsTestRender } from '../helper/createSelectorTestCase';
 import { assertNotNull } from '../helper/assertNotNull';
+import { assertZIndexLayerOrder } from '../helper/assertZIndexLayerOrder';
+import { getLabelBackgroundZIndex } from '../../src/zIndex/labelBackgroundZIndex';
 import { mockGetBBox, restoreMockGetBBox } from '../helper/mockGetBBox';
 import { mockGetComputedTextLength, restoreMockGetComputedTextLength } from '../helper/mockGetComputedTextLength';
 import { mockGetTotalLength, restoreMockGetTotalLength } from '../helper/mockGetTotalLength';
@@ -189,7 +205,7 @@ describe('label background', () => {
       backgrounds.forEach(rect => {
         expect(rect).toHaveAttribute('fill', 'gold');
         expect(rect).toHaveAttribute('width', '32');
-        expect(rect.closest('.recharts-label-list')).not.toBeNull();
+        expect(rect.closest(`.recharts-zIndex-layer_${DefaultZIndexes.labelBackground}`)).not.toBeNull();
       });
     });
 
@@ -226,6 +242,278 @@ describe('label background', () => {
       );
 
       expect(getBackgrounds(container)).toHaveLength(data.length);
+    });
+  });
+  describe('zIndex', () => {
+    function expectAllBackgroundsBelowAllTexts(container: Element) {
+      const backgrounds = getBackgrounds(container);
+      const texts = container.querySelectorAll('text.recharts-text');
+      expect(backgrounds.length).toBeGreaterThan(1);
+      expect(texts).toHaveLength(backgrounds.length);
+      backgrounds.forEach(back => {
+        texts.forEach(front => assertZIndexLayerOrder({ front, back }));
+      });
+    }
+
+    it('renders every background of a LabelList below every label text', () => {
+      const { container } = render(
+        <BarChart width={300} height={200} data={data}>
+          <Bar dataKey="value" isAnimationActive={false}>
+            <LabelList dataKey="name" position="inside" background />
+          </Bar>
+        </BarChart>,
+      );
+
+      expectAllBackgroundsBelowAllTexts(container);
+    });
+
+    it('renders the backgrounds of two overlapping labels below both texts', () => {
+      const { container } = render(
+        <BarChart width={300} height={200} data={data}>
+          <Label viewBox={cartesianViewBox} value="first label" position="center" background />
+          <Label viewBox={cartesianViewBox} value="second label" position="center" background />
+        </BarChart>,
+      );
+
+      expectAllBackgroundsBelowAllTexts(container);
+      getBackgrounds(container).forEach(rect => {
+        expect(rect.closest(`.recharts-zIndex-layer_${DefaultZIndexes.labelBackground}`)).not.toBeNull();
+      });
+    });
+
+    it('renders the background 100 layers below a LabelList with a custom zIndex', () => {
+      const { container } = render(
+        <BarChart width={300} height={200} data={data}>
+          <Bar dataKey="value" isAnimationActive={false}>
+            <LabelList dataKey="name" position="inside" background zIndex={3000} />
+          </Bar>
+        </BarChart>,
+      );
+
+      // the LabelList renders once the Bar data is ready, and its custom zIndex layers render one pass later
+      act(() => {
+        vi.runAllTimers();
+      });
+      act(() => {
+        vi.runAllTimers();
+      });
+
+      const backgrounds = getBackgrounds(container);
+      expect(backgrounds).toHaveLength(data.length);
+      backgrounds.forEach(rect => {
+        expect(rect.closest('.recharts-zIndex-layer_2900')).not.toBeNull();
+      });
+      expect(container.querySelectorAll('.recharts-zIndex-layer_3000 text.recharts-text')).toHaveLength(data.length);
+    });
+
+    it('renders the background 100 layers below a Label with a custom zIndex', () => {
+      const { container } = render(
+        <BarChart width={300} height={200} data={data}>
+          <Label viewBox={cartesianViewBox} value="text" position="center" background zIndex={3000} />
+        </BarChart>,
+      );
+
+      // custom zIndex layers are created on a later render
+      act(() => {
+        vi.runAllTimers();
+      });
+
+      const backgrounds = getBackgrounds(container);
+      expect(backgrounds).toHaveLength(1);
+      expect(backgrounds[0].closest('.recharts-zIndex-layer_2900')).not.toBeNull();
+      expect(container.querySelector('.recharts-zIndex-layer_3000 .recharts-label')).not.toBeNull();
+    });
+
+    it('renders the background in the zIndex set in the background object of a Label', () => {
+      const { container } = render(
+        <BarChart width={300} height={200} data={data}>
+          <Label viewBox={cartesianViewBox} value="text" position="center" background={{ zIndex: 1500 }} />
+        </BarChart>,
+      );
+
+      act(() => {
+        vi.runAllTimers();
+      });
+
+      const backgrounds = getBackgrounds(container);
+      expect(backgrounds).toHaveLength(1);
+      expect(backgrounds[0].closest('.recharts-zIndex-layer_1500')).not.toBeNull();
+      expect(backgrounds[0]).not.toHaveAttribute('zIndex');
+    });
+
+    it('renders the backgrounds in the zIndex set in the background object of a LabelList', () => {
+      const { container } = render(
+        <BarChart width={300} height={200} data={data}>
+          <Bar dataKey="value" isAnimationActive={false}>
+            <LabelList dataKey="name" position="inside" background={{ zIndex: 1500 }} />
+          </Bar>
+        </BarChart>,
+      );
+
+      act(() => {
+        vi.runAllTimers();
+      });
+      act(() => {
+        vi.runAllTimers();
+      });
+
+      const backgrounds = getBackgrounds(container);
+      expect(backgrounds).toHaveLength(data.length);
+      backgrounds.forEach(rect => {
+        expect(rect.closest('.recharts-zIndex-layer_1500')).not.toBeNull();
+      });
+    });
+
+    it('renders a background with an explicit zIndex 0 below the texts of overlapping labels', () => {
+      const { container } = render(
+        <BarChart width={300} height={200} data={data}>
+          <Label viewBox={cartesianViewBox} value="first label" position="center" background={{ zIndex: 0 }} />
+          <Label viewBox={cartesianViewBox} value="second label" position="center" background={{ zIndex: 0 }} />
+        </BarChart>,
+      );
+
+      act(() => {
+        vi.runAllTimers();
+      });
+
+      expectAllBackgroundsBelowAllTexts(container);
+      getBackgrounds(container).forEach(rect => {
+        expect(rect.closest('.recharts-zIndex-layer_-1')).not.toBeNull();
+      });
+    });
+
+    it('renders LabelList backgrounds with an explicit zIndex 0 below every label text', () => {
+      const { container } = render(
+        <BarChart width={300} height={200} data={data}>
+          <Bar dataKey="value" isAnimationActive={false}>
+            <LabelList dataKey="name" position="inside" background={{ zIndex: 0 }} />
+          </Bar>
+        </BarChart>,
+      );
+
+      act(() => {
+        vi.runAllTimers();
+      });
+      act(() => {
+        vi.runAllTimers();
+      });
+
+      expectAllBackgroundsBelowAllTexts(container);
+      getBackgrounds(container).forEach(rect => {
+        expect(rect.closest('.recharts-zIndex-layer_-1')).not.toBeNull();
+      });
+    });
+
+    it('renders LabelList backgrounds in the zIndex set by the theme', () => {
+      const theme: RechartsTheme = {
+        graphicalItems: [{ label: { background: { zIndex: 1500 } } }],
+      };
+      const { container } = render(
+        <RechartsThemeProvider value={theme}>
+          <BarChart width={300} height={200} data={data}>
+            <Bar dataKey="value" isAnimationActive={false}>
+              <LabelList dataKey="name" position="inside" />
+            </Bar>
+          </BarChart>
+        </RechartsThemeProvider>,
+      );
+
+      act(() => {
+        vi.runAllTimers();
+      });
+      act(() => {
+        vi.runAllTimers();
+      });
+
+      const backgrounds = getBackgrounds(container);
+      expect(backgrounds).toHaveLength(data.length);
+      backgrounds.forEach(rect => {
+        expect(rect.closest('.recharts-zIndex-layer_1500')).not.toBeNull();
+      });
+    });
+
+    it('renders the curved backgrounds of a RadialBar LabelList below every label text', () => {
+      const { container } = render(
+        <RadialBarChart width={300} height={300} data={data}>
+          <RadialBar dataKey="value" isAnimationActive={false}>
+            <LabelList dataKey="name" position="insideStart" background />
+          </RadialBar>
+        </RadialBarChart>,
+      );
+
+      const backgrounds = container.querySelectorAll('path.recharts-text-path-background');
+      const texts = container.querySelectorAll('text.recharts-text');
+      expect(backgrounds).toHaveLength(data.length);
+      expect(texts).toHaveLength(data.length);
+      backgrounds.forEach(back => {
+        expect(back.closest(`.recharts-zIndex-layer_${DefaultZIndexes.labelBackground}`)).not.toBeNull();
+        texts.forEach(front => assertZIndexLayerOrder({ front, back }));
+      });
+    });
+
+    it('renders the backgrounds of overlapping labels with zIndex 1 below both texts', () => {
+      const { container } = render(
+        <BarChart width={300} height={200} data={data}>
+          <Label viewBox={cartesianViewBox} value="first label" position="center" background zIndex={1} />
+          <Label viewBox={cartesianViewBox} value="second label" position="center" background zIndex={1} />
+        </BarChart>,
+      );
+
+      act(() => {
+        vi.runAllTimers();
+      });
+
+      expectAllBackgroundsBelowAllTexts(container);
+      getBackgrounds(container).forEach(rect => {
+        expect(rect.closest('.recharts-zIndex-layer_-99')).not.toBeNull();
+      });
+    });
+
+    it('keeps the background right before the text when the LabelList renders in the default layer', () => {
+      const { container } = render(
+        <BarChart width={300} height={200} data={data}>
+          <Bar dataKey="value" isAnimationActive={false}>
+            <LabelList dataKey="name" position="inside" background zIndex={0} />
+          </Bar>
+        </BarChart>,
+      );
+
+      const backgrounds = getBackgrounds(container);
+      expect(backgrounds).toHaveLength(data.length);
+      backgrounds.forEach(rect => {
+        expect(rect.nextElementSibling).toHaveClass('recharts-label');
+      });
+    });
+
+    it('calls the background event handlers in its own layer', () => {
+      const onClick = vi.fn();
+      const { container } = render(
+        <BarChart width={300} height={200} data={data}>
+          <Label viewBox={cartesianViewBox} value="text" position="center" background={{ onClick }} />
+        </BarChart>,
+      );
+
+      const background = getBackgrounds(container)[0];
+      assertNotNull(background);
+      fireEvent.click(background);
+      expect(onClick).toHaveBeenCalledTimes(1);
+    });
+
+    it('has no background zIndex for labels in the default layer', () => {
+      expect(getLabelBackgroundZIndex(undefined, true)).toBeUndefined();
+      expect(getLabelBackgroundZIndex(0, true)).toBeUndefined();
+    });
+
+    it('skips zIndex 0 for backgrounds, because that layer renders inside the label layer', () => {
+      expect(getLabelBackgroundZIndex(100, true)).toBe(-1);
+    });
+
+    it('uses the zIndex from the background object for labels in the default layer', () => {
+      expect(getLabelBackgroundZIndex(0, { zIndex: 5 })).toBe(5);
+    });
+    it('keeps an explicit zIndex 0 out of the label layer', () => {
+      expect(getLabelBackgroundZIndex(2000, { zIndex: 0 })).toBe(-1);
+      expect(getLabelBackgroundZIndex(0, { zIndex: 0 })).toBe(0);
     });
   });
 });

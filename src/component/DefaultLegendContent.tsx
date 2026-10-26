@@ -3,8 +3,15 @@ import { ReactNode, MouseEvent, ReactElement, CSSProperties } from 'react';
 
 import { clsx } from 'clsx';
 import { Surface } from '../container/Surface';
-import { Symbols } from '../shape/Symbols';
-import { DataKey, LegendType, adaptEventsOfChild, PresentationAttributesForHTML, CartesianLayout } from '../util/types';
+import { getSymbolHalfWidth, Symbols } from '../shape/Symbols';
+import {
+  DataKey,
+  LegendType,
+  adaptEventsOfChild,
+  PresentationAttributesForHTML,
+  CartesianLayout,
+  SymbolType,
+} from '../util/types';
 import { RequiresDefaultProps, resolveDefaultProps } from '../util/resolveDefaultProps';
 import { RechartsTheme } from '../theme/RechartsTheme';
 import { useBackwardsCompatibleTheme } from '../theme/useBackwardsCompatibleTheme';
@@ -33,6 +40,31 @@ export interface LegendPayload {
   inactive?: boolean;
   legendIcon?: ReactElement<SVGElement>;
   dataKey?: DataKey<any>;
+  /**
+   * The dots of the graphical item, if it draws one of the predefined symbols at its data points.
+   * The legend icon then draws the same symbol, with the same colors as the dots.
+   */
+  dot?: LegendPayloadDot;
+}
+
+/**
+ * The dots that a graphical item draws at its data points, as the legend icon needs them.
+ *
+ * @since 3.11
+ */
+export interface LegendPayloadDot {
+  /**
+   * The predefined symbol drawn at each data point.
+   */
+  symbol: SymbolType;
+  /**
+   * Fill of the dots, as they render in the chart, including the theme.
+   */
+  fill?: string;
+  /**
+   * Stroke of the dots, as they render in the chart, including the theme.
+   */
+  stroke?: string;
 }
 
 interface DefaultLegendContentProps {
@@ -157,6 +189,111 @@ function getStrokeDasharray(input: unknown): string | undefined {
   return undefined;
 }
 
+/**
+ * Diameter of the symbol in the `line` legend icon, in the 32x32 icon coordinates.
+ */
+const LINE_ICON_SYMBOL_SIZE = 20;
+
+/**
+ * Stroke width of a dot symbol in the legend icon, in the 32x32 icon coordinates.
+ * The icon is scaled down, so the stroke width of the dots in the chart would be too thin to see.
+ */
+const ICON_SYMBOL_STROKE_WIDTH = 3;
+
+/**
+ * Colors of a dot symbol in the legend icon.
+ * The icon follows the dots. An inactive item draws the stroke with the inactive color,
+ * and the fill too when it comes from the item: equal to the item color or to the stroke.
+ * Other fills, such as the white fill of the default Line dots, stay.
+ */
+function getIconDotColors(
+  dot: LegendPayloadDot,
+  data: LegendPayload,
+  inactiveColor: string,
+): { fill: string | undefined; stroke: string | undefined } {
+  const { fill, stroke } = dot;
+  if (!data.inactive) {
+    return { fill, stroke };
+  }
+  const hasColor = (color: string | undefined): color is string => color != null && color !== 'none';
+  const isItemFill = hasColor(fill) && (fill === data.color || fill === stroke);
+  return {
+    fill: isItemFill ? inactiveColor : fill,
+    stroke: hasColor(stroke) ? inactiveColor : stroke,
+  };
+}
+
+/**
+ * The `line` legend icon for a graphical item that draws one of the predefined symbols at its data points:
+ * a line with that symbol in the middle, in place of the default circle.
+ * The symbol has the same colors as the dots in the chart, and the line reaches the edge of the symbol.
+ */
+function LineWithSymbolIcon({
+  dot,
+  color,
+  dotColors,
+}: {
+  dot: LegendPayloadDot;
+  color: string | undefined;
+  dotColors: { fill: string | undefined; stroke: string | undefined };
+}) {
+  const halfSize = SIZE / 2;
+  const { symbol } = dot;
+  const halfWidth = getSymbolHalfWidth(symbol, LINE_ICON_SYMBOL_SIZE, 'diameter');
+  return (
+    <g className="recharts-legend-icon">
+      <path
+        strokeWidth={4}
+        fill="none"
+        stroke={color}
+        d={`M0,${halfSize}H${halfSize - halfWidth}M${halfSize + halfWidth},${halfSize}H${SIZE}`}
+      />
+      <Symbols
+        type={symbol}
+        cx={halfSize}
+        cy={halfSize}
+        size={LINE_ICON_SYMBOL_SIZE}
+        sizeType="diameter"
+        fill={dotColors.fill ?? 'none'}
+        stroke={dotColors.stroke ?? color}
+        strokeWidth={ICON_SYMBOL_STROKE_WIDTH}
+        strokeLinejoin="round"
+      />
+    </g>
+  );
+}
+
+/**
+ * The legend icon that is the dot symbol itself, with the same colors as the dots in the chart.
+ */
+function DotSymbolIcon({
+  dot,
+  color,
+  dotColors,
+}: {
+  dot: LegendPayloadDot;
+  color: string | undefined;
+  dotColors: { fill: string | undefined; stroke: string | undefined };
+}) {
+  const halfSize = SIZE / 2;
+  const hasStroke = dotColors.stroke != null && dotColors.stroke !== 'none';
+  const strokeProps = hasStroke
+    ? { stroke: dotColors.stroke, strokeWidth: ICON_SYMBOL_STROKE_WIDTH, strokeLinejoin: 'round' as const }
+    : {};
+  return (
+    <Symbols
+      fill={dotColors.fill ?? color}
+      {...strokeProps}
+      cx={halfSize}
+      cy={halfSize}
+      // keep the stroke inside the icon
+      size={hasStroke ? SIZE - ICON_SYMBOL_STROKE_WIDTH : SIZE}
+      sizeType="diameter"
+      type={dot.symbol}
+    />
+  );
+}
+
 function Icon({
   data,
   iconType,
@@ -190,6 +327,10 @@ function Icon({
       />
     );
   }
+  const dotColors = data.dot == null ? undefined : getIconDotColors(data.dot, data, inactiveColor);
+  if (preferredIcon === 'line' && data.dot != null && dotColors != null) {
+    return <LineWithSymbolIcon dot={data.dot} color={color} dotColors={dotColors} />;
+  }
   if (preferredIcon === 'line') {
     return (
       <path
@@ -218,6 +359,10 @@ function Icon({
     const iconProps: any = { ...data };
     delete iconProps.legendIcon;
     return React.cloneElement(data.legendIcon, iconProps);
+  }
+
+  if (data.dot != null && dotColors != null && preferredIcon === data.dot.symbol) {
+    return <DotSymbolIcon dot={data.dot} color={color} dotColors={dotColors} />;
   }
 
   return <Symbols fill={color} cx={halfSize} cy={halfSize} size={SIZE} sizeType="diameter" type={preferredIcon} />;

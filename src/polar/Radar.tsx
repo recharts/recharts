@@ -15,6 +15,7 @@ import {
   LabelListFromLabelProp,
 } from '../component/LabelList';
 import { Dots } from '../component/Dots';
+import { getDotSymbol, getLegendPayloadDot } from '../shape/DotSymbol';
 import {
   ActiveDotType,
   AnimationDuration,
@@ -49,12 +50,18 @@ import { ZIndexable, ZIndexLayer } from '../zIndex/ZIndexLayer';
 import { DefaultZIndexes } from '../zIndex/DefaultZIndexes';
 import { RechartsScale } from '../util/scale/RechartsScale';
 import { usePolarChartLayout } from '../context/chartLayoutContext';
-import { GraphicalItemStyle } from '../theme/RechartsTheme';
+import { GraphicalItemStyle, Styles2D } from '../theme/RechartsTheme';
 import { useRechartsTheme } from '../theme/RechartsThemeContext';
 import { useBackwardsCompatibleTheme } from '../theme/useBackwardsCompatibleTheme';
-import { getActiveStyleOverrides } from '../theme/activeStyles';
+import { UnthemedStyles, useUnthemedStyles } from '../theme/dataEntryStyles';
 import { useGraphicalItemIdentity } from '../theme/useGraphicalItemIdentity';
 import { useEffectiveDataKey } from '../util/useEffectiveDataKey';
+import {
+  DataLabelColorsContextProvider,
+  DataLabelThemeContextProvider,
+  useSeriesDataLabelColors,
+  useSeriesLabelThemeResolver,
+} from '../theme/labelTheme';
 
 export interface RadarPoint {
   x: number;
@@ -132,13 +139,19 @@ export interface RadarProps<DataPointType = any, DataValueType = any>
   className?: string;
   connectNulls?: boolean;
   /**
-   * Renders a circle element at each data point. Options:
+   * Renders a dot at each data point. Options:
    *
    * - `false`: no dots are drawn;
    * - `true`: renders the dots with default settings;
-   * - `object`: the props of the dot. This will be merged with the internal calculated props of each dot;
+   * - `object`: the props of the dot. This will be merged with the internal calculated props of each dot.
+   *   Set `symbol` to draw a predefined symbol instead of a circle;
    * - `ReactElement`: the custom dot element;
    * - `function`: a render function of the custom dot.
+   *   The legend cannot know what a custom element or function draws, so set a matching `legendType`;
+   * - `string`: name of a predefined symbol, such as `'diamond'` or `'star'`, the same as in `legendType`.
+   *   Use different symbols to tell series apart without relying on color.
+   *   The legend icon shows the same symbol.
+   *   To change the size of the symbol, use the object form with `symbol` and `r`.
    *
    * @defaultValue false
    */
@@ -167,7 +180,11 @@ export interface RadarProps<DataPointType = any, DataValueType = any>
    */
   label?: ImplicitLabelListType;
   /**
-   * The type of icon in legend.  If set to 'none', no legend item will be rendered.
+   * The type of icon in legend.
+   * If set to 'none', no legend item will be rendered.
+   *
+   * By default, the legend icon shows the same predefined symbol as the data points, if they use one.
+   *
    * @defaultValue rect
    */
   legendType?: LegendType;
@@ -231,13 +248,19 @@ function getLegendItemColor(stroke: string | undefined, fill: string | undefined
   return stroke && stroke !== 'none' ? stroke : fill;
 }
 
-const computeLegendPayloadFromRadarSectors = (props: PropsWithDefaults): ReadonlyArray<LegendPayload> => {
-  const { dataKey, name, stroke, fill, legendType, hide } = props;
+const computeLegendPayloadFromRadarSectors = (
+  props: PropsWithDefaults,
+  dotFill: string | undefined,
+): ReadonlyArray<LegendPayload> => {
+  const { dataKey, name, stroke, fill, legendType, hide, dot } = props;
   return [
     {
       inactive: hide,
       dataKey,
       type: legendType,
+      // the same colors as the dots get in RadarDotsWrapper
+      // Radar keeps its default legend icons with a theme too, only a dot symbol changes them
+      dot: getLegendPayloadDot(dot, { fill: dotFill ?? fill, stroke }, false),
       color: getLegendItemColor(stroke, fill),
       value: getTooltipNameProp(name, dataKey),
       payload: props,
@@ -280,6 +303,7 @@ const SetRadarTooltipEntrySettings = React.memo(
         color: getLegendItemColor(stroke, fill),
         unit: '', // why doesn't Radar support unit?
         graphicalItemId: id,
+        ignoreDataEntryColors: true,
       },
     };
     return <SetTooltipEntrySettings tooltipEntrySettings={tooltipEntrySettings} />;
@@ -288,11 +312,13 @@ const SetRadarTooltipEntrySettings = React.memo(
 
 type RadarPropsWithDotFill = WithIdRequired<PropsWithDefaults> & {
   dotFill?: string;
+  unthemedStyles?: UnthemedStyles;
+  themedActiveStyles?: Styles2D;
 };
 
 function RadarDotsWrapper({ points, props }: { points: ReadonlyArray<RadarPoint>; props: RadarPropsWithDotFill }) {
   const { dot, dataKey } = props;
-  const { id, dotFill, ...propsWithoutId } = props;
+  const { id, dotFill, unthemedStyles, ...propsWithoutId } = props;
 
   const baseProps = svgPropertiesNoEvents(propsWithoutId);
 
@@ -304,6 +330,7 @@ function RadarDotsWrapper({ points, props }: { points: ReadonlyArray<RadarPoint>
       dotClassName="recharts-radar-dot"
       dataKey={dataKey}
       baseProps={{ ...baseProps, fill: dotFill ?? baseProps.fill }}
+      unthemedStyles={unthemedStyles}
     />
   );
 }
@@ -636,6 +663,7 @@ function RadarWithState(props: InternalRadarProps) {
         mainColor={getLegendItemColor(props.stroke, props.fill)}
         itemDataKey={props.dataKey}
         activeDot={props.activeDot}
+        themedActiveStyles={props.themedActiveStyles}
       />
     </ZIndexLayer>
   );
@@ -673,21 +701,21 @@ export function Radar<DataPointType = any, DataValueType = any>(outsideProps: Pr
     radiusAxisId: outsideProps.radiusAxisId ?? defaultRadarProps.radiusAxisId,
   });
   const graphicalItemThemeSelector = useGraphicalItemIdentity(dataKey, outsideProps);
-  const graphicalItemTheme = useBackwardsCompatibleTheme<GraphicalItemStyle>(
+  const resolveLabelTheme = useSeriesLabelThemeResolver(graphicalItemThemeSelector);
+  const graphicalItemTheme = useBackwardsCompatibleTheme<Omit<GraphicalItemStyle, 'label'>>(
     graphicalItemThemeSelector,
     outsideProps,
     undefined,
   );
   const themeStrokeDasharray = graphicalItemTheme?.strokeDasharray;
-  const themedActiveDot = getActiveStyleOverrides(outsideProps.activeDot ?? true, graphicalItemTheme?.active);
-  const activeDot =
-    themedActiveDot == null
-      ? outsideProps.activeDot
-      : { ...themedActiveDot, ...(typeof outsideProps.activeDot === 'object' ? outsideProps.activeDot : {}) };
+  const unthemedStyles = useUnthemedStyles(outsideProps);
+  const themedActiveStyles = graphicalItemTheme?.active;
   const propsWithTheme: Props = {
     ...outsideProps,
     dataKey,
-    activeDot,
+    activeDot: outsideProps.activeDot,
+    // the legend shows the same symbol as the dots, unless legendType says otherwise
+    legendType: outsideProps.legendType ?? getDotSymbol(outsideProps.dot),
     fill: outsideProps.fill ?? graphicalItemTheme?.fill,
     fillOpacity: outsideProps.fillOpacity ?? graphicalItemTheme?.fillOpacity,
     stroke: outsideProps.stroke ?? graphicalItemTheme?.stroke,
@@ -701,6 +729,7 @@ export function Radar<DataPointType = any, DataValueType = any>(outsideProps: Pr
   const dotFill =
     outsideProps.fill ??
     (rechartsTheme == null ? props.fill : getLegendItemColor(props.stroke, graphicalItemTheme?.fill));
+  const labelColors = useSeriesDataLabelColors(getLegendItemColor(props.stroke, props.fill));
   return (
     <RegisterGraphicalItemId id={props.id} type="radar">
       {id => (
@@ -714,7 +743,7 @@ export function Radar<DataPointType = any, DataValueType = any>(outsideProps: Pr
             angleAxisId={props.angleAxisId}
             radiusAxisId={props.radiusAxisId}
           />
-          <SetPolarLegendPayload legendPayload={computeLegendPayloadFromRadarSectors(props)} />
+          <SetPolarLegendPayload legendPayload={computeLegendPayloadFromRadarSectors(props, dotFill)} />
           <SetRadarTooltipEntrySettings
             dataKey={props.dataKey}
             stroke={props.stroke}
@@ -725,7 +754,17 @@ export function Radar<DataPointType = any, DataValueType = any>(outsideProps: Pr
             tooltipType={props.tooltipType}
             id={id}
           />
-          <RadarImpl {...props} id={id} dotFill={dotFill} />
+          <DataLabelThemeContextProvider value={resolveLabelTheme}>
+            <DataLabelColorsContextProvider value={labelColors}>
+              <RadarImpl
+                {...props}
+                id={id}
+                dotFill={dotFill}
+                unthemedStyles={unthemedStyles}
+                themedActiveStyles={themedActiveStyles}
+              />
+            </DataLabelColorsContextProvider>
+          </DataLabelThemeContextProvider>
         </>
       )}
     </RegisterGraphicalItemId>

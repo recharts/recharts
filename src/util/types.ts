@@ -1124,7 +1124,7 @@ type RecordString<T> = Record<string, T>;
 type AdaptEventHandlersReturn = RecordString<(e?: Event) => any> | RecordString<(e: Event) => void> | null;
 
 export const adaptEventHandlers = (
-  props: RecordString<any> | Component | FunctionComponent | boolean,
+  props: RecordString<any> | Component | FunctionComponent | boolean | string,
   newHandler?: (e?: Event) => any,
 ): AdaptEventHandlersReturn => {
   if (!props || typeof props === 'function' || typeof props === 'boolean') {
@@ -1230,6 +1230,19 @@ export type Size = { width: number; height: number };
 /**
  * These are the props we are going to pass to an `activeDot` or `dot` if it is a function or a custom Component
  */
+/**
+ * Lets the object form of `dot` and `activeDot` draw a predefined symbol instead of a circle.
+ */
+export interface DotSymbolOption {
+  /**
+   * Name of a predefined symbol to draw instead of a circle, the same names as in `legendType`.
+   * The symbol is sized from `r`, so that it spans the same diameter as a circle with that radius would.
+   *
+   * @example <Line dot={{ symbol: 'diamond', r: 6 }} />
+   */
+  symbol?: SymbolType;
+}
+
 export type ActiveDotProps = DotProps & {
   payload: any;
   index: number;
@@ -1268,14 +1281,25 @@ export type ActiveDotType =
    */
   | ((props: ActiveDotProps) => ReactNode)
   /**
-   * activeDot can be an object; props from here will be appended to the default active dot
+   * activeDot can be an object; props from here will be appended to the default active dot.
+   * Set `symbol` to draw one of the predefined symbols instead of a circle, and `r` to change its size.
+   *
+   * @example <Line activeDot={{ symbol: 'diamond', r: 8 }} />
    */
-  | Partial<ActiveDotProps>
+  | (Partial<ActiveDotProps> & DotSymbolOption)
   /**
    * activeDot can be an element; it will get cloned and will receive new extra props.
    * I do not recommend this way! Use React component instead, that way you get more predictable props.
    */
-  | ReactElement<SVGProps<SVGElement>>;
+  | ReactElement<SVGProps<SVGElement>>
+  /**
+   * activeDot can be one of the predefined symbols, the same as in Legend and Scatter.
+   * The symbol is rendered using the {@link Symbols} component, sized to fit the default active dot.
+   * To change the size, use the object form: `activeDot={{ symbol: 'diamond', r: 8 }}`.
+   *
+   * @example <Line activeDot="diamond" />
+   */
+  | SymbolType;
 
 /**
  * Inside the dot event handlers we provide extra information about the dot point
@@ -1317,14 +1341,26 @@ export type DotType =
    */
   | ((props: DotItemDotProps) => ReactNode)
   /**
-   * dot can be an object; props from here will be appended to the default dot
+   * dot can be an object; props from here will be appended to the default dot.
+   * Set `symbol` to draw one of the predefined symbols instead of a circle, and `r` to change its size.
+   *
+   * @example <Line dot={{ symbol: 'diamond', r: 6 }} />
    */
-  | Partial<DotProps>
+  | (Partial<DotProps> & DotSymbolOption)
   /**
    * dot can be an element; it will get cloned and will receive new extra props.
    * I do not recommend this way! Use React component instead, that way you get more predictable props.
    */
-  | ReactElement<SVGProps<SVGElement>>;
+  | ReactElement<SVGProps<SVGElement>>
+  /**
+   * dot can be one of the predefined symbols, the same as in Legend and Scatter.
+   * The symbol is rendered using the {@link Symbols} component, sized to fit the default dot.
+   * To change the size, use the object form: `dot={{ symbol: 'diamond', r: 6 }}`.
+   * The legend icon shows the same symbol, unless `legendType` says otherwise.
+   *
+   * @example <Line dot="diamond" />
+   */
+  | SymbolType;
 
 /**
  * Animation metadata forwarded to custom chart shapes.

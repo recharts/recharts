@@ -293,12 +293,20 @@ export const getCartesianPosition = (options: GetCartesianPositionOptions): Calc
 
 const absolutePositions: ReadonlyArray<CartesianPosition> = ['top', 'left', 'right', 'bottom'];
 
-export function isOutsidePosition(position: CartesianPosition | undefined): boolean {
+/**
+ * Returns true for positions outside of the view box: `top`, `left`, `right`, `bottom`, and `{ x, y }` objects.
+ * Every other position, including no position, is inside of the view box.
+ * Label positions that {@link getCartesianPosition} does not know, such as `outside`, render at the center.
+ *
+ * @param position Legend or label position
+ * @returns true if the position is outside of the view box
+ */
+export function isOutsidePosition(position: CartesianPosition | CartesianLabelPosition | undefined): boolean {
   if (position == null) {
     return false;
   }
   if (typeof position === 'object') {
     return true;
   }
-  return absolutePositions.includes(position);
+  return absolutePositions.some(p => p === position);
 }

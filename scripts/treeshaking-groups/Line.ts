@@ -12,6 +12,7 @@ export const expectedInBundle = [
   'LineDrawShape',
   'matchAppend',
   'matchByIndex',
+  'Symbols',
   'Text',
   'useActiveTooltipDataPoints',
   'usePlotArea',

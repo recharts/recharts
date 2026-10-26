@@ -621,6 +621,8 @@ describe('<Sankey />', () => {
       const expectedNodeProps: SankeyNodeProps = {
         height: 13.172337974085991,
         index: 0,
+        // valid SVG props from the node data entry are spread on the node
+        name: 'Agricultural waste',
         payload: {
           depth: 0,
           dx: 10,
@@ -745,6 +747,8 @@ describe('<Sankey />', () => {
       const expectedNodeProps: SankeyNodeProps = {
         height: 13.172337974085991,
         index: 0,
+        // valid SVG props from the node data entry are spread on the node
+        name: 'Agricultural waste',
         payload: {
           name: 'Agricultural waste',
           sourceNodes: [],
