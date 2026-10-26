@@ -56,7 +56,12 @@ import { useBackwardsCompatibleTheme } from '../theme/useBackwardsCompatibleThem
 import { UnthemedStyles, useUnthemedStyles } from '../theme/dataEntryStyles';
 import { useGraphicalItemIdentity } from '../theme/useGraphicalItemIdentity';
 import { useEffectiveDataKey } from '../util/useEffectiveDataKey';
-import { DataLabelThemeContextProvider, useSeriesLabelThemeResolver } from '../theme/labelTheme';
+import {
+  DataLabelColorsContextProvider,
+  DataLabelThemeContextProvider,
+  useSeriesDataLabelColors,
+  useSeriesLabelThemeResolver,
+} from '../theme/labelTheme';
 
 export interface RadarPoint {
   x: number;
@@ -724,6 +729,7 @@ export function Radar<DataPointType = any, DataValueType = any>(outsideProps: Pr
   const dotFill =
     outsideProps.fill ??
     (rechartsTheme == null ? props.fill : getLegendItemColor(props.stroke, graphicalItemTheme?.fill));
+  const labelColors = useSeriesDataLabelColors(getLegendItemColor(props.stroke, props.fill));
   return (
     <RegisterGraphicalItemId id={props.id} type="radar">
       {id => (
@@ -749,13 +755,15 @@ export function Radar<DataPointType = any, DataValueType = any>(outsideProps: Pr
             id={id}
           />
           <DataLabelThemeContextProvider value={resolveLabelTheme}>
-            <RadarImpl
-              {...props}
-              id={id}
-              dotFill={dotFill}
-              unthemedStyles={unthemedStyles}
-              themedActiveStyles={themedActiveStyles}
-            />
+            <DataLabelColorsContextProvider value={labelColors}>
+              <RadarImpl
+                {...props}
+                id={id}
+                dotFill={dotFill}
+                unthemedStyles={unthemedStyles}
+                themedActiveStyles={themedActiveStyles}
+              />
+            </DataLabelColorsContextProvider>
           </DataLabelThemeContextProvider>
         </>
       )}

@@ -392,6 +392,12 @@ export const commentSimilarityExceptions: ReadonlyArray<CommentSimilarityGroup> 
     reason: 'Cell is a generic component used to override attributes of children, so its description is more abstract.',
   },
   {
+    components: ['LabelList'],
+    props: ['fill'],
+    reason:
+      'In LabelList, fill is the text color of the labels, and it explains how labels pick a color automatically in a theme. Elsewhere it is the color of a shape.',
+  },
+  {
     components: ['Tooltip'],
     props: ['labelStyle'],
     reason:

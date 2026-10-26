@@ -76,7 +76,12 @@ import { useBackwardsCompatibleTheme } from '../theme/useBackwardsCompatibleThem
 import { UnthemedStyles, useUnthemedStyles } from '../theme/dataEntryStyles';
 import { useGraphicalItemIdentity } from '../theme/useGraphicalItemIdentity';
 import { useEffectiveDataKey } from '../util/useEffectiveDataKey';
-import { DataLabelThemeContextProvider, useSeriesLabelThemeResolver } from '../theme/labelTheme';
+import {
+  DataLabelColorsContextProvider,
+  DataLabelThemeContextProvider,
+  useSeriesDataLabelColors,
+  useSeriesLabelThemeResolver,
+} from '../theme/labelTheme';
 
 /**
  * @inline
@@ -1137,6 +1142,7 @@ function AreaFn(outsideProps: Props<any, any>) {
     outsideProps.fill ?? (rechartsTheme == null ? props.fill : getLegendItemColor(props.stroke, theme?.fill));
   const isPanorama = useIsPanorama();
   // Report all props to Redux store first, before calling hooks, to avoid circular dependencies.
+  const labelColors = useSeriesDataLabelColors(getLegendItemColor(props.stroke, props.fill));
   return (
     <RegisterGraphicalItemId id={props.id} type="area">
       {id => (
@@ -1171,13 +1177,15 @@ function AreaFn(outsideProps: Props<any, any>) {
             connectNulls={props.connectNulls}
           />
           <DataLabelThemeContextProvider value={resolveLabelTheme}>
-            <AreaImpl
-              {...props}
-              id={id}
-              dotFill={dotFill}
-              unthemedStyles={unthemedStyles}
-              themedActiveStyles={themedActiveStyles}
-            />
+            <DataLabelColorsContextProvider value={labelColors}>
+              <AreaImpl
+                {...props}
+                id={id}
+                dotFill={dotFill}
+                unthemedStyles={unthemedStyles}
+                themedActiveStyles={themedActiveStyles}
+              />
+            </DataLabelColorsContextProvider>
           </DataLabelThemeContextProvider>
         </>
       )}

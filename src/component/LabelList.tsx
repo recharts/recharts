@@ -1,6 +1,13 @@
 import * as React from 'react';
 import { createContext, PropsWithoutRef, ReactNode, SVGProps, useContext } from 'react';
-import { LabelContentType, isLabelContentAFunction, Label, LabelPosition, LabelFormatter } from './Label';
+import {
+  LabelContentType,
+  isLabelContentAFunction,
+  isPolarViewBox,
+  Label,
+  LabelPosition,
+  LabelFormatter,
+} from './Label';
 import { Layer } from '../container/Layer';
 import { getValueByDataKey } from '../util/ChartUtils';
 import { CartesianViewBoxRequired, DataKey, PolarViewBoxRequired, TrapezoidViewBox } from '../util/types';
@@ -13,7 +20,16 @@ import { getLabelBackgroundZIndex, LabelZIndexProvider } from '../zIndex/labelBa
 import { isRenderableText, RenderableText, TextBackgroundProps, TextHaloProps } from './Text';
 import { GraphicalItemClipArea, useGraphicalItemClipArea } from '../cartesian/GraphicalItemClipPath';
 import { AxisId } from '../state/cartesianAxisSlice';
-import { applyLabelTheme, DataLabelContextProvider, useDataLabelThemeResolver } from '../theme/labelTheme';
+import {
+  applyLabelTheme,
+  DataLabelContextProvider,
+  getAutomaticDataLabelFill,
+  resolveLabelBackground,
+  useDataLabelColors,
+  useDataLabelThemeResolver,
+} from '../theme/labelTheme';
+import { useRechartsTheme } from '../theme/RechartsThemeContext';
+import { getEffectivePageBackground } from '../theme/pageBackground';
 
 export interface LabelListEntry<DataPointItem = any> {
   /**
@@ -128,6 +144,26 @@ interface LabelListProps extends ZIndexable {
    * @see {@link https://recharts.github.io/en-US/guide/zIndex/ Z-Index and layers guide}
    */
   zIndex?: number;
+  /**
+   * The text color of every label. It wins over the theme.
+   *
+   * Without it, and without a theme, each label takes the fill of its data entry, if there is one.
+   *
+   * With a theme, a `fill` in the theme's `graphicalItems[n].label.style` applies first.
+   * Otherwise each label picks a color automatically:
+   * - A label on top of a filled shape (Bar, Funnel, Pie, RadialBar) takes the `pageBackground` color,
+   *   or the `typography` color if there is no page background.
+   *   A shape with `fill="none"` or `transparent` is not filled, so its labels count as next to it.
+   * - A label next to its shape, and every label of Line, Area, Radar and Scatter, takes the color of its shape.
+   * - A label with a `background` or `halo` takes the color of its shape too.
+   * - A label at an `{ x, y }` position takes the `typography` color.
+   *
+   * Custom `content` receives the resolved color as its `fill` prop.
+   *
+   * @see {@link https://recharts.github.io/en-US/guide/label-colors/ Label colors guide}
+   * @example <LabelList position="inside" fill="#000" />
+   */
+  fill?: string;
   /**
    * Draws a rectangle behind each label, for example to keep labels readable on top of filled shapes.
    *
@@ -271,6 +307,11 @@ export function LabelList({ valueAccessor = defaultAccessor, ...restProps }: Pro
   const polarData = usePolarLabelListContext();
   const clipArea = useContext(LabelListClipAreaContext);
   const resolveLabelTheme = useDataLabelThemeResolver();
+  const theme = useRechartsTheme();
+  const dataLabelColors = useDataLabelColors();
+  // Automatic colors apply only with a theme. Without one, labels keep the fill of their entry.
+  const automaticLabelColors = theme == null ? undefined : dataLabelColors;
+  const pageBackground = getEffectivePageBackground(theme);
   const data = cartesianData || polarData;
   const labelZIndex = zIndex ?? DefaultZIndexes.label;
   const backgroundZIndex = getLabelBackgroundZIndex(labelZIndex, others.background);
@@ -297,13 +338,24 @@ export function LabelList({ valueAccessor = defaultAccessor, ...restProps }: Pro
                 const idProps = isNullish(id) ? {} : { id: `${id}-${index}` };
 
                 /*
-                 * Prefer to use the explicit fill from LabelList props, then the fill from the theme.
-                 * Only in an absence of these, fall back to the fill of the entry.
-                 * The entry fill can be quite difficult to see especially in Bar, Pie, RadialBar in inside positions,
-                 * which is why the theme can also draw a background behind the label.
-                 * On the other hand it's quite convenient in Scatter, Line, or when the position is outside the Bar, Pie filled shapes.
+                 * The explicit fill from LabelList props wins, then the fill from the label theme.
+                 * Without a theme, the label falls back to the fill of the entry.
+                 * With a theme, the fallback depends on the position, so that a label on top of a shape stays readable.
                  */
-                const themedProps = applyLabelTheme(resolveLabelTheme?.(index), restProps, entry.fill);
+                const labelTheme = resolveLabelTheme?.(index);
+                const background = resolveLabelBackground(restProps.background, labelTheme?.background);
+                const fallbackFill =
+                  automaticLabelColors == null
+                    ? entry.fill
+                    : getAutomaticDataLabelFill({
+                        position: others.position,
+                        isPolar: isPolarViewBox(entry.viewBox),
+                        hasFilledShapes: automaticLabelColors.hasFilledShapes,
+                        shapeColors: automaticLabelColors.getShapeColors?.(index) ?? { fill: entry.fill },
+                        pageBackground,
+                        hasOwnBackground: Boolean(background) || Boolean(others.halo),
+                      });
+                const themedProps = applyLabelTheme(labelTheme, restProps, fallbackFill);
 
                 return (
                   <Label

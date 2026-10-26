@@ -161,7 +161,7 @@ describe('label theme', () => {
   });
 
   describe('data labels', () => {
-    it('keep their default color and draw the background of their theme entry', () => {
+    it('take the series color and draw the background of their theme entry', () => {
       const { container } = rechartsTestRender(
         <RechartsThemeProvider value={theme}>
           <BarChart width={300} height={300} data={data}>
@@ -172,8 +172,8 @@ describe('label theme', () => {
       const texts = getTexts(container, '.recharts-label-list .recharts-label');
       expect(texts).toHaveLength(3);
       texts.forEach(text => {
-        // Bar labels have no color of their own, and this theme sets no typography
-        expect(text.style.fill).toBe('');
+        // The label sits on its own background, not on the bar, so it takes the series color
+        expect(text.style.fill).toBe('purple');
         expect(text.style.fontWeight).toBe('bold');
         // The global label theme does not apply to data labels
         expect(text.style.fontStyle).toBe('');
@@ -242,8 +242,10 @@ describe('label theme', () => {
         </RechartsThemeProvider>,
       );
       const texts = getTexts(container, '.recharts-label-list .recharts-label');
+      expect(texts).toHaveLength(3);
       texts.forEach(text => {
-        expect(text.style.fill).toBe('');
+        // The label sits on top of the bar, so it takes the automatic page background color
+        expect(text.style.fill).toBe('white');
         expect(text.style.fontWeight).toBe('');
       });
       expect(getBackgroundFills(container)).toEqual([]);

@@ -98,13 +98,19 @@ import { useGraphicalItemIdentity } from '../theme/useGraphicalItemIdentity';
 import { useEffectiveDataKey } from '../util/useEffectiveDataKey';
 import {
   getEntryColor,
+  getEntryShapeColors,
   getEntryStyleOverrides,
   omitEntrySvgProps,
   UnthemedStyles,
   useUnthemedStyles,
 } from '../theme/dataEntryStyles';
 import { getActiveStyleOverrides, useThemedActiveStyles } from '../theme/activeStyles';
-import { DataLabelThemeContextProvider, useSeriesLabelThemeResolver } from '../theme/labelTheme';
+import {
+  DataLabelColors,
+  DataLabelColorsContextProvider,
+  DataLabelThemeContextProvider,
+  useSeriesLabelThemeResolver,
+} from '../theme/labelTheme';
 
 type BarRectangleType = {
   x: number | null;
@@ -633,11 +639,25 @@ function BarLabelListProvider({
   showLabels,
   children,
   rects,
+  fill,
+  stroke,
+  unthemedStyles,
 }: {
   showLabels: boolean;
   children: ReactNode;
   rects: ReadonlyArray<BarRectangleItem> | undefined;
+  fill: string | undefined;
+  stroke: string | undefined;
+  unthemedStyles: UnthemedStyles | undefined;
 }) {
+  // The same color as in Tooltip and Legend.
+  const labelColors: DataLabelColors = React.useMemo(
+    () => ({
+      hasFilledShapes: true,
+      getShapeColors: (index: number) => getEntryShapeColors(rects?.[index]?.payload, fill, stroke, unthemedStyles),
+    }),
+    [rects, fill, stroke, unthemedStyles],
+  );
   const labelListEntries: ReadonlyArray<CartesianLabelListEntry> | undefined = rects?.map(
     (entry: BarRectangleItem): CartesianLabelListEntry => {
       const viewBox: TrapezoidViewBox = {
@@ -661,7 +681,7 @@ function BarLabelListProvider({
 
   return (
     <CartesianLabelListContextProvider value={showLabels ? labelListEntries : undefined}>
-      {children}
+      <DataLabelColorsContextProvider value={labelColors}>{children}</DataLabelColorsContextProvider>
     </CartesianLabelListContextProvider>
   );
 }
@@ -985,7 +1005,13 @@ function RectanglesWithAnimation({
   );
 
   return (
-    <BarLabelListProvider showLabels={!isAnimating} rects={data}>
+    <BarLabelListProvider
+      showLabels={!isAnimating}
+      rects={data}
+      fill={props.fill}
+      stroke={props.stroke}
+      unthemedStyles={props.unthemedStyles}
+    >
       <AnimatedItems
         animationInput={data}
         animationIdPrefix="recharts-bar-"
