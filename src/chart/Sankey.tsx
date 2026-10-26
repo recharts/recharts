@@ -920,21 +920,19 @@ interface SankeyProps extends EventThrottlingProps {
    */
   node?: SankeyNodeOptions;
   /**
-   * Labels of the nodes, the same way other charts label their shapes.
+   * Renders one label for each node. Options:
+   * - `true`: renders default labels with the node name;
+   * - `false`: no labels are rendered;
+   * - `object`: the props of LabelList component;
+   * - `ReactElement`: a custom SVG label element, such as `<text>` or `<g>`.
+   *   HTML elements such as `<div>` are not valid inside the chart SVG and may trigger React DOM warnings.
+   * - `function`: a render function of custom label.
    *
-   * - `true` shows the node name at the center of the node rectangle.
-   * - An object is passed as the props of an implicit `<LabelList>`.
-   * - A function or a React element is used as the `content` of an implicit `<LabelList>`.
-   * - `LabelList` as a child of `Sankey` renders the same entries with full control over the props.
-   *
-   * Each label receives the node name as its value, and the node rectangle as its view box,
-   * so positions such as `inside`, `top`, or `right` attach to the node.
+   * @defaultValue false
    *
    * @example <Sankey label />
    * @example <Sankey label={{ position: 'right', fill: '#333' }} />
    * @example <Sankey><LabelList position="inside" /></Sankey>
-   *
-   * @default false
    */
   label?: ImplicitLabelListType;
   /**
@@ -1559,6 +1557,7 @@ export const sankeyDefaultProps = {
   align: 'justify',
   dataKey: 'value',
   iterations: 32,
+  label: false,
   linkCurvature: 0.5,
   margin: { top: 5, right: 5, bottom: 5, left: 5 },
   nameKey: 'name',
