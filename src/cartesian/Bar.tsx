@@ -98,6 +98,7 @@ import { useGraphicalItemIdentity } from '../theme/useGraphicalItemIdentity';
 import { useEffectiveDataKey } from '../util/useEffectiveDataKey';
 import {
   getEntryColor,
+  getEntryShapeColors,
   getEntryStyleOverrides,
   omitEntrySvgProps,
   UnthemedStyles,
@@ -653,7 +654,7 @@ function BarLabelListProvider({
   const labelColors: DataLabelColors = React.useMemo(
     () => ({
       hasFilledShapes: true,
-      getColor: (index: number) => getEntryColor(rects?.[index]?.payload, fill, stroke, unthemedStyles),
+      getShapeColors: (index: number) => getEntryShapeColors(rects?.[index]?.payload, fill, stroke, unthemedStyles),
     }),
     [rects, fill, stroke, unthemedStyles],
   );

@@ -26,7 +26,7 @@ import {
   YAxis,
 } from '../../src';
 import { RechartsTheme } from '../../src/theme/RechartsTheme';
-import { DataLabelColors, getAutomaticDataLabelFill } from '../../src/theme/labelTheme';
+import { getAutomaticDataLabelFill } from '../../src/theme/labelTheme';
 import { isOutsidePolarPosition } from '../../src/polar/isOutsidePolarPosition';
 import { rechartsTestRender } from '../helper/createSelectorTestCase';
 import { mockGetBBox, restoreMockGetBBox } from '../helper/mockGetBBox';
@@ -69,12 +69,10 @@ describe('isOutsidePolarPosition', () => {
 });
 
 describe('getAutomaticDataLabelFill', () => {
-  const filled: DataLabelColors = { hasFilledShapes: true };
-  const points: DataLabelColors = { hasFilledShapes: false };
-  const cartesianFilled = { colors: filled, isPolar: false };
-  const polarFilled = { colors: filled, isPolar: true };
-  const cartesianPoints = { colors: points, isPolar: false };
-  const base = { color: 'red', pageBackground: 'white', hasOwnBackground: false };
+  const cartesianFilled = { hasFilledShapes: true, isPolar: false };
+  const polarFilled = { hasFilledShapes: true, isPolar: true };
+  const cartesianPoints = { hasFilledShapes: false, isPolar: false };
+  const base = { shapeColors: { fill: 'red', stroke: 'blue' }, pageBackground: 'white', hasOwnBackground: false };
 
   it.each([
     [cartesianFilled, undefined, 'white'],
@@ -114,6 +112,32 @@ describe('getAutomaticDataLabelFill', () => {
     expect(getAutomaticDataLabelFill({ ...base, ...cartesianFilled, position: 'inside', hasOwnBackground: true })).toBe(
       'red',
     );
+  });
+
+  it.each(['none', 'transparent', undefined])(
+    'treats a shape with fill %j as not filled, and uses its stroke',
+    fill => {
+      const shapeColors = { fill, stroke: 'blue' };
+      expect(getAutomaticDataLabelFill({ ...base, ...cartesianFilled, shapeColors, position: 'inside' })).toBe('blue');
+      expect(getAutomaticDataLabelFill({ ...base, ...polarFilled, shapeColors, position: 'end' })).toBe('blue');
+    },
+  );
+
+  it('uses the stroke of point items', () => {
+    expect(
+      getAutomaticDataLabelFill({ ...base, ...cartesianPoints, shapeColors: { stroke: 'blue' }, position: undefined }),
+    ).toBe('blue');
+  });
+
+  it('uses the typography color when neither fill nor stroke paints anything', () => {
+    expect(
+      getAutomaticDataLabelFill({
+        ...base,
+        ...cartesianPoints,
+        shapeColors: { fill: 'none', stroke: 'none' },
+        position: 'top',
+      }),
+    ).toBeUndefined();
   });
 });
 
@@ -468,6 +492,20 @@ describe('automatic data label colors', () => {
         expect(getLabelFills(container)).toEqual(['white', 'white', 'white']);
       },
     );
+
+    it.each(['insideStart', 'end'] as const)('labels of an unfilled RadialBar at %s take its stroke', position => {
+      const { container } = rechartsTestRender(
+        <RechartsThemeProvider value={theme}>
+          <RadialBarChart width={300} height={300} data={data}>
+            <RadialBar dataKey="value" fill="none" stroke="blue" isAnimationActive={false} label={{ position }} />
+          </RadialBarChart>
+        </RechartsThemeProvider>,
+      );
+      // B has its own fill in the data, which wins over fill="none"
+      expect(getLabelFills(container)).toEqual(
+        position === 'end' ? ['blue', 'green', 'blue'] : ['blue', 'white', 'blue'],
+      );
+    });
 
     it.each(['end', 'outside'] as const)('labels at %s take the color of the sector', position => {
       const { container } = rechartsTestRender(

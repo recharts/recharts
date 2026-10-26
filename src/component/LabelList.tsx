@@ -153,6 +153,7 @@ interface LabelListProps extends ZIndexable {
    * Otherwise each label picks a color automatically:
    * - A label on top of a filled shape (Bar, Funnel, Pie, RadialBar) takes the `pageBackground` color,
    *   or the `typography` color if there is no page background.
+   *   A shape with `fill="none"` or `transparent` is not filled, so its labels count as next to it.
    * - A label next to its shape, and every label of Line, Area, Radar and Scatter, takes the color of its shape.
    * - A label with a `background` or `halo` takes the color of its shape too.
    * - A label at an `{ x, y }` position takes the `typography` color.
@@ -349,8 +350,8 @@ export function LabelList({ valueAccessor = defaultAccessor, ...restProps }: Pro
                     : getAutomaticDataLabelFill({
                         position: others.position,
                         isPolar: isPolarViewBox(entry.viewBox),
-                        colors: automaticLabelColors,
-                        color: automaticLabelColors.getColor?.(index) ?? entry.fill,
+                        hasFilledShapes: automaticLabelColors.hasFilledShapes,
+                        shapeColors: automaticLabelColors.getShapeColors?.(index) ?? { fill: entry.fill },
                         pageBackground,
                         hasOwnBackground: Boolean(background) || Boolean(others.halo),
                       });

@@ -107,11 +107,30 @@ export type DataLabelColors = {
    */
   hasFilledShapes: boolean;
   /**
-   * Returns the color the graphical item draws the data point at this index with, the same as in Tooltip and Legend.
+   * Returns the colors the graphical item draws the data point at this index with, the same as in Tooltip and Legend.
    * If undefined, the label takes the `fill` of its LabelList entry.
    */
-  getColor?: (index: number) => string | undefined;
+  getShapeColors?: (index: number) => ShapeColors;
 };
+
+/**
+ * The colors a graphical item draws one shape with.
+ * Graphical items that draw a single color per data point, such as Line, pass it as `stroke`.
+ */
+export type ShapeColors = {
+  fill?: string;
+  stroke?: string;
+};
+
+/**
+ * Returns true if the color paints something. `none` and `transparent` leave the shape empty.
+ *
+ * @param color fill or stroke
+ * @returns true if the color is visible
+ */
+function isPainted(color: string | undefined): color is string {
+  return color != null && color !== 'none' && color !== 'transparent';
+}
 
 const DataLabelColorsContext = createContext<DataLabelColors | undefined>(undefined);
 
@@ -134,7 +153,7 @@ export const filledShapeLabelColors: DataLabelColors = { hasFilledShapes: true }
  * @returns data label colors for {@link DataLabelColorsContextProvider}
  */
 export function useSeriesDataLabelColors(color: string | undefined): DataLabelColors {
-  return useMemo(() => ({ hasFilledShapes: false, getColor: () => color }), [color]);
+  return useMemo(() => ({ hasFilledShapes: false, getShapeColors: () => ({ stroke: color }) }), [color]);
 }
 
 /**
@@ -142,14 +161,16 @@ export function useSeriesDataLabelColors(color: string | undefined): DataLabelCo
  *
  * - A label that sits on top of a filled shape takes the `pageBackground` color,
  *   like a cut-out of the shape. Each palette entry of the built-in themes has 4.5:1 against `pageBackground`.
- * - A label next to its shape takes the color of its data point, so it reads as part of the series.
+ *   A shape with `fill="none"` or `transparent` is not filled, so its labels count as next to it.
+ * - A label next to its shape takes the color of its data point, so it reads as part of the series:
+ *   the fill, or the stroke if the fill paints nothing.
  * - A label with its own `background` or `halo` sits on that, so it takes the color of its data point too.
  * - A label at an `{ x, y }` position can be anywhere, so it takes the `typography` color.
  *
  * @param options.position the label position
  * @param options.isPolar true if the label renders in a polar view box, the same check that Label uses to place it
- * @param options.colors data label colors of the graphical item
- * @param options.color the color of the data point
+ * @param options.hasFilledShapes see {@link DataLabelColors.hasFilledShapes}
+ * @param options.shapeColors the colors of the data point
  * @param options.pageBackground the effective page background, see `getEffectivePageBackground`
  * @param options.hasOwnBackground true if the label draws a background or a halo
  * @returns the text color, or undefined for the `typography` color
@@ -157,27 +178,31 @@ export function useSeriesDataLabelColors(color: string | undefined): DataLabelCo
 export function getAutomaticDataLabelFill({
   position,
   isPolar,
-  colors,
-  color,
+  hasFilledShapes,
+  shapeColors,
   pageBackground,
   hasOwnBackground,
 }: {
   position: LabelPosition | undefined;
   isPolar: boolean;
-  colors: DataLabelColors;
-  color: string | undefined;
+  hasFilledShapes: boolean;
+  shapeColors: ShapeColors;
   pageBackground: string | undefined;
   hasOwnBackground: boolean;
 }): string | undefined {
   if (position != null && typeof position === 'object') {
     return undefined;
   }
+  const { fill, stroke } = shapeColors;
   const isOutside = isPolar ? isOutsidePolarPosition(position) : isOutsidePosition(position);
-  if (colors.hasFilledShapes && !isOutside && !hasOwnBackground) {
+  if (hasFilledShapes && isPainted(fill) && !isOutside && !hasOwnBackground) {
     // Without a page background there is no cut-out color, and the typography color is the safest choice.
     return pageBackground;
   }
-  return color;
+  if (isPainted(fill)) {
+    return fill;
+  }
+  return isPainted(stroke) ? stroke : undefined;
 }
 
 /**

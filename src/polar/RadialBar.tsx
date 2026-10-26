@@ -79,6 +79,7 @@ import { useGraphicalItemIdentity } from '../theme/useGraphicalItemIdentity';
 import { useEffectiveDataKey } from '../util/useEffectiveDataKey';
 import {
   getEntryColor,
+  getEntryShapeColors,
   getEntryStyleOverrides,
   omitEntrySvgProps,
   UnthemedStyles,
@@ -129,7 +130,7 @@ function RadialBarLabelListProvider({
   const labelColors: DataLabelColors = React.useMemo(
     () => ({
       hasFilledShapes: true,
-      getColor: (index: number) => getEntryColor(sectors[index], fill, stroke, unthemedStyles),
+      getShapeColors: (index: number) => getEntryShapeColors(sectors[index], fill, stroke, unthemedStyles),
     }),
     [sectors, fill, stroke, unthemedStyles],
   );

@@ -52,6 +52,7 @@ export type GraphicalItemStyle = Styles2D & {
    * If `style` sets no color, data labels pick one automatically:
    * - A label on top of a filled shape (Bar, Funnel, Pie, RadialBar) takes the `pageBackground` color,
    *   or the `typography` color if there is no page background.
+   *   A shape with `fill="none"` or `transparent` is not filled, so its labels count as next to it.
    * - A label next to its shape, and every label of Line, Area, Radar and Scatter, takes the color of its shape.
    * - A label with a `background` or `halo` takes the color of its shape too.
    * - A label at an `{ x, y }` position takes the `typography` color.

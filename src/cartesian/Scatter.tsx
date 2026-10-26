@@ -81,7 +81,13 @@ import { ChartData } from '../state/chartDataSlice';
 import { useGraphicalItemIdentity } from '../theme/useGraphicalItemIdentity';
 import { useEffectiveDataKey } from '../util/useEffectiveDataKey';
 import { getDataKeyOnAxis } from '../state/selectors/effectiveDataKeySelectors';
-import { getEntryStyleOverrides, hasOwnColors, UnthemedStyles, useUnthemedStyles } from '../theme/dataEntryStyles';
+import {
+  UnthemedStyles,
+  getEntryShapeColors,
+  getEntryStyleOverrides,
+  hasOwnColors,
+  useUnthemedStyles,
+} from '../theme/dataEntryStyles';
 import { getActiveStyleOverrides, useThemedActiveStyles } from '../theme/activeStyles';
 import { Styles2D } from '../theme/RechartsTheme';
 import {
@@ -598,8 +604,8 @@ function ScatterLabelListProvider({
   const labelColors: DataLabelColors = useMemo(
     () => ({
       hasFilledShapes: false,
-      getColor: (index: number) =>
-        getScatterEntryColor(points[index]?.payload, seriesFill, seriesStroke, unthemedStyles),
+      getShapeColors: (index: number) =>
+        getEntryShapeColors(points[index]?.payload, seriesFill, seriesStroke, unthemedStyles),
     }),
     [points, seriesFill, seriesStroke, unthemedStyles],
   );

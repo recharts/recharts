@@ -162,16 +162,40 @@ function getStringProp(obj: unknown, key: 'fill' | 'stroke'): string | undefined
 }
 
 /**
- * The color a graphical item renders a data entry with: its fill, or its stroke when it has no fill.
+ * The fill and stroke a graphical item renders a data entry with.
  * An inline `style.fill` or `style.stroke` of the entry wins over its `fill` or `stroke`, the same as in the browser.
  * Follows the order in which graphical items spread the styles: the entry colors win over the graphical item colors,
  * and with a theme, an entry with its own colors ignores the theme colors.
+ *
+ * @param entry data entry, with the props of its `Cell` if there is one
+ * @param fill fill of the graphical item, theme included
+ * @param stroke stroke of the graphical item, theme included
+ * @param unthemedStyles result of {@link useUnthemedStyles}, or undefined without a theme
+ */
+export function getEntryShapeColors(
+  entry: unknown,
+  fill: string | undefined,
+  stroke: string | undefined,
+  unthemedStyles: UnthemedStyles | undefined,
+): { fill: string | undefined; stroke: string | undefined } {
+  const itemStyles = getEntryStyleOverrides(entry, unthemedStyles) ?? { fill, stroke };
+  // An inline style wins over the presentation attribute, so the shape paints with `style.fill` and `style.stroke`.
+  const entryStyle = entry != null && typeof entry === 'object' && 'style' in entry ? entry.style : undefined;
+  return {
+    fill: getStringProp(entryStyle, 'fill') ?? getStringProp(entry, 'fill') ?? itemStyles.fill,
+    stroke: getStringProp(entryStyle, 'stroke') ?? getStringProp(entry, 'stroke') ?? itemStyles.stroke,
+  };
+}
+
+/**
+ * The color a graphical item renders a data entry with: its fill, or its stroke when it has no fill.
  * Tooltip and Legend use this so that they show the same color as the shape.
  *
  * @param entry data entry, with the props of its `Cell` if there is one
  * @param fill fill of the graphical item, theme included
  * @param stroke stroke of the graphical item, theme included
  * @param unthemedStyles result of {@link useUnthemedStyles}, or undefined without a theme
+ * @see getEntryShapeColors
  */
 export function getEntryColor(
   entry: unknown,
@@ -179,29 +203,8 @@ export function getEntryColor(
   stroke: string | undefined,
   unthemedStyles: UnthemedStyles | undefined,
 ): string | undefined {
-  const itemStyles = getEntryStyleOverrides(entry, unthemedStyles) ?? { fill, stroke };
-  const entryFill = getStringProp(entry, 'fill');
-  const entryStroke = getStringProp(entry, 'stroke');
-  // An inline style wins over the presentation attribute, so the shape paints with `style.fill` and `style.stroke`.
-  const entryStyle = entry != null && typeof entry === 'object' && 'style' in entry ? entry.style : undefined;
-  const entryStyleFill = getStringProp(entryStyle, 'fill');
-  const entryStyleStroke = getStringProp(entryStyle, 'stroke');
-  if (entryStyleFill != null) {
-    return entryStyleFill;
-  }
-  if (entryFill != null) {
-    return entryFill;
-  }
-  if (itemStyles.fill != null) {
-    return itemStyles.fill;
-  }
-  if (entryStyleStroke != null) {
-    return entryStyleStroke;
-  }
-  if (entryStroke != null) {
-    return entryStroke;
-  }
-  return itemStyles.stroke;
+  const colors = getEntryShapeColors(entry, fill, stroke, unthemedStyles);
+  return colors.fill ?? colors.stroke;
 }
 
 /**

@@ -94,8 +94,9 @@ export function LabelColors() {
           <tr>
             <td>Next to the shape</td>
             <td>
-              The color the shape is drawn with, the same color as in the Tooltip and the Legend. If a data entry sets
-              its own <code>fill</code>, its label takes that color.
+              The color the shape is drawn with, the same color as in the Tooltip and the Legend: its fill, or its
+              stroke when the fill is <code>none</code> or <code>transparent</code>. If a data entry sets its own{' '}
+              <code>fill</code>, its label takes that color.
             </td>
           </tr>
           <tr>
@@ -126,6 +127,10 @@ export function LabelColors() {
       </table>
 
       <h3>Which positions are on top of the shape</h3>
+      <p>
+        A shape is only filled when its fill paints something. A Bar or RadialBar with{' '}
+        <code>fill=&quot;none&quot;</code> is an outline, so every label counts as next to it and takes its stroke.
+      </p>
       <p>
         In cartesian charts, <code>top</code>, <code>left</code>, <code>right</code> and <code>bottom</code> are next to
         the shape. Every other position, including no position at all, is on top of it. Note that <code>outside</code>{' '}
