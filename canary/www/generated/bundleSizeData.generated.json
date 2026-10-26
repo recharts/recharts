@@ -1,32 +1,32 @@
 {
   "treemap": {
     "examplePath": "www/src/views/IndexView/IndexLineChart.tsx",
-    "totalSize": 973409,
-    "totalSizeLabel": "950.59 KB",
+    "totalSize": 973530,
+    "totalSizeLabel": "950.71 KB",
     "moduleCount": 381,
-    "generatedAt": "2026-10-26T01:15:09.765Z",
+    "generatedAt": "2026-10-26T02:14:14.310Z",
     "stages": [
       {
         "stage": "es6-folder",
-        "bytes": 1529294,
+        "bytes": 1529415,
         "humanReadableSize": "1.46 MB",
         "reductionFromBaselinePercent": 0
       },
       {
         "stage": "tree-shaken",
-        "bytes": 976318,
-        "humanReadableSize": "953.44 KB",
+        "bytes": 976439,
+        "humanReadableSize": "953.55 KB",
         "reductionFromBaselinePercent": 0
       },
       {
         "stage": "minified",
-        "bytes": 318427,
-        "humanReadableSize": "310.96 KB",
-        "reductionFromBaselinePercent": 67.38
+        "bytes": 318447,
+        "humanReadableSize": "310.98 KB",
+        "reductionFromBaselinePercent": 67.39
       },
       {
         "stage": "minified+gzip",
-        "bytes": 104284,
+        "bytes": 104287,
         "humanReadableSize": "101.84 KB",
         "reductionFromBaselinePercent": 89.32
       }
@@ -34,12 +34,12 @@
     "tree": {
       "name": "bundle",
       "fullPath": "bundle",
-      "value": 973409,
+      "value": 973530,
       "children": [
         {
           "name": "src",
           "fullPath": "src",
-          "value": 569833,
+          "value": 569954,
           "children": [
             {
               "name": "state",
@@ -915,7 +915,7 @@
             {
               "name": "theme",
               "fullPath": "src/theme",
-              "value": 18854,
+              "value": 18975,
               "children": [
                 {
                   "name": "dataEntryStyles.ts",
@@ -930,7 +930,7 @@
                 {
                   "name": "activeStyles.ts",
                   "fullPath": "src/theme/activeStyles.ts",
-                  "value": 3522
+                  "value": 3643
                 },
                 {
                   "name": "useBackwardsCompatibleTheme.ts",
@@ -2632,32 +2632,32 @@
   },
   "sunburst": {
     "examplePath": "www/src/views/IndexView/IndexLineChart.tsx",
-    "totalSize": 973409,
-    "totalSizeLabel": "950.59 KB",
+    "totalSize": 973530,
+    "totalSizeLabel": "950.71 KB",
     "moduleCount": 381,
-    "generatedAt": "2026-10-26T01:15:11.954Z",
+    "generatedAt": "2026-10-26T02:14:12.008Z",
     "stages": [
       {
         "stage": "es6-folder",
-        "bytes": 1529294,
+        "bytes": 1529415,
         "humanReadableSize": "1.46 MB",
         "reductionFromBaselinePercent": 0
       },
       {
         "stage": "tree-shaken",
-        "bytes": 976318,
-        "humanReadableSize": "953.44 KB",
+        "bytes": 976439,
+        "humanReadableSize": "953.55 KB",
         "reductionFromBaselinePercent": 0
       },
       {
         "stage": "minified",
-        "bytes": 318427,
-        "humanReadableSize": "310.96 KB",
-        "reductionFromBaselinePercent": 67.38
+        "bytes": 318447,
+        "humanReadableSize": "310.98 KB",
+        "reductionFromBaselinePercent": 67.39
       },
       {
         "stage": "minified+gzip",
-        "bytes": 104284,
+        "bytes": 104287,
         "humanReadableSize": "101.84 KB",
         "reductionFromBaselinePercent": 89.32
       }
@@ -2665,12 +2665,12 @@
     "tree": {
       "name": "bundle",
       "fullPath": "bundle",
-      "value": 973409,
+      "value": 973530,
       "children": [
         {
           "name": "src",
           "fullPath": "src",
-          "value": 569833,
+          "value": 569954,
           "children": [
             {
               "name": "state",
@@ -3546,7 +3546,7 @@
             {
               "name": "theme",
               "fullPath": "src/theme",
-              "value": 18854,
+              "value": 18975,
               "children": [
                 {
                   "name": "dataEntryStyles.ts",
@@ -3561,7 +3561,7 @@
                 {
                   "name": "activeStyles.ts",
                   "fullPath": "src/theme/activeStyles.ts",
-                  "value": 3522
+                  "value": 3643
                 },
                 {
                   "name": "useBackwardsCompatibleTheme.ts",
