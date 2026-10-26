@@ -272,6 +272,8 @@ export interface ScatterProps<DataPointType = any, DataValueType = any>
    * The type of icon in legend.
    * If set to 'none', no legend item will be rendered.
    *
+   * By default, the legend icon shows the same predefined symbol as the data points, if they use one.
+   *
    * @defaultValue 'circle'
    * @example <Scatter legendType="diamond" />
    */
@@ -416,13 +418,22 @@ type InternalProps = BaseScatterSvgProps & ScatterInternalProps;
 export type Props<DataPointType = any, ValueAxisType = any> = BaseScatterSvgProps &
   ScatterProps<DataPointType, ValueAxisType>;
 
-const computeLegendPayloadFromScatterProps = (props: Props): ReadonlyArray<LegendPayload> => {
-  const { dataKey, name, fill, legendType, hide } = props;
+const computeLegendPayloadFromScatterProps = (
+  props: Props,
+  explicitShape: ScatterCustomizedShape | undefined,
+): ReadonlyArray<LegendPayload> => {
+  const { dataKey, name, fill, stroke, legendType, hide } = props;
   return [
     {
       inactive: hide,
       dataKey,
       type: legendType,
+      /*
+       * Only an explicit shape describes the points to the legend, so that the legend of a Scatter
+       * with the default shape stays unchanged. The legend symbol gets the same fill and stroke as the points,
+       * so that a stroke-only shape (fill="none") stays visible in the legend.
+       */
+      dot: typeof explicitShape === 'string' ? { symbol: explicitShape, fill, stroke } : undefined,
       color: fill,
       value: getTooltipNameProp(name, dataKey),
       payload: props,
@@ -1138,6 +1149,8 @@ function ScatterFn(outsideProps: Props) {
   const props = resolveDefaultProps(
     {
       ...outsideProps,
+      // the legend shows the same symbol as the points, unless legendType says otherwise
+      legendType: outsideProps.legendType ?? (typeof outsideProps.shape === 'string' ? outsideProps.shape : undefined),
       fill: outsideProps.fill ?? graphicalItemTheme?.fill,
       fillOpacity: outsideProps.fillOpacity ?? graphicalItemTheme?.fillOpacity,
       stroke: outsideProps.stroke ?? graphicalItemTheme?.stroke,
@@ -1156,7 +1169,7 @@ function ScatterFn(outsideProps: Props) {
     <RegisterGraphicalItemId id={props.id} type="scatter">
       {id => (
         <>
-          <SetLegendPayload legendPayload={computeLegendPayloadFromScatterProps(props)} />
+          <SetLegendPayload legendPayload={computeLegendPayloadFromScatterProps(props, outsideProps.shape)} />
           <SetCartesianGraphicalItem
             type="scatter"
             id={id}

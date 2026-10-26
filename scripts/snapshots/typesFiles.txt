@@ -105,6 +105,7 @@
   "types/shape/Cross.d.ts",
   "types/shape/Curve.d.ts",
   "types/shape/Dot.d.ts",
+  "types/shape/DotSymbol.d.ts",
   "types/shape/Polygon.d.ts",
   "types/shape/Rectangle.d.ts",
   "types/shape/Sector.d.ts",

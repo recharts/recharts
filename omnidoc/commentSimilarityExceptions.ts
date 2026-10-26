@@ -52,6 +52,12 @@ export const commentSimilarityExceptions: ReadonlyArray<CommentSimilarityGroup> 
       'dataKey in graphical elements that display their value on an axis describes how they inherit the dataKey from that axis.',
   },
   {
+    components: ['Area', 'Line', 'Radar', 'Scatter'],
+    props: ['legendType'],
+    reason:
+      'In these graphical elements the default legend icon follows the symbol that the data points use, set by `dot` or `shape`.',
+  },
+  {
     components: ['Pie'],
     props: ['label'],
     reason: 'Pie has a custom label implementation independent from other graphical elements',

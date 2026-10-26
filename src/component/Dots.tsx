@@ -2,6 +2,7 @@ import * as React from 'react';
 import { cloneElement, isValidElement } from 'react';
 import { clsx } from 'clsx';
 import { Dot, type Props as DotProps } from '../shape/Dot';
+import { DotSymbol, getDotSymbol } from '../shape/DotSymbol';
 import { Layer } from '../container/Layer';
 import { DataKey, DotItemDotProps, DotType } from '../util/types';
 import { isClipDot } from '../util/ReactUtils';
@@ -33,8 +34,14 @@ function DotItem({ option, dotProps, className }: DotItemProps) {
     return option(dotProps);
   }
 
-  const finalClassName = clsx(className, typeof option !== 'boolean' ? option.className : '');
   const { points, ...props } = dotProps ?? {};
+  const finalClassName = clsx(className, typeof option === 'object' ? option.className : undefined);
+  const symbol = getDotSymbol(option);
+
+  if (symbol != null) {
+    return <DotSymbol {...props} type={symbol} className={finalClassName} />;
+  }
+
   return <Dot {...props} className={finalClassName} />;
 }
 
@@ -56,7 +63,7 @@ interface DotsProps extends ZIndexable {
    */
   points: ReadonlyArray<DotPoint>;
   /**
-   * Dot configuration - boolean, ReactElement, function, or props object
+   * Dot configuration - boolean, ReactElement, function, props object, or a symbol name
    */
   dot: DotType;
   /**

@@ -105,6 +105,7 @@
   "lib/shape/Cross.js",
   "lib/shape/Curve.js",
   "lib/shape/Dot.js",
+  "lib/shape/DotSymbol.js",
   "lib/shape/Polygon.js",
   "lib/shape/Rectangle.js",
   "lib/shape/Sector.js",

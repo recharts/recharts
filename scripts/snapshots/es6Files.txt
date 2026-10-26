@@ -105,6 +105,7 @@
   "es6/shape/Cross.js",
   "es6/shape/Curve.js",
   "es6/shape/Dot.js",
+  "es6/shape/DotSymbol.js",
   "es6/shape/Polygon.js",
   "es6/shape/Rectangle.js",
   "es6/shape/Sector.js",
