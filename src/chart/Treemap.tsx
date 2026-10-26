@@ -659,6 +659,12 @@ type TileStyles = {
 };
 
 /**
+ * Nested tiles are painted clear so the colored depth-1 branch shows through.
+ * Tooltip text cannot use this value: it would be invisible.
+ */
+const TRANSPARENT_NESTED_TILE_FILL = 'rgba(255,255,255,0)';
+
+/**
  * Resolves the default styles of a single tile.
  * Explicit props and styles defined in data are applied later, on top of these.
  */
@@ -678,7 +684,7 @@ function getTileStyles({
   themePageBackground: string | undefined;
 }): TileStyles {
   const colors = colorPanel || COLOR_PANEL;
-  const legacyFill = nodeProps.depth < 2 ? colors[nodeProps.index % colors.length] : 'rgba(255,255,255,0)';
+  const legacyFill = nodeProps.depth < 2 ? colors[nodeProps.index % colors.length] : TRANSPARENT_NESTED_TILE_FILL;
   if (themeGraphicalItems == null) {
     return { fill: legacyFill, stroke: '#fff', strokeWidth: undefined };
   }
@@ -889,8 +895,32 @@ function getBranchIndex(tooltipIndex: TooltipIndex, depth: number, index: number
 }
 
 /**
+ * Fill of the painted depth-1 tile this node belongs to.
+ * A nested tile is drawn transparent over that ancestor, so this is the color the user sees.
+ * An explicit color panel wins. With no color panel, the theme's branch fill does,
+ * and the built-in panel covers a chart that has neither.
+ */
+function getVisibleBranchFill(branchIndex: number, source: TreemapTooltipColorSource): string | undefined {
+  if (source.colorPanel == null) {
+    const themeItems = source.themeGraphicalItems;
+    if (themeItems != null && themeItems.length > 0) {
+      const themeFill = themeItems[branchIndex % themeItems.length]?.fill;
+      if (themeFill != null) {
+        return themeFill;
+      }
+    }
+  }
+  const colors = source.colorPanel || COLOR_PANEL;
+  if (colors.length === 0) {
+    return undefined;
+  }
+  return colors[branchIndex % colors.length];
+}
+
+/**
  * The fill `ContentItem` paints on the default rectangle.
  * A data `fill` wins, then the Treemap `fill`, then the color panel or the theme.
+ * A nested tile's own fill is transparent, so the tooltip uses the visible ancestor color instead.
  */
 function getRenderedTreemapFill(node: TreemapTooltipNode, source: TreemapTooltipColorSource): string | undefined {
   const dataFill = readStringField(node, 'fill');
@@ -900,14 +930,20 @@ function getRenderedTreemapFill(node: TreemapTooltipNode, source: TreemapTooltip
   if (source.fill != null) {
     return source.fill;
   }
-  return getTileStyles({
+  const branchIndex = getBranchIndex(node.tooltipIndex, node.depth, node.index);
+  const renderedFill = getTileStyles({
     nodeProps: { depth: node.depth, index: node.index },
     nodeHasOwnColors: hasOwnColors(node) || hasOwnColors(source),
-    branchIndex: getBranchIndex(node.tooltipIndex, node.depth, node.index),
+    branchIndex,
     colorPanel: source.colorPanel,
     themeGraphicalItems: source.themeGraphicalItems,
     themePageBackground: undefined,
   }).fill;
+  if (renderedFill === TRANSPARENT_NESTED_TILE_FILL && branchIndex != null) {
+    const visibleFill = getVisibleBranchFill(branchIndex, source);
+    return visibleFill === TRANSPARENT_NESTED_TILE_FILL ? undefined : visibleFill;
+  }
+  return renderedFill;
 }
 
 /**

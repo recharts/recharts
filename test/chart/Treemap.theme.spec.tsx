@@ -1,7 +1,7 @@
 import { describe, expect, it, vi } from 'vitest';
 import React from 'react';
 import { act, fireEvent, render } from '@testing-library/react';
-import { emptyTheme, RechartsTheme, RechartsThemeProvider, Tooltip, Treemap, TreemapNode } from '../../src';
+import { emptyTheme, lightTheme, RechartsTheme, RechartsThemeProvider, Tooltip, Treemap, TreemapNode } from '../../src';
 import { assertNotNull } from '../helper/assertNotNull';
 
 const data = [
@@ -587,6 +587,29 @@ describe('Treemap tooltip color', () => {
     const tile = hoverTile(container, 1, 1);
     expect(tile.getAttribute('fill')).toBe('darkorange');
     expect(getTooltipItemColor(container)).toBe('darkorange');
+  });
+
+  it('shows the ancestor colorPanel color for a nested tile under a theme', () => {
+    const { container } = renderTooltipTreemap({
+      theme: lightTheme,
+      treemapData: nestedData,
+      colorPanel: ['#112233', '#445566'],
+    });
+
+    const hardware = queryTiles(container, 1)[0];
+    assertNotNull(hardware);
+    expect(hardware.getAttribute('fill')).toBe('#112233');
+
+    const laptop = hoverTile(container, 2, 0);
+    expect(laptop.getAttribute('fill')).toBe('rgba(255,255,255,0)');
+    // The browser normalizes the hex tooltip color. It must stay the first panel color.
+    expect(getTooltipItemColor(container)).toBe('rgb(17, 34, 51)');
+    expect(getTooltipItemColor(container)).not.toBe('rgba(255, 255, 255, 0)');
+
+    const editor = hoverTile(container, 2, 2);
+    expect(editor.getAttribute('fill')).toBe('rgba(255,255,255,0)');
+    expect(getTooltipItemColor(container)).toBe('rgb(68, 85, 102)');
+    expect(getTooltipItemColor(container)).not.toBe('rgba(255, 255, 255, 0)');
   });
 
   it('does not use the transparent nested tile fill as the tooltip text color without a provider', () => {
