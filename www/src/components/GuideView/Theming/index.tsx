@@ -648,6 +648,11 @@ export function ThemingGuide() {
         over the theme background key by key. A graphical item that sets its own <code>fill</code> or{' '}
         <code>stroke</code> ignores its theme entry, and so do its labels.
       </p>
+      <p>
+        If neither the label nor the theme sets a color, data labels pick one automatically, depending on whether they
+        sit on top of their shape or next to it. The{' '}
+        <RechartsLink to="guide/label-colors">Label colors guide</RechartsLink> explains the rules.
+      </p>
 
       <h2>Default chart size</h2>
       <p>

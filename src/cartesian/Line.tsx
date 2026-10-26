@@ -70,7 +70,12 @@ import { useBackwardsCompatibleTheme } from '../theme/useBackwardsCompatibleThem
 import { UnthemedStyles, useUnthemedStyles } from '../theme/dataEntryStyles';
 import { useGraphicalItemIdentity } from '../theme/useGraphicalItemIdentity';
 import { useEffectiveDataKey } from '../util/useEffectiveDataKey';
-import { DataLabelThemeContextProvider, useSeriesLabelThemeResolver } from '../theme/labelTheme';
+import {
+  DataLabelColorsContextProvider,
+  DataLabelThemeContextProvider,
+  useSeriesDataLabelColors,
+  useSeriesLabelThemeResolver,
+} from '../theme/labelTheme';
 
 export interface LinePointItem {
   readonly value: number;
@@ -1007,6 +1012,7 @@ function LineFn(outsideProps: Props) {
     outsideProps.fill ??
     (rechartsTheme == null ? props.fill : getDotFillFromTheme(props.stroke, graphicalItemTheme?.fill));
   const isPanorama = useIsPanorama();
+  const labelColors = useSeriesDataLabelColors(props.stroke);
   return (
     <RegisterGraphicalItemId id={props.id} type="line">
       {id => (
@@ -1037,13 +1043,15 @@ function LineFn(outsideProps: Props) {
             isPanorama={isPanorama}
           />
           <DataLabelThemeContextProvider value={resolveLabelTheme}>
-            <LineImpl
-              {...props}
-              id={id}
-              dotFill={dotFill}
-              unthemedStyles={unthemedStyles}
-              themedActiveStyles={themedActiveStyles}
-            />
+            <DataLabelColorsContextProvider value={labelColors}>
+              <LineImpl
+                {...props}
+                id={id}
+                dotFill={dotFill}
+                unthemedStyles={unthemedStyles}
+                themedActiveStyles={themedActiveStyles}
+              />
+            </DataLabelColorsContextProvider>
           </DataLabelThemeContextProvider>
         </>
       )}

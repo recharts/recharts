@@ -49,7 +49,14 @@ export type GraphicalItemStyle = Styles2D & {
    * If the graphical item sets its own `fill` or `stroke`, it ignores its theme entry completely,
    * and so do its labels. A data entry with its own `fill` or `stroke` only changes its shape, not its label.
    *
-   * If `style` sets no color, data labels keep their default color. In Pie and Funnel, that is the color of the shape.
+   * If `style` sets no color, data labels pick one automatically:
+   * - A label on top of a filled shape (Bar, Funnel, Pie, RadialBar) takes the `pageBackground` color,
+   *   or the `typography` color if there is no page background.
+   * - A label next to its shape, and every label of Line, Area, Radar and Scatter, takes the color of its shape.
+   * - A label with a `background` or `halo` takes the color of its shape too.
+   * - A label at an `{ x, y }` position takes the `typography` color.
+   *
+   * @see {@link https://recharts.github.io/en-US/guide/label-colors/ Label colors guide}
    *
    * Explicit props of `LabelList`, of the `label` prop of graphical items, and of the default Pie label
    * win over these styles.

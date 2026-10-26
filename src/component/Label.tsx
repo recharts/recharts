@@ -403,7 +403,10 @@ const getAttrsOfPolarLabel = (
   };
 };
 
-const isPolar = (
+/**
+ * Returns true if the label renders in a polar view box, which decides how its `position` is interpreted.
+ */
+export const isPolarViewBox = (
   viewBox: CartesianViewBoxRequired | TrapezoidViewBox | PolarViewBoxRequired | undefined,
 ): viewBox is PolarViewBoxRequired => viewBox != null && 'cx' in viewBox && isNumber(viewBox.cx);
 
@@ -427,7 +430,7 @@ export const defaultLabelProps = {
 function polarViewBoxToTrapezoid(
   viewBox: PolarViewBoxRequired | TrapezoidViewBox | undefined,
 ): TrapezoidViewBox | undefined {
-  if (!isPolar(viewBox)) {
+  if (!isPolarViewBox(viewBox)) {
     return viewBox;
   }
   const { cx, cy, outerRadius } = viewBox;
@@ -486,7 +489,7 @@ export function Label(outerProps: Props) {
     positionAttrs: LabelPositionAttributes | undefined;
   if (viewBoxFromProps == null) {
     viewBox = resolvedViewBox;
-  } else if (isPolar(viewBoxFromProps)) {
+  } else if (isPolarViewBox(viewBoxFromProps)) {
     viewBox = viewBoxFromProps;
   } else {
     viewBox = cartesianViewBoxToTrapezoid(viewBoxFromProps);
@@ -503,9 +506,9 @@ export function Label(outerProps: Props) {
 
   // TODO: Generic Polar Hook
   const isRadialPolarLabel =
-    isPolar(viewBox) && (position === 'insideStart' || position === 'insideEnd' || position === 'end');
+    isPolarViewBox(viewBox) && (position === 'insideStart' || position === 'insideEnd' || position === 'end');
 
-  if (isPolar(viewBox)) {
+  if (isPolarViewBox(viewBox)) {
     if (!isRadialPolarLabel) {
       positionAttrs = getAttrsOfPolarLabel(viewBox, props.offset, props.position);
     }
@@ -514,7 +517,7 @@ export function Label(outerProps: Props) {
       viewBox: cartesianBox,
       position,
       offset: props.offset,
-      parentViewBox: isPolar(parentViewBox) ? undefined : parentViewBox,
+      parentViewBox: isPolarViewBox(parentViewBox) ? undefined : parentViewBox,
       clamp: true,
     });
 
@@ -567,7 +570,7 @@ export function Label(outerProps: Props) {
 
   const attrs = svgPropertiesAndEvents(props);
 
-  if (isRadialPolarLabel && isPolar(viewBox)) {
+  if (isRadialPolarLabel && isPolarViewBox(viewBox)) {
     return renderRadialLabel(props, position, label, attrs, viewBox, props.halo);
   }
 

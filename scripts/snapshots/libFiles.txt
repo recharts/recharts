@@ -101,6 +101,7 @@
   "lib/polar/RadialBar.js",
   "lib/polar/defaultPolarAngleAxisProps.js",
   "lib/polar/defaultPolarRadiusAxisProps.js",
+  "lib/polar/isOutsidePolarPosition.js",
   "lib/shape",
   "lib/shape/Cross.js",
   "lib/shape/Curve.js",

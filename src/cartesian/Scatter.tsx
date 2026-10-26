@@ -84,7 +84,12 @@ import { getDataKeyOnAxis } from '../state/selectors/effectiveDataKeySelectors';
 import { getEntryStyleOverrides, hasOwnColors, UnthemedStyles, useUnthemedStyles } from '../theme/dataEntryStyles';
 import { getActiveStyleOverrides, useThemedActiveStyles } from '../theme/activeStyles';
 import { Styles2D } from '../theme/RechartsTheme';
-import { DataLabelThemeContextProvider, useSeriesLabelThemeResolver } from '../theme/labelTheme';
+import {
+  DataLabelColors,
+  DataLabelColorsContextProvider,
+  DataLabelThemeContextProvider,
+  useSeriesLabelThemeResolver,
+} from '../theme/labelTheme';
 
 export interface ScatterPointNode {
   x?: number | string;
@@ -543,16 +548,61 @@ function ScatterLine({ points, props }: { points: NonEmptyArray<ScatterPointItem
   );
 }
 
+/**
+ * Resolves the color a scatter point actually renders with, mirroring the render order in ScatterSymbols:
+ * data entry props win over the series props (theme already merged into those).
+ * Cell is deprecated and intentionally not part of this; its colors never reach the tooltip.
+ * Fill wins over stroke, same as Pie and Funnel entry colors.
+ * https://github.com/recharts/recharts/issues/7976
+ */
+export function getScatterEntryColor(
+  entry: unknown,
+  seriesFill: string | undefined,
+  seriesStroke: string | undefined,
+  unthemedStyles: UnthemedStyles | undefined,
+): string | undefined {
+  /*
+   * When the entry defines its own colors, the theme is suppressed for that entry at render time,
+   * and the explicit Scatter props fill in the rest (see getEntryStyleOverrides).
+   * Mirror that here so the tooltip color matches the rendered symbol.
+   */
+  const seriesFillFallback = hasOwnColors(entry) && unthemedStyles != null ? unthemedStyles.fill : seriesFill;
+  const seriesStrokeFallback = hasOwnColors(entry) && unthemedStyles != null ? unthemedStyles.stroke : seriesStroke;
+  const fill =
+    entry != null && typeof entry === 'object' && 'fill' in entry && typeof entry.fill === 'string'
+      ? entry.fill
+      : undefined;
+  const stroke =
+    entry != null && typeof entry === 'object' && 'stroke' in entry && typeof entry.stroke === 'string'
+      ? entry.stroke
+      : undefined;
+  return fill ?? seriesFillFallback ?? stroke ?? seriesStrokeFallback;
+}
+
 function ScatterLabelListProvider({
   showLabels,
   points,
+  seriesFill,
+  seriesStroke,
+  unthemedStyles,
   children,
 }: {
   showLabels: boolean;
   points: ReadonlyArray<ScatterPointItem>;
+  seriesFill: string | undefined;
+  seriesStroke: string | undefined;
+  unthemedStyles: UnthemedStyles | undefined;
   children: ReactNode;
 }) {
   const chartViewBox = useViewBox();
+  const labelColors: DataLabelColors = useMemo(
+    () => ({
+      hasFilledShapes: false,
+      getColor: (index: number) =>
+        getScatterEntryColor(points[index]?.payload, seriesFill, seriesStroke, unthemedStyles),
+    }),
+    [points, seriesFill, seriesStroke, unthemedStyles],
+  );
   const labelListEntries: ReadonlyArray<CartesianLabelListEntry> = useMemo(() => {
     return points?.map((point): CartesianLabelListEntry => {
       const viewBox: TrapezoidViewBox = {
@@ -589,7 +639,7 @@ function ScatterLabelListProvider({
 
   return (
     <CartesianLabelListContextProvider value={showLabels ? labelListEntries : undefined}>
-      {children}
+      <DataLabelColorsContextProvider value={labelColors}>{children}</DataLabelColorsContextProvider>
     </CartesianLabelListContextProvider>
   );
 }
@@ -790,7 +840,13 @@ function SymbolsWithAnimation({
   if (layout == null) return null;
 
   return (
-    <ScatterLabelListProvider showLabels={!isAnimating} points={points}>
+    <ScatterLabelListProvider
+      showLabels={!isAnimating}
+      points={points}
+      seriesFill={props.fill}
+      seriesStroke={props.stroke}
+      unthemedStyles={props.unthemedStyles}
+    >
       <AnimatedItems
         animationInput={props}
         animationIdPrefix="recharts-scatter-"
@@ -823,37 +879,6 @@ function SymbolsWithAnimation({
       <LabelListFromLabelProp label={props.label} />
     </ScatterLabelListProvider>
   );
-}
-
-/**
- * Resolves the color a scatter point actually renders with, mirroring the render order in ScatterSymbols:
- * data entry props win over the series props (theme already merged into those).
- * Cell is deprecated and intentionally not part of this; its colors never reach the tooltip.
- * Fill wins over stroke, same as Pie and Funnel entry colors.
- * https://github.com/recharts/recharts/issues/7976
- */
-export function getScatterEntryColor(
-  entry: unknown,
-  seriesFill: string | undefined,
-  seriesStroke: string | undefined,
-  unthemedStyles: UnthemedStyles | undefined,
-): string | undefined {
-  /*
-   * When the entry defines its own colors, the theme is suppressed for that entry at render time,
-   * and the explicit Scatter props fill in the rest (see getEntryStyleOverrides).
-   * Mirror that here so the tooltip color matches the rendered symbol.
-   */
-  const seriesFillFallback = hasOwnColors(entry) && unthemedStyles != null ? unthemedStyles.fill : seriesFill;
-  const seriesStrokeFallback = hasOwnColors(entry) && unthemedStyles != null ? unthemedStyles.stroke : seriesStroke;
-  const fill =
-    entry != null && typeof entry === 'object' && 'fill' in entry && typeof entry.fill === 'string'
-      ? entry.fill
-      : undefined;
-  const stroke =
-    entry != null && typeof entry === 'object' && 'stroke' in entry && typeof entry.stroke === 'string'
-      ? entry.stroke
-      : undefined;
-  return fill ?? seriesFillFallback ?? stroke ?? seriesStrokeFallback;
 }
 
 export function computeScatterPoints({

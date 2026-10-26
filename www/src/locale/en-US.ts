@@ -52,6 +52,7 @@ export const map = {
     animations: 'Animation',
     theming: 'Theming',
     'theme-color-testing': 'Theme color testing',
+    'label-colors': 'Label colors',
   },
   installation: {
     installation: 'Installation',

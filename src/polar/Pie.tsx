@@ -77,9 +77,11 @@ import { getClassNameFromUnknown } from '../util/getClassNameFromUnknown';
 import { WithIdRequired } from '../util/useUniqueId';
 import { usePolarChartLayout } from '../context/chartLayoutContext';
 import {
-  applyLabelTheme,
+  DataLabelColorsContextProvider,
   DataLabelThemeContextProvider,
   LabelBackground,
+  applyLabelTheme,
+  filledShapeLabelColors,
   useDataLabelThemeResolver,
   useIndexedLabelThemeResolver,
 } from '../theme/labelTheme';
@@ -1217,53 +1219,55 @@ function SectorsWithAnimation({
 
   return (
     <DataLabelThemeContextProvider value={resolveLabelTheme}>
-      <PieLabelListProvider showLabels={!isAnimating} sectors={sectors}>
-        <AnimatedItems
-          animationInput={props}
-          animationIdPrefix="recharts-pie-"
-          items={sectors}
-          previousItemsRef={previousSectorsRef}
-          isAnimationActive={props.isAnimationActive}
-          animationBegin={props.animationBegin}
-          animationDuration={props.animationDuration}
-          animationEasing={props.animationEasing}
-          onAnimationStart={handleAnimationStart}
-          onAnimationEnd={handleAnimationEnd}
-          animationInterpolateFn={animationInterpolateFn}
-          animationMatchBy={props.animationMatchBy}
-          layout={layout}
-        >
-          {(stepData, animationElapsedTime, isEntrance) => (
-            <Layer>
-              <PieSectors
-                sectors={stepData}
-                activeShape={activeShape}
-                inactiveShape={inactiveShape}
-                allOtherPieProps={props}
-                shape={props.shape}
-                id={id}
-                graphicalItems={graphicalItems}
-                explicitStyleProps={explicitStyleProps}
-                animationElapsedTime={animationElapsedTime}
-                isAnimating={isAnimating || animationElapsedTime < 1}
-                isEntrance={isEntrance}
-              />
-            </Layer>
-          )}
-        </AnimatedItems>
-        <PieLabelList showLabels={!isAnimating} sectors={sectors} props={props} />
-        <PolarLabelContextProvider
-          cx={firstSector?.cx ?? 0}
-          cy={firstSector?.cy ?? 0}
-          innerRadius={firstSector?.innerRadius ?? 0}
-          outerRadius={firstSector?.outerRadius ?? 0}
-          startAngle={props.startAngle}
-          endAngle={props.endAngle}
-          clockWise={false}
-        >
-          {props.children}
-        </PolarLabelContextProvider>
-      </PieLabelListProvider>
+      <DataLabelColorsContextProvider value={filledShapeLabelColors}>
+        <PieLabelListProvider showLabels={!isAnimating} sectors={sectors}>
+          <AnimatedItems
+            animationInput={props}
+            animationIdPrefix="recharts-pie-"
+            items={sectors}
+            previousItemsRef={previousSectorsRef}
+            isAnimationActive={props.isAnimationActive}
+            animationBegin={props.animationBegin}
+            animationDuration={props.animationDuration}
+            animationEasing={props.animationEasing}
+            onAnimationStart={handleAnimationStart}
+            onAnimationEnd={handleAnimationEnd}
+            animationInterpolateFn={animationInterpolateFn}
+            animationMatchBy={props.animationMatchBy}
+            layout={layout}
+          >
+            {(stepData, animationElapsedTime, isEntrance) => (
+              <Layer>
+                <PieSectors
+                  sectors={stepData}
+                  activeShape={activeShape}
+                  inactiveShape={inactiveShape}
+                  allOtherPieProps={props}
+                  shape={props.shape}
+                  id={id}
+                  graphicalItems={graphicalItems}
+                  explicitStyleProps={explicitStyleProps}
+                  animationElapsedTime={animationElapsedTime}
+                  isAnimating={isAnimating || animationElapsedTime < 1}
+                  isEntrance={isEntrance}
+                />
+              </Layer>
+            )}
+          </AnimatedItems>
+          <PieLabelList showLabels={!isAnimating} sectors={sectors} props={props} />
+          <PolarLabelContextProvider
+            cx={firstSector?.cx ?? 0}
+            cy={firstSector?.cy ?? 0}
+            innerRadius={firstSector?.innerRadius ?? 0}
+            outerRadius={firstSector?.outerRadius ?? 0}
+            startAngle={props.startAngle}
+            endAngle={props.endAngle}
+            clockWise={false}
+          >
+            {props.children}
+          </PolarLabelContextProvider>
+        </PieLabelListProvider>
+      </DataLabelColorsContextProvider>
     </DataLabelThemeContextProvider>
   );
 }

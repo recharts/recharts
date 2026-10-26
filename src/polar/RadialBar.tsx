@@ -85,7 +85,12 @@ import {
   useUnthemedStyles,
 } from '../theme/dataEntryStyles';
 import { getActiveStyleOverrides, useThemedActiveStyles } from '../theme/activeStyles';
-import { DataLabelThemeContextProvider, useSeriesLabelThemeResolver } from '../theme/labelTheme';
+import {
+  DataLabelColors,
+  DataLabelColorsContextProvider,
+  DataLabelThemeContextProvider,
+  useSeriesLabelThemeResolver,
+} from '../theme/labelTheme';
 
 const STABLE_EMPTY_ARRAY: readonly RadialBarDataItem[] = [];
 
@@ -108,12 +113,26 @@ type RadialBarSectorsProps = ShapeAnimationProps & {
 function RadialBarLabelListProvider({
   showLabels,
   sectors,
+  fill,
+  stroke,
+  unthemedStyles,
   children,
 }: {
   showLabels: boolean;
   sectors: ReadonlyArray<RadialBarDataItem>;
+  fill: string | undefined;
+  stroke: string | undefined;
+  unthemedStyles: UnthemedStyles | undefined;
   children: ReactNode;
 }) {
+  // The same color as in Tooltip and Legend.
+  const labelColors: DataLabelColors = React.useMemo(
+    () => ({
+      hasFilledShapes: true,
+      getColor: (index: number) => getEntryColor(sectors[index], fill, stroke, unthemedStyles),
+    }),
+    [sectors, fill, stroke, unthemedStyles],
+  );
   const labelListEntries: ReadonlyArray<PolarLabelListEntry> = sectors.map(
     (sector: RadialBarDataItem): PolarLabelListEntry => ({
       value: sector.value,
@@ -135,7 +154,7 @@ function RadialBarLabelListProvider({
 
   return (
     <PolarLabelListContextProvider value={showLabels ? labelListEntries : undefined}>
-      {children}
+      <DataLabelColorsContextProvider value={labelColors}>{children}</DataLabelColorsContextProvider>
     </PolarLabelListContextProvider>
   );
 }
@@ -169,7 +188,13 @@ function RadialBarSectors({
   }
 
   return (
-    <RadialBarLabelListProvider showLabels={showLabels} sectors={sectors}>
+    <RadialBarLabelListProvider
+      showLabels={showLabels}
+      sectors={sectors}
+      fill={others.fill}
+      stroke={others.stroke}
+      unthemedStyles={unthemedStyles}
+    >
       {sectors.map((entry: RadialBarDataItem, i: number) => {
         const isActive: boolean = Boolean(activeShape && activeIndex === String(i));
         const onMouseEnter = onMouseEnterFromContext(entry, i);

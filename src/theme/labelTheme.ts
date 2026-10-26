@@ -3,6 +3,9 @@ import type { TextBackgroundProps } from '../component/Text';
 import { GraphicalItemStyle, LabelTheme, RechartsTheme, TextStyles } from './RechartsTheme';
 import { useRechartsTheme } from './RechartsThemeContext';
 import { hasOwnColors } from './dataEntryStyles';
+import type { LabelPosition } from '../component/Label';
+import { isOutsidePosition } from '../cartesian/getCartesianPosition';
+import { isOutsidePolarPosition } from '../polar/isOutsidePolarPosition';
 
 /**
  * The `background` prop of Label, LabelList and Text.
@@ -91,6 +94,90 @@ export function applyLabelTheme(
     style: themeStyle == null ? explicit.style : { ...themeStyle, ...explicit.style },
     background: resolveLabelBackground(explicit.background, labelTheme?.background),
   };
+}
+
+/**
+ * How the data labels of a graphical item pick their automatic color in a theme.
+ */
+export type DataLabelColors = {
+  /**
+   * True if the graphical item draws filled shapes, and labels in inside positions sit on top of them:
+   * Bar, Funnel, Pie and RadialBar.
+   * False if every label sits next to its point: Line, Area, Radar and Scatter.
+   */
+  hasFilledShapes: boolean;
+  /**
+   * Returns the color the graphical item draws the data point at this index with, the same as in Tooltip and Legend.
+   * If undefined, the label takes the `fill` of its LabelList entry.
+   */
+  getColor?: (index: number) => string | undefined;
+};
+
+const DataLabelColorsContext = createContext<DataLabelColors | undefined>(undefined);
+
+export const DataLabelColorsContextProvider = DataLabelColorsContext.Provider;
+
+export function useDataLabelColors(): DataLabelColors | undefined {
+  return useContext(DataLabelColorsContext);
+}
+
+/**
+ * Data label colors of Funnel and Pie. Their LabelList entries carry the color of each shape.
+ */
+export const filledShapeLabelColors: DataLabelColors = { hasFilledShapes: true };
+
+/**
+ * Returns stable data label colors for graphical items where every label takes the color of the series:
+ * Line, Area and Radar.
+ *
+ * @param color the color of the series, theme included
+ * @returns data label colors for {@link DataLabelColorsContextProvider}
+ */
+export function useSeriesDataLabelColors(color: string | undefined): DataLabelColors {
+  return useMemo(() => ({ hasFilledShapes: false, getColor: () => color }), [color]);
+}
+
+/**
+ * Returns the automatic text color of a data label in a theme.
+ *
+ * - A label that sits on top of a filled shape takes the `pageBackground` color,
+ *   like a cut-out of the shape. Each palette entry of the built-in themes has 4.5:1 against `pageBackground`.
+ * - A label next to its shape takes the color of its data point, so it reads as part of the series.
+ * - A label with its own `background` or `halo` sits on that, so it takes the color of its data point too.
+ * - A label at an `{ x, y }` position can be anywhere, so it takes the `typography` color.
+ *
+ * @param options.position the label position
+ * @param options.isPolar true if the label renders in a polar view box, the same check that Label uses to place it
+ * @param options.colors data label colors of the graphical item
+ * @param options.color the color of the data point
+ * @param options.pageBackground the effective page background, see `getEffectivePageBackground`
+ * @param options.hasOwnBackground true if the label draws a background or a halo
+ * @returns the text color, or undefined for the `typography` color
+ */
+export function getAutomaticDataLabelFill({
+  position,
+  isPolar,
+  colors,
+  color,
+  pageBackground,
+  hasOwnBackground,
+}: {
+  position: LabelPosition | undefined;
+  isPolar: boolean;
+  colors: DataLabelColors;
+  color: string | undefined;
+  pageBackground: string | undefined;
+  hasOwnBackground: boolean;
+}): string | undefined {
+  if (position != null && typeof position === 'object') {
+    return undefined;
+  }
+  const isOutside = isPolar ? isOutsidePolarPosition(position) : isOutsidePosition(position);
+  if (colors.hasFilledShapes && !isOutside && !hasOwnBackground) {
+    // Without a page background there is no cut-out color, and the typography color is the safest choice.
+    return pageBackground;
+  }
+  return color;
 }
 
 /**
