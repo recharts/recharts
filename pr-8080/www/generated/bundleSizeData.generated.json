@@ -1,45 +1,45 @@
 {
   "treemap": {
     "examplePath": "www/src/views/IndexView/IndexLineChart.tsx",
-    "totalSize": 974494,
-    "totalSizeLabel": "951.65 KB",
+    "totalSize": 977794,
+    "totalSizeLabel": "954.88 KB",
     "moduleCount": 382,
-    "generatedAt": "2026-10-26T02:12:57.678Z",
+    "generatedAt": "2026-10-26T02:52:54.356Z",
     "stages": [
       {
         "stage": "es6-folder",
-        "bytes": 1531983,
-        "humanReadableSize": "1.46 MB",
+        "bytes": 1540387,
+        "humanReadableSize": "1.47 MB",
         "reductionFromBaselinePercent": 0
       },
       {
         "stage": "tree-shaken",
-        "bytes": 977405,
-        "humanReadableSize": "954.50 KB",
+        "bytes": 980705,
+        "humanReadableSize": "957.72 KB",
         "reductionFromBaselinePercent": 0
       },
       {
         "stage": "minified",
-        "bytes": 318730,
-        "humanReadableSize": "311.26 KB",
-        "reductionFromBaselinePercent": 67.39
+        "bytes": 319648,
+        "humanReadableSize": "312.16 KB",
+        "reductionFromBaselinePercent": 67.41
       },
       {
         "stage": "minified+gzip",
-        "bytes": 104361,
-        "humanReadableSize": "101.92 KB",
-        "reductionFromBaselinePercent": 89.32
+        "bytes": 104654,
+        "humanReadableSize": "102.20 KB",
+        "reductionFromBaselinePercent": 89.33
       }
     ],
     "tree": {
       "name": "bundle",
       "fullPath": "bundle",
-      "value": 974494,
+      "value": 977794,
       "children": [
         {
           "name": "src",
           "fullPath": "src",
-          "value": 570918,
+          "value": 574218,
           "children": [
             {
               "name": "state",
@@ -739,12 +739,12 @@
             {
               "name": "cartesian",
               "fullPath": "src/cartesian",
-              "value": 88731,
+              "value": 88849,
               "children": [
                 {
                   "name": "Line.tsx",
                   "fullPath": "src/cartesian/Line.tsx",
-                  "value": 17165
+                  "value": 17283
                 },
                 {
                   "name": "CartesianAxis.tsx",
@@ -811,7 +811,7 @@
             {
               "name": "component",
               "fullPath": "src/component",
-              "value": 57726,
+              "value": 59108,
               "children": [
                 {
                   "name": "Text.tsx",
@@ -829,24 +829,24 @@
                   "value": 8338
                 },
                 {
+                  "name": "DefaultLegendContent.tsx",
+                  "fullPath": "src/component/DefaultLegendContent.tsx",
+                  "value": 6505
+                },
+                {
                   "name": "LabelList.tsx",
                   "fullPath": "src/component/LabelList.tsx",
                   "value": 5892
                 },
                 {
-                  "name": "DefaultLegendContent.tsx",
-                  "fullPath": "src/component/DefaultLegendContent.tsx",
-                  "value": 5185
-                },
-                {
                   "name": "Dots.tsx",
                   "fullPath": "src/component/Dots.tsx",
-                  "value": 2434
+                  "value": 2472
                 },
                 {
                   "name": "ActivePoints.tsx",
                   "fullPath": "src/component/ActivePoints.tsx",
-                  "value": 2335
+                  "value": 2359
                 },
                 {
                   "name": "ResponsiveContainer.tsx",
@@ -1024,9 +1024,36 @@
               ]
             },
             {
+              "name": "shape",
+              "fullPath": "src/shape",
+              "value": 10169,
+              "children": [
+                {
+                  "name": "Curve.tsx",
+                  "fullPath": "src/shape/Curve.tsx",
+                  "value": 4586
+                },
+                {
+                  "name": "Symbols.tsx",
+                  "fullPath": "src/shape/Symbols.tsx",
+                  "value": 3635
+                },
+                {
+                  "name": "DotSymbol.tsx",
+                  "fullPath": "src/shape/DotSymbol.tsx",
+                  "value": 1281
+                },
+                {
+                  "name": "Dot.tsx",
+                  "fullPath": "src/shape/Dot.tsx",
+                  "value": 667
+                }
+              ]
+            },
+            {
               "name": "context",
               "fullPath": "src/context",
-              "value": 9250,
+              "value": 9273,
               "children": [
                 {
                   "name": "chartLayoutContext.tsx",
@@ -1041,7 +1068,7 @@
                 {
                   "name": "ErrorBarContext.tsx",
                   "fullPath": "src/context/ErrorBarContext.tsx",
-                  "value": 439
+                  "value": 462
                 },
                 {
                   "name": "RegisterGraphicalItemId.tsx",
@@ -1084,33 +1111,6 @@
                   "name": "useChartSynchronisation.tsx",
                   "fullPath": "src/synchronisation/useChartSynchronisation.tsx",
                   "value": 9161
-                }
-              ]
-            },
-            {
-              "name": "shape",
-              "fullPath": "src/shape",
-              "value": 8392,
-              "children": [
-                {
-                  "name": "Curve.tsx",
-                  "fullPath": "src/shape/Curve.tsx",
-                  "value": 4586
-                },
-                {
-                  "name": "Symbols.tsx",
-                  "fullPath": "src/shape/Symbols.tsx",
-                  "value": 2462
-                },
-                {
-                  "name": "DotSymbol.tsx",
-                  "fullPath": "src/shape/DotSymbol.tsx",
-                  "value": 677
-                },
-                {
-                  "name": "Dot.tsx",
-                  "fullPath": "src/shape/Dot.tsx",
-                  "value": 667
                 }
               ]
             },
@@ -2637,45 +2637,45 @@
   },
   "sunburst": {
     "examplePath": "www/src/views/IndexView/IndexLineChart.tsx",
-    "totalSize": 974494,
-    "totalSizeLabel": "951.65 KB",
+    "totalSize": 977794,
+    "totalSizeLabel": "954.88 KB",
     "moduleCount": 382,
-    "generatedAt": "2026-10-26T02:12:59.906Z",
+    "generatedAt": "2026-10-26T02:52:52.118Z",
     "stages": [
       {
         "stage": "es6-folder",
-        "bytes": 1531983,
-        "humanReadableSize": "1.46 MB",
+        "bytes": 1540387,
+        "humanReadableSize": "1.47 MB",
         "reductionFromBaselinePercent": 0
       },
       {
         "stage": "tree-shaken",
-        "bytes": 977405,
-        "humanReadableSize": "954.50 KB",
+        "bytes": 980705,
+        "humanReadableSize": "957.72 KB",
         "reductionFromBaselinePercent": 0
       },
       {
         "stage": "minified",
-        "bytes": 318730,
-        "humanReadableSize": "311.26 KB",
-        "reductionFromBaselinePercent": 67.39
+        "bytes": 319648,
+        "humanReadableSize": "312.16 KB",
+        "reductionFromBaselinePercent": 67.41
       },
       {
         "stage": "minified+gzip",
-        "bytes": 104361,
-        "humanReadableSize": "101.92 KB",
-        "reductionFromBaselinePercent": 89.32
+        "bytes": 104654,
+        "humanReadableSize": "102.20 KB",
+        "reductionFromBaselinePercent": 89.33
       }
     ],
     "tree": {
       "name": "bundle",
       "fullPath": "bundle",
-      "value": 974494,
+      "value": 977794,
       "children": [
         {
           "name": "src",
           "fullPath": "src",
-          "value": 570918,
+          "value": 574218,
           "children": [
             {
               "name": "state",
@@ -3375,12 +3375,12 @@
             {
               "name": "cartesian",
               "fullPath": "src/cartesian",
-              "value": 88731,
+              "value": 88849,
               "children": [
                 {
                   "name": "Line.tsx",
                   "fullPath": "src/cartesian/Line.tsx",
-                  "value": 17165
+                  "value": 17283
                 },
                 {
                   "name": "CartesianAxis.tsx",
@@ -3447,7 +3447,7 @@
             {
               "name": "component",
               "fullPath": "src/component",
-              "value": 57726,
+              "value": 59108,
               "children": [
                 {
                   "name": "Text.tsx",
@@ -3465,24 +3465,24 @@
                   "value": 8338
                 },
                 {
+                  "name": "DefaultLegendContent.tsx",
+                  "fullPath": "src/component/DefaultLegendContent.tsx",
+                  "value": 6505
+                },
+                {
                   "name": "LabelList.tsx",
                   "fullPath": "src/component/LabelList.tsx",
                   "value": 5892
                 },
                 {
-                  "name": "DefaultLegendContent.tsx",
-                  "fullPath": "src/component/DefaultLegendContent.tsx",
-                  "value": 5185
-                },
-                {
                   "name": "Dots.tsx",
                   "fullPath": "src/component/Dots.tsx",
-                  "value": 2434
+                  "value": 2472
                 },
                 {
                   "name": "ActivePoints.tsx",
                   "fullPath": "src/component/ActivePoints.tsx",
-                  "value": 2335
+                  "value": 2359
                 },
                 {
                   "name": "ResponsiveContainer.tsx",
@@ -3660,9 +3660,36 @@
               ]
             },
             {
+              "name": "shape",
+              "fullPath": "src/shape",
+              "value": 10169,
+              "children": [
+                {
+                  "name": "Curve.tsx",
+                  "fullPath": "src/shape/Curve.tsx",
+                  "value": 4586
+                },
+                {
+                  "name": "Symbols.tsx",
+                  "fullPath": "src/shape/Symbols.tsx",
+                  "value": 3635
+                },
+                {
+                  "name": "DotSymbol.tsx",
+                  "fullPath": "src/shape/DotSymbol.tsx",
+                  "value": 1281
+                },
+                {
+                  "name": "Dot.tsx",
+                  "fullPath": "src/shape/Dot.tsx",
+                  "value": 667
+                }
+              ]
+            },
+            {
               "name": "context",
               "fullPath": "src/context",
-              "value": 9250,
+              "value": 9273,
               "children": [
                 {
                   "name": "chartLayoutContext.tsx",
@@ -3677,7 +3704,7 @@
                 {
                   "name": "ErrorBarContext.tsx",
                   "fullPath": "src/context/ErrorBarContext.tsx",
-                  "value": 439
+                  "value": 462
                 },
                 {
                   "name": "RegisterGraphicalItemId.tsx",
@@ -3720,33 +3747,6 @@
                   "name": "useChartSynchronisation.tsx",
                   "fullPath": "src/synchronisation/useChartSynchronisation.tsx",
                   "value": 9161
-                }
-              ]
-            },
-            {
-              "name": "shape",
-              "fullPath": "src/shape",
-              "value": 8392,
-              "children": [
-                {
-                  "name": "Curve.tsx",
-                  "fullPath": "src/shape/Curve.tsx",
-                  "value": 4586
-                },
-                {
-                  "name": "Symbols.tsx",
-                  "fullPath": "src/shape/Symbols.tsx",
-                  "value": 2462
-                },
-                {
-                  "name": "DotSymbol.tsx",
-                  "fullPath": "src/shape/DotSymbol.tsx",
-                  "value": 677
-                },
-                {
-                  "name": "Dot.tsx",
-                  "fullPath": "src/shape/Dot.tsx",
-                  "value": 667
                 }
               ]
             },
