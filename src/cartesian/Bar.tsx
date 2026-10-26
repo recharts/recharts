@@ -75,8 +75,6 @@ import { RegisterGraphicalItemId } from '../context/RegisterGraphicalItemId';
 import { BarSettings } from '../state/types/BarSettings';
 import { SetCartesianGraphicalItem } from '../state/SetGraphicalItem';
 import {
-  isDataAttribute,
-  isSvgElementPropKey,
   svgPropertiesNoEvents,
   svgPropertiesNoEventsFromUnknown,
   SVGPropsNoEvents,
@@ -98,7 +96,13 @@ import { Styles2D } from '../theme/RechartsTheme';
 import { useBackwardsCompatibleTheme } from '../theme/useBackwardsCompatibleTheme';
 import { useGraphicalItemIdentity } from '../theme/useGraphicalItemIdentity';
 import { useEffectiveDataKey } from '../util/useEffectiveDataKey';
-import { getEntryStyleOverrides, UnthemedStyles, useUnthemedStyles } from '../theme/dataEntryStyles';
+import {
+  getEntryColor,
+  getEntryStyleOverrides,
+  omitEntrySvgProps,
+  UnthemedStyles,
+  useUnthemedStyles,
+} from '../theme/dataEntryStyles';
 import { getActiveStyleOverrides, useThemedActiveStyles } from '../theme/activeStyles';
 import { DataLabelThemeContextProvider, useSeriesLabelThemeResolver } from '../theme/labelTheme';
 
@@ -509,37 +513,6 @@ const computeLegendPayloadFromBarData = (props: Props): ReadonlyArray<LegendPayl
   ];
 };
 
-/**
- * The color a bar rectangle renders a data entry with: its fill, or its stroke when it has no fill.
- * Follows the order of props in `BarRectangles`: the entry colors win over the Bar colors,
- * and with a theme, an entry with its own colors ignores the theme colors.
- *
- * @param entry data entry
- * @param fill fill of the Bar, theme included
- * @param stroke stroke of the Bar, theme included
- * @param unthemedStyles explicit styles of the Bar, or undefined without a theme
- */
-function getBarEntryColor(
-  entry: unknown,
-  fill: string | undefined,
-  stroke: string | undefined,
-  unthemedStyles: UnthemedStyles | undefined,
-): string | undefined {
-  const barStyles = getEntryStyleOverrides(entry, unthemedStyles) ?? { fill, stroke };
-  const entryFill = entry != null && typeof entry === 'object' && 'fill' in entry ? entry.fill : undefined;
-  const entryStroke = entry != null && typeof entry === 'object' && 'stroke' in entry ? entry.stroke : undefined;
-  if (typeof entryFill === 'string') {
-    return entryFill;
-  }
-  if (barStyles.fill != null) {
-    return barStyles.fill;
-  }
-  if (typeof entryStroke === 'string') {
-    return entryStroke;
-  }
-  return barStyles.stroke;
-}
-
 const SetBarTooltipEntrySettings = React.memo(
   ({
     dataKey,
@@ -560,7 +533,7 @@ const SetBarTooltipEntrySettings = React.memo(
     const tooltipEntrySettings: TooltipPayloadConfiguration = {
       dataDefinedOnItem: undefined,
       getPosition: noop,
-      getEntryColor: entry => getBarEntryColor(entry, fill, stroke, unthemedStyles),
+      getEntryColor: entry => getEntryColor(entry, fill, stroke, unthemedStyles),
       settings: {
         stroke,
         strokeWidth,
@@ -590,17 +563,6 @@ type BarBackgroundProps = {
 const defaultLegacyBarBackgroundProps: Styles2D = {
   fill: '#eee',
 };
-
-/**
- * The background is not the graphical item, so it does not take the SVG properties of the data entry
- * (`stroke`, `opacity`, `style`, `data-*`, `id`, ...).
- * Custom background shapes still receive the other keys of the entry, and the entry itself as `payload`.
- */
-function omitEntrySvgProps(entry: object): Record<string, unknown> {
-  return Object.fromEntries(
-    Object.entries(entry).filter(([key]) => key === 'name' || (!isSvgElementPropKey(key) && !isDataAttribute(key))),
-  );
-}
 
 function BarBackground(props: BarBackgroundProps) {
   const activeIndex = useAppSelector(selectActiveTooltipIndex);

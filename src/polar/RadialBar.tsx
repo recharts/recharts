@@ -1,4 +1,5 @@
 import * as React from 'react';
+import omit from 'es-toolkit/compat/omit';
 import { MutableRefObject, PureComponent, ReactElement, ReactNode, useRef } from 'react';
 import { clsx } from 'clsx';
 
@@ -76,7 +77,13 @@ import { Styles2D } from '../theme/RechartsTheme';
 import { useBackwardsCompatibleTheme } from '../theme/useBackwardsCompatibleTheme';
 import { useGraphicalItemIdentity } from '../theme/useGraphicalItemIdentity';
 import { useEffectiveDataKey } from '../util/useEffectiveDataKey';
-import { getEntryStyleOverrides, UnthemedStyles, useUnthemedStyles } from '../theme/dataEntryStyles';
+import {
+  getEntryColor,
+  getEntryStyleOverrides,
+  omitEntrySvgProps,
+  UnthemedStyles,
+  useUnthemedStyles,
+} from '../theme/dataEntryStyles';
 import { getActiveStyleOverrides, useThemedActiveStyles } from '../theme/activeStyles';
 import { DataLabelThemeContextProvider, useSeriesLabelThemeResolver } from '../theme/labelTheme';
 
@@ -527,13 +534,25 @@ type ThemeInternalProps = {
 
 type InternalProps = WithIdRequired<PropsWithDefaults> & Pick<InternalRadialBarProps, 'sectors'> & ThemeInternalProps;
 
-function SetRadialBarPayloadLegend(props: RadialBarProps) {
-  const legendPayload = useAppSelector(state => selectRadialBarLegendPayload(state, props.legendType));
-  const themedLegendPayload = legendPayload?.map(entry => ({
+/**
+ * RadialBar has one legend item per data entry, so each item shows the color its own sector renders with.
+ */
+function SetRadialBarPayloadLegend({
+  legendType,
+  fill,
+  stroke,
+  unthemedStyles,
+  children,
+}: Pick<RadialBarProps, 'legendType' | 'fill' | 'stroke' | 'children'> & {
+  unthemedStyles: UnthemedStyles | undefined;
+}) {
+  const cells = React.useMemo(() => findAllByType(children, Cell), [children]);
+  const legendPayload = useAppSelector(state => selectRadialBarLegendPayload(state, legendType));
+  const coloredLegendPayload = legendPayload?.map((entry, index) => ({
     ...entry,
-    color: entry.color ?? props.fill,
+    color: getEntryColor({ ...entry.payload, ...cells[index]?.props }, fill, stroke, unthemedStyles),
   }));
-  return <SetPolarLegendPayload legendPayload={themedLegendPayload ?? []} />;
+  return <SetPolarLegendPayload legendPayload={coloredLegendPayload ?? []} />;
 }
 
 const SetRadialBarTooltipEntrySettings = React.memo(
@@ -548,13 +567,16 @@ const SetRadialBarTooltipEntrySettings = React.memo(
     tooltipType,
     formatter,
     id,
+    unthemedStyles,
   }: Pick<
     InternalProps,
     'dataKey' | 'sectors' | 'stroke' | 'strokeWidth' | 'name' | 'hide' | 'fill' | 'tooltipType' | 'formatter' | 'id'
-  >) => {
+  > & { unthemedStyles: UnthemedStyles | undefined }) => {
     const tooltipEntrySettings: TooltipPayloadConfiguration = {
       dataDefinedOnItem: sectors,
       getPosition: noop,
+      // The tooltip data are the sectors, so the entry here already includes the props of its Cell.
+      getEntryColor: sector => getEntryColor(sector, fill, stroke, unthemedStyles),
       settings: {
         graphicalItemId: id,
         stroke,
@@ -609,7 +631,7 @@ function RadialBarBackgroundSectors({
         // @ts-expect-error backgroundProps is contributing unknown props
         const props: React.ComponentProps<typeof RadialBarSector> = {
           cornerRadius: parseCornerRadius(cornerRadius),
-          ...rest,
+          ...omitEntrySvgProps(rest),
           ...backgroundThemeProps,
           ...background,
           ...backgroundProps,
@@ -708,6 +730,7 @@ function RadialBarImpl(props: WithIdRequired<PropsWithDefaults> & ThemeInternalP
         tooltipType={props.tooltipType}
         formatter={props.formatter}
         id={props.id}
+        unthemedStyles={props.unthemedStyles}
       />
       <RadialBarWithState {...props} sectors={sectors} />
     </>
@@ -789,6 +812,11 @@ export function computeRadialBarDataItems({
   }
 
   return (displayedData ?? []).map((entry: unknown, index: number) => {
+    /*
+     * `id` from a data entry is never spread on rendered elements to avoid duplicate DOM ids.
+     * The raw entry, id included, stays available through `payload`.
+     */
+    const entryWithoutId = entry != null && typeof entry === 'object' ? omit(entry, ['id']) : entry;
     let value,
       innerRadius: number | null | undefined,
       outerRadius: number | undefined,
@@ -873,7 +901,7 @@ export function computeRadialBarDataItems({
 
     return {
       // @ts-expect-error can't spread unknown
-      ...entry,
+      ...entryWithoutId,
       ...backgroundSector,
       payload: entry,
       value: stackedData ? value : value[1],
@@ -946,7 +974,14 @@ export function RadialBar<DataPointType = any, DataValueType = any>(
             minPointSize={props.minPointSize}
             maxBarSize={props.maxBarSize}
           />
-          <SetRadialBarPayloadLegend {...props} {...themedProps} />
+          <SetRadialBarPayloadLegend
+            legendType={props.legendType}
+            fill={themedProps.fill}
+            stroke={themedProps.stroke}
+            unthemedStyles={unthemedStyles}
+          >
+            {props.children}
+          </SetRadialBarPayloadLegend>
           <DataLabelThemeContextProvider value={resolveLabelTheme}>
             <RadialBarImpl
               {...props}
