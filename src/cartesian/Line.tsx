@@ -147,11 +147,13 @@ export interface LineProps<DataPointType = any, DataValueType = any>
    * - `object`: the props of the active dot. This will be merged with the internal calculated props of the active dot
    * - `ReactElement`: the custom active dot element
    * - `function`: a render function of the custom active dot
+   * - `string`: name of a predefined symbol, such as `'diamond'` or `'star'`
    *
    * @defaultValue true
    * @example <Line dataKey="value" activeDot={false} />
    * @example <Line dataKey="value" activeDot={{ stroke: 'red', strokeWidth: 2, r: 10 }} />
    * @example <Line dataKey="value" activeDot={CustomizedActiveDot} />
+   * @example <Line dataKey="value" activeDot="diamond" />
    *
    * @see {@link https://recharts.github.io/en-US/examples/SimpleLineChart/ A line chart with customized active dot}
    */
@@ -216,19 +218,22 @@ export interface LineProps<DataPointType = any, DataValueType = any>
    */
   connectNulls?: boolean;
   /**
-   * Renders a circle element at each data point. Options:
+   * Renders a dot at each data point. Options:
    *
    * - `false`: no dots are drawn;
    * - `true`: renders the dots with default settings;
    * - `object`: the props of the dot. This will be merged with the internal calculated props of each dot;
    * - `ReactElement`: the custom dot element;
-   * - `function`: a render function of the custom dot.
+   * - `function`: a render function of the custom dot;
+   * - `string`: name of a predefined symbol, such as `'diamond'` or `'star'`, the same as in `legendType`.
+   *   Use different symbols to tell series apart without relying on color.
    *
    * @defaultValue true
    *
    * @example <Line dataKey="value" dot={false} />
    * @example <Line dataKey="value" dot={{ stroke: 'red', strokeWidth: 2 }} />
    * @example <Line dataKey="value" dot={CustomizedDot} />
+   * @example <Line dataKey="value" dot="diamond" legendType="diamond" />
    *
    * @see {@link https://recharts.github.io/en-US/examples/CustomizedDotLineChart/ A line chart with customized dot}
    */

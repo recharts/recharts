@@ -2,6 +2,7 @@ import * as React from 'react';
 import { cloneElement, isValidElement } from 'react';
 import { ActiveDotProps, ActiveDotType, adaptEventHandlers, DataKey } from '../util/types';
 import { Dot } from '../shape/Dot';
+import { DotSymbol } from '../shape/DotSymbol';
 import { Layer } from '../container/Layer';
 import { useAppSelector } from '../state/hooks';
 import { selectActiveTooltipIndex } from '../state/selectors/tooltipSelectors';
@@ -75,6 +76,8 @@ const ActivePoint = ({
     dot = cloneElement(activeDot, dotProps);
   } else if (typeof activeDot === 'function') {
     dot = activeDot(dotProps);
+  } else if (typeof activeDot === 'string') {
+    dot = <DotSymbol {...dotProps} type={activeDot} />;
   } else {
     dot = <Dot {...dotProps} />;
   }

@@ -159,11 +159,13 @@ export interface AreaProps<DataPointType = any, DataValueType = any>
    * - `object`: the props of the active dot. This will be merged with the internal calculated props of the active dot
    * - `ReactElement`: the custom active dot element
    * - `function`: a render function of the custom active dot
+   * - `string`: name of a predefined symbol, such as `'diamond'` or `'star'`
    *
    * @defaultValue true
    * @example <Area dataKey="value" activeDot={false} />
    * @example <Area dataKey="value" activeDot={{ stroke: 'red', strokeWidth: 2, r: 10 }} />
    * @example <Area dataKey="value" activeDot={CustomizedActiveDot} />
+   * @example <Area dataKey="value" activeDot="diamond" />
    *
    * @see {@link https://recharts.github.io/en-US/examples/SimpleLineChart/ A line chart with customized active dot}
    */
@@ -245,13 +247,15 @@ export interface AreaProps<DataPointType = any, DataValueType = any>
    */
   connectNulls?: boolean;
   /**
-   * Renders a circle element at each data point. Options:
+   * Renders a dot at each data point. Options:
    *
    * - `false`: no dots are drawn;
    * - `true`: renders the dots with default settings;
    * - `object`: the props of the dot. This will be merged with the internal calculated props of each dot;
    * - `ReactElement`: the custom dot element;
-   * - `function`: a render function of the custom dot.
+   * - `function`: a render function of the custom dot;
+   * - `string`: name of a predefined symbol, such as `'diamond'` or `'star'`, the same as in `legendType`.
+   *   Use different symbols to tell series apart without relying on color.
    *
    * @defaultValue false
    */

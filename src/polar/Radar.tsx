@@ -133,13 +133,15 @@ export interface RadarProps<DataPointType = any, DataValueType = any>
   className?: string;
   connectNulls?: boolean;
   /**
-   * Renders a circle element at each data point. Options:
+   * Renders a dot at each data point. Options:
    *
    * - `false`: no dots are drawn;
    * - `true`: renders the dots with default settings;
    * - `object`: the props of the dot. This will be merged with the internal calculated props of each dot;
    * - `ReactElement`: the custom dot element;
-   * - `function`: a render function of the custom dot.
+   * - `function`: a render function of the custom dot;
+   * - `string`: name of a predefined symbol, such as `'diamond'` or `'star'`, the same as in `legendType`.
+   *   Use different symbols to tell series apart without relying on color.
    *
    * @defaultValue false
    */

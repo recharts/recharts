@@ -1124,7 +1124,7 @@ type RecordString<T> = Record<string, T>;
 type AdaptEventHandlersReturn = RecordString<(e?: Event) => any> | RecordString<(e: Event) => void> | null;
 
 export const adaptEventHandlers = (
-  props: RecordString<any> | Component | FunctionComponent | boolean,
+  props: RecordString<any> | Component | FunctionComponent | boolean | string,
   newHandler?: (e?: Event) => any,
 ): AdaptEventHandlersReturn => {
   if (!props || typeof props === 'function' || typeof props === 'boolean') {
@@ -1275,7 +1275,14 @@ export type ActiveDotType =
    * activeDot can be an element; it will get cloned and will receive new extra props.
    * I do not recommend this way! Use React component instead, that way you get more predictable props.
    */
-  | ReactElement<SVGProps<SVGElement>>;
+  | ReactElement<SVGProps<SVGElement>>
+  /**
+   * activeDot can be one of the predefined symbols, the same as in Legend and Scatter.
+   * The symbol is rendered using the {@link Symbols} component, sized to fit the default active dot.
+   *
+   * @example <Line activeDot="diamond" />
+   */
+  | SymbolType;
 
 /**
  * Inside the dot event handlers we provide extra information about the dot point
@@ -1324,7 +1331,15 @@ export type DotType =
    * dot can be an element; it will get cloned and will receive new extra props.
    * I do not recommend this way! Use React component instead, that way you get more predictable props.
    */
-  | ReactElement<SVGProps<SVGElement>>;
+  | ReactElement<SVGProps<SVGElement>>
+  /**
+   * dot can be one of the predefined symbols, the same as in Legend and Scatter.
+   * The symbol is rendered using the {@link Symbols} component, sized to fit the default dot.
+   * Combine with a matching `legendType` so that the legend shows the same symbol.
+   *
+   * @example <Line dot="diamond" legendType="diamond" />
+   */
+  | SymbolType;
 
 /**
  * Animation metadata forwarded to custom chart shapes.
