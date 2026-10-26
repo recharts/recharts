@@ -1,0 +1,1 @@
+import{r as t}from"./entry-DTL4uUQo.js";import{C as e}from"./RechartsWrapper-Bn4kYFsV.js";import{C as o}from"./CartesianChart-yF9-okx_.js";const l=["item"],s=t.forwardRef((r,a)=>t.createElement(o,{chartName:"FunnelChart",defaultTooltipEventType:"item",validateTooltipEventTypes:l,tooltipPayloadSearcher:e,categoricalChartProps:r,ref:a}));export{s as F};
