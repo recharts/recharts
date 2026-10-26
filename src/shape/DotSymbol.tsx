@@ -37,18 +37,35 @@ function getOwnColor(option: DotType, key: 'fill' | 'stroke'): string | undefine
 }
 
 /**
+ * Returns true if the `dot` option renders the default circle {@link Dot}:
+ * `true`, or an object without a symbol.
+ */
+function rendersDefaultCircle(dot: DotType | undefined): boolean {
+  if (dot === true) {
+    return true;
+  }
+  return dot != null && typeof dot === 'object' && !isValidElement(dot) && dot.symbol == null;
+}
+
+/**
  * Describes the dots of a graphical item for its legend icon,
  * so that the icon draws the same symbol with the same colors as the dots.
  *
- * @param dot the `dot` prop
+ * Without a theme, the default circle dots keep the default `line` legend icon, so that existing legends stay
+ * unchanged. With a theme, they are described as a `circle` so that the legend icon follows their theme colors.
+ * A custom dot (a function or an element) is never described, because the legend cannot know what it draws.
+ *
+ * @param dot the `dot` prop, after defaults
  * @param seriesDotColors the colors that the dots get from the graphical item, including the theme
- * @returns the legend dot, or undefined if the dots do not use one of the predefined symbols
+ * @param isThemed true if the chart renders with a Recharts theme
+ * @returns the legend dot, or undefined if the legend icon does not draw the dots
  */
 export function getLegendPayloadDot(
   dot: DotType | undefined,
   seriesDotColors: { fill: string | undefined; stroke: string | undefined },
+  isThemed: boolean,
 ): LegendPayloadDot | undefined {
-  const symbol = getDotSymbol(dot);
+  const symbol = getDotSymbol(dot) ?? (isThemed && rendersDefaultCircle(dot) ? 'circle' : undefined);
   if (symbol == null || dot == null) {
     return undefined;
   }
@@ -58,6 +75,19 @@ export function getLegendPayloadDot(
     fill: getOwnColor(dot, 'fill') ?? seriesDotColors.fill,
     stroke: getOwnColor(dot, 'stroke') ?? seriesDotColors.stroke,
   };
+}
+
+/**
+ * The default legend icon of Line and Area with a theme when they draw no dots:
+ * a plain line, because there is no dot to show.
+ * Without a theme, the default `line` icon stays, so that existing legends stay unchanged.
+ *
+ * @param dot the `dot` prop, after defaults
+ * @param isThemed true if the chart renders with a Recharts theme
+ * @returns `plainline` if the legend should show a plain line by default, otherwise undefined
+ */
+export function getNoDotsLegendType(dot: DotType | undefined, isThemed: boolean): 'plainline' | undefined {
+  return isThemed && !dot ? 'plainline' : undefined;
 }
 
 /**

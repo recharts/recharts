@@ -11,7 +11,7 @@ import {
   SetLabelListClipArea,
 } from '../component/LabelList';
 import { Dots, DotsDotProps } from '../component/Dots';
-import { getLegendPayloadDot } from '../shape/DotSymbol';
+import { getLegendPayloadDot, getNoDotsLegendType } from '../shape/DotSymbol';
 import { interpolate, isNan, isNullish, isNumber, noop } from '../util/DataUtils';
 import {
   getCateCoordinateOfLine,
@@ -257,7 +257,8 @@ export interface AreaProps<DataPointType = any, DataValueType = any>
    * - `object`: the props of the dot. This will be merged with the internal calculated props of each dot.
    *   Set `symbol` to draw a predefined symbol instead of a circle;
    * - `ReactElement`: the custom dot element;
-   * - `function`: a render function of the custom dot;
+   * - `function`: a render function of the custom dot.
+   *   The legend cannot know what a custom element or function draws, so set a matching `legendType`;
    * - `string`: name of a predefined symbol, such as `'diamond'` or `'star'`, the same as in `legendType`.
    *   Use different symbols to tell series apart without relying on color.
    *   The legend icon shows the same symbol.
@@ -310,6 +311,7 @@ export interface AreaProps<DataPointType = any, DataValueType = any>
    *
    * By default, the legend icon shows the same predefined symbol as the data points, if they use one.
    * The `line` icon draws it in the middle of the line.
+   * With a theme, it draws the default dots too, and a plain line when there are no dots.
    *
    * @defaultValue 'line'
    */
@@ -477,6 +479,7 @@ function getLegendItemColor(stroke: string | undefined, fill: string | undefined
 const computeLegendPayloadFromAreaData = <DataPointType, ValueAxisType>(
   props: Props<DataPointType, ValueAxisType>,
   dotFill: string | undefined,
+  isThemed: boolean,
 ): ReadonlyArray<LegendPayload> => {
   const { dataKey, name, stroke, fill, legendType, hide, dot } = props;
   return [
@@ -484,7 +487,7 @@ const computeLegendPayloadFromAreaData = <DataPointType, ValueAxisType>(
       inactive: hide,
       dataKey,
       type: legendType,
-      dot: getLegendPayloadDot(dot, { fill: dotFill ?? fill, stroke }),
+      dot: getLegendPayloadDot(dot, { fill: dotFill ?? fill, stroke }, isThemed),
       color: getLegendItemColor(stroke, fill),
       value: getTooltipNameProp(name, dataKey),
       payload: props,
@@ -1122,6 +1125,9 @@ function AreaFn(outsideProps: Props<any, any>) {
     ...theme,
     dataKey,
     activeDot: outsideProps.activeDot,
+    // with a theme, an area without dots has no dot in its legend icon either
+    legendType:
+      outsideProps.legendType ?? getNoDotsLegendType(outsideProps.dot ?? defaultAreaProps.dot, rechartsTheme != null),
   };
   const props: RequiresDefaultProps<Props<any, any>, typeof defaultAreaProps> = resolveDefaultProps(
     propsWithTheme,
@@ -1135,7 +1141,7 @@ function AreaFn(outsideProps: Props<any, any>) {
     <RegisterGraphicalItemId id={props.id} type="area">
       {id => (
         <>
-          <SetLegendPayload legendPayload={computeLegendPayloadFromAreaData(props, dotFill)} />
+          <SetLegendPayload legendPayload={computeLegendPayloadFromAreaData(props, dotFill, rechartsTheme != null)} />
           <SetAreaTooltipEntrySettings
             dataKey={props.dataKey}
             data={props.data}

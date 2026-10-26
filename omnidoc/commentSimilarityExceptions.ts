@@ -52,10 +52,16 @@ export const commentSimilarityExceptions: ReadonlyArray<CommentSimilarityGroup> 
       'dataKey in graphical elements that display their value on an axis describes how they inherit the dataKey from that axis.',
   },
   {
-    components: ['Area', 'Line', 'Radar', 'Scatter'],
+    components: ['Area', 'Line'],
     props: ['legendType'],
     reason:
-      'In these graphical elements the default legend icon follows the symbol that the data points use, set by `dot` or `shape`.',
+      'In Line and Area the default `line` legend icon follows the dots, and with a theme also the default dots and a line without dots.',
+  },
+  {
+    components: ['Radar', 'Scatter'],
+    props: ['legendType'],
+    reason:
+      'In Radar and Scatter the default legend icon follows the symbol that the data points use, set by `dot` or `shape`.',
   },
   {
     components: ['Pie'],

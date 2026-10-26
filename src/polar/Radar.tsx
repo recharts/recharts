@@ -141,7 +141,8 @@ export interface RadarProps<DataPointType = any, DataValueType = any>
    * - `object`: the props of the dot. This will be merged with the internal calculated props of each dot.
    *   Set `symbol` to draw a predefined symbol instead of a circle;
    * - `ReactElement`: the custom dot element;
-   * - `function`: a render function of the custom dot;
+   * - `function`: a render function of the custom dot.
+   *   The legend cannot know what a custom element or function draws, so set a matching `legendType`;
    * - `string`: name of a predefined symbol, such as `'diamond'` or `'star'`, the same as in `legendType`.
    *   Use different symbols to tell series apart without relying on color.
    *   The legend icon shows the same symbol.
@@ -253,7 +254,8 @@ const computeLegendPayloadFromRadarSectors = (
       dataKey,
       type: legendType,
       // the same colors as the dots get in RadarDotsWrapper
-      dot: getLegendPayloadDot(dot, { fill: dotFill ?? fill, stroke }),
+      // Radar keeps its default legend icons with a theme too, only a dot symbol changes them
+      dot: getLegendPayloadDot(dot, { fill: dotFill ?? fill, stroke }, false),
       color: getLegendItemColor(stroke, fill),
       value: getTooltipNameProp(name, dataKey),
       payload: props,
