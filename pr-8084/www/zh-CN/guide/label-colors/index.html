@@ -29,7 +29,7 @@
       rel="stylesheet"
       type="text/css"
     />
-    <script type="module" crossorigin src="/recharts/pr-8084/www/assets/index-DUXpNaBn.js"></script>
+    <script type="module" crossorigin src="/recharts/pr-8084/www/assets/index-Cun1yMyI.js"></script>
     <link rel="stylesheet" crossorigin href="/recharts/pr-8084/www/assets/index-CSyjNhZq.css">
     <link rel="sitemap" type="application/xml" title="Sitemap" href="/sitemap.xml">
   </head>
@@ -142,7 +142,7 @@ export default function PieLabelColorsExample() {
       &lt;/RadialBarChart&gt;
     &lt;/div&gt;
   );
-}</pre><div></div></div></div><div style="height:100%;display:none;overflow:hidden"><div id="recharts-devtools-portal-R6a9" style="height:100%;background:var(--color-bg);color:var(--color-text);overflow:auto;padding:10px;display:block" class=""></div></div><div style="height:100%;display:none;overflow:hidden"><div id="recharts-devtools-portal-R6a9-annotations" style="height:100%;background:var(--color-surface-base);color:var(--color-text-1);overflow:auto;padding:10px;display:block" class=""></div></div><div style="height:100%;display:none;overflow:hidden"><div style="padding:10px;height:100%;overflow:auto"><div style="display:flex;gap:12px;margin:1ex"><label style="display:flex;align-items:center;gap:8px;cursor:pointer"><input style="margin:0;width:16px;height:16px;cursor:pointer" type="radio" name=":Raama9:" checked=""/>Autoplay Animations (default)</label><label style="display:flex;align-items:center;gap:8px;cursor:pointer"><input style="margin:0;width:16px;height:16px;cursor:pointer" type="radio" name=":Raama9:"/>Manual Animations</label></div></div></div></div></div><p>The default label of a <a href="/zh-CN/api/Pie" data-discover="true">Pie</a>, which you get with <code>label={true}</code>, is drawn outside of the sector, so it takes the color of the sector.</p><h2>Contrast</h2><p>Every color of the built-in palettes has at least 4.5:1 contrast against the <code>pageBackground</code> of its theme, the WCAG contrast for normal text. That covers labels next to their shape. A label on top of a shape uses the same two colors the other way around. The built-in themes paint fills slightly transparent, so on some colors the contrast there is a little lower, but still above 3:1.</p><p>Colors that come from your data or your own theme can be anything. A label in the page background color is hard to read on a pale fill. In that case, draw a <code>background</code> or a <code>halo</code>: the label then sits on the page color and takes the color of its shape.</p><div style="display:flex;flex-wrap:wrap;gap:16px"><figure style="margin:0;width:100%;max-width:220px"><div width="100%" class="recharts-wrapper" style="position:relative;cursor:default;width:100%;aspect-ratio:1"></div><figcaption>none</figcaption></figure><figure style="margin:0;width:100%;max-width:220px"><div width="100%" class="recharts-wrapper" style="position:relative;cursor:default;width:100%;aspect-ratio:1"></div><figcaption>background</figcaption></figure><figure style="margin:0;width:100%;max-width:220px"><div width="100%" class="recharts-wrapper" style="position:relative;cursor:default;width:100%;aspect-ratio:1"></div><figcaption>halo</figcaption></figure></div><div class="codemirror-wrapper "><div id="codemirror-container"><div class="codemirror-toolbar"><select class="codemirror-toolbar-item" style="padding-right:12px"><option value="source" selected="">Source code</option><option value="devtools">Hook inspector</option><option value="annotations">Annotations</option><option value="controls">Controls</option></select><button class="codemirror-toolbar-item" type="button"><svg class="recharts-surface" width="16" height="16" viewBox="0 0 16 16"><title></title><desc></desc><path fill="none" stroke="var(--color-text-1)" stroke-width="1" width="10" height="10" x="1" y="1" radius="2" class="recharts-rectangle" d="M 1,3
+}</pre><div></div></div></div><div style="height:100%;display:none;overflow:hidden"><div id="recharts-devtools-portal-R6a9" style="height:100%;background:var(--color-bg);color:var(--color-text);overflow:auto;padding:10px;display:block" class=""></div></div><div style="height:100%;display:none;overflow:hidden"><div id="recharts-devtools-portal-R6a9-annotations" style="height:100%;background:var(--color-surface-base);color:var(--color-text-1);overflow:auto;padding:10px;display:block" class=""></div></div><div style="height:100%;display:none;overflow:hidden"><div style="padding:10px;height:100%;overflow:auto"><div style="display:flex;gap:12px;margin:1ex"><label style="display:flex;align-items:center;gap:8px;cursor:pointer"><input style="margin:0;width:16px;height:16px;cursor:pointer" type="radio" name=":Raama9:" checked=""/>Autoplay Animations (default)</label><label style="display:flex;align-items:center;gap:8px;cursor:pointer"><input style="margin:0;width:16px;height:16px;cursor:pointer" type="radio" name=":Raama9:"/>Manual Animations</label></div></div></div></div></div><p>The default label of a <a href="/zh-CN/api/Pie" data-discover="true">Pie</a>, which you get with <code>label={true}</code>, is drawn outside of the sector, so it takes the color of the sector.</p><h2>Contrast</h2><p>Every color of the built-in palettes has at least 4.5:1 contrast against the <code>pageBackground</code> of its theme, the WCAG contrast for normal text. That covers labels next to their shape. A label on top of a shape uses the same two colors the other way around. The built-in themes paint fills slightly transparent, so on some colors the contrast there is a little lower, but still above 3:1.</p><p>To bring labels on top of palette colors to 4.5:1, draw a <code>background</code> or a <code>halo</code>. The label then sits on the page color and takes the color of its shape, which is the pair the palette is designed for.</p><p>Colors that come from your data or your own theme can be anything, and a background does not help with them. A pale fill has little contrast with the page, so a label in the page color is hard to read on top of it, and a label in the pale color is hard to read on a page-colored background. Set the <code>fill</code> of the label to a color that contrasts with your data colors instead.</p><div style="display:flex;flex-wrap:wrap;gap:16px"><figure style="margin:0;width:100%;max-width:260px"><div width="100%" class="recharts-wrapper" style="position:relative;cursor:default;width:100%;aspect-ratio:1"></div><figcaption>palette colors + background</figcaption></figure><figure style="margin:0;width:100%;max-width:260px"><div width="100%" class="recharts-wrapper" style="position:relative;cursor:default;width:100%;aspect-ratio:1"></div><figcaption>pale data colors</figcaption></figure><figure style="margin:0;width:100%;max-width:260px"><div width="100%" class="recharts-wrapper" style="position:relative;cursor:default;width:100%;aspect-ratio:1"></div><figcaption>pale data colors + fill</figcaption></figure></div><div class="codemirror-wrapper "><div id="codemirror-container"><div class="codemirror-toolbar"><select class="codemirror-toolbar-item" style="padding-right:12px"><option value="source" selected="">Source code</option><option value="devtools">Hook inspector</option><option value="annotations">Annotations</option><option value="controls">Controls</option></select><button class="codemirror-toolbar-item" type="button"><svg class="recharts-surface" width="16" height="16" viewBox="0 0 16 16"><title></title><desc></desc><path fill="none" stroke="var(--color-text-1)" stroke-width="1" width="10" height="10" x="1" y="1" radius="2" class="recharts-rectangle" d="M 1,3
             A 2,2,0,0,1,3,1
             L 9,1
             A 2,2,0,0,1,11,3
@@ -156,46 +156,72 @@ export default function PieLabelColorsExample() {
             L 15,13
             A 2,2,0,0,1,13,15
             L 7,15
-            A 2,2,0,0,1,5,13 Z" style="stroke-dasharray:0px 1px"></path></svg>Copy to clipboard</button><button type="button" class="codemirror-toolbar-item"><svg stroke="currentColor" fill="none" stroke-width="2" viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round" height="1em" width="1em" xmlns="http://www.w3.org/2000/svg"><path d="M21.174 6.812a1 1 0 0 0-3.986-3.987L3.842 16.174a2 2 0 0 0-.5.83l-1.321 4.352a.5.5 0 0 0 .623.622l4.353-1.32a2 2 0 0 0 .83-.497z"></path><path d="m15 5 4 4"></path></svg><span>Edit</span></button><button type="button" class="codemirror-toolbar-item"><svg stroke="currentColor" fill="none" stroke-width="2" viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round" height="1em" width="1em" xmlns="http://www.w3.org/2000/svg"><circle cx="18" cy="5" r="3"></circle><circle cx="6" cy="12" r="3"></circle><circle cx="18" cy="19" r="3"></circle><line x1="8.59" x2="15.42" y1="13.51" y2="17.49"></line><line x1="15.41" x2="8.59" y1="6.51" y2="10.49"></line></svg><span>Open in StackBlitz</span></button></div><div style="height:100%;display:block;overflow:hidden"><div class="codemirror-example-editor tsx" style="height:100%;overflow:auto"><pre>import { Bar, BarChart, CartesianGrid, LabelList, XAxis, YAxis } from &#x27;recharts&#x27;;
+            A 2,2,0,0,1,5,13 Z" style="stroke-dasharray:0px 1px"></path></svg>Copy to clipboard</button><button type="button" class="codemirror-toolbar-item"><svg stroke="currentColor" fill="none" stroke-width="2" viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round" height="1em" width="1em" xmlns="http://www.w3.org/2000/svg"><path d="M21.174 6.812a1 1 0 0 0-3.986-3.987L3.842 16.174a2 2 0 0 0-.5.83l-1.321 4.352a.5.5 0 0 0 .623.622l4.353-1.32a2 2 0 0 0 .83-.497z"></path><path d="m15 5 4 4"></path></svg><span>Edit</span></button><button type="button" class="codemirror-toolbar-item"><svg stroke="currentColor" fill="none" stroke-width="2" viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round" height="1em" width="1em" xmlns="http://www.w3.org/2000/svg"><circle cx="18" cy="5" r="3"></circle><circle cx="6" cy="12" r="3"></circle><circle cx="18" cy="19" r="3"></circle><line x1="8.59" x2="15.42" y1="13.51" y2="17.49"></line><line x1="15.41" x2="8.59" y1="6.51" y2="10.49"></line></svg><span>Open in StackBlitz</span></button></div><div style="height:100%;display:block;overflow:hidden"><div class="codemirror-example-editor tsx" style="height:100%;overflow:auto"><pre>import { ReactNode } from &#x27;react&#x27;;
+import { Bar, BarChart, CartesianGrid, LabelList, XAxis, YAxis } from &#x27;recharts&#x27;;
 import { RechartsDevtools } from &#x27;@recharts/devtools&#x27;;
 
-const data = [
+const paletteData = [
   { name: &#x27;A&#x27;, value: 420 },
-  { name: &#x27;B&#x27;, value: 380, fill: &#x27;#fde047&#x27; },
+  { name: &#x27;B&#x27;, value: 380 },
   { name: &#x27;C&#x27;, value: 510 },
 ];
 
+/*
+ * Pale colors from the data. They have little contrast with a white page,
+ * so neither a label in the page color nor a label in the bar color is readable.
+ */
+const paleData = [
+  { name: &#x27;A&#x27;, value: 420, fill: &#x27;#fde047&#x27; },
+  { name: &#x27;B&#x27;, value: 380, fill: &#x27;#a7f3d0&#x27; },
+  { name: &#x27;C&#x27;, value: 510, fill: &#x27;#bfdbfe&#x27; },
+];
+
 const rowStyle = { display: &#x27;flex&#x27;, flexWrap: &#x27;wrap&#x27;, gap: 16 } as const;
-const figureStyle = { margin: 0, width: &#x27;100%&#x27;, maxWidth: 220 };
+const figureStyle = { margin: 0, width: &#x27;100%&#x27;, maxWidth: 260 };
 const chartStyle = { width: &#x27;100%&#x27;, aspectRatio: 1 };
 const margin = { top: 10, right: 10, left: 0, bottom: 0 };
 
-/*
- * Bar B takes its fill from the data, a pale yellow.
- * A label in the page background color is hard to read on it.
- * A background or a halo puts the label on the page color,
- * so the label takes the color of its bar instead and stays readable.
- */
+function SmallBarChart({ data, children }: { data: ReadonlyArray&lt;object&gt;; children: ReactNode }) {
+  return (
+    &lt;BarChart style={chartStyle} responsive data={data} margin={margin}&gt;
+      &lt;CartesianGrid vertical={false} /&gt;
+      &lt;XAxis dataKey=&quot;name&quot; /&gt;
+      &lt;YAxis width={40} /&gt;
+      &lt;Bar dataKey=&quot;value&quot; isAnimationActive={false}&gt;
+        {children}
+      &lt;/Bar&gt;
+      &lt;RechartsDevtools /&gt;
+    &lt;/BarChart&gt;
+  );
+}
+
 export default function LabelBackgroundExample() {
   return (
     &lt;div style={rowStyle}&gt;
-      {([&#x27;none&#x27;, &#x27;background&#x27;, &#x27;halo&#x27;] as const).map(variant =&gt; (
-        &lt;figure key={variant} style={figureStyle}&gt;
-          &lt;BarChart style={chartStyle} responsive data={data} margin={margin}&gt;
-            &lt;CartesianGrid vertical={false} /&gt;
-            &lt;XAxis dataKey=&quot;name&quot; /&gt;
-            &lt;YAxis width={40} /&gt;
-            &lt;Bar dataKey=&quot;value&quot; isAnimationActive={false}&gt;
-              &lt;LabelList position=&quot;inside&quot; background={variant === &#x27;background&#x27;} halo={variant === &#x27;halo&#x27;} /&gt;
-            &lt;/Bar&gt;
-            &lt;RechartsDevtools /&gt;
-          &lt;/BarChart&gt;
-          &lt;figcaption&gt;{variant}&lt;/figcaption&gt;
-        &lt;/figure&gt;
-      ))}
+      &lt;figure style={figureStyle}&gt;
+        {/* Palette colors: the background puts the label on the page color, in the bar color */}
+        &lt;SmallBarChart data={paletteData}&gt;
+          &lt;LabelList position=&quot;inside&quot; background /&gt;
+        &lt;/SmallBarChart&gt;
+        &lt;figcaption&gt;palette colors + background&lt;/figcaption&gt;
+      &lt;/figure&gt;
+      &lt;figure style={figureStyle}&gt;
+        {/* Pale data colors: the automatic color is hard to read in the light theme */}
+        &lt;SmallBarChart data={paleData}&gt;
+          &lt;LabelList position=&quot;inside&quot; /&gt;
+        &lt;/SmallBarChart&gt;
+        &lt;figcaption&gt;pale data colors&lt;/figcaption&gt;
+      &lt;/figure&gt;
+      &lt;figure style={figureStyle}&gt;
+        {/* Pale data colors: dark text is readable on every pale bar, in both themes */}
+        &lt;SmallBarChart data={paleData}&gt;
+          &lt;LabelList position=&quot;inside&quot; fill=&quot;#18181b&quot; /&gt;
+        &lt;/SmallBarChart&gt;
+        &lt;figcaption&gt;pale data colors + fill&lt;/figcaption&gt;
+      &lt;/figure&gt;
     &lt;/div&gt;
   );
-}</pre><div></div></div></div><div style="height:100%;display:none;overflow:hidden"><div id="recharts-devtools-portal-R8q9" style="height:100%;background:var(--color-bg);color:var(--color-text);overflow:auto;padding:10px;display:block" class=""></div></div><div style="height:100%;display:none;overflow:hidden"><div id="recharts-devtools-portal-R8q9-annotations" style="height:100%;background:var(--color-surface-base);color:var(--color-text-1);overflow:auto;padding:10px;display:block" class=""></div></div><div style="height:100%;display:none;overflow:hidden"><div style="padding:10px;height:100%;overflow:auto"><div style="display:flex;gap:12px;margin:1ex"><label style="display:flex;align-items:center;gap:8px;cursor:pointer"><input style="margin:0;width:16px;height:16px;cursor:pointer" type="radio" name=":Raaoq9:" checked=""/>Autoplay Animations (default)</label><label style="display:flex;align-items:center;gap:8px;cursor:pointer"><input style="margin:0;width:16px;height:16px;cursor:pointer" type="radio" name=":Raaoq9:"/>Manual Animations</label></div></div></div></div></div><p>A <code>background</code> draws a rectangle behind each label. It is sized after the label renders, so it is not part of server-side rendering. A <code>halo</code> draws an outline around the letters instead: it needs no measuring, so it is drawn during server-side rendering, and it covers less of the chart. Both use<!-- --> <code>pageBackground</code> unless you set a color.</p><p>To turn backgrounds on for every data label, set <code>label.background</code> in the theme:</p><div class="codemirror-example-editor " style="height:100%;overflow:auto"><pre>import { type RechartsTheme, lightTheme } from &#x27;recharts&#x27;;
+}</pre><div></div></div></div><div style="height:100%;display:none;overflow:hidden"><div id="recharts-devtools-portal-R9a9" style="height:100%;background:var(--color-bg);color:var(--color-text);overflow:auto;padding:10px;display:block" class=""></div></div><div style="height:100%;display:none;overflow:hidden"><div id="recharts-devtools-portal-R9a9-annotations" style="height:100%;background:var(--color-surface-base);color:var(--color-text-1);overflow:auto;padding:10px;display:block" class=""></div></div><div style="height:100%;display:none;overflow:hidden"><div style="padding:10px;height:100%;overflow:auto"><div style="display:flex;gap:12px;margin:1ex"><label style="display:flex;align-items:center;gap:8px;cursor:pointer"><input style="margin:0;width:16px;height:16px;cursor:pointer" type="radio" name=":Raapa9:" checked=""/>Autoplay Animations (default)</label><label style="display:flex;align-items:center;gap:8px;cursor:pointer"><input style="margin:0;width:16px;height:16px;cursor:pointer" type="radio" name=":Raapa9:"/>Manual Animations</label></div></div></div></div></div><p>A <code>background</code> draws a rectangle behind each label. It is sized after the label renders, so it is not part of server-side rendering. A <code>halo</code> draws an outline around the letters instead: it needs no measuring, so it is drawn during server-side rendering, and it covers less of the chart. Both use<!-- --> <code>pageBackground</code> unless you set a color.</p><p>To turn backgrounds on for every data label, set <code>label.background</code> in the theme:</p><div class="codemirror-example-editor " style="height:100%;overflow:auto"><pre>import { type RechartsTheme, lightTheme } from &#x27;recharts&#x27;;
 
 const theme: RechartsTheme = {
   ...lightTheme,
@@ -216,7 +242,9 @@ const theme: RechartsTheme = {
     // Every data label of this series takes this color, wherever it is
     label: { style: { fill: &#x27;#18181b&#x27; } },
   })),
-};</pre><div></div></div><p>Custom <code>content</code> receives the resolved color as its <code>fill</code> prop, so it can use it or ignore it:</p><div class="codemirror-example-editor " style="height:100%;overflow:auto"><pre>function CustomLabel({ x, y, value, fill }) {
+};</pre><div></div></div><p>Custom <code>content</code> receives the resolved color as its <code>fill</code> prop, so it can use it or ignore it:</p><div class="codemirror-example-editor " style="height:100%;overflow:auto"><pre>import { LabelList, type LabelProps } from &#x27;recharts&#x27;;
+
+function CustomLabel({ x, y, value, fill }: LabelProps) {
   // fill is the automatic color, unless the LabelList sets its own
   return (
     &lt;text x={x} y={y} fill={fill}&gt;
@@ -225,6 +253,6 @@ const theme: RechartsTheme = {
   );
 }
 
-&lt;LabelList content={CustomLabel} position=&quot;inside&quot; /&gt;</pre><div></div></div></article></div></div></main><footer><p><span>Released under the </span><a href="https://opensource.org/licenses/MIT" target="_blank" rel="noreferrer">MIT License</a></p><p>Copyright (c) 2016-<!-- -->2026<!-- --> Recharts Group</p><p>Commit: <code title="a5ba794405491874cee0d4f3c58b9e91036ec79e">a5ba7944</code></p></footer></div></div>
+&lt;LabelList content={CustomLabel} position=&quot;inside&quot; /&gt;</pre><div></div></div></article></div></div></main><footer><p><span>Released under the </span><a href="https://opensource.org/licenses/MIT" target="_blank" rel="noreferrer">MIT License</a></p><p>Copyright (c) 2016-<!-- -->2026<!-- --> Recharts Group</p><p>Commit: <code title="11c135915234b395d18363349c43f68038100eac">11c13591</code></p></footer></div></div>
   </body>
 </html>
