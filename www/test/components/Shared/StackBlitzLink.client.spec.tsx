@@ -65,3 +65,19 @@ test('uses the current mode after changing the website theme', async () => {
     expect.objectContaining({ theme: 'dark' }),
   );
 });
+
+test('wraps the example in RechartsThemeProvider with autoTheme', async () => {
+  const openProject = setup('light');
+  await userEvent.click(screen.getByRole('button', { name: 'Open in StackBlitz' }));
+  const [project] = openProject.mock.calls[0];
+  expect(project.files['src/index.tsx']).toContain("import { RechartsThemeProvider, autoTheme } from 'recharts';");
+  expect(project.files['src/index.tsx']).toContain('<RechartsThemeProvider value={autoTheme}>');
+});
+
+test('exports the same recharts version that the website uses', async () => {
+  const { version } = await import('../../../../package.json');
+  const openProject = setup('light');
+  await userEvent.click(screen.getByRole('button', { name: 'Open in StackBlitz' }));
+  const [project] = openProject.mock.calls[0];
+  expect(JSON.parse(project.files['package.json']).dependencies.recharts).toBe(version);
+});

@@ -1,5 +1,6 @@
 import { ReactNode } from 'react';
 import stackblitzSdk, { ProjectDependencies } from '@stackblitz/sdk';
+import { version as rechartsVersion } from '../../../../package.json';
 
 import cssVars from '../../styles/_variables.css?raw';
 import { sendEvent } from '../analytics.ts';
@@ -27,6 +28,7 @@ const indexTsxCode = (title: string) =>
   `
 import React from 'react';
 import { createRoot } from 'react-dom/client';
+import { RechartsThemeProvider, autoTheme } from 'recharts';
 import { RechartsDevtoolsContext, RechartsDevtoolsPortal } from '@recharts/devtools';
 
 import './index.css';
@@ -38,13 +40,19 @@ if (!container) {
 }
 const root = createRoot(container);
 
+/*
+ * autoTheme follows the CSS color-scheme of the page, set by data-mode in index.html.
+ * Change data-mode to "light" or "dark" to switch the theme.
+ */
 const AppWithDevtools = () => {
-  return <RechartsDevtoolsContext>
-    <h1>${title}</h1>
-    <Example />
-    <h2>Recharts Devtools</h2>
-    <RechartsDevtoolsPortal />
-  </RechartsDevtoolsContext>
+  return <RechartsThemeProvider value={autoTheme}>
+    <RechartsDevtoolsContext>
+      <h1>${title}</h1>
+      <Example />
+      <h2>Recharts Devtools</h2>
+      <RechartsDevtoolsPortal />
+    </RechartsDevtoolsContext>
+  </RechartsThemeProvider>
 }
 
 root.render(<AppWithDevtools />);
@@ -96,7 +104,10 @@ const dependencies: ProjectDependencies = {
   react: reactVersion,
   'react-is': reactVersion,
   'react-dom': reactVersion,
-  recharts: 'latest',
+  /*
+   * Same version as the website, so that the example uses the same API (for example autoTheme).
+   */
+  recharts: rechartsVersion,
 };
 
 const devDependencies: ProjectDependencies = {
