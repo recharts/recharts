@@ -178,6 +178,140 @@ describe('Legend icon follows the dot symbol', () => {
     });
   });
 
+  describe('Line and Area with the default dots', () => {
+    const theme = { graphicalItems: [{ stroke: 'red', fill: 'green', strokeDasharray: '4 2' }] };
+
+    function renderThemedLine(lineProps: React.ComponentProps<typeof Line>) {
+      return render(
+        <RechartsThemeProvider value={theme}>
+          <LineChart width={400} height={400} data={PageData}>
+            <Line isAnimationActive={false} {...lineProps} />
+            <Legend />
+          </LineChart>
+        </RechartsThemeProvider>,
+      );
+    }
+
+    function expectPlainLineIcon(container: Element) {
+      const icon = getLegendIcon(container);
+      const line = icon.querySelector('line.recharts-legend-icon');
+      assertNotNull(line);
+      expect(icon.querySelector('.recharts-symbols')).toBeNull();
+      return line;
+    }
+
+    it.each([
+      { name: 'dot is undefined', dot: undefined },
+      { name: 'dot={true}', dot: true },
+      { name: 'dot is an object without symbol', dot: { r: 6 } },
+    ])('draws a circle in the theme colors of the dots when $name', ({ dot }) => {
+      const { container } = renderThemedLine({ dataKey: 'uv', dot });
+      const symbol = expectLineWithSymbolIcon(container);
+      const chartDot = container.querySelector('.recharts-line-dot');
+      assertNotNull(chartDot);
+      expect(chartDot.tagName).toBe('circle');
+      expect(chartDot).toHaveAttribute('fill', 'red');
+      expect(symbol).toHaveAttribute('fill', 'red');
+      expect(symbol).toHaveAttribute('stroke', 'red');
+      // the same circle proportions as the other symbol icons
+      expect(symbol.getAttribute('d')).toBe('M10,0A10,10,0,1,1,-10,0A10,10,0,1,1,10,0');
+    });
+
+    it('uses the colors of a dot object without symbol', () => {
+      const { container } = renderThemedLine({ dataKey: 'uv', dot: { fill: 'gold' } });
+      const symbol = expectLineWithSymbolIcon(container);
+      expect(symbol).toHaveAttribute('fill', 'gold');
+    });
+
+    it('draws a plain line with the theme stroke and dash pattern when dot={false}', () => {
+      const { container } = renderThemedLine({ dataKey: 'uv', dot: false });
+      const line = expectPlainLineIcon(container);
+      expect(line).toHaveAttribute('stroke', 'red');
+      expect(line).toHaveAttribute('stroke-dasharray', '4 2');
+    });
+
+    it('draws a plain line with the stroke and dash pattern from props when dot={false}', () => {
+      const { container } = renderThemedLine({ dataKey: 'uv', dot: false, stroke: 'blue', strokeDasharray: '1 1' });
+      const line = expectPlainLineIcon(container);
+      expect(line).toHaveAttribute('stroke', 'blue');
+      expect(line).toHaveAttribute('stroke-dasharray', '1 1');
+    });
+
+    it('uses the explicit legendType over the plain line when dot={false}', () => {
+      const { container } = renderThemedLine({ dataKey: 'uv', dot: false, legendType: 'line' });
+      expectClassicLineIcon(container);
+    });
+
+    it('keeps the default line icon for a custom dot function', () => {
+      const { container } = renderThemedLine({ dataKey: 'uv', dot: () => null });
+      expectClassicLineIcon(container);
+    });
+
+    it('draws a hidden themed circle with the inactive color', () => {
+      const { container } = renderThemedLine({ dataKey: 'uv', hide: true });
+      const symbol = expectLineWithSymbolIcon(container);
+      expect(symbol).toHaveAttribute('fill', '#ccc');
+      expect(symbol).toHaveAttribute('stroke', '#ccc');
+    });
+
+    it.each([
+      { name: 'dot is undefined', dot: undefined },
+      { name: 'dot={true}', dot: true },
+      { name: 'dot={false}', dot: false },
+    ])('keeps the default line icon without a theme when $name', ({ dot }) => {
+      const { container } = render(
+        <LineChart width={400} height={400} data={PageData}>
+          <Line isAnimationActive={false} dataKey="uv" dot={dot} />
+          <Legend />
+        </LineChart>,
+      );
+      expectClassicLineIcon(container);
+    });
+
+    it('draws a plain line for a themed Area, which has no dots by default', () => {
+      const { container } = render(
+        <RechartsThemeProvider value={theme}>
+          <AreaChart width={400} height={400} data={PageData}>
+            <Area isAnimationActive={false} dataKey="uv" />
+            <Legend />
+          </AreaChart>
+        </RechartsThemeProvider>,
+      );
+      const line = expectPlainLineIcon(container);
+      expect(line).toHaveAttribute('stroke', 'red');
+    });
+
+    it('draws a circle in the theme colors of the dots for a themed Area with dots', () => {
+      const { container } = render(
+        <RechartsThemeProvider value={theme}>
+          <AreaChart width={400} height={400} data={PageData}>
+            <Area isAnimationActive={false} dataKey="uv" dot />
+            <Legend />
+          </AreaChart>
+        </RechartsThemeProvider>,
+      );
+      const symbol = expectLineWithSymbolIcon(container);
+      const chartDot = container.querySelector('.recharts-area-dot');
+      assertNotNull(chartDot);
+      expect(symbol).toHaveAttribute('fill', chartDot.getAttribute('fill'));
+    });
+
+    it('keeps the default rect icon for a themed Radar', () => {
+      const { container } = render(
+        <RechartsThemeProvider value={theme}>
+          <RadarChart width={400} height={400} data={PageData}>
+            <PolarAngleAxis dataKey="name" />
+            <Radar isAnimationActive={false} dataKey="uv" dot />
+            <Legend />
+          </RadarChart>
+        </RechartsThemeProvider>,
+      );
+      const icon = getLegendIcon(container);
+      expect(icon.querySelector('.recharts-symbols')).toBeNull();
+      expect(icon.querySelector('line')).toBeNull();
+    });
+  });
+
   describe('Area', () => {
     it('draws a line with the dot symbol in the dot colors when dot is a symbol', () => {
       const { container } = render(

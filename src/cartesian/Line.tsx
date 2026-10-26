@@ -14,7 +14,7 @@ import {
   SetLabelListClipArea,
 } from '../component/LabelList';
 import { Dots } from '../component/Dots';
-import { getLegendPayloadDot } from '../shape/DotSymbol';
+import { getLegendPayloadDot, getNoDotsLegendType } from '../shape/DotSymbol';
 import { ErrorBarDataItem, ErrorBarDataPointFormatter } from './ErrorBar';
 import { interpolate, isNullish, noop } from '../util/DataUtils';
 import { isClipDot } from '../util/ReactUtils';
@@ -228,7 +228,8 @@ export interface LineProps<DataPointType = any, DataValueType = any>
    * - `object`: the props of the dot. This will be merged with the internal calculated props of each dot.
    *   Set `symbol` to draw a predefined symbol instead of a circle;
    * - `ReactElement`: the custom dot element;
-   * - `function`: a render function of the custom dot;
+   * - `function`: a render function of the custom dot.
+   *   The legend cannot know what a custom element or function draws, so set a matching `legendType`;
    * - `string`: name of a predefined symbol, such as `'diamond'` or `'star'`, the same as in `legendType`.
    *   Use different symbols to tell series apart without relying on color.
    *   The legend icon shows the same symbol.
@@ -294,6 +295,7 @@ export interface LineProps<DataPointType = any, DataValueType = any>
    *
    * By default, the legend icon shows the same predefined symbol as the data points, if they use one.
    * The `line` icon draws it in the middle of the line.
+   * With a theme, it draws the default dots too, and a plain line when there are no dots.
    *
    * @defaultValue line
    * @example <Line dataKey="value" dot="star" legendType="star" />
@@ -500,7 +502,11 @@ function getDotFillFromTheme(stroke: string | undefined, fill: string | undefine
   return stroke && stroke !== 'none' ? stroke : fill;
 }
 
-const computeLegendPayloadFromAreaData = (props: Props, dotFill: string | undefined): ReadonlyArray<LegendPayload> => {
+const computeLegendPayloadFromAreaData = (
+  props: Props,
+  dotFill: string | undefined,
+  isThemed: boolean,
+): ReadonlyArray<LegendPayload> => {
   const { dataKey, name, stroke, fill, legendType, hide, dot } = props;
   return [
     {
@@ -508,7 +514,7 @@ const computeLegendPayloadFromAreaData = (props: Props, dotFill: string | undefi
       dataKey,
       type: legendType,
       // the same colors as the dots get in LineDotsWrapper
-      dot: getLegendPayloadDot(dot, { fill: dotFill ?? fill, stroke }),
+      dot: getLegendPayloadDot(dot, { fill: dotFill ?? fill, stroke }, isThemed),
       color: stroke,
       value: getTooltipNameProp(name, dataKey),
       payload: props,
@@ -983,6 +989,9 @@ function LineFn(outsideProps: Props) {
       ...outsideProps,
       dataKey,
       activeDot: outsideProps.activeDot,
+      // with a theme, a line without dots has no dot in its legend icon either
+      legendType:
+        outsideProps.legendType ?? getNoDotsLegendType(outsideProps.dot ?? defaultLineProps.dot, rechartsTheme != null),
       fill: outsideProps.fill ?? graphicalItemTheme?.fill,
       fillOpacity: outsideProps.fillOpacity ?? graphicalItemTheme?.fillOpacity,
       stroke: outsideProps.stroke ?? graphicalItemTheme?.stroke,
@@ -1002,7 +1011,7 @@ function LineFn(outsideProps: Props) {
     <RegisterGraphicalItemId id={props.id} type="line">
       {id => (
         <>
-          <SetLegendPayload legendPayload={computeLegendPayloadFromAreaData(props, dotFill)} />
+          <SetLegendPayload legendPayload={computeLegendPayloadFromAreaData(props, dotFill, rechartsTheme != null)} />
           <SetLineTooltipEntrySettings
             dataKey={props.dataKey}
             data={props.data}
