@@ -11,3 +11,9 @@ testWithThemes('Pie fill and stroke variants', async ({ mountStory }) => {
 
   await expect(component).toHaveScreenshot();
 });
+
+testWithThemes('Pie entry styles with labels', async ({ mountStory }) => {
+  const component = await mountStory('theme/PieTheme/PieEntryStylesWithLabels');
+
+  await expect(component).toHaveScreenshot();
+});
