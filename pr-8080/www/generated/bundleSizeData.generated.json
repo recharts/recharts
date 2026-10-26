@@ -1,45 +1,45 @@
 {
   "treemap": {
     "examplePath": "www/src/views/IndexView/IndexLineChart.tsx",
-    "totalSize": 980836,
-    "totalSizeLabel": "957.85 KB",
+    "totalSize": 981157,
+    "totalSizeLabel": "958.16 KB",
     "moduleCount": 382,
-    "generatedAt": "2026-10-26T05:02:01.419Z",
+    "generatedAt": "2026-10-26T05:45:20.108Z",
     "stages": [
       {
         "stage": "es6-folder",
-        "bytes": 1544718,
+        "bytes": 1545096,
         "humanReadableSize": "1.47 MB",
         "reductionFromBaselinePercent": 0
       },
       {
         "stage": "tree-shaken",
-        "bytes": 983747,
-        "humanReadableSize": "960.69 KB",
+        "bytes": 984068,
+        "humanReadableSize": "961.00 KB",
         "reductionFromBaselinePercent": 0
       },
       {
         "stage": "minified",
-        "bytes": 320393,
-        "humanReadableSize": "312.88 KB",
-        "reductionFromBaselinePercent": 67.43
+        "bytes": 320457,
+        "humanReadableSize": "312.95 KB",
+        "reductionFromBaselinePercent": 67.44
       },
       {
         "stage": "minified+gzip",
-        "bytes": 104884,
-        "humanReadableSize": "102.43 KB",
+        "bytes": 104912,
+        "humanReadableSize": "102.45 KB",
         "reductionFromBaselinePercent": 89.34
       }
     ],
     "tree": {
       "name": "bundle",
       "fullPath": "bundle",
-      "value": 980836,
+      "value": 981157,
       "children": [
         {
           "name": "src",
           "fullPath": "src",
-          "value": 577260,
+          "value": 577581,
           "children": [
             {
               "name": "state",
@@ -811,7 +811,7 @@
             {
               "name": "component",
               "fullPath": "src/component",
-              "value": 61000,
+              "value": 61321,
               "children": [
                 {
                   "name": "Text.tsx",
@@ -826,7 +826,7 @@
                 {
                   "name": "DefaultLegendContent.tsx",
                   "fullPath": "src/component/DefaultLegendContent.tsx",
-                  "value": 8397
+                  "value": 8718
                 },
                 {
                   "name": "Legend.tsx",
@@ -2637,45 +2637,45 @@
   },
   "sunburst": {
     "examplePath": "www/src/views/IndexView/IndexLineChart.tsx",
-    "totalSize": 980836,
-    "totalSizeLabel": "957.85 KB",
+    "totalSize": 981157,
+    "totalSizeLabel": "958.16 KB",
     "moduleCount": 382,
-    "generatedAt": "2026-10-26T05:01:59.717Z",
+    "generatedAt": "2026-10-26T05:45:18.562Z",
     "stages": [
       {
         "stage": "es6-folder",
-        "bytes": 1544718,
+        "bytes": 1545096,
         "humanReadableSize": "1.47 MB",
         "reductionFromBaselinePercent": 0
       },
       {
         "stage": "tree-shaken",
-        "bytes": 983747,
-        "humanReadableSize": "960.69 KB",
+        "bytes": 984068,
+        "humanReadableSize": "961.00 KB",
         "reductionFromBaselinePercent": 0
       },
       {
         "stage": "minified",
-        "bytes": 320393,
-        "humanReadableSize": "312.88 KB",
-        "reductionFromBaselinePercent": 67.43
+        "bytes": 320457,
+        "humanReadableSize": "312.95 KB",
+        "reductionFromBaselinePercent": 67.44
       },
       {
         "stage": "minified+gzip",
-        "bytes": 104884,
-        "humanReadableSize": "102.43 KB",
+        "bytes": 104912,
+        "humanReadableSize": "102.45 KB",
         "reductionFromBaselinePercent": 89.34
       }
     ],
     "tree": {
       "name": "bundle",
       "fullPath": "bundle",
-      "value": 980836,
+      "value": 981157,
       "children": [
         {
           "name": "src",
           "fullPath": "src",
-          "value": 577260,
+          "value": 577581,
           "children": [
             {
               "name": "state",
@@ -3447,7 +3447,7 @@
             {
               "name": "component",
               "fullPath": "src/component",
-              "value": 61000,
+              "value": 61321,
               "children": [
                 {
                   "name": "Text.tsx",
@@ -3462,7 +3462,7 @@
                 {
                   "name": "DefaultLegendContent.tsx",
                   "fullPath": "src/component/DefaultLegendContent.tsx",
-                  "value": 8397
+                  "value": 8718
                 },
                 {
                   "name": "Legend.tsx",
