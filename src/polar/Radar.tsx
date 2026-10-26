@@ -15,6 +15,7 @@ import {
   LabelListFromLabelProp,
 } from '../component/LabelList';
 import { Dots } from '../component/Dots';
+import { getDotSymbol } from '../shape/DotSymbol';
 import {
   ActiveDotType,
   AnimationDuration,
@@ -137,11 +138,14 @@ export interface RadarProps<DataPointType = any, DataValueType = any>
    *
    * - `false`: no dots are drawn;
    * - `true`: renders the dots with default settings;
-   * - `object`: the props of the dot. This will be merged with the internal calculated props of each dot;
+   * - `object`: the props of the dot. This will be merged with the internal calculated props of each dot.
+   *   Set `symbol` to draw a predefined symbol instead of a circle;
    * - `ReactElement`: the custom dot element;
    * - `function`: a render function of the custom dot;
    * - `string`: name of a predefined symbol, such as `'diamond'` or `'star'`, the same as in `legendType`.
    *   Use different symbols to tell series apart without relying on color.
+   *   The legend icon shows the same symbol.
+   *   To change the size of the symbol, use the object form with `symbol` and `r`.
    *
    * @defaultValue false
    */
@@ -170,7 +174,11 @@ export interface RadarProps<DataPointType = any, DataValueType = any>
    */
   label?: ImplicitLabelListType;
   /**
-   * The type of icon in legend.  If set to 'none', no legend item will be rendered.
+   * The type of icon in legend.
+   * If set to 'none', no legend item will be rendered.
+   *
+   * By default, the legend icon shows the same predefined symbol as the data points, if they use one.
+   *
    * @defaultValue rect
    */
   legendType?: LegendType;
@@ -235,12 +243,13 @@ function getLegendItemColor(stroke: string | undefined, fill: string | undefined
 }
 
 const computeLegendPayloadFromRadarSectors = (props: PropsWithDefaults): ReadonlyArray<LegendPayload> => {
-  const { dataKey, name, stroke, fill, legendType, hide } = props;
+  const { dataKey, name, stroke, fill, legendType, hide, dot } = props;
   return [
     {
       inactive: hide,
       dataKey,
       type: legendType,
+      dotSymbol: getDotSymbol(dot),
       color: getLegendItemColor(stroke, fill),
       value: getTooltipNameProp(name, dataKey),
       payload: props,
@@ -694,6 +703,8 @@ export function Radar<DataPointType = any, DataValueType = any>(outsideProps: Pr
     ...outsideProps,
     dataKey,
     activeDot: outsideProps.activeDot,
+    // the legend shows the same symbol as the dots, unless legendType says otherwise
+    legendType: outsideProps.legendType ?? getDotSymbol(outsideProps.dot),
     fill: outsideProps.fill ?? graphicalItemTheme?.fill,
     fillOpacity: outsideProps.fillOpacity ?? graphicalItemTheme?.fillOpacity,
     stroke: outsideProps.stroke ?? graphicalItemTheme?.stroke,

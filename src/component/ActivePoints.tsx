@@ -2,7 +2,7 @@ import * as React from 'react';
 import { cloneElement, isValidElement } from 'react';
 import { ActiveDotProps, ActiveDotType, adaptEventHandlers, DataKey } from '../util/types';
 import { Dot } from '../shape/Dot';
-import { DotSymbol } from '../shape/DotSymbol';
+import { DotSymbol, getDotSymbol } from '../shape/DotSymbol';
 import { Layer } from '../container/Layer';
 import { useAppSelector } from '../state/hooks';
 import { selectActiveTooltipIndex } from '../state/selectors/tooltipSelectors';
@@ -70,14 +70,15 @@ const ActivePoint = ({
   };
 
   let dot;
+  const symbol = getDotSymbol(activeDot);
 
   if (isValidElement(activeDot)) {
     // @ts-expect-error we're improperly typing events
     dot = cloneElement(activeDot, dotProps);
   } else if (typeof activeDot === 'function') {
     dot = activeDot(dotProps);
-  } else if (typeof activeDot === 'string') {
-    dot = <DotSymbol {...dotProps} type={activeDot} />;
+  } else if (symbol != null) {
+    dot = <DotSymbol {...dotProps} type={symbol} />;
   } else {
     dot = <Dot {...dotProps} />;
   }

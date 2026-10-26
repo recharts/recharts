@@ -11,6 +11,7 @@ import {
   SetLabelListClipArea,
 } from '../component/LabelList';
 import { Dots, DotsDotProps } from '../component/Dots';
+import { getDotSymbol } from '../shape/DotSymbol';
 import { interpolate, isNan, isNullish, isNumber, noop } from '../util/DataUtils';
 import {
   getCateCoordinateOfLine,
@@ -156,7 +157,8 @@ export interface AreaProps<DataPointType = any, DataValueType = any>
    *
    * - `false`: dots do not change on user activity; both active and inactive dots follow the `dot` prop (see below)
    * - `true`: renders the active dot with default settings
-   * - `object`: the props of the active dot. This will be merged with the internal calculated props of the active dot
+   * - `object`: the props of the active dot. This will be merged with the internal calculated props of the active dot.
+   *   Set `symbol` to draw a predefined symbol instead of a circle
    * - `ReactElement`: the custom active dot element
    * - `function`: a render function of the custom active dot
    * - `string`: name of a predefined symbol, such as `'diamond'` or `'star'`
@@ -166,6 +168,7 @@ export interface AreaProps<DataPointType = any, DataValueType = any>
    * @example <Area dataKey="value" activeDot={{ stroke: 'red', strokeWidth: 2, r: 10 }} />
    * @example <Area dataKey="value" activeDot={CustomizedActiveDot} />
    * @example <Area dataKey="value" activeDot="diamond" />
+   * @example <Area dataKey="value" activeDot={{ symbol: 'diamond', r: 8 }} />
    *
    * @see {@link https://recharts.github.io/en-US/examples/SimpleLineChart/ A line chart with customized active dot}
    */
@@ -251,11 +254,14 @@ export interface AreaProps<DataPointType = any, DataValueType = any>
    *
    * - `false`: no dots are drawn;
    * - `true`: renders the dots with default settings;
-   * - `object`: the props of the dot. This will be merged with the internal calculated props of each dot;
+   * - `object`: the props of the dot. This will be merged with the internal calculated props of each dot.
+   *   Set `symbol` to draw a predefined symbol instead of a circle;
    * - `ReactElement`: the custom dot element;
    * - `function`: a render function of the custom dot;
    * - `string`: name of a predefined symbol, such as `'diamond'` or `'star'`, the same as in `legendType`.
    *   Use different symbols to tell series apart without relying on color.
+   *   The legend icon shows the same symbol.
+   *   To change the size of the symbol, use the object form with `symbol` and `r`.
    *
    * @defaultValue false
    */
@@ -301,6 +307,10 @@ export interface AreaProps<DataPointType = any, DataValueType = any>
   /**
    * The type of icon in legend.
    * If set to 'none', no legend item will be rendered.
+   *
+   * By default, the legend icon shows the same predefined symbol as the data points, if they use one.
+   * The `line` icon draws it in the middle of the line.
+   *
    * @defaultValue 'line'
    */
   legendType?: LegendType;
@@ -467,12 +477,13 @@ function getLegendItemColor(stroke: string | undefined, fill: string | undefined
 const computeLegendPayloadFromAreaData = <DataPointType, ValueAxisType>(
   props: Props<DataPointType, ValueAxisType>,
 ): ReadonlyArray<LegendPayload> => {
-  const { dataKey, name, stroke, fill, legendType, hide } = props;
+  const { dataKey, name, stroke, fill, legendType, hide, dot } = props;
   return [
     {
       inactive: hide,
       dataKey,
       type: legendType,
+      dotSymbol: getDotSymbol(dot),
       color: getLegendItemColor(stroke, fill),
       value: getTooltipNameProp(name, dataKey),
       payload: props,

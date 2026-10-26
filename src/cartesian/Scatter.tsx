@@ -272,6 +272,8 @@ export interface ScatterProps<DataPointType = any, DataValueType = any>
    * The type of icon in legend.
    * If set to 'none', no legend item will be rendered.
    *
+   * By default, the legend icon shows the same predefined symbol as the data points, if they use one.
+   *
    * @defaultValue 'circle'
    * @example <Scatter legendType="diamond" />
    */
@@ -417,12 +419,13 @@ export type Props<DataPointType = any, ValueAxisType = any> = BaseScatterSvgProp
   ScatterProps<DataPointType, ValueAxisType>;
 
 const computeLegendPayloadFromScatterProps = (props: Props): ReadonlyArray<LegendPayload> => {
-  const { dataKey, name, fill, legendType, hide } = props;
+  const { dataKey, name, fill, legendType, hide, shape } = props;
   return [
     {
       inactive: hide,
       dataKey,
       type: legendType,
+      dotSymbol: typeof shape === 'string' ? shape : undefined,
       color: fill,
       value: getTooltipNameProp(name, dataKey),
       payload: props,
@@ -1136,6 +1139,8 @@ function ScatterFn(outsideProps: Props) {
   const props = resolveDefaultProps(
     {
       ...outsideProps,
+      // the legend shows the same symbol as the points, unless legendType says otherwise
+      legendType: outsideProps.legendType ?? (typeof outsideProps.shape === 'string' ? outsideProps.shape : undefined),
       fill: outsideProps.fill ?? graphicalItemTheme?.fill,
       fillOpacity: outsideProps.fillOpacity ?? graphicalItemTheme?.fillOpacity,
       stroke: outsideProps.stroke ?? graphicalItemTheme?.stroke,

@@ -155,6 +155,112 @@ describe('dot and activeDot as a symbol name', () => {
     });
   });
 
+  describe('Line with the symbol in the dot object', () => {
+    it('renders dot={{ symbol }} as a symbol, sized from r', () => {
+      const { container } = render(
+        <LineChart width={400} height={400} data={PageData}>
+          <Line dataKey="uv" dot={{ symbol: 'circle', r: 6 }} isAnimationActive={false} />
+        </LineChart>,
+      );
+      const dots = getDots(container, '.recharts-line-dot');
+      expect(dots).toHaveLength(PageData.length);
+      dots.forEach(dot => {
+        expect(dot.tagName).toBe('path');
+        expect(dot).toHaveClass('recharts-symbols');
+        expect(dot.getAttribute('d')).toBe('M6,0A6,6,0,1,1,-6,0A6,6,0,1,1,6,0');
+      });
+    });
+
+    it('applies the other props of the dot object to the symbol', () => {
+      const { container } = render(
+        <LineChart width={400} height={400} data={PageData}>
+          <Line
+            dataKey="uv"
+            dot={{ symbol: 'diamond', stroke: 'red', strokeWidth: 5, className: 'my-dot' }}
+            isAnimationActive={false}
+          />
+        </LineChart>,
+      );
+      const dot = container.querySelector('.recharts-line-dot');
+      assertNotNull(dot);
+      expect(dot.tagName).toBe('path');
+      expect(dot).toHaveAttribute('stroke', 'red');
+      expect(dot).toHaveAttribute('stroke-width', '5');
+      expect(dot).toHaveClass('my-dot');
+      expect(dot).toHaveClass('recharts-line-dot');
+    });
+
+    it('does not render the symbol prop as a DOM attribute', () => {
+      const { container } = render(
+        <LineChart width={400} height={400} data={PageData}>
+          <Line dataKey="uv" dot={{ symbol: 'star', r: 6 }} isAnimationActive={false} />
+        </LineChart>,
+      );
+      const dot = container.querySelector('.recharts-line-dot');
+      assertNotNull(dot);
+      expect(dot.hasAttribute('symbol')).toBe(false);
+      expect(dot.hasAttribute('r')).toBe(false);
+    });
+
+    it('renders a circle when the dot object has no symbol', () => {
+      const { container } = render(
+        <LineChart width={400} height={400} data={PageData}>
+          <Line dataKey="uv" dot={{ r: 6 }} isAnimationActive={false} />
+        </LineChart>,
+      );
+      const dot = container.querySelector('.recharts-line-dot');
+      assertNotNull(dot);
+      expect(dot.tagName).toBe('circle');
+      expect(dot).toHaveAttribute('r', '6');
+    });
+
+    it('renders activeDot={{ symbol }} as a symbol, sized from r', () => {
+      const { container } = render(
+        <LineChart width={400} height={400} data={PageData}>
+          <Line dataKey="uv" activeDot={{ symbol: 'circle', r: 8 }} />
+          <Tooltip />
+        </LineChart>,
+      );
+      showTooltip(container, lineChartMouseHoverTooltipSelector);
+      const activeDot = container.querySelector('.recharts-active-dot path');
+      assertNotNull(activeDot);
+      expect(activeDot).toHaveClass('recharts-symbols');
+      expect(activeDot).toHaveAttribute('transform', 'translate(161, 102.5)');
+      expect(activeDot.getAttribute('d')).toBe('M8,0A8,8,0,1,1,-8,0A8,8,0,1,1,8,0');
+      expect(container.querySelector('.recharts-active-dot circle')).toBeNull();
+    });
+
+    it('uses the theme active styles for activeDot={{ symbol }} without own colors', () => {
+      const { container } = render(
+        <RechartsThemeProvider value={{ graphicalItems: [{ stroke: 'red', fill: 'green', active: { fill: 'blue' } }] }}>
+          <LineChart width={400} height={400} data={PageData}>
+            <Line dataKey="uv" activeDot={{ symbol: 'wye', r: 8 }} />
+            <Tooltip />
+          </LineChart>
+        </RechartsThemeProvider>,
+      );
+      showTooltip(container, lineChartMouseHoverTooltipSelector);
+      const activeDot = container.querySelector('.recharts-active-dot path');
+      assertNotNull(activeDot);
+      expect(activeDot).toHaveAttribute('fill', 'blue');
+    });
+
+    it('uses the own colors of activeDot={{ symbol }} over the theme', () => {
+      const { container } = render(
+        <RechartsThemeProvider value={{ graphicalItems: [{ stroke: 'red', fill: 'green', active: { fill: 'blue' } }] }}>
+          <LineChart width={400} height={400} data={PageData}>
+            <Line dataKey="uv" activeDot={{ symbol: 'wye', fill: 'orange' }} />
+            <Tooltip />
+          </LineChart>
+        </RechartsThemeProvider>,
+      );
+      showTooltip(container, lineChartMouseHoverTooltipSelector);
+      const activeDot = container.querySelector('.recharts-active-dot path');
+      assertNotNull(activeDot);
+      expect(activeDot).toHaveAttribute('fill', 'orange');
+    });
+  });
+
   describe('Area', () => {
     it('renders dot and activeDot as symbols', () => {
       const { container } = render(

@@ -3,8 +3,15 @@ import { ReactNode, MouseEvent, ReactElement, CSSProperties } from 'react';
 
 import { clsx } from 'clsx';
 import { Surface } from '../container/Surface';
-import { Symbols } from '../shape/Symbols';
-import { DataKey, LegendType, adaptEventsOfChild, PresentationAttributesForHTML, CartesianLayout } from '../util/types';
+import { getSymbolHalfWidth, Symbols } from '../shape/Symbols';
+import {
+  DataKey,
+  LegendType,
+  adaptEventsOfChild,
+  PresentationAttributesForHTML,
+  CartesianLayout,
+  SymbolType,
+} from '../util/types';
 import { RequiresDefaultProps, resolveDefaultProps } from '../util/resolveDefaultProps';
 import { RechartsTheme } from '../theme/RechartsTheme';
 import { useBackwardsCompatibleTheme } from '../theme/useBackwardsCompatibleTheme';
@@ -33,6 +40,11 @@ export interface LegendPayload {
   inactive?: boolean;
   legendIcon?: ReactElement<SVGElement>;
   dataKey?: DataKey<any>;
+  /**
+   * The symbol that the graphical item draws at its data points, if it draws one of the predefined symbols.
+   * The `line` icon draws this symbol in the middle of the line, in place of the default circle.
+   */
+  dotSymbol?: SymbolType;
 }
 
 interface DefaultLegendContentProps {
@@ -157,6 +169,42 @@ function getStrokeDasharray(input: unknown): string | undefined {
   return undefined;
 }
 
+/**
+ * Diameter of the symbol in the `line` legend icon, in the 32x32 icon coordinates.
+ */
+const LINE_ICON_SYMBOL_SIZE = 20;
+
+/**
+ * The `line` legend icon for a graphical item that draws one of the predefined symbols at its data points:
+ * a line with that symbol in the middle, in place of the default circle.
+ * The symbol is hollow, like the default circle, and the line reaches the edge of the symbol.
+ */
+function LineWithSymbolIcon({ symbol, color }: { symbol: SymbolType; color: string | undefined }) {
+  const halfSize = SIZE / 2;
+  const halfWidth = getSymbolHalfWidth(symbol, LINE_ICON_SYMBOL_SIZE, 'diameter');
+  return (
+    <g className="recharts-legend-icon">
+      <path
+        strokeWidth={4}
+        fill="none"
+        stroke={color}
+        d={`M0,${halfSize}H${halfSize - halfWidth}M${halfSize + halfWidth},${halfSize}H${SIZE}`}
+      />
+      <Symbols
+        type={symbol}
+        cx={halfSize}
+        cy={halfSize}
+        size={LINE_ICON_SYMBOL_SIZE}
+        sizeType="diameter"
+        fill="none"
+        stroke={color}
+        strokeWidth={3}
+        strokeLinejoin="round"
+      />
+    </g>
+  );
+}
+
 function Icon({
   data,
   iconType,
@@ -189,6 +237,9 @@ function Icon({
         className="recharts-legend-icon"
       />
     );
+  }
+  if (preferredIcon === 'line' && data.dotSymbol != null && data.dotSymbol !== 'circle') {
+    return <LineWithSymbolIcon symbol={data.dotSymbol} color={color} />;
   }
   if (preferredIcon === 'line') {
     return (

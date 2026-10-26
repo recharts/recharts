@@ -2,7 +2,7 @@ import * as React from 'react';
 import { cloneElement, isValidElement } from 'react';
 import { clsx } from 'clsx';
 import { Dot, type Props as DotProps } from '../shape/Dot';
-import { DotSymbol } from '../shape/DotSymbol';
+import { DotSymbol, getDotSymbol } from '../shape/DotSymbol';
 import { Layer } from '../container/Layer';
 import { DataKey, DotItemDotProps, DotType } from '../util/types';
 import { isClipDot } from '../util/ReactUtils';
@@ -35,12 +35,13 @@ function DotItem({ option, dotProps, className }: DotItemProps) {
   }
 
   const { points, ...props } = dotProps ?? {};
+  const finalClassName = clsx(className, typeof option === 'object' ? option.className : undefined);
+  const symbol = getDotSymbol(option);
 
-  if (typeof option === 'string') {
-    return <DotSymbol {...props} type={option} className={className} />;
+  if (symbol != null) {
+    return <DotSymbol {...props} type={symbol} className={finalClassName} />;
   }
 
-  const finalClassName = clsx(className, typeof option !== 'boolean' ? option.className : '');
   return <Dot {...props} className={finalClassName} />;
 }
 
