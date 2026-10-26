@@ -391,3 +391,19 @@ describe('Tooltip colors and symbol id (#7976)', () => {
     expect(container.querySelector('#my-point')).toBe(null);
   });
 });
+
+describe('theme active styles with a symbol activeShape', () => {
+  it('applies the theme active fill when activeShape is a symbol name', () => {
+    const { container } = rechartsTestRender(
+      <RechartsThemeProvider value={{ graphicalItems: [{ fill: 'red', active: { fill: 'blue' } }] }}>
+        <MyChart>
+          <Scatter data={scatterData} activeShape="diamond" isAnimationActive={false} />
+          <Tooltip />
+        </MyChart>
+      </RechartsThemeProvider>,
+    );
+    showTooltip(container, scatterChartMouseHoverTooltipSelector);
+    const fills = getAllScatterPoints(container).map(path => path.getAttribute('fill'));
+    expect(fills.filter(fill => fill === 'blue')).toHaveLength(1);
+  });
+});
