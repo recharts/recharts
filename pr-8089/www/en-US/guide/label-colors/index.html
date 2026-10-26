@@ -1,0 +1,258 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <title>Recharts</title>
+    <meta charset="utf-8" />
+    <meta name="description" content="Recharts - Re-designed charting library built with React and D3." />
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5" />
+    <script>
+      /**
+       * @note this is duplicated in defineColorModeStore.ts, to avoid FOUC on initial load. Please keep in sync.
+       */
+      (function () {
+        try {
+          var storedMode = localStorage.getItem('recharts-color-mode');
+          var mode =
+            storedMode === 'light' || storedMode === 'dark'
+              ? storedMode
+              : window.matchMedia('(prefers-color-scheme: dark)').matches
+                ? 'dark'
+                : 'light';
+          document.documentElement.setAttribute('data-mode', mode);
+        } catch (e) {
+          // Do nothing
+        }
+      })();
+    </script>
+    <link
+      href="//fonts.googleapis.com/css?family=Source+Sans+Pro:400,600|Roboto Mono|Oswald:300"
+      rel="stylesheet"
+      type="text/css"
+    />
+    <script type="module" crossorigin src="/recharts/pr-8089/www/assets/index-CTNS_GpJ.js"></script>
+    <link rel="stylesheet" crossorigin href="/recharts/pr-8089/www/assets/index-CSyjNhZq.css">
+    <link rel="sitemap" type="application/xml" title="Sitemap" href="/sitemap.xml">
+  </head>
+  <body>
+    <div id="app"><div class="container"><header><a class="logo" href="/en-US/" data-discover="true"><div width="200" height="60" class="recharts-wrapper" style="position:relative;cursor:default;width:200px;height:60px"></div></a><nav class="desktop-only"><ul class="navigation-items"><li><a aria-current="page" class="active" href="/en-US/guide/" data-discover="true">Guide</a></li><li><a class="" href="/en-US/api/" data-discover="true">API</a></li><li><a class="" href="/en-US/examples/" data-discover="true">Examples</a></li><li><a class="" href="/en-US/storybook/" data-discover="true">Storybook</a></li><li><a href="https://github.com/recharts/recharts/wiki" target="_blank" rel="noopener noreferrer" style="white-space:nowrap;display:inline-flex;align-items:center;gap:0.25rem">Wiki<svg stroke="currentColor" fill="none" stroke-width="2" viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round" height="1em" width="1em" xmlns="http://www.w3.org/2000/svg"><path d="M15 3h6v6"></path><path d="M10 14 21 3"></path><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path></svg></a></li><li><a href="https://github.com/recharts/recharts" target="_blank" rel="noopener noreferrer" style="white-space:nowrap;display:inline-flex;align-items:center;gap:0.25rem">GitHub<svg stroke="currentColor" fill="none" stroke-width="2" viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round" height="1em" width="1em" xmlns="http://www.w3.org/2000/svg"><path d="M15 3h6v6"></path><path d="M10 14 21 3"></path><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path></svg></a></li><li><a href="https://www.npmjs.com/package/recharts" target="_blank" rel="noopener noreferrer" style="white-space:nowrap;display:inline-flex;align-items:center;gap:0.25rem">npm<svg stroke="currentColor" fill="none" stroke-width="2" viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round" height="1em" width="1em" xmlns="http://www.w3.org/2000/svg"><path d="M15 3h6v6"></path><path d="M10 14 21 3"></path><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path></svg></a></li><li><a href="https://github.com/recharts/recharts/wiki/3.0-migration-guide" target="_blank" rel="noopener noreferrer" style="white-space:nowrap;display:inline-flex;align-items:center;gap:0.25rem">3.0 migration guide<svg stroke="currentColor" fill="none" stroke-width="2" viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round" height="1em" width="1em" xmlns="http://www.w3.org/2000/svg"><path d="M15 3h6v6"></path><path d="M10 14 21 3"></path><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path></svg></a></li></ul><div class="nav-actions"><span class="no-wrap"><span><span class="switch-item active">En</span></span><span><span>  |  </span><a class="switch-item" href="/zh-CN/guide/label-colors/" data-discover="true">中文</a></span></span><button class="_ColorModePicker_1b4l5_1" type="button" aria-label="system"><svg stroke="currentColor" fill="none" stroke-width="2" viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round" height="1em" width="1em" xmlns="http://www.w3.org/2000/svg"><rect width="20" height="14" x="2" y="3" rx="2"></rect><line x1="8" x2="16" y1="21" y2="21"></line><line x1="12" x2="12" y1="17" y2="21"></line></svg></button></div></nav><nav class="mobile-only"><button type="button" class="mobile-nav-toggle mobile-only" aria-label="Toggle navigation"><span>Menu</span><div width="3rem" height="3rem" class="recharts-wrapper" style="position:relative;cursor:pointer;height:3rem;width:3rem"></div></button><div class="mobile-nav-backdrop " aria-hidden="true"></div><div class="slide-right-mobile-nav "><ul class="navigation-items"><li class="collapsible "><button type="button" class="collapsible-trigger"><span>Guide</span><div width="3rem" height="3rem" class="recharts-wrapper" style="position:relative;cursor:default;height:3rem;width:3rem"></div></button></li><li class="collapsible "><button type="button" class="collapsible-trigger"><span>API</span><div width="3rem" height="3rem" class="recharts-wrapper" style="position:relative;cursor:default;height:3rem;width:3rem"></div></button></li><li class="collapsible "><button type="button" class="collapsible-trigger"><span>Examples</span><div width="3rem" height="3rem" class="recharts-wrapper" style="position:relative;cursor:default;height:3rem;width:3rem"></div></button></li><li><a class="" href="/en-US/storybook/" data-discover="true">Storybook</a></li><li><a href="https://github.com/recharts/recharts/wiki" target="_blank" rel="noopener noreferrer" style="white-space:nowrap;display:inline-flex;align-items:center;gap:0.25rem">Wiki<svg stroke="currentColor" fill="none" stroke-width="2" viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round" height="1em" width="1em" xmlns="http://www.w3.org/2000/svg"><path d="M15 3h6v6"></path><path d="M10 14 21 3"></path><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path></svg></a></li><li><a href="https://github.com/recharts/recharts" target="_blank" rel="noopener noreferrer" style="white-space:nowrap;display:inline-flex;align-items:center;gap:0.25rem">GitHub<svg stroke="currentColor" fill="none" stroke-width="2" viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round" height="1em" width="1em" xmlns="http://www.w3.org/2000/svg"><path d="M15 3h6v6"></path><path d="M10 14 21 3"></path><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path></svg></a></li><li><a href="https://www.npmjs.com/package/recharts" target="_blank" rel="noopener noreferrer" style="white-space:nowrap;display:inline-flex;align-items:center;gap:0.25rem">npm<svg stroke="currentColor" fill="none" stroke-width="2" viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round" height="1em" width="1em" xmlns="http://www.w3.org/2000/svg"><path d="M15 3h6v6"></path><path d="M10 14 21 3"></path><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path></svg></a></li><li><a href="https://github.com/recharts/recharts/wiki/3.0-migration-guide" target="_blank" rel="noopener noreferrer" style="white-space:nowrap;display:inline-flex;align-items:center;gap:0.25rem">3.0 migration guide<svg stroke="currentColor" fill="none" stroke-width="2" viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round" height="1em" width="1em" xmlns="http://www.w3.org/2000/svg"><path d="M15 3h6v6"></path><path d="M10 14 21 3"></path><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path></svg></a></li></ul><div class="nav-actions"><span class="no-wrap"><span><span class="switch-item active">En</span></span><span><span>  |  </span><a class="switch-item" href="/zh-CN/guide/label-colors/" data-discover="true">中文</a></span></span><button class="_ColorModePicker_1b4l5_1" type="button" aria-label="system"><svg stroke="currentColor" fill="none" stroke-width="2" viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round" height="1em" width="1em" xmlns="http://www.w3.org/2000/svg"><rect width="20" height="14" x="2" y="3" rx="2"></rect><line x1="8" x2="16" y1="21" y2="21"></line><line x1="12" x2="12" y1="17" y2="21"></line></svg></button></div></div></nav></header><div class="sidebar desktop-only"><h2>Guide</h2><div class="sidebar-cate"><ul class="menu"><li><a class="" href="/en-US/guide/installation/" data-discover="true">Installation</a></li><li><a class="" href="/en-US/guide/getting-started/" data-discover="true">Getting Started</a></li><li><a class="" href="/en-US/guide/customize/" data-discover="true">Customize</a></li><li><a class="" href="/en-US/guide/activeIndex/" data-discover="true">Active Index</a></li><li><a class="" href="/en-US/guide/domainAndTicks/" data-discover="true">Domain and Ticks</a></li><li><a class="" href="/en-US/guide/axisTicks/" data-discover="true">Axis ticks</a></li><li><a class="" href="/en-US/guide/sizes/" data-discover="true">Chart size</a></li><li><a class="" href="/en-US/guide/zIndex/" data-discover="true">Z-Index and layers</a></li><li><a class="" href="/en-US/guide/coordinateSystems/" data-discover="true">Coordinate and dimension systems</a></li><li><a class="" href="/en-US/guide/performance/" data-discover="true">Performance</a></li><li><a class="" href="/en-US/guide/roundedBars/" data-discover="true">Rounded Bar corners</a></li><li><a class="" href="/en-US/guide/barAlignment/" data-discover="true">Bar Alignment</a></li><li><a class="" href="/en-US/guide/cell/" data-discover="true">Migrate from Cell component to shape prop</a></li><li><a class="" href="/en-US/guide/typescript/" data-discover="true">TypeScript</a></li><li><a class="" href="/en-US/guide/animations/" data-discover="true">Animation</a></li><li><a class="" href="/en-US/guide/theming/" data-discover="true">Theming</a></li><li><a class="" href="/en-US/guide/theme-color-testing/" data-discover="true">Theme color testing</a></li><li><a aria-current="page" class="active" href="/en-US/guide/label-colors/" data-discover="true">Label colors</a></li></ul></div></div><main><div class="page page-guide"><div class="content"><article><h1>Label colors</h1><p>Inside a <a href="/en-US/guide/theming" data-discover="true">theme</a>, data labels pick their text color automatically. A label next to its shape takes the color of the shape, so that it reads as part of the series. A label on top of a filled shape takes the <code>pageBackground</code> color of the theme, like a cut-out of the shape. If it took the color of the shape, it would be invisible.</p><div width="100%" class="recharts-wrapper" style="position:relative;cursor:default;width:100%;max-width:600px;max-height:70vh;aspect-ratio:1.618"></div><div class="codemirror-wrapper "><div id="codemirror-container"><div class="codemirror-toolbar"><select class="codemirror-toolbar-item" style="padding-right:12px"><option value="source" selected="">Source code</option><option value="devtools">Hook inspector</option><option value="annotations">Annotations</option><option value="controls">Controls</option></select><button class="codemirror-toolbar-item" type="button"><svg class="recharts-surface" width="16" height="16" viewBox="0 0 16 16"><title></title><desc></desc><path fill="none" stroke="var(--color-text-1)" stroke-width="1" width="10" height="10" x="1" y="1" radius="2" class="recharts-rectangle" d="M 1,3
+            A 2,2,0,0,1,3,1
+            L 9,1
+            A 2,2,0,0,1,11,3
+            L 11,9
+            A 2,2,0,0,1,9,11
+            L 3,11
+            A 2,2,0,0,1,1,9 Z" style="stroke-dasharray:0px 1px"></path><path fill="none" stroke="var(--color-text-1)" stroke-width="1" width="10" height="10" x="5" y="5" radius="2" class="recharts-rectangle" d="M 5,7
+            A 2,2,0,0,1,7,5
+            L 13,5
+            A 2,2,0,0,1,15,7
+            L 15,13
+            A 2,2,0,0,1,13,15
+            L 7,15
+            A 2,2,0,0,1,5,13 Z" style="stroke-dasharray:0px 1px"></path></svg>Copy to clipboard</button><button type="button" class="codemirror-toolbar-item"><svg stroke="currentColor" fill="none" stroke-width="2" viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round" height="1em" width="1em" xmlns="http://www.w3.org/2000/svg"><path d="M21.174 6.812a1 1 0 0 0-3.986-3.987L3.842 16.174a2 2 0 0 0-.5.83l-1.321 4.352a.5.5 0 0 0 .623.622l4.353-1.32a2 2 0 0 0 .83-.497z"></path><path d="m15 5 4 4"></path></svg><span>Edit</span></button><button type="button" class="codemirror-toolbar-item"><svg stroke="currentColor" fill="none" stroke-width="2" viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round" height="1em" width="1em" xmlns="http://www.w3.org/2000/svg"><circle cx="18" cy="5" r="3"></circle><circle cx="6" cy="12" r="3"></circle><circle cx="18" cy="19" r="3"></circle><line x1="8.59" x2="15.42" y1="13.51" y2="17.49"></line><line x1="15.41" x2="8.59" y1="6.51" y2="10.49"></line></svg><span>Open in StackBlitz</span></button></div><div style="height:100%;display:block;overflow:hidden"><div class="codemirror-example-editor tsx" style="height:100%;overflow:auto"><pre>import { Bar, CartesianGrid, ComposedChart, LabelList, Line, XAxis, YAxis } from &#x27;recharts&#x27;;
+import { RechartsDevtools } from &#x27;@recharts/devtools&#x27;;
+
+const data = [
+  { month: &#x27;Jan&#x27;, desktop: 420, mobile: 240 },
+  { month: &#x27;Feb&#x27;, desktop: 380, mobile: 310 },
+  { month: &#x27;Mar&#x27;, desktop: 510, mobile: 290 },
+  { month: &#x27;Apr&#x27;, desktop: 470, mobile: 400 },
+];
+
+const chartStyle = { width: &#x27;100%&#x27;, maxWidth: 600, maxHeight: &#x27;70vh&#x27;, aspectRatio: 1.618 };
+const margin = { top: 24, right: 20, left: 0, bottom: 0 };
+const lineLabel = { position: &#x27;top&#x27; } as const;
+
+/*
+ * This chart has no theme provider of its own. It takes the theme of this website,
+ * and the labels pick their colors from it:
+ * - the label inside each bar takes the page background color,
+ * - the label above each bar takes the color of the bar,
+ * - the label of each Line point takes the color of the line.
+ */
+export default function LabelColorsExample() {
+  return (
+    &lt;ComposedChart style={chartStyle} responsive data={data} margin={margin}&gt;
+      &lt;CartesianGrid vertical={false} /&gt;
+      &lt;XAxis dataKey=&quot;month&quot; /&gt;
+      &lt;YAxis /&gt;
+      &lt;Bar dataKey=&quot;desktop&quot; isAnimationActive={false}&gt;
+        &lt;LabelList dataKey=&quot;desktop&quot; position=&quot;insideTop&quot; /&gt;
+        &lt;LabelList dataKey=&quot;month&quot; position=&quot;top&quot; /&gt;
+      &lt;/Bar&gt;
+      &lt;Line dataKey=&quot;mobile&quot; isAnimationActive={false} label={lineLabel} /&gt;
+      &lt;RechartsDevtools /&gt;
+    &lt;/ComposedChart&gt;
+  );
+}</pre><div></div></div></div><div style="height:100%;display:none;overflow:hidden"><div id="recharts-devtools-portal-R1q9" style="height:100%;background:var(--color-bg);color:var(--color-text);overflow:auto;padding:10px;display:block" class=""></div></div><div style="height:100%;display:none;overflow:hidden"><div id="recharts-devtools-portal-R1q9-annotations" style="height:100%;background:var(--color-surface-base);color:var(--color-text-1);overflow:auto;padding:10px;display:block" class=""></div></div><div style="height:100%;display:none;overflow:hidden"><div style="padding:10px;height:100%;overflow:auto"><div style="display:flex;gap:12px;margin:1ex"><label style="display:flex;align-items:center;gap:8px;cursor:pointer"><input style="margin:0;width:16px;height:16px;cursor:pointer" type="radio" name=":Raahq9:" checked=""/>Autoplay Animations (default)</label><label style="display:flex;align-items:center;gap:8px;cursor:pointer"><input style="margin:0;width:16px;height:16px;cursor:pointer" type="radio" name=":Raahq9:"/>Manual Animations</label></div></div></div></div></div><p>This applies to data labels: <a href="/en-US/api/LabelList" data-discover="true">LabelList</a>, and the <code>label</code> prop of graphical items. Other labels, such as axis labels and the labels of reference lines and areas, take the<!-- --> <code>typography</code> color of the theme, or the top-level <code>label</code> theme.</p><p>Without a theme, nothing changes: data labels keep the colors they have always had.</p><h2>The rules</h2><table class="_table_9deko_1"><thead><tr><th>Label</th><th>Text color</th></tr></thead><tbody><tr><td>On top of the shape of a <a href="/en-US/api/Bar" data-discover="true">Bar</a>, <a href="/en-US/api/Funnel" data-discover="true">Funnel</a>,<!-- --> <a href="/en-US/api/Pie" data-discover="true">Pie</a> or <a href="/en-US/api/RadialBar" data-discover="true">RadialBar</a></td><td><code>pageBackground</code>. If the theme has none, <code>chart.backgroundColor</code>, and if it has neither, the <code>typography</code> color.</td></tr><tr><td>Next to the shape</td><td>The color the shape is drawn with, the same color as in the Tooltip and the Legend: its fill, or its stroke when the fill is <code>none</code> or <code>transparent</code>. If a data entry sets its own<!-- --> <code>fill</code>, its label takes that color.</td></tr><tr><td>Any label of a <a href="/en-US/api/Line" data-discover="true">Line</a>, <a href="/en-US/api/Area" data-discover="true">Area</a>, <a href="/en-US/api/Radar" data-discover="true">Radar</a> or<!-- --> <a href="/en-US/api/Scatter" data-discover="true">Scatter</a></td><td>The color of the series: the <code>stroke</code> of a Line, Area or Radar, and the color of each point in Scatter. These labels never sit on a filled shape.</td></tr><tr><td>With a <code>background</code> or a <code>halo</code></td><td>The color of the shape. The label sits on its own background, not on the shape.</td></tr><tr><td>At an <code>{ x, y }</code> position</td><td>The <code>typography</code> color. Recharts cannot tell where such a label ends up.</td></tr></tbody></table><h3>Which positions are on top of the shape</h3><p>A shape is only filled when its fill paints something. A Bar or RadialBar with<!-- --> <code>fill=&quot;none&quot;</code> is an outline, so every label counts as next to it and takes its stroke.</p><p>In cartesian charts, <code>top</code>, <code>left</code>, <code>right</code> and <code>bottom</code> are next to the shape. Every other position, including no position at all, is on top of it. Note that <code>outside</code> <!-- -->is not a cartesian position: in a Bar or Funnel, it is drawn in the center.</p><p>In polar charts, <code>outside</code> is past the outer edge of the sector, <code>end</code> is past the end of a RadialBar, and <code>center</code>, <code>centerTop</code> and <code>centerBottom</code> are at the center of the chart. Every other position is on top of the sector, including <code>insideStart</code> and<!-- --> <code>insideEnd</code>.</p><div style="display:flex;flex-wrap:wrap;gap:16px"><div width="100%" class="recharts-wrapper" style="position:relative;cursor:default;width:100%;max-width:300px;aspect-ratio:1"></div><div width="100%" class="recharts-wrapper" style="position:relative;cursor:default;width:100%;max-width:300px;aspect-ratio:1"></div></div><div class="codemirror-wrapper "><div id="codemirror-container"><div class="codemirror-toolbar"><select class="codemirror-toolbar-item" style="padding-right:12px"><option value="source" selected="">Source code</option><option value="devtools">Hook inspector</option><option value="annotations">Annotations</option><option value="controls">Controls</option></select><button class="codemirror-toolbar-item" type="button"><svg class="recharts-surface" width="16" height="16" viewBox="0 0 16 16"><title></title><desc></desc><path fill="none" stroke="var(--color-text-1)" stroke-width="1" width="10" height="10" x="1" y="1" radius="2" class="recharts-rectangle" d="M 1,3
+            A 2,2,0,0,1,3,1
+            L 9,1
+            A 2,2,0,0,1,11,3
+            L 11,9
+            A 2,2,0,0,1,9,11
+            L 3,11
+            A 2,2,0,0,1,1,9 Z" style="stroke-dasharray:0px 1px"></path><path fill="none" stroke="var(--color-text-1)" stroke-width="1" width="10" height="10" x="5" y="5" radius="2" class="recharts-rectangle" d="M 5,7
+            A 2,2,0,0,1,7,5
+            L 13,5
+            A 2,2,0,0,1,15,7
+            L 15,13
+            A 2,2,0,0,1,13,15
+            L 7,15
+            A 2,2,0,0,1,5,13 Z" style="stroke-dasharray:0px 1px"></path></svg>Copy to clipboard</button><button type="button" class="codemirror-toolbar-item"><svg stroke="currentColor" fill="none" stroke-width="2" viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round" height="1em" width="1em" xmlns="http://www.w3.org/2000/svg"><path d="M21.174 6.812a1 1 0 0 0-3.986-3.987L3.842 16.174a2 2 0 0 0-.5.83l-1.321 4.352a.5.5 0 0 0 .623.622l4.353-1.32a2 2 0 0 0 .83-.497z"></path><path d="m15 5 4 4"></path></svg><span>Edit</span></button><button type="button" class="codemirror-toolbar-item"><svg stroke="currentColor" fill="none" stroke-width="2" viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round" height="1em" width="1em" xmlns="http://www.w3.org/2000/svg"><circle cx="18" cy="5" r="3"></circle><circle cx="6" cy="12" r="3"></circle><circle cx="18" cy="19" r="3"></circle><line x1="8.59" x2="15.42" y1="13.51" y2="17.49"></line><line x1="15.41" x2="8.59" y1="6.51" y2="10.49"></line></svg><span>Open in StackBlitz</span></button></div><div style="height:100%;display:block;overflow:hidden"><div class="codemirror-example-editor tsx" style="height:100%;overflow:auto"><pre>import { LabelList, Pie, PieChart, RadialBar, RadialBarChart } from &#x27;recharts&#x27;;
+import { RechartsDevtools } from &#x27;@recharts/devtools&#x27;;
+
+const data = [
+  { name: &#x27;Chrome&#x27;, value: 240 },
+  { name: &#x27;Safari&#x27;, value: 200 },
+  { name: &#x27;Edge&#x27;, value: 170 },
+  { name: &#x27;Firefox&#x27;, value: 150 },
+];
+
+const rowStyle = { display: &#x27;flex&#x27;, flexWrap: &#x27;wrap&#x27;, gap: 16 } as const;
+const chartStyle = { width: &#x27;100%&#x27;, maxWidth: 300, aspectRatio: 1 };
+
+/*
+ * In polar charts, `outside` and `end` are away from the sector, and so are the
+ * `center` positions, which are at the center of the chart.
+ * Every other position is on top of the sector.
+ */
+export default function PieLabelColorsExample() {
+  return (
+    &lt;div style={rowStyle}&gt;
+      &lt;PieChart style={chartStyle} responsive&gt;
+        &lt;Pie data={data} dataKey=&quot;value&quot; nameKey=&quot;name&quot; outerRadius=&quot;70%&quot; isAnimationActive={false}&gt;
+          &lt;LabelList dataKey=&quot;value&quot; position=&quot;inside&quot; /&gt;
+          &lt;LabelList dataKey=&quot;name&quot; position=&quot;outside&quot; /&gt;
+        &lt;/Pie&gt;
+        &lt;RechartsDevtools /&gt;
+      &lt;/PieChart&gt;
+      &lt;RadialBarChart
+        style={chartStyle}
+        responsive
+        data={data}
+        innerRadius=&quot;20%&quot;
+        outerRadius=&quot;90%&quot;
+        startAngle={90}
+        endAngle={-180}
+      &gt;
+        &lt;RadialBar dataKey=&quot;value&quot; isAnimationActive={false}&gt;
+          &lt;LabelList dataKey=&quot;name&quot; position=&quot;insideStart&quot; /&gt;
+          &lt;LabelList dataKey=&quot;value&quot; position=&quot;end&quot; /&gt;
+        &lt;/RadialBar&gt;
+        &lt;RechartsDevtools /&gt;
+      &lt;/RadialBarChart&gt;
+    &lt;/div&gt;
+  );
+}</pre><div></div></div></div><div style="height:100%;display:none;overflow:hidden"><div id="recharts-devtools-portal-R6a9" style="height:100%;background:var(--color-bg);color:var(--color-text);overflow:auto;padding:10px;display:block" class=""></div></div><div style="height:100%;display:none;overflow:hidden"><div id="recharts-devtools-portal-R6a9-annotations" style="height:100%;background:var(--color-surface-base);color:var(--color-text-1);overflow:auto;padding:10px;display:block" class=""></div></div><div style="height:100%;display:none;overflow:hidden"><div style="padding:10px;height:100%;overflow:auto"><div style="display:flex;gap:12px;margin:1ex"><label style="display:flex;align-items:center;gap:8px;cursor:pointer"><input style="margin:0;width:16px;height:16px;cursor:pointer" type="radio" name=":Raama9:" checked=""/>Autoplay Animations (default)</label><label style="display:flex;align-items:center;gap:8px;cursor:pointer"><input style="margin:0;width:16px;height:16px;cursor:pointer" type="radio" name=":Raama9:"/>Manual Animations</label></div></div></div></div></div><p>The default label of a <a href="/en-US/api/Pie" data-discover="true">Pie</a>, which you get with <code>label={true}</code>, is drawn outside of the sector, so it takes the color of the sector.</p><h2>Contrast</h2><p>Every color of the built-in palettes has at least 4.5:1 contrast against the <code>pageBackground</code> of its theme, the WCAG contrast for normal text. That covers labels next to their shape. A label on top of a shape uses the same two colors the other way around. The built-in themes paint fills slightly transparent, so on some colors the contrast there is a little lower, but still above 3:1.</p><p>To bring labels on top of palette colors to 4.5:1, draw a <code>background</code> or a <code>halo</code>. The label then sits on the page color and takes the color of its shape, which is the pair the palette is designed for.</p><p>Colors that come from your data or your own theme can be anything, and a background does not help with them. A pale fill has little contrast with the page, so a label in the page color is hard to read on top of it, and a label in the pale color is hard to read on a page-colored background. Set the <code>fill</code> of the label to a color that contrasts with your data colors instead.</p><div style="display:flex;flex-wrap:wrap;gap:16px"><figure style="margin:0;width:100%;max-width:260px"><div width="100%" class="recharts-wrapper" style="position:relative;cursor:default;width:100%;aspect-ratio:1"></div><figcaption>palette colors + background</figcaption></figure><figure style="margin:0;width:100%;max-width:260px"><div width="100%" class="recharts-wrapper" style="position:relative;cursor:default;width:100%;aspect-ratio:1"></div><figcaption>pale data colors</figcaption></figure><figure style="margin:0;width:100%;max-width:260px"><div width="100%" class="recharts-wrapper" style="position:relative;cursor:default;width:100%;aspect-ratio:1"></div><figcaption>pale data colors + fill</figcaption></figure></div><div class="codemirror-wrapper "><div id="codemirror-container"><div class="codemirror-toolbar"><select class="codemirror-toolbar-item" style="padding-right:12px"><option value="source" selected="">Source code</option><option value="devtools">Hook inspector</option><option value="annotations">Annotations</option><option value="controls">Controls</option></select><button class="codemirror-toolbar-item" type="button"><svg class="recharts-surface" width="16" height="16" viewBox="0 0 16 16"><title></title><desc></desc><path fill="none" stroke="var(--color-text-1)" stroke-width="1" width="10" height="10" x="1" y="1" radius="2" class="recharts-rectangle" d="M 1,3
+            A 2,2,0,0,1,3,1
+            L 9,1
+            A 2,2,0,0,1,11,3
+            L 11,9
+            A 2,2,0,0,1,9,11
+            L 3,11
+            A 2,2,0,0,1,1,9 Z" style="stroke-dasharray:0px 1px"></path><path fill="none" stroke="var(--color-text-1)" stroke-width="1" width="10" height="10" x="5" y="5" radius="2" class="recharts-rectangle" d="M 5,7
+            A 2,2,0,0,1,7,5
+            L 13,5
+            A 2,2,0,0,1,15,7
+            L 15,13
+            A 2,2,0,0,1,13,15
+            L 7,15
+            A 2,2,0,0,1,5,13 Z" style="stroke-dasharray:0px 1px"></path></svg>Copy to clipboard</button><button type="button" class="codemirror-toolbar-item"><svg stroke="currentColor" fill="none" stroke-width="2" viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round" height="1em" width="1em" xmlns="http://www.w3.org/2000/svg"><path d="M21.174 6.812a1 1 0 0 0-3.986-3.987L3.842 16.174a2 2 0 0 0-.5.83l-1.321 4.352a.5.5 0 0 0 .623.622l4.353-1.32a2 2 0 0 0 .83-.497z"></path><path d="m15 5 4 4"></path></svg><span>Edit</span></button><button type="button" class="codemirror-toolbar-item"><svg stroke="currentColor" fill="none" stroke-width="2" viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round" height="1em" width="1em" xmlns="http://www.w3.org/2000/svg"><circle cx="18" cy="5" r="3"></circle><circle cx="6" cy="12" r="3"></circle><circle cx="18" cy="19" r="3"></circle><line x1="8.59" x2="15.42" y1="13.51" y2="17.49"></line><line x1="15.41" x2="8.59" y1="6.51" y2="10.49"></line></svg><span>Open in StackBlitz</span></button></div><div style="height:100%;display:block;overflow:hidden"><div class="codemirror-example-editor tsx" style="height:100%;overflow:auto"><pre>import { ReactNode } from &#x27;react&#x27;;
+import { Bar, BarChart, CartesianGrid, LabelList, XAxis, YAxis } from &#x27;recharts&#x27;;
+import { RechartsDevtools } from &#x27;@recharts/devtools&#x27;;
+
+const paletteData = [
+  { name: &#x27;A&#x27;, value: 420 },
+  { name: &#x27;B&#x27;, value: 380 },
+  { name: &#x27;C&#x27;, value: 510 },
+];
+
+/*
+ * Pale colors from the data. They have little contrast with a white page,
+ * so neither a label in the page color nor a label in the bar color is readable.
+ */
+const paleData = [
+  { name: &#x27;A&#x27;, value: 420, fill: &#x27;#fde047&#x27; },
+  { name: &#x27;B&#x27;, value: 380, fill: &#x27;#a7f3d0&#x27; },
+  { name: &#x27;C&#x27;, value: 510, fill: &#x27;#bfdbfe&#x27; },
+];
+
+const rowStyle = { display: &#x27;flex&#x27;, flexWrap: &#x27;wrap&#x27;, gap: 16 } as const;
+const figureStyle = { margin: 0, width: &#x27;100%&#x27;, maxWidth: 260 };
+const chartStyle = { width: &#x27;100%&#x27;, aspectRatio: 1 };
+const margin = { top: 10, right: 10, left: 0, bottom: 0 };
+
+function SmallBarChart({ data, children }: { data: ReadonlyArray&lt;object&gt;; children: ReactNode }) {
+  return (
+    &lt;BarChart style={chartStyle} responsive data={data} margin={margin}&gt;
+      &lt;CartesianGrid vertical={false} /&gt;
+      &lt;XAxis dataKey=&quot;name&quot; /&gt;
+      &lt;YAxis width={40} /&gt;
+      &lt;Bar dataKey=&quot;value&quot; isAnimationActive={false}&gt;
+        {children}
+      &lt;/Bar&gt;
+      &lt;RechartsDevtools /&gt;
+    &lt;/BarChart&gt;
+  );
+}
+
+export default function LabelBackgroundExample() {
+  return (
+    &lt;div style={rowStyle}&gt;
+      &lt;figure style={figureStyle}&gt;
+        {/* Palette colors: the background puts the label on the page color, in the bar color */}
+        &lt;SmallBarChart data={paletteData}&gt;
+          &lt;LabelList position=&quot;inside&quot; background /&gt;
+        &lt;/SmallBarChart&gt;
+        &lt;figcaption&gt;palette colors + background&lt;/figcaption&gt;
+      &lt;/figure&gt;
+      &lt;figure style={figureStyle}&gt;
+        {/* Pale data colors: the automatic color is hard to read in the light theme */}
+        &lt;SmallBarChart data={paleData}&gt;
+          &lt;LabelList position=&quot;inside&quot; /&gt;
+        &lt;/SmallBarChart&gt;
+        &lt;figcaption&gt;pale data colors&lt;/figcaption&gt;
+      &lt;/figure&gt;
+      &lt;figure style={figureStyle}&gt;
+        {/* Pale data colors: dark text is readable on every pale bar, in both themes */}
+        &lt;SmallBarChart data={paleData}&gt;
+          &lt;LabelList position=&quot;inside&quot; fill=&quot;#18181b&quot; /&gt;
+        &lt;/SmallBarChart&gt;
+        &lt;figcaption&gt;pale data colors + fill&lt;/figcaption&gt;
+      &lt;/figure&gt;
+    &lt;/div&gt;
+  );
+}</pre><div></div></div></div><div style="height:100%;display:none;overflow:hidden"><div id="recharts-devtools-portal-R9a9" style="height:100%;background:var(--color-bg);color:var(--color-text);overflow:auto;padding:10px;display:block" class=""></div></div><div style="height:100%;display:none;overflow:hidden"><div id="recharts-devtools-portal-R9a9-annotations" style="height:100%;background:var(--color-surface-base);color:var(--color-text-1);overflow:auto;padding:10px;display:block" class=""></div></div><div style="height:100%;display:none;overflow:hidden"><div style="padding:10px;height:100%;overflow:auto"><div style="display:flex;gap:12px;margin:1ex"><label style="display:flex;align-items:center;gap:8px;cursor:pointer"><input style="margin:0;width:16px;height:16px;cursor:pointer" type="radio" name=":Raapa9:" checked=""/>Autoplay Animations (default)</label><label style="display:flex;align-items:center;gap:8px;cursor:pointer"><input style="margin:0;width:16px;height:16px;cursor:pointer" type="radio" name=":Raapa9:"/>Manual Animations</label></div></div></div></div></div><p>A <code>background</code> draws a rectangle behind each label. It is sized after the label renders, so it is not part of server-side rendering. A <code>halo</code> draws an outline around the letters instead: it needs no measuring, so it is drawn during server-side rendering, and it covers less of the chart. Both use<!-- --> <code>pageBackground</code> unless you set a color.</p><p>To turn backgrounds on for every data label, set <code>label.background</code> in the theme:</p><div class="codemirror-example-editor " style="height:100%;overflow:auto"><pre>import { type RechartsTheme, lightTheme } from &#x27;recharts&#x27;;
+
+const theme: RechartsTheme = {
+  ...lightTheme,
+  graphicalItems: lightTheme.graphicalItems.map(item =&gt; ({
+    ...item,
+    // Every data label gets a background, and so takes the series color
+    label: { background: { rx: 4 } },
+  })),
+};</pre><div></div></div><h2>Choosing your own color</h2><p>The automatic color is the last resort. In order, a data label takes:</p><ol><li>The <code>fill</code> prop of the <a href="/en-US/api/LabelList" data-discover="true">LabelList</a>, or of the object in the <code>label</code> <!-- -->prop.</li><li>A <code>fill</code> or <code>color</code> in <code>graphicalItems[n].label.style</code> of the theme.</li><li>The automatic color.</li></ol><div class="codemirror-example-editor " style="height:100%;overflow:auto"><pre>&lt;Bar dataKey=&quot;desktop&quot;&gt;
+  {/* An explicit fill always wins */}
+  &lt;LabelList position=&quot;inside&quot; fill=&quot;#000&quot; /&gt;
+&lt;/Bar&gt;</pre><div></div></div><div class="codemirror-example-editor " style="height:100%;overflow:auto"><pre>import { type RechartsTheme, lightTheme } from &#x27;recharts&#x27;;
+
+const theme: RechartsTheme = {
+  ...lightTheme,
+  graphicalItems: lightTheme.graphicalItems.map(item =&gt; ({
+    ...item,
+    // Every data label of this series takes this color, wherever it is
+    label: { style: { fill: &#x27;#18181b&#x27; } },
+  })),
+};</pre><div></div></div><p>Custom <code>content</code> receives the resolved color as its <code>fill</code> prop, so it can use it or ignore it:</p><div class="codemirror-example-editor " style="height:100%;overflow:auto"><pre>import { LabelList, type LabelProps } from &#x27;recharts&#x27;;
+
+function CustomLabel({ x, y, value, fill }: LabelProps) {
+  // fill is the automatic color, unless the LabelList sets its own
+  return (
+    &lt;text x={x} y={y} fill={fill}&gt;
+      {value}
+    &lt;/text&gt;
+  );
+}
+
+&lt;LabelList content={CustomLabel} position=&quot;inside&quot; /&gt;</pre><div></div></div></article></div></div></main><footer><p><span>Released under the </span><a href="https://opensource.org/licenses/MIT" target="_blank" rel="noreferrer">MIT License</a></p><p>Copyright (c) 2016-<!-- -->2026<!-- --> Recharts Group</p><p>Commit: <code title="917b8318d79c6a59af644e667dda45d90347433d">917b8318</code></p></footer></div></div>
+  </body>
+</html>
