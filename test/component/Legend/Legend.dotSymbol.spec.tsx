@@ -295,6 +295,31 @@ describe('Legend icon follows the dot symbol', () => {
       );
     });
 
+    it('keeps a stroke-only shape visible in the legend', () => {
+      const { container } = renderScatter({ shape: 'diamond', fill: 'none', stroke: 'blue' });
+      const symbol = expectBareSymbolIcon(container);
+      const point = container.querySelector('.recharts-scatter-symbol path');
+      assertNotNull(point);
+      expect(point).toHaveAttribute('fill', 'none');
+      expect(point).toHaveAttribute('stroke', 'blue');
+      expect(symbol).toHaveAttribute('fill', 'none');
+      expect(symbol).toHaveAttribute('stroke', 'blue');
+    });
+
+    it('draws a hidden stroke-only shape with the inactive color', () => {
+      const { container } = renderScatter({ shape: 'diamond', fill: 'none', stroke: 'blue', hide: true });
+      const symbol = expectBareSymbolIcon(container);
+      expect(symbol).toHaveAttribute('fill', 'none');
+      expect(symbol).toHaveAttribute('stroke', '#ccc');
+    });
+
+    it('draws the shape with the stroke of the points', () => {
+      const { container } = renderScatter({ shape: 'star', fill: 'red', stroke: 'black' });
+      const symbol = expectBareSymbolIcon(container);
+      expect(symbol).toHaveAttribute('fill', 'red');
+      expect(symbol).toHaveAttribute('stroke', 'black');
+    });
+
     it('keeps the default circle icon for a custom shape', () => {
       const { container } = renderScatter({ shape: () => <circle /> });
       const { container: circleContainer } = renderScatter({});

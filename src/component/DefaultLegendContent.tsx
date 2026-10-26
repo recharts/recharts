@@ -202,16 +202,25 @@ const ICON_SYMBOL_STROKE_WIDTH = 3;
 
 /**
  * Colors of a dot symbol in the legend icon.
- * The icon follows the dots; an inactive item replaces the item color with the inactive color.
+ * The icon follows the dots. An inactive item draws the stroke with the inactive color,
+ * and the fill too when it comes from the item: equal to the item color or to the stroke.
+ * Other fills, such as the white fill of the default Line dots, stay.
  */
 function getIconDotColors(
   dot: LegendPayloadDot,
   data: LegendPayload,
   inactiveColor: string,
 ): { fill: string | undefined; stroke: string | undefined } {
-  const toIconColor = (dotColor: string | undefined) =>
-    data.inactive && dotColor != null && dotColor === data.color ? inactiveColor : dotColor;
-  return { fill: toIconColor(dot.fill), stroke: toIconColor(dot.stroke) };
+  const { fill, stroke } = dot;
+  if (!data.inactive) {
+    return { fill, stroke };
+  }
+  const hasColor = (color: string | undefined): color is string => color != null && color !== 'none';
+  const isItemFill = hasColor(fill) && (fill === data.color || fill === stroke);
+  return {
+    fill: isItemFill ? inactiveColor : fill,
+    stroke: hasColor(stroke) ? inactiveColor : stroke,
+  };
 }
 
 /**

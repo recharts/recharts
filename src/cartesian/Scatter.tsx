@@ -422,7 +422,7 @@ const computeLegendPayloadFromScatterProps = (
   props: Props,
   explicitShape: ScatterCustomizedShape | undefined,
 ): ReadonlyArray<LegendPayload> => {
-  const { dataKey, name, fill, legendType, hide } = props;
+  const { dataKey, name, fill, stroke, legendType, hide } = props;
   return [
     {
       inactive: hide,
@@ -430,10 +430,10 @@ const computeLegendPayloadFromScatterProps = (
       type: legendType,
       /*
        * Only an explicit shape describes the points to the legend, so that the legend of a Scatter
-       * with the default shape stays unchanged. The points are filled with the item fill;
-       * the legend has always drawn them without a stroke, so the stroke stays out too.
+       * with the default shape stays unchanged. The legend symbol gets the same fill and stroke as the points,
+       * so that a stroke-only shape (fill="none") stays visible in the legend.
        */
-      dot: typeof explicitShape === 'string' ? { symbol: explicitShape, fill } : undefined,
+      dot: typeof explicitShape === 'string' ? { symbol: explicitShape, fill, stroke } : undefined,
       color: fill,
       value: getTooltipNameProp(name, dataKey),
       payload: props,
