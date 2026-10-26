@@ -959,7 +959,13 @@ const SetTreemapTooltipEntrySettings = React.memo(
     const tooltipEntrySettings: TooltipPayloadConfiguration = {
       dataDefinedOnItem: formatRoot,
       getPosition: noop, // TODO I think Treemap has the capability of computing positions and supporting defaultIndex? Except it doesn't yet
-      getEntryColor: entry => getTreemapTooltipColor(entry, colorSource),
+      /*
+       * Without a theme, keep the legacy tooltip color: the datum colors, then the Treemap `fill`.
+       * Legacy nested tiles are transparent, so their rendered fill would make the tooltip text invisible.
+       */
+      ...(themeGraphicalItems == null
+        ? {}
+        : { getEntryColor: (entry: unknown) => getTreemapTooltipColor(entry, colorSource) }),
       settings: {
         stroke: seriesStroke,
         strokeWidth: undefined,

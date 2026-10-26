@@ -560,22 +560,22 @@ describe('Treemap tooltip color', () => {
     expect(getTooltipItemColor(container)).toBe('green');
   });
 
-  it('shows the legacy color panel color of the hovered node', () => {
+  it('keeps the default black tooltip text without a provider', () => {
     const { container } = renderTooltipTreemap({});
 
     const tile = hoverTile(container, 1, 1);
     expect(tile.getAttribute('fill')).toBe('#66B5FF');
-    expect(getTooltipItemColor(container)).toBe('rgb(102, 181, 255)');
+    expect(getTooltipItemColor(container)).toBe('rgb(0, 0, 0)');
   });
 
-  it('shows the explicit colorPanel color of the hovered node', () => {
+  it('keeps the default black tooltip text for an explicit colorPanel without a provider', () => {
     const { container } = renderTooltipTreemap({
       colorPanel: ['crimson', 'darkorange'],
     });
 
     const tile = hoverTile(container, 1, 1);
     expect(tile.getAttribute('fill')).toBe('darkorange');
-    expect(getTooltipItemColor(container)).toBe('darkorange');
+    expect(getTooltipItemColor(container)).toBe('rgb(0, 0, 0)');
   });
 
   it('shows the colorPanel color instead of the theme color', () => {
@@ -589,7 +589,7 @@ describe('Treemap tooltip color', () => {
     expect(getTooltipItemColor(container)).toBe('darkorange');
   });
 
-  it('shows the transparent nested color panel fill', () => {
+  it('does not use the transparent nested tile fill as the tooltip text color without a provider', () => {
     const { container } = renderTooltipTreemap({
       treemapData: nestedData,
       colorPanel: ['crimson', 'darkorange', 'navy', 'teal'],
@@ -597,7 +597,19 @@ describe('Treemap tooltip color', () => {
 
     const laptop = hoverTile(container, 2, 0);
     expect(laptop.getAttribute('fill')).toBe('rgba(255,255,255,0)');
-    expect(getTooltipItemColor(container)).toBe('rgba(255, 255, 255, 0)');
+    expect(getTooltipItemColor(container)).toBe('rgb(0, 0, 0)');
+  });
+
+  it('keeps using the data entry color key without a provider', () => {
+    const { container } = renderTooltipTreemap({
+      treemapData: [
+        { name: 'A', value: 100, color: 'blue' },
+        { name: 'B', value: 80 },
+      ],
+    });
+
+    hoverTile(container, 1, 0);
+    expect(getTooltipItemColor(container)).toBe('blue');
   });
 
   it('shows the theme color of the hovered branch, including a nested node', () => {
