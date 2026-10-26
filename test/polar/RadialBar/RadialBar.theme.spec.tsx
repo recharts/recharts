@@ -274,6 +274,40 @@ describe('RadialBar theme', () => {
       expect(getTooltipItem(container)).toHaveStyle({ color: 'rgb(128, 0, 128)' });
     });
 
+    it('shows the inline style fill of the entry in the tooltip and Legend, because it wins over the fill', () => {
+      const { container } = rechartsTestRender(
+        <RadialBarChart width={400} height={400} data={[{ name: 'A', value: 1, fill: 'blue', style: { fill: 'red' } }]}>
+          <RadialBar dataKey="value" isAnimationActive={false} />
+          <Tooltip defaultIndex={0} />
+          <Legend />
+        </RadialBarChart>,
+      );
+
+      const sector = getSector(container);
+      expect(sector).toHaveAttribute('fill', 'blue');
+      expect(sector).toHaveStyle({ fill: 'rgb(255, 0, 0)' });
+      expect(getTooltipItem(container)).toHaveStyle({ color: 'rgb(255, 0, 0)' });
+      expect(getLegendIconFills(container)).toEqual(['red']);
+    });
+
+    it('shows the inline style stroke of a stroke-only entry in the Legend', () => {
+      const { container } = rechartsTestRender(
+        <RechartsThemeProvider value={theme}>
+          <RadialBarChart
+            width={400}
+            height={400}
+            data={[{ name: 'A', value: 1, stroke: 'lime', style: { stroke: 'red' } }]}
+          >
+            <RadialBar dataKey="value" isAnimationActive={false} />
+            <Legend />
+          </RadialBarChart>
+        </RechartsThemeProvider>,
+      );
+
+      expect(getSector(container)).toHaveStyle({ stroke: 'rgb(255, 0, 0)' });
+      expect(getLegendIconFills(container)).toEqual(['red']);
+    });
+
     it('shows the Cell fill in the tooltip', () => {
       const { container } = rechartsTestRender(
         <RechartsThemeProvider value={theme}>

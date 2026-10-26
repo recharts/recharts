@@ -153,8 +153,17 @@ export function getEntrySvgProps(entry: unknown): Record<string, unknown> {
   return props;
 }
 
+function getStringProp(obj: unknown, key: 'fill' | 'stroke'): string | undefined {
+  if (obj == null || typeof obj !== 'object') {
+    return undefined;
+  }
+  const value: unknown = Reflect.get(obj, key);
+  return typeof value === 'string' ? value : undefined;
+}
+
 /**
  * The color a graphical item renders a data entry with: its fill, or its stroke when it has no fill.
+ * An inline `style.fill` or `style.stroke` of the entry wins over its `fill` or `stroke`, the same as in the browser.
  * Follows the order in which graphical items spread the styles: the entry colors win over the graphical item colors,
  * and with a theme, an entry with its own colors ignores the theme colors.
  * Tooltip and Legend use this so that they show the same color as the shape.
@@ -171,15 +180,25 @@ export function getEntryColor(
   unthemedStyles: UnthemedStyles | undefined,
 ): string | undefined {
   const itemStyles = getEntryStyleOverrides(entry, unthemedStyles) ?? { fill, stroke };
-  const entryFill = entry != null && typeof entry === 'object' && 'fill' in entry ? entry.fill : undefined;
-  const entryStroke = entry != null && typeof entry === 'object' && 'stroke' in entry ? entry.stroke : undefined;
-  if (typeof entryFill === 'string') {
+  const entryFill = getStringProp(entry, 'fill');
+  const entryStroke = getStringProp(entry, 'stroke');
+  // An inline style wins over the presentation attribute, so the shape paints with `style.fill` and `style.stroke`.
+  const entryStyle = entry != null && typeof entry === 'object' && 'style' in entry ? entry.style : undefined;
+  const entryStyleFill = getStringProp(entryStyle, 'fill');
+  const entryStyleStroke = getStringProp(entryStyle, 'stroke');
+  if (entryStyleFill != null) {
+    return entryStyleFill;
+  }
+  if (entryFill != null) {
     return entryFill;
   }
   if (itemStyles.fill != null) {
     return itemStyles.fill;
   }
-  if (typeof entryStroke === 'string') {
+  if (entryStyleStroke != null) {
+    return entryStyleStroke;
+  }
+  if (entryStroke != null) {
     return entryStroke;
   }
   return itemStyles.stroke;
