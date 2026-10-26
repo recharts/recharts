@@ -853,8 +853,11 @@ function BarRectangles({
         return (
           <BarStackClipLayer
             index={entry.originalDataIndex}
-            // https://github.com/recharts/recharts/issues/5415
-            key={`rectangle-${entry?.x}-${entry?.y}-${entry?.value}-${i}`}
+            /*
+             * Key by position only. x and y change on every animation frame, so a key built from
+             * them remounts every rectangle on every frame (#8064). The index alone is unique (#5415).
+             */
+            key={`rectangle-${i}`}
             className="recharts-bar-rectangle"
             {...adaptEventsOfChild(restOfAllOtherProps, entry, entry.originalDataIndex)}
             onMouseEnter={onMouseEnterFromContext(entry, entry.originalDataIndex)}
