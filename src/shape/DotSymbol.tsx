@@ -5,6 +5,7 @@ import { Symbols } from './Symbols';
 import { type Props as DotProps } from './Dot';
 import { ActiveDotType, adaptEventHandlers, DotType, SymbolType } from '../util/types';
 import { svgPropertiesNoEvents } from '../util/svgPropertiesNoEvents';
+import type { LegendPayloadDot } from '../component/DefaultLegendContent';
 
 type DotSymbolProps = DotProps & {
   type: SymbolType;
@@ -25,6 +26,38 @@ export function getDotSymbol(option: DotType | ActiveDotType | undefined): Symbo
     return option.symbol;
   }
   return undefined;
+}
+
+function getOwnColor(option: DotType, key: 'fill' | 'stroke'): string | undefined {
+  if (option == null || typeof option !== 'object' || isValidElement(option)) {
+    return undefined;
+  }
+  const value = option[key];
+  return typeof value === 'string' ? value : undefined;
+}
+
+/**
+ * Describes the dots of a graphical item for its legend icon,
+ * so that the icon draws the same symbol with the same colors as the dots.
+ *
+ * @param dot the `dot` prop
+ * @param seriesDotColors the colors that the dots get from the graphical item, including the theme
+ * @returns the legend dot, or undefined if the dots do not use one of the predefined symbols
+ */
+export function getLegendPayloadDot(
+  dot: DotType | undefined,
+  seriesDotColors: { fill: string | undefined; stroke: string | undefined },
+): LegendPayloadDot | undefined {
+  const symbol = getDotSymbol(dot);
+  if (symbol == null || dot == null) {
+    return undefined;
+  }
+  return {
+    symbol,
+    // colors in the dot object win over the graphical item, the same as in the dots
+    fill: getOwnColor(dot, 'fill') ?? seriesDotColors.fill,
+    stroke: getOwnColor(dot, 'stroke') ?? seriesDotColors.stroke,
+  };
 }
 
 /**

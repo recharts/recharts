@@ -15,7 +15,7 @@ import {
   LabelListFromLabelProp,
 } from '../component/LabelList';
 import { Dots } from '../component/Dots';
-import { getDotSymbol } from '../shape/DotSymbol';
+import { getDotSymbol, getLegendPayloadDot } from '../shape/DotSymbol';
 import {
   ActiveDotType,
   AnimationDuration,
@@ -242,14 +242,18 @@ function getLegendItemColor(stroke: string | undefined, fill: string | undefined
   return stroke && stroke !== 'none' ? stroke : fill;
 }
 
-const computeLegendPayloadFromRadarSectors = (props: PropsWithDefaults): ReadonlyArray<LegendPayload> => {
+const computeLegendPayloadFromRadarSectors = (
+  props: PropsWithDefaults,
+  dotFill: string | undefined,
+): ReadonlyArray<LegendPayload> => {
   const { dataKey, name, stroke, fill, legendType, hide, dot } = props;
   return [
     {
       inactive: hide,
       dataKey,
       type: legendType,
-      dotSymbol: getDotSymbol(dot),
+      // the same colors as the dots get in RadarDotsWrapper
+      dot: getLegendPayloadDot(dot, { fill: dotFill ?? fill, stroke }),
       color: getLegendItemColor(stroke, fill),
       value: getTooltipNameProp(name, dataKey),
       payload: props,
@@ -731,7 +735,7 @@ export function Radar<DataPointType = any, DataValueType = any>(outsideProps: Pr
             angleAxisId={props.angleAxisId}
             radiusAxisId={props.radiusAxisId}
           />
-          <SetPolarLegendPayload legendPayload={computeLegendPayloadFromRadarSectors(props)} />
+          <SetPolarLegendPayload legendPayload={computeLegendPayloadFromRadarSectors(props, dotFill)} />
           <SetRadarTooltipEntrySettings
             dataKey={props.dataKey}
             stroke={props.stroke}

@@ -3379,7 +3379,6 @@ describe('<Legend />', () => {
           zIndex: 600,
         },
         type: 'circle',
-        dotSymbol: 'circle',
         value: 'percent',
       };
       expect(onClick).toHaveBeenLastCalledWith(expectedPayload, 0, expect.objectContaining({ type: 'click' }));

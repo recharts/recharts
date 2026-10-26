@@ -10,6 +10,7 @@ import {
   PolarAngleAxis,
   Radar,
   RadarChart,
+  RechartsThemeProvider,
   Scatter,
   ScatterChart,
   XAxis,
@@ -37,7 +38,6 @@ function expectLineWithSymbolIcon(container: Element) {
   expect(group.querySelector('path:not(.recharts-symbols)')).not.toBeNull();
   const symbol = group.querySelector('path.recharts-symbols');
   assertNotNull(symbol);
-  expect(symbol).toHaveAttribute('fill', 'none');
   return symbol;
 }
 
@@ -74,8 +74,58 @@ describe('Legend icon follows the dot symbol', () => {
 
     it('draws a line with the dot symbol when dot is a symbol name', () => {
       const { container } = renderLine({ dataKey: 'uv', dot: 'star' });
+      expectLineWithSymbolIcon(container);
+    });
+
+    it('draws the symbol with the same colors as the dots', () => {
+      const { container } = renderLine({ dataKey: 'uv', dot: 'star' });
       const symbol = expectLineWithSymbolIcon(container);
+      const dot = container.querySelector('.recharts-line-dot');
+      assertNotNull(dot);
+      // without a theme, Line dots have a white fill and the line stroke
+      expect(dot).toHaveAttribute('fill', '#fff');
+      expect(dot).toHaveAttribute('stroke', '#3182bd');
+      expect(symbol).toHaveAttribute('fill', '#fff');
       expect(symbol).toHaveAttribute('stroke', '#3182bd');
+    });
+
+    it('draws the symbol with the theme colors of the dots', () => {
+      const { container } = render(
+        <RechartsThemeProvider value={{ graphicalItems: [{ stroke: 'red', fill: 'green' }] }}>
+          <LineChart width={400} height={400} data={PageData}>
+            <Line isAnimationActive={false} dataKey="uv" dot="star" />
+            <Legend />
+          </LineChart>
+        </RechartsThemeProvider>,
+      );
+      const symbol = expectLineWithSymbolIcon(container);
+      const dot = container.querySelector('.recharts-line-dot');
+      assertNotNull(dot);
+      // with a theme, Line dots are filled with the line stroke
+      expect(dot).toHaveAttribute('fill', 'red');
+      expect(symbol).toHaveAttribute('fill', 'red');
+      expect(symbol).toHaveAttribute('stroke', 'red');
+    });
+
+    it('draws the symbol with the colors from the dot object', () => {
+      const { container } = renderLine({ dataKey: 'uv', dot: { symbol: 'star', fill: 'gold', stroke: 'black' } });
+      const symbol = expectLineWithSymbolIcon(container);
+      expect(symbol).toHaveAttribute('fill', 'gold');
+      expect(symbol).toHaveAttribute('stroke', 'black');
+    });
+
+    it('draws the symbol with the inactive color when the item is hidden', () => {
+      const { container } = renderLine({ dataKey: 'uv', dot: 'star', hide: true });
+      const symbol = expectLineWithSymbolIcon(container);
+      // the white fill does not come from the item color, so it stays
+      expect(symbol).toHaveAttribute('fill', '#fff');
+      expect(symbol).toHaveAttribute('stroke', '#ccc');
+    });
+
+    it('draws a line with a circle in the dot style when dot="circle"', () => {
+      const { container } = renderLine({ dataKey: 'uv', dot: 'circle' });
+      const symbol = expectLineWithSymbolIcon(container);
+      expect(symbol).toHaveAttribute('fill', '#fff');
     });
 
     it('draws a line with the dot symbol when the dot object has a symbol', () => {
@@ -89,7 +139,6 @@ describe('Legend icon follows the dot symbol', () => {
       { name: 'dot={false}', dot: false },
       { name: 'dot is an object without symbol', dot: { r: 6 } },
       { name: 'dot is a function', dot: () => null },
-      { name: 'dot="circle"', dot: 'circle' as const },
     ])('keeps the default line icon when $name', ({ dot }) => {
       const { container } = renderLine({ dataKey: 'uv', dot });
       expectClassicLineIcon(container);
@@ -130,14 +179,20 @@ describe('Legend icon follows the dot symbol', () => {
   });
 
   describe('Area', () => {
-    it('draws a line with the dot symbol when dot is a symbol', () => {
+    it('draws a line with the dot symbol in the dot colors when dot is a symbol', () => {
       const { container } = render(
         <AreaChart width={400} height={400} data={PageData}>
           <Area isAnimationActive={false} dataKey="uv" dot="cross" />
           <Legend />
         </AreaChart>,
       );
-      expectLineWithSymbolIcon(container);
+      const symbol = expectLineWithSymbolIcon(container);
+      const dot = container.querySelector('.recharts-area-dot');
+      assertNotNull(dot);
+      // without a theme, Area dots are filled with the area fill
+      expect(dot).toHaveAttribute('fill', '#3182bd');
+      expect(symbol).toHaveAttribute('fill', '#3182bd');
+      expect(symbol).toHaveAttribute('stroke', '#3182bd');
     });
 
     it('keeps the default line icon without dots', () => {
@@ -170,6 +225,29 @@ describe('Legend icon follows the dot symbol', () => {
     it('draws the dot symbol when the dot object has a symbol', () => {
       const { container } = renderRadar({ dataKey: 'uv', dot: { symbol: 'diamond' } });
       expectBareSymbolIcon(container);
+    });
+
+    it('draws the dot symbol with the colors from the dot object', () => {
+      const { container } = renderRadar({ dataKey: 'uv', stroke: 'blue', dot: { symbol: 'diamond', fill: 'gold' } });
+      const symbol = expectBareSymbolIcon(container);
+      expect(symbol).toHaveAttribute('fill', 'gold');
+      expect(symbol).toHaveAttribute('stroke', 'blue');
+    });
+
+    it('draws the dot symbol with the theme colors of the dots', () => {
+      const { container } = render(
+        <RechartsThemeProvider value={{ graphicalItems: [{ stroke: 'red', fill: 'green' }] }}>
+          <RadarChart width={400} height={400} data={PageData}>
+            <PolarAngleAxis dataKey="name" />
+            <Radar isAnimationActive={false} dataKey="uv" dot="star" />
+            <Legend />
+          </RadarChart>
+        </RechartsThemeProvider>,
+      );
+      const symbol = expectBareSymbolIcon(container);
+      const dot = container.querySelector('.recharts-radar-dot');
+      assertNotNull(dot);
+      expect(symbol).toHaveAttribute('fill', dot.getAttribute('fill'));
     });
 
     it('keeps the default rect icon without a dot symbol', () => {

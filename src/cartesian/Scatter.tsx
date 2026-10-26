@@ -418,14 +418,22 @@ type InternalProps = BaseScatterSvgProps & ScatterInternalProps;
 export type Props<DataPointType = any, ValueAxisType = any> = BaseScatterSvgProps &
   ScatterProps<DataPointType, ValueAxisType>;
 
-const computeLegendPayloadFromScatterProps = (props: Props): ReadonlyArray<LegendPayload> => {
-  const { dataKey, name, fill, legendType, hide, shape } = props;
+const computeLegendPayloadFromScatterProps = (
+  props: Props,
+  explicitShape: ScatterCustomizedShape | undefined,
+): ReadonlyArray<LegendPayload> => {
+  const { dataKey, name, fill, legendType, hide } = props;
   return [
     {
       inactive: hide,
       dataKey,
       type: legendType,
-      dotSymbol: typeof shape === 'string' ? shape : undefined,
+      /*
+       * Only an explicit shape describes the points to the legend, so that the legend of a Scatter
+       * with the default shape stays unchanged. The points are filled with the item fill;
+       * the legend has always drawn them without a stroke, so the stroke stays out too.
+       */
+      dot: typeof explicitShape === 'string' ? { symbol: explicitShape, fill } : undefined,
       color: fill,
       value: getTooltipNameProp(name, dataKey),
       payload: props,
@@ -1159,7 +1167,7 @@ function ScatterFn(outsideProps: Props) {
     <RegisterGraphicalItemId id={props.id} type="scatter">
       {id => (
         <>
-          <SetLegendPayload legendPayload={computeLegendPayloadFromScatterProps(props)} />
+          <SetLegendPayload legendPayload={computeLegendPayloadFromScatterProps(props, outsideProps.shape)} />
           <SetCartesianGraphicalItem
             type="scatter"
             id={id}

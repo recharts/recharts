@@ -14,7 +14,7 @@ import {
   SetLabelListClipArea,
 } from '../component/LabelList';
 import { Dots } from '../component/Dots';
-import { getDotSymbol } from '../shape/DotSymbol';
+import { getLegendPayloadDot } from '../shape/DotSymbol';
 import { ErrorBarDataItem, ErrorBarDataPointFormatter } from './ErrorBar';
 import { interpolate, isNullish, noop } from '../util/DataUtils';
 import { isClipDot } from '../util/ReactUtils';
@@ -500,14 +500,15 @@ function getDotFillFromTheme(stroke: string | undefined, fill: string | undefine
   return stroke && stroke !== 'none' ? stroke : fill;
 }
 
-const computeLegendPayloadFromAreaData = (props: Props): ReadonlyArray<LegendPayload> => {
-  const { dataKey, name, stroke, legendType, hide, dot } = props;
+const computeLegendPayloadFromAreaData = (props: Props, dotFill: string | undefined): ReadonlyArray<LegendPayload> => {
+  const { dataKey, name, stroke, fill, legendType, hide, dot } = props;
   return [
     {
       inactive: hide,
       dataKey,
       type: legendType,
-      dotSymbol: getDotSymbol(dot),
+      // the same colors as the dots get in LineDotsWrapper
+      dot: getLegendPayloadDot(dot, { fill: dotFill ?? fill, stroke }),
       color: stroke,
       value: getTooltipNameProp(name, dataKey),
       payload: props,
@@ -1000,7 +1001,7 @@ function LineFn(outsideProps: Props) {
     <RegisterGraphicalItemId id={props.id} type="line">
       {id => (
         <>
-          <SetLegendPayload legendPayload={computeLegendPayloadFromAreaData(props)} />
+          <SetLegendPayload legendPayload={computeLegendPayloadFromAreaData(props, dotFill)} />
           <SetLineTooltipEntrySettings
             dataKey={props.dataKey}
             data={props.data}

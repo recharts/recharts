@@ -11,7 +11,7 @@ import {
   SetLabelListClipArea,
 } from '../component/LabelList';
 import { Dots, DotsDotProps } from '../component/Dots';
-import { getDotSymbol } from '../shape/DotSymbol';
+import { getLegendPayloadDot } from '../shape/DotSymbol';
 import { interpolate, isNan, isNullish, isNumber, noop } from '../util/DataUtils';
 import {
   getCateCoordinateOfLine,
@@ -476,6 +476,7 @@ function getLegendItemColor(stroke: string | undefined, fill: string | undefined
 
 const computeLegendPayloadFromAreaData = <DataPointType, ValueAxisType>(
   props: Props<DataPointType, ValueAxisType>,
+  dotFill: string | undefined,
 ): ReadonlyArray<LegendPayload> => {
   const { dataKey, name, stroke, fill, legendType, hide, dot } = props;
   return [
@@ -483,7 +484,7 @@ const computeLegendPayloadFromAreaData = <DataPointType, ValueAxisType>(
       inactive: hide,
       dataKey,
       type: legendType,
-      dotSymbol: getDotSymbol(dot),
+      dot: getLegendPayloadDot(dot, { fill: dotFill ?? fill, stroke }),
       color: getLegendItemColor(stroke, fill),
       value: getTooltipNameProp(name, dataKey),
       payload: props,
@@ -1134,7 +1135,7 @@ function AreaFn(outsideProps: Props<any, any>) {
     <RegisterGraphicalItemId id={props.id} type="area">
       {id => (
         <>
-          <SetLegendPayload legendPayload={computeLegendPayloadFromAreaData(props)} />
+          <SetLegendPayload legendPayload={computeLegendPayloadFromAreaData(props, dotFill)} />
           <SetAreaTooltipEntrySettings
             dataKey={props.dataKey}
             data={props.data}
