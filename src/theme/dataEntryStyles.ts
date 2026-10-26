@@ -19,7 +19,7 @@
 import { useMemo } from 'react';
 import { Styles2D } from './RechartsTheme';
 import { useRechartsTheme } from './RechartsThemeContext';
-import { svgPropertiesNoEventsFromUnknown } from '../util/svgPropertiesNoEvents';
+import { isDataAttribute, isSvgElementPropKey, svgPropertiesNoEventsFromUnknown } from '../util/svgPropertiesNoEvents';
 
 type ThemeableStyleKey = keyof Styles2D;
 
@@ -151,4 +151,49 @@ export function getEntryStyleOverrides(
 export function getEntrySvgProps(entry: unknown): Record<string, unknown> {
   const { id, ref, key, ...props } = svgPropertiesNoEventsFromUnknown(entry) ?? {};
   return props;
+}
+
+/**
+ * The color a graphical item renders a data entry with: its fill, or its stroke when it has no fill.
+ * Follows the order in which graphical items spread the styles: the entry colors win over the graphical item colors,
+ * and with a theme, an entry with its own colors ignores the theme colors.
+ * Tooltip and Legend use this so that they show the same color as the shape.
+ *
+ * @param entry data entry, with the props of its `Cell` if there is one
+ * @param fill fill of the graphical item, theme included
+ * @param stroke stroke of the graphical item, theme included
+ * @param unthemedStyles result of {@link useUnthemedStyles}, or undefined without a theme
+ */
+export function getEntryColor(
+  entry: unknown,
+  fill: string | undefined,
+  stroke: string | undefined,
+  unthemedStyles: UnthemedStyles | undefined,
+): string | undefined {
+  const itemStyles = getEntryStyleOverrides(entry, unthemedStyles) ?? { fill, stroke };
+  const entryFill = entry != null && typeof entry === 'object' && 'fill' in entry ? entry.fill : undefined;
+  const entryStroke = entry != null && typeof entry === 'object' && 'stroke' in entry ? entry.stroke : undefined;
+  if (typeof entryFill === 'string') {
+    return entryFill;
+  }
+  if (itemStyles.fill != null) {
+    return itemStyles.fill;
+  }
+  if (typeof entryStroke === 'string') {
+    return entryStroke;
+  }
+  return itemStyles.stroke;
+}
+
+/**
+ * Removes the SVG properties of a data entry (`stroke`, `opacity`, `style`, `data-*`, `id`, ...), and keeps `name`.
+ * Backgrounds are not the graphical item, so they do not take the styles of the data entry.
+ * Custom background shapes still receive the other keys of the entry, and the entry itself as `payload`.
+ *
+ * @param entry data entry, or the item computed from it
+ */
+export function omitEntrySvgProps(entry: object): Record<string, unknown> {
+  return Object.fromEntries(
+    Object.entries(entry).filter(([key]) => key === 'name' || (!isSvgElementPropKey(key) && !isDataAttribute(key))),
+  );
 }
