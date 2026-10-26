@@ -189,6 +189,17 @@ export type ImplicitLabelType =
   // dataKey is only applicable when label is used implicitly from graphical element props
   | (Props & { dataKey?: DataKey<any> });
 
+/**
+ * Internal animation bridge for backgrounds rendered in a separate zIndex layer.
+ * Inline backgrounds already inherit their parent's translation.
+ * Independent CSS translate preserves the background's SVG rotation and scale.
+ */
+const LabelBackgroundAnimationContext = createContext<
+  Pick<React.CSSProperties, 'translate' | 'transition'> | undefined
+>(undefined);
+
+export const LabelBackgroundAnimationContextProvider = LabelBackgroundAnimationContext.Provider;
+
 const CartesianLabelContext = createContext<TrapezoidViewBox | null>(null);
 
 export const CartesianLabelContextProvider = ({
@@ -476,6 +487,21 @@ export function Label(outerProps: Props) {
   const enclosingLabelZIndex = useLabelZIndex();
   const labelZIndex = props.zIndex === 0 ? (enclosingLabelZIndex ?? props.zIndex) : props.zIndex;
   const backgroundZIndex = getLabelBackgroundZIndex(labelZIndex, props.background);
+  const backgroundAnimation = useContext(LabelBackgroundAnimationContext);
+  const background = useMemo(() => {
+    if (!props.background || backgroundAnimation == null || backgroundZIndex == null || backgroundZIndex === 0) {
+      return props.background;
+    }
+
+    const settings = typeof props.background === 'object' ? props.background : {};
+    return {
+      ...settings,
+      style: {
+        ...settings.style,
+        ...backgroundAnimation,
+      },
+    };
+  }, [props.background, backgroundAnimation, backgroundZIndex]);
 
   /*
    * I am not proud about this solution, but it's a quick fix for https://github.com/recharts/recharts/issues/6030#issuecomment-3155352460.
@@ -594,7 +620,7 @@ export function Label(outerProps: Props) {
              */
             textAnchor={isValidTextAnchor(attrs.textAnchor) ? attrs.textAnchor : positionAttrs.textAnchor}
             breakAll={textBreakAll}
-            background={props.background}
+            background={background}
             halo={props.halo}
           >
             {label}
