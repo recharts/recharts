@@ -1,5 +1,15 @@
 import * as React from 'react';
-import { CSSProperties, SVGProps, useMemo, forwardRef, useCallback, useLayoutEffect, useRef, useState } from 'react';
+import {
+  CSSProperties,
+  ReactNode,
+  SVGProps,
+  useMemo,
+  forwardRef,
+  useCallback,
+  useLayoutEffect,
+  useRef,
+  useState,
+} from 'react';
 
 import { clsx } from 'clsx';
 import { isNullish, isNumber, isNumOrStr } from '../util/DataUtils';
@@ -15,6 +25,8 @@ import { RechartsTheme, TextStyles } from '../theme/RechartsTheme';
 import { resolveDefaultProps } from '../util/resolveDefaultProps';
 import { cssStylesToSvgStyles } from '../theme/cssStylesToSvgStyles';
 import { getEffectivePageBackground } from '../theme/pageBackground';
+import { getLabelBackgroundZIndex, useLabelZIndex } from '../zIndex/labelBackgroundZIndex';
+import { ZIndexLayer } from '../zIndex/ZIndexLayer';
 
 const BREAKING_SPACES = /[ \f\n\r\t\v\u2028\u2029]+/;
 
@@ -103,6 +115,16 @@ export type TextBackgroundProps = Omit<
    * @defaultValue { x: 4, y: 2 }
    */
   padding?: number | { x?: number; y?: number };
+  /**
+   * zIndex layer of the background in a `Label` or `LabelList` inside a chart.
+   * `Text` used on its own ignores it and draws the background right before the text,
+   * because `Text` has no zIndex either. Without knowing which layer the text renders in,
+   * a background in any other layer could end up above its own text, so right before the text is the only safe place.
+   * In a label with a nonzero zIndex, 0 becomes -1, because layer 0 renders inside the label's own layer.
+   *
+   * @defaultValue 100 below the label zIndex, which is `DefaultZIndexes.labelBackground` for default labels
+   */
+  zIndex?: number;
 };
 
 /**
@@ -240,12 +262,15 @@ interface TextProps {
    *
    * - `true` draws the background with default styles.
    *   The fill is the `pageBackground` color from the theme, or white when no theme is set.
-   * - An object accepts SVG `<rect>` attributes such as `fill`, `stroke` and `rx`, and a `padding`.
+   * - An object accepts SVG `<rect>` attributes such as `fill`, `stroke` and `rx`, a `padding` and a `zIndex`.
    * - `false` or `undefined` draws no background.
    *
    * The background is sized after the text renders, so it follows the content, font, line breaks and rotation.
    * For `textPath`, the background follows the same path as the text.
    * It is not rendered during server-side rendering.
+   *
+   * Inside a `Label` or `LabelList` in a chart, the rectangle renders in a zIndex layer below the label,
+   * so overlapping labels never cover each other's text.
    *
    * @since 3.11
    * @example <Text background>Label</Text>
@@ -773,6 +798,8 @@ export const Text = forwardRef<SVGTextElement, Props>((outsideProps, ref) => {
     { fill: backgroundSettings?.fill },
     defaultLegacyBackgroundProps,
   );
+  const labelZIndex = useLabelZIndex();
+  const backgroundLayer = labelZIndex == null ? undefined : getLabelBackgroundZIndex(labelZIndex, background);
   const textRef = useRef<SVGTextElement | null>(null);
   const textPathRef = useRef<SVGTextPathElement | null>(null);
   const textPathDefinitionRef = useRef<SVGPathElement | null>(null);
@@ -908,6 +935,12 @@ export const Text = forwardRef<SVGTextElement, Props>((outsideProps, ref) => {
   }
 
   const { padding, className: backgroundClassName, ...backgroundRectProps } = backgroundSettings;
+  const renderInBackgroundLayer = (backgroundElement: ReactNode) =>
+    backgroundLayer == null ? (
+      backgroundElement
+    ) : (
+      <ZIndexLayer zIndex={backgroundLayer}>{backgroundElement}</ZIndexLayer>
+    );
 
   if (textPath != null) {
     const {
@@ -922,48 +955,59 @@ export const Text = forwardRef<SVGTextElement, Props>((outsideProps, ref) => {
     const outlineWidth = resolveBackgroundStrokeWidth(configuredOutlineWidth);
     const hasOutline = outlineStroke != null && outlineStroke !== 'none' && outlineWidth > 0;
 
+    const backgroundElement = backgroundPath != null && textPathMetrics != null && (
+      <>
+        {hasOutline && (
+          <path
+            {...svgPropertiesAndEvents(backgroundPathProps)}
+            d={textPath}
+            fill="none"
+            stroke={outlineStroke}
+            strokeOpacity={outlineStrokeOpacity}
+            strokeWidth={backgroundPath.strokeWidth + 2 * outlineWidth}
+            strokeLinecap="round"
+            strokeDasharray={`${backgroundPath.length}px ${textPathMetrics.pathLength}px`}
+            strokeDashoffset={`${-backgroundPath.start}px`}
+            className={clsx('recharts-text-background', 'recharts-text-path-background-outline', backgroundClassName)}
+          />
+        )}
+        <path
+          {...svgPropertiesAndEvents(backgroundPathProps)}
+          d={textPath}
+          fill="none"
+          stroke={backgroundFill.fill}
+          strokeOpacity={fillOpacity}
+          strokeWidth={backgroundPath.strokeWidth}
+          strokeLinecap="round"
+          strokeDasharray={`${backgroundPath.length}px ${textPathMetrics.pathLength}px`}
+          strokeDashoffset={`${-backgroundPath.start}px`}
+          className={clsx('recharts-text-background', 'recharts-text-path-background', backgroundClassName)}
+        />
+      </>
+    );
+
     return (
       <g className="recharts-text-with-background">
-        {backgroundPath != null && textPathMetrics != null && (
-          <>
-            {hasOutline && (
-              <path
-                {...svgPropertiesAndEvents(backgroundPathProps)}
-                d={textPath}
-                fill="none"
-                stroke={outlineStroke}
-                strokeOpacity={outlineStrokeOpacity}
-                strokeWidth={backgroundPath.strokeWidth + 2 * outlineWidth}
-                strokeLinecap="round"
-                strokeDasharray={`${backgroundPath.length}px ${textPathMetrics.pathLength}px`}
-                strokeDashoffset={`${-backgroundPath.start}px`}
-                className={clsx(
-                  'recharts-text-background',
-                  'recharts-text-path-background-outline',
-                  backgroundClassName,
-                )}
-              />
-            )}
-            <path
-              {...svgPropertiesAndEvents(backgroundPathProps)}
-              d={textPath}
-              fill="none"
-              stroke={backgroundFill.fill}
-              strokeOpacity={fillOpacity}
-              strokeWidth={backgroundPath.strokeWidth}
-              strokeLinecap="round"
-              strokeDasharray={`${backgroundPath.length}px ${textPathMetrics.pathLength}px`}
-              strokeDashoffset={`${-backgroundPath.start}px`}
-              className={clsx('recharts-text-background', 'recharts-text-path-background', backgroundClassName)}
-            />
-          </>
-        )}
+        {renderInBackgroundLayer(backgroundElement)}
         {textElement}
       </g>
     );
   }
 
   const backgroundRect = textBox == null ? null : getTextBackgroundRect(textBox, padding);
+  const backgroundElement = backgroundRect != null && (
+    <rect
+      rx={defaultBackgroundRadius}
+      {...svgPropertiesAndEvents(backgroundRectProps)}
+      fill={backgroundFill.fill}
+      className={clsx('recharts-text-background', backgroundClassName)}
+      transform={transform}
+      x={backgroundRect.x}
+      y={backgroundRect.y}
+      width={backgroundRect.width}
+      height={backgroundRect.height}
+    />
+  );
 
   /*
    * The group is rendered even before the text is measured,
@@ -971,19 +1015,7 @@ export const Text = forwardRef<SVGTextElement, Props>((outsideProps, ref) => {
    */
   return (
     <g className="recharts-text-with-background">
-      {backgroundRect != null && (
-        <rect
-          rx={defaultBackgroundRadius}
-          {...svgPropertiesAndEvents(backgroundRectProps)}
-          fill={backgroundFill.fill}
-          className={clsx('recharts-text-background', backgroundClassName)}
-          transform={transform}
-          x={backgroundRect.x}
-          y={backgroundRect.y}
-          width={backgroundRect.width}
-          height={backgroundRect.height}
-        />
-      )}
+      {renderInBackgroundLayer(backgroundElement)}
       {textElement}
     </g>
   );

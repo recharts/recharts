@@ -377,3 +377,16 @@ export const PieLabelListWithBackground = () => (
     </Pie>
   </PieChart>
 );
+
+/*
+ * Labels are wider than the space between points, so neighbouring labels overlap.
+ * The stroke shows where each background ends; every text should stay readable on top.
+ */
+export const LineLabelListWithOverlappingBackgrounds = () => (
+  <LineChart width={360} height={240} data={pageData} margin={{ top: 40, right: 40, bottom: 10, left: 40 }}>
+    <XAxis dataKey="name" />
+    <Line dataKey="uv" isAnimationActive={false}>
+      <LabelList dataKey="name" position="top" background={{ stroke: '#8884d8' }} />
+    </Line>
+  </LineChart>
+);
