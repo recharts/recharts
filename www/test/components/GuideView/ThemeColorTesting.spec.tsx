@@ -50,7 +50,7 @@ describe('checkerState', () => {
     expect(snippet).toContain("import { darkTheme, type RechartsTheme } from 'recharts';");
     expect(snippet).toContain("import { analyzeTheme, themeFailures } from '@recharts/devtools/theme';");
     expect(snippet).toContain('const myTheme: RechartsTheme = {\n  ...darkTheme,');
-    expect(snippet).toContain("{ fill: '#5396ff', stroke: '#5396ff', fillOpacity: 0.85 },");
+    expect(snippet).toContain("{ fill: '#5396ff', stroke: '#5396ff', fillOpacity: 1 },");
     expect(snippet).toContain("pageBackground: '#18181b',");
     expect(snippet).toContain('checks: { textOnBackground: false, textOnSeries: false },');
     expect(snippet).toContain('expect(themeFailures(report)).toEqual([]);');
@@ -86,7 +86,8 @@ describe('applying suggestions', () => {
       const { state: after } = applyAllFixes(before);
       expect(failing(after)).toBeLessThanOrEqual(failing(before));
     }
-    const light = stateFromPreset('lightTheme');
+    const preset = stateFromPreset('lightTheme');
+    const light = { ...preset, series: ['#eeeeee', ...preset.series.slice(1)] };
     const { state, changedColors } = applyAllFixes(light);
     expect(changedColors).toBeGreaterThan(0);
     expect(failing(state)).toBeLessThan(failing(light));
@@ -140,14 +141,16 @@ describe('ThemeChecker', () => {
     renderChecker();
     const series1 = () => screen.getByRole('textbox', { name: 'Series 1' });
     expect(series1()).toHaveValue('#2373e6');
+    await user.clear(series1());
+    await user.type(series1(), '#eeeeee');
 
     const [apply] = screen.getAllByRole('button', { name: /^Apply #[0-9a-f]{6} to series 1$/ });
     await user.click(apply);
-    await waitFor(() => expect(series1()).not.toHaveValue('#2373e6'));
+    await waitFor(() => expect(series1()).not.toHaveValue('#eeeeee'));
     expect(screen.getByText(/^Applied #[0-9a-f]{6}\.$/)).toBeInTheDocument();
 
     await user.click(screen.getByRole('button', { name: 'Undo' }));
-    expect(series1()).toHaveValue('#2373e6');
+    expect(series1()).toHaveValue('#eeeeee');
 
     await user.click(screen.getByRole('button', { name: 'Apply all suggestions' }));
     expect(await screen.findByText(/^Changed \d+ colors\. Failing checks went from \d+ to \d+\.$/)).toBeInTheDocument();
