@@ -326,6 +326,49 @@ describe('<PolarGrid />', () => {
       expect(container.querySelectorAll('.recharts-polar-grid-concentric-circle')).toHaveLength(4);
     });
 
+    test('Resolves percentage radii relative to the outer radius', () => {
+      const { container } = render(
+        <Surface width={500} height={500}>
+          <PolarGrid
+            cx={250}
+            cy={250}
+            innerRadius={0}
+            outerRadius={200}
+            gridType="circle"
+            polarAngles={polarAngles}
+            polarRadius={['25%', '50%', 120, '100%']}
+          />
+        </Surface>,
+      );
+
+      expectPolarGridCircles(container, [
+        { cx: 250, cy: 250, r: 50 },
+        { cx: 250, cy: 250, r: 100 },
+        { cx: 250, cy: 250, r: 120 },
+        { cx: 250, cy: 250, r: 200 },
+      ]);
+    });
+
+    test('Draws the background with the largest resolved percentage radius', () => {
+      const { container } = render(
+        <Surface width={500} height={500}>
+          <PolarGrid
+            cx={250}
+            cy={250}
+            innerRadius={0}
+            outerRadius={200}
+            gridType="circle"
+            fill="red"
+            polarAngles={polarAngles}
+            polarRadius={[150, '100%']}
+          />
+        </Surface>,
+      );
+
+      const background = container.querySelector('.recharts-polar-grid-concentric-circle[fill="red"]');
+      expect(background?.getAttribute('r')).toBe('200');
+    });
+
     test("Don't render any path when outerRadius is smaller than 0", () => {
       const { container } = render(
         <Surface width={500} height={500}>
@@ -349,6 +392,21 @@ describe('<PolarGrid />', () => {
   });
 
   describe('as a child of RadarChart', () => {
+    test('Resolves percentage radii relative to the outer radius of the chart', () => {
+      const { container } = render(
+        <RadarChart width={500} height={500} data={exampleRadarData} outerRadius={200}>
+          <Radar dataKey="value" />
+          <PolarGrid gridType="circle" polarRadius={['10%', '50%', '100%']} />
+        </RadarChart>,
+      );
+
+      expect(
+        Array.from(container.querySelectorAll('.recharts-polar-grid-concentric-circle')).map(circle =>
+          Number(circle.getAttribute('r')),
+        ),
+      ).toEqual([20, 100, 200]);
+    });
+
     test('Renders polar radius axis with RadarChart', () => {
       const { container } = render(
         <RadarChart width={500} height={500} data={exampleRadarData}>

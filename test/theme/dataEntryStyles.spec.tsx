@@ -22,6 +22,7 @@ import {
 import { RechartsTheme } from '../../src/theme/RechartsTheme';
 import {
   getEntryStyleOverrides,
+  getEntrySvgProps,
   getOwnStyles,
   getOwnStylesWithFallback,
   getUnthemedStyles,
@@ -185,6 +186,19 @@ describe('getOwnStylesWithFallback', () => {
       strokeWidth: 2,
       strokeDasharray: undefined,
     });
+  });
+});
+
+describe('getEntrySvgProps', () => {
+  it('should pick the SVG properties of the entry without id, ref and key', () => {
+    expect(
+      getEntrySvgProps({ id: 'a', ref: 'r', key: 'k', name: 'A', value: 1, fill: 'gold', className: 'mine' }),
+    ).toEqual({ name: 'A', fill: 'gold', className: 'mine' });
+  });
+
+  it('should return an empty object for an entry that is not an object', () => {
+    expect(getEntrySvgProps(undefined)).toEqual({});
+    expect(getEntrySvgProps(5)).toEqual({});
   });
 });
 

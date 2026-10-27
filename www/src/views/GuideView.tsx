@@ -21,6 +21,8 @@ import { BarAlign } from '../components/GuideView/BarAlign';
 import { CellDeprecationNotice } from '../components/GuideView/CellDeprecationNotice';
 import { AnimationsGuide } from '../components/GuideView/Animations';
 import { ThemingGuide } from '../components/GuideView/Theming';
+import { ThemeColorTesting } from '../components/GuideView/ThemeColorTesting';
+import { LabelColors } from '../components/GuideView/LabelColors';
 
 const guideMap: Record<string, ComponentType<{ locale: SupportedLocale }>> = {
   installation: Installation,
@@ -39,6 +41,8 @@ const guideMap: Record<string, ComponentType<{ locale: SupportedLocale }>> = {
   typescript: TypeScript,
   animations: AnimationsGuide,
   theming: ThemingGuide,
+  'theme-color-testing': ThemeColorTesting,
+  'label-colors': LabelColors,
 };
 
 export const allGuides = Object.keys(guideMap);

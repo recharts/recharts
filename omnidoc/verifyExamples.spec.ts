@@ -64,6 +64,7 @@ describe('Documentation Examples Coverage', () => {
     'DefaultTooltipContentProps',
     'Dot',
     'DotType',
+    'LegendPayloadDot',
     'DotProps',
     'ErrorBarDirection',
     'ErrorBarProps',

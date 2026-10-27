@@ -470,8 +470,6 @@ export const selectRadialBarLegendPayload: (
       return {
         type: legendType,
         value: getValueByDataKey(entry, nameKey ?? 'name'),
-        // @ts-expect-error we need a better typing for our data inputs
-        color: entry.fill,
         // @ts-expect-error Legend payload.payload says it wants objects but our data can be unknown
         payload: entry,
       };

@@ -106,7 +106,7 @@ export const treeshakingGroups: Record<string, ReadonlyArray<string>> = {
   Scatter,
   ScatterChart,
   SunburstChart,
-  Text: ['Global', 'Text', 'useRechartsTheme'],
+  Text: ['DefaultZIndexes', 'Global', 'Text', 'ZIndexLayer', 'useChartLayout', 'useRechartsTheme'],
   Tooltip,
   Trapezoid: ['Global', 'interpolate', 'Trapezoid'],
   Treemap,

@@ -19,6 +19,7 @@
 import { useMemo } from 'react';
 import { Styles2D } from './RechartsTheme';
 import { useRechartsTheme } from './RechartsThemeContext';
+import { isDataAttribute, isSvgElementPropKey, svgPropertiesNoEventsFromUnknown } from '../util/svgPropertiesNoEvents';
 
 type ThemeableStyleKey = keyof Styles2D;
 
@@ -137,4 +138,84 @@ export function getEntryStyleOverrides(
     return undefined;
   }
   return unthemedStyles;
+}
+
+/**
+ * Picks the valid SVG properties of a data entry, without `id` so that rendered elements do not get duplicate DOM ids,
+ * and without the React `ref` and `key`.
+ * The raw entry, `id` included, stays available as `payload`.
+ * Graphical items spread these after their own props, so the data entry wins.
+ *
+ * @param entry data entry
+ */
+export function getEntrySvgProps(entry: unknown): Record<string, unknown> {
+  const { id, ref, key, ...props } = svgPropertiesNoEventsFromUnknown(entry) ?? {};
+  return props;
+}
+
+function getStringProp(obj: unknown, key: 'fill' | 'stroke'): string | undefined {
+  if (obj == null || typeof obj !== 'object') {
+    return undefined;
+  }
+  const value: unknown = Reflect.get(obj, key);
+  return typeof value === 'string' ? value : undefined;
+}
+
+/**
+ * The fill and stroke a graphical item renders a data entry with.
+ * An inline `style.fill` or `style.stroke` of the entry wins over its `fill` or `stroke`, the same as in the browser.
+ * Follows the order in which graphical items spread the styles: the entry colors win over the graphical item colors,
+ * and with a theme, an entry with its own colors ignores the theme colors.
+ *
+ * @param entry data entry, with the props of its `Cell` if there is one
+ * @param fill fill of the graphical item, theme included
+ * @param stroke stroke of the graphical item, theme included
+ * @param unthemedStyles result of {@link useUnthemedStyles}, or undefined without a theme
+ */
+export function getEntryShapeColors(
+  entry: unknown,
+  fill: string | undefined,
+  stroke: string | undefined,
+  unthemedStyles: UnthemedStyles | undefined,
+): { fill: string | undefined; stroke: string | undefined } {
+  const itemStyles = getEntryStyleOverrides(entry, unthemedStyles) ?? { fill, stroke };
+  // An inline style wins over the presentation attribute, so the shape paints with `style.fill` and `style.stroke`.
+  const entryStyle = entry != null && typeof entry === 'object' && 'style' in entry ? entry.style : undefined;
+  return {
+    fill: getStringProp(entryStyle, 'fill') ?? getStringProp(entry, 'fill') ?? itemStyles.fill,
+    stroke: getStringProp(entryStyle, 'stroke') ?? getStringProp(entry, 'stroke') ?? itemStyles.stroke,
+  };
+}
+
+/**
+ * The color a graphical item renders a data entry with: its fill, or its stroke when it has no fill.
+ * Tooltip and Legend use this so that they show the same color as the shape.
+ *
+ * @param entry data entry, with the props of its `Cell` if there is one
+ * @param fill fill of the graphical item, theme included
+ * @param stroke stroke of the graphical item, theme included
+ * @param unthemedStyles result of {@link useUnthemedStyles}, or undefined without a theme
+ * @see getEntryShapeColors
+ */
+export function getEntryColor(
+  entry: unknown,
+  fill: string | undefined,
+  stroke: string | undefined,
+  unthemedStyles: UnthemedStyles | undefined,
+): string | undefined {
+  const colors = getEntryShapeColors(entry, fill, stroke, unthemedStyles);
+  return colors.fill ?? colors.stroke;
+}
+
+/**
+ * Removes the SVG properties of a data entry (`stroke`, `opacity`, `style`, `data-*`, `id`, ...), and keeps `name`.
+ * Backgrounds are not the graphical item, so they do not take the styles of the data entry.
+ * Custom background shapes still receive the other keys of the entry, and the entry itself as `payload`.
+ *
+ * @param entry data entry, or the item computed from it
+ */
+export function omitEntrySvgProps(entry: object): Record<string, unknown> {
+  return Object.fromEntries(
+    Object.entries(entry).filter(([key]) => key === 'name' || (!isSvgElementPropKey(key) && !isDataAttribute(key))),
+  );
 }

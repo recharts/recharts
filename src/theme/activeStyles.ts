@@ -91,7 +91,8 @@ export function useThemedActiveStyles(
 /**
  * Returns the theme styles for a single active representation, or undefined if the theme does not apply to it.
  *
- * The theme applies if Recharts renders the default shape: the option is `true`, or an object without its own colors.
+ * The theme applies if Recharts renders the default shape: the option is `true`, a predefined symbol name
+ * (such as `activeDot="diamond"` or `activeShape="star"`), or an object without its own colors.
  * A custom shape (function or React element), an object with its own colors,
  * and data entries with their own colors all ignore the theme.
  *
@@ -105,7 +106,7 @@ export function getActiveStyleOverrides(
   entry?: unknown,
 ): Styles2D | undefined {
   let result: Styles2D | undefined;
-  if (activeOption === true) {
+  if (activeOption === true || typeof activeOption === 'string') {
     result = themedActiveStyles;
   } else if (activeOption != null && typeof activeOption === 'object' && !isValidElement(activeOption)) {
     result = resolveThemedActiveStyles(themedActiveStyles, activeOption);

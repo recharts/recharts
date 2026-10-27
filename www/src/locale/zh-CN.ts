@@ -51,6 +51,8 @@ export const map = {
     coordinateSystems: '坐标系与维度系统',
     animations: '动画',
     theming: '主题',
+    'theme-color-testing': '主题颜色测试',
+    'label-colors': '标签颜色',
   },
   installation: {
     installation: '安装',

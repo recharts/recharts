@@ -22,6 +22,11 @@ export type TooltipPayloadEntry = Payload<ValueType, NameType>;
  */
 export type TooltipEntrySettings = Omit<TooltipPayloadEntry, 'payload' | 'value'> & {
   nameKey: DataKey<any> | undefined;
+  /**
+   * Line, Area and Radar draw one shape per series, so their Tooltip shows the series color
+   * instead of the colors of the active data entry.
+   */
+  ignoreDataEntryColors?: boolean;
 };
 
 /**

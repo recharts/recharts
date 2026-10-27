@@ -65,6 +65,12 @@ import {
   useUnthemedStyles,
 } from '../theme/dataEntryStyles';
 import { getActiveStyleOverrides, resolveThemedActiveStyles } from '../theme/activeStyles';
+import {
+  DataLabelColorsContextProvider,
+  DataLabelThemeContextProvider,
+  filledShapeLabelColors,
+  useIndexedLabelThemeResolver,
+} from '../theme/labelTheme';
 
 export type FunnelTrapezoidItem = TrapezoidProps &
   TrapezoidViewBox & {
@@ -895,17 +901,22 @@ function FunnelFn(outsideProps: Props) {
     ],
   );
 
+  const resolveLabelTheme = useIndexedLabelThemeResolver(theme?.graphicalItems, outsideProps);
   const { id: externalId, ...resolvedProps } = resolveDefaultProps(outsideProps, defaultFunnelProps);
   return (
     <RegisterGraphicalItemId id={externalId} type="funnel">
       {id => (
-        <FunnelImpl
-          {...resolvedProps}
-          id={id}
-          indexedStyles={indexedStyles}
-          unthemedStyles={indexedStyles.length > 0 ? unthemedStyles : undefined}
-          indexedActiveStyles={indexedActiveStyles}
-        />
+        <DataLabelThemeContextProvider value={resolveLabelTheme}>
+          <DataLabelColorsContextProvider value={filledShapeLabelColors}>
+            <FunnelImpl
+              {...resolvedProps}
+              id={id}
+              indexedStyles={indexedStyles}
+              unthemedStyles={indexedStyles.length > 0 ? unthemedStyles : undefined}
+              indexedActiveStyles={indexedActiveStyles}
+            />
+          </DataLabelColorsContextProvider>
+        </DataLabelThemeContextProvider>
       )}
     </RegisterGraphicalItemId>
   );

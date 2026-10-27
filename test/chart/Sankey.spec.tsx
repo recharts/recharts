@@ -1,7 +1,7 @@
 import React from 'react';
 import { describe, expect, it, Mock, vi } from 'vitest';
 import { fireEvent, render } from '@testing-library/react';
-import { Sankey, SankeyLinkProps, SankeyNodeProps, Tooltip, XAxis, YAxis } from '../../src';
+import { Sankey, SankeyLinkProps, SankeyNodeProps, Tooltip, XAxis, YAxis, LabelList } from '../../src';
 import { computeData } from '../../src/chart/Sankey';
 import { exampleSankeyData } from '../_data';
 import { useChartHeight, useChartWidth, useViewBox } from '../../src/context/chartLayoutContext';
@@ -621,6 +621,8 @@ describe('<Sankey />', () => {
       const expectedNodeProps: SankeyNodeProps = {
         height: 13.172337974085991,
         index: 0,
+        // valid SVG props from the node data entry are spread on the node
+        name: 'Agricultural waste',
         payload: {
           depth: 0,
           dx: 10,
@@ -745,6 +747,8 @@ describe('<Sankey />', () => {
       const expectedNodeProps: SankeyNodeProps = {
         height: 13.172337974085991,
         index: 0,
+        // valid SVG props from the node data entry are spread on the node
+        name: 'Agricultural waste',
         payload: {
           name: 'Agricultural waste',
           sourceNodes: [],
@@ -1085,6 +1089,237 @@ describe('<Sankey />', () => {
       };
 
       expect(computeData({ data, ...computeOptions }).nodes.map(node => node.depth)).toEqual([0, 1, 2]);
+    });
+  });
+
+  describe('node labels', () => {
+    const labelData = {
+      nodes: [{ name: 'a' }, { name: 'b' }, { name: 'c' }],
+      links: [
+        { source: 0, target: 1, value: 10 },
+        { source: 1, target: 2, value: 10 },
+      ],
+    };
+
+    it('renders no labels by default', () => {
+      const { container } = render(<Sankey width={500} height={300} data={labelData} />);
+
+      expect(container.querySelectorAll('.recharts-label')).toHaveLength(0);
+    });
+
+    it('renders one label per node with label=true, showing the node name', () => {
+      const { container } = render(<Sankey width={500} height={300} data={labelData} label />);
+
+      const labels = container.querySelectorAll('.recharts-label');
+      expect(labels).toHaveLength(3);
+      expect(Array.from(labels).map(label => label.textContent)).toEqual(['a', 'b', 'c']);
+    });
+
+    it('renders no labels with label=false', () => {
+      const { container } = render(<Sankey width={500} height={300} data={labelData} label={false} />);
+
+      expect(container.querySelectorAll('.recharts-label')).toHaveLength(0);
+    });
+
+    it('passes the label object as props of the implicit LabelList', () => {
+      const { container } = render(
+        <Sankey width={500} height={300} data={labelData} label={{ position: 'right', fill: 'red' }} />,
+      );
+
+      const labels = container.querySelectorAll('.recharts-label');
+      expect(labels).toHaveLength(3);
+      for (const label of labels) {
+        expect(label).toHaveAttribute('fill', 'red');
+      }
+    });
+
+    it('uses a label function as the content of the implicit LabelList', () => {
+      const { container } = render(
+        <Sankey
+          width={500}
+          height={300}
+          data={labelData}
+          label={props => <text className="custom-sankey-label">{String(props.value)}</text>}
+        />,
+      );
+
+      const labels = container.querySelectorAll('.custom-sankey-label');
+      expect(labels).toHaveLength(3);
+      expect(Array.from(labels).map(label => label.textContent)).toEqual(['a', 'b', 'c']);
+    });
+
+    it('renders LabelList as a child of Sankey', () => {
+      const { container } = render(
+        <Sankey width={500} height={300} data={labelData}>
+          <LabelList className="sankey-node-label" />
+        </Sankey>,
+      );
+
+      const labels = container.querySelectorAll('.sankey-node-label');
+      expect(labels).toHaveLength(3);
+      expect(Array.from(labels).map(label => label.textContent)).toEqual(['a', 'b', 'c']);
+    });
+
+    it('reads the label value with nameKey, the same accessor as the tooltip', () => {
+      const data = {
+        nodes: [
+          { name: 'a', id: 'first' },
+          { name: 'b', id: 'second' },
+          { name: 'c', id: 'third' },
+        ],
+        links: [
+          { source: 0, target: 1, value: 10 },
+          { source: 1, target: 2, value: 10 },
+        ],
+      };
+      const { container } = render(
+        <Sankey width={500} height={300} data={data} nameKey="id" label={{ position: 'inside' }} />,
+      );
+
+      const labels = container.querySelectorAll('.recharts-label');
+      expect(labels).toHaveLength(3);
+      expect(Array.from(labels).map(label => label.textContent)).toEqual(['first', 'second', 'third']);
+    });
+
+    it('positions each label at its node rectangle', () => {
+      const { container } = render(<Sankey width={500} height={300} data={labelData} label />);
+
+      const nodes = container.querySelectorAll('.recharts-sankey-node');
+      const labels = container.querySelectorAll('.recharts-label');
+      expect(nodes).toHaveLength(3);
+      expect(labels).toHaveLength(3);
+      /*
+       * The default label position is the center of the view box, so each label
+       * sits at the center of its own node rectangle.
+       */
+      for (let i = 0; i < 3; i++) {
+        const expectedCenterX: number = readSvgNumber(nodes[i], 'x') + readSvgNumber(nodes[i], 'width') / 2;
+        const expectedCenterY: number = readSvgNumber(nodes[i], 'y') + readSvgNumber(nodes[i], 'height') / 2;
+        /*
+         * The default position is the center of the view box, and the label renders
+         * that resolved point directly onto its text element.
+         */
+        expect(readSvgNumber(labels[i], 'x')).toBeCloseTo(expectedCenterX);
+        expect(readSvgNumber(labels[i], 'y')).toBeCloseTo(expectedCenterY);
+      }
+    });
+
+    it('inherits the node fill in the label when the label sets no fill', () => {
+      const { container } = render(<Sankey width={500} height={300} data={labelData} node={{ fill: 'blue' }} label />);
+
+      const labels = container.querySelectorAll('.recharts-label');
+      expect(labels).toHaveLength(3);
+      for (const label of labels) {
+        expect(label).toHaveAttribute('fill', 'blue');
+      }
+    });
+
+    it('prefers the explicit label fill over the node fill', () => {
+      const { container } = render(
+        <Sankey width={500} height={300} data={labelData} node={{ fill: 'blue' }} label={{ fill: 'green' }} />,
+      );
+
+      const labels = container.querySelectorAll('.recharts-label');
+      expect(labels).toHaveLength(3);
+      for (const label of labels) {
+        expect(label).toHaveAttribute('fill', 'green');
+      }
+    });
+
+    it('inherits the fill the node is drawn with, when the node sets no fill of its own', () => {
+      /*
+       * A node without a fill of its own is drawn with the default fill, and the label has to be drawn
+       * with the same color, otherwise it does not read on the node.
+       */
+      const { container } = render(<Sankey width={500} height={300} data={labelData} label />);
+
+      const nodes = container.querySelectorAll('.recharts-sankey-node');
+      const labels = container.querySelectorAll('.recharts-label');
+      expect(nodes).toHaveLength(3);
+      expect(labels).toHaveLength(3);
+      for (let i = 0; i < 3; i++) {
+        const nodeFill = nodes[i].getAttribute('fill');
+        expect(nodeFill).not.toBeNull();
+        expect(labels[i]).toHaveAttribute('fill', nodeFill);
+      }
+    });
+
+    it('inherits the fill from the style of the node, because the style wins over the fill attribute', () => {
+      const { container } = render(
+        <Sankey width={500} height={300} data={labelData} node={{ style: { fill: 'red' } }} label />,
+      );
+
+      const labels = container.querySelectorAll('.recharts-label');
+      expect(labels).toHaveLength(3);
+      for (const label of labels) {
+        expect(label).toHaveAttribute('fill', 'red');
+      }
+    });
+
+    it('does not let the labels intercept the pointer events of the node underneath', () => {
+      /*
+       * A node label sits on the node rectangle, and the labels are drawn in a layer on top of the
+       * nodes. Without this the label would swallow the hover and the click of the node it belongs to.
+       */
+      const { container } = render(<Sankey width={500} height={300} data={labelData} label />);
+
+      const labels = container.querySelectorAll('.recharts-label');
+      expect(labels).toHaveLength(3);
+      for (const label of labels) {
+        expect(label).toHaveAttribute('pointer-events', 'none');
+      }
+    });
+
+    it('does not let the labels of a LabelList child intercept the pointer events of the node underneath', () => {
+      const { container } = render(
+        <Sankey width={500} height={300} data={labelData}>
+          <LabelList className="sankey-node-label" />
+        </Sankey>,
+      );
+
+      const labels = container.querySelectorAll('.sankey-node-label');
+      expect(labels).toHaveLength(3);
+      for (const label of labels) {
+        expect(label).toHaveAttribute('pointer-events', 'none');
+      }
+    });
+
+    it('keeps an explicit pointer events of a LabelList child', () => {
+      const { container } = render(
+        <Sankey width={500} height={300} data={labelData}>
+          <LabelList className="sankey-node-label" pointerEvents="auto" />
+        </Sankey>,
+      );
+
+      const labels = container.querySelectorAll('.sankey-node-label');
+      expect(labels).toHaveLength(3);
+      for (const label of labels) {
+        expect(label).toHaveAttribute('pointer-events', 'auto');
+      }
+    });
+
+    it('passes the pointer events of the label to a custom label content', () => {
+      /*
+       * A custom content decides for itself what it renders, so it has to be told that the label must
+       * not intercept the pointer events of the node underneath.
+       */
+      const contents: Array<{ pointerEvents?: string | number }> = [];
+      render(
+        <Sankey
+          width={500}
+          height={300}
+          data={labelData}
+          label={props => {
+            contents.push(props);
+            return <text className="custom-sankey-label">{String(props.value)}</text>;
+          }}
+        />,
+      );
+
+      expect(contents).toHaveLength(3);
+      for (const content of contents) {
+        expect(content.pointerEvents).toBe('none');
+      }
     });
   });
 });

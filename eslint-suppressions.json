@@ -1803,14 +1803,8 @@
     }
   },
   "www/src/docs/exampleComponents/Label/LabelRadialBarPositions.tsx": {
-    "react-perf/jsx-no-new-array-as-prop": {
-      "count": 2
-    },
     "react-perf/jsx-no-new-function-as-prop": {
       "count": 3
-    },
-    "react-perf/jsx-no-new-object-as-prop": {
-      "count": 1
     }
   },
   "www/src/docs/exampleComponents/LabelList/LabelListChartExample.tsx": {

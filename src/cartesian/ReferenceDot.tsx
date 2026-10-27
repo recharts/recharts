@@ -5,6 +5,7 @@ import { Layer } from '../container/Layer';
 import { Dot, Props as DotProps } from '../shape/Dot';
 import { CartesianLabelContextProvider, CartesianLabelFromLabelProp, ImplicitLabelType } from '../component/Label';
 import { isNumOrStr } from '../util/DataUtils';
+import { isWellBehavedNumber } from '../util/isWellBehavedNumber';
 import { IfOverflow, Overflowable } from '../util/IfOverflow';
 import { addDot, ReferenceDotSettings, removeDot } from '../state/referenceElementsSlice';
 import { useAppDispatch, useAppSelector } from '../state/hooks';
@@ -160,7 +161,14 @@ const useCoordinate = (
 
   const scales = new CartesianScaleHelperImpl({ x: xAxisScale, y: yAxisScale });
 
-  const result = scales.map({ x, y }, { position: 'middle' });
+  const cx = xAxisScale.map(x, { position: 'middle' });
+  const cy = yAxisScale.map(y, { position: 'middle' });
+  // don't render the dot if the scale can't compute a result that makes sense
+  if (!isWellBehavedNumber(cx) || !isWellBehavedNumber(cy)) {
+    return null;
+  }
+
+  const result: Coordinate = { x: cx, y: cy };
 
   if (ifOverflow === 'discard' && !scales.isInRange(result)) {
     return null;

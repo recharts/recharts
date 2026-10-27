@@ -18,6 +18,7 @@ import {
   Text,
   TextAnchor,
   TextBackgroundProps,
+  TextHaloProps,
   TextVerticalAnchor,
 } from './Text';
 import { isNullish, isNumber, isNumOrStr, mathSign } from '../util/DataUtils';
@@ -30,9 +31,11 @@ import { resolveDefaultProps } from '../util/resolveDefaultProps';
 import { svgPropertiesAndEvents } from '../util/svgPropertiesAndEvents';
 import { ZIndexable, ZIndexLayer } from '../zIndex/ZIndexLayer';
 import { DefaultZIndexes } from '../zIndex/DefaultZIndexes';
+import { getLabelBackgroundZIndex, LabelZIndexProvider, useLabelZIndex } from '../zIndex/labelBackgroundZIndex';
 
 import { CartesianLabelPosition, getCartesianPosition } from '../cartesian/getCartesianPosition';
 import { cartesianViewBoxToTrapezoid } from '../cartesian/cartesianViewBoxToTrapezoid';
+import { applyLabelTheme, useGlobalLabelTheme } from '../theme/labelTheme';
 
 /**
  * @inline
@@ -135,19 +138,40 @@ interface LabelProps extends ZIndexable {
   /**
    * Draws a background behind the label, for example to keep it readable on top of a filled shape.
    *
-   * - `true` draws the background with default styles.
-   *   The fill is the `pageBackground` color from the theme, or white when no theme is set.
+   * - `true` draws the background with the styles from the theme's `label.background`.
+   *   If neither sets a `fill`, the fill is the `pageBackground` color from the theme, or white when no theme is set.
    * - An object accepts SVG `<rect>` attributes such as `fill`, `stroke` and `rx`, and a `padding`.
-   * - `false` or `undefined` draws no background.
+   *   It is merged over the theme styles key by key.
+   * - `false` draws no background, even if the theme turns backgrounds on.
+   * - `undefined` uses the theme's `label.background`, and draws no background without a theme.
    *
    * The background is sized from the rendered text and follows curved label paths.
    * It is not drawn for custom `content`.
+   *
+   * In a chart, the rectangle renders in a zIndex layer below the label,
+   * so overlapping labels never cover each other's text.
    *
    * @since 3.11
    * @example <Label position="inside" background />
    * @example <Label position="inside" background={{ fill: '#fff', rx: 2, padding: 4 }} />
    */
   background?: boolean | TextBackgroundProps;
+  /**
+   * Draws an outline around the letters of the label, as a lighter alternative to `background`.
+   *
+   * - `true` draws the halo with default styles.
+   *   The stroke is the `pageBackground` color from the theme, or white when no theme is set.
+   * - An object accepts `stroke`, `strokeWidth`, `strokeOpacity` and `strokeLinejoin` to set them explicitly.
+   * - `false` or `undefined` draws no halo.
+   *
+   * Unlike `background`, a halo needs no measurement, works during server-side rendering, and works for
+   * labels that follow a curved path (`insideStart`, `insideEnd` and `end` in polar charts).
+   *
+   * @since 3.11
+   * @example <Label position="inside" halo />
+   * @example <Label position="inside" halo={{ stroke: '#fff', strokeWidth: 4 }} />
+   */
+  halo?: boolean | TextHaloProps;
 }
 
 export type Props = Omit<SVGProps<SVGTextElement>, 'viewBox'> & LabelProps;
@@ -261,6 +285,7 @@ const renderRadialLabel = (
   label: RenderableText,
   attrs: SVGProps<SVGTextElement>,
   viewBox: PolarViewBoxRequired,
+  halo: Props['halo'],
 ) => {
   const { offset, className, background } = labelProps;
   const { cx, cy, innerRadius, outerRadius, startAngle, endAngle, clockWise } = viewBox;
@@ -314,6 +339,7 @@ const renderRadialLabel = (
       textPath={path}
       startOffset={resolvedStartOffset}
       background={background}
+      halo={halo}
     >
       {label}
     </Text>
@@ -377,7 +403,10 @@ const getAttrsOfPolarLabel = (
   };
 };
 
-const isPolar = (
+/**
+ * Returns true if the label renders in a polar view box, which decides how its `position` is interpreted.
+ */
+export const isPolarViewBox = (
   viewBox: CartesianViewBoxRequired | TrapezoidViewBox | PolarViewBoxRequired | undefined,
 ): viewBox is PolarViewBoxRequired => viewBox != null && 'cx' in viewBox && isNumber(viewBox.cx);
 
@@ -401,7 +430,7 @@ export const defaultLabelProps = {
 function polarViewBoxToTrapezoid(
   viewBox: PolarViewBoxRequired | TrapezoidViewBox | undefined,
 ): TrapezoidViewBox | undefined {
-  if (!isPolar(viewBox)) {
+  if (!isPolarViewBox(viewBox)) {
     return viewBox;
   }
   const { cx, cy, outerRadius } = viewBox;
@@ -423,7 +452,10 @@ function polarViewBoxToTrapezoid(
  * @consumes PolarLabelContext
  */
 export function Label(outerProps: Props) {
-  const props: PropsWithDefaults = resolveDefaultProps(outerProps, defaultLabelProps);
+  const labelTheme = useGlobalLabelTheme();
+  const themedProps: Props =
+    labelTheme == null ? outerProps : { ...outerProps, ...applyLabelTheme(labelTheme, outerProps) };
+  const props: PropsWithDefaults = resolveDefaultProps(themedProps, defaultLabelProps);
   const {
     viewBox: viewBoxFromProps,
     parentViewBox,
@@ -437,6 +469,13 @@ export function Label(outerProps: Props) {
   } = props;
   const polarViewBox = usePolarLabelContext();
   const cartesianViewBox = useCartesianLabelContext();
+  /*
+   * Labels inside a LabelList render with zIndex 0, in the layer of the list,
+   * so their backgrounds go below the zIndex of the list.
+   */
+  const enclosingLabelZIndex = useLabelZIndex();
+  const labelZIndex = props.zIndex === 0 ? (enclosingLabelZIndex ?? props.zIndex) : props.zIndex;
+  const backgroundZIndex = getLabelBackgroundZIndex(labelZIndex, props.background);
 
   /*
    * I am not proud about this solution, but it's a quick fix for https://github.com/recharts/recharts/issues/6030#issuecomment-3155352460.
@@ -450,7 +489,7 @@ export function Label(outerProps: Props) {
     positionAttrs: LabelPositionAttributes | undefined;
   if (viewBoxFromProps == null) {
     viewBox = resolvedViewBox;
-  } else if (isPolar(viewBoxFromProps)) {
+  } else if (isPolarViewBox(viewBoxFromProps)) {
     viewBox = viewBoxFromProps;
   } else {
     viewBox = cartesianViewBoxToTrapezoid(viewBoxFromProps);
@@ -467,9 +506,9 @@ export function Label(outerProps: Props) {
 
   // TODO: Generic Polar Hook
   const isRadialPolarLabel =
-    isPolar(viewBox) && (position === 'insideStart' || position === 'insideEnd' || position === 'end');
+    isPolarViewBox(viewBox) && (position === 'insideStart' || position === 'insideEnd' || position === 'end');
 
-  if (isPolar(viewBox)) {
+  if (isPolarViewBox(viewBox)) {
     if (!isRadialPolarLabel) {
       positionAttrs = getAttrsOfPolarLabel(viewBox, props.offset, props.position);
     }
@@ -478,7 +517,7 @@ export function Label(outerProps: Props) {
       viewBox: cartesianBox,
       position,
       offset: props.offset,
-      parentViewBox: isPolar(parentViewBox) ? undefined : parentViewBox,
+      parentViewBox: isPolarViewBox(parentViewBox) ? undefined : parentViewBox,
       clamp: true,
     });
 
@@ -513,7 +552,7 @@ export function Label(outerProps: Props) {
      * The element is often a plain SVG element such as `<text>`,
      * where `background` would end up as an invalid DOM attribute.
      */
-    const { labelRef: _, background: _background, ...propsForElement } = propsWithViewBox;
+    const { labelRef: _, background: _background, halo: _halo, ...propsForElement } = propsWithViewBox;
     return cloneElement(content, propsForElement);
   }
 
@@ -531,8 +570,8 @@ export function Label(outerProps: Props) {
 
   const attrs = svgPropertiesAndEvents(props);
 
-  if (isRadialPolarLabel && isPolar(viewBox)) {
-    return renderRadialLabel(props, position, label, attrs, viewBox);
+  if (isRadialPolarLabel && isPolarViewBox(viewBox)) {
+    return renderRadialLabel(props, position, label, attrs, viewBox, props.halo);
   }
 
   if (positionAttrs == null) {
@@ -540,23 +579,29 @@ export function Label(outerProps: Props) {
   }
 
   return (
-    <ZIndexLayer zIndex={props.zIndex}>
-      <Text
-        ref={labelRef}
-        className={clsx('recharts-label', className)}
-        {...attrs}
-        {...positionAttrs}
-        /*
-         * textAnchor is decided by default based on the `position`
-         * but we allow overriding via props for precise control.
-         */
-        textAnchor={isValidTextAnchor(attrs.textAnchor) ? attrs.textAnchor : positionAttrs.textAnchor}
-        breakAll={textBreakAll}
-        background={props.background}
-      >
-        {label}
-      </Text>
-    </ZIndexLayer>
+    <>
+      {props.background && <ZIndexLayer zIndex={backgroundZIndex} />}
+      <ZIndexLayer zIndex={props.zIndex}>
+        <LabelZIndexProvider value={labelZIndex}>
+          <Text
+            ref={labelRef}
+            className={clsx('recharts-label', className)}
+            {...attrs}
+            {...positionAttrs}
+            /*
+             * textAnchor is decided by default based on the `position`
+             * but we allow overriding via props for precise control.
+             */
+            textAnchor={isValidTextAnchor(attrs.textAnchor) ? attrs.textAnchor : positionAttrs.textAnchor}
+            breakAll={textBreakAll}
+            background={props.background}
+            halo={props.halo}
+          >
+            {label}
+          </Text>
+        </LabelZIndexProvider>
+      </ZIndexLayer>
+    </>
   );
 }
 

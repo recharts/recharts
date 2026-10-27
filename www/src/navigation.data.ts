@@ -25,6 +25,8 @@ const guidePages = [
   'cell',
   'animations',
   'theming',
+  'theme-color-testing',
+  'label-colors',
 ];
 
 export function getSiteRoutes(): string[] {
