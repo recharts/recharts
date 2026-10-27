@@ -2251,11 +2251,6 @@
       "count": 1
     }
   },
-  "www/src/docs/exampleComponents/getRelativeCoordinate/CrosshairExample.tsx": {
-    "react-perf/jsx-no-new-object-as-prop": {
-      "count": 2
-    }
-  },
   "www/src/docs/exampleComponents/types.ts": {
     "@typescript-eslint/no-explicit-any": {
       "count": 1
