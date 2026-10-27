@@ -38,8 +38,8 @@ export const NightingaleChart = {
             nameKey="name"
             innerRadius="10%"
             outerRadius={getOuterRadius}
-            startAngle={90}
-            endAngle={-270}
+            startAngle={112.5}
+            endAngle={-247.5}
             stroke="none"
           />
           <Legend />

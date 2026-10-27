@@ -63,8 +63,8 @@ export default function NightingaleChart({ isAnimationActive = true }: { isAnima
         cy="50%"
         innerRadius="10%"
         outerRadius={getOuterRadius}
-        startAngle={90}
-        endAngle={-270}
+        startAngle={112.5}
+        endAngle={-247.5}
         isAnimationActive={isAnimationActive}
         stroke="none"
       />
