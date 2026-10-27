@@ -2169,14 +2169,6 @@
       "count": 2
     }
   },
-  "www/src/docs/exampleComponents/ScatterChart/ScatterChartWithLabels.tsx": {
-    "react-perf/jsx-no-new-array-as-prop": {
-      "count": 1
-    },
-    "react-perf/jsx-no-new-object-as-prop": {
-      "count": 3
-    }
-  },
   "www/src/docs/exampleComponents/ScatterChart/ThreeDimScatterChart.tsx": {
     "react-perf/jsx-no-new-array-as-prop": {
       "count": 1
