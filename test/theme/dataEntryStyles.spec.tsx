@@ -24,9 +24,9 @@ import {
   getEntryStyleOverrides,
   getEntrySvgProps,
   getOwnStyles,
-  getOwnStylesWithFallback,
-  getUnthemedStyles,
+  getUnthemedColors,
   hasOwnColors,
+  withoutColors,
 } from '../../src/theme/dataEntryStyles';
 import { rechartsTestRender } from '../helper/createSelectorTestCase';
 import { getAllBarPaths } from '../helper/expectBars';
@@ -79,18 +79,21 @@ const themedAttributes: StyleAttributes = {
   'stroke-width': '3',
 };
 
+/**
+ * An entry with its own colors drops the theme fill and stroke together, and keeps the other theme styles.
+ */
 const ownFillAttributes: StyleAttributes = {
   fill: 'gold',
-  'fill-opacity': null,
+  'fill-opacity': '0.5',
   stroke: null,
-  'stroke-width': null,
+  'stroke-width': '3',
 };
 
 const ownStrokeAttributes: StyleAttributes = {
   fill: null,
-  'fill-opacity': null,
+  'fill-opacity': '0.5',
   stroke: 'red',
-  'stroke-width': null,
+  'stroke-width': '3',
 };
 
 function queryAll(container: Element, selector: string): ReadonlyArray<StyleAttributes> {
@@ -146,46 +149,42 @@ describe('getOwnStyles', () => {
   });
 });
 
-describe('getUnthemedStyles', () => {
-  it('should return all style keys, including the undefined ones', () => {
-    expect(getUnthemedStyles({ stroke: 'red' })).toEqual({
-      fill: undefined,
-      fillOpacity: undefined,
-      stroke: 'red',
-      strokeOpacity: undefined,
-      strokeWidth: undefined,
-      strokeDasharray: undefined,
-    });
-    expect(Object.keys(getUnthemedStyles({}))).toHaveLength(6);
+describe('withoutColors', () => {
+  it('should remove only fill and stroke', () => {
+    const style = { fill: 'red', stroke: 'blue', strokeWidth: 2, active: { fill: 'white' }, label: { style: {} } };
+    expect(withoutColors(style)).toEqual({ strokeWidth: 2, active: { fill: 'white' }, label: { style: {} } });
+  });
+
+  it('should return the same object for the same style', () => {
+    const style = { fill: 'red', strokeWidth: 2 };
+    expect(withoutColors(style)).toBe(withoutColors(style));
+  });
+
+  it('should return undefined for a missing style', () => {
+    expect(withoutColors(undefined)).toBeUndefined();
+  });
+});
+
+describe('getUnthemedColors', () => {
+  it('should return fill and stroke, including the undefined ones', () => {
+    expect(getUnthemedColors({ stroke: 'red', strokeWidth: 2 })).toEqual({ fill: undefined, stroke: 'red' });
+    expect(Object.keys(getUnthemedColors({}))).toEqual(['fill', 'stroke']);
   });
 });
 
 describe('getEntryStyleOverrides', () => {
-  const unthemedStyles = getUnthemedStyles({ strokeWidth: 2 });
+  const unthemedColors = getUnthemedColors({ stroke: 'black' });
 
   it('should return undefined without a theme', () => {
     expect(getEntryStyleOverrides({ fill: 'gold' }, undefined)).toBe(undefined);
   });
 
-  it('should return undefined for entries without own styles', () => {
-    expect(getEntryStyleOverrides({ value: 1 }, unthemedStyles)).toBe(undefined);
+  it('should return undefined for entries without own colors', () => {
+    expect(getEntryStyleOverrides({ value: 1, strokeWidth: 2 }, unthemedColors)).toBe(undefined);
   });
 
-  it('should return the unthemed styles for entries with own styles', () => {
-    expect(getEntryStyleOverrides({ fill: 'gold' }, unthemedStyles)).toBe(unthemedStyles);
-  });
-});
-
-describe('getOwnStylesWithFallback', () => {
-  it('should prefer entry styles and fall back to the unthemed styles', () => {
-    expect(getOwnStylesWithFallback({ fill: 'gold' }, getUnthemedStyles({ fill: 'blue', strokeWidth: 2 }))).toEqual({
-      fill: 'gold',
-      fillOpacity: undefined,
-      stroke: undefined,
-      strokeOpacity: undefined,
-      strokeWidth: 2,
-      strokeDasharray: undefined,
-    });
+  it('should return the unthemed colors for entries with own colors', () => {
+    expect(getEntryStyleOverrides({ fill: 'gold' }, unthemedColors)).toBe(unthemedColors);
   });
 });
 
@@ -213,7 +212,7 @@ describe('graphical items with styles defined in data', () => {
         </RechartsThemeProvider>,
       );
 
-    it('should ignore the theme for entries that define their own styles', () => {
+    it('should ignore the theme colors for entries that define their own colors', () => {
       const { container } = renderBar({});
       expect(Array.from(getAllBarPaths(container)).map(getStyleAttributes)).toEqual([
         ownFillAttributes,
@@ -247,12 +246,17 @@ describe('graphical items with styles defined in data', () => {
           <Bar dataKey="value" isAnimationActive={false} stroke="black" />
         </BarChart>,
       );
-      expect(getStyleAttributes(getAllBarPaths(container)[0])).toEqual({ ...ownFillAttributes, stroke: 'black' });
+      expect(getStyleAttributes(getAllBarPaths(container)[0])).toEqual({
+        fill: 'gold',
+        'fill-opacity': null,
+        stroke: 'black',
+        'stroke-width': null,
+      });
     });
   });
 
   describe('RadialBar', () => {
-    it('should ignore the theme for entries that define their own styles', () => {
+    it('should ignore the theme colors for entries that define their own colors', () => {
       const { container } = rechartsTestRender(
         <RechartsThemeProvider value={theme}>
           <RadialBarChart width={400} height={400} data={data}>
@@ -269,7 +273,7 @@ describe('graphical items with styles defined in data', () => {
   });
 
   describe('Scatter', () => {
-    it('should ignore the theme for entries that define their own styles', () => {
+    it('should ignore the theme colors for entries that define their own colors', () => {
       const { container } = rechartsTestRender(
         <RechartsThemeProvider value={theme}>
           <ScatterChart width={400} height={400}>
@@ -298,7 +302,7 @@ describe('graphical items with styles defined in data', () => {
         </RechartsThemeProvider>,
       );
 
-    it('should ignore the theme and the legacy defaults for entries that define their own styles', () => {
+    it('should ignore the theme colors and the legacy defaults for entries that define their own colors', () => {
       const { container } = renderPie({});
       expect(queryAll(container, '.recharts-pie-sector path')).toEqual([
         ownFillAttributes,
@@ -311,15 +315,19 @@ describe('graphical items with styles defined in data', () => {
       const { container } = renderPie({ stroke: 'white', fill: 'blue' });
       expect(queryAll(container, '.recharts-pie-sector path')).toEqual([
         { ...ownFillAttributes, stroke: 'white' },
-        // the Pie sets its own styles, so even entries without own styles ignore the theme
-        { fill: 'blue', 'fill-opacity': null, stroke: 'white', 'stroke-width': null },
+        // the Pie sets its own colors, so even entries without own colors ignore the theme colors
+        { ...themedAttributes, fill: 'blue', stroke: 'white' },
         { ...ownStrokeAttributes, fill: 'blue' },
       ]);
     });
 
-    it('should not apply the active theme to entries that define their own styles', () => {
+    it('should apply the active theme to entries that define their own colors', () => {
       const { container } = renderPie({}, <Tooltip defaultIndex={0} />);
-      expect(getStyleAttributes(container.querySelectorAll('.recharts-pie-sector path')[0])).toEqual(ownFillAttributes);
+      expect(getStyleAttributes(container.querySelectorAll('.recharts-pie-sector path')[0])).toEqual({
+        ...ownFillAttributes,
+        fill: 'white',
+        stroke: 'black',
+      });
     });
 
     it('should apply the active theme to entries without own styles', () => {
@@ -338,14 +346,16 @@ describe('graphical items with styles defined in data', () => {
         </PieChart>,
       );
       expect(getStyleAttributes(container.querySelectorAll('.recharts-pie-sector path')[0])).toEqual({
-        ...ownFillAttributes,
+        fill: 'gold',
+        'fill-opacity': null,
         stroke: '#fff',
+        'stroke-width': null,
       });
     });
   });
 
   describe('Funnel', () => {
-    it('should ignore the theme and the legacy defaults for entries that define their own styles', () => {
+    it('should ignore the theme colors and the legacy defaults for entries that define their own colors', () => {
       const { container } = rechartsTestRender(
         <RechartsThemeProvider value={theme}>
           <FunnelChart width={400} height={400}>
@@ -390,10 +400,11 @@ describe('graphical items with styles defined in data', () => {
       );
       const nodes = queryAll(container, '.recharts-treemap-depth-1 .recharts-rectangle');
       expect(nodes).toHaveLength(3);
-      expect(nodes).toContainEqual(ownFillAttributes);
       // Treemap only takes fill and stroke from the theme
-      expect(nodes).toContainEqual({ ...themedAttributes, 'fill-opacity': null, 'stroke-width': null });
-      expect(nodes).toContainEqual(ownStrokeAttributes);
+      const onlyColors = { 'fill-opacity': null, 'stroke-width': null };
+      expect(nodes).toContainEqual({ ...ownFillAttributes, ...onlyColors });
+      expect(nodes).toContainEqual({ ...themedAttributes, ...onlyColors });
+      expect(nodes).toContainEqual({ ...ownStrokeAttributes, ...onlyColors });
     });
   });
 });

@@ -33,9 +33,11 @@ export type GraphicalItemStyle = Styles2D & {
    *   (a function or a React element) receives none of them. In Bar, a custom `shape` is used
    *   for the active bar too, so it does not receive them either.
    * - If the `activeDot`, `activeBar`, or `activeShape` object sets its own `fill` or `stroke`,
-   *   it ignores these styles completely. Its other style properties override the matching ones from here.
-   * - The same is true for graphical items and data entries that set their own `fill` or `stroke`,
-   *   see {@link RechartsTheme.graphicalItems}.
+   *   it ignores the `fill` and `stroke` from here. Its other style properties override the matching ones from here,
+   *   and the rest of these styles still apply.
+   * - These styles only apply to the active state. The explicit props of the graphical item and the styles of
+   *   data entries only apply to the inactive state, so they do not change these styles,
+   *   even if they set their own `fill` or `stroke`.
    */
   active?: Styles2D;
   /**
@@ -46,8 +48,7 @@ export type GraphicalItemStyle = Styles2D & {
    *
    * The labels take the same entry as their graphical item: Pie and Funnel take one entry per sector or trapezoid,
    * the other graphical items take one entry per series.
-   * If the graphical item sets its own `fill` or `stroke`, it ignores its theme entry completely,
-   * and so do its labels. A data entry with its own `fill` or `stroke` only changes its shape, not its label.
+   * The labels keep these styles even if the graphical item or a data entry sets its own `fill` or `stroke`.
    *
    * If `style` sets no color, data labels pick one automatically:
    * - A label on top of a filled shape (Bar, Funnel, Pie, RadialBar) takes the `pageBackground` color,
@@ -142,17 +143,17 @@ export interface RechartsTheme {
    * and all their descendants inherit that color.
    *
    * The theme colors never mix with user colors. If Line, Area, Bar, Scatter, Radar, RadialBar, Pie, Funnel,
-   * or SunburstChart sets its own `fill` or `stroke` prop, it ignores its theme entry completely,
-   * including the `active` styles.
+   * Treemap, or SunburstChart sets its own `fill` or `stroke` prop, it ignores the `fill` and `stroke`
+   * of its theme entry together. The rest of the theme entry still applies,
+   * including the `active` and `label` styles.
    *
    * Individual shapes of Bar, RadialBar, Scatter, Pie, Funnel, Treemap, Sankey, and SunburstChart, and
    * individual point markers of Line, Area, and Radar can be styled from the data array. If a data entry defines its own
-   * `fill` or `stroke`, then that shape ignores
-   * the theme completely, and renders with only its own styles and the explicit props of its
-   * graphical item.
+   * `fill` or `stroke`, then that shape ignores the theme `fill` and `stroke` together, and takes its colors
+   * only from its own styles and the explicit props of its graphical item. The rest of the theme still applies.
    *
    * Other style props and data properties (`fillOpacity`, `strokeOpacity`, `strokeWidth`, `strokeDasharray`)
-   * do not opt out of the theme. They override the matching theme value and keep the rest of the theme.
+   * override the matching theme value and keep the rest of the theme.
    *
    * Legend and Tooltip items inherit the same color.
    */

@@ -82,8 +82,8 @@ import {
   getEntryShapeColors,
   getEntryStyleOverrides,
   omitEntrySvgProps,
-  UnthemedStyles,
-  useUnthemedStyles,
+  UnthemedColors,
+  useUnthemedColors,
 } from '../theme/dataEntryStyles';
 import { getActiveStyleOverrides, useThemedActiveStyles } from '../theme/activeStyles';
 import {
@@ -116,23 +116,23 @@ function RadialBarLabelListProvider({
   sectors,
   fill,
   stroke,
-  unthemedStyles,
+  unthemedColors,
   children,
 }: {
   showLabels: boolean;
   sectors: ReadonlyArray<RadialBarDataItem>;
   fill: string | undefined;
   stroke: string | undefined;
-  unthemedStyles: UnthemedStyles | undefined;
+  unthemedColors: UnthemedColors | undefined;
   children: ReactNode;
 }) {
   // The same color as in Tooltip and Legend.
   const labelColors: DataLabelColors = React.useMemo(
     () => ({
       hasFilledShapes: true,
-      getShapeColors: (index: number) => getEntryShapeColors(sectors[index], fill, stroke, unthemedStyles),
+      getShapeColors: (index: number) => getEntryShapeColors(sectors[index], fill, stroke, unthemedColors),
     }),
-    [sectors, fill, stroke, unthemedStyles],
+    [sectors, fill, stroke, unthemedColors],
   );
   const labelListEntries: ReadonlyArray<PolarLabelListEntry> = sectors.map(
     (sector: RadialBarDataItem): PolarLabelListEntry => ({
@@ -168,7 +168,7 @@ function RadialBarSectors({
   isAnimating,
   isEntrance,
 }: RadialBarSectorsProps) {
-  const { shape, activeShape, cornerRadius, id, unthemedStyles, themedActiveStyles, ...others } =
+  const { shape, activeShape, cornerRadius, id, unthemedColors, themedActiveStyles, ...others } =
     allOtherRadialBarProps;
   const baseProps = svgPropertiesNoEvents(others);
 
@@ -194,7 +194,7 @@ function RadialBarSectors({
       sectors={sectors}
       fill={others.fill}
       stroke={others.stroke}
-      unthemedStyles={unthemedStyles}
+      unthemedColors={unthemedColors}
     >
       {sectors.map((entry: RadialBarDataItem, i: number) => {
         const isActive: boolean = Boolean(activeShape && activeIndex === String(i));
@@ -205,9 +205,9 @@ function RadialBarSectors({
         const radialBarSectorProps: React.ComponentProps<typeof RadialBarSector> = {
           ...baseProps,
           cornerRadius: parseCornerRadius(cornerRadius),
-          ...getEntryStyleOverrides(entry, unthemedStyles),
+          ...getEntryStyleOverrides(entry, unthemedColors),
           ...entry,
-          ...(isActive ? getActiveStyleOverrides(activeShape, themedActiveStyles, entry) : undefined),
+          ...(isActive ? getActiveStyleOverrides(activeShape, themedActiveStyles) : undefined),
           ...adaptEventsOfChild(restOfAllOtherProps, entry, i),
           onMouseEnter,
           onMouseLeave,
@@ -547,10 +547,10 @@ export type RadialBarProps<DataPointType = any, DataValueType = any> = Omit<
 type ThemeInternalProps = {
   /**
    * Explicit style props without theme contributions.
-   * Applied to data entries that define their own colors, so that they ignore the theme.
+   * Applied to data entries that define their own colors, so that they ignore the theme colors.
    * Undefined when there is no active theme.
    */
-  unthemedStyles?: UnthemedStyles;
+  unthemedColors?: UnthemedColors;
   /**
    * Theme styles of the active shape, without the ones that explicit props override.
    * Undefined when there is no active theme, or when the theme has no active styles.
@@ -567,16 +567,16 @@ function SetRadialBarPayloadLegend({
   legendType,
   fill,
   stroke,
-  unthemedStyles,
+  unthemedColors,
   children,
 }: Pick<RadialBarProps, 'legendType' | 'fill' | 'stroke' | 'children'> & {
-  unthemedStyles: UnthemedStyles | undefined;
+  unthemedColors: UnthemedColors | undefined;
 }) {
   const cells = React.useMemo(() => findAllByType(children, Cell), [children]);
   const legendPayload = useAppSelector(state => selectRadialBarLegendPayload(state, legendType));
   const coloredLegendPayload = legendPayload?.map((entry, index) => ({
     ...entry,
-    color: getEntryColor({ ...entry.payload, ...cells[index]?.props }, fill, stroke, unthemedStyles),
+    color: getEntryColor({ ...entry.payload, ...cells[index]?.props }, fill, stroke, unthemedColors),
   }));
   return <SetPolarLegendPayload legendPayload={coloredLegendPayload ?? []} />;
 }
@@ -593,16 +593,16 @@ const SetRadialBarTooltipEntrySettings = React.memo(
     tooltipType,
     formatter,
     id,
-    unthemedStyles,
+    unthemedColors,
   }: Pick<
     InternalProps,
     'dataKey' | 'sectors' | 'stroke' | 'strokeWidth' | 'name' | 'hide' | 'fill' | 'tooltipType' | 'formatter' | 'id'
-  > & { unthemedStyles: UnthemedStyles | undefined }) => {
+  > & { unthemedColors: UnthemedColors | undefined }) => {
     const tooltipEntrySettings: TooltipPayloadConfiguration = {
       dataDefinedOnItem: sectors,
       getPosition: noop,
       // The tooltip data are the sectors, so the entry here already includes the props of its Cell.
-      getEntryColor: sector => getEntryColor(sector, fill, stroke, unthemedStyles),
+      getEntryColor: sector => getEntryColor(sector, fill, stroke, unthemedColors),
       settings: {
         graphicalItemId: id,
         stroke,
@@ -756,7 +756,7 @@ function RadialBarImpl(props: WithIdRequired<PropsWithDefaults> & ThemeInternalP
         tooltipType={props.tooltipType}
         formatter={props.formatter}
         id={props.id}
-        unthemedStyles={props.unthemedStyles}
+        unthemedColors={props.unthemedColors}
       />
       <RadialBarWithState {...props} sectors={sectors} />
     </>
@@ -958,8 +958,8 @@ export function RadialBar<DataPointType = any, DataValueType = any>(
   });
   const graphicalItemThemeSelector = useGraphicalItemIdentity(dataKey, outsideProps);
   const resolveLabelTheme = useSeriesLabelThemeResolver(graphicalItemThemeSelector);
-  const unthemedStyles = useUnthemedStyles(outsideProps);
-  const themedActiveStyles = useThemedActiveStyles(graphicalItemThemeSelector, outsideProps);
+  const unthemedColors = useUnthemedColors(outsideProps);
+  const themedActiveStyles = useThemedActiveStyles(graphicalItemThemeSelector);
   const graphicalItemStyle = useBackwardsCompatibleTheme<RadialBarProps<DataPointType, DataValueType>>(
     graphicalItemThemeSelector,
     outsideProps,
@@ -1004,7 +1004,7 @@ export function RadialBar<DataPointType = any, DataValueType = any>(
             legendType={props.legendType}
             fill={themedProps.fill}
             stroke={themedProps.stroke}
-            unthemedStyles={unthemedStyles}
+            unthemedColors={unthemedColors}
           >
             {props.children}
           </SetRadialBarPayloadLegend>
@@ -1013,7 +1013,7 @@ export function RadialBar<DataPointType = any, DataValueType = any>(
               {...props}
               {...themedProps}
               id={id}
-              unthemedStyles={unthemedStyles}
+              unthemedColors={unthemedColors}
               themedActiveStyles={themedActiveStyles}
             />
           </DataLabelThemeContextProvider>

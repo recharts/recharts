@@ -67,7 +67,7 @@ import { ChartData } from '../state/chartDataSlice';
 import { GraphicalItemStyle, Styles2D } from '../theme/RechartsTheme';
 import { useRechartsTheme } from '../theme/RechartsThemeContext';
 import { useBackwardsCompatibleTheme } from '../theme/useBackwardsCompatibleTheme';
-import { UnthemedStyles, useUnthemedStyles } from '../theme/dataEntryStyles';
+import { UnthemedColors, useUnthemedColors } from '../theme/dataEntryStyles';
 import { useGraphicalItemIdentity } from '../theme/useGraphicalItemIdentity';
 import { useEffectiveDataKey } from '../util/useEffectiveDataKey';
 import {
@@ -92,7 +92,7 @@ export interface LinePointItem {
  * Internal props, combination of external props + defaultProps + private Recharts state
  */
 interface InternalLineProps extends ZIndexable {
-  unthemedStyles?: UnthemedStyles;
+  unthemedColors?: UnthemedColors;
   themedActiveStyles?: Styles2D;
   activeDot: ActiveDotType;
   animateNewValues: boolean;
@@ -587,7 +587,7 @@ function LineDotsWrapper({
   props: InternalProps;
 }) {
   const { dot, dataKey, dotFill, needClip } = props;
-  const { unthemedStyles } = props;
+  const { unthemedColors } = props;
 
   /*
    * Exclude ID from the props passed to the Dots component
@@ -605,7 +605,7 @@ function LineDotsWrapper({
       dotClassName="recharts-line-dot"
       dataKey={dataKey}
       baseProps={{ ...lineProps, fill: dotFill ?? lineProps.fill }}
-      unthemedStyles={unthemedStyles}
+      unthemedColors={unthemedColors}
       needClip={needClip}
       clipPathId={clipPathId}
     />
@@ -864,7 +864,7 @@ class LineWithState extends Component<InternalProps> {
 }
 
 function LineImpl(
-  props: WithIdRequired<Props> & Pick<InternalLineProps, 'dotFill' | 'unthemedStyles' | 'themedActiveStyles'>,
+  props: WithIdRequired<Props> & Pick<InternalLineProps, 'dotFill' | 'unthemedColors' | 'themedActiveStyles'>,
 ) {
   const {
     activeDot,
@@ -987,7 +987,7 @@ function LineFn(outsideProps: Props) {
     defaultLegacyThemeProps,
   );
   const themeStrokeDasharray = graphicalItemTheme?.strokeDasharray;
-  const unthemedStyles = useUnthemedStyles(outsideProps);
+  const unthemedColors = useUnthemedColors(outsideProps);
   const themedActiveStyles = graphicalItemTheme?.active;
   const props = resolveDefaultProps(
     {
@@ -1048,7 +1048,7 @@ function LineFn(outsideProps: Props) {
                 {...props}
                 id={id}
                 dotFill={dotFill}
-                unthemedStyles={unthemedStyles}
+                unthemedColors={unthemedColors}
                 themedActiveStyles={themedActiveStyles}
               />
             </DataLabelColorsContextProvider>

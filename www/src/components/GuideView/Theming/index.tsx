@@ -406,14 +406,23 @@ export function ThemingGuide() {
         <LinkToApi>CartesianGrid</LinkToApi>, you keep the theme&apos;s <code>strokeWidth</code>.
       </p>
       <p>
-        Graphical items are the exception for colors. Theme styles are designed as a coherent set, and they never mix
-        with your colors. If a graphical item sets its own <code>fill</code> or <code>stroke</code>, it ignores its{' '}
-        <code>graphicalItems</code> entry completely, including the <code>active</code> styles. For example,{' '}
-        <code>{'<Bar fill="red" />'}</code> renders red bars without the theme stroke, and{' '}
-        <code>{'<Line stroke="purple" />'}</code> renders a purple active dot instead of the theme one. The same rule
-        applies to colors defined in the data array or in <code>Cell</code>. Other style props, such as{' '}
-        <code>strokeWidth</code> or <code>strokeDasharray</code>, do not bring a color, so they merge with the theme
-        field by field: <code>{'<Line strokeDasharray="5 5" />'}</code> is a dashed line in the theme colors.
+        Graphical items are the exception for colors. The theme <code>fill</code> and <code>stroke</code> are designed
+        as a pair, and they never mix with your colors. If a graphical item sets its own <code>fill</code> or{' '}
+        <code>stroke</code>, it ignores both the <code>fill</code> and the <code>stroke</code> of its{' '}
+        <code>graphicalItems</code> entry. For example, <code>{'<Bar fill="red" />'}</code> renders red bars without the
+        theme stroke. The rest of the entry still applies, including its <code>strokeWidth</code>, its{' '}
+        <code>active</code> styles and its <code>label</code> styles. The same rule applies to colors defined in the
+        data array or in <code>Cell</code>. Other style props, such as <code>strokeWidth</code> or{' '}
+        <code>strokeDasharray</code>, do not bring a color, so they merge with the theme field by field:{' '}
+        <code>{'<Line strokeDasharray="5 5" />'}</code> is a dashed line in the theme colors.
+      </p>
+      <p>
+        The <code>active</code> styles only style the active state, and the props of the graphical item only style the
+        inactive state. So <code>{'<Line stroke="purple" />'}</code> still renders the active dot of the theme. To
+        change the active dot, pass an object: <code>{'<Line stroke="purple" activeDot={{ fill: "purple" }} />'}</code>.
+        An <code>activeDot</code>, <code>activeBar</code> or <code>activeShape</code> object that sets its own{' '}
+        <code>fill</code> or <code>stroke</code> ignores the <code>fill</code> and <code>stroke</code> of the theme{' '}
+        <code>active</code> styles, and keeps the rest.
       </p>
 
       <h2>What a theme contains</h2>
@@ -646,7 +655,7 @@ export function ThemingGuide() {
         Explicit props of the label win: <code>fill</code> and <code>style</code> override the theme style,{' '}
         <code>{'background={false}'}</code> turns the background off, and a <code>background</code> object is merged
         over the theme background key by key. A graphical item that sets its own <code>fill</code> or{' '}
-        <code>stroke</code> ignores its theme entry, and so do its labels.
+        <code>stroke</code> still takes the label styles of its theme entry.
       </p>
       <p>
         If neither the label nor the theme sets a color, data labels pick one automatically, depending on whether they

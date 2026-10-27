@@ -625,7 +625,7 @@ type ContentItemProps = {
   content: TreemapContentType;
   nodeProps: TreemapNode;
   /**
-   * True if the data node or the Treemap props define their own colors. Such nodes ignore the theme completely.
+   * True if the data node or the Treemap props define their own colors. Such nodes ignore the theme colors.
    * This is computed from the data node and the Treemap props separately
    * because nodeProps merge both and also include layout fields.
    */
@@ -691,8 +691,8 @@ function getTileStyles({
   const fillFromColorPanel = colorPanel == null ? undefined : legacyFill;
   if (nodeHasOwnColors) {
     /*
-     * A node that brings its own colors in data, or in the Treemap props, ignores the theme completely,
-     * so that its colors are not mixed with the theme colors.
+     * A node that brings its own colors in data, or in the Treemap props, ignores the theme colors,
+     * so that its colors are not mixed with the theme colors. The theme only gives tiles their colors.
      */
     return { fill: fillFromColorPanel, stroke: undefined, strokeWidth: undefined };
   }

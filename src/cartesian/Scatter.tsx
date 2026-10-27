@@ -82,11 +82,11 @@ import { useGraphicalItemIdentity } from '../theme/useGraphicalItemIdentity';
 import { useEffectiveDataKey } from '../util/useEffectiveDataKey';
 import { getDataKeyOnAxis } from '../state/selectors/effectiveDataKeySelectors';
 import {
-  UnthemedStyles,
+  UnthemedColors,
   getEntryShapeColors,
   getEntryStyleOverrides,
   hasOwnColors,
-  useUnthemedStyles,
+  useUnthemedColors,
 } from '../theme/dataEntryStyles';
 import { getActiveStyleOverrides, useThemedActiveStyles } from '../theme/activeStyles';
 import { Styles2D } from '../theme/RechartsTheme';
@@ -176,10 +176,10 @@ interface ScatterInternalProps extends ZIndexable {
   label?: ImplicitLabelListType;
   /**
    * Explicit style props without theme contributions.
-   * Applied to data entries that define their own colors, so that they ignore the theme.
+   * Applied to data entries that define their own colors, so that they ignore the theme colors.
    * Undefined when there is no active theme.
    */
-  unthemedStyles?: UnthemedStyles;
+  unthemedColors?: UnthemedColors;
   /**
    * Theme styles of the active shape, without the ones that explicit props override.
    * Undefined when there is no active theme, or when the theme has no active styles.
@@ -565,15 +565,15 @@ export function getScatterEntryColor(
   entry: unknown,
   seriesFill: string | undefined,
   seriesStroke: string | undefined,
-  unthemedStyles: UnthemedStyles | undefined,
+  unthemedColors: UnthemedColors | undefined,
 ): string | undefined {
   /*
    * When the entry defines its own colors, the theme is suppressed for that entry at render time,
    * and the explicit Scatter props fill in the rest (see getEntryStyleOverrides).
    * Mirror that here so the tooltip color matches the rendered symbol.
    */
-  const seriesFillFallback = hasOwnColors(entry) && unthemedStyles != null ? unthemedStyles.fill : seriesFill;
-  const seriesStrokeFallback = hasOwnColors(entry) && unthemedStyles != null ? unthemedStyles.stroke : seriesStroke;
+  const seriesFillFallback = hasOwnColors(entry) && unthemedColors != null ? unthemedColors.fill : seriesFill;
+  const seriesStrokeFallback = hasOwnColors(entry) && unthemedColors != null ? unthemedColors.stroke : seriesStroke;
   const fill =
     entry != null && typeof entry === 'object' && 'fill' in entry && typeof entry.fill === 'string'
       ? entry.fill
@@ -590,14 +590,14 @@ function ScatterLabelListProvider({
   points,
   seriesFill,
   seriesStroke,
-  unthemedStyles,
+  unthemedColors,
   children,
 }: {
   showLabels: boolean;
   points: ReadonlyArray<ScatterPointItem>;
   seriesFill: string | undefined;
   seriesStroke: string | undefined;
-  unthemedStyles: UnthemedStyles | undefined;
+  unthemedColors: UnthemedColors | undefined;
   children: ReactNode;
 }) {
   const chartViewBox = useViewBox();
@@ -605,9 +605,9 @@ function ScatterLabelListProvider({
     () => ({
       hasFilledShapes: false,
       getShapeColors: (index: number) =>
-        getEntryShapeColors(points[index]?.payload, seriesFill, seriesStroke, unthemedStyles),
+        getEntryShapeColors(points[index]?.payload, seriesFill, seriesStroke, unthemedColors),
     }),
-    [points, seriesFill, seriesStroke, unthemedStyles],
+    [points, seriesFill, seriesStroke, unthemedColors],
   );
   const labelListEntries: ReadonlyArray<CartesianLabelListEntry> = useMemo(() => {
     return points?.map((point): CartesianLabelListEntry => {
@@ -690,7 +690,7 @@ function ScatterPoint({
   shape: ScatterCustomizedShape;
   activeShape: ScatterCustomizedShape | undefined;
   baseProps: WithoutId<SVGPropsNoEvents<InternalProps>>;
-  entryStyleOverrides: UnthemedStyles | undefined;
+  entryStyleOverrides: UnthemedColors | undefined;
   themedActiveStyles: Styles2D | undefined;
   id: GraphicalItemId;
   restOfAllOtherProps: InternalProps;
@@ -726,7 +726,7 @@ function ScatterPoint({
     ...filteredBaseProps,
     ...entryStyleOverrides,
     ...entry,
-    ...(isActive ? getActiveStyleOverrides(activeShape, themedActiveStyles, entry) : undefined),
+    ...(isActive ? getActiveStyleOverrides(activeShape, themedActiveStyles) : undefined),
     isActive,
     index,
     animationElapsedTime,
@@ -759,7 +759,7 @@ function ScatterPoint({
 
 function ScatterSymbols(props: ScatterSymbolsProps) {
   const { points, allOtherScatterProps, animationElapsedTime, isAnimating, isEntrance } = props;
-  const { shape, activeShape, dataKey, unthemedStyles, themedActiveStyles } = allOtherScatterProps;
+  const { shape, activeShape, dataKey, unthemedColors, themedActiveStyles } = allOtherScatterProps;
   const { id, ...allOtherPropsWithoutId } = allOtherScatterProps;
 
   const {
@@ -789,7 +789,7 @@ function ScatterSymbols(props: ScatterSymbolsProps) {
           shape={shape}
           activeShape={activeShape}
           baseProps={baseProps}
-          entryStyleOverrides={getEntryStyleOverrides(entry, unthemedStyles)}
+          entryStyleOverrides={getEntryStyleOverrides(entry, unthemedColors)}
           themedActiveStyles={themedActiveStyles}
           id={id}
           restOfAllOtherProps={restOfAllOtherProps}
@@ -851,7 +851,7 @@ function SymbolsWithAnimation({
       points={points}
       seriesFill={props.fill}
       seriesStroke={props.stroke}
-      unthemedStyles={props.unthemedStyles}
+      unthemedColors={props.unthemedColors}
     >
       <AnimatedItems
         animationInput={props}
@@ -899,7 +899,7 @@ export function computeScatterPoints({
   layout,
   seriesFill,
   seriesStroke,
-  unthemedStyles,
+  unthemedColors,
 }: {
   displayedData: ReadonlyArray<unknown>;
   xAxis: BaseAxisWithScale;
@@ -912,7 +912,7 @@ export function computeScatterPoints({
   layout: LayoutType | undefined;
   seriesFill: string | undefined;
   seriesStroke: string | undefined;
-  unthemedStyles: UnthemedStyles | undefined;
+  unthemedColors: UnthemedColors | undefined;
 }): ReadonlyArray<ScatterPointItem> {
   /*
    * Scatter reads from two axes so it has two dataKeys.
@@ -931,7 +931,7 @@ export function computeScatterPoints({
     const y: unknown = getValueByDataKey(entry, yAxisDataKey);
     const z: unknown = (!isNullish(zAxisDataKey) && getValueByDataKey(entry, zAxisDataKey)) || '-';
 
-    const pointColor = getScatterEntryColor(entry, seriesFill, seriesStroke, unthemedStyles);
+    const pointColor = getScatterEntryColor(entry, seriesFill, seriesStroke, unthemedColors);
     const tooltipPayload: Array<TooltipPayloadEntry> = [
       {
         name: isNullish(xAxis.dataKey) ? scatterSettings.name : xAxis.name || String(xAxisDataKey),
@@ -1090,7 +1090,7 @@ export const defaultScatterProps = {
   zIndex: DefaultZIndexes.scatter,
 } as const satisfies Partial<Props>;
 
-function ScatterImpl(props: WithIdRequired<Props> & Pick<InternalProps, 'unthemedStyles' | 'themedActiveStyles'>) {
+function ScatterImpl(props: WithIdRequired<Props> & Pick<InternalProps, 'unthemedColors' | 'themedActiveStyles'>) {
   const {
     animationBegin,
     animationDuration,
@@ -1122,7 +1122,7 @@ function ScatterImpl(props: WithIdRequired<Props> & Pick<InternalProps, 'untheme
       isPanorama,
       props.fill,
       props.stroke,
-      props.unthemedStyles,
+      props.unthemedColors,
     );
   });
   if (needClip == null) {
@@ -1174,8 +1174,8 @@ function ScatterFn(outsideProps: Props) {
   });
   const graphicalItemThemeSelector = useGraphicalItemIdentity(effectiveDataKey, outsideProps);
   const resolveLabelTheme = useSeriesLabelThemeResolver(graphicalItemThemeSelector);
-  const unthemedStyles = useUnthemedStyles(outsideProps);
-  const themedActiveStyles = useThemedActiveStyles(graphicalItemThemeSelector, outsideProps);
+  const unthemedColors = useUnthemedColors(outsideProps);
+  const themedActiveStyles = useThemedActiveStyles(graphicalItemThemeSelector);
   const graphicalItemTheme = useBackwardsCompatibleTheme<Props>(graphicalItemThemeSelector, outsideProps, undefined);
   const props = resolveDefaultProps(
     {
@@ -1215,7 +1215,7 @@ function ScatterFn(outsideProps: Props) {
             isPanorama={isPanorama}
           />
           <DataLabelThemeContextProvider value={resolveLabelTheme}>
-            <ScatterImpl {...props} id={id} unthemedStyles={unthemedStyles} themedActiveStyles={themedActiveStyles} />
+            <ScatterImpl {...props} id={id} unthemedColors={unthemedColors} themedActiveStyles={themedActiveStyles} />
           </DataLabelThemeContextProvider>
         </>
       )}

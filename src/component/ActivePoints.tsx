@@ -57,7 +57,7 @@ const ActivePoint = ({
     fill: dataPointStyles.fill ?? mainColor ?? 'none',
     strokeWidth: 2,
     stroke: '#fff',
-    ...getActiveStyleOverrides(activeDot, themedActiveStyles, point.payload),
+    ...getActiveStyleOverrides(activeDot, themedActiveStyles),
     payload: point.payload,
     value: point.value,
   };

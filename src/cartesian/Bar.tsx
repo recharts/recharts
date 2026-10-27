@@ -101,8 +101,8 @@ import {
   getEntryShapeColors,
   getEntryStyleOverrides,
   omitEntrySvgProps,
-  UnthemedStyles,
-  useUnthemedStyles,
+  UnthemedColors,
+  useUnthemedColors,
 } from '../theme/dataEntryStyles';
 import { getActiveStyleOverrides, useThemedActiveStyles } from '../theme/activeStyles';
 import {
@@ -483,10 +483,10 @@ type InternalBarProps = {
   label?: ImplicitLabelListType;
   /**
    * Explicit style props without theme contributions.
-   * Applied to data entries that define their own colors, so that they ignore the theme.
+   * Applied to data entries that define their own colors, so that they ignore the theme colors.
    * Undefined when there is no active theme.
    */
-  unthemedStyles?: UnthemedStyles;
+  unthemedColors?: UnthemedColors;
   /**
    * Theme styles of the active bar, without the ones that explicit props override.
    * Undefined when there is no active theme, or when the theme has no active styles.
@@ -531,15 +531,15 @@ const SetBarTooltipEntrySettings = React.memo(
     formatter,
     tooltipType,
     id,
-    unthemedStyles,
+    unthemedColors,
   }: Pick<
     InternalProps,
     'dataKey' | 'stroke' | 'strokeWidth' | 'fill' | 'name' | 'hide' | 'unit' | 'formatter' | 'tooltipType' | 'id'
-  > & { unthemedStyles: UnthemedStyles | undefined }) => {
+  > & { unthemedColors: UnthemedColors | undefined }) => {
     const tooltipEntrySettings: TooltipPayloadConfiguration = {
       dataDefinedOnItem: undefined,
       getPosition: noop,
-      getEntryColor: entry => getEntryColor(entry, fill, stroke, unthemedStyles),
+      getEntryColor: entry => getEntryColor(entry, fill, stroke, unthemedColors),
       settings: {
         stroke,
         strokeWidth,
@@ -641,22 +641,22 @@ function BarLabelListProvider({
   rects,
   fill,
   stroke,
-  unthemedStyles,
+  unthemedColors,
 }: {
   showLabels: boolean;
   children: ReactNode;
   rects: ReadonlyArray<BarRectangleItem> | undefined;
   fill: string | undefined;
   stroke: string | undefined;
-  unthemedStyles: UnthemedStyles | undefined;
+  unthemedColors: UnthemedColors | undefined;
 }) {
   // The same color as in Tooltip and Legend.
   const labelColors: DataLabelColors = React.useMemo(
     () => ({
       hasFilledShapes: true,
-      getShapeColors: (index: number) => getEntryShapeColors(rects?.[index]?.payload, fill, stroke, unthemedStyles),
+      getShapeColors: (index: number) => getEntryShapeColors(rects?.[index]?.payload, fill, stroke, unthemedColors),
     }),
-    [rects, fill, stroke, unthemedStyles],
+    [rects, fill, stroke, unthemedColors],
   );
   const labelListEntries: ReadonlyArray<CartesianLabelListEntry> | undefined = rects?.map(
     (entry: BarRectangleItem): CartesianLabelListEntry => {
@@ -691,7 +691,7 @@ function BarRectangleWithActiveState(
     shape: ActiveShape<BarShapeProps, SVGPathElement>;
     activeBar: ActiveShape<BarShapeProps, SVGPathElement>;
     baseProps: WithoutId<SVGPropsNoEvents<BarRectanglesProps>>;
-    entryStyleOverrides: UnthemedStyles | undefined;
+    entryStyleOverrides: UnthemedColors | undefined;
     themedActiveStyles: Styles2D | undefined;
     entry: BarRectangleItem;
     index: number;
@@ -780,7 +780,7 @@ function BarRectangleWithActiveState(
    * and it decides on its own how the active state looks like.
    */
   const activeStyleOverrides = isVisuallyActive
-    ? getActiveStyleOverrides(option === defaultBarShape ? true : option, themedActiveStyles, entry)
+    ? getActiveStyleOverrides(option === defaultBarShape ? true : option, themedActiveStyles)
     : undefined;
 
   const content = (
@@ -815,7 +815,7 @@ function BarRectangleNeverActive(
   props: ShapeAnimationProps & {
     shape: ActiveShape<BarShapeProps, SVGPathElement>;
     baseProps: WithoutId<SVGPropsNoEvents<BarRectanglesProps>>;
-    entryStyleOverrides: UnthemedStyles | undefined;
+    entryStyleOverrides: UnthemedColors | undefined;
     entry: BarRectangleItem;
     index: number;
     dataKey: DataKey<any> | undefined;
@@ -850,7 +850,7 @@ function BarRectangles({
   props: BarRectanglesProps;
 }) {
   const { id, ...baseProps } = svgPropertiesNoEvents(props) ?? {};
-  const { shape, dataKey, activeBar, unthemedStyles, themedActiveStyles } = props;
+  const { shape, dataKey, activeBar, unthemedColors, themedActiveStyles } = props;
 
   const {
     onMouseEnter: onMouseEnterFromProps,
@@ -889,7 +889,7 @@ function BarRectangles({
                 shape={shape}
                 activeBar={activeBar}
                 baseProps={baseProps}
-                entryStyleOverrides={getEntryStyleOverrides(entry, unthemedStyles)}
+                entryStyleOverrides={getEntryStyleOverrides(entry, unthemedColors)}
                 themedActiveStyles={themedActiveStyles}
                 entry={entry}
                 index={i}
@@ -911,7 +911,7 @@ function BarRectangles({
               <BarRectangleNeverActive
                 shape={shape}
                 baseProps={baseProps}
-                entryStyleOverrides={getEntryStyleOverrides(entry, unthemedStyles)}
+                entryStyleOverrides={getEntryStyleOverrides(entry, unthemedColors)}
                 entry={entry}
                 index={i}
                 dataKey={dataKey}
@@ -1010,7 +1010,7 @@ function RectanglesWithAnimation({
       rects={data}
       fill={props.fill}
       stroke={props.stroke}
-      unthemedStyles={props.unthemedStyles}
+      unthemedColors={props.unthemedColors}
     >
       <AnimatedItems
         animationInput={data}
@@ -1367,8 +1367,8 @@ function BarFn(outsideProps: Props) {
   });
   const graphicalItemThemeSelector = useGraphicalItemIdentity(dataKey, outsideProps);
   const resolveLabelTheme = useSeriesLabelThemeResolver(graphicalItemThemeSelector);
-  const unthemedStyles = useUnthemedStyles(outsideProps);
-  const themedActiveStyles = useThemedActiveStyles(graphicalItemThemeSelector, outsideProps);
+  const unthemedColors = useUnthemedColors(outsideProps);
+  const themedActiveStyles = useThemedActiveStyles(graphicalItemThemeSelector);
   const graphicalItemStyle = useBackwardsCompatibleTheme<Props>(graphicalItemThemeSelector, outsideProps, undefined);
   const props = resolveDefaultProps({ ...outsideProps, dataKey }, defaultBarProps);
   // stackId may arrive from props or from BarStack context
@@ -1407,7 +1407,7 @@ function BarFn(outsideProps: Props) {
             formatter={props.formatter}
             tooltipType={props.tooltipType}
             id={id}
-            unthemedStyles={unthemedStyles}
+            unthemedColors={unthemedColors}
           />
           <SetCartesianGraphicalItem
             type="bar"
@@ -1432,7 +1432,7 @@ function BarFn(outsideProps: Props) {
                 {...props}
                 {...themedProps}
                 id={id}
-                unthemedStyles={unthemedStyles}
+                unthemedColors={unthemedColors}
                 themedActiveStyles={themedActiveStyles}
               />
             </DataLabelThemeContextProvider>

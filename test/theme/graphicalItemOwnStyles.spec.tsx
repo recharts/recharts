@@ -28,8 +28,9 @@ import { rechartsTestRender } from '../helper/createSelectorTestCase';
 import { getAllScatterPoints } from '../helper/expectScatterPoints';
 
 /**
- * Graphical items that set their own fill or stroke ignore their theme entry completely,
- * so that user colors never mix with theme colors. Other style props merge with the theme.
+ * Graphical items that set their own fill or stroke ignore the fill and stroke of their theme entry together,
+ * so that user colors never mix with theme colors. Other style props merge with the theme,
+ * and the theme active styles keep styling the active state.
  */
 
 const theme: RechartsTheme = {
@@ -82,9 +83,15 @@ const themedAttributes: StyleAttributes = {
 
 const ownFillAttributes: StyleAttributes = {
   fill: 'red',
-  'fill-opacity': null,
+  'fill-opacity': '0.5',
   stroke: null,
-  'stroke-width': null,
+  'stroke-width': '3',
+};
+
+const themedActiveAttributes: StyleAttributes = {
+  ...themedAttributes,
+  fill: 'white',
+  stroke: 'black',
 };
 
 function renderComposed(children: React.ReactNode) {
@@ -165,7 +172,7 @@ describe('graphical items with their own style props', () => {
       expect(getStyleAttributes(container.querySelector('.recharts-bar-rectangle path'))).toEqual(themedAttributes);
     });
 
-    it('should ignore the theme with an explicit fill', () => {
+    it('should ignore the theme colors with an explicit fill', () => {
       const { container } = renderComposed(<Bar dataKey="value" fill="red" isAnimationActive={false} />);
       expect(getStyleAttributes(container.querySelector('.recharts-bar-rectangle path'))).toEqual(ownFillAttributes);
       expect(getLegendColor(container)).toBe('red');
@@ -199,7 +206,7 @@ describe('graphical items with their own style props', () => {
   });
 
   describe('Area', () => {
-    it('should ignore the theme with an explicit fill, including the active dot', () => {
+    it('should ignore the theme colors with an explicit fill, and keep the theme active dot', () => {
       const { container } = renderComposed(<Area dataKey="value" fill="red" isAnimationActive={false} />);
       expect(getStyleAttributes(container.querySelector('.recharts-area-area'))).toEqual({
         ...ownFillAttributes,
@@ -207,14 +214,15 @@ describe('graphical items with their own style props', () => {
       });
       const curve = getStyleAttributes(container.querySelector('.recharts-area-curve'));
       expect(curve.stroke).not.toBe('indigo');
+      expect(curve['stroke-width']).toBe('3');
       const activeDot = getStyleAttributes(container.querySelector('.recharts-active-dot circle'));
-      expect(activeDot.fill).toBe('red');
-      expect(activeDot.stroke).not.toBe('black');
+      expect(activeDot.fill).toBe('white');
+      expect(activeDot.stroke).toBe('black');
     });
   });
 
   describe('Line', () => {
-    it('should apply data point styles to dots and keep them out of the theme', () => {
+    it('should apply data point colors to dots and keep them out of the theme colors', () => {
       const { container } = rechartsTestRender(
         <RechartsThemeProvider value={theme}>
           <LineChart width={400} height={400} data={[{ name: 'a', value: 100, fill: 'red' }]}>
@@ -227,10 +235,10 @@ describe('graphical items with their own style props', () => {
       const dot = container.querySelector('.recharts-line-dot');
       expect(dot).toHaveAttribute('fill', 'red');
       expect(dot).not.toHaveAttribute('stroke', 'indigo');
-      expect(dot).not.toHaveAttribute('stroke-width', '3');
+      expect(dot).toHaveAttribute('stroke-width', '3');
       const activeDot = getStyleAttributes(container.querySelector('.recharts-active-dot circle'));
-      expect(activeDot.fill).toBe('red');
-      expect(activeDot.stroke).not.toBe('black');
+      expect(activeDot.fill).toBe('white');
+      expect(activeDot.stroke).toBe('black');
     });
 
     it('should use the theme for the active dot without own styles', () => {
@@ -250,20 +258,20 @@ describe('graphical items with their own style props', () => {
       expect(getLegendColor(container)).toBe('indigo');
     });
 
-    it('should ignore the theme with an explicit stroke, including the active dot', () => {
+    it('should ignore the theme colors with an explicit stroke, and keep the theme active dot', () => {
       const { container } = renderComposed(<Line dataKey="value" stroke="red" isAnimationActive={false} />);
       const curve = getStyleAttributes(container.querySelector('.recharts-line-curve'));
       expect(curve.stroke).toBe('red');
-      expect(curve['stroke-width']).not.toBe('3');
+      expect(curve['stroke-width']).toBe('3');
       const activeDot = getStyleAttributes(container.querySelector('.recharts-active-dot circle'));
-      expect(activeDot.fill).toBe('red');
-      expect(activeDot.stroke).not.toBe('black');
+      expect(activeDot.fill).toBe('white');
+      expect(activeDot.stroke).toBe('black');
       expect(getLegendColor(container)).toBe('red');
     });
   });
 
   describe('Scatter', () => {
-    it('should ignore the theme with an explicit fill', () => {
+    it('should ignore the theme colors with an explicit fill', () => {
       const { container } = rechartsTestRender(
         <RechartsThemeProvider value={theme}>
           <ScatterChart width={400} height={400}>
@@ -278,7 +286,7 @@ describe('graphical items with their own style props', () => {
   });
 
   describe('Radar', () => {
-    it('should ignore the theme with an explicit stroke', () => {
+    it('should ignore the theme colors with an explicit stroke', () => {
       const { container } = rechartsTestRender(
         <RechartsThemeProvider value={theme}>
           <RadarChart width={400} height={400} data={data}>
@@ -290,12 +298,12 @@ describe('graphical items with their own style props', () => {
       const polygon = getStyleAttributes(container.querySelector('.recharts-radar-polygon path'));
       expect(polygon.stroke).toBe('red');
       expect(polygon.fill).not.toBe('purple');
-      expect(polygon['stroke-width']).not.toBe('3');
+      expect(polygon['stroke-width']).toBe('3');
     });
   });
 
   describe('RadialBar', () => {
-    it('should ignore the theme with an explicit fill', () => {
+    it('should ignore the theme colors with an explicit fill', () => {
       const { container } = rechartsTestRender(
         <RechartsThemeProvider value={theme}>
           <RadialBarChart width={400} height={400} data={data}>
@@ -322,7 +330,7 @@ describe('graphical items with their own style props', () => {
     it('should apply the theme, including the active sector, without own styles', () => {
       const { container } = renderPie({});
       const sectors = container.querySelectorAll('.recharts-pie-sector path');
-      expect(getStyleAttributes(sectors[0])).toEqual({ ...themedAttributes, fill: 'white', stroke: 'black' });
+      expect(getStyleAttributes(sectors[0])).toEqual(themedActiveAttributes);
       expect(getStyleAttributes(sectors[1])).toEqual(themedAttributes);
     });
 
@@ -338,17 +346,17 @@ describe('graphical items with their own style props', () => {
       expect(getStyleAttributes(sectors[1])).toEqual({ ...themedAttributes, 'stroke-width': '7' });
     });
 
-    it('should ignore the theme, including the active sector, with an explicit fill', () => {
+    it('should ignore the theme colors with an explicit fill, and keep the theme active sector', () => {
       const { container } = renderPie({ fill: 'red' });
       const sectors = container.querySelectorAll('.recharts-pie-sector path');
-      expect(getStyleAttributes(sectors[0])).toEqual(ownFillAttributes);
+      expect(getStyleAttributes(sectors[0])).toEqual(themedActiveAttributes);
       expect(getStyleAttributes(sectors[1])).toEqual(ownFillAttributes);
       expect(getLegendColor(container)).toBe('red');
     });
   });
 
   describe('Funnel', () => {
-    it('should ignore the theme and the legacy defaults with an explicit fill', () => {
+    it('should ignore the theme colors and the legacy defaults with an explicit fill', () => {
       const { container } = rechartsTestRender(
         <RechartsThemeProvider value={theme}>
           <FunnelChart width={400} height={400}>

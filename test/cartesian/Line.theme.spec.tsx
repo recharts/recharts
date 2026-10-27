@@ -356,7 +356,7 @@ describe('Line theme', () => {
     expect(activeDot).toHaveAttribute('stroke-width', '5');
   });
 
-  it('ignores the active graphical-item style when the active dot has its own color', () => {
+  it('ignores the active graphical-item colors, and keeps its other styles, when the active dot has its own color', () => {
     const { container } = rechartsTestRender(
       <RechartsThemeProvider
         value={{
@@ -384,10 +384,10 @@ describe('Line theme', () => {
     showTooltip(container, lineChartMouseHoverTooltipSelector);
     const activeDot = getActiveDot(container);
     expect(activeDot).toHaveAttribute('fill', 'blue');
-    expect(activeDot).not.toHaveAttribute('fill-opacity');
+    expect(activeDot).toHaveAttribute('fill-opacity', '0.4');
     expect(activeDot).not.toHaveAttribute('stroke', 'purple');
-    expect(activeDot).not.toHaveAttribute('stroke-dasharray');
-    expect(activeDot).not.toHaveAttribute('stroke-opacity');
+    expect(activeDot).toHaveAttribute('stroke-dasharray', '3 2');
+    expect(activeDot).toHaveAttribute('stroke-opacity', '0.6');
     expect(activeDot).toHaveAttribute('stroke-width', '3');
   });
 
@@ -430,13 +430,14 @@ describe('Line theme', () => {
       const [styled, plain] = getDots(container);
       expect(styled).toHaveAttribute('fill', 'red');
       expect(styled).toHaveAttribute('stroke', 'lime');
-      expect(styled).not.toHaveAttribute('stroke-width', '3');
+      expect(styled).toHaveAttribute('stroke-width', '3');
       expect(plain).toHaveAttribute('stroke', 'indigo');
       expect(plain).toHaveAttribute('stroke-width', '3');
 
+      // the active dot only takes the theme active styles
       const activeDot = getActiveDot(container);
-      expect(activeDot).toHaveAttribute('fill', 'red');
-      expect(activeDot).not.toHaveAttribute('stroke', 'black');
+      expect(activeDot).toHaveAttribute('fill', 'white');
+      expect(activeDot).toHaveAttribute('stroke', 'black');
     });
 
     it('shows the series color in the tooltip for a data entry with its own colors', () => {

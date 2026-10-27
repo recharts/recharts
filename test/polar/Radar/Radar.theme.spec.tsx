@@ -275,7 +275,7 @@ describe('Radar theme', () => {
     expect(polygon.getAttribute('stroke-width')).toBe('3');
   });
 
-  it('ignores the theme completely when only some props are provided', () => {
+  it('ignores the theme colors, and keeps the other theme styles, when only some props are provided', () => {
     const { container } = rechartsTestRender(
       <RechartsThemeProvider
         value={{
@@ -300,10 +300,10 @@ describe('Radar theme', () => {
     const polygon = getPolygon(container);
     expect(polygon.getAttribute('stroke')).toBe('blue');
     expect(polygon.getAttribute('fill')).not.toBe('purple');
-    expect(polygon.getAttribute('fill-opacity')).not.toBe('0.1');
-    expect(polygon.getAttribute('stroke-dasharray')).toBe(null);
-    expect(polygon.getAttribute('stroke-opacity')).toBe(null);
-    expect(polygon.getAttribute('stroke-width')).not.toBe('9');
+    expect(polygon.getAttribute('fill-opacity')).toBe('0.1');
+    expect(polygon.getAttribute('stroke-dasharray')).toBe('9 9');
+    expect(polygon.getAttribute('stroke-opacity')).toBe('0.2');
+    expect(polygon.getAttribute('stroke-width')).toBe('9');
   });
 
   describe('activeDot', () => {
@@ -338,7 +338,7 @@ describe('Radar theme', () => {
       expect(activeDot).toHaveAttribute('stroke-width', '5');
     });
 
-    it('ignores the active graphical-item style when the active dot has its own color', () => {
+    it('ignores the active graphical-item colors, and keeps its other styles, when the active dot has its own color', () => {
       const { container } = rechartsTestRender(
         <RechartsThemeProvider
           value={{
@@ -360,7 +360,7 @@ describe('Radar theme', () => {
       const activeDot = getActiveDot(container);
       expect(activeDot).toHaveAttribute('fill', 'blue');
       expect(activeDot).not.toHaveAttribute('stroke', 'purple');
-      expect(activeDot).not.toHaveAttribute('stroke-width', '5');
+      expect(activeDot).toHaveAttribute('stroke-width', '5');
     });
   });
 
@@ -407,13 +407,14 @@ describe('Radar theme', () => {
       const [styled, plain] = getDots(container);
       expect(styled).toHaveAttribute('fill', 'red');
       expect(styled).toHaveAttribute('stroke', 'lime');
-      expect(styled).not.toHaveAttribute('stroke-width', '3');
+      expect(styled).toHaveAttribute('stroke-width', '3');
       expect(plain).toHaveAttribute('stroke', 'indigo');
       expect(plain).toHaveAttribute('stroke-width', '3');
 
+      // the active dot only takes the theme active styles
       const activeDot = getActiveDot(container);
-      expect(activeDot).toHaveAttribute('fill', 'red');
-      expect(activeDot).not.toHaveAttribute('stroke', 'black');
+      expect(activeDot).toHaveAttribute('fill', 'white');
+      expect(activeDot).toHaveAttribute('stroke', 'black');
     });
 
     it('shows the series color in the tooltip for a data entry with its own colors', () => {

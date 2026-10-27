@@ -73,7 +73,7 @@ import { AreaRevealShape, AreaRevealShapeProps } from './AreaRevealShape';
 import { GraphicalItemStyle, Styles2D } from '../theme/RechartsTheme';
 import { useRechartsTheme } from '../theme/RechartsThemeContext';
 import { useBackwardsCompatibleTheme } from '../theme/useBackwardsCompatibleTheme';
-import { UnthemedStyles, useUnthemedStyles } from '../theme/dataEntryStyles';
+import { UnthemedColors, useUnthemedColors } from '../theme/dataEntryStyles';
 import { useGraphicalItemIdentity } from '../theme/useGraphicalItemIdentity';
 import { useEffectiveDataKey } from '../util/useEffectiveDataKey';
 import {
@@ -97,7 +97,7 @@ type BaseValueCoordinate<DataPointType = any> = NullableCoordinate & { payload: 
  * Internal props, combination of external props + defaultProps + private Recharts state
  */
 interface InternalAreaProps extends ZIndexable {
-  unthemedStyles?: UnthemedStyles;
+  unthemedColors?: UnthemedColors;
   themedActiveStyles?: Styles2D;
   activeDot: ActiveDotType;
   animationBegin: number;
@@ -574,7 +574,7 @@ function AreaDotsWrapper({
   points: ReadonlyArray<AreaPointItem>;
   props: WithoutId<InternalProps>;
 }) {
-  const { needClip, dot, dataKey, dotFill, unthemedStyles, ...propsWithoutDotFill } = props;
+  const { needClip, dot, dataKey, dotFill, unthemedColors, ...propsWithoutDotFill } = props;
   const areaProps: DotsDotProps = svgPropertiesNoEvents(propsWithoutDotFill);
 
   return (
@@ -585,7 +585,7 @@ function AreaDotsWrapper({
       dotClassName="recharts-area-dot"
       dataKey={dataKey}
       baseProps={{ ...areaProps, fill: dotFill ?? areaProps.fill }}
-      unthemedStyles={unthemedStyles}
+      unthemedColors={unthemedColors}
       needClip={needClip}
       clipPathId={clipPathId}
     />
@@ -884,7 +884,7 @@ class AreaWithState extends PureComponent<InternalProps> {
 
 function AreaImpl<DataPointType, ValueAxisType>(
   props: PropsWithDefaults<DataPointType, ValueAxisType> &
-    Pick<InternalProps, 'dotFill' | 'unthemedStyles' | 'themedActiveStyles'>,
+    Pick<InternalProps, 'dotFill' | 'unthemedColors' | 'themedActiveStyles'>,
 ) {
   const {
     activeDot,
@@ -1123,7 +1123,7 @@ function AreaFn(outsideProps: Props<any, any>) {
     outsideProps,
     defaultLegacyThemeProps,
   );
-  const unthemedStyles = useUnthemedStyles(outsideProps);
+  const unthemedColors = useUnthemedColors(outsideProps);
   const themedActiveStyles = theme?.active;
   const propsWithTheme: Props<any, any> = {
     ...outsideProps,
@@ -1182,7 +1182,7 @@ function AreaFn(outsideProps: Props<any, any>) {
                 {...props}
                 id={id}
                 dotFill={dotFill}
-                unthemedStyles={unthemedStyles}
+                unthemedColors={unthemedColors}
                 themedActiveStyles={themedActiveStyles}
               />
             </DataLabelColorsContextProvider>

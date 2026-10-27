@@ -164,11 +164,11 @@ describe.each(testCases)('theme active styles in $name', ({ expected, inactive, 
     expect(activeShape).toHaveAttribute('stroke-width', '9');
   });
 
-  it('ignores the theme active styles when the active shape is an object with its own color', () => {
+  it('ignores the theme active colors, and keeps the other theme active styles, when the active shape object has its own color', () => {
     const activeShape = renderActiveShape(renderChart({ active: { fill: 'lime' } }));
     expect(activeShape).toHaveAttribute('fill', 'lime');
     expect(activeShape).toHaveAttribute('stroke', inactive.stroke);
-    expect(activeShape).not.toHaveAttribute('stroke-width');
+    expect(activeShape).toHaveAttribute('stroke-width', expected.strokeWidth);
   });
 
   it('ignores the theme active styles when the active shape is a custom function', () => {
@@ -177,25 +177,25 @@ describe.each(testCases)('theme active styles in $name', ({ expected, inactive, 
     expect(activeShape).not.toHaveAttribute('stroke');
   });
 
-  it('ignores the theme, including the active styles, when the graphical item has its own color', () => {
+  it('applies the theme active styles when the graphical item has its own color', () => {
     const activeShape = renderActiveShape(renderChart({ active: true, itemProps: { fill: 'lime' } }));
-    expect(activeShape).toHaveAttribute('fill', 'lime');
-    expect(activeShape).not.toHaveAttribute('stroke', expected.stroke);
-    expect(activeShape).not.toHaveAttribute('stroke-width', expected.strokeWidth);
+    expect(activeShape).toHaveAttribute('fill', expected.fill);
+    expect(activeShape).toHaveAttribute('stroke', expected.stroke);
+    expect(activeShape).toHaveAttribute('stroke-width', expected.strokeWidth);
   });
 
-  it('merges the other style props of the graphical item with the theme active styles', () => {
+  it('applies the theme active styles over the other style props of the graphical item', () => {
     const activeShape = renderActiveShape(renderChart({ active: true, itemProps: { strokeWidth: 9 } }));
     expect(activeShape).toHaveAttribute('fill', expected.fill);
     expect(activeShape).toHaveAttribute('stroke', expected.stroke);
-    expect(activeShape).toHaveAttribute('stroke-width', '9');
+    expect(activeShape).toHaveAttribute('stroke-width', expected.strokeWidth);
   });
 
-  it('ignores the theme active styles when the data entry has its own color', () => {
+  it('applies the theme active styles when the data entry has its own color', () => {
     const activeShape = renderActiveShape(renderChart({ active: true, chartData: dataWithOwnStyles }));
-    expect(activeShape).toHaveAttribute('fill', 'gold');
-    expect(activeShape).not.toHaveAttribute('stroke', expected.stroke);
-    expect(activeShape).not.toHaveAttribute('stroke-width', expected.strokeWidth);
+    expect(activeShape).toHaveAttribute('fill', expected.fill);
+    expect(activeShape).toHaveAttribute('stroke', expected.stroke);
+    expect(activeShape).toHaveAttribute('stroke-width', expected.strokeWidth);
   });
 
   it('keeps the inactive styles when the theme has no active styles', () => {
@@ -244,12 +244,16 @@ describe('resolveThemedActiveStyles', () => {
     expect(resolveThemedActiveStyles(activeStyle, ownStyles)).toBe(activeStyle);
   });
 
-  it.each([{ fill: 'red' }, { stroke: 'red' }, { fill: 'red', strokeWidth: 5 }])(
-    'returns undefined when own styles have a color: %j',
+  it.each([{ fill: 'red' }, { stroke: 'red' }])(
+    'leaves out the fill and stroke when own styles have a color: %j',
     ownStyles => {
-      expect(resolveThemedActiveStyles(activeStyle, ownStyles)).toBeUndefined();
+      expect(resolveThemedActiveStyles(activeStyle, ownStyles)).toEqual({ strokeWidth: 2 });
     },
   );
+
+  it('returns undefined when own styles override everything', () => {
+    expect(resolveThemedActiveStyles(activeStyle, { fill: 'red', strokeWidth: 5 })).toBeUndefined();
+  });
 
   it('leaves out the styles that own styles override', () => {
     expect(resolveThemedActiveStyles(activeStyle, { strokeWidth: 5, fillOpacity: 0.5 })).toEqual({
@@ -266,7 +270,11 @@ describe('getActiveStyleOverrides', () => {
     expect(getActiveStyleOverrides(option, styles)).toBe(styles);
   });
 
-  it.each([false, undefined, null, { fill: 'red' }, { stroke: 'red' }, () => null, <g key="element" />])(
+  it.each([{ fill: 'red' }, { stroke: 'red' }])('returns the theme styles without colors for %j', option => {
+    expect(getActiveStyleOverrides(option, styles)).toEqual({ strokeWidth: 2 });
+  });
+
+  it.each([false, undefined, null, { fill: 'red', strokeWidth: 5 }, () => null, <g key="element" />])(
     'returns undefined for %j',
     option => {
       expect(getActiveStyleOverrides(option, styles)).toBeUndefined();
@@ -277,16 +285,7 @@ describe('getActiveStyleOverrides', () => {
     expect(getActiveStyleOverrides({ strokeWidth: 5 }, styles)).toEqual({ fill: 'white' });
   });
 
-  it('returns undefined when the data entry has its own color', () => {
-    expect(getActiveStyleOverrides(true, styles, { fill: 'red' })).toBeUndefined();
-    expect(getActiveStyleOverrides(true, styles, { stroke: 'red' })).toBeUndefined();
-  });
-
-  it('leaves out the styles that the data entry overrides', () => {
-    expect(getActiveStyleOverrides(true, styles, { strokeWidth: 5 })).toEqual({ fill: 'white' });
-  });
-
   it('returns undefined without theme styles', () => {
-    expect(getActiveStyleOverrides(true, undefined, {})).toBeUndefined();
+    expect(getActiveStyleOverrides(true, undefined)).toBeUndefined();
   });
 });

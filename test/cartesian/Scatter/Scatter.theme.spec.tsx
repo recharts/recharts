@@ -192,7 +192,7 @@ describe('Scatter theme', () => {
       });
     });
 
-    it('should ignore the theme completely when only some props are provided', () => {
+    it('should ignore the theme colors, and keep the other theme styles, when only some props are provided', () => {
       const { container } = rechartsTestRender(
         <RechartsThemeProvider
           value={{
@@ -214,7 +214,7 @@ describe('Scatter theme', () => {
       allPaths.forEach(path => {
         expect(path.getAttribute('fill')).toBe(null);
         expect(path.getAttribute('stroke')).toBe('red');
-        expect(path.getAttribute('stroke-dasharray')).toBe(null);
+        expect(path.getAttribute('stroke-dasharray')).toBe('4 4');
       });
     });
 

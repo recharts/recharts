@@ -233,7 +233,7 @@ describe('label theme', () => {
       expect(getBackgroundFills(container)).toEqual([]);
     });
 
-    it('ignore the theme when the graphical item sets its own fill', () => {
+    it('keep the theme when the graphical item sets its own fill', () => {
       const { container } = rechartsTestRender(
         <RechartsThemeProvider value={theme}>
           <BarChart width={300} height={300} data={data}>
@@ -244,11 +244,22 @@ describe('label theme', () => {
       const texts = getTexts(container, '.recharts-label-list .recharts-label');
       expect(texts).toHaveLength(3);
       texts.forEach(text => {
-        // The label sits on top of the bar, so it takes the automatic page background color
-        expect(text.style.fill).toBe('white');
-        expect(text.style.fontWeight).toBe('');
+        // The label has a background, so it takes the color of its shape
+        expect(text.style.fill).toBe('red');
+        expect(text.style.fontWeight).toBe('bold');
       });
-      expect(getBackgroundFills(container)).toEqual([]);
+      expect(getBackgroundFills(container)).toEqual(['ivory', 'ivory', 'ivory']);
+    });
+
+    it('keep one theme entry per sector when the Pie sets its own fill', () => {
+      const { container } = rechartsTestRender(
+        <RechartsThemeProvider value={theme}>
+          <PieChart width={300} height={300}>
+            <Pie data={data} dataKey="value" fill="red" isAnimationActive={false} label={{ position: 'inside' }} />
+          </PieChart>
+        </RechartsThemeProvider>,
+      );
+      expect(getBackgroundFills(container)).toEqual(['ivory', 'beige', 'ivory']);
     });
 
     it('apply to Line labels', () => {
