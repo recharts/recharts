@@ -314,20 +314,11 @@
     }
   },
   "src/chart/Treemap.tsx": {
-    "@typescript-eslint/consistent-type-assertions": {
-      "count": 2
-    },
-    "@typescript-eslint/no-explicit-any": {
-      "count": 3
-    },
-    "react-perf/jsx-no-new-array-as-prop": {
-      "count": 1
-    },
     "react-perf/jsx-no-new-function-as-prop": {
       "count": 4
     },
     "react-perf/jsx-no-new-object-as-prop": {
-      "count": 5
+      "count": 1
     }
   },
   "src/component/ActivePoints.tsx": {

@@ -1757,3 +1757,159 @@ describe('<Treemap /> touch label regressions', () => {
     expect(getTooltip(firstChart)).not.toBeVisible();
   });
 });
+
+/** Custom label fixture that deliberately does not forward chart event handlers. */
+function WrappedCustomLabel({ x, y, value }: LabelProps) {
+  return (
+    <text x={x} y={y} data-testid="wrapped-custom-label">
+      {value}
+    </text>
+  );
+}
+
+describe('<Treemap /> LabelList registration', () => {
+  const props = {
+    width: 400,
+    height: 250,
+    data: siblingGapData,
+    isAnimationActive: false,
+  };
+
+  function readLabels(container: Element) {
+    return Array.from(container.querySelectorAll('.recharts-label-list .recharts-label'), label => label.textContent);
+  }
+
+  /** Renders a list behind a component boundary that child traversal cannot inspect. */
+  function WrappedLabelList({ visible = true }: { visible?: boolean }) {
+    return visible ? (
+      <>
+        <LabelList dataKey="value" formatter={value => `Wrapped: ${value}`} />
+      </>
+    ) : null;
+  }
+
+  it('configures a LabelList inside a wrapper without duplicating default names', () => {
+    const { container } = render(
+      <Treemap {...props} isAnimationActive animationBegin={1000}>
+        <WrappedLabelList />
+      </Treemap>,
+    );
+    expect(readLabels(container)).toEqual(['Wrapped: 100', 'Wrapped: 100']);
+    const layers = container.querySelectorAll<SVGGElement>('.recharts-treemap-configured-label');
+    expect(layers).toHaveLength(2);
+    expect(layers[0].style.translate).not.toBe('');
+    expect(container.querySelectorAll('.recharts-rectangle')).toHaveLength(3);
+  });
+
+  it('restores default names when a wrapped list unmounts and suppresses them when it remounts', () => {
+    const { container, rerender } = render(
+      <Treemap {...props}>
+        <WrappedLabelList />
+      </Treemap>,
+    );
+    expect(readLabels(container)).toEqual(['Wrapped: 100', 'Wrapped: 100']);
+    rerender(
+      <Treemap {...props}>
+        <WrappedLabelList visible={false} />
+      </Treemap>,
+    );
+    expect(readLabels(container)).toEqual(['Left', 'Right']);
+    rerender(
+      <Treemap {...props}>
+        <WrappedLabelList />
+      </Treemap>,
+    );
+    expect(readLabels(container)).toEqual(['Wrapped: 100', 'Wrapped: 100']);
+  });
+
+  it('keeps defaults suppressed until every explicit list has unmounted', () => {
+    function Lists({ first, second }: { first: boolean; second: boolean }) {
+      return (
+        <>
+          {first && <LabelList dataKey="value" formatter={value => `First: ${value}`} />}
+          {second && <LabelList dataKey="value" formatter={value => `Second: ${value}`} />}
+        </>
+      );
+    }
+    const { container, rerender } = render(
+      <Treemap {...props}>
+        <Lists first second />
+      </Treemap>,
+    );
+    expect(readLabels(container)).toEqual(['First: 100', 'First: 100', 'Second: 100', 'Second: 100']);
+    rerender(
+      <Treemap {...props}>
+        <Lists first={false} second />
+      </Treemap>,
+    );
+    expect(readLabels(container)).toEqual(['Second: 100', 'Second: 100']);
+    rerender(
+      <Treemap {...props}>
+        <Lists first={false} second={false} />
+      </Treemap>,
+    );
+    expect(readLabels(container)).toEqual(['Left', 'Right']);
+  });
+
+  it('balances registration setup and cleanup in StrictMode', () => {
+    const { container, rerender } = render(
+      <React.StrictMode>
+        <Treemap {...props}>
+          <WrappedLabelList />
+        </Treemap>
+      </React.StrictMode>,
+    );
+    expect(readLabels(container)).toEqual(['Wrapped: 100', 'Wrapped: 100']);
+    rerender(
+      <React.StrictMode>
+        <Treemap {...props}>
+          <WrappedLabelList visible={false} />
+        </Treemap>
+      </React.StrictMode>,
+    );
+    expect(readLabels(container)).toEqual(['Left', 'Right']);
+  });
+
+  it('preserves explicitly requested defaults alongside a wrapped list', () => {
+    const { container } = render(
+      <Treemap {...props} label>
+        <WrappedLabelList />
+      </Treemap>,
+    );
+    expect(readLabels(container)).toEqual(['Left', 'Right', 'Wrapped: 100', 'Wrapped: 100']);
+  });
+
+  it('does not leak list registration into a sibling Treemap', () => {
+    const { container } = render(
+      <>
+        <Treemap {...props}>
+          <WrappedLabelList />
+        </Treemap>
+        <Treemap {...props} />
+      </>,
+    );
+    const charts = container.querySelectorAll('.recharts-wrapper');
+    expect(charts).toHaveLength(2);
+    expect(readLabels(charts[0])).toEqual(['Wrapped: 100', 'Wrapped: 100']);
+    expect(readLabels(charts[1])).toEqual(['Left', 'Right']);
+  });
+
+  it('keeps chart click callbacks when wrapped custom content does not forward handlers', () => {
+    const onClick = vi.fn();
+    function CustomList() {
+      return <LabelList content={WrappedCustomLabel} />;
+    }
+    const { container } = render(
+      <Treemap {...props} onClick={onClick}>
+        <CustomList />
+      </Treemap>,
+    );
+    const label = container.querySelector('[data-testid="wrapped-custom-label"]');
+    assertNotNull(label);
+    fireEvent.click(label);
+    expect(onClick).toHaveBeenCalledTimes(1);
+    expect(onClick.mock.calls[0][0].name).toBe('Left');
+    expect(readLabels(container)).toHaveLength(0);
+    expect(container.querySelectorAll('[data-testid="wrapped-custom-label"]')).toHaveLength(2);
+  });
+});

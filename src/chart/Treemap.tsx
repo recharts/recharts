@@ -54,17 +54,12 @@ import {
   CartesianLabelListContextProvider,
   CartesianLabelListEntry,
   ImplicitLabelListType,
-  Props as LabelListProps,
   LabelList,
   LabelListFromLabelProp,
+  LabelListSettingsContextProvider,
 } from '../component/LabelList';
 import { AllZIndexPortals } from '../zIndex/ZIndexPortal';
-import {
-  DataLabelColorsContextProvider,
-  DataLabelThemeContextProvider,
-  resolveLabelBackground,
-  useDataLabelThemeResolver,
-} from '../theme/labelTheme';
+import { DataLabelColorsContextProvider, DataLabelThemeContextProvider } from '../theme/labelTheme';
 
 const NODE_VALUE_KEY = 'value';
 const omittedTileProps = ['children', 'id'];
@@ -610,6 +605,7 @@ export interface Props<DataPointType extends TreemapDataType = TreemapDataType, 
 }
 
 interface State {
+  labelListCount: number;
   isAnimationFinished: boolean;
   formatRoot: TreemapNode | null;
   currentRoot: TreemapNode | undefined;
@@ -641,6 +637,7 @@ export const defaultTreeMapProps = {
 } as const satisfies Partial<Props>;
 
 const defaultState: State = {
+  labelListCount: 0,
   isAnimationFinished: false,
   formatRoot: null,
   currentRoot: undefined,
@@ -748,18 +745,6 @@ interface TreemapLabelListEntry extends CartesianLabelListEntry {
   'data-recharts-item-index': TooltipIndex;
 }
 
-function hasExplicitLabelList(children: ReactNode): boolean {
-  return React.Children.toArray(children).some(child => {
-    if (!React.isValidElement<{ children?: ReactNode }>(child)) {
-      return false;
-    }
-    if (child.type === LabelList) {
-      return true;
-    }
-    return child.type === React.Fragment && hasExplicitLabelList(child.props.children);
-  });
-}
-
 function TreemapLabelListProvider({
   entries,
   graphicalItems,
@@ -832,32 +817,12 @@ function TreemapAnimatedLayer({
   );
 }
 
-function TreemapConfiguredLabelsProvider({
-  entries,
-  animation,
-  children,
-}: {
-  entries: ReadonlyArray<TreemapLabelListEntry>;
-  animation: InternalTreemapProps;
-  children: ReactNode;
-}) {
-  const value = useMemo(() => ({ entries, animation }), [entries, animation]);
-  return <TreemapConfiguredLabelContext.Provider value={value}>{children}</TreemapConfiguredLabelContext.Provider>;
-}
-
-function TreemapConfiguredLabel({
-  originalContent,
-  originalBackground,
-  originalHalo,
-  ...props
-}: LabelProps & {
-  originalContent?: LabelProps['content'];
-  originalBackground?: LabelProps['background'];
-  originalHalo?: LabelProps['halo'];
-}) {
+/**
+ * Renders a resolved LabelList entry with its tile's animation and chart interactions.
+ * LabelList supplies the original content and resolved theme props without cloning its children.
+ */
+function TreemapConfiguredLabel(props: LabelProps) {
   const context = useContext(TreemapConfiguredLabelContext);
-  const resolveTheme = useDataLabelThemeResolver();
-  const labelTheme = props.index == null ? undefined : resolveTheme?.(props.index);
   const entry = props.index == null ? undefined : context?.entries[props.index];
   if (context == null || entry == null) {
     return null;
@@ -889,9 +854,6 @@ function TreemapConfiguredLabel({
         >
           <Label
             {...props}
-            content={originalContent}
-            background={resolveLabelBackground(originalBackground, labelTheme?.background)}
-            halo={originalHalo}
             onMouseEnter={props.onMouseEnter === entry.onMouseEnter ? undefined : props.onMouseEnter}
             onMouseLeave={props.onMouseLeave === entry.onMouseLeave ? undefined : props.onMouseLeave}
             onClick={props.onClick === entry.onClick ? undefined : props.onClick}
@@ -903,48 +865,34 @@ function TreemapConfiguredLabel({
   );
 }
 
-function configureTreemapLabelList(props: LabelListProps): LabelListProps {
-  return {
-    ...props,
-    content: (
-      <TreemapConfiguredLabel
-        originalContent={props.content}
-        originalBackground={props.background}
-        originalHalo={props.halo}
-      />
-    ),
-  };
-}
-
-function isTreemapLabelElement(label: ImplicitLabelListType): label is React.ReactElement {
-  return React.isValidElement(label);
-}
-
-function configureTreemapLabel(label: ImplicitLabelListType | undefined): ImplicitLabelListType {
-  if (!label || label === true) {
-    return false;
-  }
-
-  if (isTreemapLabelElement(label) || typeof label === 'function') {
-    return configureTreemapLabelList({ content: label });
-  }
-
-  return configureTreemapLabelList(label);
-}
-
-function configureTreemapLabelChildren(children: ReactNode): ReactNode {
-  return React.Children.map(children, child => {
-    if (!React.isValidElement<LabelListProps & { children?: ReactNode }>(child)) {
-      return child;
-    }
-    if (child.type === LabelList) {
-      return React.cloneElement(child, configureTreemapLabelList(child.props));
-    }
-    if (child.type === React.Fragment) {
-      return React.cloneElement(child, undefined, configureTreemapLabelChildren(child.props.children));
-    }
-    return child;
-  });
+/**
+ * Supplies the Treemap label renderer and registers mounted overlay LabelLists.
+ * Children are rendered unchanged, so fragments and wrapper components work without inspection.
+ */
+function TreemapConfiguredLabelsProvider({
+  entries,
+  animation,
+  label,
+  registerLabelList,
+  children,
+}: {
+  entries: ReadonlyArray<TreemapLabelListEntry>;
+  animation: InternalTreemapProps;
+  label: ImplicitLabelListType | undefined;
+  registerLabelList: () => () => void;
+  children: ReactNode;
+}) {
+  const value = useMemo(() => ({ entries, animation }), [entries, animation]);
+  const settings = useMemo(() => ({ LabelComponent: TreemapConfiguredLabel, registerLabelList }), [registerLabelList]);
+  const implicitSettings = useMemo(() => ({ LabelComponent: TreemapConfiguredLabel }), []);
+  return (
+    <TreemapConfiguredLabelContext.Provider value={value}>
+      <LabelListSettingsContextProvider value={implicitSettings}>
+        <LabelListFromLabelProp label={label === true ? false : label} />
+      </LabelListSettingsContextProvider>
+      <LabelListSettingsContextProvider value={settings}>{children}</LabelListSettingsContextProvider>
+    </TreemapConfiguredLabelContext.Provider>
+  );
 }
 
 function isDefaultLabelVisible(entry: TreemapLabelListEntry): boolean {
@@ -1273,19 +1221,21 @@ function TreemapNodeItem({
   const { content, themeGraphicalItems, typography } = treemapProps;
   const defaultLabel =
     entry == null ? null : (
-      <TreemapLabelListProvider entries={defaultEntries} graphicalItems={themeGraphicalItems}>
-        <LabelList
-          zIndex={0}
-          position="insideLeft"
-          offset={8}
-          fontSize={typography?.fontSize ?? 14}
-          fill={
-            themeGraphicalItems == null || themeGraphicalItems.length === 0
-              ? (typography?.fill ?? typography?.color ?? '#000')
-              : undefined
-          }
-        />
-      </TreemapLabelListProvider>
+      <LabelListSettingsContextProvider value={undefined}>
+        <TreemapLabelListProvider entries={defaultEntries} graphicalItems={themeGraphicalItems}>
+          <LabelList
+            zIndex={0}
+            position="insideLeft"
+            offset={8}
+            fontSize={typography?.fontSize ?? 14}
+            fill={
+              themeGraphicalItems == null || themeGraphicalItems.length === 0
+                ? (typography?.fill ?? typography?.color ?? '#000')
+                : undefined
+            }
+          />
+        </TreemapLabelListProvider>
+      </LabelListSettingsContextProvider>
     );
   return (
     <TreemapItem
@@ -1306,6 +1256,18 @@ class TreemapWithState extends PureComponent<InternalTreemapProps, State> {
 
   state = {
     ...defaultState,
+  };
+
+  /**
+   * Tracks mounted overlay LabelLists instead of inspecting React children.
+   * Effect cleanup restores automatic labels when the last list unmounts.
+   * Tile-local default lists sit outside this provider and do not register.
+   */
+  registerLabelList = (): (() => void) => {
+    this.setState(state => ({ labelListCount: state.labelListCount + 1 }));
+    return () => {
+      this.setState(state => ({ labelListCount: state.labelListCount - 1 }));
+    };
   };
 
   static getDerivedStateFromProps(nextProps: InternalTreemapProps, prevState: State): State | null {
@@ -1654,7 +1616,7 @@ class TreemapWithState extends PureComponent<InternalTreemapProps, State> {
     const useDefaultLabels = label == null || label === true;
     const hasCustomContent = React.isValidElement(content) || typeof content === 'function';
     const showDefaultLabels =
-      useDefaultLabels && !hasCustomContent && (label === true || !hasExplicitLabelList(children));
+      useDefaultLabels && !hasCustomContent && (label === true || this.state.labelListCount === 0);
     const defaultEntries = showDefaultLabels ? entries.filter(isDefaultLabelVisible) : [];
 
     return (
@@ -1675,12 +1637,16 @@ class TreemapWithState extends PureComponent<InternalTreemapProps, State> {
         >
           <AllZIndexPortals isPanorama={false}>
             {this.renderAllNodes(new Map(defaultEntries.map(entry => [entry.payload.tooltipIndex, entry])))}
-            <TreemapConfiguredLabelsProvider entries={entries} animation={this.props}>
-              <TreemapLabelListProvider entries={entries} graphicalItems={themeGraphicalItems}>
-                <LabelListFromLabelProp label={configureTreemapLabel(label)} />
-                {configureTreemapLabelChildren(children)}
-              </TreemapLabelListProvider>
-            </TreemapConfiguredLabelsProvider>
+            <TreemapLabelListProvider entries={entries} graphicalItems={themeGraphicalItems}>
+              <TreemapConfiguredLabelsProvider
+                entries={entries}
+                animation={this.props}
+                label={label}
+                registerLabelList={this.registerLabelList}
+              >
+                {children}
+              </TreemapConfiguredLabelsProvider>
+            </TreemapLabelListProvider>
           </AllZIndexPortals>
         </Surface>
         {type === 'nest' && this.renderNestIndex()}
