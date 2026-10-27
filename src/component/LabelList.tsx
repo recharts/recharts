@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { createContext, PropsWithoutRef, ReactNode, SVGProps, useContext, useEffect } from 'react';
+import { createContext, PropsWithoutRef, ReactNode, SVGProps, useContext, useLayoutEffect } from 'react';
 import {
   LabelContentType,
   isLabelContentAFunction,
@@ -321,7 +321,7 @@ export function LabelList({ valueAccessor = defaultAccessor, ...restProps }: Pro
 
   // Register component instances, not their rendered entries; even an empty list is explicit.
   // The stable registration callback also makes setup/cleanup safe under StrictMode.
-  useEffect(() => registerLabelList?.(), [registerLabelList]);
+  useLayoutEffect(() => registerLabelList?.(), [registerLabelList]);
 
   const { dataKey, clockWise, id, textBreakAll, zIndex, ...others } = restProps;
   const cartesianData = useCartesianLabelListContext();
