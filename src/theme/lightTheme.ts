@@ -23,7 +23,7 @@ const padding = '0.5ex';
  *
  * Every entry has at least 4.5:1 contrast against the background as a stroke,
  * the WCAG contrast for text, so a label in the series color stays readable.
- * Painted as a fill at `fillOpacity` 0.85, every entry keeps at least 3:1
+ * Painted as an opaque fill (`fillOpacity` 1), every entry keeps the same contrast
  * (WCAG 1.4.11).
  *
  * Entry N is the same hue family in the light and dark palettes, so a series
@@ -52,7 +52,7 @@ function toGraphicalItem(color: string): GraphicalItemStyle {
   return {
     fill: color,
     stroke: color,
-    fillOpacity: 0.85,
+    fillOpacity: 1,
     active: { fill: backgroundColor, stroke: color, strokeWidth: 2 },
   };
 }

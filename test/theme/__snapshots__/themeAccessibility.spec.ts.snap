@@ -18,24 +18,24 @@ strokes and fills
   barBackground.fill      1.19
 
 series colours
-  #5396ff     fill   4.71   stroke   6.05   sankey link   2.00
-  #e97e2b     fill   4.89   stroke   6.31   sankey link   2.03
-  #46d09f     fill   6.87   stroke   9.10   sankey link   2.49
-  #e683ad     fill   5.34   stroke   6.93   sankey link   2.15
-  #b8a4fe     fill   6.29   stroke   8.25   sankey link   2.38
-  #0bb1da     fill   5.38   stroke   7.02   sankey link   2.13
-  #ff9180     fill   6.18   stroke   8.11   sankey link   2.33
-  #79b14e     fill   5.34   stroke   6.93   sankey link   2.16
-  #ac71c0     fill   3.93   stroke   4.96   sankey link   1.83
-  #01a19c     fill   4.34   stroke   5.55   sankey link   1.89
-  #ffc470     fill   8.44   stroke  11.29   sankey link   2.85
-  #ffaaec     fill   7.74   stroke  10.30   sankey link   2.70
+  #5396ff     fill   6.05   stroke   6.05   sankey link   2.00
+  #e97e2b     fill   6.31   stroke   6.31   sankey link   2.03
+  #46d09f     fill   9.10   stroke   9.10   sankey link   2.49
+  #e683ad     fill   6.93   stroke   6.93   sankey link   2.15
+  #b8a4fe     fill   8.25   stroke   8.25   sankey link   2.38
+  #0bb1da     fill   7.02   stroke   7.02   sankey link   2.13
+  #ff9180     fill   8.11   stroke   8.11   sankey link   2.33
+  #79b14e     fill   6.93   stroke   6.93   sankey link   2.16
+  #ac71c0     fill   4.96   stroke   4.96   sankey link   1.83
+  #01a19c     fill   5.55   stroke   5.55   sankey link   1.89
+  #ffc470     fill  11.29   stroke  11.29   sankey link   2.85
+  #ffaaec     fill  10.30   stroke  10.30   sankey link   2.70
 
 closest pair of series colours
-  normal         11.8   #e683ad / #ffaaec
-  protanopia      4.6   #0bb1da / #ffaaec
-  deuteranopia    6.0   #0bb1da / #ac71c0
-  tritanopia      6.0   #e683ad / #ff9180"
+  normal         12.4   #e683ad / #ffaaec
+  protanopia      4.7   #0bb1da / #ffaaec
+  deuteranopia    6.2   #e97e2b / #79b14e
+  tritanopia      3.2   #e683ad / #ff9180"
 `;
 
 exports[`the numbers behind these checks > light theme report 1`] = `
@@ -56,22 +56,22 @@ strokes and fills
   barBackground.fill      1.10
 
 series colours
-  #2373e6     fill   3.53   stroke   4.50   sankey link   1.73
-  #b65700     fill   3.74   stroke   4.83   sankey link   1.77
-  #017a58     fill   4.05   stroke   5.35   sankey link   1.82
-  #a5386e     fill   4.60   stroke   6.19   sankey link   1.91
-  #6b53b0     fill   4.34   stroke   6.02   sankey link   1.83
-  #0681a0     fill   3.53   stroke   4.51   sankey link   1.74
-  #b13629     fill   4.64   stroke   6.12   sankey link   1.94
-  #628039     fill   3.42   stroke   4.50   sankey link   1.68
-  #723683     fill   5.61   stroke   8.17   sankey link   2.02
-  #39807c     fill   3.51   stroke   4.61   sankey link   1.70
-  #9b6e27     fill   3.45   stroke   4.51   sankey link   1.69
-  #aa5a9e     fill   3.47   stroke   4.50   sankey link   1.70
+  #2373e6     fill   4.50   stroke   4.50   sankey link   1.73
+  #b65700     fill   4.83   stroke   4.83   sankey link   1.77
+  #017a58     fill   5.35   stroke   5.35   sankey link   1.82
+  #a5386e     fill   6.19   stroke   6.19   sankey link   1.91
+  #6b53b0     fill   6.02   stroke   6.02   sankey link   1.83
+  #0681a0     fill   4.51   stroke   4.51   sankey link   1.74
+  #b13629     fill   6.12   stroke   6.12   sankey link   1.94
+  #628039     fill   4.50   stroke   4.50   sankey link   1.68
+  #723683     fill   8.17   stroke   8.17   sankey link   2.02
+  #39807c     fill   4.61   stroke   4.61   sankey link   1.70
+  #9b6e27     fill   4.51   stroke   4.51   sankey link   1.69
+  #aa5a9e     fill   4.50   stroke   4.50   sankey link   1.70
 
 closest pair of series colours
-  normal         10.6   #a5386e / #aa5a9e
-  protanopia      3.2   #628039 / #9b6e27
-  deuteranopia    4.4   #a5386e / #39807c
-  tritanopia      3.6   #0681a0 / #39807c"
+  normal         11.8   #6b53b0 / #723683
+  protanopia      3.7   #628039 / #9b6e27
+  deuteranopia    3.6   #b65700 / #9b6e27
+  tritanopia      3.5   #0681a0 / #39807c"
 `;
