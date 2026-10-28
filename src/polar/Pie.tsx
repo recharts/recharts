@@ -87,8 +87,8 @@ import {
 } from '../theme/labelTheme';
 import { RechartsTheme, Styles2D } from '../theme/RechartsTheme';
 import { useBackwardsCompatibleTheme } from '../theme/useBackwardsCompatibleTheme';
-import { getOwnStyles, getOwnStylesWithFallback, getUnthemedStyles, hasOwnColors } from '../theme/dataEntryStyles';
-import { getActiveStyleOverrides, resolveThemedActiveStyles } from '../theme/activeStyles';
+import { getOwnStyles, hasOwnColors, withoutColors } from '../theme/dataEntryStyles';
+import { getActiveStyleOverrides } from '../theme/activeStyles';
 
 /**
  * Properties needed by custom label renderers that happen to share their names with SVG
@@ -513,17 +513,18 @@ function getThemedPieStyles(
   }
   const entryStyles: Styles2D = payload != null && typeof payload === 'object' ? payload : {};
 
-  if (hasOwnColors(entryStyles) || hasOwnColors(explicitStyleProps)) {
-    // The data entry (or its Cell), or the Pie itself, brings its own colors, so the sector ignores the theme completely.
-    return getOwnStylesWithFallback(entryStyles, getUnthemedStyles(explicitStyleProps));
-  }
-
-  // Styles without a color of their own merge with the theme field by field.
+  // The data entry wins over the Pie props, and both win over the theme.
   const ownStyles = { ...getOwnStyles(explicitStyleProps), ...getOwnStyles(entryStyles) };
+  /*
+   * If the data entry (or its Cell), or the Pie itself, brings its own colors,
+   * the sector drops the theme fill and stroke together, so that the colors never mix.
+   * Styles without a color of their own merge with the theme field by field.
+   */
+  const hasExplicitColors = hasOwnColors(entryStyles) || hasOwnColors(explicitStyleProps);
   return {
-    fill: graphicalItemStyle.fill,
+    fill: hasExplicitColors ? ownStyles.fill : graphicalItemStyle.fill,
     fillOpacity: ownStyles.fillOpacity ?? graphicalItemStyle.fillOpacity,
-    stroke: graphicalItemStyle.stroke,
+    stroke: hasExplicitColors ? ownStyles.stroke : graphicalItemStyle.stroke,
     strokeOpacity: ownStyles.strokeOpacity ?? graphicalItemStyle.strokeOpacity,
     strokeWidth: ownStyles.strokeWidth ?? graphicalItemStyle.strokeWidth,
     strokeDasharray: ownStyles.strokeDasharray ?? graphicalItemStyle.strokeDasharray,
@@ -601,8 +602,10 @@ type PieSectorsProps = ShapeAnimationProps & {
   shape: PieShape;
   allOtherPieProps: WithoutId<InternalProps>;
   id: GraphicalItemId;
-  graphicalItems: PieGraphicalItems;
-  explicitStyleProps: PieStyleProps;
+  /**
+   * Theme `active` styles of each sector, by index. Without the theme colors if the Pie has its own colors.
+   */
+  indexedActiveStyles: ReadonlyArray<Styles2D | undefined>;
 };
 
 function getActiveShapeFill(activeShape: ActiveShape<Readonly<PieSectorDataItem>> | undefined): string | undefined {
@@ -892,8 +895,7 @@ function PieSectors(props: PieSectorsProps) {
     animationElapsedTime,
     isAnimating,
     isEntrance,
-    graphicalItems,
-    explicitStyleProps,
+    indexedActiveStyles,
   } = props;
 
   const activeIndex = useAppSelector(selectActiveTooltipIndex);
@@ -947,7 +949,7 @@ function PieSectors(props: PieSectorsProps) {
         const activeStyleOverrides = isActive
           ? getActiveStyleOverrides(
               activeShape || sectorOptions == null,
-              resolveThemedActiveStyles(graphicalItems[i % graphicalItems.length]?.active, explicitStyleProps),
+              indexedActiveStyles[i % indexedActiveStyles.length],
               entry.payload,
             )
           : undefined;
@@ -1195,16 +1197,16 @@ function SectorsWithAnimation({
   previousSectorsRef,
   id,
   graphicalItems,
-  explicitStyleProps,
+  indexedActiveStyles,
 }: {
   props: WithoutId<InternalProps>;
   previousSectorsRef: MutableRefObject<ReadonlyArray<PieSectorDataItem> | null>;
   id: GraphicalItemId;
   graphicalItems: PieGraphicalItems;
-  explicitStyleProps: PieStyleProps;
+  indexedActiveStyles: ReadonlyArray<Styles2D | undefined>;
 }) {
   const { sectors, activeShape, inactiveShape, animationInterpolateFn } = props;
-  const resolveLabelTheme = useIndexedLabelThemeResolver(graphicalItems, explicitStyleProps);
+  const resolveLabelTheme = useIndexedLabelThemeResolver(graphicalItems);
 
   const { isAnimating, handleAnimationStart, handleAnimationEnd } = useAnimationCallbacks(
     props.onAnimationStart,
@@ -1245,8 +1247,7 @@ function SectorsWithAnimation({
                   allOtherPieProps={props}
                   shape={props.shape}
                   id={id}
-                  graphicalItems={graphicalItems}
-                  explicitStyleProps={explicitStyleProps}
+                  indexedActiveStyles={indexedActiveStyles}
                   animationElapsedTime={animationElapsedTime}
                   isAnimating={isAnimating || animationElapsedTime < 1}
                   isEntrance={isEntrance}
@@ -1305,6 +1306,12 @@ function PieImpl(props: PieImplProps) {
   const { hide, className, rootTabIndex } = props;
 
   const cells = useMemo(() => findAllByType(props.children, Cell), [props.children]);
+  // The theme active colors go with the theme colors, so a Pie with its own colors drops them in the active state too.
+  const hasExplicitColors = hasOwnColors(explicitStyleProps);
+  const indexedActiveStyles = useMemo(
+    () => graphicalItems.map(style => (hasExplicitColors ? withoutColors(style.active) : style.active)),
+    [graphicalItems, hasExplicitColors],
+  );
 
   const sectors = useAppSelector(state => selectPieSectors(state, id, cells));
 
@@ -1345,7 +1352,7 @@ function PieImpl(props: PieImplProps) {
           previousSectorsRef={previousSectorsRef}
           id={id}
           graphicalItems={graphicalItems}
-          explicitStyleProps={explicitStyleProps}
+          indexedActiveStyles={indexedActiveStyles}
         />
       </Layer>
     </ZIndexLayer>

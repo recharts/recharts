@@ -1,3 +1,8 @@
+html {
+  /* Keeps anchor targets from scrolling under the sticky header below. */
+  scroll-padding-top: 60px;
+}
+
 header {
   width: 100%;
   background-color: var(--color-surface-raised);

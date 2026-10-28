@@ -31,7 +31,7 @@ import { RequiresDefaultProps, resolveDefaultProps } from '../util/resolveDefaul
 import { initialEventSettingsState } from '../state/eventSettingsSlice';
 import { GraphicalItemStyle, RechartsTheme } from '../theme/RechartsTheme';
 import { useRechartsTheme } from '../theme/RechartsThemeContext';
-import { getOwnStyles, hasOwnColors } from '../theme/dataEntryStyles';
+import { getOwnStyles, hasOwnColors, withoutColors } from '../theme/dataEntryStyles';
 import { getEffectivePageBackground } from '../theme/pageBackground';
 import { SVGElementPropKeysType, svgPropertiesNoEventsFromUnknown } from '../util/svgPropertiesNoEvents';
 
@@ -375,7 +375,7 @@ function entrySvgProps(entry: SunburstData): Omit<Partial<Record<SVGElementPropK
  * Entry props merge over the chart props: a value the entry leaves out comes from the chart.
  *
  * A color is a `fill` or `stroke` on the entry itself or on `<SunburstChart>`.
- * If either has one, the theme colors are not applied. A fill inherited from the parent
+ * If either has one, the theme colors are not applied, but the other theme styles are. A fill inherited from the parent
  * does not count, so nested sectors of the same color keep the theme separator.
  * Without a theme, the chart's legacy defaults fill that role.
  */
@@ -389,18 +389,19 @@ function resolveSectorProps({
   branchStyle,
 }: SectorPropsInput): SVGProps<SVGPathElement> {
   const strokeWidth = readEntryStrokeWidth(entry) ?? padding;
-  const chartHasColors = chartFill != null || chartStroke != null;
+  const hasExplicitColors = chartFill != null || chartStroke != null || hasOwnColors(entry);
   const props: SVGProps<SVGPathElement> = {};
-  // Copy every SVG prop from the entry first, then set the resolved colors on top.
-  Object.assign(props, entrySvgProps(entry));
-
-  if (themeStyles != null && !chartHasColors && !hasOwnColors(entry)) {
+  if (themeStyles != null) {
     /*
      * Keep non-color theme fields such as fillOpacity and strokeDasharray.
      * getOwnStyles leaves out `active`, which is not a sector prop.
-     * Entry props win over the theme, then the resolved colors and separator width.
      */
-    Object.assign(props, getOwnStyles(branchStyle), entrySvgProps(entry));
+    Object.assign(props, getOwnStyles(hasExplicitColors ? withoutColors(branchStyle) : branchStyle));
+  }
+  // Entry props win over the theme, then the resolved colors and separator width.
+  Object.assign(props, entrySvgProps(entry));
+
+  if (themeStyles != null && !hasExplicitColors) {
     props.fill = inheritedFill ?? branchStyle?.fill;
     props.stroke = themeStyles.pageBackground ?? branchStyle?.stroke;
     props.strokeWidth = strokeWidth;

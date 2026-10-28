@@ -58,7 +58,7 @@ import { GraphicalItemId } from '../state/graphicalItemsSlice';
 import { initialEventSettingsState } from '../state/eventSettingsSlice';
 import { RechartsTheme, Styles2D } from '../theme/RechartsTheme';
 import { useRechartsTheme } from '../theme/RechartsThemeContext';
-import { getOwnStyles, hasOwnColors } from '../theme/dataEntryStyles';
+import { getOwnStyles, hasOwnColors, withoutColors } from '../theme/dataEntryStyles';
 
 const interpolationGenerator = (a: number, b: number) => {
   const ka = +a;
@@ -1494,7 +1494,8 @@ function getEntrySvgProps(entry: unknown): EntrySvgProps {
  *
  * With a theme, nodes take the theme colors by their index in `data.nodes`,
  * so that a node keeps its color when the layout or sorting changes.
- * A node whose data entry or `node` prop defines its own `fill` or `stroke` ignores the theme colors completely.
+ * A node whose data entry or `node` prop defines its own `fill` or `stroke` drops the theme fill and stroke together,
+ * and keeps the other theme styles.
  * @param themeGraphicalItems graphicalItems of the active theme, or undefined if there is no theme
  * @param dataNode entry from `data.nodes`
  * @param index index of the node in `data.nodes`
@@ -1507,17 +1508,14 @@ function resolveNodeStyles(
   nodeContent: SankeyNodeOptions | undefined,
 ): ResolvedStyles {
   const ownStyles = getEntrySvgProps(dataNode);
-  if (
-    themeGraphicalItems == null ||
-    hasOwnColors(ownStyles) ||
-    hasOwnColors(svgPropertiesNoEventsFromUnknown(nodeContent))
-  ) {
+  if (themeGraphicalItems == null) {
     return { themeStyles: {}, ownStyles };
   }
   const themeItem =
     themeGraphicalItems.length === 0 ? undefined : themeGraphicalItems[index % themeGraphicalItems.length];
+  const hasExplicitColors = hasOwnColors(ownStyles) || hasOwnColors(svgPropertiesNoEventsFromUnknown(nodeContent));
   // Styles without a color of their own merge with the theme.
-  return { themeStyles: getOwnStyles(themeItem), ownStyles };
+  return { themeStyles: getOwnStyles(hasExplicitColors ? withoutColors(themeItem) : themeItem), ownStyles };
 }
 
 /**
@@ -1528,7 +1526,7 @@ function resolveNodeStyles(
  * With a theme, links take the color of their source node, including colors from explicit props and from data,
  * and draw it with {@link THEMED_LINK_STROKE_OPACITY}. Explicit `link` props override these field by field,
  * so `link={{ stroke: 'red' }}` keeps the see-through links.
- * A link whose data entry defines its own `fill` or `stroke` ignores the theme completely.
+ * A link whose data entry defines its own `fill` or `stroke` drops the theme color, and keeps the theme opacity.
  * @param themeGraphicalItems graphicalItems of the active theme, or undefined if there is no theme
  * @param dataLink entry from `data.links`
  * @param sourceNodeProps resolved props of the source node
@@ -1539,8 +1537,11 @@ function resolveLinkStyles(
   sourceNodeProps: NodeProps | undefined,
 ): ResolvedStyles {
   const ownStyles = getEntrySvgProps(dataLink);
-  if (themeGraphicalItems == null || hasOwnColors(ownStyles)) {
+  if (themeGraphicalItems == null) {
     return { themeStyles: {}, ownStyles };
+  }
+  if (hasOwnColors(ownStyles)) {
+    return { themeStyles: { strokeOpacity: THEMED_LINK_STROKE_OPACITY }, ownStyles };
   }
   const sourceColor = getRenderedPaint(sourceNodeProps, 'fill') ?? getRenderedPaint(sourceNodeProps, 'stroke');
   if (sourceColor == null) {

@@ -10,7 +10,7 @@ import { selectChartOffsetInternal } from './selectChartOffsetInternal';
 import { selectChartDataAndAlwaysIgnoreIndexes } from './dataSelectors';
 import { CellProps } from '../..';
 import { GraphicalItemId } from '../graphicalItemsSlice';
-import { hasOwnColors, UnthemedStyles } from '../../theme/dataEntryStyles';
+import { hasOwnColors, UnthemedColors } from '../../theme/dataEntryStyles';
 
 export type ResolvedFunnelSettings = {
   dataKey: DataKey<any>;
@@ -29,11 +29,11 @@ export type ResolvedFunnelSettings = {
    */
   indexedStyles: ReadonlyArray<Record<string, any>>;
   /**
-   * Explicit style props without theme contributions. Items that define their own colors
-   * (in data or in Cell) get these instead of `indexedStyles`, so they ignore the theme completely.
+   * Explicit `fill` and `stroke` props without theme contributions. Items that define their own colors
+   * (in data or in Cell) get these over `indexedStyles`, so they drop the theme colors and keep the other theme styles.
    * Undefined when there is no active theme.
    */
-  unthemedStyles?: UnthemedStyles;
+  unthemedColors?: UnthemedColors;
   legendType?: LegendType;
   id: GraphicalItemId;
 };
@@ -61,7 +61,7 @@ export const selectFunnelTrapezoids: (
       cells,
       presentationProps,
       indexedStyles,
-      unthemedStyles,
+      unthemedColors,
       id: graphicalItemId,
     },
     { chartData },
@@ -74,10 +74,12 @@ export const selectFunnelTrapezoids: (
     }
 
     const styleForEntry = (entry: unknown, cellProps: unknown, index: number) => {
-      if (unthemedStyles != null && (hasOwnColors(entry) || hasOwnColors(cellProps))) {
-        return unthemedStyles;
+      const themeStyles =
+        indexedStyles != null && indexedStyles.length > 0 ? indexedStyles[index % indexedStyles.length] : {};
+      if (unthemedColors != null && (hasOwnColors(entry) || hasOwnColors(cellProps))) {
+        return { ...themeStyles, ...unthemedColors };
       }
-      return indexedStyles != null && indexedStyles.length > 0 ? indexedStyles[index % indexedStyles.length] : {};
+      return themeStyles;
     };
 
     if (displayedData && displayedData.length) {

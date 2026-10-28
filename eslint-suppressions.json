@@ -599,11 +599,6 @@
       "count": 1
     }
   },
-  "src/theme/dataEntryStyles.ts": {
-    "@typescript-eslint/consistent-type-assertions": {
-      "count": 1
-    }
-  },
   "src/theme/graphicalItemIdentity.ts": {
     "@typescript-eslint/no-explicit-any": {
       "count": 2
@@ -2169,14 +2164,6 @@
       "count": 2
     }
   },
-  "www/src/docs/exampleComponents/ScatterChart/ScatterChartWithLabels.tsx": {
-    "react-perf/jsx-no-new-array-as-prop": {
-      "count": 1
-    },
-    "react-perf/jsx-no-new-object-as-prop": {
-      "count": 3
-    }
-  },
   "www/src/docs/exampleComponents/ScatterChart/ThreeDimScatterChart.tsx": {
     "react-perf/jsx-no-new-array-as-prop": {
       "count": 1
@@ -2249,11 +2236,6 @@
   "www/src/docs/exampleComponents/ZIndexLayer/ShadowDomExample.tsx": {
     "react-perf/jsx-no-new-function-as-prop": {
       "count": 1
-    }
-  },
-  "www/src/docs/exampleComponents/getRelativeCoordinate/CrosshairExample.tsx": {
-    "react-perf/jsx-no-new-object-as-prop": {
-      "count": 2
     }
   },
   "www/src/docs/exampleComponents/types.ts": {

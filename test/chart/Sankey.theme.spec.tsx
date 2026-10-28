@@ -280,20 +280,21 @@ describe('<Sankey /> theme', () => {
     expect(getLinks(container).map(link => link.stroke)).toEqual(['blue', 'blue', 'blue']);
   });
 
-  it('ignores the theme for nodes and links that define their own styles in data', () => {
+  it('ignores the theme colors for nodes and links that define their own colors in data', () => {
     const { container } = renderSankey(theme, {
       data: {
         nodes: [{ name: 'A', fill: 'blue' }, { name: 'B', stroke: 'black' }, { name: 'C' }],
         links: [{ source: 0, target: 1, value: 10, stroke: 'orange' }, ...data.links.slice(1)],
       },
     });
+    // the other theme styles still apply
     expect(getNodes(container)).toEqual([
-      { ...unstyledNode, fill: 'blue' },
-      { ...unstyledNode, stroke: 'black' },
+      { ...unstyledNode, fill: 'blue', fillOpacity: '0.5' },
+      { ...unstyledNode, stroke: 'black', fillOpacity: '0.5' },
       redNode,
     ]);
     expect(getLinks(container)).toEqual([
-      { ...unstyledLink, stroke: 'orange' },
+      { ...unstyledLink, stroke: 'orange', strokeOpacity: themedLinkOpacity },
       // the link does not define its own styles, so it follows its source node, including the color from data
       { ...unstyledLink, stroke: 'blue', strokeOpacity: themedLinkOpacity },
       // the source node has no fill, so the link falls back to its stroke
