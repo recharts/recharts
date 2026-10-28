@@ -182,7 +182,6 @@ export const computeNode = <DataPointType extends TreemapDataType, DataValueType
   if (computedChildren && computedChildren.length) {
     nodeValue = computedChildren.reduce((result: number, child: TreemapNode) => result + child.value, 0);
   } else {
-    // TODO need to verify dataKey
     const rawNodeValue = typeof dataKey === 'string' || typeof dataKey === 'number' ? node[dataKey] : undefined;
     const numericValue = typeof rawNodeValue === 'number' ? rawNodeValue : 0;
     nodeValue = isNan(numericValue) || numericValue <= 0 ? 0 : numericValue;
