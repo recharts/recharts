@@ -15,8 +15,17 @@ import {
 import { RequiresDefaultProps, resolveDefaultProps } from '../util/resolveDefaultProps';
 import { RechartsTheme } from '../theme/RechartsTheme';
 import { useBackwardsCompatibleTheme } from '../theme/useBackwardsCompatibleTheme';
+import { RechartsFill } from '../fill/RechartsFill';
+import { FillDefinition, canDrawFillInLegend, getFillUrl } from '../fill/FillDefinition';
+import { useUniqueId } from '../util/useUniqueId';
 
 const SIZE = 32;
+
+/**
+ * How many pattern tiles fit across a legend icon.
+ * The icon is small, so a chart-sized tile would shrink to a blur.
+ */
+const LEGEND_PATTERN_TILES = 3;
 export type ContentType = ReactElement | ((props: Props) => ReactNode);
 
 export type HorizontalAlignmentType = 'center' | 'left' | 'right';
@@ -45,6 +54,14 @@ export interface LegendPayload {
    * The legend icon then draws the same symbol, with the same colors as the dots.
    */
   dot?: LegendPayloadDot;
+  /**
+   * The fill object of the graphical item, if it paints its shapes with a pattern or a gradient.
+   * The `rect` icon, and the icons of filled symbols, draw the same pattern or gradient
+   * over the base color in `color`. Custom `definition` fills, and inactive items, draw the plain color.
+   *
+   * @since 3.11
+   */
+  fill?: RechartsFill;
 }
 
 /**
@@ -308,9 +325,27 @@ function Icon({
   const thirdSize = SIZE / 3;
   const color = data.inactive ? inactiveColor : data.color;
   const preferredIcon = iconType ?? data.type;
+  const fillId = useUniqueId('recharts-legend-fill');
+  const fillObject = data.inactive ? undefined : data.fill;
 
   if (preferredIcon === 'none') {
     return null;
+  }
+
+  /*
+   * Filled icons paint with the pattern or gradient of the graphical item.
+   * The definition lives in this icon, so it is scaled to the icon and does not depend on IDs elsewhere in the page.
+   */
+  let areaFill = color;
+  let fillDefinition: ReactNode = null;
+  if (canDrawFillInLegend(fillObject)) {
+    const tileScale = fillObject.pattern == null ? 1 : SIZE / LEGEND_PATTERN_TILES / fillObject.pattern.width;
+    areaFill = getFillUrl(fillId);
+    fillDefinition = (
+      <defs>
+        <FillDefinition id={fillId} fill={fillObject} color={color} tileScale={tileScale} />
+      </defs>
+    );
   }
   if (preferredIcon === 'plainline') {
     return (
@@ -347,12 +382,15 @@ function Icon({
   }
   if (preferredIcon === 'rect') {
     return (
-      <path
-        stroke="none"
-        fill={color}
-        d={`M0,${SIZE / 8}h${SIZE}v${(SIZE * 3) / 4}h${-SIZE}z`}
-        className="recharts-legend-icon"
-      />
+      <>
+        {fillDefinition}
+        <path
+          stroke="none"
+          fill={areaFill}
+          d={`M0,${SIZE / 8}h${SIZE}v${(SIZE * 3) / 4}h${-SIZE}z`}
+          className="recharts-legend-icon"
+        />
+      </>
     );
   }
   if (React.isValidElement(data.legendIcon)) {
@@ -365,7 +403,12 @@ function Icon({
     return <DotSymbolIcon dot={data.dot} color={color} dotColors={dotColors} />;
   }
 
-  return <Symbols fill={color} cx={halfSize} cy={halfSize} size={SIZE} sizeType="diameter" type={preferredIcon} />;
+  return (
+    <>
+      {fillDefinition}
+      <Symbols fill={areaFill} cx={halfSize} cy={halfSize} size={SIZE} sizeType="diameter" type={preferredIcon} />
+    </>
+  );
 }
 
 function Items(props: InternalProps) {
