@@ -667,7 +667,11 @@ function RadialBarBackgroundSectors({
             'recharts-radial-bar-background-sector',
             backgroundProps?.className == null ? undefined : String(backgroundProps.className),
           ),
-          option: background,
+          // A custom element or function draws the background; `true` and objects draw the default sector
+          option:
+            React.isValidElement(backgroundFromProps) || typeof backgroundFromProps === 'function'
+              ? backgroundFromProps
+              : background,
           isActive: false,
         };
 
