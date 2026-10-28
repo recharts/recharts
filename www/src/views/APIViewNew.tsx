@@ -71,6 +71,14 @@ function readStoredExpandedSections(): Record<PropsSection, boolean> {
   }
 }
 
+function getHashTarget(): string {
+  try {
+    return decodeURIComponent(window.location.hash.slice(1));
+  } catch {
+    return window.location.hash.slice(1);
+  }
+}
+
 type PropsSectionProps = {
   entries: ReadonlyArray<ApiProps>;
   locale: SupportedLocale;
@@ -152,9 +160,23 @@ function PropsSection({ entries, locale, section, isExpanded, onToggle }: PropsS
 function PropsList({ props, locale }: PropsListProps) {
   const [expandedSections, setExpandedSections] = useState(DEFAULT_EXPANDED_SECTIONS);
 
+  const [pendingScrollTarget, setPendingScrollTarget] = useState<string | null>(null);
+
   useEffect(() => {
+    const hashTarget = getHashTarget();
+    if (hashTarget !== '' && document.getElementById(hashTarget) === null) {
+      // The target may be in a section that only expands now, so the browser could not scroll to it on load.
+      setPendingScrollTarget(hashTarget);
+    }
     setExpandedSections(readStoredExpandedSections());
   }, []);
+
+  useEffect(() => {
+    if (pendingScrollTarget) {
+      document.getElementById(pendingScrollTarget)?.scrollIntoView();
+      setPendingScrollTarget(null);
+    }
+  }, [pendingScrollTarget]);
 
   const toggleSection = (section: PropsSection) => {
     setExpandedSections(previousSections => {
