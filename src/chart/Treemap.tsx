@@ -1272,9 +1272,7 @@ function TreemapItem({
     }
   };
 
-  const onClick = (event: React.MouseEvent<SVGGraphicsElement>) => {
-    // A node is nested in its ancestors' layers; do not invoke their callbacks too.
-    event.stopPropagation();
+  const onClick = () => {
     if (type === 'nest' && nodeProps.depth > 0) {
       onNestClick(nodeProps);
     } else if ((isLeaf || type === 'nest') && typeof onItemClickFromProps === 'function') {
