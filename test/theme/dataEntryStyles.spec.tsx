@@ -321,13 +321,9 @@ describe('graphical items with styles defined in data', () => {
       ]);
     });
 
-    it('should apply the active theme to entries that define their own colors', () => {
+    it('should keep the own colors of an active entry, because the theme active colors go with the theme colors', () => {
       const { container } = renderPie({}, <Tooltip defaultIndex={0} />);
-      expect(getStyleAttributes(container.querySelectorAll('.recharts-pie-sector path')[0])).toEqual({
-        ...ownFillAttributes,
-        fill: 'white',
-        stroke: 'black',
-      });
+      expect(getStyleAttributes(container.querySelectorAll('.recharts-pie-sector path')[0])).toEqual(ownFillAttributes);
     });
 
     it('should apply the active theme to entries without own styles', () => {

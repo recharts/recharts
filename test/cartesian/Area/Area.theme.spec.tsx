@@ -587,11 +587,11 @@ describe('Area theme', () => {
       expect(plain).toHaveAttribute('stroke', 'indigo');
       expect(plain).toHaveAttribute('stroke-width', '3');
 
-      // the active dot only takes the theme active styles
+      // the active dot keeps the entry fill, because the theme active colors go with the theme colors
       const activeDot = container.querySelector('.recharts-active-dot circle');
       assertNotNull(activeDot);
-      expect(activeDot).toHaveAttribute('fill', 'white');
-      expect(activeDot).toHaveAttribute('stroke', 'black');
+      expect(activeDot).toHaveAttribute('fill', 'red');
+      expect(activeDot).not.toHaveAttribute('stroke', 'black');
     });
 
     it('shows the series color in the tooltip for a data entry with its own colors', () => {

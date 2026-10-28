@@ -207,7 +207,7 @@ function RadialBarSectors({
           cornerRadius: parseCornerRadius(cornerRadius),
           ...getEntryStyleOverrides(entry, unthemedColors),
           ...entry,
-          ...(isActive ? getActiveStyleOverrides(activeShape, themedActiveStyles) : undefined),
+          ...(isActive ? getActiveStyleOverrides(activeShape, themedActiveStyles, entry) : undefined),
           ...adaptEventsOfChild(restOfAllOtherProps, entry, i),
           onMouseEnter,
           onMouseLeave,
@@ -959,7 +959,7 @@ export function RadialBar<DataPointType = any, DataValueType = any>(
   const graphicalItemThemeSelector = useGraphicalItemIdentity(dataKey, outsideProps);
   const resolveLabelTheme = useSeriesLabelThemeResolver(graphicalItemThemeSelector);
   const unthemedColors = useUnthemedColors(outsideProps);
-  const themedActiveStyles = useThemedActiveStyles(graphicalItemThemeSelector);
+  const themedActiveStyles = useThemedActiveStyles(graphicalItemThemeSelector, outsideProps);
   const graphicalItemStyle = useBackwardsCompatibleTheme<RadialBarProps<DataPointType, DataValueType>>(
     graphicalItemThemeSelector,
     outsideProps,

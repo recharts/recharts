@@ -253,14 +253,13 @@ describe('Line theme', () => {
     });
   });
 
-  it('keeps the active style of a graphical array item spread directly to Line props', () => {
-    const theme = lightTheme.graphicalItems[1];
-    assertNotNull(theme);
-    assertNotNull(theme.active);
+  it('keeps the active style of a graphical array item passed to activeDot of a Line with its own colors', () => {
+    const { active, ...theme } = lightTheme.graphicalItems[1] ?? {};
+    assertNotNull(active);
     const { container } = rechartsTestRender(
       <RechartsThemeProvider value={lightTheme}>
         <MyChart>
-          <Line dataKey="profit" isAnimationActive={false} {...theme} />
+          <Line dataKey="profit" isAnimationActive={false} {...theme} activeDot={active} />
           <Tooltip />
         </MyChart>
       </RechartsThemeProvider>,
@@ -268,9 +267,27 @@ describe('Line theme', () => {
 
     showTooltip(container, lineChartMouseHoverTooltipSelector);
     const activeDot = getActiveDot(container);
-    expect(activeDot).toHaveAttribute('fill', theme.active.fill);
-    expect(activeDot).toHaveAttribute('stroke', theme.active.stroke);
-    expect(activeDot).toHaveAttribute('stroke-width', String(theme.active.strokeWidth));
+    expect(activeDot).toHaveAttribute('fill', active.fill);
+    expect(activeDot).toHaveAttribute('stroke', active.stroke);
+    expect(activeDot).toHaveAttribute('stroke-width', String(active.strokeWidth));
+  });
+
+  it('drops the theme active colors, and keeps the other theme active styles, for a Line with its own stroke', () => {
+    const { container } = rechartsTestRender(
+      <RechartsThemeProvider value={lightTheme}>
+        <MyChart>
+          <Line dataKey="profit" isAnimationActive={false} stroke="purple" />
+          <Tooltip />
+        </MyChart>
+      </RechartsThemeProvider>,
+    );
+
+    showTooltip(container, lineChartMouseHoverTooltipSelector);
+    const activeDot = getActiveDot(container);
+    // the legacy active dot: series color fill with a white ring
+    expect(activeDot).toHaveAttribute('fill', 'purple');
+    expect(activeDot).toHaveAttribute('stroke', '#fff');
+    expect(activeDot).toHaveAttribute('stroke-width', '2');
   });
 
   it('lets explicit dot fill opacity override the default', () => {
@@ -434,10 +451,10 @@ describe('Line theme', () => {
       expect(plain).toHaveAttribute('stroke', 'indigo');
       expect(plain).toHaveAttribute('stroke-width', '3');
 
-      // the active dot only takes the theme active styles
+      // the active dot keeps the entry fill, because the theme active colors go with the theme colors
       const activeDot = getActiveDot(container);
-      expect(activeDot).toHaveAttribute('fill', 'white');
-      expect(activeDot).toHaveAttribute('stroke', 'black');
+      expect(activeDot).toHaveAttribute('fill', 'red');
+      expect(activeDot).not.toHaveAttribute('stroke', 'black');
     });
 
     it('shows the series color in the tooltip for a data entry with its own colors', () => {

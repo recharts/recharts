@@ -379,6 +379,18 @@ function FunnelLabelListProvider({
   return <CartesianLabelListContextProvider value={labelListEntries}>{children}</CartesianLabelListContextProvider>;
 }
 
+/**
+ * Returns what the user styled a trapezoid with: its `Cell` props if they have colors, otherwise its data entry.
+ * The trapezoid `payload` already includes the theme colors, so the data entry is the `payload` one level deeper.
+ */
+function getOwnColorSource(trapezoid: FunnelTrapezoidItem, cellProps: unknown): unknown {
+  if (hasOwnColors(cellProps)) {
+    return cellProps;
+  }
+  const { payload } = trapezoid;
+  return payload != null && typeof payload === 'object' && 'payload' in payload ? payload.payload : undefined;
+}
+
 function FunnelTrapezoids(props: FunnelTrapezoidsProps) {
   const { trapezoids, allOtherFunnelProps, animationElapsedTime, isAnimating, isEntrance } = props;
   const activeItemIndex = useAppSelector(selectActiveTooltipIndex);
@@ -391,6 +403,7 @@ function FunnelTrapezoids(props: FunnelTrapezoidsProps) {
     indexedActiveStyles,
     ...restOfAllOtherProps
   } = allOtherFunnelProps;
+  const cells = findAllByType(allOtherFunnelProps.children, Cell);
 
   const onMouseEnterFromContext = useMouseEnterItemDispatch(
     onMouseEnterFromProps,
@@ -411,7 +424,11 @@ function FunnelTrapezoids(props: FunnelTrapezoidsProps) {
         const trapezoidOptions = isActiveIndex ? activeShape : shape;
         const activeStyleOverrides =
           isActiveIndex && indexedActiveStyles != null && indexedActiveStyles.length > 0
-            ? getActiveStyleOverrides(activeShape, indexedActiveStyles[i % indexedActiveStyles.length])
+            ? getActiveStyleOverrides(
+                activeShape,
+                indexedActiveStyles[i % indexedActiveStyles.length],
+                getOwnColorSource(entry, cells[i]?.props),
+              )
             : undefined;
         const { id, ...trapezoidProps }: FunnelTrapezoidProps = {
           ...entry,
@@ -866,12 +883,12 @@ function FunnelFn(outsideProps: Props) {
   const unthemedColors = useUnthemedColors(outsideProps);
   /*
    * The active styles are per-index too, same as `indexedStyles`.
-   * The explicit props of the Funnel do not change them, they only style the inactive trapezoids.
+   * The theme active colors go with the theme colors, so a Funnel with its own colors drops them too.
    */
   const themeGraphicalItems = theme?.graphicalItems;
   const indexedActiveStyles: ReadonlyArray<Styles2D | undefined> = useMemo(
-    () => (themeGraphicalItems ?? []).map(style => style.active),
-    [themeGraphicalItems],
+    () => (themeGraphicalItems ?? []).map(style => (hasExplicitColors ? withoutColors(style.active) : style.active)),
+    [themeGraphicalItems, hasExplicitColors],
   );
 
   const resolveLabelTheme = useIndexedLabelThemeResolver(theme?.graphicalItems);

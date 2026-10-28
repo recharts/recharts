@@ -13,7 +13,8 @@
  *
  * Other style properties (opacities, `strokeWidth`, `strokeDasharray`) do not
  * bring a color of their own, so they merge with the theme field by field.
- * The `active` and `label` styles of the theme keep applying too.
+ * The `label` styles of the theme keep applying too, and so do the `active` styles without their colors,
+ * see `activeStyles.ts`.
  */
 
 import { useMemo } from 'react';

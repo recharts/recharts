@@ -17,6 +17,7 @@ const selectEmptyGraphicalItemDataKeys = (): ReadonlyArray<DataKey<any>> => STAB
  * Theme colors never mix with user-provided colors.
  * If the graphical item sets its own fill or stroke, the selector returns the theme entry without its fill and stroke.
  * The item keeps the rest of its theme entry, including the `active` and `label` styles.
+ * The `active` styles keep their colors here, `useThemedActiveStyles` removes them.
  *
  * @param dataKey effective dataKey of the graphical item, see {@link useEffectiveDataKey}
  * @param explicitProps props as provided by the user, before merging with theme or defaults

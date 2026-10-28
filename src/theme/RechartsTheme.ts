@@ -35,9 +35,9 @@ export type GraphicalItemStyle = Styles2D & {
    * - If the `activeDot`, `activeBar`, or `activeShape` object sets its own `fill` or `stroke`,
    *   it ignores the `fill` and `stroke` from here. Its other style properties override the matching ones from here,
    *   and the rest of these styles still apply.
-   * - These styles only apply to the active state. The explicit props of the graphical item and the styles of
-   *   data entries only apply to the inactive state, so they do not change these styles,
-   *   even if they set their own `fill` or `stroke`.
+   * - The `fill` and `stroke` from here are designed to go with the theme colors of the graphical item.
+   *   If the graphical item or a data entry sets its own `fill` or `stroke`, its active representation ignores
+   *   the `fill` and `stroke` from here, and keeps its own colors. The rest of these styles still apply.
    */
   active?: Styles2D;
   /**
@@ -144,8 +144,8 @@ export interface RechartsTheme {
    *
    * The theme colors never mix with user colors. If Line, Area, Bar, Scatter, Radar, RadialBar, Pie, Funnel,
    * Treemap, or SunburstChart sets its own `fill` or `stroke` prop, it ignores the `fill` and `stroke`
-   * of its theme entry together. The rest of the theme entry still applies,
-   * including the `active` and `label` styles.
+   * of its theme entry together, also in the active state. The rest of the theme entry still applies,
+   * including the other `active` styles and the `label` styles.
    *
    * Individual shapes of Bar, RadialBar, Scatter, Pie, Funnel, Treemap, Sankey, and SunburstChart, and
    * individual point markers of Line, Area, and Radar can be styled from the data array. If a data entry defines its own

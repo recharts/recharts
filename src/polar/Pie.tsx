@@ -87,7 +87,7 @@ import {
 } from '../theme/labelTheme';
 import { RechartsTheme, Styles2D } from '../theme/RechartsTheme';
 import { useBackwardsCompatibleTheme } from '../theme/useBackwardsCompatibleTheme';
-import { getOwnStyles, hasOwnColors } from '../theme/dataEntryStyles';
+import { getOwnStyles, hasOwnColors, withoutColors } from '../theme/dataEntryStyles';
 import { getActiveStyleOverrides } from '../theme/activeStyles';
 
 /**
@@ -602,7 +602,10 @@ type PieSectorsProps = ShapeAnimationProps & {
   shape: PieShape;
   allOtherPieProps: WithoutId<InternalProps>;
   id: GraphicalItemId;
-  graphicalItems: PieGraphicalItems;
+  /**
+   * Theme `active` styles of each sector, by index. Without the theme colors if the Pie has its own colors.
+   */
+  indexedActiveStyles: ReadonlyArray<Styles2D | undefined>;
 };
 
 function getActiveShapeFill(activeShape: ActiveShape<Readonly<PieSectorDataItem>> | undefined): string | undefined {
@@ -892,7 +895,7 @@ function PieSectors(props: PieSectorsProps) {
     animationElapsedTime,
     isAnimating,
     isEntrance,
-    graphicalItems,
+    indexedActiveStyles,
   } = props;
 
   const activeIndex = useAppSelector(selectActiveTooltipIndex);
@@ -946,7 +949,8 @@ function PieSectors(props: PieSectorsProps) {
         const activeStyleOverrides = isActive
           ? getActiveStyleOverrides(
               activeShape || sectorOptions == null,
-              graphicalItems[i % graphicalItems.length]?.active,
+              indexedActiveStyles[i % indexedActiveStyles.length],
+              entry.payload,
             )
           : undefined;
         const activeSectorProps: PieSectorShapeProps =
@@ -1193,11 +1197,13 @@ function SectorsWithAnimation({
   previousSectorsRef,
   id,
   graphicalItems,
+  indexedActiveStyles,
 }: {
   props: WithoutId<InternalProps>;
   previousSectorsRef: MutableRefObject<ReadonlyArray<PieSectorDataItem> | null>;
   id: GraphicalItemId;
   graphicalItems: PieGraphicalItems;
+  indexedActiveStyles: ReadonlyArray<Styles2D | undefined>;
 }) {
   const { sectors, activeShape, inactiveShape, animationInterpolateFn } = props;
   const resolveLabelTheme = useIndexedLabelThemeResolver(graphicalItems);
@@ -1241,7 +1247,7 @@ function SectorsWithAnimation({
                   allOtherPieProps={props}
                   shape={props.shape}
                   id={id}
-                  graphicalItems={graphicalItems}
+                  indexedActiveStyles={indexedActiveStyles}
                   animationElapsedTime={animationElapsedTime}
                   isAnimating={isAnimating || animationElapsedTime < 1}
                   isEntrance={isEntrance}
@@ -1300,6 +1306,12 @@ function PieImpl(props: PieImplProps) {
   const { hide, className, rootTabIndex } = props;
 
   const cells = useMemo(() => findAllByType(props.children, Cell), [props.children]);
+  // The theme active colors go with the theme colors, so a Pie with its own colors drops them in the active state too.
+  const hasExplicitColors = hasOwnColors(explicitStyleProps);
+  const indexedActiveStyles = useMemo(
+    () => graphicalItems.map(style => (hasExplicitColors ? withoutColors(style.active) : style.active)),
+    [graphicalItems, hasExplicitColors],
+  );
 
   const sectors = useAppSelector(state => selectPieSectors(state, id, cells));
 
@@ -1340,6 +1352,7 @@ function PieImpl(props: PieImplProps) {
           previousSectorsRef={previousSectorsRef}
           id={id}
           graphicalItems={graphicalItems}
+          indexedActiveStyles={indexedActiveStyles}
         />
       </Layer>
     </ZIndexLayer>

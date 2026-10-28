@@ -206,7 +206,7 @@ describe('graphical items with their own style props', () => {
   });
 
   describe('Area', () => {
-    it('should ignore the theme colors with an explicit fill, and keep the theme active dot', () => {
+    it('should ignore the theme colors with an explicit fill, also in the active dot', () => {
       const { container } = renderComposed(<Area dataKey="value" fill="red" isAnimationActive={false} />);
       expect(getStyleAttributes(container.querySelector('.recharts-area-area'))).toEqual({
         ...ownFillAttributes,
@@ -216,8 +216,8 @@ describe('graphical items with their own style props', () => {
       expect(curve.stroke).not.toBe('indigo');
       expect(curve['stroke-width']).toBe('3');
       const activeDot = getStyleAttributes(container.querySelector('.recharts-active-dot circle'));
-      expect(activeDot.fill).toBe('white');
-      expect(activeDot.stroke).toBe('black');
+      expect(activeDot.fill).not.toBe('white');
+      expect(activeDot.stroke).not.toBe('black');
     });
   });
 
@@ -237,8 +237,8 @@ describe('graphical items with their own style props', () => {
       expect(dot).not.toHaveAttribute('stroke', 'indigo');
       expect(dot).toHaveAttribute('stroke-width', '3');
       const activeDot = getStyleAttributes(container.querySelector('.recharts-active-dot circle'));
-      expect(activeDot.fill).toBe('white');
-      expect(activeDot.stroke).toBe('black');
+      expect(activeDot.fill).toBe('red');
+      expect(activeDot.stroke).not.toBe('black');
     });
 
     it('should use the theme for the active dot without own styles', () => {
@@ -258,14 +258,15 @@ describe('graphical items with their own style props', () => {
       expect(getLegendColor(container)).toBe('indigo');
     });
 
-    it('should ignore the theme colors with an explicit stroke, and keep the theme active dot', () => {
+    it('should ignore the theme colors with an explicit stroke, also in the active dot', () => {
       const { container } = renderComposed(<Line dataKey="value" stroke="red" isAnimationActive={false} />);
       const curve = getStyleAttributes(container.querySelector('.recharts-line-curve'));
       expect(curve.stroke).toBe('red');
       expect(curve['stroke-width']).toBe('3');
       const activeDot = getStyleAttributes(container.querySelector('.recharts-active-dot circle'));
-      expect(activeDot.fill).toBe('white');
-      expect(activeDot.stroke).toBe('black');
+      // the legacy active dot: series color fill with a white ring
+      expect(activeDot.fill).toBe('red');
+      expect(activeDot.stroke).toBe('#fff');
       expect(getLegendColor(container)).toBe('red');
     });
   });
@@ -346,10 +347,10 @@ describe('graphical items with their own style props', () => {
       expect(getStyleAttributes(sectors[1])).toEqual({ ...themedAttributes, 'stroke-width': '7' });
     });
 
-    it('should ignore the theme colors with an explicit fill, and keep the theme active sector', () => {
+    it('should ignore the theme colors with an explicit fill, also in the active sector', () => {
       const { container } = renderPie({ fill: 'red' });
       const sectors = container.querySelectorAll('.recharts-pie-sector path');
-      expect(getStyleAttributes(sectors[0])).toEqual(themedActiveAttributes);
+      expect(getStyleAttributes(sectors[0])).toEqual(ownFillAttributes);
       expect(getStyleAttributes(sectors[1])).toEqual(ownFillAttributes);
       expect(getLegendColor(container)).toBe('red');
     });

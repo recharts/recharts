@@ -68,6 +68,7 @@ import { GraphicalItemStyle, Styles2D } from '../theme/RechartsTheme';
 import { useRechartsTheme } from '../theme/RechartsThemeContext';
 import { useBackwardsCompatibleTheme } from '../theme/useBackwardsCompatibleTheme';
 import { UnthemedColors, useUnthemedColors } from '../theme/dataEntryStyles';
+import { useThemedActiveStyles } from '../theme/activeStyles';
 import { useGraphicalItemIdentity } from '../theme/useGraphicalItemIdentity';
 import { useEffectiveDataKey } from '../util/useEffectiveDataKey';
 import {
@@ -988,7 +989,7 @@ function LineFn(outsideProps: Props) {
   );
   const themeStrokeDasharray = graphicalItemTheme?.strokeDasharray;
   const unthemedColors = useUnthemedColors(outsideProps);
-  const themedActiveStyles = graphicalItemTheme?.active;
+  const themedActiveStyles = useThemedActiveStyles(graphicalItemThemeSelector, outsideProps);
   const props = resolveDefaultProps(
     {
       ...outsideProps,

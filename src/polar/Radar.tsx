@@ -54,6 +54,7 @@ import { GraphicalItemStyle, Styles2D } from '../theme/RechartsTheme';
 import { useRechartsTheme } from '../theme/RechartsThemeContext';
 import { useBackwardsCompatibleTheme } from '../theme/useBackwardsCompatibleTheme';
 import { UnthemedColors, useUnthemedColors } from '../theme/dataEntryStyles';
+import { useThemedActiveStyles } from '../theme/activeStyles';
 import { useGraphicalItemIdentity } from '../theme/useGraphicalItemIdentity';
 import { useEffectiveDataKey } from '../util/useEffectiveDataKey';
 import {
@@ -709,7 +710,7 @@ export function Radar<DataPointType = any, DataValueType = any>(outsideProps: Pr
   );
   const themeStrokeDasharray = graphicalItemTheme?.strokeDasharray;
   const unthemedColors = useUnthemedColors(outsideProps);
-  const themedActiveStyles = graphicalItemTheme?.active;
+  const themedActiveStyles = useThemedActiveStyles(graphicalItemThemeSelector, outsideProps);
   const propsWithTheme: Props = {
     ...outsideProps,
     dataKey,

@@ -177,10 +177,11 @@ describe.each(testCases)('theme active styles in $name', ({ expected, inactive, 
     expect(activeShape).not.toHaveAttribute('stroke');
   });
 
-  it('applies the theme active styles when the graphical item has its own color', () => {
+  it('keeps its own colors, and the other theme active styles, when the graphical item has its own color', () => {
     const activeShape = renderActiveShape(renderChart({ active: true, itemProps: { fill: 'lime' } }));
-    expect(activeShape).toHaveAttribute('fill', expected.fill);
-    expect(activeShape).toHaveAttribute('stroke', expected.stroke);
+    expect(activeShape).toHaveAttribute('fill', 'lime');
+    expect(activeShape).not.toHaveAttribute('stroke', expected.stroke);
+    expect(activeShape).not.toHaveAttribute('stroke', inactive.stroke);
     expect(activeShape).toHaveAttribute('stroke-width', expected.strokeWidth);
   });
 
@@ -191,11 +192,18 @@ describe.each(testCases)('theme active styles in $name', ({ expected, inactive, 
     expect(activeShape).toHaveAttribute('stroke-width', expected.strokeWidth);
   });
 
-  it('applies the theme active styles when the data entry has its own color', () => {
+  it('keeps its own colors, and the other theme active styles, when the data entry has its own color', () => {
     const activeShape = renderActiveShape(renderChart({ active: true, chartData: dataWithOwnStyles }));
+    expect(activeShape).toHaveAttribute('fill', 'gold');
+    expect(activeShape).not.toHaveAttribute('stroke', expected.stroke);
+    expect(activeShape).not.toHaveAttribute('stroke', inactive.stroke);
+    expect(activeShape).toHaveAttribute('stroke-width', expected.strokeWidth);
+  });
+
+  it('keeps the theme active colors when the graphical item sets only styles without a color', () => {
+    const activeShape = renderActiveShape(renderChart({ active: true, itemProps: { strokeWidth: 9 } }));
     expect(activeShape).toHaveAttribute('fill', expected.fill);
     expect(activeShape).toHaveAttribute('stroke', expected.stroke);
-    expect(activeShape).toHaveAttribute('stroke-width', expected.strokeWidth);
   });
 
   it('keeps the inactive styles when the theme has no active styles', () => {
@@ -287,5 +295,13 @@ describe('getActiveStyleOverrides', () => {
 
   it('returns undefined without theme styles', () => {
     expect(getActiveStyleOverrides(true, undefined)).toBeUndefined();
+  });
+
+  it.each([{ fill: 'gold' }, { stroke: 'gold' }])('leaves out the theme colors for a data entry with %j', entry => {
+    expect(getActiveStyleOverrides(true, styles, entry)).toEqual({ strokeWidth: 2 });
+  });
+
+  it.each([undefined, { name: 'A' }, { strokeWidth: 9 }])('keeps the theme colors for a data entry %j', entry => {
+    expect(getActiveStyleOverrides(true, styles, entry)).toBe(styles);
   });
 });

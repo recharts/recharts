@@ -726,7 +726,7 @@ function ScatterPoint({
     ...filteredBaseProps,
     ...entryStyleOverrides,
     ...entry,
-    ...(isActive ? getActiveStyleOverrides(activeShape, themedActiveStyles) : undefined),
+    ...(isActive ? getActiveStyleOverrides(activeShape, themedActiveStyles, entry) : undefined),
     isActive,
     index,
     animationElapsedTime,
@@ -1175,7 +1175,7 @@ function ScatterFn(outsideProps: Props) {
   const graphicalItemThemeSelector = useGraphicalItemIdentity(effectiveDataKey, outsideProps);
   const resolveLabelTheme = useSeriesLabelThemeResolver(graphicalItemThemeSelector);
   const unthemedColors = useUnthemedColors(outsideProps);
-  const themedActiveStyles = useThemedActiveStyles(graphicalItemThemeSelector);
+  const themedActiveStyles = useThemedActiveStyles(graphicalItemThemeSelector, outsideProps);
   const graphicalItemTheme = useBackwardsCompatibleTheme<Props>(graphicalItemThemeSelector, outsideProps, undefined);
   const props = resolveDefaultProps(
     {

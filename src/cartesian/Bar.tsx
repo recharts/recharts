@@ -780,7 +780,7 @@ function BarRectangleWithActiveState(
    * and it decides on its own how the active state looks like.
    */
   const activeStyleOverrides = isVisuallyActive
-    ? getActiveStyleOverrides(option === defaultBarShape ? true : option, themedActiveStyles)
+    ? getActiveStyleOverrides(option === defaultBarShape ? true : option, themedActiveStyles, entry)
     : undefined;
 
   const content = (
@@ -1368,7 +1368,7 @@ function BarFn(outsideProps: Props) {
   const graphicalItemThemeSelector = useGraphicalItemIdentity(dataKey, outsideProps);
   const resolveLabelTheme = useSeriesLabelThemeResolver(graphicalItemThemeSelector);
   const unthemedColors = useUnthemedColors(outsideProps);
-  const themedActiveStyles = useThemedActiveStyles(graphicalItemThemeSelector);
+  const themedActiveStyles = useThemedActiveStyles(graphicalItemThemeSelector, outsideProps);
   const graphicalItemStyle = useBackwardsCompatibleTheme<Props>(graphicalItemThemeSelector, outsideProps, undefined);
   const props = resolveDefaultProps({ ...outsideProps, dataKey }, defaultBarProps);
   // stackId may arrive from props or from BarStack context
