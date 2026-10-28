@@ -2,7 +2,6 @@ import { createContext, CSSProperties, useContext, useMemo } from 'react';
 import type { TextBackgroundProps } from '../component/Text';
 import { GraphicalItemStyle, LabelTheme, RechartsTheme, TextStyles } from './RechartsTheme';
 import { useRechartsTheme } from './RechartsThemeContext';
-import { hasOwnColors } from './dataEntryStyles';
 import type { LabelPosition } from '../component/Label';
 import { isOutsidePosition } from '../cartesian/getCartesianPosition';
 import { isOutsidePolarPosition } from '../polar/isOutsidePolarPosition';
@@ -247,7 +246,6 @@ export function useDataLabelThemeResolver(): DataLabelThemeResolver | undefined 
  * Returns a stable resolver that gives every data label of a graphical item the same label theme.
  *
  * @param graphicalItemThemeSelector selects the theme entry of the graphical item, see {@link useGraphicalItemIdentity}.
- *   It returns undefined if the graphical item ignores the theme.
  * @returns the resolver, or undefined without a theme
  */
 export function useSeriesLabelThemeResolver(
@@ -262,20 +260,18 @@ export function useSeriesLabelThemeResolver(
  * Returns a stable resolver for graphical items that take one theme entry per index, such as Pie and Funnel.
  * The data label at index `i` takes the label theme of `graphicalItems[i % graphicalItems.length]`.
  *
+ * The labels keep their theme even if the graphical item sets its own `fill` or `stroke`.
+ *
  * @param graphicalItems the graphical item styles from the theme, or undefined without a theme
- * @param explicitProps props as provided by the user. If they set their own `fill` or `stroke`,
- *   the graphical item ignores the theme completely, and so do its labels.
  * @returns the resolver, or undefined if the labels take no theme
  */
 export function useIndexedLabelThemeResolver(
   graphicalItems: ReadonlyArray<GraphicalItemStyle> | undefined,
-  explicitProps: object,
 ): DataLabelThemeResolver | undefined {
-  const ignoresTheme = hasOwnColors(explicitProps);
   return useMemo(() => {
-    if (graphicalItems == null || graphicalItems.length === 0 || ignoresTheme) {
+    if (graphicalItems == null || graphicalItems.length === 0) {
       return undefined;
     }
     return (index: number) => graphicalItems[index % graphicalItems.length]?.label;
-  }, [graphicalItems, ignoresTheme]);
+  }, [graphicalItems]);
 }

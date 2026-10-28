@@ -500,6 +500,8 @@ describe('SunburstChart data entry styles', () => {
     expect(ownColor).toHaveAttribute('fill', 'blue');
     expect(ownColor).toHaveAttribute('fill-opacity', '0.3');
     expect(ownColor).not.toHaveAttribute('stroke');
-    expect(ownColor).not.toHaveAttribute('stroke-dasharray');
+    // a sector with its own color ignores the theme colors, and keeps the other theme styles
+    expect(ownColor).toHaveAttribute('stroke-opacity', '0.4');
+    expect(ownColor).toHaveAttribute('stroke-dasharray', '6 2');
   });
 });
