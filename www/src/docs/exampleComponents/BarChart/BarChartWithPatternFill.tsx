@@ -23,8 +23,8 @@ const BarChartWithPatternFill = ({ isAnimationActive = true }: { isAnimationActi
         <stop offset="5%" style={{ stopColor: autoPalette[0], stopOpacity: 0.9 }} />
         <stop offset="95%" style={{ stopColor: autoPalette[0], stopOpacity: 0.1 }} />
       </linearGradient>
-      <pattern id="bar-fill-stripes" width="6" height="6" patternUnits="userSpaceOnUse" patternTransform="rotate(45)">
-        <rect width="3" height="6" style={{ fill: autoPalette[1] }} />
+      <pattern id="bar-fill-stripes" width="6" height="6" patternUnits="userSpaceOnUse">
+        <path d="M-1,1 l2,-2 M0,6 l6,-6 M5,7 l2,-2" style={{ stroke: autoPalette[1], strokeWidth: 2 }} />
       </pattern>
       <pattern id="bar-fill-stars" width="10" height="10" patternUnits="userSpaceOnUse">
         <polygon points="0,0 2,5 0,10 5,8 10,10 8,5 10,0 5,2" style={{ fill: autoPalette[2] }} />
