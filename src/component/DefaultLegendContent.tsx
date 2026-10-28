@@ -396,6 +396,8 @@ function Icon({
   if (React.isValidElement(data.legendIcon)) {
     const iconProps: any = { ...data };
     delete iconProps.legendIcon;
+    // the fill object is for the built-in icons; it is not a valid SVG paint
+    delete iconProps.fill;
     return React.cloneElement(data.legendIcon, iconProps);
   }
 

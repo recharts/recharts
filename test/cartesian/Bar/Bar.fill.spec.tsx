@@ -5,6 +5,7 @@ import {
   Bar,
   BarChart,
   BarShapeProps,
+  DefaultLegendContent,
   Legend,
   RechartsFill,
   RechartsThemeProvider,
@@ -226,5 +227,61 @@ describe('Bar with a fill object', () => {
     expect(container.querySelector('pattern')).not.toBeInTheDocument();
     expect(warn).toHaveBeenCalledWith(expect.stringContaining('ignores its `pattern` and `gradient`'));
     warn.mockRestore();
+  });
+
+  it('should draw the plain inactive color in the legend icon of a hidden bar', () => {
+    const { container } = render(
+      <BarChart width={400} height={400} data={data}>
+        <Bar dataKey="uv" hide fill={{ color: 'blue', pattern: patterns.dots }} isAnimationActive={false} />
+        <Legend inactiveColor="#ccc" />
+      </BarChart>,
+    );
+
+    expect(container.querySelector('.recharts-legend-icon')).toHaveAttribute('fill', '#ccc');
+    expect(container.querySelector('.recharts-legend-item pattern')).not.toBeInTheDocument();
+  });
+
+  it('should draw the gradient in the legend icon with its own definition', () => {
+    const { container } = renderBar({ color: 'blue', gradient: gradients.fadeDown });
+
+    const gradient = container.querySelector('.recharts-legend-item linearGradient');
+    assertNotNull(gradient);
+    expect(container.querySelector('.recharts-legend-icon')).toHaveAttribute('fill', `url(#${gradient.id})`);
+    expect(gradient.id).not.toBe('my-bar-fill');
+  });
+
+  it('should draw the pattern in a symbol legend icon', () => {
+    const { container } = render(
+      <BarChart width={400} height={400} data={data}>
+        <Bar dataKey="uv" fill={{ color: 'blue', pattern: patterns.dots }} isAnimationActive={false} />
+        <Legend iconType="circle" />
+      </BarChart>,
+    );
+
+    const pattern = container.querySelector('.recharts-legend-item pattern');
+    assertNotNull(pattern);
+    expect(container.querySelector('.recharts-legend-item .recharts-symbols')).toHaveAttribute(
+      'fill',
+      `url(#${pattern.id})`,
+    );
+  });
+
+  it('should not pass the fill object to a custom legend icon', () => {
+    const { container } = render(
+      <svg>
+        <DefaultLegendContent
+          payload={[
+            {
+              value: 'uv',
+              color: 'blue',
+              fill: { color: 'blue', pattern: patterns.dots },
+              legendIcon: <circle className="custom-icon" fill="red" />,
+            },
+          ]}
+        />
+      </svg>,
+    );
+
+    expect(container.querySelector('.custom-icon')).toHaveAttribute('fill', 'red');
   });
 });
