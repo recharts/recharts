@@ -34,10 +34,10 @@ const getOuterRadius = (entry: NightingaleDatum) => `${25 + (entry.value / maxVa
 
 const NightingaleTooltip = ({ active, payload }: TooltipContentProps) => {
   const theme = useRechartsTheme();
-  if (!active || !payload?.length) {
+  const entry: NightingaleDatum | undefined = payload?.[0]?.payload;
+  if (!active || entry == null) {
     return null;
   }
-  const entry: NightingaleDatum = payload[0].payload;
   return (
     <div
       style={{
