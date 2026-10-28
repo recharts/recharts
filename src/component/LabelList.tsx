@@ -411,21 +411,45 @@ export function LabelList({ valueAccessor = defaultAccessor, ...restProps }: Pro
 
 LabelList.displayName = 'LabelList';
 
-export function LabelListFromLabelProp({ label }: { label?: ImplicitLabelListType }) {
+function isLabelListProps(value: ImplicitLabelListType): value is Props {
+  return typeof value === 'object' && value !== null && !React.isValidElement(value);
+}
+
+export function LabelListFromLabelProp({
+  label,
+  pointerEvents,
+}: {
+  label?: ImplicitLabelListType;
+  /**
+   * The `pointer-events` of the rendered labels.
+   *
+   * Charts where a label can end up on top of a shape that has its own pointer events - such as the
+   * Sankey, where a node label sits on the node rectangle - use this to keep the labels from
+   * intercepting the events of the shape underneath them.
+   */
+  pointerEvents?: string;
+}) {
   if (!label) {
     return null;
   }
 
   if (label === true) {
-    return <LabelList key="labelList-implicit" />;
+    return <LabelList key="labelList-implicit" pointerEvents={pointerEvents} />;
   }
 
   if (React.isValidElement(label) || isLabelContentAFunction(label)) {
-    return <LabelList key="labelList-implicit" content={label} />;
+    return <LabelList key="labelList-implicit" content={label} pointerEvents={pointerEvents} />;
   }
 
-  if (typeof label === 'object') {
-    return <LabelList key="labelList-implicit" {...label} type={String(label.type)} />;
+  if (isLabelListProps(label)) {
+    return (
+      <LabelList
+        key="labelList-implicit"
+        {...label}
+        type={String(label.type)}
+        pointerEvents={label.pointerEvents ?? pointerEvents}
+      />
+    );
   }
 
   return null;

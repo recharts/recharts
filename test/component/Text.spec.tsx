@@ -425,6 +425,22 @@ describe('<Text />', () => {
   });
 
   describe('maxLines', () => {
+    test.each([
+      { children: null, breakAll: false },
+      { children: undefined, breakAll: false },
+      { children: '', breakAll: true },
+    ])('renders nothing for $children with breakAll=$breakAll', ({ children, breakAll }) => {
+      const { container } = render(
+        <Surface width={300} height={200}>
+          <Text width={300} maxLines={1} breakAll={breakAll}>
+            {children}
+          </Text>
+        </Surface>,
+      );
+
+      expect(container.querySelector('text')).not.toBeInTheDocument();
+    });
+
     test('does not do anything when maxLines are not exceeded', () => {
       render(
         <Surface width={300} height={200}>

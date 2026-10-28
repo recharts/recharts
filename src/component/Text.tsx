@@ -381,7 +381,7 @@ const calculateWordsByLines = (
     scaleToFit,
   );
 
-  if (!shouldLimitLines || scaleToFit) {
+  if (!shouldLimitLines || scaleToFit || originalResult.length === 0) {
     return originalResult;
   }
 

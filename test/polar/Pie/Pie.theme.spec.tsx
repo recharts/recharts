@@ -143,7 +143,7 @@ describe('Pie theme', () => {
     }
   });
 
-  it('ignores the indexed theme completely when explicit Pie style props are present', () => {
+  it('ignores the indexed theme colors, and keeps the other theme styles, when explicit Pie colors are present', () => {
     const { container } = rechartsTestRender(
       <RechartsThemeProvider
         value={{
@@ -171,10 +171,11 @@ describe('Pie theme', () => {
 
     [getSector(container, 0), getSector(container, 1)].forEach(sector => {
       expect(sector).toHaveAttribute('fill', 'gold');
-      expect(sector).not.toHaveAttribute('fill-opacity');
       expect(sector).not.toHaveAttribute('stroke');
       expect(sector).toHaveAttribute('stroke-width', '5');
     });
+    expect(getSector(container, 0)).toHaveAttribute('fill-opacity', '0.4');
+    expect(getSector(container, 1)).toHaveAttribute('fill-opacity', '0.6');
   });
 
   describe('Legend and Tooltip colors', () => {

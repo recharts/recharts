@@ -652,7 +652,7 @@ type ContentItemProps = {
   content: TreemapContentType;
   nodeProps: TreemapNode;
   /**
-   * True if the data node or the Treemap props define their own colors. Such nodes ignore the theme completely.
+   * True if the data node or the Treemap props define their own colors. Such nodes ignore the theme colors.
    * This is computed from the data node and the Treemap props separately
    * because nodeProps merge both and also include layout fields.
    */
@@ -685,6 +685,12 @@ type TileStyles = {
 };
 
 /**
+ * Nested tiles are painted clear so the colored depth-1 branch shows through.
+ * Tooltip text cannot use this value: it would be invisible.
+ */
+const TRANSPARENT_NESTED_TILE_FILL = 'rgba(255,255,255,0)';
+
+/**
  * Resolves the default styles of a single tile.
  * Explicit props and styles defined in data are applied later, on top of these.
  */
@@ -695,20 +701,24 @@ function getTileStyles({
   colorPanel,
   themeGraphicalItems,
   themePageBackground,
-}: Pick<
-  ContentItemProps,
-  'nodeProps' | 'nodeHasOwnColors' | 'branchIndex' | 'colorPanel' | 'themeGraphicalItems' | 'themePageBackground'
->): TileStyles {
+}: {
+  nodeProps: { depth: number; index: number };
+  nodeHasOwnColors: boolean;
+  branchIndex: number | undefined;
+  colorPanel: ReadonlyArray<string> | undefined;
+  themeGraphicalItems: RechartsTheme['graphicalItems'] | undefined;
+  themePageBackground: string | undefined;
+}): TileStyles {
   const colors = colorPanel || COLOR_PANEL;
-  const legacyFill = nodeProps.depth < 2 ? colors[nodeProps.index % colors.length] : 'rgba(255,255,255,0)';
+  const legacyFill = nodeProps.depth < 2 ? colors[nodeProps.index % colors.length] : TRANSPARENT_NESTED_TILE_FILL;
   if (themeGraphicalItems == null) {
     return { fill: legacyFill, stroke: '#fff', strokeWidth: undefined };
   }
   const fillFromColorPanel = colorPanel == null ? undefined : legacyFill;
   if (nodeHasOwnColors) {
     /*
-     * A node that brings its own colors in data, or in the Treemap props, ignores the theme completely,
-     * so that its colors are not mixed with the theme colors.
+     * A node that brings its own colors in data, or in the Treemap props, ignores the theme colors,
+     * so that its colors are not mixed with the theme colors. The theme only gives tiles their colors.
      */
     return { fill: fillFromColorPanel, stroke: undefined, strokeWidth: undefined };
   }
@@ -1005,30 +1015,182 @@ function ContentItemWithEvents(props: ContentItemProps) {
   return <ContentItem {...props} onMouseEnter={onMouseEnter} onMouseLeave={onMouseLeave} onClick={onClick} />;
 }
 
+type TreemapTooltipNode = {
+  depth: number;
+  index: number;
+  tooltipIndex: TooltipIndex;
+  [key: string]: unknown;
+};
+
+type TreemapTooltipColorSource = {
+  /**
+   * Explicit `<Treemap fill>`. This is not the theme fallback: a theme color is chosen per node.
+   */
+  fill: string | undefined;
+  stroke: string | undefined;
+  colorPanel: ReadonlyArray<string> | undefined;
+  themeGraphicalItems: RechartsTheme['graphicalItems'] | undefined;
+};
+
+function isTreemapTooltipNode(value: unknown): value is TreemapTooltipNode {
+  if (typeof value !== 'object' || value === null) {
+    return false;
+  }
+  if (!('depth' in value) || !('index' in value) || !('tooltipIndex' in value)) {
+    return false;
+  }
+  return (
+    typeof value.depth === 'number' &&
+    typeof value.index === 'number' &&
+    (typeof value.tooltipIndex === 'string' || value.tooltipIndex === null)
+  );
+}
+
+function readStringField(entry: object, key: string): string | undefined {
+  const descriptor = Object.getOwnPropertyDescriptor(entry, key);
+  if (descriptor == null || typeof descriptor.value !== 'string') {
+    return undefined;
+  }
+  return descriptor.value;
+}
+
+/**
+ * Top-level tile index this node belongs to. Nested nodes inherit that branch, the same way `renderNode` does.
+ */
+function getBranchIndex(tooltipIndex: TooltipIndex, depth: number, index: number): number | undefined {
+  if (depth < 1) {
+    return undefined;
+  }
+  if (tooltipIndex == null || tooltipIndex === '') {
+    return depth === 1 ? index : undefined;
+  }
+  const match = /^children\[(\d+)\]/.exec(tooltipIndex);
+  const rawIndex = match?.[1];
+  if (rawIndex == null) {
+    return undefined;
+  }
+  const branchIndex = Number(rawIndex);
+  return Number.isInteger(branchIndex) ? branchIndex : undefined;
+}
+
+/**
+ * Fill of the painted depth-1 tile this node belongs to.
+ * A nested tile is drawn transparent over that ancestor, so this is the color the user sees.
+ * An explicit color panel wins. With no color panel, the theme's branch fill does,
+ * and the built-in panel covers a chart that has neither.
+ */
+function getVisibleBranchFill(branchIndex: number, source: TreemapTooltipColorSource): string | undefined {
+  if (source.colorPanel == null) {
+    const themeItems = source.themeGraphicalItems;
+    if (themeItems != null && themeItems.length > 0) {
+      const themeFill = themeItems[branchIndex % themeItems.length]?.fill;
+      if (themeFill != null) {
+        return themeFill;
+      }
+    }
+  }
+  const colors = source.colorPanel || COLOR_PANEL;
+  if (colors.length === 0) {
+    return undefined;
+  }
+  return colors[branchIndex % colors.length];
+}
+
+/**
+ * The fill `ContentItem` paints on the default rectangle.
+ * A data `fill` wins, then the Treemap `fill`, then the color panel or the theme.
+ * A nested tile's own fill is transparent, so the tooltip uses the visible ancestor color instead.
+ */
+function getRenderedTreemapFill(node: TreemapTooltipNode, source: TreemapTooltipColorSource): string | undefined {
+  const dataFill = readStringField(node, 'fill');
+  if (dataFill != null) {
+    return dataFill;
+  }
+  if (source.fill != null) {
+    return source.fill;
+  }
+  const branchIndex = getBranchIndex(node.tooltipIndex, node.depth, node.index);
+  const renderedFill = getTileStyles({
+    nodeProps: { depth: node.depth, index: node.index },
+    nodeHasOwnColors: hasOwnColors(node) || hasOwnColors(source),
+    branchIndex,
+    colorPanel: source.colorPanel,
+    themeGraphicalItems: source.themeGraphicalItems,
+    themePageBackground: undefined,
+  }).fill;
+  if (renderedFill === TRANSPARENT_NESTED_TILE_FILL && branchIndex != null) {
+    const visibleFill = getVisibleBranchFill(branchIndex, source);
+    return visibleFill === TRANSPARENT_NESTED_TILE_FILL ? undefined : visibleFill;
+  }
+  return renderedFill;
+}
+
+/**
+ * Tooltip swatch for the active node.
+ * When no fill was resolved — a stroke-only node under a theme, which renders with the SVG default —
+ * keep the previous datum `color` / `fill` / `stroke` fallback. That open question is unchanged.
+ * https://github.com/recharts/recharts/issues/7980
+ */
+function getTreemapTooltipColor(entry: unknown, source: TreemapTooltipColorSource): string | undefined {
+  if (!isTreemapTooltipNode(entry)) {
+    return undefined;
+  }
+  const renderedFill = getRenderedTreemapFill(entry, source);
+  if (renderedFill != null) {
+    return renderedFill;
+  }
+  return readStringField(entry, 'color') ?? readStringField(entry, 'fill') ?? readStringField(entry, 'stroke');
+}
+
 const SetTreemapTooltipEntrySettings = React.memo(
   ({
     dataKey,
     nameKey,
     stroke,
     fill,
-    currentRoot,
+    colorPanel,
+    themeGraphicalItems,
+    formatRoot,
     id,
-  }: Pick<InternalTreemapProps, 'dataKey' | 'nameKey' | 'stroke' | 'fill' | 'id'> & {
-    currentRoot: TreemapNode | undefined;
+  }: Pick<InternalTreemapProps, 'dataKey' | 'nameKey' | 'stroke' | 'fill' | 'colorPanel' | 'id'> & {
+    themeGraphicalItems: RechartsTheme['graphicalItems'] | undefined;
+    /**
+     * The tree that is rendered. Its `tooltipIndex` and `depth` match the hovered tile, also after zooming in.
+     */
+    formatRoot: TreemapNode | null;
   }) => {
+    /*
+     * `fill` and `stroke` here are the explicit Treemap props. The first theme color stays the series
+     * fallback for a node that resolved no fill of its own; per-node colors come from `getEntryColor`.
+     */
+    const seriesFill = fill ?? themeGraphicalItems?.[0]?.fill;
+    const seriesStroke = stroke ?? themeGraphicalItems?.[0]?.stroke;
+    const colorSource: TreemapTooltipColorSource = {
+      fill,
+      stroke,
+      colorPanel,
+      themeGraphicalItems,
+    };
     const tooltipEntrySettings: TooltipPayloadConfiguration = {
-      dataDefinedOnItem: currentRoot,
+      dataDefinedOnItem: formatRoot,
       getPosition: noop, // TODO I think Treemap has the capability of computing positions and supporting defaultIndex? Except it doesn't yet
+      /*
+       * Without a theme, keep the legacy tooltip color: the datum colors, then the Treemap `fill`.
+       * Legacy nested tiles are transparent, so their rendered fill would make the tooltip text invisible.
+       */
+      ...(themeGraphicalItems == null
+        ? {}
+        : { getEntryColor: (entry: unknown) => getTreemapTooltipColor(entry, colorSource) }),
       settings: {
-        stroke,
+        stroke: seriesStroke,
         strokeWidth: undefined,
-        fill,
+        fill: seriesFill,
         dataKey,
         nameKey,
         name: undefined, // Each TreemapNode has its own name
         hide: false,
         type: undefined,
-        color: fill,
+        color: seriesFill,
         unit: '',
         graphicalItemId: id,
       },
@@ -1623,9 +1785,11 @@ class TreemapWithState extends PureComponent<InternalTreemapProps, State> {
         <SetTreemapTooltipEntrySettings
           dataKey={this.props.dataKey}
           nameKey={this.props.nameKey}
-          stroke={this.props.stroke ?? this.props.themeGraphicalItems?.[0]?.stroke}
-          fill={this.props.fill ?? this.props.themeGraphicalItems?.[0]?.fill}
-          currentRoot={this.state.currentRoot}
+          stroke={this.props.stroke}
+          fill={this.props.fill}
+          colorPanel={this.props.colorPanel}
+          themeGraphicalItems={this.props.themeGraphicalItems}
+          formatRoot={this.state.formatRoot}
           id={this.props.id}
         />
         <Surface

@@ -106,6 +106,9 @@
     },
     "react-perf/jsx-no-new-object-as-prop": {
       "count": 5
+    },
+    "recharts/no-clone-element": {
+      "count": 2
     }
   },
   "src/cartesian/CartesianAxis.tsx": {
@@ -117,11 +120,17 @@
     },
     "react-perf/jsx-no-new-object-as-prop": {
       "count": 3
+    },
+    "recharts/no-clone-element": {
+      "count": 1
     }
   },
   "src/cartesian/CartesianGrid.tsx": {
     "react-perf/jsx-no-new-object-as-prop": {
       "count": 2
+    },
+    "recharts/no-clone-element": {
+      "count": 1
     }
   },
   "src/cartesian/ErrorBar.tsx": {
@@ -154,16 +163,25 @@
   "src/cartesian/ReferenceArea.tsx": {
     "@typescript-eslint/no-explicit-any": {
       "count": 7
+    },
+    "recharts/no-clone-element": {
+      "count": 1
     }
   },
   "src/cartesian/ReferenceDot.tsx": {
     "@typescript-eslint/no-explicit-any": {
       "count": 6
+    },
+    "recharts/no-clone-element": {
+      "count": 1
     }
   },
   "src/cartesian/ReferenceLine.tsx": {
     "@typescript-eslint/no-explicit-any": {
       "count": 7
+    },
+    "recharts/no-clone-element": {
+      "count": 1
     }
   },
   "src/cartesian/Scatter.tsx": {
@@ -174,6 +192,9 @@
       "count": 14
     },
     "react-perf/jsx-no-new-object-as-prop": {
+      "count": 1
+    },
+    "recharts/no-clone-element": {
       "count": 1
     }
   },
@@ -292,6 +313,9 @@
     },
     "react-perf/jsx-no-new-object-as-prop": {
       "count": 3
+    },
+    "recharts/no-clone-element": {
+      "count": 3
     }
   },
   "src/chart/ScatterChart.tsx": {
@@ -319,11 +343,17 @@
     },
     "react-perf/jsx-no-new-object-as-prop": {
       "count": 1
+    },
+    "recharts/no-clone-element": {
+      "count": 2
     }
   },
   "src/component/ActivePoints.tsx": {
     "@typescript-eslint/no-explicit-any": {
       "count": 4
+    },
+    "recharts/no-clone-element": {
+      "count": 1
     }
   },
   "src/component/Cursor.tsx": {
@@ -331,6 +361,9 @@
       "count": 3
     },
     "react-perf/jsx-no-new-object-as-prop": {
+      "count": 1
+    },
+    "recharts/no-clone-element": {
       "count": 1
     }
   },
@@ -340,6 +373,9 @@
     },
     "@typescript-eslint/no-explicit-any": {
       "count": 1
+    },
+    "recharts/no-clone-element": {
+      "count": 1
     }
   },
   "src/component/DefaultLegendContent.tsx": {
@@ -347,6 +383,9 @@
       "count": 3
     },
     "react-perf/jsx-no-new-object-as-prop": {
+      "count": 1
+    },
+    "recharts/no-clone-element": {
       "count": 1
     }
   },
@@ -364,10 +403,16 @@
     },
     "react-perf/jsx-no-new-object-as-prop": {
       "count": 1
+    },
+    "recharts/no-clone-element": {
+      "count": 1
     }
   },
   "src/component/Label.tsx": {
     "@typescript-eslint/no-explicit-any": {
+      "count": 2
+    },
+    "recharts/no-clone-element": {
       "count": 2
     }
   },
@@ -385,6 +430,9 @@
     },
     "@typescript-eslint/no-explicit-any": {
       "count": 1
+    },
+    "recharts/no-clone-element": {
+      "count": 1
     }
   },
   "src/component/Tooltip.tsx": {
@@ -393,6 +441,9 @@
     },
     "@typescript-eslint/no-explicit-any": {
       "count": 3
+    },
+    "recharts/no-clone-element": {
+      "count": 1
     }
   },
   "src/context/ErrorBarContext.tsx": {
@@ -422,6 +473,9 @@
     },
     "react-perf/jsx-no-new-object-as-prop": {
       "count": 2
+    },
+    "recharts/no-clone-element": {
+      "count": 2
     }
   },
   "src/polar/PolarAngleAxis.tsx": {
@@ -430,11 +484,17 @@
     },
     "react-perf/jsx-no-new-object-as-prop": {
       "count": 1
+    },
+    "recharts/no-clone-element": {
+      "count": 1
     }
   },
   "src/polar/PolarRadiusAxis.tsx": {
     "@typescript-eslint/no-explicit-any": {
       "count": 18
+    },
+    "recharts/no-clone-element": {
+      "count": 1
     }
   },
   "src/polar/Radar.tsx": {
@@ -446,6 +506,9 @@
     },
     "react-perf/jsx-no-new-object-as-prop": {
       "count": 2
+    },
+    "recharts/no-clone-element": {
+      "count": 1
     }
   },
   "src/polar/RadialBar.tsx": {
@@ -590,11 +653,6 @@
       "count": 1
     }
   },
-  "src/theme/dataEntryStyles.ts": {
-    "@typescript-eslint/consistent-type-assertions": {
-      "count": 1
-    }
-  },
   "src/theme/graphicalItemIdentity.ts": {
     "@typescript-eslint/no-explicit-any": {
       "count": 2
@@ -603,6 +661,11 @@
   "src/theme/useGraphicalItemIdentity.ts": {
     "@typescript-eslint/no-explicit-any": {
       "count": 3
+    }
+  },
+  "src/util/ActiveShapeUtils.tsx": {
+    "recharts/no-clone-element": {
+      "count": 1
     }
   },
   "src/util/BarUtils.tsx": {
@@ -1794,14 +1857,8 @@
     }
   },
   "www/src/docs/exampleComponents/Label/LabelRadialBarPositions.tsx": {
-    "react-perf/jsx-no-new-array-as-prop": {
-      "count": 2
-    },
     "react-perf/jsx-no-new-function-as-prop": {
       "count": 3
-    },
-    "react-perf/jsx-no-new-object-as-prop": {
-      "count": 1
     }
   },
   "www/src/docs/exampleComponents/LabelList/LabelListChartExample.tsx": {
@@ -2166,14 +2223,6 @@
       "count": 2
     }
   },
-  "www/src/docs/exampleComponents/ScatterChart/ScatterChartWithLabels.tsx": {
-    "react-perf/jsx-no-new-array-as-prop": {
-      "count": 1
-    },
-    "react-perf/jsx-no-new-object-as-prop": {
-      "count": 3
-    }
-  },
   "www/src/docs/exampleComponents/ScatterChart/ThreeDimScatterChart.tsx": {
     "react-perf/jsx-no-new-array-as-prop": {
       "count": 1
@@ -2246,11 +2295,6 @@
   "www/src/docs/exampleComponents/ZIndexLayer/ShadowDomExample.tsx": {
     "react-perf/jsx-no-new-function-as-prop": {
       "count": 1
-    }
-  },
-  "www/src/docs/exampleComponents/getRelativeCoordinate/CrosshairExample.tsx": {
-    "react-perf/jsx-no-new-object-as-prop": {
-      "count": 2
     }
   },
   "www/src/docs/exampleComponents/types.ts": {

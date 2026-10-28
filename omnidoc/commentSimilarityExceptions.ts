@@ -40,7 +40,7 @@ export const commentSimilarityExceptions: ReadonlyArray<CommentSimilarityGroup> 
     reason: 'Graphical elements hide has extra details on domain calculation',
   },
   {
-    components: ['Area', 'Bar', 'Line', 'Scatter', 'Radar', 'RadialBar'],
+    components: ['Area', 'Bar', 'Line', 'Scatter', 'Radar', 'RadialBar', 'Sankey'],
     props: ['label'],
     reason:
       'label in graphical elements describes multiple labels, unlike axes and reference elements which describe a single label.',

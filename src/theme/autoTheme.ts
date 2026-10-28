@@ -40,7 +40,7 @@ function toGraphicalItem(color: string): GraphicalItemStyle {
   return {
     fill: color,
     stroke: color,
-    fillOpacity: 0.85,
+    fillOpacity: 1,
     active: { fill: backgroundColor, stroke: color, strokeWidth: 2 },
   };
 }
