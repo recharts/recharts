@@ -29,7 +29,7 @@
       rel="stylesheet"
       type="text/css"
     />
-    <script type="module" crossorigin src="/recharts/canary/www/assets/index-D5-5HwSi.js"></script>
+    <script type="module" crossorigin src="/recharts/canary/www/assets/index-oQU3R_Gm.js"></script>
     <link rel="stylesheet" crossorigin href="/recharts/canary/www/assets/index-CSyjNhZq.css">
     <link rel="sitemap" type="application/xml" title="Sitemap" href="/sitemap.xml">
   </head>
@@ -61,18 +61,15 @@
   useChartHeight,
   Legend,
   Text,
-  TextProps,
   ZIndexLayer,
   DefaultZIndexes,
 } from &#x27;recharts&#x27;;
 import { generateMockData, RechartsDevtools } from &#x27;@recharts/devtools&#x27;;
-import { useState, MouseEvent, TouchEvent, useCallback } from &#x27;react&#x27;;
+import { useState, MouseEvent, TouchEvent, useCallback, CSSProperties } from &#x27;react&#x27;;
 
 const data = generateMockData(30, 123);
 
-const TextWithOutline = (textProps: TextProps) =&gt; (
-  &lt;Text stroke=&quot;white&quot; strokeWidth={3} fill=&quot;black&quot; paintOrder=&quot;stroke&quot; {...textProps} /&gt;
-);
+const pointerEventsNone: CSSProperties = { pointerEvents: &#x27;none&#x27; };
 
 const PixelCrosshair = ({ pointer }: { pointer: RelativePointer | null }) =&gt; {
   const width = useChartWidth();
@@ -82,24 +79,21 @@ const PixelCrosshair = ({ pointer }: { pointer: RelativePointer | null }) =&gt; 
   }
   return (
     &lt;ZIndexLayer zIndex={DefaultZIndexes.cursorLine}&gt;
-      &lt;TextWithOutline
-        x={pointer.relativeX + 5}
-        y={0}
-        verticalAnchor=&quot;start&quot;
-      &gt;{`x: ${pointer.relativeX}`}&lt;/TextWithOutline&gt;
-      &lt;TextWithOutline
+      &lt;Text halo x={pointer.relativeX + 5} y={0} verticalAnchor=&quot;start&quot;&gt;{`x: ${pointer.relativeX}`}&lt;/Text&gt;
+      &lt;Text
+        halo
         y={pointer.relativeY + 5}
         x={width}
         verticalAnchor=&quot;start&quot;
         textAnchor=&quot;end&quot;
-      &gt;{`y: ${pointer.relativeY}`}&lt;/TextWithOutline&gt;
+      &gt;{`y: ${pointer.relativeY}`}&lt;/Text&gt;
       &lt;Cross
         /*
          * pointerEvents: none is necessary because without it, browser will detect hovering over the Cross itself
          * which makes it trigger mouseLeave on the chart which makes it erase the Cross which looks like it&#x27;s blinking.
          * If we skip pointer events on the cross then we can skip the mouseLeave and the movement is smooth.
          */
-        style={{ pointerEvents: &#x27;none&#x27; }}
+        style={pointerEventsNone}
         x={pointer.relativeX}
         y={pointer.relativeY}
         top={0}
@@ -112,6 +106,14 @@ const PixelCrosshair = ({ pointer }: { pointer: RelativePointer | null }) =&gt; 
       /&gt;
     &lt;/ZIndexLayer&gt;
   );
+};
+
+const chartStyle: CSSProperties = {
+  width: &#x27;100%&#x27;,
+  maxWidth: &#x27;500px&#x27;,
+  maxHeight: &#x27;200px&#x27;,
+  aspectRatio: 1,
+  touchAction: &#x27;none&#x27;,
 };
 
 export default function CrosshairExample({
@@ -160,13 +162,7 @@ export default function CrosshairExample({
 
   return (
     &lt;AreaChart
-      style={{
-        width: &#x27;100%&#x27;,
-        maxWidth: &#x27;500px&#x27;,
-        maxHeight: &#x27;200px&#x27;,
-        aspectRatio: 1,
-        touchAction: &#x27;none&#x27;,
-      }}
+      style={chartStyle}
       responsive
       data={data}
       onMouseMove={handleMouseMove}
@@ -184,6 +180,6 @@ export default function CrosshairExample({
       &lt;RechartsDevtools /&gt;
     &lt;/AreaChart&gt;
   );
-}</pre><div></div></div></div><div style="height:100%;display:none;overflow:hidden"><div id="recharts-devtools-portal-Raq9" style="height:100%;background:var(--color-bg);color:var(--color-text);overflow:auto;padding:10px;display:block" class=""></div></div><div style="height:100%;display:none;overflow:hidden"><div id="recharts-devtools-portal-Raq9-annotations" style="height:100%;background:var(--color-surface-base);color:var(--color-text-1);overflow:auto;padding:10px;display:block" class=""></div></div><div style="height:100%;display:none;overflow:hidden"><div style="padding:10px;height:100%;overflow:auto"><div style="display:flex;gap:12px;margin:1ex"><label style="display:flex;align-items:center;gap:8px;cursor:pointer"><input style="margin:0;width:16px;height:16px;cursor:pointer" type="radio" name=":Raaqq9:" checked=""/>Autoplay Animations (default)</label><label style="display:flex;align-items:center;gap:8px;cursor:pointer"><input style="margin:0;width:16px;height:16px;cursor:pointer" type="radio" name=":Raaqq9:"/>Manual Animations</label></div></div></div></div></div></div></div></div></div></div><div><h4 class="sub-title">Return value</h4><p><code>RelativePointer</code></p><p class="desc"><section><p>Coordinates relative to the top-left corner of the element. Single object for Mouse events, array of objects for Touch events.</p></section></p></div><section class="props-section"><h4 class="sub-title"><button type="button" aria-expanded="true" aria-controls="props-current">Props<!-- --> <i class="expander">Click to collapse</i></button></h4><ul class="props-list" id="props-current"><li class="props-item" id="event"><p class="header "><span class="title"><a href="#event">event</a></span><span class="type">HTMLMousePointer | SVGMousePointer</span></p><p class="desc"><section><p>The mouse or touch event from React event handlers (works with both HTML and SVG elements)</p></section></p></li></ul></section></div></div></main><footer><p><span>Released under the </span><a href="https://opensource.org/licenses/MIT" target="_blank" rel="noreferrer">MIT License</a></p><p>Copyright (c) 2016-<!-- -->2026<!-- --> Recharts Group</p><p>Commit: <code title="7e5b78d1b38abd0201d749a0639291ec74243fd1">7e5b78d1</code></p></footer></div></div>
+}</pre><div></div></div></div><div style="height:100%;display:none;overflow:hidden"><div id="recharts-devtools-portal-Raq9" style="height:100%;background:var(--color-bg);color:var(--color-text);overflow:auto;padding:10px;display:block" class=""></div></div><div style="height:100%;display:none;overflow:hidden"><div id="recharts-devtools-portal-Raq9-annotations" style="height:100%;background:var(--color-surface-base);color:var(--color-text-1);overflow:auto;padding:10px;display:block" class=""></div></div><div style="height:100%;display:none;overflow:hidden"><div style="padding:10px;height:100%;overflow:auto"><div style="display:flex;gap:12px;margin:1ex"><label style="display:flex;align-items:center;gap:8px;cursor:pointer"><input style="margin:0;width:16px;height:16px;cursor:pointer" type="radio" name=":Raaqq9:" checked=""/>Autoplay Animations (default)</label><label style="display:flex;align-items:center;gap:8px;cursor:pointer"><input style="margin:0;width:16px;height:16px;cursor:pointer" type="radio" name=":Raaqq9:"/>Manual Animations</label></div></div></div></div></div></div></div></div></div></div><div><h4 class="sub-title">Return value</h4><p><code>RelativePointer</code></p><p class="desc"><section><p>Coordinates relative to the top-left corner of the element. Single object for Mouse events, array of objects for Touch events.</p></section></p></div><section class="props-section"><h4 class="sub-title"><button type="button" aria-expanded="true" aria-controls="props-current">Props<!-- --> <i class="expander">Click to collapse</i></button></h4><ul class="props-list" id="props-current"><li class="props-item" id="event"><p class="header "><span class="title"><a href="#event">event</a></span><span class="type">HTMLMousePointer | SVGMousePointer</span></p><p class="desc"><section><p>The mouse or touch event from React event handlers (works with both HTML and SVG elements)</p></section></p></li></ul></section></div></div></main><footer><p><span>Released under the </span><a href="https://opensource.org/licenses/MIT" target="_blank" rel="noreferrer">MIT License</a></p><p>Copyright (c) 2016-<!-- -->2026<!-- --> Recharts Group</p><p>Commit: <code title="e46bf2847e56b765282670ebdc6aa7f9ece03394">e46bf284</code></p></footer></div></div>
   </body>
 </html>
