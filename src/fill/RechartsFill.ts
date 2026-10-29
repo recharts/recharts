@@ -67,7 +67,7 @@ export type RechartsFillDefinitionProps = {
 
 /**
  * A repeating texture, drawn over the base color of the fill.
- * It is a plain value, so it can live in JSON or in a theme.
+ * It is a plain value, so it can be stored as JSON.
  *
  * Use one of the built-in {@link patterns}, adjust one by spreading it (`{ ...patterns.dots, width: 6 }`),
  * or write your own `path`. For a texture that SVG paths can't draw, use a custom `definition` in the fill.
