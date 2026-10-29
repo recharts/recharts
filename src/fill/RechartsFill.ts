@@ -1,4 +1,15 @@
 import { ComponentType } from 'react';
+import {
+  symbolCircle,
+  symbolCross,
+  symbolDiamond,
+  symbolSquare,
+  symbolStar,
+  symbolTriangle,
+  symbolWye,
+  SymbolType as D3SymbolType,
+} from 'victory-vendor/d3-shape';
+import { getSymbolPath } from './symbolPath';
 
 /**
  * A stop of a {@link RechartsLinearGradient}.
@@ -154,9 +165,37 @@ export type RechartsFill = {
   definition: ComponentType<RechartsFillDefinitionProps>;
 };
 
+const SYMBOL_TILE_SIZE = 12;
+/**
+ * Area of each symbol, in square pixels. The same as in `Symbols`: equal areas make the shapes look equally heavy.
+ */
+const SYMBOL_AREA = 24;
+
+/**
+ * A pattern of one of the `Symbols` shapes, filled, in staggered rows:
+ * two symbols per tile, the second one moved by half a tile in both directions.
+ * @param symbolType the d3 symbol type
+ */
+function symbolPattern(symbolType: D3SymbolType): RechartsPattern {
+  const quarter = SYMBOL_TILE_SIZE / 4;
+  return {
+    width: SYMBOL_TILE_SIZE,
+    height: SYMBOL_TILE_SIZE,
+    path: [
+      getSymbolPath(symbolType, SYMBOL_AREA, quarter, quarter),
+      getSymbolPath(symbolType, SYMBOL_AREA, 3 * quarter, 3 * quarter),
+    ],
+  };
+}
+
+const circle = symbolPattern(symbolCircle);
+
 /**
  * Built-in patterns. Each of them is a plain {@link RechartsPattern} value.
  * Use them with {@link pattern}: `fill={{ definition: pattern(patterns.diagonal) }}`.
+ *
+ * `circle`, `cross`, `diamond`, `square`, `star`, `triangle`, and `wye` draw the same shapes as {@link Symbols},
+ * in staggered rows. `dots` is the same pattern as `circle`.
  *
  * @since 3.11
  */
@@ -166,8 +205,15 @@ export const patterns = {
   horizontal: { width: 8, height: 8, path: 'M0 4H8', strokeWidth: 3 },
   vertical: { width: 8, height: 8, path: 'M4 0V8', strokeWidth: 3 },
   grid: { width: 8, height: 8, path: ['M0 4H8', 'M4 0V8'], strokeWidth: 1.5 },
-  dots: { width: 8, height: 8, path: 'M2 4a2 2 0 1 0 4 0a2 2 0 1 0 -4 0' },
+  dots: circle,
   zigzag: { width: 8, height: 8, path: 'M0 5L2 3L4 5L6 3L8 5', strokeWidth: 1.5 },
+  circle,
+  cross: symbolPattern(symbolCross),
+  diamond: symbolPattern(symbolDiamond),
+  square: symbolPattern(symbolSquare),
+  star: symbolPattern(symbolStar),
+  triangle: symbolPattern(symbolTriangle),
+  wye: symbolPattern(symbolWye),
 } as const satisfies Record<string, RechartsPattern>;
 
 /**

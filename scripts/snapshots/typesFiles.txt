@@ -93,6 +93,7 @@
   "types/fill",
   "types/fill/RechartsFill.d.ts",
   "types/fill/fillDefinitions.d.ts",
+  "types/fill/symbolPath.d.ts",
   "types/hooks.d.ts",
   "types/index.d.ts",
   "types/polar",

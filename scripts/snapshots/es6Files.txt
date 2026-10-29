@@ -93,6 +93,7 @@
   "es6/fill",
   "es6/fill/RechartsFill.js",
   "es6/fill/fillDefinitions.js",
+  "es6/fill/symbolPath.js",
   "es6/hooks.js",
   "es6/index.js",
   "es6/polar",

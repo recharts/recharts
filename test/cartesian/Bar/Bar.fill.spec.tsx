@@ -115,8 +115,8 @@ describe('Bar with a fill object', () => {
     expect(fill).not.toBe('url(#my-bar-fill)');
     const legendPattern = container.querySelector('.recharts-legend-item pattern');
     assertNotNull(legendPattern);
-    // 3 tiles across the 32 units wide icon, so the tile is scaled from 8 to 32 / 3
-    expect(legendPattern).toHaveAttribute('patternTransform', `scale(${32 / 3 / 8})`);
+    // 3 tiles across the 32 units wide icon, so the tile is scaled from 12 to 32 / 3
+    expect(legendPattern).toHaveAttribute('patternTransform', `scale(${32 / 3 / 12})`);
   });
 
   it('should paint the bars with a linear gradient of the base color', () => {
