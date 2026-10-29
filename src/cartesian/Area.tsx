@@ -71,6 +71,14 @@ import { AxisId } from '../state/cartesianAxisSlice';
 import { StackDataPoint } from '../util/stacks/stackTypes';
 import { AreaRevealShape, AreaRevealShapeProps } from './AreaRevealShape';
 import { GraphicalItemStyle, Styles2D } from '../theme/RechartsTheme';
+import { RechartsFill } from '../fill/RechartsFill';
+import {
+  FillObjectDefinition,
+  getFillUrl,
+  getSeriesFillId,
+  splitFill,
+  useSeriesFillObject,
+} from '../fill/fillDefinitions';
 import { useRechartsTheme } from '../theme/RechartsThemeContext';
 import { useBackwardsCompatibleTheme } from '../theme/useBackwardsCompatibleTheme';
 import { UnthemedColors, useUnthemedColors } from '../theme/dataEntryStyles';
@@ -98,6 +106,14 @@ type BaseValueCoordinate<DataPointType = any> = NullableCoordinate & { payload: 
  * Internal props, combination of external props + defaultProps + private Recharts state
  */
 interface InternalAreaProps extends ZIndexable {
+  /**
+   * The base color of the area.
+   */
+  fill?: string;
+  /**
+   * The fill object of the area, from props or from the theme. The area shape paints with its definition.
+   */
+  fillObject?: RechartsFill;
   unthemedColors?: UnthemedColors;
   themedActiveStyles?: Styles2D;
   activeDot: ActiveDotType;
@@ -157,7 +173,24 @@ interface InternalAreaProps extends ZIndexable {
  * @internal
  */
 export interface AreaProps<DataPointType = any, DataValueType = any>
-  extends Styles2D, DataProvider<DataPointType>, ValueAxisDataConsumer<DataPointType, DataValueType>, ZIndexable {
+  extends
+    Omit<Styles2D, 'fill'>,
+    DataProvider<DataPointType>,
+    ValueAxisDataConsumer<DataPointType, DataValueType>,
+    ZIndexable {
+  /**
+   * The fill of the area. Either a color string, or a {@link RechartsFill} object with an SVG definition,
+   * such as a pattern or a gradient.
+   *
+   * With a fill object, Recharts renders the definition with a unique ID, in the chart and in the Legend icon.
+   * Tooltip, labels, and dots use the solid `color` of the fill object.
+   * If the fill object has no `color`, the area keeps the theme colors and the definition gets the theme color.
+   *
+   * @example <Area fill="blue" />
+   * @example <Area fill={{ definition: pattern(patterns.diagonal) }} />
+   * @example <Area fill={{ color: 'blue', definition: linearGradient(gradients.fadeDown) }} />
+   */
+  fill?: string | RechartsFill;
   /**
    * The active dot is rendered on the closest data point when user interacts with the chart. Options:
    *
@@ -467,15 +500,22 @@ export const defaultAreaProps = {
  */
 type AreaSvgProps = Omit<
   CurveProps,
-  'points' | 'ref' | 'layout' | 'path' | 'pathRef' | 'baseLine' | 'dangerouslySetInnerHTML'
+  'points' | 'ref' | 'layout' | 'path' | 'pathRef' | 'baseLine' | 'dangerouslySetInnerHTML' | 'fill'
 >;
 
 type InternalProps = AreaSvgProps & InternalAreaProps;
 
 export type Props<DataPointType, ValueAxisType> = AreaSvgProps & AreaProps<DataPointType, ValueAxisType>;
 
+/**
+ * Props after the fill object is split off: `fill` is the base color.
+ */
+type StringFillProps<DataPointType, ValueAxisType> = Omit<Props<DataPointType, ValueAxisType>, 'fill'> & {
+  fill?: string;
+};
+
 type PropsWithDefaults<DataPointType, ValueAxisType> = WithIdRequired<
-  RequiresDefaultProps<Props<DataPointType, ValueAxisType>, typeof defaultAreaProps>
+  RequiresDefaultProps<StringFillProps<DataPointType, ValueAxisType>, typeof defaultAreaProps>
 >;
 
 function getLegendItemColor(stroke: string | undefined, fill: string | undefined): string | undefined {
@@ -483,9 +523,10 @@ function getLegendItemColor(stroke: string | undefined, fill: string | undefined
 }
 
 const computeLegendPayloadFromAreaData = <DataPointType, ValueAxisType>(
-  props: Props<DataPointType, ValueAxisType>,
+  props: StringFillProps<DataPointType, ValueAxisType>,
   dotFill: string | undefined,
   isThemed: boolean,
+  fillObject: RechartsFill | undefined,
 ): ReadonlyArray<LegendPayload> => {
   const { dataKey, name, stroke, fill, legendType, hide, dot } = props;
   return [
@@ -495,6 +536,7 @@ const computeLegendPayloadFromAreaData = <DataPointType, ValueAxisType>(
       type: legendType,
       dot: getLegendPayloadDot(dot, { fill: dotFill ?? fill, stroke }, isThemed),
       color: getLegendItemColor(stroke, fill),
+      fill: fillObject,
       value: getTooltipNameProp(name, dataKey),
       payload: props,
     },
@@ -515,7 +557,7 @@ const SetAreaTooltipEntrySettings = React.memo(
     tooltipType,
     id,
   }: Pick<
-    WithIdRequired<Props<DataPointType, ValueAxisType>>,
+    WithIdRequired<StringFillProps<DataPointType, ValueAxisType>>,
     | 'dataKey'
     | 'data'
     | 'stroke'
@@ -654,6 +696,7 @@ function StaticArea({
 
   const curveProps: AreaRevealShapeProps = {
     ...propsWithEvents,
+    fill: props.fillObject == null ? propsWithEvents.fill : getFillUrl(getSeriesFillId(id)),
     id,
     points,
     connectNulls,
@@ -837,10 +880,16 @@ class AreaWithState extends PureComponent<InternalProps> {
     const clipDot = isClipDot(dot);
     const dotSize = r * 2 + strokeWidth;
     const activePointsClipPath = needClip ? `url(#clipPath-${clipDot ? '' : 'dots-'}${clipPathId})` : undefined;
+    const { fillObject, fill } = this.props;
 
     return (
       <ZIndexLayer zIndex={zIndex}>
         <Layer className={layerClass}>
+          {fillObject != null && (
+            <defs>
+              <FillObjectDefinition id={getSeriesFillId(id)} fillObject={fillObject} color={fill} />
+            </defs>
+          )}
           {needClip && (
             <defs>
               <GraphicalItemClipPath clipPathId={clipPathId} xAxisId={xAxisId} yAxisId={yAxisId} />
@@ -885,7 +934,7 @@ class AreaWithState extends PureComponent<InternalProps> {
 
 function AreaImpl<DataPointType, ValueAxisType>(
   props: PropsWithDefaults<DataPointType, ValueAxisType> &
-    Pick<InternalProps, 'dotFill' | 'unthemedColors' | 'themedActiveStyles'>,
+    Pick<InternalProps, 'dotFill' | 'unthemedColors' | 'themedActiveStyles' | 'fillObject'>,
 ) {
   const {
     activeDot,
@@ -1110,7 +1159,10 @@ export function computeArea({
   };
 }
 
-function AreaFn(outsideProps: Props<any, any>) {
+function AreaFn(propsWithFillObject: Props<any, any>) {
+  const { color: fillColor, fillObject } = splitFill(propsWithFillObject.fill);
+  // From here on, `fill` is the base color
+  const outsideProps = { ...propsWithFillObject, fill: fillColor };
   const rechartsTheme = useRechartsTheme();
   const dataKey = useEffectiveDataKey({
     dataKey: outsideProps.dataKey,
@@ -1118,6 +1170,7 @@ function AreaFn(outsideProps: Props<any, any>) {
     yAxisId: outsideProps.yAxisId ?? defaultAreaProps.yAxisId,
   });
   const graphicalItemThemeSelector = useGraphicalItemIdentity(dataKey, outsideProps);
+  const effectiveFillObject = useSeriesFillObject(fillObject, graphicalItemThemeSelector);
   const resolveLabelTheme = useSeriesLabelThemeResolver(graphicalItemThemeSelector);
   const theme = useBackwardsCompatibleTheme<Omit<GraphicalItemStyle, 'label'>>(
     graphicalItemThemeSelector,
@@ -1126,7 +1179,7 @@ function AreaFn(outsideProps: Props<any, any>) {
   );
   const unthemedColors = useUnthemedColors(outsideProps);
   const themedActiveStyles = useThemedActiveStyles(graphicalItemThemeSelector, outsideProps);
-  const propsWithTheme: Props<any, any> = {
+  const propsWithTheme: StringFillProps<any, any> = {
     ...outsideProps,
     ...theme,
     dataKey,
@@ -1135,7 +1188,7 @@ function AreaFn(outsideProps: Props<any, any>) {
     legendType:
       outsideProps.legendType ?? getNoDotsLegendType(outsideProps.dot ?? defaultAreaProps.dot, rechartsTheme != null),
   };
-  const props: RequiresDefaultProps<Props<any, any>, typeof defaultAreaProps> = resolveDefaultProps(
+  const props: RequiresDefaultProps<StringFillProps<any, any>, typeof defaultAreaProps> = resolveDefaultProps(
     propsWithTheme,
     defaultAreaProps,
   );
@@ -1148,7 +1201,9 @@ function AreaFn(outsideProps: Props<any, any>) {
     <RegisterGraphicalItemId id={props.id} type="area">
       {id => (
         <>
-          <SetLegendPayload legendPayload={computeLegendPayloadFromAreaData(props, dotFill, rechartsTheme != null)} />
+          <SetLegendPayload
+            legendPayload={computeLegendPayloadFromAreaData(props, dotFill, rechartsTheme != null, effectiveFillObject)}
+          />
           <SetAreaTooltipEntrySettings
             dataKey={props.dataKey}
             data={props.data}
@@ -1183,6 +1238,7 @@ function AreaFn(outsideProps: Props<any, any>) {
                 {...props}
                 id={id}
                 dotFill={dotFill}
+                fillObject={effectiveFillObject}
                 unthemedColors={unthemedColors}
                 themedActiveStyles={themedActiveStyles}
               />

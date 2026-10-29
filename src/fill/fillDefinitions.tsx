@@ -1,6 +1,7 @@
 import * as React from 'react';
-import { ComponentType, createContext, useContext } from 'react';
-import { RechartsFillDefinitionProps, RechartsLinearGradient, RechartsPattern } from './RechartsFill';
+import { ComponentType, createContext, useContext, useMemo } from 'react';
+import { RechartsFill, RechartsFillDefinitionProps, RechartsLinearGradient, RechartsPattern } from './RechartsFill';
+import type { GraphicalItemStyle, RechartsTheme } from '../theme/RechartsTheme';
 import { useRechartsTheme } from '../theme/RechartsThemeContext';
 import { getEffectivePageBackground } from '../theme/pageBackground';
 
@@ -113,4 +114,61 @@ export function linearGradient(gradient: RechartsLinearGradient): ComponentType<
     );
   }
   return LinearGradientDefinition;
+}
+
+/**
+ * Splits the `fill` prop of a graphical item into the base color, and the fill object if there is one.
+ * A fill object without `color` gives no color of its own, so the item keeps the theme colors.
+ * @param fill the `fill` prop
+ */
+export function splitFill(fill: string | RechartsFill | undefined): {
+  color: string | undefined;
+  fillObject: RechartsFill | undefined;
+} {
+  if (fill == null || typeof fill === 'string') {
+    return { color: fill, fillObject: undefined };
+  }
+  return { color: fill.color, fillObject: fill };
+}
+
+/**
+ * Returns the fill object a graphical item paints with: its own, or the `fillDefinition` of its theme entry.
+ * The theme selector leaves the definition out when the item sets its own colors.
+ * @param fillObject the fill object from props
+ * @param themeSelector selects the theme entry of the graphical item
+ */
+export function useSeriesFillObject(
+  fillObject: RechartsFill | undefined,
+  themeSelector: (theme: RechartsTheme) => GraphicalItemStyle | undefined,
+): RechartsFill | undefined {
+  const theme = useRechartsTheme();
+  const themeFillDefinition = theme == null ? undefined : themeSelector(theme)?.fillDefinition;
+  return useMemo(
+    () => fillObject ?? (themeFillDefinition == null ? undefined : { definition: themeFillDefinition }),
+    [fillObject, themeFillDefinition],
+  );
+}
+
+/**
+ * DOM id of the fill definition of a graphical item.
+ * @param id id of the graphical item
+ */
+export function getSeriesFillId(id: string): string {
+  return `${id}-fill`;
+}
+
+/**
+ * Renders the definition of a fill object. Render it inside `<defs>`.
+ */
+export function FillObjectDefinition({
+  id,
+  fillObject,
+  color,
+}: {
+  id: string;
+  fillObject: RechartsFill;
+  color: string | undefined;
+}) {
+  const Definition = fillObject.definition;
+  return <Definition id={id} color={color} />;
 }

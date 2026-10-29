@@ -8,7 +8,6 @@ import {
   ReactNode,
   useCallback,
   useEffect,
-  useMemo,
   useRef,
   useState,
 } from 'react';
@@ -106,9 +105,14 @@ import {
   useUnthemedColors,
 } from '../theme/dataEntryStyles';
 import { getActiveStyleOverrides, useThemedActiveStyles } from '../theme/activeStyles';
-import { useRechartsTheme } from '../theme/RechartsThemeContext';
 import { RechartsFill } from '../fill/RechartsFill';
-import { getFillUrl } from '../fill/fillDefinitions';
+import {
+  FillObjectDefinition,
+  getFillUrl,
+  getSeriesFillId,
+  splitFill,
+  useSeriesFillObject,
+} from '../fill/fillDefinitions';
 import {
   DataLabelColors,
   DataLabelColorsContextProvider,
@@ -1112,14 +1116,6 @@ const errorBarDataPointFormatter: ErrorBarDataPointFormatter<BarRectangleItem> =
   };
 };
 
-/**
- * DOM id of the pattern or gradient of a Bar.
- * @param id id of the Bar
- */
-function getBarFillId(id: GraphicalItemId): string {
-  return `${id}-fill`;
-}
-
 class BarWithState extends PureComponent<InternalProps> {
   render() {
     const { hide, data, dataKey, className, xAxisId, yAxisId, needClip, background, id, fillObject, fill } = this.props;
@@ -1129,14 +1125,14 @@ class BarWithState extends PureComponent<InternalProps> {
 
     const layerClass = clsx('recharts-bar', className);
     const clipPathId = id;
-    const FillDefinition = fillObject?.definition;
-
     return (
       <Layer className={layerClass} id={id}>
-        {(needClip || FillDefinition != null) && (
+        {(needClip || fillObject != null) && (
           <defs>
             {needClip && <GraphicalItemClipPath clipPathId={clipPathId} xAxisId={xAxisId} yAxisId={yAxisId} />}
-            {FillDefinition != null && <FillDefinition id={getBarFillId(id)} color={fill} />}
+            {fillObject != null && (
+              <FillObjectDefinition id={getSeriesFillId(id)} fillObject={fillObject} color={fill} />
+            )}
           </defs>
         )}
         <Layer className="recharts-bar-rectangles" clipPath={needClip ? `url(#clipPath-${clipPathId})` : undefined}>
@@ -1411,32 +1407,16 @@ export function computeBarRectangles({
 }
 
 function BarFn(propsWithFillObject: Props) {
-  const { fill: fillProp } = propsWithFillObject;
-  const fillObject = typeof fillProp === 'string' ? undefined : fillProp;
-  /*
-   * From here on, `fill` is the base color. A fill object without `color` counts as no color of its own,
-   * so the Bar keeps the theme fill and stroke, and draws the pattern or gradient with the theme fill.
-   */
-  const outsideProps: StringFillProps = {
-    ...propsWithFillObject,
-    fill: typeof fillProp === 'string' ? fillProp : fillObject?.color,
-  };
+  const { color: fillColor, fillObject } = splitFill(propsWithFillObject.fill);
+  // From here on, `fill` is the base color
+  const outsideProps: StringFillProps = { ...propsWithFillObject, fill: fillColor };
   const dataKey = useEffectiveDataKey({
     dataKey: outsideProps.dataKey,
     xAxisId: outsideProps.xAxisId ?? defaultBarProps.xAxisId,
     yAxisId: outsideProps.yAxisId ?? defaultBarProps.yAxisId,
   });
   const graphicalItemThemeSelector = useGraphicalItemIdentity(dataKey, outsideProps);
-  /*
-   * The Bar's own fill object wins. Without one, the theme entry can give a fill definition.
-   * The selector leaves it out when the Bar sets its own colors.
-   */
-  const theme = useRechartsTheme();
-  const themeFillDefinition = theme == null ? undefined : graphicalItemThemeSelector(theme)?.fillDefinition;
-  const effectiveFillObject: RechartsFill | undefined = useMemo(
-    () => fillObject ?? (themeFillDefinition == null ? undefined : { definition: themeFillDefinition }),
-    [fillObject, themeFillDefinition],
-  );
+  const effectiveFillObject = useSeriesFillObject(fillObject, graphicalItemThemeSelector);
   const resolveLabelTheme = useSeriesLabelThemeResolver(graphicalItemThemeSelector);
   const unthemedColors = useUnthemedColors(outsideProps);
   const themedActiveStyles = useThemedActiveStyles(graphicalItemThemeSelector, outsideProps);
@@ -1512,7 +1492,7 @@ function BarFn(propsWithFillObject: Props) {
                 unthemedColors={unthemedColors}
                 themedActiveStyles={themedActiveStyles}
                 fillObject={effectiveFillObject}
-                paintFill={effectiveFillObject == null ? undefined : getFillUrl(getBarFillId(id))}
+                paintFill={effectiveFillObject == null ? undefined : getFillUrl(getSeriesFillId(id))}
               />
             </DataLabelThemeContextProvider>
           </ZIndexLayer>

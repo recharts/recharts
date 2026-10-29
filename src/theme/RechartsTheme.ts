@@ -23,7 +23,7 @@ export type GraphicalItemStyle = Styles2D & {
    *
    * Give each entry a different pattern, and charts tell their series apart without relying on color alone.
    *
-   * Only Bar draws it so far. Other graphical items use the plain `fill` color.
+   * Bar, Area, Radar, and Scatter draw it. Other graphical items use the plain `fill` color.
    * A graphical item that sets its own `fill` or `stroke` doesn't use it.
    *
    * @example { fill: '#2b6cb0', fillDefinition: pattern(patterns.diagonal) }

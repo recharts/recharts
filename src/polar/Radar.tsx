@@ -51,6 +51,14 @@ import { DefaultZIndexes } from '../zIndex/DefaultZIndexes';
 import { RechartsScale } from '../util/scale/RechartsScale';
 import { usePolarChartLayout } from '../context/chartLayoutContext';
 import { GraphicalItemStyle, Styles2D } from '../theme/RechartsTheme';
+import { RechartsFill } from '../fill/RechartsFill';
+import {
+  FillObjectDefinition,
+  getFillUrl,
+  getSeriesFillId,
+  splitFill,
+  useSeriesFillObject,
+} from '../fill/fillDefinitions';
 import { useRechartsTheme } from '../theme/RechartsThemeContext';
 import { useBackwardsCompatibleTheme } from '../theme/useBackwardsCompatibleTheme';
 import { UnthemedColors, useUnthemedColors } from '../theme/dataEntryStyles';
@@ -84,6 +92,17 @@ export interface RadarPoint {
  */
 export interface RadarProps<DataPointType = any, DataValueType = any>
   extends ZIndexable, ValueAxisDataConsumer<DataPointType, DataValueType> {
+  /**
+   * The fill of the radar polygon. Either a color string, or a {@link RechartsFill} object with an SVG definition,
+   * such as a pattern or a gradient.
+   *
+   * With a fill object, Recharts renders the definition with a unique ID, in the chart and in the Legend icon.
+   * Tooltip, labels, and dots use the solid `color` of the fill object.
+   * If the fill object has no `color`, the radar keeps the theme colors and the definition gets the theme color.
+   *
+   * @example <Radar fill={{ definition: pattern(patterns.diagonal) }} />
+   */
+  fill?: string | RechartsFill;
   /**
    * @defaultValue true
    */
@@ -235,9 +254,14 @@ export type AngleAxisForRadar = {
 
 export type Props<DataPointType = any, DataValueType = any> = Omit<
   SVGProps<SVGGraphicsElement>,
-  'onMouseEnter' | 'onMouseLeave' | 'points' | 'ref'
+  'onMouseEnter' | 'onMouseLeave' | 'points' | 'ref' | 'fill'
 > &
   RadarProps<DataPointType, DataValueType>;
+
+/**
+ * Props after the fill object is split off: `fill` is the base color.
+ */
+type StringFillProps = Omit<Props, 'fill'> & { fill?: string };
 
 export type RadarComposedData = {
   points: RadarPoint[];
@@ -252,6 +276,7 @@ function getLegendItemColor(stroke: string | undefined, fill: string | undefined
 const computeLegendPayloadFromRadarSectors = (
   props: PropsWithDefaults,
   dotFill: string | undefined,
+  fillObject: RechartsFill | undefined,
 ): ReadonlyArray<LegendPayload> => {
   const { dataKey, name, stroke, fill, legendType, hide, dot } = props;
   return [
@@ -263,6 +288,7 @@ const computeLegendPayloadFromRadarSectors = (
       // Radar keeps its default legend icons with a theme too, only a dot symbol changes them
       dot: getLegendPayloadDot(dot, { fill: dotFill ?? fill, stroke }, false),
       color: getLegendItemColor(stroke, fill),
+      fill: fillObject,
       value: getTooltipNameProp(name, dataKey),
       payload: props,
     },
@@ -313,6 +339,10 @@ const SetRadarTooltipEntrySettings = React.memo(
 
 type RadarPropsWithDotFill = WithIdRequired<PropsWithDefaults> & {
   dotFill?: string;
+  /**
+   * The fill object of the radar, from props or from the theme. The polygon paints with its definition.
+   */
+  fillObject?: RechartsFill;
   unthemedColors?: UnthemedColors;
   themedActiveStyles?: Styles2D;
 };
@@ -474,7 +504,8 @@ function StaticPolygon({
     return null;
   }
 
-  const { shape, isRange, connectNulls, dotFill: _, ...propsWithoutDotFill } = props;
+  const { shape, isRange, connectNulls, dotFill: _, fillObject, ...propsWithoutDotFill } = props;
+  const paintFill = fillObject == null ? props.fill : getFillUrl(getSeriesFillId(props.id));
 
   const handleMouseEnter = (e: MouseEvent<SVGPolygonElement>) => {
     const { onMouseEnter } = props;
@@ -494,13 +525,14 @@ function StaticPolygon({
 
   let radar;
   if (React.isValidElement(shape)) {
-    radar = React.cloneElement(shape, { ...propsWithoutDotFill, points } as any);
+    radar = React.cloneElement(shape, { ...propsWithoutDotFill, fill: paintFill, points } as any);
   } else if (typeof shape === 'function') {
-    radar = shape({ ...propsWithoutDotFill, points });
+    radar = shape({ ...propsWithoutDotFill, fill: paintFill, points });
   } else {
     radar = (
       <Polygon
         {...svgPropertiesAndEvents(props)}
+        fill={paintFill}
         onMouseEnter={handleMouseEnter}
         onMouseLeave={handleMouseLeave}
         points={points}
@@ -641,7 +673,7 @@ export const defaultRadarProps = {
   zIndex: DefaultZIndexes.area,
 } as const satisfies Partial<Props>;
 
-type PropsWithDefaults = RequiresDefaultProps<Props, typeof defaultRadarProps>;
+type PropsWithDefaults = RequiresDefaultProps<StringFillProps, typeof defaultRadarProps>;
 
 export type InternalRadarProps = RadarPropsWithDotFill & RadarComposedData;
 
@@ -657,6 +689,11 @@ function RadarWithState(props: InternalRadarProps) {
   return (
     <ZIndexLayer zIndex={props.zIndex}>
       <Layer className={layerClass}>
+        {props.fillObject != null && (
+          <defs>
+            <FillObjectDefinition id={getSeriesFillId(props.id)} fillObject={props.fillObject} color={props.fill} />
+          </defs>
+        )}
         <RenderPolygon {...props} />
       </Layer>
       <ActivePoints
@@ -694,7 +731,12 @@ function RadarImpl(props: RadarPropsWithDotFill) {
  * @consumes PolarChartContext
  * @provides LabelListContext
  */
-export function Radar<DataPointType = any, DataValueType = any>(outsideProps: Props<DataPointType, DataValueType>) {
+export function Radar<DataPointType = any, DataValueType = any>(
+  propsWithFillObject: Props<DataPointType, DataValueType>,
+) {
+  const { color: fillColor, fillObject } = splitFill(propsWithFillObject.fill);
+  // From here on, `fill` is the base color
+  const outsideProps: StringFillProps = { ...propsWithFillObject, fill: fillColor };
   const rechartsTheme = useRechartsTheme();
   const dataKey = useEffectiveDataKey({
     dataKey: outsideProps.dataKey,
@@ -702,6 +744,7 @@ export function Radar<DataPointType = any, DataValueType = any>(outsideProps: Pr
     radiusAxisId: outsideProps.radiusAxisId ?? defaultRadarProps.radiusAxisId,
   });
   const graphicalItemThemeSelector = useGraphicalItemIdentity(dataKey, outsideProps);
+  const effectiveFillObject = useSeriesFillObject(fillObject, graphicalItemThemeSelector);
   const resolveLabelTheme = useSeriesLabelThemeResolver(graphicalItemThemeSelector);
   const graphicalItemTheme = useBackwardsCompatibleTheme<Omit<GraphicalItemStyle, 'label'>>(
     graphicalItemThemeSelector,
@@ -711,7 +754,7 @@ export function Radar<DataPointType = any, DataValueType = any>(outsideProps: Pr
   const themeStrokeDasharray = graphicalItemTheme?.strokeDasharray;
   const unthemedColors = useUnthemedColors(outsideProps);
   const themedActiveStyles = useThemedActiveStyles(graphicalItemThemeSelector, outsideProps);
-  const propsWithTheme: Props = {
+  const propsWithTheme: StringFillProps = {
     ...outsideProps,
     dataKey,
     activeDot: outsideProps.activeDot,
@@ -744,7 +787,9 @@ export function Radar<DataPointType = any, DataValueType = any>(outsideProps: Pr
             angleAxisId={props.angleAxisId}
             radiusAxisId={props.radiusAxisId}
           />
-          <SetPolarLegendPayload legendPayload={computeLegendPayloadFromRadarSectors(props, dotFill)} />
+          <SetPolarLegendPayload
+            legendPayload={computeLegendPayloadFromRadarSectors(props, dotFill, effectiveFillObject)}
+          />
           <SetRadarTooltipEntrySettings
             dataKey={props.dataKey}
             stroke={props.stroke}
@@ -761,6 +806,7 @@ export function Radar<DataPointType = any, DataValueType = any>(outsideProps: Pr
                 {...props}
                 id={id}
                 dotFill={dotFill}
+                fillObject={effectiveFillObject}
                 unthemedColors={unthemedColors}
                 themedActiveStyles={themedActiveStyles}
               />
