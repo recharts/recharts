@@ -1,5 +1,5 @@
 import { useCallback, useDeferredValue, useMemo, useState } from 'react';
-import { analyzeTheme, type Fix, type Vision } from '@recharts/devtools/theme';
+import { analyzeTheme, type Fix, type ThemeReport, type Vision } from '@recharts/devtools/theme';
 import { SourceCodeEditor } from '../../Playground/SourceCodeEditor.tsx';
 import {
   applyAllFixes,
@@ -16,6 +16,15 @@ import ThemeResults from './ThemeResults.tsx';
 import SimulatedCharts from './SimulatedCharts.tsx';
 import styles from './themeChecker.module.css';
 import { useColorMode } from '../../color-mode';
+
+function countFailing(report: ThemeReport): number {
+  return report.checks.filter(c => c.passes === false).length;
+}
+
+/** What the last Apply did, so it can be undone and described. */
+type LastApply =
+  | { kind: 'one'; before: CheckerState; color: string }
+  | { kind: 'all'; before: CheckerState; after: CheckerState; changedColors: number; failingBefore: number };
 
 function problemWith(state: CheckerState): string | null {
   if (state.series.length === 0) {
@@ -39,8 +48,8 @@ function useCheckerState(): [CheckerState, (next: CheckerState) => void] {
 export default function ThemeChecker() {
   const [state, setState] = useCheckerState();
   const [vision, setVision] = useState<Vision>('normal');
-  // The colors before the last Apply, and what the last Apply did. Editing by hand clears both.
-  const [undo, setUndo] = useState<{ before: CheckerState; message: string } | null>(null);
+  // What the last Apply did, for Undo and its message. Editing by hand clears it.
+  const [lastApply, setLastApply] = useState<LastApply | null>(null);
   // The analysis can take a moment with many failing pairs; keep typing responsive meanwhile.
   const deferredState = useDeferredValue(state);
 
@@ -54,34 +63,46 @@ export default function ThemeChecker() {
   const edit = useCallback(
     (next: CheckerState) => {
       setState(next);
-      setUndo(null);
+      setLastApply(null);
     },
     [setState],
   );
   const handleApplyFix = useCallback(
     (fix: Fix) => {
-      setUndo({ before: state, message: `Applied ${fix.to}.` });
+      setLastApply({ kind: 'one', before: state, color: fix.to });
       setState(applyFix(state, fix));
     },
     [state, setState],
   );
   const handleApplyAll = useCallback(() => {
-    const failing = (s: CheckerState) =>
-      analyzeTheme(toTheme(s), toOptions(s)).checks.filter(c => c.passes === false).length;
+    // The report on screen is usually for this state already; analyze again only when it lags behind.
+    const failingBefore =
+      report != null && deferredState === state
+        ? countFailing(report)
+        : countFailing(analyzeTheme(toTheme(state), toOptions(state)));
     const { state: next, changedColors } = applyAllFixes(state);
-    const message =
-      changedColors === 0
-        ? 'No suggestion could be applied without making other checks worse.'
-        : `Changed ${changedColors} ${changedColors === 1 ? 'color' : 'colors'}. Failing checks went from ${failing(state)} to ${failing(next)}.`;
-    setUndo({ before: state, message });
+    setLastApply({ kind: 'all', before: state, after: next, changedColors, failingBefore });
     setState(next);
-  }, [state, setState]);
+  }, [report, deferredState, state, setState]);
   const handleUndo = useCallback(() => {
-    if (undo != null) {
-      setState(undo.before);
-      setUndo(null);
+    if (lastApply != null) {
+      setState(lastApply.before);
+      setLastApply(null);
     }
-  }, [undo, setState]);
+  }, [lastApply, setState]);
+
+  let applyMessage: string | null = null;
+  if (lastApply?.kind === 'one') {
+    applyMessage = `Applied ${lastApply.color}.`;
+  } else if (lastApply?.kind === 'all') {
+    if (lastApply.changedColors === 0) {
+      applyMessage = 'No suggestion could be applied without making other checks worse.';
+    } else if (report != null && deferredState === lastApply.after) {
+      // The failing count after comes from the report the page renders anyway, once it catches up.
+      const { changedColors } = lastApply;
+      applyMessage = `Changed ${changedColors} ${changedColors === 1 ? 'color' : 'colors'}. Failing checks went from ${lastApply.failingBefore} to ${countFailing(report)}.`;
+    }
+  }
 
   return (
     <div className={styles.checker}>
@@ -95,8 +116,8 @@ export default function ThemeChecker() {
             onVisionChange={setVision}
             onApplyFix={handleApplyFix}
             onApplyAll={handleApplyAll}
-            onUndo={undo == null ? null : handleUndo}
-            applyMessage={undo?.message ?? null}
+            onUndo={lastApply == null ? null : handleUndo}
+            applyMessage={applyMessage}
           />
           <div className={styles.panel}>
             <h3>The theme in charts</h3>

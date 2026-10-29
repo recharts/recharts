@@ -9,7 +9,7 @@ import { isClipDot } from '../util/ReactUtils';
 import { svgPropertiesAndEventsFromUnknown } from '../util/svgPropertiesAndEvents';
 import { ZIndexable, ZIndexLayer } from '../zIndex/ZIndexLayer';
 import { DefaultZIndexes } from '../zIndex/DefaultZIndexes';
-import { getEntryStyleOverrides, getEntrySvgProps, UnthemedStyles } from '../theme/dataEntryStyles';
+import { getEntryStyleOverrides, getEntrySvgProps, UnthemedColors } from '../theme/dataEntryStyles';
 
 export interface DotPoint {
   readonly x: number | null;
@@ -83,7 +83,7 @@ interface DotsProps extends ZIndexable {
    * Except some properties that the Dots component manages itself.
    */
   baseProps: DotsDotProps;
-  unthemedStyles?: UnthemedStyles;
+  unthemedColors?: UnthemedColors;
   /**
    * Whether clipping is needed (cartesian only)
    */
@@ -101,7 +101,7 @@ export function Dots({
   dotClassName,
   dataKey,
   baseProps,
-  unthemedStyles,
+  unthemedColors,
   needClip,
   clipPathId,
   zIndex = DefaultZIndexes.scatter,
@@ -118,7 +118,7 @@ export function Dots({
     const dotProps: DotItemDotProps = {
       r: 3,
       ...baseProps,
-      ...getEntryStyleOverrides(entry.payload, unthemedStyles),
+      ...getEntryStyleOverrides(entry.payload, unthemedColors),
       // Dots are separate visual primitives; do not inherit the parent series opacity.
       fillOpacity: 1,
       ...customDotProps,

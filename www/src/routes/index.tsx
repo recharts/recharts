@@ -1,15 +1,24 @@
-import { Navigate, Outlet, ScrollRestoration, type RouteObject } from 'react-router';
+import { Navigate, Outlet, ScrollRestoration, type Location, type RouteObject } from 'react-router';
 import { IndexView, GuideView, APIView, ExamplesView, ExamplesIndexView, Storybook, NotFoundView } from '../views';
 import { Frame } from '../layouts/Frame';
 import { PageTracker } from '../components/analytics.ts';
 import { redirects } from './redirects.ts';
+
+/*
+ * Every full page load starts on a history entry with the key "default".
+ * Without the URL in the key, opening a link like /api/Legend/#itemSorter restores
+ * the position saved for whichever page was loaded before in this tab, instead of scrolling to the hash.
+ */
+function getScrollRestorationKey(location: Location): string {
+  return location.key === 'default' ? `default:${location.pathname}${location.hash}` : location.key;
+}
 
 function RootLayout() {
   return (
     <>
       <PageTracker />
       <Outlet />
-      <ScrollRestoration />
+      <ScrollRestoration getKey={getScrollRestorationKey} />
     </>
   );
 }

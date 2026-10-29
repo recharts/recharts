@@ -57,7 +57,7 @@ const calculateWordWidths = ({ children, breakAll, style }: CalculateWordWidthsP
     let words: string[] = [];
     if (!isNullish(children)) {
       if (breakAll) {
-        words = children.toString().split('');
+        words = Array.from(children.toString());
       } else {
         words = children.toString().split(BREAKING_SPACES);
       }
@@ -331,7 +331,7 @@ const findLongestLine = (words: ReadonlyArray<WordsWithWidth>): WordsWithWidth =
 const suffix = '…';
 
 const checkOverflow = (
-  text: string,
+  text: ReadonlyArray<string>,
   index: number,
   breakAll: TextProps['breakAll'],
   style: TextProps['style'],
@@ -340,7 +340,7 @@ const checkOverflow = (
   spaceWidth: number,
   scaleToFit: boolean,
 ): [boolean, ReadonlyArray<Words>] => {
-  const tempText = text.slice(0, index);
+  const tempText = text.slice(0, index).join('');
 
   const words = calculateWordWidths({
     breakAll,
@@ -372,8 +372,6 @@ const calculateWordsByLines = (
   scaleToFit: boolean,
 ): ReadonlyArray<Words> => {
   const shouldLimitLines = isNumber(maxLines);
-  const text = String(children);
-
   const originalResult: ReadonlyArray<WordsWithWidth> = calculate(
     initialWordsWithComputedWith,
     lineWidth,
@@ -381,7 +379,7 @@ const calculateWordsByLines = (
     scaleToFit,
   );
 
-  if (!shouldLimitLines || scaleToFit) {
+  if (!shouldLimitLines || scaleToFit || originalResult.length === 0) {
     return originalResult;
   }
 
@@ -390,6 +388,7 @@ const calculateWordsByLines = (
     return originalResult;
   }
 
+  const text = Array.from(String(children));
   let start = 0;
   let end = text.length - 1;
 

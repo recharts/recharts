@@ -53,7 +53,8 @@ import { usePolarChartLayout } from '../context/chartLayoutContext';
 import { GraphicalItemStyle, Styles2D } from '../theme/RechartsTheme';
 import { useRechartsTheme } from '../theme/RechartsThemeContext';
 import { useBackwardsCompatibleTheme } from '../theme/useBackwardsCompatibleTheme';
-import { UnthemedStyles, useUnthemedStyles } from '../theme/dataEntryStyles';
+import { UnthemedColors, useUnthemedColors } from '../theme/dataEntryStyles';
+import { useThemedActiveStyles } from '../theme/activeStyles';
 import { useGraphicalItemIdentity } from '../theme/useGraphicalItemIdentity';
 import { useEffectiveDataKey } from '../util/useEffectiveDataKey';
 import {
@@ -324,13 +325,13 @@ const SetRadarTooltipEntrySettings = React.memo(
 
 type RadarPropsWithDotFill = WithIdRequired<PropsWithDefaults> & {
   dotFill?: string;
-  unthemedStyles?: UnthemedStyles;
+  unthemedColors?: UnthemedColors;
   themedActiveStyles?: Styles2D;
 };
 
 function RadarDotsWrapper({ points, props }: { points: ReadonlyArray<RadarPoint>; props: RadarPropsWithDotFill }) {
   const { dot, dataKey } = props;
-  const { id, dotFill, unthemedStyles, ...propsWithoutId } = props;
+  const { id, dotFill, unthemedColors, ...propsWithoutId } = props;
 
   const baseProps = svgPropertiesNoEvents(propsWithoutId);
 
@@ -342,7 +343,7 @@ function RadarDotsWrapper({ points, props }: { points: ReadonlyArray<RadarPoint>
       dotClassName="recharts-radar-dot"
       dataKey={dataKey}
       baseProps={{ ...baseProps, fill: dotFill ?? baseProps.fill }}
-      unthemedStyles={unthemedStyles}
+      unthemedColors={unthemedColors}
     />
   );
 }
@@ -720,8 +721,8 @@ export function Radar<DataPointType = any, DataValueType = any>(outsideProps: Pr
     undefined,
   );
   const themeStrokeDasharray = graphicalItemTheme?.strokeDasharray;
-  const unthemedStyles = useUnthemedStyles(outsideProps);
-  const themedActiveStyles = graphicalItemTheme?.active;
+  const unthemedColors = useUnthemedColors(outsideProps);
+  const themedActiveStyles = useThemedActiveStyles(graphicalItemThemeSelector, outsideProps);
   const propsWithTheme: Props = {
     ...outsideProps,
     dataKey,
@@ -773,7 +774,7 @@ export function Radar<DataPointType = any, DataValueType = any>(outsideProps: Pr
                 {...props}
                 id={id}
                 dotFill={dotFill}
-                unthemedStyles={unthemedStyles}
+                unthemedColors={unthemedColors}
                 themedActiveStyles={themedActiveStyles}
               />
             </DataLabelColorsContextProvider>

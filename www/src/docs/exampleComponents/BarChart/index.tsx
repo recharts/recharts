@@ -25,6 +25,8 @@ import biaxialBarChartSource from './BiaxialBarChart?raw';
 import barChartHasBackgroundSource from './BarChartHasBackground?raw';
 import barChartWithMultiXAxisSource from './BarChartWithMultiXAxis?raw';
 import BarChartWithLabelBackground from './BarChartWithLabelBackground';
+import BarChartWithPatternFill from './BarChartWithPatternFill';
+import barChartWithPatternFillSource from './BarChartWithPatternFill?raw';
 import barChartWithLabelBackgroundSource from './BarChartWithLabelBackground?raw';
 import { ChartExample } from '../types.ts';
 import BarChartNavExample from './BarChartNavExample';
@@ -207,6 +209,18 @@ export const barChartExamples = {
         The <code>background</code> prop of <LinkToApi>LabelList</LinkToApi> draws a rounded rectangle behind each
         label, which keeps labels readable on top of the bars. Set it to <code>true</code> for the default style, or
         pass <code>TextBackgroundProps</code> to customize the rectangle.
+      </>
+    ),
+  },
+  BarChartWithPatternFill: {
+    Component: BarChartWithPatternFill,
+    sourceCode: barChartWithPatternFillSource,
+    name: 'Bar Chart with gradient and pattern fill',
+    description: (
+      <>
+        The <code>fill</code> prop of <LinkToApi>Bar</LinkToApi> accepts any SVG paint, including a reference to a
+        gradient or a pattern. Define them inside <code>{'<defs>'}</code> in the chart, and point to them with{' '}
+        <code>fill=&quot;url(#id)&quot;</code>.
       </>
     ),
   },
