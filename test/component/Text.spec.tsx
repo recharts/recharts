@@ -42,6 +42,26 @@ describe('<Text />', () => {
     expect(text.children).toHaveLength(1);
   });
 
+  test.each([
+    ['emoji', '😀😃', ['😀', '😃']],
+    ['Japanese hiragana', 'あいう', ['あ', 'い', 'う']],
+    ['Japanese katakana', 'アイウ', ['ア', 'イ', 'ウ']],
+    ['Chinese Han characters', '中文汉', ['中', '文', '汉']],
+    ['supplementary Han characters', '𠮷𠀀', ['𠮷', '𠀀']],
+    ['mixed kana, Han and emoji', 'あ中😀', ['あ', '中', '😀']],
+  ])('wraps %s on code-point boundaries with breakAll', (_, value, expected) => {
+    const { container } = render(
+      <Surface width={300} height={300}>
+        <Text width={25} breakAll>
+          {value}
+        </Text>
+      </Surface>,
+    );
+
+    const lines = Array.from(container.querySelectorAll('text > tspan'), line => line.textContent);
+    expect(lines).toEqual(expected);
+  });
+
   test('renders number children', () => {
     const { container } = render(
       <Surface width={300} height={300}>

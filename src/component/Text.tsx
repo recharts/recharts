@@ -57,7 +57,7 @@ const calculateWordWidths = ({ children, breakAll, style }: CalculateWordWidthsP
     let words: string[] = [];
     if (!isNullish(children)) {
       if (breakAll) {
-        words = children.toString().split('');
+        words = Array.from(children.toString());
       } else {
         words = children.toString().split(BREAKING_SPACES);
       }
