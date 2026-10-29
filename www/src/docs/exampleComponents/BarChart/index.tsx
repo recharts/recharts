@@ -27,6 +27,8 @@ import barChartWithMultiXAxisSource from './BarChartWithMultiXAxis?raw';
 import BarChartWithLabelBackground from './BarChartWithLabelBackground';
 import BarChartWithPatternFill from './BarChartWithPatternFill';
 import barChartWithPatternFillSource from './BarChartWithPatternFill?raw';
+import BarChartWithThemePatterns from './BarChartWithThemePatterns';
+import barChartWithThemePatternsSource from './BarChartWithThemePatterns?raw';
 import barChartWithLabelBackgroundSource from './BarChartWithLabelBackground?raw';
 import { ChartExample } from '../types.ts';
 import BarChartNavExample from './BarChartNavExample';
@@ -223,6 +225,18 @@ export const barChartExamples = {
         the built-in <code>gradients</code> and <code>patterns</code>, or from your own values. For full control, write
         the component yourself. Recharts renders it with a unique ID, draws the same fill in Legend icons, and Tooltip
         keeps showing the solid color. Patterns tell the series apart without relying on color alone.
+      </>
+    ),
+  },
+  BarChartWithThemePatterns: {
+    Component: BarChartWithThemePatterns,
+    sourceCode: barChartWithThemePatternsSource,
+    name: 'Bar Chart with patterns from the theme',
+    description: (
+      <>
+        A theme can give each graphical item a <code>fillDefinition</code> next to its <code>fill</code> color. Here
+        every entry of the active theme gets one of the built-in <code>patterns</code>, so the Bars tell their series
+        apart without relying on color alone, and without setting any <code>fill</code> themselves.
       </>
     ),
   },

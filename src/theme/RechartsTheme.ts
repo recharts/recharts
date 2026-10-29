@@ -1,6 +1,7 @@
-import { CSSProperties } from 'react';
+import { ComponentType, CSSProperties } from 'react';
 import { LegendProps } from '../index';
 import type { TextBackgroundProps } from '../component/Text';
+import type { RechartsFillDefinitionProps } from '../fill/RechartsFill';
 
 /**
  * Styles shared for rectangular or variable shape components that have an area (Area, Bar, Rectangle)
@@ -15,6 +16,21 @@ export type Styles2D = {
 };
 
 export type GraphicalItemStyle = Styles2D & {
+  /**
+   * Paints the shapes of the graphical item with an SVG definition, such as a pattern or a gradient,
+   * the same as the `definition` of a {@link RechartsFill}. The definition gets `fill` from here as its `color`,
+   * and Tooltip, Legend text, and labels use that `fill` color.
+   *
+   * Give each entry a different pattern, and charts tell their series apart without relying on color alone.
+   *
+   * Only Bar draws it so far. Other graphical items use the plain `fill` color.
+   * A graphical item that sets its own `fill` or `stroke` doesn't use it.
+   *
+   * @example { fill: '#2b6cb0', fillDefinition: pattern(patterns.diagonal) }
+   *
+   * @since 3.11
+   */
+  fillDefinition?: ComponentType<RechartsFillDefinitionProps>;
   /**
    * Styles applied to the active representation of a graphical item.
    *

@@ -41,12 +41,13 @@ export function hasOwnColors(entry: unknown): boolean {
   return Reflect.get(entry, 'fill') != null || Reflect.get(entry, 'stroke') != null;
 }
 
-type StyleWithoutColors = Omit<GraphicalItemStyle, 'fill' | 'stroke'>;
+type StyleWithoutColors = Omit<GraphicalItemStyle, 'fill' | 'stroke' | 'fillDefinition'>;
 
 const withoutColorsCache = new WeakMap<GraphicalItemStyle, StyleWithoutColors>();
 
 /**
- * Returns a copy of the style without its `fill` and `stroke`. Every other key, `active` and `label` included, stays.
+ * Returns a copy of the style without its `fill`, `stroke`, and `fillDefinition`.
+ * Every other key, `active` and `label` included, stays.
  * The result is cached, so the same style always returns the same object. That keeps theme selectors stable.
  * @param style theme style, for example an entry of `graphicalItems`
  */
@@ -60,7 +61,7 @@ export function withoutColors(style: GraphicalItemStyle | undefined): StyleWitho
   if (cached != null) {
     return cached;
   }
-  const { fill, stroke, ...rest } = style;
+  const { fill, stroke, fillDefinition, ...rest } = style;
   withoutColorsCache.set(style, rest);
   return rest;
 }
