@@ -12,6 +12,25 @@ type WindRoseDatum = {
 
 const directions = ['N', 'NE', 'E', 'SE', 'S', 'SW', 'W', 'NW'];
 
+const series = [
+  { dataKey: 'low', name: '0-10 km/h', fill: '#82ca9d' },
+  { dataKey: 'medium', name: '10-20 km/h', fill: '#ffc658' },
+  { dataKey: 'high', name: '20+ km/h', fill: '#ff8042' },
+];
+
+function WindRoseLegend() {
+  return (
+    <div style={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'center', gap: '0 16px', fontSize: 12 }}>
+      {series.map(({ name, fill }) => (
+        <span key={name} style={{ display: 'inline-flex', alignItems: 'center', gap: 4, color: fill }}>
+          <span style={{ width: 10, height: 10, backgroundColor: fill }} />
+          {name}
+        </span>
+      ))}
+    </div>
+  );
+}
+
 const data: Array<WindRoseDatum> = [
   { direction: 'N', angle: 0, low: 12, medium: 8, high: 3 },
   { direction: 'NE', angle: 45, low: 9, medium: 11, high: 4 },
@@ -27,7 +46,8 @@ const data: Array<WindRoseDatum> = [
 const maxTotal = Math.max(...data.map(entry => entry.low + entry.medium + entry.high));
 const radiusDomain = [0, maxTotal];
 const angleDomain = [0, 360];
-const formatAngle = (angle: number) => directions[angle / 45];
+const formatAngle = (angle: number) => directions[angle / 45] ?? '';
+const formatTooltipLabel = (label: unknown) => formatAngle(Number(label));
 
 const chartStyle = {
   width: '100%',
@@ -62,17 +82,18 @@ export default function WindRoseChart({ isAnimationActive = true }: { isAnimatio
         tickLine={false}
       />
       <PolarRadiusAxis domain={radiusDomain} tick={false} axisLine={false} />
-      <RadialBar dataKey="low" stackId="wind" name="0-10 km/h" fill="#82ca9d" isAnimationActive={isAnimationActive} />
-      <RadialBar
-        dataKey="medium"
-        stackId="wind"
-        name="10-20 km/h"
-        fill="#ffc658"
-        isAnimationActive={isAnimationActive}
-      />
-      <RadialBar dataKey="high" stackId="wind" name="20+ km/h" fill="#ff8042" isAnimationActive={isAnimationActive} />
-      <Legend iconSize={10} />
-      <Tooltip />
+      {series.map(entry => (
+        <RadialBar
+          key={entry.dataKey}
+          dataKey={entry.dataKey}
+          stackId="wind"
+          name={entry.name}
+          fill={entry.fill}
+          isAnimationActive={isAnimationActive}
+        />
+      ))}
+      <Legend content={WindRoseLegend} />
+      <Tooltip labelFormatter={formatTooltipLabel} />
       <RechartsDevtools />
     </RadialBarChart>
   );
