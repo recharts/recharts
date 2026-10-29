@@ -22,7 +22,7 @@ function WindRoseLegend() {
   return (
     <div style={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'center', gap: '0 16px', fontSize: 12 }}>
       {series.map(({ name, fill }) => (
-        <span key={name} style={{ display: 'inline-flex', alignItems: 'center', gap: 4, color: fill }}>
+        <span key={name} style={{ display: 'inline-flex', alignItems: 'center', gap: 4 }}>
           <span style={{ width: 10, height: 10, backgroundColor: fill }} />
           {name}
         </span>
