@@ -218,12 +218,11 @@ export const barChartExamples = {
     name: 'Bar Chart with gradient and pattern fill',
     description: (
       <>
-        The <code>fill</code> prop of <LinkToApi>Bar</LinkToApi> accepts a fill object with a linear{' '}
-        <code>gradient</code> or a <code>pattern</code>. Use one of the built-in <code>gradients</code> and{' '}
-        <code>patterns</code>, or write your own. For full control, pass a component that renders any SVG paint server,
-        such as a <code>linearGradient</code>, as the <code>definition</code>. Recharts creates the SVG definitions and
-        their IDs, draws the same fill in Legend icons, and Tooltip keeps showing the solid color. Patterns tell the
-        series apart without relying on color alone.
+        The <code>fill</code> prop of <LinkToApi>Bar</LinkToApi> accepts a fill object with a <code>definition</code>: a
+        component that renders an SVG paint server. <code>linearGradient</code> and <code>pattern</code> make one from
+        the built-in <code>gradients</code> and <code>patterns</code>, or from your own values. For full control, write
+        the component yourself. Recharts renders it with a unique ID, draws the same fill in Legend icons, and Tooltip
+        keeps showing the solid color. Patterns tell the series apart without relying on color alone.
       </>
     ),
   },

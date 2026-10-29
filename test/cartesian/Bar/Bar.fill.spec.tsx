@@ -12,6 +12,8 @@ import {
   RechartsThemeProvider,
   Tooltip,
   gradients,
+  linearGradient,
+  pattern,
   patterns,
   usePlotArea,
 } from '../../../src';
@@ -52,6 +54,11 @@ function RedToBase({ id, color }: RechartsFillDefinitionProps) {
   );
 }
 
+function PlotAreaGradient({ id, color }: RechartsFillDefinitionProps) {
+  const plotArea = usePlotArea();
+  return <linearGradient id={id} data-color={color} data-plot-height={plotArea?.height} />;
+}
+
 function getTooltipItem(container: Element): HTMLElement {
   const tooltipItem = container.querySelector<HTMLElement>('.recharts-tooltip-item');
   assertNotNull(tooltipItem);
@@ -60,7 +67,7 @@ function getTooltipItem(container: Element): HTMLElement {
 
 describe('Bar with a fill object', () => {
   it('should paint the bars with the pattern, and keep the theme colors when the fill object has no color', () => {
-    const { container } = renderBar({ pattern: patterns.diagonal });
+    const { container } = renderBar({ definition: pattern(patterns.diagonal) });
 
     const bars = getAllBarPaths(container);
     expect(bars).toHaveLength(2);
@@ -69,17 +76,17 @@ describe('Bar with a fill object', () => {
       expect(bar).toHaveAttribute('stroke', 'indigo');
     });
 
-    const pattern = container.querySelector('pattern#my-bar-fill');
-    assertNotNull(pattern);
-    expect(pattern).toHaveAttribute('patternUnits', 'userSpaceOnUse');
-    expect(pattern).toHaveAttribute('patternTransform', 'rotate(45)');
-    expect(pattern.querySelector('rect')).toHaveAttribute('fill', 'purple');
+    const patternElement = container.querySelector('pattern#my-bar-fill');
+    assertNotNull(patternElement);
+    expect(patternElement).toHaveAttribute('patternUnits', 'userSpaceOnUse');
+    expect(patternElement).toHaveAttribute('patternTransform', 'rotate(45)');
+    expect(patternElement.querySelector('rect')).toHaveAttribute('fill', 'purple');
     // the texture defaults to the page background
-    expect(pattern.querySelector('path')).toHaveAttribute('stroke', 'rgb(1, 2, 3)');
+    expect(patternElement.querySelector('path')).toHaveAttribute('stroke', 'rgb(1, 2, 3)');
   });
 
   it('should use the explicit color as the base color and drop the theme stroke', () => {
-    const { container } = renderBar({ color: 'blue', pattern: patterns.dots });
+    const { container } = renderBar({ color: 'blue', definition: pattern(patterns.dots) });
 
     const bar = getAllBarPaths(container)[0];
     expect(bar).toHaveAttribute('fill', 'url(#my-bar-fill)');
@@ -88,7 +95,7 @@ describe('Bar with a fill object', () => {
   });
 
   it('should show the base color, not the url, in Legend and Tooltip', () => {
-    const { container } = renderBar({ color: 'blue', pattern: patterns.dots });
+    const { container } = renderBar({ color: 'blue', definition: pattern(patterns.dots) });
 
     expect(getTooltipItem(container)).toHaveStyle({ color: 'rgb(0, 0, 255)' });
     const legendText = container.querySelector<HTMLElement>('.recharts-legend-item-text');
@@ -97,7 +104,7 @@ describe('Bar with a fill object', () => {
   });
 
   it('should draw the pattern in the legend icon with its own definition', () => {
-    const { container } = renderBar({ color: 'blue', pattern: patterns.dots });
+    const { container } = renderBar({ color: 'blue', definition: pattern(patterns.dots) });
 
     const icon = container.querySelector('.recharts-legend-item path.recharts-legend-icon');
     assertNotNull(icon);
@@ -111,7 +118,7 @@ describe('Bar with a fill object', () => {
   });
 
   it('should paint the bars with a linear gradient of the base color', () => {
-    const { container } = renderBar({ color: 'blue', gradient: gradients.fadeDown });
+    const { container } = renderBar({ color: 'blue', definition: linearGradient(gradients.fadeDown) });
 
     expect(getAllBarPaths(container)[0]).toHaveAttribute('fill', 'url(#my-bar-fill)');
     const gradient = container.querySelector('linearGradient#my-bar-fill');
@@ -129,12 +136,12 @@ describe('Bar with a fill object', () => {
   it('should keep explicit stop colors', () => {
     const { container } = renderBar({
       color: 'red',
-      gradient: {
+      definition: linearGradient({
         stops: [
           { offset: 0, color: 'red' },
           { offset: 1, color: 'orange' },
         ],
-      },
+      }),
     });
 
     const gradient = container.querySelector('linearGradient#my-bar-fill');
@@ -147,7 +154,7 @@ describe('Bar with a fill object', () => {
   it('should use the pattern color and opacity when set', () => {
     const { container } = renderBar({
       color: 'blue',
-      pattern: { ...patterns.horizontal, color: 'black', opacity: 0.3 },
+      definition: pattern({ ...patterns.horizontal, color: 'black', opacity: 0.3 }),
     });
 
     expect(container.querySelector('pattern#my-bar-fill path')).toHaveAttribute('stroke', 'black');
@@ -158,19 +165,12 @@ describe('Bar with a fill object', () => {
     const shape = vi.fn((props: BarShapeProps) => <rect fill={props.fill} />);
     render(
       <BarChart width={400} height={400} data={data}>
-        <Bar dataKey="uv" id="my-bar" fill={{ color: 'blue', pattern: patterns.grid }} shape={shape} />
+        <Bar dataKey="uv" id="my-bar" fill={{ color: 'blue', definition: pattern(patterns.grid) }} shape={shape} />
       </BarChart>,
     );
 
     expect(shape).toHaveBeenCalled();
     shape.mock.calls.forEach(([props]) => expect(props.fill).toBe('url(#my-bar-fill)'));
-  });
-
-  it('should treat a fill object with only a color as a plain color', () => {
-    const { container } = renderBar({ color: 'blue' });
-
-    expect(getAllBarPaths(container)[0]).toHaveAttribute('fill', 'blue');
-    expect(container.querySelector('#my-bar-fill')).not.toBeInTheDocument();
   });
 
   it('should keep working with a string fill', () => {
@@ -181,7 +181,7 @@ describe('Bar with a fill object', () => {
   });
 
   it('should default the texture to white, and paint the tile base like a shape without fill, without a theme and color', () => {
-    const { container } = renderBar({ pattern: patterns.vertical }, { withTheme: false });
+    const { container } = renderBar({ definition: pattern(patterns.vertical) }, { withTheme: false });
 
     expect(getAllBarPaths(container)[0]).toHaveAttribute('fill', 'url(#my-bar-fill)');
     const base = container.querySelector('pattern#my-bar-fill rect');
@@ -209,10 +209,6 @@ describe('Bar with a fill object', () => {
   });
 
   it('should pass the theme color to the definition, and let it call Recharts hooks', () => {
-    const PlotAreaGradient = ({ id, color }: RechartsFillDefinitionProps) => {
-      const plotArea = usePlotArea();
-      return <linearGradient id={id} data-color={color} data-plot-height={plotArea?.height} />;
-    };
     const { container } = renderBar({ definition: PlotAreaGradient });
 
     const gradient = container.querySelector('linearGradient#my-bar-fill');
@@ -224,7 +220,7 @@ describe('Bar with a fill object', () => {
   it('should draw the plain inactive color in the legend icon of a hidden bar', () => {
     const { container } = render(
       <BarChart width={400} height={400} data={data}>
-        <Bar dataKey="uv" hide fill={{ color: 'blue', pattern: patterns.dots }} isAnimationActive={false} />
+        <Bar dataKey="uv" hide fill={{ color: 'blue', definition: pattern(patterns.dots) }} isAnimationActive={false} />
         <Legend inactiveColor="#ccc" />
       </BarChart>,
     );
@@ -234,7 +230,7 @@ describe('Bar with a fill object', () => {
   });
 
   it('should draw the gradient in the legend icon with its own definition', () => {
-    const { container } = renderBar({ color: 'blue', gradient: gradients.fadeDown });
+    const { container } = renderBar({ color: 'blue', definition: linearGradient(gradients.fadeDown) });
 
     const gradient = container.querySelector('.recharts-legend-item linearGradient');
     assertNotNull(gradient);
@@ -245,16 +241,16 @@ describe('Bar with a fill object', () => {
   it('should draw the pattern in a symbol legend icon', () => {
     const { container } = render(
       <BarChart width={400} height={400} data={data}>
-        <Bar dataKey="uv" fill={{ color: 'blue', pattern: patterns.dots }} isAnimationActive={false} />
+        <Bar dataKey="uv" fill={{ color: 'blue', definition: pattern(patterns.dots) }} isAnimationActive={false} />
         <Legend iconType="circle" />
       </BarChart>,
     );
 
-    const pattern = container.querySelector('.recharts-legend-item pattern');
-    assertNotNull(pattern);
+    const patternElement = container.querySelector('.recharts-legend-item pattern');
+    assertNotNull(patternElement);
     expect(container.querySelector('.recharts-legend-item .recharts-symbols')).toHaveAttribute(
       'fill',
-      `url(#${pattern.id})`,
+      `url(#${patternElement.id})`,
     );
   });
 
@@ -266,7 +262,7 @@ describe('Bar with a fill object', () => {
             {
               value: 'uv',
               color: 'blue',
-              fill: { color: 'blue', pattern: patterns.dots },
+              fill: { color: 'blue', definition: pattern(patterns.dots) },
               legendIcon: <circle className="custom-icon" fill="red" />,
             },
           ]}

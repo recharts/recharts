@@ -105,8 +105,8 @@ import {
   useUnthemedColors,
 } from '../theme/dataEntryStyles';
 import { getActiveStyleOverrides, useThemedActiveStyles } from '../theme/activeStyles';
-import { isRechartsFill, RechartsFill } from '../fill/RechartsFill';
-import { FillDefinition, getFillUrl, needsFillDefinition } from '../fill/FillDefinition';
+import { RechartsFill } from '../fill/RechartsFill';
+import { getFillUrl } from '../fill/fillDefinitions';
 import {
   DataLabelColors,
   DataLabelColorsContextProvider,
@@ -229,17 +229,18 @@ export interface BarProps<DataPointType, ValueAxisType>
    */
   maxBarSize?: number;
   /**
-   * The fill of the bars. Either a color string, or a {@link RechartsFill} object with a pattern or a linear gradient.
+   * The fill of the bars. Either a color string, or a {@link RechartsFill} object with an SVG definition,
+   * such as a pattern or a gradient.
    *
-   * With a fill object, Recharts creates the SVG pattern or gradient and its ID.
-   * Legend, Tooltip and labels use the solid `color` of the fill object.
-   * If the fill object has no `color`, the bars keep the theme colors and draw the pattern or gradient with them.
+   * With a fill object, Recharts renders the definition with a unique ID, in the chart and in the Legend icon.
+   * Tooltip and labels use the solid `color` of the fill object.
+   * If the fill object has no `color`, the bars keep the theme colors and the definition gets the theme color.
    *
    * A custom `shape` always receives `fill` as a string.
    *
    * @example <Bar fill="blue" />
-   * @example <Bar fill={{ pattern: patterns.diagonal }} />
-   * @example <Bar fill={{ color: 'blue', gradient: gradients.fadeDown }} />
+   * @example <Bar fill={{ definition: pattern(patterns.diagonal) }} />
+   * @example <Bar fill={{ color: 'blue', definition: linearGradient(gradients.fadeDown) }} />
    *
    * @see {@link https://recharts.github.io/en-US/examples/BarChartWithPatternFill/ Bar chart with pattern and gradient fills}
    */
@@ -511,12 +512,12 @@ type InternalBarProps = {
    */
   themedActiveStyles?: Styles2D;
   /**
-   * The fill object from props, if the user set one with a pattern or a gradient.
+   * The fill object from props, if the user set one.
    * Then `fill` is its resolved base color, and the shapes paint with {@link paintFill}.
    */
   fillObject?: RechartsFill;
   /**
-   * `url(#…)` reference to the pattern or gradient of {@link fillObject}. Shapes get it as their `fill`.
+   * `url(#…)` reference to the definition of {@link fillObject}. Shapes get it as their `fill`.
    */
   paintFill?: string;
 };
@@ -548,7 +549,7 @@ const computeLegendPayloadFromBarData = (
       dataKey,
       type: legendType,
       color: fill,
-      fill: needsFillDefinition(fillObject) ? fillObject : undefined,
+      fill: fillObject,
       value: getTooltipNameProp(name, dataKey),
       payload: props,
     },
@@ -1126,14 +1127,14 @@ class BarWithState extends PureComponent<InternalProps> {
 
     const layerClass = clsx('recharts-bar', className);
     const clipPathId = id;
-    const hasFillDefinition = needsFillDefinition(fillObject);
+    const FillDefinition = fillObject?.definition;
 
     return (
       <Layer className={layerClass} id={id}>
-        {(needClip || hasFillDefinition) && (
+        {(needClip || FillDefinition != null) && (
           <defs>
             {needClip && <GraphicalItemClipPath clipPathId={clipPathId} xAxisId={xAxisId} yAxisId={yAxisId} />}
-            {hasFillDefinition && <FillDefinition id={getBarFillId(id)} fill={fillObject} color={fill} />}
+            {FillDefinition != null && <FillDefinition id={getBarFillId(id)} color={fill} />}
           </defs>
         )}
         <Layer className="recharts-bar-rectangles" clipPath={needClip ? `url(#clipPath-${clipPathId})` : undefined}>
@@ -1409,7 +1410,7 @@ export function computeBarRectangles({
 
 function BarFn(propsWithFillObject: Props) {
   const { fill: fillProp } = propsWithFillObject;
-  const fillObject = isRechartsFill(fillProp) ? fillProp : undefined;
+  const fillObject = typeof fillProp === 'string' ? undefined : fillProp;
   /*
    * From here on, `fill` is the base color. A fill object without `color` counts as no color of its own,
    * so the Bar keeps the theme fill and stroke, and draws the pattern or gradient with the theme fill.
@@ -1497,7 +1498,7 @@ function BarFn(propsWithFillObject: Props) {
                 unthemedColors={unthemedColors}
                 themedActiveStyles={themedActiveStyles}
                 fillObject={fillObject}
-                paintFill={needsFillDefinition(fillObject) ? getFillUrl(getBarFillId(id)) : undefined}
+                paintFill={fillObject == null ? undefined : getFillUrl(getBarFillId(id))}
               />
             </DataLabelThemeContextProvider>
           </ZIndexLayer>

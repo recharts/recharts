@@ -16,16 +16,11 @@ import { RequiresDefaultProps, resolveDefaultProps } from '../util/resolveDefaul
 import { RechartsTheme } from '../theme/RechartsTheme';
 import { useBackwardsCompatibleTheme } from '../theme/useBackwardsCompatibleTheme';
 import { RechartsFill } from '../fill/RechartsFill';
-import { FillDefinition, getFillUrl, needsFillDefinition } from '../fill/FillDefinition';
+import { getFillUrl, LegendIconSizeContext } from '../fill/fillDefinitions';
 import { useUniqueId } from '../util/useUniqueId';
 
 const SIZE = 32;
 
-/**
- * How many pattern tiles fit across a legend icon.
- * The icon is small, so a chart-sized tile would shrink to a blur.
- */
-const LEGEND_PATTERN_TILES = 3;
 export type ContentType = ReactElement | ((props: Props) => ReactNode);
 
 export type HorizontalAlignmentType = 'center' | 'left' | 'right';
@@ -55,9 +50,9 @@ export interface LegendPayload {
    */
   dot?: LegendPayloadDot;
   /**
-   * The fill object of the graphical item, if it paints its shapes with a pattern or a gradient.
-   * The `rect` icon, and the icons of filled symbols, draw the same pattern or gradient
-   * over the base color in `color`, or the same custom `definition`. Inactive items draw the plain inactive color.
+   * The fill object of the graphical item, if it paints its shapes with an SVG definition.
+   * The `rect` icon, and the icons of filled symbols, draw the same definition with the base color in `color`.
+   * Inactive items draw the plain inactive color.
    *
    * @since 3.11
    */
@@ -333,17 +328,20 @@ function Icon({
   }
 
   /*
-   * Filled icons paint with the pattern, gradient, or custom definition of the graphical item.
-   * The definition lives in this icon, so it is scaled to the icon and does not depend on IDs elsewhere in the page.
+   * Filled icons paint with the fill definition of the graphical item.
+   * The definition lives in this icon, so it does not depend on IDs elsewhere in the page.
+   * The context tells patterns to scale their tiles to the icon.
    */
   let areaFill = color;
   let fillDefinition: ReactNode = null;
-  if (needsFillDefinition(fillObject)) {
-    const tileScale = fillObject.pattern == null ? 1 : SIZE / LEGEND_PATTERN_TILES / fillObject.pattern.width;
+  if (fillObject != null) {
+    const FillDefinition = fillObject.definition;
     areaFill = getFillUrl(fillId);
     fillDefinition = (
       <defs>
-        <FillDefinition id={fillId} fill={fillObject} color={color} tileScale={tileScale} />
+        <LegendIconSizeContext.Provider value={SIZE}>
+          <FillDefinition id={fillId} color={color} />
+        </LegendIconSizeContext.Provider>
       </defs>
     );
   }
