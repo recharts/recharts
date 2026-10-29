@@ -4,7 +4,7 @@ import omit from 'es-toolkit/compat/omit';
 import get from 'es-toolkit/compat/get';
 
 import { Layer } from '../container/Layer';
-import { Label, LabelBackgroundAnimationContextProvider, Props as LabelProps } from '../component/Label';
+import { Label, Props as LabelProps } from '../component/Label';
 import { Surface } from '../container/Surface';
 import { Polygon } from '../shape/Polygon';
 import { Rectangle } from '../shape/Rectangle';
@@ -791,86 +791,35 @@ function TreemapLabelListProvider({
   );
 }
 
-const TreemapConfiguredLabelContext = createContext<
-  | {
-      entries: ReadonlyArray<TreemapLabelListEntry>;
-      animation: Pick<
-        InternalTreemapProps,
-        'isAnimationActive' | 'animationBegin' | 'animationDuration' | 'animationEasing'
-      >;
-    }
-  | undefined
->(undefined);
-
-function TreemapAnimatedLayer({
-  children,
-  originX,
-  originY,
-  style,
-  ...props
-}: React.ComponentProps<typeof Layer> & { originX: number; originY: number }) {
-  const animatedStyle = useMemo(
-    () => ({ ...style, transformOrigin: `${originX} ${originY}` }),
-    [style, originX, originY],
-  );
-  const backgroundAnimation = useMemo(
-    () => ({ translate: style?.translate, transition: style?.transition }),
-    [style?.translate, style?.transition],
-  );
-  return (
-    <Layer {...props} style={animatedStyle}>
-      <LabelBackgroundAnimationContextProvider value={backgroundAnimation}>
-        {children}
-      </LabelBackgroundAnimationContextProvider>
-    </Layer>
-  );
-}
+const TreemapConfiguredLabelContext = createContext<ReadonlyArray<TreemapLabelListEntry> | undefined>(undefined);
 
 /**
- * Renders a resolved LabelList entry with its tile's animation and chart interactions.
+ * Renders a resolved LabelList entry with chart interactions, without label animation.
  * LabelList supplies the original content and resolved theme props without cloning its children.
  */
 function TreemapConfiguredLabel(props: LabelProps) {
-  const context = useContext(TreemapConfiguredLabelContext);
-  const entry = props.index == null ? undefined : context?.entries[props.index];
-  if (context == null || entry == null) {
+  const entries = useContext(TreemapConfiguredLabelContext);
+  const entry = props.index == null ? undefined : entries?.[props.index];
+  if (entry == null) {
     return null;
   }
-  const { animation } = context;
-  const { x, width, y } = entry.payload;
 
   return (
-    <CSSTransitionAnimate
-      animationId={`treemap-${entry.payload.tooltipIndex}`}
-      from={`${-x - width}px 0px`}
-      to="0px 0px"
-      attributeName="translate"
-      begin={animation.animationBegin}
-      easing={extractCssEasing(animation.animationEasing)}
-      isActive={animation.isAnimationActive}
-      duration={animation.animationDuration}
+    <Layer
+      className="recharts-treemap-configured-label"
+      onMouseEnter={entry.onMouseEnter}
+      onMouseLeave={entry.onMouseLeave}
+      onClick={entry.onClick}
+      data-recharts-item-index={entry.payload.tooltipIndex}
     >
-      {style => (
-        <TreemapAnimatedLayer
-          className="recharts-treemap-configured-label"
-          style={style}
-          originX={x}
-          originY={y}
-          onMouseEnter={entry.onMouseEnter}
-          onMouseLeave={entry.onMouseLeave}
-          onClick={entry.onClick}
-          data-recharts-item-index={entry.payload.tooltipIndex}
-        >
-          <Label
-            {...props}
-            onMouseEnter={props.onMouseEnter === entry.onMouseEnter ? undefined : props.onMouseEnter}
-            onMouseLeave={props.onMouseLeave === entry.onMouseLeave ? undefined : props.onMouseLeave}
-            onClick={props.onClick === entry.onClick ? undefined : props.onClick}
-            zIndex={0}
-          />
-        </TreemapAnimatedLayer>
-      )}
-    </CSSTransitionAnimate>
+      <Label
+        {...props}
+        onMouseEnter={props.onMouseEnter === entry.onMouseEnter ? undefined : props.onMouseEnter}
+        onMouseLeave={props.onMouseLeave === entry.onMouseLeave ? undefined : props.onMouseLeave}
+        onClick={props.onClick === entry.onClick ? undefined : props.onClick}
+        zIndex={0}
+      />
+    </Layer>
   );
 }
 
@@ -880,22 +829,19 @@ function TreemapConfiguredLabel(props: LabelProps) {
  */
 function TreemapConfiguredLabelsProvider({
   entries,
-  animation,
   label,
   registerLabelList,
   children,
 }: {
   entries: ReadonlyArray<TreemapLabelListEntry>;
-  animation: InternalTreemapProps;
   label: ImplicitLabelListType | undefined;
   registerLabelList: () => () => void;
   children: ReactNode;
 }) {
-  const value = useMemo(() => ({ entries, animation }), [entries, animation]);
   const settings = useMemo(() => ({ LabelComponent: TreemapConfiguredLabel, registerLabelList }), [registerLabelList]);
   const implicitSettings = useMemo(() => ({ LabelComponent: TreemapConfiguredLabel }), []);
   return (
-    <TreemapConfiguredLabelContext.Provider value={value}>
+    <TreemapConfiguredLabelContext.Provider value={entries}>
       <LabelListSettingsContextProvider value={implicitSettings}>
         <LabelListFromLabelProp label={label === true ? false : label} />
       </LabelListSettingsContextProvider>
@@ -1215,7 +1161,6 @@ function TreemapItem({
   isLeaf,
   treemapProps,
   onNestClick,
-  defaultLabel,
 }: {
   content: TreemapContentType;
   nodeProps: TreemapNode;
@@ -1224,7 +1169,6 @@ function TreemapItem({
   isLeaf: boolean;
   treemapProps: InternalTreemapProps;
   onNestClick: (node: TreemapNode) => void;
-  defaultLabel: ReactNode;
 }): ReactNode {
   const {
     id,
@@ -1306,14 +1250,7 @@ function TreemapItem({
       onAnimationEnd={handleAnimationEnd}
     >
       {style => (
-        <TreemapAnimatedLayer
-          onMouseEnter={onMouseEnter}
-          onMouseLeave={onMouseLeave}
-          onClick={onClick}
-          style={style}
-          originX={x}
-          originY={y}
-        >
+        <Layer onMouseEnter={onMouseEnter} onMouseLeave={onMouseLeave} onClick={onClick} style={style}>
           <ContentItemWithEvents
             id={id}
             content={content}
@@ -1326,8 +1263,7 @@ function TreemapItem({
             themeGraphicalItems={themeGraphicalItems}
             themePageBackground={themePageBackground}
           />
-          {defaultLabel}
-        </TreemapAnimatedLayer>
+        </Layer>
       )}
     </CSSTransitionAnimate>
   );
@@ -1350,7 +1286,6 @@ function TreemapNodeItem({
   branchIndex,
   treemapProps,
   onNestClick,
-  onLabelMouseEnter,
 }: {
   node: TreemapNode;
   root: TreemapNode;
@@ -1358,25 +1293,12 @@ function TreemapNodeItem({
   branchIndex: number | undefined;
   treemapProps: InternalTreemapProps;
   onNestClick: (node: TreemapNode) => void;
-  onLabelMouseEnter: (node: TreemapNode, event: React.MouseEvent<SVGGraphicsElement>, notify?: boolean) => void;
 }) {
   const nodeProps = useMemo(
     () => ({ ...svgPropertiesNoEvents(treemapProps), ...node, root }),
     [treemapProps, node, root],
   );
-  const defaultEntries = useMemo(
-    () =>
-      entry == null
-        ? []
-        : [
-            {
-              ...entry,
-              onMouseEnter: (event: React.MouseEvent<SVGGraphicsElement>) => onLabelMouseEnter(nodeProps, event, false),
-              onMouseLeave: noop,
-            },
-          ],
-    [entry, nodeProps, onLabelMouseEnter],
-  );
+  const defaultEntries = useMemo(() => (entry == null ? [] : [entry]), [entry]);
   const { content, themeGraphicalItems, typography } = treemapProps;
   const defaultLabel =
     entry == null ? null : (
@@ -1397,16 +1319,18 @@ function TreemapNodeItem({
       </LabelListSettingsContextProvider>
     );
   return (
-    <TreemapItem
-      isLeaf={!node.children || !node.children.length}
-      content={content}
-      nodeProps={nodeProps}
-      nodeHasOwnColors={hasOwnColors(node) || hasOwnColors(treemapProps)}
-      branchIndex={branchIndex}
-      treemapProps={treemapProps}
-      onNestClick={onNestClick}
-      defaultLabel={defaultLabel}
-    />
+    <>
+      <TreemapItem
+        isLeaf={!node.children || !node.children.length}
+        content={content}
+        nodeProps={nodeProps}
+        nodeHasOwnColors={hasOwnColors(node) || hasOwnColors(treemapProps)}
+        branchIndex={branchIndex}
+        treemapProps={treemapProps}
+        onNestClick={onNestClick}
+      />
+      {defaultLabel}
+    </>
   );
 }
 
@@ -1566,7 +1490,6 @@ class TreemapWithState extends PureComponent<InternalTreemapProps, State> {
           branchIndex={branchIndex}
           treemapProps={this.props}
           onNestClick={this.handleClick}
-          onLabelMouseEnter={this.handleLabelMouseEnter}
         />
         {node.children && node.children.length
           ? node.children.map((child: TreemapNode) => this.renderNode(node, child, branchIndex, defaultLabels))
@@ -1575,7 +1498,7 @@ class TreemapWithState extends PureComponent<InternalTreemapProps, State> {
     );
   }
 
-  handleLabelMouseEnter = (node: TreemapNode, event: React.MouseEvent<SVGGraphicsElement>, notify = true) => {
+  handleLabelMouseEnter = (node: TreemapNode, event: React.MouseEvent<SVGGraphicsElement>) => {
     const { dispatch, dataKey, id, type, onMouseEnter } = this.props;
     dispatch(
       setActiveMouseOverItemIndex({
@@ -1585,7 +1508,7 @@ class TreemapWithState extends PureComponent<InternalTreemapProps, State> {
         activeGraphicalItemId: id,
       }),
     );
-    if (notify && (!node.children?.length || type === 'nest')) {
+    if (!node.children?.length || type === 'nest') {
       onMouseEnter?.(node, event);
     }
   };
@@ -1801,7 +1724,6 @@ class TreemapWithState extends PureComponent<InternalTreemapProps, State> {
             <TreemapLabelListProvider entries={entries} graphicalItems={themeGraphicalItems}>
               <TreemapConfiguredLabelsProvider
                 entries={entries}
-                animation={this.props}
                 label={label}
                 registerLabelList={this.registerLabelList}
               >

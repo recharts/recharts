@@ -1438,7 +1438,7 @@ describe('<Treemap /> label rendering boundaries', () => {
     expect(parent.compareDocumentPosition(childTile) & Node.DOCUMENT_POSITION_FOLLOWING).not.toBe(0);
   });
 
-  it('puts default labels inside the same animated layer as their tile', () => {
+  it('keeps default labels outside the animated tile layer', () => {
     const { container } = render(
       <Treemap {...props} data={[{ name: 'Leaf', value: 100 }]} isAnimationActive animationBegin={1000} />,
     );
@@ -1448,7 +1448,7 @@ describe('<Treemap /> label rendering boundaries', () => {
     assertNotNull(tile);
     const animatedLayer = tile.parentElement?.parentElement;
     assertNotNull(animatedLayer);
-    expect(animatedLayer.contains(label)).toBe(true);
+    expect(animatedLayer.contains(label)).toBe(false);
     expect(animatedLayer.getAttribute('style')).toContain('translate: -400px 0px');
   });
 
@@ -1506,7 +1506,7 @@ describe('<Treemap /> label rendering boundaries', () => {
     expect(chartClick).toHaveBeenCalledTimes(1);
   });
 
-  it('animates explicitly configured labels in their overlay layer', () => {
+  it('does not animate explicitly configured labels while tiles animate', () => {
     const { container } = render(
       <Treemap {...props} data={[{ name: 'Leaf', value: 100 }]} isAnimationActive animationBegin={1000}>
         <LabelList dataKey="name" />
@@ -1514,12 +1514,15 @@ describe('<Treemap /> label rendering boundaries', () => {
     );
     const layer = container.querySelector('.recharts-treemap-configured-label');
     assertNotNull(layer);
-    expect(layer.getAttribute('style')).toContain('translate: -400px 0px');
+    expect(layer.getAttribute('style')).toBeNull();
     expect(layer.textContent).toBe('Leaf');
+    const tile = container.querySelector('.recharts-treemap-depth-1 .recharts-rectangle');
+    assertNotNull(tile);
+    expect(tile.parentElement?.parentElement?.getAttribute('style')).toContain('translate: -400px 0px');
   });
 });
 
-describe('<Treemap /> label background animation regressions', () => {
+describe('<Treemap /> static label background regressions', () => {
   const props = {
     width: 400,
     height: 250,
@@ -1551,7 +1554,7 @@ describe('<Treemap /> label background animation regressions', () => {
     }
   });
 
-  it.each(['implicit', 'explicit'])('moves a portaled %s label background with its text', kind => {
+  it.each(['implicit', 'explicit'])('keeps a portaled %s label background and text static', kind => {
     const { container } = render(
       <Treemap {...props} label={kind === 'implicit' ? labelSettings : false}>
         {kind === 'explicit' ? <LabelList {...labelSettings} /> : null}
@@ -1565,9 +1568,10 @@ describe('<Treemap /> label background animation regressions', () => {
     assertNotNull(text);
     expect(layer.contains(text)).toBe(true);
     expect(layer.contains(background)).toBe(false);
-    expect(layer.style.translate).toBe('-400px 0px');
-    expect(background.style.translate).toBe(layer.style.translate);
-    expect(background.style.transition).toBe(layer.style.transition);
+    expect(layer.style.translate).toBe('');
+    expect(layer.style.transition).toBe('');
+    expect(background.style.translate).toBe('');
+    expect(background.style.transition).toBe('');
     expect(background.style.opacity).toBe('0.75');
     expect(background.getAttribute('fill')).toBe('white');
     expect(background.getAttribute('stroke')).toBe('black');
@@ -1575,7 +1579,7 @@ describe('<Treemap /> label background animation regressions', () => {
     expect(background.getAttribute('transform')).toBe(text.getAttribute('transform'));
   });
 
-  it('does not translate an inline background twice', () => {
+  it('keeps an inline background static', () => {
     const { container } = render(
       <Treemap {...props} label={false}>
         <LabelList {...labelSettings} zIndex={0} />
@@ -1585,12 +1589,12 @@ describe('<Treemap /> label background animation regressions', () => {
     const background = container.querySelector<SVGRectElement>('.recharts-text-background');
     assertNotNull(layer);
     assertNotNull(background);
-    expect(layer.style.translate).toBe('-400px 0px');
+    expect(layer.style.translate).toBe('');
     expect(layer.contains(background)).toBe(true);
     expect(background.style.translate).toBe('');
   });
 
-  it('retains an explicit background zIndex while synchronizing translation', () => {
+  it('retains an explicit background zIndex without animation', () => {
     const { container } = render(
       <Treemap {...props} label={{ position: 'inside', background: { zIndex: 500, fill: 'white' } }} />,
     );
@@ -1599,10 +1603,10 @@ describe('<Treemap /> label background animation regressions', () => {
     assertNotNull(background);
     assertNotNull(layer);
     expect(background.style.translate).toBe(layer.style.translate);
-    expect(background.style.translate).toBe('-400px 0px');
+    expect(background.style.translate).toBe('');
   });
 
-  it('synchronizes backgrounds enabled by a graphical-item theme', () => {
+  it('keeps backgrounds enabled by a graphical-item theme static', () => {
     const { container } = render(
       <RechartsThemeProvider value={{ graphicalItems: [{ fill: 'navy', label: { background: true } }] }}>
         <Treemap {...props} label={{ position: 'inside' }} />
@@ -1613,10 +1617,10 @@ describe('<Treemap /> label background animation regressions', () => {
     assertNotNull(background);
     assertNotNull(layer);
     expect(background.style.translate).toBe(layer.style.translate);
-    expect(background.style.translate).toBe('-400px 0px');
+    expect(background.style.translate).toBe('');
   });
 
-  it('synchronizes default-label backgrounds with an explicit themed zIndex', () => {
+  it('keeps default-label backgrounds static with an explicit themed zIndex', () => {
     const { container } = render(
       <RechartsThemeProvider value={{ graphicalItems: [{ fill: 'navy', label: { background: { zIndex: 500 } } }] }}>
         <Treemap {...props} />
@@ -1624,17 +1628,17 @@ describe('<Treemap /> label background animation regressions', () => {
     );
     const background = container.querySelector<SVGRectElement>('.recharts-zIndex-layer_500 .recharts-text-background');
     assertNotNull(background);
-    expect(background.style.translate).toBe('-400px 0px');
+    expect(background.style.translate).toBe('');
   });
 
-  it('removes the background translation when animation is disabled', () => {
+  it('keeps labels static when tile animation is disabled', () => {
     const { container, rerender } = render(<Treemap {...props} label={labelSettings} />);
     rerender(<Treemap {...props} label={labelSettings} isAnimationActive={false} />);
     const background = container.querySelector<SVGRectElement>('.recharts-text-background');
     const layer = container.querySelector<SVGGElement>('.recharts-treemap-configured-label');
     assertNotNull(background);
     assertNotNull(layer);
-    expect(layer.style.translate).toBe('0px 0px');
+    expect(layer.style.translate).toBe('');
     expect(background.style.translate).toBe(layer.style.translate);
     expect(background.style.transition).toBe('');
   });
@@ -1797,7 +1801,7 @@ describe('<Treemap /> LabelList registration', () => {
     expect(readLabels(container)).toEqual(['Wrapped: 100', 'Wrapped: 100']);
     const layers = container.querySelectorAll<SVGGElement>('.recharts-treemap-configured-label');
     expect(layers).toHaveLength(2);
-    expect(layers[0].style.translate).not.toBe('');
+    expect(layers[0].style.translate).toBe('');
     expect(container.querySelectorAll('.recharts-rectangle')).toHaveLength(3);
   });
 
