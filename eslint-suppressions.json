@@ -1870,11 +1870,6 @@
       "count": 3
     }
   },
-  "www/src/docs/exampleComponents/LabelList/LabelListChartExample.tsx": {
-    "react-perf/jsx-no-new-object-as-prop": {
-      "count": 3
-    }
-  },
   "www/src/docs/exampleComponents/Legend/LegendEffectOpacity.tsx": {
     "@typescript-eslint/no-explicit-any": {
       "count": 1
