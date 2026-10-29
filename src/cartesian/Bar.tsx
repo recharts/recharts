@@ -8,6 +8,7 @@ import {
   ReactNode,
   useCallback,
   useEffect,
+  useMemo,
   useRef,
   useState,
 } from 'react';
@@ -105,6 +106,7 @@ import {
   useUnthemedColors,
 } from '../theme/dataEntryStyles';
 import { getActiveStyleOverrides, useThemedActiveStyles } from '../theme/activeStyles';
+import { useRechartsTheme } from '../theme/RechartsThemeContext';
 import { RechartsFill } from '../fill/RechartsFill';
 import { getFillUrl } from '../fill/fillDefinitions';
 import {
@@ -1425,6 +1427,16 @@ function BarFn(propsWithFillObject: Props) {
     yAxisId: outsideProps.yAxisId ?? defaultBarProps.yAxisId,
   });
   const graphicalItemThemeSelector = useGraphicalItemIdentity(dataKey, outsideProps);
+  /*
+   * The Bar's own fill object wins. Without one, the theme entry can give a fill definition.
+   * The selector leaves it out when the Bar sets its own colors.
+   */
+  const theme = useRechartsTheme();
+  const themeFillDefinition = theme == null ? undefined : graphicalItemThemeSelector(theme)?.fillDefinition;
+  const effectiveFillObject: RechartsFill | undefined = useMemo(
+    () => fillObject ?? (themeFillDefinition == null ? undefined : { definition: themeFillDefinition }),
+    [fillObject, themeFillDefinition],
+  );
   const resolveLabelTheme = useSeriesLabelThemeResolver(graphicalItemThemeSelector);
   const unthemedColors = useUnthemedColors(outsideProps);
   const themedActiveStyles = useThemedActiveStyles(graphicalItemThemeSelector, outsideProps);
@@ -1458,7 +1470,9 @@ function BarFn(propsWithFillObject: Props) {
     <RegisterGraphicalItemId id={props.id} type="bar">
       {id => (
         <>
-          <SetLegendPayload legendPayload={computeLegendPayloadFromBarData({ ...props, ...themedProps }, fillObject)} />
+          <SetLegendPayload
+            legendPayload={computeLegendPayloadFromBarData({ ...props, ...themedProps }, effectiveFillObject)}
+          />
           <SetBarTooltipEntrySettings
             dataKey={props.dataKey}
             stroke={themedProps.stroke ?? props.stroke}
@@ -1497,8 +1511,8 @@ function BarFn(propsWithFillObject: Props) {
                 id={id}
                 unthemedColors={unthemedColors}
                 themedActiveStyles={themedActiveStyles}
-                fillObject={fillObject}
-                paintFill={fillObject == null ? undefined : getFillUrl(getBarFillId(id))}
+                fillObject={effectiveFillObject}
+                paintFill={effectiveFillObject == null ? undefined : getFillUrl(getBarFillId(id))}
               />
             </DataLabelThemeContextProvider>
           </ZIndexLayer>
