@@ -1,0 +1,1 @@
+function*c(e){let t=e;for(t>0&&t<1&&(t=Math.round(t*1e3));t<0;)t+=65537;for(;;)t=(75*t+74)%65537,yield Math.round(t)}function r(e,n,a){return e.next().value%(a-n)+n}function l(e,n){const a=[],o=c(n);for(let t=0;t<e;t++)a.push({label:`Iter: ${t}`,x:r(o,100,300),y:r(o,400,800),z:r(o,1e3,2e3)});return a}export{r as b,l as g,c as r};
