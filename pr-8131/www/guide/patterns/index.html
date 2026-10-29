@@ -1,0 +1,310 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <title>Recharts</title>
+    <meta charset="utf-8" />
+    <meta name="description" content="Recharts - Re-designed charting library built with React and D3." />
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5" />
+    <script>
+      /**
+       * @note this is duplicated in defineColorModeStore.ts, to avoid FOUC on initial load. Please keep in sync.
+       */
+      (function () {
+        try {
+          var storedMode = localStorage.getItem('recharts-color-mode');
+          var mode =
+            storedMode === 'light' || storedMode === 'dark'
+              ? storedMode
+              : window.matchMedia('(prefers-color-scheme: dark)').matches
+                ? 'dark'
+                : 'light';
+          document.documentElement.setAttribute('data-mode', mode);
+        } catch (e) {
+          // Do nothing
+        }
+      })();
+    </script>
+    <link
+      href="//fonts.googleapis.com/css?family=Source+Sans+Pro:400,600|Roboto Mono|Oswald:300"
+      rel="stylesheet"
+      type="text/css"
+    />
+    <script type="module" crossorigin src="/recharts/pr-8131/www/assets/index-B5vcMEJC.js"></script>
+    <link rel="stylesheet" crossorigin href="/recharts/pr-8131/www/assets/index-BpWzJu9V.css">
+    <link rel="sitemap" type="application/xml" title="Sitemap" href="/sitemap.xml">
+  </head>
+  <body>
+    <div id="app"><div class="container"><header><a class="logo" href="/en-US/" data-discover="true"><div width="200" height="60" class="recharts-wrapper" style="position:relative;cursor:default;width:200px;height:60px"></div></a><nav class="desktop-only"><ul class="navigation-items"><li><a class="" href="/en-US/guide/" data-discover="true">Guide</a></li><li><a class="" href="/en-US/api/" data-discover="true">API</a></li><li><a class="" href="/en-US/examples/" data-discover="true">Examples</a></li><li><a class="" href="/en-US/storybook/" data-discover="true">Storybook</a></li><li><a href="https://github.com/recharts/recharts/wiki" target="_blank" rel="noopener noreferrer" style="white-space:nowrap;display:inline-flex;align-items:center;gap:0.25rem">Wiki<svg stroke="currentColor" fill="none" stroke-width="2" viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round" height="1em" width="1em" xmlns="http://www.w3.org/2000/svg"><path d="M15 3h6v6"></path><path d="M10 14 21 3"></path><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path></svg></a></li><li><a href="https://github.com/recharts/recharts" target="_blank" rel="noopener noreferrer" style="white-space:nowrap;display:inline-flex;align-items:center;gap:0.25rem">GitHub<svg stroke="currentColor" fill="none" stroke-width="2" viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round" height="1em" width="1em" xmlns="http://www.w3.org/2000/svg"><path d="M15 3h6v6"></path><path d="M10 14 21 3"></path><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path></svg></a></li><li><a href="https://www.npmjs.com/package/recharts" target="_blank" rel="noopener noreferrer" style="white-space:nowrap;display:inline-flex;align-items:center;gap:0.25rem">npm<svg stroke="currentColor" fill="none" stroke-width="2" viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round" height="1em" width="1em" xmlns="http://www.w3.org/2000/svg"><path d="M15 3h6v6"></path><path d="M10 14 21 3"></path><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path></svg></a></li><li><a href="https://github.com/recharts/recharts/wiki/3.0-migration-guide" target="_blank" rel="noopener noreferrer" style="white-space:nowrap;display:inline-flex;align-items:center;gap:0.25rem">3.0 migration guide<svg stroke="currentColor" fill="none" stroke-width="2" viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round" height="1em" width="1em" xmlns="http://www.w3.org/2000/svg"><path d="M15 3h6v6"></path><path d="M10 14 21 3"></path><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path></svg></a></li></ul><div class="nav-actions"><span class="no-wrap"><span><span class="switch-item active">En</span></span><span><span>  |  </span><a class="switch-item" href="/zh-CN/" data-discover="true">中文</a></span></span><button class="_ColorModePicker_1b4l5_1" type="button" aria-label="system"><svg stroke="currentColor" fill="none" stroke-width="2" viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round" height="1em" width="1em" xmlns="http://www.w3.org/2000/svg"><rect width="20" height="14" x="2" y="3" rx="2"></rect><line x1="8" x2="16" y1="21" y2="21"></line><line x1="12" x2="12" y1="17" y2="21"></line></svg></button></div></nav><nav class="mobile-only"><button type="button" class="mobile-nav-toggle mobile-only" aria-label="Toggle navigation"><span>Menu</span><div width="3rem" height="3rem" class="recharts-wrapper" style="position:relative;cursor:pointer;height:3rem;width:3rem"></div></button><div class="mobile-nav-backdrop " aria-hidden="true"></div><div class="slide-right-mobile-nav "><ul class="navigation-items"><li class="collapsible "><button type="button" class="collapsible-trigger"><span>Guide</span><div width="3rem" height="3rem" class="recharts-wrapper" style="position:relative;cursor:default;height:3rem;width:3rem"></div></button></li><li class="collapsible "><button type="button" class="collapsible-trigger"><span>API</span><div width="3rem" height="3rem" class="recharts-wrapper" style="position:relative;cursor:default;height:3rem;width:3rem"></div></button></li><li class="collapsible "><button type="button" class="collapsible-trigger"><span>Examples</span><div width="3rem" height="3rem" class="recharts-wrapper" style="position:relative;cursor:default;height:3rem;width:3rem"></div></button></li><li><a class="" href="/en-US/storybook/" data-discover="true">Storybook</a></li><li><a href="https://github.com/recharts/recharts/wiki" target="_blank" rel="noopener noreferrer" style="white-space:nowrap;display:inline-flex;align-items:center;gap:0.25rem">Wiki<svg stroke="currentColor" fill="none" stroke-width="2" viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round" height="1em" width="1em" xmlns="http://www.w3.org/2000/svg"><path d="M15 3h6v6"></path><path d="M10 14 21 3"></path><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path></svg></a></li><li><a href="https://github.com/recharts/recharts" target="_blank" rel="noopener noreferrer" style="white-space:nowrap;display:inline-flex;align-items:center;gap:0.25rem">GitHub<svg stroke="currentColor" fill="none" stroke-width="2" viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round" height="1em" width="1em" xmlns="http://www.w3.org/2000/svg"><path d="M15 3h6v6"></path><path d="M10 14 21 3"></path><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path></svg></a></li><li><a href="https://www.npmjs.com/package/recharts" target="_blank" rel="noopener noreferrer" style="white-space:nowrap;display:inline-flex;align-items:center;gap:0.25rem">npm<svg stroke="currentColor" fill="none" stroke-width="2" viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round" height="1em" width="1em" xmlns="http://www.w3.org/2000/svg"><path d="M15 3h6v6"></path><path d="M10 14 21 3"></path><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path></svg></a></li><li><a href="https://github.com/recharts/recharts/wiki/3.0-migration-guide" target="_blank" rel="noopener noreferrer" style="white-space:nowrap;display:inline-flex;align-items:center;gap:0.25rem">3.0 migration guide<svg stroke="currentColor" fill="none" stroke-width="2" viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round" height="1em" width="1em" xmlns="http://www.w3.org/2000/svg"><path d="M15 3h6v6"></path><path d="M10 14 21 3"></path><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path></svg></a></li></ul><div class="nav-actions"><span class="no-wrap"><span><span class="switch-item active">En</span></span><span><span>  |  </span><a class="switch-item" href="/zh-CN/" data-discover="true">中文</a></span></span><button class="_ColorModePicker_1b4l5_1" type="button" aria-label="system"><svg stroke="currentColor" fill="none" stroke-width="2" viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round" height="1em" width="1em" xmlns="http://www.w3.org/2000/svg"><rect width="20" height="14" x="2" y="3" rx="2"></rect><line x1="8" x2="16" y1="21" y2="21"></line><line x1="12" x2="12" y1="17" y2="21"></line></svg></button></div></div></nav></header><div class="sidebar desktop-only"><h2>Guide</h2><div class="sidebar-cate"><ul class="menu"><li><a class="" href="/en-US/guide/installation/" data-discover="true">Installation</a></li><li><a class="" href="/en-US/guide/getting-started/" data-discover="true">Getting Started</a></li><li><a class="" href="/en-US/guide/customize/" data-discover="true">Customize</a></li><li><a class="" href="/en-US/guide/activeIndex/" data-discover="true">Active Index</a></li><li><a class="" href="/en-US/guide/domainAndTicks/" data-discover="true">Domain and Ticks</a></li><li><a class="" href="/en-US/guide/axisTicks/" data-discover="true">Axis ticks</a></li><li><a class="" href="/en-US/guide/sizes/" data-discover="true">Chart size</a></li><li><a class="" href="/en-US/guide/zIndex/" data-discover="true">Z-Index and layers</a></li><li><a class="" href="/en-US/guide/coordinateSystems/" data-discover="true">Coordinate and dimension systems</a></li><li><a class="" href="/en-US/guide/performance/" data-discover="true">Performance</a></li><li><a class="" href="/en-US/guide/roundedBars/" data-discover="true">Rounded Bar corners</a></li><li><a class="" href="/en-US/guide/barAlignment/" data-discover="true">Bar Alignment</a></li><li><a class="" href="/en-US/guide/cell/" data-discover="true">Migrate from Cell component to shape prop</a></li><li><a class="" href="/en-US/guide/typescript/" data-discover="true">TypeScript</a></li><li><a class="" href="/en-US/guide/animations/" data-discover="true">Animation</a></li><li><a class="" href="/en-US/guide/theming/" data-discover="true">Theming</a></li><li><a class="" href="/en-US/guide/theme-color-testing/" data-discover="true">Theme color testing</a></li><li><a class="" href="/en-US/guide/label-colors/" data-discover="true">Label colors</a></li><li><a class="" href="/en-US/guide/patterns/" data-discover="true">Patterns and gradients</a></li></ul></div></div><main><div class="page page-guide"><div class="content"><article><h1>Patterns and gradients</h1><p>Most charts tell their series apart by color alone. That leaves out people who see colors differently, and anyone looking at a printout in black and white. The<!-- --> <a href="https://www.w3.org/WAI/WCAG22/Understanding/use-of-color.html">WCAG success criterion 1.4.1</a> asks for a second way. Patterns are that second way: stripes, dots, or shapes drawn over the color of the series.</p><p>Wherever Recharts accepts a <code>fill</code> color for a shape that fills an area, it also accepts a fill object. A fill object has a solid <code>color</code>, and a <code>definition</code> that paints the shapes, such as a pattern or a gradient.</p><div class="codemirror-example-editor snippet" style="height:100%;overflow:auto"><pre>import { pattern, patterns } from &#x27;recharts&#x27;;
+
+// A color, the same as always
+&lt;Bar dataKey=&quot;uv&quot; fill=&quot;#8884d8&quot; /&gt;
+
+// A fill object: a solid color, and a definition that paints the shapes
+&lt;Bar dataKey=&quot;uv&quot; fill={{ color: &#x27;#8884d8&#x27;, definition: pattern(patterns.diagonal) }} /&gt;
+
+// Without a color, the Bar keeps its theme color
+&lt;Bar dataKey=&quot;uv&quot; fill={{ definition: pattern(patterns.diagonal) }} /&gt;</pre><div></div></div><p>Recharts renders the definition in SVG <code>&lt;defs&gt;</code> with a unique ID, and paints the shapes with it. You never write <code>url(#…)</code> or manage IDs yourself. Everything that needs a plain color uses the<!-- --> <code>color</code>: the Tooltip, the Legend text, and the labels. The Legend icon draws the same pattern.</p><p>If the fill object has no <code>color</code>, the shapes keep their color from the<!-- --> <a href="/en-US/guide/theming" data-discover="true">theme</a>, and the pattern is drawn in that color. The texture of the built-in patterns is drawn in the <code>pageBackground</code> color of the theme, so it looks cut out of the shape in light and dark mode alike.</p><h2>Built-in patterns</h2><p><a href="/en-US/api/patterns" data-discover="true">patterns</a> holds the built-in patterns, and <a href="/en-US/api/pattern" data-discover="true">pattern</a> turns one into a definition. The stripes and grids come first, then the same shapes as the <a href="/en-US/api/Symbols" data-discover="true">Symbols</a> in the Legend and in Scatter, two per tile in staggered rows. <code>dots</code> is the same pattern as<!-- --> <code>circle</code>.</p><div width="100%" class="recharts-wrapper" style="position:relative;cursor:default;width:100%;max-width:700px;max-height:70vh;aspect-ratio:1.618"></div><div class="codemirror-wrapper "><div id="codemirror-container"><div class="codemirror-toolbar"><select class="codemirror-toolbar-item" style="padding-right:12px"><option value="source" selected="">Source code</option><option value="devtools">Hook inspector</option><option value="annotations">Annotations</option><option value="controls">Controls</option></select><button class="codemirror-toolbar-item" type="button"><svg class="recharts-surface" width="16" height="16" viewBox="0 0 16 16"><title></title><desc></desc><path fill="none" stroke="var(--color-text-1)" stroke-width="1" width="10" height="10" x="1" y="1" radius="2" class="recharts-rectangle" d="M 1,3
+            A 2,2,0,0,1,3,1
+            L 9,1
+            A 2,2,0,0,1,11,3
+            L 11,9
+            A 2,2,0,0,1,9,11
+            L 3,11
+            A 2,2,0,0,1,1,9 Z" style="stroke-dasharray:0px 1px"></path><path fill="none" stroke="var(--color-text-1)" stroke-width="1" width="10" height="10" x="5" y="5" radius="2" class="recharts-rectangle" d="M 5,7
+            A 2,2,0,0,1,7,5
+            L 13,5
+            A 2,2,0,0,1,15,7
+            L 15,13
+            A 2,2,0,0,1,13,15
+            L 7,15
+            A 2,2,0,0,1,5,13 Z" style="stroke-dasharray:0px 1px"></path></svg>Copy to clipboard</button><button type="button" class="codemirror-toolbar-item"><svg stroke="currentColor" fill="none" stroke-width="2" viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round" height="1em" width="1em" xmlns="http://www.w3.org/2000/svg"><path d="M21.174 6.812a1 1 0 0 0-3.986-3.987L3.842 16.174a2 2 0 0 0-.5.83l-1.321 4.352a.5.5 0 0 0 .623.622l4.353-1.32a2 2 0 0 0 .83-.497z"></path><path d="m15 5 4 4"></path></svg><span>Edit</span></button><button type="button" class="codemirror-toolbar-item"><svg stroke="currentColor" fill="none" stroke-width="2" viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round" height="1em" width="1em" xmlns="http://www.w3.org/2000/svg"><circle cx="18" cy="5" r="3"></circle><circle cx="6" cy="12" r="3"></circle><circle cx="18" cy="19" r="3"></circle><line x1="8.59" x2="15.42" y1="13.51" y2="17.49"></line><line x1="15.41" x2="8.59" y1="6.51" y2="10.49"></line></svg><span>Open in StackBlitz</span></button></div><div style="height:100%;display:block;overflow:hidden"><div class="codemirror-example-editor tsx" style="height:100%;overflow:auto"><pre>import { Bar, BarChart, RechartsFill, XAxis, YAxis, pattern, patterns } from &#x27;recharts&#x27;;
+import { RechartsDevtools } from &#x27;@recharts/devtools&#x27;;
+
+/*
+ * One bar for each built-in pattern. Each data entry sets its own fill object,
+ * and none of them sets a color, so every bar keeps the theme color of the series.
+ */
+const names: ReadonlyArray&lt;keyof typeof patterns&gt; = [
+  &#x27;diagonal&#x27;,
+  &#x27;crosshatch&#x27;,
+  &#x27;horizontal&#x27;,
+  &#x27;vertical&#x27;,
+  &#x27;grid&#x27;,
+  &#x27;zigzag&#x27;,
+  &#x27;circle&#x27;,
+  &#x27;cross&#x27;,
+  &#x27;diamond&#x27;,
+  &#x27;square&#x27;,
+  &#x27;star&#x27;,
+  &#x27;triangle&#x27;,
+  &#x27;wye&#x27;,
+];
+
+const data = names.map(name =&gt; {
+  const fill: RechartsFill = { definition: pattern(patterns[name]) };
+  return { name, value: 1, fill };
+});
+
+const chartStyle = { width: &#x27;100%&#x27;, maxWidth: 700, maxHeight: &#x27;70vh&#x27;, aspectRatio: 1.618 };
+const margin = { top: 10, right: 10, left: 10, bottom: 10 };
+
+export default function BuiltInPatternsExample({ isAnimationActive = true }: { isAnimationActive?: boolean }) {
+  return (
+    &lt;BarChart style={chartStyle} responsive data={data} layout=&quot;vertical&quot; margin={margin}&gt;
+      &lt;XAxis type=&quot;number&quot; hide /&gt;
+      &lt;YAxis type=&quot;category&quot; dataKey=&quot;name&quot; width=&quot;auto&quot; /&gt;
+      &lt;Bar dataKey=&quot;value&quot; isAnimationActive={isAnimationActive} /&gt;
+      &lt;RechartsDevtools /&gt;
+    &lt;/BarChart&gt;
+  );
+}</pre><div></div></div></div><div style="height:100%;display:none;overflow:hidden"><div id="recharts-devtools-portal-R4q9" style="height:100%;background:var(--color-bg);color:var(--color-text);overflow:auto;padding:10px;display:block" class=""></div></div><div style="height:100%;display:none;overflow:hidden"><div id="recharts-devtools-portal-R4q9-annotations" style="height:100%;background:var(--color-surface-base);color:var(--color-text-1);overflow:auto;padding:10px;display:block" class=""></div></div><div style="height:100%;display:none;overflow:hidden"><div style="padding:10px;height:100%;overflow:auto"><div style="display:flex;gap:12px;margin:1ex"><label style="display:flex;align-items:center;gap:8px;cursor:pointer"><input style="margin:0;width:16px;height:16px;cursor:pointer" type="radio" name=":Raakq9:" checked=""/>Autoplay Animations (default)</label><label style="display:flex;align-items:center;gap:8px;cursor:pointer"><input style="margin:0;width:16px;height:16px;cursor:pointer" type="radio" name=":Raakq9:"/>Manual Animations</label></div></div></div></div></div><p>A pattern is a plain object: the tile size, SVG path data, and how to draw it. Spread one of the built-in patterns to adjust it.</p><div class="codemirror-example-editor snippet" style="height:100%;overflow:auto"><pre>import { pattern, patterns } from &#x27;recharts&#x27;;
+
+// Built-in patterns are plain objects, so you can adjust them by spreading
+const denseDots = pattern({ ...patterns.dots, width: 6, height: 6 });
+const darkStripes = pattern({ ...patterns.diagonal, color: &#x27;#000&#x27;, opacity: 0.3 });</pre><div></div></div><h2>Gradients</h2><p><a href="/en-US/api/gradients" data-discover="true">gradients</a> holds the built-in linear gradients, and <a href="/en-US/api/linearGradient" data-discover="true">linearGradient</a> <!-- -->turns one into a definition. They fade the base color of the fill, so they work with any color. The gradient stretches over each shape: over each bar, or here, over each area.</p><div width="100%" class="recharts-wrapper" style="position:relative;cursor:default;width:100%;max-width:600px;max-height:70vh;aspect-ratio:1.618"></div><div class="codemirror-wrapper "><div id="codemirror-container"><div class="codemirror-toolbar"><select class="codemirror-toolbar-item" style="padding-right:12px"><option value="source" selected="">Source code</option><option value="devtools">Hook inspector</option><option value="annotations">Annotations</option><option value="controls">Controls</option></select><button class="codemirror-toolbar-item" type="button"><svg class="recharts-surface" width="16" height="16" viewBox="0 0 16 16"><title></title><desc></desc><path fill="none" stroke="var(--color-text-1)" stroke-width="1" width="10" height="10" x="1" y="1" radius="2" class="recharts-rectangle" d="M 1,3
+            A 2,2,0,0,1,3,1
+            L 9,1
+            A 2,2,0,0,1,11,3
+            L 11,9
+            A 2,2,0,0,1,9,11
+            L 3,11
+            A 2,2,0,0,1,1,9 Z" style="stroke-dasharray:0px 1px"></path><path fill="none" stroke="var(--color-text-1)" stroke-width="1" width="10" height="10" x="5" y="5" radius="2" class="recharts-rectangle" d="M 5,7
+            A 2,2,0,0,1,7,5
+            L 13,5
+            A 2,2,0,0,1,15,7
+            L 15,13
+            A 2,2,0,0,1,13,15
+            L 7,15
+            A 2,2,0,0,1,5,13 Z" style="stroke-dasharray:0px 1px"></path></svg>Copy to clipboard</button><button type="button" class="codemirror-toolbar-item"><svg stroke="currentColor" fill="none" stroke-width="2" viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round" height="1em" width="1em" xmlns="http://www.w3.org/2000/svg"><path d="M21.174 6.812a1 1 0 0 0-3.986-3.987L3.842 16.174a2 2 0 0 0-.5.83l-1.321 4.352a.5.5 0 0 0 .623.622l4.353-1.32a2 2 0 0 0 .83-.497z"></path><path d="m15 5 4 4"></path></svg><span>Edit</span></button><button type="button" class="codemirror-toolbar-item"><svg stroke="currentColor" fill="none" stroke-width="2" viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round" height="1em" width="1em" xmlns="http://www.w3.org/2000/svg"><circle cx="18" cy="5" r="3"></circle><circle cx="6" cy="12" r="3"></circle><circle cx="18" cy="19" r="3"></circle><line x1="8.59" x2="15.42" y1="13.51" y2="17.49"></line><line x1="15.41" x2="8.59" y1="6.51" y2="10.49"></line></svg><span>Open in StackBlitz</span></button></div><div style="height:100%;display:block;overflow:hidden"><div class="codemirror-example-editor tsx" style="height:100%;overflow:auto"><pre>import { Area, AreaChart, CartesianGrid, RechartsFill, XAxis, YAxis, gradients, linearGradient } from &#x27;recharts&#x27;;
+import { RechartsDevtools } from &#x27;@recharts/devtools&#x27;;
+
+const data = [
+  { month: &#x27;Jan&#x27;, desktop: 420, mobile: 240 },
+  { month: &#x27;Feb&#x27;, desktop: 380, mobile: 310 },
+  { month: &#x27;Mar&#x27;, desktop: 510, mobile: 290 },
+  { month: &#x27;Apr&#x27;, desktop: 470, mobile: 400 },
+  { month: &#x27;May&#x27;, desktop: 560, mobile: 380 },
+];
+
+// Create the definitions once, outside of components.
+const fadeDown: RechartsFill = { definition: linearGradient(gradients.fadeDown) };
+
+const chartStyle = { width: &#x27;100%&#x27;, maxWidth: 600, maxHeight: &#x27;70vh&#x27;, aspectRatio: 1.618 };
+const margin = { top: 10, right: 20, left: 0, bottom: 0 };
+
+export default function GradientsExample({ isAnimationActive = true }: { isAnimationActive?: boolean }) {
+  return (
+    &lt;AreaChart style={chartStyle} responsive data={data} margin={margin}&gt;
+      &lt;CartesianGrid vertical={false} /&gt;
+      &lt;XAxis dataKey=&quot;month&quot; /&gt;
+      &lt;YAxis width=&quot;auto&quot; /&gt;
+      {/* The gradient fades the theme color of each Area */}
+      &lt;Area dataKey=&quot;desktop&quot; fill={fadeDown} isAnimationActive={isAnimationActive} /&gt;
+      &lt;Area dataKey=&quot;mobile&quot; fill={fadeDown} isAnimationActive={isAnimationActive} /&gt;
+      &lt;RechartsDevtools /&gt;
+    &lt;/AreaChart&gt;
+  );
+}</pre><div></div></div></div><div style="height:100%;display:none;overflow:hidden"><div id="recharts-devtools-portal-R7a9" style="height:100%;background:var(--color-bg);color:var(--color-text);overflow:auto;padding:10px;display:block" class=""></div></div><div style="height:100%;display:none;overflow:hidden"><div id="recharts-devtools-portal-R7a9-annotations" style="height:100%;background:var(--color-surface-base);color:var(--color-text-1);overflow:auto;padding:10px;display:block" class=""></div></div><div style="height:100%;display:none;overflow:hidden"><div style="padding:10px;height:100%;overflow:auto"><div style="display:flex;gap:12px;margin:1ex"><label style="display:flex;align-items:center;gap:8px;cursor:pointer"><input style="margin:0;width:16px;height:16px;cursor:pointer" type="radio" name=":Raana9:" checked=""/>Autoplay Animations (default)</label><label style="display:flex;align-items:center;gap:8px;cursor:pointer"><input style="margin:0;width:16px;height:16px;cursor:pointer" type="radio" name=":Raana9:"/>Manual Animations</label></div></div></div></div></div><h2>Custom patterns and definitions</h2><p>There are two ways to draw your own fill. A custom pattern is a <code>RechartsPattern</code> object: a tile size, and SVG path data drawn in each tile. Recharts paints the base color under it, and scales it down in the Legend icon.</p><p>For full control, write the definition yourself. A definition is a React component that renders an SVG paint server, such as a <code>&lt;linearGradient&gt;</code>, <code>&lt;radialGradient&gt;</code>, or<!-- --> <code>&lt;pattern&gt;</code>. It receives two props: the <code>id</code> to put on its root element, and the base <code>color</code> of the fill. It renders inside the chart, so it can call hooks, Recharts hooks included.</p><div width="100%" class="recharts-wrapper" style="position:relative;cursor:default;width:100%;max-width:600px;max-height:70vh;aspect-ratio:1.618"></div><div class="codemirror-wrapper "><div id="codemirror-container"><div class="codemirror-toolbar"><select class="codemirror-toolbar-item" style="padding-right:12px"><option value="source" selected="">Source code</option><option value="devtools">Hook inspector</option><option value="annotations">Annotations</option><option value="controls">Controls</option></select><button class="codemirror-toolbar-item" type="button"><svg class="recharts-surface" width="16" height="16" viewBox="0 0 16 16"><title></title><desc></desc><path fill="none" stroke="var(--color-text-1)" stroke-width="1" width="10" height="10" x="1" y="1" radius="2" class="recharts-rectangle" d="M 1,3
+            A 2,2,0,0,1,3,1
+            L 9,1
+            A 2,2,0,0,1,11,3
+            L 11,9
+            A 2,2,0,0,1,9,11
+            L 3,11
+            A 2,2,0,0,1,1,9 Z" style="stroke-dasharray:0px 1px"></path><path fill="none" stroke="var(--color-text-1)" stroke-width="1" width="10" height="10" x="5" y="5" radius="2" class="recharts-rectangle" d="M 5,7
+            A 2,2,0,0,1,7,5
+            L 13,5
+            A 2,2,0,0,1,15,7
+            L 15,13
+            A 2,2,0,0,1,13,15
+            L 7,15
+            A 2,2,0,0,1,5,13 Z" style="stroke-dasharray:0px 1px"></path></svg>Copy to clipboard</button><button type="button" class="codemirror-toolbar-item"><svg stroke="currentColor" fill="none" stroke-width="2" viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round" height="1em" width="1em" xmlns="http://www.w3.org/2000/svg"><path d="M21.174 6.812a1 1 0 0 0-3.986-3.987L3.842 16.174a2 2 0 0 0-.5.83l-1.321 4.352a.5.5 0 0 0 .623.622l4.353-1.32a2 2 0 0 0 .83-.497z"></path><path d="m15 5 4 4"></path></svg><span>Edit</span></button><button type="button" class="codemirror-toolbar-item"><svg stroke="currentColor" fill="none" stroke-width="2" viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round" height="1em" width="1em" xmlns="http://www.w3.org/2000/svg"><circle cx="18" cy="5" r="3"></circle><circle cx="6" cy="12" r="3"></circle><circle cx="18" cy="19" r="3"></circle><line x1="8.59" x2="15.42" y1="13.51" y2="17.49"></line><line x1="15.41" x2="8.59" y1="6.51" y2="10.49"></line></svg><span>Open in StackBlitz</span></button></div><div style="height:100%;display:block;overflow:hidden"><div class="codemirror-example-editor tsx" style="height:100%;overflow:auto"><pre>import {
+  Bar,
+  BarChart,
+  CartesianGrid,
+  Legend,
+  RechartsFill,
+  RechartsFillDefinitionProps,
+  RechartsPattern,
+  XAxis,
+  YAxis,
+  pattern,
+  useRechartsTheme,
+} from &#x27;recharts&#x27;;
+import { RechartsDevtools } from &#x27;@recharts/devtools&#x27;;
+
+const data = [
+  { quarter: &#x27;Q1&#x27;, north: 590, south: 800 },
+  { quarter: &#x27;Q2&#x27;, north: 868, south: 967 },
+  { quarter: &#x27;Q3&#x27;, north: 1397, south: 1098 },
+];
+
+// A custom pattern: the tile size, and SVG path data drawn in each tile.
+const hearts: RechartsPattern = {
+  width: 12,
+  height: 12,
+  path: &#x27;M6 10.5L1.8 6.3a2.4 2.4 0 0 1 3.4-3.4L6 3.7l.8-.8a2.4 2.4 0 0 1 3.4 3.4z&#x27;,
+};
+
+/*
+ * A custom definition: any component that renders an SVG paint server with the `id` it receives.
+ * It gets the base color of the fill, and it can call hooks, like useRechartsTheme here.
+ */
+function FadeToBackground({ id, color }: RechartsFillDefinitionProps) {
+  const theme = useRechartsTheme();
+  return (
+    &lt;linearGradient id={id} x1={0} y1={0} x2={0} y2={1}&gt;
+      &lt;stop offset={0} stopColor={color} /&gt;
+      &lt;stop offset={1} stopColor={theme?.pageBackground ?? &#x27;#fff&#x27;} /&gt;
+    &lt;/linearGradient&gt;
+  );
+}
+
+const heartsFill: RechartsFill = { definition: pattern(hearts) };
+const fadeFill: RechartsFill = { definition: FadeToBackground };
+
+const chartStyle = { width: &#x27;100%&#x27;, maxWidth: 600, maxHeight: &#x27;70vh&#x27;, aspectRatio: 1.618 };
+const margin = { top: 10, right: 20, left: 0, bottom: 0 };
+
+export default function CustomFillsExample({ isAnimationActive = true }: { isAnimationActive?: boolean }) {
+  return (
+    &lt;BarChart style={chartStyle} responsive data={data} margin={margin}&gt;
+      &lt;CartesianGrid vertical={false} /&gt;
+      &lt;XAxis dataKey=&quot;quarter&quot; /&gt;
+      &lt;YAxis width=&quot;auto&quot; /&gt;
+      &lt;Legend iconSize={24} /&gt;
+      &lt;Bar dataKey=&quot;north&quot; fill={heartsFill} isAnimationActive={isAnimationActive} /&gt;
+      &lt;Bar dataKey=&quot;south&quot; fill={fadeFill} isAnimationActive={isAnimationActive} /&gt;
+      &lt;RechartsDevtools /&gt;
+    &lt;/BarChart&gt;
+  );
+}</pre><div></div></div></div><div style="height:100%;display:none;overflow:hidden"><div id="recharts-devtools-portal-R9a9" style="height:100%;background:var(--color-bg);color:var(--color-text);overflow:auto;padding:10px;display:block" class=""></div></div><div style="height:100%;display:none;overflow:hidden"><div id="recharts-devtools-portal-R9a9-annotations" style="height:100%;background:var(--color-surface-base);color:var(--color-text-1);overflow:auto;padding:10px;display:block" class=""></div></div><div style="height:100%;display:none;overflow:hidden"><div style="padding:10px;height:100%;overflow:auto"><div style="display:flex;gap:12px;margin:1ex"><label style="display:flex;align-items:center;gap:8px;cursor:pointer"><input style="margin:0;width:16px;height:16px;cursor:pointer" type="radio" name=":Raapa9:" checked=""/>Autoplay Animations (default)</label><label style="display:flex;align-items:center;gap:8px;cursor:pointer"><input style="margin:0;width:16px;height:16px;cursor:pointer" type="radio" name=":Raapa9:"/>Manual Animations</label></div></div></div></div></div><p>Create definitions once, outside of your components. A new component on every render makes React remount the definition every time.</p><p>The Legend icon draws the definition with its own ID. A definition sized in pixels, such as a<!-- --> <code>&lt;pattern&gt;</code> with <code>patternUnits=&quot;userSpaceOnUse&quot;</code>, stays at that size in the small icon. Gradients in the default units stretch over the icon, the same as over the shapes.</p><h2>A fill for each data entry</h2><p>Graphical items that draw one shape per data entry, like <a href="/en-US/api/Bar" data-discover="true">Bar</a>, <a href="/en-US/api/Pie" data-discover="true">Pie</a>,<!-- --> <a href="/en-US/api/Funnel" data-discover="true">Funnel</a>, <a href="/en-US/api/RadialBar" data-discover="true">RadialBar</a>, <a href="/en-US/api/Scatter" data-discover="true">Scatter</a>,<!-- --> <a href="/en-US/api/Treemap" data-discover="true">Treemap</a>, <a href="/en-US/api/SunburstChart" data-discover="true">SunburstChart</a>, and the nodes of<!-- --> <a href="/en-US/api/Sankey" data-discover="true">Sankey</a>, read <code>fill</code> from each data entry too. A data entry can set a color, or a fill object. The data entry wins over the graphical item.</p><div class="codemirror-example-editor snippet" style="height:100%;overflow:auto"><pre>const data = [
+  { name: &#x27;Search&#x27;, value: 400 },
+  // This sector paints with its own pattern
+  { name: &#x27;Direct&#x27;, value: 300, fill: { definition: pattern(patterns.star) } },
+  // This sector has its own color, and no pattern
+  { name: &#x27;Social&#x27;, value: 300, fill: &#x27;#ff7300&#x27; },
+];
+
+&lt;Pie data={data} dataKey=&quot;value&quot; fill={{ definition: pattern(patterns.diagonal) }} /&gt;</pre><div></div></div><h2>Patterns in a theme</h2><p>Each entry of the theme <code>graphicalItems</code> can set a <code>fillDefinition</code> next to its<!-- --> <code>fill</code> color. Graphical items without a fill of their own then paint with it. Give each entry a different pattern, and every chart that uses the theme tells its series apart without relying on color alone, without setting a single <code>fill</code>.</p><div width="100%" class="recharts-wrapper" style="position:relative;cursor:default;width:100%;max-width:500px;max-height:70vh;aspect-ratio:1.2"></div><div class="codemirror-wrapper "><div id="codemirror-container"><div class="codemirror-toolbar"><select class="codemirror-toolbar-item" style="padding-right:12px"><option value="source" selected="">Source code</option><option value="devtools">Hook inspector</option><option value="annotations">Annotations</option><option value="controls">Controls</option></select><button class="codemirror-toolbar-item" type="button"><svg class="recharts-surface" width="16" height="16" viewBox="0 0 16 16"><title></title><desc></desc><path fill="none" stroke="var(--color-text-1)" stroke-width="1" width="10" height="10" x="1" y="1" radius="2" class="recharts-rectangle" d="M 1,3
+            A 2,2,0,0,1,3,1
+            L 9,1
+            A 2,2,0,0,1,11,3
+            L 11,9
+            A 2,2,0,0,1,9,11
+            L 3,11
+            A 2,2,0,0,1,1,9 Z" style="stroke-dasharray:0px 1px"></path><path fill="none" stroke="var(--color-text-1)" stroke-width="1" width="10" height="10" x="5" y="5" radius="2" class="recharts-rectangle" d="M 5,7
+            A 2,2,0,0,1,7,5
+            L 13,5
+            A 2,2,0,0,1,15,7
+            L 15,13
+            A 2,2,0,0,1,13,15
+            L 7,15
+            A 2,2,0,0,1,5,13 Z" style="stroke-dasharray:0px 1px"></path></svg>Copy to clipboard</button><button type="button" class="codemirror-toolbar-item"><svg stroke="currentColor" fill="none" stroke-width="2" viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round" height="1em" width="1em" xmlns="http://www.w3.org/2000/svg"><path d="M21.174 6.812a1 1 0 0 0-3.986-3.987L3.842 16.174a2 2 0 0 0-.5.83l-1.321 4.352a.5.5 0 0 0 .623.622l4.353-1.32a2 2 0 0 0 .83-.497z"></path><path d="m15 5 4 4"></path></svg><span>Edit</span></button><button type="button" class="codemirror-toolbar-item"><svg stroke="currentColor" fill="none" stroke-width="2" viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round" height="1em" width="1em" xmlns="http://www.w3.org/2000/svg"><circle cx="18" cy="5" r="3"></circle><circle cx="6" cy="12" r="3"></circle><circle cx="18" cy="19" r="3"></circle><line x1="8.59" x2="15.42" y1="13.51" y2="17.49"></line><line x1="15.41" x2="8.59" y1="6.51" y2="10.49"></line></svg><span>Open in StackBlitz</span></button></div><div style="height:100%;display:block;overflow:hidden"><div class="codemirror-example-editor tsx" style="height:100%;overflow:auto"><pre>import { useMemo } from &#x27;react&#x27;;
+import {
+  Legend,
+  Pie,
+  PieChart,
+  RechartsTheme,
+  RechartsThemeProvider,
+  Tooltip,
+  lightTheme,
+  pattern,
+  patterns,
+  useRechartsTheme,
+} from &#x27;recharts&#x27;;
+import { RechartsDevtools } from &#x27;@recharts/devtools&#x27;;
+
+const data = [
+  { name: &#x27;Search&#x27;, value: 400 },
+  { name: &#x27;Direct&#x27;, value: 300 },
+  { name: &#x27;Social&#x27;, value: 300 },
+  { name: &#x27;Email&#x27;, value: 200 },
+  { name: &#x27;Referral&#x27;, value: 100 },
+];
+
+// One pattern for each theme entry. Create the definitions once, outside of components.
+const seriesPatterns = [
+  pattern(patterns.diagonal),
+  pattern(patterns.circle),
+  pattern(patterns.crosshatch),
+  pattern(patterns.triangle),
+  pattern(patterns.zigzag),
+];
+
+// Adds a pattern to each graphical item of a theme, and keeps its colors.
+function withPatterns(theme: RechartsTheme): RechartsTheme {
+  return {
+    ...theme,
+    graphicalItems: theme.graphicalItems.map((item, index) =&gt; ({
+      ...item,
+      fillDefinition: seriesPatterns[index % seriesPatterns.length],
+    })),
+  };
+}
+
+const chartStyle = { width: &#x27;100%&#x27;, maxWidth: 500, maxHeight: &#x27;70vh&#x27;, aspectRatio: 1.2 };
+
+export default function ThemePatternsExample({ isAnimationActive = true }: { isAnimationActive?: boolean }) {
+  // Build on the active theme, so that the example follows light and dark mode
+  const theme = useRechartsTheme() ?? lightTheme;
+  const patternedTheme = useMemo(() =&gt; withPatterns(theme), [theme]);
+  return (
+    &lt;RechartsThemeProvider value={patternedTheme}&gt;
+      {/* Pie takes one theme entry per sector, so each sector gets its own color and pattern */}
+      &lt;PieChart style={chartStyle} responsive&gt;
+        &lt;Pie data={data} dataKey=&quot;value&quot; nameKey=&quot;name&quot; isAnimationActive={isAnimationActive} /&gt;
+        &lt;Legend iconSize={24} /&gt;
+        &lt;Tooltip /&gt;
+        &lt;RechartsDevtools /&gt;
+      &lt;/PieChart&gt;
+    &lt;/RechartsThemeProvider&gt;
+  );
+}</pre><div></div></div></div><div style="height:100%;display:none;overflow:hidden"><div id="recharts-devtools-portal-Rda9" style="height:100%;background:var(--color-bg);color:var(--color-text);overflow:auto;padding:10px;display:block" class=""></div></div><div style="height:100%;display:none;overflow:hidden"><div id="recharts-devtools-portal-Rda9-annotations" style="height:100%;background:var(--color-surface-base);color:var(--color-text-1);overflow:auto;padding:10px;display:block" class=""></div></div><div style="height:100%;display:none;overflow:hidden"><div style="padding:10px;height:100%;overflow:auto"><div style="display:flex;gap:12px;margin:1ex"><label style="display:flex;align-items:center;gap:8px;cursor:pointer"><input style="margin:0;width:16px;height:16px;cursor:pointer" type="radio" name=":Raata9:" checked=""/>Autoplay Animations (default)</label><label style="display:flex;align-items:center;gap:8px;cursor:pointer"><input style="margin:0;width:16px;height:16px;cursor:pointer" type="radio" name=":Raata9:"/>Manual Animations</label></div></div></div></div></div><p>Pie, Funnel, Treemap, SunburstChart, and Sankey take one theme entry per sector, trapezoid, branch, or node. The other graphical items take one per series. A graphical item or data entry that sets its own color does not take the theme pattern. A theme with fill definitions holds React components, so it cannot be stored as JSON.</p><h2>Where fill objects work</h2><table class="_table_9deko_1"><thead><tr><th>What</th><th>Where</th></tr></thead><tbody><tr><td>Graphical items</td><td>The <code>fill</code> of <a href="/en-US/api/Bar" data-discover="true">Bar</a>, <a href="/en-US/api/Area" data-discover="true">Area</a>,<!-- --> <a href="/en-US/api/Radar" data-discover="true">Radar</a>, <a href="/en-US/api/Scatter" data-discover="true">Scatter</a>, <a href="/en-US/api/Pie" data-discover="true">Pie</a>,<!-- --> <a href="/en-US/api/RadialBar" data-discover="true">RadialBar</a>, <a href="/en-US/api/Funnel" data-discover="true">Funnel</a>, <a href="/en-US/api/Treemap" data-discover="true">Treemap</a>, and<!-- --> <a href="/en-US/api/SunburstChart" data-discover="true">SunburstChart</a>, and the <code>fill</code> of their data entries</td></tr><tr><td>Reference elements and grids</td><td>The <code>fill</code> of <a href="/en-US/api/ReferenceArea" data-discover="true">ReferenceArea</a>, <a href="/en-US/api/ReferenceDot" data-discover="true">ReferenceDot</a>,<!-- --> <a href="/en-US/api/CartesianGrid" data-discover="true">CartesianGrid</a>, and <a href="/en-US/api/PolarGrid" data-discover="true">PolarGrid</a>, and each entry of<!-- --> <code>horizontalFill</code> and <code>verticalFill</code></td></tr><tr><td>Active shapes and backgrounds</td><td>The object form of <code>background</code>, <code>activeBar</code>, <code>activeShape</code>,<!-- --> <code>activeDot</code>, <code>dot</code>, and the Tooltip <code>cursor</code></td></tr><tr><td>Other components</td><td>The background of <a href="/en-US/api/Brush" data-discover="true">Brush</a>, and the shapes: <a href="/en-US/api/Rectangle" data-discover="true">Rectangle</a>,<!-- --> <a href="/en-US/api/Sector" data-discover="true">Sector</a>, <a href="/en-US/api/Trapezoid" data-discover="true">Trapezoid</a>, <a href="/en-US/api/Polygon" data-discover="true">Polygon</a>,<!-- --> <a href="/en-US/api/Symbols" data-discover="true">Symbols</a>, <a href="/en-US/api/Curve" data-discover="true">Curve</a>, and <a href="/en-US/api/Dot" data-discover="true">Dot</a></td></tr></tbody></table><div class="codemirror-example-editor snippet" style="height:100%;overflow:auto"><pre>const stripes = { color: &#x27;#eee&#x27;, definition: pattern(patterns.diagonal) };
+
+&lt;CartesianGrid horizontalFill={[&#x27;#fafafa&#x27;, stripes]} /&gt;
+&lt;ReferenceArea x1=&quot;Feb&quot; x2=&quot;Apr&quot; fill={stripes} /&gt;
+&lt;Bar dataKey=&quot;uv&quot; background={{ fill: stripes }} activeBar={{ fill: stripes }} /&gt;
+&lt;Tooltip cursor={{ fill: stripes }} /&gt;</pre><div></div></div><p>The shapes, active shapes, backgrounds, and the cursor have no theme color to fall back to, so give their fill objects a <code>color</code>. Labels and text keep plain colors, and so do the lines of a<!-- --> <a href="/en-US/api/Line" data-discover="true">Line</a>, the links of a Sankey, and the Brush travellers.</p></article></div></div></main><footer><p><span>Released under the </span><a href="https://opensource.org/licenses/MIT" target="_blank" rel="noreferrer">MIT License</a></p><p>Copyright (c) 2016-<!-- -->2026<!-- --> Recharts Group</p><p>Commit: <code title="640ecd9540582f2fab2ca592fbcb3986bf4798a9">640ecd95</code></p></footer></div></div>
+  </body>
+</html>
