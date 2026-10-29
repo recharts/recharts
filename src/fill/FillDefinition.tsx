@@ -1,6 +1,5 @@
 import * as React from 'react';
 import { RechartsFill, RechartsLinearGradient, RechartsPattern } from './RechartsFill';
-import { warn } from '../util/LogUtils';
 import { useRechartsTheme } from '../theme/RechartsThemeContext';
 import { getEffectivePageBackground } from '../theme/pageBackground';
 
@@ -10,7 +9,7 @@ const DEFAULT_PATTERN_OPACITY = 0.5;
  * The texture color of patterns that set no `color` of their own:
  * the page background, so that the texture looks like it is cut out of the shape.
  */
-function useDefaultInk(): string {
+function useDefaultTextureColor(): string {
   return getEffectivePageBackground(useRechartsTheme()) ?? '#fff';
 }
 
@@ -43,17 +42,17 @@ function PatternDefinition({
   id,
   pattern,
   color,
-  ink,
+  defaultTextureColor,
   tileScale,
 }: {
   id: string;
   pattern: RechartsPattern;
   color: string | undefined;
-  ink: string;
+  defaultTextureColor: string;
   tileScale: number;
 }) {
   const { width, height, rotation } = pattern;
-  const textureColor = pattern.color ?? ink;
+  const textureColor = pattern.color ?? defaultTextureColor;
   const transforms: Array<string> = [];
   if (rotation != null && rotation !== 0) {
     transforms.push(`rotate(${rotation})`);
@@ -61,22 +60,8 @@ function PatternDefinition({
   if (tileScale !== 1) {
     transforms.push(`scale(${tileScale})`);
   }
-  let texture: React.ReactNode;
-  if (pattern.render != null) {
-    texture = pattern.render({ color, ink: textureColor, width, height });
-  } else {
-    const paths = typeof pattern.path === 'string' ? [pattern.path] : pattern.path;
-    const isStroked = pattern.strokeWidth != null;
-    texture = paths.map(d => (
-      <path
-        key={d}
-        d={d}
-        fill={isStroked ? 'none' : textureColor}
-        stroke={isStroked ? textureColor : 'none'}
-        strokeWidth={pattern.strokeWidth}
-      />
-    ));
-  }
+  const paths = typeof pattern.path === 'string' ? [pattern.path] : pattern.path;
+  const isStroked = pattern.strokeWidth != null;
   return (
     <pattern
       id={id}
@@ -87,7 +72,17 @@ function PatternDefinition({
     >
       {/* Without a base color, the tile paints like a shape without a fill: in the SVG default color */}
       <rect width={width} height={height} fill={color} />
-      <g opacity={pattern.opacity ?? DEFAULT_PATTERN_OPACITY}>{texture}</g>
+      <g opacity={pattern.opacity ?? DEFAULT_PATTERN_OPACITY}>
+        {paths.map(d => (
+          <path
+            key={d}
+            d={d}
+            fill={isStroked ? 'none' : textureColor}
+            stroke={isStroked ? textureColor : 'none'}
+            strokeWidth={pattern.strokeWidth}
+          />
+        ))}
+      </g>
     </pattern>
   );
 }
@@ -118,24 +113,25 @@ function LinearGradientDefinition({
 }
 
 /**
- * Renders the SVG definition of a {@link RechartsFill} that has a pattern or a gradient.
- * Render it inside `<defs>`. Renders nothing for a fill that has neither.
+ * Renders the SVG definition of a {@link RechartsFill} that has a pattern, a gradient, or a custom definition.
+ * Render it inside `<defs>`. Renders nothing for a fill with only a color.
  */
 export function FillDefinition({ id, fill, color, tileScale = 1 }: FillDefinitionProps) {
-  const ink = useDefaultInk();
-  warn(
-    fill.definition == null || (fill.pattern == null && fill.gradient == null),
-    'A fill with a `definition` ignores its `pattern` and `gradient`.',
-  );
+  const defaultTextureColor = useDefaultTextureColor();
   if (fill.definition != null) {
-    return React.cloneElement<{ id?: string }>(fill.definition, { id });
+    const Definition = fill.definition;
+    return <Definition id={id} color={color} />;
   }
-  warn(
-    fill.pattern == null || fill.gradient == null,
-    'A fill with both `pattern` and `gradient` is not supported yet. Recharts draws the pattern only.',
-  );
   if (fill.pattern != null) {
-    return <PatternDefinition id={id} pattern={fill.pattern} color={color} ink={ink} tileScale={tileScale} />;
+    return (
+      <PatternDefinition
+        id={id}
+        pattern={fill.pattern}
+        color={color}
+        defaultTextureColor={defaultTextureColor}
+        tileScale={tileScale}
+      />
+    );
   }
   if (fill.gradient != null) {
     return <LinearGradientDefinition id={id} gradient={fill.gradient} color={color} />;
@@ -149,13 +145,4 @@ export function FillDefinition({ id, fill, color, tileScale = 1 }: FillDefinitio
  */
 export function needsFillDefinition(fill: RechartsFill | undefined): fill is RechartsFill {
   return fill != null && (fill.definition != null || fill.pattern != null || fill.gradient != null);
-}
-
-/**
- * Returns true if Legend icons can draw the fill. They draw built-in patterns and gradients,
- * but not custom definitions: those are made for the size of the chart shapes.
- * @param fill the fill object
- */
-export function canDrawFillInLegend(fill: RechartsFill | undefined): fill is RechartsFill {
-  return needsFillDefinition(fill) && fill.definition == null;
 }

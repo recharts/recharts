@@ -1,4 +1,4 @@
-import { ReactElement, ReactNode } from 'react';
+import { ComponentType } from 'react';
 
 /**
  * A stop of a {@link RechartsLinearGradient}.
@@ -50,24 +50,31 @@ export type RechartsLinearGradient = {
 };
 
 /**
- * What a custom pattern `render` function receives.
+ * Props of a custom {@link RechartsFill} `definition` component.
  *
  * @since 3.11
  */
-export type RechartsPatternRenderContext = {
+export type RechartsFillDefinitionProps = {
   /**
-   * The base color of the fill. Recharts already paints the tile with it, so you only draw the texture.
+   * Put this `id` on the root element of the definition. The shapes paint with `url(#id)`.
+   */
+  id: string;
+  /**
+   * The base color of the fill: the `color` of the fill object, or the theme color of the graphical item.
    */
   color: string | undefined;
-  /**
-   * The texture color.
-   */
-  ink: string;
-  width: number;
-  height: number;
 };
 
-type RechartsPatternBase = {
+/**
+ * A repeating texture, drawn over the base color of the fill.
+ * It is a plain value, so it can live in JSON or in a theme.
+ *
+ * Use one of the built-in {@link patterns}, adjust one by spreading it (`{ ...patterns.dots, width: 6 }`),
+ * or write your own `path`. For a texture that SVG paths can't draw, use a custom `definition` in the fill.
+ *
+ * @since 3.11
+ */
+export type RechartsPattern = {
   /**
    * Width of one tile, in pixels.
    */
@@ -92,58 +99,15 @@ type RechartsPatternBase = {
    * @defaultValue 0.5
    */
   opacity?: number;
-};
-
-/**
- * A {@link RechartsPattern} drawn from SVG path data. It is a plain value, so it can live in JSON or in a theme.
- *
- * @since 3.11
- */
-export type RechartsPathPattern = RechartsPatternBase & {
   /**
    * SVG path data of the texture, in tile coordinates.
    * If `strokeWidth` is set, the paths are stroked with the texture color. Otherwise they are filled.
    */
   path: string | ReadonlyArray<string>;
   strokeWidth?: number;
-  render?: never;
 };
 
-/**
- * A {@link RechartsPattern} drawn by a function, for full control over the texture.
- *
- * @since 3.11
- */
-export type RechartsRenderPattern = RechartsPatternBase & {
-  /**
-   * Draws the texture of one tile.
-   */
-  render: (context: RechartsPatternRenderContext) => ReactNode;
-  path?: never;
-  strokeWidth?: never;
-};
-
-/**
- * A repeating texture, drawn over the base color of the fill.
- *
- * Use one of the built-in {@link patterns}, adjust one by spreading it (`{ ...patterns.dots, width: 6 }`),
- * or write your own with `path` or `render`.
- *
- * @since 3.11
- */
-export type RechartsPattern = RechartsPathPattern | RechartsRenderPattern;
-
-/**
- * A fill of a graphical item: a solid color, a gradient, a pattern, or a solid color with a pattern.
- *
- * Recharts creates the SVG definitions and their IDs. Legend, Tooltip and labels use the solid `color`.
- *
- * @example <Bar dataKey="uv" fill={{ pattern: patterns.diagonal }} />
- * @example <Bar dataKey="uv" fill={{ color: 'blue', gradient: gradients.fadeDown }} />
- *
- * @since 3.11
- */
-export type RechartsFill = {
+type RechartsFillColor = {
   /**
    * The solid base color. Recharts uses it wherever it needs a plain color: Legend, Tooltip, and labels.
    *
@@ -152,25 +116,90 @@ export type RechartsFill = {
    * so the graphical item keeps the theme `stroke` too.
    */
   color?: string;
-  gradient?: RechartsLinearGradient;
+};
+
+/**
+ * A {@link RechartsFill} with a linear gradient. Stops without a color use the base color.
+ *
+ * @example <Bar dataKey="uv" fill={{ gradient: gradients.fadeDown }} />
+ *
+ * @since 3.11
+ */
+export type RechartsGradientFill = RechartsFillColor & {
+  gradient: RechartsLinearGradient;
+  pattern?: never;
+  definition?: never;
+};
+
+/**
+ * A {@link RechartsFill} with a repeating texture drawn over the base color.
+ *
+ * @example <Bar dataKey="uv" fill={{ color: 'blue', pattern: patterns.diagonal }} />
+ *
+ * @since 3.11
+ */
+export type RechartsPatternFill = RechartsFillColor & {
+  pattern: RechartsPattern;
+  gradient?: never;
+  definition?: never;
+};
+
+/**
+ * A {@link RechartsFill} with a completely custom SVG paint server.
+ *
+ * @example
+ * const Sunset = ({ id, color }: RechartsFillDefinitionProps) => (
+ *   <radialGradient id={id}>
+ *     <stop offset={0} stopColor="#ffc658" />
+ *     <stop offset={1} stopColor={color} />
+ *   </radialGradient>
+ * );
+ * <Bar dataKey="uv" fill={{ color: '#ff7300', definition: Sunset }} />
+ *
+ * @since 3.11
+ */
+export type RechartsDefinitionFill = RechartsFillColor & {
   /**
-   * A pattern can't be combined with a `gradient` yet. If both are set, Recharts draws the pattern.
-   */
-  pattern?: RechartsPattern;
-  /**
-   * A completely custom SVG paint server, such as a `<radialGradient>` or a `<pattern>`.
-   * Recharts puts it in `<defs>`, gives it a unique `id`, and paints the shapes with it,
-   * so leave the `id` out.
+   * A component that renders a completely custom SVG paint server, such as a `<radialGradient>` or a `<pattern>`.
+   * Recharts renders it in `<defs>` with a unique `id`, and paints the shapes with `url(#id)`.
+   * Put the `id` on the root element.
+   *
+   * It is a regular component rendered inside the chart, so it can call hooks, including Recharts hooks.
+   * Define it outside of other components: a new component on every render redraws the definition every time.
    *
    * The definition draws its own colors: Recharts doesn't add the base color or the texture.
-   * Legend icons stay the solid `color`.
-   *
-   * If set, Recharts ignores `gradient` and `pattern`.
-   *
-   * @example <Bar dataKey="uv" fill={{ color: '#ff7300', definition: <radialGradient><stop offset={0} stopColor="#ff7300" /></radialGradient> }} />
+   * Legend icons draw the same definition, with their own `id`. Definitions sized in pixels,
+   * such as a `<pattern>` with `patternUnits="userSpaceOnUse"`, aren't scaled down to fit the icon.
    */
-  definition?: ReactElement;
+  definition: ComponentType<RechartsFillDefinitionProps>;
+  gradient?: never;
+  pattern?: never;
 };
+
+/**
+ * A {@link RechartsFill} with only a solid color. It paints the same as a `fill` string.
+ *
+ * @since 3.11
+ */
+export type RechartsColorFill = {
+  color: string;
+  gradient?: never;
+  pattern?: never;
+  definition?: never;
+};
+
+/**
+ * A fill of a graphical item: a solid color, a gradient, a pattern, or a completely custom definition.
+ * Each of them can have a solid base `color`.
+ *
+ * Recharts creates the SVG definitions and their IDs. Tooltip and labels use the solid `color`.
+ *
+ * @example <Bar dataKey="uv" fill={{ pattern: patterns.diagonal }} />
+ * @example <Bar dataKey="uv" fill={{ color: 'blue', gradient: gradients.fadeDown }} />
+ *
+ * @since 3.11
+ */
+export type RechartsFill = RechartsColorFill | RechartsGradientFill | RechartsPatternFill | RechartsDefinitionFill;
 
 /**
  * Returns true if the fill is a {@link RechartsFill} object, and not a string.

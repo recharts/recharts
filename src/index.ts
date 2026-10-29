@@ -292,11 +292,13 @@ export { emptyTheme } from './theme/emptyTheme';
 export { autoPalette, autoTheme } from './theme/autoTheme';
 export type {
   RechartsFill,
+  RechartsColorFill,
+  RechartsDefinitionFill,
+  RechartsGradientFill,
+  RechartsPatternFill,
+  RechartsFillDefinitionProps,
   RechartsGradientStop,
   RechartsLinearGradient,
-  RechartsPathPattern,
   RechartsPattern,
-  RechartsPatternRenderContext,
-  RechartsRenderPattern,
 } from './fill/RechartsFill';
 export { gradients, patterns } from './fill/RechartsFill';

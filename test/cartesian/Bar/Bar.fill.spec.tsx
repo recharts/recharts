@@ -8,10 +8,12 @@ import {
   DefaultLegendContent,
   Legend,
   RechartsFill,
+  RechartsFillDefinitionProps,
   RechartsThemeProvider,
   Tooltip,
   gradients,
   patterns,
+  usePlotArea,
 } from '../../../src';
 import { getAllBarPaths } from '../../helper/expectBars';
 import { assertNotNull } from '../../helper/assertNotNull';
@@ -38,6 +40,15 @@ function renderBar(fill: RechartsFill | string, { withTheme = true }: { withThem
     >
       {chart}
     </RechartsThemeProvider>,
+  );
+}
+
+function RedToBase({ id, color }: RechartsFillDefinitionProps) {
+  return (
+    <radialGradient id={id}>
+      <stop offset={0} stopColor="red" />
+      <stop offset={1} stopColor={color} />
+    </radialGradient>
   );
 }
 
@@ -133,14 +144,6 @@ describe('Bar with a fill object', () => {
     expect(stops[1]).toHaveAttribute('stop-color', 'orange');
   });
 
-  it('should call a custom pattern render function with the base color and texture color', () => {
-    const renderTexture = vi.fn(() => <circle className="my-texture" r={1} />);
-    const { container } = renderBar({ color: 'blue', pattern: { width: 10, height: 12, render: renderTexture } });
-
-    expect(renderTexture).toHaveBeenCalledWith({ color: 'blue', ink: 'rgb(1, 2, 3)', width: 10, height: 12 });
-    expect(container.querySelector('pattern#my-bar-fill .my-texture')).toBeInTheDocument();
-  });
-
   it('should use the pattern color and opacity when set', () => {
     const { container } = renderBar({
       color: 'blue',
@@ -187,46 +190,35 @@ describe('Bar with a fill object', () => {
     expect(container.querySelector('pattern#my-bar-fill path')).toHaveAttribute('stroke', '#fff');
   });
 
-  it('should warn and draw only the pattern when both pattern and gradient are set', () => {
-    const warn = vi.spyOn(console, 'warn').mockImplementation(() => {});
-    const { container } = renderBar({ color: 'blue', pattern: patterns.dots, gradient: gradients.fadeDown });
-
-    expect(container.querySelector('pattern#my-bar-fill')).toBeInTheDocument();
-    expect(container.querySelector('linearGradient#my-bar-fill')).not.toBeInTheDocument();
-    expect(warn).toHaveBeenCalledWith(expect.stringContaining('both `pattern` and `gradient`'));
-    warn.mockRestore();
-  });
-
-  it('should put a custom definition in defs with the bar fill id, and keep the solid color in the legend', () => {
-    const { container } = renderBar({
-      color: 'blue',
-      definition: (
-        <radialGradient>
-          <stop offset={0} stopColor="red" />
-        </radialGradient>
-      ),
-    });
+  it('should put a custom definition in defs with the bar fill id, and draw it in the legend icon with its own id', () => {
+    const { container } = renderBar({ color: 'blue', definition: RedToBase });
 
     const gradient = container.querySelector('defs radialGradient#my-bar-fill');
     assertNotNull(gradient);
-    expect(gradient.querySelector('stop')).toHaveAttribute('stop-color', 'red');
+    const stops = gradient.querySelectorAll('stop');
+    expect(stops[0]).toHaveAttribute('stop-color', 'red');
+    expect(stops[1]).toHaveAttribute('stop-color', 'blue');
     expect(getAllBarPaths(container)[0]).toHaveAttribute('fill', 'url(#my-bar-fill)');
 
-    const legendIcon = container.querySelector('.recharts-legend-icon');
-    assertNotNull(legendIcon);
-    expect(legendIcon).toHaveAttribute('fill', 'blue');
-    expect(container.querySelectorAll('radialGradient')).toHaveLength(1);
+    const legendGradient = container.querySelector('.recharts-legend-item radialGradient');
+    assertNotNull(legendGradient);
+    expect(legendGradient.id).toMatch(/^recharts-legend-fill-/);
+    expect(legendGradient.querySelectorAll('stop')[1]).toHaveAttribute('stop-color', 'blue');
+    expect(container.querySelector('.recharts-legend-icon')).toHaveAttribute('fill', `url(#${legendGradient.id})`);
     expect(getTooltipItem(container)).toHaveStyle({ color: 'rgb(0, 0, 255)' });
   });
 
-  it('should warn and draw only the definition when it is combined with a pattern', () => {
-    const warn = vi.spyOn(console, 'warn').mockImplementation(() => {});
-    const { container } = renderBar({ pattern: patterns.dots, definition: <radialGradient /> });
+  it('should pass the theme color to the definition, and let it call Recharts hooks', () => {
+    const PlotAreaGradient = ({ id, color }: RechartsFillDefinitionProps) => {
+      const plotArea = usePlotArea();
+      return <linearGradient id={id} data-color={color} data-plot-height={plotArea?.height} />;
+    };
+    const { container } = renderBar({ definition: PlotAreaGradient });
 
-    expect(container.querySelector('radialGradient#my-bar-fill')).toBeInTheDocument();
-    expect(container.querySelector('pattern')).not.toBeInTheDocument();
-    expect(warn).toHaveBeenCalledWith(expect.stringContaining('ignores its `pattern` and `gradient`'));
-    warn.mockRestore();
+    const gradient = container.querySelector('linearGradient#my-bar-fill');
+    assertNotNull(gradient);
+    expect(gradient).toHaveAttribute('data-color', 'purple');
+    expect(gradient).toHaveAttribute('data-plot-height', '390');
   });
 
   it('should draw the plain inactive color in the legend icon of a hidden bar', () => {

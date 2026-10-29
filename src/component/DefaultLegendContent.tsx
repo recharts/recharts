@@ -16,7 +16,7 @@ import { RequiresDefaultProps, resolveDefaultProps } from '../util/resolveDefaul
 import { RechartsTheme } from '../theme/RechartsTheme';
 import { useBackwardsCompatibleTheme } from '../theme/useBackwardsCompatibleTheme';
 import { RechartsFill } from '../fill/RechartsFill';
-import { FillDefinition, canDrawFillInLegend, getFillUrl } from '../fill/FillDefinition';
+import { FillDefinition, getFillUrl, needsFillDefinition } from '../fill/FillDefinition';
 import { useUniqueId } from '../util/useUniqueId';
 
 const SIZE = 32;
@@ -57,7 +57,7 @@ export interface LegendPayload {
   /**
    * The fill object of the graphical item, if it paints its shapes with a pattern or a gradient.
    * The `rect` icon, and the icons of filled symbols, draw the same pattern or gradient
-   * over the base color in `color`. Custom `definition` fills, and inactive items, draw the plain color.
+   * over the base color in `color`, or the same custom `definition`. Inactive items draw the plain inactive color.
    *
    * @since 3.11
    */
@@ -333,12 +333,12 @@ function Icon({
   }
 
   /*
-   * Filled icons paint with the pattern or gradient of the graphical item.
+   * Filled icons paint with the pattern, gradient, or custom definition of the graphical item.
    * The definition lives in this icon, so it is scaled to the icon and does not depend on IDs elsewhere in the page.
    */
   let areaFill = color;
   let fillDefinition: ReactNode = null;
-  if (canDrawFillInLegend(fillObject)) {
+  if (needsFillDefinition(fillObject)) {
     const tileScale = fillObject.pattern == null ? 1 : SIZE / LEGEND_PATTERN_TILES / fillObject.pattern.width;
     areaFill = getFillUrl(fillId);
     fillDefinition = (
