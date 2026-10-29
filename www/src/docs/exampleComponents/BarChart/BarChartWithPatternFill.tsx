@@ -55,7 +55,7 @@ const BarChartWithPatternFill = ({ isAnimationActive = true }: { isAnimationActi
     <CartesianGrid />
     <XAxis dataKey="name" />
     <YAxis width="auto" />
-    <Legend />
+    <Legend iconSize={32} />
     <Bar dataKey="uv" fill={gradientFill} isAnimationActive={isAnimationActive} />
     <Bar dataKey="pv" fill={builtInPatternFill} isAnimationActive={isAnimationActive} />
     <Bar dataKey="amt" fill={customPatternFill} isAnimationActive={isAnimationActive} />
