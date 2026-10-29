@@ -62,6 +62,29 @@ describe('<Text />', () => {
     expect(lines).toEqual(expected);
   });
 
+  test.each([
+    ['emoji', '😀😃😄', '😀…'],
+    ['supplementary Han', '𠮷𠀀𠮷', '𠮷…'],
+    ['mixed kana and emoji', 'あ😀い', 'あ…'],
+  ])('keeps %s intact when breakAll is truncated by maxLines', (_, value, expected) => {
+    vi.spyOn(DOMUtils, 'getStringSize').mockImplementation(text => ({
+      width: Array.from(String(text)).reduce((sum, character) => {
+        const isNarrow = character === '…' || /^[\uD800-\uDFFF]$/.test(character);
+        return sum + (isNarrow ? 10 : 25);
+      }, 0),
+      height: 17,
+    }));
+    const { container } = render(
+      <Surface width={300} height={300}>
+        <Text width={50} maxLines={1} breakAll>
+          {value}
+        </Text>
+      </Surface>,
+    );
+    const lines = Array.from(container.querySelectorAll('text > tspan'), line => line.textContent);
+    expect(lines).toEqual([expected]);
+  });
+
   test('renders number children', () => {
     const { container } = render(
       <Surface width={300} height={300}>
