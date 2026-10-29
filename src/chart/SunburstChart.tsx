@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { CSSProperties, SVGProps, useMemo, useState } from 'react';
+import { createContext, CSSProperties, SVGProps, useContext, useMemo, useState } from 'react';
 import { scaleLinear } from 'victory-vendor/d3-scale';
 import { clsx } from 'clsx';
 import get from 'es-toolkit/compat/get';
@@ -7,6 +7,14 @@ import { Surface } from '../container/Surface';
 import { Layer } from '../container/Layer';
 import { Sector } from '../shape/Sector';
 import { Text, Props as TextProps } from '../component/Text';
+import { Props as LabelProps } from '../component/Label';
+import {
+  ImplicitLabelListType,
+  LabelList,
+  PolarLabelListContextProvider,
+  PolarLabelListEntry,
+  Props as LabelListProps,
+} from '../component/LabelList';
 import { polarToCartesian } from '../util/PolarUtils';
 import { ReportChartMargin, ReportChartSize, useChartHeight, useChartWidth } from '../context/chartLayoutContext';
 import { TooltipPortalContext } from '../context/tooltipPortalContext';
@@ -29,11 +37,18 @@ import { RegisterGraphicalItemId } from '../context/RegisterGraphicalItemId';
 import { WithIdRequired } from '../util/useUniqueId';
 import { RequiresDefaultProps, resolveDefaultProps } from '../util/resolveDefaultProps';
 import { initialEventSettingsState } from '../state/eventSettingsSlice';
-import { GraphicalItemStyle, RechartsTheme } from '../theme/RechartsTheme';
+import { GraphicalItemStyle, LabelTheme, RechartsTheme } from '../theme/RechartsTheme';
 import { useRechartsTheme } from '../theme/RechartsThemeContext';
 import { getOwnStyles, hasOwnColors, withoutColors } from '../theme/dataEntryStyles';
 import { getEffectivePageBackground } from '../theme/pageBackground';
 import { SVGElementPropKeysType, svgPropertiesNoEventsFromUnknown } from '../util/svgPropertiesNoEvents';
+import { svgPropertiesAndEvents } from '../util/svgPropertiesAndEvents';
+import { AllZIndexPortals } from '../zIndex/ZIndexPortal';
+import {
+  DataLabelColorsContextProvider,
+  DataLabelThemeContextProvider,
+  filledShapeLabelColors,
+} from '../theme/labelTheme';
 
 export interface SunburstData {
   [key: string]: any;
@@ -143,9 +158,28 @@ export interface SunburstChartProps extends EventThrottlingProps {
   fill?: string;
   stroke?: string;
   /**
-   * An object with svg text options to control the appearance of the chart labels.
+   * An object with text options to control the appearance of the default chart labels.
+   * Shared SVG styles also apply to the `label` prop; explicit label props win.
+   *
+   * @deprecated Prefer `label` for new code. Text-specific options remain supported for default labels.
    */
   textOptions?: TextProps;
+  /**
+   * Renders one label for each sector. Options:
+   * - `true`: renders default labels;
+   * - `false`: no labels are rendered;
+   * - `object`: the props of LabelList component;
+   * - `ReactElement`: a custom SVG label element, such as `<text>` or `<g>`.
+   *   HTML elements such as `<div>` are not valid inside the chart SVG and may trigger React DOM warnings.
+   * - `function`: a render function of custom label.
+   *
+   * Explicit LabelList children render independently of this prop.
+   *
+   * @defaultValue true
+   * @since 3.11
+   * @example <SunburstChart data={data} label={{ dataKey: 'name', background: true }} />
+   */
+  label?: ImplicitLabelListType;
 
   onMouseEnter?: (node: SunburstData, e: React.MouseEvent) => void;
 
@@ -267,25 +301,72 @@ type SunburstThemeStyles = {
   graphicalItems: RechartsTheme['graphicalItems'];
   /**
    * The color behind the chart.
-   * Separators and the label halo are painted in this color, so that they read as gaps.
+   * Separators are painted in this color, so that they read as gaps.
    */
   pageBackground: string | undefined;
 };
 
 /**
- * Label props from the theme. Explicit `textOptions` are applied on top of these.
- *
- * The label text takes the `typography` styles, which the Text component reads from the theme itself.
- * The label sits on top of the sector, so it gets a halo in the `pageBackground` color,
- * which keeps it readable on any sector color.
- * @param themeStyles styles from the theme
+ * Keep the default labels' Text-only options and baseline while LabelList supplies
+ * the sector coordinates, branch label theme, and background layering.
  */
-function getThemedTextProps(themeStyles: SunburstThemeStyles): TextProps {
-  const { pageBackground } = themeStyles;
-  return {
-    pointerEvents: 'none',
-    ...(pageBackground == null ? {} : { stroke: pageBackground, paintOrder: 'stroke fill' }),
-  };
+const SunburstTextOptionsContext = createContext<TextProps | undefined>(undefined);
+
+function SunburstLabelContent({ value, fill, style, background, halo, x, y, ...rest }: LabelProps) {
+  const textOptions = useContext(SunburstTextOptionsContext);
+  const theme = useRechartsTheme();
+  return (
+    <Text
+      {...textOptions}
+      {...svgPropertiesAndEvents(rest)}
+      x={x}
+      y={y}
+      fill={theme == null ? textOptions?.fill : fill}
+      style={style}
+      alignmentBaseline="middle"
+      textAnchor="middle"
+      background={background}
+      halo={halo}
+    >
+      {value}
+    </Text>
+  );
+}
+
+function isLabelListProps(label: ImplicitLabelListType): label is LabelListProps {
+  return typeof label === 'object' && !React.isValidElement(label);
+}
+
+function SunburstLabels({ label, textOptions }: Pick<SunburstChartProps, 'label' | 'textOptions'>) {
+  const textStyle = textOptions?.style;
+  const explicitStyle = label != null && isLabelListProps(label) ? label.style : undefined;
+  const style = useMemo(
+    () => (textStyle == null ? explicitStyle : { ...textStyle, ...explicitStyle }),
+    [textStyle, explicitStyle],
+  );
+  if (label === false) {
+    return null;
+  }
+  const { ref: _ref, children: _children, offset: _offset, ...textProps } = textOptions ?? {};
+  if (label == null || label === true) {
+    return (
+      <SunburstTextOptionsContext.Provider value={textOptions}>
+        <LabelList {...textProps} pointerEvents={textProps.pointerEvents ?? 'none'} content={SunburstLabelContent} />
+      </SunburstTextOptionsContext.Provider>
+    );
+  }
+  if (!isLabelListProps(label)) {
+    return <LabelList {...textProps} content={label} pointerEvents={textProps.pointerEvents ?? 'none'} />;
+  }
+  return (
+    <LabelList
+      {...textProps}
+      textBreakAll={textOptions?.breakAll}
+      {...label}
+      style={style}
+      pointerEvents={label.pointerEvents ?? textProps.pointerEvents ?? 'none'}
+    />
+  );
 }
 
 export const defaultSunburstChartProps = {
@@ -297,6 +378,7 @@ export const defaultSunburstChartProps = {
   fill: '#333',
   stroke: '#FFF',
   textOptions: defaultTextProps,
+  label: true,
   startAngle: 0,
   endAngle: 360,
   responsive: false,
@@ -414,7 +496,7 @@ function resolveSectorProps({
   return props;
 }
 
-const SunburstChartImpl = ({
+const SunburstChartContent = ({
   className,
   data,
   children,
@@ -426,6 +508,7 @@ const SunburstChartImpl = ({
   fill,
   stroke,
   textOptions,
+  label,
   outerRadius: outerRadiusFromProps,
   cx: cxFromProps,
   cy: cyFromProps,
@@ -436,164 +519,216 @@ const SunburstChartImpl = ({
   onMouseLeave,
   id,
   themeStyles,
-}: InternalSunburstChartProps) => {
+  width,
+  height,
+}: InternalSunburstChartProps & { width: number; height: number }) => {
   const dispatch = useAppDispatch();
 
-  const width = useChartWidth();
-  const height = useChartHeight();
+  const layout = useMemo(() => {
+    const outerRadius = outerRadiusFromProps ?? Math.min(width, height) / 2;
+    const cx = cxFromProps ?? width / 2;
+    const cy = cyFromProps ?? height / 2;
 
-  if (width == null || height == null) {
-    return null;
-  }
+    const rScale = scaleLinear([0, data[dataKey]], [0, endAngle - startAngle]);
+    const treeDepth = getMaxDepthOf(data);
+    const thickness = (outerRadius - innerRadius) / treeDepth;
 
-  const outerRadius = outerRadiusFromProps ?? Math.min(width, height) / 2;
-  const cx = cxFromProps ?? width / 2;
-  const cy = cyFromProps ?? height / 2;
+    const sectors: React.ReactNode[] = [];
+    const labelListEntries: PolarLabelListEntry[] = [];
+    const labelThemes: Array<LabelTheme | undefined> = [];
+    const resolveLabelTheme = (index: number): LabelTheme | undefined => labelThemes[index];
+    const positions: SunburstPositionMap = new Map<TooltipIndex, ChartCoordinate>([]);
 
-  const rScale = scaleLinear([0, data[dataKey]], [0, endAngle - startAngle]);
-  const treeDepth = getMaxDepthOf(data);
-  const thickness = (outerRadius - innerRadius) / treeDepth;
+    // event handlers
+    function handleMouseEnter(node: SunburstNode, e: React.MouseEvent) {
+      if (onMouseEnter) onMouseEnter(node, e);
 
-  const sectors: React.ReactNode[] = [];
-  const positions: SunburstPositionMap = new Map<TooltipIndex, ChartCoordinate>([]);
-
-  // event handlers
-  function handleMouseEnter(node: SunburstNode, e: React.MouseEvent) {
-    if (onMouseEnter) onMouseEnter(node, e);
-
-    dispatch(
-      setActiveMouseOverItemIndex({
-        activeIndex: node.tooltipIndex,
-        activeDataKey: dataKey,
-        activeCoordinate: positions.get(node.tooltipIndex),
-        activeGraphicalItemId: id,
-      }),
-    );
-  }
-
-  function handleMouseLeave(node: SunburstNode, e: React.MouseEvent) {
-    if (onMouseLeave) onMouseLeave(node, e);
-
-    dispatch(mouseLeaveItem());
-  }
-
-  function handleClick(node: SunburstNode) {
-    if (onClick) onClick(node);
-
-    dispatch(
-      setActiveClickItemIndex({
-        activeIndex: node.tooltipIndex,
-        activeDataKey: dataKey,
-        activeCoordinate: positions.get(node.tooltipIndex),
-        activeGraphicalItemId: id,
-      }),
-    );
-  }
-
-  const labelProps: TextProps | undefined =
-    themeStyles == null ? textOptions : { ...getThemedTextProps(themeStyles), ...textOptions };
-
-  // recursively add nodes for each data point and its children
-  function drawArcs(
-    childNodes: SunburstData[] | undefined,
-    options: DrawArcOptions,
-    depth: number = 1,
-  ): SunburstData[] | undefined {
-    const { radius, innerR, initialAngle, childColor, nestedActiveTooltipIndex } = options;
-
-    let currentAngle = initialAngle;
-
-    if (!childNodes) return undefined; // base case: no children of this node
-
-    return childNodes.map((d, i) => {
-      const currentTooltipIndex = depth === 1 ? `[${i}]` : addToSunburstNodeIndex(i, nestedActiveTooltipIndex);
-      const nodeWithIndex: SunburstNode = { ...d, tooltipIndex: currentTooltipIndex };
-
-      const arcLength = rScale(d[dataKey]);
-      const start = currentAngle;
-      const branchStyle =
-        options.branchStyle ??
-        (themeStyles == null || themeStyles.graphicalItems.length === 0
-          ? undefined
-          : themeStyles.graphicalItems[i % themeStyles.graphicalItems.length]);
-      const sectorProps = resolveSectorProps({
-        entry: d,
-        inheritedFill: childColor,
-        chartFill: fill,
-        chartStroke: stroke,
-        padding,
-        themeStyles,
-        branchStyle,
-      });
-      const fillColor = typeof sectorProps.fill === 'string' ? sectorProps.fill : undefined;
-      const { x: textX, y: textY } = polarToCartesian(0, 0, innerR + radius / 2, -(start + arcLength - arcLength / 2));
-      currentAngle += arcLength;
-      sectors.push(
-        <g key={`sunburst-sector-${currentTooltipIndex}`}>
-          <Sector
-            onClick={() => handleClick(nodeWithIndex)}
-            onMouseEnter={e => handleMouseEnter(nodeWithIndex, e)}
-            onMouseLeave={e => handleMouseLeave(nodeWithIndex, e)}
-            {...sectorProps}
-            startAngle={start}
-            endAngle={start + arcLength}
-            innerRadius={innerR}
-            outerRadius={innerR + radius}
-            cx={cx}
-            cy={cy}
-          />
-          <Text {...labelProps} alignmentBaseline="middle" textAnchor="middle" x={textX + cx} y={cy - textY}>
-            {d[dataKey]}
-          </Text>
-        </g>,
+      dispatch(
+        setActiveMouseOverItemIndex({
+          activeIndex: node.tooltipIndex,
+          activeDataKey: dataKey,
+          activeCoordinate: positions.get(node.tooltipIndex),
+          activeGraphicalItemId: id,
+        }),
       );
+    }
 
-      const { x: tooltipX, y: tooltipY } = polarToCartesian(cx, cy, innerR + radius / 2, start);
-      positions.set(currentTooltipIndex, { x: tooltipX, y: tooltipY });
+    function handleMouseLeave(node: SunburstNode, e: React.MouseEvent) {
+      if (onMouseLeave) onMouseLeave(node, e);
 
-      const renderedChildren = drawArcs(
-        d.children,
-        {
-          radius,
-          innerR: innerR + radius + ringPadding,
-          initialAngle: start,
-          childColor: fillColor,
+      dispatch(mouseLeaveItem());
+    }
+
+    function handleClick(node: SunburstNode) {
+      if (onClick) onClick(node);
+
+      dispatch(
+        setActiveClickItemIndex({
+          activeIndex: node.tooltipIndex,
+          activeDataKey: dataKey,
+          activeCoordinate: positions.get(node.tooltipIndex),
+          activeGraphicalItemId: id,
+        }),
+      );
+    }
+
+    // recursively add nodes for each data point and its children
+    function drawArcs(
+      childNodes: SunburstData[] | undefined,
+      options: DrawArcOptions,
+      depth: number = 1,
+    ): SunburstData[] | undefined {
+      const { radius, innerR, initialAngle, childColor, nestedActiveTooltipIndex } = options;
+
+      let currentAngle = initialAngle;
+
+      if (!childNodes) return undefined; // base case: no children of this node
+
+      return childNodes.map((d, i) => {
+        const currentTooltipIndex = depth === 1 ? `[${i}]` : addToSunburstNodeIndex(i, nestedActiveTooltipIndex);
+        const nodeWithIndex: SunburstNode = { ...d, tooltipIndex: currentTooltipIndex };
+
+        const arcLength = rScale(d[dataKey]);
+        const start = currentAngle;
+        const branchStyle =
+          options.branchStyle ??
+          (themeStyles == null || themeStyles.graphicalItems.length === 0
+            ? undefined
+            : themeStyles.graphicalItems[i % themeStyles.graphicalItems.length]);
+        const sectorProps = resolveSectorProps({
+          entry: d,
+          inheritedFill: childColor,
+          chartFill: fill,
+          chartStroke: stroke,
+          padding,
+          themeStyles,
           branchStyle,
-          nestedActiveTooltipIndex: currentTooltipIndex,
-        },
-        depth + 1,
-      );
-      /*
-       * Tooltip reads the color of the entry from the data node.
-       * Themed sectors take their color from the theme or from their parent, which the data node does not know,
-       * so the tooltip gets a copy of the node with the rendered color.
-       */
-      return themeStyles == null ? d : { ...d, fill: fillColor, children: renderedChildren };
-    });
-  }
+        });
+        const fillColor = typeof sectorProps.fill === 'string' ? sectorProps.fill : undefined;
+        currentAngle += arcLength;
+        sectors.push(
+          <g key={`sunburst-sector-${currentTooltipIndex}`}>
+            <Sector
+              onClick={() => handleClick(nodeWithIndex)}
+              onMouseEnter={e => handleMouseEnter(nodeWithIndex, e)}
+              onMouseLeave={e => handleMouseLeave(nodeWithIndex, e)}
+              {...sectorProps}
+              startAngle={start}
+              endAngle={start + arcLength}
+              innerRadius={innerR}
+              outerRadius={innerR + radius}
+              cx={cx}
+              cy={cy}
+            />
+          </g>,
+        );
 
-  const tooltipDataChildren = drawArcs(data.children, {
-    radius: thickness,
-    innerR: innerRadius,
-    initialAngle: startAngle,
-  });
+        labelListEntries.push({
+          value: d[dataKey],
+          payload: d,
+          fill: fillColor,
+          viewBox: {
+            cx,
+            cy,
+            innerRadius: innerR,
+            outerRadius: innerR + radius,
+            startAngle: start,
+            endAngle: start + arcLength,
+            clockWise: false,
+          },
+        });
+        labelThemes.push(branchStyle?.label);
+
+        const { x: tooltipX, y: tooltipY } = polarToCartesian(cx, cy, innerR + radius / 2, start);
+        positions.set(currentTooltipIndex, { x: tooltipX, y: tooltipY });
+
+        const renderedChildren = drawArcs(
+          d.children,
+          {
+            radius,
+            innerR: innerR + radius + ringPadding,
+            initialAngle: start,
+            childColor: fillColor,
+            branchStyle,
+            nestedActiveTooltipIndex: currentTooltipIndex,
+          },
+          depth + 1,
+        );
+        /*
+         * Tooltip reads the color of the entry from the data node.
+         * Themed sectors take their color from the theme or from their parent, which the data node does not know,
+         * so the tooltip gets a copy of the node with the rendered color.
+         */
+        return themeStyles == null ? d : { ...d, fill: fillColor, children: renderedChildren };
+      });
+    }
+
+    const tooltipDataChildren = drawArcs(data.children, {
+      radius: thickness,
+      innerR: innerRadius,
+      initialAngle: startAngle,
+    });
+
+    return { sectors, positions, tooltipDataChildren, labelListEntries, resolveLabelTheme };
+  }, [
+    outerRadiusFromProps,
+    width,
+    height,
+    cxFromProps,
+    cyFromProps,
+    data,
+    dataKey,
+    startAngle,
+    endAngle,
+    innerRadius,
+    onMouseEnter,
+    dispatch,
+    id,
+    onMouseLeave,
+    onClick,
+    themeStyles,
+    fill,
+    stroke,
+    padding,
+    ringPadding,
+  ]);
 
   const layerClass = clsx('recharts-sunburst', className);
   return (
     <Surface width={width} height={height}>
-      <Layer className={layerClass}>{sectors}</Layer>
+      <PolarLabelListContextProvider value={layout.labelListEntries}>
+        <DataLabelThemeContextProvider value={layout.resolveLabelTheme}>
+          <DataLabelColorsContextProvider value={filledShapeLabelColors}>
+            <Layer className={layerClass}>
+              <AllZIndexPortals isPanorama={false}>
+                {layout.sectors}
+                <SunburstLabels label={label} textOptions={textOptions} />
+              </AllZIndexPortals>
+            </Layer>
+            {children}
+          </DataLabelColorsContextProvider>
+        </DataLabelThemeContextProvider>
+      </PolarLabelListContextProvider>
       <SetSunburstTooltipEntrySettings
         dataKey={dataKey}
         nameKey={nameKey}
-        data={themeStyles == null ? data : { ...data, children: tooltipDataChildren }}
+        data={themeStyles == null ? data : { ...data, children: layout.tooltipDataChildren }}
         stroke={stroke}
         fill={fill}
-        positions={positions}
+        positions={layout.positions}
         id={id}
       />
-      {children}
     </Surface>
   );
+};
+
+const SunburstChartImpl = (props: InternalSunburstChartProps) => {
+  const width = useChartWidth();
+  const height = useChartHeight();
+  if (width == null || height == null) {
+    return null;
+  }
+  return <SunburstChartContent {...props} width={width} height={height} />;
 };
 
 /**

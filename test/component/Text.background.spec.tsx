@@ -168,6 +168,37 @@ describe('<Text background />', () => {
     expect(getBackground(container)).toBeNull();
   });
 
+  it.each([undefined, 'M 0,0 L 200,0'])('inherits pointer events for background %s', textPath => {
+    mockGetComputedTextLength(30);
+    mockGetTotalLength(200);
+    const { container, rerender } = render(
+      <Surface width={300} height={300}>
+        <Text x={10} y={20} textPath={textPath} pointerEvents="none" background={{ stroke: 'red' }}>
+          text
+        </Text>
+      </Surface>,
+    );
+    const backgrounds = container.querySelectorAll('.recharts-text-background');
+    expect(backgrounds.length).toBeGreaterThan(0);
+    backgrounds.forEach(background => expect(background).toHaveAttribute('pointer-events', 'none'));
+    rerender(
+      <Surface width={300} height={300}>
+        <Text
+          x={10}
+          y={20}
+          textPath={textPath}
+          pointerEvents="none"
+          background={{ pointerEvents: 'all', stroke: 'red' }}
+        >
+          text
+        </Text>
+      </Surface>,
+    );
+    container.querySelectorAll('.recharts-text-background').forEach(background => {
+      expect(background).toHaveAttribute('pointer-events', 'all');
+    });
+  });
+
   it('does not render the rectangle when the text has no size', () => {
     mockGetBBox(() => ({ x: 10, y: 20, width: 0, height: 0 }));
     const { container } = render(
