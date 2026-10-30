@@ -53,6 +53,7 @@ type ZIndexLayerProps = {
  * @param children the content to render inside this zIndex layer
  *
  * @since 3.4
+ * @public
  */
 export function ZIndexLayer({ zIndex, children }: ZIndexLayerProps) {
   /*

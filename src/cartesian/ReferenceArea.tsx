@@ -132,6 +132,9 @@ interface ReferenceAreaProps<
  * Omit width, height, x, y from SVGPropsAndEvents because ReferenceArea receives x1, x2, y1, y2 instead.
  * The position is calculated internally instead.
  */
+/**
+ * @public
+ */
 export type Props<
   XValueType extends ReferenceCoordinateValue = any,
   YValueType extends ReferenceCoordinateValue = any,
@@ -280,6 +283,7 @@ type PropsWithDefaults = RequiresDefaultProps<Props, typeof referenceAreaDefault
  *
  * @provides CartesianLabelContext
  * @consumes CartesianChartContext
+ * @public
  */
 export function ReferenceArea<
   XValueType extends ReferenceCoordinateValue = any,

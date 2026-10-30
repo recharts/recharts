@@ -1040,6 +1040,7 @@ describe('readProject', () => {
       ['provides', 'ErrorBarContext'],
       ['provides', 'CellReader'],
       ['consumes', 'CartesianChartContext'],
+      ['public', undefined],
     ]);
   });
 

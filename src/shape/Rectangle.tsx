@@ -16,6 +16,7 @@ import { round, roundTemplateLiteral } from '../util/round';
 
 /**
  * @inline
+ * @public
  */
 export type RectRadius = number | [number, number, number, number];
 
@@ -165,6 +166,9 @@ interface RectangleProps {
   onMouseLeave?: (e: React.MouseEvent<SVGPathElement>) => void;
 }
 
+/**
+ * @public
+ */
 export type Props = Omit<SVGProps<SVGPathElement>, 'radius'> & RectangleProps;
 
 export const defaultRectangleProps = {
@@ -190,6 +194,7 @@ export const defaultRectangleProps = {
  *
  * @param rectangleProps
  * @constructor
+ * @public
  */
 export const Rectangle: React.FC<Props> = rectangleProps => {
   const props = resolveDefaultProps(rectangleProps, defaultRectangleProps);

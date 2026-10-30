@@ -17,6 +17,9 @@ import { SymbolType } from '../util/types';
 import { isNumber, upperFirst } from '../util/DataUtils';
 import { svgPropertiesAndEvents } from '../util/svgPropertiesAndEvents';
 
+/**
+ * @public
+ */
 export type SizeType = 'area' | 'diameter';
 
 interface SymbolFactory {
@@ -108,6 +111,9 @@ export interface InnerSymbolsProp {
   sizeType?: SizeType;
 }
 
+/**
+ * @public
+ */
 export type SymbolsProps = Omit<SVGProps<SVGPathElement>, 'type'> & InnerSymbolsProp;
 
 const registerSymbol = (key: string, factory: D3SymbolType) => {
@@ -116,6 +122,7 @@ const registerSymbol = (key: string, factory: D3SymbolType) => {
 
 /**
  * Renders a symbol from a set of predefined shapes.
+ * @public
  */
 export const Symbols = ({ type = 'circle', size = 64, sizeType = 'area', ...rest }: SymbolsProps) => {
   const props = { ...rest, type, size, sizeType };

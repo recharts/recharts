@@ -95,6 +95,9 @@ interface TrapezoidProps {
   onMouseLeave?: (e: React.MouseEvent<SVGPathElement>) => void;
 }
 
+/**
+ * @public
+ */
 export type Props = SVGProps<SVGPathElement> & TrapezoidProps;
 
 export const defaultTrapezoidProps = {
@@ -109,6 +112,9 @@ export const defaultTrapezoidProps = {
   animationEasing: 'ease',
 } as const satisfies Partial<Props>;
 
+/**
+ * @public
+ */
 export const Trapezoid: React.FC<Props> = outsideProps => {
   const trapezoidProps = resolveDefaultProps(outsideProps, defaultTrapezoidProps);
 

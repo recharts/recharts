@@ -1,5 +1,8 @@
 import type { FunctionComponent, SVGProps } from 'react';
 
+/**
+ * @public
+ */
 export interface Props extends SVGProps<SVGElement> {
   /**
    * The fill color.
@@ -23,6 +26,7 @@ export interface Props extends SVGProps<SVGElement> {
  *
  * @deprecated
  * @consumes CellReader
+ * @public
  */
 export const Cell: FunctionComponent<Props> = (_props: Props) => null;
 

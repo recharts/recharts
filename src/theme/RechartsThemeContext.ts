@@ -9,6 +9,7 @@ const RechartsThemeContext = createContext<RechartsTheme | undefined>(undefined)
  * @see {@link https://recharts.github.io/en-US/guide/theming/ Theming guide}
  *
  * @since 3.11
+ * @public
  */
 export const RechartsThemeProvider = RechartsThemeContext.Provider;
 
@@ -21,5 +22,6 @@ export const RechartsThemeProvider = RechartsThemeContext.Provider;
  * @see {@link https://recharts.github.io/en-US/guide/theming/ Theming guide}
  *
  * @since 3.11
+ * @public
  */
 export const useRechartsTheme = (): RechartsTheme | undefined => useContext(RechartsThemeContext);

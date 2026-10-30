@@ -22,6 +22,9 @@ interface DotProps {
   clipDot?: boolean;
 }
 
+/**
+ * @public
+ */
 export type Props = PresentationAttributesWithProps<DotProps, SVGCircleElement> & DotProps;
 
 /**
@@ -33,6 +36,7 @@ export type Props = PresentationAttributesWithProps<DotProps, SVGCircleElement> 
  *
  * @param props
  * @constructor
+ * @public
  */
 export const Dot: React.FC<Props> = props => {
   const { cx, cy, r, className } = props;

@@ -75,6 +75,7 @@ const calculateWordWidths = ({ children, breakAll, style }: CalculateWordWidthsP
 
 /**
  * @inline
+ * @public
  */
 export type TextAnchor = 'start' | 'middle' | 'end' | 'inherit';
 
@@ -84,11 +85,13 @@ export function isValidTextAnchor(value: string | undefined): value is TextAncho
 
 /**
  * @inline
+ * @public
  */
 export type TextVerticalAnchor = 'start' | 'middle' | 'end';
 
 /**
  * @inline
+ * @public
  */
 export type RenderableText = string | number | boolean | null | undefined;
 
@@ -103,6 +106,7 @@ export function isRenderableText(val: unknown): val is RenderableText {
  * The position and size are measured from the rendered text.
  *
  * @since 3.11
+ * @public
  */
 export type TextBackgroundProps = Omit<
   SVGProps<SVGRectElement>,
@@ -295,6 +299,9 @@ interface TextProps {
   halo?: boolean | TextHaloProps;
 }
 
+/**
+ * @public
+ */
 export type Props = Omit<SVGProps<SVGTextElement>, 'textAnchor' | 'verticalAnchor'> & TextProps;
 
 type CalculateWordsByLinesProps = Pick<Props, 'maxLines' | 'children' | 'style' | 'breakAll'>;
@@ -686,6 +693,9 @@ export const textDefaultProps = {
   y: 0,
 } as const satisfies Partial<Props>;
 
+/**
+ * @public
+ */
 export const Text = forwardRef<SVGTextElement, Props>((outsideProps, ref) => {
   const typography: TextStyles = useBackwardsCompatibleTheme<TextStyles>(
     theme => theme.typography,

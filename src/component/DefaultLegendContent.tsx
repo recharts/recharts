@@ -17,12 +17,24 @@ import { RechartsTheme } from '../theme/RechartsTheme';
 import { useBackwardsCompatibleTheme } from '../theme/useBackwardsCompatibleTheme';
 
 const SIZE = 32;
+/**
+ * @public
+ */
 export type ContentType = ReactElement | ((props: Props) => ReactNode);
 
+/**
+ * @public
+ */
 export type HorizontalAlignmentType = 'center' | 'left' | 'right';
+/**
+ * @public
+ */
 export type VerticalAlignmentType = 'top' | 'bottom' | 'middle';
 export type Formatter = (value: any, entry: LegendPayload, index: number) => ReactNode;
 
+/**
+ * @public
+ */
 export interface LegendPayload {
   /**
    * This is the text that will be displayed in the legend in the DOM.
@@ -51,6 +63,7 @@ export interface LegendPayload {
  * The dots that a graphical item draws at its data points, as the legend icon needs them.
  *
  * @since 3.11
+ * @public
  */
 export interface LegendPayloadDot {
   /**
@@ -165,6 +178,9 @@ interface DefaultLegendContentProps {
   labelStyle?: CSSProperties;
 }
 
+/**
+ * @public
+ */
 export type Props = DefaultLegendContentProps &
   Omit<PresentationAttributesForHTML<LegendPayload, ReactElement>, keyof DefaultLegendContentProps>;
 
@@ -420,6 +436,7 @@ function Items(props: InternalProps) {
  *
  * You can use this component to customize the content of the legend,
  * or you can provide your own completely independent content.
+ * @public
  */
 export const DefaultLegendContent = (outsideProps: Props) => {
   const theme = useBackwardsCompatibleTheme<Pick<RechartsTheme, 'typography' | 'legend'>>(

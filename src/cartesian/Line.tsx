@@ -78,6 +78,9 @@ import {
   useSeriesLabelThemeResolver,
 } from '../theme/labelTheme';
 
+/**
+ * @public
+ */
 export interface LinePointItem {
   readonly value: number;
   readonly payload?: any;
@@ -498,6 +501,9 @@ type LineSvgProps = Omit<CurveProps, 'points' | 'pathRef' | 'ref' | 'layout' | '
 
 type InternalProps = LineSvgProps & InternalLineProps;
 
+/**
+ * @public
+ */
 export type Props<DataPointType = any, ValueAxisType = any> = LineSvgProps & LineProps<DataPointType, ValueAxisType>;
 
 /**
@@ -1064,6 +1070,7 @@ function LineFn(outsideProps: Props) {
  * @provides LabelListContext
  * @provides ErrorBarContext
  * @consumes CartesianChartContext
+ * @public
  */
 export const Line = React.memo(LineFn, propsAreEqual) as {
   <DataPointType = any, ValueAxisType = any>(props: Props<DataPointType, ValueAxisType>): ReactElement;

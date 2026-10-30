@@ -1547,6 +1547,9 @@ export const selectXAxisRange: (
   },
 );
 
+/**
+ * @public
+ */
 export type AxisRange = readonly [number, number];
 
 export const selectYAxisRange: (

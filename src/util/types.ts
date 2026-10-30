@@ -54,14 +54,22 @@ import type { EasingInput } from '../animation/easing';
  * (note that the `diverging` offset in d3 is named `sign` in recharts)
  *
  * @inline
+ * @public
  */
 export type StackOffsetType = 'sign' | 'expand' | 'none' | 'wiggle' | 'silhouette' | 'positive';
+/**
+ * @public
+ */
 export type CartesianLayout = 'horizontal' | 'vertical';
+/**
+ * @public
+ */
 export type PolarLayout = 'centric' | 'radial';
 /**
  * @deprecated use either `CartesianLayout` or `PolarLayout` instead.
  * Mixing both charts families leads to ambiguity in the type system.
  * These two layouts share very few properties, so it is best to keep them separate.
+ * @public
  */
 export type LayoutType = CartesianLayout | PolarLayout;
 export type AxisType = 'xAxis' | 'yAxis' | 'zAxis' | 'angleAxis' | 'radiusAxis';
@@ -82,6 +90,7 @@ export type AxisType = 'xAxis' | 'yAxis' | 'zAxis' | 'angleAxis' | 'radiusAxis';
  * before sending it to the store.
  *
  * @inline
+ * @public
  */
 export type AxisDomainTypeInput = 'number' | 'category' | 'auto';
 
@@ -95,6 +104,7 @@ export type EvaluatedAxisDomainType = 'number' | 'category';
  * Extracts values from data objects.
  *
  * @inline
+ * @public
  */
 export type DataKey<DataPointType, DataValueType = any> = TypedDataKey<DataPointType, DataValueType>;
 export type PresentationAttributesWithProps<P, T> = AriaAttributes &
@@ -111,11 +121,13 @@ export type PresentationAttributesForHTML<P, T> = AriaAttributes & DOMAttributes
 
 /**
  * @inline
+ * @public
  */
 export type SymbolType = 'circle' | 'cross' | 'diamond' | 'square' | 'star' | 'triangle' | 'wye';
 
 /**
  * @inline
+ * @public
  */
 export type LegendType =
   'circle' | 'cross' | 'diamond' | 'line' | 'plainline' | 'rect' | 'square' | 'star' | 'triangle' | 'wye' | 'none';
@@ -126,6 +138,9 @@ export type AllowInDimension = {
   y?: boolean;
 };
 
+/**
+ * @public
+ */
 export interface Coordinate {
   x: number;
   y: number;
@@ -170,6 +185,9 @@ export interface ChartCoordinate extends Coordinate {
   outerRadius?: number;
 }
 
+/**
+ * @public
+ */
 export type PolarCoordinate = Coordinate & {
   angle: number;
   startAngle: number;
@@ -705,6 +723,9 @@ export type ChartOffsetInternal = {
   brushBottom: number;
 };
 
+/**
+ * @public
+ */
 export interface Padding {
   top: number;
   bottom: number;
@@ -727,6 +748,9 @@ export type GeometrySectorWithCornerRadius = GeometrySector & {
   cornerIsExternal: boolean;
 };
 
+/**
+ * @public
+ */
 export type AxisDomainItem = string | number | ((d: number) => string | number) | 'auto' | 'dataMin' | 'dataMax';
 
 /**
@@ -744,6 +768,7 @@ export type AxisDomainItem = string | number | ((d: number) => string | number) 
  * - or a function
  * - array of functions
  * - or a combination of the above
+ * @public
  */
 export type AxisDomain =
   | ReadonlyArray<string>
@@ -759,6 +784,7 @@ export type AxisDomain =
  * Know that the min, max values are not guaranteed to be nice numbers - values like -Infinity or NaN are possible.
  *
  * There are also `category` axes that have different things than numbers in their domain.
+ * @public
  */
 export type NumberDomain = readonly [min: number, max: number];
 
@@ -766,6 +792,9 @@ export type CategoricalDomainItem = number | string | Date;
 
 export type CategoricalDomain = ReadonlyArray<CategoricalDomainItem>;
 
+/**
+ * @public
+ */
 export type BaseTickContentProps = {
   angle: number;
   className?: string;
@@ -784,11 +813,17 @@ export type BaseTickContentProps = {
   y: number | string;
 };
 
+/**
+ * @public
+ */
 export type XAxisTickContentProps = BaseTickContentProps & {
   orientation: XAxisOrientation;
   padding: XAxisPadding | undefined;
 };
 
+/**
+ * @public
+ */
 export type YAxisTickContentProps = BaseTickContentProps & {
   orientation: YAxisOrientation;
   padding: YAxisPadding | undefined;
@@ -796,6 +831,7 @@ export type YAxisTickContentProps = BaseTickContentProps & {
 
 /**
  * @inline
+ * @public
  */
 export type TickProp<T> = TextProps | ReactElement | ((props: T) => ReactNode) | boolean;
 
@@ -1020,6 +1056,7 @@ export interface RenderableAxisProps<DataPointType, DataValueType> extends BaseA
  * 'preserveStartEnd' keeps the left tick on collision and ensures that the first and last ticks always show.
  * 'equidistantPreserveStart' selects a number N such that every nTh tick will be shown without collision.
  * 'equidistantPreserveEnd' selects a number N such that every nTh tick will be shown, ensuring the last tick is always visible.
+ * @public
  */
 export type AxisInterval =
   number | 'preserveStart' | 'preserveEnd' | 'preserveStartEnd' | 'equidistantPreserveStart' | 'equidistantPreserveEnd';
@@ -1033,6 +1070,9 @@ export type AxisInterval =
  */
 export type AxisTick = number | string;
 
+/**
+ * @public
+ */
 export interface TickItem {
   value: any;
   coordinate: number;
@@ -1047,12 +1087,18 @@ export interface TickItem {
   offset?: number;
 }
 
+/**
+ * @public
+ */
 export interface CartesianTickItem extends TickItem {
   tickCoord?: number;
   tickSize?: number;
   isShow?: boolean;
 }
 
+/**
+ * @public
+ */
 export interface Margin {
   top: number;
   right: number;
@@ -1062,6 +1108,7 @@ export interface Margin {
 
 /**
  * @inline
+ * @public
  */
 export interface CartesianViewBox {
   x?: number;
@@ -1116,6 +1163,7 @@ export type TrapezoidViewBox = {
 
 /**
  * @inline
+ * @public
  */
 export type ViewBox = CartesianViewBoxRequired | PolarViewBoxRequired;
 
@@ -1200,6 +1248,9 @@ export const adaptEventsOfChild = (
  */
 export type TooltipEventType = 'axis' | 'item';
 
+/**
+ * @public
+ */
 export interface SankeyNode {
   // node attributes
   dx: number;
@@ -1243,6 +1294,9 @@ export interface DotSymbolOption {
   symbol?: SymbolType;
 }
 
+/**
+ * @public
+ */
 export type ActiveDotProps = DotProps & {
   payload: any;
   index: number;
@@ -1263,6 +1317,7 @@ export type ActiveDotProps = DotProps & {
  * - Radar
  *
  * @inline
+ * @public
  */
 export type ActiveDotType =
   /**
@@ -1304,6 +1359,7 @@ export type ActiveDotType =
 /**
  * Inside the dot event handlers we provide extra information about the dot point
  * that the Dot component itself does not need but users might find useful.
+ * @public
  */
 export type DotItemDotProps = SVGPropsNoEvents<Omit<DotProps, 'points' | 'ref'>> & {
   points: ReadonlyArray<DotPoint>;
@@ -1320,6 +1376,7 @@ export type DotItemDotProps = SVGPropsNoEvents<Omit<DotProps, 'points' | 'ref'>>
  * - Radar
  *
  * @inline
+ * @public
  */
 export type DotType =
   /**
@@ -1391,6 +1448,9 @@ export interface ShapeAnimationProps {
   isEntrance?: boolean;
 }
 
+/**
+ * @public
+ */
 export type ActiveShape<PropsType = Record<string, unknown>, ElementType = SVGElement> =
   | ReactElement<Partial<PropsType> & SVGProps<ElementType>>
   | ((props: PropsType, index?: string | number) => ReactNode)
@@ -1410,6 +1470,7 @@ type SVGElementTarget = Pick<SVGGraphicsElement, 'getBoundingClientRect' | 'getB
  *
  * This is meant to represent the React.MouseEvent
  * which is a wrapper on top of https://developer.mozilla.org/en-US/docs/Web/API/MouseEvent
+ * @public
  */
 export interface HTMLMousePointer {
   clientX: number;
@@ -1417,6 +1478,9 @@ export interface HTMLMousePointer {
   currentTarget: HTMLElementTarget;
 }
 
+/**
+ * @public
+ */
 export interface HTMLTouchPointer {
   touches: ArrayLike<Pick<Touch, 'clientX' | 'clientY'>>;
   currentTarget: HTMLElementTarget;
@@ -1427,6 +1491,7 @@ export interface HTMLTouchPointer {
  *
  * Similar to MousePointer but uses SVGGraphicsElement properties instead of HTMLElement properties.
  * SVG elements use getBBox() to get the intrinsic size instead of offsetWidth/offsetHeight.
+ * @public
  */
 export interface SVGMousePointer {
   clientX: number;
@@ -1434,6 +1499,9 @@ export interface SVGMousePointer {
   currentTarget: SVGElementTarget;
 }
 
+/**
+ * @public
+ */
 export interface SVGTouchPointer {
   touches: ArrayLike<Pick<Touch, 'clientX' | 'clientY'>>;
   currentTarget: SVGElementTarget;
@@ -1441,13 +1509,18 @@ export interface SVGTouchPointer {
 
 /**
  * Recharts accepts mouse events from both HTML and SVG elements.
+ * @public
  */
 export type MousePointer = HTMLMousePointer | SVGMousePointer;
+/**
+ * @public
+ */
 export type TouchPointer = HTMLTouchPointer | SVGTouchPointer;
 
 /**
  * Coordinates relative to the top-left corner of the active element.
  * Also include scale which means that element that's scaled will return the same coordinates as element that's not scaled.
+ * @public
  */
 export interface RelativePointer {
   relativeX: number;

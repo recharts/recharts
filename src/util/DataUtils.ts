@@ -125,6 +125,7 @@ export const hasDuplicate = (ary: ReadonlyArray<unknown>): boolean => {
  * @param animationElapsedTime interpolation factor; values in [0, 1] interpolate between start and end, and values outside that range extrapolate
  *
  * @since 3.9
+ * @public
  */
 export function interpolate(start: number | null | undefined, end: number, animationElapsedTime: number): number;
 export function interpolate(start: number | null | undefined, end: null, animationElapsedTime: number): null;

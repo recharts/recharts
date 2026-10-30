@@ -84,6 +84,9 @@ function RevealClipRect({ alpha, layout, points, baseLine, strokeWidth }: ClipRe
   return <HorizontalClipRect alpha={alpha} points={points} baseLine={baseLine} strokeWidth={strokeWidth} />;
 }
 
+/**
+ * @public
+ */
 export type AreaRevealShapeProps = CurveProps & ShapeAnimationProps & { layout?: LayoutType; isRange?: boolean };
 
 /**
@@ -108,6 +111,7 @@ export type AreaRevealShapeProps = CurveProps & ShapeAnimationProps & { layout?:
  * @see {@link https://recharts.github.io/en-US/guide/animations Animation guide}
  *
  * @since 3.9
+ * @public
  */
 export function AreaRevealShape(props: AreaRevealShapeProps): React.ReactElement | null {
   const {

@@ -20,6 +20,7 @@ const padding = '0.5ex';
  * @see {@link https://recharts.github.io/en-US/guide/theming/ Theming guide}
  *
  * @since 3.11
+ * @public
  */
 export const autoPalette: ReadonlyArray<string> = [
   'light-dark(#2373e6, #5396ff)', //  1 Blue
@@ -71,6 +72,7 @@ function toGraphicalItem(color: string): GraphicalItemStyle {
  * @see {@link https://recharts.github.io/en-US/guide/theming/ Theming guide}
  *
  * @since 3.11
+ * @public
  */
 export const autoTheme: RechartsTheme = {
   graphicalItems: autoPalette.map(toGraphicalItem),
