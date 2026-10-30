@@ -45,6 +45,7 @@ import { RequiresDefaultProps, resolveDefaultProps } from '../util/resolveDefaul
 import { RegisterGraphicalItemId } from '../context/RegisterGraphicalItemId';
 import { GraphicalItemId } from '../state/graphicalItemsSlice';
 import { initialEventSettingsState } from '../state/eventSettingsSlice';
+import { ColorGraphicalItemStyle, getColorGraphicalItems } from '../theme/themeFill';
 import { RechartsTheme } from '../theme/RechartsTheme';
 import { useBackwardsCompatibleTheme } from '../theme/useBackwardsCompatibleTheme';
 import { hasOwnColors } from '../theme/dataEntryStyles';
@@ -640,7 +641,7 @@ type ContentItemProps = {
   /**
    * Undefined when there is no theme at all, which is when the legacy styles apply.
    */
-  themeGraphicalItems: RechartsTheme['graphicalItems'] | undefined;
+  themeGraphicalItems: ReadonlyArray<ColorGraphicalItemStyle> | undefined;
   /**
    * The color behind the chart, used for the tile outlines.
    */
@@ -680,7 +681,7 @@ function getTileStyles({
   nodeHasOwnColors: boolean;
   branchIndex: number | undefined;
   colorPanel: ReadonlyArray<string> | undefined;
-  themeGraphicalItems: RechartsTheme['graphicalItems'] | undefined;
+  themeGraphicalItems: ReadonlyArray<ColorGraphicalItemStyle> | undefined;
   themePageBackground: string | undefined;
 }): TileStyles {
   const colors = colorPanel || COLOR_PANEL;
@@ -850,7 +851,7 @@ type TreemapTooltipColorSource = {
   fill: string | undefined;
   stroke: string | undefined;
   colorPanel: ReadonlyArray<string> | undefined;
-  themeGraphicalItems: RechartsTheme['graphicalItems'] | undefined;
+  themeGraphicalItems: ReadonlyArray<ColorGraphicalItemStyle> | undefined;
 };
 
 function isTreemapTooltipNode(value: unknown): value is TreemapTooltipNode {
@@ -974,7 +975,7 @@ const SetTreemapTooltipEntrySettings = React.memo(
     formatRoot,
     id,
   }: Pick<InternalTreemapProps, 'dataKey' | 'nameKey' | 'stroke' | 'fill' | 'colorPanel' | 'id'> & {
-    themeGraphicalItems: RechartsTheme['graphicalItems'] | undefined;
+    themeGraphicalItems: ReadonlyArray<ColorGraphicalItemStyle> | undefined;
     /**
      * The tree that is rendered. Its `tooltipIndex` and `depth` match the hovered tile, also after zooming in.
      */
@@ -1153,7 +1154,7 @@ type InternalTreemapProps = RequiresDefaultProps<Props, typeof defaultTreeMapPro
   height: number;
   dispatch: AppDispatch;
   id: GraphicalItemId;
-  themeGraphicalItems: RechartsTheme['graphicalItems'] | undefined;
+  themeGraphicalItems: ReadonlyArray<ColorGraphicalItemStyle> | undefined;
   themePageBackground: string | undefined;
   typography?: React.CSSProperties;
 };
@@ -1503,7 +1504,7 @@ export function Treemap(outsideProps: Props) {
         <TooltipPortalContext.Provider value={tooltipPortal}>
           <TreemapDispatchInject
             {...props}
-            themeGraphicalItems={theme?.graphicalItems}
+            themeGraphicalItems={getColorGraphicalItems(theme?.graphicalItems)}
             themePageBackground={theme?.pageBackground}
             typography={theme?.typography}
           />

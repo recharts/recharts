@@ -78,7 +78,7 @@ import { DefaultZIndexes } from '../zIndex/DefaultZIndexes';
 import { propsAreEqual } from '../util/propsAreEqual';
 import { useBackwardsCompatibleTheme } from '../theme/useBackwardsCompatibleTheme';
 import { ChartData } from '../state/chartDataSlice';
-import { useGraphicalItemIdentity } from '../theme/useGraphicalItemIdentity';
+import { useGraphicalItemIdentity, useGraphicalItemThemeFill } from '../theme/useGraphicalItemIdentity';
 import { useEffectiveDataKey } from '../util/useEffectiveDataKey';
 import { getDataKeyOnAxis } from '../state/selectors/effectiveDataKeySelectors';
 import {
@@ -89,15 +89,9 @@ import {
   useUnthemedColors,
 } from '../theme/dataEntryStyles';
 import { getActiveStyleOverrides, useThemedActiveStyles } from '../theme/activeStyles';
-import { Styles2D } from '../theme/RechartsTheme';
+import { ColorStyles2D } from '../theme/themeFill';
 import { RechartsFill } from '../fill/RechartsFill';
-import {
-  FillObjectDefinition,
-  getFillUrl,
-  getSeriesFillId,
-  splitFill,
-  useSeriesFillObject,
-} from '../fill/fillDefinitions';
+import { FillObjectDefinition, getFillUrl, getSeriesFillId, splitFill } from '../fill/fillDefinitions';
 import {
   DataLabelColors,
   DataLabelColorsContextProvider,
@@ -200,7 +194,7 @@ interface ScatterInternalProps extends ZIndexable {
    * Theme styles of the active shape, without the ones that explicit props override.
    * Undefined when there is no active theme, or when the theme has no active styles.
    */
-  themedActiveStyles?: Styles2D;
+  themedActiveStyles?: ColorStyles2D;
 
   isAnimationActive: boolean | 'auto';
   animationBegin: number;
@@ -726,7 +720,7 @@ function ScatterPoint({
   activeShape: ScatterCustomizedShape | undefined;
   baseProps: WithoutId<SVGPropsNoEvents<InternalProps>>;
   entryStyleOverrides: UnthemedColors | undefined;
-  themedActiveStyles: Styles2D | undefined;
+  themedActiveStyles: ColorStyles2D | undefined;
   id: GraphicalItemId;
   restOfAllOtherProps: InternalProps;
   onMouseEnterFromContext: (
@@ -1218,7 +1212,8 @@ function ScatterFn(propsWithFillObject: Props) {
     yAxisId: outsideProps.yAxisId ?? defaultScatterProps.yAxisId,
   });
   const graphicalItemThemeSelector = useGraphicalItemIdentity(effectiveDataKey, outsideProps);
-  const effectiveFillObject = useSeriesFillObject(fillObject, graphicalItemThemeSelector);
+  const themeFillObject = useGraphicalItemThemeFill(effectiveDataKey, outsideProps);
+  const effectiveFillObject = fillObject ?? themeFillObject;
   const resolveLabelTheme = useSeriesLabelThemeResolver(graphicalItemThemeSelector);
   const unthemedColors = useUnthemedColors(outsideProps);
   const themedActiveStyles = useThemedActiveStyles(graphicalItemThemeSelector, outsideProps);

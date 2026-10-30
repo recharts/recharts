@@ -3,6 +3,7 @@ import { darkTheme } from '../../src/theme/darkTheme';
 import { emptyTheme } from '../../src/theme/emptyTheme';
 import { lightTheme } from '../../src/theme/lightTheme';
 import { GraphicalItemStyle, RechartsTheme } from '../../src/theme/RechartsTheme';
+import { withFillColor } from '../../src/theme/themeFill';
 import {
   blendOver,
   ColorVisionDeficiency,
@@ -140,7 +141,9 @@ function paintedFill(style: ColorTokens, background: Rgb, description: string): 
  * @returns One opaque colour per entry in `graphicalItems`.
  */
 function paintedSeriesColors(theme: RechartsTheme, background: Rgb): ReadonlyArray<Rgb> {
-  return theme.graphicalItems.map((item, index) => paintedFill(item, background, `graphicalItems[${index}]`));
+  return theme.graphicalItems.map((item, index) =>
+    paintedFill(withFillColor(item), background, `graphicalItems[${index}]`),
+  );
 }
 
 /**
@@ -199,7 +202,7 @@ describe.each(THEME_NAMES)('%s theme', themeName => {
   });
 
   test.each(MEANINGFUL_STROKES)('the %s stroke is visible against the background', key => {
-    const style: ColorTokens | undefined = theme[key];
+    const style: ColorTokens | undefined = withFillColor(theme[key]);
     const stroke = requireColor(style?.stroke, `${key}.stroke`);
     expect(contrastRatio(stroke, background)).toBeGreaterThanOrEqual(WCAG_NON_TEXT_CONTRAST);
   });
@@ -249,7 +252,9 @@ describe('series colour contrast against the chart background', () => {
     ]);
 
     test.each(entries)('%s is visible as a filled shape', (description, item) => {
-      expect(contrastRatio(paintedFill(item, background, description), background)).toBeGreaterThanOrEqual(floor);
+      expect(
+        contrastRatio(paintedFill(withFillColor(item), background, description), background),
+      ).toBeGreaterThanOrEqual(floor);
     });
 
     test.each(entries)('%s is visible as a line', (description, item) => {
@@ -326,7 +331,7 @@ function accessibilityReport(themeName: ThemeName): string {
   lines.push('', 'strokes and fills');
   const styleKeys = ['axis', 'errorBar', 'brush', 'grid', 'reference', 'cursor', 'barBackground'] as const;
   for (const key of styleKeys) {
-    const style: ColorTokens | undefined = theme[key];
+    const style: ColorTokens | undefined = withFillColor(theme[key]);
     if (style?.stroke != null) {
       lines.push(`${`  ${key}.stroke`.padEnd(24)}${ratio(contrastRatio(parseColor(style.stroke), background))}`);
     }
@@ -338,10 +343,15 @@ function accessibilityReport(themeName: ThemeName): string {
 
   lines.push('', 'series colours');
   theme.graphicalItems.forEach((item, index) => {
-    const fill = ratio(contrastRatio(paintedFill(item, background, `graphicalItems[${index}]`), background));
+    const fill = ratio(
+      contrastRatio(paintedFill(withFillColor(item), background, `graphicalItems[${index}]`), background),
+    );
     const stroke = ratio(contrastRatio(requireColor(item.stroke, 'stroke'), background));
     const link = ratio(
-      contrastRatio(blendOver(requireColor(item.fill, 'fill'), THEMED_LINK_STROKE_OPACITY, background), background),
+      contrastRatio(
+        blendOver(requireColor(withFillColor(item).fill, 'fill'), THEMED_LINK_STROKE_OPACITY, background),
+        background,
+      ),
     );
     lines.push(`${`  ${item.fill}`.padEnd(14)}fill ${fill}   stroke ${stroke}   sankey link ${link}`);
   });

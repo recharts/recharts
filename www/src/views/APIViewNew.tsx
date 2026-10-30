@@ -157,19 +157,35 @@ function PropsSection({ entries, locale, section, isExpanded, onToggle }: PropsS
   );
 }
 
+function getSection(prop: ApiProps): PropsSection {
+  if (prop.deprecated) {
+    return 'deprecated';
+  }
+  return prop.name.startsWith('on') ? 'events' : 'current';
+}
+
 function PropsList({ props, locale }: PropsListProps) {
   const [expandedSections, setExpandedSections] = useState(DEFAULT_EXPANDED_SECTIONS);
-
   const [pendingScrollTarget, setPendingScrollTarget] = useState<string | null>(null);
 
   useEffect(() => {
-    const hashTarget = getHashTarget();
-    if (hashTarget !== '' && document.getElementById(hashTarget) === null) {
-      // The target may be in a section that only expands now, so the browser could not scroll to it on load.
+    const revealHashTarget = () => {
+      const hashTarget = getHashTarget();
+      if (hashTarget === '' || document.getElementById(hashTarget) !== null) {
+        return;
+      }
+      // The target is in a collapsed section, so the browser could not scroll to it.
       setPendingScrollTarget(hashTarget);
-    }
+      const targetProp = props.find(prop => prop.name === hashTarget);
+      if (targetProp) {
+        setExpandedSections(previousSections => ({ ...previousSections, [getSection(targetProp)]: true }));
+      }
+    };
     setExpandedSections(readStoredExpandedSections());
-  }, []);
+    revealHashTarget();
+    window.addEventListener('hashchange', revealHashTarget);
+    return () => window.removeEventListener('hashchange', revealHashTarget);
+  }, [props]);
 
   useEffect(() => {
     if (pendingScrollTarget) {
@@ -194,9 +210,9 @@ function PropsList({ props, locale }: PropsListProps) {
     return null;
   }
 
-  const currentProps = props.filter(prop => !prop.deprecated && !prop.name.startsWith('on'));
-  const deprecatedProps = props.filter(prop => prop.deprecated);
-  const events = props.filter(prop => !prop.deprecated && prop.name.startsWith('on'));
+  const currentProps = props.filter(prop => getSection(prop) === 'current');
+  const deprecatedProps = props.filter(prop => getSection(prop) === 'deprecated');
+  const events = props.filter(prop => getSection(prop) === 'events');
 
   return (
     <>

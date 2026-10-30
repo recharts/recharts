@@ -1,7 +1,6 @@
 import * as React from 'react';
-import { ComponentType, useMemo } from 'react';
+import { ComponentType } from 'react';
 import { RechartsFill, RechartsFillDefinitionProps, RechartsLinearGradient, RechartsPattern } from './RechartsFill';
-import type { GraphicalItemStyle, RechartsTheme } from '../theme/RechartsTheme';
 import { useRechartsTheme } from '../theme/RechartsThemeContext';
 import { getEffectivePageBackground } from '../theme/pageBackground';
 
@@ -136,24 +135,6 @@ export function splitFill(fill: string | RechartsFill | undefined): {
     return { color: fill, fillObject: undefined };
   }
   return { color: fill.color, fillObject: fill };
-}
-
-/**
- * Returns the fill object a graphical item paints with: its own, or the `fillDefinition` of its theme entry.
- * The theme selector leaves the definition out when the item sets its own colors.
- * @param fillObject the fill object from props
- * @param themeSelector selects the theme entry of the graphical item
- */
-export function useSeriesFillObject(
-  fillObject: RechartsFill | undefined,
-  themeSelector: (theme: RechartsTheme) => GraphicalItemStyle | undefined,
-): RechartsFill | undefined {
-  const theme = useRechartsTheme();
-  const themeFillDefinition = theme == null ? undefined : themeSelector(theme)?.fillDefinition;
-  return useMemo(
-    () => fillObject ?? (themeFillDefinition == null ? undefined : { definition: themeFillDefinition }),
-    [fillObject, themeFillDefinition],
-  );
 }
 
 /**

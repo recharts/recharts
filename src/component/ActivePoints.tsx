@@ -13,7 +13,7 @@ import { ZIndexable, ZIndexLayer } from '../zIndex/ZIndexLayer';
 import { DefaultZIndexes } from '../zIndex/DefaultZIndexes';
 import { getOwnStyles } from '../theme/dataEntryStyles';
 import { getActiveStyleOverrides } from '../theme/activeStyles';
-import { Styles2D } from '../theme/RechartsTheme';
+import { ColorStyles2D } from '../theme/themeFill';
 
 export interface PointType {
   readonly x: number | null;
@@ -33,7 +33,7 @@ const ActivePoint = ({
 }: {
   point: PointType;
   activeDot: ActiveDotType;
-  themedActiveStyles: Styles2D | undefined;
+  themedActiveStyles: ColorStyles2D | undefined;
   childIndex: number;
   dataKey: DataKey<any> | undefined;
   /**
@@ -100,7 +100,7 @@ interface ActivePointsProps extends ZIndexable {
   mainColor: string | undefined;
   itemDataKey: DataKey<any> | undefined;
   activeDot: ActiveDotType;
-  themedActiveStyles?: Styles2D;
+  themedActiveStyles?: ColorStyles2D;
   clipPath?: string;
 }
 

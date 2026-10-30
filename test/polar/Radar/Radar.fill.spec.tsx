@@ -65,7 +65,7 @@ describe('Radar with a fill object', () => {
   it('should paint with the definition from the theme', () => {
     const { container } = render(
       <RechartsThemeProvider
-        value={{ ...lightTheme, graphicalItems: [{ fill: 'teal', fillDefinition: pattern(patterns.star) }] }}
+        value={{ ...lightTheme, graphicalItems: [{ fill: { color: 'teal', definition: pattern(patterns.star) } }] }}
       >
         <RadarChart width={400} height={400} data={data}>
           <PolarAngleAxis dataKey="subject" />

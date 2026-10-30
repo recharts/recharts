@@ -1,7 +1,7 @@
-import { ComponentType, CSSProperties } from 'react';
+import { CSSProperties } from 'react';
 import { LegendProps } from '../index';
 import type { TextBackgroundProps } from '../component/Text';
-import type { RechartsFillDefinitionProps } from '../fill/RechartsFill';
+import type { RechartsFill } from '../fill/RechartsFill';
 
 /**
  * Styles shared for rectangular or variable shape components that have an area (Area, Bar, Rectangle)
@@ -12,25 +12,21 @@ export type Styles2D = {
   strokeWidth?: number | string;
   strokeDasharray?: string | number;
   fillOpacity?: number | string;
-  fill?: string;
+  /**
+   * A color, or a fill object that paints the shapes with a pattern or a gradient.
+   * Everything that needs a plain color, such as the Tooltip, the Legend text, and labels, uses its `color`.
+   *
+   * Give each entry of `graphicalItems` a different pattern, and charts tell their series apart
+   * without relying on color alone.
+   *
+   * Bar, Area, Radar, and Scatter draw the definition of a fill object. Everything else paints with its `color`.
+   *
+   * @example { fill: { color: '#2b6cb0', definition: pattern(patterns.diagonal) } }
+   */
+  fill?: string | RechartsFill;
 };
 
 export type GraphicalItemStyle = Styles2D & {
-  /**
-   * Paints the shapes of the graphical item with an SVG definition, such as a pattern or a gradient,
-   * the same as the `definition` of a {@link RechartsFill}. The definition gets `fill` from here as its `color`,
-   * and Tooltip, Legend text, and labels use that `fill` color.
-   *
-   * Give each entry a different pattern, and charts tell their series apart without relying on color alone.
-   *
-   * Bar, Area, Radar, and Scatter draw it. Other graphical items use the plain `fill` color.
-   * A graphical item that sets its own `fill` or `stroke` doesn't use it.
-   *
-   * @example { fill: '#2b6cb0', fillDefinition: pattern(patterns.diagonal) }
-   *
-   * @since 3.11
-   */
-  fillDefinition?: ComponentType<RechartsFillDefinitionProps>;
   /**
    * Styles applied to the active representation of a graphical item.
    *

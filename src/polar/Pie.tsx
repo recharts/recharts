@@ -85,7 +85,8 @@ import {
   useDataLabelThemeResolver,
   useIndexedLabelThemeResolver,
 } from '../theme/labelTheme';
-import { RechartsTheme, Styles2D } from '../theme/RechartsTheme';
+import { RechartsTheme } from '../theme/RechartsTheme';
+import { ColorGraphicalItemStyle, ColorStyles2D, getColorGraphicalItems } from '../theme/themeFill';
 import { useBackwardsCompatibleTheme } from '../theme/useBackwardsCompatibleTheme';
 import { getOwnStyles, hasOwnColors, withoutColors } from '../theme/dataEntryStyles';
 import { getActiveStyleOverrides } from '../theme/activeStyles';
@@ -487,7 +488,7 @@ type PieStyleProps = Pick<
   'fill' | 'fillOpacity' | 'stroke' | 'strokeOpacity' | 'strokeWidth' | 'strokeDasharray'
 >;
 
-type PieGraphicalItems = RechartsTheme['graphicalItems'];
+type PieGraphicalItems = ReadonlyArray<ColorGraphicalItemStyle>;
 
 /**
  * Resolves the styles of a single sector when a theme is present.
@@ -506,12 +507,12 @@ function getThemedPieStyles(
   index: number,
   graphicalItems: PieGraphicalItems,
   explicitStyleProps: PieStyleProps,
-): Styles2D | undefined {
+): ColorStyles2D | undefined {
   const graphicalItemStyle = graphicalItems[index % graphicalItems.length];
   if (graphicalItemStyle == null) {
     return undefined;
   }
-  const entryStyles: Styles2D = payload != null && typeof payload === 'object' ? payload : {};
+  const entryStyles: ColorStyles2D = payload != null && typeof payload === 'object' ? payload : {};
 
   // The data entry wins over the Pie props, and both win over the theme.
   const ownStyles = { ...getOwnStyles(explicitStyleProps), ...getOwnStyles(entryStyles) };
@@ -535,7 +536,7 @@ function getThemedPieStyles(
  * Legend and Tooltip show a single color for each sector.
  * Pie sectors are primarily filled, so the fill wins. A sector that has no fill shows its stroke instead.
  */
-function getPieEntryColor(styles: Styles2D): string | undefined {
+function getPieEntryColor(styles: ColorStyles2D): string | undefined {
   return styles.fill && styles.fill !== 'none' ? styles.fill : styles.stroke;
 }
 
@@ -605,7 +606,7 @@ type PieSectorsProps = ShapeAnimationProps & {
   /**
    * Theme `active` styles of each sector, by index. Without the theme colors if the Pie has its own colors.
    */
-  indexedActiveStyles: ReadonlyArray<Styles2D | undefined>;
+  indexedActiveStyles: ReadonlyArray<ColorStyles2D | undefined>;
 };
 
 function getActiveShapeFill(activeShape: ActiveShape<Readonly<PieSectorDataItem>> | undefined): string | undefined {
@@ -1203,7 +1204,7 @@ function SectorsWithAnimation({
   previousSectorsRef: MutableRefObject<ReadonlyArray<PieSectorDataItem> | null>;
   id: GraphicalItemId;
   graphicalItems: PieGraphicalItems;
-  indexedActiveStyles: ReadonlyArray<Styles2D | undefined>;
+  indexedActiveStyles: ReadonlyArray<ColorStyles2D | undefined>;
 }) {
   const { sectors, activeShape, inactiveShape, animationInterpolateFn } = props;
   const resolveLabelTheme = useIndexedLabelThemeResolver(graphicalItems);
@@ -1416,13 +1417,13 @@ function PieFn(outsideProps: Props) {
           <SetPiePayloadLegend
             {...propsWithoutId}
             id={id}
-            graphicalItems={theme?.graphicalItems ?? []}
+            graphicalItems={getColorGraphicalItems(theme?.graphicalItems) ?? []}
             explicitStyleProps={explicitStyleProps}
           />
           <PieImpl
             {...propsWithoutId}
             id={id}
-            graphicalItems={theme?.graphicalItems ?? []}
+            graphicalItems={getColorGraphicalItems(theme?.graphicalItems) ?? []}
             explicitStyleProps={explicitStyleProps}
           />
         </>

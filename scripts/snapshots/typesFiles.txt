@@ -236,6 +236,7 @@
   "types/theme/labelTheme.d.ts",
   "types/theme/lightTheme.d.ts",
   "types/theme/pageBackground.d.ts",
+  "types/theme/themeFill.d.ts",
   "types/theme/useBackwardsCompatibleTheme.d.ts",
   "types/theme/useGraphicalItemIdentity.d.ts",
   "types/types.d.ts",

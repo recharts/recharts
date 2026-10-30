@@ -50,20 +50,14 @@ import { ZIndexable, ZIndexLayer } from '../zIndex/ZIndexLayer';
 import { DefaultZIndexes } from '../zIndex/DefaultZIndexes';
 import { RechartsScale } from '../util/scale/RechartsScale';
 import { usePolarChartLayout } from '../context/chartLayoutContext';
-import { GraphicalItemStyle, Styles2D } from '../theme/RechartsTheme';
+import { ColorGraphicalItemStyle, ColorStyles2D } from '../theme/themeFill';
 import { RechartsFill } from '../fill/RechartsFill';
-import {
-  FillObjectDefinition,
-  getFillUrl,
-  getSeriesFillId,
-  splitFill,
-  useSeriesFillObject,
-} from '../fill/fillDefinitions';
+import { FillObjectDefinition, getFillUrl, getSeriesFillId, splitFill } from '../fill/fillDefinitions';
 import { useRechartsTheme } from '../theme/RechartsThemeContext';
 import { useBackwardsCompatibleTheme } from '../theme/useBackwardsCompatibleTheme';
 import { UnthemedColors, useUnthemedColors } from '../theme/dataEntryStyles';
 import { useThemedActiveStyles } from '../theme/activeStyles';
-import { useGraphicalItemIdentity } from '../theme/useGraphicalItemIdentity';
+import { useGraphicalItemIdentity, useGraphicalItemThemeFill } from '../theme/useGraphicalItemIdentity';
 import { useEffectiveDataKey } from '../util/useEffectiveDataKey';
 import {
   DataLabelColorsContextProvider,
@@ -344,7 +338,7 @@ type RadarPropsWithDotFill = WithIdRequired<PropsWithDefaults> & {
    */
   fillObject?: RechartsFill;
   unthemedColors?: UnthemedColors;
-  themedActiveStyles?: Styles2D;
+  themedActiveStyles?: ColorStyles2D;
 };
 
 function RadarDotsWrapper({ points, props }: { points: ReadonlyArray<RadarPoint>; props: RadarPropsWithDotFill }) {
@@ -744,9 +738,10 @@ export function Radar<DataPointType = any, DataValueType = any>(
     radiusAxisId: outsideProps.radiusAxisId ?? defaultRadarProps.radiusAxisId,
   });
   const graphicalItemThemeSelector = useGraphicalItemIdentity(dataKey, outsideProps);
-  const effectiveFillObject = useSeriesFillObject(fillObject, graphicalItemThemeSelector);
+  const themeFillObject = useGraphicalItemThemeFill(dataKey, outsideProps);
+  const effectiveFillObject = fillObject ?? themeFillObject;
   const resolveLabelTheme = useSeriesLabelThemeResolver(graphicalItemThemeSelector);
-  const graphicalItemTheme = useBackwardsCompatibleTheme<Omit<GraphicalItemStyle, 'label'>>(
+  const graphicalItemTheme = useBackwardsCompatibleTheme<Omit<ColorGraphicalItemStyle, 'label'>>(
     graphicalItemThemeSelector,
     outsideProps,
     undefined,
