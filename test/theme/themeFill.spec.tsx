@@ -1,8 +1,6 @@
 import React from 'react';
 import { describe, expect, it } from 'vitest';
 import {
-  Area,
-  AreaChart,
   Bar,
   BarChart,
   Brush,
@@ -133,10 +131,6 @@ describe('fill objects in the theme', () => {
   it('should paint the graphical items that do not draw fill objects yet with the color', () => {
     const { container } = rechartsTestRender(
       <RechartsThemeProvider value={theme}>
-        <AreaChart width={400} height={400} data={data}>
-          <Area dataKey="uv" isAnimationActive={false} />
-          <Tooltip defaultIndex={0} />
-        </AreaChart>
         <LineChart width={400} height={400} data={data}>
           <Line dataKey="uv" isAnimationActive={false} />
         </LineChart>
@@ -151,7 +145,6 @@ describe('fill objects in the theme', () => {
     );
 
     expectNoObjectFills(container);
-    expect(container.querySelector('.recharts-area-area')).toHaveAttribute('fill', 'purple');
     expect(container.querySelector('.recharts-pie-sector path')).toHaveAttribute('fill', 'purple');
   });
 });

@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { ComponentType } from 'react';
-import { RechartsFillDefinitionProps, RechartsLinearGradient, RechartsPattern } from './RechartsFill';
+import { RechartsFill, RechartsFillDefinitionProps, RechartsLinearGradient, RechartsPattern } from './RechartsFill';
 import { useRechartsTheme } from '../theme/RechartsThemeContext';
 import { getEffectivePageBackground } from '../theme/pageBackground';
 
@@ -120,4 +120,43 @@ export function linearGradient(gradient: RechartsLinearGradient): ComponentType<
     );
   }
   return LinearGradientDefinition;
+}
+
+/**
+ * Splits the `fill` prop of a graphical item into the base color, and the fill object if there is one.
+ * A fill object without `color` gives no color of its own, so the item keeps the theme colors.
+ * @param fill the `fill` prop
+ */
+export function splitFill(fill: string | RechartsFill | undefined): {
+  color: string | undefined;
+  fillObject: RechartsFill | undefined;
+} {
+  if (fill == null || typeof fill === 'string') {
+    return { color: fill, fillObject: undefined };
+  }
+  return { color: fill.color, fillObject: fill };
+}
+
+/**
+ * DOM id of the fill definition of a graphical item.
+ * @param id id of the graphical item
+ */
+export function getSeriesFillId(id: string): string {
+  return `${id}-fill`;
+}
+
+/**
+ * Renders the definition of a fill object. Render it inside `<defs>`.
+ */
+export function FillObjectDefinition({
+  id,
+  fillObject,
+  color,
+}: {
+  id: string;
+  fillObject: RechartsFill;
+  color: string | undefined;
+}) {
+  const Definition = fillObject.definition;
+  return <Definition id={id} color={color} />;
 }
