@@ -113,8 +113,31 @@ describe('Bar with a fill object', () => {
     expect(fill).not.toBe('url(#my-bar-fill)');
     const legendPattern = container.querySelector('.recharts-legend-item pattern');
     assertNotNull(legendPattern);
-    // 3 tiles across the 32 units wide icon, so the tile is scaled from 8 to 32 / 3
-    expect(legendPattern).toHaveAttribute('patternTransform', `scale(${32 / 3 / 8})`);
+    // 3 tiles of 8 units fit across the 32 units wide icon, so the tiles keep their size
+    expect(legendPattern).not.toHaveAttribute('patternTransform');
+  });
+
+  it('should scale large pattern tiles down so that 3 of them fit across the legend icon', () => {
+    const { container } = renderBar({ definition: pattern({ ...patterns.dots, width: 16, height: 16 }) });
+
+    expect(container.querySelector('.recharts-legend-item pattern')).toHaveAttribute(
+      'patternTransform',
+      `scale(${32 / 3 / 16})`,
+    );
+    // the bars paint shapes of different sizes, so their pattern keeps its tile size
+    expect(container.querySelector('pattern#my-bar-fill')).not.toHaveAttribute('patternTransform');
+  });
+
+  it('should give a definition the bounds of the legend icon, and no bounds in the chart', () => {
+    const received: Array<RechartsFillDefinitionProps['bounds']> = [];
+    function RecordBounds({ id, bounds }: RechartsFillDefinitionProps) {
+      received.push(bounds);
+      return <linearGradient id={id} />;
+    }
+    renderBar({ definition: RecordBounds });
+
+    expect(received).toContainEqual({ width: 32, height: 32 });
+    expect(received).toContainEqual(undefined);
   });
 
   it('should paint the bars with a linear gradient of the base color', () => {
