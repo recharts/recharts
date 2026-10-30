@@ -40,13 +40,13 @@ const seriesPatterns = [
 function withPatterns(theme: RechartsTheme): RechartsTheme {
   return {
     ...theme,
-    graphicalItems: theme.graphicalItems.map((item, index) => ({
-      ...item,
-      fill: {
-        color: typeof item.fill === 'object' ? item.fill.color : item.fill,
-        definition: seriesPatterns[index % seriesPatterns.length],
-      },
-    })),
+    graphicalItems: theme.graphicalItems.map((item, index) => {
+      const definition = seriesPatterns[index % seriesPatterns.length];
+      if (definition == null) {
+        return item;
+      }
+      return { ...item, fill: { color: typeof item.fill === 'object' ? item.fill.color : item.fill, definition } };
+    }),
   };
 }
 

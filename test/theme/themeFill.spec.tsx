@@ -155,3 +155,17 @@ describe('fill objects in the theme', () => {
     expect(container.querySelector('.recharts-pie-sector path')).toHaveAttribute('fill', 'purple');
   });
 });
+
+describe('Line with a fill object', () => {
+  it('should paint the dots with the color of the fill object', () => {
+    const { container } = rechartsTestRender(
+      <LineChart width={400} height={400} data={[{ uv: 1 }, { uv: 2 }]}>
+        <Line dataKey="uv" fill={fillObject('red')} isAnimationActive={false} />
+      </LineChart>,
+    );
+
+    const dots = Array.from(container.querySelectorAll('.recharts-line-dot'));
+    expect(dots).toHaveLength(2);
+    expect(dots.map(dot => dot.getAttribute('fill'))).toEqual(['red', 'red']);
+  });
+});
