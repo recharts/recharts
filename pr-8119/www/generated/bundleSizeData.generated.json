@@ -1,45 +1,45 @@
 {
   "treemap": {
     "examplePath": "www/src/views/IndexView/IndexLineChart.tsx",
-    "totalSize": 992307,
-    "totalSizeLabel": "969.05 KB",
-    "moduleCount": 384,
-    "generatedAt": "2026-10-30T09:14:38.405Z",
+    "totalSize": 994754,
+    "totalSizeLabel": "971.44 KB",
+    "moduleCount": 385,
+    "generatedAt": "2026-10-30T10:53:42.464Z",
     "stages": [
       {
         "stage": "es6-folder",
-        "bytes": 1580620,
+        "bytes": 1586160,
         "humanReadableSize": "1.51 MB",
         "reductionFromBaselinePercent": 0
       },
       {
         "stage": "tree-shaken",
-        "bytes": 995222,
-        "humanReadableSize": "971.90 KB",
+        "bytes": 997671,
+        "humanReadableSize": "974.29 KB",
         "reductionFromBaselinePercent": 0
       },
       {
         "stage": "minified",
-        "bytes": 322159,
-        "humanReadableSize": "314.61 KB",
-        "reductionFromBaselinePercent": 67.63
+        "bytes": 322663,
+        "humanReadableSize": "315.10 KB",
+        "reductionFromBaselinePercent": 67.66
       },
       {
         "stage": "minified+gzip",
-        "bytes": 105685,
-        "humanReadableSize": "103.21 KB",
-        "reductionFromBaselinePercent": 89.38
+        "bytes": 105861,
+        "humanReadableSize": "103.38 KB",
+        "reductionFromBaselinePercent": 89.39
       }
     ],
     "tree": {
       "name": "bundle",
       "fullPath": "bundle",
-      "value": 992307,
+      "value": 994754,
       "children": [
         {
           "name": "src",
           "fullPath": "src",
-          "value": 588731,
+          "value": 591178,
           "children": [
             {
               "name": "state",
@@ -739,12 +739,12 @@
             {
               "name": "cartesian",
               "fullPath": "src/cartesian",
-              "value": 90842,
+              "value": 91039,
               "children": [
                 {
                   "name": "Line.tsx",
                   "fullPath": "src/cartesian/Line.tsx",
-                  "value": 17896
+                  "value": 18078
                 },
                 {
                   "name": "CartesianAxis.tsx",
@@ -754,7 +754,7 @@
                 {
                   "name": "CartesianGrid.tsx",
                   "fullPath": "src/cartesian/CartesianGrid.tsx",
-                  "value": 14407
+                  "value": 14422
                 },
                 {
                   "name": "getCartesianPosition.tsx",
@@ -915,7 +915,7 @@
             {
               "name": "theme",
               "fullPath": "src/theme",
-              "value": 23655,
+              "value": 25905,
               "children": [
                 {
                   "name": "labelTheme.ts",
@@ -925,7 +925,7 @@
                 {
                   "name": "dataEntryStyles.ts",
                   "fullPath": "src/theme/dataEntryStyles.ts",
-                  "value": 5162
+                  "value": 5123
                 },
                 {
                   "name": "activeStyles.ts",
@@ -933,14 +933,19 @@
                   "value": 4584
                 },
                 {
+                  "name": "useGraphicalItemIdentity.ts",
+                  "fullPath": "src/theme/useGraphicalItemIdentity.ts",
+                  "value": 2054
+                },
+                {
                   "name": "useBackwardsCompatibleTheme.ts",
                   "fullPath": "src/theme/useBackwardsCompatibleTheme.ts",
                   "value": 1887
                 },
                 {
-                  "name": "useGraphicalItemIdentity.ts",
-                  "fullPath": "src/theme/useGraphicalItemIdentity.ts",
-                  "value": 1478
+                  "name": "themeFill.ts",
+                  "fullPath": "src/theme/themeFill.ts",
+                  "value": 1713
                 },
                 {
                   "name": "graphicalItemIdentity.ts",
@@ -2654,45 +2659,45 @@
   },
   "sunburst": {
     "examplePath": "www/src/views/IndexView/IndexLineChart.tsx",
-    "totalSize": 992307,
-    "totalSizeLabel": "969.05 KB",
-    "moduleCount": 384,
-    "generatedAt": "2026-10-30T09:14:36.770Z",
+    "totalSize": 994754,
+    "totalSizeLabel": "971.44 KB",
+    "moduleCount": 385,
+    "generatedAt": "2026-10-30T10:53:40.355Z",
     "stages": [
       {
         "stage": "es6-folder",
-        "bytes": 1580620,
+        "bytes": 1586160,
         "humanReadableSize": "1.51 MB",
         "reductionFromBaselinePercent": 0
       },
       {
         "stage": "tree-shaken",
-        "bytes": 995222,
-        "humanReadableSize": "971.90 KB",
+        "bytes": 997671,
+        "humanReadableSize": "974.29 KB",
         "reductionFromBaselinePercent": 0
       },
       {
         "stage": "minified",
-        "bytes": 322159,
-        "humanReadableSize": "314.61 KB",
-        "reductionFromBaselinePercent": 67.63
+        "bytes": 322663,
+        "humanReadableSize": "315.10 KB",
+        "reductionFromBaselinePercent": 67.66
       },
       {
         "stage": "minified+gzip",
-        "bytes": 105685,
-        "humanReadableSize": "103.21 KB",
-        "reductionFromBaselinePercent": 89.38
+        "bytes": 105861,
+        "humanReadableSize": "103.38 KB",
+        "reductionFromBaselinePercent": 89.39
       }
     ],
     "tree": {
       "name": "bundle",
       "fullPath": "bundle",
-      "value": 992307,
+      "value": 994754,
       "children": [
         {
           "name": "src",
           "fullPath": "src",
-          "value": 588731,
+          "value": 591178,
           "children": [
             {
               "name": "state",
@@ -3392,12 +3397,12 @@
             {
               "name": "cartesian",
               "fullPath": "src/cartesian",
-              "value": 90842,
+              "value": 91039,
               "children": [
                 {
                   "name": "Line.tsx",
                   "fullPath": "src/cartesian/Line.tsx",
-                  "value": 17896
+                  "value": 18078
                 },
                 {
                   "name": "CartesianAxis.tsx",
@@ -3407,7 +3412,7 @@
                 {
                   "name": "CartesianGrid.tsx",
                   "fullPath": "src/cartesian/CartesianGrid.tsx",
-                  "value": 14407
+                  "value": 14422
                 },
                 {
                   "name": "getCartesianPosition.tsx",
@@ -3568,7 +3573,7 @@
             {
               "name": "theme",
               "fullPath": "src/theme",
-              "value": 23655,
+              "value": 25905,
               "children": [
                 {
                   "name": "labelTheme.ts",
@@ -3578,7 +3583,7 @@
                 {
                   "name": "dataEntryStyles.ts",
                   "fullPath": "src/theme/dataEntryStyles.ts",
-                  "value": 5162
+                  "value": 5123
                 },
                 {
                   "name": "activeStyles.ts",
@@ -3586,14 +3591,19 @@
                   "value": 4584
                 },
                 {
+                  "name": "useGraphicalItemIdentity.ts",
+                  "fullPath": "src/theme/useGraphicalItemIdentity.ts",
+                  "value": 2054
+                },
+                {
                   "name": "useBackwardsCompatibleTheme.ts",
                   "fullPath": "src/theme/useBackwardsCompatibleTheme.ts",
                   "value": 1887
                 },
                 {
-                  "name": "useGraphicalItemIdentity.ts",
-                  "fullPath": "src/theme/useGraphicalItemIdentity.ts",
-                  "value": 1478
+                  "name": "themeFill.ts",
+                  "fullPath": "src/theme/themeFill.ts",
+                  "value": 1713
                 },
                 {
                   "name": "graphicalItemIdentity.ts",
