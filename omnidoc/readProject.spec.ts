@@ -67,6 +67,7 @@ describe('readProject', () => {
         "dangerouslySetInnerHTML",
         "data",
         "dataKey",
+        "fill",
         "formatter",
         "hide",
         "id",

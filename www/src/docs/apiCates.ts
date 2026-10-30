@@ -127,6 +127,10 @@ export const apiCates = [
       'lightPalette',
       'darkPalette',
       'autoPalette',
+      'patterns',
+      'pattern',
+      'gradients',
+      'linearGradient',
     ],
   },
 ];

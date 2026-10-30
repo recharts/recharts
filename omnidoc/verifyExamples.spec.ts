@@ -22,6 +22,8 @@ describe('Documentation Examples Coverage', () => {
     'darkTheme',
     'emptyTheme',
     'lightPalette',
+    'RechartsGradientStop',
+    'RechartsLinearGradient',
     'ActiveDotProps',
     'ActiveLabel',
     'ActiveShape',
