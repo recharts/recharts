@@ -31,6 +31,7 @@ export type TooltipEntrySettings = Omit<TooltipPayloadEntry, 'payload' | 'value'
 
 /**
  * This is what Tooltip renders.
+ * @public
  */
 export type TooltipPayload = ReadonlyArray<TooltipPayloadEntry>;
 
@@ -40,6 +41,7 @@ export type TooltipPayload = ReadonlyArray<TooltipPayloadEntry>;
  * Different charts have different requirements on data shapes,
  * and are also responsible for providing a function that will accept this index
  * and return data.
+ * @public
  */
 export type TooltipIndex = string | null;
 

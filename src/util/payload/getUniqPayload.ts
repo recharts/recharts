@@ -8,6 +8,7 @@ type UniqueFunc<T> = (entry: T) => unknown;
  * - `false` means "no filter"
  * - `true` means "use recharts default filter"
  * - function means "use return of this function as the default key"
+ * @public
  */
 export type UniqueOption<T> = boolean | UniqueFunc<T>;
 

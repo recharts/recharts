@@ -39,6 +39,7 @@ type RadarChartProps<DataPointType> = Omit<PolarChartProps<DataPointType>, 'layo
  * @consumes ResponsiveContainerContext
  * @provides PolarViewBoxContext
  * @provides PolarChartContext
+ * @public
  */
 export const RadarChart = forwardRef<SVGSVGElement, RadarChartProps<unknown>>(
   (props: RadarChartProps<unknown>, ref) => {

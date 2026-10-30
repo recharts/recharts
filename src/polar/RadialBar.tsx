@@ -95,6 +95,9 @@ import {
 
 const STABLE_EMPTY_ARRAY: readonly RadialBarDataItem[] = [];
 
+/**
+ * @public
+ */
 export type RadialBarDataItem = SectorProps &
   PolarViewBoxRequired &
   TooltipTriggerInfo & {
@@ -538,6 +541,9 @@ export interface InternalRadialBarProps<DataPointType = any, DataValueType = any
   zIndex?: number;
 }
 
+/**
+ * @public
+ */
 export type RadialBarProps<DataPointType = any, DataValueType = any> = Omit<
   PresentationAttributesAdaptChildEvent<RadialBarDataItem, SVGElement>,
   'ref' | keyof InternalRadialBarProps<DataPointType, DataValueType>
@@ -951,6 +957,7 @@ export function computeRadialBarDataItems({
  * @consumes PolarChartContext
  * @provides LabelListContext
  * @provides CellReader
+ * @public
  */
 export function RadialBar<DataPointType = any, DataValueType = any>(
   outsideProps: RadialBarProps<DataPointType, DataValueType>,

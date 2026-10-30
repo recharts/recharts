@@ -35,6 +35,9 @@ import { getOwnStyles, hasOwnColors, withoutColors } from '../theme/dataEntrySty
 import { getEffectivePageBackground } from '../theme/pageBackground';
 import { SVGElementPropKeysType, svgPropertiesNoEventsFromUnknown } from '../util/svgPropertiesNoEvents';
 
+/**
+ * @public
+ */
 export interface SunburstData {
   [key: string]: any;
   name: string;
@@ -52,6 +55,9 @@ interface SunburstNode extends SunburstData {
   tooltipIndex: TooltipIndex;
 }
 
+/**
+ * @public
+ */
 export interface SunburstChartProps extends EventThrottlingProps {
   className?: string;
   /**
@@ -604,6 +610,7 @@ const SunburstChartImpl = ({
  *
  * @consumes ResponsiveContainerContext
  * @provides TooltipEntrySettings
+ * @public
  */
 export const SunburstChart = (outsideProps: SunburstChartProps) => {
   const theme = useRechartsTheme();

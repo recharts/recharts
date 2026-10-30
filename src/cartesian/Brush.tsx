@@ -33,6 +33,9 @@ import { useRechartsTheme } from '../theme/RechartsThemeContext';
 import { RequiresDefaultProps, resolveDefaultProps } from '../util/resolveDefaultProps';
 import { svgPropertiesNoEvents } from '../util/svgPropertiesNoEvents';
 
+/**
+ * @public
+ */
 export type BrushTravellerType = ReactElement<SVGElement> | ((props: TravellerProps) => ReactElement<SVGElement>);
 
 // Why is this tickFormatter different from the other TickFormatters? This one allows to return numbers too for some reason.
@@ -158,6 +161,9 @@ export interface BrushProps<DataPointType = any, DataValueType = any> extends Da
   alwaysShowText?: boolean;
 }
 
+/**
+ * @public
+ */
 export type Props = Omit<SVGProps<SVGElement>, 'onChange' | 'onDragEnd' | 'ref'> & BrushProps;
 
 type InternalProps = Omit<SVGProps<SVGElement>, 'onChange' | 'onDragEnd' | 'ref'> &
@@ -1193,6 +1199,7 @@ export const defaultBrushProps = {
  * @see {@link https://recharts.github.io/en-US/examples/SynchronizedLineChart/ Synchronized Brush}
  *
  * @consumes CartesianChartContext
+ * @public
  */
 export function Brush(outsideProps: Props) {
   const activeTheme = useRechartsTheme();

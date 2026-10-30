@@ -1,3 +1,6 @@
+/**
+ * @public
+ */
 export type IfOverflow = 'hidden' | 'visible' | 'discard' | 'extendDomain';
 
 export interface Overflowable {

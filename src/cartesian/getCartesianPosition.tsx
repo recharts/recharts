@@ -38,6 +38,7 @@ export type CartesianLabelPosition =
 
 /**
  * @inline
+ * @public
  */
 export type CartesianPosition =
   | 'top'

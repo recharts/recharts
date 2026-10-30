@@ -502,6 +502,7 @@ export const getStackedData = (
 /**
  * Externally, we accept both strings and numbers as stack IDs
  * @inline
+ * @public
  */
 export type StackId = string | number;
 /**

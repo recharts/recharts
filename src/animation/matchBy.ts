@@ -10,6 +10,7 @@ import { getValueByDataKey } from '../util/ChartUtils';
  *
  * @since 3.9
  * @see {@link https://recharts.github.io/en-US/guide/animations Animation guide}
+ * @public
  */
 export type AnimationItem<T> =
   | { readonly status: 'matched'; readonly prev: T; readonly next: T }
@@ -27,6 +28,7 @@ export type AnimationItem<T> =
  *
  * @since 3.9
  * @see {@link https://recharts.github.io/en-US/guide/animations Animation guide}
+ * @public
  */
 export type AnimationMatchBy<T> = (item: T, index: number) => string | number | null;
 
@@ -36,6 +38,7 @@ export type AnimationMatchBy<T> = (item: T, index: number) => string | number | 
  *
  * @since 3.9
  * @see {@link https://recharts.github.io/en-US/guide/animations Animation guide}
+ * @public
  */
 export type AnimationMatchByProp<T> = typeof matchByIndex | typeof matchAppend | AnimationMatchBy<T>;
 
@@ -53,6 +56,7 @@ export type AnimationMatchByProp<T> = typeof matchByIndex | typeof matchAppend |
  *
  * @since 3.9
  * @see {@link https://recharts.github.io/en-US/guide/animations Animation guide}
+ * @public
  */
 export const matchByIndex = 'index' as const;
 
@@ -71,6 +75,7 @@ export const matchByIndex = 'index' as const;
  *
  * @since 3.9
  * @see {@link https://recharts.github.io/en-US/guide/animations Animation guide}
+ * @public
  */
 export const matchAppend = 'append' as const;
 
@@ -92,6 +97,7 @@ export const matchAppend = 'append' as const;
  *
  * @since 3.9
  * @see {@link https://recharts.github.io/en-US/guide/animations Animation guide}
+ * @public
  */
 export function matchByDataKey(dataKey: DataKey<Record<string, unknown>>): AnimationMatchBy<{ payload?: unknown }> {
   return (item: { payload?: unknown }): string | number | null => {

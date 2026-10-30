@@ -246,6 +246,9 @@ const getDepthTree = (tree: SankeyNode[]): SankeyNode[][] => {
 
 type LinkDataItemDy = LinkDataItem & { dy: number; sy?: number; ty?: number };
 
+/**
+ * @public
+ */
 export type SankeyVerticalAlign = 'justify' | 'top';
 
 const updateYOfTree = (
@@ -795,6 +798,9 @@ interface LinkDataItem
   value: number;
 }
 
+/**
+ * @public
+ */
 export interface NodeProps extends Omit<SVGProps<SVGRectElement>, 'height' | 'width'> {
   height: number;
   width: number;
@@ -804,6 +810,9 @@ export interface NodeProps extends Omit<SVGProps<SVGRectElement>, 'height' | 'wi
   y: number;
 }
 
+/**
+ * @public
+ */
 export interface LinkProps extends SVGProps<SVGPathElement> {
   sourceX: number;
   targetX: number;
@@ -819,15 +828,24 @@ export interface LinkProps extends SVGProps<SVGPathElement> {
   payload: Omit<SankeyLink, 'source' | 'target'> & { source: SankeyNode; target: SankeyNode };
 }
 
+/**
+ * @public
+ */
 export interface SankeyData {
   nodes: any[];
   links: LinkDataItem[];
 }
 
 // TODO: improve types - NodeOptions uses SankeyNode, LinkOptions uses LinkProps. Standardize.
+/**
+ * @public
+ */
 export type SankeyNodeOptions =
   ReactElement<SVGProps<SVGRectElement>> | ((props: NodeProps) => ReactNode) | RectangleProps;
 
+/**
+ * @public
+ */
 export type SankeyLinkOptions =
   | ReactElement<SVGProps<SVGPathElement>>
   | ((props: LinkProps) => ReactElement<SVGProps<SVGPathElement>>)
@@ -989,8 +1007,14 @@ interface SankeyProps extends EventThrottlingProps {
   align?: 'left' | 'justify';
 }
 
+/**
+ * @public
+ */
 export type Props = Omit<SVGProps<SVGSVGElement>, keyof SankeyProps> & SankeyProps;
 
+/**
+ * @public
+ */
 export type SankeyElementType = 'node' | 'link';
 
 /**
@@ -1774,6 +1798,7 @@ function SankeyImpl(props: InternalSankeyProps) {
  *
  * @consumes ResponsiveContainerContext
  * @provides TooltipEntrySettings
+ * @public
  */
 export function Sankey(outsideProps: Props) {
   const props: PropsWithResolvedDefaults = resolveDefaultProps(outsideProps, sankeyDefaultProps);

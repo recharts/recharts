@@ -60,6 +60,7 @@ const CURVE_FACTORIES: CurveFactories = {
 
 /**
  * @inline
+ * @public
  */
 export type CurveType =
   | 'basis'
@@ -85,6 +86,7 @@ type NullableAreaPoint = NullableCoordinate & { base?: NullableCoordinate };
 
 /**
  * @inline
+ * @public
  */
 export type BaseLineType = number | ReadonlyArray<NullableCoordinate>;
 
@@ -197,6 +199,9 @@ type CurveMouseEvents = {
 };
 
 // Mouse event handlers receive the full Props, including the event handlers themselves.
+/**
+ * @public
+ */
 export type Props = Omit<
   PresentationAttributesWithProps<CurveProps, SVGPathElement>,
   | 'type'
@@ -289,6 +294,9 @@ export const getPath = ({
   return nullableLineFunction(formatPoints);
 };
 
+/**
+ * @public
+ */
 export const Curve: React.FC<Props> = props => {
   const { className, points, path, pathRef } = props;
   const layout = useChartLayout();

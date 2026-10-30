@@ -31,6 +31,9 @@ export function BarRectangle({ option, ...shapeProps }: BarRectangleProps) {
   );
 }
 
+/**
+ * @public
+ */
 export type MinPointSize = number | ((value: number | undefined | null, index: number) => number);
 
 /**

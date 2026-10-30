@@ -38,6 +38,20 @@ That list may only shrink: adding a new name to it instead of documenting the ex
 whole point. To shrink it, add the `@since` tag and delete the name - the test fails if a listed
 export turns out to be documented after all, or to no longer exist.
 
+### `@public` Tag Enforcement (`public-tag.spec.ts`)
+
+Every export from `src/index.ts` must carry a JSDoc `@public` tag on its declaration, so that it is
+obvious from the code itself which declarations are public API and need extra care when changed.
+The tag is informational only and is not rendered on the website.
+
+```ts
+/**
+ * @since 3.11
+ * @public
+ */
+export function useSomethingNew() {}
+```
+
 ### API Documentation Generator (`generateApiDoc.ts`)
 
 Auto-generates API documentation files from TypeScript source code. This tool:

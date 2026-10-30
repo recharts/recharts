@@ -137,6 +137,9 @@ interface ReferenceDotProps<
   onMouseLeave?: (dotProps: DotProps, e: React.MouseEvent<SVGCircleElement>) => void;
 }
 
+/**
+ * @public
+ */
 export type Props<
   XValueType extends ReferenceCoordinateValue = any,
   YValueType extends ReferenceCoordinateValue = any,
@@ -277,6 +280,7 @@ type PropsWithDefaults = RequiresDefaultProps<Props, typeof referenceDotDefaultP
  *
  * @provides CartesianLabelContext
  * @consumes CartesianChartContext
+ * @public
  */
 export function ReferenceDot<
   XValueType extends ReferenceCoordinateValue = any,

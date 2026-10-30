@@ -34,6 +34,7 @@ import { DefaultZIndexes } from '../zIndex/DefaultZIndexes';
  * If set false, no cursor will be drawn when tooltip is active.
  * If set an object, the option is the configuration of cursor.
  * If set a React element, the option is the custom react element of drawing cursor
+ * @public
  */
 export type CursorDefinition = boolean | ReactElement | SVGProps<SVGElement>;
 

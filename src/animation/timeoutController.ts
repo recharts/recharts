@@ -8,6 +8,7 @@ export type CallbackType = (now: number) => void;
  * A function that, when called, cancels the timeout.
  *
  * @since 3.9
+ * @public
  */
 export type CancelableTimeout = () => void;
 
@@ -25,6 +26,7 @@ export type CancelableTimeout = () => void;
  * @see {@link https://recharts.github.io/en-US/guide/animations/ Animation guide}
  *
  * @since 3.9
+ * @public
  */
 export interface TimeoutController {
   /**

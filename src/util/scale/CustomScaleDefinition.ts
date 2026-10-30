@@ -9,6 +9,7 @@ import { CategoricalDomainItem } from '../types';
  * - immutable API is preferred in Recharts and mutating state will lead to hard-to-debug issues.
  *
  * @see {@link ScaleType} and {@link RechartsScaleType} for string shortcuts that you can use instead of this interface.
+ * @public
  */
 export interface CustomScaleDefinition<Domain extends CategoricalDomainItem = CategoricalDomainItem> {
   /**

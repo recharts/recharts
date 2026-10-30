@@ -86,6 +86,7 @@ import {
 
 /**
  * @inline
+ * @public
  */
 export type BaseValue = number | 'dataMin' | 'dataMax';
 
@@ -472,6 +473,9 @@ type AreaSvgProps = Omit<
 
 type InternalProps = AreaSvgProps & InternalAreaProps;
 
+/**
+ * @public
+ */
 export type Props<DataPointType, ValueAxisType> = AreaSvgProps & AreaProps<DataPointType, ValueAxisType>;
 
 type PropsWithDefaults<DataPointType, ValueAxisType> = WithIdRequired<
@@ -1197,6 +1201,7 @@ function AreaFn(outsideProps: Props<any, any>) {
 /**
  * @provides LabelListContext
  * @consumes CartesianChartContext
+ * @public
  */
 export const Area = React.memo(AreaFn, propsAreEqual) as <DataPointType = any, ValueAxisType = any>(
   props: Props<DataPointType, ValueAxisType>,

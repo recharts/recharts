@@ -115,6 +115,9 @@ interface PolarGridProps extends ZIndexable {
   fillOpacity?: number | string;
 }
 
+/**
+ * @public
+ */
 export type Props = SVGProps<SVGLineElement> & PolarGridProps;
 
 type PropsWithDefaults = Omit<Props, 'polarRadius'> & {
@@ -255,6 +258,7 @@ export const defaultPolarGridProps = {
 
 /**
  * @consumes PolarViewBoxContext
+ * @public
  */
 export const PolarGrid = (outsideProps: Props) => {
   const themeProps = useBackwardsCompatibleTheme(theme => theme.grid, outsideProps, defaultLegacyThemeProps);

@@ -97,6 +97,9 @@ import {
   useSeriesLabelThemeResolver,
 } from '../theme/labelTheme';
 
+/**
+ * @public
+ */
 export interface ScatterPointNode {
   x?: number | string;
   y?: number | string;
@@ -109,6 +112,7 @@ export interface ScatterPointNode {
  *
  * Scatter -> Symbol ignores points with null cx or cy so those won't render if using the default shapes.
  * However: the points are exposed via various props and can be used in custom shapes so we keep them around.
+ * @public
  */
 export interface ScatterPointItem {
   /**
@@ -147,6 +151,9 @@ export interface ScatterPointItem {
   tooltipPosition: Coordinate;
 }
 
+/**
+ * @public
+ */
 export type ScatterCustomizedShape = ActiveShape<ScatterShapeProps & InnerSymbolsProp, SVGPathElement> | SymbolType;
 
 /**
@@ -426,6 +433,9 @@ type BaseScatterSvgProps = Omit<
 
 type InternalProps = BaseScatterSvgProps & ScatterInternalProps;
 
+/**
+ * @public
+ */
 export type Props<DataPointType = any, ValueAxisType = any> = BaseScatterSvgProps &
   ScatterProps<DataPointType, ValueAxisType>;
 
@@ -1228,6 +1238,7 @@ function ScatterFn(outsideProps: Props) {
  * @provides ErrorBarContext
  * @provides CellReader
  * @consumes CartesianChartContext
+ * @public
  */
 export const Scatter = React.memo(ScatterFn, propsAreEqual) as {
   <DataPointType = any, ValueAxisType = any>(props: Props<DataPointType, ValueAxisType>): ReactElement;

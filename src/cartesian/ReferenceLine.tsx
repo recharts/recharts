@@ -38,6 +38,7 @@ import { useBackwardsCompatibleTheme } from '../theme/useBackwardsCompatibleThem
  * and you want the line to end at 50, you would provide `50` here.
  *
  * @inline
+ * @public
  */
 export type ReferenceLineSegment = readonly [
   {
@@ -152,6 +153,7 @@ interface ReferenceLineProps<
  * 1. The components wants viewBox of object type, and svg wants string
  *    - so there's a conflict, and the component will throw if it gets string
  * 2. Internally the component calls `svgPropertiesNoEvents` which filters the viewBox away anyway
+ * @public
  */
 export type Props<
   XValueType extends ReferenceCoordinateValue = any,
@@ -389,6 +391,7 @@ type PropsWithDefaults = RequiresDefaultProps<Props, typeof referenceLineDefault
  *
  * @provides CartesianLabelContext
  * @consumes CartesianChartContext
+ * @public
  */
 export function ReferenceLine<
   XValueType extends ReferenceCoordinateValue = any,

@@ -41,6 +41,9 @@ import { getClassNameFromUnknown } from '../util/getClassNameFromUnknown';
 import { Styles1D } from '../theme/RechartsTheme';
 import { useBackwardsCompatibleTheme } from '../theme/useBackwardsCompatibleTheme';
 
+/**
+ * @public
+ */
 export type TickOrientation = 'left' | 'right' | 'middle';
 
 export interface PolarRadiusAxisProps<DataPointType = any, DataValueType = any>
@@ -215,6 +218,9 @@ export interface PolarRadiusAxisProps<DataPointType = any, DataValueType = any>
 
 type AxisSvgProps = Omit<PresentationAttributesAdaptChildEvent<any, SVGTextElement>, 'scale' | 'type'>;
 
+/**
+ * @public
+ */
 export type Props<DataPointType = any, DataValueType = any> = AxisSvgProps &
   PolarRadiusAxisProps<DataPointType, DataValueType>;
 
@@ -431,6 +437,7 @@ export const PolarRadiusAxisWrapper: FunctionComponent<PropsWithDefaults> = (def
 /**
  * @provides PolarLabelContext
  * @consumes PolarViewBoxContext
+ * @public
  */
 export function PolarRadiusAxis<DataPointType = any, DataValueType = any>(
   outsideProps: Props<DataPointType, DataValueType>,

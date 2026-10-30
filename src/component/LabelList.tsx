@@ -31,6 +31,9 @@ import {
 import { useRechartsTheme } from '../theme/RechartsThemeContext';
 import { getEffectivePageBackground } from '../theme/pageBackground';
 
+/**
+ * @public
+ */
 export interface LabelListEntry<DataPointItem = any> {
   /**
    * Value is what renders in the UI as the label content.
@@ -207,6 +210,9 @@ interface LabelListProps extends ZIndexable {
  * LabelList props do not allow refs because the same props are reused in multiple elements so we don't have a good single place to ref to.
  */
 type SvgTextProps = PropsWithoutRef<SVGProps<SVGTextElement>>;
+/**
+ * @public
+ */
 export type Props = Omit<SvgTextProps, 'children'> & LabelListProps;
 
 /**
@@ -224,6 +230,7 @@ export type Props = Omit<SvgTextProps, 'children'> & LabelListProps;
  *    the props to be passed to a LabelList component
  *
  * @inline
+ * @public
  */
 export type ImplicitLabelListType = boolean | LabelContentType | Props;
 
@@ -300,6 +307,7 @@ function usePolarLabelListContext(): ReadonlyArray<PolarLabelListEntry> | undefi
 
 /**
  * @consumes LabelListContext
+ * @public
  */
 export function LabelList({ valueAccessor = defaultAccessor, ...restProps }: Props) {
   const { dataKey, clockWise, id, textBreakAll, zIndex, ...others } = restProps;
