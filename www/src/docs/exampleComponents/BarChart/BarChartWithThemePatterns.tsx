@@ -42,7 +42,10 @@ function withPatterns(theme: RechartsTheme): RechartsTheme {
     ...theme,
     graphicalItems: theme.graphicalItems.map((item, index) => ({
       ...item,
-      fillDefinition: seriesPatterns[index % seriesPatterns.length],
+      fill: {
+        color: typeof item.fill === 'object' ? item.fill.color : item.fill,
+        definition: seriesPatterns[index % seriesPatterns.length],
+      },
     })),
   };
 }

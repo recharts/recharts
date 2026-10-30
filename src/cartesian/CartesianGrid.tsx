@@ -22,7 +22,7 @@ import { isPositiveNumber } from '../util/isWellBehavedNumber';
 import { areScalesApproximatelyEqual, areValueArraysApproximatelyEqual } from '../util/propsAreEqual';
 import { ZIndexable, ZIndexLayer } from '../zIndex/ZIndexLayer';
 import { DefaultZIndexes } from '../zIndex/DefaultZIndexes';
-import { Styles2D } from '../theme/RechartsTheme';
+import { ColorStyles2D, withFillColor } from '../theme/themeFill';
 import { useBackwardsCompatibleTheme } from '../theme/useBackwardsCompatibleTheme';
 
 /**
@@ -546,7 +546,7 @@ export const defaultCartesianGridProps = {
   zIndex: DefaultZIndexes.grid,
 } as const satisfies Partial<Props>;
 
-const defaultLegacyGridThemeProps: Styles2D = {
+const defaultLegacyGridThemeProps: ColorStyles2D = {
   fill: 'none',
   stroke: '#ccc',
 };
@@ -594,7 +594,7 @@ export function CartesianGrid(props: Props) {
   );
 
   const themeProps = useBackwardsCompatibleTheme(
-    theme => theme.grid,
+    theme => withFillColor(theme.grid),
     propsIncludingDefaults,
     defaultLegacyGridThemeProps,
   );

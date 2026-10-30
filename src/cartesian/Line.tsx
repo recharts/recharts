@@ -64,7 +64,7 @@ import { DefaultZIndexes } from '../zIndex/DefaultZIndexes';
 import { propsAreEqual } from '../util/propsAreEqual';
 import { GraphicalItemId } from '../state/graphicalItemsSlice';
 import { ChartData } from '../state/chartDataSlice';
-import { GraphicalItemStyle, Styles2D } from '../theme/RechartsTheme';
+import { ColorGraphicalItemStyle, ColorStyles2D } from '../theme/themeFill';
 import { useRechartsTheme } from '../theme/RechartsThemeContext';
 import { useBackwardsCompatibleTheme } from '../theme/useBackwardsCompatibleTheme';
 import { UnthemedColors, useUnthemedColors } from '../theme/dataEntryStyles';
@@ -94,7 +94,7 @@ export interface LinePointItem {
  */
 interface InternalLineProps extends ZIndexable {
   unthemedColors?: UnthemedColors;
-  themedActiveStyles?: Styles2D;
+  themedActiveStyles?: ColorStyles2D;
   activeDot: ActiveDotType;
   animateNewValues: boolean;
   animationBegin: number;
@@ -464,7 +464,7 @@ const defaultLineAnimateItems: AnimationInterpolateFn<LinePointItem, CartesianLa
   return result;
 };
 
-const defaultLegacyThemeProps: GraphicalItemStyle = {
+const defaultLegacyThemeProps: ColorGraphicalItemStyle = {
   fill: '#fff',
   stroke: '#3182bd',
   strokeWidth: 1,
@@ -982,7 +982,7 @@ function LineFn(outsideProps: Props) {
   });
   const graphicalItemThemeSelector = useGraphicalItemIdentity(dataKey, outsideProps);
   const resolveLabelTheme = useSeriesLabelThemeResolver(graphicalItemThemeSelector);
-  const graphicalItemTheme = useBackwardsCompatibleTheme<Omit<GraphicalItemStyle, 'label'>>(
+  const graphicalItemTheme = useBackwardsCompatibleTheme<Omit<ColorGraphicalItemStyle, 'label'>>(
     graphicalItemThemeSelector,
     outsideProps,
     defaultLegacyThemeProps,

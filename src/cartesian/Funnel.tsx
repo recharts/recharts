@@ -55,7 +55,8 @@ import { GraphicalItemId } from '../state/graphicalItemsSlice';
 import { RegisterGraphicalItemId } from '../context/RegisterGraphicalItemId';
 import { WithIdRequired } from '../util/useUniqueId';
 import { useCartesianChartLayout } from '../context/chartLayoutContext';
-import { RechartsTheme, Styles2D } from '../theme/RechartsTheme';
+import { RechartsTheme } from '../theme/RechartsTheme';
+import { ColorStyles2D, getColorGraphicalItems } from '../theme/themeFill';
 import { useBackwardsCompatibleTheme } from '../theme/useBackwardsCompatibleTheme';
 import { getOwnStyles, hasOwnColors, UnthemedColors, useUnthemedColors, withoutColors } from '../theme/dataEntryStyles';
 import { getActiveStyleOverrides } from '../theme/activeStyles';
@@ -88,7 +89,7 @@ type InternalFunnelProps = RequiresDefaultProps<FunnelProps, typeof defaultFunne
    * Theme styles of the active shape for each index, without the ones that explicit props override.
    * Empty when there is no active theme.
    */
-  indexedActiveStyles?: ReadonlyArray<Styles2D | undefined>;
+  indexedActiveStyles?: ReadonlyArray<ColorStyles2D | undefined>;
 };
 
 /**
@@ -558,7 +559,7 @@ function RenderTrapezoids(props: InternalProps) {
  * Every themeable style key set to undefined.
  * Spreading this first removes the legacy defaults, which never apply together with a theme.
  */
-const NO_STYLES: Record<keyof Styles2D, undefined> = {
+const NO_STYLES: Record<keyof ColorStyles2D, undefined> = {
   fill: undefined,
   fillOpacity: undefined,
   stroke: undefined,
@@ -601,7 +602,7 @@ function FunnelImpl(
   props: WithIdRequired<RequiresDefaultProps<Props, typeof defaultFunnelProps>> & {
     indexedStyles: ReadonlyArray<Record<string, unknown>>;
     unthemedColors: UnthemedColors | undefined;
-    indexedActiveStyles: ReadonlyArray<Styles2D | undefined>;
+    indexedActiveStyles: ReadonlyArray<ColorStyles2D | undefined>;
   },
 ) {
   const plotArea = usePlotArea();
@@ -869,7 +870,7 @@ function FunnelFn(outsideProps: Props) {
    */
   const hasExplicitColors = hasOwnColors(outsideProps);
   const indexedStyles: ReadonlyArray<Record<string, unknown>> = useMemo(() => {
-    const graphicalItems = theme?.graphicalItems;
+    const graphicalItems = getColorGraphicalItems(theme?.graphicalItems);
     if (graphicalItems == null || graphicalItems.length === 0) {
       return [];
     }
@@ -885,13 +886,13 @@ function FunnelFn(outsideProps: Props) {
    * The active styles are per-index too, same as `indexedStyles`.
    * The theme active colors go with the theme colors, so a Funnel with its own colors drops them too.
    */
-  const themeGraphicalItems = theme?.graphicalItems;
-  const indexedActiveStyles: ReadonlyArray<Styles2D | undefined> = useMemo(
+  const themeGraphicalItems = getColorGraphicalItems(theme?.graphicalItems);
+  const indexedActiveStyles: ReadonlyArray<ColorStyles2D | undefined> = useMemo(
     () => (themeGraphicalItems ?? []).map(style => (hasExplicitColors ? withoutColors(style.active) : style.active)),
     [themeGraphicalItems, hasExplicitColors],
   );
 
-  const resolveLabelTheme = useIndexedLabelThemeResolver(theme?.graphicalItems);
+  const resolveLabelTheme = useIndexedLabelThemeResolver(getColorGraphicalItems(theme?.graphicalItems));
   const { id: externalId, ...resolvedProps } = resolveDefaultProps(outsideProps, defaultFunnelProps);
   return (
     <RegisterGraphicalItemId id={externalId} type="funnel">

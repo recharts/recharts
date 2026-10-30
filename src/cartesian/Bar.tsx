@@ -8,7 +8,6 @@ import {
   ReactNode,
   useCallback,
   useEffect,
-  useMemo,
   useRef,
   useState,
 } from 'react';
@@ -93,9 +92,9 @@ import { AxisId } from '../state/cartesianAxisSlice';
 import { BarStackClipLayer, useStackId } from './BarStack';
 import { GraphicalItemId } from '../state/graphicalItemsSlice';
 import { ChartData } from '../state/chartDataSlice';
-import { Styles2D } from '../theme/RechartsTheme';
+import { ColorStyles2D, withFillColor } from '../theme/themeFill';
 import { useBackwardsCompatibleTheme } from '../theme/useBackwardsCompatibleTheme';
-import { useGraphicalItemIdentity } from '../theme/useGraphicalItemIdentity';
+import { useGraphicalItemIdentity, useGraphicalItemThemeFill } from '../theme/useGraphicalItemIdentity';
 import { useEffectiveDataKey } from '../util/useEffectiveDataKey';
 import {
   getEntryColor,
@@ -106,7 +105,6 @@ import {
   useUnthemedColors,
 } from '../theme/dataEntryStyles';
 import { getActiveStyleOverrides, useThemedActiveStyles } from '../theme/activeStyles';
-import { useRechartsTheme } from '../theme/RechartsThemeContext';
 import { RechartsFill } from '../fill/RechartsFill';
 import { getFillUrl } from '../fill/fillDefinitions';
 import {
@@ -512,7 +510,7 @@ type InternalBarProps = {
    * Theme styles of the active bar, without the ones that explicit props override.
    * Undefined when there is no active theme, or when the theme has no active styles.
    */
-  themedActiveStyles?: Styles2D;
+  themedActiveStyles?: ColorStyles2D;
   /**
    * The fill object from props, if the user set one.
    * Then `fill` is its resolved base color, and the shapes paint with {@link paintFill}.
@@ -605,7 +603,7 @@ type BarBackgroundProps = {
   allOtherBarProps: InternalProps;
 };
 
-const defaultLegacyBarBackgroundProps: Styles2D = {
+const defaultLegacyBarBackgroundProps: ColorStyles2D = {
   fill: '#eee',
 };
 
@@ -615,7 +613,7 @@ function BarBackground(props: BarBackgroundProps) {
   const { data, dataKey, background: backgroundFromProps, allOtherBarProps } = props;
   const backgroundProps = svgPropertiesNoEventsFromUnknown(backgroundFromProps);
   const backgroundThemeProps = useBackwardsCompatibleTheme(
-    theme => theme.barBackground,
+    theme => withFillColor(theme.barBackground),
     backgroundProps ?? {},
     defaultLegacyBarBackgroundProps,
   );
@@ -731,7 +729,7 @@ function BarRectangleWithActiveState(
     activeBar: ActiveShape<BarShapeProps, SVGPathElement>;
     baseProps: WithoutId<SVGPropsNoEvents<BarRectanglesProps>>;
     entryStyleOverrides: UnthemedColors | undefined;
-    themedActiveStyles: Styles2D | undefined;
+    themedActiveStyles: ColorStyles2D | undefined;
     entry: BarRectangleItem;
     index: number;
     dataKey: DataKey<any> | undefined;
@@ -1427,16 +1425,9 @@ function BarFn(propsWithFillObject: Props) {
     yAxisId: outsideProps.yAxisId ?? defaultBarProps.yAxisId,
   });
   const graphicalItemThemeSelector = useGraphicalItemIdentity(dataKey, outsideProps);
-  /*
-   * The Bar's own fill object wins. Without one, the theme entry can give a fill definition.
-   * The selector leaves it out when the Bar sets its own colors.
-   */
-  const theme = useRechartsTheme();
-  const themeFillDefinition = theme == null ? undefined : graphicalItemThemeSelector(theme)?.fillDefinition;
-  const effectiveFillObject: RechartsFill | undefined = useMemo(
-    () => fillObject ?? (themeFillDefinition == null ? undefined : { definition: themeFillDefinition }),
-    [fillObject, themeFillDefinition],
-  );
+  // The Bar's own fill object wins. Without one, it paints with the fill object of its theme entry, if there is one.
+  const themeFillObject = useGraphicalItemThemeFill(dataKey, outsideProps);
+  const effectiveFillObject: RechartsFill | undefined = fillObject ?? themeFillObject;
   const resolveLabelTheme = useSeriesLabelThemeResolver(graphicalItemThemeSelector);
   const unthemedColors = useUnthemedColors(outsideProps);
   const themedActiveStyles = useThemedActiveStyles(graphicalItemThemeSelector, outsideProps);

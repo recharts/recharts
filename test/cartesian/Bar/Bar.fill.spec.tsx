@@ -299,12 +299,12 @@ describe('Bar with a fill object', () => {
   });
 });
 
-describe('Bar with a fill definition from the theme', () => {
+describe('Bar with a fill object from the theme', () => {
   const themeWithPatterns: RechartsTheme = {
     ...lightTheme,
     graphicalItems: [
-      { fill: 'purple', stroke: 'indigo', fillDefinition: pattern(patterns.diagonal) },
-      { fill: 'teal', stroke: 'navy', fillDefinition: linearGradient(gradients.fadeDown) },
+      { fill: { color: 'purple', definition: pattern(patterns.diagonal) }, stroke: 'indigo' },
+      { fill: { color: 'teal', definition: linearGradient(gradients.fadeDown) }, stroke: 'navy' },
     ],
   };
 
@@ -320,7 +320,7 @@ describe('Bar with a fill definition from the theme', () => {
     );
   }
 
-  it('should paint each Bar with the definition of its theme entry, in the theme color', () => {
+  it('should paint each Bar with the fill object of its theme entry', () => {
     const { container } = renderThemedBars();
 
     // the theme assigns entries by the sorted dataKeys, so pv takes the first entry and uv the second
@@ -338,21 +338,21 @@ describe('Bar with a fill definition from the theme', () => {
     expect(uvGradient.querySelector('stop')).toHaveAttribute('stop-color', 'teal');
   });
 
-  it('should draw the theme definition in the legend icons', () => {
+  it('should draw the theme fill object in the legend icons', () => {
     const { container } = renderThemedBars();
 
     expect(container.querySelectorAll('.recharts-legend-item pattern')).toHaveLength(1);
     expect(container.querySelectorAll('.recharts-legend-item linearGradient')).toHaveLength(1);
   });
 
-  it('should not use the theme definition when the Bar sets its own color', () => {
+  it('should not use the theme fill object when the Bar sets its own color', () => {
     const { container } = renderThemedBars('orange');
 
     expect(container.querySelector('#uv-bar-fill')).not.toBeInTheDocument();
     expect(container.querySelector('.recharts-bar#uv-bar path.recharts-rectangle')).toHaveAttribute('fill', 'orange');
   });
 
-  it("should use the Bar's own fill object instead of the theme definition", () => {
+  it("should use the Bar's own fill object instead of the theme fill object", () => {
     const { container } = renderThemedBars({ definition: pattern(patterns.dots) });
 
     const uvPattern = container.querySelector('pattern#uv-bar-fill');
@@ -361,5 +361,12 @@ describe('Bar with a fill definition from the theme', () => {
     expect(uvPattern.querySelector('path')).toHaveAttribute('stroke', 'none');
     // a fill object without color keeps the theme color
     expect(uvPattern.querySelector('rect')).toHaveAttribute('fill', 'teal');
+  });
+
+  it('should show the color of the theme fill object in the legend text', () => {
+    const { container } = renderThemedBars();
+
+    const legendTexts = Array.from(container.querySelectorAll<HTMLElement>('.recharts-legend-item-text'));
+    expect(legendTexts.map(text => text.style.color)).toEqual(['purple', 'teal']);
   });
 });

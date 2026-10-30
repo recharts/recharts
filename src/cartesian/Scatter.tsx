@@ -89,7 +89,7 @@ import {
   useUnthemedColors,
 } from '../theme/dataEntryStyles';
 import { getActiveStyleOverrides, useThemedActiveStyles } from '../theme/activeStyles';
-import { Styles2D } from '../theme/RechartsTheme';
+import { ColorStyles2D } from '../theme/themeFill';
 import {
   DataLabelColors,
   DataLabelColorsContextProvider,
@@ -184,7 +184,7 @@ interface ScatterInternalProps extends ZIndexable {
    * Theme styles of the active shape, without the ones that explicit props override.
    * Undefined when there is no active theme, or when the theme has no active styles.
    */
-  themedActiveStyles?: Styles2D;
+  themedActiveStyles?: ColorStyles2D;
 
   isAnimationActive: boolean | 'auto';
   animationBegin: number;
@@ -691,7 +691,7 @@ function ScatterPoint({
   activeShape: ScatterCustomizedShape | undefined;
   baseProps: WithoutId<SVGPropsNoEvents<InternalProps>>;
   entryStyleOverrides: UnthemedColors | undefined;
-  themedActiveStyles: Styles2D | undefined;
+  themedActiveStyles: ColorStyles2D | undefined;
   id: GraphicalItemId;
   restOfAllOtherProps: InternalProps;
   onMouseEnterFromContext: (

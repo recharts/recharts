@@ -234,9 +234,9 @@ export const barChartExamples = {
     name: 'Bar Chart with patterns from the theme',
     description: (
       <>
-        A theme can give each graphical item a <code>fillDefinition</code> next to its <code>fill</code> color. Here
-        every entry of the active theme gets one of the built-in <code>patterns</code>, so the Bars tell their series
-        apart without relying on color alone, and without setting any <code>fill</code> themselves.
+        The <code>fill</code> of a theme entry can be a fill object, the same as the <code>fill</code> of a Bar. Here
+        every entry of the active theme keeps its color and gets one of the built-in <code>patterns</code>, so the Bars
+        tell their series apart without relying on color alone, and without setting any <code>fill</code> themselves.
       </>
     ),
   },
