@@ -985,7 +985,7 @@ function LineFn(propsWithFillObject: Props) {
   const { fill } = propsWithFillObject;
   const outsideProps: StringFillProps = {
     ...propsWithFillObject,
-    fill: typeof fill === 'object' ? fill.color : fill,
+    fill: fill != null && typeof fill === 'object' ? fill.color : fill,
   };
   const rechartsTheme = useRechartsTheme();
   const dataKey = useEffectiveDataKey({
