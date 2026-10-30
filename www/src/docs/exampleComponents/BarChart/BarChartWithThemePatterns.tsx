@@ -30,10 +30,10 @@ const chartMargin = { top: 20, right: 0, left: 0, bottom: 5 };
 // One pattern per series. Create the definitions once, outside of components.
 const seriesPatterns = [
   pattern(patterns.diagonal),
-  pattern(patterns.dots),
+  pattern(patterns.star),
   pattern(patterns.crosshatch),
-  pattern(patterns.zigzag),
-  pattern(patterns.grid),
+  pattern(patterns.diamond),
+  pattern(patterns.triangle),
 ];
 
 // Adds a pattern to each graphical item of a theme, and keeps its colors.

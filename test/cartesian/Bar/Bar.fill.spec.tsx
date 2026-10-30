@@ -115,8 +115,8 @@ describe('Bar with a fill object', () => {
     expect(fill).not.toBe('url(#my-bar-fill)');
     const legendPattern = container.querySelector('.recharts-legend-item pattern');
     assertNotNull(legendPattern);
-    // 3 tiles of 8 units fit across the 32 units wide icon, so the tiles keep their size
-    expect(legendPattern).not.toHaveAttribute('patternTransform');
+    // only 2.7 tiles of 12 units fit across the 32 units wide icon, so the tiles get smaller to fit 3
+    expect(legendPattern).toHaveAttribute('patternTransform', `scale(${32 / 3 / 12})`);
   });
 
   it('should scale large pattern tiles down so that 3 of them fit across the legend icon', () => {
