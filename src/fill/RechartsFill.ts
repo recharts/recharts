@@ -74,6 +74,13 @@ export type RechartsFillDefinitionProps = {
    * The base color of the fill: the `color` of the fill object, or the theme color of the graphical item.
    */
   color: string | undefined;
+  /**
+   * The size of the area the definition paints, in SVG units, when the definition paints one area of known size,
+   * such as a Legend icon. Undefined when it paints shapes of different sizes, such as every bar of a series.
+   *
+   * Use it to adapt to small areas: {@link pattern} scales its tiles down so that a few of them fit.
+   */
+  bounds?: { width: number; height: number };
 };
 
 /**
@@ -150,8 +157,9 @@ export type RechartsFill = {
    * It is a regular component rendered inside the chart, so it can call hooks, including Recharts hooks.
    * Define it outside of other components: a new component on every render redraws the definition every time.
    *
-   * Legend icons draw the same definition, with their own `id`. Definitions sized in pixels,
-   * such as a `<pattern>` with `patternUnits="userSpaceOnUse"`, aren't scaled down to fit the icon.
+   * Legend icons draw the same definition, with their own `id`, and give it their size as `bounds`.
+   * A definition sized in pixels, such as a `<pattern>` with `patternUnits="userSpaceOnUse"`,
+   * can read `bounds` to fit the small icon.
    *
    * @example
    * const Sunset = ({ id, color }: RechartsFillDefinitionProps) => (
