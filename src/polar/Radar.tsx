@@ -50,7 +50,7 @@ import { ZIndexable, ZIndexLayer } from '../zIndex/ZIndexLayer';
 import { DefaultZIndexes } from '../zIndex/DefaultZIndexes';
 import { RechartsScale } from '../util/scale/RechartsScale';
 import { usePolarChartLayout } from '../context/chartLayoutContext';
-import { GraphicalItemStyle, Styles2D } from '../theme/RechartsTheme';
+import { ColorGraphicalItemStyle, ColorStyles2D } from '../theme/themeFill';
 import { useRechartsTheme } from '../theme/RechartsThemeContext';
 import { useBackwardsCompatibleTheme } from '../theme/useBackwardsCompatibleTheme';
 import { UnthemedColors, useUnthemedColors } from '../theme/dataEntryStyles';
@@ -314,7 +314,7 @@ const SetRadarTooltipEntrySettings = React.memo(
 type RadarPropsWithDotFill = WithIdRequired<PropsWithDefaults> & {
   dotFill?: string;
   unthemedColors?: UnthemedColors;
-  themedActiveStyles?: Styles2D;
+  themedActiveStyles?: ColorStyles2D;
 };
 
 function RadarDotsWrapper({ points, props }: { points: ReadonlyArray<RadarPoint>; props: RadarPropsWithDotFill }) {
@@ -703,7 +703,7 @@ export function Radar<DataPointType = any, DataValueType = any>(outsideProps: Pr
   });
   const graphicalItemThemeSelector = useGraphicalItemIdentity(dataKey, outsideProps);
   const resolveLabelTheme = useSeriesLabelThemeResolver(graphicalItemThemeSelector);
-  const graphicalItemTheme = useBackwardsCompatibleTheme<Omit<GraphicalItemStyle, 'label'>>(
+  const graphicalItemTheme = useBackwardsCompatibleTheme<Omit<ColorGraphicalItemStyle, 'label'>>(
     graphicalItemThemeSelector,
     outsideProps,
     undefined,

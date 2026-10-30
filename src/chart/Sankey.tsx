@@ -56,7 +56,7 @@ import { WithIdRequired } from '../util/useUniqueId';
 import { RegisterGraphicalItemId } from '../context/RegisterGraphicalItemId';
 import { GraphicalItemId } from '../state/graphicalItemsSlice';
 import { initialEventSettingsState } from '../state/eventSettingsSlice';
-import { RechartsTheme, Styles2D } from '../theme/RechartsTheme';
+import { ColorGraphicalItemStyle, ColorStyles2D, getColorGraphicalItems } from '../theme/themeFill';
 import { useRechartsTheme } from '../theme/RechartsThemeContext';
 import { getOwnStyles, hasOwnColors, withoutColors } from '../theme/dataEntryStyles';
 
@@ -789,7 +789,7 @@ const SetSankeyTooltipEntrySettings = React.memo(
  * With a theme, a link that defines its own `fill` or `stroke` ignores the theme colors.
  */
 interface LinkDataItem
-  extends Styles2D, Omit<SVGPropsNoEvents<SVGProps<SVGPathElement>>, keyof Styles2D | 'id' | 'target' | 'd'> {
+  extends ColorStyles2D, Omit<SVGPropsNoEvents<SVGProps<SVGPathElement>>, keyof ColorStyles2D | 'id' | 'target' | 'd'> {
   source: number;
   target: number;
   value: number;
@@ -1054,7 +1054,7 @@ const buildLinkProps = ({
   /**
    * Styles from the theme. Explicit props from `linkContent` override these.
    */
-  themeStyles: Styles2D;
+  themeStyles: ColorStyles2D;
   /**
    * SVG props defined in the link data entry. These override everything else.
    */
@@ -1262,7 +1262,7 @@ const buildNodeProps = ({
   /**
    * Styles from the theme. Explicit props from `nodeContent` override these.
    */
-  themeStyles: Styles2D;
+  themeStyles: ColorStyles2D;
   /**
    * SVG props defined in the node data entry. These override everything else, except the position and size.
    */
@@ -1457,7 +1457,7 @@ type ResolvedStyles = {
   /**
    * Styles from the theme. Explicit props override these.
    */
-  themeStyles: Styles2D;
+  themeStyles: ColorStyles2D;
   /**
    * SVG props from the data entry. These override the explicit props.
    */
@@ -1502,7 +1502,7 @@ function getEntrySvgProps(entry: unknown): EntrySvgProps {
  * @param nodeContent the `node` prop
  */
 function resolveNodeStyles(
-  themeGraphicalItems: RechartsTheme['graphicalItems'] | undefined,
+  themeGraphicalItems: ReadonlyArray<ColorGraphicalItemStyle> | undefined,
   dataNode: unknown,
   index: number,
   nodeContent: SankeyNodeOptions | undefined,
@@ -1532,7 +1532,7 @@ function resolveNodeStyles(
  * @param sourceNodeProps resolved props of the source node
  */
 function resolveLinkStyles(
-  themeGraphicalItems: RechartsTheme['graphicalItems'] | undefined,
+  themeGraphicalItems: ReadonlyArray<ColorGraphicalItemStyle> | undefined,
   dataLink: unknown,
   sourceNodeProps: NodeProps | undefined,
 ): ResolvedStyles {
@@ -1616,7 +1616,7 @@ function SankeyImpl(props: InternalSankeyProps) {
 
   const width = useChartWidth();
   const height = useChartHeight();
-  const themeGraphicalItems = useRechartsTheme()?.graphicalItems;
+  const themeGraphicalItems = getColorGraphicalItems(useRechartsTheme()?.graphicalItems);
 
   const { links, modifiedLinks, modifiedNodes } = useMemo(() => {
     if (!data || !width || !height || width <= 0 || height <= 0) {

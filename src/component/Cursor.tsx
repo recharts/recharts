@@ -24,7 +24,7 @@ import { selectIsZoomed } from '../state/selectors/zoomSelectors';
 import { useClipPathId } from '../container/ClipPathProvider';
 import { TooltipIndex, TooltipPayload } from '../state/tooltipSlice';
 import { svgPropertiesNoEventsFromUnknown } from '../util/svgPropertiesNoEvents';
-import { Styles2D } from '../theme/RechartsTheme';
+import { ColorStyles2D, withFillColor } from '../theme/themeFill';
 import { useBackwardsCompatibleTheme } from '../theme/useBackwardsCompatibleTheme';
 import { useRechartsTheme } from '../theme/RechartsThemeContext';
 import { ZIndexable, ZIndexLayer } from '../zIndex/ZIndexLayer';
@@ -52,7 +52,7 @@ export type CursorConnectedProps = CursorProps & {
   chartName: string;
 };
 
-const defaultLegacyCursorThemeProps: Styles2D = {
+const defaultLegacyCursorThemeProps: ColorStyles2D = {
   stroke: '#ccc',
   fill: '#ccc',
 };
@@ -78,7 +78,7 @@ export function CursorInternal(props: CursorConnectedProps) {
   const cursorPropsFromDefinition = svgPropertiesNoEventsFromUnknown(cursor) ?? {};
   const activeTheme = useRechartsTheme();
   const cursorThemeProps = useBackwardsCompatibleTheme(
-    theme => (isValidElement(cursor) ? undefined : theme.cursor),
+    theme => (isValidElement(cursor) ? undefined : withFillColor(theme.cursor)),
     cursorPropsFromDefinition,
     defaultLegacyCursorThemeProps,
   );
