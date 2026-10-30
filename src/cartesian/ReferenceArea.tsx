@@ -21,7 +21,7 @@ import { ZIndexable, ZIndexLayer } from '../zIndex/ZIndexLayer';
 import { DefaultZIndexes } from '../zIndex/DefaultZIndexes';
 import { RechartsScale } from '../util/scale/RechartsScale';
 import { CartesianScaleHelperImpl } from '../util/scale/CartesianScaleHelper';
-import { Styles2D } from '../theme/RechartsTheme';
+import { ColorStyles2D, withFillColor } from '../theme/themeFill';
 import { useBackwardsCompatibleTheme } from '../theme/useBackwardsCompatibleTheme';
 
 type ReferenceCoordinateValue = number | string;
@@ -258,7 +258,7 @@ export const referenceAreaDefaultProps = {
   zIndex: DefaultZIndexes.area,
 } as const satisfies Partial<Props>;
 
-const defaultLegacyReferenceAreaThemeProps: Styles2D = {
+const defaultLegacyReferenceAreaThemeProps: ColorStyles2D = {
   fill: '#ccc',
   fillOpacity: 0.5,
   stroke: 'none',
@@ -286,7 +286,7 @@ export function ReferenceArea<
   YValueType extends ReferenceCoordinateValue = any,
 >(outsideProps: Props<XValueType, YValueType>) {
   const themeProps = useBackwardsCompatibleTheme(
-    theme => theme.reference,
+    theme => withFillColor(theme.reference),
     outsideProps,
     defaultLegacyReferenceAreaThemeProps,
   );

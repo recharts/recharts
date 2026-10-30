@@ -92,9 +92,9 @@ import { AxisId } from '../state/cartesianAxisSlice';
 import { BarStackClipLayer, useStackId } from './BarStack';
 import { GraphicalItemId } from '../state/graphicalItemsSlice';
 import { ChartData } from '../state/chartDataSlice';
-import { Styles2D } from '../theme/RechartsTheme';
+import { ColorStyles2D, withFillColor } from '../theme/themeFill';
 import { useBackwardsCompatibleTheme } from '../theme/useBackwardsCompatibleTheme';
-import { useGraphicalItemIdentity } from '../theme/useGraphicalItemIdentity';
+import { useGraphicalItemIdentity, useGraphicalItemThemeFill } from '../theme/useGraphicalItemIdentity';
 import { useEffectiveDataKey } from '../util/useEffectiveDataKey';
 import {
   getEntryColor,
@@ -105,6 +105,8 @@ import {
   useUnthemedColors,
 } from '../theme/dataEntryStyles';
 import { getActiveStyleOverrides, useThemedActiveStyles } from '../theme/activeStyles';
+import { RechartsFill } from '../fill/RechartsFill';
+import { FillObjectDefinition, getFillUrl, getSeriesFillId, splitFill } from '../fill/fillDefinitions';
 import {
   DataLabelColors,
   DataLabelColorsContextProvider,
@@ -226,6 +228,23 @@ export interface BarProps<DataPointType, ValueAxisType>
    * The maximum width of bar in a horizontal chart, or maximum height in a vertical chart.
    */
   maxBarSize?: number;
+  /**
+   * The fill of the bars. Either a color string, or a {@link RechartsFill} object with an SVG definition,
+   * such as a pattern or a gradient.
+   *
+   * With a fill object, Recharts renders the definition with a unique ID, in the chart and in the Legend icon.
+   * Tooltip and labels use the solid `color` of the fill object.
+   * If the fill object has no `color`, the bars keep the theme colors and the definition gets the theme color.
+   *
+   * A custom `shape` always receives `fill` as a string.
+   *
+   * @example <Bar fill="blue" />
+   * @example <Bar fill={{ definition: pattern(patterns.diagonal) }} />
+   * @example <Bar fill={{ color: 'blue', definition: linearGradient(gradients.fadeDown) }} />
+   *
+   * @see {@link https://recharts.github.io/en-US/examples/BarChartWithPatternFill/ Bar chart with pattern and gradient fills}
+   */
+  fill?: string | RechartsFill;
   /**
    * Hides the whole graphical element when true.
    *
@@ -491,7 +510,16 @@ type InternalBarProps = {
    * Theme styles of the active bar, without the ones that explicit props override.
    * Undefined when there is no active theme, or when the theme has no active styles.
    */
-  themedActiveStyles?: Styles2D;
+  themedActiveStyles?: ColorStyles2D;
+  /**
+   * The fill object from props, if the user set one.
+   * Then `fill` is its resolved base color, and the shapes paint with {@link paintFill}.
+   */
+  fillObject?: RechartsFill;
+  /**
+   * `url(#…)` reference to the definition of {@link fillObject}. Shapes get it as their `fill`.
+   */
+  paintFill?: string;
 };
 
 type BarSvgProps = Omit<
@@ -501,11 +529,19 @@ type BarSvgProps = Omit<
 
 export type Props<DataPointType = any, ValueAxisType = any> = Partial<BarEvents> &
   BarProps<DataPointType, ValueAxisType> &
-  Omit<BarSvgProps, keyof BarEvents>;
+  Omit<BarSvgProps, keyof BarEvents | 'fill'>;
+
+/**
+ * Props with `fill` resolved to the base color string. Theme and color logic work with these.
+ */
+type StringFillProps = Omit<Props, 'fill'> & { fill?: string };
 
 type InternalProps = BarSvgProps & InternalBarProps;
 
-const computeLegendPayloadFromBarData = (props: Props): ReadonlyArray<LegendPayload> => {
+const computeLegendPayloadFromBarData = (
+  props: StringFillProps,
+  fillObject: RechartsFill | undefined,
+): ReadonlyArray<LegendPayload> => {
   const { dataKey, name, fill, legendType, hide } = props;
   return [
     {
@@ -513,6 +549,7 @@ const computeLegendPayloadFromBarData = (props: Props): ReadonlyArray<LegendPayl
       dataKey,
       type: legendType,
       color: fill,
+      fill: fillObject,
       value: getTooltipNameProp(name, dataKey),
       payload: props,
     },
@@ -566,7 +603,7 @@ type BarBackgroundProps = {
   allOtherBarProps: InternalProps;
 };
 
-const defaultLegacyBarBackgroundProps: Styles2D = {
+const defaultLegacyBarBackgroundProps: ColorStyles2D = {
   fill: '#eee',
 };
 
@@ -576,7 +613,7 @@ function BarBackground(props: BarBackgroundProps) {
   const { data, dataKey, background: backgroundFromProps, allOtherBarProps } = props;
   const backgroundProps = svgPropertiesNoEventsFromUnknown(backgroundFromProps);
   const backgroundThemeProps = useBackwardsCompatibleTheme(
-    theme => theme.barBackground,
+    theme => withFillColor(theme.barBackground),
     backgroundProps ?? {},
     defaultLegacyBarBackgroundProps,
   );
@@ -692,7 +729,7 @@ function BarRectangleWithActiveState(
     activeBar: ActiveShape<BarShapeProps, SVGPathElement>;
     baseProps: WithoutId<SVGPropsNoEvents<BarRectanglesProps>>;
     entryStyleOverrides: UnthemedColors | undefined;
-    themedActiveStyles: Styles2D | undefined;
+    themedActiveStyles: ColorStyles2D | undefined;
     entry: BarRectangleItem;
     index: number;
     dataKey: DataKey<any> | undefined;
@@ -849,8 +886,10 @@ function BarRectangles({
   data: ReadonlyArray<BarRectangleItem> | undefined;
   props: BarRectanglesProps;
 }) {
-  const { id, ...baseProps } = svgPropertiesNoEvents(props) ?? {};
-  const { shape, dataKey, activeBar, unthemedColors, themedActiveStyles } = props;
+  const { id, ...svgProps } = svgPropertiesNoEvents(props) ?? {};
+  const { shape, dataKey, activeBar, unthemedColors, themedActiveStyles, paintFill } = props;
+  // `fill` is the base color, for labels, Legend and Tooltip. The shapes paint with the pattern or gradient.
+  const baseProps = paintFill == null ? svgProps : { ...svgProps, fill: paintFill };
 
   const {
     onMouseEnter: onMouseEnterFromProps,
@@ -1073,19 +1112,21 @@ const errorBarDataPointFormatter: ErrorBarDataPointFormatter<BarRectangleItem> =
 
 class BarWithState extends PureComponent<InternalProps> {
   render() {
-    const { hide, data, dataKey, className, xAxisId, yAxisId, needClip, background, id } = this.props;
+    const { hide, data, dataKey, className, xAxisId, yAxisId, needClip, background, id, fillObject, fill } = this.props;
     if (hide || data == null) {
       return null;
     }
 
     const layerClass = clsx('recharts-bar', className);
     const clipPathId = id;
-
     return (
       <Layer className={layerClass} id={id}>
-        {needClip && (
+        {(needClip || fillObject != null) && (
           <defs>
-            <GraphicalItemClipPath clipPathId={clipPathId} xAxisId={xAxisId} yAxisId={yAxisId} />
+            {needClip && <GraphicalItemClipPath clipPathId={clipPathId} xAxisId={xAxisId} yAxisId={yAxisId} />}
+            {fillObject != null && (
+              <FillObjectDefinition id={getSeriesFillId(id)} fillObject={fillObject} color={fill} />
+            )}
           </defs>
         )}
         <Layer className="recharts-bar-rectangles" clipPath={needClip ? `url(#clipPath-${clipPathId})` : undefined}>
@@ -1359,17 +1400,27 @@ export function computeBarRectangles({
     .filter(Boolean);
 }
 
-function BarFn(outsideProps: Props) {
+function BarFn(propsWithFillObject: Props) {
+  const { color: fillColor, fillObject } = splitFill(propsWithFillObject.fill);
+  // From here on, `fill` is the base color
+  const outsideProps: StringFillProps = { ...propsWithFillObject, fill: fillColor };
   const dataKey = useEffectiveDataKey({
     dataKey: outsideProps.dataKey,
     xAxisId: outsideProps.xAxisId ?? defaultBarProps.xAxisId,
     yAxisId: outsideProps.yAxisId ?? defaultBarProps.yAxisId,
   });
   const graphicalItemThemeSelector = useGraphicalItemIdentity(dataKey, outsideProps);
+  // The Bar's own fill object wins. Without one, it paints with the fill object of its theme entry, if there is one.
+  const themeFillObject = useGraphicalItemThemeFill(dataKey, outsideProps);
+  const effectiveFillObject: RechartsFill | undefined = fillObject ?? themeFillObject;
   const resolveLabelTheme = useSeriesLabelThemeResolver(graphicalItemThemeSelector);
   const unthemedColors = useUnthemedColors(outsideProps);
   const themedActiveStyles = useThemedActiveStyles(graphicalItemThemeSelector, outsideProps);
-  const graphicalItemStyle = useBackwardsCompatibleTheme<Props>(graphicalItemThemeSelector, outsideProps, undefined);
+  const graphicalItemStyle = useBackwardsCompatibleTheme<StringFillProps>(
+    graphicalItemThemeSelector,
+    outsideProps,
+    undefined,
+  );
   const props = resolveDefaultProps({ ...outsideProps, dataKey }, defaultBarProps);
   // stackId may arrive from props or from BarStack context
   const stackId = useStackId(props.stackId);
@@ -1382,7 +1433,7 @@ function BarFn(outsideProps: Props) {
   const themeStrokeDasharray = outsideProps.strokeDasharray ?? graphicalItemStyle?.strokeDasharray;
   const themeFillOpacity = outsideProps.fillOpacity ?? graphicalItemStyle?.fillOpacity;
 
-  const themedProps: Partial<Props> = {};
+  const themedProps: Partial<StringFillProps> = {};
   if (themeFill !== undefined) themedProps.fill = themeFill;
   if (themeStroke !== undefined) themedProps.stroke = themeStroke;
   if (themeStrokeWidth !== undefined) themedProps.strokeWidth = themeStrokeWidth;
@@ -1395,7 +1446,9 @@ function BarFn(outsideProps: Props) {
     <RegisterGraphicalItemId id={props.id} type="bar">
       {id => (
         <>
-          <SetLegendPayload legendPayload={computeLegendPayloadFromBarData({ ...props, ...themedProps })} />
+          <SetLegendPayload
+            legendPayload={computeLegendPayloadFromBarData({ ...props, ...themedProps }, effectiveFillObject)}
+          />
           <SetBarTooltipEntrySettings
             dataKey={props.dataKey}
             stroke={themedProps.stroke ?? props.stroke}
@@ -1434,6 +1487,8 @@ function BarFn(outsideProps: Props) {
                 id={id}
                 unthemedColors={unthemedColors}
                 themedActiveStyles={themedActiveStyles}
+                fillObject={effectiveFillObject}
+                paintFill={effectiveFillObject == null ? undefined : getFillUrl(getSeriesFillId(id))}
               />
             </DataLabelThemeContextProvider>
           </ZIndexLayer>

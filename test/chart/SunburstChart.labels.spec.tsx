@@ -8,6 +8,8 @@ import {
   RechartsThemeProvider,
   SunburstChart,
   SunburstData,
+  pattern,
+  patterns,
 } from '../../src';
 import { rechartsTestRender } from '../helper/createSelectorTestCase';
 import { assertNotNull } from '../helper/assertNotNull';
@@ -141,6 +143,30 @@ describe('Sunburst sector labels', () => {
     expect(labels(container).map(label => label.style.fill)).toEqual(['navy', 'navy', 'navy', 'purple']);
     expect(labels(container).map(label => label.style.fontWeight)).toEqual(['700', '700', '700', '']);
     labels(container).forEach(label => expect(label).not.toHaveAttribute('stroke'));
+  });
+
+  it('preserves branch label styles and backgrounds when the theme uses fill objects', () => {
+    const definition = pattern(patterns.diagonal);
+    const { container } = renderChart(
+      {},
+      {
+        ...theme,
+        graphicalItems: [
+          { ...theme.graphicalItems[0], fill: { color: 'red', definition } },
+          { ...theme.graphicalItems[1], fill: { color: 'green', definition } },
+        ],
+      },
+    );
+    expect(Array.from(container.querySelectorAll('.recharts-sector'), sector => sector.getAttribute('fill'))).toEqual([
+      'red',
+      'red',
+      'red',
+      'green',
+    ]);
+    expect(labels(container).map(label => label.style.fill)).toEqual(['navy', 'navy', 'navy', 'purple']);
+    const backgrounds = container.querySelectorAll('.recharts-text-background');
+    expect(backgrounds).toHaveLength(3);
+    backgrounds.forEach(background => expect(background).toHaveAttribute('fill', 'ivory'));
   });
 
   it('applies branch label styles to explicit LabelList children even when sectors have explicit colors', () => {

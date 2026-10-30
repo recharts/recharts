@@ -398,6 +398,18 @@ export const commentSimilarityExceptions: ReadonlyArray<CommentSimilarityGroup> 
       'In LabelList, fill is the text color of the labels, and it explains how labels pick a color automatically in a theme. Elsewhere it is the color of a shape.',
   },
   {
+    components: ['Bar', 'Area', 'Radar', 'Scatter'],
+    props: ['fill'],
+    reason:
+      'These fills also accept a fill object with a pattern or a gradient, and explain how Tooltip and labels keep a solid color. Elsewhere it is a plain color.',
+  },
+  {
+    components: ['Line'],
+    props: ['fill'],
+    reason:
+      'Line fill colors the dots, and it explains that a fill object counts by its color, so theme entries spread onto a Line. Elsewhere it is the color of a shape.',
+  },
+  {
     components: ['Tooltip'],
     props: ['labelStyle'],
     reason:

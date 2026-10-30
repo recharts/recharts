@@ -37,7 +37,8 @@ import { RegisterGraphicalItemId } from '../context/RegisterGraphicalItemId';
 import { WithIdRequired } from '../util/useUniqueId';
 import { RequiresDefaultProps, resolveDefaultProps } from '../util/resolveDefaultProps';
 import { initialEventSettingsState } from '../state/eventSettingsSlice';
-import { GraphicalItemStyle, LabelTheme, RechartsTheme } from '../theme/RechartsTheme';
+import { LabelTheme } from '../theme/RechartsTheme';
+import { ColorGraphicalItemStyle, getColorGraphicalItems } from '../theme/themeFill';
 import { useRechartsTheme } from '../theme/RechartsThemeContext';
 import { getOwnStyles, hasOwnColors, withoutColors } from '../theme/dataEntryStyles';
 import { getEffectivePageBackground } from '../theme/pageBackground';
@@ -199,7 +200,7 @@ interface DrawArcOptions {
    * Theme style of the first-ring sector that this branch starts from.
    * Undefined for the first ring, and without a theme.
    */
-  branchStyle?: GraphicalItemStyle;
+  branchStyle?: ColorGraphicalItemStyle;
   nestedActiveTooltipIndex?: TooltipIndex | undefined;
 }
 
@@ -298,7 +299,7 @@ type SunburstPositionMap = Map<TooltipIndex, ChartCoordinate>;
  * Undefined if there is no theme, in which case the chart renders with its legacy styles.
  */
 type SunburstThemeStyles = {
-  graphicalItems: RechartsTheme['graphicalItems'];
+  graphicalItems: ReadonlyArray<ColorGraphicalItemStyle>;
   /**
    * The color behind the chart.
    * Separators are painted in this color, so that they read as gaps.
@@ -434,7 +435,7 @@ type SectorPropsInput = {
   /** Separator width. An entry `strokeWidth` wins over this. */
   padding: number;
   themeStyles: SunburstThemeStyles | undefined;
-  branchStyle: GraphicalItemStyle | undefined;
+  branchStyle: ColorGraphicalItemStyle | undefined;
 };
 
 /**
@@ -751,7 +752,7 @@ export const SunburstChart = (outsideProps: SunburstChartProps) => {
       theme == null
         ? undefined
         : {
-            graphicalItems: theme.graphicalItems,
+            graphicalItems: getColorGraphicalItems(theme.graphicalItems),
             pageBackground: getEffectivePageBackground(theme),
           },
     [theme],

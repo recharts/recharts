@@ -669,7 +669,7 @@
   },
   "src/theme/useGraphicalItemIdentity.ts": {
     "@typescript-eslint/no-explicit-any": {
-      "count": 3
+      "count": 2
     }
   },
   "src/util/ActiveShapeUtils.tsx": {
@@ -1867,11 +1867,6 @@
   },
   "www/src/docs/exampleComponents/Label/LabelRadialBarPositions.tsx": {
     "react-perf/jsx-no-new-function-as-prop": {
-      "count": 3
-    }
-  },
-  "www/src/docs/exampleComponents/LabelList/LabelListChartExample.tsx": {
-    "react-perf/jsx-no-new-object-as-prop": {
       "count": 3
     }
   },

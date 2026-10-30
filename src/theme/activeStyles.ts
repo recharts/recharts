@@ -21,7 +21,8 @@
  */
 
 import { isValidElement } from 'react';
-import { GraphicalItemStyle, RechartsTheme, Styles2D } from './RechartsTheme';
+import { RechartsTheme } from './RechartsTheme';
+import { ColorGraphicalItemStyle, ColorStyles2D } from './themeFill';
 import { useRechartsTheme } from './RechartsThemeContext';
 import { hasOwnColors, withoutColors } from './dataEntryStyles';
 
@@ -33,16 +34,19 @@ import { hasOwnColors, withoutColors } from './dataEntryStyles';
  * @returns theme styles to apply to the active representation, without the ones that `ownStyles` override.
  * Undefined if there is nothing to apply.
  */
-export function resolveThemedActiveStyles(activeStyle: Styles2D | undefined, ownStyles: unknown): Styles2D | undefined {
+export function resolveThemedActiveStyles(
+  activeStyle: ColorStyles2D | undefined,
+  ownStyles: unknown,
+): ColorStyles2D | undefined {
   if (activeStyle == null || ownStyles == null || typeof ownStyles !== 'object') {
     return activeStyle;
   }
-  const { fillOpacity, strokeOpacity, strokeWidth, strokeDasharray }: Styles2D = ownStyles;
+  const { fillOpacity, strokeOpacity, strokeWidth, strokeDasharray }: ColorStyles2D = ownStyles;
   const themeStyles = hasOwnColors(ownStyles) ? withoutColors(activeStyle) : activeStyle;
   if (fillOpacity == null && strokeOpacity == null && strokeWidth == null && strokeDasharray == null) {
     return Object.keys(themeStyles).length > 0 ? themeStyles : undefined;
   }
-  const result: Styles2D = { ...themeStyles };
+  const result: ColorStyles2D = { ...themeStyles };
   if (fillOpacity != null) {
     delete result.fillOpacity;
   }
@@ -67,9 +71,9 @@ export function resolveThemedActiveStyles(activeStyle: Styles2D | undefined, own
  * @param explicitProps props as provided by the user, before merging with theme or defaults
  */
 export function useThemedActiveStyles(
-  themeSelector: (theme: RechartsTheme) => GraphicalItemStyle | undefined,
-  explicitProps: Styles2D,
-): Styles2D | undefined {
+  themeSelector: (theme: RechartsTheme) => ColorGraphicalItemStyle | undefined,
+  explicitProps: ColorStyles2D,
+): ColorStyles2D | undefined {
   const theme = useRechartsTheme();
   const activeStyle = theme == null ? undefined : themeSelector(theme)?.active;
   return hasOwnColors(explicitProps) ? withoutColors(activeStyle) : activeStyle;
@@ -90,9 +94,9 @@ export function useThemedActiveStyles(
  */
 export function getActiveStyleOverrides(
   activeOption: unknown,
-  themedActiveStyles: Styles2D | undefined,
+  themedActiveStyles: ColorStyles2D | undefined,
   entry?: unknown,
-): Styles2D | undefined {
+): ColorStyles2D | undefined {
   const themeStyles = hasOwnColors(entry) ? withoutColors(themedActiveStyles) : themedActiveStyles;
   if (activeOption === true || typeof activeOption === 'string') {
     return themeStyles;

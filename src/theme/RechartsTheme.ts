@@ -1,6 +1,7 @@
 import { CSSProperties } from 'react';
 import { LegendProps } from '../index';
 import type { TextBackgroundProps } from '../component/Text';
+import type { RechartsFill } from '../fill/RechartsFill';
 
 /**
  * Styles shared for rectangular or variable shape components that have an area (Area, Bar, Rectangle)
@@ -11,7 +12,18 @@ export type Styles2D = {
   strokeWidth?: number | string;
   strokeDasharray?: string | number;
   fillOpacity?: number | string;
-  fill?: string;
+  /**
+   * A color, or a fill object that paints the shapes with a pattern or a gradient.
+   * Everything that needs a plain color, such as the Tooltip, the Legend text, and labels, uses its `color`.
+   *
+   * Give each entry of `graphicalItems` a different pattern, and charts tell their series apart
+   * without relying on color alone.
+   *
+   * Bar, Area, Radar, and Scatter draw the definition of a fill object. Everything else paints with its `color`.
+   *
+   * @example { fill: { color: '#2b6cb0', definition: pattern(patterns.diagonal) } }
+   */
+  fill?: string | RechartsFill;
 };
 
 export type GraphicalItemStyle = Styles2D & {
