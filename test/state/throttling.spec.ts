@@ -6,6 +6,7 @@ import { mouseMoveAction } from '../../src/state/mouseEventsMiddleware';
 import { keyDownAction } from '../../src/state/keyboardEventsMiddleware';
 import { externalEventAction } from '../../src/state/externalEventsMiddleware';
 import { setEventSettings } from '../../src/state/eventSettingsSlice';
+import { mouseLeaveChart, setMouseOverAxisIndex } from '../../src/state/tooltipSlice';
 import { getMockDomRect } from '../helper/mockGetBoundingClientRect';
 
 function createMockMousePointer(x: number, y: number): HTMLMousePointer {
@@ -212,6 +213,86 @@ describe('Throttling Middleware', () => {
 
       expect(vi.getTimerCount()).toBe(0);
       expect(mockHandler).toHaveBeenCalled();
+    });
+  });
+
+  describe('when there are multiple charts on the same page', () => {
+    let otherStore: ReturnType<typeof createRechartsStore>;
+
+    beforeEach(() => {
+      otherStore = createRechartsStore();
+    });
+
+    it('should not cancel the pending mousemove frame of another chart', () => {
+      store.dispatch(mouseMoveAction(createMockMousePointer(50, 50)));
+      otherStore.dispatch(mouseMoveAction(createMockMousePointer(60, 60)));
+
+      // One pending frame per chart
+      expect(vi.getTimerCount()).toBe(2);
+    });
+
+    it('should not skip the mousemove timeout of another chart when throttleDelay is a number', () => {
+      store.dispatch(setEventSettings({ throttleDelay: 100, throttledEvents: 'all' }));
+      otherStore.dispatch(setEventSettings({ throttleDelay: 100, throttledEvents: 'all' }));
+
+      store.dispatch(mouseMoveAction(createMockMousePointer(50, 50)));
+      otherStore.dispatch(mouseMoveAction(createMockMousePointer(60, 60)));
+
+      // One pending timeout per chart
+      expect(vi.getTimerCount()).toBe(2);
+    });
+
+    it('should not cancel the pending mousemove of another chart when the mouse leaves one chart', () => {
+      store.dispatch(mouseMoveAction(createMockMousePointer(50, 50)));
+      expect(vi.getTimerCount()).toBe(1);
+
+      otherStore.dispatch(mouseLeaveChart());
+
+      expect(vi.getTimerCount()).toBe(1);
+    });
+
+    it('should call the leading edge external event handler of every chart', () => {
+      store.dispatch(setEventSettings({ throttleDelay: 100, throttledEvents: 'all' }));
+      otherStore.dispatch(setEventSettings({ throttleDelay: 100, throttledEvents: 'all' }));
+      const handler = vi.fn();
+      const otherHandler = vi.fn();
+
+      store.dispatch(externalEventAction({ reactEvent: { type: 'mousemove', persist: vi.fn() }, handler }));
+      otherStore.dispatch(
+        externalEventAction({ reactEvent: { type: 'mousemove', persist: vi.fn() }, handler: otherHandler }),
+      );
+
+      expect(handler).toHaveBeenCalledTimes(1);
+      expect(otherHandler).toHaveBeenCalledTimes(1);
+
+      act(() => {
+        vi.advanceTimersByTime(100);
+      });
+
+      expect(handler).toHaveBeenCalledTimes(1);
+      expect(otherHandler).toHaveBeenCalledTimes(1);
+    });
+
+    it('should call each external event handler with the state of its own chart', () => {
+      store.dispatch(setEventSettings({ throttleDelay: 100, throttledEvents: 'all' }));
+      otherStore.dispatch(setEventSettings({ throttleDelay: 100, throttledEvents: 'all' }));
+      store.dispatch(
+        setMouseOverAxisIndex({ activeIndex: '1', activeDataKey: undefined, activeCoordinate: { x: 10, y: 20 } }),
+      );
+      const handler = vi.fn();
+      const otherHandler = vi.fn();
+
+      store.dispatch(externalEventAction({ reactEvent: { type: 'mousemove', persist: vi.fn() }, handler }));
+      otherStore.dispatch(
+        externalEventAction({ reactEvent: { type: 'mousemove', persist: vi.fn() }, handler: otherHandler }),
+      );
+      act(() => {
+        vi.advanceTimersByTime(100);
+      });
+
+      expect(handler).toHaveBeenCalledWith(expect.objectContaining({ isTooltipActive: true }), expect.anything());
+      expect(otherHandler).toHaveBeenCalledTimes(1);
+      expect(otherHandler).toHaveBeenCalledWith(expect.objectContaining({ isTooltipActive: false }), expect.anything());
     });
   });
 });

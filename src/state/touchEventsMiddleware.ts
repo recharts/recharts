@@ -1,4 +1,10 @@
-import { createAction, createListenerMiddleware, ListenerEffectAPI, PayloadAction } from '@reduxjs/toolkit';
+import {
+  createAction,
+  createListenerMiddleware,
+  ListenerEffectAPI,
+  ListenerMiddlewareInstance,
+  PayloadAction,
+} from '@reduxjs/toolkit';
 import * as React from 'react';
 import { AppDispatch, RechartsRootState } from './store';
 import { setActiveMouseOverItemIndex, setMouseOverAxisIndex } from './tooltipSlice';
@@ -14,124 +20,136 @@ import { createEventProxy } from '../util/createEventProxy';
 
 export const touchEventAction = createAction<React.TouchEvent<HTMLDivElement>>('touchMove');
 
-export const touchEventMiddleware = createListenerMiddleware<RechartsRootState>();
+/**
+ * Creates the middleware that throttles touchmove events and turns them into tooltip updates.
+ *
+ * Each chart store must get its own instance, because the throttling state below belongs to one chart.
+ * If it were shared, a touch in one chart could cancel or replace the pending touch of another chart.
+ *
+ * @returns a new listener middleware with its own throttling state
+ */
+export function createTouchEventMiddleware(): ListenerMiddlewareInstance<RechartsRootState> {
+  const touchEventMiddleware = createListenerMiddleware<RechartsRootState>();
 
-let rafId: number | null = null;
-let timeoutId: ReturnType<typeof setTimeout> | null = null;
-let latestChartPointers: ReadonlyArray<RelativePointer> | null = null;
-let latestTouchEvent: React.TouchEvent<HTMLDivElement> | null = null;
+  let rafId: number | null = null;
+  let timeoutId: ReturnType<typeof setTimeout> | null = null;
+  let latestChartPointers: ReadonlyArray<RelativePointer> | null = null;
+  let latestTouchEvent: React.TouchEvent<HTMLDivElement> | null = null;
 
-touchEventMiddleware.startListening({
-  actionCreator: touchEventAction,
-  effect: (
-    action: PayloadAction<React.TouchEvent<HTMLDivElement>>,
-    listenerApi: ListenerEffectAPI<RechartsRootState, AppDispatch>,
-  ) => {
-    const touchEvent = action.payload;
-    if (touchEvent.touches == null || touchEvent.touches.length === 0) {
-      return;
-    }
+  touchEventMiddleware.startListening({
+    actionCreator: touchEventAction,
+    effect: (
+      action: PayloadAction<React.TouchEvent<HTMLDivElement>>,
+      listenerApi: ListenerEffectAPI<RechartsRootState, AppDispatch>,
+    ) => {
+      const touchEvent = action.payload;
+      if (touchEvent.touches == null || touchEvent.touches.length === 0) {
+        return;
+      }
 
-    latestTouchEvent = createEventProxy(touchEvent);
+      latestTouchEvent = createEventProxy(touchEvent);
 
-    const state = listenerApi.getState();
-    const { throttleDelay, throttledEvents } = state.eventSettings;
-    const isThrottled = throttledEvents === 'all' || throttledEvents.includes('touchmove');
+      const state = listenerApi.getState();
+      const { throttleDelay, throttledEvents } = state.eventSettings;
+      const isThrottled = throttledEvents === 'all' || throttledEvents.includes('touchmove');
 
-    if (rafId !== null) {
-      cancelAnimationFrame(rafId);
-      rafId = null;
-    }
-    if (timeoutId !== null && (typeof throttleDelay !== 'number' || !isThrottled)) {
-      clearTimeout(timeoutId);
-      timeoutId = null;
-    }
+      if (rafId !== null) {
+        cancelAnimationFrame(rafId);
+        rafId = null;
+      }
+      if (timeoutId !== null && (typeof throttleDelay !== 'number' || !isThrottled)) {
+        clearTimeout(timeoutId);
+        timeoutId = null;
+      }
 
-    latestChartPointers = Array.from(touchEvent.touches).map(touch =>
-      getRelativeCoordinate({
-        clientX: touch.clientX,
-        clientY: touch.clientY,
-        currentTarget: touchEvent.currentTarget,
-      }),
-    );
+      latestChartPointers = Array.from(touchEvent.touches).map(touch =>
+        getRelativeCoordinate({
+          clientX: touch.clientX,
+          clientY: touch.clientY,
+          currentTarget: touchEvent.currentTarget,
+        }),
+      );
 
-    const callback = () => {
-      try {
-        if (latestTouchEvent == null) {
-          return;
-        }
-
-        const currentState = listenerApi.getState();
-        const tooltipEventType = selectTooltipEventType(currentState, currentState.tooltip.settings.shared);
-        if (tooltipEventType === 'axis') {
-          const latestTouchPointer = latestChartPointers?.[0];
-          if (latestTouchPointer == null) {
+      const callback = () => {
+        try {
+          if (latestTouchEvent == null) {
             return;
           }
-          const activeProps = selectActivePropsFromChartPointer(currentState, latestTouchPointer);
-          if (activeProps?.activeIndex != null) {
+
+          const currentState = listenerApi.getState();
+          const tooltipEventType = selectTooltipEventType(currentState, currentState.tooltip.settings.shared);
+          if (tooltipEventType === 'axis') {
+            const latestTouchPointer = latestChartPointers?.[0];
+            if (latestTouchPointer == null) {
+              return;
+            }
+            const activeProps = selectActivePropsFromChartPointer(currentState, latestTouchPointer);
+            if (activeProps?.activeIndex != null) {
+              listenerApi.dispatch(
+                setMouseOverAxisIndex({
+                  activeIndex: activeProps.activeIndex,
+                  activeDataKey: undefined,
+                  activeCoordinate: activeProps.activeCoordinate,
+                }),
+              );
+            }
+          } else if (tooltipEventType === 'item') {
+            const touch = latestTouchEvent.touches[0];
+            if (document.elementFromPoint == null || touch == null) {
+              return;
+            }
+            const target = document.elementFromPoint(touch.clientX, touch.clientY);
+            if (!target || !target.getAttribute) {
+              return;
+            }
+            const itemIndex = target.getAttribute(DATA_ITEM_INDEX_ATTRIBUTE_NAME);
+            const graphicalItemId = target.getAttribute(DATA_ITEM_GRAPHICAL_ITEM_ID_ATTRIBUTE_NAME) ?? undefined;
+            const settings = selectAllGraphicalItemsSettings(currentState).find(item => item.id === graphicalItemId);
+            if (itemIndex == null || settings == null || graphicalItemId == null) {
+              return;
+            }
+            const { dataKey } = settings;
+            const coordinate = selectTooltipCoordinate(currentState, itemIndex, graphicalItemId);
+
             listenerApi.dispatch(
-              setMouseOverAxisIndex({
-                activeIndex: activeProps.activeIndex,
-                activeDataKey: undefined,
-                activeCoordinate: activeProps.activeCoordinate,
+              setActiveMouseOverItemIndex({
+                activeDataKey: dataKey,
+                activeIndex: itemIndex,
+                activeCoordinate: coordinate,
+                activeGraphicalItemId: graphicalItemId,
               }),
             );
           }
-        } else if (tooltipEventType === 'item') {
-          const touch = latestTouchEvent.touches[0];
-          if (document.elementFromPoint == null || touch == null) {
-            return;
-          }
-          const target = document.elementFromPoint(touch.clientX, touch.clientY);
-          if (!target || !target.getAttribute) {
-            return;
-          }
-          const itemIndex = target.getAttribute(DATA_ITEM_INDEX_ATTRIBUTE_NAME);
-          const graphicalItemId = target.getAttribute(DATA_ITEM_GRAPHICAL_ITEM_ID_ATTRIBUTE_NAME) ?? undefined;
-          const settings = selectAllGraphicalItemsSettings(currentState).find(item => item.id === graphicalItemId);
-          if (itemIndex == null || settings == null || graphicalItemId == null) {
-            return;
-          }
-          const { dataKey } = settings;
-          const coordinate = selectTooltipCoordinate(currentState, itemIndex, graphicalItemId);
-
-          listenerApi.dispatch(
-            setActiveMouseOverItemIndex({
-              activeDataKey: dataKey,
-              activeIndex: itemIndex,
-              activeCoordinate: coordinate,
-              activeGraphicalItemId: graphicalItemId,
-            }),
-          );
+        } finally {
+          rafId = null;
+          timeoutId = null;
         }
-      } finally {
-        rafId = null;
-        timeoutId = null;
-      }
-    };
+      };
 
-    if (!isThrottled) {
-      callback();
-      return;
-    }
-
-    if (throttleDelay === 'raf') {
-      rafId = requestAnimationFrame(callback);
-    } else if (typeof throttleDelay === 'number') {
-      if (timeoutId === null) {
+      if (!isThrottled) {
         callback();
-        latestTouchEvent = null;
-
-        timeoutId = setTimeout(() => {
-          if (latestTouchEvent) {
-            callback();
-          } else {
-            timeoutId = null;
-            rafId = null;
-          }
-        }, throttleDelay);
+        return;
       }
-    }
-  },
-});
+
+      if (throttleDelay === 'raf') {
+        rafId = requestAnimationFrame(callback);
+      } else if (typeof throttleDelay === 'number') {
+        if (timeoutId === null) {
+          callback();
+          latestTouchEvent = null;
+
+          timeoutId = setTimeout(() => {
+            if (latestTouchEvent) {
+              callback();
+            } else {
+              timeoutId = null;
+              rafId = null;
+            }
+          }, throttleDelay);
+        }
+      }
+    },
+  });
+
+  return touchEventMiddleware;
+}
