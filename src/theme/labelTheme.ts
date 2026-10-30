@@ -1,6 +1,7 @@
 import { createContext, CSSProperties, useContext, useMemo } from 'react';
 import type { TextBackgroundProps } from '../component/Text';
-import { GraphicalItemStyle, LabelTheme, RechartsTheme, TextStyles } from './RechartsTheme';
+import { LabelTheme, RechartsTheme, TextStyles } from './RechartsTheme';
+import { ColorGraphicalItemStyle } from './themeFill';
 import { useRechartsTheme } from './RechartsThemeContext';
 import type { LabelPosition } from '../component/Label';
 import { isOutsidePosition } from '../cartesian/getCartesianPosition';
@@ -249,7 +250,7 @@ export function useDataLabelThemeResolver(): DataLabelThemeResolver | undefined 
  * @returns the resolver, or undefined without a theme
  */
 export function useSeriesLabelThemeResolver(
-  graphicalItemThemeSelector: (theme: RechartsTheme) => GraphicalItemStyle | undefined,
+  graphicalItemThemeSelector: (theme: RechartsTheme) => ColorGraphicalItemStyle | undefined,
 ): DataLabelThemeResolver | undefined {
   const theme = useRechartsTheme();
   const labelTheme = theme == null ? undefined : graphicalItemThemeSelector(theme)?.label;
@@ -266,7 +267,7 @@ export function useSeriesLabelThemeResolver(
  * @returns the resolver, or undefined if the labels take no theme
  */
 export function useIndexedLabelThemeResolver(
-  graphicalItems: ReadonlyArray<GraphicalItemStyle> | undefined,
+  graphicalItems: ReadonlyArray<ColorGraphicalItemStyle> | undefined,
 ): DataLabelThemeResolver | undefined {
   return useMemo(() => {
     if (graphicalItems == null || graphicalItems.length === 0) {

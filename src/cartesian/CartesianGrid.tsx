@@ -22,7 +22,7 @@ import { isPositiveNumber } from '../util/isWellBehavedNumber';
 import { areScalesApproximatelyEqual, areValueArraysApproximatelyEqual } from '../util/propsAreEqual';
 import { ZIndexable, ZIndexLayer } from '../zIndex/ZIndexLayer';
 import { DefaultZIndexes } from '../zIndex/DefaultZIndexes';
-import { Styles2D } from '../theme/RechartsTheme';
+import { ColorStyles2D, withFillColor } from '../theme/themeFill';
 import { useBackwardsCompatibleTheme } from '../theme/useBackwardsCompatibleTheme';
 
 /**
@@ -424,38 +424,65 @@ function VerticalStripes(props: CartesianGridInternalProps) {
   return <g className="recharts-cartesian-gridstripes-vertical">{items}</g>;
 }
 
+type TickFontStyle = { fontSize?: string; letterSpacing?: string };
+
+/**
+ * Reads fontSize/letterSpacing from an axis's `tick` prop when it is a plain
+ * style object (e.g. `tick={{ fontSize: 30 }}`). Unlike CartesianAxis, the grid
+ * has no DOM to measure, so function/element ticks are not covered.
+ */
+function getTickFontStyle(tick: unknown): TickFontStyle {
+  if (tick == null || typeof tick !== 'object' || React.isValidElement(tick)) {
+    return {};
+  }
+  const fontSize =
+    'fontSize' in tick && tick.fontSize != null ? `${tick.fontSize}`.replace(/^(\d+(\.\d+)?)$/, '$1px') : undefined;
+  const letterSpacing = 'letterSpacing' in tick && tick.letterSpacing != null ? String(tick.letterSpacing) : undefined;
+  return { fontSize, letterSpacing };
+}
+
 const defaultVerticalCoordinatesGenerator: VerticalCoordinatesGenerator = (
   { xAxis, width, height, offset },
   syncWithTicks,
-) =>
-  getCoordinatesOfGrid(
-    getTicks({
-      ...defaultCartesianAxisProps,
-      ...xAxis,
-      ticks: getTicksOfAxis(xAxis, true),
-      viewBox: { x: 0, y: 0, width, height },
-    }),
+) => {
+  const { fontSize, letterSpacing } = getTickFontStyle(xAxis?.tick);
+  return getCoordinatesOfGrid(
+    getTicks(
+      {
+        ...defaultCartesianAxisProps,
+        ...xAxis,
+        ticks: getTicksOfAxis(xAxis, true),
+        viewBox: { x: 0, y: 0, width, height },
+      },
+      fontSize,
+      letterSpacing,
+    ),
     offset.left,
     offset.left + offset.width,
     syncWithTicks,
   );
-
+};
 const defaultHorizontalCoordinatesGenerator: HorizontalCoordinatesGenerator = (
   { yAxis, width, height, offset },
   syncWithTicks,
-) =>
-  getCoordinatesOfGrid(
-    getTicks({
-      ...defaultCartesianAxisProps,
-      ...yAxis,
-      ticks: getTicksOfAxis(yAxis, true),
-      viewBox: { x: 0, y: 0, width, height },
-    }),
+) => {
+  const { fontSize, letterSpacing } = getTickFontStyle(yAxis?.tick);
+  return getCoordinatesOfGrid(
+    getTicks(
+      {
+        ...defaultCartesianAxisProps,
+        ...yAxis,
+        ticks: getTicksOfAxis(yAxis, true),
+        viewBox: { x: 0, y: 0, width, height },
+      },
+      fontSize,
+      letterSpacing,
+    ),
     offset.top,
     offset.top + offset.height,
     syncWithTicks,
   );
-
+};
 function areGridAxisScalesEqual(
   a: AxisPropsForCartesianGridTicksGeneration['scale'],
   b: AxisPropsForCartesianGridTicksGeneration['scale'],
@@ -519,7 +546,7 @@ export const defaultCartesianGridProps = {
   zIndex: DefaultZIndexes.grid,
 } as const satisfies Partial<Props>;
 
-const defaultLegacyGridThemeProps: Styles2D = {
+const defaultLegacyGridThemeProps: ColorStyles2D = {
   fill: 'none',
   stroke: '#ccc',
 };
@@ -567,7 +594,7 @@ export function CartesianGrid(props: Props) {
   );
 
   const themeProps = useBackwardsCompatibleTheme(
-    theme => theme.grid,
+    theme => withFillColor(theme.grid),
     propsIncludingDefaults,
     defaultLegacyGridThemeProps,
   );
@@ -585,6 +612,7 @@ export function CartesianGrid(props: Props) {
    */
   const verticalCoordinatesGenerator =
     propsIncludingDefaults.verticalCoordinatesGenerator || defaultVerticalCoordinatesGenerator;
+
   const horizontalCoordinatesGenerator =
     propsIncludingDefaults.horizontalCoordinatesGenerator || defaultHorizontalCoordinatesGenerator;
 

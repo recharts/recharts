@@ -1677,3 +1677,38 @@ describe('RadialBar background zIndex', () => {
     expect(backgroundSectors).toHaveLength(dataWithBackground.length);
   });
 });
+
+describe('RadialBar custom background', () => {
+  const data = [
+    { name: 'A', pv: 2400 },
+    { name: 'B', pv: 4567 },
+  ];
+
+  it('should render a custom background element instead of the default sector', () => {
+    const CustomBackground = () => <path className="custom-background" />;
+    const { container } = rechartsTestRender(
+      <RadialBarChart width={500} height={500} data={data}>
+        <RadialBar background={<CustomBackground />} isAnimationActive={false} dataKey="pv" />
+      </RadialBarChart>,
+    );
+
+    expect(container.querySelectorAll('.custom-background')).toHaveLength(data.length);
+    expect(container.querySelectorAll('.recharts-radial-bar-background-sector')).toHaveLength(0);
+  });
+
+  it('should call a custom background function with the background geometry of each bar', () => {
+    const background = vi.fn((_props: unknown) => <path className="custom-background" />);
+    const { container } = rechartsTestRender(
+      <RadialBarChart width={500} height={500} data={data} startAngle={90} endAngle={-270}>
+        <RadialBar background={background} isAnimationActive={false} dataKey="pv" />
+      </RadialBarChart>,
+    );
+
+    expect(container.querySelectorAll('.custom-background')).toHaveLength(data.length);
+    expect(container.querySelectorAll('.recharts-radial-bar-background-sector')).toHaveLength(0);
+    expect(background).toHaveBeenCalledWith(
+      expect.objectContaining({ startAngle: 90, endAngle: -270, index: 1, payload: data[1] }),
+      1,
+    );
+  });
+});

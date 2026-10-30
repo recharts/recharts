@@ -2,6 +2,7 @@ import React from 'react';
 import { describe, expect, it } from 'vitest';
 import { lightTheme, Line, LineChart, RechartsThemeProvider, Tooltip } from '../../src';
 import { graphicalItemIdentity } from '../../src/theme/graphicalItemIdentity';
+import { withFillColor } from '../../src/theme/themeFill';
 import { assertNotNull } from '../helper/assertNotNull';
 import { rechartsTestRender } from '../helper/createSelectorTestCase';
 import { showTooltip } from '../component/Tooltip/tooltipTestHelpers';
@@ -259,7 +260,8 @@ describe('Line theme', () => {
     const { container } = rechartsTestRender(
       <RechartsThemeProvider value={lightTheme}>
         <MyChart>
-          <Line dataKey="profit" isAnimationActive={false} {...theme} activeDot={active} />
+          {/* the active dot takes plain colors, so a fill object in the theme counts by its color */}
+          <Line dataKey="profit" isAnimationActive={false} {...theme} activeDot={withFillColor(active)} />
           <Tooltip />
         </MyChart>
       </RechartsThemeProvider>,

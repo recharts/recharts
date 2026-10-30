@@ -13,7 +13,7 @@ import { ZIndexable, ZIndexLayer } from '../zIndex/ZIndexLayer';
 import { DefaultZIndexes } from '../zIndex/DefaultZIndexes';
 import { resolveDefaultProps } from '../util/resolveDefaultProps';
 import { useBackwardsCompatibleTheme } from '../theme/useBackwardsCompatibleTheme';
-import { Styles2D } from '../theme/RechartsTheme';
+import { ColorStyles2D, withFillColor } from '../theme/themeFill';
 
 interface PolarGridProps extends ZIndexable {
   /**
@@ -239,7 +239,7 @@ const ConcentricGridPath = (props: PropsWithDefaults) => {
 /**
  * Default styling that was applied before themes existed
  */
-const defaultLegacyThemeProps: Styles2D = {
+const defaultLegacyThemeProps: ColorStyles2D = {
   stroke: '#ccc',
   strokeWidth: 1,
   fill: 'none',
@@ -257,7 +257,11 @@ export const defaultPolarGridProps = {
  * @consumes PolarViewBoxContext
  */
 export const PolarGrid = (outsideProps: Props) => {
-  const themeProps = useBackwardsCompatibleTheme(theme => theme.grid, outsideProps, defaultLegacyThemeProps);
+  const themeProps = useBackwardsCompatibleTheme(
+    theme => withFillColor(theme.grid),
+    outsideProps,
+    defaultLegacyThemeProps,
+  );
   const propsWithTheme: Props = {
     ...outsideProps,
     ...themeProps,

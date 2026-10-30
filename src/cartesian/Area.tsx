@@ -70,7 +70,7 @@ import { propsAreEqual } from '../util/propsAreEqual';
 import { AxisId } from '../state/cartesianAxisSlice';
 import { StackDataPoint } from '../util/stacks/stackTypes';
 import { AreaRevealShape, AreaRevealShapeProps } from './AreaRevealShape';
-import { GraphicalItemStyle, Styles2D } from '../theme/RechartsTheme';
+import { ColorGraphicalItemStyle, ColorStyles2D } from '../theme/themeFill';
 import { useRechartsTheme } from '../theme/RechartsThemeContext';
 import { useBackwardsCompatibleTheme } from '../theme/useBackwardsCompatibleTheme';
 import { UnthemedColors, useUnthemedColors } from '../theme/dataEntryStyles';
@@ -99,7 +99,7 @@ type BaseValueCoordinate<DataPointType = any> = NullableCoordinate & { payload: 
  */
 interface InternalAreaProps extends ZIndexable {
   unthemedColors?: UnthemedColors;
-  themedActiveStyles?: Styles2D;
+  themedActiveStyles?: ColorStyles2D;
   activeDot: ActiveDotType;
   animationBegin: number;
   animationDuration: AnimationDuration;
@@ -157,7 +157,7 @@ interface InternalAreaProps extends ZIndexable {
  * @internal
  */
 export interface AreaProps<DataPointType = any, DataValueType = any>
-  extends Styles2D, DataProvider<DataPointType>, ValueAxisDataConsumer<DataPointType, DataValueType>, ZIndexable {
+  extends ColorStyles2D, DataProvider<DataPointType>, ValueAxisDataConsumer<DataPointType, DataValueType>, ZIndexable {
   /**
    * The active dot is rendered on the closest data point when user interacts with the chart. Options:
    *
@@ -435,7 +435,7 @@ const defaultAreaAnimateItems: AnimationInterpolateFn<AreaPointItem, CartesianLa
 /**
  * Default styling that was applied before themes existed
  */
-const defaultLegacyThemeProps: GraphicalItemStyle = {
+const defaultLegacyThemeProps: ColorGraphicalItemStyle = {
   fill: '#3182bd',
   fillOpacity: 0.6,
   stroke: '#3182bd',
@@ -1119,7 +1119,7 @@ function AreaFn(outsideProps: Props<any, any>) {
   });
   const graphicalItemThemeSelector = useGraphicalItemIdentity(dataKey, outsideProps);
   const resolveLabelTheme = useSeriesLabelThemeResolver(graphicalItemThemeSelector);
-  const theme = useBackwardsCompatibleTheme<Omit<GraphicalItemStyle, 'label'>>(
+  const theme = useBackwardsCompatibleTheme<Omit<ColorGraphicalItemStyle, 'label'>>(
     graphicalItemThemeSelector,
     outsideProps,
     defaultLegacyThemeProps,

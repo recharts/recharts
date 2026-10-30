@@ -73,7 +73,7 @@ import { ZIndexable, ZIndexLayer } from '../zIndex/ZIndexLayer';
 import { DefaultZIndexes } from '../zIndex/DefaultZIndexes';
 import { getZIndexFromUnknown } from '../zIndex/getZIndexFromUnknown';
 import { usePolarChartLayout } from '../context/chartLayoutContext';
-import { Styles2D } from '../theme/RechartsTheme';
+import { ColorStyles2D, withFillColor } from '../theme/themeFill';
 import { useBackwardsCompatibleTheme } from '../theme/useBackwardsCompatibleTheme';
 import { useGraphicalItemIdentity } from '../theme/useGraphicalItemIdentity';
 import { useEffectiveDataKey } from '../util/useEffectiveDataKey';
@@ -555,7 +555,7 @@ type ThemeInternalProps = {
    * Theme styles of the active shape, without the ones that explicit props override.
    * Undefined when there is no active theme, or when the theme has no active styles.
    */
-  themedActiveStyles?: Styles2D;
+  themedActiveStyles?: ColorStyles2D;
 };
 
 type InternalProps = WithIdRequired<PropsWithDefaults> & Pick<InternalRadialBarProps, 'sectors'> & ThemeInternalProps;
@@ -622,7 +622,7 @@ const SetRadialBarTooltipEntrySettings = React.memo(
   },
 );
 
-const defaultLegacyBarBackgroundProps: Styles2D = {
+const defaultLegacyBarBackgroundProps: ColorStyles2D = {
   fill: '#eee',
 };
 
@@ -636,7 +636,7 @@ function RadialBarBackgroundSectors({
   const { cornerRadius, background: backgroundFromProps } = allOtherRadialBarProps;
   const backgroundProps = svgPropertiesNoEventsFromUnknown(backgroundFromProps);
   const backgroundThemeProps = useBackwardsCompatibleTheme(
-    theme => theme.barBackground,
+    theme => withFillColor(theme.barBackground),
     backgroundProps ?? {},
     defaultLegacyBarBackgroundProps,
   );
@@ -667,7 +667,11 @@ function RadialBarBackgroundSectors({
             'recharts-radial-bar-background-sector',
             backgroundProps?.className == null ? undefined : String(backgroundProps.className),
           ),
-          option: background,
+          // A custom element or function draws the background; `true` and objects draw the default sector
+          option:
+            React.isValidElement(backgroundFromProps) || typeof backgroundFromProps === 'function'
+              ? backgroundFromProps
+              : background,
           isActive: false,
         };
 
