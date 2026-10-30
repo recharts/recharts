@@ -52,12 +52,64 @@ interface CalculatedWordWidths {
 
 type CalculateWordWidthsParam = Pick<Props, 'children' | 'breakAll' | 'style'>;
 
+/*
+ * Minimal structural types for Intl.Segmenter. Some of this repository's
+ * tsconfig projects (test-vr, website) compile with an ES2020 lib, which has
+ * no Intl.Segmenter declarations, so the global type cannot be referenced
+ * directly. A local structural shape keeps every project compiling while the
+ * implementation still uses the real Intl.Segmenter at runtime.
+ */
+interface GraphemeSegment {
+  segment: string;
+}
+
+interface GraphemeSegmenter {
+  segment(input: string): Iterable<GraphemeSegment>;
+}
+
+type GraphemeSegmenterConstructor = new (locale?: string, options?: { granularity: 'grapheme' }) => GraphemeSegmenter;
+
+/*
+ * A single lazily-created segmenter instance: constructing Intl.Segmenter is
+ * measurably more expensive than segmenting with an existing one.
+ * Availability itself is re-checked on every call so environments without
+ * Intl.Segmenter (e.g. Firefox before 125) always take the fallback.
+ */
+let cachedGraphemeSegmenter: GraphemeSegmenter | undefined;
+
+const getGraphemeSegmenter = (): GraphemeSegmenter | null => {
+  const SegmenterImpl: GraphemeSegmenterConstructor | undefined =
+    typeof Intl === 'undefined' ? undefined : Reflect.get(Intl, 'Segmenter');
+  if (typeof SegmenterImpl !== 'function') {
+    return null;
+  }
+  if (cachedGraphemeSegmenter === undefined) {
+    cachedGraphemeSegmenter = new SegmenterImpl(undefined, { granularity: 'grapheme' });
+  }
+  return cachedGraphemeSegmenter;
+};
+
+/**
+ * Splits text into grapheme clusters (user-perceived characters) so that `breakAll`
+ * wrapping and `maxLines` truncation never tear a cluster apart: ZWJ sequences,
+ * combining marks, regional indicators and emoji modifiers stay together.
+ * Falls back to code-point splitting (`Array.from`) when Intl.Segmenter is not
+ * available (e.g. Firefox before 125), which preserves the previous behavior.
+ */
+const splitIntoGraphemes = (text: string): string[] => {
+  const segmenter = getGraphemeSegmenter();
+  if (segmenter == null) {
+    return Array.from(text);
+  }
+  return Array.from(segmenter.segment(text), graphemeSegment => graphemeSegment.segment);
+};
+
 const calculateWordWidths = ({ children, breakAll, style }: CalculateWordWidthsParam): CalculatedWordWidths | null => {
   try {
     let words: string[] = [];
     if (!isNullish(children)) {
       if (breakAll) {
-        words = Array.from(children.toString());
+        words = splitIntoGraphemes(children.toString());
       } else {
         words = children.toString().split(BREAKING_SPACES);
       }
@@ -388,7 +440,7 @@ const calculateWordsByLines = (
     return originalResult;
   }
 
-  const text = Array.from(String(children));
+  const text = splitIntoGraphemes(String(children));
   let start = 0;
   let end = text.length - 1;
 
