@@ -6,12 +6,18 @@ import { selectChartDataAndAlwaysIgnoreIndexes, selectChartDataWithIndexes } fro
 import { RechartsRootState } from '../store';
 import { ChartDataState } from '../chartDataSlice';
 import { AxisId } from '../cartesianAxisSlice';
-import { LayoutType, LegendType, PolarViewBoxRequired, TickItem } from '../../util/types';
+import { DataKey, LayoutType, LegendType, PolarViewBoxRequired, TickItem } from '../../util/types';
 import { selectPolarAxisScale, selectPolarAxisTicks, selectPolarGraphicalItemAxisTicks } from './polarScaleSelectors';
 import { BaseAxisWithScale, combineStackGroups, selectTooltipAxis } from './axisSelectors';
 import { selectAngleAxis, selectPolarViewBox, selectRadiusAxis } from './polarAxisSelectors';
 import { selectChartLayout } from '../../context/chartLayoutContext';
-import { BarPositionPosition, getBandSizeOfAxis, getBaseValueOfBar, isCategoricalAxis } from '../../util/ChartUtils';
+import {
+  BarPositionPosition,
+  getBandSizeOfAxis,
+  getBaseValueOfBar,
+  getValueByDataKey,
+  isCategoricalAxis,
+} from '../../util/ChartUtils';
 import { BarWithPosition, SizeList } from './barSelectors';
 import {
   selectBarCategoryGap,
@@ -439,11 +445,17 @@ export const selectRadialBarSectors: (
 export const selectRadialBarLegendPayload: (
   state: RechartsRootState,
   legendType: LegendType | undefined,
+  nameKey: DataKey<unknown> | undefined,
 ) => ReadonlyArray<LegendPayload> = createSelector(
-  [selectChartDataAndAlwaysIgnoreIndexes, (_s: RechartsRootState, l: LegendType | undefined) => l],
+  [
+    selectChartDataAndAlwaysIgnoreIndexes,
+    (_s: RechartsRootState, l: LegendType | undefined) => l,
+    (_s: RechartsRootState, _l: LegendType | undefined, n: DataKey<unknown> | undefined) => n,
+  ],
   (
     { chartData, dataStartIndex, dataEndIndex }: ChartDataState,
     legendType: LegendType | undefined,
+    nameKey: DataKey<unknown> | undefined,
   ): ReadonlyArray<LegendPayload> => {
     if (chartData == null) {
       return [];
@@ -457,8 +469,7 @@ export const selectRadialBarLegendPayload: (
     return displayedData.map((entry): LegendPayload => {
       return {
         type: legendType,
-        // @ts-expect-error we need a better typing for our data inputs
-        value: entry.name,
+        value: getValueByDataKey(entry, nameKey ?? 'name'),
         // @ts-expect-error Legend payload.payload says it wants objects but our data can be unknown
         payload: entry,
       };

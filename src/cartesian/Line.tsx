@@ -120,6 +120,7 @@ interface InternalLineProps extends ZIndexable {
   shape: ActiveShape<LineDrawShapeProps, SVGPathElement>;
 
   name?: string | number;
+  nameKey?: DataKey<unknown>;
   needClip?: boolean;
 
   onAnimationEnd?: () => void;
@@ -325,6 +326,17 @@ export interface LineProps<DataPointType = any, DataValueType = any>
    * If no value was set to this option, the value of dataKey will be used alternatively.
    */
   name?: string | number;
+  /**
+   * Name represents each data entry in the tooltip.
+   * This allows you to extract the name from the data:
+   *
+   * - `string`: the name of the field in the data object;
+   * - `number`: the index of the field in the data;
+   * - `function`: a function that receives the data object and returns the name.
+   *
+   * @since 3.11
+   */
+  nameKey?: DataKey<DataPointType>;
   /**
    * The customized event handler of animation end
    */
@@ -536,6 +548,7 @@ const SetLineTooltipEntrySettings = React.memo(
     strokeWidth,
     fill,
     name,
+    nameKey,
     hide,
     unit,
     formatter,
@@ -549,6 +562,7 @@ const SetLineTooltipEntrySettings = React.memo(
     | 'strokeWidth'
     | 'fill'
     | 'name'
+    | 'nameKey'
     | 'hide'
     | 'unit'
     | 'formatter'
@@ -563,7 +577,7 @@ const SetLineTooltipEntrySettings = React.memo(
         strokeWidth,
         fill,
         dataKey,
-        nameKey: undefined,
+        nameKey,
         name: getTooltipNameProp(name, dataKey),
         hide,
         type: tooltipType,
@@ -1026,6 +1040,7 @@ function LineFn(outsideProps: Props) {
             strokeWidth={props.strokeWidth}
             fill={props.fill}
             name={props.name}
+            nameKey={props.nameKey}
             hide={props.hide}
             unit={props.unit}
             formatter={props.formatter}

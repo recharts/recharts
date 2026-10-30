@@ -3116,6 +3116,19 @@ describe('<Legend />', () => {
       ]);
     });
 
+    it('should use nameKey for legend labels', () => {
+      const { container } = rechartsTestRender(
+        <RadialBarChart width={500} height={500} data={numericalData}>
+          <Legend itemSorter={null} />
+          <RadialBar dataKey="percent" nameKey="value" />
+        </RadialBarChart>,
+      );
+      expectLegendLabels(
+        container,
+        numericalData.map(entry => ({ fill: null, textContent: entry.value })),
+      );
+    });
+
     it('should use special `name` and `fill` properties from data as legend labels and colors', () => {
       // I think this is the only way to set legend labels for RadialBarChart?
       const { container } = rechartsTestRender(
