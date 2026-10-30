@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { ComponentType, createContext, useContext, useMemo } from 'react';
+import { ComponentType, useMemo } from 'react';
 import { RechartsFill, RechartsFillDefinitionProps, RechartsLinearGradient, RechartsPattern } from './RechartsFill';
 import type { GraphicalItemStyle, RechartsTheme } from '../theme/RechartsTheme';
 import { useRechartsTheme } from '../theme/RechartsThemeContext';
@@ -8,16 +8,23 @@ import { getEffectivePageBackground } from '../theme/pageBackground';
 const DEFAULT_PATTERN_OPACITY = 0.5;
 
 /**
- * How many pattern tiles fit across a legend icon.
+ * How many pattern tiles at least fit across a small painted area.
+ * Fewer tiles would not read as a pattern.
  */
-const LEGEND_ICON_TILES = 3;
+const MIN_TILES_ACROSS = 3;
 
 /**
- * Width of the legend icon that a fill definition renders in, in the icon's own units.
- * Undefined when the definition renders for the chart shapes.
- * Patterns use it to scale their tiles down, so that a few of them fit into the small icon.
+ * Returns how much a pattern scales its tiles, so that at least {@link MIN_TILES_ACROSS} of them fit across the
+ * painted area. Tiles only get smaller: a large area keeps the tile size of the pattern.
+ * @param bounds the size of the painted area, if it is known
+ * @param tileSize the larger side of the tile
  */
-export const LegendIconSizeContext = createContext<number | undefined>(undefined);
+function getTileScale(bounds: RechartsFillDefinitionProps['bounds'], tileSize: number): number {
+  if (bounds == null || tileSize <= 0) {
+    return 1;
+  }
+  return Math.min(1, Math.min(bounds.width, bounds.height) / MIN_TILES_ACROSS / tileSize);
+}
 
 /**
  * Returns the `fill` attribute that references a fill definition.
@@ -42,17 +49,17 @@ export function getFillUrl(id: string): string {
  * @since 3.11
  */
 export function pattern(value: RechartsPattern): ComponentType<RechartsFillDefinitionProps> {
-  function PatternDefinition({ id, color }: RechartsFillDefinitionProps) {
+  function PatternDefinition({ id, color, bounds }: RechartsFillDefinitionProps) {
     const theme = useRechartsTheme();
-    const legendIconSize = useContext(LegendIconSizeContext);
     const { width, height, rotation } = value;
+    const tileScale = getTileScale(bounds, Math.max(width, height));
     const textureColor = value.color ?? getEffectivePageBackground(theme) ?? '#fff';
     const transforms: Array<string> = [];
     if (rotation != null && rotation !== 0) {
       transforms.push(`rotate(${rotation})`);
     }
-    if (legendIconSize != null) {
-      transforms.push(`scale(${legendIconSize / LEGEND_ICON_TILES / width})`);
+    if (tileScale !== 1) {
+      transforms.push(`scale(${tileScale})`);
     }
     const paths = typeof value.path === 'string' ? [value.path] : value.path;
     const isStroked = value.strokeWidth != null;

@@ -16,10 +16,14 @@ import { RequiresDefaultProps, resolveDefaultProps } from '../util/resolveDefaul
 import { RechartsTheme } from '../theme/RechartsTheme';
 import { useBackwardsCompatibleTheme } from '../theme/useBackwardsCompatibleTheme';
 import { RechartsFill } from '../fill/RechartsFill';
-import { getFillUrl, LegendIconSizeContext } from '../fill/fillDefinitions';
+import { getFillUrl } from '../fill/fillDefinitions';
 import { useUniqueId } from '../util/useUniqueId';
 
 const SIZE = 32;
+/**
+ * Fill definitions in an icon paint the whole icon, so they get its size.
+ */
+const ICON_BOUNDS = { width: SIZE, height: SIZE };
 
 export type ContentType = ReactElement | ((props: Props) => ReactNode);
 
@@ -330,7 +334,7 @@ function Icon({
   /*
    * Filled icons paint with the fill definition of the graphical item.
    * The definition lives in this icon, so it does not depend on IDs elsewhere in the page.
-   * The context tells patterns to scale their tiles to the icon.
+   * The definition gets the size of the icon, so that patterns can scale their tiles to it.
    */
   let areaFill = color;
   let fillDefinition: ReactNode = null;
@@ -339,9 +343,7 @@ function Icon({
     areaFill = getFillUrl(fillId);
     fillDefinition = (
       <defs>
-        <LegendIconSizeContext.Provider value={SIZE}>
-          <FillDefinition id={fillId} color={color} />
-        </LegendIconSizeContext.Provider>
+        <FillDefinition id={fillId} color={color} bounds={ICON_BOUNDS} />
       </defs>
     );
   }
