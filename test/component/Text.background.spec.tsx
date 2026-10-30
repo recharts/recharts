@@ -188,6 +188,25 @@ describe('<Text background />', () => {
           y={20}
           textPath={textPath}
           pointerEvents="none"
+          style={{ pointerEvents: 'auto' }}
+          background={{ stroke: 'red' }}
+        >
+          text
+        </Text>
+      </Surface>,
+    );
+    expect(container.querySelector('text')).toHaveStyle({ pointerEvents: 'auto' });
+    container.querySelectorAll('.recharts-text-background').forEach(background => {
+      expect(background).toHaveAttribute('pointer-events', 'auto');
+    });
+    rerender(
+      <Surface width={300} height={300}>
+        <Text
+          x={10}
+          y={20}
+          textPath={textPath}
+          pointerEvents="none"
+          style={{ pointerEvents: 'auto' }}
           background={{ pointerEvents: 'all', stroke: 'red' }}
         >
           text

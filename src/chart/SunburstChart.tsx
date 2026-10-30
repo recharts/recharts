@@ -340,11 +340,20 @@ function isLabelListProps(label: ImplicitLabelListType): label is LabelListProps
 
 function SunburstLabels({ label, textOptions }: Pick<SunburstChartProps, 'label' | 'textOptions'>) {
   const textStyle = textOptions?.style;
-  const explicitStyle = label != null && isLabelListProps(label) ? label.style : undefined;
-  const style = useMemo(
-    () => (textStyle == null ? explicitStyle : { ...textStyle, ...explicitStyle }),
-    [textStyle, explicitStyle],
-  );
+  const explicitLabel = label != null && isLabelListProps(label) ? label : undefined;
+  const explicitStyle = explicitLabel?.style;
+  const explicitFill = explicitLabel?.fill;
+  const style = useMemo(() => {
+    if (textStyle == null) {
+      return explicitStyle;
+    }
+    if (explicitFill == null) {
+      return { ...textStyle, ...explicitStyle };
+    }
+    // Shared CSS fill must not take precedence over an explicit label fill prop.
+    const { fill: _fill, ...sharedStyle } = textStyle;
+    return { ...sharedStyle, ...explicitStyle };
+  }, [textStyle, explicitStyle, explicitFill]);
   if (label === false) {
     return null;
   }

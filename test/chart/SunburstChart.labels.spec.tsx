@@ -174,13 +174,16 @@ describe('Sunburst sector labels', () => {
     expect(labels(container).map(label => label.style.fill)).toEqual(['navy', 'navy', 'navy', 'purple']);
   });
 
-  it('gives explicit label props precedence over textOptions and theme', () => {
+  it.each([
+    { name: 'legacy', activeTheme: undefined },
+    { name: 'themed', activeTheme: theme },
+  ])('gives explicit label props precedence over shared styles in $name charts', ({ activeTheme }) => {
     const { container } = renderChart(
       {
-        textOptions: { fill: 'orange', style: { fontStyle: 'italic' } },
+        textOptions: { fill: 'orange', style: { fill: 'orange', fontStyle: 'italic' } },
         label: { fill: 'blue', style: { fontWeight: 400 }, background: false },
       },
-      theme,
+      activeTheme,
     );
     labels(container).forEach(label => {
       expect(label.style.fill).toBe('blue');
@@ -188,6 +191,31 @@ describe('Sunburst sector labels', () => {
       expect(label.style.fontStyle).toBe('italic');
     });
     expect(container.querySelectorAll('.recharts-text-background')).toHaveLength(0);
+  });
+
+  it.each([
+    { name: 'legacy', activeTheme: undefined },
+    { name: 'themed', activeTheme: theme },
+  ])('retains explicit label style precedence in $name charts', ({ activeTheme }) => {
+    const { container } = renderChart(
+      {
+        textOptions: { style: { fill: 'orange', fontStyle: 'italic' } },
+        label: { fill: 'blue', style: { fill: 'green' } },
+      },
+      activeTheme,
+    );
+    labels(container).forEach(label => {
+      expect(label.style.fill).toBe('green');
+      expect(label.style.fontStyle).toBe('italic');
+    });
+  });
+
+  it('retains shared fill when the label does not override it', () => {
+    const { container } = renderChart(
+      { textOptions: { style: { fill: 'orange' } }, label: { dataKey: 'name' } },
+      theme,
+    );
+    labels(container).forEach(label => expect(label.style.fill).toBe('orange'));
   });
 
   it('passes branch backgrounds to custom content, with explicit overrides merged', () => {
