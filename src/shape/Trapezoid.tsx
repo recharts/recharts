@@ -4,6 +4,8 @@
 import * as React from 'react';
 import { SVGProps, useEffect, useRef, useState } from 'react';
 import { clsx } from 'clsx';
+import { RechartsFill } from '../fill/RechartsFill';
+import { FillObjectPaint, getShapeBounds } from '../fill/fillDefinitions';
 import { AnimationDuration, EasingInput } from '../util/types';
 import { resolveDefaultProps } from '../util/resolveDefaultProps';
 import { JavascriptAnimate } from '../animation/JavascriptAnimate';
@@ -109,7 +111,7 @@ export const defaultTrapezoidProps = {
   animationEasing: 'ease',
 } as const satisfies Partial<Props>;
 
-export const Trapezoid: React.FC<Props> = outsideProps => {
+const TrapezoidImpl: React.FC<Props> = outsideProps => {
   const trapezoidProps = resolveDefaultProps(outsideProps, defaultTrapezoidProps);
 
   const { x, y, upperWidth, lowerWidth, height, className } = trapezoidProps;
@@ -219,5 +221,39 @@ export const Trapezoid: React.FC<Props> = outsideProps => {
         );
       }}
     </JavascriptAnimate>
+  );
+};
+
+/**
+ * Props of {@link Trapezoid}: `fill` can be a fill object too.
+ *
+ * @since 3.11
+ */
+export type TrapezoidFillProps = Omit<Props, 'fill'> & {
+  /**
+   * The fill of the trapezoid. Either a color string, or a {@link RechartsFill} object with an SVG definition,
+   * such as a pattern or a gradient. Recharts renders the definition with a unique ID.
+   * Set the `color` of the fill object: there is no theme color to fall back to.
+   *
+   * @example <Trapezoid fill={{ color: 'blue', definition: pattern(patterns.diagonal) }} />
+   */
+  fill?: string | RechartsFill;
+};
+
+export const Trapezoid = (props: TrapezoidFillProps) => {
+  const { fill } = props;
+  // spreading all props first keeps `fill` in its place among the attributes
+  return fill != null && typeof fill === 'object' ? (
+    <FillObjectPaint
+      fill={fill}
+      bounds={getShapeBounds(
+        Math.max(Math.abs(props.upperWidth ?? 0), Math.abs(props.lowerWidth ?? 0)),
+        Math.abs(props.height ?? 0),
+      )}
+    >
+      {paint => <TrapezoidImpl {...props} fill={paint} />}
+    </FillObjectPaint>
+  ) : (
+    <TrapezoidImpl {...props} fill={fill} />
   );
 };

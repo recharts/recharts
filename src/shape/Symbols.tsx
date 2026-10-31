@@ -13,6 +13,8 @@ import {
   SymbolType as D3SymbolType,
 } from 'victory-vendor/d3-shape';
 import { clsx } from 'clsx';
+import { FillObjectPaint, getShapeBounds } from '../fill/fillDefinitions';
+import { RechartsFill } from '../fill/RechartsFill';
 import { SymbolType } from '../util/types';
 import { isNumber, upperFirst } from '../util/DataUtils';
 import { svgPropertiesAndEvents } from '../util/svgPropertiesAndEvents';
@@ -114,10 +116,7 @@ const registerSymbol = (key: string, factory: D3SymbolType) => {
   symbolFactories[`symbol${upperFirst(key)}`] = factory;
 };
 
-/**
- * Renders a symbol from a set of predefined shapes.
- */
-export const Symbols = ({ type = 'circle', size = 64, sizeType = 'area', ...rest }: SymbolsProps) => {
+const SymbolsImpl = ({ type = 'circle', size = 64, sizeType = 'area', ...rest }: SymbolsProps) => {
   const props = { ...rest, type, size, sizeType };
   let realType: SymbolType = 'circle';
   if (typeof type === 'string') {
@@ -163,6 +162,49 @@ export const Symbols = ({ type = 'circle', size = 64, sizeType = 'area', ...rest
   }
 
   return null;
+};
+
+/**
+ * Props of {@link Symbols}: `fill` can be a fill object too.
+ *
+ * @since 3.11
+ */
+export type SymbolsFillProps = Omit<SymbolsProps, 'fill'> & {
+  /**
+   * The fill of the symbol. Either a color string, or a {@link RechartsFill} object with an SVG definition,
+   * such as a pattern or a gradient. Recharts renders the definition with a unique ID.
+   * Set the `color` of the fill object: there is no theme color to fall back to.
+   *
+   * @example <Symbols fill={{ color: 'blue', definition: pattern(patterns.diagonal) }} />
+   */
+  fill?: string | RechartsFill;
+};
+
+/**
+ * The approximate size of a symbol, for the definition of its fill object.
+ * @param size the `size` prop
+ * @param sizeType the `sizeType` prop
+ */
+function getSymbolBounds(size: number | undefined, sizeType: SizeType | undefined) {
+  const actualSize = size ?? 64;
+  // an area of `size` fits roughly in a square of its square root
+  const side = sizeType === 'diameter' ? actualSize : Math.sqrt(actualSize);
+  return getShapeBounds(side, side);
+}
+
+/**
+ * Renders a symbol from a set of predefined shapes.
+ */
+export const Symbols = (props: SymbolsFillProps) => {
+  const { fill } = props;
+  // spreading all props first keeps `fill` in its place among the attributes
+  return fill != null && typeof fill === 'object' ? (
+    <FillObjectPaint fill={fill} bounds={getSymbolBounds(props.size, props.sizeType)}>
+      {paint => <SymbolsImpl {...props} fill={paint} />}
+    </FillObjectPaint>
+  ) : (
+    <SymbolsImpl {...props} fill={fill} />
+  );
 };
 
 Symbols.registerSymbol = registerSymbol;

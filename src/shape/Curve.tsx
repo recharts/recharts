@@ -25,6 +25,8 @@ import {
 } from 'victory-vendor/d3-shape';
 
 import { clsx } from 'clsx';
+import { FillObjectPaint } from '../fill/fillDefinitions';
+import { RechartsFill } from '../fill/RechartsFill';
 import {
   adaptEventHandlers,
   Coordinate,
@@ -289,7 +291,7 @@ export const getPath = ({
   return nullableLineFunction(formatPoints);
 };
 
-export const Curve: React.FC<Props> = props => {
+const CurveImpl: React.FC<Props> = props => {
   const { className, points, path, pathRef } = props;
   const layout = useChartLayout();
 
@@ -315,5 +317,31 @@ export const Curve: React.FC<Props> = props => {
       d={realPath === null ? undefined : realPath}
       ref={pathRef}
     />
+  );
+};
+
+/**
+ * Props of {@link Curve}: `fill` can be a fill object too.
+ *
+ * @since 3.11
+ */
+export type CurveFillProps = Omit<Props, 'fill'> & {
+  /**
+   * The fill of the curve. Either a color string, or a {@link RechartsFill} object with an SVG definition,
+   * such as a pattern or a gradient. Recharts renders the definition with a unique ID.
+   * Set the `color` of the fill object: there is no theme color to fall back to.
+   *
+   * @example <Curve fill={{ color: 'blue', definition: pattern(patterns.diagonal) }} />
+   */
+  fill?: string | RechartsFill;
+};
+
+export const Curve = (props: CurveFillProps) => {
+  const { fill } = props;
+  // spreading all props first keeps `fill` in its place among the attributes
+  return fill != null && typeof fill === 'object' ? (
+    <FillObjectPaint fill={fill}>{paint => <CurveImpl {...props} fill={paint} />}</FillObjectPaint>
+  ) : (
+    <CurveImpl {...props} fill={fill} />
   );
 };

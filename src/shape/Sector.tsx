@@ -1,6 +1,8 @@
 import * as React from 'react';
 import { SVGProps } from 'react';
 import { clsx } from 'clsx';
+import { RechartsFill } from '../fill/RechartsFill';
+import { FillObjectPaint } from '../fill/fillDefinitions';
 import { GeometrySector, GeometrySectorWithCornerRadius } from '../util/types';
 import { polarToCartesian, RADIAN } from '../util/PolarUtils';
 import { getPercentValue, mathSign } from '../util/DataUtils';
@@ -311,13 +313,7 @@ export const defaultSectorProps = {
   cornerIsExternal: false,
 } as const satisfies Partial<Props>;
 
-/**
- * Renders a sector (pie-slice or donut-segment shape) from center
- * coordinates, inner/outer radius, and start/end angles. Used by polar
- * components such as Pie, RadialBar, and PolarGrid, and as the radial
- * cursor shape shown by Tooltip on polar charts.
- */
-export const Sector: React.FC<Props> = sectorProps => {
+const SectorImpl: React.FC<Props> = sectorProps => {
   const props = resolveDefaultProps(sectorProps, defaultSectorProps);
   const {
     cx,
@@ -358,4 +354,36 @@ export const Sector: React.FC<Props> = sectorProps => {
   }
 
   return <path {...svgPropertiesAndEvents(props)} className={layerClass} d={path} />;
+};
+
+/**
+ * Props of {@link Sector}: `fill` can be a fill object too.
+ *
+ * @since 3.11
+ */
+export type SectorFillProps = Omit<Props, 'fill'> & {
+  /**
+   * The fill of the sector. Either a color string, or a {@link RechartsFill} object with an SVG definition,
+   * such as a pattern or a gradient. Recharts renders the definition with a unique ID.
+   * Set the `color` of the fill object: there is no theme color to fall back to.
+   *
+   * @example <Sector fill={{ color: 'blue', definition: pattern(patterns.diagonal) }} />
+   */
+  fill?: string | RechartsFill;
+};
+
+/**
+ * Renders a sector (pie-slice or donut-segment shape) from center
+ * coordinates, inner/outer radius, and start/end angles. Used by polar
+ * components such as Pie, RadialBar, and PolarGrid, and as the radial
+ * cursor shape shown by Tooltip on polar charts.
+ */
+export const Sector = (props: SectorFillProps) => {
+  const { fill } = props;
+  // spreading all props first keeps `fill` in its place among the attributes
+  return fill != null && typeof fill === 'object' ? (
+    <FillObjectPaint fill={fill}>{paint => <SectorImpl {...props} fill={paint} />}</FillObjectPaint>
+  ) : (
+    <SectorImpl {...props} fill={fill} />
+  );
 };

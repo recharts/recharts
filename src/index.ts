@@ -49,21 +49,21 @@ export { Customized } from './component/Customized';
 export type { Props as CustomizedProps } from './component/Customized';
 
 export { Sector } from './shape/Sector';
-export type { Props as SectorProps } from './shape/Sector';
+export type { Props as SectorProps, SectorFillProps } from './shape/Sector';
 export { Curve } from './shape/Curve';
-export type { Props as CurveProps, CurveType, BaseLineType } from './shape/Curve';
+export type { Props as CurveProps, CurveType, BaseLineType, CurveFillProps } from './shape/Curve';
 export { Rectangle } from './shape/Rectangle';
-export type { Props as RectangleProps, RectRadius } from './shape/Rectangle';
+export type { Props as RectangleProps, RectRadius, RectangleFillProps } from './shape/Rectangle';
 export { Polygon } from './shape/Polygon';
-export type { Props as PolygonProps } from './shape/Polygon';
+export type { Props as PolygonProps, PolygonFillProps } from './shape/Polygon';
 export { Dot } from './shape/Dot';
-export type { Props as DotProps } from './shape/Dot';
+export type { Props as DotProps, DotFillProps } from './shape/Dot';
 export type { ActiveDotProps } from './util/types';
 export type { DotItemDotProps } from './util/types';
 export { Cross } from './shape/Cross';
 export type { Props as CrossProps } from './shape/Cross';
 export { Symbols } from './shape/Symbols';
-export type { SymbolsProps, SizeType } from './shape/Symbols';
+export type { SymbolsProps, SizeType, SymbolsFillProps } from './shape/Symbols';
 export type { SymbolType } from './util/types';
 
 export { PolarGrid } from './polar/PolarGrid';
@@ -161,7 +161,7 @@ export { Funnel } from './cartesian/Funnel';
 export type { Props as FunnelProps, FunnelTrapezoidItem } from './cartesian/Funnel';
 export { FunnelChart } from './chart/FunnelChart';
 export { Trapezoid } from './shape/Trapezoid';
-export type { Props as TrapezoidProps } from './shape/Trapezoid';
+export type { Props as TrapezoidProps, TrapezoidFillProps } from './shape/Trapezoid';
 
 export { Global } from './util/Global';
 export type {
