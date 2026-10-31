@@ -48,6 +48,7 @@ export const map = {
     roundedBars: '圆角柱状图',
     barAlignment: '柱子对齐方式',
     cell: '从 Cell 组件迁移到 shape 属性',
+    dataStyles: 'Styling data points',
     coordinateSystems: '坐标系与维度系统',
     animations: '动画',
     theming: '主题',

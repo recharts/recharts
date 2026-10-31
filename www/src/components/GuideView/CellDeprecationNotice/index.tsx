@@ -1,4 +1,5 @@
 import { LinkToApi } from '../../Shared/LinkToApi.tsx';
+import { RechartsLink } from '../../Shared/RechartsLink.tsx';
 import { TargetBlankLink } from '../../Shared/TargetBlankLink.tsx';
 import CellPieExample from '../../../docs/exampleComponents/Cell/CellPieExample.tsx';
 import { CodeEditorWithPreview } from '../../CodeEditorWithPreview.tsx';
@@ -41,6 +42,11 @@ export function CellDeprecationNotice() {
       <p>
         All relevant components should now have a <code>shape</code> or <code>content</code> prop that allows you to
         provide your own component. Inside of that component, set whichever props - static or dynamic - that you wish.
+      </p>
+      <p>
+        For static per-item colors, you may not need <code>shape</code> at all: put <code>fill</code>,{' '}
+        <code>stroke</code> and other SVG props directly in the <code>data</code> array. See{' '}
+        <RechartsLink to="guide/dataStyles">Styling data points</RechartsLink>.
       </p>
       <p>
         If you find that this new approach does not support your use-case, please{' '}

@@ -23,6 +23,7 @@ const guidePages = [
   'roundedBars',
   'barAlignment',
   'cell',
+  'dataStyles',
   'animations',
   'theming',
   'theme-color-testing',

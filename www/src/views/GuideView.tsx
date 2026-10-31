@@ -22,6 +22,7 @@ import { CellDeprecationNotice } from '../components/GuideView/CellDeprecationNo
 import { AnimationsGuide } from '../components/GuideView/Animations';
 import { ThemingGuide } from '../components/GuideView/Theming';
 import { ThemeColorTesting } from '../components/GuideView/ThemeColorTesting';
+import { DataStyles } from '../components/GuideView/DataStyles';
 import { LabelColors } from '../components/GuideView/LabelColors';
 
 const guideMap: Record<string, ComponentType<{ locale: SupportedLocale }>> = {
@@ -38,6 +39,7 @@ const guideMap: Record<string, ComponentType<{ locale: SupportedLocale }>> = {
   roundedBars: RoundedBars,
   barAlignment: BarAlign,
   cell: CellDeprecationNotice,
+  dataStyles: DataStyles,
   typescript: TypeScript,
   animations: AnimationsGuide,
   theming: ThemingGuide,
