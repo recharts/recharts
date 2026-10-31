@@ -53,6 +53,7 @@ export const map = {
     theming: 'Theming',
     'theme-color-testing': 'Theme color testing',
     'label-colors': 'Label colors',
+    patterns: 'Patterns and gradients',
   },
   installation: {
     installation: 'Installation',
