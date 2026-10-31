@@ -1,6 +1,8 @@
 import * as React from 'react';
 import { SVGProps } from 'react';
 import { clsx } from 'clsx';
+import { RechartsFill } from '../fill/RechartsFill';
+import { FillObjectPaint } from '../fill/fillDefinitions';
 import { GeometrySector, GeometrySectorWithCornerRadius } from '../util/types';
 import { polarToCartesian, RADIAN } from '../util/PolarUtils';
 import { getPercentValue, mathSign } from '../util/DataUtils';
@@ -206,6 +208,15 @@ const getSectorWithCorner = ({
 
 interface SectorProps {
   /**
+   * The fill of the sector. Either a color string, or a {@link RechartsFill} object with an SVG definition,
+   * such as a pattern or a gradient. Recharts renders the definition with a unique ID.
+   * Set the `color` of the fill object: there is no theme color to fall back to.
+   *
+   * @since 3.11
+   * @example <Sector fill={{ color: 'blue', definition: pattern(patterns.diagonal) }} />
+   */
+  fill?: string | RechartsFill;
+  /**
    * The SVG element's class name.
    */
   className?: string;
@@ -297,7 +308,13 @@ interface SectorProps {
  * SVG cx, cy are `string | number | undefined`, but internally we use `number` so let's
  * override the types here.
  */
-export type Props = Omit<SVGProps<SVGPathElement>, 'cx' | 'cy' | 'dangerouslySetInnerHTML'> & Partial<SectorProps>;
+export type Props = Omit<SVGProps<SVGPathElement>, 'cx' | 'cy' | 'dangerouslySetInnerHTML' | 'fill'> &
+  Partial<SectorProps>;
+
+/**
+ * The props of the inner renderer, which gets the `fill` as a color or a `url(#…)` reference.
+ */
+type StringFillProps = Omit<Props, 'fill'> & { fill?: string };
 
 export const defaultSectorProps = {
   cx: 0,
@@ -311,13 +328,7 @@ export const defaultSectorProps = {
   cornerIsExternal: false,
 } as const satisfies Partial<Props>;
 
-/**
- * Renders a sector (pie-slice or donut-segment shape) from center
- * coordinates, inner/outer radius, and start/end angles. Used by polar
- * components such as Pie, RadialBar, and PolarGrid, and as the radial
- * cursor shape shown by Tooltip on polar charts.
- */
-export const Sector: React.FC<Props> = sectorProps => {
+const SectorImpl: React.FC<StringFillProps> = sectorProps => {
   const props = resolveDefaultProps(sectorProps, defaultSectorProps);
   const {
     cx,
@@ -358,4 +369,20 @@ export const Sector: React.FC<Props> = sectorProps => {
   }
 
   return <path {...svgPropertiesAndEvents(props)} className={layerClass} d={path} />;
+};
+
+/**
+ * Renders a sector (pie-slice or donut-segment shape) from center
+ * coordinates, inner/outer radius, and start/end angles. Used by polar
+ * components such as Pie, RadialBar, and PolarGrid, and as the radial
+ * cursor shape shown by Tooltip on polar charts.
+ */
+export const Sector = (props: Props) => {
+  const { fill } = props;
+  // spreading all props first keeps `fill` in its place among the attributes
+  return fill != null && typeof fill === 'object' ? (
+    <FillObjectPaint fill={fill}>{paint => <SectorImpl {...props} fill={paint} />}</FillObjectPaint>
+  ) : (
+    <SectorImpl {...props} fill={fill} />
+  );
 };

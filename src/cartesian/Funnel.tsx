@@ -76,8 +76,12 @@ import {
   useIndexedLabelThemeResolver,
 } from '../theme/labelTheme';
 
-export type FunnelTrapezoidItem = TrapezoidProps &
+export type FunnelTrapezoidItem = Omit<TrapezoidProps, 'fill'> &
   TrapezoidViewBox & {
+    /**
+     * The color of the entry. A fill object in the props paints the entry with its definition.
+     */
+    fill?: string;
     value?: number | string;
     payload?: any;
     tooltipPosition: Coordinate;

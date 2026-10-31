@@ -4,6 +4,8 @@
 import * as React from 'react';
 import { SVGProps, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { clsx } from 'clsx';
+import { RechartsFill } from '../fill/RechartsFill';
+import { FillObjectPaint, getShapeBounds } from '../fill/fillDefinitions';
 import { AnimationDuration } from '../util/types';
 import { resolveDefaultProps } from '../util/resolveDefaultProps';
 import { JavascriptAnimate } from '../animation/JavascriptAnimate';
@@ -78,6 +80,15 @@ const getRectanglePath = (x: number, y: number, width: number, height: number, r
   return path;
 };
 interface RectangleProps {
+  /**
+   * The fill of the rectangle. Either a color string, or a {@link RechartsFill} object with an SVG definition,
+   * such as a pattern or a gradient. Recharts renders the definition with a unique ID.
+   * Set the `color` of the fill object: there is no theme color to fall back to.
+   *
+   * @since 3.11
+   * @example <Rectangle fill={{ color: 'blue', definition: pattern(patterns.diagonal) }} />
+   */
+  fill?: string | RechartsFill;
   className?: string;
   /**
    * The x-coordinate of top left point of the rectangle.
@@ -165,7 +176,12 @@ interface RectangleProps {
   onMouseLeave?: (e: React.MouseEvent<SVGPathElement>) => void;
 }
 
-export type Props = Omit<SVGProps<SVGPathElement>, 'radius'> & RectangleProps;
+export type Props = Omit<SVGProps<SVGPathElement>, 'radius' | 'fill'> & RectangleProps;
+
+/**
+ * The props of the inner renderer, which gets the `fill` as a color or a `url(#…)` reference.
+ */
+type StringFillProps = Omit<Props, 'fill'> & { fill?: string };
 
 export const defaultRectangleProps = {
   x: 0,
@@ -180,18 +196,7 @@ export const defaultRectangleProps = {
   animationEasing: 'ease',
 } as const satisfies Partial<Props>;
 
-/**
- * Renders a rectangle element. Unlike the {@link https://developer.mozilla.org/en-US/docs/Web/SVG/Reference/Element/rect rect SVG element}, this component supports rounded corners
- * and animation.
- *
- * This component accepts X and Y coordinates in pixels.
- * If you need to position the rectangle based on your chart's data,
- * consider using the {@link ReferenceArea} component instead.
- *
- * @param rectangleProps
- * @constructor
- */
-export const Rectangle: React.FC<Props> = rectangleProps => {
+const RectangleImpl: React.FC<StringFillProps> = rectangleProps => {
   const props = resolveDefaultProps(rectangleProps, defaultRectangleProps);
   const pathRef = useRef<SVGPathElement>(null);
   const [totalLength, setTotalLength] = useState(-1);
@@ -324,5 +329,28 @@ export const Rectangle: React.FC<Props> = rectangleProps => {
         );
       }}
     </JavascriptAnimate>
+  );
+};
+
+/**
+ * Renders a rectangle element. Unlike the {@link https://developer.mozilla.org/en-US/docs/Web/SVG/Reference/Element/rect rect SVG element}, this component supports rounded corners
+ * and animation.
+ *
+ * This component accepts X and Y coordinates in pixels.
+ * If you need to position the rectangle based on your chart's data,
+ * consider using the {@link ReferenceArea} component instead.
+ *
+ * @param rectangleProps
+ * @constructor
+ */
+export const Rectangle = (props: Props) => {
+  const { fill } = props;
+  // spreading all props first keeps `fill` in its place among the attributes
+  return fill != null && typeof fill === 'object' ? (
+    <FillObjectPaint fill={fill} bounds={getShapeBounds(Math.abs(props.width ?? 0), Math.abs(props.height ?? 0))}>
+      {paint => <RectangleImpl {...props} fill={paint} />}
+    </FillObjectPaint>
+  ) : (
+    <RectangleImpl {...props} fill={fill} />
   );
 };

@@ -4,6 +4,8 @@
 import * as React from 'react';
 import { SVGProps } from 'react';
 import { clsx } from 'clsx';
+import { RechartsFill } from '../fill/RechartsFill';
+import { FillObjectPaint } from '../fill/fillDefinitions';
 import { Coordinate } from '../util/types';
 import { svgPropertiesAndEvents } from '../util/svgPropertiesAndEvents';
 import { roundTemplateLiteral } from '../util/round';
@@ -78,6 +80,15 @@ const getRanglePath = (
 
 interface PolygonProps {
   /**
+   * The fill of the polygon. Either a color string, or a {@link RechartsFill} object with an SVG definition,
+   * such as a pattern or a gradient. Recharts renders the definition with a unique ID.
+   * Set the `color` of the fill object: there is no theme color to fall back to.
+   *
+   * @since 3.11
+   * @example <Polygon fill={{ color: 'blue', definition: pattern(patterns.diagonal) }} />
+   */
+  fill?: string | RechartsFill;
+  /**
    * The SVG element's class name.
    */
   className?: string;
@@ -133,19 +144,14 @@ interface PolygonProps {
   onMouseLeave?: (e: React.MouseEvent<SVGPolygonElement, MouseEvent>) => void;
 }
 
-export type Props = Omit<SVGProps<SVGPolygonElement>, 'points'> & PolygonProps;
+export type Props = Omit<SVGProps<SVGPolygonElement>, 'points' | 'fill'> & PolygonProps;
 
 /**
- * Renders a polygon shape from an array of x/y coordinates, closing the
- * outline into a filled shape by default. If the given points contain a
- * gap (an invalid or missing coordinate) and `connectNulls` is not set,
- * the outline is split into separate, unclosed subpaths around that gap
- * instead of forming a single closed shape. Used internally by polar
- * components such as Radar and PolarGrid to draw chart shapes. Accepts
- * standard SVG presentation attributes (e.g. `stroke`, `fill`,
- * `strokeWidth`) for styling, since it wraps a native SVG path element.
+ * The props of the inner renderer, which gets the `fill` as a color or a `url(#…)` reference.
  */
-export const Polygon: React.FC<Props> = props => {
+type StringFillProps = Omit<Props, 'fill'> & { fill?: string };
+
+const PolygonImpl: React.FC<StringFillProps> = props => {
   const { points, className, baseLinePoints, connectNulls, ...others } = props;
 
   if (!points || !points.length) {
@@ -189,5 +195,25 @@ export const Polygon: React.FC<Props> = props => {
       className={layerClass}
       d={singlePath}
     />
+  );
+};
+
+/**
+ * Renders a polygon shape from an array of x/y coordinates, closing the
+ * outline into a filled shape by default. If the given points contain a
+ * gap (an invalid or missing coordinate) and `connectNulls` is not set,
+ * the outline is split into separate, unclosed subpaths around that gap
+ * instead of forming a single closed shape. Used internally by polar
+ * components such as Radar and PolarGrid to draw chart shapes. Accepts
+ * standard SVG presentation attributes (e.g. `stroke`, `fill`,
+ * `strokeWidth`) for styling, since it wraps a native SVG path element.
+ */
+export const Polygon = (props: Props) => {
+  const { fill } = props;
+  // spreading all props first keeps `fill` in its place among the attributes
+  return fill != null && typeof fill === 'object' ? (
+    <FillObjectPaint fill={fill}>{paint => <PolygonImpl {...props} fill={paint} />}</FillObjectPaint>
+  ) : (
+    <PolygonImpl {...props} fill={fill} />
   );
 };
