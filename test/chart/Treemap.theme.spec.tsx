@@ -39,11 +39,13 @@ function queryTiles(container: Element, depth: number): ReadonlyArray<SVGPathEle
 
 /**
  * Reads fill and stroke of the tiles, in render order, together with the name of the node.
- * The name is read from the label rendered next to the tile.
+ * The name is read from the shared label with the same tooltip index.
  */
 function getTileAttributes(container: Element, depth: number) {
   return queryTiles(container, depth).map(rect => ({
-    name: rect.parentElement?.querySelector('text')?.textContent,
+    name: Array.from(container.querySelectorAll('.recharts-label')).find(
+      label => label.getAttribute('data-recharts-item-index') === rect.getAttribute('data-recharts-item-index'),
+    )?.textContent,
     fill: rect.getAttribute('fill'),
     stroke: rect.getAttribute('stroke'),
   }));
@@ -87,7 +89,7 @@ describe('<Treemap /> theme', () => {
     );
     const rootRect = queryTiles(container, 0)[0];
     const depthOneRects = getTileAttributes(container, 1);
-    const firstText = container.querySelector<SVGTextElement>('.recharts-treemap-depth-1 text');
+    const firstText = container.querySelector<SVGTextElement>('.recharts-label');
     assertNotNull(rootRect);
     assertNotNull(firstText);
 
@@ -98,7 +100,7 @@ describe('<Treemap /> theme', () => {
       { name: 'B', fill: 'mediumseagreen', stroke: 'indigo' },
     ]);
     expect(firstText.getAttribute('font-size')).toBe('22');
-    expect(firstText.getAttribute('fill')).toBe('navy');
+    expect(firstText.getAttribute('fill') || firstText.style.fill).toBe('navy');
     expect(firstText.style.fontWeight).toBe('700');
     expect(firstText.style.fontFamily).toBe('monospace');
   });

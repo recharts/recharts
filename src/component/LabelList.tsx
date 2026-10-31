@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { createContext, PropsWithoutRef, ReactNode, SVGProps, useContext } from 'react';
+import { createContext, PropsWithoutRef, ReactNode, SVGProps, useContext, useLayoutEffect } from 'react';
 import {
   LabelContentType,
   isLabelContentAFunction,
@@ -235,6 +235,19 @@ const defaultAccessor = (entry: LabelListEntry): RenderableText => {
   return undefined;
 };
 
+/**
+ * Internal graphical-item overrides for rendering and registering mounted LabelLists.
+ * Components outside a provider keep the standard Label renderer and do not register.
+ */
+interface LabelListSettings {
+  LabelComponent?: React.ComponentType<LabelProps>;
+  registerLabelList?: () => () => void;
+}
+
+const LabelListSettingsContext = createContext<LabelListSettings | undefined>(undefined);
+
+export const LabelListSettingsContextProvider = LabelListSettingsContext.Provider;
+
 const CartesianLabelListContext = createContext<ReadonlyArray<CartesianLabelListEntry> | undefined>(undefined);
 
 export const CartesianLabelListContextProvider = CartesianLabelListContext.Provider;
@@ -302,6 +315,14 @@ function usePolarLabelListContext(): ReadonlyArray<PolarLabelListEntry> | undefi
  * @consumes LabelListContext
  */
 export function LabelList({ valueAccessor = defaultAccessor, ...restProps }: Props) {
+  const settings = useContext(LabelListSettingsContext);
+  const LabelComponent = settings?.LabelComponent ?? Label;
+  const registerLabelList = settings?.registerLabelList;
+
+  // Register component instances, not their rendered entries; even an empty list is explicit.
+  // The stable registration callback also makes setup/cleanup safe under StrictMode.
+  useLayoutEffect(() => registerLabelList?.(), [registerLabelList]);
+
   const { dataKey, clockWise, id, textBreakAll, zIndex, ...others } = restProps;
   const cartesianData = useCartesianLabelListContext();
   const polarData = usePolarLabelListContext();
@@ -358,7 +379,7 @@ export function LabelList({ valueAccessor = defaultAccessor, ...restProps }: Pro
                 const themedProps = applyLabelTheme(labelTheme, restProps, fallbackFill);
 
                 return (
-                  <Label
+                  <LabelComponent
                     key={`label-${index}`}
                     {...svgPropertiesAndEvents(entry)}
                     {...others}
