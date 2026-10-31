@@ -23,6 +23,7 @@ import {
   WheelEvent,
 } from 'react';
 import type * as d3Scales from 'victory-vendor/d3-scale';
+import type { RechartsFill } from '../fill/RechartsFill';
 import type { Props as DotProps } from '../shape/Dot';
 import { AxisRange } from '../state/selectors/axisSelectors';
 import { ExternalMouseEvents } from '../chart/types';
@@ -1286,7 +1287,7 @@ export type ActiveDotType =
    *
    * @example <Line activeDot={{ symbol: 'diamond', r: 8 }} />
    */
-  | (Partial<ActiveDotProps> & DotSymbolOption)
+  | (WithFillObject<Partial<ActiveDotProps>> & DotSymbolOption)
   /**
    * activeDot can be an element; it will get cloned and will receive new extra props.
    * I do not recommend this way! Use React component instead, that way you get more predictable props.
@@ -1346,7 +1347,7 @@ export type DotType =
    *
    * @example <Line dot={{ symbol: 'diamond', r: 6 }} />
    */
-  | (Partial<DotProps> & DotSymbolOption)
+  | (WithFillObject<Partial<DotProps>> & DotSymbolOption)
   /**
    * dot can be an element; it will get cloned and will receive new extra props.
    * I do not recommend this way! Use React component instead, that way you get more predictable props.
@@ -1391,10 +1392,23 @@ export interface ShapeAnimationProps {
   isEntrance?: boolean;
 }
 
+/**
+ * The object form of a shape option, where `fill` can be a {@link RechartsFill} object too.
+ * Recharts renders these options with its shape components, which paint fill objects with their own definition.
+ *
+ * @since 3.11
+ */
+export type WithFillObject<T> = Omit<T, 'fill'> & {
+  /**
+   * A color, or a {@link RechartsFill} object with an SVG definition, such as a pattern or a gradient.
+   */
+  fill?: string | RechartsFill;
+};
+
 export type ActiveShape<PropsType = Record<string, unknown>, ElementType = SVGElement> =
   | ReactElement<Partial<PropsType> & SVGProps<ElementType>>
   | ((props: PropsType, index?: string | number) => ReactNode)
-  | (Partial<PropsType> & SVGProps<ElementType>)
+  | WithFillObject<Partial<PropsType> & SVGProps<ElementType>>
   | boolean;
 
 export type RangeObj = PolarViewBoxRequired & {

@@ -73,7 +73,7 @@ import { ZIndexable, ZIndexLayer } from '../zIndex/ZIndexLayer';
 import { DefaultZIndexes } from '../zIndex/DefaultZIndexes';
 import { getZIndexFromUnknown } from '../zIndex/getZIndexFromUnknown';
 import { usePolarChartLayout } from '../context/chartLayoutContext';
-import { ColorStyles2D, withFillColor } from '../theme/themeFill';
+import { ColorStyles2D } from '../theme/themeFill';
 import { RechartsFill } from '../fill/RechartsFill';
 import {
   EntryFillDefinitions,
@@ -690,7 +690,7 @@ function RadialBarBackgroundSectors({
   const { cornerRadius, background: backgroundFromProps } = allOtherRadialBarProps;
   const backgroundProps = svgPropertiesNoEventsFromUnknown(backgroundFromProps);
   const backgroundThemeProps = useBackwardsCompatibleTheme(
-    theme => withFillColor(theme.barBackground),
+    theme => theme.barBackground,
     backgroundProps ?? {},
     defaultLegacyBarBackgroundProps,
   );

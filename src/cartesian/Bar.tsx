@@ -92,7 +92,7 @@ import { AxisId } from '../state/cartesianAxisSlice';
 import { BarStackClipLayer, useStackId } from './BarStack';
 import { GraphicalItemId } from '../state/graphicalItemsSlice';
 import { ChartData } from '../state/chartDataSlice';
-import { ColorStyles2D, withFillColor } from '../theme/themeFill';
+import { ColorStyles2D } from '../theme/themeFill';
 import { useBackwardsCompatibleTheme } from '../theme/useBackwardsCompatibleTheme';
 import { useGraphicalItemIdentity, useGraphicalItemThemeFill } from '../theme/useGraphicalItemIdentity';
 import { useEffectiveDataKey } from '../util/useEffectiveDataKey';
@@ -627,7 +627,7 @@ function BarBackground(props: BarBackgroundProps) {
   const { data, dataKey, background: backgroundFromProps, allOtherBarProps } = props;
   const backgroundProps = svgPropertiesNoEventsFromUnknown(backgroundFromProps);
   const backgroundThemeProps = useBackwardsCompatibleTheme(
-    theme => withFillColor(theme.barBackground),
+    theme => theme.barBackground,
     backgroundProps ?? {},
     defaultLegacyBarBackgroundProps,
   );

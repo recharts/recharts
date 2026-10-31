@@ -19,8 +19,9 @@ export type Styles2D = {
    * Give each entry of `graphicalItems` a different pattern, and charts tell their series apart
    * without relying on color alone.
    *
-   * Bar, Area, Radar, Scatter, Pie, RadialBar, Funnel, CartesianGrid, PolarGrid, ReferenceArea, and ReferenceDot
-   * draw the definition of a fill object. Everything else paints with its `color`.
+   * Bar, Area, Radar, Scatter, Pie, RadialBar, Funnel, CartesianGrid, PolarGrid, ReferenceArea, ReferenceDot,
+   * Brush, the Bar and RadialBar backgrounds, and the Tooltip cursor draw the definition of a fill object.
+   * Everything else, the `active` styles included, paints with its `color`.
    *
    * @example { fill: { color: '#2b6cb0', definition: pattern(patterns.diagonal) } }
    */
