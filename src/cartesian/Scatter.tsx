@@ -91,7 +91,17 @@ import {
 import { getActiveStyleOverrides, useThemedActiveStyles } from '../theme/activeStyles';
 import { ColorStyles2D } from '../theme/themeFill';
 import { RechartsFill } from '../fill/RechartsFill';
-import { FillObjectDefinition, getFillUrl, getSeriesFillId, splitFill } from '../fill/fillDefinitions';
+import {
+  EntryFillDefinitions,
+  FillObjectDefinition,
+  getEntryFillId,
+  getFillUrl,
+  getSeriesFillId,
+  hasEntryFillObjects,
+  readEntryFill,
+  splitFill,
+  withEntryFillColor,
+} from '../fill/fillDefinitions';
 import {
   DataLabelColors,
   DataLabelColorsContextProvider,
@@ -699,6 +709,7 @@ function ScatterLabelListProvider({
  */
 function ScatterPoint({
   entry,
+  paintFill,
   index,
   shape,
   activeShape,
@@ -715,6 +726,10 @@ function ScatterPoint({
   onClickFromContext,
 }: ShapeAnimationProps & {
   entry: ScatterPointItem;
+  /**
+   * `url(#…)` of the fill definition of the data entry, if it has its own fill object. Wins over the entry fill.
+   */
+  paintFill: string | undefined;
   index: number;
   shape: ScatterCustomizedShape;
   activeShape: ScatterCustomizedShape | undefined;
@@ -755,6 +770,7 @@ function ScatterPoint({
     ...filteredBaseProps,
     ...entryStyleOverrides,
     ...entry,
+    ...(paintFill == null ? undefined : { fill: paintFill }),
     ...(isActive ? getActiveStyleOverrides(activeShape, themedActiveStyles, entry) : undefined),
     isActive,
     index,
@@ -816,6 +832,8 @@ function ScatterSymbols(props: ScatterSymbolsProps) {
         <ScatterPoint
           key={`symbol-${entry?.cx}-${entry?.cy}-${entry?.size}-${i}`}
           entry={entry}
+          // a data entry with its own fill object paints with its own definition
+          paintFill={readEntryFill(entry.payload).fillObject == null ? undefined : getFillUrl(getEntryFillId(id, i))}
           index={i}
           shape={shape}
           activeShape={activeShape}
@@ -1031,21 +1049,24 @@ export function computeScatterPoints({
      */
     const entryWithoutId: Record<string, unknown> = typeof entry === 'object' && entry !== null ? { ...entry } : {};
     delete entryWithoutId.id;
-    return {
-      ...entryWithoutId,
-      cx,
-      cy,
-      x: cx == null ? undefined : cx - radius,
-      y: cy == null ? undefined : cy - radius,
-      width: 2 * radius,
-      height: 2 * radius,
-      size,
-      node: { x, y, z },
-      tooltipPayload,
-      tooltipPosition: { x: cx, y: cy },
-      payload: entry,
-      ...(cells && cells[index] && cells[index].props),
-    };
+    return withEntryFillColor<ScatterPointItem>(
+      {
+        ...entryWithoutId,
+        cx,
+        cy,
+        x: cx == null ? undefined : cx - radius,
+        y: cy == null ? undefined : cy - radius,
+        width: 2 * radius,
+        height: 2 * radius,
+        size,
+        node: { x, y, z },
+        tooltipPayload,
+        tooltipPosition: { x: cx, y: cy },
+        payload: entry,
+        ...(cells && cells[index] && cells[index].props),
+      },
+      entry,
+    );
   });
 }
 
@@ -1064,7 +1085,7 @@ const errorBarDataPointFormatter: ErrorBarDataPointFormatter<ScatterPointItem> =
 };
 
 function ScatterWithId(props: InternalProps) {
-  const { hide, points, className, needClip, xAxisId, yAxisId, id } = props;
+  const { hide, points, className, needClip, xAxisId, yAxisId, id, fill, stroke, unthemedColors } = props;
   const previousPointsRef = useRef<ReadonlyArray<ScatterPointItem> | null>(null);
   if (hide) {
     return null;
@@ -1072,15 +1093,26 @@ function ScatterWithId(props: InternalProps) {
   const layerClass = clsx('recharts-scatter', className);
   const clipPathId = id;
   const clipPath = needClip ? `url(#clipPath-${clipPathId})` : undefined;
+  const hasEntryFills = hasEntryFillObjects(points.map(point => point.payload));
 
   return (
     <ZIndexLayer zIndex={props.zIndex}>
       <Layer className={layerClass} clipPath={clipPath} id={id}>
-        {(needClip || props.fillObject != null) && (
+        {(needClip || props.fillObject != null || hasEntryFills) && (
           <defs>
             {needClip && <GraphicalItemClipPath clipPathId={clipPathId} xAxisId={xAxisId} yAxisId={yAxisId} />}
             {props.fillObject != null && (
-              <FillObjectDefinition id={getSeriesFillId(id)} fillObject={props.fillObject} color={props.fill} />
+              <FillObjectDefinition id={getSeriesFillId(id)} fillObject={props.fillObject} color={fill} />
+            )}
+            {hasEntryFills && (
+              <EntryFillDefinitions
+                id={id}
+                entries={points.map((point, index) => ({
+                  index,
+                  payload: point.payload,
+                  color: getEntryShapeColors(point.payload, fill, stroke, unthemedColors).fill,
+                }))}
+              />
             )}
           </defs>
         )}

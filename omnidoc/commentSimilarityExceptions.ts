@@ -404,6 +404,12 @@ export const commentSimilarityExceptions: ReadonlyArray<CommentSimilarityGroup> 
       'These fills also accept a fill object with a pattern or a gradient, and explain how Tooltip and labels keep a solid color. Elsewhere it is a plain color.',
   },
   {
+    components: ['Pie', 'RadialBar', 'Funnel'],
+    props: ['fill'],
+    reason:
+      'These fills also accept a fill object, and explain how each data entry can have its own fill. Elsewhere it is a plain color.',
+  },
+  {
     components: ['Line'],
     props: ['fill'],
     reason:

@@ -21,6 +21,7 @@ import { useMemo } from 'react';
 import { ColorGraphicalItemStyle, ColorStyles2D } from './themeFill';
 import { useRechartsTheme } from './RechartsThemeContext';
 import { isDataAttribute, isSvgElementPropKey, svgPropertiesNoEventsFromUnknown } from '../util/svgPropertiesNoEvents';
+import { readEntryFill } from '../fill/fillDefinitions';
 
 /**
  * Explicit `fill` and `stroke` props of a graphical item, both keys present (possibly as `undefined`).
@@ -32,13 +33,14 @@ export type UnthemedColors = { fill: string | undefined; stroke: string | undefi
 /**
  * Returns true if the graphical item props or the data entry define their own `fill` or `stroke`.
  * Such items and entries drop the theme `fill` and `stroke`, and keep the rest of the theme.
+ * A fill object counts by its `color` only, so a fill object without a color keeps the theme colors.
  * @param entry props of graphical item, data entry, or anything else
  */
 export function hasOwnColors(entry: unknown): boolean {
   if (entry == null || typeof entry !== 'object') {
     return false;
   }
-  return Reflect.get(entry, 'fill') != null || Reflect.get(entry, 'stroke') != null;
+  return readEntryFill(entry).color != null || Reflect.get(entry, 'stroke') != null;
 }
 
 type StyleWithoutColors = Omit<ColorGraphicalItemStyle, 'fill' | 'stroke'>;
@@ -75,8 +77,9 @@ export function getOwnStyles(entry: ColorStyles2D | null | undefined): ColorStyl
   if (entry == null) {
     return result;
   }
-  if (entry.fill != null) {
-    result.fill = entry.fill;
+  const entryFill = readEntryFill(entry).color;
+  if (entryFill != null) {
+    result.fill = entryFill;
   }
   if (entry.fillOpacity != null) {
     result.fillOpacity = entry.fillOpacity;
@@ -144,12 +147,21 @@ export function getEntryStyleOverrides(
  */
 export function getEntrySvgProps(entry: unknown): Record<string, unknown> {
   const { id, ref, key, ...props } = svgPropertiesNoEventsFromUnknown(entry) ?? {};
+  if (props.fill != null && typeof props.fill !== 'string') {
+    // a fill object paints through its definition; the shape gets its color, or keeps the fill of the graphical item
+    const { fill, ...propsWithoutFill } = props;
+    const { color } = readEntryFill(entry);
+    return color == null ? propsWithoutFill : { ...propsWithoutFill, fill: color };
+  }
   return props;
 }
 
 function getStringProp(obj: unknown, key: 'fill' | 'stroke'): string | undefined {
   if (obj == null || typeof obj !== 'object') {
     return undefined;
+  }
+  if (key === 'fill') {
+    return readEntryFill(obj).color;
   }
   const value: unknown = Reflect.get(obj, key);
   return typeof value === 'string' ? value : undefined;

@@ -5,13 +5,9 @@ import {
   BarChart,
   Brush,
   CartesianGrid,
-  Funnel,
-  FunnelChart,
   Legend,
   Line,
   LineChart,
-  Pie,
-  PieChart,
   RechartsFill,
   RechartsTheme,
   RechartsThemeProvider,
@@ -134,18 +130,11 @@ describe('fill objects in the theme', () => {
         <LineChart width={400} height={400} data={data}>
           <Line dataKey="uv" isAnimationActive={false} />
         </LineChart>
-        <PieChart width={400} height={400}>
-          <Pie data={data} dataKey="uv" isAnimationActive={false} />
-        </PieChart>
-        <FunnelChart width={400} height={400}>
-          <Funnel data={data} dataKey="uv" isAnimationActive={false} />
-        </FunnelChart>
         <Treemap width={400} height={400} data={data} dataKey="uv" isAnimationActive={false} />
       </RechartsThemeProvider>,
     );
 
     expectNoObjectFills(container);
-    expect(container.querySelector('.recharts-pie-sector path')).toHaveAttribute('fill', 'purple');
   });
 });
 

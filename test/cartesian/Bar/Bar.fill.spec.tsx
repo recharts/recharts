@@ -370,3 +370,33 @@ describe('Bar with a fill object from the theme', () => {
     expect(legendTexts.map(text => text.style.color)).toEqual(['purple', 'teal']);
   });
 });
+
+describe('Bar with fill objects in the data', () => {
+  it('should paint a bar with the fill object of its data entry, and keep the color in the Tooltip', () => {
+    const { container } = render(
+      <RechartsThemeProvider value={{ ...lightTheme, graphicalItems: [{ fill: 'purple', stroke: 'indigo' }] }}>
+        <BarChart
+          width={400}
+          height={400}
+          data={[
+            { uv: 1 },
+            { uv: 2, fill: { color: 'blue', definition: pattern(patterns.dots) } },
+            { uv: 3, fill: { definition: pattern(patterns.star) } },
+          ]}
+        >
+          <Bar dataKey="uv" id="my-bar" isAnimationActive={false} />
+          <Tooltip defaultIndex={1} />
+        </BarChart>
+      </RechartsThemeProvider>,
+    );
+
+    const bars = getAllBarPaths(container);
+    expect(bars[0]).toHaveAttribute('fill', 'purple');
+    expect(bars[1]).toHaveAttribute('fill', 'url(#my-bar-fill-1)');
+    expect(container.querySelector('pattern#my-bar-fill-1 rect')).toHaveAttribute('fill', 'blue');
+    // a fill object without color keeps the theme color of the Bar
+    expect(bars[2]).toHaveAttribute('fill', 'url(#my-bar-fill-2)');
+    expect(container.querySelector('pattern#my-bar-fill-2 rect')).toHaveAttribute('fill', 'purple');
+    expect(getTooltipItem(container)).toHaveStyle({ color: 'rgb(0, 0, 255)' });
+  });
+});
