@@ -1,32 +1,32 @@
 {
   "treemap": {
     "examplePath": "www/src/views/IndexView/IndexLineChart.tsx",
-    "totalSize": 1005205,
-    "totalSizeLabel": "981.65 KB",
+    "totalSize": 1005221,
+    "totalSizeLabel": "981.66 KB",
     "moduleCount": 385,
-    "generatedAt": "2026-10-30T10:40:22.718Z",
+    "generatedAt": "2026-10-31T13:13:01.649Z",
     "stages": [
       {
         "stage": "es6-folder",
-        "bytes": 1637126,
+        "bytes": 1637142,
         "humanReadableSize": "1.56 MB",
         "reductionFromBaselinePercent": 0
       },
       {
         "stage": "tree-shaken",
-        "bytes": 1008124,
-        "humanReadableSize": "984.50 KB",
+        "bytes": 1008140,
+        "humanReadableSize": "984.51 KB",
         "reductionFromBaselinePercent": 0
       },
       {
         "stage": "minified",
-        "bytes": 325517,
-        "humanReadableSize": "317.89 KB",
+        "bytes": 325526,
+        "humanReadableSize": "317.90 KB",
         "reductionFromBaselinePercent": 67.71
       },
       {
         "stage": "minified+gzip",
-        "bytes": 106761,
+        "bytes": 106765,
         "humanReadableSize": "104.26 KB",
         "reductionFromBaselinePercent": 89.41
       }
@@ -34,12 +34,12 @@
     "tree": {
       "name": "bundle",
       "fullPath": "bundle",
-      "value": 1005205,
+      "value": 1005221,
       "children": [
         {
           "name": "src",
           "fullPath": "src",
-          "value": 601629,
+          "value": 601645,
           "children": [
             {
               "name": "state",
@@ -739,12 +739,12 @@
             {
               "name": "cartesian",
               "fullPath": "src/cartesian",
-              "value": 92222,
+              "value": 92238,
               "children": [
                 {
                   "name": "Line.tsx",
                   "fullPath": "src/cartesian/Line.tsx",
-                  "value": 18062
+                  "value": 18078
                 },
                 {
                   "name": "CartesianGrid.tsx",
@@ -2659,32 +2659,32 @@
   },
   "sunburst": {
     "examplePath": "www/src/views/IndexView/IndexLineChart.tsx",
-    "totalSize": 1005205,
-    "totalSizeLabel": "981.65 KB",
+    "totalSize": 1005221,
+    "totalSizeLabel": "981.66 KB",
     "moduleCount": 385,
-    "generatedAt": "2026-10-30T10:40:20.411Z",
+    "generatedAt": "2026-10-31T13:12:59.523Z",
     "stages": [
       {
         "stage": "es6-folder",
-        "bytes": 1637126,
+        "bytes": 1637142,
         "humanReadableSize": "1.56 MB",
         "reductionFromBaselinePercent": 0
       },
       {
         "stage": "tree-shaken",
-        "bytes": 1008124,
-        "humanReadableSize": "984.50 KB",
+        "bytes": 1008140,
+        "humanReadableSize": "984.51 KB",
         "reductionFromBaselinePercent": 0
       },
       {
         "stage": "minified",
-        "bytes": 325517,
-        "humanReadableSize": "317.89 KB",
+        "bytes": 325526,
+        "humanReadableSize": "317.90 KB",
         "reductionFromBaselinePercent": 67.71
       },
       {
         "stage": "minified+gzip",
-        "bytes": 106761,
+        "bytes": 106765,
         "humanReadableSize": "104.26 KB",
         "reductionFromBaselinePercent": 89.41
       }
@@ -2692,12 +2692,12 @@
     "tree": {
       "name": "bundle",
       "fullPath": "bundle",
-      "value": 1005205,
+      "value": 1005221,
       "children": [
         {
           "name": "src",
           "fullPath": "src",
-          "value": 601629,
+          "value": 601645,
           "children": [
             {
               "name": "state",
@@ -3397,12 +3397,12 @@
             {
               "name": "cartesian",
               "fullPath": "src/cartesian",
-              "value": 92222,
+              "value": 92238,
               "children": [
                 {
                   "name": "Line.tsx",
                   "fullPath": "src/cartesian/Line.tsx",
-                  "value": 18062
+                  "value": 18078
                 },
                 {
                   "name": "CartesianGrid.tsx",
