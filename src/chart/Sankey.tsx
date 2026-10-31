@@ -1,6 +1,6 @@
 import { clsx } from 'clsx';
 import * as React from 'react';
-import { MouseEvent, ReactElement, ReactNode, SVGProps, useCallback, useMemo, useState } from 'react';
+import { ComponentType, MouseEvent, ReactElement, ReactNode, SVGProps, useCallback, useMemo, useState } from 'react';
 import maxBy from 'es-toolkit/compat/maxBy';
 import sumBy from 'es-toolkit/compat/sumBy';
 import get from 'es-toolkit/compat/get';
@@ -59,6 +59,8 @@ import { initialEventSettingsState } from '../state/eventSettingsSlice';
 import { ColorGraphicalItemStyle, ColorStyles2D, getColorGraphicalItems } from '../theme/themeFill';
 import { useRechartsTheme } from '../theme/RechartsThemeContext';
 import { getOwnStyles, hasOwnColors, withoutColors } from '../theme/dataEntryStyles';
+import { RechartsFill, RechartsFillDefinitionProps } from '../fill/RechartsFill';
+import { readEntryFill, useThemeFillObjects } from '../fill/fillDefinitions';
 
 const interpolationGenerator = (a: number, b: number) => {
   const ka = +a;
@@ -1198,29 +1200,6 @@ function AllSankeyLinkElements({
 }
 
 /**
- * @param option the `node` prop
- * @param props resolved props of the node
- * @param hasTheme true if a theme is active, in which case the legacy styles are not applied
- */
-function renderNodeItem(option: SankeyNodeOptions | undefined, props: NodeProps, hasTheme: boolean) {
-  if (React.isValidElement(option)) {
-    return React.cloneElement(option, props);
-  }
-  if (typeof option === 'function') {
-    return option(props);
-  }
-
-  return (
-    // @ts-expect-error recharts radius is not compatible with SVG radius
-    <Rectangle
-      {...(hasTheme ? undefined : legacyNodeStyles)}
-      {...svgPropertiesNoEvents(props)}
-      className={clsx('recharts-sankey-node', props.className)}
-    />
-  );
-}
-
-/**
  * The fill the node is actually rendered with.
  *
  * `renderNodeItem` puts the legacy default fill on the rectangle first and spreads the node props over
@@ -1243,6 +1222,43 @@ function getRenderedNodeFill(nodeProps: NodeProps, hasTheme: boolean): string | 
     return legacyNodeStyles.fill;
   }
   return undefined;
+}
+
+/**
+ * @param option the `node` prop
+ * @param props resolved props of the node
+ * @param hasTheme true if a theme is active, in which case the legacy styles are not applied
+ */
+/**
+ * @param option the `node` prop
+ * @param props resolved props of the node
+ * @param hasTheme true if a theme is active, in which case the legacy styles are not applied
+ * @param fillDefinition the fill definition of the node, if it paints with one. It gets the color of the node.
+ */
+function renderNodeItem(
+  option: SankeyNodeOptions | undefined,
+  props: NodeProps,
+  hasTheme: boolean,
+  fillDefinition: ComponentType<RechartsFillDefinitionProps> | undefined,
+) {
+  if (React.isValidElement(option)) {
+    return React.cloneElement(option, props);
+  }
+  if (typeof option === 'function') {
+    return option(props);
+  }
+
+  return (
+    // @ts-expect-error recharts radius is not compatible with SVG radius
+    <Rectangle
+      {...(hasTheme ? undefined : legacyNodeStyles)}
+      {...svgPropertiesNoEvents(props)}
+      {...(fillDefinition == null
+        ? undefined
+        : { fill: { color: getRenderedNodeFill(props, hasTheme), definition: fillDefinition } })}
+      className={clsx('recharts-sankey-node', props.className)}
+    />
+  );
 }
 
 const buildNodeProps = ({
@@ -1287,6 +1303,7 @@ const buildNodeProps = ({
 function NodeElement({
   graphicalItemId,
   props,
+  fillDefinition,
   nodeContent,
   i,
   onMouseEnter,
@@ -1296,6 +1313,7 @@ function NodeElement({
 }: {
   graphicalItemId: GraphicalItemId;
   props: NodeProps;
+  fillDefinition: ComponentType<RechartsFillDefinitionProps> | undefined;
   nodeContent: SankeyNodeOptions | undefined;
   i: number;
   onMouseEnter: (nodeProps: NodeProps, e: MouseEvent<SVGGraphicsElement>) => void;
@@ -1338,7 +1356,7 @@ function NodeElement({
     },
   };
 
-  return <Layer {...events}>{renderNodeItem(nodeContent, props, hasTheme)}</Layer>;
+  return <Layer {...events}>{renderNodeItem(nodeContent, props, hasTheme, fillDefinition)}</Layer>;
 }
 
 /**
@@ -1404,6 +1422,7 @@ function SankeyLabelListProvider({
 function AllNodeElements({
   graphicalItemId,
   modifiedNodes,
+  nodeFillDefinitions,
   nodeContent,
   onMouseEnter,
   onMouseLeave,
@@ -1412,6 +1431,10 @@ function AllNodeElements({
 }: {
   graphicalItemId: GraphicalItemId;
   modifiedNodes: ReadonlyArray<NodeProps>;
+  /**
+   * The fill definition of each node, by index.
+   */
+  nodeFillDefinitions: ReadonlyArray<ComponentType<RechartsFillDefinitionProps> | undefined>;
   nodeContent: SankeyNodeOptions | undefined;
   onMouseEnter: (nodeProps: NodeProps, e: MouseEvent<SVGGraphicsElement>) => void;
   onMouseLeave: (nodeProps: NodeProps, e: MouseEvent<SVGGraphicsElement>) => void;
@@ -1426,6 +1449,7 @@ function AllNodeElements({
             graphicalItemId={graphicalItemId}
             key={`node-${modifiedNode.index}-${modifiedNode.x}-${modifiedNode.y}`}
             props={modifiedNode}
+            fillDefinition={nodeFillDefinitions[i]}
             nodeContent={nodeContent}
             i={i}
             onMouseEnter={onMouseEnter}
@@ -1464,6 +1488,13 @@ type ResolvedStyles = {
   ownStyles: EntrySvgProps;
 };
 
+type ResolvedNodeStyles = ResolvedStyles & {
+  /**
+   * The fill definition of the node: from its data entry, from the `node` prop, or from the theme.
+   */
+  fillDefinition: ComponentType<RechartsFillDefinitionProps> | undefined;
+};
+
 /**
  * Reads the SVG props that a node or link data entry applies to its shape.
  *
@@ -1478,7 +1509,8 @@ function getEntrySvgProps(entry: unknown): EntrySvgProps {
   // Skip null and undefined, so that `{ stroke: undefined }` keeps the stroke from props, the theme or the defaults.
   for (const key in svgProps) {
     if (Object.prototype.hasOwnProperty.call(svgProps, key)) {
-      const value: unknown = Reflect.get(svgProps, key);
+      const value: unknown = key === 'fill' ? readEntryFill(entry).color : Reflect.get(svgProps, key);
+      // a fill object counts by its color; it paints through its definition
       if (value != null) {
         result[key] = value;
       }
@@ -1497,25 +1529,37 @@ function getEntrySvgProps(entry: unknown): EntrySvgProps {
  * A node whose data entry or `node` prop defines its own `fill` or `stroke` drops the theme fill and stroke together,
  * and keeps the other theme styles.
  * @param themeGraphicalItems graphicalItems of the active theme, or undefined if there is no theme
+ * @param themeFillObjects the fill object of each theme entry, from {@link useThemeFillObjects}
  * @param dataNode entry from `data.nodes`
  * @param index index of the node in `data.nodes`
  * @param nodeContent the `node` prop
  */
 function resolveNodeStyles(
   themeGraphicalItems: ReadonlyArray<ColorGraphicalItemStyle> | undefined,
+  themeFillObjects: ReadonlyArray<RechartsFill | undefined>,
   dataNode: unknown,
   index: number,
   nodeContent: SankeyNodeOptions | undefined,
-): ResolvedStyles {
+): ResolvedNodeStyles {
   const ownStyles = getEntrySvgProps(dataNode);
+  const ownFillDefinition =
+    readEntryFill(dataNode).fillObject?.definition ?? readEntryFill(nodeContent).fillObject?.definition;
   if (themeGraphicalItems == null) {
-    return { themeStyles: {}, ownStyles };
+    return { themeStyles: {}, ownStyles, fillDefinition: ownFillDefinition };
   }
   const themeItem =
     themeGraphicalItems.length === 0 ? undefined : themeGraphicalItems[index % themeGraphicalItems.length];
   const hasExplicitColors = hasOwnColors(ownStyles) || hasOwnColors(svgPropertiesNoEventsFromUnknown(nodeContent));
   // Styles without a color of their own merge with the theme.
-  return { themeStyles: getOwnStyles(hasExplicitColors ? withoutColors(themeItem) : themeItem), ownStyles };
+  return {
+    themeStyles: getOwnStyles(hasExplicitColors ? withoutColors(themeItem) : themeItem),
+    ownStyles,
+    fillDefinition:
+      ownFillDefinition ??
+      (hasExplicitColors || themeFillObjects.length === 0
+        ? undefined
+        : themeFillObjects[index % themeFillObjects.length]?.definition),
+  };
 }
 
 /**
@@ -1617,10 +1661,11 @@ function SankeyImpl(props: InternalSankeyProps) {
   const width = useChartWidth();
   const height = useChartHeight();
   const themeGraphicalItems = getColorGraphicalItems(useRechartsTheme()?.graphicalItems);
+  const themeFillObjects = useThemeFillObjects();
 
-  const { links, modifiedLinks, modifiedNodes } = useMemo(() => {
+  const { links, modifiedLinks, modifiedNodes, nodeFillDefinitions } = useMemo(() => {
     if (!data || !width || !height || width <= 0 || height <= 0) {
-      return { nodes: [], links: [], modifiedLinks: [], modifiedNodes: [] };
+      return { nodes: [], links: [], modifiedLinks: [], modifiedNodes: [], nodeFillDefinitions: [] };
     }
     const contentWidth = width - (margin.left ?? 0) - (margin.right ?? 0);
     const contentHeight = height - (margin.top ?? 0) - (margin.bottom ?? 0);
@@ -1638,8 +1683,16 @@ function SankeyImpl(props: InternalSankeyProps) {
 
     const top = margin.top || 0;
     const left = margin.left || 0;
+    const newNodeFillDefinitions: Array<ComponentType<RechartsFillDefinitionProps> | undefined> = [];
     const newModifiedNodes = computed.nodes.map((n, i) => {
-      const { themeStyles, ownStyles } = resolveNodeStyles(themeGraphicalItems, data.nodes[i], i, node);
+      const { themeStyles, ownStyles, fillDefinition } = resolveNodeStyles(
+        themeGraphicalItems,
+        themeFillObjects,
+        data.nodes[i],
+        i,
+        node,
+      );
+      newNodeFillDefinitions.push(fillDefinition);
       return buildNodeProps({
         node: n,
         nodeContent: node,
@@ -1677,6 +1730,7 @@ function SankeyImpl(props: InternalSankeyProps) {
       links: computed.links,
       modifiedLinks: newModifiedLinks,
       modifiedNodes: newModifiedNodes,
+      nodeFillDefinitions: newNodeFillDefinitions,
     };
   }, [
     data,
@@ -1693,6 +1747,7 @@ function SankeyImpl(props: InternalSankeyProps) {
     align,
     verticalAlign,
     themeGraphicalItems,
+    themeFillObjects,
   ]);
 
   const handleMouseEnter = useCallback(
@@ -1750,6 +1805,7 @@ function SankeyImpl(props: InternalSankeyProps) {
             <AllNodeElements
               graphicalItemId={id}
               modifiedNodes={modifiedNodes}
+              nodeFillDefinitions={nodeFillDefinitions}
               nodeContent={node}
               dataKey={dataKey}
               onMouseEnter={(nodeProps: NodeProps, e: MouseEvent<SVGGraphicsElement>) =>
