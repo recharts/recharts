@@ -1,1 +1,0 @@
-import{e as a,r as n}from"./iframe-BJZBYlXs.js";import{o as u}from"./resolveDefaultProps-DGRFLMT5.js";const c=()=>{const[r]=n.useState(()=>u("uid-"));return r},d=a.useId??c;function i(r){var t;if(r==null)return;if(r.pageBackground!=null)return r.pageBackground;const o=(t=r.chart)==null?void 0:t.backgroundColor;return typeof o=="string"?o:void 0}export{i as g,d as u};
