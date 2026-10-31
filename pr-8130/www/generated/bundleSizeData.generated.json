@@ -1,21 +1,21 @@
 {
   "treemap": {
     "examplePath": "www/src/views/IndexView/IndexLineChart.tsx",
-    "totalSize": 1005221,
-    "totalSizeLabel": "981.66 KB",
+    "totalSize": 1005168,
+    "totalSizeLabel": "981.61 KB",
     "moduleCount": 385,
-    "generatedAt": "2026-10-31T15:17:18.808Z",
+    "generatedAt": "2026-10-31T16:20:27.886Z",
     "stages": [
       {
         "stage": "es6-folder",
-        "bytes": 1637142,
+        "bytes": 1637299,
         "humanReadableSize": "1.56 MB",
         "reductionFromBaselinePercent": 0
       },
       {
         "stage": "tree-shaken",
-        "bytes": 1008140,
-        "humanReadableSize": "984.51 KB",
+        "bytes": 1008091,
+        "humanReadableSize": "984.46 KB",
         "reductionFromBaselinePercent": 0
       },
       {
@@ -34,12 +34,12 @@
     "tree": {
       "name": "bundle",
       "fullPath": "bundle",
-      "value": 1005221,
+      "value": 1005168,
       "children": [
         {
           "name": "src",
           "fullPath": "src",
-          "value": 601645,
+          "value": 601592,
           "children": [
             {
               "name": "state",
@@ -999,17 +999,17 @@
             {
               "name": "shape",
               "fullPath": "src/shape",
-              "value": 14564,
+              "value": 14511,
               "children": [
                 {
                   "name": "Curve.tsx",
                   "fullPath": "src/shape/Curve.tsx",
-                  "value": 5086
+                  "value": 5102
                 },
                 {
                   "name": "Symbols.tsx",
                   "fullPath": "src/shape/Symbols.tsx",
-                  "value": 4613
+                  "value": 4629
                 },
                 {
                   "name": "DotSymbol.tsx",
@@ -1019,7 +1019,7 @@
                 {
                   "name": "Dot.tsx",
                   "fullPath": "src/shape/Dot.tsx",
-                  "value": 1229
+                  "value": 1144
                 }
               ]
             },
@@ -2659,21 +2659,21 @@
   },
   "sunburst": {
     "examplePath": "www/src/views/IndexView/IndexLineChart.tsx",
-    "totalSize": 1005221,
-    "totalSizeLabel": "981.66 KB",
+    "totalSize": 1005168,
+    "totalSizeLabel": "981.61 KB",
     "moduleCount": 385,
-    "generatedAt": "2026-10-31T15:17:21.130Z",
+    "generatedAt": "2026-10-31T16:20:30.335Z",
     "stages": [
       {
         "stage": "es6-folder",
-        "bytes": 1637142,
+        "bytes": 1637299,
         "humanReadableSize": "1.56 MB",
         "reductionFromBaselinePercent": 0
       },
       {
         "stage": "tree-shaken",
-        "bytes": 1008140,
-        "humanReadableSize": "984.51 KB",
+        "bytes": 1008091,
+        "humanReadableSize": "984.46 KB",
         "reductionFromBaselinePercent": 0
       },
       {
@@ -2692,12 +2692,12 @@
     "tree": {
       "name": "bundle",
       "fullPath": "bundle",
-      "value": 1005221,
+      "value": 1005168,
       "children": [
         {
           "name": "src",
           "fullPath": "src",
-          "value": 601645,
+          "value": 601592,
           "children": [
             {
               "name": "state",
@@ -3657,17 +3657,17 @@
             {
               "name": "shape",
               "fullPath": "src/shape",
-              "value": 14564,
+              "value": 14511,
               "children": [
                 {
                   "name": "Curve.tsx",
                   "fullPath": "src/shape/Curve.tsx",
-                  "value": 5086
+                  "value": 5102
                 },
                 {
                   "name": "Symbols.tsx",
                   "fullPath": "src/shape/Symbols.tsx",
-                  "value": 4613
+                  "value": 4629
                 },
                 {
                   "name": "DotSymbol.tsx",
@@ -3677,7 +3677,7 @@
                 {
                   "name": "Dot.tsx",
                   "fullPath": "src/shape/Dot.tsx",
-                  "value": 1229
+                  "value": 1144
                 }
               ]
             },
