@@ -119,9 +119,10 @@ export function DataStyles() {
           unique on the page.
         </li>
         <li>
-          <strong>Position and size come from Recharts.</strong> Recharts computes <code>x</code>, <code>y</code>,{' '}
-          <code>width</code>, <code>height</code>, <code>cx</code>, <code>cy</code> and <code>transform</code> from your
-          values and the axes, so an entry cannot move or resize its shape.
+          <strong>Position comes from Recharts.</strong> Recharts computes <code>x</code>, <code>y</code>,{' '}
+          <code>width</code>, <code>height</code>, <code>cx</code> and <code>cy</code> from your values and the axes,
+          and these win over the same keys in an entry. Size props that the shape reads directly still apply, such as{' '}
+          <code>r</code> on a dot (see the Line example below).
         </li>
       </ul>
       <blockquote>
@@ -145,6 +146,10 @@ export function DataStyles() {
         <code>{'<Bar fill="#8884d8" stroke="#333" />'}</code> and an entry <code>{"{ fill: 'red' }"}</code>, that bar is
         red with a <code>#333</code> outline. With <code>{"{ stroke: 'lime' }"}</code>, it keeps the{' '}
         <code>#8884d8</code> fill and gets a lime outline.
+      </p>
+      <p>
+        One exception: a <code>style</code> prop is CSS, and CSS beats SVG attributes. A <code>fill</code> in{' '}
+        <code>{"<Bar style={{ fill: 'blue' }} />"}</code> overrides the <code>fill</code> of every entry.
       </p>
       <CodeEditorWithPreview
         Component={DataStylesPrecedenceExample}
@@ -174,11 +179,12 @@ export function DataStyles() {
       <p>
         Note what this means for an entry that sets only one color. <code>{"{ stroke: 'red' }"}</code> on a{' '}
         <code>Bar</code> in a themed chart, with no <code>fill</code> on the <code>{'<Bar>'}</code>, draws a bar with a
-        red outline and no fill. If you want both, set both.
+        red outline and the SVG default fill, which is black. For an outline only, add{' '}
+        <code>fill: &apos;none&apos;</code>. If you want both colors, set both.
       </p>
       <p>
-        With a theme, <LinkToApi>Tooltip</LinkToApi> and <LinkToApi>Legend</LinkToApi> always show the color the shape
-        is actually drawn with:
+        With a theme, the <LinkToApi>Tooltip</LinkToApi> shows the color the shape is actually drawn with, and so does
+        the <LinkToApi>Legend</LinkToApi> for components that have one Legend item per entry:
       </p>
       <ul>
         <li>
