@@ -27,6 +27,15 @@ const getTrapezoidPath = (x: number, y: number, upperWidth: number, lowerWidth: 
 };
 
 interface TrapezoidProps {
+  /**
+   * The fill of the trapezoid. Either a color string, or a {@link RechartsFill} object with an SVG definition,
+   * such as a pattern or a gradient. Recharts renders the definition with a unique ID.
+   * Set the `color` of the fill object: there is no theme color to fall back to.
+   *
+   * @since 3.11
+   * @example <Trapezoid fill={{ color: 'blue', definition: pattern(patterns.diagonal) }} />
+   */
+  fill?: string | RechartsFill;
   className?: string;
   /**
    * The x-coordinate of top left point of the trapezoid.
@@ -97,7 +106,12 @@ interface TrapezoidProps {
   onMouseLeave?: (e: React.MouseEvent<SVGPathElement>) => void;
 }
 
-export type Props = SVGProps<SVGPathElement> & TrapezoidProps;
+export type Props = Omit<SVGProps<SVGPathElement>, 'fill'> & TrapezoidProps;
+
+/**
+ * The props of the inner renderer, which gets the `fill` as a color or a `url(#…)` reference.
+ */
+type StringFillProps = Omit<Props, 'fill'> & { fill?: string };
 
 export const defaultTrapezoidProps = {
   x: 0,
@@ -111,7 +125,7 @@ export const defaultTrapezoidProps = {
   animationEasing: 'ease',
 } as const satisfies Partial<Props>;
 
-const TrapezoidImpl: React.FC<Props> = outsideProps => {
+const TrapezoidImpl: React.FC<StringFillProps> = outsideProps => {
   const trapezoidProps = resolveDefaultProps(outsideProps, defaultTrapezoidProps);
 
   const { x, y, upperWidth, lowerWidth, height, className } = trapezoidProps;
@@ -224,23 +238,7 @@ const TrapezoidImpl: React.FC<Props> = outsideProps => {
   );
 };
 
-/**
- * Props of {@link Trapezoid}: `fill` can be a fill object too.
- *
- * @since 3.11
- */
-export type TrapezoidFillProps = Omit<Props, 'fill'> & {
-  /**
-   * The fill of the trapezoid. Either a color string, or a {@link RechartsFill} object with an SVG definition,
-   * such as a pattern or a gradient. Recharts renders the definition with a unique ID.
-   * Set the `color` of the fill object: there is no theme color to fall back to.
-   *
-   * @example <Trapezoid fill={{ color: 'blue', definition: pattern(patterns.diagonal) }} />
-   */
-  fill?: string | RechartsFill;
-};
-
-export const Trapezoid = (props: TrapezoidFillProps) => {
+export const Trapezoid = (props: Props) => {
   const { fill } = props;
   // spreading all props first keeps `fill` in its place among the attributes
   return fill != null && typeof fill === 'object' ? (

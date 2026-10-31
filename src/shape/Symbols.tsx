@@ -102,6 +102,15 @@ export function getSymbolHalfWidth(type: SymbolType, size: number, sizeType: Siz
 }
 
 export interface InnerSymbolsProp {
+  /**
+   * The fill of the symbol. Either a color string, or a {@link RechartsFill} object with an SVG definition,
+   * such as a pattern or a gradient. Recharts renders the definition with a unique ID.
+   * Set the `color` of the fill object: there is no theme color to fall back to.
+   *
+   * @since 3.11
+   * @example <Symbols fill={{ color: 'blue', definition: pattern(patterns.diagonal) }} />
+   */
+  fill?: string | RechartsFill;
   className?: string;
   type?: SymbolType;
   cx?: number;
@@ -110,13 +119,18 @@ export interface InnerSymbolsProp {
   sizeType?: SizeType;
 }
 
-export type SymbolsProps = Omit<SVGProps<SVGPathElement>, 'type'> & InnerSymbolsProp;
+export type SymbolsProps = Omit<SVGProps<SVGPathElement>, 'type' | 'fill'> & InnerSymbolsProp;
+
+/**
+ * The props of the inner renderer, which gets the `fill` as a color or a `url(#…)` reference.
+ */
+type StringFillProps = Omit<SymbolsProps, 'fill'> & { fill?: string };
 
 const registerSymbol = (key: string, factory: D3SymbolType) => {
   symbolFactories[`symbol${upperFirst(key)}`] = factory;
 };
 
-const SymbolsImpl = ({ type = 'circle', size = 64, sizeType = 'area', ...rest }: SymbolsProps) => {
+const SymbolsImpl = ({ type = 'circle', size = 64, sizeType = 'area', ...rest }: StringFillProps) => {
   const props = { ...rest, type, size, sizeType };
   let realType: SymbolType = 'circle';
   if (typeof type === 'string') {
@@ -165,22 +179,6 @@ const SymbolsImpl = ({ type = 'circle', size = 64, sizeType = 'area', ...rest }:
 };
 
 /**
- * Props of {@link Symbols}: `fill` can be a fill object too.
- *
- * @since 3.11
- */
-export type SymbolsFillProps = Omit<SymbolsProps, 'fill'> & {
-  /**
-   * The fill of the symbol. Either a color string, or a {@link RechartsFill} object with an SVG definition,
-   * such as a pattern or a gradient. Recharts renders the definition with a unique ID.
-   * Set the `color` of the fill object: there is no theme color to fall back to.
-   *
-   * @example <Symbols fill={{ color: 'blue', definition: pattern(patterns.diagonal) }} />
-   */
-  fill?: string | RechartsFill;
-};
-
-/**
  * The approximate size of a symbol, for the definition of its fill object.
  * @param size the `size` prop
  * @param sizeType the `sizeType` prop
@@ -195,7 +193,7 @@ function getSymbolBounds(size: number | undefined, sizeType: SizeType | undefine
 /**
  * Renders a symbol from a set of predefined shapes.
  */
-export const Symbols = (props: SymbolsFillProps) => {
+export const Symbols = (props: SymbolsProps) => {
   const { fill } = props;
   // spreading all props first keeps `fill` in its place among the attributes
   return fill != null && typeof fill === 'object' ? (

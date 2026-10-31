@@ -131,7 +131,11 @@ type BarRectangleType = {
   height: number;
 };
 
-export interface BarRectangleItem extends RectangleProps {
+export interface BarRectangleItem extends Omit<RectangleProps, 'fill'> {
+  /**
+   * The color of the entry. A fill object in the props paints the entry with its definition.
+   */
+  fill?: string;
   value: number | [number, number];
   /** the coordinate of background rectangle */
   background?: BarRectangleType;

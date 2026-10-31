@@ -108,12 +108,16 @@ import {
 
 const STABLE_EMPTY_ARRAY: readonly RadialBarDataItem[] = [];
 
-export type RadialBarDataItem = SectorProps &
+export type RadialBarDataItem = Omit<SectorProps, 'fill'> &
   PolarViewBoxRequired &
   TooltipTriggerInfo & {
+    /**
+     * The color of the entry. A fill object in the props paints the entry with its definition.
+     */
+    fill?: string;
     value?: any;
     payload?: any;
-    background?: SectorProps;
+    background?: Omit<SectorProps, 'fill'> & { fill?: string };
   };
 
 type RadialBarBackground = boolean | (ActiveShape<SectorProps> & ZIndexable);

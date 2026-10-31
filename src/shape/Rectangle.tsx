@@ -80,6 +80,15 @@ const getRectanglePath = (x: number, y: number, width: number, height: number, r
   return path;
 };
 interface RectangleProps {
+  /**
+   * The fill of the rectangle. Either a color string, or a {@link RechartsFill} object with an SVG definition,
+   * such as a pattern or a gradient. Recharts renders the definition with a unique ID.
+   * Set the `color` of the fill object: there is no theme color to fall back to.
+   *
+   * @since 3.11
+   * @example <Rectangle fill={{ color: 'blue', definition: pattern(patterns.diagonal) }} />
+   */
+  fill?: string | RechartsFill;
   className?: string;
   /**
    * The x-coordinate of top left point of the rectangle.
@@ -167,7 +176,12 @@ interface RectangleProps {
   onMouseLeave?: (e: React.MouseEvent<SVGPathElement>) => void;
 }
 
-export type Props = Omit<SVGProps<SVGPathElement>, 'radius'> & RectangleProps;
+export type Props = Omit<SVGProps<SVGPathElement>, 'radius' | 'fill'> & RectangleProps;
+
+/**
+ * The props of the inner renderer, which gets the `fill` as a color or a `url(#…)` reference.
+ */
+type StringFillProps = Omit<Props, 'fill'> & { fill?: string };
 
 export const defaultRectangleProps = {
   x: 0,
@@ -182,7 +196,7 @@ export const defaultRectangleProps = {
   animationEasing: 'ease',
 } as const satisfies Partial<Props>;
 
-const RectangleImpl: React.FC<Props> = rectangleProps => {
+const RectangleImpl: React.FC<StringFillProps> = rectangleProps => {
   const props = resolveDefaultProps(rectangleProps, defaultRectangleProps);
   const pathRef = useRef<SVGPathElement>(null);
   const [totalLength, setTotalLength] = useState(-1);
@@ -319,22 +333,6 @@ const RectangleImpl: React.FC<Props> = rectangleProps => {
 };
 
 /**
- * Props of {@link Rectangle}: `fill` can be a fill object too.
- *
- * @since 3.11
- */
-export type RectangleFillProps = Omit<Props, 'fill'> & {
-  /**
-   * The fill of the rectangle. Either a color string, or a {@link RechartsFill} object with an SVG definition,
-   * such as a pattern or a gradient. Recharts renders the definition with a unique ID.
-   * Set the `color` of the fill object: there is no theme color to fall back to.
-   *
-   * @example <Rectangle fill={{ color: 'blue', definition: pattern(patterns.diagonal) }} />
-   */
-  fill?: string | RechartsFill;
-};
-
-/**
  * Renders a rectangle element. Unlike the {@link https://developer.mozilla.org/en-US/docs/Web/SVG/Reference/Element/rect rect SVG element}, this component supports rounded corners
  * and animation.
  *
@@ -345,7 +343,7 @@ export type RectangleFillProps = Omit<Props, 'fill'> & {
  * @param rectangleProps
  * @constructor
  */
-export const Rectangle = (props: RectangleFillProps) => {
+export const Rectangle = (props: Props) => {
   const { fill } = props;
   // spreading all props first keeps `fill` in its place among the attributes
   return fill != null && typeof fill === 'object' ? (

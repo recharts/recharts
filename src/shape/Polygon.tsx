@@ -80,6 +80,15 @@ const getRanglePath = (
 
 interface PolygonProps {
   /**
+   * The fill of the polygon. Either a color string, or a {@link RechartsFill} object with an SVG definition,
+   * such as a pattern or a gradient. Recharts renders the definition with a unique ID.
+   * Set the `color` of the fill object: there is no theme color to fall back to.
+   *
+   * @since 3.11
+   * @example <Polygon fill={{ color: 'blue', definition: pattern(patterns.diagonal) }} />
+   */
+  fill?: string | RechartsFill;
+  /**
    * The SVG element's class name.
    */
   className?: string;
@@ -135,9 +144,14 @@ interface PolygonProps {
   onMouseLeave?: (e: React.MouseEvent<SVGPolygonElement, MouseEvent>) => void;
 }
 
-export type Props = Omit<SVGProps<SVGPolygonElement>, 'points'> & PolygonProps;
+export type Props = Omit<SVGProps<SVGPolygonElement>, 'points' | 'fill'> & PolygonProps;
 
-const PolygonImpl: React.FC<Props> = props => {
+/**
+ * The props of the inner renderer, which gets the `fill` as a color or a `url(#…)` reference.
+ */
+type StringFillProps = Omit<Props, 'fill'> & { fill?: string };
+
+const PolygonImpl: React.FC<StringFillProps> = props => {
   const { points, className, baseLinePoints, connectNulls, ...others } = props;
 
   if (!points || !points.length) {
@@ -185,22 +199,6 @@ const PolygonImpl: React.FC<Props> = props => {
 };
 
 /**
- * Props of {@link Polygon}: `fill` can be a fill object too.
- *
- * @since 3.11
- */
-export type PolygonFillProps = Omit<Props, 'fill'> & {
-  /**
-   * The fill of the polygon. Either a color string, or a {@link RechartsFill} object with an SVG definition,
-   * such as a pattern or a gradient. Recharts renders the definition with a unique ID.
-   * Set the `color` of the fill object: there is no theme color to fall back to.
-   *
-   * @example <Polygon fill={{ color: 'blue', definition: pattern(patterns.diagonal) }} />
-   */
-  fill?: string | RechartsFill;
-};
-
-/**
  * Renders a polygon shape from an array of x/y coordinates, closing the
  * outline into a filled shape by default. If the given points contain a
  * gap (an invalid or missing coordinate) and `connectNulls` is not set,
@@ -210,7 +208,7 @@ export type PolygonFillProps = Omit<Props, 'fill'> & {
  * standard SVG presentation attributes (e.g. `stroke`, `fill`,
  * `strokeWidth`) for styling, since it wraps a native SVG path element.
  */
-export const Polygon = (props: PolygonFillProps) => {
+export const Polygon = (props: Props) => {
   const { fill } = props;
   // spreading all props first keeps `fill` in its place among the attributes
   return fill != null && typeof fill === 'object' ? (
