@@ -1,5 +1,7 @@
 import { CSSProperties } from 'react';
 import { LegendProps } from '../index';
+import type { TextBackgroundProps } from '../component/Text';
+import type { RechartsFill } from '../fill/RechartsFill';
 
 /**
  * Styles shared for rectangular or variable shape components that have an area (Area, Bar, Rectangle)
@@ -10,7 +12,18 @@ export type Styles2D = {
   strokeWidth?: number | string;
   strokeDasharray?: string | number;
   fillOpacity?: number | string;
-  fill?: string;
+  /**
+   * A color, or a fill object that paints the shapes with a pattern or a gradient.
+   * Everything that needs a plain color, such as the Tooltip, the Legend text, and labels, uses its `color`.
+   *
+   * Give each entry of `graphicalItems` a different pattern, and charts tell their series apart
+   * without relying on color alone.
+   *
+   * Bar, Area, Radar, and Scatter draw the definition of a fill object. Everything else paints with its `color`.
+   *
+   * @example { fill: { color: '#2b6cb0', definition: pattern(patterns.diagonal) } }
+   */
+  fill?: string | RechartsFill;
 };
 
 export type GraphicalItemStyle = Styles2D & {
@@ -32,11 +45,37 @@ export type GraphicalItemStyle = Styles2D & {
    *   (a function or a React element) receives none of them. In Bar, a custom `shape` is used
    *   for the active bar too, so it does not receive them either.
    * - If the `activeDot`, `activeBar`, or `activeShape` object sets its own `fill` or `stroke`,
-   *   it ignores these styles completely. Its other style properties override the matching ones from here.
-   * - The same is true for graphical items and data entries that set their own `fill` or `stroke`,
-   *   see {@link RechartsTheme.graphicalItems}.
+   *   it ignores the `fill` and `stroke` from here. Its other style properties override the matching ones from here,
+   *   and the rest of these styles still apply.
+   * - The `fill` and `stroke` from here are designed to go with the theme colors of the graphical item.
+   *   If the graphical item or a data entry sets its own `fill` or `stroke`, its active representation ignores
+   *   the `fill` and `stroke` from here, and keeps its own colors. The rest of these styles still apply.
    */
   active?: Styles2D;
+  /**
+   * Styles of the data labels of this graphical item: `LabelList`, the `label` prop of graphical items,
+   * and the default Pie label.
+   *
+   * Data labels never use the global {@link RechartsTheme.label}.
+   *
+   * The labels take the same entry as their graphical item: Pie and Funnel take one entry per sector or trapezoid,
+   * the other graphical items take one entry per series.
+   * The labels keep these styles even if the graphical item or a data entry sets its own `fill` or `stroke`.
+   *
+   * If `style` sets no color, data labels pick one automatically:
+   * - A label on top of a filled shape (Bar, Funnel, Pie, RadialBar) takes the `pageBackground` color,
+   *   or the `typography` color if there is no page background.
+   *   A shape with `fill="none"` or `transparent` is not filled, so its labels count as next to it.
+   * - A label next to its shape, and every label of Line, Area, Radar and Scatter, takes the color of its shape.
+   * - A label with a `background` or `halo` takes the color of its shape too.
+   * - A label at an `{ x, y }` position takes the `typography` color.
+   *
+   * @see {@link https://recharts.github.io/en-US/guide/label-colors/ Label colors guide}
+   *
+   * Explicit props of `LabelList`, of the `label` prop of graphical items, and of the default Pie label
+   * win over these styles.
+   */
+  label?: LabelTheme;
 };
 
 /**
@@ -55,6 +94,32 @@ export type Styles1D = {
  * These styles are applied to both SVG elements (Label, Text) and HTML elements (Legend, Tooltip).
  */
 export type TextStyles = CSSProperties;
+
+/**
+ * Styles of labels.
+ *
+ * Explicit props of the label win over these styles.
+ */
+export type LabelTheme = {
+  /**
+   * Text styles. They are merged over `typography`, and the explicit `style` prop of the label is merged over them.
+   *
+   * A `fill` or `color` here sets the text color, unless the label sets its own `fill`.
+   */
+  style?: TextStyles;
+  /**
+   * The default for the `background` prop of the label, in the same format.
+   *
+   * - `true` or an object draws a background behind every label that does not set `background={false}`.
+   * - An object also sets the styles of the background. If the label sets `background` to an object,
+   *   that object is merged over these styles key by key.
+   * - `false` or `undefined` draws no background, unless the label asks for one.
+   *   If it does, it gets the default styles.
+   *
+   * If neither the label nor the theme sets the background `fill`, the background uses `pageBackground`.
+   */
+  background?: boolean | TextBackgroundProps;
+};
 
 /**
  * Styling presets for Recharts components.
@@ -89,20 +154,29 @@ export interface RechartsTheme {
    * Treemap and SunburstChart give each top-level tile or first-ring sector the next entry by index,
    * and all their descendants inherit that color.
    *
-   * The theme colors never mix with user colors. If Line, Area, Bar, Scatter, Radar, RadialBar, Pie, or Funnel
-   * sets its own `fill` or `stroke` prop, it ignores its theme entry completely, including the `active` styles.
+   * The theme colors never mix with user colors. If Line, Area, Bar, Scatter, Radar, RadialBar, Pie, Funnel,
+   * Treemap, or SunburstChart sets its own `fill` or `stroke` prop, it ignores the `fill` and `stroke`
+   * of its theme entry together, also in the active state. The rest of the theme entry still applies,
+   * including the other `active` styles and the `label` styles.
    *
-   * Individual shapes of Bar, RadialBar, Scatter, Pie, Funnel, Treemap, Sankey, and SunburstChart can be styled
-   * from the data array. If a data entry defines its own `fill` or `stroke`, then that shape ignores
-   * the theme completely, and renders with only its own styles and the explicit props of its
-   * graphical item.
+   * Individual shapes of Bar, RadialBar, Scatter, Pie, Funnel, Treemap, Sankey, and SunburstChart, and
+   * individual point markers of Line, Area, and Radar can be styled from the data array. If a data entry defines its own
+   * `fill` or `stroke`, then that shape ignores the theme `fill` and `stroke` together, and takes its colors
+   * only from its own styles and the explicit props of its graphical item. The rest of the theme still applies.
    *
    * Other style props and data properties (`fillOpacity`, `strokeOpacity`, `strokeWidth`, `strokeDasharray`)
-   * do not opt out of the theme. They override the matching theme value and keep the rest of the theme.
+   * override the matching theme value and keep the rest of the theme.
    *
    * Legend and Tooltip items inherit the same color.
    */
   graphicalItems: ReadonlyArray<GraphicalItemStyle>;
+  /**
+   * Styles of labels other than data labels: axis labels, labels of reference lines, areas and dots,
+   * and standalone `Label` components.
+   *
+   * Data labels take their styles from {@link GraphicalItemStyle.label} instead.
+   */
+  label?: LabelTheme;
   /**
    * Styles applied to Bar and RadialBar backgrounds.
    */

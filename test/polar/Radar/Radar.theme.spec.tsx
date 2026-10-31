@@ -275,7 +275,7 @@ describe('Radar theme', () => {
     expect(polygon.getAttribute('stroke-width')).toBe('3');
   });
 
-  it('ignores the theme completely when only some props are provided', () => {
+  it('ignores the theme colors, and keeps the other theme styles, when only some props are provided', () => {
     const { container } = rechartsTestRender(
       <RechartsThemeProvider
         value={{
@@ -300,10 +300,10 @@ describe('Radar theme', () => {
     const polygon = getPolygon(container);
     expect(polygon.getAttribute('stroke')).toBe('blue');
     expect(polygon.getAttribute('fill')).not.toBe('purple');
-    expect(polygon.getAttribute('fill-opacity')).not.toBe('0.1');
-    expect(polygon.getAttribute('stroke-dasharray')).toBe(null);
-    expect(polygon.getAttribute('stroke-opacity')).toBe(null);
-    expect(polygon.getAttribute('stroke-width')).not.toBe('9');
+    expect(polygon.getAttribute('fill-opacity')).toBe('0.1');
+    expect(polygon.getAttribute('stroke-dasharray')).toBe('9 9');
+    expect(polygon.getAttribute('stroke-opacity')).toBe('0.2');
+    expect(polygon.getAttribute('stroke-width')).toBe('9');
   });
 
   describe('activeDot', () => {
@@ -338,7 +338,7 @@ describe('Radar theme', () => {
       expect(activeDot).toHaveAttribute('stroke-width', '5');
     });
 
-    it('ignores the active graphical-item style when the active dot has its own color', () => {
+    it('ignores the active graphical-item colors, and keeps its other styles, when the active dot has its own color', () => {
       const { container } = rechartsTestRender(
         <RechartsThemeProvider
           value={{
@@ -360,7 +360,76 @@ describe('Radar theme', () => {
       const activeDot = getActiveDot(container);
       expect(activeDot).toHaveAttribute('fill', 'blue');
       expect(activeDot).not.toHaveAttribute('stroke', 'purple');
-      expect(activeDot).not.toHaveAttribute('stroke-width', '5');
+      expect(activeDot).toHaveAttribute('stroke-width', '5');
+    });
+  });
+
+  describe('data entry styles', () => {
+    const styledData = [
+      { name: 'A', profit: 100, fill: 'red', stroke: 'lime' },
+      { name: 'B', profit: 200 },
+      { name: 'C', profit: 150 },
+    ];
+
+    const theme = {
+      graphicalItems: [
+        { fill: 'purple', stroke: 'indigo', strokeWidth: 3, active: { fill: 'white', stroke: 'black' } },
+      ],
+    };
+
+    function getDots(container: HTMLElement): ReadonlyArray<Element> {
+      return Array.from(container.querySelectorAll('.recharts-radar-dot'));
+    }
+
+    it('paints a dot with the colors of its data entry without a theme', () => {
+      const { container } = rechartsTestRender(
+        <RadarChart width={600} height={600} data={styledData}>
+          <Radar dataKey="profit" stroke="#8884d8" dot isAnimationActive={false} />
+        </RadarChart>,
+      );
+
+      const [styled, plain] = getDots(container);
+      expect(styled).toHaveAttribute('fill', 'red');
+      expect(styled).toHaveAttribute('stroke', 'lime');
+      expect(plain).toHaveAttribute('stroke', '#8884d8');
+    });
+
+    it('ignores the theme colors on a dot whose data entry has its own colors', () => {
+      const { container } = rechartsTestRender(
+        <RechartsThemeProvider value={theme}>
+          <RadarChart width={600} height={600} data={styledData}>
+            <Radar dataKey="profit" dot isAnimationActive={false} />
+            <Tooltip defaultIndex={0} />
+          </RadarChart>
+        </RechartsThemeProvider>,
+      );
+
+      const [styled, plain] = getDots(container);
+      expect(styled).toHaveAttribute('fill', 'red');
+      expect(styled).toHaveAttribute('stroke', 'lime');
+      expect(styled).toHaveAttribute('stroke-width', '3');
+      expect(plain).toHaveAttribute('stroke', 'indigo');
+      expect(plain).toHaveAttribute('stroke-width', '3');
+
+      // the active dot keeps the entry fill, because the theme active colors go with the theme colors
+      const activeDot = getActiveDot(container);
+      expect(activeDot).toHaveAttribute('fill', 'red');
+      expect(activeDot).not.toHaveAttribute('stroke', 'black');
+    });
+
+    it('shows the series color in the tooltip for a data entry with its own colors', () => {
+      const { container } = rechartsTestRender(
+        <RechartsThemeProvider value={theme}>
+          <RadarChart width={600} height={600} data={styledData}>
+            <Radar dataKey="profit" isAnimationActive={false} />
+            <Tooltip defaultIndex={0} />
+          </RadarChart>
+        </RechartsThemeProvider>,
+      );
+
+      const item = container.querySelector('.recharts-tooltip-item');
+      assertNotNull(item);
+      expect(item).toHaveStyle({ color: 'rgb(75, 0, 130)' });
     });
   });
 });

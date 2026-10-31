@@ -11,8 +11,10 @@ import {
   CartesianLabelListEntry,
   ImplicitLabelListType,
   LabelListFromLabelProp,
+  SetLabelListClipArea,
 } from '../component/LabelList';
 import { Dots } from '../component/Dots';
+import { getLegendPayloadDot, getNoDotsLegendType } from '../shape/DotSymbol';
 import { ErrorBarDataItem, ErrorBarDataPointFormatter } from './ErrorBar';
 import { interpolate, isNullish, noop } from '../util/DataUtils';
 import { isClipDot } from '../util/ReactUtils';
@@ -62,12 +64,20 @@ import { DefaultZIndexes } from '../zIndex/DefaultZIndexes';
 import { propsAreEqual } from '../util/propsAreEqual';
 import { GraphicalItemId } from '../state/graphicalItemsSlice';
 import { ChartData } from '../state/chartDataSlice';
-import { GraphicalItemStyle } from '../theme/RechartsTheme';
+import type { RechartsFill } from '../fill/RechartsFill';
+import { ColorGraphicalItemStyle, ColorStyles2D } from '../theme/themeFill';
 import { useRechartsTheme } from '../theme/RechartsThemeContext';
 import { useBackwardsCompatibleTheme } from '../theme/useBackwardsCompatibleTheme';
-import { getActiveStyleOverrides } from '../theme/activeStyles';
+import { UnthemedColors, useUnthemedColors } from '../theme/dataEntryStyles';
+import { useThemedActiveStyles } from '../theme/activeStyles';
 import { useGraphicalItemIdentity } from '../theme/useGraphicalItemIdentity';
 import { useEffectiveDataKey } from '../util/useEffectiveDataKey';
+import {
+  DataLabelColorsContextProvider,
+  DataLabelThemeContextProvider,
+  useSeriesDataLabelColors,
+  useSeriesLabelThemeResolver,
+} from '../theme/labelTheme';
 
 export interface LinePointItem {
   readonly value: number;
@@ -84,6 +94,8 @@ export interface LinePointItem {
  * Internal props, combination of external props + defaultProps + private Recharts state
  */
 interface InternalLineProps extends ZIndexable {
+  unthemedColors?: UnthemedColors;
+  themedActiveStyles?: ColorStyles2D;
   activeDot: ActiveDotType;
   animateNewValues: boolean;
   animationBegin: number;
@@ -136,18 +148,27 @@ interface InternalLineProps extends ZIndexable {
 export interface LineProps<DataPointType = any, DataValueType = any>
   extends DataProvider<DataPointType>, ValueAxisDataConsumer<DataPointType, DataValueType>, ZIndexable {
   /**
+   * The fill color of the dots. A Line draws no area, so a fill object counts by its `color`.
+   * That lets you spread a theme entry, whose `fill` can be a fill object, onto a Line.
+   */
+  fill?: string | RechartsFill;
+  /**
    * The active dot is rendered on the closest data point when user interacts with the chart. Options:
    *
    * - `false`: dots do not change on user activity; both active and inactive dots follow the `dot` prop (see below)
    * - `true`: renders the active dot with default settings
-   * - `object`: the props of the active dot. This will be merged with the internal calculated props of the active dot
+   * - `object`: the props of the active dot. This will be merged with the internal calculated props of the active dot.
+   *   Set `symbol` to draw a predefined symbol instead of a circle
    * - `ReactElement`: the custom active dot element
    * - `function`: a render function of the custom active dot
+   * - `string`: name of a predefined symbol, such as `'diamond'` or `'star'`
    *
    * @defaultValue true
    * @example <Line dataKey="value" activeDot={false} />
    * @example <Line dataKey="value" activeDot={{ stroke: 'red', strokeWidth: 2, r: 10 }} />
    * @example <Line dataKey="value" activeDot={CustomizedActiveDot} />
+   * @example <Line dataKey="value" activeDot="diamond" />
+   * @example <Line dataKey="value" activeDot={{ symbol: 'diamond', r: 8 }} />
    *
    * @see {@link https://recharts.github.io/en-US/examples/SimpleLineChart/ A line chart with customized active dot}
    */
@@ -212,19 +233,27 @@ export interface LineProps<DataPointType = any, DataValueType = any>
    */
   connectNulls?: boolean;
   /**
-   * Renders a circle element at each data point. Options:
+   * Renders a dot at each data point. Options:
    *
    * - `false`: no dots are drawn;
    * - `true`: renders the dots with default settings;
-   * - `object`: the props of the dot. This will be merged with the internal calculated props of each dot;
+   * - `object`: the props of the dot. This will be merged with the internal calculated props of each dot.
+   *   Set `symbol` to draw a predefined symbol instead of a circle;
    * - `ReactElement`: the custom dot element;
    * - `function`: a render function of the custom dot.
+   *   The legend cannot know what a custom element or function draws, so set a matching `legendType`;
+   * - `string`: name of a predefined symbol, such as `'diamond'` or `'star'`, the same as in `legendType`.
+   *   Use different symbols to tell series apart without relying on color.
+   *   The legend icon shows the same symbol.
+   *   To change the size of the symbol, use the object form with `symbol` and `r`.
    *
    * @defaultValue true
    *
    * @example <Line dataKey="value" dot={false} />
    * @example <Line dataKey="value" dot={{ stroke: 'red', strokeWidth: 2 }} />
    * @example <Line dataKey="value" dot={CustomizedDot} />
+   * @example <Line dataKey="value" dot="diamond" />
+   * @example <Line dataKey="value" dot={{ symbol: 'diamond', r: 6 }} />
    *
    * @see {@link https://recharts.github.io/en-US/examples/CustomizedDotLineChart/ A line chart with customized dot}
    */
@@ -275,7 +304,13 @@ export interface LineProps<DataPointType = any, DataValueType = any>
   /**
    * The type of icon in legend.
    * If set to 'none', no legend item will be rendered.
+   *
+   * By default, the legend icon shows the same predefined symbol as the data points, if they use one.
+   * The `line` icon draws it in the middle of the line.
+   * With a theme, it draws the default dots too, and a plain line when there are no dots.
+   *
    * @defaultValue line
+   * @example <Line dataKey="value" dot="star" legendType="star" />
    */
   legendType?: LegendType;
   /**
@@ -435,7 +470,7 @@ const defaultLineAnimateItems: AnimationInterpolateFn<LinePointItem, CartesianLa
   return result;
 };
 
-const defaultLegacyThemeProps: GraphicalItemStyle = {
+const defaultLegacyThemeProps: ColorGraphicalItemStyle = {
   fill: '#fff',
   stroke: '#3182bd',
   strokeWidth: 1,
@@ -465,9 +500,11 @@ export const defaultLineProps = {
 /**
  * Because of naming conflict, we are forced to ignore certain (valid) SVG attributes.
  */
-type LineSvgProps = Omit<CurveProps, 'points' | 'pathRef' | 'ref' | 'layout' | 'baseLine'>;
+type LineSvgProps = Omit<CurveProps, 'points' | 'pathRef' | 'ref' | 'layout' | 'baseLine' | 'fill'>;
 
-type InternalProps = LineSvgProps & InternalLineProps;
+type StringFillProps = Omit<Props, 'fill'> & { fill?: string };
+
+type InternalProps = LineSvgProps & { fill?: string } & InternalLineProps;
 
 export type Props<DataPointType = any, ValueAxisType = any> = LineSvgProps & LineProps<DataPointType, ValueAxisType>;
 
@@ -479,13 +516,19 @@ function getDotFillFromTheme(stroke: string | undefined, fill: string | undefine
   return stroke && stroke !== 'none' ? stroke : fill;
 }
 
-const computeLegendPayloadFromAreaData = (props: Props): ReadonlyArray<LegendPayload> => {
-  const { dataKey, name, stroke, legendType, hide } = props;
+const computeLegendPayloadFromAreaData = (
+  props: StringFillProps,
+  dotFill: string | undefined,
+  isThemed: boolean,
+): ReadonlyArray<LegendPayload> => {
+  const { dataKey, name, stroke, fill, legendType, hide, dot } = props;
   return [
     {
       inactive: hide,
       dataKey,
       type: legendType,
+      // the same colors as the dots get in LineDotsWrapper
+      dot: getLegendPayloadDot(dot, { fill: dotFill ?? fill, stroke }, isThemed),
       color: stroke,
       value: getTooltipNameProp(name, dataKey),
       payload: props,
@@ -536,6 +579,7 @@ const SetLineTooltipEntrySettings = React.memo(
         unit,
         formatter,
         graphicalItemId: id,
+        ignoreDataEntryColors: true,
       },
     };
     return <SetTooltipEntrySettings tooltipEntrySettings={tooltipEntrySettings} />;
@@ -552,6 +596,7 @@ function LineDotsWrapper({
   props: InternalProps;
 }) {
   const { dot, dataKey, dotFill, needClip } = props;
+  const { unthemedColors } = props;
 
   /*
    * Exclude ID from the props passed to the Dots component
@@ -569,6 +614,7 @@ function LineDotsWrapper({
       dotClassName="recharts-line-dot"
       dataKey={dataKey}
       baseProps={{ ...lineProps, fill: dotFill ?? lineProps.fill }}
+      unthemedColors={unthemedColors}
       needClip={needClip}
       clipPathId={clipPathId}
     />
@@ -806,8 +852,11 @@ class LineWithState extends Component<InternalProps> {
             data={points}
             dataPointFormatter={errorBarDataPointFormatter}
             errorBarOffset={0}
+            clipPath={needClip ? `url(#clipPath-${clipPathId})` : undefined}
           >
-            <RenderCurve props={this.props} clipPathId={clipPathId} />
+            <SetLabelListClipArea xAxisId={xAxisId} yAxisId={yAxisId}>
+              <RenderCurve props={this.props} clipPathId={clipPathId} />
+            </SetLabelListClipArea>
           </SetErrorBarContext>
         </Layer>
         <ActivePoints
@@ -816,13 +865,16 @@ class LineWithState extends Component<InternalProps> {
           mainColor={this.props.stroke}
           itemDataKey={this.props.dataKey}
           clipPath={activePointsClipPath}
+          themedActiveStyles={this.props.themedActiveStyles}
         />
       </ZIndexLayer>
     );
   }
 }
 
-function LineImpl(props: WithIdRequired<Props> & Pick<InternalLineProps, 'dotFill'>) {
+function LineImpl(
+  props: WithIdRequired<StringFillProps> & Pick<InternalLineProps, 'dotFill' | 'unthemedColors' | 'themedActiveStyles'>,
+) {
   const {
     activeDot,
     animateNewValues,
@@ -929,7 +981,12 @@ export function computeLinePoints({
     .filter(Boolean);
 }
 
-function LineFn(outsideProps: Props) {
+function LineFn(propsWithFillObject: Props) {
+  const { fill } = propsWithFillObject;
+  const outsideProps: StringFillProps = {
+    ...propsWithFillObject,
+    fill: fill != null && typeof fill === 'object' ? fill.color : fill,
+  };
   const rechartsTheme = useRechartsTheme();
   const dataKey = useEffectiveDataKey({
     dataKey: outsideProps.dataKey,
@@ -937,22 +994,23 @@ function LineFn(outsideProps: Props) {
     yAxisId: outsideProps.yAxisId ?? defaultLineProps.yAxisId,
   });
   const graphicalItemThemeSelector = useGraphicalItemIdentity(dataKey, outsideProps);
-  const graphicalItemTheme = useBackwardsCompatibleTheme<GraphicalItemStyle>(
+  const resolveLabelTheme = useSeriesLabelThemeResolver(graphicalItemThemeSelector);
+  const graphicalItemTheme = useBackwardsCompatibleTheme<Omit<ColorGraphicalItemStyle, 'label'>>(
     graphicalItemThemeSelector,
     outsideProps,
     defaultLegacyThemeProps,
   );
   const themeStrokeDasharray = graphicalItemTheme?.strokeDasharray;
-  const themedActiveDot = getActiveStyleOverrides(outsideProps.activeDot ?? true, graphicalItemTheme?.active);
-  const activeDot =
-    themedActiveDot == null
-      ? outsideProps.activeDot
-      : { ...themedActiveDot, ...(typeof outsideProps.activeDot === 'object' ? outsideProps.activeDot : {}) };
+  const unthemedColors = useUnthemedColors(outsideProps);
+  const themedActiveStyles = useThemedActiveStyles(graphicalItemThemeSelector, outsideProps);
   const props = resolveDefaultProps(
     {
       ...outsideProps,
       dataKey,
-      activeDot,
+      activeDot: outsideProps.activeDot,
+      // with a theme, a line without dots has no dot in its legend icon either
+      legendType:
+        outsideProps.legendType ?? getNoDotsLegendType(outsideProps.dot ?? defaultLineProps.dot, rechartsTheme != null),
       fill: outsideProps.fill ?? graphicalItemTheme?.fill,
       fillOpacity: outsideProps.fillOpacity ?? graphicalItemTheme?.fillOpacity,
       stroke: outsideProps.stroke ?? graphicalItemTheme?.stroke,
@@ -968,11 +1026,12 @@ function LineFn(outsideProps: Props) {
     outsideProps.fill ??
     (rechartsTheme == null ? props.fill : getDotFillFromTheme(props.stroke, graphicalItemTheme?.fill));
   const isPanorama = useIsPanorama();
+  const labelColors = useSeriesDataLabelColors(props.stroke);
   return (
     <RegisterGraphicalItemId id={props.id} type="line">
       {id => (
         <>
-          <SetLegendPayload legendPayload={computeLegendPayloadFromAreaData(props)} />
+          <SetLegendPayload legendPayload={computeLegendPayloadFromAreaData(props, dotFill, rechartsTheme != null)} />
           <SetLineTooltipEntrySettings
             dataKey={props.dataKey}
             data={props.data}
@@ -997,7 +1056,17 @@ function LineFn(outsideProps: Props) {
             hide={props.hide}
             isPanorama={isPanorama}
           />
-          <LineImpl {...props} id={id} dotFill={dotFill} />
+          <DataLabelThemeContextProvider value={resolveLabelTheme}>
+            <DataLabelColorsContextProvider value={labelColors}>
+              <LineImpl
+                {...props}
+                id={id}
+                dotFill={dotFill}
+                unthemedColors={unthemedColors}
+                themedActiveStyles={themedActiveStyles}
+              />
+            </DataLabelColorsContextProvider>
+          </DataLabelThemeContextProvider>
         </>
       )}
     </RegisterGraphicalItemId>

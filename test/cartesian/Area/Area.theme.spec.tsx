@@ -2,7 +2,7 @@ import { describe, expect, it } from 'vitest';
 import { generateMockData } from '@recharts/devtools';
 import React from 'react';
 import { rechartsTestRender } from '../../helper/createSelectorTestCase';
-import { Area, AreaChart, RechartsThemeProvider, XAxis, YAxis } from '../../../src';
+import { Area, AreaChart, RechartsThemeProvider, Tooltip, XAxis, YAxis } from '../../../src';
 import { assertNotNull } from '../../helper/assertNotNull';
 import { showTooltip } from '../../component/Tooltip/tooltipTestHelpers';
 import { mockGetBoundingClientRect } from '../../helper/mockGetBoundingClientRect';
@@ -153,7 +153,7 @@ describe('Area theme', () => {
     });
 
     describe('when only some props are provided', () => {
-      it('should ignore the theme completely so that the colors do not mix', () => {
+      it('should ignore the theme colors so that they do not mix, and keep the other theme styles', () => {
         const { container } = rechartsTestRender(
           <RechartsThemeProvider
             value={{
@@ -166,7 +166,7 @@ describe('Area theme', () => {
             }}
           >
             <MyChart>
-              {/* Only provide fill, the theme fillOpacity does not apply */}
+              {/* Only provide fill, the theme fillOpacity still applies */}
               <Area dataKey="x" fill="gold" />
             </MyChart>
           </RechartsThemeProvider>,
@@ -174,7 +174,7 @@ describe('Area theme', () => {
         const path = container.querySelector('.recharts-area-area');
         assertNotNull(path);
         expect(path.getAttribute('fill')).toBe('gold');
-        expect(path.getAttribute('fill-opacity')).toBe(null);
+        expect(path.getAttribute('fill-opacity')).toBe('0.7');
       });
     });
   });
@@ -274,7 +274,7 @@ describe('Area theme', () => {
     });
 
     describe('when only some props are provided', () => {
-      it('should ignore the theme completely so that the colors do not mix', () => {
+      it('should ignore the theme colors so that they do not mix, and keep the other theme styles', () => {
         const { container } = rechartsTestRender(
           <RechartsThemeProvider
             value={{
@@ -290,7 +290,7 @@ describe('Area theme', () => {
             }}
           >
             <MyChart>
-              {/* Only provide stroke, the rest of the theme does not apply */}
+              {/* Only provide stroke, the theme fill does not apply, the rest of the theme does */}
               <Area dataKey="x" stroke="green" />
             </MyChart>
           </RechartsThemeProvider>,
@@ -298,9 +298,9 @@ describe('Area theme', () => {
         const path = container.querySelector('.recharts-area-curve');
         assertNotNull(path);
         expect(path.getAttribute('stroke')).toBe('green');
-        expect(path.getAttribute('stroke-width')).not.toBe('4');
-        expect(path.getAttribute('stroke-opacity')).toBe(null);
-        expect(path.getAttribute('stroke-dasharray')).toBe(null);
+        expect(path.getAttribute('stroke-width')).toBe('4');
+        expect(path.getAttribute('stroke-opacity')).toBe('0.3');
+        expect(path.getAttribute('stroke-dasharray')).toBe('5 10');
         expect(container.querySelector('.recharts-area-area')?.getAttribute('fill')).not.toBe('purple');
       });
     });
@@ -484,7 +484,7 @@ describe('Area theme', () => {
     });
 
     describe('when activeDot prop has its own color', () => {
-      it('should ignore the theme active styles', () => {
+      it('should ignore the theme active colors, and keep the other theme active styles', () => {
         const { container } = rechartsTestRender(
           <RechartsThemeProvider
             value={{
@@ -509,7 +509,7 @@ describe('Area theme', () => {
         assertNotNull(activeDot);
         expect(activeDot).toHaveAttribute('fill', 'gold');
         expect(activeDot).not.toHaveAttribute('stroke', 'red');
-        expect(activeDot).not.toHaveAttribute('stroke-width', '5');
+        expect(activeDot).toHaveAttribute('stroke-width', '5');
         expect(activeDot).toHaveAttribute('r', '10');
       });
     });
@@ -537,6 +537,76 @@ describe('Area theme', () => {
     it('should convert array of numbers to string', () => {
       // @ts-expect-error this works but the type does not support it yet, room for improvement!
       expect(renderDasharray([5, 10, 3])).toBe('5,10,3');
+    });
+  });
+
+  describe('data entry styles', () => {
+    const styledData = [
+      { name: 'A', profit: 100, fill: 'red', stroke: 'lime' },
+      { name: 'B', profit: 200 },
+      { name: 'C', profit: 150 },
+    ];
+
+    const theme = {
+      graphicalItems: [
+        { fill: 'purple', stroke: 'indigo', strokeWidth: 3, active: { fill: 'white', stroke: 'black' } },
+      ],
+    };
+
+    function getDots(container: HTMLElement): ReadonlyArray<Element> {
+      return Array.from(container.querySelectorAll('.recharts-area-dot'));
+    }
+
+    it('paints a dot with the colors of its data entry without a theme', () => {
+      const { container } = rechartsTestRender(
+        <AreaChart width={400} height={300} data={styledData}>
+          <Area dataKey="profit" stroke="#8884d8" dot isAnimationActive={false} />
+        </AreaChart>,
+      );
+
+      const [styled, plain] = getDots(container);
+      expect(styled).toHaveAttribute('fill', 'red');
+      expect(styled).toHaveAttribute('stroke', 'lime');
+      expect(plain).toHaveAttribute('stroke', '#8884d8');
+    });
+
+    it('ignores the theme colors on a dot whose data entry has its own colors', () => {
+      const { container } = rechartsTestRender(
+        <RechartsThemeProvider value={theme}>
+          <AreaChart width={400} height={300} data={styledData}>
+            <Area dataKey="profit" dot isAnimationActive={false} />
+            <Tooltip defaultIndex={0} />
+          </AreaChart>
+        </RechartsThemeProvider>,
+      );
+
+      const [styled, plain] = getDots(container);
+      expect(styled).toHaveAttribute('fill', 'red');
+      expect(styled).toHaveAttribute('stroke', 'lime');
+      expect(styled).toHaveAttribute('stroke-width', '3');
+      expect(plain).toHaveAttribute('stroke', 'indigo');
+      expect(plain).toHaveAttribute('stroke-width', '3');
+
+      // the active dot keeps the entry fill, because the theme active colors go with the theme colors
+      const activeDot = container.querySelector('.recharts-active-dot circle');
+      assertNotNull(activeDot);
+      expect(activeDot).toHaveAttribute('fill', 'red');
+      expect(activeDot).not.toHaveAttribute('stroke', 'black');
+    });
+
+    it('shows the series color in the tooltip for a data entry with its own colors', () => {
+      const { container } = rechartsTestRender(
+        <RechartsThemeProvider value={theme}>
+          <AreaChart width={400} height={300} data={styledData}>
+            <Area dataKey="profit" isAnimationActive={false} />
+            <Tooltip defaultIndex={0} />
+          </AreaChart>
+        </RechartsThemeProvider>,
+      );
+
+      const item = container.querySelector('.recharts-tooltip-item');
+      assertNotNull(item);
+      expect(item).toHaveStyle({ color: 'rgb(75, 0, 130)' });
     });
   });
 });

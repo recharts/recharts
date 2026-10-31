@@ -29,10 +29,11 @@ import { RegisterGraphicalItemId } from '../context/RegisterGraphicalItemId';
 import { WithIdRequired } from '../util/useUniqueId';
 import { RequiresDefaultProps, resolveDefaultProps } from '../util/resolveDefaultProps';
 import { initialEventSettingsState } from '../state/eventSettingsSlice';
-import { GraphicalItemStyle, RechartsTheme } from '../theme/RechartsTheme';
+import { ColorGraphicalItemStyle, getColorGraphicalItems } from '../theme/themeFill';
 import { useRechartsTheme } from '../theme/RechartsThemeContext';
-import { getOwnStyles, hasOwnColors } from '../theme/dataEntryStyles';
+import { getOwnStyles, hasOwnColors, withoutColors } from '../theme/dataEntryStyles';
 import { getEffectivePageBackground } from '../theme/pageBackground';
+import { SVGElementPropKeysType, svgPropertiesNoEventsFromUnknown } from '../util/svgPropertiesNoEvents';
 
 export interface SunburstData {
   [key: string]: any;
@@ -164,7 +165,7 @@ interface DrawArcOptions {
    * Theme style of the first-ring sector that this branch starts from.
    * Undefined for the first ring, and without a theme.
    */
-  branchStyle?: GraphicalItemStyle;
+  branchStyle?: ColorGraphicalItemStyle;
   nestedActiveTooltipIndex?: TooltipIndex | undefined;
 }
 
@@ -252,14 +253,18 @@ const preloadedState: Partial<RechartsRootState> = {
   },
 };
 
-type SunburstPositionMap = Map<string, ChartCoordinate>;
+/**
+ * Sector coordinates keyed by their tooltip index (`[0]`, `[0]children[1]`, ...) which is the identity
+ * that the tooltip store and the keyboard navigation use when asking for a position.
+ */
+type SunburstPositionMap = Map<TooltipIndex, ChartCoordinate>;
 
 /**
  * Styles that the chart takes from the theme.
  * Undefined if there is no theme, in which case the chart renders with its legacy styles.
  */
 type SunburstThemeStyles = {
-  graphicalItems: RechartsTheme['graphicalItems'];
+  graphicalItems: ReadonlyArray<ColorGraphicalItemStyle>;
   /**
    * The color behind the chart.
    * Separators and the label halo are painted in this color, so that they read as gaps.
@@ -315,6 +320,100 @@ type InternalSunburstChartProps = WithIdRequired<
   themeStyles: SunburstThemeStyles | undefined;
 };
 
+function readEntryStroke(entry: unknown): string | undefined {
+  if (entry != null && typeof entry === 'object' && 'stroke' in entry && typeof entry.stroke === 'string') {
+    return entry.stroke;
+  }
+  return undefined;
+}
+
+function readEntryStrokeWidth(entry: unknown): string | number | undefined {
+  if (entry != null && typeof entry === 'object' && 'strokeWidth' in entry) {
+    const { strokeWidth } = entry;
+    if (typeof strokeWidth === 'number' || typeof strokeWidth === 'string') {
+      return strokeWidth;
+    }
+  }
+  return undefined;
+}
+
+type SectorPropsInput = {
+  entry: SunburstData;
+  /**
+   * Resolved fill of the parent sector.
+   * A child with no fill of its own paints with this color.
+   * It does not count as the child's own color, so a theme separator can still apply.
+   */
+  inheritedFill: string | undefined;
+  /** Explicit chart fill. Includes the legacy default when no theme is active. */
+  chartFill: string | undefined;
+  /** Explicit chart stroke. Includes the legacy default when no theme is active. */
+  chartStroke: string | undefined;
+  /** Separator width. An entry `strokeWidth` wins over this. */
+  padding: number;
+  themeStyles: SunburstThemeStyles | undefined;
+  branchStyle: ColorGraphicalItemStyle | undefined;
+};
+
+/**
+ * SVG props from one data entry, without `id`.
+ * `id` is removed so a data id cannot land on the sector.
+ */
+function entrySvgProps(entry: SunburstData): Omit<Partial<Record<SVGElementPropKeysType, unknown>>, 'id'> {
+  const props = svgPropertiesNoEventsFromUnknown(entry);
+  if (props == null) {
+    return {};
+  }
+  const { id, ...withoutId } = props;
+  return withoutId;
+}
+
+/**
+ * Resolves the props of one sector.
+ *
+ * Every valid SVG prop on the data entry is applied, except `id`.
+ * Entry props merge over the chart props: a value the entry leaves out comes from the chart.
+ *
+ * A color is a `fill` or `stroke` on the entry itself or on `<SunburstChart>`.
+ * If either has one, the theme colors are not applied, but the other theme styles are. A fill inherited from the parent
+ * does not count, so nested sectors of the same color keep the theme separator.
+ * Without a theme, the chart's legacy defaults fill that role.
+ */
+function resolveSectorProps({
+  entry,
+  inheritedFill,
+  chartFill,
+  chartStroke,
+  padding,
+  themeStyles,
+  branchStyle,
+}: SectorPropsInput): SVGProps<SVGPathElement> {
+  const strokeWidth = readEntryStrokeWidth(entry) ?? padding;
+  const hasExplicitColors = chartFill != null || chartStroke != null || hasOwnColors(entry);
+  const props: SVGProps<SVGPathElement> = {};
+  if (themeStyles != null) {
+    /*
+     * Keep non-color theme fields such as fillOpacity and strokeDasharray.
+     * getOwnStyles leaves out `active`, which is not a sector prop.
+     */
+    Object.assign(props, getOwnStyles(hasExplicitColors ? withoutColors(branchStyle) : branchStyle));
+  }
+  // Entry props win over the theme, then the resolved colors and separator width.
+  Object.assign(props, entrySvgProps(entry));
+
+  if (themeStyles != null && !hasExplicitColors) {
+    props.fill = inheritedFill ?? branchStyle?.fill;
+    props.stroke = themeStyles.pageBackground ?? branchStyle?.stroke;
+    props.strokeWidth = strokeWidth;
+    return props;
+  }
+
+  props.fill = entry.fill ?? inheritedFill ?? chartFill;
+  props.stroke = readEntryStroke(entry) ?? chartStroke;
+  props.strokeWidth = strokeWidth;
+  return props;
+}
+
 const SunburstChartImpl = ({
   className,
   data,
@@ -351,12 +450,12 @@ const SunburstChartImpl = ({
   const cx = cxFromProps ?? width / 2;
   const cy = cyFromProps ?? height / 2;
 
-  const rScale = scaleLinear([0, data[dataKey]], [0, endAngle]);
+  const rScale = scaleLinear([0, data[dataKey]], [0, endAngle - startAngle]);
   const treeDepth = getMaxDepthOf(data);
   const thickness = (outerRadius - innerRadius) / treeDepth;
 
   const sectors: React.ReactNode[] = [];
-  const positions: SunburstPositionMap = new Map<string, ChartCoordinate>([]);
+  const positions: SunburstPositionMap = new Map<TooltipIndex, ChartCoordinate>([]);
 
   // event handlers
   function handleMouseEnter(node: SunburstNode, e: React.MouseEvent) {
@@ -366,7 +465,7 @@ const SunburstChartImpl = ({
       setActiveMouseOverItemIndex({
         activeIndex: node.tooltipIndex,
         activeDataKey: dataKey,
-        activeCoordinate: positions.get(node.name),
+        activeCoordinate: positions.get(node.tooltipIndex),
         activeGraphicalItemId: id,
       }),
     );
@@ -385,7 +484,7 @@ const SunburstChartImpl = ({
       setActiveClickItemIndex({
         activeIndex: node.tooltipIndex,
         activeDataKey: dataKey,
-        activeCoordinate: positions.get(node.name),
+        activeCoordinate: positions.get(node.tooltipIndex),
         activeGraphicalItemId: id,
       }),
     );
@@ -393,36 +492,6 @@ const SunburstChartImpl = ({
 
   const labelProps: TextProps | undefined =
     themeStyles == null ? textOptions : { ...getThemedTextProps(themeStyles), ...textOptions };
-
-  /**
-   * Resolves the styles of a single sector.
-   *
-   * Without a theme, a sector uses its own `fill` from data, or else its parent's color, or else the `fill` prop.
-   *
-   * With a theme, each first-ring sector takes the next theme color, and all its descendants inherit it.
-   * Separators are painted in the chart background color, so that they read as gaps.
-   * A sector that defines its own colors in data ignores the theme,
-   * and renders with only its own styles, the inherited color, and the explicit props.
-   */
-  function getSectorStyles(
-    d: SunburstData,
-    childColor: string | undefined,
-    branchStyle: GraphicalItemStyle | undefined,
-  ): SVGProps<SVGPathElement> {
-    if (themeStyles == null) {
-      return { fill: d?.fill ?? childColor ?? fill, stroke, strokeWidth: padding };
-    }
-    if (hasOwnColors(d)) {
-      return { fill: childColor ?? fill, stroke, strokeWidth: padding, ...getOwnStyles(d) };
-    }
-    return {
-      fill: childColor ?? fill ?? branchStyle?.fill,
-      stroke: stroke ?? themeStyles.pageBackground ?? branchStyle?.stroke,
-      strokeWidth: padding,
-      // Styles without a color of their own merge with the theme.
-      ...getOwnStyles(d),
-    };
-  }
 
   // recursively add nodes for each data point and its children
   function drawArcs(
@@ -447,17 +516,25 @@ const SunburstChartImpl = ({
         (themeStyles == null || themeStyles.graphicalItems.length === 0
           ? undefined
           : themeStyles.graphicalItems[i % themeStyles.graphicalItems.length]);
-      const sectorStyles = getSectorStyles(d, childColor, branchStyle);
-      const fillColor = sectorStyles.fill;
+      const sectorProps = resolveSectorProps({
+        entry: d,
+        inheritedFill: childColor,
+        chartFill: fill,
+        chartStroke: stroke,
+        padding,
+        themeStyles,
+        branchStyle,
+      });
+      const fillColor = typeof sectorProps.fill === 'string' ? sectorProps.fill : undefined;
       const { x: textX, y: textY } = polarToCartesian(0, 0, innerR + radius / 2, -(start + arcLength - arcLength / 2));
       currentAngle += arcLength;
       sectors.push(
-        <g key={`sunburst-sector-${d.name}-${i}`}>
+        <g key={`sunburst-sector-${currentTooltipIndex}`}>
           <Sector
             onClick={() => handleClick(nodeWithIndex)}
             onMouseEnter={e => handleMouseEnter(nodeWithIndex, e)}
             onMouseLeave={e => handleMouseLeave(nodeWithIndex, e)}
-            {...sectorStyles}
+            {...sectorProps}
             startAngle={start}
             endAngle={start + arcLength}
             innerRadius={innerR}
@@ -472,7 +549,7 @@ const SunburstChartImpl = ({
       );
 
       const { x: tooltipX, y: tooltipY } = polarToCartesian(cx, cy, innerR + radius / 2, start);
-      positions.set(d.name, { x: tooltipX, y: tooltipY });
+      positions.set(currentTooltipIndex, { x: tooltipX, y: tooltipY });
 
       const renderedChildren = drawArcs(
         d.children,
@@ -539,7 +616,7 @@ export const SunburstChart = (outsideProps: SunburstChartProps) => {
       theme == null
         ? undefined
         : {
-            graphicalItems: theme.graphicalItems,
+            graphicalItems: getColorGraphicalItems(theme.graphicalItems),
             pageBackground: getEffectivePageBackground(theme),
           },
     [theme],

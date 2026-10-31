@@ -6,109 +6,103 @@
  * This file decides when the `active` styles of a theme apply to it.
  * All graphical items follow the same rules.
  *
- * The rules are the same as in `dataEntryStyles.ts`: theme styles are a coherent set,
- * and they never mix with user-provided colors. Other style properties
- * (opacities, `strokeWidth`, `strokeDasharray`) merge with the theme field by field.
+ * The theme designs the `active` colors to go with its own series colors: for example a background fill
+ * with a series-color stroke. They do not fit a shape that has colors of its own.
+ * So the theme active `fill` and `stroke` only apply to shapes that take their colors from the theme.
+ * If the graphical item props, or the data entry, set their own `fill` or `stroke`,
+ * the active shape drops the theme active `fill` and `stroke` together, and keeps its own colors.
+ * The same goes for an active representation object (such as an `activeDot` object) with its own colors.
+ *
+ * Other active style properties (opacities, `strokeWidth`, `strokeDasharray`) do not bring a color,
+ * so they always apply in the active state. Only the active representation object overrides them, field by field.
  *
  * On top of that, the theme only styles what Recharts renders by default.
  * A custom shape (a function or a React element) has all the control, and it receives no theme active styles.
  */
 
-import { isValidElement, useMemo } from 'react';
-import { GraphicalItemStyle, RechartsTheme, Styles2D } from './RechartsTheme';
+import { isValidElement } from 'react';
+import { RechartsTheme } from './RechartsTheme';
+import { ColorGraphicalItemStyle, ColorStyles2D } from './themeFill';
 import { useRechartsTheme } from './RechartsThemeContext';
-import { hasOwnColors } from './dataEntryStyles';
+import { hasOwnColors, withoutColors } from './dataEntryStyles';
 
 /**
- * Merges the `active` theme styles with user-provided styles.
+ * Merges the `active` theme styles with the styles of the active representation.
  *
  * @param activeStyle `active` slice of the graphical item theme
- * @param ownStyles styles provided by the user: props of graphical item, active shape object, or data entry
+ * @param ownStyles styles of the active representation, such as an `activeDot` object
  * @returns theme styles to apply to the active representation, without the ones that `ownStyles` override.
- * Undefined if `ownStyles` have their own colors, or if there is nothing to apply.
+ * Undefined if there is nothing to apply.
  */
-export function resolveThemedActiveStyles(activeStyle: Styles2D | undefined, ownStyles: unknown): Styles2D | undefined {
-  if (activeStyle == null || hasOwnColors(ownStyles)) {
-    return undefined;
-  }
-  if (ownStyles == null || typeof ownStyles !== 'object') {
+export function resolveThemedActiveStyles(
+  activeStyle: ColorStyles2D | undefined,
+  ownStyles: unknown,
+): ColorStyles2D | undefined {
+  if (activeStyle == null || ownStyles == null || typeof ownStyles !== 'object') {
     return activeStyle;
   }
-  const { fillOpacity, strokeOpacity, strokeWidth, strokeDasharray }: Styles2D = ownStyles;
+  const { fillOpacity, strokeOpacity, strokeWidth, strokeDasharray }: ColorStyles2D = ownStyles;
+  const themeStyles = hasOwnColors(ownStyles) ? withoutColors(activeStyle) : activeStyle;
   if (fillOpacity == null && strokeOpacity == null && strokeWidth == null && strokeDasharray == null) {
-    return activeStyle;
+    return Object.keys(themeStyles).length > 0 ? themeStyles : undefined;
   }
-  const result: Styles2D = {};
-  if (activeStyle.fill != null) {
-    result.fill = activeStyle.fill;
+  const result: ColorStyles2D = { ...themeStyles };
+  if (fillOpacity != null) {
+    delete result.fillOpacity;
   }
-  if (activeStyle.stroke != null) {
-    result.stroke = activeStyle.stroke;
+  if (strokeOpacity != null) {
+    delete result.strokeOpacity;
   }
-  if (fillOpacity == null && activeStyle.fillOpacity != null) {
-    result.fillOpacity = activeStyle.fillOpacity;
+  if (strokeWidth != null) {
+    delete result.strokeWidth;
   }
-  if (strokeOpacity == null && activeStyle.strokeOpacity != null) {
-    result.strokeOpacity = activeStyle.strokeOpacity;
-  }
-  if (strokeWidth == null && activeStyle.strokeWidth != null) {
-    result.strokeWidth = activeStyle.strokeWidth;
-  }
-  if (strokeDasharray == null && activeStyle.strokeDasharray != null) {
-    result.strokeDasharray = activeStyle.strokeDasharray;
+  if (strokeDasharray != null) {
+    delete result.strokeDasharray;
   }
   return Object.keys(result).length > 0 ? result : undefined;
 }
 
 /**
- * Returns referentially stable {@link resolveThemedActiveStyles} of a graphical item,
+ * Returns the `active` theme styles of a graphical item,
  * or undefined if there is no active theme, or the theme does not define `active` styles.
+ * If the graphical item sets its own `fill` or `stroke`, the result has no theme colors.
  *
  * @param themeSelector selects the theme slice of this graphical item
  * @param explicitProps props as provided by the user, before merging with theme or defaults
  */
 export function useThemedActiveStyles(
-  themeSelector: (theme: RechartsTheme) => GraphicalItemStyle | undefined,
-  explicitProps: Styles2D,
-): Styles2D | undefined {
+  themeSelector: (theme: RechartsTheme) => ColorGraphicalItemStyle | undefined,
+  explicitProps: ColorStyles2D,
+): ColorStyles2D | undefined {
   const theme = useRechartsTheme();
   const activeStyle = theme == null ? undefined : themeSelector(theme)?.active;
-  const { fill, fillOpacity, stroke, strokeOpacity, strokeWidth, strokeDasharray } = explicitProps;
-  return useMemo(
-    () =>
-      resolveThemedActiveStyles(activeStyle, {
-        fill,
-        fillOpacity,
-        stroke,
-        strokeOpacity,
-        strokeWidth,
-        strokeDasharray,
-      }),
-    [activeStyle, fill, fillOpacity, stroke, strokeOpacity, strokeWidth, strokeDasharray],
-  );
+  return hasOwnColors(explicitProps) ? withoutColors(activeStyle) : activeStyle;
 }
 
 /**
  * Returns the theme styles for a single active representation, or undefined if the theme does not apply to it.
  *
- * The theme applies if Recharts renders the default shape: the option is `true`, or an object without its own colors.
- * A custom shape (function or React element), an object with its own colors,
- * and data entries with their own colors all ignore the theme.
+ * The theme applies if Recharts renders the default shape: the option is `true`, a predefined symbol name
+ * (such as `activeDot="diamond"` or `activeShape="star"`), or an object.
+ * A data entry or an object that sets its own `fill` or `stroke` drops the theme colors,
+ * and keeps the other theme styles.
+ * A custom shape (function or React element) ignores the theme.
  *
  * @param activeOption the `activeDot`, `activeShape`, or `activeBar` prop
- * @param themedActiveStyles `active` slice of the graphical item theme, or the result of {@link resolveThemedActiveStyles}
+ * @param themedActiveStyles result of {@link useThemedActiveStyles}, or the `active` slice of the graphical item theme
  * @param entry data entry, if this graphical item renders one shape per data entry
  */
 export function getActiveStyleOverrides(
   activeOption: unknown,
-  themedActiveStyles: Styles2D | undefined,
+  themedActiveStyles: ColorStyles2D | undefined,
   entry?: unknown,
-): Styles2D | undefined {
-  let result: Styles2D | undefined;
-  if (activeOption === true) {
-    result = themedActiveStyles;
-  } else if (activeOption != null && typeof activeOption === 'object' && !isValidElement(activeOption)) {
-    result = resolveThemedActiveStyles(themedActiveStyles, activeOption);
+): ColorStyles2D | undefined {
+  const themeStyles = hasOwnColors(entry) ? withoutColors(themedActiveStyles) : themedActiveStyles;
+  if (activeOption === true || typeof activeOption === 'string') {
+    return themeStyles;
   }
-  return entry == null ? result : resolveThemedActiveStyles(result, entry);
+  if (activeOption != null && typeof activeOption === 'object' && !isValidElement(activeOption)) {
+    return resolveThemedActiveStyles(themeStyles, activeOption);
+  }
+  return undefined;
 }

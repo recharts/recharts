@@ -1,7 +1,7 @@
 import React from 'react';
 import { describe, expect, it, Mock, test, vi } from 'vitest';
 import { fireEvent, render, screen } from '@testing-library/react';
-import { Bar, BarChart, DotProps, LineChart, ReferenceDot, XAxis, YAxis } from '../../src';
+import { Bar, BarChart, Brush, DotProps, IfOverflow, LineChart, ReferenceDot, XAxis, YAxis } from '../../src';
 import { useAppSelector } from '../../src/state/hooks';
 import { selectReferenceDotsByAxis } from '../../src/state/selectors/axisSelectors';
 import { assertNotNull } from '../helper/assertNotNull';
@@ -477,6 +477,87 @@ describe('<ReferenceDot />', () => {
 
       expect(dotSpy).toHaveBeenLastCalledWith([]);
       expect(dotSpy).toHaveBeenCalledTimes(5);
+    });
+  });
+
+  describe('when a coordinate is not a category on the axis', () => {
+    test.each(['discard', 'hidden', 'visible', 'extendDomain'] satisfies ReadonlyArray<IfOverflow>)(
+      'should not render a dot when x is not on the XAxis and ifOverflow=%s',
+      ifOverflow => {
+        const { container } = render(
+          <BarChart width={400} height={300} data={data} margin={{ top: 0, right: 0, bottom: 0, left: 0 }}>
+            <XAxis dataKey="name" />
+            <YAxis />
+            <Bar dataKey="uv" isAnimationActive={false} />
+            <ReferenceDot x="201201" y={0} ifOverflow={ifOverflow} />
+          </BarChart>,
+        );
+        expect(container.querySelectorAll('.recharts-reference-dot-dot')).toHaveLength(0);
+      },
+    );
+
+    test.each(['discard', 'hidden', 'visible', 'extendDomain'] satisfies ReadonlyArray<IfOverflow>)(
+      'should not render a dot when x is outside the brushed range and ifOverflow=%s',
+      ifOverflow => {
+        const { container } = render(
+          <BarChart width={400} height={300} data={data}>
+            <XAxis dataKey="name" />
+            <YAxis />
+            <Bar dataKey="uv" isAnimationActive={false} />
+            <ReferenceDot x="201102" y={0} ifOverflow={ifOverflow} />
+            <Brush dataKey="name" startIndex={4} endIndex={8} />
+          </BarChart>,
+        );
+        expect(container.querySelectorAll('.recharts-reference-dot-dot')).toHaveLength(0);
+      },
+    );
+
+    test.each(['discard', 'hidden', 'visible', 'extendDomain'] satisfies ReadonlyArray<IfOverflow>)(
+      'should not render a dot when y is not a category on the YAxis and ifOverflow=%s',
+      ifOverflow => {
+        const { container } = render(
+          <BarChart
+            width={400}
+            height={300}
+            data={data}
+            layout="vertical"
+            margin={{ top: 0, right: 0, bottom: 0, left: 0 }}
+          >
+            <XAxis type="number" />
+            <YAxis type="category" dataKey="name" />
+            <Bar dataKey="uv" isAnimationActive={false} />
+            <ReferenceDot x={0} y="201201" ifOverflow={ifOverflow} />
+          </BarChart>,
+        );
+        expect(container.querySelectorAll('.recharts-reference-dot-dot')).toHaveLength(0);
+      },
+    );
+
+    it('should still render a dot when both coordinates are on the axes', () => {
+      const { container } = render(
+        <BarChart width={400} height={300} data={data}>
+          <XAxis dataKey="name" />
+          <YAxis />
+          <Bar dataKey="uv" isAnimationActive={false} />
+          <ReferenceDot x="201106" y={0} />
+          <Brush dataKey="name" startIndex={4} endIndex={8} />
+        </BarChart>,
+      );
+      expect(container.querySelectorAll('.recharts-reference-dot-dot')).toHaveLength(1);
+    });
+
+    it('should still render a dot when a numeric coordinate is outside the domain and ifOverflow is visible', () => {
+      const { container } = render(
+        <BarChart width={400} height={300} data={data}>
+          <XAxis dataKey="name" />
+          <YAxis />
+          <Bar dataKey="uv" isAnimationActive={false} />
+          <ReferenceDot x="201106" y={20} ifOverflow="visible" />
+        </BarChart>,
+      );
+      const dot = container.querySelector('.recharts-reference-dot-dot');
+      expect(dot).not.toBeNull();
+      expect(Number(dot?.getAttribute('cx'))).toBeGreaterThan(0);
     });
   });
 });

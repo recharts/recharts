@@ -12,6 +12,7 @@ import { expectScatterPoints } from '../helper/expectScatterPoints';
 import { useIsPanorama } from '../../src/context/PanoramaContext';
 import { createSelectorTestCase } from '../helper/createSelectorTestCase';
 import { expectLastCalledWith } from '../helper/expectLastCalledWith';
+import { assertNotNull } from '../helper/assertNotNull';
 
 type ExpectedErrorBarLine = {
   x1: string;
@@ -2419,6 +2420,92 @@ describe('<ErrorBar />', () => {
         { x1: '395', x2: '395', y1: '109', y2: '74.33333333333336' },
         { x1: '390', x2: '400', y1: '109', y2: '109' },
       ]);
+    });
+  });
+
+  describe('clipping', () => {
+    // the first and the last whisker reach outside of the YAxis domain [0, 100]
+    const data = [
+      { x: 1, uv: 90, err: 30 },
+      { x: 2, uv: 50, err: 10 },
+      { x: 3, uv: 10, err: 30 },
+    ];
+
+    function getItemClipPathUrl(container: HTMLElement, itemSelector: string): string {
+      const item = container.querySelector(itemSelector);
+      assertNotNull(item);
+      const clipPath = item.querySelector('clipPath');
+      assertNotNull(clipPath);
+      return `url(#${clipPath.getAttribute('id')})`;
+    }
+
+    function getErrorBarClipPaths(container: HTMLElement): ReadonlyArray<string | null | undefined> {
+      const errorBars = container.querySelectorAll('.recharts-errorBar');
+      expect(errorBars).toHaveLength(data.length);
+      return Array.from(errorBars).map(errorBar => errorBar.closest('[clip-path]')?.getAttribute('clip-path'));
+    }
+
+    it('should not clip ErrorBars when the axes do not allow data overflow', () => {
+      const renderTestCase = createSelectorTestCase(({ children }) => (
+        <LineChart width={400} height={300} data={data}>
+          <XAxis dataKey="x" />
+          <YAxis domain={[0, 100]} />
+          <Line dataKey="uv" isAnimationActive={false}>
+            <ErrorBar dataKey="err" isAnimationActive={false} />
+          </Line>
+          {children}
+        </LineChart>
+      ));
+      const { container } = renderTestCase();
+      expect(getErrorBarClipPaths(container)).toEqual([undefined, undefined, undefined]);
+    });
+
+    it('should clip ErrorBars in Line with the clip path of the Line', () => {
+      const renderTestCase = createSelectorTestCase(({ children }) => (
+        <LineChart width={400} height={300} data={data}>
+          <XAxis dataKey="x" />
+          <YAxis domain={[0, 100]} allowDataOverflow />
+          <Line dataKey="uv" isAnimationActive={false}>
+            <ErrorBar dataKey="err" isAnimationActive={false} />
+          </Line>
+          {children}
+        </LineChart>
+      ));
+      const { container } = renderTestCase();
+      const clipPathUrl = getItemClipPathUrl(container, '.recharts-line');
+      expect(getErrorBarClipPaths(container)).toEqual([clipPathUrl, clipPathUrl, clipPathUrl]);
+    });
+
+    it('should clip ErrorBars in Bar with the clip path of the Bar', () => {
+      const renderTestCase = createSelectorTestCase(({ children }) => (
+        <BarChart width={400} height={300} data={data}>
+          <XAxis dataKey="x" />
+          <YAxis domain={[0, 100]} allowDataOverflow />
+          <Bar dataKey="uv" isAnimationActive={false}>
+            <ErrorBar dataKey="err" isAnimationActive={false} />
+          </Bar>
+          {children}
+        </BarChart>
+      ));
+      const { container } = renderTestCase();
+      const clipPathUrl = getItemClipPathUrl(container, '.recharts-bar');
+      expect(getErrorBarClipPaths(container)).toEqual([clipPathUrl, clipPathUrl, clipPathUrl]);
+    });
+
+    it('should clip ErrorBars in Scatter with the clip path of the Scatter', () => {
+      const renderTestCase = createSelectorTestCase(({ children }) => (
+        <ScatterChart width={400} height={300}>
+          <XAxis dataKey="x" type="number" />
+          <YAxis dataKey="uv" domain={[0, 100]} allowDataOverflow />
+          <Scatter data={data} isAnimationActive={false}>
+            <ErrorBar dataKey="err" isAnimationActive={false} />
+          </Scatter>
+          {children}
+        </ScatterChart>
+      ));
+      const { container } = renderTestCase();
+      const clipPathUrl = getItemClipPathUrl(container, '.recharts-scatter');
+      expect(getErrorBarClipPaths(container)).toEqual([clipPathUrl, clipPathUrl, clipPathUrl]);
     });
   });
 });

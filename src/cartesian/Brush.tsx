@@ -27,7 +27,7 @@ import { BrushSettings, setBrushSettings } from '../state/brushSlice';
 import { PanoramaContextProvider } from '../context/PanoramaContext';
 import { selectBrushDimensions } from '../state/selectors/brushSelectors';
 import { useBrushChartSynchronisation } from '../synchronisation/useChartSynchronisation';
-import { Styles2D } from '../theme/RechartsTheme';
+import { ColorStyles2D, withFillColor } from '../theme/themeFill';
 import { useBackwardsCompatibleTheme } from '../theme/useBackwardsCompatibleTheme';
 import { useRechartsTheme } from '../theme/RechartsThemeContext';
 import { RequiresDefaultProps, resolveDefaultProps } from '../util/resolveDefaultProps';
@@ -38,7 +38,7 @@ export type BrushTravellerType = ReactElement<SVGElement> | ((props: TravellerPr
 // Why is this tickFormatter different from the other TickFormatters? This one allows to return numbers too for some reason.
 type BrushTickFormatter = (value: any, index: number) => number | string;
 
-type BrushStyleProps = Pick<Styles2D, 'fill' | 'stroke'>;
+type BrushStyleProps = Pick<ColorStyles2D, 'fill' | 'stroke'>;
 
 /**
  * The type is exported only so that TypeScript can name it in the declaration files of projects
@@ -1197,7 +1197,7 @@ export const defaultBrushProps = {
 export function Brush(outsideProps: Props) {
   const activeTheme = useRechartsTheme();
   const themeProps = useBackwardsCompatibleTheme<BrushStyleProps>(
-    theme => theme.brush,
+    theme => withFillColor(theme.brush),
     {
       fill: outsideProps.fill,
       stroke: outsideProps.stroke,

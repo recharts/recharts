@@ -24,6 +24,12 @@ export type CommentSimilarityGroup = {
  */
 export const commentSimilarityExceptions: ReadonlyArray<CommentSimilarityGroup> = [
   {
+    components: ['Label', 'LabelList'],
+    props: ['background'],
+    reason:
+      'Label and LabelList take the default background from the label theme, Text is the primitive that does not read the label theme.',
+  },
+  {
     components: ['*'],
     props: ['children'],
     reason: 'Children comments vary widely based on component purpose',
@@ -34,7 +40,7 @@ export const commentSimilarityExceptions: ReadonlyArray<CommentSimilarityGroup> 
     reason: 'Graphical elements hide has extra details on domain calculation',
   },
   {
-    components: ['Area', 'Bar', 'Line', 'Scatter', 'Radar', 'RadialBar'],
+    components: ['Area', 'Bar', 'Line', 'Scatter', 'Radar', 'RadialBar', 'Sankey'],
     props: ['label'],
     reason:
       'label in graphical elements describes multiple labels, unlike axes and reference elements which describe a single label.',
@@ -44,6 +50,18 @@ export const commentSimilarityExceptions: ReadonlyArray<CommentSimilarityGroup> 
     props: ['dataKey'],
     reason:
       'dataKey in graphical elements that display their value on an axis describes how they inherit the dataKey from that axis.',
+  },
+  {
+    components: ['Area', 'Line'],
+    props: ['legendType'],
+    reason:
+      'In Line and Area the default `line` legend icon follows the dots, and with a theme also the default dots and a line without dots.',
+  },
+  {
+    components: ['Radar', 'Scatter'],
+    props: ['legendType'],
+    reason:
+      'In Radar and Scatter the default legend icon follows the symbol that the data points use, set by `dot` or `shape`.',
   },
   {
     components: ['Pie'],
@@ -372,6 +390,24 @@ export const commentSimilarityExceptions: ReadonlyArray<CommentSimilarityGroup> 
     components: ['Cell'],
     props: ['fill', 'stroke'],
     reason: 'Cell is a generic component used to override attributes of children, so its description is more abstract.',
+  },
+  {
+    components: ['LabelList'],
+    props: ['fill'],
+    reason:
+      'In LabelList, fill is the text color of the labels, and it explains how labels pick a color automatically in a theme. Elsewhere it is the color of a shape.',
+  },
+  {
+    components: ['Bar', 'Area', 'Radar', 'Scatter'],
+    props: ['fill'],
+    reason:
+      'These fills also accept a fill object with a pattern or a gradient, and explain how Tooltip and labels keep a solid color. Elsewhere it is a plain color.',
+  },
+  {
+    components: ['Line'],
+    props: ['fill'],
+    reason:
+      'Line fill colors the dots, and it explains that a fill object counts by its color, so theme entries spread onto a Line. Elsewhere it is the color of a shape.',
   },
   {
     components: ['Tooltip'],

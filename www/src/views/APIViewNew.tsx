@@ -1,6 +1,6 @@
 import Helmet from 'react-helmet';
 import { Link } from 'react-router';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { allApiDocs as API } from '../docs/api';
 import { localeGet, parseLocalObj, useLocale } from '../utils/LocaleUtils.ts';
 import './APIView.css';
@@ -45,19 +45,21 @@ type PropsSection = 'current' | 'deprecated' | 'events';
 
 const PROPS_SECTION_STORAGE_KEY = 'recharts-api-props-sections';
 
-function getInitialExpandedSections(): Record<PropsSection, boolean> {
-  if (typeof window === 'undefined') {
-    return { current: true, deprecated: false, events: false };
-  }
+const DEFAULT_EXPANDED_SECTIONS: Record<PropsSection, boolean> = { current: true, deprecated: false, events: false };
 
+/*
+ * Reads the stored state only after hydration; reading it during the first render
+ * would make the client differ from the prerendered HTML.
+ */
+function readStoredExpandedSections(): Record<PropsSection, boolean> {
   try {
     const storedValue = window.localStorage.getItem(PROPS_SECTION_STORAGE_KEY);
     if (storedValue === null) {
-      return { current: true, deprecated: false, events: false };
+      return DEFAULT_EXPANDED_SECTIONS;
     }
     const parsedValue: unknown = JSON.parse(storedValue);
     if (typeof parsedValue !== 'object' || parsedValue === null) {
-      return { current: true, deprecated: false, events: false };
+      return DEFAULT_EXPANDED_SECTIONS;
     }
     return {
       current: !('current' in parsedValue) || parsedValue.current === true,
@@ -65,7 +67,15 @@ function getInitialExpandedSections(): Record<PropsSection, boolean> {
       events: 'events' in parsedValue && parsedValue.events === true,
     };
   } catch {
-    return { current: true, deprecated: false, events: false };
+    return DEFAULT_EXPANDED_SECTIONS;
+  }
+}
+
+function getHashTarget(): string {
+  try {
+    return decodeURIComponent(window.location.hash.slice(1));
+  } catch {
+    return window.location.hash.slice(1);
   }
 }
 
@@ -108,7 +118,7 @@ function PropsSection({ entries, locale, section, isExpanded, onToggle }: PropsS
                   <strong>Deprecated:</strong> {parseLocalObj(locale, entry.deprecated)}
                 </div>
               ) : null}
-              <p className="desc">{parseLocalObj(locale, entry.desc)}</p>
+              <div className="desc">{parseLocalObj(locale, entry.desc)}</div>
               {entry.since ? (
                 <p className="since">
                   {localeGet(locale, 'api', 'since')} {entry.since}
@@ -147,8 +157,43 @@ function PropsSection({ entries, locale, section, isExpanded, onToggle }: PropsS
   );
 }
 
+function getSection(prop: ApiProps): PropsSection {
+  if (prop.deprecated) {
+    return 'deprecated';
+  }
+  return prop.name.startsWith('on') ? 'events' : 'current';
+}
+
 function PropsList({ props, locale }: PropsListProps) {
-  const [expandedSections, setExpandedSections] = useState(getInitialExpandedSections);
+  const [expandedSections, setExpandedSections] = useState(DEFAULT_EXPANDED_SECTIONS);
+  const [pendingScrollTarget, setPendingScrollTarget] = useState<string | null>(null);
+
+  useEffect(() => {
+    const revealHashTarget = () => {
+      const hashTarget = getHashTarget();
+      if (hashTarget === '' || document.getElementById(hashTarget) !== null) {
+        return;
+      }
+      // The target is in a collapsed section, so the browser could not scroll to it.
+      setPendingScrollTarget(hashTarget);
+      const targetProp = props.find(prop => prop.name === hashTarget);
+      if (targetProp) {
+        setExpandedSections(previousSections => ({ ...previousSections, [getSection(targetProp)]: true }));
+      }
+    };
+    setExpandedSections(readStoredExpandedSections());
+    revealHashTarget();
+    window.addEventListener('hashchange', revealHashTarget);
+    return () => window.removeEventListener('hashchange', revealHashTarget);
+  }, [props]);
+
+  useEffect(() => {
+    if (pendingScrollTarget) {
+      document.getElementById(pendingScrollTarget)?.scrollIntoView();
+      setPendingScrollTarget(null);
+    }
+  }, [pendingScrollTarget]);
+
   const toggleSection = (section: PropsSection) => {
     setExpandedSections(previousSections => {
       const nextSections = { ...previousSections, [section]: !previousSections[section] };
@@ -165,9 +210,9 @@ function PropsList({ props, locale }: PropsListProps) {
     return null;
   }
 
-  const currentProps = props.filter(prop => !prop.deprecated && !prop.name.startsWith('on'));
-  const deprecatedProps = props.filter(prop => prop.deprecated);
-  const events = props.filter(prop => !prop.deprecated && prop.name.startsWith('on'));
+  const currentProps = props.filter(prop => getSection(prop) === 'current');
+  const deprecatedProps = props.filter(prop => getSection(prop) === 'deprecated');
+  const events = props.filter(prop => getSection(prop) === 'events');
 
   return (
     <>
@@ -318,7 +363,7 @@ function APIViewNewImpl({ params }: APIViewNewImplProps) {
             {api.deprecated === true ? 'This component is deprecated.' : parseLocalObj(locale, api.deprecated)}
           </div>
         )}
-        {api.desc && <p className="survey">{parseLocalObj(locale, api.desc)}</p>}
+        {api.desc && <div className="survey">{parseLocalObj(locale, api.desc)}</div>}
         {api.links && api.links.length ? (
           <div className="links">
             <h4 className="sub-title">{localeGet(locale, 'api', 'links')}</h4>
@@ -342,7 +387,7 @@ function APIViewNewImpl({ params }: APIViewNewImplProps) {
             <p>
               <code>{api.returnValue}</code>
             </p>
-            {api.returnDesc && <p className="desc">{parseLocalObj(locale, api.returnDesc)}</p>}
+            {api.returnDesc && <div className="desc">{parseLocalObj(locale, api.returnDesc)}</div>}
           </div>
         )}
 
