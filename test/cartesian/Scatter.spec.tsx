@@ -16,7 +16,7 @@ import { assertNotNull } from '../helper/assertNotNull';
 import { useAppSelector } from '../../src/state/hooks';
 import { selectUnfilteredCartesianItems } from '../../src/state/selectors/axisSelectors';
 import { expectScatterPoints } from '../helper/expectScatterPoints';
-import { createSelectorTestCase } from '../helper/createSelectorTestCase';
+import { createSelectorTestCase, rechartsTestRender } from '../helper/createSelectorTestCase';
 import { selectTooltipPayload } from '../../src/state/selectors/selectors';
 import { dataWithSpecialNameAndFillProperties, PageData } from '../_data';
 import { ScatterSettings } from '../../src/state/types/ScatterSettings';
@@ -24,6 +24,8 @@ import { expectLastCalledWith } from '../helper/expectLastCalledWith';
 import { userEventSetup } from '../helper/userEventSetup';
 import { mockTouchingElement } from '../helper/mockTouchingElement';
 import { selectActiveTooltipPayload } from '../../src/state/selectors/tooltipSelectors';
+import { expectTooltipPayload, showTooltip } from '../component/Tooltip/tooltipTestHelpers';
+import { scatterChartMouseHoverTooltipSelector } from '../component/Tooltip/tooltipMouseHoverSelectors';
 
 describe('<Scatter />', () => {
   const data = [
@@ -754,6 +756,75 @@ describe('<Scatter />', () => {
           toFake: ['requestAnimationFrame', 'cancelAnimationFrame'],
         });
       }
+    });
+  });
+
+  describe('with a z value of 0', () => {
+    type ZDatum = { x: number; y: number; z?: number | null };
+    type RenderedPoint = { size: number | undefined; z: ReadonlyArray<unknown> };
+
+    const zData: ReadonlyArray<ZDatum> = [
+      { x: 1, y: 1, z: -10 },
+      { x: 2, y: 2, z: 0 },
+      { x: 3, y: 3, z: 10 },
+    ];
+
+    function renderPoints(points: ReadonlyArray<ZDatum>): ReadonlyArray<RenderedPoint> {
+      const rendered: Array<RenderedPoint> = [];
+      rechartsTestRender(
+        <ScatterChart width={400} height={400}>
+          <XAxis dataKey="x" type="number" />
+          <YAxis dataKey="y" type="number" />
+          <ZAxis dataKey="z" type="number" range={[100, 1000]} />
+          <Scatter
+            data={points}
+            isAnimationActive={false}
+            shape={(props: ScatterShapeProps) => {
+              rendered.push({
+                size: props.size,
+                z: (props.tooltipPayload ?? []).filter(entry => entry.dataKey === 'z').map(entry => entry.value),
+              });
+              return <g />;
+            }}
+          />
+        </ScatterChart>,
+      );
+      return rendered;
+    }
+
+    it('should size the bubble by the z scale', () => {
+      expect(renderPoints(zData).map(point => point.size)).toEqual([100, 550, 1000]);
+    });
+
+    it('should put z in the tooltip payload', () => {
+      expect(renderPoints(zData).map(point => point.z)).toEqual([[-10], [0], [10]]);
+    });
+
+    it('should show z in the tooltip on hover', () => {
+      const { container } = render(
+        <ScatterChart width={400} height={400}>
+          <XAxis dataKey="x" type="number" />
+          <YAxis dataKey="y" type="number" />
+          <ZAxis dataKey="z" type="number" range={[100, 1000]} />
+          <Tooltip />
+          <Scatter data={zData} isAnimationActive={false} />
+        </ScatterChart>,
+      );
+      showTooltip(container, `${scatterChartMouseHoverTooltipSelector}:nth-child(2)`);
+      expectTooltipPayload(container, '', ['x : 2', 'y : 2', 'z : 0']);
+    });
+
+    it.each([undefined, null, NaN])('should keep the smallest size and no z in the tooltip when z is %s', missing => {
+      const points = renderPoints([
+        { x: 1, y: 1, z: -10 },
+        { x: 2, y: 2, z: missing },
+        { x: 3, y: 3, z: 10 },
+      ]);
+      expect(points).toEqual([
+        { size: 100, z: [-10] },
+        { size: 100, z: [] },
+        { size: 1000, z: [10] },
+      ]);
     });
   });
 });
