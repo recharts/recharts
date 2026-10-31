@@ -24,6 +24,7 @@ describe('Documentation Examples Coverage', () => {
     'lightPalette',
     'RechartsGradientStop',
     'RechartsLinearGradient',
+    'WithFillObject',
     'ActiveDotProps',
     'ActiveLabel',
     'ActiveShape',

@@ -420,6 +420,11 @@ export const commentSimilarityExceptions: ReadonlyArray<CommentSimilarityGroup> 
     reason: 'The grid background also accepts a fill object with a pattern or a gradient.',
   },
   {
+    components: ['Brush'],
+    props: ['fill'],
+    reason: 'The Brush background accepts a fill object, and its travellers use the plain color.',
+  },
+  {
     components: ['Line'],
     props: ['fill'],
     reason:
