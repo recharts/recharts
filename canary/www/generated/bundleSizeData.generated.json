@@ -1,45 +1,45 @@
 {
   "treemap": {
     "examplePath": "www/src/views/IndexView/IndexLineChart.tsx",
-    "totalSize": 994754,
-    "totalSizeLabel": "971.44 KB",
+    "totalSize": 997087,
+    "totalSizeLabel": "973.72 KB",
     "moduleCount": 385,
-    "generatedAt": "2026-10-30T13:58:23.305Z",
+    "generatedAt": "2026-10-31T15:13:11.235Z",
     "stages": [
       {
         "stage": "es6-folder",
-        "bytes": 1595419,
-        "humanReadableSize": "1.52 MB",
+        "bytes": 1614890,
+        "humanReadableSize": "1.54 MB",
         "reductionFromBaselinePercent": 0
       },
       {
         "stage": "tree-shaken",
-        "bytes": 997671,
-        "humanReadableSize": "974.29 KB",
+        "bytes": 1000004,
+        "humanReadableSize": "976.57 KB",
         "reductionFromBaselinePercent": 0
       },
       {
         "stage": "minified",
-        "bytes": 322663,
-        "humanReadableSize": "315.10 KB",
+        "bytes": 323396,
+        "humanReadableSize": "315.82 KB",
         "reductionFromBaselinePercent": 67.66
       },
       {
         "stage": "minified+gzip",
-        "bytes": 105861,
-        "humanReadableSize": "103.38 KB",
+        "bytes": 106076,
+        "humanReadableSize": "103.59 KB",
         "reductionFromBaselinePercent": 89.39
       }
     ],
     "tree": {
       "name": "bundle",
       "fullPath": "bundle",
-      "value": 994754,
+      "value": 997087,
       "children": [
         {
           "name": "src",
           "fullPath": "src",
-          "value": 591178,
+          "value": 593511,
           "children": [
             {
               "name": "state",
@@ -915,7 +915,7 @@
             {
               "name": "theme",
               "fullPath": "src/theme",
-              "value": 25905,
+              "value": 26456,
               "children": [
                 {
                   "name": "labelTheme.ts",
@@ -925,7 +925,7 @@
                 {
                   "name": "dataEntryStyles.ts",
                   "fullPath": "src/theme/dataEntryStyles.ts",
-                  "value": 5123
+                  "value": 5674
                 },
                 {
                   "name": "activeStyles.ts",
@@ -1147,6 +1147,18 @@
               ]
             },
             {
+              "name": "fill",
+              "fullPath": "src/fill",
+              "value": 1952,
+              "children": [
+                {
+                  "name": "fillDefinitions.tsx",
+                  "fullPath": "src/fill/fillDefinitions.tsx",
+                  "value": 1952
+                }
+              ]
+            },
+            {
               "name": "hooks.ts",
               "fullPath": "src/hooks.ts",
               "value": 1813
@@ -1170,18 +1182,6 @@
                   "name": "defaultPolarRadiusAxisProps.tsx",
                   "fullPath": "src/polar/defaultPolarRadiusAxisProps.tsx",
                   "value": 248
-                }
-              ]
-            },
-            {
-              "name": "fill",
-              "fullPath": "src/fill",
-              "value": 170,
-              "children": [
-                {
-                  "name": "fillDefinitions.tsx",
-                  "fullPath": "src/fill/fillDefinitions.tsx",
-                  "value": 170
                 }
               ]
             }
@@ -2659,45 +2659,45 @@
   },
   "sunburst": {
     "examplePath": "www/src/views/IndexView/IndexLineChart.tsx",
-    "totalSize": 994754,
-    "totalSizeLabel": "971.44 KB",
+    "totalSize": 997087,
+    "totalSizeLabel": "973.72 KB",
     "moduleCount": 385,
-    "generatedAt": "2026-10-30T13:58:25.024Z",
+    "generatedAt": "2026-10-31T15:13:08.949Z",
     "stages": [
       {
         "stage": "es6-folder",
-        "bytes": 1595419,
-        "humanReadableSize": "1.52 MB",
+        "bytes": 1614890,
+        "humanReadableSize": "1.54 MB",
         "reductionFromBaselinePercent": 0
       },
       {
         "stage": "tree-shaken",
-        "bytes": 997671,
-        "humanReadableSize": "974.29 KB",
+        "bytes": 1000004,
+        "humanReadableSize": "976.57 KB",
         "reductionFromBaselinePercent": 0
       },
       {
         "stage": "minified",
-        "bytes": 322663,
-        "humanReadableSize": "315.10 KB",
+        "bytes": 323396,
+        "humanReadableSize": "315.82 KB",
         "reductionFromBaselinePercent": 67.66
       },
       {
         "stage": "minified+gzip",
-        "bytes": 105861,
-        "humanReadableSize": "103.38 KB",
+        "bytes": 106076,
+        "humanReadableSize": "103.59 KB",
         "reductionFromBaselinePercent": 89.39
       }
     ],
     "tree": {
       "name": "bundle",
       "fullPath": "bundle",
-      "value": 994754,
+      "value": 997087,
       "children": [
         {
           "name": "src",
           "fullPath": "src",
-          "value": 591178,
+          "value": 593511,
           "children": [
             {
               "name": "state",
@@ -3573,7 +3573,7 @@
             {
               "name": "theme",
               "fullPath": "src/theme",
-              "value": 25905,
+              "value": 26456,
               "children": [
                 {
                   "name": "labelTheme.ts",
@@ -3583,7 +3583,7 @@
                 {
                   "name": "dataEntryStyles.ts",
                   "fullPath": "src/theme/dataEntryStyles.ts",
-                  "value": 5123
+                  "value": 5674
                 },
                 {
                   "name": "activeStyles.ts",
@@ -3805,6 +3805,18 @@
               ]
             },
             {
+              "name": "fill",
+              "fullPath": "src/fill",
+              "value": 1952,
+              "children": [
+                {
+                  "name": "fillDefinitions.tsx",
+                  "fullPath": "src/fill/fillDefinitions.tsx",
+                  "value": 1952
+                }
+              ]
+            },
+            {
               "name": "hooks.ts",
               "fullPath": "src/hooks.ts",
               "value": 1813
@@ -3828,18 +3840,6 @@
                   "name": "defaultPolarRadiusAxisProps.tsx",
                   "fullPath": "src/polar/defaultPolarRadiusAxisProps.tsx",
                   "value": 248
-                }
-              ]
-            },
-            {
-              "name": "fill",
-              "fullPath": "src/fill",
-              "value": 170,
-              "children": [
-                {
-                  "name": "fillDefinitions.tsx",
-                  "fullPath": "src/fill/fillDefinitions.tsx",
-                  "value": 170
                 }
               ]
             }
