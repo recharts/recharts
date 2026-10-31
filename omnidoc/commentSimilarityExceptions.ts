@@ -410,6 +410,16 @@ export const commentSimilarityExceptions: ReadonlyArray<CommentSimilarityGroup> 
       'These fills also accept a fill object, and explain how each data entry can have its own fill. Elsewhere it is a plain color.',
   },
   {
+    components: ['ReferenceArea', 'ReferenceDot'],
+    props: ['fill'],
+    reason: 'These fills also accept a fill object with a pattern or a gradient. Elsewhere it is a plain color.',
+  },
+  {
+    components: ['CartesianGrid', 'PolarGrid'],
+    props: ['fill'],
+    reason: 'The grid background also accepts a fill object with a pattern or a gradient.',
+  },
+  {
     components: ['Line'],
     props: ['fill'],
     reason:

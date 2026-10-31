@@ -120,7 +120,8 @@ describe('fill objects in the theme', () => {
     );
 
     expectNoObjectFills(container);
-    expect(container.querySelector('.recharts-reference-area-rect')).toHaveAttribute('fill', '#ddd');
+    // the reference area draws the fill object of the theme
+    expect(container.querySelector('.recharts-reference-area-rect')?.getAttribute('fill')).toMatch(/^url\(#/);
     expect(container.querySelector('.recharts-brush rect')).toHaveAttribute('fill', '#fafafa');
   });
 
