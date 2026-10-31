@@ -346,7 +346,8 @@ export function ThemingGuide() {
       <ol>
         <li>
           <strong>Did you pass the prop explicitly?</strong> If yes, your prop wins. Always. A theme never overrides
-          something you wrote in JSX.
+          something you wrote in JSX. This includes colors set in the data array, see{' '}
+          <RechartsLink to="guide/dataStyles">Styling data points</RechartsLink>.
         </li>
         <li>
           <strong>Is there a theme provider, and does its theme contain the relevant section?</strong> If yes, the theme
