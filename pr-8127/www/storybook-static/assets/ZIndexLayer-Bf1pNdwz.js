@@ -1,0 +1,13 @@
+import{v as p,w as I}from"./resolveDefaultProps-zC97C8Ii.js";import{k as g,V as x,c as y,f as w,d as v,W as C,X as h,Y as E}from"./zIndexSlice-asfAkO72.js";import{e as Z,r as i}from"./iframe-DG1yZPWZ.js";import{a as L}from"./index-B8R5wD7Q.js";const S=(e,r,a)=>{const o=g();if(o==null)return a==null?r:p(r,a);const c=e(o);return c==null?r:p(r,c)},_=()=>{const[e]=i.useState(()=>I("uid-"));return e},b=Z.useId??_;function T(e){var a;if(e==null)return;if(e.pageBackground!=null)return e.pageBackground;const r=(a=e.chart)==null?void 0:a.backgroundColor;return typeof r=="string"?r:void 0}function m({zIndex:e,children:r}){const o=x()&&e!==void 0&&e!==0,c=y(),u=i.useRef(void 0),d=i.useRef(new Set),s=w(),l=v(t=>C(t,e,c));if(i.useLayoutEffect(()=>{if(!o){const t=d.current;t.forEach(n=>{s(h({zIndex:n}))}),t.clear(),u.current=void 0;return}if(d.current.has(e)||(s(E({zIndex:e})),d.current.add(e)),l){u.current=l;const t=d.current;t.forEach(n=>{n!==e&&(s(h({zIndex:n})),t.delete(n))})}},[s,e,o,l]),i.useLayoutEffect(()=>{const t=d.current;return()=>{t.forEach(n=>{s(h({zIndex:n}))}),t.clear()}},[s]),!o)return r;const f=l??u.current;return f?L.createPortal(r,f):null}try{m.displayName="ZIndexLayer",m.__docgenInfo={description:`A layer that renders its children into a portal corresponding to the given zIndex.
+We can't use regular CSS \`z-index\` because SVG does not support it.
+So instead, we create separate DOM nodes for each zIndex layer
+and render the children into the corresponding DOM node using React portals.
+
+This component must be used inside a Chart component.`,displayName:"ZIndexLayer",filePath:"/__w/recharts/recharts/src/zIndex/ZIndexLayer.tsx",methods:[],props:{zIndex:{defaultValue:null,declarations:[{fileName:"recharts/src/zIndex/ZIndexLayer.tsx",name:"TypeLiteral"}],description:`Z-Index of this component and its children.
+
+The higher the value, the more on top it will be rendered.
+Components with higher zIndex will appear in front of components with lower zIndex.
+
+If \`undefined\` or \`0\`, the content is rendered in the default layer without portals.`,name:"zIndex",required:!0,tags:{},type:{name:"number | undefined"}},children:{defaultValue:null,declarations:[{fileName:"recharts/src/zIndex/ZIndexLayer.tsx",name:"TypeLiteral"}],description:`The content to render inside this zIndex layer.
+Undefined children are allowed and will render nothing and will still report the zIndex to the portal system.`,name:"children",required:!1,tags:{},type:{name:"ReactNode"}}},tags:{param:`zIndex numeric zIndex value, higher values are rendered on top of lower values
+children the content to render inside this zIndex layer`,since:"3.4"}}}catch{}export{m as Z,b as a,T as g,S as u};
