@@ -1,6 +1,16 @@
 import { clsx } from 'clsx';
 import * as React from 'react';
-import { MouseEvent, ReactElement, ReactNode, SVGProps, useCallback, useMemo, useState } from 'react';
+import {
+  MouseEvent,
+  ReactElement,
+  ReactNode,
+  SVGProps,
+  TouchEvent,
+  TouchEventHandler,
+  useCallback,
+  useMemo,
+  useState,
+} from 'react';
 import maxBy from 'es-toolkit/compat/maxBy';
 import sumBy from 'es-toolkit/compat/sumBy';
 import get from 'es-toolkit/compat/get';
@@ -22,6 +32,7 @@ import {
 import { ReportChartMargin, ReportChartSize, useChartHeight, useChartWidth } from '../context/chartLayoutContext';
 import { TooltipPortalContext } from '../context/tooltipPortalContext';
 import { RechartsWrapper } from './RechartsWrapper';
+import { CategoricalChartFunc } from './types';
 import {
   CartesianLabelListContextProvider,
   CartesianLabelListEntry,
@@ -829,9 +840,7 @@ export type SankeyNodeOptions =
   ReactElement<SVGProps<SVGRectElement>> | ((props: NodeProps) => ReactNode) | RectangleProps;
 
 export type SankeyLinkOptions =
-  | ReactElement<SVGProps<SVGPathElement>>
-  | ((props: LinkProps) => ReactElement<SVGProps<SVGPathElement>>)
-  | SVGProps<SVGPathElement>;
+  ReactElement<SVGProps<SVGPathElement>> | ((props: LinkProps) => ReactNode) | SVGProps<SVGPathElement>;
 
 interface SankeyProps extends EventThrottlingProps {
   /**
@@ -987,6 +996,18 @@ interface SankeyProps extends EventThrottlingProps {
    * @default 'justify'
    */
   align?: 'left' | 'justify';
+  /**
+   * The customized event handler of touchstart on the chart wrapper.
+   */
+  onTouchStart?: TouchEventHandler<HTMLDivElement>;
+  /**
+   * The customized event handler of touchmove on the chart wrapper.
+   */
+  onTouchMove?: TouchEventHandler<HTMLDivElement>;
+  /**
+   * The customized event handler of touchend on the chart wrapper.
+   */
+  onTouchEnd?: TouchEventHandler<HTMLDivElement>;
 }
 
 export type Props = Omit<SVGProps<SVGSVGElement>, keyof SankeyProps> & SankeyProps;
@@ -1150,7 +1171,12 @@ function SankeyLinkElement({
     },
   };
 
-  return <Layer {...events}>{renderLinkItem(linkContent, props, hasTheme)}</Layer>;
+  const item = renderLinkItem(linkContent, props, hasTheme);
+  return (
+    <Layer {...events} data-recharts-item-index={`link-${i}`} data-recharts-item-id={graphicalItemId}>
+      {item}
+    </Layer>
+  );
 }
 
 function AllSankeyLinkElements({
@@ -1338,7 +1364,12 @@ function NodeElement({
     },
   };
 
-  return <Layer {...events}>{renderNodeItem(nodeContent, props, hasTheme)}</Layer>;
+  const item = renderNodeItem(nodeContent, props, hasTheme);
+  return (
+    <Layer {...events} data-recharts-item-index={`node-${i}`} data-recharts-item-id={graphicalItemId}>
+      {item}
+    </Layer>
+  );
 }
 
 /**
@@ -1775,9 +1806,37 @@ function SankeyImpl(props: InternalSankeyProps) {
  * @consumes ResponsiveContainerContext
  * @provides TooltipEntrySettings
  */
+/**
+ * Sankey's public props type touch handlers as plain React touch handlers on the chart
+ * wrapper div, while RechartsWrapper dispatches them with (nextState, event).
+ * Adapt so user handlers receive just the event, matching the documented props type.
+ */
+function adaptTouchHandler(
+  handler: TouchEventHandler<HTMLDivElement> | undefined,
+): CategoricalChartFunc<TouchEvent<SVGGraphicsElement>> | undefined {
+  if (handler == null) {
+    return undefined;
+  }
+  return (_nextState, event) => {
+    // @ts-expect-error RechartsWrapper dispatches a TouchEvent typed as SVGGraphicsElement, though it attaches these handlers to the chart's root HTMLDivElement (pre-existing inconsistency)
+    handler(event);
+  };
+}
+
 export function Sankey(outsideProps: Props) {
   const props: PropsWithResolvedDefaults = resolveDefaultProps(outsideProps, sankeyDefaultProps);
-  const { width, height, style, className, id: externalId, throttleDelay, throttledEvents } = props;
+  const {
+    width,
+    height,
+    style,
+    className,
+    id: externalId,
+    throttleDelay,
+    throttledEvents,
+    onTouchStart,
+    onTouchMove,
+    onTouchEnd,
+  } = props;
   const [tooltipPortal, setTooltipPortal] = useState<HTMLElement | null>(null);
 
   return (
@@ -1809,9 +1868,9 @@ export function Sankey(outsideProps: Props) {
         onMouseUp={undefined}
         onContextMenu={undefined}
         onDoubleClick={undefined}
-        onTouchStart={undefined}
-        onTouchMove={undefined}
-        onTouchEnd={undefined}
+        onTouchStart={adaptTouchHandler(onTouchStart)}
+        onTouchMove={adaptTouchHandler(onTouchMove)}
+        onTouchEnd={adaptTouchHandler(onTouchEnd)}
       >
         <TooltipPortalContext.Provider value={tooltipPortal}>
           <RegisterGraphicalItemId id={externalId} type="sankey">
