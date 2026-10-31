@@ -106,7 +106,17 @@ import {
 } from '../theme/dataEntryStyles';
 import { getActiveStyleOverrides, useThemedActiveStyles } from '../theme/activeStyles';
 import { RechartsFill } from '../fill/RechartsFill';
-import { FillObjectDefinition, getFillUrl, getSeriesFillId, splitFill } from '../fill/fillDefinitions';
+import {
+  EntryFillDefinitions,
+  FillObjectDefinition,
+  getEntryFillId,
+  getFillUrl,
+  getSeriesFillId,
+  hasEntryFillObjects,
+  readEntryFill,
+  splitFill,
+  withEntryFillColor,
+} from '../fill/fillDefinitions';
 import {
   DataLabelColors,
   DataLabelColorsContextProvider,
@@ -909,6 +919,11 @@ function BarRectangles({
   return (
     <>
       {data.map((entry: BarRectangleItem, i: number) => {
+        // a data entry with its own fill object paints with its own definition
+        const paintedEntry =
+          readEntryFill(entry.payload).fillObject == null
+            ? entry
+            : { ...entry, fill: getFillUrl(getEntryFillId(id, entry.originalDataIndex)) };
         return (
           <BarStackClipLayer
             index={entry.originalDataIndex}
@@ -930,7 +945,7 @@ function BarRectangles({
                 baseProps={baseProps}
                 entryStyleOverrides={getEntryStyleOverrides(entry, unthemedColors)}
                 themedActiveStyles={themedActiveStyles}
-                entry={entry}
+                entry={paintedEntry}
                 index={i}
                 dataKey={dataKey}
                 animationElapsedTime={animationElapsedTime}
@@ -951,7 +966,7 @@ function BarRectangles({
                 shape={shape}
                 baseProps={baseProps}
                 entryStyleOverrides={getEntryStyleOverrides(entry, unthemedColors)}
-                entry={entry}
+                entry={paintedEntry}
                 index={i}
                 dataKey={dataKey}
                 animationElapsedTime={animationElapsedTime}
@@ -1112,20 +1127,45 @@ const errorBarDataPointFormatter: ErrorBarDataPointFormatter<BarRectangleItem> =
 
 class BarWithState extends PureComponent<InternalProps> {
   render() {
-    const { hide, data, dataKey, className, xAxisId, yAxisId, needClip, background, id, fillObject, fill } = this.props;
+    const {
+      hide,
+      data,
+      dataKey,
+      className,
+      xAxisId,
+      yAxisId,
+      needClip,
+      background,
+      id,
+      fillObject,
+      fill,
+      stroke,
+      unthemedColors,
+    } = this.props;
     if (hide || data == null) {
       return null;
     }
 
     const layerClass = clsx('recharts-bar', className);
     const clipPathId = id;
+    const hasEntryFills = hasEntryFillObjects(data.map(entry => entry.payload));
     return (
       <Layer className={layerClass} id={id}>
-        {(needClip || fillObject != null) && (
+        {(needClip || fillObject != null || hasEntryFills) && (
           <defs>
             {needClip && <GraphicalItemClipPath clipPathId={clipPathId} xAxisId={xAxisId} yAxisId={yAxisId} />}
             {fillObject != null && (
               <FillObjectDefinition id={getSeriesFillId(id)} fillObject={fillObject} color={fill} />
+            )}
+            {hasEntryFills && (
+              <EntryFillDefinitions
+                id={id}
+                entries={data.map(entry => ({
+                  index: entry.originalDataIndex,
+                  payload: entry.payload,
+                  color: getEntryShapeColors(entry.payload, fill, stroke, unthemedColors).fill,
+                }))}
+              />
             )}
           </defs>
         )}
@@ -1395,7 +1435,7 @@ export function computeBarRectangles({
         ...(cells && cells[index] && cells[index].props),
       } satisfies BarRectangleItem;
 
-      return barRectangleItem;
+      return withEntryFillColor(barRectangleItem, entry);
     })
     .filter(Boolean);
 }

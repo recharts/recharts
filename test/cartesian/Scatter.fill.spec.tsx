@@ -83,4 +83,27 @@ describe('Scatter with a fill object', () => {
     expect(getSymbols(container)[0]).toHaveAttribute('fill', 'blue');
     expect(container.querySelector('#my-scatter-fill')).not.toBeInTheDocument();
   });
+
+  it('should paint a point with the fill object of its data entry', () => {
+    const { container } = render(
+      <ScatterChart width={400} height={400}>
+        <XAxis dataKey="x" type="number" />
+        <YAxis dataKey="y" type="number" />
+        <Scatter
+          data={[
+            { x: 1, y: 1 },
+            { x: 2, y: 3, fill: { color: 'blue', definition: pattern(patterns.dots) } },
+          ]}
+          id="my-scatter"
+          fill="green"
+          isAnimationActive={false}
+        />
+      </ScatterChart>,
+    );
+
+    const symbols = getSymbols(container);
+    expect(symbols[0]).toHaveAttribute('fill', 'green');
+    expect(symbols[1]).toHaveAttribute('fill', 'url(#my-scatter-fill-1)');
+    expect(container.querySelector('pattern#my-scatter-fill-1 rect')).toHaveAttribute('fill', 'blue');
+  });
 });

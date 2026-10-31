@@ -1,8 +1,9 @@
 import * as React from 'react';
-import { ComponentType } from 'react';
+import { ComponentType, useMemo } from 'react';
 import { RechartsFill, RechartsFillDefinitionProps, RechartsLinearGradient, RechartsPattern } from './RechartsFill';
 import { useRechartsTheme } from '../theme/RechartsThemeContext';
 import { getEffectivePageBackground } from '../theme/pageBackground';
+import { getThemeFillObject } from '../theme/themeFill';
 
 const DEFAULT_PATTERN_OPACITY = 0.5;
 
@@ -159,4 +160,171 @@ export function FillObjectDefinition({
 }) {
   const Definition = fillObject.definition;
   return <Definition id={id} color={color} />;
+}
+
+const entryFillCache = new WeakMap<object, RechartsFill>();
+
+/**
+ * Returns true if the value can be rendered as a React component: a function, or a memo or forwardRef object.
+ * @param value the `definition` from a data entry
+ */
+function isDefinitionComponent(value: unknown): value is ComponentType<RechartsFillDefinitionProps> {
+  return typeof value === 'function' || (value != null && typeof value === 'object' && '$$typeof' in value);
+}
+
+/**
+ * Reads the `fill` of a data entry, which can be a color string or a fill object.
+ * Data entries have no types, so this checks that an object has a `definition` before treating it as a fill object.
+ * Anything else counts as no fill.
+ * @param entry the data entry, possibly merged with the props of its Cell
+ */
+export function readEntryFill(entry: unknown): {
+  color: string | undefined;
+  fillObject: RechartsFill | undefined;
+} {
+  if (entry == null || typeof entry !== 'object' || !('fill' in entry)) {
+    return { color: undefined, fillObject: undefined };
+  }
+  const { fill } = entry;
+  if (typeof fill === 'string') {
+    return { color: fill, fillObject: undefined };
+  }
+  if (fill == null || typeof fill !== 'object') {
+    return { color: undefined, fillObject: undefined };
+  }
+  const cached = entryFillCache.get(fill);
+  if (cached != null) {
+    return { color: cached.color, fillObject: cached };
+  }
+  const definition = 'definition' in fill ? fill.definition : undefined;
+  if (!isDefinitionComponent(definition)) {
+    return { color: undefined, fillObject: undefined };
+  }
+  const color = 'color' in fill && typeof fill.color === 'string' ? fill.color : undefined;
+  // the same data entry gives the same fill object, so that it stays stable between renders
+  const fillObject: RechartsFill = { color, definition };
+  entryFillCache.set(fill, fillObject);
+  return { color, fillObject };
+}
+
+/**
+ * DOM id of the fill definition of one data entry of a graphical item.
+ * @param id id of the graphical item
+ * @param index index of the data entry
+ */
+export function getEntryFillId(id: string, index: number): string {
+  return `${id}-fill-${index}`;
+}
+
+/**
+ * Returns the item without the fill object that its data entry may have spread into it.
+ * The item keeps the color of the fill object, or no `fill` at all, so that it takes the fill of the graphical item.
+ * Shapes never get a fill object, only colors and `url(#…)` references.
+ * @param item the item computed from the data entry, with the entry spread into it
+ * @param entry the data entry, possibly merged with the props of its Cell
+ */
+export function withEntryFillColor<T extends object>(item: T, entry: unknown): T {
+  const { color, fillObject } = readEntryFill(entry);
+  if (fillObject == null) {
+    return item;
+  }
+  if (color != null) {
+    return { ...item, fill: color };
+  }
+  const itemWithoutFill = { ...item };
+  Reflect.deleteProperty(itemWithoutFill, 'fill');
+  return itemWithoutFill;
+}
+
+/**
+ * Renders the definitions of the data entries that have their own fill object. Render it inside `<defs>`.
+ */
+export function EntryFillDefinitions({
+  id,
+  entries,
+}: {
+  /**
+   * id of the graphical item
+   */
+  id: string;
+  entries: ReadonlyArray<{ index: number; payload: unknown; color: string | undefined }>;
+}) {
+  return (
+    <>
+      {entries.map(({ index, payload, color }) => {
+        const { fillObject } = readEntryFill(payload);
+        return fillObject == null ? null : (
+          <FillObjectDefinition key={index} id={getEntryFillId(id, index)} fillObject={fillObject} color={color} />
+        );
+      })}
+    </>
+  );
+}
+
+/**
+ * Returns true if any of the data entries has its own fill object.
+ * @param payloads the data entries
+ */
+export function hasEntryFillObjects(payloads: ReadonlyArray<unknown>): boolean {
+  return payloads.some(payload => readEntryFill(payload).fillObject != null);
+}
+
+/**
+ * Returns the fill object a data entry paints with: its own, or none if it has its own color,
+ * or else the fill object of its graphical item.
+ * @param payload the data entry, possibly merged with the props of its Cell
+ * @param seriesFillObject the fill object of the graphical item
+ */
+export function getEntryFillObject(
+  payload: unknown,
+  seriesFillObject: RechartsFill | undefined,
+): RechartsFill | undefined {
+  const { color, fillObject } = readEntryFill(payload);
+  if (fillObject != null) {
+    return fillObject;
+  }
+  return color == null ? seriesFillObject : undefined;
+}
+
+/**
+ * Returns the fill object of a data entry in a graphical item that takes one theme entry per data entry,
+ * like Pie and Funnel: the entry's own fill object, else the item's fill object, else the theme definition.
+ * An entry with its own color, or an item with its own colors, doesn't take the theme definition.
+ *
+ * @param payload the data entry, possibly merged with the props of its Cell
+ * @param index index of the data entry
+ * @param seriesFillObject the fill object of the graphical item
+ * @param themeFillObjects the fill object of each theme entry, from {@link useThemeFillObjects}
+ * @param seriesHasOwnColors true if the graphical item sets its own colors
+ */
+export function getIndexedEntryFillObject(
+  payload: unknown,
+  index: number,
+  seriesFillObject: RechartsFill | undefined,
+  themeFillObjects: ReadonlyArray<RechartsFill | undefined>,
+  seriesHasOwnColors: boolean,
+): RechartsFill | undefined {
+  const { color, fillObject } = readEntryFill(payload);
+  if (fillObject != null) {
+    return fillObject;
+  }
+  if (color != null) {
+    return undefined;
+  }
+  if (seriesFillObject != null) {
+    return seriesFillObject;
+  }
+  if (themeFillObjects.length === 0 || seriesHasOwnColors) {
+    return undefined;
+  }
+  return themeFillObjects[index % themeFillObjects.length];
+}
+
+/**
+ * Returns the fill object of each theme entry, or undefined for an entry that fills with a color.
+ * The result is the same array as long as the theme stays the same.
+ */
+export function useThemeFillObjects(): ReadonlyArray<RechartsFill | undefined> {
+  const graphicalItems = useRechartsTheme()?.graphicalItems;
+  return useMemo(() => (graphicalItems ?? []).map(style => getThemeFillObject(style.fill)), [graphicalItems]);
 }
