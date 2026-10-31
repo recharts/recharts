@@ -13,7 +13,9 @@ import { ZIndexable, ZIndexLayer } from '../zIndex/ZIndexLayer';
 import { DefaultZIndexes } from '../zIndex/DefaultZIndexes';
 import { resolveDefaultProps } from '../util/resolveDefaultProps';
 import { useBackwardsCompatibleTheme } from '../theme/useBackwardsCompatibleTheme';
-import { ColorStyles2D, withFillColor } from '../theme/themeFill';
+import { ColorStyles2D, useThemeFillObject, withFillColor } from '../theme/themeFill';
+import { RechartsFill } from '../fill/RechartsFill';
+import { splitFill, useFillPaint } from '../fill/fillDefinitions';
 
 interface PolarGridProps extends ZIndexable {
   /**
@@ -106,18 +108,26 @@ interface PolarGridProps extends ZIndexable {
    */
   strokeDasharray?: string | number;
   /**
-   * The background color used to fill the space between grid lines.
+   * The background used to fill the space between grid lines: a color, or a {@link RechartsFill} object
+   * with an SVG definition, such as a pattern or a gradient.
+   *
+   * @example <PolarGrid fill={{ color: '#eee', definition: pattern(patterns.dots) }} />
    */
-  fill?: string;
+  fill?: string | RechartsFill;
   /**
    * The opacity of the background used to fill the space between grid lines.
    */
   fillOpacity?: number | string;
 }
 
-export type Props = SVGProps<SVGLineElement> & PolarGridProps;
+export type Props = Omit<SVGProps<SVGLineElement>, 'fill'> & PolarGridProps;
 
-type PropsWithDefaults = Omit<Props, 'polarRadius'> & {
+/**
+ * Props after the fill is resolved: `fill` is a color or a `url(#…)`.
+ */
+type StringFillProps = Omit<Props, 'fill'> & { fill?: string };
+
+type PropsWithDefaults = Omit<StringFillProps, 'polarRadius'> & {
   cx: number;
   cy: number;
   innerRadius: number;
@@ -256,15 +266,26 @@ export const defaultPolarGridProps = {
 /**
  * @consumes PolarViewBoxContext
  */
-export const PolarGrid = (outsideProps: Props) => {
+export const PolarGrid = (propsWithFillObject: Props) => {
+  // From here on, `fill` is the base color
+  const outsideProps: StringFillProps = { ...propsWithFillObject, fill: splitFill(propsWithFillObject.fill).color };
   const themeProps = useBackwardsCompatibleTheme(
     theme => withFillColor(theme.grid),
     outsideProps,
     defaultLegacyThemeProps,
   );
-  const propsWithTheme: Props = {
+  // Without a fill of its own, the grid paints with the fill object of the theme, if there is one
+  const themeFillObject = useThemeFillObject(theme => theme.grid);
+  const background = useFillPaint(
+    propsWithFillObject.fill ?? themeFillObject,
+    themeProps.fill,
+    'recharts-polar-grid-fill',
+  );
+  const propsWithTheme: StringFillProps = {
     ...outsideProps,
     ...themeProps,
+    // the background paints with the definition
+    fill: background.paint,
   };
   const {
     gridType,
@@ -314,6 +335,7 @@ export const PolarGrid = (outsideProps: Props) => {
   return (
     <ZIndexLayer zIndex={props.zIndex}>
       <g className="recharts-polar-grid">
+        {background.definition != null && <defs>{background.definition}</defs>}
         <ConcentricGridPath
           gridType={gridType}
           radialLines={radialLines}
