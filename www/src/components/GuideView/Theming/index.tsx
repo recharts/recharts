@@ -696,6 +696,10 @@ export function ThemingGuide() {
         . This is how a <LinkToApi>Scatter</LinkToApi> that reads both coordinates from its axes gets a theme color.
       </p>
       <p>
+        Each entry can also set a <code>fillDefinition</code>, such as a pattern, so that series differ by more than
+        color. The <RechartsLink to="guide/patterns">Patterns and gradients guide</RechartsLink> explains how.
+      </p>
+      <p>
         This is a convenient default. If you need different colors or want to control the assignment yourself, provide
         an explicit <code>fill</code> or <code>stroke</code> prop on the graphical item. You will need to do that when
         several graphical items share one <code>dataKey</code> and each brings its own <code>data</code> array, for
