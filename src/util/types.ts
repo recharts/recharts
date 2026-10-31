@@ -1347,7 +1347,7 @@ export type DotType =
    *
    * @example <Line dot={{ symbol: 'diamond', r: 6 }} />
    */
-  | (WithFillObject<Partial<DotProps>> & DotSymbolOption)
+  | (Partial<DotProps> & DotSymbolOption)
   /**
    * dot can be an element; it will get cloned and will receive new extra props.
    * I do not recommend this way! Use React component instead, that way you get more predictable props.
