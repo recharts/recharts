@@ -420,6 +420,12 @@ export const commentSimilarityExceptions: ReadonlyArray<CommentSimilarityGroup> 
     reason: 'The grid background also accepts a fill object with a pattern or a gradient.',
   },
   {
+    components: ['Treemap', 'SunburstChart'],
+    props: ['fill'],
+    reason:
+      'These fills also accept a fill object, and explain how each node can have its own fill. Elsewhere it is a plain color.',
+  },
+  {
     components: ['Brush'],
     props: ['fill'],
     reason: 'The Brush background accepts a fill object, and its travellers use the plain color.',
