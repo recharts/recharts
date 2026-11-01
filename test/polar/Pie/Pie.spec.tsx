@@ -901,6 +901,51 @@ describe('<Pie />', () => {
       expect(label).toHaveAttribute('y', '250');
     });
 
+    it('should render label with position=center in the center of the Pie when the Pie is not in the middle of the chart', () => {
+      const { container } = render(
+        <PieChart width={500} height={500}>
+          <Pie
+            isAnimationActive={false}
+            cx="30%"
+            cy="70%"
+            startAngle={180}
+            endAngle={0}
+            innerRadius={100}
+            outerRadius={140}
+            data={sectorsData}
+            dataKey="cy"
+          >
+            <Label position="center" value="My test label" />
+          </Pie>
+        </PieChart>,
+      );
+
+      const label = container.querySelector('.recharts-label');
+      expect(label).toBeInTheDocument();
+      // the chart has 5px margin, so cx is 5 + 490 * 0.3 = 152 and cy is 5 + 490 * 0.7 = 348
+      expect(label).toHaveAttribute('x', '152');
+      expect(label).toHaveAttribute('y', '348');
+    });
+
+    it('should render label with position=center in the center of each Pie', () => {
+      const { container } = render(
+        <PieChart width={500} height={300}>
+          <Pie isAnimationActive={false} cx="25%" outerRadius={80} data={sectorsData} dataKey="cy">
+            <Label position="center" value="left" className="left" />
+          </Pie>
+          <Pie isAnimationActive={false} cx="75%" outerRadius={80} data={sectorsData} dataKey="cy">
+            <Label position="center" value="right" className="right" />
+          </Pie>
+        </PieChart>,
+      );
+
+      // 5px margin, so the centers are 5 + 490 * 0.25 = 127.5 and 5 + 490 * 0.75 = 372.5
+      expect(container.querySelector('.left')).toHaveAttribute('x', '127.5');
+      expect(container.querySelector('.left')).toHaveAttribute('y', '150');
+      expect(container.querySelector('.right')).toHaveAttribute('x', '372.5');
+      expect(container.querySelector('.right')).toHaveAttribute('y', '150');
+    });
+
     it('should shift the label left and right with dx and dy', () => {
       const { container } = render(
         <PieChart width={500} height={500}>
