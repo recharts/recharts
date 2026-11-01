@@ -1,28 +1,28 @@
 {
   "treemap": {
     "examplePath": "www/src/views/IndexView/IndexLineChart.tsx",
-    "totalSize": 1004843,
-    "totalSizeLabel": "981.29 KB",
+    "totalSize": 1005142,
+    "totalSizeLabel": "981.58 KB",
     "moduleCount": 385,
-    "generatedAt": "2026-11-01T08:56:45.719Z",
+    "generatedAt": "2026-11-01T09:27:06.137Z",
     "stages": [
       {
         "stage": "es6-folder",
-        "bytes": 1629895,
-        "humanReadableSize": "1.55 MB",
+        "bytes": 1631528,
+        "humanReadableSize": "1.56 MB",
         "reductionFromBaselinePercent": 0
       },
       {
         "stage": "tree-shaken",
-        "bytes": 1007766,
-        "humanReadableSize": "984.15 KB",
+        "bytes": 1008065,
+        "humanReadableSize": "984.44 KB",
         "reductionFromBaselinePercent": 0
       },
       {
         "stage": "minified",
         "bytes": 325543,
         "humanReadableSize": "317.91 KB",
-        "reductionFromBaselinePercent": 67.7
+        "reductionFromBaselinePercent": 67.71
       },
       {
         "stage": "minified+gzip",
@@ -34,12 +34,12 @@
     "tree": {
       "name": "bundle",
       "fullPath": "bundle",
-      "value": 1004843,
+      "value": 1005142,
       "children": [
         {
           "name": "src",
           "fullPath": "src",
-          "value": 601267,
+          "value": 601566,
           "children": [
             {
               "name": "state",
@@ -452,7 +452,7 @@
             {
               "name": "util",
               "fullPath": "src/util",
-              "value": 120584,
+              "value": 120883,
               "children": [
                 {
                   "name": "scale",
@@ -571,14 +571,14 @@
                   "value": 2795
                 },
                 {
+                  "name": "ActiveShapeUtils.tsx",
+                  "fullPath": "src/util/ActiveShapeUtils.tsx",
+                  "value": 2432
+                },
+                {
                   "name": "DOMUtils.ts",
                   "fullPath": "src/util/DOMUtils.ts",
                   "value": 2400
-                },
-                {
-                  "name": "ActiveShapeUtils.tsx",
-                  "fullPath": "src/util/ActiveShapeUtils.tsx",
-                  "value": 2133
                 },
                 {
                   "name": "svgPropertiesAndEvents.ts",
@@ -2659,28 +2659,28 @@
   },
   "sunburst": {
     "examplePath": "www/src/views/IndexView/IndexLineChart.tsx",
-    "totalSize": 1004843,
-    "totalSizeLabel": "981.29 KB",
+    "totalSize": 1005142,
+    "totalSizeLabel": "981.58 KB",
     "moduleCount": 385,
-    "generatedAt": "2026-11-01T08:56:43.389Z",
+    "generatedAt": "2026-11-01T09:27:08.053Z",
     "stages": [
       {
         "stage": "es6-folder",
-        "bytes": 1629895,
-        "humanReadableSize": "1.55 MB",
+        "bytes": 1631528,
+        "humanReadableSize": "1.56 MB",
         "reductionFromBaselinePercent": 0
       },
       {
         "stage": "tree-shaken",
-        "bytes": 1007766,
-        "humanReadableSize": "984.15 KB",
+        "bytes": 1008065,
+        "humanReadableSize": "984.44 KB",
         "reductionFromBaselinePercent": 0
       },
       {
         "stage": "minified",
         "bytes": 325543,
         "humanReadableSize": "317.91 KB",
-        "reductionFromBaselinePercent": 67.7
+        "reductionFromBaselinePercent": 67.71
       },
       {
         "stage": "minified+gzip",
@@ -2692,12 +2692,12 @@
     "tree": {
       "name": "bundle",
       "fullPath": "bundle",
-      "value": 1004843,
+      "value": 1005142,
       "children": [
         {
           "name": "src",
           "fullPath": "src",
-          "value": 601267,
+          "value": 601566,
           "children": [
             {
               "name": "state",
@@ -3110,7 +3110,7 @@
             {
               "name": "util",
               "fullPath": "src/util",
-              "value": 120584,
+              "value": 120883,
               "children": [
                 {
                   "name": "scale",
@@ -3229,14 +3229,14 @@
                   "value": 2795
                 },
                 {
+                  "name": "ActiveShapeUtils.tsx",
+                  "fullPath": "src/util/ActiveShapeUtils.tsx",
+                  "value": 2432
+                },
+                {
                   "name": "DOMUtils.ts",
                   "fullPath": "src/util/DOMUtils.ts",
                   "value": 2400
-                },
-                {
-                  "name": "ActiveShapeUtils.tsx",
-                  "fullPath": "src/util/ActiveShapeUtils.tsx",
-                  "value": 2133
                 },
                 {
                   "name": "svgPropertiesAndEvents.ts",
