@@ -1,4 +1,3 @@
-import { useMemo } from 'react';
 import {
   Legend,
   Pie,
@@ -34,10 +33,13 @@ const seriesPatterns = [
 function withPatterns(theme: RechartsTheme): RechartsTheme {
   return {
     ...theme,
-    graphicalItems: theme.graphicalItems.map((item, index) => ({
-      ...item,
-      fillDefinition: seriesPatterns[index % seriesPatterns.length],
-    })),
+    graphicalItems: theme.graphicalItems.map((item, index) => {
+      const definition = seriesPatterns[index % seriesPatterns.length];
+      if (definition == null) {
+        return item;
+      }
+      return { ...item, fill: { color: typeof item.fill === 'object' ? item.fill.color : item.fill, definition } };
+    }),
   };
 }
 
@@ -46,7 +48,7 @@ const chartStyle = { width: '100%', maxWidth: 500, maxHeight: '70vh', aspectRati
 export default function ThemePatternsExample({ isAnimationActive = true }: { isAnimationActive?: boolean }) {
   // Build on the active theme, so that the example follows light and dark mode
   const theme = useRechartsTheme() ?? lightTheme;
-  const patternedTheme = useMemo(() => withPatterns(theme), [theme]);
+  const patternedTheme = withPatterns(theme);
   return (
     <RechartsThemeProvider value={patternedTheme}>
       {/* Pie takes one theme entry per sector, so each sector gets its own color and pattern */}

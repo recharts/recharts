@@ -696,7 +696,7 @@ export function ThemingGuide() {
         . This is how a <LinkToApi>Scatter</LinkToApi> that reads both coordinates from its axes gets a theme color.
       </p>
       <p>
-        Each entry can also set a <code>fillDefinition</code>, such as a pattern, so that series differ by more than
+        The <code>fill</code> of each entry can also be a fill object with a pattern, so that series differ by more than
         color. The <RechartsLink to="guide/patterns">Patterns and gradients guide</RechartsLink> explains how.
       </p>
       <p>

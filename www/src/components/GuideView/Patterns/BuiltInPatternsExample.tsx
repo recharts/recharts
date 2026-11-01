@@ -26,8 +26,10 @@ const data = names.map(name => {
   return { name, value: 1, fill };
 });
 
-const chartStyle = { width: '100%', maxWidth: 700, maxHeight: '70vh', aspectRatio: 1.618 };
+// Each strip gets a fixed height, so that every pattern is large enough to see, and every label fits
+const stripHeight = 40;
 const margin = { top: 10, right: 10, left: 10, bottom: 10 };
+const chartStyle = { width: '100%', maxWidth: 700, height: names.length * stripHeight + margin.top + margin.bottom };
 
 export default function BuiltInPatternsExample({ isAnimationActive = true }: { isAnimationActive?: boolean }) {
   return (

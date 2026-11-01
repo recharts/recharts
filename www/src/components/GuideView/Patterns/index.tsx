@@ -39,6 +39,14 @@ const entryFillExample = `const data = [
 
 <Pie data={data} dataKey="value" fill={{ definition: pattern(patterns.diagonal) }} />`;
 
+const themeSlotsExample = `import { lightTheme, pattern, patterns } from 'recharts';
+
+const theme = {
+  ...lightTheme,
+  grid: { ...lightTheme.grid, fill: { color: '#fafafa', definition: pattern(patterns.dots) } },
+  reference: { ...lightTheme.reference, fill: { color: '#eee', definition: pattern(patterns.diagonal) } },
+};`;
+
 const otherPlacesExample = `const stripes = { color: '#eee', definition: pattern(patterns.diagonal) };
 
 <CartesianGrid horizontalFill={['#fafafa', stripes]} />
@@ -147,10 +155,10 @@ export function Patterns() {
 
       <h2>Patterns in a theme</h2>
       <p>
-        Each entry of the theme <code>graphicalItems</code> can set a <code>fillDefinition</code> next to its{' '}
-        <code>fill</code> color. Graphical items without a fill of their own then paint with it. Give each entry a
-        different pattern, and every chart that uses the theme tells its series apart without relying on color alone,
-        without setting a single <code>fill</code>.
+        The <code>fill</code> of each theme entry in <code>graphicalItems</code> can be a fill object too, the same as
+        the <code>fill</code> of a graphical item. Graphical items without a fill of their own then paint with it. Give
+        each entry a different pattern, and every chart that uses the theme tells its series apart without relying on
+        color alone, without setting a single <code>fill</code>.
       </p>
       <CodeEditorWithPreview
         Component={ThemePatternsExample}
@@ -160,8 +168,15 @@ export function Patterns() {
       <p>
         Pie, Funnel, Treemap, SunburstChart, and Sankey take one theme entry per sector, trapezoid, branch, or node. The
         other graphical items take one per series. A graphical item or data entry that sets its own color does not take
-        the theme pattern. A theme with fill definitions holds React components, so it cannot be stored as JSON.
+        the theme pattern. A theme with fill objects holds React components, so it cannot be stored as JSON.
       </p>
+      <p>
+        The other theme styles that fill an area take fill objects too: <code>grid</code>, <code>reference</code>,{' '}
+        <code>brush</code>, <code>barBackground</code>, and <code>cursor</code>. A grid, reference element, Brush,
+        background, or cursor without a fill of its own paints with the fill object of the theme. The{' '}
+        <code>active</code> styles of a theme entry and the cross cursor of a ScatterChart use the <code>color</code>.
+      </p>
+      <SourceCodeEditor value={themeSlotsExample} className="snippet" readOnly />
 
       <h2>Where fill objects work</h2>
       <table className={styles.table}>
