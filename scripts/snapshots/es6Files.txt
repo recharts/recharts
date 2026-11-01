@@ -311,6 +311,7 @@
   "es6/util/useId.js",
   "es6/util/usePrefersReducedMotion.js",
   "es6/util/useReportScale.js",
+  "es6/util/useStableValue.js",
   "es6/util/useUniqueId.js",
   "es6/util/zoom",
   "es6/util/zoom/ZoomOptions.js",

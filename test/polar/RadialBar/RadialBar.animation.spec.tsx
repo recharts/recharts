@@ -3,9 +3,10 @@ import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { act } from '@testing-library/react';
 import { createSelectorTestCase } from '../../helper/createSelectorTestCase';
 import { pageDataWithFillColor } from '../../../storybook/stories/data';
-import { RadialBar, RadialBarChart } from '../../../src';
+import { LabelList, RadialBar, RadialBarChart } from '../../../src';
 import { getRadialBarPaths } from '../../helper/expectRadialBars';
 import { assertNotNull } from '../../helper/assertNotNull';
+import { getLabelListTexts } from '../../helper/expectLabel';
 import { MockAnimationManager } from '../../animation/MockProgressAnimationManager';
 
 const smallerData = pageDataWithFillColor.slice(0, 2);
@@ -381,6 +382,31 @@ describe('RadialBar animation', () => {
           'M 347.8,200 A 147.8,147.8,0, 1,0, 285.4481,320.5963 L 249.6038,270.0079 A 85.8,85.8,0, 1,1, 285.8,200 Z',
         ],
       ]);
+    });
+  });
+
+  describe('when the surrounding component re-renders', () => {
+    const renderTestCase = createSelectorTestCase(({ children }) => (
+      <RadialBarChart width={400} height={400} data={smallerData}>
+        <RadialBar dataKey="pv" onAnimationStart={onAnimationStart} onAnimationEnd={onAnimationEnd}>
+          <LabelList dataKey="pv" />
+        </RadialBar>
+        {children}
+      </RadialBarChart>
+    ));
+
+    it('should keep the labels rendered and not restart the animation', async () => {
+      const { container, animationManager, rerenderSameComponent } = renderTestCase();
+      await animationManager.completeAnimation();
+
+      expect(getLabelListTexts(container)).toEqual(['2400', '4567']);
+      expect(onAnimationStart).toHaveBeenCalledTimes(1);
+
+      rerenderSameComponent();
+
+      expect(getLabelListTexts(container)).toEqual(['2400', '4567']);
+      expect(onAnimationStart).toHaveBeenCalledTimes(1);
+      expect(onAnimationEnd).toHaveBeenCalledTimes(1);
     });
   });
 });

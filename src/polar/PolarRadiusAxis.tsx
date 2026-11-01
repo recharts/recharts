@@ -36,6 +36,8 @@ import { RechartsScale } from '../util/scale/RechartsScale';
 import { CustomScaleDefinition } from '../util/scale/CustomScaleDefinition';
 import { usePolarChartLayout } from '../context/chartLayoutContext';
 import { noop } from '../util/DataUtils';
+import { propsAreEqual } from '../util/propsAreEqual';
+import { useStableValue } from '../util/useStableValue';
 import { getAxisTypeBasedOnLayout } from '../util/getAxisTypeBasedOnLayout';
 import { getClassNameFromUnknown } from '../util/getClassNameFromUnknown';
 import { Styles1D } from '../theme/RechartsTheme';
@@ -237,7 +239,7 @@ const defaultLegacyRadiusAxisThemeProps: Styles1D = {
 function SetRadiusAxisSettings(props: Omit<RadiusAxisSettings, 'type'> & { type: AxisDomainTypeInput }): null {
   const dispatch = useAppDispatch();
   const layout = usePolarChartLayout();
-  const settings: RadiusAxisSettings | undefined = useMemo(() => {
+  const nextSettings: RadiusAxisSettings | undefined = useMemo(() => {
     const { type: typeFromProps, ...rest } = props;
     const evaluatedType: EvaluatedAxisDomainType | undefined = getAxisTypeBasedOnLayout(
       layout,
@@ -249,6 +251,7 @@ function SetRadiusAxisSettings(props: Omit<RadiusAxisSettings, 'type'> & { type:
     }
     return { ...rest, type: evaluatedType };
   }, [props, layout]);
+  const settings = useStableValue(nextSettings, propsAreEqual);
   useEffect(() => {
     if (settings == null) {
       return noop;

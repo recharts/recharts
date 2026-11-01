@@ -32,6 +32,8 @@ import { RechartsScale } from '../util/scale/RechartsScale';
 import { CustomScaleDefinition } from '../util/scale/CustomScaleDefinition';
 import { usePolarChartLayout } from '../context/chartLayoutContext';
 import { noop } from '../util/DataUtils';
+import { propsAreEqual } from '../util/propsAreEqual';
+import { useStableValue } from '../util/useStableValue';
 import { getAxisTypeBasedOnLayout } from '../util/getAxisTypeBasedOnLayout';
 import { getClassNameFromUnknown } from '../util/getClassNameFromUnknown';
 import { useRechartsTheme } from '../theme/RechartsThemeContext';
@@ -283,7 +285,7 @@ type AngleAxisSettingsReporter = Omit<AngleAxisSettings, 'type'> & {
 function SetAngleAxisSettings(props: AngleAxisSettingsReporter): ReactNode {
   const dispatch = useAppDispatch();
   const layout = usePolarChartLayout();
-  const settings: AngleAxisSettings | undefined = useMemo(() => {
+  const nextSettings: AngleAxisSettings | undefined = useMemo(() => {
     const { children, type: typeFromProps, ...rest } = props;
     const evaluatedType: EvaluatedAxisDomainType | undefined = getAxisTypeBasedOnLayout(
       layout,
@@ -295,6 +297,7 @@ function SetAngleAxisSettings(props: AngleAxisSettingsReporter): ReactNode {
     }
     return { ...rest, type: evaluatedType };
   }, [props, layout]);
+  const settings = useStableValue(nextSettings, propsAreEqual);
   const synchronizedSettings = useAppSelector(state => selectAngleAxis(state, settings?.id));
   const settingsAreSynchronized = settings === synchronizedSettings;
   useEffect(() => {
