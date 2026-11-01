@@ -27,6 +27,8 @@ import barChartWithMultiXAxisSource from './BarChartWithMultiXAxis?raw';
 import BarChartWithLabelBackground from './BarChartWithLabelBackground';
 import BarChartWithPatternFill from './BarChartWithPatternFill';
 import barChartWithPatternFillSource from './BarChartWithPatternFill?raw';
+import BarChartWithThemePatterns from './BarChartWithThemePatterns';
+import barChartWithThemePatternsSource from './BarChartWithThemePatterns?raw';
 import barChartWithLabelBackgroundSource from './BarChartWithLabelBackground?raw';
 import { ChartExample } from '../types.ts';
 import BarChartNavExample from './BarChartNavExample';
@@ -218,9 +220,23 @@ export const barChartExamples = {
     name: 'Bar Chart with gradient and pattern fill',
     description: (
       <>
-        The <code>fill</code> prop of <LinkToApi>Bar</LinkToApi> accepts any SVG paint, including a reference to a
-        gradient or a pattern. Define them inside <code>{'<defs>'}</code> in the chart, and point to them with{' '}
-        <code>fill=&quot;url(#id)&quot;</code>.
+        The <code>fill</code> prop of <LinkToApi>Bar</LinkToApi> accepts a fill object with a <code>definition</code>: a
+        component that renders an SVG paint server. <code>linearGradient</code> and <code>pattern</code> make one from
+        the built-in <code>gradients</code> and <code>patterns</code>, or from your own values. For full control, write
+        the component yourself. Recharts renders it with a unique ID, draws the same fill in Legend icons, and Tooltip
+        keeps showing the solid color. Patterns tell the series apart without relying on color alone.
+      </>
+    ),
+  },
+  BarChartWithThemePatterns: {
+    Component: BarChartWithThemePatterns,
+    sourceCode: barChartWithThemePatternsSource,
+    name: 'Bar Chart with patterns from the theme',
+    description: (
+      <>
+        The <code>fill</code> of a theme entry can be a fill object, the same as the <code>fill</code> of a Bar. Here
+        every entry of the active theme keeps its color and gets one of the built-in <code>patterns</code>, so the Bars
+        tell their series apart without relying on color alone, and without setting any <code>fill</code> themselves.
       </>
     ),
   },

@@ -24,7 +24,7 @@ import { DefaultZIndexes } from '../zIndex/DefaultZIndexes';
 import { isWellBehavedNumber } from '../util/isWellBehavedNumber';
 import { BandPosition, RechartsScale } from '../util/scale/RechartsScale';
 import { CartesianScaleHelper, CartesianScaleHelperImpl } from '../util/scale/CartesianScaleHelper';
-import { Styles2D } from '../theme/RechartsTheme';
+import { ColorStyles2D, withFillColor } from '../theme/themeFill';
 import { useBackwardsCompatibleTheme } from '../theme/useBackwardsCompatibleTheme';
 
 /**
@@ -367,7 +367,7 @@ export const referenceLineDefaultProps = {
   zIndex: DefaultZIndexes.line,
 } as const satisfies Partial<Props>;
 
-const defaultLegacyReferenceLineThemeProps: Styles2D = {
+const defaultLegacyReferenceLineThemeProps: ColorStyles2D = {
   fill: 'none',
   stroke: '#ccc',
   fillOpacity: 1,
@@ -395,7 +395,7 @@ export function ReferenceLine<
   YValueType extends ReferenceCoordinateValue = any,
 >(outsideProps: Props<XValueType, YValueType>) {
   const themeProps = useBackwardsCompatibleTheme(
-    theme => theme.reference,
+    theme => withFillColor(theme.reference),
     outsideProps,
     defaultLegacyReferenceLineThemeProps,
   );

@@ -17,6 +17,7 @@ import { referenceDotApiExamples } from './ReferenceDot';
 import { referenceLineApiExamples } from './ReferenceLine';
 import { responsiveContainerApiExamples } from './ResponsiveContainer';
 import { sankeyApiExamples } from './SankeyChart';
+import { symbolsApiExamples } from './Symbols';
 import { scatterChartApiExamples } from './ScatterChart';
 import { treemapApiExamples } from './Treemap';
 import { ChartExample } from '../exampleComponents/types.ts';
@@ -66,6 +67,7 @@ export const allApiExamples: Record<string, ReadonlyArray<ChartExample>> = {
   Funnel: funnelApiExamples,
   FunnelChart: funnelChartApiExamples,
   Sankey: sankeyApiExamples,
+  Symbols: symbolsApiExamples,
   SunburstChart: sunburstChartApiExamples,
   ZIndexLayer: zIndexLayerApiExamples,
   DefaultZIndexes: defaultZIndexesApiExamples,

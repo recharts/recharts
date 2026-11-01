@@ -113,6 +113,7 @@ export const treeshakingGroups: Record<string, ReadonlyArray<string>> = {
   XAxis,
   YAxis,
   ZAxis,
+  pattern: ['pattern', 'useRechartsTheme'],
   useCartesianChartLayout: ['useChartLayout'],
   useXAxisDomain: ['getNiceTickValues'],
   useXAxisInverseDataSnapScale: ['getNiceTickValues'],

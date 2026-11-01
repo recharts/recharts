@@ -22,8 +22,10 @@ import { isPositiveNumber } from '../util/isWellBehavedNumber';
 import { areScalesApproximatelyEqual, areValueArraysApproximatelyEqual } from '../util/propsAreEqual';
 import { ZIndexable, ZIndexLayer } from '../zIndex/ZIndexLayer';
 import { DefaultZIndexes } from '../zIndex/DefaultZIndexes';
-import { Styles2D } from '../theme/RechartsTheme';
+import { ColorStyles2D, useThemeFillObject, withFillColor } from '../theme/themeFill';
 import { useBackwardsCompatibleTheme } from '../theme/useBackwardsCompatibleTheme';
+import { RechartsFill } from '../fill/RechartsFill';
+import { splitFill, useFillPaint, useFillPaints } from '../fill/fillDefinitions';
 
 /**
  * The <CartesianGrid horizontal
@@ -122,12 +124,14 @@ interface CartesianGridProps extends ZIndexable {
    */
   verticalPoints?: number[];
   /**
-   * The background color used to fill the space between grid lines
+   * The background used to fill the space between grid lines: a color, or a {@link RechartsFill} object
+   * with an SVG definition, such as a pattern or a gradient.
    *
    * @example <CartesianGrid fill="red" />
    * @example <CartesianGrid fill="#ccc" />
+   * @example <CartesianGrid fill={{ color: '#eee', definition: pattern(patterns.dots) }} />
    */
-  fill?: string;
+  fill?: string | RechartsFill;
   /**
    * The opacity of the background used to fill the space between grid lines
    *
@@ -139,6 +143,7 @@ interface CartesianGridProps extends ZIndexable {
    *
    * The values from this array will be passed in as the `fill` property in a `rect` SVG element.
    * For possible values see: https://developer.mozilla.org/en-US/docs/Web/SVG/Attribute/fill#rect
+   * A value can also be a {@link RechartsFill} object, such as a pattern.
    *
    * In case there are more stripes than colors, the colors will start from beginning.
    * So for example: verticalFill['yellow', 'black'] produces a pattern of yellow|black|yellow|black
@@ -148,12 +153,13 @@ interface CartesianGridProps extends ZIndexable {
    *
    * @defaultValue []
    */
-  verticalFill?: string[];
+  verticalFill?: Array<string | RechartsFill>;
   /**
    * Defines background color of stripes.
    *
    * The values from this array will be passed in as the `fill` property in a `rect` SVG element.
    * For possible values see: https://developer.mozilla.org/en-US/docs/Web/SVG/Attribute/fill#rect
+   * A value can also be a {@link RechartsFill} object, such as a pattern.
    *
    * In case there are more stripes than colors, the colors will start from beginning.
    * So for example: horizontalFill['yellow', 'black'] produces a pattern of yellow|black|yellow|black
@@ -163,7 +169,7 @@ interface CartesianGridProps extends ZIndexable {
    *
    * @defaultValue []
    */
-  horizontalFill?: string[];
+  horizontalFill?: Array<string | RechartsFill>;
   /**
    * If true, only the lines that correspond to the axes ticks values will be drawn.
    * If false, extra lines could be added for each axis (at min and max coordinates), if there will not such ticks.
@@ -208,12 +214,21 @@ interface CartesianGridProps extends ZIndexable {
 }
 
 // We exclude strokeDasharray here because Recharts allows array of numbers while DOM does not
-type AcceptedSvgProps = Omit<SVGProps<SVGLineElement>, 'offset' | 'strokeDasharray'>;
+type AcceptedSvgProps = Omit<SVGProps<SVGLineElement>, 'offset' | 'strokeDasharray' | 'fill'>;
 
 export type Props = AcceptedSvgProps & CartesianGridProps;
 
+/**
+ * Grid props after the fills are resolved: `fill` is the base color, and the stripes are colors or `url(#…)`.
+ */
+type StringFillGridProps = Omit<CartesianGridProps, 'fill' | 'horizontalFill' | 'verticalFill'> & {
+  fill?: string;
+  horizontalFill?: string[];
+  verticalFill?: string[];
+};
+
 type CartesianGridInternalProps = AcceptedSvgProps &
-  RequiresDefaultProps<CartesianGridProps, typeof defaultCartesianGridProps> & {
+  RequiresDefaultProps<StringFillGridProps, typeof defaultCartesianGridProps> & {
     // x,y,width,height are not declared directly in default props but are resolved using offset, if undefined
     x: number;
     y: number;
@@ -221,7 +236,9 @@ type CartesianGridInternalProps = AcceptedSvgProps &
     height: number;
   };
 
-const Background = (props: Pick<AcceptedSvgProps, 'fill' | 'fillOpacity' | 'x' | 'y' | 'width' | 'height' | 'ry'>) => {
+const Background = (
+  props: Pick<AcceptedSvgProps, 'fillOpacity' | 'x' | 'y' | 'width' | 'height' | 'ry'> & { fill: string | undefined },
+) => {
   const { fill } = props;
 
   if (!fill || fill === 'none') {
@@ -424,38 +441,65 @@ function VerticalStripes(props: CartesianGridInternalProps) {
   return <g className="recharts-cartesian-gridstripes-vertical">{items}</g>;
 }
 
+type TickFontStyle = { fontSize?: string; letterSpacing?: string };
+
+/**
+ * Reads fontSize/letterSpacing from an axis's `tick` prop when it is a plain
+ * style object (e.g. `tick={{ fontSize: 30 }}`). Unlike CartesianAxis, the grid
+ * has no DOM to measure, so function/element ticks are not covered.
+ */
+function getTickFontStyle(tick: unknown): TickFontStyle {
+  if (tick == null || typeof tick !== 'object' || React.isValidElement(tick)) {
+    return {};
+  }
+  const fontSize =
+    'fontSize' in tick && tick.fontSize != null ? `${tick.fontSize}`.replace(/^(\d+(\.\d+)?)$/, '$1px') : undefined;
+  const letterSpacing = 'letterSpacing' in tick && tick.letterSpacing != null ? String(tick.letterSpacing) : undefined;
+  return { fontSize, letterSpacing };
+}
+
 const defaultVerticalCoordinatesGenerator: VerticalCoordinatesGenerator = (
   { xAxis, width, height, offset },
   syncWithTicks,
-) =>
-  getCoordinatesOfGrid(
-    getTicks({
-      ...defaultCartesianAxisProps,
-      ...xAxis,
-      ticks: getTicksOfAxis(xAxis, true),
-      viewBox: { x: 0, y: 0, width, height },
-    }),
+) => {
+  const { fontSize, letterSpacing } = getTickFontStyle(xAxis?.tick);
+  return getCoordinatesOfGrid(
+    getTicks(
+      {
+        ...defaultCartesianAxisProps,
+        ...xAxis,
+        ticks: getTicksOfAxis(xAxis, true),
+        viewBox: { x: 0, y: 0, width, height },
+      },
+      fontSize,
+      letterSpacing,
+    ),
     offset.left,
     offset.left + offset.width,
     syncWithTicks,
   );
-
+};
 const defaultHorizontalCoordinatesGenerator: HorizontalCoordinatesGenerator = (
   { yAxis, width, height, offset },
   syncWithTicks,
-) =>
-  getCoordinatesOfGrid(
-    getTicks({
-      ...defaultCartesianAxisProps,
-      ...yAxis,
-      ticks: getTicksOfAxis(yAxis, true),
-      viewBox: { x: 0, y: 0, width, height },
-    }),
+) => {
+  const { fontSize, letterSpacing } = getTickFontStyle(yAxis?.tick);
+  return getCoordinatesOfGrid(
+    getTicks(
+      {
+        ...defaultCartesianAxisProps,
+        ...yAxis,
+        ticks: getTicksOfAxis(yAxis, true),
+        viewBox: { x: 0, y: 0, width, height },
+      },
+      fontSize,
+      letterSpacing,
+    ),
     offset.top,
     offset.top + offset.height,
     syncWithTicks,
   );
-
+};
 function areGridAxisScalesEqual(
   a: AxisPropsForCartesianGridTicksGeneration['scale'],
   b: AxisPropsForCartesianGridTicksGeneration['scale'],
@@ -519,7 +563,7 @@ export const defaultCartesianGridProps = {
   zIndex: DefaultZIndexes.grid,
 } as const satisfies Partial<Props>;
 
-const defaultLegacyGridThemeProps: Styles2D = {
+const defaultLegacyGridThemeProps: ColorStyles2D = {
   fill: 'none',
   stroke: '#ccc',
 };
@@ -529,10 +573,22 @@ const defaultLegacyGridThemeProps: Styles2D = {
  *
  * @consumes CartesianChartContext
  */
-export function CartesianGrid(props: Props) {
+export function CartesianGrid(propsWithFillObjects: Props) {
   const chartWidth = useChartWidth();
   const chartHeight = useChartHeight();
   const offset = useOffsetInternal();
+  const horizontalStripes = useFillPaints(
+    propsWithFillObjects.horizontalFill,
+    'recharts-cartesian-grid-horizontal-fill',
+  );
+  const verticalStripes = useFillPaints(propsWithFillObjects.verticalFill, 'recharts-cartesian-grid-vertical-fill');
+  // From here on, `fill` is the base color, and the stripes are colors or `url(#…)`
+  const props: Omit<Props, 'fill' | 'horizontalFill' | 'verticalFill'> & StringFillGridProps = {
+    ...propsWithFillObjects,
+    fill: splitFill(propsWithFillObjects.fill).color,
+    horizontalFill: propsWithFillObjects.horizontalFill == null ? undefined : horizontalStripes.paints,
+    verticalFill: propsWithFillObjects.verticalFill == null ? undefined : verticalStripes.paints,
+  };
   const propsIncludingDefaults: CartesianGridInternalProps = {
     ...resolveDefaultProps(props, defaultCartesianGridProps),
     x: isNumber(props.x) ? props.x : offset.left,
@@ -567,9 +623,16 @@ export function CartesianGrid(props: Props) {
   );
 
   const themeProps = useBackwardsCompatibleTheme(
-    theme => theme.grid,
+    theme => withFillColor(theme.grid),
     propsIncludingDefaults,
     defaultLegacyGridThemeProps,
+  );
+  // Without a fill of its own, the grid paints with the fill object of the theme, if there is one
+  const themeFillObject = useThemeFillObject(theme => theme.grid);
+  const background = useFillPaint(
+    propsWithFillObjects.fill ?? themeFillObject,
+    themeProps.fill,
+    'recharts-cartesian-grid-fill',
   );
 
   if (!isPositiveNumber(width) || !isPositiveNumber(height) || !isNumber(x) || !isNumber(y)) {
@@ -585,6 +648,7 @@ export function CartesianGrid(props: Props) {
    */
   const verticalCoordinatesGenerator =
     propsIncludingDefaults.verticalCoordinatesGenerator || defaultVerticalCoordinatesGenerator;
+
   const horizontalCoordinatesGenerator =
     propsIncludingDefaults.horizontalCoordinatesGenerator || defaultHorizontalCoordinatesGenerator;
 
@@ -661,8 +725,17 @@ export function CartesianGrid(props: Props) {
         className="recharts-cartesian-grid"
         clipPath={isZoomed && clipPathId != null ? `url(#${clipPathId})` : undefined}
       >
+        {(background.definition != null ||
+          horizontalStripes.definitions != null ||
+          verticalStripes.definitions != null) && (
+          <defs>
+            {background.definition}
+            {horizontalStripes.definitions}
+            {verticalStripes.definitions}
+          </defs>
+        )}
         <Background
-          fill={themeProps.fill}
+          fill={background.paint}
           fillOpacity={themeProps.fillOpacity}
           x={propsIncludingDefaults.x}
           y={propsIncludingDefaults.y}

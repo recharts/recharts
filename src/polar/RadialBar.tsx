@@ -73,9 +73,22 @@ import { ZIndexable, ZIndexLayer } from '../zIndex/ZIndexLayer';
 import { DefaultZIndexes } from '../zIndex/DefaultZIndexes';
 import { getZIndexFromUnknown } from '../zIndex/getZIndexFromUnknown';
 import { usePolarChartLayout } from '../context/chartLayoutContext';
-import { Styles2D } from '../theme/RechartsTheme';
+import { ColorStyles2D } from '../theme/themeFill';
+import { RechartsFill } from '../fill/RechartsFill';
+import {
+  EntryFillDefinitions,
+  FillObjectDefinition,
+  getEntryFillId,
+  getEntryFillObject,
+  getFillUrl,
+  getSeriesFillId,
+  hasEntryFillObjects,
+  readEntryFill,
+  splitFill,
+  withEntryFillColor,
+} from '../fill/fillDefinitions';
 import { useBackwardsCompatibleTheme } from '../theme/useBackwardsCompatibleTheme';
-import { useGraphicalItemIdentity } from '../theme/useGraphicalItemIdentity';
+import { useGraphicalItemIdentity, useGraphicalItemThemeFill } from '../theme/useGraphicalItemIdentity';
 import { useEffectiveDataKey } from '../util/useEffectiveDataKey';
 import {
   getEntryColor,
@@ -95,12 +108,16 @@ import {
 
 const STABLE_EMPTY_ARRAY: readonly RadialBarDataItem[] = [];
 
-export type RadialBarDataItem = SectorProps &
+export type RadialBarDataItem = Omit<SectorProps, 'fill'> &
   PolarViewBoxRequired &
   TooltipTriggerInfo & {
+    /**
+     * The color of the entry. A fill object in the props paints the entry with its definition.
+     */
+    fill?: string;
     value?: any;
     payload?: any;
-    background?: SectorProps;
+    background?: Omit<SectorProps, 'fill'> & { fill?: string };
   };
 
 type RadialBarBackground = boolean | (ActiveShape<SectorProps> & ZIndexable);
@@ -168,9 +185,11 @@ function RadialBarSectors({
   isAnimating,
   isEntrance,
 }: RadialBarSectorsProps) {
-  const { shape, activeShape, cornerRadius, id, unthemedColors, themedActiveStyles, ...others } =
+  const { shape, activeShape, cornerRadius, id, unthemedColors, themedActiveStyles, fillObject, ...others } =
     allOtherRadialBarProps;
-  const baseProps = svgPropertiesNoEvents(others);
+  const svgProps = svgPropertiesNoEvents(others);
+  // `fill` stays the base color for labels; the shapes paint with the definition
+  const baseProps = fillObject == null ? svgProps : { ...svgProps, fill: getFillUrl(getSeriesFillId(id)) };
 
   const activeIndex = useAppSelector(selectActiveTooltipIndex);
   const {
@@ -207,6 +226,10 @@ function RadialBarSectors({
           cornerRadius: parseCornerRadius(cornerRadius),
           ...getEntryStyleOverrides(entry, unthemedColors),
           ...entry,
+          // a data entry with its own fill object paints with its own definition
+          ...(readEntryFill(entry.payload).fillObject == null
+            ? undefined
+            : { fill: getFillUrl(getEntryFillId(id, i)) }),
           ...(isActive ? getActiveStyleOverrides(activeShape, themedActiveStyles, entry) : undefined),
           ...adaptEventsOfChild(restOfAllOtherProps, entry, i),
           onMouseEnter,
@@ -346,6 +369,19 @@ function RenderSectors(props: InternalProps) {
  */
 export interface InternalRadialBarProps<DataPointType = any, DataValueType = any>
   extends ValueAxisDataConsumer<DataPointType, DataValueType>, ZIndexable {
+  /**
+   * The fill of the sectors. Either a color string, or a {@link RechartsFill} object with an SVG definition,
+   * such as a pattern or a gradient.
+   *
+   * Each sector can have its own fill too: set `fill` in its data entry, to a color or to a fill object.
+   *
+   * With a fill object, Recharts renders the definition with a unique ID, in the chart and in the Legend icons.
+   * Tooltip and labels use the solid `color` of the fill object.
+   * If the fill object has no `color`, the sectors keep the theme colors and the definition gets the theme color.
+   *
+   * @example <RadialBar dataKey="uv" fill={{ definition: pattern(patterns.diagonal) }} />
+   */
+  fill?: string | RechartsFill;
   activeShape?: ActiveShape<RadialBarSectorProps, SVGPathElement>;
   /**
    * @defaultValue 0
@@ -544,7 +580,19 @@ export type RadialBarProps<DataPointType = any, DataValueType = any> = Omit<
 > &
   Omit<InternalRadialBarProps<DataPointType, DataValueType>, 'sectors'>;
 
+/**
+ * Props after the fill object is split off: `fill` is the base color.
+ */
+type StringFillProps<DataPointType, DataValueType> = Omit<RadialBarProps<DataPointType, DataValueType>, 'fill'> & {
+  fill?: string;
+};
+
 type ThemeInternalProps = {
+  /**
+   * The fill object of the RadialBar, from props or from the theme.
+   * Sectors without a fill of their own paint with it.
+   */
+  fillObject?: RechartsFill;
   /**
    * Explicit style props without theme contributions.
    * Applied to data entries that define their own colors, so that they ignore the theme colors.
@@ -555,7 +603,7 @@ type ThemeInternalProps = {
    * Theme styles of the active shape, without the ones that explicit props override.
    * Undefined when there is no active theme, or when the theme has no active styles.
    */
-  themedActiveStyles?: Styles2D;
+  themedActiveStyles?: ColorStyles2D;
 };
 
 type InternalProps = WithIdRequired<PropsWithDefaults> & Pick<InternalRadialBarProps, 'sectors'> & ThemeInternalProps;
@@ -568,16 +616,22 @@ function SetRadialBarPayloadLegend({
   fill,
   stroke,
   unthemedColors,
+  fillObject,
   children,
-}: Pick<RadialBarProps, 'legendType' | 'fill' | 'stroke' | 'children'> & {
+}: Pick<StringFillProps<unknown, unknown>, 'legendType' | 'fill' | 'stroke' | 'children'> & {
   unthemedColors: UnthemedColors | undefined;
+  fillObject: RechartsFill | undefined;
 }) {
   const cells = React.useMemo(() => findAllByType(children, Cell), [children]);
   const legendPayload = useAppSelector(state => selectRadialBarLegendPayload(state, legendType));
-  const coloredLegendPayload = legendPayload?.map((entry, index) => ({
-    ...entry,
-    color: getEntryColor({ ...entry.payload, ...cells[index]?.props }, fill, stroke, unthemedColors),
-  }));
+  const coloredLegendPayload = legendPayload?.map((entry, index) => {
+    const payload = { ...entry.payload, ...cells[index]?.props };
+    return {
+      ...entry,
+      color: getEntryColor(payload, fill, stroke, unthemedColors),
+      fill: getEntryFillObject(payload, fillObject),
+    };
+  });
   return <SetPolarLegendPayload legendPayload={coloredLegendPayload ?? []} />;
 }
 
@@ -622,7 +676,7 @@ const SetRadialBarTooltipEntrySettings = React.memo(
   },
 );
 
-const defaultLegacyBarBackgroundProps: Styles2D = {
+const defaultLegacyBarBackgroundProps: ColorStyles2D = {
   fill: '#eee',
 };
 
@@ -667,7 +721,11 @@ function RadialBarBackgroundSectors({
             'recharts-radial-bar-background-sector',
             backgroundProps?.className == null ? undefined : String(backgroundProps.className),
           ),
-          option: background,
+          // A custom element or function draws the background; `true` and objects draw the default sector
+          option:
+            React.isValidElement(backgroundFromProps) || typeof backgroundFromProps === 'function'
+              ? backgroundFromProps
+              : background,
           isActive: false,
         };
 
@@ -688,17 +746,35 @@ class RadialBarWithState extends PureComponent<InternalProps> {
   }
 
   render() {
-    const { hide, sectors, className, background } = this.props;
+    const { hide, sectors, className, background, fillObject, id, fill, stroke, unthemedColors } = this.props;
 
     if (hide) {
       return null;
     }
 
     const layerClass = clsx('recharts-area', className);
+    const hasEntryFills = hasEntryFillObjects(sectors.map(sector => sector.payload));
 
     return (
       <ZIndexLayer zIndex={this.props.zIndex}>
         <Layer className={layerClass}>
+          {(fillObject != null || hasEntryFills) && (
+            <defs>
+              {fillObject != null && (
+                <FillObjectDefinition id={getSeriesFillId(id)} fillObject={fillObject} color={fill} />
+              )}
+              {hasEntryFills && (
+                <EntryFillDefinitions
+                  id={id}
+                  entries={sectors.map((sector, index) => ({
+                    index,
+                    payload: sector.payload,
+                    color: getEntryShapeColors(sector.payload, fill, stroke, unthemedColors).fill,
+                  }))}
+                />
+              )}
+            </defs>
+          )}
           {background && <Layer className="recharts-radial-bar-background">{this.renderBackground(sectors)}</Layer>}
           <Layer className="recharts-radial-bar-sectors">
             <RenderSectors {...this.props} />
@@ -786,7 +862,7 @@ export const defaultRadialBarProps = {
 } as const satisfies Partial<RadialBarProps>;
 
 type PropsWithDefaults<DataPointType = any, DataValueType = any> = RequiresDefaultProps<
-  RadialBarProps<DataPointType, DataValueType>,
+  StringFillProps<DataPointType, DataValueType>,
   typeof defaultRadialBarProps
 >;
 
@@ -925,21 +1001,24 @@ export function computeRadialBarDataItems({
       }
     }
 
-    return {
-      // @ts-expect-error can't spread unknown
-      ...entryWithoutId,
-      ...backgroundSector,
-      payload: entry,
-      value: stackedData ? value : value[1],
-      cx,
-      cy,
-      innerRadius,
-      outerRadius,
-      startAngle,
-      // @ts-expect-error endAngle is used before assigned (?)
-      endAngle,
-      ...(cells && cells[index] && cells[index].props),
-    } satisfies RadialBarDataItem;
+    return withEntryFillColor<RadialBarDataItem>(
+      {
+        // @ts-expect-error can't spread unknown
+        ...entryWithoutId,
+        ...backgroundSector,
+        payload: entry,
+        value: stackedData ? value : value[1],
+        cx,
+        cy,
+        innerRadius,
+        outerRadius,
+        startAngle,
+        // @ts-expect-error endAngle is used before assigned (?)
+        endAngle,
+        ...(cells && cells[index] && cells[index].props),
+      } satisfies RadialBarDataItem,
+      entry,
+    );
   });
 }
 
@@ -949,18 +1028,23 @@ export function computeRadialBarDataItems({
  * @provides CellReader
  */
 export function RadialBar<DataPointType = any, DataValueType = any>(
-  outsideProps: RadialBarProps<DataPointType, DataValueType>,
+  propsWithFillObject: RadialBarProps<DataPointType, DataValueType>,
 ) {
+  const { color: fillColor, fillObject } = splitFill(propsWithFillObject.fill);
+  // From here on, `fill` is the base color
+  const outsideProps: StringFillProps<DataPointType, DataValueType> = { ...propsWithFillObject, fill: fillColor };
   const dataKey = useEffectiveDataKey({
     dataKey: outsideProps.dataKey,
     angleAxisId: outsideProps.angleAxisId ?? defaultRadialBarProps.angleAxisId,
     radiusAxisId: outsideProps.radiusAxisId ?? defaultRadialBarProps.radiusAxisId,
   });
   const graphicalItemThemeSelector = useGraphicalItemIdentity(dataKey, outsideProps);
+  const themeFillObject = useGraphicalItemThemeFill(dataKey, outsideProps);
+  const effectiveFillObject = fillObject ?? themeFillObject;
   const resolveLabelTheme = useSeriesLabelThemeResolver(graphicalItemThemeSelector);
   const unthemedColors = useUnthemedColors(outsideProps);
   const themedActiveStyles = useThemedActiveStyles(graphicalItemThemeSelector, outsideProps);
-  const graphicalItemStyle = useBackwardsCompatibleTheme<RadialBarProps<DataPointType, DataValueType>>(
+  const graphicalItemStyle = useBackwardsCompatibleTheme<StringFillProps<DataPointType, DataValueType>>(
     graphicalItemThemeSelector,
     outsideProps,
     undefined,
@@ -974,7 +1058,7 @@ export function RadialBar<DataPointType = any, DataValueType = any>(
   const themeStrokeDasharray = outsideProps.strokeDasharray ?? graphicalItemStyle?.strokeDasharray;
   const themeFillOpacity = outsideProps.fillOpacity ?? graphicalItemStyle?.fillOpacity;
 
-  const themedProps: Partial<RadialBarProps<DataPointType, DataValueType>> = {};
+  const themedProps: Partial<StringFillProps<DataPointType, DataValueType>> = {};
   if (themeFill !== undefined) themedProps.fill = themeFill;
   if (themeStroke !== undefined) themedProps.stroke = themeStroke;
   if (themeStrokeWidth !== undefined) themedProps.strokeWidth = themeStrokeWidth;
@@ -1005,6 +1089,7 @@ export function RadialBar<DataPointType = any, DataValueType = any>(
             fill={themedProps.fill}
             stroke={themedProps.stroke}
             unthemedColors={unthemedColors}
+            fillObject={effectiveFillObject}
           >
             {props.children}
           </SetRadialBarPayloadLegend>
@@ -1013,6 +1098,7 @@ export function RadialBar<DataPointType = any, DataValueType = any>(
               {...props}
               {...themedProps}
               id={id}
+              fillObject={effectiveFillObject}
               unthemedColors={unthemedColors}
               themedActiveStyles={themedActiveStyles}
             />

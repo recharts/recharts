@@ -432,12 +432,7 @@ describe('RadialBar theme', () => {
       expect(background).not.toHaveAttribute('data-testid');
     });
 
-    /*
-     * RadialBar renders the background with the computed geometry as the shape option,
-     * so a custom background function or element is never used.
-     * https://github.com/recharts/recharts/issues/2535
-     */
-    test.fails('RadialBar with custom function background receives the entry name and payload', () => {
+    test('RadialBar with custom function background receives the entry name and payload', () => {
       const background = vi.fn((_props: unknown) => <path />);
       const entry = { name: 'A', value: 1, stroke: 'lime' };
       rechartsTestRender(

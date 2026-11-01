@@ -1,68 +1,43 @@
-import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Label, LabelList } from 'recharts';
-import { RechartsDevtools } from '@recharts/devtools';
+import {
+  BarChart,
+  Bar,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Label,
+  LabelList,
+  createHorizontalChart,
+  LabelProps,
+  LabelListProps,
+} from 'recharts';
+import { generateMockData, MockDataType, RechartsDevtools } from '@recharts/devtools';
 
-// #region Sample data
-const data = [
-  {
-    name: 'Page A',
-    uv: 4000,
-    pv: 2400,
-    amt: 2400,
-  },
-  {
-    name: 'Page B',
-    uv: 3000,
-    pv: 1398,
-    amt: 2210,
-  },
-  {
-    name: 'Page C',
-    uv: 2000,
-    pv: 9800,
-    amt: 2290,
-  },
-  {
-    name: 'Page D',
-    uv: 2780,
-    pv: 3908,
-    amt: 2000,
-  },
-];
-
+// #region Sample data and styles
+const data = generateMockData(6, 892134);
+const Typed = createHorizontalChart<MockDataType>()({ BarChart, XAxis, YAxis, Bar, LabelList });
+const chartStyle = { width: '100%', maxWidth: '700px', maxHeight: '70vh', aspectRatio: 1.618 };
+const labelProps: LabelProps = {
+  value: 'pv of page',
+  angle: -90,
+  position: 'insideLeft',
+  textAnchor: 'middle',
+};
+const positionTop: LabelListProps = { position: 'top' };
 // #endregion
+
 const LabelListChartExample = ({ isAnimationActive = true }: { isAnimationActive?: boolean }) => (
-  <BarChart
-    style={{ width: '100%', maxWidth: '700px', maxHeight: '70vh', aspectRatio: 1.618 }}
-    responsive
-    data={data}
-    margin={{
-      top: 15,
-      right: 0,
-      left: 0,
-      bottom: 5,
-    }}
-  >
+  <Typed.BarChart style={chartStyle} responsive data={data}>
     <CartesianGrid />
-    <XAxis dataKey="name">
+    <Typed.XAxis dataKey="label">
       <Label value="Pages of my website" offset={0} position="insideBottom" />
-    </XAxis>
-    <YAxis
-      width="auto"
-      label={{
-        value: 'pv of page',
-        angle: -90,
-        position: 'insideLeft',
-        textAnchor: 'middle',
-      }}
-    />
-    <Bar dataKey="pv" isAnimationActive={isAnimationActive}>
-      <LabelList dataKey="name" position="insideTop" angle={45} />
-    </Bar>
-    <Bar dataKey="uv" isAnimationActive={isAnimationActive}>
-      <LabelList dataKey="uv" position="top" />
-    </Bar>
+    </Typed.XAxis>
+    <Typed.YAxis width="auto" label={labelProps} />
+    <Typed.Bar dataKey="x" isAnimationActive={isAnimationActive}>
+      <Typed.LabelList dataKey="label" position="insideTopLeft" textAnchor="start" angle={45} dx={5} />
+    </Typed.Bar>
+    <Typed.Bar dataKey="y" isAnimationActive={isAnimationActive} label={positionTop} />
     <RechartsDevtools />
-  </BarChart>
+  </Typed.BarChart>
 );
 
 export default LabelListChartExample;

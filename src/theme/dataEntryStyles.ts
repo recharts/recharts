@@ -18,9 +18,10 @@
  */
 
 import { useMemo } from 'react';
-import { GraphicalItemStyle, Styles2D } from './RechartsTheme';
+import { ColorGraphicalItemStyle, ColorStyles2D } from './themeFill';
 import { useRechartsTheme } from './RechartsThemeContext';
 import { isDataAttribute, isSvgElementPropKey, svgPropertiesNoEventsFromUnknown } from '../util/svgPropertiesNoEvents';
+import { readEntryFill } from '../fill/fillDefinitions';
 
 /**
  * Explicit `fill` and `stroke` props of a graphical item, both keys present (possibly as `undefined`).
@@ -32,27 +33,29 @@ export type UnthemedColors = { fill: string | undefined; stroke: string | undefi
 /**
  * Returns true if the graphical item props or the data entry define their own `fill` or `stroke`.
  * Such items and entries drop the theme `fill` and `stroke`, and keep the rest of the theme.
+ * A fill object counts by its `color` only, so a fill object without a color keeps the theme colors.
  * @param entry props of graphical item, data entry, or anything else
  */
 export function hasOwnColors(entry: unknown): boolean {
   if (entry == null || typeof entry !== 'object') {
     return false;
   }
-  return Reflect.get(entry, 'fill') != null || Reflect.get(entry, 'stroke') != null;
+  return readEntryFill(entry).color != null || Reflect.get(entry, 'stroke') != null;
 }
 
-type StyleWithoutColors = Omit<GraphicalItemStyle, 'fill' | 'stroke'>;
+type StyleWithoutColors = Omit<ColorGraphicalItemStyle, 'fill' | 'stroke'>;
 
-const withoutColorsCache = new WeakMap<GraphicalItemStyle, StyleWithoutColors>();
+const withoutColorsCache = new WeakMap<ColorGraphicalItemStyle, StyleWithoutColors>();
 
 /**
- * Returns a copy of the style without its `fill` and `stroke`. Every other key, `active` and `label` included, stays.
+ * Returns a copy of the style without its `fill` and `stroke`.
+ * Every other key, `active` and `label` included, stays.
  * The result is cached, so the same style always returns the same object. That keeps theme selectors stable.
  * @param style theme style, for example an entry of `graphicalItems`
  */
-export function withoutColors(style: GraphicalItemStyle): StyleWithoutColors;
-export function withoutColors(style: GraphicalItemStyle | undefined): StyleWithoutColors | undefined;
-export function withoutColors(style: GraphicalItemStyle | undefined): StyleWithoutColors | undefined {
+export function withoutColors(style: ColorGraphicalItemStyle): StyleWithoutColors;
+export function withoutColors(style: ColorGraphicalItemStyle | undefined): StyleWithoutColors | undefined;
+export function withoutColors(style: ColorGraphicalItemStyle | undefined): StyleWithoutColors | undefined {
   if (style == null) {
     return undefined;
   }
@@ -69,13 +72,14 @@ export function withoutColors(style: GraphicalItemStyle | undefined): StyleWitho
  * Picks the themeable style properties that the data entry defines, and leaves out the undefined ones.
  * @param entry data entry
  */
-export function getOwnStyles(entry: Styles2D | null | undefined): Styles2D {
-  const result: Styles2D = {};
+export function getOwnStyles(entry: ColorStyles2D | null | undefined): ColorStyles2D {
+  const result: ColorStyles2D = {};
   if (entry == null) {
     return result;
   }
-  if (entry.fill != null) {
-    result.fill = entry.fill;
+  const entryFill = readEntryFill(entry).color;
+  if (entryFill != null) {
+    result.fill = entryFill;
   }
   if (entry.fillOpacity != null) {
     result.fillOpacity = entry.fillOpacity;
@@ -99,7 +103,7 @@ export function getOwnStyles(entry: Styles2D | null | undefined): Styles2D {
  * Picks the `fill` and `stroke` from explicit props, including the undefined ones.
  * @param explicitProps props as provided by the user, before merging with theme or defaults
  */
-export function getUnthemedColors(explicitProps: Styles2D): UnthemedColors {
+export function getUnthemedColors(explicitProps: ColorStyles2D): UnthemedColors {
   return { fill: explicitProps.fill, stroke: explicitProps.stroke };
 }
 
@@ -108,7 +112,7 @@ export function getUnthemedColors(explicitProps: Styles2D): UnthemedColors {
  * Without a theme, graphical items keep their legacy behaviour and there is nothing to override.
  * @param explicitProps props as provided by the user, before merging with theme or defaults
  */
-export function useUnthemedColors(explicitProps: Styles2D): UnthemedColors | undefined {
+export function useUnthemedColors(explicitProps: ColorStyles2D): UnthemedColors | undefined {
   const hasTheme = useRechartsTheme() != null;
   const { fill, stroke } = explicitProps;
   return useMemo(() => (hasTheme ? getUnthemedColors({ fill, stroke }) : undefined), [hasTheme, fill, stroke]);
@@ -143,12 +147,21 @@ export function getEntryStyleOverrides(
  */
 export function getEntrySvgProps(entry: unknown): Record<string, unknown> {
   const { id, ref, key, ...props } = svgPropertiesNoEventsFromUnknown(entry) ?? {};
+  if (props.fill != null && typeof props.fill !== 'string') {
+    // a fill object paints through its definition; the shape gets its color, or keeps the fill of the graphical item
+    const { fill, ...propsWithoutFill } = props;
+    const { color } = readEntryFill(entry);
+    return color == null ? propsWithoutFill : { ...propsWithoutFill, fill: color };
+  }
   return props;
 }
 
 function getStringProp(obj: unknown, key: 'fill' | 'stroke'): string | undefined {
   if (obj == null || typeof obj !== 'object') {
     return undefined;
+  }
+  if (key === 'fill') {
+    return readEntryFill(obj).color;
   }
   const value: unknown = Reflect.get(obj, key);
   return typeof value === 'string' ? value : undefined;

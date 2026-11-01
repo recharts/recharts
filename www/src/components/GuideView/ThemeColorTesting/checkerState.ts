@@ -46,7 +46,9 @@ export function stateFromPreset(preset: PresetName): CheckerState {
   const labelColor = theme.typography?.color;
   return {
     preset,
-    series: theme.graphicalItems.map(item => item.fill ?? item.stroke ?? '#000000'),
+    series: theme.graphicalItems.map(
+      item => (typeof item.fill === 'object' ? item.fill.color : item.fill) ?? item.stroke ?? '#000000',
+    ),
     fillOpacity: typeof fillOpacity === 'number' ? fillOpacity : 1,
     pageBackground: theme.pageBackground ?? '#ffffff',
     labelColor: typeof labelColor === 'string' ? labelColor : '#000000',
