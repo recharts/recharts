@@ -36,6 +36,9 @@ import { svgPropertiesNoEvents } from '../util/svgPropertiesNoEvents';
 import { RechartsFill } from '../fill/RechartsFill';
 import { splitFill, useFillPaint } from '../fill/fillDefinitions';
 
+/**
+ * @public
+ */
 export type BrushTravellerType = ReactElement<SVGElement> | ((props: TravellerProps) => ReactElement<SVGElement>);
 
 // Why is this tickFormatter different from the other TickFormatters? This one allows to return numbers too for some reason.
@@ -168,6 +171,9 @@ export interface BrushProps<DataPointType = any, DataValueType = any> extends Da
   alwaysShowText?: boolean;
 }
 
+/**
+ * @public
+ */
 export type Props = Omit<SVGProps<SVGElement>, 'onChange' | 'onDragEnd' | 'ref' | 'fill'> & BrushProps;
 
 /**
@@ -1214,6 +1220,7 @@ export const defaultBrushProps = {
  * @see {@link https://recharts.github.io/en-US/examples/SynchronizedLineChart/ Synchronized Brush}
  *
  * @consumes CartesianChartContext
+ * @public
  */
 export function Brush(propsWithFillObject: Props) {
   // From here on, `fill` is the base color

@@ -144,6 +144,9 @@ interface PolygonProps {
   onMouseLeave?: (e: React.MouseEvent<SVGPolygonElement, MouseEvent>) => void;
 }
 
+/**
+ * @public
+ */
 export type Props = Omit<SVGProps<SVGPolygonElement>, 'points' | 'fill'> & PolygonProps;
 
 /**
@@ -207,6 +210,7 @@ const PolygonImpl: React.FC<StringFillProps> = props => {
  * components such as Radar and PolarGrid to draw chart shapes. Accepts
  * standard SVG presentation attributes (e.g. `stroke`, `fill`,
  * `strokeWidth`) for styling, since it wraps a native SVG path element.
+ * @public
  */
 export const Polygon = (props: Props) => {
   const { fill } = props;

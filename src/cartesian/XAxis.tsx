@@ -211,6 +211,9 @@ export interface XAxisProps<DataPointType = any, DataValueType = any> extends Om
   niceTicks?: NiceTicksAlgorithm;
 }
 
+/**
+ * @public
+ */
 export type Props<DataPointType = any, DataValueType = any> = Omit<
   PresentationAttributesAdaptChildEvent<TickItem, SVGTextElement>,
   'scale' | 'ref' | 'height'
@@ -412,6 +415,7 @@ const XAxisSettingsDispatcher = <DataPointType, DataValueType>(outsideProps: Pro
 /**
  * @consumes CartesianViewBoxContext
  * @provides CartesianLabelContext
+ * @public
  */
 export const XAxis = React.memo(XAxisSettingsDispatcher, axisPropsAreEqual) as <
   DataPointType = any,

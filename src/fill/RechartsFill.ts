@@ -15,6 +15,7 @@ import { getSymbolPath } from './symbolPath';
  * A stop of a {@link RechartsLinearGradient}.
  *
  * @since 3.11
+ * @public
  */
 export type RechartsGradientStop = {
   /**
@@ -39,6 +40,7 @@ export type RechartsGradientStop = {
  * Because of that, an angled gradient looks skewed on narrow shapes.
  *
  * @since 3.11
+ * @public
  */
 export type RechartsLinearGradient = {
   /**
@@ -64,6 +66,7 @@ export type RechartsLinearGradient = {
  * Props of a {@link RechartsFill} `definition` component.
  *
  * @since 3.11
+ * @public
  */
 export type RechartsFillDefinitionProps = {
   /**
@@ -92,6 +95,7 @@ export type RechartsFillDefinitionProps = {
  * For a texture that SVG paths can't draw, write your own `definition` component.
  *
  * @since 3.11
+ * @public
  */
 export type RechartsPattern = {
   /**
@@ -139,6 +143,7 @@ export type RechartsPattern = {
  * @example <Bar dataKey="uv" fill={{ color: 'blue', definition: linearGradient(gradients.fadeDown) }} />
  *
  * @since 3.11
+ * @public
  */
 export type RechartsFill = {
   /**
@@ -206,6 +211,7 @@ const circle = symbolPattern(symbolCircle);
  * in staggered rows. `dots` is the same pattern as `circle`.
  *
  * @since 3.11
+ * @public
  */
 export const patterns = {
   diagonal: { width: 8, height: 8, rotation: 45, path: 'M0 4H8', strokeWidth: 3 },
@@ -230,6 +236,7 @@ export const patterns = {
  * Use them with {@link linearGradient}: `fill={{ definition: linearGradient(gradients.fadeDown) }}`.
  *
  * @since 3.11
+ * @public
  */
 export const gradients = {
   fadeDown: {
