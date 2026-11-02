@@ -97,8 +97,8 @@ export function DataStyles() {
         </tbody>
       </table>
       <p>
-        <strong>Note:</strong> support is being rolled out component by component. If a component from the table does
-        not pick up your entry props in the Recharts version you use, it is not released yet.
+        Data entry properties work in all of these components since Recharts 3.11. In older versions, support was
+        incomplete.
       </p>
 
       <h2>What you can put in an entry</h2>
