@@ -379,8 +379,7 @@ export const commentSimilarityExceptions: ReadonlyArray<CommentSimilarityGroup> 
   {
     components: ['Treemap'],
     props: ['label'],
-    reason:
-      'Treemap label defaults to size-filtered node names and documents how implicit labels interact with explicit LabelList children, unlike other components.',
+    reason: 'Treemap shows the node names by default, unlike other components where labels are off by default.',
   },
   {
     components: ['Treemap'],
