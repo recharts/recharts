@@ -8,6 +8,7 @@ import {
   LayoutType,
   PolarCoordinate,
   TooltipEventType,
+  WithFillObject,
 } from '../util/types';
 import { Curve } from '../shape/Curve';
 import { Cross } from '../shape/Cross';
@@ -35,7 +36,7 @@ import { DefaultZIndexes } from '../zIndex/DefaultZIndexes';
  * If set an object, the option is the configuration of cursor.
  * If set a React element, the option is the custom react element of drawing cursor
  */
-export type CursorDefinition = boolean | ReactElement | SVGProps<SVGElement>;
+export type CursorDefinition = boolean | ReactElement | WithFillObject<SVGProps<SVGElement>>;
 
 export interface CursorProps extends ZIndexable {
   cursor: CursorDefinition;
@@ -78,7 +79,13 @@ export function CursorInternal(props: CursorConnectedProps) {
   const cursorPropsFromDefinition = svgPropertiesNoEventsFromUnknown(cursor) ?? {};
   const activeTheme = useRechartsTheme();
   const cursorThemeProps = useBackwardsCompatibleTheme(
-    theme => (isValidElement(cursor) ? undefined : withFillColor(theme.cursor)),
+    theme => {
+      if (isValidElement(cursor)) {
+        return undefined;
+      }
+      // The cross of a ScatterChart is two lines, so it takes the color of a fill object
+      return chartName === 'ScatterChart' ? withFillColor(theme.cursor) : theme.cursor;
+    },
     cursorPropsFromDefinition,
     defaultLegacyCursorThemeProps,
   );

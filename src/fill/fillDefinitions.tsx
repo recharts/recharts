@@ -395,3 +395,45 @@ export function useFillPaints(
   });
   return { paints, definitions };
 }
+
+/**
+ * Returns bounds of the given size, or undefined if a side is not a positive number.
+ * @param width width of the painted area
+ * @param height height of the painted area
+ */
+export function getShapeBounds(width: unknown, height: unknown): RechartsFillDefinitionProps['bounds'] {
+  if (typeof width !== 'number' || typeof height !== 'number' || !(width > 0) || !(height > 0)) {
+    return undefined;
+  }
+  return { width, height };
+}
+
+/**
+ * Renders the definition of a fill object with a unique id, and the shape that paints with it.
+ * Shape components use it only when their `fill` is a fill object, so that plain colors render without any hook.
+ */
+export function FillObjectPaint({
+  fill,
+  bounds,
+  children,
+}: {
+  fill: RechartsFill;
+  /**
+   * The size of the shape, if the shape knows it.
+   */
+  bounds?: RechartsFillDefinitionProps['bounds'];
+  /**
+   * Renders the shape with the `url(#…)` of the definition as its `fill`.
+   */
+  children: (paint: string) => ReactNode;
+}) {
+  const id = useUniqueId('recharts-shape-fill');
+  return (
+    <>
+      <defs>
+        <FillObjectDefinition id={id} fillObject={fill} color={fill.color} bounds={bounds} />
+      </defs>
+      {children(getFillUrl(id))}
+    </>
+  );
+}

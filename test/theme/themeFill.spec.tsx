@@ -15,7 +15,6 @@ import {
   ReferenceDot,
   ReferenceLine,
   Tooltip,
-  Treemap,
   XAxis,
   YAxis,
   lightTheme,
@@ -125,13 +124,12 @@ describe('fill objects in the theme', () => {
     expect(container.querySelector('.recharts-brush rect')).toHaveAttribute('fill', '#fafafa');
   });
 
-  it('should paint the graphical items that do not draw fill objects yet with the color', () => {
+  it('should paint Line, which draws no area, with the color', () => {
     const { container } = rechartsTestRender(
       <RechartsThemeProvider value={theme}>
         <LineChart width={400} height={400} data={data}>
           <Line dataKey="uv" isAnimationActive={false} />
         </LineChart>
-        <Treemap width={400} height={400} data={data} dataKey="uv" isAnimationActive={false} />
       </RechartsThemeProvider>,
     );
 

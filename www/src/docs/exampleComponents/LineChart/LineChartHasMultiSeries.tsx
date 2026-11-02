@@ -34,9 +34,7 @@ function MyLine(props: LineProps & { index: number }) {
   const theme = useRechartsTheme();
   // All lines share the same dataKey, so each one picks its theme colors by index.
   const { active, ...style } = theme?.graphicalItems?.[index] ?? {};
-  // The active dot takes a plain color, so use the color of a fill object
-  const activeDot = active && { ...active, fill: typeof active.fill === 'object' ? active.fill.color : active.fill };
-  return <Line {...style} activeDot={activeDot} {...rest} />;
+  return <Line {...style} activeDot={active} {...rest} />;
 }
 
 // #endregion

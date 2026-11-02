@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { useEffect, useRef } from 'react';
 import { PayloadAction } from '@reduxjs/toolkit';
 import { useAppDispatch, useAppSelector } from '../state/hooks';
 import { selectEventEmitter, selectSyncId, selectSyncMethod } from '../state/selectors/rootPropsSelectors';
@@ -304,6 +304,36 @@ export function useTooltipChartSynchronisation(
    */
   const isReceivingSynchronisation = tooltipState?.sourceViewBox != null;
   const viewBox = useViewBox();
+  const lastSentActiveRef = useRef(false);
+
+  useEffect(() => {
+    if (syncId == null || eventEmitterSymbol == null) {
+      return noop;
+    }
+    return () => {
+      /*
+       * The other charts keep the tooltip this chart sent them until they get an inactive event.
+       * Unmounting under the pointer fires no mouseleave, so send that event here.
+       */
+      if (lastSentActiveRef.current) {
+        lastSentActiveRef.current = false;
+        eventCenter.emit(
+          TOOLTIP_SYNC_EVENT,
+          syncId,
+          setSyncInteraction({
+            active: false,
+            coordinate: undefined,
+            dataKey: undefined,
+            index: null,
+            label: undefined,
+            sourceViewBox: undefined,
+            graphicalItemId: undefined,
+          }),
+          eventEmitterSymbol,
+        );
+      }
+    };
+  }, [syncId, eventEmitterSymbol]);
 
   useEffect(() => {
     if (isReceivingSynchronisation) {
@@ -312,6 +342,7 @@ export function useTooltipChartSynchronisation(
        * Let's not send any outgoing synchronisation events while that's happening
        * to avoid infinite loops and cascading tooltip clears.
        */
+      lastSentActiveRef.current = false;
       return;
     }
     if (syncId == null) {
@@ -337,6 +368,7 @@ export function useTooltipChartSynchronisation(
       sourceViewBox: viewBox,
       graphicalItemId: activeGraphicalItemId,
     });
+    lastSentActiveRef.current = isTooltipActive;
     eventCenter.emit(TOOLTIP_SYNC_EVENT, syncId, syncAction, eventEmitterSymbol);
   }, [
     isReceivingSynchronisation,

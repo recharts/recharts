@@ -468,6 +468,7 @@ export function Label(outerProps: Props) {
     labelRef,
   } = props;
   const polarViewBox = usePolarLabelContext();
+  const parentPolarViewBox = useContext(PolarLabelContext);
   const cartesianViewBox = useCartesianLabelContext();
   /*
    * Labels inside a LabelList render with zIndex 0, in the layer of the list,
@@ -481,8 +482,10 @@ export function Label(outerProps: Props) {
    * I am not proud about this solution, but it's a quick fix for https://github.com/recharts/recharts/issues/6030#issuecomment-3155352460.
    * What we should really do is split Label into two components: CartesianLabel and PolarLabel and then handle their respective viewBoxes separately.
    * Also other components should set its own viewBox in a context so that we can fix https://github.com/recharts/recharts/issues/6156
+   * A Pie or a PolarRadiusAxis sets its own polar viewBox, so a centered Label inside of it uses that one.
    */
-  const resolvedViewBox = position === 'center' ? cartesianViewBox : (polarViewBox ?? cartesianViewBox);
+  const resolvedViewBox =
+    position === 'center' ? (parentPolarViewBox ?? cartesianViewBox) : (polarViewBox ?? cartesianViewBox);
 
   let viewBox: PolarViewBoxRequired | TrapezoidViewBox | undefined,
     label: RenderableText,

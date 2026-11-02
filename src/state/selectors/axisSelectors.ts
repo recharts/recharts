@@ -1242,6 +1242,23 @@ export const combineAxisDomain = (
   return numericalDomain;
 };
 
+// Hidden stacked items count too, so hiding the stacked series does not move the axis.
+export const combineStackOffsetTypeOfAxis = <T extends GraphicalItemSettings>(
+  stackOffsetType: StackOffsetType,
+  graphicalItems: ReadonlyArray<T>,
+  axisPredicate: (item: T) => boolean,
+): StackOffsetType =>
+  graphicalItems.some(item => axisPredicate(item) && isStackedGraphicalItem(item)) ? stackOffsetType : 'none';
+
+const selectStackOffsetTypeOfAxis: (
+  state: RechartsRootState,
+  axisType: AllAxisTypes,
+  axisId: AxisId,
+) => StackOffsetType = createSelector(
+  [selectStackOffsetType, selectUnfilteredCartesianItems, selectAxisPredicate],
+  combineStackOffsetTypeOfAxis,
+);
+
 export const selectAxisDomain: (
   state: RechartsRootState,
   axisType: AllAxisTypes,
@@ -1253,7 +1270,7 @@ export const selectAxisDomain: (
     selectChartLayout,
     selectDisplayedData,
     selectAllAppliedValues,
-    selectStackOffsetType,
+    selectStackOffsetTypeOfAxis,
     pickAxisType,
     selectNumericalDomain,
   ],

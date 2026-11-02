@@ -24,6 +24,7 @@ import { ThemingGuide } from '../components/GuideView/Theming';
 import { ThemeColorTesting } from '../components/GuideView/ThemeColorTesting';
 import { DataStyles } from '../components/GuideView/DataStyles';
 import { LabelColors } from '../components/GuideView/LabelColors';
+import { Patterns } from '../components/GuideView/Patterns';
 
 const guideMap: Record<string, ComponentType<{ locale: SupportedLocale }>> = {
   installation: Installation,
@@ -45,6 +46,7 @@ const guideMap: Record<string, ComponentType<{ locale: SupportedLocale }>> = {
   theming: ThemingGuide,
   'theme-color-testing': ThemeColorTesting,
   'label-colors': LabelColors,
+  patterns: Patterns,
 };
 
 export const allGuides = Object.keys(guideMap);

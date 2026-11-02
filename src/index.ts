@@ -298,4 +298,5 @@ export type {
   RechartsPattern,
 } from './fill/RechartsFill';
 export { gradients, patterns } from './fill/RechartsFill';
+export type { WithFillObject } from './util/types';
 export { linearGradient, pattern } from './fill/fillDefinitions';
