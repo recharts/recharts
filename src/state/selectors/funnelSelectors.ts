@@ -1,5 +1,6 @@
 import { createSelector } from 'reselect';
 import { ReactElement } from 'react';
+import { withEntryFillColor } from '../../fill/fillDefinitions';
 import { computeFunnelTrapezoids, FunnelTrapezoidItem, getFunnelEntryColor } from '../../cartesian/Funnel';
 import { LegendPayload } from '../../component/DefaultLegendContent';
 import { getTooltipNameProp } from '../../util/ChartUtils';
@@ -87,7 +88,8 @@ export const selectFunnelTrapezoids: (
         payload: entry,
         ...presentationProps,
         ...styleForEntry(entry, cells?.[index]?.props, index),
-        ...entry,
+        // a fill object paints through its definition, so the trapezoid only keeps its color
+        ...(entry != null && typeof entry === 'object' ? withEntryFillColor(entry, entry) : entry),
         ...(cells && cells[index] && cells[index].props),
       }));
     } else if (cells && cells.length) {

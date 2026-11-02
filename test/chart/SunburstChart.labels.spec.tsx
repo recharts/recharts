@@ -1,5 +1,6 @@
 import React from 'react';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
+import { render } from '@testing-library/react';
 import {
   LabelList,
   LabelListProps,
@@ -50,6 +51,14 @@ function renderChart(props: Partial<React.ComponentProps<typeof SunburstChart>> 
 
 function labels(container: Element) {
   return Array.from(container.querySelectorAll<SVGTextElement>('.recharts-label-list text'));
+}
+
+function paintedPattern(container: Element, sector: Element): Element {
+  const match = sector.getAttribute('fill')?.match(/^url\(#(.+)\)$/);
+  assertNotNull(match);
+  const element = container.querySelector(`pattern[id="${match[1]}"]`);
+  assertNotNull(element);
+  return element;
 }
 
 describe('Sunburst sector labels', () => {
@@ -157,16 +166,44 @@ describe('Sunburst sector labels', () => {
         ],
       },
     );
-    expect(Array.from(container.querySelectorAll('.recharts-sector'), sector => sector.getAttribute('fill'))).toEqual([
-      'red',
-      'red',
-      'red',
-      'green',
-    ]);
+    expect(
+      Array.from(container.querySelectorAll('.recharts-sector'), sector =>
+        paintedPattern(container, sector).querySelector('rect')?.getAttribute('fill'),
+      ),
+    ).toEqual(['red', 'red', 'red', 'green']);
     expect(labels(container).map(label => label.style.fill)).toEqual(['navy', 'navy', 'navy', 'purple']);
     const backgrounds = container.querySelectorAll('.recharts-text-background');
     expect(backgrounds).toHaveLength(3);
     backgrounds.forEach(background => expect(background).toHaveAttribute('fill', 'ivory'));
+  });
+
+  it('updates the chart fill definition without changing its color or branch labels', () => {
+    const dots = pattern(patterns.dots);
+    const diagonal = pattern(patterns.diagonal);
+    const { container, rerender } = render(
+      <RechartsThemeProvider value={theme}>
+        <SunburstChart width={400} height={400} data={data} fill={{ color: 'orange', definition: dots }} />
+      </RechartsThemeProvider>,
+    );
+    const firstSector = container.querySelector('.recharts-sector');
+    assertNotNull(firstSector);
+    expect(
+      Array.from(paintedPattern(container, firstSector).querySelectorAll('path'), path => path.getAttribute('d')),
+    ).toEqual(patterns.dots.path);
+
+    rerender(
+      <RechartsThemeProvider value={theme}>
+        <SunburstChart width={400} height={400} data={data} fill={{ color: 'orange', definition: diagonal }} />
+      </RechartsThemeProvider>,
+    );
+
+    container.querySelectorAll('.recharts-sector').forEach(sector => {
+      const definition = paintedPattern(container, sector);
+      expect(definition.querySelector('path')).toHaveAttribute('d', patterns.diagonal.path);
+      expect(definition.querySelector('rect')).toHaveAttribute('fill', 'orange');
+    });
+    expect(labels(container).map(label => label.style.fill)).toEqual(['navy', 'navy', 'navy', 'purple']);
+    expect(container.querySelectorAll('.recharts-text-background')).toHaveLength(3);
   });
 
   it('applies branch label styles to explicit LabelList children even when sectors have explicit colors', () => {

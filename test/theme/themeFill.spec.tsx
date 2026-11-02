@@ -5,13 +5,9 @@ import {
   BarChart,
   Brush,
   CartesianGrid,
-  Funnel,
-  FunnelChart,
   Legend,
   Line,
   LineChart,
-  Pie,
-  PieChart,
   RechartsFill,
   RechartsTheme,
   RechartsThemeProvider,
@@ -19,7 +15,6 @@ import {
   ReferenceDot,
   ReferenceLine,
   Tooltip,
-  Treemap,
   XAxis,
   YAxis,
   lightTheme,
@@ -124,28 +119,21 @@ describe('fill objects in the theme', () => {
     );
 
     expectNoObjectFills(container);
-    expect(container.querySelector('.recharts-reference-area-rect')).toHaveAttribute('fill', '#ddd');
+    // the reference area draws the fill object of the theme
+    expect(container.querySelector('.recharts-reference-area-rect')?.getAttribute('fill')).toMatch(/^url\(#/);
     expect(container.querySelector('.recharts-brush rect')).toHaveAttribute('fill', '#fafafa');
   });
 
-  it('should paint the graphical items that do not draw fill objects yet with the color', () => {
+  it('should paint Line, which draws no area, with the color', () => {
     const { container } = rechartsTestRender(
       <RechartsThemeProvider value={theme}>
         <LineChart width={400} height={400} data={data}>
           <Line dataKey="uv" isAnimationActive={false} />
         </LineChart>
-        <PieChart width={400} height={400}>
-          <Pie data={data} dataKey="uv" isAnimationActive={false} />
-        </PieChart>
-        <FunnelChart width={400} height={400}>
-          <Funnel data={data} dataKey="uv" isAnimationActive={false} />
-        </FunnelChart>
-        <Treemap width={400} height={400} data={data} dataKey="uv" isAnimationActive={false} />
       </RechartsThemeProvider>,
     );
 
     expectNoObjectFills(container);
-    expect(container.querySelector('.recharts-pie-sector path')).toHaveAttribute('fill', 'purple');
   });
 });
 
