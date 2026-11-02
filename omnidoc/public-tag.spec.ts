@@ -25,6 +25,15 @@ describe('@public tags on public exports', () => {
     expect(missing, `${missing.length} export(s) from src/index.ts have no @public tag. ${HOW_TO_FIX}`).toEqual([]);
   });
 
+  it('should only have @public tags on declarations that are exported from src/index.ts', () => {
+    const notExported = projectReader.getPublicTaggedDeclarationsNotExported();
+
+    expect(
+      notExported,
+      'These declarations have a @public tag but are not exported from src/index.ts. Remove the tag, or export them.',
+    ).toEqual([]);
+  });
+
   it('should not have more than one @public tag on the same export', () => {
     const duplicated = allExports.filter(
       name => (projectReader.getComponentJsDocMeta(name)?.tags.filter(([tag]) => tag === 'public').length ?? 0) > 1,

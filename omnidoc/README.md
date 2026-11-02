@@ -42,7 +42,9 @@ export turns out to be documented after all, or to no longer exist.
 
 Every export from `src/index.ts` must carry a JSDoc `@public` tag on its declaration, so that it is
 obvious from the code itself which declarations are public API and need extra care when changed.
-The tag is informational only and is not rendered on the website.
+The tag is informational only and is not rendered on the website. The reverse is enforced too:
+a declaration with a `@public` tag must be exported from `src/index.ts`, so the tag cannot go stale
+when an export is removed.
 
 ```ts
 /**
