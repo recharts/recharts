@@ -1,45 +1,45 @@
 {
   "treemap": {
     "examplePath": "www/src/views/IndexView/IndexLineChart.tsx",
-    "totalSize": 1005168,
-    "totalSizeLabel": "981.61 KB",
+    "totalSize": 1005358,
+    "totalSizeLabel": "981.79 KB",
     "moduleCount": 385,
-    "generatedAt": "2026-11-01T14:42:18.251Z",
+    "generatedAt": "2026-11-02T00:15:41.846Z",
     "stages": [
       {
         "stage": "es6-folder",
-        "bytes": 1638211,
+        "bytes": 1638461,
         "humanReadableSize": "1.56 MB",
         "reductionFromBaselinePercent": 0
       },
       {
         "stage": "tree-shaken",
-        "bytes": 1008091,
-        "humanReadableSize": "984.46 KB",
+        "bytes": 1008281,
+        "humanReadableSize": "984.65 KB",
         "reductionFromBaselinePercent": 0
       },
       {
         "stage": "minified",
-        "bytes": 325526,
-        "humanReadableSize": "317.90 KB",
+        "bytes": 325537,
+        "humanReadableSize": "317.91 KB",
         "reductionFromBaselinePercent": 67.71
       },
       {
         "stage": "minified+gzip",
-        "bytes": 106765,
-        "humanReadableSize": "104.26 KB",
+        "bytes": 106772,
+        "humanReadableSize": "104.27 KB",
         "reductionFromBaselinePercent": 89.41
       }
     ],
     "tree": {
       "name": "bundle",
       "fullPath": "bundle",
-      "value": 1005168,
+      "value": 1005358,
       "children": [
         {
           "name": "src",
           "fullPath": "src",
-          "value": 601592,
+          "value": 601782,
           "children": [
             {
               "name": "state",
@@ -811,7 +811,7 @@
             {
               "name": "component",
               "fullPath": "src/component",
-              "value": 63760,
+              "value": 63950,
               "children": [
                 {
                   "name": "Text.tsx",
@@ -821,7 +821,7 @@
                 {
                   "name": "Label.tsx",
                   "fullPath": "src/component/Label.tsx",
-                  "value": 12582
+                  "value": 12772
                 },
                 {
                   "name": "DefaultLegendContent.tsx",
@@ -2659,45 +2659,45 @@
   },
   "sunburst": {
     "examplePath": "www/src/views/IndexView/IndexLineChart.tsx",
-    "totalSize": 1005168,
-    "totalSizeLabel": "981.61 KB",
+    "totalSize": 1005358,
+    "totalSizeLabel": "981.79 KB",
     "moduleCount": 385,
-    "generatedAt": "2026-11-01T14:42:16.587Z",
+    "generatedAt": "2026-11-02T00:15:44.156Z",
     "stages": [
       {
         "stage": "es6-folder",
-        "bytes": 1638211,
+        "bytes": 1638461,
         "humanReadableSize": "1.56 MB",
         "reductionFromBaselinePercent": 0
       },
       {
         "stage": "tree-shaken",
-        "bytes": 1008091,
-        "humanReadableSize": "984.46 KB",
+        "bytes": 1008281,
+        "humanReadableSize": "984.65 KB",
         "reductionFromBaselinePercent": 0
       },
       {
         "stage": "minified",
-        "bytes": 325526,
-        "humanReadableSize": "317.90 KB",
+        "bytes": 325537,
+        "humanReadableSize": "317.91 KB",
         "reductionFromBaselinePercent": 67.71
       },
       {
         "stage": "minified+gzip",
-        "bytes": 106765,
-        "humanReadableSize": "104.26 KB",
+        "bytes": 106772,
+        "humanReadableSize": "104.27 KB",
         "reductionFromBaselinePercent": 89.41
       }
     ],
     "tree": {
       "name": "bundle",
       "fullPath": "bundle",
-      "value": 1005168,
+      "value": 1005358,
       "children": [
         {
           "name": "src",
           "fullPath": "src",
-          "value": 601592,
+          "value": 601782,
           "children": [
             {
               "name": "state",
@@ -3469,7 +3469,7 @@
             {
               "name": "component",
               "fullPath": "src/component",
-              "value": 63760,
+              "value": 63950,
               "children": [
                 {
                   "name": "Text.tsx",
@@ -3479,7 +3479,7 @@
                 {
                   "name": "Label.tsx",
                   "fullPath": "src/component/Label.tsx",
-                  "value": 12582
+                  "value": 12772
                 },
                 {
                   "name": "DefaultLegendContent.tsx",
