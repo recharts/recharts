@@ -66,6 +66,7 @@ export interface TreemapDataType {
 /**
  * This is what is returned from `squarify`, the final treemap data structure
  * that gets rendered and is stored in
+ * @public
  */
 export interface TreemapNode {
   children: ReadonlyArray<TreemapNode> | null;
@@ -422,8 +423,14 @@ const squarify = (node: TreemapNode, aspectRatio: number, nodeInset: number, nod
   return node;
 };
 
+/**
+ * @public
+ */
 export type TreemapContentType = ReactNode | ((props: TreemapNode) => React.ReactElement);
 
+/**
+ * @public
+ */
 export interface Props<DataPointType extends TreemapDataType = TreemapDataType, DataValueType = any>
   extends DataConsumer<DataPointType, DataValueType>, EventThrottlingProps {
   /**
@@ -1479,6 +1486,7 @@ type TreemapThemeSlice = Partial<Pick<RechartsTheme, 'graphicalItems' | 'typogra
  * @consumes ResponsiveContainerContext
  * @consumes RechartsThemeContext
  * @provides TooltipEntrySettings
+ * @public
  */
 export function Treemap(outsideProps: Props) {
   const theme = useBackwardsCompatibleTheme<TreemapThemeSlice>(

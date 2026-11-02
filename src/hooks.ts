@@ -40,6 +40,7 @@ export const useYAxis = (yAxisId: AxisId): BaseAxisWithScale | undefined => {
  * @param options - Optional configuration for banded scales.
  * @param options.position - Position within a band: 'start', 'middle', or 'end'.
  * @returns The pixel coordinate, or `undefined` if the value is not in the domain.
+ * @public
  */
 export type ScaleFunction = (value: unknown, options?: { position?: BandPosition }) => number | undefined;
 
@@ -47,6 +48,7 @@ export type ScaleFunction = (value: unknown, options?: { position?: BandPosition
  * A function that converts pixel coordinates back to data values.
  * @param pixelValue - The pixel coordinate to convert.
  * @returns The closest data value in the domain.
+ * @public
  */
 export type InverseScaleFunction = (pixelValue: number) => unknown;
 
@@ -70,6 +72,7 @@ export type InverseScaleFunction = (pixelValue: number) => unknown;
  * @param xAxisId The `xAxisId` of the XAxis. Defaults to `0` if not provided.
  * @returns A scale function that maps data values to pixel coordinates, or `undefined`.
  * @since 3.8
+ * @public
  */
 export const useXAxisScale = (xAxisId: AxisId = defaultAxisId): ScaleFunction | undefined => {
   const isPanorama = useIsPanorama();
@@ -97,6 +100,7 @@ export const useXAxisScale = (xAxisId: AxisId = defaultAxisId): ScaleFunction | 
  * @param yAxisId The `yAxisId` of the YAxis. Defaults to `0` if not provided.
  * @returns A scale function that maps data values to pixel coordinates, or `undefined`.
  * @since 3.8
+ * @public
  */
 export const useYAxisScale = (yAxisId: AxisId = defaultAxisId): ScaleFunction | undefined => {
   const isPanorama = useIsPanorama();
@@ -128,6 +132,7 @@ export const useYAxisScale = (yAxisId: AxisId = defaultAxisId): ScaleFunction | 
  * @param xAxisId The `xAxisId` of the XAxis. Defaults to `0` if not provided.
  * @returns An inverse scale function that maps pixel coordinates to data values, or `undefined`.
  * @since 3.8
+ * @public
  */
 export const useXAxisInverseScale = (xAxisId: AxisId = defaultAxisId): InverseScaleFunction | undefined => {
   const isPanorama = useIsPanorama();
@@ -150,6 +155,7 @@ export const useXAxisInverseScale = (xAxisId: AxisId = defaultAxisId): InverseSc
  * @param xAxisId The `xAxisId` of the XAxis. Defaults to `0` if not provided.
  * @returns An inverse scale function that maps pixel coordinates to the closest data value, or `undefined`.
  * @since 3.8
+ * @public
  */
 export const useXAxisInverseDataSnapScale = (xAxisId: AxisId = defaultAxisId): InverseScaleFunction | undefined => {
   const isPanorama = useIsPanorama();
@@ -172,6 +178,7 @@ export const useXAxisInverseDataSnapScale = (xAxisId: AxisId = defaultAxisId): I
  * @param xAxisId The `xAxisId` of the XAxis. Defaults to `0` if not provided.
  * @returns An inverse scale function that maps pixel coordinates to the closest tick value, or `undefined`.
  * @since 3.8
+ * @public
  */
 export const useXAxisInverseTickSnapScale = (xAxisId: AxisId = defaultAxisId): InverseScaleFunction | undefined => {
   return useAppSelector(state => selectAxisInverseTickSnapScale(state, 'xAxis', xAxisId));
@@ -201,6 +208,7 @@ export const useXAxisInverseTickSnapScale = (xAxisId: AxisId = defaultAxisId): I
  * @param yAxisId The `yAxisId` of the YAxis. Defaults to `0` if not provided.
  * @returns An inverse scale function that maps pixel coordinates to data values, or `undefined`.
  * @since 3.8
+ * @public
  */
 export const useYAxisInverseScale = (yAxisId: AxisId = defaultAxisId): InverseScaleFunction | undefined => {
   const isPanorama = useIsPanorama();
@@ -223,6 +231,7 @@ export const useYAxisInverseScale = (yAxisId: AxisId = defaultAxisId): InverseSc
  * @param yAxisId The `yAxisId` of the YAxis. Defaults to `0` if not provided.
  * @returns An inverse scale function that maps pixel coordinates to the closest data value, or `undefined`.
  * @since 3.8
+ * @public
  */
 export const useYAxisInverseDataSnapScale = (yAxisId: AxisId = defaultAxisId): InverseScaleFunction | undefined => {
   const isPanorama = useIsPanorama();
@@ -245,6 +254,7 @@ export const useYAxisInverseDataSnapScale = (yAxisId: AxisId = defaultAxisId): I
  * @param yAxisId The `yAxisId` of the YAxis. Defaults to `0` if not provided.
  * @returns An inverse scale function that maps pixel coordinates to the closest tick value, or `undefined`.
  * @since 3.8
+ * @public
  */
 export const useYAxisInverseTickSnapScale = (yAxisId: AxisId = defaultAxisId): InverseScaleFunction | undefined => {
   return useAppSelector(state => selectAxisInverseTickSnapScale(state, 'yAxis', yAxisId));
@@ -259,6 +269,7 @@ export const useYAxisInverseTickSnapScale = (yAxisId: AxisId = defaultAxisId): I
  * @param xAxisId The `xAxisId` of the XAxis. Defaults to `0` if not provided.
  * @returns An array of ticks, or `undefined` if the axis doesn't exist or hasn't been calculated yet.
  * @since 3.8
+ * @public
  */
 export const useXAxisTicks = (xAxisId: AxisId = defaultAxisId): ReadonlyArray<TickItem> | undefined => {
   return useAppSelector(state => selectRenderedTicksOfAxis(state, 'xAxis', xAxisId));
@@ -273,6 +284,7 @@ export const useXAxisTicks = (xAxisId: AxisId = defaultAxisId): ReadonlyArray<Ti
  * @param yAxisId The `yAxisId` of the YAxis. Defaults to `0` if not provided.
  * @returns An array of ticks, or `undefined` if the axis doesn't exist or hasn't been calculated yet.
  * @since 3.8
+ * @public
  */
 export const useYAxisTicks = (yAxisId: AxisId = defaultAxisId): ReadonlyArray<TickItem> | undefined => {
   return useAppSelector(state => selectRenderedTicksOfAxis(state, 'yAxis', yAxisId));
@@ -281,6 +293,7 @@ export const useYAxisTicks = (yAxisId: AxisId = defaultAxisId): ReadonlyArray<Ti
 /**
  * Data point with x and y values that can be converted to pixel coordinates.
  * The x and y values should be in the same format as your chart data.
+ * @public
  */
 export type CartesianDataPoint = {
   x: number | string;
@@ -314,6 +327,7 @@ export type CartesianDataPoint = {
  * @param yAxisId The `yAxisId` of the Y-axis. Defaults to `0` if not provided.
  * @returns The pixel x,y coordinates, or `undefined` if conversion is not possible.
  * @since 3.8
+ * @public
  */
 export const useCartesianScale = (
   dataPoint: CartesianDataPoint,
@@ -345,6 +359,7 @@ export const useCartesianScale = (
  *
  * @returns ActiveLabel
  * @since 3.0
+ * @public
  */
 export const useActiveTooltipLabel = (): ActiveLabel => {
   return useAppSelector(selectActiveLabel);
@@ -375,6 +390,7 @@ export const useActiveTooltipLabel = (): ActiveLabel => {
  *
  * @returns Offset of the chart in pixels, or undefined if used outside a chart context.
  * @since 3.1
+ * @public
  */
 export const useOffset = (): ChartOffset | undefined => {
   return useAppSelector(selectChartOffset);
@@ -397,6 +413,7 @@ export const useOffset = (): ChartOffset | undefined => {
  *
  * @returns Plot area of the chart in pixels, or undefined if used outside a chart context.
  * @since 3.1
+ * @public
  */
 export const usePlotArea = (): PlotArea | undefined => {
   return useAppSelector(selectPlotArea);
@@ -419,6 +436,7 @@ export const usePlotArea = (): PlotArea | undefined => {
  * @returns Data points that are currently visible in a Tooltip
  *
  * @since 3.1
+ * @public
  */
 export const useActiveTooltipDataPoints = <T = unknown>(): ReadonlyArray<T> | undefined => {
   return useAppSelector(selectActiveTooltipDataPoints);
@@ -439,6 +457,7 @@ export const useActiveTooltipDataPoints = <T = unknown>(): ReadonlyArray<T> | un
  * @param xAxisId The `xAxisId` of the X-axis. Defaults to `0` if not provided.
  * @returns The domain of the X-axis, or `undefined` if it cannot be calculated or if used outside a chart context.
  * @since 3.2
+ * @public
  */
 export const useXAxisDomain = (xAxisId: AxisId = defaultAxisId): NumberDomain | CategoricalDomain | undefined => {
   const isPanorama = useIsPanorama();
@@ -459,6 +478,7 @@ export const useXAxisDomain = (xAxisId: AxisId = defaultAxisId): NumberDomain | 
  * @param yAxisId The `yAxisId` of the Y-axis. Defaults to `0` if not provided.
  * @returns The domain of the Y-axis, or `undefined` if it cannot be calculated or if used outside a chart context.
  * @since 3.2
+ * @public
  */
 export const useYAxisDomain = (yAxisId: AxisId = defaultAxisId): NumberDomain | CategoricalDomain | undefined => {
   const isPanorama = useIsPanorama();
@@ -475,6 +495,7 @@ export const useYAxisDomain = (yAxisId: AxisId = defaultAxisId): NumberDomain | 
  *
  * @returns {boolean} True if the Tooltip is active, false otherwise.
  * @since 3.7
+ * @public
  */
 export const useIsTooltipActive = (): boolean => {
   return useAppSelector(selectIsTooltipActive) ?? false;
@@ -490,6 +511,7 @@ export const useIsTooltipActive = (): boolean => {
  *
  * @returns {Coordinate | undefined} The coordinate of the active Tooltip, or undefined.
  * @since 3.7
+ * @public
  */
 export const useActiveTooltipCoordinate = (): Coordinate | undefined => {
   const coordinate = useAppSelector(selectActiveTooltipCoordinate);

@@ -130,6 +130,7 @@ export type LabelTheme = {
  * @see {@link https://recharts.github.io/en-US/guide/theming/ Theming guide}
  *
  * @since 3.11
+ * @public
  */
 export interface RechartsTheme {
   /**

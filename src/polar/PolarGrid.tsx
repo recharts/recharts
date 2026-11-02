@@ -120,6 +120,9 @@ interface PolarGridProps extends ZIndexable {
   fillOpacity?: number | string;
 }
 
+/**
+ * @public
+ */
 export type Props = Omit<SVGProps<SVGLineElement>, 'fill'> & PolarGridProps;
 
 /**
@@ -265,6 +268,7 @@ export const defaultPolarGridProps = {
 
 /**
  * @consumes PolarViewBoxContext
+ * @public
  */
 export const PolarGrid = (propsWithFillObject: Props) => {
   // From here on, `fill` is the base color

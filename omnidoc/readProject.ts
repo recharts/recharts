@@ -191,6 +191,14 @@ export class ProjectDocReader implements DocReader {
     return getTagText(jsdoc, 'since')?.text;
   }
 
+  /**
+   * Returns true when the declaration behind a top-level export carries a `@public` JSDoc tag.
+   * See `public-tag.spec.ts`.
+   */
+  isMarkedPublic(exportName: string): boolean {
+    return hasTag(this.getComponentJsDocMeta(exportName), 'public');
+  }
+
   private getComponentDeclaration(component: string): ExportedDeclarations {
     const exportedDeclarations = this.getExportedDeclarations();
 
