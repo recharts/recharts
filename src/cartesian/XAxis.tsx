@@ -43,6 +43,7 @@ import { RequiresDefaultProps, resolveDefaultProps } from '../util/resolveDefaul
 import { axisPropsAreEqual } from '../util/axisPropsAreEqual';
 import { CustomScaleDefinition } from '../util/scale/CustomScaleDefinition';
 import { useCartesianChartLayout } from '../context/chartLayoutContext';
+import { DEFAULT_X_AXIS_HEIGHT } from '../util/Constants';
 import { getAxisTypeBasedOnLayout } from '../util/getAxisTypeBasedOnLayout';
 
 /**
@@ -278,6 +279,14 @@ const XAxisImpl = (props: PropsWithDefaults) => {
    * https://github.com/recharts/recharts/issues/6257
    */
   const synchronizedSettings = useAppSelector(state => selectXAxisSettingsNoDefaults(state, xAxisId));
+  const chartDataLengthEmpty = useAppSelector(state => !state.chartData.chartData?.length);
+
+  useLayoutEffect(() => {
+    // Without data the axis is measured as 0 high and hidden, so start again from the default height.
+    if (chartDataLengthEmpty === false && height === 'auto') {
+      dispatch(updateXAxisHeight({ id: xAxisId, height: DEFAULT_X_AXIS_HEIGHT }));
+    }
+  }, [chartDataLengthEmpty, height, dispatch, xAxisId]);
 
   useLayoutEffect(() => {
     // No dynamic height calculation is done when height !== 'auto'
