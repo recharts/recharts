@@ -742,11 +742,47 @@ export const selectStackGroups: (
   combineStackGroups,
 );
 
+export const selectAllErrorBarSettings = (state: RechartsRootState): ErrorBarsState => state.errorBars;
+
+/**
+ * An ErrorBar on a stacked item is drawn around the end of its stack segment (see `computeBarRectangles`),
+ * so its error range starts from the stacked value, not from the value in the data.
+ */
+function extendDomainToStackedErrorBars(
+  domainOfStackGroups: NumberDomain | undefined,
+  stackGroups: AllStackGroups | undefined,
+  { chartData, dataStartIndex, dataEndIndex }: ChartDataState,
+  errorBars: ErrorBarsState,
+  axisType: AllAxisTypes,
+): NumberDomain | undefined {
+  let [lowerEnd, upperEnd] = domainOfStackGroups ?? [Infinity, -Infinity];
+  Object.values(stackGroups ?? {}).forEach(({ stackedData, graphicalItems }) => {
+    graphicalItems.forEach((item, seriesIndex) => {
+      const relevantErrorBars = errorBars[item.id]?.filter(errorBar =>
+        isErrorBarRelevantForAxisType(axisType, errorBar),
+      );
+      if (!relevantErrorBars?.length) {
+        return;
+      }
+      const entries = item.data?.length ? item.data : chartData?.slice(dataStartIndex, dataEndIndex + 1);
+      entries?.forEach((entry, index) => {
+        const stackedValue = stackedData[seriesIndex]?.[index + dataStartIndex];
+        getErrorDomainByDataKey(entry, stackedValue?.[1], relevantErrorBars).forEach(value => {
+          lowerEnd = Math.min(lowerEnd, value);
+          upperEnd = Math.max(upperEnd, value);
+        });
+      });
+    });
+  });
+  return isWellBehavedNumber(lowerEnd) && isWellBehavedNumber(upperEnd) ? [lowerEnd, upperEnd] : undefined;
+}
+
 export const combineDomainOfStackGroups = (
   stackGroups: AllStackGroups | undefined,
   chartDataState: ChartDataState,
   axisType: AllAxisTypes,
   domainFromUserPreference: NumberDomain | undefined,
+  errorBars: ErrorBarsState,
 ): NumberDomain | undefined => {
   if (domainFromUserPreference != null) {
     // User has specified a domain, so we respect that and we can skip computing anything else
@@ -757,7 +793,13 @@ export const combineDomainOfStackGroups = (
     return undefined;
   }
   const [startIndex, endIndex] = getBrushSliceIndexes(chartDataState);
-  return getDomainOfStackGroups(stackGroups, startIndex, endIndex);
+  return extendDomainToStackedErrorBars(
+    getDomainOfStackGroups(stackGroups, startIndex, endIndex),
+    stackGroups,
+    chartDataState,
+    errorBars,
+    axisType,
+  );
 };
 
 const selectAllowsDataOverflow: (state: RechartsRootState, axisType: AllAxisTypes, axisId: AxisId) => boolean =
@@ -814,7 +856,13 @@ export const selectDomainOfStackGroups: (
   axisId: AxisId,
   isPanorama: boolean,
 ) => NumberDomain | undefined = createSelector(
-  [selectStackGroups, selectChartDataWithIndexes, pickAxisType, selectDomainFromUserPreference],
+  [
+    selectStackGroups,
+    selectChartDataWithIndexes,
+    pickAxisType,
+    selectDomainFromUserPreference,
+    selectAllErrorBarSettings,
+  ],
   combineDomainOfStackGroups,
   {
     memoizeOptions: {
@@ -822,8 +870,6 @@ export const selectDomainOfStackGroups: (
     },
   },
 );
-
-export const selectAllErrorBarSettings = (state: RechartsRootState): ErrorBarsState => state.errorBars;
 
 const combineRelevantErrorBarSettings = (
   cartesianItemsSettings: ReadonlyArray<CartesianGraphicalItemSettings>,

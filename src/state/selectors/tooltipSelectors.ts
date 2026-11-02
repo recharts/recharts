@@ -192,7 +192,13 @@ const selectTooltipStackGroups: (state: RechartsRootState) => Record<StackId, St
 );
 
 const selectTooltipDomainOfStackGroups: (state: RechartsRootState) => NumberDomain | undefined = createSelector(
-  [selectTooltipStackGroups, selectChartDataWithIndexes, selectTooltipAxisType, selectTooltipDomainFromUserPreferences],
+  [
+    selectTooltipStackGroups,
+    selectChartDataWithIndexes,
+    selectTooltipAxisType,
+    selectTooltipDomainFromUserPreferences,
+    selectAllErrorBarSettings,
+  ],
   combineDomainOfStackGroups,
 );
 
