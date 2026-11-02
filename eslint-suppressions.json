@@ -980,11 +980,6 @@
       "count": 2
     }
   },
-  "test/chart/LineChart.spec.tsx": {
-    "@typescript-eslint/no-explicit-any": {
-      "count": 1
-    }
-  },
   "test/chart/PieChart.spec.tsx": {
     "@typescript-eslint/no-explicit-any": {
       "count": 1
