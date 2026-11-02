@@ -1,10 +1,9 @@
 import * as React from 'react';
-import { createContext, PureComponent, ReactNode, useCallback, useContext, useMemo, useState } from 'react';
+import { PureComponent, ReactNode, useCallback, useMemo, useState } from 'react';
 import omit from 'es-toolkit/compat/omit';
 import get from 'es-toolkit/compat/get';
 
 import { Layer } from '../container/Layer';
-import { Label, Props as LabelProps } from '../component/Label';
 import { Surface } from '../container/Surface';
 import { Polygon } from '../shape/Polygon';
 import { Rectangle } from '../shape/Rectangle';
@@ -56,7 +55,6 @@ import {
   ImplicitLabelListType,
   LabelList,
   LabelListFromLabelProp,
-  LabelListSettingsContextProvider,
 } from '../component/LabelList';
 import { AllZIndexPortals } from '../zIndex/ZIndexPortal';
 import { DataLabelColorsContextProvider, DataLabelThemeContextProvider } from '../theme/labelTheme';
@@ -64,8 +62,6 @@ import { RechartsFill } from '../fill/RechartsFill';
 import { readEntryFill, splitFill } from '../fill/fillDefinitions';
 
 const NODE_VALUE_KEY = 'value';
-const omittedTileProps = ['children', 'id'];
-const treemapNestIndexStyle: React.CSSProperties = { marginTop: '8px', textAlign: 'center' };
 
 /**
  * This is what end users defines as `data` on Treemap.
@@ -136,8 +132,6 @@ const options: ChartOptions = {
   eventEmitter: undefined,
 };
 
-const treemapPreloadedState = { options };
-
 const NEST_INDEX_HEIGHT = 30;
 
 const getTreemapRenderHeight = (height: number, type: Props['type']) => {
@@ -184,7 +178,8 @@ export const computeNode = <DataPointType extends TreemapDataType, DataValueType
   if (computedChildren && computedChildren.length) {
     nodeValue = computedChildren.reduce((result: number, child: TreemapNode) => result + child.value, 0);
   } else {
-    const rawNodeValue = typeof dataKey === 'string' || typeof dataKey === 'number' ? node[dataKey] : undefined;
+    // TODO need to verify dataKey
+    const rawNodeValue = node[dataKey as string];
     const numericValue = typeof rawNodeValue === 'number' ? rawNodeValue : 0;
     nodeValue = isNan(numericValue) || numericValue <= 0 ? 0 : numericValue;
   }
@@ -438,7 +433,7 @@ const squarify = (node: TreemapNode, aspectRatio: number, nodeInset: number, nod
 
 export type TreemapContentType = ReactNode | ((props: TreemapNode) => React.ReactElement);
 
-export interface Props<DataPointType extends TreemapDataType = TreemapDataType, DataValueType = unknown>
+export interface Props<DataPointType extends TreemapDataType = TreemapDataType, DataValueType = any>
   extends DataConsumer<DataPointType, DataValueType>, EventThrottlingProps {
   /**
    * The width of chart container.
@@ -504,12 +499,16 @@ export interface Props<DataPointType extends TreemapDataType = TreemapDataType, 
   content?: TreemapContentType;
 
   /**
-   * Configures tile labels through the shared LabelList system.
-   * Defaults to size-filtered node names. Set false to hide automatic labels.
-   * An object configures LabelList; an element or function supplies custom label content.
-   * Explicit LabelList children are independent of this prop and replace implicit default labels.
-   * Set true to render default labels alongside explicit LabelList children.
-   * Default labels follow tile paint order; configured labels use the shared overlay layer.
+   * Renders one label for each tile, through the shared LabelList.
+   * Options:
+   * - `true` or undefined: renders the node names on the tiles where they fit;
+   * - `false`: no labels are rendered;
+   * - object: the props of LabelList component;
+   * - ReactElement: a custom SVG label element, such as `<text>` or `<g>`;
+   * - function: a render function of custom label.
+   *
+   * `<LabelList>` children render in addition to these labels. Set `label={false}` to show only the children.
+   * The node names are not drawn when `content` renders the tiles.
    */
   label?: ImplicitLabelListType;
 
@@ -613,7 +612,6 @@ export interface Props<DataPointType extends TreemapDataType = TreemapDataType, 
 }
 
 interface State {
-  labelListCount: number;
   isAnimationFinished: boolean;
   formatRoot: TreemapNode | null;
   currentRoot: TreemapNode | undefined;
@@ -622,8 +620,7 @@ interface State {
   prevType?: 'flat' | 'nest';
   prevWidth?: number;
   prevHeight?: number;
-  prevDataKey: DataKey<TreemapDataType, unknown>;
-  prevNameKey?: DataKey<TreemapDataType, unknown>;
+  prevDataKey: DataKey<any>;
   prevAspectRatio: number;
   prevNodeInset: number;
   prevNodeGap: number;
@@ -645,7 +642,6 @@ export const defaultTreeMapProps = {
 } as const satisfies Partial<Props>;
 
 const defaultState: State = {
-  labelListCount: 0,
   isAnimationFinished: false,
   formatRoot: null,
   currentRoot: undefined,
@@ -681,7 +677,7 @@ type ContentItemProps = {
    * The color behind the chart, used for the tile outlines.
    */
   themePageBackground: string | undefined;
-  dataKey: DataKey<TreemapDataType, unknown>;
+  dataKey: DataKey<any>;
   onClick?: (e: React.MouseEvent<SVGPathElement, MouseEvent>) => void;
   onMouseEnter?: (e: React.MouseEvent<SVGPathElement, MouseEvent>) => void;
   onMouseLeave?: (e: React.MouseEvent<SVGPathElement, MouseEvent>) => void;
@@ -752,24 +748,38 @@ function getTileStyles({
   };
 }
 
+/**
+ * One label-list entry per tile: the tile rectangle is the viewBox and the node name is the value.
+ */
 interface TreemapLabelListEntry extends CartesianLabelListEntry {
   payload: TreemapNode;
+  /**
+   * Index of the top-level tile that this node belongs to. The theme label style is picked by this index,
+   * the same way as the tile color.
+   */
   branchIndex: number;
+  /**
+   * True if the node or the Treemap props define their own colors, which turns off the theme.
+   */
   ignoresTheme: boolean;
   tileStroke: string | undefined;
-  onMouseEnter: React.MouseEventHandler<SVGGraphicsElement>;
-  onMouseLeave: React.MouseEventHandler<SVGGraphicsElement>;
-  onClick: React.MouseEventHandler<SVGGraphicsElement>;
+  /**
+   * Ties the label to its tile in the DOM, the same way as the tile rectangle.
+   */
   'data-recharts-item-index': TooltipIndex;
 }
 
+/**
+ * Provides the label entries and the label theme of the tiles, the same way as Pie, Funnel and Sankey do.
+ * Uses only the existing label contexts.
+ */
 function TreemapLabelListProvider({
   entries,
   graphicalItems,
   children,
 }: {
   entries: ReadonlyArray<TreemapLabelListEntry>;
-  graphicalItems: RechartsTheme['graphicalItems'] | undefined;
+  graphicalItems: ReadonlyArray<GraphicalItemStyle> | undefined;
   children: ReactNode;
 }) {
   const resolveLabelTheme = useCallback(
@@ -778,7 +788,6 @@ function TreemapLabelListProvider({
       if (entry == null || entry.ignoresTheme || graphicalItems == null || graphicalItems.length === 0) {
         return undefined;
       }
-      // Every descendant uses its top-level branch's theme, not its label-array index.
       return graphicalItems[entry.branchIndex % graphicalItems.length]?.label;
     },
     [entries, graphicalItems],
@@ -800,65 +809,9 @@ function TreemapLabelListProvider({
   );
 }
 
-const TreemapConfiguredLabelContext = createContext<ReadonlyArray<TreemapLabelListEntry> | undefined>(undefined);
-
 /**
- * Renders a resolved LabelList entry with chart interactions, without label animation.
- * LabelList supplies the original content and resolved theme props without cloning its children.
+ * The node name fits in the tile, with the same rule the previous built-in label used.
  */
-function TreemapConfiguredLabel(props: LabelProps) {
-  const entries = useContext(TreemapConfiguredLabelContext);
-  const entry = props.index == null ? undefined : entries?.[props.index];
-  if (entry == null) {
-    return null;
-  }
-
-  return (
-    <Layer
-      className="recharts-treemap-configured-label"
-      onMouseEnter={entry.onMouseEnter}
-      onMouseLeave={entry.onMouseLeave}
-      onClick={entry.onClick}
-      data-recharts-item-index={entry.payload.tooltipIndex}
-    >
-      <Label
-        {...props}
-        onMouseEnter={props.onMouseEnter === entry.onMouseEnter ? undefined : props.onMouseEnter}
-        onMouseLeave={props.onMouseLeave === entry.onMouseLeave ? undefined : props.onMouseLeave}
-        onClick={props.onClick === entry.onClick ? undefined : props.onClick}
-        zIndex={0}
-      />
-    </Layer>
-  );
-}
-
-/**
- * Supplies the Treemap label renderer and registers mounted overlay LabelLists.
- * Children are rendered unchanged, so fragments and wrapper components work without inspection.
- */
-function TreemapConfiguredLabelsProvider({
-  entries,
-  label,
-  registerLabelList,
-  children,
-}: {
-  entries: ReadonlyArray<TreemapLabelListEntry>;
-  label: ImplicitLabelListType | undefined;
-  registerLabelList: () => () => void;
-  children: ReactNode;
-}) {
-  const settings = useMemo(() => ({ LabelComponent: TreemapConfiguredLabel, registerLabelList }), [registerLabelList]);
-  const implicitSettings = useMemo(() => ({ LabelComponent: TreemapConfiguredLabel }), []);
-  return (
-    <TreemapConfiguredLabelContext.Provider value={entries}>
-      <LabelListSettingsContextProvider value={implicitSettings}>
-        <LabelListFromLabelProp label={label === true ? false : label} />
-      </LabelListSettingsContextProvider>
-      <LabelListSettingsContextProvider value={settings}>{children}</LabelListSettingsContextProvider>
-    </TreemapConfiguredLabelContext.Provider>
-  );
-}
-
 function isDefaultLabelVisible(entry: TreemapLabelListEntry): boolean {
   const { width, height, name } = entry.payload;
   if (width <= 20 || height <= 20) {
@@ -866,6 +819,37 @@ function isDefaultLabelVisible(entry: TreemapLabelListEntry): boolean {
   }
   const size = getStringSize(name);
   return size.width < width && size.height < height;
+}
+
+/**
+ * The default node name of one tile.
+ * It renders inline (zIndex 0) in the layer of its tile, where the built-in text was before,
+ * so it keeps the paint order, the animation and the events of the tile.
+ * It does not take pointer events, so hover, click and touch reach the tile underneath.
+ */
+function TreemapDefaultLabel({
+  entry,
+  graphicalItems,
+  typography,
+}: {
+  entry: TreemapLabelListEntry;
+  graphicalItems: ReadonlyArray<GraphicalItemStyle> | undefined;
+  typography: React.CSSProperties | undefined;
+}) {
+  const entries = useMemo(() => [entry], [entry]);
+  const hasThemeColors = graphicalItems != null && graphicalItems.length > 0;
+  return (
+    <TreemapLabelListProvider entries={entries} graphicalItems={graphicalItems}>
+      <LabelList
+        zIndex={0}
+        position="insideLeft"
+        offset={8}
+        fontSize={typography?.fontSize ?? 14}
+        fill={hasThemeColors ? undefined : (typography?.fill ?? typography?.color ?? '#000')}
+        pointerEvents="none"
+      />
+    </TreemapLabelListProvider>
+  );
 }
 
 function ContentItem({
@@ -881,15 +865,6 @@ function ContentItem({
   onMouseLeave,
   onClick,
 }: ContentItemProps): React.ReactElement {
-  const { x, y, width, height } = nodeProps;
-  const arrowPoints = useMemo(
-    () => [
-      { x: x + 2, y: y + height / 2 },
-      { x: x + 6, y: y + height / 2 + 3 },
-      { x: x + 2, y: y + height / 2 + 6 },
-    ],
-    [x, y, height],
-  );
   if (React.isValidElement(content)) {
     return (
       <Layer onMouseEnter={onMouseEnter} onMouseLeave={onMouseLeave} onClick={onClick}>
@@ -905,6 +880,7 @@ function ContentItem({
     );
   }
   // optimize default shape
+  const { x, y, width, height } = nodeProps;
   const { fill, stroke, strokeWidth } = getTileStyles({
     nodeProps,
     nodeHasOwnColors,
@@ -916,7 +892,15 @@ function ContentItem({
 
   let arrow = null;
   if (width > 10 && height > 10 && nodeProps.children && type === 'nest' && nodeProps.depth > 0) {
-    arrow = <Polygon points={arrowPoints} />;
+    arrow = (
+      <Polygon
+        points={[
+          { x: x + 2, y: y + height / 2 },
+          { x: x + 6, y: y + height / 2 + 3 },
+          { x: x + 2, y: y + height / 2 + 6 },
+        ]}
+      />
+    );
   }
 
   /*
@@ -938,7 +922,7 @@ function ContentItem({
         fill={fill}
         stroke={stroke}
         strokeWidth={strokeWidth}
-        {...omit(nodeProps, omittedTileProps)}
+        {...omit(nodeProps, ['children', 'id'])}
         {...(fillObject == null ? undefined : { fill: fillObject })}
         onMouseEnter={onMouseEnter}
         onMouseLeave={onMouseLeave}
@@ -1188,6 +1172,7 @@ function TreemapItem({
   isLeaf,
   treemapProps,
   onNestClick,
+  defaultLabelEntry,
 }: {
   content: TreemapContentType;
   nodeProps: TreemapNode;
@@ -1196,6 +1181,11 @@ function TreemapItem({
   isLeaf: boolean;
   treemapProps: InternalTreemapProps;
   onNestClick: (node: TreemapNode) => void;
+  /**
+   * The default name of the node, undefined if it is not shown.
+   * It renders in the layer of the tile, where the built-in text was before.
+   */
+  defaultLabelEntry: TreemapLabelListEntry | undefined;
 }): ReactNode {
   const {
     id,
@@ -1214,22 +1204,11 @@ function TreemapItem({
     onMouseLeave: onMouseLeaveFromProps,
     themeGraphicalItems,
     themePageBackground,
+    typography,
   } = treemapProps;
   const { width, height, x, y } = nodeProps;
   const translateX = -x - width;
   const translateY = 0;
-  const animatedNodeProps = useMemo(
-    () => ({
-      ...nodeProps,
-      isAnimationActive,
-      isUpdateAnimationActive: !isUpdateAnimationActive,
-      width,
-      height,
-      x,
-      y,
-    }),
-    [nodeProps, isAnimationActive, isUpdateAnimationActive, width, height, x, y],
-  );
 
   const onMouseEnter = (e: React.MouseEvent<SVGGraphicsElement>) => {
     if ((isLeaf || type === 'nest') && typeof onMouseEnterFromProps === 'function') {
@@ -1246,7 +1225,8 @@ function TreemapItem({
   const onClick = () => {
     if (type === 'nest' && nodeProps.depth > 0) {
       onNestClick(nodeProps);
-    } else if ((isLeaf || type === 'nest') && typeof onItemClickFromProps === 'function') {
+    }
+    if ((isLeaf || type === 'nest') && typeof onItemClickFromProps === 'function') {
       onItemClickFromProps(nodeProps);
     }
   };
@@ -1266,9 +1246,9 @@ function TreemapItem({
   return (
     <CSSTransitionAnimate
       animationId={`treemap-${nodeProps.tooltipIndex}`}
-      from={`${translateX}px ${translateY}px`}
-      to="0px 0px"
-      attributeName="translate"
+      from={`translate(${translateX}px, ${translateY}px)`}
+      to="translate(0, 0)"
+      attributeName="transform"
       begin={animationBegin}
       easing={extractCssEasing(animationEasing)}
       isActive={isAnimationActive}
@@ -1277,12 +1257,25 @@ function TreemapItem({
       onAnimationEnd={handleAnimationEnd}
     >
       {style => (
-        <Layer onMouseEnter={onMouseEnter} onMouseLeave={onMouseLeave} onClick={onClick} style={style}>
+        <Layer
+          onMouseEnter={onMouseEnter}
+          onMouseLeave={onMouseLeave}
+          onClick={onClick}
+          style={{ ...style, transformOrigin: `${x} ${y}` }}
+        >
           <ContentItemWithEvents
             id={id}
             content={content}
             dataKey={dataKey}
-            nodeProps={animatedNodeProps}
+            nodeProps={{
+              ...nodeProps,
+              isAnimationActive,
+              isUpdateAnimationActive: !isUpdateAnimationActive,
+              width,
+              height,
+              x,
+              y,
+            }}
             nodeHasOwnColors={nodeHasOwnColors}
             branchIndex={branchIndex}
             type={type}
@@ -1290,6 +1283,13 @@ function TreemapItem({
             themeGraphicalItems={themeGraphicalItems}
             themePageBackground={themePageBackground}
           />
+          {defaultLabelEntry && (
+            <TreemapDefaultLabel
+              entry={defaultLabelEntry}
+              graphicalItems={themeGraphicalItems}
+              typography={typography}
+            />
+          )}
         </Layer>
       )}
     </CSSTransitionAnimate>
@@ -1306,78 +1306,11 @@ type InternalTreemapProps = RequiresDefaultProps<Props, typeof defaultTreeMapPro
   typography?: React.CSSProperties;
 };
 
-function TreemapNodeItem({
-  node,
-  root,
-  entry,
-  branchIndex,
-  treemapProps,
-  onNestClick,
-}: {
-  node: TreemapNode;
-  root: TreemapNode;
-  entry: TreemapLabelListEntry | undefined;
-  branchIndex: number | undefined;
-  treemapProps: InternalTreemapProps;
-  onNestClick: (node: TreemapNode) => void;
-}) {
-  const nodeProps = useMemo(
-    () => ({ ...svgPropertiesNoEvents(treemapProps), ...node, root }),
-    [treemapProps, node, root],
-  );
-  const defaultEntries = useMemo(() => (entry == null ? [] : [entry]), [entry]);
-  const { content, themeGraphicalItems, typography } = treemapProps;
-  const defaultLabel =
-    entry == null ? null : (
-      <LabelListSettingsContextProvider value={undefined}>
-        <TreemapLabelListProvider entries={defaultEntries} graphicalItems={themeGraphicalItems}>
-          <LabelList
-            zIndex={0}
-            position="insideLeft"
-            offset={8}
-            fontSize={typography?.fontSize ?? 14}
-            fill={
-              themeGraphicalItems == null || themeGraphicalItems.length === 0
-                ? (typography?.fill ?? typography?.color ?? '#000')
-                : undefined
-            }
-          />
-        </TreemapLabelListProvider>
-      </LabelListSettingsContextProvider>
-    );
-  return (
-    <>
-      <TreemapItem
-        isLeaf={!node.children || !node.children.length}
-        content={content}
-        nodeProps={nodeProps}
-        nodeHasOwnColors={hasOwnColors(node) || hasOwnColors(treemapProps)}
-        branchIndex={branchIndex}
-        treemapProps={treemapProps}
-        onNestClick={onNestClick}
-      />
-      {defaultLabel}
-    </>
-  );
-}
-
 class TreemapWithState extends PureComponent<InternalTreemapProps, State> {
   static displayName = 'Treemap';
 
   state = {
     ...defaultState,
-  };
-
-  /**
-   * Tracks mounted overlay LabelLists instead of inspecting React children.
-   * Effect cleanup restores automatic labels when the last list unmounts.
-   * Tile-local default lists sit outside this provider and do not register.
-   */
-  registerLabelList = (): (() => void) => {
-    this.setState(state => ({ labelListCount: state.labelListCount + 1 }));
-    return () => {
-      this.setState(state => ({ labelListCount: state.labelListCount - 1 }));
-    };
   };
 
   static getDerivedStateFromProps(nextProps: InternalTreemapProps, prevState: State): State | null {
@@ -1387,7 +1320,6 @@ class TreemapWithState extends PureComponent<InternalTreemapProps, State> {
       nextProps.width !== prevState.prevWidth ||
       nextProps.height !== prevState.prevHeight ||
       nextProps.dataKey !== prevState.prevDataKey ||
-      nextProps.nameKey !== prevState.prevNameKey ||
       nextProps.aspectRatio !== prevState.prevAspectRatio ||
       nextProps.nodeInset !== prevState.prevNodeInset ||
       nextProps.nodeGap !== prevState.prevNodeGap
@@ -1418,7 +1350,6 @@ class TreemapWithState extends PureComponent<InternalTreemapProps, State> {
         prevWidth: nextProps.width,
         prevHeight: nextProps.height,
         prevDataKey: nextProps.dataKey,
-        prevNameKey: nextProps.nameKey,
         prevType: nextProps.type,
         prevNodeInset: nextProps.nodeInset,
         prevNodeGap: nextProps.nodeGap,
@@ -1445,12 +1376,12 @@ class TreemapWithState extends PureComponent<InternalTreemapProps, State> {
       const formatRoot = squarify(root, aspectRatio, nodeInset, nodeGap);
 
       const { nestIndex } = this.state;
-      const nextNestIndex = [...nestIndex, node];
+      nestIndex.push(node);
 
       this.setState({
         formatRoot,
         currentRoot: root,
-        nestIndex: nextNestIndex,
+        nestIndex,
       });
     }
     if (onClick) {
@@ -1476,7 +1407,7 @@ class TreemapWithState extends PureComponent<InternalTreemapProps, State> {
     nestIndex = nestIndex.slice(0, i + 1);
     this.setState({
       formatRoot,
-      currentRoot: root,
+      currentRoot: node,
       nestIndex,
     });
   }
@@ -1485,6 +1416,7 @@ class TreemapWithState extends PureComponent<InternalTreemapProps, State> {
    * @param root parent of the node
    * @param node the node to render
    * @param parentBranchIndex index of the top-level tile that the parent belongs to, undefined if the parent is the root
+   * @param defaultLabels the default label entries, by the tooltip index of their node
    */
   renderNode(
     root: TreemapNode,
@@ -1492,8 +1424,9 @@ class TreemapWithState extends PureComponent<InternalTreemapProps, State> {
     parentBranchIndex: number | undefined,
     defaultLabels: ReadonlyMap<TooltipIndex, TreemapLabelListEntry>,
   ): ReactNode {
-    const { type } = this.props;
+    const { content, type } = this.props;
     const nodeProps = { ...svgPropertiesNoEvents(this.props), ...node, root };
+    const isLeaf = !node.children || !node.children.length;
     const branchIndex = node.depth === 0 ? undefined : (parentBranchIndex ?? node.index);
 
     const { currentRoot } = this.state;
@@ -1510,13 +1443,15 @@ class TreemapWithState extends PureComponent<InternalTreemapProps, State> {
         key={`recharts-treemap-node-${nodeProps.x}-${nodeProps.y}-${nodeProps.name}`}
         className={`recharts-treemap-depth-${node.depth}`}
       >
-        <TreemapNodeItem
-          node={node}
-          root={root}
-          entry={defaultLabels.get(node.tooltipIndex)}
+        <TreemapItem
+          isLeaf={isLeaf}
+          content={content}
+          nodeProps={nodeProps}
+          nodeHasOwnColors={hasOwnColors(node) || hasOwnColors(this.props)}
           branchIndex={branchIndex}
           treemapProps={this.props}
           onNestClick={this.handleClick}
+          defaultLabelEntry={defaultLabels.get(node.tooltipIndex)}
         />
         {node.children && node.children.length
           ? node.children.map((child: TreemapNode) => this.renderNode(node, child, branchIndex, defaultLabels))
@@ -1525,46 +1460,20 @@ class TreemapWithState extends PureComponent<InternalTreemapProps, State> {
     );
   }
 
-  handleLabelMouseEnter = (node: TreemapNode, event: React.MouseEvent<SVGGraphicsElement>) => {
-    const { dispatch, dataKey, id, type, onMouseEnter } = this.props;
-    dispatch(
-      setActiveMouseOverItemIndex({
-        activeIndex: node.tooltipIndex,
-        activeDataKey: dataKey,
-        activeCoordinate: { x: node.x + node.width / 2, y: node.y + node.height / 2 },
-        activeGraphicalItemId: id,
-      }),
-    );
-    if (!node.children?.length || type === 'nest') {
-      onMouseEnter?.(node, event);
-    }
-  };
+  renderAllNodes(defaultLabels: ReadonlyMap<TooltipIndex, TreemapLabelListEntry>): ReactNode {
+    const { formatRoot } = this.state;
 
-  handleLabelMouseLeave = (node: TreemapNode, event: React.MouseEvent<SVGGraphicsElement>) => {
-    // Match tiles: tooltip state is cleared when leaving the chart, not the item.
-    if (!node.children?.length || this.props.type === 'nest') {
-      this.props.onMouseLeave?.(node, event);
+    if (!formatRoot) {
+      return null;
     }
-  };
 
-  handleLabelClick = (node: TreemapNode, event: React.MouseEvent<SVGGraphicsElement>) => {
-    event.stopPropagation();
-    const { dispatch, dataKey, id, type, onClick } = this.props;
-    dispatch(
-      setActiveClickItemIndex({
-        activeIndex: node.tooltipIndex,
-        activeDataKey: dataKey,
-        activeCoordinate: { x: node.x + node.width / 2, y: node.y + node.height / 2 },
-        activeGraphicalItemId: id,
-      }),
-    );
-    if (type === 'nest') {
-      this.handleClick(node);
-    } else if (!node.children?.length) {
-      onClick?.(node);
-    }
-  };
+    return this.renderNode(formatRoot, formatRoot, undefined, defaultLabels);
+  }
 
+  /**
+   * One entry per rendered tile, without the root.
+   * In the nest mode, only the children of the current root are rendered, so only they get labels.
+   */
   getLabelListEntries(): ReadonlyArray<TreemapLabelListEntry> {
     const { formatRoot } = this.state;
     const { type, colorPanel, themeGraphicalItems, themePageBackground } = this.props;
@@ -1583,17 +1492,13 @@ class TreemapWithState extends PureComponent<InternalTreemapProps, State> {
         themeGraphicalItems,
         themePageBackground,
       });
+      // the label is drawn on top of the color the tile is drawn with
       const { style } = nodeProps;
       const styleFill = style != null && typeof style === 'object' && 'fill' in style ? style.fill : undefined;
       const styleStroke = style != null && typeof style === 'object' && 'stroke' in style ? style.stroke : undefined;
       const fill = styleFill ?? readEntryFill(nodeProps).color ?? tileStyles.fill;
       const stroke = styleStroke ?? ('stroke' in nodeProps ? nodeProps.stroke : tileStyles.stroke);
-
-      const viewBox = {
-        ...filterRect(node),
-        upperWidth: node.width,
-        lowerWidth: node.width,
-      };
+      const viewBox = { ...filterRect(node), upperWidth: node.width, lowerWidth: node.width };
 
       entries.push({
         ...viewBox,
@@ -1604,9 +1509,6 @@ class TreemapWithState extends PureComponent<InternalTreemapProps, State> {
         tileStroke: typeof stroke === 'string' ? stroke : undefined,
         branchIndex,
         ignoresTheme: nodeHasOwnColors,
-        onMouseEnter: event => this.handleLabelMouseEnter(nodeProps, event),
-        onMouseLeave: event => this.handleLabelMouseLeave(nodeProps, event),
-        onClick: event => this.handleLabelClick(nodeProps, event),
         'data-recharts-item-index': node.tooltipIndex,
       });
 
@@ -1615,21 +1517,10 @@ class TreemapWithState extends PureComponent<InternalTreemapProps, State> {
       }
     };
 
-    // Skip the synthetic layout root; nest mode exposes only its direct children.
     if (formatRoot != null) {
       formatRoot.children?.forEach(node => visitNode(formatRoot, node, node.index));
     }
     return entries;
-  }
-
-  renderAllNodes(defaultLabels: ReadonlyMap<TooltipIndex, TreemapLabelListEntry>): ReactNode {
-    const { formatRoot } = this.state;
-
-    if (!formatRoot) {
-      return null;
-    }
-
-    return this.renderNode(formatRoot, formatRoot, undefined, defaultLabels);
   }
 
   // render nest treemap
@@ -1638,11 +1529,10 @@ class TreemapWithState extends PureComponent<InternalTreemapProps, State> {
     const { nestIndex } = this.state;
 
     return (
-      <div className="recharts-treemap-nest-index-wrapper" style={treemapNestIndexStyle}>
+      <div className="recharts-treemap-nest-index-wrapper" style={{ marginTop: '8px', textAlign: 'center' }}>
         {nestIndex.map((item: TreemapNode, i: number) => {
           // TODO need to verify nameKey type
-          const rawName =
-            typeof nameKey === 'string' || typeof nameKey === 'number' ? get(item, nameKey, 'root') : 'root';
+          const rawName = get(item, nameKey as string, 'root');
           const name: string = typeof rawName === 'string' ? rawName : 'root';
           let content: ReactNode;
           if (React.isValidElement(nestIndexContent)) {
@@ -1684,15 +1574,10 @@ class TreemapWithState extends PureComponent<InternalTreemapProps, State> {
       return;
     }
     const target = document.elementFromPoint(touchEvent.clientX, touchEvent.clientY);
-    if (!(target instanceof Element) || this.state.formatRoot == null) {
+    if (!target || !target.getAttribute || this.state.formatRoot == null) {
       return;
     }
-    const item = target.closest('[data-recharts-item-index]');
-    const surface = item?.closest('svg');
-    if (item == null || (surface != null && surface !== e.currentTarget)) {
-      return;
-    }
-    const itemIndex = item.getAttribute('data-recharts-item-index');
+    const itemIndex = target.getAttribute('data-recharts-item-index');
     const activeNode: unknown = treemapPayloadSearcher(this.state.formatRoot, itemIndex);
     if (!isTreemapNode(activeNode)) {
       return;
@@ -1721,13 +1606,17 @@ class TreemapWithState extends PureComponent<InternalTreemapProps, State> {
     const { width, height, className, style, children, type, fill, ...others } = this.props;
     // the surface keeps the plain color, which elements without a fill of their own inherit
     const attrs = svgPropertiesNoEvents({ ...others, fill: splitFill(fill).color });
-    const entries = this.getLabelListEntries();
     const { label, content, themeGraphicalItems } = this.props;
-    const useDefaultLabels = label == null || label === true;
+    const labelEntries = this.getLabelListEntries();
     const hasCustomContent = React.isValidElement(content) || typeof content === 'function';
-    const showDefaultLabels =
-      useDefaultLabels && !hasCustomContent && (label === true || this.state.labelListCount === 0);
-    const defaultEntries = showDefaultLabels ? entries.filter(isDefaultLabelVisible) : [];
+    const showDefaultLabels = (label == null || label === true) && !hasCustomContent;
+    const defaultLabels: ReadonlyMap<TooltipIndex, TreemapLabelListEntry> = new Map(
+      showDefaultLabels
+        ? labelEntries
+            .filter(isDefaultLabelVisible)
+            .map((entry): [TooltipIndex, TreemapLabelListEntry] => [entry.payload.tooltipIndex, entry])
+        : [],
+    );
 
     return (
       <>
@@ -1748,15 +1637,10 @@ class TreemapWithState extends PureComponent<InternalTreemapProps, State> {
           onTouchMove={this.handleTouchMove}
         >
           <AllZIndexPortals isPanorama={false}>
-            {this.renderAllNodes(new Map(defaultEntries.map(entry => [entry.payload.tooltipIndex, entry])))}
-            <TreemapLabelListProvider entries={entries} graphicalItems={themeGraphicalItems}>
-              <TreemapConfiguredLabelsProvider
-                entries={entries}
-                label={label}
-                registerLabelList={this.registerLabelList}
-              >
-                {children}
-              </TreemapConfiguredLabelsProvider>
+            {this.renderAllNodes(defaultLabels)}
+            <TreemapLabelListProvider entries={labelEntries} graphicalItems={themeGraphicalItems}>
+              <LabelListFromLabelProp label={label === true ? undefined : label} pointerEvents="none" />
+              {children}
             </TreemapLabelListProvider>
           </AllZIndexPortals>
         </Surface>
@@ -1809,7 +1693,7 @@ export function Treemap(outsideProps: Props) {
   const [tooltipPortal, setTooltipPortal] = useState<HTMLElement | null>(null);
 
   return (
-    <RechartsStoreProvider preloadedState={treemapPreloadedState} reduxStoreName={props.className ?? 'Treemap'}>
+    <RechartsStoreProvider preloadedState={{ options }} reduxStoreName={props.className ?? 'Treemap'}>
       <ReportChartMargin margin={defaultTreemapMargin} />
       <ReportEventSettings throttleDelay={throttleDelay} throttledEvents={throttledEvents} />
       <RechartsWrapper
