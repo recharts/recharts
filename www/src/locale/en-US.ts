@@ -56,6 +56,14 @@ export const map = {
     'label-colors': 'Label colors',
     patterns: 'Patterns and gradients',
   },
+  guideSections: {
+    'getting-started': 'Getting started',
+    'layout-and-axes': 'Layout and axes',
+    styling: 'Styling',
+    theming: 'Theming',
+    advanced: 'Advanced',
+    migration: 'Migration',
+  },
   installation: {
     installation: 'Installation',
     'npm-desc': `NPM is the easiest and fastest way to get started using Recharts.

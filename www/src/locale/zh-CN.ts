@@ -56,6 +56,14 @@ export const map = {
     'label-colors': '标签颜色',
     patterns: '图案与渐变',
   },
+  guideSections: {
+    'getting-started': '入门',
+    'layout-and-axes': '布局与坐标轴',
+    styling: '样式',
+    theming: '主题',
+    advanced: '进阶',
+    migration: '迁移',
+  },
   installation: {
     installation: '安装',
     'npm-desc': '推荐使用 npm 的方式安装，它能更好地和 CommonJS打包工具配合使用，例如：',
