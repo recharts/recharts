@@ -1,1 +1,0 @@
-import{r as t}from"./entry-C1W8mNNz.js";import{D as e}from"./RechartsWrapper-COXNk9AS.js";import{C as o}from"./CartesianChart-Dh7Vu-Fg.js";const p=["item"],s=t.forwardRef((r,a)=>t.createElement(o,{chartName:"ScatterChart",defaultTooltipEventType:"item",validateTooltipEventTypes:p,tooltipPayloadSearcher:e,categoricalChartProps:r,ref:a}));export{s as S};
