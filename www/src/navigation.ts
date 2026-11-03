@@ -93,7 +93,7 @@ function exampleNavItems(locale: SupportedLocale): ReadonlyArray<NavCategory> {
     displayName: categoryName,
     items: Object.entries(category.examples).map(([name, example]) => ({
       key: name,
-      displayName: example.name,
+      displayName: (localeGet(locale, 'examples', name) as string | undefined) ?? example.name,
       url: `/${locale}/examples/${name}/`,
     })),
     NavPreview: category.NavPreview,
