@@ -53,33 +53,15 @@ interface CalculatedWordWidths {
 type CalculateWordWidthsParam = Pick<Props, 'children' | 'breakAll' | 'style'>;
 
 /*
- * Minimal structural types for Intl.Segmenter. Some of this repository's
- * tsconfig projects (test-vr, website) compile with an ES2020 lib, which has
- * no Intl.Segmenter declarations, so the global type cannot be referenced
- * directly. A local structural shape keeps every project compiling while the
- * implementation still uses the real Intl.Segmenter at runtime.
- */
-interface GraphemeSegment {
-  segment: string;
-}
-
-interface GraphemeSegmenter {
-  segment(input: string): Iterable<GraphemeSegment>;
-}
-
-type GraphemeSegmenterConstructor = new (locale?: string, options?: { granularity: 'grapheme' }) => GraphemeSegmenter;
-
-/*
  * A single lazily-created segmenter instance: constructing Intl.Segmenter is
  * measurably more expensive than segmenting with an existing one.
  * Availability itself is re-checked on every call so environments without
  * Intl.Segmenter (e.g. Firefox before 125) always take the fallback.
  */
-let cachedGraphemeSegmenter: GraphemeSegmenter | undefined;
+let cachedGraphemeSegmenter: Intl.Segmenter | undefined;
 
-const getGraphemeSegmenter = (): GraphemeSegmenter | null => {
-  const SegmenterImpl: GraphemeSegmenterConstructor | undefined =
-    typeof Intl === 'undefined' ? undefined : Reflect.get(Intl, 'Segmenter');
+const getGraphemeSegmenter = (): Intl.Segmenter | null => {
+  const SegmenterImpl = typeof Intl === 'undefined' ? undefined : Intl.Segmenter;
   if (typeof SegmenterImpl !== 'function') {
     return null;
   }
