@@ -1,1 +1,0 @@
-import{r as a}from"./entry-DEb561D5.js";import{D as e}from"./RechartsWrapper-C8sfet6G.js";import{C as o}from"./CartesianChart-B13nxHiT.js";const p=["axis"],c=a.forwardRef((r,t)=>a.createElement(o,{chartName:"AreaChart",defaultTooltipEventType:"axis",validateTooltipEventTypes:p,tooltipPayloadSearcher:e,categoricalChartProps:r,ref:t}));export{c as A};

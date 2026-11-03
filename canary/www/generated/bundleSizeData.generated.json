@@ -1,45 +1,45 @@
 {
   "treemap": {
     "examplePath": "www/src/views/IndexView/IndexLineChart.tsx",
-    "totalSize": 1009913,
-    "totalSizeLabel": "986.24 KB",
+    "totalSize": 1010052,
+    "totalSizeLabel": "986.38 KB",
     "moduleCount": 385,
-    "generatedAt": "2026-11-03T10:07:43.566Z",
+    "generatedAt": "2026-11-03T11:54:17.962Z",
     "stages": [
       {
         "stage": "es6-folder",
-        "bytes": 1647335,
+        "bytes": 1647593,
         "humanReadableSize": "1.57 MB",
         "reductionFromBaselinePercent": 0
       },
       {
         "stage": "tree-shaken",
-        "bytes": 1012836,
-        "humanReadableSize": "989.10 KB",
+        "bytes": 1012975,
+        "humanReadableSize": "989.23 KB",
         "reductionFromBaselinePercent": 0
       },
       {
         "stage": "minified",
-        "bytes": 326298,
+        "bytes": 326300,
         "humanReadableSize": "318.65 KB",
-        "reductionFromBaselinePercent": 67.78
+        "reductionFromBaselinePercent": 67.79
       },
       {
         "stage": "minified+gzip",
-        "bytes": 107021,
+        "bytes": 107017,
         "humanReadableSize": "104.51 KB",
-        "reductionFromBaselinePercent": 89.43
+        "reductionFromBaselinePercent": 89.44
       }
     ],
     "tree": {
       "name": "bundle",
       "fullPath": "bundle",
-      "value": 1009913,
+      "value": 1010052,
       "children": [
         {
           "name": "src",
           "fullPath": "src",
-          "value": 606337,
+          "value": 606476,
           "children": [
             {
               "name": "state",
@@ -452,7 +452,7 @@
             {
               "name": "util",
               "fullPath": "src/util",
-              "value": 121038,
+              "value": 121177,
               "children": [
                 {
                   "name": "scale",
@@ -491,7 +491,7 @@
                 {
                   "name": "ChartUtils.ts",
                   "fullPath": "src/util/ChartUtils.ts",
-                  "value": 15228
+                  "value": 15367
                 },
                 {
                   "name": "zoom",
@@ -2659,45 +2659,45 @@
   },
   "sunburst": {
     "examplePath": "www/src/views/IndexView/IndexLineChart.tsx",
-    "totalSize": 1009913,
-    "totalSizeLabel": "986.24 KB",
+    "totalSize": 1010052,
+    "totalSizeLabel": "986.38 KB",
     "moduleCount": 385,
-    "generatedAt": "2026-11-03T10:07:41.345Z",
+    "generatedAt": "2026-11-03T11:54:20.348Z",
     "stages": [
       {
         "stage": "es6-folder",
-        "bytes": 1647335,
+        "bytes": 1647593,
         "humanReadableSize": "1.57 MB",
         "reductionFromBaselinePercent": 0
       },
       {
         "stage": "tree-shaken",
-        "bytes": 1012836,
-        "humanReadableSize": "989.10 KB",
+        "bytes": 1012975,
+        "humanReadableSize": "989.23 KB",
         "reductionFromBaselinePercent": 0
       },
       {
         "stage": "minified",
-        "bytes": 326298,
+        "bytes": 326300,
         "humanReadableSize": "318.65 KB",
-        "reductionFromBaselinePercent": 67.78
+        "reductionFromBaselinePercent": 67.79
       },
       {
         "stage": "minified+gzip",
-        "bytes": 107021,
+        "bytes": 107017,
         "humanReadableSize": "104.51 KB",
-        "reductionFromBaselinePercent": 89.43
+        "reductionFromBaselinePercent": 89.44
       }
     ],
     "tree": {
       "name": "bundle",
       "fullPath": "bundle",
-      "value": 1009913,
+      "value": 1010052,
       "children": [
         {
           "name": "src",
           "fullPath": "src",
-          "value": 606337,
+          "value": 606476,
           "children": [
             {
               "name": "state",
@@ -3110,7 +3110,7 @@
             {
               "name": "util",
               "fullPath": "src/util",
-              "value": 121038,
+              "value": 121177,
               "children": [
                 {
                   "name": "scale",
@@ -3149,7 +3149,7 @@
                 {
                   "name": "ChartUtils.ts",
                   "fullPath": "src/util/ChartUtils.ts",
-                  "value": 15228
+                  "value": 15367
                 },
                 {
                   "name": "zoom",
