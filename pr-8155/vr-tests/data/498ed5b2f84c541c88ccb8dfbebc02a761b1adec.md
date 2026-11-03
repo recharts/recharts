@@ -1,0 +1,339 @@
+# Instructions
+
+- Following Playwright test failed.
+- Explain why, be concise, respect Playwright best practices.
+- Provide a snippet of code with the fix, if possible.
+
+# Test info
+
+- Name: tests/www/ScatterChartApiExamples.spec-vr.tsx >> BubbleChart
+- Location: test-vr/tests/www/ScatterChartApiExamples.spec-vr.tsx:36:5
+
+# Error details
+
+```
+Error: expect(locator).toHaveScreenshot(expected) failed
+
+Locator: locator('#root').locator(':scope > *').first()
+  881 pixels (ratio 0.01 of all image pixels) are different.
+
+Call log:
+  - Expect "toHaveScreenshot" with timeout 10000ms
+    - verifying given screenshot expectation
+  - waiting for locator('#root').locator(':scope > *').first()
+    - locator resolved to <div>…</div>
+  - taking element screenshot
+    - disabled all CSS animations
+  - waiting for fonts to load...
+  - fonts loaded
+  - attempting scroll into view action
+    - waiting for element to be stable
+  - 4990 pixels (ratio 0.02 of all image pixels) are different.
+  - waiting 100ms before taking screenshot
+  - waiting for locator('#root').locator(':scope > *').first()
+    - locator resolved to <div>…</div>
+  - taking element screenshot
+    - disabled all CSS animations
+  - waiting for fonts to load...
+  - fonts loaded
+  - attempting scroll into view action
+    - waiting for element to be stable
+  - 4109 pixels (ratio 0.02 of all image pixels) are different.
+  - waiting 250ms before taking screenshot
+  - waiting for locator('#root').locator(':scope > *').first()
+    - locator resolved to <div>…</div>
+  - taking element screenshot
+    - disabled all CSS animations
+  - waiting for fonts to load...
+  - fonts loaded
+  - attempting scroll into view action
+    - waiting for element to be stable
+  - captured a stable screenshot
+  - 881 pixels (ratio 0.01 of all image pixels) are different.
+
+```
+
+# Page snapshot
+
+```yaml
+- generic [active] [ref=e1]:
+  - generic [ref=e3]:
+    - generic [ref=e4]:
+      - generic:
+        - generic:
+          - paragraph: 7a
+          - paragraph: "value: 200"
+      - application [ref=e5]:
+        - generic [ref=e88]:
+          - generic:
+            - generic: 12a
+            - generic: 1a
+            - generic: 2a
+            - generic: 3a
+            - generic: 4a
+            - generic: 5a
+            - generic: 6a
+            - generic: 7a
+            - generic: 8a
+            - generic: 9a
+            - generic: 10a
+            - generic: 11a
+            - generic: 12a
+            - generic: 1p
+            - generic: 2p
+            - generic: 3p
+            - generic: 4p
+            - generic: 5p
+            - generic: 6p
+            - generic: 7p
+            - generic: 8p
+            - generic: 9p
+            - generic: 10p
+            - generic: 11p
+          - generic [ref=e89]: Sunday
+    - application [ref=e91]:
+      - generic [ref=e173]:
+        - generic:
+          - generic: 12a
+          - generic: 1a
+          - generic: 2a
+          - generic: 3a
+          - generic: 4a
+          - generic: 5a
+          - generic: 6a
+          - generic: 7a
+          - generic: 8a
+          - generic: 9a
+          - generic: 10a
+          - generic: 11a
+          - generic: 12a
+          - generic: 1p
+          - generic: 2p
+          - generic: 3p
+          - generic: 4p
+          - generic: 5p
+          - generic: 6p
+          - generic: 7p
+          - generic: 8p
+          - generic: 9p
+          - generic: 10p
+          - generic: 11p
+        - generic [ref=e174]: Monday
+    - application [ref=e176]:
+      - generic [ref=e258]:
+        - generic:
+          - generic: 12a
+          - generic: 1a
+          - generic: 2a
+          - generic: 3a
+          - generic: 4a
+          - generic: 5a
+          - generic: 6a
+          - generic: 7a
+          - generic: 8a
+          - generic: 9a
+          - generic: 10a
+          - generic: 11a
+          - generic: 12a
+          - generic: 1p
+          - generic: 2p
+          - generic: 3p
+          - generic: 4p
+          - generic: 5p
+          - generic: 6p
+          - generic: 7p
+          - generic: 8p
+          - generic: 9p
+          - generic: 10p
+          - generic: 11p
+        - generic [ref=e259]: Tuesday
+    - application [ref=e261]:
+      - generic [ref=e343]:
+        - generic:
+          - generic: 12a
+          - generic: 1a
+          - generic: 2a
+          - generic: 3a
+          - generic: 4a
+          - generic: 5a
+          - generic: 6a
+          - generic: 7a
+          - generic: 8a
+          - generic: 9a
+          - generic: 10a
+          - generic: 11a
+          - generic: 12a
+          - generic: 1p
+          - generic: 2p
+          - generic: 3p
+          - generic: 4p
+          - generic: 5p
+          - generic: 6p
+          - generic: 7p
+          - generic: 8p
+          - generic: 9p
+          - generic: 10p
+          - generic: 11p
+        - generic [ref=e344]: Wednesday
+    - application [ref=e346]:
+      - generic [ref=e428]:
+        - generic:
+          - generic: 12a
+          - generic: 1a
+          - generic: 2a
+          - generic: 3a
+          - generic: 4a
+          - generic: 5a
+          - generic: 6a
+          - generic: 7a
+          - generic: 8a
+          - generic: 9a
+          - generic: 10a
+          - generic: 11a
+          - generic: 12a
+          - generic: 1p
+          - generic: 2p
+          - generic: 3p
+          - generic: 4p
+          - generic: 5p
+          - generic: 6p
+          - generic: 7p
+          - generic: 8p
+          - generic: 9p
+          - generic: 10p
+          - generic: 11p
+        - generic [ref=e429]: Thursday
+    - application [ref=e431]:
+      - generic [ref=e513]:
+        - generic:
+          - generic: 12a
+          - generic: 1a
+          - generic: 2a
+          - generic: 3a
+          - generic: 4a
+          - generic: 5a
+          - generic: 6a
+          - generic: 7a
+          - generic: 8a
+          - generic: 9a
+          - generic: 10a
+          - generic: 11a
+          - generic: 12a
+          - generic: 1p
+          - generic: 2p
+          - generic: 3p
+          - generic: 4p
+          - generic: 5p
+          - generic: 6p
+          - generic: 7p
+          - generic: 8p
+          - generic: 9p
+          - generic: 10p
+          - generic: 11p
+        - generic [ref=e514]: Friday
+    - application [ref=e516]:
+      - generic [ref=e598]:
+        - generic [ref=e599]:
+          - generic [ref=e600]: 12a
+          - generic [ref=e602]: 1a
+          - generic [ref=e604]: 2a
+          - generic [ref=e606]: 3a
+          - generic [ref=e608]: 4a
+          - generic [ref=e610]: 5a
+          - generic [ref=e612]: 6a
+          - generic [ref=e614]: 7a
+          - generic [ref=e616]: 8a
+          - generic [ref=e618]: 9a
+          - generic [ref=e620]: 10a
+          - generic [ref=e622]: 11a
+          - generic [ref=e624]: 12a
+          - generic [ref=e626]: 1p
+          - generic [ref=e628]: 2p
+          - generic [ref=e630]: 3p
+          - generic [ref=e632]: 4p
+          - generic [ref=e634]: 5p
+          - generic [ref=e636]: 6p
+          - generic [ref=e638]: 7p
+          - generic [ref=e640]: 8p
+          - generic [ref=e642]: 9p
+          - generic [ref=e644]: 10p
+          - generic [ref=e646]: 11p
+        - generic [ref=e648]: Saturday
+  - generic [ref=e649]: 11p
+```
+
+# Test source
+
+```ts
+  1  | import type {
+  2  |   BubbleChart,
+  3  |   JointLineScatterChart,
+  4  |   ScatterChartExample,
+  5  |   ScatterChartWithLabels,
+  6  |   ThreeDimScatterChart,
+  7  | } from './ScatterChartApiExamples.story';
+  8  | import { expect, test } from '../fixtures';
+  9  | 
+  10 | test('ScatterChartNavExample', async ({ mountStory }) => {
+  11 |   const component = await mountStory('www/ScatterChartApiExamples/ScatterChartNavExample', { testTheme: 'light' });
+  12 |   await expect(component).toHaveScreenshot();
+  13 | });
+  14 | 
+  15 | test('ScatterChartWithCells', async ({ mountStory }) => {
+  16 |   const component = await mountStory('www/ScatterChartApiExamples/ScatterChartWithCells', { testTheme: 'light' });
+  17 |   await expect(component).toHaveScreenshot();
+  18 | });
+  19 | 
+  20 | test('MultipleYAxesScatterChart', async ({ mountStory }) => {
+  21 |   const component = await mountStory('www/ScatterChartApiExamples/MultipleYAxesScatterChart', { testTheme: 'light' });
+  22 |   await expect(component).toHaveScreenshot();
+  23 | });
+  24 | 
+  25 | test('ScatterChartWithLabels', async ({ mountStory }) => {
+  26 |   const component = await mountStory<typeof ScatterChartWithLabels>(
+  27 |     'www/ScatterChartApiExamples/ScatterChartWithLabels',
+  28 |     {
+  29 |       testTheme: 'light',
+  30 |       defaultIndex: '2',
+  31 |     },
+  32 |   );
+  33 |   await expect(component).toHaveScreenshot();
+  34 | });
+  35 | 
+  36 | test('BubbleChart', async ({ mountStory }) => {
+  37 |   const component = await mountStory<typeof BubbleChart>('www/ScatterChartApiExamples/BubbleChart', {
+  38 |     testTheme: 'light',
+  39 |     defaultIndex: '7',
+  40 |   });
+> 41 |   await expect(component).toHaveScreenshot();
+     |                           ^ Error: expect(locator).toHaveScreenshot(expected) failed
+  42 | });
+  43 | 
+  44 | test('JointLineScatterChart', async ({ mountStory }) => {
+  45 |   const component = await mountStory<typeof JointLineScatterChart>(
+  46 |     'www/ScatterChartApiExamples/JointLineScatterChart',
+  47 |     {
+  48 |       testTheme: 'light',
+  49 |       defaultIndex: '2',
+  50 |     },
+  51 |   );
+  52 |   await expect(component).toHaveScreenshot();
+  53 | });
+  54 | 
+  55 | test('ThreeDimScatterChart', async ({ mountStory }) => {
+  56 |   const component = await mountStory<typeof ThreeDimScatterChart>('www/ScatterChartApiExamples/ThreeDimScatterChart', {
+  57 |     testTheme: 'light',
+  58 |     defaultIndex: '3',
+  59 |   });
+  60 |   await expect(component).toHaveScreenshot();
+  61 | });
+  62 | 
+  63 | test('ScatterChartExample', async ({ mountStory }) => {
+  64 |   const component = await mountStory<typeof ScatterChartExample>('www/ScatterChartApiExamples/ScatterChartExample', {
+  65 |     testTheme: 'light',
+  66 |     isAnimationActive: false,
+  67 |   });
+  68 |   await expect(component).toHaveScreenshot();
+  69 | });
+  70 | 
+```
