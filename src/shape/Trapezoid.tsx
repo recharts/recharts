@@ -106,6 +106,9 @@ interface TrapezoidProps {
   onMouseLeave?: (e: React.MouseEvent<SVGPathElement>) => void;
 }
 
+/**
+ * @public
+ */
 export type Props = Omit<SVGProps<SVGPathElement>, 'fill'> & TrapezoidProps;
 
 /**
@@ -238,6 +241,9 @@ const TrapezoidImpl: React.FC<StringFillProps> = outsideProps => {
   );
 };
 
+/**
+ * @public
+ */
 export const Trapezoid = (props: Props) => {
   const { fill } = props;
   // spreading all props first keeps `fill` in its place among the attributes

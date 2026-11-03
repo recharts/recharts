@@ -502,6 +502,7 @@ export const getStackedData = (
 /**
  * Externally, we accept both strings and numbers as stack IDs
  * @inline
+ * @public
  */
 export type StackId = string | number;
 /**
@@ -513,6 +514,24 @@ export type NormalizedStackId = string;
 
 export function getNormalizedStackId(publicStackId: StackId | undefined): NormalizedStackId | undefined {
   return publicStackId == null ? undefined : String(publicStackId);
+}
+
+// The category domain skips rows without a valid category, so the tick at a row's index can belong to another row.
+function getCateTickOfEntry<T>(
+  dataKey: DataKey<T> | undefined,
+  ticks: ReadonlyArray<TickItem> | undefined,
+  entry: T,
+  index: number,
+): TickItem | undefined {
+  const tickAtIndex = ticks?.[index];
+  if (isNullish(dataKey)) {
+    return tickAtIndex;
+  }
+  const category = getValueByDataKey(entry, dataKey);
+  if (tickAtIndex?.value === category) {
+    return tickAtIndex;
+  }
+  return ticks && findEntryInArray(ticks, 'value', category);
 }
 
 export function getCateCoordinateOfLine<T extends Record<string, unknown>>({
@@ -536,18 +555,8 @@ export function getCateCoordinateOfLine<T extends Record<string, unknown>>({
   dataKey?: DataKey<T>;
 }): number | null {
   if (axis.type === 'category') {
-    // find coordinate of category axis by the value of category
-    // @ts-expect-error why does this use direct object access instead of getValueByDataKey?
-    if (!axis.allowDuplicatedCategory && axis.dataKey && !isNullish(entry[axis.dataKey])) {
-      // @ts-expect-error why does this use direct object access instead of getValueByDataKey?
-      const matchedTick = findEntryInArray(ticks, 'value', entry[axis.dataKey]);
-
-      if (matchedTick) {
-        return matchedTick.coordinate + bandSize / 2;
-      }
-    }
-
-    return ticks?.[index] ? ticks[index].coordinate + bandSize / 2 : null;
+    const tick = getCateTickOfEntry(axis.dataKey, ticks, entry, index);
+    return tick ? tick.coordinate + bandSize / 2 : null;
   }
 
   const value = getValueByDataKey(entry, !isNullish(dataKey) ? dataKey : axis.dataKey);
@@ -575,7 +584,8 @@ export const getCateCoordinateOfBar = ({
   index: number;
 }): number | null => {
   if (axis.type === 'category') {
-    return ticks[index] ? ticks[index].coordinate + offset : null;
+    const tick = getCateTickOfEntry(axis.dataKey, ticks, entry, index);
+    return tick ? tick.coordinate + offset : null;
   }
   // getValueByDataKey does not validate the output type
   const value: number | undefined = getValueByDataKey(entry, axis.dataKey, axis.scale.domain()[index]);

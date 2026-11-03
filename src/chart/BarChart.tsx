@@ -10,6 +10,7 @@ const allowedTooltipTypes: ReadonlyArray<TooltipEventType> = ['axis', 'item'];
  * @consumes ResponsiveContainerContext
  * @provides CartesianViewBoxContext
  * @provides CartesianChartContext
+ * @public
  */
 export const BarChart = forwardRef<SVGSVGElement, CartesianChartProps<unknown>>(
   (props: CartesianChartProps<unknown>, ref) => {

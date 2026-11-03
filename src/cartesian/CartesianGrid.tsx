@@ -29,6 +29,7 @@ import { splitFill, useFillPaint, useFillPaints } from '../fill/fillDefinitions'
 
 /**
  * The <CartesianGrid horizontal
+ * @public
  */
 export type GridLineTypeFunctionProps = Omit<LineItemProps, 'key'> & {
   // React does not pass the key through when calling cloneElement - so it might be undefined when cloning
@@ -40,6 +41,9 @@ export type GridLineTypeFunctionProps = Omit<LineItemProps, 'key'> & {
 export type AxisPropsForCartesianGridTicksGeneration = AxisPropsNeededForTicksGenerator &
   Omit<GetTicksInput, 'ticks' | 'viewBox'>;
 
+/**
+ * @public
+ */
 export type GridLineType =
   | SVGProps<SVGLineElement>
   | ReactElement<SVGElement>
@@ -216,6 +220,9 @@ interface CartesianGridProps extends ZIndexable {
 // We exclude strokeDasharray here because Recharts allows array of numbers while DOM does not
 type AcceptedSvgProps = Omit<SVGProps<SVGLineElement>, 'offset' | 'strokeDasharray' | 'fill'>;
 
+/**
+ * @public
+ */
 export type Props = AcceptedSvgProps & CartesianGridProps;
 
 /**
@@ -572,6 +579,7 @@ const defaultLegacyGridThemeProps: ColorStyles2D = {
  * Renders background grid with lines and fill colors in a Cartesian chart.
  *
  * @consumes CartesianChartContext
+ * @public
  */
 export function CartesianGrid(propsWithFillObjects: Props) {
   const chartWidth = useChartWidth();

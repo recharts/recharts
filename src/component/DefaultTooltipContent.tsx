@@ -17,6 +17,9 @@ function defaultFormatter(value: ValueType | undefined): React.ReactNode {
 }
 
 export type TooltipType = 'none';
+/**
+ * @public
+ */
 export type ValueType = number | string | ReadonlyArray<number | string>;
 export type NameType = number | string;
 export type Formatter<TValue extends ValueType = ValueType, TName extends NameType = NameType> = (
@@ -27,6 +30,9 @@ export type Formatter<TValue extends ValueType = ValueType, TName extends NameTy
   payload: ReadonlyArray<Payload<TValue, TName>>,
 ) => [React.ReactNode, TName] | React.ReactNode;
 
+/**
+ * @public
+ */
 export interface Payload<TValue extends ValueType = ValueType, TName extends NameType = NameType> extends Omit<
   SVGProps<SVGElement>,
   'name'
@@ -55,10 +61,14 @@ export interface Payload<TValue extends ValueType = ValueType, TName extends Nam
 
 /**
  * @inline
+ * @public
  */
 export type TooltipItemSorter<TValue extends ValueType = ValueType, TName extends NameType = NameType> =
   'dataKey' | 'value' | 'name' | ((item: Payload<TValue, TName>) => number | string | undefined);
 
+/**
+ * @public
+ */
 export interface Props<TValue extends ValueType = ValueType, TName extends NameType = NameType> {
   separator?: string;
   wrapperClassName?: string;
@@ -111,6 +121,7 @@ function lodashLikeSortBy<T>(array: ReadonlyArray<T>, itemSorter: TooltipItemSor
  *
  * You can use this component to customize the content of the tooltip,
  * or you can provide your own completely independent content.
+ * @public
  */
 export const DefaultTooltipContent = (props: Props) => {
   const theme = useBackwardsCompatibleTheme<Pick<RechartsTheme, 'typography' | 'tooltip'>>(

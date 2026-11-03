@@ -19,6 +19,9 @@ import { CartesianChartProps } from './types';
 import { TooltipProps } from '../component/Tooltip';
 import { NameType, ValueType } from '../component/DefaultTooltipContent';
 
+/**
+ * @public
+ */
 export type TypedHorizontalChartContext<TData, TCategorical, TNumerical, TComponents> = {
   AreaChart: React.ComponentType<Omit<CartesianChartProps<TData>, 'layout'>>;
   BarChart: React.ComponentType<Omit<CartesianChartProps<TData>, 'layout'>>;
@@ -48,6 +51,9 @@ export type TypedHorizontalChartContext<TData, TCategorical, TNumerical, TCompon
   'Funnel' | 'FunnelChart'
 >;
 
+/**
+ * @public
+ */
 export type TypedVerticalChartContext<TData, TCategorical, TNumerical, TComponents> = {
   AreaChart: React.ComponentType<Omit<CartesianChartProps<TData>, 'layout'>>;
   BarChart: React.ComponentType<Omit<CartesianChartProps<TData>, 'layout'>>;
@@ -89,6 +95,9 @@ const createCartesianCharts = <TData,>(layout: 'horizontal' | 'vertical') => ({
   ),
 });
 
+/**
+ * @public
+ */
 export type NoFunnel<T> = 'Funnel' extends keyof T ? never : 'FunnelChart' extends keyof T ? never : T;
 
 /**
@@ -123,6 +132,7 @@ export type NoFunnel<T> = 'Funnel' extends keyof T ? never : 'FunnelChart' exten
  *
  * @since 3.8
  * @see {@link https://recharts.github.io/en-US/guide/typescript/ Guide: Strong typing for Recharts components}
+ * @public
  */
 export function createHorizontalChart<TData, TCategorical = string, TNumerical = number>() {
   return function withComponents<TComponents extends Record<string, any>>(components: NoFunnel<TComponents>) {
@@ -165,6 +175,7 @@ export function createHorizontalChart<TData, TCategorical = string, TNumerical =
  *
  * @since 3.8
  * @see {@link https://recharts.github.io/en-US/guide/typescript/ Guide: Strong typing for Recharts components}
+ * @public
  */
 export function createVerticalChart<TData, TCategorical = string, TNumerical = number>() {
   return function withComponents<TComponents extends Record<string, any>>(components: TComponents) {

@@ -228,6 +228,7 @@ export const calculateStep = (
  * @param allowDecimals Allow the ticks to be decimals or not
  * @param niceTicksMode The algorithm to use for calculating nice ticks.
  * @return array of ticks
+ * @public
  */
 export const getNiceTickValues = (
   [min, max]: NumberDomain,

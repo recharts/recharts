@@ -66,6 +66,9 @@ import {
   useSeriesLabelThemeResolver,
 } from '../theme/labelTheme';
 
+/**
+ * @public
+ */
 export interface RadarPoint {
   x: number;
   y: number;
@@ -246,6 +249,9 @@ export type AngleAxisForRadar = {
   range: AxisRange;
 };
 
+/**
+ * @public
+ */
 export type Props<DataPointType = any, DataValueType = any> = Omit<
   SVGProps<SVGGraphicsElement>,
   'onMouseEnter' | 'onMouseLeave' | 'points' | 'ref' | 'fill'
@@ -669,6 +675,9 @@ export const defaultRadarProps = {
 
 type PropsWithDefaults = RequiresDefaultProps<StringFillProps, typeof defaultRadarProps>;
 
+/**
+ * @public
+ */
 export type InternalRadarProps = RadarPropsWithDotFill & RadarComposedData;
 
 function RadarWithState(props: InternalRadarProps) {
@@ -724,6 +733,7 @@ function RadarImpl(props: RadarPropsWithDotFill) {
 /**
  * @consumes PolarChartContext
  * @provides LabelListContext
+ * @public
  */
 export function Radar<DataPointType = any, DataValueType = any>(
   propsWithFillObject: Props<DataPointType, DataValueType>,

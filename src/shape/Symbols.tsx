@@ -19,6 +19,9 @@ import { SymbolType } from '../util/types';
 import { isNumber, upperFirst } from '../util/DataUtils';
 import { svgPropertiesAndEvents } from '../util/svgPropertiesAndEvents';
 
+/**
+ * @public
+ */
 export type SizeType = 'area' | 'diameter';
 
 interface SymbolFactory {
@@ -119,6 +122,9 @@ export interface InnerSymbolsProp {
   sizeType?: SizeType;
 }
 
+/**
+ * @public
+ */
 export type SymbolsProps = Omit<SVGProps<SVGPathElement>, 'type' | 'fill'> & InnerSymbolsProp;
 
 /**
@@ -192,6 +198,7 @@ function getSymbolBounds(size: number | undefined, sizeType: SizeType | undefine
 
 /**
  * Renders a symbol from a set of predefined shapes.
+ * @public
  */
 export const Symbols = (props: SymbolsProps) => {
   const { fill } = props;

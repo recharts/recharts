@@ -257,6 +257,9 @@ type AxisSvgProps = Omit<
   'scale' | 'type' | 'dangerouslySetInnerHTML'
 >;
 
+/**
+ * @public
+ */
 export type Props<DataPointType = any, DataValueType = any> = AxisSvgProps &
   PolarAngleAxisProps<DataPointType, DataValueType>;
 
@@ -500,6 +503,7 @@ export const PolarAngleAxisWrapper: FunctionComponent<PropsWithDefaults> = (defa
 /**
  * @provides PolarLabelContext
  * @consumes PolarViewBoxContext
+ * @public
  */
 export function PolarAngleAxis<DataPointType = any, DataValueType = any>(
   outsideProps: Props<DataPointType, DataValueType>,

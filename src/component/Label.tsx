@@ -39,6 +39,7 @@ import { applyLabelTheme, useGlobalLabelTheme } from '../theme/labelTheme';
 
 /**
  * @inline
+ * @public
  */
 export type LabelContentType = ReactElement | ((props: Props) => RenderableText | ReactElement);
 
@@ -46,6 +47,7 @@ type PolarLabelPosition = 'insideStart' | 'insideEnd' | 'end';
 
 /**
  * @inline
+ * @public
  */
 export type LabelPosition = CartesianLabelPosition | PolarLabelPosition;
 
@@ -174,12 +176,18 @@ interface LabelProps extends ZIndexable {
   halo?: boolean | TextHaloProps;
 }
 
+/**
+ * @public
+ */
 export type Props = Omit<SVGProps<SVGTextElement>, 'viewBox'> & LabelProps;
 
 type PropsWithDefaults = Props & {
   offset: number;
 };
 
+/**
+ * @public
+ */
 export type ImplicitLabelType =
   | boolean
   | string
@@ -450,6 +458,7 @@ function polarViewBoxToTrapezoid(
  * @consumes PolarViewBoxContext
  * @consumes CartesianLabelContext
  * @consumes PolarLabelContext
+ * @public
  */
 export function Label(outerProps: Props) {
   const labelTheme = useGlobalLabelTheme();

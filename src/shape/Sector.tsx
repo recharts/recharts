@@ -307,6 +307,7 @@ interface SectorProps {
 /**
  * SVG cx, cy are `string | number | undefined`, but internally we use `number` so let's
  * override the types here.
+ * @public
  */
 export type Props = Omit<SVGProps<SVGPathElement>, 'cx' | 'cy' | 'dangerouslySetInnerHTML' | 'fill'> &
   Partial<SectorProps>;
@@ -376,6 +377,7 @@ const SectorImpl: React.FC<StringFillProps> = sectorProps => {
  * coordinates, inner/outer radius, and start/end angles. Used by polar
  * components such as Pie, RadialBar, and PolarGrid, and as the radial
  * cursor shape shown by Tooltip on polar charts.
+ * @public
  */
 export const Sector = (props: Props) => {
   const { fill } = props;

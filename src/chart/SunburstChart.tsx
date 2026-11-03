@@ -53,6 +53,9 @@ import {
   filledShapeLabelColors,
 } from '../theme/labelTheme';
 
+/**
+ * @public
+ */
 export interface SunburstData {
   [key: string]: any;
   name: string;
@@ -73,6 +76,9 @@ interface SunburstNode extends SunburstData {
   tooltipIndex: TooltipIndex;
 }
 
+/**
+ * @public
+ */
 export interface SunburstChartProps extends EventThrottlingProps {
   className?: string;
   /**
@@ -795,6 +801,7 @@ const SunburstChartImpl = (props: InternalSunburstChartProps) => {
  *
  * @consumes ResponsiveContainerContext
  * @provides TooltipEntrySettings
+ * @public
  */
 export const SunburstChart = (outsideProps: SunburstChartProps) => {
   const theme = useRechartsTheme();
