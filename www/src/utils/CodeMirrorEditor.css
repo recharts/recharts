@@ -1,9 +1,10 @@
 .codemirror-wrapper {
   .codemirror-toolbar {
     background-color: var(--color-surface-sunken);
-    height: 40px;
-    padding: 0 10px 0 20px;
+    min-height: 40px;
+    padding: 4px 10px 4px 20px;
     display: flex;
+    flex-wrap: wrap;
     justify-content: flex-start;
     align-items: center;
     gap: 8px;
