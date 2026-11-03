@@ -1,45 +1,45 @@
 {
   "treemap": {
     "examplePath": "www/src/views/IndexView/IndexLineChart.tsx",
-    "totalSize": 1008838,
-    "totalSizeLabel": "985.19 KB",
+    "totalSize": 1010195,
+    "totalSizeLabel": "986.52 KB",
     "moduleCount": 385,
-    "generatedAt": "2026-11-03T04:29:59.753Z",
+    "generatedAt": "2026-11-03T08:34:42.908Z",
     "stages": [
       {
         "stage": "es6-folder",
-        "bytes": 1646366,
+        "bytes": 1647715,
         "humanReadableSize": "1.57 MB",
         "reductionFromBaselinePercent": 0
       },
       {
         "stage": "tree-shaken",
-        "bytes": 1011761,
-        "humanReadableSize": "988.05 KB",
+        "bytes": 1013118,
+        "humanReadableSize": "989.37 KB",
         "reductionFromBaselinePercent": 0
       },
       {
         "stage": "minified",
-        "bytes": 326140,
-        "humanReadableSize": "318.50 KB",
-        "reductionFromBaselinePercent": 67.77
+        "bytes": 326379,
+        "humanReadableSize": "318.73 KB",
+        "reductionFromBaselinePercent": 67.78
       },
       {
         "stage": "minified+gzip",
-        "bytes": 106957,
-        "humanReadableSize": "104.45 KB",
+        "bytes": 107059,
+        "humanReadableSize": "104.55 KB",
         "reductionFromBaselinePercent": 89.43
       }
     ],
     "tree": {
       "name": "bundle",
       "fullPath": "bundle",
-      "value": 1008838,
+      "value": 1010195,
       "children": [
         {
           "name": "src",
           "fullPath": "src",
-          "value": 605262,
+          "value": 606619,
           "children": [
             {
               "name": "state",
@@ -811,12 +811,12 @@
             {
               "name": "component",
               "fullPath": "src/component",
-              "value": 64219,
+              "value": 65576,
               "children": [
                 {
                   "name": "Text.tsx",
                   "fullPath": "src/component/Text.tsx",
-                  "value": 20967
+                  "value": 22324
                 },
                 {
                   "name": "Label.tsx",
@@ -2659,45 +2659,45 @@
   },
   "sunburst": {
     "examplePath": "www/src/views/IndexView/IndexLineChart.tsx",
-    "totalSize": 1008838,
-    "totalSizeLabel": "985.19 KB",
+    "totalSize": 1010195,
+    "totalSizeLabel": "986.52 KB",
     "moduleCount": 385,
-    "generatedAt": "2026-11-03T04:29:58.018Z",
+    "generatedAt": "2026-11-03T08:34:45.214Z",
     "stages": [
       {
         "stage": "es6-folder",
-        "bytes": 1646366,
+        "bytes": 1647715,
         "humanReadableSize": "1.57 MB",
         "reductionFromBaselinePercent": 0
       },
       {
         "stage": "tree-shaken",
-        "bytes": 1011761,
-        "humanReadableSize": "988.05 KB",
+        "bytes": 1013118,
+        "humanReadableSize": "989.37 KB",
         "reductionFromBaselinePercent": 0
       },
       {
         "stage": "minified",
-        "bytes": 326140,
-        "humanReadableSize": "318.50 KB",
-        "reductionFromBaselinePercent": 67.77
+        "bytes": 326379,
+        "humanReadableSize": "318.73 KB",
+        "reductionFromBaselinePercent": 67.78
       },
       {
         "stage": "minified+gzip",
-        "bytes": 106957,
-        "humanReadableSize": "104.45 KB",
+        "bytes": 107059,
+        "humanReadableSize": "104.55 KB",
         "reductionFromBaselinePercent": 89.43
       }
     ],
     "tree": {
       "name": "bundle",
       "fullPath": "bundle",
-      "value": 1008838,
+      "value": 1010195,
       "children": [
         {
           "name": "src",
           "fullPath": "src",
-          "value": 605262,
+          "value": 606619,
           "children": [
             {
               "name": "state",
@@ -3469,12 +3469,12 @@
             {
               "name": "component",
               "fullPath": "src/component",
-              "value": 64219,
+              "value": 65576,
               "children": [
                 {
                   "name": "Text.tsx",
                   "fullPath": "src/component/Text.tsx",
-                  "value": 20967
+                  "value": 22324
                 },
                 {
                   "name": "Label.tsx",
