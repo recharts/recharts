@@ -171,6 +171,10 @@ export interface PolarRadiusAxisProps<DataPointType = any, DataValueType = any>
   /**
    * Allow the ticks of axis to be decimals or not.
    *
+   * This only applies when Recharts calculates the ticks, which happens on axes with `type="number"`.
+   * It has no effect on axes with `type="category"`, which show the data values as they are,
+   * or when you pass your own `ticks`.
+   *
    * @defaultValue false
    */
   allowDecimals?: boolean;
