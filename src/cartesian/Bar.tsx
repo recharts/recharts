@@ -735,6 +735,8 @@ function BarLabelListProvider({
         parentViewBox: entry.parentViewBox,
         viewBox,
         fill: entry.fill,
+        // rects skip bars without a size, so the position in rects is not the index of the data entry
+        originalDataIndex: entry.originalDataIndex,
       };
     },
   );
