@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { createContext, CSSProperties, SVGProps, useContext, useMemo, useState } from 'react';
+import { CSSProperties, SVGProps, useCallback, useMemo, useState } from 'react';
 import { scaleLinear } from 'victory-vendor/d3-scale';
 import { clsx } from 'clsx';
 import get from 'es-toolkit/compat/get';
@@ -327,10 +327,17 @@ type SunburstThemeStyles = {
  * Keep the default labels' Text-only options and baseline while LabelList supplies
  * the sector coordinates, branch label theme, and background layering.
  */
-const SunburstTextOptionsContext = createContext<TextProps | undefined>(undefined);
-
-function SunburstLabelContent({ value, fill, style, background, halo, x, y, ...rest }: LabelProps) {
-  const textOptions = useContext(SunburstTextOptionsContext);
+function SunburstLabelContent({
+  textOptions,
+  value,
+  fill,
+  style,
+  background,
+  halo,
+  x,
+  y,
+  ...rest
+}: LabelProps & { textOptions?: TextProps }) {
   const theme = useRechartsTheme();
   return (
     <Text
@@ -355,6 +362,10 @@ function isLabelListProps(label: ImplicitLabelListType): label is LabelListProps
 }
 
 function SunburstLabels({ label, textOptions }: Pick<SunburstChartProps, 'label' | 'textOptions'>) {
+  const content = useCallback(
+    (labelProps: LabelProps) => <SunburstLabelContent {...labelProps} textOptions={textOptions} />,
+    [textOptions],
+  );
   const textStyle = textOptions?.style;
   const explicitLabel = label != null && isLabelListProps(label) ? label : undefined;
   const explicitStyle = explicitLabel?.style;
@@ -375,11 +386,7 @@ function SunburstLabels({ label, textOptions }: Pick<SunburstChartProps, 'label'
   }
   const { ref: _ref, children: _children, offset: _offset, ...textProps } = textOptions ?? {};
   if (label == null || label === true) {
-    return (
-      <SunburstTextOptionsContext.Provider value={textOptions}>
-        <LabelList {...textProps} pointerEvents={textProps.pointerEvents ?? 'none'} content={SunburstLabelContent} />
-      </SunburstTextOptionsContext.Provider>
-    );
+    return <LabelList {...textProps} pointerEvents={textProps.pointerEvents ?? 'none'} content={content} />;
   }
   if (!isLabelListProps(label)) {
     return <LabelList {...textProps} content={label} pointerEvents={textProps.pointerEvents ?? 'none'} />;
