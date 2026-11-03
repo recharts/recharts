@@ -433,24 +433,12 @@ const calculateWordsByLines = (
   let start = 0;
   let end = text.length - 1;
 
-  let iterations = 0;
+  // Keep the last fitting prefix, including the final candidate in the search range.
   let trimmedResult;
 
-  while (start <= end && iterations <= text.length - 1) {
+  while (start <= end) {
     const middle = Math.floor((start + end) / 2);
-    const prev = middle - 1;
-
-    const [doesPrevOverflow, result] = checkOverflow(
-      text,
-      prev,
-      breakAll,
-      style,
-      maxLines,
-      lineWidth,
-      spaceWidth,
-      scaleToFit,
-    );
-    const [doesMiddleOverflow] = checkOverflow(
+    const [doesOverflow, result] = checkOverflow(
       text,
       middle,
       breakAll,
@@ -461,20 +449,12 @@ const calculateWordsByLines = (
       scaleToFit,
     );
 
-    if (!doesPrevOverflow && !doesMiddleOverflow) {
+    if (doesOverflow) {
+      end = middle - 1;
+    } else {
+      trimmedResult = result;
       start = middle + 1;
     }
-
-    if (doesPrevOverflow && doesMiddleOverflow) {
-      end = middle - 1;
-    }
-
-    if (!doesPrevOverflow && doesMiddleOverflow) {
-      trimmedResult = result;
-      break;
-    }
-
-    iterations++;
   }
 
   // Fallback to originalResult (result without trimming) if we cannot find the
