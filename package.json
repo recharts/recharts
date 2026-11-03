@@ -161,7 +161,7 @@
     "babel-plugin-dev-expression": "^0.2.3",
     "babel-plugin-transform-define": "^2.1.4",
     "browserslist": "^4.23.2",
-    "bundlewatch": "^0.4.1",
+    "bundlewatch": "^1.1.0",
     "chromatic": "^18.1.0",
     "cross-env": "^10.1.0",
     "d3-scale-chromatic": "^3.1.0",
