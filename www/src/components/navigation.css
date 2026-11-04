@@ -81,6 +81,10 @@ nav.desktop-only {
     .navigation-items {
       display: flex;
       flex-direction: row;
+      align-items: center;
+      margin: 0;
+      padding: 0;
+      list-style: none;
       flex: 1;
       gap: min(40px, 2vw);
 
