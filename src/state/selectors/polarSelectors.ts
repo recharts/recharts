@@ -14,6 +14,7 @@ import {
   combineGraphicalItemsSettings,
   combineNiceTicks,
   combineNumericalDomain,
+  combineStackOffsetTypeOfAxis,
   itemAxisPredicate,
   selectAllErrorBarSettings,
   selectBaseAxis,
@@ -23,7 +24,7 @@ import {
   selectRenderableAxisSettings,
 } from './axisSelectors';
 import { PolarGraphicalItemSettings } from '../graphicalItemsSlice';
-import { CategoricalDomain, LayoutType, NumberDomain } from '../../util/types';
+import { CategoricalDomain, LayoutType, NumberDomain, StackOffsetType } from '../../util/types';
 import { getDataKeyOnAxis } from './effectiveDataKeySelectors';
 import { selectChartLayout } from '../../context/chartLayoutContext';
 import { getValueByDataKey } from '../../util/ChartUtils';
@@ -151,6 +152,15 @@ const selectPolarNumericalDomain: (
   combineNumericalDomain,
 );
 
+const selectPolarStackOffsetTypeOfAxis: (
+  state: RechartsRootState,
+  axisType: PolarAxisType,
+  polarAxisId: AxisId,
+) => StackOffsetType = createSelector(
+  [selectStackOffsetType, selectUnfilteredPolarItems, selectAxisPredicate],
+  combineStackOffsetTypeOfAxis,
+);
+
 export const selectPolarAxisDomain: (
   state: RechartsRootState,
   axisType: PolarAxisType,
@@ -161,7 +171,7 @@ export const selectPolarAxisDomain: (
     selectChartLayout,
     selectPolarDisplayedData,
     selectPolarAppliedValues,
-    selectStackOffsetType,
+    selectPolarStackOffsetTypeOfAxis,
     pickAxisType,
     selectPolarNumericalDomain,
   ],

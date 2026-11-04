@@ -17,7 +17,6 @@ export const SymbolsTypes = () => {
     >
       {symbolTypes.map((type, index) => {
         const cx = cellWidth * index + cellWidth / 2;
-        const fill = palette[index % palette.length]?.fill;
         return (
           <g key={type}>
             <Symbols
@@ -25,7 +24,7 @@ export const SymbolsTypes = () => {
               cx={cx}
               cy={40}
               size={1200}
-              fill={(typeof fill === 'object' ? fill.color : fill) ?? '#8884d8'}
+              fill={palette[index % palette.length]?.fill ?? '#8884d8'}
             />
             <Text x={cx} y={95} textAnchor="middle">
               {type}

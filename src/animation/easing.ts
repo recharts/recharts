@@ -192,6 +192,7 @@ export type EasingFunction = (t: number) => number;
 
 /**
  * @inline
+ * @public
  */
 export type EasingInput = NamedBezier | 'spring' | EasingFunction;
 

@@ -8,6 +8,9 @@ import { Layer } from '../container/Layer';
 import { warn } from '../util/LogUtils';
 
 type Comp<P> = FunctionComponent<P> | Component<P> | ReactElement<P>;
+/**
+ * @public
+ */
 export type Props<P, C extends Comp<P>> = P & {
   /**
    * Render your components directly, without Customized wrapper. Will be removed in 4.0
@@ -27,6 +30,7 @@ export type Props<P, C extends Comp<P>> = P & {
  * @example After: `<MyCustomComponent />`
  *
  * @deprecated Just render your components directly. Will be removed in 4.0
+ * @public
  */
 export function Customized<P, C extends Comp<P>>({ component, ...props }: Props<P, C>) {
   let child;

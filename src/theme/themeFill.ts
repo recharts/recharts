@@ -1,5 +1,6 @@
 import type { RechartsFill } from '../fill/RechartsFill';
-import { GraphicalItemStyle, Styles2D } from './RechartsTheme';
+import { GraphicalItemStyle, RechartsTheme, Styles2D } from './RechartsTheme';
+import { useRechartsTheme } from './RechartsThemeContext';
 
 /**
  * Theme styles with the `fill` as a plain color.
@@ -92,4 +93,16 @@ export function getColorGraphicalItems(
   const result = graphicalItems.map(style => withFillColor(style));
   graphicalItemsCache.set(graphicalItems, result);
   return result;
+}
+
+/**
+ * Returns the fill object of a theme slot, or undefined without a theme, or if the slot fills with a color.
+ * Components that draw fill objects paint with it when they have no `fill` of their own.
+ * @param themeSelector selects the theme slot, for example `theme => theme.grid`
+ */
+export function useThemeFillObject(
+  themeSelector: (theme: RechartsTheme) => Pick<Styles2D, 'fill'> | undefined,
+): RechartsFill | undefined {
+  const theme = useRechartsTheme();
+  return theme == null ? undefined : getThemeFillObject(themeSelector(theme)?.fill);
 }

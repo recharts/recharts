@@ -92,7 +92,7 @@ import { AxisId } from '../state/cartesianAxisSlice';
 import { BarStackClipLayer, useStackId } from './BarStack';
 import { GraphicalItemId } from '../state/graphicalItemsSlice';
 import { ChartData } from '../state/chartDataSlice';
-import { ColorStyles2D, withFillColor } from '../theme/themeFill';
+import { ColorStyles2D } from '../theme/themeFill';
 import { useBackwardsCompatibleTheme } from '../theme/useBackwardsCompatibleTheme';
 import { useGraphicalItemIdentity, useGraphicalItemThemeFill } from '../theme/useGraphicalItemIdentity';
 import { useEffectiveDataKey } from '../util/useEffectiveDataKey';
@@ -106,7 +106,17 @@ import {
 } from '../theme/dataEntryStyles';
 import { getActiveStyleOverrides, useThemedActiveStyles } from '../theme/activeStyles';
 import { RechartsFill } from '../fill/RechartsFill';
-import { FillObjectDefinition, getFillUrl, getSeriesFillId, splitFill } from '../fill/fillDefinitions';
+import {
+  EntryFillDefinitions,
+  FillObjectDefinition,
+  getEntryFillId,
+  getFillUrl,
+  getSeriesFillId,
+  hasEntryFillObjects,
+  readEntryFill,
+  splitFill,
+  withEntryFillColor,
+} from '../fill/fillDefinitions';
 import {
   DataLabelColors,
   DataLabelColorsContextProvider,
@@ -121,7 +131,14 @@ type BarRectangleType = {
   height: number;
 };
 
-export interface BarRectangleItem extends RectangleProps {
+/**
+ * @public
+ */
+export interface BarRectangleItem extends Omit<RectangleProps, 'fill'> {
+  /**
+   * The color of the entry. A fill object in the props paints the entry with its definition.
+   */
+  fill?: string;
   value: number | [number, number];
   /** the coordinate of background rectangle */
   background?: BarRectangleType;
@@ -144,6 +161,9 @@ export interface BarRectangleItem extends RectangleProps {
   originalDataIndex: number;
 }
 
+/**
+ * @public
+ */
 export type BarShapeProps = BarRectangleItem &
   ShapeAnimationProps & {
     isActive: boolean;
@@ -527,6 +547,9 @@ type BarSvgProps = Omit<
   'radius' | 'name' | 'ref'
 >;
 
+/**
+ * @public
+ */
 export type Props<DataPointType = any, ValueAxisType = any> = Partial<BarEvents> &
   BarProps<DataPointType, ValueAxisType> &
   Omit<BarSvgProps, keyof BarEvents | 'fill'>;
@@ -613,7 +636,7 @@ function BarBackground(props: BarBackgroundProps) {
   const { data, dataKey, background: backgroundFromProps, allOtherBarProps } = props;
   const backgroundProps = svgPropertiesNoEventsFromUnknown(backgroundFromProps);
   const backgroundThemeProps = useBackwardsCompatibleTheme(
-    theme => withFillColor(theme.barBackground),
+    theme => theme.barBackground,
     backgroundProps ?? {},
     defaultLegacyBarBackgroundProps,
   );
@@ -909,6 +932,11 @@ function BarRectangles({
   return (
     <>
       {data.map((entry: BarRectangleItem, i: number) => {
+        // a data entry with its own fill object paints with its own definition
+        const paintedEntry =
+          readEntryFill(entry.payload).fillObject == null
+            ? entry
+            : { ...entry, fill: getFillUrl(getEntryFillId(id, entry.originalDataIndex)) };
         return (
           <BarStackClipLayer
             index={entry.originalDataIndex}
@@ -930,7 +958,7 @@ function BarRectangles({
                 baseProps={baseProps}
                 entryStyleOverrides={getEntryStyleOverrides(entry, unthemedColors)}
                 themedActiveStyles={themedActiveStyles}
-                entry={entry}
+                entry={paintedEntry}
                 index={i}
                 dataKey={dataKey}
                 animationElapsedTime={animationElapsedTime}
@@ -951,7 +979,7 @@ function BarRectangles({
                 shape={shape}
                 baseProps={baseProps}
                 entryStyleOverrides={getEntryStyleOverrides(entry, unthemedColors)}
-                entry={entry}
+                entry={paintedEntry}
                 index={i}
                 dataKey={dataKey}
                 animationElapsedTime={animationElapsedTime}
@@ -1112,20 +1140,45 @@ const errorBarDataPointFormatter: ErrorBarDataPointFormatter<BarRectangleItem> =
 
 class BarWithState extends PureComponent<InternalProps> {
   render() {
-    const { hide, data, dataKey, className, xAxisId, yAxisId, needClip, background, id, fillObject, fill } = this.props;
+    const {
+      hide,
+      data,
+      dataKey,
+      className,
+      xAxisId,
+      yAxisId,
+      needClip,
+      background,
+      id,
+      fillObject,
+      fill,
+      stroke,
+      unthemedColors,
+    } = this.props;
     if (hide || data == null) {
       return null;
     }
 
     const layerClass = clsx('recharts-bar', className);
     const clipPathId = id;
+    const hasEntryFills = hasEntryFillObjects(data.map(entry => entry.payload));
     return (
       <Layer className={layerClass} id={id}>
-        {(needClip || fillObject != null) && (
+        {(needClip || fillObject != null || hasEntryFills) && (
           <defs>
             {needClip && <GraphicalItemClipPath clipPathId={clipPathId} xAxisId={xAxisId} yAxisId={yAxisId} />}
             {fillObject != null && (
               <FillObjectDefinition id={getSeriesFillId(id)} fillObject={fillObject} color={fill} />
+            )}
+            {hasEntryFills && (
+              <EntryFillDefinitions
+                id={id}
+                entries={data.map(entry => ({
+                  index: entry.originalDataIndex,
+                  payload: entry.payload,
+                  color: getEntryShapeColors(entry.payload, fill, stroke, unthemedColors).fill,
+                }))}
+              />
             )}
           </defs>
         )}
@@ -1395,7 +1448,7 @@ export function computeBarRectangles({
         ...(cells && cells[index] && cells[index].props),
       } satisfies BarRectangleItem;
 
-      return barRectangleItem;
+      return withEntryFillColor(barRectangleItem, entry);
     })
     .filter(Boolean);
 }
@@ -1504,6 +1557,7 @@ function BarFn(propsWithFillObject: Props) {
  * @provides CellReader
  * @consumes CartesianChartContext
  * @consumes BarStackContext
+ * @public
  */
 export const Bar = React.memo(BarFn, propsAreEqual) as <DataPointType = any, ValueAxisType = any>(
   props: Props<DataPointType, ValueAxisType>,

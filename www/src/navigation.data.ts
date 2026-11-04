@@ -23,10 +23,12 @@ const guidePages = [
   'roundedBars',
   'barAlignment',
   'cell',
+  'dataStyles',
   'animations',
   'theming',
   'theme-color-testing',
   'label-colors',
+  'patterns',
 ];
 
 export function getSiteRoutes(): string[] {

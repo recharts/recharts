@@ -72,6 +72,7 @@ export const useOffsetInternal = (): ChartOffsetInternal => {
  * Returns `undefined` if used outside a chart context.
  *
  * @returns {number | undefined} The width of the chart in pixels, or `undefined` if not in a chart context.
+ * @public
  */
 export const useChartWidth = (): number | undefined => {
   return useAppSelector(selectChartWidth);
@@ -95,6 +96,7 @@ export const useChartWidth = (): number | undefined => {
  * Returns `undefined` if used outside a chart context.
  *
  * @returns {number | undefined} The height of the chart in pixels, or `undefined` if not in a chart context.
+ * @public
  */
 export const useChartHeight = (): number | undefined => {
   return useAppSelector(selectChartHeight);
@@ -109,6 +111,7 @@ export const useChartHeight = (): number | undefined => {
  * Returns `undefined` if used outside a chart context.
  *
  * @returns {Margin | undefined} The margin of the chart in pixels, or `undefined` if not in a chart context.
+ * @public
  */
 export const useMargin = (): Margin | undefined => {
   return useAppSelector(state => state.layout.margin);
@@ -129,6 +132,7 @@ export const selectChartLayout = (state: RechartsRootState): LayoutType => state
  * @returns {LayoutType | undefined} The chart layout, or `undefined` if not in a chart context.
  *
  * @since 3.9
+ * @public
  */
 export const useChartLayout = (): LayoutType | undefined => useAppSelector(selectChartLayout);
 
@@ -141,6 +145,7 @@ export const useChartLayout = (): LayoutType | undefined => useAppSelector(selec
  * @since 3.9
  *
  * @returns {CartesianLayout | undefined} The Cartesian chart layout, or `undefined`.
+ * @public
  */
 export const useCartesianChartLayout = (): CartesianLayout | undefined => {
   const layout = useChartLayout();
@@ -167,6 +172,7 @@ export const selectPolarChartLayout = (state: RechartsRootState): PolarLayout | 
  * @returns {PolarLayout | undefined} The Polar chart layout, or `undefined`.
  *
  * @since 3.9
+ * @public
  */
 export const usePolarChartLayout = (): PolarLayout | undefined => {
   return useAppSelector(selectPolarChartLayout);

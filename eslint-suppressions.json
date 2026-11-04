@@ -980,11 +980,6 @@
       "count": 2
     }
   },
-  "test/chart/LineChart.spec.tsx": {
-    "@typescript-eslint/no-explicit-any": {
-      "count": 1
-    }
-  },
   "test/chart/PieChart.spec.tsx": {
     "@typescript-eslint/no-explicit-any": {
       "count": 1
@@ -1434,21 +1429,6 @@
     },
     "react-perf/jsx-no-new-object-as-prop": {
       "count": 3
-    }
-  },
-  "www/src/components/GuideView/Theming/CustomThemeExample.tsx": {
-    "react-perf/jsx-no-new-object-as-prop": {
-      "count": 2
-    }
-  },
-  "www/src/components/GuideView/Theming/NestedThemeExample.tsx": {
-    "react-perf/jsx-no-new-object-as-prop": {
-      "count": 2
-    }
-  },
-  "www/src/components/GuideView/Theming/ThemeSwitcherExample.tsx": {
-    "react-perf/jsx-no-new-object-as-prop": {
-      "count": 2
     }
   },
   "www/src/components/GuideView/TypeScript/Step1.tsx": {

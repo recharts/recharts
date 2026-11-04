@@ -3,6 +3,7 @@ import {
   Children,
   PureComponent,
   ReactElement,
+  ReactNode,
   SVGAttributes,
   SVGProps,
   TouchEvent,
@@ -27,12 +28,17 @@ import { BrushSettings, setBrushSettings } from '../state/brushSlice';
 import { PanoramaContextProvider } from '../context/PanoramaContext';
 import { selectBrushDimensions } from '../state/selectors/brushSelectors';
 import { useBrushChartSynchronisation } from '../synchronisation/useChartSynchronisation';
-import { ColorStyles2D, withFillColor } from '../theme/themeFill';
+import { ColorStyles2D, useThemeFillObject, withFillColor } from '../theme/themeFill';
 import { useBackwardsCompatibleTheme } from '../theme/useBackwardsCompatibleTheme';
 import { useRechartsTheme } from '../theme/RechartsThemeContext';
 import { RequiresDefaultProps, resolveDefaultProps } from '../util/resolveDefaultProps';
 import { svgPropertiesNoEvents } from '../util/svgPropertiesNoEvents';
+import { RechartsFill } from '../fill/RechartsFill';
+import { splitFill, useFillPaint } from '../fill/fillDefinitions';
 
+/**
+ * @public
+ */
 export type BrushTravellerType = ReactElement<SVGElement> | ((props: TravellerProps) => ReactElement<SVGElement>);
 
 // Why is this tickFormatter different from the other TickFormatters? This one allows to return numbers too for some reason.
@@ -50,6 +56,13 @@ export interface BrushProps<DataPointType = any, DataValueType = any> extends Da
   DataPointType,
   DataValueType
 > {
+  /**
+   * The fill of the brush background: a color, or a {@link RechartsFill} object with an SVG definition,
+   * such as a pattern or a gradient. The travellers use the plain color.
+   *
+   * @example <Brush fill={{ color: '#fff', definition: pattern(patterns.diagonal) }} />
+   */
+  fill?: string | RechartsFill;
   /**
    * The x-coordinate of brush.
    * If left undefined, it will be computed from the chart's offset and margins.
@@ -158,13 +171,25 @@ export interface BrushProps<DataPointType = any, DataValueType = any> extends Da
   alwaysShowText?: boolean;
 }
 
-export type Props = Omit<SVGProps<SVGElement>, 'onChange' | 'onDragEnd' | 'ref'> & BrushProps;
+/**
+ * @public
+ */
+export type Props = Omit<SVGProps<SVGElement>, 'onChange' | 'onDragEnd' | 'ref' | 'fill'> & BrushProps;
 
-type InternalProps = Omit<SVGProps<SVGElement>, 'onChange' | 'onDragEnd' | 'ref'> &
-  RequiresDefaultProps<BrushProps, typeof defaultBrushProps>;
+/**
+ * Props after the fill is resolved: `fill` is a color or a `url(#…)`.
+ */
+type StringFillBrushProps = Omit<BrushProps, 'fill'> & { fill?: string };
+
+type InternalProps = Omit<SVGProps<SVGElement>, 'onChange' | 'onDragEnd' | 'ref' | 'fill'> &
+  RequiresDefaultProps<StringFillBrushProps, typeof defaultBrushProps>;
 
 type BrushInternalProps = InternalProps & {
   travellerStyleProps: BrushStyleProps;
+  /**
+   * The definition of the background fill object, if there is one.
+   */
+  fillDefinition?: ReactNode;
 };
 
 type PropertiesFromContext = {
@@ -990,6 +1015,7 @@ class BrushWithState extends PureComponent<BrushWithStateProps, State> {
       height,
       alwaysShowText,
       fill,
+      fillDefinition,
       stroke,
       startIndex,
       endIndex,
@@ -1024,6 +1050,7 @@ class BrushWithState extends PureComponent<BrushWithStateProps, State> {
         onTouchMove={this.handleTouchMove}
         style={style}
       >
+        {fillDefinition != null && <defs>{fillDefinition}</defs>}
         <Background x={x} y={calculatedY} width={width} height={height} fill={fill} stroke={stroke} />
         <PanoramaContextProvider>
           <Panorama x={x} y={calculatedY} width={width} height={height} data={data} padding={padding}>
@@ -1193,8 +1220,14 @@ export const defaultBrushProps = {
  * @see {@link https://recharts.github.io/en-US/examples/SynchronizedLineChart/ Synchronized Brush}
  *
  * @consumes CartesianChartContext
+ * @public
  */
-export function Brush(outsideProps: Props) {
+export function Brush(propsWithFillObject: Props) {
+  // From here on, `fill` is the base color
+  const outsideProps: Omit<Props, 'fill'> & { fill?: string } = {
+    ...propsWithFillObject,
+    fill: splitFill(propsWithFillObject.fill).color,
+  };
   const activeTheme = useRechartsTheme();
   const themeProps = useBackwardsCompatibleTheme<BrushStyleProps>(
     theme => withFillColor(theme.brush),
@@ -1204,7 +1237,11 @@ export function Brush(outsideProps: Props) {
     },
     defaultLegacyBrushThemeProps,
   );
-  const props = resolveDefaultProps({ ...outsideProps, ...themeProps }, defaultBrushProps);
+  // Without a fill of its own, the background paints with the fill object of the theme, if there is one
+  const themeFillObject = useThemeFillObject(theme => theme.brush);
+  const background = useFillPaint(propsWithFillObject.fill ?? themeFillObject, themeProps.fill, 'recharts-brush-fill');
+  // the background paints with the definition
+  const props = resolveDefaultProps({ ...outsideProps, ...themeProps, fill: background.paint }, defaultBrushProps);
   const travellerStyleProps: BrushStyleProps =
     activeTheme == null
       ? themeProps
@@ -1221,7 +1258,7 @@ export function Brush(outsideProps: Props) {
         width={props.width}
         padding={props.padding}
       />
-      <BrushInternal {...props} travellerStyleProps={travellerStyleProps} />
+      <BrushInternal {...props} travellerStyleProps={travellerStyleProps} fillDefinition={background.definition} />
     </>
   );
 }
