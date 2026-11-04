@@ -634,6 +634,9 @@ function AreaDotsWrapper({
   );
 }
 
+/**
+ * Shares lazily built label entries for each points array, hiding them while labels are disabled during animation.
+ */
 function AreaLabelListProvider({
   showLabels,
   children,
@@ -643,7 +646,6 @@ function AreaLabelListProvider({
   children: ReactNode;
   points: ReadonlyArray<AreaPointItem>;
 }) {
-  // Build entries only when a LabelList consumes them, sharing the result between consumers.
   const getLabelListEntries = useMemo(
     () =>
       once(() =>

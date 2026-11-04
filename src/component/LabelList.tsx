@@ -299,6 +299,7 @@ function isClippedAway(
   );
 }
 
+/** Resolves eager or lazy Cartesian label entries only when a LabelList consumes the context. */
 function useCartesianLabelListContext(): ReadonlyArray<CartesianLabelListEntry> | undefined {
   const value = useContext(CartesianLabelListContext);
   return typeof value === 'function' ? value() : value;

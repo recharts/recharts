@@ -628,6 +628,9 @@ function LineDotsWrapper({
   );
 }
 
+/**
+ * Shares lazily built label entries for each points array, hiding them while labels are disabled during animation.
+ */
 function LineLabelListProvider({
   showLabels,
   children,
@@ -637,7 +640,6 @@ function LineLabelListProvider({
   children: ReactNode;
   points: ReadonlyArray<LinePointItem>;
 }) {
-  // Build entries only when a LabelList consumes them, sharing the result between consumers.
   const getLabelListEntries = useMemo(
     () =>
       once(() =>

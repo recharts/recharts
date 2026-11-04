@@ -1,6 +1,6 @@
 import React, { ReactNode } from 'react';
 import { act, render } from '@testing-library/react';
-import { beforeEach, describe, expect, it, vi } from 'vitest';
+import { beforeEach, describe, expect, it, Mock, vi } from 'vitest';
 import { Area, ComposedChart, LabelList, Line } from '../../src';
 import * as lineSelectors from '../../src/state/selectors/lineSelectors';
 import * as areaSelectors from '../../src/state/selectors/areaSelectors';
@@ -8,7 +8,8 @@ import { Props as LabelListProps } from '../../src/component/LabelList';
 import { mockGetBoundingClientRect } from '../helper/mockGetBoundingClientRect';
 
 describe.each(['Line', 'Area'] as const)('%s lazy label entries', series => {
-  function mockPoints(value = 42) {
+  /** Mocks the selected series with a value getter that tracks label-entry construction. */
+  function mockPoints(value: number = 42): { readValue: Mock<() => number>; payload: { value: number } } {
     const readValue = vi.fn(() => value);
     const payload = { value };
     const coordinates = { x: 100, y: 100, payload };
@@ -40,6 +41,7 @@ describe.each(['Line', 'Area'] as const)('%s lazy label entries', series => {
     return { readValue, payload };
   }
 
+  /** Renders either series so the same lazy-label assertions exercise both providers. */
   function TestChart({
     children,
     label = false,
