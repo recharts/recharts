@@ -1,60 +1,60 @@
 {
   "treemap": {
     "examplePath": "www/src/views/IndexView/IndexLineChart.tsx",
-    "totalSize": 1010052,
+    "totalSize": 1010057,
     "totalSizeLabel": "986.38 KB",
     "moduleCount": 385,
-    "generatedAt": "2026-11-04T03:55:36.689Z",
+    "generatedAt": "2026-11-04T07:25:36.014Z",
     "stages": [
       {
         "stage": "es6-folder",
-        "bytes": 1647593,
+        "bytes": 1647549,
         "humanReadableSize": "1.57 MB",
         "reductionFromBaselinePercent": 0
       },
       {
         "stage": "tree-shaken",
-        "bytes": 1012975,
-        "humanReadableSize": "989.23 KB",
+        "bytes": 1012980,
+        "humanReadableSize": "989.24 KB",
         "reductionFromBaselinePercent": 0
       },
       {
         "stage": "minified",
-        "bytes": 326300,
+        "bytes": 326293,
         "humanReadableSize": "318.65 KB",
         "reductionFromBaselinePercent": 67.79
       },
       {
         "stage": "minified+gzip",
-        "bytes": 107017,
-        "humanReadableSize": "104.51 KB",
+        "bytes": 107004,
+        "humanReadableSize": "104.50 KB",
         "reductionFromBaselinePercent": 89.44
       }
     ],
     "tree": {
       "name": "bundle",
       "fullPath": "bundle",
-      "value": 1010052,
+      "value": 1010057,
       "children": [
         {
           "name": "src",
           "fullPath": "src",
-          "value": 606476,
+          "value": 606481,
           "children": [
             {
               "name": "state",
               "fullPath": "src/state",
-              "value": 190889,
+              "value": 190896,
               "children": [
                 {
                   "name": "selectors",
                   "fullPath": "src/state/selectors",
-                  "value": 121055,
+                  "value": 121062,
                   "children": [
                     {
                       "name": "axisSelectors.ts",
                       "fullPath": "src/state/selectors/axisSelectors.ts",
-                      "value": 57990
+                      "value": 57988
                     },
                     {
                       "name": "combiners",
@@ -126,7 +126,7 @@
                     {
                       "name": "tooltipSelectors.ts",
                       "fullPath": "src/state/selectors/tooltipSelectors.ts",
-                      "value": 14185
+                      "value": 14194
                     },
                     {
                       "name": "polarAxisSelectors.ts",
@@ -452,7 +452,7 @@
             {
               "name": "util",
               "fullPath": "src/util",
-              "value": 121177,
+              "value": 121175,
               "children": [
                 {
                   "name": "scale",
@@ -491,7 +491,7 @@
                 {
                   "name": "ChartUtils.ts",
                   "fullPath": "src/util/ChartUtils.ts",
-                  "value": 15367
+                  "value": 15365
                 },
                 {
                   "name": "zoom",
@@ -2659,60 +2659,60 @@
   },
   "sunburst": {
     "examplePath": "www/src/views/IndexView/IndexLineChart.tsx",
-    "totalSize": 1010052,
+    "totalSize": 1010057,
     "totalSizeLabel": "986.38 KB",
     "moduleCount": 385,
-    "generatedAt": "2026-11-04T03:55:34.846Z",
+    "generatedAt": "2026-11-04T07:25:33.625Z",
     "stages": [
       {
         "stage": "es6-folder",
-        "bytes": 1647593,
+        "bytes": 1647549,
         "humanReadableSize": "1.57 MB",
         "reductionFromBaselinePercent": 0
       },
       {
         "stage": "tree-shaken",
-        "bytes": 1012975,
-        "humanReadableSize": "989.23 KB",
+        "bytes": 1012980,
+        "humanReadableSize": "989.24 KB",
         "reductionFromBaselinePercent": 0
       },
       {
         "stage": "minified",
-        "bytes": 326300,
+        "bytes": 326293,
         "humanReadableSize": "318.65 KB",
         "reductionFromBaselinePercent": 67.79
       },
       {
         "stage": "minified+gzip",
-        "bytes": 107017,
-        "humanReadableSize": "104.51 KB",
+        "bytes": 107004,
+        "humanReadableSize": "104.50 KB",
         "reductionFromBaselinePercent": 89.44
       }
     ],
     "tree": {
       "name": "bundle",
       "fullPath": "bundle",
-      "value": 1010052,
+      "value": 1010057,
       "children": [
         {
           "name": "src",
           "fullPath": "src",
-          "value": 606476,
+          "value": 606481,
           "children": [
             {
               "name": "state",
               "fullPath": "src/state",
-              "value": 190889,
+              "value": 190896,
               "children": [
                 {
                   "name": "selectors",
                   "fullPath": "src/state/selectors",
-                  "value": 121055,
+                  "value": 121062,
                   "children": [
                     {
                       "name": "axisSelectors.ts",
                       "fullPath": "src/state/selectors/axisSelectors.ts",
-                      "value": 57990
+                      "value": 57988
                     },
                     {
                       "name": "combiners",
@@ -2784,7 +2784,7 @@
                     {
                       "name": "tooltipSelectors.ts",
                       "fullPath": "src/state/selectors/tooltipSelectors.ts",
-                      "value": 14185
+                      "value": 14194
                     },
                     {
                       "name": "polarAxisSelectors.ts",
@@ -3110,7 +3110,7 @@
             {
               "name": "util",
               "fullPath": "src/util",
-              "value": 121177,
+              "value": 121175,
               "children": [
                 {
                   "name": "scale",
@@ -3149,7 +3149,7 @@
                 {
                   "name": "ChartUtils.ts",
                   "fullPath": "src/util/ChartUtils.ts",
-                  "value": 15367
+                  "value": 15365
                 },
                 {
                   "name": "zoom",
