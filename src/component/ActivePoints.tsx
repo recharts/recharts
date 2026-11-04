@@ -115,7 +115,7 @@ export function ActivePoints({
 }: ActivePointsProps) {
   const activeTooltipIndex = useAppSelector(selectActiveTooltipIndex);
   const activeDataPoints = useActiveTooltipDataPoints();
-  if (points == null || activeDataPoints == null) {
+  if (activeDot === false || points == null || activeDataPoints == null || activeDataPoints.length === 0) {
     return null;
   }
 
