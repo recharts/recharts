@@ -48,6 +48,28 @@ describe('Bar labels keep the index of their data entry when some bars are not r
     expect(indices).toEqual(['0', '3']);
   });
 
+  it('should clip labels by their own bar when bars before them are skipped', () => {
+    // 'b' is skipped and 'c' is entirely above the domain; only the labels of 'a' and 'd' stay visible.
+    const rangeData = [
+      { name: 'a', range: [20, 50] },
+      { name: 'b', range: null },
+      { name: 'c', range: [120, 150] },
+      { name: 'd', range: [80, 130] },
+    ];
+    const { container } = render(
+      <BarChart width={400} height={400} data={rangeData}>
+        <XAxis dataKey="name" />
+        <YAxis domain={[0, 100]} allowDataOverflow />
+        <Bar dataKey="range" isAnimationActive={false}>
+          <LabelList dataKey="name" id="bar-label" />
+        </Bar>
+      </BarChart>,
+    );
+    const labels = Array.from(container.querySelectorAll('.recharts-label-list .recharts-label'));
+    expect(labels.map(label => label.textContent)).toEqual(['a', 'd']);
+    expect(labels.map(label => label.getAttribute('id'))).toEqual(['bar-label-0', 'bar-label-3']);
+  });
+
   it('should pass the data index to valueAccessor', () => {
     const { container } = render(
       <BarChart width={400} height={400} data={data}>
