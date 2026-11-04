@@ -104,6 +104,11 @@ interface ActivePointsProps extends ZIndexable {
   clipPath?: string;
 }
 
+/**
+ * Renders the first series point matching the active tooltip payload.
+ * Skips the point search when active dots are disabled or the active payload is empty.
+ * @returns The active dot in its z-index layer, or null when there is no point to render.
+ */
 export function ActivePoints({
   points,
   mainColor,

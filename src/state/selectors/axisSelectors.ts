@@ -899,6 +899,12 @@ export const mergeDomains = (
   return [min, max];
 };
 
+/**
+ * Combines numerical values and relevant error bars into an axis domain.
+ * Reads each series' own data when present, otherwise the chart-level slice, without mutating either.
+ * Falls back to displayed data when the axis has a dataKey but no graphical items.
+ * @returns The finite domain bounds, or undefined when no valid domain can be calculated.
+ */
 export const combineDomainOfAllAppliedNumericalValuesIncludingErrorValues = (
   displayedData: ChartData,
   axisSettings: BaseCartesianAxis,
@@ -918,7 +924,7 @@ export const combineDomainOfAllAppliedNumericalValuesIncludingErrorValues = (
      * domain that covers all values from all sources.
      */
     items.forEach(item => {
-      const itemData: ChartData = item.data != null ? [...item.data] : (chartDataSlice ?? []);
+      const itemData: ChartData = item.data ?? chartDataSlice ?? [];
       const dataKey = getDataKeyOnAxis(item.dataKey, axisSettings.dataKey, layout, axisType);
       const relevantErrorBars = errorBars[item.id]?.filter(errorBar =>
         isErrorBarRelevantForAxisType(axisType, errorBar),
