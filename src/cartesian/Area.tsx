@@ -1,6 +1,7 @@
 import * as React from 'react';
 import { MutableRefObject, PureComponent, ReactElement, ReactNode, useMemo, useRef } from 'react';
 import { clsx } from 'clsx';
+import { once } from 'es-toolkit';
 import { BaseLineType, CurveType, Props as CurveProps } from '../shape/Curve';
 import { Layer } from '../container/Layer';
 import {
@@ -642,27 +643,33 @@ function AreaLabelListProvider({
   children: ReactNode;
   points: ReadonlyArray<AreaPointItem>;
 }) {
-  const labelListEntries: ReadonlyArray<CartesianLabelListEntry> = points.map((point): CartesianLabelListEntry => {
-    const viewBox: TrapezoidViewBox = {
-      x: point.x ?? 0,
-      y: point.y ?? 0,
-      width: 0,
-      lowerWidth: 0,
-      upperWidth: 0,
-      height: 0,
-    };
-    return {
-      ...viewBox,
-      value: point.value,
-      payload: point.payload,
-      parentViewBox: undefined,
-      viewBox,
-      fill: undefined,
-    };
-  });
-
+  // Build entries only when a LabelList consumes them, sharing the result between consumers.
+  const getLabelListEntries = useMemo(
+    () =>
+      once(() =>
+        points.map((point): CartesianLabelListEntry => {
+          const viewBox: TrapezoidViewBox = {
+            x: point.x ?? 0,
+            y: point.y ?? 0,
+            width: 0,
+            lowerWidth: 0,
+            upperWidth: 0,
+            height: 0,
+          };
+          return {
+            ...viewBox,
+            value: point.value,
+            payload: point.payload,
+            parentViewBox: undefined,
+            viewBox,
+            fill: undefined,
+          };
+        }),
+      ),
+    [points],
+  );
   return (
-    <CartesianLabelListContextProvider value={showLabels ? labelListEntries : undefined}>
+    <CartesianLabelListContextProvider value={showLabels ? getLabelListEntries : undefined}>
       {children}
     </CartesianLabelListContextProvider>
   );

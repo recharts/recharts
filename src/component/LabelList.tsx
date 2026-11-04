@@ -242,7 +242,9 @@ const defaultAccessor = (entry: LabelListEntry): RenderableText => {
   return undefined;
 };
 
-const CartesianLabelListContext = createContext<ReadonlyArray<CartesianLabelListEntry> | undefined>(undefined);
+const CartesianLabelListContext = createContext<
+  ReadonlyArray<CartesianLabelListEntry> | (() => ReadonlyArray<CartesianLabelListEntry> | undefined) | undefined
+>(undefined);
 
 export const CartesianLabelListContextProvider = CartesianLabelListContext.Provider;
 
@@ -298,7 +300,8 @@ function isClippedAway(
 }
 
 function useCartesianLabelListContext(): ReadonlyArray<CartesianLabelListEntry> | undefined {
-  return useContext(CartesianLabelListContext);
+  const value = useContext(CartesianLabelListContext);
+  return typeof value === 'function' ? value() : value;
 }
 
 function usePolarLabelListContext(): ReadonlyArray<PolarLabelListEntry> | undefined {

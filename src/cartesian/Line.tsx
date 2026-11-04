@@ -2,6 +2,7 @@ import * as React from 'react';
 import { Component, MutableRefObject, ReactElement, ReactNode, RefObject, useCallback, useMemo, useRef } from 'react';
 
 import { clsx } from 'clsx';
+import { once } from 'es-toolkit';
 import { CurveType, Props as CurveProps } from '../shape/Curve';
 import { Layer } from '../container/Layer';
 import { LineDrawShape, LineDrawShapeProps } from './LineDrawShape';
@@ -636,32 +637,37 @@ function LineLabelListProvider({
   children: ReactNode;
   points: ReadonlyArray<LinePointItem>;
 }) {
-  const labelListEntries: ReadonlyArray<CartesianLabelListEntry> = useMemo(() => {
-    return points?.map((point): CartesianLabelListEntry => {
-      const viewBox: TrapezoidViewBox = {
-        x: point.x ?? 0,
-        y: point.y ?? 0,
-        width: 0,
-        lowerWidth: 0,
-        upperWidth: 0,
-        height: 0,
-      };
-      return {
-        ...viewBox,
-        value: point.value,
-        payload: point.payload,
-        viewBox,
-        /*
-         * Line is not passing parentViewBox to the LabelList so the labels can escape - looks like a bug, should we pass parentViewBox?
-         * Or should this just be the root chart viewBox?
-         */
-        parentViewBox: undefined,
-        fill: undefined,
-      };
-    });
-  }, [points]);
+  // Build entries only when a LabelList consumes them, sharing the result between consumers.
+  const getLabelListEntries = useMemo(
+    () =>
+      once(() =>
+        points?.map((point): CartesianLabelListEntry => {
+          const viewBox: TrapezoidViewBox = {
+            x: point.x ?? 0,
+            y: point.y ?? 0,
+            width: 0,
+            lowerWidth: 0,
+            upperWidth: 0,
+            height: 0,
+          };
+          return {
+            ...viewBox,
+            value: point.value,
+            payload: point.payload,
+            viewBox,
+            /*
+             * Line is not passing parentViewBox to the LabelList so the labels can escape - looks like a bug, should we pass parentViewBox?
+             * Or should this just be the root chart viewBox?
+             */
+            parentViewBox: undefined,
+            fill: undefined,
+          };
+        }),
+      ),
+    [points],
+  );
   return (
-    <CartesianLabelListContextProvider value={showLabels ? labelListEntries : undefined}>
+    <CartesianLabelListContextProvider value={showLabels ? getLabelListEntries : undefined}>
       {children}
     </CartesianLabelListContextProvider>
   );
