@@ -1164,8 +1164,15 @@ export const combineNumericalDomain = (
     return domainFromUserPreference;
   }
 
+  /*
+   * The stack groups domain only applies to the numeric axis, the one that the stacks grow along.
+   * https://github.com/recharts/recharts/issues/8159
+   */
   const shouldIncludeDomainOfStackGroups =
-    (layout === 'vertical' && axisType === 'xAxis') || (layout === 'horizontal' && axisType === 'yAxis');
+    (layout === 'vertical' && axisType === 'xAxis') ||
+    (layout === 'horizontal' && axisType === 'yAxis') ||
+    (layout === 'radial' && axisType === 'angleAxis') ||
+    (layout === 'centric' && axisType === 'radiusAxis');
 
   const mergedDomains = shouldIncludeDomainOfStackGroups
     ? mergeDomains(domainOfStackGroups, referenceElementsDomain, dataAndErrorBarsDomain)
