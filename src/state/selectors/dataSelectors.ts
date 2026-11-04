@@ -20,7 +20,6 @@ export const selectChartDataWithIndexes = (state: RechartsRootState): ChartDataS
  * This selector will always return the full range of data, ignoring the indexes set by a Brush.
  * Useful for when you want to render the full range of data, even if a Brush is active.
  * For example: in the Brush panorama, in Legend, in Tooltip.
- * Depends only on the data references so Brush index updates do not invalidate full-history calculations.
  */
 export const selectChartDataAndAlwaysIgnoreIndexes: (state: RechartsRootState) => ChartDataState = createSelector(
   [
