@@ -77,6 +77,20 @@ export class MockTimeoutController implements TimeoutController {
   }
 
   /**
+   * Same as triggerNextTimeout, but synchronous and without its own act(), so that the caller can
+   * run it together with other work inside one act() (one React batch).
+   */
+  triggerNextTimeoutSync(now: number): void {
+    const next = this.timeouts.shift();
+    if (next == null) {
+      return;
+    }
+    const { callback } = next;
+    this.removeTimeout(callback);
+    callback(now);
+  }
+
+  /**
    * Flushes all registered timeouts by triggering them in the order they were registered.
    * This simulates the passage of time until all timeouts are executed.
    * @param tickSize - The size of each tick in milliseconds. Defaults to 1000ms.

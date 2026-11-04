@@ -39,6 +39,18 @@ export interface MockAnimationManager {
    */
   completeAnimation(): Promise<void>;
 
+  /**
+   * Renders the final frame (progress 100%) and completes the animation in the same act(),
+   * which is what animationControllerImpl does in a browser: its last tick calls the listener
+   * and then animationHandle.complete() (onAnimationEnd) in one callback, so React renders the
+   * final frame and the end of the animation in one batch.
+   * completeAnimation() renders them in two separate acts instead.
+   *
+   * @throws Error Will throw an error if the queue is empty.
+   * @returns Promise<void>
+   */
+  finishAnimationInOneFrame(): Promise<void>;
+
   isAnimating(): boolean;
 }
 
@@ -100,6 +112,19 @@ export class MockProgressAnimationManager implements MockAnimationManager {
       this.animation?.complete();
     });
 
+    this.onStop?.();
+  }
+
+  async finishAnimationInOneFrame(): Promise<void> {
+    if (this.animation === null) {
+      throw new Error('Queue is empty');
+    }
+    const animationDuration = await this.peekAnimationDuration();
+    const now = animationDuration + this.animation.getAnimationBegin() + this.firstTick;
+    act(() => {
+      this.timeoutController.triggerNextTimeoutSync(now);
+      this.animation?.complete();
+    });
     this.onStop?.();
   }
 

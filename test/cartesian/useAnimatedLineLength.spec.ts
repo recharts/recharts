@@ -27,6 +27,18 @@ describe('useAnimatedLineLength', () => {
       const { result } = renderHook(() => useAnimatedLineLength(pointsA));
       expect(result.current(1, 100)).toBeNull();
     });
+
+    it('should treat animationElapsedTime=1 as fully visible when totalLength has more than 4 decimals', () => {
+      const { result, rerender } = renderHook(({ points }) => useAnimatedLineLength(points), {
+        initialProps: { points: pointsA },
+      });
+      // visibleLength is rounded to 4 decimals: round(100.00004) is 100, short of 100.00004
+      expect(result.current(1, 100.00004)).toBeNull();
+
+      // the line is fully drawn, so a later data change must not mask it again
+      rerender({ points: pointsB });
+      expect(result.current(0, 120)).toBeNull();
+    });
   });
 
   describe('after data change mid-animation (interrupted)', () => {
