@@ -3,6 +3,7 @@ import { CSSProperties, ReactElement, ReactNode, useEffect } from 'react';
 import { createPortal } from 'react-dom';
 import {
   DefaultTooltipContent,
+  Formatter,
   NameType,
   Payload,
   Props as DefaultTooltipContentProps,
@@ -50,7 +51,7 @@ export type TooltipContentProps<TValue extends ValueType = ValueType, TName exte
   TName
 > & {
   label?: string | number;
-  payload: TooltipPayload;
+  payload: ReadonlyArray<Payload<TValue, TName>>;
   coordinate: Coordinate | undefined;
   active: boolean;
   accessibilityLayer: boolean;
@@ -149,13 +150,7 @@ export type TooltipProps<TValue extends ValueType = ValueType, TName extends Nam
    *
    * @example <Tooltip formatter={(value) => typeof value === 'number' ? new Intl.NumberFormat('ar', { numberingSystem: 'arab' }).format(value) : String(value)} />
    */
-  formatter?: (
-    value: TValue,
-    name: TName,
-    item: TooltipPayloadEntry,
-    index: number,
-    payload: TooltipPayload,
-  ) => ReactNode | [ReactNode, ReactNode];
+  formatter?: Formatter<TValue, TName>;
   /**
    * If true, the tooltip will display information about hidden series.
    * Defaults to false.
@@ -175,7 +170,7 @@ export type TooltipProps<TValue extends ValueType = ValueType, TName extends Nam
    * Defaults to 'name' which means it sorts alphabetically by graphical item `name` property.
    * @defaultValue name
    */
-  itemSorter?: TooltipItemSorter;
+  itemSorter?: TooltipItemSorter<TValue, TName>;
   /**
    * CSS styles of individual items inside the tooltip, a `<li>` element.
    * These show the data label (name, or dataKey) and value.
@@ -191,7 +186,7 @@ export type TooltipProps<TValue extends ValueType = ValueType, TName extends Nam
    *
    * @example <Tooltip labelFormatter={(label) => typeof label === 'number' ? new Intl.NumberFormat('ar', { numberingSystem: 'arab' }).format(label) : label} />
    */
-  labelFormatter?: (label: ReactNode, payload: TooltipPayload) => ReactNode;
+  labelFormatter?: (label: ReactNode, payload: ReadonlyArray<Payload<TValue, TName>>) => ReactNode;
   /**
    * CSS styles of the tooltip title.
    * Renders once on the top of tooltip and shows categorical axis value.

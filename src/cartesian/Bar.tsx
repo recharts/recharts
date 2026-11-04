@@ -53,7 +53,7 @@ import {
 } from '../util/types';
 import { BarRectangle, BarRectangleProps, defaultBarShape, MinPointSize, minPointSizeCallback } from '../util/BarUtils';
 import type { LegendPayload } from '../component/DefaultLegendContent';
-import { Formatter } from '../component/DefaultTooltipContent';
+import { Formatter, ItemTooltipValue } from '../component/DefaultTooltipContent';
 import {
   useMouseClickItemDispatch,
   useMouseEnterItemDispatch,
@@ -219,7 +219,7 @@ export interface BarProps<DataPointType, ValueAxisType>
    * Formats the value displayed in the tooltip for this Bar.
    * When set, takes precedence over the `formatter` prop on the Tooltip component.
    */
-  formatter?: Formatter;
+  formatter?: Formatter<ItemTooltipValue<ValueAxisType>>;
   /**
    * The type of icon in legend. If set to 'none', no legend item will be rendered.
    *
