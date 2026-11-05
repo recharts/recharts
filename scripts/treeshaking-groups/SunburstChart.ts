@@ -3,6 +3,8 @@ export const expectedInBundle = [
   'getNiceTickValues',
   'getRelativeCoordinate',
   'Global',
+  'Label',
+  'LabelList',
   'Layer',
   'Sector',
   'SunburstChart',
