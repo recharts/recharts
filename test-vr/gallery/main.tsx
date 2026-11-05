@@ -83,9 +83,13 @@ export function initializeMountGallery(galleryElement: HTMLElement): void {
     const Story = await resolveStory(story);
     const storyProps: Record<string, unknown> = props ?? {};
     const theme = getRechartsTheme();
+    const Wrapper =
+      isPreviewFrame && urlParameters.get('inspect') === 'true'
+        ? (await import('./InspectionTools')).InspectionTools
+        : undefined;
     const galleryRoot = root ?? createRoot(galleryElement);
     root = galleryRoot;
-    renderStory(galleryRoot, galleryElement, Story, storyProps, theme);
+    renderStory(galleryRoot, galleryElement, Story, storyProps, theme, Wrapper);
   };
 
   window.unmount = async () => {
@@ -102,7 +106,7 @@ export function initializeMountGallery(galleryElement: HTMLElement): void {
     window.parent.postMessage({ ...message, source: previewMessageSource }, window.location.origin);
   }
 
-  if (isPreviewFrame && window.parent !== window) {
+  if (isPreviewFrame) {
     const storyId = urlParameters.get('story');
     if (storyId !== null) {
       window

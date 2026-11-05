@@ -56,6 +56,7 @@ export function renderStory(
   Story: StoryComponent,
   props: Record<string, unknown>,
   theme: RechartsThemeVariant,
+  Wrapper?: React.ComponentType<{ children: React.ReactNode }>,
 ): void {
   setCanvasBackground(canvas, theme);
 
@@ -64,6 +65,7 @@ export function renderStory(
    * instead of being swallowed by React.
    */
   flushSync(() => {
-    root.render(renderWithRechartsTheme(theme, <Story {...props} />));
+    const story = <Story {...props} />;
+    root.render(renderWithRechartsTheme(theme, Wrapper ? <Wrapper>{story}</Wrapper> : story));
   });
 }
