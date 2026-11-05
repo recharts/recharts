@@ -105,14 +105,14 @@ export const combineTooltipPayload = (
   }
   const { chartData, computedData } = chartDataState;
   const [sliceStartIndex, sliceEndIndex] = getBrushSliceIndexes(chartDataState);
+  // Brush indexes address the chart data. Data defined on an item is used as the item drew it.
+  const slicedChartData = chartData == null ? undefined : getSliced(chartData, sliceStartIndex, sliceEndIndex);
 
   const init: Array<TooltipPayloadEntry> = [];
 
   return tooltipPayloadConfigurations.reduce((agg, configuration): Array<TooltipPayloadEntry> => {
     const { dataDefinedOnItem, settings, getEntryColor } = configuration;
-    const finalData = selectFinalData(dataDefinedOnItem, chartData);
-
-    const sliced = Array.isArray(finalData) ? getSliced(finalData, sliceStartIndex, sliceEndIndex) : finalData;
+    const sliced = selectFinalData(dataDefinedOnItem, slicedChartData);
 
     const finalDataKey: DataKey<any> | undefined = settings?.dataKey ?? tooltipAxisDataKey;
     // BaseAxisProps does not support nameKey but it could!
