@@ -785,8 +785,11 @@ function ContentItem({
     );
   }
   let text = null;
-  const nameSize = getStringSize(nodeProps.name);
-  if (width > 20 && height > 20 && nameSize.width < width && nameSize.height < height) {
+  /*
+   * Measuring the name forces a layout in the browser, so only measure tiles that are big enough to show it.
+   */
+  const nameSize = width > 20 && height > 20 ? getStringSize(nodeProps.name) : undefined;
+  if (nameSize != null && nameSize.width < width && nameSize.height < height) {
     text = (
       <text
         x={x + 8}
@@ -1192,6 +1195,15 @@ type InternalTreemapProps = RequiresDefaultProps<Props, typeof defaultTreeMapPro
   typography?: React.CSSProperties;
 };
 
+type RenderNodeShared = {
+  svgProps: ReturnType<typeof svgPropertiesNoEvents>;
+  treemapHasOwnColors: boolean;
+  /**
+   * Names of the children of the current root, with the depths they appear at.
+   */
+  currentRootChildDepthsByName: Map<unknown, Set<number>>;
+};
+
 class TreemapWithState extends PureComponent<InternalTreemapProps, State> {
   static displayName = 'Treemap';
 
@@ -1302,19 +1314,20 @@ class TreemapWithState extends PureComponent<InternalTreemapProps, State> {
    * @param root parent of the node
    * @param node the node to render
    * @param parentBranchIndex index of the top-level tile that the parent belongs to, undefined if the parent is the root
+   * @param shared values that are the same for every node, computed once per render
    */
-  renderNode(root: TreemapNode, node: TreemapNode, parentBranchIndex: number | undefined): ReactNode {
+  renderNode(
+    root: TreemapNode,
+    node: TreemapNode,
+    parentBranchIndex: number | undefined,
+    shared: RenderNodeShared,
+  ): ReactNode {
     const { content, type } = this.props;
-    const nodeProps = { ...svgPropertiesNoEvents(this.props), ...node, root };
+    const nodeProps = { ...shared.svgProps, ...node, root };
     const isLeaf = !node.children || !node.children.length;
     const branchIndex = node.depth === 0 ? undefined : (parentBranchIndex ?? node.index);
 
-    const { currentRoot } = this.state;
-    const isCurrentRootChild = (currentRoot?.children || []).filter(
-      (item: TreemapNode) => item.depth === node.depth && item.name === node.name,
-    );
-
-    if (!isCurrentRootChild.length && root.depth && type === 'nest') {
+    if (type === 'nest' && root.depth && !shared.currentRootChildDepthsByName.get(node.name)?.has(node.depth)) {
       return null;
     }
 
@@ -1327,26 +1340,44 @@ class TreemapWithState extends PureComponent<InternalTreemapProps, State> {
           isLeaf={isLeaf}
           content={content}
           nodeProps={nodeProps}
-          nodeHasOwnColors={hasOwnColors(node) || hasOwnColors(this.props)}
+          nodeHasOwnColors={shared.treemapHasOwnColors || hasOwnColors(node)}
           branchIndex={branchIndex}
           treemapProps={this.props}
           onNestClick={this.handleClick}
         />
         {node.children && node.children.length
-          ? node.children.map((child: TreemapNode) => this.renderNode(node, child, branchIndex))
+          ? node.children.map((child: TreemapNode) => this.renderNode(node, child, branchIndex, shared))
           : null}
       </Layer>
     );
   }
 
   renderAllNodes(): ReactNode {
-    const { formatRoot } = this.state;
+    const { formatRoot, currentRoot } = this.state;
 
     if (!formatRoot) {
       return null;
     }
 
-    return this.renderNode(formatRoot, formatRoot, undefined);
+    /*
+     * In nest mode a node is only drawn if the current root has a child with the same name and depth.
+     * Index those children once, so that the check is a lookup instead of a scan for every node.
+     */
+    const currentRootChildDepthsByName = new Map<unknown, Set<number>>();
+    for (const child of currentRoot?.children ?? []) {
+      let depths = currentRootChildDepthsByName.get(child.name);
+      if (depths == null) {
+        depths = new Set();
+        currentRootChildDepthsByName.set(child.name, depths);
+      }
+      depths.add(child.depth);
+    }
+
+    return this.renderNode(formatRoot, formatRoot, undefined, {
+      svgProps: svgPropertiesNoEvents(this.props),
+      treemapHasOwnColors: hasOwnColors(this.props),
+      currentRootChildDepthsByName,
+    });
   }
 
   // render nest treemap
