@@ -35,7 +35,7 @@ import {
   TrapezoidViewBox,
 } from '../util/types';
 import type { LegendPayload } from '../component/DefaultLegendContent';
-import { Formatter } from '../component/DefaultTooltipContent';
+import { Formatter, ItemTooltipValue } from '../component/DefaultTooltipContent';
 import { ActivePoints } from '../component/ActivePoints';
 import { TooltipPayloadConfiguration } from '../state/tooltipSlice';
 import { SetTooltipEntrySettings } from '../state/SetTooltipEntrySettings';
@@ -359,7 +359,7 @@ export interface LineProps<DataPointType = any, DataValueType = any>
    * Formats the value displayed in the tooltip for this Line.
    * When set, takes precedence over the `formatter` prop on the Tooltip component.
    */
-  formatter?: Formatter;
+  formatter?: Formatter<ItemTooltipValue<DataValueType>>;
   /**
    * The id of XAxis which is corresponding to the data. Required when there are multiple XAxes.
    * @defaultValue 0
