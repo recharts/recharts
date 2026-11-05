@@ -81,6 +81,10 @@ nav.desktop-only {
     .navigation-items {
       display: flex;
       flex-direction: row;
+      align-items: center;
+      margin: 0;
+      padding: 0;
+      list-style: none;
       flex: 1;
       gap: min(40px, 2vw);
 
@@ -161,6 +165,10 @@ nav.desktop-only {
         .menu {
           padding-left: 1rem;
         }
+        .sidebar-cate-title {
+          margin: 0;
+          padding: 16px 20px 4px;
+        }
         a {
           padding: 8px 20px;
 
@@ -182,6 +190,17 @@ body.no-scroll {
 }
 
 .sidebar-cate {
+  /* A heading that only labels a group of links, for example a section of the guide */
+  .sidebar-cate-title {
+    font-size: var(--font-size-lg);
+    margin: 1.25rem 0 0.25rem;
+    color: var(--color-text-3);
+  }
+
+  &:first-of-type .sidebar-cate-title {
+    margin-top: 0.5rem;
+  }
+
   a {
     display: flex;
     flex-direction: row;

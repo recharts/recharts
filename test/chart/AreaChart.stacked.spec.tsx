@@ -1,6 +1,6 @@
 import React from 'react';
 import { describe, it, expect } from 'vitest';
-import { Area, AreaChart, Tooltip, XAxis, YAxis } from '../../src';
+import { Area, AreaChart, Line, Tooltip, XAxis, YAxis } from '../../src';
 import { createSelectorTestCase } from '../helper/createSelectorTestCase';
 import { expectAreaCurve } from '../helper/expectAreaCurve';
 import { selectArea, selectGraphicalItemStackedData } from '../../src/state/selectors/areaSelectors';
@@ -11,6 +11,7 @@ import { ExpectedStackedDataSeries, expectGraphicalItemSettings } from '../helpe
 import { ChartData } from '../../src/state/chartDataSlice';
 import { StackGroup } from '../../src/util/stacks/stackTypes';
 import { AreaSettings } from '../../src/state/types/AreaSettings';
+import { AxisDomain } from '../../src/util/types';
 import { expectLastCalledWith } from '../helper/expectLastCalledWith';
 
 const data1 = [
@@ -1296,6 +1297,52 @@ describe('AreaChart stacked', () => {
         expect(result).not.toEqual([0, 1]);
       });
     });
+  });
+
+  describe('with stackOffset="expand" and a second, unstacked YAxis', () => {
+    const data = [
+      { name: 'a', uv: 10, pv: 30, price: 120 },
+      { name: 'b', uv: 20, pv: 20, price: 480 },
+      { name: 'c', uv: 30, pv: 10, price: 250 },
+    ];
+
+    function renderTestCase(rightAxisDomain: AxisDomain | undefined, hideStackedAreas: boolean) {
+      return createSelectorTestCase(({ children }) => (
+        <AreaChart width={400} height={300} data={data} stackOffset="expand">
+          <XAxis dataKey="name" />
+          <YAxis yAxisId="left" />
+          <YAxis yAxisId="right" orientation="right" domain={rightAxisDomain} />
+          <Area yAxisId="left" dataKey="uv" stackId="1" hide={hideStackedAreas} />
+          <Area yAxisId="left" dataKey="pv" stackId="1" hide={hideStackedAreas} />
+          <Line yAxisId="right" dataKey="price" isAnimationActive={false} />
+          {children}
+        </AreaChart>
+      ));
+    }
+
+    it('should keep the [0, 1] domain on the stacked axis', () => {
+      const { spy } = renderTestCase(undefined, false)(state => selectAxisDomain(state, 'yAxis', 'left', false));
+      expectLastCalledWith(spy, [0, 1]);
+    });
+
+    it('should keep the [0, 1] domain on the stacked axis when its areas are hidden', () => {
+      const { spy } = renderTestCase(undefined, true)(state => selectAxisDomain(state, 'yAxis', 'left', false));
+      expectLastCalledWith(spy, [0, 1]);
+    });
+
+    it.each([
+      { rightAxisDomain: undefined, expected: [0, 480] },
+      { rightAxisDomain: [0, 1000], expected: [0, 1000] },
+    ])(
+      'should give the unstacked axis the domain $expected when its domain prop is $rightAxisDomain',
+      ({ rightAxisDomain, expected }) => {
+        const { spy } = renderTestCase(
+          rightAxisDomain,
+          false,
+        )(state => selectAxisDomain(state, 'yAxis', 'right', false));
+        expectLastCalledWith(spy, expected);
+      },
+    );
   });
   describe.todo('vertical charts');
 });

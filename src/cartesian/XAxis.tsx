@@ -43,6 +43,7 @@ import { RequiresDefaultProps, resolveDefaultProps } from '../util/resolveDefaul
 import { axisPropsAreEqual } from '../util/axisPropsAreEqual';
 import { CustomScaleDefinition } from '../util/scale/CustomScaleDefinition';
 import { useCartesianChartLayout } from '../context/chartLayoutContext';
+import { DEFAULT_X_AXIS_HEIGHT } from '../util/Constants';
 import { getAxisTypeBasedOnLayout } from '../util/getAxisTypeBasedOnLayout';
 
 /**
@@ -211,6 +212,9 @@ export interface XAxisProps<DataPointType = any, DataValueType = any> extends Om
   niceTicks?: NiceTicksAlgorithm;
 }
 
+/**
+ * @public
+ */
 export type Props<DataPointType = any, DataValueType = any> = Omit<
   PresentationAttributesAdaptChildEvent<TickItem, SVGTextElement>,
   'scale' | 'ref' | 'height'
@@ -278,6 +282,14 @@ const XAxisImpl = (props: PropsWithDefaults) => {
    * https://github.com/recharts/recharts/issues/6257
    */
   const synchronizedSettings = useAppSelector(state => selectXAxisSettingsNoDefaults(state, xAxisId));
+  const chartDataLengthEmpty = useAppSelector(state => !state.chartData.chartData?.length);
+
+  useLayoutEffect(() => {
+    // Without data the axis is measured as 0 high and hidden, so start again from the default height.
+    if (chartDataLengthEmpty === false && height === 'auto') {
+      dispatch(updateXAxisHeight({ id: xAxisId, height: DEFAULT_X_AXIS_HEIGHT }));
+    }
+  }, [chartDataLengthEmpty, height, dispatch, xAxisId]);
 
   useLayoutEffect(() => {
     // No dynamic height calculation is done when height !== 'auto'
@@ -412,6 +424,7 @@ const XAxisSettingsDispatcher = <DataPointType, DataValueType>(outsideProps: Pro
 /**
  * @consumes CartesianViewBoxContext
  * @provides CartesianLabelContext
+ * @public
  */
 export const XAxis = React.memo(XAxisSettingsDispatcher, axisPropsAreEqual) as <
   DataPointType = any,

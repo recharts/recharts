@@ -14,6 +14,9 @@ export function parseCornerRadius(cornerRadius: string | number | undefined): nu
   return cornerRadius;
 }
 
+/**
+ * @public
+ */
 export interface RadialBarSectorProps extends RadialBarDataItem, ShapeAnimationProps {
   index: number;
   isActive: boolean;

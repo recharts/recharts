@@ -25,6 +25,9 @@ import {
 import { Percent, Size } from '../util/types';
 import { isPositiveNumber } from '../util/isWellBehavedNumber';
 
+/**
+ * @public
+ */
 export interface Props extends Omit<React.HTMLAttributes<HTMLDivElement>, 'id' | 'className' | 'style' | 'onResize'> {
   /**
    * width / height. If specified, the height will be calculated by width / aspect.
@@ -256,6 +259,7 @@ const SizeDetectorContainer = forwardRef<HTMLDivElement | null, Props>(
  * @see {@link https://recharts.github.io/en-US/guide/sizes/ Chart size guide}
  *
  * @provides ResponsiveContainerContext
+ * @public
  */
 export const ResponsiveContainer = forwardRef<HTMLDivElement, Props>((props, ref) => {
   const responsiveContainerContext = useResponsiveContainerContext();

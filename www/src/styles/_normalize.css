@@ -16,9 +16,7 @@ html {
  * Remove default margin.
  */
 
-body,
-p,
-div {
+body {
   margin: 0;
 }
 

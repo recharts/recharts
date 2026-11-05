@@ -12,6 +12,9 @@ import { PolarChartProps } from './types';
 import { TooltipProps } from '../component/Tooltip';
 import { NameType, ValueType } from '../component/DefaultTooltipContent';
 
+/**
+ * @public
+ */
 export type TypedCentricChartContext<TData, TCategorical, TNumerical, TComponents> = {
   RadarChart: React.ComponentType<Omit<PolarChartProps<TData>, 'layout'>>;
 } & Omit<
@@ -33,6 +36,9 @@ export type TypedCentricChartContext<TData, TCategorical, TNumerical, TComponent
   'RadialBar' | 'RadialBarChart' | 'Pie' | 'PieChart'
 >;
 
+/**
+ * @public
+ */
 export type TypedRadialChartContext<TData, TCategorical, TNumerical, TComponents> = {
   RadialBarChart: React.ComponentType<Omit<PolarChartProps<TData>, 'layout'>>;
   PieChart: React.ComponentType<Omit<PolarChartProps<TData>, 'layout'>>;
@@ -55,6 +61,9 @@ export type TypedRadialChartContext<TData, TCategorical, TNumerical, TComponents
   'Radar' | 'RadarChart'
 >;
 
+/**
+ * @public
+ */
 export type NoRadial<T> = 'RadialBar' extends keyof T
   ? never
   : 'RadialBarChart' extends keyof T
@@ -65,6 +74,9 @@ export type NoRadial<T> = 'RadialBar' extends keyof T
         ? never
         : T;
 
+/**
+ * @public
+ */
 export type NoCentric<T> = 'Radar' extends keyof T ? never : 'RadarChart' extends keyof T ? never : T;
 
 /**
@@ -96,6 +108,7 @@ export type NoCentric<T> = 'Radar' extends keyof T ? never : 'RadarChart' extend
  *
  * @since 3.8
  * @see {@link https://recharts.github.io/en-US/guide/typescript/ Guide: Strong typing for Recharts components}
+ * @public
  */
 export function createCentricChart<TData, TCategorical = string, TNumerical = number>() {
   return function withComponents<TComponents extends Record<string, any>>(components: NoRadial<TComponents>) {
@@ -135,6 +148,7 @@ export function createCentricChart<TData, TCategorical = string, TNumerical = nu
  *
  * @since 3.8
  * @see {@link https://recharts.github.io/en-US/guide/typescript/ Guide: Strong typing for Recharts components}
+ * @public
  */
 export function createRadialChart<TData, TCategorical = string, TNumerical = number>() {
   return function withComponents<TComponents extends Record<string, any>>(components: NoCentric<TComponents>) {

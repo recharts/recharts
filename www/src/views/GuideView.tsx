@@ -22,37 +22,72 @@ import { CellDeprecationNotice } from '../components/GuideView/CellDeprecationNo
 import { AnimationsGuide } from '../components/GuideView/Animations';
 import { ThemingGuide } from '../components/GuideView/Theming';
 import { ThemeColorTesting } from '../components/GuideView/ThemeColorTesting';
+import { DataStyles } from '../components/GuideView/DataStyles';
 import { LabelColors } from '../components/GuideView/LabelColors';
 import { Patterns } from '../components/GuideView/Patterns';
 
-const guideMap: Record<string, ComponentType<{ locale: SupportedLocale }>> = {
-  installation: Installation,
-  'getting-started': GettingStarted,
-  customize: Customize,
-  activeIndex: ActiveIndex,
-  domainAndTicks: DomainAndTicks,
-  axisTicks: AxisTicks,
-  sizes: ChartSizing,
-  zIndex: ZIndex,
-  coordinateSystems: CoordinateSystems,
-  performance: Performance,
-  roundedBars: RoundedBars,
-  barAlignment: BarAlign,
-  cell: CellDeprecationNotice,
-  typescript: TypeScript,
-  animations: AnimationsGuide,
-  theming: ThemingGuide,
-  'theme-color-testing': ThemeColorTesting,
-  'label-colors': LabelColors,
-  patterns: Patterns,
+/**
+ * Sections group guides in the navigation. They are displayed in this order.
+ * Each section needs a translated name in `guideSections` in every locale file in `www/src/locale`.
+ */
+export const guideSections = [
+  'getting-started',
+  'layout-and-axes',
+  'styling',
+  'theming',
+  'advanced',
+  'migration',
+] as const;
+
+export type GuideSection = (typeof guideSections)[number];
+
+type GuideDefinition = {
+  Component: ComponentType<{ locale: SupportedLocale }>;
+  /**
+   * The navigation section this guide belongs to.
+   * Within a section, guides are listed in the order in which they appear in `guideMap`.
+   */
+  section: GuideSection;
 };
 
-export const allGuides = Object.keys(guideMap);
+const guideMap: Record<string, GuideDefinition> = {
+  installation: { Component: Installation, section: 'getting-started' },
+  'getting-started': { Component: GettingStarted, section: 'getting-started' },
+  typescript: { Component: TypeScript, section: 'getting-started' },
+  customize: { Component: Customize, section: 'getting-started' },
+  sizes: { Component: ChartSizing, section: 'layout-and-axes' },
+  domainAndTicks: { Component: DomainAndTicks, section: 'layout-and-axes' },
+  axisTicks: { Component: AxisTicks, section: 'layout-and-axes' },
+  barAlignment: { Component: BarAlign, section: 'layout-and-axes' },
+  dataStyles: { Component: DataStyles, section: 'styling' },
+  roundedBars: { Component: RoundedBars, section: 'styling' },
+  'label-colors': { Component: LabelColors, section: 'styling' },
+  patterns: { Component: Patterns, section: 'styling' },
+  animations: { Component: AnimationsGuide, section: 'styling' },
+  theming: { Component: ThemingGuide, section: 'theming' },
+  'theme-color-testing': { Component: ThemeColorTesting, section: 'theming' },
+  coordinateSystems: { Component: CoordinateSystems, section: 'advanced' },
+  zIndex: { Component: ZIndex, section: 'advanced' },
+  performance: { Component: Performance, section: 'advanced' },
+  activeIndex: { Component: ActiveIndex, section: 'migration' },
+  cell: { Component: CellDeprecationNotice, section: 'migration' },
+};
+
+/**
+ * Guide names grouped by section, in navigation order.
+ */
+export const guidesBySection: ReadonlyArray<{ section: GuideSection; guides: ReadonlyArray<string> }> =
+  guideSections.map(section => ({
+    section,
+    guides: Object.keys(guideMap).filter(name => guideMap[name]?.section === section),
+  }));
+
+export const allGuides: ReadonlyArray<string> = guidesBySection.flatMap(({ guides }) => guides);
 
 function Guide({ locale, page }: { locale: SupportedLocale; page: string }) {
-  const GuideComponent = guideMap[page];
-  if (GuideComponent) {
-    return <GuideComponent locale={locale} />;
+  const guide = guideMap[page];
+  if (guide) {
+    return <guide.Component locale={locale} />;
   }
   return null;
 }

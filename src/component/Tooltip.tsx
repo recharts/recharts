@@ -32,6 +32,9 @@ import { useTooltipChartSynchronisation } from '../synchronisation/useChartSynch
 import { useTooltipEventType } from '../state/selectors/selectTooltipEventType';
 import { resolveDefaultProps } from '../util/resolveDefaultProps';
 
+/**
+ * @public
+ */
 export type ContentType<TValue extends ValueType = ValueType, TName extends NameType = NameType> =
   ReactElement | ((props: TooltipContentProps<TValue, TName>) => ReactNode);
 
@@ -39,6 +42,9 @@ function defaultUniqBy(entry: Payload<ValueType, NameType>) {
   return entry.dataKey;
 }
 
+/**
+ * @public
+ */
 export type TooltipContentProps<TValue extends ValueType = ValueType, TName extends NameType = NameType> = TooltipProps<
   TValue,
   TName
@@ -67,6 +73,9 @@ function renderContent<TValue extends ValueType, TName extends NameType>(
 
 type PropertiesReadFromContext = 'viewBox' | 'active' | 'payload' | 'coordinate' | 'label' | 'accessibilityLayer';
 
+/**
+ * @public
+ */
 export type TooltipProps<TValue extends ValueType = ValueType, TName extends NameType = NameType> = Omit<
   DefaultTooltipContentProps<TValue, TName>,
   PropertiesReadFromContext
@@ -293,6 +302,7 @@ export const defaultTooltipProps = {
  * @consumes CartesianChartContext
  * @consumes PolarChartContext
  * @consumes TooltipEntrySettings
+ * @public
  */
 export function Tooltip(outsideProps: TooltipProps<ValueType, NameType>) {
   const props = resolveDefaultProps(outsideProps, defaultTooltipProps);

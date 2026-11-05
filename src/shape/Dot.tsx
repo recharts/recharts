@@ -33,6 +33,9 @@ interface DotProps {
   clipDot?: boolean;
 }
 
+/**
+ * @public
+ */
 export type Props = Omit<PresentationAttributesWithProps<DotProps, SVGCircleElement>, 'fill'> & DotProps;
 
 /**
@@ -69,6 +72,7 @@ const DotImpl: React.FC<StringFillProps> = props => {
  *
  * @param props
  * @constructor
+ * @public
  */
 export const Dot = (props: Props) => {
   const { fill } = props;

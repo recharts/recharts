@@ -131,6 +131,9 @@ type BarRectangleType = {
   height: number;
 };
 
+/**
+ * @public
+ */
 export interface BarRectangleItem extends Omit<RectangleProps, 'fill'> {
   /**
    * The color of the entry. A fill object in the props paints the entry with its definition.
@@ -158,6 +161,9 @@ export interface BarRectangleItem extends Omit<RectangleProps, 'fill'> {
   originalDataIndex: number;
 }
 
+/**
+ * @public
+ */
 export type BarShapeProps = BarRectangleItem &
   ShapeAnimationProps & {
     isActive: boolean;
@@ -541,6 +547,9 @@ type BarSvgProps = Omit<
   'radius' | 'name' | 'ref'
 >;
 
+/**
+ * @public
+ */
 export type Props<DataPointType = any, ValueAxisType = any> = Partial<BarEvents> &
   BarProps<DataPointType, ValueAxisType> &
   Omit<BarSvgProps, keyof BarEvents | 'fill'>;
@@ -726,6 +735,8 @@ function BarLabelListProvider({
         parentViewBox: entry.parentViewBox,
         viewBox,
         fill: entry.fill,
+        // rects skip bars without a size, so the position in rects is not the index of the data entry
+        originalDataIndex: entry.originalDataIndex,
       };
     },
   );
@@ -1548,6 +1559,7 @@ function BarFn(propsWithFillObject: Props) {
  * @provides CellReader
  * @consumes CartesianChartContext
  * @consumes BarStackContext
+ * @public
  */
 export const Bar = React.memo(BarFn, propsAreEqual) as <DataPointType = any, ValueAxisType = any>(
   props: Props<DataPointType, ValueAxisType>,

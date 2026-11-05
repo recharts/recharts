@@ -52,12 +52,46 @@ interface CalculatedWordWidths {
 
 type CalculateWordWidthsParam = Pick<Props, 'children' | 'breakAll' | 'style'>;
 
+/*
+ * A single lazily-created segmenter instance: constructing Intl.Segmenter is
+ * measurably more expensive than segmenting with an existing one.
+ * Availability itself is re-checked on every call so environments without
+ * Intl.Segmenter (e.g. Firefox before 125) always take the fallback.
+ */
+let cachedGraphemeSegmenter: Intl.Segmenter | undefined;
+
+const getGraphemeSegmenter = (): Intl.Segmenter | null => {
+  const SegmenterImpl = typeof Intl === 'undefined' ? undefined : Intl.Segmenter;
+  if (typeof SegmenterImpl !== 'function') {
+    return null;
+  }
+  if (cachedGraphemeSegmenter === undefined) {
+    cachedGraphemeSegmenter = new SegmenterImpl(undefined, { granularity: 'grapheme' });
+  }
+  return cachedGraphemeSegmenter;
+};
+
+/**
+ * Splits text into grapheme clusters (user-perceived characters) so that `breakAll`
+ * wrapping and `maxLines` truncation never tear a cluster apart: ZWJ sequences,
+ * combining marks, regional indicators and emoji modifiers stay together.
+ * Falls back to code-point splitting (`Array.from`) when Intl.Segmenter is not
+ * available (e.g. Firefox before 125), which preserves the previous behavior.
+ */
+const splitIntoGraphemes = (text: string): string[] => {
+  const segmenter = getGraphemeSegmenter();
+  if (segmenter == null) {
+    return Array.from(text);
+  }
+  return Array.from(segmenter.segment(text), graphemeSegment => graphemeSegment.segment);
+};
+
 const calculateWordWidths = ({ children, breakAll, style }: CalculateWordWidthsParam): CalculatedWordWidths | null => {
   try {
     let words: string[] = [];
     if (!isNullish(children)) {
       if (breakAll) {
-        words = Array.from(children.toString());
+        words = splitIntoGraphemes(children.toString());
       } else {
         words = children.toString().split(BREAKING_SPACES);
       }
@@ -75,6 +109,7 @@ const calculateWordWidths = ({ children, breakAll, style }: CalculateWordWidthsP
 
 /**
  * @inline
+ * @public
  */
 export type TextAnchor = 'start' | 'middle' | 'end' | 'inherit';
 
@@ -84,11 +119,13 @@ export function isValidTextAnchor(value: string | undefined): value is TextAncho
 
 /**
  * @inline
+ * @public
  */
 export type TextVerticalAnchor = 'start' | 'middle' | 'end';
 
 /**
  * @inline
+ * @public
  */
 export type RenderableText = string | number | boolean | null | undefined;
 
@@ -103,6 +140,7 @@ export function isRenderableText(val: unknown): val is RenderableText {
  * The position and size are measured from the rendered text.
  *
  * @since 3.11
+ * @public
  */
 export type TextBackgroundProps = Omit<
   SVGProps<SVGRectElement>,
@@ -295,6 +333,9 @@ interface TextProps {
   halo?: boolean | TextHaloProps;
 }
 
+/**
+ * @public
+ */
 export type Props = Omit<SVGProps<SVGTextElement>, 'textAnchor' | 'verticalAnchor'> & TextProps;
 
 type CalculateWordsByLinesProps = Pick<Props, 'maxLines' | 'children' | 'style' | 'breakAll'>;
@@ -388,28 +429,16 @@ const calculateWordsByLines = (
     return originalResult;
   }
 
-  const text = Array.from(String(children));
+  const text = splitIntoGraphemes(String(children));
   let start = 0;
   let end = text.length - 1;
 
-  let iterations = 0;
+  // Keep the last fitting prefix, including the final candidate in the search range.
   let trimmedResult;
 
-  while (start <= end && iterations <= text.length - 1) {
+  while (start <= end) {
     const middle = Math.floor((start + end) / 2);
-    const prev = middle - 1;
-
-    const [doesPrevOverflow, result] = checkOverflow(
-      text,
-      prev,
-      breakAll,
-      style,
-      maxLines,
-      lineWidth,
-      spaceWidth,
-      scaleToFit,
-    );
-    const [doesMiddleOverflow] = checkOverflow(
+    const [doesOverflow, result] = checkOverflow(
       text,
       middle,
       breakAll,
@@ -420,20 +449,12 @@ const calculateWordsByLines = (
       scaleToFit,
     );
 
-    if (!doesPrevOverflow && !doesMiddleOverflow) {
+    if (doesOverflow) {
+      end = middle - 1;
+    } else {
+      trimmedResult = result;
       start = middle + 1;
     }
-
-    if (doesPrevOverflow && doesMiddleOverflow) {
-      end = middle - 1;
-    }
-
-    if (!doesPrevOverflow && doesMiddleOverflow) {
-      trimmedResult = result;
-      break;
-    }
-
-    iterations++;
   }
 
   // Fallback to originalResult (result without trimming) if we cannot find the
@@ -686,6 +707,9 @@ export const textDefaultProps = {
   y: 0,
 } as const satisfies Partial<Props>;
 
+/**
+ * @public
+ */
 export const Text = forwardRef<SVGTextElement, Props>((outsideProps, ref) => {
   const typography: TextStyles = useBackwardsCompatibleTheme<TextStyles>(
     theme => theme.typography,
@@ -959,6 +983,7 @@ export const Text = forwardRef<SVGTextElement, Props>((outsideProps, ref) => {
         {hasOutline && (
           <path
             {...svgPropertiesAndEvents(backgroundPathProps)}
+            pointerEvents={backgroundPathProps.pointerEvents ?? styleFinal.pointerEvents ?? props.pointerEvents}
             d={textPath}
             fill="none"
             stroke={outlineStroke}
@@ -972,6 +997,7 @@ export const Text = forwardRef<SVGTextElement, Props>((outsideProps, ref) => {
         )}
         <path
           {...svgPropertiesAndEvents(backgroundPathProps)}
+          pointerEvents={backgroundPathProps.pointerEvents ?? styleFinal.pointerEvents ?? props.pointerEvents}
           d={textPath}
           fill="none"
           stroke={backgroundFill.fill}
@@ -998,6 +1024,7 @@ export const Text = forwardRef<SVGTextElement, Props>((outsideProps, ref) => {
     <rect
       rx={defaultBackgroundRadius}
       {...svgPropertiesAndEvents(backgroundRectProps)}
+      pointerEvents={backgroundRectProps.pointerEvents ?? styleFinal.pointerEvents ?? props.pointerEvents}
       fill={backgroundFill.fill}
       className={clsx('recharts-text-background', backgroundClassName)}
       transform={transform}

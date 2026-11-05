@@ -48,6 +48,7 @@ export function getFillUrl(id: string): string {
  * @param value the pattern to draw
  * @returns a component to use as the `definition` of a {@link RechartsFill}
  * @since 3.11
+ * @public
  */
 export function pattern(value: RechartsPattern): ComponentType<RechartsFillDefinitionProps> {
   function PatternDefinition({ id, color, bounds }: RechartsFillDefinitionProps) {
@@ -103,6 +104,7 @@ export function pattern(value: RechartsPattern): ComponentType<RechartsFillDefin
  * @param gradient the gradient to draw
  * @returns a component to use as the `definition` of a {@link RechartsFill}
  * @since 3.11
+ * @public
  */
 export function linearGradient(gradient: RechartsLinearGradient): ComponentType<RechartsFillDefinitionProps> {
   function LinearGradientDefinition({ id, color }: RechartsFillDefinitionProps) {

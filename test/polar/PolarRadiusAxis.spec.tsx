@@ -190,6 +190,21 @@ describe('<PolarRadiusAxis />', () => {
       });
     });
 
+    describe('with stackOffset="expand"', () => {
+      const renderTestCase = createSelectorTestCase(({ children }) => (
+        <RadarChart width={500} height={500} data={exampleRadarData} stackOffset="expand">
+          <PolarRadiusAxis dataKey="value" />
+          <Radar dataKey="value" isAnimationActive={false} />
+          {children}
+        </RadarChart>
+      ));
+
+      it('should select the domain of the data, because Radar does not stack', () => {
+        const { spy } = renderTestCase(state => selectPolarAxisDomain(state, 'radiusAxis', 0));
+        expectLastCalledWith(spy, [0, 999]);
+      });
+    });
+
     describe('with categorical dataKey', () => {
       const renderTestCase = createSelectorTestCase(({ children }) => (
         <RadarChart width={500} height={500} data={exampleRadarData}>

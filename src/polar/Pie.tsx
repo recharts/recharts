@@ -164,6 +164,9 @@ interface PieDef {
   cornerRadius?: number | string;
 }
 
+/**
+ * @public
+ */
 export type PieLabelLine =
   ReactElement<SVGElement> | ((props: any) => ReactElement<SVGElement>) | SVGProps<SVGPathElement> | boolean;
 
@@ -177,15 +180,22 @@ interface PieLabelExtraProps {
   background?: boolean | TextBackgroundProps;
 }
 
+/**
+ * @public
+ */
 export type PieLabelRenderProps = Omit<SVGPropsNoEvents<PieSvgAttributes>, 'offset'> &
   Omit<PieSectorDataItem, 'offset'> &
   PieLabelExtraProps &
   Coordinate;
 
+/**
+ * @public
+ */
 export type LabelListPropsWithPosition = LabelListProps & { position: LabelListProps['position'] };
 
 /**
  * The `label` prop in Pie accepts a variety of alternatives.
+ * @public
  */
 export type PieLabel =
   /*
@@ -236,6 +246,7 @@ export type PieSectorData = GeometrySector &
  *
  * https://github.com/recharts/recharts/issues/6380
  * https://github.com/recharts/recharts/discussions/6375
+ * @public
  */
 export type PieSectorDataItem = PiePresentationProps &
   PieCoordinate &
@@ -243,6 +254,9 @@ export type PieSectorDataItem = PiePresentationProps &
     cornerRadius: number | undefined;
   };
 
+/**
+ * @public
+ */
 export type PieSectorShapeProps = PieSectorDataItem &
   ShapeAnimationProps & {
     [DATA_ITEM_INDEX_ATTRIBUTE_NAME]: number;
@@ -250,6 +264,9 @@ export type PieSectorShapeProps = PieSectorDataItem &
     isActive: boolean;
     index: number;
   } & SVGProps<SVGPathElement>;
+/**
+ * @public
+ */
 export type PieShape = ActiveShape<PieSectorShapeProps, SVGPathElement>;
 
 interface PieEvents {
@@ -498,6 +515,9 @@ type PieSvgAttributes = Omit<PresentationAttributesAdaptChildEvent<any, SVGEleme
 
 type InternalProps = PieSvgAttributes & InternalPieProps;
 
+/**
+ * @public
+ */
 export type Props<DataPointType = any, DataValueType = any> = PieSvgAttributes & PieProps<DataPointType, DataValueType>;
 
 type RealPieData = Record<string, unknown>;
@@ -1501,6 +1521,9 @@ function PieFn(propsWithFillObject: Props) {
     </RegisterGraphicalItemId>
   );
 }
+/**
+ * @public
+ */
 export const Pie = PieFn as {
   <DataPointType = any, DataValueType = any>(outsideProps: Props<DataPointType, DataValueType>): ReactElement;
   (outsideProps: Props<any, any>): ReactElement;

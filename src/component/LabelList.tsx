@@ -31,6 +31,9 @@ import {
 import { useRechartsTheme } from '../theme/RechartsThemeContext';
 import { getEffectivePageBackground } from '../theme/pageBackground';
 
+/**
+ * @public
+ */
 export interface LabelListEntry<DataPointItem = any> {
   /**
    * Value is what renders in the UI as the label content.
@@ -43,6 +46,13 @@ export interface LabelListEntry<DataPointItem = any> {
    */
   payload: DataPointItem;
   fill: string | undefined;
+  /**
+   * Index of the data entry that this label belongs to.
+   * Some graphical items do not render every data entry (Bar skips bars without a size, for example),
+   * so this can differ from the position of the entry in the list.
+   * If undefined, the position in the list is the index.
+   */
+  originalDataIndex?: number;
 }
 
 /**
@@ -77,7 +87,7 @@ interface LabelListProps extends ZIndexable {
   /**
    * The accessor function to get the value of each label. Is ignored if dataKey is specified.
    * @param entry
-   * @param index
+   * @param index the index of the data entry that the label belongs to
    */
   valueAccessor?: (entry: CartesianLabelListEntry | PolarLabelListEntry, index: number) => RenderableText;
   /**
@@ -207,6 +217,9 @@ interface LabelListProps extends ZIndexable {
  * LabelList props do not allow refs because the same props are reused in multiple elements so we don't have a good single place to ref to.
  */
 type SvgTextProps = PropsWithoutRef<SVGProps<SVGTextElement>>;
+/**
+ * @public
+ */
 export type Props = Omit<SvgTextProps, 'children'> & LabelListProps;
 
 /**
@@ -224,6 +237,7 @@ export type Props = Omit<SvgTextProps, 'children'> & LabelListProps;
  *    the props to be passed to a LabelList component
  *
  * @inline
+ * @public
  */
 export type ImplicitLabelListType = boolean | LabelContentType | Props;
 
@@ -300,6 +314,7 @@ function usePolarLabelListContext(): ReadonlyArray<PolarLabelListEntry> | undefi
 
 /**
  * @consumes LabelListContext
+ * @public
  */
 export function LabelList({ valueAccessor = defaultAccessor, ...restProps }: Props) {
   const { dataKey, clockWise, id, textBreakAll, zIndex, ...others } = restProps;
@@ -327,10 +342,16 @@ export function LabelList({ valueAccessor = defaultAccessor, ...restProps }: Pro
         <DataLabelContextProvider value>
           <LabelZIndexProvider value={labelZIndex}>
             <Layer className="recharts-label-list">
-              {data.map((entry, index) => {
-                if (isClippedAway(cartesianData?.[index], clipArea)) {
+              {data.map((entry, position) => {
+                if (isClippedAway(cartesianData?.[position], clipArea)) {
                   return null;
                 }
+                /*
+                 * `position` is where the entry sits in the list, `index` is the data entry the label belongs to.
+                 * They differ when the graphical item does not render every data entry.
+                 * Colors and themes read the lists by position; ids, keys and the index users get are data indexes.
+                 */
+                const index = entry.originalDataIndex ?? position;
                 const value = isNullish(dataKey)
                   ? valueAccessor(entry, index)
                   : (getValueByDataKey(entry.payload, dataKey) as string | number);
@@ -342,7 +363,7 @@ export function LabelList({ valueAccessor = defaultAccessor, ...restProps }: Pro
                  * Without a theme, the label falls back to the fill of the entry.
                  * With a theme, the fallback depends on the position, so that a label on top of a shape stays readable.
                  */
-                const labelTheme = resolveLabelTheme?.(index);
+                const labelTheme = resolveLabelTheme?.(position);
                 const background = resolveLabelBackground(restProps.background, labelTheme?.background);
                 const fallbackFill =
                   automaticLabelColors == null
@@ -351,7 +372,7 @@ export function LabelList({ valueAccessor = defaultAccessor, ...restProps }: Pro
                         position: others.position,
                         isPolar: isPolarViewBox(entry.viewBox),
                         hasFilledShapes: automaticLabelColors.hasFilledShapes,
-                        shapeColors: automaticLabelColors.getShapeColors?.(index) ?? { fill: entry.fill },
+                        shapeColors: automaticLabelColors.getShapeColors?.(position) ?? { fill: entry.fill },
                         pageBackground,
                         hasOwnBackground: Boolean(background) || Boolean(others.halo),
                       });

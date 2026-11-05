@@ -107,28 +107,28 @@ describe('<SunburstChart /> theme', () => {
     expect(getSectors(container).map(sector => sector.stroke)).toEqual(['darkred', 'darkred', 'darkred', 'darkgreen']);
   });
 
-  it('paints separators and the label halo in chart.backgroundColor if the theme has no page background', () => {
+  it('paints separators and inside labels in chart.backgroundColor if the theme has no page background', () => {
     const { container } = renderSunburst({
       ...theme,
       pageBackground: undefined,
       chart: { backgroundColor: '#f8fafc' },
     });
     expect(getSectors(container).map(sector => sector.stroke)).toEqual(['#f8fafc', '#f8fafc', '#f8fafc', '#f8fafc']);
-    expect(getFirstLabel(container)).toHaveAttribute('stroke', '#f8fafc');
+    expect(getFirstLabel(container).style.fill).toBe('rgb(248, 250, 252)');
   });
 
   it('prefers the page background over chart.backgroundColor', () => {
     const { container } = renderSunburst({ ...theme, chart: { backgroundColor: '#f8fafc' } });
     expect(getSectors(container).map(sector => sector.stroke)).toEqual(['ivory', 'ivory', 'ivory', 'ivory']);
-    expect(getFirstLabel(container)).toHaveAttribute('stroke', 'ivory');
+    expect(getFirstLabel(container).style.fill).toBe('ivory');
   });
 
-  it('styles labels with typography and a halo in the page background color, without the legacy label styles', () => {
+  it('uses automatic inside label colors without the legacy halo or label styles', () => {
     const { container } = renderSunburst(theme);
     const label = getFirstLabel(container);
-    expect(label.style.fill).toBe('navy');
-    expect(label).toHaveAttribute('stroke', 'ivory');
-    expect(label).toHaveAttribute('paint-order', 'stroke fill');
+    expect(label.style.fill).toBe('ivory');
+    expect(label).not.toHaveAttribute('stroke');
+    expect(label).not.toHaveAttribute('paint-order');
     expect(label).not.toHaveAttribute('font-weight');
     expect(label).not.toHaveAttribute('font-size');
   });
