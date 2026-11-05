@@ -687,6 +687,10 @@ class BrushWithState extends PureComponent<BrushWithStateProps, State> {
     } = nextProps;
 
     if (data !== prevState.prevData) {
+      const lastIndex = data ? data.length - 1 : 0;
+      const clampedStartIndex = Math.min(Math.max(startIndexControlledFromProps ?? startIndex, 0), lastIndex);
+      const clampedEndIndex = Math.min(Math.max(endIndexControlledFromProps ?? endIndex, 0), lastIndex);
+
       return {
         prevData: data,
         prevTravellerWidth: travellerWidth,
@@ -700,8 +704,8 @@ class BrushWithState extends PureComponent<BrushWithStateProps, State> {
               width,
               x,
               travellerWidth,
-              startIndex: Math.min(Math.max(startIndexControlledFromProps ?? startIndex, 0), data.length - 1),
-              endIndex: Math.min(Math.max(endIndexControlledFromProps ?? endIndex, 0), data.length - 1),
+              startIndex: clampedStartIndex,
+              endIndex: clampedEndIndex,
             })
           : { scale: undefined, scaleValues: undefined }),
       };
