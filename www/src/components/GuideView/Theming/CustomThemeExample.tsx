@@ -1,5 +1,6 @@
 import {
   CartesianGrid,
+  LabelProps,
   Legend,
   Line,
   LineChart,
@@ -81,29 +82,35 @@ const brandTheme: RechartsTheme = {
     labelStyle: { letterSpacing: '0.05em', textTransform: 'uppercase' },
   },
   pageBackground: '#ffffff',
+  chart: {
+    width: '100%',
+    maxWidth: 600,
+    maxHeight: '70vh',
+    aspectRatio: 1.618,
+    padding: 12,
+    borderRadius: 8,
+    backgroundColor: '#ffffff',
+  },
 };
+
+const xAxisLabel: LabelProps = { position: 'insideBottomRight', value: 'Month' };
+const yAxisLabel: LabelProps = { value: 'Revenue [AUD]', angle: -90, textAnchor: 'end', position: 'insideTopLeft' };
+const referenceLineLabel: LabelProps = { position: 'insideTopRight', value: 6000 };
 
 export default function CustomThemeExample() {
   return (
-    <div style={{ padding: 12, borderRadius: 8, backgroundColor: '#ffffff' }}>
-      <RechartsThemeProvider value={brandTheme}>
-        <LineChart
-          style={{ width: '100%', maxWidth: 600, maxHeight: '70vh', aspectRatio: 1.618 }}
-          responsive
-          data={data}
-          margin={{ top: 10, right: 20, left: 10, bottom: 10 }}
-        >
-          <CartesianGrid />
-          <XAxis dataKey="month" />
-          <YAxis />
-          <ReferenceLine y={6000} />
-          <Tooltip defaultIndex={2} />
-          <Legend />
-          <Line dataKey="revenue" isAnimationActive={false} />
-          <Line dataKey="profit" isAnimationActive={false} />
-          <RechartsDevtools />
-        </LineChart>
-      </RechartsThemeProvider>
-    </div>
+    <RechartsThemeProvider value={brandTheme}>
+      <LineChart responsive data={data}>
+        <CartesianGrid />
+        <XAxis dataKey="month" height="auto" label={xAxisLabel} />
+        <YAxis width="auto" label={yAxisLabel} />
+        <ReferenceLine y={6000} label={referenceLineLabel} />
+        <Tooltip defaultIndex={2} />
+        <Legend />
+        <Line dataKey="revenue" />
+        <Line dataKey="profit" />
+        <RechartsDevtools />
+      </LineChart>
+    </RechartsThemeProvider>
   );
 }

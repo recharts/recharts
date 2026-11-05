@@ -1431,21 +1431,6 @@
       "count": 3
     }
   },
-  "www/src/components/GuideView/Theming/CustomThemeExample.tsx": {
-    "react-perf/jsx-no-new-object-as-prop": {
-      "count": 2
-    }
-  },
-  "www/src/components/GuideView/Theming/NestedThemeExample.tsx": {
-    "react-perf/jsx-no-new-object-as-prop": {
-      "count": 2
-    }
-  },
-  "www/src/components/GuideView/Theming/ThemeSwitcherExample.tsx": {
-    "react-perf/jsx-no-new-object-as-prop": {
-      "count": 2
-    }
-  },
   "www/src/components/GuideView/TypeScript/Step1.tsx": {
     "react-perf/jsx-no-new-object-as-prop": {
       "count": 1

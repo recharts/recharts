@@ -1164,8 +1164,15 @@ export const combineNumericalDomain = (
     return domainFromUserPreference;
   }
 
+  /*
+   * The stack groups domain only applies to the numeric axis, the one that the stacks grow along.
+   * https://github.com/recharts/recharts/issues/8159
+   */
   const shouldIncludeDomainOfStackGroups =
-    (layout === 'vertical' && axisType === 'xAxis') || (layout === 'horizontal' && axisType === 'yAxis');
+    (layout === 'vertical' && axisType === 'xAxis') ||
+    (layout === 'horizontal' && axisType === 'yAxis') ||
+    (layout === 'radial' && axisType === 'angleAxis') ||
+    (layout === 'centric' && axisType === 'radiusAxis');
 
   const mergedDomains = shouldIncludeDomainOfStackGroups
     ? mergeDomains(domainOfStackGroups, referenceElementsDomain, dataAndErrorBarsDomain)
@@ -2134,10 +2141,9 @@ export const combineAxisTicks = (
 
   let offset = type === 'category' && scale.bandwidth ? scale.bandwidth() / offsetForBand : 0;
 
-  offset =
-    axisType === 'angleAxis' && axisRange != null && axisRange.length >= 2
-      ? mathSign(axisRange[0] - axisRange[1]) * 2 * offset
-      : offset;
+  if (axisType === 'angleAxis' && axisRange != null && axisRange.length >= 2) {
+    offset = axisRange[0] > axisRange[1] ? 2 * offset : 0;
+  }
 
   // The ticks set by user should only affect the ticks adjacent to axis line
   const ticksOrNiceTicks = ticks || niceTicks;
