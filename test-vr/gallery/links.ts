@@ -1,5 +1,6 @@
 import type { RechartsThemeVariant } from './renderer';
 
+/** Resolves the mount page at local or published paths, with optional inspection. */
 export function getStoryFrameUrl(
   storyId: string,
   theme: RechartsThemeVariant,
@@ -16,6 +17,7 @@ export function getStoryFrameUrl(
   return url.toString();
 }
 
+/** Builds a source-sharing link that retains the selected story and repository dependencies. */
 export function getStackBlitzUrl(
   storyId: string,
   storyFile: string,

@@ -60,6 +60,7 @@ declare global {
   }
 }
 
+/** Installs the test mount API and automatically loads stories requested by preview URLs. */
 export function initializeMountGallery(galleryElement: HTMLElement): void {
   const canvasElement = galleryElement;
 

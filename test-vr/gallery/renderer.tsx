@@ -50,6 +50,7 @@ function renderWithRechartsTheme(theme: RechartsThemeVariant, story: React.React
   }
 }
 
+/** Renders the selected theme, preserving the ordinary mount unless a wrapper is explicitly supplied. */
 export function renderStory(
   root: Root,
   canvas: HTMLElement,

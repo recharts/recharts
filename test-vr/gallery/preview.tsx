@@ -110,6 +110,7 @@ function getFrameStatus(value: unknown): { status: 'ready' } | { status: 'error'
   return undefined;
 }
 
+/** Keeps a theme's story in its own frame and exposes its standalone inspection link. */
 function StoryPanel({
   story,
   theme,
@@ -243,6 +244,7 @@ function StoryPreview({ story }: { story: Story }) {
   );
 }
 
+/** Browses stories with isolated theme previews and links to inspection and source sharing. */
 export function PreviewApp() {
   const [selectedStoryId, setSelectedStoryId] = React.useState<string | undefined>(getStoryIdFromUrl);
   const selectedStory = stories.find(story => story.id === selectedStoryId);

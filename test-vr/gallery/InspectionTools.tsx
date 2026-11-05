@@ -2,6 +2,7 @@ import * as React from 'react';
 import { RechartsAnnotationsPortal, RechartsDevtoolsContext, RechartsDevtoolsPortal } from '@recharts/devtools';
 import './inspection.css';
 
+/** Connects the story's devtools to inspection portals outside the chart. */
 export function InspectionTools({ children }: { children: React.ReactNode }) {
   return (
     <RechartsDevtoolsContext>
