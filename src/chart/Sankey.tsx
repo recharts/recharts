@@ -128,7 +128,7 @@ type NodeAdjacency = {
 
 /**
  * For every node, finds the links that point to it and the links that leave it, in one pass over the links.
- * The indexes in each list are in the same order as the links.
+ * The indexes in each list are in the same order as the links. Links with a missing or out of range end are skipped.
  *
  * @param links all links
  * @param nodeCount number of nodes
@@ -148,18 +148,21 @@ const getAdjacencyOfNodes = (links: ReadonlyArray<LinkDataItem>, nodeCount: numb
       continue;
     }
     const { source, target } = link;
-
-    if (isNodeIndex(source)) {
-      const adjacency = result[source];
-      adjacency?.targetNodes.push(target);
-      adjacency?.targetLinks.push(i);
+    /*
+     * A link with one end outside the nodes is skipped on both ends. Recording the valid end alone
+     * would give that node a phantom source, so it would no longer count as a root of the layout.
+     */
+    if (!isNodeIndex(source) || !isNodeIndex(target)) {
+      continue;
     }
 
-    if (isNodeIndex(target)) {
-      const adjacency = result[target];
-      adjacency?.sourceNodes.push(source);
-      adjacency?.sourceLinks.push(i);
-    }
+    const sourceAdjacency = result[source];
+    sourceAdjacency?.targetNodes.push(target);
+    sourceAdjacency?.targetLinks.push(i);
+
+    const targetAdjacency = result[target];
+    targetAdjacency?.sourceNodes.push(source);
+    targetAdjacency?.sourceLinks.push(i);
   }
 
   return result;
