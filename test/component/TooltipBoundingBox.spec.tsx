@@ -67,6 +67,30 @@ describe('TooltipBoundingBox', () => {
     expect(element).not.toBeVisible();
   });
 
+  describe('will-change while transitioning', () => {
+    it('should promote the wrapper to a compositor layer when the position transition is enabled', () => {
+      render(<TooltipBoundingBox {...defaultProps} isAnimationActive animationDuration={400} />);
+      const wrapper = screen.getByText('Hello world!');
+      expect(wrapper).toHaveStyle({
+        transition: 'transform 400ms ease',
+        willChange: 'transform',
+      });
+    });
+
+    it('should not set will-change when animations are disabled', () => {
+      render(<TooltipBoundingBox {...defaultProps} isAnimationActive={false} />);
+      const wrapper = screen.getByText('Hello world!');
+      expect(wrapper).not.toHaveStyle({ transition: 'transform 400ms ease' });
+      expect(wrapper.style.willChange).not.toBe('transform');
+    });
+
+    it('should not set will-change when the tooltip is not active', () => {
+      render(<TooltipBoundingBox {...defaultProps} isAnimationActive active={false} />);
+      const wrapper = screen.getByText('Hello world!');
+      expect(wrapper.style.willChange).not.toBe('transform');
+    });
+  });
+
   describe('offset prop', () => {
     it('should accept number offset', () => {
       render(<TooltipBoundingBox {...defaultProps} offset={15} />);
