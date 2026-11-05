@@ -13,6 +13,7 @@ import {
 } from 'react';
 import { clsx } from 'clsx';
 import { scalePoint, ScalePoint } from 'victory-vendor/d3-scale';
+import { clamp } from 'es-toolkit';
 import range from 'es-toolkit/compat/range';
 import { Layer } from '../container/Layer';
 import { Text } from '../component/Text';
@@ -688,8 +689,8 @@ class BrushWithState extends PureComponent<BrushWithStateProps, State> {
 
     if (data !== prevState.prevData) {
       const lastIndex = data ? data.length - 1 : 0;
-      const clampedStartIndex = Math.min(Math.max(startIndexControlledFromProps ?? startIndex, 0), lastIndex);
-      const clampedEndIndex = Math.min(Math.max(endIndexControlledFromProps ?? endIndex, 0), lastIndex);
+      const clampedStartIndex = clamp(startIndexControlledFromProps ?? startIndex, 0, lastIndex);
+      const clampedEndIndex = clamp(endIndexControlledFromProps ?? endIndex, 0, lastIndex);
 
       return {
         prevData: data,
