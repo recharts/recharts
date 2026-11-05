@@ -687,11 +687,11 @@ class BrushWithState extends PureComponent<BrushWithStateProps, State> {
       endIndexControlledFromProps,
     } = nextProps;
 
-    if (data !== prevState.prevData) {
-      const lastIndex = data ? data.length - 1 : 0;
-      const clampedStartIndex = clamp(startIndexControlledFromProps ?? startIndex, 0, lastIndex);
-      const clampedEndIndex = clamp(endIndexControlledFromProps ?? endIndex, 0, lastIndex);
+    const lastIndex = data ? data.length - 1 : 0;
+    const clampedStartIndex = clamp(startIndexControlledFromProps ?? startIndex, 0, lastIndex);
+    const clampedEndIndex = clamp(endIndexControlledFromProps ?? endIndex, 0, lastIndex);
 
+    if (data !== prevState.prevData) {
       return {
         prevData: data,
         prevTravellerWidth: travellerWidth,
@@ -752,7 +752,7 @@ class BrushWithState extends PureComponent<BrushWithStateProps, State> {
         prevState.prevStartIndexControlledFromProps !== startIndexControlledFromProps
       ) {
         return {
-          startX: prevState.scale(startIndexControlledFromProps),
+          startX: prevState.scale(clampedStartIndex),
           prevStartIndexControlledFromProps: startIndexControlledFromProps,
         };
       }
@@ -762,7 +762,7 @@ class BrushWithState extends PureComponent<BrushWithStateProps, State> {
         prevState.prevEndIndexControlledFromProps !== endIndexControlledFromProps
       ) {
         return {
-          endX: prevState.scale(endIndexControlledFromProps),
+          endX: prevState.scale(clampedEndIndex),
           prevEndIndexControlledFromProps: endIndexControlledFromProps,
         };
       }

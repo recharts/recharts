@@ -75,6 +75,27 @@ describe.each([false, true])('Brush data refresh (StrictMode: %s)', strict => {
   });
 
   it.each([
+    { startIndex: -3, endIndex: 2, expected: ['10', '210'] },
+    { startIndex: 1, endIndex: 100, expected: ['110', '310'] },
+  ])('clamps prop-only updates ($startIndex, $endIndex)', ({ startIndex, endIndex, expected }) => {
+    const onChange = vi.fn();
+    const { container, rerender } = render(<Chart chartData={data} startIndex={1} endIndex={2} onChange={onChange} />, {
+      wrapper,
+    });
+    flushUpdates();
+    expect(positions(container)).toEqual(['110', '210']);
+
+    rerender(<Chart chartData={data} startIndex={startIndex} endIndex={endIndex} onChange={onChange} />);
+    flushUpdates();
+    expect(positions(container)).toEqual(expected);
+    expect(onChange).not.toHaveBeenCalled();
+
+    rerender(<Chart chartData={data} startIndex={1} endIndex={2} onChange={onChange} />);
+    flushUpdates();
+    expect(positions(container)).toEqual(['110', '210']);
+  });
+
+  it.each([
     { startIndex: 1, endIndex: undefined, expected: ['110', '310'] },
     { startIndex: undefined, endIndex: 2, expected: ['10', '210'] },
   ])('preserves a partially controlled selection ($startIndex, $endIndex)', ({ startIndex, endIndex, expected }) => {
