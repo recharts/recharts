@@ -100,7 +100,9 @@ describe('<Treemap /> theme', () => {
       { name: 'B', fill: 'mediumseagreen', stroke: 'indigo' },
     ]);
     expect(firstText.getAttribute('font-size')).toBe('22');
-    expect(firstText.getAttribute('fill') || firstText.style.fill).toBe('navy');
+    // With theme colors the label has no fill attribute; the typography color comes from the shared Text style.
+    expect(firstText.getAttribute('fill')).toBeNull();
+    expect(firstText.style.fill).toBe('navy');
     expect(firstText.style.fontWeight).toBe('700');
     expect(firstText.style.fontFamily).toBe('monospace');
   });
