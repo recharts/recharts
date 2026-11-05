@@ -1,6 +1,6 @@
-import { expect, test } from '../fixtures';
+import { expect, testWithThemes } from '../fixtures';
 
-test('LegendStylesExample', async ({ mountStory }) => {
-  const component = await mountStory('www/LegendStylesExample/LegendStylesExample', { testTheme: 'light' });
+testWithThemes('LegendStylesExample', async ({ mountStory }) => {
+  const component = await mountStory('www/LegendStylesExample/LegendStylesExample');
   await expect(component).toHaveScreenshot();
 });
