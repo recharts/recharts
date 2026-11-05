@@ -378,6 +378,11 @@ export const commentSimilarityExceptions: ReadonlyArray<CommentSimilarityGroup> 
   },
   {
     components: ['Treemap'],
+    props: ['label'],
+    reason: 'Treemap shows the node names by default, unlike other components where labels are off by default.',
+  },
+  {
+    components: ['Treemap'],
     props: ['data'],
     reason: 'Treemap data structure allows `children` properties for nested nodes',
   },
