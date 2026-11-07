@@ -12,14 +12,13 @@ import {
 } from '../util/RadialBarUtils';
 import { Props as SectorProps } from '../shape/Sector';
 import { Layer } from '../container/Layer';
-import { findAllByType } from '../util/ReactUtils';
+import { useCells } from '../util/useCells';
 import {
   ImplicitLabelListType,
   LabelListFromLabelProp,
   PolarLabelListContextProvider,
   PolarLabelListEntry,
 } from '../component/LabelList';
-import { Cell } from '../component/Cell';
 import { interpolate, mathSign, noop } from '../util/DataUtils';
 import {
   BarPositionPosition,
@@ -330,7 +329,7 @@ function SectorsWithAnimation({
 
   return (
     <AnimatedItems
-      animationInput={props}
+      animationInput={sectors}
       animationIdPrefix="recharts-radialbar-"
       items={sectors}
       previousItemsRef={previousSectorsRef}
@@ -628,7 +627,7 @@ function SetRadialBarPayloadLegend({
   unthemedColors: UnthemedColors | undefined;
   fillObject: RechartsFill | undefined;
 }) {
-  const cells = React.useMemo(() => findAllByType(children, Cell), [children]);
+  const cells = useCells(children);
   const legendPayload = useAppSelector(state => selectRadialBarLegendPayload(state, legendType));
   const coloredLegendPayload = legendPayload?.map((entry, index) => {
     const payload = { ...entry.payload, ...cells[index]?.props };
@@ -792,7 +791,7 @@ class RadialBarWithState extends PureComponent<InternalProps> {
 }
 
 function RadialBarImpl(props: WithIdRequired<PropsWithDefaults> & ThemeInternalProps) {
-  const cells = React.useMemo(() => findAllByType(props.children, Cell), [props.children]);
+  const cells = useCells(props.children);
 
   const radialBarSettings: RadialBarSettings = React.useMemo(
     () => ({

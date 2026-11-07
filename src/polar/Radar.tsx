@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { MouseEvent, MutableRefObject, ReactElement, ReactNode, SVGProps, useRef } from 'react';
+import { MouseEvent, MutableRefObject, ReactElement, ReactNode, SVGProps, useMemo, useRef } from 'react';
 import last from 'es-toolkit/compat/last';
 
 import { clsx } from 'clsx';
@@ -598,7 +598,8 @@ function PolygonWithAnimation({
     onAnimationStart,
     onAnimationEnd,
   } = props;
-  const baseLineAnimationState = useAnimationStartSnapshot(props, previousBaseLinePointsRef);
+  const animationInput = useMemo(() => ({ points, baseLinePoints }), [points, baseLinePoints]);
+  const baseLineAnimationState = useAnimationStartSnapshot(animationInput, previousBaseLinePointsRef);
   const prevBaseLinePoints = baseLineAnimationState.startValue;
   const baseLineAnimationItems = matchAnimationItems(prevBaseLinePoints ?? null, baseLinePoints, animationMatchBy);
 
@@ -614,7 +615,7 @@ function PolygonWithAnimation({
   return (
     <RadarLabelListProvider showLabels={!isAnimating} points={points}>
       <AnimatedItems
-        animationInput={props}
+        animationInput={animationInput}
         animationIdPrefix="recharts-radar-"
         items={points}
         previousItemsRef={previousPointsRef}

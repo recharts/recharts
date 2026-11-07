@@ -10,10 +10,9 @@ import {
   LabelListFromLabelProp,
   SetLabelListClipArea,
 } from '../component/LabelList';
-import { findAllByType } from '../util/ReactUtils';
+import { useCells } from '../util/useCells';
 import { Curve, CurveType, Props as CurveProps } from '../shape/Curve';
 import { ErrorBarDataItem, ErrorBarDataPointFormatter, ErrorBarDirection } from './ErrorBar';
-import { Cell } from '../component/Cell';
 import { getLinearRegression, interpolate, isNan, isNullish } from '../util/DataUtils';
 import { getCateCoordinateOfLine, getTooltipNameProp, getValueByDataKey } from '../util/ChartUtils';
 import {
@@ -913,7 +912,7 @@ function SymbolsWithAnimation({
       unthemedColors={props.unthemedColors}
     >
       <AnimatedItems
-        animationInput={props}
+        animationInput={points}
         animationIdPrefix="recharts-scatter-"
         items={points}
         previousItemsRef={previousPointsRef}
@@ -1187,7 +1186,7 @@ function ScatterImpl(
   } = resolveDefaultProps(props, defaultScatterProps);
 
   const { needClip } = useNeedsClip(xAxisId, yAxisId);
-  const cells = useMemo(() => findAllByType(props.children, Cell), [props.children]);
+  const cells = useCells(props.children);
   const isPanorama = useIsPanorama();
 
   const points = useAppSelector(state => {
