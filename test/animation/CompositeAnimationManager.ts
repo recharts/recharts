@@ -48,6 +48,18 @@ export class CompositeAnimationManager implements MockAnimationManager {
     }
   }
 
+  async finishAnimationInOneFrame(): Promise<void> {
+    const animatingManagers = this.getAnimatingManagers();
+    if (animatingManagers.size === 0) {
+      throw new Error('No active animation managers available');
+    }
+
+    for (const [, manager] of animatingManagers) {
+      // eslint-disable-next-line no-await-in-loop
+      await manager.finishAnimationInOneFrame();
+    }
+  }
+
   isAnimating(): boolean {
     // Check if any of the animation managers are animating
     return this.getAnimatingManagers().size > 0;

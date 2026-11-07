@@ -775,7 +775,14 @@ function CurveWithAnimation({
       >
         {(stepData, animationElapsedTime, isEntrance) => {
           const animationActive = isAnimating || animationElapsedTime < 1;
-          const visibleLength = animationActive ? getVisibleLength(animationElapsedTime, totalLength) : null;
+          /*
+           * The final frame (animationElapsedTime=1) renders in the same batch as onAnimationEnd,
+           * so isAnimating is already false. It must still reach getVisibleLength, or the hook never
+           * learns that the line is fully drawn and the next data update draws it in again.
+           */
+          const lineLength =
+            animationActive || animationElapsedTime >= 1 ? getVisibleLength(animationElapsedTime, totalLength) : null;
+          const visibleLength = animationActive ? lineLength : null;
           return (
             <StaticCurve
               props={props}
