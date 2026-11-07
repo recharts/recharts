@@ -22,12 +22,15 @@ export const selectChartDataWithIndexes = (state: RechartsRootState): ChartDataS
  * For example: in the Brush panorama, in Legend, in Tooltip.
  */
 export const selectChartDataAndAlwaysIgnoreIndexes: (state: RechartsRootState) => ChartDataState = createSelector(
-  [selectChartDataWithIndexes],
-  (dataState: ChartDataState) => {
-    const dataEndIndex = dataState.chartData != null ? dataState.chartData.length - 1 : 0;
+  [
+    (state: RechartsRootState): ChartData | undefined => state.chartData.chartData,
+    (state: RechartsRootState): unknown => state.chartData.computedData,
+  ],
+  (chartData: ChartData | undefined, computedData: unknown): ChartDataState => {
+    const dataEndIndex = chartData != null ? chartData.length - 1 : 0;
     return {
-      chartData: dataState.chartData,
-      computedData: dataState.computedData,
+      chartData,
+      computedData,
       dataEndIndex,
       dataStartIndex: 0,
     };
