@@ -410,7 +410,7 @@ describe('selectTooltipPayload', () => {
     expect(selectTooltipPayload(store.getState(), 'item', 'hover', undefined)).toEqual([expectedEntry]);
   });
 
-  it('should return sliced data if set by Brush for item hover', () => {
+  it('should not slice data defined on the item by the Brush indexes for item hover', () => {
     const store = createRechartsStore(preloadedState);
     const tooltipSettings: TooltipPayloadConfiguration = {
       getPosition: noop,
@@ -444,14 +444,18 @@ describe('selectTooltipPayload', () => {
       }),
     );
     store.dispatch(setDataStartEndIndexes({ startIndex: 1, endIndex: 10 }));
+    /*
+     * Brush start and end indexes address the chart-level data array.
+     * The item's own data is used as given, so index 0 is its first entry.
+     */
     const expectedEntry: TooltipPayloadEntry = {
-      name: 3,
+      name: 1,
       dataKey: 'y',
       nameKey: 'x',
       stroke: 'red',
       fill: 'green',
-      payload: { x: 3, y: 4 },
-      value: 4,
+      payload: { x: 1, y: 2 },
+      value: 2,
       graphicalItemId: 'graphicalItemId3',
     };
     expect(selectTooltipPayload(store.getState(), 'item', 'hover', undefined)).toEqual([expectedEntry]);
