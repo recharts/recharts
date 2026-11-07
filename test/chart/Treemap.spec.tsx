@@ -1,7 +1,7 @@
 import React from 'react';
-import { describe, test, expect, it, vi } from 'vitest';
-import { render, fireEvent } from '@testing-library/react';
-import { Tooltip, Treemap, XAxis, YAxis } from '../../src';
+import { afterEach, beforeEach, describe, test, expect, it, vi } from 'vitest';
+import { render, fireEvent, within } from '@testing-library/react';
+import { LabelList, RechartsThemeProvider, Tooltip, Treemap, XAxis, YAxis } from '../../src';
 import { exampleTreemapData } from '../_data';
 import { TreemapNode, addToTreemapNodeIndex, computeNode, treemapPayloadSearcher } from '../../src/chart/Treemap';
 import { useChartHeight, useChartWidth, useMargin, useViewBox } from '../../src/context/chartLayoutContext';
@@ -9,6 +9,7 @@ import { getTooltip, showTooltip } from '../component/Tooltip/tooltipTestHelpers
 import { treemapNodeChartMouseHoverTooltipSelector } from '../component/Tooltip/tooltipMouseHoverSelectors';
 import { assertNotNull } from '../helper/assertNotNull';
 import { mockTouchingElement } from '../helper/mockTouchingElement';
+import { Props as LabelProps } from '../../src/component/Label';
 
 const multiLevelInsetData = [
   {
@@ -28,6 +29,112 @@ const siblingGapData = [
 ];
 
 describe('<Treemap />', () => {
+  it.each([
+    {
+      description: 'node names by default',
+      dataKey: undefined,
+      expected: ['Tile: Left', 'Tile: Right'],
+    },
+    {
+      description: 'names from the payload',
+      dataKey: 'name',
+      expected: ['Tile: Left', 'Tile: Right'],
+    },
+    {
+      description: 'values from the payload',
+      dataKey: 'value',
+      expected: ['Tile: 100', 'Tile: 100'],
+    },
+  ])('renders explicit LabelList with $description', ({ dataKey, expected }) => {
+    const { container } = render(
+      <Treemap
+        width={400}
+        height={250}
+        data={siblingGapData}
+        isAnimationActive={false}
+        nameKey="name"
+        dataKey="value"
+        label={false}
+      >
+        <LabelList dataKey={dataKey} formatter={value => `Tile: ${value}`} fill="black" />
+      </Treemap>,
+    );
+
+    const labels = container.querySelectorAll('.recharts-label-list .recharts-label');
+
+    // Explicit labels work even when automatic labels are disabled.
+    // Only data tiles receive labels, not the synthetic root.
+    expect(labels).toHaveLength(2);
+    expect(Array.from(labels, label => label.textContent)).toEqual(expected);
+    expect(container.querySelectorAll('.recharts-rectangle')).toHaveLength(3);
+  });
+
+  it('updates explicit LabelList entries after navigating into a nested tile', () => {
+    const { container } = render(
+      <Treemap
+        width={400}
+        height={250}
+        data={[
+          {
+            name: 'Group',
+            children: [{ name: 'Child', value: 100 }],
+          },
+        ]}
+        isAnimationActive={false}
+        nameKey="name"
+        dataKey="value"
+        type="nest"
+        label={false}
+      >
+        <LabelList fill="black" />
+      </Treemap>,
+    );
+
+    const readLabels = () =>
+      Array.from(container.querySelectorAll('.recharts-label-list .recharts-label'), label => label.textContent);
+
+    // Descendants are not labelled until their level is displayed.
+    expect(readLabels()).toEqual(['Group']);
+
+    const groupTile = container.querySelector('.recharts-treemap-depth-1 .recharts-rectangle');
+    assertNotNull(groupTile);
+    fireEvent.click(groupTile);
+
+    expect(readLabels()).toEqual(['Child']);
+  });
+
+  it('updates built-in label visibility when the label prop changes', () => {
+    const props = {
+      width: 400,
+      height: 250,
+      data: siblingGapData,
+      isAnimationActive: false,
+      nameKey: 'name',
+      dataKey: 'value',
+    };
+
+    const { container, rerender } = render(<Treemap {...props} />);
+    const { queryByText } = within(container);
+
+    // Default labels remain visible.
+    expect(queryByText('Left')).toBeInTheDocument();
+    expect(queryByText('Right')).toBeInTheDocument();
+
+    rerender(<Treemap {...props} label={false} />);
+
+    // Hiding labels must not remove the tiles.
+    expect(queryByText('Left')).not.toBeInTheDocument();
+    expect(queryByText('Right')).not.toBeInTheDocument();
+    expect(container.querySelectorAll('.recharts-rectangle')).toHaveLength(3);
+
+    rerender(<Treemap {...props} label />);
+
+    // Labels can be enabled again without changing the data.
+    expect(queryByText('Left')).toBeInTheDocument();
+    expect(queryByText('Right')).toBeInTheDocument();
+    expect(container.querySelectorAll('.recharts-rectangle')).toHaveLength(3);
+  });
+
   test('renders 20 rectangles in simple TreemapChart', () => {
     const { container } = render(
       <Treemap
@@ -226,7 +333,7 @@ describe('<Treemap />', () => {
 
     expect(container.querySelectorAll('.recharts-rectangle')).toHaveLength(4);
     expect(container.querySelectorAll('.recharts-treemap-depth-1')).toHaveLength(3);
-    expect(container.querySelectorAll('.recharts-treemap-depth-1')[0]).toHaveTextContent('U');
+    expect(within(container).getByText('U')).toBeInTheDocument();
   });
 
   test('breadcrumb navigation allows going back to root', () => {
@@ -1099,5 +1206,411 @@ describe('<Treemap /> mouse events', () => {
 
     fireEvent.touchMove(firstNode, { touches: [{ clientX: 200, clientY: 200 }] });
     expect(onTouchMove).toHaveBeenCalledTimes(0);
+  });
+});
+
+describe('<Treemap /> shared labels', () => {
+  const props = {
+    width: 400,
+    height: 250,
+    data: siblingGapData,
+    isAnimationActive: false,
+    nameKey: 'name',
+    dataKey: 'value',
+  };
+
+  function readLabels(container: Element) {
+    return Array.from(container.querySelectorAll('.recharts-label-list .recharts-label'));
+  }
+
+  it('renders default names through LabelList without a synthetic-root label', () => {
+    const { container } = render(<Treemap {...props} />);
+    expect(readLabels(container).map(label => label.textContent)).toEqual(['Left', 'Right']);
+    expect(container.querySelectorAll('.recharts-rectangle')).toHaveLength(3);
+  });
+
+  it('supports object labels with dataKey, formatter, position and explicit fill', () => {
+    const { container } = render(
+      <Treemap
+        {...props}
+        label={{
+          dataKey: 'value',
+          formatter: value => `Value: ${value}`,
+          position: 'inside',
+          fill: 'purple',
+        }}
+      />,
+    );
+    expect(readLabels(container).map(label => label.textContent)).toEqual(['Value: 100', 'Value: 100']);
+    expect(readLabels(container).map(label => label.getAttribute('fill'))).toEqual(['purple', 'purple']);
+  });
+
+  it('supports function labels with values and calculated view boxes', () => {
+    const custom = vi.fn(({ x, y, value }: LabelProps) => (
+      <text x={x} y={y} data-testid="custom-label">
+        {value}
+      </text>
+    ));
+    const { container } = render(<Treemap {...props} label={custom} />);
+    expect(Array.from(container.querySelectorAll('[data-testid="custom-label"]'), label => label.textContent)).toEqual([
+      'Left',
+      'Right',
+    ]);
+    expect(custom.mock.calls[0][0]).toEqual(
+      expect.objectContaining({
+        value: 'Left',
+        viewBox: expect.objectContaining({ x: 0, y: 0 }),
+      }),
+    );
+  });
+
+  it('supports a React element label', () => {
+    function Custom({ x, y, value }: LabelProps) {
+      return <text x={x} y={y} data-testid="element-label">{`Custom: ${value}`}</text>;
+    }
+    const { container } = render(<Treemap {...props} label={<Custom />} />);
+    expect(Array.from(container.querySelectorAll('[data-testid="element-label"]'), label => label.textContent)).toEqual(
+      ['Custom: Left', 'Custom: Right'],
+    );
+  });
+
+  it('size-filters default labels but not explicitly configured labels', () => {
+    const { container, rerender } = render(<Treemap {...props} width={10} height={10} />);
+    expect(readLabels(container)).toHaveLength(0);
+    rerender(<Treemap {...props} width={10} height={10} label={{ fill: 'black' }} />);
+    expect(readLabels(container)).toHaveLength(2);
+  });
+
+  it('does not add default labels to custom tile content', () => {
+    const { container } = render(<Treemap {...props} content={() => <rect data-testid="custom-tile" />} />);
+    expect(readLabels(container)).toHaveLength(0);
+    expect(container.querySelectorAll('[data-testid="custom-tile"]')).toHaveLength(3);
+  });
+
+  it('resolves label themes by branch rather than by flattened label index', () => {
+    const { container } = render(
+      <RechartsThemeProvider
+        value={{
+          graphicalItems: [
+            { fill: 'red', label: { style: { fill: 'purple' } } },
+            { fill: 'green', label: { style: { fill: 'orange' } } },
+          ],
+        }}
+      >
+        <Treemap
+          {...props}
+          data={[
+            { name: 'Parent A', children: [{ name: 'Child A', value: 100 }] },
+            { name: 'Parent B', children: [{ name: 'Child B', value: 100 }] },
+          ]}
+        />
+      </RechartsThemeProvider>,
+    );
+    expect(readLabels(container).map(label => [label.textContent, label.getAttribute('fill')])).toEqual([
+      ['Parent A', 'purple'],
+      ['Child A', 'purple'],
+      ['Parent B', 'orange'],
+      ['Child B', 'orange'],
+    ]);
+  });
+
+  it('uses the page background as the automatic inside-label color', () => {
+    const { container } = render(
+      <RechartsThemeProvider value={{ graphicalItems: [{ fill: 'navy' }], pageBackground: 'white' }}>
+        <Treemap {...props} />
+      </RechartsThemeProvider>,
+    );
+    expect(readLabels(container).map(label => label.getAttribute('fill'))).toEqual(['white', 'white']);
+  });
+
+  it('lets explicit label fill override the graphical-item label theme', () => {
+    const { container } = render(
+      <RechartsThemeProvider value={{ graphicalItems: [{ fill: 'navy', label: { style: { fill: 'purple' } } }] }}>
+        <Treemap {...props} label={{ fill: 'orange' }} />
+      </RechartsThemeProvider>,
+    );
+    expect(readLabels(container).map(label => label.getAttribute('fill'))).toEqual(['orange', 'orange']);
+  });
+});
+
+/**
+ * True if the element is inside the layer that animates the tile.
+ */
+function hasAnimatedAncestor(element: Element): boolean {
+  return element.closest('[style*="translate"]') != null;
+}
+
+// Regression coverage for Treemap-specific label placement.
+describe('<Treemap /> label rendering boundaries', () => {
+  const props = {
+    width: 400,
+    height: 250,
+    nameKey: 'name',
+    dataKey: 'value',
+    isAnimationActive: false,
+  };
+
+  it('keeps a parent default label before its full-size child tile', () => {
+    const { container } = render(
+      <Treemap {...props} data={[{ name: 'Parent', children: [{ name: 'Child', value: 100 }] }]} />,
+    );
+    const parent = container.querySelector('.recharts-treemap-depth-1 .recharts-label');
+    const childTile = container.querySelector('.recharts-treemap-depth-2 .recharts-rectangle');
+    assertNotNull(parent);
+    assertNotNull(childTile);
+    expect(parent.textContent).toBe('Parent');
+    expect(parent.compareDocumentPosition(childTile) & Node.DOCUMENT_POSITION_FOLLOWING).not.toBe(0);
+  });
+
+  it('keeps default labels in the layer of their tile, like the previous built-in text', () => {
+    const { container } = render(
+      <Treemap {...props} data={[{ name: 'Leaf', value: 100 }]} isAnimationActive animationBegin={1000} />,
+    );
+    const label = container.querySelector('.recharts-treemap-depth-1 .recharts-label');
+    const tile = container.querySelector('.recharts-treemap-depth-1 .recharts-rectangle');
+    assertNotNull(label);
+    assertNotNull(tile);
+    const tileLayer = tile.parentElement?.parentElement;
+    assertNotNull(tileLayer);
+    expect(tileLayer.contains(label)).toBe(true);
+  });
+
+  it('navigates in nest mode when the default name is clicked', () => {
+    const { container, getByText } = render(
+      <Treemap
+        {...props}
+        type="nest"
+        data={[
+          { name: 'Group', children: [{ name: 'Child', value: 100 }] },
+          { name: 'Other', value: 100 },
+        ]}
+      />,
+    );
+    fireEvent.click(getByText('Group'));
+    expect(Array.from(container.querySelectorAll('.recharts-label'), label => label.textContent)).toEqual(['Child']);
+  });
+
+  it('does not animate explicitly configured labels while tiles animate', () => {
+    const { container } = render(
+      <Treemap {...props} data={[{ name: 'Leaf', value: 100 }]} isAnimationActive animationBegin={1000} label={false}>
+        <LabelList dataKey="name" />
+      </Treemap>,
+    );
+    const label = container.querySelector('.recharts-label-list .recharts-label');
+    assertNotNull(label);
+    expect(label.textContent).toBe('Leaf');
+    expect(hasAnimatedAncestor(label)).toBe(false);
+    const tile = container.querySelector('.recharts-treemap-depth-1 .recharts-rectangle');
+    assertNotNull(tile);
+    expect(hasAnimatedAncestor(tile)).toBe(true);
+  });
+});
+
+describe('<Treemap /> static label background regressions', () => {
+  const props = {
+    width: 400,
+    height: 250,
+    data: [{ name: 'Leaf', value: 100 }],
+    isAnimationActive: true,
+    animationBegin: 1000,
+    animationDuration: 3000,
+  };
+  const labelSettings = {
+    position: 'inside' as const,
+    angle: 30,
+    background: { fill: 'white', stroke: 'black', style: { opacity: 0.75 } },
+  };
+  let getBBoxDescriptor: PropertyDescriptor | undefined;
+
+  beforeEach(() => {
+    getBBoxDescriptor = Object.getOwnPropertyDescriptor(SVGElement.prototype, 'getBBox');
+    Object.defineProperty(SVGElement.prototype, 'getBBox', {
+      configurable: true,
+      value: () => ({ x: 180, y: 115, width: 40, height: 20 }),
+    });
+  });
+
+  afterEach(() => {
+    if (getBBoxDescriptor == null) {
+      Reflect.deleteProperty(SVGElement.prototype, 'getBBox');
+    } else {
+      Object.defineProperty(SVGElement.prototype, 'getBBox', getBBoxDescriptor);
+    }
+  });
+
+  it.each(['implicit', 'explicit'])('keeps a portaled %s label background and text static', kind => {
+    const { container } = render(
+      <Treemap {...props} label={kind === 'implicit' ? labelSettings : false}>
+        {kind === 'explicit' ? <LabelList {...labelSettings} /> : null}
+      </Treemap>,
+    );
+    const background = container.querySelector<SVGRectElement>('.recharts-text-background');
+    const text = container.querySelector<SVGTextElement>('.recharts-label');
+    assertNotNull(background);
+    assertNotNull(text);
+    expect(hasAnimatedAncestor(text)).toBe(false);
+    expect(hasAnimatedAncestor(background)).toBe(false);
+    expect(background.style.translate).toBe('');
+    expect(background.style.transition).toBe('');
+    expect(background.style.opacity).toBe('0.75');
+    expect(background.getAttribute('fill')).toBe('white');
+    expect(background.getAttribute('stroke')).toBe('black');
+    expect(text.getAttribute('transform')).toContain('rotate(30');
+    expect(background.getAttribute('transform')).toBe(text.getAttribute('transform'));
+  });
+
+  it('keeps an inline background static', () => {
+    const { container } = render(
+      <Treemap {...props} label={false}>
+        <LabelList {...labelSettings} zIndex={0} />
+      </Treemap>,
+    );
+    const background = container.querySelector<SVGRectElement>('.recharts-text-background');
+    assertNotNull(background);
+    expect(hasAnimatedAncestor(background)).toBe(false);
+    expect(background.style.translate).toBe('');
+  });
+
+  it('retains an explicit background zIndex without animation', () => {
+    const { container } = render(
+      <Treemap {...props} label={{ position: 'inside', background: { zIndex: 500, fill: 'white' } }} />,
+    );
+    const background = container.querySelector<SVGRectElement>('.recharts-zIndex-layer_500 .recharts-text-background');
+    assertNotNull(background);
+    expect(hasAnimatedAncestor(background)).toBe(false);
+    expect(background.style.translate).toBe('');
+  });
+
+  it('keeps backgrounds enabled by a graphical-item theme static', () => {
+    const { container } = render(
+      <RechartsThemeProvider value={{ graphicalItems: [{ fill: 'navy', label: { background: true } }] }}>
+        <Treemap {...props} label={{ position: 'inside' }} />
+      </RechartsThemeProvider>,
+    );
+    const background = container.querySelector<SVGRectElement>('.recharts-text-background');
+    assertNotNull(background);
+    expect(hasAnimatedAncestor(background)).toBe(false);
+    expect(background.style.translate).toBe('');
+  });
+
+  it('keeps default-label backgrounds static with an explicit themed zIndex', () => {
+    const { container } = render(
+      <RechartsThemeProvider value={{ graphicalItems: [{ fill: 'navy', label: { background: { zIndex: 500 } } }] }}>
+        <Treemap {...props} />
+      </RechartsThemeProvider>,
+    );
+    const background = container.querySelector<SVGRectElement>('.recharts-zIndex-layer_500 .recharts-text-background');
+    assertNotNull(background);
+    expect(background.style.translate).toBe('');
+  });
+
+  it('keeps labels static when tile animation is disabled', () => {
+    const { container, rerender } = render(<Treemap {...props} label={labelSettings} />);
+    rerender(<Treemap {...props} label={labelSettings} isAnimationActive={false} />);
+    const background = container.querySelector<SVGRectElement>('.recharts-text-background');
+    assertNotNull(background);
+    expect(hasAnimatedAncestor(background)).toBe(false);
+    expect(background.style.transition).toBe('');
+  });
+});
+
+describe('<Treemap /> typography theme without graphical-item styles', () => {
+  it.each([
+    { typography: { fill: 'purple' }, expected: 'purple' },
+    { typography: { color: 'green' }, expected: 'green' },
+    { typography: { fill: 'purple', color: 'green' }, expected: 'purple' },
+  ])('uses $expected for default labels with an empty graphicalItems palette', ({ typography, expected }) => {
+    const { container } = render(
+      <RechartsThemeProvider value={{ graphicalItems: [], typography }}>
+        <Treemap width={400} height={250} data={siblingGapData} isAnimationActive={false} />
+      </RechartsThemeProvider>,
+    );
+    const labels = container.querySelectorAll('.recharts-label');
+    expect(labels).toHaveLength(2);
+    expect(Array.from(labels, label => label.getAttribute('fill'))).toEqual([expected, expected]);
+  });
+});
+
+describe('<Treemap /> labels without extra contexts', () => {
+  const props = {
+    width: 400,
+    height: 250,
+    data: siblingGapData,
+    isAnimationActive: false,
+    nameKey: 'name',
+    dataKey: 'value',
+  } as const;
+
+  function readLabelTexts(container: Element): ReadonlyArray<string | null> {
+    return Array.from(container.querySelectorAll('.recharts-label'), label => label.textContent);
+  }
+
+  it('draws the default names without taking pointer events, so the tile keeps hover, click and touch', () => {
+    const { container } = render(<Treemap {...props} />);
+    const labels = Array.from(container.querySelectorAll('.recharts-label'));
+
+    expect(labels.map(label => label.textContent)).toEqual(['Left', 'Right']);
+    labels.forEach(label => expect(label).toHaveAttribute('pointer-events', 'none'));
+  });
+
+  it('draws labels from the label prop without taking pointer events, unless set explicitly', () => {
+    const { container, rerender } = render(<Treemap {...props} label={{ dataKey: 'value' }} />);
+    container
+      .querySelectorAll('.recharts-label')
+      .forEach(label => expect(label).toHaveAttribute('pointer-events', 'none'));
+
+    rerender(<Treemap {...props} label={{ dataKey: 'value', pointerEvents: 'auto' }} />);
+    container
+      .querySelectorAll('.recharts-label')
+      .forEach(label => expect(label).toHaveAttribute('pointer-events', 'auto'));
+  });
+
+  it('renders LabelList children in addition to the default names', () => {
+    const { container } = render(
+      <Treemap {...props}>
+        <LabelList dataKey="value" />
+      </Treemap>,
+    );
+
+    const texts = readLabelTexts(container);
+    expect(texts).toHaveLength(4);
+    expect(texts).toEqual(expect.arrayContaining(['Left', 'Right', '100', '100']));
+  });
+
+  it('renders only the LabelList children with label={false}', () => {
+    const { container } = render(
+      <Treemap {...props} label={false}>
+        <LabelList dataKey="value" />
+      </Treemap>,
+    );
+
+    expect(readLabelTexts(container)).toEqual(['100', '100']);
+  });
+
+  it('renders no labels with label={false} and no children', () => {
+    const { container } = render(<Treemap {...props} label={false} />);
+
+    expect(container.querySelectorAll('.recharts-label')).toHaveLength(0);
+  });
+
+  it('keeps the nest indicator arrow next to the default name', () => {
+    const { container } = render(
+      <Treemap
+        {...props}
+        type="nest"
+        data={[
+          {
+            name: 'Group',
+            children: [
+              { name: 'One', value: 1 },
+              { name: 'Two', value: 1 },
+            ],
+          },
+        ]}
+      />,
+    );
+
+    expect(container.querySelector('.recharts-polygon')).toBeInTheDocument();
+    expect(readLabelTexts(container)).toEqual(['Group']);
   });
 });
