@@ -212,14 +212,14 @@ export interface AreaProps<DataPointType = any, DataValueType = any>
   /**
    * Configures the starting value used to build the internal baseline for non-ranged, non-stacked areas.
    *
-   * WARNING despite the name `dataMin`|`dataMax` this actually reads the domain instead, so it should rather be
-   * `domainMin`|`domainMax`. This looks like a small detail,
-   * but it's actually important because domains are usually extended automatically.
-   * For example the default numerical domain starts from 0.
-   *
    * - `number`: uses the corresponding axis value as a flat baseline
-   * - `dataMin`: uses the minimum of the value-axis domain
-   * - `dataMax`: uses the maximum of the value-axis domain
+   * - `dataMin`: uses the smallest value in the data, as read by `dataKey`
+   * - `dataMax`: uses the largest value in the data, as read by `dataKey`
+   *
+   * The bounds are read from the data rather than from the value-axis domain, so a domain that is extended
+   * automatically - the default numerical domain starts from 0 - does not move the baseline.
+   * Null and undefined values are ignored. When `dataKey` yields no number at all, or the value axis is
+   * categorical, the corresponding axis domain edge is used instead.
    *
    * Ignored when the area is stacked or when `dataKey` already returns `[min, max]` tuples.
    *
@@ -998,20 +998,18 @@ export function computeArea({
     dataMax: number | undefined,
     isRange = false,
     baseLine: number | NullableCoordinate[] | undefined;
-  if (hasStack) {
-    for (let i = 0; i < stackedData.length; i++) {
-      const p = stackedData[i];
-      if (p != null) {
-        const lo = Math.min(p[0], p[1]);
-        const hi = Math.max(p[0], p[1]);
-        dataMin = dataMin == null ? lo : Math.min(dataMin, lo);
-        dataMax = dataMax == null ? hi : Math.max(dataMax, hi);
-      }
-    }
-  } else {
+  /*
+   * baseValue only applies to non-stacked areas - a stack takes its baseline from the previous series -
+   * so the bounds are only needed here, and only for the data that is actually rendered.
+   */
+  if (!hasStack) {
     for (let i = 0; i < displayedData.length; i++) {
-      const val = Number(getValueByDataKey(displayedData[i], dataKey));
-      if (!Number.isNaN(val)) {
+      const rawValue = getValueByDataKey(displayedData[i], dataKey);
+      if (rawValue == null) {
+        continue;
+      }
+      const val = Number(rawValue);
+      if (Number.isFinite(val)) {
         dataMin = dataMin == null ? val : Math.min(dataMin, val);
         dataMax = dataMax == null ? val : Math.max(dataMax, val);
       }

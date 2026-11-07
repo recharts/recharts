@@ -1550,4 +1550,55 @@ describe('computeArea', () => {
       },
     ]);
   });
+
+  describe('with baseValue dataMin or dataMax', () => {
+    const areaSettings: AreaSettings = {
+      hide: false,
+      isPanorama: false,
+      type: 'area',
+      xAxisId: 0,
+      yAxisId: 0,
+      zAxisId: 0,
+      id: 'area-0',
+      barSize: undefined,
+      connectNulls: false,
+      baseValue: 'dataMin',
+      dataKey: 'v',
+      stackId: '',
+      data: [],
+    };
+
+    /*
+     * mockScale multiplies by 2, so the baseline coordinate is the data bound times two:
+     * 10 -> 20 for dataMin, 30 -> 60 for dataMax.
+     * Number(null) is 0, so a null that is read instead of skipped would pull dataMin down to 0.
+     */
+    const displayedData = [{ v: 10 }, { v: null }, { v: undefined }, { v: 30 }];
+
+    it('should compute dataMin from the numeric values only', () => {
+      const { baseLine } = computeArea({
+        displayedData,
+        areaSettings,
+        layout: 'horizontal',
+        // @ts-expect-error incomplete mock
+        yAxis: { scale: mockScale, type: 'number' },
+        // @ts-expect-error incomplete mock
+        xAxis: { scale: mockScale2, dataKey: 'v' },
+      });
+      expect(baseLine).toBe(20);
+    });
+
+    it('should compute dataMax from the numeric values only', () => {
+      const { baseLine } = computeArea({
+        displayedData,
+        areaSettings: { ...areaSettings, baseValue: 'dataMax' },
+        layout: 'horizontal',
+        // @ts-expect-error incomplete mock
+        yAxis: { scale: mockScale, type: 'number' },
+        // @ts-expect-error incomplete mock
+        xAxis: { scale: mockScale2, dataKey: 'v' },
+      });
+      expect(baseLine).toBe(60);
+    });
+  });
 });
