@@ -14,17 +14,21 @@ type BarRect = { x: number; y: number; width: number; height: number };
 function getBarRects(container: Element): BarRect[] {
   return Array.from(container.querySelectorAll('.recharts-bar-rectangle path')).map(path => {
     // Rectangle paths are drawn as "M x,y h width v height h -width Z"
-    const match = /^M\s*([-\d.]+),([-\d.]+)\s*h\s*([-\d.]+)\s*v\s*([-\d.]+)/.exec(path.getAttribute('d') ?? '');
+    const d = path.getAttribute('d');
+    const match = /^M\s*([-\d.]+),([-\d.]+)\s*h\s*([-\d.]+)\s*v\s*([-\d.]+)/.exec(d ?? '');
+    if (match === null) {
+      throw new Error(`Unexpected rectangle path: ${d}`);
+    }
     return {
-      x: Number(match?.[1]),
-      y: Number(match?.[2]),
-      width: Number(match?.[3]),
-      height: Number(match?.[4]),
+      x: Number(match[1]),
+      y: Number(match[2]),
+      width: Number(match[3]),
+      height: Number(match[4]),
     };
   });
 }
 
-function expectStackedBars(rects: BarRect[]) {
+function expectStackedBars(rects: BarRect[]): void {
   expect(rects).toHaveLength(2);
   const [bottom, top] = rects;
   expect(bottom.width).toBeGreaterThan(0);
@@ -79,6 +83,7 @@ describe('stacked Bar with a single data point', () => {
     expect(left.width).toBeGreaterThan(0);
     expect(left.height).toBeGreaterThan(0);
     expect(right.width).toBeGreaterThan(0);
+    expect(right.height).toBeGreaterThan(0);
     expect(right.y).toBe(left.y);
     expect(right.x).toBe(left.x + left.width);
   });

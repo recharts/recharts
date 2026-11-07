@@ -17,7 +17,7 @@ import { showTooltipOnCoordinate } from './Tooltip/tooltipTestHelpers';
 // uv is 400 for "Page A", which is above this domain, so the first point overflows the plot area
 const overflowingDomain: [number, number] = [0, 250];
 
-function hoverFirstPoint(container: Element) {
+function hoverFirstPoint(container: Element): void {
   // left edge of the plot area, nearest to the first data point
   showTooltipOnCoordinate(container, '.recharts-wrapper', { clientX: 70, clientY: 200 });
 }
@@ -36,7 +36,7 @@ function getClipRect(container: Element, clipPathUrl: string): Element {
   return rect;
 }
 
-function expectActiveDotOutsideAndClipped(container: Element) {
+function expectActiveDotOutsideAndClipped(container: Element): void {
   const activeDot = getActiveDot(container);
   const circle = activeDot.querySelector('circle');
   assertNotNull(circle);
