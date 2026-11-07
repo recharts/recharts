@@ -25,6 +25,8 @@ const config = path.join(testDir, 'playwright.config.ts');
 const snapshotRoot = path.resolve(testDir, '__snapshots__');
 const MAX_SCREENSHOTS_PER_TEST = 50;
 const extraNamedScreenshots = new Set([]);
+// Windows installs the npx launcher as npx.cmd, which needs a shell for execFileSync to run it.
+const npx = process.platform === 'win32' ? 'npx.cmd' : 'npx';
 
 function sanitizeForFilePath(s) {
   // eslint-disable-next-line no-control-regex -- copied from playwright-core, which strips control characters too
@@ -44,10 +46,11 @@ function escapeRegExp(s) {
 }
 
 const report = JSON.parse(
-  execFileSync('npx', ['playwright', 'test', '--config', config, '--list', '--reporter=json'], {
+  execFileSync(npx, ['playwright', 'test', '--config', config, '--list', '--reporter=json'], {
     encoding: 'utf8',
     maxBuffer: 256 * 1024 * 1024,
     env: { ...process.env, CI: process.env.CI ?? '1' },
+    shell: process.platform === 'win32',
   }),
 );
 
