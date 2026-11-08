@@ -26,6 +26,17 @@ const SPAN_STYLE = {
   margin: 0,
   border: 'none',
   whiteSpace: 'pre',
+  /*
+   * The measurement span is reused, so reset every style that is part of the cache key.
+   * Otherwise a style set for one measurement (e.g. a tick's fontFamily) would leak into
+   * the next one that doesn't set it, and the result would be cached under the wrong key.
+   */
+  fontSize: '',
+  fontFamily: '',
+  fontWeight: '',
+  fontStyle: '',
+  letterSpacing: '',
+  textTransform: '',
 };
 const MEASUREMENT_SPAN_ID = 'recharts_measurement_span';
 

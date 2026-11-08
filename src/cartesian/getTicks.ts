@@ -146,11 +146,20 @@ export type GetTicksInput = {
   viewBox: CartesianViewBoxRequired;
 };
 
-export function getTicks(
-  props: GetTicksInput,
-  fontSize?: string,
-  letterSpacing?: string,
-): ReadonlyArray<CartesianTickItem> {
+/**
+ * The text styles that affect how wide or tall a tick label is.
+ * Tick labels are measured outside of the axis, so these have to be passed explicitly;
+ * anything left undefined is inherited from the page.
+ */
+export type TickTextStyle = {
+  fontSize?: string;
+  letterSpacing?: string;
+  fontFamily?: string;
+  fontWeight?: string;
+  fontStyle?: string;
+};
+
+export function getTicks(props: GetTicksInput, tickTextStyle: TickTextStyle = {}): ReadonlyArray<CartesianTickItem> {
   const { tick, ticks, viewBox, minTickGap, orientation, interval, tickFormatter, unit, angle } = props;
 
   if (!ticks || !ticks.length || !tick) {
@@ -164,15 +173,14 @@ export function getTicks(
   let candidates: ReadonlyArray<CartesianTickItem> = [];
 
   const sizeKey = orientation === 'top' || orientation === 'bottom' ? 'width' : 'height';
-  const unitSize: Size =
-    unit && sizeKey === 'width' ? getStringSize(unit, { fontSize, letterSpacing }) : { width: 0, height: 0 };
+  const unitSize: Size = unit && sizeKey === 'width' ? getStringSize(unit, tickTextStyle) : { width: 0, height: 0 };
 
   const getTickSize = (content: CartesianTickItem, index: number) => {
     const value = typeof tickFormatter === 'function' ? tickFormatter(content.value, index) : content.value;
     // Recharts only supports angles when sizeKey === 'width'
     return sizeKey === 'width'
-      ? getAngledTickWidth(getStringSize(value, { fontSize, letterSpacing }), unitSize, angle)
-      : getStringSize(value, { fontSize, letterSpacing })[sizeKey];
+      ? getAngledTickWidth(getStringSize(value, tickTextStyle), unitSize, angle)
+      : getStringSize(value, tickTextStyle)[sizeKey];
   };
 
   const tick0 = ticks[0];
