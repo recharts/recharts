@@ -12,6 +12,7 @@ export const expectedInBundle = [
   'Layer',
   'matchAppend',
   'matchByIndex',
+  'Symbols',
   'Text',
   'useActiveTooltipDataPoints',
   'usePlotArea',

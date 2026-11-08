@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { PureComponent, ReactNode, useCallback, useState } from 'react';
+import { PureComponent, ReactNode, useCallback, useMemo, useState } from 'react';
 import omit from 'es-toolkit/compat/omit';
 import get from 'es-toolkit/compat/get';
 
@@ -45,10 +45,21 @@ import { RequiresDefaultProps, resolveDefaultProps } from '../util/resolveDefaul
 import { RegisterGraphicalItemId } from '../context/RegisterGraphicalItemId';
 import { GraphicalItemId } from '../state/graphicalItemsSlice';
 import { initialEventSettingsState } from '../state/eventSettingsSlice';
-import { RechartsTheme } from '../theme/RechartsTheme';
+import { GraphicalItemStyle, RechartsTheme } from '../theme/RechartsTheme';
 import { useBackwardsCompatibleTheme } from '../theme/useBackwardsCompatibleTheme';
 import { hasOwnColors } from '../theme/dataEntryStyles';
 import { getEffectivePageBackground } from '../theme/pageBackground';
+import {
+  CartesianLabelListContextProvider,
+  CartesianLabelListEntry,
+  ImplicitLabelListType,
+  LabelList,
+  LabelListFromLabelProp,
+} from '../component/LabelList';
+import { AllZIndexPortals } from '../zIndex/ZIndexPortal';
+import { DataLabelColorsContextProvider, DataLabelThemeContextProvider } from '../theme/labelTheme';
+import { RechartsFill } from '../fill/RechartsFill';
+import { readEntryFill, splitFill } from '../fill/fillDefinitions';
 
 const NODE_VALUE_KEY = 'value';
 
@@ -64,6 +75,7 @@ export interface TreemapDataType {
 /**
  * This is what is returned from `squarify`, the final treemap data structure
  * that gets rendered and is stored in
+ * @public
  */
 export interface TreemapNode {
   children: ReadonlyArray<TreemapNode> | null;
@@ -420,8 +432,14 @@ const squarify = (node: TreemapNode, aspectRatio: number, nodeInset: number, nod
   return node;
 };
 
+/**
+ * @public
+ */
 export type TreemapContentType = ReactNode | ((props: TreemapNode) => React.ReactElement);
 
+/**
+ * @public
+ */
 export interface Props<DataPointType extends TreemapDataType = TreemapDataType, DataValueType = any>
   extends DataConsumer<DataPointType, DataValueType>, EventThrottlingProps {
   /**
@@ -487,7 +505,28 @@ export interface Props<DataPointType extends TreemapDataType = TreemapDataType, 
    */
   content?: TreemapContentType;
 
-  fill?: string;
+  /**
+   * Renders one label for each tile, through the shared LabelList.
+   * Options:
+   * - `true` or undefined: renders the node names on the tiles where they fit;
+   * - `false`: no labels are rendered;
+   * - object: the props of LabelList component;
+   * - ReactElement: a custom SVG label element, such as `<text>` or `<g>`;
+   * - function: a render function of custom label.
+   *
+   * `<LabelList>` children render in addition to these labels. Set `label={false}` to show only the children.
+   * The node names are not drawn when `content` renders the tiles.
+   */
+  label?: ImplicitLabelListType;
+
+  /**
+   * The fill of the tiles: a color, or a {@link RechartsFill} object with an SVG definition,
+   * such as a pattern or a gradient. A node in the data can set its own `fill` the same way.
+   * If the fill object has no `color`, the definition gets the color the tile would have without it.
+   *
+   * @example <Treemap fill={{ definition: pattern(patterns.diagonal) }} />
+   */
+  fill?: string | RechartsFill;
 
   stroke?: string;
 
@@ -625,7 +664,7 @@ type ContentItemProps = {
   content: TreemapContentType;
   nodeProps: TreemapNode;
   /**
-   * True if the data node or the Treemap props define their own colors. Such nodes ignore the theme completely.
+   * True if the data node or the Treemap props define their own colors. Such nodes ignore the theme colors.
    * This is computed from the data node and the Treemap props separately
    * because nodeProps merge both and also include layout fields.
    */
@@ -640,12 +679,11 @@ type ContentItemProps = {
   /**
    * Undefined when there is no theme at all, which is when the legacy styles apply.
    */
-  themeGraphicalItems: RechartsTheme['graphicalItems'] | undefined;
+  themeGraphicalItems: ReadonlyArray<GraphicalItemStyle> | undefined;
   /**
    * The color behind the chart, used for the tile outlines.
    */
   themePageBackground: string | undefined;
-  typography: React.CSSProperties | undefined;
   dataKey: DataKey<any>;
   onClick?: (e: React.MouseEvent<SVGPathElement, MouseEvent>) => void;
   onMouseEnter?: (e: React.MouseEvent<SVGPathElement, MouseEvent>) => void;
@@ -659,6 +697,12 @@ type TileStyles = {
 };
 
 /**
+ * Nested tiles are painted clear so the colored depth-1 branch shows through.
+ * Tooltip text cannot use this value: it would be invisible.
+ */
+const TRANSPARENT_NESTED_TILE_FILL = 'rgba(255,255,255,0)';
+
+/**
  * Resolves the default styles of a single tile.
  * Explicit props and styles defined in data are applied later, on top of these.
  */
@@ -669,20 +713,24 @@ function getTileStyles({
   colorPanel,
   themeGraphicalItems,
   themePageBackground,
-}: Pick<
-  ContentItemProps,
-  'nodeProps' | 'nodeHasOwnColors' | 'branchIndex' | 'colorPanel' | 'themeGraphicalItems' | 'themePageBackground'
->): TileStyles {
+}: {
+  nodeProps: { depth: number; index: number };
+  nodeHasOwnColors: boolean;
+  branchIndex: number | undefined;
+  colorPanel: ReadonlyArray<string> | undefined;
+  themeGraphicalItems: ReadonlyArray<GraphicalItemStyle> | undefined;
+  themePageBackground: string | undefined;
+}): TileStyles {
   const colors = colorPanel || COLOR_PANEL;
-  const legacyFill = nodeProps.depth < 2 ? colors[nodeProps.index % colors.length] : 'rgba(255,255,255,0)';
+  const legacyFill = nodeProps.depth < 2 ? colors[nodeProps.index % colors.length] : TRANSPARENT_NESTED_TILE_FILL;
   if (themeGraphicalItems == null) {
     return { fill: legacyFill, stroke: '#fff', strokeWidth: undefined };
   }
   const fillFromColorPanel = colorPanel == null ? undefined : legacyFill;
   if (nodeHasOwnColors) {
     /*
-     * A node that brings its own colors in data, or in the Treemap props, ignores the theme completely,
-     * so that its colors are not mixed with the theme colors.
+     * A node that brings its own colors in data, or in the Treemap props, ignores the theme colors,
+     * so that its colors are not mixed with the theme colors. The theme only gives tiles their colors.
      */
     return { fill: fillFromColorPanel, stroke: undefined, strokeWidth: undefined };
   }
@@ -701,10 +749,114 @@ function getTileStyles({
    */
   const branchStyle = themeGraphicalItems[branchIndex % themeGraphicalItems.length];
   return {
-    fill: fillFromColorPanel ?? branchStyle?.fill,
+    fill: fillFromColorPanel ?? splitFill(branchStyle?.fill).color,
     stroke: themePageBackground ?? branchStyle?.stroke,
     strokeWidth: undefined,
   };
+}
+
+/**
+ * One label-list entry per tile: the tile rectangle is the viewBox and the node name is the value.
+ */
+interface TreemapLabelListEntry extends CartesianLabelListEntry {
+  payload: TreemapNode;
+  /**
+   * Index of the top-level tile that this node belongs to. The theme label style is picked by this index,
+   * the same way as the tile color.
+   */
+  branchIndex: number;
+  /**
+   * True if the node or the Treemap props define their own colors, which turns off the theme.
+   */
+  ignoresTheme: boolean;
+  tileStroke: string | undefined;
+  /**
+   * Ties the label to its tile in the DOM, the same way as the tile rectangle.
+   */
+  'data-recharts-item-index': TooltipIndex;
+}
+
+/**
+ * Provides the label entries and the label theme of the tiles, the same way as Pie, Funnel and Sankey do.
+ * Uses only the existing label contexts.
+ */
+function TreemapLabelListProvider({
+  entries,
+  graphicalItems,
+  children,
+}: {
+  entries: ReadonlyArray<TreemapLabelListEntry>;
+  graphicalItems: ReadonlyArray<GraphicalItemStyle> | undefined;
+  children: ReactNode;
+}) {
+  const resolveLabelTheme = useCallback(
+    (index: number) => {
+      const entry = entries[index];
+      if (entry == null || entry.ignoresTheme || graphicalItems == null || graphicalItems.length === 0) {
+        return undefined;
+      }
+      return graphicalItems[entry.branchIndex % graphicalItems.length]?.label;
+    },
+    [entries, graphicalItems],
+  );
+  const colors = useMemo(
+    () => ({
+      hasFilledShapes: true,
+      getShapeColors: (index: number) => ({ fill: entries[index]?.fill, stroke: entries[index]?.tileStroke }),
+    }),
+    [entries],
+  );
+
+  return (
+    <DataLabelThemeContextProvider value={resolveLabelTheme}>
+      <DataLabelColorsContextProvider value={colors}>
+        <CartesianLabelListContextProvider value={entries}>{children}</CartesianLabelListContextProvider>
+      </DataLabelColorsContextProvider>
+    </DataLabelThemeContextProvider>
+  );
+}
+
+/**
+ * The node name fits in the tile, with the same rule the previous built-in label used.
+ */
+function isDefaultLabelVisible(entry: TreemapLabelListEntry): boolean {
+  const { width, height, name } = entry.payload;
+  if (width <= 20 || height <= 20) {
+    return false;
+  }
+  const size = getStringSize(name);
+  return size.width < width && size.height < height;
+}
+
+/**
+ * The default node name of one tile.
+ * It renders inline (zIndex 0) in the layer of its tile, where the built-in text was before,
+ * so it keeps the paint order, the animation and the events of the tile.
+ * It does not take pointer events, so hover, click and touch reach the tile underneath.
+ */
+function TreemapDefaultLabel({
+  entry,
+  graphicalItems,
+  typography,
+}: {
+  entry: TreemapLabelListEntry;
+  graphicalItems: ReadonlyArray<GraphicalItemStyle> | undefined;
+  typography: React.CSSProperties | undefined;
+}) {
+  const entries = useMemo(() => [entry], [entry]);
+  const hasThemeColors = graphicalItems != null && graphicalItems.length > 0;
+  return (
+    <TreemapLabelListProvider entries={entries} graphicalItems={graphicalItems}>
+      <LabelList
+        zIndex={0}
+        position="insideLeft"
+        offset={8}
+        fontSize={typography?.fontSize ?? 14}
+        fill={hasThemeColors ? undefined : (typography?.fill ?? typography?.color ?? '#000')}
+        pointerEvents="none"
+      />
+    </TreemapLabelListProvider>
+  );
 }
 
 function ContentItem({
@@ -716,7 +868,6 @@ function ContentItem({
   colorPanel,
   themeGraphicalItems,
   themePageBackground,
-  typography,
   onMouseEnter,
   onMouseLeave,
   onClick,
@@ -758,21 +909,19 @@ function ContentItem({
       />
     );
   }
-  let text = null;
-  const nameSize = getStringSize(nodeProps.name);
-  if (width > 20 && height > 20 && nameSize.width < width && nameSize.height < height) {
-    text = (
-      <text
-        x={x + 8}
-        y={y + height / 2 + 7}
-        fontSize={typography?.fontSize ?? 14}
-        fill={typography?.fill ?? typography?.color}
-        style={typography}
-      >
-        {nodeProps.name}
-      </text>
-    );
-  }
+
+  /*
+   * A fill object from the node, from the Treemap, or from the theme branch paints through its definition,
+   * in the color the tile has without it.
+   */
+  const nodeFill = readEntryFill(nodeProps);
+  const branchDefinition =
+    !nodeHasOwnColors && branchIndex != null && themeGraphicalItems != null && themeGraphicalItems.length > 0
+      ? splitFill(themeGraphicalItems[branchIndex % themeGraphicalItems.length]?.fill).fillObject?.definition
+      : undefined;
+  const definition = nodeFill.fillObject?.definition ?? branchDefinition;
+  const fillObject: RechartsFill | undefined =
+    definition == null ? undefined : { color: nodeFill.color ?? fill, definition };
 
   return (
     <g>
@@ -781,13 +930,13 @@ function ContentItem({
         stroke={stroke}
         strokeWidth={strokeWidth}
         {...omit(nodeProps, ['children', 'id'])}
+        {...(fillObject == null ? undefined : { fill: fillObject })}
         onMouseEnter={onMouseEnter}
         onMouseLeave={onMouseLeave}
         onClick={onClick}
         data-recharts-item-index={nodeProps.tooltipIndex}
       />
       {arrow}
-      {text}
     </g>
   );
 }
@@ -826,30 +975,186 @@ function ContentItemWithEvents(props: ContentItemProps) {
   return <ContentItem {...props} onMouseEnter={onMouseEnter} onMouseLeave={onMouseLeave} onClick={onClick} />;
 }
 
+type TreemapTooltipNode = {
+  depth: number;
+  index: number;
+  tooltipIndex: TooltipIndex;
+  [key: string]: unknown;
+};
+
+type TreemapTooltipColorSource = {
+  /**
+   * Explicit `<Treemap fill>`. This is not the theme fallback: a theme color is chosen per node.
+   */
+  fill: string | undefined;
+  stroke: string | undefined;
+  colorPanel: ReadonlyArray<string> | undefined;
+  themeGraphicalItems: ReadonlyArray<GraphicalItemStyle> | undefined;
+};
+
+function isTreemapTooltipNode(value: unknown): value is TreemapTooltipNode {
+  if (typeof value !== 'object' || value === null) {
+    return false;
+  }
+  if (!('depth' in value) || !('index' in value) || !('tooltipIndex' in value)) {
+    return false;
+  }
+  return (
+    typeof value.depth === 'number' &&
+    typeof value.index === 'number' &&
+    (typeof value.tooltipIndex === 'string' || value.tooltipIndex === null)
+  );
+}
+
+function readStringField(entry: object, key: string): string | undefined {
+  const descriptor = Object.getOwnPropertyDescriptor(entry, key);
+  if (descriptor == null || typeof descriptor.value !== 'string') {
+    return undefined;
+  }
+  return descriptor.value;
+}
+
+/**
+ * Top-level tile index this node belongs to. Nested nodes inherit that branch, the same way `renderNode` does.
+ */
+function getBranchIndex(tooltipIndex: TooltipIndex, depth: number, index: number): number | undefined {
+  if (depth < 1) {
+    return undefined;
+  }
+  if (tooltipIndex == null || tooltipIndex === '') {
+    return depth === 1 ? index : undefined;
+  }
+  const match = /^children\[(\d+)\]/.exec(tooltipIndex);
+  const rawIndex = match?.[1];
+  if (rawIndex == null) {
+    return undefined;
+  }
+  const branchIndex = Number(rawIndex);
+  return Number.isInteger(branchIndex) ? branchIndex : undefined;
+}
+
+/**
+ * Fill of the painted depth-1 tile this node belongs to.
+ * A nested tile is drawn transparent over that ancestor, so this is the color the user sees.
+ * An explicit color panel wins. With no color panel, the theme's branch fill does,
+ * and the built-in panel covers a chart that has neither.
+ */
+function getVisibleBranchFill(branchIndex: number, source: TreemapTooltipColorSource): string | undefined {
+  if (source.colorPanel == null) {
+    const themeItems = source.themeGraphicalItems;
+    if (themeItems != null && themeItems.length > 0) {
+      const themeFill = splitFill(themeItems[branchIndex % themeItems.length]?.fill).color;
+      if (themeFill != null) {
+        return themeFill;
+      }
+    }
+  }
+  const colors = source.colorPanel || COLOR_PANEL;
+  if (colors.length === 0) {
+    return undefined;
+  }
+  return colors[branchIndex % colors.length];
+}
+
+/**
+ * The fill `ContentItem` paints on the default rectangle.
+ * A data `fill` wins, then the Treemap `fill`, then the color panel or the theme.
+ * A nested tile's own fill is transparent, so the tooltip uses the visible ancestor color instead.
+ */
+function getRenderedTreemapFill(node: TreemapTooltipNode, source: TreemapTooltipColorSource): string | undefined {
+  const dataFill = readEntryFill(node).color;
+  if (dataFill != null) {
+    return dataFill;
+  }
+  if (source.fill != null) {
+    return source.fill;
+  }
+  const branchIndex = getBranchIndex(node.tooltipIndex, node.depth, node.index);
+  const renderedFill = getTileStyles({
+    nodeProps: { depth: node.depth, index: node.index },
+    nodeHasOwnColors: hasOwnColors(node) || hasOwnColors(source),
+    branchIndex,
+    colorPanel: source.colorPanel,
+    themeGraphicalItems: source.themeGraphicalItems,
+    themePageBackground: undefined,
+  }).fill;
+  if (renderedFill === TRANSPARENT_NESTED_TILE_FILL && branchIndex != null) {
+    const visibleFill = getVisibleBranchFill(branchIndex, source);
+    return visibleFill === TRANSPARENT_NESTED_TILE_FILL ? undefined : visibleFill;
+  }
+  return renderedFill;
+}
+
+/**
+ * Tooltip swatch for the active node.
+ * When no fill was resolved — a stroke-only node under a theme, which renders with the SVG default —
+ * keep the previous datum `color` / `fill` / `stroke` fallback. That open question is unchanged.
+ * https://github.com/recharts/recharts/issues/7980
+ */
+function getTreemapTooltipColor(entry: unknown, source: TreemapTooltipColorSource): string | undefined {
+  if (!isTreemapTooltipNode(entry)) {
+    return undefined;
+  }
+  const renderedFill = getRenderedTreemapFill(entry, source);
+  if (renderedFill != null) {
+    return renderedFill;
+  }
+  return readStringField(entry, 'color') ?? readStringField(entry, 'fill') ?? readStringField(entry, 'stroke');
+}
+
 const SetTreemapTooltipEntrySettings = React.memo(
   ({
     dataKey,
     nameKey,
     stroke,
     fill,
-    currentRoot,
+    colorPanel,
+    themeGraphicalItems,
+    formatRoot,
     id,
-  }: Pick<InternalTreemapProps, 'dataKey' | 'nameKey' | 'stroke' | 'fill' | 'id'> & {
-    currentRoot: TreemapNode | undefined;
+  }: Pick<InternalTreemapProps, 'dataKey' | 'nameKey' | 'stroke' | 'colorPanel' | 'id'> & {
+    /**
+     * The color of the Treemap `fill`.
+     */
+    fill: string | undefined;
+    themeGraphicalItems: ReadonlyArray<GraphicalItemStyle> | undefined;
+    /**
+     * The tree that is rendered. Its `tooltipIndex` and `depth` match the hovered tile, also after zooming in.
+     */
+    formatRoot: TreemapNode | null;
   }) => {
+    /*
+     * `fill` and `stroke` here are the explicit Treemap props. The first theme color stays the series
+     * fallback for a node that resolved no fill of its own; per-node colors come from `getEntryColor`.
+     */
+    const seriesFill = fill ?? splitFill(themeGraphicalItems?.[0]?.fill).color;
+    const seriesStroke = stroke ?? themeGraphicalItems?.[0]?.stroke;
+    const colorSource: TreemapTooltipColorSource = {
+      fill,
+      stroke,
+      colorPanel,
+      themeGraphicalItems,
+    };
     const tooltipEntrySettings: TooltipPayloadConfiguration = {
-      dataDefinedOnItem: currentRoot,
+      dataDefinedOnItem: formatRoot,
       getPosition: noop, // TODO I think Treemap has the capability of computing positions and supporting defaultIndex? Except it doesn't yet
+      /*
+       * Without a theme, keep the legacy tooltip color: the datum colors, then the Treemap `fill`.
+       * Legacy nested tiles are transparent, so their rendered fill would make the tooltip text invisible.
+       */
+      ...(themeGraphicalItems == null
+        ? {}
+        : { getEntryColor: (entry: unknown) => getTreemapTooltipColor(entry, colorSource) }),
       settings: {
-        stroke,
+        stroke: seriesStroke,
         strokeWidth: undefined,
-        fill,
+        fill: seriesFill,
         dataKey,
         nameKey,
         name: undefined, // Each TreemapNode has its own name
         hide: false,
         type: undefined,
-        color: fill,
+        color: seriesFill,
         unit: '',
         graphicalItemId: id,
       },
@@ -874,6 +1179,7 @@ function TreemapItem({
   isLeaf,
   treemapProps,
   onNestClick,
+  defaultLabelEntry,
 }: {
   content: TreemapContentType;
   nodeProps: TreemapNode;
@@ -882,6 +1188,11 @@ function TreemapItem({
   isLeaf: boolean;
   treemapProps: InternalTreemapProps;
   onNestClick: (node: TreemapNode) => void;
+  /**
+   * The default name of the node, undefined if it is not shown.
+   * It renders in the layer of the tile, where the built-in text was before.
+   */
+  defaultLabelEntry: TreemapLabelListEntry | undefined;
 }): ReactNode {
   const {
     id,
@@ -978,8 +1289,14 @@ function TreemapItem({
             colorPanel={colorPanel}
             themeGraphicalItems={themeGraphicalItems}
             themePageBackground={themePageBackground}
-            typography={typography}
           />
+          {defaultLabelEntry && (
+            <TreemapDefaultLabel
+              entry={defaultLabelEntry}
+              graphicalItems={themeGraphicalItems}
+              typography={typography}
+            />
+          )}
         </Layer>
       )}
     </CSSTransitionAnimate>
@@ -991,7 +1308,7 @@ type InternalTreemapProps = RequiresDefaultProps<Props, typeof defaultTreeMapPro
   height: number;
   dispatch: AppDispatch;
   id: GraphicalItemId;
-  themeGraphicalItems: RechartsTheme['graphicalItems'] | undefined;
+  themeGraphicalItems: ReadonlyArray<GraphicalItemStyle> | undefined;
   themePageBackground: string | undefined;
   typography?: React.CSSProperties;
 };
@@ -1106,8 +1423,14 @@ class TreemapWithState extends PureComponent<InternalTreemapProps, State> {
    * @param root parent of the node
    * @param node the node to render
    * @param parentBranchIndex index of the top-level tile that the parent belongs to, undefined if the parent is the root
+   * @param defaultLabels the default label entries, by the tooltip index of their node
    */
-  renderNode(root: TreemapNode, node: TreemapNode, parentBranchIndex: number | undefined): ReactNode {
+  renderNode(
+    root: TreemapNode,
+    node: TreemapNode,
+    parentBranchIndex: number | undefined,
+    defaultLabels: ReadonlyMap<TooltipIndex, TreemapLabelListEntry>,
+  ): ReactNode {
     const { content, type } = this.props;
     const nodeProps = { ...svgPropertiesNoEvents(this.props), ...node, root };
     const isLeaf = !node.children || !node.children.length;
@@ -1135,22 +1458,76 @@ class TreemapWithState extends PureComponent<InternalTreemapProps, State> {
           branchIndex={branchIndex}
           treemapProps={this.props}
           onNestClick={this.handleClick}
+          defaultLabelEntry={defaultLabels.get(node.tooltipIndex)}
         />
         {node.children && node.children.length
-          ? node.children.map((child: TreemapNode) => this.renderNode(node, child, branchIndex))
+          ? node.children.map((child: TreemapNode) => this.renderNode(node, child, branchIndex, defaultLabels))
           : null}
       </Layer>
     );
   }
 
-  renderAllNodes(): ReactNode {
+  renderAllNodes(defaultLabels: ReadonlyMap<TooltipIndex, TreemapLabelListEntry>): ReactNode {
     const { formatRoot } = this.state;
 
     if (!formatRoot) {
       return null;
     }
 
-    return this.renderNode(formatRoot, formatRoot, undefined);
+    return this.renderNode(formatRoot, formatRoot, undefined, defaultLabels);
+  }
+
+  /**
+   * One entry per rendered tile, without the root.
+   * In the nest mode, only the children of the current root are rendered, so only they get labels.
+   */
+  getLabelListEntries(): ReadonlyArray<TreemapLabelListEntry> {
+    const { formatRoot } = this.state;
+    const { type, colorPanel, themeGraphicalItems, themePageBackground } = this.props;
+    const entries: TreemapLabelListEntry[] = [];
+    const chartAttributes = svgPropertiesNoEvents(this.props);
+    const chartHasOwnColors = hasOwnColors(this.props);
+
+    const visitNode = (root: TreemapNode, node: TreemapNode, branchIndex: number): void => {
+      const nodeProps = { ...chartAttributes, ...node, root };
+      const nodeHasOwnColors = chartHasOwnColors || hasOwnColors(node);
+      const tileStyles = getTileStyles({
+        nodeProps,
+        nodeHasOwnColors,
+        branchIndex,
+        colorPanel,
+        themeGraphicalItems,
+        themePageBackground,
+      });
+      // the label is drawn on top of the color the tile is drawn with
+      const { style } = nodeProps;
+      const styleFill = style != null && typeof style === 'object' && 'fill' in style ? style.fill : undefined;
+      const styleStroke = style != null && typeof style === 'object' && 'stroke' in style ? style.stroke : undefined;
+      const fill = styleFill ?? readEntryFill(nodeProps).color ?? tileStyles.fill;
+      const stroke = styleStroke ?? ('stroke' in nodeProps ? nodeProps.stroke : tileStyles.stroke);
+      const viewBox = { ...filterRect(node), upperWidth: node.width, lowerWidth: node.width };
+
+      entries.push({
+        ...viewBox,
+        viewBox,
+        value: node.name,
+        payload: node,
+        fill: typeof fill === 'string' ? fill : undefined,
+        tileStroke: typeof stroke === 'string' ? stroke : undefined,
+        branchIndex,
+        ignoresTheme: nodeHasOwnColors,
+        'data-recharts-item-index': node.tooltipIndex,
+      });
+
+      if (type !== 'nest') {
+        node.children?.forEach(child => visitNode(node, child, branchIndex));
+      }
+    };
+
+    if (formatRoot != null) {
+      formatRoot.children?.forEach(node => visitNode(formatRoot, node, node.index));
+    }
+    return entries;
   }
 
   // render nest treemap
@@ -1233,17 +1610,31 @@ class TreemapWithState extends PureComponent<InternalTreemapProps, State> {
   };
 
   render() {
-    const { width, height, className, style, children, type, ...others } = this.props;
-    const attrs = svgPropertiesNoEvents(others);
+    const { width, height, className, style, children, type, fill, ...others } = this.props;
+    // the surface keeps the plain color, which elements without a fill of their own inherit
+    const attrs = svgPropertiesNoEvents({ ...others, fill: splitFill(fill).color });
+    const { label, content, themeGraphicalItems } = this.props;
+    const labelEntries = this.getLabelListEntries();
+    const hasCustomContent = React.isValidElement(content) || typeof content === 'function';
+    const showDefaultLabels = (label == null || label === true) && !hasCustomContent;
+    const defaultLabels: ReadonlyMap<TooltipIndex, TreemapLabelListEntry> = new Map(
+      showDefaultLabels
+        ? labelEntries
+            .filter(isDefaultLabelVisible)
+            .map((entry): [TooltipIndex, TreemapLabelListEntry] => [entry.payload.tooltipIndex, entry])
+        : [],
+    );
 
     return (
       <>
         <SetTreemapTooltipEntrySettings
           dataKey={this.props.dataKey}
           nameKey={this.props.nameKey}
-          stroke={this.props.stroke ?? this.props.themeGraphicalItems?.[0]?.stroke}
-          fill={this.props.fill ?? this.props.themeGraphicalItems?.[0]?.fill}
-          currentRoot={this.state.currentRoot}
+          stroke={this.props.stroke}
+          fill={splitFill(this.props.fill).color}
+          colorPanel={this.props.colorPanel}
+          themeGraphicalItems={this.props.themeGraphicalItems}
+          formatRoot={this.state.formatRoot}
           id={this.props.id}
         />
         <Surface
@@ -1252,8 +1643,13 @@ class TreemapWithState extends PureComponent<InternalTreemapProps, State> {
           height={getTreemapRenderHeight(height, type)}
           onTouchMove={this.handleTouchMove}
         >
-          {this.renderAllNodes()}
-          {children}
+          <AllZIndexPortals isPanorama={false}>
+            {this.renderAllNodes(defaultLabels)}
+            <TreemapLabelListProvider entries={labelEntries} graphicalItems={themeGraphicalItems}>
+              <LabelListFromLabelProp label={label === true ? undefined : label} pointerEvents="none" />
+              {children}
+            </TreemapLabelListProvider>
+          </AllZIndexPortals>
         </Surface>
         {type === 'nest' && this.renderNestIndex()}
       </>
@@ -1287,6 +1683,7 @@ type TreemapThemeSlice = Partial<Pick<RechartsTheme, 'graphicalItems' | 'typogra
  * @consumes ResponsiveContainerContext
  * @consumes RechartsThemeContext
  * @provides TooltipEntrySettings
+ * @public
  */
 export function Treemap(outsideProps: Props) {
   const theme = useBackwardsCompatibleTheme<TreemapThemeSlice>(

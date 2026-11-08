@@ -55,19 +55,36 @@ import { GraphicalItemId } from '../state/graphicalItemsSlice';
 import { RegisterGraphicalItemId } from '../context/RegisterGraphicalItemId';
 import { WithIdRequired } from '../util/useUniqueId';
 import { useCartesianChartLayout } from '../context/chartLayoutContext';
-import { RechartsTheme, Styles2D } from '../theme/RechartsTheme';
-import { useBackwardsCompatibleTheme } from '../theme/useBackwardsCompatibleTheme';
+import { RechartsTheme } from '../theme/RechartsTheme';
+import { ColorStyles2D, getColorGraphicalItems } from '../theme/themeFill';
+import { RechartsFill } from '../fill/RechartsFill';
 import {
-  getOwnStyles,
-  getUnthemedStyles,
-  hasOwnColors,
-  UnthemedStyles,
-  useUnthemedStyles,
-} from '../theme/dataEntryStyles';
-import { getActiveStyleOverrides, resolveThemedActiveStyles } from '../theme/activeStyles';
+  FillObjectDefinition,
+  getEntryFillId,
+  getFillUrl,
+  getIndexedEntryFillObject,
+  splitFill,
+  useThemeFillObjects,
+} from '../fill/fillDefinitions';
+import { useBackwardsCompatibleTheme } from '../theme/useBackwardsCompatibleTheme';
+import { getOwnStyles, hasOwnColors, UnthemedColors, useUnthemedColors, withoutColors } from '../theme/dataEntryStyles';
+import { getActiveStyleOverrides } from '../theme/activeStyles';
+import {
+  DataLabelColorsContextProvider,
+  DataLabelThemeContextProvider,
+  filledShapeLabelColors,
+  useIndexedLabelThemeResolver,
+} from '../theme/labelTheme';
 
-export type FunnelTrapezoidItem = TrapezoidProps &
+/**
+ * @public
+ */
+export type FunnelTrapezoidItem = Omit<TrapezoidProps, 'fill'> &
   TrapezoidViewBox & {
+    /**
+     * The color of the entry. A fill object in the props paints the entry with its definition.
+     */
+    fill?: string;
     value?: number | string;
     payload?: any;
     tooltipPosition: Coordinate;
@@ -81,14 +98,18 @@ export type FunnelTrapezoidItem = TrapezoidProps &
 /**
  * Internal props, combination of external props + defaultProps + private Recharts state
  */
-type InternalFunnelProps = RequiresDefaultProps<FunnelProps, typeof defaultFunnelProps> & {
+type InternalFunnelProps = RequiresDefaultProps<StringFillFunnelProps, typeof defaultFunnelProps> & {
   id: GraphicalItemId;
   trapezoids: ReadonlyArray<FunnelTrapezoidItem>;
+  /**
+   * `url(#…)` of the fill definition of each trapezoid, by index. Undefined for trapezoids with a plain color.
+   */
+  trapezoidPaintFills?: ReadonlyArray<string | undefined>;
   /**
    * Theme styles of the active shape for each index, without the ones that explicit props override.
    * Empty when there is no active theme.
    */
-  indexedActiveStyles?: ReadonlyArray<Styles2D | undefined>;
+  indexedActiveStyles?: ReadonlyArray<ColorStyles2D | undefined>;
 };
 
 /**
@@ -101,6 +122,20 @@ type InternalFunnelProps = RequiresDefaultProps<FunnelProps, typeof defaultFunne
  */
 export interface FunnelProps<DataPointType = any, DataValueType = any>
   extends DataProvider<DataPointType>, Required<DataConsumer<DataPointType, DataValueType>> {
+  /**
+   * The fill of the trapezoids. Either a color string, or a {@link RechartsFill} object with an SVG definition,
+   * such as a pattern or a gradient.
+   *
+   * Each trapezoid can have its own fill too: set `fill` in its data entry, to a color or to a fill object.
+   * The data entry wins over this prop, and both win over the theme.
+   *
+   * With a fill object, Recharts renders the definition with a unique ID for each trapezoid,
+   * in the chart and in the Legend icons. Tooltip and labels use the solid `color` of the fill object.
+   * If the fill object has no `color`, the trapezoids keep the theme colors and the definition gets the theme color.
+   *
+   * @example <Funnel dataKey="value" fill={{ definition: pattern(patterns.diagonal) }} />
+   */
+  fill?: string | RechartsFill;
   /**
    * This component is rendered when this graphical item is activated
    * (could be by mouse hover, touch, keyboard, programmatically).
@@ -255,10 +290,19 @@ export interface FunnelProps<DataPointType = any, DataValueType = any>
   onMouseLeave?: (data: FunnelTrapezoidItem, index: number, e: React.MouseEvent<SVGPathElement>) => void;
 }
 
-type FunnelSvgProps = Omit<PresentationAttributesAdaptChildEvent<FunnelTrapezoidItem, SVGPathElement>, 'ref'>;
+type FunnelSvgProps = Omit<PresentationAttributesAdaptChildEvent<FunnelTrapezoidItem, SVGPathElement>, 'ref' | 'fill'>;
+
+/**
+ * Props after the fill object is split off: `fill` is the base color.
+ */
+type StringFillFunnelProps = Omit<FunnelProps, 'fill'> & { fill?: string };
+type StringFillProps = Omit<Props, 'fill'> & { fill?: string };
 
 type InternalProps = FunnelSvgProps & InternalFunnelProps;
 
+/**
+ * @public
+ */
 export type Props<DataPointType = any, DataValueType = any> = FunnelSvgProps &
   FunnelProps<DataPointType, DataValueType>;
 
@@ -341,12 +385,34 @@ const SetFunnelTooltipEntrySettings = React.memo(
   },
 );
 
-function SetFunnelPayloadLegend({ funnelSettings }: { funnelSettings: ResolvedFunnelSettings }) {
+function SetFunnelPayloadLegend({
+  funnelSettings,
+  fillObjects,
+}: {
+  funnelSettings: ResolvedFunnelSettings;
+  /**
+   * The fill object of each trapezoid, by index.
+   */
+  fillObjects: ReadonlyArray<RechartsFill | undefined>;
+}) {
   const legendPayload = useAppSelector(state => selectFunnelLegend(state, funnelSettings));
   if (legendPayload == null) {
     return null;
   }
-  return <SetLegendPayload legendPayload={legendPayload} />;
+  const legendPayloadWithFills = legendPayload.map((entry, index) => {
+    const fill = fillObjects[index];
+    return fill == null ? entry : { ...entry, fill };
+  });
+  return <SetLegendPayload legendPayload={legendPayloadWithFills} />;
+}
+
+/**
+ * Returns the data entry of a trapezoid, as the user wrote it. Undefined for trapezoids made from Cells only.
+ * @param trapezoid the trapezoid
+ */
+function getFunnelDataEntry(trapezoid: FunnelTrapezoidItem): unknown {
+  const { payload } = trapezoid;
+  return payload != null && typeof payload === 'object' && 'payload' in payload ? payload.payload : undefined;
 }
 
 function FunnelLabelListProvider({
@@ -379,6 +445,18 @@ function FunnelLabelListProvider({
   return <CartesianLabelListContextProvider value={labelListEntries}>{children}</CartesianLabelListContextProvider>;
 }
 
+/**
+ * Returns what the user styled a trapezoid with: its `Cell` props if they have colors, otherwise its data entry.
+ * The trapezoid `payload` already includes the theme colors, so the data entry is the `payload` one level deeper.
+ */
+function getOwnColorSource(trapezoid: FunnelTrapezoidItem, cellProps: unknown): unknown {
+  if (hasOwnColors(cellProps)) {
+    return cellProps;
+  }
+  const { payload } = trapezoid;
+  return payload != null && typeof payload === 'object' && 'payload' in payload ? payload.payload : undefined;
+}
+
 function FunnelTrapezoids(props: FunnelTrapezoidsProps) {
   const { trapezoids, allOtherFunnelProps, animationElapsedTime, isAnimating, isEntrance } = props;
   const activeItemIndex = useAppSelector(selectActiveTooltipIndex);
@@ -391,6 +469,7 @@ function FunnelTrapezoids(props: FunnelTrapezoidsProps) {
     indexedActiveStyles,
     ...restOfAllOtherProps
   } = allOtherFunnelProps;
+  const cells = findAllByType(allOtherFunnelProps.children, Cell);
 
   const onMouseEnterFromContext = useMouseEnterItemDispatch(
     onMouseEnterFromProps,
@@ -414,15 +493,12 @@ function FunnelTrapezoids(props: FunnelTrapezoidsProps) {
             ? getActiveStyleOverrides(
                 activeShape,
                 indexedActiveStyles[i % indexedActiveStyles.length],
-                /*
-                 * `entry.payload` already has the theme styles merged in,
-                 * so we look at the original data entry instead.
-                 */
-                entry.payload?.payload,
+                getOwnColorSource(entry, cells[i]?.props),
               )
             : undefined;
         const { id, ...trapezoidProps }: FunnelTrapezoidProps = {
           ...entry,
+          fill: allOtherFunnelProps.trapezoidPaintFills?.[i] ?? entry.fill,
           ...activeStyleOverrides,
           option: trapezoidOptions,
           isActive: isActiveIndex,
@@ -545,6 +621,19 @@ function RenderTrapezoids(props: InternalProps) {
   return <TrapezoidsWithAnimation props={props} previousTrapezoidsRef={previousTrapezoidsRef} />;
 }
 
+/**
+ * Every themeable style key set to undefined.
+ * Spreading this first removes the legacy defaults, which never apply together with a theme.
+ */
+const NO_STYLES: Record<keyof ColorStyles2D, undefined> = {
+  fill: undefined,
+  fillOpacity: undefined,
+  stroke: undefined,
+  strokeOpacity: undefined,
+  strokeWidth: undefined,
+  strokeDasharray: undefined,
+};
+
 const getRealWidthHeight = (customWidth: number | string | undefined, offset: ChartOffsetInternal) => {
   const { width, height, left, top } = offset;
 
@@ -576,10 +665,13 @@ export const defaultFunnelProps = {
 } as const satisfies Partial<Props>;
 
 function FunnelImpl(
-  props: WithIdRequired<RequiresDefaultProps<Props, typeof defaultFunnelProps>> & {
+  props: WithIdRequired<RequiresDefaultProps<StringFillProps, typeof defaultFunnelProps>> & {
     indexedStyles: ReadonlyArray<Record<string, unknown>>;
-    unthemedStyles: UnthemedStyles | undefined;
-    indexedActiveStyles: ReadonlyArray<Styles2D | undefined>;
+    unthemedColors: UnthemedColors | undefined;
+    indexedActiveStyles: ReadonlyArray<ColorStyles2D | undefined>;
+    funnelFillObject: RechartsFill | undefined;
+    themeFillObjects: ReadonlyArray<RechartsFill | undefined>;
+    hasExplicitColors: boolean;
   },
 ) {
   const plotArea = usePlotArea();
@@ -597,7 +689,10 @@ function FunnelImpl(
     lastShapeType,
     id,
     indexedStyles,
-    unthemedStyles,
+    unthemedColors,
+    funnelFillObject,
+    themeFillObjects,
+    hasExplicitColors,
     ...everythingElse
   } = props;
 
@@ -616,7 +711,7 @@ function FunnelImpl(
       cells,
       presentationProps,
       indexedStyles,
-      unthemedStyles,
+      unthemedColors,
       legendType: props.legendType,
       id,
     }),
@@ -631,13 +726,22 @@ function FunnelImpl(
       cells,
       presentationProps,
       indexedStyles,
-      unthemedStyles,
+      unthemedColors,
       props.legendType,
       id,
     ],
   );
 
   const trapezoids = useAppSelector(state => selectFunnelTrapezoids(state, funnelSettings));
+  const trapezoidFillObjects = (trapezoids ?? []).map((trapezoid, index) =>
+    getIndexedEntryFillObject(
+      getFunnelDataEntry(trapezoid),
+      index,
+      funnelFillObject,
+      themeFillObjects,
+      hasExplicitColors,
+    ),
+  );
 
   if (hide || !trapezoids || !trapezoids.length || !plotArea) {
     return null;
@@ -648,7 +752,7 @@ function FunnelImpl(
 
   return (
     <>
-      <SetFunnelPayloadLegend funnelSettings={funnelSettings} />
+      <SetFunnelPayloadLegend funnelSettings={funnelSettings} fillObjects={trapezoidFillObjects} />
       <SetFunnelTooltipEntrySettings
         dataKey={props.dataKey}
         nameKey={props.nameKey}
@@ -663,7 +767,25 @@ function FunnelImpl(
         id={id}
       />
       <Layer className={layerClass}>
+        {trapezoidFillObjects.some(fillObject => fillObject != null) && (
+          <defs>
+            {trapezoidFillObjects.map((fillObject, index) =>
+              fillObject == null ? null : (
+                <FillObjectDefinition
+                  // the trapezoid index is the identity of its definition
+                  key={index}
+                  id={getEntryFillId(id, index)}
+                  fillObject={fillObject}
+                  color={trapezoids[index]?.fill}
+                />
+              ),
+            )}
+          </defs>
+        )}
         <RenderTrapezoids
+          trapezoidPaintFills={trapezoidFillObjects.map((fillObject, index) =>
+            fillObject == null ? undefined : getFillUrl(getEntryFillId(id, index)),
+          )}
           {...everythingElse}
           id={id}
           stroke={stroke}
@@ -831,7 +953,13 @@ export function computeFunnelTrapezoids({
  * @provides CellReader
  * @consumes RechartsThemeContext
  */
-function FunnelFn(outsideProps: Props) {
+function FunnelFn(propsWithFillObject: Props) {
+  const { color: fillColor, fillObject: funnelFillObject } = splitFill(propsWithFillObject.fill);
+  // From here on, `fill` is the base color
+  const outsideProps: StringFillProps = useMemo(
+    () => ({ ...propsWithFillObject, fill: fillColor }),
+    [propsWithFillObject, fillColor],
+  );
   const theme = useBackwardsCompatibleTheme<Partial<Pick<RechartsTheme, 'graphicalItems'>>>(
     (rechartsTheme: RechartsTheme) => ({ graphicalItems: rechartsTheme.graphicalItems }),
     {},
@@ -841,76 +969,62 @@ function FunnelFn(outsideProps: Props) {
   /*
    * Funnel is per-index: each trapezoid at index `i` picks its styles from
    * graphicalItems[i % graphicalItems.length].
-   * If the Funnel sets its own fill or stroke, it ignores the theme completely
+   * If the Funnel sets its own fill or stroke, it drops the theme fill and stroke together
    * so that its colors are not mixed with the theme colors.
    * Other explicit style props merge with the theme field by field.
    */
+  const hasExplicitColors = hasOwnColors(outsideProps);
   const indexedStyles: ReadonlyArray<Record<string, unknown>> = useMemo(() => {
-    const graphicalItems = theme?.graphicalItems;
+    const graphicalItems = getColorGraphicalItems(theme?.graphicalItems);
     if (graphicalItems == null || graphicalItems.length === 0) {
       return [];
     }
-    if (hasOwnColors(outsideProps)) {
-      // Unthemed styles also remove the legacy defaults, which never apply together with a theme.
-      return [getUnthemedStyles(outsideProps)];
-    }
     return graphicalItems.map(style => ({
       // Start without any styles, so that legacy defaults never fill in what the theme leaves out.
-      ...getUnthemedStyles({}),
-      ...getOwnStyles(style),
+      ...NO_STYLES,
+      ...getOwnStyles(hasExplicitColors ? withoutColors(style) : style),
       ...getOwnStyles(outsideProps),
     }));
-  }, [outsideProps, theme]);
-  const unthemedStyles = useUnthemedStyles(outsideProps);
-  const explicitFill = outsideProps.fill;
-  const explicitFillOpacity = outsideProps.fillOpacity;
-  const explicitStroke = outsideProps.stroke;
-  const explicitStrokeOpacity = outsideProps.strokeOpacity;
-  const explicitStrokeWidth = outsideProps.strokeWidth;
-  const explicitStrokeDasharray = outsideProps.strokeDasharray;
+  }, [outsideProps, theme, hasExplicitColors]);
+  const unthemedColors = useUnthemedColors(outsideProps);
   /*
    * The active styles are per-index too, same as `indexedStyles`.
+   * The theme active colors go with the theme colors, so a Funnel with its own colors drops them too.
    */
-  const themeGraphicalItems = theme?.graphicalItems;
-  const indexedActiveStyles: ReadonlyArray<Styles2D | undefined> = useMemo(
-    () =>
-      (themeGraphicalItems ?? []).map(style =>
-        resolveThemedActiveStyles(style.active, {
-          fill: explicitFill,
-          fillOpacity: explicitFillOpacity,
-          stroke: explicitStroke,
-          strokeOpacity: explicitStrokeOpacity,
-          strokeWidth: explicitStrokeWidth,
-          strokeDasharray: explicitStrokeDasharray,
-        }),
-      ),
-    [
-      themeGraphicalItems,
-      explicitFill,
-      explicitFillOpacity,
-      explicitStroke,
-      explicitStrokeOpacity,
-      explicitStrokeWidth,
-      explicitStrokeDasharray,
-    ],
+  const themeGraphicalItems = getColorGraphicalItems(theme?.graphicalItems);
+  const indexedActiveStyles: ReadonlyArray<ColorStyles2D | undefined> = useMemo(
+    () => (themeGraphicalItems ?? []).map(style => (hasExplicitColors ? withoutColors(style.active) : style.active)),
+    [themeGraphicalItems, hasExplicitColors],
   );
 
+  const resolveLabelTheme = useIndexedLabelThemeResolver(getColorGraphicalItems(theme?.graphicalItems));
+  const themeFillObjects = useThemeFillObjects();
   const { id: externalId, ...resolvedProps } = resolveDefaultProps(outsideProps, defaultFunnelProps);
   return (
     <RegisterGraphicalItemId id={externalId} type="funnel">
       {id => (
-        <FunnelImpl
-          {...resolvedProps}
-          id={id}
-          indexedStyles={indexedStyles}
-          unthemedStyles={indexedStyles.length > 0 ? unthemedStyles : undefined}
-          indexedActiveStyles={indexedActiveStyles}
-        />
+        <DataLabelThemeContextProvider value={resolveLabelTheme}>
+          <DataLabelColorsContextProvider value={filledShapeLabelColors}>
+            <FunnelImpl
+              {...resolvedProps}
+              id={id}
+              indexedStyles={indexedStyles}
+              unthemedColors={indexedStyles.length > 0 ? unthemedColors : undefined}
+              indexedActiveStyles={indexedActiveStyles}
+              funnelFillObject={funnelFillObject}
+              themeFillObjects={themeFillObjects}
+              hasExplicitColors={hasExplicitColors}
+            />
+          </DataLabelColorsContextProvider>
+        </DataLabelThemeContextProvider>
       )}
     </RegisterGraphicalItemId>
   );
 }
 
+/**
+ * @public
+ */
 export const Funnel = FunnelFn as {
   <DataPointType = any, DataValueType = any>(outsideProps: Props<DataPointType, DataValueType>): ReactElement;
   (outsideProps: Props<any, any>): ReactElement;

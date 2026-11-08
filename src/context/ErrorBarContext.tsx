@@ -15,6 +15,11 @@ type ErrorBarContextType<T extends BarRectangleItem | LinePointItem | ScatterPoi
   yAxisId: AxisId;
   dataPointFormatter: ErrorBarDataPointFormatter<T>;
   errorBarOffset: number;
+  /**
+   * The clip path of the parent graphical item, or undefined if the item is not clipped.
+   * ErrorBar renders in its own zIndex layer so it does not inherit the clip path from the item's DOM.
+   */
+  clipPath: string | undefined;
 };
 
 const initialContextState: ErrorBarContextType<any> = {
@@ -23,6 +28,7 @@ const initialContextState: ErrorBarContextType<any> = {
   yAxisId: 'yAxis-0',
   dataPointFormatter: () => ({ x: 0, y: 0, value: 0 }),
   errorBarOffset: 0,
+  clipPath: undefined,
 };
 
 const ErrorBarContext = createContext(initialContextState);

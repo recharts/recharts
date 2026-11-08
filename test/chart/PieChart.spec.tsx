@@ -179,6 +179,45 @@ describe('<PieChart />', () => {
     });
   });
 
+  describe('zero values at the start with paddingAngle', () => {
+    const dataStartingWithZero = [
+      { name: 'Zero', value: 0 },
+      { name: 'A', value: 1 },
+      { name: 'B', value: 1 },
+    ];
+
+    test('keeps a half pie between startAngle and endAngle', () => {
+      const { container } = rechartsTestRender(
+        <PieChart width={400} height={400}>
+          <Pie
+            data={dataStartingWithZero}
+            dataKey="value"
+            startAngle={180}
+            endAngle={0}
+            paddingAngle={10}
+            isAnimationActive={false}
+          />
+        </PieChart>,
+      );
+      expectPieSectorAngles(container, [
+        { startAngle: 180, endAngle: 95 },
+        { startAngle: 85, endAngle: 0 },
+      ]);
+    });
+
+    test('starts a full pie at startAngle', () => {
+      const { container } = rechartsTestRender(
+        <PieChart width={400} height={400}>
+          <Pie data={dataStartingWithZero} dataKey="value" paddingAngle={10} isAnimationActive={false} />
+        </PieChart>,
+      );
+      expectPieSectorAngles(container, [
+        { startAngle: 0, endAngle: 170 },
+        { startAngle: 180, endAngle: 350 },
+      ]);
+    });
+  });
+
   test('Renders 6 sectors circles in simple PieChart', () => {
     const { container } = rechartsTestRender(
       <PieChart width={800} height={400}>
@@ -989,6 +1028,40 @@ describe('<PieChart />', () => {
       expect(labelSpy).toHaveBeenCalled();
       const props = labelSpy.mock.calls[0][0];
       expect(props.viewBox.innerRadius).toBe(0);
+    });
+
+    test('should pass the Pie center to custom Label content with position=center', () => {
+      const labelSpy = vi.fn().mockReturnValue(null);
+
+      rechartsTestRender(
+        <PieChart width={400} height={400}>
+          <Pie
+            dataKey="value"
+            isAnimationActive={false}
+            data={[
+              { name: 'Group A', value: 400 },
+              { name: 'Group B', value: 300 },
+            ]}
+            cx={100}
+            cy={300}
+            innerRadius={60}
+            outerRadius={90}
+          >
+            <Label position="center" content={labelSpy} />
+          </Pie>
+        </PieChart>,
+      );
+
+      act(() => {
+        vi.runOnlyPendingTimers();
+      });
+
+      expect(labelSpy).toHaveBeenCalled();
+      const props = labelSpy.mock.calls[0][0];
+      expect(props.viewBox.cx).toBe(105);
+      expect(props.viewBox.cy).toBe(305);
+      expect(props.x).toBe(105);
+      expect(props.y).toBe(305);
     });
 
     test('should render children directly when Pie has no sectors', () => {

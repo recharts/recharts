@@ -24,7 +24,7 @@ import { DefaultZIndexes } from '../zIndex/DefaultZIndexes';
 import { isWellBehavedNumber } from '../util/isWellBehavedNumber';
 import { BandPosition, RechartsScale } from '../util/scale/RechartsScale';
 import { CartesianScaleHelper, CartesianScaleHelperImpl } from '../util/scale/CartesianScaleHelper';
-import { Styles2D } from '../theme/RechartsTheme';
+import { ColorStyles2D, withFillColor } from '../theme/themeFill';
 import { useBackwardsCompatibleTheme } from '../theme/useBackwardsCompatibleTheme';
 
 /**
@@ -38,6 +38,7 @@ import { useBackwardsCompatibleTheme } from '../theme/useBackwardsCompatibleThem
  * and you want the line to end at 50, you would provide `50` here.
  *
  * @inline
+ * @public
  */
 export type ReferenceLineSegment = readonly [
   {
@@ -152,6 +153,7 @@ interface ReferenceLineProps<
  * 1. The components wants viewBox of object type, and svg wants string
  *    - so there's a conflict, and the component will throw if it gets string
  * 2. Internally the component calls `svgPropertiesNoEvents` which filters the viewBox away anyway
+ * @public
  */
 export type Props<
   XValueType extends ReferenceCoordinateValue = any,
@@ -367,7 +369,7 @@ export const referenceLineDefaultProps = {
   zIndex: DefaultZIndexes.line,
 } as const satisfies Partial<Props>;
 
-const defaultLegacyReferenceLineThemeProps: Styles2D = {
+const defaultLegacyReferenceLineThemeProps: ColorStyles2D = {
   fill: 'none',
   stroke: '#ccc',
   fillOpacity: 1,
@@ -389,13 +391,14 @@ type PropsWithDefaults = RequiresDefaultProps<Props, typeof referenceLineDefault
  *
  * @provides CartesianLabelContext
  * @consumes CartesianChartContext
+ * @public
  */
 export function ReferenceLine<
   XValueType extends ReferenceCoordinateValue = any,
   YValueType extends ReferenceCoordinateValue = any,
 >(outsideProps: Props<XValueType, YValueType>) {
   const themeProps = useBackwardsCompatibleTheme(
-    theme => theme.reference,
+    theme => withFillColor(theme.reference),
     outsideProps,
     defaultLegacyReferenceLineThemeProps,
   );

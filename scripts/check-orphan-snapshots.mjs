@@ -15,7 +15,7 @@
  * The sanitize/trim rules mirror playwright-core's sanitizeForFilePath and trimLongString.
  * Re-check them when upgrading Playwright if this script starts reporting live baselines.
  */
-import { execFileSync } from 'node:child_process';
+import { execSync } from 'node:child_process';
 import crypto from 'node:crypto';
 import fs from 'node:fs';
 import path from 'node:path';
@@ -44,7 +44,8 @@ function escapeRegExp(s) {
 }
 
 const report = JSON.parse(
-  execFileSync('npx', ['playwright', 'test', '--config', config, '--list', '--reporter=json'], {
+  // execSync runs through a shell, so `npx` resolves to npx.cmd on Windows.
+  execSync(`npx playwright test --config ${config} --list --reporter=json`, {
     encoding: 'utf8',
     maxBuffer: 256 * 1024 * 1024,
     env: { ...process.env, CI: process.env.CI ?? '1' },

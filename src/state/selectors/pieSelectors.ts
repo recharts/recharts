@@ -1,5 +1,6 @@
 import { createSelector } from 'reselect';
 import { ReactElement } from 'react';
+import { readEntryFill } from '../../fill/fillDefinitions';
 import { CellProps } from '../..';
 import { computePieSectors, PieSectorDataItem } from '../../polar/Pie';
 import { RechartsRootState } from '../store';
@@ -81,14 +82,7 @@ export const selectPieLegend: (
     }
     return displayedData.map((entry, i): LegendPayload => {
       const name = getValueByDataKey(entry, pieSettings.nameKey, pieSettings.name);
-      let color;
-      if (cells?.[i]?.props?.fill) {
-        color = cells[i].props.fill;
-      } else if (typeof entry === 'object' && entry != null && 'fill' in entry) {
-        color = entry.fill;
-      } else {
-        color = pieSettings.fill;
-      }
+      const color = readEntryFill(cells?.[i]?.props).color ?? readEntryFill(entry).color ?? pieSettings.fill;
       return {
         value: getTooltipNameProp(name, pieSettings.dataKey),
         dataKey: pieSettings.dataKey,

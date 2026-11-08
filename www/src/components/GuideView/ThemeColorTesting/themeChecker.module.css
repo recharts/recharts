@@ -1,0 +1,183 @@
+.checker {
+  --pass: #15803d;
+  --fail: #b91c1c;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  margin: 16px 0 32px;
+}
+
+:global([data-mode='dark']) .checker {
+  --pass: #4ade80;
+  --fail: #f87171;
+}
+
+.panel {
+  border: 1px solid var(--color-border-4);
+  border-radius: 8px;
+  padding: 16px;
+  background: var(--color-surface-raised);
+  min-width: 0;
+}
+
+.panel h3 {
+  margin-top: 0;
+}
+
+.row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px 16px;
+  margin-bottom: 12px;
+}
+
+.seriesList {
+  list-style: none;
+  padding: 0;
+  margin: 0 0 12px;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+  gap: 8px;
+}
+
+.seriesItem {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.seriesItem input[type='text'] {
+  width: 90px;
+  font-family: var(--font-family-code);
+}
+
+.colorField {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.colorField input[type='text'] {
+  width: 90px;
+  font-family: var(--font-family-code);
+}
+
+.invalid {
+  outline: 2px solid var(--fail);
+}
+
+.pasteArea {
+  width: 100%;
+  min-height: 48px;
+  font-family: var(--font-family-code);
+}
+
+.tabs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  margin-bottom: 12px;
+}
+
+.tabs button[aria-pressed='true'] {
+  font-weight: bold;
+  text-decoration: underline;
+}
+
+.scroll {
+  overflow-x: auto;
+}
+
+.table {
+  border-collapse: collapse;
+  font-variant-numeric: tabular-nums;
+}
+
+.table th,
+.table td {
+  padding: 4px 8px;
+  border: 1px solid var(--color-border-4);
+  text-align: left;
+  white-space: nowrap;
+}
+
+.matrix td {
+  text-align: center;
+  min-width: 48px;
+}
+
+.pass {
+  color: var(--pass);
+}
+
+.fail {
+  color: var(--fail);
+  font-weight: bold;
+}
+
+.info {
+  color: var(--color-text-3);
+}
+
+.swatch {
+  display: inline-block;
+  width: 16px;
+  height: 16px;
+  border-radius: 3px;
+  border: 1px solid var(--color-border-2);
+  vertical-align: middle;
+}
+
+.labelSample {
+  display: inline-block;
+  padding: 0 6px;
+  border-radius: 3px;
+  font-weight: bold;
+}
+
+.preview {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(400px, 100%), 1fr));
+  gap: 16px;
+  padding: 16px;
+  border-radius: 8px;
+}
+
+.error {
+  color: var(--fail);
+}
+
+.fix {
+  white-space: nowrap;
+}
+
+.failure {
+  border-left: 4px solid var(--fail);
+  padding: 4px 12px;
+  margin-bottom: 12px;
+}
+
+.failure h5 {
+  margin: 4px 0;
+  font-size: var(--font-size-lg);
+}
+
+.failure p {
+  margin: 4px 0;
+}
+
+.summary {
+  margin-bottom: 16px;
+}
+
+.verdict {
+  font-size: var(--font-size-xl);
+  font-weight: bold;
+  margin: 0 0 4px;
+}
+
+.applyButton {
+  margin-left: 4px;
+  font-size: 0.85em;
+}

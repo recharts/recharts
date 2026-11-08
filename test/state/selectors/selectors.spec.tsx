@@ -566,7 +566,7 @@ describe('selectTooltipPayload', () => {
     expect(actual?.[0].value).toBe(100);
   });
 
-  it('should fall back to index-based search when label-based search returns undefined', () => {
+  it('should not fall back to the entry at activeIndex when no entry matches the label', () => {
     const chartDataState: ChartDataState = {
       ...initialChartDataState,
       chartData: [
@@ -587,67 +587,24 @@ describe('selectTooltipPayload', () => {
       dataDefinedOnItem: undefined,
       getPosition: noop,
     };
-    // activeLabel that doesn't match any entry - simulates allowDuplicatedCategory=false
-    // scenario where tick label may not directly correspond to data entries
-    const activeLabel = 'NonExistent';
     const actual: TooltipPayload | undefined = combineTooltipPayload(
       [tooltipPayloadConfiguration],
       '1',
       chartDataState,
       'name',
-      activeLabel,
+      'NonExistent',
       arrayTooltipSearcher,
       'axis',
     );
-    // Falls back to index-based search, returning the entry at index 1
-    expect(actual).toHaveLength(1);
-    expect(actual?.[0].payload).toEqual({ name: 'Page B', pv: 200 });
-    expect(actual?.[0].value).toBe(200);
-  });
-
-  it('should fall back to index-based search for duplicate categories when label does not match any data entry', () => {
-    const chartDataState: ChartDataState = {
-      ...initialChartDataState,
-      chartData: [
-        { category: 'A', value: 10 },
-        { category: 'A', value: 20 },
-        { category: 'B', value: 30 },
-      ],
-      dataStartIndex: 0,
-      dataEndIndex: 2,
+    const expected: TooltipPayloadEntry = {
+      dataKey: 'pv',
+      nameKey: 'name',
+      graphicalItemId: 'bar-1',
+      name: undefined,
+      payload: undefined,
+      value: undefined,
     };
-    const tooltipPayloadConfiguration: TooltipPayloadConfiguration = {
-      settings: {
-        dataKey: 'value',
-        nameKey: 'category',
-        graphicalItemId: 'bar-1',
-        name: undefined,
-      },
-      dataDefinedOnItem: undefined,
-      getPosition: noop,
-    };
-    /*
-     * Use an activeLabel that does not exist in any data entry,
-     * forcing findEntryInArray to return undefined and triggering
-     * the index-based fallback branch (tooltipPayloadSearcher).
-     * The result should match the entry at activeIndex rather than
-     * the (nonexistent) label match.
-     */
-    const activeLabel = 'NonExistent';
-    const actual: TooltipPayload | undefined = combineTooltipPayload(
-      [tooltipPayloadConfiguration],
-      '1',
-      chartDataState,
-      'category',
-      activeLabel,
-      arrayTooltipSearcher,
-      'axis',
-    );
-    // Label-based search failed — falls back to index-based payload lookup.
-    // Verifies the fallback logic is executed and returns data at activeIndex=1.
-    expect(actual).toHaveLength(1);
-    expect(actual?.[0].payload).toEqual({ category: 'A', value: 20 });
-    expect(actual?.[0].value).toBe(20);
+    expect(actual).toEqual([expected]);
   });
 });
 

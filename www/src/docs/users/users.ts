@@ -47,4 +47,9 @@ export const users = [
     url: 'https://ahrefs.com/',
     logoImgUrl: '/assets/ahrefs.png',
   },
+  {
+    name: 'Influence',
+    url: 'https://influence.so/',
+    logoImgUrl: 'https://influence.so/icon.png',
+  },
 ];

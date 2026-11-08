@@ -1,7 +1,20 @@
 import { render } from '@testing-library/react';
 import React from 'react';
 
-import { Bar, BarChart, LabelList, Scatter, ScatterChart, XAxis, YAxis, ZAxis } from '../../src';
+import {
+  Area,
+  AreaChart,
+  Bar,
+  BarChart,
+  LabelList,
+  Line,
+  LineChart,
+  Scatter,
+  ScatterChart,
+  XAxis,
+  YAxis,
+  ZAxis,
+} from '../../src';
 import { expectScatterPoints } from '../helper/expectScatterPoints';
 import { expectLabels } from '../helper/expectLabel';
 
@@ -157,5 +170,135 @@ describe('<LabelList />', () => {
     const text = label[0].closest('text');
     expect(text).toBeInTheDocument();
     expect(text).toHaveAttribute('offset', '40');
+  });
+
+  describe('in a graphical item clipped by allowDataOverflow', () => {
+    const data = [
+      { name: 'a', value: 50 },
+      { name: 'b', value: 150 },
+      { name: 'c', value: 100 },
+      { name: 'd', value: -20 },
+      { name: 'e', value: 0 },
+    ];
+
+    const rangeData = [
+      { name: 'a', range: [20, 50] },
+      { name: 'b', range: [120, 150] },
+      { name: 'c', range: [90, 100] },
+      { name: 'd', range: [80, 130] },
+      { name: 'e', range: [-40, -10] },
+      { name: 'f', range: [100, 120] },
+      { name: 'g', range: [-30, 0] },
+    ];
+
+    const scatterData = [
+      { x: 1, y: 50 },
+      { x: 2, y: 150 },
+      { x: 3, y: 100 },
+      { x: 4, y: -20 },
+      { x: 5, y: 0 },
+    ];
+
+    function getLabelTexts(container: Element): ReadonlyArray<string | null> {
+      return Array.from(container.querySelectorAll('.recharts-label-list .recharts-label')).map(
+        label => label.textContent,
+      );
+    }
+
+    it('should render all Line labels if the axis does not allow data overflow', () => {
+      const { container } = render(
+        <LineChart width={400} height={400} data={data}>
+          <XAxis dataKey="name" />
+          <YAxis domain={[0, 100]} />
+          <Line dataKey="value" label isAnimationActive={false} />
+        </LineChart>,
+      );
+      expect(getLabelTexts(container)).toEqual(['50', '150', '100', '-20', '0']);
+    });
+
+    it('should skip Line labels outside of the domain, and keep the labels on its edges', () => {
+      const { container } = render(
+        <LineChart width={400} height={400} data={data}>
+          <XAxis dataKey="name" />
+          <YAxis domain={[0, 100]} allowDataOverflow />
+          <Line dataKey="value" label isAnimationActive={false} />
+        </LineChart>,
+      );
+      expect(getLabelTexts(container)).toEqual(['50', '100', '0']);
+    });
+
+    it('should skip LabelList children of a Line outside of the domain, and keep the index of the others', () => {
+      const { container } = render(
+        <LineChart width={400} height={400} data={data}>
+          <XAxis dataKey="name" />
+          <YAxis domain={[0, 100]} allowDataOverflow />
+          <Line dataKey="value" isAnimationActive={false}>
+            <LabelList dataKey="name" id="line-label" />
+          </Line>
+        </LineChart>,
+      );
+      expect(getLabelTexts(container)).toEqual(['a', 'c', 'e']);
+      const ids = Array.from(container.querySelectorAll('.recharts-label')).map(label => label.getAttribute('id'));
+      expect(ids).toEqual(['line-label-0', 'line-label-2', 'line-label-4']);
+    });
+
+    it('should skip Area labels outside of the domain, and keep the labels on its edges', () => {
+      const { container } = render(
+        <AreaChart width={400} height={400} data={data}>
+          <XAxis dataKey="name" />
+          <YAxis domain={[0, 100]} allowDataOverflow />
+          <Area dataKey="value" label isAnimationActive={false} />
+        </AreaChart>,
+      );
+      expect(getLabelTexts(container)).toEqual(['50', '100', '0']);
+    });
+
+    it('should render all Bar labels if the axis does not allow data overflow', () => {
+      const { container } = render(
+        <BarChart width={400} height={400} data={rangeData}>
+          <XAxis dataKey="name" />
+          <YAxis domain={[0, 100]} />
+          <Bar dataKey="range" label isAnimationActive={false} />
+        </BarChart>,
+      );
+      expect(getLabelTexts(container)).toEqual(['50', '150', '100', '130', '-10', '120', '0']);
+    });
+
+    it('should skip labels of Bars outside of the domain, also if they touch its edge', () => {
+      const { container } = render(
+        <BarChart width={400} height={400} data={rangeData}>
+          <XAxis dataKey="name" />
+          <YAxis domain={[0, 100]} allowDataOverflow />
+          <Bar dataKey="range" label isAnimationActive={false} />
+        </BarChart>,
+      );
+      expect(getLabelTexts(container)).toEqual(['50', '100', '130']);
+    });
+
+    it('should skip Scatter labels outside of the domain, and keep the labels on its edges', () => {
+      const { container } = render(
+        <ScatterChart width={400} height={400}>
+          <XAxis dataKey="x" type="number" />
+          <YAxis dataKey="y" domain={[0, 100]} allowDataOverflow />
+          <Scatter data={scatterData} isAnimationActive={false}>
+            <LabelList dataKey="y" />
+          </Scatter>
+        </ScatterChart>,
+      );
+      expect(getLabelTexts(container)).toEqual(['50', '100', '0']);
+    });
+
+    it('should only skip labels outside of the clipped dimension', () => {
+      const { container } = render(
+        <ScatterChart width={400} height={400}>
+          <XAxis dataKey="x" type="number" domain={[2, 4]} allowDataOverflow />
+          <YAxis dataKey="y" />
+          <Scatter data={scatterData} isAnimationActive={false}>
+            <LabelList dataKey="x" />
+          </Scatter>
+        </ScatterChart>,
+      );
+      expect(getLabelTexts(container)).toEqual(['2', '3', '4']);
+    });
   });
 });

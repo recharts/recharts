@@ -1,0 +1,41 @@
+.gallery-inspection-tools {
+  margin-block-start: 24px;
+  padding: 20px;
+  color: CanvasText;
+  background: Canvas;
+  font-family: system-ui, sans-serif;
+  border-block-start: 1px solid GrayText;
+}
+
+.gallery-inspection-tools h1 {
+  margin-block: 0 16px;
+  font-size: 20px;
+}
+
+.gallery-inspection-tools h2 {
+  font-size: 16px;
+}
+
+.gallery-inspection-tools section {
+  margin-block-end: 24px;
+}
+
+.gallery-inspection-hint {
+  max-width: 70ch;
+}
+
+.gallery-inspector-portal:not(:empty) + .gallery-inspection-hint {
+  display: none;
+}
+
+.gallery-inspection-tools .recharts-annotations {
+  --rd-surface: Canvas;
+  --rd-surface-raised: Canvas;
+  --rd-surface-active: ButtonFace;
+  --rd-border: GrayText;
+  --rd-border-strong: CanvasText;
+  --rd-border-subtle: GrayText;
+  --rd-text: CanvasText;
+  --rd-text-muted: GrayText;
+  --rd-accent: Highlight;
+}

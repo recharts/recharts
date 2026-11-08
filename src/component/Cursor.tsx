@@ -8,6 +8,7 @@ import {
   LayoutType,
   PolarCoordinate,
   TooltipEventType,
+  WithFillObject,
 } from '../util/types';
 import { Curve } from '../shape/Curve';
 import { Cross } from '../shape/Cross';
@@ -24,7 +25,7 @@ import { selectIsZoomed } from '../state/selectors/zoomSelectors';
 import { useClipPathId } from '../container/ClipPathProvider';
 import { TooltipIndex, TooltipPayload } from '../state/tooltipSlice';
 import { svgPropertiesNoEventsFromUnknown } from '../util/svgPropertiesNoEvents';
-import { Styles2D } from '../theme/RechartsTheme';
+import { ColorStyles2D, withFillColor } from '../theme/themeFill';
 import { useBackwardsCompatibleTheme } from '../theme/useBackwardsCompatibleTheme';
 import { useRechartsTheme } from '../theme/RechartsThemeContext';
 import { ZIndexable, ZIndexLayer } from '../zIndex/ZIndexLayer';
@@ -34,8 +35,9 @@ import { DefaultZIndexes } from '../zIndex/DefaultZIndexes';
  * If set false, no cursor will be drawn when tooltip is active.
  * If set an object, the option is the configuration of cursor.
  * If set a React element, the option is the custom react element of drawing cursor
+ * @public
  */
-export type CursorDefinition = boolean | ReactElement | SVGProps<SVGElement>;
+export type CursorDefinition = boolean | ReactElement | WithFillObject<SVGProps<SVGElement>>;
 
 export interface CursorProps extends ZIndexable {
   cursor: CursorDefinition;
@@ -52,7 +54,7 @@ export type CursorConnectedProps = CursorProps & {
   chartName: string;
 };
 
-const defaultLegacyCursorThemeProps: Styles2D = {
+const defaultLegacyCursorThemeProps: ColorStyles2D = {
   stroke: '#ccc',
   fill: '#ccc',
 };
@@ -78,7 +80,13 @@ export function CursorInternal(props: CursorConnectedProps) {
   const cursorPropsFromDefinition = svgPropertiesNoEventsFromUnknown(cursor) ?? {};
   const activeTheme = useRechartsTheme();
   const cursorThemeProps = useBackwardsCompatibleTheme(
-    theme => (isValidElement(cursor) ? undefined : theme.cursor),
+    theme => {
+      if (isValidElement(cursor)) {
+        return undefined;
+      }
+      // The cross of a ScatterChart is two lines, so it takes the color of a fill object
+      return chartName === 'ScatterChart' ? withFillColor(theme.cursor) : theme.cursor;
+    },
     cursorPropsFromDefinition,
     defaultLegacyCursorThemeProps,
   );

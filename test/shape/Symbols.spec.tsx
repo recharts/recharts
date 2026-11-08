@@ -1,6 +1,7 @@
 import React from 'react';
 import { render } from '@testing-library/react';
 import { Surface, Symbols, LineChart, XAxis, Line, YAxis } from '../../src';
+import { getSymbolHalfWidth } from '../../src/shape/Symbols';
 
 describe('<Symbols />', () => {
   test('Render 1 symbol', () => {
@@ -56,5 +57,23 @@ describe('<Symbols />', () => {
     const symbols = container.querySelectorAll('.recharts-line .recharts-line-curve');
     expect(symbols).toHaveLength(1);
     expect(symbols[0]).not.toHaveAttribute('points');
+  });
+});
+
+describe('getSymbolHalfWidth', () => {
+  test('returns the radius of a circle', () => {
+    expect(getSymbolHalfWidth('circle', 20, 'diameter')).toBeCloseTo(10);
+  });
+
+  test('returns half of the side of a square', () => {
+    expect(getSymbolHalfWidth('square', 20, 'diameter')).toBeCloseTo(10);
+  });
+
+  test('returns less than half of the size for diamond, which is narrower than it is tall', () => {
+    expect(getSymbolHalfWidth('diamond', 20, 'diameter')).toBeCloseTo(5.774, 3);
+  });
+
+  test('scales with size', () => {
+    expect(getSymbolHalfWidth('star', 40, 'diameter')).toBeCloseTo(2 * getSymbolHalfWidth('star', 20, 'diameter'));
   });
 });

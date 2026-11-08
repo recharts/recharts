@@ -1,6 +1,13 @@
 import * as React from 'react';
-import { createContext, PropsWithoutRef, SVGProps, useContext } from 'react';
-import { LabelContentType, isLabelContentAFunction, Label, LabelPosition, LabelFormatter } from './Label';
+import { createContext, PropsWithoutRef, ReactNode, SVGProps, useContext } from 'react';
+import {
+  LabelContentType,
+  isLabelContentAFunction,
+  isPolarViewBox,
+  Label,
+  LabelPosition,
+  LabelFormatter,
+} from './Label';
 import { Layer } from '../container/Layer';
 import { getValueByDataKey } from '../util/ChartUtils';
 import { CartesianViewBoxRequired, DataKey, PolarViewBoxRequired, TrapezoidViewBox } from '../util/types';
@@ -9,8 +16,24 @@ import { LabelProps } from '../index';
 import { svgPropertiesAndEvents } from '../util/svgPropertiesAndEvents';
 import { ZIndexable, ZIndexLayer } from '../zIndex/ZIndexLayer';
 import { DefaultZIndexes } from '../zIndex/DefaultZIndexes';
-import { isRenderableText, RenderableText, TextBackgroundProps } from './Text';
+import { getLabelBackgroundZIndex, LabelZIndexProvider } from '../zIndex/labelBackgroundZIndex';
+import { isRenderableText, RenderableText, TextBackgroundProps, TextHaloProps } from './Text';
+import { GraphicalItemClipArea, useGraphicalItemClipArea } from '../cartesian/GraphicalItemClipPath';
+import { AxisId } from '../state/cartesianAxisSlice';
+import {
+  applyLabelTheme,
+  DataLabelContextProvider,
+  getAutomaticDataLabelFill,
+  resolveLabelBackground,
+  useDataLabelColors,
+  useDataLabelThemeResolver,
+} from '../theme/labelTheme';
+import { useRechartsTheme } from '../theme/RechartsThemeContext';
+import { getEffectivePageBackground } from '../theme/pageBackground';
 
+/**
+ * @public
+ */
 export interface LabelListEntry<DataPointItem = any> {
   /**
    * Value is what renders in the UI as the label content.
@@ -23,6 +46,13 @@ export interface LabelListEntry<DataPointItem = any> {
    */
   payload: DataPointItem;
   fill: string | undefined;
+  /**
+   * Index of the data entry that this label belongs to.
+   * Some graphical items do not render every data entry (Bar skips bars without a size, for example),
+   * so this can differ from the position of the entry in the list.
+   * If undefined, the position in the list is the index.
+   */
+  originalDataIndex?: number;
 }
 
 /**
@@ -57,7 +87,7 @@ interface LabelListProps extends ZIndexable {
   /**
    * The accessor function to get the value of each label. Is ignored if dataKey is specified.
    * @param entry
-   * @param index
+   * @param index the index of the data entry that the label belongs to
    */
   valueAccessor?: (entry: CartesianLabelListEntry | PolarLabelListEntry, index: number) => RenderableText;
   /**
@@ -125,27 +155,71 @@ interface LabelListProps extends ZIndexable {
    */
   zIndex?: number;
   /**
+   * The text color of every label. It wins over the theme.
+   *
+   * Without it, and without a theme, each label takes the fill of its data entry, if there is one.
+   *
+   * With a theme, a `fill` in the theme's `graphicalItems[n].label.style` applies first.
+   * Otherwise each label picks a color automatically:
+   * - A label on top of a filled shape (Bar, Funnel, Pie, RadialBar) takes the `pageBackground` color,
+   *   or the `typography` color if there is no page background.
+   *   A shape with `fill="none"` or `transparent` is not filled, so its labels count as next to it.
+   * - A label next to its shape, and every label of Line, Area, Radar and Scatter, takes the color of its shape.
+   * - A label with a `background` or `halo` takes the color of its shape too.
+   * - A label at an `{ x, y }` position takes the `typography` color.
+   *
+   * Custom `content` receives the resolved color as its `fill` prop.
+   *
+   * @see {@link https://recharts.github.io/en-US/guide/label-colors/ Label colors guide}
+   * @example <LabelList position="inside" fill="#000" />
+   */
+  fill?: string;
+  /**
    * Draws a rectangle behind each label, for example to keep labels readable on top of filled shapes.
    *
-   * - `true` draws the background with default styles.
-   *   The fill is the `pageBackground` color from the theme, or white when no theme is set.
+   * - `true` draws the background with the styles from the theme's `graphicalItems[n].label.background`.
+   *   If neither sets a `fill`, the fill is the `pageBackground` color from the theme, or white when no theme is set.
    * - An object accepts SVG `<rect>` attributes such as `fill`, `stroke` and `rx`, and a `padding`.
-   * - `false` or `undefined` draws no background.
+   *   It is merged over the theme styles key by key.
+   * - `false` draws no background, even if the theme turns backgrounds on.
+   * - `undefined` uses the theme's `graphicalItems[n].label.background`, and draws no background without a theme.
    *
    * Each background is sized from its rendered label and follows curved label paths.
    * It is not drawn for custom `content`.
+   *
+   * In a chart, the rectangles render in a zIndex layer below the labels,
+   * so overlapping labels never cover each other's text.
    *
    * @since 3.11
    * @example <LabelList position="inside" background />
    * @example <LabelList position="inside" background={{ fill: '#fff', rx: 2, padding: 4 }} />
    */
   background?: boolean | TextBackgroundProps;
+  /**
+   * Draws an outline around the letters of each label, as a lighter alternative to `background`.
+   *
+   * - `true` draws the halo with default styles.
+   *   The stroke is the `pageBackground` color from the theme, or white when no theme is set.
+   * - An object accepts `stroke`, `strokeWidth`, `strokeOpacity` and `strokeLinejoin` to set them explicitly.
+   * - `false` or `undefined` draws no halo.
+   *
+   * Unlike `background`, a halo needs no measurement, works during server-side rendering, and works for
+   * labels that follow a curved path (`insideStart`, `insideEnd` and `end` in polar charts).
+   *
+   * @since 3.11
+   * @example <LabelList position="inside" halo />
+   * @example <LabelList position="inside" halo={{ stroke: '#fff', strokeWidth: 4 }} />
+   */
+  halo?: boolean | TextHaloProps;
 }
 
 /**
  * LabelList props do not allow refs because the same props are reused in multiple elements so we don't have a good single place to ref to.
  */
 type SvgTextProps = PropsWithoutRef<SVGProps<SVGTextElement>>;
+/**
+ * @public
+ */
 export type Props = Omit<SvgTextProps, 'children'> & LabelListProps;
 
 /**
@@ -163,6 +237,7 @@ export type Props = Omit<SvgTextProps, 'children'> & LabelListProps;
  *    the props to be passed to a LabelList component
  *
  * @inline
+ * @public
  */
 export type ImplicitLabelListType = boolean | LabelContentType | Props;
 
@@ -182,6 +257,53 @@ const PolarLabelListContext = createContext<ReadonlyArray<PolarLabelListEntry> |
 
 export const PolarLabelListContextProvider = PolarLabelListContext.Provider;
 
+const LabelListClipAreaContext = createContext<GraphicalItemClipArea | undefined>(undefined);
+
+/**
+ * Graphical items that can be clipped (for example when an axis has `allowDataOverflow`) render this around their labels.
+ * The labels are not clipped, because the label of a point on the edge of the domain is often drawn outside of the clip area.
+ * Instead, LabelList skips the labels of elements that are completely outside of the clip area.
+ */
+export function SetLabelListClipArea({
+  xAxisId,
+  yAxisId,
+  children,
+}: {
+  xAxisId: AxisId;
+  yAxisId: AxisId;
+  children: ReactNode;
+}) {
+  const clipArea = useGraphicalItemClipArea(xAxisId, yAxisId);
+  return <LabelListClipAreaContext.Provider value={clipArea}>{children}</LabelListClipAreaContext.Provider>;
+}
+
+function isInRange(start: number, size: number, areaStart: number, areaSize: number): boolean {
+  const areaEnd = areaStart + areaSize;
+  if (size === 0) {
+    // A point exactly on the edge of the domain is inside, so that it keeps its label.
+    return start >= areaStart && start <= areaEnd;
+  }
+  // A bar that only touches the edge from outside is not visible at all.
+  return Math.max(start, start + size) > areaStart && Math.min(start, start + size) < areaEnd;
+}
+
+/**
+ * The element of a label is a point (Line, Area), a rectangle (Bar), or the box of a symbol (Scatter).
+ * The label is skipped if its element is outside of the clip area in one of the clipped dimensions.
+ */
+function isClippedAway(
+  entry: CartesianLabelListEntry | undefined,
+  clipArea: GraphicalItemClipArea | undefined,
+): boolean {
+  if (entry == null || clipArea == null) {
+    return false;
+  }
+  return (
+    (clipArea.isXClipped && !isInRange(entry.x, entry.width, clipArea.x, clipArea.width)) ||
+    (clipArea.isYClipped && !isInRange(entry.y, entry.height, clipArea.y, clipArea.height))
+  );
+}
+
 function useCartesianLabelListContext(): ReadonlyArray<CartesianLabelListEntry> | undefined {
   return useContext(CartesianLabelListContext);
 }
@@ -192,75 +314,142 @@ function usePolarLabelListContext(): ReadonlyArray<PolarLabelListEntry> | undefi
 
 /**
  * @consumes LabelListContext
+ * @public
  */
 export function LabelList({ valueAccessor = defaultAccessor, ...restProps }: Props) {
   const { dataKey, clockWise, id, textBreakAll, zIndex, ...others } = restProps;
   const cartesianData = useCartesianLabelListContext();
   const polarData = usePolarLabelListContext();
+  const clipArea = useContext(LabelListClipAreaContext);
+  const resolveLabelTheme = useDataLabelThemeResolver();
+  const theme = useRechartsTheme();
+  const dataLabelColors = useDataLabelColors();
+  // Automatic colors apply only with a theme. Without one, labels keep the fill of their entry.
+  const automaticLabelColors = theme == null ? undefined : dataLabelColors;
+  const pageBackground = getEffectivePageBackground(theme);
   const data = cartesianData || polarData;
+  const labelZIndex = zIndex ?? DefaultZIndexes.label;
+  const backgroundZIndex = getLabelBackgroundZIndex(labelZIndex, others.background);
+
   if (!data || !data.length) {
     return null;
   }
 
   return (
-    <ZIndexLayer zIndex={zIndex ?? DefaultZIndexes.label}>
-      <Layer className="recharts-label-list">
-        {data.map((entry, index) => {
-          const value = isNullish(dataKey)
-            ? valueAccessor(entry, index)
-            : (getValueByDataKey(entry.payload, dataKey) as string | number);
+    <>
+      {others.background && <ZIndexLayer zIndex={backgroundZIndex} />}
+      <ZIndexLayer zIndex={labelZIndex}>
+        <DataLabelContextProvider value>
+          <LabelZIndexProvider value={labelZIndex}>
+            <Layer className="recharts-label-list">
+              {data.map((entry, position) => {
+                if (isClippedAway(cartesianData?.[position], clipArea)) {
+                  return null;
+                }
+                /*
+                 * `position` is where the entry sits in the list, `index` is the data entry the label belongs to.
+                 * They differ when the graphical item does not render every data entry.
+                 * Colors and themes read the lists by position; ids, keys and the index users get are data indexes.
+                 */
+                const index = entry.originalDataIndex ?? position;
+                const value = isNullish(dataKey)
+                  ? valueAccessor(entry, index)
+                  : (getValueByDataKey(entry.payload, dataKey) as string | number);
 
-          const idProps = isNullish(id) ? {} : { id: `${id}-${index}` };
+                const idProps = isNullish(id) ? {} : { id: `${id}-${index}` };
 
-          return (
-            <Label
-              key={`label-${index}`}
-              {...svgPropertiesAndEvents(entry)}
-              {...others}
-              {...idProps}
-              /*
-               * Prefer to use the explicit fill from LabelList props.
-               * Only in an absence of that, fall back to the fill of the entry.
-               * The entry fill can be quite difficult to see especially in Bar, Pie, RadialBar in inside positions.
-               * On the other hand it's quite convenient in Scatter, Line, or when the position is outside the Bar, Pie filled shapes.
-               */
-              fill={restProps.fill ?? entry.fill}
-              parentViewBox={entry.parentViewBox}
-              value={value}
-              textBreakAll={textBreakAll}
-              viewBox={entry.viewBox}
-              index={index}
-              /*
-               * Here we don't want to use the default Label zIndex,
-               * we want it to inherit the zIndex of the LabelList itself
-               * which means just rendering as a regular child, without portaling anywhere.
-               */
-              zIndex={0}
-            />
-          );
-        })}
-      </Layer>
-    </ZIndexLayer>
+                /*
+                 * The explicit fill from LabelList props wins, then the fill from the label theme.
+                 * Without a theme, the label falls back to the fill of the entry.
+                 * With a theme, the fallback depends on the position, so that a label on top of a shape stays readable.
+                 */
+                const labelTheme = resolveLabelTheme?.(position);
+                const background = resolveLabelBackground(restProps.background, labelTheme?.background);
+                const fallbackFill =
+                  automaticLabelColors == null
+                    ? entry.fill
+                    : getAutomaticDataLabelFill({
+                        position: others.position,
+                        isPolar: isPolarViewBox(entry.viewBox),
+                        hasFilledShapes: automaticLabelColors.hasFilledShapes,
+                        shapeColors: automaticLabelColors.getShapeColors?.(position) ?? { fill: entry.fill },
+                        pageBackground,
+                        hasOwnBackground: Boolean(background) || Boolean(others.halo),
+                      });
+                const themedProps = applyLabelTheme(labelTheme, restProps, fallbackFill);
+
+                return (
+                  <Label
+                    key={`label-${index}`}
+                    {...svgPropertiesAndEvents(entry)}
+                    {...others}
+                    {...idProps}
+                    fill={themedProps.fill}
+                    style={themedProps.style}
+                    background={themedProps.background}
+                    parentViewBox={entry.parentViewBox}
+                    value={value}
+                    textBreakAll={textBreakAll}
+                    viewBox={entry.viewBox}
+                    index={index}
+                    /*
+                     * Here we don't want to use the default Label zIndex,
+                     * we want it to inherit the zIndex of the LabelList itself
+                     * which means just rendering as a regular child, without portaling anywhere.
+                     */
+                    zIndex={0}
+                  />
+                );
+              })}
+            </Layer>
+          </LabelZIndexProvider>
+        </DataLabelContextProvider>
+      </ZIndexLayer>
+    </>
   );
 }
 
 LabelList.displayName = 'LabelList';
 
-export function LabelListFromLabelProp({ label }: { label?: ImplicitLabelListType }) {
+function isLabelListProps(value: ImplicitLabelListType): value is Props {
+  return typeof value === 'object' && value !== null && !React.isValidElement(value);
+}
+
+export function LabelListFromLabelProp({
+  label,
+  pointerEvents,
+}: {
+  label?: ImplicitLabelListType;
+  /**
+   * The `pointer-events` of the rendered labels.
+   *
+   * Charts where a label can end up on top of a shape that has its own pointer events - such as the
+   * Sankey, where a node label sits on the node rectangle - use this to keep the labels from
+   * intercepting the events of the shape underneath them.
+   */
+  pointerEvents?: string;
+}) {
   if (!label) {
     return null;
   }
 
   if (label === true) {
-    return <LabelList key="labelList-implicit" />;
+    return <LabelList key="labelList-implicit" pointerEvents={pointerEvents} />;
   }
 
   if (React.isValidElement(label) || isLabelContentAFunction(label)) {
-    return <LabelList key="labelList-implicit" content={label} />;
+    return <LabelList key="labelList-implicit" content={label} pointerEvents={pointerEvents} />;
   }
 
-  if (typeof label === 'object') {
-    return <LabelList key="labelList-implicit" {...label} type={String(label.type)} />;
+  if (isLabelListProps(label)) {
+    return (
+      <LabelList
+        key="labelList-implicit"
+        {...label}
+        type={String(label.type)}
+        pointerEvents={label.pointerEvents ?? pointerEvents}
+      />
+    );
   }
 
   return null;

@@ -1,6 +1,16 @@
 import { describe, expect, it } from 'vitest';
 import React from 'react';
-import { Cell, emptyTheme, Legend, Pie, PieChart, RechartsTheme, RechartsThemeProvider, Tooltip } from '../../../src';
+import {
+  Cell,
+  emptyTheme,
+  Legend,
+  Pie,
+  PieChart,
+  PieLabelRenderProps,
+  RechartsTheme,
+  RechartsThemeProvider,
+  Tooltip,
+} from '../../../src';
 import { rechartsTestRender } from '../../helper/createSelectorTestCase';
 import { assertNotNull } from '../../helper/assertNotNull';
 import { showTooltip } from '../../component/Tooltip/tooltipTestHelpers';
@@ -133,7 +143,7 @@ describe('Pie theme', () => {
     }
   });
 
-  it('ignores the indexed theme completely when explicit Pie style props are present', () => {
+  it('ignores the indexed theme colors, and keeps the other theme styles, when explicit Pie colors are present', () => {
     const { container } = rechartsTestRender(
       <RechartsThemeProvider
         value={{
@@ -161,10 +171,11 @@ describe('Pie theme', () => {
 
     [getSector(container, 0), getSector(container, 1)].forEach(sector => {
       expect(sector).toHaveAttribute('fill', 'gold');
-      expect(sector).not.toHaveAttribute('fill-opacity');
       expect(sector).not.toHaveAttribute('stroke');
       expect(sector).toHaveAttribute('stroke-width', '5');
     });
+    expect(getSector(container, 0)).toHaveAttribute('fill-opacity', '0.4');
+    expect(getSector(container, 1)).toHaveAttribute('fill-opacity', '0.6');
   });
 
   describe('Legend and Tooltip colors', () => {
@@ -286,5 +297,118 @@ describe('Pie theme', () => {
       expect(getLegendIconColors(container)).toEqual(['blue', 'orange', 'red']);
       expect(getTooltipItemColor(container)).toBe('blue');
     });
+  });
+});
+
+describe('Pie data entry styles on labels (issue #7974)', () => {
+  const styledData = [
+    {
+      name: 'A',
+      value: 100,
+      id: 'entry-a',
+      fill: '#ff0000',
+      opacity: 0.4,
+      strokeWidth: 7,
+      strokeDasharray: '1 1',
+      'data-testid': 'datum-a',
+    },
+    { name: 'B', value: 200 },
+  ];
+
+  function getLabelLine(container: HTMLElement, index: number): Element {
+    const line = container.querySelectorAll('.recharts-pie-label-line')[index];
+    assertNotNull(line);
+    return line;
+  }
+
+  function getLabelText(container: HTMLElement, index: number): Element {
+    const text = container.querySelectorAll('.recharts-pie-label-text')[index];
+    assertNotNull(text);
+    return text;
+  }
+
+  it('spreads entry styles on the sector, but removes the entry id everywhere', () => {
+    const { container } = rechartsTestRender(
+      <MyChart>
+        <Pie data={styledData} dataKey="value" label labelLine isAnimationActive={false} />
+      </MyChart>,
+    );
+
+    // entry props still spread on the graphical item itself
+    const sector = getSector(container, 0);
+    expect(sector).toHaveAttribute('fill', '#ff0000');
+    expect(sector).toHaveAttribute('opacity', '0.4');
+    expect(sector).toHaveAttribute('stroke-width', '7');
+    expect(sector).toHaveAttribute('stroke-dasharray', '1 1');
+
+    // id is removed from the sector, the label line and the label text
+    expect(sector).not.toHaveAttribute('id');
+    expect(container.querySelector('#entry-a')).toBeNull();
+  });
+
+  it('keeps only the entry color on the label line and the label text', () => {
+    const { container } = rechartsTestRender(
+      <MyChart>
+        <Pie data={styledData} dataKey="value" label labelLine isAnimationActive={false} />
+      </MyChart>,
+    );
+
+    const line = getLabelLine(container, 0);
+    expect(line).toHaveAttribute('stroke', '#ff0000');
+    expect(line).not.toHaveAttribute('opacity');
+    expect(line).not.toHaveAttribute('stroke-width');
+    expect(line).not.toHaveAttribute('stroke-dasharray');
+    expect(line).not.toHaveAttribute('data-testid');
+
+    const text = getLabelText(container, 0);
+    expect(text).toHaveAttribute('fill', '#ff0000');
+    expect(text).not.toHaveAttribute('opacity');
+    expect(text).not.toHaveAttribute('stroke-width');
+    expect(text).not.toHaveAttribute('stroke-dasharray');
+    expect(text).not.toHaveAttribute('data-testid');
+  });
+
+  it('still passes geometry, name and payload to a custom label renderer', () => {
+    const captured: PieLabelRenderProps[] = [];
+    rechartsTestRender(
+      <MyChart>
+        <Pie
+          data={styledData}
+          dataKey="value"
+          label={(props: PieLabelRenderProps) => {
+            captured.push(props);
+            return <text>{props.name}</text>;
+          }}
+          isAnimationActive={false}
+        />
+      </MyChart>,
+    );
+
+    expect(captured.length).toBeGreaterThan(0);
+    const first = captured[0];
+    expect(first.name).toBe('A');
+    expect(first.cx).toEqual(expect.any(Number));
+    expect(first.cy).toEqual(expect.any(Number));
+    expect(first.outerRadius).toEqual(expect.any(Number));
+    expect(first.percent).toEqual(expect.any(Number));
+    expect(first.payload).toMatchObject({ name: 'A', value: 100, id: 'entry-a' });
+  });
+
+  it('keeps only the entry color on labels when a theme is present', () => {
+    const { container } = rechartsTestRender(
+      <RechartsThemeProvider value={{ graphicalItems: [{ fill: 'purple', stroke: 'indigo' }] }}>
+        <MyChart>
+          <Pie data={styledData} dataKey="value" label labelLine isAnimationActive={false} />
+        </MyChart>
+      </RechartsThemeProvider>,
+    );
+
+    expect(getLabelLine(container, 0)).toHaveAttribute('stroke', '#ff0000');
+    expect(getLabelLine(container, 0)).not.toHaveAttribute('stroke-width');
+    expect(getLabelText(container, 0)).toHaveAttribute('fill', '#ff0000');
+    expect(getLabelText(container, 0)).not.toHaveAttribute('opacity');
+    // unthemed entry follows the theme color
+    expect(getLabelLine(container, 1)).toHaveAttribute('stroke', 'purple');
+    expect(getLabelText(container, 1)).toHaveAttribute('fill', 'purple');
   });
 });

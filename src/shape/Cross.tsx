@@ -35,6 +35,9 @@ interface CrossProps {
   className?: number;
 }
 
+/**
+ * @public
+ */
 export type Props = SVGProps<SVGPathElement> & CrossProps;
 
 const getPath = (x: number, y: number, width: number, height: number, top: number, left: number) => {
@@ -52,6 +55,8 @@ const getPath = (x: number, y: number, width: number, height: number, top: numbe
  *
  * Use SVG presentation attributes such as `stroke`, `strokeWidth`, and `strokeDasharray`
  * to style the lines. Set `stroke` to make the path visible; `fill` does not color the lines.
+ *
+ * @public
  */
 export const Cross: React.FC<Props> = ({
   x = 0,

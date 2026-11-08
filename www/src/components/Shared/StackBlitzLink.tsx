@@ -1,7 +1,9 @@
 import { ReactNode } from 'react';
 import stackblitzSdk, { ProjectDependencies } from '@stackblitz/sdk';
+import { version as rechartsVersion } from '../../../../package.json';
 
 import cssVars from '../../styles/_variables.css?raw';
+import followStackBlitzThemeCode from './stackblitz/followStackBlitzTheme.ts?raw';
 import { sendEvent } from '../analytics.ts';
 import { ColorMode, useColorMode } from '../color-mode';
 
@@ -27,9 +29,11 @@ const indexTsxCode = (title: string) =>
   `
 import React from 'react';
 import { createRoot } from 'react-dom/client';
+import { RechartsThemeProvider, autoTheme } from 'recharts';
 import { RechartsDevtoolsContext, RechartsDevtoolsPortal } from '@recharts/devtools';
 
 import './index.css';
+import './followStackBlitzTheme';
 import Example from './Example';
 
 const container = document.getElementById('root');
@@ -38,13 +42,19 @@ if (!container) {
 }
 const root = createRoot(container);
 
+/*
+ * autoTheme follows the CSS color-scheme of the page, set by data-mode in index.html.
+ * followStackBlitzTheme updates data-mode when you switch the StackBlitz editor theme.
+ */
 const AppWithDevtools = () => {
-  return <RechartsDevtoolsContext>
-    <h1>${title}</h1>
-    <Example />
-    <h2>Recharts Devtools</h2>
-    <RechartsDevtoolsPortal />
-  </RechartsDevtoolsContext>
+  return <RechartsThemeProvider value={autoTheme}>
+    <RechartsDevtoolsContext>
+      <h1>${title}</h1>
+      <Example />
+      <h2>Recharts Devtools</h2>
+      <RechartsDevtoolsPortal />
+    </RechartsDevtoolsContext>
+  </RechartsThemeProvider>
 }
 
 root.render(<AppWithDevtools />);
@@ -64,6 +74,19 @@ const indexHtmlCode = (args: { title: string; mode: ColorMode }) => `
   <script type="module" src="./src/index.tsx"></script>
   </body>
   </html>
+`;
+
+/*
+ * The website variables only define colors, so the page would be transparent
+ * and show the background that StackBlitz sets on the preview iframe.
+ */
+// language=CSS
+const indexCssCode = `${cssVars}
+
+html {
+  background-color: var(--color-surface-base);
+  color: var(--color-text-1);
+}
 `;
 
 // tsconfig.json
@@ -96,7 +119,10 @@ const dependencies: ProjectDependencies = {
   react: reactVersion,
   'react-is': reactVersion,
   'react-dom': reactVersion,
-  recharts: 'latest',
+  /*
+   * Same version as the website, so that the example uses the same API (for example autoTheme).
+   */
+  recharts: rechartsVersion,
 };
 
 const devDependencies: ProjectDependencies = {
@@ -160,7 +186,8 @@ export function StackBlitzLink({ code, title, children }: StackBlitzLinkProps) {
             title,
             files: {
               'index.html': indexHtmlCode({ title, mode }),
-              'src/index.css': cssVars,
+              'src/index.css': indexCssCode,
+              'src/followStackBlitzTheme.ts': followStackBlitzThemeCode,
               /*
                * This file has tsx in it, and create-react-app supports TypeScript out of the box.
                */

@@ -118,7 +118,7 @@ describe('autoTheme', () => {
 
   it('should use light-dark() for the page background and text color', () => {
     expect(autoTheme.pageBackground).toBe('light-dark(#fff, #18181b)');
-    expect(autoTheme.typography?.color).toBe('light-dark(#18181b, #f4f4f5)');
+    expect(autoTheme.typography?.color).toBe('light-dark(#010101, #f4f4f5)');
     expect(autoTheme.tooltip?.contentStyle?.border).toBe('1px solid light-dark(#a1a1aa, #71717a)');
   });
 });

@@ -3,6 +3,8 @@ export const expectedInBundle = [
   'getNiceTickValues',
   'getRelativeCoordinate',
   'Global',
+  'Label',
+  'LabelList',
   'Layer',
   'Sector',
   'SunburstChart',
@@ -12,4 +14,5 @@ export const expectedInBundle = [
   'useChartWidth',
   'useChartLayout',
   'useRechartsTheme',
+  'ZIndexLayer',
 ] as const;

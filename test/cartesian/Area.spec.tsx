@@ -889,6 +889,7 @@ describe.each(chartsThatSupportArea)('<Area /> as a child of $testName', ({ Char
             dataKey: 'value',
             fill: '#3182bd',
             graphicalItemId: expect.stringMatching(/^recharts-area-.+/),
+            ignoreDataEntryColors: true,
             hide: false,
             name: 'value',
             nameKey: undefined,

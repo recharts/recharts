@@ -1,7 +1,7 @@
 import type { FunnelChartExample } from './FunnelChartApiExamples.story';
-import { expect, test } from '../fixtures';
+import { expect, testWithThemes } from '../fixtures';
 
-test('FunnelChartExample', async ({ mountStory }) => {
+testWithThemes('FunnelChartExample', async ({ mountStory }) => {
   const component = await mountStory<typeof FunnelChartExample>('www/FunnelChartApiExamples/FunnelChartExample', {
     isAnimationActive: false,
   });

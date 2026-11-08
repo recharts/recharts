@@ -1,16 +1,35 @@
+import { clsx } from 'clsx';
 import * as React from 'react';
-import { MouseEvent, ReactElement, ReactNode, SVGProps, useCallback, useMemo, useState } from 'react';
+import { ComponentType, MouseEvent, ReactElement, ReactNode, SVGProps, useCallback, useMemo, useState } from 'react';
 import maxBy from 'es-toolkit/compat/maxBy';
 import sumBy from 'es-toolkit/compat/sumBy';
 import get from 'es-toolkit/compat/get';
 import { Surface } from '../container/Surface';
+import { AllZIndexPortals } from '../zIndex/ZIndexPortal';
 import { Layer } from '../container/Layer';
 import { Props as RectangleProps, Rectangle } from '../shape/Rectangle';
 import { getValueByDataKey } from '../util/ChartUtils';
-import { Coordinate, DataKey, EventThrottlingProps, Margin, Percent, SankeyLink, SankeyNode } from '../util/types';
+import {
+  Coordinate,
+  DataKey,
+  EventThrottlingProps,
+  Margin,
+  Percent,
+  SankeyLink,
+  SankeyNode,
+  TrapezoidViewBox,
+} from '../util/types';
 import { ReportChartMargin, ReportChartSize, useChartHeight, useChartWidth } from '../context/chartLayoutContext';
 import { TooltipPortalContext } from '../context/tooltipPortalContext';
 import { RechartsWrapper } from './RechartsWrapper';
+import {
+  CartesianLabelListContextProvider,
+  CartesianLabelListEntry,
+  ImplicitLabelListType,
+  LabelList,
+  LabelListFromLabelProp,
+  Props as LabelListProps,
+} from '../component/LabelList';
 import { RechartsStoreProvider } from '../state/RechartsStoreProvider';
 import { useAppDispatch } from '../state/hooks';
 import {
@@ -25,7 +44,11 @@ import { SetTooltipEntrySettings } from '../state/SetTooltipEntrySettings';
 import { ChartOptions } from '../state/optionsSlice';
 import { ReportEventSettings } from '../state/ReportEventSettings';
 import { SetComputedData } from '../context/chartDataContext';
-import { svgPropertiesNoEvents, svgPropertiesNoEventsFromUnknown } from '../util/svgPropertiesNoEvents';
+import {
+  SVGPropsNoEvents,
+  svgPropertiesNoEvents,
+  svgPropertiesNoEventsFromUnknown,
+} from '../util/svgPropertiesNoEvents';
 import { RequiresDefaultProps, resolveDefaultProps } from '../util/resolveDefaultProps';
 import { isPositiveNumber } from '../util/isWellBehavedNumber';
 import { isNotNil, noop } from '../util/DataUtils';
@@ -33,9 +56,11 @@ import { WithIdRequired } from '../util/useUniqueId';
 import { RegisterGraphicalItemId } from '../context/RegisterGraphicalItemId';
 import { GraphicalItemId } from '../state/graphicalItemsSlice';
 import { initialEventSettingsState } from '../state/eventSettingsSlice';
-import { RechartsTheme, Styles2D } from '../theme/RechartsTheme';
+import { ColorGraphicalItemStyle, ColorStyles2D, getColorGraphicalItems } from '../theme/themeFill';
 import { useRechartsTheme } from '../theme/RechartsThemeContext';
-import { getOwnStyles, hasOwnColors } from '../theme/dataEntryStyles';
+import { getOwnStyles, hasOwnColors, withoutColors } from '../theme/dataEntryStyles';
+import { RechartsFill, RechartsFillDefinitionProps } from '../fill/RechartsFill';
+import { readEntryFill, useThemeFillObjects } from '../fill/fillDefinitions';
 
 const interpolationGenerator = (a: number, b: number) => {
   const ka = +a;
@@ -223,6 +248,9 @@ const getDepthTree = (tree: SankeyNode[]): SankeyNode[][] => {
 
 type LinkDataItemDy = LinkDataItem & { dy: number; sy?: number; ty?: number };
 
+/**
+ * @public
+ */
 export type SankeyVerticalAlign = 'justify' | 'top';
 
 const updateYOfTree = (
@@ -761,15 +789,20 @@ const SetSankeyTooltipEntrySettings = React.memo(
 /**
  * A link in the Sankey data.
  *
- * Style properties such as `stroke` are read only when a theme is active.
- * A link that defines any of them ignores the theme.
+ * Valid SVG properties such as `stroke`, `strokeDasharray`, `opacity` or `className` are spread on the link path.
+ * `id` and `d` are not, because ids must be unique and Sankey computes the path itself.
+ * With a theme, a link that defines its own `fill` or `stroke` ignores the theme colors.
  */
-interface LinkDataItem extends Styles2D {
+interface LinkDataItem
+  extends ColorStyles2D, Omit<SVGPropsNoEvents<SVGProps<SVGPathElement>>, keyof ColorStyles2D | 'id' | 'target' | 'd'> {
   source: number;
   target: number;
   value: number;
 }
 
+/**
+ * @public
+ */
 export interface NodeProps extends Omit<SVGProps<SVGRectElement>, 'height' | 'width'> {
   height: number;
   width: number;
@@ -779,6 +812,9 @@ export interface NodeProps extends Omit<SVGProps<SVGRectElement>, 'height' | 'wi
   y: number;
 }
 
+/**
+ * @public
+ */
 export interface LinkProps extends SVGProps<SVGPathElement> {
   sourceX: number;
   targetX: number;
@@ -794,15 +830,24 @@ export interface LinkProps extends SVGProps<SVGPathElement> {
   payload: Omit<SankeyLink, 'source' | 'target'> & { source: SankeyNode; target: SankeyNode };
 }
 
+/**
+ * @public
+ */
 export interface SankeyData {
   nodes: any[];
   links: LinkDataItem[];
 }
 
 // TODO: improve types - NodeOptions uses SankeyNode, LinkOptions uses LinkProps. Standardize.
+/**
+ * @public
+ */
 export type SankeyNodeOptions =
   ReactElement<SVGProps<SVGRectElement>> | ((props: NodeProps) => ReactNode) | RectangleProps;
 
+/**
+ * @public
+ */
 export type SankeyLinkOptions =
   | ReactElement<SVGProps<SVGPathElement>>
   | ((props: LinkProps) => ReactElement<SVGProps<SVGPathElement>>)
@@ -895,6 +940,22 @@ interface SankeyProps extends EventThrottlingProps {
    */
   node?: SankeyNodeOptions;
   /**
+   * Renders one label for each node. Options:
+   * - `true`: renders default labels with the node name;
+   * - `false`: no labels are rendered;
+   * - `object`: the props of LabelList component;
+   * - `ReactElement`: a custom SVG label element, such as `<text>` or `<g>`.
+   *   HTML elements such as `<div>` are not valid inside the chart SVG and may trigger React DOM warnings.
+   * - `function`: a render function of custom label.
+   *
+   * @defaultValue false
+   *
+   * @example <Sankey label />
+   * @example <Sankey label={{ position: 'right', fill: '#333' }} />
+   * @example <Sankey><LabelList position="inside" /></Sankey>
+   */
+  label?: ImplicitLabelListType;
+  /**
    * If set an object, the option is the configuration of links.
    * If set a React element, the option is the custom react element of drawing the links.
    *
@@ -948,8 +1009,14 @@ interface SankeyProps extends EventThrottlingProps {
   align?: 'left' | 'justify';
 }
 
+/**
+ * @public
+ */
 export type Props = Omit<SVGProps<SVGSVGElement>, keyof SankeyProps> & SankeyProps;
 
+/**
+ * @public
+ */
 export type SankeyElementType = 'node' | 'link';
 
 /**
@@ -975,11 +1042,10 @@ function renderLinkItem(option: SankeyLinkOptions | undefined, props: LinkProps,
     return option(props);
   }
 
-  const { sourceX, sourceY, sourceControlX, targetX, targetY, targetControlX, linkWidth, ...others } = props;
+  const { sourceX, sourceY, sourceControlX, targetX, targetY, targetControlX, linkWidth, className, ...others } = props;
 
   return (
     <path
-      className="recharts-sankey-link"
       d={`
           M${sourceX},${sourceY}
           C${sourceControlX},${sourceY} ${targetControlX},${targetY} ${targetX},${targetY}
@@ -988,6 +1054,7 @@ function renderLinkItem(option: SankeyLinkOptions | undefined, props: LinkProps,
       {...(hasTheme ? undefined : legacyLinkStyles)}
       strokeWidth={linkWidth}
       {...svgPropertiesNoEvents(others)}
+      className={clsx('recharts-sankey-link', className)}
     />
   );
 }
@@ -1013,11 +1080,11 @@ const buildLinkProps = ({
   /**
    * Styles from the theme. Explicit props from `linkContent` override these.
    */
-  themeStyles: Styles2D;
+  themeStyles: ColorStyles2D;
   /**
-   * Styles defined in the link data entry. These override everything else.
+   * SVG props defined in the link data entry. These override everything else.
    */
-  ownStyles: Styles2D;
+  ownStyles: EntrySvgProps;
 }): LinkProps | undefined => {
   const { sy: sourceRelativeY, ty: targetRelativeY, dy: linkWidth } = link;
   const sourceNode = nodes[link.source];
@@ -1033,12 +1100,15 @@ const buildLinkProps = ({
   const sourceY = sourceNode.y + sourceRelativeY + linkWidth / 2 + top;
   const targetY = targetNode.y + targetRelativeY + linkWidth / 2 + top;
 
+  // The geometry comes last, so that `targetX` and `targetY`, which are also valid SVG attributes, can't move the link.
+  // @ts-expect-error linkContent is passing in unknown props
   const linkProps: LinkProps = {
+    ...themeStyles,
+    ...svgPropertiesNoEventsFromUnknown(linkContent),
+    ...ownStyles,
     sourceX,
-    // @ts-expect-error the linkContent from below is contributing unknown props
     targetX,
     sourceY,
-    // @ts-expect-error the linkContent from below is contributing unknown props
     targetY,
     sourceControlX,
     targetControlX,
@@ -1047,9 +1117,6 @@ const buildLinkProps = ({
     linkWidth,
     index: i,
     payload: { ...link, source: sourceNode, target: targetNode },
-    ...themeStyles,
-    ...svgPropertiesNoEventsFromUnknown(linkContent),
-    ...ownStyles,
   };
 
   return linkProps;
@@ -1157,11 +1224,47 @@ function AllSankeyLinkElements({
 }
 
 /**
+ * The fill the node is actually rendered with.
+ *
+ * `renderNodeItem` puts the legacy default fill on the rectangle first and spreads the node props over
+ * it, so an explicit `fill` wins over the default. An inline `style.fill` wins over the `fill`
+ * attribute in the CSS cascade, so it wins over both.
+ *
+ * @param nodeProps resolved props of the node
+ * @param hasTheme true if a theme is active, in which case the legacy styles are not applied
+ * @returns the fill of the rendered node, undefined when the node has no fill of its own
+ */
+function getRenderedNodeFill(nodeProps: NodeProps, hasTheme: boolean): string | undefined {
+  const styleFill: unknown = nodeProps.style?.fill;
+  if (typeof styleFill === 'string') {
+    return styleFill;
+  }
+  if (typeof nodeProps.fill === 'string') {
+    return nodeProps.fill;
+  }
+  if (!hasTheme) {
+    return legacyNodeStyles.fill;
+  }
+  return undefined;
+}
+
+/**
  * @param option the `node` prop
  * @param props resolved props of the node
  * @param hasTheme true if a theme is active, in which case the legacy styles are not applied
  */
-function renderNodeItem(option: SankeyNodeOptions | undefined, props: NodeProps, hasTheme: boolean) {
+/**
+ * @param option the `node` prop
+ * @param props resolved props of the node
+ * @param hasTheme true if a theme is active, in which case the legacy styles are not applied
+ * @param fillDefinition the fill definition of the node, if it paints with one. It gets the color of the node.
+ */
+function renderNodeItem(
+  option: SankeyNodeOptions | undefined,
+  props: NodeProps,
+  hasTheme: boolean,
+  fillDefinition: ComponentType<RechartsFillDefinitionProps> | undefined,
+) {
   if (React.isValidElement(option)) {
     return React.cloneElement(option, props);
   }
@@ -1172,9 +1275,12 @@ function renderNodeItem(option: SankeyNodeOptions | undefined, props: NodeProps,
   return (
     // @ts-expect-error recharts radius is not compatible with SVG radius
     <Rectangle
-      className="recharts-sankey-node"
       {...(hasTheme ? undefined : legacyNodeStyles)}
       {...svgPropertiesNoEvents(props)}
+      {...(fillDefinition == null
+        ? undefined
+        : { fill: { color: getRenderedNodeFill(props, hasTheme), definition: fillDefinition } })}
+      className={clsx('recharts-sankey-node', props.className)}
     />
   );
 }
@@ -1196,11 +1302,11 @@ const buildNodeProps = ({
   /**
    * Styles from the theme. Explicit props from `nodeContent` override these.
    */
-  themeStyles: Styles2D;
+  themeStyles: ColorStyles2D;
   /**
-   * Styles defined in the node data entry. These override everything else.
+   * SVG props defined in the node data entry. These override everything else, except the position and size.
    */
-  ownStyles: Styles2D;
+  ownStyles: EntrySvgProps;
 }) => {
   const { x, y, dx, dy } = node;
   // @ts-expect-error nodeContent is passing in unknown props
@@ -1221,6 +1327,7 @@ const buildNodeProps = ({
 function NodeElement({
   graphicalItemId,
   props,
+  fillDefinition,
   nodeContent,
   i,
   onMouseEnter,
@@ -1230,6 +1337,7 @@ function NodeElement({
 }: {
   graphicalItemId: GraphicalItemId;
   props: NodeProps;
+  fillDefinition: ComponentType<RechartsFillDefinitionProps> | undefined;
   nodeContent: SankeyNodeOptions | undefined;
   i: number;
   onMouseEnter: (nodeProps: NodeProps, e: MouseEvent<SVGGraphicsElement>) => void;
@@ -1272,12 +1380,73 @@ function NodeElement({
     },
   };
 
-  return <Layer {...events}>{renderNodeItem(nodeContent, props, hasTheme)}</Layer>;
+  return <Layer {...events}>{renderNodeItem(nodeContent, props, hasTheme, fillDefinition)}</Layer>;
+}
+
+/**
+ * Publishes one cartesian label-list entry per node so that `LabelList`,
+ * and the implicit `label` prop, can draw node labels like in other charts.
+ *
+ * The entry value is the node name read through `nameKey`, so labels honor the
+ * same accessor as the tooltip. The entry fill is the fill the node renders with,
+ * so a label without an explicit fill inherits the color of its node.
+ */
+function SankeyLabelListProvider({
+  nodes,
+  nameKey,
+  children,
+}: {
+  nodes: ReadonlyArray<NodeProps>;
+  nameKey: Props['nameKey'];
+  children: ReactNode;
+}) {
+  const hasTheme = useRechartsTheme() != null;
+  /*
+   * A label that is drawn on top of a node swallows the hover and the click of that node, so the labels
+   * of a Sankey do not take pointer events. A user that sets `pointerEvents` on a `LabelList` keeps
+   * their own value.
+   */
+  const childrenWithPointerEvents = React.Children.map(children, child => {
+    if (!React.isValidElement<LabelListProps>(child) || child.type !== LabelList) {
+      return child;
+    }
+    return React.cloneElement(child, { pointerEvents: child.props.pointerEvents ?? 'none' });
+  });
+  const labelListEntries: ReadonlyArray<CartesianLabelListEntry> = useMemo(
+    () =>
+      nodes.map((nodeProps): CartesianLabelListEntry => {
+        const viewBox: TrapezoidViewBox = {
+          x: nodeProps.x,
+          y: nodeProps.y,
+          width: nodeProps.width,
+          lowerWidth: nodeProps.width,
+          upperWidth: nodeProps.width,
+          height: nodeProps.height,
+        };
+        return {
+          ...viewBox,
+          // @ts-expect-error the same accessor the tooltip reads, but the node union does not accept a plain string dataKey
+          value: getValueByDataKey(nodeProps.payload, nameKey, ''),
+          payload: nodeProps.payload,
+          parentViewBox: undefined,
+          viewBox,
+          fill: getRenderedNodeFill(nodeProps, hasTheme),
+        };
+      }),
+    [nodes, nameKey, hasTheme],
+  );
+
+  return (
+    <CartesianLabelListContextProvider value={labelListEntries}>
+      {childrenWithPointerEvents}
+    </CartesianLabelListContextProvider>
+  );
 }
 
 function AllNodeElements({
   graphicalItemId,
   modifiedNodes,
+  nodeFillDefinitions,
   nodeContent,
   onMouseEnter,
   onMouseLeave,
@@ -1286,6 +1455,10 @@ function AllNodeElements({
 }: {
   graphicalItemId: GraphicalItemId;
   modifiedNodes: ReadonlyArray<NodeProps>;
+  /**
+   * The fill definition of each node, by index.
+   */
+  nodeFillDefinitions: ReadonlyArray<ComponentType<RechartsFillDefinitionProps> | undefined>;
   nodeContent: SankeyNodeOptions | undefined;
   onMouseEnter: (nodeProps: NodeProps, e: MouseEvent<SVGGraphicsElement>) => void;
   onMouseLeave: (nodeProps: NodeProps, e: MouseEvent<SVGGraphicsElement>) => void;
@@ -1300,6 +1473,7 @@ function AllNodeElements({
             graphicalItemId={graphicalItemId}
             key={`node-${modifiedNode.index}-${modifiedNode.x}-${modifiedNode.y}`}
             props={modifiedNode}
+            fillDefinition={nodeFillDefinitions[i]}
             nodeContent={nodeContent}
             i={i}
             onMouseEnter={onMouseEnter}
@@ -1322,78 +1496,128 @@ function AllNodeElements({
  */
 export const THEMED_LINK_STROKE_OPACITY = 0.4;
 
+/**
+ * SVG props read from a node or link data entry.
+ */
+type EntrySvgProps = Partial<Record<string, unknown>>;
+
 type ResolvedStyles = {
   /**
    * Styles from the theme. Explicit props override these.
    */
-  themeStyles: Styles2D;
+  themeStyles: ColorStyles2D;
   /**
-   * Styles from the data entry. These override the explicit props.
+   * SVG props from the data entry. These override the explicit props.
    */
-  ownStyles: Styles2D;
+  ownStyles: EntrySvgProps;
 };
 
-const noStyles: ResolvedStyles = { themeStyles: {}, ownStyles: {} };
+type ResolvedNodeStyles = ResolvedStyles & {
+  /**
+   * The fill definition of the node: from its data entry, from the `node` prop, or from the theme.
+   */
+  fillDefinition: ComponentType<RechartsFillDefinitionProps> | undefined;
+};
+
+/**
+ * Reads the SVG props that a node or link data entry applies to its shape.
+ *
+ * - `id` is removed, because ids must be unique on the page and the data entry is not the only place they could come from.
+ * - `target` is removed, because in a link it is the index of the target node, not the SVG `target` attribute.
+ * - `d` is removed, because Sankey computes the link path. Node position and size are set after these props for the same reason.
+ * @param entry entry from `data.nodes` or `data.links`
+ */
+function getEntrySvgProps(entry: unknown): EntrySvgProps {
+  const { id, target, d, ...svgProps } = svgPropertiesNoEventsFromUnknown(entry) ?? {};
+  const result: EntrySvgProps = {};
+  // Skip null and undefined, so that `{ stroke: undefined }` keeps the stroke from props, the theme or the defaults.
+  for (const key in svgProps) {
+    if (Object.prototype.hasOwnProperty.call(svgProps, key)) {
+      const value: unknown = key === 'fill' ? readEntryFill(entry).color : Reflect.get(svgProps, key);
+      // a fill object counts by its color; it paints through its definition
+      if (value != null) {
+        result[key] = value;
+      }
+    }
+  }
+  return result;
+}
 
 /**
  * Resolves the theme and data styles of a single node.
  *
- * Nodes take the theme colors by their index in `data.nodes`,
- * so that a node keeps its color when the layout or sorting changes.
- * A node that defines its own colors in data ignores the theme completely.
+ * Valid SVG props from the data entry are always spread on the node, with or without a theme.
  *
- * Without a theme, Sankey keeps its legacy behaviour and does not read styles from data.
+ * With a theme, nodes take the theme colors by their index in `data.nodes`,
+ * so that a node keeps its color when the layout or sorting changes.
+ * A node whose data entry or `node` prop defines its own `fill` or `stroke` drops the theme fill and stroke together,
+ * and keeps the other theme styles.
  * @param themeGraphicalItems graphicalItems of the active theme, or undefined if there is no theme
+ * @param themeFillObjects the fill object of each theme entry, from {@link useThemeFillObjects}
  * @param dataNode entry from `data.nodes`
  * @param index index of the node in `data.nodes`
+ * @param nodeContent the `node` prop
  */
 function resolveNodeStyles(
-  themeGraphicalItems: RechartsTheme['graphicalItems'] | undefined,
-  dataNode: Styles2D | undefined,
+  themeGraphicalItems: ReadonlyArray<ColorGraphicalItemStyle> | undefined,
+  themeFillObjects: ReadonlyArray<RechartsFill | undefined>,
+  dataNode: unknown,
   index: number,
-): ResolvedStyles {
+  nodeContent: SankeyNodeOptions | undefined,
+): ResolvedNodeStyles {
+  const ownStyles = getEntrySvgProps(dataNode);
+  const ownFillDefinition =
+    readEntryFill(dataNode).fillObject?.definition ?? readEntryFill(nodeContent).fillObject?.definition;
   if (themeGraphicalItems == null) {
-    return noStyles;
-  }
-  if (hasOwnColors(dataNode)) {
-    return { themeStyles: {}, ownStyles: getOwnStyles(dataNode) };
+    return { themeStyles: {}, ownStyles, fillDefinition: ownFillDefinition };
   }
   const themeItem =
     themeGraphicalItems.length === 0 ? undefined : themeGraphicalItems[index % themeGraphicalItems.length];
+  const hasExplicitColors = hasOwnColors(ownStyles) || hasOwnColors(svgPropertiesNoEventsFromUnknown(nodeContent));
   // Styles without a color of their own merge with the theme.
-  return { themeStyles: getOwnStyles(themeItem), ownStyles: getOwnStyles(dataNode) };
+  return {
+    themeStyles: getOwnStyles(hasExplicitColors ? withoutColors(themeItem) : themeItem),
+    ownStyles,
+    fillDefinition:
+      ownFillDefinition ??
+      (hasExplicitColors || themeFillObjects.length === 0
+        ? undefined
+        : themeFillObjects[index % themeFillObjects.length]?.definition),
+  };
 }
 
 /**
  * Resolves the theme and data styles of a single link.
  *
- * Links take the color of their source node, including colors from explicit props and from data,
- * and draw it with {@link THEMED_LINK_STROKE_OPACITY}.
- * A link that defines its own colors in data ignores the theme completely.
+ * Valid SVG props from the data entry are always spread on the link, with or without a theme.
  *
- * Without a theme, Sankey keeps its legacy behaviour and does not read styles from data.
+ * With a theme, links take the color of their source node, including colors from explicit props and from data,
+ * and draw it with {@link THEMED_LINK_STROKE_OPACITY}. Explicit `link` props override these field by field,
+ * so `link={{ stroke: 'red' }}` keeps the see-through links.
+ * A link whose data entry defines its own `fill` or `stroke` drops the theme color, and keeps the theme opacity.
  * @param themeGraphicalItems graphicalItems of the active theme, or undefined if there is no theme
  * @param dataLink entry from `data.links`
  * @param sourceNodeProps resolved props of the source node
  */
 function resolveLinkStyles(
-  themeGraphicalItems: RechartsTheme['graphicalItems'] | undefined,
-  dataLink: Styles2D | undefined,
+  themeGraphicalItems: ReadonlyArray<ColorGraphicalItemStyle> | undefined,
+  dataLink: unknown,
   sourceNodeProps: NodeProps | undefined,
 ): ResolvedStyles {
+  const ownStyles = getEntrySvgProps(dataLink);
   if (themeGraphicalItems == null) {
-    return noStyles;
+    return { themeStyles: {}, ownStyles };
   }
-  if (hasOwnColors(dataLink)) {
-    return { themeStyles: {}, ownStyles: getOwnStyles(dataLink) };
+  if (hasOwnColors(ownStyles)) {
+    return { themeStyles: { strokeOpacity: THEMED_LINK_STROKE_OPACITY }, ownStyles };
   }
   const sourceColor = getRenderedPaint(sourceNodeProps, 'fill') ?? getRenderedPaint(sourceNodeProps, 'stroke');
   if (sourceColor == null) {
-    return noStyles;
+    return { themeStyles: {}, ownStyles };
   }
   return {
     themeStyles: { stroke: sourceColor, strokeOpacity: THEMED_LINK_STROKE_OPACITY },
-    ownStyles: getOwnStyles(dataLink),
+    ownStyles,
   };
 }
 
@@ -1402,6 +1626,7 @@ export const sankeyDefaultProps = {
   align: 'justify',
   dataKey: 'value',
   iterations: 32,
+  label: false,
   linkCurvature: 0.5,
   margin: { top: 5, right: 5, bottom: 5, left: 5 },
   nameKey: 'name',
@@ -1422,6 +1647,8 @@ function SankeyImpl(props: InternalSankeyProps) {
     link,
     dataKey,
     node,
+    label,
+    nameKey,
     onMouseEnter,
     onMouseLeave,
     onClick,
@@ -1457,11 +1684,12 @@ function SankeyImpl(props: InternalSankeyProps) {
 
   const width = useChartWidth();
   const height = useChartHeight();
-  const themeGraphicalItems = useRechartsTheme()?.graphicalItems;
+  const themeGraphicalItems = getColorGraphicalItems(useRechartsTheme()?.graphicalItems);
+  const themeFillObjects = useThemeFillObjects();
 
-  const { links, modifiedLinks, modifiedNodes } = useMemo(() => {
+  const { links, modifiedLinks, modifiedNodes, nodeFillDefinitions } = useMemo(() => {
     if (!data || !width || !height || width <= 0 || height <= 0) {
-      return { nodes: [], links: [], modifiedLinks: [], modifiedNodes: [] };
+      return { nodes: [], links: [], modifiedLinks: [], modifiedNodes: [], nodeFillDefinitions: [] };
     }
     const contentWidth = width - (margin.left ?? 0) - (margin.right ?? 0);
     const contentHeight = height - (margin.top ?? 0) - (margin.bottom ?? 0);
@@ -1479,8 +1707,16 @@ function SankeyImpl(props: InternalSankeyProps) {
 
     const top = margin.top || 0;
     const left = margin.left || 0;
+    const newNodeFillDefinitions: Array<ComponentType<RechartsFillDefinitionProps> | undefined> = [];
     const newModifiedNodes = computed.nodes.map((n, i) => {
-      const { themeStyles, ownStyles } = resolveNodeStyles(themeGraphicalItems, data.nodes[i], i);
+      const { themeStyles, ownStyles, fillDefinition } = resolveNodeStyles(
+        themeGraphicalItems,
+        themeFillObjects,
+        data.nodes[i],
+        i,
+        node,
+      );
+      newNodeFillDefinitions.push(fillDefinition);
       return buildNodeProps({
         node: n,
         nodeContent: node,
@@ -1518,6 +1754,7 @@ function SankeyImpl(props: InternalSankeyProps) {
       links: computed.links,
       modifiedLinks: newModifiedLinks,
       modifiedNodes: newModifiedNodes,
+      nodeFillDefinitions: newNodeFillDefinitions,
     };
   }, [
     data,
@@ -1534,6 +1771,7 @@ function SankeyImpl(props: InternalSankeyProps) {
     align,
     verticalAlign,
     themeGraphicalItems,
+    themeFillObjects,
   ]);
 
   const handleMouseEnter = useCallback(
@@ -1571,34 +1809,40 @@ function SankeyImpl(props: InternalSankeyProps) {
     <>
       <SetComputedData computedData={{ links: modifiedLinks, nodes: modifiedNodes }} />
       <Surface {...attrs} title={title} desc={desc} role={role} tabIndex={tabIndex} width={width} height={height}>
-        {children}
-        <AllSankeyLinkElements
-          graphicalItemId={id}
-          links={links}
-          modifiedLinks={modifiedLinks}
-          linkContent={link}
-          dataKey={dataKey}
-          onMouseEnter={(linkProps: LinkProps, e: MouseEvent<SVGGraphicsElement>) =>
-            handleMouseEnter(linkProps, 'link', e)
-          }
-          onMouseLeave={(linkProps: LinkProps, e: MouseEvent<SVGGraphicsElement>) =>
-            handleMouseLeave(linkProps, 'link', e)
-          }
-          onClick={(linkProps: LinkProps, e: MouseEvent<SVGGraphicsElement>) => handleClick(linkProps, 'link', e)}
-        />
-        <AllNodeElements
-          graphicalItemId={id}
-          modifiedNodes={modifiedNodes}
-          nodeContent={node}
-          dataKey={dataKey}
-          onMouseEnter={(nodeProps: NodeProps, e: MouseEvent<SVGGraphicsElement>) =>
-            handleMouseEnter(nodeProps, 'node', e)
-          }
-          onMouseLeave={(nodeProps: NodeProps, e: MouseEvent<SVGGraphicsElement>) =>
-            handleMouseLeave(nodeProps, 'node', e)
-          }
-          onClick={(nodeProps: NodeProps, e: MouseEvent<SVGGraphicsElement>) => handleClick(nodeProps, 'node', e)}
-        />
+        <AllZIndexPortals isPanorama={false}>
+          <SankeyLabelListProvider nodes={modifiedNodes} nameKey={nameKey}>
+            {children}
+            <AllSankeyLinkElements
+              graphicalItemId={id}
+              links={links}
+              modifiedLinks={modifiedLinks}
+              linkContent={link}
+              dataKey={dataKey}
+              onMouseEnter={(linkProps: LinkProps, e: MouseEvent<SVGGraphicsElement>) =>
+                handleMouseEnter(linkProps, 'link', e)
+              }
+              onMouseLeave={(linkProps: LinkProps, e: MouseEvent<SVGGraphicsElement>) =>
+                handleMouseLeave(linkProps, 'link', e)
+              }
+              onClick={(linkProps: LinkProps, e: MouseEvent<SVGGraphicsElement>) => handleClick(linkProps, 'link', e)}
+            />
+            <AllNodeElements
+              graphicalItemId={id}
+              modifiedNodes={modifiedNodes}
+              nodeFillDefinitions={nodeFillDefinitions}
+              nodeContent={node}
+              dataKey={dataKey}
+              onMouseEnter={(nodeProps: NodeProps, e: MouseEvent<SVGGraphicsElement>) =>
+                handleMouseEnter(nodeProps, 'node', e)
+              }
+              onMouseLeave={(nodeProps: NodeProps, e: MouseEvent<SVGGraphicsElement>) =>
+                handleMouseLeave(nodeProps, 'node', e)
+              }
+              onClick={(nodeProps: NodeProps, e: MouseEvent<SVGGraphicsElement>) => handleClick(nodeProps, 'node', e)}
+            />
+            <LabelListFromLabelProp label={label} pointerEvents="none" />
+          </SankeyLabelListProvider>
+        </AllZIndexPortals>
       </Surface>
     </>
   );
@@ -1610,6 +1854,7 @@ function SankeyImpl(props: InternalSankeyProps) {
  *
  * @consumes ResponsiveContainerContext
  * @provides TooltipEntrySettings
+ * @public
  */
 export function Sankey(outsideProps: Props) {
   const props: PropsWithResolvedDefaults = resolveDefaultProps(outsideProps, sankeyDefaultProps);

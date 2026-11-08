@@ -82,3 +82,32 @@ export function PieFillStrokeVariants() {
     />
   );
 }
+
+/**
+ * Data entries bring their own styles. The sectors take all of them,
+ * but the label lines and label texts take only the entry fill as their color.
+ * https://github.com/recharts/recharts/issues/7974
+ */
+const dataWithEntryStyles = [
+  { name: 'Plain', value: 100 },
+  { name: 'Fill', value: 200, fill: '#ef4444' },
+  {
+    name: 'Styled',
+    value: 300,
+    fill: '#3b82f6',
+    stroke: '#111827',
+    strokeWidth: 4,
+    strokeDasharray: '8 4',
+    opacity: 0.5,
+  },
+  { name: 'Stroke', value: 150, stroke: '#22c55e', strokeWidth: 3 },
+];
+
+export function PieEntryStylesWithLabels() {
+  return (
+    <PieChart style={{ width: '480px', height: '360px' }}>
+      <Pie data={dataWithEntryStyles} dataKey="value" outerRadius={110} label labelLine isAnimationActive={false} />
+      <Legend />
+    </PieChart>
+  );
+}

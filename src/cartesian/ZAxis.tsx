@@ -32,6 +32,9 @@ function SetZAxisSettings(settings: ZAxisSettings): null {
   return null;
 }
 
+/**
+ * @public
+ */
 export interface Props<DataPointType = any, DataValueType = any> extends Omit<
   BaseAxisProps<DataPointType, DataValueType>,
   'domain'
@@ -119,6 +122,7 @@ export const zAxisDefaultProps = {
  * Useful for dynamically setting Scatter point size, based on data.
  *
  * @consumes CartesianViewBoxContext
+ * @public
  */
 export function ZAxis<DataPointType = any, DataValueType = any>(outsideProps: Props<DataPointType, DataValueType>) {
   const props = resolveDefaultProps(outsideProps, zAxisDefaultProps);

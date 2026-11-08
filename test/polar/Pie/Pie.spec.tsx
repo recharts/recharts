@@ -12,6 +12,7 @@ import {
   PieLabelRenderProps,
   PieProps,
   PieSectorDataItem,
+  RechartsThemeProvider,
   Sector,
   Tooltip,
 } from '../../../src';
@@ -26,7 +27,7 @@ import {
 } from '../../component/Tooltip/tooltipTestHelpers';
 import { pieChartMouseHoverTooltipSelector } from '../../component/Tooltip/tooltipMouseHoverSelectors';
 import { PageData } from '../../_data';
-import { createSelectorTestCase } from '../../helper/createSelectorTestCase';
+import { createSelectorTestCase, rechartsTestRender } from '../../helper/createSelectorTestCase';
 import { mockGetBoundingClientRect } from '../../helper/mockGetBoundingClientRect';
 import {
   selectAllGraphicalItemsSettings,
@@ -659,6 +660,111 @@ describe('<Pie />', () => {
       expect(spy).toHaveBeenNthCalledWith(1, expectedProps);
     });
 
+    it('should pass props combined with theme', () => {
+      const spy = vi.fn();
+      render(
+        <RechartsThemeProvider
+          value={{ graphicalItems: [{ fill: 'blue', label: { background: { fill: 'red', rx: '10' } } }] }}
+        >
+          <PieChart width={500} height={500}>
+            <Pie
+              isAnimationActive={false}
+              cx={250}
+              cy={250}
+              label={spy}
+              innerRadius={0}
+              outerRadius={200}
+              data={sectorsData}
+              dataKey="value"
+              id="pie-value"
+            />
+          </PieChart>
+        </RechartsThemeProvider>,
+      );
+      const expectedProps: PieLabelRenderProps = {
+        background: { fill: 'red', rx: '10' },
+        cornerRadius: undefined,
+        cx: 255,
+        cy: 255,
+        dataKey: 'value',
+        endAngle: 360,
+        fill: 'blue',
+        index: 0,
+        innerRadius: 0,
+        maxRadius: 346.4823227814083,
+        midAngle: 180,
+        middleRadius: 100,
+        name: 'A',
+        outerRadius: 200,
+        paddingAngle: 0,
+        payload: {
+          cx: 250,
+          cy: 250,
+          endAngle: 72,
+          innerRadius: 50,
+          name: 'A',
+          outerRadius: 100,
+          startAngle: 0,
+          value: 40,
+        },
+        percent: 1,
+        startAngle: 0,
+        stroke: 'none',
+        textAnchor: 'end',
+        tooltipPayload: [
+          {
+            color: 'blue',
+            dataKey: 'value',
+            fill: 'blue',
+            name: 'A',
+            payload: {
+              cx: 250,
+              cy: 250,
+              endAngle: 72,
+              innerRadius: 50,
+              name: 'A',
+              outerRadius: 100,
+              startAngle: 0,
+              value: 40,
+            },
+            type: undefined,
+            value: 40,
+            graphicalItemId: 'pie-value',
+          },
+        ],
+        tooltipPosition: {
+          x: 155,
+          y: 255,
+        },
+        value: 40,
+        x: 35,
+        y: 254.99999999999997,
+      };
+      expect(spy).toHaveBeenCalledTimes(sectorsData.length);
+      expect(spy).toHaveBeenNthCalledWith(1, expectedProps);
+    });
+
+    it('preserves inherited Pie label styles without a theme', () => {
+      const { container } = rechartsTestRender(
+        <PieChart width={300} height={300}>
+          <Pie
+            data={sectorsData}
+            dataKey="value"
+            isAnimationActive={false}
+            style={{ fontStyle: 'italic', fontWeight: 'bold' }}
+            label
+          />
+        </PieChart>,
+      );
+
+      const texts = container.querySelectorAll<SVGTextElement>('text.recharts-pie-label-text');
+      expect(texts).toHaveLength(sectorsData.length);
+      texts.forEach(text => {
+        expect(text.style.fontStyle).toBe('italic');
+        expect(text.style.fontWeight).toBe('bold');
+      });
+    });
+
     test('Render customized label when label is a function', () => {
       const renderLabel: PieLabel = (props: PieLabelRenderProps) => {
         /*
@@ -793,6 +899,51 @@ describe('<Pie />', () => {
       expect(label).toBeInTheDocument();
       expect(label).toHaveAttribute('x', '250');
       expect(label).toHaveAttribute('y', '250');
+    });
+
+    it('should render label with position=center in the center of the Pie when the Pie is not in the middle of the chart', () => {
+      const { container } = render(
+        <PieChart width={500} height={500}>
+          <Pie
+            isAnimationActive={false}
+            cx="30%"
+            cy="70%"
+            startAngle={180}
+            endAngle={0}
+            innerRadius={100}
+            outerRadius={140}
+            data={sectorsData}
+            dataKey="cy"
+          >
+            <Label position="center" value="My test label" />
+          </Pie>
+        </PieChart>,
+      );
+
+      const label = container.querySelector('.recharts-label');
+      expect(label).toBeInTheDocument();
+      // the chart has 5px margin, so cx is 5 + 490 * 0.3 = 152 and cy is 5 + 490 * 0.7 = 348
+      expect(label).toHaveAttribute('x', '152');
+      expect(label).toHaveAttribute('y', '348');
+    });
+
+    it('should render label with position=center in the center of each Pie', () => {
+      const { container } = render(
+        <PieChart width={500} height={300}>
+          <Pie isAnimationActive={false} cx="25%" outerRadius={80} data={sectorsData} dataKey="cy">
+            <Label position="center" value="left" className="left" />
+          </Pie>
+          <Pie isAnimationActive={false} cx="75%" outerRadius={80} data={sectorsData} dataKey="cy">
+            <Label position="center" value="right" className="right" />
+          </Pie>
+        </PieChart>,
+      );
+
+      // 5px margin, so the centers are 5 + 490 * 0.25 = 127.5 and 5 + 490 * 0.75 = 372.5
+      expect(container.querySelector('.left')).toHaveAttribute('x', '127.5');
+      expect(container.querySelector('.left')).toHaveAttribute('y', '150');
+      expect(container.querySelector('.right')).toHaveAttribute('x', '372.5');
+      expect(container.querySelector('.right')).toHaveAttribute('y', '150');
     });
 
     it('should shift the label left and right with dx and dy', () => {
@@ -1508,34 +1659,34 @@ describe('<Pie />', () => {
         const { spy } = renderTestCase(selectTooltipAxisTicks);
         expectLastCalledWith(spy, [
           {
-            coordinate: -72,
+            coordinate: 0,
             value: 0,
             index: 0,
-            offset: -72,
-          },
-          {
-            coordinate: 0,
-            value: 1,
-            index: 1,
-            offset: -72,
+            offset: 0,
           },
           {
             coordinate: 72,
-            value: 2,
-            index: 2,
-            offset: -72,
+            value: 1,
+            index: 1,
+            offset: 0,
           },
           {
             coordinate: 144,
-            value: 3,
-            index: 3,
-            offset: -72,
+            value: 2,
+            index: 2,
+            offset: 0,
           },
           {
             coordinate: 216,
+            value: 3,
+            index: 3,
+            offset: 0,
+          },
+          {
+            coordinate: 288,
             value: 4,
             index: 4,
-            offset: -72,
+            offset: 0,
           },
         ]);
         expect(spy).toHaveBeenCalledTimes(2);

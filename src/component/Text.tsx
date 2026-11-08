@@ -1,5 +1,15 @@
 import * as React from 'react';
-import { CSSProperties, SVGProps, useMemo, forwardRef, useCallback, useLayoutEffect, useRef, useState } from 'react';
+import {
+  CSSProperties,
+  ReactNode,
+  SVGProps,
+  useMemo,
+  forwardRef,
+  useCallback,
+  useLayoutEffect,
+  useRef,
+  useState,
+} from 'react';
 
 import { clsx } from 'clsx';
 import { isNullish, isNumber, isNumOrStr } from '../util/DataUtils';
@@ -15,6 +25,8 @@ import { RechartsTheme, TextStyles } from '../theme/RechartsTheme';
 import { resolveDefaultProps } from '../util/resolveDefaultProps';
 import { cssStylesToSvgStyles } from '../theme/cssStylesToSvgStyles';
 import { getEffectivePageBackground } from '../theme/pageBackground';
+import { getLabelBackgroundZIndex, useLabelZIndex } from '../zIndex/labelBackgroundZIndex';
+import { ZIndexLayer } from '../zIndex/ZIndexLayer';
 
 const BREAKING_SPACES = /[ \f\n\r\t\v\u2028\u2029]+/;
 
@@ -40,12 +52,46 @@ interface CalculatedWordWidths {
 
 type CalculateWordWidthsParam = Pick<Props, 'children' | 'breakAll' | 'style'>;
 
+/*
+ * A single lazily-created segmenter instance: constructing Intl.Segmenter is
+ * measurably more expensive than segmenting with an existing one.
+ * Availability itself is re-checked on every call so environments without
+ * Intl.Segmenter (e.g. Firefox before 125) always take the fallback.
+ */
+let cachedGraphemeSegmenter: Intl.Segmenter | undefined;
+
+const getGraphemeSegmenter = (): Intl.Segmenter | null => {
+  const SegmenterImpl = typeof Intl === 'undefined' ? undefined : Intl.Segmenter;
+  if (typeof SegmenterImpl !== 'function') {
+    return null;
+  }
+  if (cachedGraphemeSegmenter === undefined) {
+    cachedGraphemeSegmenter = new SegmenterImpl(undefined, { granularity: 'grapheme' });
+  }
+  return cachedGraphemeSegmenter;
+};
+
+/**
+ * Splits text into grapheme clusters (user-perceived characters) so that `breakAll`
+ * wrapping and `maxLines` truncation never tear a cluster apart: ZWJ sequences,
+ * combining marks, regional indicators and emoji modifiers stay together.
+ * Falls back to code-point splitting (`Array.from`) when Intl.Segmenter is not
+ * available (e.g. Firefox before 125), which preserves the previous behavior.
+ */
+const splitIntoGraphemes = (text: string): string[] => {
+  const segmenter = getGraphemeSegmenter();
+  if (segmenter == null) {
+    return Array.from(text);
+  }
+  return Array.from(segmenter.segment(text), graphemeSegment => graphemeSegment.segment);
+};
+
 const calculateWordWidths = ({ children, breakAll, style }: CalculateWordWidthsParam): CalculatedWordWidths | null => {
   try {
     let words: string[] = [];
     if (!isNullish(children)) {
       if (breakAll) {
-        words = children.toString().split('');
+        words = splitIntoGraphemes(children.toString());
       } else {
         words = children.toString().split(BREAKING_SPACES);
       }
@@ -63,6 +109,7 @@ const calculateWordWidths = ({ children, breakAll, style }: CalculateWordWidthsP
 
 /**
  * @inline
+ * @public
  */
 export type TextAnchor = 'start' | 'middle' | 'end' | 'inherit';
 
@@ -72,11 +119,13 @@ export function isValidTextAnchor(value: string | undefined): value is TextAncho
 
 /**
  * @inline
+ * @public
  */
 export type TextVerticalAnchor = 'start' | 'middle' | 'end';
 
 /**
  * @inline
+ * @public
  */
 export type RenderableText = string | number | boolean | null | undefined;
 
@@ -91,6 +140,7 @@ export function isRenderableText(val: unknown): val is RenderableText {
  * The position and size are measured from the rendered text.
  *
  * @since 3.11
+ * @public
  */
 export type TextBackgroundProps = Omit<
   SVGProps<SVGRectElement>,
@@ -103,7 +153,28 @@ export type TextBackgroundProps = Omit<
    * @defaultValue { x: 4, y: 2 }
    */
   padding?: number | { x?: number; y?: number };
+  /**
+   * zIndex layer of the background in a `Label` or `LabelList` inside a chart.
+   * `Text` used on its own ignores it and draws the background right before the text,
+   * because `Text` has no zIndex either. Without knowing which layer the text renders in,
+   * a background in any other layer could end up above its own text, so right before the text is the only safe place.
+   * In a label with a nonzero zIndex, 0 becomes -1, because layer 0 renders inside the label's own layer.
+   *
+   * @defaultValue 100 below the label zIndex, which is `DefaultZIndexes.labelBackground` for default labels
+   */
+  zIndex?: number;
 };
+
+/**
+ * Props of the halo (text outline) drawn around the letters, as a lighter alternative to `background`.
+ * Accepts a subset of the SVG `<text>` stroke attributes.
+ *
+ * @since 3.11
+ */
+export type TextHaloProps = Pick<
+  SVGProps<SVGTextElement>,
+  'stroke' | 'strokeWidth' | 'strokeOpacity' | 'strokeLinejoin'
+>;
 
 interface TextProps {
   /**
@@ -229,20 +300,42 @@ interface TextProps {
    *
    * - `true` draws the background with default styles.
    *   The fill is the `pageBackground` color from the theme, or white when no theme is set.
-   * - An object accepts SVG `<rect>` attributes such as `fill`, `stroke` and `rx`, and a `padding`.
+   * - An object accepts SVG `<rect>` attributes such as `fill`, `stroke` and `rx`, a `padding` and a `zIndex`.
    * - `false` or `undefined` draws no background.
    *
    * The background is sized after the text renders, so it follows the content, font, line breaks and rotation.
    * For `textPath`, the background follows the same path as the text.
    * It is not rendered during server-side rendering.
    *
+   * Inside a `Label` or `LabelList` in a chart, the rectangle renders in a zIndex layer below the label,
+   * so overlapping labels never cover each other's text.
+   *
    * @since 3.11
    * @example <Text background>Label</Text>
    * @example <Text background={{ fill: '#fff', stroke: '#000', rx: 2, padding: { x: 6, y: 3 } }}>Label</Text>
    */
   background?: boolean | TextBackgroundProps;
+
+  /**
+   * Draws an outline around the letters of the text, as a lighter alternative to `background`.
+   *
+   * - `true` draws the halo with default styles.
+   *   The stroke is the `pageBackground` color from the theme, or white when no theme is set.
+   * - An object accepts `stroke`, `strokeWidth`, `strokeOpacity` and `strokeLinejoin` to set them explicitly.
+   * - `false` or `undefined` draws no halo.
+   *
+   * Unlike `background`, a halo needs no measurement, so it is drawn during server-side rendering.
+   *
+   * @since 3.11
+   * @example <Text halo>Label</Text>
+   * @example <Text halo={{ stroke: '#fff', strokeWidth: 4 }}>Label</Text>
+   */
+  halo?: boolean | TextHaloProps;
 }
 
+/**
+ * @public
+ */
 export type Props = Omit<SVGProps<SVGTextElement>, 'textAnchor' | 'verticalAnchor'> & TextProps;
 
 type CalculateWordsByLinesProps = Pick<Props, 'maxLines' | 'children' | 'style' | 'breakAll'>;
@@ -279,7 +372,7 @@ const findLongestLine = (words: ReadonlyArray<WordsWithWidth>): WordsWithWidth =
 const suffix = '…';
 
 const checkOverflow = (
-  text: string,
+  text: ReadonlyArray<string>,
   index: number,
   breakAll: TextProps['breakAll'],
   style: TextProps['style'],
@@ -288,7 +381,7 @@ const checkOverflow = (
   spaceWidth: number,
   scaleToFit: boolean,
 ): [boolean, ReadonlyArray<Words>] => {
-  const tempText = text.slice(0, index);
+  const tempText = text.slice(0, index).join('');
 
   const words = calculateWordWidths({
     breakAll,
@@ -320,8 +413,6 @@ const calculateWordsByLines = (
   scaleToFit: boolean,
 ): ReadonlyArray<Words> => {
   const shouldLimitLines = isNumber(maxLines);
-  const text = String(children);
-
   const originalResult: ReadonlyArray<WordsWithWidth> = calculate(
     initialWordsWithComputedWith,
     lineWidth,
@@ -329,7 +420,7 @@ const calculateWordsByLines = (
     scaleToFit,
   );
 
-  if (!shouldLimitLines || scaleToFit) {
+  if (!shouldLimitLines || scaleToFit || originalResult.length === 0) {
     return originalResult;
   }
 
@@ -338,27 +429,16 @@ const calculateWordsByLines = (
     return originalResult;
   }
 
+  const text = splitIntoGraphemes(String(children));
   let start = 0;
   let end = text.length - 1;
 
-  let iterations = 0;
+  // Keep the last fitting prefix, including the final candidate in the search range.
   let trimmedResult;
 
-  while (start <= end && iterations <= text.length - 1) {
+  while (start <= end) {
     const middle = Math.floor((start + end) / 2);
-    const prev = middle - 1;
-
-    const [doesPrevOverflow, result] = checkOverflow(
-      text,
-      prev,
-      breakAll,
-      style,
-      maxLines,
-      lineWidth,
-      spaceWidth,
-      scaleToFit,
-    );
-    const [doesMiddleOverflow] = checkOverflow(
+    const [doesOverflow, result] = checkOverflow(
       text,
       middle,
       breakAll,
@@ -369,20 +449,12 @@ const calculateWordsByLines = (
       scaleToFit,
     );
 
-    if (!doesPrevOverflow && !doesMiddleOverflow) {
+    if (doesOverflow) {
+      end = middle - 1;
+    } else {
+      trimmedResult = result;
       start = middle + 1;
     }
-
-    if (doesPrevOverflow && doesMiddleOverflow) {
-      end = middle - 1;
-    }
-
-    if (!doesPrevOverflow && doesMiddleOverflow) {
-      trimmedResult = result;
-      break;
-    }
-
-    iterations++;
   }
 
   // Fallback to originalResult (result without trimming) if we cannot find the
@@ -448,6 +520,24 @@ const defaultBackgroundRadius = 4;
 function selectBackgroundFill(theme: RechartsTheme): BackgroundFill | undefined {
   const pageBackground = getEffectivePageBackground(theme);
   return typeof pageBackground === 'string' ? { fill: pageBackground } : undefined;
+}
+
+type HaloStroke = {
+  stroke?: string;
+};
+
+/**
+ * Without a theme, charts are designed for a white background.
+ */
+const defaultLegacyHaloStroke: HaloStroke = { stroke: '#fff' };
+
+const defaultHaloStrokeWidth = 3;
+
+const defaultHaloStrokeLinejoin = 'round' as const;
+
+function selectHaloStroke(theme: RechartsTheme): HaloStroke | undefined {
+  const pageBackground = getEffectivePageBackground(theme);
+  return typeof pageBackground === 'string' ? { stroke: pageBackground } : undefined;
 }
 
 /**
@@ -593,6 +683,16 @@ function resolveBackgroundSettings(background: Props['background']): TextBackgro
   return background;
 }
 
+function resolveHaloSettings(halo: Props['halo']): TextHaloProps | undefined {
+  if (halo === true) {
+    return {};
+  }
+  if (halo == null || halo === false) {
+    return undefined;
+  }
+  return halo;
+}
+
 export const textDefaultProps = {
   angle: 0,
   breakAll: false,
@@ -607,6 +707,9 @@ export const textDefaultProps = {
   y: 0,
 } as const satisfies Partial<Props>;
 
+/**
+ * @public
+ */
 export const Text = forwardRef<SVGTextElement, Props>((outsideProps, ref) => {
   const typography: TextStyles = useBackwardsCompatibleTheme<TextStyles>(
     theme => theme.typography,
@@ -628,6 +731,7 @@ export const Text = forwardRef<SVGTextElement, Props>((outsideProps, ref) => {
     style: propsStyle,
     textPath,
     background,
+    halo,
     ...props
   } = propsWithDefaults;
   // Here it is important to actually remove these three props, and not put them to DOM
@@ -694,12 +798,31 @@ export const Text = forwardRef<SVGTextElement, Props>((outsideProps, ref) => {
     };
   }, [styleTemp, angle, textPath]);
 
+  const haloSettings = resolveHaloSettings(halo);
+  const haloStroke = useBackwardsCompatibleTheme<HaloStroke>(
+    selectHaloStroke,
+    { stroke: haloSettings?.stroke },
+    defaultLegacyHaloStroke,
+  );
+  const haloProps: (SVGProps<SVGTextElement> & { paintOrder?: string }) | undefined =
+    haloSettings == null
+      ? undefined
+      : {
+          stroke: haloStroke.stroke,
+          strokeWidth: haloSettings.strokeWidth ?? defaultHaloStrokeWidth,
+          strokeLinejoin: haloSettings.strokeLinejoin ?? defaultHaloStrokeLinejoin,
+          strokeOpacity: haloSettings.strokeOpacity,
+          paintOrder: 'stroke fill',
+        };
+
   const backgroundSettings = resolveBackgroundSettings(background);
   const backgroundFill = useBackwardsCompatibleTheme<BackgroundFill>(
     selectBackgroundFill,
     { fill: backgroundSettings?.fill },
     defaultLegacyBackgroundProps,
   );
+  const labelZIndex = useLabelZIndex();
+  const backgroundLayer = labelZIndex == null ? undefined : getLabelBackgroundZIndex(labelZIndex, background);
   const textRef = useRef<SVGTextElement | null>(null);
   const textPathRef = useRef<SVGTextPathElement | null>(null);
   const textPathDefinitionRef = useRef<SVGPathElement | null>(null);
@@ -795,6 +918,11 @@ export const Text = forwardRef<SVGTextElement, Props>((outsideProps, ref) => {
     <text
       transform={transform}
       {...svgPropertiesAndEvents(textElementProps)}
+      /*
+       * haloProps comes after textElementProps so it takes over an explicit stroke prop.
+       * Overlapping labels are not specially handled: where two labels overlap, a halo can cover its neighbor's text.
+       */
+      {...haloProps}
       style={styleFinal}
       ref={setTextRef}
       x={x}
@@ -830,6 +958,12 @@ export const Text = forwardRef<SVGTextElement, Props>((outsideProps, ref) => {
   }
 
   const { padding, className: backgroundClassName, ...backgroundRectProps } = backgroundSettings;
+  const renderInBackgroundLayer = (backgroundElement: ReactNode) =>
+    backgroundLayer == null ? (
+      backgroundElement
+    ) : (
+      <ZIndexLayer zIndex={backgroundLayer}>{backgroundElement}</ZIndexLayer>
+    );
 
   if (textPath != null) {
     const {
@@ -844,48 +978,62 @@ export const Text = forwardRef<SVGTextElement, Props>((outsideProps, ref) => {
     const outlineWidth = resolveBackgroundStrokeWidth(configuredOutlineWidth);
     const hasOutline = outlineStroke != null && outlineStroke !== 'none' && outlineWidth > 0;
 
+    const backgroundElement = backgroundPath != null && textPathMetrics != null && (
+      <>
+        {hasOutline && (
+          <path
+            {...svgPropertiesAndEvents(backgroundPathProps)}
+            pointerEvents={backgroundPathProps.pointerEvents ?? styleFinal.pointerEvents ?? props.pointerEvents}
+            d={textPath}
+            fill="none"
+            stroke={outlineStroke}
+            strokeOpacity={outlineStrokeOpacity}
+            strokeWidth={backgroundPath.strokeWidth + 2 * outlineWidth}
+            strokeLinecap="round"
+            strokeDasharray={`${backgroundPath.length}px ${textPathMetrics.pathLength}px`}
+            strokeDashoffset={`${-backgroundPath.start}px`}
+            className={clsx('recharts-text-background', 'recharts-text-path-background-outline', backgroundClassName)}
+          />
+        )}
+        <path
+          {...svgPropertiesAndEvents(backgroundPathProps)}
+          pointerEvents={backgroundPathProps.pointerEvents ?? styleFinal.pointerEvents ?? props.pointerEvents}
+          d={textPath}
+          fill="none"
+          stroke={backgroundFill.fill}
+          strokeOpacity={fillOpacity}
+          strokeWidth={backgroundPath.strokeWidth}
+          strokeLinecap="round"
+          strokeDasharray={`${backgroundPath.length}px ${textPathMetrics.pathLength}px`}
+          strokeDashoffset={`${-backgroundPath.start}px`}
+          className={clsx('recharts-text-background', 'recharts-text-path-background', backgroundClassName)}
+        />
+      </>
+    );
+
     return (
       <g className="recharts-text-with-background">
-        {backgroundPath != null && textPathMetrics != null && (
-          <>
-            {hasOutline && (
-              <path
-                {...svgPropertiesAndEvents(backgroundPathProps)}
-                d={textPath}
-                fill="none"
-                stroke={outlineStroke}
-                strokeOpacity={outlineStrokeOpacity}
-                strokeWidth={backgroundPath.strokeWidth + 2 * outlineWidth}
-                strokeLinecap="round"
-                strokeDasharray={`${backgroundPath.length}px ${textPathMetrics.pathLength}px`}
-                strokeDashoffset={`${-backgroundPath.start}px`}
-                className={clsx(
-                  'recharts-text-background',
-                  'recharts-text-path-background-outline',
-                  backgroundClassName,
-                )}
-              />
-            )}
-            <path
-              {...svgPropertiesAndEvents(backgroundPathProps)}
-              d={textPath}
-              fill="none"
-              stroke={backgroundFill.fill}
-              strokeOpacity={fillOpacity}
-              strokeWidth={backgroundPath.strokeWidth}
-              strokeLinecap="round"
-              strokeDasharray={`${backgroundPath.length}px ${textPathMetrics.pathLength}px`}
-              strokeDashoffset={`${-backgroundPath.start}px`}
-              className={clsx('recharts-text-background', 'recharts-text-path-background', backgroundClassName)}
-            />
-          </>
-        )}
+        {renderInBackgroundLayer(backgroundElement)}
         {textElement}
       </g>
     );
   }
 
   const backgroundRect = textBox == null ? null : getTextBackgroundRect(textBox, padding);
+  const backgroundElement = backgroundRect != null && (
+    <rect
+      rx={defaultBackgroundRadius}
+      {...svgPropertiesAndEvents(backgroundRectProps)}
+      pointerEvents={backgroundRectProps.pointerEvents ?? styleFinal.pointerEvents ?? props.pointerEvents}
+      fill={backgroundFill.fill}
+      className={clsx('recharts-text-background', backgroundClassName)}
+      transform={transform}
+      x={backgroundRect.x}
+      y={backgroundRect.y}
+      width={backgroundRect.width}
+      height={backgroundRect.height}
+    />
+  );
 
   /*
    * The group is rendered even before the text is measured,
@@ -893,19 +1041,7 @@ export const Text = forwardRef<SVGTextElement, Props>((outsideProps, ref) => {
    */
   return (
     <g className="recharts-text-with-background">
-      {backgroundRect != null && (
-        <rect
-          rx={defaultBackgroundRadius}
-          {...svgPropertiesAndEvents(backgroundRectProps)}
-          fill={backgroundFill.fill}
-          className={clsx('recharts-text-background', backgroundClassName)}
-          transform={transform}
-          x={backgroundRect.x}
-          y={backgroundRect.y}
-          width={backgroundRect.width}
-          height={backgroundRect.height}
-        />
-      )}
+      {renderInBackgroundLayer(backgroundElement)}
       {textElement}
     </g>
   );

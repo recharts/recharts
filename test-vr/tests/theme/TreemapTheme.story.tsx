@@ -76,3 +76,24 @@ export function TreemapFillStrokeVariants() {
     />
   );
 }
+
+/**
+ * An explicit colorPanel paints nested tiles transparent, so their branch color shows through.
+ * The tooltip of a nested tile must stay readable.
+ * https://github.com/recharts/recharts/pull/8048#discussion_r4376903265
+ */
+export function TreemapColorPanelNestedTooltip() {
+  return (
+    <Treemap
+      width={500}
+      height={300}
+      data={data}
+      isAnimationActive={false}
+      nameKey="name"
+      dataKey="value"
+      colorPanel={['steelblue', 'seagreen']}
+    >
+      <Tooltip defaultIndex="children[0]children[0]" />
+    </Treemap>
+  );
+}

@@ -102,6 +102,9 @@ in `eslint-suppressions.json` so that lint passes. This file is a ratchet:
 - New violations fail lint. Do not add them to the suppressions file; CI checks that the number of suppressions never grows.
 - When you fix a suppressed violation, lint fails until you update the file: `npm run lint -- --prune-suppressions`.
 
+The same ratchet applies to `cloneElement` (rule `recharts/no-clone-element`). Do not clone elements;
+render a new element with explicit props instead.
+
 ## <a name="license"></a>License
 
 By contributing to Recharts, you agree that your contributions will be licensed under its MIT license.

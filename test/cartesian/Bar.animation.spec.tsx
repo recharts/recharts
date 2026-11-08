@@ -229,6 +229,32 @@ describe('Bar animation', () => {
         ['M 9.5,59 h 36 v 36 h -36 Z', 'M 54.5,26.495 h 36 v 68.505 h -36 Z'],
       ]);
     });
+
+    // https://github.com/recharts/recharts/issues/8064
+    it('should update the same rectangle elements instead of remounting them on every frame', async () => {
+      const { container, animationManager } = renderTestCase();
+
+      await animationManager.setAnimationProgress(0.1);
+      const initialBarPaths = Array.from(getAllBarPaths(container));
+      expect(initialBarPaths).toHaveLength(2);
+
+      for (const progress of [0.3, 0.6, 0.9]) {
+        // eslint-disable-next-line no-await-in-loop
+        await animationManager.setAnimationProgress(progress);
+        const currentBarPaths = Array.from(getAllBarPaths(container));
+        expect(currentBarPaths).toHaveLength(initialBarPaths.length);
+        currentBarPaths.forEach((bar, index) => {
+          expect(bar).toBe(initialBarPaths[index]);
+        });
+      }
+
+      await animationManager.completeAnimation();
+      const finalBarPaths = Array.from(getAllBarPaths(container));
+      expect(finalBarPaths).toHaveLength(initialBarPaths.length);
+      finalBarPaths.forEach((bar, index) => {
+        expect(bar).toBe(initialBarPaths[index]);
+      });
+    });
   });
 
   describe('shape prop', () => {

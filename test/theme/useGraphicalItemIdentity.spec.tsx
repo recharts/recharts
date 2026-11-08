@@ -67,13 +67,25 @@ describe('useGraphicalItemIdentity', () => {
   });
 
   it.each([{ fill: 'red' }, { stroke: 'red' }, { fill: 'red', strokeWidth: 3 }])(
-    'returns undefined when the graphical item sets its own color %s',
+    'returns the theme entry without its colors when the graphical item sets its own color %s',
     explicitProps => {
       const { result } = renderHook(() => useGraphicalItemIdentity('revenue', explicitProps), {
         wrapper: createWrapper(['revenue', 'profit']),
       });
 
-      expect(result.current(theme)).toBeUndefined();
+      const themeWithStyles: RechartsTheme = {
+        graphicalItems: [
+          { stroke: 'red' },
+          { fill: 'blue', stroke: 'navy', strokeWidth: 2, active: { fill: 'white' }, label: { background: true } },
+        ],
+      };
+      expect(result.current(themeWithStyles)).toEqual({
+        strokeWidth: 2,
+        active: { fill: 'white' },
+        label: { background: true },
+      });
+      // the same object every time, so that selectors stay stable
+      expect(result.current(themeWithStyles)).toBe(result.current(themeWithStyles));
     },
   );
 

@@ -10,6 +10,7 @@ import storybook from 'eslint-plugin-storybook';
 import comments from '@eslint-community/eslint-plugin-eslint-comments/configs';
 import reactPerf from 'eslint-plugin-react-perf-x';
 import jsdoc from 'eslint-plugin-jsdoc';
+import { rechartsPlugin } from './scripts/eslint-rules/no-clone-element.mjs';
 
 const gitignorePath = path.resolve('.', '.gitignore');
 const allFiles = [
@@ -519,6 +520,21 @@ const typeSafety = {
   },
 };
 
+/*
+ * `cloneElement` overrides props of elements passed in by the user, which hides the data flow.
+ * Render a new element with explicit props instead.
+ *
+ * Existing violations are recorded in `eslint-suppressions.json`, see the `typeSafety` comment above.
+ */
+const noCloneElement = {
+  name: 'x/no-clone-element',
+  files: allFiles,
+  plugins: { recharts: rechartsPlugin },
+  rules: {
+    'recharts/no-clone-element': 'error',
+  },
+};
+
 export default [
   // Ignore .gitignore files/folder in eslint
   includeIgnoreFile(gitignorePath),
@@ -549,4 +565,5 @@ export default [
   generatedApiDocsOverrides,
   perfOptimization,
   typeSafety,
+  noCloneElement,
 ];

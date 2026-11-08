@@ -1,3 +1,4 @@
+import { readEntryFill } from '../../../fill/fillDefinitions';
 import {
   TooltipEntrySettings,
   TooltipIndex,
@@ -64,7 +65,8 @@ function parseTooltipPayloadItem(item: unknown): TooltipPayloadItemLike | undefi
   const dataKey = 'dataKey' in item ? parseDataKey(item.dataKey) : undefined;
   const payload = 'payload' in item ? item.payload : undefined;
   const color = 'color' in item ? parseColor(item.color) : undefined;
-  const fill = 'fill' in item ? parseColor(item.fill) : undefined;
+  // a fill object in the data counts by its color
+  const fill = readEntryFill(item).color;
   const stroke = 'stroke' in item ? parseColor(item.stroke) : undefined;
 
   return {
@@ -144,18 +146,6 @@ export const combineTooltipPayload = (
       tooltipEventType === 'axis'
     ) {
       tooltipPayload = findEntryInArray(sliced, tooltipAxisDataKey, activeLabel);
-      /*
-       * When allowDuplicatedCategory is false and there are duplicate category values
-       * in the data, findEntryInArray returns only the first matching entry.
-       * If the user hovers over a bar that corresponds to a later duplicate,
-       * the activeIndex provides the correct position. We fall back to the index-based
-       * search when the label-based search returns undefined, which can happen
-       * when the activeLabel does not precisely match any data entry (e.g., due to
-       * type coercion differences between tick values and data values).
-       */
-      if (tooltipPayload == null) {
-        tooltipPayload = tooltipPayloadSearcher(sliced, activeIndex, computedData, finalNameKey);
-      }
     } else {
       /*
        * This is a problem because it assumes that the index is pointing to the displayed data
@@ -195,8 +185,9 @@ export const combineTooltipPayload = (
       /*
        * Graphical items that resolve the styles of each data entry on their own (Bar) report the color
        * they render the active entry with. The others take the colors of the active datum before their series colors.
+       * Line, Area and Radar draw one shape per series, so they keep the series color.
        */
-      const parsedItem = parseTooltipPayloadItem(tooltipPayload);
+      const parsedItem = settings.ignoreDataEntryColors ? undefined : parseTooltipPayloadItem(tooltipPayload);
       const entryColor =
         getEntryColor == null
           ? (parsedItem?.color ?? parsedItem?.fill ?? parsedItem?.stroke)

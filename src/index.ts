@@ -14,6 +14,7 @@ export { DefaultLegendContent } from './component/DefaultLegendContent';
 export type {
   Props as DefaultLegendContentProps,
   LegendPayload,
+  LegendPayloadDot,
   ContentType as LegendContentType,
   HorizontalAlignmentType,
   VerticalAlignmentType,
@@ -289,3 +290,13 @@ export { darkPalette, darkTheme } from './theme/darkTheme';
 export { lightPalette, lightTheme } from './theme/lightTheme';
 export { emptyTheme } from './theme/emptyTheme';
 export { autoPalette, autoTheme } from './theme/autoTheme';
+export type {
+  RechartsFill,
+  RechartsFillDefinitionProps,
+  RechartsGradientStop,
+  RechartsLinearGradient,
+  RechartsPattern,
+} from './fill/RechartsFill';
+export { gradients, patterns } from './fill/RechartsFill';
+export type { WithFillObject } from './util/types';
+export { linearGradient, pattern } from './fill/fillDefinitions';

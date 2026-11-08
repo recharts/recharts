@@ -65,3 +65,37 @@ test('uses the current mode after changing the website theme', async () => {
     expect.objectContaining({ theme: 'dark' }),
   );
 });
+
+test('wraps the example in RechartsThemeProvider with autoTheme', async () => {
+  const openProject = setup('light');
+  await userEvent.click(screen.getByRole('button', { name: 'Open in StackBlitz' }));
+  const [project] = openProject.mock.calls[0];
+  expect(project.files['src/index.tsx']).toContain("import { RechartsThemeProvider, autoTheme } from 'recharts';");
+  expect(project.files['src/index.tsx']).toContain('<RechartsThemeProvider value={autoTheme}>');
+});
+
+test('exports the same recharts version that the website uses', async () => {
+  const { version } = await import('../../../../package.json');
+  const openProject = setup('light');
+  await userEvent.click(screen.getByRole('button', { name: 'Open in StackBlitz' }));
+  const [project] = openProject.mock.calls[0];
+  expect(JSON.parse(project.files['package.json']).dependencies.recharts).toBe(version);
+});
+
+test('exports the listener that follows the StackBlitz editor theme', async () => {
+  const openProject = setup('light');
+  await userEvent.click(screen.getByRole('button', { name: 'Open in StackBlitz' }));
+  const [project] = openProject.mock.calls[0];
+  expect(project.files['src/index.tsx']).toContain("import './followStackBlitzTheme';");
+  expect(project.files['src/followStackBlitzTheme.ts']).toContain(
+    "window.addEventListener('message', handleStackBlitzMessage);",
+  );
+});
+
+test('gives the exported page an opaque background', async () => {
+  const openProject = setup('light');
+  await userEvent.click(screen.getByRole('button', { name: 'Open in StackBlitz' }));
+  const [project] = openProject.mock.calls[0];
+  expect(project.files['src/index.css']).toContain('--color-surface-base');
+  expect(project.files['src/index.css']).toMatch(/html \{\s*background-color: var\(--color-surface-base\);/);
+});
