@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 232 48" fill="none">
+  <g transform="translate(4 4)">
+    <path transform="rotate(45 20 20)" d="M20 5 31.667 31.667 20 25 8.333 31.667Z" fill="#34d399" stroke="#34d399" stroke-width="3.667" stroke-linejoin="round" stroke-linecap="round"/>
+  </g>
+  <text x="56" y="32" font-family="Inter, ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, Arial, sans-serif" font-size="26" font-weight="800" letter-spacing="-0.5" fill="#0b1220">Rocketeers</text>
+</svg>
