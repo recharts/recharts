@@ -25,7 +25,7 @@ import {
   YAxisTickContentProps,
   TickItem as TickItemType,
 } from '../util/types';
-import { getTicks } from './getTicks';
+import { getTicks, TickLabelStyle } from './getTicks';
 import { svgPropertiesNoEvents, svgPropertiesNoEventsFromUnknown } from '../util/svgPropertiesNoEvents';
 import { AxisId, XAxisOrientation, XAxisPadding, YAxisOrientation, YAxisPadding } from '../state/cartesianAxisSlice';
 import { getCalculatedYAxisWidth } from '../util/YAxisUtils';
@@ -384,10 +384,9 @@ type TicksProps = {
   axisId: AxisId | undefined;
   axisType: 'xAxis' | 'yAxis' | undefined;
   events: Omit<PresentationAttributesAdaptChildEvent<any, SVGElement>, 'scale' | 'viewBox'>;
-  fontSize: string;
   getTicksConfig: Omit<Props, 'ticks' | 'ref'>;
   height: number;
-  letterSpacing: string;
+  labelStyle: TickLabelStyle;
   mirror: boolean;
   orientation: Orientation;
   padding?: Props['padding'];
@@ -414,10 +413,9 @@ const Ticks = forwardRef<SVGGElement, TicksProps>((props: TicksProps, ref) => {
     axisId,
     axisType,
     events,
-    fontSize,
     getTicksConfig,
     height,
-    letterSpacing,
+    labelStyle,
     mirror,
     orientation,
     padding,
@@ -439,7 +437,7 @@ const Ticks = forwardRef<SVGGElement, TicksProps>((props: TicksProps, ref) => {
     y,
   } = props;
   // @ts-expect-error some properties are optional in props but required in getTicks
-  const finalTicks = getTicks({ ...getTicksConfig, ticks }, fontSize, letterSpacing);
+  const finalTicks = getTicks({ ...getTicksConfig, ticks }, labelStyle);
   const axisProps = svgPropertiesNoEvents(getTicksConfig);
   const customTickProps = svgPropertiesNoEventsFromUnknown(tick);
   // Use user-provided textAnchor if available, otherwise calculate from orientation/mirror
@@ -542,8 +540,12 @@ const Ticks = forwardRef<SVGGElement, TicksProps>((props: TicksProps, ref) => {
 
 const CartesianAxisComponent = forwardRef<CartesianAxisRef, InternalProps>((props, ref) => {
   const { axisLine, width, height, className, hide, ticks, axisType, axisId, ...rest } = props;
-  const [fontSize, setFontSize] = useState('');
-  const [letterSpacing, setLetterSpacing] = useState('');
+  const [labelStyle, setLabelStyle] = useState<TickLabelStyle>({
+    fontSize: '',
+    letterSpacing: '',
+    fontFamily: '',
+    fontWeight: '',
+  });
   const tickRefs = useRef<HTMLCollectionOf<Element> | null>(null);
 
   useImperativeHandle(ref, (): CartesianAxisRef => ({
@@ -576,16 +578,24 @@ const CartesianAxisComponent = forwardRef<CartesianAxisRef, InternalProps>((prop
 
         if (tick) {
           const computedStyle = window.getComputedStyle(tick);
-          const calculatedFontSize = computedStyle.fontSize;
-          const calculatedLetterSpacing = computedStyle.letterSpacing;
-          if (calculatedFontSize !== fontSize || calculatedLetterSpacing !== letterSpacing) {
-            setFontSize(calculatedFontSize);
-            setLetterSpacing(calculatedLetterSpacing);
+          const nextLabelStyle: TickLabelStyle = {
+            fontSize: computedStyle.fontSize,
+            letterSpacing: computedStyle.letterSpacing,
+            fontFamily: computedStyle.fontFamily,
+            fontWeight: computedStyle.fontWeight,
+          };
+          if (
+            nextLabelStyle.fontSize !== labelStyle.fontSize ||
+            nextLabelStyle.letterSpacing !== labelStyle.letterSpacing ||
+            nextLabelStyle.fontFamily !== labelStyle.fontFamily ||
+            nextLabelStyle.fontWeight !== labelStyle.fontWeight
+          ) {
+            setLabelStyle(nextLabelStyle);
           }
         }
       }
     },
-    [fontSize, letterSpacing],
+    [labelStyle],
   );
 
   const axisTheme = useBackwardsCompatibleTheme(theme => theme.axis, props, defaultLegacyAxisThemeProps);
@@ -626,10 +636,9 @@ const CartesianAxisComponent = forwardRef<CartesianAxisRef, InternalProps>((prop
           axisId={axisId}
           axisType={axisType}
           events={rest}
-          fontSize={fontSize}
           getTicksConfig={props}
           height={props.height}
-          letterSpacing={letterSpacing}
+          labelStyle={labelStyle}
           mirror={props.mirror}
           orientation={props.orientation}
           padding={props.padding}

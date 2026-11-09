@@ -88,7 +88,12 @@ describe('<CartesianAxis />', () => {
   });
 
   it('gets font states from its ComputedStyle', () => {
-    const myStyle = { fontSize: '14px', letterSpacing: '0.5em' } as CSSStyleDeclaration;
+    const myStyle = {
+      fontSize: '14px',
+      letterSpacing: '0.5em',
+      fontFamily: 'Roboto Mono',
+      fontWeight: '500',
+    } as CSSStyleDeclaration;
 
     vi.spyOn(window, 'getComputedStyle').mockReturnValue(myStyle);
 
@@ -111,7 +116,11 @@ describe('<CartesianAxis />', () => {
 
     const container: HTMLSpanElement | null = document.querySelector('#recharts_measurement_span');
 
-    expect(container?.style).toMatchObject(myStyle);
+    // CSSOM quotes multi-word family names when the inline style is read back.
+    expect(container?.style.fontSize).toBe('14px');
+    expect(container?.style.letterSpacing).toBe('0.5em');
+    expect(container?.style.fontFamily).toContain('Roboto Mono');
+    expect(container?.style.fontWeight).toBe('500');
   });
 
   it('Renders ticks when interval="preserveStart"', () => {

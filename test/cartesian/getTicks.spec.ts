@@ -247,4 +247,23 @@ describe('getTicks', () => {
       },
     );
   });
+
+  test('forwards fontFamily and fontWeight to label measurement', () => {
+    getTicks(EXAMPLE_INPUT, {
+      fontSize: '12px',
+      letterSpacing: '0.1px',
+      fontFamily: 'Roboto Mono',
+      fontWeight: '500',
+    });
+
+    expect(DOMUtils.getStringSize).toHaveBeenCalledWith(
+      '10',
+      expect.objectContaining({
+        fontSize: '12px',
+        letterSpacing: '0.1px',
+        fontFamily: 'Roboto Mono',
+        fontWeight: '500',
+      }),
+    );
+  });
 });
