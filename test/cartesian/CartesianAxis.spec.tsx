@@ -4,6 +4,7 @@ import { describe, expect, it, vi } from 'vitest';
 import { scaleLinear } from 'victory-vendor/d3-scale';
 import { CartesianAxis, CustomScaleDefinition, Surface } from '../../src';
 import { TickItem } from '../../src/util/types';
+import { getMockDomRect } from '../helper/mockGetBoundingClientRect';
 
 const CustomizeLabel = ({ x, y }: any) => (
   <text data-testid="customized-label" x={x} y={y}>
@@ -87,10 +88,23 @@ describe('<CartesianAxis />', () => {
     expect(container.querySelectorAll('.recharts-cartesian-axis-tick')).toHaveLength(5);
   });
 
-  it('gets font states from its ComputedStyle', () => {
-    const myStyle = { fontSize: '14px', letterSpacing: '0.5em' } as CSSStyleDeclaration;
-
-    vi.spyOn(window, 'getComputedStyle').mockReturnValue(myStyle);
+  it('measures the tick labels in the font from their computed style', () => {
+    const tickFont = {
+      fontSize: '14px',
+      fontFamily: '"Roboto Mono", monospace',
+      fontWeight: '700',
+      fontStyle: 'italic',
+      letterSpacing: '0.5em',
+    };
+    vi.spyOn(window, 'getComputedStyle').mockReturnValue(Object.assign(document.createElement('span').style, tickFont));
+    const measurements: Array<Record<string, string | null>> = [];
+    vi.spyOn(Element.prototype, 'getBoundingClientRect').mockImplementation(function mock(this: Element) {
+      if (this instanceof HTMLElement && this.id === 'recharts_measurement_span') {
+        const { fontSize, fontFamily, fontWeight, fontStyle, letterSpacing } = this.style;
+        measurements.push({ text: this.textContent, fontSize, fontFamily, fontWeight, fontStyle, letterSpacing });
+      }
+      return getMockDomRect();
+    });
 
     render(
       <Surface width={500} height={500}>
@@ -109,9 +123,7 @@ describe('<CartesianAxis />', () => {
       </Surface>,
     );
 
-    const container: HTMLSpanElement | null = document.querySelector('#recharts_measurement_span');
-
-    expect(container?.style).toMatchObject(myStyle);
+    expect(measurements).toContainEqual({ text: '1000', ...tickFont });
   });
 
   it('Renders ticks when interval="preserveStart"', () => {
