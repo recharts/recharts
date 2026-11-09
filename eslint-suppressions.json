@@ -78,11 +78,6 @@
       "count": 3
     }
   },
-  "src/cartesian/AreaRevealShape.tsx": {
-    "react-perf/jsx-no-new-array-as-prop": {
-      "count": 1
-    }
-  },
   "src/cartesian/Bar.tsx": {
     "@typescript-eslint/consistent-type-assertions": {
       "count": 1
