@@ -9,6 +9,13 @@ import { arrayTooltipSearcher } from '../../src/state/optionsSlice';
 import { produceState } from '../helper/produceState';
 import { emptyOffset } from '../helper/offsetHelpers';
 import { TooltipPayload } from '../../src/state/tooltipSlice';
+import { Bar, BarChart, ComposedChart, Line, Tooltip, XAxis, YAxis } from '../../src';
+import { PageData } from '../_data';
+import { showTooltip } from './Tooltip/tooltipTestHelpers';
+import {
+  barChartMouseHoverTooltipSelector,
+  composedChartMouseHoverTooltipSelector,
+} from './Tooltip/tooltipMouseHoverSelectors';
 
 const defaultProps: CursorProps = {
   cursor: true,
@@ -82,6 +89,44 @@ describe('Cursor', () => {
       const cursor = container.querySelector('.recharts-rectangle');
       assertNotNull(cursor);
       expect(cursor).toBeVisible();
+    });
+
+    it('should render rectangle cursor for a non-BarChart that contains a cartesian Bar', () => {
+      const props: CursorConnectedProps = {
+        layout: 'horizontal',
+        ...defaultProps,
+        tooltipAxisBandSize: 1,
+        chartName: 'ComposedChart',
+        hasCartesianBar: true,
+        offset: emptyOffset,
+        coordinate: baseCoord,
+      };
+      const { container } = render(
+        <svg width={100} height={100}>
+          <CursorInternal {...props} />
+        </svg>,
+      );
+      expect(container.querySelector('.recharts-rectangle')).toBeVisible();
+      expect(container.querySelector('.recharts-curve')).toBeNull();
+    });
+
+    it('should render curve cursor for a non-BarChart without a cartesian Bar', () => {
+      const props: CursorConnectedProps = {
+        layout: 'horizontal',
+        ...defaultProps,
+        tooltipAxisBandSize: 1,
+        chartName: 'ComposedChart',
+        hasCartesianBar: false,
+        offset: emptyOffset,
+        coordinate: baseCoord,
+      };
+      const { container } = render(
+        <svg width={100} height={100}>
+          <CursorInternal {...props} />
+        </svg>,
+      );
+      expect(container.querySelector('.recharts-curve')).toBeVisible();
+      expect(container.querySelector('.recharts-rectangle')).toBeNull();
     });
 
     it('should render sector cursor for radial layout charts', () => {
@@ -175,6 +220,72 @@ describe('Cursor', () => {
       const cursor = container.querySelector('.recharts-sector');
       assertNotNull(cursor);
       expect(cursor).toBeVisible();
+    });
+  });
+
+  describe('in charts', () => {
+    const cursorSelector = '.recharts-tooltip-cursor';
+
+    it('should render a band cursor in BarChart', () => {
+      const { container } = render(
+        <BarChart width={400} height={400} data={PageData}>
+          <XAxis dataKey="name" />
+          <YAxis />
+          <Bar dataKey="uv" isAnimationActive={false} />
+          <Tooltip />
+        </BarChart>,
+      );
+      showTooltip(container, barChartMouseHoverTooltipSelector);
+      const cursor = container.querySelector(cursorSelector);
+      assertNotNull(cursor);
+      expect(cursor).toHaveClass('recharts-rectangle');
+    });
+
+    it('should render a band cursor in ComposedChart that contains a Bar', () => {
+      const { container } = render(
+        <ComposedChart width={400} height={400} data={PageData}>
+          <XAxis dataKey="name" />
+          <YAxis />
+          <Bar dataKey="uv" isAnimationActive={false} />
+          <Line dataKey="pv" isAnimationActive={false} />
+          <Tooltip />
+        </ComposedChart>,
+      );
+      showTooltip(container, composedChartMouseHoverTooltipSelector);
+      const cursor = container.querySelector(cursorSelector);
+      assertNotNull(cursor);
+      expect(cursor).toHaveClass('recharts-rectangle');
+      expect(container.querySelector(`${cursorSelector}.recharts-curve`)).toBeNull();
+    });
+
+    it('should render a band cursor in vertical ComposedChart that contains a Bar', () => {
+      const { container } = render(
+        <ComposedChart width={400} height={400} data={PageData} layout="vertical">
+          <XAxis type="number" />
+          <YAxis type="category" dataKey="name" />
+          <Bar dataKey="uv" isAnimationActive={false} />
+          <Tooltip />
+        </ComposedChart>,
+      );
+      showTooltip(container, composedChartMouseHoverTooltipSelector);
+      const cursor = container.querySelector(cursorSelector);
+      assertNotNull(cursor);
+      expect(cursor).toHaveClass('recharts-rectangle');
+    });
+
+    it('should keep the line cursor in ComposedChart without a Bar', () => {
+      const { container } = render(
+        <ComposedChart width={400} height={400} data={PageData}>
+          <XAxis dataKey="name" />
+          <YAxis />
+          <Line dataKey="pv" isAnimationActive={false} />
+          <Tooltip />
+        </ComposedChart>,
+      );
+      showTooltip(container, composedChartMouseHoverTooltipSelector);
+      const cursor = container.querySelector(cursorSelector);
+      assertNotNull(cursor);
+      expect(cursor).toHaveClass('recharts-curve');
     });
   });
 });
