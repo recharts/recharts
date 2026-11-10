@@ -1869,6 +1869,9 @@ describe('Tooltip visibility when the chart mouse handlers update React state', 
     act(() => {
       vi.runOnlyPendingTimers();
     });
+    // Still open after the state updates, so the check below shows that mouseleave closes it.
+    expect(getTooltip(container)).toBeVisible();
+
     fireEvent.mouseLeave(wrapper);
     act(() => {
       vi.runOnlyPendingTimers();
