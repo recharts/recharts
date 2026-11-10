@@ -646,7 +646,8 @@ describe('<Brush />', () => {
 
     test('should keep following the mouse past several data points instead of resetting', () => {
       const { container } = render(<ControlledBrush />);
-      const traveller = container.querySelector('.recharts-brush-traveller') as SVGGElement;
+      const traveller = container.querySelector('.recharts-brush-traveller');
+      assertNotNull(traveller);
       const selectedRange = screen.getByLabelText('selected range');
       const selectedStartIndex = () => Number(selectedRange.textContent?.split('-')[0]);
 
