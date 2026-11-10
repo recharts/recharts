@@ -8,7 +8,6 @@ import sortBy from 'es-toolkit/compat/sortBy';
 import { clsx } from 'clsx';
 import { isNullish, isNumOrStr } from '../util/DataUtils';
 import { DataKey } from '../util/types';
-import { TooltipPayload, TooltipPayloadEntry } from '../state/tooltipSlice';
 import { RechartsTheme } from '../theme/RechartsTheme';
 import { useBackwardsCompatibleTheme } from '../theme/useBackwardsCompatibleTheme';
 
@@ -29,6 +28,11 @@ export type Formatter<TValue extends ValueType = ValueType, TName extends NameTy
   index: number,
   payload: ReadonlyArray<Payload<TValue, TName>>,
 ) => [React.ReactNode, TName] | React.ReactNode;
+
+/**
+ * Tooltip value type of a graphical item with `TDataValue` data.
+ */
+export type ItemTooltipValue<TDataValue> = unknown extends TDataValue ? ValueType : Extract<TDataValue, ValueType>;
 
 /**
  * @public
@@ -108,11 +112,13 @@ export const defaultDefaultTooltipContentProps = {
   accessibilityLayer: false,
 } as const satisfies Partial<Props<any, any>>;
 
-function lodashLikeSortBy<T>(array: ReadonlyArray<T>, itemSorter: TooltipItemSorter | undefined): ReadonlyArray<T> {
+function lodashLikeSortBy<TValue extends ValueType, TName extends NameType>(
+  array: ReadonlyArray<Payload<TValue, TName>>,
+  itemSorter: TooltipItemSorter<TValue, TName> | undefined,
+): ReadonlyArray<Payload<TValue, TName>> {
   if (itemSorter == null) {
     return array;
   }
-  // @ts-expect-error sortBy types somehow are returning a number type.
   return sortBy(array, itemSorter);
 }
 
@@ -123,7 +129,9 @@ function lodashLikeSortBy<T>(array: ReadonlyArray<T>, itemSorter: TooltipItemSor
  * or you can provide your own completely independent content.
  * @public
  */
-export const DefaultTooltipContent = (props: Props) => {
+export const DefaultTooltipContent = <TValue extends ValueType = ValueType, TName extends NameType = NameType>(
+  props: Props<TValue, TName>,
+) => {
   const theme = useBackwardsCompatibleTheme<Pick<RechartsTheme, 'typography' | 'tooltip'>>(
     (rechartsTheme: RechartsTheme) => ({
       typography: rechartsTheme.typography,
@@ -159,13 +167,13 @@ export const DefaultTooltipContent = (props: Props) => {
     if (payload && payload.length) {
       const listStyle = { padding: 0, margin: 0 };
 
-      const sortedPayload: TooltipPayload = lodashLikeSortBy(payload, itemSorter);
-      const items = sortedPayload.map((entry: TooltipPayloadEntry, i: number) => {
+      const sortedPayload = lodashLikeSortBy(payload, itemSorter);
+      const items = sortedPayload.map((entry, i) => {
         if (!entry || entry.type === 'none') {
           return null;
         }
 
-        const finalFormatter: Formatter = entry.formatter || formatter || defaultFormatter;
+        const finalFormatter: Formatter<TValue, TName> = entry.formatter || formatter || defaultFormatter;
         const { value, name } = entry;
         let finalValue: React.ReactNode = value;
         let finalName: React.ReactNode = name;
