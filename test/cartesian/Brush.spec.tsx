@@ -619,6 +619,56 @@ describe('<Brush />', () => {
     });
   });
 
+  describe('dragging a traveller when start/endIndex are controlled with useState in onChange', () => {
+    // https://github.com/recharts/recharts/issues/2672
+    const ControlledBrush = () => {
+      const [range, setRange] = useState({ startIndex: 0, endIndex: data.length - 1 });
+
+      return (
+        <>
+          <BarChart width={400} height={100} data={data}>
+            <Bar dataKey="value" isAnimationActive={false} />
+            <Brush
+              dataKey="value"
+              x={100}
+              y={50}
+              width={400}
+              height={40}
+              startIndex={range.startIndex}
+              endIndex={range.endIndex}
+              onChange={({ startIndex, endIndex }) => setRange({ startIndex, endIndex })}
+            />
+          </BarChart>
+          <output aria-label="selected range">{`${range.startIndex}-${range.endIndex}`}</output>
+        </>
+      );
+    };
+
+    test('should keep following the mouse past several data points instead of resetting', () => {
+      const { container } = render(<ControlledBrush />);
+      const traveller = container.querySelector('.recharts-brush-traveller') as SVGGElement;
+      const selectedRange = screen.getByLabelText('selected range');
+      const selectedStartIndex = () => Number(selectedRange.textContent?.split('-')[0]);
+
+      fireEvent.mouseDown(traveller);
+      const startIndexes: number[] = [];
+      for (const clientX of [50, 100, 150, 200]) {
+        fireEvent.mouseMove(traveller, { clientX });
+        startIndexes.push(selectedStartIndex());
+      }
+      fireEvent.mouseUp(traveller);
+
+      // Every move passes more data points, so the start index keeps growing instead of
+      // snapping back to its initial value after the first onChange.
+      expect(startIndexes[0]).toBeGreaterThan(0);
+      startIndexes.slice(1).forEach((startIndex, i) => {
+        expect(startIndex).toBeGreaterThan(startIndexes[i]);
+      });
+      // Same selection as the uncontrolled Brush dragged by the same distance (see 'with panorama').
+      expect(selectedRange).toHaveTextContent(`6-${data.length - 1}`);
+    });
+  });
+
   describe('panorama and state integration', () => {
     it('should select data from the parent chart', () => {
       const rootDataSpy = vi.fn();
