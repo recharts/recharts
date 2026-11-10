@@ -144,7 +144,7 @@ describe('chart wrapper events', () => {
     });
   });
 
-  describe.each(onlyCompact(allCharts))('$testName', ({ ChartElement, tooltipIndex }) => {
+  describe.each(onlyCompact(allCharts))('$testName', ({ ChartElement, tooltipIndex, testName }) => {
     it('should not call onClick when user clicks on the chart', () => {
       const { container } = render(<ChartElement onClick={spies.onClick} />);
       const surface = container.querySelector('.recharts-surface');
@@ -170,7 +170,9 @@ describe('chart wrapper events', () => {
       expect(spies.onMouseLeave).not.toHaveBeenCalled();
     });
 
-    it('should not call onTouchStart, onTouchMove, or onTouchEnd', () => {
+    it('should not call onTouchStart, onTouchMove, or onTouchEnd', ctx => {
+      // Sankey dispatches the touch handlers from its nodes and links, see Sankey.spec.tsx.
+      if (testName === 'compact Sankey') ctx.skip();
       mockTouchingElement(tooltipIndex, 'uv');
 
       const { container } = render(

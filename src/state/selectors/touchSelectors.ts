@@ -1,7 +1,7 @@
 import { createSelector } from 'reselect';
 import { RechartsRootState } from '../store';
 import { TooltipIndex, TooltipPayloadConfiguration } from '../tooltipSlice';
-import { Coordinate } from '../../util/types';
+import { Coordinate, DataKey } from '../../util/types';
 import { selectTooltipState } from './selectTooltipState';
 import { GraphicalItemId } from '../graphicalItemsSlice';
 
@@ -38,5 +38,24 @@ export const selectTooltipCoordinate: (
       return undefined;
     }
     return getPosition(tooltipIndex);
+  },
+);
+
+export const selectTooltipDataKey: (
+  state: RechartsRootState,
+  graphicalItemId: GraphicalItemId,
+) => DataKey<unknown> | undefined = createSelector(
+  [
+    selectAllTooltipPayloadConfiguration,
+    (_state: RechartsRootState, graphicalItemId: GraphicalItemId): GraphicalItemId => graphicalItemId,
+  ],
+  (
+    allTooltipConfigurations: ReadonlyArray<TooltipPayloadConfiguration>,
+    graphicalItemId: GraphicalItemId,
+  ): DataKey<unknown> | undefined => {
+    const mostRelevantTooltipConfiguration = allTooltipConfigurations.find(
+      tooltipConfiguration => tooltipConfiguration.settings.graphicalItemId === graphicalItemId,
+    );
+    return mostRelevantTooltipConfiguration?.settings.dataKey;
   },
 );
