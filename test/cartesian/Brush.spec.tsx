@@ -665,12 +665,9 @@ describe('<Brush />', () => {
       }
       fireEvent.mouseUp(traveller);
 
-      // Every move passes more data points, so the start index keeps growing instead of
+      // Every move passes more data points, so the start index follows the mouse instead of
       // snapping back to its initial value after the first onChange.
-      expect(startIndexes[0]).toBeGreaterThan(0);
-      startIndexes.slice(1).forEach((startIndex, i) => {
-        expect(startIndex).toBeGreaterThan(startIndexes[i]);
-      });
+      expect(startIndexes).toEqual([1, 3, 4, 6]);
       // Same selection as the uncontrolled Brush dragged by the same distance (see 'with panorama').
       expect(selectedRange).toHaveTextContent(`6-${data.length - 1}`);
     });
