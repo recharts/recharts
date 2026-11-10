@@ -649,7 +649,13 @@ describe('<Brush />', () => {
       const traveller = container.querySelector('.recharts-brush-traveller');
       assertNotNull(traveller);
       const selectedRange = screen.getByLabelText('selected range');
-      const selectedStartIndex = () => Number(selectedRange.textContent?.split('-')[0]);
+      const selectedStartIndex = (): number => {
+        const match = /^(\d+)-\d+$/.exec(selectedRange.textContent ?? '');
+        if (!match) {
+          throw new Error(`Expected the selected range to be "start-end", got "${selectedRange.textContent}"`);
+        }
+        return Number(match[1]);
+      };
 
       fireEvent.mouseDown(traveller);
       const startIndexes: number[] = [];
