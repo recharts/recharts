@@ -1829,3 +1829,53 @@ describe('Tooltip visibility after mouseleave with a pending throttled mousemove
     expectTooltipNotVisible(container);
   });
 });
+
+describe('Tooltip visibility when the chart mouse handlers update React state', () => {
+  // https://github.com/recharts/recharts/issues/3956
+  beforeEach(() => {
+    mockGetBoundingClientRect({ width: 100, height: 100 });
+  });
+
+  const ChartThatUpdatesStateOnHover = () => {
+    const [hoverEvents, setHoverEvents] = useState(0);
+
+    return (
+      <>
+        <LineChart
+          width={400}
+          height={400}
+          data={PageData}
+          onMouseEnter={() => setHoverEvents(count => count + 1)}
+          onMouseMove={() => setHoverEvents(count => count + 1)}
+        >
+          <XAxis dataKey="name" />
+          <YAxis />
+          <Tooltip isAnimationActive={false} />
+          <Line dataKey="uv" isAnimationActive={false} />
+        </LineChart>
+        <output aria-label="hover events">{hoverEvents}</output>
+      </>
+    );
+  };
+
+  test('should hide the tooltip after mouseleave', () => {
+    const { container } = render(<ChartThatUpdatesStateOnHover />);
+    showTooltip(container, lineChartMouseHoverTooltipSelector);
+    expect(getTooltip(container)).toBeVisible();
+
+    const wrapper = container.querySelector(lineChartMouseHoverTooltipSelector);
+    assertNotNull(wrapper);
+    fireEvent.mouseMove(wrapper, { clientX: 150, clientY: 200 });
+    act(() => {
+      vi.runOnlyPendingTimers();
+    });
+    fireEvent.mouseLeave(wrapper);
+    act(() => {
+      vi.runOnlyPendingTimers();
+    });
+
+    // The handlers did run and re-render the parent, which is what used to keep the tooltip open.
+    expect(Number(container.querySelector('output')?.textContent)).toBeGreaterThan(0);
+    expectTooltipNotVisible(container);
+  });
+});
