@@ -1865,11 +1865,15 @@ describe('Tooltip visibility when the chart mouse handlers update React state', 
 
     const wrapper = container.querySelector(lineChartMouseHoverTooltipSelector);
     assertNotNull(wrapper);
+    const hoverEvents = () => Number(container.querySelector('output')?.textContent);
+    const hoverEventsBeforeMove = hoverEvents();
     fireEvent.mouseMove(wrapper, { clientX: 150, clientY: 200 });
     act(() => {
       vi.runOnlyPendingTimers();
     });
-    // Still open after the state updates, so the check below shows that mouseleave closes it.
+    // The mouse move re-rendered the parent, which is what used to keep the tooltip open...
+    expect(hoverEvents()).toBeGreaterThan(hoverEventsBeforeMove);
+    // ...and the tooltip is still open, so the check below shows that mouseleave closes it.
     expect(getTooltip(container)).toBeVisible();
 
     fireEvent.mouseLeave(wrapper);
@@ -1877,8 +1881,6 @@ describe('Tooltip visibility when the chart mouse handlers update React state', 
       vi.runOnlyPendingTimers();
     });
 
-    // The handlers did run and re-render the parent, which is what used to keep the tooltip open.
-    expect(Number(container.querySelector('output')?.textContent)).toBeGreaterThan(0);
     expectTooltipNotVisible(container);
   });
 });
