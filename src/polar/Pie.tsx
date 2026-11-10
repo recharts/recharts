@@ -983,15 +983,15 @@ function PieSectors(props: PieSectorsProps) {
       {sectors.map((entry: PieSectorDataItem, i: number) => {
         if (entry?.startAngle === 0 && entry?.endAngle === 0 && sectors.length !== 1) return null;
 
-        // For Pie charts, when multiple Pies share the same dataKey, we need to ensure only the hovered Pie's sector is active.
-        // We do this by checking if the active graphical item ID matches this Pie's ID.
+        // Multiple Pies often share a dataKey. Active and inactive sectors must follow the hovered Pie,
+        // otherwise a sibling Pie inherits the tooltip index and repaints its cells and labels.
+        // https://github.com/recharts/recharts/issues/4753
         const graphicalItemMatches = activeGraphicalItemId == null || activeGraphicalItemId === id;
+        const dataKeyMatches = activeDataKey == null || allOtherPieProps.dataKey === activeDataKey;
+        const isThisPieActive = Boolean(activeIndex) && dataKeyMatches && graphicalItemMatches;
 
-        const isActive =
-          String(i) === activeIndex &&
-          (activeDataKey == null || allOtherPieProps.dataKey === activeDataKey) &&
-          graphicalItemMatches;
-        const inactiveShape = activeIndex ? inactiveShapeProp : null;
+        const isActive = String(i) === activeIndex && isThisPieActive;
+        const inactiveShape = isThisPieActive ? inactiveShapeProp : null;
         const sectorOptions = activeShape && isActive ? activeShape : inactiveShape;
         const sectorProps: PieSectorShapeProps = {
           ...entry,
