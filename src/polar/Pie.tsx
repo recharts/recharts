@@ -4,6 +4,7 @@ import get from 'es-toolkit/compat/get';
 
 import { clsx } from 'clsx';
 import { selectPieLegend, selectPieSectors } from '../state/selectors/pieSelectors';
+import { selectPlotArea } from '../state/selectors/selectPlotArea';
 import { useAppSelector } from '../state/hooks';
 import { Layer } from '../container/Layer';
 import { Curve, Props as CurveProps } from '../shape/Curve';
@@ -12,7 +13,6 @@ import { Text, TextBackgroundProps } from '../component/Text';
 import { Cell } from '../component/Cell';
 import { findAllByType } from '../util/ReactUtils';
 import { getMaxRadius, polarToCartesian } from '../util/PolarUtils';
-import { usePlotArea } from '../hooks';
 import { getSpacedPieLabelPositions } from './spacePieLabels';
 import { getPercentValue, interpolate, isNumber, mathSign } from '../util/DataUtils';
 import { getTooltipNameProp, getValueByDataKey } from '../util/ChartUtils';
@@ -862,7 +862,7 @@ function PieLabels({
   showLabels: boolean;
 }) {
   const resolveLabelTheme = useDataLabelThemeResolver();
-  const plotArea = usePlotArea();
+  const plotArea = useAppSelector(selectPlotArea);
   const { label, labelLine, dataKey, minLabelSpacing } = props;
   if (!showLabels || !label || !sectors) {
     return null;
