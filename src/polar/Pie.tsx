@@ -12,6 +12,8 @@ import { Text, TextBackgroundProps } from '../component/Text';
 import { Cell } from '../component/Cell';
 import { findAllByType } from '../util/ReactUtils';
 import { getMaxRadius, polarToCartesian } from '../util/PolarUtils';
+import { usePlotArea } from '../hooks';
+import { getSpacedPieLabelPositions } from './spacePieLabels';
 import { getPercentValue, interpolate, isNumber, mathSign } from '../util/DataUtils';
 import { getTooltipNameProp, getValueByDataKey } from '../util/ChartUtils';
 import {
@@ -440,6 +442,14 @@ export interface PieProps<DataPointType = any, DataValueType = any>
    */
   label?: PieLabel;
   /**
+   * Minimum vertical distance in pixels between outside label centers on the same side of the pie.
+   * Set this to the label height plus the desired gap. When the plot is too short, labels share the
+   * available height evenly. Custom renderers receive the adjusted coordinates. Labels rendered
+   * with a LabelList or an explicit `position` use their own layout.
+   * @example <Pie label minLabelSpacing={18} />
+   */
+  minLabelSpacing?: number;
+  /**
    * If false set, label lines will not be drawn. If true set, label lines will be drawn which have the props calculated internally.
    * If object set, label lines will be drawn which have the props merged by the internal calculated props and the option.
    * If ReactElement set, the option can be the custom label line element.
@@ -852,7 +862,8 @@ function PieLabels({
   showLabels: boolean;
 }) {
   const resolveLabelTheme = useDataLabelThemeResolver();
-  const { label, labelLine, dataKey } = props;
+  const plotArea = usePlotArea();
+  const { label, labelLine, dataKey, minLabelSpacing } = props;
   if (!showLabels || !label || !sectors) {
     return null;
   }
@@ -867,9 +878,19 @@ function PieLabels({
       label.offsetRadius) ||
     20;
 
+  const spacedPositions =
+    plotArea &&
+    plotArea.height > 0 &&
+    minLabelSpacing != null &&
+    Number.isFinite(minLabelSpacing) &&
+    minLabelSpacing > 0
+      ? getSpacedPieLabelPositions(sectors, offsetRadius, plotArea.y, plotArea.height, minLabelSpacing)
+      : undefined;
+
   const labels = sectors.map((entry, i) => {
     const midAngle = (entry.startAngle + entry.endAngle) / 2;
-    const endPoint = polarToCartesian(entry.cx, entry.cy, entry.outerRadius + offsetRadius, midAngle);
+    const endPoint =
+      spacedPositions?.[i] ?? polarToCartesian(entry.cx, entry.cy, entry.outerRadius + offsetRadius, midAngle);
     const entryLabelProps = filterEntryPropsForLabels(entry);
     const labelProps: PieLabelRenderProps = {
       ...pieProps,

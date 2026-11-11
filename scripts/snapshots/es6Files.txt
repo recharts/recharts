@@ -106,6 +106,7 @@
   "es6/polar/defaultPolarAngleAxisProps.js",
   "es6/polar/defaultPolarRadiusAxisProps.js",
   "es6/polar/isOutsidePolarPosition.js",
+  "es6/polar/spacePieLabels.js",
   "es6/shape",
   "es6/shape/Cross.js",
   "es6/shape/Curve.js",
