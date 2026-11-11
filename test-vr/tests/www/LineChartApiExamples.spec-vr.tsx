@@ -3,111 +3,101 @@ import type {
   VerticalLineChart,
   VerticalLineChartWithSpecifiedDomain,
 } from './LineChartApiExamples.story';
-import { expect, test } from '../fixtures';
+import { expect, testWithThemes } from '../fixtures';
 
-test('LineChartNegativeValuesWithReferenceLines', async ({ mountStory }) => {
-  const component = await mountStory('www/LineChartApiExamples/LineChartNegativeValuesWithReferenceLines', {
-    testTheme: 'light',
-  });
+testWithThemes('LineChartNegativeValuesWithReferenceLines', async ({ mountStory }) => {
+  const component = await mountStory('www/LineChartApiExamples/LineChartNegativeValuesWithReferenceLines');
   await expect(component).toHaveScreenshot();
 });
 
-test('LineChartAxisInterval', async ({ mountStory }) => {
-  const component = await mountStory('www/LineChartApiExamples/LineChartAxisInterval', { testTheme: 'light' });
+testWithThemes('LineChartAxisInterval', async ({ mountStory }) => {
+  const component = await mountStory('www/LineChartApiExamples/LineChartAxisInterval');
   await expect(component).toHaveScreenshot();
 });
 
-test('LineChartHasMultiSeries', async ({ mountStory }) => {
+testWithThemes('LineChartHasMultiSeries', async ({ mountStory }) => {
   const component = await mountStory<typeof LineChartHasMultiSeries>(
     'www/LineChartApiExamples/LineChartHasMultiSeries',
     {
-      testTheme: 'light',
       defaultIndex: 2,
     },
   );
   await expect(component).toHaveScreenshot();
 });
 
-test('HighlightAndZoomLineChart', async ({ mountStory }) => {
-  const component = await mountStory('www/LineChartApiExamples/HighlightAndZoomLineChart', { testTheme: 'light' });
+testWithThemes('HighlightAndZoomLineChart', async ({ mountStory }) => {
+  const component = await mountStory('www/LineChartApiExamples/HighlightAndZoomLineChart');
   await expect(component).toHaveScreenshot();
 });
 
-test('SynchronizedLineChart', async ({ mountStory }) => {
-  const component = await mountStory('www/LineChartApiExamples/SynchronizedLineChart', { testTheme: 'light' });
+testWithThemes('SynchronizedLineChart', async ({ mountStory }) => {
+  const component = await mountStory('www/LineChartApiExamples/SynchronizedLineChart');
   await expect(component).toHaveScreenshot();
 });
 
-test('CustomizedLabelLineChart', async ({ mountStory }) => {
-  const component = await mountStory('www/LineChartApiExamples/CustomizedLabelLineChart', { testTheme: 'light' });
+testWithThemes('CustomizedLabelLineChart', async ({ mountStory }) => {
+  const component = await mountStory('www/LineChartApiExamples/CustomizedLabelLineChart');
   await expect(component).toHaveScreenshot();
 });
 
-test('CustomizedLabelLineChart dark mode', async ({ mountStory }) => {
-  const component = await mountStory('www/LineChartApiExamples/CustomizedLabelLineChart', { testTheme: 'dark' });
+testWithThemes('CustomizedDotLineChart', async ({ mountStory }) => {
+  const component = await mountStory('www/LineChartApiExamples/CustomizedDotLineChart');
   await expect(component).toHaveScreenshot();
 });
 
-test('CustomizedDotLineChart', async ({ mountStory }) => {
-  const component = await mountStory('www/LineChartApiExamples/CustomizedDotLineChart', { testTheme: 'light' });
+testWithThemes('LineChartWithReferenceLines', async ({ mountStory }) => {
+  const component = await mountStory('www/LineChartApiExamples/LineChartWithReferenceLines');
   await expect(component).toHaveScreenshot();
 });
 
-test('LineChartWithReferenceLines', async ({ mountStory }) => {
-  const component = await mountStory('www/LineChartApiExamples/LineChartWithReferenceLines', { testTheme: 'light' });
+testWithThemes('LineChartWithXAxisPadding', async ({ mountStory }) => {
+  const component = await mountStory('www/LineChartApiExamples/LineChartWithXAxisPadding');
   await expect(component).toHaveScreenshot();
 });
 
-test('LineChartWithXAxisPadding', async ({ mountStory }) => {
-  const component = await mountStory('www/LineChartApiExamples/LineChartWithXAxisPadding', { testTheme: 'light' });
+testWithThemes('LineChartConnectNulls', async ({ mountStory }) => {
+  const component = await mountStory('www/LineChartApiExamples/LineChartConnectNulls');
   await expect(component).toHaveScreenshot();
 });
 
-test('LineChartConnectNulls', async ({ mountStory }) => {
-  const component = await mountStory('www/LineChartApiExamples/LineChartConnectNulls', { testTheme: 'light' });
-  await expect(component).toHaveScreenshot();
-});
-
-test('VerticalLineChartWithSpecifiedDomain', async ({ mountStory }) => {
+testWithThemes('VerticalLineChartWithSpecifiedDomain', async ({ mountStory }) => {
   const component = await mountStory<typeof VerticalLineChartWithSpecifiedDomain>(
     'www/LineChartApiExamples/VerticalLineChartWithSpecifiedDomain',
     {
-      testTheme: 'light',
       isAnimationActive: false,
     },
   );
   await expect(component).toHaveScreenshot();
 });
 
-test('BiaxialLineChart', async ({ mountStory }) => {
-  const component = await mountStory('www/LineChartApiExamples/BiaxialLineChart', { testTheme: 'light' });
+testWithThemes('BiaxialLineChart', async ({ mountStory }) => {
+  const component = await mountStory('www/LineChartApiExamples/BiaxialLineChart');
   await expect(component).toHaveScreenshot();
 });
 
-test('VerticalLineChart', async ({ mountStory }) => {
+testWithThemes('VerticalLineChart', async ({ mountStory }) => {
   const component = await mountStory<typeof VerticalLineChart>('www/LineChartApiExamples/VerticalLineChart', {
-    testTheme: 'light',
     isAnimationActive: false,
   });
   await expect(component).toHaveScreenshot();
 });
 
-test('DashedLineChart', async ({ mountStory }) => {
-  const component = await mountStory('www/LineChartApiExamples/DashedLineChart', { testTheme: 'light' });
+testWithThemes('DashedLineChart', async ({ mountStory }) => {
+  const component = await mountStory('www/LineChartApiExamples/DashedLineChart');
   await expect(component).toHaveScreenshot();
 });
 
-test('TinyLineChart', async ({ mountStory }) => {
-  const component = await mountStory('www/LineChartApiExamples/TinyLineChart', { testTheme: 'light' });
+testWithThemes('TinyLineChart', async ({ mountStory }) => {
+  const component = await mountStory('www/LineChartApiExamples/TinyLineChart');
   await expect(component).toHaveScreenshot();
 });
 
-test('SimpleLineChart', async ({ mountStory }) => {
-  const component = await mountStory('www/LineChartApiExamples/SimpleLineChart', { testTheme: 'light' });
+testWithThemes('SimpleLineChart', async ({ mountStory }) => {
+  const component = await mountStory('www/LineChartApiExamples/SimpleLineChart');
   await expect(component).toHaveScreenshot();
 });
 
-test('LineChartNavExample', async ({ mountStory }) => {
-  const component = await mountStory('www/LineChartApiExamples/LineChartNavExample', { testTheme: 'light' });
+testWithThemes('LineChartNavExample', async ({ mountStory }) => {
+  const component = await mountStory('www/LineChartApiExamples/LineChartNavExample');
   await expect(component).toHaveScreenshot();
 });
