@@ -3,6 +3,7 @@ import { LayoutType, Margin, Size } from '../util/types';
 
 type ChartLayoutState = {
   layoutType: LayoutType;
+  visibleTitle?: string;
   width: number;
   height: number;
   margin: Margin;
@@ -38,12 +39,15 @@ const chartLayoutSlice = createSlice({
       state.margin.bottom = action.payload.bottom ?? 0;
       state.margin.left = action.payload.left ?? 0;
     },
+    setVisibleTitle(state, action: PayloadAction<string | undefined>) {
+      state.visibleTitle = action.payload;
+    },
     setScale(state, action: PayloadAction<number>) {
       state.scale = action.payload;
     },
   },
 });
 
-export const { setMargin, setLayout, setChartSize, setScale } = chartLayoutSlice.actions;
+export const { setMargin, setLayout, setChartSize, setScale, setVisibleTitle } = chartLayoutSlice.actions;
 
 export const chartLayoutReducer = chartLayoutSlice.reducer;

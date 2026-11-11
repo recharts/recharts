@@ -5,6 +5,7 @@ import { useAccessibilityLayer } from '../context/accessibilityContext';
 import { useIsPanorama } from '../context/PanoramaContext';
 import { Surface } from './Surface';
 import { useAppSelector } from '../state/hooks';
+import { selectChartTitle } from '../state/selectors/selectChartOffsetInternal';
 import { selectBrushDimensions } from '../state/selectors/brushSelectors';
 import { isPositiveNumber } from '../util/isWellBehavedNumber';
 import { AllZIndexPortals } from '../zIndex/ZIndexPortal';
@@ -30,6 +31,29 @@ const FULL_WIDTH_AND_HEIGHT = {
    */
   display: 'block',
 };
+
+function ChartTitle() {
+  const title = useAppSelector(selectChartTitle);
+  if (!title) {
+    return null;
+  }
+
+  return (
+    <text
+      className="recharts-chart-title"
+      x={title.x}
+      y={title.y}
+      textAnchor="middle"
+      dominantBaseline="central"
+      fontSize={16}
+      fill="currentColor"
+      pointerEvents="none"
+      aria-hidden="true"
+    >
+      {title.text}
+    </text>
+  );
+}
 
 const MainChartSurface = forwardRef<SVGSVGElement, RootSurfaceProps>((props: RootSurfaceProps, ref) => {
   const width = useChartWidth();
@@ -70,6 +94,7 @@ const MainChartSurface = forwardRef<SVGSVGElement, RootSurfaceProps>((props: Roo
       style={FULL_WIDTH_AND_HEIGHT}
       ref={ref}
     >
+      {title && <ChartTitle />}
       {children}
     </Surface>
   );

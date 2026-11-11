@@ -12,7 +12,13 @@ import {
 import { XAxisSettings, YAxisSettings } from '../cartesianAxisSlice';
 import { LegendSettings } from '../legendSlice';
 import { appendOffsetOfLegend } from '../../util/ChartUtils';
-import { selectChartHeight, selectChartWidth, selectMargin } from './containerSelectors';
+import {
+  selectChartHeight,
+  selectChartWidth,
+  selectMargin,
+  selectTitleHeight,
+  selectVisibleTitle,
+} from './containerSelectors';
 import { selectAllXAxes, selectAllYAxes } from './selectAllAxes';
 import { DEFAULT_X_AXIS_HEIGHT, DEFAULT_Y_AXIS_WIDTH } from '../../util/Constants';
 import { RechartsRootState } from '../store';
@@ -81,6 +87,7 @@ export const selectChartOffsetInternal: (state: RechartsRootState) => ChartOffse
     selectBottomAxesOffset,
     selectLegendSettings,
     selectLegendSize,
+    selectTitleHeight,
   ],
   (
     chartWidth: number,
@@ -93,6 +100,7 @@ export const selectChartOffsetInternal: (state: RechartsRootState) => ChartOffse
     bottomAxesOffset: number,
     legendSettings: LegendSettings,
     legendSize: Size,
+    titleHeight: number,
   ): ChartOffsetInternal => {
     const offsetH: OffsetHorizontal = {
       left: (margin.left || 0) + leftAxesOffset,
@@ -111,6 +119,7 @@ export const selectChartOffsetInternal: (state: RechartsRootState) => ChartOffse
     offset.bottom += brushHeight;
 
     offset = appendOffsetOfLegend(offset, legendSettings, legendSize);
+    offset.top += titleHeight;
 
     const offsetWidth = chartWidth - offset.left - offset.right;
     const offsetHeight = chartHeight - offset.top - offset.bottom;
@@ -123,6 +132,12 @@ export const selectChartOffsetInternal: (state: RechartsRootState) => ChartOffse
       height: Math.max(offsetHeight, 0),
     };
   },
+);
+
+export const selectChartTitle = createSelector(
+  [selectVisibleTitle, selectChartOffsetInternal, selectMargin, selectTitleHeight],
+  (title, offset, margin, titleHeight) =>
+    title ? { text: title, x: offset.left + offset.width / 2, y: (margin.top ?? 0) + titleHeight / 2 } : undefined,
 );
 
 export const selectChartViewBox = createSelector(

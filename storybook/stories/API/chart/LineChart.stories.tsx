@@ -1,7 +1,7 @@
 import React, { useCallback, useState } from 'react';
 import { Args } from '@storybook/react-vite';
 import { pageData } from '../../data';
-import { Line, LineChart, ResponsiveContainer, Tooltip, XAxis } from '../../../../src';
+import { Line, LineChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from '../../../../src';
 import { LineChartArgs } from '../arg-types/LineChartArgs';
 import { getStoryArgsFromArgsTypesObject } from '../props/utils';
 
@@ -41,6 +41,19 @@ export const API = {
     ...getStoryArgsFromArgsTypesObject(LineChartArgs),
     data: pageData,
   },
+};
+
+export const VisibleTitle = {
+  render: (args: Args) => (
+    <ResponsiveContainer width="100%" height={300}>
+      <LineChart data={pageData} {...args}>
+        <XAxis dataKey="name" />
+        <YAxis width={80} />
+        <Line dataKey="uv" isAnimationActive={false} />
+      </LineChart>
+    </ResponsiveContainer>
+  ),
+  args: { title: 'Unique visitors by page', showTitle: true },
 };
 
 export const SynchronizedTooltip = {

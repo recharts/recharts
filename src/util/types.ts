@@ -1632,6 +1632,16 @@ export interface ValueAxisDataConsumer<DataPointType, DataValueType> {
  */
 interface BaseChartProps<DataPointType> extends DataProvider<DataPointType>, ExternalMouseEvents {
   /**
+   * Accessible name for the chart's SVG.
+   */
+  title?: string;
+  /**
+   * Display the title as a single line centered over the plot and reserve 24 pixels above the axes for it.
+   * The visible text can be styled with the `recharts-chart-title` CSS class.
+   * @defaultValue false
+   */
+  showTitle?: boolean;
+  /**
    * The width of chart container.
    * Can be a number or a percent string like "100%".
    *
@@ -1820,7 +1830,6 @@ export interface CartesianChartProps<DataPointType = unknown>
    * @defaultValue none
    */
   stackOffset?: StackOffsetType;
-  title?: string;
 }
 
 export interface PolarChartProps<DataPointType = unknown> extends BaseChartProps<DataPointType>, EventThrottlingProps {
@@ -1880,7 +1889,6 @@ export interface PolarChartProps<DataPointType = unknown> extends BaseChartProps
    * Angle in degrees from which the chart should start.
    */
   startAngle?: number;
-  title?: string;
 }
 
 export type Percent = `${number}%`;
