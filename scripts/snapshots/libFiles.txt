@@ -159,6 +159,7 @@
   "lib/state/selectors/combiners/combineAxisRangeWithReverse.js",
   "lib/state/selectors/combiners/combineBarPosition.js",
   "lib/state/selectors/combiners/combineBarSizeList.js",
+  "lib/state/selectors/combiners/combineCategoryBarOffsets.js",
   "lib/state/selectors/combiners/combineCheckedDomain.js",
   "lib/state/selectors/combiners/combineConfiguredScale.js",
   "lib/state/selectors/combiners/combineCoordinateForDefaultIndex.js",

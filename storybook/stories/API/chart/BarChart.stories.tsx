@@ -35,6 +35,30 @@ export const API = {
   },
 };
 
+export const SparseCategories = {
+  render: (args: Args) => (
+    <BarChart {...args}>
+      <XAxis dataKey="day" />
+      <YAxis unit="h" />
+      <Tooltip />
+      <Bar dataKey="design" name="Design" />
+      <Bar dataKey="build" name="Build" />
+    </BarChart>
+  ),
+  args: {
+    width: 500,
+    height: 240,
+    barSize: 24,
+    centerBarsInCategory: true,
+    data: [
+      { day: 'Mon', design: 3, build: 4 },
+      { day: 'Tue', design: 5 },
+      { day: 'Wed', build: 6 },
+      { day: 'Thu', design: 0, build: 4 },
+    ],
+  },
+};
+
 export const BarInBar = {
   render: (args: Args) => {
     return (

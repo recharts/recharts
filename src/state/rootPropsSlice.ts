@@ -10,6 +10,7 @@ import { BaseValue } from '../cartesian/Area';
 export type UpdatableChartOptions = {
   accessibilityLayer: boolean;
   barCategoryGap: number | string;
+  centerBarsInCategory?: boolean;
   barGap: number | string;
   barSize: string | number | undefined;
   /**
@@ -53,6 +54,7 @@ const rootPropsSlice = createSlice({
     updateOptions: (state: UpdatableChartOptions, action: PayloadAction<UpdatableChartOptions>) => {
       state.accessibilityLayer = action.payload.accessibilityLayer;
       state.barCategoryGap = action.payload.barCategoryGap;
+      state.centerBarsInCategory = action.payload.centerBarsInCategory;
       state.barGap = action.payload.barGap ?? initialState.barGap;
       state.barSize = action.payload.barSize;
       state.maxBarSize = action.payload.maxBarSize;

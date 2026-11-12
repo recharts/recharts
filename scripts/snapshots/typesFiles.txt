@@ -159,6 +159,7 @@
   "types/state/selectors/combiners/combineAxisRangeWithReverse.d.ts",
   "types/state/selectors/combiners/combineBarPosition.d.ts",
   "types/state/selectors/combiners/combineBarSizeList.d.ts",
+  "types/state/selectors/combiners/combineCategoryBarOffsets.d.ts",
   "types/state/selectors/combiners/combineCheckedDomain.d.ts",
   "types/state/selectors/combiners/combineConfiguredScale.d.ts",
   "types/state/selectors/combiners/combineCoordinateForDefaultIndex.d.ts",
