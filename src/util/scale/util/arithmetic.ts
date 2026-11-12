@@ -44,7 +44,19 @@ function rangeStep(start: Decimal, end: Decimal, step: Decimal): Array<number> {
   while (num.lt(end) && i < 100000) {
     result.push(num.toNumber());
 
-    num = num.add(step);
+    const next = num.add(step);
+    /*
+     * A non-positive step, or one too small to change `num` at Decimal's
+     * current precision, leaves `num.lt(end)` true forever. Stop instead of
+     * emitting 100000 identical values up to the iteration cap. This happens
+     * with subnormal domains (the computed step collapses to zero) and with
+     * very large values where adding a small step rounds back to the same
+     * Decimal.
+     */
+    if (!next.gt(num)) {
+      break;
+    }
+    num = next;
     i++;
   }
 
