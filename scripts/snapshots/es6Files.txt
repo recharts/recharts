@@ -103,6 +103,7 @@
   "es6/polar/PolarRadiusAxis.js",
   "es6/polar/Radar.js",
   "es6/polar/RadialBar.js",
+  "es6/polar/SpacedPieLabels.js",
   "es6/polar/defaultPolarAngleAxisProps.js",
   "es6/polar/defaultPolarRadiusAxisProps.js",
   "es6/polar/isOutsidePolarPosition.js",

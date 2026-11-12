@@ -13,7 +13,7 @@ import { Text, TextBackgroundProps } from '../component/Text';
 import { Cell } from '../component/Cell';
 import { findAllByType } from '../util/ReactUtils';
 import { getMaxRadius, polarToCartesian } from '../util/PolarUtils';
-import { getSpacedPieLabelPositions } from './spacePieLabels';
+import { SpacedPieLabels } from './SpacedPieLabels';
 import { getPercentValue, interpolate, isNumber, mathSign } from '../util/DataUtils';
 import { getTooltipNameProp, getValueByDataKey } from '../util/ChartUtils';
 import {
@@ -444,7 +444,8 @@ export interface PieProps<DataPointType = any, DataValueType = any>
   /**
    * Minimum vertical distance in pixels between outside label centers on the same side of the pie.
    * Set this to the label height plus the desired gap. When the plot is too short, labels share the
-   * available height evenly. Custom renderers receive the adjusted coordinates. Labels rendered
+   * available height evenly. Custom labels that render nothing at their original coordinates do not
+   * occupy a slot. Visible renderers receive the adjusted coordinates. Labels rendered
    * with a LabelList or an explicit `position` use their own layout.
    * @example <Pie label minLabelSpacing={18} />
    */
@@ -878,77 +879,93 @@ function PieLabels({
       label.offsetRadius) ||
     20;
 
-  const spacedPositions =
+  const renderLabels = (positions?: ReadonlyArray<Coordinate>, measure = false) => {
+    return sectors.map((entry, i) => {
+      const midAngle = (entry.startAngle + entry.endAngle) / 2;
+      const endPoint =
+        positions?.[i] ?? polarToCartesian(entry.cx, entry.cy, entry.outerRadius + offsetRadius, midAngle);
+      const entryLabelProps = filterEntryPropsForLabels(entry);
+      const labelProps: PieLabelRenderProps = {
+        ...pieProps,
+        ...entryLabelProps,
+        // @ts-expect-error entry fill is a valid label color
+        fill: entry.fill,
+        // @ts-expect-error customLabelProps is contributing unknown props
+        stroke: 'none',
+        ...customLabelProps,
+        index: i,
+        textAnchor: getTextAnchor(endPoint.x, entry.cx),
+        ...endPoint,
+      };
+      const themedLabelProps = applyLabelTheme(
+        resolveLabelTheme?.(i),
+        {
+          fill: labelObject?.fill,
+          style: labelObject?.style ?? labelProps.style,
+          background: labelObject?.background,
+        },
+        labelProps.fill,
+      );
+      const finalLabelProps: PieLabelRenderProps = {
+        ...labelProps,
+        ...themedLabelProps,
+      };
+      const lineProps: CurveProps = {
+        ...pieProps,
+        ...entryLabelProps,
+        // @ts-expect-error customLabelLineProps is contributing unknown props
+        fill: 'none',
+        // @ts-expect-error customLabelLineProps is contributing unknown props
+        stroke: entry.fill,
+        ...customLabelLineProps,
+        index: i,
+        points: [polarToCartesian(entry.cx, entry.cy, entry.outerRadius, midAngle), endPoint],
+        key: 'line',
+      };
+
+      const key = `label-${entry.startAngle}-${entry.endAngle}-${entry.midAngle}-${i}`;
+      const content = renderLabelItem(
+        label,
+        finalLabelProps,
+        getValueByDataKey(entry.payload, dataKey, entry.value),
+        themedLabelProps.background,
+      );
+      const item = (
+        <Layer key={key}>
+          {labelLine && renderLabelLineItem(labelLine, lineProps)}
+          {measure ? <g data-label-x={endPoint.x}>{content}</g> : content}
+        </Layer>
+      );
+      return measure ? (
+        item
+      ) : (
+        <ZIndexLayer key={key} zIndex={DefaultZIndexes.label}>
+          {item}
+        </ZIndexLayer>
+      );
+    });
+  };
+
+  if (
     plotArea &&
     plotArea.height > 0 &&
     minLabelSpacing != null &&
     Number.isFinite(minLabelSpacing) &&
     minLabelSpacing > 0
-      ? getSpacedPieLabelPositions(sectors, offsetRadius, plotArea.y, plotArea.height, minLabelSpacing)
-      : undefined;
-
-  const labels = sectors.map((entry, i) => {
-    const midAngle = (entry.startAngle + entry.endAngle) / 2;
-    const endPoint =
-      spacedPositions?.[i] ?? polarToCartesian(entry.cx, entry.cy, entry.outerRadius + offsetRadius, midAngle);
-    const entryLabelProps = filterEntryPropsForLabels(entry);
-    const labelProps: PieLabelRenderProps = {
-      ...pieProps,
-      ...entryLabelProps,
-      // @ts-expect-error entry fill is a valid label color
-      fill: entry.fill,
-      // @ts-expect-error customLabelProps is contributing unknown props
-      stroke: 'none',
-      ...customLabelProps,
-      index: i,
-      textAnchor: getTextAnchor(endPoint.x, entry.cx),
-      ...endPoint,
-    };
-    const themedLabelProps = applyLabelTheme(
-      resolveLabelTheme?.(i),
-      {
-        fill: labelObject?.fill,
-        style: labelObject?.style ?? labelProps.style,
-        background: labelObject?.background,
-      },
-      labelProps.fill,
-    );
-    const finalLabelProps: PieLabelRenderProps = {
-      ...labelProps,
-      ...themedLabelProps,
-    };
-    const lineProps: CurveProps = {
-      ...pieProps,
-      ...entryLabelProps,
-      // @ts-expect-error customLabelLineProps is contributing unknown props
-      fill: 'none',
-      // @ts-expect-error customLabelLineProps is contributing unknown props
-      stroke: entry.fill,
-      ...customLabelLineProps,
-      index: i,
-      points: [polarToCartesian(entry.cx, entry.cy, entry.outerRadius, midAngle), endPoint],
-      key: 'line',
-    };
-
+  ) {
     return (
-      <ZIndexLayer
-        zIndex={DefaultZIndexes.label}
-        key={`label-${entry.startAngle}-${entry.endAngle}-${entry.midAngle}-${i}`}
-      >
-        <Layer>
-          {labelLine && renderLabelLineItem(labelLine, lineProps)}
-          {renderLabelItem(
-            label,
-            finalLabelProps,
-            getValueByDataKey(entry.payload, dataKey, entry.value),
-            themedLabelProps.background,
-          )}
-        </Layer>
+      <ZIndexLayer zIndex={DefaultZIndexes.label}>
+        <SpacedPieLabels
+          sectors={sectors}
+          offsetRadius={offsetRadius}
+          plot={plotArea}
+          spacing={minLabelSpacing}
+          renderLabels={renderLabels}
+        />
       </ZIndexLayer>
     );
-  });
-
-  return <Layer className="recharts-pie-labels">{labels}</Layer>;
+  }
+  return <Layer className="recharts-pie-labels">{renderLabels()}</Layer>;
 }
 
 function PieLabelList({

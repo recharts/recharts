@@ -1,7 +1,8 @@
 import React from 'react';
 import { render } from '@testing-library/react';
-import { describe, expect, it } from 'vitest';
+import { afterEach, describe, expect, it } from 'vitest';
 import { Pie, PieChart } from '../../../src';
+import { mockGetBBox, restoreMockGetBBox } from '../../helper/mockGetBBox';
 
 const data = [64, 24, 6, 3, 1.5, 0.9, 0.4, 0.2].map(value => ({ value }));
 
@@ -22,6 +23,66 @@ function verticalGaps(positions: number[]): number[] {
 }
 
 describe('Pie minLabelSpacing', () => {
+  afterEach(restoreMockGetBBox);
+
+  it.each([false, true])('keeps 50px-wide labels within the chart when spacing moves them outward (left: %s)', left => {
+    mockGetBBox(group => {
+      const anchor = Number(group.querySelector('text')?.getAttribute('x'));
+      return { x: left ? anchor - 50 : anchor, y: 0, width: 50, height: 12 };
+    });
+    const { container } = render(
+      <PieChart width={200} height={200} margin={{ top: 0, bottom: 0, left: 0, right: 0 }}>
+        <Pie
+          data={[{ value: 1 }, { value: 1 }]}
+          startAngle={90}
+          endAngle={left ? 110 : 70}
+          outerRadius={80}
+          label
+          minLabelSpacing={20}
+          isAnimationActive={false}
+        />
+      </PieChart>,
+    );
+    const points = labelCoordinates(container);
+    expect(points).toHaveLength(2);
+    expect(verticalGaps(points.map(p => p.y))).toEqual([20]);
+    expect(points[1]?.x).toBe(left ? 50 : 150);
+  });
+
+  it('shares the height among visible custom labels and remeasures when the renderer changes', () => {
+    mockGetBBox(group => {
+      const text = group.querySelector('text');
+      return text?.textContent
+        ? { x: Number(text.getAttribute('x')), y: 0, width: 12, height: 12 }
+        : { x: 0, y: 0, width: 0, height: 0 };
+    });
+    const slices = Array.from({ length: 10 }, () => ({ value: 1 }));
+    const chart = (visible: number) => (
+      <PieChart width={200} height={100} margin={{ top: 0, bottom: 0, left: 0, right: 0 }}>
+        <Pie
+          data={slices}
+          startAngle={80}
+          endAngle={70}
+          outerRadius={20}
+          minLabelSpacing={20}
+          isAnimationActive={false}
+          label={({ index, x, y }) =>
+            index < visible ? (
+              <text data-testid="visible-label" x={x} y={y}>
+                {index}
+              </text>
+            ) : null
+          }
+        />
+      </PieChart>
+    );
+    const { getAllByTestId, rerender } = render(chart(5));
+    const centers = () => getAllByTestId('visible-label').map(node => Number(node.getAttribute('y')));
+    expect(verticalGaps(centers())).toEqual([20, 20, 20, 20]);
+    rerender(chart(10));
+    expect(verticalGaps(centers())).toEqual(Array(9).fill(10));
+  });
+
   it.each([0, 180])('separates neighboring labels without changing their order at startAngle=%i', startAngle => {
     function chart(minLabelSpacing?: number) {
       return (

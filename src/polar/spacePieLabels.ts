@@ -2,7 +2,9 @@ import { polarToCartesian } from '../util/PolarUtils';
 import type { Coordinate } from '../util/types';
 import type { PieSectorDataItem } from './Pie';
 
-type LabelPosition = { point: Coordinate; cx: number; cy: number };
+export type PieLabelExtent = { left: number; right: number } | 'hidden';
+
+type LabelPosition = { point: Coordinate; cx: number; cy: number; limitX?: number };
 
 function spaceLabelColumn(labels: LabelPosition[], top: number, height: number, minSpacing: number): void {
   if (labels.length === 0) {
@@ -37,14 +39,18 @@ function spaceLabelColumn(labels: LabelPosition[], top: number, height: number, 
     if (count === 1 && base === mean) {
       continue;
     }
-    for (const [offset, { point, cx, cy }] of labels.slice(start, start + count).entries()) {
+    for (const [offset, { point, cx, cy, limitX }] of labels.slice(start, start + count).entries()) {
       const y = base + (start + offset) * spacing;
       if (y !== point.y) {
         // When a label moves toward the middle of the pie, keep its text outside the original label radius.
         const dx = point.x - cx;
         const radiusSquared = dx ** 2 + (point.y - cy) ** 2;
         const outsideX = Math.sqrt(Math.max(0, radiusSquared - (y - cy) ** 2));
-        point.x = cx + (dx < 0 ? -1 : 1) * Math.max(Math.abs(dx), outsideX);
+        const x = cx + (dx < 0 ? -1 : 1) * Math.max(Math.abs(dx), outsideX);
+        point.x = x;
+        if (limitX != null) {
+          point.x = dx < 0 ? Math.max(x, limitX) : Math.min(x, limitX);
+        }
         point.y = y;
       }
     }
@@ -54,19 +60,30 @@ function spaceLabelColumn(labels: LabelPosition[], top: number, height: number, 
 export function getSpacedPieLabelPositions(
   sectors: ReadonlyArray<PieSectorDataItem>,
   offsetRadius: number,
-  top: number,
-  height: number,
+  plot: { x: number; y: number; width: number; height: number },
   minSpacing: number,
+  extents: ReadonlyArray<PieLabelExtent | undefined>,
 ): Coordinate[] {
   const left: LabelPosition[] = [];
   const right: LabelPosition[] = [];
-  const positions = sectors.map(({ cx, cy, outerRadius, startAngle, endAngle }) => {
+  const positions = sectors.map(({ cx, cy, outerRadius, startAngle, endAngle }, index) => {
     const point = polarToCartesian(cx, cy, outerRadius + offsetRadius, (startAngle + endAngle) / 2);
-    const column = point.x < cx ? left : right;
-    column.push({ point, cx, cy });
+    const extent = extents[index];
+    if (extent !== 'hidden') {
+      const isLeft = point.x < cx;
+      const column = isLeft ? left : right;
+      // Keep the original anchor if the label was already wider than the available space.
+      let limitX;
+      if (extent) {
+        limitX = isLeft
+          ? Math.min(point.x, plot.x + extent.left)
+          : Math.max(point.x, plot.x + plot.width - extent.right);
+      }
+      column.push({ point, cx, cy, limitX });
+    }
     return point;
   });
-  spaceLabelColumn(left, top, height, minSpacing);
-  spaceLabelColumn(right, top, height, minSpacing);
+  spaceLabelColumn(left, plot.y, plot.height, minSpacing);
+  spaceLabelColumn(right, plot.y, plot.height, minSpacing);
   return positions;
 }
