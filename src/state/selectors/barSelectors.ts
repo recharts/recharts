@@ -28,7 +28,7 @@ import { combineAllBarPositions } from './combiners/combineAllBarPositions';
 import { combineStackedData } from './combiners/combineStackedData';
 import { selectXAxisIdFromGraphicalItemId, selectYAxisIdFromGraphicalItemId } from './graphicalItemSelectors';
 import { combineBarPosition } from './combiners/combineBarPosition';
-import { combineCategoryBarOffsets } from './combiners/combineCategoryBarOffsets';
+import { type CategoryBarPosition, combineCategoryBarOffsets } from './combiners/combineCategoryBarOffsets';
 
 const pickIsPanorama = (_state: RechartsRootState, _id: GraphicalItemId, isPanorama: boolean): boolean => isPanorama;
 
@@ -372,7 +372,7 @@ export const selectBarRectangles: (
     xAxisTicks,
     yAxisTicks,
     pos: BarPositionPosition | undefined,
-    categoryPosition,
+    categoryPosition: CategoryBarPosition | undefined,
     layout: LayoutType,
     { chartData, dataStartIndex, dataEndIndex },
     bandSize,

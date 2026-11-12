@@ -10,7 +10,7 @@ import type { TickItem } from '../../../util/types';
 
 export type CategoryBarPosition = { size: number; offsets: ReadonlyArray<number | undefined> };
 
-type BarEntry = { offsets: Array<number | undefined>; index: number };
+type BarEntry = { offsets: Array<number | undefined>; index: number; size: number };
 type OccupiedSlot = { size: number; entries: Array<BarEntry> };
 
 /** Place each occupied series or stack once at its category, including bars with their own data. */
@@ -52,12 +52,12 @@ export function combineCategoryBarOffsets(
     .map(bar => [bar])
     .values();
   for (const { position, stackId } of positions) {
-    const entriesByCategory = new Map<number, Array<BarEntry>>();
+    const stackSlots = new Map<number, OccupiedSlot>();
     const members =
       stackId == null ? (unstackedGroups.next().value ?? []) : bars.filter(bar => bar.stackId === stackId);
-    const limit = members[0]?.maxBarSize ?? maxBarSize;
-    const size = !fixedSize && isWellBehavedNumber(limit) ? Math.min(position.size, limit) : position.size;
     for (const bar of members) {
+      const limit = bar.maxBarSize ?? maxBarSize;
+      const size = !fixedSize && isWellBehavedNumber(limit) ? Math.min(position.size, limit) : position.size;
       const offsets: Array<number | undefined> = [];
       positionById.set(bar.id, { size, offsets });
       const data = bar.data?.length ? bar.data : chartRows;
@@ -68,15 +68,16 @@ export function combineCategoryBarOffsets(
         // The axis resolves named categories and duplicate ticks in the same way as the rendered rectangle.
         const category = getCateCoordinateOfBar({ axis, ticks, entry, index, bandSize: 0, offset: 0 });
         if (category != null) {
-          const entries = entriesByCategory.get(category) ?? [];
-          entries.push({ offsets, index });
-          entriesByCategory.set(category, entries);
+          const slot = stackSlots.get(category) ?? { size, entries: [] };
+          slot.size = Math.max(slot.size, size);
+          slot.entries.push({ offsets, index, size });
+          stackSlots.set(category, slot);
         }
       });
     }
-    for (const [category, entries] of entriesByCategory) {
+    for (const [category, slot] of stackSlots) {
       const slots = slotsByCategory.get(category) ?? [];
-      slots.push({ size, entries });
+      slots.push(slot);
       slotsByCategory.set(category, slots);
     }
   }
@@ -89,8 +90,8 @@ export function combineCategoryBarOffsets(
     const width = slots.reduce((sum, slot) => sum + slot.size, 0) + (slots.length - 1) * gap;
     let offset = center - width / 2;
     for (const { size, entries } of slots) {
-      for (const { offsets, index } of entries) {
-        offsets[index] = offset;
+      for (const entry of entries) {
+        entry.offsets[entry.index] = offset + (size - entry.size) / 2;
       }
       offset += size + gap;
     }

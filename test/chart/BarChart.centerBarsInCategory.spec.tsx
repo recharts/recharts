@@ -147,6 +147,35 @@ describe('centerBarsInCategory', () => {
     expect(centers(container, 'b')).toEqual([86, 225]);
   });
 
+  it('centers differently capped stack members and uses the widest present bar for each category', () => {
+    const { container } = render(
+      <BarChart
+        width={300}
+        height={200}
+        margin={margin}
+        data={[
+          { wide: 1, thin: 2, other: 3 },
+          { thin: 2, other: 3 },
+        ]}
+        barGap={6}
+        centerBarsInCategory
+      >
+        <Bar className="thin" dataKey="thin" stackId="work" maxBarSize={10} isAnimationActive={false} />
+        <Bar className="wide" dataKey="wide" stackId="work" maxBarSize={40} isAnimationActive={false} />
+        <Bar className="other" dataKey="other" maxBarSize={20} isAnimationActive={false} />
+      </BarChart>,
+    );
+    const widths = (series: string) =>
+      Array.from(container.querySelectorAll(`.${series} path.recharts-rectangle`), path =>
+        Number(path.getAttribute('width')),
+      );
+    expect(widths('wide')).toEqual([40]);
+    expect(widths('thin')).toEqual([10, 10]);
+    expect(centers(container, 'wide')).toEqual([62]);
+    expect(centers(container, 'thin')).toEqual([62, 212]);
+    expect(centers(container, 'other')).toEqual([98, 233]);
+  });
+
   it('treats a stack as one slot and uses the rows selected by a Brush', () => {
     const data = [{ a: 2, b: 3, c: 1 }, { b: 4 }, { a: 2, b: 1, c: 3 }, { c: 5 }];
     const { container } = render(
