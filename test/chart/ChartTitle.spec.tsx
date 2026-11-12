@@ -1,6 +1,7 @@
 import * as React from 'react';
 import { render } from '@testing-library/react';
 import { Brush, Legend, Line, LineChart, Pie, PieChart, PolarGrid, RadarChart, XAxis, YAxis } from '../../src';
+import { mockGetBoundingClientRect } from '../helper/mockGetBoundingClientRect';
 
 const data = [{ value: 1 }, { value: 2 }];
 
@@ -46,6 +47,7 @@ describe('visible chart title', () => {
   });
 
   it.each([false, true])('places a top legend below the heading (position prop: %s)', usePosition => {
+    mockGetBoundingClientRect({ width: 80, height: 20 });
     const { container } = render(
       <LineChart width={400} height={200} data={data} title="Daily visits" showTitle>
         <Legend {...(usePosition ? { position: 'top' as const } : { verticalAlign: 'top' as const })} />
@@ -53,7 +55,15 @@ describe('visible chart title', () => {
       </LineChart>,
     );
     expect(container.querySelector('.recharts-chart-title')).toHaveAttribute('y', '17');
-    expect(container.querySelector('.recharts-legend-wrapper')).toHaveStyle({ top: '29px' });
+    const legend = container.querySelector('.recharts-legend-wrapper');
+    if (usePosition) {
+      expect(legend).toHaveStyle({ top: '49px', transform: 'translate(-50%, -100%)' });
+    } else {
+      expect(legend).toHaveStyle({ top: '29px' });
+    }
+    const plot = container.querySelector('clipPath rect');
+    expect(plot).toHaveAttribute('y', '49');
+    expect(plot).toHaveAttribute('height', '146');
   });
 
   it('reserves space in a PieChart only when there is title text to display', () => {
