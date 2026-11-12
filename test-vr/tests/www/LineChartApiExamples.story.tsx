@@ -15,7 +15,6 @@ import LineChartHasMultiSeriesComponent from '../../../www/src/docs/exampleCompo
 import LineChartAxisIntervalComponent from '../../../www/src/docs/exampleComponents/LineChart/LineChartAxisInterval';
 import LineChartNegativeValuesWithReferenceLinesComponent from '../../../www/src/docs/exampleComponents/LineChart/LineChartNegativeValuesWithReferenceLines';
 import LineChartNavExampleComponent from '../../../www/src/docs/exampleComponents/LineChart/LineChartNavExample';
-import '../../../www/src/styles/app.css';
 
 export const LineChartNegativeValuesWithReferenceLines = LineChartNegativeValuesWithReferenceLinesComponent;
 export const LineChartAxisInterval = LineChartAxisIntervalComponent;
