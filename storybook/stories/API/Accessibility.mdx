@@ -61,4 +61,4 @@ When `accessibilityLayer` is enabled (which it is by default), it will:
 1. Set `role="application"` on the chart. This can be overridden by passing your own `role` prop.
 2. Set `tabIndex={0}` to add the chart to the tab order. This can be overridden by passing your own `tabIndex` prop.
 
-The accessibility layer adds keyboard event handlers to listen for `ArrowLeft` and `ArrowRight` keys. These keystrokes are used to navigate between data points and update the tooltip accordingly. The implementation no longer spoofs mouse movements as it did in earlier versions.
+The accessibility layer adds keyboard event handlers to listen for `ArrowLeft` and `ArrowRight` keys. These keystrokes are used to navigate between data points and update the tooltip accordingly. In a chart with `layout="vertical"`, `ArrowDown` and `ArrowUp` also navigate between the categories, following the direction of the `YAxis` (a reversed `YAxis` flips them); in other layouts they are left to the browser. The implementation no longer spoofs mouse movements as it did in earlier versions.
