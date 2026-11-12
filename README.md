@@ -46,17 +46,15 @@ NPM is the easiest and fastest way to get started using Recharts. It is also the
 
 ```sh
 # latest stable
-$ npm install recharts react-is
+$ npm install recharts
 ```
-
-`react-is` needs to match the version of your installed `react` package.
 
 ### Deno
 
 Deno is a drop-in replacement for npm, so Recharts installs the same way:
 
 ```sh
-$ deno add recharts react-is
+$ deno add recharts
 ```
 
 ### umd
@@ -66,7 +64,6 @@ The UMD build is also available on unpkg.com:
 ```html
 <script src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
 <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
-<script src="https://unpkg.com/react-is@18/umd/react-is.production.min.js"></script>
 <script src="https://unpkg.com/recharts/umd/Recharts.js"></script>
 ```
 
