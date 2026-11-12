@@ -1,7 +1,8 @@
 import React from 'react';
-import { render } from '@testing-library/react';
-import { afterEach, describe, expect, it } from 'vitest';
+import { act, fireEvent, render } from '@testing-library/react';
+import { afterEach, describe, expect, it, vi } from 'vitest';
 import { Pie, PieChart } from '../../../src';
+import { assertNotNull } from '../../helper/assertNotNull';
 import { mockGetBBox, restoreMockGetBBox } from '../../helper/mockGetBBox';
 
 const data = [64, 24, 6, 3, 1.5, 0.9, 0.4, 0.2].map(value => ({ value }));
@@ -47,6 +48,11 @@ describe('Pie minLabelSpacing', () => {
     expect(points).toHaveLength(2);
     expect(verticalGaps(points.map(p => p.y))).toEqual([20]);
     expect(points[1]?.x).toBe(left ? 50 : 150);
+    points.forEach(({ x }) => {
+      const start = left ? x - 50 : x;
+      expect(start).toBeGreaterThanOrEqual(0);
+      expect(start + 50).toBeLessThanOrEqual(200);
+    });
   });
 
   it('shares the height among visible custom labels and remeasures when the renderer changes', () => {
@@ -81,6 +87,60 @@ describe('Pie minLabelSpacing', () => {
     expect(verticalGaps(centers())).toEqual([20, 20, 20, 20]);
     rerender(chart(10));
     expect(verticalGaps(centers())).toEqual(Array(9).fill(10));
+  });
+
+  it('reclaims space when a custom label hides itself without rerendering the Pie', () => {
+    let resize: (() => void) | undefined;
+    const disconnect = vi.fn();
+    const getBox = (group: Element) => {
+      const text = group.querySelector('text');
+      return { x: Number(text?.getAttribute('x')), y: 0, width: text ? 12 : 0, height: text ? 12 : 0 };
+    };
+    mockGetBBox(getBox);
+    vi.stubGlobal(
+      'ResizeObserver',
+      class {
+        observe = vi.fn();
+
+        disconnect = disconnect;
+
+        constructor(callback: () => void) {
+          resize = callback;
+        }
+      },
+    );
+    function ToggleLabel({ x, y }: { x: number; y: number }) {
+      const [visible, setVisible] = React.useState(true);
+      return visible ? (
+        <text x={x} y={y} onClick={() => setVisible(false)}>
+          Project
+        </text>
+      ) : null;
+    }
+    const { getAllByText, unmount } = render(
+      <PieChart width={200} height={60} margin={{ top: 0, bottom: 0, left: 0, right: 0 }}>
+        <Pie
+          data={Array.from({ length: 4 }, () => ({ value: 1 }))}
+          startAngle={80}
+          endAngle={70}
+          outerRadius={12}
+          minLabelSpacing={20}
+          isAnimationActive={false}
+          label={p => <ToggleLabel x={p.x} y={p.y} />}
+        />
+      </PieChart>,
+    );
+    const labels = () => getAllByText('Project');
+    const gaps = () => verticalGaps(labels().map(node => Number(node.getAttribute('y'))));
+    expect(gaps()).toEqual([15, 15, 15]);
+    const [first] = labels();
+    assertNotNull(first);
+    fireEvent.click(first);
+    assertNotNull(resize);
+    act(resize);
+    expect(gaps()).toEqual([20, 20]);
+    unmount();
+    expect(disconnect).toHaveBeenCalled();
   });
 
   it.each([0, 180])('separates neighboring labels without changing their order at startAngle=%i', startAngle => {

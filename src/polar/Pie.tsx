@@ -879,7 +879,7 @@ function PieLabels({
       label.offsetRadius) ||
     20;
 
-  const renderLabels = (positions?: ReadonlyArray<Coordinate>, measure = false) => {
+  const renderLabels = (positions?: ReadonlyArray<Coordinate>, measure = false): ReactElement[] => {
     return sectors.map((entry, i) => {
       const midAngle = (entry.startAngle + entry.endAngle) / 2;
       const endPoint =
