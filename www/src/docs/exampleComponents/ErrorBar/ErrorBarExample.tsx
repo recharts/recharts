@@ -1,5 +1,6 @@
-import { ScatterChart, XAxis, YAxis, CartesianGrid, Tooltip, Legend, Scatter, ErrorBar } from 'recharts';
+import { ScatterChart, XAxis, YAxis, CartesianGrid, Tooltip, Legend, Scatter, ErrorBar, Margin } from 'recharts';
 import { RechartsDevtools } from '@recharts/devtools';
+import { CSSProperties } from 'react';
 
 // #region Sample data
 const data = [
@@ -55,17 +56,16 @@ const data = [
 ];
 
 // #endregion
+const chartStyle: CSSProperties = { width: '100%', maxWidth: '700px', maxHeight: '70vh', aspectRatio: 1.618 };
+const margin: Margin = {
+  top: 20,
+  right: 0,
+  bottom: 20,
+  left: 0,
+};
+
 const ErrorBarExample = ({ isAnimationActive = true }) => (
-  <ScatterChart
-    style={{ width: '100%', maxWidth: '700px', maxHeight: '70vh', aspectRatio: 1.618 }}
-    responsive
-    margin={{
-      top: 20,
-      right: 0,
-      bottom: 20,
-      left: 0,
-    }}
-  >
+  <ScatterChart style={chartStyle} responsive margin={margin}>
     <CartesianGrid />
     <XAxis dataKey="x" type="number" name="stature" unit="cm" />
     <YAxis dataKey="y" type="number" name="weight" unit="kg" width="auto" />
