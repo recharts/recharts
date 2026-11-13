@@ -241,6 +241,67 @@ describe('theme active styles in Bar with a custom shape', () => {
   });
 });
 
+describe('theme active styles in Pie with a custom shape', () => {
+  // Pie selects the theme by the index of the data entry, so the active sector at index 1 has the second slice.
+  const ownColors = { fill: 'teal', stroke: 'navy' };
+
+  function renderPieWithCustomShape(pieProps: Partial<React.ComponentProps<typeof Pie>>) {
+    const shape = vi.fn(({ fill, stroke, strokeWidth, isActive }) => (
+      <path
+        className={isActive ? 'custom-sector custom-sector-active' : 'custom-sector'}
+        fill={fill}
+        stroke={stroke}
+        strokeWidth={strokeWidth}
+      />
+    ));
+    const { container } = rechartsTestRender(
+      <RechartsThemeProvider value={theme}>
+        <PieChart width={400} height={400}>
+          <Pie data={data} dataKey="value" isAnimationActive={false} shape={shape} {...pieProps} />
+          <Tooltip defaultIndex={1} />
+        </PieChart>
+      </RechartsThemeProvider>,
+    );
+    return { container, shape };
+  }
+
+  it('ignores the theme active styles when the shape is a custom function', () => {
+    const { container, shape } = renderPieWithCustomShape({});
+    expect(shape).toHaveBeenCalledWith(expect.objectContaining({ isActive: true, index: 1, ...ownColors }), 1);
+    const activeSector = container.querySelector('.recharts-active-shape .custom-sector-active');
+    assertNotNull(activeSector);
+    expect(activeSector).toHaveAttribute('fill', ownColors.fill);
+    expect(activeSector).toHaveAttribute('stroke', ownColors.stroke);
+    expect(activeSector).not.toHaveAttribute('stroke-width');
+  });
+
+  it('renders the custom shape for the active sector, without the theme active styles, when activeShape is true', () => {
+    const { container, shape } = renderPieWithCustomShape({ activeShape: true });
+    expect(shape).toHaveBeenCalledWith(expect.objectContaining({ isActive: true, index: 1, ...ownColors }), 1);
+    const activeSector = container.querySelector('.recharts-active-shape .custom-sector-active');
+    assertNotNull(activeSector);
+    expect(activeSector).toHaveAttribute('fill', ownColors.fill);
+    expect(activeSector).toHaveAttribute('stroke', ownColors.stroke);
+    expect(container.querySelectorAll('.recharts-pie-sector path.recharts-sector')).toHaveLength(0);
+  });
+
+  it('still applies the theme active styles to the default shape without activeShape', () => {
+    const { container } = rechartsTestRender(
+      <RechartsThemeProvider value={theme}>
+        <PieChart width={400} height={400}>
+          <Pie data={data} dataKey="value" isAnimationActive={false} />
+          <Tooltip defaultIndex={1} />
+        </PieChart>
+      </RechartsThemeProvider>,
+    );
+    const activeSector = container.querySelector('.recharts-active-shape path.recharts-sector');
+    assertNotNull(activeSector);
+    expect(activeSector).toHaveAttribute('fill', 'black');
+    expect(activeSector).toHaveAttribute('stroke', 'orange');
+    expect(activeSector).toHaveAttribute('stroke-width', '5');
+  });
+});
+
 describe('resolveThemedActiveStyles', () => {
   const activeStyle = { fill: 'white', stroke: 'black', strokeWidth: 2 };
 
