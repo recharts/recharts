@@ -1007,6 +1007,31 @@ describe('Keyboard preventDefault while the accessibility layer consumes the key
     expect(defaultConsumed(container, 'Tab')).toBe(false);
   });
 
+  test.each([
+    ['ArrowLeft', 'altKey'],
+    ['ArrowRight', 'altKey'],
+    ['ArrowLeft', 'ctrlKey'],
+    ['ArrowRight', 'metaKey'],
+    ['Enter', 'metaKey'],
+  ])('should leave the browser shortcut %s with %s to the browser', (key, modifier) => {
+    // Alt+ArrowLeft is "back", Cmd+ArrowLeft is "back" on macOS, and so on.
+    const { container } = renderArea();
+    const svg = getMainSurface(container);
+    act(() => svg.focus());
+    expectTooltipPayload(container, 'Page A', ['uv : 400']);
+    expect(fireEvent.keyDown(svg, { key, [modifier]: true })).toBe(true);
+    // The tooltip stays where it was, too.
+    expectTooltipPayload(container, 'Page A', ['uv : 400']);
+  });
+
+  test('should still move the tooltip on an arrow key with Shift', () => {
+    const { container } = renderArea();
+    const svg = getMainSurface(container);
+    act(() => svg.focus());
+    expect(fireEvent.keyDown(svg, { key: 'ArrowRight', shiftKey: true })).toBe(false);
+    expectTooltipPayload(container, 'Page B', ['uv : 300']);
+  });
+
   test('should not consume anything when the accessibility layer is off', () => {
     const { container } = renderArea(false);
     expect(defaultConsumed(container, 'ArrowRight')).toBe(false);
