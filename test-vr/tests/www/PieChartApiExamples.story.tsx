@@ -7,7 +7,6 @@ import PieChartWithNeedleComponent from '../../../www/src/docs/exampleComponents
 import PieChartInFlexboxComponent from '../../../www/src/docs/exampleComponents/PieChart/PieChartInFlexbox';
 import PieChartNavExampleComponent from '../../../www/src/docs/exampleComponents/PieChart/PieChartNavExample';
 import PieWithGradientComponent from '../../../www/src/docs/exampleComponents/PieChart/PieWithGradient';
-import '../../../www/src/styles/app.css';
 
 export const PieChartNavExample = PieChartNavExampleComponent;
 export const PieChartInFlexbox = PieChartInFlexboxComponent;

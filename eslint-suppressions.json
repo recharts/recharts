@@ -1997,14 +1997,6 @@
       "count": 2
     }
   },
-  "www/src/docs/exampleComponents/PieChart/CustomActiveShapePieChart.tsx": {
-    "react-perf/jsx-no-new-function-as-prop": {
-      "count": 1
-    },
-    "react-perf/jsx-no-new-object-as-prop": {
-      "count": 2
-    }
-  },
   "www/src/docs/exampleComponents/PieChart/PieChartInFlexbox.tsx": {
     "react-perf/jsx-no-new-object-as-prop": {
       "count": 3
