@@ -9,8 +9,9 @@ import { Layer } from '../container/Layer';
 import { Curve, Props as CurveProps } from '../shape/Curve';
 import { Sector } from '../shape/Sector';
 import { Text, TextBackgroundProps } from '../component/Text';
-import { Cell } from '../component/Cell';
-import { findAllByType } from '../util/ReactUtils';
+import { useCells } from '../util/useCells';
+import { useStableValue } from '../util/useStableValue';
+import { propsAreEqual } from '../util/propsAreEqual';
 import { getMaxRadius, polarToCartesian } from '../util/PolarUtils';
 import { getPercentValue, interpolate, isNumber, mathSign } from '../util/DataUtils';
 import { getTooltipNameProp, getValueByDataKey } from '../util/ChartUtils';
@@ -624,7 +625,7 @@ function SetPiePayloadLegend(props: {
   explicitStyleProps: PieStyleProps;
   pieFillObject: RechartsFill | undefined;
 }) {
-  const cells = useMemo(() => findAllByType(props.children, Cell), [props.children]);
+  const cells = useCells(props.children);
   const themeFillObjects = useThemeFillObjects();
 
   const legendPayload = useAppSelector(state => selectPieLegend(state, props.id, cells));
@@ -1258,12 +1259,14 @@ const defaultPieAnimateItems: AnimationInterpolateFn<PieSectorDataItem, PolarLay
 
 function SectorsWithAnimation({
   props,
+  animationInput,
   previousSectorsRef,
   id,
   graphicalItems,
   indexedActiveStyles,
 }: {
   props: WithoutId<InternalProps>;
+  animationInput: ReadonlyArray<PieSectorDataItem>;
   previousSectorsRef: MutableRefObject<ReadonlyArray<PieSectorDataItem> | null>;
   id: GraphicalItemId;
   graphicalItems: PieGraphicalItems;
@@ -1288,7 +1291,7 @@ function SectorsWithAnimation({
       <DataLabelColorsContextProvider value={filledShapeLabelColors}>
         <PieLabelListProvider showLabels={!isAnimating} sectors={sectors}>
           <AnimatedItems
-            animationInput={props}
+            animationInput={animationInput}
             animationIdPrefix="recharts-pie-"
             items={sectors}
             previousItemsRef={previousSectorsRef}
@@ -1370,7 +1373,7 @@ function PieImpl(props: PieImplProps) {
   const { hide, className, rootTabIndex } = props;
   const themeFillObjects = useThemeFillObjects();
 
-  const cells = useMemo(() => findAllByType(props.children, Cell), [props.children]);
+  const cells = useCells(props.children);
   // The theme active colors go with the theme colors, so a Pie with its own colors drops them in the active state too.
   const hasExplicitColors = hasOwnColors(explicitStyleProps);
   const indexedActiveStyles = useMemo(
@@ -1435,6 +1438,7 @@ function PieImpl(props: PieImplProps) {
         )}
         <SectorsWithAnimation
           props={{ ...propsWithoutId, sectors: themedSectors, sectorPaintFills }}
+          animationInput={sectors}
           previousSectorsRef={previousSectorsRef}
           id={id}
           graphicalItems={graphicalItems}
@@ -1471,7 +1475,7 @@ function PieFn(propsWithFillObject: Props) {
     strokeDasharray: outsideProps.strokeDasharray,
   };
   const { id: externalId, ...propsWithoutId } = props;
-  const presentationProps: PiePresentationProps | null = svgPropertiesNoEvents(propsWithoutId);
+  const presentationProps = useStableValue(svgPropertiesNoEvents(propsWithoutId), propsAreEqual);
 
   return (
     <RegisterGraphicalItemId id={externalId} type="pie">
