@@ -992,7 +992,20 @@ function PieSectors(props: PieSectorsProps) {
           (activeDataKey == null || allOtherPieProps.dataKey === activeDataKey) &&
           graphicalItemMatches;
         const inactiveShape = activeIndex ? inactiveShapeProp : null;
-        const sectorOptions = activeShape && isActive ? activeShape : inactiveShape;
+        /*
+         * Same as `activeBar` in Bar: `activeShape={true}` renders the `shape`,
+         * so a custom `shape` renders the active sector too, and it decides on its own how the active state looks like.
+         */
+        let option: ActiveShape<PieSectorShapeProps, SVGPathElement> | ActiveShape<Readonly<PieSectorDataItem>>;
+        let usesInactiveShape = false;
+        if (isActive && activeShape) {
+          option = activeShape === true ? shape : activeShape;
+        } else if (inactiveShape != null) {
+          option = inactiveShape;
+          usesInactiveShape = true;
+        } else {
+          option = shape;
+        }
         const sectorProps: PieSectorShapeProps = {
           ...entry,
           fill: allOtherPieProps.sectorPaintFills?.[i] ?? entry.fill,
@@ -1007,15 +1020,18 @@ function PieSectors(props: PieSectorsProps) {
           [DATA_ITEM_GRAPHICAL_ITEM_ID_ATTRIBUTE_NAME]: id,
         };
         /*
-         * Without `activeShape` and `inactiveShape`, the active sector renders the default shape too.
+         * The theme active styles only apply to the default sector, or to an `activeShape` object on top of it.
+         * A custom `shape` or `activeShape` (function or element) receives none of them,
+         * and neither does the deprecated `inactiveShape` when it renders the active sector.
          */
-        const activeStyleOverrides = isActive
-          ? getActiveStyleOverrides(
-              activeShape || sectorOptions == null,
-              indexedActiveStyles[i % indexedActiveStyles.length],
-              entry.payload,
-            )
-          : undefined;
+        const activeStyleOverrides =
+          isActive && !usesInactiveShape
+            ? getActiveStyleOverrides(
+                option === defaultPieSectorShape ? true : option,
+                indexedActiveStyles[i % indexedActiveStyles.length],
+                entry.payload,
+              )
+            : undefined;
         const activeSectorProps: PieSectorShapeProps =
           activeStyleOverrides == null ? sectorProps : { ...sectorProps, ...activeStyleOverrides };
 
@@ -1030,7 +1046,7 @@ function PieSectors(props: PieSectorsProps) {
             onClick={onClickFromContext(entry, i)}
           >
             <Shape<PieSectorShapeProps, SVGPathElement>
-              option={sectorOptions ?? shape}
+              option={option}
               DefaultShape={defaultPieSectorShape}
               shapeProps={activeSectorProps}
             />
