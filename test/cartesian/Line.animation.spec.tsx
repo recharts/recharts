@@ -863,6 +863,29 @@ describe('Line animation', () => {
       });
     });
 
+    describe('when the initial animation ends with its final frame and onAnimationEnd in one render', () => {
+      it('should not mask the line again when the data changes', async () => {
+        const { container, animationManager } = renderTestCase();
+        await animationManager.setAnimationProgress(0.9);
+        expect(getLine(container)).toHaveAttribute('stroke-dasharray', '90px 100px');
+
+        // what the browser does: the final frame and the end of the animation in one batch
+        await animationManager.finishAnimationInOneFrame();
+        expect(getLine(container)).not.toHaveAttribute('stroke-dasharray');
+
+        const button = container.querySelector('button');
+        assertNotNull(button);
+        act(() => {
+          button.click();
+        });
+
+        // the line was fully drawn: the new animation must not draw it in again from 90px
+        expect(getLine(container)).not.toHaveAttribute('stroke-dasharray');
+        await animationManager.setAnimationProgress(0.5);
+        expect(getLine(container)).not.toHaveAttribute('stroke-dasharray');
+      });
+    });
+
     describe('interaction after initial animation completes', () => {
       async function prime(container: HTMLElement, animationManager: MockAnimationManager) {
         // The test begins initially with the UV dataKey, so we need to run the animation to completion.
