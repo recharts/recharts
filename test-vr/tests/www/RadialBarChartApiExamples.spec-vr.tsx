@@ -1,23 +1,16 @@
-import { expect, test } from '../fixtures';
+import { expect, testWithThemes } from '../fixtures';
 
-test('RadialBarChartNavExample', async ({ mountStory }) => {
-  const component = await mountStory('www/RadialBarChartApiExamples/RadialBarChartNavExample', { testTheme: 'light' });
+testWithThemes('RadialBarChartNavExample', async ({ mountStory }) => {
+  const component = await mountStory('www/RadialBarChartApiExamples/RadialBarChartNavExample');
   await expect(component).toHaveScreenshot();
 });
 
-test('SimpleRadialBarChart', async ({ mountStory }) => {
-  const component = await mountStory('www/RadialBarChartApiExamples/SimpleRadialBarChart', { testTheme: 'light' });
+testWithThemes('SimpleRadialBarChart', async ({ mountStory }) => {
+  const component = await mountStory('www/RadialBarChartApiExamples/SimpleRadialBarChart');
   await expect(component).toHaveScreenshot();
 });
 
-test('SimpleRadialBarChart dark theme', async ({ mountStory }) => {
-  const component = await mountStory('www/RadialBarChartApiExamples/SimpleRadialBarChart', { testTheme: 'dark' });
-  await expect(component).toHaveScreenshot();
-});
-
-test('RadialBarChartClickToFocusLegendExample', async ({ mountStory }) => {
-  const component = await mountStory('www/RadialBarChartApiExamples/RadialBarChartClickToFocusLegendExample', {
-    testTheme: 'light',
-  });
+testWithThemes('RadialBarChartClickToFocusLegendExample', async ({ mountStory }) => {
+  const component = await mountStory('www/RadialBarChartApiExamples/RadialBarChartClickToFocusLegendExample');
   await expect(component).toHaveScreenshot();
 });

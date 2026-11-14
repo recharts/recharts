@@ -2074,14 +2074,6 @@
       "count": 1
     }
   },
-  "www/src/docs/exampleComponents/RadialBarChart/RadialBarChartClickToFocusLegendExample.tsx": {
-    "react-perf/jsx-no-new-function-as-prop": {
-      "count": 1
-    },
-    "react-perf/jsx-no-new-object-as-prop": {
-      "count": 2
-    }
-  },
   "www/src/docs/exampleComponents/RadialBarChart/RadialBarChartNavExample.tsx": {
     "react-perf/jsx-no-new-array-as-prop": {
       "count": 1
