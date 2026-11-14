@@ -8,3 +8,7 @@ export const selectChartHeight = (state: RechartsRootState): number => state.lay
 export const selectContainerScale: (state: RechartsRootState) => number = state => state.layout.scale;
 
 export const selectMargin = (state: RechartsRootState): Margin => state.layout.margin;
+
+const CHART_TITLE_HEIGHT = 24;
+export const selectVisibleTitle = (state: RechartsRootState) => state.layout.visibleTitle;
+export const selectTitleHeight = (state: RechartsRootState) => (selectVisibleTitle(state) ? CHART_TITLE_HEIGHT : 0);

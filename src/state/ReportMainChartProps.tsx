@@ -1,7 +1,7 @@
 import { memo, ReactNode, useEffect } from 'react';
 import { LayoutType, Margin } from '../util/types';
 import { useIsPanorama } from '../context/PanoramaContext';
-import { setLayout, setMargin } from './layoutSlice';
+import { setLayout, setMargin, setVisibleTitle } from './layoutSlice';
 import { useAppDispatch } from './hooks';
 import { propsAreEqual } from '../util/propsAreEqual';
 
@@ -11,10 +11,11 @@ import { propsAreEqual } from '../util/propsAreEqual';
  */
 type MainChartProps = {
   layout: LayoutType;
+  visibleTitle?: string;
   margin: Partial<Margin>;
 };
 
-function ReportMainChartPropsImpl({ layout, margin }: MainChartProps): ReactNode {
+function ReportMainChartPropsImpl({ layout, margin, visibleTitle }: MainChartProps): ReactNode {
   const dispatch = useAppDispatch();
 
   /*
@@ -34,8 +35,9 @@ function ReportMainChartPropsImpl({ layout, margin }: MainChartProps): ReactNode
     if (!isPanorama) {
       dispatch(setLayout(layout));
       dispatch(setMargin(margin));
+      dispatch(setVisibleTitle(visibleTitle));
     }
-  }, [dispatch, isPanorama, layout, margin]);
+  }, [dispatch, isPanorama, layout, margin, visibleTitle]);
   return null;
 }
 
