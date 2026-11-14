@@ -2,6 +2,7 @@ import React from 'react';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { render } from '@testing-library/react';
 import { CartesianGrid, Line, LineChart, XAxis, YAxis } from '../../../src';
+import * as DOMUtils from '../../../src/util/DOMUtils';
 import { getMockDomRect } from '../../helper/mockGetBoundingClientRect';
 
 // Unique labels, so a measurement cached by another test file can't be reused.
@@ -39,5 +40,26 @@ describe('CartesianGrid with a custom tick fontSize', () => {
     const withDefaultFont = countVerticalGridLines(true);
     const withLargeFont = countVerticalGridLines({ fontSize: 30 });
     expect(withLargeFont).toBeLessThan(withDefaultFont);
+  });
+
+  it('measures labels with the font family and weight from the tick prop', () => {
+    const getStringSize = vi.spyOn(DOMUtils, 'getStringSize');
+
+    render(
+      <LineChart width={360} height={200} data={data.slice(0, 4)}>
+        <CartesianGrid />
+        <XAxis dataKey="name" tick={{ fontFamily: 'Roboto Mono', fontWeight: 500, fontSize: 12 }} />
+        <YAxis />
+        <Line dataKey="value" />
+      </LineChart>,
+    );
+
+    expect(getStringSize).toHaveBeenCalledWith(
+      expect.anything(),
+      expect.objectContaining({
+        fontFamily: 'Roboto Mono',
+        fontWeight: '500',
+      }),
+    );
   });
 });
