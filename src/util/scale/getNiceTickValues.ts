@@ -243,8 +243,8 @@ export const getNiceTickValues = (
   if (cormin === -Infinity || cormax === Infinity) {
     const values: Array<number> =
       cormax === Infinity
-        ? [cormin, ...Array(tickCount - 1).fill(Infinity)]
-        : [...Array(tickCount - 1).fill(-Infinity), cormax];
+        ? [cormin, ...Array(count - 1).fill(Infinity)]
+        : [...Array(count - 1).fill(-Infinity), cormax];
 
     return min > max ? values.reverse() : values;
   }
