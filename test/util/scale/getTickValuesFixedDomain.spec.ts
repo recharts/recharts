@@ -149,3 +149,15 @@ test('allowDecimals=false does not produce duplicate ticks with step=1 boundary 
   expect(scales).toEqual([0, 1, 2, 3]);
   expect(scales.length).toBeLessThan(5);
 });
+
+test('does not emit 100000 duplicate ticks when the step collapses to zero', () => {
+  // A subnormal domain makes getAdaptiveStep return step=0. rangeStep then
+  // never advances `num`, so num.lt(end) stays true and it emitted 100000
+  // identical values before the iteration cap. A chart would try to render
+  // 100001 tick elements and freeze the main thread.
+  const scales = getTickValuesFixedDomain([Number.MIN_VALUE, Number.MIN_VALUE * 2], 6);
+
+  expect(scales.length).toBeLessThan(10);
+  expect(scales[0]).toBe(Number.MIN_VALUE);
+  expect(scales[scales.length - 1]).toBe(Number.MIN_VALUE * 2);
+});
