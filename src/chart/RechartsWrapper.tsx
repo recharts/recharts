@@ -23,7 +23,7 @@ import { externalEventAction } from '../state/externalEventsMiddleware';
 import { touchEventAction } from '../state/touchEventsMiddleware';
 import { TooltipPortalContext } from '../context/tooltipPortalContext';
 import { LegendPortalContext } from '../context/legendPortalContext';
-import { ReportChartSize } from '../context/chartLayoutContext';
+import { ReportChartSize, selectChartLayout } from '../context/chartLayoutContext';
 import { useResponsiveContainerContext } from '../component/ResponsiveContainer';
 import { Percent } from '../util/types';
 import { useRechartsTheme } from '../theme/RechartsThemeContext';
@@ -270,6 +270,7 @@ export const RechartsWrapper = forwardRef<HTMLDivElement | null, RechartsWrapper
     const containerRef: MutableRefObject<HTMLDivElement | null> = useRef<HTMLDivElement>(null);
     const dispatch = useAppDispatch();
     const accessibilityLayerIsEnabled = useAppSelector(state => state.rootProps.accessibilityLayer !== false);
+    const isVerticalLayout = useAppSelector(state => selectChartLayout(state) === 'vertical');
     const [tooltipPortal, setTooltipPortal] = useState<HTMLElement | null>(null);
     const [legendPortal, setLegendPortal] = useState<HTMLElement | null>(null);
 
@@ -346,16 +347,22 @@ export const RechartsWrapper = forwardRef<HTMLDivElement | null, RechartsWrapper
         // the element the accessibility layer makes focusable. The wrapper also hosts custom children
         // (a custom legend, a custom tooltip, <Customized>) whose buttons, links and inputs live
         // inside this same div; swallowing Enter there would stop a focused button from activating.
+        //
+        // ArrowUp and ArrowDown move the tooltip only in a vertical layout, so only there are they consumed.
+        const isVerticalArrow = e.key === 'ArrowUp' || e.key === 'ArrowDown';
         if (
           accessibilityLayerIsEnabled &&
           isChartSurface(e.target) &&
-          (e.key === 'ArrowLeft' || e.key === 'ArrowRight' || e.key === 'Enter')
+          (e.key === 'ArrowLeft' ||
+            e.key === 'ArrowRight' ||
+            e.key === 'Enter' ||
+            (isVerticalArrow && isVerticalLayout))
         ) {
           e.preventDefault();
         }
         dispatch(keyDownAction(e.key));
       },
-      [dispatch, accessibilityLayerIsEnabled],
+      [dispatch, accessibilityLayerIsEnabled, isVerticalLayout],
     );
 
     const myOnContextMenu = useCallback(
