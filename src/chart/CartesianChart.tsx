@@ -17,6 +17,7 @@ const defaultMargin: Margin = { top: 5, right: 5, bottom: 5, left: 5 };
 export const defaultCartesianChartProps = {
   accessibilityLayer: true,
   barCategoryGap: '10%',
+  centerBarsInCategory: false,
   barGap: 4,
   layout: 'horizontal',
   margin: defaultMargin,
@@ -74,6 +75,7 @@ export const CartesianChart = forwardRef<SVGSVGElement, CartesianChartOptions>(f
         baseValue={rootChartProps.baseValue}
         accessibilityLayer={rootChartProps.accessibilityLayer}
         barCategoryGap={rootChartProps.barCategoryGap}
+        centerBarsInCategory={rootChartProps.centerBarsInCategory}
         maxBarSize={rootChartProps.maxBarSize}
         stackOffset={rootChartProps.stackOffset}
         barGap={rootChartProps.barGap}
