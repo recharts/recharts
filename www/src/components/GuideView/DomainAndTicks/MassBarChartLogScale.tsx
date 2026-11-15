@@ -1,5 +1,8 @@
-import { Bar, BarChart, Tooltip, XAxis, YAxis } from 'recharts';
+import { Bar, BarChart, registerScales, Tooltip, XAxis, YAxis } from 'recharts';
 import { RechartsDevtools } from '@recharts/devtools';
+import { scaleLog } from 'd3-scale';
+
+registerScales({ scaleLog });
 
 // #region Solar System Data
 /**

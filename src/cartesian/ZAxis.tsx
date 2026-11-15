@@ -94,9 +94,13 @@ export interface Props<DataPointType = any, DataValueType = any> extends Omit<
    * If undefined, or 'auto', the scale function is created internally according to the type of axis and data.
    *
    * You can define a custom scale, either as a string shortcut to a d3 scale, or as a complete scale definition object.
+   * String shortcuts other than `linear`, `band` and `point` need their d3 scale registered first, with `registerScales`.
    *
    * @defaultValue auto
-   * @example <ZAxis scale="log" />
+   * @example
+   * import { scaleLog } from 'd3-scale';
+   * registerScales({ scaleLog });
+   * <ZAxis scale="log" />
    * @example
    * import { scaleLog } from 'd3-scale';
    * const scale = scaleLog().base(Math.E);

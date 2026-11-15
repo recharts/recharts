@@ -1,14 +1,9 @@
-import * as d3Scales from 'victory-vendor/d3-scale';
-import { D3ScaleType, RechartsScaleType } from '../../../util/types';
+import { RechartsScaleType } from '../../../util/types';
 import { BaseCartesianAxis } from '../../cartesianAxisSlice';
-import { upperFirst } from '../../../util/DataUtils';
-
-function getD3ScaleName(name: string): D3ScaleType {
-  return `scale${upperFirst(name)}` as D3ScaleType;
-}
+import { isRegisteredScaleName } from '../../../util/scale/scaleRegistry';
 
 function isSupportedScaleName(name: string): name is RechartsScaleType {
-  return getD3ScaleName(name) in d3Scales;
+  return isRegisteredScaleName(name);
 }
 
 export const combineRealScaleType = (

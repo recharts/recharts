@@ -1,4 +1,3 @@
-import * as d3Scales from 'victory-vendor/d3-scale';
 import { BaseCartesianAxis } from '../../cartesianAxisSlice';
 import {
   CategoricalDomain,
@@ -9,21 +8,7 @@ import {
 } from '../../../util/types';
 import { CustomScaleDefinition } from '../../../util/scale/CustomScaleDefinition';
 import { AxisRange } from '../axisSelectors';
-import { upperFirst } from '../../../util/DataUtils';
-
-function getD3ScaleFromType<Domain extends CategoricalDomainItem = CategoricalDomainItem>(
-  realScaleType: D3ScaleType | RechartsScaleType,
-): CustomScaleDefinition<Domain> | undefined {
-  const scales = d3Scales as Record<string, unknown>;
-  if (realScaleType in scales && typeof scales[realScaleType] === 'function') {
-    return scales[realScaleType]();
-  }
-  const name = `scale${upperFirst(realScaleType)}`;
-  if (name in scales && typeof scales[name] === 'function') {
-    return scales[name]();
-  }
-  return undefined;
-}
+import { createRegisteredScale } from '../../../util/scale/scaleRegistry';
 
 /**
  * Converts external scale definition into internal RechartsScale definition.
@@ -68,7 +53,7 @@ export function combineConfiguredScaleInternal<Domain extends CategoricalDomainI
   if (scale == null) {
     return undefined;
   }
-  const d3ScaleFunction: CustomScaleDefinition<Domain> | undefined = getD3ScaleFromType(scale);
+  const d3ScaleFunction: CustomScaleDefinition<Domain> | undefined = createRegisteredScale(scale);
   if (d3ScaleFunction == null) {
     return undefined;
   }

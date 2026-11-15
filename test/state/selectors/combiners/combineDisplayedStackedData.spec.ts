@@ -1,8 +1,12 @@
 import { describe, it, expect } from 'vitest';
+import { scaleSequential } from 'victory-vendor/d3-scale';
 import { combineDisplayedStackedData } from '../../../../src/state/selectors/combiners/combineDisplayedStackedData';
 import { ChartDataState } from '../../../../src/state/chartDataSlice';
 import { BaseCartesianAxis } from '../../../../src/state/cartesianAxisSlice';
 import { DefinitelyStackedGraphicalItem } from '../../../../src/state/types/StackedGraphicalItem';
+import { registerScales } from '../../../../src/util/scale/scaleRegistry';
+
+registerScales({ scaleSequential });
 
 const emptyAxisSettings: BaseCartesianAxis = {
   type: 'number',

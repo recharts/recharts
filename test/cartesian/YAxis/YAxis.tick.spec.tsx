@@ -1,6 +1,7 @@
 import React, { ReactNode } from 'react';
 import { describe, expect, it, Mock, vi } from 'vitest';
 import { fireEvent, render } from '@testing-library/react';
+import { scaleTime } from 'victory-vendor/d3-scale';
 import {
   Bar,
   BarChart,
@@ -15,6 +16,9 @@ import {
 import { ExpectAxisDomain, expectYAxisTicks } from '../../helper/expectAxisTicks';
 import { expectLastCalledWith, expectNthCalledWith } from '../../helper/expectLastCalledWith';
 import { dateWithValueData } from '../../../storybook/stories/data';
+import { registerScales } from '../../../src/util/scale/scaleRegistry';
+
+registerScales({ scaleTime });
 
 const data = [
   { x: 90, y: 90, z: 90 },

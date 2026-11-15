@@ -1,6 +1,7 @@
 import { expect, userEvent, within } from 'storybook/test';
 import { Args, StoryObj } from '@storybook/react-vite';
 import React, { useCallback, useState } from 'react';
+import { scaleSymlog } from 'victory-vendor/d3-scale';
 import { Impressions, impressionsData, logData, pageData } from '../../data';
 import {
   Brush,
@@ -12,6 +13,7 @@ import {
   MouseHandlerDataParam,
   ReferenceArea,
   ReferenceLine,
+  registerScales,
   ResponsiveContainer,
   Tooltip,
   XAxis,
@@ -20,6 +22,8 @@ import {
 import { getStoryArgsFromArgsTypesObject } from '../../API/props/utils';
 import { LineChartArgs } from '../../API/arg-types/LineChartArgs';
 import { assertNotNull } from '../../../../test/helper/assertNotNull';
+
+registerScales({ scaleSymlog });
 
 export default {
   component: LineChart,
