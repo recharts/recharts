@@ -28,6 +28,9 @@ beforeEach(() => {
     width: `${text}`.length,
     height: 12,
   }));
+  vi.spyOn(DOMUtils, 'getStringSizes').mockImplementation(texts =>
+    texts.map(text => ({ width: `${text}`.length, height: 12 })),
+  );
 });
 
 afterAll(() => {

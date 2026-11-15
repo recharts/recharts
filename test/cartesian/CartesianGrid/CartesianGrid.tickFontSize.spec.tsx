@@ -25,11 +25,14 @@ describe('CartesianGrid with a custom tick fontSize', () => {
   beforeEach(() => {
     // jsdom has no layout: give the text measurement span a width proportional to its font size.
     // A font size without a unit is invalid CSS, so it is ignored, like in a browser.
+    // Batched measurements put the font on a container around the measured spans.
     vi.spyOn(Element.prototype, 'getBoundingClientRect').mockImplementation(function mock(this: Element) {
-      if (this.id !== 'recharts_measurement_span') {
+      const container = this.parentElement?.closest('.recharts-measurement-container');
+      const styled = this.id === 'recharts_measurement_span' ? this : container;
+      if (!(styled instanceof HTMLElement)) {
         return getMockDomRect();
       }
-      const fontSize = this instanceof HTMLElement ? this.style.fontSize : '';
+      const { fontSize } = styled.style;
       const px = /^\d+(\.\d+)?px$/.test(fontSize) ? parseFloat(fontSize) : 12;
       return getMockDomRect({ width: (this.textContent ?? '').length * px * 0.6, height: px });
     });
