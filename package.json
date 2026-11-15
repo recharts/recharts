@@ -102,6 +102,7 @@
     }
   },
   "dependencies": {
+    "@babel/runtime": "^7.29.7",
     "@reduxjs/toolkit": "^1.9.0 || 2.x.x",
     "clsx": "^2.1.1",
     "decimal.js-light": "^2.5.1",
@@ -118,10 +119,10 @@
     "@arethetypeswrong/cli": "^0.18.5",
     "@babel/cli": "^7.24.8",
     "@babel/core": "^7.24.9",
+    "@babel/plugin-transform-runtime": "^7.29.7",
     "@babel/preset-env": "^7.29.0",
     "@babel/preset-react": "^7.28.5",
     "@babel/preset-typescript": "^7.28.5",
-    "@babel/runtime": "^7.26.10",
     "@chromatic-com/storybook": "^5.2.1",
     "@codecov/bundle-analyzer": "^2.0.1",
     "@eslint-community/eslint-plugin-eslint-comments": "^4.7.2",
