@@ -1,21 +1,18 @@
 import * as React from 'react';
-import { cloneElement, createElement, isValidElement, ReactElement, SVGProps } from 'react';
+import { cloneElement, createElement, isValidElement, ReactElement, SVGProps, useContext } from 'react';
 import { clsx } from 'clsx';
 import {
   ChartOffsetInternal,
   Coordinate,
-  isPolarCoordinate,
   LayoutType,
   PolarCoordinate,
   TooltipEventType,
   WithFillObject,
 } from '../util/types';
 import { Curve } from '../shape/Curve';
-import { Cross } from '../shape/Cross';
 import { getCursorRectangle } from '../util/cursor/getCursorRectangle';
 import { Rectangle } from '../shape/Rectangle';
-import { getRadialCursorPoints } from '../util/cursor/getRadialCursorPoints';
-import { Sector } from '../shape/Sector';
+import { CursorShapeContext } from '../util/cursor/cursorShapes';
 import { getCursorPoints } from '../util/cursor/getCursorPoints';
 import { useChartLayout, useOffsetInternal } from '../context/chartLayoutContext';
 import { useTooltipAxisBandSize } from '../context/useTooltipAxis';
@@ -103,6 +100,7 @@ export function CursorInternal(props: CursorConnectedProps) {
    */
   const clipPathId = useClipPathId();
   const isZoomed = useAppSelector(selectIsZoomed) ?? false;
+  const resolveCursorShape = useContext(CursorShapeContext);
 
   // The cursor is a part of the Tooltip, and it should be shown (by default) when the Tooltip is active.
   const activeCoordinate = coordinate;
@@ -112,27 +110,17 @@ export function CursorInternal(props: CursorConnectedProps) {
     return null;
   }
   let restProps, cursorComp: React.ComponentType<any>, preferredZIndex: number;
+  // scatter and radial charts provide their own cursor shape (see cursorShapes)
+  const customShape = resolveCursorShape?.(layout, activeCoordinate);
 
-  if (chartName === 'ScatterChart') {
-    restProps = activeCoordinate;
-    cursorComp = Cross;
-    preferredZIndex = DefaultZIndexes.cursorLine;
+  if (customShape) {
+    restProps = customShape.props;
+    cursorComp = customShape.component;
+    preferredZIndex = customShape.zIndex;
   } else if (chartName === 'BarChart') {
     restProps = getCursorRectangle(layout, activeCoordinate, offset, tooltipAxisBandSize);
     cursorComp = Rectangle;
     preferredZIndex = DefaultZIndexes.cursorRectangle;
-  } else if (layout === 'radial' && isPolarCoordinate(activeCoordinate)) {
-    const { cx, cy, radius, startAngle, endAngle } = getRadialCursorPoints(activeCoordinate);
-    restProps = {
-      cx,
-      cy,
-      startAngle,
-      endAngle,
-      innerRadius: radius,
-      outerRadius: radius,
-    };
-    cursorComp = Sector;
-    preferredZIndex = DefaultZIndexes.cursorLine;
   } else {
     restProps = { points: getCursorPoints(layout, activeCoordinate, offset) };
     cursorComp = Curve;

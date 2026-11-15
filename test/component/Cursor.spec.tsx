@@ -1,5 +1,5 @@
 import React from 'react';
-import { describe, expect, it } from 'vitest';
+import { beforeEach, describe, expect, it } from 'vitest';
 import { render } from '@testing-library/react';
 import { Cursor, CursorConnectedProps, CursorInternal, CursorProps } from '../../src/component/Cursor';
 import { assertNotNull } from '../helper/assertNotNull';
@@ -9,6 +9,26 @@ import { arrayTooltipSearcher } from '../../src/state/optionsSlice';
 import { produceState } from '../helper/produceState';
 import { emptyOffset } from '../helper/offsetHelpers';
 import { TooltipPayload } from '../../src/state/tooltipSlice';
+import { crossCursor, CursorShapeContext, radialCursor } from '../../src/util/cursor/cursorShapes';
+import {
+  PolarAngleAxis,
+  PolarGrid,
+  PolarRadiusAxis,
+  Radar,
+  RadarChart,
+  Scatter,
+  ScatterChart,
+  Tooltip,
+  XAxis,
+  YAxis,
+} from '../../src';
+import { PageData } from '../_data';
+import { mockGetBoundingClientRect } from '../helper/mockGetBoundingClientRect';
+import { showTooltip } from './Tooltip/tooltipTestHelpers';
+import {
+  radarChartMouseHoverTooltipSelector,
+  scatterChartMouseHoverTooltipSelector,
+} from './Tooltip/tooltipMouseHoverSelectors';
 
 const defaultProps: CursorProps = {
   cursor: true,
@@ -101,9 +121,11 @@ describe('Cursor', () => {
         },
       };
       const { container } = render(
-        <svg width={100} height={100}>
-          <CursorInternal {...props} coordinate={coordinate} zIndex={0} />
-        </svg>,
+        <CursorShapeContext.Provider value={radialCursor}>
+          <svg width={100} height={100}>
+            <CursorInternal {...props} coordinate={coordinate} zIndex={0} />
+          </svg>
+        </CursorShapeContext.Provider>,
       );
       const cursor = container.querySelector('.recharts-sector');
       assertNotNull(cursor);
@@ -151,11 +173,13 @@ describe('Cursor', () => {
         draft.tooltip.itemInteraction.hover.active = true;
       });
       const { container } = render(
-        <RechartsStoreProvider preloadedState={preloadedScatterState}>
-          <svg width={100} height={100}>
-            <Cursor {...defaultProps} coordinate={baseCoord} zIndex={0} />
-          </svg>
-        </RechartsStoreProvider>,
+        <CursorShapeContext.Provider value={crossCursor}>
+          <RechartsStoreProvider preloadedState={preloadedScatterState}>
+            <svg width={100} height={100}>
+              <Cursor {...defaultProps} coordinate={baseCoord} zIndex={0} />
+            </svg>
+          </RechartsStoreProvider>
+        </CursorShapeContext.Provider>,
       );
       const cursor = container.querySelector('.recharts-cross');
       assertNotNull(cursor);
@@ -166,15 +190,50 @@ describe('Cursor', () => {
       const coordinate = { endAngle: 2, radius: 1, startAngle: 1, x: 0, y: 0 };
       const payload: TooltipPayload = [{ value: 'test', name: 'test', graphicalItemId: 'foo' }];
       const { container } = render(
-        <RechartsStoreProvider preloadedState={preloadedRadialState}>
-          <svg width={100} height={100}>
-            <Cursor {...defaultProps} coordinate={coordinate} payload={payload} zIndex={0} />
-          </svg>
-        </RechartsStoreProvider>,
+        <CursorShapeContext.Provider value={radialCursor}>
+          <RechartsStoreProvider preloadedState={preloadedRadialState}>
+            <svg width={100} height={100}>
+              <Cursor {...defaultProps} coordinate={coordinate} payload={payload} zIndex={0} />
+            </svg>
+          </RechartsStoreProvider>
+        </CursorShapeContext.Provider>,
       );
       const cursor = container.querySelector('.recharts-sector');
       assertNotNull(cursor);
       expect(cursor).toBeVisible();
+    });
+  });
+
+  describe('shape provided by the chart', () => {
+    beforeEach(() => {
+      mockGetBoundingClientRect({ width: 100, height: 100 });
+    });
+
+    it('ScatterChart draws a cross cursor', () => {
+      const { container, debug } = render(
+        <ScatterChart width={400} height={400} throttledEvents={[]}>
+          <XAxis dataKey="uv" />
+          <YAxis dataKey="pv" />
+          <Scatter data={PageData} />
+          <Tooltip />
+        </ScatterChart>,
+      );
+      showTooltip(container, scatterChartMouseHoverTooltipSelector, debug);
+      expect(container.querySelector('.recharts-tooltip-cursor.recharts-cross')).toBeVisible();
+    });
+
+    it('RadarChart draws a sector cursor', () => {
+      const { container, debug } = render(
+        <RadarChart width={600} height={600} data={PageData} layout="radial" throttledEvents={[]}>
+          <PolarGrid />
+          <PolarAngleAxis dataKey="name" />
+          <PolarRadiusAxis />
+          <Radar dataKey="uv" />
+          <Tooltip />
+        </RadarChart>,
+      );
+      showTooltip(container, radarChartMouseHoverTooltipSelector, debug);
+      expect(container.querySelector('.recharts-tooltip-cursor.recharts-sector')).toBeVisible();
     });
   });
 });
