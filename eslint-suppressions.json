@@ -2123,11 +2123,6 @@
       "count": 1
     }
   },
-  "www/src/docs/exampleComponents/Sankey/SankeyCustomNodeExample.tsx": {
-    "react-perf/jsx-no-new-object-as-prop": {
-      "count": 2
-    }
-  },
   "www/src/docs/exampleComponents/ScatterChart/BubbleChart.tsx": {
     "react-perf/jsx-no-new-object-as-prop": {
       "count": 5
