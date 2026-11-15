@@ -1,6 +1,6 @@
 import React from 'react';
 import { describe, expect, test, it } from 'vitest';
-import { Bar, BarChart, ErrorBar, Line, LineChart, Scatter, ScatterChart, XAxis, YAxis } from '../../src';
+import { Bar, BarChart, Brush, ErrorBar, Line, LineChart, Scatter, ScatterChart, XAxis, YAxis } from '../../src';
 import { expectXAxisTicks, expectYAxisTicks } from '../helper/expectAxisTicks';
 import {
   getErrorDomainByDataKey,
@@ -2307,6 +2307,86 @@ describe('<ErrorBar />', () => {
             y: '20',
           },
         ]);
+      });
+    });
+
+    describe('extending the value axis domain for stacked Bars', () => {
+      type StackDatum = { name: string; bottom: number; top: number; err: [number, number] };
+
+      // The stack of 'a' ends at 20 and its error reaches 50 above the end of a segment. The stack of 'b' ends at 30.
+      const stackData: ReadonlyArray<StackDatum> = [
+        { name: 'a', bottom: 10, top: 10, err: [5, 50] },
+        { name: 'b', bottom: 10, top: 20, err: [5, 5] },
+      ];
+
+      const renderStackedBars = (
+        bottomErrorBar: React.ReactNode,
+        topErrorBar: React.ReactNode,
+        brush?: React.ReactNode,
+      ) =>
+        createSelectorTestCase(({ children }) => (
+          <BarChart data={stackData} width={400} height={300}>
+            <XAxis dataKey="name" />
+            <YAxis />
+            <Bar isAnimationActive={false} dataKey="bottom" stackId="s">
+              {bottomErrorBar}
+            </Bar>
+            <Bar isAnimationActive={false} dataKey="top" stackId="s">
+              {topErrorBar}
+            </Bar>
+            {brush}
+            {children}
+          </BarChart>
+        ))(state => selectNumericalDomain(state, 'yAxis', 0, false));
+
+      test('should extend the YAxis domain to an ErrorBar on the top segment of a stack', () => {
+        const { spy } = renderStackedBars(null, <ErrorBar dataKey="err" />);
+        expectLastCalledWith(spy, [0, 70]);
+      });
+
+      test('should measure an ErrorBar on the bottom segment from the end of that segment', () => {
+        const { spy } = renderStackedBars(<ErrorBar dataKey="err" />, null);
+        expectLastCalledWith(spy, [0, 60]);
+      });
+
+      test('should not extend the YAxis domain to an ErrorBar in the x direction', () => {
+        const { spy } = renderStackedBars(null, <ErrorBar dataKey="err" direction="x" />);
+        expectLastCalledWith(spy, [0, 30]);
+      });
+
+      test('should only count the ErrorBars inside the Brush range', () => {
+        const { spy } = renderStackedBars(null, <ErrorBar dataKey="err" />, <Brush startIndex={1} />);
+        expectLastCalledWith(spy, [0, 35]);
+      });
+
+      test('should extend the YAxis domain when the stacked Bars have their own data', () => {
+        const { spy } = createSelectorTestCase(({ children }) => (
+          <BarChart width={400} height={300}>
+            <XAxis dataKey="name" allowDuplicatedCategory={false} />
+            <YAxis />
+            <Bar isAnimationActive={false} data={stackData} dataKey="bottom" stackId="s" />
+            <Bar isAnimationActive={false} data={stackData} dataKey="top" stackId="s">
+              <ErrorBar dataKey="err" />
+            </Bar>
+            {children}
+          </BarChart>
+        ))(state => selectNumericalDomain(state, 'yAxis', 0, false));
+        expectLastCalledWith(spy, [0, 70]);
+      });
+
+      test('should extend the XAxis domain in a vertical chart', () => {
+        const { spy } = createSelectorTestCase(({ children }) => (
+          <BarChart data={stackData} width={400} height={300} layout="vertical">
+            <XAxis type="number" />
+            <YAxis type="category" dataKey="name" />
+            <Bar isAnimationActive={false} dataKey="bottom" stackId="s" />
+            <Bar isAnimationActive={false} dataKey="top" stackId="s">
+              <ErrorBar dataKey="err" />
+            </Bar>
+            {children}
+          </BarChart>
+        ))(state => selectNumericalDomain(state, 'xAxis', 0, false));
+        expectLastCalledWith(spy, [0, 70]);
       });
     });
   });

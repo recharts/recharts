@@ -138,6 +138,9 @@ function getDefaultPosition(
 
 export type LegendItemSorter = 'value' | 'dataKey' | ((item: LegendPayload) => number | string);
 
+/**
+ * @public
+ */
 export type Props = Omit<DefaultLegendContentProps, 'payload' | 'ref' | 'verticalAlign' | 'layout'> & {
   /**
    * Renders the content of the legend.
@@ -408,6 +411,9 @@ function LegendImpl(outsideProps: Props) {
   return createPortal(legendElement, legendPortal);
 }
 
+/**
+ * @public
+ */
 export const Legend = React.memo(LegendImpl, propsAreEqual);
 
 Legend.displayName = 'Legend';

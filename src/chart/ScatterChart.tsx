@@ -10,6 +10,7 @@ const allowedTooltipTypes: ReadonlyArray<TooltipEventType> = ['item'];
  * @consumes ResponsiveContainerContext
  * @provides CartesianViewBoxContext
  * @provides CartesianChartContext
+ * @public
  */
 export const ScatterChart = forwardRef<SVGSVGElement, CartesianChartProps<unknown>>(
   (props: CartesianChartProps<unknown>, ref) => {

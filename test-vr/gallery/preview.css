@@ -138,6 +138,22 @@ summary {
   font-weight: 400;
 }
 
+.gallery-tool-link {
+  display: inline-block;
+  margin-block-start: 8px;
+  color: #1d4ed8;
+  font-size: 13px;
+}
+
+.gallery-tool-link:focus-visible {
+  outline: 2px solid currentColor;
+  outline-offset: 4px;
+}
+
+.story-panel--dark .gallery-tool-link {
+  color: #93c5fd;
+}
+
 .story-variants {
   display: flex;
   flex-direction: column;

@@ -23,6 +23,7 @@ const AnimationControllerContext = createContext<AnimationController>(animationC
  * @see {@link https://recharts.github.io/en-US/guide/animations/ Animation guide}
  *
  * @since 3.9
+ * @public
  */
 export const AnimationControllerProvider = AnimationControllerContext.Provider;
 

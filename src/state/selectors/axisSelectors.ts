@@ -742,11 +742,47 @@ export const selectStackGroups: (
   combineStackGroups,
 );
 
+export const selectAllErrorBarSettings = (state: RechartsRootState): ErrorBarsState => state.errorBars;
+
+/**
+ * An ErrorBar on a stacked item is drawn around the end of its stack segment (see `computeBarRectangles`),
+ * so its error range starts from the stacked value, not from the value in the data.
+ */
+function extendDomainToStackedErrorBars(
+  domainOfStackGroups: NumberDomain | undefined,
+  stackGroups: AllStackGroups | undefined,
+  { chartData, dataStartIndex, dataEndIndex }: ChartDataState,
+  errorBars: ErrorBarsState,
+  axisType: AllAxisTypes,
+): NumberDomain | undefined {
+  let [lowerEnd, upperEnd] = domainOfStackGroups ?? [Infinity, -Infinity];
+  Object.values(stackGroups ?? {}).forEach(({ stackedData, graphicalItems }) => {
+    graphicalItems.forEach((item, seriesIndex) => {
+      const relevantErrorBars = errorBars[item.id]?.filter(errorBar =>
+        isErrorBarRelevantForAxisType(axisType, errorBar),
+      );
+      if (!relevantErrorBars?.length) {
+        return;
+      }
+      const entries = item.data?.length ? item.data : chartData?.slice(dataStartIndex, dataEndIndex + 1);
+      entries?.forEach((entry, index) => {
+        const stackedValue = stackedData[seriesIndex]?.[index + dataStartIndex];
+        getErrorDomainByDataKey(entry, stackedValue?.[1], relevantErrorBars).forEach(value => {
+          lowerEnd = Math.min(lowerEnd, value);
+          upperEnd = Math.max(upperEnd, value);
+        });
+      });
+    });
+  });
+  return isWellBehavedNumber(lowerEnd) && isWellBehavedNumber(upperEnd) ? [lowerEnd, upperEnd] : undefined;
+}
+
 export const combineDomainOfStackGroups = (
   stackGroups: AllStackGroups | undefined,
   chartDataState: ChartDataState,
   axisType: AllAxisTypes,
   domainFromUserPreference: NumberDomain | undefined,
+  errorBars: ErrorBarsState,
 ): NumberDomain | undefined => {
   if (domainFromUserPreference != null) {
     // User has specified a domain, so we respect that and we can skip computing anything else
@@ -757,7 +793,13 @@ export const combineDomainOfStackGroups = (
     return undefined;
   }
   const [startIndex, endIndex] = getBrushSliceIndexes(chartDataState);
-  return getDomainOfStackGroups(stackGroups, startIndex, endIndex);
+  return extendDomainToStackedErrorBars(
+    getDomainOfStackGroups(stackGroups, startIndex, endIndex),
+    stackGroups,
+    chartDataState,
+    errorBars,
+    axisType,
+  );
 };
 
 const selectAllowsDataOverflow: (state: RechartsRootState, axisType: AllAxisTypes, axisId: AxisId) => boolean =
@@ -814,7 +856,13 @@ export const selectDomainOfStackGroups: (
   axisId: AxisId,
   isPanorama: boolean,
 ) => NumberDomain | undefined = createSelector(
-  [selectStackGroups, selectChartDataWithIndexes, pickAxisType, selectDomainFromUserPreference],
+  [
+    selectStackGroups,
+    selectChartDataWithIndexes,
+    pickAxisType,
+    selectDomainFromUserPreference,
+    selectAllErrorBarSettings,
+  ],
   combineDomainOfStackGroups,
   {
     memoizeOptions: {
@@ -822,8 +870,6 @@ export const selectDomainOfStackGroups: (
     },
   },
 );
-
-export const selectAllErrorBarSettings = (state: RechartsRootState): ErrorBarsState => state.errorBars;
 
 const combineRelevantErrorBarSettings = (
   cartesianItemsSettings: ReadonlyArray<CartesianGraphicalItemSettings>,
@@ -1118,8 +1164,15 @@ export const combineNumericalDomain = (
     return domainFromUserPreference;
   }
 
+  /*
+   * The stack groups domain only applies to the numeric axis, the one that the stacks grow along.
+   * https://github.com/recharts/recharts/issues/8159
+   */
   const shouldIncludeDomainOfStackGroups =
-    (layout === 'vertical' && axisType === 'xAxis') || (layout === 'horizontal' && axisType === 'yAxis');
+    (layout === 'vertical' && axisType === 'xAxis') ||
+    (layout === 'horizontal' && axisType === 'yAxis') ||
+    (layout === 'radial' && axisType === 'angleAxis') ||
+    (layout === 'centric' && axisType === 'radiusAxis');
 
   const mergedDomains = shouldIncludeDomainOfStackGroups
     ? mergeDomains(domainOfStackGroups, referenceElementsDomain, dataAndErrorBarsDomain)
@@ -1242,6 +1295,23 @@ export const combineAxisDomain = (
   return numericalDomain;
 };
 
+// Hidden stacked items count too, so hiding the stacked series does not move the axis.
+export const combineStackOffsetTypeOfAxis = <T extends GraphicalItemSettings>(
+  stackOffsetType: StackOffsetType,
+  graphicalItems: ReadonlyArray<T>,
+  axisPredicate: (item: T) => boolean,
+): StackOffsetType =>
+  graphicalItems.some(item => axisPredicate(item) && isStackedGraphicalItem(item)) ? stackOffsetType : 'none';
+
+const selectStackOffsetTypeOfAxis: (
+  state: RechartsRootState,
+  axisType: AllAxisTypes,
+  axisId: AxisId,
+) => StackOffsetType = createSelector(
+  [selectStackOffsetType, selectUnfilteredCartesianItems, selectAxisPredicate],
+  combineStackOffsetTypeOfAxis,
+);
+
 export const selectAxisDomain: (
   state: RechartsRootState,
   axisType: AllAxisTypes,
@@ -1253,7 +1323,7 @@ export const selectAxisDomain: (
     selectChartLayout,
     selectDisplayedData,
     selectAllAppliedValues,
-    selectStackOffsetType,
+    selectStackOffsetTypeOfAxis,
     pickAxisType,
     selectNumericalDomain,
   ],
@@ -1547,6 +1617,9 @@ export const selectXAxisRange: (
   },
 );
 
+/**
+ * @public
+ */
 export type AxisRange = readonly [number, number];
 
 export const selectYAxisRange: (
@@ -2068,10 +2141,9 @@ export const combineAxisTicks = (
 
   let offset = type === 'category' && scale.bandwidth ? scale.bandwidth() / offsetForBand : 0;
 
-  offset =
-    axisType === 'angleAxis' && axisRange != null && axisRange.length >= 2
-      ? mathSign(axisRange[0] - axisRange[1]) * 2 * offset
-      : offset;
+  if (axisType === 'angleAxis' && axisRange != null && axisRange.length >= 2) {
+    offset = axisRange[0] > axisRange[1] ? 2 * offset : 0;
+  }
 
   // The ticks set by user should only affect the ticks adjacent to axis line
   const ticksOrNiceTicks = ticks || niceTicks;

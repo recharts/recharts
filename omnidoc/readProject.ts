@@ -191,6 +191,62 @@ export class ProjectDocReader implements DocReader {
     return getTagText(jsdoc, 'since')?.text;
   }
 
+  /**
+   * Returns true when the declaration behind a top-level export carries a `@public` JSDoc tag.
+   * See `public-tag.spec.ts`.
+   */
+  isMarkedPublic(exportName: string): boolean {
+    return hasTag(this.getComponentJsDocMeta(exportName), 'public');
+  }
+
+  /**
+   * Returns every declaration in `src` that carries a `@public` JSDoc tag but is not exported
+   * from src/index.ts, as `name (path:line)`. See `public-tag.spec.ts`.
+   */
+  getPublicTaggedDeclarationsNotExported(): ReadonlyArray<string> {
+    // Compare symbols, not nodes: an overloaded function has one symbol but several declarations.
+    const exportedSymbols = new Set<TsMorphSymbol>();
+    for (const declarations of this.getExportedDeclarations().values()) {
+      for (const declaration of declarations) {
+        const symbol = declaration.getSymbol();
+        if (symbol) {
+          exportedSymbols.add(symbol);
+        }
+      }
+    }
+
+    const srcDir = `${this.project.getDirectoryOrThrow('src').getPath()}/`;
+    const result: string[] = [];
+    for (const sourceFile of this.project.getSourceFiles()) {
+      if (!sourceFile.getFilePath().startsWith(srcDir)) {
+        continue;
+      }
+      sourceFile.forEachDescendant(node => {
+        if (!Node.isJSDocable(node)) {
+          return;
+        }
+        const isTaggedPublic = node
+          .getJsDocs()
+          .some(jsDoc => jsDoc.getTags().some(tag => tag.getTagName() === 'public'));
+        if (!isTaggedPublic) {
+          return;
+        }
+        // The JSDoc of `export const X = ...` sits on the statement, the symbol on the declaration.
+        const declarations = Node.isVariableStatement(node) ? node.getDeclarations() : [node];
+        const isExported = declarations.some(declaration => {
+          const symbol = declaration.getSymbol();
+          return symbol != null && exportedSymbols.has(symbol);
+        });
+        if (!isExported) {
+          const name = declarations[0].getSymbol()?.getName() ?? node.getKindName();
+          const path = sourceFile.getFilePath().slice(srcDir.length - 'src/'.length);
+          result.push(`${name} (${path}:${node.getStartLineNumber()})`);
+        }
+      });
+    }
+    return result;
+  }
+
   private getComponentDeclaration(component: string): ExportedDeclarations {
     const exportedDeclarations = this.getExportedDeclarations();
 

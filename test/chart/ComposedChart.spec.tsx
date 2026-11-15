@@ -7,6 +7,10 @@ import { mockGetBoundingClientRect } from '../helper/mockGetBoundingClientRect';
 import { useChartHeight, useChartWidth, useViewBox } from '../../src/context/chartLayoutContext';
 
 import { useClipPathId } from '../../src/container/ClipPathProvider';
+import { expectBars } from '../helper/expectBars';
+import { expectLines } from '../helper/expectLine';
+import { expectAreaCurve } from '../helper/expectAreaCurve';
+import { expectXAxisTicks } from '../helper/expectAxisTicks';
 
 describe('<ComposedChart />', () => {
   const data = [
@@ -77,6 +81,33 @@ describe('<ComposedChart />', () => {
 
     expect(container.querySelectorAll('.recharts-tooltip-cursor')).toHaveLength(1);
     expect(container.querySelectorAll('.recharts-active-dot')).toHaveLength(2);
+  });
+
+  test('should draw each point on the tick of its own category when a row has no category', () => {
+    const dataWithMissingCategory = [{ name: 'A', uv: 10 }, { uv: 20 }, { name: 'C', uv: 30 }, { name: 'D', uv: 40 }];
+    const { container } = render(
+      <ComposedChart width={400} height={300} data={dataWithMissingCategory}>
+        <XAxis dataKey="name" />
+        <YAxis domain={[0, 40]} />
+        <Bar dataKey="uv" isAnimationActive={false} />
+        <Line dataKey="uv" isAnimationActive={false} />
+        <Area dataKey="uv" isAnimationActive={false} />
+      </ComposedChart>,
+    );
+
+    expectXAxisTicks(container, [
+      { textContent: 'A', x: '120', y: '273' },
+      { textContent: 'C', x: '230', y: '273' },
+      { textContent: 'D', x: '340', y: '273' },
+    ]);
+    // 10 on A, 30 on C, 40 on D; the row with no category is not drawn
+    expectBars(container, [
+      { x: '76', y: '200', width: '88', height: '65', radius: '0', d: 'M 76,200 h 88 v 65 h -88 Z' },
+      { x: '186', y: '70', width: '88', height: '195', radius: '0', d: 'M 186,70 h 88 v 195 h -88 Z' },
+      { x: '296', y: '5', width: '88', height: '260', radius: '0', d: 'M 296,5 h 88 v 260 h -88 Z' },
+    ]);
+    expectLines(container, [{ d: 'M120,200ZM230,70L340,5' }]);
+    expectAreaCurve(container, [{ d: 'M120,200ZM230,70L340,5' }]);
   });
 
   describe('ComposedChart layout context', () => {

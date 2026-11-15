@@ -1,3 +1,4 @@
+import { readEntryFill } from '../../../fill/fillDefinitions';
 import {
   TooltipEntrySettings,
   TooltipIndex,
@@ -64,7 +65,8 @@ function parseTooltipPayloadItem(item: unknown): TooltipPayloadItemLike | undefi
   const dataKey = 'dataKey' in item ? parseDataKey(item.dataKey) : undefined;
   const payload = 'payload' in item ? item.payload : undefined;
   const color = 'color' in item ? parseColor(item.color) : undefined;
-  const fill = 'fill' in item ? parseColor(item.fill) : undefined;
+  // a fill object in the data counts by its color
+  const fill = readEntryFill(item).color;
   const stroke = 'stroke' in item ? parseColor(item.stroke) : undefined;
 
   return {

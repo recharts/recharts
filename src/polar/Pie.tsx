@@ -85,7 +85,18 @@ import {
   useDataLabelThemeResolver,
   useIndexedLabelThemeResolver,
 } from '../theme/labelTheme';
-import { RechartsTheme, Styles2D } from '../theme/RechartsTheme';
+import { RechartsTheme } from '../theme/RechartsTheme';
+import { ColorGraphicalItemStyle, ColorStyles2D, getColorGraphicalItems } from '../theme/themeFill';
+import { RechartsFill } from '../fill/RechartsFill';
+import {
+  FillObjectDefinition,
+  getEntryFillId,
+  getFillUrl,
+  getIndexedEntryFillObject,
+  readEntryFill,
+  splitFill,
+  useThemeFillObjects,
+} from '../fill/fillDefinitions';
 import { useBackwardsCompatibleTheme } from '../theme/useBackwardsCompatibleTheme';
 import { getOwnStyles, hasOwnColors, withoutColors } from '../theme/dataEntryStyles';
 import { getActiveStyleOverrides } from '../theme/activeStyles';
@@ -153,6 +164,9 @@ interface PieDef {
   cornerRadius?: number | string;
 }
 
+/**
+ * @public
+ */
 export type PieLabelLine =
   ReactElement<SVGElement> | ((props: any) => ReactElement<SVGElement>) | SVGProps<SVGPathElement> | boolean;
 
@@ -166,15 +180,22 @@ interface PieLabelExtraProps {
   background?: boolean | TextBackgroundProps;
 }
 
+/**
+ * @public
+ */
 export type PieLabelRenderProps = Omit<SVGPropsNoEvents<PieSvgAttributes>, 'offset'> &
   Omit<PieSectorDataItem, 'offset'> &
   PieLabelExtraProps &
   Coordinate;
 
+/**
+ * @public
+ */
 export type LabelListPropsWithPosition = LabelListProps & { position: LabelListProps['position'] };
 
 /**
  * The `label` prop in Pie accepts a variety of alternatives.
+ * @public
  */
 export type PieLabel =
   /*
@@ -225,6 +246,7 @@ export type PieSectorData = GeometrySector &
  *
  * https://github.com/recharts/recharts/issues/6380
  * https://github.com/recharts/recharts/discussions/6375
+ * @public
  */
 export type PieSectorDataItem = PiePresentationProps &
   PieCoordinate &
@@ -232,6 +254,9 @@ export type PieSectorDataItem = PiePresentationProps &
     cornerRadius: number | undefined;
   };
 
+/**
+ * @public
+ */
 export type PieSectorShapeProps = PieSectorDataItem &
   ShapeAnimationProps & {
     [DATA_ITEM_INDEX_ATTRIBUTE_NAME]: number;
@@ -239,6 +264,9 @@ export type PieSectorShapeProps = PieSectorDataItem &
     isActive: boolean;
     index: number;
   } & SVGProps<SVGPathElement>;
+/**
+ * @public
+ */
 export type PieShape = ActiveShape<PieSectorShapeProps, SVGPathElement>;
 
 interface PieEvents {
@@ -285,6 +313,10 @@ interface PieEvents {
 interface InternalPieProps extends PropsWithResolvedDefaults {
   id: GraphicalItemId;
   sectors: ReadonlyArray<PieSectorDataItem>;
+  /**
+   * `url(#…)` of the fill definition of each sector, by index. Undefined for sectors with a plain color.
+   */
+  sectorPaintFills?: ReadonlyArray<string | undefined>;
 }
 
 /**
@@ -295,6 +327,21 @@ interface InternalPieProps extends PropsWithResolvedDefaults {
  */
 export interface PieProps<DataPointType = any, DataValueType = any>
   extends DataProvider<DataPointType>, DataConsumer<DataPointType, DataValueType>, PieDef, PieEvents, ZIndexable {
+  /**
+   * The fill of the sectors. Either a color string, or a {@link RechartsFill} object with an SVG definition,
+   * such as a pattern or a gradient.
+   *
+   * Each sector can have its own fill too: set `fill` in its data entry, to a color or to a fill object.
+   * The data entry wins over this prop, and both win over the theme.
+   *
+   * With a fill object, Recharts renders the definition with a unique ID for each sector,
+   * in the chart and in the Legend icons. Tooltip and labels use the solid `color` of the fill object.
+   * If the fill object has no `color`, the sectors keep the theme colors and the definition gets the theme color.
+   *
+   * @example <Pie fill={{ definition: pattern(patterns.diagonal) }} />
+   * @example <Pie data={[{ value: 1, fill: { definition: pattern(patterns.star) } }]} />
+   */
+  fill?: string | RechartsFill;
   /**
    * This component is rendered when this graphical item is activated
    * (could be by mouse hover, touch, keyboard, programmatically).
@@ -464,10 +511,13 @@ export interface PieProps<DataPointType = any, DataValueType = any>
   zIndex?: number;
 }
 
-type PieSvgAttributes = Omit<PresentationAttributesAdaptChildEvent<any, SVGElement>, 'ref' | keyof PieEvents>;
+type PieSvgAttributes = Omit<PresentationAttributesAdaptChildEvent<any, SVGElement>, 'ref' | 'fill' | keyof PieEvents>;
 
 type InternalProps = PieSvgAttributes & InternalPieProps;
 
+/**
+ * @public
+ */
 export type Props<DataPointType = any, DataValueType = any> = PieSvgAttributes & PieProps<DataPointType, DataValueType>;
 
 type RealPieData = Record<string, unknown>;
@@ -482,12 +532,17 @@ export type PieCoordinate = {
 
 const defaultPieSectorShape = Sector;
 
+/**
+ * Props after the fill object is split off: `fill` is the base color.
+ */
+type StringFillProps = Omit<Props, 'fill'> & { fill?: string };
+
 type PieStyleProps = Pick<
-  Props,
+  StringFillProps,
   'fill' | 'fillOpacity' | 'stroke' | 'strokeOpacity' | 'strokeWidth' | 'strokeDasharray'
 >;
 
-type PieGraphicalItems = RechartsTheme['graphicalItems'];
+type PieGraphicalItems = ReadonlyArray<ColorGraphicalItemStyle>;
 
 /**
  * Resolves the styles of a single sector when a theme is present.
@@ -506,12 +561,14 @@ function getThemedPieStyles(
   index: number,
   graphicalItems: PieGraphicalItems,
   explicitStyleProps: PieStyleProps,
-): Styles2D | undefined {
+): ColorStyles2D | undefined {
   const graphicalItemStyle = graphicalItems[index % graphicalItems.length];
   if (graphicalItemStyle == null) {
     return undefined;
   }
-  const entryStyles: Styles2D = payload != null && typeof payload === 'object' ? payload : {};
+  // A fill object in the data entry counts by its color only, so one without a color keeps the theme colors
+  const entryStyles: ColorStyles2D =
+    payload != null && typeof payload === 'object' ? { ...payload, fill: readEntryFill(payload).color } : {};
 
   // The data entry wins over the Pie props, and both win over the theme.
   const ownStyles = { ...getOwnStyles(explicitStyleProps), ...getOwnStyles(entryStyles) };
@@ -535,7 +592,7 @@ function getThemedPieStyles(
  * Legend and Tooltip show a single color for each sector.
  * Pie sectors are primarily filled, so the fill wins. A sector that has no fill shows its stroke instead.
  */
-function getPieEntryColor(styles: Styles2D): string | undefined {
+function getPieEntryColor(styles: ColorStyles2D): string | undefined {
   return styles.fill && styles.fill !== 'none' ? styles.fill : styles.stroke;
 }
 
@@ -565,8 +622,10 @@ function SetPiePayloadLegend(props: {
   id: GraphicalItemId;
   graphicalItems: PieGraphicalItems;
   explicitStyleProps: PieStyleProps;
+  pieFillObject: RechartsFill | undefined;
 }) {
   const cells = useMemo(() => findAllByType(props.children, Cell), [props.children]);
+  const themeFillObjects = useThemeFillObjects();
 
   const legendPayload = useAppSelector(state => selectPieLegend(state, props.id, cells));
   if (legendPayload == null) {
@@ -574,16 +633,19 @@ function SetPiePayloadLegend(props: {
   }
 
   const themedLegendPayload = legendPayload.map((entry, index) => {
-    const styles = getThemedPieStyles(
-      { ...entry.payload, ...cells?.[index]?.props },
+    const payloadWithCell = { ...entry.payload, ...cells?.[index]?.props };
+    const fill = getIndexedEntryFillObject(
+      payloadWithCell,
       index,
-      props.graphicalItems,
-      props.explicitStyleProps,
+      props.pieFillObject,
+      themeFillObjects,
+      hasOwnColors(props.explicitStyleProps),
     );
+    const styles = getThemedPieStyles(payloadWithCell, index, props.graphicalItems, props.explicitStyleProps);
     if (styles == null) {
-      return entry;
+      return fill == null ? entry : { ...entry, fill };
     }
-    return { ...entry, color: getPieEntryColor(styles) };
+    return { ...entry, color: getPieEntryColor(styles), fill };
   });
 
   return <SetPolarLegendPayload legendPayload={themedLegendPayload} />;
@@ -605,7 +667,7 @@ type PieSectorsProps = ShapeAnimationProps & {
   /**
    * Theme `active` styles of each sector, by index. Without the theme colors if the Pie has its own colors.
    */
-  indexedActiveStyles: ReadonlyArray<Styles2D | undefined>;
+  indexedActiveStyles: ReadonlyArray<ColorStyles2D | undefined>;
 };
 
 function getActiveShapeFill(activeShape: ActiveShape<Readonly<PieSectorDataItem>> | undefined): string | undefined {
@@ -930,9 +992,23 @@ function PieSectors(props: PieSectorsProps) {
           (activeDataKey == null || allOtherPieProps.dataKey === activeDataKey) &&
           graphicalItemMatches;
         const inactiveShape = activeIndex ? inactiveShapeProp : null;
-        const sectorOptions = activeShape && isActive ? activeShape : inactiveShape;
+        /*
+         * Same as `activeBar` in Bar: `activeShape={true}` renders the `shape`,
+         * so a custom `shape` renders the active sector too, and it decides on its own how the active state looks like.
+         */
+        let option: ActiveShape<PieSectorShapeProps, SVGPathElement> | ActiveShape<Readonly<PieSectorDataItem>>;
+        let usesInactiveShape = false;
+        if (isActive && activeShape) {
+          option = activeShape === true ? shape : activeShape;
+        } else if (inactiveShape != null) {
+          option = inactiveShape;
+          usesInactiveShape = true;
+        } else {
+          option = shape;
+        }
         const sectorProps: PieSectorShapeProps = {
           ...entry,
+          fill: allOtherPieProps.sectorPaintFills?.[i] ?? entry.fill,
           stroke: entry.stroke,
           tabIndex: -1,
           index: i,
@@ -944,15 +1020,18 @@ function PieSectors(props: PieSectorsProps) {
           [DATA_ITEM_GRAPHICAL_ITEM_ID_ATTRIBUTE_NAME]: id,
         };
         /*
-         * Without `activeShape` and `inactiveShape`, the active sector renders the default shape too.
+         * The theme active styles only apply to the default sector, or to an `activeShape` object on top of it.
+         * A custom `shape` or `activeShape` (function or element) receives none of them,
+         * and neither does the deprecated `inactiveShape` when it renders the active sector.
          */
-        const activeStyleOverrides = isActive
-          ? getActiveStyleOverrides(
-              activeShape || sectorOptions == null,
-              indexedActiveStyles[i % indexedActiveStyles.length],
-              entry.payload,
-            )
-          : undefined;
+        const activeStyleOverrides =
+          isActive && !usesInactiveShape
+            ? getActiveStyleOverrides(
+                option === defaultPieSectorShape ? true : option,
+                indexedActiveStyles[i % indexedActiveStyles.length],
+                entry.payload,
+              )
+            : undefined;
         const activeSectorProps: PieSectorShapeProps =
           activeStyleOverrides == null ? sectorProps : { ...sectorProps, ...activeStyleOverrides };
 
@@ -967,7 +1046,7 @@ function PieSectors(props: PieSectorsProps) {
             onClick={onClickFromContext(entry, i)}
           >
             <Shape<PieSectorShapeProps, SVGPathElement>
-              option={sectorOptions ?? shape}
+              option={option}
               DefaultShape={defaultPieSectorShape}
               shapeProps={activeSectorProps}
             />
@@ -1042,10 +1121,8 @@ export function computePieSectors({
       // The raw entry, id included, stays available through `payload`.
       const entryWithoutId = { ...entryWithCellInfo };
       delete entryWithoutId.id;
-      const sectorColor =
-        entryWithCellInfo != null && 'fill' in entryWithCellInfo && typeof entryWithCellInfo.fill === 'string'
-          ? entryWithCellInfo.fill
-          : pieSettings.fill;
+      const entryFill = readEntryFill(entryWithCellInfo);
+      const sectorColor = entryFill.color ?? pieSettings.fill;
 
       // Leading zero values take no space, so the first visible sector gets no padding in front of it.
       const isFirstAfterLeadingZeros = i > 0 && i === firstNonZeroIndex;
@@ -1087,6 +1164,8 @@ export function computePieSectors({
         middleRadius,
         tooltipPosition,
         ...entryWithoutId,
+        // a fill object from the data paints the sector later; the sector itself keeps its base color
+        ...(entryFill.fillObject == null ? undefined : { fill: sectorColor }),
         ...coordinate,
         value: val,
         dataKey,
@@ -1143,6 +1222,7 @@ type WithoutId<T> = Omit<T, 'id'>;
 type PieImplProps = WithIdRequired<PropsWithResolvedDefaults> & {
   graphicalItems: PieGraphicalItems;
   explicitStyleProps: PieStyleProps;
+  pieFillObject: RechartsFill | undefined;
 };
 
 const defaultPieAnimateItems: AnimationInterpolateFn<PieSectorDataItem, PolarLayout> = (
@@ -1203,7 +1283,7 @@ function SectorsWithAnimation({
   previousSectorsRef: MutableRefObject<ReadonlyArray<PieSectorDataItem> | null>;
   id: GraphicalItemId;
   graphicalItems: PieGraphicalItems;
-  indexedActiveStyles: ReadonlyArray<Styles2D | undefined>;
+  indexedActiveStyles: ReadonlyArray<ColorStyles2D | undefined>;
 }) {
   const { sectors, activeShape, inactiveShape, animationInterpolateFn } = props;
   const resolveLabelTheme = useIndexedLabelThemeResolver(graphicalItems);
@@ -1302,8 +1382,9 @@ export const defaultPieProps = {
 } as const satisfies Partial<Props>;
 
 function PieImpl(props: PieImplProps) {
-  const { id, graphicalItems, explicitStyleProps, ...propsWithoutId } = props;
+  const { id, graphicalItems, explicitStyleProps, pieFillObject, ...propsWithoutId } = props;
   const { hide, className, rootTabIndex } = props;
+  const themeFillObjects = useThemeFillObjects();
 
   const cells = useMemo(() => findAllByType(props.children, Cell), [props.children]);
   // The theme active colors go with the theme colors, so a Pie with its own colors drops them in the active state too.
@@ -1327,6 +1408,12 @@ function PieImpl(props: PieImplProps) {
   const themedSectors = sectors.map((sector, index) =>
     getThemedPieSector(sector, index, graphicalItems, explicitStyleProps),
   );
+  const sectorFillObjects = themedSectors.map((sector, index) =>
+    getIndexedEntryFillObject(sector.payload, index, pieFillObject, themeFillObjects, hasExplicitColors),
+  );
+  const sectorPaintFills = sectorFillObjects.map((fillObject, index) =>
+    fillObject == null ? undefined : getFillUrl(getEntryFillId(id, index)),
+  );
   // The legacy default fill and stroke never apply together with a theme, and that is true in the Tooltip too.
   const isThemed = graphicalItems.length > 0;
 
@@ -1347,8 +1434,23 @@ function PieImpl(props: PieImplProps) {
         activeShape={props.activeShape}
       />
       <Layer tabIndex={rootTabIndex} className={layerClass}>
+        {sectorFillObjects.some(fillObject => fillObject != null) && (
+          <defs>
+            {sectorFillObjects.map((fillObject, index) =>
+              fillObject == null ? null : (
+                <FillObjectDefinition
+                  // the sector index is the identity of its definition
+                  key={index}
+                  id={getEntryFillId(id, index)}
+                  fillObject={fillObject}
+                  color={themedSectors[index]?.fill}
+                />
+              ),
+            )}
+          </defs>
+        )}
         <SectorsWithAnimation
-          props={{ ...propsWithoutId, sectors: themedSectors }}
+          props={{ ...propsWithoutId, sectors: themedSectors, sectorPaintFills }}
           previousSectorsRef={previousSectorsRef}
           id={id}
           graphicalItems={graphicalItems}
@@ -1359,14 +1461,17 @@ function PieImpl(props: PieImplProps) {
   );
 }
 
-type PropsWithResolvedDefaults = RequiresDefaultProps<Props, typeof defaultPieProps>;
+type PropsWithResolvedDefaults = RequiresDefaultProps<StringFillProps, typeof defaultPieProps>;
 
 /**
  * @consumes PolarChartContext
  * @provides LabelListContext
  * @provides CellReader
  */
-function PieFn(outsideProps: Props) {
+function PieFn(propsWithFillObject: Props) {
+  const { color: fillColor, fillObject: pieFillObject } = splitFill(propsWithFillObject.fill);
+  // From here on, `fill` is the base color
+  const outsideProps: StringFillProps = { ...propsWithFillObject, fill: fillColor };
   const props: PropsWithResolvedDefaults = resolveDefaultProps(outsideProps, defaultPieProps);
   const theme = useBackwardsCompatibleTheme<Partial<Pick<RechartsTheme, 'graphicalItems'>>>(
     (rechartsTheme: RechartsTheme) => ({ graphicalItems: rechartsTheme.graphicalItems }),
@@ -1416,20 +1521,25 @@ function PieFn(outsideProps: Props) {
           <SetPiePayloadLegend
             {...propsWithoutId}
             id={id}
-            graphicalItems={theme?.graphicalItems ?? []}
+            graphicalItems={getColorGraphicalItems(theme?.graphicalItems) ?? []}
             explicitStyleProps={explicitStyleProps}
+            pieFillObject={pieFillObject}
           />
           <PieImpl
             {...propsWithoutId}
             id={id}
-            graphicalItems={theme?.graphicalItems ?? []}
+            graphicalItems={getColorGraphicalItems(theme?.graphicalItems) ?? []}
             explicitStyleProps={explicitStyleProps}
+            pieFillObject={pieFillObject}
           />
         </>
       )}
     </RegisterGraphicalItemId>
   );
 }
+/**
+ * @public
+ */
 export const Pie = PieFn as {
   <DataPointType = any, DataValueType = any>(outsideProps: Props<DataPointType, DataValueType>): ReactElement;
   (outsideProps: Props<any, any>): ReactElement;

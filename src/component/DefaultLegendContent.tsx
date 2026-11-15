@@ -15,14 +15,34 @@ import {
 import { RequiresDefaultProps, resolveDefaultProps } from '../util/resolveDefaultProps';
 import { RechartsTheme } from '../theme/RechartsTheme';
 import { useBackwardsCompatibleTheme } from '../theme/useBackwardsCompatibleTheme';
+import { RechartsFill } from '../fill/RechartsFill';
+import { getFillUrl } from '../fill/fillDefinitions';
+import { useUniqueId } from '../util/useUniqueId';
 
 const SIZE = 32;
+/**
+ * Fill definitions in an icon paint the whole icon, so they get its size.
+ */
+const ICON_BOUNDS = { width: SIZE, height: SIZE };
+
+/**
+ * @public
+ */
 export type ContentType = ReactElement | ((props: Props) => ReactNode);
 
+/**
+ * @public
+ */
 export type HorizontalAlignmentType = 'center' | 'left' | 'right';
+/**
+ * @public
+ */
 export type VerticalAlignmentType = 'top' | 'bottom' | 'middle';
 export type Formatter = (value: any, entry: LegendPayload, index: number) => ReactNode;
 
+/**
+ * @public
+ */
 export interface LegendPayload {
   /**
    * This is the text that will be displayed in the legend in the DOM.
@@ -45,12 +65,21 @@ export interface LegendPayload {
    * The legend icon then draws the same symbol, with the same colors as the dots.
    */
   dot?: LegendPayloadDot;
+  /**
+   * The fill object of the graphical item, if it paints its shapes with an SVG definition.
+   * The `rect` icon, and the icons of filled symbols, draw the same definition with the base color in `color`.
+   * Inactive items draw the plain inactive color.
+   *
+   * @since 3.11
+   */
+  fill?: RechartsFill;
 }
 
 /**
  * The dots that a graphical item draws at its data points, as the legend icon needs them.
  *
  * @since 3.11
+ * @public
  */
 export interface LegendPayloadDot {
   /**
@@ -165,6 +194,9 @@ interface DefaultLegendContentProps {
   labelStyle?: CSSProperties;
 }
 
+/**
+ * @public
+ */
 export type Props = DefaultLegendContentProps &
   Omit<PresentationAttributesForHTML<LegendPayload, ReactElement>, keyof DefaultLegendContentProps>;
 
@@ -308,9 +340,28 @@ function Icon({
   const thirdSize = SIZE / 3;
   const color = data.inactive ? inactiveColor : data.color;
   const preferredIcon = iconType ?? data.type;
+  const fillId = useUniqueId('recharts-legend-fill');
+  const fillObject = data.inactive ? undefined : data.fill;
 
   if (preferredIcon === 'none') {
     return null;
+  }
+
+  /*
+   * Filled icons paint with the fill definition of the graphical item.
+   * The definition lives in this icon, so it does not depend on IDs elsewhere in the page.
+   * The definition gets the size of the icon, so that patterns can scale their tiles to it.
+   */
+  let areaFill = color;
+  let fillDefinition: ReactNode = null;
+  if (fillObject != null) {
+    const FillDefinition = fillObject.definition;
+    areaFill = getFillUrl(fillId);
+    fillDefinition = (
+      <defs>
+        <FillDefinition id={fillId} color={color} bounds={ICON_BOUNDS} />
+      </defs>
+    );
   }
   if (preferredIcon === 'plainline') {
     return (
@@ -347,17 +398,22 @@ function Icon({
   }
   if (preferredIcon === 'rect') {
     return (
-      <path
-        stroke="none"
-        fill={color}
-        d={`M0,${SIZE / 8}h${SIZE}v${(SIZE * 3) / 4}h${-SIZE}z`}
-        className="recharts-legend-icon"
-      />
+      <>
+        {fillDefinition}
+        <path
+          stroke="none"
+          fill={areaFill}
+          d={`M0,${SIZE / 8}h${SIZE}v${(SIZE * 3) / 4}h${-SIZE}z`}
+          className="recharts-legend-icon"
+        />
+      </>
     );
   }
   if (React.isValidElement(data.legendIcon)) {
     const iconProps: any = { ...data };
     delete iconProps.legendIcon;
+    // the fill object is for the built-in icons; it is not a valid SVG paint
+    delete iconProps.fill;
     return React.cloneElement(data.legendIcon, iconProps);
   }
 
@@ -365,7 +421,12 @@ function Icon({
     return <DotSymbolIcon dot={data.dot} color={color} dotColors={dotColors} />;
   }
 
-  return <Symbols fill={color} cx={halfSize} cy={halfSize} size={SIZE} sizeType="diameter" type={preferredIcon} />;
+  return (
+    <>
+      {fillDefinition}
+      <Symbols fill={areaFill} cx={halfSize} cy={halfSize} size={SIZE} sizeType="diameter" type={preferredIcon} />
+    </>
+  );
 }
 
 function Items(props: InternalProps) {
@@ -420,6 +481,7 @@ function Items(props: InternalProps) {
  *
  * You can use this component to customize the content of the legend,
  * or you can provide your own completely independent content.
+ * @public
  */
 export const DefaultLegendContent = (outsideProps: Props) => {
   const theme = useBackwardsCompatibleTheme<Pick<RechartsTheme, 'typography' | 'legend'>>(

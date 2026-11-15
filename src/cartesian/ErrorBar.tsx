@@ -35,6 +35,7 @@ export interface ErrorBarDataItem {
  * Except! In Scatter chart, error bars can go both ways.
  *
  * So this property is only ever used in Scatter chart, and ignored elsewhere.
+ * @public
  */
 export type ErrorBarDirection = 'x' | 'y';
 
@@ -102,6 +103,9 @@ interface ErrorBarProps<DataPointType = any, DataValueType = any> extends ZIndex
   zIndex?: number;
 }
 
+/**
+ * @public
+ */
 export type Props = SVGProps<SVGLineElement> & ErrorBarProps;
 
 /**
@@ -298,6 +302,7 @@ export const errorBarDefaultProps = {
  * as the reference point for calculating the error bar positions.
  *
  * @consumes ErrorBarContext
+ * @public
  */
 export function ErrorBar(outsideProps: Props) {
   const realDirection: ErrorBarDirection = useErrorBarDirection(outsideProps.direction);

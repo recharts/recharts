@@ -4,7 +4,7 @@ import { SupportedLocale, supportedLocales } from './locale';
 import { defaultLocale, localeGet, useLocale } from './utils/LocaleUtils';
 import { apiCates } from './docs/apiCates';
 import { allExamples } from './docs/exampleComponents';
-import { allGuides } from './views/GuideView';
+import { guidesBySection } from './views/GuideView';
 
 /**
  * Represents a single navigation link in the navigation menu.
@@ -52,25 +52,27 @@ export type NavCategory = {
    * A preview component to be displayed alongside the navigation items in this category.
    */
   NavPreview: null | ((props: { isAnimationActive?: boolean }) => ReactNode);
+  /**
+   * If true, the category heading is a link to the first item in the category.
+   * If false, the heading is a plain label for a group of items.
+   */
+  headingLinksToFirstItem: boolean;
 };
 
 export type Navigation = ReadonlyArray<NavItem>;
 
 function guideNavItems(locale: SupportedLocale): ReadonlyArray<NavCategory> {
-  const items = allGuides.map(name => ({
-    key: name,
-    displayName: localeGet(locale, 'guide', name),
-    url: `/${locale}/guide/${name}/`,
+  return guidesBySection.map(({ section, guides }): NavCategory => ({
+    key: section,
+    displayName: localeGet(locale, 'guideSections', section),
+    items: guides.map(name => ({
+      key: name,
+      displayName: localeGet(locale, 'guide', name),
+      url: `/${locale}/guide/${name}/`,
+    })),
+    NavPreview: null,
+    headingLinksToFirstItem: false,
   }));
-  // The "Guide" page has only one category, without any names. As we add more categories in the future, we will adjust this.
-  return [
-    {
-      key: 'guide',
-      displayName: '',
-      items,
-      NavPreview: null,
-    },
-  ];
 }
 
 function apiNavItems(locale: SupportedLocale): ReadonlyArray<NavCategory> {
@@ -83,6 +85,7 @@ function apiNavItems(locale: SupportedLocale): ReadonlyArray<NavCategory> {
       url: `/${locale}/api/${compName}/`,
     })),
     NavPreview: null,
+    headingLinksToFirstItem: true,
   }));
 }
 
@@ -97,6 +100,7 @@ function exampleNavItems(locale: SupportedLocale): ReadonlyArray<NavCategory> {
       url: `/${locale}/examples/${name}/`,
     })),
     NavPreview: category.NavPreview,
+    headingLinksToFirstItem: true,
   }));
 }
 

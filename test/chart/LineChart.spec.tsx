@@ -5,6 +5,7 @@ import { generateMockData } from '@recharts/devtools';
 import {
   Brush,
   CartesianGrid,
+  DotItemDotProps,
   LabelProps,
   Legend,
   Line,
@@ -14,9 +15,10 @@ import {
   Tooltip,
   XAxis,
   YAxis,
+  CurveType,
+  DataKey,
 } from '../../src';
 import { assertNotNull } from '../helper/assertNotNull';
-import { CurveType } from '../../src/shape/Curve';
 import { lineChartMouseHoverTooltipSelector } from '../component/Tooltip/tooltipMouseHoverSelectors';
 import { PageData } from '../_data';
 import { expectXAxisTicks } from '../helper/expectAxisTicks';
@@ -575,7 +577,7 @@ describe('<LineChart />', () => {
   });
 
   test('Renders 6 dots when dot is a function', () => {
-    const renderDot = (props: any) => {
+    const renderDot = (props: DotItemDotProps) => {
       const { cx, cy, key } = props;
 
       return <circle className="customized-dot" key={key} cx={cx} cy={cy} r={10} />;
@@ -1855,5 +1857,40 @@ describe('<LineChart /> with dataKey as a function', () => {
     expect(dataKey2Spy).toHaveBeenCalledTimes(data2.length * 7);
     expect(dataKey2Spy).toHaveBeenNthCalledWith(1, data2[0]);
     expect(dataKey2Spy).toHaveBeenLastCalledWith(data2[2]);
+  });
+});
+
+describe('<LineChart /> with repeated categories and allowDuplicatedCategory=false', () => {
+  type MyDataType = {
+    name: string;
+    category: { name: string };
+    0: string;
+    value: number;
+  };
+  const data: ReadonlyArray<MyDataType> = ['A', 'B', 'A'].map((name, index) => ({
+    name,
+    category: { name },
+    0: name,
+    value: index + 1,
+  }));
+
+  const accessors: ReadonlyArray<[string, DataKey<MyDataType, string>]> = [
+    ['a flat key', 'name'],
+    // @ts-expect-error the dot syntax of lodash is not typed well
+    ['a nested key', 'category.name'],
+    ['a function', entry => entry.category.name],
+    ['the numeric key 0', 0],
+  ];
+
+  test.each(accessors)('places every point on its category tick when XAxis dataKey is %s', (_, dataKey) => {
+    const { container } = render(
+      <LineChart width={500} height={300} data={data}>
+        <XAxis dataKey={dataKey} allowDuplicatedCategory={false} />
+        <Line dataKey="value" isAnimationActive={false} />
+      </LineChart>,
+    );
+
+    const dots = Array.from(container.querySelectorAll('.recharts-line-dot'));
+    expect(dots.map(dot => dot.getAttribute('cx'))).toEqual(['5', '495', '5']);
   });
 });

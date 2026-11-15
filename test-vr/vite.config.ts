@@ -31,6 +31,9 @@ export default defineConfig(({ command }) => ({
   },
   cacheDir: path.join(repoRoot, 'node_modules/.vite-test-vr'),
   optimizeDeps: {
+    // Keep chart hooks in the same module graph as the stories. Prebundling
+    // devtools also bundles a second copy of the aliased local Recharts context.
+    exclude: ['@recharts/devtools'],
     entries: ['gallery/index.html', 'gallery/preview.html', 'tests/**/*.story.tsx'],
   },
   resolve: {

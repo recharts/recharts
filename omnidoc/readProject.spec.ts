@@ -67,6 +67,7 @@ describe('readProject', () => {
         "dangerouslySetInnerHTML",
         "data",
         "dataKey",
+        "fill",
         "formatter",
         "hide",
         "id",
@@ -1042,6 +1043,7 @@ describe('readProject', () => {
       ['provides', 'ErrorBarContext'],
       ['provides', 'CellReader'],
       ['consumes', 'CartesianChartContext'],
+      ['public', undefined],
     ]);
   });
 

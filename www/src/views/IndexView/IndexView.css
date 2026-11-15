@@ -3,6 +3,13 @@
   flex-direction: column;
   align-items: center;
 
+  /* Blocks space their content with flex gap, so text keeps no default margins here. */
+  h1,
+  h2,
+  p {
+    margin: 0;
+  }
+
   .block {
     max-width: 1000px;
     padding: 50px 20px;
@@ -62,6 +69,9 @@
     margin-top: 60px;
 
     .feat {
+      margin: 0;
+      padding: 0;
+      list-style: none;
       display: flex;
       flex-direction: row;
       justify-content: space-between;
@@ -113,11 +123,13 @@
     max-width: 100%;
 
     .users {
+      margin: 0;
+      padding: 0;
+      list-style: none;
       width: 100%;
       max-width: 1600px;
-      overflow-x: auto;
       display: grid;
-      grid-template-columns: repeat(5, minmax(300px, 1fr));
+      grid-template-columns: repeat(auto-fill, minmax(min(240px, 100%), 1fr));
       gap: 20px;
 
       .user {

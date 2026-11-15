@@ -8,6 +8,9 @@ import {
   Line,
   LineChart,
   PieChart,
+  PolarRadiusAxis,
+  RadialBar,
+  RadialBarChart,
   ReferenceLine,
   Surface,
   YAxis,
@@ -689,6 +692,24 @@ describe('<Label />', () => {
           {},
         );
       });
+    });
+  });
+
+  describe('in PolarRadiusAxis', () => {
+    it('should render position=center in the center of the polar chart when cy is set', () => {
+      const { container } = rechartsTestRender(
+        <RadialBarChart width={500} height={500} data={data} cy="70%" startAngle={180} endAngle={0}>
+          <RadialBar dataKey="uv" />
+          <PolarRadiusAxis tick={false} axisLine={false}>
+            <Label position="center" value="center label" />
+          </PolarRadiusAxis>
+        </RadialBarChart>,
+      );
+
+      const label = container.querySelector('.recharts-label');
+      assertNotNull(label);
+      expect(label).toHaveAttribute('x', '250');
+      expect(label).toHaveAttribute('y', '350');
     });
   });
 

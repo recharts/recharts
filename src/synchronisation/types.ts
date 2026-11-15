@@ -1,10 +1,14 @@
 import { Coordinate, DataKey, TickItem } from '../util/types';
 import { TooltipIndex } from '../state/tooltipSlice';
 
+/**
+ * @public
+ */
 export type ActiveLabel = string | number | undefined;
 
 /**
  * Despite the name, this type is used for all event types, not just mouse events.
+ * @public
  */
 export type MouseHandlerDataParam = {
   /**
@@ -36,5 +40,6 @@ export type MouseHandlerDataParam = {
  * custom function: will receive two arguments and should return an index of the active tick in the current chart:
  * argument 1: ticks from the current chart
  * argument 2: active tooltip state from the other chart
+ * @public
  */
 export type SyncMethod = 'index' | 'value' | ((ticks: ReadonlyArray<TickItem>, data: MouseHandlerDataParam) => number);

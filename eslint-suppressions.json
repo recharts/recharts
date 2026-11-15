@@ -669,7 +669,7 @@
   },
   "src/theme/useGraphicalItemIdentity.ts": {
     "@typescript-eslint/no-explicit-any": {
-      "count": 3
+      "count": 2
     }
   },
   "src/util/ActiveShapeUtils.tsx": {
@@ -978,11 +978,6 @@
     },
     "@typescript-eslint/no-non-null-assertion": {
       "count": 2
-    }
-  },
-  "test/chart/LineChart.spec.tsx": {
-    "@typescript-eslint/no-explicit-any": {
-      "count": 1
     }
   },
   "test/chart/PieChart.spec.tsx": {
@@ -1436,21 +1431,6 @@
       "count": 3
     }
   },
-  "www/src/components/GuideView/Theming/CustomThemeExample.tsx": {
-    "react-perf/jsx-no-new-object-as-prop": {
-      "count": 2
-    }
-  },
-  "www/src/components/GuideView/Theming/NestedThemeExample.tsx": {
-    "react-perf/jsx-no-new-object-as-prop": {
-      "count": 2
-    }
-  },
-  "www/src/components/GuideView/Theming/ThemeSwitcherExample.tsx": {
-    "react-perf/jsx-no-new-object-as-prop": {
-      "count": 2
-    }
-  },
   "www/src/components/GuideView/TypeScript/Step1.tsx": {
     "react-perf/jsx-no-new-object-as-prop": {
       "count": 1
@@ -1818,11 +1798,6 @@
       "count": 2
     }
   },
-  "www/src/docs/exampleComponents/ErrorBar/ErrorBarExample.tsx": {
-    "react-perf/jsx-no-new-object-as-prop": {
-      "count": 2
-    }
-  },
   "www/src/docs/exampleComponents/Funnel/FunnelExample.tsx": {
     "react-perf/jsx-no-new-object-as-prop": {
       "count": 2
@@ -1867,11 +1842,6 @@
   },
   "www/src/docs/exampleComponents/Label/LabelRadialBarPositions.tsx": {
     "react-perf/jsx-no-new-function-as-prop": {
-      "count": 3
-    }
-  },
-  "www/src/docs/exampleComponents/LabelList/LabelListChartExample.tsx": {
-    "react-perf/jsx-no-new-object-as-prop": {
       "count": 3
     }
   },
@@ -2027,14 +1997,6 @@
       "count": 2
     }
   },
-  "www/src/docs/exampleComponents/PieChart/CustomActiveShapePieChart.tsx": {
-    "react-perf/jsx-no-new-function-as-prop": {
-      "count": 1
-    },
-    "react-perf/jsx-no-new-object-as-prop": {
-      "count": 2
-    }
-  },
   "www/src/docs/exampleComponents/PieChart/PieChartInFlexbox.tsx": {
     "react-perf/jsx-no-new-object-as-prop": {
       "count": 3
@@ -2110,14 +2072,6 @@
     },
     "react-perf/jsx-no-new-object-as-prop": {
       "count": 1
-    }
-  },
-  "www/src/docs/exampleComponents/RadialBarChart/RadialBarChartClickToFocusLegendExample.tsx": {
-    "react-perf/jsx-no-new-function-as-prop": {
-      "count": 1
-    },
-    "react-perf/jsx-no-new-object-as-prop": {
-      "count": 2
     }
   },
   "www/src/docs/exampleComponents/RadialBarChart/RadialBarChartNavExample.tsx": {

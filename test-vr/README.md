@@ -198,6 +198,24 @@ mount page, so state, DOM mutations, document-level styles, and SVG identifiers 
 that variant. Both HTML pages use the shared `gallery/entry.tsx`; preview iframes load
 `gallery/index.html` so they exercise the same mount path as Playwright.
 
+### Inspecting and sharing a story
+
+Each theme panel in `gallery/preview.html` has an **Inspect** link. It opens that
+story in a separate tab with the hook inspector and annotations controls from
+`@recharts/devtools`. The controls and chart share a context within that tab;
+each theme remains isolated. Stories must include `<RechartsDevtools />` inside
+their chart to populate the tools, just like website examples do. An empty
+inspector explains this requirement. Inspection is opt-in and never enabled by
+the automated mount path or the ordinary three-panel preview.
+
+**Open repository in StackBlitz** opens the repository with the selected story
+file in the editor and the matching gallery preview. It runs `npm run test-vr:dev`,
+which also starts the gallery locally without Docker for manual inspection.
+The link opens committed GitHub sources, not uncommitted local edits. It defaults
+to `recharts/recharts/tree/main`; set `VITE_GALLERY_GITHUB_REF` when starting or
+building the gallery to inspect a fork, branch, tag, or commit, for example
+`your-name/recharts/tree/your-branch`.
+
 ### `playwright-report`
 
 This is nice, human-readable HTML report of the test results. Open it in your browser and click around.

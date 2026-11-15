@@ -64,7 +64,8 @@ import { DefaultZIndexes } from '../zIndex/DefaultZIndexes';
 import { propsAreEqual } from '../util/propsAreEqual';
 import { GraphicalItemId } from '../state/graphicalItemsSlice';
 import { ChartData } from '../state/chartDataSlice';
-import { GraphicalItemStyle, Styles2D } from '../theme/RechartsTheme';
+import type { RechartsFill } from '../fill/RechartsFill';
+import { ColorGraphicalItemStyle, ColorStyles2D } from '../theme/themeFill';
 import { useRechartsTheme } from '../theme/RechartsThemeContext';
 import { useBackwardsCompatibleTheme } from '../theme/useBackwardsCompatibleTheme';
 import { UnthemedColors, useUnthemedColors } from '../theme/dataEntryStyles';
@@ -78,6 +79,9 @@ import {
   useSeriesLabelThemeResolver,
 } from '../theme/labelTheme';
 
+/**
+ * @public
+ */
 export interface LinePointItem {
   readonly value: number;
   readonly payload?: any;
@@ -94,7 +98,7 @@ export interface LinePointItem {
  */
 interface InternalLineProps extends ZIndexable {
   unthemedColors?: UnthemedColors;
-  themedActiveStyles?: Styles2D;
+  themedActiveStyles?: ColorStyles2D;
   activeDot: ActiveDotType;
   animateNewValues: boolean;
   animationBegin: number;
@@ -147,6 +151,11 @@ interface InternalLineProps extends ZIndexable {
  */
 export interface LineProps<DataPointType = any, DataValueType = any>
   extends DataProvider<DataPointType>, ValueAxisDataConsumer<DataPointType, DataValueType>, ZIndexable {
+  /**
+   * The fill color of the dots. A Line draws no area, so a fill object counts by its `color`.
+   * That lets you spread a theme entry, whose `fill` can be a fill object, onto a Line.
+   */
+  fill?: string | RechartsFill;
   /**
    * The active dot is rendered on the closest data point when user interacts with the chart. Options:
    *
@@ -476,7 +485,7 @@ const defaultLineAnimateItems: AnimationInterpolateFn<LinePointItem, CartesianLa
   return result;
 };
 
-const defaultLegacyThemeProps: GraphicalItemStyle = {
+const defaultLegacyThemeProps: ColorGraphicalItemStyle = {
   fill: '#fff',
   stroke: '#3182bd',
   strokeWidth: 1,
@@ -506,10 +515,15 @@ export const defaultLineProps = {
 /**
  * Because of naming conflict, we are forced to ignore certain (valid) SVG attributes.
  */
-type LineSvgProps = Omit<CurveProps, 'points' | 'pathRef' | 'ref' | 'layout' | 'baseLine'>;
+type LineSvgProps = Omit<CurveProps, 'points' | 'pathRef' | 'ref' | 'layout' | 'baseLine' | 'fill'>;
 
-type InternalProps = LineSvgProps & InternalLineProps;
+type StringFillProps = Omit<Props, 'fill'> & { fill?: string };
 
+type InternalProps = LineSvgProps & { fill?: string } & InternalLineProps;
+
+/**
+ * @public
+ */
 export type Props<DataPointType = any, ValueAxisType = any> = LineSvgProps & LineProps<DataPointType, ValueAxisType>;
 
 /**
@@ -521,7 +535,7 @@ function getDotFillFromTheme(stroke: string | undefined, fill: string | undefine
 }
 
 const computeLegendPayloadFromAreaData = (
-  props: Props,
+  props: StringFillProps,
   dotFill: string | undefined,
   isThemed: boolean,
 ): ReadonlyArray<LegendPayload> => {
@@ -879,7 +893,7 @@ class LineWithState extends Component<InternalProps> {
 }
 
 function LineImpl(
-  props: WithIdRequired<Props> & Pick<InternalLineProps, 'dotFill' | 'unthemedColors' | 'themedActiveStyles'>,
+  props: WithIdRequired<StringFillProps> & Pick<InternalLineProps, 'dotFill' | 'unthemedColors' | 'themedActiveStyles'>,
 ) {
   const {
     activeDot,
@@ -987,7 +1001,12 @@ export function computeLinePoints({
     .filter(Boolean);
 }
 
-function LineFn(outsideProps: Props) {
+function LineFn(propsWithFillObject: Props) {
+  const { fill } = propsWithFillObject;
+  const outsideProps: StringFillProps = {
+    ...propsWithFillObject,
+    fill: fill != null && typeof fill === 'object' ? fill.color : fill,
+  };
   const rechartsTheme = useRechartsTheme();
   const dataKey = useEffectiveDataKey({
     dataKey: outsideProps.dataKey,
@@ -996,7 +1015,7 @@ function LineFn(outsideProps: Props) {
   });
   const graphicalItemThemeSelector = useGraphicalItemIdentity(dataKey, outsideProps);
   const resolveLabelTheme = useSeriesLabelThemeResolver(graphicalItemThemeSelector);
-  const graphicalItemTheme = useBackwardsCompatibleTheme<Omit<GraphicalItemStyle, 'label'>>(
+  const graphicalItemTheme = useBackwardsCompatibleTheme<Omit<ColorGraphicalItemStyle, 'label'>>(
     graphicalItemThemeSelector,
     outsideProps,
     defaultLegacyThemeProps,
@@ -1079,6 +1098,7 @@ function LineFn(outsideProps: Props) {
  * @provides LabelListContext
  * @provides ErrorBarContext
  * @consumes CartesianChartContext
+ * @public
  */
 export const Line = React.memo(LineFn, propsAreEqual) as {
   <DataPointType = any, ValueAxisType = any>(props: Props<DataPointType, ValueAxisType>): ReactElement;

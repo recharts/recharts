@@ -1,6 +1,9 @@
 import { SyntheticEvent, MouseEvent, TouchEvent } from 'react';
 import { MouseHandlerDataParam } from '../synchronisation/types';
 
+/**
+ * @public
+ */
 export type TooltipTrigger = 'hover' | 'click';
 
 export type CategoricalChartFunc<E = SyntheticEvent> = (nextState: MouseHandlerDataParam, event: E) => void;

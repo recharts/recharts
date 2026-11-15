@@ -1,6 +1,7 @@
 import { CSSProperties } from 'react';
 import { LegendProps } from '../index';
 import type { TextBackgroundProps } from '../component/Text';
+import type { RechartsFill } from '../fill/RechartsFill';
 
 /**
  * Styles shared for rectangular or variable shape components that have an area (Area, Bar, Rectangle)
@@ -11,7 +12,20 @@ export type Styles2D = {
   strokeWidth?: number | string;
   strokeDasharray?: string | number;
   fillOpacity?: number | string;
-  fill?: string;
+  /**
+   * A color, or a fill object that paints the shapes with a pattern or a gradient.
+   * Everything that needs a plain color, such as the Tooltip, the Legend text, and labels, uses its `color`.
+   *
+   * Give each entry of `graphicalItems` a different pattern, and charts tell their series apart
+   * without relying on color alone.
+   *
+   * Bar, Area, Radar, Scatter, Pie, RadialBar, Funnel, Treemap, SunburstChart, Sankey nodes, CartesianGrid,
+   * PolarGrid, ReferenceArea, ReferenceDot, Brush, the Bar and RadialBar backgrounds, and the Tooltip cursor
+   * draw the definition of a fill object. Everything else, the `active` styles included, paints with its `color`.
+   *
+   * @example { fill: { color: '#2b6cb0', definition: pattern(patterns.diagonal) } }
+   */
+  fill?: string | RechartsFill;
 };
 
 export type GraphicalItemStyle = Styles2D & {
@@ -30,8 +44,8 @@ export type GraphicalItemStyle = Styles2D & {
    * All of these follow the same rules:
    *
    * - These styles apply only to what Recharts renders by default. A custom active representation
-   *   (a function or a React element) receives none of them. In Bar, a custom `shape` is used
-   *   for the active bar too, so it does not receive them either.
+   *   (a function or a React element) receives none of them. In Bar and Pie, a custom `shape` is used
+   *   for the active bar or sector too, so it does not receive them either.
    * - If the `activeDot`, `activeBar`, or `activeShape` object sets its own `fill` or `stroke`,
    *   it ignores the `fill` and `stroke` from here. Its other style properties override the matching ones from here,
    *   and the rest of these styles still apply.
@@ -116,6 +130,7 @@ export type LabelTheme = {
  * @see {@link https://recharts.github.io/en-US/guide/theming/ Theming guide}
  *
  * @since 3.11
+ * @public
  */
 export interface RechartsTheme {
   /**

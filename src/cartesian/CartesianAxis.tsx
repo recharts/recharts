@@ -38,9 +38,17 @@ import { removeRenderedTicks, setRenderedTicks } from '../state/renderedTicksSli
 import { useAppDispatch } from '../state/hooks';
 import { Styles1D, TextStyles } from '../theme/RechartsTheme';
 import { useBackwardsCompatibleTheme } from '../theme/useBackwardsCompatibleTheme';
-/** The orientation of the axis in correspondence to the chart */
+/**
+ * The orientation of the axis in correspondence to the chart
+ *
+ * @public
+ */
 export type Orientation = XAxisOrientation | YAxisOrientation;
-/** A unit to be appended to a value */
+/**
+ * A unit to be appended to a value
+ *
+ * @public
+ */
 export type Unit = string | number;
 /** The formatter function of tick */
 export type TickFormatter = (value: any, index: number) => string;
@@ -131,6 +139,9 @@ const emptyTextThemeProps: TextStyles = {};
  * `viewBox` and `scale` are SVG attributes.
  * Recharts however - unfortunately - has its own attributes named `viewBox` and `scale`
  * that are completely different data shape and different purpose.
+ */
+/**
+ * @public
  */
 export type Props = Omit<PresentationAttributesAdaptChildEvent<any, SVGElement>, 'viewBox' | 'scale' | 'ref'> &
   CartesianAxisProps;
@@ -663,6 +674,7 @@ const CartesianAxisComponent = forwardRef<CartesianAxisRef, InternalProps>((prop
  * Use XAxis or YAxis instead.
  *
  * Starting from Recharts v4.0 we will make this component internal only.
+ * @public
  */
 export const CartesianAxis = React.forwardRef((outsideProps: Props, ref: React.Ref<CartesianAxisRef>) => {
   const props = resolveDefaultProps(outsideProps, defaultCartesianAxisProps);
