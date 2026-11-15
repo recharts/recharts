@@ -2215,11 +2215,6 @@
       "count": 1
     }
   },
-  "www/src/docs/exampleComponents/TreeMap/CustomContentTreemap.tsx": {
-    "react-perf/jsx-no-new-object-as-prop": {
-      "count": 1
-    }
-  },
   "www/src/docs/exampleComponents/TreeMap/NestedTreemap.tsx": {
     "react-perf/jsx-no-new-object-as-prop": {
       "count": 1
@@ -2231,11 +2226,6 @@
     }
   },
   "www/src/docs/exampleComponents/TreeMap/TreeMapNavExample.tsx": {
-    "react-perf/jsx-no-new-object-as-prop": {
-      "count": 1
-    }
-  },
-  "www/src/docs/exampleComponents/TreeMap/TreemapWithPaddingAndGaps.tsx": {
     "react-perf/jsx-no-new-object-as-prop": {
       "count": 1
     }
@@ -2319,14 +2309,6 @@
     },
     "@typescript-eslint/no-non-null-assertion": {
       "count": 4
-    }
-  },
-  "www/test/docs/exampleComponents/TreeMap/TreemapWithPaddingAndGaps.spec.tsx": {
-    "@typescript-eslint/consistent-type-assertions": {
-      "count": 1
-    },
-    "@typescript-eslint/no-explicit-any": {
-      "count": 1
     }
   },
   "www/test/validate-sitemap.spec.ts": {

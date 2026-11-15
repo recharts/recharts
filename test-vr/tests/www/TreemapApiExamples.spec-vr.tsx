@@ -1,29 +1,28 @@
 import type { BundleSizeTreemap } from './TreemapApiExamples.story';
-import { expect, test } from '../fixtures';
+import { expect, testWithThemes } from '../fixtures';
 
-test('TreeMapNavExample', async ({ mountStory }) => {
-  const component = await mountStory('www/TreemapApiExamples/TreeMapNavExample', { testTheme: 'light' });
+testWithThemes('TreeMapNavExample', async ({ mountStory }) => {
+  const component = await mountStory('www/TreemapApiExamples/TreeMapNavExample');
   await expect(component).toHaveScreenshot();
 });
 
-test('CustomContentTreemap', async ({ mountStory }) => {
-  const component = await mountStory('www/TreemapApiExamples/CustomContentTreemap', { testTheme: 'light' });
+testWithThemes('CustomContentTreemap', async ({ mountStory }) => {
+  const component = await mountStory('www/TreemapApiExamples/CustomContentTreemap');
   await expect(component).toHaveScreenshot();
 });
 
-test('SimpleTreemap', async ({ mountStory }) => {
-  const component = await mountStory('www/TreemapApiExamples/SimpleTreemap', { testTheme: 'light' });
+testWithThemes('SimpleTreemap', async ({ mountStory }) => {
+  const component = await mountStory('www/TreemapApiExamples/SimpleTreemap');
   await expect(component).toHaveScreenshot();
 });
 
-test('TreemapWithPaddingAndGaps', async ({ mountStory }) => {
-  const component = await mountStory('www/TreemapApiExamples/TreemapWithPaddingAndGaps', { testTheme: 'light' });
+testWithThemes('TreemapWithPaddingAndGaps', async ({ mountStory }) => {
+  const component = await mountStory('www/TreemapApiExamples/TreemapWithPaddingAndGaps');
   await expect(component).toHaveScreenshot();
 });
 
-test('BundleSizeTreemap', async ({ mountStory }) => {
+testWithThemes('BundleSizeTreemap', async ({ mountStory }) => {
   const component = await mountStory<typeof BundleSizeTreemap>('www/TreemapApiExamples/BundleSizeTreemap', {
-    testTheme: 'light',
     forceFallbackData: true,
   });
   await expect(component).toHaveScreenshot();
