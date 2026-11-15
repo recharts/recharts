@@ -12,13 +12,7 @@ import {
 import { XAxisSettings, YAxisSettings } from '../cartesianAxisSlice';
 import { LegendSettings } from '../legendSlice';
 import { appendOffsetOfLegend } from '../../util/ChartUtils';
-import {
-  selectChartHeight,
-  selectChartWidth,
-  selectMargin,
-  selectTitleHeight,
-  selectVisibleTitle,
-} from './containerSelectors';
+import { selectChartHeight, selectChartWidth, selectMargin, selectTitleHeight } from './containerSelectors';
 import { selectAllXAxes, selectAllYAxes } from './selectAllAxes';
 import { DEFAULT_X_AXIS_HEIGHT, DEFAULT_Y_AXIS_WIDTH } from '../../util/Constants';
 import { RechartsRootState } from '../store';
@@ -132,12 +126,6 @@ export const selectChartOffsetInternal: (state: RechartsRootState) => ChartOffse
       height: Math.max(offsetHeight, 0),
     };
   },
-);
-
-export const selectChartTitle = createSelector(
-  [selectVisibleTitle, selectChartOffsetInternal, selectMargin, selectTitleHeight],
-  (title, offset, margin, titleHeight) =>
-    title ? { text: title, x: offset.left + offset.width / 2, y: (margin.top ?? 0) + titleHeight / 2 } : undefined,
 );
 
 export const selectChartViewBox = createSelector(

@@ -21,7 +21,6 @@ export const defaultCartesianChartProps = {
   layout: 'horizontal',
   margin: defaultMargin,
   responsive: false,
-  showTitle: false,
   reverseStackOrder: false,
   stackOffset: 'none',
   syncMethod: 'index',
@@ -66,11 +65,7 @@ export const CartesianChart = forwardRef<SVGSVGElement, CartesianChartOptions>(f
   return (
     <RechartsStoreProvider preloadedState={{ options }} reduxStoreName={categoricalChartProps.id ?? chartName}>
       <ChartDataContextProvider chartData={categoricalChartProps.data} />
-      <ReportMainChartProps
-        layout={rootChartProps.layout}
-        margin={rootChartProps.margin}
-        visibleTitle={rootChartProps.showTitle ? rootChartProps.title?.trim() : undefined}
-      />
+      <ReportMainChartProps layout={rootChartProps.layout} margin={rootChartProps.margin} />
       <ReportEventSettings
         throttleDelay={rootChartProps.throttleDelay}
         throttledEvents={rootChartProps.throttledEvents}

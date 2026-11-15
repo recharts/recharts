@@ -28,7 +28,6 @@ export const defaultPolarChartProps = {
   syncMethod: 'index',
   layout: 'radial',
   responsive: false,
-  showTitle: false,
   cx: '50%',
   cy: '50%',
   innerRadius: 0,
@@ -87,11 +86,7 @@ export const PolarChart = forwardRef<SVGSVGElement, PolarChartOptions>(function 
   return (
     <RechartsStoreProvider preloadedState={{ options }} reduxStoreName={polarChartProps.id ?? chartName}>
       <ChartDataContextProvider chartData={polarChartProps.data} />
-      <ReportMainChartProps
-        layout={layout}
-        margin={polarChartProps.margin}
-        visibleTitle={polarChartProps.showTitle ? polarChartProps.title?.trim() : undefined}
-      />
+      <ReportMainChartProps layout={layout} margin={polarChartProps.margin} />
       <ReportEventSettings
         throttleDelay={polarChartProps.throttleDelay}
         throttledEvents={polarChartProps.throttledEvents}

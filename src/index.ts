@@ -43,6 +43,8 @@ export type {
 } from './component/Text';
 export { Label } from './component/Label';
 export type { Props as LabelProps, LabelContentType, LabelPosition, ImplicitLabelType } from './component/Label';
+export { Title } from './component/Title';
+export type { TitleProps } from './component/Title';
 export { LabelList } from './component/LabelList';
 export type { Props as LabelListProps, LabelListEntry, ImplicitLabelListType } from './component/LabelList';
 export { Customized } from './component/Customized';

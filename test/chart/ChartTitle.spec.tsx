@@ -1,21 +1,34 @@
 import * as React from 'react';
-import { render } from '@testing-library/react';
-import { Brush, Legend, Line, LineChart, Pie, PieChart, PolarGrid, RadarChart, XAxis, YAxis } from '../../src';
+import { render, waitFor } from '@testing-library/react';
+import {
+  Brush,
+  Label,
+  Legend,
+  Line,
+  LineChart,
+  Pie,
+  PieChart,
+  PolarGrid,
+  RadarChart,
+  Title,
+  XAxis,
+  YAxis,
+} from '../../src';
 import { mockGetBoundingClientRect } from '../helper/mockGetBoundingClientRect';
 
 const data = [{ value: 1 }, { value: 2 }];
 
 describe('visible chart title', () => {
   it('centers the title on the plot and reserves space above a top axis as the chart resizes', () => {
-    const chart = (width: number, showTitle: boolean) => (
+    const chart = (width: number, withHeading: boolean) => (
       <LineChart
         width={width}
         height={200}
         margin={{ left: 10, right: 20, top: 6, bottom: 10 }}
         data={data}
-        title="Daily visits"
-        showTitle={showTitle}
+        title="Site traffic"
       >
+        {withHeading && <Title>Daily visits</Title>}
         <YAxis width={70} />
         <XAxis orientation="top" height={30} />
         <Line dataKey="value" isAnimationActive={false} />
@@ -25,13 +38,13 @@ describe('visible chart title', () => {
     const plot = () => container.querySelector('clipPath rect');
     const heading = () => container.querySelector('.recharts-chart-title');
 
-    expect(container.querySelector('svg > title')).toHaveTextContent('Daily visits');
+    expect(container.querySelector('svg > title')).toHaveTextContent('Site traffic');
     expect(heading()).toBeNull();
     expect(plot()).toHaveAttribute('y', '36');
 
     rerender(chart(400, true));
     expect(heading()).toHaveTextContent('Daily visits');
-    expect(heading()).toHaveAttribute('aria-hidden', 'true');
+    expect(container.querySelector('svg')).toHaveAccessibleName('Site traffic');
     expect(heading()).toHaveAttribute('x', '230');
     expect(heading()).toHaveAttribute('y', '18');
     expect(plot()).toHaveAttribute('y', '60');
@@ -43,13 +56,14 @@ describe('visible chart title', () => {
     rerender(chart(600, false));
     expect(heading()).toBeNull();
     expect(plot()).toHaveAttribute('height', '154');
-    expect(container.querySelector('svg > title')).toHaveTextContent('Daily visits');
+    expect(container.querySelector('svg > title')).toHaveTextContent('Site traffic');
   });
 
   it.each([false, true])('places a top legend below the heading (position prop: %s)', usePosition => {
     mockGetBoundingClientRect({ width: 80, height: 20 });
     const { container } = render(
-      <LineChart width={400} height={200} data={data} title="Daily visits" showTitle>
+      <LineChart width={400} height={200} data={data}>
+        <Title>Daily visits</Title>
         <Legend {...(usePosition ? { position: 'top' as const } : { verticalAlign: 'top' as const })} />
         <Line dataKey="value" isAnimationActive={false} />
       </LineChart>,
@@ -68,7 +82,8 @@ describe('visible chart title', () => {
 
   it('reserves space in a PieChart only when there is title text to display', () => {
     const chart = (title?: string) => (
-      <PieChart width={300} height={200} title={title} showTitle>
+      <PieChart width={300} height={200}>
+        <Title>{title}</Title>
         <Pie data={data} dataKey="value" isAnimationActive={false} />
       </PieChart>
     );
@@ -86,7 +101,8 @@ describe('visible chart title', () => {
 
   it('moves a percentage-based polar center below the heading and honors an explicit pixel center', () => {
     const chart = (cy: string | number) => (
-      <RadarChart width={300} height={200} cy={cy} title="Activity" showTitle>
+      <RadarChart width={300} height={200} cy={cy}>
+        <Title>Activity</Title>
         <PolarGrid gridType="circle" polarAngles={[0, 90, 180, 270]} polarRadius={[60]} />
       </RadarChart>
     );
@@ -98,12 +114,57 @@ describe('visible chart title', () => {
     expect(grid()).toHaveAttribute('cy', '65');
   });
 
+  it('keeps the original plot area for a chart-level Label', () => {
+    const { container } = render(
+      <LineChart width={300} height={200}>
+        <Label position="top">Overlay</Label>
+      </LineChart>,
+    );
+    expect(container.querySelector('.recharts-label')).toHaveTextContent('Overlay');
+    expect(container.querySelector('clipPath rect')).toHaveAttribute('y', '5');
+  });
+
+  it('stacks wrapped titles in declaration order after insertion, keyed reordering and removal', async () => {
+    const Heading = React.memo(({ text }: { text: string }) => <Title>{text}</Title>);
+    const chart = (texts: string[]) => (
+      <LineChart width={300} height={200}>
+        {texts.map(text => (
+          <Heading key={text} text={text} />
+        ))}
+      </LineChart>
+    );
+    const { container, rerender } = render(chart(['Subtitle']));
+    const headings = () =>
+      Array.from(container.querySelectorAll('.recharts-chart-title'), el => [el.textContent, el.getAttribute('y')]);
+    const plot = () => container.querySelector('clipPath rect');
+    expect(headings()).toEqual([['Subtitle', '17']]);
+    rerender(chart(['Title', 'Subtitle']));
+    expect(headings()).toEqual([
+      ['Title', '17'],
+      ['Subtitle', '41'],
+    ]);
+    expect(plot()).toHaveAttribute('y', '53');
+    rerender(chart(['Subtitle', 'Title']));
+    await waitFor(() =>
+      expect(headings()).toEqual([
+        ['Subtitle', '17'],
+        ['Title', '41'],
+      ]),
+    );
+    rerender(chart(['Title']));
+    expect(headings()).toEqual([['Title', '17']]);
+    rerender(chart([]));
+    expect(plot()).toHaveAttribute('y', '5');
+  });
+
   it('keeps a Brush panorama from overriding the main chart title', () => {
     const { container } = render(
-      <LineChart data={data} width={300} height={200} title="Daily visits" showTitle>
+      <LineChart data={data} width={300} height={200}>
+        <Title>Daily visits</Title>
         <Line dataKey="value" isAnimationActive={false} />
         <Brush>
-          <LineChart title="Preview" showTitle>
+          <LineChart>
+            <Title>Preview</Title>
             <Line dataKey="value" isAnimationActive={false} />
           </LineChart>
         </Brush>
