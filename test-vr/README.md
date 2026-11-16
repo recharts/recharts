@@ -98,19 +98,10 @@ also set Playwright's browser `colorScheme` to match; this controls
 The gallery declares support for both color schemes so the browser resolves
 system colors according to the selected `colorScheme`. These are separate
 settings, so explicitly override `colorScheme` when a test needs a browser color
-scheme that differs from its Recharts theme. Do not add a `testTheme` prop, put
+scheme that differs from its Recharts theme. Do not add a theme prop to a story, put
 a theme name in a test title, or pass a custom screenshot name. Project names
 make the snapshots separate and deterministic, for example
 `LineChart-1-chromium-light-linux.png`.
-
-The `test` export is the staged, legacy-only fixture used by existing specs;
-`legacyTest` is its explicit name for new specs that intentionally need
-compatibility behavior with a plain white canvas. Existing specs may keep using it until their
-individual migration adds light and dark baselines. Use
-[the VR migration skill](../.agents/skills/vr-test-migration/SKILL.md) for that
-work. The old `test-vr/tests/www/StoryTheme.tsx` helper and its `testTheme`
-prop are also compatibility code for unmigrated website specs; do not use them
-in new stories.
 
 Intentional exceptions can suppress variants with structured fixture options at
 file, `test.describe`, or individual test scope:
