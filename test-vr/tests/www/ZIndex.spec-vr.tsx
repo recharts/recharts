@@ -1,14 +1,13 @@
-import type { ShadowDomExample } from './ZIndex.story';
-import { expect, test } from '../fixtures';
+import { PrahaMetro, ShadowDomExample } from './ZIndex.story';
+import { expect, testWithThemes } from '../fixtures';
 
-test('ZIndex PrahaMetro', async ({ mountStory }) => {
-  const component = await mountStory('www/ZIndex/PrahaMetro', { testTheme: 'light' });
+testWithThemes('ZIndex PrahaMetro', async ({ mountStory }) => {
+  const component = await mountStory<typeof PrahaMetro>('www/ZIndex/PrahaMetro');
   await expect(component).toHaveScreenshot();
 });
 
-test('ShadowDomExample', async ({ mountStory }) => {
+testWithThemes('ShadowDomExample', async ({ mountStory }) => {
   const component = await mountStory<typeof ShadowDomExample>('www/ZIndex/ShadowDomExample', {
-    testTheme: 'light',
     isAnimationActive: false,
   });
   await expect(component).toHaveScreenshot();

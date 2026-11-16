@@ -1446,17 +1446,6 @@
       "count": 1
     }
   },
-  "www/src/components/GuideView/ZIndex/PrahaMetro.tsx": {
-    "react-perf/jsx-no-new-array-as-prop": {
-      "count": 2
-    },
-    "react-perf/jsx-no-new-function-as-prop": {
-      "count": 1
-    },
-    "react-perf/jsx-no-new-object-as-prop": {
-      "count": 7
-    }
-  },
   "www/src/components/ManualAnimationContext.tsx": {
     "react-perf/jsx-no-new-function-as-prop": {
       "count": 7
