@@ -74,13 +74,18 @@ export function Title({ children, className }: TitleProps) {
   const margin = useAppSelector(selectMargin);
   const isPanorama = useIsPanorama();
   const visible = !isPanorama && children != null && String(children).trim() !== '';
-  const row = useMemo(
-    () =>
-      plot && margin && index != null && index >= 0
-        ? { x: plot.x, y: (margin.top ?? 0) + index * TITLE_ROW_HEIGHT, width: plot.width, height: TITLE_ROW_HEIGHT }
-        : undefined,
-    [plot, margin, index],
-  );
+  const titleViewBox = useMemo(() => {
+    if (!plot || !margin || index == null || index < 0) {
+      return undefined;
+    }
+
+    return {
+      x: plot.x,
+      y: (margin.top ?? 0) + index * TITLE_ROW_HEIGHT,
+      width: plot.width,
+      height: TITLE_ROW_HEIGHT,
+    };
+  }, [plot, margin, index]);
 
   useLayoutEffect(() => {
     const element = ref.current;
@@ -103,8 +108,8 @@ export function Title({ children, className }: TitleProps) {
   }
   return (
     <g ref={ref}>
-      {row && (
-        <Label className={clsx('recharts-chart-title', className)} viewBox={row} position="center" zIndex={0}>
+      {titleViewBox && (
+        <Label className={clsx('recharts-chart-title', className)} viewBox={titleViewBox} position="center" zIndex={0}>
           {children}
         </Label>
       )}
