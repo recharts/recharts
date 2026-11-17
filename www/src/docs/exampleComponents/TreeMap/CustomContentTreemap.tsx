@@ -1,5 +1,6 @@
-import { Treemap, TreemapNode } from 'recharts';
+import { Treemap, TreemapNode, Text, useRechartsTheme } from 'recharts';
 import { RechartsDevtools } from '@recharts/devtools';
+import { CSSProperties } from 'react';
 
 // #region Sample data
 const data = [
@@ -141,6 +142,8 @@ const COLORS = ['#8889DD', '#9597E4', '#8DC77B', '#A5D297', '#E2CF45', '#F8C12D'
 const CustomizedContent = (props: TreemapNode) => {
   const { root, depth, x, y, width, height, index, name } = props;
 
+  const theme = useRechartsTheme();
+
   return (
     <g>
       <rect
@@ -150,33 +153,36 @@ const CustomizedContent = (props: TreemapNode) => {
         height={height}
         style={{
           fill: depth < 2 ? COLORS[Math.floor((index / (root?.children?.length ?? 1)) * 6)] : '#ffffff00',
-          stroke: '#fff',
+          stroke: theme?.pageBackground ?? '#fff',
           strokeWidth: 2 / (depth + 1e-10),
           strokeOpacity: 1 / (depth + 1e-10),
         }}
       />
       {depth === 1 ? (
-        <text x={x + width / 2} y={y + height / 2 + 7} textAnchor="middle" fill="#fff" fontSize={14}>
+        <Text
+          x={x + width / 2}
+          y={y + height / 2 + 7}
+          textAnchor="middle"
+          fontSize={14}
+          fill={theme?.pageBackground ?? '#fff'}
+        >
           {name}
-        </text>
+        </Text>
       ) : null}
       {depth === 1 ? (
-        <text x={x + 4} y={y + 18} fill="#fff" fontSize={16} fillOpacity={0.9}>
+        <Text x={x + 4} y={y + 18} fontSize={16} fillOpacity={0.9} fill={theme?.pageBackground ?? '#fff'}>
           {index + 1}
-        </text>
+        </Text>
       ) : null}
     </g>
   );
 };
 
+const chartStyle: CSSProperties = { width: '100%', maxWidth: '500px', maxHeight: '80vh', aspectRatio: 4 / 3 };
+
 const CustomContentTreemap = () => {
   return (
-    <Treemap
-      style={{ width: '100%', maxWidth: '500px', maxHeight: '80vh', aspectRatio: 4 / 3 }}
-      data={data}
-      dataKey="size"
-      content={CustomizedContent}
-    >
+    <Treemap style={chartStyle} data={data} dataKey="size" content={CustomizedContent}>
       <RechartsDevtools />
     </Treemap>
   );

@@ -4,7 +4,7 @@
  *
  * The gallery itself does not add global CSS, while individual stories or
  * story helpers may opt in (for example www/src/styles/app.css imported by
- * test-vr/tests/www/StoryTheme.tsx).
+ * test-vr/tests/www/IndexView.story.tsx).
  */
 import path from 'node:path';
 import { defineConfig } from 'vite';
