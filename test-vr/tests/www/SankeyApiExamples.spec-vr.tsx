@@ -1,6 +1,6 @@
-import { expect, test } from '../fixtures';
+import { expect, testWithThemes } from '../fixtures';
 
-test('SankeyCustomNodeExample', async ({ mountStory }) => {
+testWithThemes('SankeyCustomNodeExample', async ({ mountStory }) => {
   const component = await mountStory('www/SankeyApiExamples/SankeyCustomNodeExample');
   await expect(component).toHaveScreenshot();
 });

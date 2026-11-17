@@ -49,7 +49,7 @@ export default function Example() {
       >
         {common}
         <Typed.Line type="monotone" dataKey="y" />
-        <Brush stroke="var(--color-border-1)" fill="var(--color-surface-base)" />
+        <Brush />
         <RechartsDevtools />
       </Typed.LineChart>
 

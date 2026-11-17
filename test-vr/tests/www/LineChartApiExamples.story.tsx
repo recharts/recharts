@@ -15,24 +15,21 @@ import LineChartHasMultiSeriesComponent from '../../../www/src/docs/exampleCompo
 import LineChartAxisIntervalComponent from '../../../www/src/docs/exampleComponents/LineChart/LineChartAxisInterval';
 import LineChartNegativeValuesWithReferenceLinesComponent from '../../../www/src/docs/exampleComponents/LineChart/LineChartNegativeValuesWithReferenceLines';
 import LineChartNavExampleComponent from '../../../www/src/docs/exampleComponents/LineChart/LineChartNavExample';
-import { themedStory } from './StoryTheme';
 
-export const LineChartNegativeValuesWithReferenceLines = themedStory(
-  LineChartNegativeValuesWithReferenceLinesComponent,
-);
-export const LineChartAxisInterval = themedStory(LineChartAxisIntervalComponent);
-export const LineChartHasMultiSeries = themedStory(LineChartHasMultiSeriesComponent);
-export const HighlightAndZoomLineChart = themedStory(HighlightAndZoomLineChartComponent);
-export const SynchronizedLineChart = themedStory(SynchronizedLineChartComponent);
-export const CustomizedLabelLineChart = themedStory(CustomizedLabelLineChartComponent);
-export const CustomizedDotLineChart = themedStory(CustomizedDotLineChartComponent);
-export const LineChartWithReferenceLines = themedStory(LineChartWithReferenceLinesComponent);
-export const LineChartWithXAxisPadding = themedStory(LineChartWithXAxisPaddingComponent);
-export const LineChartConnectNulls = themedStory(LineChartConnectNullsComponent);
-export const VerticalLineChartWithSpecifiedDomain = themedStory(VerticalLineChartWithSpecifiedDomainComponent);
-export const BiaxialLineChart = themedStory(BiaxialLineChartComponent);
-export const VerticalLineChart = themedStory(VerticalLineChartComponent);
-export const DashedLineChart = themedStory(DashedLineChartComponent);
-export const TinyLineChart = themedStory(TinyLineChartComponent);
-export const SimpleLineChart = themedStory(SimpleLineChartComponent);
-export const LineChartNavExample = themedStory(LineChartNavExampleComponent);
+export const LineChartNegativeValuesWithReferenceLines = LineChartNegativeValuesWithReferenceLinesComponent;
+export const LineChartAxisInterval = LineChartAxisIntervalComponent;
+export const LineChartHasMultiSeries = LineChartHasMultiSeriesComponent;
+export const HighlightAndZoomLineChart = HighlightAndZoomLineChartComponent;
+export const SynchronizedLineChart = SynchronizedLineChartComponent;
+export const CustomizedLabelLineChart = CustomizedLabelLineChartComponent;
+export const CustomizedDotLineChart = CustomizedDotLineChartComponent;
+export const LineChartWithReferenceLines = LineChartWithReferenceLinesComponent;
+export const LineChartWithXAxisPadding = LineChartWithXAxisPaddingComponent;
+export const LineChartConnectNulls = LineChartConnectNullsComponent;
+export const VerticalLineChartWithSpecifiedDomain = VerticalLineChartWithSpecifiedDomainComponent;
+export const BiaxialLineChart = BiaxialLineChartComponent;
+export const VerticalLineChart = VerticalLineChartComponent;
+export const DashedLineChart = DashedLineChartComponent;
+export const TinyLineChart = TinyLineChartComponent;
+export const SimpleLineChart = SimpleLineChartComponent;
+export const LineChartNavExample = LineChartNavExampleComponent;

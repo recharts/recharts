@@ -1,11 +1,12 @@
+import type { TreemapNode } from 'recharts';
 import { describe, expect, it } from 'vitest';
 import { render, screen } from '@testing-library/react';
 
-import { renderNodeGapAndPaddingContent } from '../../../../src/docs/exampleComponents/TreeMap/TreemapWithPaddingAndGaps';
+import { NodeGapAndPaddingContent } from '../../../../src/docs/exampleComponents/TreeMap/TreemapWithPaddingAndGaps';
 
 describe('TreemapWithPaddingAndGaps content renderer', () => {
   it('renders leaf labels when node is large enough', () => {
-    const node = {
+    const node: TreemapNode = {
       x: 10,
       y: 20,
       width: 40,
@@ -17,7 +18,11 @@ describe('TreemapWithPaddingAndGaps content renderer', () => {
       children: null,
     };
 
-    const { container } = render(<svg>{renderNodeGapAndPaddingContent(node as any)}</svg>);
+    const { container } = render(
+      <svg>
+        <NodeGapAndPaddingContent {...node} />
+      </svg>,
+    );
 
     expect(screen.getByText('Leaf Node')).not.toBeNull();
     const label = container.querySelector('text');
