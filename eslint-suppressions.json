@@ -1446,17 +1446,6 @@
       "count": 1
     }
   },
-  "www/src/components/GuideView/ZIndex/PrahaMetro.tsx": {
-    "react-perf/jsx-no-new-array-as-prop": {
-      "count": 2
-    },
-    "react-perf/jsx-no-new-function-as-prop": {
-      "count": 1
-    },
-    "react-perf/jsx-no-new-object-as-prop": {
-      "count": 7
-    }
-  },
   "www/src/components/ManualAnimationContext.tsx": {
     "react-perf/jsx-no-new-function-as-prop": {
       "count": 7
@@ -1798,11 +1787,6 @@
       "count": 2
     }
   },
-  "www/src/docs/exampleComponents/ErrorBar/ErrorBarExample.tsx": {
-    "react-perf/jsx-no-new-object-as-prop": {
-      "count": 2
-    }
-  },
   "www/src/docs/exampleComponents/Funnel/FunnelExample.tsx": {
     "react-perf/jsx-no-new-object-as-prop": {
       "count": 2
@@ -2002,14 +1986,6 @@
       "count": 2
     }
   },
-  "www/src/docs/exampleComponents/PieChart/CustomActiveShapePieChart.tsx": {
-    "react-perf/jsx-no-new-function-as-prop": {
-      "count": 1
-    },
-    "react-perf/jsx-no-new-object-as-prop": {
-      "count": 2
-    }
-  },
   "www/src/docs/exampleComponents/PieChart/PieChartInFlexbox.tsx": {
     "react-perf/jsx-no-new-object-as-prop": {
       "count": 3
@@ -2087,14 +2063,6 @@
       "count": 1
     }
   },
-  "www/src/docs/exampleComponents/RadialBarChart/RadialBarChartClickToFocusLegendExample.tsx": {
-    "react-perf/jsx-no-new-function-as-prop": {
-      "count": 1
-    },
-    "react-perf/jsx-no-new-object-as-prop": {
-      "count": 2
-    }
-  },
   "www/src/docs/exampleComponents/RadialBarChart/RadialBarChartNavExample.tsx": {
     "react-perf/jsx-no-new-array-as-prop": {
       "count": 1
@@ -2142,11 +2110,6 @@
   "www/src/docs/exampleComponents/ResponsiveContainer/ResponsiveContainerExample.tsx": {
     "react-perf/jsx-no-new-object-as-prop": {
       "count": 1
-    }
-  },
-  "www/src/docs/exampleComponents/Sankey/SankeyCustomNodeExample.tsx": {
-    "react-perf/jsx-no-new-object-as-prop": {
-      "count": 2
     }
   },
   "www/src/docs/exampleComponents/ScatterChart/BubbleChart.tsx": {
@@ -2241,11 +2204,6 @@
       "count": 1
     }
   },
-  "www/src/docs/exampleComponents/TreeMap/CustomContentTreemap.tsx": {
-    "react-perf/jsx-no-new-object-as-prop": {
-      "count": 1
-    }
-  },
   "www/src/docs/exampleComponents/TreeMap/NestedTreemap.tsx": {
     "react-perf/jsx-no-new-object-as-prop": {
       "count": 1
@@ -2257,11 +2215,6 @@
     }
   },
   "www/src/docs/exampleComponents/TreeMap/TreeMapNavExample.tsx": {
-    "react-perf/jsx-no-new-object-as-prop": {
-      "count": 1
-    }
-  },
-  "www/src/docs/exampleComponents/TreeMap/TreemapWithPaddingAndGaps.tsx": {
     "react-perf/jsx-no-new-object-as-prop": {
       "count": 1
     }
@@ -2345,14 +2298,6 @@
     },
     "@typescript-eslint/no-non-null-assertion": {
       "count": 4
-    }
-  },
-  "www/test/docs/exampleComponents/TreeMap/TreemapWithPaddingAndGaps.spec.tsx": {
-    "@typescript-eslint/consistent-type-assertions": {
-      "count": 1
-    },
-    "@typescript-eslint/no-explicit-any": {
-      "count": 1
     }
   },
   "www/test/validate-sitemap.spec.ts": {

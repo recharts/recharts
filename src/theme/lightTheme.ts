@@ -92,7 +92,7 @@ export const lightTheme: RechartsTheme = {
     stroke: '#71717a',
     strokeWidth: 1,
     fill: '#d4d4d8',
-    fillOpacity: 0.25,
+    fillOpacity: 0.85,
   },
   cursor: {
     stroke: '#d4d4d8',

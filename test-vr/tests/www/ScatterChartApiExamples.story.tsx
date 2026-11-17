@@ -6,13 +6,12 @@ import ScatterChartWithLabelsComponent from '../../../www/src/docs/exampleCompon
 import MultipleYAxesScatterChartComponent from '../../../www/src/docs/exampleComponents/ScatterChart/MultipleYAxesScatterChart';
 import ScatterChartWithCellsComponent from '../../../www/src/docs/exampleComponents/ScatterChart/ScatterChartWithCells';
 import ScatterChartNavExampleComponent from '../../../www/src/docs/exampleComponents/ScatterChart/ScatterChartNavExample';
-import { themedStory } from './StoryTheme';
 
-export const ScatterChartNavExample = themedStory(ScatterChartNavExampleComponent);
-export const ScatterChartWithCells = themedStory(ScatterChartWithCellsComponent);
-export const MultipleYAxesScatterChart = themedStory(MultipleYAxesScatterChartComponent);
-export const ScatterChartWithLabels = themedStory(ScatterChartWithLabelsComponent);
-export const BubbleChart = themedStory(BubbleChartComponent);
-export const JointLineScatterChart = themedStory(JointLineScatterChartComponent);
-export const ThreeDimScatterChart = themedStory(ThreeDimScatterChartComponent);
-export const ScatterChartExample = themedStory(ScatterChartExampleComponent);
+export const ScatterChartNavExample = ScatterChartNavExampleComponent;
+export const ScatterChartWithCells = ScatterChartWithCellsComponent;
+export const MultipleYAxesScatterChart = MultipleYAxesScatterChartComponent;
+export const ScatterChartWithLabels = ScatterChartWithLabelsComponent;
+export const BubbleChart = BubbleChartComponent;
+export const JointLineScatterChart = JointLineScatterChartComponent;
+export const ThreeDimScatterChart = ThreeDimScatterChartComponent;
+export const ScatterChartExample = ScatterChartExampleComponent;

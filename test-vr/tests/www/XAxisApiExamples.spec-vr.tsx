@@ -1,6 +1,6 @@
-import { expect, test } from '../fixtures';
+import { expect, testWithThemes } from '../fixtures';
 
-test('MultiXAxisExample', async ({ mountStory }) => {
+testWithThemes('MultiXAxisExample', async ({ mountStory }) => {
   const component = await mountStory('www/XAxisApiExamples/MultiXAxisExample');
   await expect(component).toHaveScreenshot();
 });

@@ -44,8 +44,8 @@ export type GraphicalItemStyle = Styles2D & {
    * All of these follow the same rules:
    *
    * - These styles apply only to what Recharts renders by default. A custom active representation
-   *   (a function or a React element) receives none of them. In Bar, a custom `shape` is used
-   *   for the active bar too, so it does not receive them either.
+   *   (a function or a React element) receives none of them. In Bar and Pie, a custom `shape` is used
+   *   for the active bar or sector too, so it does not receive them either.
    * - If the `activeDot`, `activeBar`, or `activeShape` object sets its own `fill` or `stroke`,
    *   it ignores the `fill` and `stroke` from here. Its other style properties override the matching ones from here,
    *   and the rest of these styles still apply.
