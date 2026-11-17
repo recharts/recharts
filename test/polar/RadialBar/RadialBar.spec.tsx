@@ -584,15 +584,15 @@ describe('<RadialBar />', () => {
       assertNotNull(lastResult);
       const { a: resultA, b: resultB } = lastResult;
 
-      // The angle axis domain here is [0, 99] (the larger of the two raw values), not [0, 100].
-      // Bar 'a' (cumulative range [0, 1]) naturally spans [0, 3.64], expanded to [0, 30] by minAngle.
+      // The angle axis domain here is [0, 100], the stack total.
+      // Bar 'a' (cumulative range [0, 1]) naturally spans [0, 3.6], expanded to [0, 30] by minAngle.
       expect(resultA[0].startAngle).toBe(0);
       expect(resultA[0].endAngle).toBe(30);
 
-      // Bar 'b' (cumulative range [1, 100], stacked on top of 'a') naturally spans [3.64, 360],
+      // Bar 'b' (cumulative range [1, 100], stacked on top of 'a') naturally spans [3.6, 360],
       // well above the threshold so it is untouched - but that overlaps bar 'a's expanded range
       // by roughly 26.4°.
-      expect(resultB[0].startAngle).toBeCloseTo(360 / 99, 5);
+      expect(resultB[0].startAngle).toBeCloseTo(360 / 100, 5);
       expect(resultB[0].endAngle).toBe(360);
     });
   });

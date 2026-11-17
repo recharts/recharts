@@ -1,6 +1,7 @@
-import { Tooltip, Treemap, TreemapNode } from 'recharts';
+import { Tooltip, Treemap, TreemapNode, Text, useRechartsTheme } from 'recharts';
 
 import { RechartsDevtools } from '@recharts/devtools';
+import { CSSProperties } from 'react';
 
 const data = [
   {
@@ -72,10 +73,12 @@ const data = [
 
 const colors = ['#8889DD', '#3a6bd6', '#ce6d1d', '#45b622', '#E2CF45'];
 
-export const renderNodeGapAndPaddingContent = (props: TreemapNode) => {
+export const NodeGapAndPaddingContent = (props: TreemapNode) => {
   const { root, depth, x, y, width, height, index, name, children } = props;
 
   const isLeaf = !children || children.length === 0;
+
+  const theme = useRechartsTheme();
 
   return (
     <g>
@@ -86,30 +89,38 @@ export const renderNodeGapAndPaddingContent = (props: TreemapNode) => {
         height={height}
         style={{
           fill: depth < 2 ? colors[Math.floor((index / (root?.children?.length ?? 1)) * 5)] : '#ffffff00',
-          stroke: '#fff',
+          stroke: theme?.pageBackground ?? '#fff',
           strokeWidth: 1,
         }}
       />
       {isLeaf && width > 36 && height > 18 ? (
-        <text x={x + width / 2} y={y + height / 2 + 4} textAnchor="middle" fill="#fff" fontSize={12}>
+        <Text
+          x={x + width / 2}
+          y={y + height / 2 + 4}
+          textAnchor="middle"
+          fontSize={12}
+          fill={theme?.pageBackground ?? '#fff'}
+        >
           {name}
-        </text>
+        </Text>
       ) : null}
     </g>
   );
 };
 
+const chartStyle: CSSProperties = { width: '100%', maxWidth: '500px', maxHeight: '80vh', aspectRatio: 4 / 3 };
+
 const TreemapWithPaddingAndGaps = () => {
   return (
     <Treemap
-      style={{ width: '100%', maxWidth: '500px', maxHeight: '80vh', aspectRatio: 4 / 3 }}
+      style={chartStyle}
       data={data}
       dataKey="size"
       nameKey="name"
       aspectRatio={4 / 3}
       nodeInset={6}
       nodeGap={6}
-      content={renderNodeGapAndPaddingContent}
+      content={NodeGapAndPaddingContent}
     >
       <Tooltip />
       <RechartsDevtools />

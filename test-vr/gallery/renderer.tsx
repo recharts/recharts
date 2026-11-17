@@ -50,12 +50,14 @@ function renderWithRechartsTheme(theme: RechartsThemeVariant, story: React.React
   }
 }
 
+/** Renders the selected theme, preserving the ordinary mount unless a wrapper is explicitly supplied. */
 export function renderStory(
   root: Root,
   canvas: HTMLElement,
   Story: StoryComponent,
   props: Record<string, unknown>,
   theme: RechartsThemeVariant,
+  Wrapper?: React.ComponentType<{ children: React.ReactNode }>,
 ): void {
   setCanvasBackground(canvas, theme);
 
@@ -64,6 +66,7 @@ export function renderStory(
    * instead of being swallowed by React.
    */
   flushSync(() => {
-    root.render(renderWithRechartsTheme(theme, <Story {...props} />));
+    const story = <Story {...props} />;
+    root.render(renderWithRechartsTheme(theme, Wrapper ? <Wrapper>{story}</Wrapper> : story));
   });
 }
