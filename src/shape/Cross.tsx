@@ -45,6 +45,17 @@ const getPath = (x: number, y: number, width: number, height: number, top: numbe
 };
 
 /**
+ * Renders a crosshair as an SVG path with one horizontal and one vertical line.
+ * It is used as the default tooltip cursor in {@link ScatterChart}.
+ *
+ * All coordinates and dimensions are in pixels, rather than chart data values.
+ * The vertical line runs from `(x, top)` to `(x, top + height)`, and the horizontal line
+ * runs from `(left, y)` to `(left + width, y)`. Set `top`, `left`, `width`, and `height`
+ * to define the extent of the lines; `x` and `y` position their intersection.
+ *
+ * Use SVG presentation attributes such as `stroke`, `strokeWidth`, and `strokeDasharray`
+ * to style the lines. Set `stroke` to make the path visible; `fill` does not color the lines.
+ *
  * @public
  */
 export const Cross: React.FC<Props> = ({

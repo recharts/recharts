@@ -1,6 +1,6 @@
-import { expect, test } from './fixtures';
+import { expect, testWithThemes } from './fixtures';
 
-test('bar and line without z-index', async ({ mountStory }) => {
+testWithThemes('bar and line without z-index', async ({ mountStory }) => {
   const component = await mountStory('zIndex/BarAndLineWithoutZIndex');
   await expect(component).toHaveScreenshot();
 });
