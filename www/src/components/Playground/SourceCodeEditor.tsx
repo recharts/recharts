@@ -67,6 +67,8 @@ const regionFoldService = foldService.of((state, from, _to) => {
   return null;
 });
 
+const editorWrapperStyle: React.CSSProperties = { height: '100%', overflow: 'auto' };
+
 const trimNewlinesFromStartAndEnd = (s: string): string => s.replace(/^\n+|\n+$/g, '');
 
 const createEditorTheme = (dark: boolean) =>
@@ -293,7 +295,7 @@ export function SourceCodeEditor({
   return (
     <div
       className={`codemirror-example-editor ${showCopyButton ? 'has-copy-button' : ''} ${className}`}
-      style={{ height: '100%', overflow: 'auto' }}
+      style={editorWrapperStyle}
     >
       {showFallback && <pre>{valueWithoutTrailingNewline}</pre>}
       <div ref={editorRef} />
