@@ -8,6 +8,9 @@ export function CopyButton({ getValueToCopy }: { getValueToCopy: () => unknown }
 
   const handleCopy = () => {
     const valueToCopy = getValueToCopy();
+    if (typeof valueToCopy === 'string') {
+      return navigator.clipboard.writeText(valueToCopy);
+    }
     if (valueToCopy !== undefined) {
       return navigator.clipboard.writeText(JSON.stringify(valueToCopy, null, 2));
     }

@@ -52,8 +52,11 @@
       border: none;
     }
 
-    .install-btn {
-      width: 280px;
+    .install-snippet {
+      width: 100%;
+      max-width: 400px;
+      margin: 20px auto;
+      text-align: left;
     }
   }
 

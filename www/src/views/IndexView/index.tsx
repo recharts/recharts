@@ -12,6 +12,25 @@ import { CodeEditorWithPreview } from '../../components/CodeEditorWithPreview.ts
 import IndexLineChart from './IndexLineChart.tsx';
 import IndexLineChartSource from './IndexLineChart.tsx?raw';
 import { ColorModeWatcher } from '../../components/color-mode';
+import { ToolFrame, ToolItem } from '../../components/Playground/ToolFrame.tsx';
+import { SourceCodeEditor } from '../../components/Playground/SourceCodeEditor.tsx';
+import { CopyButton } from '../../utils/CopyButton.tsx';
+
+const installCommand = 'npm install recharts';
+function getInstallCommand() {
+  return installCommand;
+}
+
+const installTools: ReadonlyArray<ToolItem> = [
+  {
+    name: 'source',
+    label: 'Source code',
+    component: <SourceCodeEditor className="sh" value={installCommand} readOnly />,
+    actions: [<CopyButton key="copy" getValueToCopy={getInstallCommand} />],
+  },
+];
+
+function noop() {}
 
 class IndexViewImpl extends PureComponent<RouteComponentProps> {
   render() {
@@ -21,14 +40,7 @@ class IndexViewImpl extends PureComponent<RouteComponentProps> {
         <div className="desc block">
           <h1>Recharts</h1>
           <p className="subtitle">{localeGet(locale, 'home', 'slogan')}</p>
-          <Link to={`/${locale}/guide/installation/`} className="button install-btn">
-            <LuZap />
-            &nbsp;
-            {localeGet(locale, 'home', 'install')}
-            {import.meta.env.VITE_RECHARTS_LATEST_VERSION
-              ? ` v${import.meta.env.VITE_RECHARTS_LATEST_VERSION}`
-              : undefined}
-          </Link>
+          <ToolFrame className="install-snippet" activeTool="source" onToolChange={noop} tools={installTools} />
           <ColorModeWatcher
             render={state => (
               <GitHubButton
