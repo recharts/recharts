@@ -49,7 +49,12 @@ describe.each(['Line', 'Area'] as const)('Brush %s preview calculations', series
       dataStartIndex: 14,
       dataEndIndex: 29,
     });
-    expect(compute.mock.calls.some(([args]) => args.displayedData.length < data.length)).toBe(true);
-    expect(compute.mock.calls.some(([args]) => args.displayedData.length === data.length)).toBe(false);
+    expect(compute).toHaveBeenCalledTimes(14);
+    for (let startIndex = 1; startIndex <= 14; startIndex++) {
+      expect(compute).toHaveBeenNthCalledWith(
+        startIndex,
+        expect.objectContaining({ displayedData: data.slice(startIndex) }),
+      );
+    }
   });
 });
