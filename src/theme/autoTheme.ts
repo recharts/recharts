@@ -100,7 +100,7 @@ export const autoTheme: RechartsTheme = {
     stroke: 'light-dark(#71717a, #a1a1aa)',
     strokeWidth: 1,
     fill: 'light-dark(#d4d4d8, #3f3f46)',
-    fillOpacity: 0.25,
+    fillOpacity: 0.85,
   },
   cursor: {
     stroke: 'light-dark(#d4d4d8, #3f3f46)',
