@@ -54,9 +54,21 @@
 
     .install-snippet {
       width: 100%;
-      max-width: 400px;
-      margin: 20px auto;
+      max-width: 360px;
+      margin: 24px auto;
       text-align: left;
+
+      .cm-editor {
+        font-size: 15px;
+      }
+
+      .cm-gutters {
+        display: none;
+      }
+
+      .cm-line {
+        padding-left: 16px;
+      }
     }
   }
 
