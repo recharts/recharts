@@ -1,5 +1,6 @@
 import * as React from 'react';
 import type { RechartsThemeVariant } from './renderer';
+import { getStackBlitzUrl, getStoryFrameUrl } from './links';
 import './preview.css';
 
 type StoryComponent = React.ComponentType<Record<string, unknown>>;
@@ -8,6 +9,7 @@ type StoryModule = Record<string, unknown>;
 type Story = {
   id: string;
   file: string;
+  sourceFile: string;
   name: string;
   component: StoryComponent;
 };
@@ -35,6 +37,7 @@ const stories: Story[] = Object.entries(storyModules)
         {
           id: `${storyFile}/${name}`,
           file: storyFile,
+          sourceFile: file.replace(/^\.\.\/tests\//, ''),
           name,
           component: value,
         },
@@ -87,15 +90,6 @@ function getStoryIdFromUrl(): string | undefined {
   return storyId !== null && stories.some(story => story.id === storyId) ? storyId : stories[0]?.id;
 }
 
-function getStoryFrameUrl(storyId: string, theme: RechartsThemeVariant): string {
-  // Preview the same mount page that Playwright uses so story rendering cannot diverge.
-  const url = new URL('./index.html', window.location.href);
-  url.searchParams.set('preview', 'true');
-  url.searchParams.set('rechartsTheme', theme);
-  url.searchParams.set('story', storyId);
-  return url.toString();
-}
-
 function isRecord(value: unknown): value is Record<string, unknown> {
   return typeof value === 'object' && value !== null;
 }
@@ -116,6 +110,7 @@ function getFrameStatus(value: unknown): { status: 'ready' } | { status: 'error'
   return undefined;
 }
 
+/** Keeps a theme's story in its own frame and exposes its standalone inspection link. */
 function StoryPanel({
   story,
   theme,
@@ -181,6 +176,14 @@ function StoryPanel({
       <header className="story-panel-header">
         <h3>{label}</h3>
         <p>{description}</p>
+        <a
+          className="gallery-tool-link"
+          href={getStoryFrameUrl(story.id, theme, window.location.href, true)}
+          target="_blank"
+          rel="noreferrer"
+        >
+          Inspect {label} (new tab)
+        </a>
       </header>
       <div className="story-panel-content">
         {enabled ? (
@@ -188,7 +191,7 @@ function StoryPanel({
             ref={frameRef}
             className="story-panel-frame"
             title={`${story.name} ${label} theme`}
-            src={getStoryFrameUrl(story.id, theme)}
+            src={getStoryFrameUrl(story.id, theme, window.location.href)}
             width={STORY_FRAME_WIDTH}
             height={STORY_FRAME_HEIGHT}
             onError={() => setFrameStatus({ message: 'Failed to load story frame.', status: 'error' })}
@@ -241,6 +244,7 @@ function StoryPreview({ story }: { story: Story }) {
   );
 }
 
+/** Browses stories with isolated theme previews and links to inspection and source sharing. */
 export function PreviewApp() {
   const [selectedStoryId, setSelectedStoryId] = React.useState<string | undefined>(getStoryIdFromUrl);
   const selectedStory = stories.find(story => story.id === selectedStoryId);
@@ -298,6 +302,14 @@ export function PreviewApp() {
           <h2>
             {selectedStory.name} <code>{selectedStory.id}</code>
           </h2>
+          <a
+            className="gallery-tool-link"
+            href={getStackBlitzUrl(selectedStory.id, selectedStory.sourceFile, import.meta.env.VITE_GALLERY_GITHUB_REF)}
+            target="_blank"
+            rel="noreferrer"
+          >
+            Open repository in StackBlitz (new tab)
+          </a>
         </header>
         <StoryPreview key={selectedStory.id} story={selectedStory} />
       </main>

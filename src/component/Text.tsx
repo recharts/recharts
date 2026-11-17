@@ -983,6 +983,7 @@ export const Text = forwardRef<SVGTextElement, Props>((outsideProps, ref) => {
         {hasOutline && (
           <path
             {...svgPropertiesAndEvents(backgroundPathProps)}
+            pointerEvents={backgroundPathProps.pointerEvents ?? styleFinal.pointerEvents ?? props.pointerEvents}
             d={textPath}
             fill="none"
             stroke={outlineStroke}
@@ -996,6 +997,7 @@ export const Text = forwardRef<SVGTextElement, Props>((outsideProps, ref) => {
         )}
         <path
           {...svgPropertiesAndEvents(backgroundPathProps)}
+          pointerEvents={backgroundPathProps.pointerEvents ?? styleFinal.pointerEvents ?? props.pointerEvents}
           d={textPath}
           fill="none"
           stroke={backgroundFill.fill}
@@ -1022,6 +1024,7 @@ export const Text = forwardRef<SVGTextElement, Props>((outsideProps, ref) => {
     <rect
       rx={defaultBackgroundRadius}
       {...svgPropertiesAndEvents(backgroundRectProps)}
+      pointerEvents={backgroundRectProps.pointerEvents ?? styleFinal.pointerEvents ?? props.pointerEvents}
       fill={backgroundFill.fill}
       className={clsx('recharts-text-background', backgroundClassName)}
       transform={transform}

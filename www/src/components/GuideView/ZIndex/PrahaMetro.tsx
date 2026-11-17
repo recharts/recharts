@@ -8,21 +8,40 @@ import {
   XAxis,
   YAxis,
   DefaultZIndexes,
-  ZIndexLayer,
   LabelListEntry,
+  Dot,
+  DotProps,
+  AxisDomain,
+  LabelProps,
+  DotType,
+  useRechartsTheme,
 } from 'recharts';
+import { useMemo } from 'react';
 import { RechartsDevtools } from '@recharts/devtools';
 
-const AirplaneIcon = () => (
+// The icon path is 238.45 x 228.25 units, rendered at scale(0.1).
+const ICON_SCALE = 0.1;
+const ICON_WIDTH = 238.45445 * ICON_SCALE;
+const ICON_HEIGHT = 228.24998 * ICON_SCALE;
+
+const AirplaneIcon = ({ cx = 0, cy = 0 }: Pick<DotProps, 'cx' | 'cy'>) => (
   // https://upload.wikimedia.org/wikipedia/commons/7/7d/Plane_icon.svg
-  <svg xmlns="http://www.w3.org/2000/svg" width="238.45445" height="228.24998" version="1.0">
-    <path
-      transform="scale(0.1)"
-      fillRule="evenodd"
-      d="M194.67321 0 70.641958 53.625c-10.38227-6.92107-34.20058-21.27539-38.90545-23.44898-39.4400301-18.22079-36.9454001 14.73107-20.34925 24.6052 4.53917 2.70065 27.72352 17.17823 43.47345 26.37502l17.90625 133.9375 22.21875 13.15625 11.531252-120.9375 71.53125 36.6875 3.84375 39.21875 14.53125 8.625 11.09375-42.40625.125.0625 30.8125-31.53125-14.875-8-35.625 16.90625-68.28125-42.4375L217.36071 12.25 194.67321 0z"
-    />
-  </svg>
+  <path
+    // center the icon on (cx, cy)
+    transform={`translate(${cx - ICON_WIDTH / 2}, ${cy - ICON_HEIGHT / 2}) scale(${ICON_SCALE})`}
+    fillRule="evenodd"
+    d="M194.67321 0 70.641958 53.625c-10.38227-6.92107-34.20058-21.27539-38.90545-23.44898-39.4400301-18.22079-36.9454001 14.73107-20.34925 24.6052 4.53917 2.70065 27.72352 17.17823 43.47345 26.37502l17.90625 133.9375 22.21875 13.15625 11.531252-120.9375 71.53125 36.6875 3.84375 39.21875 14.53125 8.625 11.09375-42.40625.125.0625 30.8125-31.53125-14.875-8-35.625 16.90625-68.28125-42.4375L217.36071 12.25 194.67321 0z"
+  />
 );
+
+const AirplaneReferenceDot = (props: DotProps) => {
+  return (
+    <g>
+      <Dot {...props} />
+      <AirplaneIcon cx={props.cx} cy={props.cy} />
+    </g>
+  );
+};
 
 function between(a: number, b: number) {
   return Math.min(a, b) + Math.abs(a - b) / 2;
@@ -192,13 +211,37 @@ const lineC = {
 // Some labels are rendering overlapped so we need to show them in custom positions
 const customLabels = [mustek, muzeum, florenc, hlavak, veleslavin].map(s => s.name);
 
+/**
+ * Stations are outlined with the page background color, so that they look like a gap in the line.
+ * Falls back to white when no theme is set.
+ */
+function useStationOutline(): string {
+  const theme = useRechartsTheme();
+  return theme?.pageBackground ?? '#fff';
+}
+
+function stationLabelAccessor(entry: LabelListEntry) {
+  const label: string | undefined = entry.payload?.name;
+  if (label != null && customLabels.includes(label)) {
+    return undefined;
+  }
+  return label;
+}
+
 function MetroLine(props: LineProps) {
+  const stationOutline = useStationOutline();
+  // Dot fill comes from the Line `fill` prop, so this style can be shared by all lines
+  const metroLineDot: DotType = useMemo(
+    () => ({ strokeWidth: 3, stroke: stationOutline, r: 10, fillOpacity: 1 }),
+    [stationOutline],
+  );
   return (
     <Line
       type="monotone"
       dataKey="yPos"
       strokeWidth={15}
-      dot={{ strokeWidth: 3, stroke: '#fff', r: 10, fill: props.stroke, fillOpacity: 1 }}
+      dot={metroLineDot}
+      fill={props.stroke}
       isAnimationActive={false}
       activeDot={false}
       {...props}
@@ -208,54 +251,81 @@ function MetroLine(props: LineProps) {
         fill={props.stroke}
         fontWeight="bold"
         textAnchor="start"
-        // dataKey="name"
         position="top"
         dy={-15}
         dx={5}
-        valueAccessor={(entry: LabelListEntry) => {
-          const label: string | undefined = entry.payload?.name;
-          if (label != null && customLabels.includes(label)) {
-            return undefined;
-          }
-          return label;
-        }}
+        valueAccessor={stationLabelAccessor}
       />
     </Line>
   );
 }
+
+const chartMargin = { left: 30, bottom: 30, right: 60, top: 150 };
+const xAxisDomain: AxisDomain = ['dataMin', 'dataMax'];
+const yAxisDomain: AxisDomain = [0, 'dataMax'];
+
+const mustekLabel: LabelProps = {
+  value: mustek.name,
+  angle: -65,
+  textAnchor: 'start',
+  fontWeight: 'bold',
+  dy: -18,
+  dx: 10,
+};
+
+const muzeumLabel: LabelProps = {
+  value: muzeum.name,
+  angle: -65,
+  textAnchor: 'end',
+  fontWeight: 'bold',
+  dy: 45,
+};
+
+const florencLabel: LabelProps = {
+  value: florenc.name,
+  angle: -65,
+  textAnchor: 'start',
+  fontWeight: 'bold',
+  dy: -18,
+  dx: -15,
+};
+
+const hlavakLabel: LabelProps = {
+  value: hlavak.name,
+  angle: -73,
+  textAnchor: 'start',
+  fontWeight: 'bold',
+  dy: 45,
+  dx: 15,
+};
+
+const veleslavinLabel: LabelProps = {
+  value: veleslavin.name,
+  fill: lineA.color,
+  angle: -65,
+  textAnchor: 'start',
+  fontWeight: 'bold',
+  dy: -25,
+  dx: 0,
+};
 // #endregion
 
 export default function PrahaMetro() {
+  const stationOutline = useStationOutline();
   return (
-    <LineChart
-      width={900}
-      height={480}
-      margin={{
-        left: 30,
-        bottom: 30,
-        right: 60,
-        top: 150,
-      }}
-    >
+    <LineChart width={900} height={480} margin={chartMargin}>
       <MetroLine id="C" data={lineC.stations} stroke={lineC.color} />
       <MetroLine id="A" data={lineA.stations} stroke={lineA.color} />
       <MetroLine id="B" data={lineB.stations} stroke={lineB.color} />
-      <XAxis type="number" dataKey="xPos" domain={['dataMin', 'dataMax']} hide />
-      <YAxis domain={[0, 'dataMax']} hide />
+      <XAxis type="number" dataKey="xPos" domain={xAxisDomain} hide />
+      <YAxis domain={yAxisDomain} hide />
       <ReferenceDot
         x={mustek.xPos}
         y={mustek.yPos}
-        label={{
-          value: mustek.name,
-          fill: '#000',
-          angle: -65,
-          textAnchor: 'start',
-          fontWeight: 'bold',
-          dy: -18,
-          dx: 10,
-        }}
+        label={mustekLabel}
         r={18}
         fill={lineA.color}
+        stroke="none"
         fillOpacity={1}
         // one lower zIndex so that these dots render as a background behind the line dots
         zIndex={DefaultZIndexes.scatter - 1}
@@ -263,16 +333,10 @@ export default function PrahaMetro() {
       <ReferenceDot
         x={muzeum.xPos}
         y={muzeum.yPos}
-        label={{
-          value: muzeum.name,
-          fill: '#000',
-          angle: -65,
-          textAnchor: 'end',
-          fontWeight: 'bold',
-          dy: 45,
-        }}
+        label={muzeumLabel}
         r={18}
         fill={lineC.color}
+        stroke="none"
         fillOpacity={1}
         // one lower zIndex so that these dots render as a background behind the line dots
         zIndex={DefaultZIndexes.scatter - 1}
@@ -280,17 +344,10 @@ export default function PrahaMetro() {
       <ReferenceDot
         x={florenc.xPos}
         y={florenc.yPos}
-        label={{
-          value: florenc.name,
-          fill: '#000',
-          angle: -65,
-          textAnchor: 'start',
-          fontWeight: 'bold',
-          dy: -18,
-          dx: -15,
-        }}
+        label={florencLabel}
         r={18}
         fill={lineC.color}
+        stroke="none"
         fillOpacity={1}
         // one lower zIndex so that these dots render as a background behind the line dots
         zIndex={DefaultZIndexes.scatter - 1}
@@ -298,52 +355,29 @@ export default function PrahaMetro() {
       <ReferenceDot
         x={hlavak.xPos}
         y={hlavak.yPos}
-        label={{
-          value: hlavak.name,
-          fill: '#000',
-          angle: -73,
-          textAnchor: 'start',
-          fontWeight: 'bold',
-          dy: 45,
-          dx: 15,
-        }}
+        label={hlavakLabel}
         r={20}
         // one higher zIndex so that this dot renders over the line dot - we want to highlight this station
         zIndex={DefaultZIndexes.scatter + 1}
         fill={lineC.color}
         fillOpacity={1}
-        stroke="#fff"
+        stroke={stationOutline}
         strokeWidth={3}
+        shape={AirplaneReferenceDot}
       />
       <ReferenceDot
         x={veleslavin.xPos}
         y={veleslavin.yPos}
-        label={{
-          value: veleslavin.name,
-          fill: lineA.color,
-          angle: -65,
-          textAnchor: 'start',
-          fontWeight: 'bold',
-          dy: -25,
-          dx: 0,
-        }}
+        label={veleslavinLabel}
         r={20}
         // one higher zIndex so that this dot renders over the line dot - we want to highlight this station
         zIndex={DefaultZIndexes.scatter + 1}
         fill={lineA.color}
         fillOpacity={1}
-        stroke="#fff"
+        stroke={stationOutline}
         strokeWidth={3}
+        shape={AirplaneReferenceDot}
       />
-      {/* Position the Airplane icon on top of the dot */}
-      <ZIndexLayer zIndex={DefaultZIndexes.scatter + 2}>
-        <svg xmlns="http://www.w3.org/2000/svg" x={495} y={290}>
-          <AirplaneIcon />
-        </svg>
-        <svg xmlns="http://www.w3.org/2000/svg" x={147} y={140}>
-          <AirplaneIcon />
-        </svg>
-      </ZIndexLayer>
       <RechartsDevtools />
     </LineChart>
   );
