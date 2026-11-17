@@ -1,7 +1,8 @@
 import { useEffect, useState } from 'react';
-import { Link, NavLink } from 'react-router';
+import { NavLink } from 'react-router';
 import { Bar, BarChart, Line, LineChart, XAxis, YAxis } from 'recharts';
-import { NavCategory, useAllNavigationItems } from '../navigation.ts';
+import { useAllNavigationItems } from '../navigation.ts';
+import { NavCategoryList } from './Shared/NavCategoryList.tsx';
 import { TargetBlankLink } from './Shared/TargetBlankLink.tsx';
 import './navigation.css';
 import { LocaleSwitch } from './LocaleSwitch.tsx';
@@ -106,34 +107,7 @@ function SlideRightMobileNav({ isOpen, onClose }: { isOpen: boolean; onClose: ()
                   </button>
                   {isExpanded && (
                     <div className="collapsible-content">
-                      {categories.map(({ key, displayName, items, NavPreview }: NavCategory) => {
-                        const firstItem = items[0];
-
-                        return (
-                          <div className="sidebar-cate" key={key}>
-                            {displayName && firstItem != null && (
-                              <Link to={firstItem.url} onClick={onClose}>
-                                <h4>{displayName}</h4>
-                                {NavPreview && (
-                                  <div className="chart-preview">
-                                    <NavPreview />
-                                  </div>
-                                )}
-                              </Link>
-                            )}
-                            {displayName && firstItem == null && <h4>{displayName}</h4>}
-                            <ul className="menu">
-                              {items.map(item => (
-                                <li key={item.key}>
-                                  <NavLink to={item.url} onClick={onClose}>
-                                    {item.displayName}
-                                  </NavLink>
-                                </li>
-                              ))}
-                            </ul>
-                          </div>
-                        );
-                      })}
+                      <NavCategoryList categories={categories} onNavigate={onClose} />
                     </div>
                   )}
                 </li>

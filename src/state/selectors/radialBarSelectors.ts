@@ -8,29 +8,20 @@ import { ChartDataState } from '../chartDataSlice';
 import { AxisId } from '../cartesianAxisSlice';
 import { LayoutType, LegendType, PolarViewBoxRequired, TickItem } from '../../util/types';
 import { selectPolarAxisScale, selectPolarAxisTicks, selectPolarGraphicalItemAxisTicks } from './polarScaleSelectors';
-import { BaseAxisWithScale, combineStackGroups, selectTooltipAxis } from './axisSelectors';
+import { BaseAxisWithScale } from './axisSelectors';
 import { selectAngleAxis, selectPolarViewBox, selectRadiusAxis } from './polarAxisSelectors';
 import { selectChartLayout } from '../../context/chartLayoutContext';
 import { BarPositionPosition, getBandSizeOfAxis, getBaseValueOfBar, isCategoricalAxis } from '../../util/ChartUtils';
 import { BarWithPosition, SizeList } from './barSelectors';
-import {
-  selectBarCategoryGap,
-  selectBarGap,
-  selectReverseStackOrder,
-  selectRootBarSize,
-  selectRootMaxBarSize,
-  selectStackOffsetType,
-} from './rootPropsSelectors';
+import { selectBarCategoryGap, selectBarGap, selectRootBarSize, selectRootMaxBarSize } from './rootPropsSelectors';
 import { PolarGraphicalItemSettings } from '../graphicalItemsSlice';
-import { PolarAxisType, selectPolarItemsSettings, selectUnfilteredPolarItems } from './polarSelectors';
+import { selectPolarStackGroups, selectUnfilteredPolarItems } from './polarSelectors';
 import { AngleAxisSettings, RadiusAxisSettings } from '../polarAxisSlice';
 import { LegendPayload } from '../../component/DefaultLegendContent';
 import { isNullish } from '../../util/DataUtils';
 
 import { AllStackGroups, StackDataPoint, StackSeries, StackSeriesIdentifier } from '../../util/stacks/stackTypes';
-import { combineDisplayedStackedData, DisplayedStackedData } from './combiners/combineDisplayedStackedData';
 import { RadialBarSettings } from '../types/RadialBarSettings';
-import { isStackedGraphicalItem, type StackedGraphicalItem } from '../types/StackedGraphicalItem';
 import { combineBarSizeList } from './combiners/combineBarSizeList';
 import { combineAllBarPositions } from './combiners/combineAllBarPositions';
 import { combineStackedData } from './combiners/combineStackedData';
@@ -303,34 +294,6 @@ export const selectPolarBarPosition: (
   combineBarPosition,
 );
 
-const selectStackedRadialBars: (
-  state: RechartsRootState,
-  axisType: PolarAxisType,
-  polarAxisId: AxisId,
-) => ReadonlyArray<StackedGraphicalItem> = createSelector(
-  [selectPolarItemsSettings],
-  (allPolarItems: ReadonlyArray<PolarGraphicalItemSettings>): ReadonlyArray<StackedGraphicalItem> =>
-    allPolarItems.filter(isStackedGraphicalItem),
-);
-
-const selectPolarCombinedStackedData: (
-  state: RechartsRootState,
-  axisType: PolarAxisType,
-  polarAxisId: AxisId,
-) => DisplayedStackedData = createSelector(
-  [selectStackedRadialBars, selectChartDataAndAlwaysIgnoreIndexes, selectTooltipAxis],
-  combineDisplayedStackedData,
-);
-
-const selectStackGroups: (
-  state: RechartsRootState,
-  axisType: PolarAxisType,
-  polarAxisId: AxisId,
-) => AllStackGroups | undefined = createSelector(
-  [selectPolarCombinedStackedData, selectStackedRadialBars, selectStackOffsetType, selectReverseStackOrder],
-  combineStackGroups,
-);
-
 const selectRadialBarStackGroups: (
   state: RechartsRootState,
   radiusAxisId: AxisId,
@@ -340,9 +303,9 @@ const selectRadialBarStackGroups: (
 ) => AllStackGroups | undefined = (state, radiusAxisId, angleAxisId) => {
   const layout = selectChartLayout(state);
   if (layout === 'centric') {
-    return selectStackGroups(state, 'radiusAxis', radiusAxisId);
+    return selectPolarStackGroups(state, 'radiusAxis', radiusAxisId);
   }
-  return selectStackGroups(state, 'angleAxis', angleAxisId);
+  return selectPolarStackGroups(state, 'angleAxis', angleAxisId);
 };
 
 const selectPolarStackedData: (
@@ -459,8 +422,6 @@ export const selectRadialBarLegendPayload: (
         type: legendType,
         // @ts-expect-error we need a better typing for our data inputs
         value: entry.name,
-        // @ts-expect-error we need a better typing for our data inputs
-        color: entry.fill,
         // @ts-expect-error Legend payload.payload says it wants objects but our data can be unknown
         payload: entry,
       };

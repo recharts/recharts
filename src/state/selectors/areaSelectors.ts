@@ -22,6 +22,9 @@ import { GraphicalItemId } from '../graphicalItemsSlice';
 import { selectChartBaseValue } from './rootPropsSelectors';
 import { selectXAxisIdFromGraphicalItemId, selectYAxisIdFromGraphicalItemId } from './graphicalItemSelectors';
 
+/**
+ * @public
+ */
 export interface AreaPointItem extends NullableCoordinate {
   x: number | null;
   y: number | null;

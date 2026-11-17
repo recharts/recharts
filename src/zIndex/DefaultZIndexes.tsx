@@ -2,6 +2,7 @@
  * A collection of all default zIndex values used by Recharts.
  *
  * You can reuse these, or you can define your own.
+ * @public
  */
 export const DefaultZIndexes = {
   /**
@@ -80,6 +81,15 @@ export const DefaultZIndexes = {
    * Hovering over a Point in Line, Area, Scatter, Radar renders a highlight dot
    */
   activeDot: 1200,
+
+  /**
+   * Backgrounds of LabelList and Label, when they have `background` set.
+   * All backgrounds render below all label texts, so overlapping labels stay readable.
+   * The gap to `label` leaves room for your own layers between backgrounds and texts.
+   * A label with a custom zIndex keeps the same gap: zIndex 500 puts its background at 400.
+   * Set `zIndex` in the `background` object to choose the layer yourself.
+   */
+  labelBackground: 1900,
 
   /**
    * LabelList and Label, including Axis labels

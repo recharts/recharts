@@ -296,6 +296,26 @@ describe('event handlers and refs', () => {
 });
 
 describe('getPath', () => {
+  it.each([
+    ['horizontal', 'M1,10L4,40L4,4L1,1Z'],
+    ['vertical', 'M1,10L4,40L4,40L1,10Z'],
+  ] as const)('keeps points paired with their baseline when connecting nulls in %s layout', (layout, expectedPath) => {
+    const points = [
+      { x: 1, y: 10 },
+      { x: 2, y: null },
+      { x: 3, y: 30 },
+      { x: 4, y: 40 },
+    ];
+    const baseLine = [
+      { x: 1, y: 1 },
+      { x: 2, y: 2 },
+      { x: null, y: null },
+      { x: 4, y: 4 },
+    ];
+
+    expect(getPath({ points, baseLine, layout, connectNulls: true })).toBe(expectedPath);
+  });
+
   it('should return null when called without parameters', () => {
     const actual = getPath({});
     expect(actual).toBeNull();

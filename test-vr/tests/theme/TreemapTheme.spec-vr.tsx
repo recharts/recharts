@@ -11,3 +11,9 @@ testWithThemes('Treemap fill and stroke variants', async ({ mountStory }) => {
 
   await expect(component).toHaveScreenshot();
 });
+
+testWithThemes('Treemap colorPanel nested tile tooltip', async ({ mountStory }) => {
+  const component = await mountStory('theme/TreemapTheme/TreemapColorPanelNestedTooltip');
+
+  await expect(component).toHaveScreenshot();
+});

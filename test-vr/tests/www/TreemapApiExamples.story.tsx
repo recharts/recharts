@@ -3,10 +3,9 @@ import BundleSizeTreemapComponent from '../../../www/src/docs/exampleComponents/
 import CustomContentTreemapComponent from '../../../www/src/docs/exampleComponents/TreeMap/CustomContentTreemap';
 import TreeMapNavExampleComponent from '../../../www/src/docs/exampleComponents/TreeMap/TreeMapNavExample';
 import TreemapWithPaddingAndGapsComponent from '../../../www/src/docs/exampleComponents/TreeMap/TreemapWithPaddingAndGaps';
-import { themedStory } from './StoryTheme';
 
-export const TreeMapNavExample = themedStory(TreeMapNavExampleComponent);
-export const CustomContentTreemap = themedStory(CustomContentTreemapComponent);
-export const SimpleTreemap = themedStory(SimpleTreemapComponent);
-export const TreemapWithPaddingAndGaps = themedStory(TreemapWithPaddingAndGapsComponent);
-export const BundleSizeTreemap = themedStory(BundleSizeTreemapComponent);
+export const TreeMapNavExample = TreeMapNavExampleComponent;
+export const CustomContentTreemap = CustomContentTreemapComponent;
+export const SimpleTreemap = SimpleTreemapComponent;
+export const TreemapWithPaddingAndGaps = TreemapWithPaddingAndGapsComponent;
+export const BundleSizeTreemap = BundleSizeTreemapComponent;

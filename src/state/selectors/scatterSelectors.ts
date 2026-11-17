@@ -17,7 +17,7 @@ import { ScatterSettings } from '../types/ScatterSettings';
 import { GraphicalItemId } from '../graphicalItemsSlice';
 import { TickItem } from '../../util/types';
 import { selectChartLayout } from '../../context/chartLayoutContext';
-import { UnthemedStyles } from '../../theme/dataEntryStyles';
+import { UnthemedColors } from '../../theme/dataEntryStyles';
 
 const selectXAxisWithScale = (
   state: RechartsRootState,
@@ -105,7 +105,7 @@ const pickSeriesStroke = (
   seriesStroke: string | undefined,
 ): string | undefined => seriesStroke;
 
-const pickUnthemedStyles = (
+const pickUnthemedColors = (
   _state: RechartsRootState,
   _x: AxisId,
   _y: AxisId,
@@ -115,8 +115,8 @@ const pickUnthemedStyles = (
   _isPanorama: boolean,
   _seriesFill: string | undefined,
   _seriesStroke: string | undefined,
-  unthemedStyles: UnthemedStyles | undefined,
-): UnthemedStyles | undefined => unthemedStyles;
+  unthemedColors: UnthemedColors | undefined,
+): UnthemedColors | undefined => unthemedColors;
 
 const scatterChartDataSelector = (
   state: RechartsRootState,
@@ -151,7 +151,7 @@ export const selectScatterPoints: (
   isPanorama: boolean,
   seriesFill?: string,
   seriesStroke?: string,
-  unthemedStyles?: UnthemedStyles,
+  unthemedColors?: UnthemedColors,
 ) => ReadonlyArray<ScatterPointItem> | undefined = createSelector(
   [
     scatterChartDataSelector,
@@ -165,7 +165,7 @@ export const selectScatterPoints: (
     selectChartLayout,
     pickSeriesFill,
     pickSeriesStroke,
-    pickUnthemedStyles,
+    pickUnthemedColors,
   ],
   (
     { chartData, dataStartIndex, dataEndIndex }: ChartDataState,
@@ -179,7 +179,7 @@ export const selectScatterPoints: (
     layout,
     seriesFill: string | undefined,
     seriesStroke: string | undefined,
-    unthemedStyles: UnthemedStyles | undefined,
+    unthemedColors: UnthemedColors | undefined,
   ): ReadonlyArray<ScatterPointItem> | undefined => {
     if (scatterSettings == null) {
       return undefined;
@@ -213,7 +213,7 @@ export const selectScatterPoints: (
       layout,
       seriesFill,
       seriesStroke,
-      unthemedStyles,
+      unthemedColors,
     });
   },
 );

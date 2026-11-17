@@ -82,4 +82,37 @@ describe('RechartsWrapper', () => {
 
     vi.unstubAllGlobals();
   });
+
+  it('should not throw when ref callback receives null (React 19 Suspense disappearLayoutEffects)', () => {
+    // In React 19, Suspense can trigger a "disappear" layout effect where
+    // the ref callback is called with null before the component unmounts.
+    // This test verifies that setTooltipPortal/setLegendPortal are guarded
+    // against null to prevent state updates during this phase.
+    const errorSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
+    const warnSpy = vi.spyOn(console, 'warn').mockImplementation(() => {});
+
+    try {
+      const { unmount } = render(
+        <RechartsWrapper responsive width={100} height={100}>
+          <div />
+        </RechartsWrapper>,
+      );
+
+      // Unmount should not trigger "Cannot update during an existing state transition" warnings
+      unmount();
+
+      const errors = errorSpy.mock.calls
+        .map(call => call[0])
+        .filter(msg => typeof msg === 'string' && msg.includes('state'));
+      const warns = warnSpy.mock.calls
+        .map(call => call[0])
+        .filter(msg => typeof msg === 'string' && msg.includes('state'));
+
+      expect(errors).toHaveLength(0);
+      expect(warns).toHaveLength(0);
+    } finally {
+      errorSpy.mockRestore();
+      warnSpy.mockRestore();
+    }
+  });
 });

@@ -234,6 +234,7 @@ abstract class RechartsAnimation<T, E> {
  * This animation requires one render cycle for each frame, and it calls setTimeout as quickly as possible
  *
  * @since 3.9
+ * @public
  */
 export class JavascriptAnimation extends RechartsAnimation<number, EasingFunction> {
   // eslint-disable-next-line class-methods-use-this
@@ -261,6 +262,7 @@ export class JavascriptAnimation extends RechartsAnimation<number, EasingFunctio
  * This animation requires only one render, and the actual transition is then handled by the browser.
  *
  * @since 3.9
+ * @public
  */
 export class CSSTransitionAnimation extends RechartsAnimation<string, NamedBezier> {
   protected nextAnimationUpdate(timeElapsed: number): number {
@@ -303,5 +305,6 @@ export class CSSTransitionAnimation extends RechartsAnimation<string, NamedBezie
  * @see {@link https://recharts.github.io/en-US/guide/animations/ Animation guide}
  *
  * @since 3.9
+ * @public
  */
 export type AnimationHandle = JavascriptAnimation | CSSTransitionAnimation;

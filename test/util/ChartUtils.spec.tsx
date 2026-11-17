@@ -1,6 +1,7 @@
 import { scaleBand, scaleLinear, scalePoint } from 'victory-vendor/d3-scale';
 import {
   getBandSizeOfAxis,
+  getCateCoordinateOfBar,
   getDomainOfStackGroups,
   getTooltipNameProp,
   getValueByDataKey,
@@ -563,5 +564,33 @@ describe('getTooltipNameProp', () => {
 
   it('should return undefined when both name and dataKey are undefined', () => {
     expect(getTooltipNameProp(undefined, undefined)).toBeUndefined();
+  });
+});
+
+describe('getCateCoordinateOfBar', () => {
+  const axis: BaseAxisWithScale = {
+    allowDataOverflow: false,
+    allowDuplicatedCategory: true,
+    dataKey: 'name',
+    domain: undefined,
+    id: defaultAxisId,
+    includeHidden: false,
+    name: undefined,
+    reversed: false,
+    unit: undefined,
+    type: 'category',
+    scale: rechartsScaleFactory<string>(scaleBand().domain(['A', 'C']).range([0, 100])),
+  };
+  const ticks: ReadonlyArray<TickItem> = [
+    { coordinate: 0, index: 0, value: 'A' },
+    { coordinate: 50, index: 1, value: 'C' },
+  ];
+
+  it.each([
+    { entry: { name: 'A', uv: 10 }, index: 0, expected: 5 },
+    { entry: { uv: 20 }, index: 1, expected: null },
+    { entry: { name: 'C', uv: 30 }, index: 2, expected: 55 },
+  ])('should put the row at index $index on the tick of its own category', ({ entry, index, expected }) => {
+    expect(getCateCoordinateOfBar({ axis, ticks, offset: 5, bandSize: 50, entry, index })).toBe(expected);
   });
 });

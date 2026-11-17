@@ -12,7 +12,7 @@ import {
   stackOrderNone,
 } from 'victory-vendor/d3-shape';
 
-import { findEntryInArray, isNan, isNotNil, isNullish, isNumber, isNumOrStr, mathSign } from './DataUtils';
+import { findEntryInArray, isNan, isNotNil, isNullish, isNumber, isNumOrStr } from './DataUtils';
 
 import { TooltipEntrySettings, TooltipPayloadEntry } from '../state/tooltipSlice';
 import {
@@ -238,7 +238,9 @@ export const getTicksOfAxis = (
   const offsetForBand = realScaleType === 'scaleBand' && scale.bandwidth ? scale.bandwidth() / 2 : 2;
   let offset = (isGrid || isAll) && type === 'category' && scale.bandwidth ? scale.bandwidth() / offsetForBand : 0;
 
-  offset = axisType === 'angleAxis' && range && range.length >= 2 ? mathSign(range[0] - range[1]) * 2 * offset : offset;
+  if (axisType === 'angleAxis' && range && range.length >= 2) {
+    offset = range[0] > range[1] ? 2 * offset : 0;
+  }
 
   // The ticks set by user should only affect the ticks adjacent to axis line
   if (isGrid && (ticks || niceTicks)) {
@@ -502,6 +504,7 @@ export const getStackedData = (
 /**
  * Externally, we accept both strings and numbers as stack IDs
  * @inline
+ * @public
  */
 export type StackId = string | number;
 /**
@@ -513,6 +516,24 @@ export type NormalizedStackId = string;
 
 export function getNormalizedStackId(publicStackId: StackId | undefined): NormalizedStackId | undefined {
   return publicStackId == null ? undefined : String(publicStackId);
+}
+
+// The category domain skips rows without a valid category, so the tick at a row's index can belong to another row.
+function getCateTickOfEntry<T>(
+  dataKey: DataKey<T> | undefined,
+  ticks: ReadonlyArray<TickItem> | undefined,
+  entry: T,
+  index: number,
+): TickItem | undefined {
+  const tickAtIndex = ticks?.[index];
+  if (isNullish(dataKey)) {
+    return tickAtIndex;
+  }
+  const category = getValueByDataKey(entry, dataKey);
+  if (tickAtIndex?.value === category) {
+    return tickAtIndex;
+  }
+  return ticks && findEntryInArray(ticks, 'value', category);
 }
 
 export function getCateCoordinateOfLine<T extends Record<string, unknown>>({
@@ -536,18 +557,8 @@ export function getCateCoordinateOfLine<T extends Record<string, unknown>>({
   dataKey?: DataKey<T>;
 }): number | null {
   if (axis.type === 'category') {
-    // find coordinate of category axis by the value of category
-    // @ts-expect-error why does this use direct object access instead of getValueByDataKey?
-    if (!axis.allowDuplicatedCategory && axis.dataKey && !isNullish(entry[axis.dataKey])) {
-      // @ts-expect-error why does this use direct object access instead of getValueByDataKey?
-      const matchedTick = findEntryInArray(ticks, 'value', entry[axis.dataKey]);
-
-      if (matchedTick) {
-        return matchedTick.coordinate + bandSize / 2;
-      }
-    }
-
-    return ticks?.[index] ? ticks[index].coordinate + bandSize / 2 : null;
+    const tick = getCateTickOfEntry(axis.dataKey, ticks, entry, index);
+    return tick ? tick.coordinate + bandSize / 2 : null;
   }
 
   const value = getValueByDataKey(entry, !isNullish(dataKey) ? dataKey : axis.dataKey);
@@ -575,7 +586,8 @@ export const getCateCoordinateOfBar = ({
   index: number;
 }): number | null => {
   if (axis.type === 'category') {
-    return ticks[index] ? ticks[index].coordinate + offset : null;
+    const tick = getCateTickOfEntry(axis.dataKey, ticks, entry, index);
+    return tick ? tick.coordinate + offset : null;
   }
   // getValueByDataKey does not validate the output type
   const value: number | undefined = getValueByDataKey(entry, axis.dataKey, axis.scale.domain()[index]);
@@ -719,6 +731,19 @@ export const getBandSizeOfAxis = (
     return bandSize === Infinity ? 0 : bandSize;
   }
 
+  const onlyTick = ticks?.length === 1 ? ticks[0] : undefined;
+  if (isBar && axis?.scale != null && onlyTick != null) {
+    // A single tick gives no gap to measure. Bars are centered on their tick, so the widest band
+    // that stays inside the axis is twice the distance from the tick to the nearer axis edge.
+    const [rangeStart = 0, rangeEnd = 0] = axis.scale.range();
+    const tick = onlyTick.coordinate;
+    const band = 2 * Math.min(Math.abs(tick - rangeStart), Math.abs(rangeEnd - tick));
+    // A tick sitting on the axis edge leaves no room, so fall through to the default below.
+    if (band > 0) {
+      return band;
+    }
+  }
+
   return isBar ? undefined : 0;
 };
 
@@ -735,8 +760,10 @@ export function getTooltipEntry({
   value: ValueType;
   name: string | undefined;
 }): TooltipPayloadEntry {
+  // `ignoreDataEntryColors` only steers the color selection, so it does not belong in the payload
+  const { ignoreDataEntryColors, ...settings } = tooltipEntrySettings;
   return {
-    ...tooltipEntrySettings,
+    ...settings,
     dataKey,
     payload,
     value,

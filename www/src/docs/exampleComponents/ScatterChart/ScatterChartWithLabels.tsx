@@ -1,5 +1,19 @@
-import { ScatterChart, Scatter, XAxis, YAxis, CartesianGrid, Tooltip, LabelList, ZAxis, TooltipIndex } from 'recharts';
+import {
+  ScatterChart,
+  Scatter,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Tooltip,
+  LabelList,
+  ZAxis,
+  TooltipIndex,
+  AxisRange,
+  ScatterCustomizedShape,
+  Margin,
+} from 'recharts';
 import { RechartsDevtools } from '@recharts/devtools';
+import { CSSProperties } from 'react';
 
 // #region Sample data
 const data = [
@@ -12,26 +26,26 @@ const data = [
 ];
 
 // #endregion
+
+const chartStyle: CSSProperties = { width: '100%', maxWidth: '700px', maxHeight: '70vh', aspectRatio: 1.618 };
+const activeShapeStyle: ScatterCustomizedShape = { fill: 'green' };
+const zAxisRange: AxisRange = [900, 4000];
+const chartMargin: Partial<Margin> = {
+  top: 50,
+};
+
 const ScatterChartWithLabels = ({ defaultIndex }: { defaultIndex?: TooltipIndex }) => {
   return (
-    <ScatterChart
-      style={{ width: '100%', maxWidth: '700px', maxHeight: '70vh', aspectRatio: 1.618 }}
-      responsive
-      margin={{
-        top: 20,
-        right: 0,
-        bottom: 0,
-        left: 0,
-      }}
-    >
+    <ScatterChart style={chartStyle} responsive margin={chartMargin}>
       <CartesianGrid />
       <XAxis type="number" dataKey="x" name="stature" unit="cm" />
       <YAxis type="number" dataKey="y" name="weight" unit="kg" width="auto" />
       <Tooltip defaultIndex={defaultIndex} />
-      <Scatter name="A school" data={data} activeShape={{ fill: 'green' }}>
-        <LabelList dataKey="x" />
+      <Scatter name="A school" data={data} activeShape={activeShapeStyle}>
+        {/* The labels by default have the same color as Scatter.fill which makes them invisible. So let's add background! */}
+        <LabelList dataKey="x" background />
       </Scatter>
-      <ZAxis range={[900, 4000]} dataKey="z" />
+      <ZAxis range={zAxisRange} dataKey="z" />
       <RechartsDevtools />
     </ScatterChart>
   );

@@ -1,5 +1,6 @@
-import { Pie, PieChart, Sector, PieSectorDataItem, Tooltip, TooltipIndex } from 'recharts';
+import { Pie, PieChart, Sector, Tooltip, TooltipIndex, Margin, PieSectorShapeProps, Text } from 'recharts';
 import { RechartsDevtools } from '@recharts/devtools';
+import { CSSProperties } from 'react';
 
 // #region Sample data
 const data = [
@@ -10,19 +11,11 @@ const data = [
 ];
 
 // #endregion
-const renderActiveShape = ({
-  cx,
-  cy,
-  midAngle,
-  innerRadius,
-  outerRadius,
-  startAngle,
-  endAngle,
-  fill,
-  payload,
-  percent,
-  value,
-}: PieSectorDataItem) => {
+const renderShape = (props: PieSectorShapeProps) => {
+  if (!props.isActive) {
+    return <Sector {...props} />;
+  }
+  const { cx, cy, midAngle, innerRadius, outerRadius, startAngle, endAngle, fill, payload, percent, value } = props;
   const RADIAN = Math.PI / 180;
   const sin = Math.sin(-RADIAN * (midAngle ?? 1));
   const cos = Math.cos(-RADIAN * (midAngle ?? 1));
@@ -59,12 +52,21 @@ const renderActiveShape = ({
       />
       <path d={`M${sx},${sy}L${mx},${my}L${ex},${ey}`} stroke={fill} fill="none" />
       <circle cx={ex} cy={ey} r={2} fill={fill} stroke="none" />
-      <text x={ex + (cos >= 0 ? 1 : -1) * 12} y={ey} textAnchor={textAnchor} fill="#333">{`PV ${value}`}</text>
-      <text x={ex + (cos >= 0 ? 1 : -1) * 12} y={ey} dy={18} textAnchor={textAnchor} fill="#999">
+      <Text x={ex + (cos >= 0 ? 1 : -1) * 12} y={ey} textAnchor={textAnchor} fill={fill}>{`PV ${value}`}</Text>
+      <Text x={ex + (cos >= 0 ? 1 : -1) * 12} y={ey} dy={18} textAnchor={textAnchor}>
         {`(Rate ${((percent ?? 1) * 100).toFixed(2)}%)`}
-      </text>
+      </Text>
     </g>
   );
+};
+
+const emptyComponent = () => null;
+const chartStyle: CSSProperties = { width: '100%', maxWidth: '500px', maxHeight: '80vh', aspectRatio: 1 };
+const margin: Margin = {
+  top: 50,
+  right: 120,
+  bottom: 0,
+  left: 120,
 };
 
 export default function CustomActiveShapePieChart({
@@ -75,18 +77,9 @@ export default function CustomActiveShapePieChart({
   defaultIndex?: TooltipIndex;
 }) {
   return (
-    <PieChart
-      style={{ width: '100%', maxWidth: '500px', maxHeight: '80vh', aspectRatio: 1 }}
-      responsive
-      margin={{
-        top: 50,
-        right: 120,
-        bottom: 0,
-        left: 120,
-      }}
-    >
+    <PieChart style={chartStyle} responsive margin={margin}>
       <Pie
-        activeShape={renderActiveShape}
+        shape={renderShape}
         data={data}
         cx="50%"
         cy="50%"
@@ -95,7 +88,7 @@ export default function CustomActiveShapePieChart({
         dataKey="value"
         isAnimationActive={isAnimationActive}
       />
-      <Tooltip content={() => null} defaultIndex={defaultIndex} />
+      <Tooltip content={emptyComponent} defaultIndex={defaultIndex} />
       <RechartsDevtools />
     </PieChart>
   );

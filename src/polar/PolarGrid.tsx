@@ -6,13 +6,16 @@ import { AxisId } from '../state/cartesianAxisSlice';
 import { useAppSelector } from '../state/hooks';
 import { selectPolarGridAngles, selectPolarGridRadii } from '../state/selectors/polarGridSelectors';
 import { selectPolarViewBox } from '../state/selectors/polarAxisSelectors';
-import { PolarViewBoxRequired } from '../util/types';
+import { Percent, PolarViewBoxRequired } from '../util/types';
+import { getPercentValue } from '../util/DataUtils';
 import { svgPropertiesNoEvents } from '../util/svgPropertiesNoEvents';
 import { ZIndexable, ZIndexLayer } from '../zIndex/ZIndexLayer';
 import { DefaultZIndexes } from '../zIndex/DefaultZIndexes';
 import { resolveDefaultProps } from '../util/resolveDefaultProps';
 import { useBackwardsCompatibleTheme } from '../theme/useBackwardsCompatibleTheme';
-import { Styles2D } from '../theme/RechartsTheme';
+import { ColorStyles2D, useThemeFillObject, withFillColor } from '../theme/themeFill';
+import { RechartsFill } from '../fill/RechartsFill';
+import { splitFill, useFillPaint } from '../fill/fillDefinitions';
 
 interface PolarGridProps extends ZIndexable {
   /**
@@ -53,8 +56,14 @@ interface PolarGridProps extends ZIndexable {
   polarAngles?: ReadonlyArray<number>;
   /**
    * The array of every circle grid's radius.
+   *
+   * A number is the radius in pixels.
+   * A percentage string such as `'50%'` is relative to the outer radius of the grid,
+   * so `'100%'` draws the outermost circle and the grid keeps its proportions when the chart is resized.
+   * For example, `polarRadius={['25%', '50%', '75%', '100%']}` draws four evenly spaced circles.
+   * Numbers and percentages can be mixed.
    */
-  polarRadius?: ReadonlyArray<number>;
+  polarRadius?: ReadonlyArray<number | Percent>;
   /**
    * The type of polar grids.
    * @defaultValue polygon
@@ -99,18 +108,29 @@ interface PolarGridProps extends ZIndexable {
    */
   strokeDasharray?: string | number;
   /**
-   * The background color used to fill the space between grid lines.
+   * The background used to fill the space between grid lines: a color, or a {@link RechartsFill} object
+   * with an SVG definition, such as a pattern or a gradient.
+   *
+   * @example <PolarGrid fill={{ color: '#eee', definition: pattern(patterns.dots) }} />
    */
-  fill?: string;
+  fill?: string | RechartsFill;
   /**
    * The opacity of the background used to fill the space between grid lines.
    */
   fillOpacity?: number | string;
 }
 
-export type Props = SVGProps<SVGLineElement> & PolarGridProps;
+/**
+ * @public
+ */
+export type Props = Omit<SVGProps<SVGLineElement>, 'fill'> & PolarGridProps;
 
-type PropsWithDefaults = Props & {
+/**
+ * Props after the fill is resolved: `fill` is a color or a `url(#…)`.
+ */
+type StringFillProps = Omit<Props, 'fill'> & { fill?: string };
+
+type PropsWithDefaults = Omit<StringFillProps, 'polarRadius'> & {
   cx: number;
   cy: number;
   innerRadius: number;
@@ -232,7 +252,7 @@ const ConcentricGridPath = (props: PropsWithDefaults) => {
 /**
  * Default styling that was applied before themes existed
  */
-const defaultLegacyThemeProps: Styles2D = {
+const defaultLegacyThemeProps: ColorStyles2D = {
   stroke: '#ccc',
   strokeWidth: 1,
   fill: 'none',
@@ -248,12 +268,28 @@ export const defaultPolarGridProps = {
 
 /**
  * @consumes PolarViewBoxContext
+ * @public
  */
-export const PolarGrid = (outsideProps: Props) => {
-  const themeProps = useBackwardsCompatibleTheme(theme => theme.grid, outsideProps, defaultLegacyThemeProps);
-  const propsWithTheme: Props = {
+export const PolarGrid = (propsWithFillObject: Props) => {
+  // From here on, `fill` is the base color
+  const outsideProps: StringFillProps = { ...propsWithFillObject, fill: splitFill(propsWithFillObject.fill).color };
+  const themeProps = useBackwardsCompatibleTheme(
+    theme => withFillColor(theme.grid),
+    outsideProps,
+    defaultLegacyThemeProps,
+  );
+  // Without a fill of its own, the grid paints with the fill object of the theme, if there is one
+  const themeFillObject = useThemeFillObject(theme => theme.grid);
+  const background = useFillPaint(
+    propsWithFillObject.fill ?? themeFillObject,
+    themeProps.fill,
+    'recharts-polar-grid-fill',
+  );
+  const propsWithTheme: StringFillProps = {
     ...outsideProps,
     ...themeProps,
+    // the background paints with the definition
+    fill: background.paint,
   };
   const {
     gridType,
@@ -281,39 +317,42 @@ export const PolarGrid = (outsideProps: Props) => {
     return null;
   }
 
-  const props: PropsWithDefaults = {
-    cx: polarViewBox?.cx ?? cxFromOutside ?? 0,
-    cy: polarViewBox?.cy ?? cyFromOutside ?? 0,
-    innerRadius: polarViewBox?.innerRadius ?? innerRadiusFromOutside ?? 0,
-    outerRadius: polarViewBox?.outerRadius ?? outerRadiusFromOutside ?? 0,
-    polarAngles,
-    polarRadius,
-    zIndex,
-    ...inputs,
-  };
-
-  const { outerRadius } = props;
+  const outerRadius = polarViewBox?.outerRadius ?? outerRadiusFromOutside ?? 0;
 
   if (outerRadius <= 0) {
     return null;
   }
 
+  const resolvedPolarRadius = polarRadius.map(radius => getPercentValue(radius, outerRadius));
+
+  const props: PropsWithDefaults = {
+    cx: polarViewBox?.cx ?? cxFromOutside ?? 0,
+    cy: polarViewBox?.cy ?? cyFromOutside ?? 0,
+    innerRadius: polarViewBox?.innerRadius ?? innerRadiusFromOutside ?? 0,
+    outerRadius,
+    polarAngles,
+    polarRadius: resolvedPolarRadius,
+    zIndex,
+    ...inputs,
+  };
+
   return (
     <ZIndexLayer zIndex={props.zIndex}>
       <g className="recharts-polar-grid">
+        {background.definition != null && <defs>{background.definition}</defs>}
         <ConcentricGridPath
           gridType={gridType}
           radialLines={radialLines}
           {...props}
           polarAngles={polarAngles}
-          polarRadius={polarRadius}
+          polarRadius={resolvedPolarRadius}
         />
         <PolarAngles
           gridType={gridType}
           radialLines={radialLines}
           {...props}
           polarAngles={polarAngles}
-          polarRadius={polarRadius}
+          polarRadius={resolvedPolarRadius}
         />
       </g>
     </ZIndexLayer>

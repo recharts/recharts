@@ -83,4 +83,102 @@ describe('TooltipBoundingBox', () => {
       expect(screen.getByText('Hello world!')).toBeInTheDocument();
     });
   });
+
+  describe('position', () => {
+    const viewBox = { x: 0, y: 0, width: 100, height: 100 };
+    const boxWithSize = { width: 10, height: 10, left: 0, top: 0 };
+    const emptyBox = { width: 0, height: 0, left: 0, top: 0 };
+
+    function getWrapper(): HTMLElement {
+      const wrapper = screen.getByText('Hello world!');
+      expect(wrapper).toHaveClass('recharts-tooltip-wrapper');
+      return wrapper;
+    }
+
+    it('should not set transform before the box has a size', () => {
+      render(<TooltipBoundingBox {...defaultProps} viewBox={viewBox} lastBoundingBox={emptyBox} />);
+      expect(getWrapper().style.transform).toBe('');
+    });
+
+    it('should set transform once the box has a size', () => {
+      render(<TooltipBoundingBox {...defaultProps} viewBox={viewBox} lastBoundingBox={boxWithSize} />);
+      expect(getWrapper().style.transform).toBe('translate(1px, 2px)');
+    });
+
+    it('should keep positioning with the last size when the box becomes empty', () => {
+      const { rerender } = render(
+        <TooltipBoundingBox {...defaultProps} viewBox={viewBox} lastBoundingBox={boxWithSize} />,
+      );
+      rerender(<TooltipBoundingBox {...defaultProps} viewBox={viewBox} lastBoundingBox={emptyBox} active={false} />);
+      expect(getWrapper().style.transform).toBe('translate(1px, 2px)');
+
+      rerender(
+        <TooltipBoundingBox
+          {...defaultProps}
+          viewBox={viewBox}
+          lastBoundingBox={emptyBox}
+          coordinate={{ x: 95, y: 60 }}
+        />,
+      );
+      // 95 + 10 overflows the viewBox width, so the last size moves the tooltip to the left of the coordinate
+      expect(getWrapper().style.transform).toBe('translate(85px, 60px)');
+    });
+
+    it('should keep positioning with the latest size when the content changes size between empty intervals', () => {
+      const largerBox = { width: 30, height: 10, left: 0, top: 0 };
+      const { rerender } = render(
+        <TooltipBoundingBox
+          {...defaultProps}
+          viewBox={viewBox}
+          lastBoundingBox={boxWithSize}
+          coordinate={{ x: 85, y: 2 }}
+        />,
+      );
+      // 85 + 10 fits in the viewBox width
+      expect(getWrapper().style.transform).toBe('translate(85px, 2px)');
+
+      rerender(
+        <TooltipBoundingBox
+          {...defaultProps}
+          viewBox={viewBox}
+          lastBoundingBox={emptyBox}
+          coordinate={{ x: 85, y: 2 }}
+          active={false}
+        />,
+      );
+      expect(getWrapper().style.transform).toBe('translate(85px, 2px)');
+
+      rerender(
+        <TooltipBoundingBox
+          {...defaultProps}
+          viewBox={viewBox}
+          lastBoundingBox={largerBox}
+          coordinate={{ x: 85, y: 2 }}
+        />,
+      );
+      // 85 + 30 overflows the viewBox width, so the tooltip moves to the left of the coordinate
+      expect(getWrapper().style.transform).toBe('translate(55px, 2px)');
+
+      rerender(
+        <TooltipBoundingBox
+          {...defaultProps}
+          viewBox={viewBox}
+          lastBoundingBox={emptyBox}
+          coordinate={{ x: 85, y: 2 }}
+          active={false}
+        />,
+      );
+      expect(getWrapper().style.transform).toBe('translate(55px, 2px)');
+
+      rerender(
+        <TooltipBoundingBox
+          {...defaultProps}
+          viewBox={viewBox}
+          lastBoundingBox={emptyBox}
+          coordinate={{ x: 85, y: 60 }}
+        />,
+      );
+      expect(getWrapper().style.transform).toBe('translate(55px, 60px)');
+    });
+  });
 });

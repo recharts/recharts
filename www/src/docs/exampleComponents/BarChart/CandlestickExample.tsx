@@ -1,4 +1,4 @@
-import { generateMockMarketData, RechartsDevtools } from '@recharts/devtools';
+import { generateMockMarketData, type MarketCandle, RechartsDevtools } from '@recharts/devtools';
 import {
   Bar,
   BarChart,
@@ -14,7 +14,6 @@ import {
   YAxis,
   useRechartsTheme,
 } from 'recharts';
-import { MarketCandle } from '@recharts/devtools/dist/generateMockMarketData';
 
 const data: ReadonlyArray<MarketCandle> = generateMockMarketData(100, 1337, 100, 1768145757834);
 

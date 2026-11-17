@@ -28,6 +28,7 @@ html {
 body {
   font-family: var(--font-family-base), serif;
   font-size: var(--font-size-base);
+  line-height: 1.5;
   color: var(--color-text-3);
   background-color: var(--color-surface-base);
 }
@@ -77,36 +78,8 @@ img {
   vertical-align: middle;
 }
 
-ul,
-ol {
-  list-style: none;
-}
-
 code {
   font-size: var(--font-size-base);
-}
-
-div,
-dl,
-dt,
-dd,
-ul,
-ol,
-li,
-h1,
-h2,
-h3,
-h4,
-h5,
-h6,
-pre,
-form,
-p,
-blockquote,
-th,
-td {
-  margin: 0;
-  padding: 0;
 }
 
 /* Button*/

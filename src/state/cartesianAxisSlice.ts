@@ -15,13 +15,26 @@ import { CustomScaleDefinition } from '../util/scale/CustomScaleDefinition';
 
 /**
  * @inline
+ * @public
  */
 export type AxisId = string | number;
 export const defaultAxisId: AxisId = 0;
+/**
+ * @public
+ */
 export type XAxisPadding = { left?: number; right?: number } | 'gap' | 'no-gap';
+/**
+ * @public
+ */
 export type YAxisPadding = { top?: number; bottom?: number } | 'gap' | 'no-gap';
 
+/**
+ * @public
+ */
 export type XAxisOrientation = 'top' | 'bottom';
+/**
+ * @public
+ */
 export type YAxisOrientation = 'left' | 'right';
 
 /**
@@ -83,6 +96,7 @@ export type BaseCartesianAxis = {
  *
  * @see {@link https://recharts.github.io/guide/axisTicks/}
  * @inline
+ * @public
  */
 export type NiceTicksAlgorithm = 'none' | 'auto' | 'adaptive' | 'snap125';
 
@@ -137,6 +151,9 @@ export type XAxisSettings = CartesianAxisSettings & {
   heightHistory?: number[];
 };
 
+/**
+ * @public
+ */
 export type YAxisWidth = number | 'auto';
 
 export type YAxisSettings = CartesianAxisSettings & {

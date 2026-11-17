@@ -1,5 +1,5 @@
 import React from 'react';
-import { describe, expect, it, vi } from 'vitest';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { fireEvent, render } from '@testing-library/react';
 import {
   Bar,
@@ -7,6 +7,7 @@ import {
   CartesianGrid,
   ComposedChart,
   Legend,
+  Line,
   Scatter,
   ScatterChart,
   Symbols,
@@ -39,8 +40,12 @@ import {
   expectTooltipNotVisible,
   expectTooltipPayload,
   showTooltip,
+  showTooltipOnCoordinate,
 } from '../component/Tooltip/tooltipTestHelpers';
-import { scatterChartMouseHoverTooltipSelector } from '../component/Tooltip/tooltipMouseHoverSelectors';
+import {
+  composedChartMouseHoverTooltipSelector,
+  scatterChartMouseHoverTooltipSelector,
+} from '../component/Tooltip/tooltipMouseHoverSelectors';
 import { mockGetBoundingClientRect } from '../helper/mockGetBoundingClientRect';
 import { TooltipPayloadConfiguration, TooltipState } from '../../src/state/tooltipSlice';
 import { selectTooltipState } from '../../src/state/selectors/selectTooltipState';
@@ -139,51 +144,51 @@ describe('ScatterChart of three dimension data', () => {
         width: '3.638913473173784',
       },
       {
-        cx: '73.33333333333333',
+        cx: '233.33333333333334',
         cy: '135.5',
         d: 'M0,0',
         height: '3.8563503319209342',
-        transform: 'translate(73.33333333333333, 135.5)',
+        transform: 'translate(233.33333333333334, 135.5)',
         width: '3.8563503319209342',
       },
       {
-        cx: '100',
+        cx: '260',
         cy: '110.75000000000001',
         d: 'M0,0',
         height: '3.749208526326083',
-        transform: 'translate(100, 110.75000000000001)',
+        transform: 'translate(260, 110.75000000000001)',
         width: '3.749208526326083',
       },
       {
-        cx: '126.66666666666667',
+        cx: '286.6666666666667',
         cy: '110.75000000000001',
         d: 'M0,0',
         height: '3.9088200952233594',
-        transform: 'translate(126.66666666666667, 110.75000000000001)',
+        transform: 'translate(286.6666666666667, 110.75000000000001)',
         width: '3.9088200952233594',
       },
       {
-        cx: '153.33333333333334',
+        cx: '313.3333333333333',
         cy: '143.75',
         d: 'M0,0',
         height: '3.694472617243352',
-        transform: 'translate(153.33333333333334, 143.75)',
+        transform: 'translate(313.3333333333333, 143.75)',
         width: '3.694472617243352',
       },
       {
-        cx: '180.00000000000003',
+        cx: '340',
         cy: '119.00000000000001',
         d: 'M0,0',
         height: '3.960594802695323',
-        transform: 'translate(180.00000000000003, 119.00000000000001)',
+        transform: 'translate(340, 119.00000000000001)',
         width: '3.960594802695323',
       },
       {
-        cx: '206.66666666666669',
+        cx: '366.6666666666667',
         cy: '168.49999999999997',
         d: 'M0,0',
         height: '3.803156745151513',
-        transform: 'translate(206.66666666666669, 168.49999999999997)',
+        transform: 'translate(366.6666666666667, 168.49999999999997)',
         width: '3.803156745151513',
       },
     ]);
@@ -647,10 +652,10 @@ describe('ScatterChart of two dimension data', () => {
     expectScatterPoints(container, [
       {
         cx: '230',
-        cy: '185',
+        cy: '20',
         d: 'M0,0',
         height: '9.0270333367641',
-        transform: 'translate(230, 185)',
+        transform: 'translate(230, 20)',
         width: '9.0270333367641',
       },
     ]);
@@ -2199,6 +2204,48 @@ describe('Tooltip integration', () => {
         },
       ];
       expectLastCalledWith(spy, expected);
+    });
+  });
+  describe('with Brush', () => {
+    // rows d0..d9: x = 0..9, y = 10..100; the Brush draws d3..d7
+    const data = Array.from({ length: 10 }, (_, i) => ({ name: `d${i}`, x: i, y: (i + 1) * 10 }));
+
+    beforeEach(() => {
+      mockGetBoundingClientRect({ width: 100, height: 100 });
+    });
+
+    it.each([
+      { point: 1, expected: ['x : 3', 'y : 40'] },
+      { point: 5, expected: ['x : 7', 'y : 80'] },
+    ])('should show the row of hovered point $point when a Brush selects part of the data', ({ point, expected }) => {
+      const { container } = render(
+        <ScatterChart width={400} height={400} data={data}>
+          <XAxis dataKey="x" />
+          <YAxis dataKey="y" />
+          <Scatter isAnimationActive={false} />
+          <Tooltip isAnimationActive={false} />
+          <Brush startIndex={3} endIndex={7} />
+        </ScatterChart>,
+      );
+      expect(container.querySelectorAll(scatterChartMouseHoverTooltipSelector)).toHaveLength(5);
+      showTooltip(container, `${scatterChartMouseHoverTooltipSelector}:nth-child(${point})`);
+      expectTooltipPayload(container, '', expected);
+    });
+
+    it('should show the same row for Line and Scatter in a ComposedChart axis tooltip', () => {
+      const { container } = render(
+        <ComposedChart width={500} height={300} data={data} margin={{ top: 0, right: 0, bottom: 0, left: 0 }}>
+          <XAxis dataKey="name" height={0} />
+          <YAxis width={0} />
+          <Line name="line" dataKey="y" isAnimationActive={false} />
+          <Scatter name="scatter" dataKey="y" isAnimationActive={false} />
+          <Tooltip isAnimationActive={false} />
+          <Brush startIndex={3} endIndex={7} />
+        </ComposedChart>,
+      );
+      // 5 categories d3..d7 across 500px: the first band is 0..100
+      showTooltipOnCoordinate(container, composedChartMouseHoverTooltipSelector, { clientX: 50, clientY: 100 });
+      expectTooltipPayload(container, 'd3', ['line : 40', 'name : d3', 'scatter : 40']);
     });
   });
 });

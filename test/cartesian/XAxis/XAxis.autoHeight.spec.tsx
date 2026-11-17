@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { ComponentProps } from 'react';
 import { render } from '@testing-library/react';
 import { describe, expect, it } from 'vitest';
 import { Bar, BarChart, XAxis } from '../../../src';
@@ -59,5 +59,30 @@ describe('<XAxis height="auto" />', () => {
 
     expect(calculatedXAxisHeight).toBe(88); // 80 height + 6 tick size + 2 tick margin
     expect(xAxisLine).toHaveAttribute('height', '88');
+  });
+
+  it('should render x-axis with dynamically calculated height even after starting from empty data', () => {
+    mockGetBoundingClientRect({ width: 30, height: 80 });
+
+    const BarChartWrapper = ({ data: internalData }: Pick<ComponentProps<typeof BarChart>, 'data'>) => {
+      return (
+        <BarChart width={400} height={300} data={internalData}>
+          <XAxis dataKey="name" height="auto" />
+          <Bar dataKey="amt" />
+        </BarChart>
+      );
+    };
+
+    const { container, rerender } = render(<BarChartWrapper data={[]} />);
+    rerender(<BarChartWrapper data={data} />);
+
+    const tickElements = container.querySelectorAll('.recharts-cartesian-axis-tick-value');
+    expect(tickElements).toHaveLength(3);
+
+    const xAxis = container.querySelector('.xAxis');
+    assertNotNull(xAxis);
+    const xAxisLine = xAxis.querySelector('line');
+
+    expect(xAxisLine).toHaveAttribute('height', '88'); // 80 height + 6 tick size + 2 tick margin
   });
 });

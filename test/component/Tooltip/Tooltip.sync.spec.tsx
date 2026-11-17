@@ -1035,6 +1035,83 @@ describe('Tooltip synchronization', () => {
       });
     });
   });
+
+  describe('when a synchronised chart unmounts', () => {
+    function Charts({
+      showA = true,
+      showB = true,
+      activeA,
+    }: {
+      showA?: boolean;
+      showB?: boolean;
+      activeA?: boolean;
+    }): ReactNode {
+      const chart = (className: string, active?: boolean): ReactNode => (
+        <div className={className}>
+          <LineChart width={400} height={400} data={PageData} syncId="unmount-sync">
+            <XAxis dataKey="name" />
+            <Line isAnimationActive={false} dataKey="uv" />
+            <Tooltip active={active} />
+          </LineChart>
+        </div>
+      );
+      return (
+        <>
+          {showA && chart('chart-a', activeA)}
+          {showB && chart('chart-b')}
+          {chart('chart-c')}
+        </>
+      );
+    }
+
+    function getChart(container: Element, className: string): Element {
+      const chart = container.querySelector(`.${className}`);
+      assertNotNull(chart);
+      return chart;
+    }
+
+    it('should hide the tooltip and cursor in the other charts when the hovered chart unmounts', () => {
+      const { container, rerender, debug } = render(<Charts />);
+      showTooltip(getChart(container, 'chart-a'), lineChartMouseHoverTooltipSelector, debug);
+      expectTooltipPayload(getChart(container, 'chart-b'), 'Page C', ['uv : 300']);
+      expect(getChart(container, 'chart-b').querySelector('.recharts-tooltip-cursor')).toBeVisible();
+
+      // the pointer is still over chart A when it goes away, so it never gets a mouseleave
+      rerender(<Charts showA={false} />);
+
+      expectTooltipNotVisible(getChart(container, 'chart-b'));
+      expectTooltipNotVisible(getChart(container, 'chart-c'));
+      expect(container.querySelector('.recharts-tooltip-cursor')).not.toBeInTheDocument();
+    });
+
+    it('should keep the synchronised tooltip when a chart that only receives it unmounts', () => {
+      const { container, rerender, debug } = render(<Charts />);
+      showTooltip(getChart(container, 'chart-a'), lineChartMouseHoverTooltipSelector, debug);
+
+      rerender(<Charts showB={false} />);
+
+      expectTooltipPayload(getChart(container, 'chart-a'), 'Page C', ['uv : 300']);
+      expectTooltipPayload(getChart(container, 'chart-c'), 'Page C', ['uv : 300']);
+    });
+
+    it('should keep the tooltip of the current source when a chart that sent one earlier unmounts', () => {
+      const { container, rerender, debug } = render(<Charts activeA />);
+      showTooltip(getChart(container, 'chart-a'), lineChartMouseHoverTooltipSelector, debug);
+      hideTooltip(getChart(container, 'chart-a'), lineChartMouseHoverTooltipSelector);
+      showTooltipOnCoordinate(
+        getChart(container, 'chart-c'),
+        lineChartMouseHoverTooltipSelector,
+        { clientX: 100, clientY: 100 },
+        debug,
+      );
+      expectTooltipPayload(getChart(container, 'chart-b'), 'Page B', ['uv : 300']);
+
+      rerender(<Charts activeA showA={false} />);
+
+      expectTooltipPayload(getChart(container, 'chart-b'), 'Page B', ['uv : 300']);
+      expect(getChart(container, 'chart-b').querySelector('.recharts-tooltip-cursor')).toBeVisible();
+    });
+  });
 });
 
 describe('brush synchronization', () => {

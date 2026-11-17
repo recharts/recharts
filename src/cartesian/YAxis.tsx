@@ -222,6 +222,9 @@ export interface YAxisProps<DataPointType = any, DataValueType = any> extends Om
   niceTicks?: NiceTicksAlgorithm;
 }
 
+/**
+ * @public
+ */
 export type Props<DataPointType = any, DataValueType = any> = Omit<
   PresentationAttributesAdaptChildEvent<TickItem, SVGTextElement>,
   'scale' | 'ref'
@@ -439,6 +442,7 @@ const YAxisSettingsDispatcher = <DataPointType, DataValueType>(outsideProps: Pro
 /**
  * @consumes CartesianViewBoxContext
  * @provides CartesianLabelContext
+ * @public
  */
 export const YAxis = React.memo(YAxisSettingsDispatcher, axisPropsAreEqual) as <
   DataPointType = any,

@@ -1,7 +1,7 @@
 import React from 'react';
 import { describe, it, expect, beforeEach } from 'vitest';
 import { createSelectorTestCase } from '../../helper/createSelectorTestCase';
-import { Line, LineChart, Tooltip } from '../../../src';
+import { Line, LineChart, Tooltip, TooltipContentProps } from '../../../src';
 import {
   expectTooltipCoordinate,
   expectTooltipNotVisible,
@@ -11,7 +11,7 @@ import {
 } from './tooltipTestHelpers';
 import { lineChartMouseHoverTooltipSelector } from './tooltipMouseHoverSelectors';
 import { selectIsTooltipActive } from '../../../src/state/selectors/selectors';
-import { mockGetBoundingClientRect } from '../../helper/mockGetBoundingClientRect';
+import { getMockDomRect, mockGetBoundingClientRect } from '../../helper/mockGetBoundingClientRect';
 import { expectLastCalledWith } from '../../helper/expectLastCalledWith';
 
 describe('Tooltip animation', () => {
@@ -188,6 +188,102 @@ describe('Tooltip animation', () => {
         expect(tooltip).toHaveStyle({
           top: 0,
           left: 0,
+          transform: 'translate(75px, 60px)',
+          transition: 'transform 400ms ease',
+        });
+      });
+    });
+  });
+
+  describe('with custom content that renders nothing while inactive', () => {
+    beforeEach(() => {
+      /*
+       * Browsers measure the tooltip wrapper as 0x0 while the content renders nothing.
+       * Everything else keeps the 10x10 mock.
+       */
+      vi.spyOn(Element.prototype, 'getBoundingClientRect').mockImplementation(function getRect(this: Element) {
+        const isEmptyTooltipWrapper =
+          this.classList.contains('recharts-tooltip-wrapper') && this.childElementCount === 0;
+        return getMockDomRect(isEmptyTooltipWrapper ? { width: 0, height: 0 } : { width: 10, height: 10 });
+      });
+    });
+
+    const MyCustomContent = ({ active, payload }: TooltipContentProps) => {
+      if (active && payload && payload.length > 0) {
+        return <p>My Custom Content</p>;
+      }
+      return null;
+    };
+    const renderTestCase = createSelectorTestCase(({ children }) => (
+      <LineChart
+        width={100}
+        height={100}
+        data={[
+          { name: 'A', value: 1 },
+          { name: 'B', value: 2 },
+        ]}
+      >
+        <Line dataKey="value" />
+        {children}
+        <Tooltip content={MyCustomContent} />
+      </LineChart>
+    ));
+
+    it('should start at 0,0 when displayed first time', () => {
+      const { container } = renderTestCase();
+      const tooltip = getTooltip(container);
+      expect(tooltip.style.transform).toBe('');
+
+      showTooltipOnCoordinate(container, lineChartMouseHoverTooltipSelector, {
+        clientX: 20,
+        clientY: 20,
+      });
+
+      expect(tooltip).toHaveStyle({
+        transform: 'translate(15px, 30px)',
+        transition: 'transform 400ms ease',
+      });
+    });
+
+    describe('when tooltip hides, and then shows again', () => {
+      it('should stay at its last position while hidden', () => {
+        const { container } = renderTestCase();
+        showTooltipOnCoordinate(container, lineChartMouseHoverTooltipSelector, {
+          clientX: 20,
+          clientY: 20,
+        });
+        hideTooltip(container, lineChartMouseHoverTooltipSelector);
+        expectTooltipNotVisible(container);
+
+        const tooltip = getTooltip(container);
+        expect(tooltip).toBeEmptyDOMElement();
+        expect(tooltip.style.transform).toBe('translate(15px, 30px)');
+      });
+
+      it('should animate from the last position towards the final position', () => {
+        const { container } = renderTestCase();
+        const tooltip = getTooltip(container);
+        showTooltipOnCoordinate(container, lineChartMouseHoverTooltipSelector, {
+          clientX: 20,
+          clientY: 20,
+        });
+        hideTooltip(container, lineChartMouseHoverTooltipSelector);
+
+        const observer = new MutationObserver(() => {});
+        observer.observe(tooltip, { attributes: true, attributeFilter: ['style'], attributeOldValue: true });
+        showTooltipOnCoordinate(container, lineChartMouseHoverTooltipSelector, {
+          clientX: 80,
+          clientY: 80,
+        });
+        // style values before each change; the transition starts from the first one
+        const previousStyles = observer.takeRecords().map(record => record.oldValue);
+        observer.disconnect();
+
+        expect(previousStyles[0]).toContain('transform: translate(15px, 30px)');
+        previousStyles.forEach(previousStyle => {
+          expect(previousStyle).toContain('transform: translate(');
+        });
+        expect(tooltip).toHaveStyle({
           transform: 'translate(75px, 60px)',
           transition: 'transform 400ms ease',
         });

@@ -192,7 +192,7 @@ describe('Scatter theme', () => {
       });
     });
 
-    it('should ignore the theme completely when only some props are provided', () => {
+    it('should ignore the theme colors, and keep the other theme styles, when only some props are provided', () => {
       const { container } = rechartsTestRender(
         <RechartsThemeProvider
           value={{
@@ -214,7 +214,7 @@ describe('Scatter theme', () => {
       allPaths.forEach(path => {
         expect(path.getAttribute('fill')).toBe(null);
         expect(path.getAttribute('stroke')).toBe('red');
-        expect(path.getAttribute('stroke-dasharray')).toBe(null);
+        expect(path.getAttribute('stroke-dasharray')).toBe('4 4');
       });
     });
 
@@ -389,5 +389,21 @@ describe('Tooltip colors and symbol id (#7976)', () => {
       expect(path.getAttribute('id')).toBe(null);
     });
     expect(container.querySelector('#my-point')).toBe(null);
+  });
+});
+
+describe('theme active styles with a symbol activeShape', () => {
+  it('applies the theme active fill when activeShape is a symbol name', () => {
+    const { container } = rechartsTestRender(
+      <RechartsThemeProvider value={{ graphicalItems: [{ fill: 'red', active: { fill: 'blue' } }] }}>
+        <MyChart>
+          <Scatter data={scatterData} activeShape="diamond" isAnimationActive={false} />
+          <Tooltip />
+        </MyChart>
+      </RechartsThemeProvider>,
+    );
+    showTooltip(container, scatterChartMouseHoverTooltipSelector);
+    const fills = getAllScatterPoints(container).map(path => path.getAttribute('fill'));
+    expect(fills.filter(fill => fill === 'blue')).toHaveLength(1);
   });
 });

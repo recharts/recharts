@@ -29,6 +29,7 @@ const MyCustomSymbol = (props: ScatterShapeProps) => (
     {...props}
     size={300}
     fill={COLORS[props.index % COLORS.length]}
+    stroke="none"
     type={SYMBOLS[props.index % SYMBOLS.length]}
   />
 );

@@ -98,19 +98,10 @@ also set Playwright's browser `colorScheme` to match; this controls
 The gallery declares support for both color schemes so the browser resolves
 system colors according to the selected `colorScheme`. These are separate
 settings, so explicitly override `colorScheme` when a test needs a browser color
-scheme that differs from its Recharts theme. Do not add a `testTheme` prop, put
+scheme that differs from its Recharts theme. Do not add a theme prop to a story, put
 a theme name in a test title, or pass a custom screenshot name. Project names
 make the snapshots separate and deterministic, for example
 `LineChart-1-chromium-light-linux.png`.
-
-The `test` export is the staged, legacy-only fixture used by existing specs;
-`legacyTest` is its explicit name for new specs that intentionally need
-compatibility behavior with a plain white canvas. Existing specs may keep using it until their
-individual migration adds light and dark baselines. Use
-[the VR migration skill](../.agents/skills/vr-test-migration/SKILL.md) for that
-work. The old `test-vr/tests/www/StoryTheme.tsx` helper and its `testTheme`
-prop are also compatibility code for unmigrated website specs; do not use them
-in new stories.
 
 Intentional exceptions can suppress variants with structured fixture options at
 file, `test.describe`, or individual test scope:
@@ -197,6 +188,24 @@ isolated legacy, light, and dark panels. Each panel uses the same theme renderer
 mount page, so state, DOM mutations, document-level styles, and SVG identifiers stay scoped to
 that variant. Both HTML pages use the shared `gallery/entry.tsx`; preview iframes load
 `gallery/index.html` so they exercise the same mount path as Playwright.
+
+### Inspecting and sharing a story
+
+Each theme panel in `gallery/preview.html` has an **Inspect** link. It opens that
+story in a separate tab with the hook inspector and annotations controls from
+`@recharts/devtools`. The controls and chart share a context within that tab;
+each theme remains isolated. Stories must include `<RechartsDevtools />` inside
+their chart to populate the tools, just like website examples do. An empty
+inspector explains this requirement. Inspection is opt-in and never enabled by
+the automated mount path or the ordinary three-panel preview.
+
+**Open repository in StackBlitz** opens the repository with the selected story
+file in the editor and the matching gallery preview. It runs `npm run test-vr:dev`,
+which also starts the gallery locally without Docker for manual inspection.
+The link opens committed GitHub sources, not uncommitted local edits. It defaults
+to `recharts/recharts/tree/main`; set `VITE_GALLERY_GITHUB_REF` when starting or
+building the gallery to inspect a fork, branch, tag, or commit, for example
+`your-name/recharts/tree/your-branch`.
 
 ### `playwright-report`
 
