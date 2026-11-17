@@ -1,50 +1,50 @@
 {
   "treemap": {
     "examplePath": "www/src/views/IndexView/IndexLineChart.tsx",
-    "totalSize": 1011760,
-    "totalSizeLabel": "988.05 KB",
+    "totalSize": 1014084,
+    "totalSizeLabel": "990.32 KB",
     "moduleCount": 386,
-    "generatedAt": "2026-11-17T20:35:36.088Z",
+    "generatedAt": "2026-11-17T21:55:46.279Z",
     "stages": [
       {
         "stage": "es6-folder",
-        "bytes": 1663999,
+        "bytes": 1666413,
         "humanReadableSize": "1.59 MB",
         "reductionFromBaselinePercent": 0
       },
       {
         "stage": "tree-shaken",
-        "bytes": 1014685,
-        "humanReadableSize": "990.90 KB",
+        "bytes": 1017009,
+        "humanReadableSize": "993.17 KB",
         "reductionFromBaselinePercent": 0
       },
       {
         "stage": "minified",
-        "bytes": 326681,
-        "humanReadableSize": "319.02 KB",
-        "reductionFromBaselinePercent": 67.8
+        "bytes": 326702,
+        "humanReadableSize": "319.04 KB",
+        "reductionFromBaselinePercent": 67.88
       },
       {
         "stage": "minified+gzip",
-        "bytes": 107072,
-        "humanReadableSize": "104.56 KB",
-        "reductionFromBaselinePercent": 89.45
+        "bytes": 107087,
+        "humanReadableSize": "104.58 KB",
+        "reductionFromBaselinePercent": 89.47
       }
     ],
     "tree": {
       "name": "bundle",
       "fullPath": "bundle",
-      "value": 1011760,
+      "value": 1014084,
       "children": [
         {
           "name": "src",
           "fullPath": "src",
-          "value": 607442,
+          "value": 609766,
           "children": [
             {
               "name": "state",
               "fullPath": "src/state",
-              "value": 191541,
+              "value": 193873,
               "children": [
                 {
                   "name": "selectors",
@@ -278,7 +278,7 @@
                 {
                   "name": "keyboardEventsMiddleware.ts",
                   "fullPath": "src/state/keyboardEventsMiddleware.ts",
-                  "value": 6661
+                  "value": 6631
                 },
                 {
                   "name": "cartesianAxisSlice.ts",
@@ -288,17 +288,22 @@
                 {
                   "name": "mouseEventsMiddleware.ts",
                   "fullPath": "src/state/mouseEventsMiddleware.ts",
-                  "value": 4600
+                  "value": 5225
                 },
                 {
                   "name": "externalEventsMiddleware.ts",
                   "fullPath": "src/state/externalEventsMiddleware.ts",
-                  "value": 4477
+                  "value": 5218
                 },
                 {
                   "name": "touchEventsMiddleware.ts",
                   "fullPath": "src/state/touchEventsMiddleware.ts",
-                  "value": 3800
+                  "value": 4468
+                },
+                {
+                  "name": "store.ts",
+                  "fullPath": "src/state/store.ts",
+                  "value": 3366
                 },
                 {
                   "name": "zIndexSlice.ts",
@@ -309,11 +314,6 @@
                   "name": "chartDataSlice.ts",
                   "fullPath": "src/state/chartDataSlice.ts",
                   "value": 3195
-                },
-                {
-                  "name": "store.ts",
-                  "fullPath": "src/state/store.ts",
-                  "value": 3038
                 },
                 {
                   "name": "graphicalItemsSlice.ts",
@@ -452,17 +452,17 @@
             {
               "name": "util",
               "fullPath": "src/util",
-              "value": 120167,
+              "value": 120159,
               "children": [
                 {
                   "name": "scale",
                   "fullPath": "src/util/scale",
-                  "value": 15763,
+                  "value": 15755,
                   "children": [
                     {
                       "name": "getNiceTickValues.ts",
                       "fullPath": "src/util/scale/getNiceTickValues.ts",
-                      "value": 10775
+                      "value": 10767
                     },
                     {
                       "name": "createCategoricalInverse.ts",
@@ -2664,50 +2664,50 @@
   },
   "sunburst": {
     "examplePath": "www/src/views/IndexView/IndexLineChart.tsx",
-    "totalSize": 1011760,
-    "totalSizeLabel": "988.05 KB",
+    "totalSize": 1014084,
+    "totalSizeLabel": "990.32 KB",
     "moduleCount": 386,
-    "generatedAt": "2026-11-17T20:35:34.153Z",
+    "generatedAt": "2026-11-17T21:55:43.998Z",
     "stages": [
       {
         "stage": "es6-folder",
-        "bytes": 1663999,
+        "bytes": 1666413,
         "humanReadableSize": "1.59 MB",
         "reductionFromBaselinePercent": 0
       },
       {
         "stage": "tree-shaken",
-        "bytes": 1014685,
-        "humanReadableSize": "990.90 KB",
+        "bytes": 1017009,
+        "humanReadableSize": "993.17 KB",
         "reductionFromBaselinePercent": 0
       },
       {
         "stage": "minified",
-        "bytes": 326681,
-        "humanReadableSize": "319.02 KB",
-        "reductionFromBaselinePercent": 67.8
+        "bytes": 326702,
+        "humanReadableSize": "319.04 KB",
+        "reductionFromBaselinePercent": 67.88
       },
       {
         "stage": "minified+gzip",
-        "bytes": 107072,
-        "humanReadableSize": "104.56 KB",
-        "reductionFromBaselinePercent": 89.45
+        "bytes": 107087,
+        "humanReadableSize": "104.58 KB",
+        "reductionFromBaselinePercent": 89.47
       }
     ],
     "tree": {
       "name": "bundle",
       "fullPath": "bundle",
-      "value": 1011760,
+      "value": 1014084,
       "children": [
         {
           "name": "src",
           "fullPath": "src",
-          "value": 607442,
+          "value": 609766,
           "children": [
             {
               "name": "state",
               "fullPath": "src/state",
-              "value": 191541,
+              "value": 193873,
               "children": [
                 {
                   "name": "selectors",
@@ -2941,7 +2941,7 @@
                 {
                   "name": "keyboardEventsMiddleware.ts",
                   "fullPath": "src/state/keyboardEventsMiddleware.ts",
-                  "value": 6661
+                  "value": 6631
                 },
                 {
                   "name": "cartesianAxisSlice.ts",
@@ -2951,17 +2951,22 @@
                 {
                   "name": "mouseEventsMiddleware.ts",
                   "fullPath": "src/state/mouseEventsMiddleware.ts",
-                  "value": 4600
+                  "value": 5225
                 },
                 {
                   "name": "externalEventsMiddleware.ts",
                   "fullPath": "src/state/externalEventsMiddleware.ts",
-                  "value": 4477
+                  "value": 5218
                 },
                 {
                   "name": "touchEventsMiddleware.ts",
                   "fullPath": "src/state/touchEventsMiddleware.ts",
-                  "value": 3800
+                  "value": 4468
+                },
+                {
+                  "name": "store.ts",
+                  "fullPath": "src/state/store.ts",
+                  "value": 3366
                 },
                 {
                   "name": "zIndexSlice.ts",
@@ -2972,11 +2977,6 @@
                   "name": "chartDataSlice.ts",
                   "fullPath": "src/state/chartDataSlice.ts",
                   "value": 3195
-                },
-                {
-                  "name": "store.ts",
-                  "fullPath": "src/state/store.ts",
-                  "value": 3038
                 },
                 {
                   "name": "graphicalItemsSlice.ts",
@@ -3115,17 +3115,17 @@
             {
               "name": "util",
               "fullPath": "src/util",
-              "value": 120167,
+              "value": 120159,
               "children": [
                 {
                   "name": "scale",
                   "fullPath": "src/util/scale",
-                  "value": 15763,
+                  "value": 15755,
                   "children": [
                     {
                       "name": "getNiceTickValues.ts",
                       "fullPath": "src/util/scale/getNiceTickValues.ts",
-                      "value": 10775
+                      "value": 10767
                     },
                     {
                       "name": "createCategoricalInverse.ts",
