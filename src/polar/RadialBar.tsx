@@ -251,21 +251,13 @@ function RadialBarSectors({
 
         if (isActive) {
           return (
-            <ZIndexLayer
-              zIndex={DefaultZIndexes.activeBar}
-              key={`sector-${entry.cx}-${entry.cy}-${entry.innerRadius}-${entry.outerRadius}-${entry.startAngle}-${entry.endAngle}-${i}`}
-            >
+            <ZIndexLayer zIndex={DefaultZIndexes.activeBar} key={`sector-${i}`}>
               <RadialBarSector {...radialBarSectorProps} />
             </ZIndexLayer>
           );
         }
 
-        return (
-          <RadialBarSector
-            key={`sector-${entry.cx}-${entry.cy}-${entry.innerRadius}-${entry.outerRadius}-${entry.startAngle}-${entry.endAngle}-${i}`}
-            {...radialBarSectorProps}
-          />
-        );
+        return <RadialBarSector key={`sector-${i}`} {...radialBarSectorProps} />;
       })}
       <LabelListFromLabelProp label={allOtherRadialBarProps.label} />
       {allOtherRadialBarProps.children}

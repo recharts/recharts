@@ -118,6 +118,32 @@ describe('Funnel animation', () => {
         ['M 5,5L 495,5L 433.75,150L 66.25,150L 5,5 Z', 'M 66.25,150L 433.75,150L 250,295L 250,295L 66.25,150 Z'],
       ]);
     });
+
+    // https://github.com/recharts/recharts/issues/8229
+    it('should update the same trapezoid elements instead of remounting them on every frame', async () => {
+      const { container, animationManager } = renderTestCase();
+
+      await animationManager.setAnimationProgress(0.1);
+      const initialPaths = getFunnelPaths(container);
+      expect(initialPaths).toHaveLength(2);
+
+      for (const progress of [0.3, 0.6, 0.9]) {
+        // eslint-disable-next-line no-await-in-loop
+        await animationManager.setAnimationProgress(progress);
+        const currentPaths = getFunnelPaths(container);
+        expect(currentPaths).toHaveLength(initialPaths.length);
+        currentPaths.forEach((path, index) => {
+          expect(path).toBe(initialPaths[index]);
+        });
+      }
+
+      await animationManager.completeAnimation();
+      const finalPaths = getFunnelPaths(container);
+      expect(finalPaths).toHaveLength(initialPaths.length);
+      finalPaths.forEach((path, index) => {
+        expect(path).toBe(initialPaths[index]);
+      });
+    });
   });
 
   describe('shape prop', () => {

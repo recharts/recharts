@@ -179,6 +179,7 @@ export function CodeEditorWithPreview<T>({
           onChange={isEditMode ? setEditedCode : undefined}
           readOnly={!isEditMode}
           className="tsx"
+          showCopyButton={false}
         />
       ),
       actions: sourceActions,

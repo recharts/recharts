@@ -1,27 +1,116 @@
+.codemirror-example-editor {
+  border: 1px solid var(--color-border-4);
+  border-radius: 8px;
+  background-color: var(--color-code-bg);
+
+  /* Server-rendered fallback before CodeMirror mounts; matches the editor metrics to avoid a layout jump. */
+  > pre {
+    margin: 0;
+    padding: 12px 16px 12px 24px;
+    font-family: var(--font-family-code);
+    font-size: 13px;
+    line-height: 1.65;
+    color: var(--color-code-3);
+    background: transparent;
+    white-space: pre-wrap;
+  }
+}
+
+.codemirror-example-editor.has-copy-button {
+  position: relative;
+
+  /* Keep code clear of the copy button. */
+  .cm-content,
+  > pre {
+    padding-right: 44px;
+  }
+}
+
+.codemirror-copy-button {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 30px;
+  height: 30px;
+  padding: 0;
+  cursor: pointer;
+  background-color: var(--color-code-bg);
+  border: 1px solid var(--color-border-4);
+  border-radius: 6px;
+  color: var(--color-text-2);
+  opacity: 0.7;
+  transition:
+    opacity 0.15s,
+    border-color 0.15s;
+
+  &:hover,
+  &:focus-visible {
+    opacity: 1;
+    border-color: var(--color-solid-brand-1);
+  }
+
+  &:focus-visible {
+    outline: 2px solid var(--color-solid-brand-1);
+    outline-offset: 1px;
+  }
+
+  /* Icon-only: the label stays available to screen readers. */
+  .codemirror-toolbar-label {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip-path: inset(50%);
+    white-space: nowrap;
+  }
+}
+
 .codemirror-wrapper {
+  #codemirror-container {
+    max-width: 120ex;
+    border: 1px solid var(--color-border-4);
+    border-radius: 8px;
+    overflow: hidden;
+    background-color: var(--color-code-bg);
+  }
+
+  /* Inside the frame, the editor shares the frame's border and corners. */
+  .codemirror-example-editor {
+    border: none;
+    border-radius: 0;
+  }
+
   .codemirror-toolbar {
-    background-color: var(--color-surface-sunken);
-    min-height: 40px;
-    padding: 4px 10px 4px 20px;
+    background-color: var(--color-code-toolbar-bg);
+    border-bottom: 1px solid var(--color-border-4);
+    min-height: 44px;
+    padding: 6px 10px;
     display: flex;
     flex-wrap: wrap;
     justify-content: flex-start;
     align-items: center;
-    gap: 8px;
+    gap: 6px;
 
     .codemirror-toolbar-item {
       display: inline-flex;
       align-items: center;
       gap: 6px;
       cursor: pointer;
-      padding: 6px 12px;
-      height: 3.2rem;
+      padding: 0 10px;
+      height: 30px;
       background-color: transparent;
-      border: 1px solid var(--color-border-2);
-      border-radius: 4px;
-      font-size: 14px;
+      border: 1px solid var(--color-border-3);
+      border-radius: 6px;
+      font-family: inherit;
+      font-size: 13px;
       color: var(--color-text-2);
-      transition: all 0.2s;
+      transition:
+        background-color 0.15s,
+        border-color 0.15s,
+        color 0.15s;
       line-height: 1;
 
       &:hover {
@@ -30,13 +119,14 @@
         color: white;
       }
 
+      &:focus-visible {
+        outline: 2px solid var(--color-solid-brand-1);
+        outline-offset: 1px;
+      }
+
       svg {
         font-size: 14px;
       }
     }
-  }
-
-  #codemirror-container {
-    max-width: 120ex;
   }
 }
