@@ -624,7 +624,7 @@ const parseLabel = (
   viewBox: ViewBox | undefined,
   labelRef?: React.RefObject<SVGTextElement> | null,
 ) => {
-  if (!label) {
+  if (!label && label !== 0) {
     return null;
   }
 
