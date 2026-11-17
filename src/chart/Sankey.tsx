@@ -119,27 +119,53 @@ const getSumWithWeightedTarget = (
 
 const ascendingY = (a: { y: number }, b: { y: number }) => a.y - b.y;
 
-const searchTargetsAndSources = (links: LinkDataItem[], id: number) => {
-  const sourceNodes: number[] = [];
-  const sourceLinks: number[] = [];
-  const targetNodes: number[] = [];
-  const targetLinks: number[] = [];
+type NodeAdjacency = {
+  sourceNodes: number[];
+  sourceLinks: number[];
+  targetNodes: number[];
+  targetLinks: number[];
+};
+
+/**
+ * For every node, finds the links that point to it and the links that leave it, in one pass over the links.
+ * The indexes in each list are in the same order as the links. Links with a missing or out of range end are skipped.
+ *
+ * @param links all links
+ * @param nodeCount number of nodes
+ * @returns adjacency of each node, by node index
+ */
+const getAdjacencyOfNodes = (links: ReadonlyArray<LinkDataItem>, nodeCount: number): NodeAdjacency[] => {
+  const result: NodeAdjacency[] = [];
+  for (let id = 0; id < nodeCount; id++) {
+    result.push({ sourceNodes: [], sourceLinks: [], targetNodes: [], targetLinks: [] });
+  }
+  const isNodeIndex = (value: unknown): value is number =>
+    typeof value === 'number' && Number.isInteger(value) && value >= 0 && value < nodeCount;
 
   for (let i = 0, len = links.length; i < len; i++) {
     const link = links[i];
-
-    if (link?.source === id) {
-      targetNodes.push(link.target);
-      targetLinks.push(i);
+    if (link == null) {
+      continue;
+    }
+    const { source, target } = link;
+    /*
+     * A link with one end outside the nodes is skipped on both ends. Recording the valid end alone
+     * would give that node a phantom source, so it would no longer count as a root of the layout.
+     */
+    if (!isNodeIndex(source) || !isNodeIndex(target)) {
+      continue;
     }
 
-    if (link?.target === id) {
-      sourceNodes.push(link.source);
-      sourceLinks.push(i);
-    }
+    const sourceAdjacency = result[source];
+    sourceAdjacency?.targetNodes.push(target);
+    sourceAdjacency?.targetLinks.push(i);
+
+    const targetAdjacency = result[target];
+    targetAdjacency?.sourceNodes.push(source);
+    targetAdjacency?.sourceLinks.push(i);
   }
 
-  return { sourceNodes, sourceLinks, targetLinks, targetNodes };
+  return result;
 };
 
 const updateDepthOfTargets = (tree: SankeyNode[], curNode: SankeyNode, onPath: Set<SankeyNode> = new Set()): void => {
@@ -186,8 +212,9 @@ const getNodesTree = (
   nodeWidth: number,
   align: 'left' | 'justify',
 ): { tree: SankeyNode[]; maxDepth: number } => {
+  const adjacencyOfNodes = getAdjacencyOfNodes(links, nodes.length);
   const tree = nodes.map((entry: SankeyNode, index: number) => {
-    const result = searchTargetsAndSources(links, index);
+    const result = adjacencyOfNodes[index] ?? { sourceNodes: [], sourceLinks: [], targetNodes: [], targetLinks: [] };
 
     return {
       ...entry,

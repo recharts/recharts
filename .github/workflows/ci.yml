@@ -489,6 +489,13 @@ jobs:
       - name: Checkout Recharts Repository
         uses: actions/checkout@v7
 
+      - name: Authenticate Flakiness.io uploads from fork PRs
+        # Fork PRs get no secrets or OIDC token, so this sets FLAKINESS_ACCESS_TOKEN for later steps.
+        # It does nothing for pushes and same-repo PRs, which keep using OIDC.
+        uses: flakiness/authenticate-fork-prs@v1
+        with:
+          flakiness-project: recharts/recharts
+
       - name: Use Node.js ${{ env.NODE_VERSION }}
         uses: actions/setup-node@v7
         with:
@@ -505,14 +512,6 @@ jobs:
         run: npx playwright test --config=test-vr/playwright.config.ts --project=${{ matrix.project }}
         # Continue even if tests fail so the blob report can still be uploaded.
         continue-on-error: true
-
-      - name: Upload Flakiness report artifact (fork PRs only)
-        if: always() && github.event_name == 'pull_request' && github.event.pull_request.head.repo.fork
-        uses: actions/upload-artifact@v7
-        with:
-          name: flakiness-report-${{ github.job }}-${{ strategy.job-index }}
-          path: flakiness-report/
-          retention-days: 1
 
       - name: Upload blob report artifact
         if: always()

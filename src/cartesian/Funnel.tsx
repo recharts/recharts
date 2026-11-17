@@ -510,7 +510,7 @@ function FunnelTrapezoids(props: FunnelTrapezoidsProps) {
 
         return (
           <Layer
-            key={`trapezoid-${entry?.x}-${entry?.y}-${entry?.name}-${entry?.value}`}
+            key={`trapezoid-${i}`}
             className="recharts-funnel-trapezoid"
             {...adaptEventsOfChild(restOfAllOtherProps, entry, i)}
             onMouseEnter={onMouseEnterFromContext(entry, i)}
