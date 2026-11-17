@@ -52,6 +52,9 @@ import {
   DataLabelThemeContextProvider,
   filledShapeLabelColors,
 } from '../theme/labelTheme';
+import { ZoomPropBridge } from './zoom/ZoomPropBridge';
+import { ZoomProp } from '../util/zoom/ZoomOptions';
+import { ZoomableChartContent } from './zoom/ZoomableChartContent';
 
 /**
  * @public
@@ -81,6 +84,23 @@ interface SunburstNode extends SunburstData {
  */
 export interface SunburstChartProps extends EventThrottlingProps {
   className?: string;
+  /**
+   * Turn on accessibility support for keyboard-only and screen reader users.
+   *
+   * @defaultValue true
+   */
+  accessibilityLayer?: boolean;
+  title?: string;
+  desc?: string;
+  role?: React.AriaRole;
+  tabIndex?: number;
+  /**
+   * Enables the built-in zoom and pan controls.
+   *
+   * Accepts `true` for defaults, `'x' | 'y' | 'xy'` as shorthand, or a full options object.
+   * Equivalent to mounting `<ZoomAndPan />` as a child.
+   */
+  zoom?: ZoomProp;
   /**
    * The source data. Each element should be an object.
    * The properties of each object represent the values of different data dimensions.
@@ -409,6 +429,7 @@ function SunburstLabels({ label, textOptions }: Pick<SunburstChartProps, 'label'
 }
 
 export const defaultSunburstChartProps = {
+  accessibilityLayer: true,
   padding: 2,
   dataKey: 'value',
   nameKey: 'name',
@@ -581,6 +602,11 @@ const SunburstChartContent = ({
   themeStyles,
   width,
   height,
+  accessibilityLayer,
+  title,
+  desc,
+  role: roleFromProps,
+  tabIndex: tabIndexFromProps,
 }: InternalSunburstChartProps & { width: number; height: number }) => {
   const dispatch = useAppDispatch();
 
@@ -756,17 +782,22 @@ const SunburstChartContent = ({
   ]);
 
   const layerClass = clsx('recharts-sunburst', className);
+  const role = roleFromProps ?? (accessibilityLayer ? 'application' : undefined);
+  const tabIndex = tabIndexFromProps ?? (accessibilityLayer ? 0 : undefined);
   return (
-    <Surface width={width} height={height}>
+    <Surface width={width} height={height} title={title} desc={desc} role={role} tabIndex={tabIndex}>
       <PolarLabelListContextProvider value={layout.labelListEntries}>
         <DataLabelThemeContextProvider value={layout.resolveLabelTheme}>
           <DataLabelColorsContextProvider value={filledShapeLabelColors}>
-            <Layer className={layerClass}>
-              <AllZIndexPortals isPanorama={false}>
-                {layout.sectors}
-                <SunburstLabels label={label} textOptions={textOptions} />
-              </AllZIndexPortals>
-            </Layer>
+            {/* The z-index portals live inside the zoom layer so that labels follow the sectors. */}
+            <ZoomableChartContent>
+              <Layer className={layerClass}>
+                <AllZIndexPortals isPanorama={false}>
+                  {layout.sectors}
+                  <SunburstLabels label={label} textOptions={textOptions} />
+                </AllZIndexPortals>
+              </Layer>
+            </ZoomableChartContent>
             {children}
           </DataLabelColorsContextProvider>
         </DataLabelThemeContextProvider>
@@ -862,6 +893,7 @@ export const SunburstChart = (outsideProps: SunburstChartProps) => {
               />
             )}
           </RegisterGraphicalItemId>
+          <ZoomPropBridge zoom={props.zoom} />
         </RechartsWrapper>
       </TooltipPortalContext.Provider>
     </RechartsStoreProvider>

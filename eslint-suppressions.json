@@ -103,7 +103,7 @@
       "count": 5
     },
     "recharts/no-clone-element": {
-      "count": 2
+      "count": 1
     }
   },
   "src/cartesian/CartesianAxis.tsx": {
@@ -446,6 +446,11 @@
     "@typescript-eslint/no-explicit-any": {
       "count": 3
     },
+    "recharts/no-clone-element": {
+      "count": 1
+    }
+  },
+  "src/container/PanoramaPreview.tsx": {
     "recharts/no-clone-element": {
       "count": 1
     }

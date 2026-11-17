@@ -770,6 +770,7 @@ describe('Tooltip visibility', () => {
       expectLastCalledWith(spy, {
         bottom: 135,
         brushBottom: 35,
+        brushRight: 30,
         height: 245,
         left: 80,
         right: 30,

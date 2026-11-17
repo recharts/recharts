@@ -39,6 +39,7 @@ import { XAxisOrientation, XAxisPadding, YAxisOrientation, YAxisPadding } from '
 import { TextAnchor, TextVerticalAnchor } from '../component/Text';
 import type { TickFormatter } from '../cartesian/CartesianAxis';
 import { TextProps } from '../index';
+import { ZoomProp } from './zoom/ZoomOptions';
 import { TypedDataKey } from './typedDataKey';
 import type { EasingInput } from '../animation/easing';
 
@@ -722,6 +723,7 @@ export type ChartOffsetInternal = {
   width: number;
   height: number;
   brushBottom: number;
+  brushRight: number;
 };
 
 /**
@@ -1705,6 +1707,14 @@ interface BaseChartProps<DataPointType> extends DataProvider<DataPointType>, Ext
    * @see {@link https://recharts.github.io/en-US/guide/sizes/ Chart sizing guide}
    */
   responsive?: boolean;
+  /**
+   * Enables the built-in zoom and pan controls.
+   *
+   * Accepts `true` for defaults, `'x' | 'y' | 'xy'` as shorthand, or a full options object.
+   *
+   * You can also mount the headless `<ZoomAndPan />` component as a child for the same feature set.
+   */
+  zoom?: ZoomProp;
 }
 
 export interface EventThrottlingProps {

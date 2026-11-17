@@ -11,6 +11,7 @@ describe('selectChartOffset', () => {
   shouldReturnFromInitialState(selectChartOffsetInternal, {
     bottom: 5,
     brushBottom: 5,
+    brushRight: 5,
     height: 0,
     left: 5,
     right: 5,

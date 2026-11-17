@@ -563,8 +563,13 @@ describe('<ReferenceLine />', () => {
       };
 
       const PanoramaComp = (): null => {
-        panoramaYAxisRangeSpy(useAppSelector(state => selectAxisRangeWithReverse(state, 'yAxis', 0, true)));
-        panoramaXAxisRangeSpy(useAppSelector(state => selectAxisRangeWithReverse(state, 'xAxis', 0, true)));
+        /*
+         * The brush preview is an isolated chart with its own store: inside it, the regular
+         * (non-panorama) selectors return the preview's own ranges, computed from the brush rail
+         * size and padding - the same numbers the legacy shared-store panorama selectors produced.
+         */
+        panoramaYAxisRangeSpy(useAppSelector(state => selectAxisRangeWithReverse(state, 'yAxis', 0, false)));
+        panoramaXAxisRangeSpy(useAppSelector(state => selectAxisRangeWithReverse(state, 'xAxis', 0, false)));
         return null;
       };
 
@@ -578,6 +583,9 @@ describe('<ReferenceLine />', () => {
           <Line dataKey="uv" />
           <Brush dataKey="name" padding={{ bottom: 1, left: 3, right: 5, top: 9 }}>
             <LineChart>
+              {/* The preview is an isolated chart, so it declares its own (hidden) categorical
+                  axis: it no longer inherits the main chart's axis configuration. */}
+              <XAxis dataKey="name" hide />
               <ReferenceLine y={1000} />
               <ReferenceLine x="Page C" />
               <Line dataKey="pv" />

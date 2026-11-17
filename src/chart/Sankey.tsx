@@ -51,7 +51,7 @@ import {
 } from '../util/svgPropertiesNoEvents';
 import { RequiresDefaultProps, resolveDefaultProps } from '../util/resolveDefaultProps';
 import { isPositiveNumber } from '../util/isWellBehavedNumber';
-import { isNotNil, noop } from '../util/DataUtils';
+import { isNotNil } from '../util/DataUtils';
 import { WithIdRequired } from '../util/useUniqueId';
 import { RegisterGraphicalItemId } from '../context/RegisterGraphicalItemId';
 import { GraphicalItemId } from '../state/graphicalItemsSlice';
@@ -61,6 +61,9 @@ import { useRechartsTheme } from '../theme/RechartsThemeContext';
 import { getOwnStyles, hasOwnColors, withoutColors } from '../theme/dataEntryStyles';
 import { RechartsFill, RechartsFillDefinitionProps } from '../fill/RechartsFill';
 import { readEntryFill, useThemeFillObjects } from '../fill/fillDefinitions';
+import { ZoomPropBridge } from './zoom/ZoomPropBridge';
+import { ZoomProp } from '../util/zoom/ZoomOptions';
+import { ZoomableChartContent } from './zoom/ZoomableChartContent';
 
 const interpolationGenerator = (a: number, b: number) => {
   const ka = +a;
@@ -791,10 +794,13 @@ const SetSankeyTooltipEntrySettings = React.memo(
     name,
     data,
     id,
-  }: Pick<InternalSankeyProps, 'dataKey' | 'nameKey' | 'stroke' | 'strokeWidth' | 'fill' | 'name' | 'data' | 'id'>) => {
+    positions,
+  }: Pick<InternalSankeyProps, 'dataKey' | 'nameKey' | 'stroke' | 'strokeWidth' | 'fill' | 'name' | 'data' | 'id'> & {
+    positions: Record<string, Coordinate | undefined>;
+  }) => {
     const tooltipEntrySettings: TooltipPayloadConfiguration = {
       dataDefinedOnItem: data,
-      getPosition: noop,
+      getPosition: tooltipIndex => positions[tooltipIndex],
       settings: {
         stroke,
         strokeWidth,
@@ -1034,6 +1040,13 @@ interface SankeyProps extends EventThrottlingProps {
    * @default 'justify'
    */
   align?: 'left' | 'justify';
+  /**
+   * Enables the built-in zoom and pan controls.
+   *
+   * Accepts `true` for defaults, `'x' | 'y' | 'xy'` as shorthand, or a full options object.
+   * Equivalent to mounting `<ZoomAndPan />` as a child.
+   */
+  zoom?: ZoomProp;
 }
 
 /**
@@ -1687,6 +1700,10 @@ function SankeyImpl(props: InternalSankeyProps) {
     linkCurvature,
     margin,
     verticalAlign,
+    stroke,
+    strokeWidth,
+    fill,
+    name,
     align,
     accessibilityLayer,
     title,
@@ -1801,6 +1818,19 @@ function SankeyImpl(props: InternalSankeyProps) {
     themeFillObjects,
   ]);
 
+  const tooltipPositions = useMemo(() => {
+    const positions: Record<string, Coordinate | undefined> = {};
+
+    modifiedNodes.forEach((item, index) => {
+      positions[`node-${index}`] = getNodeCoordinateOfTooltip(item);
+    });
+    modifiedLinks.forEach((item, index) => {
+      positions[`link-${index}`] = getLinkCoordinateOfTooltip(item);
+    });
+
+    return positions;
+  }, [modifiedLinks, modifiedNodes]);
+
   const handleMouseEnter = useCallback(
     (item: NodeProps | LinkProps, type: SankeyElementType, e: MouseEvent<SVGGraphicsElement>) => {
       if (onMouseEnter) {
@@ -1834,42 +1864,58 @@ function SankeyImpl(props: InternalSankeyProps) {
 
   return (
     <>
+      <SetSankeyTooltipEntrySettings
+        dataKey={dataKey}
+        nameKey={nameKey}
+        stroke={stroke}
+        strokeWidth={strokeWidth}
+        fill={fill}
+        name={name}
+        data={data}
+        id={id}
+        positions={tooltipPositions}
+      />
       <SetComputedData computedData={{ links: modifiedLinks, nodes: modifiedNodes }} />
       <Surface {...attrs} title={title} desc={desc} role={role} tabIndex={tabIndex} width={width} height={height}>
-        <AllZIndexPortals isPanorama={false}>
-          <SankeyLabelListProvider nodes={modifiedNodes} nameKey={nameKey}>
-            {children}
-            <AllSankeyLinkElements
-              graphicalItemId={id}
-              links={links}
-              modifiedLinks={modifiedLinks}
-              linkContent={link}
-              dataKey={dataKey}
-              onMouseEnter={(linkProps: LinkProps, e: MouseEvent<SVGGraphicsElement>) =>
-                handleMouseEnter(linkProps, 'link', e)
-              }
-              onMouseLeave={(linkProps: LinkProps, e: MouseEvent<SVGGraphicsElement>) =>
-                handleMouseLeave(linkProps, 'link', e)
-              }
-              onClick={(linkProps: LinkProps, e: MouseEvent<SVGGraphicsElement>) => handleClick(linkProps, 'link', e)}
-            />
-            <AllNodeElements
-              graphicalItemId={id}
-              modifiedNodes={modifiedNodes}
-              nodeFillDefinitions={nodeFillDefinitions}
-              nodeContent={node}
-              dataKey={dataKey}
-              onMouseEnter={(nodeProps: NodeProps, e: MouseEvent<SVGGraphicsElement>) =>
-                handleMouseEnter(nodeProps, 'node', e)
-              }
-              onMouseLeave={(nodeProps: NodeProps, e: MouseEvent<SVGGraphicsElement>) =>
-                handleMouseLeave(nodeProps, 'node', e)
-              }
-              onClick={(nodeProps: NodeProps, e: MouseEvent<SVGGraphicsElement>) => handleClick(nodeProps, 'node', e)}
-            />
-            <LabelListFromLabelProp label={label} pointerEvents="none" />
-          </SankeyLabelListProvider>
-        </AllZIndexPortals>
+        <SankeyLabelListProvider nodes={modifiedNodes} nameKey={nameKey}>
+          {/* Children stay outside the clip/zoom layer: Sankey's public contract is that they do NOT
+              receive a clipPathId, and overlays (Tooltip & co.) must not be transform-zoomed. The z-index
+              portals live inside the zoom layer so that labels rendered through them follow the nodes. */}
+          {children}
+          <ZoomableChartContent>
+            <AllZIndexPortals isPanorama={false}>
+              <AllSankeyLinkElements
+                graphicalItemId={id}
+                links={links}
+                modifiedLinks={modifiedLinks}
+                linkContent={link}
+                dataKey={dataKey}
+                onMouseEnter={(linkProps: LinkProps, e: MouseEvent<SVGGraphicsElement>) =>
+                  handleMouseEnter(linkProps, 'link', e)
+                }
+                onMouseLeave={(linkProps: LinkProps, e: MouseEvent<SVGGraphicsElement>) =>
+                  handleMouseLeave(linkProps, 'link', e)
+                }
+                onClick={(linkProps: LinkProps, e: MouseEvent<SVGGraphicsElement>) => handleClick(linkProps, 'link', e)}
+              />
+              <AllNodeElements
+                graphicalItemId={id}
+                modifiedNodes={modifiedNodes}
+                nodeFillDefinitions={nodeFillDefinitions}
+                nodeContent={node}
+                dataKey={dataKey}
+                onMouseEnter={(nodeProps: NodeProps, e: MouseEvent<SVGGraphicsElement>) =>
+                  handleMouseEnter(nodeProps, 'node', e)
+                }
+                onMouseLeave={(nodeProps: NodeProps, e: MouseEvent<SVGGraphicsElement>) =>
+                  handleMouseLeave(nodeProps, 'node', e)
+                }
+                onClick={(nodeProps: NodeProps, e: MouseEvent<SVGGraphicsElement>) => handleClick(nodeProps, 'node', e)}
+              />
+              <LabelListFromLabelProp label={label} pointerEvents="none" />
+            </AllZIndexPortals>
+          </ZoomableChartContent>
+        </SankeyLabelListProvider>
       </Surface>
     </>
   );
@@ -1923,22 +1969,9 @@ export function Sankey(outsideProps: Props) {
       >
         <TooltipPortalContext.Provider value={tooltipPortal}>
           <RegisterGraphicalItemId id={externalId} type="sankey">
-            {id => (
-              <>
-                <SetSankeyTooltipEntrySettings
-                  dataKey={props.dataKey}
-                  nameKey={props.nameKey}
-                  stroke={props.stroke}
-                  strokeWidth={props.strokeWidth}
-                  fill={props.fill}
-                  name={props.name}
-                  data={props.data}
-                  id={id}
-                />
-                <SankeyImpl {...props} id={id} />
-              </>
-            )}
+            {id => <SankeyImpl {...props} id={id} />}
           </RegisterGraphicalItemId>
+          <ZoomPropBridge zoom={props.zoom} />
         </TooltipPortalContext.Provider>
       </RechartsWrapper>
     </RechartsStoreProvider>

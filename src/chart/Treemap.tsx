@@ -60,6 +60,9 @@ import { AllZIndexPortals } from '../zIndex/ZIndexPortal';
 import { DataLabelColorsContextProvider, DataLabelThemeContextProvider } from '../theme/labelTheme';
 import { RechartsFill } from '../fill/RechartsFill';
 import { readEntryFill, splitFill } from '../fill/fillDefinitions';
+import { ZoomPropBridge } from './zoom/ZoomPropBridge';
+import { ZoomProp } from '../util/zoom/ZoomOptions';
+import { ZoomableChartContent } from './zoom/ZoomableChartContent';
 
 const NODE_VALUE_KEY = 'value';
 
@@ -443,6 +446,23 @@ export type TreemapContentType = ReactNode | ((props: TreemapNode) => React.Reac
 export interface Props<DataPointType extends TreemapDataType = TreemapDataType, DataValueType = any>
   extends DataConsumer<DataPointType, DataValueType>, EventThrottlingProps {
   /**
+   * Turn on accessibility support for keyboard-only and screen reader users.
+   *
+   * @defaultValue true
+   */
+  accessibilityLayer?: boolean;
+  title?: string;
+  desc?: string;
+  role?: React.AriaRole;
+  tabIndex?: number;
+  /**
+   * Enables the built-in zoom and pan controls.
+   *
+   * Accepts `true` for defaults, `'x' | 'y' | 'xy'` as shorthand, or a full options object.
+   * Equivalent to mounting `<ZoomAndPan />` as a child.
+   */
+  zoom?: ZoomProp;
+  /**
    * The width of chart container.
    * Can be a number or a percent string like "100%".
    */
@@ -634,6 +654,7 @@ interface State {
 }
 
 export const defaultTreeMapProps = {
+  accessibilityLayer: true,
   aspectRatio: 0.5 * (1 + Math.sqrt(5)),
   nodeInset: 0,
   nodeGap: 0,
@@ -1610,7 +1631,20 @@ class TreemapWithState extends PureComponent<InternalTreemapProps, State> {
   };
 
   render() {
-    const { width, height, className, style, children, type, fill, ...others } = this.props;
+    const {
+      width,
+      height,
+      className,
+      style,
+      children,
+      type,
+      fill,
+      dispatch,
+      accessibilityLayer,
+      title,
+      desc,
+      ...others
+    } = this.props;
     // the surface keeps the plain color, which elements without a fill of their own inherit
     const attrs = svgPropertiesNoEvents({ ...others, fill: splitFill(fill).color });
     const { label, content, themeGraphicalItems } = this.props;
@@ -1624,6 +1658,9 @@ class TreemapWithState extends PureComponent<InternalTreemapProps, State> {
             .map((entry): [TooltipIndex, TreemapLabelListEntry] => [entry.payload.tooltipIndex, entry])
         : [],
     );
+
+    const role = attrs.role ?? (accessibilityLayer ? 'application' : undefined);
+    const tabIndex = attrs.tabIndex ?? (accessibilityLayer ? 0 : undefined);
 
     return (
       <>
@@ -1639,17 +1676,27 @@ class TreemapWithState extends PureComponent<InternalTreemapProps, State> {
         />
         <Surface
           {...attrs}
+          title={title}
+          desc={desc}
+          role={role}
+          tabIndex={tabIndex}
           width={width}
           height={getTreemapRenderHeight(height, type)}
           onTouchMove={this.handleTouchMove}
         >
-          <AllZIndexPortals isPanorama={false}>
-            {this.renderAllNodes(defaultLabels)}
-            <TreemapLabelListProvider entries={labelEntries} graphicalItems={themeGraphicalItems}>
-              <LabelListFromLabelProp label={label === true ? undefined : label} pointerEvents="none" />
-              {children}
-            </TreemapLabelListProvider>
-          </AllZIndexPortals>
+          {/* The z-index portals live inside the zoom layer so that labels follow the tiles. */}
+          <ZoomableChartContent>
+            <AllZIndexPortals isPanorama={false}>
+              {this.renderAllNodes(defaultLabels)}
+              <TreemapLabelListProvider entries={labelEntries} graphicalItems={themeGraphicalItems}>
+                <LabelListFromLabelProp label={label === true ? undefined : label} pointerEvents="none" />
+              </TreemapLabelListProvider>
+            </AllZIndexPortals>
+          </ZoomableChartContent>
+          {/* Children stay outside the clip/zoom layer: overlays such as ZoomAndPan must not be transform-zoomed. */}
+          <TreemapLabelListProvider entries={labelEntries} graphicalItems={themeGraphicalItems}>
+            {children}
+          </TreemapLabelListProvider>
         </Surface>
         {type === 'nest' && this.renderNestIndex()}
       </>
@@ -1740,6 +1787,7 @@ export function Treemap(outsideProps: Props) {
             themePageBackground={theme?.pageBackground}
             typography={theme?.typography}
           />
+          <ZoomPropBridge zoom={props.zoom} />
         </TooltipPortalContext.Provider>
       </RechartsWrapper>
     </RechartsStoreProvider>

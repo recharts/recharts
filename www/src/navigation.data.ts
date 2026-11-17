@@ -29,6 +29,7 @@ const guidePages = [
   'theme-color-testing',
   'label-colors',
   'patterns',
+  'zoomAndPan',
 ];
 
 export function getSiteRoutes(): string[] {

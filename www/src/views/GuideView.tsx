@@ -25,6 +25,7 @@ import { ThemeColorTesting } from '../components/GuideView/ThemeColorTesting';
 import { DataStyles } from '../components/GuideView/DataStyles';
 import { LabelColors } from '../components/GuideView/LabelColors';
 import { Patterns } from '../components/GuideView/Patterns';
+import { ZoomAndPanGuide } from '../components/GuideView/ZoomAndPan';
 
 /**
  * Sections group guides in the navigation. They are displayed in this order.
@@ -69,6 +70,7 @@ const guideMap: Record<string, GuideDefinition> = {
   coordinateSystems: { Component: CoordinateSystems, section: 'advanced' },
   zIndex: { Component: ZIndex, section: 'advanced' },
   performance: { Component: Performance, section: 'advanced' },
+  zoomAndPan: { Component: ZoomAndPanGuide, section: 'advanced' },
   activeIndex: { Component: ActiveIndex, section: 'migration' },
   cell: { Component: CellDeprecationNotice, section: 'migration' },
 };

@@ -10,6 +10,7 @@ const offset: ChartOffsetInternal = {
   bottom: 0,
   right: 0,
   brushBottom: 0,
+  brushRight: 0,
 };
 
 const polarViewBox: PolarViewBoxRequired = {

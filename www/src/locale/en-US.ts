@@ -55,6 +55,7 @@ export const map = {
     'theme-color-testing': 'Theme color testing',
     'label-colors': 'Label colors',
     patterns: 'Patterns and gradients',
+    zoomAndPan: 'Zoom & Pan',
   },
   guideSections: {
     'getting-started': 'Getting started',
@@ -111,6 +112,7 @@ export const map = {
     deprecated: 'Deprecated Props',
     events: 'Events',
     since: 'Available since Recharts',
+    'zoom-and-pan': 'Zoom & Pan',
   },
   'design-disciplines': {
     'design-disciplines': 'Design Disciplines',

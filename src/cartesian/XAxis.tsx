@@ -40,7 +40,7 @@ import { selectAxisViewBox } from '../state/selectors/selectChartOffsetInternal'
 import { useIsPanorama } from '../context/PanoramaContext';
 import { isLabelContentAFunction } from '../component/Label';
 import { RequiresDefaultProps, resolveDefaultProps } from '../util/resolveDefaultProps';
-import { axisPropsAreEqual } from '../util/axisPropsAreEqual';
+import { axisPropsAreEqual, axisSettingsAreEqual } from '../util/axisPropsAreEqual';
 import { CustomScaleDefinition } from '../util/scale/CustomScaleDefinition';
 import { useCartesianChartLayout } from '../context/chartLayoutContext';
 import { DEFAULT_X_AXIS_HEIGHT } from '../util/Constants';
@@ -244,7 +244,7 @@ function SetXAxisSettings(props: Omit<XAxisSettings, 'type'> & { type: AxisDomai
     }
     if (prevSettingsRef.current === null) {
       dispatch(addXAxis(settings));
-    } else if (prevSettingsRef.current !== settings) {
+    } else if (!axisSettingsAreEqual(prevSettingsRef.current, settings)) {
       dispatch(replaceXAxis({ prev: prevSettingsRef.current, next: settings }));
     }
     prevSettingsRef.current = settings;

@@ -324,6 +324,7 @@ describe.each(allChartsThatSupportCartesianGrid)('<CartesianGrid /> when child o
     const expectedOffset: ChartOffsetInternal = {
       bottom: 11,
       brushBottom: 11,
+      brushRight: 13,
       height: 175,
       left: 12,
       right: 13,
@@ -1332,6 +1333,7 @@ describe.each(allChartsThatSupportCartesianGrid)('<CartesianGrid /> when child o
             offset: {
               bottom: 5,
               brushBottom: 5,
+              brushRight: 5,
               height: 490,
               left: 5,
               right: 5,
@@ -1429,6 +1431,7 @@ describe.each(allChartsThatSupportCartesianGrid)('<CartesianGrid /> when child o
             offset: {
               bottom: 5,
               brushBottom: 5,
+              brushRight: 5,
               height: 490,
               left: 5,
               right: 5,
@@ -1521,6 +1524,7 @@ describe.each(allChartsThatSupportCartesianGrid)('<CartesianGrid /> when child o
             offset: {
               bottom: 5,
               brushBottom: 5,
+              brushRight: 5,
               height: 490,
               left: 5,
               right: 5,
@@ -1609,6 +1613,7 @@ describe.each(allChartsThatSupportCartesianGrid)('<CartesianGrid /> when child o
             offset: {
               bottom: 5,
               brushBottom: 5,
+              brushRight: 5,
               height: 490,
               left: 5,
               right: 5,
