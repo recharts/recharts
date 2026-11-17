@@ -12,6 +12,7 @@ import { CodeEditorWithPreview } from '../../components/CodeEditorWithPreview.ts
 import IndexLineChart from './IndexLineChart.tsx';
 import IndexLineChartSource from './IndexLineChart.tsx?raw';
 import { ColorModeWatcher } from '../../components/color-mode';
+import { SourceCodeEditor } from '../../components/Playground/SourceCodeEditor.tsx';
 
 class IndexViewImpl extends PureComponent<RouteComponentProps> {
   render() {
@@ -21,14 +22,7 @@ class IndexViewImpl extends PureComponent<RouteComponentProps> {
         <div className="desc block">
           <h1>Recharts</h1>
           <p className="subtitle">{localeGet(locale, 'home', 'slogan')}</p>
-          <Link to={`/${locale}/guide/installation/`} className="button install-btn">
-            <LuZap />
-            &nbsp;
-            {localeGet(locale, 'home', 'install')}
-            {import.meta.env.VITE_RECHARTS_LATEST_VERSION
-              ? ` v${import.meta.env.VITE_RECHARTS_LATEST_VERSION}`
-              : undefined}
-          </Link>
+          <SourceCodeEditor className="sh install-snippet" value="npm install recharts" readOnly />
           <ColorModeWatcher
             render={state => (
               <GitHubButton
