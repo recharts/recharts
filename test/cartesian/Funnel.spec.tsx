@@ -216,4 +216,49 @@ describe('<Funnel />', () => {
       expect(Number.isFinite(trapezoid.height)).toBe(true);
     });
   });
+
+  it('should give the stage above a null value a lowerWidth of 0', () => {
+    const offset = { left: 10, top: 20, width: 400, height: 300, right: 10, bottom: 10, brushBottom: 0 };
+
+    const trapezoids = computeFunnelTrapezoids({
+      dataKey: 'value',
+      nameKey: 'name',
+      displayedData: [
+        { value: 100, name: 'A' },
+        { value: null, name: 'B' },
+        { value: 50, name: 'C' },
+      ],
+      tooltipType: undefined,
+      lastShapeType: 'triangle',
+      reversed: false,
+      offset,
+      customWidth: undefined,
+      graphicalItemId: 'test-funnel',
+    });
+
+    expect(trapezoids.map(({ upperWidth, lowerWidth }) => ({ upperWidth, lowerWidth }))).toEqual([
+      { upperWidth: 400, lowerWidth: 0 },
+      { upperWidth: 0, lowerWidth: 200 },
+      { upperWidth: 200, lowerWidth: 0 },
+    ]);
+  });
+
+  it('should draw the stage above a null value', () => {
+    const nullData = [
+      { value: 100, name: 'A' },
+      { value: null, name: 'B' },
+      { value: 50, name: 'C' },
+    ];
+    const { container } = render(
+      <FunnelChart width={500} height={500}>
+        <Funnel dataKey="value" data={nullData} isAnimationActive={false} />
+      </FunnelChart>,
+    );
+
+    const paths = container.querySelectorAll('.recharts-funnel-trapezoid path');
+    expect(paths).toHaveLength(3);
+    paths.forEach(path => {
+      expect(path.getAttribute('d')).not.toContain('NaN');
+    });
+  });
 });
