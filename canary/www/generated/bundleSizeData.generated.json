@@ -1,45 +1,45 @@
 {
   "treemap": {
     "examplePath": "www/src/views/IndexView/IndexLineChart.tsx",
-    "totalSize": 1014084,
-    "totalSizeLabel": "990.32 KB",
+    "totalSize": 1014563,
+    "totalSizeLabel": "990.78 KB",
     "moduleCount": 386,
-    "generatedAt": "2026-11-18T08:43:53.549Z",
+    "generatedAt": "2026-11-18T17:27:07.773Z",
     "stages": [
       {
         "stage": "es6-folder",
-        "bytes": 1666477,
+        "bytes": 1666954,
         "humanReadableSize": "1.59 MB",
         "reductionFromBaselinePercent": 0
       },
       {
         "stage": "tree-shaken",
-        "bytes": 1017009,
-        "humanReadableSize": "993.17 KB",
+        "bytes": 1017488,
+        "humanReadableSize": "993.64 KB",
         "reductionFromBaselinePercent": 0
       },
       {
         "stage": "minified",
-        "bytes": 326702,
-        "humanReadableSize": "319.04 KB",
-        "reductionFromBaselinePercent": 67.88
+        "bytes": 326731,
+        "humanReadableSize": "319.07 KB",
+        "reductionFromBaselinePercent": 67.89
       },
       {
         "stage": "minified+gzip",
-        "bytes": 107087,
-        "humanReadableSize": "104.58 KB",
+        "bytes": 107105,
+        "humanReadableSize": "104.59 KB",
         "reductionFromBaselinePercent": 89.47
       }
     ],
     "tree": {
       "name": "bundle",
       "fullPath": "bundle",
-      "value": 1014084,
+      "value": 1014563,
       "children": [
         {
           "name": "src",
           "fullPath": "src",
-          "value": 609766,
+          "value": 610245,
           "children": [
             {
               "name": "state",
@@ -452,12 +452,12 @@
             {
               "name": "util",
               "fullPath": "src/util",
-              "value": 120159,
+              "value": 120638,
               "children": [
                 {
                   "name": "scale",
                   "fullPath": "src/util/scale",
-                  "value": 15755,
+                  "value": 16234,
                   "children": [
                     {
                       "name": "getNiceTickValues.ts",
@@ -477,12 +477,12 @@
                     {
                       "name": "util",
                       "fullPath": "src/util/scale/util",
-                      "value": 1218,
+                      "value": 1697,
                       "children": [
                         {
                           "name": "arithmetic.ts",
                           "fullPath": "src/util/scale/util/arithmetic.ts",
-                          "value": 1218
+                          "value": 1697
                         }
                       ]
                     }
@@ -2664,45 +2664,45 @@
   },
   "sunburst": {
     "examplePath": "www/src/views/IndexView/IndexLineChart.tsx",
-    "totalSize": 1014084,
-    "totalSizeLabel": "990.32 KB",
+    "totalSize": 1014563,
+    "totalSizeLabel": "990.78 KB",
     "moduleCount": 386,
-    "generatedAt": "2026-11-18T08:43:51.576Z",
+    "generatedAt": "2026-11-18T17:27:05.506Z",
     "stages": [
       {
         "stage": "es6-folder",
-        "bytes": 1666477,
+        "bytes": 1666954,
         "humanReadableSize": "1.59 MB",
         "reductionFromBaselinePercent": 0
       },
       {
         "stage": "tree-shaken",
-        "bytes": 1017009,
-        "humanReadableSize": "993.17 KB",
+        "bytes": 1017488,
+        "humanReadableSize": "993.64 KB",
         "reductionFromBaselinePercent": 0
       },
       {
         "stage": "minified",
-        "bytes": 326702,
-        "humanReadableSize": "319.04 KB",
-        "reductionFromBaselinePercent": 67.88
+        "bytes": 326731,
+        "humanReadableSize": "319.07 KB",
+        "reductionFromBaselinePercent": 67.89
       },
       {
         "stage": "minified+gzip",
-        "bytes": 107087,
-        "humanReadableSize": "104.58 KB",
+        "bytes": 107105,
+        "humanReadableSize": "104.59 KB",
         "reductionFromBaselinePercent": 89.47
       }
     ],
     "tree": {
       "name": "bundle",
       "fullPath": "bundle",
-      "value": 1014084,
+      "value": 1014563,
       "children": [
         {
           "name": "src",
           "fullPath": "src",
-          "value": 609766,
+          "value": 610245,
           "children": [
             {
               "name": "state",
@@ -3115,12 +3115,12 @@
             {
               "name": "util",
               "fullPath": "src/util",
-              "value": 120159,
+              "value": 120638,
               "children": [
                 {
                   "name": "scale",
                   "fullPath": "src/util/scale",
-                  "value": 15755,
+                  "value": 16234,
                   "children": [
                     {
                       "name": "getNiceTickValues.ts",
@@ -3140,12 +3140,12 @@
                     {
                       "name": "util",
                       "fullPath": "src/util/scale/util",
-                      "value": 1218,
+                      "value": 1697,
                       "children": [
                         {
                           "name": "arithmetic.ts",
                           "fullPath": "src/util/scale/util/arithmetic.ts",
-                          "value": 1218
+                          "value": 1697
                         }
                       ]
                     }
