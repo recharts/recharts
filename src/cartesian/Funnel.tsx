@@ -858,6 +858,9 @@ export function computeFunnelTrapezoids({
           if (typeof second === 'number') {
             nextVal = second;
           }
+        } else {
+          // a null or non-numeric next value narrows this stage to a point, like a missing one
+          nextVal = 0;
         }
       } else if (rawVal instanceof Array && rawVal.length === 2) {
         const [first, second] = rawVal;
