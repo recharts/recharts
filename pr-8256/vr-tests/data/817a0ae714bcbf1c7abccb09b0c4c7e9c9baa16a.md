@@ -1,0 +1,98 @@
+# Instructions
+
+- Following Playwright test failed.
+- Explain why, be concise, respect Playwright best practices.
+- Provide a snippet of code with the fix, if possible.
+
+# Test info
+
+- Name: tests/www/LabelListApiExamples.spec-vr.tsx >> LabelListChartExample
+- Location: test-vr/tests/www/LabelListApiExamples.spec-vr.tsx:4:1
+
+# Error details
+
+```
+Error: expect(locator).toHaveScreenshot(expected) failed
+
+Locator: locator('#root').locator(':scope > *').first()
+  577 pixels (ratio 0.01 of all image pixels) are different.
+
+Call log:
+  - Expect "toHaveScreenshot" locator('#root').locator(':scope > *').first() with timeout 10000ms
+    - verifying given screenshot expectation
+  - waiting for locator('#root').locator(':scope > *').first()
+    - locator resolved to <div width="100%" class="recharts-wrapper">…</div>
+  - taking element screenshot
+    - disabled all CSS animations
+  - waiting for fonts to load...
+  - fonts loaded
+  - attempting scroll into view action
+    - waiting for element to be stable
+  - 577 pixels (ratio 0.01 of all image pixels) are different.
+  - waiting 100ms before taking screenshot
+  - waiting for locator('#root').locator(':scope > *').first()
+    - locator resolved to <div width="100%" class="recharts-wrapper">…</div>
+  - taking element screenshot
+    - disabled all CSS animations
+  - waiting for fonts to load...
+  - fonts loaded
+  - attempting scroll into view action
+    - waiting for element to be stable
+  - captured a stable screenshot
+  - 577 pixels (ratio 0.01 of all image pixels) are different.
+
+```
+
+# Page snapshot
+
+```yaml
+- generic [active] [ref=e1]:
+  - application [ref=e4]:
+    - generic [ref=e59]:
+      - generic [ref=e60]:
+        - generic [ref=e61]: "Iter: 0"
+        - generic [ref=e63]: "Iter: 1"
+        - generic [ref=e65]: "Iter: 2"
+        - generic [ref=e67]: "Iter: 3"
+        - generic [ref=e69]: "Iter: 4"
+        - generic [ref=e71]: "Iter: 5"
+      - generic [ref=e73]: Pages of my website
+      - generic [ref=e74]:
+        - generic [ref=e75]: "0"
+        - generic [ref=e77]: "200"
+        - generic [ref=e79]: "400"
+        - generic [ref=e81]: "600"
+        - generic [ref=e83]: "800"
+      - generic [ref=e85]: pv of page
+      - generic [ref=e86]:
+        - generic [ref=e87]: Iter:0
+        - generic [ref=e88]: Iter:1
+        - generic [ref=e89]: Iter:2
+        - generic [ref=e90]: Iter:3
+        - generic [ref=e91]: Iter:4
+        - generic [ref=e92]: Iter:5
+      - generic [ref=e93]:
+        - generic [ref=e94]: "547"
+        - generic [ref=e95]: "634"
+        - generic [ref=e96]: "604"
+        - generic [ref=e97]: "590"
+        - generic [ref=e98]: "480"
+        - generic [ref=e99]: "518"
+  - generic [aria-hidden] [ref=e100]: "0"
+```
+
+# Test source
+
+```ts
+  1  | import type { LabelListChartExample } from './LabelListApiExamples.story';
+  2  | import { expect, testWithThemes } from '../fixtures';
+  3  | 
+  4  | testWithThemes('LabelListChartExample', async ({ mountStory }) => {
+  5  |   const component = await mountStory<typeof LabelListChartExample>('www/LabelListApiExamples/LabelListChartExample', {
+  6  |     isAnimationActive: false,
+  7  |   });
+> 8  |   await expect(component).toHaveScreenshot();
+     |                           ^ Error: expect(locator).toHaveScreenshot(expected) failed
+  9  | });
+  10 | 
+```

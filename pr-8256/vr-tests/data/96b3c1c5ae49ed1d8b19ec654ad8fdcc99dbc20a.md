@@ -1,0 +1,125 @@
+# Instructions
+
+- Following Playwright test failed.
+- Explain why, be concise, respect Playwright best practices.
+- Provide a snippet of code with the fix, if possible.
+
+# Test info
+
+- Name: tests/DotSymbols.spec-vr.tsx >> Line with every dot symbol and matching legend icons
+- Location: test-vr/tests/DotSymbols.spec-vr.tsx:3:1
+
+# Error details
+
+```
+Error: expect(locator).toHaveScreenshot(expected) failed
+
+Locator: locator('#root').locator(':scope > *').first()
+  856 pixels (ratio 0.01 of all image pixels) are different.
+
+Call log:
+  - Expect "toHaveScreenshot" locator('#root').locator(':scope > *').first() with timeout 10000ms
+    - verifying given screenshot expectation
+  - waiting for locator('#root').locator(':scope > *').first()
+    - locator resolved to <div width="600" height="400" class="recharts-wrapper">…</div>
+  - taking element screenshot
+    - disabled all CSS animations
+  - waiting for fonts to load...
+  - fonts loaded
+  - attempting scroll into view action
+    - waiting for element to be stable
+  - 856 pixels (ratio 0.01 of all image pixels) are different.
+  - waiting 100ms before taking screenshot
+  - waiting for locator('#root').locator(':scope > *').first()
+    - locator resolved to <div width="600" height="400" class="recharts-wrapper">…</div>
+  - taking element screenshot
+    - disabled all CSS animations
+  - waiting for fonts to load...
+  - fonts loaded
+  - attempting scroll into view action
+    - waiting for element to be stable
+  - captured a stable screenshot
+  - 856 pixels (ratio 0.01 of all image pixels) are different.
+
+```
+
+# Page snapshot
+
+```yaml
+- generic [active] [ref=e1]:
+  - generic [ref=e3]:
+    - list [ref=e5]:
+      - listitem [ref=e6]:
+        - img "circle legend icon" [ref=e7]
+        - text: circle
+      - listitem [ref=e10]:
+        - img "cross legend icon" [ref=e11]
+        - text: cross
+      - listitem [ref=e14]:
+        - img "default legend icon" [ref=e15]
+        - text: default
+      - listitem [ref=e18]:
+        - img "diamond legend icon" [ref=e19]
+        - text: diamond
+      - listitem [ref=e22]:
+        - img "square legend icon" [ref=e23]
+        - text: square
+      - listitem [ref=e26]:
+        - img "star legend icon" [ref=e27]
+        - text: star
+      - listitem [ref=e30]:
+        - img "triangle legend icon" [ref=e31]
+        - text: triangle
+      - listitem [ref=e34]:
+        - img "wye legend icon" [ref=e35]
+        - text: wye
+    - application [ref=e38]:
+      - generic [ref=e125]:
+        - generic [ref=e126]:
+          - generic [ref=e127]: "0"
+          - generic [ref=e129]: "1"
+          - generic [ref=e131]: "2"
+          - generic [ref=e133]: "3"
+          - generic [ref=e135]: "4"
+          - generic [ref=e137]: "5"
+        - generic [ref=e139]:
+          - generic [ref=e140]: "0"
+          - generic [ref=e142]: "25"
+          - generic [ref=e144]: "50"
+          - generic [ref=e146]: "75"
+          - generic [ref=e148]: "100"
+  - generic [aria-hidden] [ref=e150]: "25"
+```
+
+# Test source
+
+```ts
+  1  | import { expect, testWithThemes } from './fixtures';
+  2  | 
+  3  | testWithThemes('Line with every dot symbol and matching legend icons', async ({ mountStory }) => {
+  4  |   const component = await mountStory('DotSymbols/LineChartWithDotSymbols');
+> 5  |   await expect(component).toHaveScreenshot();
+     |                           ^ Error: expect(locator).toHaveScreenshot(expected) failed
+  6  | });
+  7  | 
+  8  | testWithThemes('Line with resized dot and activeDot symbols', async ({ mountStory }) => {
+  9  |   const component = await mountStory('DotSymbols/LineChartWithResizedDotSymbols');
+  10 |   await expect(component).toHaveScreenshot();
+  11 | });
+  12 | 
+  13 | testWithThemes('Area with dot symbols', async ({ mountStory }) => {
+  14 |   const component = await mountStory('DotSymbols/AreaChartWithDotSymbols');
+  15 |   await expect(component).toHaveScreenshot();
+  16 | });
+  17 | 
+  18 | testWithThemes('Radar with dot symbols in the legend', async ({ mountStory }) => {
+  19 |   const component = await mountStory('DotSymbols/RadarChartWithDotSymbols');
+  20 |   await expect(component).toHaveScreenshot();
+  21 | });
+  22 | 
+  23 | testWithThemes('Scatter with shape in the legend', async ({ mountStory }) => {
+  24 |   const component = await mountStory('DotSymbols/ScatterChartWithShapeLegend');
+  25 |   await expect(component).toHaveScreenshot();
+  26 | });
+  27 | 
+```
