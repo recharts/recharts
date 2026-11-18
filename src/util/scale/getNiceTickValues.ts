@@ -304,12 +304,14 @@ export const getTickValuesFixedDomain = (
      * The domain boundary (cormax) is appended after the rangeStep values. When
      * cormax rounds down to the same integer as the last rangeStep value, we end up
      * with a duplicate trailing tick. Remove it.
+     * Rounding can also move a tick outside [cormin, cormax]: with a fractional
+     * domain such as [0.4, 0.6] both values round away from the interval, so the
+     * axis would render ticks that are not inside the domain it was given. Clamp
+     * the rounded values back into the interval and drop the duplicates that
+     * clamping can create; for such a domain the survivors are its boundaries.
      */
-    values = values.map(value => Math.round(value));
-    const last = values.length - 1;
-    if (last > 0 && values[last] === values[last - 1]) {
-      values = values.slice(0, last);
-    }
+    const rounded = values.map(value => Math.min(cormax, Math.max(cormin, Math.round(value))));
+    values = rounded.filter((value, index) => index === 0 || value !== rounded[index - 1]);
   }
 
   return min > max ? values.reverse() : values;
