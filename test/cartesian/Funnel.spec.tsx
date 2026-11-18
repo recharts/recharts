@@ -216,4 +216,37 @@ describe('<Funnel />', () => {
       expect(Number.isFinite(trapezoid.height)).toBe(true);
     });
   });
+
+  it('should draw the stage above a null value narrowing to a point', () => {
+    const dataWithNull = [{ value: 100 }, { value: null }, { value: 50 }];
+    const offset = { left: 10, top: 20, width: 400, height: 300, right: 10, bottom: 10, brushBottom: 0 };
+
+    const trapezoids = computeFunnelTrapezoids({
+      dataKey: 'value',
+      nameKey: 'name',
+      displayedData: dataWithNull,
+      tooltipType: undefined,
+      lastShapeType: 'triangle',
+      reversed: false,
+      offset,
+      customWidth: undefined,
+      graphicalItemId: 'test-funnel',
+    });
+
+    expect(trapezoids).toHaveLength(3);
+    expect(trapezoids[0].upperWidth).toBe(400);
+    expect(trapezoids[0].lowerWidth).toBe(0);
+    expect(trapezoids[0].width).toBe(400);
+  });
+
+  it('should render every trapezoid when a value is null', () => {
+    const { container } = render(
+      <FunnelChart width={500} height={300}>
+        <Funnel dataKey="value" data={[{ value: 100 }, { value: null }, { value: 50 }]} isAnimationActive={false} />
+      </FunnelChart>,
+    );
+
+    const trapezoids = container.querySelectorAll('.recharts-trapezoid');
+    expect(trapezoids).toHaveLength(3);
+  });
 });
