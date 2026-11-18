@@ -123,11 +123,10 @@ function tagAlignedItems<T>(
   for (const prev of removedPrevItems) {
     tagged.push({ status: 'removed', prev });
   }
-  for (let i = 0; i < nextItems.length; i++) {
+  for (const [i, next] of nextItems.entries()) {
     // This function intentionally pairs by array index. The strategy-specific functions above are
     // responsible for producing an alignedPrevItems array whose indices already correspond to nextItems.
     const prev = alignedPrevItems[i];
-    const next = nextItems[i]!;
     if (prev != null) {
       tagged.push({ status: 'matched', prev, next });
     } else {
