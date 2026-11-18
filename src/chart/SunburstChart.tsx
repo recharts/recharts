@@ -590,8 +590,9 @@ const SunburstChartContent = ({
     const cy = cyFromProps ?? height / 2;
 
     const rScale = scaleLinear([0, data[dataKey]], [0, endAngle - startAngle]);
-    const treeDepth = getMaxDepthOf(data);
-    const thickness = (outerRadius - innerRadius) / treeDepth;
+    // The root has no ring of its own, it is the hole inside innerRadius.
+    const ringCount = Math.max(getMaxDepthOf(data) - 1, 1);
+    const thickness = Math.max((outerRadius - innerRadius - (ringCount - 1) * ringPadding) / ringCount, 0);
 
     const sectors: React.ReactNode[] = [];
     const labelListEntries: PolarLabelListEntry[] = [];

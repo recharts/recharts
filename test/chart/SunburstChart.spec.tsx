@@ -107,6 +107,57 @@ describe('<Sunburst />', () => {
     });
   });
 
+  describe('ring thickness', () => {
+    // The root is the hole inside innerRadius, so only the levels below it get a ring.
+    function chain(levels: number): SunburstData {
+      let node: SunburstData = { name: 'leaf', value: 10 };
+      for (let i = 1; i < levels; i++) {
+        node = { name: `level${i}`, value: 10, children: [node] };
+      }
+      return { name: 'root', value: 10, children: [node] };
+    }
+
+    function outerRadii(container: HTMLElement): number[] {
+      return Array.from(container.querySelectorAll('.recharts-sector')).map(sector => {
+        const arc = /A\s*([\d.]+),/.exec(sector.getAttribute('d') ?? '');
+        return Number(arc?.[1]);
+      });
+    }
+
+    it('ends the outermost ring at outerRadius', () => {
+      const { container } = rechartsTestRender(
+        <SunburstChart width={500} height={500} data={chain(3)} innerRadius={50} ringPadding={0} />,
+      );
+      const radii = outerRadii(container);
+      expect(radii).toHaveLength(3);
+      expect(radii[0]).toBeCloseTo(116.667, 2);
+      expect(radii[1]).toBeCloseTo(183.333, 2);
+      expect(radii[2]).toBeCloseTo(250, 2);
+    });
+
+    it('fills the whole radius when there is only one ring', () => {
+      const { container } = rechartsTestRender(
+        <SunburstChart width={500} height={500} data={chain(1)} innerRadius={50} />,
+      );
+      expect(outerRadii(container)).toEqual([250]);
+    });
+
+    it('takes ringPadding out of the available space instead of overshooting outerRadius', () => {
+      const { container } = rechartsTestRender(
+        <SunburstChart width={500} height={500} data={chain(3)} innerRadius={50} ringPadding={30} outerRadius={200} />,
+      );
+      const radii = outerRadii(container);
+      expect(radii[2]).toBeCloseTo(200, 2);
+    });
+
+    it('does not draw negative rings when ringPadding leaves no room', () => {
+      const { container } = rechartsTestRender(
+        <SunburstChart width={500} height={500} data={chain(3)} innerRadius={50} ringPadding={500} />,
+      );
+      outerRadii(container).forEach(radius => expect(Number.isNaN(radius) || radius >= 0).toBe(true));
+    });
+  });
+
   describe('startAngle and endAngle', () => {
     const halvesData = {
       name: 'Root',
@@ -273,7 +324,7 @@ describe('<Sunburst />', () => {
           dataKey: 'value',
           graphicalItemId: expect.stringMatching(/^recharts-sunburst-.+/),
           coordinate: {
-            x: 583.3333333333334,
+            x: 599.5,
             y: 250,
           },
         },
@@ -286,7 +337,7 @@ describe('<Sunburst />', () => {
         click: {
           active: true,
           coordinate: {
-            x: 583.3333333333334,
+            x: 599.5,
             y: 250,
           },
           dataKey: 'value',
@@ -296,7 +347,7 @@ describe('<Sunburst />', () => {
         hover: {
           active: true,
           coordinate: {
-            x: 583.3333333333334,
+            x: 599.5,
             y: 250,
           },
           dataKey: 'value',
@@ -312,7 +363,7 @@ describe('<Sunburst />', () => {
         click: {
           active: true,
           coordinate: {
-            x: 583.3333333333334,
+            x: 599.5,
             y: 250,
           },
           dataKey: 'value',
@@ -324,7 +375,7 @@ describe('<Sunburst />', () => {
           index: '[0]',
           dataKey: 'value',
           coordinate: {
-            x: 583.3333333333334,
+            x: 599.5,
             y: 250,
           },
           graphicalItemId: expect.stringMatching(/^recharts-sunburst-.+/),
@@ -353,10 +404,10 @@ describe('<Sunburst />', () => {
       expectTooltipPayload(container, '', ['Child1 : 30']);
       /*
        * The chart is 400x400 so cx, cy are 200, 200. The first ring node starts at angle 0 and its
-       * label sits half way through the ring thickness, which is (200 - 50) / 3 = 50,
-       * so the coordinate is 200 + (50 + 50 / 2) = 275 on the x axis.
+       * label sits half way through the ring thickness, which is (200 - 50 - 2) / 2 = 74
+       * (two rings and the default ringPadding of 2), so the coordinate is 200 + (50 + 74 / 2) = 287 on the x axis.
        */
-      expectTooltipCoordinate(container, { x: 285, y: 210 });
+      expectTooltipCoordinate(container, { x: 297, y: 210 });
     });
 
     it('should show the tooltip at the sector position when defaultIndex is the tooltip index of a nested node', () => {
@@ -368,7 +419,7 @@ describe('<Sunburst />', () => {
 
       expectTooltipPayload(container, '', ['third child : 10']);
       // The second ring starts at 50 + 50 + 2 and its label is half way through it, so 200 + 127 on the x axis.
-      expectTooltipCoordinate(container, { x: 337, y: 210 });
+      expectTooltipCoordinate(container, { x: 373, y: 210 });
     });
 
     it('should not show the tooltip when defaultIndex does not match any node', () => {
@@ -428,8 +479,8 @@ describe('<Sunburst />', () => {
       });
 
       // A is at the start of the first ring, A/shared at the start of the second ring
-      expect(hoverCoordinates[0]).toEqual({ x: 275, y: 200 });
-      expect(hoverCoordinates[1]).toEqual({ x: 327, y: 200 });
+      expect(hoverCoordinates[0]).toEqual({ x: 287, y: 200 });
+      expect(hoverCoordinates[1]).toEqual({ x: 363, y: 200 });
       /*
        * B and B/shared are half a circle away which is where the two `shared` sectors used to
        * collapse onto the same position.

@@ -325,7 +325,7 @@ const SunburstChartTestCase: TooltipVisibilityTestCase = {
     </SunburstChart>
   ),
   mouseHoverSelector: sunburstChartMouseHoverTooltipSelector,
-  expectedTransform: 'transform: translate(285px, 210px);',
+  expectedTransform: 'transform: translate(297px, 210px);',
   tooltipIndex: '0',
 };
 

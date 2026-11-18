@@ -119,7 +119,7 @@ describe('Sunburst sector labels', () => {
           cx: 200,
           cy: 200,
           innerRadius: 50,
-          outerRadius: 100,
+          outerRadius: 124,
           startAngle: 0,
           endAngle: 216,
           clockWise: false,
