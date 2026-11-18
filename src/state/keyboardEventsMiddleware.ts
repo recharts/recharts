@@ -184,18 +184,29 @@ keyboardEventsMiddleware.startListening({
     if (keyboardInteraction.active) {
       return;
     }
-    if (keyboardInteraction.index == null) {
-      const nextIndex = '0';
-      const tooltipEventType = selectTooltipEventType(state, state.tooltip.settings.shared);
-      const coordinate = selectCoordinateForDefaultIndex(state, tooltipEventType, 'hover', String(nextIndex));
-      listenerApi.dispatch(
-        setKeyboardInteraction({
-          active: true,
-          activeIndex: nextIndex,
-          activeCoordinate: coordinate,
-        }),
-      );
-    }
+    /*
+     * On the first focus there is no index yet, so the tooltip opens at the first data point.
+     * When focus comes back after a blur, the index from before the blur is still in the state
+     * (blur only sets active to false), so the tooltip reopens there and arrow keys continue from it.
+     * The index is resolved the same way the arrow keys resolve it (clamped to the data, null when it is
+     * outside the axis domain); if it does not resolve, start from the first point again.
+     */
+    const previousIndex = combineActiveTooltipIndex(
+      keyboardInteraction,
+      selectTooltipDisplayedData(state),
+      selectTooltipAxisDataKey(state),
+      selectTooltipAxisDomain(state),
+    );
+    const nextIndex = previousIndex ?? '0';
+    const tooltipEventType = selectTooltipEventType(state, state.tooltip.settings.shared);
+    const coordinate = selectCoordinateForDefaultIndex(state, tooltipEventType, 'hover', nextIndex);
+    listenerApi.dispatch(
+      setKeyboardInteraction({
+        active: true,
+        activeIndex: nextIndex,
+        activeCoordinate: coordinate,
+      }),
+    );
   },
 });
 

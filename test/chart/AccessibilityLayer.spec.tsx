@@ -243,6 +243,61 @@ describe.each([true, undefined])('AccessibilityLayer with accessibilityLayer=%s'
       expect(tooltip.textContent).toBe('');
     });
 
+    test('Tooltip reopens at the previous index when the chart gets focus again', () => {
+      const { container } = render(
+        <AreaChart width={100} height={50} data={PageData} accessibilityLayer={accessibilityLayer}>
+          <Area type="monotone" dataKey="uv" stroke="#ff7300" fill="#ff7300" />
+          <Tooltip />
+          <Legend />
+          <XAxis dataKey="name" />
+          <YAxis />
+        </AreaChart>,
+      );
+
+      const svg = getMainSurface(container);
+      const tooltip = getTooltip(container);
+
+      act(() => svg.focus());
+      expect(tooltip).toHaveTextContent('Page A');
+      arrowRight(svg);
+      expect(tooltip).toHaveTextContent('Page B');
+
+      act(() => svg.blur());
+      expect(tooltip.textContent).toBe('');
+
+      act(() => svg.focus());
+      expect(tooltip).toHaveTextContent('Page B');
+
+      // Arrow keys continue from the reopened index
+      arrowRight(svg);
+      expect(tooltip).toHaveTextContent('Page C');
+    });
+
+    test('Tooltip reopens on focus after Enter closed it and the chart lost focus', () => {
+      const { container } = render(
+        <AreaChart width={100} height={50} data={PageData} accessibilityLayer={accessibilityLayer}>
+          <Area type="monotone" dataKey="uv" stroke="#ff7300" fill="#ff7300" />
+          <Tooltip />
+          <XAxis dataKey="name" />
+          <YAxis />
+        </AreaChart>,
+      );
+
+      const svg = getMainSurface(container);
+      const tooltip = getTooltip(container);
+
+      act(() => svg.focus());
+      arrowRight(svg);
+      expect(tooltip).toHaveTextContent('Page B');
+
+      fireEvent.keyDown(svg, { key: 'Enter' });
+      expect(tooltip.textContent).toBe('');
+
+      act(() => svg.blur());
+      act(() => svg.focus());
+      expect(tooltip).toHaveTextContent('Page B');
+    });
+
     test('Left/right arrow pays attention to if the XAxis is reversed', () => {
       const mockMouseMovements = vi.fn();
 
@@ -403,6 +458,29 @@ describe.each([true, undefined])('AccessibilityLayer with accessibilityLayer=%s'
         // The chart only goes from A - E, so we shouldn't be able to go right any further.
         arrowRight(svg);
         expectTooltipPayload(container, 'Page E', ['uv : 278']);
+      });
+
+      test('When data get removed while the chart has no focus, the tooltip reopens at the last remaining item', () => {
+        const { container } = renderTestCase();
+        const svg = getMainSurface(container);
+
+        act(() => svg.focus());
+        for (let i = 0; i < 5; i++) {
+          arrowRight(svg);
+        }
+        expectTooltipPayload(container, 'Page F', ['uv : 189']);
+
+        act(() => svg.blur());
+        expectTooltipNotVisible(container);
+
+        clickOn3(container);
+        expectTooltipNotVisible(container);
+
+        act(() => svg.focus());
+        expectTooltipPayload(container, 'Page C', ['uv : 300']);
+
+        arrowLeft(svg);
+        expectTooltipPayload(container, 'Page B', ['uv : 300']);
       });
     });
 
@@ -743,6 +821,9 @@ describe.each([true, undefined])('AccessibilityLayer with accessibilityLayer=%s'
 
       act(() => svg.blur());
       expect(getTooltip(container).textContent).toBe('');
+
+      act(() => svg.focus());
+      expectTooltipPayload(container, '', ['Page B : 300']);
     });
   });
 
@@ -1190,5 +1271,21 @@ describe('Multiple charts navigation', () => {
     // First tooltip should be hidden, second tooltip should show
     expect(tooltip1?.textContent).toBe('');
     expect(tooltip2).toHaveTextContent('Page A');
+
+    // Move focus back to the first chart (simulating Shift+Tab)
+    if (!(svg1 instanceof SVGElement) || !(svg2 instanceof SVGElement)) {
+      throw new Error('Expected both chart surfaces to be SVG elements');
+    }
+    act(() => {
+      svg2.blur();
+      svg1.focus();
+    });
+
+    // First tooltip reopens where it was before, second tooltip is hidden
+    expect(tooltip1).toHaveTextContent('Page B');
+    expect(tooltip2?.textContent).toBe('');
+
+    arrowRight(svg1);
+    expect(tooltip1).toHaveTextContent('Page C');
   });
 });
