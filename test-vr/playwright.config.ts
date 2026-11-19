@@ -148,6 +148,15 @@ export default defineConfig({
      * component tests typically touch between tests.
      */
     reuseContext: true,
+
+    /*
+     * Recharts animations default to isAnimationActive="auto", which honors prefers-reduced-motion.
+     * Screenshots should show the final state of the chart, not the animation itself.
+     * When we let the animations run, WebKit may repaint the finished chart with slightly different
+     * anti-aliasing depending on when other animations on the page complete,
+     * which made the tests flaky.
+     */
+    contextOptions: { reducedMotion: 'reduce' },
   },
 
   /* Configure projects for major browsers */
