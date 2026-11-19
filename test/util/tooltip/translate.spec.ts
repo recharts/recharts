@@ -190,6 +190,104 @@ describe.each(dimensions)('getTooltipTranslateXY dimension %s', dimension => {
     });
   });
 
+  describe('when the tooltip touches the edge of the viewBox exactly', () => {
+    it('should keep the tooltip after the coordinate when it ends exactly at the end of the viewBox', () => {
+      const result = getTooltipTranslateXY({
+        allowEscapeViewBox: { [dimension]: false },
+        coordinate: { x: 1, y: 2, [dimension]: 100 },
+        key: dimension,
+        offset: 10,
+        position: {},
+        reverseDirection: { [dimension]: false },
+        tooltipDimension: 20,
+        viewBox: { [dimension]: 0 },
+        viewBoxDimension: 130,
+      });
+      // positive = 100 + 10 = 110, and 110 + 20 = 130 is the end of the viewBox, so it still fits.
+      expect(result).toBe(110);
+    });
+
+    it('should keep the tooltip before the coordinate when it starts exactly at the start of the viewBox and reverseDirection is true', () => {
+      const result = getTooltipTranslateXY({
+        allowEscapeViewBox: { [dimension]: false },
+        coordinate: { x: 1, y: 2, [dimension]: 100 },
+        key: dimension,
+        offset: 10,
+        position: {},
+        reverseDirection: { [dimension]: true },
+        tooltipDimension: 20,
+        viewBox: { [dimension]: 70 },
+        viewBoxDimension: 200,
+      });
+      // negative = 100 - 20 - 10 = 70, which is the start of the viewBox, so it still fits.
+      expect(result).toBe(70);
+    });
+
+    it('should put the tooltip at the start of the viewBox when the tooltip is exactly as large as the viewBox', () => {
+      const result = getTooltipTranslateXY({
+        allowEscapeViewBox: { [dimension]: false },
+        coordinate: { x: 1, y: 2, [dimension]: 500 },
+        key: dimension,
+        offset: 10,
+        position: {},
+        reverseDirection: { [dimension]: false },
+        tooltipDimension: 100,
+        viewBox: { [dimension]: 20 },
+        viewBoxDimension: 100,
+      });
+      // The tooltip fills the viewBox, so the only position inside it is the start: 20.
+      expect(result).toBe(20);
+    });
+  });
+
+  describe('when the viewBox is not complete', () => {
+    it('should return 0 when the viewBox has no start', () => {
+      const result = getTooltipTranslateXY({
+        allowEscapeViewBox: { [dimension]: false },
+        coordinate: { x: 1, y: 2, [dimension]: 150 },
+        key: dimension,
+        offset: 10,
+        position: {},
+        reverseDirection: { [dimension]: false },
+        tooltipDimension: 15,
+        viewBox: {},
+        viewBoxDimension: 400,
+      });
+      expect(result).toBe(0);
+    });
+
+    it('should return 0 when the viewBox has no dimension', () => {
+      const result = getTooltipTranslateXY({
+        allowEscapeViewBox: { [dimension]: false },
+        coordinate: { x: 1, y: 2, [dimension]: 150 },
+        key: dimension,
+        offset: 10,
+        position: {},
+        reverseDirection: { [dimension]: false },
+        tooltipDimension: 15,
+        viewBox: { [dimension]: 10 },
+        viewBoxDimension: undefined,
+      });
+      expect(result).toBe(0);
+    });
+
+    it('should only keep the start edge when the viewBox has no dimension and reverseDirection is true', () => {
+      const result = getTooltipTranslateXY({
+        allowEscapeViewBox: { [dimension]: false },
+        coordinate: { x: 1, y: 2, [dimension]: 950 },
+        key: dimension,
+        offset: 10,
+        position: {},
+        reverseDirection: { [dimension]: true },
+        tooltipDimension: 15,
+        viewBox: { [dimension]: 10 },
+        viewBoxDimension: undefined,
+      });
+      // negative = 950 - 15 - 10 = 925. Without a dimension there is no end edge to clamp to.
+      expect(result).toBe(925);
+    });
+  });
+
   describe('when the coordinate is stale after the viewBox gets smaller', () => {
     // The tooltip keeps its last coordinate after the mouse leaves the chart.
     // This is the coordinate of the last bar in a 1000px chart, after the chart shrinks to 400px.
@@ -313,6 +411,14 @@ describe('getTooltipCSSClassName', () => {
     });
     const expected = 'recharts-tooltip-wrapper';
     expect(result).toEqual(expected);
+  });
+  it('should add `right` and `bottom`, and not `left` or `top`, if translate is equal to coordinate', () => {
+    const result = getTooltipCSSClassName({
+      coordinate: { x: 40, y: 60 },
+      translateX: 40,
+      translateY: 60,
+    });
+    expect(result).toEqual('recharts-tooltip-wrapper recharts-tooltip-wrapper-right recharts-tooltip-wrapper-bottom');
   });
   it('should add `right` if translateX is bigger than coordinate.x', () => {
     const result = getTooltipCSSClassName({
