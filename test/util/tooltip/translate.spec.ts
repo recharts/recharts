@@ -138,7 +138,7 @@ describe.each(dimensions)('getTooltipTranslateXY dimension %s', dimension => {
   });
 
   describe('when tooltip is outside the viewBox', () => {
-    it('should try to fit translate inside the viewBox', () => {
+    it('should fit translate inside the viewBox', () => {
       const result = getTooltipTranslateXY({
         allowEscapeViewBox: { [dimension]: false },
         coordinate: { x: 1, y: 2, [dimension]: 190 },
@@ -150,12 +150,30 @@ describe.each(dimensions)('getTooltipTranslateXY dimension %s', dimension => {
         viewBox: { [dimension]: 9 },
         viewBoxDimension: 60,
       });
-      expect(result).toBe(172);
+      // viewBox ends at 9 + 60 = 69. The tooltip is 15 long, so it starts at 69 - 15 = 54.
+      expect(result).toBe(54);
     });
   });
 
   describe('when tooltip has negative offset', () => {
-    it('should try to fit translate inside the viewBox', () => {
+    it('should not subtract the negative offset when the tooltip goes before the coordinate', () => {
+      const result = getTooltipTranslateXY({
+        allowEscapeViewBox: { [dimension]: false },
+        coordinate: { x: 1, y: 2, [dimension]: 850 },
+        key: dimension,
+        offset: -35,
+        position: {},
+        reverseDirection: { [dimension]: false },
+        tooltipDimension: 70,
+        viewBox: { [dimension]: 65 },
+        viewBoxDimension: 800,
+      });
+      // positive = 850 - 35 = 815, and 815 + 70 > 865, so the tooltip goes before the coordinate.
+      // negative = 850 - 70 = 780. The negative offset is not subtracted.
+      expect(result).toBe(780);
+    });
+
+    it('should keep the tooltip inside the viewBox when the coordinate is after the viewBox', () => {
       const result = getTooltipTranslateXY({
         allowEscapeViewBox: { [dimension]: false },
         coordinate: { x: 1, y: 2, [dimension]: 900 },
@@ -167,7 +185,92 @@ describe.each(dimensions)('getTooltipTranslateXY dimension %s', dimension => {
         viewBox: { [dimension]: 65 },
         viewBoxDimension: 800,
       });
-      expect(result).toBe(830);
+      // viewBox ends at 65 + 800 = 865. The tooltip is 70 long, so it starts at 865 - 70 = 795.
+      expect(result).toBe(795);
+    });
+  });
+
+  describe('when the coordinate is stale after the viewBox gets smaller', () => {
+    // The tooltip keeps its last coordinate after the mouse leaves the chart.
+    // This is the coordinate of the last bar in a 1000px chart, after the chart shrinks to 400px.
+    const staleCoordinate = 950;
+
+    it('should keep the tooltip inside the new viewBox', () => {
+      const result = getTooltipTranslateXY({
+        allowEscapeViewBox: { [dimension]: false },
+        coordinate: { x: 1, y: 2, [dimension]: staleCoordinate },
+        key: dimension,
+        offset: 10,
+        position: {},
+        reverseDirection: { [dimension]: false },
+        tooltipDimension: 22,
+        viewBox: { [dimension]: 60 },
+        viewBoxDimension: 340,
+      });
+      expect(result).toBe(60 + 340 - 22);
+    });
+
+    it('should keep the tooltip inside the new viewBox when reverseDirection is true', () => {
+      const result = getTooltipTranslateXY({
+        allowEscapeViewBox: { [dimension]: false },
+        coordinate: { x: 1, y: 2, [dimension]: staleCoordinate },
+        key: dimension,
+        offset: 10,
+        position: {},
+        reverseDirection: { [dimension]: true },
+        tooltipDimension: 22,
+        viewBox: { [dimension]: 60 },
+        viewBoxDimension: 340,
+      });
+      expect(result).toBe(60 + 340 - 22);
+    });
+
+    it('should let the tooltip leave the viewBox when allowEscapeViewBox is true', () => {
+      const result = getTooltipTranslateXY({
+        allowEscapeViewBox: { [dimension]: true },
+        coordinate: { x: 1, y: 2, [dimension]: staleCoordinate },
+        key: dimension,
+        offset: 10,
+        position: {},
+        reverseDirection: { [dimension]: false },
+        tooltipDimension: 22,
+        viewBox: { [dimension]: 60 },
+        viewBoxDimension: 340,
+      });
+      expect(result).toBe(staleCoordinate + 10);
+    });
+  });
+
+  describe('when tooltip is larger than the viewBox', () => {
+    it('should keep the start of the tooltip at the start of the viewBox', () => {
+      const result = getTooltipTranslateXY({
+        allowEscapeViewBox: { [dimension]: false },
+        coordinate: { x: 1, y: 2, [dimension]: 150 },
+        key: dimension,
+        offset: 10,
+        position: {},
+        reverseDirection: { [dimension]: false },
+        tooltipDimension: 400,
+        viewBox: { [dimension]: 20 },
+        viewBoxDimension: 260,
+      });
+      expect(result).toBe(20);
+    });
+
+    it('should not move the tooltip before the viewBox when reverseDirection is true', () => {
+      const result = getTooltipTranslateXY({
+        allowEscapeViewBox: { [dimension]: false },
+        coordinate: { x: 1, y: 2, [dimension]: 150 },
+        key: dimension,
+        offset: 10,
+        position: {},
+        reverseDirection: { [dimension]: true },
+        tooltipDimension: 400,
+        viewBox: { [dimension]: 20 },
+        viewBoxDimension: 260,
+      });
+      // negative = 150 - 400 - 10 < 20, so the tooltip goes after the coordinate: 150 + 10.
+      expect(result).toBe(160);
     });
   });
 });
