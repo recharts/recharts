@@ -139,6 +139,7 @@ export interface FunnelProps<DataPointType = any, DataValueType = any>
   /**
    * This component is rendered when this graphical item is activated
    * (could be by mouse hover, touch, keyboard, programmatically).
+   * When set to `true`, renders the item's `shape` with `isActive: true`.
    */
   activeShape?: ActiveShape<FunnelTrapezoidItem, SVGPathElement>;
   /**
@@ -246,10 +247,11 @@ export interface FunnelProps<DataPointType = any, DataValueType = any>
   /**
    * If set a ReactElement, the shape of funnel can be customized.
    * If set a function, the function will be called to render customized shape.
+   * When `activeShape={true}`, the custom shape is also rendered for the active trapezoid and receives `isActive: true`.
    * During animations, the function shape also receives `animationElapsedTime`, `isAnimating`, and `isEntrance`.
    * By default, renders a trapezoid.
    */
-  shape?: ActiveShape<FunnelTrapezoidItem & ShapeAnimationProps, SVGPathElement>;
+  shape?: ActiveShape<FunnelTrapezoidItem & ShapeAnimationProps & { isActive: boolean }, SVGPathElement>;
   tooltipType?: TooltipType;
   /**
    * Formats the value displayed in the tooltip for this Funnel.
@@ -487,11 +489,20 @@ function FunnelTrapezoids(props: FunnelTrapezoidsProps) {
     <>
       {trapezoids.map((entry: FunnelTrapezoidItem, i: number) => {
         const isActiveIndex = Boolean(activeShape) && activeItemIndex === String(i);
-        const trapezoidOptions = isActiveIndex ? activeShape : shape;
+        /*
+         * Same as `activeBar` in Bar: `activeShape={true}` renders the `shape`,
+         * so a custom `shape` renders the active trapezoid too, and decides on its own how the active state looks.
+         */
+        let trapezoidOptions: FunnelTrapezoidProps['option'];
+        if (isActiveIndex && activeShape != null && activeShape !== false) {
+          trapezoidOptions = activeShape === true ? shape : activeShape;
+        } else {
+          trapezoidOptions = shape;
+        }
         const activeStyleOverrides =
           isActiveIndex && indexedActiveStyles != null && indexedActiveStyles.length > 0
             ? getActiveStyleOverrides(
-                activeShape,
+                trapezoidOptions === defaultFunnelShape ? true : trapezoidOptions,
                 indexedActiveStyles[i % indexedActiveStyles.length],
                 getOwnColorSource(entry, cells[i]?.props),
               )

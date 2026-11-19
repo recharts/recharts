@@ -345,6 +345,7 @@ export interface PieProps<DataPointType = any, DataValueType = any>
   /**
    * This component is rendered when this graphical item is activated
    * (could be by mouse hover, touch, keyboard, programmatically).
+   * When set to `true`, renders the item's `shape` with `isActive: true`.
    *
    * @deprecated Use the `shape` prop to create each sector. `isActive` designates the "active" shape.
    * @example <Pie activeShape={<CustomActiveShape />} />

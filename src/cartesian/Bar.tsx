@@ -279,6 +279,7 @@ export interface BarProps<DataPointType, ValueAxisType>
   /**
    * If set a ReactElement, the shape of bar can be customized.
    * If set a function, the function will be called to render customized shape.
+   * When `activeBar={true}`, the custom shape is also rendered for the active bar and receives `isActive: true`.
    * During animations, the function shape also receives `animationElapsedTime`, `isAnimating`, and `isEntrance`.
    * By default, renders a rectangle.
    *
