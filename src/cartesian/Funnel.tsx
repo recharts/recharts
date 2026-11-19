@@ -215,6 +215,13 @@ export interface FunnelProps<DataPointType = any, DataValueType = any>
   isAnimationActive?: boolean | 'auto';
   label?: ImplicitLabelListType;
   /**
+   * The direction of the taper. A vertical taper runs from top to bottom and a horizontal taper runs from left to right.
+   * @defaultValue vertical
+   * @example <Funnel dataKey="value" taperDirection="horizontal" />
+   * @example <Funnel dataKey="value" taperDirection="horizontal" reversed />
+   */
+  taperDirection?: CartesianLayout;
+  /**
    * @defaultValue triangle
    */
   lastShapeType?: 'triangle' | 'rectangle';
@@ -544,19 +551,24 @@ const defaultFunnelAnimateItems: AnimationInterpolateFn<FunnelTrapezoidItem, Car
           upperWidth: interpolate(item.prev.upperWidth, item.next.upperWidth, animationElapsedTime),
           lowerWidth: interpolate(item.prev.lowerWidth, item.next.lowerWidth, animationElapsedTime),
           height: interpolate(item.prev.height, item.next.height, animationElapsedTime),
+          ...(item.next.taperDirection === 'horizontal'
+            ? { width: interpolate(item.prev.width, item.next.width, animationElapsedTime) }
+            : {}),
         },
       ];
     }
     // added
     const { next } = item;
+    const horizontal = next.taperDirection === 'horizontal';
     return [
       {
         ...next,
-        x: interpolate(next.x + next.upperWidth / 2, next.x, animationElapsedTime),
-        y: interpolate(next.y + next.height / 2, next.y, animationElapsedTime),
+        x: interpolate(next.x + (horizontal ? next.width : next.upperWidth) / 2, next.x, animationElapsedTime),
+        y: interpolate(next.y + (horizontal ? next.upperWidth : next.height) / 2, next.y, animationElapsedTime),
         upperWidth: interpolate(0, next.upperWidth, animationElapsedTime),
         lowerWidth: interpolate(0, next.lowerWidth, animationElapsedTime),
         height: interpolate(0, next.height, animationElapsedTime),
+        ...(horizontal ? { width: interpolate(0, next.width, animationElapsedTime) } : {}),
       },
     ];
   });
@@ -662,6 +674,7 @@ export const defaultFunnelProps = {
   reversed: false,
   shape: defaultFunnelShape,
   stroke: '#fff',
+  taperDirection: 'vertical',
 } as const satisfies Partial<Props>;
 
 function FunnelImpl(
@@ -706,6 +719,7 @@ function FunnelImpl(
       data: props.data,
       tooltipType: props.tooltipType,
       lastShapeType,
+      taperDirection: props.taperDirection,
       reversed: props.reversed,
       customWidth: props.width,
       cells,
@@ -721,6 +735,7 @@ function FunnelImpl(
       props.data,
       props.tooltipType,
       lastShapeType,
+      props.taperDirection,
       props.reversed,
       props.width,
       cells,
@@ -813,6 +828,7 @@ export function computeFunnelTrapezoids({
   displayedData,
   tooltipType,
   lastShapeType,
+  taperDirection,
   reversed,
   offset,
   customWidth,
@@ -824,6 +840,7 @@ export function computeFunnelTrapezoids({
   displayedData: ReadonlyArray<RealFunnelData>;
   tooltipType?: TooltipType;
   lastShapeType?: Props['lastShapeType'];
+  taperDirection?: CartesianLayout;
   reversed?: boolean;
   customWidth: number | string | undefined;
   graphicalItemId: GraphicalItemId;
@@ -835,7 +852,9 @@ export function computeFunnelTrapezoids({
   });
   const maxValue = Math.max.apply(null, values);
   const len = displayedData.length;
-  const rowHeight = realHeight / len;
+  const horizontal = taperDirection === 'horizontal';
+  const breadth = horizontal ? realHeight : realWidth;
+  const stageLength = (horizontal ? realWidth : realHeight) / len;
   const parentViewBox = { x: offset.left, y: offset.top, width: offset.width, height: offset.height };
 
   let trapezoids: ReadonlyArray<FunnelTrapezoidItem> = displayedData.map(
@@ -875,13 +894,10 @@ export function computeFunnelTrapezoids({
         nextVal = 0;
       }
 
-      // @ts-expect-error this is a problem if we have ranged values because `val` can be an array
-      const x = maxValue === 0 ? offsetX : ((maxValue - val) * realWidth) / (2 * maxValue) + offsetX;
-      const y = rowHeight * i + offsetY;
       // @ts-expect-error getValueByDataKey does not validate the output type
-      const upperWidth = maxValue === 0 ? 0 : (val / maxValue) * realWidth;
+      const upperWidth = maxValue === 0 ? 0 : (val / maxValue) * breadth;
       // @ts-expect-error nextVal could be an array
-      const lowerWidth = maxValue === 0 ? 0 : (nextVal / maxValue) * realWidth;
+      const lowerWidth = maxValue === 0 ? 0 : (nextVal / maxValue) * breadth;
 
       const trapezoidColor = getFunnelEntryColor(entry);
       const tooltipPayload: TooltipPayload = [
@@ -895,9 +911,46 @@ export function computeFunnelTrapezoids({
           ...(trapezoidColor != null ? { color: trapezoidColor, fill: trapezoidColor } : {}),
         },
       ];
+      const entryProps = entry != null && typeof entry === 'object' ? omit(entry, ['width', 'taperDirection']) : {};
+
+      if (horizontal) {
+        const leftSpan = reversed ? lowerWidth : upperWidth;
+        const rightSpan = reversed ? upperWidth : lowerWidth;
+        const x = offsetX + (reversed ? len - 1 - i : i) * stageLength;
+        const centerY = offsetY + realHeight / 2;
+        const height = Math.max(Math.abs(leftSpan), Math.abs(rightSpan));
+        return {
+          ...entryProps,
+          taperDirection: 'horizontal',
+          x,
+          y: centerY - leftSpan / 2,
+          width: stageLength,
+          height,
+          upperWidth: leftSpan,
+          lowerWidth: rightSpan,
+          name,
+          val,
+          tooltipPayload,
+          tooltipPosition: { x: x + stageLength / 2, y: centerY },
+          payload: entry,
+          parentViewBox,
+          labelViewBox: {
+            x,
+            y: centerY - height / 2,
+            width: stageLength,
+            height,
+            upperWidth: stageLength,
+            lowerWidth: stageLength,
+          },
+        };
+      }
+
+      // @ts-expect-error this is a problem if we have ranged values because `val` can be an array
+      const x = maxValue === 0 ? offsetX : ((maxValue - val) * realWidth) / (2 * maxValue) + offsetX;
+      const y = stageLength * i + offsetY;
       const tooltipPosition: Coordinate = {
         x: x + upperWidth / 2,
-        y: y + rowHeight / 2,
+        y: y + stageLength / 2,
       };
 
       const trapezoidViewBox: TrapezoidViewBox = {
@@ -906,7 +959,7 @@ export function computeFunnelTrapezoids({
         upperWidth,
         lowerWidth,
         width: Math.max(upperWidth, lowerWidth),
-        height: rowHeight,
+        height: stageLength,
       };
 
       return {
@@ -915,7 +968,7 @@ export function computeFunnelTrapezoids({
         val,
         tooltipPayload,
         tooltipPosition,
-        ...(entry != null && typeof entry === 'object' ? omit(entry, ['width']) : {}),
+        ...entryProps,
         payload: entry,
         parentViewBox,
         labelViewBox: trapezoidViewBox,
@@ -923,15 +976,15 @@ export function computeFunnelTrapezoids({
     },
   );
 
-  if (reversed) {
+  if (reversed && !horizontal) {
     trapezoids = trapezoids.map((entry: FunnelTrapezoidItem, index: number): FunnelTrapezoidItem => {
       const reversedViewBox: TrapezoidViewBox = {
         x: entry.x - (entry.lowerWidth - entry.upperWidth) / 2,
-        y: entry.y - index * rowHeight + (len - 1 - index) * rowHeight,
+        y: entry.y - index * stageLength + (len - 1 - index) * stageLength,
         upperWidth: entry.lowerWidth,
         lowerWidth: entry.upperWidth,
         width: Math.max(entry.lowerWidth, entry.upperWidth),
-        height: rowHeight,
+        height: stageLength,
       };
 
       return {
@@ -939,7 +992,7 @@ export function computeFunnelTrapezoids({
         ...reversedViewBox,
         tooltipPosition: {
           ...entry.tooltipPosition,
-          y: entry.y - index * rowHeight + (len - 1 - index) * rowHeight + rowHeight / 2,
+          y: entry.y - index * stageLength + (len - 1 - index) * stageLength + stageLength / 2,
         },
         labelViewBox: reversedViewBox,
       };
