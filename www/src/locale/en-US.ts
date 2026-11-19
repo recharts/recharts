@@ -7,7 +7,6 @@ export const map = {
   },
   home: {
     slogan: 'A composable charting library built on React components',
-    install: 'Install',
     composable: 'Composable',
     composableContent: 'Quickly build your charts with decoupled, reusable React components.',
     reliable: 'Reliable',

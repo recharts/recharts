@@ -60,3 +60,29 @@ test('preserves in-progress edits when the color mode changes', async () => {
   expect(EditorView.findFromDOM(editorContent)).toBe(view);
   expect(view!.state.doc.toString()).toContain('const extra = 1;');
 });
+
+test('shows a copy button that copies the current editor content', async () => {
+  // userEvent.setup() installs a clipboard stub that jsdom lacks.
+  const user = userEvent.setup();
+
+  const { container } = render(
+    <ColorModeProvider>
+      <SourceCodeEditor value={'\nnpm install recharts\n'} />
+    </ColorModeProvider>,
+  );
+  await waitFor(() => expect(container.querySelector('.cm-content')).toBeTruthy());
+
+  await user.click(screen.getByRole('button', { name: 'Copy to clipboard' }));
+
+  await waitFor(async () => expect(await navigator.clipboard.readText()).toBe('npm install recharts'));
+});
+
+test('hides the copy button when showCopyButton is false', () => {
+  render(
+    <ColorModeProvider>
+      <SourceCodeEditor value="const answer = 42;" showCopyButton={false} />
+    </ColorModeProvider>,
+  );
+
+  expect(screen.queryByRole('button', { name: 'Copy to clipboard' })).not.toBeInTheDocument();
+});

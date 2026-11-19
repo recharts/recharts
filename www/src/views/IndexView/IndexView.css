@@ -52,8 +52,23 @@
       border: none;
     }
 
-    .install-btn {
-      width: 280px;
+    .install-snippet {
+      width: 100%;
+      max-width: 360px;
+      margin: 24px auto;
+      text-align: left;
+
+      .cm-editor {
+        font-size: 15px;
+      }
+
+      .cm-gutters {
+        display: none;
+      }
+
+      .cm-line {
+        padding-left: 16px;
+      }
     }
   }
 
