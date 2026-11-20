@@ -2,6 +2,13 @@ const env = process.env.NODE_ENV;
 
 module.exports = {
   plugins: [
+    /*
+     * Import Babel's helpers (object spread, destructuring, ...) from @babel/runtime instead of
+     * inlining a copy into every file, which bundlers cannot deduplicate.
+     * `version` matches the @babel/runtime dependency in package.json, so newer helpers such as
+     * objectSpread2 are imported too rather than inlined.
+     */
+    ['@babel/plugin-transform-runtime', { version: '^7.29.7' }],
     'babel-plugin-dev-expression',
     [
       'transform-define',
