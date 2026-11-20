@@ -2,12 +2,13 @@ import { render } from '@testing-library/react';
 import React from 'react';
 import {
   getStringSize,
+  getStringSizes,
   clearStringCache,
   getStringCacheStats,
   configureTextMeasurement,
   getTextMeasurementConfig,
 } from '../../src/util/DOMUtils';
-import { mockGetBoundingClientRect } from '../helper/mockGetBoundingClientRect';
+import { getMockDomRect, mockGetBoundingClientRect } from '../helper/mockGetBoundingClientRect';
 
 describe('DOMUtils', () => {
   beforeEach(() => {
@@ -111,6 +112,61 @@ describe('DOMUtils', () => {
     getStringSize('test');
 
     expect(getStringCacheStats().size).toBe(0);
+  });
+
+  describe('getStringSizes', () => {
+    beforeEach(() => {
+      // jsdom has no layout: make the width follow the text, so the sizes can be told apart.
+      vi.spyOn(Element.prototype, 'getBoundingClientRect').mockImplementation(function mock(this: Element) {
+        return getMockDomRect({ width: (this.textContent ?? '').length * 10, height: 17 });
+      });
+    });
+
+    test('returns the sizes in the same order as the texts, and 0 for missing texts', () => {
+      expect(getStringSizes(['a', 'abc', null, 12, undefined])).toEqual([
+        { width: 10, height: 17 },
+        { width: 30, height: 17 },
+        { width: 0, height: 0 },
+        { width: 20, height: 17 },
+        { width: 0, height: 0 },
+      ]);
+    });
+
+    test('measures every distinct uncached text once, and removes its spans afterwards', () => {
+      getStringSize('cached');
+      const spy = vi.mocked(Element.prototype.getBoundingClientRect);
+      spy.mockClear();
+
+      getStringSizes(['cached', 'x', 'y', 'x']);
+
+      expect(spy).toHaveBeenCalledTimes(2);
+      expect(document.querySelectorAll('.recharts-measurement-container')).toHaveLength(0);
+    });
+
+    test('fills the cache that getStringSize reads', () => {
+      getStringSizes(['shared'], { fontSize: '14px' });
+
+      expect(getStringCacheStats().size).toBe(1);
+      expect(getStringSize('shared', { fontSize: '14px' })).toEqual({ width: 60, height: 17 });
+    });
+
+    test('measures each span in the document, inheriting the given style from its container', () => {
+      const seen: Array<{ text: string | null; fontSize?: string; letterSpacing?: string; isConnected: boolean }> = [];
+      vi.mocked(Element.prototype.getBoundingClientRect).mockImplementation(function mock(this: Element) {
+        const container = this.parentElement;
+        seen.push({
+          text: this.textContent,
+          fontSize: container?.style.fontSize,
+          letterSpacing: container?.style.letterSpacing,
+          isConnected: this.isConnected,
+        });
+        return getMockDomRect();
+      });
+
+      getStringSizes(['styled'], { fontSize: '14px', letterSpacing: '2px' });
+
+      expect(seen).toEqual([{ text: 'styled', fontSize: '14px', letterSpacing: '2px', isConnected: true }]);
+    });
   });
 
   afterAll(() => {

@@ -4,6 +4,7 @@ import { describe, expect, it, vi } from 'vitest';
 import { scaleLinear } from 'victory-vendor/d3-scale';
 import { CartesianAxis, CustomScaleDefinition, Surface } from '../../src';
 import { TickItem } from '../../src/util/types';
+import * as DOMUtils from '../../src/util/DOMUtils';
 
 const CustomizeLabel = ({ x, y }: any) => (
   <text data-testid="customized-label" x={x} y={y}>
@@ -91,6 +92,7 @@ describe('<CartesianAxis />', () => {
     const myStyle = { fontSize: '14px', letterSpacing: '0.5em' } as CSSStyleDeclaration;
 
     vi.spyOn(window, 'getComputedStyle').mockReturnValue(myStyle);
+    const getStringSizesSpy = vi.spyOn(DOMUtils, 'getStringSizes');
 
     render(
       <Surface width={500} height={500}>
@@ -109,9 +111,7 @@ describe('<CartesianAxis />', () => {
       </Surface>,
     );
 
-    const container: HTMLSpanElement | null = document.querySelector('#recharts_measurement_span');
-
-    expect(container?.style).toMatchObject(myStyle);
+    expect(getStringSizesSpy).toHaveBeenCalledWith(expect.any(Array), myStyle);
   });
 
   it('Renders ticks when interval="preserveStart"', () => {

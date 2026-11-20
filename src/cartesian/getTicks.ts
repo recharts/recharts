@@ -1,6 +1,6 @@
 import { CartesianTickItem, CartesianViewBoxRequired, Size } from '../util/types';
 import { mathSign, isNumber } from '../util/DataUtils';
-import { getStringSize } from '../util/DOMUtils';
+import { getStringSize, getStringSizes } from '../util/DOMUtils';
 import { Global } from '../util/Global';
 import { isVisible, getTickBoundaries, getNumberIntervalTicks, getAngledTickWidth } from '../util/TickUtils';
 import { getEquidistantTicks, getEquidistantPreserveEndTicks } from './getEquidistantTicks';
@@ -167,12 +167,21 @@ export function getTicks(
   const unitSize: Size =
     unit && sizeKey === 'width' ? getStringSize(unit, { fontSize, letterSpacing }) : { width: 0, height: 0 };
 
-  const getTickSize = (content: CartesianTickItem, index: number) => {
-    const value = typeof tickFormatter === 'function' ? tickFormatter(content.value, index) : content.value;
+  /*
+   * Measure every label in one go: measuring them one by one forces a browser layout per label,
+   * and the tick selection below can ask for thousands of them on a dense category axis.
+   */
+  const tickSizes = getStringSizes(
+    ticks.map((content, index) =>
+      typeof tickFormatter === 'function' ? tickFormatter(content.value, index) : content.value,
+    ),
+    { fontSize, letterSpacing },
+  );
+
+  const getTickSize = (_content: CartesianTickItem, index: number) => {
+    const size = tickSizes[index] ?? { width: 0, height: 0 };
     // Recharts only supports angles when sizeKey === 'width'
-    return sizeKey === 'width'
-      ? getAngledTickWidth(getStringSize(value, { fontSize, letterSpacing }), unitSize, angle)
-      : getStringSize(value, { fontSize, letterSpacing })[sizeKey];
+    return sizeKey === 'width' ? getAngledTickWidth(size, unitSize, angle) : size[sizeKey];
   };
 
   const tick0 = ticks[0];
