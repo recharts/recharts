@@ -13,6 +13,7 @@ import {
 } from 'react';
 import { clsx } from 'clsx';
 import { scalePoint, ScalePoint } from 'victory-vendor/d3-scale';
+import { clamp } from 'es-toolkit';
 import range from 'es-toolkit/compat/range';
 import { Layer } from '../container/Layer';
 import { Text } from '../component/Text';
@@ -686,6 +687,10 @@ class BrushWithState extends PureComponent<BrushWithStateProps, State> {
       endIndexControlledFromProps,
     } = nextProps;
 
+    const lastIndex = data ? data.length - 1 : 0;
+    const clampedStartIndex = clamp(startIndexControlledFromProps ?? startIndex, 0, lastIndex);
+    const clampedEndIndex = clamp(endIndexControlledFromProps ?? endIndex, 0, lastIndex);
+
     if (data !== prevState.prevData) {
       return {
         prevData: data,
@@ -695,7 +700,14 @@ class BrushWithState extends PureComponent<BrushWithStateProps, State> {
         prevStartIndexControlledFromProps: startIndexControlledFromProps,
         prevEndIndexControlledFromProps: endIndexControlledFromProps,
         ...(data && data.length
-          ? createScale({ data, width, x, travellerWidth, startIndex, endIndex })
+          ? createScale({
+              data,
+              width,
+              x,
+              travellerWidth,
+              startIndex: clampedStartIndex,
+              endIndex: clampedEndIndex,
+            })
           : { scale: undefined, scaleValues: undefined }),
       };
     }
@@ -740,7 +752,7 @@ class BrushWithState extends PureComponent<BrushWithStateProps, State> {
         prevState.prevStartIndexControlledFromProps !== startIndexControlledFromProps
       ) {
         return {
-          startX: prevState.scale(startIndexControlledFromProps),
+          startX: prevState.scale(clampedStartIndex),
           prevStartIndexControlledFromProps: startIndexControlledFromProps,
         };
       }
@@ -750,7 +762,7 @@ class BrushWithState extends PureComponent<BrushWithStateProps, State> {
         prevState.prevEndIndexControlledFromProps !== endIndexControlledFromProps
       ) {
         return {
-          endX: prevState.scale(endIndexControlledFromProps),
+          endX: prevState.scale(clampedEndIndex),
           prevEndIndexControlledFromProps: endIndexControlledFromProps,
         };
       }
