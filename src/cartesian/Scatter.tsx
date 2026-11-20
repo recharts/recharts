@@ -345,6 +345,7 @@ export interface ScatterProps<DataPointType = any, DataValueType = any>
   /**
    * This component is rendered when this graphical item is activated
    * (could be by mouse hover, touch, keyboard, programmatically).
+   * When set to `true`, renders the item's `shape` with `isActive: true`.
    *
    * @see {@link https://recharts.github.io/en-US/examples/SimpleScatterChart/ Scatter chart with custom active shape}
    * @example <Scatter activeShape={{ fill: 'red' }} />
@@ -355,6 +356,7 @@ export interface ScatterProps<DataPointType = any, DataValueType = any>
    * - Can be one of the predefined shapes as a string, which will be passed to {@link Symbols} component.
    * - If set a ReactElement, the shape of point can be customized.
    * - If set a function, the function will be called to render customized shape.
+   * - When `activeShape={true}`, the custom shape is also rendered for the active point and receives `isActive: true`.
    * - During animations, the function shape also receives `animationElapsedTime`, `isAnimating`, and `isEntrance`.
    * @defaultValue circle
    *
@@ -765,8 +767,17 @@ function ScatterPoint({
   }, [hasActiveShape, index]);
   const isActive: boolean = useAppSelector(selectIsActive) ?? false;
 
-  // isActive is only true when hasActiveShape is true, so activeShape is defined here
-  const option = isActive && activeShape != null && activeShape !== false ? activeShape : shape;
+  /*
+   * Same as `activeBar` in Bar: `activeShape={true}` renders the `shape`,
+   * so a custom `shape` renders the active point too, and decides on its own how the active state looks.
+   * Predefined symbol names (such as `'circle'` or `'diamond'`) are still built-in shapes, so they keep the theme active styles.
+   */
+  let option: ScatterCustomizedShape;
+  if (isActive && activeShape != null && activeShape !== false) {
+    option = activeShape === true ? shape : activeShape;
+  } else {
+    option = shape;
+  }
   // Filter out undefined values from baseProps so data fill/stroke aren't clobbered
   const filteredBaseProps: SVGProps<SVGGraphicsElement> = {
     ...(baseProps.fill !== undefined && { fill: baseProps.fill }),
@@ -781,7 +792,9 @@ function ScatterPoint({
     ...entryStyleOverrides,
     ...entry,
     ...(paintFill == null ? undefined : { fill: paintFill }),
-    ...(isActive ? getActiveStyleOverrides(activeShape, themedActiveStyles, entry) : undefined),
+    ...(isActive
+      ? getActiveStyleOverrides(typeof option === 'boolean' ? true : option, themedActiveStyles, entry)
+      : undefined),
     isActive,
     index,
     animationElapsedTime,
