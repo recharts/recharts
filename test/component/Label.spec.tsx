@@ -291,7 +291,10 @@ describe('<Label />', () => {
         });
 
         it('should render label when given value prop', () => {
-          // @ts-expect-error typescript is correct here, Label does not allow function as value, and renders gibberish
+          /*
+           * `value` is `any` so a LabelList content callback can read arrays and objects from dataKey.
+           * The default text label stringifies a function.
+           */
           const { container } = renderLabelWithValue(fn);
 
           const label = container.querySelector('.recharts-label');
@@ -355,7 +358,10 @@ describe('<Label />', () => {
         });
 
         it('should render label when given value prop', () => {
-          // @ts-expect-error typescript is correct here, Label does not allow React component as value, and it renders gibberish
+          /*
+           * `value` is `any` so a LabelList content callback can read arrays and objects from dataKey.
+           * The default text label stringifies a component.
+           */
           const { container } = renderLabelWithValue(MyComp);
 
           const label = container.querySelector('.recharts-label');
@@ -390,7 +396,10 @@ describe('<Label />', () => {
         });
 
         it('should render label when given value prop', () => {
-          // @ts-expect-error typescript is correct here, Label does not allow React element as value, and it renders gibberish
+          /*
+           * `value` is `any` so a LabelList content callback can read arrays and objects from dataKey.
+           * The default text label stringifies an element.
+           */
           const { container } = renderLabelWithValue(element);
 
           const label = container.querySelector('.recharts-label');
@@ -422,7 +431,10 @@ describe('<Label />', () => {
         });
 
         it('should render label when given value prop', () => {
-          // @ts-expect-error typescript says that array of strings is not allowed as value, and indeed it calls the standard .toString() on it and renders that
+          /*
+           * `value` is `any` so a LabelList content callback can read arrays and objects from dataKey.
+           * The default text label calls toString on an array of strings.
+           */
           const { container } = renderLabelWithValue(array);
 
           const label = container.querySelector('.recharts-label');

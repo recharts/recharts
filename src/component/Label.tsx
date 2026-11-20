@@ -72,11 +72,16 @@ interface LabelProps extends ZIndexable {
    */
   formatter?: LabelFormatter;
   /**
-   * The value of label can be set as children or as the `value` prop
+   * The value of label, set as children or as the `value` prop.
+   *
+   * A {@link LabelList} `content` function receives the value returned by `dataKey`.
+   * `dataKey` may return an array or an object, not only text. This is `any` so the
+   * callback can read the runtime value without narrowing.
    *
    * @example <Label value="foo" />
+   * @see {@link https://github.com/recharts/recharts/issues/5849}
    */
-  value?: RenderableText;
+  value?: any; // eslint-disable-line @typescript-eslint/no-explicit-any -- dataKey may return arrays or objects
   /**
    * The offset to the specified "position". Direction of the offset depends on the position.
    *
