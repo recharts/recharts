@@ -23,7 +23,7 @@ import { ZIndexable, ZIndexLayer } from '../zIndex/ZIndexLayer';
 import { DefaultZIndexes } from '../zIndex/DefaultZIndexes';
 import { isWellBehavedNumber } from '../util/isWellBehavedNumber';
 import { BandPosition, RechartsScale } from '../util/scale/RechartsScale';
-import { CartesianScaleHelper, CartesianScaleHelperImpl } from '../util/scale/CartesianScaleHelper';
+import { CartesianScaleHelperImpl } from '../util/scale/CartesianScaleHelper';
 import { ColorStyles2D, withFillColor } from '../theme/themeFill';
 import { useBackwardsCompatibleTheme } from '../theme/useBackwardsCompatibleTheme';
 
@@ -237,16 +237,38 @@ const getVerticalLineEndPoints = (
   return xAxisOrientation === 'top' ? points.reverse() : points;
 };
 
+const mapSegmentEnd = (
+  end: ReferenceLineSegment[number],
+  position: Props['position'],
+  xAxisScale: RechartsScale,
+  yAxisScale: RechartsScale,
+  fallback: 'rangeMin' | 'rangeMax',
+): Coordinate | null => {
+  const hasX = end.x != null;
+  const hasY = end.y != null;
+  const x = hasX ? xAxisScale.map(end.x, { position }) : xAxisScale[fallback]();
+  const y = hasY ? yAxisScale.map(end.y, { position }) : yAxisScale[fallback]();
+  // a coordinate that was given but that the scale cannot map (for example a category outside of the Brush range) is not the same as a coordinate that was left out
+  if (!isWellBehavedNumber(x) || !isWellBehavedNumber(y)) {
+    return null;
+  }
+  return { x, y };
+};
+
 const getSegmentLineEndPoints = (
   segment: ReferenceLineSegment,
   ifOverflow: IfOverflow,
   position: Props['position'],
-  scales: CartesianScaleHelper,
+  xAxisScale: RechartsScale,
+  yAxisScale: RechartsScale,
 ): ReadonlyArray<Coordinate> | null => {
-  const points: [Coordinate, Coordinate] = [
-    scales.mapWithFallback(segment[0], { position, fallback: 'rangeMin' }),
-    scales.mapWithFallback(segment[1], { position, fallback: 'rangeMax' }),
-  ];
+  const start = mapSegmentEnd(segment[0], position, xAxisScale, yAxisScale, 'rangeMin');
+  const end = mapSegmentEnd(segment[1], position, xAxisScale, yAxisScale, 'rangeMax');
+  if (start == null || end == null) {
+    return null;
+  }
+  const points: [Coordinate, Coordinate] = [start, end];
+  const scales = new CartesianScaleHelperImpl({ x: xAxisScale, y: yAxisScale });
 
   if (ifOverflow === 'discard' && points.some(p => !scales.isInRange(p))) {
     return null;
@@ -275,12 +297,7 @@ export const getEndPoints = (
     return getVerticalLineEndPoints(xCoord, ifOverflow, position, xAxisOrientation, xAxisScale, viewBox);
   }
   if (segment != null && segment.length === 2) {
-    return getSegmentLineEndPoints(
-      segment,
-      ifOverflow,
-      position,
-      new CartesianScaleHelperImpl({ x: xAxisScale, y: yAxisScale }),
-    );
+    return getSegmentLineEndPoints(segment, ifOverflow, position, xAxisScale, yAxisScale);
   }
 
   return null;

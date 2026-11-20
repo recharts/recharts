@@ -546,6 +546,57 @@ describe('<ReferenceLine />', () => {
     });
   });
 
+  describe('segment with an end outside the Brush range', () => {
+    const brushData = [
+      { name: 'A', uv: 10 },
+      { name: 'B', uv: 20 },
+      { name: 'C', uv: 15 },
+      { name: 'D', uv: 30 },
+      { name: 'E', uv: 25 },
+      { name: 'F', uv: 5 },
+    ];
+
+    it.each(['discard', 'hidden', 'visible'] as const)(
+      'should not draw a segment whose end is a hidden category when ifOverflow is %s',
+      ifOverflow => {
+        const { container } = render(
+          <LineChart width={500} height={300} data={brushData}>
+            <XAxis dataKey="name" />
+            <YAxis />
+            <Line dataKey="uv" />
+            <Brush dataKey="name" startIndex={2} endIndex={5} />
+            <ReferenceLine
+              segment={[
+                { x: 'A', y: 10 },
+                { x: 'E', y: 25 },
+              ]}
+              ifOverflow={ifOverflow}
+            />
+          </LineChart>,
+        );
+        expect(container.querySelectorAll('.recharts-reference-line-line')).toHaveLength(0);
+      },
+    );
+
+    it('should draw a segment whose ends are both visible categories', () => {
+      const { container } = render(
+        <LineChart width={500} height={300} data={brushData}>
+          <XAxis dataKey="name" />
+          <YAxis />
+          <Line dataKey="uv" />
+          <Brush dataKey="name" startIndex={2} endIndex={5} />
+          <ReferenceLine
+            segment={[
+              { x: 'D', y: 10 },
+              { x: 'E', y: 25 },
+            ]}
+          />
+        </LineChart>,
+      );
+      expect(container.querySelectorAll('.recharts-reference-line-line')).toHaveLength(1);
+    });
+  });
+
   describe('panorama', () => {
     it('should render two ReferenceLines in a Brush panorama', () => {
       const brushDimensionsSpy = vi.fn();
