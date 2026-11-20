@@ -70,6 +70,27 @@ describe('selectContainerScale', () => {
     expectLastCalledWith(spy, 3 / 5);
   });
 
+  it('should measure the scale once per mount when the measured value keeps changing', () => {
+    /*
+     * An ancestor animating `transform: scale()` makes every read of the DOMRect different.
+     * Measuring again after each store update then never settles: https://github.com/recharts/recharts/issues/8184
+     */
+    let reads = 0;
+    vi.spyOn(HTMLElement.prototype, 'getBoundingClientRect').mockImplementation(() => {
+      reads += 1;
+      return { x: 0, y: 0, top: 0, left: 0, right: 0, bottom: 0, width: 100 + reads, height: 100, toJSON: () => ({}) };
+    });
+    mockHTMLElementProperty('offsetWidth', 100);
+    const renderTestCase = createSelectorTestCase(({ children }) => (
+      <ComposedChart width={100} height={100}>
+        {children}
+      </ComposedChart>
+    ));
+    const { spy } = renderTestCase(selectContainerScale);
+    const scales = new Set(spy.mock.calls.map(([scale]) => scale));
+    expect(scales.size).toBeLessThanOrEqual(2);
+  });
+
   it('should return scale: 1 in jsdom because jsdom returns zeroes everywhere', () => {
     /*
      * This is a little bit of optimization for the test environment

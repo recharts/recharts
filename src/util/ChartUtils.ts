@@ -443,29 +443,15 @@ export const offsetPositive: OffsetAccessor = series => {
 
 /**
  * Function type to compute offset for stacked data.
- *
- * d3-shape has something fishy going on with its types.
- * In @definitelytyped/d3-shape, this function (the offset accessor) is typed as Series<> => void.
- * However! When I actually open the storybook I can see that the offset accessor actually receives Array<Series<>>.
- * The same I can see in the source code itself:
- * https://github.com/DefinitelyTyped/DefinitelyTyped/discussions/66042
- * That one unfortunately has no types but we can tell it passes three-dimensional array.
- *
- * Which leads me to believe that definitelytyped is wrong on this one.
- * There's open discussion on this topic without much attention:
- * https://github.com/DefinitelyTyped/DefinitelyTyped/discussions/66042
+ * Receives all stacked series at once, and mutates them in place.
  */
-type OffsetAccessor = (series: Array<Series<Record<string, unknown>, string>>, order: number[]) => void;
+type OffsetAccessor = (series: Array<Series<Record<string, unknown>, DataKey<unknown>>>, order: number[]) => void;
 
 const STACK_OFFSET_MAP: Record<StackOffsetType, OffsetAccessor> = {
   sign: offsetSign,
-  // @ts-expect-error definitelytyped types are incorrect
   expand: stackOffsetExpand,
-  // @ts-expect-error definitelytyped types are incorrect
   none: stackOffsetNone,
-  // @ts-expect-error definitelytyped types are incorrect
   silhouette: stackOffsetSilhouette,
-  // @ts-expect-error definitelytyped types are incorrect
   wiggle: stackOffsetWiggle,
   positive: offsetPositive,
 };
@@ -480,7 +466,6 @@ export const getStackedData = (
     .keys(dataKeys)
     .value((d, key) => Number(getValueByDataKey(d, key, 0)))
     .order(stackOrderNone)
-    // @ts-expect-error definitelytyped types are incorrect
     .offset(offsetAccessor);
 
   const result = stack(data);

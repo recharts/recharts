@@ -510,7 +510,7 @@ function FunnelTrapezoids(props: FunnelTrapezoidsProps) {
 
         return (
           <Layer
-            key={`trapezoid-${entry?.x}-${entry?.y}-${entry?.name}-${entry?.value}`}
+            key={`trapezoid-${i}`}
             className="recharts-funnel-trapezoid"
             {...adaptEventsOfChild(restOfAllOtherProps, entry, i)}
             onMouseEnter={onMouseEnterFromContext(entry, i)}
@@ -858,6 +858,8 @@ export function computeFunnelTrapezoids({
           if (typeof second === 'number') {
             nextVal = second;
           }
+        } else if (nextDataValue === null) {
+          nextVal = 0;
         }
       } else if (rawVal instanceof Array && rawVal.length === 2) {
         const [first, second] = rawVal;

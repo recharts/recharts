@@ -44,6 +44,12 @@ export default defineConfig({
         extends: true,
         test: {
           name: 'unit:lib',
+          server: {
+            deps: {
+              // The inspector must use the local chart hooks and their context.
+              inline: ['@recharts/devtools', 'recharts'],
+            },
+          },
           isolate: false,
           setupFiles: [
             'test/vitest.setup.ts',
