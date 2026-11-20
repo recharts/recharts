@@ -275,6 +275,12 @@ export const getEndPoints = (
     return getVerticalLineEndPoints(xCoord, ifOverflow, position, xAxisOrientation, xAxisScale, viewBox);
   }
   if (segment != null && segment.length === 2) {
+    // don't render the segment if the scale can't compute a result that makes sense
+    const isOffAxis = (value: number | string | undefined, scale: RechartsScale): boolean =>
+      value != null && !isWellBehavedNumber(scale.map(value, { position }));
+    if (segment.some(end => isOffAxis(end.x, xAxisScale) || isOffAxis(end.y, yAxisScale))) {
+      return null;
+    }
     return getSegmentLineEndPoints(
       segment,
       ifOverflow,
