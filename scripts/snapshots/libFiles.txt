@@ -268,6 +268,7 @@
   "lib/util/createEventProxy.js",
   "lib/util/createPolarCharts.js",
   "lib/util/cursor",
+  "lib/util/cursor/cursorShapes.js",
   "lib/util/cursor/getCursorPoints.js",
   "lib/util/cursor/getCursorRectangle.js",
   "lib/util/cursor/getRadialCursorPoints.js",

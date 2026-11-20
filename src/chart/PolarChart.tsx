@@ -12,6 +12,7 @@ import { TooltipPayloadSearcher } from '../state/tooltipSlice';
 import { CategoricalChart } from './CategoricalChart';
 import { resolveDefaultProps } from '../util/resolveDefaultProps';
 import { initialEventSettingsState } from '../state/eventSettingsSlice';
+import { CursorShapeContext, radialCursor } from '../util/cursor/cursorShapes';
 
 const defaultMargin: Margin = { top: 5, right: 5, bottom: 5, left: 5 };
 
@@ -112,7 +113,9 @@ export const PolarChart = forwardRef<SVGSVGElement, PolarChartOptions>(function 
         innerRadius={polarChartProps.innerRadius}
         outerRadius={polarChartProps.outerRadius}
       />
-      <CategoricalChart {...otherCategoricalProps} ref={ref} />
+      <CursorShapeContext.Provider value={radialCursor}>
+        <CategoricalChart {...otherCategoricalProps} ref={ref} />
+      </CursorShapeContext.Provider>
     </RechartsStoreProvider>
   );
 });
