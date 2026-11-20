@@ -502,7 +502,9 @@ function FunnelTrapezoids(props: FunnelTrapezoidsProps) {
         const activeStyleOverrides =
           isActiveIndex && indexedActiveStyles != null && indexedActiveStyles.length > 0
             ? getActiveStyleOverrides(
-                trapezoidOptions === defaultFunnelShape ? true : trapezoidOptions,
+                trapezoidOptions === defaultFunnelShape || typeof trapezoidOptions === 'boolean'
+                  ? true
+                  : trapezoidOptions,
                 indexedActiveStyles[i % indexedActiveStyles.length],
                 getOwnColorSource(entry, cells[i]?.props),
               )

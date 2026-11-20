@@ -244,7 +244,11 @@ function RadialBarSectors({
             ? undefined
             : { fill: getFillUrl(getEntryFillId(id, i)) }),
           ...(isActive
-            ? getActiveStyleOverrides(option === defaultRadialBarShape ? true : option, themedActiveStyles, entry)
+            ? getActiveStyleOverrides(
+                option === defaultRadialBarShape || typeof option === 'boolean' ? true : option,
+                themedActiveStyles,
+                entry,
+              )
             : undefined),
           ...adaptEventsOfChild(restOfAllOtherProps, entry, i),
           onMouseEnter,

@@ -792,7 +792,9 @@ function ScatterPoint({
     ...entryStyleOverrides,
     ...entry,
     ...(paintFill == null ? undefined : { fill: paintFill }),
-    ...(isActive ? getActiveStyleOverrides(option, themedActiveStyles, entry) : undefined),
+    ...(isActive
+      ? getActiveStyleOverrides(typeof option === 'boolean' ? true : option, themedActiveStyles, entry)
+      : undefined),
     isActive,
     index,
     animationElapsedTime,

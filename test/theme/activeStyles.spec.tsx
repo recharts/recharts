@@ -362,7 +362,7 @@ describe('theme active styles in Scatter with a custom shape', () => {
 
   function renderScatter(
     scatterProps: Partial<React.ComponentProps<typeof Scatter>>,
-    activeTheme: RechartsTheme | undefined = theme,
+    activeTheme: RechartsTheme | undefined,
   ) {
     const shape = createShapeSpy('custom-scatter');
     const { container } = renderWithOptionalTheme(
@@ -378,7 +378,7 @@ describe('theme active styles in Scatter with a custom shape', () => {
   }
 
   it('renders the custom shape function for the active point, without the theme active styles, when activeShape is true', () => {
-    const { container, shape } = renderScatter({ activeShape: true });
+    const { container, shape } = renderScatter({ activeShape: true }, theme);
     expect(shape).toHaveBeenCalledWith(expect.objectContaining({ isActive: true, index: 1, ...ownColors }), 1);
     const activePoint = container.querySelector('.recharts-active-shape .custom-scatter-active');
     assertNotNull(activePoint);
@@ -389,10 +389,13 @@ describe('theme active styles in Scatter with a custom shape', () => {
   });
 
   it('renders a custom shape React element for the active point, without the theme active styles, when activeShape is true', () => {
-    const { container } = renderScatter({
-      activeShape: true,
-      shape: <CustomElement baseClassName="custom-scatter" />,
-    });
+    const { container } = renderScatter(
+      {
+        activeShape: true,
+        shape: <CustomElement baseClassName="custom-scatter" />,
+      },
+      theme,
+    );
     const activePoint = container.querySelector('.recharts-active-shape .custom-scatter-active');
     assertNotNull(activePoint);
     expect(activePoint).toHaveAttribute('fill', ownColors.fill);
@@ -406,15 +409,17 @@ describe('theme active styles in Scatter with a custom shape', () => {
     expect(shape).toHaveBeenCalledWith(expect.objectContaining({ isActive: true, index: 1 }), 1);
     const activePoint = container.querySelector('.recharts-active-shape .custom-scatter-active');
     assertNotNull(activePoint);
+    expect(activePoint).not.toHaveAttribute('fill', ownColors.fill);
+    expect(activePoint).not.toHaveAttribute('fill', 'white');
     expect(container.querySelectorAll('.recharts-scatter-symbol path.recharts-symbols')).toHaveLength(0);
   });
 
   it('keeps the predefined symbol shape and applies the theme active styles when activeShape is true', () => {
-    const { container: circleContainer } = renderScatter({ shape: undefined, activeShape: true });
+    const { container: circleContainer } = renderScatter({ shape: undefined, activeShape: true }, theme);
     const circlePath = circleContainer.querySelector('.recharts-active-shape path.recharts-symbols')?.getAttribute('d');
     assertNotNull(circlePath);
 
-    const { container } = renderScatter({ shape: 'diamond', activeShape: true });
+    const { container } = renderScatter({ shape: 'diamond', activeShape: true }, theme);
     const inactiveDiamond = container.querySelector('.recharts-shape path.recharts-symbols');
     const activeDiamond = container.querySelector('.recharts-active-shape path.recharts-symbols');
     assertNotNull(inactiveDiamond);
@@ -433,17 +438,27 @@ describe('theme active styles in Scatter with a custom shape', () => {
     assertNotNull(inactiveDiamond);
     assertNotNull(activeDiamond);
     expect(activeDiamond).toHaveAttribute('d', inactiveDiamond.getAttribute('d'));
+    expect(activeDiamond).not.toHaveAttribute('fill', 'white');
+  });
+
+  it('applies the theme active styles to the default shape when shape is false and activeShape is true', () => {
+    const { container } = renderScatter({ shape: false, activeShape: true }, theme);
+    const activePoint = container.querySelector('.recharts-active-shape path.recharts-symbols');
+    assertNotNull(activePoint);
+    expect(activePoint).toHaveAttribute('fill', 'white');
+    expect(activePoint).toHaveAttribute('stroke', 'crimson');
+    expect(activePoint).toHaveAttribute('stroke-width', '3');
   });
 
   it('renders an explicit activeShape object or function instead of the custom shape', () => {
-    const { container: objectContainer, shape: objectShape } = renderScatter({ activeShape: { fill: 'lime' } });
+    const { container: objectContainer, shape: objectShape } = renderScatter({ activeShape: { fill: 'lime' } }, theme);
     expect(objectShape).not.toHaveBeenCalledWith(expect.objectContaining({ isActive: true }), expect.anything());
     const activeObjectPoint = objectContainer.querySelector('.recharts-active-shape path.recharts-symbols');
     assertNotNull(activeObjectPoint);
     expect(activeObjectPoint).toHaveAttribute('fill', 'lime');
     expect(activeObjectPoint).toHaveAttribute('stroke-width', '3');
 
-    const { container: fnContainer, shape: fnShape } = renderScatter({ activeShape: customShape });
+    const { container: fnContainer, shape: fnShape } = renderScatter({ activeShape: customShape }, theme);
     expect(fnShape).not.toHaveBeenCalledWith(expect.objectContaining({ isActive: true }), expect.anything());
     const activeFnPoint = fnContainer.querySelector('.recharts-active-shape .custom-shape path');
     assertNotNull(activeFnPoint);
@@ -457,7 +472,7 @@ describe('theme active styles in RadialBar with a custom shape', () => {
 
   function renderRadialBar(
     radialBarProps: Partial<React.ComponentProps<typeof RadialBar>>,
-    activeTheme: RechartsTheme | undefined = theme,
+    activeTheme: RechartsTheme | undefined,
   ) {
     const shape = createShapeSpy('custom-radial-bar');
     const { container } = renderWithOptionalTheme(
@@ -471,7 +486,7 @@ describe('theme active styles in RadialBar with a custom shape', () => {
   }
 
   it('renders the custom shape function for the active sector, without the theme active styles, when activeShape is true', () => {
-    const { container, shape } = renderRadialBar({ activeShape: true });
+    const { container, shape } = renderRadialBar({ activeShape: true }, theme);
     expect(shape).toHaveBeenCalledWith(expect.objectContaining({ isActive: true, index: 1, ...ownColors }), 1);
     const activeSector = container.querySelector('.recharts-active-shape .custom-radial-bar-active');
     assertNotNull(activeSector);
@@ -483,10 +498,13 @@ describe('theme active styles in RadialBar with a custom shape', () => {
   });
 
   it('renders a custom shape React element for the active sector, without the theme active styles, when activeShape is true', () => {
-    const { container } = renderRadialBar({
-      activeShape: true,
-      shape: <CustomElement baseClassName="custom-radial-bar" />,
-    });
+    const { container } = renderRadialBar(
+      {
+        activeShape: true,
+        shape: <CustomElement baseClassName="custom-radial-bar" />,
+      },
+      theme,
+    );
     const activeSector = container.querySelector('.recharts-active-shape .custom-radial-bar-active');
     assertNotNull(activeSector);
     expect(activeSector).toHaveAttribute('fill', ownColors.fill);
@@ -501,19 +519,33 @@ describe('theme active styles in RadialBar with a custom shape', () => {
     expect(shape).toHaveBeenCalledWith(expect.objectContaining({ isActive: true, index: 1 }), 1);
     const activeSector = container.querySelector('.recharts-active-shape .custom-radial-bar-active');
     assertNotNull(activeSector);
+    expect(activeSector).not.toHaveAttribute('fill', ownColors.fill);
+    expect(activeSector).not.toHaveAttribute('fill', 'white');
     expect(container.querySelectorAll('.recharts-radial-bar-sectors path.recharts-sector')).toHaveLength(0);
     expect(container.querySelectorAll('.recharts-active-shape path.recharts-sector')).toHaveLength(0);
   });
 
+  it('applies the theme active styles to the default shape when shape is false and activeShape is true', () => {
+    const { container } = renderRadialBar({ shape: false, activeShape: true }, theme);
+    const activeSector = container.querySelector('.recharts-active-shape path.recharts-sector');
+    assertNotNull(activeSector);
+    expect(activeSector).toHaveAttribute('fill', 'white');
+    expect(activeSector).toHaveAttribute('stroke', 'crimson');
+    expect(activeSector).toHaveAttribute('stroke-width', '3');
+  });
+
   it('renders an explicit activeShape object or function instead of the custom shape', () => {
-    const { container: objectContainer, shape: objectShape } = renderRadialBar({ activeShape: { fill: 'lime' } });
+    const { container: objectContainer, shape: objectShape } = renderRadialBar(
+      { activeShape: { fill: 'lime' } },
+      theme,
+    );
     expect(objectShape).not.toHaveBeenCalledWith(expect.objectContaining({ isActive: true }), expect.anything());
     const activeObjectSector = objectContainer.querySelector('.recharts-active-shape path.recharts-sector');
     assertNotNull(activeObjectSector);
     expect(activeObjectSector).toHaveAttribute('fill', 'lime');
     expect(activeObjectSector).toHaveAttribute('stroke-width', '3');
 
-    const { container: fnContainer, shape: fnShape } = renderRadialBar({ activeShape: customShape });
+    const { container: fnContainer, shape: fnShape } = renderRadialBar({ activeShape: customShape }, theme);
     expect(fnShape).not.toHaveBeenCalledWith(expect.objectContaining({ isActive: true }), expect.anything());
     const activeFnSector = fnContainer.querySelector('.recharts-active-shape .custom-shape path');
     assertNotNull(activeFnSector);
@@ -527,7 +559,7 @@ describe('theme active styles in Funnel with a custom shape', () => {
 
   function renderFunnel(
     funnelProps: Partial<React.ComponentProps<typeof Funnel>>,
-    activeTheme: RechartsTheme | undefined = theme,
+    activeTheme: RechartsTheme | undefined,
   ) {
     const shape = createShapeSpy('custom-funnel');
     const { container } = renderWithOptionalTheme(
@@ -544,7 +576,7 @@ describe('theme active styles in Funnel with a custom shape', () => {
   }
 
   it('renders the custom shape function for the active trapezoid, without the theme active styles, when activeShape is true', () => {
-    const { container, shape } = renderFunnel({ activeShape: true });
+    const { container, shape } = renderFunnel({ activeShape: true }, theme);
     expect(shape).toHaveBeenCalledWith(expect.objectContaining({ isActive: true, name: 'B', ...ownColors }), undefined);
     const activeTrapezoid = container.querySelector('.recharts-active-shape .custom-funnel-active');
     assertNotNull(activeTrapezoid);
@@ -555,10 +587,13 @@ describe('theme active styles in Funnel with a custom shape', () => {
   });
 
   it('renders a custom shape React element for the active trapezoid, without the theme active styles, when activeShape is true', () => {
-    const { container } = renderFunnel({
-      activeShape: true,
-      shape: <CustomElement baseClassName="custom-funnel" />,
-    });
+    const { container } = renderFunnel(
+      {
+        activeShape: true,
+        shape: <CustomElement baseClassName="custom-funnel" />,
+      },
+      theme,
+    );
     const activeTrapezoid = container.querySelector('.recharts-active-shape .custom-funnel-active');
     assertNotNull(activeTrapezoid);
     expect(activeTrapezoid).toHaveAttribute('fill', ownColors.fill);
@@ -572,19 +607,30 @@ describe('theme active styles in Funnel with a custom shape', () => {
     expect(shape).toHaveBeenCalledWith(expect.objectContaining({ isActive: true, name: 'B' }), undefined);
     const activeTrapezoid = container.querySelector('.recharts-active-shape .custom-funnel-active');
     assertNotNull(activeTrapezoid);
+    expect(activeTrapezoid).not.toHaveAttribute('fill', ownColors.fill);
+    expect(activeTrapezoid).not.toHaveAttribute('fill', 'black');
     expect(container.querySelectorAll('path.recharts-trapezoid')).toHaveLength(0);
   });
 
+  it('applies the theme active styles to the default shape when shape is false and activeShape is true', () => {
+    const { container } = renderFunnel({ shape: false, activeShape: true }, theme);
+    const activeTrapezoid = container.querySelector('.recharts-active-shape path.recharts-trapezoid');
+    assertNotNull(activeTrapezoid);
+    expect(activeTrapezoid).toHaveAttribute('fill', 'black');
+    expect(activeTrapezoid).toHaveAttribute('stroke', 'orange');
+    expect(activeTrapezoid).toHaveAttribute('stroke-width', '5');
+  });
+
   it('renders an explicit activeShape object or function instead of the custom shape', () => {
-    const { container: objectContainer, shape: objectShape } = renderFunnel({ activeShape: { fill: 'lime' } });
-    expect(objectShape).not.toHaveBeenCalledWith(expect.objectContaining({ isActive: true }), expect.anything());
+    const { container: objectContainer, shape: objectShape } = renderFunnel({ activeShape: { fill: 'lime' } }, theme);
+    expect(objectShape).not.toHaveBeenCalledWith(expect.objectContaining({ isActive: true }), undefined);
     const activeObjectTrapezoid = objectContainer.querySelector('.recharts-active-shape path.recharts-trapezoid');
     assertNotNull(activeObjectTrapezoid);
     expect(activeObjectTrapezoid).toHaveAttribute('fill', 'lime');
     expect(activeObjectTrapezoid).toHaveAttribute('stroke-width', '5');
 
-    const { container: fnContainer, shape: fnShape } = renderFunnel({ activeShape: customShape });
-    expect(fnShape).not.toHaveBeenCalledWith(expect.objectContaining({ isActive: true }), expect.anything());
+    const { container: fnContainer, shape: fnShape } = renderFunnel({ activeShape: customShape }, theme);
+    expect(fnShape).not.toHaveBeenCalledWith(expect.objectContaining({ isActive: true }), undefined);
     const activeFnTrapezoid = fnContainer.querySelector('.recharts-active-shape .custom-shape path');
     assertNotNull(activeFnTrapezoid);
     expect(activeFnTrapezoid).toHaveAttribute('fill', 'lime');
