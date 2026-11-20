@@ -1,6 +1,15 @@
 import React from 'react';
 import { render } from '@testing-library/react';
-import { Cell, Funnel, FunnelChart, FunnelProps, FunnelTrapezoidItem, LabelList, Tooltip } from '../../src';
+import {
+  Cell,
+  Funnel,
+  FunnelChart,
+  FunnelProps,
+  FunnelTrapezoidItem,
+  LabelList,
+  Tooltip,
+  TooltipContentProps,
+} from '../../src';
 import { showTooltip } from '../component/Tooltip/tooltipTestHelpers';
 import { funnelChartMouseHoverTooltipSelector } from '../component/Tooltip/tooltipMouseHoverSelectors';
 import { computeFunnelTrapezoids } from '../../src/cartesian/Funnel';
@@ -12,6 +21,10 @@ const data = [
   { value: 40, name: '咨询' },
   { value: 26, name: '订单' },
 ];
+
+function StageTooltip({ active, coordinate, payload }: TooltipContentProps) {
+  return active && coordinate ? <span>{`${payload[0]?.name} at ${coordinate.x},${coordinate.y}`}</span> : null;
+}
 
 describe('<Funnel />', () => {
   it('Render 5 Trapezoid in a simple funnel', () => {
@@ -181,6 +194,76 @@ describe('<Funnel />', () => {
     const firstTrapezoidReversed = container.getElementsByClassName('recharts-trapezoid')[0];
     expect(firstTrapezoidReversed.getAttribute('x')).toEqual('54');
     expect(firstTrapezoidReversed.getAttribute('y')).toEqual('237');
+  });
+
+  describe('horizontal layout', () => {
+    const stages = [
+      { name: 'Entered', value: 100 },
+      { name: 'Qualified', value: 50 },
+      { name: 'Invited', value: 75 },
+    ];
+
+    function Chart({ taperDirection, reversed }: Pick<FunnelProps, 'taperDirection' | 'reversed'>) {
+      return (
+        <FunnelChart width={400} height={170} margin={{ left: 20, right: 80, top: 10, bottom: 40 }} layout="horizontal">
+          <Funnel
+            taperDirection={taperDirection}
+            reversed={reversed}
+            data={stages}
+            dataKey="value"
+            width={240}
+            lastShapeType="rectangle"
+            isAnimationActive={false}
+          >
+            <LabelList dataKey="name" position="middle" />
+          </Funnel>
+          <Tooltip content={StageTooltip} />
+        </FunnelChart>
+      );
+    }
+
+    // Compare the physical corners without depending on which corner begins the SVG path.
+    function getStageCorners(container: Element): ReadonlyArray<Set<string>> {
+      return Array.from(container.querySelectorAll('.recharts-funnel-trapezoid path'), path => {
+        return new Set(path.getAttribute('d')?.match(/-?[\d.]+,-?[\d.]+/g));
+      });
+    }
+
+    it('lays out narrowing, widening, and rectangular stages within the configured width', () => {
+      const { container, rerender } = render(<Chart />);
+      const vertical = getStageCorners(container);
+      expect(vertical).toHaveLength(3);
+      expect(vertical[0]).toEqual(new Set(['20,10', '260,10', '200,50', '80,50']));
+
+      rerender(<Chart taperDirection="horizontal" />);
+      expect(getStageCorners(container)).toEqual([
+        new Set(['20,10', '100,40', '100,100', '20,130']),
+        new Set(['100,40', '180,25', '180,115', '100,100']),
+        new Set(['180,25', '260,25', '260,115', '180,115']),
+      ]);
+
+      rerender(<Chart taperDirection="vertical" />);
+      expect(getStageCorners(container)).toEqual(vertical);
+    });
+
+    it('reverses the stage positions while keeping each label and hover target with its data', () => {
+      const { container, rerender, getByText } = render(<Chart taperDirection="horizontal" />);
+      expect(getByText('Entered').closest('text')).toHaveAttribute('x', '60');
+      expect(getByText('Entered').closest('text')).toHaveAttribute('y', '70');
+      showTooltip(container, funnelChartMouseHoverTooltipSelector);
+      expect(getByText('Entered at 60,70')).toBeInTheDocument();
+
+      rerender(<Chart taperDirection="horizontal" reversed />);
+      expect(getStageCorners(container)).toEqual([
+        new Set(['180,40', '260,10', '260,130', '180,100']),
+        new Set(['100,25', '180,40', '180,100', '100,115']),
+        new Set(['20,25', '100,25', '100,115', '20,115']),
+      ]);
+      expect(getByText('Entered').closest('text')).toHaveAttribute('x', '220');
+      expect(getByText('Entered').closest('text')).toHaveAttribute('y', '70');
+      showTooltip(container, funnelChartMouseHoverTooltipSelector);
+      expect(getByText('Entered at 220,70')).toBeInTheDocument();
+    });
   });
 
   it('should not produce NaN when all data values are 0', () => {

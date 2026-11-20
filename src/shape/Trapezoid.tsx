@@ -6,7 +6,7 @@ import { SVGProps, useEffect, useRef, useState } from 'react';
 import { clsx } from 'clsx';
 import { RechartsFill } from '../fill/RechartsFill';
 import { FillObjectPaint, getShapeBounds } from '../fill/fillDefinitions';
-import { AnimationDuration, EasingInput } from '../util/types';
+import { AnimationDuration, CartesianLayout, EasingInput } from '../util/types';
 import { resolveDefaultProps } from '../util/resolveDefaultProps';
 import { JavascriptAnimate } from '../animation/JavascriptAnimate';
 import { useAnimationId } from '../util/useAnimationId';
@@ -15,13 +15,26 @@ import { getTransitionVal } from '../animation/util';
 import { svgPropertiesAndEvents } from '../util/svgPropertiesAndEvents';
 import { roundTemplateLiteral } from '../util/round';
 
-const getTrapezoidPath = (x: number, y: number, upperWidth: number, lowerWidth: number, height: number): string => {
+const getTrapezoidPath = (
+  x: number,
+  y: number,
+  upperWidth: number,
+  lowerWidth: number,
+  length: number,
+  taperDirection: CartesianLayout | undefined,
+): string => {
   const widthGap = upperWidth - lowerWidth;
-  let path;
-  path = roundTemplateLiteral`M ${x},${y}`;
+  let path = roundTemplateLiteral`M ${x},${y}`;
+  if (taperDirection === 'horizontal') {
+    path += roundTemplateLiteral`L ${x},${y + upperWidth}`;
+    path += roundTemplateLiteral`L ${x + length},${y + upperWidth - widthGap / 2}`;
+    path += roundTemplateLiteral`L ${x + length},${y + widthGap / 2}`;
+    path += roundTemplateLiteral`L ${x},${y} Z`;
+    return path;
+  }
   path += roundTemplateLiteral`L ${x + upperWidth},${y}`;
-  path += roundTemplateLiteral`L ${x + upperWidth - widthGap / 2},${y + height}`;
-  path += roundTemplateLiteral`L ${x + upperWidth - widthGap / 2 - lowerWidth},${y + height}`;
+  path += roundTemplateLiteral`L ${x + upperWidth - widthGap / 2},${y + length}`;
+  path += roundTemplateLiteral`L ${x + upperWidth - widthGap / 2 - lowerWidth},${y + length}`;
   path += roundTemplateLiteral`L ${x},${y} Z`;
   return path;
 };
@@ -38,6 +51,12 @@ interface TrapezoidProps {
   fill?: string | RechartsFill;
   className?: string;
   /**
+   * The direction of the taper. A vertical taper runs from top to bottom and a horizontal taper runs from left to right.
+   * @defaultValue vertical
+   * @example <Trapezoid taperDirection="horizontal" width={80} upperWidth={60} lowerWidth={20} />
+   */
+  taperDirection?: CartesianLayout;
+  /**
    * The x-coordinate of top left point of the trapezoid.
    * @default 0
    */
@@ -48,12 +67,13 @@ interface TrapezoidProps {
    */
   y?: number;
   /**
-   * Width of the upper horizontal side of the trapezoid in pixels.
+   * Length of the top side (left side in horizontal layout), in pixels.
+   * With a horizontal taper, `width` sets the distance between the two sides.
    * @default 0
    */
   upperWidth?: number;
   /**
-   * Width of the lower horizontal side of the trapezoid in pixels.
+   * Length of the bottom side (right side in horizontal layout), in pixels.
    * @default 0
    */
   lowerWidth?: number;
@@ -116,12 +136,17 @@ export type Props = Omit<SVGProps<SVGPathElement>, 'fill'> & TrapezoidProps;
  */
 type StringFillProps = Omit<Props, 'fill'> & { fill?: string };
 
+function getTrapezoidLength({ taperDirection, width, height }: Props): number {
+  return taperDirection === 'horizontal' ? Number(width ?? 0) : (height ?? 0);
+}
+
 export const defaultTrapezoidProps = {
   x: 0,
   y: 0,
   upperWidth: 0,
   lowerWidth: 0,
   height: 0,
+  taperDirection: 'vertical',
   isUpdateAnimationActive: false,
   animationBegin: 0,
   animationDuration: 1500,
@@ -131,7 +156,8 @@ export const defaultTrapezoidProps = {
 const TrapezoidImpl: React.FC<StringFillProps> = outsideProps => {
   const trapezoidProps = resolveDefaultProps(outsideProps, defaultTrapezoidProps);
 
-  const { x, y, upperWidth, lowerWidth, height, className } = trapezoidProps;
+  const { x, y, upperWidth, lowerWidth, taperDirection, className } = trapezoidProps;
+  const length = getTrapezoidLength(trapezoidProps);
   const { animationEasing, animationDuration, animationBegin, isUpdateAnimationActive } = trapezoidProps;
 
   const pathRef = useRef<SVGPathElement | null>(null);
@@ -139,7 +165,7 @@ const TrapezoidImpl: React.FC<StringFillProps> = outsideProps => {
 
   const prevUpperWidthRef = useRef<number>(upperWidth);
   const prevLowerWidthRef = useRef<number>(lowerWidth);
-  const prevHeightRef = useRef<number>(height);
+  const prevLengthRef = useRef<number>(length);
   const prevXRef = useRef<number>(x);
   const prevYRef = useRef<number>(y);
   const animationId = useAnimationId(outsideProps, 'trapezoid-');
@@ -163,9 +189,9 @@ const TrapezoidImpl: React.FC<StringFillProps> = outsideProps => {
     y !== +y ||
     upperWidth !== +upperWidth ||
     lowerWidth !== +lowerWidth ||
-    height !== +height ||
+    !Number.isFinite(length) ||
     (upperWidth === 0 && lowerWidth === 0) ||
-    height === 0
+    length === 0
   ) {
     return null;
   }
@@ -178,7 +204,7 @@ const TrapezoidImpl: React.FC<StringFillProps> = outsideProps => {
         <path
           {...svgPropertiesAndEvents(trapezoidProps)}
           className={layerClass}
-          d={getTrapezoidPath(x, y, upperWidth, lowerWidth, height)}
+          d={getTrapezoidPath(x, y, upperWidth, lowerWidth, length, taperDirection)}
         />
       </g>
     );
@@ -186,7 +212,7 @@ const TrapezoidImpl: React.FC<StringFillProps> = outsideProps => {
 
   const prevUpperWidth = prevUpperWidthRef.current;
   const prevLowerWidth = prevLowerWidthRef.current;
-  const prevHeight = prevHeightRef.current;
+  const prevLength = prevLengthRef.current;
   const prevX = prevXRef.current;
   const prevY = prevYRef.current;
 
@@ -211,14 +237,14 @@ const TrapezoidImpl: React.FC<StringFillProps> = outsideProps => {
       {(animationElapsedTime: number) => {
         const currUpperWidth = interpolate(prevUpperWidth, upperWidth, animationElapsedTime);
         const currLowerWidth = interpolate(prevLowerWidth, lowerWidth, animationElapsedTime);
-        const currHeight = interpolate(prevHeight, height, animationElapsedTime);
+        const currLength = interpolate(prevLength, length, animationElapsedTime);
         const currX = interpolate(prevX, x, animationElapsedTime);
         const currY = interpolate(prevY, y, animationElapsedTime);
 
         if (pathRef.current) {
           prevUpperWidthRef.current = currUpperWidth;
           prevLowerWidthRef.current = currLowerWidth;
-          prevHeightRef.current = currHeight;
+          prevLengthRef.current = currLength;
           prevXRef.current = currX;
           prevYRef.current = currY;
         }
@@ -228,7 +254,7 @@ const TrapezoidImpl: React.FC<StringFillProps> = outsideProps => {
           <path
             {...svgPropertiesAndEvents(trapezoidProps)}
             className={layerClass}
-            d={getTrapezoidPath(currX, currY, currUpperWidth, currLowerWidth, currHeight)}
+            d={getTrapezoidPath(currX, currY, currUpperWidth, currLowerWidth, currLength, taperDirection)}
             ref={pathRef}
             style={{
               ...animationStyle,
@@ -246,18 +272,18 @@ const TrapezoidImpl: React.FC<StringFillProps> = outsideProps => {
  */
 export const Trapezoid = (props: Props) => {
   const { fill } = props;
+  if (fill == null || typeof fill !== 'object') {
+    return <TrapezoidImpl {...props} fill={fill} />;
+  }
+  const breadth = Math.max(Math.abs(props.upperWidth ?? 0), Math.abs(props.lowerWidth ?? 0));
+  const length = Math.abs(getTrapezoidLength(props));
   // spreading all props first keeps `fill` in its place among the attributes
-  return fill != null && typeof fill === 'object' ? (
+  return (
     <FillObjectPaint
       fill={fill}
-      bounds={getShapeBounds(
-        Math.max(Math.abs(props.upperWidth ?? 0), Math.abs(props.lowerWidth ?? 0)),
-        Math.abs(props.height ?? 0),
-      )}
+      bounds={props.taperDirection === 'horizontal' ? getShapeBounds(length, breadth) : getShapeBounds(breadth, length)}
     >
       {paint => <TrapezoidImpl {...props} fill={paint} />}
     </FillObjectPaint>
-  ) : (
-    <TrapezoidImpl {...props} fill={fill} />
   );
 };

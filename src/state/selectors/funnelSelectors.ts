@@ -4,7 +4,7 @@ import { withEntryFillColor } from '../../fill/fillDefinitions';
 import { computeFunnelTrapezoids, FunnelTrapezoidItem, getFunnelEntryColor } from '../../cartesian/Funnel';
 import { LegendPayload } from '../../component/DefaultLegendContent';
 import { getTooltipNameProp } from '../../util/ChartUtils';
-import { LegendType, ChartOffsetInternal, DataKey, TooltipType } from '../../util/types';
+import { CartesianLayout, LegendType, ChartOffsetInternal, DataKey, TooltipType } from '../../util/types';
 import { ChartData } from '../chartDataSlice';
 import { RechartsRootState } from '../store';
 import { selectChartOffsetInternal } from './selectChartOffsetInternal';
@@ -19,6 +19,7 @@ export type ResolvedFunnelSettings = {
   nameKey: DataKey<any>;
   tooltipType?: TooltipType;
   lastShapeType?: 'triangle' | 'rectangle';
+  taperDirection?: CartesianLayout;
   reversed?: boolean;
   customWidth?: string | number;
   cells: ReadonlyArray<ReactElement>;
@@ -57,6 +58,7 @@ export const selectFunnelTrapezoids: (
       nameKey,
       tooltipType,
       lastShapeType,
+      taperDirection,
       reversed,
       customWidth,
       cells,
@@ -108,6 +110,7 @@ export const selectFunnelTrapezoids: (
       displayedData,
       tooltipType,
       lastShapeType,
+      taperDirection,
       reversed,
       offset,
       customWidth,
