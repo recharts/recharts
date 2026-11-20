@@ -296,6 +296,13 @@ export const selectHasBar = (state: RechartsRootState): boolean =>
   state.graphicalItems.polarItems.some(item => item.type === 'radialBar');
 
 /**
+ * @param state RechartsRootState
+ * @return boolean true if there is at least one cartesian Bar. RadialBar is not included.
+ */
+export const selectHasCartesianBar = (state: RechartsRootState): boolean =>
+  state.graphicalItems.cartesianItems.some(item => item.type === 'bar');
+
+/**
  * Filters CartesianGraphicalItemSettings by the relevant axis ID
  * @param axisType 'xAxis' | 'yAxis' | 'zAxis' | 'radiusAxis' | 'angleAxis'
  * @param axisId from props, defaults to 0

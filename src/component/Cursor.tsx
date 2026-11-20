@@ -22,6 +22,7 @@ import { useTooltipAxisBandSize } from '../context/useTooltipAxis';
 import { useChartName } from '../state/selectors/selectors';
 import { useAppSelector } from '../state/hooks';
 import { selectIsZoomed } from '../state/selectors/zoomSelectors';
+import { selectHasCartesianBar } from '../state/selectors/axisSelectors';
 import { useClipPathId } from '../container/ClipPathProvider';
 import { TooltipIndex, TooltipPayload } from '../state/tooltipSlice';
 import { svgPropertiesNoEventsFromUnknown } from '../util/svgPropertiesNoEvents';
@@ -52,6 +53,11 @@ export type CursorConnectedProps = CursorProps & {
   layout: LayoutType;
   offset: ChartOffsetInternal;
   chartName: string;
+  /**
+   * True when the chart renders at least one cartesian Bar. Such charts show the band (Rectangle) cursor,
+   * so that a ComposedChart with a Bar highlights the hovered category the same way a BarChart does.
+   */
+  hasCartesianBar?: boolean;
 };
 
 const defaultLegacyCursorThemeProps: ColorStyles2D = {
@@ -75,8 +81,18 @@ function RenderCursor({
 }
 
 export function CursorInternal(props: CursorConnectedProps) {
-  const { coordinate, payload, index, offset, tooltipAxisBandSize, layout, cursor, tooltipEventType, chartName } =
-    props;
+  const {
+    coordinate,
+    payload,
+    index,
+    offset,
+    tooltipAxisBandSize,
+    layout,
+    cursor,
+    tooltipEventType,
+    chartName,
+    hasCartesianBar = false,
+  } = props;
   const cursorPropsFromDefinition = svgPropertiesNoEventsFromUnknown(cursor) ?? {};
   const activeTheme = useRechartsTheme();
   const cursorThemeProps = useBackwardsCompatibleTheme(
@@ -117,7 +133,7 @@ export function CursorInternal(props: CursorConnectedProps) {
     restProps = activeCoordinate;
     cursorComp = Cross;
     preferredZIndex = DefaultZIndexes.cursorLine;
-  } else if (chartName === 'BarChart') {
+  } else if (chartName === 'BarChart' || (hasCartesianBar && (layout === 'horizontal' || layout === 'vertical'))) {
     restProps = getCursorRectangle(layout, activeCoordinate, offset, tooltipAxisBandSize);
     cursorComp = Rectangle;
     preferredZIndex = DefaultZIndexes.cursorRectangle;
@@ -176,6 +192,7 @@ export function Cursor(props: CursorProps) {
   const offset = useOffsetInternal();
   const layout = useChartLayout();
   const chartName = useChartName();
+  const hasCartesianBar = useAppSelector(selectHasCartesianBar);
 
   if (tooltipAxisBandSize == null || offset == null || layout == null || chartName == null) {
     return null;
@@ -188,6 +205,7 @@ export function Cursor(props: CursorProps) {
       layout={layout}
       tooltipAxisBandSize={tooltipAxisBandSize}
       chartName={chartName}
+      hasCartesianBar={hasCartesianBar}
     />
   );
 }
