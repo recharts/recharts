@@ -1,9 +1,13 @@
 import React from 'react';
 import { describe, it } from 'vitest';
+import { scaleTime } from 'victory-vendor/d3-scale';
 import { createSelectorTestCase } from '../../helper/createSelectorTestCase';
 import { ComposedChart, XAxis } from '../../../src';
 import { coordinateWithValueData, dateWithValueData, pageData, timeData } from '../../../storybook/stories/data';
 import { expectXAxisTicks } from '../../helper/expectAxisTicks';
+import { registerScales } from '../../../src/util/scale/scaleRegistry';
+
+registerScales({ scaleTime });
 
 describe('XAxis with different data types', () => {
   describe('string data', () => {

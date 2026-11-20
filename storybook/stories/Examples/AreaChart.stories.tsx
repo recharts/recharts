@@ -1,20 +1,24 @@
 import React from 'react';
 import { Args } from '@storybook/react-vite';
+import { scaleTime } from 'victory-vendor/d3-scale';
 import { pageData, rangeData, timeData } from '../data';
 import {
+  Area,
   AreaChart,
-  ResponsiveContainer,
   CartesianGrid,
+  ComposedChart,
+  Legend,
+  LegendPayload,
+  registerScales,
+  ResponsiveContainer,
+  Tooltip,
   XAxis,
   YAxis,
-  Tooltip,
-  Area,
-  Legend,
-  ComposedChart,
-  LegendPayload,
 } from '../../../src';
 import { getStoryArgsFromArgsTypesObject } from '../API/props/utils';
 import { AreaChartArgs } from '../API/arg-types/AreaChartArgs';
+
+registerScales({ scaleTime });
 
 export default {
   component: AreaChart,

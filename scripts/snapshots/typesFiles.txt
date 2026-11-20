@@ -293,6 +293,7 @@
   "types/util/scale/createCategoricalInverse.d.ts",
   "types/util/scale/getNiceTickValues.d.ts",
   "types/util/scale/index.d.ts",
+  "types/util/scale/scaleRegistry.d.ts",
   "types/util/scale/util",
   "types/util/scale/util/arithmetic.d.ts",
   "types/util/stacks",

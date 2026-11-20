@@ -1,6 +1,7 @@
 import { describe, expect, it, vi } from 'vitest';
 import React, { ReactNode } from 'react';
 import { fireEvent, render } from '@testing-library/react';
+import { scaleLog, scaleUtc } from 'victory-vendor/d3-scale';
 import { BarChart, Customized, XAxis } from '../../../src';
 import { expectLastCalledWith } from '../../helper/expectLastCalledWith';
 import { useAppSelector } from '../../../src/state/hooks';
@@ -14,6 +15,9 @@ import { XAxisSettings } from '../../../src/state/cartesianAxisSlice';
 import { createSelectorTestCase, rechartsTestRender } from '../../helper/createSelectorTestCase';
 import { assertNotNull } from '../../helper/assertNotNull';
 import { TickItem } from '../../../src/util/types';
+import { registerScales } from '../../../src/util/scale/scaleRegistry';
+
+registerScales({ scaleLog, scaleUtc });
 
 describe('state integration', () => {
   it('should publish its configuration to redux store', () => {

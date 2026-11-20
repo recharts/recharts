@@ -1,6 +1,7 @@
 import { fireEvent, render } from '@testing-library/react';
 import React, { ComponentProps, ReactNode } from 'react';
 import { describe, expect, it, test, vi } from 'vitest';
+import { scaleLog, scaleUtc } from 'victory-vendor/d3-scale';
 import {
   Area,
   AreaChart,
@@ -36,6 +37,9 @@ import { createSelectorTestCase, rechartsTestRender } from '../../helper/createS
 import { expectYAxisTicks } from '../../helper/expectAxisTicks';
 import { expectLastCalledWith } from '../../helper/expectLastCalledWith';
 import { mockGetBoundingClientRect } from '../../helper/mockGetBoundingClientRect';
+import { registerScales } from '../../../src/util/scale/scaleRegistry';
+
+registerScales({ scaleLog, scaleUtc });
 
 describe('<YAxis />', () => {
   const data = [

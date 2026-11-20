@@ -1,6 +1,7 @@
 import React from 'react';
 import { fireEvent, render } from '@testing-library/react';
 import { describe, expect, it, Mock, test, vi } from 'vitest';
+import { scaleLog } from 'victory-vendor/d3-scale';
 import {
   PolarAngleAxis,
   PolarRadiusAxis,
@@ -34,6 +35,9 @@ import { createSelectorTestCase } from '../../helper/createSelectorTestCase';
 import { useIsPanorama } from '../../../src/context/PanoramaContext';
 import { expectLastCalledWith, expectNthCalledWith } from '../../helper/expectLastCalledWith';
 import { userEventSetup } from '../../helper/userEventSetup';
+import { registerScales } from '../../../src/util/scale/scaleRegistry';
+
+registerScales({ scaleLog });
 
 type ExpectedAngleAxisTick = {
   x1: string;

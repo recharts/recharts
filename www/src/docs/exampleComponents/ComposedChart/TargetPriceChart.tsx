@@ -1,18 +1,22 @@
 import * as React from 'react';
 import {
-  ComposedChart,
+  Area,
   CartesianGrid,
+  ComposedChart,
+  LabelList,
+  LabelProps,
+  Line,
+  MouseHandlerDataParam,
+  registerScales,
   Tooltip,
   XAxis,
   YAxis,
-  Area,
-  Line,
-  LabelList,
-  LabelProps,
-  MouseHandlerDataParam,
 } from 'recharts';
 import { RechartsDevtools } from '@recharts/devtools';
 import { useCallback } from 'react';
+import { scaleTime } from 'd3-scale';
+
+registerScales({ scaleTime });
 
 // #region Sample data
 export const chartData = [

@@ -8,6 +8,9 @@ import { selectRealScaleType } from '../../../src/state/selectors/axisSelectors'
 import { Customized, Line, LineChart, XAxis, YAxis } from '../../../src';
 import { ExpectAxisDomain, expectXAxisTicks } from '../../helper/expectAxisTicks';
 import { Props as XAxisProps } from '../../../src/cartesian/XAxis';
+import { registerScales } from '../../../src/util/scale/scaleRegistry';
+
+registerScales({ scaleTime });
 
 describe('time scale', () => {
   const timeData = [
