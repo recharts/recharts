@@ -100,6 +100,8 @@ interface LabelProps extends ZIndexable {
    * If set a React element, the option is the custom React element of rendering label.
    * Use an SVG element or component, such as `<text>` or `<g>`.
    * HTML elements such as `<div>` are not valid inside the chart SVG and may trigger React DOM warnings.
+   * To render HTML, wrap it in an SVG `<foreignObject>` with a `width` and a `height`.
+   * Use the wrapper's `x` and `y` coordinates to position it within the chart.
    * If set a function, the function will be called to render label content.
    *
    * @example <Label content={CustomizedLabel} />
