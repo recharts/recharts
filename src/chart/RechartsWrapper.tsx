@@ -346,6 +346,12 @@ export const RechartsWrapper = forwardRef<HTMLDivElement | null, RechartsWrapper
         // the element the accessibility layer makes focusable. The wrapper also hosts custom children
         // (a custom legend, a custom tooltip, <Customized>) whose buttons, links and inputs live
         // inside this same div; swallowing Enter there would stop a focused button from activating.
+        //
+        // With Alt, Ctrl or Meta held the key is a browser or OS shortcut (Alt+ArrowLeft goes back,
+        // Cmd+ArrowLeft too on macOS), so leave it alone entirely: no preventDefault and no tooltip move.
+        if (e.altKey || e.ctrlKey || e.metaKey) {
+          return;
+        }
         if (
           accessibilityLayerIsEnabled &&
           isChartSurface(e.target) &&
