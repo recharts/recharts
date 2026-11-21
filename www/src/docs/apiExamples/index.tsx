@@ -9,6 +9,7 @@ import { labelApiExamples } from './Label';
 import { labelListApiExamples } from './LabelList';
 import { legendApiExamples } from './Legend';
 import { lineChartApiExamples } from './LineChart';
+import { lineChartExamples } from '../exampleComponents/LineChart';
 import { pieChartApiExamples } from './PieChart';
 import { radarChartApiExamples } from './RadarChart';
 import { radialBarApiExamples } from './RadialBarChart';
@@ -63,6 +64,7 @@ export const allApiExamples: Record<string, ReadonlyArray<ChartExample>> = {
   ReferenceArea: referenceAreaApiExamples,
   ErrorBar: errorBarApiExamples,
   Label: labelApiExamples,
+  Title: [lineChartExamples.LineChartWithTitles],
   LabelList: labelListApiExamples,
   Funnel: funnelApiExamples,
   FunnelChart: funnelChartApiExamples,

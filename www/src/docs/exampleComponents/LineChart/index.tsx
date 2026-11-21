@@ -7,6 +7,8 @@ import LineChartConnectNulls from './LineChartConnectNulls';
 import LineChartWithReferenceLines from './LineChartWithReferenceLines';
 import LineChartWithXAxisPadding from './LineChartWithXAxisPadding';
 import SimpleLineChart from './SimpleLineChart';
+import LineChartWithTitles from './LineChartWithTitles';
+import lineChartWithTitlesSource from './LineChartWithTitles?raw';
 import SynchronizedLineChart from './SynchronizedLineChart';
 import SynchronizedDifferentData from './SynchronizedDifferentData';
 import TinyLineChart from './TinyLineChart';
@@ -51,6 +53,11 @@ import AnimatedTimeSeriesExample, {
 import AnimatedTimeSeriesExampleSource from './AnimatedTimeSeriesExample.tsx?raw';
 
 export const lineChartExamples = {
+  LineChartWithTitles: {
+    Component: LineChartWithTitles,
+    sourceCode: lineChartWithTitlesSource,
+    name: 'Line chart with a title and subtitle',
+  },
   SimpleLineChart: {
     Component: SimpleLineChart,
     sourceCode: simpleLineChartSource,

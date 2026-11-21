@@ -2,6 +2,7 @@ import * as React from 'react';
 import { CSSProperties, useLayoutEffect } from 'react';
 import { createPortal } from 'react-dom';
 import { CartesianPosition, getCartesianPosition, isOutsidePosition } from '../cartesian/getCartesianPosition';
+import { selectTitleHeight } from '../state/selectors/containerSelectors';
 import { useLegendPortal } from '../context/legendPortalContext';
 import {
   ContentType,
@@ -106,6 +107,7 @@ function getDefaultPosition(
   chartWidth: number,
   chartHeight: number,
   box: ElementOffset,
+  titleHeight: number,
 ): CSSProperties {
   const { layout, align, verticalAlign } = props;
   let hPos, vPos;
@@ -126,10 +128,12 @@ function getDefaultPosition(
     ((style.top === undefined || style.top === null) && (style.bottom === undefined || style.bottom === null))
   ) {
     if (verticalAlign === 'middle') {
-      vPos = { top: ((chartHeight || 0) - box.height) / 2 };
+      vPos = { top: ((chartHeight || 0) + titleHeight - box.height) / 2 };
     } else {
       vPos =
-        verticalAlign === 'bottom' ? { bottom: (margin && margin.bottom) || 0 } : { top: (margin && margin.top) || 0 };
+        verticalAlign === 'bottom'
+          ? { bottom: (margin && margin.bottom) || 0 }
+          : { top: (margin?.top ?? 0) + titleHeight };
     }
   }
 
@@ -320,6 +324,7 @@ function LegendImpl(outsideProps: Props) {
   const contextPayload = useLegendPayload();
   const legendPortalFromContext = useLegendPortal();
   const margin = useMargin();
+  const titleHeight = useAppSelector(selectTitleHeight) ?? 0;
   const positionViewBox = useAppSelector(state => selectPositionViewBox(state, props.position));
   const { width: widthFromProps, height: heightFromProps, wrapperStyle, portal: portalFromProps } = props;
 
@@ -366,7 +371,7 @@ function LegendImpl(outsideProps: Props) {
         left: positionResult.x + (outsidePositionOffset.left ?? 0),
         transform: cartesianPositionToCSSTranslate(positionResult.horizontalAnchor, positionResult.verticalAnchor),
       }
-    : getDefaultPosition(wrapperStyle, props, margin, chartWidth, chartHeight, lastBoundingBox);
+    : getDefaultPosition(wrapperStyle, props, margin, chartWidth, chartHeight, lastBoundingBox, titleHeight);
 
   // if the user supplies their own portal, only use their defined wrapper styles
   const outerStyle: CSSProperties | undefined = portalFromProps

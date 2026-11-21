@@ -3,10 +3,10 @@ import { RechartsRootState } from '../store';
 import { AxisId } from '../cartesianAxisSlice';
 import { AngleAxisSettings, RadiusAxisSettings } from '../polarAxisSlice';
 import { PolarChartOptions } from '../polarOptionsSlice';
-import { selectChartHeight, selectChartWidth } from './containerSelectors';
+import { selectChartHeight, selectChartWidth, selectTitleHeight } from './containerSelectors';
 import { selectChartOffsetInternal } from './selectChartOffsetInternal';
 import { getMaxRadius } from '../../util/PolarUtils';
-import { getPercentValue } from '../../util/DataUtils';
+import { getPercentValue, isPercent } from '../../util/DataUtils';
 import { AxisDomainTypeInput, LayoutType, PolarLayout, PolarViewBoxRequired } from '../../util/types';
 import { defaultPolarAngleAxisProps } from '../../polar/defaultPolarAngleAxisProps';
 import { defaultPolarRadiusAxisProps } from '../../polar/defaultPolarRadiusAxisProps';
@@ -155,7 +155,15 @@ export const selectRadiusAxisRangeWithReversed: (
 ) => AxisRange | undefined = createSelector([selectRadiusAxis, selectRadiusAxisRange], combineAxisRangeWithReverse);
 
 export const selectPolarViewBox: (state: RechartsRootState) => PolarViewBoxRequired | undefined = createSelector(
-  [selectChartLayout, selectPolarOptions, selectInnerRadius, selectOuterRadius, selectChartWidth, selectChartHeight],
+  [
+    selectChartLayout,
+    selectPolarOptions,
+    selectInnerRadius,
+    selectOuterRadius,
+    selectChartWidth,
+    selectChartHeight,
+    selectTitleHeight,
+  ],
   (
     layout: LayoutType,
     polarOptions: PolarChartOptions | null,
@@ -163,6 +171,7 @@ export const selectPolarViewBox: (state: RechartsRootState) => PolarViewBoxRequi
     outerRadius,
     width,
     height,
+    titleHeight,
   ): PolarViewBoxRequired | undefined => {
     if (
       (layout !== 'centric' && layout !== 'radial') ||
@@ -173,9 +182,10 @@ export const selectPolarViewBox: (state: RechartsRootState) => PolarViewBoxRequi
       return undefined;
     }
     const { cx, cy, startAngle, endAngle } = polarOptions;
+    const contentHeight = Math.max(0, height - titleHeight);
     return {
       cx: getPercentValue(cx, width, width / 2),
-      cy: getPercentValue(cy, height, height / 2),
+      cy: isPercent(cy) ? titleHeight + getPercentValue(cy, contentHeight) : getPercentValue(cy, height, height / 2),
       innerRadius,
       outerRadius,
       startAngle,
