@@ -25,7 +25,7 @@ import {
   YAxisTickContentProps,
   TickItem as TickItemType,
 } from '../util/types';
-import { getTicks } from './getTicks';
+import { getTicks, TickFontStyle } from './getTicks';
 import { svgPropertiesNoEvents, svgPropertiesNoEventsFromUnknown } from '../util/svgPropertiesNoEvents';
 import { AxisId, XAxisOrientation, XAxisPadding, YAxisOrientation, YAxisPadding } from '../state/cartesianAxisSlice';
 import { getCalculatedYAxisWidth } from '../util/YAxisUtils';
@@ -380,14 +380,28 @@ function RenderedTicksReporter({
   return null;
 }
 
+/**
+ * Reads the font that a tick label is rendered in.
+ * The computed style includes fonts set by the `tick` prop, CSS, the theme, and the page.
+ * @param computedStyle the computed style of a rendered tick label
+ * @returns the font to measure the tick labels with
+ */
+function getTickFontStyleFromComputedStyle(computedStyle: CSSStyleDeclaration): TickFontStyle {
+  return {
+    fontSize: computedStyle.fontSize,
+    fontFamily: computedStyle.fontFamily,
+    fontWeight: computedStyle.fontWeight,
+    fontStyle: computedStyle.fontStyle,
+    letterSpacing: computedStyle.letterSpacing,
+  };
+}
+
 type TicksProps = {
   axisId: AxisId | undefined;
   axisType: 'xAxis' | 'yAxis' | undefined;
   events: Omit<PresentationAttributesAdaptChildEvent<any, SVGElement>, 'scale' | 'viewBox'>;
-  fontSize: string;
   getTicksConfig: Omit<Props, 'ticks' | 'ref'>;
   height: number;
-  letterSpacing: string;
   mirror: boolean;
   orientation: Orientation;
   padding?: Props['padding'];
@@ -397,6 +411,7 @@ type TicksProps = {
   strokeWidth?: Props['strokeWidth'];
   style?: Props['style'];
   tick?: Props['tick'];
+  tickFontStyle: TickFontStyle;
   tickFormatter?: Props['tickFormatter'];
   tickLine?: Props['tickLine'];
   tickMargin: number;
@@ -414,10 +429,8 @@ const Ticks = forwardRef<SVGGElement, TicksProps>((props: TicksProps, ref) => {
     axisId,
     axisType,
     events,
-    fontSize,
     getTicksConfig,
     height,
-    letterSpacing,
     mirror,
     orientation,
     padding,
@@ -427,6 +440,7 @@ const Ticks = forwardRef<SVGGElement, TicksProps>((props: TicksProps, ref) => {
     strokeWidth,
     style,
     tick,
+    tickFontStyle,
     tickFormatter,
     tickLine,
     tickMargin,
@@ -439,7 +453,7 @@ const Ticks = forwardRef<SVGGElement, TicksProps>((props: TicksProps, ref) => {
     y,
   } = props;
   // @ts-expect-error some properties are optional in props but required in getTicks
-  const finalTicks = getTicks({ ...getTicksConfig, ticks }, fontSize, letterSpacing);
+  const finalTicks = getTicks({ ...getTicksConfig, ticks }, tickFontStyle);
   const axisProps = svgPropertiesNoEvents(getTicksConfig);
   const customTickProps = svgPropertiesNoEventsFromUnknown(tick);
   // Use user-provided textAnchor if available, otherwise calculate from orientation/mirror
@@ -542,8 +556,7 @@ const Ticks = forwardRef<SVGGElement, TicksProps>((props: TicksProps, ref) => {
 
 const CartesianAxisComponent = forwardRef<CartesianAxisRef, InternalProps>((props, ref) => {
   const { axisLine, width, height, className, hide, ticks, axisType, axisId, ...rest } = props;
-  const [fontSize, setFontSize] = useState('');
-  const [letterSpacing, setLetterSpacing] = useState('');
+  const [tickFontStyle, setTickFontStyle] = useState<TickFontStyle>({});
   const tickRefs = useRef<HTMLCollectionOf<Element> | null>(null);
 
   useImperativeHandle(ref, (): CartesianAxisRef => ({
@@ -575,17 +588,14 @@ const CartesianAxisComponent = forwardRef<CartesianAxisRef, InternalProps>((prop
         const tick: Element | undefined = tickNodes[0];
 
         if (tick) {
-          const computedStyle = window.getComputedStyle(tick);
-          const calculatedFontSize = computedStyle.fontSize;
-          const calculatedLetterSpacing = computedStyle.letterSpacing;
-          if (calculatedFontSize !== fontSize || calculatedLetterSpacing !== letterSpacing) {
-            setFontSize(calculatedFontSize);
-            setLetterSpacing(calculatedLetterSpacing);
+          const calculatedTickFontStyle = getTickFontStyleFromComputedStyle(window.getComputedStyle(tick));
+          if (!isEqual(calculatedTickFontStyle, tickFontStyle)) {
+            setTickFontStyle(calculatedTickFontStyle);
           }
         }
       }
     },
-    [fontSize, letterSpacing],
+    [tickFontStyle],
   );
 
   const axisTheme = useBackwardsCompatibleTheme(theme => theme.axis, props, defaultLegacyAxisThemeProps);
@@ -626,10 +636,8 @@ const CartesianAxisComponent = forwardRef<CartesianAxisRef, InternalProps>((prop
           axisId={axisId}
           axisType={axisType}
           events={rest}
-          fontSize={fontSize}
           getTicksConfig={props}
           height={props.height}
-          letterSpacing={letterSpacing}
           mirror={props.mirror}
           orientation={props.orientation}
           padding={props.padding}
@@ -640,6 +648,7 @@ const CartesianAxisComponent = forwardRef<CartesianAxisRef, InternalProps>((prop
           strokeWidth={axisTheme.strokeWidth}
           style={{ ...typography, ...props.style }}
           tick={props.tick}
+          tickFontStyle={tickFontStyle}
           tickFormatter={props.tickFormatter}
           tickLine={props.tickLine}
           tickMargin={props.tickMargin}

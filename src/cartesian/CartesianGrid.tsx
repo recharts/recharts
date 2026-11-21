@@ -6,7 +6,7 @@ import { isNumber } from '../util/DataUtils';
 import { ChartOffsetInternal } from '../util/types';
 
 import { AxisPropsNeededForTicksGenerator, getCoordinatesOfGrid, getTicksOfAxis } from '../util/ChartUtils';
-import { getTicks, GetTicksInput } from './getTicks';
+import { getTicks, GetTicksInput, TickFontStyle } from './getTicks';
 import { defaultCartesianAxisProps } from './CartesianAxis';
 import { useChartHeight, useChartWidth, useOffsetInternal } from '../context/chartLayoutContext';
 import { AxisId } from '../state/cartesianAxisSlice';
@@ -448,28 +448,34 @@ function VerticalStripes(props: CartesianGridInternalProps) {
   return <g className="recharts-cartesian-gridstripes-vertical">{items}</g>;
 }
 
-type TickFontStyle = { fontSize?: string; letterSpacing?: string };
+function toCssString(value: unknown): string | undefined {
+  return value == null ? undefined : String(value);
+}
 
 /**
- * Reads fontSize/letterSpacing from an axis's `tick` prop when it is a plain
- * style object (e.g. `tick={{ fontSize: 30 }}`). Unlike CartesianAxis, the grid
- * has no DOM to measure, so function/element ticks are not covered.
+ * Reads the font from an axis's `tick` prop when it is a plain style object
+ * (e.g. `tick={{ fontSize: 30, fontFamily: 'monospace' }}`). Unlike CartesianAxis, the grid
+ * has no DOM to measure, so fonts from function/element ticks, CSS, or the theme are not covered.
+ * @param tick the `tick` prop of the axis
+ * @returns the font to measure the tick labels with
  */
 function getTickFontStyle(tick: unknown): TickFontStyle {
   if (tick == null || typeof tick !== 'object' || React.isValidElement(tick)) {
     return {};
   }
-  const fontSize =
-    'fontSize' in tick && tick.fontSize != null ? `${tick.fontSize}`.replace(/^(\d+(\.\d+)?)$/, '$1px') : undefined;
-  const letterSpacing = 'letterSpacing' in tick && tick.letterSpacing != null ? String(tick.letterSpacing) : undefined;
-  return { fontSize, letterSpacing };
+  return {
+    fontSize: 'fontSize' in tick ? toCssString(tick.fontSize)?.replace(/^(\d+(\.\d+)?)$/, '$1px') : undefined,
+    fontFamily: 'fontFamily' in tick ? toCssString(tick.fontFamily) : undefined,
+    fontWeight: 'fontWeight' in tick ? toCssString(tick.fontWeight) : undefined,
+    fontStyle: 'fontStyle' in tick ? toCssString(tick.fontStyle) : undefined,
+    letterSpacing: 'letterSpacing' in tick ? toCssString(tick.letterSpacing) : undefined,
+  };
 }
 
 const defaultVerticalCoordinatesGenerator: VerticalCoordinatesGenerator = (
   { xAxis, width, height, offset },
   syncWithTicks,
 ) => {
-  const { fontSize, letterSpacing } = getTickFontStyle(xAxis?.tick);
   return getCoordinatesOfGrid(
     getTicks(
       {
@@ -478,8 +484,7 @@ const defaultVerticalCoordinatesGenerator: VerticalCoordinatesGenerator = (
         ticks: getTicksOfAxis(xAxis, true),
         viewBox: { x: 0, y: 0, width, height },
       },
-      fontSize,
-      letterSpacing,
+      getTickFontStyle(xAxis?.tick),
     ),
     offset.left,
     offset.left + offset.width,
@@ -490,7 +495,6 @@ const defaultHorizontalCoordinatesGenerator: HorizontalCoordinatesGenerator = (
   { yAxis, width, height, offset },
   syncWithTicks,
 ) => {
-  const { fontSize, letterSpacing } = getTickFontStyle(yAxis?.tick);
   return getCoordinatesOfGrid(
     getTicks(
       {
@@ -499,8 +503,7 @@ const defaultHorizontalCoordinatesGenerator: HorizontalCoordinatesGenerator = (
         ticks: getTicksOfAxis(yAxis, true),
         viewBox: { x: 0, y: 0, width, height },
       },
-      fontSize,
-      letterSpacing,
+      getTickFontStyle(yAxis?.tick),
     ),
     offset.top,
     offset.top + offset.height,
