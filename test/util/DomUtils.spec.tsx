@@ -72,6 +72,21 @@ describe('DOMUtils', () => {
     expect(getStringCacheStats().size).toBe(0);
   });
 
+  test('does not carry font styles over from a previous measurement', () => {
+    render(<span id="recharts_measurement_span">test</span>);
+    mockGetBoundingClientRect({ width: 25, height: 17 });
+
+    getStringSize('first', { fontFamily: 'Roboto Mono', fontWeight: '700', fontStyle: 'italic', fontSize: '20px' });
+    getStringSize('second', { letterSpacing: '1px' });
+
+    const span = document.getElementById('recharts_measurement_span');
+    expect(span?.style.fontFamily).toBe('');
+    expect(span?.style.fontWeight).toBe('');
+    expect(span?.style.fontStyle).toBe('');
+    expect(span?.style.fontSize).toBe('');
+    expect(span?.style.letterSpacing).toBe('1px');
+  });
+
   test('cache should handle different styles separately', () => {
     render(<span id="recharts_measurement_span">test</span>);
     mockGetBoundingClientRect({
