@@ -1829,3 +1829,58 @@ describe('Tooltip visibility after mouseleave with a pending throttled mousemove
     expectTooltipNotVisible(container);
   });
 });
+
+describe('Tooltip visibility when the chart mouse handlers update React state', () => {
+  // https://github.com/recharts/recharts/issues/3956
+  beforeEach(() => {
+    mockGetBoundingClientRect({ width: 100, height: 100 });
+  });
+
+  const ChartThatUpdatesStateOnHover = () => {
+    const [hoverEvents, setHoverEvents] = useState(0);
+
+    return (
+      <>
+        <LineChart
+          width={400}
+          height={400}
+          data={PageData}
+          onMouseEnter={() => setHoverEvents(count => count + 1)}
+          onMouseMove={() => setHoverEvents(count => count + 1)}
+        >
+          <XAxis dataKey="name" />
+          <YAxis />
+          <Tooltip isAnimationActive={false} />
+          <Line dataKey="uv" isAnimationActive={false} />
+        </LineChart>
+        <output aria-label="hover events">{hoverEvents}</output>
+      </>
+    );
+  };
+
+  test('should hide the tooltip after mouseleave', () => {
+    const { container } = render(<ChartThatUpdatesStateOnHover />);
+    showTooltip(container, lineChartMouseHoverTooltipSelector);
+    expect(getTooltip(container)).toBeVisible();
+
+    const wrapper = container.querySelector(lineChartMouseHoverTooltipSelector);
+    assertNotNull(wrapper);
+    const hoverEvents = () => Number(container.querySelector('output')?.textContent);
+    const hoverEventsBeforeMove = hoverEvents();
+    fireEvent.mouseMove(wrapper, { clientX: 150, clientY: 200 });
+    act(() => {
+      vi.runOnlyPendingTimers();
+    });
+    // The mouse move re-rendered the parent, which is what used to keep the tooltip open...
+    expect(hoverEvents()).toBeGreaterThan(hoverEventsBeforeMove);
+    // ...and the tooltip is still open, so the check below shows that mouseleave closes it.
+    expect(getTooltip(container)).toBeVisible();
+
+    fireEvent.mouseLeave(wrapper);
+    act(() => {
+      vi.runOnlyPendingTimers();
+    });
+
+    expectTooltipNotVisible(container);
+  });
+});
