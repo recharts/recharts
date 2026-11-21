@@ -26,10 +26,8 @@ updates:
         patterns:
           - 'react'
           - 'react-dom'
-          - 'react-is'
           - '@types/react'
           - '@types/react-dom'
-          - '@types/react-is'
       react-router:
         patterns:
           - 'react-router'
