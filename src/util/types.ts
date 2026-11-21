@@ -1748,6 +1748,13 @@ export interface CartesianChartProps<DataPointType = unknown>
    */
   barCategoryGap?: number | string;
   /**
+   * Center the bars present in each category, keeping their widths and gap.
+   * Null and missing values leave no space. A zero value retains its slot.
+   * A stack occupies one slot when any of its bars has a value.
+   * @defaultValue false
+   */
+  centerBarsInCategory?: boolean;
+  /**
    * The gap between two bars in the same category.
    *
    * @defaultValue 4
