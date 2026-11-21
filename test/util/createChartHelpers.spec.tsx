@@ -11,6 +11,7 @@ import {
   createHorizontalChart,
   createRadialChart,
   createVerticalChart,
+  DefaultTooltipContent,
   Funnel,
   FunnelChart,
   Line,
@@ -198,6 +199,79 @@ describe('Chart Helpers', () => {
             formatter={(value: string) => value}
           />
         </Typed.AreaChart>
+      );
+      expect(invalidFormatterChart).toBeDefined();
+    });
+
+    it('should type the payload entries in Tooltip callbacks with TNumerical value', () => {
+      const Typed = createHorizontalChart<ExampleDataPoint, string, number>()({
+        Area,
+        Tooltip,
+      });
+
+      const validChart = (
+        <Typed.AreaChart data={data} width={400} height={400}>
+          <Typed.Area dataKey="value" isAnimationActive={false} />
+          <Typed.Tooltip
+            content={props => props.payload[0]?.value?.toFixed(2)}
+            formatter={(_value, _name, item) => item.value?.toFixed(2)}
+            itemSorter={item => item.value}
+            labelFormatter={(_label, payload) => payload[0]?.value?.toFixed(2)}
+          />
+        </Typed.AreaChart>
+      );
+      expect(validChart).toBeDefined();
+    });
+
+    it('should accept the content props of a typed Tooltip in DefaultTooltipContent', () => {
+      const Typed = createHorizontalChart<ExampleDataPoint, string, number>()({
+        Area,
+        Tooltip,
+      });
+
+      const validChart = (
+        <Typed.AreaChart data={data} width={400} height={400}>
+          <Typed.Area dataKey="value" isAnimationActive={false} />
+          <Typed.Tooltip content={props => <DefaultTooltipContent {...props} />} />
+        </Typed.AreaChart>
+      );
+      expect(validChart).toBeDefined();
+    });
+
+    it('should type Area, Bar, and Line formatter with TNumerical value', () => {
+      const Typed = createHorizontalChart<ExampleDataPoint, string, number>()({
+        Area,
+        Bar,
+        Line,
+      });
+
+      const validChart = (
+        <Typed.ComposedChart data={data} width={400} height={400}>
+          <Typed.Area dataKey="value" formatter={value => value?.toFixed(2)} />
+          <Typed.Bar dataKey="value" formatter={value => value?.toFixed(2)} />
+          <Typed.Line dataKey="value" formatter={value => value?.toFixed(2)} />
+        </Typed.ComposedChart>
+      );
+      expect(validChart).toBeDefined();
+
+      const invalidFormatterChart = (
+        <Typed.ComposedChart data={data} width={400} height={400}>
+          <Typed.Area
+            dataKey="value"
+            // @ts-expect-error value should be number, not string
+            formatter={(value: string) => value}
+          />
+          <Typed.Bar
+            dataKey="value"
+            // @ts-expect-error value should be number, not string
+            formatter={(value: string) => value}
+          />
+          <Typed.Line
+            dataKey="value"
+            // @ts-expect-error value should be number, not string
+            formatter={(value: string) => value}
+          />
+        </Typed.ComposedChart>
       );
       expect(invalidFormatterChart).toBeDefined();
     });
