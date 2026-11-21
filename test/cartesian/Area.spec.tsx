@@ -418,7 +418,7 @@ describe.each(chartsThatSupportArea)('<Area /> as a child of $testName', ({ Char
           .soft(curves[0])
           .toHaveAttribute(
             'd',
-            'M65,355L172.5,355L280,355L387.5,355L495,355L495,495L387.5,495L280,495L172.5,495L65,495Z',
+            'M65,355L172.5,355L280,355L387.5,355L495,355L495,355L387.5,355L280,355L172.5,355L65,355Z',
           );
         expect.soft(curves[1]).toHaveAttribute('d', 'M65,355L172.5,355L280,355L387.5,355L495,355');
       });
@@ -434,7 +434,10 @@ describe.each(chartsThatSupportArea)('<Area /> as a child of $testName', ({ Char
         expect(curves).toHaveLength(2);
         expect
           .soft(curves[0])
-          .toHaveAttribute('d', 'M65,355L172.5,355L280,355L387.5,355L495,355L495,5L387.5,5L280,5L172.5,5L65,5Z');
+          .toHaveAttribute(
+            'd',
+            'M65,355L172.5,355L280,355L387.5,355L495,355L495,355L387.5,355L280,355L172.5,355L65,355Z',
+          );
         expect.soft(curves[1]).toHaveAttribute('d', 'M65,355L172.5,355L280,355L387.5,355L495,355');
       });
     });
@@ -528,7 +531,7 @@ describe.each(chartsThatSupportArea)('<Area /> as a child of $testName', ({ Char
           .soft(curves[0])
           .toHaveAttribute(
             'd',
-            'M495,54.286L495,54.286L495,54.286L495,54.286L495,54.286L65,54.286L65,54.286L65,54.286L65,54.286L65,54.286Z',
+            'M495,54.286L495,54.286L495,54.286L495,54.286L495,54.286L495,54.286L495,54.286L495,54.286L495,54.286L495,54.286Z',
           );
         expect.soft(curves[1]).toHaveAttribute('d', 'M495,54.286L495,54.286L495,54.286L495,54.286L495,54.286');
       });
@@ -588,7 +591,7 @@ describe.each(chartsThatSupportArea)('<Area /> as a child of $testName', ({ Char
         expect.soft(curves[1]).toHaveAttribute('d', 'M5,5L127.5,5L250,5L372.5,5L495,5');
       });
 
-      it('should set baseValue to 0 when dataMin', () => {
+      it('should set baseValue to actual dataMin when no axes', () => {
         const { container } = render(
           <ChartElement data={data}>
             <Area dataKey="value" baseValue="dataMin" />
@@ -596,9 +599,10 @@ describe.each(chartsThatSupportArea)('<Area /> as a child of $testName', ({ Char
         );
         const curves = container.querySelectorAll('.recharts-curve');
         expect(curves).toHaveLength(2);
+        // data is all value=100, so dataMin=100 → area collapses to flat line
         expect
           .soft(curves[0])
-          .toHaveAttribute('d', 'M5,5L127.5,5L250,5L372.5,5L495,5L495,495L372.5,495L250,495L127.5,495L5,495Z');
+          .toHaveAttribute('d', 'M5,5L127.5,5L250,5L372.5,5L495,5L495,5L372.5,5L250,5L127.5,5L5,5Z');
         expect.soft(curves[1]).toHaveAttribute('d', 'M5,5L127.5,5L250,5L372.5,5L495,5');
       });
 
@@ -1546,5 +1550,56 @@ describe('computeArea', () => {
         y: null,
       },
     ]);
+  });
+
+  describe('with baseValue dataMin or dataMax', () => {
+    const areaSettings: AreaSettings = {
+      hide: false,
+      isPanorama: false,
+      type: 'area',
+      xAxisId: 0,
+      yAxisId: 0,
+      zAxisId: 0,
+      id: 'area-0',
+      barSize: undefined,
+      connectNulls: false,
+      baseValue: 'dataMin',
+      dataKey: 'v',
+      stackId: '',
+      data: [],
+    };
+
+    /*
+     * mockScale multiplies by 2, so the baseline coordinate is the data bound times two:
+     * 10 -> 20 for dataMin, 30 -> 60 for dataMax.
+     * Number(null) is 0, so a null that is read instead of skipped would pull dataMin down to 0.
+     */
+    const displayedData = [{ v: 10 }, { v: null }, { v: undefined }, { v: 30 }];
+
+    it('should compute dataMin from the numeric values only', () => {
+      const { baseLine } = computeArea({
+        displayedData,
+        areaSettings,
+        layout: 'horizontal',
+        // @ts-expect-error incomplete mock
+        yAxis: { scale: mockScale, type: 'number' },
+        // @ts-expect-error incomplete mock
+        xAxis: { scale: mockScale2, dataKey: 'v' },
+      });
+      expect(baseLine).toBe(20);
+    });
+
+    it('should compute dataMax from the numeric values only', () => {
+      const { baseLine } = computeArea({
+        displayedData,
+        areaSettings: { ...areaSettings, baseValue: 'dataMax' },
+        layout: 'horizontal',
+        // @ts-expect-error incomplete mock
+        yAxis: { scale: mockScale, type: 'number' },
+        // @ts-expect-error incomplete mock
+        xAxis: { scale: mockScale2, dataKey: 'v' },
+      });
+      expect(baseLine).toBe(60);
+    });
   });
 });
