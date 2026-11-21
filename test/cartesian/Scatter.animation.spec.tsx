@@ -2,13 +2,27 @@ import React, { useState, ReactNode } from 'react';
 import { beforeEach, describe, expect, it } from 'vitest';
 import { act } from '@testing-library/react';
 import { createSelectorTestCase } from '../helper/createSelectorTestCase';
-import { ScatterChart, Scatter, Legend, XAxis, YAxis, ZAxis, CartesianLayout } from '../../src';
+import {
+  ScatterChart,
+  Scatter,
+  Legend,
+  XAxis,
+  YAxis,
+  ZAxis,
+  CartesianLayout,
+  LabelList,
+  ErrorBar,
+  Cell,
+} from '../../src';
 import type { AnimationInterpolateFn, ScatterPointItem } from '../../src';
 import { PageData } from '../_data';
 import { mockSequenceOfGetBoundingClientRect } from '../helper/mockGetBoundingClientRect';
 import { ExpectedPoint, expectScatterPoints, getAllScatterPoints } from '../helper/expectScatterPoints';
 import { MockAnimationManager } from '../animation/MockProgressAnimationManager';
 import { assertNotNull } from '../helper/assertNotNull';
+import { getLabelListTexts } from '../helper/expectLabel';
+
+const smallerData = PageData.slice(0, 2);
 
 function getDotsXY(container: Element): ReadonlyArray<{ cx: string | null; cy: string | null }> {
   return getAllScatterPoints(container).map(dot => ({
@@ -648,6 +662,57 @@ describe('Scatter Animation', () => {
         'M4.282,0A4.282,4.282,0,1,1,-4.282,0A4.282,4.282,0,1,1,4.282,0',
         'M4.514,0A4.514,4.514,0,1,1,-4.514,0A4.514,4.514,0,1,1,4.514,0',
       ]);
+    });
+  });
+
+  describe('when the surrounding component re-renders', () => {
+    it('should keep the labels rendered and not restart the animation', async () => {
+      const renderTestCase = createSelectorTestCase(({ children }) => (
+        <ScatterChart width={100} height={100}>
+          <XAxis dataKey="uv" />
+          <YAxis dataKey="pv" />
+          <Scatter data={smallerData}>
+            <LabelList dataKey="pv" />
+          </Scatter>
+          {children}
+        </ScatterChart>
+      ));
+      const { container, animationManager, rerenderSameComponent } = renderTestCase();
+      await animationManager.completeAnimation();
+
+      expect(getLabelListTexts(container)).toEqual(['2400', '4567']);
+      expect(animationManager.isAnimating()).toBe(false);
+
+      rerenderSameComponent();
+
+      expect(getLabelListTexts(container)).toEqual(['2400', '4567']);
+      expect(animationManager.isAnimating()).toBe(false);
+    });
+
+    it('should keep the labels rendered with Cell and ErrorBar children', async () => {
+      const renderTestCase = createSelectorTestCase(({ children }) => (
+        <ScatterChart width={100} height={100}>
+          <XAxis dataKey="uv" />
+          <YAxis dataKey="pv" />
+          <Scatter data={smallerData}>
+            <LabelList dataKey="pv" />
+            <ErrorBar dataKey="amt" direction="y" />
+            <Cell fill="green" />
+            <Cell fill="blue" />
+          </Scatter>
+          {children}
+        </ScatterChart>
+      ));
+      const { container, animationManager, rerenderSameComponent } = renderTestCase();
+      await animationManager.completeAnimation();
+
+      expect(getLabelListTexts(container)).toEqual(['2400', '4567']);
+      expect(animationManager.isAnimating()).toBe(false);
+
+      rerenderSameComponent();
+
+      expect(getLabelListTexts(container)).toEqual(['2400', '4567']);
+      expect(animationManager.isAnimating()).toBe(false);
     });
   });
 });

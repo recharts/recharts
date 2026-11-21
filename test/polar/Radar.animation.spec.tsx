@@ -3,10 +3,11 @@ import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { act, render } from '@testing-library/react';
 import { createSelectorTestCase } from '../helper/createSelectorTestCase';
 import { PageData } from '../_data';
-import { PolarAngleAxis, PolarGrid, PolarLayout, PolarRadiusAxis, Radar, RadarChart } from '../../src';
+import { LabelList, PolarAngleAxis, PolarGrid, PolarLayout, PolarRadiusAxis, Radar, RadarChart } from '../../src';
 import type { AnimationInterpolateFn, RadarPoint } from '../../src';
 import { AnimationControllerProvider } from '../../src/animation/useAnimationController';
 import { assertNotNull } from '../helper/assertNotNull';
+import { getLabelListTexts } from '../helper/expectLabel';
 import {
   ExpectedRadarDot,
   expectRadarDots,
@@ -722,6 +723,33 @@ describe('Radar animation', () => {
       const polygonsAfterAnimation = getRangeRadarStrokePaths(container);
       expect(polygonsAfterAnimation).toHaveLength(2);
       expect(polygonsAfterAnimation[0]).not.toBe(polygonsAfterAnimation[1]);
+    });
+  });
+
+  describe('when the surrounding component re-renders', () => {
+    const renderTestCase = createSelectorTestCase(({ children }) =>
+      renderRadarChart(
+        <>
+          <Radar dataKey="pv" onAnimationStart={onAnimationStart} onAnimationEnd={onAnimationEnd}>
+            <LabelList dataKey="pv" />
+          </Radar>
+          {children}
+        </>,
+      ),
+    );
+
+    it('should keep the labels rendered and not restart the animation', async () => {
+      const { container, animationManager, rerenderSameComponent } = renderTestCase();
+      await animationManager.completeAnimation();
+
+      expect(getLabelListTexts(container)).toEqual(['2400', '4567', '1398']);
+      expect(onAnimationStart).toHaveBeenCalledTimes(1);
+
+      rerenderSameComponent();
+
+      expect(getLabelListTexts(container)).toEqual(['2400', '4567', '1398']);
+      expect(onAnimationStart).toHaveBeenCalledTimes(1);
+      expect(onAnimationEnd).toHaveBeenCalledTimes(1);
     });
   });
 });
