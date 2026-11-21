@@ -1089,6 +1089,14 @@ export function computeArea({
   const isHorizontalLayout = layout === 'horizontal';
   let isRange = false;
 
+  /*
+   * connectNulls renders a null inside a stacked series as zero contribution,
+   * but there is nothing to connect before the first or after the last value of the series.
+   */
+  const hasValue = displayedData.map(entry => getValueByDataKey(entry, dataKey) != null);
+  const firstValueIndex = hasValue.indexOf(true);
+  const lastValueIndex = hasValue.lastIndexOf(true);
+
   const points: ReadonlyArray<AreaPointItem> = displayedData.map((entry, index): AreaPointItem => {
     let valueAsArray: ReadonlyArray<unknown> | undefined;
 
@@ -1119,7 +1127,9 @@ export function computeArea({
       stackDataKeys != null &&
       stackDataKeys.length > 0 &&
       stackDataKeys.every(key => getValueByDataKey(entry, key) == null);
-    const isBreakPoint = value1 == null || (hasStack && !connectNulls && rawValue == null) || wholeStackIsNull;
+    const isOutsideSeriesValues = index < firstValueIndex || index > lastValueIndex;
+    const isBreakPoint =
+      value1 == null || (hasStack && rawValue == null && (!connectNulls || isOutsideSeriesValues)) || wholeStackIsNull;
 
     if (isHorizontalLayout) {
       return {
