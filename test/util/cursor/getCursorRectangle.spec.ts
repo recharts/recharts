@@ -1,8 +1,8 @@
 import { CursorRectangle, getCursorRectangle } from '../../../src/util/cursor/getCursorRectangle';
-import { ChartCoordinate, ChartOffsetInternal, LayoutType } from '../../../src/util/types';
+import { ChartOffsetInternal, Coordinate, LayoutType } from '../../../src/util/types';
 import { makeChartOffset } from '../../helper/offsetHelpers';
 
-const activeCoordinate: ChartCoordinate = {
+const activeCoordinate: Coordinate = {
   x: 100,
   y: 170,
 };
