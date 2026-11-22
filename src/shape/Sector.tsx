@@ -329,6 +329,41 @@ export const defaultSectorProps = {
   cornerIsExternal: false,
 } as const satisfies Partial<Props>;
 
+const transformProperties = ['transform', 'transform-box', 'transform-origin', 'translate', 'rotate', 'scale'];
+
+function alignFocusIndicator(indicator: SVGGElement | null): void {
+  const sector = indicator?.previousElementSibling;
+  const parent = indicator?.parentElement;
+  const view = indicator?.ownerDocument.defaultView;
+  if (!indicator || !sector || !view) {
+    return;
+  }
+
+  const { style: indicatorStyle } = indicator;
+  if (sector instanceof view.SVGGraphicsElement && parent instanceof view.SVGGraphicsElement) {
+    const sectorMatrix = sector.getCTM();
+    const parentMatrix = parent.getCTM();
+    if (sectorMatrix && parentMatrix) {
+      const { a, b, c, d, e, f } = parentMatrix.inverse().multiply(sectorMatrix);
+      const matrix = [a, b, c, d, e, f];
+      if (matrix.every(Number.isFinite)) {
+        indicatorStyle.transform = `matrix(${matrix.join(',')})`;
+        indicatorStyle.transformBox = 'view-box';
+        indicatorStyle.transformOrigin = '0 0';
+        indicatorStyle.translate = 'none';
+        indicatorStyle.rotate = 'none';
+        indicatorStyle.scale = 'none';
+        return;
+      }
+    }
+  }
+
+  const style = view.getComputedStyle(sector);
+  transformProperties.forEach(property => {
+    indicatorStyle.setProperty(property, style.getPropertyValue(property));
+  });
+}
+
 function SectorImpl({ showFocusIndicator, ...sectorProps }: StringFillProps & { showFocusIndicator?: boolean }) {
   const props = resolveDefaultProps(sectorProps, defaultSectorProps);
   const {
@@ -385,11 +420,7 @@ function SectorImpl({ showFocusIndicator, ...sectorProps }: StringFillProps & { 
           pointerEvents="none"
           strokeLinejoin="round"
           transform={props.transform}
-          style={{
-            transform: props.style?.transform,
-            transformBox: props.style?.transformBox,
-            transformOrigin: props.style?.transformOrigin,
-          }}
+          ref={indicator => alignFocusIndicator(indicator)}
         >
           <path d={path} stroke="Canvas" strokeWidth={5} vectorEffect="non-scaling-stroke" />
           <path d={path} stroke="CanvasText" strokeWidth={2} vectorEffect="non-scaling-stroke" />

@@ -1,6 +1,6 @@
 import React, { ReactNode } from 'react';
 import { expect, it, Mock, vi } from 'vitest';
-import { fireEvent, render, waitFor } from '@testing-library/react';
+import { act, fireEvent, render, waitFor } from '@testing-library/react';
 import { generateMockData } from '@recharts/devtools';
 import {
   Coordinate,
@@ -1790,6 +1790,88 @@ describe('<Pie />', () => {
 
       await user.tab();
       expect(indicator()).not.toBeInTheDocument();
+    });
+
+    test('the focus indicator clears when onFocus moves focus outside the slice', async () => {
+      const user = userEventSetup();
+      const { container, getByRole } = render(
+        <>
+          <PieChart width={200} height={200} accessibilityLayer={false}>
+            <Pie
+              data={[{ value: 1 }]}
+              dataKey="value"
+              isAnimationActive={false}
+              rootTabIndex={-1}
+              shape={{ tabIndex: 0 }}
+              onFocus={() => getByRole('button', { name: 'After' }).focus()}
+            />
+          </PieChart>
+          <button type="button">After</button>
+        </>,
+      );
+
+      await user.tab();
+
+      expect(getByRole('button', { name: 'After' })).toHaveFocus();
+      expect(container.querySelector('.recharts-pie-focus-indicator')).not.toBeInTheDocument();
+    });
+
+    test('the focus indicator stays visible when onBlur refocuses the slice', async () => {
+      const user = userEventSetup();
+      const { container } = render(
+        <PieChart width={200} height={200} accessibilityLayer={false}>
+          <Pie
+            data={[{ value: 1 }]}
+            dataKey="value"
+            isAnimationActive={false}
+            rootTabIndex={-1}
+            shape={{ tabIndex: 0, className: 'refocused-slice' }}
+            onBlur={(_entry, _index, event) => {
+              if (event.target instanceof SVGElement) {
+                event.target.focus();
+              }
+            }}
+          />
+        </PieChart>,
+      );
+      const slice = container.querySelector<SVGPathElement>('.refocused-slice');
+      assertNotNull(slice);
+      await user.tab();
+      expect(slice).toHaveFocus();
+
+      act(() => slice.blur());
+
+      expect(slice).toHaveFocus();
+      expect(container.querySelector('.recharts-pie-focus-indicator')).toBeInTheDocument();
+    });
+
+    test('the focus indicator follows a slice transformed by a CSS class', async () => {
+      const user = userEventSetup();
+      const { container } = render(
+        <>
+          <style>
+            {'path.shifted-slice { transform: translateX(20px) rotate(30deg); transform-origin: 50% 50%; }'}
+          </style>
+          <PieChart width={200} height={200} accessibilityLayer={false}>
+            <Pie
+              data={[{ value: 1 }, { value: 2 }]}
+              dataKey="value"
+              isAnimationActive={false}
+              rootTabIndex={-1}
+              shape={{ tabIndex: 0, className: 'shifted-slice' }}
+            />
+          </PieChart>
+        </>,
+      );
+      const slice = container.querySelector('.shifted-slice');
+      await user.tab();
+
+      expect(slice).toHaveFocus();
+      const indicator = container.querySelector('.recharts-pie-focus-indicator');
+      assertNotNull(indicator);
+      const style = window.getComputedStyle(indicator);
+      expect(style.transform).toBe('translateX(20px) rotate(30deg)');
+      expect(style.transformOrigin).toBe('50% 50%');
     });
 
     test('Tab can focus in and out of the pie chart', async () => {

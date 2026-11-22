@@ -979,19 +979,19 @@ function PieSector({
   );
   const handleFocus = useCallback(
     (event: FocusEvent<SVGGElement>) => {
-      onFocus?.(event);
       if (event.target === event.currentTarget) {
         setFocusTarget('group');
       } else if (usesDefaultShape && event.target.classList.contains('recharts-sector')) {
         setFocusTarget('path');
       }
+      onFocus?.(event);
     },
     [onFocus, usesDefaultShape],
   );
   const handleBlur = useCallback(
     (event: FocusEvent<SVGGElement>) => {
-      onBlur?.(event);
       setFocusTarget(null);
+      onBlur?.(event);
     },
     [onBlur],
   );
