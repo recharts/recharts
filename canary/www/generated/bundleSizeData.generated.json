@@ -4,11 +4,11 @@
     "totalSize": 1015443,
     "totalSizeLabel": "991.64 KB",
     "moduleCount": 386,
-    "generatedAt": "2026-11-21T18:55:02.203Z",
+    "generatedAt": "2026-11-22T16:21:59.888Z",
     "stages": [
       {
         "stage": "es6-folder",
-        "bytes": 1667166,
+        "bytes": 1667471,
         "humanReadableSize": "1.59 MB",
         "reductionFromBaselinePercent": 0
       },
@@ -2667,11 +2667,11 @@
     "totalSize": 1015443,
     "totalSizeLabel": "991.64 KB",
     "moduleCount": 386,
-    "generatedAt": "2026-11-21T18:55:03.893Z",
+    "generatedAt": "2026-11-22T16:21:57.972Z",
     "stages": [
       {
         "stage": "es6-folder",
-        "bytes": 1667166,
+        "bytes": 1667471,
         "humanReadableSize": "1.59 MB",
         "reductionFromBaselinePercent": 0
       },
