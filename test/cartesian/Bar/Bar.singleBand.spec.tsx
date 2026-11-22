@@ -1,7 +1,11 @@
 import React from 'react';
 import { render } from '@testing-library/react';
 import { describe, expect, it } from 'vitest';
+import { scaleTime } from 'victory-vendor/d3-scale';
 import { Bar, BarChart, XAxis, YAxis } from '../../../src';
+import { registerScales } from '../../../src/util/scale/scaleRegistry';
+
+registerScales({ scaleTime });
 
 const time = new Date('2025-01-01').getTime();
 

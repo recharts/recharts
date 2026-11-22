@@ -293,6 +293,7 @@
   "es6/util/scale/createCategoricalInverse.js",
   "es6/util/scale/getNiceTickValues.js",
   "es6/util/scale/index.js",
+  "es6/util/scale/scaleRegistry.js",
   "es6/util/scale/util",
   "es6/util/scale/util/arithmetic.js",
   "es6/util/stacks",

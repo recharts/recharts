@@ -1,6 +1,7 @@
 import React, { ReactNode } from 'react';
 import { describe, it, expect, vi } from 'vitest';
 import { fireEvent } from '@testing-library/react';
+import { scaleLog } from 'victory-vendor/d3-scale';
 import { BarChart, CartesianGrid, Scatter, ScatterChart, Surface, Tooltip, XAxis, YAxis, ZAxis } from '../../src';
 import { assertNotNull } from '../helper/assertNotNull';
 import { useAppSelector } from '../../src/state/hooks';
@@ -15,6 +16,9 @@ import { useIsPanorama } from '../../src/context/PanoramaContext';
 import { expectTooltipPayload } from '../component/Tooltip/tooltipTestHelpers';
 import { createSelectorTestCase, rechartsTestRender } from '../helper/createSelectorTestCase';
 import { userEventSetup } from '../helper/userEventSetup';
+import { registerScales } from '../../src/util/scale/scaleRegistry';
+
+registerScales({ scaleLog });
 
 describe('<ZAxis />', () => {
   const data = [

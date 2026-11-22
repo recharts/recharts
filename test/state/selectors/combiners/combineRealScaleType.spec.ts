@@ -1,7 +1,10 @@
-import { describe, expect, it } from 'vitest';
-import { scaleLog } from 'victory-vendor/d3-scale';
+import { describe, expect, it, vi } from 'vitest';
+import { scaleLog, scaleSymlog } from 'victory-vendor/d3-scale';
 import { BaseCartesianAxis } from '../../../../src/state/cartesianAxisSlice';
 import { combineRealScaleType } from '../../../../src/state/selectors/combiners/combineRealScaleType';
+import { registerScales } from '../../../../src/util/scale/scaleRegistry';
+
+registerScales({ scaleLog, scaleSymlog });
 
 const baseAxis: BaseCartesianAxis = {
   id: 0,
@@ -64,13 +67,19 @@ describe('combineRealScaleType', () => {
   it('falls back to point for already-prefixed names like scaleLog', () => {
     // @ts-expect-error TypeScript is doing its job and preventing us from passing an invalid scale, but we want to test the runtime behavior in this case
     const axis = createAxis({ type: 'number', scale: 'scaleLog' });
+    const warn = vi.spyOn(console, 'warn').mockImplementation((): void => undefined);
     expect(combineRealScaleType(axis, false, 'LineChart')).toBe('point');
+    expect(warn).toHaveBeenCalledWith(expect.stringContaining('Scale "scaleLog" is not registered'));
+    warn.mockRestore();
   });
 
   it('falls back to point for unknown string scales', () => {
     // @ts-expect-error typescript is doing its job and preventing us from passing an invalid scale, but we want to test the runtime behavior in this case
     const axis = createAxis({ type: 'number', scale: 'madeUpScaleName' });
+    const warn = vi.spyOn(console, 'warn').mockImplementation((): void => undefined);
     expect(combineRealScaleType(axis, false, 'LineChart')).toBe('point');
+    expect(warn).toHaveBeenCalledWith(expect.stringContaining('Scale "madeUpScaleName" is not registered'));
+    warn.mockRestore();
   });
 
   it('returns undefined for function scales', () => {

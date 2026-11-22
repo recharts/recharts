@@ -1,5 +1,6 @@
 import React from 'react';
 import { Args } from '@storybook/react-vite';
+import { scaleTime } from 'victory-vendor/d3-scale';
 import { pageData, timeData } from '../../data';
 import {
   Area,
@@ -12,6 +13,7 @@ import {
   LineChart,
   ReferenceDot,
   ReferenceLine,
+  registerScales,
   ResponsiveContainer,
   Scatter,
   Tooltip,
@@ -20,6 +22,8 @@ import {
 } from '../../../../src';
 import { ComposedChartArgs } from '../arg-types/ComposedChartArgs';
 import { getStoryArgsFromArgsTypesObject } from '../props/utils';
+
+registerScales({ scaleTime });
 
 export default {
   argTypes: ComposedChartArgs,

@@ -214,6 +214,7 @@ export type { CartesianPosition } from './cartesian/getCartesianPosition';
 
 /** export getNiceTickValues so this can be used as a replacement for what is in recharts-scale */
 export { getNiceTickValues } from './util/scale/getNiceTickValues';
+export { registerScales } from './util/scale/scaleRegistry';
 
 export {
   useActiveTooltipLabel,

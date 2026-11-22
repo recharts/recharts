@@ -1,6 +1,7 @@
 import React from 'react';
 import { render } from '@testing-library/react';
 import { describe, expect, it, vi } from 'vitest';
+import { scaleLog } from 'victory-vendor/d3-scale';
 import { exampleRadarData, PageData } from '../_data';
 import { PolarRadiusAxis, Radar, RadarChart, RadialBar, RadialBarChart } from '../../src';
 import { assertNotNull } from '../helper/assertNotNull';
@@ -21,6 +22,9 @@ import { selectPolarAxisScale } from '../../src/state/selectors/polarScaleSelect
 import { expectLastCalledWithScale } from '../helper/expectScale';
 import { useIsPanorama } from '../../src/context/PanoramaContext';
 import { expectLastCalledWith } from '../helper/expectLastCalledWith';
+import { registerScales } from '../../src/util/scale/scaleRegistry';
+
+registerScales({ scaleLog });
 
 type ExpectedRadiusAxisTick = {
   x: string;

@@ -1,8 +1,11 @@
-import { scaleLinear } from 'victory-vendor/d3-scale';
+import { scaleLinear, scaleLog } from 'victory-vendor/d3-scale';
 import { describe, expect, it } from 'vitest';
 import { assertNotNull } from '../../../helper/assertNotNull';
 import { AxisRange } from '../../../../src/state/selectors/axisSelectors';
 import { combineConfiguredScaleInternal } from '../../../../src/state/selectors/combiners/combineConfiguredScale';
+import { registerScales } from '../../../../src/util/scale/scaleRegistry';
+
+registerScales({ scaleLog });
 
 const testDomain: ReadonlyArray<number> = [0, 100];
 const testRange: AxisRange = [0, 500];

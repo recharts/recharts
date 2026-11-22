@@ -293,6 +293,7 @@
   "lib/util/scale/createCategoricalInverse.js",
   "lib/util/scale/getNiceTickValues.js",
   "lib/util/scale/index.js",
+  "lib/util/scale/scaleRegistry.js",
   "lib/util/scale/util",
   "lib/util/scale/util/arithmetic.js",
   "lib/util/stacks",
