@@ -63393,7 +63393,7 @@ init_dist();
 var import_memoizerific9 = __toESM(require_memoizerific(), 1), import_semver = __toESM(require_semver2(), 1);
 
 // src/manager-api/version.ts
-var version = "10.6.3";
+var version = "10.6.7";
 
 // src/manager-api/modules/versions.ts
 var { VERSIONCHECK } = scope, getVersionCheckData = (0, import_memoizerific9.default)(1)(() => {

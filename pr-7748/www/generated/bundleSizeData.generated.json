@@ -1,40 +1,40 @@
 {
   "treemap": {
     "examplePath": "www/src/views/IndexView/IndexLineChart.tsx",
-    "totalSize": 1014563,
-    "totalSizeLabel": "990.78 KB",
+    "totalSize": 1015443,
+    "totalSizeLabel": "991.64 KB",
     "moduleCount": 386,
-    "generatedAt": "2026-11-19T12:22:53.206Z",
+    "generatedAt": "2026-11-22T21:03:33.048Z",
     "stages": [
       {
         "stage": "es6-folder",
-        "bytes": 1666954,
+        "bytes": 1667471,
         "humanReadableSize": "1.59 MB",
         "reductionFromBaselinePercent": 0
       },
       {
         "stage": "tree-shaken",
-        "bytes": 1017488,
-        "humanReadableSize": "993.64 KB",
+        "bytes": 1018368,
+        "humanReadableSize": "994.50 KB",
         "reductionFromBaselinePercent": 0
       },
       {
         "stage": "minified",
-        "bytes": 326731,
-        "humanReadableSize": "319.07 KB",
-        "reductionFromBaselinePercent": 67.89
+        "bytes": 327120,
+        "humanReadableSize": "319.45 KB",
+        "reductionFromBaselinePercent": 67.88
       },
       {
         "stage": "minified+gzip",
-        "bytes": 107105,
-        "humanReadableSize": "104.59 KB",
+        "bytes": 107237,
+        "humanReadableSize": "104.72 KB",
         "reductionFromBaselinePercent": 89.47
       }
     ],
     "tree": {
       "name": "bundle",
       "fullPath": "bundle",
-      "value": 1014563,
+      "value": 1015443,
       "children": [
         {
           "name": "src",
@@ -1190,7 +1190,7 @@
         {
           "name": "node_modules",
           "fullPath": "node_modules",
-          "value": 403277,
+          "value": 404157,
           "children": [
             {
               "name": "@reduxjs",
@@ -2396,6 +2396,25 @@
               ]
             },
             {
+              "name": "d3-path",
+              "fullPath": "node_modules/d3-path",
+              "value": 5183,
+              "children": [
+                {
+                  "name": "dist",
+                  "fullPath": "node_modules/d3-path/dist",
+                  "value": 5183,
+                  "children": [
+                    {
+                      "name": "d3-path.mjs",
+                      "fullPath": "node_modules/d3-path/dist/d3-path.mjs",
+                      "value": 5183
+                    }
+                  ]
+                }
+              ]
+            },
+            {
               "name": "d3-interpolate",
               "fullPath": "node_modules/d3-interpolate",
               "value": 4952,
@@ -2464,25 +2483,6 @@
                       "name": "constant.js",
                       "fullPath": "node_modules/d3-interpolate/src/constant.js",
                       "value": 28
-                    }
-                  ]
-                }
-              ]
-            },
-            {
-              "name": "d3-path",
-              "fullPath": "node_modules/d3-path",
-              "value": 4303,
-              "children": [
-                {
-                  "name": "src",
-                  "fullPath": "node_modules/d3-path/src",
-                  "value": 4303,
-                  "children": [
-                    {
-                      "name": "path.js",
-                      "fullPath": "node_modules/d3-path/src/path.js",
-                      "value": 4303
                     }
                   ]
                 }
@@ -2664,40 +2664,40 @@
   },
   "sunburst": {
     "examplePath": "www/src/views/IndexView/IndexLineChart.tsx",
-    "totalSize": 1014563,
-    "totalSizeLabel": "990.78 KB",
+    "totalSize": 1015443,
+    "totalSizeLabel": "991.64 KB",
     "moduleCount": 386,
-    "generatedAt": "2026-11-19T12:22:50.895Z",
+    "generatedAt": "2026-11-22T21:03:35.321Z",
     "stages": [
       {
         "stage": "es6-folder",
-        "bytes": 1666954,
+        "bytes": 1667471,
         "humanReadableSize": "1.59 MB",
         "reductionFromBaselinePercent": 0
       },
       {
         "stage": "tree-shaken",
-        "bytes": 1017488,
-        "humanReadableSize": "993.64 KB",
+        "bytes": 1018368,
+        "humanReadableSize": "994.50 KB",
         "reductionFromBaselinePercent": 0
       },
       {
         "stage": "minified",
-        "bytes": 326731,
-        "humanReadableSize": "319.07 KB",
-        "reductionFromBaselinePercent": 67.89
+        "bytes": 327120,
+        "humanReadableSize": "319.45 KB",
+        "reductionFromBaselinePercent": 67.88
       },
       {
         "stage": "minified+gzip",
-        "bytes": 107105,
-        "humanReadableSize": "104.59 KB",
+        "bytes": 107237,
+        "humanReadableSize": "104.72 KB",
         "reductionFromBaselinePercent": 89.47
       }
     ],
     "tree": {
       "name": "bundle",
       "fullPath": "bundle",
-      "value": 1014563,
+      "value": 1015443,
       "children": [
         {
           "name": "src",
@@ -3853,7 +3853,7 @@
         {
           "name": "node_modules",
           "fullPath": "node_modules",
-          "value": 403277,
+          "value": 404157,
           "children": [
             {
               "name": "@reduxjs",
@@ -5059,6 +5059,25 @@
               ]
             },
             {
+              "name": "d3-path",
+              "fullPath": "node_modules/d3-path",
+              "value": 5183,
+              "children": [
+                {
+                  "name": "dist",
+                  "fullPath": "node_modules/d3-path/dist",
+                  "value": 5183,
+                  "children": [
+                    {
+                      "name": "d3-path.mjs",
+                      "fullPath": "node_modules/d3-path/dist/d3-path.mjs",
+                      "value": 5183
+                    }
+                  ]
+                }
+              ]
+            },
+            {
               "name": "d3-interpolate",
               "fullPath": "node_modules/d3-interpolate",
               "value": 4952,
@@ -5127,25 +5146,6 @@
                       "name": "constant.js",
                       "fullPath": "node_modules/d3-interpolate/src/constant.js",
                       "value": 28
-                    }
-                  ]
-                }
-              ]
-            },
-            {
-              "name": "d3-path",
-              "fullPath": "node_modules/d3-path",
-              "value": 4303,
-              "children": [
-                {
-                  "name": "src",
-                  "fullPath": "node_modules/d3-path/src",
-                  "value": 4303,
-                  "children": [
-                    {
-                      "name": "path.js",
-                      "fullPath": "node_modules/d3-path/src/path.js",
-                      "value": 4303
                     }
                   ]
                 }
