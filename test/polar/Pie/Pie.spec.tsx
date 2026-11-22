@@ -1754,6 +1754,44 @@ describe('<Pie />', () => {
   });
 
   describe('keyboard interaction', () => {
+    test('the focus indicator follows a focused slice and clears when focus leaves', async () => {
+      const user = userEventSetup();
+      const { container } = render(
+        <>
+          <button type="button">Before</button>
+          <PieChart width={200} height={200} accessibilityLayer={false}>
+            <Pie
+              data={[{ value: 1 }, { value: 2 }]}
+              dataKey="value"
+              isAnimationActive={false}
+              innerRadius={30}
+              cornerRadius={5}
+              rootTabIndex={-1}
+              shape={{ tabIndex: 0 }}
+            />
+          </PieChart>
+          <button type="button">After</button>
+        </>,
+      );
+      const [firstSlice, secondSlice] = container.querySelectorAll('.recharts-pie-sector .recharts-sector');
+      const indicator = () => container.querySelector('.recharts-pie-focus-indicator path');
+
+      await user.tab();
+      expect(indicator()).not.toBeInTheDocument();
+
+      await user.tab();
+      expect(firstSlice).toHaveFocus();
+      expect(indicator()).toHaveAttribute('d', firstSlice.getAttribute('d'));
+      expect(firstSlice).toHaveStyle({ outline: 'none' });
+
+      await user.tab();
+      expect(secondSlice).toHaveFocus();
+      expect(indicator()).toHaveAttribute('d', secondSlice.getAttribute('d'));
+
+      await user.tab();
+      expect(indicator()).not.toBeInTheDocument();
+    });
+
     test('Tab can focus in and out of the pie chart', async () => {
       const user = userEventSetup();
       expect.assertions(3);

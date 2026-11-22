@@ -329,7 +329,7 @@ export const defaultSectorProps = {
   cornerIsExternal: false,
 } as const satisfies Partial<Props>;
 
-const SectorImpl: React.FC<StringFillProps> = sectorProps => {
+function SectorImpl({ showFocusIndicator, ...sectorProps }: StringFillProps & { showFocusIndicator?: boolean }) {
   const props = resolveDefaultProps(sectorProps, defaultSectorProps);
   const {
     cx,
@@ -369,8 +369,47 @@ const SectorImpl: React.FC<StringFillProps> = sectorProps => {
     path = getSectorPath({ cx, cy, innerRadius, outerRadius, startAngle, endAngle });
   }
 
-  return <path {...svgPropertiesAndEvents(props)} className={layerClass} d={path} />;
-};
+  return (
+    <>
+      <path
+        {...svgPropertiesAndEvents(props)}
+        className={layerClass}
+        d={path}
+        style={showFocusIndicator ? { ...props.style, outline: 'none' } : props.style}
+      />
+      {showFocusIndicator && (
+        <g
+          className="recharts-pie-focus-indicator"
+          aria-hidden="true"
+          fill="none"
+          pointerEvents="none"
+          strokeLinejoin="round"
+          transform={props.transform}
+          style={{
+            transform: props.style?.transform,
+            transformBox: props.style?.transformBox,
+            transformOrigin: props.style?.transformOrigin,
+          }}
+        >
+          <path d={path} stroke="Canvas" strokeWidth={5} vectorEffect="non-scaling-stroke" />
+          <path d={path} stroke="CanvasText" strokeWidth={2} vectorEffect="non-scaling-stroke" />
+        </g>
+      )}
+    </>
+  );
+}
+
+export function SectorWithFocusIndicator({ showFocusIndicator, ...props }: Props & { showFocusIndicator?: boolean }) {
+  const { fill } = props;
+  // spreading all props first keeps `fill` in its place among the attributes
+  return fill != null && typeof fill === 'object' ? (
+    <FillObjectPaint fill={fill}>
+      {paint => <SectorImpl {...props} fill={paint} showFocusIndicator={showFocusIndicator} />}
+    </FillObjectPaint>
+  ) : (
+    <SectorImpl {...props} fill={fill} showFocusIndicator={showFocusIndicator} />
+  );
+}
 
 /**
  * Renders a sector (pie-slice or donut-segment shape) from center
@@ -379,12 +418,4 @@ const SectorImpl: React.FC<StringFillProps> = sectorProps => {
  * cursor shape shown by Tooltip on polar charts.
  * @public
  */
-export const Sector = (props: Props) => {
-  const { fill } = props;
-  // spreading all props first keeps `fill` in its place among the attributes
-  return fill != null && typeof fill === 'object' ? (
-    <FillObjectPaint fill={fill}>{paint => <SectorImpl {...props} fill={paint} />}</FillObjectPaint>
-  ) : (
-    <SectorImpl {...props} fill={fill} />
-  );
-};
+export const Sector = (props: Props) => <SectorWithFocusIndicator {...props} />;

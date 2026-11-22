@@ -1,13 +1,24 @@
 import * as React from 'react';
-import { MutableRefObject, ReactElement, ReactNode, SVGProps, useMemo, useRef } from 'react';
+import {
+  FocusEvent,
+  isValidElement,
+  MutableRefObject,
+  ReactElement,
+  ReactNode,
+  SVGProps,
+  useCallback,
+  useMemo,
+  useRef,
+  useState,
+} from 'react';
 import get from 'es-toolkit/compat/get';
 
 import { clsx } from 'clsx';
 import { selectPieLegend, selectPieSectors } from '../state/selectors/pieSelectors';
 import { useAppSelector } from '../state/hooks';
-import { Layer } from '../container/Layer';
+import { Layer, Props as LayerProps } from '../container/Layer';
 import { Curve, Props as CurveProps } from '../shape/Curve';
-import { Sector } from '../shape/Sector';
+import { Sector, SectorWithFocusIndicator } from '../shape/Sector';
 import { Text, TextBackgroundProps } from '../component/Text';
 import { Cell } from '../component/Cell';
 import { findAllByType } from '../util/ReactUtils';
@@ -946,6 +957,61 @@ function PieLabelList({
   return <PieLabels sectors={sectors} props={props} showLabels={showLabels} />;
 }
 
+const hiddenOutline = { outline: 'none' };
+
+function PieSector({
+  option,
+  shapeProps,
+  onFocus,
+  onBlur,
+  ...layerProps
+}: LayerProps & {
+  option: ActiveShape<PieSectorShapeProps, SVGPathElement>;
+  shapeProps: PieSectorShapeProps;
+}) {
+  const [focusTarget, setFocusTarget] = useState<'group' | 'path' | null>(null);
+  const usesDefaultShape =
+    option === defaultPieSectorShape || (typeof option !== 'function' && !isValidElement(option));
+  const showFocusIndicator = usesDefaultShape && focusTarget !== null;
+  const focusedShapeProps = useMemo(
+    () => (showFocusIndicator ? { ...shapeProps, showFocusIndicator } : shapeProps),
+    [shapeProps, showFocusIndicator],
+  );
+  const handleFocus = useCallback(
+    (event: FocusEvent<SVGGElement>) => {
+      onFocus?.(event);
+      if (event.target === event.currentTarget) {
+        setFocusTarget('group');
+      } else if (usesDefaultShape && event.target.classList.contains('recharts-sector')) {
+        setFocusTarget('path');
+      }
+    },
+    [onFocus, usesDefaultShape],
+  );
+  const handleBlur = useCallback(
+    (event: FocusEvent<SVGGElement>) => {
+      onBlur?.(event);
+      setFocusTarget(null);
+    },
+    [onBlur],
+  );
+
+  return (
+    <Layer
+      {...layerProps}
+      style={showFocusIndicator && focusTarget === 'group' ? hiddenOutline : layerProps.style}
+      onFocus={handleFocus}
+      onBlur={handleBlur}
+    >
+      <Shape
+        option={option === defaultPieSectorShape ? SectorWithFocusIndicator : option}
+        DefaultShape={SectorWithFocusIndicator}
+        shapeProps={focusedShapeProps}
+      />
+    </Layer>
+  );
+}
+
 function PieSectors(props: PieSectorsProps) {
   const {
     sectors,
@@ -1036,7 +1102,7 @@ function PieSectors(props: PieSectorsProps) {
           activeStyleOverrides == null ? sectorProps : { ...sectorProps, ...activeStyleOverrides };
 
         return (
-          <Layer
+          <PieSector
             key={`sector-${entry?.startAngle}-${entry?.endAngle}-${entry.midAngle}-${i}`}
             tabIndex={-1}
             className="recharts-pie-sector"
@@ -1044,13 +1110,9 @@ function PieSectors(props: PieSectorsProps) {
             onMouseEnter={onMouseEnterFromContext(entry, i)}
             onMouseLeave={onMouseLeaveFromContext(entry, i)}
             onClick={onClickFromContext(entry, i)}
-          >
-            <Shape<PieSectorShapeProps, SVGPathElement>
-              option={option}
-              DefaultShape={defaultPieSectorShape}
-              shapeProps={activeSectorProps}
-            />
-          </Layer>
+            option={option}
+            shapeProps={activeSectorProps}
+          />
         );
       })}
     </>
