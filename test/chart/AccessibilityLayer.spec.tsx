@@ -1190,6 +1190,17 @@ describe('keyboard navigation while the mouse rests over the chart', () => {
     expectTooltipPayload(container, 'Page A', ['uv : 400']);
   });
 
+  test('Enter after focus shows the keyboard tooltip instead of the hovered point', () => {
+    const { container } = renderTestCase();
+    showTooltip(container, barChartMouseHoverTooltipSelector);
+    const svg = getMainSurface(container);
+    act(() => svg.focus());
+    expectTooltipPayload(container, 'Page C', ['uv : 300']);
+
+    fireEvent.keyDown(svg, { key: 'Enter' });
+    expectTooltipPayload(container, 'Page A', ['uv : 400']);
+  });
+
   test('moving the mouse again takes over from the keyboard', () => {
     const { container } = renderTestCase();
     const svg = getMainSurface(container);

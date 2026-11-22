@@ -1,5 +1,5 @@
 import { createAction, createListenerMiddleware, ListenerEffectAPI } from '@reduxjs/toolkit';
-import { setKeyboardInteraction, setKeyPressInteraction, TooltipInteractionState } from './tooltipSlice';
+import { setKeyboardInteraction, TooltipInteractionState } from './tooltipSlice';
 import { AppDispatch, RechartsRootState } from './store';
 import {
   selectTooltipAxisDomain,
@@ -79,7 +79,7 @@ keyboardEventsMiddleware.startListening({
             String(keyboardInteraction.index),
           );
           listenerApi.dispatch(
-            setKeyPressInteraction({
+            setKeyboardInteraction({
               active: !keyboardInteraction.active,
               activeIndex: keyboardInteraction.index,
               activeCoordinate: coordinate,
@@ -135,7 +135,7 @@ keyboardEventsMiddleware.startListening({
         }
         const coordinate = selectCoordinateForDefaultIndex(currentState, tooltipEventType, 'hover', String(nextIndex));
         listenerApi.dispatch(
-          setKeyPressInteraction({
+          setKeyboardInteraction({
             active: true,
             activeIndex: nextIndex.toString(),
             activeCoordinate: coordinate,
@@ -180,17 +180,19 @@ keyboardEventsMiddleware.startListening({
     if (!accessibilityLayerIsActive) {
       return;
     }
-    const { keyboardInteraction } = state.tooltip;
+    const { keyboardInteraction, axisInteraction, itemInteraction } = state.tooltip;
     if (keyboardInteraction.active) {
       return;
     }
     if (keyboardInteraction.index == null) {
+      // A mouse click focuses the chart too. Keep the tooltip on the point under the pointer until a key is pressed.
+      const pointerIsHovering = axisInteraction.hover.active || itemInteraction.hover.active;
       const nextIndex = '0';
       const tooltipEventType = selectTooltipEventType(state, state.tooltip.settings.shared);
       const coordinate = selectCoordinateForDefaultIndex(state, tooltipEventType, 'hover', String(nextIndex));
       listenerApi.dispatch(
         setKeyboardInteraction({
-          active: true,
+          active: !pointerIsHovering,
           activeIndex: nextIndex,
           activeCoordinate: coordinate,
         }),
