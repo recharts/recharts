@@ -571,11 +571,6 @@
       "count": 1
     }
   },
-  "src/state/selectors/combiners/combineDisplayedStackedData.ts": {
-    "@typescript-eslint/no-non-null-assertion": {
-      "count": 1
-    }
-  },
   "src/state/selectors/combiners/combineRealScaleType.ts": {
     "@typescript-eslint/consistent-type-assertions": {
       "count": 1
