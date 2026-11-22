@@ -11,6 +11,7 @@ import { ScatterPointItem } from './Scatter';
 import { ReportErrorBarSettings, useErrorBarContext } from '../context/ErrorBarContext';
 import { useXAxis, useYAxis } from '../hooks';
 import { makeNumber } from '../state/selectors/axisSelectors';
+import { isWellBehavedNumber } from '../util/isWellBehavedNumber';
 import { resolveDefaultProps } from '../util/resolveDefaultProps';
 import { svgPropertiesNoEvents } from '../util/svgPropertiesNoEvents';
 import { useChartLayout } from '../context/chartLayoutContext';
@@ -156,7 +157,7 @@ function ErrorBarImpl(props: ErrorBarInternalProps) {
   const errorBars = data.map((entry: any, dataIndex: number) => {
     const { x, y, value, errorVal } = dataPointFormatter(entry, dataKey, direction);
 
-    if (!errorVal || x == null || y == null) {
+    if (!errorVal || !isWellBehavedNumber(x) || !isWellBehavedNumber(y)) {
       return null;
     }
 
@@ -191,7 +192,7 @@ function ErrorBarImpl(props: ErrorBarInternalProps) {
       const xMin = scale.map(numericValue - lowBound);
       const xMax = scale.map(numericValue + highBound);
 
-      if (xMin != null && xMax != null) {
+      if (isWellBehavedNumber(xMin) && isWellBehavedNumber(xMax)) {
         // the right line of |--|
         lineCoordinates.push({ x1: xMax, y1: yMin, x2: xMax, y2: yMax });
         // the middle line of |--|
@@ -210,7 +211,7 @@ function ErrorBarImpl(props: ErrorBarInternalProps) {
       const yMin = scale.map(numericValue - lowBound);
       const yMax = scale.map(numericValue + highBound);
 
-      if (yMin != null && yMax != null) {
+      if (isWellBehavedNumber(yMin) && isWellBehavedNumber(yMax)) {
         // the top line
         lineCoordinates.push({ x1: xMin, y1: yMax, x2: xMax, y2: yMax });
         // the middle line
@@ -218,6 +219,10 @@ function ErrorBarImpl(props: ErrorBarInternalProps) {
         // the bottom line
         lineCoordinates.push({ x1: xMin, y1: yMin, x2: xMax, y2: yMin });
       }
+    }
+
+    if (lineCoordinates.length === 0) {
+      return null;
     }
 
     const scaleDirection: string = direction === 'x' ? 'scaleX' : 'scaleY';

@@ -859,6 +859,21 @@ function TreemapDefaultLabel({
   );
 }
 
+/**
+ * The small arrow at the left edge of a parent tile in nest mode.
+ */
+function TreemapNestArrow({ x, y, height }: { x: number; y: number; height: number }) {
+  const points: ReadonlyArray<Coordinate> = useMemo(
+    () => [
+      { x: x + 2, y: y + height / 2 },
+      { x: x + 6, y: y + height / 2 + 3 },
+      { x: x + 2, y: y + height / 2 + 6 },
+    ],
+    [x, y, height],
+  );
+  return <Polygon points={points} />;
+}
+
 function ContentItem({
   content,
   nodeProps,
@@ -899,15 +914,7 @@ function ContentItem({
 
   let arrow = null;
   if (width > 10 && height > 10 && nodeProps.children && type === 'nest' && nodeProps.depth > 0) {
-    arrow = (
-      <Polygon
-        points={[
-          { x: x + 2, y: y + height / 2 },
-          { x: x + 6, y: y + height / 2 + 3 },
-          { x: x + 2, y: y + height / 2 + 6 },
-        ]}
-      />
-    );
+    arrow = <TreemapNestArrow x={x} y={y} height={height} />;
   }
 
   /*
