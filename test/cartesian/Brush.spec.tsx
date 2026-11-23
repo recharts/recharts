@@ -498,6 +498,45 @@ describe('<Brush />', () => {
       });
     });
 
+    test('Travellers should move by one step with the keyboard after being dragged past each other', () => {
+      const onChange = vi.fn();
+      const { container } = render(
+        <BarChart width={400} height={100} data={data}>
+          <Brush
+            dataKey="value"
+            x={100}
+            y={50}
+            width={400}
+            height={40}
+            startIndex={2}
+            endIndex={6}
+            onChange={onChange}
+          />
+        </BarChart>,
+      );
+
+      const [leftTraveller, rightTraveller] = Array.from(container.querySelectorAll('.recharts-brush-traveller'));
+      assertNotNull(leftTraveller);
+      assertNotNull(rightTraveller);
+
+      // drag the left traveller past the right one, so the dragged traveller now holds the end index
+      fireEvent.mouseDown(leftTraveller);
+      fireEvent.mouseMove(leftTraveller, { clientX: 250 });
+      fireEvent.mouseUp(leftTraveller);
+      expectLastCalledWith(onChange, { startIndex: 6, endIndex: 10 });
+
+      fireEvent.keyDown(leftTraveller, { key: 'ArrowLeft' });
+      expectLastCalledWith(onChange, { startIndex: 6, endIndex: 9 });
+
+      fireEvent.keyDown(leftTraveller, { key: 'ArrowRight' });
+      fireEvent.keyDown(leftTraveller, { key: 'ArrowRight' });
+      expectLastCalledWith(onChange, { startIndex: 6, endIndex: 11 });
+
+      // the other traveller now holds the start index
+      fireEvent.keyDown(rightTraveller, { key: 'ArrowLeft' });
+      expectLastCalledWith(onChange, { startIndex: 5, endIndex: 11 });
+    });
+
     const ControlledPanoramicBrush = () => {
       const [startIndex, setStartIndex] = useState<number | undefined>(3);
       const [endIndex, setEndIndex] = useState<number | undefined>(data.length - 1);
