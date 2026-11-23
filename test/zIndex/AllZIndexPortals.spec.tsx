@@ -38,8 +38,8 @@ describe('AllZIndexPortals', () => {
 
     // all z-index portals should be rendered (they are <g> elements with a recharts-zIndex-layer_ class)
     expect(container.querySelectorAll('g[class*="recharts-zIndex-layer_"]')).toHaveLength(allZIndexes.length);
-    // and none of them should be made focusable in any way
-    expect(container.querySelectorAll('g[tabindex]')).toHaveLength(0);
+    // and none of them should be a tab stop
+    expect(container.querySelectorAll('g[class*="recharts-zIndex-layer_"]:not([tabindex="-1"])')).toHaveLength(0);
 
     act(() => {
       store.dispatch(registerZIndexPortal({ zIndex: newZIndexDefinitelyNotOneOfTheDefaults }));
@@ -49,6 +49,29 @@ describe('AllZIndexPortals', () => {
     // After registering, should have one more z-index portal
     const zIndexPortals = container.querySelectorAll('g[class*="recharts-zIndex-layer_"]');
     expect(zIndexPortals).toHaveLength(allZIndexes.length + 1);
+  });
+
+  it('should keep the portal groups out of the tab order and hide their focus ring', () => {
+    const { container } = render(
+      <svg>
+        <Provider store={store} context={nonNullContext}>
+          <AllZIndexPortals isPanorama={false}>child</AllZIndexPortals>
+        </Provider>
+      </svg>,
+    );
+
+    const portals = Array.from(container.querySelectorAll<SVGGElement>('g[class*="recharts-zIndex-layer_"]'));
+    expect(portals.length).toBeGreaterThan(0);
+
+    /*
+     * React attaches focus listeners to a portal container, which is enough to make an SVG element
+     * focusable in Chromium, so every one of these groups would otherwise become a Tab stop
+     * and would show a focus ring around the layer contents when clicked.
+     */
+    portals.forEach(portal => {
+      expect(portal).toHaveAttribute('tabindex', '-1');
+      expect(portal.style.outline).toBe('none');
+    });
   });
 
   it('should render one child for each of the registered elements', () => {

@@ -15,8 +15,14 @@ function ZIndexSvgPortal({ zIndex, isPanorama }: { zIndex: number; isPanorama: b
       dispatch(unregisterZIndexPortalElement({ zIndex, isPanorama }));
     };
   }, [dispatch, zIndex, isPanorama]);
-  // a bare <g> is not tabbable or pointer-focusable; do not add tabIndex
-  return <g ref={ref} className={`recharts-zIndex-layer_${zIndex}`} />;
+  /*
+   * React attaches focusin and focusout listeners to every portal container, and Chromium reports an
+   * SVG element that has focus listeners as focusable. Without `tabIndex` these groups therefore join
+   * the sequential focus order and steal a Tab stop each. `tabIndex={-1}` keeps them out of the tab
+   * order, and `outline: none` keeps a click on the chart from painting a focus ring around the shapes
+   * of whichever layer was hit.
+   */
+  return <g ref={ref} tabIndex={-1} style={{ outline: 'none' }} className={`recharts-zIndex-layer_${zIndex}`} />;
 }
 
 export function AllZIndexPortals({ children, isPanorama }: { children?: React.ReactNode; isPanorama: boolean }) {
