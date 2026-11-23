@@ -30,7 +30,7 @@ import {
 import { SetTooltipEntrySettings } from '../state/SetTooltipEntrySettings';
 import { RechartsStoreProvider } from '../state/RechartsStoreProvider';
 import { ReportEventSettings } from '../state/ReportEventSettings';
-import { ChartCoordinate, DataKey, EventThrottlingProps, Margin, Percent } from '../util/types';
+import { Coordinate, DataKey, EventThrottlingProps, Margin, Percent } from '../util/types';
 import { useAppDispatch } from '../state/hooks';
 import { RechartsRootState } from '../state/store';
 import { RegisterGraphicalItemId } from '../context/RegisterGraphicalItemId';
@@ -314,7 +314,7 @@ const preloadedState: Partial<RechartsRootState> = {
  * Sector coordinates keyed by their tooltip index (`[0]`, `[0]children[1]`, ...) which is the identity
  * that the tooltip store and the keyboard navigation use when asking for a position.
  */
-type SunburstPositionMap = Map<TooltipIndex, ChartCoordinate>;
+type SunburstPositionMap = Map<TooltipIndex, Coordinate>;
 
 /**
  * Styles that the chart takes from the theme.
@@ -597,7 +597,7 @@ const SunburstChartContent = ({
     const labelListEntries: PolarLabelListEntry[] = [];
     const labelThemes: Array<LabelTheme | undefined> = [];
     const resolveLabelTheme = (index: number): LabelTheme | undefined => labelThemes[index];
-    const positions: SunburstPositionMap = new Map<TooltipIndex, ChartCoordinate>([]);
+    const positions: SunburstPositionMap = new Map<TooltipIndex, Coordinate>([]);
 
     // event handlers
     function handleMouseEnter(node: SunburstNode, e: React.MouseEvent) {
