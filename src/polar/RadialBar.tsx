@@ -1,7 +1,6 @@
 import * as React from 'react';
 import omit from 'es-toolkit/compat/omit';
 import { MutableRefObject, PureComponent, ReactElement, ReactNode, useRef } from 'react';
-import { clsx } from 'clsx';
 
 import { Series } from 'victory-vendor/d3-shape';
 import {
@@ -12,6 +11,7 @@ import {
 } from '../util/RadialBarUtils';
 import { Props as SectorProps } from '../shape/Sector';
 import { Layer } from '../container/Layer';
+import { clsx } from '../util/clsx';
 import { findAllByType } from '../util/ReactUtils';
 import {
   ImplicitLabelListType,

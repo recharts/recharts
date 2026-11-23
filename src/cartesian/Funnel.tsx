@@ -2,7 +2,6 @@ import * as React from 'react';
 import { MutableRefObject, ReactElement, ReactNode, useMemo, useRef } from 'react';
 import omit from 'es-toolkit/compat/omit';
 
-import { clsx } from 'clsx';
 import { selectActiveTooltipIndex } from '../state/selectors/tooltipSelectors';
 import { useAppSelector } from '../state/hooks';
 import { Layer } from '../container/Layer';
@@ -44,6 +43,7 @@ import { SetTooltipEntrySettings } from '../state/SetTooltipEntrySettings';
 import { SetLegendPayload } from '../state/SetLegendPayload';
 import { Formatter } from '../component/DefaultTooltipContent';
 import { ResolvedFunnelSettings, selectFunnelLegend, selectFunnelTrapezoids } from '../state/selectors/funnelSelectors';
+import { clsx } from '../util/clsx';
 import { findAllByType } from '../util/ReactUtils';
 import { Cell } from '../component/Cell';
 import { RequiresDefaultProps, resolveDefaultProps } from '../util/resolveDefaultProps';
