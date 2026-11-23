@@ -12,8 +12,8 @@ export type RadialCursorPoints = {
 
 /**
  * Only applicable for radial layouts
- * @param {Object} activeCoordinate ChartCoordinate
- * @returns {Object} RadialCursorPoints
+ * @param activeCoordinate the polar coordinate of the active tooltip item
+ * @returns start and end points of the radial cursor line, together with the polar coordinates they were computed from
  */
 export function getRadialCursorPoints(activeCoordinate: PolarCoordinate): RadialCursorPoints {
   const { cx, cy, radius, startAngle, endAngle } = activeCoordinate;
