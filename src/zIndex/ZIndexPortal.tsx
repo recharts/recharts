@@ -15,8 +15,8 @@ function ZIndexSvgPortal({ zIndex, isPanorama }: { zIndex: number; isPanorama: b
       dispatch(unregisterZIndexPortalElement({ zIndex, isPanorama }));
     };
   }, [dispatch, zIndex, isPanorama]);
-  // a bare <g> is not tabbable or pointer-focusable; do not add tabIndex
-  return <g ref={ref} className={`recharts-zIndex-layer_${zIndex}`} />;
+  // React attaches focusin/focusout listeners to portal containers, which makes <g> tabbable in Chromium without tabIndex={-1}
+  return <g ref={ref} tabIndex={-1} style={{ outline: 'none' }} className={`recharts-zIndex-layer_${zIndex}`} />;
 }
 
 export function AllZIndexPortals({ children, isPanorama }: { children?: React.ReactNode; isPanorama: boolean }) {
