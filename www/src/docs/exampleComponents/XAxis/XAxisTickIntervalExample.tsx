@@ -38,7 +38,8 @@ const axes = intervalOptions.map((interval, index) => ({
   label: { value: `interval=${JSON.stringify(interval)}`, position: 'insideBottom', offset: 15 } as const,
 }));
 
-const chartStyle = { width: '100%', maxWidth: '700px', maxHeight: '90vh', aspectRatio: 0.9 };
+// The six axes take 390px, so use a fixed height instead of an aspect ratio to keep room for the plot on narrow screens.
+const chartStyle = { width: '100%', maxWidth: '700px', height: '640px' };
 
 // The margins leave room for the first and last tick labels, which extend beyond the plot area.
 const chartMargin = { top: 20, right: 30, left: 30, bottom: 20 };
