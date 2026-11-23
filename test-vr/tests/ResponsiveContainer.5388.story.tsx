@@ -3,6 +3,7 @@
  */
 import * as React from 'react';
 import { CSSProperties } from 'react';
+import { RechartsDevtools } from '@recharts/devtools';
 import { Line, LineChart, ResponsiveContainer, XAxis, YAxis } from '../../src';
 import { pageData } from '../../storybook/stories/data';
 
@@ -61,6 +62,7 @@ export const ChartInGridRowInsidePanelWithMargin = () => {
                 <XAxis dataKey="name" />
                 <YAxis />
                 <Line dataKey="uv" isAnimationActive={false} />
+                <RechartsDevtools />
               </LineChart>
             </ResponsiveContainer>
           </div>
