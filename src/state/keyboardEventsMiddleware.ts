@@ -185,10 +185,10 @@ keyboardEventsMiddleware.startListening({
       return;
     }
     if (keyboardInteraction.index == null) {
-      // A mouse click focuses the chart too. Keep the tooltip on the point under the pointer until a key is pressed.
-      const pointerIsHovering = axisInteraction.hover.active || itemInteraction.hover.active;
-      const nextIndex = '0';
       const tooltipEventType = selectTooltipEventType(state, state.tooltip.settings.shared);
+      // A mouse click focuses the chart too. Keep the tooltip on the point under the pointer until a key is pressed.
+      const pointerIsHovering = (tooltipEventType === 'axis' ? axisInteraction : itemInteraction).hover.active;
+      const nextIndex = '0';
       const coordinate = selectCoordinateForDefaultIndex(state, tooltipEventType, 'hover', String(nextIndex));
       listenerApi.dispatch(
         setKeyboardInteraction({

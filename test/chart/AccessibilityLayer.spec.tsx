@@ -29,7 +29,10 @@ import {
   getTooltip,
   showTooltip,
 } from '../component/Tooltip/tooltipTestHelpers';
-import { barChartMouseHoverTooltipSelector } from '../component/Tooltip/tooltipMouseHoverSelectors';
+import {
+  barChartMouseHoverTooltipSelector,
+  barMouseHoverTooltipSelector,
+} from '../component/Tooltip/tooltipMouseHoverSelectors';
 import { PageData } from '../_data';
 import { createSelectorTestCase } from '../helper/createSelectorTestCase';
 import { clickOn } from '../helper/clickOn';
@@ -1210,6 +1213,25 @@ describe('keyboard navigation while the mouse rests over the chart', () => {
 
     showTooltip(container, barChartMouseHoverTooltipSelector);
     expectTooltipPayload(container, 'Page C', ['uv : 300']);
+  });
+
+  test('focus shows the axis tooltip when a bar stayed hovered from before the tooltip became shared', () => {
+    const renderChart = (shared: boolean) => (
+      <BarChart width={400} height={400} data={PageData}>
+        <XAxis dataKey="name" />
+        <Bar dataKey="uv" />
+        <Tooltip shared={shared} />
+      </BarChart>
+    );
+    const { container, rerender } = render(renderChart(false));
+    showTooltip(container, barMouseHoverTooltipSelector);
+    expectTooltipPayload(container, '', ['uv : 400']);
+
+    rerender(renderChart(true));
+    expectTooltipNotVisible(container);
+    const svg = getMainSurface(container);
+    act(() => svg.focus());
+    expectTooltipPayload(container, 'Page A', ['uv : 400']);
   });
 });
 
