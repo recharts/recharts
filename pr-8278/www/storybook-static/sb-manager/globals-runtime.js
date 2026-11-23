@@ -63141,14 +63141,19 @@ var FILTER_KEYS = {
   }), provider.channel?.on(
     STORY_PREPARED,
     function({ id, ...update2 }) {
-      let { ref, sourceType } = getEventMetadata(this, fullAPI);
+      let { ref } = getEventMetadata(this, fullAPI);
       if (api.updateStory(id, { ...update2, prepared: !0 }, ref), !ref && !store2.getState().hasCalledSetOptions) {
         let { options } = update2.parameters;
         fullAPI.setOptions(removeRemovedOptions(options)), store2.setState({ hasCalledSetOptions: !0 });
       }
-      if (sourceType === "local") {
+    }
+  ), provider.channel?.on(
+    STORY_FINISHED,
+    function({ storyId: finishedStoryId }) {
+      let { sourceType } = getEventMetadata(this, fullAPI);
+      sourceType === "local" && scope.requestIdleCallback(() => {
         let { storyId, index: index4, refId } = store2.getState();
-        if (!index4)
+        if (!index4 || storyId !== finishedStoryId)
           return;
         let toBePreloaded = Array.from(
           /* @__PURE__ */ new Set([
@@ -63156,11 +63161,12 @@ var FILTER_KEYS = {
             api.findSiblingStoryId(storyId, index4, -1, !0)
           ])
         ).filter(Boolean);
-        provider.channel?.emit(PRELOAD_ENTRIES, {
+        toBePreloaded.length > 0 && provider.channel?.emit(PRELOAD_ENTRIES, {
           ids: toBePreloaded,
+          source: "sibling",
           options: { target: refId }
         });
-      }
+      });
     }
   ), provider.channel?.on(
     DOCS_PREPARED,
@@ -63393,7 +63399,7 @@ init_dist();
 var import_memoizerific9 = __toESM(require_memoizerific(), 1), import_semver = __toESM(require_semver2(), 1);
 
 // src/manager-api/version.ts
-var version = "10.6.7";
+var version = "10.6.8";
 
 // src/manager-api/modules/versions.ts
 var { VERSIONCHECK } = scope, getVersionCheckData = (0, import_memoizerific9.default)(1)(() => {
