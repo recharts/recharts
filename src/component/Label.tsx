@@ -10,7 +10,7 @@ import {
   useContext,
   useMemo,
 } from 'react';
-import { clsx } from 'clsx';
+import { clsx } from '../util/clsx';
 import {
   isValidTextAnchor,
   RenderableText,

@@ -1,4 +1,3 @@
-import { clsx } from 'clsx';
 import * as React from 'react';
 import {
   createContext,
@@ -14,6 +13,7 @@ import {
   useState,
 } from 'react';
 import throttle from 'es-toolkit/compat/throttle';
+import { clsx } from '../util/clsx';
 import { isNumber, noop } from '../util/DataUtils';
 import { warn } from '../util/LogUtils';
 import {

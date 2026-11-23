@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { ReactNode, MouseEvent, ReactElement, CSSProperties } from 'react';
 
-import { clsx } from 'clsx';
+import { clsx } from '../util/clsx';
 import { Surface } from '../container/Surface';
 import { getSymbolHalfWidth, Symbols } from '../shape/Symbols';
 import {

@@ -3,7 +3,7 @@
  */
 import * as React from 'react';
 import { ReactElement, SVGProps, useEffect } from 'react';
-import { clsx } from 'clsx';
+import { clsx } from '../util/clsx';
 import { Layer } from '../container/Layer';
 import { CartesianLabelContextProvider, CartesianLabelFromLabelProp, ImplicitLabelType } from '../component/Label';
 import { IfOverflow, Overflowable } from '../util/IfOverflow';

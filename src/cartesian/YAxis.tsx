@@ -1,6 +1,6 @@
-import { clsx } from 'clsx';
 import * as React from 'react';
 import { isValidElement, ReactElement, SVGProps, useCallback, useLayoutEffect, useMemo, useRef } from 'react';
+import { clsx } from '../util/clsx';
 import { isLabelContentAFunction } from '../component/Label';
 import { useCartesianChartLayout } from '../context/chartLayoutContext';
 import { useIsPanorama } from '../context/PanoramaContext';

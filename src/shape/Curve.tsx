@@ -24,7 +24,7 @@ import {
   Line as D3LineCurve,
 } from 'victory-vendor/d3-shape';
 
-import { clsx } from 'clsx';
+import { clsx } from '../util/clsx';
 import { FillObjectPaint } from '../fill/fillDefinitions';
 import { RechartsFill } from '../fill/RechartsFill';
 import {

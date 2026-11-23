@@ -11,7 +11,7 @@ import {
   useState,
 } from 'react';
 
-import { clsx } from 'clsx';
+import { clsx } from '../util/clsx';
 import { isNullish, isNumber, isNumOrStr } from '../util/DataUtils';
 import { Global } from '../util/Global';
 import { getStringSize } from '../util/DOMUtils';
