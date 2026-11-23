@@ -17,6 +17,10 @@ import * as ComponentStories from './ResponsiveContainer.stories';
   This component uses the ResizeObserver API to monitor changes to the size of its parent element. If you need to
   support older browsers that do not support this API, you may need to include a polyfill.
 </p>
+<p>
+  The parent element must have a size of its own: the container measures itself and passes that size to the chart, so a
+  parent whose height comes from its content leaves the chart with nothing to measure.
+</p>
 
 ## Child Components
 
