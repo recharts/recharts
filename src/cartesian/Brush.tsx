@@ -969,8 +969,13 @@ class BrushWithState extends PureComponent<BrushWithStateProps, State> {
       return;
     }
 
-    const newIndex = currentIndex + direction;
-    if (newIndex === -1 || newIndex >= scaleValues.length) {
+    // Step to the next index on the `gap` grid, as dragging does. The last index stays reachable.
+    const steppedIndex = currentIndex + direction;
+    const newIndex = Math.min(
+      (direction > 0 ? Math.ceil(steppedIndex / gap) : Math.floor(steppedIndex / gap)) * gap,
+      data.length - 1,
+    );
+    if (newIndex < 0 || newIndex === currentIndex || newIndex >= scaleValues.length) {
       return;
     }
 
