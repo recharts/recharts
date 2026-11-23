@@ -911,11 +911,6 @@
       "count": 68
     }
   },
-  "test/cartesian/GraphicalItemClipPath.spec.tsx": {
-    "@typescript-eslint/no-non-null-assertion": {
-      "count": 1
-    }
-  },
   "test/cartesian/Line.animation.spec.tsx": {
     "@typescript-eslint/consistent-type-assertions": {
       "count": 2
