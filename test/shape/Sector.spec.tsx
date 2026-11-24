@@ -2,6 +2,8 @@ import React from 'react';
 import { render } from '@testing-library/react';
 
 import { Surface, Sector } from '../../src';
+import { SectorWithFocusIndicator } from '../../src/shape/Sector';
+import { assertNotNull } from '../helper/assertNotNull';
 
 describe('<Sector />', () => {
   test('Render 1 sector in simple Sector', () => {
@@ -97,6 +99,35 @@ describe('<Sector />', () => {
       expect(path).toContain('a20,20,0,0,1,40,0');
       expect(path).toContain('a20,20,0,0,1,-40,0');
     });
+  });
+
+  test('the focus indicator follows a transform-box change on the slice style', () => {
+    function renderSector(transformBox: 'view-box' | 'fill-box') {
+      return (
+        <Surface width={200} height={200}>
+          <SectorWithFocusIndicator
+            cx={100}
+            cy={100}
+            innerRadius={0}
+            outerRadius={80}
+            startAngle={0}
+            endAngle={90}
+            showFocusIndicator
+            style={{ transform: 'scale(2)', transformBox, transformOrigin: '0px 0px' }}
+          />
+        </Surface>
+      );
+    }
+
+    const { container, rerender } = render(renderSector('view-box'));
+    const indicator = container.querySelector('.recharts-pie-focus-indicator');
+    assertNotNull(indicator);
+    expect(window.getComputedStyle(indicator).transformBox).toBe('view-box');
+
+    rerender(renderSector('fill-box'));
+
+    expect(container.querySelector('.recharts-pie-focus-indicator')).toBe(indicator);
+    expect(window.getComputedStyle(indicator).transformBox).toBe('fill-box');
   });
 
   test("Don't render any sector when props is invalid", () => {

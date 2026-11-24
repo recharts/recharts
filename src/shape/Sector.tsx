@@ -330,7 +330,7 @@ export const defaultSectorProps = {
 } as const satisfies Partial<Props>;
 
 const transformProperties = ['transform', 'transform-box', 'transform-origin', 'translate', 'rotate', 'scale'];
-const animatedTransformProperties = new Set(['transform', 'translate', 'rotate', 'scale', 'all']);
+const animatedTransformProperties = new Set(['transform', 'transform-origin', 'translate', 'rotate', 'scale', 'all']);
 
 function readTransitionProperty(animation: Animation): string | null {
   if (!('transitionProperty' in animation)) {
@@ -353,7 +353,7 @@ function animationMovesSector(animation: Animation, sector: Element): boolean {
     return false;
   }
   return effect.getKeyframes().some(frame =>
-    ['transform', 'translate', 'rotate', 'scale'].some(key => {
+    ['transform', 'transformOrigin', 'translate', 'rotate', 'scale'].some(key => {
       const value = frame[key];
       return typeof value === 'string' && value !== '';
     }),
@@ -549,7 +549,7 @@ function SectorImpl({ showFocusIndicator, ...sectorProps }: StringFillProps & { 
     className,
     transform: transformAttribute,
   } = props;
-  const { transform, transformOrigin, translate, rotate, scale } = props.style ?? {};
+  const { transform, transformBox, transformOrigin, translate, rotate, scale } = props.style ?? {};
   const rendered = !(outerRadius < innerRadius || startAngle === endAngle);
 
   useLayoutEffect(() => {
@@ -564,6 +564,7 @@ function SectorImpl({ showFocusIndicator, ...sectorProps }: StringFillProps & { 
     className,
     transformAttribute,
     transform,
+    transformBox,
     transformOrigin,
     translate,
     rotate,

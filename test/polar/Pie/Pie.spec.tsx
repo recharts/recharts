@@ -1991,6 +1991,119 @@ describe('<Pie />', () => {
       expect(slice).toHaveStyle({ outline: 'none' });
     });
 
+    test('the focus indicator follows a transform-origin transition', async () => {
+      const user = userEventSetup();
+      const { container } = render(
+        <>
+          <style data-testid="origin-slice-style">
+            {
+              'path.origin-slice { transform: scale(2); transform-origin: 0px 0px; transition: transform-origin 200ms; }'
+            }
+          </style>
+          <PieChart width={200} height={200} accessibilityLayer={false}>
+            <Pie
+              data={[{ value: 1 }]}
+              dataKey="value"
+              isAnimationActive={false}
+              rootTabIndex={-1}
+              shape={{ tabIndex: 0, className: 'origin-slice' }}
+            />
+          </PieChart>
+        </>,
+      );
+      const slice = container.querySelector('.origin-slice');
+      assertNotNull(slice);
+      await user.tab();
+
+      const indicator = container.querySelector('.recharts-pie-focus-indicator');
+      assertNotNull(indicator);
+      expect(window.getComputedStyle(indicator).transformOrigin).toBe('0px 0px');
+
+      const styleElement = container.querySelector('[data-testid="origin-slice-style"]');
+      assertNotNull(styleElement);
+      slice.dispatchEvent(new TransitionEvent('transitionrun', { propertyName: 'transform-origin' }));
+      styleElement.textContent =
+        'path.origin-slice { transform: scale(2); transform-origin: 20px 10px; transition: transform-origin 200ms; }';
+      act(() => {
+        vi.runOnlyPendingTimers();
+      });
+
+      expect(window.getComputedStyle(indicator).transformOrigin).toBe('20px 10px');
+
+      slice.dispatchEvent(new TransitionEvent('transitionend', { propertyName: 'transform-origin' }));
+      styleElement.textContent =
+        'path.origin-slice { transform: scale(2); transform-origin: 40px 30px; transition: transform-origin 200ms; }';
+      act(() => {
+        vi.runOnlyPendingTimers();
+      });
+
+      expect(window.getComputedStyle(indicator).transformOrigin).toBe('20px 10px');
+    });
+
+    test('the focus indicator follows a transform-origin transition already running on focus', async () => {
+      const user = userEventSetup();
+      const { container } = render(
+        <>
+          <style data-testid="origin-live-style">
+            {'path.origin-live { transform: scale(2); transform-origin: 0px 0px; }'}
+          </style>
+          <PieChart width={200} height={200} accessibilityLayer={false}>
+            <Pie
+              data={[{ value: 1 }]}
+              dataKey="value"
+              isAnimationActive={false}
+              rootTabIndex={-1}
+              shape={{ tabIndex: 0, className: 'origin-live' }}
+            />
+          </PieChart>
+        </>,
+      );
+      const slice = container.querySelector('.origin-live');
+      assertNotNull(slice);
+      let finish: (() => void) | undefined;
+      const animation = {
+        playState: 'running' as const,
+        transitionProperty: 'transform-origin',
+        addEventListener(type: string, listener: EventListener) {
+          if (type === 'finish') {
+            finish = () => {
+              listener(new Event('finish'));
+            };
+          }
+        },
+        removeEventListener() {},
+      };
+      Object.defineProperty(slice, 'getAnimations', {
+        configurable: true,
+        value: () => [animation],
+      });
+
+      await user.tab();
+      const indicator = container.querySelector('.recharts-pie-focus-indicator');
+      assertNotNull(indicator);
+      expect(window.getComputedStyle(indicator).transformOrigin).toBe('0px 0px');
+
+      const styleElement = container.querySelector('[data-testid="origin-live-style"]');
+      assertNotNull(styleElement);
+      styleElement.textContent = 'path.origin-live { transform: scale(2); transform-origin: 20px 10px; }';
+      act(() => {
+        vi.runOnlyPendingTimers();
+      });
+
+      expect(window.getComputedStyle(indicator).transformOrigin).toBe('20px 10px');
+
+      if (finish == null) {
+        throw new Error('expected the running transform-origin transition to be tracked');
+      }
+      finish();
+      styleElement.textContent = 'path.origin-live { transform: scale(2); transform-origin: 40px 30px; }';
+      act(() => {
+        vi.runOnlyPendingTimers();
+      });
+
+      expect(window.getComputedStyle(indicator).transformOrigin).toBe('20px 10px');
+    });
+
     test('Tab can focus in and out of the pie chart', async () => {
       const user = userEventSetup();
       expect.assertions(3);
