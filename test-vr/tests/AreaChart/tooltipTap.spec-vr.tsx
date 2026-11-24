@@ -22,3 +22,20 @@ testWithThemes('AreaChart shows the hover tooltip on the first tap', async ({ mo
   await page.mouse.move(10, 300);
   await expect(tooltip).toBeHidden();
 });
+
+testWithThemes('an interrupted touch inside the chart preserves outside dismissal', async ({ mountStory, page }) => {
+  const chart = await mountStory('AreaChart/tooltipTap/AreaChartWithHoverTooltip');
+  const tooltip = chart.locator('.recharts-tooltip-wrapper');
+  await expect(chart.locator('.recharts-area-curve')).toBeVisible();
+
+  await chart.tap({ position: { x: 240, y: 100 } });
+  await expect(tooltip).toBeVisible();
+
+  // Dispatch pointer events directly to model a cancelled gesture without compatibility mouse events.
+  await chart.dispatchEvent('pointerdown', { pointerType: 'touch' });
+  await chart.dispatchEvent('pointercancel', { pointerType: 'touch' });
+  await expect(tooltip).toBeVisible();
+
+  await page.locator('body').dispatchEvent('pointerdown', { pointerType: 'touch' });
+  await expect(tooltip).toBeHidden();
+});

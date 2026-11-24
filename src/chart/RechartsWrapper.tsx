@@ -313,17 +313,18 @@ export const RechartsWrapper = forwardRef<HTMLDivElement | null, RechartsWrapper
       (e: React.MouseEvent<HTMLDivElement>) => {
         if (usesAxisHover && 'pointerType' in e.nativeEvent && e.nativeEvent.pointerType === 'touch') {
           // A tap can generate a mouseleave as the browser restores the mouse cursor's hover target.
-          // Keep the tapped value until the next pointer interaction, which may start outside the chart.
+          // Keep the tapped value until a pointer interaction outside the chart.
           const chart = e.currentTarget;
           touchTap.current?.abort();
           const controller = new AbortController();
           touchTap.current = controller;
           const releaseTap = (event: PointerEvent) => {
+            if (event.composedPath().includes(chart)) {
+              return;
+            }
             controller.abort();
             touchTap.current = null;
-            if (!event.composedPath().includes(chart)) {
-              dispatch(mouseLeaveChart());
-            }
+            dispatch(mouseLeaveChart());
           };
           const options = { capture: true, signal: controller.signal };
           chart.ownerDocument.addEventListener('pointerdown', releaseTap, options);
