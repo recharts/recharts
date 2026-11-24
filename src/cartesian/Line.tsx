@@ -1,7 +1,6 @@
 import * as React from 'react';
 import { Component, MutableRefObject, ReactElement, ReactNode, RefObject, useCallback, useMemo, useRef } from 'react';
 
-import { clsx } from 'clsx';
 import { once } from 'es-toolkit';
 import { CurveType, Props as CurveProps } from '../shape/Curve';
 import { Layer } from '../container/Layer';
@@ -18,6 +17,7 @@ import { Dots } from '../component/Dots';
 import { getLegendPayloadDot, getNoDotsLegendType } from '../shape/DotSymbol';
 import { ErrorBarDataItem, ErrorBarDataPointFormatter } from './ErrorBar';
 import { interpolate, isNullish, noop } from '../util/DataUtils';
+import { clsx } from '../util/clsx';
 import { isClipDot } from '../util/ReactUtils';
 import { getCateCoordinateOfLine, getTooltipNameProp, getValueByDataKey } from '../util/ChartUtils';
 import {

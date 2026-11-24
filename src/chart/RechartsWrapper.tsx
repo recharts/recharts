@@ -11,7 +11,7 @@ import {
   useRef,
   useState,
 } from 'react';
-import { clsx } from 'clsx';
+import { clsx } from '../util/clsx';
 import { mouseLeaveChart } from '../state/tooltipSlice';
 import { useAppDispatch, useAppSelector } from '../state/hooks';
 import { mouseClickAction, mouseMoveAction } from '../state/mouseEventsMiddleware';

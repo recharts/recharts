@@ -4,6 +4,7 @@ import { Line, LineChart, XAxis, YAxis } from '../../src';
 import { createSelectorTestCase } from '../helper/createSelectorTestCase';
 import { mockGetBoundingClientRect } from '../helper/mockGetBoundingClientRect';
 import { expectLastCalledWith } from '../helper/expectLastCalledWith';
+import { assertNotNull } from '../helper/assertNotNull';
 import { useNeedsClip } from '../../src/cartesian/GraphicalItemClipPath';
 import { selectXAxisSettings, selectYAxisSettings } from '../../src/state/selectors/axisSelectors';
 
@@ -247,7 +248,8 @@ describe('GraphicalItemClipPath', () => {
         expect(curve).not.toBeNull();
         const clipPathAttr = curve?.getAttribute('clip-path');
         expect(clipPathAttr).not.toBeNull();
-        expect(clipPathAttr!).toContain('url(#clipPath-');
+        assertNotNull(clipPathAttr);
+        expect(clipPathAttr).toContain('url(#clipPath-');
       });
 
       it('should render a GraphicalItemClipPath SVG element', () => {

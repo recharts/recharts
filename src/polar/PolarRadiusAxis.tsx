@@ -3,7 +3,6 @@ import { FunctionComponent, ReactElement, ReactNode, SVGProps, useEffect, useMem
 import maxBy from 'es-toolkit/compat/maxBy';
 import minBy from 'es-toolkit/compat/minBy';
 
-import { clsx } from 'clsx';
 import { Text } from '../component/Text';
 import { PolarLabelContextProvider, PolarLabelFromLabelProp } from '../component/Label';
 import { Layer } from '../container/Layer';
@@ -37,6 +36,7 @@ import { CustomScaleDefinition } from '../util/scale/CustomScaleDefinition';
 import { usePolarChartLayout } from '../context/chartLayoutContext';
 import { noop } from '../util/DataUtils';
 import { getAxisTypeBasedOnLayout } from '../util/getAxisTypeBasedOnLayout';
+import { clsx } from '../util/clsx';
 import { getClassNameFromUnknown } from '../util/getClassNameFromUnknown';
 import { Styles1D } from '../theme/RechartsTheme';
 import { useBackwardsCompatibleTheme } from '../theme/useBackwardsCompatibleTheme';

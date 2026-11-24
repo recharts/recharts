@@ -3,6 +3,8 @@ import MultiXAxisExample, { multiXAxisDescription } from './MultiXAxisExample.ts
 import MultiXAxisExampleSource from './MultiXAxisExample.tsx?raw';
 import XAxisAutoHeightExample, { xAxisAutoHeightDescription } from './XAxisAutoHeightExample.tsx';
 import XAxisAutoHeightExampleSource from './XAxisAutoHeightExample.tsx?raw';
+import XAxisTickIntervalExample, { xAxisTickIntervalDescription } from './XAxisTickIntervalExample.tsx';
+import XAxisTickIntervalExampleSource from './XAxisTickIntervalExample.tsx?raw';
 
 export const xAxisExamples = {
   MultiXAxisExample: {
@@ -16,5 +18,11 @@ export const xAxisExamples = {
     Component: XAxisAutoHeightExample,
     sourceCode: XAxisAutoHeightExampleSource,
     description: xAxisAutoHeightDescription,
+  },
+  XAxisTickIntervalExample: {
+    name: 'Tick Interval',
+    Component: XAxisTickIntervalExample,
+    sourceCode: XAxisTickIntervalExampleSource,
+    description: xAxisTickIntervalDescription,
   },
 } satisfies Record<string, ChartExample>;

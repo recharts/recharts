@@ -12,7 +12,7 @@ import {
   symbolWye,
   SymbolType as D3SymbolType,
 } from 'victory-vendor/d3-shape';
-import { clsx } from 'clsx';
+import { clsx } from '../util/clsx';
 import { FillObjectPaint, getShapeBounds } from '../fill/fillDefinitions';
 import { RechartsFill } from '../fill/RechartsFill';
 import { SymbolType } from '../util/types';

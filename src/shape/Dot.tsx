@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { clsx } from 'clsx';
+import { clsx } from '../util/clsx';
 import { RechartsFill } from '../fill/RechartsFill';
 import { FillObjectPaint, getShapeBounds } from '../fill/fillDefinitions';
 import { PresentationAttributesWithProps, adaptEventHandlers } from '../util/types';

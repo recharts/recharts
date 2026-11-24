@@ -11,13 +11,13 @@ import {
   useContext,
   useEffect,
 } from 'react';
-import { clsx } from 'clsx';
 import { scalePoint, ScalePoint } from 'victory-vendor/d3-scale';
 import range from 'es-toolkit/compat/range';
 import { Layer } from '../container/Layer';
 import { Text } from '../component/Text';
 import { getValueByDataKey } from '../util/ChartUtils';
 import { isNumber, isNotNil } from '../util/DataUtils';
+import { clsx } from '../util/clsx';
 import { generatePrefixStyle } from '../util/CssPrefixUtils';
 import { DataConsumer, DataKey, Padding } from '../util/types';
 import { useChartData, useDataIndex } from '../context/chartDataContext';

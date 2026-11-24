@@ -3,7 +3,7 @@
  */
 import * as React from 'react';
 import { SVGProps, useEffect, useRef, useState } from 'react';
-import { clsx } from 'clsx';
+import { clsx } from '../util/clsx';
 import { RechartsFill } from '../fill/RechartsFill';
 import { FillObjectPaint, getShapeBounds } from '../fill/fillDefinitions';
 import { AnimationDuration, EasingInput } from '../util/types';

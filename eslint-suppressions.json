@@ -516,9 +516,6 @@
     "@typescript-eslint/no-explicit-any": {
       "count": 12
     },
-    "react-perf/jsx-no-new-array-as-prop": {
-      "count": 1
-    },
     "react-perf/jsx-no-new-object-as-prop": {
       "count": 1
     }
@@ -909,11 +906,6 @@
     },
     "@typescript-eslint/no-non-null-assertion": {
       "count": 68
-    }
-  },
-  "test/cartesian/GraphicalItemClipPath.spec.tsx": {
-    "@typescript-eslint/no-non-null-assertion": {
-      "count": 1
     }
   },
   "test/cartesian/Line.animation.spec.tsx": {

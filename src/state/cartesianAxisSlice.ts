@@ -1,4 +1,4 @@
-import { createSlice, PayloadAction, prepareAutoBatched } from '@reduxjs/toolkit';
+import { createSlice, PayloadAction, prepareAutoBatched, Reducer } from '@reduxjs/toolkit';
 import { castDraft } from 'immer';
 import {
   AxisDomain,
@@ -328,4 +328,4 @@ export const {
   updateXAxisHeight,
 } = cartesianAxisSlice.actions;
 
-export const cartesianAxisReducer = cartesianAxisSlice.reducer;
+export const cartesianAxisReducer: Reducer<AxisMapState> = cartesianAxisSlice.reducer;

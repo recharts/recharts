@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { ReactNode, SVGAttributes } from 'react';
-import { clsx } from 'clsx';
+import { clsx } from '../util/clsx';
 import { svgPropertiesAndEvents } from '../util/svgPropertiesAndEvents';
 
 interface LayerProps {

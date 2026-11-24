@@ -77,6 +77,9 @@ export default defineConfig({
         },
       },
       {
+        // Since Vitest 5, inline projects extend the root config by default. Opt out so the
+        // root exclude (which ignores scripts/**) does not filter out these tests.
+        extends: false,
         test: {
           name: 'build-output',
           include: ['scripts/**/buildOutput.test.ts', 'scripts/**/verify-exports.test.ts'],
@@ -85,6 +88,7 @@ export default defineConfig({
         },
       },
       {
+        extends: false,
         test: {
           name: 'treeshaking',
           include: ['scripts/treeshaking.test.ts', 'scripts/generate-bundle-data.test.ts'],
