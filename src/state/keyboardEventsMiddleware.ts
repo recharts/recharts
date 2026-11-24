@@ -7,13 +7,47 @@ import {
   selectTooltipDisplayedData,
 } from './selectors/tooltipSelectors';
 import { selectCoordinateForDefaultIndex } from './selectors/selectors';
-import { selectChartDirection, selectTooltipAxisDataKey } from './selectors/axisSelectors';
+import { AxisDirection, selectChartDirection, selectTooltipAxisDataKey } from './selectors/axisSelectors';
 import { combineActiveTooltipIndex } from './selectors/combiners/combineActiveTooltipIndex';
 import { selectTooltipEventType } from './selectors/selectTooltipEventType';
 
 export const keyDownAction = createAction<KeyboardEvent['key']>('keyDown');
 export const focusAction = createAction('focus');
 export const blurAction = createAction('blur');
+
+/**
+ * Converts an arrow key into a step through the data, taking the direction of the chart into account.
+ *
+ * - ArrowRight / ArrowLeft step forward / backward. They are flipped only for the `right-to-left` direction,
+ *   that is a horizontal layout with a reversed XAxis. In a vertical layout they are never flipped,
+ *   not even when the YAxis is reversed.
+ * - ArrowDown / ArrowUp step along the categories of a vertical chart, and follow the direction of the YAxis.
+ *   They are ignored in all other layouts, where the browser keeps their default.
+ *
+ * @param key the pressed key
+ * @param direction the direction in which the data are laid out
+ * @returns +1 for the next data point, -1 for the previous one, or null if the key does not move the tooltip
+ */
+function getKeyboardMovement(key: KeyboardEvent['key'], direction: AxisDirection | undefined): 1 | -1 | null {
+  switch (key) {
+    case 'ArrowRight':
+      return direction === 'right-to-left' ? -1 : 1;
+    case 'ArrowLeft':
+      return direction === 'right-to-left' ? 1 : -1;
+    case 'ArrowDown':
+      if (direction === 'top-to-bottom') {
+        return 1;
+      }
+      return direction === 'bottom-to-top' ? -1 : null;
+    case 'ArrowUp':
+      if (direction === 'top-to-bottom') {
+        return -1;
+      }
+      return direction === 'bottom-to-top' ? 1 : null;
+    default:
+      return null;
+  }
+}
 
 export const keyboardEventsMiddleware = createListenerMiddleware<RechartsRootState>();
 
@@ -52,7 +86,13 @@ keyboardEventsMiddleware.startListening({
         }
         const { keyboardInteraction } = currentState.tooltip;
         const key = latestKeyboardActionPayload;
-        if (key !== 'ArrowRight' && key !== 'ArrowLeft' && key !== 'Enter') {
+        if (
+          key !== 'ArrowRight' &&
+          key !== 'ArrowLeft' &&
+          key !== 'ArrowDown' &&
+          key !== 'ArrowUp' &&
+          key !== 'Enter'
+        ) {
           return;
         }
 
@@ -88,14 +128,14 @@ keyboardEventsMiddleware.startListening({
           return;
         }
 
-        const direction = selectChartDirection(currentState);
-        const directionMultiplier = direction === 'left-to-right' ? 1 : -1;
-        const movement = key === 'ArrowRight' ? 1 : -1;
+        const movement = getKeyboardMovement(key, selectChartDirection(currentState));
+        if (movement == null) {
+          return;
+        }
         let nextIndex: number;
         if (isOutsideDomain) {
           const axisDataKey = selectTooltipAxisDataKey(currentState);
           const domain = selectTooltipAxisDomain(currentState);
-          const effectiveMovement = movement * directionMultiplier;
 
           // Build a minimal TooltipInteractionState for the candidate-index check.
           const mkInteraction = (i: number): TooltipInteractionState => ({
@@ -107,7 +147,7 @@ keyboardEventsMiddleware.startListening({
           });
 
           nextIndex = -1;
-          if (effectiveMovement > 0) {
+          if (movement > 0) {
             for (let i = 0; i < displayedData.length; i++) {
               if (combineActiveTooltipIndex(mkInteraction(i), displayedData, axisDataKey, domain) != null) {
                 nextIndex = i;
@@ -127,7 +167,7 @@ keyboardEventsMiddleware.startListening({
             return;
           }
         } else {
-          nextIndex = currentIndex + movement * directionMultiplier;
+          nextIndex = currentIndex + movement;
           const dataLength = tooltipTicks?.length || displayedData.length;
           if (dataLength === 0 || nextIndex >= dataLength || nextIndex < 0) {
             return;

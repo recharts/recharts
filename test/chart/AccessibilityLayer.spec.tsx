@@ -4,6 +4,8 @@ import { describe, expect, test, vi } from 'vitest';
 import {
   Area,
   AreaChart,
+  Bar,
+  BarChart,
   CartesianGrid,
   DefaultTooltipContent,
   Funnel,
@@ -49,6 +51,18 @@ function arrowRight(container: Element) {
 function arrowLeft(container: Element) {
   fireEvent.keyDown(container, {
     key: 'ArrowLeft',
+  });
+}
+
+function arrowUp(container: Element) {
+  fireEvent.keyDown(container, {
+    key: 'ArrowUp',
+  });
+}
+
+function arrowDown(container: Element) {
+  fireEvent.keyDown(container, {
+    key: 'ArrowDown',
   });
 }
 
@@ -1137,6 +1151,165 @@ describe('AreaChart vertical', () => {
     act(() => getMainSurface(container).focus());
 
     expectTooltipPayload(container, 'Page A', ['uv : 400']);
+  });
+});
+
+describe('BarChart vertical keyboard navigation', () => {
+  function renderVerticalBarChart(reversed: boolean) {
+    return render(
+      <BarChart width={300} height={300} data={PageData} layout="vertical">
+        <Bar dataKey="uv" />
+        <Tooltip />
+        <XAxis type="number" />
+        <YAxis dataKey="name" type="category" reversed={reversed} />
+      </BarChart>,
+    );
+  }
+
+  describe('when the categories run from top to bottom', () => {
+    test('ArrowDown goes to the next category and ArrowUp to the previous one', () => {
+      const { container } = renderVerticalBarChart(false);
+      const svg = getMainSurface(container);
+
+      act(() => svg.focus());
+      expectTooltipPayload(container, 'Page A', ['uv : 400']);
+
+      arrowDown(svg);
+      expectTooltipPayload(container, 'Page B', ['uv : 300']);
+
+      arrowDown(svg);
+      expectTooltipPayload(container, 'Page C', ['uv : 300']);
+
+      arrowUp(svg);
+      expectTooltipPayload(container, 'Page B', ['uv : 300']);
+
+      arrowUp(svg);
+      expectTooltipPayload(container, 'Page A', ['uv : 400']);
+    });
+
+    test('ArrowUp and ArrowDown stop at the first and the last category', () => {
+      const { container } = renderVerticalBarChart(false);
+      const svg = getMainSurface(container);
+
+      act(() => svg.focus());
+      arrowUp(svg);
+      expectTooltipPayload(container, 'Page A', ['uv : 400']);
+
+      for (let i = 0; i < PageData.length + 2; i++) {
+        arrowDown(svg);
+      }
+      expectTooltipPayload(container, 'Page F', ['uv : 189']);
+    });
+
+    test('ArrowRight goes to the next category and ArrowLeft to the previous one, like in a horizontal chart', () => {
+      const { container } = renderVerticalBarChart(false);
+      const svg = getMainSurface(container);
+
+      act(() => svg.focus());
+      expectTooltipPayload(container, 'Page A', ['uv : 400']);
+
+      arrowRight(svg);
+      expectTooltipPayload(container, 'Page B', ['uv : 300']);
+
+      arrowRight(svg);
+      expectTooltipPayload(container, 'Page C', ['uv : 300']);
+
+      arrowLeft(svg);
+      expectTooltipPayload(container, 'Page B', ['uv : 300']);
+    });
+  });
+
+  describe('when the YAxis is reversed and the categories run from bottom to top', () => {
+    test('ArrowUp goes to the next category and ArrowDown to the previous one', () => {
+      const { container } = renderVerticalBarChart(true);
+      const svg = getMainSurface(container);
+
+      act(() => svg.focus());
+      expectTooltipPayload(container, 'Page A', ['uv : 400']);
+
+      // Page A is the bottom-most category, there is nothing below it
+      arrowDown(svg);
+      expectTooltipPayload(container, 'Page A', ['uv : 400']);
+
+      arrowUp(svg);
+      expectTooltipPayload(container, 'Page B', ['uv : 300']);
+
+      arrowUp(svg);
+      expectTooltipPayload(container, 'Page C', ['uv : 300']);
+
+      arrowDown(svg);
+      expectTooltipPayload(container, 'Page B', ['uv : 300']);
+    });
+
+    test('ArrowRight still goes to the next category and ArrowLeft to the previous one', () => {
+      const { container } = renderVerticalBarChart(true);
+      const svg = getMainSurface(container);
+
+      act(() => svg.focus());
+      expectTooltipPayload(container, 'Page A', ['uv : 400']);
+
+      arrowLeft(svg);
+      expectTooltipPayload(container, 'Page A', ['uv : 400']);
+
+      arrowRight(svg);
+      expectTooltipPayload(container, 'Page B', ['uv : 300']);
+
+      arrowRight(svg);
+      expectTooltipPayload(container, 'Page C', ['uv : 300']);
+
+      arrowLeft(svg);
+      expectTooltipPayload(container, 'Page B', ['uv : 300']);
+    });
+  });
+
+  test('ArrowUp and ArrowDown do nothing in a horizontal chart', () => {
+    const { container } = render(
+      <BarChart width={300} height={300} data={PageData}>
+        <Bar dataKey="uv" />
+        <Tooltip />
+        <XAxis dataKey="name" />
+        <YAxis />
+      </BarChart>,
+    );
+    const svg = getMainSurface(container);
+
+    act(() => svg.focus());
+    expectTooltipPayload(container, 'Page A', ['uv : 400']);
+
+    arrowDown(svg);
+    expectTooltipPayload(container, 'Page A', ['uv : 400']);
+
+    arrowRight(svg);
+    expectTooltipPayload(container, 'Page B', ['uv : 300']);
+
+    arrowUp(svg);
+    expectTooltipPayload(container, 'Page B', ['uv : 300']);
+  });
+
+  describe('browser default of the arrow keys', () => {
+    // fireEvent returns false only when a handler called preventDefault, so invert it to read "was the default consumed".
+    function defaultConsumed(container: HTMLElement, key: string): boolean {
+      const svg = getMainSurface(container);
+      act(() => svg.focus());
+      return !fireEvent.keyDown(svg, { key });
+    }
+
+    test.each(['ArrowUp', 'ArrowDown'])('should consume the default of %s in a vertical chart', key => {
+      const { container } = renderVerticalBarChart(false);
+      expect(defaultConsumed(container, key)).toBe(true);
+    });
+
+    test.each(['ArrowUp', 'ArrowDown'])('should leave the default of %s alone in a horizontal chart', key => {
+      const { container } = render(
+        <BarChart width={300} height={300} data={PageData}>
+          <Bar dataKey="uv" />
+          <Tooltip />
+          <XAxis dataKey="name" />
+          <YAxis />
+        </BarChart>,
+      );
+      expect(defaultConsumed(container, key)).toBe(false);
+    });
   });
 });
 
