@@ -516,9 +516,6 @@
     "@typescript-eslint/no-explicit-any": {
       "count": 12
     },
-    "react-perf/jsx-no-new-array-as-prop": {
-      "count": 1
-    },
     "react-perf/jsx-no-new-object-as-prop": {
       "count": 1
     }
