@@ -7,7 +7,7 @@
  *
  * This renderedTickSlice stores those actually rendered ticks so that we can return them from a hook later.
  */
-import { createSlice, PayloadAction } from '@reduxjs/toolkit';
+import { createSlice, PayloadAction, Reducer } from '@reduxjs/toolkit';
 import { castDraft, WritableDraft } from 'immer';
 import { TickItem } from '../util/types';
 import { areRenderedTicksEqual } from '../util/propsAreEqual';
@@ -60,4 +60,4 @@ export const renderedTicksSlice = createSlice({
 
 export const { setRenderedTicks, removeRenderedTicks } = renderedTicksSlice.actions;
 
-export const renderedTicksReducer = renderedTicksSlice.reducer;
+export const renderedTicksReducer: Reducer<RenderedTicksState> = renderedTicksSlice.reducer;

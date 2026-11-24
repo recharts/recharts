@@ -1,4 +1,4 @@
-import { createSlice, PayloadAction } from '@reduxjs/toolkit';
+import { createSlice, PayloadAction, Reducer } from '@reduxjs/toolkit';
 import { ErrorBarDirection } from '../cartesian/ErrorBar';
 import { DataKey } from '../util/types';
 import { GraphicalItemId } from './graphicalItemsSlice';
@@ -62,4 +62,4 @@ const errorBarSlice = createSlice({
 
 export const { addErrorBar, replaceErrorBar, removeErrorBar } = errorBarSlice.actions;
 
-export const errorBarReducer = errorBarSlice.reducer;
+export const errorBarReducer: Reducer<ErrorBarsState> = errorBarSlice.reducer;

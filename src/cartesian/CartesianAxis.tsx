@@ -6,7 +6,6 @@ import { SVGProps, useState, useRef, useCallback, forwardRef, useImperativeHandl
 
 import get from 'es-toolkit/compat/get';
 import isEqual from 'es-toolkit/compat/isEqual';
-import { clsx } from 'clsx';
 import { Layer } from '../container/Layer';
 import { Text, Props as TextProps, TextAnchor, TextVerticalAnchor, isValidTextAnchor } from '../component/Text';
 import { CartesianLabelContextProvider, ImplicitLabelType, CartesianLabelFromLabelProp } from '../component/Label';
@@ -33,6 +32,7 @@ import { getCalculatedXAxisHeight } from '../util/XAxisUtils';
 import { RequiresDefaultProps, resolveDefaultProps } from '../util/resolveDefaultProps';
 import { ZIndexable, ZIndexLayer } from '../zIndex/ZIndexLayer';
 import { DefaultZIndexes } from '../zIndex/DefaultZIndexes';
+import { clsx } from '../util/clsx';
 import { getClassNameFromUnknown } from '../util/getClassNameFromUnknown';
 import { removeRenderedTicks, setRenderedTicks } from '../state/renderedTicksSlice';
 import { useAppDispatch } from '../state/hooks';

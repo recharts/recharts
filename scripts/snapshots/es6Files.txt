@@ -264,6 +264,7 @@
   "es6/util/XAxisUtils.js",
   "es6/util/YAxisUtils.js",
   "es6/util/axisPropsAreEqual.js",
+  "es6/util/clsx.js",
   "es6/util/createCartesianCharts.js",
   "es6/util/createEventProxy.js",
   "es6/util/createPolarCharts.js",

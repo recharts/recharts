@@ -1,7 +1,18 @@
 import React from 'react';
 import { MockInstance, vi, beforeEach, describe, it, test, expect, Mock } from 'vitest';
 import { screen, render, fireEvent } from '@testing-library/react';
-import { BarChart, ReferenceLine, Bar, XAxis, YAxis, LineChart, Line, Brush, ComposedChart } from '../../../src';
+import {
+  BarChart,
+  ReferenceLine,
+  Bar,
+  XAxis,
+  YAxis,
+  LineChart,
+  Line,
+  Brush,
+  ComposedChart,
+  IfOverflow,
+} from '../../../src';
 import { useAppSelector } from '../../../src/state/hooks';
 import { selectAxisRangeWithReverse, selectReferenceLinesByAxis } from '../../../src/state/selectors/axisSelectors';
 import { pageData } from '../../../storybook/stories/data';
@@ -468,6 +479,48 @@ describe('<ReferenceLine />', () => {
 
     expect(refLine[0]).toHaveAttribute('y', '104.3');
     expect(topTick.textContent).toEqual('105');
+  });
+
+  describe('segment with an end that is not a category on the axis', () => {
+    test.each(['discard', 'hidden', 'visible', 'extendDomain'] satisfies ReadonlyArray<IfOverflow>)(
+      'should not render a segment when an end is outside the brushed range and ifOverflow=%s',
+      ifOverflow => {
+        const { container } = render(
+          <LineChart width={500} height={300} data={data}>
+            <XAxis dataKey="name" />
+            <YAxis />
+            <Line dataKey="uv" isAnimationActive={false} />
+            <ReferenceLine
+              segment={[
+                { x: '201102', y: 0 },
+                { x: '201108', y: 2 },
+              ]}
+              ifOverflow={ifOverflow}
+            />
+            <Brush dataKey="name" startIndex={4} endIndex={8} />
+          </LineChart>,
+        );
+        expectReferenceLines(container, []);
+      },
+    );
+
+    it('should still render a segment when both ends are in the brushed range', () => {
+      const { container } = render(
+        <LineChart width={500} height={300} data={data}>
+          <XAxis dataKey="name" />
+          <YAxis />
+          <Line dataKey="uv" isAnimationActive={false} />
+          <ReferenceLine
+            segment={[
+              { x: '201106', y: 0 },
+              { x: '201108', y: 2 },
+            ]}
+          />
+          <Brush dataKey="name" startIndex={4} endIndex={8} />
+        </LineChart>,
+      );
+      expect(container.querySelectorAll('.recharts-reference-line-line')).toHaveLength(1);
+    });
   });
 
   describe('state integration', () => {
