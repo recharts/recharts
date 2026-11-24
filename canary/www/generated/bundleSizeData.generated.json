@@ -1,45 +1,45 @@
 {
   "treemap": {
     "examplePath": "www/src/views/IndexView/IndexLineChart.tsx",
-    "totalSize": 1015451,
-    "totalSizeLabel": "991.65 KB",
+    "totalSize": 1017200,
+    "totalSizeLabel": "993.36 KB",
     "moduleCount": 386,
-    "generatedAt": "2026-11-24T15:48:14.789Z",
+    "generatedAt": "2026-11-24T16:40:07.184Z",
     "stages": [
       {
         "stage": "es6-folder",
-        "bytes": 1668615,
+        "bytes": 1671211,
         "humanReadableSize": "1.59 MB",
         "reductionFromBaselinePercent": 0
       },
       {
         "stage": "tree-shaken",
-        "bytes": 1018376,
-        "humanReadableSize": "994.51 KB",
+        "bytes": 1020125,
+        "humanReadableSize": "996.22 KB",
         "reductionFromBaselinePercent": 0
       },
       {
         "stage": "minified",
-        "bytes": 327141,
-        "humanReadableSize": "319.47 KB",
-        "reductionFromBaselinePercent": 67.88
+        "bytes": 327155,
+        "humanReadableSize": "319.49 KB",
+        "reductionFromBaselinePercent": 67.93
       },
       {
         "stage": "minified+gzip",
-        "bytes": 107247,
-        "humanReadableSize": "104.73 KB",
-        "reductionFromBaselinePercent": 89.47
+        "bytes": 107236,
+        "humanReadableSize": "104.72 KB",
+        "reductionFromBaselinePercent": 89.49
       }
     ],
     "tree": {
       "name": "bundle",
       "fullPath": "bundle",
-      "value": 1015451,
+      "value": 1017200,
       "children": [
         {
           "name": "src",
           "fullPath": "src",
-          "value": 610253,
+          "value": 612370,
           "children": [
             {
               "name": "state",
@@ -452,7 +452,7 @@
             {
               "name": "util",
               "fullPath": "src/util",
-              "value": 120638,
+              "value": 122755,
               "children": [
                 {
                   "name": "scale",
@@ -579,6 +579,11 @@
                   "name": "DOMUtils.ts",
                   "fullPath": "src/util/DOMUtils.ts",
                   "value": 2400
+                },
+                {
+                  "name": "clsx.ts",
+                  "fullPath": "src/util/clsx.ts",
+                  "value": 2117
                 },
                 {
                   "name": "svgPropertiesAndEvents.ts",
@@ -1190,7 +1195,7 @@
         {
           "name": "node_modules",
           "fullPath": "node_modules",
-          "value": 404157,
+          "value": 403789,
           "children": [
             {
               "name": "@reduxjs",
@@ -2574,25 +2579,6 @@
                       "name": "index.js",
                       "fullPath": "node_modules/internmap/src/index.js",
                       "value": 1175
-                    }
-                  ]
-                }
-              ]
-            },
-            {
-              "name": "clsx",
-              "fullPath": "node_modules/clsx",
-              "value": 368,
-              "children": [
-                {
-                  "name": "dist",
-                  "fullPath": "node_modules/clsx/dist",
-                  "value": 368,
-                  "children": [
-                    {
-                      "name": "clsx.mjs",
-                      "fullPath": "node_modules/clsx/dist/clsx.mjs",
-                      "value": 368
                     }
                   ]
                 }
@@ -2664,45 +2650,45 @@
   },
   "sunburst": {
     "examplePath": "www/src/views/IndexView/IndexLineChart.tsx",
-    "totalSize": 1015451,
-    "totalSizeLabel": "991.65 KB",
+    "totalSize": 1017200,
+    "totalSizeLabel": "993.36 KB",
     "moduleCount": 386,
-    "generatedAt": "2026-11-24T15:48:16.314Z",
+    "generatedAt": "2026-11-24T16:40:08.804Z",
     "stages": [
       {
         "stage": "es6-folder",
-        "bytes": 1668615,
+        "bytes": 1671211,
         "humanReadableSize": "1.59 MB",
         "reductionFromBaselinePercent": 0
       },
       {
         "stage": "tree-shaken",
-        "bytes": 1018376,
-        "humanReadableSize": "994.51 KB",
+        "bytes": 1020125,
+        "humanReadableSize": "996.22 KB",
         "reductionFromBaselinePercent": 0
       },
       {
         "stage": "minified",
-        "bytes": 327141,
-        "humanReadableSize": "319.47 KB",
-        "reductionFromBaselinePercent": 67.88
+        "bytes": 327155,
+        "humanReadableSize": "319.49 KB",
+        "reductionFromBaselinePercent": 67.93
       },
       {
         "stage": "minified+gzip",
-        "bytes": 107247,
-        "humanReadableSize": "104.73 KB",
-        "reductionFromBaselinePercent": 89.47
+        "bytes": 107236,
+        "humanReadableSize": "104.72 KB",
+        "reductionFromBaselinePercent": 89.49
       }
     ],
     "tree": {
       "name": "bundle",
       "fullPath": "bundle",
-      "value": 1015451,
+      "value": 1017200,
       "children": [
         {
           "name": "src",
           "fullPath": "src",
-          "value": 610253,
+          "value": 612370,
           "children": [
             {
               "name": "state",
@@ -3115,7 +3101,7 @@
             {
               "name": "util",
               "fullPath": "src/util",
-              "value": 120638,
+              "value": 122755,
               "children": [
                 {
                   "name": "scale",
@@ -3242,6 +3228,11 @@
                   "name": "DOMUtils.ts",
                   "fullPath": "src/util/DOMUtils.ts",
                   "value": 2400
+                },
+                {
+                  "name": "clsx.ts",
+                  "fullPath": "src/util/clsx.ts",
+                  "value": 2117
                 },
                 {
                   "name": "svgPropertiesAndEvents.ts",
@@ -3853,7 +3844,7 @@
         {
           "name": "node_modules",
           "fullPath": "node_modules",
-          "value": 404157,
+          "value": 403789,
           "children": [
             {
               "name": "@reduxjs",
@@ -5237,25 +5228,6 @@
                       "name": "index.js",
                       "fullPath": "node_modules/internmap/src/index.js",
                       "value": 1175
-                    }
-                  ]
-                }
-              ]
-            },
-            {
-              "name": "clsx",
-              "fullPath": "node_modules/clsx",
-              "value": 368,
-              "children": [
-                {
-                  "name": "dist",
-                  "fullPath": "node_modules/clsx/dist",
-                  "value": 368,
-                  "children": [
-                    {
-                      "name": "clsx.mjs",
-                      "fullPath": "node_modules/clsx/dist/clsx.mjs",
-                      "value": 368
                     }
                   ]
                 }
