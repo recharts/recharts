@@ -33,3 +33,7 @@ export function expectLabels(
 
   expect(actualLabels).toEqual(expectedLabels);
 }
+
+export function getLabelListTexts(container: Element): ReadonlyArray<string> {
+  return Array.from(container.querySelectorAll('.recharts-label-list text')).map(text => text.textContent ?? '');
+}

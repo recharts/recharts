@@ -42,7 +42,7 @@ export function SetErrorBarContext<T extends BarRectangleItem | LinePointItem | 
 
 export const useErrorBarContext = () => useContext(ErrorBarContext);
 
-export function ReportErrorBarSettings(props: ErrorBarsSettings): null {
+function ReportErrorBarSettingsImpl(props: ErrorBarsSettings): null {
   const dispatch = useAppDispatch();
   const graphicalItemId = useGraphicalItemId();
   const prevPropsRef = useRef<ErrorBarsSettings | null>(null);
@@ -71,3 +71,5 @@ export function ReportErrorBarSettings(props: ErrorBarsSettings): null {
 
   return null;
 }
+
+export const ReportErrorBarSettings = React.memo(ReportErrorBarSettingsImpl);

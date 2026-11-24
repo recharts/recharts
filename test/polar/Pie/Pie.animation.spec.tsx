@@ -3,9 +3,10 @@ import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { act } from '@testing-library/react';
 import { createSelectorTestCase } from '../../helper/createSelectorTestCase';
 import { PageData } from '../../_data';
-import { Pie, PieChart } from '../../../src';
+import { LabelList, Pie, PieChart } from '../../../src';
 import { expectPieSectorAngles, expectPieSectors } from '../../helper/expectPieSectors';
 import { assertNotNull } from '../../helper/assertNotNull';
+import { getLabelListTexts } from '../../helper/expectLabel';
 import { MockAnimationManager } from '../../animation/MockProgressAnimationManager';
 import { expectAnimatedPiePaths } from '../../helper/expectAnimatedPiePaths';
 import { expectAnimatedPieAngles } from '../../helper/expectAnimatedPieAngles';
@@ -556,6 +557,31 @@ describe('Pie animation', () => {
           { endAngle: 0, startAngle: 240 },
         ],
       ]);
+    });
+  });
+
+  describe('when the surrounding component re-renders', () => {
+    const renderTestCase = createSelectorTestCase(({ children }) => (
+      <PieChart width={100} height={100}>
+        <Pie data={smallerData} dataKey="pv" onAnimationStart={onAnimationStart} onAnimationEnd={onAnimationEnd}>
+          <LabelList dataKey="pv" />
+        </Pie>
+        {children}
+      </PieChart>
+    ));
+
+    it('should keep the labels rendered and not restart the animation', async () => {
+      const { container, animationManager, rerenderSameComponent } = renderTestCase();
+      await animationManager.completeAnimation();
+
+      expect(getLabelListTexts(container)).toEqual(['2400', '4567', '1398']);
+      expect(onAnimationStart).toHaveBeenCalledTimes(1);
+
+      rerenderSameComponent();
+
+      expect(getLabelListTexts(container)).toEqual(['2400', '4567', '1398']);
+      expect(onAnimationStart).toHaveBeenCalledTimes(1);
+      expect(onAnimationEnd).toHaveBeenCalledTimes(1);
     });
   });
 });

@@ -311,6 +311,7 @@
   "lib/util/useId.js",
   "lib/util/usePrefersReducedMotion.js",
   "lib/util/useReportScale.js",
+  "lib/util/useStableValue.js",
   "lib/util/useUniqueId.js",
   "lib/util/zoom",
   "lib/util/zoom/ZoomOptions.js",
