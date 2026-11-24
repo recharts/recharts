@@ -60,6 +60,7 @@ import { selectRadialBarLegendPayload, selectRadialBarSectors } from '../state/s
 import { useAppSelector } from '../state/hooks';
 import { selectActiveTooltipIndex } from '../state/selectors/tooltipSelectors';
 import { SetPolarLegendPayload } from '../state/SetLegendPayload';
+import type { LegendPayload } from '../component/DefaultLegendContent';
 import { AnimatedItems, AnimationInterpolateFn, useAnimationCallbacks } from '../animation/AnimatedItems';
 import { AnimationMatchByProp, matchAppend } from '../animation/matchBy';
 import { AxisId } from '../state/cartesianAxisSlice';
@@ -107,6 +108,8 @@ import {
 } from '../theme/labelTheme';
 
 const STABLE_EMPTY_ARRAY: readonly RadialBarDataItem[] = [];
+
+const noLegendPayload: ReadonlyArray<LegendPayload> = [];
 
 /**
  * @public
@@ -622,15 +625,19 @@ function SetRadialBarPayloadLegend({
 }) {
   const cells = React.useMemo(() => findAllByType(children, Cell), [children]);
   const legendPayload = useAppSelector(state => selectRadialBarLegendPayload(state, legendType));
-  const coloredLegendPayload = legendPayload?.map((entry, index) => {
-    const payload = { ...entry.payload, ...cells[index]?.props };
-    return {
-      ...entry,
-      color: getEntryColor(payload, fill, stroke, unthemedColors),
-      fill: getEntryFillObject(payload, fillObject),
-    };
-  });
-  return <SetPolarLegendPayload legendPayload={coloredLegendPayload ?? []} />;
+  const coloredLegendPayload: ReadonlyArray<LegendPayload> = React.useMemo(
+    () =>
+      legendPayload?.map((entry, index) => {
+        const payload = { ...entry.payload, ...cells[index]?.props };
+        return {
+          ...entry,
+          color: getEntryColor(payload, fill, stroke, unthemedColors),
+          fill: getEntryFillObject(payload, fillObject),
+        };
+      }) ?? noLegendPayload,
+    [legendPayload, cells, fill, stroke, unthemedColors, fillObject],
+  );
+  return <SetPolarLegendPayload legendPayload={coloredLegendPayload} />;
 }
 
 const SetRadialBarTooltipEntrySettings = React.memo(

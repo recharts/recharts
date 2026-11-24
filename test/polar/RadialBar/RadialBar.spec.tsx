@@ -42,6 +42,7 @@ import {
   selectRootMaxBarSize,
 } from '../../../src/state/selectors/rootPropsSelectors';
 import { selectRealScaleType } from '../../../src/state/selectors/axisSelectors';
+import { selectLegendPayload } from '../../../src/state/selectors/legendSelectors';
 import { RadialBarSettings } from '../../../src/state/types/RadialBarSettings';
 import { expectLastCalledWith } from '../../helper/expectLastCalledWith';
 import { userEventSetup } from '../../helper/userEventSetup';
@@ -1538,6 +1539,23 @@ describe('<RadialBar />', () => {
 
       expect(polarItemsSpy).toHaveBeenLastCalledWith([]);
       expect(polarItemsSpy).toHaveBeenCalledTimes(4);
+    });
+
+    it('should keep the same legend payload when the chart rerenders with the same props', () => {
+      const renderTestCase = createSelectorTestCase(({ children }) => (
+        <RadialBarChart width={100} height={100} data={PageData}>
+          <RadialBar dataKey="uv" />
+          {children}
+        </RadialBarChart>
+      ));
+      const { spy, rerenderSameComponent } = renderTestCase(selectLegendPayload);
+      const payloadBefore = spy.mock.lastCall?.[0];
+      assertNotNull(payloadBefore);
+      expect(payloadBefore).toHaveLength(PageData.length);
+
+      rerenderSameComponent();
+
+      expect(spy.mock.lastCall?.[0]).toBe(payloadBefore);
     });
   });
 });
