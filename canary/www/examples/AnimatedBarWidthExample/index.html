@@ -29,7 +29,7 @@
       rel="stylesheet"
       type="text/css"
     />
-    <script type="module" crossorigin src="/recharts/canary/www/assets/index-WRGtO0l-.js"></script>
+    <script type="module" crossorigin src="/recharts/canary/www/assets/index-CttWpyto.js"></script>
     <link rel="stylesheet" crossorigin href="/recharts/canary/www/assets/index-CuDuxXOS.css">
     <link rel="sitemap" type="application/xml" title="Sitemap" href="/sitemap.xml">
   </head>
@@ -52,22 +52,39 @@
   Bar,
   BarChart,
   BarShapeProps,
+  Coordinate,
+  ImplicitLabelListType,
   RechartsTheme,
   RechartsThemeProvider,
   Rectangle,
+  TickProp,
   Tooltip,
+  TooltipContentProps,
   TooltipIndex,
   usePlotArea,
   XAxis,
+  XAxisPadding,
   YAxis,
+  YAxisPadding,
+  YAxisTickContentProps,
 } from &#x27;recharts&#x27;;
 import { generateMockData, RechartsDevtools } from &#x27;@recharts/devtools&#x27;;
+import { CSSProperties, useMemo } from &#x27;react&#x27;;
 
 const data = generateMockData(15, 5);
 
 // A single shape component that handles both active and inactive states.
 // It keeps the DOM element mounted, allowing CSS to transition the properties.
 const AnimatedShape = (props: BarShapeProps) =&gt; {
+  const animatedStyle = useMemo(
+    (): CSSProperties =&gt; ({
+      transform: props.isActive ? undefined : `scaleX(20%)`,
+      transformOrigin: `${props.x}px center`,
+      transition: &#x27;all 0.2s ease-out&#x27;,
+      pointerEvents: &#x27;none&#x27;,
+    }),
+    [props.isActive, props.x],
+  );
   return (
     &lt;&gt;
       {/*
@@ -86,25 +103,27 @@ const AnimatedShape = (props: BarShapeProps) =&gt; {
         Animates the width and position smoothly.
         pointerEvents: &#x27;none&#x27; ensures the hitbox (parent) handles interaction.
       */}
-      &lt;Rectangle
-        {...props}
-        style={{
-          transform: props.isActive ? undefined : `scaleX(20%)`,
-          transformOrigin: `${props.x}px center`,
-          transition: &#x27;all 0.2s ease-out&#x27;,
-          pointerEvents: &#x27;none&#x27;,
-        }}
-      /&gt;
+      &lt;Rectangle {...props} style={animatedStyle} /&gt;
     &lt;/&gt;
   );
 };
 
+const CustomTooltipContent = (props: TooltipContentProps) =&gt; {
+  return props.payload[0]?.payload.label;
+};
+
 const BottomTooltip = ({ defaultIndex }: { defaultIndex?: TooltipIndex }) =&gt; {
   const plotArea = usePlotArea();
-  if (plotArea == null) {
+  const position: Partial&lt;Coordinate&gt; | undefined = useMemo(() =&gt; {
+    if (plotArea == null) return undefined;
+    return {
+      y: plotArea.y + plotArea.height - 100,
+    };
+  }, [plotArea]);
+  if (position == null) {
     return null;
   }
-  return &lt;Tooltip defaultIndex={defaultIndex} cursor={false} position={{ y: plotArea.y + plotArea.height - 100 }} /&gt;;
+  return &lt;Tooltip defaultIndex={defaultIndex} cursor={false} position={position} content={CustomTooltipContent} /&gt;;
 };
 
 const MonochromeTheme: RechartsTheme = {
@@ -115,7 +134,17 @@ const MonochromeTheme: RechartsTheme = {
       fillOpacity: 1,
     },
   ],
+  pageBackground: &#x27;light-dark(#fff, #18181b)&#x27;,
+  typography: {
+    color: &#x27;light-dark(#010101, #f4f4f5)&#x27;,
+  },
 };
+
+const chartStyle: CSSProperties = { width: &#x27;100%&#x27;, maxWidth: &#x27;700px&#x27;, maxHeight: &#x27;70vh&#x27;, aspectRatio: 1.618 };
+const xAxisPadding: XAxisPadding = { right: 30 };
+const yAxisTick: TickProp&lt;YAxisTickContentProps&gt; = { angle: 90, textAnchor: &#x27;start&#x27; };
+const yAxisPadding: YAxisPadding = { bottom: 30 };
+const barLabel: ImplicitLabelListType = { fill: &#x27;white&#x27;, position: &#x27;insideTopRight&#x27;, angle: 90, textAnchor: &#x27;start&#x27; };
 
 export default function AnimatedBarWidthExample({
   isAnimationActive = true,
@@ -126,32 +155,21 @@ export default function AnimatedBarWidthExample({
 }) {
   return (
     &lt;RechartsThemeProvider value={MonochromeTheme}&gt;
-      &lt;BarChart
-        style={{ width: &#x27;100%&#x27;, maxWidth: &#x27;700px&#x27;, maxHeight: &#x27;70vh&#x27;, aspectRatio: 1.618 }}
-        responsive
-        data={data}
-        barCategoryGap={4}
-      &gt;
-        &lt;XAxis dataKey=&quot;label&quot; mirror padding={{ right: 30 }} interval={1} /&gt;
-        &lt;YAxis
-          mirror
-          orientation=&quot;right&quot;
-          tickLine={false}
-          tick={{ angle: 90, textAnchor: &#x27;start&#x27; }}
-          padding={{ bottom: 30 }}
-        /&gt;
+      &lt;BarChart style={chartStyle} responsive data={data} barCategoryGap={4}&gt;
+        &lt;XAxis dataKey=&quot;label&quot; mirror padding={xAxisPadding} interval={1} /&gt;
+        &lt;YAxis mirror orientation=&quot;right&quot; tickLine={false} tick={yAxisTick} padding={yAxisPadding} /&gt;
         &lt;Bar
           dataKey=&quot;y&quot;
           isAnimationActive={isAnimationActive}
           activeBar={AnimatedShape}
           shape={AnimatedShape}
-          label={{ fill: &#x27;white&#x27;, position: &#x27;insideTopRight&#x27;, angle: 90, textAnchor: &#x27;start&#x27; }}
+          label={barLabel}
         /&gt;
         &lt;BottomTooltip defaultIndex={defaultIndex} /&gt;
         &lt;RechartsDevtools /&gt;
       &lt;/BarChart&gt;
     &lt;/RechartsThemeProvider&gt;
   );
-}</pre><div></div></div></div><div style="height:100%;display:none;overflow:hidden"><div id="recharts-devtools-portal-R5a9" style="height:100%;background:var(--color-bg);color:var(--color-text);overflow:auto;padding:10px;display:block" class=""></div></div><div style="height:100%;display:none;overflow:hidden"><div id="recharts-devtools-portal-R5a9-annotations" style="height:100%;background:var(--color-surface-base);color:var(--color-text-1);overflow:auto;padding:10px;display:block" class=""></div></div><div style="height:100%;display:none;overflow:hidden"><div style="padding:10px;height:100%;overflow:auto"><div style="display:flex;gap:12px;margin:1ex"><label style="display:flex;align-items:center;gap:8px;cursor:pointer"><input style="margin:0;width:16px;height:16px;cursor:pointer" type="radio" name=":R55da9:" checked=""/>Autoplay Animations (default)</label><label style="display:flex;align-items:center;gap:8px;cursor:pointer"><input style="margin:0;width:16px;height:16px;cursor:pointer" type="radio" name=":R55da9:"/>Manual Animations</label></div></div></div></div></div></div></div></div></div></main><footer><p><span>Released under the </span><a href="https://opensource.org/licenses/MIT" target="_blank" rel="noreferrer">MIT License</a></p><p>Copyright (c) 2016-<!-- -->2026<!-- --> Recharts Group</p><p>Commit: <code title="0c16ba4198d31bb22c9d869bc9dc892c22f3faa6">0c16ba41</code></p></footer></div></div>
+}</pre><div></div></div></div><div style="height:100%;display:none;overflow:hidden"><div id="recharts-devtools-portal-R5a9" style="height:100%;background:var(--color-bg);color:var(--color-text);overflow:auto;padding:10px;display:block" class=""></div></div><div style="height:100%;display:none;overflow:hidden"><div id="recharts-devtools-portal-R5a9-annotations" style="height:100%;background:var(--color-surface-base);color:var(--color-text-1);overflow:auto;padding:10px;display:block" class=""></div></div><div style="height:100%;display:none;overflow:hidden"><div style="padding:10px;height:100%;overflow:auto"><div style="display:flex;gap:12px;margin:1ex"><label style="display:flex;align-items:center;gap:8px;cursor:pointer"><input style="margin:0;width:16px;height:16px;cursor:pointer" type="radio" name=":R55da9:" checked=""/>Autoplay Animations (default)</label><label style="display:flex;align-items:center;gap:8px;cursor:pointer"><input style="margin:0;width:16px;height:16px;cursor:pointer" type="radio" name=":R55da9:"/>Manual Animations</label></div></div></div></div></div></div></div></div></div></main><footer><p><span>Released under the </span><a href="https://opensource.org/licenses/MIT" target="_blank" rel="noreferrer">MIT License</a></p><p>Copyright (c) 2016-<!-- -->2026<!-- --> Recharts Group</p><p>Commit: <code title="719b1e38a5e0e0c739ad5a581a682b8499c18f87">719b1e38</code></p></footer></div></div>
   </body>
 </html>
