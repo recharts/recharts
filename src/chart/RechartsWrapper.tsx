@@ -14,6 +14,7 @@ import {
 import { clsx } from '../util/clsx';
 import { mouseLeaveChart } from '../state/tooltipSlice';
 import { useAppDispatch, useAppSelector } from '../state/hooks';
+import { selectTooltipEventType } from '../state/selectors/selectTooltipEventType';
 import { mouseClickAction, mouseMoveAction } from '../state/mouseEventsMiddleware';
 import { useSynchronisedEventsFromOtherCharts } from '../synchronisation/useChartSynchronisation';
 import { focusAction, keyDownAction, blurAction } from '../state/keyboardEventsMiddleware';
@@ -269,6 +270,18 @@ export const RechartsWrapper = forwardRef<HTMLDivElement | null, RechartsWrapper
     } = props;
     const containerRef: MutableRefObject<HTMLDivElement | null> = useRef<HTMLDivElement>(null);
     const dispatch = useAppDispatch();
+    const usesAxisHover = useAppSelector(
+      state =>
+        state.tooltip.settings.trigger === 'hover' &&
+        selectTooltipEventType(state, state.tooltip.settings.shared) === 'axis',
+    );
+    const touchTap = useRef<AbortController | null>(null);
+    useEffect(() => {
+      return () => {
+        touchTap.current?.abort();
+        touchTap.current = null;
+      };
+    }, []);
     const accessibilityLayerIsEnabled = useAppSelector(state => state.rootProps.accessibilityLayer !== false);
     const [tooltipPortal, setTooltipPortal] = useState<HTMLElement | null>(null);
     const [legendPortal, setLegendPortal] = useState<HTMLElement | null>(null);
@@ -298,10 +311,28 @@ export const RechartsWrapper = forwardRef<HTMLDivElement | null, RechartsWrapper
 
     const myOnClick = useCallback(
       (e: React.MouseEvent<HTMLDivElement>) => {
+        if (usesAxisHover && 'pointerType' in e.nativeEvent && e.nativeEvent.pointerType === 'touch') {
+          // A tap can generate a mouseleave as the browser restores the mouse cursor's hover target.
+          // Keep the tapped value until the next pointer interaction, which may start outside the chart.
+          const chart = e.currentTarget;
+          touchTap.current?.abort();
+          const controller = new AbortController();
+          touchTap.current = controller;
+          const releaseTap = (event: PointerEvent) => {
+            controller.abort();
+            touchTap.current = null;
+            if (!event.composedPath().includes(chart)) {
+              dispatch(mouseLeaveChart());
+            }
+          };
+          const options = { capture: true, signal: controller.signal };
+          chart.ownerDocument.addEventListener('pointerdown', releaseTap, options);
+          chart.ownerDocument.addEventListener('pointermove', releaseTap, options);
+        }
         dispatch(mouseClickAction(e));
         dispatch(externalEventAction({ handler: onClick, reactEvent: e }));
       },
-      [dispatch, onClick],
+      [dispatch, onClick, usesAxisHover],
     );
 
     const myOnMouseEnter = useCallback(
@@ -314,7 +345,9 @@ export const RechartsWrapper = forwardRef<HTMLDivElement | null, RechartsWrapper
 
     const myOnMouseLeave = useCallback(
       (e: React.MouseEvent<HTMLDivElement>) => {
-        dispatch(mouseLeaveChart());
+        if (!touchTap.current) {
+          dispatch(mouseLeaveChart());
+        }
         dispatch(externalEventAction({ handler: onMouseLeave, reactEvent: e }));
       },
       [dispatch, onMouseLeave],
