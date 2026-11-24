@@ -76,7 +76,7 @@ gallery resolve the story by id and keeps the same rendering path for tests and 
 
 ## Fixture and project structure
 
-New specs use `testWithThemes` from `test-vr/tests/fixtures`. The fixture runs
+Specs use `testWithThemes` from `test-vr/tests/fixtures`. The fixture runs
 each test in the following nine projects:
 
 | Projects                                          | Recharts rendering                                                   |
@@ -86,15 +86,8 @@ each test in the following nine projects:
 | `chromium-dark`, `firefox-dark`, `webkit-dark`    | `RechartsThemeProvider` with `darkTheme`, dark checkerboard canvas   |
 
 The Playwright project selects the variant through the gallery URL and metadata.
-The story does not receive a theme prop. Never add `testTheme` to a new story,
+The story does not receive a theme prop. Never add a theme prop to a story,
 put a theme name in the test title, or pass a custom screenshot name.
-
-The exported `test` fixture is the legacy-only compatibility entry point used
-by existing specs, and `legacyTest` is its explicit name. Keep those fixtures
-local to specs that are not ready for light and dark baselines. The old
-`test-vr/tests/www/StoryTheme.tsx` helper is also compatibility code for
-unmigrated website stories. For migration work, use
-`.agents/skills/vr-test-migration/SKILL.md`.
 
 ## Intentional variant exceptions
 

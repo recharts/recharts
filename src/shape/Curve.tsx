@@ -24,7 +24,7 @@ import {
   Line as D3LineCurve,
 } from 'victory-vendor/d3-shape';
 
-import { clsx } from 'clsx';
+import { clsx } from '../util/clsx';
 import { FillObjectPaint } from '../fill/fillDefinitions';
 import { RechartsFill } from '../fill/RechartsFill';
 import {
@@ -254,7 +254,6 @@ export const getPath = ({
   connectNulls = defaultCurveProps.connectNulls,
 }: GetPathProps): string | null => {
   const curveFactory = getCurveFactory(type, layout);
-  const formatPoints: ReadonlyArray<NullableCoordinate> = connectNulls ? points.filter(defined) : points;
 
   // When dealing with an area chart (where `baseLine` is an array),
   // we need to pair points with their corresponding `baseLine` points first.
@@ -296,6 +295,7 @@ export const getPath = ({
     return nullableLineFunction(finalPoints);
   }
 
+  const formatPoints: ReadonlyArray<NullableCoordinate> = connectNulls ? points.filter(defined) : points;
   let lineFunction: D3LineCurve<Coordinate> | D3AreaCurve<Coordinate>;
   if (layout === 'vertical' && isNumber(baseLine)) {
     lineFunction = shapeArea<Coordinate>().y(getY).x1(getX).x0(baseLine);

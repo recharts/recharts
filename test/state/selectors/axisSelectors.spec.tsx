@@ -64,6 +64,29 @@ const data1 = mockData.slice(0, 5);
 const data2 = mockData.slice(5);
 
 describe('selectAxisDomain', () => {
+  it('includes error bars from frozen series data alongside chart-level data', () => {
+    const chartData = Object.freeze([{ value: -10 }, { value: 20 }]);
+    const seriesData = Object.freeze([Object.freeze({ value: -5, error: 2 }), Object.freeze({ value: 30, error: 5 })]);
+    const renderTestCase = createSelectorTestCase(({ children }) => (
+      <ComposedChart width={400} height={300} data={chartData}>
+        <YAxis type="number" domain={['dataMin', 'dataMax']} />
+        <Bar dataKey="value" isAnimationActive={false} />
+        <Scatter dataKey="value" data={seriesData} isAnimationActive={false}>
+          <ErrorBar dataKey="error" direction="y" />
+        </Scatter>
+        {children}
+      </ComposedChart>
+    ));
+
+    const { spy } = renderTestCase(state => selectAxisDomain(state, 'yAxis', defaultAxisId, false));
+
+    expectLastCalledWith(spy, [-10, 35]);
+    expect(seriesData).toEqual([
+      { value: -5, error: 2 },
+      { value: 30, error: 5 },
+    ]);
+  });
+
   it('should return undefined if there is no data in the chart', () => {
     const spy = vi.fn();
     const Comp = (): null => {

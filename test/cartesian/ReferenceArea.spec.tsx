@@ -1,7 +1,20 @@
 import React from 'react';
 import { describe, expect, it, Mock, test, vi } from 'vitest';
 import { fireEvent, render } from '@testing-library/react';
-import { Bar, BarChart, Brush, IfOverflow, LabelProps, LineChart, ReferenceArea, XAxis, YAxis } from '../../src';
+import {
+  Bar,
+  BarChart,
+  Brush,
+  IfOverflow,
+  LabelProps,
+  Line,
+  LineChart,
+  pattern,
+  patterns,
+  ReferenceArea,
+  XAxis,
+  YAxis,
+} from '../../src';
 import { useAppSelector } from '../../src/state/hooks';
 import { selectReferenceAreasByAxis } from '../../src/state/selectors/axisSelectors';
 import { userEventSetup } from '../helper/userEventSetup';
@@ -737,6 +750,182 @@ describe('<ReferenceArea />', () => {
         </BarChart>,
       );
       expect(container.querySelectorAll('.recharts-reference-area-rect')).toHaveLength(1);
+    });
+  });
+
+  describe('with non-finite coordinates', () => {
+    const logData = [
+      { x: 1, y: 1 },
+      { x: 10, y: 10 },
+      { x: 100, y: 100 },
+    ];
+
+    test.each(['discard', 'hidden', 'visible', 'extendDomain'] satisfies ReadonlyArray<IfOverflow>)(
+      'should not render area or label when a log scale maps y1=0 to a non-finite value and ifOverflow=%s',
+      ifOverflow => {
+        const { container } = render(
+          <LineChart width={400} height={300} data={logData}>
+            <XAxis dataKey="x" type="number" />
+            <YAxis scale="log" domain={[1, 100]} allowDataOverflow />
+            <ReferenceArea y1={0} y2={10} ifOverflow={ifOverflow} label="Zone" />
+          </LineChart>,
+        );
+        expect(container.querySelectorAll('.recharts-reference-area')).toHaveLength(0);
+        expect(container.querySelectorAll('.recharts-reference-area-rect')).toHaveLength(0);
+        expect(container.querySelectorAll('.recharts-label')).toHaveLength(0);
+      },
+    );
+
+    test.each(['discard', 'hidden', 'visible', 'extendDomain'] satisfies ReadonlyArray<IfOverflow>)(
+      'should not render area or label when a log scale maps negative y1 to NaN and ifOverflow=%s',
+      ifOverflow => {
+        const { container } = render(
+          <LineChart width={400} height={300} data={logData}>
+            <XAxis dataKey="x" type="number" />
+            <YAxis scale="log" domain={[1, 100]} allowDataOverflow />
+            <ReferenceArea y1={-5} y2={10} ifOverflow={ifOverflow} label="Zone" />
+          </LineChart>,
+        );
+        expect(container.querySelectorAll('.recharts-reference-area')).toHaveLength(0);
+        expect(container.querySelectorAll('.recharts-reference-area-rect')).toHaveLength(0);
+        expect(container.querySelectorAll('.recharts-label')).toHaveLength(0);
+      },
+    );
+
+    it('should still render area and label on a log scale when coordinates are positive and finite', () => {
+      const { container } = render(
+        <LineChart width={400} height={300} data={logData}>
+          <XAxis dataKey="x" type="number" />
+          <YAxis scale="log" domain={[1, 100]} allowDataOverflow />
+          <ReferenceArea y1={1} y2={10} ifOverflow="visible" label="Zone" />
+        </LineChart>,
+      );
+      expect(container.querySelectorAll('.recharts-reference-area-rect')).toHaveLength(1);
+      expect(container.querySelectorAll('.recharts-label')).toHaveLength(1);
+    });
+
+    it('should still render area and label on a numeric axis when coordinates are finite', () => {
+      const { container } = render(
+        <LineChart width={400} height={300} data={logData}>
+          <XAxis dataKey="x" type="number" domain={[0, 100]} />
+          <YAxis domain={[0, 100]} />
+          <Line dataKey="y" isAnimationActive={false} />
+          <ReferenceArea x1={10} x2={50} y1={10} y2={50} ifOverflow="visible" label="Zone" />
+        </LineChart>,
+      );
+      expect(container.querySelectorAll('.recharts-reference-area-rect')).toHaveLength(1);
+      expect(container.querySelectorAll('.recharts-label')).toHaveLength(1);
+    });
+
+    test.each(['Infinity', '-Infinity'])(
+      'should not render area or label when string %s is passed on a numeric axis',
+      badString => {
+        const { container } = render(
+          <LineChart width={400} height={300} data={logData}>
+            <XAxis dataKey="x" type="number" domain={[0, 100]} />
+            <YAxis domain={[0, 100]} />
+            <Line dataKey="y" isAnimationActive={false} />
+            <ReferenceArea<string | number, number> x1={badString} x2={50} ifOverflow="visible" label="Zone" />
+          </LineChart>,
+        );
+        expect(container.querySelectorAll('.recharts-reference-area')).toHaveLength(0);
+        expect(container.querySelectorAll('.recharts-reference-area-rect')).toHaveLength(0);
+        expect(container.querySelectorAll('.recharts-label')).toHaveLength(0);
+      },
+    );
+
+    test.each([
+      { label: 'x1=NaN', coords: { x1: NaN, x2: 50 } },
+      { label: 'x1=Infinity', coords: { x1: Infinity, x2: 50 } },
+      { label: 'x1=-Infinity', coords: { x1: -Infinity, x2: 50 } },
+      { label: 'x2=NaN', coords: { x1: 10, x2: NaN } },
+      { label: 'x2=Infinity', coords: { x1: 10, x2: Infinity } },
+      { label: 'x2=-Infinity', coords: { x1: 10, x2: -Infinity } },
+      { label: 'y1=NaN', coords: { y1: NaN, y2: 50 } },
+      { label: 'y1=Infinity', coords: { y1: Infinity, y2: 50 } },
+      { label: 'y1=-Infinity', coords: { y1: -Infinity, y2: 50 } },
+      { label: 'y2=NaN', coords: { y1: 10, y2: NaN } },
+      { label: 'y2=Infinity', coords: { y1: 10, y2: Infinity } },
+      { label: 'y2=-Infinity', coords: { y1: 10, y2: -Infinity } },
+    ])('should not render area when $label on a numeric axis', ({ coords }) => {
+      const { container } = render(
+        <LineChart width={400} height={300} data={logData}>
+          <XAxis dataKey="x" type="number" domain={[0, 100]} />
+          <YAxis domain={[0, 100]} />
+          <Line dataKey="y" isAnimationActive={false} />
+          <ReferenceArea {...coords} ifOverflow="visible" label="Zone" />
+        </LineChart>,
+      );
+      expect(container.querySelectorAll('.recharts-reference-area')).toHaveLength(0);
+      expect(container.querySelectorAll('.recharts-reference-area-rect')).toHaveLength(0);
+      expect(container.querySelectorAll('.recharts-label')).toHaveLength(0);
+    });
+
+    it('should not render area when finite endpoints overflow rectangle width to Infinity', () => {
+      const { container } = render(
+        <LineChart width={400} height={300} data={logData}>
+          <XAxis dataKey="x" type="number" domain={[0, 100]} />
+          <YAxis domain={[0, 100]} />
+          <Line dataKey="y" isAnimationActive={false} />
+          <ReferenceArea x1={-3e307} x2={3e307} ifOverflow="visible" label="Zone" />
+        </LineChart>,
+      );
+      expect(container.querySelectorAll('.recharts-reference-area')).toHaveLength(0);
+      expect(container.querySelectorAll('.recharts-reference-area-rect')).toHaveLength(0);
+    });
+
+    it('should not render area when finite endpoints overflow rectangle height to Infinity', () => {
+      const { container } = render(
+        <LineChart width={400} height={300} data={logData}>
+          <XAxis dataKey="x" type="number" domain={[0, 100]} />
+          <YAxis domain={[0, 100]} />
+          <Line dataKey="y" isAnimationActive={false} />
+          <ReferenceArea y1={-4e307} y2={4e307} ifOverflow="visible" label="Zone" />
+        </LineChart>,
+      );
+      expect(container.querySelectorAll('.recharts-reference-area')).toHaveLength(0);
+      expect(container.querySelectorAll('.recharts-reference-area-rect')).toHaveLength(0);
+    });
+
+    it('should not render SVG fill definitions when coordinates are non-finite', () => {
+      const { container } = render(
+        <LineChart width={400} height={300} data={logData}>
+          <XAxis dataKey="x" type="number" />
+          <YAxis scale="log" domain={[1, 100]} allowDataOverflow />
+          <ReferenceArea
+            y1={-5}
+            y2={10}
+            ifOverflow="visible"
+            fill={{ color: 'blue', definition: pattern(patterns.diagonal) }}
+          />
+        </LineChart>,
+      );
+      expect(container.querySelectorAll('.recharts-reference-area')).toHaveLength(0);
+      expect(container.querySelectorAll('defs pattern')).toHaveLength(0);
+    });
+
+    it('should not pass non-finite geometry to a custom shape or render a custom label when coordinates are non-finite', () => {
+      const shapeSpy = vi.fn((_props: Record<string, unknown>) => <g data-testid="custom-area-shape" />);
+      const { container } = render(
+        <LineChart width={400} height={300} data={logData}>
+          <XAxis dataKey="x" type="number" />
+          <YAxis scale="log" domain={[1, 100]} allowDataOverflow />
+          <ReferenceArea
+            y1={0}
+            y2={10}
+            ifOverflow="visible"
+            shape={shapeSpy}
+            label={<text data-testid="custom-area-label">Zone</text>}
+          />
+        </LineChart>,
+      );
+      expect(shapeSpy).toHaveBeenCalled();
+      const lastCallArgs = shapeSpy.mock.calls.at(-1)?.[0];
+      expect(lastCallArgs).not.toHaveProperty('x');
+      expect(lastCallArgs).not.toHaveProperty('y');
+      expect(lastCallArgs).not.toHaveProperty('width');
+      expect(lastCallArgs).not.toHaveProperty('height');
+      expect(container.querySelectorAll('[data-testid="custom-area-label"]')).toHaveLength(0);
     });
   });
 });

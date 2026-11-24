@@ -1,5 +1,5 @@
-import { clsx } from 'clsx';
 import { CSSProperties } from 'react';
+import { clsx } from '../clsx';
 import { isNumber } from '../DataUtils';
 import { Coordinate, CartesianViewBox, AllowInDimension } from '../types';
 

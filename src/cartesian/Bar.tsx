@@ -11,8 +11,8 @@ import {
   useRef,
   useState,
 } from 'react';
-import { clsx } from 'clsx';
 import { Series } from 'victory-vendor/d3-shape';
+import { clsx } from '../util/clsx';
 import { Props as RectangleProps, RectRadius } from '../shape/Rectangle';
 import { Layer } from '../container/Layer';
 import { ErrorBarDataItem, ErrorBarDataPointFormatter } from './ErrorBar';
@@ -735,6 +735,8 @@ function BarLabelListProvider({
         parentViewBox: entry.parentViewBox,
         viewBox,
         fill: entry.fill,
+        // rects skip bars without a size, so the position in rects is not the index of the data entry
+        originalDataIndex: entry.originalDataIndex,
       };
     },
   );

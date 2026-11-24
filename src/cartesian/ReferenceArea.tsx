@@ -1,11 +1,12 @@
 import * as React from 'react';
 import { ReactElement, useEffect } from 'react';
-import { clsx } from 'clsx';
+import { clsx } from '../util/clsx';
 import { Layer } from '../container/Layer';
 import { CartesianLabelContextProvider, CartesianLabelFromLabelProp, ImplicitLabelType } from '../component/Label';
 import { rectWithPoints } from '../util/CartesianUtils';
 import { Overflowable } from '../util/IfOverflow';
 import { isNumOrStr } from '../util/DataUtils';
+import { isWellBehavedNumber } from '../util/isWellBehavedNumber';
 import { Props as RectangleProps, Rectangle } from '../shape/Rectangle';
 
 import { addArea, ReferenceAreaSettings, removeArea } from '../state/referenceElementsSlice';
@@ -157,7 +158,7 @@ export type Props<
 type StringFillProps = Omit<Props, 'fill'> & { fill?: string };
 
 const toCoordinate = (x: number | undefined, y: number | undefined): Coordinate | null =>
-  x == null || y == null ? null : { x, y };
+  isWellBehavedNumber(x) && isWellBehavedNumber(y) ? { x, y } : null;
 
 const getRect = (
   hasX1: boolean,
@@ -174,7 +175,9 @@ const getRect = (
     return null;
   }
 
-  const scales = new CartesianScaleHelperImpl({ x: xAxisScale, y: yAxisScale });
+  if (Number.isNaN(xValue1) || Number.isNaN(xValue2) || Number.isNaN(yValue1) || Number.isNaN(yValue2)) {
+    return null;
+  }
 
   const p1 = toCoordinate(
     hasX1 ? xAxisScale.map(xValue1, { position: 'start' }) : xAxisScale.rangeMin(),
@@ -191,11 +194,19 @@ const getRect = (
     return null;
   }
 
-  if (props.ifOverflow === 'discard' && (!scales.isInRange(p1) || !scales.isInRange(p2))) {
+  if (props.ifOverflow === 'discard') {
+    const scales = new CartesianScaleHelperImpl({ x: xAxisScale, y: yAxisScale });
+    if (!scales.isInRange(p1) || !scales.isInRange(p2)) {
+      return null;
+    }
+  }
+
+  const rect = rectWithPoints(p1, p2);
+  if (!isWellBehavedNumber(rect.width) || !isWellBehavedNumber(rect.height)) {
     return null;
   }
 
-  return rectWithPoints(p1, p2);
+  return rect;
 };
 
 const renderRect = (option: ReferenceAreaProps['shape'], props: SVGPropsAndEvents<RectangleProps>) => {

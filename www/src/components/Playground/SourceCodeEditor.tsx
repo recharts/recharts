@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { EditorView, keymap } from '@codemirror/view';
 import { EditorState, Extension, Compartment } from '@codemirror/state';
 import { javascript } from '@codemirror/lang-javascript';
@@ -13,6 +13,7 @@ import {
 import { tags as t } from '@lezer/highlight';
 import '../../utils/CodeMirrorEditor.css'; // Keep using the same CSS for now
 import { useColorMode } from '../color-mode';
+import { CopyButton } from '../../utils/CopyButton';
 
 // Custom highlight style with improved color contrast for accessibility
 const accessibleHighlightStyle = HighlightStyle.define([
@@ -66,19 +67,49 @@ const regionFoldService = foldService.of((state, from, _to) => {
   return null;
 });
 
+const editorWrapperStyle: React.CSSProperties = { height: '100%', overflow: 'auto' };
+
 const trimNewlinesFromStartAndEnd = (s: string): string => s.replace(/^\n+|\n+$/g, '');
 
 const createEditorTheme = (dark: boolean) =>
   EditorView.theme(
     {
-      '&': { height: '100%', fontSize: '14px' },
-      '.cm-scroller': { fontFamily: 'monospace' },
-      '.cm-foldGutter': { width: '20px' },
-      '.cm-content': { maxWidth: '100%' },
-      '.cm-gutters': {
-        backgroundColor: 'var(--color-surface-sunken)',
-        borderColor: 'var(--color-border-3)',
+      '&': {
+        height: '100%',
+        fontSize: '13px',
+        color: 'var(--color-code-3)',
+        backgroundColor: 'var(--color-code-bg)',
       },
+      '&.cm-focused': { outline: 'none' },
+      '.cm-scroller': {
+        fontFamily: 'var(--font-family-code)',
+        lineHeight: '1.65',
+      },
+      '.cm-content': { maxWidth: '100%', padding: '12px 0' },
+      '.cm-line': { padding: '0 16px 0 4px' },
+      '.cm-gutters': {
+        backgroundColor: 'transparent',
+        border: 'none',
+        color: 'var(--color-text-3)',
+      },
+      '.cm-foldGutter': { width: '20px' },
+      '.cm-foldGutter .cm-gutterElement': {
+        paddingLeft: '6px',
+        opacity: '0.5',
+        transition: 'opacity 0.15s',
+      },
+      '.cm-foldGutter .cm-gutterElement:hover': { opacity: '1' },
+      '.cm-foldPlaceholder': {
+        backgroundColor: 'var(--color-code-selection)',
+        border: 'none',
+        color: 'var(--color-text-2)',
+        padding: '0 6px',
+        borderRadius: '4px',
+      },
+      '&.cm-focused .cm-selectionBackground, .cm-selectionBackground, .cm-content ::selection': {
+        backgroundColor: 'var(--color-code-selection)',
+      },
+      '.cm-cursor': { borderLeftColor: 'var(--color-text-1)' },
     },
     { dark },
   );
@@ -107,6 +138,11 @@ export type SourceCodeEditorProps = {
    * Ref to expose editor methods (like get value).
    */
   getEditorValue?: (getValue: () => string) => void;
+  /**
+   * Whether to show a copy button in the top-right corner. Defaults to true.
+   * Turn it off when the editor sits in a frame that has its own copy button.
+   */
+  showCopyButton?: boolean;
 };
 
 /**
@@ -119,6 +155,7 @@ export function SourceCodeEditor({
   readOnly = true,
   className = '',
   getEditorValue,
+  showCopyButton = true,
 }: SourceCodeEditorProps) {
   const editorRef = useRef<HTMLDivElement>(null);
   const viewRef: React.MutableRefObject<EditorView | null> = useRef<EditorView | null>(null);
@@ -250,10 +287,19 @@ export function SourceCodeEditor({
     });
   }, [readOnly, editExtensions, onChange]);
 
+  const getValueToCopy = useCallback(
+    () => viewRef.current?.state.doc.toString() ?? valueWithoutTrailingNewline,
+    [valueWithoutTrailingNewline],
+  );
+
   return (
-    <div className={`codemirror-example-editor ${className}`} style={{ height: '100%', overflow: 'auto' }}>
+    <div
+      className={`codemirror-example-editor ${showCopyButton ? 'has-copy-button' : ''} ${className}`}
+      style={editorWrapperStyle}
+    >
       {showFallback && <pre>{valueWithoutTrailingNewline}</pre>}
       <div ref={editorRef} />
+      {showCopyButton && <CopyButton className="codemirror-copy-button" getValueToCopy={getValueToCopy} />}
     </div>
   );
 }
