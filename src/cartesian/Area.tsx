@@ -677,6 +677,27 @@ function AreaLabelListProvider({
   );
 }
 
+/**
+ * A stacked series with connectNulls fills its nulls as zero contribution so the stack has no gaps,
+ * but its stroke has nothing to connect before its first or after its last value.
+ */
+function trimPointsWithoutValue(
+  points: ReadonlyArray<AreaPointItem>,
+  dataKey: DataKey<unknown> | undefined,
+): ReadonlyArray<AreaPointItem> {
+  const hasNoValue = (point: AreaPointItem | undefined) =>
+    point?.payload != null && getValueByDataKey(point.payload, dataKey) == null;
+  let start = 0;
+  while (start < points.length && hasNoValue(points[start])) {
+    start++;
+  }
+  let end = points.length;
+  while (end > start && hasNoValue(points[end - 1])) {
+    end--;
+  }
+  return start === 0 && end === points.length ? points : points.slice(start, end);
+}
+
 function StaticArea({
   points,
   baseLine,
@@ -701,11 +722,14 @@ function StaticArea({
   const { id, ...propsWithoutId } = props;
   const propsWithEvents = svgPropertiesAndEvents(propsWithoutId);
 
+  const strokePoints = useMemo(() => trimPointsWithoutValue(points, props.dataKey), [points, props.dataKey]);
+
   const curveProps: AreaRevealShapeProps = {
     ...propsWithEvents,
     fill: props.fillObject == null ? propsWithEvents.fill : getFillUrl(getSeriesFillId(id)),
     id,
     points,
+    strokePoints,
     connectNulls,
     type,
     baseLine,
@@ -1089,14 +1113,6 @@ export function computeArea({
   const isHorizontalLayout = layout === 'horizontal';
   let isRange = false;
 
-  /*
-   * connectNulls renders a null inside a stacked series as zero contribution,
-   * but there is nothing to connect before the first or after the last value of the series.
-   */
-  const hasValue = displayedData.map(entry => getValueByDataKey(entry, dataKey) != null);
-  const firstValueIndex = hasValue.indexOf(true);
-  const lastValueIndex = hasValue.lastIndexOf(true);
-
   const points: ReadonlyArray<AreaPointItem> = displayedData.map((entry, index): AreaPointItem => {
     let valueAsArray: ReadonlyArray<unknown> | undefined;
 
@@ -1127,9 +1143,7 @@ export function computeArea({
       stackDataKeys != null &&
       stackDataKeys.length > 0 &&
       stackDataKeys.every(key => getValueByDataKey(entry, key) == null);
-    const isOutsideSeriesValues = index < firstValueIndex || index > lastValueIndex;
-    const isBreakPoint =
-      value1 == null || (hasStack && rawValue == null && (!connectNulls || isOutsideSeriesValues)) || wholeStackIsNull;
+    const isBreakPoint = value1 == null || (hasStack && !connectNulls && rawValue == null) || wholeStackIsNull;
 
     if (isHorizontalLayout) {
       return {
