@@ -2,22 +2,39 @@ import {
   Bar,
   BarChart,
   BarShapeProps,
+  Coordinate,
+  ImplicitLabelListType,
   RechartsTheme,
   RechartsThemeProvider,
   Rectangle,
+  TickProp,
   Tooltip,
+  TooltipContentProps,
   TooltipIndex,
   usePlotArea,
   XAxis,
+  XAxisPadding,
   YAxis,
+  YAxisPadding,
+  YAxisTickContentProps,
 } from 'recharts';
 import { generateMockData, RechartsDevtools } from '@recharts/devtools';
+import { CSSProperties, useMemo } from 'react';
 
 const data = generateMockData(15, 5);
 
 // A single shape component that handles both active and inactive states.
 // It keeps the DOM element mounted, allowing CSS to transition the properties.
 const AnimatedShape = (props: BarShapeProps) => {
+  const animatedStyle = useMemo(
+    (): CSSProperties => ({
+      transform: props.isActive ? undefined : `scaleX(20%)`,
+      transformOrigin: `${props.x}px center`,
+      transition: 'all 0.2s ease-out',
+      pointerEvents: 'none',
+    }),
+    [props.isActive, props.x],
+  );
   return (
     <>
       {/*
@@ -36,25 +53,27 @@ const AnimatedShape = (props: BarShapeProps) => {
         Animates the width and position smoothly.
         pointerEvents: 'none' ensures the hitbox (parent) handles interaction.
       */}
-      <Rectangle
-        {...props}
-        style={{
-          transform: props.isActive ? undefined : `scaleX(20%)`,
-          transformOrigin: `${props.x}px center`,
-          transition: 'all 0.2s ease-out',
-          pointerEvents: 'none',
-        }}
-      />
+      <Rectangle {...props} style={animatedStyle} />
     </>
   );
 };
 
+const CustomTooltipContent = (props: TooltipContentProps) => {
+  return props.payload[0]?.payload.label;
+};
+
 const BottomTooltip = ({ defaultIndex }: { defaultIndex?: TooltipIndex }) => {
   const plotArea = usePlotArea();
-  if (plotArea == null) {
+  const position: Partial<Coordinate> | undefined = useMemo(() => {
+    if (plotArea == null) return undefined;
+    return {
+      y: plotArea.y + plotArea.height - 100,
+    };
+  }, [plotArea]);
+  if (position == null) {
     return null;
   }
-  return <Tooltip defaultIndex={defaultIndex} cursor={false} position={{ y: plotArea.y + plotArea.height - 100 }} />;
+  return <Tooltip defaultIndex={defaultIndex} cursor={false} position={position} content={CustomTooltipContent} />;
 };
 
 const MonochromeTheme: RechartsTheme = {
@@ -65,7 +84,17 @@ const MonochromeTheme: RechartsTheme = {
       fillOpacity: 1,
     },
   ],
+  pageBackground: 'light-dark(#fff, #18181b)',
+  typography: {
+    color: 'light-dark(#010101, #f4f4f5)',
+  },
 };
+
+const chartStyle: CSSProperties = { width: '100%', maxWidth: '700px', maxHeight: '70vh', aspectRatio: 1.618 };
+const xAxisPadding: XAxisPadding = { right: 30 };
+const yAxisTick: TickProp<YAxisTickContentProps> = { angle: 90, textAnchor: 'start' };
+const yAxisPadding: YAxisPadding = { bottom: 30 };
+const barLabel: ImplicitLabelListType = { fill: 'white', position: 'insideTopRight', angle: 90, textAnchor: 'start' };
 
 export default function AnimatedBarWidthExample({
   isAnimationActive = true,
@@ -76,26 +105,15 @@ export default function AnimatedBarWidthExample({
 }) {
   return (
     <RechartsThemeProvider value={MonochromeTheme}>
-      <BarChart
-        style={{ width: '100%', maxWidth: '700px', maxHeight: '70vh', aspectRatio: 1.618 }}
-        responsive
-        data={data}
-        barCategoryGap={4}
-      >
-        <XAxis dataKey="label" mirror padding={{ right: 30 }} interval={1} />
-        <YAxis
-          mirror
-          orientation="right"
-          tickLine={false}
-          tick={{ angle: 90, textAnchor: 'start' }}
-          padding={{ bottom: 30 }}
-        />
+      <BarChart style={chartStyle} responsive data={data} barCategoryGap={4}>
+        <XAxis dataKey="label" mirror padding={xAxisPadding} interval={1} />
+        <YAxis mirror orientation="right" tickLine={false} tick={yAxisTick} padding={yAxisPadding} />
         <Bar
           dataKey="y"
           isAnimationActive={isAnimationActive}
           activeBar={AnimatedShape}
           shape={AnimatedShape}
-          label={{ fill: 'white', position: 'insideTopRight', angle: 90, textAnchor: 'start' }}
+          label={barLabel}
         />
         <BottomTooltip defaultIndex={defaultIndex} />
         <RechartsDevtools />

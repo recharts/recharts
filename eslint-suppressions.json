@@ -1555,11 +1555,6 @@
       "count": 2
     }
   },
-  "www/src/docs/exampleComponents/BarChart/AnimatedBarWidthExample.tsx": {
-    "react-perf/jsx-no-new-object-as-prop": {
-      "count": 7
-    }
-  },
   "www/src/docs/exampleComponents/BarChart/BarChartHasBackground.tsx": {
     "react-perf/jsx-no-new-object-as-prop": {
       "count": 2
