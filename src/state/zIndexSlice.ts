@@ -2,7 +2,7 @@
  * This slice contains a registry of z-index values for various components.
  * The state is a map from z-index numbers to element references.
  */
-import { createSlice, PayloadAction, prepareAutoBatched } from '@reduxjs/toolkit';
+import { createSlice, PayloadAction, prepareAutoBatched, Reducer } from '@reduxjs/toolkit';
 import { castDraft } from 'immer';
 
 import { DefaultZIndexes } from '../zIndex/DefaultZIndexes';
@@ -130,4 +130,4 @@ export const {
   unregisterZIndexPortalElement,
 } = zIndexSlice.actions;
 
-export const zIndexReducer = zIndexSlice.reducer;
+export const zIndexReducer: Reducer<ZIndexState> = zIndexSlice.reducer;

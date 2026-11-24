@@ -1,4 +1,4 @@
-import { createSlice, PayloadAction } from '@reduxjs/toolkit';
+import { createSlice, PayloadAction, Reducer } from '@reduxjs/toolkit';
 import { castDraft } from 'immer';
 import { AxisId, BaseCartesianAxis, TicksSettings } from './cartesianAxisSlice';
 
@@ -37,4 +37,4 @@ const polarAxisSlice = createSlice({
 
 export const { addRadiusAxis, removeRadiusAxis, addAngleAxis, removeAngleAxis } = polarAxisSlice.actions;
 
-export const polarAxisReducer = polarAxisSlice.reducer;
+export const polarAxisReducer: Reducer<PolarAxisState> = polarAxisSlice.reducer;
