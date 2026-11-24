@@ -1,6 +1,6 @@
 import React, { ReactNode } from 'react';
 import { expect, it, Mock, vi } from 'vitest';
-import { fireEvent, render, waitFor } from '@testing-library/react';
+import { act, fireEvent, render, waitFor } from '@testing-library/react';
 import { generateMockData } from '@recharts/devtools';
 import {
   Coordinate,
@@ -1754,6 +1754,356 @@ describe('<Pie />', () => {
   });
 
   describe('keyboard interaction', () => {
+    test('the focus indicator follows a focused slice and clears when focus leaves', async () => {
+      const user = userEventSetup();
+      const { container } = render(
+        <>
+          <button type="button">Before</button>
+          <PieChart width={200} height={200} accessibilityLayer={false}>
+            <Pie
+              data={[{ value: 1 }, { value: 2 }]}
+              dataKey="value"
+              isAnimationActive={false}
+              innerRadius={30}
+              cornerRadius={5}
+              rootTabIndex={-1}
+              shape={{ tabIndex: 0 }}
+            />
+          </PieChart>
+          <button type="button">After</button>
+        </>,
+      );
+      const [firstSlice, secondSlice] = container.querySelectorAll('.recharts-pie-sector .recharts-sector');
+      const indicator = () => container.querySelector('.recharts-pie-focus-indicator path');
+
+      await user.tab();
+      expect(indicator()).not.toBeInTheDocument();
+
+      await user.tab();
+      expect(firstSlice).toHaveFocus();
+      expect(indicator()).toHaveAttribute('d', firstSlice.getAttribute('d'));
+      expect(firstSlice).toHaveStyle({ outline: 'none' });
+
+      await user.tab();
+      expect(secondSlice).toHaveFocus();
+      expect(indicator()).toHaveAttribute('d', secondSlice.getAttribute('d'));
+
+      await user.tab();
+      expect(indicator()).not.toBeInTheDocument();
+    });
+
+    test('the focus indicator clears when onFocus moves focus outside the slice', async () => {
+      const user = userEventSetup();
+      const { container, getByRole } = render(
+        <>
+          <PieChart width={200} height={200} accessibilityLayer={false}>
+            <Pie
+              data={[{ value: 1 }]}
+              dataKey="value"
+              isAnimationActive={false}
+              rootTabIndex={-1}
+              shape={{ tabIndex: 0 }}
+              onFocus={() => getByRole('button', { name: 'After' }).focus()}
+            />
+          </PieChart>
+          <button type="button">After</button>
+        </>,
+      );
+
+      await user.tab();
+
+      expect(getByRole('button', { name: 'After' })).toHaveFocus();
+      expect(container.querySelector('.recharts-pie-focus-indicator')).not.toBeInTheDocument();
+    });
+
+    test('the focus indicator stays visible when onBlur refocuses the slice', async () => {
+      const user = userEventSetup();
+      const { container } = render(
+        <PieChart width={200} height={200} accessibilityLayer={false}>
+          <Pie
+            data={[{ value: 1 }]}
+            dataKey="value"
+            isAnimationActive={false}
+            rootTabIndex={-1}
+            shape={{ tabIndex: 0, className: 'refocused-slice' }}
+            onBlur={(_entry, _index, event) => {
+              if (event.target instanceof SVGElement) {
+                event.target.focus();
+              }
+            }}
+          />
+        </PieChart>,
+      );
+      const slice = container.querySelector<SVGPathElement>('.refocused-slice');
+      assertNotNull(slice);
+      await user.tab();
+      expect(slice).toHaveFocus();
+
+      act(() => slice.blur());
+
+      expect(slice).toHaveFocus();
+      expect(container.querySelector('.recharts-pie-focus-indicator')).toBeInTheDocument();
+    });
+
+    test('the focus indicator follows a slice transformed by a CSS class', async () => {
+      const user = userEventSetup();
+      const { container } = render(
+        <>
+          <style>
+            {'path.shifted-slice { transform: translateX(20px) rotate(30deg); transform-origin: 50% 50%; }'}
+          </style>
+          <PieChart width={200} height={200} accessibilityLayer={false}>
+            <Pie
+              data={[{ value: 1 }, { value: 2 }]}
+              dataKey="value"
+              isAnimationActive={false}
+              rootTabIndex={-1}
+              shape={{ tabIndex: 0, className: 'shifted-slice' }}
+            />
+          </PieChart>
+        </>,
+      );
+      const slice = container.querySelector('.shifted-slice');
+      await user.tab();
+
+      expect(slice).toHaveFocus();
+      const indicator = container.querySelector('.recharts-pie-focus-indicator');
+      assertNotNull(indicator);
+      const style = window.getComputedStyle(indicator);
+      expect(style.transform).toBe('translateX(20px) rotate(30deg)');
+      expect(style.transformOrigin).toBe('50% 50%');
+    });
+
+    test('the focus indicator stays with a slice after its CSS transform transition', async () => {
+      const user = userEventSetup();
+      const { container } = render(
+        <>
+          <style data-testid="moving-slice-style">
+            {
+              'path.moving-slice { transform: translateX(10px); transform-origin: 0px 0px; transition: transform 200ms; }'
+            }
+          </style>
+          <PieChart width={200} height={200} accessibilityLayer={false}>
+            <Pie
+              data={[{ value: 1 }]}
+              dataKey="value"
+              isAnimationActive={false}
+              rootTabIndex={-1}
+              shape={{ tabIndex: 0, className: 'moving-slice' }}
+            />
+          </PieChart>
+        </>,
+      );
+      const slice = container.querySelector('.moving-slice');
+      assertNotNull(slice);
+      await user.tab();
+
+      const indicator = container.querySelector('.recharts-pie-focus-indicator');
+      assertNotNull(indicator);
+      expect(slice).toHaveStyle({ outline: 'none' });
+      expect(window.getComputedStyle(indicator).transform).toBe('translateX(10px)');
+
+      const styleElement = container.querySelector('[data-testid="moving-slice-style"]');
+      assertNotNull(styleElement);
+      slice.dispatchEvent(new TransitionEvent('transitionrun', { propertyName: 'transform' }));
+      styleElement.textContent =
+        'path.moving-slice { transform: translateX(40px); transform-origin: 0px 0px; transition: transform 200ms; }';
+      act(() => {
+        vi.runOnlyPendingTimers();
+      });
+
+      expect(window.getComputedStyle(indicator).transform).toBe('translateX(40px)');
+
+      slice.dispatchEvent(new TransitionEvent('transitionend', { propertyName: 'transform' }));
+      styleElement.textContent =
+        'path.moving-slice { transform: translateX(80px); transform-origin: 0px 0px; transition: transform 200ms; }';
+      act(() => {
+        vi.runOnlyPendingTimers();
+      });
+
+      expect(window.getComputedStyle(indicator).transform).toBe('translateX(40px)');
+      expect(slice).toHaveStyle({ outline: 'none' });
+    });
+
+    test('the focus indicator follows a transform transition that is already running on focus', async () => {
+      const user = userEventSetup();
+      const { container } = render(
+        <>
+          <style data-testid="live-slice-style">
+            {'path.live-slice { transform: translateX(5px); transform-origin: 0px 0px; }'}
+          </style>
+          <PieChart width={200} height={200} accessibilityLayer={false}>
+            <Pie
+              data={[{ value: 1 }]}
+              dataKey="value"
+              isAnimationActive={false}
+              rootTabIndex={-1}
+              shape={{ tabIndex: 0, className: 'live-slice' }}
+            />
+          </PieChart>
+        </>,
+      );
+      const slice = container.querySelector('.live-slice');
+      assertNotNull(slice);
+      let finish: (() => void) | undefined;
+      const animation = {
+        playState: 'running' as const,
+        transitionProperty: 'transform',
+        addEventListener(type: string, listener: EventListener) {
+          if (type === 'finish') {
+            finish = () => {
+              listener(new Event('finish'));
+            };
+          }
+        },
+        removeEventListener() {},
+      };
+      Object.defineProperty(slice, 'getAnimations', {
+        configurable: true,
+        value: () => [animation],
+      });
+
+      await user.tab();
+      const indicator = container.querySelector('.recharts-pie-focus-indicator');
+      assertNotNull(indicator);
+      expect(slice).toHaveStyle({ outline: 'none' });
+      expect(window.getComputedStyle(indicator).transform).toBe('translateX(5px)');
+
+      const styleElement = container.querySelector('[data-testid="live-slice-style"]');
+      assertNotNull(styleElement);
+      styleElement.textContent = 'path.live-slice { transform: translateX(25px); transform-origin: 0px 0px; }';
+      act(() => {
+        vi.runOnlyPendingTimers();
+      });
+
+      expect(window.getComputedStyle(indicator).transform).toBe('translateX(25px)');
+
+      if (finish == null) {
+        throw new Error('expected the running transform transition to be tracked');
+      }
+      finish();
+      styleElement.textContent = 'path.live-slice { transform: translateX(60px); transform-origin: 0px 0px; }';
+      act(() => {
+        vi.runOnlyPendingTimers();
+      });
+
+      expect(window.getComputedStyle(indicator).transform).toBe('translateX(25px)');
+      expect(slice).toHaveStyle({ outline: 'none' });
+    });
+
+    test('the focus indicator follows a transform-origin transition', async () => {
+      const user = userEventSetup();
+      const { container } = render(
+        <>
+          <style data-testid="origin-slice-style">
+            {
+              'path.origin-slice { transform: scale(2); transform-origin: 0px 0px; transition: transform-origin 200ms; }'
+            }
+          </style>
+          <PieChart width={200} height={200} accessibilityLayer={false}>
+            <Pie
+              data={[{ value: 1 }]}
+              dataKey="value"
+              isAnimationActive={false}
+              rootTabIndex={-1}
+              shape={{ tabIndex: 0, className: 'origin-slice' }}
+            />
+          </PieChart>
+        </>,
+      );
+      const slice = container.querySelector('.origin-slice');
+      assertNotNull(slice);
+      await user.tab();
+
+      const indicator = container.querySelector('.recharts-pie-focus-indicator');
+      assertNotNull(indicator);
+      expect(window.getComputedStyle(indicator).transformOrigin).toBe('0px 0px');
+
+      const styleElement = container.querySelector('[data-testid="origin-slice-style"]');
+      assertNotNull(styleElement);
+      slice.dispatchEvent(new TransitionEvent('transitionrun', { propertyName: 'transform-origin' }));
+      styleElement.textContent =
+        'path.origin-slice { transform: scale(2); transform-origin: 20px 10px; transition: transform-origin 200ms; }';
+      act(() => {
+        vi.runOnlyPendingTimers();
+      });
+
+      expect(window.getComputedStyle(indicator).transformOrigin).toBe('20px 10px');
+
+      slice.dispatchEvent(new TransitionEvent('transitionend', { propertyName: 'transform-origin' }));
+      styleElement.textContent =
+        'path.origin-slice { transform: scale(2); transform-origin: 40px 30px; transition: transform-origin 200ms; }';
+      act(() => {
+        vi.runOnlyPendingTimers();
+      });
+
+      expect(window.getComputedStyle(indicator).transformOrigin).toBe('20px 10px');
+    });
+
+    test('the focus indicator follows a transform-origin transition already running on focus', async () => {
+      const user = userEventSetup();
+      const { container } = render(
+        <>
+          <style data-testid="origin-live-style">
+            {'path.origin-live { transform: scale(2); transform-origin: 0px 0px; }'}
+          </style>
+          <PieChart width={200} height={200} accessibilityLayer={false}>
+            <Pie
+              data={[{ value: 1 }]}
+              dataKey="value"
+              isAnimationActive={false}
+              rootTabIndex={-1}
+              shape={{ tabIndex: 0, className: 'origin-live' }}
+            />
+          </PieChart>
+        </>,
+      );
+      const slice = container.querySelector('.origin-live');
+      assertNotNull(slice);
+      let finish: (() => void) | undefined;
+      const animation = {
+        playState: 'running' as const,
+        transitionProperty: 'transform-origin',
+        addEventListener(type: string, listener: EventListener) {
+          if (type === 'finish') {
+            finish = () => {
+              listener(new Event('finish'));
+            };
+          }
+        },
+        removeEventListener() {},
+      };
+      Object.defineProperty(slice, 'getAnimations', {
+        configurable: true,
+        value: () => [animation],
+      });
+
+      await user.tab();
+      const indicator = container.querySelector('.recharts-pie-focus-indicator');
+      assertNotNull(indicator);
+      expect(window.getComputedStyle(indicator).transformOrigin).toBe('0px 0px');
+
+      const styleElement = container.querySelector('[data-testid="origin-live-style"]');
+      assertNotNull(styleElement);
+      styleElement.textContent = 'path.origin-live { transform: scale(2); transform-origin: 20px 10px; }';
+      act(() => {
+        vi.runOnlyPendingTimers();
+      });
+
+      expect(window.getComputedStyle(indicator).transformOrigin).toBe('20px 10px');
+
+      if (finish == null) {
+        throw new Error('expected the running transform-origin transition to be tracked');
+      }
+      finish();
+      styleElement.textContent = 'path.origin-live { transform: scale(2); transform-origin: 40px 30px; }';
+      act(() => {
+        vi.runOnlyPendingTimers();
+      });
+
+      expect(window.getComputedStyle(indicator).transformOrigin).toBe('20px 10px');
+    });
+
     test('Tab can focus in and out of the pie chart', async () => {
       const user = userEventSetup();
       expect.assertions(3);

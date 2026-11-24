@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { SVGProps } from 'react';
+import { SVGProps, useLayoutEffect, useRef } from 'react';
 import { clsx } from 'clsx';
 import { RechartsFill } from '../fill/RechartsFill';
 import { FillObjectPaint } from '../fill/fillDefinitions';
@@ -329,8 +329,213 @@ export const defaultSectorProps = {
   cornerIsExternal: false,
 } as const satisfies Partial<Props>;
 
-const SectorImpl: React.FC<StringFillProps> = sectorProps => {
+const transformProperties = ['transform', 'transform-box', 'transform-origin', 'translate', 'rotate', 'scale'];
+const animatedTransformProperties = new Set(['transform', 'transform-origin', 'translate', 'rotate', 'scale', 'all']);
+
+function readTransitionProperty(animation: Animation): string | null {
+  if (!('transitionProperty' in animation)) {
+    return null;
+  }
+  const { transitionProperty } = animation;
+  return typeof transitionProperty === 'string' ? transitionProperty : null;
+}
+
+function animationMovesSector(animation: Animation, sector: Element): boolean {
+  const property = readTransitionProperty(animation);
+  if (property != null) {
+    return animatedTransformProperties.has(property);
+  }
+  const { effect } = animation;
+  if (effect == null || typeof KeyframeEffect === 'undefined' || !(effect instanceof KeyframeEffect)) {
+    return false;
+  }
+  if (effect.target !== sector || effect.pseudoElement) {
+    return false;
+  }
+  return effect.getKeyframes().some(frame =>
+    ['transform', 'transformOrigin', 'translate', 'rotate', 'scale'].some(key => {
+      const value = frame[key];
+      return typeof value === 'string' && value !== '';
+    }),
+  );
+}
+
+function isTransformTransitionEvent(event: Event, sector: Element): event is TransitionEvent {
+  return (
+    event.target === sector && event instanceof TransitionEvent && animatedTransformProperties.has(event.propertyName)
+  );
+}
+
+function alignFocusIndicator(indicator: SVGGElement | null): void {
+  const sector = indicator?.previousElementSibling;
+  const parent = indicator?.parentElement;
+  const view = indicator?.ownerDocument.defaultView;
+  if (!indicator || !sector || !view) {
+    return;
+  }
+
+  const { style: indicatorStyle } = indicator;
+  if (sector instanceof view.SVGGraphicsElement && parent instanceof view.SVGGraphicsElement) {
+    const sectorMatrix = sector.getCTM();
+    const parentMatrix = parent.getCTM();
+    if (sectorMatrix && parentMatrix) {
+      const { a, b, c, d, e, f } = parentMatrix.inverse().multiply(sectorMatrix);
+      const matrix = [a, b, c, d, e, f];
+      if (matrix.every(Number.isFinite)) {
+        indicatorStyle.transform = `matrix(${matrix.join(',')})`;
+        indicatorStyle.transformBox = 'view-box';
+        indicatorStyle.transformOrigin = '0 0';
+        indicatorStyle.translate = 'none';
+        indicatorStyle.rotate = 'none';
+        indicatorStyle.scale = 'none';
+        return;
+      }
+    }
+  }
+
+  const style = view.getComputedStyle(sector);
+  transformProperties.forEach(property => {
+    indicatorStyle.setProperty(property, style.getPropertyValue(property));
+  });
+}
+
+function trackSectorFocusIndicator(indicator: SVGGElement): () => void {
+  const sector = indicator.previousElementSibling;
+  if (!(sector instanceof Element)) {
+    return () => {};
+  }
+
+  let frame: number | null = null;
+  let eventSources = 0;
+  let animationSources = 0;
+  let stopped = false;
+  const followed = new Set<Animation>();
+  const stops = new Map<Animation, () => void>();
+  const active = () => eventSources + animationSources > 0;
+
+  const cancelFrame = () => {
+    if (frame != null) {
+      cancelAnimationFrame(frame);
+      frame = null;
+    }
+  };
+
+  const tick = () => {
+    frame = null;
+    if (stopped) {
+      return;
+    }
+    alignFocusIndicator(indicator);
+    if (active()) {
+      frame = requestAnimationFrame(tick);
+    }
+  };
+
+  const syncFrame = () => {
+    if (stopped) {
+      return;
+    }
+    if (active()) {
+      if (frame == null) {
+        frame = requestAnimationFrame(tick);
+      }
+      return;
+    }
+    cancelFrame();
+    alignFocusIndicator(indicator);
+  };
+
+  const follow = (animation: Animation): boolean => {
+    if (followed.has(animation)) {
+      return true;
+    }
+    if (animation.playState !== 'running' || !animationMovesSector(animation, sector)) {
+      return false;
+    }
+    const stop = () => {
+      animation.removeEventListener('finish', stop);
+      animation.removeEventListener('cancel', stop);
+      stops.delete(animation);
+      if (!followed.delete(animation)) {
+        return;
+      }
+      animationSources -= 1;
+      syncFrame();
+    };
+    followed.add(animation);
+    stops.set(animation, stop);
+    animation.addEventListener('finish', stop);
+    animation.addEventListener('cancel', stop);
+    animationSources += 1;
+    syncFrame();
+    return true;
+  };
+
+  const followCurrent = () => {
+    if (typeof sector.getAnimations !== 'function') {
+      return;
+    }
+    sector.getAnimations().forEach(follow);
+  };
+
+  const onTransitionRun = (event: Event) => {
+    if (!isTransformTransitionEvent(event, sector) || stopped) {
+      return;
+    }
+    const followedBefore = followed.size;
+    followCurrent();
+    if (followed.size !== followedBefore) {
+      return;
+    }
+    eventSources += 1;
+    syncFrame();
+  };
+
+  const onTransitionDone = (event: Event) => {
+    if (!isTransformTransitionEvent(event, sector) || stopped) {
+      return;
+    }
+    if (eventSources > 0) {
+      eventSources -= 1;
+    }
+    alignFocusIndicator(indicator);
+    if (!active()) {
+      cancelFrame();
+    }
+  };
+
+  const onAnimationStart = (event: Event) => {
+    if (event.target === sector && !stopped) {
+      followCurrent();
+    }
+  };
+
+  alignFocusIndicator(indicator);
+  followCurrent();
+  sector.addEventListener('transitionrun', onTransitionRun);
+  sector.addEventListener('transitionend', onTransitionDone);
+  sector.addEventListener('transitioncancel', onTransitionDone);
+  sector.addEventListener('animationstart', onAnimationStart);
+
+  return () => {
+    stopped = true;
+    cancelFrame();
+    sector.removeEventListener('transitionrun', onTransitionRun);
+    sector.removeEventListener('transitionend', onTransitionDone);
+    sector.removeEventListener('transitioncancel', onTransitionDone);
+    sector.removeEventListener('animationstart', onAnimationStart);
+    stops.forEach((stop, animation) => {
+      animation.removeEventListener('finish', stop);
+      animation.removeEventListener('cancel', stop);
+    });
+    stops.clear();
+    followed.clear();
+  };
+}
+
+function SectorImpl({ showFocusIndicator, ...sectorProps }: StringFillProps & { showFocusIndicator?: boolean }) {
   const props = resolveDefaultProps(sectorProps, defaultSectorProps);
+  const indicatorRef = useRef<SVGGElement | null>(null);
   const {
     cx,
     cy,
@@ -342,9 +547,31 @@ const SectorImpl: React.FC<StringFillProps> = sectorProps => {
     startAngle,
     endAngle,
     className,
+    transform: transformAttribute,
   } = props;
+  const { transform, transformBox, transformOrigin, translate, rotate, scale } = props.style ?? {};
+  const rendered = !(outerRadius < innerRadius || startAngle === endAngle);
 
-  if (outerRadius < innerRadius || startAngle === endAngle) {
+  useLayoutEffect(() => {
+    const indicator = indicatorRef.current;
+    if (!showFocusIndicator || !rendered || indicator == null) {
+      return undefined;
+    }
+    return trackSectorFocusIndicator(indicator);
+  }, [
+    showFocusIndicator,
+    rendered,
+    className,
+    transformAttribute,
+    transform,
+    transformBox,
+    transformOrigin,
+    translate,
+    rotate,
+    scale,
+  ]);
+
+  if (!rendered) {
     return null;
   }
 
@@ -369,8 +596,43 @@ const SectorImpl: React.FC<StringFillProps> = sectorProps => {
     path = getSectorPath({ cx, cy, innerRadius, outerRadius, startAngle, endAngle });
   }
 
-  return <path {...svgPropertiesAndEvents(props)} className={layerClass} d={path} />;
-};
+  return (
+    <>
+      <path
+        {...svgPropertiesAndEvents(props)}
+        className={layerClass}
+        d={path}
+        style={showFocusIndicator ? { ...props.style, outline: 'none' } : props.style}
+      />
+      {showFocusIndicator && (
+        <g
+          className="recharts-pie-focus-indicator"
+          aria-hidden="true"
+          fill="none"
+          pointerEvents="none"
+          strokeLinejoin="round"
+          transform={props.transform}
+          ref={indicatorRef}
+        >
+          <path d={path} stroke="Canvas" strokeWidth={5} vectorEffect="non-scaling-stroke" />
+          <path d={path} stroke="CanvasText" strokeWidth={2} vectorEffect="non-scaling-stroke" />
+        </g>
+      )}
+    </>
+  );
+}
+
+export function SectorWithFocusIndicator({ showFocusIndicator, ...props }: Props & { showFocusIndicator?: boolean }) {
+  const { fill } = props;
+  // spreading all props first keeps `fill` in its place among the attributes
+  return fill != null && typeof fill === 'object' ? (
+    <FillObjectPaint fill={fill}>
+      {paint => <SectorImpl {...props} fill={paint} showFocusIndicator={showFocusIndicator} />}
+    </FillObjectPaint>
+  ) : (
+    <SectorImpl {...props} fill={fill} showFocusIndicator={showFocusIndicator} />
+  );
+}
 
 /**
  * Renders a sector (pie-slice or donut-segment shape) from center
@@ -379,12 +641,4 @@ const SectorImpl: React.FC<StringFillProps> = sectorProps => {
  * cursor shape shown by Tooltip on polar charts.
  * @public
  */
-export const Sector = (props: Props) => {
-  const { fill } = props;
-  // spreading all props first keeps `fill` in its place among the attributes
-  return fill != null && typeof fill === 'object' ? (
-    <FillObjectPaint fill={fill}>{paint => <SectorImpl {...props} fill={paint} />}</FillObjectPaint>
-  ) : (
-    <SectorImpl {...props} fill={fill} />
-  );
-};
+export const Sector = (props: Props) => <SectorWithFocusIndicator {...props} />;
