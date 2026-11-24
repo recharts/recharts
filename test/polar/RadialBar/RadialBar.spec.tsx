@@ -1557,6 +1557,15 @@ describe('<RadialBar />', () => {
 
       expect(spy.mock.lastCall?.[0]).toBe(payloadBefore);
     });
+
+    it('should not render any sectors when rendered outside of a chart', () => {
+      const { container } = render(
+        <svg>
+          <RadialBar dataKey="uv" />
+        </svg>,
+      );
+      expect(container.querySelectorAll('.recharts-radial-bar-sector')).toHaveLength(0);
+    });
   });
 });
 
