@@ -1,4 +1,4 @@
-import { createSlice, PayloadAction } from '@reduxjs/toolkit';
+import { createSlice, PayloadAction, Reducer } from '@reduxjs/toolkit';
 import { AxisViewport, clampViewport, FULL_VIEWPORT, viewportsEqual } from '../util/zoom/viewport';
 
 /**
@@ -73,4 +73,4 @@ const zoomSlice = createSlice({
 
 export const { setAxisViewport, setZoom, resetZoom } = zoomSlice.actions;
 
-export const zoomReducer = zoomSlice.reducer;
+export const zoomReducer: Reducer<ZoomState> = zoomSlice.reducer;

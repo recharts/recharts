@@ -1,4 +1,4 @@
-import { createSlice } from '@reduxjs/toolkit';
+import { createSlice, Reducer } from '@reduxjs/toolkit';
 import { TooltipEventType } from '../util/types';
 import { TooltipIndex, TooltipPayloadSearcher } from './tooltipSlice';
 import { isNan } from '../util/DataUtils';
@@ -59,6 +59,6 @@ const optionsSlice = createSlice({
   },
 });
 
-export const optionsReducer = optionsSlice.reducer;
+export const optionsReducer: Reducer<ChartOptions> = optionsSlice.reducer;
 
 export const { createEventEmitter } = optionsSlice.actions;

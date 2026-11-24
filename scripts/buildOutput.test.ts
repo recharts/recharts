@@ -1,4 +1,4 @@
-import { existsSync } from 'fs';
+import { existsSync, readFileSync } from 'fs';
 import { describe, it, expect } from 'vitest';
 import { globSync } from 'glob';
 
@@ -57,6 +57,18 @@ describe('expected folder structure', () => {
   describe('types folder output', () => {
     it('should have expected files and no more', async () => {
       await checkFolderOutput('types/**/*', 'typesFiles');
+    });
+
+    it('should not import undeclared redux or redux-thunk packages in declaration files', () => {
+      const dtsFiles = globSync('types/**/*.d.ts', { platform: 'linux' });
+      expect(dtsFiles.length).toBeGreaterThan(0);
+
+      const offendingFiles = dtsFiles.filter(file => {
+        const content = readFileSync(file, 'utf8');
+        return /from ['"]redux(?:-thunk)?['"]|import\(['"]redux(?:-thunk)?['"]\)/.test(content);
+      });
+
+      expect(offendingFiles).toEqual([]);
     });
   });
 
