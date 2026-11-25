@@ -957,13 +957,11 @@ class BrushWithState extends PureComponent<BrushWithStateProps, State> {
     }
 
     // unless we search for the closest scaleValue to the current coordinate
-    // we need to move travelers via index when using the keyboard
-    let currentIndex: number = -1;
-    if (id === 'startX') {
-      currentIndex = startIndex;
-    } else if (id === 'endX') {
-      currentIndex = endIndex;
-    }
+    // we need to move travelers via index when using the keyboard.
+    // The travellers can be dragged past each other, so the left one holds startIndex whatever its id.
+    const otherX = id === 'startX' ? endX : startX;
+    const isLeftTraveller = id === 'startX' ? startX <= endX : endX < startX;
+    const currentIndex = isLeftTraveller ? startIndex : endIndex;
 
     if (currentIndex < 0 || currentIndex >= data.length) {
       return;
@@ -980,7 +978,7 @@ class BrushWithState extends PureComponent<BrushWithStateProps, State> {
     }
 
     // Prevent travellers from being on top of each other or overlapping
-    if ((id === 'startX' && newScaleValue >= endX) || (id === 'endX' && newScaleValue <= startX)) {
+    if (isLeftTraveller ? newScaleValue >= otherX : newScaleValue <= otherX) {
       return;
     }
 
