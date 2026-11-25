@@ -1012,7 +1012,7 @@ describe('<LineChart /> and various data sources', () => {
       </LineChart>,
     );
     expectLabels(container, ['258', '295', '193', '168', '117', '597', '745', '657', '538', '762']);
-    // sic! the XAxis renders all ticks twice!
+    // Both Lines have a point at every category, so every category gets one tick, the same as with the data on the chart
     expectXAxisTicks(container, [
       {
         textContent: 'Iter: 0',
@@ -1021,42 +1021,17 @@ describe('<LineChart /> and various data sources', () => {
       },
       {
         textContent: 'Iter: 1',
-        x: '48.333333333333336',
+        x: '102.5',
         y: '373',
       },
       {
         textContent: 'Iter: 2',
-        x: '91.66666666666667',
+        x: '200',
         y: '373',
       },
       {
         textContent: 'Iter: 3',
-        x: '135',
-        y: '373',
-      },
-      {
-        textContent: 'Iter: 4',
-        x: '178.33333333333334',
-        y: '373',
-      },
-      {
-        textContent: 'Iter: 0',
-        x: '221.66666666666669',
-        y: '373',
-      },
-      {
-        textContent: 'Iter: 1',
-        x: '265',
-        y: '373',
-      },
-      {
-        textContent: 'Iter: 2',
-        x: '308.33333333333337',
-        y: '373',
-      },
-      {
-        textContent: 'Iter: 3',
-        x: '351.6666666666667',
+        x: '297.5',
         y: '373',
       },
       {
@@ -1114,7 +1089,7 @@ describe('<LineChart /> and various data sources', () => {
       </LineChart>,
     );
     expectLabels(container, ['258', '295', '193', '168', '117', '597', '745', '657', '538', '762']);
-    // sic! the XAxis renders all ticks twice -anyway- and ignores my attempt at setting a domain
+    // sic! the XAxis ignores my attempt at setting a domain
     expectXAxisTicks(container, [
       {
         textContent: 'Iter: 0',
@@ -1123,42 +1098,17 @@ describe('<LineChart /> and various data sources', () => {
       },
       {
         textContent: 'Iter: 1',
-        x: '48.333333333333336',
+        x: '102.5',
         y: '373',
       },
       {
         textContent: 'Iter: 2',
-        x: '91.66666666666667',
+        x: '200',
         y: '373',
       },
       {
         textContent: 'Iter: 3',
-        x: '135',
-        y: '373',
-      },
-      {
-        textContent: 'Iter: 4',
-        x: '178.33333333333334',
-        y: '373',
-      },
-      {
-        textContent: 'Iter: 0',
-        x: '221.66666666666669',
-        y: '373',
-      },
-      {
-        textContent: 'Iter: 1',
-        x: '265',
-        y: '373',
-      },
-      {
-        textContent: 'Iter: 2',
-        x: '308.33333333333337',
-        y: '373',
-      },
-      {
-        textContent: 'Iter: 3',
-        x: '351.6666666666667',
+        x: '297.5',
         y: '373',
       },
       {

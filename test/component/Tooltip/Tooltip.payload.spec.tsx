@@ -1464,7 +1464,8 @@ describe('Tooltip payload', () => {
       </div>,
     );
 
-    showTooltip(container, ComposedChartTestCase.mouseHoverSelector, debug);
+    // the tick of category E: with a tick per category, every series covers the whole width of the chart
+    showTooltipOnCoordinate(container, ComposedChartTestCase.mouseHoverSelector, { clientX: 329, clientY: 200 }, debug);
 
     expectTooltipPayload(container, 'E', ['value : 0.7', 'value : 0.4']);
   });

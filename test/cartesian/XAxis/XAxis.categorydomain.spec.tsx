@@ -408,6 +408,7 @@ describe('categorical domain', () => {
           <Customized component={<ExpectAxisDomain assert={spy} axisType="xAxis" />} />
         </LineChart>,
       );
+      // The 200 that both Lines have a point at is one category, so it gets one tick
       expectXAxisTicks(container, [
         {
           textContent: '90',
@@ -416,36 +417,66 @@ describe('categorical domain', () => {
         },
         {
           textContent: '200',
-          x: '53.333333333333336',
+          x: '63',
           y: '273',
         },
         {
           textContent: '260',
-          x: '101.66666666666667',
+          x: '121',
           y: '273',
         },
         {
           textContent: '400',
-          x: '150',
+          x: '179',
           y: '273',
         },
         {
           textContent: '280',
-          x: '198.33333333333334',
+          x: '237',
           y: '273',
         },
         {
           textContent: '500',
-          x: '246.66666666666669',
-          y: '273',
-        },
-        {
-          textContent: '200',
           x: '295',
           y: '273',
         },
       ]);
-      expectLastCalledWith(spy, [0, 1, 2, 3, 4, 5, 6]);
+      expectLastCalledWith(spy, [90, 200, 260, 400, 280, 500]);
+    });
+
+    it('should give a tick of its own to a category that is repeated within the data of one element', () => {
+      const spy = vi.fn();
+      const { container } = render(
+        <LineChart width={300} height={300}>
+          <Line data={[{ z: 90 }, { z: 90 }, { z: 260 }]} />
+          <Line data={[{ z: 400 }, { z: 90 }]} />
+          <XAxis dataKey="z" type="category" />
+          <Customized component={<ExpectAxisDomain assert={spy} axisType="xAxis" />} />
+        </LineChart>,
+      );
+      expectXAxisTicks(container, [
+        {
+          textContent: '90',
+          x: '5',
+          y: '273',
+        },
+        {
+          textContent: '90',
+          x: '101.66666666666667',
+          y: '273',
+        },
+        {
+          textContent: '260',
+          x: '198.33333333333334',
+          y: '273',
+        },
+        {
+          textContent: '400',
+          x: '295',
+          y: '273',
+        },
+      ]);
+      expectLastCalledWith(spy, [0, 1, 2, 3]);
     });
 
     it('should merge and display domain of all data, and remove duplicates, even when the duplicates are defined on different elements', () => {

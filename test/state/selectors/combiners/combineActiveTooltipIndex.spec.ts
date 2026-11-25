@@ -2,7 +2,7 @@ import { describe, it, expect } from 'vitest';
 import { combineActiveTooltipIndex } from '../../../../src/state/selectors/combiners/combineActiveTooltipIndex';
 import { TooltipInteractionState } from '../../../../src/state/tooltipSlice';
 import { ChartData } from '../../../../src/state/chartDataSlice';
-import { CategoricalDomain, NumberDomain } from '../../../../src/util/types';
+import { CategoricalDomain, NumberDomain, TickItem } from '../../../../src/util/types';
 
 const createInteraction = (index: TooltipInteractionState['index']): TooltipInteractionState => ({
   active: true,
@@ -12,13 +12,16 @@ const createInteraction = (index: TooltipInteractionState['index']): TooltipInte
   graphicalItemId: undefined,
 });
 
+const createTicks = (values: ReadonlyArray<unknown>): ReadonlyArray<TickItem> =>
+  values.map((value, index) => ({ value, index, coordinate: index * 10, offset: 0 }));
+
 describe('combineActiveTooltipIndex', () => {
   it('returns null when the hovered datum falls outside the provided numeric domain', () => {
     const chartData: ChartData = [{ value: 2 }, { value: 10 }];
     const tooltipInteraction = createInteraction('1');
     const domain: NumberDomain = [0, 5] as const;
 
-    const result = combineActiveTooltipIndex(tooltipInteraction, chartData, 'value', domain);
+    const result = combineActiveTooltipIndex(tooltipInteraction, chartData, undefined, 'value', domain);
 
     expect(result).toBeNull();
   });
@@ -28,7 +31,7 @@ describe('combineActiveTooltipIndex', () => {
     const tooltipInteraction = createInteraction('30');
     const domain: NumberDomain = [0, 20] as const;
 
-    const result = combineActiveTooltipIndex(tooltipInteraction, chartData, 'value', domain);
+    const result = combineActiveTooltipIndex(tooltipInteraction, chartData, undefined, 'value', domain);
 
     expect(result).toBe('2');
   });
@@ -38,7 +41,7 @@ describe('combineActiveTooltipIndex', () => {
     const tooltipInteraction = createInteraction('0');
     const categoricalDomain: CategoricalDomain = ['alpha', 'beta'];
 
-    const result = combineActiveTooltipIndex(tooltipInteraction, chartData, 'category', categoricalDomain);
+    const result = combineActiveTooltipIndex(tooltipInteraction, chartData, undefined, 'category', categoricalDomain);
 
     expect(result).toBe('0');
   });
@@ -47,8 +50,56 @@ describe('combineActiveTooltipIndex', () => {
     const chartData: ChartData = [];
     const tooltipInteraction = createInteraction('node-3');
 
-    const result = combineActiveTooltipIndex(tooltipInteraction, chartData, undefined, undefined);
+    const result = combineActiveTooltipIndex(tooltipInteraction, chartData, undefined, undefined, undefined);
 
     expect(result).toBe('node-3');
+  });
+
+  it('reads the value of the tick at the index, not of the row at the index, when the two differ', () => {
+    // The rows of two data arrays, one after the other, and the ticks made from their distinct categories
+    const chartData: ChartData = [
+      { value: 10 },
+      { value: 20 },
+      { value: 30 },
+      { value: 40 },
+      { value: 30 },
+      { value: 5 },
+    ];
+    const tooltipTicks = createTicks([10, 20, 30, 40, 5]);
+    const tooltipInteraction = createInteraction('4');
+    const domain: NumberDomain = [4, 6] as const;
+
+    const result = combineActiveTooltipIndex(tooltipInteraction, chartData, tooltipTicks, 'value', domain);
+
+    expect(result).toBe('4');
+  });
+
+  it('returns null when the tick at the index is outside the numeric domain', () => {
+    const chartData: ChartData = [
+      { value: 10 },
+      { value: 20 },
+      { value: 30 },
+      { value: 40 },
+      { value: 30 },
+      { value: 5 },
+    ];
+    const tooltipTicks = createTicks([10, 20, 30, 40, 5]);
+    const tooltipInteraction = createInteraction('4');
+    const domain: NumberDomain = [40, 50] as const;
+
+    const result = combineActiveTooltipIndex(tooltipInteraction, chartData, tooltipTicks, 'value', domain);
+
+    expect(result).toBeNull();
+  });
+
+  it('reads the value of the row at the index when there is no tick at that index', () => {
+    const chartData: ChartData = [{ value: 2 }, { value: 10 }];
+    const tooltipTicks = createTicks([2]);
+    const tooltipInteraction = createInteraction('1');
+    const domain: NumberDomain = [0, 5] as const;
+
+    const result = combineActiveTooltipIndex(tooltipInteraction, chartData, tooltipTicks, 'value', domain);
+
+    expect(result).toBeNull();
   });
 });

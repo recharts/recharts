@@ -67,17 +67,21 @@ keyboardEventsMiddleware.startListening({
           return;
         }
 
+        const tooltipTicks = selectTooltipAxisTicks(currentState);
+        const displayedData = selectTooltipDisplayedData(currentState);
+        // The index addresses the tooltip ticks; where there are none, it addresses the rows of displayed data.
+        const indexCount = tooltipTicks?.length || displayedData.length;
+
         // TODO this is lacking index for charts that do not support numeric indexes
         const resolvedIndex = combineActiveTooltipIndex(
           keyboardInteraction,
-          selectTooltipDisplayedData(currentState),
+          displayedData,
+          tooltipTicks,
           selectTooltipAxisDataKey(currentState),
           selectTooltipAxisDomain(currentState),
         );
         const currentIndex = resolvedIndex == null ? -1 : Number(resolvedIndex);
         const isOutsideDomain = !Number.isFinite(currentIndex) || currentIndex < 0;
-        const tooltipTicks = selectTooltipAxisTicks(currentState);
-        const displayedData = selectTooltipDisplayedData(currentState);
         const tooltipEventType = selectTooltipEventType(currentState, currentState.tooltip.settings.shared);
         if (key === 'Enter') {
           if (isOutsideDomain) {
@@ -119,15 +123,19 @@ keyboardEventsMiddleware.startListening({
 
           nextIndex = -1;
           if (effectiveMovement > 0) {
-            for (let i = 0; i < displayedData.length; i++) {
-              if (combineActiveTooltipIndex(mkInteraction(i), displayedData, axisDataKey, domain) != null) {
+            for (let i = 0; i < indexCount; i++) {
+              if (
+                combineActiveTooltipIndex(mkInteraction(i), displayedData, tooltipTicks, axisDataKey, domain) != null
+              ) {
                 nextIndex = i;
                 break;
               }
             }
           } else {
-            for (let i = displayedData.length - 1; i >= 0; i--) {
-              if (combineActiveTooltipIndex(mkInteraction(i), displayedData, axisDataKey, domain) != null) {
+            for (let i = indexCount - 1; i >= 0; i--) {
+              if (
+                combineActiveTooltipIndex(mkInteraction(i), displayedData, tooltipTicks, axisDataKey, domain) != null
+              ) {
                 nextIndex = i;
                 break;
               }
@@ -139,8 +147,7 @@ keyboardEventsMiddleware.startListening({
           }
         } else {
           nextIndex = currentIndex + movement * directionMultiplier;
-          const dataLength = tooltipTicks?.length || displayedData.length;
-          if (dataLength === 0 || nextIndex >= dataLength || nextIndex < 0) {
+          if (indexCount === 0 || nextIndex >= indexCount || nextIndex < 0) {
             return;
           }
         }

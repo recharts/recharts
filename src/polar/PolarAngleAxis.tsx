@@ -63,6 +63,9 @@ export interface PolarAngleAxisProps<DataPointType = any, DataValueType = any>
   allowDecimals?: boolean;
   /**
    * Allow the axis has duplicated categories or not when the type of axis is "category".
+   *
+   * A category that several graphical items each have a point at, in the `data` of each, is one category and gets one tick.
+   * Only a category that repeats within the data of a single item gets a tick of its own.
    * @defaultValue true
    */
   allowDuplicatedCategory?: boolean;

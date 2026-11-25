@@ -1,7 +1,7 @@
 import { TooltipIndex, TooltipInteractionState } from '../../tooltipSlice';
 import { ChartData } from '../../chartDataSlice';
 import { isWellBehavedNumber } from '../../../util/isWellBehavedNumber';
-import { DataKey, CategoricalDomain, NumberDomain } from '../../../util/types';
+import { DataKey, CategoricalDomain, NumberDomain, TickItem } from '../../../util/types';
 import { getValueByDataKey } from '../../../util/ChartUtils';
 import { isWellFormedNumberDomain } from '../../../util/isDomainSpecifiedByUser';
 
@@ -32,7 +32,7 @@ function isValueWithinNumberDomain(value: unknown, domain: NumberDomain): boolea
 }
 
 function isValueWithinDomain(
-  entry: unknown,
+  value: unknown,
   axisDataKey: DataKey<unknown> | undefined,
   domain: NumberDomain | CategoricalDomain | undefined,
 ): boolean {
@@ -40,7 +40,6 @@ function isValueWithinDomain(
     return true;
   }
 
-  const value = getValueByDataKey(entry, axisDataKey);
   if (value == null) {
     return true;
   }
@@ -55,6 +54,7 @@ function isValueWithinDomain(
 export const combineActiveTooltipIndex = (
   tooltipInteraction: TooltipInteractionState | undefined,
   chartData: ChartData,
+  tooltipAxisTicks: ReadonlyArray<TickItem> | undefined,
   axisDataKey?: DataKey<unknown>,
   domain?: NumberDomain | CategoricalDomain,
 ): TooltipIndex | null => {
@@ -82,13 +82,22 @@ export const combineActiveTooltipIndex = (
 
   // now let's clamp the desiredIndex between the limits
   const clampedIndex = Math.max(lowerLimit, Math.min(indexAsNumber, upperLimit));
+
+  /*
+   * The index addresses the tooltip ticks. With the data on the chart, the tick and the row at one index are the same.
+   * With data on several graphical items, a tick can be a category that the row at that index shares with another item,
+   * and then the value of the tick itself is the one that is inside the domain or outside of it.
+   */
+  const tick = tooltipAxisTicks?.[clampedIndex];
   const entry = chartData[clampedIndex];
 
-  if (entry == null) {
+  if (tick == null && entry == null) {
     return String(clampedIndex);
   }
 
-  if (!isValueWithinDomain(entry, axisDataKey, domain)) {
+  const value = tick == null ? getValueByDataKey(entry, axisDataKey) : tick.value;
+
+  if (!isValueWithinDomain(value, axisDataKey, domain)) {
     return null;
   }
 
