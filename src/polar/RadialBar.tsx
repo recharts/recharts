@@ -223,6 +223,16 @@ function RadialBarSectors({
     >
       {sectors.map((entry: RadialBarDataItem, i: number) => {
         const isActive: boolean = Boolean(activeShape && activeIndex === String(i));
+        /*
+         * Same as `activeBar` in Bar: `activeShape={true}` renders the `shape`,
+         * so a custom `shape` renders the active sector too, and decides on its own how the active state looks.
+         */
+        let option: React.ComponentProps<typeof RadialBarSector>['option'];
+        if (isActive && activeShape != null && activeShape !== false) {
+          option = activeShape === true ? shape : activeShape;
+        } else {
+          option = shape;
+        }
         const onMouseEnter = onMouseEnterFromContext(entry, i);
         const onMouseLeave = onMouseLeaveFromContext(entry, i);
         const onClick = onClickFromContext(entry, i);
@@ -236,7 +246,13 @@ function RadialBarSectors({
           ...(readEntryFill(entry.payload).fillObject == null
             ? undefined
             : { fill: getFillUrl(getEntryFillId(id, i)) }),
-          ...(isActive ? getActiveStyleOverrides(activeShape, themedActiveStyles, entry) : undefined),
+          ...(isActive
+            ? getActiveStyleOverrides(
+                option === defaultRadialBarShape || typeof option === 'boolean' ? true : option,
+                themedActiveStyles,
+                entry,
+              )
+            : undefined),
           ...adaptEventsOfChild(restOfAllOtherProps, entry, i),
           onMouseEnter,
           onMouseLeave,
@@ -248,7 +264,7 @@ function RadialBarSectors({
           isAnimating,
           isEntrance,
           isActive,
-          option: isActive && activeShape != null ? activeShape : shape,
+          option,
           index: i,
         };
 
@@ -380,6 +396,11 @@ export interface InternalRadialBarProps<DataPointType = any, DataValueType = any
    * @example <RadialBar dataKey="uv" fill={{ definition: pattern(patterns.diagonal) }} />
    */
   fill?: string | RechartsFill;
+  /**
+   * This component is rendered when this graphical item is activated
+   * (could be by mouse hover, touch, keyboard, programmatically).
+   * When set to `true`, renders the item's `shape` with `isActive: true`.
+   */
   activeShape?: ActiveShape<RadialBarSectorProps, SVGPathElement>;
   /**
    * @defaultValue 0
@@ -548,6 +569,7 @@ export interface InternalRadialBarProps<DataPointType = any, DataValueType = any
   /**
    * If set a ReactElement, the shape of radial bar sectors can be customized.
    * If set a function, the function will be called to render customized shape.
+   * When `activeShape={true}`, the custom shape is also rendered for the active sector and receives `isActive: true`.
    * During animations, the function shape also receives `animationElapsedTime`, `isAnimating`, and `isEntrance`.
    * By default, renders a sector.
    */
