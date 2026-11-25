@@ -10,6 +10,7 @@ import {
   useCartesianScale,
 } from '../../src/hooks';
 import { PageData } from '../_data';
+import { assertNotNull } from '../helper/assertNotNull';
 
 describe('axis scale hooks', () => {
   describe('useXAxisScale', () => {
@@ -138,9 +139,10 @@ describe('axis scale hooks', () => {
           // Get pixel for 'Page C'
           const pixelForPageC = scaleFunction('Page C');
           expect(pixelForPageC).toBeDefined();
+          assertNotNull(pixelForPageC);
 
           // Inverse should return closest category
-          const dataValue = inverseFunction(pixelForPageC!);
+          const dataValue = inverseFunction(pixelForPageC);
           expect(dataValue).toBe('Page C');
         }
       });

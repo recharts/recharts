@@ -1049,11 +1049,6 @@
       "count": 1
     }
   },
-  "test/hooks/useAxisScale.spec.tsx": {
-    "@typescript-eslint/no-non-null-assertion": {
-      "count": 1
-    }
-  },
   "test/hooks/useAxisTicks.spec.tsx": {
     "@typescript-eslint/no-non-null-assertion": {
       "count": 4
