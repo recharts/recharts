@@ -1,7 +1,8 @@
 import { describe, it, expect } from 'vitest';
-import { scaleLinear } from 'victory-vendor/d3-scale';
+import { scaleBand, scaleLinear, scalePoint } from 'victory-vendor/d3-scale';
 import { bisect, createCategoricalInverse } from '../../../src/util/scale/createCategoricalInverse';
 import { CustomScaleDefinition } from '../../../src';
+import { CategoricalDomainItem } from '../../../src/util/types';
 
 describe('bisect', () => {
   it('should return the correct insertion index in an ascending array', () => {
@@ -78,6 +79,49 @@ describe('createCategoricalInverse', () => {
       expect(inverse(45)).toBe(1);
       expect(inverse(75)).toBe(1);
       expect(inverse(100)).toBe(2);
+    }
+  });
+});
+
+describe('inverse category positions', () => {
+  it.each([
+    { range: [0, 300], paddingInner: 0, paddingOuter: 0 },
+    { range: [300, 0], paddingInner: 0, paddingOuter: 0 },
+    { range: [0, 300], paddingInner: 0.2, paddingOuter: 0.1 },
+    { range: [300, 0], paddingInner: 0.2, paddingOuter: 0.1 },
+  ])('snaps to band centers with $range and $paddingInner inner padding', ({ range, paddingInner, paddingOuter }) => {
+    const domain = ['A', 'B', 'C'];
+    const scale = scaleBand<CategoricalDomainItem>()
+      .domain(domain)
+      .range(range)
+      .paddingInner(paddingInner)
+      .paddingOuter(paddingOuter);
+    const inverse = createCategoricalInverse(scale);
+    expect(inverse).toBeDefined();
+    for (const category of domain) {
+      const start = scale(category);
+      if (start == null) {
+        throw new Error('Expected a position for every category');
+      }
+      for (const fraction of [0.1, 0.5, 0.9]) {
+        expect(inverse?.(start + scale.bandwidth() * fraction)).toBe(category);
+      }
+    }
+  });
+
+  it.each([
+    [0, 300],
+    [300, 0],
+  ])('does not shift point scales with range %j', (...range) => {
+    const domain = ['A', 'B', 'C'];
+    const scale = scalePoint<CategoricalDomainItem>().domain(domain).range(range);
+    const inverse = createCategoricalInverse(scale);
+    for (const category of domain) {
+      const position = scale(category);
+      if (position == null) {
+        throw new Error('Expected a position for every category');
+      }
+      expect(inverse?.(position)).toBe(category);
     }
   });
 });
