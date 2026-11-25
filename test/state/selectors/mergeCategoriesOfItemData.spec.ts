@@ -63,12 +63,29 @@ describe('mergeCategoriesOfItemData', () => {
     expect(categoriesOf(result)).toEqual(['c', 'a', 'b', 'd']);
   });
 
-  it('keeps one value for each repeat of a category within one array', () => {
+  it('keeps the repeats of a category within the array only, also when a later array repeats it', () => {
     const values = appliedValues(['a', 'a', 'b', 'a', 'b', 'b']);
 
     const result = mergeCategoriesOfItemData(values, [3, 3]);
 
-    expect(categoriesOf(result)).toEqual(['a', 'a', 'b', 'b']);
+    // the second array's second 'b' repeats a category that the first array has, which brings the one tick of 'b'
+    expect(categoriesOf(result)).toEqual(['a', 'a', 'b']);
+  });
+
+  it('gives two arrays with the same repeated category the ticks of the first one', () => {
+    const values = appliedValues(['a', 'a', 'a', 'a']);
+
+    const result = mergeCategoriesOfItemData(values, [2, 2]);
+
+    expect(categoriesOf(result)).toEqual(['a', 'a']);
+  });
+
+  it('keeps the repeats of a category that an array introduces, next to the categories it shares', () => {
+    const values = appliedValues(['a', 'b', 'b', 'c', 'a', 'c', 'c']);
+
+    const result = mergeCategoriesOfItemData(values, [3, 4]);
+
+    expect(categoriesOf(result)).toEqual(['a', 'b', 'b', 'c', 'c', 'c']);
   });
 
   it('keeps a category that is repeated within an array that comes second', () => {

@@ -404,9 +404,11 @@ export const getItemDataLengths = (
  * on "Tuesday" share that tick. A category repeated within one array, on the other hand, is a repeated category,
  * which `allowDuplicatedCategory` gives a tick of its own to, and it keeps it.
  *
- * So this leaves out the categories that an array shares with an array before it. With a single array there is nothing
- * to share and the values are returned as they are. The same goes for values whose number differs from the total length
- * of the arrays, because those did not come from the arrays.
+ * So this leaves out of every array the categories that an array before it has. The repeats of such a category within the
+ * array are left out as well: the array that has the category first brings the ticks, one for each of its own repeats, and
+ * the points of the other arrays take those. With a single array there is nothing to share and the values are returned
+ * as they are. The same goes for values whose number differs from the total length of the arrays, because those did not
+ * come from the arrays.
  *
  * @param appliedValues values read with the dataKey of a categorical axis, from the rows of the data arrays, one array after the other
  * @param dataLengths length of each data array, see {@link getItemDataLengths}
@@ -422,24 +424,28 @@ export const mergeCategoriesOfItemData = (
     return appliedValues;
   }
   const seenBefore = new Set<unknown>();
-  const seenInArray = new Set<unknown>();
+  // the categories that no array before this one has
+  const newInArray = new Set<unknown>();
   const merged: Array<{ value: unknown }> = [];
   let start = 0;
   for (const length of lengths) {
     const arrayValues = appliedValues.slice(start, start + length);
     start += length;
-    seenInArray.clear();
+    newInArray.clear();
     for (const appliedValue of arrayValues) {
       const { value } = appliedValue;
-      /*
-       * A row without a category gets no tick either way, so it is left to the callers that know what to do with it.
-       */
-      if (value == null || seenInArray.has(value) || !seenBefore.has(value)) {
+      if (value == null) {
+        /*
+         * A row without a category gets no tick either way, so it is left to the callers that know what to do with it.
+         */
         merged.push(appliedValue);
-      }
-      if (value != null) {
+      } else if (!seenBefore.has(value)) {
+        merged.push(appliedValue);
         seenBefore.add(value);
-        seenInArray.add(value);
+        newInArray.add(value);
+      } else if (newInArray.has(value)) {
+        // a category repeated within the array that brings its ticks, which gets a tick of its own
+        merged.push(appliedValue);
       }
     }
   }
