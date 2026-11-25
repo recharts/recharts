@@ -461,6 +461,35 @@ describe('<Brush />', () => {
       });
     });
 
+    test('Travellers should move by `gap` data points with the keyboard', () => {
+      const onChange = vi.fn();
+      const { container } = render(
+        <BarChart width={400} height={100} data={data}>
+          <Brush dataKey="value" x={100} y={50} width={400} height={40} gap={2} onChange={onChange} />
+        </BarChart>,
+      );
+
+      const [leftTraveller, rightTraveller] = Array.from(container.querySelectorAll('.recharts-brush-traveller'));
+      assertNotNull(leftTraveller);
+      assertNotNull(rightTraveller);
+
+      fireEvent.keyDown(leftTraveller, { key: 'ArrowRight' });
+      expectLastCalledWith(onChange, { startIndex: 2, endIndex: 13 });
+      fireEvent.keyDown(leftTraveller, { key: 'ArrowRight' });
+      expectLastCalledWith(onChange, { startIndex: 4, endIndex: 13 });
+      fireEvent.keyDown(leftTraveller, { key: 'ArrowLeft' });
+      expectLastCalledWith(onChange, { startIndex: 2, endIndex: 13 });
+
+      // the last index is not on the gap grid, but it stays reachable, as when dragging
+      fireEvent.keyDown(rightTraveller, { key: 'ArrowLeft' });
+      expectLastCalledWith(onChange, { startIndex: 2, endIndex: 12 });
+      fireEvent.keyDown(rightTraveller, { key: 'ArrowLeft' });
+      expectLastCalledWith(onChange, { startIndex: 2, endIndex: 10 });
+      fireEvent.keyDown(rightTraveller, { key: 'ArrowRight' });
+      fireEvent.keyDown(rightTraveller, { key: 'ArrowRight' });
+      expectLastCalledWith(onChange, { startIndex: 2, endIndex: 13 });
+    });
+
     test('Travellers should move when valid keyboard events are fired AFTER mouse interaction', async () => {
       const { container } = render(
         <BarChart width={400} height={100} data={data}>
