@@ -39,7 +39,7 @@ import {
 import { clsx } from '../util/clsx';
 import { isClipDot } from '../util/ReactUtils';
 import type { LegendPayload } from '../component/DefaultLegendContent';
-import { Formatter } from '../component/DefaultTooltipContent';
+import { Formatter, ItemTooltipValue } from '../component/DefaultTooltipContent';
 import { ActivePoints } from '../component/ActivePoints';
 import { TooltipPayloadConfiguration } from '../state/tooltipSlice';
 import { SetTooltipEntrySettings } from '../state/SetTooltipEntrySettings';
@@ -150,7 +150,6 @@ interface InternalAreaProps extends ZIndexable {
   shape: ActiveShape<CurveProps, SVGPathElement>;
   stackId?: StackId;
 
-  formatter?: Formatter;
   tooltipType?: TooltipType;
   top: number;
   type?: CurveType;
@@ -403,7 +402,7 @@ export interface AreaProps<DataPointType = any, DataValueType = any>
    * Formats the value displayed in the tooltip for this Area.
    * When set, takes precedence over the `formatter` prop on the Tooltip component.
    */
-  formatter?: Formatter;
+  formatter?: Formatter<ItemTooltipValue<DataValueType>>;
   /**
    * The id of XAxis which is corresponding to the data. Required when there are multiple XAxes.
    * @defaultValue 0
@@ -543,7 +542,7 @@ const computeLegendPayloadFromAreaData = <DataPointType, ValueAxisType>(
 };
 
 const SetAreaTooltipEntrySettings = React.memo(
-  <DataPointType, ValueAxisType>({
+  ({
     dataKey,
     data,
     stroke,
@@ -556,7 +555,7 @@ const SetAreaTooltipEntrySettings = React.memo(
     tooltipType,
     id,
   }: Pick<
-    WithIdRequired<StringFillProps<DataPointType, ValueAxisType>>,
+    WithIdRequired<StringFillProps<unknown, unknown>>,
     | 'dataKey'
     | 'data'
     | 'stroke'
