@@ -39,9 +39,11 @@ export function createCategoricalInverse(
     return undefined;
   }
   const domain = allDataPointsOnAxis ?? scale.domain();
+  // Banded scales return the start of each band, but chart categories are centered in it.
+  const offset = (scale.bandwidth?.() ?? 0) / 2;
   // Build an array of pixel positions for each domain value
   // @ts-expect-error we're attempting to scale unknown without having guarantee that it is a Domain type
-  const pixelPositions: number[] = domain.map(d => scale(d) ?? 0);
+  const pixelPositions: number[] = domain.map(d => (scale(d) ?? 0) + offset);
   const range = scale.range();
 
   if (domain.length === 0 || range.length < 2) {
