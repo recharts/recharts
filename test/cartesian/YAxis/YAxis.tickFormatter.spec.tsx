@@ -34,12 +34,11 @@ describe('YAxis with custom tickFormatter', () => {
     renderTestCase();
 
     expect(tickFormatterSpy).toHaveBeenCalledTimes(24);
-    // interesting that they are called upside down but ... that doesn't really matter
-    expect(tickFormatterSpy).toHaveBeenNthCalledWith(1, 'Page F', 5);
-    expect(tickFormatterSpy).toHaveBeenNthCalledWith(2, 'Page E', 4);
-    expect(tickFormatterSpy).toHaveBeenNthCalledWith(3, 'Page D', 3);
-    expect(tickFormatterSpy).toHaveBeenNthCalledWith(4, 'Page C', 2);
-    expect(tickFormatterSpy).toHaveBeenNthCalledWith(5, 'Page B', 1);
-    expect(tickFormatterSpy).toHaveBeenNthCalledWith(6, 'Page A', 0);
+    expect(tickFormatterSpy).toHaveBeenNthCalledWith(1, 'Page A', 0);
+    expect(tickFormatterSpy).toHaveBeenNthCalledWith(2, 'Page B', 1);
+    expect(tickFormatterSpy).toHaveBeenNthCalledWith(3, 'Page C', 2);
+    expect(tickFormatterSpy).toHaveBeenNthCalledWith(4, 'Page D', 3);
+    expect(tickFormatterSpy).toHaveBeenNthCalledWith(5, 'Page E', 4);
+    expect(tickFormatterSpy).toHaveBeenNthCalledWith(6, 'Page F', 5);
   });
 });
