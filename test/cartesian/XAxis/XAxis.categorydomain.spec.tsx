@@ -479,6 +479,48 @@ describe('categorical domain', () => {
       expectLastCalledWith(spy, [0, 1, 2, 3]);
     });
 
+    it('should give a category that every element repeats only as many ticks as one element repeats it', () => {
+      const spy = vi.fn();
+      const { container } = render(
+        <LineChart width={300} height={300}>
+          <Line
+            data={[
+              { z: 90, y: 1 },
+              { z: 90, y: 2 },
+            ]}
+            dataKey="y"
+            isAnimationActive={false}
+          />
+          <Line
+            data={[
+              { z: 90, y: 3 },
+              { z: 90, y: 4 },
+            ]}
+            dataKey="y"
+            isAnimationActive={false}
+          />
+          <XAxis dataKey="z" type="category" />
+          <Customized component={<ExpectAxisDomain assert={spy} axisType="xAxis" />} />
+        </LineChart>,
+      );
+      // Both Lines repeat the category. The repeats of the first Line are the ticks, and the second Line puts its points on them
+      expectXAxisTicks(container, [
+        {
+          textContent: '90',
+          x: '5',
+          y: '273',
+        },
+        {
+          textContent: '90',
+          x: '295',
+          y: '273',
+        },
+      ]);
+      const dotsX = Array.from(container.querySelectorAll('circle.recharts-dot')).map(dot => dot.getAttribute('cx'));
+      expect(dotsX).toEqual(['5', '295', '5', '295']);
+      expectLastCalledWith(spy, [0, 1]);
+    });
+
     it('should merge and display domain of all data, and remove duplicates, even when the duplicates are defined on different elements', () => {
       const spy = vi.fn();
       const { container } = render(
