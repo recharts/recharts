@@ -1,8 +1,8 @@
 import React from 'react';
-import { render, screen } from '@testing-library/react';
+import { render, screen, within } from '@testing-library/react';
 import { describe, expect, it, vi } from 'vitest';
 import { scaleLinear } from 'victory-vendor/d3-scale';
-import { CartesianAxis, CustomScaleDefinition, Surface } from '../../src';
+import { CartesianAxis, CustomScaleDefinition, LineChart, Surface, XAxis, YAxis } from '../../src';
 import { TickItem } from '../../src/util/types';
 
 const CustomizeLabel = ({ x, y }: any) => (
@@ -27,6 +27,27 @@ describe('<CartesianAxis />', () => {
     { value: 40, coordinate: 200, index: 3, offset: 0 },
     { value: 90, coordinate: 250, index: 4, offset: 0 },
   ];
+
+  it('groups tick labels by the axis label across z-index layers', () => {
+    render(
+      <LineChart
+        width={400}
+        height={300}
+        data={[
+          { month: 'April', count: 0 },
+          { month: 'May', count: 10 },
+        ]}
+      >
+        <XAxis dataKey="month" interval={0} label="Months" />
+        <YAxis dataKey="count" interval={0} ticks={[0, 10]} domain={[0, 10]} label={{ value: 'Count' }} />
+      </LineChart>,
+    );
+
+    const months = within(screen.getByRole('group', { name: 'Months' }));
+    expect(months.getByText('April')).toBeInTheDocument();
+    expect(months.getByText('May')).toBeInTheDocument();
+    expect(within(screen.getByRole('group', { name: 'Count' })).getByText('10')).toBeInTheDocument();
+  });
 
   it('Renders 5 ticks in simple CartesianAxis', () => {
     const { container } = render(
