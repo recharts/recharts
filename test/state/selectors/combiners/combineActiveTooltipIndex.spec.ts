@@ -21,7 +21,7 @@ describe('combineActiveTooltipIndex', () => {
     const tooltipInteraction = createInteraction('1');
     const domain: NumberDomain = [0, 5] as const;
 
-    const result = combineActiveTooltipIndex(tooltipInteraction, chartData, undefined, 'value', domain);
+    const result = combineActiveTooltipIndex(tooltipInteraction, 'axis', chartData, undefined, 'value', domain);
 
     expect(result).toBeNull();
   });
@@ -31,7 +31,7 @@ describe('combineActiveTooltipIndex', () => {
     const tooltipInteraction = createInteraction('30');
     const domain: NumberDomain = [0, 20] as const;
 
-    const result = combineActiveTooltipIndex(tooltipInteraction, chartData, undefined, 'value', domain);
+    const result = combineActiveTooltipIndex(tooltipInteraction, 'axis', chartData, undefined, 'value', domain);
 
     expect(result).toBe('2');
   });
@@ -41,7 +41,14 @@ describe('combineActiveTooltipIndex', () => {
     const tooltipInteraction = createInteraction('0');
     const categoricalDomain: CategoricalDomain = ['alpha', 'beta'];
 
-    const result = combineActiveTooltipIndex(tooltipInteraction, chartData, undefined, 'category', categoricalDomain);
+    const result = combineActiveTooltipIndex(
+      tooltipInteraction,
+      'axis',
+      chartData,
+      undefined,
+      'category',
+      categoricalDomain,
+    );
 
     expect(result).toBe('0');
   });
@@ -50,7 +57,7 @@ describe('combineActiveTooltipIndex', () => {
     const chartData: ChartData = [];
     const tooltipInteraction = createInteraction('node-3');
 
-    const result = combineActiveTooltipIndex(tooltipInteraction, chartData, undefined, undefined, undefined);
+    const result = combineActiveTooltipIndex(tooltipInteraction, 'axis', chartData, undefined, undefined, undefined);
 
     expect(result).toBe('node-3');
   });
@@ -69,7 +76,7 @@ describe('combineActiveTooltipIndex', () => {
     const tooltipInteraction = createInteraction('4');
     const domain: NumberDomain = [4, 6] as const;
 
-    const result = combineActiveTooltipIndex(tooltipInteraction, chartData, tooltipTicks, 'value', domain);
+    const result = combineActiveTooltipIndex(tooltipInteraction, 'axis', chartData, tooltipTicks, 'value', domain);
 
     expect(result).toBe('4');
   });
@@ -87,9 +94,28 @@ describe('combineActiveTooltipIndex', () => {
     const tooltipInteraction = createInteraction('4');
     const domain: NumberDomain = [40, 50] as const;
 
-    const result = combineActiveTooltipIndex(tooltipInteraction, chartData, tooltipTicks, 'value', domain);
+    const result = combineActiveTooltipIndex(tooltipInteraction, 'axis', chartData, tooltipTicks, 'value', domain);
 
     expect(result).toBeNull();
+  });
+
+  it('reads the value of the row at the index, and not of the tick, for an item interaction', () => {
+    // The index of an item interaction is the position in the data of the hovered item, which the ticks know nothing of
+    const chartData: ChartData = [
+      { value: 10 },
+      { value: 20 },
+      { value: 30 },
+      { value: 40 },
+      { value: 30 },
+      { value: 5 },
+    ];
+    const tooltipTicks = createTicks([10, 20, 30, 40, 5]);
+    const tooltipInteraction = createInteraction('4');
+
+    // the row at the index is outside of the domain, the tick at the index is inside of it
+    expect(combineActiveTooltipIndex(tooltipInteraction, 'item', chartData, tooltipTicks, 'value', [4, 6])).toBeNull();
+    // the row at the index is inside of the domain, the tick at the index is outside of it
+    expect(combineActiveTooltipIndex(tooltipInteraction, 'item', chartData, tooltipTicks, 'value', [25, 35])).toBe('4');
   });
 
   it('reads the value of the row at the index when there is no tick at that index', () => {
@@ -98,7 +124,7 @@ describe('combineActiveTooltipIndex', () => {
     const tooltipInteraction = createInteraction('1');
     const domain: NumberDomain = [0, 5] as const;
 
-    const result = combineActiveTooltipIndex(tooltipInteraction, chartData, tooltipTicks, 'value', domain);
+    const result = combineActiveTooltipIndex(tooltipInteraction, 'axis', chartData, tooltipTicks, 'value', domain);
 
     expect(result).toBeNull();
   });

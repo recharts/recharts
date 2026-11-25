@@ -1,7 +1,7 @@
 import { TooltipIndex, TooltipInteractionState } from '../../tooltipSlice';
 import { ChartData } from '../../chartDataSlice';
 import { isWellBehavedNumber } from '../../../util/isWellBehavedNumber';
-import { DataKey, CategoricalDomain, NumberDomain, TickItem } from '../../../util/types';
+import { DataKey, CategoricalDomain, NumberDomain, TickItem, TooltipEventType } from '../../../util/types';
 import { getValueByDataKey } from '../../../util/ChartUtils';
 import { isWellFormedNumberDomain } from '../../../util/isDomainSpecifiedByUser';
 
@@ -53,6 +53,7 @@ function isValueWithinDomain(
 
 export const combineActiveTooltipIndex = (
   tooltipInteraction: TooltipInteractionState | undefined,
+  tooltipEventType: TooltipEventType | undefined,
   chartData: ChartData,
   tooltipAxisTicks: ReadonlyArray<TickItem> | undefined,
   axisDataKey?: DataKey<unknown>,
@@ -83,13 +84,17 @@ export const combineActiveTooltipIndex = (
   // now let's clamp the desiredIndex between the limits
   const clampedIndex = Math.max(lowerLimit, Math.min(indexAsNumber, upperLimit));
 
+  const entry = chartData[clampedIndex];
+
   /*
-   * The index addresses the tooltip ticks. With the data on the chart, the tick and the row at one index are the same.
+   * An `axis` interaction indexes the tooltip ticks. With the data on the chart, the tick and the row at one index are the same.
    * With data on several graphical items, a tick can be a category that the row at that index shares with another item,
    * and then the value of the tick itself is the one that is inside the domain or outside of it.
+   *
+   * An `item` interaction indexes the data of the hovered item, which neither the ticks nor the displayed data are,
+   * so it keeps reading the row of the displayed data at the index.
    */
-  const tick = tooltipAxisTicks?.[clampedIndex];
-  const entry = chartData[clampedIndex];
+  const tick = tooltipEventType === 'item' ? undefined : tooltipAxisTicks?.[clampedIndex];
 
   if (tick == null && entry == null) {
     return String(clampedIndex);

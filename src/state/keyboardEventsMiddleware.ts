@@ -71,10 +71,12 @@ keyboardEventsMiddleware.startListening({
         const displayedData = selectTooltipDisplayedData(currentState);
         // The index addresses the tooltip ticks; where there are none, it addresses the rows of displayed data.
         const indexCount = tooltipTicks?.length || displayedData.length;
+        const tooltipEventType = selectTooltipEventType(currentState, currentState.tooltip.settings.shared);
 
         // TODO this is lacking index for charts that do not support numeric indexes
         const resolvedIndex = combineActiveTooltipIndex(
           keyboardInteraction,
+          tooltipEventType,
           displayedData,
           tooltipTicks,
           selectTooltipAxisDataKey(currentState),
@@ -82,7 +84,6 @@ keyboardEventsMiddleware.startListening({
         );
         const currentIndex = resolvedIndex == null ? -1 : Number(resolvedIndex);
         const isOutsideDomain = !Number.isFinite(currentIndex) || currentIndex < 0;
-        const tooltipEventType = selectTooltipEventType(currentState, currentState.tooltip.settings.shared);
         if (key === 'Enter') {
           if (isOutsideDomain) {
             return;
@@ -125,7 +126,14 @@ keyboardEventsMiddleware.startListening({
           if (effectiveMovement > 0) {
             for (let i = 0; i < indexCount; i++) {
               if (
-                combineActiveTooltipIndex(mkInteraction(i), displayedData, tooltipTicks, axisDataKey, domain) != null
+                combineActiveTooltipIndex(
+                  mkInteraction(i),
+                  tooltipEventType,
+                  displayedData,
+                  tooltipTicks,
+                  axisDataKey,
+                  domain,
+                ) != null
               ) {
                 nextIndex = i;
                 break;
@@ -134,7 +142,14 @@ keyboardEventsMiddleware.startListening({
           } else {
             for (let i = indexCount - 1; i >= 0; i--) {
               if (
-                combineActiveTooltipIndex(mkInteraction(i), displayedData, tooltipTicks, axisDataKey, domain) != null
+                combineActiveTooltipIndex(
+                  mkInteraction(i),
+                  tooltipEventType,
+                  displayedData,
+                  tooltipTicks,
+                  axisDataKey,
+                  domain,
+                ) != null
               ) {
                 nextIndex = i;
                 break;

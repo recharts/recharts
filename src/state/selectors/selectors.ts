@@ -93,6 +93,7 @@ export const selectActiveIndex: (
 ) => TooltipIndex | null = createSelector(
   [
     selectTooltipInteractionState,
+    pickTooltipEventType,
     selectTooltipDisplayedData,
     selectTooltipAxisTicks,
     selectTooltipAxisDataKey,

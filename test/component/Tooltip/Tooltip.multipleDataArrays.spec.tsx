@@ -7,6 +7,8 @@ import { render } from '@testing-library/react';
 import { describe, it, expect, beforeEach, vi } from 'vitest';
 import { createSelectorTestCase } from '../../helper/createSelectorTestCase';
 import {
+  Bar,
+  BarChart,
   ComposedChart,
   Legend,
   Line,
@@ -364,6 +366,48 @@ describe('Tooltip in chart with multiple data arrays', () => {
       });
 
       expectTooltipPayload(container, '40', ['a : 40', 'b : 50']);
+    });
+  });
+
+  describe('when the data is on the chart and on a series', () => {
+    // The ticks start with the categories of the chart data, the displayed data with the rows of the series.
+    // The first point of the chart data is outside of the domain, the first point of the series is inside of it.
+    const renderTestCase = (shared: boolean) =>
+      createSelectorTestCase(({ children }) => (
+        <BarChart
+          width={500}
+          height={300}
+          data={[
+            { x: 40, a: 1 },
+            { x: 15, a: 2 },
+            { x: 25, a: 3 },
+          ]}
+        >
+          <XAxis dataKey="x" type="number" domain={[0, 30]} allowDataOverflow />
+          <YAxis />
+          <Tooltip defaultIndex="0" shared={shared} />
+          <Bar dataKey="a" />
+          <Bar
+            dataKey="b"
+            data={[
+              { x: 28, b: 1 },
+              { x: 12, b: 2 },
+            ]}
+          />
+          {children}
+        </BarChart>
+      ));
+
+    it('should read the tick at the index for an axis interaction, and leave the index out of the domain', () => {
+      const { spy } = renderTestCase(true)(selectActiveTooltipIndex);
+
+      expectLastCalledWith(spy, null);
+    });
+
+    it('should read the row of the series at the index for an item interaction', () => {
+      const { spy } = renderTestCase(false)(selectActiveTooltipIndex);
+
+      expectLastCalledWith(spy, '0');
     });
   });
 });
