@@ -466,6 +466,11 @@ const tooltipSlice = createSlice({
       state.syncInteraction = action.payload;
     },
     setKeyboardInteraction(state, action: PayloadAction<KeyboardTooltipActionPayload>) {
+      if (action.payload.active) {
+        // The most recent input wins: mouse actions turn off the keyboard interaction, so turning it on turns off mouse hover.
+        state.axisInteraction.hover.active = false;
+        state.itemInteraction.hover.active = false;
+      }
       state.keyboardInteraction.active = action.payload.active;
       state.keyboardInteraction.index = action.payload.activeIndex;
       state.keyboardInteraction.coordinate = action.payload.activeCoordinate;

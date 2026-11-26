@@ -191,17 +191,19 @@ keyboardEventsMiddleware.startListening({
     if (!accessibilityLayerIsActive) {
       return;
     }
-    const { keyboardInteraction } = state.tooltip;
+    const { keyboardInteraction, axisInteraction, itemInteraction } = state.tooltip;
     if (keyboardInteraction.active) {
       return;
     }
     if (keyboardInteraction.index == null) {
-      const nextIndex = '0';
       const tooltipEventType = selectTooltipEventType(state, state.tooltip.settings.shared);
+      // A mouse click focuses the chart too. Keep the tooltip on the point under the pointer until a key is pressed.
+      const pointerIsHovering = (tooltipEventType === 'axis' ? axisInteraction : itemInteraction).hover.active;
+      const nextIndex = '0';
       const coordinate = selectCoordinateForDefaultIndex(state, tooltipEventType, 'hover', String(nextIndex));
       listenerApi.dispatch(
         setKeyboardInteraction({
-          active: true,
+          active: !pointerIsHovering,
           activeIndex: nextIndex,
           activeCoordinate: coordinate,
         }),
