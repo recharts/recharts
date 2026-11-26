@@ -1,3 +1,4 @@
+import { CSSProperties } from 'react';
 import { CartesianTickItem, CartesianViewBoxRequired, Size } from '../util/types';
 import { mathSign, isNumber } from '../util/DataUtils';
 import { getStringSize } from '../util/DOMUtils';
@@ -146,11 +147,32 @@ export type GetTicksInput = {
   viewBox: CartesianViewBoxRequired;
 };
 
-export function getTicks(
-  props: GetTicksInput,
-  fontSize?: string,
-  letterSpacing?: string,
-): ReadonlyArray<CartesianTickItem> {
+/**
+ * Font properties of the label being measured.
+ * `fontSize` and `letterSpacing` decide how many ticks fit.
+ * `fontFamily` and `fontWeight` have to be included too, otherwise a tick
+ * drawn in a wider face than the page is measured too narrow and the edge
+ * labels are placed past the axis.
+ */
+export type TickLabelStyle = {
+  fontSize?: string;
+  letterSpacing?: string;
+  fontFamily?: string;
+  fontWeight?: string;
+};
+
+function toMeasurementStyle({ fontSize, letterSpacing, fontFamily, fontWeight }: TickLabelStyle): CSSProperties {
+  const style: CSSProperties = { fontSize, letterSpacing };
+  if (fontFamily) {
+    style.fontFamily = fontFamily;
+  }
+  if (fontWeight) {
+    style.fontWeight = fontWeight;
+  }
+  return style;
+}
+
+export function getTicks(props: GetTicksInput, labelStyle: TickLabelStyle = {}): ReadonlyArray<CartesianTickItem> {
   const { tick, ticks, viewBox, minTickGap, orientation, interval, tickFormatter, unit, angle } = props;
 
   if (!ticks || !ticks.length || !tick) {
@@ -164,15 +186,15 @@ export function getTicks(
   let candidates: ReadonlyArray<CartesianTickItem> = [];
 
   const sizeKey = orientation === 'top' || orientation === 'bottom' ? 'width' : 'height';
-  const unitSize: Size =
-    unit && sizeKey === 'width' ? getStringSize(unit, { fontSize, letterSpacing }) : { width: 0, height: 0 };
+  const measurementStyle = toMeasurementStyle(labelStyle);
+  const unitSize: Size = unit && sizeKey === 'width' ? getStringSize(unit, measurementStyle) : { width: 0, height: 0 };
 
   const getTickSize = (content: CartesianTickItem, index: number) => {
     const value = typeof tickFormatter === 'function' ? tickFormatter(content.value, index) : content.value;
     // Recharts only supports angles when sizeKey === 'width'
     return sizeKey === 'width'
-      ? getAngledTickWidth(getStringSize(value, { fontSize, letterSpacing }), unitSize, angle)
-      : getStringSize(value, { fontSize, letterSpacing })[sizeKey];
+      ? getAngledTickWidth(getStringSize(value, measurementStyle), unitSize, angle)
+      : getStringSize(value, measurementStyle)[sizeKey];
   };
 
   const tick0 = ticks[0];
