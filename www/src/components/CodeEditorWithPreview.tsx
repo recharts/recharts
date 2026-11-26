@@ -1,4 +1,4 @@
-import React, { ComponentType, ReactNode, useEffect, useState } from 'react';
+import React, { ComponentType, ReactNode, useCallback, useEffect, useMemo, useState } from 'react';
 import * as RechartsScope from 'recharts';
 import * as D3ShapeScope from 'd3-shape';
 import * as RechartsDevtoolsScope from '@recharts/devtools';
@@ -105,7 +105,7 @@ export function CodeEditorWithPreview<T>({
     }
   }, [isEditMode, Runner]);
 
-  const handleEditClick = () => {
+  const handleEditClick = useCallback(() => {
     sendEvent({
       category: 'Examples',
       action: 'Edit Code',
@@ -114,9 +114,9 @@ export function CodeEditorWithPreview<T>({
 
     setIsEditMode(true);
     setEditedCode(sourceCode);
-  };
+  }, [analyticsLabel, sourceCode]);
 
-  const handleRunCode = () => {
+  const handleRunCode = useCallback(() => {
     if (editedCode === sourceCode) {
       sendEvent({
         category: 'Examples',
@@ -132,29 +132,32 @@ export function CodeEditorWithPreview<T>({
     }
 
     setCodeToRun(editedCode);
-  };
+  }, [analyticsLabel, editedCode, sourceCode]);
 
   const codeToDisplay = editedCode ?? sourceCode;
 
   // Actions for the Source tool (Edit/Run buttons)
-  const sourceActions: ReactNode[] = [
-    <CopyButton key="copy" getValueToCopy={() => codeToDisplay} />,
-    isEditMode ? (
-      <button key="run" type="button" className="codemirror-toolbar-item" onClick={handleRunCode}>
-        <LuPlay />
-        <span>Run</span>
-      </button>
-    ) : (
-      <button key="edit" type="button" className="codemirror-toolbar-item" onClick={handleEditClick}>
-        <LuPencil />
-        <span>Edit</span>
-      </button>
-    ),
-    <StackBlitzLink key="stackblitz-link" code={codeToDisplay} title={stackBlitzTitle}>
-      <LuShare2 />
-      <span>Open in StackBlitz</span>
-    </StackBlitzLink>,
-  ];
+  const sourceActions: ReactNode[] = useMemo(
+    () => [
+      <CopyButton key="copy" getValueToCopy={() => codeToDisplay} />,
+      isEditMode ? (
+        <button key="run" type="button" className="codemirror-toolbar-item" onClick={handleRunCode}>
+          <LuPlay />
+          <span>Run</span>
+        </button>
+      ) : (
+        <button key="edit" type="button" className="codemirror-toolbar-item" onClick={handleEditClick}>
+          <LuPencil />
+          <span>Edit</span>
+        </button>
+      ),
+      <StackBlitzLink key="stackblitz-link" code={codeToDisplay} title={stackBlitzTitle}>
+        <LuShare2 />
+        <span>Open in StackBlitz</span>
+      </StackBlitzLink>,
+    ],
+    [codeToDisplay, handleEditClick, handleRunCode, isEditMode, stackBlitzTitle],
+  );
 
   // Fix for DevTools Copy Button:
   // DevToolsPanel needs to expose the value to the parent if we want the button in the Toolbar.
@@ -169,50 +172,64 @@ export function CodeEditorWithPreview<T>({
   const [isManualAnimations, setIsManualAnimations] = useState<boolean>(false);
 
   // Update tools definition
-  const actualTools: ToolItem[] = [
-    {
-      name: 'source',
-      label: 'Source code',
-      component: (
-        <SourceCodeEditor
-          value={codeToDisplay}
-          onChange={isEditMode ? setEditedCode : undefined}
-          readOnly={!isEditMode}
-          className="tsx"
-          showCopyButton={false}
-        />
-      ),
-      actions: sourceActions,
-    },
-    {
-      name: 'devtools',
-      label: 'Hook inspector',
-      component: <DevToolsPanel onValueChange={setDevToolsValue} initialTab={defaultToolTab} />,
-      actions: [<CopyButton key="copy-devtools" getValueToCopy={() => devToolsValue} />],
-    },
-    {
-      name: 'annotations',
-      label: 'Annotations',
-      component: <AnnotationsPanel />,
-    },
-    {
-      name: 'controls',
-      label: 'Controls',
-      component: (
-        <div style={{ padding: '10px', height: '100%', overflow: 'auto' }}>
-          {defaultControlsState != null && levers != null && (
-            <Levers
-              defaultState={defaultControlsState}
-              levers={levers}
-              onChange={setControlsState}
-              state={controlsState}
-            />
-          )}
-          <ManualAnimationControls isManualAnimationEnabled={isManualAnimations} onToggle={setIsManualAnimations} />
-        </div>
-      ),
-    },
-  ];
+  const actualTools: ToolItem[] = useMemo(
+    () => [
+      {
+        name: 'source',
+        label: 'Source code',
+        component: (
+          <SourceCodeEditor
+            value={codeToDisplay}
+            onChange={isEditMode ? setEditedCode : undefined}
+            readOnly={!isEditMode}
+            className="tsx"
+            showCopyButton={false}
+          />
+        ),
+        actions: sourceActions,
+      },
+      {
+        name: 'devtools',
+        label: 'Hook inspector',
+        component: <DevToolsPanel onValueChange={setDevToolsValue} initialTab={defaultToolTab} />,
+        actions: [<CopyButton key="copy-devtools" getValueToCopy={() => devToolsValue} />],
+      },
+      {
+        name: 'annotations',
+        label: 'Annotations',
+        component: <AnnotationsPanel />,
+      },
+      {
+        name: 'controls',
+        label: 'Controls',
+        component: (
+          <div style={{ padding: '10px', height: '100%', overflow: 'auto' }}>
+            {defaultControlsState != null && levers != null && (
+              <Levers
+                defaultState={defaultControlsState}
+                levers={levers}
+                onChange={setControlsState}
+                state={controlsState}
+              />
+            )}
+            <ManualAnimationControls isManualAnimationEnabled={isManualAnimations} onToggle={setIsManualAnimations} />
+          </div>
+        ),
+      },
+    ],
+    [
+      codeToDisplay,
+      controlsState,
+      defaultControlsState,
+      defaultToolTab,
+      devToolsValue,
+      isEditMode,
+      isManualAnimations,
+      levers,
+      setControlsState,
+      sourceActions,
+    ],
+  );
 
   return (
     <RechartsDevtoolsContext>
