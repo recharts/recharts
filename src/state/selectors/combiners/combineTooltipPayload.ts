@@ -145,7 +145,12 @@ export const combineTooltipPayload = (
        */
       tooltipEventType === 'axis'
     ) {
-      tooltipPayload = findEntryInArray(sliced, tooltipAxisDataKey, activeLabel);
+      // A category can repeat, so the row at the active index wins when it has the active label.
+      const entryAtIndex = tooltipPayloadSearcher(sliced, activeIndex, computedData, finalNameKey);
+      tooltipPayload =
+        getValueByDataKey(entryAtIndex, tooltipAxisDataKey) === activeLabel
+          ? entryAtIndex
+          : findEntryInArray(sliced, tooltipAxisDataKey, activeLabel);
     } else {
       /*
        * This is a problem because it assumes that the index is pointing to the displayed data
