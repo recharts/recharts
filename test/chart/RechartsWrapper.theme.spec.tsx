@@ -45,7 +45,7 @@ const paintedTheme: RechartsTheme = {
   chart: {
     backgroundColor: 'ivory',
     borderRadius: 8,
-    boxShadow: '0 0 4px black',
+    boxShadow: 'black 0px 0px 4px',
     outline: '1px solid red',
     overflow: 'hidden',
   },
@@ -68,7 +68,7 @@ describe('RechartsWrapper with a theme', () => {
     expect(getWrapperStyle(wrapper, ['backgroundColor', 'borderRadius', 'boxShadow', 'outline', 'overflow'])).toEqual({
       backgroundColor: 'ivory',
       borderRadius: '8px',
-      boxShadow: '0 0 4px black',
+      boxShadow: 'black 0px 0px 4px',
       outline: '1px solid red',
       overflow: 'hidden',
     });
