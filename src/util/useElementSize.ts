@@ -17,6 +17,44 @@ function parsePixels(value: string): number {
   return Number.isNaN(parsed) ? 0 : parsed;
 }
 
+function isPixels(value: string): boolean {
+  return value.endsWith('px');
+}
+
+/**
+ * Measures the border box from the computed style, keeping fractional pixels.
+ * `offsetWidth` and `offsetHeight` would round to whole pixels, which moves whatever is positioned around the element.
+ *
+ * @param element the element to measure
+ * @param computedStyle the computed style of the element
+ * @returns the width and height of the border box
+ */
+function getBorderBoxSize(element: HTMLElement, computedStyle: CSSStyleDeclaration): Size {
+  if (!isPixels(computedStyle.width) || !isPixels(computedStyle.height)) {
+    // The computed size is not a used value, for example `auto` on an inline element, or in jsdom
+    return { width: element.offsetWidth, height: element.offsetHeight };
+  }
+  const width = parsePixels(computedStyle.width);
+  const height = parsePixels(computedStyle.height);
+  if (computedStyle.boxSizing === 'border-box') {
+    return { width, height };
+  }
+  return {
+    width:
+      width +
+      parsePixels(computedStyle.paddingLeft) +
+      parsePixels(computedStyle.paddingRight) +
+      parsePixels(computedStyle.borderLeftWidth) +
+      parsePixels(computedStyle.borderRightWidth),
+    height:
+      height +
+      parsePixels(computedStyle.paddingTop) +
+      parsePixels(computedStyle.paddingBottom) +
+      parsePixels(computedStyle.borderTopWidth) +
+      parsePixels(computedStyle.borderBottomWidth),
+  };
+}
+
 /**
  * Measures the layout size of an element.
  *
@@ -24,22 +62,24 @@ function parsePixels(value: string): number {
  * An element that mounts inside a scaled parent (for example during an animation) gets its real size,
  * and the size stays right after the transform goes away, even though ResizeObserver does not fire then.
  *
+ * The content box is in whole pixels, because charts render at whole pixel sizes.
+ * The border box keeps fractional pixels, because other elements are positioned around it.
+ *
  * @param element the element to measure
  * @param box which box to measure
  * @returns the width and height of the box
  */
 export function getElementSize(element: HTMLElement, box: MeasuredBox): Size {
+  const computedStyle = window.getComputedStyle(element);
   if (box === 'border-box') {
-    // offsetWidth and offsetHeight include padding and border
-    return { width: element.offsetWidth, height: element.offsetHeight };
+    return getBorderBoxSize(element, computedStyle);
   }
   // clientWidth and clientHeight include padding, but not border or scrollbar
-  const computedStyle = window.getComputedStyle(element);
   const horizontalPadding = parsePixels(computedStyle.paddingLeft) + parsePixels(computedStyle.paddingRight);
   const verticalPadding = parsePixels(computedStyle.paddingTop) + parsePixels(computedStyle.paddingBottom);
   return {
-    width: Math.max(0, element.clientWidth - horizontalPadding),
-    height: Math.max(0, element.clientHeight - verticalPadding),
+    width: Math.max(0, Math.round(element.clientWidth - horizontalPadding)),
+    height: Math.max(0, Math.round(element.clientHeight - verticalPadding)),
   };
 }
 
@@ -104,7 +144,6 @@ function hasSignificantChange(previous: Size, next: Size, threshold: number): bo
  *
  * Every measurement reads the layout size from the element itself, see {@link getElementSize}.
  * ResizeObserver only tells this hook when to measure again.
- * The returned size is rounded to whole pixels.
  *
  * @param options see {@link UseElementSizeOptions}
  * @returns [size, setMeasuredElement]. Pass the setter to a DOM element ref like this: `<div ref={setMeasuredElement}>`
@@ -138,9 +177,8 @@ export function useElementSize(options: UseElementSizeOptions): [Size, SetMeasur
       return null;
     }
     const measured = getElementSize(node, box);
-    const rounded: Size = { width: Math.round(measured.width), height: Math.round(measured.height) };
-    setSize(previous => (hasSignificantChange(previous, rounded, threshold) ? rounded : previous));
-    return rounded;
+    setSize(previous => (hasSignificantChange(previous, measured, threshold) ? measured : previous));
+    return measured;
   }, [box, threshold]);
 
   const setMeasuredElement = useCallback(

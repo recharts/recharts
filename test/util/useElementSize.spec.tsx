@@ -108,7 +108,7 @@ describe('useElementSize', () => {
     expect(result.current[0]).toEqual({ width: 100, height: 120 });
   });
 
-  it('rounds to whole pixels', () => {
+  it('rounds the content box to whole pixels', () => {
     const { node } = createMeasuredNode({ width: 100, height: 50 });
     node.style.padding = '0.3px';
     const { result } = renderHook(() => useElementSize({ ...borderBoxOptions, box: 'content-box' }));

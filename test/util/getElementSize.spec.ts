@@ -54,7 +54,7 @@ describe('getElementSize with content-box', () => {
 });
 
 describe('getElementSize with border-box', () => {
-  it('returns the offset size, which includes padding and border', () => {
+  it('falls back to the offset size when the computed size is not in pixels', () => {
     mockHTMLElementProperty('offsetWidth', 120);
     mockHTMLElementProperty('offsetHeight', 60);
     const element = createElement({ padding: '10px', borderStyle: 'solid', borderWidth: '5px' });
@@ -67,5 +67,26 @@ describe('getElementSize with border-box', () => {
     const element = createElement();
     vi.spyOn(element, 'getBoundingClientRect').mockReturnValue(getMockDomRect({ width: 60, height: 30 }));
     expect(getElementSize(element, 'border-box')).toEqual({ width: 120, height: 60 });
+  });
+
+  it('keeps fractional pixels, and adds padding and border to the computed width and height', () => {
+    const element = createElement({
+      width: '100.5px',
+      height: '20.25px',
+      padding: '2px',
+      borderStyle: 'solid',
+      borderWidth: '1px',
+    });
+    expect(getElementSize(element, 'border-box')).toEqual({ width: 106.5, height: 26.25 });
+  });
+
+  it('returns the computed width and height as they are with box-sizing: border-box', () => {
+    const element = createElement({
+      boxSizing: 'border-box',
+      width: '100.5px',
+      height: '20.25px',
+      padding: '2px',
+    });
+    expect(getElementSize(element, 'border-box')).toEqual({ width: 100.5, height: 20.25 });
   });
 });
