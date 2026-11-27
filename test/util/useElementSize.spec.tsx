@@ -1,4 +1,4 @@
-import React, { StrictMode } from 'react';
+import React, { StrictMode, useCallback } from 'react';
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { act, render, renderHook, screen } from '@testing-library/react';
 import { useElementSize, UseElementSizeOptions } from '../../src/util/useElementSize';
@@ -82,7 +82,7 @@ describe('useElementSize', () => {
       result.current[1](node);
     });
     expect(result.current[0]).toEqual({ width: 100, height: 50 });
-    expect(observeSpy).toHaveBeenCalledWith(node);
+    expect(observeSpy).toHaveBeenCalledWith(node, { box: 'border-box' });
   });
 
   it('measures the content box without padding', () => {
@@ -251,13 +251,13 @@ describe('useElementSize', () => {
     const { node, resize } = createMeasuredNode({ width: 100, height: 50 });
     function MeasuredElement() {
       const [size, setMeasuredElement] = useElementSize(borderBoxOptions);
+      // A stable ref, so that only Strict Mode detaches and re-attaches the element, not every re-render
+      const setElementRef = useCallback(
+        (element: HTMLDivElement | null) => setMeasuredElement(element == null ? null : node),
+        [setMeasuredElement],
+      );
       return (
-        <div
-          data-testid="measured-element"
-          data-width={size.width}
-          data-height={size.height}
-          ref={element => setMeasuredElement(element == null ? null : node)}
-        />
+        <div data-testid="measured-element" data-width={size.width} data-height={size.height} ref={setElementRef} />
       );
     }
     render(

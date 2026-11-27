@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useLayoutEffect, useRef, useState } from 'react';
 import throttle from 'es-toolkit/compat/throttle';
 import { Size } from './types';
 
@@ -30,8 +30,13 @@ function isPixels(value: string): boolean {
  * @returns the width and height of the border box
  */
 function getBorderBoxSize(element: HTMLElement, computedStyle: CSSStyleDeclaration): Size {
-  if (!isPixels(computedStyle.width) || !isPixels(computedStyle.height)) {
-    // The computed size is not a used value, for example `auto` on an inline element, or in jsdom
+  if (element.getClientRects().length === 0 || !isPixels(computedStyle.width) || !isPixels(computedStyle.height)) {
+    /*
+     * The computed size is not a used layout size. This happens when the element has no layout box
+     * (`display: none` on it or on an ancestor), where the computed style still has any width and height
+     * set in CSS, but offsetWidth and offsetHeight are 0. It also happens for `auto` on an inline element,
+     * and in jsdom, which does no layout.
+     */
     return { width: element.offsetWidth, height: element.offsetHeight };
   }
   const width = parsePixels(computedStyle.width);
@@ -164,10 +169,12 @@ export function useElementSize(options: UseElementSizeOptions): [Size, SetMeasur
   const stopObservingRef = useRef<(() => void) | null>(null);
   /*
    * A ref keeps the ResizeObserver from being re-created when the onResize function changes.
-   * The ref is updated on every render, so the latest onResize function is always called.
+   * The ref is updated on every commit, so the latest committed onResize function is always called.
    */
   const onResizeRef = useRef(onResize);
-  onResizeRef.current = onResize;
+  useLayoutEffect(() => {
+    onResizeRef.current = onResize;
+  });
 
   const shouldMeasure = !observe || measureWithoutResizeObserver || typeof ResizeObserver !== 'undefined';
 
@@ -205,13 +212,14 @@ export function useElementSize(options: UseElementSizeOptions): [Size, SetMeasur
       };
       const callback = throttleMs > 0 ? throttle(onObserved, throttleMs, { leading: false, trailing: true }) : null;
       const observer = new ResizeObserver(callback ?? onObserved);
-      observer.observe(node);
+      // Observe the same box that this hook measures, so that a padding or border change notifies too
+      observer.observe(node, { box });
       stopObservingRef.current = () => {
         observer.disconnect();
         callback?.cancel();
       };
     },
-    [measure, observe, shouldMeasure, throttleMs],
+    [box, measure, observe, shouldMeasure, throttleMs],
   );
 
   useEffect(() => {

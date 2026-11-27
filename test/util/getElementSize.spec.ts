@@ -21,6 +21,20 @@ function mockClientSize(width: number, height: number) {
   mockHTMLElementProperty('clientHeight', height);
 }
 
+/**
+ * jsdom does no layout, so `getClientRects()` is always empty, as if the element had `display: none`.
+ * This makes the element look like it has a layout box.
+ * @param element the element to give a layout box
+ * @returns the same element
+ */
+function withLayoutBox(element: HTMLElement): HTMLElement {
+  const rects = [getMockDomRect()];
+  vi.spyOn(element, 'getClientRects').mockReturnValue(
+    Object.assign(rects, { item: (index: number) => rects[index] ?? null }),
+  );
+  return element;
+}
+
 describe('getElementSize with content-box', () => {
   it('returns the client size of an element without padding', () => {
     mockClientSize(400, 200);
@@ -70,23 +84,36 @@ describe('getElementSize with border-box', () => {
   });
 
   it('keeps fractional pixels, and adds padding and border to the computed width and height', () => {
-    const element = createElement({
-      width: '100.5px',
-      height: '20.25px',
-      padding: '2px',
-      borderStyle: 'solid',
-      borderWidth: '1px',
-    });
+    const element = withLayoutBox(
+      createElement({
+        width: '100.5px',
+        height: '20.25px',
+        padding: '2px',
+        borderStyle: 'solid',
+        borderWidth: '1px',
+      }),
+    );
     expect(getElementSize(element, 'border-box')).toEqual({ width: 106.5, height: 26.25 });
   });
 
   it('returns the computed width and height as they are with box-sizing: border-box', () => {
-    const element = createElement({
-      boxSizing: 'border-box',
-      width: '100.5px',
-      height: '20.25px',
-      padding: '2px',
-    });
+    const element = withLayoutBox(
+      createElement({
+        boxSizing: 'border-box',
+        width: '100.5px',
+        height: '20.25px',
+        padding: '2px',
+      }),
+    );
     expect(getElementSize(element, 'border-box')).toEqual({ width: 100.5, height: 20.25 });
+  });
+
+  it('returns zero for an element without a layout box, even with a width and height in CSS', () => {
+    // In a browser, offsetWidth and offsetHeight are 0 for an element with display: none
+    mockHTMLElementProperty('offsetWidth', 0);
+    mockHTMLElementProperty('offsetHeight', 0);
+    const element = createElement({ display: 'none', width: '100px', height: '20px' });
+    // jsdom reports no client rects, which is what a browser reports for display: none
+    expect(getElementSize(element, 'border-box')).toEqual({ width: 0, height: 0 });
   });
 });
