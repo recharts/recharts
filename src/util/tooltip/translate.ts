@@ -30,6 +30,31 @@ export function getTooltipCSSClassName({
   });
 }
 
+/**
+ * Keeps the tooltip inside the viewBox.
+ *
+ * The start edge always applies.
+ * The end edge applies only when the tooltip fits in the viewBox.
+ * A tooltip that is larger than the viewBox keeps its start edge visible.
+ *
+ * The end edge is necessary because the coordinate can be outside the viewBox.
+ * For example, the tooltip keeps its last coordinate after the mouse leaves the chart.
+ * If the chart then gets smaller, that coordinate can be after the new end of the viewBox.
+ * Without the end edge, the hidden tooltip stays there and makes the page scroll.
+ */
+function clampToViewBox(
+  translate: number,
+  viewBoxStart: number,
+  viewBoxDimension: number | undefined,
+  tooltipDimension: number,
+): number {
+  if (viewBoxDimension != null && tooltipDimension <= viewBoxDimension) {
+    const maxTranslate = viewBoxStart + viewBoxDimension - tooltipDimension;
+    return Math.max(Math.min(translate, maxTranslate), viewBoxStart);
+  }
+  return Math.max(translate, viewBoxStart);
+}
+
 export function getTooltipTranslateXY({
   allowEscapeViewBox,
   coordinate,
@@ -70,10 +95,8 @@ export function getTooltipTranslateXY({
   if (reverseDirection[key]) {
     const tooltipBoundary = negative;
     const viewBoxBoundary = viewBoxKey;
-    if (tooltipBoundary < viewBoxBoundary) {
-      return Math.max(positive, viewBoxKey);
-    }
-    return Math.max(negative, viewBoxKey);
+    const translate = tooltipBoundary < viewBoxBoundary ? positive : negative;
+    return clampToViewBox(translate, viewBoxKey, viewBoxDimension, tooltipDimension);
   }
 
   if (viewBoxDimension == null) {
@@ -81,10 +104,8 @@ export function getTooltipTranslateXY({
   }
   const tooltipBoundary = positive + tooltipDimension;
   const viewBoxBoundary = viewBoxKey + viewBoxDimension;
-  if (tooltipBoundary > viewBoxBoundary) {
-    return Math.max(negative, viewBoxKey);
-  }
-  return Math.max(positive, viewBoxKey);
+  const translate = tooltipBoundary > viewBoxBoundary ? negative : positive;
+  return clampToViewBox(translate, viewBoxKey, viewBoxDimension, tooltipDimension);
 }
 
 export function getTransformStyle({

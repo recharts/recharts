@@ -1,5 +1,6 @@
 import React, { useCallback, useState } from 'react';
 import { Args } from '@storybook/react-vite';
+import { expect, fireEvent, userEvent, waitFor, within } from 'storybook/test';
 import { generateMockData } from '@recharts/devtools';
 import { pageData } from '../data';
 import {
@@ -560,5 +561,59 @@ export const TooltipWithNegativeOffset = {
     wrapperStyle: {
       width: 100,
     },
+  },
+};
+
+export const TooltipStaleCoordinateAfterShrinkBug8263Repro = {
+  render: (args: Args) => {
+    const [width, setWidth] = useState(800);
+
+    return (
+      <div>
+        <p>
+          Hover the last bar, move the mouse out of the chart, then click &quot;Shrink&quot;. The scroll container must
+          not get a horizontal scrollbar. See https://github.com/recharts/recharts/issues/8263
+        </p>
+        <button type="button" onClick={() => setWidth(300)}>
+          Shrink
+        </button>
+        <button type="button" onClick={() => setWidth(800)}>
+          Grow
+        </button>
+        <div data-testid="scroll-container" style={{ width, overflowX: 'auto', border: '1px solid black' }}>
+          <BarChart responsive width="100%" height={300} data={pageData}>
+            <XAxis dataKey="name" />
+            <YAxis />
+            <Tooltip {...args} />
+            <Bar dataKey="uv" fill="#8884d8" />
+          </BarChart>
+        </div>
+      </div>
+    );
+  },
+  args: {
+    ...getStoryArgsFromArgsTypesObject(TooltipArgs),
+    isAnimationActive: false,
+  },
+  play: async ({ canvasElement }: { canvasElement: HTMLElement }) => {
+    const canvas = within(canvasElement);
+    const scrollContainer = canvas.getByTestId('scroll-container');
+    const wrapper = scrollContainer.querySelector('.recharts-wrapper');
+    const tooltip = scrollContainer.querySelector('.recharts-tooltip-wrapper');
+    if (!(wrapper instanceof HTMLElement) || !(tooltip instanceof HTMLElement)) {
+      throw new Error('Chart did not render');
+    }
+
+    const rect = wrapper.getBoundingClientRect();
+    fireEvent.mouseMove(wrapper, { clientX: rect.right - 10, clientY: rect.top + rect.height / 2 });
+    await waitFor(() => expect(tooltip).toBeVisible());
+
+    fireEvent.mouseOut(wrapper, { relatedTarget: canvasElement });
+    await waitFor(() => expect(tooltip).not.toBeVisible());
+
+    await userEvent.click(canvas.getByRole('button', { name: 'Shrink' }));
+    await waitFor(() => expect(wrapper.getBoundingClientRect().width).toBeLessThan(rect.width));
+
+    await waitFor(() => expect(scrollContainer.scrollWidth).toBe(scrollContainer.clientWidth));
   },
 };
