@@ -74,7 +74,7 @@ describe('Label theme', () => {
       color: 'rgb(128, 0, 128)',
       fontFamily: 'cursive',
       fontSize: '24px',
-      fontWeight: 'bold',
+      fontWeight: '700',
       letterSpacing: '3px',
     });
 
@@ -97,7 +97,7 @@ describe('Label theme', () => {
     expect(labelListLabel).toHaveStyle({
       fontFamily: 'monospace',
       fontSize: '18px',
-      fontWeight: 'bold',
+      fontWeight: '700',
     });
   });
 
@@ -150,7 +150,7 @@ describe('Label theme', () => {
     expect(label).toHaveStyle({
       fontFamily: 'cursive',
       fontSize: '12px',
-      fontWeight: 'bold',
+      fontWeight: '700',
       letterSpacing: '1px',
     });
   });
@@ -200,7 +200,7 @@ describe('Label theme', () => {
     const allTexts = container.querySelectorAll('text');
     expect(allTexts).toHaveLength(10);
     allTexts.forEach(text => {
-      expect(text).toHaveStyle({ fontFamily: 'cursive', fontSize: 18, fontWeight: 'bold' });
+      expect(text).toHaveStyle({ fontFamily: 'cursive', fontSize: '18px', fontWeight: '700' });
     });
     const dataLabels = container.querySelectorAll('.recharts-label-list text');
     expect(dataLabels).toHaveLength(2);

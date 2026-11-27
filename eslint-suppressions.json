@@ -62,9 +62,6 @@
   "src/animation/matchBy.ts": {
     "@typescript-eslint/consistent-type-assertions": {
       "count": 1
-    },
-    "@typescript-eslint/no-non-null-assertion": {
-      "count": 1
     }
   },
   "src/cartesian/Area.tsx": {
@@ -1049,11 +1046,6 @@
       "count": 1
     }
   },
-  "test/hooks/useAxisScale.spec.tsx": {
-    "@typescript-eslint/no-non-null-assertion": {
-      "count": 1
-    }
-  },
   "test/hooks/useAxisTicks.spec.tsx": {
     "@typescript-eslint/no-non-null-assertion": {
       "count": 4
@@ -1208,9 +1200,6 @@
   "www/src/components/CodeEditorWithPreview.tsx": {
     "@typescript-eslint/no-explicit-any": {
       "count": 4
-    },
-    "react-perf/jsx-no-new-array-as-prop": {
-      "count": 1
     },
     "react-perf/jsx-no-new-function-as-prop": {
       "count": 2

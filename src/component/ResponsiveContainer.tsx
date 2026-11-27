@@ -24,6 +24,7 @@ import {
 } from './responsiveContainerUtils';
 import { Percent, Size } from '../util/types';
 import { isPositiveNumber } from '../util/isWellBehavedNumber';
+import { getContentBoxSize } from '../util/getContentBoxSize';
 
 /**
  * @public
@@ -192,7 +193,7 @@ const SizeDetectorContainer = forwardRef<HTMLDivElement | null, Props>(
       }
       const observer = new ResizeObserver(callback);
 
-      const { width: containerWidth, height: containerHeight } = containerRef.current.getBoundingClientRect();
+      const { width: containerWidth, height: containerHeight } = getContentBoxSize(containerRef.current);
       setContainerSize(containerWidth, containerHeight);
 
       observer.observe(containerRef.current);

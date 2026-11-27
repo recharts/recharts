@@ -1469,6 +1469,44 @@ describe('Tooltip payload', () => {
     expectTooltipPayload(container, 'E', ['value : 0.7', 'value : 0.4']);
   });
 
+  it('should contain the row at the active index when its category repeats', () => {
+    const data = [
+      { day: '5/9/2023', value: 5 },
+      { day: '5/10/2023', value: 0 },
+      { day: '5/10/2023', value: 13 },
+    ];
+
+    const { container } = render(
+      <LineChart width={400} height={400} data={data}>
+        <XAxis dataKey="day" />
+        <Tooltip defaultIndex={2} />
+        <Line dataKey="value" />
+      </LineChart>,
+    );
+
+    expectTooltipPayload(container, '5/10/2023', ['value : 13']);
+  });
+
+  it('should find the row by label when an item has no row at the active index', () => {
+    const { container } = render(
+      <ComposedChart width={400} height={400}>
+        <XAxis dataKey="day" type="category" />
+        <Tooltip defaultIndex={2} />
+        <Line
+          dataKey="value"
+          name="first"
+          data={[
+            { day: 'A', value: 1 },
+            { day: 'A', value: 2 },
+          ]}
+        />
+        <Line dataKey="value" name="second" data={[{ value: 13 }]} />
+      </ComposedChart>,
+    );
+
+    expectTooltipPayload(container, '', ['second : 13']);
+  });
+
   describe('shared prop', () => {
     describe('in BarChart', () => {
       it('when true, should render tooltip payload with data from all Bars', () => {

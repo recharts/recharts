@@ -106,7 +106,7 @@ describe('Tooltip theme', () => {
       fontFamily: 'monospace',
       color: 'rgb(128, 0, 128)',
       fontSize: '18px',
-      fontWeight: 'bold',
+      fontWeight: '700',
     });
 
     const label = container.querySelector<HTMLElement>('.recharts-tooltip-label');
@@ -154,7 +154,7 @@ describe('Tooltip theme', () => {
     assertNotNull(item);
     expect(item).toHaveStyle({
       fontSize: '12px',
-      fontWeight: 'bold',
+      fontWeight: '700',
       fontStyle: 'italic',
     });
 
@@ -163,7 +163,7 @@ describe('Tooltip theme', () => {
     expect(label).toHaveStyle({
       color: 'rgb(0, 128, 0)',
       fontSize: '16px',
-      fontWeight: 'bold',
+      fontWeight: '700',
       fontStyle: 'italic',
     });
   });

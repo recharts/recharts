@@ -174,5 +174,12 @@ export function expectTooltipCoordinate(container: Element, expectedCoordinate: 
   expect(tooltip).toBeInTheDocument();
   expect(tooltip).toBeVisible();
   const { transform } = tooltip.style;
-  expect(transform).toContain(`translate(${expectedCoordinate.x}px, ${expectedCoordinate.y}px)`);
+  /*
+   * Browsers (and jsdom since v31) serialize inline style numbers with limited precision,
+   * so compare the parsed numbers instead of the exact string.
+   */
+  const match = /translate\((-?[\d.e+-]+)px, (-?[\d.e+-]+)px\)/.exec(transform);
+  assertNotNull(match);
+  expect(Number(match[1])).toBeCloseTo(expectedCoordinate.x, 2);
+  expect(Number(match[2])).toBeCloseTo(expectedCoordinate.y, 2);
 }
