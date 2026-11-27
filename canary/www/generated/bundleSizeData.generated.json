@@ -1,45 +1,45 @@
 {
   "treemap": {
     "examplePath": "www/src/views/IndexView/IndexLineChart.tsx",
-    "totalSize": 1018134,
-    "totalSizeLabel": "994.27 KB",
-    "moduleCount": 386,
-    "generatedAt": "2026-11-27T17:05:13.891Z",
+    "totalSize": 1019336,
+    "totalSizeLabel": "995.45 KB",
+    "moduleCount": 387,
+    "generatedAt": "2026-11-27T18:29:29.058Z",
     "stages": [
       {
         "stage": "es6-folder",
-        "bytes": 1672489,
+        "bytes": 1673911,
         "humanReadableSize": "1.60 MB",
         "reductionFromBaselinePercent": 0
       },
       {
         "stage": "tree-shaken",
-        "bytes": 1021059,
-        "humanReadableSize": "997.13 KB",
+        "bytes": 1022263,
+        "humanReadableSize": "998.30 KB",
         "reductionFromBaselinePercent": 0
       },
       {
         "stage": "minified",
-        "bytes": 327223,
-        "humanReadableSize": "319.55 KB",
-        "reductionFromBaselinePercent": 67.95
+        "bytes": 327454,
+        "humanReadableSize": "319.78 KB",
+        "reductionFromBaselinePercent": 67.97
       },
       {
         "stage": "minified+gzip",
-        "bytes": 107277,
-        "humanReadableSize": "104.76 KB",
-        "reductionFromBaselinePercent": 89.49
+        "bytes": 107372,
+        "humanReadableSize": "104.86 KB",
+        "reductionFromBaselinePercent": 89.5
       }
     ],
     "tree": {
       "name": "bundle",
       "fullPath": "bundle",
-      "value": 1018134,
+      "value": 1019336,
       "children": [
         {
           "name": "src",
           "fullPath": "src",
-          "value": 613179,
+          "value": 614381,
           "children": [
             {
               "name": "state",
@@ -452,7 +452,7 @@
             {
               "name": "util",
               "fullPath": "src/util",
-              "value": 122755,
+              "value": 123996,
               "children": [
                 {
                   "name": "scale",
@@ -604,6 +604,11 @@
                   "name": "CartesianUtils.ts",
                   "fullPath": "src/util/CartesianUtils.ts",
                   "value": 1319
+                },
+                {
+                  "name": "getContentBoxSize.ts",
+                  "fullPath": "src/util/getContentBoxSize.ts",
+                  "value": 1241
                 },
                 {
                   "name": "LRUCache.ts",
@@ -868,7 +873,7 @@
             {
               "name": "animation",
               "fullPath": "src/animation",
-              "value": 32656,
+              "value": 32627,
               "children": [
                 {
                   "name": "AnimationHandle.ts",
@@ -878,7 +883,7 @@
                 {
                   "name": "matchBy.ts",
                   "fullPath": "src/animation/matchBy.ts",
-                  "value": 5919
+                  "value": 5890
                 },
                 {
                   "name": "easing.ts",
@@ -977,12 +982,12 @@
             {
               "name": "chart",
               "fullPath": "src/chart",
-              "value": 16852,
+              "value": 16842,
               "children": [
                 {
                   "name": "RechartsWrapper.tsx",
                   "fullPath": "src/chart/RechartsWrapper.tsx",
-                  "value": 12480
+                  "value": 12470
                 },
                 {
                   "name": "CartesianChart.tsx",
@@ -2650,45 +2655,45 @@
   },
   "sunburst": {
     "examplePath": "www/src/views/IndexView/IndexLineChart.tsx",
-    "totalSize": 1018134,
-    "totalSizeLabel": "994.27 KB",
-    "moduleCount": 386,
-    "generatedAt": "2026-11-27T17:05:16.033Z",
+    "totalSize": 1019336,
+    "totalSizeLabel": "995.45 KB",
+    "moduleCount": 387,
+    "generatedAt": "2026-11-27T18:29:26.769Z",
     "stages": [
       {
         "stage": "es6-folder",
-        "bytes": 1672489,
+        "bytes": 1673911,
         "humanReadableSize": "1.60 MB",
         "reductionFromBaselinePercent": 0
       },
       {
         "stage": "tree-shaken",
-        "bytes": 1021059,
-        "humanReadableSize": "997.13 KB",
+        "bytes": 1022263,
+        "humanReadableSize": "998.30 KB",
         "reductionFromBaselinePercent": 0
       },
       {
         "stage": "minified",
-        "bytes": 327223,
-        "humanReadableSize": "319.55 KB",
-        "reductionFromBaselinePercent": 67.95
+        "bytes": 327454,
+        "humanReadableSize": "319.78 KB",
+        "reductionFromBaselinePercent": 67.97
       },
       {
         "stage": "minified+gzip",
-        "bytes": 107277,
-        "humanReadableSize": "104.76 KB",
-        "reductionFromBaselinePercent": 89.49
+        "bytes": 107372,
+        "humanReadableSize": "104.86 KB",
+        "reductionFromBaselinePercent": 89.5
       }
     ],
     "tree": {
       "name": "bundle",
       "fullPath": "bundle",
-      "value": 1018134,
+      "value": 1019336,
       "children": [
         {
           "name": "src",
           "fullPath": "src",
-          "value": 613179,
+          "value": 614381,
           "children": [
             {
               "name": "state",
@@ -3101,7 +3106,7 @@
             {
               "name": "util",
               "fullPath": "src/util",
-              "value": 122755,
+              "value": 123996,
               "children": [
                 {
                   "name": "scale",
@@ -3253,6 +3258,11 @@
                   "name": "CartesianUtils.ts",
                   "fullPath": "src/util/CartesianUtils.ts",
                   "value": 1319
+                },
+                {
+                  "name": "getContentBoxSize.ts",
+                  "fullPath": "src/util/getContentBoxSize.ts",
+                  "value": 1241
                 },
                 {
                   "name": "LRUCache.ts",
@@ -3517,7 +3527,7 @@
             {
               "name": "animation",
               "fullPath": "src/animation",
-              "value": 32656,
+              "value": 32627,
               "children": [
                 {
                   "name": "AnimationHandle.ts",
@@ -3527,7 +3537,7 @@
                 {
                   "name": "matchBy.ts",
                   "fullPath": "src/animation/matchBy.ts",
-                  "value": 5919
+                  "value": 5890
                 },
                 {
                   "name": "easing.ts",
@@ -3626,12 +3636,12 @@
             {
               "name": "chart",
               "fullPath": "src/chart",
-              "value": 16852,
+              "value": 16842,
               "children": [
                 {
                   "name": "RechartsWrapper.tsx",
                   "fullPath": "src/chart/RechartsWrapper.tsx",
-                  "value": 12480
+                  "value": 12470
                 },
                 {
                   "name": "CartesianChart.tsx",
