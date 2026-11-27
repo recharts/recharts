@@ -69,9 +69,11 @@ keyboardEventsMiddleware.startListening({
 
         const tooltipTicks = selectTooltipAxisTicks(currentState);
         const displayedData = selectTooltipDisplayedData(currentState);
-        // The index addresses the tooltip ticks; where there are none, it addresses the rows of displayed data.
-        const indexCount = tooltipTicks?.length || displayedData.length;
         const tooltipEventType = selectTooltipEventType(currentState, currentState.tooltip.settings.shared);
+        // An `axis` interaction indexes the tooltip ticks and an `item` interaction the rows of displayed data;
+        // where there are no ticks, both index the rows.
+        const indexCount =
+          tooltipEventType !== 'item' && tooltipTicks?.length ? tooltipTicks.length : displayedData.length;
 
         // TODO this is lacking index for charts that do not support numeric indexes
         const resolvedIndex = combineActiveTooltipIndex(

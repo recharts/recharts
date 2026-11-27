@@ -77,8 +77,17 @@ export const combineActiveTooltipIndex = (
   const lowerLimit = 0;
   let upperLimit: number = +Infinity;
 
-  if (chartData.length > 0) {
-    upperLimit = chartData.length - 1;
+  /*
+   * An `axis` interaction indexes the tooltip ticks, so an index beyond the last tick is the last tick.
+   * Where there are no ticks, it indexes the rows of the displayed data.
+   * An `item` interaction indexes the data of the hovered item, which neither the ticks nor the displayed data are,
+   * so it keeps the upper bound of the displayed data.
+   */
+  const indexesTicks = tooltipEventType !== 'item' && tooltipAxisTicks != null && tooltipAxisTicks.length > 0;
+  const indexSpace = indexesTicks ? tooltipAxisTicks : chartData;
+
+  if (indexSpace.length > 0) {
+    upperLimit = indexSpace.length - 1;
   }
 
   // now let's clamp the desiredIndex between the limits
@@ -87,12 +96,9 @@ export const combineActiveTooltipIndex = (
   const entry = chartData[clampedIndex];
 
   /*
-   * An `axis` interaction indexes the tooltip ticks. With the data on the chart, the tick and the row at one index are the same.
+   * With the data on the chart, the tick and the row at one index are the same.
    * With data on several graphical items, a tick can be a category that the row at that index shares with another item,
    * and then the value of the tick itself is the one that is inside the domain or outside of it.
-   *
-   * An `item` interaction indexes the data of the hovered item, which neither the ticks nor the displayed data are,
-   * so it keeps reading the row of the displayed data at the index.
    */
   const tick = tooltipEventType === 'item' ? undefined : tooltipAxisTicks?.[clampedIndex];
 

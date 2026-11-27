@@ -118,7 +118,7 @@ describe('combineActiveTooltipIndex', () => {
     expect(combineActiveTooltipIndex(tooltipInteraction, 'item', chartData, tooltipTicks, 'value', [25, 35])).toBe('4');
   });
 
-  it('reads the value of the row at the index when there is no tick at that index', () => {
+  it('clamps an axis interaction to the last tick when the index is beyond the ticks', () => {
     const chartData: ChartData = [{ value: 2 }, { value: 10 }];
     const tooltipTicks = createTicks([2]);
     const tooltipInteraction = createInteraction('1');
@@ -126,6 +126,35 @@ describe('combineActiveTooltipIndex', () => {
 
     const result = combineActiveTooltipIndex(tooltipInteraction, 'axis', chartData, tooltipTicks, 'value', domain);
 
-    expect(result).toBeNull();
+    // the index does not reach the row at 1, whose value is outside of the domain
+    expect(result).toBe('0');
+  });
+
+  it('bounds an axis interaction by the ticks and an item interaction by the displayed data when there are fewer ticks than rows', () => {
+    // The rows of two data arrays, one after the other, and the ticks made from their distinct categories
+    const chartData: ChartData = [
+      { value: 10 },
+      { value: 20 },
+      { value: 30 },
+      { value: 40 },
+      { value: 30 },
+      { value: 5 },
+    ];
+    const tooltipTicks = createTicks([10, 20, 30, 40, 50]);
+    const tooltipInteraction = createInteraction('5');
+    const domain: NumberDomain = [40, 60] as const;
+
+    // the last tick is the end of the index space of an axis interaction, and its value is the one read
+    expect(combineActiveTooltipIndex(tooltipInteraction, 'axis', chartData, tooltipTicks, 'value', domain)).toBe('4');
+    // the last row is the end of the index space of an item interaction, and its value is the one read
+    expect(combineActiveTooltipIndex(tooltipInteraction, 'item', chartData, tooltipTicks, 'value', domain)).toBeNull();
+    expect(combineActiveTooltipIndex(tooltipInteraction, 'item', chartData, tooltipTicks, 'value', [4, 6])).toBe('5');
+  });
+
+  it('bounds an axis interaction by the displayed data when there are no ticks', () => {
+    const chartData: ChartData = [{ value: 2 }, { value: 7 }, { value: 15 }];
+    const tooltipInteraction = createInteraction('5');
+
+    expect(combineActiveTooltipIndex(tooltipInteraction, 'axis', chartData, [], 'value', undefined)).toBe('2');
   });
 });
