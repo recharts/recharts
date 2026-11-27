@@ -81,6 +81,33 @@ describe('Funnel animation', () => {
     });
   });
 
+  describe('horizontal entrance animation', () => {
+    const data = [{ value: 2 }, { value: 1 }];
+    const renderTestCase = createSelectorTestCase(({ children }) => (
+      <FunnelChart width={210} height={110}>
+        <Funnel data={data} dataKey="value" taperDirection="horizontal" isAnimationActive animationEasing="linear" />
+        {children}
+      </FunnelChart>
+    ));
+
+    it('grows each stage from its center and keeps the final path on rerender', async () => {
+      const { container, animationManager, rerenderSameComponent } = renderTestCase();
+
+      await animationManager.setAnimationProgress(0.5);
+      expect(getFunnelPathStrings(container)).toEqual([
+        'M 30,30L 30,80L 80,67.5L 80,42.5L 30,30 Z',
+        'M 130,42.5L 130,67.5L 180,55L 180,55L 130,42.5 Z',
+      ]);
+
+      await animationManager.completeAnimation();
+      const finalPaths = ['M 5,5L 5,105L 105,80L 105,30L 5,5 Z', 'M 105,30L 105,80L 205,55L 205,55L 105,30 Z'];
+      expect(getFunnelPathStrings(container)).toEqual(finalPaths);
+
+      rerenderSameComponent();
+      expect(getFunnelPathStrings(container)).toEqual(finalPaths);
+    });
+  });
+
   describe('initial animation with simple props', () => {
     const renderTestCase = createSelectorTestCase(({ children }) => (
       <FunnelChart width={500} height={300}>
