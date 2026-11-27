@@ -7,7 +7,9 @@ import {
   ThunkDispatch,
 } from '@reduxjs/toolkit';
 import { setKeyboardInteraction, TooltipInteractionState } from './tooltipSlice';
+import { ChartData } from './chartDataSlice';
 import { AppDispatch, RechartsRootState } from './store';
+import { TickItem, TooltipEventType } from '../util/types';
 import {
   selectTooltipAxisDomain,
   selectTooltipAxisTicks,
@@ -17,6 +19,37 @@ import { selectCoordinateForDefaultIndex } from './selectors/selectors';
 import { selectChartDirection, selectTooltipAxisDataKey } from './selectors/axisSelectors';
 import { combineActiveTooltipIndex } from './selectors/combiners/combineActiveTooltipIndex';
 import { selectTooltipEventType } from './selectors/selectTooltipEventType';
+import { selectAllUnfilteredGraphicalItems } from './selectors/graphicalItemSelectors';
+
+/**
+ * The number of indexes the keyboard steps through.
+ *
+ * An `axis` interaction indexes the tooltip ticks; where there are no ticks, it indexes the rows of the displayed data.
+ * An `item` interaction indexes the data of the hovered item. The keyboard has no hovered item and shows the first one
+ * (see `combineTooltipPayloadConfigurations`), so it steps through the entries of that item: the data of the item where it
+ * has its own, and the rows of the displayed data otherwise, which with the data on the chart are the rows of the chart data.
+ * The displayed data alone is the concatenation of the data of all items, which is more than one item has.
+ */
+export const selectKeyboardIndexCount = (
+  state: RechartsRootState,
+  tooltipEventType: TooltipEventType | undefined,
+  tooltipTicks: ReadonlyArray<TickItem> | undefined,
+  displayedData: ChartData,
+): number => {
+  if (tooltipEventType !== 'item' && tooltipTicks?.length) {
+    return tooltipTicks.length;
+  }
+  if (tooltipEventType === 'item') {
+    const firstItemId = state.tooltip.tooltipItemPayloads[0]?.settings.graphicalItemId;
+    const firstItem =
+      firstItemId == null ? undefined : selectAllUnfilteredGraphicalItems(state).find(item => item.id === firstItemId);
+    const itemData = firstItem?.data;
+    if (itemData != null && itemData.length > 0) {
+      return itemData.length;
+    }
+  }
+  return displayedData.length;
+};
 
 export const keyDownAction = createAction<KeyboardEvent['key']>('keyDown');
 export const focusAction = createAction('focus');
@@ -70,10 +103,7 @@ keyboardEventsMiddleware.startListening({
         const tooltipTicks = selectTooltipAxisTicks(currentState);
         const displayedData = selectTooltipDisplayedData(currentState);
         const tooltipEventType = selectTooltipEventType(currentState, currentState.tooltip.settings.shared);
-        // An `axis` interaction indexes the tooltip ticks and an `item` interaction the rows of displayed data;
-        // where there are no ticks, both index the rows.
-        const indexCount =
-          tooltipEventType !== 'item' && tooltipTicks?.length ? tooltipTicks.length : displayedData.length;
+        const indexCount = selectKeyboardIndexCount(currentState, tooltipEventType, tooltipTicks, displayedData);
 
         // TODO this is lacking index for charts that do not support numeric indexes
         const resolvedIndex = combineActiveTooltipIndex(
