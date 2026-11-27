@@ -128,7 +128,8 @@ describe('label background', () => {
         const background = container.querySelector('path.recharts-text-path-background');
         assertNotNull(background);
         expect(background).toHaveAttribute('stroke', '#fff');
-        expect(background).toHaveAttribute('stroke-width', '16');
+        // computed font size (16px browser default) plus vertical padding on both sides
+        expect(background).toHaveAttribute('stroke-width', '20');
         expect(background).toHaveAttribute('stroke-dasharray', '38px 500px');
       },
     );

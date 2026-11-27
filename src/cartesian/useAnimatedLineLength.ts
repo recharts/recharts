@@ -43,7 +43,8 @@ export function useAnimatedLineLength(
 
     if (animationElapsedTime > 0 && totalLength > 0) {
       maxAnimatedLengthRef.current = Math.max(maxAnimatedLengthRef.current, visibleLength);
-      if (visibleLength >= totalLength) {
+      // visibleLength is rounded to 4 decimals and getTotalLength() is not: the final frame is always full.
+      if (animationElapsedTime >= 1 || visibleLength >= totalLength) {
         reachedFullRef.current = true;
         return null;
       }

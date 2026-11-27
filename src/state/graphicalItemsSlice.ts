@@ -1,4 +1,4 @@
-import { createSlice, current, PayloadAction, prepareAutoBatched } from '@reduxjs/toolkit';
+import { createSlice, current, PayloadAction, prepareAutoBatched, Reducer } from '@reduxjs/toolkit';
 import { castDraft } from 'immer';
 import { ChartData } from './chartDataSlice';
 import { AxisId } from './cartesianAxisSlice';
@@ -160,4 +160,4 @@ export const {
   replacePolarGraphicalItem,
 } = graphicalItemsSlice.actions;
 
-export const graphicalItemsReducer = graphicalItemsSlice.reducer;
+export const graphicalItemsReducer: Reducer<GraphicalItemsState> = graphicalItemsSlice.reducer;

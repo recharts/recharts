@@ -28,6 +28,7 @@ import { ReportChartSize } from '../context/chartLayoutContext';
 import { useResponsiveContainerContext } from '../component/ResponsiveContainer';
 import { Percent } from '../util/types';
 import { useRechartsTheme } from '../theme/RechartsThemeContext';
+import { getContentBoxSize } from '../util/getContentBoxSize';
 
 export type RechartsWrapperProps = ExternalMouseEvents & {
   children: ReactNode;
@@ -113,7 +114,7 @@ const ResponsiveDiv = forwardRef<HTMLDivElement, WrapperDivProps>((props: Wrappe
 
       // 3. Initiate a new ResizeObserver on the valid DOM node
       if (node != null && typeof ResizeObserver !== 'undefined') {
-        const { width: containerWidth, height: containerHeight } = node.getBoundingClientRect();
+        const { width: containerWidth, height: containerHeight } = getContentBoxSize(node);
         setContainerSize(containerWidth, containerHeight);
 
         const callback = (entries: ResizeObserverEntry[]) => {
@@ -178,7 +179,7 @@ const ReadSizeOnceDiv = forwardRef<HTMLDivElement, WrapperDivProps>((props: Wrap
         ref(node);
       }
       if (node != null) {
-        const { width: containerWidth, height: containerHeight } = node.getBoundingClientRect();
+        const { width: containerWidth, height: containerHeight } = getContentBoxSize(node);
         setContainerSize(containerWidth, containerHeight);
       }
     },
