@@ -1,0 +1,1 @@
+import{Y as a}from"./Text-CpEuDyFY.js";function c(i){let t=!1,e;return function(...r){return t||(t=!0,e=i(...r)),e}}function d(i){const t=a(i),e=3,r=2;if(t!=null){const{r:s,strokeWidth:u}=t;let o=Number(s),n=Number(u);return(Number.isNaN(o)||o<0)&&(o=e),(Number.isNaN(n)||n<0)&&(n=r),{r:o,strokeWidth:n}}return{r:e,strokeWidth:r}}export{d as g,c as o};
