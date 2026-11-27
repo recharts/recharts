@@ -28,6 +28,7 @@ import { combineAllBarPositions } from './combiners/combineAllBarPositions';
 import { combineStackedData } from './combiners/combineStackedData';
 import { selectXAxisIdFromGraphicalItemId, selectYAxisIdFromGraphicalItemId } from './graphicalItemSelectors';
 import { combineBarPosition } from './combiners/combineBarPosition';
+import { type CategoryBarPosition, combineCategoryBarOffsets } from './combiners/combineCategoryBarOffsets';
 
 const pickIsPanorama = (_state: RechartsRootState, _id: GraphicalItemId, isPanorama: boolean): boolean => isPanorama;
 
@@ -227,6 +228,28 @@ const selectYAxisTicks = (state: RechartsRootState, id: GraphicalItemId, isPanor
   return selectTicksOfGraphicalItem(state, 'yAxis', yAxisId, isPanorama);
 };
 
+const selectCategoryBarOffsets = createSelector(
+  [
+    selectBarSizeList,
+    selectRootMaxBarSize,
+    selectBarGap,
+    selectBarCategoryGap,
+    selectBarBandSize,
+    selectAxisBandSize,
+    selectAllVisibleBars,
+    selectChartDataWithIndexesIfNotInPanoramaPosition3,
+    (state: RechartsRootState, id: GraphicalItemId, isPanorama: boolean) =>
+      selectChartLayout(state) === 'horizontal'
+        ? selectXAxisWithScale(state, id, isPanorama)
+        : selectYAxisWithScale(state, id, isPanorama),
+    (state: RechartsRootState, id: GraphicalItemId, isPanorama: boolean) =>
+      selectChartLayout(state) === 'horizontal'
+        ? selectXAxisTicks(state, id, isPanorama)
+        : selectYAxisTicks(state, id, isPanorama),
+  ],
+  combineCategoryBarOffsets,
+);
+
 export const selectBarPosition: (
   state: RechartsRootState,
   id: GraphicalItemId,
@@ -331,6 +354,8 @@ export const selectBarRectangles: (
     selectXAxisTicks,
     selectYAxisTicks,
     selectBarPosition,
+    (state: RechartsRootState, id: GraphicalItemId, isPanorama: boolean) =>
+      state.rootProps.centerBarsInCategory ? selectCategoryBarOffsets(state, id, isPanorama)?.get(id) : undefined,
     selectChartLayout,
     selectChartDataWithIndexesIfNotInPanoramaPosition3,
     selectAxisBandSize,
@@ -347,6 +372,7 @@ export const selectBarRectangles: (
     xAxisTicks,
     yAxisTicks,
     pos: BarPositionPosition | undefined,
+    categoryPosition: CategoryBarPosition | undefined,
     layout: LayoutType,
     { chartData, dataStartIndex, dataEndIndex },
     bandSize,
@@ -385,6 +411,7 @@ export const selectBarRectangles: (
       layout,
       barSettings,
       pos,
+      categoryPosition,
       parentViewBox: axisViewBox,
       bandSize,
       xAxis,

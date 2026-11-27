@@ -3,6 +3,9 @@ import CustomBandScaleExample, { barAlignDefaultState, barAlignLevers } from './
 import customBandScaleExampleSource from './CustomBandScaleExample?raw';
 import { TargetBlankLink } from '../../Shared/TargetBlankLink';
 
+import WorkLogExample from './WorkLogExample';
+import workLogExampleSource from './WorkLogExample?raw';
+
 export function BarAlign() {
   return (
     <article>
@@ -46,6 +49,17 @@ export function BarAlign() {
         levers={barAlignLevers}
         stackBlitzTitle="Bar Chart with custom scale"
         defaultTool="controls"
+      />
+      <h2>Centering bars when a project has no entry</h2>
+      <p>
+        In this work log, Tuesday has only design hours and Wednesday has only build hours. Set{' '}
+        <code>centerBarsInCategory</code> to center each day&apos;s recorded projects over its tick. Thursday has an
+        explicit zero for design, so both projects keep their slots.
+      </p>
+      <CodeEditorWithPreview
+        Component={WorkLogExample}
+        sourceCode={workLogExampleSource}
+        stackBlitzTitle="Grouped bars in a work log"
       />
     </article>
   );

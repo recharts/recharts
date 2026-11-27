@@ -65,6 +65,7 @@ import { SetErrorBarContext } from '../context/ErrorBarContext';
 import { GraphicalItemClipPath, useNeedsClip } from './GraphicalItemClipPath';
 import { useChartLayout } from '../context/chartLayoutContext';
 import { selectBarRectangles } from '../state/selectors/barSelectors';
+import type { CategoryBarPosition } from '../state/selectors/combiners/combineCategoryBarOffsets';
 import { BaseAxisWithScale } from '../state/selectors/axisSelectors';
 import { useAppSelector } from '../state/hooks';
 import { useIsPanorama } from '../context/PanoramaContext';
@@ -1291,6 +1292,7 @@ export function computeBarRectangles({
   layout,
   barSettings: { dataKey, minPointSize: minPointSizeProp, hasCustomShape },
   pos,
+  categoryPosition,
   bandSize,
   xAxis,
   yAxis,
@@ -1307,6 +1309,7 @@ export function computeBarRectangles({
   layout: 'horizontal' | 'vertical';
   barSettings: BarSettings;
   pos: BarPositionPosition;
+  categoryPosition?: CategoryBarPosition;
   bandSize: number;
   xAxis: BaseAxisWithScale;
   yAxis: BaseAxisWithScale;
@@ -1326,6 +1329,7 @@ export function computeBarRectangles({
   parentViewBox: CartesianViewBoxRequired;
   dataStartIndex: number;
 }): ReadonlyArray<BarRectangleItem> | undefined {
+  const barSize = categoryPosition?.size ?? pos.size;
   const numericAxis = layout === 'horizontal' ? yAxis : xAxis;
   // @ts-expect-error this assumes that the domain is always numeric, but doesn't check for it
   const stackedDomain: ReadonlyArray<number> = stackedData ? numericAxis.scale.domain() : null;
@@ -1334,6 +1338,10 @@ export function computeBarRectangles({
 
   return displayedData
     .map((entry: unknown, index): BarRectangleItem | null => {
+      const barOffset = categoryPosition == null ? pos.offset : categoryPosition.offsets[index];
+      if (barOffset == null) {
+        return null;
+      }
       let value, x: number | null, y, width, height, background: BarRectangleType;
 
       if (stackedData) {
@@ -1363,12 +1371,12 @@ export function computeBarRectangles({
           axis: xAxis,
           ticks: xAxisTicks,
           bandSize,
-          offset: pos.offset,
+          offset: barOffset,
           entry,
           index,
         });
         y = currentValueScale ?? baseValueScale ?? undefined;
-        width = pos.size;
+        width = barSize;
         const computedHeight = baseValueScale - currentValueScale;
         height = isNan(computedHeight) ? 0 : computedHeight;
         background = { x, y: offset.top, width, height: offset.height };
@@ -1394,12 +1402,12 @@ export function computeBarRectangles({
           axis: yAxis,
           ticks: yAxisTicks,
           bandSize,
-          offset: pos.offset,
+          offset: barOffset,
           entry,
           index,
         });
         width = currentValueScale - baseValueScale;
-        height = pos.size;
+        height = barSize;
         background = { x: offset.left, y, width: offset.width, height };
 
         if (stackedData) {

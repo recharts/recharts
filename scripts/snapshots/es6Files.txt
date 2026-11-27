@@ -159,6 +159,7 @@
   "es6/state/selectors/combiners/combineAxisRangeWithReverse.js",
   "es6/state/selectors/combiners/combineBarPosition.js",
   "es6/state/selectors/combiners/combineBarSizeList.js",
+  "es6/state/selectors/combiners/combineCategoryBarOffsets.js",
   "es6/state/selectors/combiners/combineCheckedDomain.js",
   "es6/state/selectors/combiners/combineConfiguredScale.js",
   "es6/state/selectors/combiners/combineCoordinateForDefaultIndex.js",
