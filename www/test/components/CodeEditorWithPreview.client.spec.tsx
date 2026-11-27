@@ -1,7 +1,8 @@
 import { afterEach, expect, test } from 'vitest';
-import { cleanup, render, screen, waitFor } from '@testing-library/react';
+import { act, cleanup, render, screen, waitFor } from '@testing-library/react';
 import { userEvent } from '@testing-library/user-event';
 import '@testing-library/jest-dom/vitest';
+import { EditorView } from '@codemirror/view';
 import { MemoryRouter } from 'react-router';
 
 import { CodeEditorWithPreview } from '../../src/components/CodeEditorWithPreview';
@@ -12,8 +13,21 @@ const sourceCode = `export default function Example() {
 }
 `;
 
+const editedSourceCode = `export default function Example() {
+  return <p>Edited example from react-runner</p>;
+}`;
+
 function Example() {
   return <p>Example from the component</p>;
+}
+
+function getEditorView(container: HTMLElement): EditorView {
+  const content = container.querySelector('.cm-content');
+  const view = content instanceof HTMLElement ? EditorView.findFromDOM(content) : null;
+  if (view == null) {
+    throw new Error('The source code editor is not rendered yet');
+  }
+  return view;
 }
 
 function renderEditor() {
@@ -54,6 +68,24 @@ test('switches to edit mode and runs the code with react-runner', async () => {
 
   expect(await screen.findByText('Example from react-runner')).toBeInTheDocument();
   expect(screen.queryByText('Example from the component')).not.toBeInTheDocument();
+});
+
+test('copies and runs the edited code', async () => {
+  const user = userEvent.setup();
+  const { container } = renderEditor();
+
+  await user.click(screen.getByRole('button', { name: 'Edit' }));
+  const view = await waitFor(() => getEditorView(container));
+  act(() => {
+    view.dispatch({ changes: { from: 0, to: view.state.doc.length, insert: editedSourceCode } });
+  });
+
+  await user.click(screen.getByRole('button', { name: 'Copy to clipboard' }));
+  await waitFor(async () => expect(await navigator.clipboard.readText()).toBe(editedSourceCode));
+
+  await user.click(screen.getByRole('button', { name: 'Run' }));
+  expect(await screen.findByText('Edited example from react-runner')).toBeInTheDocument();
+  expect(screen.queryByText('Example from react-runner')).not.toBeInTheDocument();
 });
 
 test('shows the hook inspector copy button, which does not copy the source code', async () => {
