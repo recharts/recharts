@@ -9,7 +9,8 @@ import {
 import { setKeyboardInteraction, TooltipInteractionState } from './tooltipSlice';
 import { ChartData } from './chartDataSlice';
 import { AppDispatch, RechartsRootState } from './store';
-import { TickItem, TooltipEventType } from '../util/types';
+import { DataKey, TickItem, TooltipEventType } from '../util/types';
+import { getValueByDataKey } from '../util/ChartUtils';
 import {
   selectTooltipAxisDomain,
   selectTooltipAxisTicks,
@@ -49,6 +50,33 @@ export const selectKeyboardIndexCount = (
     }
   }
   return displayedData.length;
+};
+
+/**
+ * The position in the tooltip ticks of the tick that places the entry at an index, for an `item` interaction.
+ *
+ * Line, Area and Bar give their tooltip entries no position of their own, so an entry is placed by the tick of its category.
+ * That is the tick at the position of the entry as long as the ticks are the categories of the data in the order of the data,
+ * and the tick nearest to the entry where they are the nice numbers of a numeric axis. Where the ticks leave out the repeats
+ * of a category (`allowDuplicatedCategory={false}`), the tick at the position of an entry can be another category, so the
+ * tick of the category is read by value. Returns -1 where no tick places the entry.
+ */
+export const selectTickPositionOfEntry = (
+  index: number,
+  displayedData: ChartData,
+  tooltipTicks: ReadonlyArray<TickItem> | undefined,
+  axisDataKey: DataKey<unknown> | undefined,
+): number => {
+  if (tooltipTicks == null || tooltipTicks.length === 0) {
+    return index;
+  }
+  const tick = tooltipTicks[index];
+  const category = getValueByDataKey(displayedData[index], axisDataKey);
+  const positionOfCategory = tooltipTicks.findIndex(t => t.value === category);
+  if (positionOfCategory >= 0 && tick?.value !== category) {
+    return positionOfCategory;
+  }
+  return tick != null ? index : -1;
 };
 
 export const keyDownAction = createAction<KeyboardEvent['key']>('keyDown');
@@ -104,6 +132,15 @@ keyboardEventsMiddleware.startListening({
         const displayedData = selectTooltipDisplayedData(currentState);
         const tooltipEventType = selectTooltipEventType(currentState, currentState.tooltip.settings.shared);
         const indexCount = selectKeyboardIndexCount(currentState, tooltipEventType, tooltipTicks, displayedData);
+        const axisDataKey = selectTooltipAxisDataKey(currentState);
+        /*
+         * The index of an `axis` interaction is a position in the ticks. An `item` interaction indexes the entries of the first item,
+         * so its coordinate is read at the position of the tick that places the entry.
+         */
+        const tickPositionOf = (index: number): number =>
+          tooltipEventType === 'item'
+            ? selectTickPositionOfEntry(index, displayedData, tooltipTicks, axisDataKey)
+            : index;
 
         // TODO this is lacking index for charts that do not support numeric indexes
         const resolvedIndex = combineActiveTooltipIndex(
@@ -111,20 +148,25 @@ keyboardEventsMiddleware.startListening({
           tooltipEventType,
           displayedData,
           tooltipTicks,
-          selectTooltipAxisDataKey(currentState),
+          axisDataKey,
           selectTooltipAxisDomain(currentState),
         );
         const currentIndex = resolvedIndex == null ? -1 : Number(resolvedIndex);
-        const isOutsideDomain = !Number.isFinite(currentIndex) || currentIndex < 0;
+        /*
+         * An index at or beyond the index count is one that the data no longer has: the first item has fewer entries than before,
+         * or another chart has sent it. Either arrow leaves it, and enters the indexes from its own side.
+         */
+        const isOutsideDomain = !Number.isFinite(currentIndex) || currentIndex < 0 || currentIndex >= indexCount;
         if (key === 'Enter') {
-          if (isOutsideDomain) {
+          const tickPosition = isOutsideDomain ? -1 : tickPositionOf(currentIndex);
+          if (tickPosition < 0) {
             return;
           }
           const coordinate = selectCoordinateForDefaultIndex(
             currentState,
             tooltipEventType,
             'hover',
-            String(keyboardInteraction.index),
+            String(tickPosition),
           );
           listenerApi.dispatch(
             setKeyboardInteraction({
@@ -141,7 +183,6 @@ keyboardEventsMiddleware.startListening({
         const movement = key === 'ArrowRight' ? 1 : -1;
         let nextIndex: number;
         if (isOutsideDomain) {
-          const axisDataKey = selectTooltipAxisDataKey(currentState);
           const domain = selectTooltipAxisDomain(currentState);
           const effectiveMovement = movement * directionMultiplier;
 
@@ -158,6 +199,7 @@ keyboardEventsMiddleware.startListening({
           if (effectiveMovement > 0) {
             for (let i = 0; i < indexCount; i++) {
               if (
+                tickPositionOf(i) >= 0 &&
                 combineActiveTooltipIndex(
                   mkInteraction(i),
                   tooltipEventType,
@@ -174,6 +216,7 @@ keyboardEventsMiddleware.startListening({
           } else {
             for (let i = indexCount - 1; i >= 0; i--) {
               if (
+                tickPositionOf(i) >= 0 &&
                 combineActiveTooltipIndex(
                   mkInteraction(i),
                   tooltipEventType,
@@ -198,7 +241,16 @@ keyboardEventsMiddleware.startListening({
             return;
           }
         }
-        const coordinate = selectCoordinateForDefaultIndex(currentState, tooltipEventType, 'hover', String(nextIndex));
+        const tickPosition = tickPositionOf(nextIndex);
+        if (tickPosition < 0) {
+          return;
+        }
+        const coordinate = selectCoordinateForDefaultIndex(
+          currentState,
+          tooltipEventType,
+          'hover',
+          String(tickPosition),
+        );
         listenerApi.dispatch(
           setKeyboardInteraction({
             active: true,

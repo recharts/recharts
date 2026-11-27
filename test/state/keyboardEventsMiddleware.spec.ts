@@ -1,7 +1,11 @@
 import { beforeEach, describe, expect, it } from 'vitest';
 import { createRechartsStore } from '../../src/state/store';
-import { keyDownAction, selectKeyboardIndexCount } from '../../src/state/keyboardEventsMiddleware';
-import { addCartesianGraphicalItem } from '../../src/state/graphicalItemsSlice';
+import {
+  keyDownAction,
+  selectKeyboardIndexCount,
+  selectTickPositionOfEntry,
+} from '../../src/state/keyboardEventsMiddleware';
+import { addCartesianGraphicalItem, replaceCartesianGraphicalItem } from '../../src/state/graphicalItemsSlice';
 import {
   addTooltipEntrySettings,
   setKeyboardInteraction,
@@ -110,6 +114,32 @@ describe('keyboardEventsMiddleware', () => {
       const state = store.getState();
       expect(selectKeyboardIndexCount(state, 'item', undefined, new Array(4).fill({}))).toBe(2);
     });
+
+    it('leaves an index beyond the entries of the first item with either arrow', () => {
+      const shrinking = createRechartsStore({ options: itemTooltipOptions() });
+      const first = barSettings('bar-0', 'uv', [{ name: 'A' }, { name: 'B' }, { name: 'C' }]);
+      shrinking.dispatch(addCartesianGraphicalItem(first));
+      shrinking.dispatch(addTooltipEntrySettings(tooltipEntry('bar-0', 'uv')));
+      shrinking.dispatch(
+        addCartesianGraphicalItem(
+          barSettings('bar-1', 'pv', [{ name: 'A' }, { name: 'B' }, { name: 'C' }, { name: 'D' }, { name: 'E' }]),
+        ),
+      );
+      shrinking.dispatch(addTooltipEntrySettings(tooltipEntry('bar-1', 'pv')));
+      shrinking.dispatch(setKeyboardInteraction({ active: true, activeIndex: '2', activeCoordinate: undefined }));
+
+      // The first item keeps one entry; the displayed data still has the rows of both items, so the index 2 is kept.
+      shrinking.dispatch(
+        replaceCartesianGraphicalItem({ prev: first, next: barSettings('bar-0', 'uv', [{ name: 'A' }]) }),
+      );
+
+      shrinking.dispatch(keyDownAction('ArrowRight'));
+      expect(shrinking.getState().tooltip.keyboardInteraction.index).toBe('0');
+
+      shrinking.dispatch(setKeyboardInteraction({ active: true, activeIndex: '2', activeCoordinate: undefined }));
+      shrinking.dispatch(keyDownAction('ArrowLeft'));
+      expect(shrinking.getState().tooltip.keyboardInteraction.index).toBe('0');
+    });
   });
 
   describe('with an item tooltip and the data on the chart', () => {
@@ -151,6 +181,51 @@ describe('keyboardEventsMiddleware', () => {
     it('counts the rows of the displayed data for an item interaction without a tooltip item of its own', () => {
       const store = createRechartsStore({ options: itemTooltipOptions() });
       expect(selectKeyboardIndexCount(store.getState(), 'item', ticks, displayedData)).toBe(4);
+    });
+  });
+
+  describe('selectTickPositionOfEntry', () => {
+    const rows = [
+      { name: 'A', uv: 1 },
+      { name: 'A', uv: 2 },
+      { name: 'B', uv: 3 },
+    ];
+    const ticksOf = (values: ReadonlyArray<unknown>): ReadonlyArray<TickItem> =>
+      values.map((value, index) => ({ value, coordinate: index * 10, index }));
+
+    it('is the position of the entry while every entry has its own tick', () => {
+      const ticks = ticksOf(['A', 'A', 'B']);
+      expect(selectTickPositionOfEntry(0, rows, ticks, 'name')).toBe(0);
+      expect(selectTickPositionOfEntry(1, rows, ticks, 'name')).toBe(1);
+      expect(selectTickPositionOfEntry(2, rows, ticks, 'name')).toBe(2);
+    });
+
+    it('is the tick of the category where the ticks leave out the repeats of a category', () => {
+      const ticks = ticksOf(['A', 'B']);
+      expect(selectTickPositionOfEntry(0, rows, ticks, 'name')).toBe(0);
+      expect(selectTickPositionOfEntry(1, rows, ticks, 'name')).toBe(0);
+      expect(selectTickPositionOfEntry(2, rows, ticks, 'name')).toBe(1);
+    });
+
+    it('is the position of the entry where the ticks are the nice numbers of a numeric axis', () => {
+      const ticks = ticksOf([0, 2, 4, 6]);
+      const points = [
+        { x: 1, y: 1 },
+        { x: 3, y: 2 },
+        { x: 5, y: 3 },
+      ];
+      expect(selectTickPositionOfEntry(0, points, ticks, 'x')).toBe(0);
+      expect(selectTickPositionOfEntry(2, points, ticks, 'x')).toBe(2);
+    });
+
+    it('is the position of the entry where there are no ticks', () => {
+      expect(selectTickPositionOfEntry(1, rows, undefined, 'name')).toBe(1);
+      expect(selectTickPositionOfEntry(1, rows, [], 'name')).toBe(1);
+    });
+
+    it('is none where the ticks neither place the entry nor carry its category', () => {
+      expect(selectTickPositionOfEntry(2, rows, ticksOf(['A']), 'name')).toBe(-1);
+      expect(selectTickPositionOfEntry(2, rows, ticksOf(['A', 'B']), undefined)).toBe(-1);
     });
   });
 });

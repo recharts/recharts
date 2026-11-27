@@ -4,6 +4,8 @@ import { describe, expect, test, vi } from 'vitest';
 import {
   Area,
   AreaChart,
+  Bar,
+  BarChart,
   CartesianGrid,
   DefaultTooltipContent,
   Funnel,
@@ -25,6 +27,8 @@ import { expectTooltipNotVisible, expectTooltipPayload, getTooltip } from '../co
 import { PageData } from '../_data';
 import { createSelectorTestCase } from '../helper/createSelectorTestCase';
 import { clickOn } from '../helper/clickOn';
+import { expectLastCalledWith } from '../helper/expectLastCalledWith';
+import { selectTooltipAxisTicks } from '../../src/state/selectors/tooltipSelectors';
 
 function assertChartA11yAttributes(svg: Element) {
   expect(svg).not.toBeNull();
@@ -534,6 +538,62 @@ describe.each([true, undefined])('AccessibilityLayer with accessibilityLayer=%s'
         expect(['30', '40', '50', '60'].some(v => textAfter.includes(v))).toBe(true);
         arrowRight(svg);
         expect(['30', '40', '50', '60'].some(v => (getTooltip(container).textContent ?? '').includes(v))).toBe(true);
+      });
+    });
+
+    describe('BarChart with an item tooltip and a category that repeats, allowDuplicatedCategory={false}', () => {
+      const repeatedCategoryData = [
+        { name: 'A', uv: 1 },
+        { name: 'A', uv: 2 },
+        { name: 'B', uv: 3 },
+      ];
+      const RepeatedCategoryChart = ({ children }: { children?: ReactNode }) => (
+        <BarChart width={300} height={100} data={repeatedCategoryData} accessibilityLayer={accessibilityLayer}>
+          <Bar dataKey="uv" />
+          <XAxis dataKey="name" allowDuplicatedCategory={false} />
+          <YAxis />
+          <Tooltip shared={false} />
+          {children}
+        </BarChart>
+      );
+
+      test('ArrowRight reaches the third bar, which no tick at its position places, and keeps its coordinate', () => {
+        const renderTestCase = createSelectorTestCase(RepeatedCategoryChart);
+        const ticks = renderTestCase(selectTooltipAxisTicks).spy.mock.lastCall?.[0];
+        // The two bars of the category A share one tick.
+        expect(ticks?.map(tick => tick.value)).toEqual(['A', 'B']);
+        assertNotNull(ticks);
+
+        const { container, spy } = renderTestCase(state => state.tooltip.keyboardInteraction);
+        const svg = getMainSurface(container);
+        act(() => svg.focus());
+        expectLastCalledWith(spy, {
+          active: true,
+          index: '0',
+          dataKey: undefined,
+          graphicalItemId: undefined,
+          coordinate: { x: ticks[0].coordinate, y: expect.any(Number) },
+        });
+
+        arrowRight(svg);
+        // The second bar of the category A is placed by the tick of A, not by the tick at the position of the entry.
+        expectLastCalledWith(spy, {
+          active: true,
+          index: '1',
+          dataKey: undefined,
+          graphicalItemId: undefined,
+          coordinate: { x: ticks[0].coordinate, y: expect.any(Number) },
+        });
+
+        arrowRight(svg);
+        expect(getTooltip(container)).toHaveTextContent('uv : 3');
+        expectLastCalledWith(spy, {
+          active: true,
+          index: '2',
+          dataKey: undefined,
+          graphicalItemId: undefined,
+          coordinate: { x: ticks[1].coordinate, y: expect.any(Number) },
+        });
       });
     });
 
