@@ -8,11 +8,10 @@ import type {
   StraightAnglePieChart,
   TwoLevelPieChart,
 } from './PieChartApiExamples.story';
-import { expect, test } from '../fixtures';
+import { expect, testWithThemes } from '../fixtures';
 
-test('PieChartNavExample', async ({ mountStory }) => {
+testWithThemes('PieChartNavExample', async ({ mountStory }) => {
   const component = await mountStory<typeof PieChartNavExample>('www/PieChartApiExamples/PieChartNavExample', {
-    testTheme: 'light',
     isAnimationActive: false,
   });
   await expect(component).toHaveScreenshot();
@@ -24,46 +23,42 @@ test('PieChartNavExample', async ({ mountStory }) => {
 //   await expect(component).toHaveScreenshot();
 // });
 
-test('PieChartInFlexbox', async ({ mountStory }) => {
-  const component = await mountStory('www/PieChartApiExamples/PieChartInFlexbox', { testTheme: 'light' });
+testWithThemes('PieChartInFlexbox', async ({ mountStory }) => {
+  const component = await mountStory('www/PieChartApiExamples/PieChartInFlexbox');
   await expect(component).toHaveScreenshot();
 });
 
-test('PieChartWithNeedle', async ({ mountStory }) => {
+testWithThemes('PieChartWithNeedle', async ({ mountStory }) => {
   const component = await mountStory<typeof PieChartWithNeedle>('www/PieChartApiExamples/PieChartWithNeedle', {
-    testTheme: 'light',
     isAnimationActive: false,
   });
   await expect(component).toHaveScreenshot();
 });
 
-test('PieChartWithPaddingAngle', async ({ mountStory }) => {
+testWithThemes('PieChartWithPaddingAngle', async ({ mountStory }) => {
   const component = await mountStory<typeof PieChartWithPaddingAngle>(
     'www/PieChartApiExamples/PieChartWithPaddingAngle',
     {
-      testTheme: 'light',
       isAnimationActive: false,
     },
   );
   await expect(component).toHaveScreenshot();
 });
 
-test('PieChartWithCustomizedLabel', async ({ mountStory }) => {
+testWithThemes('PieChartWithCustomizedLabel', async ({ mountStory }) => {
   const component = await mountStory<typeof PieChartWithCustomizedLabel>(
     'www/PieChartApiExamples/PieChartWithCustomizedLabel',
     {
-      testTheme: 'light',
       isAnimationActive: false,
     },
   );
   await expect(component).toHaveScreenshot();
 });
 
-test('CustomActiveShapePieChart', async ({ mountStory }) => {
+testWithThemes('CustomActiveShapePieChart', async ({ mountStory }) => {
   const component = await mountStory<typeof CustomActiveShapePieChart>(
     'www/PieChartApiExamples/CustomActiveShapePieChart',
     {
-      testTheme: 'light',
       isAnimationActive: false,
       defaultIndex: '0',
     },
@@ -71,26 +66,23 @@ test('CustomActiveShapePieChart', async ({ mountStory }) => {
   await expect(component).toHaveScreenshot();
 });
 
-test('StraightAnglePieChart', async ({ mountStory }) => {
+testWithThemes('StraightAnglePieChart', async ({ mountStory }) => {
   const component = await mountStory<typeof StraightAnglePieChart>('www/PieChartApiExamples/StraightAnglePieChart', {
-    testTheme: 'light',
     isAnimationActive: false,
   });
   await expect(component).toHaveScreenshot();
 });
 
-test('TwoLevelPieChart', async ({ mountStory }) => {
+testWithThemes('TwoLevelPieChart', async ({ mountStory }) => {
   const component = await mountStory<typeof TwoLevelPieChart>('www/PieChartApiExamples/TwoLevelPieChart', {
-    testTheme: 'light',
     isAnimationActive: false,
     defaultIndex: '1',
   });
   await expect(component).toHaveScreenshot();
 });
 
-test('PieWithGradient', async ({ mountStory }) => {
+testWithThemes('PieWithGradient', async ({ mountStory }) => {
   const component = await mountStory<typeof PieWithGradient>('www/PieChartApiExamples/PieWithGradient', {
-    testTheme: 'light',
     isAnimationActive: false,
     defaultIndex: '1',
   });

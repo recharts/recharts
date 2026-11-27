@@ -1,4 +1,4 @@
-import { createSlice, PayloadAction } from '@reduxjs/toolkit';
+import { createSlice, PayloadAction, Reducer } from '@reduxjs/toolkit';
 import { StackOffsetType } from '../util/types';
 import { SyncMethod } from '../synchronisation/types';
 import { BaseValue } from '../cartesian/Area';
@@ -66,6 +66,6 @@ const rootPropsSlice = createSlice({
   },
 });
 
-export const rootPropsReducer = rootPropsSlice.reducer;
+export const rootPropsReducer: Reducer<UpdatableChartOptions> = rootPropsSlice.reducer;
 
 export const { updateOptions } = rootPropsSlice.actions;

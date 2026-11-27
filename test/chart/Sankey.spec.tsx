@@ -999,6 +999,56 @@ describe('<Sankey />', () => {
     });
   });
 
+  describe('layout of graphs with links to missing nodes', () => {
+    const computeOptions = {
+      width: 1000,
+      height: 500,
+      iterations: 0,
+      nodeWidth: 10,
+      nodePadding: 10,
+      sort: true,
+      verticalAlign: 'justify',
+      align: 'justify',
+    } as const;
+
+    /**
+     * Node `a` is the only real root. If the link from the missing node 99 were kept on `a`'s side,
+     * `a` would have a source, no node would be a root and every node would stay at depth 0.
+     */
+    it('ignores a link whose source is not a node', () => {
+      const data = {
+        nodes: [{ name: 'a' }, { name: 'b' }],
+        links: [
+          { source: 99, target: 0, value: 5 },
+          { source: 0, target: 1, value: 10 },
+        ],
+      };
+
+      const { nodes } = computeData({ data, ...computeOptions });
+
+      expect(nodes.map(node => node.depth)).toEqual([0, 1]);
+      expect(nodes.map(node => node.sourceLinks)).toEqual([[], [1]]);
+      expect(nodes.map(node => node.targetLinks)).toEqual([[1], []]);
+      expect(nodes[0]?.x).toBeLessThan(nodes[1]?.x ?? 0);
+    });
+
+    it('ignores a link whose target is not a node', () => {
+      const data = {
+        nodes: [{ name: 'a' }, { name: 'b' }],
+        links: [
+          { source: 0, target: 1, value: 10 },
+          { source: 1, target: -1, value: 5 },
+        ],
+      };
+
+      const { nodes } = computeData({ data, ...computeOptions });
+
+      expect(nodes.map(node => node.depth)).toEqual([0, 1]);
+      expect(nodes.map(node => node.sourceNodes)).toEqual([[], [0]]);
+      expect(nodes.map(node => node.targetNodes)).toEqual([[1], []]);
+    });
+  });
+
   describe('layout of graphs that contain a cycle', () => {
     const computeOptions = {
       width: 1000,

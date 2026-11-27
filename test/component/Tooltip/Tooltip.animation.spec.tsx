@@ -72,7 +72,7 @@ describe('Tooltip animation', () => {
           top: 0,
           left: 0,
           transform: 'translate(15px, 30px)',
-          transition: 'transform 400ms ease',
+          transition: 'transform 0.4s',
         });
       });
     });
@@ -102,7 +102,7 @@ describe('Tooltip animation', () => {
           top: 0,
           left: 0,
           transform: 'translate(75px, 60px)',
-          transition: 'transform 400ms ease',
+          transition: 'transform 0.4s',
         });
       });
     });
@@ -159,7 +159,7 @@ describe('Tooltip animation', () => {
           top: 0,
           left: 0,
           transform: 'translate(15px, 30px)',
-          transition: 'transform 400ms ease',
+          transition: 'transform 0.4s',
         });
       });
     });
@@ -189,7 +189,7 @@ describe('Tooltip animation', () => {
           top: 0,
           left: 0,
           transform: 'translate(75px, 60px)',
-          transition: 'transform 400ms ease',
+          transition: 'transform 0.4s',
         });
       });
     });
@@ -241,7 +241,7 @@ describe('Tooltip animation', () => {
 
       expect(tooltip).toHaveStyle({
         transform: 'translate(15px, 30px)',
-        transition: 'transform 400ms ease',
+        transition: 'transform 0.4s',
       });
     });
 
@@ -285,7 +285,7 @@ describe('Tooltip animation', () => {
         });
         expect(tooltip).toHaveStyle({
           transform: 'translate(75px, 60px)',
-          transition: 'transform 400ms ease',
+          transition: 'transform 0.4s',
         });
       });
     });

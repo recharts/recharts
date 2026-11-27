@@ -1,4 +1,11 @@
-import { createAction, createListenerMiddleware, ListenerEffectAPI } from '@reduxjs/toolkit';
+import {
+  AnyAction,
+  createAction,
+  createListenerMiddleware,
+  ListenerEffectAPI,
+  ListenerMiddlewareInstance,
+  ThunkDispatch,
+} from '@reduxjs/toolkit';
 import { setKeyboardInteraction, TooltipInteractionState } from './tooltipSlice';
 import { AppDispatch, RechartsRootState } from './store';
 import {
@@ -15,7 +22,11 @@ export const keyDownAction = createAction<KeyboardEvent['key']>('keyDown');
 export const focusAction = createAction('focus');
 export const blurAction = createAction('blur');
 
-export const keyboardEventsMiddleware = createListenerMiddleware<RechartsRootState>();
+export const keyboardEventsMiddleware: ListenerMiddlewareInstance<
+  RechartsRootState,
+  ThunkDispatch<RechartsRootState, unknown, AnyAction>,
+  unknown
+> = createListenerMiddleware<RechartsRootState>();
 
 let rafId: number | null = null;
 let timeoutId: ReturnType<typeof setTimeout> | null = null;

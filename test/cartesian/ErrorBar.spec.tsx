@@ -2588,4 +2588,118 @@ describe('<ErrorBar />', () => {
       expect(getErrorBarClipPaths(container)).toEqual([clipPathUrl, clipPathUrl, clipPathUrl]);
     });
   });
+
+  describe('non-finite and unmappable coordinates', () => {
+    it('should skip whiskers whose bounds map to NaN on a log YAxis', () => {
+      const data = [
+        { name: 'a', uv: 10, err: 15 },
+        { name: 'b', uv: 10, err: 10 },
+        { name: 'c', uv: 100, err: 20 },
+      ];
+      const renderTestCase = createSelectorTestCase(({ children }) => (
+        <LineChart width={400} height={300} data={data}>
+          <XAxis dataKey="name" />
+          <YAxis scale="log" domain={[1, 1000]} allowDataOverflow />
+          <Line dataKey="uv" isAnimationActive={false}>
+            <ErrorBar dataKey="err" isAnimationActive={false} />
+          </Line>
+          {children}
+        </LineChart>
+      ));
+
+      const { container } = renderTestCase();
+      const errorBars = container.querySelectorAll('.recharts-errorBar');
+      expect(errorBars).toHaveLength(1);
+      const lines = container.querySelectorAll('.recharts-errorBar line');
+      expect(lines).toHaveLength(3);
+      lines.forEach(line => {
+        expect(Number.isFinite(Number(line.getAttribute('x1')))).toBe(true);
+        expect(Number.isFinite(Number(line.getAttribute('x2')))).toBe(true);
+        expect(Number.isFinite(Number(line.getAttribute('y1')))).toBe(true);
+        expect(Number.isFinite(Number(line.getAttribute('y2')))).toBe(true);
+      });
+    });
+
+    it('should skip whiskers whose bounds map to NaN on a log XAxis in vertical layout', () => {
+      const data = [
+        { name: 'a', uv: 10, err: 15 },
+        { name: 'b', uv: 100, err: 20 },
+      ];
+      const renderTestCase = createSelectorTestCase(({ children }) => (
+        <BarChart width={400} height={300} data={data} layout="vertical">
+          <XAxis type="number" scale="log" domain={[1, 1000]} allowDataOverflow />
+          <YAxis type="category" dataKey="name" />
+          <Bar dataKey="uv" isAnimationActive={false}>
+            <ErrorBar dataKey="err" isAnimationActive={false} />
+          </Bar>
+          {children}
+        </BarChart>
+      ));
+
+      const { container } = renderTestCase();
+      const errorBars = container.querySelectorAll('.recharts-errorBar');
+      expect(errorBars).toHaveLength(1);
+      const lines = container.querySelectorAll('.recharts-errorBar line');
+      expect(lines).toHaveLength(3);
+      lines.forEach(line => {
+        expect(Number.isFinite(Number(line.getAttribute('x1')))).toBe(true);
+        expect(Number.isFinite(Number(line.getAttribute('x2')))).toBe(true);
+        expect(Number.isFinite(Number(line.getAttribute('y1')))).toBe(true);
+        expect(Number.isFinite(Number(line.getAttribute('y2')))).toBe(true);
+      });
+    });
+
+    it('should skip whiskers when Scatter data points or error bounds map to NaN on a log scale', () => {
+      const data = [
+        { x: 0, y: 100, errX: 2, errY: 20 },
+        { x: 100, y: 0, errX: 20, errY: 2 },
+        { x: 10, y: 10, errX: 15, errY: 15 },
+        { x: 100, y: 100, errX: 20, errY: 20 },
+      ];
+      const renderTestCase = createSelectorTestCase(({ children }) => (
+        <ScatterChart width={400} height={300}>
+          <XAxis type="number" dataKey="x" scale="log" domain={[1, 1000]} allowDataOverflow />
+          <YAxis type="number" dataKey="y" scale="log" domain={[1, 1000]} allowDataOverflow />
+          <Scatter data={data} isAnimationActive={false}>
+            <ErrorBar dataKey="errX" direction="x" isAnimationActive={false} />
+            <ErrorBar dataKey="errY" direction="y" isAnimationActive={false} />
+          </Scatter>
+          {children}
+        </ScatterChart>
+      ));
+
+      const { container } = renderTestCase();
+      // Only the last point (x=100, y=100) has finite coordinates and finite error bounds on both axes
+      expect(container.querySelectorAll('.recharts-errorBar')).toHaveLength(2);
+      const lines = container.querySelectorAll('.recharts-errorBar line');
+      expect(lines).toHaveLength(6);
+      lines.forEach(line => {
+        expect(Number.isFinite(Number(line.getAttribute('x1')))).toBe(true);
+        expect(Number.isFinite(Number(line.getAttribute('x2')))).toBe(true);
+        expect(Number.isFinite(Number(line.getAttribute('y1')))).toBe(true);
+        expect(Number.isFinite(Number(line.getAttribute('y2')))).toBe(true);
+      });
+    });
+
+    it('should not render empty errorBar layers when direction=y is used on a category YAxis', () => {
+      const data = [
+        { name: 'a', uv: 10, err: 2 },
+        { name: 'b', uv: 20, err: 4 },
+      ];
+      const renderTestCase = createSelectorTestCase(({ children }) => (
+        <BarChart width={400} height={300} data={data} layout="vertical">
+          <XAxis type="number" />
+          <YAxis type="category" dataKey="name" />
+          <Bar dataKey="uv" isAnimationActive={false}>
+            <ErrorBar dataKey="err" direction="y" isAnimationActive={false} />
+          </Bar>
+          {children}
+        </BarChart>
+      ));
+
+      const { container } = renderTestCase();
+      expect(container.querySelectorAll('.recharts-errorBar')).toHaveLength(0);
+      expectErrorBars(container, []);
+    });
+  });
 });

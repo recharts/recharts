@@ -3,7 +3,7 @@
  */
 import * as React from 'react';
 import { ReactElement, ReactNode, isValidElement, useLayoutEffect, useMemo, useRef } from 'react';
-import { clsx } from 'clsx';
+import { clsx } from '../util/clsx';
 import { CartesianAxis, CartesianAxisRef, defaultCartesianAxisProps } from './CartesianAxis';
 import {
   AxisInterval,

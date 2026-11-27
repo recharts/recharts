@@ -87,6 +87,9 @@
   --color-code-7: #6a737d; /* Gray */
   --color-code-8: #0a3069; /* Blue */
   --color-code-9: #007070; /* Teal */
+  --color-code-bg: var(--color-gray-50);
+  --color-code-toolbar-bg: var(--color-white);
+  --color-code-selection: rgb(16 116 182 / 18%);
 }
 
 [data-mode='dark'] {
@@ -137,7 +140,10 @@
   --color-code-4: #74bf80;
   --color-code-5: #ffc194;
   --color-code-6: #69aeff;
-  --color-code-7: #6a737d;
+  --color-code-7: #8b949e;
   --color-code-8: #9ac6ff;
   --color-code-9: #79d0cf;
+  --color-code-bg: var(--color-gray-950);
+  --color-code-toolbar-bg: var(--color-gray-900);
+  --color-code-selection: rgb(46 150 234 / 30%);
 }

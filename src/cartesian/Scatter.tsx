@@ -1,7 +1,6 @@
 import * as React from 'react';
 import { MutableRefObject, ReactElement, ReactNode, SVGProps, useMemo, useRef } from 'react';
 
-import { clsx } from 'clsx';
 import { Layer } from '../container/Layer';
 import {
   CartesianLabelListContextProvider,
@@ -10,6 +9,7 @@ import {
   LabelListFromLabelProp,
   SetLabelListClipArea,
 } from '../component/LabelList';
+import { clsx } from '../util/clsx';
 import { findAllByType } from '../util/ReactUtils';
 import { Curve, CurveType, Props as CurveProps } from '../shape/Curve';
 import { ErrorBarDataItem, ErrorBarDataPointFormatter, ErrorBarDirection } from './ErrorBar';

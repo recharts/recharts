@@ -105,14 +105,14 @@ export const combineTooltipPayload = (
   }
   const { chartData, computedData } = chartDataState;
   const [sliceStartIndex, sliceEndIndex] = getBrushSliceIndexes(chartDataState);
+  // Brush indexes address the chart data. Data defined on an item is used as the item drew it.
+  const slicedChartData = chartData == null ? undefined : getSliced(chartData, sliceStartIndex, sliceEndIndex);
 
   const init: Array<TooltipPayloadEntry> = [];
 
   return tooltipPayloadConfigurations.reduce((agg, configuration): Array<TooltipPayloadEntry> => {
     const { dataDefinedOnItem, settings, getEntryColor } = configuration;
-    const finalData = selectFinalData(dataDefinedOnItem, chartData);
-
-    const sliced = Array.isArray(finalData) ? getSliced(finalData, sliceStartIndex, sliceEndIndex) : finalData;
+    const sliced = selectFinalData(dataDefinedOnItem, slicedChartData);
 
     const finalDataKey: DataKey<any> | undefined = settings?.dataKey ?? tooltipAxisDataKey;
     // BaseAxisProps does not support nameKey but it could!
@@ -145,7 +145,11 @@ export const combineTooltipPayload = (
        */
       tooltipEventType === 'axis'
     ) {
-      tooltipPayload = findEntryInArray(sliced, tooltipAxisDataKey, activeLabel);
+      // A category can repeat, so the row at the active index wins when it has the active label.
+      const entryAtIndex = tooltipPayloadSearcher(sliced, activeIndex, computedData, finalNameKey);
+      tooltipPayload =
+        findEntryInArray([entryAtIndex], tooltipAxisDataKey, activeLabel) ??
+        findEntryInArray(sliced, tooltipAxisDataKey, activeLabel);
     } else {
       /*
        * This is a problem because it assumes that the index is pointing to the displayed data

@@ -1,6 +1,6 @@
-import { expect, test } from '../fixtures';
+import { expect, testWithThemes } from '../fixtures';
 
-test('TooltipStylesExample', async ({ mountStory }) => {
-  const component = await mountStory('www/TooltipStylesExample/TooltipStylesExample', { testTheme: 'light' });
+testWithThemes('TooltipStylesExample', async ({ mountStory }) => {
+  const component = await mountStory('www/TooltipStylesExample/TooltipStylesExample');
   await expect(component).toHaveScreenshot();
 });
