@@ -7,6 +7,7 @@ import { PageData } from '../_data';
 import { mockGetTotalLength, restoreMockGetTotalLength } from '../helper/mockGetTotalLength';
 import { ExpectedLabel, expectLabels } from '../helper/expectLabel';
 import { mockGetBoundingClientRect, mockSequenceOfGetBoundingClientRect } from '../helper/mockGetBoundingClientRect';
+import { mockHTMLElementProperty } from '../helper/mockHTMLElementProperty';
 import { expectDots } from '../helper/expectDots';
 import { expectLines } from '../helper/expectLine';
 import { MockAnimationManager } from '../animation/MockProgressAnimationManager';
@@ -514,7 +515,10 @@ describe('Line animation', () => {
       const { container, animationManager } = renderTestCase();
 
       act(() => {
-        resizeObserverCallback([{ contentRect: { width: 500, height: 400 } }] as ResizeObserverEntry[]);
+        // The chart reads its size from the DOM, the entry only tells it to measure again
+        mockHTMLElementProperty('clientWidth', 500);
+        mockHTMLElementProperty('clientHeight', 400);
+        resizeObserverCallback([] as ResizeObserverEntry[]);
         vi.runOnlyPendingTimers();
       });
 
@@ -569,7 +573,10 @@ describe('Line animation', () => {
       const { container, animationManager } = renderResponsiveComposed();
 
       act(() => {
-        resizeObserverCallback([{ contentRect: { width: 500, height: 400 } }] as ResizeObserverEntry[]);
+        // The chart reads its size from the DOM, the entry only tells it to measure again
+        mockHTMLElementProperty('clientWidth', 500);
+        mockHTMLElementProperty('clientHeight', 400);
+        resizeObserverCallback([] as ResizeObserverEntry[]);
         vi.runOnlyPendingTimers();
       });
 

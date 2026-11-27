@@ -14,7 +14,8 @@ import {
 import { CartesianLayout, Margin, Size } from '../util/types';
 import { getUniqPayload, UniqueOption } from '../util/payload/getUniqPayload';
 import { useLegendPayload } from '../context/legendPayloadContext';
-import { ElementOffset, useElementOffset } from '../util/useElementOffset';
+import { ElementOffset } from '../util/useElementOffset';
+import { useElementSize } from '../util/useElementSize';
 import { useChartHeight, useChartWidth, useMargin } from '../context/chartLayoutContext';
 import { LegendSettings, setLegendSettings, setLegendSize } from '../state/legendSlice';
 import { useAppDispatch, useAppSelector } from '../state/hooks';
@@ -82,7 +83,7 @@ function selectPositionViewBox(state: RechartsRootState, position: CartesianPosi
 function getOutsidePositionOffset(
   position: CartesianPosition | undefined,
   offset: number,
-  box: ElementOffset,
+  box: Size,
 ): { top?: number; left?: number } {
   if (position === 'top') {
     return { top: box.height + offset };
@@ -105,7 +106,7 @@ function getDefaultPosition(
   margin: Margin | undefined,
   chartWidth: number,
   chartHeight: number,
-  box: ElementOffset,
+  box: Size,
 ): CSSProperties {
   const { layout, align, verticalAlign } = props;
   let hPos, vPos;
@@ -328,7 +329,14 @@ function LegendImpl(outsideProps: Props) {
 
   // The contextPayload is not used directly inside the hook, but we need the onBBoxUpdate call
   // when the payload changes, therefore it's here as a dependency.
-  const [lastBoundingBox, updateBoundingBox] = useElementOffset([contextPayload]);
+  const [lastBoundingBox, updateBoundingBox] = useElementSize({
+    box: 'border-box',
+    initialSize: { width: 0, height: 0 },
+    observe: true,
+    // Ignore 1px changes, which could otherwise loop: the size of the element changes the layout around it
+    threshold: 1,
+    extraDependencies: [contextPayload],
+  });
   const chartWidth = useChartWidth();
   const chartHeight = useChartHeight();
   if (chartWidth == null || chartHeight == null || (props.position != null && positionViewBox == null)) {

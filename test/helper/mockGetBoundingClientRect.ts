@@ -1,5 +1,5 @@
 import { vi } from 'vitest';
-import { mockHTMLElementProperty } from './mockHTMLElementProperty';
+import { mockHTMLElementGetter, mockHTMLElementProperty } from './mockHTMLElementProperty';
 import { NonEmptyArray } from '../../src/util/types';
 
 export function getMockDomRect(partial: Partial<DOMRect> = {}): DOMRect {
@@ -48,7 +48,7 @@ export function mockGetBoundingClientRect(rect: Partial<DOMRect>, mockClientHeig
  * This is useful for testing behaviour of Legend and other components that rely on the size of the DOM elements
  * and change their layout based on the size of the elements as the rendering progresses.
  * @param rects an array of partial DOMRect objects that will be returned by getBoundingClientRect in sequence. The last rect will be returned as the final value repeatedly.
- * @param mockClientHeightWidth if true, will also mock offsetHeight and offsetWidth properties of the HTMLElement
+ * @param mockClientHeightWidth if true, will also mock offsetHeight and offsetWidth properties of the HTMLElement, with the same sequence
  * @return void
  */
 export function mockSequenceOfGetBoundingClientRect(
@@ -62,7 +62,11 @@ export function mockSequenceOfGetBoundingClientRect(
   vi.spyOn(Element.prototype, 'getBoundingClientRect').mockReturnValue(mockDomRects[mockDomRects.length - 1]);
 
   if (mockClientHeightWidth) {
-    mockHTMLElementProperty('offsetHeight', mockDomRects[0].height);
-    mockHTMLElementProperty('offsetWidth', mockDomRects[0].width);
+    // Each read of offsetWidth (or offsetHeight) returns the next rect in the sequence, like getBoundingClientRect
+    const last = mockDomRects.length - 1;
+    let widthReads = 0;
+    let heightReads = 0;
+    mockHTMLElementGetter('offsetWidth', () => mockDomRects[Math.min(widthReads++, last)].width);
+    mockHTMLElementGetter('offsetHeight', () => mockDomRects[Math.min(heightReads++, last)].height);
   }
 }
