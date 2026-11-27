@@ -91,8 +91,10 @@ function useTooltipSyncEventsListener() {
            * That is not true when the axes have different scales - for example LineChart puts points
            * on the edges of the plot area, while BarChart puts them in the middle of each band.
            * So along the tooltip axis, snap to where this chart renders the synchronised index.
+           * The synchronised index is the position in the ticks, the index space the label and the payload read too,
+           * not `TickItem.index`, which differs from the position where tick generation dropped an entry.
            */
-          const activeTick = tooltipTicks?.find(tick => String(tick.index) === String(action.payload.index));
+          const activeTick = tooltipTicks?.[Number(action.payload.index)];
           if (activeTick != null) {
             if (layout === 'horizontal') {
               scaledCoordinate.x = activeTick.coordinate;
