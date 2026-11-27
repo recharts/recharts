@@ -1,4 +1,4 @@
-import { ChartCoordinate, ChartOffsetInternal, LayoutType } from '../types';
+import { ChartOffsetInternal, Coordinate, LayoutType } from '../types';
 
 export type CursorRectangle = {
   x: number;
@@ -9,7 +9,7 @@ export type CursorRectangle = {
 
 export function getCursorRectangle(
   layout: LayoutType,
-  activeCoordinate: ChartCoordinate,
+  activeCoordinate: Coordinate,
   offset: ChartOffsetInternal,
   tooltipAxisBandSize: number,
 ): CursorRectangle {

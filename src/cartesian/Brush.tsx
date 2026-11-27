@@ -11,13 +11,13 @@ import {
   useContext,
   useEffect,
 } from 'react';
-import { clsx } from 'clsx';
 import { scalePoint, ScalePoint } from 'victory-vendor/d3-scale';
 import range from 'es-toolkit/compat/range';
 import { Layer } from '../container/Layer';
 import { Text } from '../component/Text';
 import { getValueByDataKey } from '../util/ChartUtils';
 import { isNumber, isNotNil } from '../util/DataUtils';
+import { clsx } from '../util/clsx';
 import { generatePrefixStyle } from '../util/CssPrefixUtils';
 import { DataConsumer, DataKey, Padding } from '../util/types';
 import { useChartData, useDataIndex } from '../context/chartDataContext';
@@ -957,20 +957,23 @@ class BrushWithState extends PureComponent<BrushWithStateProps, State> {
     }
 
     // unless we search for the closest scaleValue to the current coordinate
-    // we need to move travelers via index when using the keyboard
-    let currentIndex: number = -1;
-    if (id === 'startX') {
-      currentIndex = startIndex;
-    } else if (id === 'endX') {
-      currentIndex = endIndex;
-    }
+    // we need to move travelers via index when using the keyboard.
+    // The travellers can be dragged past each other, so the left one holds startIndex whatever its id.
+    const otherX = id === 'startX' ? endX : startX;
+    const isLeftTraveller = id === 'startX' ? startX <= endX : endX < startX;
+    const currentIndex = isLeftTraveller ? startIndex : endIndex;
 
     if (currentIndex < 0 || currentIndex >= data.length) {
       return;
     }
 
-    const newIndex = currentIndex + direction;
-    if (newIndex === -1 || newIndex >= scaleValues.length) {
+    // Step to the next index on the `gap` grid, as dragging does. The last index stays reachable.
+    const steppedIndex = currentIndex + direction;
+    const newIndex = Math.min(
+      (direction > 0 ? Math.ceil(steppedIndex / gap) : Math.floor(steppedIndex / gap)) * gap,
+      data.length - 1,
+    );
+    if (newIndex < 0 || newIndex === currentIndex || newIndex >= scaleValues.length) {
       return;
     }
 
@@ -980,7 +983,7 @@ class BrushWithState extends PureComponent<BrushWithStateProps, State> {
     }
 
     // Prevent travellers from being on top of each other or overlapping
-    if ((id === 'startX' && newScaleValue >= endX) || (id === 'endX' && newScaleValue <= startX)) {
+    if (isLeftTraveller ? newScaleValue >= otherX : newScaleValue <= otherX) {
       return;
     }
 

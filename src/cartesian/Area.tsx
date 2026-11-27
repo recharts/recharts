@@ -1,6 +1,5 @@
 import * as React from 'react';
 import { MutableRefObject, PureComponent, ReactElement, ReactNode, useMemo, useRef } from 'react';
-import { clsx } from 'clsx';
 import { once } from 'es-toolkit';
 import { BaseLineType, CurveType, Props as CurveProps } from '../shape/Curve';
 import { Layer } from '../container/Layer';
@@ -37,6 +36,7 @@ import {
   TooltipType,
   TrapezoidViewBox,
 } from '../util/types';
+import { clsx } from '../util/clsx';
 import { isClipDot } from '../util/ReactUtils';
 import type { LegendPayload } from '../component/DefaultLegendContent';
 import { Formatter } from '../component/DefaultTooltipContent';

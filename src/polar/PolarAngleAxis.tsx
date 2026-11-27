@@ -1,6 +1,5 @@
 import * as React from 'react';
 import { FunctionComponent, ReactNode, SVGProps, useEffect, useMemo } from 'react';
-import { clsx } from 'clsx';
 import { Layer } from '../container/Layer';
 import { Dot } from '../shape/Dot';
 import { Polygon } from '../shape/Polygon';
@@ -33,6 +32,7 @@ import { CustomScaleDefinition } from '../util/scale/CustomScaleDefinition';
 import { usePolarChartLayout } from '../context/chartLayoutContext';
 import { noop } from '../util/DataUtils';
 import { getAxisTypeBasedOnLayout } from '../util/getAxisTypeBasedOnLayout';
+import { clsx } from '../util/clsx';
 import { getClassNameFromUnknown } from '../util/getClassNameFromUnknown';
 import { useRechartsTheme } from '../theme/RechartsThemeContext';
 

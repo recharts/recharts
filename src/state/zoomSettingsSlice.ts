@@ -1,4 +1,4 @@
-import { createSlice, PayloadAction } from '@reduxjs/toolkit';
+import { createSlice, PayloadAction, Reducer } from '@reduxjs/toolkit';
 import { ZoomLimits } from '../util/zoom/zoomActions';
 import { ZoomAxis } from '../util/zoom/ZoomOptions';
 
@@ -38,4 +38,4 @@ const zoomSettingsSlice = createSlice({
 });
 
 export const { setZoomAxis, setZoomLimits } = zoomSettingsSlice.actions;
-export const zoomSettingsReducer = zoomSettingsSlice.reducer;
+export const zoomSettingsReducer: Reducer<ZoomSettingsState> = zoomSettingsSlice.reducer;

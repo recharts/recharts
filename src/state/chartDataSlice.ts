@@ -1,4 +1,4 @@
-import { PayloadAction, createSlice } from '@reduxjs/toolkit';
+import { PayloadAction, createSlice, Reducer } from '@reduxjs/toolkit';
 import { castDraft } from 'immer';
 import { BrushStartEndIndex } from '../context/brushUpdateContext';
 
@@ -116,4 +116,4 @@ const chartDataSlice = createSlice({
 
 export const { setChartData, setDataStartEndIndexes, setComputedData } = chartDataSlice.actions;
 
-export const chartDataReducer = chartDataSlice.reducer;
+export const chartDataReducer: Reducer<ChartDataState> = chartDataSlice.reducer;

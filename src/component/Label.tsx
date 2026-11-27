@@ -10,7 +10,7 @@ import {
   useContext,
   useMemo,
 } from 'react';
-import { clsx } from 'clsx';
+import { clsx } from '../util/clsx';
 import {
   isValidTextAnchor,
   RenderableText,
@@ -100,7 +100,14 @@ interface LabelProps extends ZIndexable {
    * If set a React element, the option is the custom React element of rendering label.
    * Use an SVG element or component, such as `<text>` or `<g>`.
    * HTML elements such as `<div>` are not valid inside the chart SVG and may trigger React DOM warnings.
-   * If set a function, the function will be called to render label content.
+   * To render HTML, wrap it in an SVG `<foreignObject>` with a `width` and a `height`.
+   * The wrapper's `x` and `y` place its top-left corner. To center a 100-by-50 wrapper
+   * at `(x, y)`, place it at `(x - 50, y - 25)`.
+   *
+   * Pass `x` and `y` to `<Label>` to position a custom element, or return a wrapper
+   * from a `content` function to set its size and position directly.
+   * For a `<LabelList>` inside a `<Bar>`, the function receives the bar's `x` and `y` by default.
+   * Use `viewBox` to find a different position, such as the center of the bar.
    *
    * @example <Label content={CustomizedLabel} />
    * @example

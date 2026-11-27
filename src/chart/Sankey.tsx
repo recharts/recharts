@@ -1,9 +1,9 @@
-import { clsx } from 'clsx';
 import * as React from 'react';
 import { ComponentType, MouseEvent, ReactElement, ReactNode, SVGProps, useCallback, useMemo, useState } from 'react';
 import maxBy from 'es-toolkit/compat/maxBy';
 import sumBy from 'es-toolkit/compat/sumBy';
 import get from 'es-toolkit/compat/get';
+import { clsx } from '../util/clsx';
 import { Surface } from '../container/Surface';
 import { AllZIndexPortals } from '../zIndex/ZIndexPortal';
 import { Layer } from '../container/Layer';

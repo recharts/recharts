@@ -5,7 +5,7 @@
 import * as React from 'react';
 import { CSSProperties, HTMLAttributes, ReactNode, SVGProps } from 'react';
 import sortBy from 'es-toolkit/compat/sortBy';
-import { clsx } from 'clsx';
+import { clsx } from '../util/clsx';
 import { isNullish, isNumOrStr } from '../util/DataUtils';
 import { DataKey } from '../util/types';
 import { TooltipPayload, TooltipPayloadEntry } from '../state/tooltipSlice';

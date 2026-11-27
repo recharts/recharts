@@ -1,10 +1,10 @@
 import * as React from 'react';
 import { cloneElement, isValidElement } from 'react';
-import { clsx } from 'clsx';
 import { Dot, type Props as DotProps } from '../shape/Dot';
 import { DotSymbol, getDotSymbol } from '../shape/DotSymbol';
 import { Layer } from '../container/Layer';
 import { DataKey, DotItemDotProps, DotType } from '../util/types';
+import { clsx } from '../util/clsx';
 import { isClipDot } from '../util/ReactUtils';
 import { svgPropertiesAndEventsFromUnknown } from '../util/svgPropertiesAndEvents';
 import { ZIndexable, ZIndexLayer } from '../zIndex/ZIndexLayer';

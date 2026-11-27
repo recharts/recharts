@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { isValidElement } from 'react';
-import { clsx } from 'clsx';
+import { clsx } from '../util/clsx';
 import { Symbols } from './Symbols';
 import { type Props as DotProps } from './Dot';
 import { ActiveDotType, adaptEventHandlers, DotType, SymbolType } from '../util/types';
